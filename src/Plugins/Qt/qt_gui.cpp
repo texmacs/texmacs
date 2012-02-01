@@ -20,6 +20,7 @@
 #include <QDesktopWidget>
 #include <QClipboard>
 #include <QFileOpenEvent>
+#include <QStackedLayout>
 #include <QLabel>
 #include <QSocketNotifier>
 #include <QSetIterator>
@@ -64,7 +65,7 @@ bool wait_for_delayed_commands = true;
 ******************************************************************************/
 
 qt_gui_rep::qt_gui_rep(int &argc, char **argv):
-  interrupted (false)
+  interrupted (false), waitWindow (NULL)
 {
   (void) argc; (void) argv;
   // argc= argc2;
@@ -118,9 +119,10 @@ qt_gui_rep::~qt_gui_rep()  {
   delete gui_helper;
   
   while (waitDialogs.count()) {
-    delete waitDialogs.last();
+    waitDialogs.last()->deleteLater();
     waitDialogs.removeLast();
-  }
+  }    
+  if (waitWindow) delete waitWindow;
   
  // delete updatetimer; we do not need this given that gui_helper is the 
  // parent of updatetimer
@@ -241,33 +243,28 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
   
   //FIXME: we must center the wait widget wrt the current active window
   
+  if (!waitWindow) {
+    waitWindow = new QWidget (wid->wid->window());
+    waitWindow->setWindowFlags (Qt::Window | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    QStackedLayout *layout = new QStackedLayout();
+    layout->setSizeConstraint(QLayout::SetFixedSize);
+    waitWindow->setLayout(layout);
+  }
+  
   if (waitDialogs.count()) {
-    waitDialogs.last()->close();
+    waitWindow->layout()->removeWidget(waitDialogs.last());
   }
   
   if (N(message)) {
-    
     // push a new wait message in the list
     
     if (arg != "") message= message * " " * arg * "...";
     
-    QLabel* lab = new  QLabel(); //(wid->wid->window());
-    lab->setWindowFlags(Qt::Window | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
-    //lab->setWindowModality(Qt::ApplicationModal);
+    QLabel* lab = new  QLabel();
     lab->setFocusPolicy(Qt::NoFocus);
     lab->setMargin(15);
     lab->setText (to_qstring (tm_var_encode(message)));
-    QSize sz = lab->sizeHint();
-    QRect rect = QRect(QPoint(0,0),sz);
-    //HACK: 
-    // processEvents is needed to let Qt update windows coordinates in the case
-    qApp->processEvents();
-    //ENDHACK
-    QPoint pt = wid->wid->window()->geometry().center();
-    rect.moveCenter(pt);
-    lab->move(rect.topLeft());
     waitDialogs << lab;
-    
   } else {
     // pop the next wait message from the list
     if (waitDialogs.count()) {
@@ -277,15 +274,30 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
   }
 
   if (waitDialogs.count()) {
-    waitDialogs.last()->show();
-    //waitDialogs.last()->raise();
+    waitWindow->layout()->addWidget(waitDialogs.last());
+    waitWindow->updateGeometry();
+    {
+      QSize sz = waitWindow->geometry().size();
+      QRect rect = QRect(QPoint(0,0),sz);
+      //HACK: 
+      // processEvents is needed to let Qt update windows coordinates in the case
+      qApp->processEvents();
+      //ENDHACK
+      QPoint pt = wid->wid->window()->geometry().center();
+      rect.moveCenter(pt);
+      waitWindow->move(rect.topLeft());
+      
+    }
+    waitWindow->show();
     qApp->processEvents();
-    waitDialogs.last()->repaint();
-    qApp->processEvents();
-    QApplication::flush();
-
+    waitWindow->repaint();
+  } else {
+    waitWindow->close();
   }
-
+  qApp->processEvents();
+  QApplication::flush();
+  
+  
   //    wid->wid->setUpdatesEnabled(true);
 
   // next time we do update the dialog will disappear
@@ -878,10 +890,13 @@ qt_gui_rep::update () {
   // check if a wait dialog is active and in the case remove it.
   // if we are here then the long operation is finished.
   
-  while (waitDialogs.count()) {
-    waitDialogs.last()->close();
-    waitDialogs.last()->deleteLater();
-    waitDialogs.removeLast();
+  if (waitDialogs.count()) {
+    waitWindow->layout()->removeWidget(waitDialogs.last());
+    waitWindow->close();
+    while (waitDialogs.count()) {
+      waitDialogs.last()->deleteLater();
+      waitDialogs.removeLast();
+    }
   }
   
   

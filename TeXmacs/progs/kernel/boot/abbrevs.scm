@@ -84,8 +84,11 @@
 (define-public-macro (with-cc cont . body)
   `(call/cc (lambda (,cont) ,@body)))
 
-(define-public-macro (when cond . body)
-  `(if ,cond (begin ,@body)))
+(define-public-macro (when cond? . body)
+  `(if ,cond? (begin ,@body)))
+
+(define-public-macro (unless cond? . body)
+  `(if (not ,cond?) (begin ,@body)))
 
 (define-public-macro (with var val . body)
   (if (pair? var)

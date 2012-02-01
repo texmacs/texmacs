@@ -45,7 +45,7 @@
 (setq unary-keywords
   '(let let* lambda
     with-result and-let* setup-append-if
-    while for repeat when assuming mini tile
+    while for repeat when unless assuming mini tile
     with-focus-after
     drd-group drd-table drd-dispatcher
     with-cc with-aux

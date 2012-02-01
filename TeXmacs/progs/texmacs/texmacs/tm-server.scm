@@ -121,11 +121,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (safely-kill-buffer)
-  (dialogue
-    (if (or (not (buffer-unsaved?))
-	    (dialogue-confirm?
-	     "The buffer has not been saved. Really close it?" #f))
-	(kill-buffer))))
+  (if (not (buffer-unsaved?)) (kill-buffer)
+      (user-confirm? "The buffer has not been saved. Really close it?" #f  
+        (lambda (answ) (when answ (kill-buffer))))))
 
 (tm-define (safely-kill-window)
   (if (<= (get-nr-windows) 1)
@@ -133,8 +131,6 @@
       (kill-window)))
 
 (tm-define (safely-quit-TeXmacs)
-  (dialogue
-    (if (or (not (exists-unsaved-buffer?))
-	    (dialogue-confirm?
-	     "There are unsaved files. Really quit?" #f))
-	(quit-TeXmacs))))
+  (if (not (exists-unsaved-buffer?)) (quit-TeXmacs)
+      (user-confirm? "There are unsaved files. Really quit?" #f  
+        (lambda (answ) (when answ (quit-TeXmacs))))))

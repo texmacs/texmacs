@@ -61,14 +61,14 @@
   (let* ((env-l (map string->symbol (string-tokenize-comma env)))
 	 (pred-l (map (lambda (tag) (cut tm-func? <> tag)) env-l))
 	 (l (append-map (cut tree-search (buffer-tree) <>) pred-l)))
-    (dialogue
-      (if (and (not (locified? l))
-	       (dialogue-confirm? "Locify environments?" #f))
-	  (locify l))
-      (let* ((name (string-append (get-abbr-buffer) " - " env))
-	     (style (tree->stree (get-style-tree)))
-	     (r (filter-map environment->locus l)))
-	(delayed (:pause 25) (build-locus-page-sub name style r #f))))))
+    (unless (locified? l)
+      (user-confirm? "Locify environments?" #f 
+        (lambda (answ) 
+	  (when answ (locify l))
+	  (let* ((name (string-append (get-abbr-buffer) " - " env))
+		 (style (tree->stree (get-style-tree)))
+		 (r (filter-map environment->locus l)))
+	    (delayed (:pause 25) (build-locus-page-sub name style r #f))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Constellation page

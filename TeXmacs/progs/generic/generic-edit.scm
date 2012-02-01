@@ -575,14 +575,14 @@
 
 (tm-define (make-thumbnails)
   (:interactive #t)
-  (dialogue
-    (let* ((dir (dialogue-url "Picture directory" "directory"))
-	   (find (url-append dir (thumbnail-suffixes)))
-	   (files (url->list (url-expand (url-complete find "r"))))
-	   (base (get-name-buffer))
-	   (rel-files (map (lambda (x) (url-delta base x)) files)))
-      (if (nnull? rel-files) (make-thumbnails-sub rel-files)))))
-
+  (user-url "Picture directory" "directory" 
+   (lambda (dir) 
+     (let* ((find (url-append dir (thumbnail-suffixes)))
+	          (files (url->list (url-expand (url-complete find "r"))))
+	          (base (get-name-buffer))
+	          (rel-files (map (lambda (x) (url-delta base x)) files)))
+           (if (nnull? rel-files) (make-thumbnails-sub rel-files))))))
+   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for floats
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

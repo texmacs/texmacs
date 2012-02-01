@@ -357,9 +357,9 @@
     (cond ((or ok? (== (get-preference "security") "accept all scripts"))
 	   (execute-at cmd opt-location))
 	  ((== (get-preference "security") "prompt on scripts")
-	   (dialogue
-	     (if (dialogue-confirm? `(concat "Execute " ,s "?") #f)
-		 (execute-at cmd opt-location))))
+	   (user-confirm? `(concat "Execute " ,s "?") #f
+	     (lambda (answ)
+	       (when answ (execute-at cmd opt-location)))))
 	  (else (set-message "Unsecure script refused" "Evaluate script")))))
 
 (define (go-to-vertex v attrs)

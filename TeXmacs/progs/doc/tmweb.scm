@@ -91,14 +91,12 @@
 
 (tm-define (tmweb-interactive-build)
   (:interactive #t)
-  (dialogue
-    (let* ((src (dialogue-url "Source directory" "directory"))
-	   (dest (dialogue-url "Destination directory" "directory")))
-      (tmweb-convert-dir src dest))))
+  (user-url "Source directory" "directory" 
+    (lambda (src)  (user-url "Destination directory" "directory"
+      (lambda (dest) (tmweb-convert-dir src dest))))))
 
 (tm-define (tmweb-interactive-update)
   (:interactive #t)
-  (dialogue
-    (let* ((src (dialogue-url "Source directory" "directory"))
-	   (dest (dialogue-url "Destination directory" "directory")))
-      (tmweb-update-dir src dest))))
+  (user-url "Source directory" "directory" 
+    (lambda (src)  (user-url "Destination directory" "directory"
+      (lambda (dest) (tmweb-update-dir src dest))))))

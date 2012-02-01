@@ -104,6 +104,28 @@
       (texmacs-error "dialogue-ask" "Not in dialogue")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Simple questions without continuations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public (user-ask prompt cont)
+  (tm-interactive cont
+		  (if (string? prompt)
+		      (list (build-interactive-arg prompt))
+		      (list prompt))))
+
+(define-public (user-confirm? prompt default cont)
+  (let ((k (lambda (answ) (cont (yes? answ)))))
+    (if default
+	(user-ask (list prompt "question" (yes) (no)) k)
+	(user-ask (list prompt "question" (no) (yes)) k))))
+
+(define-public (user-url prompt type cont)
+  (user-delayed (lambda () (choose-file cont prompt type))))
+
+(define-public (user-delayed cont)
+  (exec-delayed cont))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Delayed execution of commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

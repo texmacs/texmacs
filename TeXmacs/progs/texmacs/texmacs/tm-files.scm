@@ -43,17 +43,20 @@
 (tm-define current-save-target (url-none))
 
 (define (secure-save-buffer file fm)
-  (dialogue
-    (when (or (not (url-exists? file))
-	      (dialogue-confirm?
-	       "File already exists. Overwrite existing file?" #f))
-      (texmacs-save-buffer file fm)
-      (activate-highlighting))))
+    (when (not (url-exists? file))
+      (user-confirm?
+       "File already exists. Overwrite existing file?" #f
+       (lambda (answ)
+	 (when answ
+	   (texmacs-save-buffer file fm)
+	   (activate-highlighting))))))
 
 (tm-define (save-buffer . l)
-  (if (and (pair? l) (url? (car l))) (set! current-save-target (car l)))
+  (if (and (pair? l) (url? (car l)))
+      (set! current-save-target (car l)))
   (cond ((= (length l) 0) (save-buffer (get-name-buffer)))
-	((url-scratch? (car l)) (choose-file save-buffer "Save TeXmacs file" "texmacs"))
+	((url-scratch? (car l))
+	 (choose-file save-buffer "Save TeXmacs file" "texmacs"))
 	((= (length l) 1) (texmacs-save-buffer (car l) "generic"))
 	(else (secure-save-buffer (car l) (cadr l)))))
 
@@ -85,14 +88,15 @@
          (question (if (== suffix "#")
                        "Rescue file from crash?"
                        "Load more recent autosave file?")))
-    (dialogue
-      (if (and (!= fm "help")
-               (not (url-rooted-web? file))
-               (!= suffix "")
-               (dialogue-confirm? question #t))
-          (texmacs-load-buffer (url-glue file suffix) fm where #t)
-          (texmacs-load-buffer file fm where #f))
-      (activate-highlighting))))
+    (if (and (!= fm "help")
+	     (not (url-rooted-web? file))
+	     (!= suffix ""))
+	(user-confirm? question #t
+	  (lambda (answ)
+	    (when answ
+	      (texmacs-load-buffer (url-glue file suffix) fm where #t)
+	      (texmacs-load-buffer file fm where #f))
+	    (activate-highlighting))))))
 
 (tm-define (load-buffer . l)
   (with file (url-append "$TEXMACS_FILE_PATH" (car l))
