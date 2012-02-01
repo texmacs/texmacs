@@ -18,17 +18,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmfs-checkout l)
-  (dialogue
-    (let* ((new-closure (tmfs-client-remote `(tmfs-closure ,l)))
-	   (old-closure (tmfs-closure l))
-	   (diff-closure (list-difference new-closure old-closure))
-	   (news (tmfs-client-remote `(tmfs-get-ressources ,diff-closure))))
-      (tmfs-set-ressources news))))
+  (let* ((new-closure (tmfs-client-remote `(tmfs-closure ,l)))
+	 (old-closure (tmfs-closure l))
+	 (diff-closure (list-difference new-closure old-closure))
+	 (news (tmfs-client-remote `(tmfs-get-ressources ,diff-closure))))
+    (tmfs-set-ressources news)))
 
 (tm-define (tmfs-commit l)
-  (dialogue
-    (let* ((old-closure (tmfs-client-remote `(tmfs-closure ,l)))
-	   (new-closure (tmfs-closure l))
-	   (diff-closure (list-difference new-closure old-closure))
-	   (news (tmfs-get-ressources diff-closure)))
-      (tmfs-client-remote `(tmfs-set-ressources ,news)))))
+  (let* ((old-closure (tmfs-client-remote `(tmfs-closure ,l)))
+	 (new-closure (tmfs-closure l))
+	 (diff-closure (list-difference new-closure old-closure))
+	 (news (tmfs-get-ressources diff-closure)))
+    (tmfs-client-remote `(tmfs-set-ressources ,news))))
