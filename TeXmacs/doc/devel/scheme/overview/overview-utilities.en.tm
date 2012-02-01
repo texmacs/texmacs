@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.10>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
@@ -6,10 +6,10 @@
   <tmdoc-title|Standard utilities>
 
   Besides the basic concepts from the previous sections, which underly the
-  scheme API for <TeXmacs>, the <value|scheme> kernel implements several
-  other utilities and language extensions. In this section, we will briefly
-  sketch some of them on hand of examples. Further details can be found in
-  the chapter about <hlink|<TeXmacs> extensions to <value|scheme> and
+  scheme API for <TeXmacs>, the <scheme> kernel implements several other
+  utilities and language extensions. In this section, we will briefly sketch
+  some of them on hand of examples. Further details can be found in the
+  chapter about <hlink|<TeXmacs> extensions to <scheme> and
   utilities|../utils/scheme-utils.en.tm>.
 
   <paragraph*|Regular expressions>
@@ -23,39 +23,46 @@
     <frac|<with|color|brown|a>|1+<sqrt|<with|color|brown|b>>>
   </equation*>
 
-  in the current buffer, where <with|mode|math|<with|color|brown|a>> and
-  <with|mode|math|<with|color|brown|b>> are general expressions, one may use
-  the following <value|scheme> command:
+  in the current buffer, where <math|<with|color|brown|a>> and
+  <math|<with|color|brown|b>> are general expressions, one may use the
+  following <scheme> command:
 
-  <with|prog-language|scheme|prog-session|default|<\session>
+  <\session|scheme|default>
     <\input|scheme] >
       (select (buffer-tree) '(:* (:match (frac :%1 (concat "1+" (sqrt
       :%1))))))
     </input>
-  </session>>
+  </session>
 
   <paragraph*|Dialogues>
 
-  <TeXmacs> supports several commands for asynchronous evaluation of scheme
-  commands and interactive dialogues with the user. In general, asynchroneous
-  instructions have to be encapsulated inside a ``<scm|dialogue> block''. For
-  instance, when executing the following scheme command, you will be prompted
-  for two numbers, whose product will be displayed in the footer:
+  <TeXmacs> supports several commands for interactive dialogues with the
+  user. For instance, when executing the following scheme command, you will
+  be prompted for two numbers, whose product will be displayed in the footer:
 
-  <\with|prog-language|scheme|prog-session|default>
-    <\session>
-      <\input|scheme] >
-        (dialogue
+  <\session|scheme|default>
+    <\input|Scheme] >
+      (user-ask "First number:"
 
-        \ \ (let* ((a (string-\<gtr\>number (dialogue-ask "First number:")))
+      \ \ (lambda (a)
 
-        \ \ \ \ \ \ \ \ \ (b (string-\<gtr\>number (dialogue-ask "Second
-        number:"))))
+      \ \ \ \ (user-ask "Second number:"
 
-        \ \ \ \ (set-message (number-\<gtr\>string (* a b)) "product")))
-      </input>
-    </session>
-  </with>
+      \ \ \ \ \ \ (lambda (b)
+
+      \ \ \ \ \ \ \ \ (set-message (number-\<gtr\>string (*
+      (string-\<gtr\>number a)
+
+      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (string-\<gtr\>number
+      b)))
+
+      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "product")))))
+    </input>
+
+    <\input|Scheme] >
+      \;
+    </input>
+  </session>
 
   <paragraph*|User preferences>
 
@@ -65,13 +72,13 @@
   call-back routine. The call-back routine is called whenever you change the
   corresponding preference. For instance:
 
-  <\scheme-fragment>
+  <\scm-code>
     (define-preferences
 
     \ \ ("Gnu's hair color" "brown" notify-gnu-hair-change)
 
     \ \ ("Snail's cruising speed" "1mm/sec" notify-Achilles))
-  </scheme-fragment>
+  </scm-code>
 
   Preferences can be set, reset and read using <scm|set-preference>,
   <scm|reset-preference> and <scm|get-preference>.
@@ -88,7 +95,7 @@
 
   Typically, the declaration of a new format and a converter would look like:
 
-  <\scheme-fragment>
+  <\scm-code>
     (define-format blablah
 
     \ \ (:name "Blablah")
@@ -102,7 +109,7 @@
     \ \ (:require (url-exists-in-path? "bla2tex"))
 
     \ \ (:shell "bla2tex" from "\<gtr\>" to))
-  </scheme-fragment>
+  </scm-code>
 
   <tmdoc-copyright|2005|Joris van der Hoeven>
 
