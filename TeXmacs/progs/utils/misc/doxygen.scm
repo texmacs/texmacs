@@ -294,7 +294,7 @@
   (:synopsis "Get the url for the given Doxygen tag.")
   (let* ((xs (tree-as-string x))
 	 (y (ahash-ref* tag->url xs "")))
-    (if (string-null? y)
+    (if (not (string-null? y)) y
 	(let ((proposal (ahash-ref* key->tag xs '())))
 	  (cond
 	    ((null? proposal)
@@ -304,11 +304,7 @@
 	     (tree-set! x (first proposal))
 	     (ahash-ref tag->url (first proposal)))
 	    (else
-	      (dialogue
-		(set! y (dialogue-ask
-			 (cons "Pick up a correct tag:"
-			       (cons "Question" proposal))))
-		(tree-set! x y)
-		(ahash-ref tag->url y)))))
-	y)))
-
+	      (user-ask (cons* "Pick up a correct tag:" "Question" proposal)
+		(lambda (y)
+		  (tree-set! x y)
+		  (ahash-ref tag->url y)))))))))
