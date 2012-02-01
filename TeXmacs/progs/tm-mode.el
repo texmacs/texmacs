@@ -24,10 +24,9 @@
     case-lambda kbd-map kbd-wildcards kbd-commands kbd-symbols
     define-grammar define-regexp-grammar
     drd-rule drd-rules assume texmacs-modes
-    delayed dialogue on-entry on-exit widget-delayed
+    user-delayed delayed dialogue on-entry on-exit widget-delayed
     association-tile bar concat dense-bar dense-tile document
-    header-bar sequence short-bar short-tile
-    minibar
+    header-bar sequence short-bar short-tile minibar
     wrap-selection-any wrap-selection-small
     try-modification
     $begin $cond))
@@ -50,8 +49,8 @@
     drd-group drd-table drd-dispatcher
     with-cc with-aux
     with-action with-module with-cursor with-server
-    dialogue-user widget-with
-    aspect block-input button form
+    dialogue-user user-ask
+    widget-with aspect block-input button form
     input internal short-input
     $when $let $let* $for))
 
@@ -75,6 +74,7 @@
 (setq binary-keywords
   '(with with-define with-global and-with with-innermost receive
     with-environment with-environment* converter
+    user-confirm user-url
     hidden-input pagelet radio-button toggle-button
     $with))
 

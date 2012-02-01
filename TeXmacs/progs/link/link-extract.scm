@@ -62,7 +62,7 @@
 	 (pred-l (map (lambda (tag) (cut tm-func? <> tag)) env-l))
 	 (l (append-map (cut tree-search (buffer-tree) <>) pred-l)))
     (unless (locified? l)
-      (user-confirm? "Locify environments?" #f 
+      (user-confirm "Locify environments?" #f 
         (lambda (answ) 
 	  (when answ (locify l))
 	  (let* ((name (string-append (get-abbr-buffer) " - " env))

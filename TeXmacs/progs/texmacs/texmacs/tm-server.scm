@@ -122,7 +122,7 @@
 
 (tm-define (safely-kill-buffer)
   (if (not (buffer-unsaved?)) (kill-buffer)
-      (user-confirm? "The buffer has not been saved. Really close it?" #f  
+      (user-confirm "The buffer has not been saved. Really close it?" #f  
         (lambda (answ) (when answ (kill-buffer))))))
 
 (tm-define (safely-kill-window)
@@ -132,5 +132,5 @@
 
 (tm-define (safely-quit-TeXmacs)
   (if (not (exists-unsaved-buffer?)) (quit-TeXmacs)
-      (user-confirm? "There are unsaved files. Really quit?" #f  
+      (user-confirm "There are unsaved files. Really quit?" #f  
         (lambda (answ) (when answ (quit-TeXmacs))))))

@@ -113,7 +113,7 @@
 		      (list (build-interactive-arg prompt))
 		      (list prompt))))
 
-(define-public (user-confirm? prompt default cont)
+(define-public (user-confirm prompt default cont)
   (let ((k (lambda (answ) (cont (yes? answ)))))
     (if default
 	(user-ask (list prompt "question" (yes) (no)) k)

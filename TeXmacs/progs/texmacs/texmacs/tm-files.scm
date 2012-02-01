@@ -44,7 +44,7 @@
 
 (define (secure-save-buffer file fm)
     (when (not (url-exists? file))
-      (user-confirm?
+      (user-confirm
        "File already exists. Overwrite existing file?" #f
        (lambda (answ)
 	 (when answ
@@ -91,7 +91,7 @@
     (if (and (!= fm "help")
 	     (not (url-rooted-web? file))
 	     (!= suffix ""))
-	(user-confirm? question #t
+	(user-confirm question #t
 	  (lambda (answ)
 	    (when answ
 	      (texmacs-load-buffer (url-glue file suffix) fm where #t)
