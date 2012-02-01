@@ -24,11 +24,6 @@
 (define has-look-and-feel? (lambda (x) (== x "emacs")))
 (define (experimental-qt-gui?) #f)
 
-;; Should be defined 
-(define dialogue-break #f)
-(define dialogue-return #f)
-(define dialogue-error #f)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Redirect standard output
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
