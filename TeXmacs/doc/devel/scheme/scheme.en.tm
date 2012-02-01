@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.4>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
@@ -6,7 +6,7 @@
   <tmdoc-title|Programming <scheme> extensions to <TeXmacs>>
 
   <\traverse>
-    <branch|Overwiew of the <scheme> extension
+    <branch|Overview of the <scheme> extension
     language|overview/scheme-overview.en.tm>
 
     <branch|<TeXmacs> extensions to <scheme> and
