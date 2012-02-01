@@ -65,17 +65,8 @@
        r)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Simple questions
+;; Questions with user interaction
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define-public (dialogue-ask prompt)
-  (if dialogue-break
-      (dialogue-user local-continue
-	(tm-interactive (dialogue-machine local-continue)
-			(if (string? prompt)
-			    (list (build-interactive-arg prompt))
-			    (list prompt))))
-      (texmacs-error "dialogue-ask" "Not in dialogue")))
 
 (define (yes)
   (with lan (get-output-language)
@@ -90,22 +81,6 @@
 	  ((== lan "dutch") "nee")
 	  ((== lan "german") "nein")
 	  (else "no"))))
-
-(define-public (dialogue-confirm? prompt default)
-  (if default
-      (yes? (dialogue-ask (list prompt "question" (yes) (no))))
-      (yes? (dialogue-ask (list prompt "question" (no) (yes))))))
-
-(define-public (dialogue-url prompt type)
-  (if dialogue-break
-      (dialogue-user local-continue
-	(delayed
-	  (choose-file (dialogue-machine local-continue) prompt type)))
-      (texmacs-error "dialogue-ask" "Not in dialogue")))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Simple questions without continuations
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-public (user-ask prompt cont)
   (tm-interactive cont
