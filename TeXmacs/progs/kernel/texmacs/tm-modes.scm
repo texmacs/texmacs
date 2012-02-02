@@ -118,6 +118,7 @@
   (in-std-text% #t in-text% in-std%)
   (in-tmdoc% (style-has? "tmdoc-style"))
   (in-mmxdoc% (style-has? "mmxdoc-style") in-tmdoc%)
+  (in-manual% (not (help-buffer?)) in-tmdoc%)
   (in-plugin-with-converters%
    (plugin-supports-math-input-ref (get-env "prog-language")))
   (in-screens% (inside? 'screens))

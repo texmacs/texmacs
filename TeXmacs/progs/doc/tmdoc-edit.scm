@@ -1,9 +1,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : tmdoc-kbd.scm
-;; DESCRIPTION : keyboard shortcuts for documentation mode
-;; COPYRIGHT   : (C) 2007  Joris van der Hoeven
+;; MODULE      : std-text-edit.scm
+;; DESCRIPTION : editing routines for text mode
+;; COPYRIGHT   : (C) 2001  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -11,11 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (doc tmdoc-kbd)
-  (:use (text std-text-kbd)))
-
-(kbd-map
-  (:mode in-manual?)
-  ("S-F7" (make 'scm))
-  ("C-F7" (make 'scm-arg))
-  ("M-F7" (make 'scm-fragment)))
+(texmacs-module (doc tmdoc-edit)
+  (:use (utils library tree)
+	(utils edit variants)
+	(doc tmdoc-drd)))

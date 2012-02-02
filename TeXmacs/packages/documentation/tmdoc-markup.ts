@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.12>
+<TeXmacs|1.0.7.14>
 
 <style|source>
 
@@ -41,6 +41,12 @@
   <assign|menu-extra|<macro|body|<active*|<with|mode|math|\<rightarrow\>>><menu-item|<arg|body>>>>
 
   <assign|menu|<xmacro|x|<style-with|src-compact|none|<menu-item|<arg|x|0>><map-args|menu-extra|concat|x|1><index-write|<map-args|menu-item|tuple|x>>>>>
+
+  <assign|submenu|<xmacro|x|<style-with|src-compact|none|<menu-item|<arg|x|1>><map-args|menu-extra|concat|x|2><index-write|<map-args|menu-item|tuple|x>>>>>
+
+  <assign|subsubmenu|<xmacro|x|<style-with|src-compact|none|<menu-item|<arg|x|2>><map-args|menu-extra|concat|x|3><index-write|<map-args|menu-item|tuple|x>>>>>
+
+  <assign|subsubsubmenu|<xmacro|x|<style-with|src-compact|none|<menu-item|<arg|x|3>><map-args|menu-extra|concat|x|4><index-write|<map-args|menu-item|tuple|x>>>>>
 
   <\active*>
     <\src-comment>

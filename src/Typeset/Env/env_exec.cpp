@@ -721,17 +721,19 @@ edit_env_rep::exec_arg (tree t) {
   list<hashmap<string,path> > old_src= macro_src;
   if (!is_nil (macro_arg)) macro_arg= macro_arg->next;
   if (!is_nil (macro_src)) macro_src= macro_src->next;
+  bool err= false;
   if (N(t) > 1) {
     int i, n= N(t);
     for (i=1; i<n; i++) {
       tree u= exec (t[i]);
-      if (!is_int (u)) break;
+      if (!is_int (u)) { err= true; break; }
       int nr= as_int (u);
-      if ((!is_compound (r)) || (nr<0) || (nr>=N(r))) break;
+      if ((!is_compound (r)) || (nr<0) || (nr>=N(r))) { err= true; break; }
       r= r[nr];
     }
   }
-  r= exec (r);
+  if (err) r= tree (ERROR, "bad arg");
+  else r= exec (r);
   macro_arg= old_var;
   macro_src= old_src;
   return r;
