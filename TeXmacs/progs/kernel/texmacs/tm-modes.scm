@@ -13,7 +13,7 @@
 
 (texmacs-module (kernel texmacs tm-modes)
   (:use
-    (kernel drd drd-rules) (kernel drd drd-query) (kernel drd drd-data)
+    (kernel logic logic-rules) (kernel logic logic-query) (kernel logic logic-data)
     (kernel texmacs tm-plugins) (kernel texmacs tm-preferences)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
