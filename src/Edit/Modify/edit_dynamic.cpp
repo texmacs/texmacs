@@ -104,9 +104,12 @@ edit_dynamic_rep::make_compound (tree_label l, int n= -1) {
   if (n == 0) insert_tree (t, 1);
   else if (is_with_like (t) && as_bool (call ("with-like-check-insert", t)));
   else {
-    tree f= get_env_value (as_string (l));
+    string s= as_string (l);
+    tree f= get_env_value (s);
     bool block_macro= (N(f) == 2) && is_multi_paragraph_macro (f);
     bool table_macro= (N(f) == 2) && contains_table_format (f[1], f[0]);
+    // FIXME: why do we take the precaution N(f) == 2 ?
+    if (s == "explain") block_macro= true;
 
     tree sel= "";
     if (selection_active_small () ||

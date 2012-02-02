@@ -74,18 +74,28 @@
 
   <assign|explain-header|<\macro|what>
     <\with|par-first|0fn|par-par-sep|0fn>
-      <surround|<vspace*|0.5fn>|<no-page-break>|<arg|what>>
+      <\surround|<vspace*|0.5fn>|<no-page-break>>
+        <arg|what>
+      </surround>
     </with>
   </macro>>
 
   <assign|explain-body|<\macro|body>
-    <surround||<right-flush><vspace|0.5fn><no-indent*>|<with|par-left|<plus|<value|par-left>|1.5fn>|<arg|body>>>
+    <\surround||<right-flush><vspace|0.5fn><no-indent*>>
+      <\with|par-left|<plus|<value|par-left>|1.5fn>>
+        <arg|body>
+      </with>
+    </surround>
   </macro>>
 
   <assign|explain|<\macro|what|body>
-    <explain-header|<arg|what>>
+    <\explain-header>
+      <arg|what>
+    </explain-header>
 
-    <explain-body|<arg|body>>
+    <\explain-body>
+      <arg|body>
+    </explain-body>
   </macro>>
 
   <assign|explain-macro-sub|<macro|x|pos|<if|<equal|<arg|pos>|0>|<indexed|<src-macro|<arg|x>>>|<src-arg|<arg|x>>>>>

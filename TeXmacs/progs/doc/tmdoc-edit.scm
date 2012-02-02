@@ -15,3 +15,64 @@
   (:use (utils library tree)
 	(utils edit variants)
 	(doc tmdoc-drd)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Inserting meta data
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tmdoc-insert-title)
+  (with buf (buffer-tree)
+    (when (tree-is? buf 'document)
+      (tree-insert! buf 0 '((tmdoc-title "")))
+      (tree-go-to buf 0 0 0))))
+
+(tm-define (tmdoc-insert-copyright)
+  (with buf (buffer-tree)
+    (when (tree-is? buf 'document)
+      (with n (- (tree-arity buf)
+                 (if (tree-is? buf :last 'tmdoc-license) 1 0))
+        (tree-insert! buf n '((tmdoc-copyright "" "")))
+        (tree-go-to buf n 0 0)))))
+
+(tm-define (tmdoc-insert-license)
+  (with buf (buffer-tree)
+    (when (tree-is? buf 'document)
+      (with n (tree-arity buf)
+        (tree-insert! buf n '((tmdoc-license "")))
+        (tree-go-to buf n 0 0)))))
+
+(tm-define (tmdoc-insert-gnu-fdl)
+  (with buf (buffer-tree)
+    (when (tree-is? buf 'document)
+      (with n (tree-arity buf)
+        (tree-insert! buf n '((tmdoc-license "")))
+        (tree-go-to buf n 0 0)
+        (insert "Permission is granted to copy, distribute and/or modify this
+document under the terms of the GNU Free Documentation License, Version 1.1 or
+any later version published by the Free Software Foundation; with no Invariant
+Sections, with no Front-Cover Texts, and with no Back-Cover Texts. A copy of
+the license is included in the section entitled \"GNU Free Documentation License\".")))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Inserting branches
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tmdoc-make-branch l)
+  (with-innermost t 'traverse
+    (with doc (tree-ref t 0)
+      (when (and doc (tree-is? doc 'document))
+        (with i (tree-down-index doc)
+          (when (!= (tree-ref doc i) (string->tree ""))
+            (tree-insert! doc (+ i 1) '(""))
+            (tree-go-to doc (+ i 1) 0))
+          (make l))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Inserting the synopsis of an explanation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tmdoc-insert-explain-synopsis)
+  (with-innermost t 'explain
+    (when (and t (== (tree-arity t) 2))
+      (tree-go-to t 0 :end)
+      (make 'explain-synopsis))))

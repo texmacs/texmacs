@@ -19,16 +19,24 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind tmdoc-meta-menu
-  ("Title" (make 'tmdoc-title))
-  ("Copyright" (make 'tmdoc-copyright))
-  ("License" (make 'tmdoc-license)))
+  ("Title" (tmdoc-insert-title))
+  ("Copyright" (tmdoc-insert-copyright))
+  ("License" (tmdoc-insert-license))
+  ("GNU FDL" (tmdoc-insert-gnu-fdl)))
 
 (menu-bind tmdoc-traversal-menu
   ("Traverse" (make 'traverse))
   (when (inside? 'traverse)
-    ("Branch" (make 'branch))
-    ("Extra branch" (make 'extra-branch))
-    ("Continue" (make 'continue))))
+    ("Branch" (tmdoc-make-branch 'branch))
+    ("Extra branch" (tmdoc-make-branch 'extra-branch))
+    ("Continue" (tmdoc-make-branch 'continue))))
+
+(menu-bind tmdoc-explain-menu
+  ("Explanatory item" (make 'explain))
+  (when (inside? 'explain)
+    ("TeXmacs macro" (make 'explain-macro))
+    ("Environment variable" (make 'var-val))
+    ("Synopsis" (tmdoc-insert-explain-synopsis))))
 
 (menu-bind tmdoc-gui-menu
   ("Keyboard shortcut" (make 'shortcut))
@@ -43,7 +51,11 @@
   ("Screenshot" (make 'screenshot)))
 
 (menu-bind tmdoc-annotate-menu
-  ("TeXmacs tag" (make 'markup))
+  ("Primitive or macro" (make 'markup))
+  ("Macro argument" (make 'src-arg))
+  ("Environment variable" (make 'src-var))
+  ("Length" (make 'src-length))
+  ---
   ("TeXmacs style" (make 'tmstyle))
   ("TeXmacs package" (make 'tmpackage))
   ("TeXmacs DTD" (make 'tmdtd)))
@@ -59,6 +71,7 @@
   (when (in-text?)
     (-> "Meta data" (link tmdoc-meta-menu))
     (-> "Traversal" (link tmdoc-traversal-menu))
+    (-> "Explain" (link tmdoc-explain-menu))
     (-> "User interface" (link tmdoc-gui-menu))
     (-> "Annotate" (link tmdoc-annotate-menu)))
   (-> "Indication" (link tmdoc-indication-menu)))
