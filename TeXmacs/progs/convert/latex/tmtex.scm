@@ -98,7 +98,7 @@
 ;; Data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-table tmtex-table-props%
+(logic-table tmtex-table-props%
   (block ("" "l" "" #t))
   (block* ("" "c" "" #t))
   (tabular ("" "l" "" #f))
@@ -107,7 +107,7 @@
   (det ((left|) "c" (right|) #f))
   (choice ((left\{) "l" (right.) #f)))
 
-(drd-table tex-with-cmd%
+(logic-table tex-with-cmd%
   (("font-family" "rm") tmtextrm)
   (("font-family" "ss") tmtextsf)
   (("font-family" "tt") tmtexttt)
@@ -142,7 +142,7 @@
   (("par-mode" "left") (!begin "flushleft"))
   (("par-mode" "right") (!begin "flushright")))
 
-(drd-table tex-assign-cmd%
+(logic-table tex-assign-cmd%
   (("font-family" "rm") rmfamily)
   (("font-family" "ss") ssfamily)
   (("font-family" "tt") ttfamily)
@@ -226,7 +226,7 @@
 
 (define tex-apply
   (lambda l
-    (if (or (tmtex-math-mode?) (drd-in? (car l) tmpre-sectional%)) l
+    (if (or (tmtex-math-mode?) (logic-in? (car l) tmpre-sectional%)) l
 	(list '!group l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -272,7 +272,7 @@
 		       (cv (string-convert qs "Cork" "UTF-8")))
 		  (list '!widechar (string->symbol cv))))))
 	(else (let ((ss (list (string->symbol s))))
-		(cond ((not (drd-in? (car ss) latex-symbol%))
+		(cond ((not (logic-in? (car ss) latex-symbol%))
 		       (display* "TeXmacs] non converted symbol: " s "\n")
 		       "")
 		      (group? (list '!group ss))
@@ -321,7 +321,7 @@
   (receive (p q) (list-break l (lambda (c) (not (char-alphabetic? c))))
     (let* ((op (list->string p))
 	   (tail (tmtex-math-list q)))
-      (if (drd-in? (string->symbol op) latex-operator%)
+      (if (logic-in? (string->symbol op) latex-operator%)
 	  (cons (list '!symbol (tex-apply (string->symbol op))) tail)
 	  (cons (tex-apply 'tmop op) tail)))))
 
@@ -843,7 +843,7 @@
 	   (tmtex-table-args-assemble lb (cons (car lb) rb) l))))
 
 (define (tmtex-table-apply key x)
-  (let* ((props (drd-ref tmtex-table-props% key)))
+  (let* ((props (logic-ref tmtex-table-props% key)))
     (if props
 	(let* ((env (if (tmtex-math-mode?) 'array 'tabular))
 	       (before (car props))
@@ -868,7 +868,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmtex-get-with-cmd var val)
-  (drd-ref tex-with-cmd% (list var val)))
+  (logic-ref tex-with-cmd% (list var val)))
 
 (define (tmtex-get-assign-cmd var val)
   (if (== var "font-size")
@@ -885,7 +885,7 @@
 	      ((< x 22.5) 'huge)
 	      ((< x 50) 'Huge)
 	      (else #f)))
-      (drd-ref tex-assign-cmd% (list var val))))
+      (logic-ref tex-assign-cmd% (list var val))))
 
 (define (tmlength->texlength len)
   ;; TODO: rewrite (quote x) -> x and (tmlen ...) -> ...pt
@@ -964,7 +964,7 @@
 
 (define (tmtex-var-name var)
   (cond ((nstring? var) "")
-	((drd-in? (string->symbol var) tmtex-protected%)
+	((logic-in? (string->symbol var) tmtex-protected%)
 	 (string-append "tm" var))
 	((<= (string-length var) 1) var)
 	(else (list->string (tmtex-var-name-sub (string->list var))))))
@@ -1501,10 +1501,10 @@
 
 (define (tmtex-apply key args)
   (let ((n (length args))
-	(r (drd-ref tmtex-methods% key)))
+	(r (logic-ref tmtex-methods% key)))
     (if (in? key '(quote quasiquote unquote)) (set! r tmtex-noop))
     (if r (r args)
-	(let ((p (drd-ref tmtex-tmstyle% key)))
+	(let ((p (logic-ref tmtex-tmstyle% key)))
 	  (if (and p (or (= (cadr p) -1) (= (cadr p) n)))
 	      ((car p) (symbol->string key) args)
 	      (if (and (= n 1)
@@ -1538,7 +1538,7 @@
 ;; Dispatching
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-dispatcher tmtex-methods%
+(logic-dispatcher tmtex-methods%
   ((:or unknown uninit error raw-data) tmtex-noop)
   (document tmtex-document)
   (para tmtex-para)
@@ -1666,7 +1666,7 @@
   (!file tmtex-file)
   (!arg tmtex-tex-arg))
 
-(drd-table tmtex-tmstyle%
+(logic-table tmtex-tmstyle%
   ((:or hide-preamble show-preamble) (,tmtex-default -1))
   (hide-part (,tmtex-hide-part -1))
   (show-part (,tmtex-show-part -1))
@@ -1777,7 +1777,7 @@
   ((:or cite-author* cite-author*-link) (,tmtex-cite-author* 1))
   ((:or cite-year cite-year-link) (,tmtex-cite-year 1)))
 
-(drd-group tmtex-protected%
+(logic-group tmtex-protected%
   a b c d i j k l o r t u v H L O P S
   aa ae bf cr dh dj dp em fi ge gg ht if in it le lg ll lu lq mp mu
   ne ng ni nu oe or pi pm rm rq sb sc sf sl sp ss th to tt wd wp wr xi
@@ -1812,7 +1812,7 @@
 	(substring s 6 (string-length s))
 	s)))
 
-(define (drd-first-list name)
+(define (logic-first-list name)
   (let* ((l1 (query (cons name '('first 'second))))
 	 (l2 (map (cut assoc-ref <> 'first) l1)))
     (map as-string l2)))
@@ -1821,10 +1821,10 @@
   `(associate ,name (xmacro "x" (eval-args "x"))))
 
 (tm-define (tmtex-env-patch t)
-  (let* ((l1 (drd-first-list 'tmtex-methods%))
-	 (l2 (drd-first-list 'tmtex-tmstyle%))
-	 (l3 (map as-string (drd-apply-list '(latex-tag%))))
-	 (l4 (map as-string (drd-apply-list '(latex-symbol%))))
+  (let* ((l1 (logic-first-list 'tmtex-methods%))
+	 (l2 (logic-first-list 'tmtex-tmstyle%))
+	 (l3 (map as-string (logic-apply-list '(latex-tag%))))
+	 (l4 (map as-string (logic-apply-list '(latex-symbol%))))
 	 (l5 (list-difference l3 l4))
 	 (l6 (map as-string (collect-user-defs (tree->stree t))))
 	 (l7 (list-difference (list-union l2 (list-union l5 l6)) l1)))

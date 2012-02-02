@@ -20,7 +20,7 @@
 ;; Examples of rules
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-rules
+(logic-rules
   ((sun% Joris Piet))
   ((sun% Piet Opa))
   ((daughter% Geeske Opa))
@@ -30,15 +30,15 @@
   ((descends% 'x 'y) (child% 'x 'y))
   ((descends% 'x 'z) (child% 'x 'y) (descends% 'y 'z)))
 
-;; (??? (child% 'x Opa))
-;; (??? (descends% 'x 'y))
-;; (??? (descends% 'x 'y) (daughter% Joleen Opa))
+;; (logic-query (child% 'x Opa))
+;; (logic-query (descends% 'x 'y))
+;; (logic-query (descends% 'x 'y) (daughter% Joleen Opa))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Addional assumptions <-> creating modules
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-rules
+(logic-rules
   (assume family%) ; added to constraints for all rules below
   ((sun% Joris Piet))
   ((sun% Piet Opa))
@@ -49,5 +49,5 @@
   ((descends% 'x 'y) (child% 'x 'y))
   ((descends% 'x 'z) (child% 'x 'y) (descends% 'y 'z)))
 
-;; (??? (child% 'x Opa))
-;; (??? (child% 'x Opa) family%)
+;; (logic-query (child% 'x Opa))
+;; (logic-query (child% 'x Opa) family%)

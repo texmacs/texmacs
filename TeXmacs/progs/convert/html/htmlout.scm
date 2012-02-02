@@ -20,23 +20,23 @@
 ;; Data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-group htmlout-big-all%
+(logic-group htmlout-big-all%
   ;; Both the tag and the children are displayed in multi-line format.
   html head style body table tr ul ol dl
   ;; and for MathML
   mtable mtr)
 
-(drd-group htmlout-big-tag%
+(logic-group htmlout-big-tag%
   ;; The tag is displayed in multi-line format.
   div p li dt dd center blockquote)
 
-(drd-rule (htmlout-big-tag% 'x) (htmlout-big-all% 'x))
+(logic-rule (htmlout-big-tag% 'x) (htmlout-big-all% 'x))
 
 (define (htmlout-big-all? op)
-  (drd-in? op htmlout-big-all%))
+  (logic-in? op htmlout-big-all%))
 
 (define (htmlout-big-tag? op)
-  (drd-in? op htmlout-big-tag%))
+  (logic-in? op htmlout-big-tag%))
 
 (define (htmlout-big? x)
   (and (pair? x)

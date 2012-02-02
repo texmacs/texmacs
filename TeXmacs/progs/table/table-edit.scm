@@ -141,7 +141,7 @@
 (tm-define (table-interactive-set var)
   (:interactive #t)
   (interactive (lambda (s) (table-set-format var s))
-    (drd-ref env-var-description% var)))
+    (logic-ref env-var-description% var)))
 
 (define (table-set-format-list vars vals)
   (map table-set-format vars vals))
@@ -323,7 +323,7 @@
 (tm-define (cell-interactive-set var)
   (:interactive #t)
   (interactive (lambda (s) (cell-set-format var s))
-    (drd-ref env-var-description% var)))
+    (logic-ref env-var-description% var)))
 
 (define (cell-set-format-list vars vals)
   (if (selection-active-any?)

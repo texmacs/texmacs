@@ -34,13 +34,13 @@
 	   (test (if (null? l) #t (if (null? (cdr l)) (car l) (cons 'and l))))
 	   (defn `(define-public (,pred) ,test))
 	   (rules (map (lambda (dep) (list dep mode)) deps))
-	   (drd-cmd `(drd-rules ,@rules))
+	   (logic-cmd `(logic-rules ,@rules))
 	   (arch1 `(set-symbol-procedure! ',mode ,pred))
 	   (arch2 `(set-symbol-procedure! ',pred ,pred)))
       (if (== mode 'always%) (set! defn '(noop)))
       (if (null? deps)
 	  (list 'begin defn arch1 arch2)
-	  (list 'begin defn arch1 arch2 drd-cmd)))))
+	  (list 'begin defn arch1 arch2 logic-cmd)))))
 
 (define-public-macro (texmacs-modes . l)
   `(begin

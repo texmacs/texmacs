@@ -37,7 +37,7 @@
 (tm-define (interactive-change-locus-rendering var)
   (:interactive #t)
   (interactive (lambda (val) (change-locus-rendering var val))
-    (list (drd-ref env-var-description% var) "string"
+    (list (logic-ref env-var-description% var) "string"
 	  (get-locus-rendering var))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

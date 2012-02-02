@@ -263,18 +263,18 @@
 (tm-define-macro (plugin-input-converters name2 . l)
   (let ((name (if (string? name2) name2 (symbol->string name2))))
     (lazy-input-converter-force name)
-    (drd-group plugin-input-converters% ,name)
-    `(drd-rules ,@(plugin-input-converters-rules name l))))
+    (logic-group plugin-input-converters% ,name)
+    `(logic-rules ,@(plugin-input-converters-rules name l))))
 
 (define (plugin-input-ref key)
   (lazy-input-converter-force plugin-input-current-plugin)
-  (let ((im (drd-ref plugin-input-converter%
+  (let ((im (logic-ref plugin-input-converter%
 		     (list plugin-input-current-plugin key))))
-    (if im im (drd-ref plugin-input-converter% (list "generic" key)))))
+    (if im im (logic-ref plugin-input-converter% (list "generic" key)))))
 
 (tm-define (plugin-supports-math-input-ref key)
   (lazy-input-converter-force key)
-  (drd-in? key plugin-input-converters%))
+  (logic-in? key plugin-input-converters%))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initialization

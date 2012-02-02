@@ -7,7 +7,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; The macro 'drd-rules' can be used to add new rules to the global
+;; The macro 'logic-rules' can be used to add new rules to the global
 ;; logical program. In principle, this program is a list with instructions
 ;; which can be executed in order when solving the logical program.
 ;; However, for efficiency reasons, we use a recursive hashtable structure
@@ -106,21 +106,18 @@
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public (drd-rules-decls l extra)
+(define-public (logic-rules-decls l extra)
   (cond ((npair? l) (noop))
 	((and (pair? (car l)) (== (caar l) 'assume))
-	 (drd-rules-decls (cdr l) (append (cdar l) extra)))
+	 (logic-rules-decls (cdr l) (append (cdar l) extra)))
 	(else
 	 (logic-add-rule (cons (caar l) (append extra (cdar l))))
-	 (drd-rules-decls (cdr l) extra))))
+	 (logic-rules-decls (cdr l) extra))))
 
-(define-public-macro (drd-rules . l)
+(define-public-macro (logic-rules . l)
   `(begin
-     (drd-rules-decls ,(list 'quasiquote l) '())
+     (logic-rules-decls ,(list 'quasiquote l) '())
      (display "")))
 
-(define-public-macro (drd-rule . l)
-  `(drd-rules ,l))
-
-(define-public-macro (!!! . l)
-  `(drd-rules ,l))
+(define-public-macro (logic-rule . l)
+  `(logic-rules ,l))

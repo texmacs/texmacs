@@ -29,7 +29,7 @@
 (tm-define (make-interactive-with var)
   (:interactive #t)
   (interactive (lambda (s) (make-with var s))
-    (list (drd-ref env-var-description% var) "string" (get-env var))))
+    (list (logic-ref env-var-description% var) "string" (get-env var))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting and toggling with-like tags

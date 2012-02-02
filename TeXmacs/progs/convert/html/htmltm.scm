@@ -416,7 +416,7 @@
 
 (define handler (cut htmltm-handler <> <> <> htmltm-args-serial))
 
-(drd-dispatcher htmltm-methods%
+(logic-dispatcher htmltm-methods%
   ;;; Document structure
   ((:or head title meta) htmltm-drop)
   ((:or html body) (handler :mixed :inline htmltm-pass))

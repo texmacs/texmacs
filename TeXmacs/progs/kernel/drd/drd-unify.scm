@@ -53,7 +53,7 @@
 ;; User interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public (=== expr1 expr2)
+(define-public (logic-unify expr1 expr2)
   "Compute unifications of expressions @expr1 and @expr2 with free variables."
   (let ((sols (unify (list expr1) (list expr2) '())))
     (if (null? sols) #f sols)))

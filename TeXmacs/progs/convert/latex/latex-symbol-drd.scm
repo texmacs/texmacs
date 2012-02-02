@@ -13,7 +13,7 @@
 
 (texmacs-module (convert latex latex-symbol-drd))
 
-(drd-group latex-ams-symbol%
+(logic-group latex-ams-symbol%
   ;;`
   Bbbk Box Bumpeq Cap Cup Finv Game Lleftarrow Lsh
   Rrightarrow Rsh Subset Supset Vdash Vvdash
@@ -53,7 +53,7 @@
   varsubsetneqq varsupsetneq varsupsetneqq vartriangle
   vartriangleleft vartriangleright veebar yen)
 
-(drd-group latex-wasy-symbol%
+(logic-group latex-wasy-symbol%
   agemO APLbox APLcomment APLdownarrowbox APLdown APLinput
   APLleftarrowbox APLrightarrowbox APLstar APLuparrowbox APLup apprge
   apprle aquarius ascnode ataribox bell blacksmiley
@@ -75,7 +75,7 @@
   wasypropto wasyrhd wasysqsubset wasysqsupset wasytherefore
   wasyunlhd wasyunrhd XBox)
 
-(drd-group latex-stmary-symbol%
+(logic-group latex-stmary-symbol%
   Arrownot arrownot baro bbslash binampersand bindnasrepma
   boxast boxbar boxbox boxbslash boxcircle
   ;;boxdot
@@ -96,10 +96,10 @@
   varodot varogreaterthan varolessthan varominus varoplus varoslash
   varotimes varovee varowedge vartimes Ydown Yleft Yright Yup)
 
-(drd-group latex-mathabx-symbols%
+(logic-group latex-mathabx-symbols%
   divides ndivides)
 
-(drd-rules
+(logic-rules
   ((latex-needs% 'x "amssymb") (latex-ams-symbol% 'x))
   ((latex-needs% 'x "wasysym") (latex-wasy-symbol% 'x))
   ((latex-needs% 'x "stmaryrd") (latex-stmary-symbol% 'x))

@@ -57,7 +57,7 @@
 (define (mathtm-string env s)
   ;; FIXME: use translators or parser for this!!!
   ;; TODO: learn when the trailing ';' is optional
-  (cond ((drd-ref mathml-symbol->tm% s) => identity)
+  (cond ((logic-ref mathml-symbol->tm% s) => identity)
 	(else (xmltm-text s))))
 
 (define (mathtm-mo env a c)
@@ -67,13 +67,13 @@
 	(else
 	 (let* ((s (car c))
 		(r (xmltm-text s)))
-	   (cond ((drd-ref mathml-left->tm% s) => (lambda (x) `((left ,x))))
-		 ((drd-ref mathml-right->tm% s) => (lambda (x) `((right ,x))))
-		 ((drd-ref mathml-big->tm% s) => (lambda (x) `((big ,x))))
-		 ((drd-ref mathml-symbol->tm% s) => (lambda (x) `(,x)))
-		 ((drd-ref tmtm-left% r) => (lambda (x) `((left ,x))))
-		 ((drd-ref tmtm-right% r) => (lambda (x) `((right ,x))))
-		 ((drd-ref tmtm-big% r) => (lambda (x) `((big ,x))))
+	   (cond ((logic-ref mathml-left->tm% s) => (lambda (x) `((left ,x))))
+		 ((logic-ref mathml-right->tm% s) => (lambda (x) `((right ,x))))
+		 ((logic-ref mathml-big->tm% s) => (lambda (x) `((big ,x))))
+		 ((logic-ref mathml-symbol->tm% s) => (lambda (x) `(,x)))
+		 ((logic-ref tmtm-left% r) => (lambda (x) `((left ,x))))
+		 ((logic-ref tmtm-right% r) => (lambda (x) `((right ,x))))
+		 ((logic-ref tmtm-big% r) => (lambda (x) `((big ,x))))
 		 (else (list r)))))))
 
 (define (mathtm-mtext env a c)
@@ -238,12 +238,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (mathtm-below base sub)
-  (cond ((drd-ref mathml-below->tm% sub) =>
+  (cond ((logic-ref mathml-below->tm% sub) =>
 	 (lambda (x) `((wide* ,base ,x))))
 	(else `((below ,base ,sub)))))
 
 (define (mathtm-above base sup)
-  (cond ((drd-ref mathml-above->tm% sup) =>
+  (cond ((logic-ref mathml-above->tm% sup) =>
 	 (lambda (x) `((wide ,base ,x))))
 	(else `((above ,base ,sup)))))
 
@@ -400,7 +400,7 @@
     ((t) (mathtm-as-serial #f t))
     ((env t) (mathtm-serial env (mathtm env t)))))
 
-(drd-dispatcher mathtm-methods%
+(logic-dispatcher mathtm-methods%
   ;;; Interface
   (math (mathtm-handler :element mathtm-math))
   (none (mathtm-handler :mixed mathtm-none))

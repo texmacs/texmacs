@@ -19,7 +19,7 @@
 ;; Extra TeXmacs symbols
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-table latex-texmacs-symbol%
+(logic-table latex-texmacs-symbol%
   ;; arrows with limits
   (leftarrowlim "\\mathop{\\leftarrow}\\limits")
   (rightarrowlim "\\mathop{\\rightarrow}\\limits")
@@ -139,7 +139,7 @@
   (transtype "\\,:\\!!>")
   (udots "{\\mathinner{\\mskip1mu\\raise1pt\\vbox{\\kern7pt\\hbox{.}}\\mskip2mu\\raise4pt\\hbox{.}\\mskip2mu\\raise7pt\\hbox{.}\\mskip1mu}}"))
 
-(drd-rules
+(logic-rules
   ((latex-texmacs-macro% 'x 'body) (latex-texmacs-symbol% 'x 'body))
   ((latex-texmacs-arity% 'x 0) (latex-texmacs-symbol% 'x 'body))
   ;;;
@@ -151,7 +151,7 @@
 ;; Extra TeXmacs macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-table latex-texmacs-0%
+(logic-table latex-texmacs-0%
   (tmunsc "\\_")
   (emdash "---")
   (tmat "\\symbol{\"40}")
@@ -166,7 +166,7 @@
   (scheme "{\\sc Scheme}")
   (pari "{\\sc Pari}"))
 
-(drd-table latex-texmacs-1%
+(logic-table latex-texmacs-1%
   (tmrsub (ensuremath (!append "_{" (textrm 1) "}")))
   (tmrsup (ensuremath (!append "^{" (textrm 1) "}")))
   (tmtextrm (!group (rmfamily) (!group 1)))
@@ -201,20 +201,20 @@
   (AMSclass (!group (textbf (!translate "A.M.S. subject classification:"))
 		    " " 1)))
 
-(drd-table latex-texmacs-2%
+(logic-table latex-texmacs-2%
   (tmhlink (!group "\\color{blue} " 1))
   (tmaction (!group "\\color{blue} " 1))
   (subindex (index (!append 1 "!" 2))))
 
-(drd-table latex-texmacs-3%
+(logic-table latex-texmacs-3%
   (subsubindex (index (!append 1 "!" 2 "!" 3)))
   (tmref 1)
   (glossaryentry (!append (item (!option (!append 1 (hfill)))) 2 (dotfill) 3)))
 
-(drd-table latex-texmacs-4%
+(logic-table latex-texmacs-4%
   (subsubsubindex (index (!append 1 "!" 2 "!" 3 "!" 4))))
 
-(drd-rules
+(logic-rules
   ((latex-texmacs-macro% 'x 'body) (latex-texmacs-0% 'x 'body))
   ((latex-texmacs-arity% 'x 0) (latex-texmacs-0% 'x 'body))
   ((latex-texmacs-macro% 'x 'body) (latex-texmacs-1% 'x 'body))
@@ -236,7 +236,7 @@
 ;; Extra TeXmacs environments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-table latex-texmacs-environment%
+(logic-table latex-texmacs-environment%
   ("proof"
    (!append (noindent) (textbf (!append (!translate "Proof") "\\ "))
 	    ---
@@ -276,7 +276,7 @@
 			       "\\setlength{\\leftmargin}{7em}"
 			       "\\small")) ---)))
 
-(drd-table latex-texmacs-env-arity%
+(logic-table latex-texmacs-env-arity%
   ("proof" 0)
   ("proof*" 1)
   ("tmparmod" 3)
@@ -287,23 +287,23 @@
   ("elsequation*" 0)
   ("theglossary" 1))
 
-(drd-group latex-texmacs-tag%
+(logic-group latex-texmacs-tag%
   begin-proof begin-proof* begin-tmparmod begin-tmparsep begin-tmindent
   begin-elsequation begin-elsequation* begin-theglossary)
 
-(drd-group latex-environment-0%
+(logic-group latex-environment-0%
   begin-proof begin-tmindent begin-elsequation begin-elsequation*)
 
-(drd-group latex-environment-1%
+(logic-group latex-environment-1%
   begin-proof* begin-theglossary)
 
-(drd-group latex-environment-3%
+(logic-group latex-environment-3%
   begin-tmparmod begin-tmparsep)
 
 (define-macro (latex-texmacs-itemize env lab)
   (with env-sym (string->symbol (string-append "begin-" env))
     `(begin
-       (drd-table latex-texmacs-environment%
+       (logic-table latex-texmacs-environment%
 	 (,env
 	  ((!begin "itemize")
 	   (!append "\\renewcommand{\\labelitemi}{" ,lab "}"
@@ -311,30 +311,30 @@
 		    "\\renewcommand{\\labelitemiii}{" ,lab "}"
 		    "\\renewcommand{\\labelitemiv}{" ,lab "}"
 		    ---))))
-       (drd-table latex-texmacs-env-arity% (,env 0))
+       (logic-table latex-texmacs-env-arity% (,env 0))
        ;;;
-       (drd-group latex-texmacs-tag% ,env-sym)
-       (drd-group latex-list% ,env-sym))))
+       (logic-group latex-texmacs-tag% ,env-sym)
+       (logic-group latex-list% ,env-sym))))
 
 (define-macro (latex-texmacs-enumerate env lab)
   (with env-sym (string->symbol (string-append "begin-" env))
     `(begin
-       (drd-table latex-texmacs-environment%
+       (logic-table latex-texmacs-environment%
 	 (,env ((!begin "enumerate" (!option ,lab)) ---)))
-       (drd-table latex-texmacs-env-arity% (,env 0))
+       (logic-table latex-texmacs-env-arity% (,env 0))
        ;;;
-       (drd-group latex-texmacs-tag% ,env-sym)
-       (drd-group latex-list% ,env-sym))))
+       (logic-group latex-texmacs-tag% ,env-sym)
+       (logic-group latex-list% ,env-sym))))
 
 (define-macro (latex-texmacs-description env)
   (with env-sym (string->symbol (string-append "begin-" env))
     `(begin
-       (drd-table latex-texmacs-environment%
+       (logic-table latex-texmacs-environment%
 	 (,env ((!begin "description") ---)))
-       (drd-table latex-texmacs-env-arity% (,env 0))
+       (logic-table latex-texmacs-env-arity% (,env 0))
        ;;;
-       (drd-group latex-texmacs-tag% ,env-sym)
-       (drd-group latex-list% ,env-sym))))
+       (logic-group latex-texmacs-tag% ,env-sym)
+       (logic-group latex-list% ,env-sym))))
 
 (latex-texmacs-itemize "itemizeminus" "$-$")
 (latex-texmacs-itemize "itemizedot" "$\\bullet$")
@@ -353,7 +353,7 @@
 ;; Extra preamble definitions which are needed to export certain macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-table latex-texmacs-preamble%
+(logic-table latex-texmacs-preamble%
   (mho
    (!append
     "\\renewcommand{\\mho}{\\mbox{\\rotatebox[origin=c]{180}{$\\omega$}}}"))
@@ -382,7 +382,7 @@
     "  \\end{minipage}}\n")))
 
 ;;(define-macro (latex-texmacs-long prim x l m r)
-;;  `(drd-table latex-texmacs-preamble%
+;;  `(logic-table latex-texmacs-preamble%
 ;;     (,(string->symbol (substring prim 1 (string-length prim)))
 ;;      (!append
 ;;       "\\def" ,prim "fill@{\\arrowfill@" ,l ,m ,r "}\n"
@@ -390,7 +390,7 @@
 ;;       "\\ext@arrow 0099" ,prim "fill@{#1}{#2}}\n"))))
 
 (define-macro (latex-texmacs-long prim x l m r)
-  `(drd-table latex-texmacs-preamble%
+  `(logic-table latex-texmacs-preamble%
      (,(string->symbol (substring prim 1 (string-length prim)))
       (!append
        "\\providecommand{" ,prim "}[2][]{"
@@ -420,13 +420,13 @@
 (define-macro (latex-texmacs-thmenv prim name before after)
   (with env-sym (string->symbol (string-append "begin-" prim))
     `(begin
-       (drd-table latex-texmacs-env-preamble%
+       (logic-table latex-texmacs-env-preamble%
 	 (,prim (!append ,@before (newtheorem ,prim (!translate ,name))
 			 ,@after "\n")
 		no-amsthm-package%))
        ;;;
-       (drd-group latex-texmacs-tag% ,env-sym)
-       (drd-group latex-environment-0% ,env-sym))))
+       (logic-group latex-texmacs-tag% ,env-sym)
+       (logic-group latex-environment-0% ,env-sym))))
 
 (define-macro (latex-texmacs-theorem prim name)
   `(latex-texmacs-thmenv ,prim ,name () ()))
@@ -462,7 +462,7 @@
 
 (define-macro (ams-texmacs-theorem abbr full)
   `(begin
-     (drd-table latex-texmacs-env-preamble%
+     (logic-table latex-texmacs-env-preamble%
        (,abbr (!append "\\theoremstyle{plain}\n"
 		       (newtheorem ,abbr (!translate ,full))
 		       "\n")
@@ -470,7 +470,7 @@
 
 (define-macro (ams-texmacs-remark abbr full)
   `(begin
-     (drd-table latex-texmacs-env-preamble%
+     (logic-table latex-texmacs-env-preamble%
        (,abbr (!append "\\theoremstyle{remark}\n"
 		       (newtheorem ,abbr (!translate ,full))
 		       "\n")
@@ -497,16 +497,16 @@
 ;; Style-dependent extra macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-table latex-texmacs-0%
+(logic-table latex-texmacs-0%
   (appendix "" letter-style%))
 
 (define-macro (latex-texmacs-section name inside . conds)
-  `(drd-table latex-texmacs-1%
+  `(logic-table latex-texmacs-1%
      (,name (!append (medskip) (bigskip) "\n\n" (noindent) (textbf ,inside))
 	    ,@conds)))
 
 (define-macro (latex-texmacs-paragraph name inside . conds)
-  `(drd-table latex-texmacs-1%
+  `(logic-table latex-texmacs-1%
      (,name (!append (smallskip) "\n\n" (noindent) (textbf ,inside))
 	    ,@conds)))
 
@@ -522,13 +522,13 @@
 ;; Deprecated extra macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-table latex-texmacs-0%
+(logic-table latex-texmacs-0%
   (labeleqnum "\\addtocounter{equation}{-1}\\refstepcounter{equation}\\addtocounter{equation}{1})")
   (eqnumber (!append "\\hfill(\\theequation" (!recurse (labeleqnum)) ")"))
   (leqnumber (!append "(\\theequation" (!recurse (labeleqnum)) ")\\hfill"))
   (reqnumber (!append "\\hfill(\\theequation" (!recurse (labeleqnum)) ")")))
 
-(drd-table latex-texmacs-1%
+(logic-table latex-texmacs-1%
   (key (!append "\\fbox{\\rule[-2pt]{0pt}{9pt}" (texttt 1) "}"))
   (skey (!recurse (key (!append "shift-" 1))))
   (ckey (!recurse (key (!append "ctrl-" 1))))
@@ -540,7 +540,7 @@
 ;; Language specific preambles
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-table latex-preamble-language-def%
+(logic-table latex-preamble-language-def%
   ("bulgarian"
    "\\usepackage[cp1251]{inputenc}\n\\usepackage[bulgarian]{babel}")
   ("czech" "\\usepackage[czech]{babel}")
@@ -565,7 +565,7 @@
 ;; Catcode tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-table corkT1-to-latex-catcodes%
+(logic-table corkT1-to-latex-catcodes%
   ("\x00" "\\`{ }")
   ("\x01" "\\'{ }")
   ("\x02" "\\^{ }")
@@ -727,7 +727,7 @@
   ("\xFE" "{\\th}")
   ("\xFF" "{\\ss}"))
 
-(drd-table cyrillic-catcodes%
+(logic-table cyrillic-catcodes%
   ("À" "\\CYRA")
   ("à" "\\cyra")
   ("Á" "\\CYRB")
@@ -799,7 +799,7 @@
 ;; Page size settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-table latex-paper-type%
+(logic-table latex-paper-type%
   ("a0" "a0paper")
   ("a1" "a1paper")
   ("a2" "a2paper")

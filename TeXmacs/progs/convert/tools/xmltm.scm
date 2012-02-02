@@ -476,9 +476,9 @@
 ;; Generic XML dispatcher
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (sxml-meta-drd-ref ns-id ncname)
-  (cond ((== ns-id "h") (drd-ref htmltm-methods% ncname))
-	((== ns-id "m") (drd-ref mathtm-methods% ncname))
+(define (sxml-meta-logic-ref ns-id ncname)
+  (cond ((== ns-id "h") (logic-ref htmltm-methods% ncname))
+	((== ns-id "m") (logic-ref mathtm-methods% ncname))
 	(else #f)))
 
 (tm-define (sxml-dispatch x-string x-pass env t)
@@ -491,7 +491,7 @@
 	((sxml-control-node? t) '())
 	(else
 	 (receive (ns-id ncname) (sxml-split-name (sxml-name t))
-	   (cond ((sxml-meta-drd-ref ns-id (string->symbol ncname))
+	   (cond ((sxml-meta-logic-ref ns-id (string->symbol ncname))
 		  => (cut <> env (sxml-attr-list t) (sxml-content t)))
 		 (else (x-pass env (sxml-attr-list t) (sxml-content t))))))))
 

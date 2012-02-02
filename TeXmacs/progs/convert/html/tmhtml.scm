@@ -771,9 +771,9 @@
 	(tmhtml arg))))
 
 (define (tmhtml-with-one var val arg)
-  (cond ((drd-ref tmhtml-with-cmd% (list var val)) =>
+  (cond ((logic-ref tmhtml-with-cmd% (list var val)) =>
 	 (lambda (w) (list (append w (tmhtml arg)))))
-	((drd-ref tmhtml-with-cmd% var) =>
+	((logic-ref tmhtml-with-cmd% var) =>
 	 (lambda (h) (h val arg)))
 	(else (tmhtml arg))))
 
@@ -1307,7 +1307,7 @@
   (append-map tmhtml l))
 
 (define (tmhtml-dispatch htable l)
-  (let ((x (drd-ref ,htable (car l))))
+  (let ((x (logic-ref ,htable (car l))))
     (cond ((not x) #f)
 	  ((procedure? x) (x (cdr l)))
 	  (else (tmhtml-post-simplify-element
@@ -1343,7 +1343,7 @@
 ;; Dispatching
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-dispatcher tmhtml-primitives%
+(logic-dispatcher tmhtml-primitives%
   (document tmhtml-document)
   (para tmhtml-paragraph)
   (surround tmhtml-surround)
@@ -1450,7 +1450,7 @@
 
   (!file tmhtml-file))
 
-(drd-table tmhtml-stdmarkup%
+(logic-table tmhtml-stdmarkup%
   ;; special auxiliary tags
   (!left ,tmhtml-align-left)
   (!middle ,tmhtml-align-middle)
@@ -1515,7 +1515,7 @@
 ;;    (name (h:name)) ; not in HTML4
 ;;    (person (h:person)))) ; not in HTML4
 
-(drd-table tmhtml-with-cmd%
+(logic-table tmhtml-with-cmd%
   ("mode" ,tmhtml-with-mode)
   ("color" ,tmhtml-with-color)
   ("font-size" ,tmhtml-with-font-size)
@@ -1538,12 +1538,12 @@
   (("font-shape" "small-caps")
    (h:class (@ (style "font-variant: small-caps")))))
 
-(drd-table tmhtml-with-cmd% ; deprecated
+(logic-table tmhtml-with-cmd% ; deprecated
   (("par-mode" "left") (h:div (@ (align "left"))))
   (("par-mode" "justify") (h:div (@ (align "justify"))))
   (("par-mode" "center") (h:center)))
 
-(drd-table tmhtml-with-cmd% ; netscape4
+(logic-table tmhtml-with-cmd% ; netscape4
   (("par-columns" "1") (h:multicol (@ (cols "1"))))
   (("par-columns" "2") (h:multicol (@ (cols "2"))))
   (("par-columns" "3") (h:multicol (@ (cols "3"))))

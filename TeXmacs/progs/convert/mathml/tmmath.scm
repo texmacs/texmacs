@@ -41,8 +41,8 @@
   (if (string? x)
       (with type (math-symbol-type x)
 	(cond ((string-number? x) `(m:mn ,x))
-	      ((drd-ref tm->mathml-constant% x) => (lambda (y) `(m:mn ,y)))
-	      ((drd-ref tm->mathml-operator% x) => (lambda (y) `(m:mo ,y)))
+	      ((logic-ref tm->mathml-constant% x) => (lambda (y) `(m:mn ,y)))
+	      ((logic-ref tm->mathml-operator% x) => (lambda (y) `(m:mo ,y)))
 	      ((in? type '("unknown" "symbol")) `(m:mi ,(cork->utf8* x)))
 	      (else `(m:mo ,(cork->utf8* x)))))
       (tmmath x)))
@@ -71,7 +71,7 @@
   (tmmath-concat (cdr (downgrade-brackets (cons 'big-around l)))))
 
 (define (tmmath-large x)
-  (with y (drd-ref tm->mathml-large% x)
+  (with y (logic-ref tm->mathml-large% x)
     (if y y (cork->utf8 x))))
 
 (define (tmmath-left l) `(m:mo (@ (form "prefix")) ,(tmmath-large (car l))))
@@ -80,7 +80,7 @@
 
 (define (tmmath-big l)
   (cond ((== (car l) ".") "")
-	((drd-ref tm->mathml-big% (car l)) => (lambda (y) `(m:mo ,y)))
+	((logic-ref tm->mathml-big% (car l)) => (lambda (y) `(m:mo ,y)))
 	(else `(m:mo ,(car l)))))
 
 (define (tmmath-lsub l) (tmmath-concat `((lsub ,(car l)))))
@@ -134,11 +134,11 @@
       `(m:mroot ,(tmmath (car l)) ,(tmmath (cadr l)))))
 
 (define (tmmath-wide l)
-  (with acc (or (drd-ref tm->mathml-wide% (cadr l)) "")
+  (with acc (or (logic-ref tm->mathml-wide% (cadr l)) "")
     `(m:mover ,(tmmath (car l)) (m:mo ,acc))))
 
 (define (tmmath-wide* l)
-  (with acc (or (drd-ref tm->mathml-wide% (cadr l)) "")
+  (with acc (or (logic-ref tm->mathml-wide% (cadr l)) "")
     `(m:munder ,(tmmath (car l)) (m:mo ,acc))))
 
 (define (tmmath-above l)
@@ -268,7 +268,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmmath-dispatch htable l)
-  (let ((x (drd-ref ,htable (car l))))
+  (let ((x (logic-ref ,htable (car l))))
     (and (procedure? x)
 	 (x (cdr l)))))
 
@@ -282,7 +282,7 @@
 ;; Dispatching
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-dispatcher tmmath-primitives%
+(logic-dispatcher tmmath-primitives%
   ;; Mathematics
   (concat tmmath-concat)
   (concat! tmmath-concat!)

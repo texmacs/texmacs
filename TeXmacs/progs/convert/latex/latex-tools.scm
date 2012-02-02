@@ -60,8 +60,8 @@
 
 (define (latex-replace-catcode s)
   (or (if latex-cyrillic-catcode?
-	  (drd-ref cyrillic-catcodes% s)
-	  (drd-ref corkT1-to-latex-catcodes% s))
+	  (logic-ref cyrillic-catcodes% s)
+	  (logic-ref corkT1-to-latex-catcodes% s))
       s))
 
 (tm-define (latex-expand-catcodes t)
@@ -119,15 +119,15 @@
   (if (npair? t) t
       (let* ((head  (car t))
 	     (tail  (map latex-expand-macros (cdr t)))
-	     (body  (drd-ref latex-texmacs-macro% head
+	     (body  (logic-ref latex-texmacs-macro% head
 			     latex-style-hyp latex-amsthm-hyp))
-	     (arity (drd-ref latex-texmacs-arity% head
+	     (arity (logic-ref latex-texmacs-arity% head
 			     latex-style-hyp latex-amsthm-hyp))
 	     (env   (and (func? head '!begin)
-			 (drd-ref latex-texmacs-environment% (cadr head)
+			 (logic-ref latex-texmacs-environment% (cadr head)
 				  latex-style-hyp latex-amsthm-hyp)))
 	     (envar (and (func? head '!begin)
-			 (drd-ref latex-texmacs-env-arity% (cadr head)
+			 (logic-ref latex-texmacs-env-arity% (cadr head)
 				  latex-style-hyp latex-amsthm-hyp))))
 	(cond ((and body (== (length tail) arity))
 	       (latex-substitute body t))
@@ -151,26 +151,26 @@
 (define (latex-macro-defs-sub t)
   (when (pair? t)
     (for-each latex-macro-defs-sub (cdr t))
-    (let* ((body  (drd-ref latex-texmacs-macro% (car t)
+    (let* ((body  (logic-ref latex-texmacs-macro% (car t)
 			   latex-style-hyp latex-amsthm-hyp))
-	   (arity (drd-ref latex-texmacs-arity% (car t)
+	   (arity (logic-ref latex-texmacs-arity% (car t)
 			   latex-style-hyp latex-amsthm-hyp)))
       (when (and body (== (length t) (+ arity 1)))
 	(ahash-set! latex-macro-table (car t)
 		    (list arity (latex-expand-def body)))
 	(latex-macro-defs-sub body)))
     (let* ((body  (and (func? (car t) '!begin)
-		       (drd-ref latex-texmacs-environment% (cadar t))))
+		       (logic-ref latex-texmacs-environment% (cadar t))))
 	   (arity (and (func? (car t) '!begin)
-		       (drd-ref latex-texmacs-env-arity% (cadar t)))))
+		       (logic-ref latex-texmacs-env-arity% (cadar t)))))
       (when (and body (== (length (cddar t)) arity))
 	(ahash-set! latex-env-table (cadar t)
 		    (list arity (latex-expand-def body)))
 	(latex-macro-defs-sub body)))
-    (with body (or (drd-ref latex-texmacs-preamble% (car t)
+    (with body (or (logic-ref latex-texmacs-preamble% (car t)
 			    latex-style-hyp latex-amsthm-hyp)
 		   (and (func? (car t) '!begin)
-			(drd-ref latex-texmacs-env-preamble% (cadar t)
+			(logic-ref latex-texmacs-env-preamble% (cadar t)
 				 latex-style-hyp latex-amsthm-hyp)))
       (when body
 	(ahash-set! latex-preamble-table (car t) body)))))
@@ -241,7 +241,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (latex-command-uses s)
-  (with packlist (drd-ref-list latex-needs% s)
+  (with packlist (logic-ref-list latex-needs% s)
     (when packlist
       (for-each (cut ahash-set! latex-uses-table <> #t) packlist))))
 
@@ -256,8 +256,8 @@
       (for-each latex-use-which-package (cdr l)))))
 
 (define (latex-use-package-compare l r)
-  (let* ((tl (drd-ref latex-package-priority% l))
-	 (tr (drd-ref latex-package-priority% r))
+  (let* ((tl (logic-ref latex-package-priority% l))
+	 (tr (logic-ref latex-package-priority% r))
 	 (vl (if tl tl 999999))
 	 (vr (if tr tr 999999)))
     (< vl vr)))
@@ -284,13 +284,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (latex-preamble-language lan)
-  (if (drd-ref latex-preamble-language-def% lan)
-      (string-append (drd-ref latex-preamble-language-def% lan) "\n")
+  (if (logic-ref latex-preamble-language-def% lan)
+      (string-append (logic-ref latex-preamble-language-def% lan) "\n")
       ""))
 
 (define (latex-preamble-page-type init)
   (let* ((page-type (ahash-ref init "page-type"))
-	 (page-size (drd-ref latex-paper-type% page-type)))
+	 (page-size (logic-ref latex-paper-type% page-type)))
     (if page-size `(!append (geometry ,page-size) "\n") "")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

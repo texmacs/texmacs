@@ -31,7 +31,7 @@
 (tm-define (make-interactive-line-with var)
   (:interactive #t)
   (interactive (lambda (s) (make-line-with var s))
-    (list (drd-ref env-var-description% var) "string" (get-env var))))
+    (list (logic-ref env-var-description% var) "string" (get-env var))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Page breaking

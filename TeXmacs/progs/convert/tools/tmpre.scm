@@ -17,20 +17,20 @@
 ;; Data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-group tmpre-inline-env%
+(logic-group tmpre-inline-env%
   verbatim code center indent description itemize itemize-minus
   itemize-dot itemize-arrow enumerate enumerate-numeric
   enumerate-roman enumerate-Roman enumerate-alpha enumerate-Alpha
   equation equation* eqnarray eqnarray* leqnarray leqnarray*
   elsequation elsequation*)
 
-(drd-group tmpre-sectional%
+(logic-group tmpre-sectional%
   part chapter appendix section subsection subsubsection
   paragraph subparagraph
   part* chapter* appendix* section* subsection* subsubsection*
   paragraph* subparagraph*)
 
-(drd-group tmpre-theorem-env%
+(logic-group tmpre-theorem-env%
   theorem proposition lemma corollary axiom definition notation conjecture
   remark note example exercise warning convention acknowledgments
   theorem* proposition* lemma* corollary* axiom* definition* notation*
@@ -44,13 +44,13 @@
 (define (tmpre-non-isolated? l)
   (not (and (list? l)
 	    (= (length l) 2)
-	    (drd-in? (car l) tmpre-sectional%))))
+	    (logic-in? (car l) tmpre-sectional%))))
 
 (define (tmpre-glueable? l)
   (or (func? l 'assign 2)
       (and (list? l)
 	   (= (length l) 2)
-	   (drd-in? (car l) tmpre-inline-env%)
+	   (logic-in? (car l) tmpre-inline-env%)
 	   (pair? (cadr l))
 	   (in? (caadr l) '(document tformat table)))))
 
@@ -86,7 +86,7 @@
 (define (tmpre l)
   (cond ((nlist? l) l)
 	((and (= (length l) 2)
-	      (drd-in? (car l) tmpre-theorem-env%)
+	      (logic-in? (car l) tmpre-theorem-env%)
 	      (func? (cadr l) 'document)
 	      (>= (length (cadr l)) 3))
 	 (list (car l) (cons 'document (tmpre-var-document (cdadr l)))))

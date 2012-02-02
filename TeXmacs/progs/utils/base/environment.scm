@@ -13,7 +13,7 @@
 
 (texmacs-module (utils base environment))
 
-(drd-table env-var-description%
+(logic-table env-var-description%
   ("color" "Foreground colour")
   ("bg-color" "Background colour")
   ("locus-color" "Colour of loci")

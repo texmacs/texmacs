@@ -17,14 +17,14 @@
 ;; Ordinary symbols
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-table tm->mathml-constant%
+(logic-table tm->mathml-constant%
   ("<mathcatalan>" "C")
   ("<mathe>" "e")
   ("<matheuler>" "&eulergamma;")
   ("<mathi>" "&ImaginaryI;")
   ("<mathpi>" "&pi;"))
 
-(drd-table mathml-constant->tm%
+(logic-table mathml-constant->tm%
   ("&eulergamma;" "<matheuler>")
   ("&ImaginaryI;" "<mathi>")
   ("&ii;" "<mathi>")
@@ -38,26 +38,26 @@
   ("&Zopf;" "<bbb-Z>")
   ("&Ropf;" "<bbb-R>"))
 
-(drd-table tm->mathml-operator%
+(logic-table tm->mathml-operator%
   ("&" "&amp;")
   ("<less>" "&lt;")
   ("*" "&InvisibleTimes;")
   (" " "&ApplyFunction;"))
 
-(drd-table mathml-operator->tm%
+(logic-table mathml-operator->tm%
   ("&it;" "*")
   ("*" "*")
   ("&leq;" "<leq>")
   ("&geq;" "<geq>")
   ("&RightArrow;" "<rightarrow>"))
 
-(drd-table mathml-symbol->tm%
+(logic-table mathml-symbol->tm%
   ("&mldr;" "<cdots>")
   ("&ThinSpace;" (hspace "0.1666667em"))
   ("&MediumSpace;" (hspace "0.2222222em"))
   ("&ThickSpace;" (hspace "0.2777778em")))
 
-(drd-rules
+(logic-rules
   ((mathml-operator->tm% 'x 'y) (tm->mathml-operator% 'y 'x))
   ((mathml-symbol->tm% 'x 'y) (mathml-constant->tm% 'x 'y))
   ((mathml-symbol->tm% 'x 'y) (mathml-operator->tm% 'x 'y)))
@@ -66,7 +66,7 @@
 ;; Special symbols
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-table tm->mathml-left%
+(logic-table tm->mathml-left%
   ("(" "(")
   ("[" "[")
   ("{" "{")
@@ -76,13 +76,13 @@
   ("llbracket" "&LeftDoubleBracket;")
   ("/" "/"))
 
-(drd-table tmtm-left%
+(logic-table tmtm-left%
   ;; For HTML entities &lfloor;, &lceil, etc.
   ("<lfloor>" "lfloor")
   ("<lceil>" "lceil")
   ("<langle>" "langle"))
 
-(drd-table tm->mathml-right%
+(logic-table tm->mathml-right%
   (")" ")")
   ("]" "]")
   ("}" "}")
@@ -92,13 +92,13 @@
   ("rrbracket" "&RightDoubleBracket;")
   ("\\\\" "&Backslash;"))
 
-(drd-table tmtm-right%
+(logic-table tmtm-right%
   ;; For HTML entities &rfloor;, &rceil, etc.
   ("<rfloor>" "rfloor")
   ("<rceil>" "rceil")
   ("<rangle>" "rangle"))
 
-(drd-table tm->mathml-big%
+(logic-table tm->mathml-big%
   ("sum" "&Sum;")
   ("prod" "&Product;")
   ("int" "&Integral;")
@@ -123,13 +123,13 @@
   ;;("interleave" "&Interleave;")
 )
 
-(drd-table tmtm-big%
+(logic-table tmtm-big%
   ;; For HTML entities &sum;, &prod;, etc.
   ("<sum>" "sum")
   ("<prod>" "prod")
   ("<int>" "int"))
 
-(drd-table tm->mathml-above-below%
+(logic-table tm->mathml-above-below%
   ("^" "&Hat;")
   ("~" "&Tilde;")
   ("<bar>" "&OverBar;")
@@ -144,19 +144,19 @@
   ("<wide-varrightarrow>" "&RightArrow;")
   ("<wide-varleftarrow>" "&LeftArrow;"))
 
-(drd-table tm->mathml-only-above%
+(logic-table tm->mathml-only-above%
   ("<wide-overbrace>" "&OverBrace;")
   ("<wide-underbrace*>" "&UnderBrace;")
   ("<wide-sqoverbrace>" "&OverBracket;")
   ("<wide-squnderbrace*>" "&UnderBracket;"))
 
-(drd-table tm->mathml-only-below%
+(logic-table tm->mathml-only-below%
   ("<wide-overbrace*>" "&OverBrace;")
   ("<wide-underbrace>" "&UnderBrace;")
   ("<wide-sqoverbrace*>" "&OverBracket;")
   ("<wide-squnderbrace>" "&UnderBracket;"))
 
-(drd-rules
+(logic-rules
   ((tm->mathml-large% 'x 'y) (tm->mathml-left% 'x 'y))
   ((tm->mathml-large% 'x 'y) (tm->mathml-right% 'x 'y))
   ((mathml-left->tm% 'x 'y) (tm->mathml-left% 'y 'x))

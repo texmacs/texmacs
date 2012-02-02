@@ -102,5 +102,5 @@
   "Prove @goal using extra rules @extra."
   (logic-prove (list goal) (map list extra) '()))
 
-(define-public-macro (??? . l)
+(define-public-macro (logic-query . l)
   (cons 'query (map (lambda (x) (list 'quote x)) l)))

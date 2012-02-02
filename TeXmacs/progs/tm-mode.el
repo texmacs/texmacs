@@ -46,7 +46,7 @@
     with-result and-let* setup-append-if
     while for repeat when unless assuming mini tile
     with-focus-after
-    drd-group drd-table drd-dispatcher
+    logic-group logic-table logic-dispatcher
     with-aux with-action with-module with-cursor with-server
     user-ask
     widget-with aspect block-input button form

@@ -16,14 +16,14 @@
   (:use (convert latex latex-symbol-drd)
 	(convert latex latex-texmacs-drd)))
 
-(drd-rules
+(logic-rules
   ((latex-tag% 'x) (latex-arity% 'x 'y)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; LaTeX commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-group latex-command-0%
+(logic-group latex-command-0%
   ,(string->symbol " ") ,(string->symbol ";") 
   ,(string->symbol ",") ,(string->symbol ":") 
   - / [ ] ! * | i j ss SS oe OE ae AE
@@ -46,7 +46,7 @@
   ;; wikipedia
   infin rang)
 
-(drd-group latex-command-1%
+(logic-group latex-command-1%
   usepackage part part* chapter chapter*
   section section* subsection subsection* subsubsection subsubsection*
   paragraph paragraph* subparagraph subparagraph* nextbib
@@ -71,19 +71,19 @@
   epsfig url penalty centerline fbox framebox
   enlargethispage)
 
-(drd-group latex-command-1% ;; . needs a special treatment
+(logic-group latex-command-1% ;; . needs a special treatment
   ,(string->symbol "."))
 
-(drd-group latex-command-2%
+(logic-group latex-command-2%
   binom choose cfrac tfrac equal href
   sideset stackrel citeauthoryear
   setcounter addtocounter setlength addtolength
   scalebox)
 
-(drd-group latex-command-3%
+(logic-group latex-command-3%
   ifthenelse resizebox)
 
-(drd-rules
+(logic-rules
   ((latex-command% 'x) (latex-command-0% 'x))
   ((latex-arity% 'x 0) (latex-command-0% 'x))
   ((latex-command% 'x) (latex-command-1% 'x))
@@ -97,10 +97,10 @@
 ;; LaTeX commands with optional arguments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-group latex-command-0*%
+(logic-group latex-command-0*%
   item ,(string->symbol "\\"))
 
-(drd-group latex-command-1*%
+(logic-group latex-command-1*%
   documentclass documentstyle sqrt bibitem cite
   includegraphics includegraphics*
   subjclass
@@ -108,13 +108,13 @@
   xLeftarrow xRightarrow xLeftrightarrow xequal
   xmapsto xmapsfrom)
 
-(drd-group latex-command-2*%
+(logic-group latex-command-2*%
   def newcommand renewcommand newtheorem newtheorem* frac parbox)
 
-(drd-group latex-command-3*%
+(logic-group latex-command-3*%
   newenvironment renewenvironment)
 
-(drd-rules
+(logic-rules
   ((latex-command-0% 'x) (latex-command-0*% 'x))
   ((latex-optional-arg% 'x) (latex-command-0*% 'x))
   ((latex-command-1% 'x) (latex-command-1*% 'x))
@@ -128,23 +128,23 @@
 ;; Environments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-group latex-environment-0%
+(logic-group latex-environment-0%
   begin-document begin-abstract begin-verbatim begin-proof
   begin-matrix begin-pmatrix begin-bmatrix begin-vmatrix begin-smallmatrix
   begin-cases
   begin-center begin-flushleft begin-flushright
   begin-picture)
 
-(drd-group latex-environment-0*%
+(logic-group latex-environment-0*%
   begin-figure begin-table)
 
-(drd-group latex-environment-1%
+(logic-group latex-environment-1%
   begin-tabbing begin-thebibliography)
 
-(drd-group latex-environment-1*%
+(logic-group latex-environment-1*%
   begin-array begin-tabular)
 
-(drd-rules
+(logic-rules
   ((latex-environment% 'x) (latex-environment-0% 'x))
   ((latex-arity% 'x 0) (latex-environment-0% 'x))
   ((latex-environment% 'x) (latex-environment-1% 'x))
@@ -162,7 +162,7 @@
 ;; Modifiers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-group latex-modifier-0%
+(logic-group latex-modifier-0%
   rm tt sf md bf it em sl sc rmfamily ttfamily sffamily
   mdseries bfseries upshape itshape slshape scshape
   displaystyle textstyle scriptstyle scriptscriptstyle cal frak Bbb
@@ -170,12 +170,12 @@
   large Large LARGE huge Huge
   black white grey red blue yellow green orange magenta brown pink)
 
-(drd-group latex-modifier-1%
+(logic-group latex-modifier-1%
   textrm texttt textsf textmd textbf textup textit textsl textsc emph
   mathrm mathtt mathsf mathmd mathbf mathup mathit mathsl mathnormal
   mathcal mathfrak mathbb mathbbm mathscr operatorname boldsymbol)
 
-(drd-rules
+(logic-rules
   ((latex-modifier% 'x) (latex-modifier-0% 'x))
   ((latex-arity% 'x 0) (latex-modifier-0% 'x))
   ((latex-modifier% 'x) (latex-modifier-1% 'x))
@@ -185,19 +185,19 @@
 ;; Special types of LaTeX primitives
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-group latex-control%
+(logic-group latex-control%
   $ & % ,(string->symbol "#") _ { } <less> <gtr>)
 
-(drd-group latex-operator%
+(logic-group latex-operator%
   arccos arcsin arctan arg cos cosh cot coth csc deg det dim exp gcd hom
   inf ker lg lim liminf limsup ln log max min Pr sec sin sinh sup tan tanh)
 
-(drd-group latex-list%
+(logic-group latex-list%
   begin-itemize begin-enumerate begin-description
   begin-asparaitem begin-inparaitem begin-compactitem
   begin-asparaenum begin-inparaenum begin-compactenum)
 
-(drd-group latex-math-environment-0%
+(logic-group latex-math-environment-0%
   begin-formula begin-equation*
   begin-math begin-displaymath begin-equation
   begin-eqnarray begin-eqnarray*
@@ -206,7 +206,7 @@
   begin-gather begin-gather*
   begin-eqsplit begin-eqsplit*)
 
-(drd-rules
+(logic-rules
   ((latex-arity% 'x 0) (latex-control% 'x))
   ((latex-arity% 'x 0) (latex-operator% 'x))
   ((latex-environment-0*% 'x) (latex-list% 'x))
@@ -217,7 +217,7 @@
 ;; Symbols
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-group latex-symbol%
+(logic-group latex-symbol%
   ;; Greek letters
   Gamma Delta Theta Lambda Xi Pi Sigma Upsilon Phi Psi Omega
   alpha beta gamma delta epsilon
@@ -280,14 +280,14 @@
   ;; Miscellaneous symbols (amssymb or graphicx required)
   Diamond mho)
 
-(drd-group latex-big-symbol%
+(logic-group latex-big-symbol%
   sum int bigintwl oint bigointwl prod coprod
   bignone bigtimes bigoplus bigotimes bigodot
   bigvee bigwedge bigsqcup bigcup bigcap bigpluscup bigtriangledown
   bigtriangleup bigcurlyvee bigcurlywedge bigsqcap bigbox bigparallel
   biginterleave bignplus bigvarint bigiint bigiiint bigvaroint bigoiint)
 
-(drd-rules
+(logic-rules
   ((latex-arity% 'x 0) (latex-symbol% 'x))
   ((latex-arity% 'x 0) (latex-big-symbol% 'x))
   ((latex-symbol% 'x) (latex-ams-symbol% 'x))
@@ -298,7 +298,7 @@
 ;; Using packages
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-table latex-package-priority%
+(logic-table latex-package-priority%
   ("geometry" 10)
   ("amsmath" 20)
   ("amssymb" 30)
@@ -314,7 +314,7 @@
   ("multicol" 130)
   ("hyperref" 140))
 
-(drd-table latex-needs%
+(logic-table latex-needs%
   (!verbatim "alltt")
 
   (geometry "geometry")
@@ -403,8 +403,8 @@
 (define (latex-resolve s)
   (if (string-starts? s "\\")
       (set! s (substring s 1 (string-length s))))
-  (with arity (drd-ref latex-arity% (string->symbol s))
-    (if (drd-in? (string->symbol s) latex-optional-arg%)
+  (with arity (logic-ref latex-arity% (string->symbol s))
+    (if (logic-in? (string->symbol s) latex-optional-arg%)
 	(set! arity (- -1 arity)))
     (if (string-starts? s "end-")
 	(begin
@@ -421,14 +421,14 @@
   "Get the type of a LaTeX @tag"
   (receive (s arity) (latex-resolve tag)
     (cond ((not arity) "undefined")
-          ((drd-in? s latex-command%) "command")
-	  ((drd-in? s latex-modifier%) "modifier")
-	  ((drd-in? s latex-control%) "control")
-	  ((drd-in? s latex-operator%) "operator")
-	  ((drd-in? s latex-list%) "list")
-	  ((drd-in? s latex-math-environment%) "math-environment")
-	  ((drd-in? s latex-environment%) "environment")
-	  ((drd-in? s latex-texmacs%) "texmacs")
-	  ((drd-in? s latex-symbol%) "symbol")
-	  ((drd-in? s latex-big-symbol%) "big-symbol")
+          ((logic-in? s latex-command%) "command")
+	  ((logic-in? s latex-modifier%) "modifier")
+	  ((logic-in? s latex-control%) "control")
+	  ((logic-in? s latex-operator%) "operator")
+	  ((logic-in? s latex-list%) "list")
+	  ((logic-in? s latex-math-environment%) "math-environment")
+	  ((logic-in? s latex-environment%) "environment")
+	  ((logic-in? s latex-texmacs%) "texmacs")
+	  ((logic-in? s latex-symbol%) "symbol")
+	  ((logic-in? s latex-big-symbol%) "big-symbol")
 	  (else "undefined"))))
