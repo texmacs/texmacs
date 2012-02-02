@@ -25,9 +25,10 @@
 
 (menu-bind tmdoc-traversal-menu
   ("Traverse" (make 'traverse))
-  ("Branch" (make 'branch))
-  ("Extra branch" (make 'extra-branch))
-  ("Continue" (make 'continue)))
+  (when (inside? 'traverse)
+    ("Branch" (make 'branch))
+    ("Extra branch" (make 'extra-branch))
+    ("Continue" (make 'continue))))
 
 (menu-bind tmdoc-gui-menu
   ("Keyboard shortcut" (make 'shortcut))

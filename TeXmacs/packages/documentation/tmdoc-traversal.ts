@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.0.7.14>
 
 <style|source>
 
@@ -116,13 +116,23 @@
     </src-comment>
   </active*>
 
-  <assign|traverse|<macro|body|<itemize|<arg|body>>>>
+  <assign|traverse|<\macro|body>
+    <\itemize>
+      <arg|body>
+    </itemize>
+  </macro>>
 
-  <assign|branch|<macro|body|destination|<item><hlink|<arg|body>|<arg|destination>>>>
+  <assign|branch|<\macro|body|destination>
+    <item><hlink|<arg|body>|<arg|destination>>
+  </macro>>
 
-  <assign|extra-branch|<macro|body|destination|<item><hlink|<with|color|brown|<arg|body>>|<arg|destination>>>>
+  <assign|extra-branch|<\macro|body|destination>
+    <item><hlink|<with|color|brown|<arg|body>>|<arg|destination>>
+  </macro>>
 
-  <assign|continue|<macro|body|destination|<item><hlink|<with|color|brown|<arg|body>>|<arg|destination>>>>
+  <assign|continue|<\macro|body|destination>
+    <item><hlink|<with|color|brown|<arg|body>>|<arg|destination>>
+  </macro>>
 
   <assign|tmdoc-include|<\macro|inclusion>
     <extern|tmdoc-include|<find-file|.|$TEXMACS_DOC_PATH|http://www.gnu.org/software/texmacs-doc|<arg|inclusion>>>
