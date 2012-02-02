@@ -161,7 +161,7 @@
 
 ;(display "Booting documentation\n")
 (lazy-keyboard (doc tmdoc-kbd) in-manual?)
-(lazy-menu (doc tmdoc-menu) tmdoc-menu)
+(lazy-menu (doc tmdoc-menu) tmdoc-menu tmdoc-icons)
 (lazy-menu (doc help-menu) help-menu)
 (lazy-define (doc tmdoc) tmdoc-expand-help tmdoc-expand-help-manual
 	     tmdoc-expand-this tmdoc-include)

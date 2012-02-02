@@ -3427,6 +3427,25 @@ upgrade_gr_attributes (tree t) {
 }
 
 /******************************************************************************
+* Upgrade cursor tag
+******************************************************************************/
+
+static tree
+upgrade_cursor (tree t) {
+  int i;
+  if (is_atomic (t)) return t;
+  if (is_func (t, VALUE)) {
+    if (t == tree (VALUE, "cursor")) return compound ("cursor");
+    if (t == tree (VALUE, "math-cursor")) return compound ("math-cursor");
+  }
+  int n= N(t);
+  tree r (t, n);
+  for (i=0; i<n; i++)
+    r[i]= upgrade_cursor (t[i]);
+  return r;
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -3590,6 +3609,8 @@ upgrade (tree t, string version) {
     t= downgrade_big (t);
   if (version_inf_eq (version, "1.0.7.13"))
     t= upgrade_gr_attributes (t);
+  if (version_inf_eq (version, "1.0.7.14"))
+    t= upgrade_cursor (t);
 
   if (is_non_style_document (t))
     t= automatic_correct (t, version);

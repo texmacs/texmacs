@@ -84,6 +84,8 @@
       (-> "Focus" (link graphics-focus-menu)))
   (if (not (in-graphics?))
       (-> "Insert" (link insert-menu))
+      (if (in-manual?)
+	  (-> "Manual" (link tmdoc-menu)))
       (if (or (in-source?) (with-source-tool?))
 	  (-> "Source" (link source-menu)))
       (if (with-linking-tool?)

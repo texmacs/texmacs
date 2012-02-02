@@ -1,0 +1,27 @@
+/* XPM */
+static char *tm_tmdoc_title[] = {
+/* columns rows colors chars-per-pixel */
+"17 17 4 1 ",
+"  c #3F3F3F",
+". c gray25",
+"X c #414141",
+"o c None",
+/* pixels */
+"ooooooooooooooooo",
+"ooooooooooooooooo",
+"o. ..oo.o..oo...o",
+"o oo.oo.oo.o..ooo",
+"o oo.o.ooo o.oooo",
+"o oo.o.ooo.o.oooo",
+"o oo.oo.oo.oo.ooo",
+"o.o..oo.oo.oo.ooo",
+"oooooooo. oooo .o",
+"ooooooooooooooooo",
+"ooooooooooooooooo",
+"o.oo.oo.oooo.oo.o",
+"oo..ooo.o..o.oooo",
+"ooooooo o..o.oo.o",
+"oo..ooo.oooo.oo.o",
+"o.oo.oooooooooooo",
+"ooooooooooooooooo"
+};

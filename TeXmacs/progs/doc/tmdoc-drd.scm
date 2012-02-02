@@ -17,10 +17,12 @@
 ;; General groups
 
 (define-group variant-tag
-  (tmdoc-traversal-tag) (tmdoc-menu-tag) (tmdoc-annotation-tag))
+  (tmdoc-traversal-tag) (tmdoc-menu-tag) (tmdoc-annotation-tag)
+  (tmdoc-small-box-tag) (tmdoc-big-box-tag))
 
 (define-group similar-tag
-  (tmdoc-traversal-tag) (tmdoc-menu-tag) (tmdoc-annotation-tag))
+  (tmdoc-traversal-tag) (tmdoc-menu-tag) (tmdoc-annotation-tag)
+  (tmdoc-small-box-tag) (tmdoc-big-box-tag))
 
 ;; TeXmacs documentation groups
 
@@ -32,3 +34,9 @@
 
 (define-group tmdoc-annotation-tag
   markup tmstyle tmpackage tmdtd)
+
+(define-group tmdoc-small-box-tag
+  small-focus small-envbox)
+
+(define-group tmdoc-big-box-tag
+  big-focus big-envbox)

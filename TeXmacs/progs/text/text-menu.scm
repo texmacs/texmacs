@@ -351,6 +351,7 @@
   (if (style-has? "std-markup-dtd")
       /)
   (link text-format-icons)
+  (if (in-manual?) (link tmdoc-icons))
   (link texmacs-insert-icons))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

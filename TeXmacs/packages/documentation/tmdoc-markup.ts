@@ -203,9 +203,11 @@
 
   \;
 
-  <assign|cursor|<with|color|red|\|>>
+  <assign|text-cursor|<macro|<with|color|red|\|>>>
 
-  <assign|math-cursor|<with|color|magenta|\|>>
+  <assign|math-cursor|<macro|<math-ignore|<with|color|#c000ff|\|>>>>
+
+  <assign|cursor|<macro|<math-ignore|<if|<equal|<value|mode>|math>|<math-cursor>|<text-cursor>>>>>
 
   <assign|small-envbox|<macro|body|<with|color|#e8f0f0|<block|<tformat|<cwith|1|1|1|1|cell-lsep|0em>|<cwith|1|1|1|1|cell-rsep|0em>|<cwith|1|1|1|1|cell-bsep|0em>|<cwith|1|1|1|1|cell-tsep|0em>|<table|<row|<cell|<with|color|black|<arg|body>>>>>>>>>>
 
