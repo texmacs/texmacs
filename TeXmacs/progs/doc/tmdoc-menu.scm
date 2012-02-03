@@ -85,6 +85,8 @@
   /
   (=> (balloon (icon "tm_traverse.xpm") "Specify how to traverse the manual")
       (link tmdoc-traversal-menu))
+  (=> (balloon (icon "tm_explain.xpm") "Insert explanatory item")
+      (link tmdoc-explain-menu))
   (=> (balloon (icon "tm_gui.xpm") "Insert user interface related markup")
       (link tmdoc-gui-menu))
   (=> (balloon (icon "tm_tmdoc_annotate.xpm") "Insert annotation")
