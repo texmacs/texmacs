@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.12>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
@@ -22,6 +22,11 @@
   <hlink|copyright and license|copyright.en.tm><inactive|> information, as
   well as indications on how to <hlink|traverse|traversal.en.tm> your
   documentation, if it contains <hlink|many files|file-names.en.tm>.
+
+  When selecting the <tmstyle|tmdoc> document style, the top level
+  <menu|Manual> menu will appear automatically, together with some additional
+  icons. The most important tags for documentation purposes can be found in
+  this menu.
 
   <\warning>
     Don't forget to select <menu|Document|Language|Your language> for each

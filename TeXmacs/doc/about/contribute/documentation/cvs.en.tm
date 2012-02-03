@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.12>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
@@ -11,11 +11,11 @@
 
   <verbatim| \ \ \ <hlink|http://www.texmacs.org/tmweb/download/svn.en.html|http://www.texmacs.org/tmweb/download/svn.en.html>>
 
-  In fact, the <name|cvs> system is not ideal for our documentation purpose,
-  because it is not very dynamic. In the future, we plan to create a
-  dedicated publication website, which will allow you to save documents
-  directly to the web. It should also allow the automatic conversion of the
-  documentation to other formats, the compilation of books, etc.
+  In fact, SVN is not ideal for our documentation purpose, because it is not
+  very dynamic. In the future, we plan to create a dedicated publication
+  website, which will allow you to save documents directly to the web. It
+  should also allow the automatic conversion of the documentation to other
+  formats, the compilation of books, etc.
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 

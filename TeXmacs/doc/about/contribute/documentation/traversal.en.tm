@@ -1,9 +1,9 @@
-<TeXmacs|1.0.0.17>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
 <\body>
-  <expand|tmdoc-title|Traversing the <TeXmacs> documentation>
+  <tmdoc-title|Traversing the <TeXmacs> documentation>
 
   As a general rule, you should avoid the use of sectioning commands inside
   the <TeXmacs> documentation and try to write small help pages on well
@@ -14,46 +14,38 @@
 
   The <tmstyle|tmdoc> style provides three markup macros for indicating how
   to traverse documentation. The <markup|traverse> macro is used to
-  encapsulate regions with traversal information. The <markup|branch> macro
-  indicates a help page which should be considered as a subsection and the
-  <markup|continue> macro indicates a follow-up page. Both the
-  <markup|branch> and the <markup|continue> macro take two arguments. The
-  first argument describes the link and the second argument gives the
-  physical relative address of the linked file.
+  encapsulate regions with traversal information. It can be inserted using
+  the <subsubmenu|Manual|Traversal|Traverse> entry in the
+  <menu|Manual|Traversal> or <icon|tm_traverse.xpm> menu. The <markup|branch>
+  and <markup|extra-branch> macros indicate help pages which should be
+  considered as a subsection and an appendix respectively, whereas the
+  <markup|continue> macro indicates a follow-up page. Each of these macros
+  should be used inside a <markup|traverse> environment and each of these
+  macros takes two arguments. The first argument describes the link and the
+  second argument gives the physical relative address of the linked file.
 
   Typically, at the end of a meta help file you will find several
   <markup|branch> or <markup|continue> macros, inside one <markup|traverse>
   macro. At the top of the document, you should also specify a title for your
-  document using the <markup|tmdoc-title> macro. When generating a printed
-  manual from the documentation, a chapter-section-subsection structure will
-  automatically be generated from this information and the document titles.
-  Alternatively, one might automatically generate additional buttons for
-  navigating inside the documentation using a browser.
+  document using the <markup|tmdoc-title> macro, as <hlink|described
+  before|copyright.en.tm>. When generating a printed manual from the
+  documentation, a chapter-section-subsection structure will automatically be
+  generated from this information and the document titles. Alternatively, one
+  might automatically generate additional buttons for navigating inside the
+  documentation using a browser.
 
-  <apply|tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
-  <expand|tmdoc-license|Permission is granted to copy, distribute and/or
-  modify this document under the terms of the GNU Free Documentation License,
-  Version 1.1 or any later version published by the Free Software Foundation;
-  with no Invariant Sections, with no Front-Cover Texts, and with no
-  Back-Cover Texts. A copy of the license is included in the section entitled
-  "GNU Free Documentation License".>
+  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
+  document under the terms of the GNU Free Documentation License, Version 1.1
+  or any later version published by the Free Software Foundation; with no
+  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+  Texts. A copy of the license is included in the section entitled "GNU Free
+  Documentation License".>
 </body>
 
 <\initial>
   <\collection>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
     <associate|language|english>
   </collection>
 </initial>

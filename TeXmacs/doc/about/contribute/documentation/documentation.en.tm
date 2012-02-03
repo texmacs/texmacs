@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.12>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
@@ -18,7 +18,8 @@
 
     <branch|Directories and file names|file-names.en.tm>
 
-    <branch|Copyright information and the license|copyright.en.tm>
+    <branch|Specifying meta information for documentation
+    files|copyright.en.tm>
 
     <branch|Automatic traversal of the documentation|traversal.en.tm>
 
