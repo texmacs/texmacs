@@ -594,7 +594,6 @@
 	  (else (make-menu-bad-format p style)))))
 
 (tm-define (make-menu-widget p style)
-  (:type (-> object widget))
   (:synopsis "Transform a menu into a widget.")
   (:argument p "a scheme object which represents the menu")
   (:argument style "menu style")
