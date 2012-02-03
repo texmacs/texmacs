@@ -1,14 +1,17 @@
-<TeXmacs|1.0.7.12>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.7 to 1.0.7.14>
+  <section|Changes from version 1.0.7 to 1.0.7.15>
 
   <\itemize>
-    <item>New icons for Qt version of TeXmacs (1.0.7.14).
+    <item>Special editing mode for writing <TeXmacs> documentation
+    (1.0.7.15).
+
+    <item>New icons for Qt version of <TeXmacs> (1.0.7.14).
 
     <item>Many bug fixes for graphics mode (1.0.7.14).
 
