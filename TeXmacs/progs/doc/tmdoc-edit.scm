@@ -14,11 +14,27 @@
 (texmacs-module (doc tmdoc-edit)
   (:use (utils library tree)
 	(utils edit variants)
+	(text std-text-edit)
 	(doc tmdoc-drd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting meta data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tmdoc-propose-title?)
+  (with buf (buffer-tree)
+    (and (in-manual?)
+	 (tree-is? buf 'document)
+	 (not (previous-section))
+	 (not (tree-is? buf 0 'tmdoc-title)))))
+
+(tm-define (tmdoc-propose-copyright-and-license?)
+  (with buf (buffer-tree)
+    (and (in-manual?)
+	 (tree-is? buf 'document)
+	 (not (previous-section))
+	 (tree-is? buf 0 'tmdoc-title)
+	 (not (tree-is? buf :last 'tmdoc-license)))))
 
 (tm-define (tmdoc-insert-title)
   (with buf (buffer-tree)
@@ -52,6 +68,10 @@ document under the terms of the GNU Free Documentation License, Version 1.1 or
 any later version published by the Free Software Foundation; with no Invariant
 Sections, with no Front-Cover Texts, and with no Back-Cover Texts. A copy of
 the license is included in the section entitled \"GNU Free Documentation License\".")))))
+
+(tm-define (tmdoc-insert-copyright-and-license)
+  (tmdoc-insert-gnu-fdl)
+  (tmdoc-insert-copyright))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting branches

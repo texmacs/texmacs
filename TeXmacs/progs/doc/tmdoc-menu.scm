@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (doc tmdoc-menu)
-  (:use (doc tmdoc-edit)))
+  (:use (text text-menu)
+	(doc tmdoc-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menus for TeXmacs documentation
@@ -82,11 +83,28 @@
 
 (menu-bind tmdoc-icons
   /
-  (=> (balloon (icon "tm_tmdoc_title.xpm") "Enter document meta data")
-      (link tmdoc-meta-menu))
   (=> (balloon (icon "tm_traverse.xpm") "Specify how to traverse the manual")
       (link tmdoc-traversal-menu))
   (=> (balloon (icon "tm_gui.xpm") "Insert user interface related markup")
       (link tmdoc-gui-menu))
   (=> (balloon (icon "tm_tmdoc_annotate.xpm") "Insert annotation")
       (link tmdoc-annotate-menu)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Document meta information
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (focus-can-move? t)
+  (:require (tree-in? t '(tmdoc-title tmdoc-copyright tmdoc-license)))
+  #f)
+
+(tm-menu (focus-document-extra-icons t)
+  (:require (tmdoc-propose-title?))
+  (minibar
+    ((balloon "Title" "Insert title") (tmdoc-insert-title))))
+
+(tm-menu (focus-document-extra-icons t)
+  (:require (tmdoc-propose-copyright-and-license?))
+  (minibar
+    ((balloon "Copyright" "Insert copyright and license information")
+     (tmdoc-insert-copyright-and-license))))
