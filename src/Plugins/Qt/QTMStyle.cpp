@@ -17,7 +17,11 @@
 #include <QPainter>
 #include <QMainWindow>
 
-
+#ifdef Q_WS_MAC
+#define UNIFIED_TOOLBAR
+// enable the unified toolbar style on the mac. To work properly this requires
+// a modification of the widget hierarchy of the main window.
+#endif
 
 // custom style to override some Qt "features" like
 // frame around widgets in the status bar
@@ -463,6 +467,7 @@ QTMStyle::drawControl (ControlElement element, const QStyleOption* option, QPain
 #endif
 
     case CE_ToolBar: {
+#ifdef UNIFIED_TOOLBAR
       if ((widget) &&  (widget->windowTitle() == "mode toolbar"))  {
 
           // For unified tool bars, draw nothing.
@@ -497,6 +502,7 @@ QTMStyle::drawControl (ControlElement element, const QStyleOption* option, QPain
           linearGrad.setColorAt(1, mainWindowGradientEnd);
           painter->fillRect(option->rect, linearGrad);
         }
+#endif // UNIFIED_TOOLBAR
     } break;
       
     default:
