@@ -869,6 +869,7 @@ qt_ui_element_rep::as_qwidget () {
       int style = x.x2;
       //color col = x.x3;
       //bool tsp = x.x4;
+      //str= "<font color=#f00>" * str * "</font>";
       
       // a text widget with a given color and transparency
       QLabel *w = new QLabel();
@@ -879,6 +880,7 @@ qt_ui_element_rep::as_qwidget () {
 #endif
       string t= tm_var_encode (str);
       if (t == "Help") t= "Help ";
+      //w->setTextFormat(Qt::RichText);
       w->setText(to_qstring (t));
       if (style == WIDGET_STYLE_MINI) {
         QFont f = w->font();
