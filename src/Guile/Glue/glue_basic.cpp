@@ -4848,6 +4848,21 @@ tmg_widget_vlist (SCM arg1) {
 }
 
 SCM
+tmg_widget_aligned (SCM arg1, SCM arg2) {
+  SCM_ASSERT_ARRAY_WIDGET (arg1, SCM_ARG1, "widget-aligned");
+  SCM_ASSERT_ARRAY_WIDGET (arg2, SCM_ARG2, "widget-aligned");
+
+  array_widget in1= scm_to_array_widget (arg1);
+  array_widget in2= scm_to_array_widget (arg2);
+
+  // SCM_DEFER_INTS;
+  widget out= aligned_widget (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return widget_to_scm (out);
+}
+
+SCM
 tmg_object_2promise_widget (SCM arg1) {
   SCM_ASSERT_OBJECT (arg1, SCM_ARG1, "object->promise-widget");
 
@@ -5438,6 +5453,7 @@ initialize_glue_basic () {
   scm_new_procedure ("widget-color", (FN) tmg_widget_color, 5, 0, 0);
   scm_new_procedure ("widget-hlist", (FN) tmg_widget_hlist, 1, 0, 0);
   scm_new_procedure ("widget-vlist", (FN) tmg_widget_vlist, 1, 0, 0);
+  scm_new_procedure ("widget-aligned", (FN) tmg_widget_aligned, 2, 0, 0);
   scm_new_procedure ("object->promise-widget", (FN) tmg_object_2promise_widget, 1, 0, 0);
   scm_new_procedure ("window-handle", (FN) tmg_window_handle, 0, 0, 0);
   scm_new_procedure ("window-create", (FN) tmg_window_create, 4, 0, 0);

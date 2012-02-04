@@ -142,6 +142,11 @@
   `($vlist ,@(map gui-menu-item (cdr x))))
 
 (tm-define (gui-menu-item x)
+  (:case aligned)
+  (require-format x '(aligned :*))
+  `($aligned ,@(map gui-menu-item (cdr x))))
+
+(tm-define (gui-menu-item x)
   (:case inert)
   (require-format x '(inert :*))
   `($widget-style ,widget-style-inert ,@(map gui-menu-item (cdr x))))

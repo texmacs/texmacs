@@ -139,6 +139,10 @@
   (:synopsis "Vertical layout of widgets")
   `(cons* 'vlist ($list ,@l)))
 
+(tm-define-macro ($aligned . l)
+  (:synopsis "Align two column table")
+  `(cons* 'aligned ($list ,@l)))
+
 (tm-define-macro ($horizontal . l)
   (:synopsis "Horizontal layout of widgets")
   `(cons* 'horizontal ($list ,@l)))

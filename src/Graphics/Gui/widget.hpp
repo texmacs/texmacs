@@ -187,6 +187,10 @@ widget horizontal_list (array<widget> a);
   // a horizontal list made up of the widgets in a
 widget vertical_list (array<widget> a);
   // a vertical list made up of the widgets in a
+widget aligned_widget (array<widget> lhs, array<widget> rhs,
+                       SI hsep= 0, SI vsep= 0, SI lpad= 0, SI rpad= 0);
+  // a table with two columns, the first one being right aligned and
+  // the second one being left aligned
 widget extend (widget w, array<widget> a);
   // extend the size of w to the maximum of the sizes of
   // the widgets in the list a

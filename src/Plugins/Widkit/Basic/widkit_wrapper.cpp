@@ -87,6 +87,13 @@ vertical_list (array<widget> a) {
 }
 
 widget
+aligned_widget (array<widget> lhs, array<widget> rhs,
+                SI hsep, SI vsep, SI lpad, SI rpad) {
+  return abstract (aligned_widget (concrete (lhs), concrete (rhs),
+                                   hsep, vsep, lpad, rpad));
+}
+
+widget
 horizontal_menu (array<widget> a) {
   return abstract (horizontal_list (concrete (a)));
   //return abstract (horizontal_array (concrete (a), -1));

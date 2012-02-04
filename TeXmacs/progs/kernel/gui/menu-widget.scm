@@ -49,6 +49,7 @@
     (vertical :menu-item-list)
     (hlist :menu-item-list)
     (vlist :menu-item-list)
+    (aligned :menu-item-list)
     (minibar :menu-item-list)
     (extend :menu-item :menu-item-list)
     (style :integer? :menu-item-list)
@@ -188,7 +189,7 @@
 
 (define (make-menu-text s style)
   "Make @(text :string?) menu item."
-  (widget-text s style (color "black") #t))
+  (widget-text s style (color "black") #f))
 
 (define (make-menu-input p style)
   "Make @(input :%1 :string? :%1 :string?) menu item."
@@ -340,6 +341,19 @@
   "Make @(vertical :menu-item-list) menu item."
   (widget-vlist (make-menu-items (cdr p) style #f)))
 
+(define (lhs l)
+  (if (or (null? l) (null? (cdr l))) (list)
+      (cons (car l) (lhs (cddr l)))))
+
+(define (rhs l)
+  (if (or (null? l) (null? (cdr l))) (list)
+      (cons (cadr l) (rhs (cddr l)))))
+
+(define (make-menu-aligned p style)
+  "Make @(vertical :menu-item-list) menu item."
+  (widget-aligned (make-menu-items (lhs (cdr p)) style #f)
+                  (make-menu-items (rhs (cdr p)) style #f)))
+
 (define (make-menu-extend p style bar?)
   "Make @(extend :menu-item :menu-item-list) menu item."
   (with l (make-menu-items (cdr p) style bar?)
@@ -475,6 +489,8 @@
          ,(lambda (p style bar?) (list (make-menu-hlist p style))))
   (vlist (:*)
          ,(lambda (p style bar?) (list (make-menu-vlist p style))))
+  (aligned (:*)
+         ,(lambda (p style bar?) (list (make-menu-aligned p style))))
   (minibar (:*)
 	    ,(lambda (p style bar?) (list (make-menu-minibar p style))))
   (extend (:%1 :*)
@@ -579,6 +595,7 @@
   (vertical ,(lambda (p) `(vertical ,@(menu-expand-list (cdr p)))))
   (hlist ,(lambda (p) `(hlist ,@(menu-expand-list (cdr p)))))
   (vlist ,(lambda (p) `(vlist ,@(menu-expand-list (cdr p)))))
+  (aligned ,(lambda (p) `(aligned ,@(menu-expand-list (cdr p)))))
   (minibar ,(lambda (p) `(minibar ,@(menu-expand-list (cdr p)))))
   (extend ,(lambda (p) `(extend ,@(menu-expand-list (cdr p)))))
   (style ,(lambda (p) `(extend ,@(menu-expand-list (cdr p)))))

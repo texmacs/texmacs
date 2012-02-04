@@ -413,6 +413,7 @@
   (widget-color glue_widget (widget content bool bool int int))
   (widget-hlist horizontal_list (widget array_widget))
   (widget-vlist vertical_list (widget array_widget))
+  (widget-aligned aligned_widget (widget array_widget array_widget))
   (object->promise-widget as_promise_widget (promise_widget object))
 
   ;; windows

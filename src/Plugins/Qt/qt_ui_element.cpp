@@ -925,6 +925,11 @@ widget horizontal_menu (array<widget> arr) { return qt_ui_element_rep::create (q
 widget vertical_menu (array<widget> arr)  { return qt_ui_element_rep::create (qt_ui_element_rep::vertical_menu, arr); }
 widget horizontal_list (array<widget> arr) { return qt_ui_element_rep::create (qt_ui_element_rep::horizontal_list, arr); }
 widget vertical_list (array<widget> arr) { return qt_ui_element_rep::create (qt_ui_element_rep::vertical_list, arr); }
+widget aligned_widget (array<widget> lhs, array<widget> rhs, SI, SI, SI, SI) {
+  // FIXME: to be implemented in a clean way
+  array<widget> a;
+  for (int i=0; i<min(N(lhs),N(rhs)); i++) a << lhs[i] << rhs[i];
+  return tile_menu (a, 2); }
 widget tile_menu (array<widget> a, int cols) { return qt_ui_element_rep::create (qt_ui_element_rep::tile_menu, a, cols); }
 widget minibar_menu (array<widget> arr) { return qt_ui_element_rep::create (qt_ui_element_rep::minibar_menu, arr); }
 widget menu_separator (bool vertical) { return qt_ui_element_rep::create (qt_ui_element_rep::menu_separator, vertical); }
