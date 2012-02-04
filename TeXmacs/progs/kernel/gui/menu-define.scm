@@ -67,6 +67,11 @@
   `($menu-group ,(cadr x)))
 
 (tm-define (gui-menu-item x)
+  (:case text)
+  (require-format x '(text :%1))
+  `($menu-text ,(cadr x)))
+
+(tm-define (gui-menu-item x)
   (:case glue)
   (require-format x '(glue :%4))
   `($glue ,(second x) ,(third x) ,(fourth x) ,(fifth x)))

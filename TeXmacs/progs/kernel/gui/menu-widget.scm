@@ -39,6 +39,7 @@
     ---
     |
     (group :string?)
+    (text :string?)
     (glue :boolean? :boolean? :integer? :integer?)
     (color :%1 :boolean? :boolean? :integer? :integer?)
     (:menu-wide-label :%1)
@@ -184,6 +185,10 @@
 (define (make-menu-group s style)
   "Make @(group :string?) menu item."
   (widget-menu-group s style))
+
+(define (make-menu-text s style)
+  "Make @(text :string?) menu item."
+  (widget-text s style (color "black") #t))
 
 (define (make-menu-input p style)
   "Make @(input :%1 :string? :%1 :string?) menu item."
@@ -454,6 +459,8 @@
                                    (fourth p) (fifth p) (sixth p)))))
   (group (:string?)
 	 ,(lambda (p style bar?) (list (make-menu-group (cadr p) style))))
+  (text (:string?)
+	 ,(lambda (p style bar?) (list (make-menu-text (cadr p) style))))
   (symbol (:string? :*)
 	  ,(lambda (p style bar?) (list (make-menu-symbol p style))))
   (input (:%1 :string? :%1 :string?)
@@ -562,6 +569,7 @@
   (--- ,(lambda (p) `(--- ,@(menu-expand-list (cdr p)))))
   (| ,(lambda (p) `(| ,@(menu-expand-list (cdr p)))))
   (group ,replace-procedures)
+  (text ,replace-procedures)
   (glue ,replace-procedures)
   (color ,replace-procedures)
   (symbol ,replace-procedures)

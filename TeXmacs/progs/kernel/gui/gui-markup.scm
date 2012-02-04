@@ -215,6 +215,10 @@
   (:synopsis "Make a menu group")
   `(list 'group ,text))
 
+(tm-define-macro ($menu-text text)
+  (:synopsis "Make text")
+  `(list 'text ,text))
+
 (tm-define-macro ($input cmd type proposals width)
   (:synopsis "Make input field")
   `(list 'input (lambda (answer) ,cmd) ,type (lambda () ,proposals) ,width))
