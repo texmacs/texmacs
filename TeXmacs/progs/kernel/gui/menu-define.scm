@@ -206,6 +206,16 @@
 	 `($> ,(gui-menu-item (car x)) ,@(cdr x)))
         (else (texmacs-error "gui-menu-item" "invalid menu item ~S" x))))
 
+(tm-define (gui-menu-item x)
+  (:case form)
+  (require-format x '(form :%1 :*))
+  `($form ,@(map gui-menu-item (cdr x))))
+
+(tm-define (gui-menu-item x)
+  (:case form-input)
+  (require-format x '(form-input :%4))
+  `($form-input ,@(cdr x)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User interface for dynamic menu definitions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

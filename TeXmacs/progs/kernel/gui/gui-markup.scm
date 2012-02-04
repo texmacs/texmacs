@@ -86,6 +86,12 @@
   `(with ,var ,val
      (cons* 'list ($list ,@l))))
 
+(tm-define-macro ($execute cmd . l)
+  (:synopsis "Execute one command")
+  `(begin
+     ,cmd
+     (cons* 'list ($list ,@l))))
+
 (tm-define-macro ($for var-val . l)
   (:synopsis "For primitive for content generation")
   (when (nlist-2? var-val)
@@ -222,6 +228,45 @@
 (tm-define-macro ($input cmd type proposals width)
   (:synopsis "Make input field")
   `(list 'input (lambda (answer) ,cmd) ,type (lambda () ,proposals) ,width))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Forms
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define form-name "empty")
+(tm-define form-entries (list))
+(tm-define form-last (make-ahash-table))
+
+(tm-define (form-named-set name field val)
+  (ahash-set! form-last (list name field) val))
+
+(tm-define (form-named-ref name field)
+  (ahash-ref form-last (list name field)))
+
+(tm-define-macro (form-set field val)
+  `(form-named-set form-name ,field ,val))
+
+(tm-define-macro (form-ref field)
+  `(form-named-ref form-name ,field))
+
+(tm-define-macro (form-fields)
+  `form-entries)
+
+(tm-define-macro (form-values)
+  `(map (lambda (x) (form-ref x)) (form-fields)))
+
+(tm-define-macro ($form name . l)
+  (:synopsis "Make form")
+  `($let* ((form-name ,name)
+           (form-entries (list)))
+     ,@l))
+
+(tm-define-macro ($form-input field type proposals width)
+  (:synopsis "Make form textual input field")
+  `($execute
+     (set! form-entries (append form-entries (list ,field)))
+     ($input (form-named-set form-name ,field answer)
+             ,type ,proposals ,width)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic text markup
