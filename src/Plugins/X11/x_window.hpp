@@ -80,7 +80,9 @@ public:
   void   set_visibility (bool flag);
   void   set_full_screen (bool flag);
   void   set_size (SI w, SI h);
+  void   set_size_limits (SI min_w, SI min_h, SI max_w, SI max_h);
   void   get_size (SI& w, SI& h);
+  void   get_size_limits (SI& min_w, SI& min_h, SI& max_w, SI& max_h);
   void   set_position (SI x, SI y);
   void   get_position (SI& x, SI& y);
   void   set_keyboard_focus (widget wid, bool get_focus);

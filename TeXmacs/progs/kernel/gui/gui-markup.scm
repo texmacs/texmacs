@@ -143,6 +143,14 @@
   (:synopsis "Align two column table")
   `(cons* 'aligned ($list ,@l)))
 
+(tm-define-macro ($tabs . l)
+  (:synopsis "A tab bar")
+  `(cons* 'tabs ($list ,@l)))
+
+(tm-define-macro ($tab . l)
+  (:synopsis "One tab of a tab bar")
+  `(cons* 'tab ($list ,@l)))
+
 (tm-define-macro ($horizontal . l)
   (:synopsis "Horizontal layout of widgets")
   `(cons* 'horizontal ($list ,@l)))

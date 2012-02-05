@@ -35,8 +35,12 @@ public:
     // Set or reset full screen mode
   virtual void set_size (SI w, SI h) = 0;
     // Resize the window
+  virtual void set_size_limits (SI min_w, SI min_h, SI max_w, SI max_h) = 0;
+    // Specify how far the window can be resized
   virtual void get_size (SI& w, SI& h) = 0;
     // Get the current size of the window
+  virtual void get_size_limits (SI& min_w, SI& min_h, SI& max_w, SI& max_h)=0;
+    // Get information on how far the window can be resized
   virtual void set_position (SI x, SI y) = 0;
     // Move the window
   virtual void get_position (SI& x, SI& y) = 0;
@@ -76,5 +80,8 @@ int get_identifier (window w);
   // Get low-level handle for the window, as used by the operating system
 window get_window (int id);
   // Determine the window as a function of its identifier
+void refresh_size (window win);
+  // Update the size of the window as a function of the possibly modified
+  // state of the underlying widget
 
 #endif // defined WINDOW_H

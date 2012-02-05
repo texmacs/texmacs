@@ -147,6 +147,16 @@
   `($aligned ,@(map gui-menu-item (cdr x))))
 
 (tm-define (gui-menu-item x)
+  (:case tabs)
+  (require-format x '(tabs :*))
+  `($tabs ,@(map gui-menu-item (cdr x))))
+
+(tm-define (gui-menu-item x)
+  (:case tab)
+  (require-format x '(tab :*))
+  `($tab ,@(map gui-menu-item (cdr x))))
+
+(tm-define (gui-menu-item x)
   (:case inert)
   (require-format x '(inert :*))
   `($widget-style ,widget-style-inert ,@(map gui-menu-item (cdr x))))

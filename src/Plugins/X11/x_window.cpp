@@ -257,6 +257,11 @@ x_window_rep::get_size (SI& ww, SI& hh) {
 }
 
 void
+x_window_rep::get_size_limits (SI& min_w, SI& min_h, SI& max_w, SI& max_h) {
+  min_w= Min_w; min_h= Min_h; max_w= Max_w; max_h= Max_h;
+}
+
+void
 x_window_rep::set_position (SI x, SI y) {
   x= x/PIXEL;
   y= -y/PIXEL;
@@ -269,8 +274,28 @@ x_window_rep::set_position (SI x, SI y) {
 
 void
 x_window_rep::set_size (SI w, SI h) {
-  h=-h; ren->decode (w, h);
+  w= w/PIXEL; h= h/PIXEL;
+  //h=-h; ren->decode (w, h);
   XResizeWindow (dpy, win, w, h);
+}
+
+void
+x_window_rep::set_size_limits (SI min_w, SI min_h, SI max_w, SI max_h) {
+  if (min_w == Min_w && min_h == Min_h && max_w == Max_w && max_h == Max_h)
+    return;
+  Min_w= min_w; Min_h= min_h; Max_w= max_w; Max_h= max_h;
+  min_w= min_w/PIXEL; min_h= min_h/PIXEL;
+  max_w= max_w/PIXEL; max_h= max_h/PIXEL;
+
+  XSizeHints* size_hints;
+  ASSERT (size_hints= XAllocSizeHints (), "out of memory (X server)");
+  size_hints->flags       = PMinSize | PMaxSize;
+  size_hints->min_width   = min_w;
+  size_hints->min_height  = min_h;
+  size_hints->max_width   = max_w;
+  size_hints->max_height  = max_h;
+  XSetWMNormalHints (dpy, win, size_hints);
+  XFree(size_hints);
 }
 
 void

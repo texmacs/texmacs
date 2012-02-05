@@ -94,6 +94,11 @@ aligned_widget (array<widget> lhs, array<widget> rhs,
 }
 
 widget
+tabs_widget (array<widget> tabs, array<widget> bodies) {
+  return abstract (tabs_widget (concrete (tabs), concrete (bodies)));
+}
+
+widget
 horizontal_menu (array<widget> a) {
   return abstract (horizontal_list (concrete (a)));
   //return abstract (horizontal_array (concrete (a), -1));

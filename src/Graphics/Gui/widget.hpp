@@ -191,6 +191,8 @@ widget aligned_widget (array<widget> lhs, array<widget> rhs,
                        SI hsep= 0, SI vsep= 0, SI lpad= 0, SI rpad= 0);
   // a table with two columns, the first one being right aligned and
   // the second one being left aligned
+widget tabs_widget (array<widget> tabs, array<widget> bodies);
+  // a tab bar where one and only of the bodies can be selected
 widget extend (widget w, array<widget> a);
   // extend the size of w to the maximum of the sizes of
   // the widgets in the list a

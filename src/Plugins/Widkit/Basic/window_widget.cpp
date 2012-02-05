@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "window.hpp"
+#include "message.hpp"
 #include "Widkit/wk_widget.hpp"
 #include "Widkit/Event/basic_event.hpp"
 
@@ -78,4 +79,21 @@ void
 destroy_window_widget (wk_widget w) {
   ASSERT (w->is_window_widget (), "not a window widget");
   tm_delete (w->win);
+}
+
+void
+refresh_size (window win) {
+  widget wid= win->get_widget ();
+  SI old_w, old_h;
+  win->get_size (old_w, old_h);
+  SI def_w= old_w, def_h= old_h;
+  SI min_w= old_w, min_h= old_h;
+  SI max_w= old_w, max_h= old_h;
+  concrete (wid) << get_size (def_w, def_h, 0);
+  concrete (wid) << get_size (min_w, min_h, -1);
+  concrete (wid) << get_size (max_w, max_h, 1);
+  concrete (wid) << emit_position (0, 0, def_w, def_h);
+  win->set_size_limits (min_w, min_h, max_w, max_h);
+  if (def_w != old_w || def_h != old_h)
+    win->set_size (def_w, def_h);
 }

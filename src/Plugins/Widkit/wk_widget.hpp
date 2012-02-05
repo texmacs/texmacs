@@ -94,6 +94,7 @@ wk_widget aligned_widget (array<wk_widget> lhs, array<wk_widget> rhs,
 wk_widget horizontal_array (array<wk_widget> a, int stretch_me= -1);
 wk_widget horizontal_array (array<wk_widget> a, array<string> s,
 			    int stretch_me= -1);
+wk_widget tabs_widget (array<wk_widget> tabs, array<wk_widget> bodies);
 wk_widget switch_widget (array<wk_widget> a, array<string> name, int init= 0);
 wk_widget optional_widget (wk_widget w, bool on= true);
 wk_widget glue_wk_widget (bool hx=true, bool vx=true, SI w=0, SI h=0);

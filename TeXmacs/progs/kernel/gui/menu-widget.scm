@@ -50,6 +50,8 @@
     (hlist :menu-item-list)
     (vlist :menu-item-list)
     (aligned :menu-item-list)
+    (tabs :menu-item-list)
+    (tab :menu-item-list)
     (minibar :menu-item-list)
     (extend :menu-item :menu-item-list)
     (style :integer? :menu-item-list)
@@ -338,7 +340,7 @@
   (widget-hlist (make-menu-items (cdr p) style #t)))
 
 (define (make-menu-vlist p style)
-  "Make @(vertical :menu-item-list) menu item."
+  "Make @(vlist :menu-item-list) menu item."
   (widget-vlist (make-menu-items (cdr p) style #f)))
 
 (define (lhs l)
@@ -350,9 +352,25 @@
       (cons (cadr l) (rhs (cddr l)))))
 
 (define (make-menu-aligned p style)
-  "Make @(vertical :menu-item-list) menu item."
+  "Make @(aligned :menu-item-list) menu item."
   (widget-aligned (make-menu-items (lhs (cdr p)) style #f)
                   (make-menu-items (rhs (cdr p)) style #f)))
+
+(define (tab-key x)
+  (cadr x))
+
+(define (tab-value x)
+  (list 'vlist (cddr x)))
+
+(define (make-menu-tabs p style)
+  "Make @(tabs :menu-item-list) menu item."
+  (widget-tabs (make-menu-items (map tab-key (cdr p)) style #f)
+               (make-menu-items (map tab-value (cdr p)) style #f)))
+
+(define (make-menu-tab p style)
+  "Make @(tab :menu-item-list) menu item."
+  (display* "Error 'make-menu-tab', " p ", " style "\n")
+  (list 'vlist))
 
 (define (make-menu-extend p style bar?)
   "Make @(extend :menu-item :menu-item-list) menu item."
@@ -491,6 +509,10 @@
          ,(lambda (p style bar?) (list (make-menu-vlist p style))))
   (aligned (:*)
          ,(lambda (p style bar?) (list (make-menu-aligned p style))))
+  (tabs (:*)
+        ,(lambda (p style bar?) (list (make-menu-tabs p style))))
+  (tab (:*)
+        ,(lambda (p style bar?) (list (make-menu-tab p style))))
   (minibar (:*)
 	    ,(lambda (p style bar?) (list (make-menu-minibar p style))))
   (extend (:%1 :*)
@@ -596,6 +618,8 @@
   (hlist ,(lambda (p) `(hlist ,@(menu-expand-list (cdr p)))))
   (vlist ,(lambda (p) `(vlist ,@(menu-expand-list (cdr p)))))
   (aligned ,(lambda (p) `(aligned ,@(menu-expand-list (cdr p)))))
+  (tabs ,(lambda (p) `(tabs ,@(menu-expand-list (cdr p)))))
+  (tab ,(lambda (p) `(tab ,@(menu-expand-list (cdr p)))))
   (minibar ,(lambda (p) `(minibar ,@(menu-expand-list (cdr p)))))
   (extend ,(lambda (p) `(extend ,@(menu-expand-list (cdr p)))))
   (style ,(lambda (p) `(extend ,@(menu-expand-list (cdr p)))))

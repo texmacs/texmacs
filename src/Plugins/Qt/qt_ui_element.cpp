@@ -930,6 +930,8 @@ widget aligned_widget (array<widget> lhs, array<widget> rhs, SI, SI, SI, SI) {
   array<widget> a;
   for (int i=0; i<min(N(lhs),N(rhs)); i++) a << lhs[i] << rhs[i];
   return tile_menu (a, 2); }
+widget tabs_widget (array<widget> tabs, array<widget> bodies) {
+  (void) tabs; (void) bodies; ERROR ("not yet implemented"); }
 widget tile_menu (array<widget> a, int cols) { return qt_ui_element_rep::create (qt_ui_element_rep::tile_menu, a, cols); }
 widget minibar_menu (array<widget> arr) { return qt_ui_element_rep::create (qt_ui_element_rep::minibar_menu, arr); }
 widget menu_separator (bool vertical) { return qt_ui_element_rep::create (qt_ui_element_rep::menu_separator, vertical); }
