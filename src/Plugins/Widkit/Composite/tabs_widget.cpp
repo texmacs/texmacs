@@ -9,8 +9,9 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "Widkit/composite_widget.hpp"
 #include "window.hpp"
+#include "Widkit/composite_widget.hpp"
+#include "Widkit/layout.hpp"
 
 #define THIS (wk_widget (this))
 
@@ -22,11 +23,13 @@ void abs_round (SI& l);
 
 class tabs_widget_rep: public composite_widget_rep {
 public:
+  SI h1, h2;
   tabs_widget_rep (array<wk_widget> a, array<wk_widget> b);
   operator tree ();
 
   void handle_get_size (get_size_event ev);
   void handle_position (position_event ev);
+  void handle_repaint (repaint_event ev);
   void handle_find_child (find_child_event ev);
   void handle_mouse (mouse_event ev);
 };
@@ -41,7 +44,7 @@ tabs_make (array<wk_widget> a, array<wk_widget> b) {
 }
 
 tabs_widget_rep::tabs_widget_rep (array<wk_widget> a, array<wk_widget> b):
-  composite_widget_rep (tabs_make (a, b), south_west) {}
+  composite_widget_rep (tabs_make (a, b), south_west), h1 (0), h2 (0) {}
 
 tabs_widget_rep::operator tree () {
   int i;
@@ -65,7 +68,7 @@ tabs_widget_rep::handle_get_size (get_size_event ev) {
   }
   int www= w, hhh= h - hh;
   a[l] << get_size (www, hhh, ev->mode);
-  w= max (ww, www); h= hh + hhh;
+  w= max (ww, www); h= hh + hhh + 2*PIXEL;
 }
 
 void
@@ -93,10 +96,44 @@ tabs_widget_rep::handle_position (position_event ev) {
     a[i] << get_size (the_w, the_h, -1);
     abs_round (the_w);
     abs_round (the_h);
-    a[i] << emit_position (cur_w, last_h, the_w, max_h, south_west);
+    a[i] << emit_position (cur_w, last_h + 2*PIXEL, the_w, max_h, south_west);
     cur_w += the_w;
   }
   a[l] << emit_position (0, 0, main_w, last_h, south_west);
+  h1= last_h; h2= max_h;
+}
+
+void
+tabs_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
+  renderer ren= win->get_renderer ();
+  layout_default (ren, 0, 0, w, h);
+  if (h1 == 0 || h2 == 0) return;
+  layout_dark (ren, 0, h1, w, PIXEL);
+  layout_lower (ren, 0, h1 + PIXEL, w, PIXEL);
+  /*
+  if ((style & WIDGET_STYLE_PRESSED) != 0) {
+    if (status) layout_higher (ren, 0, 0, w, h);
+    else {
+      layout_dark (ren, 0, 0, w, h);
+      layout_lower (ren, 0, 0, w, h);
+    }
+  }
+  else if (inside && !status && enabled)
+    layout_higher (ren, 0, 0, w, h);
+  else if (status) {
+    layout_dark (ren, 0, 0, w, h);
+    layout_lower (ren, 0, 0, w, h);
+  }
+  else if (button_flag)
+    layout_higher (ren, 0, 0, w, h);
+  if (rflag)
+    layout_submenu_triangle (ren, w-10*PIXEL, h>>1);
+  if (has_pull_down && inside && !status)
+    //layout_pulldown_triangle (ren, 6*PIXEL, 4*PIXEL);
+    layout_pulldown_dash (ren, 0, 0, w-2*PIXEL);
+  //if (has_pull_down && !inside && !status)
+  //  layout_pulldown_dash (ren, 2*PIXEL, 0, w-4*PIXEL);
+  */
 }
 
 void

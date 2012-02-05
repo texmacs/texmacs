@@ -191,6 +191,7 @@
 
 (define (make-menu-text s style)
   "Make @(text :string?) menu item."
+  ;;(widget-text s style (color "black") #t)
   (widget-text s style (color "black") #f))
 
 (define (make-menu-input p style)
