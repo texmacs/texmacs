@@ -13,6 +13,7 @@
 #define LAYOUT_H
 #include "window.hpp"
 
+color layout_pastel (renderer win);
 color layout_light (renderer win);
 color layout_normal (renderer win);
 color layout_dark (renderer win);
