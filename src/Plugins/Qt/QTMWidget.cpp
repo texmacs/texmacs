@@ -464,7 +464,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
       }
     }
     // denis end
-    else if (qtkeymap->contains (key)) {
+    if (qtkeymap->contains (key)) {
       r = qtkeymap[key];
     }
     else if (qtdeadmap->contains (key)) {
