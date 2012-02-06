@@ -101,6 +101,7 @@ string_to_scheme_tree (string s, int& i) {
 
 scheme_tree
 string_to_scheme_tree (string s) {
+  s= replace (s, "\015", "");
   int i=0;
   return string_to_scheme_tree (s, i);
 }

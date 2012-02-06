@@ -450,12 +450,28 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
     }
 
     string r;
-    if (qtkeymap->contains (key)) {
+    // denis begin
+    if (event->text().count() == 1) {
+      QChar c= event->text()[0];
+      if (c.isPrint()) { // not a control character or dead key or modifier
+	char ac=c.toAscii();
+	if (ac) { // a true ascii printable
+	  r= ac;
+	  if (DEBUG_QT) cout << "ascii key= " <<r << "\n";	
+	  the_gui->process_keypress(wid, r, texmacs_time());
+	  return;
+	}
+      }
+    }
+    // denis end
+    else if (qtkeymap->contains (key)) {
       r = qtkeymap[key];
-    } else if (qtdeadmap->contains (key)) {
+    }
+    else if (qtdeadmap->contains (key)) {
       mods &=~ Qt::ShiftModifier;
       r = qtdeadmap[key];
-    } else {
+    }
+    else {
       QString nss = event->text();
       unsigned short unic= nss.data()[0].unicode();
       if (unic < 32 && key < 128 && key > 0) {
