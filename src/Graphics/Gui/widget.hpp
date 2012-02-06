@@ -196,7 +196,8 @@ widget tabs_widget (array<widget> tabs, array<widget> bodies);
 widget extend (widget w, array<widget> a);
   // extend the size of w to the maximum of the sizes of
   // the widgets in the list a
-
+widget toggle_widget (command cmd, bool on= false, int style= 0);
+  // an input toggle
 widget wait_widget (SI width, SI height, string message);
   // a widget of a specified width and height, displaying a wait message
   // this widget is only needed when using the X11 plugin

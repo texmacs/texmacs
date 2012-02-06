@@ -942,4 +942,5 @@ widget menu_button (widget w, command cmd, string pre, string ks, int style) { r
 widget balloon_widget (widget w, widget help) { return qt_ui_element_rep::create (qt_ui_element_rep::balloon_widget, w, help); }
 widget text_widget (string s, int style, color col, bool tsp) { return qt_ui_element_rep::create (qt_ui_element_rep::text_widget, s, style, col, tsp); }
 widget xpm_widget (url file_name) { return qt_ui_element_rep::create (qt_ui_element_rep::xpm_widget, file_name); }
-
+widget toggle_widget (command cmd, bool on, int style) {
+  (void) cmd; (void) on; (void) style; FAILED ("not yet implemented"); }

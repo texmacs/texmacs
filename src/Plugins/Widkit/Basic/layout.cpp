@@ -58,6 +58,18 @@ layout_dark_outline (renderer ren, SI x1, SI y1, SI x2, SI y2) {
 }
 
 void
+layout_pastel_lower (renderer ren, SI x1, SI y1, SI x2, SI y2) {
+  layout_pastel (ren, x1, y1, x2, y2);
+  ren->set_line_style (PIXEL);
+  ren->set_color (white);
+  ren->line (x1, y1, x2-PIXEL, y1);
+  ren->line (x2- PIXEL, y1, x2- PIXEL, y2- PIXEL);
+  ren->set_color (layout_normal (ren));
+  ren->line (x1, y2- PIXEL, x2, y2- PIXEL);
+  ren->line (x1, y1, x1, y2- PIXEL);
+}
+
+void
 layout_lower (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   ren->set_line_style (PIXEL);
   ren->set_color (white);

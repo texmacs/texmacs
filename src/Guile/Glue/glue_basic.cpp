@@ -4684,6 +4684,23 @@ tmg_widget_menu_button (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5) {
 }
 
 SCM
+tmg_widget_toggle (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_COMMAND (arg1, SCM_ARG1, "widget-toggle");
+  SCM_ASSERT_BOOL (arg2, SCM_ARG2, "widget-toggle");
+  SCM_ASSERT_INT (arg3, SCM_ARG3, "widget-toggle");
+
+  command in1= scm_to_command (arg1);
+  bool in2= scm_to_bool (arg2);
+  int in3= scm_to_int (arg3);
+
+  // SCM_DEFER_INTS;
+  widget out= toggle_widget (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return widget_to_scm (out);
+}
+
+SCM
 tmg_widget_balloon (SCM arg1, SCM arg2) {
   SCM_ASSERT_WIDGET (arg1, SCM_ARG1, "widget-balloon");
   SCM_ASSERT_WIDGET (arg2, SCM_ARG2, "widget-balloon");
@@ -5458,6 +5475,7 @@ initialize_glue_basic () {
   scm_new_procedure ("widget-pulldown-button", (FN) tmg_widget_pulldown_button, 2, 0, 0);
   scm_new_procedure ("widget-pullright-button", (FN) tmg_widget_pullright_button, 2, 0, 0);
   scm_new_procedure ("widget-menu-button", (FN) tmg_widget_menu_button, 5, 0, 0);
+  scm_new_procedure ("widget-toggle", (FN) tmg_widget_toggle, 3, 0, 0);
   scm_new_procedure ("widget-balloon", (FN) tmg_widget_balloon, 2, 0, 0);
   scm_new_procedure ("widget-empty", (FN) tmg_widget_empty, 0, 0, 0);
   scm_new_procedure ("widget-text", (FN) tmg_widget_text, 4, 0, 0);

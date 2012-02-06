@@ -45,6 +45,7 @@
     (:menu-wide-label :%1)
     (symbol :string? :*)
     (input :%1 :string? :%1 :string?)
+    (toggle :%2)
     (horizontal :menu-item-list)
     (vertical :menu-item-list)
     (hlist :menu-item-list)
@@ -199,6 +200,11 @@
   (with (tag cmd type props width) p
     (widget-input (object->command (menu-protect cmd)) type (props)
 		  (logior style widget-style-mini) width)))
+
+(define (make-toggle p style)
+  "Make @(toggle :%2) item."
+  (with (tag cmd on) p
+    (widget-toggle (object->command cmd) (on) style)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu entries
@@ -498,6 +504,8 @@
 	  ,(lambda (p style bar?) (list (make-menu-symbol p style))))
   (input (:%1 :string? :%1 :string?)
          ,(lambda (p style bar?) (list (make-menu-input p style))))
+  (toggle (:%2)
+	  ,(lambda (p style bar?) (list (make-toggle p style))))
   (link (:%1)
 	,(lambda (p style bar?) (make-menu-link p style bar?)))
   (horizontal (:*)
@@ -575,6 +583,11 @@
 	     (if (pair? r) (car r) (replace-procedures (cadddr p))))
 	  ,(fifth p)))
 
+(define (menu-expand-toggle p)
+  "Expand toggle item @p."
+  `(toggle ,(replace-procedures (cadr p))
+	   ,(replace-procedures (caddr p))))
+
 (define (menu-expand-list l)
   "Expand links and conditional menus in list of menus @l."
   (map menu-expand l))
@@ -613,6 +626,7 @@
   (color ,replace-procedures)
   (symbol ,replace-procedures)
   (input ,menu-expand-input)
+  (toggle ,menu-expand-toggle)
   (link ,menu-expand-link p)
   (horizontal ,(lambda (p) `(horizontal ,@(menu-expand-list (cdr p)))))
   (vertical ,(lambda (p) `(vertical ,@(menu-expand-list (cdr p)))))
@@ -698,3 +712,36 @@
       (with p (lambda (com) (widget-color-picker com #f proposals))
         (with cmd* (lambda (t) (when t (cmd (tm->stree t))))
           (interactive-window p cmd* "Choose background")))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Some tests
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (widget1 cmd)
+  (form "Test"
+    (aligned
+      (text "First:") (form-input "First" "string" '("gnu") "1w")
+      (text "Second:") (form-input "Second" "string" '("gnat") "1w"))
+    ---
+    (horizontal
+      (explicit-buttons
+        ("Cancel" (cmd "Cancel"))
+	(glue #t #f 200 0)
+	("Ok"
+	  (display* (form-fields) " -> " (form-values) "\n")
+	  (cmd "Ok"))))))
+
+(tm-menu (widget2 cmd)
+  (aligned
+    (text "First:")
+    (toggle (display* "First " answer "\n") #f)
+    (text "Second:")
+    (toggle (display* "Second " answer "\n") #f))
+  ---
+  (horizontal
+    (explicit-buttons
+      (glue #t #f 100 0)
+      ("Ok" (cmd "Ok")))))
+
+(tm-define (show w)
+  (dialogue-window w (lambda (x) (display* x "\n")) "Simple form"))

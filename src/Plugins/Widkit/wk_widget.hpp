@@ -113,6 +113,7 @@ wk_widget pulldown_button (wk_widget w, wk_widget m, int style= 0);
 wk_widget pullright_button (wk_widget w, wk_widget m, int style= 0);
 wk_widget pulldown_button (wk_widget w, promise<wk_widget> pw);
 wk_widget pullright_button (wk_widget w, promise<wk_widget> pw);
+wk_widget toggle_wk_widget (command cmd, bool on= false, int style= 0);
 wk_widget popup_widget (wk_widget w, gravity quit=center);
 wk_widget canvas_widget (wk_widget w, gravity grav=north_west, bool rf= false);
 wk_widget input_text_wk_widget (command cb,

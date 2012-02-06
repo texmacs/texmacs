@@ -87,6 +87,11 @@
   `($input ,@(cdr x)))
 
 (tm-define (gui-menu-item x)
+  (:case toggle)
+  (require-format x '(toggle :%2))
+  `($toggle ,@(cdr x)))
+
+(tm-define (gui-menu-item x)
   (:case icon)
   (require-format x '(icon :%1))
   `($icon ,(cadr x)))

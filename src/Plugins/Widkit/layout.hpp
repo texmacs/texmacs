@@ -23,6 +23,7 @@ void  layout_dark (renderer win, SI x1, SI y1, SI x2, SI y2);
 void  layout_outline (renderer win, SI x1, SI y1, SI x2, SI y2);
 void  layout_dark_outline (renderer win, SI x1, SI y1, SI x2, SI y2);
 void  layout_lower (renderer win, SI x1, SI y1, SI x2, SI y2);
+void  layout_pastel_lower (renderer win, SI x1, SI y1, SI x2, SI y2);
 void  layout_higher (renderer win, SI x1, SI y1, SI x2, SI y2);
 void  layout_submenu_triangle (renderer win, SI x, SI y);
 void  layout_pulldown_triangle (renderer win, SI x, SI y);

@@ -220,6 +220,11 @@ pullright_button (widget w, promise<widget> pw) {
 }
 
 widget
+toggle_widget (command cmd, bool on, int style) {
+  return abstract (toggle_wk_widget (cmd, on, style));
+}
+
+widget
 popup_widget (widget w) {
   return abstract (popup_widget (concrete (w), center));
 }
