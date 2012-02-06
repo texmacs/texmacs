@@ -277,12 +277,16 @@
            (form-entries (list)))
      ,@l))
 
+(tm-define (form-proposals name field l)
+  (if (nnull? l) (form-named-set name field (car l)))
+  l)
+
 (tm-define-macro ($form-input field type proposals width)
   (:synopsis "Make form textual input field")
   `($execute
      (set! form-entries (append form-entries (list ,field)))
      ($input (form-named-set form-name ,field answer)
-             ,type ,proposals ,width)))
+             ,type (form-proposals form-name ,field ,proposals) ,width)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic text markup
