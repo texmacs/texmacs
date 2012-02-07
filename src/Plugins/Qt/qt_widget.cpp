@@ -137,15 +137,15 @@ qt_glue_widget_rep::as_qwidget() {
   return w;
 }
 
-
 /******************************************************************************
 * Global functions we export for the creation of widgets by TeXmacs
 ******************************************************************************/
 
 // Window widgets creating functions
 widget
-plain_window_widget (widget w, string s) {
+plain_window_widget (widget w, string s, command quit) {
   // creates a decorated window with name s and contents w
+  (void) quit; // FIXME: take into account quit argument
   return concrete(w)->plain_window_widget (s);
 }
 
