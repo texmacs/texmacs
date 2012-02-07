@@ -95,7 +95,7 @@ operator << (tm_ostream& out, widget w) {
 * Window widgets
 ******************************************************************************/
 
-widget plain_window_widget (widget w, string s);
+widget plain_window_widget (widget w, string s, command quit= command ());
   // creates a decorated window with name s and contents w
 widget popup_window_widget (widget w, string s);
   // creates an undecorated window with name s and contents w

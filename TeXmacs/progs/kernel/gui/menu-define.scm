@@ -246,7 +246,14 @@
 (tm-define-macro (define-menu head . body)
   `(define ,head (menu-dynamic ,@body)))
 
+(tm-define-macro (define-widget head . body)
+  `(define ,head (menu-dynamic ,@body)))
+
 (tm-define-macro (tm-menu head . l)
+  (receive (opts body) (list-break l not-define-option?)
+    `(tm-define ,head ,@opts (menu-dynamic ,@body))))
+
+(tm-define-macro (tm-widget head . l)
   (receive (opts body) (list-break l not-define-option?)
     `(tm-define ,head ,@opts (menu-dynamic ,@body))))
 

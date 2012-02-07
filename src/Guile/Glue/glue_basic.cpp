@@ -4936,6 +4936,25 @@ tmg_window_create (SCM arg1, SCM arg2, SCM arg3, SCM arg4) {
 }
 
 SCM
+tmg_window_create_quit (SCM arg1, SCM arg2, SCM arg3, SCM arg4) {
+  SCM_ASSERT_INT (arg1, SCM_ARG1, "window-create-quit");
+  SCM_ASSERT_WIDGET (arg2, SCM_ARG2, "window-create-quit");
+  SCM_ASSERT_STRING (arg3, SCM_ARG3, "window-create-quit");
+  SCM_ASSERT_COMMAND (arg4, SCM_ARG4, "window-create-quit");
+
+  int in1= scm_to_int (arg1);
+  widget in2= scm_to_widget (arg2);
+  string in3= scm_to_string (arg3);
+  command in4= scm_to_command (arg4);
+
+  // SCM_DEFER_INTS;
+  window_create (in1, in2, in3, in4);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_window_delete (SCM arg1) {
   SCM_ASSERT_INT (arg1, SCM_ARG1, "window-delete");
 
@@ -5491,6 +5510,7 @@ initialize_glue_basic () {
   scm_new_procedure ("object->promise-widget", (FN) tmg_object_2promise_widget, 1, 0, 0);
   scm_new_procedure ("window-handle", (FN) tmg_window_handle, 0, 0, 0);
   scm_new_procedure ("window-create", (FN) tmg_window_create, 4, 0, 0);
+  scm_new_procedure ("window-create-quit", (FN) tmg_window_create_quit, 4, 0, 0);
   scm_new_procedure ("window-delete", (FN) tmg_window_delete, 1, 0, 0);
   scm_new_procedure ("window-show", (FN) tmg_window_show, 1, 0, 0);
   scm_new_procedure ("window-hide", (FN) tmg_window_hide, 1, 0, 0);

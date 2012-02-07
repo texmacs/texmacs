@@ -421,6 +421,7 @@
   ;; windows
   (window-handle window_handle (int))
   (window-create window_create (void int widget string bool))
+  (window-create-quit window_create (void int widget string command))
   (window-delete window_delete (void int))
   (window-show window_show (void int))
   (window-hide window_hide (void int))

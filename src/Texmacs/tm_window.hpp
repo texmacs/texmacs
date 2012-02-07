@@ -86,6 +86,7 @@ typedef tm_window_rep* tm_window;
 
 int window_handle ();
 void window_create (int win, widget wid, string name, bool plain);
+void window_create (int win, widget wid, string name, command quit);
 void window_delete (int win);
 void window_show (int win);
 void window_hide (int win);

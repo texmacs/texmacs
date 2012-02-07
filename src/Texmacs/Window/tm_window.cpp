@@ -297,6 +297,13 @@ window_create (int win, widget wid, string name, bool plain) {
 }
 
 void
+window_create (int win, widget wid, string name, command quit) {
+  widget pww;
+  pww= plain_window_widget (wid, name, quit);
+  window_table (win)= pww;
+}
+
+void
 window_delete (int win) {
   ASSERT (window_table->contains (win), "window does not exist");
   widget pww= window_table [win];

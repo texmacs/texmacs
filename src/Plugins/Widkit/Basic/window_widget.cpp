@@ -19,9 +19,10 @@
 ******************************************************************************/
 
 class window_widget_rep: public wk_widget_rep {
+  command quit;
 public:
-  window_widget_rep (array<wk_widget> a, array<string> name):
-    wk_widget_rep (a, name, north_west) {}
+  window_widget_rep (array<wk_widget> a, array<string> name, command quit2):
+    wk_widget_rep (a, name, north_west), quit (quit2) {}
   operator tree () { return tree (TUPLE, "window", (tree) a[0]); }
   bool is_window_widget () { return true; }
   bool handle (event ev);
@@ -31,16 +32,18 @@ bool
 window_widget_rep::handle (event ev) {
   if (ev->type == ATTACH_WINDOW_EVENT)
     win= ((attach_window_event) ev)->win;
+  if (ev->type == DESTROY_EVENT && !is_nil (quit))
+    quit ();
   return a[0] -> handle (ev);
 }
 
 wk_widget
-window_widget (wk_widget w) {
+window_widget (wk_widget w, command quit) {
   array<wk_widget> a (1);
   a[0]= w;
   array<string> name (1);
   name[0]= "window";
-  return tm_new<window_widget_rep> (a, name);
+  return tm_new<window_widget_rep> (a, name, quit);
 }
 
 /******************************************************************************
@@ -48,14 +51,14 @@ window_widget (wk_widget w) {
 ******************************************************************************/
 
 wk_widget
-plain_window_widget (wk_widget wid, string s) {
+plain_window_widget (wk_widget wid, string s, command quit) {
   SI W, H;
   gui_root_extents (W, H);
   SI min_w= 0, min_h= 0, def_w= H, def_h= H, max_w= H, max_h= H;
   wid << get_size (min_w, min_h, -1);
   wid << get_size (def_w, def_h, 0);
   wid << get_size (max_w, max_h, 1);
-  wid= window_widget (wid);
+  wid= window_widget (wid, quit);
   (void) plain_window (abstract (wid), s,
 		       min_w, min_h, def_w, def_h, max_w, max_h);
   return wid;
@@ -69,7 +72,7 @@ popup_window_widget (wk_widget wid, string s) {
   wid << get_size (min_w, min_h, -1);
   wid << get_size (def_w, def_h, 0);
   wid << get_size (max_w, max_h, 1);
-  wid= window_widget (wid);
+  wid= window_widget (wid, command ());
   (void) popup_window (abstract (wid), s,
 		       min_w, min_h, def_w, def_h, max_w, max_h);
   return wid;

@@ -663,14 +663,25 @@
   (:argument style "menu style")
   ((wrap-catch make-menu-main) p style))
 
+(tm-define (top-window menu-promise name)
+  (:interactive #t)
+  (let* ((win (window-handle))
+	 (qui (object->command (lambda () (window-delete win))))
+	 (men (menu-promise))
+	 (scm (list 'vertical men))
+	 (wid (make-menu-widget scm 0)))
+    (window-create-quit win wid name qui)
+    (window-show win)))
+
 (tm-define (dialogue-window menu-promise cmd name)
   (:interactive #t)
   (let* ((win (window-handle))
+	 (qui (object->command (lambda () (window-delete win))))
 	 (lbd (lambda x (apply cmd x) (window-delete win)))
 	 (men (menu-promise lbd))
 	 (scm (list 'vertical men))
 	 (wid (make-menu-widget scm 0)))
-    (window-create win wid name #t)
+    (window-create-quit win wid name qui)
     (window-show win)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -714,10 +725,24 @@
           (interactive-window p cmd* "Choose background")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Some tests
+;; Some test widgets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-menu (widget1 cmd)
+(tm-widget (widget1)
+  (aligned
+    (text "First:")
+    (toggle (display* "First " answer "\n") #f)
+    (text "Second:")
+    (toggle (display* "Second " answer "\n") #f)))
+
+(tm-define (show w)
+  (top-window w "Simple widget"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Some test forms
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget (form1 cmd)
   (form "Test"
     (aligned
       (text "First:") (form-input "First" "string" '("gnu") "1w")
@@ -731,7 +756,7 @@
 	  (display* (form-fields) " -> " (form-values) "\n")
 	  (cmd "Ok"))))))
 
-(tm-menu (widget2 cmd)
+(tm-widget (form2 cmd)
   (aligned
     (text "First:")
     (toggle (display* "First " answer "\n") #f)
@@ -743,5 +768,5 @@
       (glue #t #f 100 0)
       ("Ok" (cmd "Ok")))))
 
-(tm-define (show w)
+(tm-define (show-form w)
   (dialogue-window w (lambda (x) (display* x "\n")) "Simple form"))

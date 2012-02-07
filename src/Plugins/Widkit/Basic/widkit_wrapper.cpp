@@ -276,8 +276,8 @@ texmacs_widget (int mask, command quit) {
 }
 
 widget
-plain_window_widget (widget wid, string s) {
-  return abstract (plain_window_widget (concrete (wid), s));
+plain_window_widget (widget wid, string s, command quit) {
+  return abstract (plain_window_widget (concrete (wid), s, quit));
 }
 
 widget
