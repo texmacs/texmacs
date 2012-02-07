@@ -246,6 +246,11 @@ inputs_list_widget (command call_back, array<string> prompts) {
 }
 
 widget
+enum_widget (command cb, array<string> vals, string v, int style, string w) {
+  return abstract (enum_wk_widget (cb, vals, v, style, w));
+}
+
+widget
 file_chooser_widget (command cmd, string type, bool save) {
   return abstract (file_chooser_wk_widget (cmd, type));
 }

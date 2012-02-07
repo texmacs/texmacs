@@ -245,6 +245,11 @@
   (:synopsis "Make input toggle")
   `(list 'toggle (lambda (answer) ,cmd) (lambda () ,on)))
 
+(tm-define-macro ($enum cmd vals val width)
+  (:synopsis "Make input enumeration field")
+  `(list 'enum (lambda (answer) ,cmd) (lambda () ,vals) (lambda () ,val)
+         ,width))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Forms
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -272,3 +272,50 @@
 
 (tm-menu (preferences-menu)
   (dynamic (compute-preferences-menu preferences-tree)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Preferences subwidgets
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget (appearance-preferences-widget)
+  (aligned
+    (text "Look and feel:")
+    (enum (set-preference "look and feel" answer)
+          '("Emacs" "Gnome" "KDE" "Mac OS" "Windows")
+          (get-preference "look and feel")
+          "10em")
+    (text "User interface language:")
+    (enum (set-preference "language" answer)
+          '("British" "Bulgarian" "Chinese" "Czech" "Dutch" "Danish"
+            "English" "Finnish" "French" "German" "Hungarian" "Italian"
+            "Japanese" "Korean" "Polish" "Portuguese" "Romanian" "Russian"
+            "Slovene" "Spanish" "Swedish" "Taiwanese" "Ukrainian")
+          (get-preference "language")
+          "10em")
+    (text "Interactive questions:")
+    (enum (set-preference "interactive questions" answer)
+          '("On the footer" "In popup windows")
+          (get-preference "interactive questions")
+          "10em")
+    (text "Details in menus:")
+    (enum (set-preference "detailed menus" answer)
+          '("Simplified menus" "Detailed menus")
+          (get-preference "detailed menus")
+          "10em")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Preferences widget
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget (preferences-widget)
+  (tabs
+    (tab (text "Appearance")
+      (centered
+        (dynamic (appearance-preferences-widget))))
+    (tab (text "Keyboard")
+      (centered
+        (aligned
+          (text "First:")
+          (toggle (display* "First " answer "\n") #f)
+          (text "Second:")
+          (toggle (display* "Second " answer "\n") #f))))))

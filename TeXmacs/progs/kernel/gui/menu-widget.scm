@@ -45,6 +45,7 @@
     (:menu-wide-label :%1)
     (symbol :string? :*)
     (input :%1 :string? :%1 :string?)
+    (enum :%3 :string?)
     (toggle :%2)
     (horizontal :menu-item-list)
     (vertical :menu-item-list)
@@ -200,6 +201,12 @@
   (with (tag cmd type props width) p
     (widget-input (object->command (menu-protect cmd)) type (props)
 		  (logior style widget-style-mini) width)))
+
+(define (make-enum p style)
+  "Make @(enum :%3 :string?) item."
+  (with (tag cmd vals val width) p
+    (widget-enum (object->command (menu-protect cmd))
+                 (vals) (val) style width)))
 
 (define (make-toggle p style)
   "Make @(toggle :%2) item."
@@ -504,6 +511,8 @@
 	  ,(lambda (p style bar?) (list (make-menu-symbol p style))))
   (input (:%1 :string? :%1 :string?)
          ,(lambda (p style bar?) (list (make-menu-input p style))))
+  (enum (:%3 :string?)
+        ,(lambda (p style bar?) (list (make-enum p style))))
   (toggle (:%2)
 	  ,(lambda (p style bar?) (list (make-toggle p style))))
   (link (:%1)
@@ -583,6 +592,13 @@
 	     (if (pair? r) (car r) (replace-procedures (cadddr p))))
 	  ,(fifth p)))
 
+(define (menu-expand-enum p)
+  "Expand enum item @p."
+  `(enum ,(replace-procedures (cadr p))
+         ,(replace-procedures (caddr p))
+         ,(replace-procedures (cadddr p))
+         ,(fifth p)))
+
 (define (menu-expand-toggle p)
   "Expand toggle item @p."
   `(toggle ,(replace-procedures (cadr p))
@@ -626,6 +642,7 @@
   (color ,replace-procedures)
   (symbol ,replace-procedures)
   (input ,menu-expand-input)
+  (enum ,menu-expand-enum)
   (toggle ,menu-expand-toggle)
   (link ,menu-expand-link p)
   (horizontal ,(lambda (p) `(horizontal ,@(menu-expand-list (cdr p)))))
@@ -752,11 +769,21 @@
           (toggle (display* "First " answer "\n") #f)
           (text "Second:")
           (toggle (display* "Second " answer "\n") #f)))
-      ---
-      (padded
-        (horizontal
-          (explicit-buttons
-            ("Cancel" (display "Cancel\n")) >> ("Ok" (display "Ok\n"))))))))
+      (bottom-buttons
+        ("Cancel" (display "Cancel\n")) >> ("Ok" (display "Ok\n"))))
+    (tab (text "Settings")
+      (centered
+        (aligned
+          (text "First:")
+          (enum (display* "First " answer "\n")
+                '("gnu" "gnat" "zebra")
+                "zebra" "10em")
+          (text "Second:")
+          (enum (display* "Second " answer "\n")
+                '("fun" "foo" "bar")
+                "fun" "10em")))
+      (bottom-buttons
+        >> ("Ok" (display "Ok\n"))))))
 
 (tm-define (show w)
   (top-window w "Simple widget"))
@@ -771,14 +798,11 @@
       (aligned
         (text "First:") (form-input "First" "string" '("gnu") "1w")
         (text "Second:") (form-input "Second" "string" '("gnat") "1w")))
-    ---
-    (centered
-      (horizontal
-        (explicit-buttons
-          ("Cancel" (cmd "Cancel")) >>
-          ("Ok"
-            (display* (form-fields) " -> " (form-values) "\n")
-            (cmd "Ok")))))))
+    (bottom-buttons
+      ("Cancel" (cmd "Cancel")) >>
+      ("Ok"
+        (display* (form-fields) " -> " (form-values) "\n")
+        (cmd "Ok")))))
 
 (tm-widget (form2 cmd)
   (centered
@@ -787,12 +811,7 @@
       (toggle (display* "First " answer "\n") #f)
       (text "Second:")
       (toggle (display* "Second " answer "\n") #f)))
-  ---
-  (centered
-    (horizontal
-      (explicit-buttons
-       (glue #t #f 100 0)
-       ("Ok" (cmd "Ok"))))))
+  (bottom-buttons >> ("Ok" (cmd "Ok"))))
 
 (tm-define (show-form w)
   (dialogue-window w (lambda (x) (display* x "\n")) "Simple form"))

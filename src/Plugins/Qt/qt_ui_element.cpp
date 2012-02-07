@@ -916,8 +916,8 @@ qt_ui_element_rep::as_qwidget () {
 
 
 /******************************************************************************
- * Widgets for the construction of menus and dialogs
- ******************************************************************************/
+* Widgets for the construction of menus and dialogs
+******************************************************************************/
 
 // TeXmacs interface
 
@@ -931,7 +931,8 @@ widget aligned_widget (array<widget> lhs, array<widget> rhs, SI, SI, SI, SI) {
   for (int i=0; i<min(N(lhs),N(rhs)); i++) a << lhs[i] << rhs[i];
   return tile_menu (a, 2); }
 widget tabs_widget (array<widget> tabs, array<widget> bodies) {
-  (void) tabs; (void) bodies; FAILED ("not yet implemented"); }
+  (void) tabs; (void) bodies;
+  FAILED ("not yet implemented"); }
 widget tile_menu (array<widget> a, int cols) { return qt_ui_element_rep::create (qt_ui_element_rep::tile_menu, a, cols); }
 widget minibar_menu (array<widget> arr) { return qt_ui_element_rep::create (qt_ui_element_rep::minibar_menu, arr); }
 widget menu_separator (bool vertical) { return qt_ui_element_rep::create (qt_ui_element_rep::menu_separator, vertical); }
@@ -943,4 +944,8 @@ widget balloon_widget (widget w, widget help) { return qt_ui_element_rep::create
 widget text_widget (string s, int style, color col, bool tsp) { return qt_ui_element_rep::create (qt_ui_element_rep::text_widget, s, style, col, tsp); }
 widget xpm_widget (url file_name) { return qt_ui_element_rep::create (qt_ui_element_rep::xpm_widget, file_name); }
 widget toggle_widget (command cmd, bool on, int style) {
-  (void) cmd; (void) on; (void) style; FAILED ("not yet implemented"); }
+  (void) cmd; (void) on; (void) style;
+  FAILED ("not yet implemented"); }
+widget enum_widget (command cb, array<string> vals, int style, string w) {
+  (void) cb; (void) vals; (void) style; (void) w;
+  FAILED ("not yet implemented"); }

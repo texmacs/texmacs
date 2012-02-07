@@ -16,6 +16,7 @@
 #include "blackbox.hpp"
 #include "command.hpp"
 #include "timer.hpp"
+#define PIXEL 256
 
 class window_rep;
 typedef window_rep* window;
@@ -171,6 +172,9 @@ widget input_text_widget (command call_back, string type, array<string> def,
   // default inputs (the first one should be displayed, if there is one)
   // an optional width may be specified for the input field
   // the width is specified in TeXmacs length format with units em, px or w
+widget enum_widget (command cb, array<string> vals, string val,
+                    int st= 0, string w= "1w");
+  // select an input from a list of possible values
 
 /******************************************************************************
 * Other widgets
@@ -188,7 +192,8 @@ widget horizontal_list (array<widget> a);
 widget vertical_list (array<widget> a);
   // a vertical list made up of the widgets in a
 widget aligned_widget (array<widget> lhs, array<widget> rhs,
-                       SI hsep= 0, SI vsep= 0, SI lpad= 0, SI rpad= 0);
+                       SI hsep= 3*PIXEL, SI vsep= 3*PIXEL,
+                       SI lpad= 0, SI rpad= 0);
   // a table with two columns, the first one being right aligned and
   // the second one being left aligned
 widget tabs_widget (array<widget> tabs, array<widget> bodies);

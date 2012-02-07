@@ -37,8 +37,8 @@ toggle_widget_rep::toggle_widget_rep (command cmd2, bool on2, int style2):
   cmd (cmd2), on (on2), style (style2), dy (3*PIXEL)
 {
   bool mini= (style & WIDGET_STYLE_MINI) != 0;
-  if (mini) sz= 11*PIXEL;
-  else sz= 14*PIXEL;
+  if (mini) sz= 12*PIXEL;
+  else sz= 15*PIXEL;
 }
 
 void

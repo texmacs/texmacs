@@ -87,6 +87,11 @@
   `($input ,@(cdr x)))
 
 (tm-define (gui-menu-item x)
+  (:case enum)
+  (require-format x '(enum :%4))
+  `($enum ,@(cdr x)))
+
+(tm-define (gui-menu-item x)
   (:case toggle)
   (require-format x '(toggle :%2))
   `($toggle ,@(cdr x)))
@@ -190,22 +195,35 @@
   (:case padded)
   (require-format x '(padded :*))
   `($vlist
-     ($glue #f #f 0 5)
+     ($glue #f #f 0 10)
      ($hlist
-       ($glue #f #f 5 0)
+       ($glue #f #f 25 0)
        ($vlist ,@(map gui-menu-item (cdr x)))
-       ($glue #f #f 5 0))
-     ($glue #f #f 0 5)))
+       ($glue #f #f 25 0))
+     ($glue #f #f 0 10)))
 
 (tm-define (gui-menu-item x)
   (:case centered)
   (require-format x '(centered :*))
   `($vlist
+     ($glue #f #f 0 10)
+     ($hlist
+       ($glue #t #f 25 0)
+       ($vlist ,@(map gui-menu-item (cdr x)))
+       ($glue #t #f 25 0))
+     ($glue #f #f 0 10)))
+
+(tm-define (gui-menu-item x)
+  (:case bottom-buttons)
+  (require-format x '(bottom-buttons :*))
+  `($vlist
+     $---
      ($glue #f #f 0 5)
      ($hlist
-       ($glue #t #f 5 0)
-       ($vlist ,@(map gui-menu-item (cdr x)))
-       ($glue #t #f 5 0))
+       ($glue #f #f 5 0)
+       ($widget-style ,widget-style-button
+         ,@(map gui-menu-item (cdr x)))
+       ($glue #f #f 5 0))
      ($glue #f #f 0 5)))
 
 (tm-define (gui-menu-item x)

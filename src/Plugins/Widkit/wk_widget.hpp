@@ -90,7 +90,8 @@ wk_widget vertical_menu (array<wk_widget> a);
 wk_widget tile (array<wk_widget> a, int cols);
 wk_widget tile (array<wk_widget> a, int cols, array<string> name);
 wk_widget aligned_widget (array<wk_widget> lhs, array<wk_widget> rhs,
-			  SI hsep, SI vsep, SI lpad= 0, SI rpad= 0);
+			  SI hsep= 3*PIXEL, SI vsep= 3*PIXEL,
+                          SI lpad= 0, SI rpad= 0);
 wk_widget horizontal_array (array<wk_widget> a, int stretch_me= -1);
 wk_widget horizontal_array (array<wk_widget> a, array<string> s,
 			    int stretch_me= -1);
@@ -121,6 +122,8 @@ wk_widget input_text_wk_widget (command cb,
 wk_widget input_text_wk_widget (command cb, string type, array<string> def,
 				int style= 0, string w= "1w", bool pf= false);
 wk_widget inputs_list_wk_widget (command call_back, array<string> prompts);
+wk_widget enum_wk_widget (command cb, array<string> vals, string cur,
+                          int style= 0, string w= "1w");
 wk_widget file_chooser_wk_widget (command cmd, string type);
 wk_widget color_picker_wk_widget (command cmd, bool bg, array<tree> proposals);
 wk_widget balloon_widget (wk_widget w, wk_widget help);
