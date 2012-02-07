@@ -274,33 +274,73 @@
   (dynamic (compute-preferences-menu preferences-tree)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Preferences subwidgets
+;; Appearance preferences
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-preference-names "look and feel"
+  ("emacs" "Emacs")
+  ("gnome" "Gnome")
+  ("kde" "KDE")
+  ("macos" "Mac OS")
+  ("windows" "Windows"))
+
+(define-preference-names "language"
+  ("british" "British")
+  ("bulgarian" "Bulgarian")
+  ("chinese" "Chinese")
+  ("czech" "Czech")
+  ("dutch" "Dutch")
+  ("danish" "Danish")
+  ("english" "English")
+  ("finnish" "Finnish")
+  ("french" "French")
+  ("german" "German")
+  ("hungarian" "Hungarian")
+  ("italian" "Italian")
+  ("japanese" "Japanese")
+  ("korean" "Korean")
+  ("polish" "Polish")
+  ("portuguese" "Portuguese")
+  ("romanian" "Romanian")
+  ("russian" "Russian")
+  ("slovene" "Slovene")
+  ("spanish" "Spanish")
+  ("swedish" "Swedish")
+  ("taiwanese" "Taiwanese")
+  ("ukrainian" "Ukrainian"))
+
+(define-preference-names "interactive questions"
+  ("footer" "On the footer")
+  ("popup" "In popup windows"))
+
+(define-preference-names "detailed menus"
+  ("simple ""Simplified menus")
+  ("detailed" "Detailed menus"))
 
 (tm-widget (appearance-preferences-widget)
   (aligned
     (text "Look and feel:")
-    (enum (set-preference "look and feel" answer)
+    (enum (set-pretty-preference "look and feel" answer)
           '("Emacs" "Gnome" "KDE" "Mac OS" "Windows")
-          (get-preference "look and feel")
+          (get-pretty-preference "look and feel")
           "10em")
     (text "User interface language:")
-    (enum (set-preference "language" answer)
+    (enum (set-pretty-preference "language" answer)
           '("British" "Bulgarian" "Chinese" "Czech" "Dutch" "Danish"
             "English" "Finnish" "French" "German" "Hungarian" "Italian"
             "Japanese" "Korean" "Polish" "Portuguese" "Romanian" "Russian"
             "Slovene" "Spanish" "Swedish" "Taiwanese" "Ukrainian")
-          (get-preference "language")
+          (get-pretty-preference "language")
           "10em")
     (text "Interactive questions:")
-    (enum (set-preference "interactive questions" answer)
+    (enum (set-pretty-preference "interactive questions" answer)
           '("On the footer" "In popup windows")
-          (get-preference "interactive questions")
+          (get-pretty-preference "interactive questions")
           "10em")
     (text "Details in menus:")
-    (enum (set-preference "detailed menus" answer)
+    (enum (set-pretty-preference "detailed menus" answer)
           '("Simplified menus" "Detailed menus")
-          (get-preference "detailed menus")
+          (get-pretty-preference "detailed menus")
           "10em")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -319,3 +359,6 @@
           (toggle (display* "First " answer "\n") #f)
           (text "Second:")
           (toggle (display* "Second " answer "\n") #f))))))
+
+(tm-define (open-preferences)
+  (top-window preferences-widget "User preferences"))
