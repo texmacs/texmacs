@@ -420,7 +420,7 @@
 (tm-menu (focus-ancestor-icons t)
   (:require (doc-title-context? t))
   (minibar (dynamic (focus-title-icons)))
-  (glue #f #f 5 0))
+  //)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Focus menus for entering authors
@@ -457,9 +457,9 @@
 (tm-menu (focus-ancestor-icons t)
   (:require (doc-author-context? t))
   (minibar (dynamic (focus-title-icons)))
-  (glue #f #f 5 0)
+  //
   (minibar (dynamic (focus-author-icons)))
-  (glue #f #f 5 0))
+  //)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Focus menus for sections
@@ -489,7 +489,7 @@
 
 (tm-menu (focus-extra-icons t)
   (:require (section-context? t))
-  (glue #f #f 5 0)
+  //
   (mini #t
     (=> (eval (tm/section-get-title-string t))
 	(link focus-section-menu))))

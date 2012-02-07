@@ -642,7 +642,7 @@
 (tm-menu (standard-focus-icons t)
   (:require (tree-is-buffer? t))
   (dynamic (focus-style-icons t))  
-  (glue #f #f 5 0)
+  //
   (dynamic (focus-document-icons t))  
-  (glue #f #f 5 0)   
+  //   
   (dynamic (focus-document-extra-icons t)))

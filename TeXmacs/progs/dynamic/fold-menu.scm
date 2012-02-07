@@ -266,16 +266,16 @@
 (tm-menu (standard-focus-icons t)
   (:require (tree-is? t 'screens))
   (dynamic (focus-style-icons t))  
-  (glue #f #f 5 0)
+  //
   (minibar (dynamic (focus-insert-icons t)))
-  (glue #f #f 5 0)
+  //
   (minibar (dynamic (focus-tag-icons t)))
-  (glue #f #f 5 0)
+  //
   (with i (tree-index (tree-down t))
     (mini #t
       (=> (eval (get-slide-name (tree-ref t i) i))
           (dynamic (focus-slides-menu t)))))
   (assuming (slide-propose-title? t)
-    (glue #f #f 5 0)
+    //
     (minibar
      ((balloon "Title" "Insert title") (slide-insert-title t)))))

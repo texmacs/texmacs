@@ -729,11 +729,34 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget (widget1)
-  (aligned
-    (text "First:")
-    (toggle (display* "First " answer "\n") #f)
-    (text "Second:")
-    (toggle (display* "Second " answer "\n") #f)))
+  (centered
+    (aligned
+      (text "First:")
+      (toggle (display* "First " answer "\n") #f)
+      (text "Second:")
+      (toggle (display* "Second " answer "\n") #f))))
+
+(tm-widget (widget2)
+  (tabs
+    (tab (text "General")
+      (centered
+        (aligned
+          (text "First:")
+          (toggle (display* "First " answer "\n") #f)
+          (text "Second:")
+          (toggle (display* "Second " answer "\n") #f))))
+    (tab (text "Extra")
+      (centered
+        (aligned
+          (text "First:")
+          (toggle (display* "First " answer "\n") #f)
+          (text "Second:")
+          (toggle (display* "Second " answer "\n") #f)))
+      ---
+      (padded
+        (horizontal
+          (explicit-buttons
+            ("Cancel" (display "Cancel\n")) >> ("Ok" (display "Ok\n"))))))))
 
 (tm-define (show w)
   (top-window w "Simple widget"))
@@ -744,29 +767,32 @@
 
 (tm-widget (form1 cmd)
   (form "Test"
-    (aligned
-      (text "First:") (form-input "First" "string" '("gnu") "1w")
-      (text "Second:") (form-input "Second" "string" '("gnat") "1w"))
+    (centered
+      (aligned
+        (text "First:") (form-input "First" "string" '("gnu") "1w")
+        (text "Second:") (form-input "Second" "string" '("gnat") "1w")))
     ---
-    (horizontal
-      (explicit-buttons
-        ("Cancel" (cmd "Cancel"))
-	(glue #t #f 200 0)
-	("Ok"
-	  (display* (form-fields) " -> " (form-values) "\n")
-	  (cmd "Ok"))))))
+    (centered
+      (horizontal
+        (explicit-buttons
+          ("Cancel" (cmd "Cancel")) >>
+          ("Ok"
+            (display* (form-fields) " -> " (form-values) "\n")
+            (cmd "Ok")))))))
 
 (tm-widget (form2 cmd)
-  (aligned
-    (text "First:")
-    (toggle (display* "First " answer "\n") #f)
-    (text "Second:")
-    (toggle (display* "Second " answer "\n") #f))
+  (centered
+    (aligned
+      (text "First:")
+      (toggle (display* "First " answer "\n") #f)
+      (text "Second:")
+      (toggle (display* "Second " answer "\n") #f)))
   ---
-  (horizontal
-    (explicit-buttons
-      (glue #t #f 100 0)
-      ("Ok" (cmd "Ok")))))
+  (centered
+    (horizontal
+      (explicit-buttons
+       (glue #t #f 100 0)
+       ("Ok" (cmd "Ok"))))))
 
 (tm-define (show-form w)
   (dialogue-window w (lambda (x) (display* x "\n")) "Simple form"))

@@ -158,7 +158,7 @@
 
 (tm-define (gui-menu-item x)
   (:case tab)
-  (require-format x '(tab :*))
+  (require-format x '(tab :%1 :*))
   `($tab ,@(map gui-menu-item (cdr x))))
 
 (tm-define (gui-menu-item x)
@@ -185,6 +185,28 @@
   (:case extend)
   (require-format x '(extend :%1 :*))
   `($widget-extend ,@(map gui-menu-item (cdr x))))
+
+(tm-define (gui-menu-item x)
+  (:case padded)
+  (require-format x '(padded :*))
+  `($vlist
+     ($glue #f #f 0 5)
+     ($hlist
+       ($glue #f #f 5 0)
+       ($vlist ,@(map gui-menu-item (cdr x)))
+       ($glue #f #f 5 0))
+     ($glue #f #f 0 5)))
+
+(tm-define (gui-menu-item x)
+  (:case centered)
+  (require-format x '(centered :*))
+  `($vlist
+     ($glue #f #f 0 5)
+     ($hlist
+       ($glue #t #f 5 0)
+       ($vlist ,@(map gui-menu-item (cdr x)))
+       ($glue #t #f 5 0))
+     ($glue #f #f 0 5)))
 
 (tm-define (gui-menu-item x)
   (:case assuming)
@@ -218,13 +240,20 @@
 
 (tm-define (gui-menu-item x)
   ;;(display* "x= " x "\n")
-  (cond ((== x '---) '$---)
-	((== x '/) '$/)
-	((== x (string->symbol "|")) '$/)
+  (cond ((symbol? x)
+         (cond ((== x '---) '$---)
+               ((== x '===) (gui-menu-item '(glue #f #f 0 5)))
+               ((== x '/) '$/)
+               ((== x '//) (gui-menu-item '(glue #f #f 5 0)))
+               ((== x '>>) (gui-menu-item '(glue #t #f 5 0)))
+               ((== x (string->symbol "|")) '$/)
+               (else
+                 (texmacs-error "gui-menu-item" "invalid menu item ~S" x))))
 	((string? x) x)
 	((and (pair? x) (or (string? (car x)) (pair? (car x))))
 	 `($> ,(gui-menu-item (car x)) ,@(cdr x)))
-        (else (texmacs-error "gui-menu-item" "invalid menu item ~S" x))))
+        (else
+          (texmacs-error "gui-menu-item" "invalid menu item ~S" x))))
 
 (tm-define (gui-menu-item x)
   (:case form)

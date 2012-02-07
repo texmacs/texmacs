@@ -106,7 +106,7 @@ tabs_widget_rep::handle_position (position_event ev) {
     cur_w += the_w + 2*PIXEL;
     xs << cur_w;
   }
-  a[l] << emit_position (0, 0, main_w, last_h, south_west);
+  a[l] << emit_position (0, 0, w, last_h, south_west);
   h1= last_h; h2= max_h;
 }
 
