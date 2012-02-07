@@ -45,6 +45,7 @@
   '(let let* lambda
     with-result and-let* setup-append-if
     while for repeat when unless assuming mini tile
+    define-preference-names
     with-focus-after
     logic-group logic-table logic-dispatcher
     with-aux with-action with-module with-cursor with-server

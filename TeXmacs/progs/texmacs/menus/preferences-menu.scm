@@ -344,6 +344,60 @@
           "10em")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Keyboard preferences
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-preference-names "automatic quotes"
+  ("default" "Default")
+  ("none" "Disabled")
+  ("dutch" "Dutch")
+  ("english" "English")
+  ("french" "French")
+  ("german" "German")
+  ("spanish" "Spanish")
+  ("swiss" "Swiss"))
+
+(define-preference-names "automatic brackets"
+  ("off" "Disabled")
+  ("mathematics" "Inside mathematics" "mathematics")
+  ("on" "Enabled"))
+
+(define-preference-names "cyrillic input method"
+  ("translit" "Translit")
+  ("jcuken" "Jcuken")
+  ("yawerty" "Yawerty")
+  ("koi8-r" "Koi8-r")
+  ("cp1251" "Cp1251"))
+
+(tm-widget (keyboard-preferences-widget)
+  (aligned
+    (text "Automatic quotes:")
+    (enum (set-pretty-preference "automatic quotes" answer)
+          '("Off" "Dutch" "English" "French" "German" "Spanish" "Swiss")
+          (get-pretty-preference "automatic quotes")
+          "10em")
+    (text "Automatic brackets:")
+    (enum (set-pretty-preference "automatic brackets" answer)
+          '("Disabled" "Enabled" "Inside mathematics")
+          (get-pretty-preference "automatic brackets")
+          "10em")
+    (text "Cyrillic input method:")
+    (enum (set-pretty-preference "cyrillic input method" answer)
+          '("Translit" "Jcuken" "Yawerty" "Koi8-r" "Cp1251")
+          (get-pretty-preference "cyrillic input method")
+          "10em")))
+
+;(-> "Remote control"
+;    (enum ("Left" "ir-left") "pageup" *)
+;    (enum ("Right" "ir-right") "pagedown" *)
+;    (enum ("Up" "ir-up") "home" *)
+;    (enum ("Down" "ir-down") "end" *)
+;    (enum ("Center" "ir-center") "return" "S-return" *)
+;    (enum ("Play" "ir-play") "F5" *)
+;    (enum ("Pause" "ir-pause") "escape" *)
+;    (enum ("Menu" "ir-menu") "." *))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences widget
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -354,11 +408,7 @@
         (dynamic (appearance-preferences-widget))))
     (tab (text "Keyboard")
       (centered
-        (aligned
-          (text "First:")
-          (toggle (display* "First " answer "\n") #f)
-          (text "Second:")
-          (toggle (display* "Second " answer "\n") #f))))))
+        (dynamic (keyboard-preferences-widget))))))
 
 (tm-define (open-preferences)
   (top-window preferences-widget "User preferences"))
