@@ -946,6 +946,7 @@ widget xpm_widget (url file_name) { return qt_ui_element_rep::create (qt_ui_elem
 widget toggle_widget (command cmd, bool on, int style) {
   (void) cmd; (void) on; (void) style;
   FAILED ("not yet implemented"); }
-widget enum_widget (command cb, array<string> vals, int style, string w) {
-  (void) cb; (void) vals; (void) style; (void) w;
+widget enum_widget (command cb, array<string> vals, string val,
+                    int style, string w) {
+  (void) cb; (void) vals; (void) val; (void) style; (void) w;
   FAILED ("not yet implemented"); }
