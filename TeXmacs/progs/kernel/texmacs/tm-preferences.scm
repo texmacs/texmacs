@@ -98,6 +98,12 @@
       ;;(display* "Get: " which ", " val " -> " pretty-val "\n")
       (or pretty-val val "Default"))))
 
+(tm-define (set-boolean-preference which val)
+  (set-preference which (if val "on" "off")))
+
+(tm-define (get-boolean-preference which)
+  (== (get-preference which) "on"))
+
 (define-public (set-preference-encode which x)
    `(ahash-set! preference-encode-table
                 (cons ,which ,(car x)) ,(cadr x)))

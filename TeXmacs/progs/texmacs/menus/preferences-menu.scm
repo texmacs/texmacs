@@ -421,6 +421,102 @@
             (get-preference "ir-menu") "5em"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Conversion preferences widget
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget (html-preferences-widget)
+  ===
+  (bold (text "TeXmacs -> Html"))
+  ===
+  (aligned
+    (toggle (set-boolean-preference "texmacs->html:css" answer)
+            (get-boolean-preference "texmacs->html:css"))
+    (text "Use CSS for more advanced formatting")
+    (toggle (set-boolean-preference "texmacs->html:mathml" answer)
+            (get-boolean-preference "texmacs->html:mathml"))
+    (text "Export mathematical formulas as MathML")
+    (toggle (set-boolean-preference "texmacs->html:images" answer)
+            (get-boolean-preference "texmacs->html:images"))
+    (text "Export mathematical formulas as images")))
+
+(tm-widget (latex-preferences-widget)
+  ===
+  (bold (text "TeXmacs -> LaTeX"))
+  ===
+  (aligned
+    (toggle (set-boolean-preference "texmacs->latex:replace-style" answer)
+            (get-boolean-preference "texmacs->latex:replace-style"))
+    (text "Replace TeXmacs styles with no LaTeX equivalents")
+    ;;(toggle (set-boolean-preference "texmacs->latex:expand-macros" answer)
+    ;;        (get-boolean-preference "texmacs->latex:expand-macros"))
+    ;;(text "Expand all TeXmacs macros with no LaTeX equivalents")
+    (toggle (set-boolean-preference "texmacs->latex:expand-user-macros" answer)
+            (get-boolean-preference "texmacs->latex:expand-user-macros"))
+    (text "Expand all user defined macros")
+    (toggle (set-boolean-preference "texmacs->latex:indirect-bib" answer)
+            (get-boolean-preference "texmacs->latex:indirect-bib"))
+    (text "Export bibliographies as links")
+    (toggle (set-boolean-preference "texmacs->latex:use-catcodes" answer)
+            (get-boolean-preference "texmacs->latex:use-catcodes"))
+    (text "Allow for catcode definitions in preamble")
+    (toggle (set-boolean-preference "texmacs->latex:use-macros" answer)
+            (get-boolean-preference "texmacs->latex:use-macros"))
+    (text "Allow for macro definitions in preamble")))
+
+(define-preference-names "texmacs->verbatim:encoding"
+  ("cork" "Cork")
+  ("iso-8859-1" "Iso-8859-1")
+  ("utf-8" "Utf-8"))
+
+(define-preference-names "verbatim->texmacs:encoding"
+  ("cork" "Cork")
+  ("iso-8859-1" "Iso-8859-1")
+  ("utf-8" "Utf-8"))
+
+(tm-widget (verbatim-preferences-widget)
+  ===
+  (bold (text "TeXmacs -> Verbatim"))
+  ===
+  (aligned
+    (toggle (set-boolean-preference "texmacs->verbatim:wrap" answer)
+            (get-boolean-preference "texmacs->verbatim:wrap"))
+    (text "Use line wrapping for lines which are longer than 80 characters"))
+  ===
+  (aligned
+    (text "Character encoding:")
+    (enum (set-pretty-preference "texmacs->verbatim:encoding" answer)
+          '("Cork" "Iso-8859-1" "Utf-8")
+          (get-pretty-preference "texmacs->verbatim:encoding")
+          "5em"))
+  ======
+  (bold (text "Verbatim -> TeXmacs"))
+  ===
+  (aligned
+    (toggle (set-boolean-preference "verbatim->texmacs:wrap" answer)
+            (get-boolean-preference "verbatim->texmacs:wrap"))
+    (text "Merge lines into paragraphs unless separated by blank lines"))
+  ===
+  (aligned
+    (text "Character encoding:")
+    (enum (set-pretty-preference "verbatim->texmacs:encoding" answer)
+          '("Cork" "Iso-8859-1" "Utf-8")
+          (get-pretty-preference "verbatim->texmacs:encoding")
+          "5em")))
+
+(tm-widget (conversion-preferences-widget)
+  ======
+  (tabs
+    (tab (text "Html")
+      (centered
+        (dynamic (html-preferences-widget))))
+    (tab (text "LaTeX")
+      (centered
+        (dynamic (latex-preferences-widget))))
+    (tab (text "Verbatim")
+      (centered
+        (dynamic (verbatim-preferences-widget))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences widget
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -431,7 +527,9 @@
         (dynamic (general-preferences-widget))))
     (tab (text "Keyboard")
       (centered
-        (dynamic (keyboard-preferences-widget))))))
+        (dynamic (keyboard-preferences-widget))))
+    (tab (text "Converters")
+      (dynamic (conversion-preferences-widget)))))
 
 (tm-define (open-preferences)
   (top-window preferences-widget "User preferences"))
