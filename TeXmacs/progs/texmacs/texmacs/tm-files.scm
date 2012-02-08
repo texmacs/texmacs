@@ -43,13 +43,14 @@
 (tm-define current-save-target (url-none))
 
 (define (secure-save-buffer file fm)
-    (when (not (url-exists? file))
+  (if (not (url-exists? file))
+      (texmacs-save-buffer file fm)
       (user-confirm
-       "File already exists. Overwrite existing file?" #f
-       (lambda (answ)
-	 (when answ
-	   (texmacs-save-buffer file fm)
-	   (activate-highlighting))))))
+	  "File already exists. Overwrite existing file?" #f
+	(lambda (answ)
+	  (when answ
+	    (texmacs-save-buffer file fm)
+	    (activate-highlighting))))))
 
 (tm-define (save-buffer . l)
   (if (and (pair? l) (url? (car l)))
