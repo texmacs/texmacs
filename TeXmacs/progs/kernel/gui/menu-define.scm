@@ -177,6 +177,11 @@
   `($widget-style ,widget-style-button ,@(map gui-menu-item (cdr x))))
 
 (tm-define (gui-menu-item x)
+  (:case bold)
+  (require-format x '(bold :*))
+  `($widget-style ,widget-style-bold ,@(map gui-menu-item (cdr x))))
+
+(tm-define (gui-menu-item x)
   (:case tile)
   (require-format x '(tile :integer? :*))
   `($tile ,(cadr x) ,@(map gui-menu-item (cddr x))))
@@ -261,9 +266,12 @@
   (cond ((symbol? x)
          (cond ((== x '---) '$---)
                ((== x '===) (gui-menu-item '(glue #f #f 0 5)))
+               ((== x '======) (gui-menu-item '(glue #f #f 0 15)))
                ((== x '/) '$/)
                ((== x '//) (gui-menu-item '(glue #f #f 5 0)))
+               ((== x '///) (gui-menu-item '(glue #f #f 15 0)))
                ((== x '>>) (gui-menu-item '(glue #t #f 5 0)))
+               ((== x '>>>) (gui-menu-item '(glue #t #f 15 0)))
                ((== x (string->symbol "|")) '$/)
                (else
                  (texmacs-error "gui-menu-item" "invalid menu item ~S" x))))

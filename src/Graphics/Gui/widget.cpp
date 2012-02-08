@@ -210,5 +210,6 @@ font
 get_default_styled_font (int style) {
   bool tt  = (style & WIDGET_STYLE_MONOSPACED) != 0;
   bool mini= (style & WIDGET_STYLE_MINI) != 0;
-  return get_default_font (tt, mini);
+  bool bold= (style & WIDGET_STYLE_BOLD) != 0;
+  return get_default_font (tt, mini, bold);
 }

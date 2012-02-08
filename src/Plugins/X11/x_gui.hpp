@@ -154,8 +154,8 @@ public:
   /******************************** Fonts ************************************/
   void set_shrinking_factor (int sfactor);
   void set_default_font (string name);
-  font default_font_sub (bool tt, bool mini);
-  font default_font (bool tt= false, bool mini= false);
+  font default_font_sub (bool tt, bool mini, bool bold);
+  font default_font (bool tt= false, bool mini= false, bool bold= false);
   void get_ps_char (Font fn, int c, metric& ex, glyph& gl);
   void load_system_font (string family, int size, int dpi,
 			 font_metric& fnm, font_glyphs& fng);

@@ -166,7 +166,7 @@
 (define-public remote-control-flag? #f)
 (define-public remote-control-remap (make-ahash-table))
 
-(define (cyrillic-input-method? what)
+(define-public (cyrillic-input-method? what)
   (== (get-preference "cyrillic input method") what))
 
 (texmacs-modes

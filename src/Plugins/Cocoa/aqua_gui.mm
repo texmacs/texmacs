@@ -429,7 +429,7 @@ set_default_font (string name) {
 }
 
 font
-get_default_font (bool tt, bool mini) {
+get_default_font (bool tt, bool mini, bool bold) {
   (void) tt; (void) mini;
   // get the default font or monospaced font (if tt is true)
 	

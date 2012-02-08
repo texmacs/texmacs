@@ -95,7 +95,7 @@
 (tm-define (get-pretty-preference which)
   (with val (get-preference which)
     (with pretty-val (ahash-ref preference-encode-table (cons which val))
-      (display* "Get: " which ", " val " -> " pretty-val "\n")
+      ;;(display* "Get: " which ", " val " -> " pretty-val "\n")
       (or pretty-val val "Default"))))
 
 (define-public (set-preference-encode which x)

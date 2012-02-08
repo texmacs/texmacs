@@ -136,20 +136,23 @@ x_gui_rep::set_default_font (string name) {
 }
 
 font
-x_gui_rep::default_font_sub (bool tt, bool mini) {
+x_gui_rep::default_font_sub (bool tt, bool mini, bool bold) {
   string s= the_default_font;
+  string series= (bold? string ("bold"): string ("medium"));
   if (s == "") s= "ecrm11@300";
   int i, j, n= N(s);
   for (j=0; j<n; j++) if ((s[j] >= '0') && (s[j] <= '9')) break;
   string fam= s (0, j);
   if (mini && fam == "ecrm") fam= "ecss";
+  if (bold && fam == "ecrm") fam= "ecbx";
+  if (bold && fam == "ecss") fam= "ecsx";
   for (i=j; j<n; j++) if (s[j] == '@') break;
   int sz= (j<n? as_int (s (i, j)): 10);
   if (j<n) j++;
   int dpi= (j<n? as_int (s (j, n)): 300);
   if (mini) { sz= (int) (0.6 * sz); dpi= (int) (1.3333333 * dpi); }
   if (use_macos_fonts ()) {
-    tree lucida_fn= tuple ("apple-lucida", "ss", "medium", "right");
+    tree lucida_fn= tuple ("apple-lucida", "ss", series, "right");
     lucida_fn << as_string (sz) << as_string ((int) (0.95 * dpi));
     return find_font (lucida_fn);
   }
@@ -161,7 +164,7 @@ x_gui_rep::default_font_sub (bool tt, bool mini) {
 	((ff == "cm") || (ff == "ec"))) {
       fam= "la" * fam (2, N(fam)); ff= "la"; if (sz<100) sz *= 100; }
     if (out_lan == "japanese" || out_lan == "korean") {
-      tree modern_fn= tuple ("modern", "ss", "medium", "right");
+      tree modern_fn= tuple ("modern", "ss", series, "right");
       modern_fn << as_string (sz) << as_string (dpi);
       return find_font (modern_fn);
     }
@@ -187,8 +190,8 @@ x_gui_rep::default_font_sub (bool tt, bool mini) {
 }
 
 font
-x_gui_rep::default_font (bool tt, bool mini) {
-  font fn= default_font_sub (tt, mini);
+x_gui_rep::default_font (bool tt, bool mini, bool bold) {
+  font fn= default_font_sub (tt, mini, bold);
   if (!tt && !mini) the_default_wait_font= fn;
   return fn;
 }
@@ -199,8 +202,8 @@ set_default_font (string name) {
 }
 
 font
-get_default_font (bool tt, bool mini) {
-  return the_gui->default_font (tt, mini);
+get_default_font (bool tt, bool mini, bool bold) {
+  return the_gui->default_font (tt, mini, bold);
 }
 
 /******************************************************************************

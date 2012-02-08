@@ -32,4 +32,4 @@
     (lazy-keyboard (text cyrillic cp1251-kbd) in-cyrillic-cp1251?))))
 
 (define-preferences
-  ("cyrillic input method" "" notify-cyrillic-input-method))
+  ("cyrillic input method" "none" notify-cyrillic-input-method))

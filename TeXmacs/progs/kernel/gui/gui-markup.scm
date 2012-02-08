@@ -25,6 +25,7 @@
 (define-public widget-style-inert 16)
 (define-public widget-style-button 32)
 (define-public widget-style-centered 64)
+(define-public widget-style-bold 128)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Control structures

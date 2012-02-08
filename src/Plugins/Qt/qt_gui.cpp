@@ -980,13 +980,13 @@ qt_gui_rep::update () {
 
 void
 set_default_font (string name) {
-        (void) name;
+  (void) name;
   // set the name of the default font
   // this is ignored since Qt handles fonts for the widgets
 }
 
 font
-get_default_font (bool tt, bool mini) {
+get_default_font (bool tt, bool mini, bool bold) {
   (void) tt; (void) mini;
   // get the default font or monospaced font (if tt is true)
         
@@ -1003,8 +1003,8 @@ void
 load_system_font (string family, int size, int dpi,
                   font_metric& fnm, font_glyphs& fng)
 {
-        (void) family; (void) size; (void) dpi; (void) fnm; (void) fng;
-        if (DEBUG_QT) cout << "load_system_font(): SHOULD NOT BE CALLED\n";
+  (void) family; (void) size; (void) dpi; (void) fnm; (void) fng;
+  if (DEBUG_QT) cout << "load_system_font(): SHOULD NOT BE CALLED\n";
 }
 
 /******************************************************************************

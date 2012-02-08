@@ -45,17 +45,29 @@ enum_command (wk_widget in, string val, command cb) {
 ******************************************************************************/
 
 wk_widget
-enum_wk_widget (command cb, array<string> vals, string v, int st, string w) {
+enum_wk_widget (command cb, array<string> vals, string val,
+                int style, string w) {
   int i, n= N(vals);
   array<string> def (1);
-  def[0]= v;
-  wk_widget in= input_text_wk_widget (cb, "string", def, st, w, true);
+  def[0]= val;
+  wk_widget in= input_text_wk_widget (cb, "string", def, style, w, true);
+  if (n == 0) return in;
+  bool editable= (val == "" || vals[n-1] == "");
+  if (vals[n-1] == "") { n= n-1; vals= range (vals, 0, n); }
   array<wk_widget> entries (n);
   for (i=0; i<n; i++) {
-    wk_widget txt= text_wk_widget (vals[i], st);
+    wk_widget txt= text_wk_widget (vals[i], style);
     command cmd= enum_command (in, vals[i], cb);
-    entries[i]= command_button (txt, cmd, st);
+    entries[i]= command_button (txt, cmd, style);
   }
   wk_widget menu= vertical_menu (entries);
-  return pulldown_button (in, menu, st);
+  if (!editable)
+    return pulldown_button (in, menu, style);
+  wk_widget v= text_wk_widget ("v", style);
+  wk_widget v_but= command_button (v, command (), style|WIDGET_STYLE_BUTTON);
+  wk_widget v_pop= pulldown_button (v_but, menu, style);
+  array<wk_widget> ret (2);
+  ret[0]= in;
+  ret[1]= v_pop;
+  return horizontal_list (ret);
 }

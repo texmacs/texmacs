@@ -69,9 +69,9 @@ string get_named_color (color c);
 
 void set_default_font (string name);
   // set the name of the default font
-font get_default_font (bool tt= false, bool mini= false);
+font get_default_font (bool tt= false, bool mini= false, bool bold= false);
   // get the default font, depending on desired characteristics:
-  // tt for a monospaced font and mini for a smaller font
+  // tt for a monospaced font, mini for a smaller font and bold for a bold font
 font get_default_styled_font (int style);
   // get the default font for a given style
   // (see widget.hpp for available styles)

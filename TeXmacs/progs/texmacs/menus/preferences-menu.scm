@@ -278,6 +278,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-preference-names "look and feel"
+  ("default" "Default")
   ("emacs" "Emacs")
   ("gnome" "Gnome")
   ("kde" "KDE")
@@ -317,11 +318,11 @@
   ("simple ""Simplified menus")
   ("detailed" "Detailed menus"))
 
-(tm-widget (appearance-preferences-widget)
+(tm-widget (general-preferences-widget)
   (aligned
     (text "Look and feel:")
     (enum (set-pretty-preference "look and feel" answer)
-          '("Emacs" "Gnome" "KDE" "Mac OS" "Windows")
+          '("Default" "Emacs" "Gnome" "KDE" "Mac OS" "Windows")
           (get-pretty-preference "look and feel")
           "10em")
     (text "User interface language:")
@@ -363,6 +364,7 @@
   ("on" "Enabled"))
 
 (define-preference-names "cyrillic input method"
+  ("none" "None")
   ("translit" "Translit")
   ("jcuken" "Jcuken")
   ("yawerty" "Yawerty")
@@ -383,19 +385,40 @@
           "10em")
     (text "Cyrillic input method:")
     (enum (set-pretty-preference "cyrillic input method" answer)
-          '("Translit" "Jcuken" "Yawerty" "Koi8-r" "Cp1251")
+          '("None" "Translit" "Jcuken" "Yawerty" "Koi8-r" "Cp1251")
           (get-pretty-preference "cyrillic input method")
-          "10em")))
-
-;(-> "Remote control"
-;    (enum ("Left" "ir-left") "pageup" *)
-;    (enum ("Right" "ir-right") "pagedown" *)
-;    (enum ("Up" "ir-up") "home" *)
-;    (enum ("Down" "ir-down") "end" *)
-;    (enum ("Center" "ir-center") "return" "S-return" *)
-;    (enum ("Play" "ir-play") "F5" *)
-;    (enum ("Pause" "ir-pause") "escape" *)
-;    (enum ("Menu" "ir-menu") "." *))
+          "10em"))
+  ======
+  (bold (text "Remote controllers with keyboard simulation"))
+  ===
+  (hlist
+    (aligned
+      (text "Left:")
+      (enum (set-preference "ir-left" answer) '("pageup" "")
+            (get-preference "ir-left") "5em")
+      (text "Right:")
+      (enum (set-preference "ir-right" answer) '("pagedown" "")
+            (get-preference "ir-right") "5em")
+      (text "Up:")
+      (enum (set-preference "ir-up" answer) '("home" "")
+            (get-preference "ir-up") "5em")
+      (text "Down:")
+      (enum (set-preference "ir-down" answer) '("end" "")
+            (get-preference "ir-down") "5em"))
+    ///
+    (aligned
+      (text "Center:")
+      (enum (set-preference "ir-center" answer) '("return" "S-return" "")
+            (get-preference "ir-center") "5em")
+      (text "Play:")
+      (enum (set-preference "ir-play" answer) '("F5" "")
+            (get-preference "ir-play") "5em")
+      (text "Pause:")
+      (enum (set-preference "ir-pause" answer) '("escape" "")
+            (get-preference "ir-pause") "5em")
+      (text "Menu:")
+      (enum (set-preference "ir-menu" answer) '("." "")
+            (get-preference "ir-menu") "5em"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences widget
@@ -403,9 +426,9 @@
 
 (tm-widget (preferences-widget)
   (tabs
-    (tab (text "Appearance")
+    (tab (text "General")
       (centered
-        (dynamic (appearance-preferences-widget))))
+        (dynamic (general-preferences-widget))))
     (tab (text "Keyboard")
       (centered
         (dynamic (keyboard-preferences-widget))))))
