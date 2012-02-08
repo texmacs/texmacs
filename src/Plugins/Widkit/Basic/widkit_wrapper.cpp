@@ -235,6 +235,11 @@ canvas_widget (widget w) {
 }
 
 widget
+scrollable_widget (widget wid, string w, string h, int style) {
+  return abstract (scrollable_widget (concrete (wid), w, h, style));
+}
+
+widget
 input_text_widget (command call_back, string type, array<string> def,
 		   int style, string width) {
   return abstract (input_text_wk_widget (call_back, type, def, style, width));

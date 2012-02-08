@@ -417,6 +417,7 @@
   (widget-vlist vertical_list (widget array_widget))
   (widget-aligned aligned_widget (widget array_widget array_widget))
   (widget-tabs tabs_widget (widget array_widget array_widget))
+  (widget-scrollable scrollable_widget (widget widget string string int))
   (object->promise-widget as_promise_widget (promise_widget object))
 
   ;; windows

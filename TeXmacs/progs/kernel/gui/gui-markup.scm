@@ -164,6 +164,10 @@
   (:synopsis "Tile layout of widgets")
   `(cons* 'tile ,columns ($list ,@l)))
 
+(tm-define-macro ($scrollable w h . l)
+  (:synopsis "Make a scrollable with give extents")
+  `(cons* 'scrollable ,w ,h ($list ,@l)))
+
 (tm-define $/
   (:synopsis "Horizontal separator")
   (string->symbol "|"))

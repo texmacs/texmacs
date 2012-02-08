@@ -950,3 +950,6 @@ widget enum_widget (command cb, array<string> vals, string val,
                     int style, string w) {
   (void) cb; (void) vals; (void) val; (void) style; (void) w;
   FAILED ("not yet implemented"); }
+widget scrollable_widget (widget wid, string w, string h, int style) {
+  (void) wid; (void) w; (void) h; (void) style;
+  FAILED ("not yet implemented"); }

@@ -187,6 +187,11 @@
   `($tile ,(cadr x) ,@(map gui-menu-item (cddr x))))
 
 (tm-define (gui-menu-item x)
+  (:case scrollable)
+  (require-format x '(scrollable :string? :string? :*))
+  `($scrollable ,(cadr x) ,(caddr x) ,@(map gui-menu-item (cdddr x))))
+
+(tm-define (gui-menu-item x)
   (:case minibar)
   (require-format x '(minibar :*))
   `(gui$minibar ,@(map gui-menu-item (cdr x))))

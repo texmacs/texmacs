@@ -120,26 +120,21 @@ input_widget_rep::cancel () {
 
 void
 input_widget_rep::handle_get_size (get_size_event ev) {
-  SI ex, ey;
-  if (win == NULL) gui_maximal_extents (ex, ey);
-  else win->get_size (ex, ey);
-  font fn= get_default_styled_font (style);
+  SI ww = decode_length (width, this, style);
+  SI dww= (SI) ((2*dw) / SHRINK);
   if (ends (width, "w") && is_double (width (0, N(width) - 1))) {
-    double x= as_double (width (0, N(width) - 1));
+    font fn= get_default_styled_font (style);
     if (ev->mode == -1) ev->w= 0;
     else if (ev->mode == 0);
-    else if (ev->mode == 1) ev->w= (SI) (x * ex);
-    ev->w= max (ev->w, (4 * fn->wquad + 2*dw) / SHRINK);
+    else if (ev->mode == 1) ev->w= ww;
+    ev->w= max (ev->w, (4*fn->wquad) / SHRINK + dww);
   }
-  else if (ends (width, "em") && is_double (width (0, N(width) - 2))) {
-    double x= as_double (width (0, N(width) - 2));
-    ev->w= (SI) ((x * fn->wquad + 2*dw) / SHRINK);
-  }
-  else if (ends (width, "px") && is_double (width (0, N(width) - 2))) {
-    double x= as_double (width (0, N(width) - 2));
-    ev->w= (SI) (x * PIXEL + (2*dw / SHRINK));
-  }
-  else if (ev->mode == 1) ev->w= ex;
+  else if (ends (width, "em") && is_double (width (0, N(width) - 2)))
+    ev->w= ww + dww;
+  else if (ends (width, "px") && is_double (width (0, N(width) - 2)))
+    ev->w= ww + dww;
+  else if (ev->mode == 1)
+    ev->w= ww;
   ev->h= text_h;
   abs_round (ev->w, ev->h);
 }

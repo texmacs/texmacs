@@ -200,6 +200,9 @@ widget aligned_widget (array<widget> lhs, array<widget> rhs,
   // the second one being left aligned
 widget tabs_widget (array<widget> tabs, array<widget> bodies);
   // a tab bar where one and only of the bodies can be selected
+widget scrollable_widget (widget wid, string w, string h, int style= 0);
+  // a widget of a given size, whose contents can be scrolled
+  // if the size of the inner contents exceed the specified size
 widget extend (widget w, array<widget> a);
   // extend the size of w to the maximum of the sizes of
   // the widgets in the list a

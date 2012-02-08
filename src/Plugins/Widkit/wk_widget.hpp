@@ -75,6 +75,8 @@ void wk_grab_pointer (wk_widget w);
 void wk_ungrab_pointer (wk_widget w);
 bool wk_has_pointer_grab (wk_widget w);
 
+SI decode_length (string s, wk_widget w, int style);
+
 #define WK_FAILED(msg) { wk_error (msg); FAILED ("widget_error"); }
 
 /******************************************************************************
@@ -117,6 +119,7 @@ wk_widget pullright_button (wk_widget w, promise<wk_widget> pw);
 wk_widget toggle_wk_widget (command cmd, bool on= false, int style= 0);
 wk_widget popup_widget (wk_widget w, gravity quit=center);
 wk_widget canvas_widget (wk_widget w, gravity grav=north_west, bool rf= false);
+wk_widget scrollable_widget (wk_widget wid, string w, string h, int style= 0);
 wk_widget input_text_wk_widget (command cb,
 				int style= 0, string w= "1w", bool pf= true);
 wk_widget input_text_wk_widget (command cb, string type, array<string> def,

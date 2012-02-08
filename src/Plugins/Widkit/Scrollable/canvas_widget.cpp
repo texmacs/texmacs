@@ -277,6 +277,36 @@ canvas_widget_rep::handle (event ev) {
 }
 
 /******************************************************************************
+* Resize widgets
+******************************************************************************/
+
+class resize_widget_rep: public basic_widget_rep {
+  SI width, height;
+public:
+  resize_widget_rep (wk_widget w, SI width, SI height);
+  operator tree ();
+  void handle_get_size (get_size_event ev);
+};
+
+resize_widget_rep::resize_widget_rep (wk_widget w, SI width2, SI height2):
+  basic_widget_rep (1), width (width2), height (height2) { a[0]= w; }
+
+resize_widget_rep::operator tree () {
+  return tree (TUPLE, "resize", (tree) a[0],
+	       as_tree (width), as_string (height));
+}
+
+void
+resize_widget_rep::handle_get_size (get_size_event ev) {
+  ev->w= width; ev->h= height;
+}
+
+wk_widget
+resize_widget (wk_widget w, SI width, SI height) {
+  return tm_new<resize_widget_rep> (w, width, height);
+}
+
+/******************************************************************************
 * exported routines
 ******************************************************************************/
 
@@ -288,4 +318,15 @@ set_scrollable (wk_widget w) {
 wk_widget
 canvas_widget (wk_widget w, gravity grav, bool request_focus) {
   return tm_new<canvas_widget_rep> (w, grav, request_focus);
+}
+
+wk_widget
+scrollable_widget (wk_widget wid, string w, string h, int style) {
+  wk_widget cv= canvas_widget (wid);
+  SI ww= decode_length (w, wid, style);
+  SI hh= decode_length (h, wid, style);
+  SI widw= ww, widh= hh;
+  wid << get_size (widw, widh);
+  cv << set_coord4 ("extents", 0, -widh, widw, 0);
+  return resize_widget (cv, ww, hh);
 }

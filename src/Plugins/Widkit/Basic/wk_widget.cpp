@@ -12,6 +12,8 @@
 #include "window.hpp"
 #include "Widkit/wk_widget.hpp"
 #include "Widkit/Event/basic_event.hpp"
+#include "analyze.hpp"
+#include "font.hpp"
 
 /******************************************************************************
 * Widget construction and destruction
@@ -171,4 +173,35 @@ bool
 wk_has_pointer_grab (wk_widget w) {
   return !is_nil (w) && w->win != NULL &&
     w->win->get_mouse_grab (abstract (w));
+}
+
+/******************************************************************************
+* Length conversions
+******************************************************************************/
+
+#define SHRINK 3
+
+SI
+decode_length (string width, wk_widget wid, int style) {
+  SI ex, ey;
+  if (wid->win == NULL) gui_maximal_extents (ex, ey);
+  else wid->win->get_size (ex, ey);
+  if (ends (width, "w") && is_double (width (0, N(width) - 1))) {
+    double x= as_double (width (0, N(width) - 1));
+    return (SI) (x * ex);
+  }
+  else if (ends (width, "h") && is_double (width (0, N(width) - 1))) {
+    double y= as_double (width (0, N(width) - 1));
+    return (SI) (y * ey);
+  }
+  else if (ends (width, "em") && is_double (width (0, N(width) - 2))) {
+    font fn= get_default_styled_font (style);
+    double x= as_double (width (0, N(width) - 2));
+    return (SI) ((x * fn->wquad) / SHRINK);
+  }
+  else if (ends (width, "px") && is_double (width (0, N(width) - 2))) {
+    double x= as_double (width (0, N(width) - 2));
+    return (SI) (x * PIXEL);
+  }
+  else return ex;
 }

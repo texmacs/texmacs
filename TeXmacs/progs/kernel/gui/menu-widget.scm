@@ -60,6 +60,7 @@
     (-> :menu-label :menu-item-list)
     (=> :menu-label :menu-item-list)
     (tile :integer? :menu-item-list)
+    (scrollable :string? :string? :menu-item-list)
     (if :%1 :menu-item-list)
     (when :%1 :menu-item-list)
     (mini :%1 :menu-item-list)
@@ -424,6 +425,12 @@
   (with (tag width . items) p
     (widget-tmenu (make-menu-items items style #f) width)))
 
+(define (make-scrollable p style)
+  "Make @(scrollable :string? :string? :menu-item-list) item."
+  (with (tag w h . items) p
+    (with inner (make-menu-items (list (cons 'vertical items)) style #f)
+      (widget-scrollable (car inner) w h style))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dynamic menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -543,6 +550,8 @@
       ,(lambda (p style bar?) (list (make-menu-submenu p style))))
   (tile (:integer? :*)
 	,(lambda (p style bar?) (list (make-menu-tile p style))))
+  (scrollable (:string? :string? :*)
+	      ,(lambda (p style bar?) (list (make-scrollable p style))))
   (if (:%1 :*)
       ,(lambda (p style bar?) (make-menu-if p style bar?)))
   (when (:%1 :*)
@@ -658,6 +667,7 @@
   (-> ,replace-procedures)
   (=> ,replace-procedures)
   (tile ,replace-procedures)
+  (scrollable ,replace-procedures)
   (if ,menu-expand-if)
   (when ,menu-expand-when)
   (mini ,menu-expand-mini)
@@ -784,6 +794,32 @@
                 "fun" "10em")))
       (bottom-buttons
         >> ("Ok" (display "Ok\n"))))))
+
+(tm-widget (widget3)
+  (centered
+    (aligned
+      (text "First:")
+      (toggle (display* "First " answer "\n") #f)
+      (text "Second:")
+      (toggle (display* "Second " answer "\n") #f))
+    (scrollable "100px" "100px"
+      (aligned
+        (text "First:")
+	(toggle (display* "First " answer "\n") #f)
+	(text "Second:")
+	(toggle (display* "Second " answer "\n") #f)
+	(text "Third:")
+	(toggle (display* "Third " answer "\n") #f)
+	(text "Fourth:")
+	(toggle (display* "Fourth " answer "\n") #f)
+	(text "Fifth:")
+	(toggle (display* "Fifth " answer "\n") #f)
+	(text "Sixth:")
+	(toggle (display* "Sixth " answer "\n") #f)
+	(text "Seventh:")
+	(toggle (display* "Seventh " answer "\n") #f)
+	(text "Eighth:")
+	(toggle (display* "Eighth " answer "\n") #f)))))
 
 (tm-define (show w)
   (top-window w "Simple widget"))
