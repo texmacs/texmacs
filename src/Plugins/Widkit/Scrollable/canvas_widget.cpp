@@ -307,6 +307,37 @@ resize_widget (wk_widget w, SI width, SI height) {
 }
 
 /******************************************************************************
+* Wrap scroll widgets
+******************************************************************************/
+
+class wrap_scroll_widget_rep: public basic_widget_rep {
+public:
+  wrap_scroll_widget_rep (wk_widget w);
+  operator tree ();
+  void handle_repaint (repaint_event ev);
+};
+
+wrap_scroll_widget_rep::wrap_scroll_widget_rep (wk_widget w):
+  basic_widget_rep (1) { a[0]= w; }
+
+wrap_scroll_widget_rep::operator tree () {
+  return tree (TUPLE, "wrap_scroll", (tree) a[0]);
+}
+
+void
+wrap_scroll_widget_rep::handle_repaint (repaint_event ev) {
+  renderer ren= win->get_renderer ();
+  layout_default (ren, ev->x1, ev->y1, ev->x2, ev->y2);
+  a[0] << emit_position (0, 0, w, h);
+  basic_widget_rep::handle_repaint (ev);
+}
+
+wk_widget
+wrap_scroll_widget (wk_widget w) {
+  return tm_new<wrap_scroll_widget_rep> (w);
+}
+
+/******************************************************************************
 * exported routines
 ******************************************************************************/
 
@@ -322,11 +353,13 @@ canvas_widget (wk_widget w, gravity grav, bool request_focus) {
 
 wk_widget
 scrollable_widget (wk_widget wid, string w, string h, int style) {
-  wk_widget cv= canvas_widget (wid);
+  wk_widget cv= canvas_widget (wrap_scroll_widget (wid));
   SI ww= decode_length (w, wid, style);
   SI hh= decode_length (h, wid, style);
+  abs_round (ww, hh);
   SI widw= ww, widh= hh;
   wid << get_size (widw, widh);
+  abs_round (widw, widh);
   cv << set_coord4 ("extents", 0, -widh, widw, 0);
   return resize_widget (cv, ww, hh);
 }

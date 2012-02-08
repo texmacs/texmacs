@@ -200,14 +200,14 @@ vertical_list_rep::handle_position (position_event ev) {
   SI  cur_h=0;
   for (i=0; i<N(a); i++) {
     SI the_w= w, the_h;
-    if (i<N(a)-1) {
-      min_w= w, min_h= h/N(a);
-      a[i] << get_size (min_w, min_h, -1);
-      max_w= w, max_h= h/N(a);
-      a[i] << get_size (max_w, max_h,  1);
-      the_h= (SI) (min_h+ stretch* (max_h- min_h));
-    }
-    else the_h= h+ cur_h;
+    //if (i<N(a)-1) {
+    min_w= w, min_h= h/N(a);
+    a[i] << get_size (min_w, min_h, -1);
+    max_w= w, max_h= h/N(a);
+    a[i] << get_size (max_w, max_h,  1);
+    the_h= (SI) (min_h+ stretch* (max_h- min_h));
+    //}
+    //else the_h= h+ cur_h;
     abs_round (the_h);
     a[i] << emit_position (0, cur_h, the_w, the_h);
     cur_h-=the_h;

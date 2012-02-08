@@ -797,12 +797,7 @@
 
 (tm-widget (widget3)
   (centered
-    (aligned
-      (text "First:")
-      (toggle (display* "First " answer "\n") #f)
-      (text "Second:")
-      (toggle (display* "Second " answer "\n") #f))
-    (scrollable "100px" "100px"
+    (scrollable "200px" "100px"
       (aligned
         (text "First:")
 	(toggle (display* "First " answer "\n") #f)
