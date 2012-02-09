@@ -893,7 +893,9 @@
                '("Third" "Fifth")))))
 
 (tm-widget (widget5)
-  (centered
+  ===
+  (hlist
+    //
     (hsplit
       (resize ("100px" "200px" "400px") ("50px" "100px" "150px")
         (scrollable
@@ -904,7 +906,9 @@
         (scrollable
           (choices (display* answer "\n")
                    '("First" "Second" "Third" "Fourth" "Fifth" "Sixth")
-                   '("Third" "Fifth")))))))
+                   '("Third" "Fifth")))))
+    //)
+  ===)
 
 (tm-define (show w)
   (top-window w "Simple widget"))
