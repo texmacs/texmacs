@@ -167,6 +167,21 @@ tmg_show_icon_bar (SCM arg1, SCM arg2) {
 }
 
 SCM
+tmg_show_side_tools (SCM arg1, SCM arg2) {
+  SCM_ASSERT_INT (arg1, SCM_ARG1, "show-side-tools");
+  SCM_ASSERT_BOOL (arg2, SCM_ARG2, "show-side-tools");
+
+  int in1= scm_to_int (arg1);
+  bool in2= scm_to_bool (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->show_side_tools (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_show_footer (SCM arg1) {
   SCM_ASSERT_BOOL (arg1, SCM_ARG1, "show-footer");
 
@@ -196,6 +211,19 @@ tmg_visible_icon_barP (SCM arg1) {
 
   // SCM_DEFER_INTS;
   bool out= get_server()->visible_icon_bar (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_visible_side_toolsP (SCM arg1) {
+  SCM_ASSERT_INT (arg1, SCM_ARG1, "visible-side-tools?");
+
+  int in1= scm_to_int (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= get_server()->visible_side_tools (in1);
   // SCM_ALLOW_INTS;
 
   return bool_to_scm (out);
@@ -1099,9 +1127,11 @@ initialize_glue_server () {
   scm_new_procedure ("window-get-property", (FN) tmg_window_get_property, 1, 0, 0);
   scm_new_procedure ("show-header", (FN) tmg_show_header, 1, 0, 0);
   scm_new_procedure ("show-icon-bar", (FN) tmg_show_icon_bar, 2, 0, 0);
+  scm_new_procedure ("show-side-tools", (FN) tmg_show_side_tools, 2, 0, 0);
   scm_new_procedure ("show-footer", (FN) tmg_show_footer, 1, 0, 0);
   scm_new_procedure ("visible-header?", (FN) tmg_visible_headerP, 0, 0, 0);
   scm_new_procedure ("visible-icon-bar?", (FN) tmg_visible_icon_barP, 1, 0, 0);
+  scm_new_procedure ("visible-side-tools?", (FN) tmg_visible_side_toolsP, 1, 0, 0);
   scm_new_procedure ("visible-footer?", (FN) tmg_visible_footerP, 0, 0, 0);
   scm_new_procedure ("full-screen-mode", (FN) tmg_full_screen_mode, 2, 0, 0);
   scm_new_procedure ("full-screen?", (FN) tmg_full_screenP, 0, 0, 0);

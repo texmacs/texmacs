@@ -73,6 +73,8 @@ operator << (tm_ostream& out, widget w) {
   else return w->print (out);
 }
 
+extern bool use_side_tools;
+
 /******************************************************************************
 * Widget style parameters
 ******************************************************************************/

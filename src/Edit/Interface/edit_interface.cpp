@@ -95,6 +95,8 @@ edit_interface_rep::resume () {
   SERVER (menu_icons (1, "(horizontal (link texmacs-mode-icons))"));
   SERVER (menu_icons (2, "(horizontal (link texmacs-focus-icons))"));
   SERVER (menu_icons (3, "(horizontal (link texmacs-extra-icons))"));
+  if (use_side_tools)
+    { SERVER (side_tools (0, "(vertical (link texmacs-side-tools))")); }
   cur_sb= 2;
   tp= make_cursor_accessible (tp, true);
   notify_change (THE_FOCUS + THE_EXTENTS + THE_CURSOR);
@@ -397,6 +399,8 @@ edit_interface_rep::apply_changes () {
       SERVER (menu_icons (1, "(horizontal (link texmacs-mode-icons))"));
       SERVER (menu_icons (2, "(horizontal (link texmacs-focus-icons))"));
       SERVER (menu_icons (3, "(horizontal (link texmacs-extra-icons))"));
+      if (use_side_tools)
+        { SERVER (side_tools (0, "(vertical (link texmacs-side-tools))")); }
       set_footer ();
       if (!get_renderer (this) -> interrupted ()) drd_update ();
       cache_memorize ();

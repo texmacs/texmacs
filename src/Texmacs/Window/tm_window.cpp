@@ -48,6 +48,7 @@ texmacs_window_widget (widget wid, tree geom) {
   int W, H;
   int w= geometry_w, h= geometry_h;
   int x= geometry_x, y= geometry_y;
+  if (use_side_tools) { w += 200; h += 100; }
   if (is_tuple (geom) && N (geom) >= 2) {
     w= as_int (geom[0]);
     h= as_int (geom[1]);
@@ -135,6 +136,15 @@ tm_window_rep::menu_icons (int which, string menu) {
 }
 
 void
+tm_window_rep::side_tools (int which, string tools) {
+  eval ("(lazy-initialize-force)");
+  widget w;
+  if (get_menu_widget (10 + which, tools, w)) {
+    if (which == 0) set_side_tools (wid, w);
+  }
+}
+
+void
 tm_window_rep::set_header_flag (bool flag) {
   set_header_visibility (wid, flag);
 }
@@ -145,6 +155,11 @@ tm_window_rep::set_icon_bar_flag (int which, bool flag) {
   else if (which == 1) set_mode_icons_visibility (wid, flag);
   else if (which == 2) set_focus_icons_visibility (wid, flag);
   else if (which == 3) set_user_icons_visibility (wid, flag);
+}
+
+void
+tm_window_rep::set_side_tools_flag (int which, bool flag) {
+  if (which == 0) set_side_tools_visibility (wid, flag);
 }
 
 bool
@@ -158,6 +173,12 @@ tm_window_rep::get_icon_bar_flag (int which) {
   else if (which == 1) return get_mode_icons_visibility (wid);
   else if (which == 2) return get_focus_icons_visibility (wid);
   else if (which == 3) return get_user_icons_visibility (wid);
+  else return false;
+}
+
+bool
+tm_window_rep::get_side_tools_flag (int which) {
+  if (which == 0) return get_side_tools_visibility (wid);
   else return false;
 }
 

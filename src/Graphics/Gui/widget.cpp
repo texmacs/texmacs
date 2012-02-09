@@ -213,3 +213,5 @@ get_default_styled_font (int style) {
   bool bold= (style & WIDGET_STYLE_BOLD) != 0;
   return get_default_font (tt, mini, bold);
 }
+
+bool use_side_tools= false;

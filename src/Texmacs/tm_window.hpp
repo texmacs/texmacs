@@ -46,10 +46,13 @@ public:
   bool get_menu_widget (int which, string menu, widget& w);
   void menu_main (string menu);
   void menu_icons (int which, string menu);
+  void side_tools (int which, string tools);
   void set_header_flag (bool flag);
   void set_icon_bar_flag (int which, bool flag);
+  void set_side_tools_flag (int which, bool flag);
   bool get_header_flag ();
   bool get_icon_bar_flag (int which);
+  bool get_side_tools_flag (int which);
 
   int  get_shrinking_factor ();
   void set_shrinking_factor (int sf);

@@ -160,6 +160,24 @@
     (link dynamic-icons)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The TeXmacs side tools
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (upward-context-trees t)
+  (cond ((tree-is-buffer? t) (list t))
+        ((tree-atomic? t) (upward-context-trees (tree-up t)))
+        (else (cons t (upward-context-trees (tree-up t))))))
+
+(tm-widget (texmacs-side-tool t)
+  ((eval (symbol->string (tree-label t)))
+   (tree-select t)))
+
+(tm-widget (texmacs-side-tools)
+  (for (t (upward-context-trees (cursor-tree)))
+    (dynamic (texmacs-side-tool t))
+    ===))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The mode dependent icon bar
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

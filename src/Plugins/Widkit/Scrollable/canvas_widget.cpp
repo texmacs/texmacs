@@ -308,7 +308,6 @@ resize_widget_rep::handle_get_size (get_size_event ev) {
   if (ev->mode == -1) { ww= minw; hh= minh; }
   else if (ev->mode == 1) { ww= maxw; hh= maxh; }
   else { ww= defw; hh= defh; }
-  //cout << ev->mode << " -> " << ww << ", " << hh << "\n";
   if (ww != "") ev->w= decode_length (ww, a[0], style);
   if (hh != "") ev->h= decode_length (hh, a[0], style);
   abs_round (ev->w, ev->h);

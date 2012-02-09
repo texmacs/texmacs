@@ -60,6 +60,8 @@ enum slot_id {
   SLOT_FOCUS_ICONS,
   SLOT_USER_ICONS_VISIBILITY,
   SLOT_USER_ICONS,
+  SLOT_SIDE_TOOLS_VISIBILITY,
+  SLOT_SIDE_TOOLS,
   SLOT_FOOTER_VISIBILITY,
   SLOT_LEFT_FOOTER,
   SLOT_RIGHT_FOOTER,
@@ -550,6 +552,24 @@ inline void
 set_user_icons (widget w, widget bar) {
   // set user icons bar
   write (w, SLOT_USER_ICONS, bar);
+}
+
+inline void
+set_side_tools_visibility (widget w, bool visible) {
+  // set visibility of user icons bar
+  send<bool> (w, SLOT_SIDE_TOOLS_VISIBILITY, visible);
+}
+
+inline bool
+get_side_tools_visibility (widget w) {
+  // get visibility of user icons bar
+  return query<bool> (w, SLOT_SIDE_TOOLS_VISIBILITY);
+}
+
+inline void
+set_side_tools (widget w, widget bar) {
+  // set user icons bar
+  write (w, SLOT_SIDE_TOOLS, bar);
 }
 
 inline void
