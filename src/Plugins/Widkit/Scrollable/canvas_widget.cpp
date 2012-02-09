@@ -288,6 +288,7 @@ public:
                      string w2, string h2, string w3, string j3);
   operator tree ();
   void handle_get_size (get_size_event ev);
+  void handle_repaint (repaint_event ev);
 };
 
 resize_widget_rep::resize_widget_rep (wk_widget w, int style2,
@@ -307,9 +308,16 @@ resize_widget_rep::handle_get_size (get_size_event ev) {
   if (ev->mode == -1) { ww= minw; hh= minh; }
   else if (ev->mode == 1) { ww= maxw; hh= maxh; }
   else { ww= defw; hh= defh; }
-  ev->w= decode_length (ww, a[0], style);
-  ev->h= decode_length (hh, a[0], style);
+  if (ww != "") ev->w= decode_length (ww, a[0], style);
+  if (hh != "") ev->h= decode_length (hh, a[0], style);
   abs_round (ev->w, ev->h);
+}
+
+void
+resize_widget_rep::handle_repaint (repaint_event ev) {
+  renderer ren= win->get_renderer ();
+  layout_default (ren, ev->x1, ev->y1, ev->x2, ev->y2);
+  basic_widget_rep::handle_repaint (ev);
 }
 
 wk_widget
