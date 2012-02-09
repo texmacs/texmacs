@@ -92,6 +92,16 @@
   `($enum ,@(cdr x)))
 
 (tm-define (gui-menu-item x)
+  (:case choice)
+  (require-format x '(choice :%3))
+  `($choice ,@(cdr x)))
+
+(tm-define (gui-menu-item x)
+  (:case choices)
+  (require-format x '(choices :%3))
+  `($choices ,@(cdr x)))
+
+(tm-define (gui-menu-item x)
   (:case toggle)
   (require-format x '(toggle :%2))
   `($toggle ,@(cdr x)))

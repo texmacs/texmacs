@@ -131,6 +131,8 @@ wk_widget input_text_wk_widget (command cb, string type, array<string> def,
 wk_widget inputs_list_wk_widget (command call_back, array<string> prompts);
 wk_widget enum_wk_widget (command cb, array<string> vals, string cur,
                           int style= 0, string w= "1w");
+wk_widget choice_wk_widget (command cb, array<string> vals, string val);
+wk_widget choice_wk_widget (command cb, array<string> vals, array<string> mc);
 wk_widget file_chooser_wk_widget (command cmd, string type);
 wk_widget color_picker_wk_widget (command cmd, bool bg, array<tree> proposals);
 wk_widget balloon_widget (wk_widget w, wk_widget help);

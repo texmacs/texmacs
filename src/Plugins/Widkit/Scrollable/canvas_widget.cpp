@@ -376,7 +376,7 @@ user_canvas_widget (wk_widget wid, int style) {
   wk_widget cv= canvas_widget (wrap_scroll_widget (wid));
   SI widw, widh;
   gui_maximal_extents (widw, widh);
-  wid << get_size (widw, widh);
+  wid << get_size (widw, widh, -1);
   abs_round (widw, widh);
   cv << set_coord4 ("extents", 0, -widh, widw, 0);
   return cv;

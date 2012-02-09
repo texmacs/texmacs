@@ -950,6 +950,12 @@ widget enum_widget (command cb, array<string> vals, string val,
                     int style, string w) {
   (void) cb; (void) vals; (void) val; (void) style; (void) w;
   FAILED ("not yet implemented"); }
+widget choice_widget (command cb, array<string> vals, string val) {
+  (void) cb; (void) vals; (void) val;
+  FAILED ("not yet implemented"); }
+widget choice_widget (command cb, array<string> vals, array<string> mc) {
+  (void) cb; (void) vals; (void) mc;
+  FAILED ("not yet implemented"); }
 widget user_canvas_widget (widget wid, int style= 0) {
   (void) wid; (void) style;
   FAILED ("not yet implemented"); }

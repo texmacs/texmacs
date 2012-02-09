@@ -46,6 +46,8 @@
     (symbol :string? :*)
     (input :%1 :string? :%1 :string?)
     (enum :%3 :string?)
+    (choice :%3)
+    (choices :%3)
     (toggle :%2)
     (horizontal :menu-item-list)
     (vertical :menu-item-list)
@@ -212,6 +214,16 @@
   (with (tag cmd vals val width) p
     (widget-enum (object->command (menu-protect cmd))
                  (vals) (val) style width)))
+
+(define (make-choice p style)
+  "Make @(choice :%3) item."
+  (with (tag cmd vals val) p
+    (widget-choice (object->command (menu-protect cmd)) (vals) (val))))
+
+(define (make-choices p style)
+  "Make @(choices :%3) item."
+  (with (tag cmd vals mc) p
+    (widget-choices (object->command (menu-protect cmd)) (vals) (mc))))
 
 (define (make-toggle p style)
   "Make @(toggle :%2) item."
@@ -546,6 +558,10 @@
          ,(lambda (p style bar?) (list (make-menu-input p style))))
   (enum (:%3 :string?)
         ,(lambda (p style bar?) (list (make-enum p style))))
+  (choice (:%3)
+          ,(lambda (p style bar?) (list (make-choice p style))))
+  (choices (:%3)
+           ,(lambda (p style bar?) (list (make-choices p style))))
   (toggle (:%2)
 	  ,(lambda (p style bar?) (list (make-toggle p style))))
   (link (:%1)
@@ -642,6 +658,12 @@
          ,(replace-procedures (cadddr p))
          ,(fifth p)))
 
+(define (menu-expand-choice p)
+  "Expand choice item @p."
+  `(,(car p) ,(replace-procedures (cadr p))
+             ,(replace-procedures (caddr p))
+             ,(replace-procedures (cadddr p))))
+
 (define (menu-expand-toggle p)
   "Expand toggle item @p."
   `(toggle ,(replace-procedures (cadr p))
@@ -686,6 +708,8 @@
   (symbol ,replace-procedures)
   (input ,menu-expand-input)
   (enum ,menu-expand-enum)
+  (choice ,menu-expand-choice)
+  (choices ,menu-expand-choice)
   (toggle ,menu-expand-toggle)
   (link ,menu-expand-link p)
   (horizontal ,(lambda (p) `(horizontal ,@(menu-expand-list (cdr p)))))
@@ -854,6 +878,19 @@
             (toggle (display* "Seventh " answer "\n") #f))
           (item (text "Eighth:")
             (toggle (display* "Eighth " answer "\n") #f)))))))
+
+(tm-widget (widget4)
+  (centered
+    (resize "200px" "50px"
+      (scrollable
+        (choice (display* answer "\n")
+                '("First" "Second" "Third" "Fourth" "Fifth" "Sixth")
+                "Third")))
+    ======
+    (resize "200px" "150px"
+      (choices (display* answer "\n")
+               '("First" "Second" "Third" "Fourth" "Fifth" "Sixth")
+               '("Third" "Fifth")))))
 
 (tm-define (show w)
   (top-window w "Simple widget"))

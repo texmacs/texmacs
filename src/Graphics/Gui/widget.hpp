@@ -176,7 +176,11 @@ widget input_text_widget (command call_back, string type, array<string> def,
   // the width is specified in TeXmacs length format with units em, px or w
 widget enum_widget (command cb, array<string> vals, string val,
                     int st= 0, string w= "1w");
-  // select an input from a list of possible values
+  // select a value from a list of possible values
+widget choice_widget (command cb, array<string> vals, string val);
+  // select a value from a long list of possible values
+widget choice_widget (command cb, array<string> vals, array<string> mc);
+  // select multiple values from a long list
 
 /******************************************************************************
 * Other widgets

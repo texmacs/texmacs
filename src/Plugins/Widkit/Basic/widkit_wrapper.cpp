@@ -272,6 +272,16 @@ enum_widget (command cb, array<string> vals, string v, int style, string w) {
 }
 
 widget
+choice_widget (command cb, array<string> vals, string v) {
+  return abstract (choice_wk_widget (cb, vals, v));
+}
+
+widget
+choice_widget (command cb, array<string> vals, array<string> mc) {
+  return abstract (choice_wk_widget (cb, vals, mc));
+}
+
+widget
 file_chooser_widget (command cmd, string type, bool save) {
   return abstract (file_chooser_wk_widget (cmd, type));
 }

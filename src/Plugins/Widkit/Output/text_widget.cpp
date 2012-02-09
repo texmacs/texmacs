@@ -80,12 +80,10 @@ text_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
 
 wk_widget
 text_wk_widget (string s, int style, bool tsp) {
-  (void) style;
   return tm_new<text_widget_rep> (s, style, black, tsp, false, 3*PIXEL, 0);
 }
 
 wk_widget
 menu_text_wk_widget (string s, int style, color col, bool tsp, bool tt) {
-  (void) style;
   return tm_new<text_widget_rep> (s, style, col, tsp, tt, 3*PIXEL, 0);
 }

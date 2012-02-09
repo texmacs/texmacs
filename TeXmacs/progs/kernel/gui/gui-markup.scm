@@ -271,6 +271,14 @@
   `(list 'enum (lambda (answer) ,cmd) (lambda () ,vals) (lambda () ,val)
          ,width))
 
+(tm-define-macro ($choice cmd vals val)
+  (:synopsis "Make a choice list")
+  `(list 'choice (lambda (answer) ,cmd) (lambda () ,vals) (lambda () ,val)))
+
+(tm-define-macro ($choices cmd vals mc)
+  (:synopsis "Make a multiple choice list")
+  `(list 'choices (lambda (answer) ,cmd) (lambda () ,vals) (lambda () ,mc)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Forms
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
