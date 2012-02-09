@@ -281,29 +281,41 @@ canvas_widget_rep::handle (event ev) {
 ******************************************************************************/
 
 class resize_widget_rep: public basic_widget_rep {
-  SI width, height;
+  int style;
+  string minw, minh, defw, defh, maxw, maxh;
 public:
-  resize_widget_rep (wk_widget w, SI width, SI height);
+  resize_widget_rep (wk_widget w, int style, string w1, string h1,
+                     string w2, string h2, string w3, string j3);
   operator tree ();
   void handle_get_size (get_size_event ev);
 };
 
-resize_widget_rep::resize_widget_rep (wk_widget w, SI width2, SI height2):
-  basic_widget_rep (1), width (width2), height (height2) { a[0]= w; }
+resize_widget_rep::resize_widget_rep (wk_widget w, int style2,
+                                      string w1, string h1,
+                                      string w2, string h2,
+                                      string w3, string h3):
+  basic_widget_rep (1), style (style2), minw (w1), minh (h1),
+  defw (w2), defh (h2), maxw (w3), maxh (h3) { a[0]= w; }
 
 resize_widget_rep::operator tree () {
-  return tree (TUPLE, "resize", (tree) a[0],
-	       as_tree (width), as_string (height));
+  return tree (TUPLE, "resize", (tree) a[0], defw, defh);
 }
 
 void
 resize_widget_rep::handle_get_size (get_size_event ev) {
-  ev->w= width; ev->h= height;
+  string ww, hh;
+  if (ev->mode == -1) { ww= minw; hh= minh; }
+  else if (ev->mode == 1) { ww= maxw; hh= maxh; }
+  else { ww= defw; hh= defh; }
+  ev->w= decode_length (ww, a[0], style);
+  ev->h= decode_length (hh, a[0], style);
+  abs_round (ev->w, ev->h);
 }
 
 wk_widget
-resize_widget (wk_widget w, SI width, SI height) {
-  return tm_new<resize_widget_rep> (w, width, height);
+resize_widget (wk_widget w, int style, string w1, string h1,
+               string w2, string h2, string w3, string h3) {
+  return tm_new<resize_widget_rep> (w, style, w1, h1, w2, h2, w3, h3);
 }
 
 /******************************************************************************
@@ -352,14 +364,24 @@ canvas_widget (wk_widget w, gravity grav, bool request_focus) {
 }
 
 wk_widget
-scrollable_widget (wk_widget wid, string w, string h, int style) {
+user_canvas_widget (wk_widget wid, int style) {
   wk_widget cv= canvas_widget (wrap_scroll_widget (wid));
-  SI ww= decode_length (w, wid, style);
-  SI hh= decode_length (h, wid, style);
-  abs_round (ww, hh);
-  SI widw= ww, widh= hh;
+  SI widw, widh;
+  gui_maximal_extents (widw, widh);
   wid << get_size (widw, widh);
   abs_round (widw, widh);
   cv << set_coord4 ("extents", 0, -widh, widw, 0);
-  return resize_widget (cv, ww, hh);
+  return cv;
+}
+
+wk_widget
+hsplit_widget (wk_widget l, wk_widget r) {
+  (void) l; (void) r;
+  FAILED ("not yet implemented");
+}
+
+wk_widget
+vsplit_widget (wk_widget t, wk_widget b) {
+  (void) t; (void) b;
+  FAILED ("not yet implemented");
 }

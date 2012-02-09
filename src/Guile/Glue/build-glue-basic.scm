@@ -417,7 +417,11 @@
   (widget-vlist vertical_list (widget array_widget))
   (widget-aligned aligned_widget (widget array_widget array_widget))
   (widget-tabs tabs_widget (widget array_widget array_widget))
-  (widget-scrollable scrollable_widget (widget widget string string int))
+  (widget-scrollable user_canvas_widget (widget widget int))
+  (widget-resize resize_widget (widget widget int string string
+                                       string string string string))
+  (widget-hsplit hsplit_widget (widget widget widget))
+  (widget-vsplit vsplit_widget (widget widget widget))
   (object->promise-widget as_promise_widget (promise_widget object))
 
   ;; windows

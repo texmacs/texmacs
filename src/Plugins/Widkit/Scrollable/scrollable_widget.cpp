@@ -141,69 +141,60 @@ scrollable_widget_rep::handle_position (position_event ev) { (void) ev;
 
 void
 scrollable_widget_rep::handle_set_widget (set_widget_event ev) {
-  if (ev->which == "hor-bar") { hor= ev->w.rep; return; }
-  if (ev->which == "ver-bar") { ver= ev->w.rep; return; }
-  attribute_widget_rep::handle_set_widget (ev);
+  if      (ev->which == "hor-bar") hor= ev->w.rep;
+  else if (ev->which == "ver-bar") ver= ev->w.rep;
+  else attribute_widget_rep::handle_set_widget (ev);
 }
 
 void
 scrollable_widget_rep::handle_get_coord1 (get_coord1_event ev) {
-  if (ev->which == "width") { ev->c1= w; return; }
-  if (ev->which == "height") { ev->c1= h; return; }
+  if      (ev->which == "width") ev->c1= w;
+  else if (ev->which == "height") ev->c1= h;
   else attribute_widget_rep::handle_get_coord1 (ev);
 }
 
 void
 scrollable_widget_rep::handle_get_coord2 (get_coord2_event ev) {
-  if (ev->which == "scroll position") {
-    ev->c1= scx; ev->c2= scy;
-    return;
-  }
+  if      (ev->which == "scroll position") {
+    ev->c1= scx; ev->c2= scy; }
+  else if (ev->which == "extra width") {
+    ev->c1= 0; ev->c2= 0; }
   else attribute_widget_rep::handle_get_coord2 (ev);
 }
 
 void
 scrollable_widget_rep::handle_get_coord4 (get_coord4_event ev) {
-  if (ev->which == "visible") {
+  if      (ev->which == "visible") {
     ev->c1= scx   ; ev->c2= scy -h;
     ev->c3= scx+ w; ev->c4= scy;
-    return;
   }
-  if (ev->which == "extents") {
+  else if (ev->which == "extents") {
     ev->c1= ex1; ev->c2= ey1;
     ev->c3= ex2; ev->c4= ey2;
-    return;
   }
   else attribute_widget_rep::handle_get_coord4 (ev);
 }
 
 void
 scrollable_widget_rep::handle_set_coord2 (set_coord2_event ev) {
-  if (ev->which == "scroll position") {
+  if      (ev->which == "scroll position")
     scroll_to (ev->c1, ev->c2);
-    return;
-  }
-  attribute_widget_rep::handle_set_coord2 (ev);
+  else if (ev->which == "extra width");
+  else attribute_widget_rep::handle_set_coord2 (ev);
 }
 
 void
 scrollable_widget_rep::handle_set_coord4 (set_coord4_event ev) {
-  if (ev->which == "extents") {
+  if (ev->which == "extents")
     set_extents (ev->c1, ev->c2, ev->c3, ev->c4);
-    return;
-  }
-  attribute_widget_rep::handle_set_coord4 (ev);
+  else attribute_widget_rep::handle_set_coord4 (ev);
 }
 
 void
 scrollable_widget_rep::handle_scroll (scroll_event ev) {
-  if (ev->which == "hor-bar") {
+  if      (ev->which == "hor-bar")
     scroll_event_hor (ev->c1, ev->c2, ev->c3);
-    return;
-  }
-  if (ev->which == "ver-bar") {
+  else if (ev->which == "ver-bar")
     scroll_event_ver (ev->c1, ev->c2, ev->c3);
-    return;
-  }
-  WK_FAILED ("invalid scroll");
+  else { WK_FAILED ("invalid scroll"); }
 }

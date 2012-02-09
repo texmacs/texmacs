@@ -52,6 +52,7 @@
     (hlist :menu-item-list)
     (vlist :menu-item-list)
     (aligned :menu-item-list)
+    (aligned-item :%2)
     (tabs :menu-item-list)
     (tab :menu-item-list)
     (minibar :menu-item-list)
@@ -60,7 +61,10 @@
     (-> :menu-label :menu-item-list)
     (=> :menu-label :menu-item-list)
     (tile :integer? :menu-item-list)
-    (scrollable :string? :string? :menu-item-list)
+    (scrollable :menu-item-list)
+    (resize :%2 :menu-item-list)
+    (hsplit :menu-item :menu-item)
+    (vsplit :menu-item :menu-item)
     (if :%1 :menu-item-list)
     (when :%1 :menu-item-list)
     (mini :%1 :menu-item-list)
@@ -358,18 +362,15 @@
   "Make @(vlist :menu-item-list) menu item."
   (widget-vlist (make-menu-items (cdr p) style #f)))
 
-(define (lhs l)
-  (if (or (null? l) (null? (cdr l))) (list)
-      (cons (car l) (lhs (cddr l)))))
+(define (make-aligned p style)
+  "Make @(aligned :menu-item-list) item."
+  (widget-aligned (make-menu-items (map cadr (cdr p)) style #f)
+                  (make-menu-items (map caddr (cdr p)) style #f)))
 
-(define (rhs l)
-  (if (or (null? l) (null? (cdr l))) (list)
-      (cons (cadr l) (rhs (cddr l)))))
-
-(define (make-menu-aligned p style)
-  "Make @(aligned :menu-item-list) menu item."
-  (widget-aligned (make-menu-items (lhs (cdr p)) style #f)
-                  (make-menu-items (rhs (cdr p)) style #f)))
+(define (make-aligned-item p style)
+  "Make @(aligned-item :2%) item."
+  (display* "Error 'make-aligned-item', " p ", " style "\n")
+  (list 'vlist))
 
 (define (tab-key x)
   (cadr x))
@@ -426,10 +427,35 @@
     (widget-tmenu (make-menu-items items style #f) width)))
 
 (define (make-scrollable p style)
-  "Make @(scrollable :string? :string? :menu-item-list) item."
+  "Make @(scrollable :menu-item-list) item."
+  (with (tag . items) p
+    (with inner (make-menu-items (list (cons 'vertical items)) style #f)
+      (widget-scrollable (car inner) style))))
+
+(define (decode-resize x)
+  (cond ((string? x) (list x x x))
+        ((list-3? x) x)
+        (else (make-menu-error "bad length in " (object->string x)))))
+
+(define (make-resize p style)
+  "Make @(resize :%2 :menu-item-list) item."
   (with (tag w h . items) p
     (with inner (make-menu-items (list (cons 'vertical items)) style #f)
-      (widget-scrollable (car inner) w h style))))
+      (with (w1 w2 w3) (decode-resize w)
+        (with (h1 h2 h3) (decode-resize h)
+          (widget-resize (car inner) style w1 h1 w2 h2 w3 h3))))))
+
+(define (make-hsplit p style)
+  "Make @(hsplit :menu-item :menu-item) item."
+  (with (tag . items) p
+    (with l (make-menu-items items style #f)
+      (widget-hsplit (car l) (cadr l)))))
+
+(define (make-vsplit p style)
+  "Make @(vsplit :menu-item :menu-item) item."
+  (with (tag . items) p
+    (with l (make-menu-items items style #f)
+      (widget-vsplit (car l) (cadr l)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dynamic menus
@@ -533,7 +559,9 @@
   (vlist (:*)
          ,(lambda (p style bar?) (list (make-menu-vlist p style))))
   (aligned (:*)
-         ,(lambda (p style bar?) (list (make-menu-aligned p style))))
+         ,(lambda (p style bar?) (list (make-aligned p style))))
+  (aligned-item (:%2)
+                ,(lambda (p style bar?) (list (make-aligned-item p style))))
   (tabs (:*)
         ,(lambda (p style bar?) (list (make-menu-tabs p style))))
   (tab (:*)
@@ -550,8 +578,14 @@
       ,(lambda (p style bar?) (list (make-menu-submenu p style))))
   (tile (:integer? :*)
 	,(lambda (p style bar?) (list (make-menu-tile p style))))
-  (scrollable (:string? :string? :*)
+  (scrollable (:*)
 	      ,(lambda (p style bar?) (list (make-scrollable p style))))
+  (resize (:%2 :*)
+      ,(lambda (p style bar?) (list (make-resize p style))))
+  (hsplit (:%2)
+          ,(lambda (p style bar?) (list (make-hsplit p style))))
+  (vsplit (:%2)
+          ,(lambda (p style bar?) (list (make-vsplit p style))))
   (if (:%1 :*)
       ,(lambda (p style bar?) (make-menu-if p style bar?)))
   (when (:%1 :*)
@@ -659,6 +693,7 @@
   (hlist ,(lambda (p) `(hlist ,@(menu-expand-list (cdr p)))))
   (vlist ,(lambda (p) `(vlist ,@(menu-expand-list (cdr p)))))
   (aligned ,(lambda (p) `(aligned ,@(menu-expand-list (cdr p)))))
+  (aligned-item ,(lambda (p) `(aligned-item ,@(menu-expand-list (cdr p)))))
   (tabs ,(lambda (p) `(tabs ,@(menu-expand-list (cdr p)))))
   (tab ,(lambda (p) `(tab ,@(menu-expand-list (cdr p)))))
   (minibar ,(lambda (p) `(minibar ,@(menu-expand-list (cdr p)))))
@@ -667,7 +702,10 @@
   (-> ,replace-procedures)
   (=> ,replace-procedures)
   (tile ,replace-procedures)
-  (scrollable ,replace-procedures)
+  (scrollable ,(lambda (p) `(scrollable ,@(menu-expand-list (cdr p)))))
+  (resize ,(lambda (p) `(resize ,@(menu-expand-list (cdr p)))))
+  (hsplit ,(lambda (p) `(hsplit ,@(menu-expand-list (cdr p)))))
+  (vsplit ,(lambda (p) `(vsplit ,@(menu-expand-list (cdr p)))))
   (if ,menu-expand-if)
   (when ,menu-expand-when)
   (mini ,menu-expand-mini)
@@ -758,63 +796,64 @@
 (tm-widget (widget1)
   (centered
     (aligned
-      (text "First:")
-      (toggle (display* "First " answer "\n") #f)
-      (text "Second:")
-      (toggle (display* "Second " answer "\n") #f))))
+      (item (text "First:")
+        (toggle (display* "First " answer "\n") #f))
+      (item (text "Second:")
+        (toggle (display* "Second " answer "\n") #f)))))
 
 (tm-widget (widget2)
   (tabs
     (tab (text "General")
       (centered
         (aligned
-          (text "First:")
-          (toggle (display* "First " answer "\n") #f)
-          (text "Second:")
-          (toggle (display* "Second " answer "\n") #f))))
+          (item (text "First:")
+            (toggle (display* "First " answer "\n") #f))
+          (item (text "Second:")
+            (toggle (display* "Second " answer "\n") #f)))))
     (tab (text "Extra")
       (centered
         (aligned
-          (text "First:")
-          (toggle (display* "First " answer "\n") #f)
-          (text "Second:")
-          (toggle (display* "Second " answer "\n") #f)))
+          (item (text "First:")
+            (toggle (display* "First " answer "\n") #f))
+          (item (text "Second:")
+            (toggle (display* "Second " answer "\n") #f))))
       (bottom-buttons
         ("Cancel" (display "Cancel\n")) >> ("Ok" (display "Ok\n"))))
     (tab (text "Settings")
       (centered
         (aligned
-          (text "First:")
-          (enum (display* "First " answer "\n")
-                '("gnu" "gnat" "zebra")
-                "zebra" "10em")
-          (text "Second:")
-          (enum (display* "Second " answer "\n")
-                '("fun" "foo" "bar")
-                "fun" "10em")))
+          (item (text "First:")
+            (enum (display* "First " answer "\n")
+                  '("gnu" "gnat" "zebra")
+                  "zebra" "10em"))
+          (item (text "Second:")
+            (enum (display* "Second " answer "\n")
+                  '("fun" "foo" "bar")
+                  "fun" "10em"))))
       (bottom-buttons
         >> ("Ok" (display "Ok\n"))))))
 
 (tm-widget (widget3)
   (centered
-    (scrollable "200px" "100px"
-      (aligned
-        (text "First:")
-	(toggle (display* "First " answer "\n") #f)
-	(text "Second:")
-	(toggle (display* "Second " answer "\n") #f)
-	(text "Third:")
-	(toggle (display* "Third " answer "\n") #f)
-	(text "Fourth:")
-	(toggle (display* "Fourth " answer "\n") #f)
-	(text "Fifth:")
-	(toggle (display* "Fifth " answer "\n") #f)
-	(text "Sixth:")
-	(toggle (display* "Sixth " answer "\n") #f)
-	(text "Seventh:")
-	(toggle (display* "Seventh " answer "\n") #f)
-	(text "Eighth:")
-	(toggle (display* "Eighth " answer "\n") #f)))))
+    (resize "200px" "100px"
+      (scrollable
+        (aligned
+          (item (text "First:")
+            (toggle (display* "First " answer "\n") #f))
+          (item (text "Second:")
+            (toggle (display* "Second " answer "\n") #f))
+          (item (text "Third:")
+            (toggle (display* "Third " answer "\n") #f))
+          (item (text "Fourth:")
+            (toggle (display* "Fourth " answer "\n") #f))
+          (item (text "Fifth:")
+            (toggle (display* "Fifth " answer "\n") #f))
+          (item (text "Sixth:")
+            (toggle (display* "Sixth " answer "\n") #f))
+          (item (text "Seventh:")
+            (toggle (display* "Seventh " answer "\n") #f))
+          (item (text "Eighth:")
+            (toggle (display* "Eighth " answer "\n") #f)))))))
 
 (tm-define (show w)
   (top-window w "Simple widget"))
@@ -827,21 +866,23 @@
   (form "Test"
     (centered
       (aligned
-        (text "First:") (form-input "First" "string" '("gnu") "1w")
-        (text "Second:") (form-input "Second" "string" '("gnat") "1w")))
+        (item (text "First:")
+          (form-input "First" "string" '("gnu") "1w"))
+        (item (text "Second:")
+          (form-input "Second" "string" '("gnat") "1w"))))
     (bottom-buttons
       ("Cancel" (cmd "Cancel")) >>
       ("Ok"
-        (display* (form-fields) " -> " (form-values) "\n")
-        (cmd "Ok")))))
+       (display* (form-fields) " -> " (form-values) "\n")
+       (cmd "Ok")))))
 
 (tm-widget (form2 cmd)
   (centered
     (aligned
-      (text "First:")
-      (toggle (display* "First " answer "\n") #f)
-      (text "Second:")
-      (toggle (display* "Second " answer "\n") #f)))
+      (item (text "First:")
+        (toggle (display* "First " answer "\n") #f))
+      (item (text "Second:")
+        (toggle (display* "Second " answer "\n") #f))))
   (bottom-buttons >> ("Ok" (cmd "Ok"))))
 
 (tm-define (show-form w)

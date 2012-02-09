@@ -109,7 +109,7 @@
 (tm-define (gui-menu-item x)
   (:case verbatim)
   (require-format x '(verbatim :*))
-  `($concat-text ,@(cdr x)))
+  `($verbatim-text ,@(cdr x)))
 
 (tm-define (gui-menu-item x)
   (:case check)
@@ -157,6 +157,16 @@
   `($aligned ,@(map gui-menu-item (cdr x))))
 
 (tm-define (gui-menu-item x)
+  (:case item)
+  (require-format x '(item :%2))
+  `($aligned-item ,@(map gui-menu-item (cdr x))))
+
+(tm-define (gui-menu-item x)
+  (:case meti)
+  (require-format x '(meti :%2))
+  `($aligned-item ,@(map gui-menu-item (reverse (cdr x)))))
+
+(tm-define (gui-menu-item x)
   (:case tabs)
   (require-format x '(tabs :*))
   `($tabs ,@(map gui-menu-item (cdr x))))
@@ -188,8 +198,23 @@
 
 (tm-define (gui-menu-item x)
   (:case scrollable)
-  (require-format x '(scrollable :string? :string? :*))
-  `($scrollable ,(cadr x) ,(caddr x) ,@(map gui-menu-item (cdddr x))))
+  (require-format x '(scrollable :*))
+  `($scrollable ,@(map gui-menu-item (cdr x))))
+
+(tm-define (gui-menu-item x)
+  (:case resize)
+  (require-format x '(resize :%2 :*))
+  `($resize ,(cadr x) ,(caddr x) ,@(map gui-menu-item (cdddr x))))
+
+(tm-define (gui-menu-item x)
+  (:case hsplit)
+  (require-format x '(hsplit :%2))
+  `($hsplit ,@(map gui-menu-item (cdr x))))
+
+(tm-define (gui-menu-item x)
+  (:case vsplit)
+  (require-format x '(vsplit :%2))
+  `($vsplit ,@(map gui-menu-item (cdr x))))
 
 (tm-define (gui-menu-item x)
   (:case minibar)

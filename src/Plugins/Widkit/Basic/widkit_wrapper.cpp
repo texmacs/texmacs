@@ -235,8 +235,24 @@ canvas_widget (widget w) {
 }
 
 widget
-scrollable_widget (widget wid, string w, string h, int style) {
-  return abstract (scrollable_widget (concrete (wid), w, h, style));
+user_canvas_widget (widget wid, int style) {
+  return abstract (user_canvas_widget (concrete (wid), style));
+}
+
+widget
+resize_widget (widget w, int style, string w1, string h1,
+               string w2, string h2, string w3, string h3) {
+  return abstract (resize_widget (concrete (w), style, w1, h1, w2, h2, w3, h3));
+}
+
+widget
+hsplit_widget (widget l, widget r) {
+  return abstract (hsplit_widget (concrete (l), concrete (r)));
+}
+
+widget
+vsplit_widget (widget t, widget b) {
+  return abstract (vsplit_widget (concrete (t), concrete (b)));
 }
 
 widget

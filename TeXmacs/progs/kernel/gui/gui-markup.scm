@@ -144,6 +144,10 @@
   (:synopsis "Align two column table")
   `(cons* 'aligned ($list ,@l)))
 
+(tm-define-macro ($aligned-item . l)
+  (:synopsis "Item in an aligned list")
+  `(cons* 'aligned-item ($list ,@l)))
+
 (tm-define-macro ($tabs . l)
   (:synopsis "A tab bar")
   `(cons* 'tabs ($list ,@l)))
@@ -164,9 +168,21 @@
   (:synopsis "Tile layout of widgets")
   `(cons* 'tile ,columns ($list ,@l)))
 
-(tm-define-macro ($scrollable w h . l)
-  (:synopsis "Make a scrollable with give extents")
-  `(cons* 'scrollable ,w ,h ($list ,@l)))
+(tm-define-macro ($scrollable . l)
+  (:synopsis "Make a scrollable widget")
+  `(cons* 'scrollable ($list ,@l)))
+
+(tm-define-macro ($resize w h . l)
+  (:synopsis "Resize the widget")
+  `(cons* 'resize ',w ',h ($list ,@l)))
+
+(tm-define-macro ($hsplit l r)
+  (:synopsis "Widget which is split horizontally into two parts")
+  `(list 'hsplit ,l ,r))
+
+(tm-define-macro ($vsplit t b)
+  (:synopsis "Widget which is split vertically into two parts")
+  `(list 'vsplit ,t ,b))
 
 (tm-define $/
   (:synopsis "Horizontal separator")

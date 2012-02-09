@@ -950,6 +950,16 @@ widget enum_widget (command cb, array<string> vals, string val,
                     int style, string w) {
   (void) cb; (void) vals; (void) val; (void) style; (void) w;
   FAILED ("not yet implemented"); }
-widget scrollable_widget (widget wid, string w, string h, int style) {
-  (void) wid; (void) w; (void) h; (void) style;
+widget user_canvas_widget (widget wid, int style= 0) {
+  (void) wid; (void) style;
+  FAILED ("not yet implemented"); }
+widget resize_widget (widget w, int style, string w1, string h1,
+                      string w2, string h2, string w3, string h3) {
+  (void) wid; (void) style; (void) w1; (void) h1; (void) w2; (void) h2; (void) w3; (void) h3;
+  FAILED ("not yet implemented"); }
+widget hsplit_widget (widget l, wk_widget r) {
+  (void) l; (void) r;
+  FAILED ("not yet implemented"); }
+widget vsplit_widget (widget t, wk_widget b) {
+  (void) t; (void) b;
   FAILED ("not yet implemented"); }

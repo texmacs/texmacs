@@ -4916,19 +4916,72 @@ tmg_widget_tabs (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_widget_scrollable (SCM arg1, SCM arg2, SCM arg3, SCM arg4) {
+tmg_widget_scrollable (SCM arg1, SCM arg2) {
   SCM_ASSERT_WIDGET (arg1, SCM_ARG1, "widget-scrollable");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "widget-scrollable");
-  SCM_ASSERT_STRING (arg3, SCM_ARG3, "widget-scrollable");
-  SCM_ASSERT_INT (arg4, SCM_ARG4, "widget-scrollable");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "widget-scrollable");
 
   widget in1= scm_to_widget (arg1);
-  string in2= scm_to_string (arg2);
-  string in3= scm_to_string (arg3);
-  int in4= scm_to_int (arg4);
+  int in2= scm_to_int (arg2);
 
   // SCM_DEFER_INTS;
-  widget out= scrollable_widget (in1, in2, in3, in4);
+  widget out= user_canvas_widget (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return widget_to_scm (out);
+}
+
+SCM
+tmg_widget_resize (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5, SCM arg6, SCM arg7, SCM arg8) {
+  SCM_ASSERT_WIDGET (arg1, SCM_ARG1, "widget-resize");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "widget-resize");
+  SCM_ASSERT_STRING (arg3, SCM_ARG3, "widget-resize");
+  SCM_ASSERT_STRING (arg4, SCM_ARG4, "widget-resize");
+  SCM_ASSERT_STRING (arg5, SCM_ARG5, "widget-resize");
+  SCM_ASSERT_STRING (arg6, SCM_ARG6, "widget-resize");
+  SCM_ASSERT_STRING (arg7, SCM_ARG7, "widget-resize");
+  SCM_ASSERT_STRING (arg8, SCM_ARG8, "widget-resize");
+
+  widget in1= scm_to_widget (arg1);
+  int in2= scm_to_int (arg2);
+  string in3= scm_to_string (arg3);
+  string in4= scm_to_string (arg4);
+  string in5= scm_to_string (arg5);
+  string in6= scm_to_string (arg6);
+  string in7= scm_to_string (arg7);
+  string in8= scm_to_string (arg8);
+
+  // SCM_DEFER_INTS;
+  widget out= resize_widget (in1, in2, in3, in4, in5, in6, in7, in8);
+  // SCM_ALLOW_INTS;
+
+  return widget_to_scm (out);
+}
+
+SCM
+tmg_widget_hsplit (SCM arg1, SCM arg2) {
+  SCM_ASSERT_WIDGET (arg1, SCM_ARG1, "widget-hsplit");
+  SCM_ASSERT_WIDGET (arg2, SCM_ARG2, "widget-hsplit");
+
+  widget in1= scm_to_widget (arg1);
+  widget in2= scm_to_widget (arg2);
+
+  // SCM_DEFER_INTS;
+  widget out= hsplit_widget (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return widget_to_scm (out);
+}
+
+SCM
+tmg_widget_vsplit (SCM arg1, SCM arg2) {
+  SCM_ASSERT_WIDGET (arg1, SCM_ARG1, "widget-vsplit");
+  SCM_ASSERT_WIDGET (arg2, SCM_ARG2, "widget-vsplit");
+
+  widget in1= scm_to_widget (arg1);
+  widget in2= scm_to_widget (arg2);
+
+  // SCM_DEFER_INTS;
+  widget out= vsplit_widget (in1, in2);
   // SCM_ALLOW_INTS;
 
   return widget_to_scm (out);
@@ -5548,7 +5601,10 @@ initialize_glue_basic () {
   scm_new_procedure ("widget-vlist", (FN) tmg_widget_vlist, 1, 0, 0);
   scm_new_procedure ("widget-aligned", (FN) tmg_widget_aligned, 2, 0, 0);
   scm_new_procedure ("widget-tabs", (FN) tmg_widget_tabs, 2, 0, 0);
-  scm_new_procedure ("widget-scrollable", (FN) tmg_widget_scrollable, 4, 0, 0);
+  scm_new_procedure ("widget-scrollable", (FN) tmg_widget_scrollable, 2, 0, 0);
+  scm_new_procedure ("widget-resize", (FN) tmg_widget_resize, 8, 0, 0);
+  scm_new_procedure ("widget-hsplit", (FN) tmg_widget_hsplit, 2, 0, 0);
+  scm_new_procedure ("widget-vsplit", (FN) tmg_widget_vsplit, 2, 0, 0);
   scm_new_procedure ("object->promise-widget", (FN) tmg_object_2promise_widget, 1, 0, 0);
   scm_new_procedure ("window-handle", (FN) tmg_window_handle, 0, 0, 0);
   scm_new_procedure ("window-create", (FN) tmg_window_create, 4, 0, 0);

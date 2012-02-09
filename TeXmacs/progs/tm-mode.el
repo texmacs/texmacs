@@ -29,6 +29,7 @@
     header-bar sequence short-bar short-tile minibar
     wrap-selection-any wrap-selection-small
     try-modification
+    tabs centered aligned bottom-buttons scrollable
     $begin $cond))
 
 (setq nullary-no-highlight
@@ -50,8 +51,7 @@
     logic-group logic-table logic-dispatcher
     with-aux with-action with-module with-cursor with-server
     user-ask
-    widget-with aspect block-input button form
-    input internal short-input
+    tab form item meti
     $when $let $let* $for))
 
 (setq unary-definitions
@@ -75,7 +75,7 @@
   '(with with-define with-global and-with with-innermost receive
     with-environment with-environment* converter
     user-confirm user-url
-    hidden-input pagelet radio-button toggle-button
+    resize
     $with))
 
 (setq binary-indent
@@ -93,7 +93,6 @@
     plugin-input-converters use-modules export import-from inherit-modules
     lazy-menu lazy-keyboard lazy-define lazy-initialize
     lazy-format lazy-language lazy-input-converter
-    form-cancel form-done form-next form-previous radio suggestions toggle
     $if))
 
 (setq highlight-definitions
