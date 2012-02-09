@@ -308,6 +308,7 @@ resize_widget_rep::handle_get_size (get_size_event ev) {
   if (ev->mode == -1) { ww= minw; hh= minh; }
   else if (ev->mode == 1) { ww= maxw; hh= maxh; }
   else { ww= defw; hh= defh; }
+  //cout << ev->mode << " -> " << ww << ", " << hh << "\n";
   if (ww != "") ev->w= decode_length (ww, a[0], style);
   if (hh != "") ev->h= decode_length (hh, a[0], style);
   abs_round (ev->w, ev->h);
@@ -323,6 +324,9 @@ resize_widget_rep::handle_repaint (repaint_event ev) {
 wk_widget
 resize_widget (wk_widget w, int style, string w1, string h1,
                string w2, string h2, string w3, string h3) {
+  //cout << "min: " << w1 << ", " << h1 << "\n";
+  //cout << "def: " << w2 << ", " << h2 << "\n";
+  //cout << "max: " << w3 << ", " << h3 << "\n";
   return tm_new<resize_widget_rep> (w, style, w1, h1, w2, h2, w3, h3);
 }
 
@@ -380,12 +384,6 @@ user_canvas_widget (wk_widget wid, int style) {
   abs_round (widw, widh);
   cv << set_coord4 ("extents", 0, -widh, widw, 0);
   return cv;
-}
-
-wk_widget
-hsplit_widget (wk_widget l, wk_widget r) {
-  (void) l; (void) r;
-  FAILED ("not yet implemented");
 }
 
 wk_widget

@@ -29,7 +29,7 @@
     header-bar sequence short-bar short-tile minibar
     wrap-selection-any wrap-selection-small
     try-modification
-    tabs centered aligned bottom-buttons scrollable
+    tabs centered aligned bottom-buttons scrollable hsplit vsplit
     $begin $cond))
 
 (setq nullary-no-highlight

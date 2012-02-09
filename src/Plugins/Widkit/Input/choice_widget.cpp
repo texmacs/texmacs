@@ -105,7 +105,7 @@ choice_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
       ren->clear (0, y + dy, 3*w, y);
       ren->set_background (white);
     }
-    if (i == over) layout_higher (ren, 0, y + dy, 3*w, y);
+    if (i == over) layout_dark_outline (ren, 0, y + dy, 3*w, y);
     ren->set_color (black);
     fn->var_get_extents (names[i], ex);
     fn ->draw (ren, names[i], 9*PIXEL, y-fn->y2-6*PIXEL);

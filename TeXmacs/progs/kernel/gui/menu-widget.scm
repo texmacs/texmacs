@@ -892,6 +892,20 @@
                '("First" "Second" "Third" "Fourth" "Fifth" "Sixth")
                '("Third" "Fifth")))))
 
+(tm-widget (widget5)
+  (centered
+    (hsplit
+      (resize ("100px" "200px" "400px") ("50px" "100px" "150px")
+        (scrollable
+          (choice (display* answer "\n")
+                  '("First" "Second" "Third" "Fourth" "Fifth" "Sixth")
+                  "Third")))
+      (resize ("100px" "200px" "400px") ("50px" "100px" "150px")
+        (scrollable
+          (choices (display* answer "\n")
+                   '("First" "Second" "Third" "Fourth" "Fifth" "Sixth")
+                   '("Third" "Fifth")))))))
+
 (tm-define (show w)
   (top-window w "Simple widget"))
 
