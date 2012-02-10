@@ -417,23 +417,30 @@ edit_interface_rep::apply_changes () {
   
   // cout << "Handling automatic resizing\n";
   int sb= 1;
-  if (is_attached (this) && get_init_string (PAGE_MEDIUM) == "automatic") {
-    SI wx, wy;
-    ::get_size (get_window (this), wx, wy);
-    if (get_init_string (SCROLL_BARS) == "false") sb= 0;
-    if (get_server () -> in_full_screen_mode ()) sb= 0;
+  if (is_attached (this) &&
+      get_server() -> has_window() &&
+      get_init_string (PAGE_MEDIUM) == "automatic")
+    {
+      SI wx, wy;
+      tm_window win= get_server () -> get_window ();
+      //cout << "\n";
+      //cout << "Getting size " << ((tree) concrete (win->wid)) << "\n";
+      ::get_size (win -> wid, wx, wy);
+      //::get_size (get_window (this), wx, wy);
+      if (get_init_string (SCROLL_BARS) == "false") sb= 0;
+      if (get_server () -> in_full_screen_mode ()) sb= 0;
 #ifdef QTTEXMACS
-    if (sb) wx -= 24 * PIXEL;
+      if (sb) wx -= 24 * PIXEL;
 #else
-    if (sb) wx -= 20 * PIXEL;
+      if (sb) wx -= 20 * PIXEL;
 #endif
-    if (wx != cur_wx || wy != cur_wy) {
-      cur_wx= wx; cur_wy= wy;
-      init_env (PAGE_SCREEN_WIDTH, as_string (wx*sfactor) * "tmpt");
-      init_env (PAGE_SCREEN_HEIGHT, as_string (wy*sfactor) * "tmpt");
-      notify_change (THE_ENVIRONMENT);
+      if (wx != cur_wx || wy != cur_wy) {
+	cur_wx= wx; cur_wy= wy;
+	init_env (PAGE_SCREEN_WIDTH, as_string (wx*sfactor) * "tmpt");
+	init_env (PAGE_SCREEN_HEIGHT, as_string (wy*sfactor) * "tmpt");
+	notify_change (THE_ENVIRONMENT);
+      }
     }
-  }
   if (sb != cur_sb) {
     cur_sb= sb;
     if (get_server() -> has_window()) {
