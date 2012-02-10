@@ -279,6 +279,14 @@
   (:synopsis "Make a multiple choice list")
   `(list 'choices (lambda (answer) ,cmd) (lambda () ,vals) (lambda () ,mc)))
 
+(tm-define-macro ($texmacs-output doc)
+  (:synopsis "Make TeXmacs output field")
+  `(list 'texmacs-output (lambda () ,doc)))
+
+(tm-define-macro ($texmacs-input doc cmd continuous?)
+  (:synopsis "Make TeXmacs input field")
+  `(list 'texmacs-input (lambda () ,doc) (lambda (answer) ,cmd) ,continuous?))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Forms
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

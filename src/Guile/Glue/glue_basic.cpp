@@ -5022,6 +5022,36 @@ tmg_widget_vsplit (SCM arg1, SCM arg2) {
 }
 
 SCM
+tmg_widget_texmacs_output (SCM arg1) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "widget-texmacs-output");
+
+  content in1= scm_to_content (arg1);
+
+  // SCM_DEFER_INTS;
+  widget out= texmacs_output_widget (in1);
+  // SCM_ALLOW_INTS;
+
+  return widget_to_scm (out);
+}
+
+SCM
+tmg_widget_texmacs_input (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "widget-texmacs-input");
+  SCM_ASSERT_COMMAND (arg2, SCM_ARG2, "widget-texmacs-input");
+  SCM_ASSERT_BOOL (arg3, SCM_ARG3, "widget-texmacs-input");
+
+  content in1= scm_to_content (arg1);
+  command in2= scm_to_command (arg2);
+  bool in3= scm_to_bool (arg3);
+
+  // SCM_DEFER_INTS;
+  widget out= texmacs_input_widget (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return widget_to_scm (out);
+}
+
+SCM
 tmg_object_2promise_widget (SCM arg1) {
   SCM_ASSERT_OBJECT (arg1, SCM_ARG1, "object->promise-widget");
 
@@ -5641,6 +5671,8 @@ initialize_glue_basic () {
   scm_new_procedure ("widget-resize", (FN) tmg_widget_resize, 8, 0, 0);
   scm_new_procedure ("widget-hsplit", (FN) tmg_widget_hsplit, 2, 0, 0);
   scm_new_procedure ("widget-vsplit", (FN) tmg_widget_vsplit, 2, 0, 0);
+  scm_new_procedure ("widget-texmacs-output", (FN) tmg_widget_texmacs_output, 1, 0, 0);
+  scm_new_procedure ("widget-texmacs-input", (FN) tmg_widget_texmacs_input, 3, 0, 0);
   scm_new_procedure ("object->promise-widget", (FN) tmg_object_2promise_widget, 1, 0, 0);
   scm_new_procedure ("window-handle", (FN) tmg_window_handle, 0, 0, 0);
   scm_new_procedure ("window-create", (FN) tmg_window_create, 4, 0, 0);

@@ -63,6 +63,23 @@ texmacs_window_widget (widget wid, tree geom) {
 }
 
 /******************************************************************************
+* Embedded TeXmacs widgets
+******************************************************************************/
+
+widget
+texmacs_output_widget (tree doc) {
+  widget wid= texmacs_widget (0, command ());
+  return wid;
+}
+
+widget
+texmacs_input_widget (tree doc, command cmd, bool continuous) {
+  (void) cmd; (void) continuous;
+  widget wid= texmacs_widget (0, command ());
+  return wid;
+}
+
+/******************************************************************************
 * Meta mathods
 ******************************************************************************/
 

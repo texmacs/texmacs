@@ -82,6 +82,16 @@
   `($colored-glue ,(second x) ,(third x) ,(fourth x) ,(fifth x) ,(sixth x)))
 
 (tm-define (gui-menu-item x)
+  (:case texmacs-output)
+  (require-format x '(texmacs-output :%1))
+  `($texmacs-output ,@(cdr x)))
+
+(tm-define (gui-menu-item x)
+  (:case texmacs-input)
+  (require-format x '(texmacs-input :%3))
+  `($texmacs-input ,@(cdr x)))
+
+(tm-define (gui-menu-item x)
   (:case input)
   (require-format x '(input :%4))
   `($input ,@(cdr x)))

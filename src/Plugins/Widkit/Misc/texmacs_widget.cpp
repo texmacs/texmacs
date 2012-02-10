@@ -422,13 +422,15 @@ texmacs_widget_rep::handle_get_string (get_string_event ev) {
 
 void
 texmacs_widget_rep::handle_set_coord2 (set_coord2_event ev) {
-  if (ev->which == "scroll position") THIS ["canvas"] << ev;
+  if (ev->which == "extra width" && ev->c1 == 0 && ev->c2 == 0) return;
+  else if (ev->which == "scroll position") THIS ["canvas"] << ev;
   else WK_FAILED ("could not set coord2 attribute " * ev->which);
 }
 
 void
 texmacs_widget_rep::handle_get_coord2 (get_coord2_event ev) {
-  if (ev->which == "scroll position") THIS ["canvas"] << ev;
+  if (ev->which == "extra width") { ev->c1= ev->c2= 0; return; }
+  else if (ev->which == "scroll position") THIS ["canvas"] << ev;
   else WK_FAILED ("could not get coord2 attribute " * ev->which);
 }
 

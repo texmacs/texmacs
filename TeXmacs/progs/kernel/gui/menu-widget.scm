@@ -44,6 +44,8 @@
     (color :%1 :boolean? :boolean? :integer? :integer?)
     (:menu-wide-label :%1)
     (symbol :string? :*)
+    (texmacs-output :%1)
+    (texmacs-input :%3)
     (input :%1 :string? :%1 :string?)
     (enum :%3 :string?)
     (choice :%3)
@@ -202,6 +204,16 @@
   "Make @(text :string?) menu item."
   ;;(widget-text s style (color "black") #t)
   (widget-text s style (color "black") #f))
+
+(define (make-texmacs-output p style)
+  "Make @(texmacs-output :%1) item."
+  (with (tag t) p
+    (widget-texmacs-output (t))))
+
+(define (make-texmacs-input p style)
+  "Make @(texmacs-input :%3) item."
+  (with (tag t cmd cont?) p
+    (widget-texmacs-input (t) (object->command (menu-protect cmd)) cont?)))
 
 (define (make-menu-input p style)
   "Make @(input :%1 :string? :%1 :string?) menu item."
@@ -554,6 +566,10 @@
 	 ,(lambda (p style bar?) (list (make-menu-text (cadr p) style))))
   (symbol (:string? :*)
 	  ,(lambda (p style bar?) (list (make-menu-symbol p style))))
+  (texmacs-output (:%1)
+    ,(lambda (p style bar?) (list (make-texmacs-output p style))))
+  (texmacs-input (:%3)
+    ,(lambda (p style bar?) (list (make-texmacs-input p style))))
   (input (:%1 :string? :%1 :string?)
          ,(lambda (p style bar?) (list (make-menu-input p style))))
   (enum (:%3 :string?)
@@ -643,6 +659,12 @@
     ;;(menu-expand value)
     (if (match? value ':menu-item) (menu-expand value) p)))
 
+(define (menu-expand-texmacs-input p)
+  "Expand texmacs-input item @p."
+  `(texmacs-input ,(replace-procedures (cadr p))
+                  ,(replace-procedures (caddr p))
+                  ,(cadddr p)))
+
 (define (menu-expand-input p)
   "Expand input menu item @p."
   `(input ,(replace-procedures (cadr p))
@@ -706,6 +728,8 @@
   (glue ,replace-procedures)
   (color ,replace-procedures)
   (symbol ,replace-procedures)
+  (texmacs-output ,replace-procedures)
+  (texmacs-input ,menu-expand-texmacs-input)
   (input ,menu-expand-input)
   (enum ,menu-expand-enum)
   (choice ,menu-expand-choice)
@@ -909,6 +933,13 @@
                    '("Third" "Fifth")))))
     //)
   ===)
+
+(tm-widget (widget6)
+  (centered
+    (resize "500px" "300px"
+      (texmacs-output
+        '(document (theorem (document "This is true"))
+                   (proof (document "Trivial")))))))
 
 (tm-define (show w)
   (top-window w "Simple widget"))
