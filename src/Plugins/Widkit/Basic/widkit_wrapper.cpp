@@ -358,44 +358,53 @@ check_type (blackbox bb, string s) {
 SI get_dx (gravity grav, SI w);
 SI get_dy (gravity grav, SI h);
 
+bool
+bad_parent (wk_widget wid) {
+  return wid->win != NULL && wid != concrete (wid->win->get_widget ()) [0];
+}
+
 void
 principal_widget_check (wk_widget wid) {
   // FIXME: Positions should really be computed relative to parent widgets.
   // Currently, we only allow geometry access of the unique child of
   // a window widget.
-  if (wid->win != NULL && wid != concrete (wid->win->get_widget ()) [0]) {
+  if (bad_parent (wid)) {
     cerr << "Widget= " << wid << "\n";
     FAILED ("invalid geometry access");
   }
 }
 
 void
-set_geometry (wk_widget wid, SI x, SI y, SI w, SI h, bool fatal= true) {
+set_geometry (wk_widget wid, SI x, SI y, SI w, SI h) {
   if (wid->is_window_widget ()) {
     wid->win->set_position (x, y);
     wid->win->set_size (w, h);
   }
   else {
-    if (fatal) // FIXME: we should use parent's coordinates
-      principal_widget_check (wid);
+    //principal_widget_check (wid);// FIXME: we should use parent's coordinates
     wid << emit_position (x, y, w, h, north_west);
   }
 }
 
 void
-get_geometry (wk_widget wid, SI& x, SI& y, SI& w, SI& h, bool fatal= true) {
+get_geometry (wk_widget wid, SI& x, SI& y, SI& w, SI& h) {
   if (wid->is_window_widget ()) {
     wid->win->get_position (x, y);
     wid->win->get_size (w, h);
     //cout << "Size == " << (w>>8) << ", " << (h>>8) << "\n";
   }
   else {
-    if (fatal) // FIXME: we should use parent's coordinates
-      principal_widget_check (wid);
+    //principal_widget_check (wid);// FIXME: we should use parent's coordinates
     x= wid->ox - get_dx (wid->grav, wid->w);
     y= wid->oy - get_dy (wid->grav, wid->h);
     w= wid->w;
     h= wid->h;
+
+    if (bad_parent (wid)) {
+      SI dx, dy;
+      wid->win->get_position (dx, dy);
+      x += dx; y += dy;
+    }
     //cout << "Size " << ((tree) wid) << " := " << (w>>8) << ", " << (h>>8) << "\n";
   }
 }
@@ -459,8 +468,8 @@ send_size (wk_widget w, blackbox val) {
   if (w->is_window_widget ()) w->win->set_size (p.x1, p.x2);
   else {
     SI x, y, W, H;
-    get_geometry (w, x, y, W, H, false);
-    set_geometry (w, x, y, p.x1, p.x2, false);
+    get_geometry (w, x, y, W, H);
+    set_geometry (w, x, y, p.x1, p.x2);
   }
 }
 
@@ -723,7 +732,7 @@ query_size (wk_widget w, int type_id) {
   typedef pair<SI,SI> coord2;
   ASSERT (type_id == type_helper<coord2>::id, "type mismatch");
   SI x, y, W, H;
-  get_geometry (w, x, y, W, H, false);
+  get_geometry (w, x, y, W, H);
   return close_box<coord2> (coord2 (W, H));
 }
 
