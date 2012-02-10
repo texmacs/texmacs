@@ -396,7 +396,7 @@ get_geometry (wk_widget wid, SI& x, SI& y, SI& w, SI& h, bool fatal= true) {
     y= wid->oy - get_dy (wid->grav, wid->h);
     w= wid->w;
     h= wid->h;
-    //cout << "Size := " << (w>>8) << ", " << (h>>8) << "\n";
+    //cout << "Size " << ((tree) wid) << " := " << (w>>8) << ", " << (h>>8) << "\n";
   }
 }
 

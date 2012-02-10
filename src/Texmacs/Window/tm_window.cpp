@@ -140,6 +140,7 @@ embedded_texmacs_widget (tree doc, bool output) {
   vw->win= win;
   vw->buf->in_menu= false;
   set_canvas (win->wid, vw->ed);
+  vw->ed->cvw= win->wid.rep;
   return win->wid;
 }
 

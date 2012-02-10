@@ -489,6 +489,9 @@ texmacs_widget_rep::handle_destroy (destroy_event ev) {
 bool
 texmacs_widget_rep::handle (event ev) {
   //cout << "handle " << ((event) ev) << LF;
+  //  if (ev->type == POSITION_EVENT) {
+  //  cout << "position: " << ((event) ev) << LF;
+  //}
   switch (ev->type) {
   case SET_INTEGER_EVENT:
     handle_set_integer (ev);
@@ -512,7 +515,12 @@ texmacs_widget_rep::handle (event ev) {
     handle_set_coord4 (ev);
     return true;
   default:
-    return basic_widget_rep::handle (ev);
+    {
+      //cout << "size< " << (w>>8) << ", " << (h>>8) << LF;
+      bool flag= basic_widget_rep::handle (ev);
+      //cout << "size> " << (w>>8) << ", " << (h>>8) << LF;
+      return flag;
+    }
   }
 }
 

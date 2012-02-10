@@ -48,6 +48,7 @@ extern bool enable_fastenv;
 class editor_rep: public simple_widget_rep {
 public:
   server_rep* sv;   // the underlying texmacs server
+  widget_rep* cvw;  // non reference counted canvas widget
 
 protected:
   tm_buffer   buf;  // the underlying buffer

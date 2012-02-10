@@ -422,11 +422,8 @@ edit_interface_rep::apply_changes () {
       get_init_string (PAGE_MEDIUM) == "automatic")
     {
       SI wx, wy;
-      tm_window win= get_server () -> get_window ();
-      //cout << "\n";
-      //cout << "Getting size " << ((tree) concrete (win->wid)) << "\n";
-      ::get_size (win -> wid, wx, wy);
-      //::get_size (get_window (this), wx, wy);
+      if (cvw == NULL) ::get_size (get_window (this), wx, wy);
+      else ::get_size (widget (cvw), wx, wy);
       if (get_init_string (SCROLL_BARS) == "false") sb= 0;
       if (get_server () -> in_full_screen_mode ()) sb= 0;
 #ifdef QTTEXMACS
