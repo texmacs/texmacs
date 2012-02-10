@@ -36,9 +36,8 @@ tm_window_rep::tm_window_rep (widget wid2, tree geom):
   sfactor= get_server () -> get_default_shrinking_factor ();
 }
 
-tm_window_rep::tm_window_rep (tree doc):
-  win (texmacs_widget (0, command ())),
-  // FIXME: use clean quit command
+tm_window_rep::tm_window_rep (tree doc, command quit):
+  win (texmacs_widget (0, quit)),
   wid (win), id (-1),
   serial (tm_window_serial++),
   menu_current (object ()), menu_cache (widget ()),
@@ -75,6 +74,34 @@ texmacs_window_widget (widget wid, tree geom) {
 }
 
 /******************************************************************************
+* Closing embedded TeXmacs widgets
+******************************************************************************/
+
+class close_embedded_command_rep: public command_rep {
+  tm_view vw;
+public:
+  close_embedded_command_rep (tm_view vw2): vw (vw2) {}
+  void apply ();
+  tm_ostream& print (tm_ostream& out) {
+    return out << "Close_Embedded widget command"; }
+};
+
+void
+close_embedded_command_rep::apply () {
+  cout << "Destroy " << vw->buf->name << "\n";
+  tm_window win= vw->win;
+  ASSERT (N(vw->buf->vws) == 1, "invalid cloned embedded TeXmacs widget");
+  get_server () -> delete_buffer (vw->buf);
+  //destroy_window_widget (win->win);
+  tm_delete (win);
+}
+
+command
+close_embedded_command (tm_view vw) {
+  return tm_new<close_embedded_command_rep> (vw);
+}
+
+/******************************************************************************
 * Embedded TeXmacs widgets
 ******************************************************************************/
 
@@ -106,14 +133,14 @@ widget
 embedded_texmacs_widget (tree doc, bool output) {
   doc= enrich_embedded_document (doc);
   string    name= embedded_name ();
-  tm_window win = tm_new<tm_window_rep> (doc);
   tm_buffer buf = get_server () -> new_buffer (url (name), doc);
   tm_view   vw  = get_server () -> get_passive_view (buf);
+  tm_window win = tm_new<tm_window_rep> (doc, close_embedded_command (vw));
   get_server () -> set_aux (name, name);
   vw->win= win;
-  widget wid= win->wid;
-  set_canvas (wid, vw->ed);
-  return wid;
+  vw->buf->in_menu= false;
+  set_canvas (win->wid, vw->ed);
+  return win->wid;
 }
 
 widget

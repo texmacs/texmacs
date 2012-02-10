@@ -99,7 +99,7 @@ tm_data_rep::get_buffer_menu () {
       menu_append_buffer (s, bufs[i]);
       count++;
     }
-    else two_types= true;
+    else if (bufs[i]->in_menu) two_types= true;
     if (count == 10) break;
   }
   if (two_types) {
