@@ -12,6 +12,7 @@
 #include "tm_window.hpp"
 #include "message.hpp"
 #include "dictionary.hpp"
+#include "merge_sort.hpp"
 
 int geometry_w= 800, geometry_h= 600;
 int geometry_x= 0  , geometry_y= 0;
@@ -35,8 +36,19 @@ tm_window_rep::tm_window_rep (widget wid2, tree geom):
   sfactor= get_server () -> get_default_shrinking_factor ();
 }
 
+tm_window_rep::tm_window_rep (tree doc):
+  win (texmacs_widget (0, command ())),
+  // FIXME: use clean quit command
+  wid (win), id (-1),
+  serial (tm_window_serial++),
+  menu_current (object ()), menu_cache (widget ()),
+  text_ptr (NULL)
+{
+  sfactor= get_server () -> get_default_shrinking_factor ();
+}
+
 tm_window_rep::~tm_window_rep () {
-  destroy_window_id (id);
+  if (id != -1) destroy_window_id (id);
 }
 
 /******************************************************************************
@@ -66,17 +78,53 @@ texmacs_window_widget (widget wid, tree geom) {
 * Embedded TeXmacs widgets
 ******************************************************************************/
 
+string
+embedded_name () {
+  static int nr= 0;
+  nr++;
+  return "* Embedded " * as_string (nr) * " *";
+}
+
+tree
+enrich_embedded_document (tree body) {
+  tree style= "generic";
+  hashmap<string,tree> initial (UNINIT);
+  initial (PAGE_MEDIUM)= "automatic";
+  initial (PAGE_SCREEN_LEFT)= "4px";
+  initial (PAGE_SCREEN_RIGHT)= "4px";
+  initial (PAGE_SCREEN_TOP)= "2px";
+  initial (PAGE_SCREEN_BOT)= "2px";
+  tree doc (DOCUMENT);
+  doc << compound ("TeXmacs", TEXMACS_VERSION);
+  doc << compound ("style", tree (TUPLE, "generic"));
+  doc << compound ("body", body);
+  doc << compound ("initial", make_collection (initial));
+  return doc;
+}
+
+widget
+embedded_texmacs_widget (tree doc, bool output) {
+  doc= enrich_embedded_document (doc);
+  string    name= embedded_name ();
+  tm_window win = tm_new<tm_window_rep> (doc);
+  tm_buffer buf = get_server () -> new_buffer (url (name), doc);
+  tm_view   vw  = get_server () -> get_passive_view (buf);
+  get_server () -> set_aux (name, name);
+  vw->win= win;
+  widget wid= win->wid;
+  set_canvas (wid, vw->ed);
+  return wid;
+}
+
 widget
 texmacs_output_widget (tree doc) {
-  widget wid= texmacs_widget (0, command ());
-  return wid;
+  return embedded_texmacs_widget (doc, false);
 }
 
 widget
 texmacs_input_widget (tree doc, command cmd, bool continuous) {
   (void) cmd; (void) continuous;
-  widget wid= texmacs_widget (0, command ());
-  return wid;
+  return embedded_texmacs_widget (doc, false);
 }
 
 /******************************************************************************

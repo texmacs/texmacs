@@ -735,12 +735,14 @@ query_position (wk_widget w, int type_id) {
 blackbox
 query_keyboard_focus (wk_widget w, int type_id) {
   ASSERT (type_id == type_helper<bool>::id, "type mismatch");
+  if (w->win == NULL) return close_box<bool> (false);
   return close_box<bool> (w->win->get_keyboard_focus (abstract (w)));
 }
 
 blackbox
 query_mouse_grab (wk_widget w, int type_id) {
   ASSERT (type_id == type_helper<bool>::id, "type mismatch");
+  if (w->win == NULL) return close_box<bool> (false);
   return close_box<bool> (w->win->get_mouse_grab (abstract (w)));
 }
 

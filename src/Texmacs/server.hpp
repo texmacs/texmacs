@@ -28,6 +28,11 @@ public:
   server_rep ();
   virtual ~server_rep ();
 
+  /* low level */
+  virtual tm_buffer new_buffer (url name, tree doc) = 0;
+  virtual void attach_view (tm_window win, tm_view vw) = 0;
+  virtual tm_view get_passive_view (tm_buffer buf) = 0;
+
   /* Get and set objects associated to server */
   virtual server_rep* get_server () = 0;
   virtual bool        has_view () = 0;

@@ -32,6 +32,7 @@ protected:
 
 public:
   tm_window_rep (widget wid2, tree geom);
+  tm_window_rep (tree doc);
   ~tm_window_rep ();
   void set_window_name (string s);
   void set_window_url (url u);

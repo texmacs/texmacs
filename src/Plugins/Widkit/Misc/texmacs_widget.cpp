@@ -345,15 +345,17 @@ texmacs_widget_rep::handle_set_widget (set_widget_event ev) {
   else if (ev->which == "interactive input")
     set_subwidget (THIS ["footer"] ["interactive"], "middle", ev->w);
   else if (ev->which == "scrollable") {
-    // FIXME: we manually take care of the keyboard focus
-    // this should be done more systematically when changing subwidgets
-    wk_widget old= THIS ["canvas"] ["scrollable"];
-    bool focus= query_keyboard_focus (abstract (old));
     THIS ["canvas"] << set_widget ("scrollable", ev->w);
-    THIS ["canvas"] << emit_attach_window (win);
-    if (focus) send_keyboard_focus (abstract (THIS ["canvas"]));
-    old << emit_attach_window (NULL);
-    THIS ["canvas"] << emit_update ();
+    if (attached ()) {
+      // FIXME: we manually take care of the keyboard focus
+      // this should be done more systematically when changing subwidgets
+      wk_widget old= THIS ["canvas"] ["scrollable"];
+      bool focus= query_keyboard_focus (abstract (old));
+      THIS ["canvas"] << emit_attach_window (win);
+      old << emit_attach_window (NULL);
+      if (focus) send_keyboard_focus (abstract (THIS ["canvas"]));
+      THIS ["canvas"] << emit_update ();
+    }
   }
   else a[0] << ev;
 }
@@ -486,7 +488,7 @@ texmacs_widget_rep::handle_destroy (destroy_event ev) {
 
 bool
 texmacs_widget_rep::handle (event ev) {
-  // cout << "handle " << ((event) ev) << LF;
+  //cout << "handle " << ((event) ev) << LF;
   switch (ev->type) {
   case SET_INTEGER_EVENT:
     handle_set_integer (ev);

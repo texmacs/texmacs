@@ -9,6 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include "rectangles.hpp"
 #include "window.hpp"
 #include "Widkit/basic_widget.hpp"
 #include "Widkit/Event/attribute_event.hpp"
@@ -316,7 +317,12 @@ resize_widget_rep::handle_get_size (get_size_event ev) {
 void
 resize_widget_rep::handle_repaint (repaint_event ev) {
   renderer ren= win->get_renderer ();
-  layout_default (ren, ev->x1, ev->y1, ev->x2, ev->y2);
+  rectangles r1= rectangle (ev->x1, ev->y1, ev->x2, ev->y2);
+  rectangles r2= rectangle (0, -h, w, 0);
+  rectangles rs= r1 - r2;
+  for (int i=0; i<N(rs); i++)
+    layout_default (ren, rs[i]->x1, rs[i]->y1, rs[i]->x2, rs[i]->y2);
+  //layout_default (ren, ev->x1, ev->y1, ev->x2, ev->y2);
   basic_widget_rep::handle_repaint (ev);
 }
 
