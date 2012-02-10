@@ -956,16 +956,16 @@ widget choice_widget (command cb, array<string> vals, string val) {
 widget choice_widget (command cb, array<string> vals, array<string> mc) {
   (void) cb; (void) vals; (void) mc;
   FAILED ("not yet implemented"); }
-widget user_canvas_widget (widget wid, int style= 0) {
+widget user_canvas_widget (widget wid, int style) {
   (void) wid; (void) style;
   FAILED ("not yet implemented"); }
 widget resize_widget (widget w, int style, string w1, string h1,
                       string w2, string h2, string w3, string h3) {
-  (void) wid; (void) style; (void) w1; (void) h1; (void) w2; (void) h2; (void) w3; (void) h3;
+  (void) w; (void) style; (void) w1; (void) h1; (void) w2; (void) h2; (void) w3; (void) h3;
   FAILED ("not yet implemented"); }
-widget hsplit_widget (widget l, wk_widget r) {
+widget hsplit_widget (widget l, widget r) {
   (void) l; (void) r;
   FAILED ("not yet implemented"); }
-widget vsplit_widget (widget t, wk_widget b) {
+widget vsplit_widget (widget t, widget b) {
   (void) t; (void) b;
   FAILED ("not yet implemented"); }
