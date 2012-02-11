@@ -206,6 +206,9 @@ widget aligned_widget (array<widget> lhs, array<widget> rhs,
   // the second one being left aligned
 widget tabs_widget (array<widget> tabs, array<widget> bodies);
   // a tab bar where one and only of the bodies can be selected
+widget wrapped_widget (widget w, command quit);
+  // copy of w, but with a separate reference counter,
+  // and with a command to be called upon destruction
 widget user_canvas_widget (widget wid, int style= 0);
   // a widget whose contents can be scrolled
   // if the size of the inner contents exceed the specified size

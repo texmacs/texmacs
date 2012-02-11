@@ -135,6 +135,11 @@ optional_widget (widget w, bool on) {
 }
 
 widget
+wrapped_widget (widget w, command cmd) {
+  return abstract (wrapped_widget (concrete (w), cmd));
+}
+
+widget
 empty_widget () {
   return abstract (glue_wk_widget (false, false, 0, 0));
 }

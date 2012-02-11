@@ -88,12 +88,15 @@ public:
 
 void
 close_embedded_command_rep::apply () {
-  cout << "Destroy " << vw->buf->name << "\n";
+  //cout << "Destroy " << vw->buf->name << "\n";
+  get_server () -> window_focus (vw->ed->mvw->win->id);
+  //cout << "Changed focus\n";
   tm_window win= vw->win;
   ASSERT (N(vw->buf->vws) == 1, "invalid cloned embedded TeXmacs widget");
   get_server () -> delete_buffer (vw->buf);
-  //destroy_window_widget (win->win);
+  //cout << "Deleted buffer\n";
   tm_delete (win);
+  //cout << "Deleted window\n";
 }
 
 command
@@ -132,16 +135,18 @@ enrich_embedded_document (tree body) {
 widget
 embedded_texmacs_widget (tree doc, bool output) {
   doc= enrich_embedded_document (doc);
-  string    name= embedded_name ();
-  tm_buffer buf = get_server () -> new_buffer (url (name), doc);
-  tm_view   vw  = get_server () -> get_passive_view (buf);
-  tm_window win = tm_new<tm_window_rep> (doc, close_embedded_command (vw));
+  tm_view   curvw=  get_server () -> get_view ();
+  string    name = embedded_name ();
+  tm_buffer buf  = get_server () -> new_buffer (url (name), doc);
+  tm_view   vw   = get_server () -> get_passive_view (buf);
+  tm_window win  = tm_new<tm_window_rep> (doc, command ());
   get_server () -> set_aux (name, name);
   vw->win= win;
   vw->buf->in_menu= false;
   set_canvas (win->wid, vw->ed);
   vw->ed->cvw= win->wid.rep;
-  return win->wid;
+  vw->ed->mvw= curvw;
+  return wrapped_widget (win->wid, close_embedded_command (vw));
 }
 
 widget

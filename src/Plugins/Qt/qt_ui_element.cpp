@@ -933,6 +933,9 @@ widget aligned_widget (array<widget> lhs, array<widget> rhs, SI, SI, SI, SI) {
 widget tabs_widget (array<widget> tabs, array<widget> bodies) {
   (void) tabs; (void) bodies;
   FAILED ("not yet implemented"); }
+widget wrapped_widget (widget w, command cmd) {
+  (void) w; (void) cmd;
+  FAILED ("not yet implemented"); }
 widget tile_menu (array<widget> a, int cols) { return qt_ui_element_rep::create (qt_ui_element_rep::tile_menu, a, cols); }
 widget minibar_menu (array<widget> arr) { return qt_ui_element_rep::create (qt_ui_element_rep::minibar_menu, arr); }
 widget menu_separator (bool vertical) { return qt_ui_element_rep::create (qt_ui_element_rep::menu_separator, vertical); }

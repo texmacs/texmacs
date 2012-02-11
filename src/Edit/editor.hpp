@@ -41,26 +41,28 @@
 
 class tm_buffer_rep;
 typedef tm_buffer_rep* tm_buffer;
+class tm_view_rep;
 class server_rep;
 class modification;
 extern bool enable_fastenv;
 
 class editor_rep: public simple_widget_rep {
 public:
-  server_rep* sv;   // the underlying texmacs server
-  widget_rep* cvw;  // non reference counted canvas widget
+  server_rep*  sv;   // the underlying texmacs server
+  widget_rep*  cvw;  // non reference counted canvas widget
+  tm_view_rep* mvw;  // master view
 
 protected:
-  tm_buffer   buf;  // the underlying buffer
-  drd_info    drd;  // the drd for the buffer
-  tree&       et;   // all TeXmacs trees
-  box         eb;   // box translation of tree
-  path        rp;   // path to the root of the document in et
-  path        tp;   // path of cursor in tree
+  tm_buffer    buf;  // the underlying buffer
+  drd_info     drd;  // the drd for the buffer
+  tree&        et;   // all TeXmacs trees
+  box          eb;   // box translation of tree
+  path         rp;   // path to the root of the document in et
+  path         tp;   // path of cursor in tree
 #ifdef EXPERIMENTAL
-  environment ste;  // environment for style rewriting
-  tree        cct;  // clean copy of the document tree
-  memorizer   mem;  // style converted document tree
+  environment  ste;  // environment for style rewriting
+  tree         cct;  // clean copy of the document tree
+  memorizer    mem;  // style converted document tree
 #endif
 
   /* exchanging information with the interface */

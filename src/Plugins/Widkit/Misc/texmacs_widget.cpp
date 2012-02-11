@@ -479,7 +479,7 @@ texmacs_widget_rep::handle_resize (resize_event ev) {
 
 void
 texmacs_widget_rep::handle_destroy (destroy_event ev) {
-  quit ();
+  if (!is_nil (quit)) quit ();
 }
 
 /******************************************************************************

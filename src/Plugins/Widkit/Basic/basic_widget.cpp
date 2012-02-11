@@ -143,6 +143,9 @@ basic_widget_rep::handle_resize (resize_event ev) { (void) ev;
 
 void
 basic_widget_rep::handle_destroy (destroy_event ev) { (void) ev;
+  int i;
+  for (i=0; i<N(a); i++)
+    a[i] << emit_destroy ();
 }
 
 /******************************************************************************

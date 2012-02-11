@@ -12,6 +12,10 @@
 #include "Widkit/composite_widget.hpp"
 #include "Widkit/Event/attribute_event.hpp"
 
+/******************************************************************************
+* Switch widgets
+******************************************************************************/
+
 class switch_widget_rep: public composite_widget_rep {
   int current;
   array<wk_widget> variant;
@@ -126,6 +130,33 @@ switch_widget_rep::handle (event ev) {
 }
 
 /******************************************************************************
+* Wrapped widgets
+******************************************************************************/
+
+class wrapped_widget_rep: public composite_widget_rep {
+  command quit;
+public:
+  wrapped_widget_rep (wk_widget w, command quit);
+  ~wrapped_widget_rep ();
+  void handle_destroy (destroy_event ev);
+  operator tree ();
+};
+
+wrapped_widget_rep::wrapped_widget_rep (wk_widget w, command q):
+  composite_widget_rep (1), quit (q) { a[0]= w; }
+
+wrapped_widget_rep::~wrapped_widget_rep () {
+  if (!is_nil (quit)) quit (); }
+
+void
+wrapped_widget_rep::handle_destroy (destroy_event ev) {
+  if (!is_nil (quit)) quit ();
+  quit= command (); }
+
+wrapped_widget_rep::operator tree () {
+  return tree (TUPLE, "wrapped", (tree) a[0]); }
+
+/******************************************************************************
 * Interface
 ******************************************************************************/
 
@@ -142,4 +173,9 @@ optional_widget (wk_widget w, bool on) {
   array<string> name (2);
   name[0]= "default";
   return switch_widget (a, name, on? 0: 1);
+}
+
+wk_widget
+wrapped_widget (wk_widget w, command cmd) {
+  return tm_new<wrapped_widget_rep> (w, cmd);
 }
