@@ -149,10 +149,12 @@ embedded_texmacs_widget (tree doc, bool output) {
   return wrapped_widget (win->wid, close_embedded_command (vw));
 }
 
+/*
 widget
 texmacs_output_widget (tree doc) {
   return embedded_texmacs_widget (doc, false);
 }
+*/
 
 widget
 texmacs_input_widget (tree doc, command cmd, bool continuous) {

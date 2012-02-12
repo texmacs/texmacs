@@ -12,7 +12,9 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include "window.hpp"
 #include "Widkit/composite_widget.hpp"
+#include "Widkit/layout.hpp"
 
 void abs_round (SI& l);
 
@@ -127,6 +129,7 @@ public:
   void handle_get_size (get_size_event ev);
   void handle_position (position_event ev);
   void handle_find_child (find_child_event ev);
+  void handle_repaint (repaint_event ev);
 };
 
 vertical_list_rep::vertical_list_rep (array<wk_widget> a, bool mf):
@@ -220,6 +223,15 @@ vertical_list_rep::handle_find_child (find_child_event ev) {
   for (i=0; i<N(a); i++)
     if ((ev->y >= a[i]->y1()-oy) && (ev->y < a[i]->y2()-oy)) return;
   i= -1;
+}
+
+void
+vertical_list_rep::handle_repaint (repaint_event ev) {
+  renderer ren= win->get_renderer ();
+  int i= N(a)-1;
+  SI bot= a[i]->y1()-oy;
+  if (bot > -h) layout_default (ren, 0, -h, w, bot);
+  basic_widget_rep::handle_repaint (ev);
 }
 
 /******************************************************************************

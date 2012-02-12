@@ -112,3 +112,15 @@ void
 simple_widget_rep::handle_repaint (repaint_event ev) {
   handle_repaint (ev->x1, ev->y1, ev->x2, ev->y2);
 }
+
+void
+simple_widget_rep::handle_set_coord2 (set_coord2_event ev) {
+  if (ev->which == "extra width" && ev->c1 == 0 && ev->c2 == 0) return;
+  else WK_FAILED ("could not set coord2 attribute " * ev->which);
+}
+
+void
+simple_widget_rep::handle_get_coord2 (get_coord2_event ev) {
+  if (ev->which == "extra width") { ev->c1= ev->c2= 0; return; }
+  else WK_FAILED ("could not get coord2 attribute " * ev->which);
+}

@@ -36,6 +36,8 @@ public:
   void handle_set_integer (set_integer_event ev);
   void handle_clear (clear_event ev);
   void handle_repaint (repaint_event ev);
+  void handle_set_coord2 (set_coord2_event ev);
+  void handle_get_coord2 (get_coord2_event ev);
 };
 
 #endif // defined WK_WIDGET_H
