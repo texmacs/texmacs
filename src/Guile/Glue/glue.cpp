@@ -128,6 +128,26 @@ cpp_error () {
   FAILED ("an error occurred");
 }
 
+void
+show_balloon (widget w, int x, int y) {
+  show_help_balloon (w, x, y);
+  //show_help_balloon (w, x * PIXEL, y * PIXEL);
+}
+
+array<int>
+get_bounding_rectangle (tree t) {
+  editor ed= get_server () -> get_editor ();
+  rectangle wr= ed -> get_window_extents ();
+  path p= reverse (obtain_ip (t));
+  selection sel= ed->search_selection (p * 0, p * right_index (t));
+  rectangle selr= least_upper_bound (sel->rs) / 5;
+  rectangle r= translate (selr, wr->x1, wr->y2);
+  array<int> ret;
+  ret << (r->x1) << (r->y1) << (r->x2) << (r->y2);
+  //ret << (r->x1/PIXEL) << (r->y1/PIXEL) << (r->x2/PIXEL) << (r->y2/PIXEL);
+  return ret;
+}
+
 /******************************************************************************
 * Redirections
 ******************************************************************************/

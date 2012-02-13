@@ -47,6 +47,7 @@ slot_name (const slot s) {
     "SLOT_SCROLLBARS_VISIBILITY",
     "SLOT_SCROLL_POSITION",
     "SLOT_CANVAS",
+    "SLOT_SCROLLABLE",
     "SLOT_CURSOR",
     
     "SLOT_HEADER_VISIBILITY",

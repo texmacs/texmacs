@@ -117,6 +117,7 @@ embedded_name () {
 
 tree
 enrich_embedded_document (tree body) {
+  if (!is_func (body, DOCUMENT)) body= tree (DOCUMENT, body);
   tree style= "generic";
   hashmap<string,tree> initial (UNINIT);
   initial (PAGE_MEDIUM)= "automatic";
@@ -143,7 +144,7 @@ embedded_texmacs_widget (tree doc, bool output) {
   get_server () -> set_aux (name, name);
   vw->win= win;
   vw->buf->in_menu= false;
-  set_canvas (win->wid, vw->ed);
+  set_scrollable (win->wid, vw->ed);
   vw->ed->cvw= win->wid.rep;
   vw->ed->mvw= curvw;
   return wrapped_widget (win->wid, close_embedded_command (vw));

@@ -538,3 +538,15 @@
 (tm-define (screens-switch-to which)
   (and-with t (tree-innermost 'screens)
     (switch-to t which :start)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Help balloons
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (balloon-show)
+  (:secure #t)
+  (with-action body
+    (and-with balloon (tree-ref body :next)
+      (with w (widget-texmacs-output balloon)
+        (with (x1 y1 x2 y2) (tree-bounding-rectangle body)
+          (show-balloon w x1 (- y1 (* 5 256))))))))

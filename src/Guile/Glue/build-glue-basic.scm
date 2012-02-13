@@ -427,6 +427,8 @@
   (widget-texmacs-output texmacs_output_widget (widget content))
   (widget-texmacs-input texmacs_input_widget (widget content command bool))
   (object->promise-widget as_promise_widget (promise_widget object))
+  (tree-bounding-rectangle get_bounding_rectangle (array_int tree))
+  (show-balloon show_help_balloon (void widget int int))
 
   ;; windows
   (window-handle window_handle (int))

@@ -48,6 +48,7 @@ enum slot_id {
   SLOT_SCROLLBARS_VISIBILITY,
   SLOT_SCROLL_POSITION,
   SLOT_CANVAS,
+  SLOT_SCROLLABLE,
   SLOT_CURSOR,
 
   SLOT_HEADER_VISIBILITY,
@@ -449,9 +450,15 @@ get_scroll_position (widget w, SI& x, SI& y) {
 }
 
 inline void
-set_canvas (widget w, widget cv) {
+set_scrollable (widget w, widget cv) {
   // set the scrollable canvas itself
-  write (w, SLOT_CANVAS, cv);
+  write (w, SLOT_SCROLLABLE, cv);
+}
+
+inline widget
+get_canvas (widget w) {
+  // get the scrollable canvas itself
+  return read (w, SLOT_CANVAS);
 }
 
 inline void

@@ -118,6 +118,9 @@ public:
   void full_screen_mode (bool flag);
   void before_menu_action ();
   void after_menu_action ();
+  cursor search_cursor (path p);
+  selection search_selection (path start, path end);
+  rectangle get_window_extents ();
 
   /* keyboard handling */
   int  get_input_mode ();

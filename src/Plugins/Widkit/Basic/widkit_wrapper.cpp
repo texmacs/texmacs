@@ -387,6 +387,11 @@ set_geometry (wk_widget wid, SI x, SI y, SI w, SI h) {
   }
   else {
     //principal_widget_check (wid);// FIXME: we should use parent's coordinates
+    if (bad_parent (wid)) {
+      SI dx, dy;
+      wid->win->get_position (dx, dy);
+      x -= dx; y -= dy;
+    }
     wid << emit_position (x, y, w, h, north_west);
   }
 }
@@ -871,6 +876,9 @@ wk_widget_rep::read (slot s, blackbox index) {
   case SLOT_WINDOW:
     check_type_void (index, "SLOT_WINDOW");
     return win -> get_widget ();
+  case SLOT_CANVAS:
+    check_type_void (index, "SLOT_CANVAS");
+    return abstract (THIS ["canvas"]);
   case SLOT_FORM_FIELD:
     check_type<int> (index, "SLOT_FORM_FIELD");
     return abstract (THIS [0] ["inputs"] [2*open_box<int> (index)] ["input"]);
@@ -913,8 +921,8 @@ wk_widget_rep::write (slot s, blackbox index, widget w) {
     check_type_void (index, "SLOT_SIDE_TOOLS");
     THIS << set_widget ("side tools", concrete (w));
     break;
-  case SLOT_CANVAS:
-    check_type_void (index, "SLOT_CANVAS");
+  case SLOT_SCROLLABLE:
+    check_type_void (index, "SLOT_SCROLLABLE");
     THIS << set_widget ("scrollable", concrete (w));
     break;
   case SLOT_INTERACTIVE_PROMPT:

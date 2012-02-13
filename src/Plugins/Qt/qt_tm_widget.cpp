@@ -702,9 +702,9 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     cout << "qt_tm_widget_rep::write " << slot_name (s) << LF;
   
   switch (s) {
-    case SLOT_CANVAS:
+    case SLOT_SCROLLABLE:
     {
-      check_type_void (index, "SLOT_CANVAS");
+      check_type_void (index, "SLOT_SCROLLABLE");
       QStackedWidget* tw= tm_centralwidget();
       QWidget *new_widget= concrete(w)->get_canvas();
       QWidget *old_widget= tw->currentWidget();

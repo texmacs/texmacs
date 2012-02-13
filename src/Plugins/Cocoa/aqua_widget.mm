@@ -674,9 +674,9 @@ TMMenuHelper *the_menu_helper = nil;
 void
 aqua_tm_widget_rep::write (slot s, blackbox index, widget w) {
   switch (s) {
-  case SLOT_CANVAS: 
+  case SLOT_SCROLLABLE: 
     {
-      check_type_void (index, "SLOT_CANVAS");
+      check_type_void (index, "SLOT_SCROLLABLE");
       NSView *v = ((aqua_view_widget_rep*) w.rep)->view;
       [sv setDocumentView: v];
       [[sv window] makeFirstResponder:v];

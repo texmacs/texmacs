@@ -683,6 +683,30 @@ edit_interface_rep::after_menu_action () {
   end_editing ();
 }
 
+rectangle
+edit_interface_rep::get_window_extents () {
+  SI ox, oy, w, h;
+  widget me= get_canvas (widget (cvw));
+  ::get_position (me, ox, oy);
+  ::get_size (me, w, h);
+  SI vx1, vy1, vx2, vy2;
+  SERVER (get_visible (vx1, vy1, vx2, vy2));
+  ox -= vx1; oy -= vy2;
+  return rectangle (ox, oy - h, ox + w, oy);
+}
+
+cursor
+edit_interface_rep::search_cursor (path p) {
+  return eb->find_check_cursor (p);
+}
+
+selection
+edit_interface_rep::search_selection (path start, path end) {
+  selection sel= eb->find_check_selection (start, end);
+  rectangle r= least_upper_bound (sel->rs) / 5;
+  return sel;
+}
+
 /******************************************************************************
 * event handlers
 ******************************************************************************/

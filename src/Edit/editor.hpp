@@ -66,11 +66,11 @@ protected:
 #endif
 
   /* exchanging information with the interface */
-  virtual SI      get_window_height () = 0;
-  virtual void    get_selection (path& start, path& end) = 0;
-  virtual void    set_selection (path start, path end) = 0;
-  virtual cursor& the_cursor () = 0;
-  virtual cursor& the_ghost_cursor () = 0;
+  virtual SI        get_window_height () = 0;
+  virtual void      get_selection (path& start, path& end) = 0;
+  virtual void      set_selection (path start, path end) = 0;
+  virtual cursor&   the_cursor () = 0;
+  virtual cursor&   the_ghost_cursor () = 0;
 
   /* exchanging information with the typesetter */
   virtual typesetter           get_typesetter () = 0;
@@ -142,6 +142,9 @@ public:
   virtual void full_screen_mode (bool flag) = 0;
   virtual void before_menu_action () = 0;
   virtual void after_menu_action () = 0;
+  virtual rectangle get_window_extents () = 0;
+  virtual cursor search_cursor (path p) = 0;
+  virtual selection search_selection (path start, path end) = 0;
   virtual int  get_input_mode () = 0;
   virtual void set_input_mode (int mode) = 0;
   virtual void set_input_normal () = 0;

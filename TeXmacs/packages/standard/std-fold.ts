@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.0.7.14>
 
 <style|<tuple|source|std>>
 
@@ -364,6 +364,16 @@
   <assign|fold-back|<value|identity>>
 
   <assign|keep-unfolded|<value|identity>>
+
+  <\active*>
+    <\src-comment>
+      Help balloons.
+    </src-comment>
+  </active*>
+
+  <assign|balloon|<\macro|x|y>
+    <action|<arg|x>|(balloon-show)|<arg|x>>
+  </macro>>
 
   <\active*>
     <\src-comment>
