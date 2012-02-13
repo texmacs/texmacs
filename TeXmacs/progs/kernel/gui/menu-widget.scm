@@ -936,14 +936,16 @@
 
 (tm-widget (widget6)
   (centered
-    (resize "500px" "100px"
+    (resize "500px" "50px"
       (texmacs-output
         '(document (theorem (document "This is true.")))))
     ======
     (resize "500px" "300px"
-      (texmacs-output
-        '(document (proof (document "Trivial."
-                                    "But you might want more details.")))))))
+      (texmacs-input
+        '(with "bg-color" "#fcfcf8"
+           (document (proof (document "Trivial."
+                                      "But you may add more details."))))
+        (noop) #f))))
 
 (tm-define (show w)
   (top-window w "Simple widget"))

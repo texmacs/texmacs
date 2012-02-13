@@ -117,6 +117,8 @@ embedded_name () {
 
 tree
 enrich_embedded_document (tree body) {
+  tree orig= body;
+  if (is_func (body, WITH)) body= body[N(body)-1];
   if (!is_func (body, DOCUMENT)) body= tree (DOCUMENT, body);
   tree style= "generic";
   hashmap<string,tree> initial (UNINIT);
@@ -125,6 +127,10 @@ enrich_embedded_document (tree body) {
   initial (PAGE_SCREEN_RIGHT)= "4px";
   initial (PAGE_SCREEN_TOP)= "2px";
   initial (PAGE_SCREEN_BOT)= "2px";
+  if (is_func (orig, WITH))
+    for (int i=0; i+2<N(orig); i++)
+      if (is_atomic (orig[i]))
+        initial (orig[i]->label)= orig[i+1];
   tree doc (DOCUMENT);
   doc << compound ("TeXmacs", TEXMACS_VERSION);
   doc << compound ("style", tree (TUPLE, "generic"));
@@ -134,7 +140,8 @@ enrich_embedded_document (tree body) {
 }
 
 widget
-embedded_texmacs_widget (tree doc, bool output) {
+texmacs_input_widget (tree doc, command cmd, bool continuous) {
+  (void) cmd; (void) continuous;
   doc= enrich_embedded_document (doc);
   tm_view   curvw=  get_server () -> get_view ();
   string    name = embedded_name ();
@@ -148,19 +155,6 @@ embedded_texmacs_widget (tree doc, bool output) {
   vw->ed->cvw= win->wid.rep;
   vw->ed->mvw= curvw;
   return wrapped_widget (win->wid, close_embedded_command (vw));
-}
-
-/*
-widget
-texmacs_output_widget (tree doc) {
-  return embedded_texmacs_widget (doc, false);
-}
-*/
-
-widget
-texmacs_input_widget (tree doc, command cmd, bool continuous) {
-  (void) cmd; (void) continuous;
-  return embedded_texmacs_widget (doc, false);
 }
 
 /******************************************************************************
