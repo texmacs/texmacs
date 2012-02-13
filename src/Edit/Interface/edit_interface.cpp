@@ -686,7 +686,7 @@ edit_interface_rep::after_menu_action () {
 rectangle
 edit_interface_rep::get_window_extents () {
   SI ox, oy, w, h;
-  widget me= get_canvas (widget (cvw));
+  widget me= ::get_canvas (widget (cvw));
   ::get_position (me, ox, oy);
   ::get_size (me, w, h);
   SI vx1, vy1, vx2, vy2;
