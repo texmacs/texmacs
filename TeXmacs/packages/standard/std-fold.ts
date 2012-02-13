@@ -371,9 +371,11 @@
     </src-comment>
   </active*>
 
-  <assign|balloon|<\macro|x|y>
-    <action|<arg|x>|(balloon-show)|<arg|x>>
-  </macro>>
+  <assign|mouse-over|<macro|body|destination|where|<style-with|src-compact|none|<locus|<id|<hard-id|<arg|body>>>|<link|mouse-over|<id|<hard-id|<arg|body>>>|<script|<arg|destination>|<arg|where>>>|<arg|body>>>>>
+
+  <assign|move-over-balloon|<macro|x|y|<mouse-over|<arg|x>|(show-move-over-balloon)|<arg|x>>>>
+
+  <assign|help-balloon|<macro|x|y|<mouse-over|<arg|x>|(show-help-balloon)|<arg|x>>>>
 
   <\active*>
     <\src-comment>

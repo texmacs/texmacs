@@ -106,10 +106,18 @@
 (define (filter-on-type item)
   (navigation-allow-type? (link-item-type item)))
 
-(define (filter-link-list l)
-  (if (not (navigation-bidirectional?))
-      (set! l (list-filter l filter-on-bidirectional)))
-  (list-filter l filter-on-type))
+(define (filter-on-event event)
+  (lambda (item)
+    ;;(display* "Filter: " item " on " event "\n")
+    (or (== event "click")
+        (== (link-item-type item) event))))
+
+(define (filter-link-list l event)
+  (let* ((f1 (if (navigation-bidirectional?) l
+                 (list-filter l filter-on-bidirectional)))
+         (f2 (list-filter l filter-on-type))
+         (f3 (list-filter l (filter-on-event event))))
+    f3))
 
 (tm-define (exact-link-list t filter?)
   (:synopsis "Build possibly filtered link list for the tree @t.")
@@ -121,7 +129,7 @@
   (with l (if (and filter? (not (navigation-external?)))
 	      (exact-link-list-local t)
 	      (exact-link-list-global t))
-    (if filter? (filter-link-list l) l)))
+    (if filter? (filter-link-list l "click") l)))
 
 (tm-define (upward-link-list t filter?)
   (:synopsis "Build possibly filtered link list for @t and its ancestors.")
@@ -164,7 +172,7 @@
 
 (tm-define (link-active-ids l)
   (:synopsis "Return list of identifiers in @l which admit an active link.")
-  (with r (filter-link-list (ids->link-list l))
+  (with r (filter-link-list (ids->link-list l) "click")
     (list-remove-duplicates (map link-item-id r))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -425,14 +433,14 @@
 	     (set! the-navigation-list nl)
 	     (interactive navigation-list-follow-xtyped))))))
 
-(tm-define (link-follow-ids ids)
+(tm-define (link-follow-ids ids event)
   (:synopsis "Follow one of the links for identifiers in @ids.")
   (navigation-list-follow
    (link-list->navigation-list
-    (filter-link-list (ids->link-list ids)))))
+    (filter-link-list (ids->link-list ids) event))))
 
 (tm-define (locus-link-follow)
   (:synopsis "Follow one of the links in the current locus.")
   (let* ((ts (link-active-upwards (cursor-tree)))
 	 (ids (append-map tree->ids ts)))
-    (link-follow-ids ids)))
+    (link-follow-ids ids "click")))

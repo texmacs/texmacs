@@ -68,7 +68,7 @@ void
 edit_interface_rep::mouse_select (SI x, SI y, int mods, bool drag) {
   if (eb->action ("select" , x, y, 0) != "") return;
   if (!is_nil (active_ids) && (mods & 256) == 0) {
-    call ("link-follow-ids", object (active_ids));
+    call ("link-follow-ids", object (active_ids), object ("click"));
     return;
   }
   tree g;
@@ -351,6 +351,8 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
     (type == "move" || type == "dragging-left" || type == "dragging-right");
   if ((!move_like) || (is_attached (this) && !check_event (MOTION_EVENT)))
     update_active_loci ();
+  if (type == "move")
+    call ("link-follow-ids", object (active_ids), object ("mouse-over"));
 
   if (type == "leave")
     set_pointer ("XC_top_left_arrow");
