@@ -13,6 +13,8 @@
 #include "Boxes/graphics.hpp"
 #include "drd_std.hpp"
 #include "hashset.hpp"
+#include "analyze.hpp"
+#include "Scheme/object.hpp"
 
 #define BEGIN_MAGNIFY                                           \
   tree new_mag= as_string (env->magn * env->mgfy);              \
@@ -34,6 +36,36 @@
 /* TODO: Check that the active elements (f.e. the <action> markup) also
    adhere to the same convention.
  */
+
+void
+notify_graphics_extents (tree t, point lbot, point rtop) {
+  static hashmap<string,tree> h (UNINIT);
+  if (is_atomic (t)) {
+    string id= t->label;
+    tree val= tuple (as_string (lbot[0]), as_string (lbot[1]),
+                     as_string (rtop[0]), as_string (rtop[1]));
+    if (h[id] != val) {
+      h (id)= val;
+      array<object> args;
+      args << object (id)
+           << object (lbot[0]) << object (lbot[1])
+           << object (rtop[0]) << object (rtop[1]);
+      call ("graphics-notify-extents", args);
+    }
+  }
+  else if (is_func (t, GRAPHICS) || is_func (t, GR_GROUP)) {
+    for (int i=0; i<N(t); i++)
+      notify_graphics_extents (t[i], lbot, rtop);
+  }
+  else if (is_func (t, LOCUS) || is_func (t, WITH)) {
+    if (is_func (t, LOCUS, 2) &&
+        is_func (t[0], ID, 1) &&
+        is_atomic (t[0][0]) &&
+        starts (t[0][0]->label, "graph-"))
+      notify_graphics_extents (t[0][0], lbot, rtop);
+    notify_graphics_extents (t[N(t)-1], lbot, rtop);
+  }
+}
 
 void
 concater_rep::typeset_graphics (tree t, path ip) {
@@ -67,6 +99,8 @@ BEGIN_MAGNIFY
   gr->set_aspect (env->read (GR_EDIT_GRID_ASPECT));
   box b= graphics_box (ip, bs, env->fr, gr, lim1, lim2);
   print (b);
+
+  notify_graphics_extents (t, lim1, lim2);
 END_MAGNIFY
 }
 

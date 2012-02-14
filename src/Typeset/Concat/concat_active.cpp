@@ -88,8 +88,8 @@ build_locus (edit_env env, tree t, list<string>& ids, string& col, string &ref, 
   //cout << "Typeset " << body << "\n";
   bool accessible= is_accessible (obtain_ip (body));
   bool visited= false;
-  ref="";
-  anchor="";
+  ref= "";
+  anchor= "";
 
   if (!is_nil (env->link_env)) {
     int i, j;

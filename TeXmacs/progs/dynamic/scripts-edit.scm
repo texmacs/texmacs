@@ -310,6 +310,25 @@
   (alternate-toggle t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Call backs
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (mathemagix-alive?)
+  (and (connection-defined? "mathemagix")
+       (> (connection-status "mathemagix" "default") 1)))
+
+(tm-define (notify-graphics-extents id x1 y1 x2 y2)
+  (when (mathemagix-alive?)
+    (with msg (string-append "notify_graphics_extents (\"" id "\", "
+                             (number->string x1) ", " (number->string y1) ", "
+                             (number->string x2) ", " (number->string y2) ")")
+      ;;(display* "sending " msg "\n")
+      (silent-feed* "mathemagix" "default" msg noop '()))))
+
+(tm-define (graphics-notify-extents id x1 y1 x2 y2)
+  (delayed (:idle 1) (notify-graphics-extents id x1 y1 x2 y2)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Converters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

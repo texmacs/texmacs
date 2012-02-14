@@ -801,6 +801,9 @@ typeset_as_box (edit_env env, tree t, path ip) {
   return composite_box (ip, bs, xs, ys);
 }
 
+bool build_locus (edit_env env, tree t, list<string>& ids, string& col, string &ref, string &anchor);
+bool build_locus (edit_env env, tree t, list<string>& ids, string& col);
+
 box
 typeset_as_atomic (edit_env env, tree t, path ip) {
   if (is_func (t, WITH)) {
@@ -833,6 +836,18 @@ typeset_as_atomic (edit_env env, tree t, path ip) {
     STACK_DELETE_ARRAY(vars);
     STACK_DELETE_ARRAY(oldv);
     STACK_DELETE_ARRAY(newv);
+    return b;
+  }
+  else if (is_func (t, LOCUS) && N(t) != 0) {
+    string ref;
+    string anchor;
+    int last= N(t)-1;
+    list<string> ids;
+    string col;
+    (void) build_locus (env, t, ids, col, ref, anchor);
+    tree old= env->local_begin (COLOR, col);
+    box b= typeset_as_atomic (env, t[last], descend (ip, last));
+    env->local_end (COLOR, old);
     return b;
   }
   else {
