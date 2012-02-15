@@ -16,6 +16,8 @@
 #include "url.hpp"
 
 tree upgrade_tex (tree t);
+bool textm_class_flag= false;
+//bool textm_class_flag= true;
 static bool textm_appendices= false;
 static bool textm_unicode   = false;
 static bool textm_natbib    = false;
@@ -735,7 +737,35 @@ latex_command_to_tree (tree t) {
     return compound ("reset-counter", v2e (t[1]));
   if (is_tuple (t, "\\addtocounter", 2)) // FIXME: only inc works
     return compound ("inc-counter", v2e (t[1]));
-  if (is_tuple (t, "\\setlength")) return "";
+  if (is_tuple (t, "\\setlength", 2)) {
+    if (!textm_class_flag) return "";
+    else {
+      string len= (is_atomic (t[1])? t[1]->label: v2e (t[1]));
+      tree val= l2e (t[2]);
+      if (len == "\\oddsidemargin") len= "tex-odd-side-margin";
+      if (len == "\\evensidemargin") len= "tex-even-side-margin";
+      if (len == "\\textwidth") len= "tex-text-width";
+      if (len == "\\topmargin") len= "tex-top-margin";
+      if (len == "\\headheight") len= "tex-head-height";
+      if (len == "\\headsep") len= "tex-head-sep";
+      if (len == "\\topskip") len= "tex-top-skip";
+      if (len == "\\textheight") len= "tex-text-height";
+      if (len == "\\footskip") len= "tex-foot-skip";
+      if (len == "\\footnotesep") len= "tex-footnote-sep";
+      if (len == "\\columnsep") len= "tex-column-sep";
+      if (len == "\\marginparwidth") len= "tex-margin-par-width";
+      if (len == "\\par-indent") len= "par-first";
+      if (len == "\\jot") len= "tex-jot";
+      if (len == "\\mathindent") len= "tex-math-indent";
+      if (len == "\\abovedisplayskip") len= "tex-above-display-skip";
+      if (len == "\\belowdisplayskip") len= "tex-below-display-skip";
+      if (len == "\\abovedisplayshortskip")
+	len= "tex-above-display-short-skip";
+      if (len == "\\belowdisplayshortskip")
+	len= "tex-below-display-short-skip";
+      return tree (ASSIGN, len, tree (MACRO, val));
+    }
+  }
   if (is_tuple (t, "\\addtolength")) return "";
   if (is_tuple (t, "\\enlargethispage")) return "";
   if (is_tuple (t, "\\mathop", 1)) return l2e (t[1]);
@@ -1782,7 +1812,7 @@ latex_to_tree (tree t1) {
   tree t2= is_document? filter_preamble (t1): t1;
   //cout << "\n\nt2= " << t2 << "\n\n";
   tree t3= parsed_latex_to_tree (t2);
-  // cout << "\n\nt3= " << t3 << "\n\n";
+  //cout << "\n\nt3= " << t3 << "\n\n";
   tree t4= finalize_document (t3);
   // cout << "\n\nt4= " << t4 << "\n\n";
   tree t5= is_document? finalize_preamble (t4, style): t4;

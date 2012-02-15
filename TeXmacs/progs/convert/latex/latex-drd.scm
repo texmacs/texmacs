@@ -26,7 +26,7 @@
 (logic-group latex-command-0%
   ,(string->symbol " ") ,(string->symbol ";") 
   ,(string->symbol ",") ,(string->symbol ":") 
-  - / [ ] ! * | i j ss SS oe OE ae AE
+  - / [ ] ! * ,(string->symbol "|") i j ss SS oe OE ae AE
   AA DH L NG O S TH aa dh dj l ng o th pounds colon
   quad qquad par smallskip medskip bigskip
   noindent newline linebreak nobreak nolinebreak
@@ -69,7 +69,8 @@
   citet citep citet* citep* citealt citealp citealt* citealp*
   citetext citeauthor citeauthor* citeyear
   epsfig url penalty centerline fbox framebox
-  enlargethispage)
+  enlargethispage
+  newlength newdimen)
 
 (logic-group latex-command-1% ;; . needs a special treatment
   ,(string->symbol "."))
@@ -295,6 +296,23 @@
   ((latex-symbol% 'x) (latex-stmary-symbol% 'x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Lengths
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(logic-group latex-length%
+  oddsidemargin evensidemargin textwidth
+  topmargin headheight headsep topskip textheight
+  footskip footnotesep columnsep floatsep
+  marginparwidth marginparsep parindent
+  jot mathindent
+  abovedisplayskip belowdisplayskip
+  abovedisplayshortskip belowdisplayshortskip
+  p@ z@)
+
+(logic-rules
+  ((latex-arity% 'x 0) (latex-length% 'x)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Using packages
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -422,6 +440,7 @@
   (receive (s arity) (latex-resolve tag)
     (cond ((not arity) "undefined")
           ((logic-in? s latex-command%) "command")
+          ((logic-in? s latex-length%) "length")
 	  ((logic-in? s latex-modifier%) "modifier")
 	  ((logic-in? s latex-control%) "control")
 	  ((logic-in? s latex-operator%) "operator")

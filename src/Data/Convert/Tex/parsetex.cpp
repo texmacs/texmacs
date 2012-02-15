@@ -13,6 +13,8 @@
 #include "converter.hpp"
 
 string string_arg (tree t);
+extern bool textm_class_flag;
+hashmap<string,int> textm_recursion_level (0);
 
 /******************************************************************************
 * The latex_parser structure
@@ -41,18 +43,23 @@ string string_arg (tree t);
 ******************************************************************************/
 
 struct latex_parser {
+  int level;
   bool unicode;
-  latex_parser (bool unicode2): unicode (unicode2) {}
+  latex_parser (bool unicode2): level (0), unicode (unicode2) {}
   void latex_error (string s, int i, string message);
 
-  tree parse           (string s, int& i, string stop= "", bool change= false);
-  tree parse_backslash (string s, int& i);
-  tree parse_symbol    (string s, int& i);
-  tree parse_command   (string s, int& i, string which);
-  tree parse_unknown   (string s, int& i, string which);
-  tree parse_verbatim  (string s, int& i, string end);
+  tree parse             (string s, int& i, string stop= "", bool ch= false);
+  tree parse_backslash   (string s, int& i);
+  tree parse_symbol      (string s, int& i);
+  tree parse_command     (string s, int& i, string which);
+  tree parse_argument    (string s, int& i);
+  tree parse_unknown     (string s, int& i, string which);
+  bool can_parse_length  (string s, int i);
+  tree parse_length      (string s, int& i);
+  tree parse_length_name (string s, int& i);
+  tree parse_verbatim    (string s, int& i, string end);
 
-  tree parse           (string s, bool change);
+  tree parse             (string s, bool change);
 };
 
 /******************************************************************************
@@ -61,10 +68,12 @@ struct latex_parser {
 
 void
 latex_parser::latex_error (string s, int i, string message) {
-  cerr << "Latex error] " << message << "\n";
-  if (i>30) s= "..." * s (i-27, N(s));
-  if (N(s)>60) s= s (0, 57) * "...";
-  cerr << "Latex error] in " << s << "\n";
+  if (!textm_class_flag) {
+    cerr << "Latex error] " << message << "\n";
+    if (i>30) s= "..." * s (i-27, N(s));
+    if (N(s)>60) s= s (0, 57) * "...";
+    cerr << "Latex error] in " << s << "\n";
+  }
 }
 
 /******************************************************************************
@@ -79,12 +88,25 @@ is_regular (tree t) {
   return !starts (s, "\\begin-") && !starts (s, "\\end-");
 }
 
+static bool
+is_tex_alpha (char c) {
+  return is_alpha (c) || c == '@';
+}
+
+static bool
+is_tex_alpha (string s) {
+  for (int i=0; i<N(s); i++)
+    if (!is_alpha (s[i]) && s[i] != '@') return false;
+  return true;
+}
+
 tree
 latex_parser::parse (string s, int& i, string stop, bool change) {
   bool no_error= true;
   int n= N(s);
   tree t (CONCAT);
 
+  level++;
   command_type ->extend ();
   command_arity->extend ();
   command_def  ->extend ();
@@ -142,7 +164,7 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
       else t << s (i-1, i);
       break;
     case '\\':
-      if (((i+7)<n) && !is_alpha (s (i+5, i+7)) &&
+      if (((i+7)<n) && !is_tex_alpha (s (i+5, i+7)) &&
 	  (s (i, i+5) == "\\over" || s (i, i+5) == "\\atop"))
 	{
 	  string fr_cmd= s(i,i+5);
@@ -158,15 +180,15 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
 	  tree den= parse (s, i, "denom");
 	  t << tree (TUPLE, fr_cmd, num, den);
 	}
-      else if (((i+5)<n) && (s(i,i+3)=="\\sp") && (!is_alpha(s[i+3]))) {
+      else if ((i+5) < n && s(i,i+3) == "\\sp" && !is_tex_alpha (s[i+3])) {
 	i+=3;
 	t << parse_command (s, i, "\\<sup>");
       }
-      else if (((i+5)<n) && (s(i,i+3)=="\\sb") && (!is_alpha(s[i+3]))) {
+      else if ((i+5) < n && s(i,i+3) == "\\sb" && !is_tex_alpha (s[i+3])) {
 	i+=3;
 	t << parse_command (s, i, "\\<sub>");
       }
-      else if (((i+10)<n) && (s(i,i+8)=="\\pmatrix")) {
+      else if ((i+10) < n && s(i,i+8) == "\\pmatrix") {
 	i+=8;
 	tree arg= parse_command (s, i, "\\pmatrix");
 	if (is_tuple (arg, "\\pmatrix", 1)) arg= arg[1];
@@ -175,7 +197,9 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
 	else t << arg;
 	t << tree (TUPLE, "\\end-pmatrix");
       }
-      else  {
+      else if (can_parse_length (s, i))
+	t << parse_length (s, i);
+      else {
 	tree u= parse_backslash (s, i);
 	if (u != "") t << u;
       }
@@ -260,7 +284,10 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
       break;
     }
     default:
-      if (unicode && ((unsigned char) s[i]) >= 128) {
+      if ((s[i] == '-' || (s[i] >= '0' && s[i] <= '9')) &&
+	  can_parse_length (s, i))
+	t << parse_length (s, i);
+      else if (unicode && ((unsigned char) s[i]) >= 128) {
 	unsigned int code= decode_from_utf8 (s, i);
 	t << tree (TUPLE, "\\#" * as_hexadecimal (code));
       }
@@ -300,6 +327,7 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
     }
   }
 
+  level--;
   if (change) {
     command_type ->merge ();
     command_arity->merge ();
@@ -331,7 +359,7 @@ latex_parser::parse_backslash (string s, int& i) {
     i+=16;
     return parse_verbatim (s, i, "\\end{verbatim}");
   }
-  if (((i+5)<n) && (s(i,i+4)=="\\url") && !is_alpha (s[i+5])) {
+  if (((i+5)<n) && (s(i,i+4)=="\\url") && !is_tex_alpha (s[i+5])) {
     i+=4;
     while (i<n && (s[i] == ' ' || s[i] == '\n' || s[i] == '\t')) i++;
     string ss;
@@ -366,7 +394,7 @@ latex_parser::parse_backslash (string s, int& i) {
     i++;
     return tree (TUPLE, "\\ ");
   }
-  if (!is_alpha(s[i])) {
+  if (!is_tex_alpha(s[i])) {
     i++;
     if (s[i-1]=='(') return parse_command (s, i, "\\begin-math");
     if (s[i-1]==')') return parse_command (s, i, "\\end-math");
@@ -377,7 +405,7 @@ latex_parser::parse_backslash (string s, int& i) {
 
   /************************* normal commands *********************************/
   int start= i-1;
-  while ((i<n) && is_alpha (s[i])) i++;
+  while ((i<n) && is_tex_alpha (s[i])) i++;
   if ((i<n) && (s[i]=='*') && latex_type (s (start, i+1)) != "undefined") i++;
   string r= s (start, i);
   if ((r == "\\begin") || (r == "\\end")) {
@@ -417,8 +445,8 @@ latex_parser::parse_symbol (string s, int& i) {
   if (s[i] != '\\') { i++; return s(start, i); }
   i++;
   if (i == N(s)) return tree (TUPLE, "\\backslash");
-  if (!is_alpha (s[i])) { i++; return s(start, i); }
-  while ((i<N(s)) && is_alpha (s[i])) i++;
+  if (!is_tex_alpha (s[i])) { i++; return s(start, i); }
+  while ((i<N(s)) && is_tex_alpha (s[i])) i++;
   if ((i<N(s)) && (s[i]=='*')) i++;
   return s(start,i);
 }
@@ -470,12 +498,28 @@ latex_parser::parse_command (string s, int& i, string cmd) {
   if (cmd == "\\end-split") cmd= "\\end-eqsplit";
   if (cmd == "\\begin-split*") cmd= "\\begin-eqsplit*";
   if (cmd == "\\end-split*") cmd= "\\end-eqsplit*";
+
   if (latex_type (cmd) == "undefined")
     return parse_unknown (s, i, cmd);
 
   if (latex_type (cmd) == "math-environment") {
     if (cmd (0, 6) == "\\begin") command_type ("!mode") = "math";
     else command_type ("!mode") = "text";
+  }
+
+  if (textm_class_flag && level <= 1 && latex_type (cmd) == "length") {
+    //cout << "Parse length " << cmd << "\n";
+    int n= N(s);
+    while (i<n && (is_space (s[i]) || s[i] == '=')) i++;
+    tree len= parse_length (s, i);
+    //cout << "Got " << len << "\n";
+    return tree (TUPLE, "\\setlength", copy (cmd), copy (len));
+  }
+
+  if (cmd == "\\setlength") {
+    tree name= parse_length_name (s, i);
+    tree arg = parse_argument (s, i);
+    return tuple (cmd, name, arg);
   }
 
   bool mbox_flag=
@@ -570,6 +614,11 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     command_type  (var)= "environment";
     command_arity (var)= 0;
   }
+  if (is_tuple (t, "\\newdimen", 1) || is_tuple (t, "\\newlength", 1)) {
+    string var= string_arg (t[1]);
+    command_type  (var)= "length";
+    command_arity (var)= 0;
+  }
   if (is_tuple (t, "\\newenvironment", 3)) {
     string var= "\\begin-" * string_arg (t[1]);
     command_type  (var)= "user";
@@ -599,16 +648,30 @@ latex_parser::parse_command (string s, int& i, string cmd) {
   if (latex_type (cmd) == "user") {
     int pos= 0;
     string body= command_def[cmd];
-    if (count_occurrences ("\\begin", body) ==
-	count_occurrences ("\\end", body))
-      (void) parse (sharp_to_arg (body, u), pos, "", true);
-    else t= parse (sharp_to_arg (body, u), pos, "", true);
+    textm_recursion_level (cmd)++;
+    if (textm_recursion_level [cmd] <= 5) {
+      if (count_occurrences ("\\begin", body) ==
+	  count_occurrences ("\\end", body))
+	(void) parse (sharp_to_arg (body, u), pos, "", true);
+      else t= parse (sharp_to_arg (body, u), pos, "", true);
+    }
+    textm_recursion_level (cmd)--;
     // replaces macros by their definitions in the case when
     // the user defined shorthands for \\begin{env} and \\end{env}
   }
 
   if (mbox_flag) command_type ("!mode") = "math";
   return t;
+}
+
+tree
+latex_parser::parse_argument (string s, int& i) {
+  skip_spaces (s, i);
+  if (s[i] == '{') {
+    i++;
+    return parse (s, i, "}");
+  }
+  else parse_symbol (s, i);
 }
 
 tree
@@ -638,6 +701,118 @@ latex_parser::parse_unknown (string s, int& i, string cmd) {
     else break;
   }
   return t;
+}
+
+/******************************************************************************
+* Parsing lengths
+******************************************************************************/
+
+bool
+latex_parser::can_parse_length (string s, int i) {
+  if (!textm_class_flag) return false;
+  int initial= i;
+  int stage= 0;
+  int n= N(s);
+  while (i<n) {
+    if (is_numeric (s[i]) || s[i] == '.' || s[i] == '-') { stage= 1; i++; }
+    else if (is_space (s[i]) && stage > 0) i++;
+    else if (read (s, i, "plus") || read (s, i, "\\@plus") ||
+	     read (s, i, "minus") || read (s, i, "\\@minus"))
+      return stage >= 2;
+    else if (is_tex_alpha (s[i])) {
+      if (read (s, i, "cm")) stage= 2;
+      else if (read (s, i, "mm")) stage= 2;
+      else if (read (s, i, "pt")) stage= 2;
+      else if (read (s, i, "in")) stage= 2;
+      else if (read (s, i, "em")) stage= 2;
+      else if (read (s, i, "pc")) stage= 2;
+      else if (read (s, i, "bp")) stage= 2;
+      else if (read (s, i, "dd")) stage= 2;
+      else if (read (s, i, "cc")) stage= 2;
+      else if (read (s, i, "sp")) stage= 2;
+      else return false;
+      if (i<n && is_tex_alpha (s[i])) return false;
+    }
+    else if (s[i] == '\\') {
+      i++;
+      int start= i;
+      while (i<n && is_tex_alpha (s[i])) i++;
+      if (latex_type (s (start, i)) != "length") return false;
+      return s[initial] != '\\' || level > 1;
+    }
+    else return false;
+  }
+  return false;
+}
+
+tree
+latex_parser::parse_length (string s, int& i) {
+  int n= N(s);
+  tree r= tree (CONCAT);
+  while (i<n) {
+    if (is_numeric (s[i]) || s[i] == '.' || s[i] == '-')
+      r << s (i, i+1);
+    else if (read (s, i, "plus") || read (s, i, "\\@plus")) {
+      tree next= parse_length (s, i);
+      if (is_tuple (next, "\\tex-len", 3)) {
+	//ASSERT (next[2] == "0pt", "invalid multiple plus");
+	return tuple ("\\tex-len", r, next[1], next[3]);
+      }
+      else return tuple ("\\tex-len", r, next, "0pt");
+    }
+    else if (read (s, i, "minus") || read (s, i, "\\@minus")) {
+      tree next= parse_length (s, i);
+      if (is_tuple (next, "\\tex-len", 3)) {
+	//ASSERT (next[3] == "0pt", "invalid multiple minus");
+	return tuple ("\\tex-len", r, next[2], next[1]);
+      }
+      else return tuple ("\\tex-len", r, "0pt", next);
+    }
+    else if (is_tex_alpha (s[i]) && N(r) > 0 && is_atomic (r[N(r)-1]) &&
+	     (is_numeric (r[N(r)-1]->label) ||
+	      r[N(r)-1] == "." || r[N(r)-1] == "-")) {
+      for (;i<n && is_tex_alpha (s[i]); i++)
+	r << s (i, i+1);
+      continue;
+    }
+    else if (s[i] == '\\') {
+      i++;
+      int start= i;
+      while (i<n && is_tex_alpha (s[i])) i++;
+      string unit= s (start, i);
+      if (latex_type (unit) != "length") { i= start-1; break; }
+      // FIXME
+      if (unit == "p@")
+	r << string ("p") << string ("t");
+      else if (unit == "z@")
+	r << string ("0") << string ("p") << string ("t");
+      // FIXME
+      continue;
+    }
+    else if (is_space (s[i]));
+    else break;
+    i++;
+  }
+  return r;
+}
+
+tree
+latex_parser::parse_length_name (string s, int& i) {
+  skip_spaces (s, i);
+  if (s[i] == '{') {
+    i++;
+    tree r= parse_length_name (s, i);
+    skip_spaces (s, i);
+    if (s[i] == '}') i++;
+    return r;
+  }
+  else if (s[i] == '\\') {
+    int start= i;
+    i++;
+    while (i<N(s) && is_tex_alpha (s[i])) i++;
+    return s (start, i);
+  }
+  else return "";
 }
 
 /******************************************************************************
