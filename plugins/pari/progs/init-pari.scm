@@ -16,11 +16,7 @@
 (define (pari-initialize)
   (import-from (utils plugins plugin-convert))
   (import-from (pari-menus))
-  (plugin-input-converters pari)
-  (menu-extend texmacs-extra-menu
-    (if (or (in-pari?) (and (not-in-session?) (pari-scripts?)))
-	(=> "Pari"
-	    (link pari-menu)))))
+  (plugin-input-converters pari))
 
 (define (pari-commander s)
   (string-append (char->string #\002)

@@ -136,6 +136,14 @@
 
 (menu-bind maxima-help-icons
   (if (and (in-maxima?) maxima-help)
-      |
+      /
       ((balloon (icon "tm_help.xpm") "Maxima manual")
        (load-help-buffer maxima-help))))
+
+(menu-bind session-help-icons
+  (:require (and (in-maxima?) (in-session?)))
+  (link maxima-help-icons))
+
+(menu-bind plugin-menu
+  (:require (or (in-maxima?) (and (not-in-session?) (maxima-scripts?))))
+  (=> "Maxima" (link maxima-menu)))

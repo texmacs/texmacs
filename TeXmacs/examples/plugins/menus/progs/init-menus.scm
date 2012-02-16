@@ -11,18 +11,20 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind menus-menu
-  ("Hi" (insert "Hello world")))
+(define menu-items '("Hi"))
 
-(menu-extend texmacs-extra-menu
-  (if (equal? (get-env "prog language") "menus")
-      (=> "Menus" (link menus-menu))))
+(tm-menu (menus-menu)
+  (for (entry menu-items)
+    ((eval entry) (insert entry))))
 
-(define-macro (menus-add s)
-  `(menu-extend menus-menu
-     (,s (insert ,s))))
+(tm-define (menus-add entry)
+  (set! menu-items (cons entry menu-items)))
 
 (plugin-configure menus
   (:require (url-exists-in-path? "menus.bin"))
   (:launch "menus.bin")
   (:session "Menus"))
+
+(menu-bind plugin-menu
+  (:require (in-menus?))
+  (=> "Menus" (link menus-menu)))

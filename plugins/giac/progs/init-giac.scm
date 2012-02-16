@@ -14,10 +14,7 @@
 (define (giac-initialize)
   (import-from (utils plugins plugin-convert))
   (import-from (giac-menus))
-  (lazy-input-converter (giac-input) giac)
-  (menu-extend texmacs-extra-menu
-    (if (in-giac?)
-	(=> "Giac" (link giac-functions-menu)))))
+  (lazy-input-converter (giac-input) giac))
 
 (plugin-configure giac
   (:require (url-exists-in-path? "giac"))

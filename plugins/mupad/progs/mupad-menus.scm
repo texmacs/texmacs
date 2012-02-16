@@ -134,3 +134,14 @@
   ("Importing data" (mupad-show-help "import"))
   ("Generating input for other programs"
    (mupad-show-help "generate")))
+
+(menu-bind plugin-menu
+  (:require (or (in-mupad?) (and (not-in-session?) (mupad-scripts?))))
+  (=> "Mupad"
+      (link mupad-menu)))
+
+(menu-bind session-help-icons
+  (:require (and (in-mupad?) (in-session?)))
+  /
+  (=> (balloon (icon "tm_help.xpm") "MuPAD documentation")
+      (link mupad-help-menu)))

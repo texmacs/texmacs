@@ -240,5 +240,6 @@
   (link texgraph-3d-menu)
 )
 
-
-
+(menu-bind plugin-menu
+  (:require (or (in-texgraph?) (and (not-in-session?) (texgraph-scripts?))))
+  (=> "TeXgraph" (link texgraph-functions-menu)))

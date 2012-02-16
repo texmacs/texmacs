@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.1>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
@@ -6,16 +6,16 @@
   <tmdoc-title|Sending commands to <TeXmacs>>
 
   The application may use <verbatim|command> as a very particular output
-  format in order to send <value|scheme> commands to <TeXmacs>. In other
-  words, the block
+  format in order to send <scheme> commands to <TeXmacs>. In other words, the
+  block
 
   <\quotation>
     <framed-fragment|<verbatim|<render-key|DATA_BEGIN>command:<em|cmd><render-key|DATA_END>>>
   </quotation>
 
   will send the command <verbatim|<em|cmd>> to <TeXmacs>. Such commands are
-  executed immediately after reception of <render-key|DATA_END>. We also recall that
-  such command blocks may be incorporated recursively in larger
+  executed immediately after reception of <render-key|DATA_END>. We also
+  recall that such command blocks may be incorporated recursively in larger
   <render-key|DATA_BEGIN>-<render-key|DATA_END> blocks.
 
   <paragraph*|The <verbatim|menus> plug-in>
@@ -33,7 +33,7 @@
 
   The body of the main loop of <verbatim|menus.cpp> simply contains
 
-  <\cpp-fragment>
+  <\cpp-code>
     char buffer[100];
 
     cin.getline (buffer, 100, '\\n');
@@ -52,36 +52,29 @@
     cout \<less\>\<less\> DATA_END;
 
     fflush (stdout);
-  </cpp-fragment>
+  </cpp-code>
 
-  The <value|scheme> macro <scheme-code|menus-add> is defined in
-  <verbatim|init-menus.scm>:
+  The <scheme> macro <scm|menus-add> is defined in <verbatim|init-menus.scm>:
 
-  <\scheme-fragment>
-    (menu-bind menus-menu
-
-    \ \ ("Hi" (insert "Hello world")))
+  <\scm-code>
+    (define menu-items '("Hi"))
 
     \;
 
-    (menu-extend texmacs-extra-menu
+    (tm-menu (menus-menu)
 
-    \ \ (if (equal? (get-env "prog language") "menus")
+    \ \ (for (entry menu-items)
 
-    \ \ \ \ \ \ (=\<gtr\> "Menus" (link menus-menu))))
+    \ \ \ \ ((eval entry) (insert entry))))
 
     \;
 
-    (define-macro (menus-add s)
+    (tm-define (menus-add entry)
 
-    \ \ `(menu-extend menus-menu
+    \ \ (set! menu-items (cons entry menu-items)))
 
-    \ \ \ \ \ (,s (insert ,s))))
-  </scheme-fragment>
+    \;
 
-  The configuration of <verbatim|menus> proceeds as usual:
-
-  <\scheme-fragment>
     (plugin-configure menus
 
     \ \ (:require (url-exists-in-path? "menus.bin"))
@@ -89,7 +82,27 @@
     \ \ (:launch "menus.bin")
 
     \ \ (:session "Menus"))
-  </scheme-fragment>
+
+    \;
+
+    (menu-bind plugin-menu
+
+    \ \ (:require (in-menus?))
+
+    \ \ (=\<gtr\> "Menus" (link menus-menu)))
+  </scm-code>
+
+  The configuration of <verbatim|menus> proceeds as usual:
+
+  <\scm-code>
+    (plugin-configure menus
+
+    \ \ (:require (url-exists-in-path? "menus.bin"))
+
+    \ \ (:launch "menus.bin")
+
+    \ \ (:session "Menus"))
+  </scm-code>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 

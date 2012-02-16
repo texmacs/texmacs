@@ -85,3 +85,10 @@
    (load-buffer "$reduce/doc/manual/maintain.tex"))
   ("Reserved identifiers"
    (load-buffer "$reduce/doc/manual/appenda.tex")))
+
+(menu-bind session-help-icons
+  (:require (and (in-reduce?)
+                 (url-exists? "$reduce/doc/manual/abstract.tex")))
+  /
+  (=> (balloon (icon "tm_help.xpm") "Reduce documentation")
+      (link reduce-help-menu)))

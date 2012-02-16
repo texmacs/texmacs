@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.1>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
@@ -29,7 +29,7 @@
   in this file, the keyboard shortcuts <key|T h .> and <key|P r o p .> for
   starting a new theorem <abbr|resp.> proposition:
 
-  <\scm-fragment>
+  <\scm-code>
     (kbd-map
 
     \ \ ("D e f ." (make 'definition))
@@ -39,13 +39,15 @@
     \ \ ("P r o p ." (make 'proposition))
 
     \ \ ("T h ." (make 'theorem)))
-  </scm-fragment>
+  </scm-code>
 
   Similarly, the following command extends the standard <menu|Insert> menu
   with a special section for the insertion of greetings:
 
-  <\scm-fragment>
-    (menu-extend insert-menu
+  <\scm-code>
+    (menu-bind insert-menu
+
+    \ \ (next)
 
     \ \ ---
 
@@ -60,7 +62,7 @@
     \ \ \ \ \ \ ("Yours sincerely" (insert "Yours sincerely,"))
 
     \ \ \ \ \ \ ("Greetings" (insert "Greetings,"))))
-  </scm-fragment>
+  </scm-code>
 
   The customization of the <hlink|keyboard|../utils/utils-keyboard.en.tm> and
   <hlink|menus|../utils/utils-menus.en.tm> is described in more detail in the
@@ -73,7 +75,7 @@
   The file <verbatim|my-init-buffer.scm> can for instance be used in order to
   automatically select a certain style when starting a new document:
 
-  <\scm-fragment>
+  <\scm-code>
     (if (no-name?)
 
     \ \ \ \ (begin
@@ -81,7 +83,7 @@
     \ \ \ \ \ \ (init-style "article")
 
     \ \ \ \ \ \ (pretend-save-buffer)))
-  </scm-fragment>
+  </scm-code>
 
   Notice that the check <verbatim|(no-name?)> is important: when omitted, the
   styles of existing documents would also be changed to <tmstyle|article>.
@@ -94,11 +96,11 @@
   following code will force <TeXmacs> to automatically launch a <name|Maxima>
   session for every newly opened document:
 
-  <\scm-fragment>
+  <\scm-code>
     (if (no-name?)
 
     \ \ \ \ (make-session "maxima" (url-\<gtr\>string (get-name-buffer))))
-  </scm-fragment>
+  </scm-code>
 
   Using <scm|(url-\<gtr\>string (get-name-buffer))> as the second argument of
   <scm|make-session> ensures that a different session will be opened for
@@ -125,11 +127,11 @@
   Furthermore, the file <verbatim|init-<em|name>.scm> should a piece of
   configuration code of the form
 
-  <\scm-fragment>
+  <\scm-code>
     (plugin-configure <em|name>
 
     \ \ (:require #t))
-  </scm-fragment>
+  </scm-code>
 
   Any other <scheme> code present in <verbatim|init-<em|name>.scm> will then
   be executed when the plug-in is booted, that is, shortly after <TeXmacs> is
@@ -160,8 +162,8 @@
   In order to rapidly test the effect of <scheme> commands, it is convenient
   to execute them directly from within the editor. <TeXmacs> provides two
   mechanisms for doing this: directly type the command on the footer using
-  the <shortcut|(interactive footer-eval)> shortcut, or start a <scheme> session using
-  <menu|Insert|Session|Scheme>.
+  the <shortcut|(interactive footer-eval)> shortcut, or start a <scheme>
+  session using <menu|Insert|Session|Scheme>.
 
   The first mechanism is useful when you do not want to alter the document or
   when the current cursor position is important for the command you wish to
@@ -178,23 +180,19 @@
   <\session|scheme|default>
     <\folded-io|scheme] >
       (define (square x) (* x x))
-    <|folded-io>
-      </folded-io>
+    </folded-io|>
 
     <\folded-io|scheme] >
       (square 1111111)
-    <|folded-io>
-      </folded-io>
+    </folded-io|>
 
     <\folded-io|scheme] >
       (kbd-map ("h i ." (insert "Hi there!")))
-    <|folded-io>
-      </folded-io>
+    </folded-io|>
 
     <\folded-io|scheme] >
       ;; try typing ``hi.''
-    <|folded-io>
-      </folded-io>
+    </folded-io|>
   </session>
 
   <paragraph*|Command-line options for executing <scheme> commands>
@@ -208,9 +206,9 @@
     scheme command <verbatim|<em|cmd>> when booting has completed. For
     instance,
 
-    <\shell-fragment>
+    <\shell-code>
       texmacs -x "(display \\"Hi there\\\\n\\")"
-    </shell-fragment>
+    </shell-code>
 
     causes <TeXmacs> to print ``Hi there!'' when starting up. Notice that the
     <verbatim|-x> option may be used several times.
@@ -219,9 +217,9 @@
     <TeXmacs> to quit. It is usually used after a <verbatim|-x> option. For
     instance,
 
-    <\shell-fragment>
+    <\shell-code>
       texmacs text.tm -x "(print)" -q
-    </shell-fragment>
+    </shell-code>
 
     will cause <TeXmacs> to load the file <verbatim|text.tm>, to print it,
     and quit.

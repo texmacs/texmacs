@@ -608,3 +608,7 @@
   )
 
 )
+
+(menu-bind plugin-menu
+  (:require (or (in-eukleides?) (and (not-in-session?) (eukleides-scripts?))))
+  (=> "Eukleides" (link eukleides-functions-menu)))

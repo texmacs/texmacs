@@ -25,13 +25,7 @@
 	(cond ((pair? help-list)
 	       (set! maxima-help (car help-list)))
 	      ((string? help-list)
-	       (set! maxima-help help-list)))))
-  (menu-extend session-help-icons
-    (link maxima-help-icons))
-  (menu-extend texmacs-extra-menu
-    (if (or (in-maxima?) (and (not-in-session?) (maxima-scripts?)))
-	(=> "Maxima"
-	    (link maxima-menu)))))
+	       (set! maxima-help help-list))))))
 
 (define (maxima-serialize lan t)
   (import-from (utils plugins plugin-cmd))

@@ -109,5 +109,6 @@ draw(T^4*p,StickIntervalMarker(i=3,n=2,angle=-45,size=4mm,space=2mm,dotframe));
 
 )
 
-
-
+(menu-bind plugin-menu
+  (:require (or (in-asymptote?) (and (not-in-session?) (asymptote-scripts?))))
+  (=> "Asymptote" (link asymptote-functions-menu)))

@@ -14,12 +14,7 @@
 (define (reduce-initialize)
   (import-from (utils plugins plugin-convert))
   (import-from (reduce-menus))
-  (lazy-input-converter (reduce-input) reduce)
-  (menu-extend session-help-icons
-    (if (and (in-reduce?) (url-exists? "$reduce/doc/manual/abstract.tex"))
-	|
-	(=> (balloon (icon "tm_help.xpm") "Reduce documentation")
-	    (link reduce-help-menu)))))
+  (lazy-input-converter (reduce-input) reduce))
 
 (plugin-configure reduce
   (:require (url-exists-in-path? "reduce"))

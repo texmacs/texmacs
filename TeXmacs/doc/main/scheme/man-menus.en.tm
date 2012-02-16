@@ -1,37 +1,38 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|Creating your own dynamic menus>
 
-  You may define (or modify) a (part of a) menu with name <scm-arg|name>
-  using
+  You may define a menu with name <scm-arg|name> either using
 
-  <\scm-fragment>
-    (menu-bind <scm-arg|name> . <scm-arg|prog>)
-  </scm-fragment>
+  <\scm-code>
+    (menu-bind <scm-arg|name> . <scm-arg|def>)
+  </scm-code>
 
-  and append new entries to an existing (part of a) menu with name
-  <scm-arg|name> using
+  or
 
-  <\scm-fragment>
-    (menu-extend <scm-arg|name> . <scm-arg|prog>)
-  </scm-fragment>
+  <\scm-code>
+    (tm-menu (<scm-arg|name>) . <scm-arg|def>)
+  </scm-code>
 
-  Here <scm-arg|prog> is a program which represents the entries of the menu.
-  In particular, you may take a look at the files in the directory
+  Here <scm-arg|def> is a program which represents the entries of the menu.
+  In particular, you may take a<nbsp>look at the files in the directory
 
   <\verbatim>
     \ \ \ \ $TEXMACS_PATH/progs/menu
   </verbatim>
 
-  in order to see how the standard <TeXmacs> menus are defined.
+  in order to see how the standard <TeXmacs> menus are defined. In the case
+  of <scm|tm-menu>, it is possible to specify additional arguments, which
+  makes it possible to dynamically construct more complex menus which depend
+  on parameters.
 
-  More precisely, the program <verbatim|<em|prog>> in <verbatim|menu-set> or
-  <verbatim|menu-append> is a list of entries of one of the following forms:
+  More precisely, the program <verbatim|<em|def>> in <scm|menu-bind> or
+  <scm|tm-menu> is a list of entries of one of the following forms:
 
-  <\scm-fragment>
+  <\scm-code>
     (=\<gtr\> "pulldown menu name" <scm-arg|menu-definition>)
 
     (-\<gtr\> "pullright menu name" <scm-arg|menu-definition>)
@@ -43,7 +44,7 @@
     (if <scm-arg|condition> <scm-arg|menu-definition>)
 
     (link <scm-arg|variable>)
-  </scm-fragment>
+  </scm-code>
 
   \;
 

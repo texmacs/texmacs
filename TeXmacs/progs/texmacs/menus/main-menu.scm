@@ -20,6 +20,8 @@
 
 (menu-bind texmacs-extra-menu)
 (menu-bind texmacs-extra-icons)
+(menu-bind plugin-menu)
+(menu-bind plugin-icons)
 (tm-define (buffer-menu) (get-buffer-menu))
 (tm-define (project-buffer-menu) (get-project-buffer-menu))
 (tm-define (style-menu) (get-style-menu))
@@ -49,6 +51,7 @@
 	  (=> "Link" (link link-menu)))
       (if (in-presentation?)
 	  (=> "Dynamic" (link dynamic-menu)))
+      (link plugin-menu)
       (link texmacs-extra-menu)
       (=> "Focus" (link focus-menu))
       (=> "Format" (link format-menu)))

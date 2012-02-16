@@ -14,16 +14,7 @@
 (define (mupad-initialize)
   (import-from (utils plugins plugin-convert))
   (import-from (mupad-menus))
-  (lazy-input-converter (mupad-input) mupad)
-  (menu-extend texmacs-extra-menu
-    (if (or (in-mupad?) (and (not-in-session?) (mupad-scripts?)))
-	(=> "Mupad"
-	    (link mupad-menu))))
-  (menu-extend session-help-icons
-    (if (in-mupad?)
-	|
-	(=> (balloon (icon "tm_help.xpm") "MuPAD documentation")
-	    (link mupad-help-menu)))))
+  (lazy-input-converter (mupad-input) mupad))
 
 (define (mupad-serialize lan t)
   (import-from (utils plugins plugin-cmd))

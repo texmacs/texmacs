@@ -205,9 +205,9 @@
       (script-modified-eval fun :approx))))
 
 (tm-define (script-apply fun . opts)
-  (if (in? opts '(() (1)))
+  (if (and (in? opts '(() (1))) (not-in-session?))
       (script-modified-eval (lambda () (insert-function fun)))
-      (let* ((n (car opts))
+      (let* ((n (if (null? opts) 1 (car opts)))
 	     (input (script-get-input)))
 	;;(display* "Script apply " fun ", " n "\n")
 	(when input

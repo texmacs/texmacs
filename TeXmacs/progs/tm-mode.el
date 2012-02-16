@@ -47,6 +47,7 @@
   '(let let* lambda
     with-result and-let* setup-append-if
     while for repeat when unless assuming mini tile
+    plugin-configure
     define-preference-names
     with-focus-after
     logic-group logic-table logic-dispatcher
@@ -61,7 +62,7 @@
     tm-define tm-define-macro tm-property request-handler
     tm-menu define-menu tm-widget define-widget tm-generate
     tm-build tm-build-macro tm-build-widget
-    menu-bind menu-extend define-table extend-table
+    menu-bind define-table extend-table
     define-format define-language))
 
 (setq unary-no-highlight
@@ -90,7 +91,7 @@
 
 (setq other-keywords
   '(for if inherit
-    define-secure-symbols map-in-order link promise plugin-configure
+    define-secure-symbols map-in-order link promise
     plugin-input-converters use-modules export import-from inherit-modules
     lazy-menu lazy-keyboard lazy-define lazy-initialize
     lazy-format lazy-language lazy-input-converter

@@ -377,12 +377,6 @@
   (receive (opts body) (list-break l not-define-option?)
     `(tm-define (,name) ,@opts (menu-dynamic ,@body))))
 
-(define-public-macro (menu-extend name . l)
-  (receive (opts body) (list-break l not-define-option?)
-    `(tm-redefine ,name ,@opts
-       (with old-menu (tm-definition ,name ,@opts)
-	 (lambda () (append (old-menu) (menu-dynamic ,@body)))))))
-
 (define-public-macro (lazy-menu module . menus)
   `(begin
      (lazy-define ,module ,@menus)

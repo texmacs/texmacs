@@ -70,3 +70,8 @@
   (if (not-in-session?)
       ---
       (link scripts-eval-toggle-menu)))
+
+  (menu-bind plugin-menu
+    (:require (or (in-pari?) (and (not-in-session?) (pari-scripts?))))
+    (=> "Pari"
+        (link pari-menu)))

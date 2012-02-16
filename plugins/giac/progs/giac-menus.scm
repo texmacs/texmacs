@@ -221,3 +221,7 @@
   (-> "Isometries"
       ("Isom" (giac-insert "isom()"))
       ("Mkisom" (giac-insert "mkisom()"))))
+
+(menu-bind plugin-menu
+  (:require (in-giac?))
+  (=> "Giac" (link giac-functions-menu)))

@@ -11,19 +11,16 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (r-initialize)
+  (import-from (utils plugins plugin-convert))
+  (lazy-input-converter (r-input) r))
+
 (define (r-serialize lan t)
   (import-from (utils plugins plugin-cmd))
   (with u (pre-serialize lan t)
     (with s (texmacs->verbatim (stree->tree u))
       (string-append (escape-verbatim 
-		      (string-replace s "\n" ";;" 
-				      )
-		      ) "\n" )))
-)
-
-(define (r-initialize)
-  (import-from (utils plugins plugin-convert))
-  (lazy-input-converter (r-input) r))
+		      (string-replace s "\n" ";;")) "\n"))))
 
 (plugin-configure r
   (:require (url-exists-in-path? "R"))
@@ -32,17 +29,12 @@
   (:launch "exec tm_r")
   (:tab-completion #t)
   (:session "R")
-  (:scripts "R")
-  )
-
+  (:scripts "R"))
 
 (menu-bind r-menu
   ("update menu" (insert "t.update.menus(max.len=30)"))
-  ("R help in TeXmacs" (insert "t.start.help()"))  
-  )
+  ("R help in TeXmacs" (insert "t.start.help()")))
 
-(menu-extend texmacs-extra-menu
-    (if (in-r?)
-          (=> "R" (link r-menu))))
-	  
-
+(menu-bind plugin-menu
+  (:require (in-r?))
+  (=> "R" (link r-menu)))
