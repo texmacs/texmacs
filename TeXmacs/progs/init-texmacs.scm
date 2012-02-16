@@ -155,7 +155,6 @@
 (lazy-menu (dynamic scripts-menu) scripts-eval-menu scripts-plot-menu
 	   plugin-eval-menu plugin-eval-toggle-menu plugin-plot-menu)
 (lazy-define (dynamic session-edit) scheme-eval)
-(lazy-define (dynamic form-edit) form-ref form-set! form-toggle)
 (lazy-initialize (dynamic session-menu) (in-session?))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 

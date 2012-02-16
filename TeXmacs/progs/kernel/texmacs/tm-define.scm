@@ -52,23 +52,6 @@
   (or (and (symbol? x) (string-ends? (symbol->string x) "?"))
       (and (pair? x) (== (car x) 'lambda))))
 
-(define (define-option-context opt decl)
-  (if (predicate-option? (car opt))
-      (conditions-insert! 1 (car opt))
-      (conditions-insert! 1 `(lambda (t) (match? t ',(car opt)))))
-  decl)
-
-(define (define-option-inside opt decl)
-  (define-option-context
-    `((lambda (t)
-	(and (tm-compound? t)
-	     (in? (tm-car t) ',opt))))
-    decl))
-
-(define (define-option-case opt decl)
-  (conditions-insert! 2 (list quote (list->vector opt)))
-  decl)
-
 (define (define-option-match opt decl)
   (cond ((predicate-option? opt) (conditions-insert! 3 opt))
 	((and (pair? opt) (null? (cdr opt))
@@ -85,10 +68,6 @@
 
 (hash-set! define-option-table :profile define-option-profile)
 (hash-set! define-option-table :mode define-option-mode)
-;;(hash-set! define-option-table :context define-option-context)
-;;(hash-set! define-option-table :inside define-option-inside)
-;;(hash-set! define-option-table :case define-option-case)
-;;(hash-set! define-option-table :match define-option-match)
 (hash-set! define-option-table :require define-option-require)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -262,46 +241,6 @@
      ,@(map property-rewrite ovl-props)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Retrieve definitions and redefinition of functions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define-public (tm-definition-sub head body)
-  (if (and (nnull? body) (pair? (car body)) (keyword? (caar body)))
-      (let ((decl (tm-definition-sub head (cdr body))))
-	((hash-ref define-option-table (caar body)) (cdar body) decl))
-      (cons 'tm-definition-overloaded (cons head body))))
-
-(define-public-macro (tm-definition head . body)
-  (set! ovl-conds '())
-  (set! ovl-props '())
-  (tm-definition-sub head body))
-
-(define-public-macro (tm-definition-overloaded head . body)
-  (with var (ca*r head)
-    `(ovl-find (ahash-ref ovl-table ',var) (list ,@ovl-conds))))
-
-(define-public (tm-redefine-sub head body)
-  (if (and (pair? (car body)) (keyword? (caar body)))
-      (let ((decl (tm-redefine-sub head (cdr body))))
-	((hash-ref define-option-table (caar body)) (cdar body) decl))
-      (cons 'tm-redefine-overloaded (cons head body))))
-
-(define-public-macro (tm-redefine head . body)
-  (set! ovl-conds '())
-  (set! ovl-props '())
-  (tm-redefine-sub head body))
-
-(define-public-macro (tm-redefine-overloaded head . body)
-  (let* ((var (ca*r head))
-	 (val (lambda* head body)))
-    `(begin
-       (ahash-set! ovl-table ',var
-		   (ovl-insert (ahash-ref ovl-table ',var) ,val
-			       (list ,@ovl-conds)))
-       (set! ,var (lambda args (ovl-apply (ahash-ref ovl-table ',var) args)))
-       ,@(map property-rewrite ovl-props))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Lazy function declations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -315,17 +254,16 @@
 	 (new (if old (cons module old) (list module))))
     (ahash-set! lazy-define-table name new))
   (with name-star (string->symbol (string-append (symbol->string name) "*"))
-    `(if (not (tm-definition ,@opts ,name))
-	 (tm-define (,name . args)
-	   ,@opts
-	   (let* ((m (resolve-module ',module))
-		  (p (module-ref texmacs-user '%module-public-interface))
-		  (r (module-ref p ',name #f)))
-	     (if (not r)
-		 (texmacs-error "lazy-define"
-				,(string-append "Could not retrieve "
-						(symbol->string name))))
-	     (apply r args))))))
+    `(tm-define (,name . args)
+       ,@opts
+       (let* ((m (resolve-module ',module))
+              (p (module-ref texmacs-user '%module-public-interface))
+              (r (module-ref p ',name #f)))
+         (if (not r)
+             (texmacs-error "lazy-define"
+                            ,(string-append "Could not retrieve "
+                                            (symbol->string name))))
+         (apply r args)))))
 
 (define-public-macro (lazy-define module . names)
   (receive (opts real-names) (list-break names not-define-option?)
