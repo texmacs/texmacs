@@ -199,6 +199,9 @@
   (alternative-tag? (tree-label t)))
 
 (tm-define (switch-select t i)
+  (texmacs-error "switch-select" "invalid context"))
+
+(tm-define (switch-select t i)
   (:require (alternative-context? t))
   (switch-set-range t 0 :last #f)
   (switch-set t i #t))

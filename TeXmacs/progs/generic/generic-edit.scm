@@ -330,8 +330,8 @@
   (structured-inner-extremal t downwards?))
 
 (tm-define (structured-exit t forwards?)
-  (:require (complex-context? t))
-  (tree-go-to t (if forwards? :end :start)))
+  (when (complex-context? t)
+    (tree-go-to t (if forwards? :end :start))))
 
 (tm-define (structured-left)
   (structured-horizontal (focus-tree) #f))

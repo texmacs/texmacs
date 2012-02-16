@@ -14,7 +14,8 @@
 (texmacs-module (text text-menu)
   (:use (text format-text-edit)
         (text std-text-edit)
-        (text tm-structure)))
+        (text tm-structure)
+        (generic document-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document headers

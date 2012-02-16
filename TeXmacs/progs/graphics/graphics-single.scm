@@ -54,7 +54,10 @@
   (if (not (and (pair? (sketch-get)) (eq? 1 (length (sketch-get)))))
       (graphics-error "(sketch-get1)"))
   (sketch-get))
-  
+
+(tm-define (object_create tag x y)
+  (texmacs-error "object-create" "invalid tag"))
+
 (tm-define (object_create tag x y)
   (:require (== tag 'point))
   (object-set! `(point ,x ,y) 'new))

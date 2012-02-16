@@ -195,6 +195,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (start-operation opn p obj)
+  (texmacs-error "start-operation" "invalid context"))
+
+(tm-define (start-operation opn p obj)
   (:require (graphical-non-group-tag? (car obj)))
   (set! current-path #f)
   (if sticky-point
@@ -286,6 +289,9 @@
                 (set! multiselecting #t))))))
 
 (tm-define (toggle-select x y p obj)
+  (texmacs-error "toggle-select" "invalid context"))
+
+(tm-define (toggle-select x y p obj)
   (:require (graphical-non-group-tag? (car obj)))
   (any_toggle-select x y p obj))
 
@@ -295,6 +301,9 @@
          (graphics-decorations-update))
         ((and p (not multiselecting) (== (cadr (graphics-mode)) 'props))
          (graphics-copy-props p))))
+
+(tm-define (unselect-all p obj)
+  (texmacs-error "unselect-all" "invalid context"))
 
 (tm-define (unselect-all p obj)
   (:require (graphical-non-group-tag? (car obj)))

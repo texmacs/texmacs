@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (generic document-menu)
-  (:use (generic document-edit)))
+  (:use (generic document-edit)
+        (generic generic-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Submenus for the Document menu and the iconbars

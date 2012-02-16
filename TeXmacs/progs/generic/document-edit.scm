@@ -12,7 +12,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (generic document-edit)
-  (:use (utils base environment) (utils library length)))
+  (:use (utils base environment)
+        (utils library length)
+        (generic generic-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document style and packages

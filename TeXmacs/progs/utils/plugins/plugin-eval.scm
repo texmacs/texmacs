@@ -64,6 +64,9 @@
       ;;(display* "r= " r "\n")
       (plugin-postprocess name ses r (cons :simplify-output opts)))))
 
+(tm-define (script-numeric-evaluation-command)
+  "as_number")
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; New connection management
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
