@@ -62,7 +62,7 @@
   (let* ((fun (car proto))
 	 (args (cdr proto)))
     `(tm-define (build-content w)
-       (:case ,fun)
+       (:require (tm-is? w ',fun))
        (with ,(cons 'options args) (build-options w)
 	 (build-with options
            (begin ,@body))))))
@@ -71,7 +71,7 @@
   (let* ((fun (car proto))
 	 (args (cdr proto)))
     `(tm-define (build-content w)
-       (:case ,fun)
+       (:require (tm-is? w ',fun))
        (with ,(cons 'options args) (build-options w)
 	 (build-with options
 	   (build-content (begin ,@body)))))))
@@ -80,7 +80,7 @@
   (let* ((fun (car proto))
 	 (args (cdr proto)))
     `(tm-define (build-content w)
-       (:case ,fun)
+       (:require (tm-is? w ',fun))
        (with ,(cons 'options args) (build-options w)
 	 (build-with options
 	   (build-content-list ,(list 'quasiquote body)))))))

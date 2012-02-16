@@ -13,6 +13,10 @@
 
 (texmacs-module (kernel gui gui-test))
 
+(tm-define (open-test-widget)
+  ;; NOTE: close with Done in order to test other widgets
+  (widget-popup "Test" '(widget-4)))
+
 (tm-build-widget (widget-1)
   "Hallo, hier komt een lange regel met tekst."
   (concat "Links" >>> "Rechts"))

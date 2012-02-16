@@ -51,7 +51,7 @@
                  (kernel gui menu-define) (kernel gui menu-widget)
 		 (kernel gui kbd-define) (kernel gui kbd-handlers)
 		 (kernel gui gui-widget) (kernel gui gui-factory)
-		 (kernel gui gui-form))
+		 (kernel gui gui-form) (kernel gui gui-test))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting utilities\n")

@@ -85,10 +85,10 @@
 
 (hash-set! define-option-table :profile define-option-profile)
 (hash-set! define-option-table :mode define-option-mode)
-(hash-set! define-option-table :context define-option-context)
-(hash-set! define-option-table :inside define-option-inside)
-(hash-set! define-option-table :case define-option-case)
-(hash-set! define-option-table :match define-option-match)
+;;(hash-set! define-option-table :context define-option-context)
+;;(hash-set! define-option-table :inside define-option-inside)
+;;(hash-set! define-option-table :case define-option-case)
+;;(hash-set! define-option-table :match define-option-match)
 (hash-set! define-option-table :require define-option-require)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
