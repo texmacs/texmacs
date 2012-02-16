@@ -15,6 +15,51 @@
   (:use (kernel texmacs tm-define)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Contextual overloading
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public (ctx-add-condition l kind opt)
+  ;;(display* "add condition " l ", " opt "\n")
+  ;;(conditions-insert l kind opt)
+  (append l (list opt))
+  )
+
+(define-public (ctx-insert ovl data conds)
+  ;;(display* "insert " ovl ", " data ", " conds "\n")
+  ;;(ovl-insert ovl data conds)
+  (cons (cons conds data) (or ovl '()))
+  )
+
+(define-public (ctx-find ovl conds)
+  ;;(display* "find " ovl ", " conds "\n")
+  ;;(ovl-find ovl conds)
+  (cond ((or (not ovl) (null? ovl)) #f)
+        ((== (caar ovl) conds) (cdar ovl))
+        (else (ctx-find (cdr ovl) conds)))
+)
+
+(define-public (ctx-remove ovl conds)
+  ;;(display* "remove " ovl ", " conds "\n")
+  ;;(ovl-remove ovl conds)
+  (cond ((or (not ovl) (null? ovl)) '())
+        ((== (caar ovl) conds) (ctx-remove (cdr ovl) conds))
+        (else (cons (car ovl) (ctx-remove (cdr ovl) conds))))
+)
+
+(define (and-apply l args)
+  (or (null? l)
+      (and (apply (car l) (or args '()))
+           (and-apply (cdr l) args))))
+
+(define-public (ctx-resolve ovl args)
+  ;;(display* "resolve " ovl ", " args "\n")
+  ;;(ovl-resolve ovl args)
+  (cond ((or (not ovl) (null? ovl)) #f)
+        ((and-apply (caar ovl) args) (cdar ovl))
+        (else (ctx-resolve (cdr ovl) args)))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Lazy keyboard bindings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -114,8 +159,8 @@
 	 (cmd (if (string? com) com (object->string com))))
     ;;(display* "Binding '" key "' when " conds " to " com "\n")
     (kbd-delete-key-binding2 conds key)
-    (kbd-set-map! key (ovl-insert (kbd-get-map key) im conds))
-    (kbd-set-inv! com (ovl-insert (kbd-get-inv com) key conds))
+    (kbd-set-map! key (ctx-insert (kbd-get-map key) im conds))
+    (kbd-set-inv! com (ctx-insert (kbd-get-inv com) key conds))
     (kbd-set-rev! cmd (simple-insert (kbd-get-rev cmd) key))
     ;;(display* key " > " (kbd-get-map key) "\n")
     ;;(display* com " < " (kbd-get-inv com) "\n")
@@ -124,25 +169,25 @@
 
 (tm-define (kbd-delete-key-binding2 conds key)
   ;;(display* "Deleting binding '" key "' when " conds "\n")
-  (with im (ovl-find (kbd-get-map key) conds)
+  (with im (ctx-find (kbd-get-map key) conds)
     (if im
 	(let* ((com (kbd-source (car im)))
 	       (cmd (object->string com)))
-	  (kbd-set-map! key (ovl-remove (kbd-get-map key) conds))
-	  (kbd-set-inv! com (ovl-remove (kbd-get-inv com) conds))
+	  (kbd-set-map! key (ctx-remove (kbd-get-map key) conds))
+	  (kbd-set-inv! com (ctx-remove (kbd-get-inv com) conds))
 	  (kbd-set-rev! cmd (simple-remove (kbd-get-inv cmd) key))))))
 
 (tm-define (kbd-find-key-binding key)
   (:synopsis "Find the command associated to the keystroke @key")
   ;;(display* "Find binding '" key "'\n")
   (lazy-keyboard-force)
-  (ovl-resolve (kbd-get-map key) #f))
+  (ctx-resolve (kbd-get-map key) #f))
 
 (tm-define (kbd-find-inv-binding com)
   (:synopsis "Find keyboard binding for command @com")
   ;;(display* "Find inverse binding '" com "'\n")
   (lazy-keyboard-force)
-  (with r (ovl-resolve (kbd-get-inv com) #f)
+  (with r (ctx-resolve (kbd-get-inv com) #f)
     (if r r "")))
 
 (tm-define (kbd-find-rev-binding cmd)
@@ -158,9 +203,9 @@
 
 (define (kbd-find-key-binding2 conds key)
   ;;(display* "Find binding '" key "' when " conds "\n")
-  ;; FIXME: we really need an ovl-find which does mode inference
-  (or (ovl-find (kbd-get-map key) conds)
-      (ovl-find (kbd-get-map key) '())))
+  ;; FIXME: we really need an ctx-find which does mode inference
+  (or (ctx-find (kbd-get-map key) conds)
+      (ctx-find (kbd-get-map key) '())))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Yet more subroutines for the definition of keyboard shortcuts
@@ -206,8 +251,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (kbd-add-condition conds opt)
+  ;;(display* "Add condition " opt "\n")
   (cond ((== (car opt) :mode)
-         (conditions-insert conds 0 (cadr opt)))
+         (ctx-add-condition conds 0 (cadr opt)))
+	((== (car opt) :require)
+         (ctx-add-condition conds 0 `(lambda () ,(cadr opt))))
 	(else (texmacs-error "kbd-add-condition"
 			     "Bad keyboard option ~S" opt))))
 
