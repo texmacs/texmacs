@@ -208,15 +208,6 @@
 (define (kbd-add-condition conds opt)
   (cond ((== (car opt) :mode)
          (conditions-insert conds 0 (cadr opt)))
-	((== (car opt) :context)
-	 (if (predicate-option? (cadr opt))
-	     (conditions-insert conds 1 (cadr opt))
-	     (with pred `(lambda (t) (match? t ',(cadr opt)))
-	       (conditions-insert conds 1 pred))))
-	((== (car opt) :inside)
-	 (with pred `(lambda (t) (and (tm-compound? t)
-				      (in? (tm-car t) ',(cdr opt))))
-	   (conditions-insert conds 1 pred)))
 	(else (texmacs-error "kbd-add-condition"
 			     "Bad keyboard option ~S" opt))))
 
