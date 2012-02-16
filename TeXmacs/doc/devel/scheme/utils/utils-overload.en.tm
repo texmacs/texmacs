@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
@@ -31,37 +31,9 @@
 
   <paragraph*|Contextual overloading>
 
-  We will first describe the various options for overloading. If several
-  definitions are given for the same function (or macro) <scm|foo> and
-  several definitions satisfy the corresponding overloading conditions, when
-  applying <scm|foo> to some arguments, then the <em|most particular>
-  definition will prevail. For any of the overloading options, we will
-  therefore have to specify what we mean my ``most particular''. When trying
-  to find out the most particular set of options, we first sort on mode, next
-  on context and finally on function arguments. Notice that sorting on
-  function arguments is not yet fully implemented, so we will not discuss
-  this yet.
-
-  <\explain>
-    <scm|(:mode <scm-arg|mode>)><explain-synopsis|mode-based overloading>
-  <|explain>
-    This option specifies that the definition is only valid when we are in a
-    given <scm-arg|mode>. New modes are defined using <scm|texmacs-modes> and
-    modes can inherit from other modes. A mode <math|m<rsub|1>> is understood
-    to be more particular than another mode <math|m<rsub|2>> if
-    <math|m<rsub|1>> inherits from <math|m<rsub|2>>.
-  </explain>
-
-  <\explain>
-    <scm|(:match <scm-arg|pattern>)><explain-synopsis|argument based
-    overloading>
-  <|explain>
-    This option specifies that one necessary condition for the declaration to
-    be valid valid is that the arguments match the specified pattern
-    according to the primitive <scm|match?>. We have not yet implemented a
-    function to test whether a pattern is a restriction of another pattern,
-    so ambiguous overloads cannot be resolved.
-  </explain>
+  We will first describe the most important <scm|:require> option for
+  contextual overloading, which was already discussed
+  <hlink|before|../overview/overview-overloading.en.tm>.
 
   <\explain>
     <scm|(:require <scm-arg|cond>)><explain-synopsis|argument based
@@ -69,12 +41,11 @@
   <|explain>
     This option specifies that one necessary condition for the declaration to
     be valid is that the condition <scm-arg|cond> is met. This condition may
-    involve the arguments of the function. Again, ambiguous overloads cannot
-    be resolved.
+    involve the arguments of the function.
 
     As an example, let us consider the following definitions:
 
-    <\scm-fragment>
+    <\scm-code>
       (tm-define (special t)
 
       \ \ (and-with p (tree-outer t)
@@ -96,7 +67,7 @@
       \ \ (:require (tree-is? t 'rsub))
 
       \ \ (tree-set! t `(rsup ,(tree-ref t 0))))
-    </scm-fragment>
+    </scm-code>
 
     The default implementation of <scm|special> is to apply <scm|special> to
     the parent <scm|p> of <scm|t> as long as <scm|t> is not the entire
@@ -107,29 +78,20 @@
     calling <scm|special> will swap the numerator and the denominator. On the
     other hand, if your cursor is inside a subscript inside a fraction, then
     calling <scm|special> will change the subscript into a superscript.
-  </explain>
 
-  <\explain>
-    <scm|(:case <scm-arg|label-1> ... <scm-arg|label-n>)><explain-synopsis|argument
-    based dispatching>
-  <|explain>
-    This is a very special case of the <scm|:match> option, where we require
-    the first argument to be a compound hybrid tree whose root label is
-    amongst <scm-arg|label-1> until <scm-arg|label-n>. Besides a simplified
-    syntax, the implementation of <scm|:case> is done using a dispatch via a
-    hash table. When appropriate, you should therefore priviledge <scm|:case>
-    over the general form of <scm|:match>. A typical situation when
-    <scm|:case> is useful is when writing a converter <scm|tm-\<gtr\>foo> of
-    <TeXmacs> trees into your own foormat: specific converters for given tags
-    can be added using
+    When the conditions of several (re)declarations are met, then the last
+    redeclaration will be used. Inside a redeclaration, one may also use the
+    <scm|former> keyword in order to explicitly access the former value of
+    the redefined symbol.
 
-    <\scm-fragment>
-      (tm-define (tm-\<gtr\>foo t)
-
-      \ \ (:case frac)
-
-      \ \ <with|prog-font-shape|italic|tm-to-foo-converter-for-frac>)
-    </scm-fragment>
+    <\explain>
+      <scm|(:mode <scm-arg|mode>)><explain-synopsis|mode-based overloading>
+    <|explain>
+      This option is equivalent to <scm|(:require (<scm-arg|mode>))> and
+      specifies that the definition is only valid when we are in a given
+      <scm-arg|mode>. New modes are defined using <scm|texmacs-modes> and
+      modes can inherit from other modes.
+    </explain>
   </explain>
 
   <paragraph*|Other options for function and macro declarations>
@@ -149,13 +111,13 @@
     expressions may be encoded inside this string by using the
     <verbatim|@>-prefix. For instance:
 
-    <\scm-fragment>
+    <\scm-code>
       (tm-define (list-square l)
 
       \ \ (:synopsis "Appends the list @l to itself")
 
       \ \ (append l l))
-    </scm-fragment>
+    </scm-code>
 
     The synopsis of a function is used for instance in order to provide a
     short help string for the function. In the future, we might also use it

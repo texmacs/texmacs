@@ -30,6 +30,10 @@
   (require-format x '(dynamic :%1))
   `($dynamic ,(cadr x)))
 
+(define (gui-make-former x)
+  (require-format x '(former :*))
+  `($dynamic ,x))
+
 (define (gui-make-link x)
   (require-format x '(link :%1))
   `($menu-link ,(cadr x)))
@@ -273,6 +277,7 @@
 (define-table gui-make-table
   (eval ,gui-make-eval)
   (dynamic ,gui-make-dynamic)
+  (former ,gui-make-former)
   (link ,gui-make-link)
   (let ,gui-make-let)
   (let* ,gui-make-let)

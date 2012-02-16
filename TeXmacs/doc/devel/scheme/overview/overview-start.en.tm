@@ -47,7 +47,7 @@
   <\scm-code>
     (menu-bind insert-menu
 
-    \ \ (next)
+    \ \ (former)
 
     \ \ ---
 

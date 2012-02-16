@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.11>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
@@ -30,98 +30,51 @@
   <\scm-code>
     (tm-define (hello) (insert "Hello"))
 
-    (tm-define (hello) (:mode in-math?) (insert-go-to "hello()" '(6)))
+    (tm-define (hello) (:require (in-math?)) (insert-go-to "hello()" '(6)))
   </scm-code>
-
-  Here we recall that the two definitions may be put inside different
-  modules. Notice also that the contextual overloading system considers the
-  implementation of <scm|hello> inside math mode to be more <em|particular>
-  than the default implementation. In case when several implementations match
-  their respective conditions, the most particular implementation will be
-  chosen.
-
-  Currently, <TeXmacs> supports two major types of conditions:
-
-  <\description>
-    <item*|Conditions on the mode>
-
-    A <em|<TeXmacs> mode> corresponds to a simple predicate without
-    arguments, together with a finite number of other, less particular, modes
-    which are implied by it. New modes can be defined using the instruction
-
-    <\scm-code>
-      (texmacs-modes <em|mode>% <em|cond> <em|submode-1> ... <em|submode-n>)
-    </scm-code>
-
-    For instance, we might define a new mode <scm|inside-theorem?> as follows
-
-    <\scm-code>
-      (texmacs-modes inside-theorem% (inside? 'theorem) in-text%)
-    </scm-code>
-
-    Some standard modes are <scm|always?>, <scm|in-source?>, <scm|in-text?>,
-    <scm|in-math?>, <scm|in-prog?>. There is also a special mode
-    <scm|prevail?> which is always satisfied, but nevertheless considered as
-    more particular than all other modes.
-
-    <\remark>
-      Currently, modes necessarily terminate by the <verbatim|?> character.
-      However, in the <scm|texmacs-modes> instruction, the <verbatim|?> has
-      to be replaced by a <verbatim|%>. This may change in a future version
-      of <TeXmacs>.
-    </remark>
-
-    <item*|Conditions on the arguments of the function>
-
-    This type of contextual overloading is closest to the more classical
-    concept of overloading used by languages like <name|C++>. Although one
-    may overload on the types of the arguments, it is also possible to impose
-    more general conditions on the arguments. For instance, one may sometimes
-    wish to write the following kind of code:
-
-    <\scm-code>
-      (tm-define (my-replace what by)
-
-      \ \ <em|default-implementation>)
-
-      \;
-
-      (tm-define (my-replace what by)
-
-      \ \ (:require (== what by))
-
-      \ \ (noop))
-    </scm-code>
-  </description>
 
   \;
 
-  In cases of conflict, we notice that the contextual overloading system
-  first dispatches on mode and then on the arguments on the function. For
-  instance, consider a routine <scm|foo> defined<nbsp>by
+  The order in which routines are overloaded is important. <TeXmacs> first
+  tries the latest (re)definition. If this definition does not satisfy the
+  requirements (<scm|(in-math?)>, in our case), then it tries the before last
+  (re)definition, and so on until an implementation is found which matches
+  the requirements. For example, if we invert the two declarations in the
+  above example, then the general unconditional definition of <scm|hello>
+  will always prevail. If the two declarations are made inside different
+  modules, then it is up to the user to ensure that the modules are loaded in
+  an appropriate order.
+
+  Inside a redefinition, it is also possible to access the former definition
+  using the keyword <scm|former>. In particular, the code
 
   <\scm-code>
-    (tm-define (foo t) (:mode in-math?) <em|implementation-1>)
+    (tm-define (hello)
 
-    (tm-define (foo t) (:require (tree-is? t 'frac)) <em|implementation-2>)
+    \ \ (if (in-math?) (insert-go-to "hello()" '(6)) (former)))
   </scm-code>
 
-  Then the first implementation will be used when <scm|foo> is called for a
-  fraction in math mode. In cases of conflict when no implementation is
-  preferrable <em|a priori>, the last implementation prevails. For instance,
-  consider a predicate <scm|(gnu? t)> which implies another predicate
-  <scm|(hairy? t)>, and assume that we want to overload a function <scm|(foo
-  t)> for both predicates. Then we may use something such as
+  is equivalent to the second declaration in our example.
+
+  Contextual overloading generalizes more classical overloading on the types
+  of the arguments, such as <name|C++> style polymorphism. Although one may
+  overload on the types of the arguments, it is also possible to impose more
+  general conditions on the arguments. For instance, one may sometimes wish
+  to write the following kind of code:
 
   <\scm-code>
-    (tm-define (foo t) (:require (hairy? t) <em|implementation-1>)
+    (tm-define (my-replace what by)
 
-    (tm-define (foo t) (:require (gnu? t)) <em|implementation-2>)
+    \ \ <em|default-implementation>)
+
+    \;
+
+    (tm-define (my-replace what by)
+
+    \ \ (:require (== what by))
+
+    \ \ (noop))
   </scm-code>
-
-  Indeed, the most particular implementation should be declared last. In the
-  case when both implementations are in different files, the file with the
-  definition when <scm|(gnu? t)> should include the other<nbsp>one.
 
   Besides <scm|tm-define>, several other added language primitives support
   the contextual overloading mechanism. For instance, <scm|kbd-map> and

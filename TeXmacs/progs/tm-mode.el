@@ -90,7 +90,7 @@
   ternary-keywords)
 
 (setq other-keywords
-  '(for if inherit next-method
+  '(for if inherit former
     define-secure-symbols map-in-order link promise
     plugin-input-converters use-modules export import-from inherit-modules
     lazy-menu lazy-keyboard lazy-define lazy-initialize

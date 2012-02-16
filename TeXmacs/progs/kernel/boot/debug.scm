@@ -107,6 +107,9 @@
 (define-public (syntax-error where message . args)
   (scm-error* 'syntax-error where message args #f))
 
+(define-public (former . l)
+  (texmacs-error "former" "no next method"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Regression testing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
