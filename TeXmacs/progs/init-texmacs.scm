@@ -16,7 +16,7 @@
 ;; TODO: scheme file caching using (set! primitive-load ...) and
 ;; (set! %search-load-path)
 
-(debug-enable 'backtrace 'debug)
+;;(debug-enable 'backtrace 'debug)
 ;; (define load-indent 0)
 ;; (define old-primitive-load primitive-load)
 ;; (define (new-primitive-load . x)
