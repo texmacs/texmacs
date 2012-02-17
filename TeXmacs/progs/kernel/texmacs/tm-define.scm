@@ -57,10 +57,6 @@
 ;; Overloading
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (define-option-profile opt decl)
-  (display* "Profile: " opt ", " decl "\n")
-  (if (has-look-and-feel? opt) decl '(begin)))
-
 (define (conditions-insert! kind opt)
   (set! ovl-conds (conditions-insert ovl-conds kind opt)))
 
@@ -88,7 +84,6 @@
     `(lambda ,(cdadr decl) ,(car opt))
     decl))
 
-;;(hash-set! define-option-table :profile define-option-profile)
 (hash-set! define-option-table :mode define-option-mode)
 (hash-set! define-option-table :require define-option-require)
 
@@ -192,10 +187,6 @@
   (if (null? new-conds) body
       `((if ,(and* new-conds)
             ,(begin* body)
-            ;;(begin
-            ;;  (if (== ',var 'keyboard-press)
-            ;;      (display* "Next method for " ',var "\n"))
-            ;;  ,(apply* 'former head))
             ,(apply* 'former head)))))
 
 (define-public tm-defined-table (make-ahash-table))
@@ -210,9 +201,6 @@
            ;;    (display* "Overloaded " ',var "\n"))
            ;;(display* "Overloaded " ',var "\n")
            ;;(display* "   " ',nval "\n")
-           ;;(when (== ',var 'keyboard-press)
-           ;;  (display* "Overloaded " ',var "\n")
-           ;;  (display* "   " ',nval "\n"))
            (set! temp-module ,(current-module))
            (set! temp-value ,nval)
            (set-current-module texmacs-user)
@@ -235,62 +223,9 @@
            (ahash-set! tm-defined-table ',var 1)
            ,@(map property-rewrite ovl-props)))))
 
-;; (define-public-macro (old-tm-define-overloaded head . body)
-;;   (let* ((var (ca*r head))
-;; 	 (val (lambda* head body))
-;; 	 (default? (and (null? ovl-conds) (not (ahash-ref ovl-table var)))))
-;;     `(begin
-;;        (set! temp-module ,(current-module))
-;;        (set! temp-value ,val)
-;;        ,(if default?
-;;             `(ahash-set! ovl-table ',var (cons 100 temp-value))
-;;             `(ahash-set! ovl-table ',var
-;;                          (ovl-insert (ahash-ref ovl-table ',var) temp-value
-;;                                      (list ,@ovl-conds))))
-;;        (set-current-module texmacs-user)
-;;        (cond ((not (procedure? temp-value))
-;;               (define-public ,head temp-value))
-;;              (,default?
-;;                (define-public ,var temp-value))
-;;              (else
-;;                (define-public (,var . args)
-;;                  (ovl-apply (ahash-ref ovl-table ',var) args))))
-;;        (set-current-module temp-module)
-;;        ,@(map property-rewrite ovl-props))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Overloaded macros with properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; (define-public (tm-define-macro-sub head body)
-;;   (if (and (pair? (car body)) (keyword? (caar body)))
-;;       (let ((decl (tm-define-macro-sub head (cdr body))))
-;; 	((hash-ref define-option-table (caar body)) (cdar body) decl))
-;;       (cons 'tm-define-macro-overloaded (cons head body))))
-
-;; (define-public-macro (tm-define-macro head . body)
-;;   (set! ovl-conds '())
-;;   (set! new-conds '())
-;;   (set! ovl-props '())
-;;   (tm-define-macro-sub head body))
-
-;; (define-public-macro (tm-define-macro-overloaded head . body)
-;;   (let* ((var (ca*r head))
-;; 	 (val (lambda* head body))
-;; 	 (default? (and (null? ovl-conds) (not (ahash-ref ovl-table var)))))
-;;     `(begin
-;;        (set! temp-module ,(current-module))
-;;        (set! temp-value ,val)
-;;        ,(if default?
-;; 	    `(ahash-set! ovl-table ',var (cons 100 temp-value))
-;; 	    `(ahash-set! ovl-table ',var
-;; 		       (ovl-insert (ahash-ref ovl-table ',var) temp-value
-;; 				   (list ,@ovl-conds))))
-;;        (set-current-module texmacs-user)
-;;        (define-public-macro (,var . args)
-;; 	 (ovl-apply (ahash-ref ovl-table ',var) args))
-;;        (set-current-module temp-module)
-;;        ,@(map property-rewrite ovl-props))))
 
 (define-public (tm-macroify head)
   (if (pair? head)

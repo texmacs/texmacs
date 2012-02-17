@@ -103,7 +103,7 @@
   (string<=? (symbol->string s1) (symbol->string s2)))
 
 (define (get-function-list)
-  (list-sort (map car (ahash-table->list ovl-table)) symbol<=?))
+  (list-sort (map car (ahash-table->list tm-defined-table)) symbol<=?))
 
 (define (get-interactive-function-list)
   (let* ((funs (get-function-list))
