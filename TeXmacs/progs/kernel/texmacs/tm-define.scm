@@ -65,11 +65,10 @@
 
 (define-public define-option-table (make-hash-table 100))
 
-(define-public xxx-conds '())
-(define-public new-conds '())
+(define-public cur-conds '())
 
-(define xxx-props-table (make-ahash-table))
-(define xxx-props '())
+(define cur-props-table (make-ahash-table))
+(define cur-props '())
 
 (define (ca*r x) (if (pair? x) (ca*r (car x)) x))
 (define (ca*adr x) (ca*r (cadr x)))
@@ -102,10 +101,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (ctx-add-condition! kind opt)
-  (set! xxx-conds (ctx-add-condition xxx-conds kind opt)))
+  (set! cur-conds (ctx-add-condition cur-conds kind opt)))
 
 (define (define-option-mode opt decl)
-  (set! new-conds (append new-conds (list opt)))
   (ctx-add-condition! 0 (car opt))
   decl)
 
@@ -123,7 +121,6 @@
   decl)
 
 (define (define-option-require opt decl)
-  (set! new-conds (append new-conds opt))
   (define-option-match
     `(lambda ,(cdadr decl) ,(car opt))
     decl))
@@ -145,24 +142,24 @@
   "Associate a property to a function symbol under conditions"
   (let* ((key (cons var prop))
 	 (conds (filter-conds conds*)))
-    (ahash-set! xxx-props-table key
-		(ctx-insert (ahash-ref xxx-props-table key) what conds))))
+    (ahash-set! cur-props-table key
+		(ctx-insert (ahash-ref cur-props-table key) what conds))))
 
 (define-public (property var prop)
   "Retrieve a property of a function symbol"
   (if (procedure? var) (set! var (procedure-name var)))
   (let* ((key (cons var prop)))
-    (ctx-resolve (ahash-ref xxx-props-table key) #f)))
+    (ctx-resolve (ahash-ref cur-props-table key) #f)))
 
 (define (property-rewrite l)
-  `(property-set! ,@l (list ,@xxx-conds)))
+  `(property-set! ,@l (list ,@cur-conds)))
 
 (define ((define-property which) opt decl)
-  (set! xxx-props (cons `(',(ca*adr decl) ,which ',opt) xxx-props))
+  (set! cur-props (cons `(',(ca*adr decl) ,which ',opt) cur-props))
   decl)
 
 (define ((define-property* which) opt decl)
-  (set! xxx-props (cons `(',(ca*adr decl) ,which (list ,@opt)) xxx-props))
+  (set! cur-props (cons `(',(ca*adr decl) ,which (list ,@opt)) cur-props))
   decl)
 
 (define (compute-arguments decl)
@@ -176,20 +173,20 @@
   (let* ((var (ca*adr decl))
 	 (args (compute-arguments decl))
 	 (arg (list :argument (car opt))))
-    (set! xxx-props (cons `(',var :arguments ',args) xxx-props))
-    (set! xxx-props (cons `(',var ',arg ',(cdr opt)) xxx-props))
+    (set! cur-props (cons `(',var :arguments ',args) cur-props))
+    (set! cur-props (cons `(',var ',arg ',(cdr opt)) cur-props))
     decl))
 
 (define (define-option-default opt decl)
   (let* ((var (ca*adr decl))
 	 (arg (list :default (car opt))))
-    (set! xxx-props (cons `(',var ',arg (lambda () ,@(cdr opt))) xxx-props))
+    (set! cur-props (cons `(',var ',arg (lambda () ,@(cdr opt))) cur-props))
     decl))
 
 (define (define-option-proposals opt decl)
   (let* ((var (ca*adr decl))
 	 (arg (list :proposals (car opt))))
-    (set! xxx-props (cons `(',var ',arg (lambda () ,@(cdr opt))) xxx-props))
+    (set! cur-props (cons `(',var ',arg (lambda () ,@(cdr opt))) cur-props))
     decl))
 
 (hash-set! define-option-table :type (define-property :type))
@@ -222,14 +219,18 @@
       (cons 'tm-define-overloaded (cons head body))))
 
 (define-public-macro (tm-define head . body)
-  (set! xxx-conds '())
-  (set! new-conds '())
-  (set! xxx-props '())
+  (set! cur-conds '())
+  (set! cur-props '())
   (tm-define-sub head body))
 
+(define (unlambda pred?)
+  (if (func? pred? 'lambda)
+      (caddr pred?)
+      (list pred?)))
+
 (define-public (tm-add-condition var head body)
-  (if (null? new-conds) body
-      `((if ,(and* new-conds)
+  (if (null? cur-conds) body
+      `((if ,(and* (map unlambda cur-conds))
             ,(begin* body)
             ,(apply* 'former head)))))
 
@@ -252,20 +253,20 @@
            (set-current-module temp-module)
            (ahash-set! tm-defined-table ',var
                        (+ 1 (ahash-ref tm-defined-table ',var)))
-           ,@(map property-rewrite xxx-props))
+           ,@(map property-rewrite cur-props))
         `(begin
-           (when (nnull? new-conds)
+           (when (nnull? cur-conds)
              (display* "warning: conditional master routine " ',var "\n")
              (display* "   " ',nval "\n"))
            ;;(display* "Defined " ',var "\n")
-           ;;(if (nnull? new-conds) (display* "   " ',nval "\n"))
+           ;;(if (nnull? cur-conds) (display* "   " ',nval "\n"))
            (set! temp-module ,(current-module))
            (set! temp-value ,nval)
            (set-current-module texmacs-user)
            (define-public ,var temp-value)
            (set-current-module temp-module)
            (ahash-set! tm-defined-table ',var 1)
-           ,@(map property-rewrite xxx-props)))))
+           ,@(map property-rewrite cur-props)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Overloaded macros with properties
@@ -301,14 +302,13 @@
 	((hash-ref define-option-table (caar body)) (cdar body) decl))))
 
 (define-public-macro (tm-property head . body)
-  (set! xxx-conds '())
-  (set! new-conds '())
-  (set! xxx-props '())
+  (set! cur-conds '())
+  (set! cur-props '())
   (tm-property-sub head body))
 
 (define-public-macro (tm-property-overloaded head . body)
   `(begin
-     ,@(map property-rewrite xxx-props)))
+     ,@(map property-rewrite cur-props)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Lazy function declations
