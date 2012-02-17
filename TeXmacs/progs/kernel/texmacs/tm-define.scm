@@ -11,8 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (kernel texmacs tm-define)
-  (:inherit (kernel texmacs tm-overload)))
+(texmacs-module (kernel texmacs tm-define))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Contextual overloading
@@ -20,31 +19,23 @@
 
 (define-public (ctx-add-condition l kind opt)
   ;;(display* "add condition " l ", " opt "\n")
-  ;;(conditions-insert l kind opt)
-  (append l (list opt))
-  )
+  (append l (list opt)))
 
 (define-public (ctx-insert ctx data conds)
   ;;(display* "insert " ctx ", " data ", " conds "\n")
-  ;;(ovl-insert ctx data conds)
-  (cons (cons conds data) (or ctx '()))
-  )
+  (cons (cons conds data) (or ctx '())))
 
 (define-public (ctx-find ctx conds)
   ;;(display* "find " ctx ", " conds "\n")
-  ;;(ovl-find ctx conds)
   (cond ((or (not ctx) (null? ctx)) #f)
         ((== (caar ctx) conds) (cdar ctx))
-        (else (ctx-find (cdr ctx) conds)))
-)
+        (else (ctx-find (cdr ctx) conds))))
 
 (define-public (ctx-remove ctx conds)
   ;;(display* "remove " ctx ", " conds "\n")
-  ;;(ovl-remove ctx conds)
   (cond ((or (not ctx) (null? ctx)) '())
         ((== (caar ctx) conds) (ctx-remove (cdr ctx) conds))
-        (else (cons (car ctx) (ctx-remove (cdr ctx) conds))))
-)
+        (else (cons (car ctx) (ctx-remove (cdr ctx) conds)))))
 
 (define (and-apply l args)
   (or (null? l)
@@ -53,11 +44,9 @@
 
 (define-public (ctx-resolve ctx args)
   ;;(display* "resolve " ctx ", " args "\n")
-  ;;(ovl-resolve ctx args)
   (cond ((or (not ctx) (null? ctx)) #f)
         ((and-apply (caar ctx) args) (cdar ctx))
-        (else (ctx-resolve (cdr ctx) args)))
-)
+        (else (ctx-resolve (cdr ctx) args))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global variables and subroutines

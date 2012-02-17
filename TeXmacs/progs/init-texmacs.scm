@@ -41,7 +41,7 @@
 (inherit-modules (kernel regexp regexp-match) (kernel regexp regexp-select))
 (inherit-modules (kernel logic logic-rules) (kernel logic logic-query)
 		 (kernel logic logic-data))
-(inherit-modules (kernel texmacs tm-overload) (kernel texmacs tm-define)
+(inherit-modules (kernel texmacs tm-define)
 		 (kernel texmacs tm-preferences) (kernel texmacs tm-modes)
 		 (kernel texmacs tm-plugins) (kernel texmacs tm-secure)
 		 (kernel texmacs tm-convert) (kernel texmacs tm-dialogue)
