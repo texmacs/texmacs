@@ -15,17 +15,61 @@
   (:inherit (kernel texmacs tm-overload)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Contextual overloading
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public (ctx-add-condition l kind opt)
+  ;;(display* "add condition " l ", " opt "\n")
+  ;;(conditions-insert l kind opt)
+  (append l (list opt))
+  )
+
+(define-public (ctx-insert ctx data conds)
+  ;;(display* "insert " ctx ", " data ", " conds "\n")
+  ;;(ovl-insert ctx data conds)
+  (cons (cons conds data) (or ctx '()))
+  )
+
+(define-public (ctx-find ctx conds)
+  ;;(display* "find " ctx ", " conds "\n")
+  ;;(ovl-find ctx conds)
+  (cond ((or (not ctx) (null? ctx)) #f)
+        ((== (caar ctx) conds) (cdar ctx))
+        (else (ctx-find (cdr ctx) conds)))
+)
+
+(define-public (ctx-remove ctx conds)
+  ;;(display* "remove " ctx ", " conds "\n")
+  ;;(ovl-remove ctx conds)
+  (cond ((or (not ctx) (null? ctx)) '())
+        ((== (caar ctx) conds) (ctx-remove (cdr ctx) conds))
+        (else (cons (car ctx) (ctx-remove (cdr ctx) conds))))
+)
+
+(define (and-apply l args)
+  (or (null? l)
+      (and (apply (car l) (or args '()))
+           (and-apply (cdr l) args))))
+
+(define-public (ctx-resolve ctx args)
+  ;;(display* "resolve " ctx ", " args "\n")
+  ;;(ovl-resolve ctx args)
+  (cond ((or (not ctx) (null? ctx)) #f)
+        ((and-apply (caar ctx) args) (cdar ctx))
+        (else (ctx-resolve (cdr ctx) args)))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global variables and subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-public define-option-table (make-hash-table 100))
 
-(define-public ovl-table (make-ahash-table))
-(define-public ovl-conds '())
+(define-public xxx-conds '())
 (define-public new-conds '())
 
-(define ovl-props-table (make-ahash-table))
-(define ovl-props '())
+(define xxx-props-table (make-ahash-table))
+(define xxx-props '())
 
 (define (ca*r x) (if (pair? x) (ca*r (car x)) x))
 (define (ca*adr x) (ca*r (cadr x)))
@@ -57,12 +101,12 @@
 ;; Overloading
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (conditions-insert! kind opt)
-  (set! ovl-conds (conditions-insert ovl-conds kind opt)))
+(define (ctx-add-condition! kind opt)
+  (set! xxx-conds (ctx-add-condition xxx-conds kind opt)))
 
 (define (define-option-mode opt decl)
   (set! new-conds (append new-conds (list opt)))
-  (conditions-insert! 0 (car opt))
+  (ctx-add-condition! 0 (car opt))
   decl)
 
 (define-public (predicate-option? x)
@@ -70,12 +114,12 @@
       (and (pair? x) (== (car x) 'lambda))))
 
 (define (define-option-match opt decl)
-  (cond ((predicate-option? opt) (conditions-insert! 3 opt))
+  (cond ((predicate-option? opt) (ctx-add-condition! 3 opt))
 	((and (pair? opt) (null? (cdr opt))
 	      (predicate-option? (car opt))
 	      (list? (cadr decl)) (= (length (cadr decl)) 3))
-	 (conditions-insert! 3 (car opt)))
-	(else (conditions-insert! 3 `(lambda args (match? args ',opt)))))
+	 (ctx-add-condition! 3 (car opt)))
+	(else (ctx-add-condition! 3 `(lambda args (match? args ',opt)))))
   decl)
 
 (define (define-option-require opt decl)
@@ -101,24 +145,24 @@
   "Associate a property to a function symbol under conditions"
   (let* ((key (cons var prop))
 	 (conds (filter-conds conds*)))
-    (ahash-set! ovl-props-table key
-		(ovl-insert (ahash-ref ovl-props-table key) what conds))))
+    (ahash-set! xxx-props-table key
+		(ctx-insert (ahash-ref xxx-props-table key) what conds))))
 
 (define-public (property var prop)
   "Retrieve a property of a function symbol"
   (if (procedure? var) (set! var (procedure-name var)))
   (let* ((key (cons var prop)))
-    (ovl-resolve (ahash-ref ovl-props-table key) #f)))
+    (ctx-resolve (ahash-ref xxx-props-table key) #f)))
 
 (define (property-rewrite l)
-  `(property-set! ,@l (list ,@ovl-conds)))
+  `(property-set! ,@l (list ,@xxx-conds)))
 
 (define ((define-property which) opt decl)
-  (set! ovl-props (cons `(',(ca*adr decl) ,which ',opt) ovl-props))
+  (set! xxx-props (cons `(',(ca*adr decl) ,which ',opt) xxx-props))
   decl)
 
 (define ((define-property* which) opt decl)
-  (set! ovl-props (cons `(',(ca*adr decl) ,which (list ,@opt)) ovl-props))
+  (set! xxx-props (cons `(',(ca*adr decl) ,which (list ,@opt)) xxx-props))
   decl)
 
 (define (compute-arguments decl)
@@ -132,20 +176,20 @@
   (let* ((var (ca*adr decl))
 	 (args (compute-arguments decl))
 	 (arg (list :argument (car opt))))
-    (set! ovl-props (cons `(',var :arguments ',args) ovl-props))
-    (set! ovl-props (cons `(',var ',arg ',(cdr opt)) ovl-props))
+    (set! xxx-props (cons `(',var :arguments ',args) xxx-props))
+    (set! xxx-props (cons `(',var ',arg ',(cdr opt)) xxx-props))
     decl))
 
 (define (define-option-default opt decl)
   (let* ((var (ca*adr decl))
 	 (arg (list :default (car opt))))
-    (set! ovl-props (cons `(',var ',arg (lambda () ,@(cdr opt))) ovl-props))
+    (set! xxx-props (cons `(',var ',arg (lambda () ,@(cdr opt))) xxx-props))
     decl))
 
 (define (define-option-proposals opt decl)
   (let* ((var (ca*adr decl))
 	 (arg (list :proposals (car opt))))
-    (set! ovl-props (cons `(',var ',arg (lambda () ,@(cdr opt))) ovl-props))
+    (set! xxx-props (cons `(',var ',arg (lambda () ,@(cdr opt))) xxx-props))
     decl))
 
 (hash-set! define-option-table :type (define-property :type))
@@ -178,9 +222,9 @@
       (cons 'tm-define-overloaded (cons head body))))
 
 (define-public-macro (tm-define head . body)
-  (set! ovl-conds '())
+  (set! xxx-conds '())
   (set! new-conds '())
-  (set! ovl-props '())
+  (set! xxx-props '())
   (tm-define-sub head body))
 
 (define-public (tm-add-condition var head body)
@@ -208,7 +252,7 @@
            (set-current-module temp-module)
            (ahash-set! tm-defined-table ',var
                        (+ 1 (ahash-ref tm-defined-table ',var)))
-           ,@(map property-rewrite ovl-props))
+           ,@(map property-rewrite xxx-props))
         `(begin
            (when (nnull? new-conds)
              (display* "warning: conditional master routine " ',var "\n")
@@ -221,7 +265,7 @@
            (define-public ,var temp-value)
            (set-current-module temp-module)
            (ahash-set! tm-defined-table ',var 1)
-           ,@(map property-rewrite ovl-props)))))
+           ,@(map property-rewrite xxx-props)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Overloaded macros with properties
@@ -257,14 +301,14 @@
 	((hash-ref define-option-table (caar body)) (cdar body) decl))))
 
 (define-public-macro (tm-property head . body)
-  (set! ovl-conds '())
+  (set! xxx-conds '())
   (set! new-conds '())
-  (set! ovl-props '())
+  (set! xxx-props '())
   (tm-property-sub head body))
 
 (define-public-macro (tm-property-overloaded head . body)
   `(begin
-     ,@(map property-rewrite ovl-props)))
+     ,@(map property-rewrite xxx-props)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Lazy function declations

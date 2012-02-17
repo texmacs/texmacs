@@ -15,51 +15,6 @@
   (:use (kernel texmacs tm-define)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Contextual overloading
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define-public (ctx-add-condition l kind opt)
-  ;;(display* "add condition " l ", " opt "\n")
-  ;;(conditions-insert l kind opt)
-  (append l (list opt))
-  )
-
-(define-public (ctx-insert ovl data conds)
-  ;;(display* "insert " ovl ", " data ", " conds "\n")
-  ;;(ovl-insert ovl data conds)
-  (cons (cons conds data) (or ovl '()))
-  )
-
-(define-public (ctx-find ovl conds)
-  ;;(display* "find " ovl ", " conds "\n")
-  ;;(ovl-find ovl conds)
-  (cond ((or (not ovl) (null? ovl)) #f)
-        ((== (caar ovl) conds) (cdar ovl))
-        (else (ctx-find (cdr ovl) conds)))
-)
-
-(define-public (ctx-remove ovl conds)
-  ;;(display* "remove " ovl ", " conds "\n")
-  ;;(ovl-remove ovl conds)
-  (cond ((or (not ovl) (null? ovl)) '())
-        ((== (caar ovl) conds) (ctx-remove (cdr ovl) conds))
-        (else (cons (car ovl) (ctx-remove (cdr ovl) conds))))
-)
-
-(define (and-apply l args)
-  (or (null? l)
-      (and (apply (car l) (or args '()))
-           (and-apply (cdr l) args))))
-
-(define-public (ctx-resolve ovl args)
-  ;;(display* "resolve " ovl ", " args "\n")
-  ;;(ovl-resolve ovl args)
-  (cond ((or (not ovl) (null? ovl)) #f)
-        ((and-apply (caar ovl) args) (cdar ovl))
-        (else (ctx-resolve (cdr ovl) args)))
-)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Lazy keyboard bindings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
