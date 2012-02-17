@@ -52,6 +52,8 @@
 ;; Global variables and subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-public tm-defined-table (make-ahash-table))
+(define-public tm-defined-name (make-ahash-table))
 (define-public define-option-table (make-hash-table 100))
 
 (define-public cur-conds '())
@@ -84,6 +86,12 @@
 
 (define (begin* conds)
   (if (list-1? conds) (car conds) `(begin ,@conds)))
+
+(let ((old-procedure-name procedure-name))
+  (set! procedure-name
+        (lambda (fun)
+          (or (old-procedure-name fun)
+              (ahash-ref tm-defined-name fun)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Overloading
@@ -189,6 +197,12 @@
 (hash-set! define-option-table :check-mark (define-property* :check-mark))
 (hash-set! define-option-table :interactive (define-property* :interactive))
 
+(define-public (procedure-sources about)
+  (or (and (procedure? about)
+           (ahash-ref tm-defined-table (procedure-name about)))
+      (and (procedure-source about)
+           (list (procedure-source about)))))
+
 (define-public (help about)
   ;; very provisional
   (cond ((property about :synopsis)
@@ -201,17 +215,6 @@
 ;; Overloaded functions with properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public (tm-define-sub head body)
-  (if (and (pair? (car body)) (keyword? (caar body)))
-      (let ((decl (tm-define-sub head (cdr body))))
-	((hash-ref define-option-table (caar body)) (cdar body) decl))
-      (cons 'tm-define-overloaded (cons head body))))
-
-(define-public-macro (tm-define head . body)
-  (set! cur-conds '())
-  (set! cur-props '())
-  (tm-define-sub head body))
-
 (define (unlambda pred?)
   (if (func? pred? 'lambda)
       (caddr pred?)
@@ -223,15 +226,13 @@
             ,(begin* body)
             ,(apply* 'former head)))))
 
-(define-public tm-defined-table (make-ahash-table))
-
 (define-public-macro (tm-define-overloaded head . body)
   (let* ((var (ca*r head))
          (nbody (tm-add-condition var head body))
          (nval (lambda* head nbody)))
     (if (ahash-ref tm-defined-table var)
         `(let ((former ,var))
-           ;;(if (== (ahash-ref tm-defined-table ',var) 1)
+           ;;(if (== (length (ahash-ref tm-defined-table ',var)) 1)
            ;;    (display* "Overloaded " ',var "\n"))
            ;;(display* "Overloaded " ',var "\n")
            ;;(display* "   " ',nval "\n")
@@ -241,7 +242,8 @@
            (set! ,var temp-value)
            (set-current-module temp-module)
            (ahash-set! tm-defined-table ',var
-                       (+ 1 (ahash-ref tm-defined-table ',var)))
+                       (cons ',nval (ahash-ref tm-defined-table ',var)))
+           (ahash-set! tm-defined-name ,var ',var)
            ,@(map property-rewrite cur-props))
         `(begin
            (when (nnull? cur-conds)
@@ -254,8 +256,20 @@
            (set-current-module texmacs-user)
            (define-public ,var temp-value)
            (set-current-module temp-module)
-           (ahash-set! tm-defined-table ',var 1)
+           (ahash-set! tm-defined-table ',var (list ',nval))
+           (ahash-set! tm-defined-name ,var ',var)
            ,@(map property-rewrite cur-props)))))
+
+(define-public (tm-define-sub head body)
+  (if (and (pair? (car body)) (keyword? (caar body)))
+      (let ((decl (tm-define-sub head (cdr body))))
+	((hash-ref define-option-table (caar body)) (cdar body) decl))
+      (cons 'tm-define-overloaded (cons head body))))
+
+(define-public-macro (tm-define head . body)
+  (set! cur-conds '())
+  (set! cur-props '())
+  (tm-define-sub head body))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Overloaded macros with properties
