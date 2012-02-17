@@ -263,6 +263,8 @@
 (define-public (tm-define-sub head body)
   (if (and (pair? (car body)) (keyword? (caar body)))
       (let ((decl (tm-define-sub head (cdr body))))
+	(if (not (hash-ref define-option-table (caar body)))
+	    (texmacs-error "tm-define-sub" "unknown option ~S" (caar body)))
 	((hash-ref define-option-table (caar body)) (cdar body) decl))
       (cons 'tm-define-overloaded (cons head body))))
 
