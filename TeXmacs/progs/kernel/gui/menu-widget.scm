@@ -965,7 +965,7 @@
         (noop) #f))))
 
 (tm-widget (widget7)
-  (centered
+  (padded
     (ink)))
 
 (tm-define (show w)
