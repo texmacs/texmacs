@@ -11,6 +11,7 @@
 
 #include "Widkit/attribute_widget.hpp"
 #include "Widkit/layout.hpp"
+#include "Scheme/object.hpp"
 
 /******************************************************************************
 * Ink points
@@ -90,6 +91,7 @@ public:
   ink_widget_rep (command cb);
   operator tree ();
   void refresh_last ();
+  void commit ();
   void handle_get_size (get_size_event ev);
   void handle_repaint (repaint_event ev);
   void handle_mouse (mouse_event ev);
@@ -166,8 +168,10 @@ ink_widget_rep::handle_mouse (mouse_event ev) {
       if (!nearby (shs[i], x/PIXEL, y/PIXEL))
         nshs << shs[i];
     shs= nshs;
-    if (N(nshs) != n)
+    if (N(nshs) != n) {
       this << emit_invalidate_all ();
+      commit ();
+    }
   }
   else if (type == "press-left") {
     ink_shape sh (0);
@@ -177,16 +181,40 @@ ink_widget_rep::handle_mouse (mouse_event ev) {
     refresh_last ();
     dragging= true;
   }
-  else if (dragging &&
-           (type == "move" || type == "release-left" || type == "leave")) {
-    ink_shape& sh= shs [N(shs)-1];
-    ink_point& p = sh [N(sh)-1];
-    if (p->x != (x/PIXEL) || p->y != (y/PIXEL)) {
-      sh << ink_point (x/PIXEL, y/PIXEL);
-      refresh_last ();
-    }
-    dragging= (type == "move");
+  else if (type == "leave" && (ev->x < 0 || ev->x >= w)) {
+    if (ev->x >= w) cb (list_object (object (true)));
+    shs= array<ink_shape> (0);
+    this << emit_invalidate_all ();
+    if (ev->x < 0) commit ();
   }
+  else if (type == "move" || type == "release-left" || type == "leave")
+    if (dragging) {
+      ink_shape& sh= shs [N(shs)-1];
+      ink_point& p = sh [N(sh)-1];
+      if (p->x != (x/PIXEL) || p->y != (y/PIXEL)) {
+        sh << ink_point (x/PIXEL, y/PIXEL);
+        refresh_last ();
+      }
+      if (type != "move") {
+        dragging= false;
+        commit ();
+      }
+    }
+}
+
+void
+ink_widget_rep::commit () {
+  object l= null_object ();
+  for (int k= N(shs)-1; k>=0; k--) {
+    ink_shape sh= shs[k];
+    object obj= null_object ();
+    for (int i=N(sh)-1; i>=0; i--) {
+      object p= list_object (object (sh[i]->x), object (sh[i]->y));
+      obj= cons (p, obj);
+    }
+    l= cons (obj, l);
+  }
+  cb (list_object (l));
 }
 
 /******************************************************************************

@@ -966,7 +966,8 @@
 
 (tm-widget (widget7)
   (padded
-    (ink (display* answer "\n"))))
+    ;;(ink (display* answer "\n"))))
+    (ink (noop))))
 
 (tm-define (show w)
   (top-window w "Simple widget"))
