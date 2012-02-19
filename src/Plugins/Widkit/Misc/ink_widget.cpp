@@ -43,18 +43,51 @@ operator << (tm_ostream& out, ink_point p) {
   return out;
 }
 
+/******************************************************************************
+* Ink shapes
+******************************************************************************/
+
 typedef array<ink_point> ink_shape;
+
+inline bool
+small (double x, double y) {
+  return sqrt (x*x + y*y) <= 5.0;
+}
+
+bool
+nearby (ink_shape sh, double x, double y) {
+  //cout << "Check " << x << ", " << y << "\n";
+  for (int i=0; i<N(sh)-1; i++) {
+    double t = 0.0;
+    double x1= sh[i]->x, x2= sh[i+1]->x;
+    double y1= sh[i]->y, y2= sh[i+1]->y;
+    //cout << "  " << x1 << ", " << y1 << "; " << x2 << ", " << y2 << "\n";
+    if (x1 == x2 && y1 == y2 && small (x - x1, y - y1)) return true;
+    if (abs (x2 - x1) >= abs (y2 - y1)) t= (x - x1) / (x2 - x1);
+    else t= (y - y1) / (y2 - y1);
+    double xt= x1 + t * (x2 - x1);
+    double yt= y1 + t * (y2 - y1);
+    if (small (xt-x, yt-y)) {
+      //cout << "  " << x << ", " << y << "; " << xt << ", " << yt << "\n";
+      if (t < 0 && small (x-x1, y-y1)) return true;
+      if (t > 1 && small (x-x2, y-y2)) return true;
+      if (t >= 0 && t <= 1) return true;
+    }
+  }
+  return false;
+}
 
 /******************************************************************************
 * Ink widget
 ******************************************************************************/
 
 class ink_widget_rep: public attribute_widget_rep {
+  command cb;
   array<ink_shape> shs;
   bool dragging;
 
 public:
-  ink_widget_rep ();
+  ink_widget_rep (command cb);
   operator tree ();
   void refresh_last ();
   void handle_get_size (get_size_event ev);
@@ -66,8 +99,8 @@ public:
 * Routines for ink_widgets
 ******************************************************************************/
 
-ink_widget_rep::ink_widget_rep ():
-  attribute_widget_rep (), shs (), dragging (false) {}
+ink_widget_rep::ink_widget_rep (command cb2):
+  attribute_widget_rep (), cb (cb2), shs (), dragging (false) {}
 
 ink_widget_rep::operator tree () {
   return tree (TUPLE, "ink");
@@ -123,8 +156,20 @@ void
 ink_widget_rep::handle_mouse (mouse_event ev) {
   string type= ev->type;
   SI     x= ev->x, y= ev->y;
+  bool   erase= ev->pressed ("right");
+
   //cout << type << ", " << x/PIXEL << ", " << y/PIXEL << "\n";
-  if (type == "press-left") {
+  if (erase) {
+    int n= N(shs);
+    array<ink_shape> nshs;
+    for (int i=0; i<N(shs); i++)
+      if (!nearby (shs[i], x/PIXEL, y/PIXEL))
+        nshs << shs[i];
+    shs= nshs;
+    if (N(nshs) != n)
+      this << emit_invalidate_all ();
+  }
+  else if (type == "press-left") {
     ink_shape sh (0);
     sh << ink_point (x/PIXEL, y/PIXEL);
     sh << ink_point (x/PIXEL, y/PIXEL);
@@ -132,7 +177,8 @@ ink_widget_rep::handle_mouse (mouse_event ev) {
     refresh_last ();
     dragging= true;
   }
-  else if (dragging && (type == "move" || type == "release-left")) {
+  else if (dragging &&
+           (type == "move" || type == "release-left" || type == "leave")) {
     ink_shape& sh= shs [N(shs)-1];
     ink_point& p = sh [N(sh)-1];
     if (p->x != (x/PIXEL) || p->y != (y/PIXEL)) {
@@ -148,6 +194,6 @@ ink_widget_rep::handle_mouse (mouse_event ev) {
 ******************************************************************************/
 
 wk_widget
-ink_wk_widget () {
-  return tm_new<ink_widget_rep> ();
+ink_wk_widget (command cb) {
+  return tm_new<ink_widget_rep> (cb);
 }

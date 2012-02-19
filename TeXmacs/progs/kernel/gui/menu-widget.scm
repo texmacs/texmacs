@@ -74,7 +74,7 @@
     (mini :%1 :menu-item-list)
     (link :%1)
     (promise :%1)
-    (ink)
+    (ink :%1)
     (:menu-item-list)))
   (:menu-item-list (:repeat :menu-item)))
 
@@ -484,8 +484,8 @@
 
 (define (make-ink p style)
   "Make @(ink) item."
-  (with (tag) p
-    (widget-ink)))
+  (with (tag cmd) p
+    (widget-ink (object->command cmd))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dynamic menus
@@ -629,7 +629,7 @@
           ,(lambda (p style bar?) (list (make-hsplit p style))))
   (vsplit (:%2)
           ,(lambda (p style bar?) (list (make-vsplit p style))))
-  (ink ()
+  (ink (:%1)
        ,(lambda (p style bar?) (list (make-ink p style))))
   (if (:%1 :*)
       ,(lambda (p style bar?) (make-menu-if p style bar?)))
@@ -966,7 +966,7 @@
 
 (tm-widget (widget7)
   (padded
-    (ink)))
+    (ink (display* answer "\n"))))
 
 (tm-define (show w)
   (top-window w "Simple widget"))

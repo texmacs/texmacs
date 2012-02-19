@@ -228,9 +228,10 @@ widget toggle_widget (command cmd, bool on= false, int style= 0);
 widget wait_widget (SI width, SI height, string message);
   // a widget of a specified width and height, displaying a wait message
   // this widget is only needed when using the X11 plugin
-widget ink_widget ();
+widget ink_widget (command cb);
   // widget for inking a sketch. The input may later be passed to
-  // an external program for handwriting recognition
+  // an external program for handwriting recognition,
+  // using the callback routine
 widget refresh_widget (string tmwid);
   // a widget which is automatically constructed from the a dynamic
   // scheme widget tmwid. When receiving the send_refresh event,

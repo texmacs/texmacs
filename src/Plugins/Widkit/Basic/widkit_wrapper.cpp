@@ -312,8 +312,8 @@ wait_widget (SI w, SI h, string message) {
 }
 
 widget
-ink_widget () {
-  return abstract (ink_wk_widget ());
+ink_widget (command cb) {
+  return abstract (ink_wk_widget (cb));
 }
 
 widget

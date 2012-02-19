@@ -291,9 +291,9 @@
   (:synopsis "Make TeXmacs input field")
   `(list 'texmacs-input (lambda () ,doc) (lambda (answer) ,cmd) ,continuous?))
 
-(tm-define-macro ($ink)
+(tm-define-macro ($ink cmd)
   (:synopsis "Make an ink widget")
-  `(list 'ink))
+  `(list 'ink (lambda (answer) ,cmd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Forms

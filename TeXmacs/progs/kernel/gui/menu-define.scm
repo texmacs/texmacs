@@ -267,8 +267,8 @@
   `($promise ,(cadr x)))
 
 (define (gui-make-ink x)
-  (require-format x '(ink))
-  `($ink))
+  (require-format x '(ink :%1))
+  `($ink ,(cadr x)))
 
 (define (gui-make-form x)
   (require-format x '(form :%1 :*))
