@@ -79,7 +79,7 @@ ink_widget_rep::handle_get_size (get_size_event ev) {
   ev->h= 400 * PIXEL;
   if (ev->mode == 1) {
     ev->w= 1280 * PIXEL;
-    ev->h= 600 * PIXEL;
+    ev->h= 400 * PIXEL;
   }
   abs_round (ev->w, ev->h);
 }
@@ -89,6 +89,7 @@ ink_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   renderer ren= win->get_renderer ();
   layout_pastel (ren, ev->x1, ev->y1, ev->x2, ev->y2);
   ren->set_color (black);
+  ren->set_line_style (2 * PIXEL);
   for (int i=0; i<N(shs); i++) {
     ink_shape sh= shs[i];
     int n= N(sh);
