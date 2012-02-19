@@ -40,6 +40,7 @@
   (=> "Edit" (link edit-menu))
   (if (in-graphics?)
       (=> "Insert" (link graphics-insert-menu))
+      (link texmacs-extra-menu)
       (=> "Focus" (link graphics-focus-menu)))
   (if (not (in-graphics?))
       (=> "Insert" (link insert-menu))
