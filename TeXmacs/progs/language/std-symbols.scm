@@ -442,6 +442,18 @@
     "<b-O>" "<b-P>" "<b-Q>" "<b-R>" "<b-S>" "<b-T>" "<b-U>"
     "<b-V>" "<b-W>" "<b-X>" "<b-Y>" "<b-Z>"
 
+    "<b-up-a>" "<b-up-b>" "<b-up-c>" "<b-up-d>" "<b-up-e>" "<b-up-f>"
+    "<b-up-g>" "<b-up-h>" "<b-up-i>" "<b-up-j>" "<b-up-k>" "<b-up-l>"
+    "<b-up-m>" "<b-up-n>" "<b-up-o>" "<b-up-p>" "<b-up-q>" "<b-up-r>"
+    "<b-up-s>" "<b-up-t>" "<b-up-u>" "<b-up-v>" "<b-up-w>" "<b-up-x>"
+    "<b-up-y>" "<b-up-z>"
+
+    "<b-up-A>" "<b-up-B>" "<b-up-C>" "<b-up-D>" "<b-up-E>" "<b-up-F>"
+    "<b-up-G>" "<b-up-H>" "<b-up-I>" "<b-up-J>" "<b-up-K>" "<b-up-L>"
+    "<b-up-M>" "<b-up-N>" "<b-up-O>" "<b-up-P>" "<b-up-Q>" "<b-up-R>"
+    "<b-up-S>" "<b-up-T>" "<b-up-U>" "<b-up-V>" "<b-up-W>" "<b-up-X>"
+    "<b-up-Y>" "<b-up-Z>"
+
     "<b-0>" "<b-1>" "<b-2>" "<b-3>" "<b-4>"
     "<b-5>" "<b-6>" "<b-7>" "<b-8>" "<b-9>"
     

@@ -253,6 +253,7 @@
 	((string-starts? s "bbb-") (tmtex-modified-token 'mathbbm s 4))
 	((string-starts? s "b-cal-")
 	 (tex-apply 'tmmathbf (tmtex-modified-token 'mathcal s 6)))
+	((string-starts? s "b-up-") (tmtex-modified-token 'mathbf s 5))
 	((string-starts? s "b-") (tmtex-modified-token 'tmmathbf s 2))
 	((and (string-starts? s "#") tmtex-oriental?)
 	 (cond (tmtex-japanese?

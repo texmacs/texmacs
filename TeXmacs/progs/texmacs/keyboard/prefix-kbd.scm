@@ -255,6 +255,7 @@
 
   ("math:greek" "F5" #t)
   ("math:bold" "F6" #t)
+  ("math:bold:up" "C-F6" #t)
   ("math:bold:greek" "math:bold math:greek" #t)
   ("math:bold:cal" "math:bold math:cal" #t)
   ("math:cal" "F7" #t)
@@ -337,6 +338,7 @@
   ("math" "" "Insert mathematical markup")
   ("math:greek" "" "Insert a Greek character")
   ("math:bold" "" "Insert a bold character")
+  ("math:bold:up" "" "Insert an upright bold character")
   ("math:bold:greek" "" "Insert a bold Greek character")
   ("math:cal" "" "Insert a calligraphic character")
   ("math:bold:cal" "" "Insert a bold calligraphic character")
