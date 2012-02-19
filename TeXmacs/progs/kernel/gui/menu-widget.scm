@@ -74,6 +74,7 @@
     (mini :%1 :menu-item-list)
     (link :%1)
     (promise :%1)
+    (ink)
     (:menu-item-list)))
   (:menu-item-list (:repeat :menu-item)))
 
@@ -481,6 +482,11 @@
     (with l (make-menu-items items style #f)
       (widget-vsplit (car l) (cadr l)))))
 
+(define (make-ink p style)
+  "Make @(ink) item."
+  (with (tag) p
+    (widget-ink)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dynamic menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -520,6 +526,11 @@
     ;;(make-menu-items value style bar?)
     (if (match? value ':menu-item) (make-menu-items value style bar?)
 	(make-menu-error "promise did not yield a menu: " value))))
+
+(define (make-refresh p style bar?)
+  "Make @(refresh s) widget."
+  (with (tag s) p
+    (widget-refresh s)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main routines for making menu items
@@ -618,6 +629,8 @@
           ,(lambda (p style bar?) (list (make-hsplit p style))))
   (vsplit (:%2)
           ,(lambda (p style bar?) (list (make-vsplit p style))))
+  (ink ()
+       ,(lambda (p style bar?) (list (make-ink p style))))
   (if (:%1 :*)
       ,(lambda (p style bar?) (make-menu-if p style bar?)))
   (when (:%1 :*)
@@ -625,7 +638,9 @@
   (mini (:%1 :*)
         ,(lambda (p style bar?) (make-menu-mini p style bar?)))
   (promise (:%1)
-	   ,(lambda (p style bar?) (make-menu-promise p style bar?))))
+	   ,(lambda (p style bar?) (make-menu-promise p style bar?)))
+  (refresh (:%1)
+	   ,(lambda (p style bar?) (make-refresh p style bar?))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu expansion
@@ -754,10 +769,12 @@
   (resize ,(lambda (p) `(resize ,@(menu-expand-list (cdr p)))))
   (hsplit ,(lambda (p) `(hsplit ,@(menu-expand-list (cdr p)))))
   (vsplit ,(lambda (p) `(vsplit ,@(menu-expand-list (cdr p)))))
+  (ink ,replace-procedures)
   (if ,menu-expand-if)
   (when ,menu-expand-when)
   (mini ,menu-expand-mini)
-  (promise ,menu-expand-promise))
+  (promise ,menu-expand-promise)
+  (refresh ,replace-procedures))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface
@@ -946,6 +963,10 @@
            (document (proof (document "Trivial."
                                       "But you may add more details."))))
         (noop) #f))))
+
+(tm-widget (widget7)
+  (centered
+    (ink)))
 
 (tm-define (show w)
   (top-window w "Simple widget"))

@@ -31,6 +31,7 @@ enum slot_id {
   SLOT_SIZE,
   SLOT_POSITION,
   SLOT_UPDATE,
+  SLOT_REFRESH,
   SLOT_KEYBOARD,
   SLOT_KEYBOARD_FOCUS,
   SLOT_MOUSE,
@@ -313,6 +314,14 @@ send_update (widget w) {
   // has changed in such a way that the geometries of w and its subwidgets
   // may need to be adjusted. Example: a change of the current output language
   send (w, SLOT_UPDATE);
+}
+
+inline void
+send_refresh (widget w) {
+  // this message is issued if the contents of one of the dynamic
+  // subwidgets (as constructed using refresh_widget) of w
+  // may have changed and needs to be recomputed
+  send (w, SLOT_REFRESH);
 }
 
 inline void

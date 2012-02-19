@@ -58,6 +58,10 @@
                 (list pred? (cons* 'menu-dynamic body))))
     `(cond ,@(map fun (cdr x)))))
 
+(define (gui-make-refresh x)
+  (require-format x '(refresh :%1))
+  `($refresh ,(cadr x)))
+
 (define (gui-make-group x)
   (require-format x '(group :%1))
   `($menu-group ,(cadr x)))
@@ -262,6 +266,10 @@
   (require-format x '(promise :%1))
   `($promise ,(cadr x)))
 
+(define (gui-make-ink x)
+  (require-format x '(ink))
+  `($ink))
+
 (define (gui-make-form x)
   (require-format x '(form :%1 :*))
   `($form ,@(map gui-make (cdr x))))
@@ -285,6 +293,7 @@
   (receive ,gui-make-with)
   (for ,gui-make-for)
   (cond ,gui-make-cond)
+  (refresh ,gui-make-refresh)
   (group ,gui-make-group)
   (text ,gui-make-text)
   (glue ,gui-make-glue)
@@ -331,6 +340,7 @@
   (mini ,gui-make-mini)
   (symbol ,gui-make-symbol)
   (promise ,gui-make-promise)
+  (ink ,gui-make-ink)
   (form ,gui-make-form)
   (form-input ,gui-make-form-input))
 

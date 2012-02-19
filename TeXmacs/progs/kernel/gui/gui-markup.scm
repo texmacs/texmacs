@@ -120,6 +120,10 @@
   (:synopsis "Make possibly inert (whence greyed) widgets")
   `(cons* 'when (lambda () ,pred?) ($list ,@l)))
 
+(tm-define-macro ($refresh s)
+  (:synopsis "Make a refresh widget")
+  `(list 'hsplit ,s))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General layout widgets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -286,6 +290,10 @@
 (tm-define-macro ($texmacs-input doc cmd continuous?)
   (:synopsis "Make TeXmacs input field")
   `(list 'texmacs-input (lambda () ,doc) (lambda (answer) ,cmd) ,continuous?))
+
+(tm-define-macro ($ink)
+  (:synopsis "Make an ink widget")
+  `(list 'ink))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Forms

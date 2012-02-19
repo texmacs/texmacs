@@ -426,6 +426,8 @@
   (widget-vsplit vsplit_widget (widget widget widget))
   (widget-texmacs-output texmacs_output_widget (widget content))
   (widget-texmacs-input texmacs_input_widget (widget content command bool))
+  (widget-ink ink_widget (widget))
+  (widget-refresh refresh_widget (widget string))
   (object->promise-widget as_promise_widget (promise_widget object))
   (tree-bounding-rectangle get_bounding_rectangle (array_int tree))
   (show-balloon show_help_balloon (void widget int int))

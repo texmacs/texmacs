@@ -30,6 +30,7 @@ slot_name (const slot s) {
     "SLOT_SIZE",
     "SLOT_POSITION",
     "SLOT_UPDATE",
+    "SLOT_REFRESH",
     "SLOT_KEYBOARD",
     "SLOT_KEYBOARD_FOCUS",
     "SLOT_MOUSE",

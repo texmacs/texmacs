@@ -138,6 +138,8 @@ wk_widget file_chooser_wk_widget (command cmd, string type);
 wk_widget color_picker_wk_widget (command cmd, bool bg, array<tree> proposals);
 wk_widget balloon_widget (wk_widget w, wk_widget help);
 wk_widget wait_wk_widget (SI w, SI h, string message);
+wk_widget ink_wk_widget ();
+wk_widget refresh_wk_widget (string tmwid);
 wk_widget texmacs_wk_widget (int mask, command quit);
 wk_widget plain_window_widget (wk_widget wid, string s, command q= command ());
 wk_widget popup_window_widget (wk_widget wid, string s);

@@ -312,6 +312,16 @@ wait_widget (SI w, SI h, string message) {
 }
 
 widget
+ink_widget () {
+  return abstract (ink_wk_widget ());
+}
+
+widget
+refresh_widget (string tmwid) {
+  return abstract (refresh_wk_widget (tmwid));
+}
+
+widget
 texmacs_widget (int mask, command quit) {
   return abstract (texmacs_wk_widget (mask, quit));
 }
@@ -591,6 +601,9 @@ wk_widget_rep::send (slot s, blackbox val) {
     break;
   case SLOT_UPDATE:
     send_update (THIS, val);
+    break;
+  case SLOT_REFRESH:
+    //send_refresh (THIS, val);
     break;
   case SLOT_KEYBOARD:
     send_keyboard (THIS, val);

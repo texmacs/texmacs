@@ -5052,6 +5052,28 @@ tmg_widget_texmacs_input (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
+tmg_widget_ink () {
+  // SCM_DEFER_INTS;
+  widget out= ink_widget ();
+  // SCM_ALLOW_INTS;
+
+  return widget_to_scm (out);
+}
+
+SCM
+tmg_widget_refresh (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "widget-refresh");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  widget out= refresh_widget (in1);
+  // SCM_ALLOW_INTS;
+
+  return widget_to_scm (out);
+}
+
+SCM
 tmg_object_2promise_widget (SCM arg1) {
   SCM_ASSERT_OBJECT (arg1, SCM_ARG1, "object->promise-widget");
 
@@ -5703,6 +5725,8 @@ initialize_glue_basic () {
   scm_new_procedure ("widget-vsplit", (FN) tmg_widget_vsplit, 2, 0, 0);
   scm_new_procedure ("widget-texmacs-output", (FN) tmg_widget_texmacs_output, 1, 0, 0);
   scm_new_procedure ("widget-texmacs-input", (FN) tmg_widget_texmacs_input, 3, 0, 0);
+  scm_new_procedure ("widget-ink", (FN) tmg_widget_ink, 0, 0, 0);
+  scm_new_procedure ("widget-refresh", (FN) tmg_widget_refresh, 1, 0, 0);
   scm_new_procedure ("object->promise-widget", (FN) tmg_object_2promise_widget, 1, 0, 0);
   scm_new_procedure ("tree-bounding-rectangle", (FN) tmg_tree_bounding_rectangle, 1, 0, 0);
   scm_new_procedure ("show-balloon", (FN) tmg_show_balloon, 3, 0, 0);

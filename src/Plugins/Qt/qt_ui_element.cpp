@@ -972,3 +972,8 @@ widget hsplit_widget (widget l, widget r) {
 widget vsplit_widget (widget t, widget b) {
   (void) t; (void) b;
   FAILED ("not yet implemented"); }
+widget ink_widget () {
+  FAILED ("not yet implemented"); }
+widget refresh_widget (string tmwid) {
+  (void) tmwid;
+  FAILED ("not yet implemented"); }

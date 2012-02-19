@@ -105,6 +105,10 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       NOT_IMPLEMENTED ;
         //send_update (THIS, val);
       break;
+    case SLOT_REFRESH:
+      NOT_IMPLEMENTED ;
+        //send_refresh (THIS, val);
+      break;
       
     default:
       FAILED ("cannot handle slot type");
