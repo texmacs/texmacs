@@ -12,41 +12,7 @@
 #include "Widkit/attribute_widget.hpp"
 #include "Widkit/layout.hpp"
 #include "Scheme/object.hpp"
-
-/******************************************************************************
-* Poly lines
-******************************************************************************/
-
-typedef array<double> point;
-typedef array<point> poly_line;
-
-inline bool
-small (double x, double y) {
-  return sqrt (x*x + y*y) <= 5.0;
-}
-
-bool
-nearby (poly_line sh, double x, double y) {
-  //cout << "Check " << x << ", " << y << "\n";
-  for (int i=0; i<N(sh)-1; i++) {
-    double t = 0.0;
-    double x1= sh[i][0], x2= sh[i+1][0];
-    double y1= sh[i][1], y2= sh[i+1][1];
-    //cout << "  " << x1 << ", " << y1 << "; " << x2 << ", " << y2 << "\n";
-    if (x1 == x2 && y1 == y2 && small (x - x1, y - y1)) return true;
-    if (abs (x2 - x1) >= abs (y2 - y1)) t= (x - x1) / (x2 - x1);
-    else t= (y - y1) / (y2 - y1);
-    double xt= x1 + t * (x2 - x1);
-    double yt= y1 + t * (y2 - y1);
-    if (small (xt-x, yt-y)) {
-      //cout << "  " << x << ", " << y << "; " << xt << ", " << yt << "\n";
-      if (t < 0 && small (x-x1, y-y1)) return true;
-      if (t > 1 && small (x-x2, y-y2)) return true;
-      if (t >= 0 && t <= 1) return true;
-    }
-  }
-  return false;
-}
+#include "poly_line.hpp"
 
 /******************************************************************************
 * Ink widget
@@ -141,7 +107,7 @@ ink_widget_rep::handle_mouse (mouse_event ev) {
     int n= N(shs);
     array<poly_line> nshs;
     for (int i=0; i<N(shs); i++)
-      if (!nearby (shs[i], x/PIXEL, y/PIXEL))
+      if (!nearby (point (x/PIXEL, y/PIXEL), shs[i]))
         nshs << shs[i];
     shs= nshs;
     if (N(nshs) != n) {
