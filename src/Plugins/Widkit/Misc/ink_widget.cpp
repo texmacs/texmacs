@@ -159,6 +159,30 @@ ink_widget_rep::commit () {
 }
 
 /******************************************************************************
+* Learning glyphs
+******************************************************************************/
+
+array<array<poly_line> > learned_glyphs;
+array<string>            learned_names;
+
+void
+register_glyph (string name, array<poly_line> gl) {
+  //cout << "Added " << name << "\n";
+  learned_names  << name;
+  learned_glyphs << gl;
+}
+
+string
+recognize_glyph (array<poly_line> gl) {
+  for (int i=0; i<N(learned_names); i++) {
+    string name= learned_names[i];
+    array<poly_line> gl2= learned_glyphs[i];
+    cout << name << ": 0%\n";
+  }
+  return "";
+}
+
+/******************************************************************************
 * Interface
 ******************************************************************************/
 

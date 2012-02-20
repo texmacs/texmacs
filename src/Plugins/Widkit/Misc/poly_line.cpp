@@ -18,6 +18,24 @@ inline double square (double x) { return x*x; }
 ******************************************************************************/
 
 double
+min (point p) {
+  ASSERT (N(p) > 0, "non zero length expected");
+  double r= p[0];
+  for (int i=1; i<N(p); i++)
+    r= min (r, p[i]);
+  return r;
+}
+
+double
+max (point p) {
+  ASSERT (N(p) > 0, "non zero length expected");
+  double r= p[0];
+  for (int i=1; i<N(p); i++)
+    r= max (r, p[i]);
+  return r;
+}
+
+double
 distance (point p, point q) {
   ASSERT (N(p) == N(q), "unequal lengths");
   double s= 0.0;
@@ -101,4 +119,41 @@ sup (array<point> a) {
   for (int i=1; i<N(a); i++)
     p= sup (p, a[i]);
   return p;
+}
+
+poly_line
+operator + (poly_line pl, point p) {
+  int i, n= N(pl);
+  poly_line r (n);
+  for (i=0; i<n; i++)
+    r[i]= pl[i] + p;
+  return r;
+}
+
+poly_line
+operator - (poly_line pl, point p) {
+  int i, n= N(pl);
+  poly_line r (n);
+  for (i=0; i<n; i++)
+    r[i]= pl[i] - p;
+  return r;
+}
+
+poly_line
+operator * (double x, poly_line pl) {
+  int i, n= N(pl);
+  poly_line r (n);
+  for (i=0; i<n; i++)
+    r[i]= x * pl[i];
+  return r;
+}
+
+poly_line
+normalize (poly_line pl) {
+  if (N(pl) == 0) return pl;
+  pl= pl - inf (pl);
+  if (N(pl) == 1) return pl;
+  double sc= max (sup (pl));
+  if (sc == 0.0) return pl;
+  return (1.0 / sc) * pl;
 }

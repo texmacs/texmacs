@@ -70,6 +70,8 @@
   (cout-buffer cout_buffer (void))
   (cout-unbuffer cout_unbuffer (string))
   (mark-new new_marker (double))
+  (glyph-register register_glyph (void string array_array_array_double))
+  (glyph-recognize recognize_glyph (string array_array_array_double))
 
   ;; routines for images
   (image->psdoc image_to_psdoc (string url))

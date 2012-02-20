@@ -993,6 +993,9 @@ typedef array<int> array_int;
 typedef array<string> array_string;
 typedef array<tree> array_tree;
 typedef array<widget> array_widget;
+typedef array<double> array_double;
+typedef array<array<double> > array_array_double;
+typedef array<array<array<double> > > array_array_array_double;
 
 static bool
 scm_is_array_int (SCM p) {
@@ -1051,6 +1054,96 @@ scm_to_array_string (SCM p) {
   }
   return a;
 }
+
+static bool
+scm_is_array_double (SCM p) {
+  if (scm_is_null (p)) return true;
+  else return scm_is_pair (p) &&
+	      scm_is_double (SCM_CAR (p)) &&
+	      scm_is_array_double (SCM_CDR (p));
+}
+
+#define SCM_ASSERT_ARRAY_DOUBLE(p,arg,rout) \
+  SCM_ASSERT (scm_is_array_double (p), p, arg, rout)
+
+/* static */ SCM
+array_double_to_scm (array<double> a) {
+  int i, n= N(a);
+  SCM p= SCM_NULL;
+  for (i=n-1; i>=0; i--) p= scm_cons (double_to_scm (a[i]), p);
+  return p;
+}
+
+/* static */ array<double>
+scm_to_array_double (SCM p) {
+  array<double> a;
+  while (!scm_is_null (p)) {
+    a << ((double) scm_to_double (SCM_CAR (p)));
+    p= SCM_CDR (p);
+  }
+  return a;
+}
+
+static bool
+scm_is_array_array_double (SCM p) {
+  if (scm_is_null (p)) return true;
+  else return scm_is_pair (p) &&
+	      scm_is_array_double (SCM_CAR (p)) &&
+	      scm_is_array_array_double (SCM_CDR (p));
+}
+
+#define SCM_ASSERT_ARRAY_ARRAY_DOUBLE(p,arg,rout) \
+  SCM_ASSERT (scm_is_array_array_double (p), p, arg, rout)
+
+/* static */ SCM
+array_array_double_to_scm (array<array_double> a) {
+  int i, n= N(a);
+  SCM p= SCM_NULL;
+  for (i=n-1; i>=0; i--) p= scm_cons (array_double_to_scm (a[i]), p);
+  return p;
+}
+
+/* static */ array<array_double>
+scm_to_array_array_double (SCM p) {
+  array<array_double> a;
+  while (!scm_is_null (p)) {
+    a << ((array_double) scm_to_array_double (SCM_CAR (p)));
+    p= SCM_CDR (p);
+  }
+  return a;
+}
+
+static bool
+scm_is_array_array_array_double (SCM p) {
+  if (scm_is_null (p)) return true;
+  else return scm_is_pair (p) &&
+	      scm_is_array_array_double (SCM_CAR (p)) &&
+	      scm_is_array_array_array_double (SCM_CDR (p));
+}
+
+#define SCM_ASSERT_ARRAY_ARRAY_ARRAY_DOUBLE(p,arg,rout) \
+  SCM_ASSERT (scm_is_array_array_array_double (p), p, arg, rout)
+
+/* static */ SCM
+array_array_array_double_to_scm (array<array_array_double> a) {
+  int i, n= N(a);
+  SCM p= SCM_NULL;
+  for (i=n-1; i>=0; i--) p= scm_cons (array_array_double_to_scm (a[i]), p);
+  return p;
+}
+
+/* static */ array<array_array_double>
+scm_to_array_array_array_double (SCM p) {
+  array<array_array_double> a;
+  while (!scm_is_null (p)) {
+    a << ((array_array_double) scm_to_array_array_double (SCM_CAR (p)));
+    p= SCM_CDR (p);
+  }
+  return a;
+}
+
+void register_glyph (string s, array_array_array_double gl);
+string recognize_glyph (array_array_array_double gl);
 
 #define scm_is_property scm_is_array_string
 #define SCM_ASSERT_PROPERTY(p,arg,rout) SCM_ASSERT_ARRAY_STRING (p,arg,rout)

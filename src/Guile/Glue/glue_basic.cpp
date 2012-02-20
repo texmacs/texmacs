@@ -615,6 +615,34 @@ tmg_mark_new () {
 }
 
 SCM
+tmg_glyph_register (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "glyph-register");
+  SCM_ASSERT_ARRAY_ARRAY_ARRAY_DOUBLE (arg2, SCM_ARG2, "glyph-register");
+
+  string in1= scm_to_string (arg1);
+  array_array_array_double in2= scm_to_array_array_array_double (arg2);
+
+  // SCM_DEFER_INTS;
+  register_glyph (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_glyph_recognize (SCM arg1) {
+  SCM_ASSERT_ARRAY_ARRAY_ARRAY_DOUBLE (arg1, SCM_ARG1, "glyph-recognize");
+
+  array_array_array_double in1= scm_to_array_array_array_double (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= recognize_glyph (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
 tmg_image_2psdoc (SCM arg1) {
   SCM_ASSERT_URL (arg1, SCM_ARG1, "image->psdoc");
 
@@ -5414,6 +5442,8 @@ initialize_glue_basic () {
   scm_new_procedure ("cout-buffer", (FN) tmg_cout_buffer, 0, 0, 0);
   scm_new_procedure ("cout-unbuffer", (FN) tmg_cout_unbuffer, 0, 0, 0);
   scm_new_procedure ("mark-new", (FN) tmg_mark_new, 0, 0, 0);
+  scm_new_procedure ("glyph-register", (FN) tmg_glyph_register, 2, 0, 0);
+  scm_new_procedure ("glyph-recognize", (FN) tmg_glyph_recognize, 1, 0, 0);
   scm_new_procedure ("image->psdoc", (FN) tmg_image_2psdoc, 1, 0, 0);
   scm_new_procedure ("tree->stree", (FN) tmg_tree_2stree, 1, 0, 0);
   scm_new_procedure ("stree->tree", (FN) tmg_stree_2tree, 1, 0, 0);

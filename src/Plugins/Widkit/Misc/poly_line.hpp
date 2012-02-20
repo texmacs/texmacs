@@ -21,6 +21,8 @@ point operator *  (double x, point p );
 point operator /  (point  p, double x);
 bool  operator == (point p1, point p2);
 
+double min (point p);
+double max (point p);
 double distance (point p, point q);
 point project (point p, point q1, point q2);
 double distance (point p, point q1, point q2);
@@ -34,3 +36,4 @@ point sup (poly_line pl);
 poly_line operator + (poly_line pl, point p);
 poly_line operator - (poly_line pl, point p);
 poly_line operator * (double x, poly_line pl);
+poly_line normalize (poly_line pl);
