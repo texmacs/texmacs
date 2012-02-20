@@ -20,7 +20,7 @@
 
 class ink_widget_rep: public attribute_widget_rep {
   command cb;
-  array<poly_line> shs;
+  contours shs;
   bool dragging;
 
 public:
@@ -105,7 +105,7 @@ ink_widget_rep::handle_mouse (mouse_event ev) {
   //cout << type << ", " << x/PIXEL << ", " << y/PIXEL << "\n";
   if (erase) {
     int n= N(shs);
-    array<poly_line> nshs;
+    contours nshs;
     for (int i=0; i<N(shs); i++)
       if (!nearby (point (x/PIXEL, y/PIXEL), shs[i]))
         nshs << shs[i];
@@ -124,7 +124,7 @@ ink_widget_rep::handle_mouse (mouse_event ev) {
   }
   else if (type == "leave" && (ev->x < 0 || ev->x >= w)) {
     if (ev->x >= w) cb (list_object (object (true)));
-    shs= array<poly_line> (0);
+    shs= contours (0);
     this << emit_invalidate_all ();
     if (ev->x < 0) commit ();
   }
@@ -162,24 +162,28 @@ ink_widget_rep::commit () {
 * Learning glyphs
 ******************************************************************************/
 
-array<array<poly_line> > learned_glyphs;
-array<string>            learned_names;
+array<contours> learned_glyphs;
+array<string>   learned_names;
 
 void
-register_glyph (string name, array<poly_line> gl) {
+register_glyph (string name, contours gl) {
   //cout << "Added " << name << "\n";
   learned_names  << name;
   learned_glyphs << gl;
 }
 
 string
-recognize_glyph (array<poly_line> gl) {
+recognize_glyph (contours gl) {
+  string best= "";
+  double best_rec= -100.0;
   for (int i=0; i<N(learned_names); i++) {
-    string name= learned_names[i];
-    array<poly_line> gl2= learned_glyphs[i];
-    cout << name << ": 0%\n";
+    string   name= learned_names[i];
+    contours gl2 = learned_glyphs[i];
+    double   rec = similarity (gl, gl2);
+    if (rec > best_rec) { best_rec= rec; best= name; }
+    //cout << name << ": " << 100.0 * rec << "%\n";
   }
-  return "";
+  return best;
 }
 
 /******************************************************************************

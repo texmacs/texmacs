@@ -36,6 +36,14 @@ max (point p) {
 }
 
 double
+length (point p) {
+  double s= 0.0;
+  for (int i=0; i<N(p); i++)
+    s += square (p[i]);
+  return sqrt (s);
+}
+
+double
 distance (point p, point q) {
   ASSERT (N(p) == N(q), "unequal lengths");
   double s= 0.0;
@@ -83,11 +91,17 @@ sup (point p, point q) {
   return r;
 }
 
+point
+abs (point p) {
+  point r (N(p));
+  for (int i=0; i<N(p); i++)
+    r[i]= (p[i] > 0? p[i]: -p[i]);
+  return r;
+}
+
 /******************************************************************************
 * Poly lines
 ******************************************************************************/
-
-typedef array<point> poly_line;
 
 double
 distance (point p, poly_line pl) {
@@ -104,20 +118,20 @@ nearby (point p, poly_line pl) {
 }
 
 point
-inf (array<point> a) {
-  ASSERT (N(a) > 0, "non zero length expected");
-  point p= a[0];
-  for (int i=1; i<N(a); i++)
-    p= inf (p, a[i]);
+inf (poly_line pl) {
+  ASSERT (N(pl) > 0, "non zero length expected");
+  point p= pl[0];
+  for (int i=1; i<N(pl); i++)
+    p= inf (p, pl[i]);
   return p;
 }
 
 point
-sup (array<point> a) {
-  ASSERT (N(a) > 0, "non zero length expected");
-  point p= a[0];
-  for (int i=1; i<N(a); i++)
-    p= sup (p, a[i]);
+sup (poly_line pl) {
+  ASSERT (N(pl) > 0, "non zero length expected");
+  point p= pl[0];
+  for (int i=1; i<N(pl); i++)
+    p= sup (p, pl[i]);
   return p;
 }
 
@@ -156,4 +170,134 @@ normalize (poly_line pl) {
   double sc= max (sup (pl));
   if (sc == 0.0) return pl;
   return (1.0 / sc) * pl;
+}
+
+/******************************************************************************
+* Contours
+******************************************************************************/
+
+double
+distance (point p, contours gl) {
+  double m= 1.0e10;
+  for (int i=0; i<N(gl); i++)
+    m= min (m, distance (p, gl[i]));
+  return m;
+}
+
+bool
+nearby (point p, contours gl) {
+  return distance (p, gl) <= 5.0;
+}
+
+point
+inf (contours gl) {
+  ASSERT (N(gl) > 0, "non zero length expected");
+  point p= inf (gl[0]);
+  for (int i=1; i<N(gl); i++)
+    p= inf (p, inf (gl[i]));
+  return p;
+}
+
+point
+sup (contours gl) {
+  ASSERT (N(gl) > 0, "non zero length expected");
+  point p= sup (gl[0]);
+  for (int i=1; i<N(gl); i++)
+    p= sup (p, sup (gl[i]));
+  return p;
+}
+
+contours
+operator + (contours gl, point p) {
+  int i, n= N(gl);
+  contours r (n);
+  for (i=0; i<n; i++)
+    r[i]= gl[i] + p;
+  return r;
+}
+
+contours
+operator - (contours gl, point p) {
+  int i, n= N(gl);
+  contours r (n);
+  for (i=0; i<n; i++)
+    r[i]= gl[i] - p;
+  return r;
+}
+
+contours
+operator * (double x, contours gl) {
+  int i, n= N(gl);
+  contours r (n);
+  for (i=0; i<n; i++)
+    r[i]= x * gl[i];
+  return r;
+}
+
+contours
+normalize (contours gl) {
+  if (N(gl) == 0) return gl;
+  gl= gl - inf (gl);
+  double sc= max (sup (gl));
+  if (sc == 0.0) return gl;
+  gl= (1.0 / sc) * gl;
+  return gl;
+}
+
+/******************************************************************************
+* Check similarity
+******************************************************************************/
+
+double
+length (poly_line pl) {
+  double len= 0.0;
+  for (int i=1; i<N(pl); i++)
+    len += distance (pl[i], pl[i-1]);
+  return len;
+}
+
+point
+access (poly_line pl, double t) {
+  for (int i=1; i<N(pl); i++) {
+    point dp= pl[i] - pl[i-1];
+    double len= length (dp);
+    if (t < len) return pl[i-1] + (t / len) * dp;
+    t -= len;
+  }
+  FAILED ("not on poly_line");
+}
+
+double
+similarity (poly_line pl1, poly_line pl2) {
+  int number= 20;
+  double sum;
+  double l1= length (pl1);
+  double l2= length (pl2);
+  //cout << "\n";
+  //cout << "pl1= " << pl1 << "\n";
+  //cout << "pl2= " << pl2 << "\n";
+  //cout << "l1= " << l1 << "\n";
+  //cout << "l2= " << l2 << "\n";
+  for (int i=0; i<=number; i++) {
+    double t= (0.999999999 * i) / number;
+    //cout << "t1= " << (t * l1) << "\n";
+    //cout << "t2= " << (t * l2) << "\n";
+    point p1= access (pl1, t * l1);
+    point p2= access (pl2, t * l2);
+    //cout << "  " << i << ", " << p1 << ", " << p2
+    //<< "; " << max (abs (p1 - p2)) << "\n";
+    sum += max (abs (p1 - p2));
+  }
+  return 1.0 - (sum / (number + 1));
+}
+
+double
+similarity (contours g1, contours g2) {
+  g1= normalize (g1);
+  g2= normalize (g2);
+  if (N(g1) != N(g2)) return 0;
+  double sum= 0.0;
+  for (int i=0; i<N(g1); i++)
+    sum += similarity (g1[i], g2[i]);
+  return sum / N(g1);
 }

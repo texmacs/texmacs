@@ -13,6 +13,7 @@
 
 typedef array<double> point;
 typedef array<point> poly_line;
+typedef array<poly_line> contours;
 
 point operator -  (point p);
 point operator +  (point p1, point p2);
@@ -37,3 +38,13 @@ poly_line operator + (poly_line pl, point p);
 poly_line operator - (poly_line pl, point p);
 poly_line operator * (double x, poly_line pl);
 poly_line normalize (poly_line pl);
+
+double distance (point p, contours pl);
+bool nearby (point p, contours pl);
+point inf (contours pl);
+point sup (contours pl);
+contours operator + (contours pl, point p);
+contours operator - (contours pl, point p);
+contours operator * (double x, contours pl);
+contours normalize (contours pl);
+double similarity (contours g1, contours g2);
