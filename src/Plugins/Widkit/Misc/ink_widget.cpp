@@ -69,6 +69,7 @@ ink_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
       array<SI> y (2);
       x[0]= x[1]= (SI) (sh[0][0] * PIXEL);
       y[0]= y[1]= (SI) (sh[0][1] * PIXEL);
+      ren->lines (x, y);
     }
     else if (n>1) {
       array<SI> x (n);
@@ -180,34 +181,61 @@ ink_widget_rep::commit () {
 
 array<contours>       learned_glyphs;
 array<string>         learned_names;
-array<array<tree> >   learned_discrete;
-array<array<double> > learned_continuous;
+array<array<tree> >   learned_disc1;
+array<array<double> > learned_cont1;
+array<array<tree> >   learned_disc2;
+array<array<double> > learned_cont2;
 
 void
 register_glyph (string name, contours gl) {
-  //cout << "Added " << name << "\n";
-  array<tree>   disc;
-  array<double> cont;
-  invariants (gl, disc, cont);
-  learned_names      << name;
-  learned_glyphs     << gl;
-  learned_discrete   << disc;
-  learned_continuous << cont;
+  array<tree>   disc1;
+  array<double> cont1;
+  invariants (gl, 1, disc1, cont1);
+  array<tree>   disc2;
+  array<double> cont2;
+  invariants (gl, 2, disc2, cont2);
+  learned_names  << name;
+  learned_glyphs << gl;
+  learned_disc1  << disc1;
+  learned_cont1  << cont1;
+  learned_disc2  << disc2;
+  learned_cont2  << cont2;
+  //cout << "Added " << name << ", " << disc1 << "\n";
 }
 
 string
 recognize_glyph (contours gl) {
   array<tree>   disc1;
   array<double> cont1;
-  invariants (gl, disc1, cont1);
+  invariants (gl, 1, disc1, cont1);
+  array<tree>   disc2;
+  array<double> cont2;
+  invariants (gl, 2, disc2, cont2);
+
   string best= "";
+  int    best_i= -1;
   double best_rec= -100.0;
   for (int i=0; i<N(learned_names); i++)
-    if (disc1 == learned_discrete[i]) {
-      string        name = learned_names[i];
-      array<double> cont2= learned_continuous[i];
-      double        dist = l2_norm (cont2 - cont1) / sqrt (N(cont1));
-      double        rec  = 1.0 - dist;
+    if (N(learned_glyphs[i]) == N(gl) && disc1 == learned_disc1[i]) {
+      string        name= learned_names[i];
+      array<double> cont= learned_cont1[i];
+      double        dist= l2_norm (cont - cont1) / sqrt (N(cont1));
+      double        rec = 1.0 - dist;
+      if (rec > best_rec) { best_rec= rec; best= name; best_i= i; }
+      //cout << name << ": " << 100.0 * rec << "%\n";
+    }
+  if (best != "") {
+    //cout << "disc= " << disc1 << "\n";
+    //cout << "cont= " << cont1 << "\n";
+    return best;
+  }
+
+  for (int i=0; i<N(learned_names); i++)
+    if (N(learned_glyphs[i]) == N(gl) && disc2 == learned_disc2[i]) {
+      string        name= learned_names[i];
+      array<double> cont= learned_cont2[i];
+      double        dist= l2_norm (cont - cont2) / sqrt (N(cont2));
+      double        rec = 1.0 - dist;
       if (rec > best_rec) { best_rec= rec; best= name; }
       //cout << name << ": " << 100.0 * rec << "%\n";
     }

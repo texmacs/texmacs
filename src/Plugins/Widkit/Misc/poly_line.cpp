@@ -316,7 +316,9 @@ vertices (poly_line pl) {
 ******************************************************************************/
 
 void
-invariants (poly_line pl, array<tree>& disc, array<double>& cont) {
+invariants (poly_line pl, int level,
+            array<tree>& disc, array<double>& cont)
+{
   double l= length (pl);
   int pieces= 20;
   for (int i=0; i<=pieces; i++) {
@@ -324,12 +326,20 @@ invariants (poly_line pl, array<tree>& disc, array<double>& cont) {
     point  p= access (pl, t * l);
     cont << p;
   }
+
+  if (level <= 1) {
+    array<double> ts= vertices (pl);
+    disc << tree (as_string (N(ts)));
+    cont << (2.5 * ts);
+  }
 }
 
 void
-invariants (contours gl, array<tree>& disc, array<double>& cont) {
+invariants (contours gl, int level,
+            array<tree>& disc, array<double>& cont)
+{
   gl= normalize (gl);
   disc << tree (as_string (N(gl)));
   for (int i=0; i<N(gl); i++)
-    invariants (gl[i], disc, cont);
+    invariants (gl[i], level, disc, cont);
 }

@@ -983,6 +983,7 @@
 
 (define (load-glyphs)
   (when (not glyphs-loaded?)
+    (set! glyphs-loaded? #t)
     (with l (if (url-exists? "~/.TeXmacs/system/glyphs.scm")
                 (load-object "~/.TeXmacs/system/glyphs.scm")
                 '())

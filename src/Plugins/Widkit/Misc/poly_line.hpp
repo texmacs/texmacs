@@ -52,4 +52,5 @@ contours operator + (contours pl, point p);
 contours operator - (contours pl, point p);
 contours operator * (double x, contours pl);
 contours normalize (contours pl);
-void invariants (contours gl, array<tree>& disc, array<double>& cont);
+void invariants (contours gl, int level,
+                 array<tree>& disc, array<double>& cont);
