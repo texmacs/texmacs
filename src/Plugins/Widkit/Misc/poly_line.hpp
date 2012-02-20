@@ -22,6 +22,7 @@ point operator *  (double x, point p );
 point operator /  (point  p, double x);
 bool  operator == (point p1, point p2);
 
+double l2_norm (point p);
 double min (point p);
 double max (point p);
 double distance (point p, point q);
@@ -38,6 +39,8 @@ poly_line operator + (poly_line pl, point p);
 poly_line operator - (poly_line pl, point p);
 poly_line operator * (double x, poly_line pl);
 poly_line normalize (poly_line pl);
+double length (poly_line pl);
+point access (poly_line pl, double t);
 
 double distance (point p, contours pl);
 bool nearby (point p, contours pl);
@@ -47,4 +50,5 @@ contours operator + (contours pl, point p);
 contours operator - (contours pl, point p);
 contours operator * (double x, contours pl);
 contours normalize (contours pl);
-double similarity (contours g1, contours g2);
+array<int> discrete_invariant (contours gl);
+array<double> continuous_invariant (contours gl);

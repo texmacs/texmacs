@@ -983,7 +983,9 @@
 
 (define (load-glyphs)
   (when (not glyphs-loaded?)
-    (with l (load-object "~/.TeXmacs/system/glyphs.scm")
+    (with l (if (url-exists? "~/.TeXmacs/system/glyphs.scm")
+                (load-object "~/.TeXmacs/system/glyphs.scm")
+                '())
       (set! glyph-table (list->ahash-table l))
       (for (x l)
         (let* ((key (car x))

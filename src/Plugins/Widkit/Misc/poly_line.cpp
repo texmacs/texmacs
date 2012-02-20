@@ -36,7 +36,7 @@ max (point p) {
 }
 
 double
-length (point p) {
+l2_norm (point p) {
   double s= 0.0;
   for (int i=0; i<N(p); i++)
     s += square (p[i]);
@@ -172,6 +172,25 @@ normalize (poly_line pl) {
   return (1.0 / sc) * pl;
 }
 
+double
+length (poly_line pl) {
+  double len= 0.0;
+  for (int i=1; i<N(pl); i++)
+    len += distance (pl[i], pl[i-1]);
+  return len;
+}
+
+point
+access (poly_line pl, double t) {
+  for (int i=1; i<N(pl); i++) {
+    point dp= pl[i] - pl[i-1];
+    double len= l2_norm (dp);
+    if (t < len) return pl[i-1] + (t / len) * dp;
+    t -= len;
+  }
+  FAILED ("not on poly_line");
+}
+
 /******************************************************************************
 * Contours
 ******************************************************************************/
@@ -245,59 +264,34 @@ normalize (contours gl) {
 }
 
 /******************************************************************************
-* Check similarity
+* Associate invariants to glyphs
 ******************************************************************************/
 
-double
-length (poly_line pl) {
-  double len= 0.0;
-  for (int i=1; i<N(pl); i++)
-    len += distance (pl[i], pl[i-1]);
-  return len;
+array<int>
+discrete_invariant (contours gl) {
+  array<int> r;
+  r << N(gl);
+  return r;
 }
 
-point
-access (poly_line pl, double t) {
-  for (int i=1; i<N(pl); i++) {
-    point dp= pl[i] - pl[i-1];
-    double len= length (dp);
-    if (t < len) return pl[i-1] + (t / len) * dp;
-    t -= len;
+array<double>
+continuous_invariant (poly_line pl) {
+  array<double> r;
+  double l= length (pl);
+  int pieces= 20;
+  for (int i=0; i<=pieces; i++) {
+    double t= (0.999999999 * i) / pieces;
+    point  p= access (pl, t * l);
+    r << p;
   }
-  FAILED ("not on poly_line");
+  return r;
 }
 
-double
-similarity (poly_line pl1, poly_line pl2) {
-  int number= 20;
-  double sum;
-  double l1= length (pl1);
-  double l2= length (pl2);
-  //cout << "\n";
-  //cout << "pl1= " << pl1 << "\n";
-  //cout << "pl2= " << pl2 << "\n";
-  //cout << "l1= " << l1 << "\n";
-  //cout << "l2= " << l2 << "\n";
-  for (int i=0; i<=number; i++) {
-    double t= (0.999999999 * i) / number;
-    //cout << "t1= " << (t * l1) << "\n";
-    //cout << "t2= " << (t * l2) << "\n";
-    point p1= access (pl1, t * l1);
-    point p2= access (pl2, t * l2);
-    //cout << "  " << i << ", " << p1 << ", " << p2
-    //<< "; " << max (abs (p1 - p2)) << "\n";
-    sum += max (abs (p1 - p2));
-  }
-  return 1.0 - (sum / (number + 1));
-}
-
-double
-similarity (contours g1, contours g2) {
-  g1= normalize (g1);
-  g2= normalize (g2);
-  if (N(g1) != N(g2)) return 0;
-  double sum= 0.0;
-  for (int i=0; i<N(g1); i++)
-    sum += similarity (g1[i], g2[i]);
-  return sum / N(g1);
+array<double>
+continuous_invariant (contours gl) {
+  gl= normalize (gl);
+  array<double> r;
+  for (int i=0; i<N(gl); i++)
+    r << continuous_invariant (gl[i]);
+  return r;
 }

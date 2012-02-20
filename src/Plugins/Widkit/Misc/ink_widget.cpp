@@ -162,27 +162,35 @@ ink_widget_rep::commit () {
 * Learning glyphs
 ******************************************************************************/
 
-array<contours> learned_glyphs;
-array<string>   learned_names;
+array<contours>       learned_glyphs;
+array<string>         learned_names;
+array<array<int> >    learned_discrete;
+array<array<double> > learned_continuous;
 
 void
 register_glyph (string name, contours gl) {
   //cout << "Added " << name << "\n";
-  learned_names  << name;
-  learned_glyphs << gl;
+  learned_names      << name;
+  learned_glyphs     << gl;
+  learned_discrete   << discrete_invariant (gl);
+  learned_continuous << continuous_invariant (gl);
 }
 
 string
 recognize_glyph (contours gl) {
+  array<int>    disc1= discrete_invariant (gl);
+  array<double> cont1= continuous_invariant (gl);
   string best= "";
   double best_rec= -100.0;
-  for (int i=0; i<N(learned_names); i++) {
-    string   name= learned_names[i];
-    contours gl2 = learned_glyphs[i];
-    double   rec = similarity (gl, gl2);
-    if (rec > best_rec) { best_rec= rec; best= name; }
-    //cout << name << ": " << 100.0 * rec << "%\n";
-  }
+  for (int i=0; i<N(learned_names); i++)
+    if (disc1 == learned_discrete[i]) {
+      string        name = learned_names[i];
+      array<double> cont2= learned_continuous[i];
+      double         dist = l2_norm (cont2 - cont1) / sqrt (N(cont1));
+      double         rec  = 1.0 - dist;
+      if (rec > best_rec) { best_rec= rec; best= name; }
+      //cout << name << ": " << 100.0 * rec << "%\n";
+    }
   return best;
 }
 
