@@ -128,7 +128,13 @@ ink_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   for (int i=0; i<N(shs); i++) {
     ink_shape sh= shs[i];
     int n= N(sh);
-    if (n>1) {
+    if (n == 1) {
+      array<SI> x (2);
+      array<SI> y (2);
+      x[0]= x[1]= (SI) (sh[0]->x * PIXEL);
+      y[0]= y[1]= (SI) (sh[0]->y * PIXEL);
+    }
+    else if (n>1) {
       array<SI> x (n);
       array<SI> y (n);
       for (int j=0; j<n; j++) {
@@ -144,7 +150,7 @@ void
 ink_widget_rep::refresh_last () {
   if (N(shs) > 0) {
     ink_shape& sh= shs [N(shs)-1];
-    ink_point& p = sh [N(sh)-2];
+    ink_point& p = sh [max (0, N(sh)-2)];
     ink_point& q = sh [N(sh)-1];
     SI x1= min (p->x, q->x) * PIXEL;
     SI y1= min (p->y, q->y) * PIXEL;
@@ -176,7 +182,6 @@ ink_widget_rep::handle_mouse (mouse_event ev) {
   else if (type == "press-left") {
     ink_shape sh (0);
     sh << ink_point (x/PIXEL, y/PIXEL);
-    sh << ink_point (x/PIXEL, y/PIXEL);
     shs << sh;
     refresh_last ();
     dragging= true;
@@ -188,7 +193,7 @@ ink_widget_rep::handle_mouse (mouse_event ev) {
     if (ev->x < 0) commit ();
   }
   else if (type == "move" || type == "release-left" || type == "leave")
-    if (dragging) {
+    if (dragging && N(shs) > 0) {
       ink_shape& sh= shs [N(shs)-1];
       ink_point& p = sh [N(sh)-1];
       if (p->x != (x/PIXEL) || p->y != (y/PIXEL)) {
