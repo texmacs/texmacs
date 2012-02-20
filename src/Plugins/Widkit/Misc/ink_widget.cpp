@@ -80,6 +80,20 @@ ink_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
       ren->lines (x, y);
     }
   }
+  /*
+  for (int i=0; i<N(shs); i++) {
+    poly_line pl= shs[i];
+    array<double> ts= vertices (pl);
+    double len= length (pl);
+    for (int j=0; j<N(ts); j++) {
+      ren->set_color (red);
+      point p= access (pl, ts[j] * len);
+      SI x= p[0] * PIXEL;
+      SI y= p[1] * PIXEL;
+      ren->fill (x - 2*PIXEL, y - 2*PIXEL, x + 2*PIXEL, y + 2*PIXEL);
+    }
+  }
+  */
 }
 
 void
@@ -92,7 +106,8 @@ ink_widget_rep::refresh_last () {
     SI y1= min (p[1], q[1]) * PIXEL;
     SI x2= max (p[0], q[0]) * PIXEL;
     SI y2= max (p[1], q[1]) * PIXEL;
-    this << emit_invalidate (x1 - PIXEL, y1 - PIXEL, x2 + PIXEL, y2 + PIXEL);
+    this << emit_invalidate (x1 - 3*PIXEL, y1 - 3*PIXEL,
+                             x2 + 3*PIXEL, y2 + 3*PIXEL);
   }
 }
 
@@ -140,6 +155,7 @@ ink_widget_rep::handle_mouse (mouse_event ev) {
         dragging= false;
         commit ();
       }
+      this << emit_invalidate_all ();
     }
 }
 
@@ -164,30 +180,34 @@ ink_widget_rep::commit () {
 
 array<contours>       learned_glyphs;
 array<string>         learned_names;
-array<array<int> >    learned_discrete;
+array<array<tree> >   learned_discrete;
 array<array<double> > learned_continuous;
 
 void
 register_glyph (string name, contours gl) {
   //cout << "Added " << name << "\n";
+  array<tree>   disc;
+  array<double> cont;
+  invariants (gl, disc, cont);
   learned_names      << name;
   learned_glyphs     << gl;
-  learned_discrete   << discrete_invariant (gl);
-  learned_continuous << continuous_invariant (gl);
+  learned_discrete   << disc;
+  learned_continuous << cont;
 }
 
 string
 recognize_glyph (contours gl) {
-  array<int>    disc1= discrete_invariant (gl);
-  array<double> cont1= continuous_invariant (gl);
+  array<tree>   disc1;
+  array<double> cont1;
+  invariants (gl, disc1, cont1);
   string best= "";
   double best_rec= -100.0;
   for (int i=0; i<N(learned_names); i++)
     if (disc1 == learned_discrete[i]) {
       string        name = learned_names[i];
       array<double> cont2= learned_continuous[i];
-      double         dist = l2_norm (cont2 - cont1) / sqrt (N(cont1));
-      double         rec  = 1.0 - dist;
+      double        dist = l2_norm (cont2 - cont1) / sqrt (N(cont1));
+      double        rec  = 1.0 - dist;
       if (rec > best_rec) { best_rec= rec; best= name; }
       //cout << name << ": " << 100.0 * rec << "%\n";
     }

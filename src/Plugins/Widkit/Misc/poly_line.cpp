@@ -44,6 +44,15 @@ l2_norm (point p) {
 }
 
 double
+inner (point p, point q) {
+  ASSERT (N(p) == N(q), "unequal lengths");
+  double s= 0.0;
+  for (int i=0; i<N(p); i++)
+    s += p[i] * q[i];
+  return s;
+}
+
+double
 distance (point p, point q) {
   ASSERT (N(p) == N(q), "unequal lengths");
   double s= 0.0;
@@ -182,13 +191,14 @@ length (poly_line pl) {
 
 point
 access (poly_line pl, double t) {
+  if (t < 0) return pl[0];
   for (int i=1; i<N(pl); i++) {
     point dp= pl[i] - pl[i-1];
     double len= l2_norm (dp);
     if (t < len) return pl[i-1] + (t / len) * dp;
     t -= len;
   }
-  FAILED ("not on poly_line");
+  return pl[N(pl)-1];
 }
 
 /******************************************************************************
@@ -264,34 +274,62 @@ normalize (contours gl) {
 }
 
 /******************************************************************************
-* Associate invariants to glyphs
+* Vertex detection
 ******************************************************************************/
 
-array<int>
-discrete_invariant (contours gl) {
-  array<int> r;
-  r << N(gl);
+array<double>
+vertices (poly_line pl) {
+  pl= (1.0 / length (pl)) * pl;
+  array<double> r;
+  double t = 0.0;
+  double dt= 0.025;
+  r << 0.0;
+  int    todo_i= -1;
+  double todo_t= 0.0;
+  double todo_p= 0.0;
+  for (int i=0; i+1<N(pl); i++) {
+    if (t >= r[N(r)-1] + dt && t <= 1.0 - dt) {
+      double t1= max (t - dt, 0.000000001);
+      double t2= min (t + dt, 0.999999999);
+      point  p = pl[i];
+      point  p1= access (pl, t1);
+      point  p2= access (pl, t2);
+      double pr= inner (p1 - p, p2 - p);
+      if (pr >= 0 && (todo_i < 0 || pr > todo_p)) {
+        todo_i= i;
+        todo_t= t;
+        todo_p= pr;
+      }
+    }
+    t += distance (pl[i+1], pl[i]);
+    if (todo_i >= 0 && t >= todo_t + dt) {
+      r << todo_t;
+      todo_i= -1;
+    }
+  }
+  r << 1.0;
   return r;
 }
 
-array<double>
-continuous_invariant (poly_line pl) {
-  array<double> r;
+/******************************************************************************
+* Associate invariants to glyphs
+******************************************************************************/
+
+void
+invariants (poly_line pl, array<tree>& disc, array<double>& cont) {
   double l= length (pl);
   int pieces= 20;
   for (int i=0; i<=pieces; i++) {
     double t= (0.999999999 * i) / pieces;
     point  p= access (pl, t * l);
-    r << p;
+    cont << p;
   }
-  return r;
 }
 
-array<double>
-continuous_invariant (contours gl) {
+void
+invariants (contours gl, array<tree>& disc, array<double>& cont) {
   gl= normalize (gl);
-  array<double> r;
+  disc << tree (as_string (N(gl)));
   for (int i=0; i<N(gl); i++)
-    r << continuous_invariant (gl[i]);
-  return r;
+    invariants (gl[i], disc, cont);
 }
