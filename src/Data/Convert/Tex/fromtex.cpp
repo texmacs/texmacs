@@ -206,6 +206,7 @@ latex_symbol_to_tree (string s) {
       if (s == "\\dots") return "<ldots>";
       if (s == "\\infin") return "<infty>";
       if (s == "\\rang") return "<rangle>";
+      if (s == "\\today") return compound ("date", "");
       if (s == "\\tableofcontents")
 	return compound ("table-of-contents", "toc", tree (DOCUMENT, ""));
       if (s == "\\bgroup") return "";

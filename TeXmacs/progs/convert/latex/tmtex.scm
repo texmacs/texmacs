@@ -465,6 +465,9 @@
 (define (tmtex-document l)
   (cons '!document (tmtex-list l)))
 
+(define (tmtex-date l)
+  (tmtex-default "today" l))
+
 (define (tmtex-para l)
   (cons '!paragraph (tmtex-list l)))
 
@@ -1623,9 +1626,11 @@
   (syntax tmtex-syntax)
 
   ((:or or xor and not plus minus times over div mod
-	merge length range number date translate change-case find-file
+	merge length range number translate change-case find-file
 	is-tuple look-up
 	equal unequal less lesseq greater greatereq) tmtex-noop)
+
+  (date tmtex-date)
 
   ((:or cm-length mm-length in-length pt-length
 	bp-length dd-length pc-length cc-length
