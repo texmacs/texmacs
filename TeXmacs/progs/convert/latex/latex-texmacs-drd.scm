@@ -453,8 +453,11 @@
 (latex-texmacs-remark "convention" "Convention")
 (latex-texmacs-remark "warning" "Warning")
 (latex-texmacs-remark "acknowledgments" "Acknowledgments")
+(latex-texmacs-remark "answer" "Answer")
+(latex-texmacs-remark "question" "Question")
 (latex-texmacs-exercise "exercise" "Exercise")
 (latex-texmacs-exercise "problem" "Problem")
+(latex-texmacs-exercise "solution" "Solution")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; AMS style theorems
@@ -476,6 +479,26 @@
 		       "\n")
 	      amsthm-package%))))
 
+(define-macro (ams-texmacs-indent-exercise abbr full)
+  `(begin
+     (logic-table latex-texmacs-env-preamble%
+		  (,abbr (!append "\\newtheoremstyle{indent-exercise}{3pt}{3pt}{\\small}"
+				  "{\\parindent}{\\bf\\small}{.}{.5em}{}{}\n"
+				  "\\theoremstyle{indent-exercise}\n"
+		       (newtheorem ,abbr (!translate ,full))
+		       "\n")
+	      amsthm-package%))))
+
+(define-macro (ams-texmacs-noindent-exercise abbr full)
+  `(begin
+     (logic-table latex-texmacs-env-preamble%
+		  (,abbr (!append "\\newtheoremstyle{noindent-exercise}{3pt}{3pt}{\\small}"
+				  "{}{\\bf\\small}{.}{.5em}{}{}\n"
+				  "\\theoremstyle{noindent-exercise}\n"
+		       (newtheorem ,abbr (!translate ,full))
+		       "\n")
+	      amsthm-package%))))
+
 (ams-texmacs-theorem "theorem" "Theorem")
 (ams-texmacs-theorem "proposition" "Proposition")
 (ams-texmacs-theorem "lemma" "Lemma")
@@ -490,8 +513,11 @@
 (ams-texmacs-remark "convention" "Convention")
 (ams-texmacs-remark "acknowledgments" "Acknowledgments")
 (ams-texmacs-remark "warning" "Warning")
-(ams-texmacs-remark "exercise" "Exercise")
-(ams-texmacs-remark "problem" "Problem")
+(ams-texmacs-remark "answer" "Answer")
+(ams-texmacs-remark "question" "Question")
+(ams-texmacs-indent-exercise "exercise" "Exercise")
+(ams-texmacs-indent-exercise "problem" "Problem")
+(ams-texmacs-noindent-exercise "solution" "Solution")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Style-dependent extra macros

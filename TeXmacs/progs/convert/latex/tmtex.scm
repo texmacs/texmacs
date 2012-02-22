@@ -1680,7 +1680,8 @@
   (appendix (,tmtex-appendix 1))
   ((:or theorem proposition lemma corollary proof axiom definition
 	notation conjecture remark note example exercise problem warning
-	convention quote-env quotation verse)
+	convention quote-env quotation verse solution question answer
+	acknowledgments)
    (,tmtex-std-env 1))
   ((:or verbatim code) (,tmtex-verbatim 1))
   (center (,tmtex-std-env 1))
