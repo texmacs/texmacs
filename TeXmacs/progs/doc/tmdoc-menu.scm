@@ -25,6 +25,12 @@
   ("License" (tmdoc-insert-license))
   ("GNU FDL" (tmdoc-insert-gnu-fdl)))
 
+(menu-bind tmweb-meta-menu
+  ("Title" (tmweb-insert-title))
+  ("Copyright" (tmdoc-insert-copyright))
+  ("License" (tmweb-insert-license))
+  ("Classification" (interactive tmweb-insert-classifiers)))
+
 (menu-bind tmdoc-traversal-menu
   ("Traverse" (make 'traverse))
   (when (inside? 'traverse)
@@ -70,7 +76,10 @@
 
 (menu-bind tmdoc-menu
   (when (in-text?)
-    (-> "Meta data" (link tmdoc-meta-menu))
+    (if (not (in-tmweb?))
+        (-> "Meta data" (link tmdoc-meta-menu)))
+    (if (in-tmweb?)
+        (-> "Meta data" (link tmweb-meta-menu)))
     (-> "Traversal" (link tmdoc-traversal-menu))
     (-> "Explain" (link tmdoc-explain-menu))
     (-> "User interface" (link tmdoc-gui-menu))
@@ -97,7 +106,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (focus-can-move? t)
-  (:require (tree-in? t '(tmdoc-title tmdoc-copyright tmdoc-license)))
+  (:require (tree-in? t '(tmdoc-title tmweb-title tmdoc-copyright
+                          tmdoc-license tmweb-license)))
   #f)
 
 (tm-menu (focus-document-extra-icons t)
@@ -110,3 +120,14 @@
   (minibar
     ((balloon "Copyright" "Insert copyright and license information")
      (tmdoc-insert-copyright-and-license))))
+
+(tm-menu (focus-document-extra-icons t)
+  (:require (tmweb-propose-title?))
+  (minibar
+    ((balloon "Title" "Insert title") (tmweb-insert-title))))
+
+(tm-menu (focus-document-extra-icons t)
+  (:require (tmweb-propose-copyright-and-license?))
+  (minibar
+    ((balloon "Copyright" "Insert copyright and license information")
+     (tmweb-insert-copyright-and-license))))

@@ -117,6 +117,7 @@
   (in-std% (style-has? "std-dtd"))
   (in-std-text% #t in-text% in-std%)
   (in-tmdoc% (style-has? "tmdoc-style"))
+  (in-tmweb% (style-has? "tmweb-style") in-tmdoc%)
   (in-mmxdoc% (style-has? "mmxdoc-style") in-tmdoc%)
   (in-manual% (not (help-buffer?)) in-tmdoc%)
   (in-plugin-with-converters%
