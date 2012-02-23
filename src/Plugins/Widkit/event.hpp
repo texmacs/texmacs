@@ -67,6 +67,7 @@ event emit_alarm (string message, time_t t);
 event emit_clear (SI x1, SI y1, SI x2, SI y2);
 event emit_repaint (SI x1, SI y1, SI x2, SI y2, bool& stop);
 event emit_update ();
+event emit_refresh ();
 event emit_invalidate_all ();
 event emit_invalidate (SI x1, SI y1, SI x2, SI y2);
 event emit_keyboard_grab (bool in_out_flag, time_t t=0);

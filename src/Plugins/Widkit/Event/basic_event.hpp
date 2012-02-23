@@ -140,6 +140,12 @@ struct update_event_rep: public event_rep {
 };
 EVENT(update_event);
 
+struct refresh_event_rep: public event_rep {
+  refresh_event_rep ();
+  operator tree ();
+};
+EVENT(refresh_event);
+
 struct invalidate_event_rep: public event_rep {
   bool all_flag;
   SI x1, y1, x2, y2;

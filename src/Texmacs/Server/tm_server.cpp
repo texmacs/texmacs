@@ -332,6 +332,8 @@ tm_server_rep::interpose_handler () {
       if (vw->win != NULL) vw->ed->animate ();
     }
   }
+
+  windows_refresh ();
 }
 
 void

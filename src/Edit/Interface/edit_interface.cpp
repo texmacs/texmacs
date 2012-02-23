@@ -681,6 +681,7 @@ void
 edit_interface_rep::after_menu_action () {
   notify_change (THE_DECORATIONS);
   end_editing ();
+  windows_delayed_refresh (1);
 }
 
 rectangle

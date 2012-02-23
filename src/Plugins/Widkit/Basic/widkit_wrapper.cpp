@@ -500,6 +500,12 @@ send_update (wk_widget w, blackbox val) {
 }
 
 void
+send_refresh (wk_widget w, blackbox val) {
+  ASSERT (is_nil (val), "type mismatch");
+  w << emit_refresh ();
+}
+
+void
 send_keyboard (wk_widget w, blackbox val) {
   typedef pair<string,time_t> keypress;
   ASSERT (type_box (val) == type_helper<keypress>::id, "type mismatch");
@@ -603,7 +609,7 @@ wk_widget_rep::send (slot s, blackbox val) {
     send_update (THIS, val);
     break;
   case SLOT_REFRESH:
-    //send_refresh (THIS, val);
+    send_refresh (THIS, val);
     break;
   case SLOT_KEYBOARD:
     send_keyboard (THIS, val);

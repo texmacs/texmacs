@@ -161,6 +161,12 @@ update_event_rep::operator tree () { return "update_event"; }
 event emit_update () {
   return tm_new<update_event_rep> (); }
 
+refresh_event_rep::refresh_event_rep ():
+  event_rep (REFRESH_EVENT) {}
+refresh_event_rep::operator tree () { return "refresh_event"; }
+event emit_refresh () {
+  return tm_new<refresh_event_rep> (); }
+
 invalidate_event_rep::invalidate_event_rep ():
   event_rep (INVALIDATE_EVENT), all_flag (true),
   x1 (0), y1 (0), x2 (0), y2 (0) {}

@@ -69,6 +69,7 @@
     (resize :%2 :menu-item-list)
     (hsplit :menu-item :menu-item)
     (vsplit :menu-item :menu-item)
+    (refresh :%1)
     (if :%1 :menu-item-list)
     (when :%1 :menu-item-list)
     (mini :%1 :menu-item-list)
@@ -530,7 +531,7 @@
 (define (make-refresh p style bar?)
   "Make @(refresh s) widget."
   (with (tag s) p
-    (widget-refresh s)))
+    (list (widget-refresh (if (string? s) s (symbol->string s))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main routines for making menu items
@@ -968,6 +969,20 @@
   (padded
     ;;(ink (display* answer "\n"))))
     (ink (noop))))
+
+(tm-define widget8-list '("First" "Second"))
+
+(menu-bind widget8-sub
+  (for (x widget8-list)
+    ((eval x) (display* x "\n"))))
+
+(tm-widget (widget8)
+  (padded
+    (with l '("First" "Second")
+      (input (set! widget8-list (cons answer widget8-list))
+             "string" '() "1w")
+      ===
+      (refresh widget8-sub))))
 
 (tm-define (show w)
   (top-window w "Simple widget"))

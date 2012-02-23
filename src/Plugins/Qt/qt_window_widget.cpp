@@ -106,7 +106,7 @@ qt_window_widget_rep::send (slot s, blackbox val) {
         //send_update (THIS, val);
       break;
     case SLOT_REFRESH:
-      NOT_IMPLEMENTED ;
+        //NOT_IMPLEMENTED ;
         //send_refresh (THIS, val);
       break;
       

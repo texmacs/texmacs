@@ -207,6 +207,12 @@ basic_widget_rep::handle_update (update_event ev) { (void) ev;
 }
 
 void
+basic_widget_rep::handle_refresh (refresh_event ev) { (void) ev;
+  for (int i=0; i<N(a); i++)
+    a[i] << emit_refresh ();
+}
+
+void
 basic_widget_rep::handle_invalidate (invalidate_event ev) {
   if (ev->all_flag) win->invalidate (x1()-ox, y1()-oy, x2()-ox, y2()-oy);
   else win->invalidate (ev->x1, ev->y1, ev->x2, ev->y2);
@@ -351,6 +357,9 @@ basic_widget_rep::handle (event ev) {
   case UPDATE_EVENT:
     test_window_attached (ev, this);
     handle_update (ev);
+    return true;
+  case REFRESH_EVENT:
+    handle_refresh (ev);
     return true;
   case INVALIDATE_EVENT: {
     if (!attached ()) return true;

@@ -97,5 +97,7 @@ void window_create (int win, widget wid, string name, command quit);
 void window_delete (int win);
 void window_show (int win);
 void window_hide (int win);
+void windows_delayed_refresh (int ms);
+void windows_refresh ();
 
 #endif // defined TM_WINDOW_H

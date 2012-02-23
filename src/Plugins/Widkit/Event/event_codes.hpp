@@ -29,35 +29,36 @@
 #define CLEAR_EVENT           0x0000000c
 #define REPAINT_EVENT         0x0000000d
 #define UPDATE_EVENT          0x0000000e
-#define INVALIDATE_EVENT      0x0000000f
-#define KEYBOARD_GRAB_EVENT   0x00000010
-#define MOUSE_GRAB_EVENT      0x00000011
-#define REQUEST_ALARM_EVENT   0x00000012
-#define FIND_CHILD_EVENT      0x00000013
+#define REFRESH_EVENT         0x0000000f
+#define INVALIDATE_EVENT      0x00000010
+#define KEYBOARD_GRAB_EVENT   0x00000011
+#define MOUSE_GRAB_EVENT      0x00000012
+#define REQUEST_ALARM_EVENT   0x00000013
+#define FIND_CHILD_EVENT      0x00000014
 
 /*** composite events ***/
-#define CLEAN_EVENT           0x00000014
-#define INSERT_EVENT          0x00000015
-#define REMOVE_EVENT          0x00000016
+#define CLEAN_EVENT           0x00000015
+#define INSERT_EVENT          0x00000016
+#define REMOVE_EVENT          0x00000017
 
 /*** attribute events ***/
-#define GET_INTEGER_EVENT     0x00000017
-#define GET_DOUBLE_EVENT      0x00000018
-#define GET_STRING_EVENT      0x00000019
-#define GET_COORD1_EVENT      0x0000001a
-#define GET_COORD2_EVENT      0x0000001b
-#define GET_COORD3_EVENT      0x0000001c
-#define GET_COORD4_EVENT      0x0000001d
-#define SET_INTEGER_EVENT     0x0000001e
-#define SET_DOUBLE_EVENT      0x0000001f
-#define SET_STRING_EVENT      0x00000020
-#define SET_COORD1_EVENT      0x00000021
-#define SET_COORD2_EVENT      0x00000022
-#define SET_COORD3_EVENT      0x00000023
-#define SET_COORD4_EVENT      0x00000024
+#define GET_INTEGER_EVENT     0x00000018
+#define GET_DOUBLE_EVENT      0x00000019
+#define GET_STRING_EVENT      0x0000001a
+#define GET_COORD1_EVENT      0x0000001b
+#define GET_COORD2_EVENT      0x0000001c
+#define GET_COORD3_EVENT      0x0000001d
+#define GET_COORD4_EVENT      0x0000001e
+#define SET_INTEGER_EVENT     0x0000001f
+#define SET_DOUBLE_EVENT      0x00000020
+#define SET_STRING_EVENT      0x00000021
+#define SET_COORD1_EVENT      0x00000022
+#define SET_COORD2_EVENT      0x00000023
+#define SET_COORD3_EVENT      0x00000024
+#define SET_COORD4_EVENT      0x00000025
 
 /*** scroll events ***/
-#define SCROLL_EVENT          0x00000025
+#define SCROLL_EVENT          0x00000026
 
 /*** shared implementation for event_ptr<> ***/
 template<class R> struct event_ptr;

@@ -122,7 +122,7 @@
 
 (tm-define-macro ($refresh s)
   (:synopsis "Make a refresh widget")
-  `(list 'hsplit ,s))
+  `(list 'refresh ',s))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General layout widgets

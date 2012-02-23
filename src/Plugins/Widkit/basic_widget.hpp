@@ -48,6 +48,7 @@ public:
   virtual void handle_clear          (clear_event ev);
   virtual void handle_repaint        (repaint_event ev);
   virtual void handle_update         (update_event ev);
+  virtual void handle_refresh        (refresh_event ev);
   virtual void handle_invalidate     (invalidate_event ev);
   virtual void handle_keyboard_grab  (keyboard_grab_event ev);
   virtual void handle_mouse_grab     (mouse_grab_event ev);

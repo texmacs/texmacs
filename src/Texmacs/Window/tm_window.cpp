@@ -13,6 +13,7 @@
 #include "message.hpp"
 #include "dictionary.hpp"
 #include "merge_sort.hpp"
+#include "iterator.hpp"
 
 int geometry_w= 800, geometry_h= 600;
 int geometry_x= 0  , geometry_y= 0;
@@ -395,6 +396,7 @@ tm_window_rep::interactive_return () {
 ******************************************************************************/
 
 static hashmap<int,widget> window_table (NULL);
+static time_t refresh_time= 0;
 
 int
 window_handle () {
@@ -439,4 +441,20 @@ window_hide (int win) {
   ASSERT (window_table->contains (win), "window does not exist");
   widget pww= window_table [win];
   set_visibility (pww, false);
+}
+
+void
+windows_delayed_refresh (int ms) {
+  refresh_time= texmacs_time () + ms;
+}
+
+void
+windows_refresh () {
+  if (texmacs_time () < refresh_time) return;
+  iterator<int> it= iterate (window_table);
+  while (it->busy ()) {
+    int id= it->next ();
+    send_refresh (window_table[id]);
+  }
+  windows_delayed_refresh (1000000000);
 }
