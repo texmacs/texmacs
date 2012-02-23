@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : gui-form.scm
+;; MODULE      : old-gui-form.scm
 ;; DESCRIPTION : Standard forms for interactive commands
 ;; COPYRIGHT   : (C) 2007  Joris van der Hoeven
 ;;
@@ -11,8 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (kernel gui gui-form)
-  (:use (kernel gui gui-factory)))
+(texmacs-module (kernel old-gui old-gui-form)
+  (:use (kernel old-gui old-gui-factory)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Typed form entries

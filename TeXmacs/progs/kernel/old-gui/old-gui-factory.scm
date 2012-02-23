@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : gui-factory.scm
+;; MODULE      : old-gui-factory.scm
 ;; DESCRIPTION : Factory of content builders
 ;; COPYRIGHT   : (C) 2007  Joris van der Hoeven
 ;;
@@ -11,8 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (kernel gui gui-factory)
-  (:use (kernel gui gui-widget)))
+(texmacs-module (kernel old-gui old-gui-factory)
+  (:use (kernel old-gui old-gui-widget)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Building content

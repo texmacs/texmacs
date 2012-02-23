@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : gui-test.scm
+;; MODULE      : old-gui-test.scm
 ;; DESCRIPTION : Several test routines for widgets
 ;; COPYRIGHT   : (C) 2007  Joris van der Hoeven
 ;;
@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (kernel gui gui-test))
+(texmacs-module (kernel old-gui old-gui-test))
 
 (tm-define (open-test-widget)
   ;; NOTE: close with Done in order to test other widgets
