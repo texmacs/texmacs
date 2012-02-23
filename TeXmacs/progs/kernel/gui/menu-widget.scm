@@ -681,6 +681,11 @@
                   ,(replace-procedures (caddr p))
                   ,(cadddr p)))
 
+(define (menu-expand-texmacs-output p)
+  "Expand conditional menu @p."
+  (with (tag out) p
+    `(texmacs-output ',(out))))
+
 (define (menu-expand-input p)
   "Expand input menu item @p."
   `(input ,(replace-procedures (cadr p))
@@ -744,8 +749,8 @@
   (glue ,replace-procedures)
   (color ,replace-procedures)
   (symbol ,replace-procedures)
-  (texmacs-output ,replace-procedures)
   (texmacs-input ,menu-expand-texmacs-input)
+  (texmacs-output ,menu-expand-texmacs-output)
   (input ,menu-expand-input)
   (enum ,menu-expand-enum)
   (choice ,menu-expand-choice)

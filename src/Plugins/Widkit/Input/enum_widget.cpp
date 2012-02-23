@@ -33,6 +33,7 @@ void
 enum_command_rep::apply () {
   in << set_string ("input", val);
   cb (list_object (object (val)));
+  windows_delayed_refresh (1);
 }
 
 command

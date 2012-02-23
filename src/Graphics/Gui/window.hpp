@@ -80,5 +80,7 @@ int get_identifier (window w);
   // Get low-level handle for the window, as used by the operating system
 window get_window (int id);
   // Determine the window as a function of its identifier
+void windows_delayed_refresh (int ms);
+  // Refresh all windows after ms milliseconds
 
 #endif // defined WINDOW_H

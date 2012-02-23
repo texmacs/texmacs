@@ -173,6 +173,65 @@
   (bottom-buttons >> ("Ok" (cmd "Ok"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Font selector
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define selector-font-family "roman")
+(tm-define selector-font-series "medium")
+(tm-define selector-font-shape "right")
+
+(tm-widget (font-sample-text)
+  (texmacs-output
+    `(document
+       (with
+         "font" ,selector-font-family
+         "font-series" ,selector-font-series
+         "font-shape" ,selector-font-shape
+         "abcdefghij, ABCDEFGHIJ, 0123456789"))))
+
+(tm-define (make-multi-with . l)
+  (with t (if (selection-active-any?) (selection-tree) "")
+    (if (selection-active-any?) (clipboard-cut "null"))
+    (insert-go-to `(with ,@l ,t) (cons (length l) (path-end t '())))))
+
+(tm-define (font-select-font)
+  (with l '()
+    (when (!= selector-font-family (get-env "font"))
+      (set! l (cons* "font" selector-font-family l)))
+    (when (!= selector-font-series (get-env "font-series"))
+      (set! l (cons* "font-series" selector-font-series l)))
+    (when (!= selector-font-shape (get-env "font-shape"))
+      (set! l (cons* "font-shape" selector-font-shape l)))
+    (apply make-multi-with l)))
+
+(tm-widget (font-selector quit)
+  (padded
+    (aligned
+      (item (text "Family:")
+        (enum (set! selector-font-family answer)
+              '("roman" "concrete" "stix")
+              selector-font-family "100px"))
+      (item (text "Series:")
+        (enum (set! selector-font-series answer)
+              '("light" "medium" "bold")
+              selector-font-series "100px"))
+      (item (text "Shape:")
+        (enum (set! selector-font-shape answer)
+              '("right" "italic" "slanted")
+              selector-font-shape "100px")))
+    === --- ===
+    (refresh font-sample-text)
+    === --- ===
+    (explicit-buttons
+      (hlist >>> ("Ok" (begin (font-select-font) (quit)))))))
+
+(tm-define (open-font-selector)
+  (set! selector-font-family (get-env "font"))
+  (set! selector-font-series (get-env "font-series"))
+  (set! selector-font-shape (get-env "font-shape"))
+  (dialogue-window font-selector noop "Font selector"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for showing widgets and forms
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

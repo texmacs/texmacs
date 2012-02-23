@@ -79,7 +79,7 @@ refresh_widget_rep::handle_refresh (refresh_event ev) { (void) ev;
     if (attached ()) {
       if (!a[0]->attached () || a[0]->win != win)
         a[0] << emit_attach_window (win);
-      if (ww1 == ww2 && hh1 == hh2) a[0] << emit_update ();
+      if (ww1 == ww2 && hh1 == hh2) this << emit_update ();
       else concrete (this->win->get_widget ()) << emit_update ();
     }
   }
