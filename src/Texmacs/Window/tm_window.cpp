@@ -14,6 +14,7 @@
 #include "dictionary.hpp"
 #include "merge_sort.hpp"
 #include "iterator.hpp"
+#include "window.hpp"
 
 int geometry_w= 800, geometry_h= 600;
 int geometry_x= 0  , geometry_y= 0;
@@ -455,6 +456,7 @@ windows_refresh () {
   while (it->busy ()) {
     int id= it->next ();
     send_refresh (window_table[id]);
+    refresh_size (window_table[id], false);
   }
   windows_delayed_refresh (1000000000);
 }

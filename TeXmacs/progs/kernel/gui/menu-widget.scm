@@ -979,7 +979,7 @@
 (tm-widget (widget8)
   (padded
     (with l '("First" "Second")
-      (input (set! widget8-list (cons answer widget8-list))
+      (input (if answer (set! widget8-list (cons answer widget8-list)))
              "string" '() "1w")
       ===
       (refresh widget8-sub))))

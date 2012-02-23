@@ -167,7 +167,7 @@ tabs_widget_rep::handle_mouse (mouse_event ev) {
     a[l] << set_integer ("switch", focus);
     THIS << emit_update ();
     THIS << emit_reposition ();
-    refresh_size (win);
+    refresh_size (win->get_widget (), true);
   }
   else composite_widget_rep::handle_mouse (ev);
 }
