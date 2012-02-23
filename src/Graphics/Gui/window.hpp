@@ -80,8 +80,5 @@ int get_identifier (window w);
   // Get low-level handle for the window, as used by the operating system
 window get_window (int id);
   // Determine the window as a function of its identifier
-void refresh_size (widget wid, bool exact);
-  // Update the size of a window widget as a function of
-  // a possible modification of its state
 
 #endif // defined WINDOW_H

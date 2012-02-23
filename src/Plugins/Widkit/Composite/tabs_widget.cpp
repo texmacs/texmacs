@@ -16,6 +16,7 @@
 #define THIS (wk_widget (this))
 
 void abs_round (SI& l);
+void refresh_size (widget wid, bool exact);
 
 /******************************************************************************
 * Horizontal lists
