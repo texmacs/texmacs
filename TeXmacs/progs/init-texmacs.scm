@@ -58,6 +58,7 @@
 ;(display "Booting utilities\n")
 (lazy-define (utils cas cas-out) cas->stree)
 (use-modules (utils misc markup-funcs))
+(use-modules (utils handwriting handwriting))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting BibTeX style modules\n")
