@@ -785,7 +785,7 @@
 	((func? x 'tmlen 3)
 	 (string-append (tmhtml-force-string (caddr x)) "tmpt"))
 	;;(else (force-string x))))
-	(else (texmacs->verbatim (tm->tree x)))))
+	(else (texmacs->code x "utf-8"))))
 
 (define (tmhtml-with l)
   (cond ((null? l) '())

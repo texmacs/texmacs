@@ -28,13 +28,12 @@
 
 (tm-define (verbatim-serialize lan t)
   (with u (pre-serialize lan t)
-    (string-append
-     (escape-verbatim (texmacs->verbatim (stree->tree u))) "\n")))
+    (string-append (escape-verbatim (texmacs->code u)) "\n")))
 
 (tm-define (generic-serialize lan t)
   (with u (pre-serialize lan t)
     (string-append (char->string #\002) "verbatim:"
-		   (escape-generic (texmacs->verbatim (stree->tree u)))
+		   (escape-generic (texmacs->code u))
 		   (char->string #\005))))
 
 (tm-define (plugin-serialize lan t)

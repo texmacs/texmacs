@@ -94,9 +94,10 @@
 	   key)))
 
 (tm-define (scheme-eval t)
-  (let* ((s (texmacs->verbatim (tm->tree t)))
+  (let* ((s (texmacs->code t))
 	 (r (eval-string-with-catch s)))
-    (cond ((and (tree? r) (session-scheme-trees?)) (tree-copy r))
+    (cond ((and (tree? r) (session-scheme-trees?))
+           (tree 'text (tree-copy r)))
 	  ((session-scheme-math?)
 	   (with m (cas->stree r)
 	     (if (tm? m) (tree 'math (tm->tree m)) (var-object->string r))))

@@ -27,9 +27,11 @@
   (cond ((null? l) l)
 	((func? (car l) 'concat) (tmconcat-simplify (append (cdar l) (cdr l))))
 	((== (car l) "") (tmconcat-simplify (cdr l)))
-	((and (string? (car l)) (nnull? (cdr l)) (string? (cadr l)))
-	 (tmconcat-simplify (cons (string-append (car l) (cadr l)) (cddr l))))
-	(else (cons (car l) (tmconcat-simplify (cdr l))))))
+        (else
+          (with r (tmconcat-simplify (cdr l))
+            (if (and (string? (car l)) (nnull? r) (string? (car r)))
+                (cons (string-append (car l) (car r)) (cdr r))
+                (cons (car l) r))))))
 
 (tm-define (tmconcat . in)
   (:synopsis "Constructor of horizontal concatenations with corrections.")

@@ -75,6 +75,12 @@
 ;; Verbatim
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (texmacs->code t . enc)
+  (if (null? enc) (set! enc (list "iso-8859-1")))
+  (if (tree? t)
+      (cpp-texmacs->verbatim t #f (car enc))
+      (texmacs->code (tm->tree t) (car enc))))
+
 (tm-define (texmacs->verbatim x . opts)
   (if (list-1? opts) (set! opts (car opts)))
   (let* ((wrap? (== (assoc-ref opts "texmacs->verbatim:wrap") "on"))

@@ -19,7 +19,7 @@
 (define (texgraph-serialize lan t)
   (import-from (utils plugins plugin-cmd))
   (with u (pre-serialize lan t)
-    (with s (texmacs->verbatim (stree->tree u))
+    (with s (texmacs->code u)
       (string-append (escape-verbatim (string-replace s "\n" "~")) "\n"))))
 
 (define (texgraph-initialize)

@@ -274,7 +274,7 @@
 
 (define (tmmath x)
   (cond ((!= (ahash-ref tmmath-env "mode") "math")
-	 `(m:mtext ,(texmacs->verbatim (tm->tree x))))
+	 `(m:mtext ,(texmacs->code x  "utf-8")))
 	((string? x) (tmmath-concat (list x)))
 	(else (or (tmmath-dispatch 'tmmath-primitives% x) ""))))
 

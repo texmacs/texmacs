@@ -162,7 +162,7 @@
   </active*>
 
   <assign|tm-fragment|<\macro|body>
-    <quotation|<framed-fragment|<arg|body>>>
+    <pseudo-code|<arg|body>>
   </macro>>
 
   <\active*>
