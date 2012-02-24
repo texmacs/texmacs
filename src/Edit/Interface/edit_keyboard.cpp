@@ -163,7 +163,7 @@ edit_interface_rep::key_press (string gkey) {
   string rew= sv->kbd_post_rewrite (key);
   if (N(rew) == 1) {
     int i ((unsigned char) rew[0]);
-    if ((i >= 32 && i <= 127) || (i >= 128 && i <= 255))
+    if ((i >= 32 && i <= 127) || (i >= 128 && i <= 255) || (i == 25))
       if (!inside_active_graphics ()) {
         archive_state ();
 	insert_tree (rew);
