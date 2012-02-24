@@ -160,6 +160,7 @@
 	   plugin-eval-menu plugin-eval-toggle-menu plugin-plot-menu)
 (lazy-define (dynamic session-edit) scheme-eval)
 (lazy-initialize (dynamic session-menu) (in-session?))
+(lazy-keyboard (dynamic calc-edit) always?)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting documentation\n")
