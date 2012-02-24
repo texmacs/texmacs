@@ -184,6 +184,12 @@ url_tmfs (string name) {
   return url_root ("tmfs") * u;
 }
 
+static url
+url_blank (string name) {
+  url u= url_get_name (name);
+  return url_root ("blank") * u;
+}
+
 /******************************************************************************
 * Generic url constructor
 ******************************************************************************/
@@ -231,6 +237,7 @@ url_general (string name, int type= URL_SYSTEM) {
   if (starts (name, "http://")) return url_http (name (7, N (name)));
   if (starts (name, "ftp://")) return url_ftp (name (6, N (name)));
   if (starts (name, "tmfs://")) return url_tmfs (name (7, N (name)));
+  if (starts (name, "//")) return url_blank (name (2, N (name)));
   if (heuristic_is_path (name, type)) return url_path (name, type);
   if (heuristic_is_default (name, type)) return url_default (name, type);
   if (heuristic_is_http (name)) return url_http (name);
@@ -291,15 +298,19 @@ url
 operator * (url u1, url u2) {
   //cout << "concat " << u1->t << " * " << u2->t << "\n";
   if (is_root (u2) || (is_concat (u2) && is_root (u2[1]))) {
-    if (is_concat (u1) && is_root_web (u1[1]) &&
-	(is_root (u2, "default") ||
-	 (is_concat (u2) && is_root (u2[1], "default"))))
-      {
-	url v= u1[2];
-	while (is_concat (v)) v= v[1];
-	if (is_root (u2)) return u1[1] * v;
-	return u1[1] * v * u2[2];
-      }
+    if (is_concat (u1) && is_root_web (u1[1])) {
+      if (is_root (u2, "default") ||
+          (is_concat (u2) && is_root (u2[1], "default")))
+        {
+          url v= u1[2];
+          while (is_concat (v)) v= v[1];
+          if (is_root (u2)) return u1[1] * v;
+          return u1[1] * v * u2[2];
+        }
+      if (is_root (u2, "blank") ||
+          (is_concat (u2) && is_root (u2[1], "blank")))
+        return reroot (u2, u1[1][1]->t->label);
+    }
     return u2;
   }
   if (is_here (u1) || (u1->t == "")) return u2;
@@ -387,6 +398,14 @@ is_rooted_tmfs (url u) {
 }
 
 bool
+is_rooted_blank (url u) {
+  return
+    is_root_blank (u) ||
+    (is_concat (u) && is_rooted_blank (u[1])) ||
+    (is_or (u) && is_rooted_blank (u[1]) && is_rooted_blank (u[2]));
+}
+
+bool
 is_name (url u) {
   if (is_atomic (u)) return true;
   if (!is_concat (u)) return false;
@@ -471,6 +490,7 @@ as_string (url u, int type) {
 #else
   if (is_root (u, "default")) return "/";
 #endif
+  if (is_root (u, "blank")) return "/";
   if (is_root (u, "file")) return u[1]->t->label * "://";
   if (is_root (u)) return u[1]->t->label * ":/";
   if (is_wildcard (u, 0)) return "**";
@@ -857,8 +877,11 @@ concretize (url u) {
   string s = as_string (u);
   if (starts (s, "file:///")) s= s (8, N(s));
   if (heuristic_is_default (s, 0)) return s;
+  if (is_rooted (u, "blank")) return as_string (reroot (u, "default"));
 #else
-  if (is_rooted (u, "default") || is_rooted (u, "file"))
+  if (is_rooted (u, "default") ||
+      is_rooted (u, "file") ||
+      is_rooted (u, "blank"))
     return as_string (reroot (u, "default"));
 #endif
   if (is_rooted_web (u)) return concretize (get_from_web (u));
