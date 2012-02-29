@@ -737,6 +737,7 @@ qt_ui_element_rep::as_qlayoutitem () {
     case menu_button:
     case text_widget:
     case xpm_widget:
+    case toggle_widget:
     {
       QWidget *w = this->as_qwidget();
       return new QWidgetItem(w);
@@ -771,6 +772,26 @@ qt_ui_element_rep::as_qlayoutitem () {
   
   return NULL;
 }
+
+/*! Ad-hoc command to be used with toggle widgets.
+ * The command associated with a qt_ui_element::toggle_widget has as a parameter the state
+ * of the QCheckBox. Since it is assumed everywhere else that commands injected into
+ * the gui's queue accept no parameters, and changes would be too big, we choose to
+ * encapsulate the original command in a new one which will execute the first with 
+ * its argument.
+ * \sa qt_ui_element, , qt_ui_element_rep::as_qwidget, qt_ui_element_rep::toggle_widget
+ */
+class toggle_command_rep: public command_rep {
+  QPointer<QCheckBox> qwid;
+  command cmd; 
+
+public:
+  toggle_command_rep(command c, QCheckBox* w) : qwid(w), cmd(c) { }
+  void apply () { if(qwid) cmd (list_object (object (qwid->isChecked()))); }
+  tm_ostream& print (tm_ostream& out) {
+    return out << "Toggle"; }
+};
+
 
 QWidget *
 qt_ui_element_rep::as_qwidget () {
@@ -904,7 +925,29 @@ qt_ui_element_rep::as_qwidget () {
       return l;
     }
       break;
+
+    case toggle_widget:
+    { 
+      typedef triple<command, bool, int > T;
+      T x = open_box<T>(load);
+      command cmd = x.x1;
+      bool check  = x.x2;
+      int style   = x.x3;
+      QCheckBox* w  = new QCheckBox (NULL);  
+      w->setCheckState(check ? Qt::Checked : Qt::Unchecked);
+      command tcmd = tm_new<toggle_command_rep> (cmd, w);
+      QTMCommand* c = new QTMCommand (tcmd);
+      c->setParent (w);
+      QObject::connect (w, SIGNAL (stateChanged(int)), c, SLOT (apply()), Qt::QueuedConnection);
+
+      //FIXME: should handle style information.
+      (void) style;
+      //bool mini= (style & WIDGET_STYLE_MINI) != 0;
       
+      return w;
+    }
+      break;
+
     default:
       ;
   }
@@ -946,9 +989,7 @@ widget menu_button (widget w, command cmd, string pre, string ks, int style) { r
 widget balloon_widget (widget w, widget help) { return qt_ui_element_rep::create (qt_ui_element_rep::balloon_widget, w, help); }
 widget text_widget (string s, int style, color col, bool tsp) { return qt_ui_element_rep::create (qt_ui_element_rep::text_widget, s, style, col, tsp); }
 widget xpm_widget (url file_name) { return qt_ui_element_rep::create (qt_ui_element_rep::xpm_widget, file_name); }
-widget toggle_widget (command cmd, bool on, int style) {
-  (void) cmd; (void) on; (void) style;
-  FAILED ("not yet implemented"); }
+widget toggle_widget (command cmd, bool on, int style) { return qt_ui_element_rep::create (qt_ui_element_rep::toggle_widget, cmd, on, style); }
 widget enum_widget (command cb, array<string> vals, string val,
                     int style, string w) {
   (void) cb; (void) vals; (void) val; (void) style; (void) w;

@@ -23,6 +23,12 @@
  * ui element widget  
  *******************************************************************************/
 
+/*!
+ * Texmacs expects widgets to behave in three different ways: as embedded widgets,
+ * as menus and as regular widgets, all of which are essentially different in QT. Hence
+ * the need to construct the QT widgets differently on a request basis via the 4 methods
+ * @as_qaction(), @get_qmenu(), @as_qlayoutmenu(), @as_qwidget
+ */
 class qt_ui_element_rep: public qt_widget_rep {
 public:
   
@@ -30,7 +36,7 @@ public:
     horizontal_menu, vertical_menu, horizontal_list, vertical_list,
     tile_menu, minibar_menu, menu_separator, menu_group, 
     pulldown_button, pullright_button, menu_button,
-    balloon_widget, text_widget, xpm_widget
+    balloon_widget, text_widget, xpm_widget, toggle_widget
   } ;
   
   types type;
@@ -50,6 +56,7 @@ public:
   virtual QMenu *get_qmenu();
   virtual QLayoutItem *as_qlayoutitem ();
   virtual QWidget *as_qwidget ();
+    
 
   template<class X1> static widget create (types _type, X1 x1) {
     return tm_new <qt_ui_element_rep> (_type, close_box<X1>(x1));
