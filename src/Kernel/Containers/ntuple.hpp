@@ -94,7 +94,7 @@ public:
   inline quintuple (const quintuple& q):
     x1 (q.x1), x2 (q.x2), x3 (q.x3), x4 (q.x4), x5 (q.x5) {}
   inline quintuple (const T1& y1, const T2& y2, const T3& y3,
-		    const T3& y4, const T5& y5):
+		    const T4& y4, const T5& y5):
     x1 (y1), x2 (y2), x3 (y3), x4 (y4), x5 (y5) {}
   inline quintuple& operator = (const quintuple& q) {
     x1= q.x1; x2= q.x2; x3= q.x3; x4= q.x4; x5= q.x5; return *this; }
