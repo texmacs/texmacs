@@ -830,7 +830,7 @@ public:
   void apply () { 
     if (qwid) {
       QList<QListWidgetItem*> items = qwid->selectedItems();
-      array<string> selected (items.size());
+      array<string> selected;
       for(int i=0; i<items.size(); ++i)
         selected << from_qstring (items[i]->text());
       object l= null_object ();
@@ -1052,7 +1052,7 @@ qt_ui_element_rep::as_qwidget () {
       }
       
       command ecmd = tm_new<qt_choice_command_rep> (w, cmd, multiple_sel);
-      QTMCommand* qcmd = new QTMCommand (cmd);
+      QTMCommand* qcmd = new QTMCommand (ecmd);
       qcmd->setParent (w);
       QObject::connect (w, SIGNAL (itemSelectionChanged()), qcmd, SLOT (apply()), Qt::QueuedConnection);
       
