@@ -35,6 +35,7 @@ coord2 from_qsize (const QSize & s);
 QString to_qstylesheet(int style);
 
 QStringList to_qstringlist(array<string> l);
+array<string> from_qstringlist(const QStringList& l);
 QString to_qstring (string s);
 QString utf8_to_qstring (string s);  //<! convert a string with texmacs internal encoding to a QString via Utf8 encoding
 string from_qstring (const QString & s);  //<! convert an utf8 texmacs string to a QString

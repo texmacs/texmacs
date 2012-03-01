@@ -118,6 +118,14 @@ to_qstringlist(array<string> l) {
   return ql;
 }
 
+array<string>
+from_qstringlist(const QStringList& l) {
+  array<string> tl (l.size());
+  for(QStringList::const_iterator it = l.begin(); it != l.end(); ++it)
+    tl << from_qstring(*it);
+  return tl;
+}
+
 QString
 to_qstring (string s) {
   string out_lan= get_output_language ();
