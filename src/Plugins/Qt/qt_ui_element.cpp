@@ -740,6 +740,7 @@ qt_ui_element_rep::as_qlayoutitem () {
     case xpm_widget:
     case toggle_widget:
     case enum_widget:
+    case choice_widget:
     {
       QWidget *w = this->as_qwidget();
       return new QWidgetItem(w);
@@ -813,6 +814,33 @@ public:
     return out << "Enum"; }
 };
 
+/*! Ad-hoc command to be used with choice widgets.
+ * The command associated with a qt_ui_element::choice_widget has one parameter. (a
+ * list of selected items).
+ * For the reason to be of this class, see \sa qt_toggle_command_rep.
+ * \sa qt_ui_element, , qt_ui_element_rep::as_qwidget, qt_ui_element_rep::choice_widget
+ */
+class qt_choice_command_rep: public command_rep {
+  QPointer<QListWidget> qwid;
+  command cmd;
+  bool multiple;  //<! Whether multiple choices are allowed in the widget.
+  
+public:
+  qt_choice_command_rep(QListWidget* w, command c, bool m) : qwid(w), cmd(c), multiple(m) {}
+  void apply () { 
+    if (qwid) {
+      QList<QListWidgetItem*> items = qwid->selectedItems();
+      array<string> selected (items.size());
+      for(int i=0; i<items.size(); ++i)
+        selected << from_qstring (items[i]->text());
+      object l= null_object ();
+      for (int i=N(selected)-1; i>=0; i--)
+        l= cons (selected[i], l);
+      cmd (list_object (l));
+    }
+  }
+  tm_ostream& print (tm_ostream& out) { return out << "Choice"; }
+};
 
 
 QWidget *
@@ -1000,6 +1028,37 @@ qt_ui_element_rep::as_qwidget () {
       return w;
     }
       break;
+    case choice_widget:
+    {
+      //command cmd, array<string> vals, array<string> chosen
+      typedef quartet<command, array<string>, array<string>, bool > T;
+      T x = open_box<T>(load);
+      command cmd = x.x1;
+      QStringList items  = to_qstringlist(x.x2);
+      QStringList chosen = to_qstringlist(x.x3);
+      bool multiple_sel  = x.x4;
+      
+      QListWidget* w = new QListWidget();
+      w->addItems(items);
+
+      if (multiple_sel)
+        w->setSelectionMode(QAbstractItemView::ExtendedSelection);  // Support CTRL and SHIFT multiple selections.
+      else
+        w->setSelectionMode(QAbstractItemView::SingleSelection);
+      
+      for (int i = 0; i < chosen.size(); ++i) {
+        QListWidgetItem* item = w->item(i);
+        item->setSelected(chosen.contains(item->text(), Qt::CaseSensitive));  // Qt::CaseSensitive is the default anyway
+      }
+      
+      command ecmd = tm_new<qt_choice_command_rep> (w, cmd, multiple_sel);
+      QTMCommand* qcmd = new QTMCommand (cmd);
+      qcmd->setParent (w);
+      QObject::connect (w, SIGNAL (itemSelectionChanged()), qcmd, SLOT (apply()), Qt::QueuedConnection);
+      
+      return w;      
+    }
+      break;
     default:
       ;
   }
@@ -1066,12 +1125,12 @@ widget text_widget (string s, int style, color col, bool tsp) { return qt_ui_ele
 widget xpm_widget (url file_name) { return qt_ui_element_rep::create (qt_ui_element_rep::xpm_widget, file_name); }
 widget toggle_widget (command cmd, bool on, int style) { return qt_ui_element_rep::create (qt_ui_element_rep::toggle_widget, cmd, on, style); }
 widget enum_widget (command cmd, array<string> vals, string val, int style, string width) { return qt_ui_element_rep::create (qt_ui_element_rep::enum_widget, cmd, vals, val, style, width); }
-widget choice_widget (command cb, array<string> vals, string val) {
-  (void) cb; (void) vals; (void) val;
-  FAILED ("not yet implemented"); }
-widget choice_widget (command cb, array<string> vals, array<string> mc) {
-  (void) cb; (void) vals; (void) mc;
-  FAILED ("not yet implemented"); }
+widget choice_widget (command cmd, array<string> vals, array<string> chosen) { return qt_ui_element_rep::create(qt_ui_element_rep::choice_widget, cmd, vals, chosen, true); }
+widget choice_widget (command cmd, array<string> vals, string cur) {
+  array<string> chosen (1);
+  chosen[0]= cur;
+  return qt_ui_element_rep::create(qt_ui_element_rep::choice_widget, cmd, vals, chosen, false); }
+
 widget user_canvas_widget (widget wid, int style) {
   (void) wid; (void) style;
   FAILED ("not yet implemented"); }
