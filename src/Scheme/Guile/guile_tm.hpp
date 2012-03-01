@@ -1,18 +1,22 @@
-
 /******************************************************************************
-* MODULE     : guile.hpp
-* DESCRIPTION: Everything which depends on the version of Guile
-*              should be move to this file
-* COPYRIGHT  : (C) 1999  Joris van der Hoeven
-*******************************************************************************
-* This software falls under the GNU general public license version 3 or later.
-* It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
-* in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
-******************************************************************************/
+ * MODULE     : guile_tm.hpp
+ * DESCRIPTION: Everything which depends on the version of Guile
+ *              should be move to this file
+ * COPYRIGHT  : (C) 1999-2011  Joris van der Hoeven and Massimiliano Gubinelli
+ *******************************************************************************
+ * This software falls under the GNU general public license version 3 or later.
+ * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+ * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+ ******************************************************************************/
 
-#ifndef GUILE_HH
-#define GUILE_HH
+#ifndef GUILE_TM_H
+#define GUILE_TM_H
 #include "tm_configure.hpp"
+
+#include "blackbox.hpp"
+#include "array.hpp"
+
+
 #ifdef __MINGW32__
 // we redefine some symbols to avoid name clashes with Windows headers (included by Guile)
 #define PATTERN WIN_PATTERN
@@ -133,4 +137,51 @@ typedef SCM (*scm_t_catch_handler) (void *data, SCM tag, SCM throw_args);
 #endif
 #endif
 
-#endif // defined GUILE_HH
+
+#define SCM_ARG8 8
+#define SCM_ARG9 9
+
+#ifdef DOTS_OK
+typedef SCM (*FN)(...);
+#else
+typedef SCM (*FN)();
+#endif
+
+
+typedef SCM scm;
+
+bool scm_is_blackbox (scm obj);
+scm blackbox_to_scm (blackbox b);
+blackbox scm_to_blackbox (scm obj);
+
+inline scm scm_null () { return SCM_NULL; }
+inline scm scm_true () { return SCM_BOOL_T; }
+inline scm scm_false () { return SCM_BOOL_F; }
+inline void scm_set_car (scm a, scm b) { SCM_SETCAR(a,b); }
+inline void scm_set_cdr (scm a, scm b) { SCM_SETCDR(a,b); }
+	
+	
+inline bool scm_is_equal (scm o1, scm o2) { return SCM_NFALSEP ( scm_equal_p(o1, o2)); }
+
+
+scm eval_scheme_file (string name);
+scm eval_scheme (string s);
+scm call_scheme (scm fun);
+scm call_scheme (scm fun, scm a1);
+scm call_scheme (scm fun, scm a1, scm a2);
+scm call_scheme (scm fun, scm a1, scm a2, scm a3);
+scm call_scheme (scm fun, scm a1, scm a2, scm a3, scm a4);
+scm call_scheme (scm fun, array<scm> a);
+
+
+#define scm_install_procedure(name, func, args, p0, p1) \
+  scm_new_procedure (name, ( FN )( func ), args, p0, p1)
+
+
+
+string scheme_dialect ();
+
+
+#endif // defined GUILE_TM_H
+
+

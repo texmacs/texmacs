@@ -15,7 +15,7 @@
 #include "hashset.hpp"
 #include "iterator.hpp"
 #include "timer.hpp"
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 #include <stdio.h>
 #include <string.h>
 #ifndef __MINGW32__

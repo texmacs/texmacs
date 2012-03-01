@@ -119,7 +119,7 @@ public:
 
 // generic_rep in generic_tree.hpp
 
-template<> struct type_helper<tree> { static tree init; };
+template<> struct type_helper<tree> { static int id; static tree init; };
 
 typedef tree scheme_tree;
 

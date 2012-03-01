@@ -12,7 +12,7 @@
 #include "client_server.hpp"
 #include "socket_server.hpp"
 #include "socket_link.hpp"
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 
 static socket_link_rep* the_client= NULL;
 

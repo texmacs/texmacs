@@ -13,7 +13,7 @@
 #include "mac_utilities.h"
 #include "url.hpp"
 #include "converter.hpp"
-#include "../Guile/scheme.hpp"
+#include "../Scheme/scheme.hpp"
 
 static string 
 from_nsstring (NSString *s) {

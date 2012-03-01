@@ -36,7 +36,7 @@
 
 #include "tm_link.hpp" // for number_of_servers
 
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 //#include "TeXmacs/server.hpp" // for get_server
 
 #include "qt_simple_widget.hpp"

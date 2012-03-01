@@ -465,7 +465,7 @@ main (int argc, char** argv) {
 //#ifdef EXPERIMENTAL
 //  test_environments ();
 //#endif
-  start_guile (argc, argv, TeXmacs_main);
+  start_scheme (argc, argv, TeXmacs_main);
   cout.close ();
   cerr.close ();
   return 0;

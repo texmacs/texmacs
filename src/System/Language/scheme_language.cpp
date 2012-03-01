@@ -11,7 +11,7 @@
 
 #include "analyze.hpp"
 #include "impl_language.hpp"
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 
 scheme_language_rep::scheme_language_rep (string name):
   language_rep (name), colored ("")

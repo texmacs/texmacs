@@ -13,7 +13,7 @@
 #include "qt_utilities.hpp"
 
 #include "message.hpp"
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 
 #include <QColorDialog>
 

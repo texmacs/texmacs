@@ -10,7 +10,7 @@
 ******************************************************************************/
 
 #include "command.hpp"
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 
 /******************************************************************************
 * default implementation of command application with arguments

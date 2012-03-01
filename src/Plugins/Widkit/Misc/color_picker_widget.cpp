@@ -13,7 +13,7 @@
 #include "Widkit/attribute_widget.hpp"
 #include "Widkit/layout.hpp"
 #include "file.hpp"
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 
 /******************************************************************************
 * Color button widget

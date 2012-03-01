@@ -18,6 +18,7 @@
 ******************************************************************************/
 
 tree type_helper<tree>::init (UNINIT);
+int type_helper<tree>::id  = new_type_identifier ();
 
 void
 destroy_tree_rep (tree_rep* rep) {

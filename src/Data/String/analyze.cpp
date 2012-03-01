@@ -12,7 +12,7 @@
 #include "analyze.hpp"
 #include "merge_sort.hpp"
 #include "converter.hpp"
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 
 /******************************************************************************
 * Tests for caracters

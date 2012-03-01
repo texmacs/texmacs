@@ -191,8 +191,8 @@
   (let ((name (car l))
 	(arg-type (cdaddr l)))
     ;; (output "\n" name ", " arg-type "\n")
-    (output "  scm_new_procedure (\"" name "\", ")
-    (output "(FN) " (translate-name name) ", ")
+    (output "  scm_install_procedure (\"" name "\", ")
+    (output " " (translate-name name) ", ")
     (output (length arg-type) ", 0, 0);\n")))
 
 (define (build-declare-routines l)
@@ -214,3 +214,4 @@
 
 (define-macro build
   (lambda l (build-main l)))
+

@@ -12,7 +12,7 @@
 #include "edit_text.hpp"
 #include "file.hpp"
 #include "analyze.hpp"
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 
 /******************************************************************************
 * Constructors and destructors

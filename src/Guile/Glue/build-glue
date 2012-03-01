@@ -1,8 +1,0 @@
-#!/bin/sh
-# Program to make Guile interface to TeXmacs
-
-if test $# = 2; then
-  guile -l build-glue.scm -l $1 -c "(quit)" | cat > $2
-else
-  echo "Usage: build-glue <input.scm> <output.cpp>"
-fi

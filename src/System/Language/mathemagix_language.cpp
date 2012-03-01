@@ -11,7 +11,7 @@
 
 #include "analyze.hpp"
 #include "impl_language.hpp"
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 #define COLOR_MARKUP "#500d04"
 
 static void parse_number (string s, int& pos);

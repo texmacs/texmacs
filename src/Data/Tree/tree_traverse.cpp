@@ -13,7 +13,7 @@
 #include "drd_std.hpp"
 #include "analyze.hpp"
 #include "hashset.hpp"
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 
 /******************************************************************************
 * Accessability

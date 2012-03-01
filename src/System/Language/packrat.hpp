@@ -12,7 +12,7 @@
 #ifndef PACKRAT_H
 #define PACKRAT_H
 #include "tree.hpp"
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 
 void   packrat_define (string lan, string s, tree t);
 void   packrat_property (string lan, string s, string var, string val);

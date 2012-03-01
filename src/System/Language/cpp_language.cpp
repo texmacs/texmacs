@@ -12,7 +12,7 @@
 
 #include "analyze.hpp"
 #include "impl_language.hpp"
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 
 extern tree the_et;
 

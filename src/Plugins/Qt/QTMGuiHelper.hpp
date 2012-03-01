@@ -13,7 +13,7 @@
 #define QTMGUIHELPER_HPP
 
 #include "qt_gui.hpp"
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 #include <QObject>
 #include <QTranslator>
 

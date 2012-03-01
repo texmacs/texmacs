@@ -14,7 +14,7 @@
 #include "sys_utils.hpp"
 #include "analyze.hpp"
 #include "hashmap.hpp"
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 
 #ifdef OS_WIN32
 #include <urlget.h>

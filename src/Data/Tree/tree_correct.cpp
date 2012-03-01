@@ -11,7 +11,7 @@
 
 #include "tree_correct.hpp"
 #include "tree_analyze.hpp"
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 #include "packrat.hpp"
 
 /******************************************************************************

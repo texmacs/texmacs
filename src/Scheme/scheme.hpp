@@ -1,7 +1,7 @@
 
 /******************************************************************************
-* MODULE     : object.hpp
-* DESCRIPTION: Scheme objects
+* MODULE     : scheme.hpp
+* DESCRIPTION: Abstract interface for the manipulation of scheme objects
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
@@ -9,87 +9,50 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#ifndef OBJECT_H
-#define OBJECT_H
+#ifndef SCHEME_HH
+#define SCHEME_HH
+
 #include "tree.hpp"
 #include "path.hpp"
 #include "command.hpp"
 #include "url.hpp"
 
-#ifdef __MINGW32__
-// we redefine some symbols to avoid name clashes with Windows headers (included by Guile)
-#define PATTERN WIN_PATTERN
-#define STRING WIN_STRING
-#define GROUP WIN_GROUP
-#define mouse_event win_mouse_event
-#ifdef IN
-#define MY_IN IN
-#undef IN
-#endif
-#ifdef OUT
-#define MY_OUT OUT
-#undef OUT
-#endif
-#ifdef MENU_EVENT
-#define MY_MENU_EVENT MENU_EVENT
-#undef MENU_EVENT
-#endif
-#include <libguile.h>
-#undef STRING
-#undef ERROR
-#undef PATTERN
-#undef GROUP
-#undef mouse_event
-#undef IN
-#undef OUT
-#undef MENU_EVENT
-#ifdef MY_MENU_EVENT
-#define MENU_EVENT MY_MENU_EVENT
-#undef MY_MENU_EVENT
-#endif
-#ifdef MY_IN
-#define IN MY_IN
-#undef MY_IN
-#endif
-#ifdef MY_OUT
-#define OUT MY_OUT
-#undef MY_OUT
-#endif
-#else
-#include <libguile.h>
-#endif
+void start_scheme (int argc, char** argv, void (*call_back) (int, char**));
+void initialize_scheme ();
 
-
-class object_rep: concrete_struct {
-  SCM handle;
-public:
-  object_rep (SCM obj);
-  ~object_rep ();
-  SCM lookup ();
-  friend struct object;
+class object_rep : concrete_struct {
+  friend class object;
 };
+
+
+class scm_object_rep;
 
 struct object {
-  CONCRETE(object);
-  inline object (SCM obj): rep (tm_new<object_rep> (obj)) {}
-  object ();
-  object (bool b);
-  object (int i);
-  object (double x);
-  object (const char* s);
-  object (string s);
-  object (tree t);
-  object (list<string> l);
-  object (list<tree> l);
-  object (path p);
-  object (url u);
+	CONCRETE(object);
+	object ();
+    object (scm_object_rep* o);
+	object (void *); // left intentionally undefined to inhibith implicit conversion of pointers to bool
+	object (bool b); // implicit conversion to bool is dangerous!!! (all pointers match this conversion)
+	object (int i);
+	object (double x);
+	object (const char* s);
+	object (string s);
+	object (tree t);
+	object (list<string> l);
+	object (list<tree> l);
+	object (path p);
+	object (url u);
 };
 CONCRETE_CODE(object);
+
+
+
 
 tm_ostream& operator << (tm_ostream& out, object obj);
 bool operator == (object obj1, object obj2);
 bool operator != (object obj1, object obj2);
 int hash (object obj);
+
 
 object null_object ();
 object list_object (object obj1);
@@ -144,6 +107,11 @@ object scheme_cmd (const char* s);
 object scheme_cmd (string s);
 object scheme_cmd (object cmd);
 
+
+void notify_preferences_loaded ();
+string get_preference (string var);
+
+
 object eval (const char* expr);
 object eval (string expr);
 object eval (object expr);
@@ -174,7 +142,5 @@ object call (object fun, object a1, object a2, object a3);
 object call (object fun, object a1, object a2, object a3, object a4);
 object call (object fun, array<object> a);
 
-void notify_preferences_loaded ();
-string get_preference (string var);
 
-#endif // defined OBJECT_H
+#endif // defined SCHEME_HH

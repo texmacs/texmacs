@@ -60,7 +60,7 @@ AR = ar
 ARFLAGS = -r
 RM = rm -f
 CP = cp -r -f
-GLUE = cd Guile/Glue; ./build-glue
+GLUE = cd Scheme/Glue; ./build-glue
 TOUCH = touch
 MOC = @MOC@
 MOCFLAGS = @QT_CPPFLAGS@
@@ -110,7 +110,7 @@ style_src    := $(call findsrc_in,Style,@CONFIG_EXPERIMENTAL@)
 typeset_src  := $(call findsrc,Typeset)
 edit_src     := $(call findsrc,Edit)
 texmacs_src  := $(call findsrc,Texmacs)
-guile_src    := $(call findsrc_in,Guile,Scheme) glue_all.cpp
+guile_src    := $(call findsrc_in,Scheme,Scheme Guile)
 
 # Each makefile will have its own Deps directory. Okay that is a bit
 # inefficient, but that is much simpler to maintain.
@@ -140,7 +140,7 @@ deps += $(texmacs_cpp_deps) $(texmacs_c_deps) $(texmacs_m_deps) $(texmacs_mm_dep
 
 incl_flags = $(patsubst %,-I%,$(1))
 
-system_incl   := $(call incl_flags,System System/Boot System/Classes System/Files System/Link System/Misc System/Language Kernel/Abstractions Kernel/Containers Kernel/Types Data/Convert Data/Drd Data/History Data/Observers Data/String Data/Tmfs Data/Tree Guile Graphics/Bitmap_fonts Graphics/Fonts Graphics/Gui Graphics/Mathematics Graphics/Renderer Graphics/Handwriting Plugins)
+system_incl   := $(call incl_flags,System System/Boot System/Classes System/Files System/Link System/Misc System/Language Kernel/Abstractions Kernel/Containers Kernel/Types Data/Convert Data/Drd Data/History Data/Observers Data/String Data/Tmfs Data/Tree Scheme Graphics/Bitmap_fonts Graphics/Fonts Graphics/Gui Graphics/Mathematics Graphics/Renderer Graphics/Handwriting Plugins)
 kernel_incl   := $(system_incl)
 data_incl     := $(system_incl)
 graphics_incl := $(system_incl)
@@ -180,7 +180,7 @@ $(qt_moc_paths): ./Plugins/Qt/moc_%.cpp: ./Plugins/Qt/%.hpp
 # Dependencies
 ###############################################################################
 
-deps_incl = $(call incl_flags,System System/Boot System/Classes System/Files System/Link System/Misc System/Language Kernel/Abstractions Kernel/Containers Kernel/Types Data/Convert Data/Drd Data/History Data/Observers Data/String Data/Tmfs Data/Tree Graphics Plugins Style/Environment Style/Evaluate Style/Memorizer Typeset Edit Texmacs Guile Graphics/Bitmap_fonts Graphics/Fonts Graphics/Gui Graphics/Mathematics Graphics/Renderer Graphics/Handwriting)
+deps_incl = $(call incl_flags,System System/Boot System/Classes System/Files System/Link System/Misc System/Language Kernel/Abstractions Kernel/Containers Kernel/Types Data/Convert Data/Drd Data/History Data/Observers Data/String Data/Tmfs Data/Tree Graphics Plugins Style/Environment Style/Evaluate Style/Memorizer Typeset Edit Texmacs Scheme Graphics/Bitmap_fonts Graphics/Fonts Graphics/Gui Graphics/Mathematics Graphics/Renderer Graphics/Handwriting)
 
 deps_flags = $(deps_incl)\
  $(CPPFLAGS) $(CXXAXEL) $(CXXCAIRO) $(CXXIMLIB2) $(CXXFREETYPE) $(CXXICONV) $(CXXGUILE) \
@@ -376,13 +376,13 @@ all: $(tmsrc)/bin/texmacs.bin
 # automatically, but only if there is an appropriate rule for
 # regenerating the glue source from the scheme documents.
 
-Guile/Glue/glue_%.cpp: Guile/Glue/build-glue-%.scm
+Scheme/Glue/glue_%.cpp: Scheme/Glue/build-glue-%.scm
 	$(MAKE) GLUE
 
-gluesrc = Guile/Glue
+gluesrc = Scheme/Glue
 
 GLUE: $(gluesrc)/glue_basic.cpp $(gluesrc)/glue_editor.cpp $(gluesrc)/glue_server.cpp
-	$(RM) Objects/glue_all.o
+	$(RM) Objects/glue.o
 
 .PHONY: GLUE
 

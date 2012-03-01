@@ -15,7 +15,7 @@
 #include "vars.hpp"
 #include "drd_std.hpp"
 #include <stdio.h>
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 #include "tree_correct.hpp"
 #include "merge_sort.hpp"
 

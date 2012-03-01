@@ -11,7 +11,7 @@
 
 #include "Boxes/composite.hpp"
 #include "Boxes/construct.hpp"
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 
 bool in_presentation_mode ();
 

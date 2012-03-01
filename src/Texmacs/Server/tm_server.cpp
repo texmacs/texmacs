@@ -85,7 +85,7 @@ tm_server_rep::tm_server_rep ():
   style_drd (tree (COLLECTION))
 {
   the_server= tm_new<server> (this);
-  initialize_guile ();
+  initialize_scheme ();
   gui_interpose (texmacs_interpose_handler);
   set_wait_handler (texmacs_wait_handler);
   if (is_none (tm_init_file))

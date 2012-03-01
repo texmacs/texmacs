@@ -13,7 +13,7 @@
 #define SERVER_H
 #include "editor.hpp"
 #include "url.hpp"
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 
 class tm_buffer_rep;
 class tm_view_rep;
