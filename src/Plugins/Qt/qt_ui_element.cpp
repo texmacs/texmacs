@@ -741,6 +741,7 @@ qt_ui_element_rep::as_qlayoutitem () {
     case toggle_widget:
     case enum_widget:
     case choice_widget:
+    case scrollable_widget:      
     {
       QWidget *w = this->as_qwidget();
       return new QWidgetItem(w);
@@ -1030,7 +1031,6 @@ qt_ui_element_rep::as_qwidget () {
       break;
     case choice_widget:
     {
-      //command cmd, array<string> vals, array<string> chosen
       typedef quartet<command, array<string>, array<string>, bool > T;
       T x = open_box<T>(load);
       command cmd = x.x1;
@@ -1057,6 +1057,33 @@ qt_ui_element_rep::as_qwidget () {
       QObject::connect (w, SIGNAL (itemSelectionChanged()), qcmd, SLOT (apply()), Qt::QueuedConnection);
       
       return w;      
+    }
+      break;
+    case scrollable_widget:
+    {
+      typedef pair<widget, int> T;
+      T x = open_box<T>(load);
+      widget wid = x.x1;
+      int style  = x.x2;
+      
+      QScrollArea* scroll = new QScrollArea();
+      QWidget* w = concrete(wid)->as_qwidget();
+      scroll->setBackgroundRole(QPalette::NoRole);
+      if (w) {
+        QLayout* l = w->layout();
+        
+        if(l)
+          l->setSizeConstraint(QLayout::SetFixedSize);
+        else
+          w->setMinimumSize(100,200);
+        
+        scroll->setWidget(w);
+      }
+      // FIXME????
+      // "Note that You must add the layout of widget before you call this function; 
+      //  if you add it later, the widget will not be visible - regardless of when you show() the scroll area.
+      //  In this case, you can also not show() the widget later."
+      return scroll;
     }
       break;
     default:
@@ -1130,10 +1157,7 @@ widget choice_widget (command cmd, array<string> vals, string cur) {
   array<string> chosen (1);
   chosen[0]= cur;
   return qt_ui_element_rep::create(qt_ui_element_rep::choice_widget, cmd, vals, chosen, false); }
-
-widget user_canvas_widget (widget wid, int style) {
-  (void) wid; (void) style;
-  FAILED ("not yet implemented"); }
+widget user_canvas_widget (widget wid, int style) { return qt_ui_element_rep::create(qt_ui_element_rep::scrollable_widget, wid, style); }
 widget resize_widget (widget w, int style, string w1, string h1,
                       string w2, string h2, string w3, string h3) {
   (void) w; (void) style; (void) w1; (void) h1; (void) w2; (void) h2; (void) w3; (void) h3;
