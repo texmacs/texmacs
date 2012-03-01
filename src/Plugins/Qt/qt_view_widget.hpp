@@ -18,8 +18,8 @@
 
 class QWidget;
 
-/**
- * TODO: description!
+/*!
+ * 
  */
 class qt_view_widget_rep: public qt_widget_rep {
 public:
@@ -45,7 +45,7 @@ public:
   //virtual void deconnect (slot s, widget w2, slot s2);
     // deconnect a state slot s from another slot s2 of another widget w2
   
-  virtual widget plain_window_widget (string s);
+  virtual widget plain_window_widget (string s, command q);
   void set_current_renderer(basic_renderer _r) { current_renderer = _r;  }
   basic_renderer get_current_renderer() {  return current_renderer; }
   virtual QWidget* as_qwidget () { return view ; };

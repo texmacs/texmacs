@@ -19,6 +19,7 @@
 #include <QDateTime>
 #include <QTextCodec>
 #include <QHash>
+#include <QStringList>
 
 #include <QPrinter>
 #include <QPrintDialog>
@@ -32,9 +33,7 @@
 #include "Ghostscript/gs_utilities.hpp"
 #endif
 
-/**
- * some debugging infrastucture
- */
+/*! some debugging infrastucture */
 tm_ostream&
 operator << (tm_ostream& out, QRect rect) {
   return out << "(" << rect.x() << "," << rect.y() << ","
@@ -57,6 +56,32 @@ QSize
 to_qsize (const coord2 & p) {
   float c= 1.0/PIXEL;
   return QSize (p.x1*c, p.x2*c);
+}
+
+
+// TODO
+QString
+to_qstylesheet(int style) {
+  QString sheet("* {");
+  if (style & WIDGET_STYLE_MINI)  // use smaller text font inside widget
+    sheet += "";
+  if (style & WIDGET_STYLE_MONOSPACED)  // use monospaced font inside widget
+    sheet += "";
+  if (style & WIDGET_STYLE_GREY)  // use grey text font
+    sheet += "";
+  if (style & WIDGET_STYLE_PRESSED)   // indicate that a button is currently pressed
+    sheet += "";
+  if (style & WIDGET_STYLE_INERT)  // only render but don't associate any action to widget
+    sheet += "";
+  if (style & WIDGET_STYLE_BUTTON)  // indicate that a button should explicitly rendered as a button
+    sheet += "";
+  if (style & WIDGET_STYLE_CENTERED)  // use centered text
+    sheet += "";
+  if (style & WIDGET_STYLE_BOLD)
+    sheet += "";
+
+  sheet += "}";
+  return sheet;
 }
 
 coord4
@@ -85,6 +110,13 @@ from_qsize (const QSize & s) {
   return coord2 (c1, c2);
 }
 
+QStringList
+to_qstringlist(array<string> l) {
+  QStringList ql;
+  for(int i=0; i<N(l); ++i)
+    ql << to_qstring(l[i]);
+  return ql;
+}
 
 QString
 to_qstring (string s) {
@@ -157,8 +189,7 @@ to_qcolor (const string& col) {
 }
 
 /*!
- * Returns a color encoded as a string with hexadecimal RGB values, 
- * as in #e3a1ff
+ * Returns a color encoded as a string with hexadecimal RGB values, as in #e3a1ff
  */
 string
 from_qcolor (const QColor& col) {

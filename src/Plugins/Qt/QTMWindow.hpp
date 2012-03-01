@@ -37,5 +37,15 @@ protected:
   virtual void closeEvent (QCloseEvent *event);
 };
 
+class QTMPlainWindow: public QWidget {
+  Q_OBJECT
+  
+protected:
+  virtual void closeEvent (QCloseEvent *event);
+signals:
+  void closed();
+};
+
+
 
 #endif // QTMWINDOW_HPP

@@ -128,8 +128,9 @@ qt_menu_rep::popup_window_widget (string s) {
 }
 
 widget
-qt_menu_rep::plain_window_widget (string s) {
+qt_menu_rep::plain_window_widget (string s, command q) {
   item->menu()->setWindowTitle (to_qstring (s));
+  (void) q; // FIXME: to be ignored?
   return this;
 }
 

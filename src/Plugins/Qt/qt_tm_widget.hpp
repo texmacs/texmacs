@@ -85,7 +85,7 @@ public:
   virtual widget read (slot s, blackbox index);
   virtual void write (slot s, blackbox index, widget w);
   
-  virtual widget plain_window_widget (string s);
+  virtual widget plain_window_widget (string s, command q);
   
   QMainWindow* tm_mainwindow () {
     return qobject_cast<QMainWindow*> (view); }

@@ -29,3 +29,10 @@ void QTMWindow::closeEvent ( QCloseEvent *event )
   }
  // QMainWindow::closeEvent (event);
 }
+
+void QTMPlainWindow::closeEvent ( QCloseEvent *event )
+{
+  if (DEBUG_QT)   cout << "CLOSE PLAIN WINDOW" << LF;
+  (void) event;
+  emit closed();
+}

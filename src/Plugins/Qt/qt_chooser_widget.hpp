@@ -21,14 +21,15 @@
  */
 class qt_chooser_widget_rep: public qt_widget_rep {
 protected:      
-  command cmd;      //! Scheme closure to execute after the dialog closes
+  command cmd;      //!< Scheme closure to execute when the file is chosen
+  command quit;     //!< Execute when the dialog closes. (NOT USED)
   string type;
   bool   save;
   string win_title;
-  string directory; //! Set this property sending SLOT_DIRECTORY to this widget
+  string directory; //!< Set this property sending SLOT_DIRECTORY to this widget
   coord2 position; 
   coord2 size;
-  string file;      //! Set this property sending SLOT_FILE to this widget
+  string file;      //!< Set this property sending SLOT_FILE to this widget
   
 public:
   qt_chooser_widget_rep (command, string, bool);
@@ -39,7 +40,7 @@ public:
   virtual widget read (slot s, blackbox index);
   virtual void write (slot s, blackbox index, widget w);
   virtual void notify (slot s, blackbox new_val);
-  virtual widget plain_window_widget (string s);
+  virtual widget plain_window_widget (string s, command q);
   
   void perform_dialog();
 };

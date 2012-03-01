@@ -19,6 +19,8 @@
 #include <QString>
 #include <QColor>
 
+class QStringList;
+
 typedef quartet<SI,SI,SI,SI> coord4;
 typedef pair<SI,SI> coord2;
 
@@ -30,16 +32,14 @@ QSize to_qsize (const coord2 & p);
 coord4 from_qrect (const QRect & rect);
 coord2 from_qpoint (const QPoint & pt);
 coord2 from_qsize (const QSize & s);
+QString to_qstylesheet(int style);
+
+QStringList to_qstringlist(array<string> l);
 QString to_qstring (string s);
-// convert a string with texmacs internal encoding to 
-// a QString via Utf8 encoding
-QString utf8_to_qstring (string s);
-// convert an utf8 texmacs string to a QString
-string from_qstring (const QString & s);
-// convert a QString to a TeXmacs utf8 string
-string from_qstring_utf8 (const QString & s);
-// convert a QString to a TeXmacs cork string
-string qt_translate (string s);
+QString utf8_to_qstring (string s);  //<! convert a string with texmacs internal encoding to a QString via Utf8 encoding
+string from_qstring (const QString & s);  //<! convert an utf8 texmacs string to a QString
+string from_qstring_utf8 (const QString & s);  //<! convert a QString to a TeXmacs utf8 string
+string qt_translate (string s); //!< convert a QString to a TeXmacs cork string
 bool qt_supports (url u);
 void qt_image_size (url image, int& w, int& h);
 void qt_convert_image (url image, url dest, int w =0, int h =0);

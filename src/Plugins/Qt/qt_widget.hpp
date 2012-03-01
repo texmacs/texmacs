@@ -37,7 +37,7 @@ public:
    * @param s (Often?) a title for the window.
    * @return A pointer to this widget.
    */
-  virtual widget plain_window_widget (string s);
+  virtual widget plain_window_widget (string s, command q);
   
   /*!
    *

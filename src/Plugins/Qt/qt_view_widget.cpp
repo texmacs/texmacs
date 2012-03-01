@@ -109,7 +109,9 @@ qt_view_widget_rep::send (slot s, blackbox val) {
       if (DEBUG_QT)
         cout << "Ignored!\n";
       break;
-      
+    case SLOT_REFRESH:
+      // This message is sent to refresh special widgets. Usually we just ignore it.
+      break;
     default:
       FAILED ("unhandled slot type");
   }
@@ -217,14 +219,14 @@ qt_view_widget_rep::write (slot s, blackbox index, widget w) {
 }
 
 
-/**
+/*!
  * Sets the view's title to _title, then constructs a wrapper widget for the
  * view and returns it.
  */
 widget
-qt_view_widget_rep::plain_window_widget (string _title) {
+qt_view_widget_rep::plain_window_widget (string _title, command q) {
   view->setWindowTitle (to_qstring (_title));
-  widget wid= tm_new<qt_window_widget_rep> (view);
+  widget wid= tm_new<qt_window_widget_rep> (view, q);
     //FIXME: is this the right thing to do?
   return wid;
 }

@@ -36,7 +36,8 @@ public:
     horizontal_menu, vertical_menu, horizontal_list, vertical_list,
     tile_menu, minibar_menu, menu_separator, menu_group, 
     pulldown_button, pullright_button, menu_button,
-    balloon_widget, text_widget, xpm_widget, toggle_widget
+    balloon_widget, text_widget, xpm_widget, toggle_widget,
+    enum_widget
   } ;
   
   types type;
@@ -51,7 +52,7 @@ public:
 
   virtual widget make_popup_widget ();
   virtual widget popup_window_widget (string s);
-  virtual widget plain_window_widget (string s);
+  virtual widget plain_window_widget (string s, command q);
   virtual QAction* as_qaction ();
   virtual QMenu *get_qmenu();
   virtual QLayoutItem *as_qlayoutitem ();

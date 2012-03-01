@@ -31,7 +31,7 @@ public:
   virtual void send (slot s, blackbox val);
   virtual widget make_popup_widget ();
   virtual widget popup_window_widget (string s);
-  virtual widget plain_window_widget (string s);
+  virtual widget plain_window_widget (string s, command q);
   virtual QAction* as_qaction ();
 };
 

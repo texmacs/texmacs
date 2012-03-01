@@ -166,9 +166,10 @@ qt_chooser_widget_rep::write (slot s, blackbox index, widget w) {
 }
 
 widget
-qt_chooser_widget_rep::plain_window_widget (string s)
+qt_chooser_widget_rep::plain_window_widget (string s, command q)
 {
   win_title = s;
+  quit = q;       // (NOT USED)
   return this;
 }
 
@@ -253,6 +254,7 @@ qt_chooser_widget_rep::perform_dialog () {
     }
   }
   cmd ();
+  if (!is_nil(quit)) quit ();
 }
 #else
 /**
@@ -356,5 +358,6 @@ qt_chooser_widget_rep::perform_dialog () {
   delete dialog;
   
   cmd ();
+  if (!is_nil(quit)) quit ();
 }
 #endif

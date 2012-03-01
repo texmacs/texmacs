@@ -54,9 +54,10 @@ qt_color_picker_widget_rep::send (slot s, blackbox val) {
  * window_create() expects this method in widgets which implement windows
  */
 widget
-qt_color_picker_widget_rep::plain_window_widget (string title)
+qt_color_picker_widget_rep::plain_window_widget (string title, command q)
 {
   _windowTitle = title;
+  (void) q;
   return this;
 }
 

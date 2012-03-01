@@ -844,11 +844,11 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
   tm_scrollarea()->setVerticalScrollBarPolicy(flag ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
 }
 
+// creates a decorated window with name s and contents w
 widget
-qt_tm_widget_rep::plain_window_widget (string s) {
-    // creates a decorated window with name s and contents w
-  widget w= qt_view_widget_rep::plain_window_widget (s);
-    // to manage correctly retain counts
-  qt_window_widget_rep* wid= (qt_window_widget_rep*) (w.rep);
+qt_tm_widget_rep::plain_window_widget (string s, command q) {
+
+  widget w= qt_view_widget_rep::plain_window_widget (s, q);
+  qt_window_widget_rep* wid= (qt_window_widget_rep*) (w.rep);   // to manage correctly retain counts
   return wid;
 }

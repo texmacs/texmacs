@@ -22,10 +22,10 @@ class QWidget;
  */
 class qt_window_widget_rep: public widget_rep {
 public:
-
   QWidget *wid;
-
-  qt_window_widget_rep (QWidget* _wid);
+  command quit;    // Ignored
+  
+  qt_window_widget_rep (QWidget* _wid, command q);
   ~qt_window_widget_rep ();
 
   virtual void send (slot s, blackbox val);

@@ -25,7 +25,7 @@ widget the_keyboard_focus (NULL);
  ******************************************************************************/
 
 widget
-qt_widget_rep::plain_window_widget (string s) {
+qt_widget_rep::plain_window_widget (string s, command ) {
   (void) s;
   return widget ();
 }
@@ -142,11 +142,13 @@ qt_glue_widget_rep::as_qwidget() {
 ******************************************************************************/
 
 // Window widgets creating functions
+
+/*! Creates a decorated window.
+ * The window will have name s, contents w and perform command q upon closing.
+ */
 widget
-plain_window_widget (widget w, string s, command quit) {
-  // creates a decorated window with name s and contents w
-  (void) quit; // FIXME: take into account quit argument
-  return concrete(w)->plain_window_widget (s);
+plain_window_widget (widget w, string s, command q) {
+  return concrete(w)->plain_window_widget (s, q);
 }
 
 widget

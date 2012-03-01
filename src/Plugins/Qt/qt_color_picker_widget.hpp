@@ -31,7 +31,7 @@ public:
   ~qt_color_picker_widget_rep ();
   
   virtual void            send (slot s, blackbox val);
-  widget   plain_window_widget (string s);
+  widget   plain_window_widget (string s, command q);
 
   void showDialog();
   

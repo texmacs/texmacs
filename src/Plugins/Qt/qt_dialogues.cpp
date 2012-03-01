@@ -57,7 +57,7 @@ public:
   virtual void notify (slot s, blackbox new_val);
   // virtual void connect (slot s, widget w2, slot s2);
   // virtual void deconnect (slot s, widget w2, slot s2);
-  virtual widget plain_window_widget (string s);
+  virtual widget plain_window_widget (string s, command q);
   void perform_dialog();
 };
 
@@ -231,9 +231,10 @@ qt_input_widget_rep::write (slot s, blackbox index, widget w) {
 }
 
 widget
-qt_input_widget_rep::plain_window_widget (string s)
+qt_input_widget_rep::plain_window_widget (string s, command q)
 {
   win_title = s;
+  (void) q;  // FIXME? ignore ok?
   return this;
 }
 
