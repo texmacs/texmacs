@@ -153,6 +153,7 @@ qt_view_widget_rep::query (slot s, int type_id) {
       return close_box<renderer> (r);
     }      
 #endif
+      
     case SLOT_POSITION:
     {
       typedef pair<SI,SI> coord2;
@@ -162,6 +163,15 @@ qt_view_widget_rep::query (slot s, int type_id) {
         cout << "Position (" << pt.x() << "," << pt.y() << ")\n";
       return close_box<coord2> (from_qpoint (pt));
     }
+
+    case SLOT_SIZE:
+    {
+      typedef pair<SI,SI> coord2;
+      TYPE_CHECK (type_id == type_helper<coord2>::id);
+      QSize s= view->size();
+      return close_box<coord2> (from_qsize (s));
+    }
+      
     default:
       FAILED ("cannot handle slot type");
       return blackbox ();

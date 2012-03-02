@@ -37,7 +37,9 @@ public:
     tile_menu, minibar_menu, menu_separator, menu_group, 
     pulldown_button, pullright_button, menu_button,
     balloon_widget, text_widget, xpm_widget, toggle_widget,
-    enum_widget, choice_widget, scrollable_widget
+    enum_widget, choice_widget, scrollable_widget,
+    hsplit_widget, vsplit_widget,
+    tabs_widget, wrapped_widget
   } ;
   
   types type;

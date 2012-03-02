@@ -36,7 +36,10 @@ const char *ui_type_string[]= {
 "tile_menu", "minibar_menu", "menu_separator", "menu_group", 
 "pulldown_button", "pullright_button", "menu_button",
 "balloon_widget", "text_widget", "xpm_widget", "toggle_widget",
-  "enum_widget", "choice_widget", "scrollable_widget" };
+  "enum_widget", "choice_widget", "scrollable_widget",
+  "hsplit_widget", "vsplit_widget", "tabs_widget", "wrapped_widget"
+
+};
 
 
 /******************************************************************************
@@ -753,7 +756,11 @@ qt_ui_element_rep::as_qlayoutitem () {
     case toggle_widget:
     case enum_widget:
     case choice_widget:
-    case scrollable_widget:      
+    case scrollable_widget:
+    case hsplit_widget:
+    case vsplit_widget:
+    case tabs_widget:
+    case wrapped_widget:
     {
       QWidget *w = this->as_qwidget();
       return new QWidgetItem(w);
@@ -1097,6 +1104,62 @@ qt_ui_element_rep::as_qwidget () {
     }
       break;
       
+    case hsplit_widget:
+    case vsplit_widget:
+    {
+      typedef pair<widget, widget> T;
+      T x = open_box<T>(load);
+      widget w1 = x.x1;
+      widget w2 = x.x2;
+      
+      QWidget* qw1 = concrete(w1)->as_qwidget();
+      QWidget* qw2 = concrete(w2)->as_qwidget();
+      QSplitter* split = new QSplitter();
+      split->setOrientation(type == hsplit_widget ? Qt::Horizontal : Qt::Vertical);
+      split->addWidget(qw1);
+      split->addWidget(qw2);
+      
+      return split;
+    }
+      break;
+
+    case tabs_widget:
+    {
+      typedef pair<array<widget>, array<widget> > T;
+      T x = open_box<T>(load);
+      array<widget> tabs = x.x1;
+      array<widget> bodies = x.x2;
+      
+      QTabWidget* tw = new QTabWidget ();
+      
+      for (int i = 0; i < N(tabs); i++) {
+        if (is_nil (tabs[i])) break;
+        QWidget* prelabel = concrete (tabs[i]) -> as_qwidget();
+        QLabel* label = qobject_cast<QLabel*> (prelabel);
+        QWidget* body = concrete (bodies[i]) -> as_qwidget();
+        tw->addTab(body, label ? label->text() : "");
+        delete prelabel;
+      }
+      
+      return tw;
+    }
+
+    case wrapped_widget:
+    {
+      typedef pair<widget, command> T;
+      T x = open_box<T>(load);
+      widget w = x.x1;
+      command cmd = x.x2;
+      
+      QWidget* qw = concrete(w)->as_qwidget();
+      QTMCommand* c = new QTMCommand (cmd);
+      c->setParent (qw);
+      QObject::connect (qw, SIGNAL (destroyed()), c, SLOT (apply()), Qt::QueuedConnection);
+      
+      return qw;
+    }
+      break;
+      
     default:
       ;
   }
@@ -1145,12 +1208,8 @@ widget aligned_widget (array<widget> lhs, array<widget> rhs, SI, SI, SI, SI) {
   array<widget> a;
   for (int i=0; i<min(N(lhs),N(rhs)); i++) a << lhs[i] << rhs[i];
   return tile_menu (a, 2); }
-widget tabs_widget (array<widget> tabs, array<widget> bodies) {
-  (void) tabs; (void) bodies;
-  FAILED ("not yet implemented"); }
-widget wrapped_widget (widget w, command cmd) {
-  (void) w; (void) cmd;
-  FAILED ("not yet implemented"); }
+widget tabs_widget (array<widget> tabs, array<widget> bodies) { return qt_ui_element_rep::create (qt_ui_element_rep::tabs_widget, tabs, bodies); }
+widget wrapped_widget (widget w, command cmd) { return qt_ui_element_rep::create (qt_ui_element_rep::wrapped_widget, w, cmd); }
 widget tile_menu (array<widget> a, int cols) { return qt_ui_element_rep::create (qt_ui_element_rep::tile_menu, a, cols); }
 widget minibar_menu (array<widget> arr) { return qt_ui_element_rep::create (qt_ui_element_rep::minibar_menu, arr); }
 widget menu_separator (bool vertical) { return qt_ui_element_rep::create (qt_ui_element_rep::menu_separator, vertical); }
@@ -1172,13 +1231,12 @@ widget user_canvas_widget (widget wid, int style) { return qt_ui_element_rep::cr
 widget resize_widget (widget w, int style, string w1, string h1,
                       string w2, string h2, string w3, string h3) {
   (void) w; (void) style; (void) w1; (void) h1; (void) w2; (void) h2; (void) w3; (void) h3;
-  FAILED ("not yet implemented"); }
-widget hsplit_widget (widget l, widget r) {
-  (void) l; (void) r;
-  FAILED ("not yet implemented"); }
-widget vsplit_widget (widget t, widget b) {
-  (void) t; (void) b;
-  FAILED ("not yet implemented"); }
+  //FAILED ("not yet implemented");
+  //FIXME: add a meaningul semantics
+  return w;
+}
+widget hsplit_widget (widget l, widget r) { return qt_ui_element_rep::create(qt_ui_element_rep::hsplit_widget, l, r); }
+widget vsplit_widget (widget t, widget b) { return qt_ui_element_rep::create(qt_ui_element_rep::vsplit_widget, t, b); }
 widget ink_widget (command cb) {
   (void) cb;
   FAILED ("not yet implemented"); }
