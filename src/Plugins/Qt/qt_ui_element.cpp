@@ -1228,6 +1228,8 @@ decode_length (string width, wk_widget wid, int style) {
 
 // TeXmacs interface
 
+
+
 widget horizontal_menu (array<widget> arr) { return qt_ui_element_rep::create (qt_ui_element_rep::horizontal_menu, arr); }
 widget vertical_menu (array<widget> arr)  { return qt_ui_element_rep::create (qt_ui_element_rep::vertical_menu, arr); }
 widget horizontal_list (array<widget> arr) { return qt_ui_element_rep::create (qt_ui_element_rep::horizontal_list, arr); }
@@ -1236,7 +1238,7 @@ widget aligned_widget (array<widget> lhs, array<widget> rhs, SI hsep, SI vsep, S
   typedef quartet<SI, SI, SI, SI> T1;
   typedef triple<array<widget>, array<widget>, T1> T;
   return tm_new <qt_ui_element_rep> (qt_ui_element_rep::aligned_widget, 
-                                     close_box<T> (T (lhs,rhs, T1 (hsep, vsep, lpad, rpad)))); 
+                                     close_box (T (lhs,rhs, T1 (hsep, vsep, lpad, rpad)))); 
 }
 widget tabs_widget (array<widget> tabs, array<widget> bodies) { return qt_ui_element_rep::create (qt_ui_element_rep::tabs_widget, tabs, bodies); }
 widget wrapped_widget (widget w, command cmd) { return qt_ui_element_rep::create (qt_ui_element_rep::wrapped_widget, w, cmd); }
