@@ -30,6 +30,18 @@ blackboxP (scm t) {
 }
 
 
+#if 0
+template<class T> scm box_to_scm (T o) { return blackbox_to_scm (close_box<T> (o)); }
+template<class T> T scm_to_box (scm obj) { return open_box<T>(scm_to_blackbox (obj));  }
+template<class T> scm cmp_box (scm o1, scm o2) { return bool_to_scm (scm_to_box<T> (o1) == scm_to_box<T> (o2)); }
+template<class T> scm boxP (scm t) {
+	bool b= scm_is_blackbox (t) && (type_box (blackboxvalue(t)) == type_helper<T>::id);
+	return bool_to_scm (b);
+}
+#endif
+
+
+
 /******************************************************************************
  * Miscellaneous routines for use by glue only
  ******************************************************************************/
