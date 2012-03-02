@@ -32,13 +32,13 @@
 
 
 const char *ui_type_string[]= {
- "horizontal_menu", "vertical_menu", "horizontal_list", "vertical_list",
-"tile_menu", "minibar_menu", "menu_separator", "menu_group", 
-"pulldown_button", "pullright_button", "menu_button",
-"balloon_widget", "text_widget", "xpm_widget", "toggle_widget",
+  "horizontal_menu", "vertical_menu", "horizontal_list", "vertical_list",
+  "tile_menu", "minibar_menu", "menu_separator", "menu_group", 
+  "pulldown_button", "pullright_button", "menu_button",
+  "balloon_widget", "text_widget", "xpm_widget", "toggle_widget",
   "enum_widget", "choice_widget", "scrollable_widget",
-  "hsplit_widget", "vsplit_widget", "tabs_widget", "wrapped_widget"
-
+  "hsplit_widget", "vsplit_widget", 
+  "aligned_widget", "tabs_widget", "wrapped_widget"
 };
 
 
@@ -708,6 +708,34 @@ qt_ui_element_rep::as_qlayoutitem () {
       return l;
     }
       break;
+
+    case aligned_widget: 
+    {
+      typedef quartet<SI, SI, SI, SI> T1;
+      typedef triple<array<widget>, array<widget>, T1 > T;
+      T x = open_box<T>(load);
+      array<widget> lhs = x.x1;
+      array<widget> rhs = x.x2;
+      T1 y = x.x3;
+      SI hsep = y.x1; SI vsep = y.x2; SI lpad = y.x3; SI rpad = y.x4; 
+      
+      //  a table with two columns
+      
+      QGridLayout* l= new QGridLayout ();
+      l->setSizeConstraint (QLayout::SetFixedSize);
+      l->setHorizontalSpacing (2);
+      l->setVerticalSpacing (2);
+      l->setContentsMargins (4, 0, 4, 0);
+      for (int i=0; i < N(lhs); i++) {
+        QLayoutItem *lli = concrete(lhs[i])->as_qlayoutitem();
+        QLayoutItem *rli = concrete(rhs[i])->as_qlayoutitem();
+        l->addItem(lli, i, 0);
+        l->addItem(rli, i, 1);
+      }
+      return l;
+    }
+      break;
+      
       
     case minibar_menu: 
     {
@@ -874,6 +902,7 @@ qt_ui_element_rep::as_qwidget () {
     case vertical_list:
     case tile_menu: 
     case minibar_menu: 
+    case aligned_widget: 
     {
       QLayoutItem *li = this->as_qlayoutitem();
       QWidget *w = new QWidget();
@@ -1203,11 +1232,20 @@ widget horizontal_menu (array<widget> arr) { return qt_ui_element_rep::create (q
 widget vertical_menu (array<widget> arr)  { return qt_ui_element_rep::create (qt_ui_element_rep::vertical_menu, arr); }
 widget horizontal_list (array<widget> arr) { return qt_ui_element_rep::create (qt_ui_element_rep::horizontal_list, arr); }
 widget vertical_list (array<widget> arr) { return qt_ui_element_rep::create (qt_ui_element_rep::vertical_list, arr); }
-widget aligned_widget (array<widget> lhs, array<widget> rhs, SI, SI, SI, SI) {
+widget aligned_widget (array<widget> lhs, array<widget> rhs, SI hsep, SI vsep, SI lpad, SI rpad) { 
+  typedef quartet<SI, SI, SI, SI> T1;
+  typedef triple<array<widget>, array<widget>, T1> T;
+  return tm_new <qt_ui_element_rep> (qt_ui_element_rep::aligned_widget, 
+                                     close_box<T> (T (lhs,rhs, T1 (hsep, vsep, lpad, rpad)))); 
+}
+
+//  return qt_ui_element_rep::create (qt_ui_element_rep::aligned_widget, lhs, rhs, hsep, vsep, lpad, vpad); }
+#if 0
   // FIXME: to be implemented in a clean way
   array<widget> a;
   for (int i=0; i<min(N(lhs),N(rhs)); i++) a << lhs[i] << rhs[i];
-  return tile_menu (a, 2); }
+return tile_menu (a, 2); }
+#endif
 widget tabs_widget (array<widget> tabs, array<widget> bodies) { return qt_ui_element_rep::create (qt_ui_element_rep::tabs_widget, tabs, bodies); }
 widget wrapped_widget (widget w, command cmd) { return qt_ui_element_rep::create (qt_ui_element_rep::wrapped_widget, w, cmd); }
 widget tile_menu (array<widget> a, int cols) { return qt_ui_element_rep::create (qt_ui_element_rep::tile_menu, a, cols); }
@@ -1231,7 +1269,6 @@ widget user_canvas_widget (widget wid, int style) { return qt_ui_element_rep::cr
 widget resize_widget (widget w, int style, string w1, string h1,
                       string w2, string h2, string w3, string h3) {
   (void) w; (void) style; (void) w1; (void) h1; (void) w2; (void) h2; (void) w3; (void) h3;
-  //FAILED ("not yet implemented");
   //FIXME: add a meaningul semantics
   return w;
 }
