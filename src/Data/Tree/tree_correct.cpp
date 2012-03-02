@@ -196,6 +196,13 @@ homoglyph_correct (array<tree> a) {
   return r;
 }
 
+static string
+get_submode (tree t, int i, string mode) {
+  if (is_func (t, WITH, 3) && t[0] == MATH_FONT_FAMILY && i == 2) return "text";
+  tree tmode= the_drd->get_env_child (t, i, MODE, mode);
+  return (is_atomic (tmode)? tmode->label: string ("text"));
+}
+
 static tree
 homoglyph_correct (tree t, string mode) {
   //cout << "Correct " << t << ", " << mode << "\n";
@@ -204,8 +211,7 @@ homoglyph_correct (tree t, string mode) {
     int i, n= N(t);
     r= tree (t, n);
     for (i=0; i<n; i++) {
-      tree tmode= the_drd->get_env_child (t, i, MODE, mode);
-      string smode= (is_atomic (tmode)? tmode->label: string ("text"));
+      string smode= get_submode (t, i, mode);
       if (is_correctable_child (t, i))
 	r[i]= homoglyph_correct (t[i], smode);
       else r[i]= t[i];
@@ -277,8 +283,7 @@ superfluous_invisible_correct (tree t, string mode) {
     int i, n= N(t);
     r= tree (t, n);
     for (i=0; i<n; i++) {
-      tree tmode= the_drd->get_env_child (t, i, MODE, mode);
-      string smode= (is_atomic (tmode)? tmode->label: string ("text"));
+      string smode= get_submode (t, i, mode);
       //cout << "  " << i << ": " << is_correctable_child (t, i)
       //<< ", " << smode << "\n";
       if (is_func (t, WITH) && i != N(t)-1)
@@ -426,8 +431,7 @@ invisible_corrector::count_invisible (tree t, string mode) {
   if (is_compound (t)) {
     int i, n= N(t);
     for (i=0; i<n; i++) {
-      tree tmode= the_drd->get_env_child (t, i, MODE, mode);
-      string smode= (is_atomic (tmode)? tmode->label: string ("text"));
+      string smode= get_submode (t, i, mode);
       if (is_func (t, WITH) && i != N(t)-1);
       else if (is_correctable_child (t, i))
 	count_invisible (t[i], smode);
@@ -592,8 +596,7 @@ invisible_corrector::correct (tree t, string mode) {
     int i, n= N(t);
     r= tree (t, n);
     for (i=0; i<n; i++) {
-      tree tmode= the_drd->get_env_child (t, i, MODE, mode);
-      string smode= (is_atomic (tmode)? tmode->label: string ("text"));
+      string smode= get_submode (t, i, mode);
       if (is_func (t, WITH) && i != N(t)-1)
 	r[i]= t[i];
       else if (is_correctable_child (t, i))
