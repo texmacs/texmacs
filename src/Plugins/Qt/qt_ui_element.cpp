@@ -1238,14 +1238,6 @@ widget aligned_widget (array<widget> lhs, array<widget> rhs, SI hsep, SI vsep, S
   return tm_new <qt_ui_element_rep> (qt_ui_element_rep::aligned_widget, 
                                      close_box<T> (T (lhs,rhs, T1 (hsep, vsep, lpad, rpad)))); 
 }
-
-//  return qt_ui_element_rep::create (qt_ui_element_rep::aligned_widget, lhs, rhs, hsep, vsep, lpad, vpad); }
-#if 0
-  // FIXME: to be implemented in a clean way
-  array<widget> a;
-  for (int i=0; i<min(N(lhs),N(rhs)); i++) a << lhs[i] << rhs[i];
-return tile_menu (a, 2); }
-#endif
 widget tabs_widget (array<widget> tabs, array<widget> bodies) { return qt_ui_element_rep::create (qt_ui_element_rep::tabs_widget, tabs, bodies); }
 widget wrapped_widget (widget w, command cmd) { return qt_ui_element_rep::create (qt_ui_element_rep::wrapped_widget, w, cmd); }
 widget tile_menu (array<widget> a, int cols) { return qt_ui_element_rep::create (qt_ui_element_rep::tile_menu, a, cols); }
