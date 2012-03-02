@@ -23,8 +23,8 @@
 #include "tmfs.hpp"
 
 
-SCM
-blackboxP (SCM t) {
+scm
+blackboxP (scm t) {
 	bool b= scm_is_blackbox (t);
 	return bool_to_scm (b);
 }
@@ -701,88 +701,88 @@ scm_is_array_string (scm p) {
 
 
 static bool
-scm_is_array_double (SCM p) {
+scm_is_array_double (scm p) {
   if (scm_is_null (p)) return true;
   else return scm_is_pair (p) &&
-    scm_is_double (SCM_CAR (p)) &&
-    scm_is_array_double (SCM_CDR (p));
+    scm_is_double (scm_car (p)) &&
+    scm_is_array_double (scm_cdr (p));
 }
 
 #define SCM_ASSERT_ARRAY_DOUBLE(p,arg,rout) \
 SCM_ASSERT (scm_is_array_double (p), p, arg, rout)
 
-/* static */ SCM
+/* static */ scm
 array_double_to_scm (array<double> a) {
   int i, n= N(a);
-  SCM p= SCM_NULL;
+  scm p= scm_null();
   for (i=n-1; i>=0; i--) p= scm_cons (double_to_scm (a[i]), p);
   return p;
 }
 
 /* static */ array<double>
-scm_to_array_double (SCM p) {
+scm_to_array_double (scm p) {
   array<double> a;
   while (!scm_is_null (p)) {
-    a << ((double) scm_to_double (SCM_CAR (p)));
-    p= SCM_CDR (p);
+    a << ((double) scm_to_double (scm_car (p)));
+    p= scm_cdr (p);
   }
   return a;
 }
 
 static bool
-scm_is_array_array_double (SCM p) {
+scm_is_array_array_double (scm  p) {
   if (scm_is_null (p)) return true;
   else return scm_is_pair (p) &&
-    scm_is_array_double (SCM_CAR (p)) &&
-    scm_is_array_array_double (SCM_CDR (p));
+    scm_is_array_double (scm_car (p)) &&
+    scm_is_array_array_double (scm_cdr (p));
 }
 
 #define SCM_ASSERT_ARRAY_ARRAY_DOUBLE(p,arg,rout) \
 SCM_ASSERT (scm_is_array_array_double (p), p, arg, rout)
 
-/* static */ SCM
+/* static */ scm
 array_array_double_to_scm (array<array_double> a) {
   int i, n= N(a);
-  SCM p= SCM_NULL;
+  scm p= scm_null ();
   for (i=n-1; i>=0; i--) p= scm_cons (array_double_to_scm (a[i]), p);
   return p;
 }
 
 /* static */ array<array_double>
-scm_to_array_array_double (SCM p) {
+scm_to_array_array_double (scm p) {
   array<array_double> a;
   while (!scm_is_null (p)) {
-    a << ((array_double) scm_to_array_double (SCM_CAR (p)));
-    p= SCM_CDR (p);
+    a << ((array_double) scm_to_array_double (scm_car (p)));
+    p= scm_cdr (p);
   }
   return a;
 }
 
 static bool
-scm_is_array_array_array_double (SCM p) {
+scm_is_array_array_array_double (scm p) {
   if (scm_is_null (p)) return true;
   else return scm_is_pair (p) &&
-    scm_is_array_array_double (SCM_CAR (p)) &&
-    scm_is_array_array_array_double (SCM_CDR (p));
+    scm_is_array_array_double (scm_car (p)) &&
+    scm_is_array_array_array_double (scm_cdr (p));
 }
 
 #define SCM_ASSERT_ARRAY_ARRAY_ARRAY_DOUBLE(p,arg,rout) \
 SCM_ASSERT (scm_is_array_array_array_double (p), p, arg, rout)
 
-/* static */ SCM
+/* static */ scm
 array_array_array_double_to_scm (array<array_array_double> a) {
   int i, n= N(a);
-  SCM p= SCM_NULL;
+  scm p= scm_null ();
   for (i=n-1; i>=0; i--) p= scm_cons (array_array_double_to_scm (a[i]), p);
   return p;
 }
 
 /* static */ array<array_array_double>
-scm_to_array_array_array_double (SCM p) {
+scm_to_array_array_array_double (scm p) {
   array<array_array_double> a;
   while (!scm_is_null (p)) {
-    a << ((array_array_double) scm_to_array_array_double (SCM_CAR (p)));
-    p= SCM_CDR (p);
+    a << ((array_array_double) scm_to_array_array_double (scm_car (p)));
+    p= scm_cdr (p);
   }
   return a;
 }
@@ -1043,6 +1043,9 @@ scm_to_collection (scm p) {
 #include "patch.hpp"
 #include "packrat.hpp"
 
+
+#define SCM scm
+#define SCM_UNSPECIFIED scm_null ()
 
 #include "../Glue/glue_basic.cpp"
 #include "../Glue/glue_editor.cpp"
