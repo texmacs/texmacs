@@ -30,6 +30,15 @@
 
 #include "Style/Evaluate/evaluate_main.hpp" // required for as_length(string)
 
+
+const char *ui_type_string[]= {
+ "horizontal_menu", "vertical_menu", "horizontal_list", "vertical_list",
+"tile_menu", "minibar_menu", "menu_separator", "menu_group", 
+"pulldown_button", "pullright_button", "menu_button",
+"balloon_widget", "text_widget", "xpm_widget", "toggle_widget",
+  "enum_widget", "choice_widget", "scrollable_widget" };
+
+
 /******************************************************************************
  * Auxiliary classes
  ******************************************************************************/
@@ -384,6 +393,7 @@ qt_plain_widget_rep::send (slot s, blackbox val) {
 
 widget 
 qt_ui_element_rep::plain_window_widget (string s, command quit)  {
+  //cout << "plain_window_widget " << ui_type_string[type] << LF;
   QLayoutItem *li = as_qlayoutitem();
   QTMPlainWindow* w = new QTMPlainWindow();
   if (li->widget()) 
@@ -644,6 +654,8 @@ QTMUIButton::paintEvent(QPaintEvent* event) {
 
 QLayoutItem *
 qt_ui_element_rep::as_qlayoutitem () {
+  //cout << "as_qlayoutitem " << ui_type_string[type] << LF;
+
   switch (type) {
     case horizontal_menu:
     case vertical_menu:
@@ -846,6 +858,8 @@ public:
 
 QWidget *
 qt_ui_element_rep::as_qwidget () {
+  //cout << "as_qwidget " << ui_type_string[type] << LF;
+
   switch (type) {
     case horizontal_menu:
     case vertical_menu:
@@ -857,11 +871,12 @@ qt_ui_element_rep::as_qwidget () {
       QLayoutItem *li = this->as_qlayoutitem();
       QWidget *w = new QWidget();
       if (QLayout *l = li->layout()) {
+        // note that the QLayout is the same object as the QLayoutItem 
+        // so no need to free li
         w->setLayout(l);
       } else {
         cout << "qt_ui_element_rep::as_qwidget : invalid situation" << LF;
       }
-      delete li;
       return w;
     }
       break;
@@ -995,6 +1010,7 @@ qt_ui_element_rep::as_qwidget () {
       return w;
     }
       break;
+      
     case enum_widget:
     {
       typedef quintuple<command, array<string>, string, int, string> T;
@@ -1029,6 +1045,7 @@ qt_ui_element_rep::as_qwidget () {
       return w;
     }
       break;
+      
     case choice_widget:
     {
       typedef quartet<command, array<string>, array<string>, bool > T;
@@ -1059,6 +1076,7 @@ qt_ui_element_rep::as_qwidget () {
       return w;      
     }
       break;
+      
     case scrollable_widget:
     {
       typedef pair<widget, int> T;
@@ -1067,18 +1085,10 @@ qt_ui_element_rep::as_qwidget () {
       int style  = x.x2;
       
       QScrollArea* scroll = new QScrollArea();
-      QWidget* w = concrete(wid)->as_qwidget();
       scroll->setBackgroundRole(QPalette::NoRole);
-      if (w) {
-        QLayout* l = w->layout();
-        
-        if(l)
-          l->setSizeConstraint(QLayout::SetFixedSize);
-        else
-          w->setMinimumSize(100,200);
-        
-        scroll->setWidget(w);
-      }
+      QWidget* w = concrete(wid)->as_qwidget();
+      scroll->setWidget(w);
+    
       // FIXME????
       // "Note that You must add the layout of widget before you call this function; 
       //  if you add it later, the widget will not be visible - regardless of when you show() the scroll area.
@@ -1086,6 +1096,7 @@ qt_ui_element_rep::as_qwidget () {
       return scroll;
     }
       break;
+      
     default:
       ;
   }
