@@ -407,6 +407,8 @@ static bool after_begin_comment (string s, int i, tree t) {
   if (s2[pos]!='*') return false;
   while (line_number(t2) > 0) {
     t2= line_inc(t2,-1);
+    // line_inc return tree(ERROR) upon error
+    if (!is_atomic(t2)) return false;
     s2= t2->label;
     if (N(s2)>0 && begin_comment (s2, N(s2)-1)) return true;
     if (N(s2)==0) return false;
@@ -430,6 +432,8 @@ static bool before_end_comment (string s, int i, tree t) {
   if (end_comment(s, i)) return true;
   while (line_number(t2) < number-1) {
     t2= line_inc(t2,1);
+    // line_inc return tree(ERROR) upon error
+    if (!is_atomic(t2)) return false;
     s2= t2->label;
     if (N(s2)==0) return false;
     pos=0;
@@ -464,6 +468,7 @@ static bool in_preprocessing (string s, tree t) {
   string s2= s;
   while (line_number(t2) > 0) {
     t2= line_inc(t2,-1);
+    // line_inc return tree(ERROR) upon error
     if (!is_atomic(t2)) return false;
     s2= t2->label;
     if (!end_preprocessing(s2)) return false;
