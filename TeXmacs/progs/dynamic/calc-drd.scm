@@ -14,4 +14,4 @@
 (texmacs-module (dynamic calc-drd)
   (:use (dynamic dynamic-drd)))
 
-(define-toggle calc-output calc-formula)
+(define-toggle calc-input calc-output)

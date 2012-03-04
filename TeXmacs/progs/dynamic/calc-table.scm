@@ -53,7 +53,7 @@
   ;;(display* "Renaming " cell "\n")
   (with s (cell-name cell)
     (with body (tree-ref cell 0)
-      (when (tree-in? body '(calc-input calc-output calc-formula))
+      (when (tree-in? body '(calc-comment calc-input calc-output))
         (with id (tree->string (tree-ref body 0))
           (if (!= s id) (ahash-set! calc-rename-table id s))
           (tree-set body 0 s))))))
@@ -62,8 +62,8 @@
   ;;(display* "Updating " cell "\n")
   (with s (cell-name cell)
     (with body (tree-ref cell 0)
-      (when (not (tree-in? body '(calc-input calc-output calc-formula)))
-        (tree-insert-node! body 1 `(calc-input ,s))))))
+      (when (not (tree-in? body '(calc-comment calc-input calc-output)))
+        (tree-insert-node! body 1 `(calc-input ,s ""))))))
 
 (tm-define (calc-table-update)
   (with-innermost t 'calc-table

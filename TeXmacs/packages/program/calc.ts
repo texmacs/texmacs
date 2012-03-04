@@ -26,15 +26,29 @@
     </src-comment>
   </active*>
 
-  <assign|calc-table|<macro|ref|body|<locus|<id|<arg|ref>>|<arg|body>>>>
+  <assign|calc-comment|<macro|ref|in|<locus|<id|<arg|ref>>|<arg|in>>>>
 
-  <assign|calc-input|<macro|ref|in|<locus|<id|<arg|ref>>|<arg|in>>>>
+  <assign|calc-input|<macro|ref|in|out|<locus|<id|<arg|ref>>|<arg|in>>>>
 
-  <assign|calc-output|<macro|ref|out|formula|<locus|<id|<arg|ref>>|<arg|out>>>>
-
-  <assign|calc-formula|<macro|ref|out|formula|<locus|<id|<arg|ref>>|<arg|formula>>>>
+  <assign|calc-output|<macro|ref|in|out|<locus|<id|<arg|ref>>|<arg|out>>>>
 
   <assign|calc-ref|<macro|ref|<with|color|dark magenta|<arg|ref>>>>
+
+  \;
+
+  <assign|calc-table|<macro|ref|body|<locus|<id|<arg|ref>>|<arg|body>>>>
+
+  <assign|cell-comment|<macro|ref|body|<calc-comment|<arg|ref>|<arg|body>>>>
+
+  <assign|cell-input|<macro|ref|in|out|<calc-input|<arg|ref>|<arg|in>|<arg|out>>>>
+
+  <assign|cell-output|<macro|ref|in|out|<calc-output|<arg|ref>|<arg|in>|<arg|out>>>>
+
+  <drd-props|cell-comment|arity|2|border|no>
+
+  <drd-props|cell-comment|arity|3|border|no>
+
+  <drd-props|cell-comment|arity|3|border|no>
 
   \;
 </body>
