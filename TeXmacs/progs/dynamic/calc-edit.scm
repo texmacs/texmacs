@@ -2,7 +2,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; MODULE      : calc-edit.scm
-;; DESCRIPTION : routines for spread sheets
+;; DESCRIPTION : low level linking and evaluation routines for spread sheets
 ;; COPYRIGHT   : (C) 2012  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
@@ -16,7 +16,8 @@
 	(utils library cursor)
 	(utils plugins plugin-cmd)
 	(convert tools tmconcat)
-        (text tm-structure)))
+        (text tm-structure)
+        (dynamic calc-drd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Spreadsheet evaluation

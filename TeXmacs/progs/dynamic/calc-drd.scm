@@ -1,9 +1,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : scripts-drd.scm
-;; DESCRIPTION : data relation definitions for scripting tags
-;; COPYRIGHT   : (C) 2009  Joris van der Hoeven
+;; MODULE      : calc-drd.scm
+;; DESCRIPTION : data relation definitions for spreadsheet related tags
+;; COPYRIGHT   : (C) 2012  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -11,10 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (dynamic scripts-drd)
+(texmacs-module (dynamic calc-drd)
   (:use (dynamic dynamic-drd)))
 
-;; input <-> output toggles
-
-(define-toggle script-input script-output)
-(define-toggle converter-input converter-output)
+(define-toggle calc-output calc-formula)
