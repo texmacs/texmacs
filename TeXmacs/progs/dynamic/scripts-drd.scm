@@ -18,3 +18,5 @@
 
 (define-toggle script-input script-output)
 (define-toggle converter-input converter-output)
+
+(define-toggle calc-output calc-formula)

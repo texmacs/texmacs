@@ -23,6 +23,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define calc-table (make-ahash-table))
+(tm-define calc-formula (make-ahash-table))
 (tm-define calc-invalid (make-ahash-table))
 (tm-define calc-todo (make-ahash-table))
 
@@ -44,9 +45,14 @@
              (ahash-set! calc-invalid var #t))))
         ((tree-in? t '(calc-output calc-formula))
          (let* ((var (texmacs->string (tree-ref t 0)))
-                (formula (tree-ref t 2)))
-           (when (not (calc-updated? formula))
+                (formula-tree (tree-ref t 2))
+                (formula (tree->stree formula-tree))
+                (out (tree->stree (tree-ref t 1))))
+           (when (or (!= (ahash-ref calc-table var) out)
+                     (!= (ahash-ref calc-formula var) formula)
+                     (not (calc-updated? formula-tree)))
              (ahash-set! calc-invalid var #t)
+             (ahash-set! calc-formula var formula)
              (ahash-set! calc-todo var t))))
         (else (for-each calc-update-inputs (tree-children t)))))
 
@@ -165,6 +171,21 @@
   (calc-repeat-update-inputs (buffer-tree))
   (calc-continue))
 
-(tm-define (kbd-enter t forwards?)
-  (:require (tree-in? t '(calc-input calc-output calc-formula)))
+(tm-define (alternate-toggle t)
+  (:require (tree-is? t 'calc-output))
+  (tree-assign-node t 'calc-formula)
+  (tree-go-to t 2 :end))
+
+(tm-define (alternate-toggle t)
+  (:require (tree-is? t 'calc-formula))
+  (tree-assign-node t 'calc-output)
+  (tree-go-to t 1 :end)
   (calc))
+
+(tm-define (kbd-enter t forwards?)
+  (:require (tree-in? t '(calc-input)))
+  (calc))
+
+(tm-define (kbd-enter t forwards?)
+  (:require (tree-in? t '(calc-output calc-formula)))
+  (alternate-toggle t))
