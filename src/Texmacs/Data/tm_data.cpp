@@ -340,7 +340,7 @@ tm_data_rep::attach_view (tm_window win, tm_view vw) {
   vw->win= win;
   widget wid= win->wid;
   set_scrollable (wid, vw->ed);
-  //vw->ed->cvw= wid.rep; FIXME: uncomment this line
+  vw->ed->cvw= wid.rep;
   ASSERT (is_attached (wid), "widget should be attached");
   vw->ed->resume ();
   win->set_window_name (vw->buf->abbr);
