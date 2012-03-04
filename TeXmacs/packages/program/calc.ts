@@ -26,6 +26,8 @@
     </src-comment>
   </active*>
 
+  <assign|calc-table|<macro|ref|body|<locus|<id|<arg|ref>>|<arg|body>>>>
+
   <assign|calc-input|<macro|ref|in|<locus|<id|<arg|ref>>|<arg|in>>>>
 
   <assign|calc-output|<macro|ref|out|formula|<locus|<id|<arg|ref>>|<arg|out>>>>
