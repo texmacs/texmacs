@@ -127,6 +127,19 @@
 ;; Communication with the plug-in
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (remove-with-like t)
+  (if (not (with-like? t)) t
+      (remove-with-like (tree-ref t :last))))
+
+(define (calc-normalize t)
+  (when (and t
+	     (tree-in? t '(calc-output cell-output))
+	     (== (remove-with-like (tree-ref t 1))
+		 (remove-with-like (tree-ref t 2))))
+    (let* ((old-l (tree-label t))
+	   (new-l (if (== old-l 'calc-output) 'calc-input 'cell-input)))
+      (tree-assign-node t new-l))))
+
 (tm-define (calc-feed var in out)
   (let* ((lan (get-init "prog-scripts"))
 	 (ses (get-init "prog-session")))
@@ -141,7 +154,8 @@
                     (with check (tree-pointer->tree ptr)
                       (tree-pointer-detach ptr)
                       (when (== check out)
-                        (tree-set out r)
+                        (tree-set! out r)
+			(calc-normalize (tree-ref out :up))
                         (ahash-set! calc-output var (tm->stree r))
                         (ahash-remove! calc-todo var)
                         (delayed (calc-continue)))))
@@ -176,10 +190,6 @@
 ;; Keyboard interaction
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (remove-with-like t)
-  (if (not (with-like? t)) t
-      (remove-with-like (tree-ref t :last))))
-
 (tm-define (alternate-toggle t)
   (:require (tree-is? t 'calc-output))
   (tree-assign-node t 'calc-input)
@@ -187,13 +197,10 @@
 
 (tm-define (alternate-toggle t)
   (:require (tree-is? t 'calc-input))
+  (tree-assign-node t 'calc-output)
+  (tree-go-to t 2 :end)
   (calc)
-  (when (and (tree-is? t 'calc-input)
-             (== (remove-with-like (tree-ref t 1))
-                 (remove-with-like (tree-ref t 2))))
-    (tree-assign-node t 'calc-output)
-    (tree-go-to t 2 :end)))
-
+  (if (== (ahash-size calc-todo) 0) (calc-normalize t)))
 
 (tm-define (alternate-toggle t)
   (:require (tree-is? t 'cell-output))
@@ -202,12 +209,10 @@
 
 (tm-define (alternate-toggle t)
   (:require (tree-is? t 'cell-input))
+  (tree-assign-node t 'cell-output)
+  (tree-go-to t 2 :end)
   (calc)
-  (when (and (tree-is? t 'calc-input)
-             (== (remove-with-like (tree-ref t 1))
-                 (remove-with-like (tree-ref t 2))))
-    (tree-assign-node t 'cell-output)
-    (tree-go-to t 2 :end)))
+  (if (== (ahash-size calc-todo) 0) (calc-normalize t)))
 
 (tm-define (kbd-enter t forwards?)
   (:require (calc-inert-context? t))
