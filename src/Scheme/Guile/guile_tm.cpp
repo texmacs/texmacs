@@ -310,8 +310,8 @@ scm_to_double (SCM i) {
  ******************************************************************************/
 
 
-SCM
-string_to_scm (string s) {
+tmscm
+string_to_tmscm (string s) {
 	char* _s= as_charp (s);
 	SCM r= scm_str2scm (_s, N(s));
 	tm_delete_array (_s);
@@ -319,7 +319,7 @@ string_to_scm (string s) {
 }
 
 string
-scm_to_string (SCM s) {
+tmscm_to_string (tmscm s) {
 	guile_str_size_t len_r;
 	char* _r= scm_scm2str (s, &len_r);
 	string r (_r, len_r);
@@ -336,13 +336,13 @@ scm_to_string (SCM s) {
  ******************************************************************************/
 
 #if 0
-bool scm_is_symbol (scm s) {
+bool tmscm_is_symbol (tmscm s) {
   return SCM_NFALSEP (scm_symbol_p (s));
 }
 #endif
 
-SCM
-symbol_to_scm (string s) {
+tmscm
+symbol_to_tmscm (string s) {
 	char* _s= as_charp (s);
 	SCM r= scm_symbol2scm (_s);
 	tm_delete_array (_s);
@@ -350,7 +350,7 @@ symbol_to_scm (string s) {
 }
 
 string
-scm_to_symbol (SCM s) {
+tmscm_to_symbol (tmscm s) {
 	guile_str_size_t len_r;
 	char* _r= scm_scm2symbol (s, &len_r);
 	string r (_r, len_r);
@@ -372,19 +372,19 @@ static long blackbox_tag;
 (SCM_NIMP (t) && (((long) SCM_CAR (t)) == blackbox_tag))
 
 bool
-scm_is_blackbox (SCM t) {
+tmscm_is_blackbox (tmscm t) {
 	return SCM_BLACKBOXP (t);
 }
 
-scm
-blackbox_to_scm (blackbox b) {
+tmscm
+blackbox_to_tmscm (blackbox b) {
 	SCM blackbox_smob;
 	SET_SMOB (blackbox_smob, (void*) (tm_new<blackbox> (b)), (SCM) blackbox_tag);
 	return blackbox_smob;
 }
 
 blackbox
-scm_to_blackbox (SCM blackbox_smob) {
+tmscm_to_blackbox (tmscm blackbox_smob) {
 	return *((blackbox*) SCM_CDR (blackbox_smob));
 }
 
@@ -405,10 +405,10 @@ int
 print_blackbox (SCM blackbox_smob, SCM port, scm_print_state *pstate) {
 	(void) pstate;
 	string s = "<blackbox>";
-	int type_ = type_box (scm_to_blackbox(blackbox_smob)) ;
+	int type_ = type_box (tmscm_to_blackbox(blackbox_smob)) ;
 	if (type_ == type_helper<tree>::id)
 	{
-		tree   t= scm_to_tree (blackbox_smob);
+		tree   t= tmscm_to_tree (blackbox_smob);
 		s= "<tree " * tree_to_texmacs (t) * ">";
 	} else if (type_ == type_helper<observer>::id)
 	{
@@ -424,17 +424,17 @@ print_blackbox (SCM blackbox_smob, SCM port, scm_print_state *pstate) {
 		s= "<command>";
 	} else if (type_ == type_helper<url>::id)
 	{
-		url    u= scm_to_url (blackbox_smob);
+		url    u= tmscm_to_url (blackbox_smob);
 		s= "<url " * as_string (u) * ">";
 	}
 	
-	scm_display (string_to_scm (s), port);
+	scm_display (string_to_tmscm (s), port);
 	return 1;
 }
 
 static SCM
 cmp_blackbox (SCM t1, SCM t2) {
-	return scm_bool2scm (scm_to_blackbox (t1) == scm_to_blackbox (t2));
+	return scm_bool2scm (tmscm_to_blackbox (t1) == tmscm_to_blackbox (t2));
 }
 
 
@@ -468,7 +468,7 @@ initialize_smobs () {
 
 #endif
 
-scm object_stack;
+tmscm object_stack;
 
 void
 initialize_scheme () {

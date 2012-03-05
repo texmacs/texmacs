@@ -9,7 +9,6 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "Scheme/object.hpp"
 #include "poly_line.hpp"
 
 extern array<contours>       learned_glyphs;

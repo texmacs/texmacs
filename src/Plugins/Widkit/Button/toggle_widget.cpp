@@ -12,7 +12,7 @@
 #include "renderer.hpp"
 #include "Widkit/layout.hpp"
 #include "Widkit/basic_widget.hpp"
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 
 /******************************************************************************
 * Command buttons

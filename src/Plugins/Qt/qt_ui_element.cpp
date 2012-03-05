@@ -19,6 +19,7 @@
 #include "widget.hpp"
 #include "message.hpp"
 #include "promise.hpp"
+#include "scheme.hpp"
 //#import "TMView.h"
 #include <QtGui>
 

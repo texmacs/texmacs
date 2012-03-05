@@ -22,7 +22,6 @@
 #endif
 #endif
 #include "server.hpp"
-#include "scheme.hpp"
 #include "drd_info.hpp"
 #ifdef EXPERIMENTAL
 #include "../Style/Environment/environment.hpp"

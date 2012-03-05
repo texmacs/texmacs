@@ -11,7 +11,7 @@
 
 #include "window.hpp"
 #include "Widkit/wk_widget.hpp"
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 
 /******************************************************************************
 * Enumeration commands

@@ -12,7 +12,7 @@
 #include "window.hpp"
 #include "Widkit/basic_widget.hpp"
 #include "Widkit/layout.hpp"
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 #include "font.hpp"
 
 /******************************************************************************

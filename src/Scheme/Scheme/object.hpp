@@ -14,29 +14,29 @@
 
 
 #include "scheme.hpp" // interface to texmacs
-//#include "../Tiny/tinyscheme_tm.hpp" // interface to TinyScheme
+//#include "../Tiny/tinytmscm_tm.hpp" // interface to TinyScheme
 #include "../Guile/guile_tm.hpp" // interface to guile
 
 
 
-class scm_object_rep: public object_rep {
-	scm handle;
+class tmscm_object_rep: public object_rep {
+	tmscm  handle;
 
-	scm_object_rep (scm obj);
-	~scm_object_rep ();
+	tmscm_object_rep (tmscm  obj);
+	~tmscm_object_rep ();
 
 	friend class object;
-  friend scm object_to_scm (object o);
-  friend object scm_to_object (scm obj);
+  friend tmscm  object_to_tmscm  (object o);
+  friend object tmscm_to_object (tmscm  obj);
   template<typename C, typename A1> friend C* tm_new (const A1& a1); 
 };
 
-inline scm object_to_scm (object o) {
-  scm_object_rep *oo = static_cast<scm_object_rep*>(o.operator->());
-  return scm_caar (oo->handle);
-  //return scm_caar ((scm)o->lookup ()); 
+inline tmscm  object_to_tmscm  (object o) {
+  tmscm_object_rep *oo = static_cast<tmscm_object_rep*>(o.operator->());
+  return tmscm_caar (oo->handle);
+  //return tmscm_caar ((tmscm )o->lookup ()); 
 }
-inline object scm_to_object (scm obj) { return tm_new<scm_object_rep> (obj); }
+inline object tmscm_to_object (tmscm  obj) { return tm_new<tmscm_object_rep> (obj); }
 
 
 #endif // defined OBJECT_H

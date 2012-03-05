@@ -194,6 +194,6 @@ void scm_define_glue(const char *name, scm_foreign_func f);
 #define SCM_ARG7
 #define SCM_ARG8
 
-#define SCM_ASSERT(_cond, _arg, _pos, _subr)
+#define TMSCM_ASSERT(_cond, _arg, _pos, _subr)
 
 #endif // TINYSCHEME_TM_HPP

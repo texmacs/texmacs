@@ -14,7 +14,7 @@
 #include "drd_std.hpp"
 #include "hashset.hpp"
 #include "analyze.hpp"
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 
 #define BEGIN_MAGNIFY                                           \
   tree new_mag= as_string (env->magn * env->mgfy);              \

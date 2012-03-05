@@ -24,38 +24,38 @@
 
 void initialize_glue ();
 
-bool scm_is_tree (scm obj);
-bool scm_is_list_string (scm obj);
-bool scm_is_list_tree (scm obj);
-bool scm_is_path (scm obj);
-bool scm_is_url (scm obj);
-bool scm_is_widget (scm obj);
+bool tmscm_is_tree (tmscm  obj);
+bool tmscm_is_list_string (tmscm  obj);
+bool tmscm_is_list_tree (tmscm  obj);
+bool tmscm_is_path (tmscm  obj);
+bool tmscm_is_url (tmscm  obj);
+bool tmscm_is_widget (tmscm  obj);
 
-scm bool_to_scm (bool b);
-scm int_to_scm (int i);
-scm double_to_scm (double i);
-scm string_to_scm (string s);
-scm symbol_to_scm (string s);
-scm tree_to_scm (tree t);
-scm list_string_to_scm (list<string> l);
-scm list_tree_to_scm (list<tree> l);
-scm path_to_scm (path p);
-scm url_to_scm (url u);
-scm scheme_tree_to_scm (scheme_tree t);
+tmscm  bool_to_tmscm (bool b);
+tmscm  int_to_tmscm (int i);
+tmscm  double_to_tmscm (double i);
+tmscm  string_to_tmscm (string s);
+tmscm  symbol_to_tmscm (string s);
+tmscm  tree_to_tmscm (tree t);
+tmscm  list_string_to_tmscm (list<string> l);
+tmscm  list_tree_to_tmscm (list<tree> l);
+tmscm  path_to_tmscm (path p);
+tmscm  url_to_tmscm (url u);
+tmscm  scheme_tree_to_tmscm (scheme_tree t);
 
-//int scm_to_bool (scm obj);
-int scm_to_int (scm obj);
-double scm_to_double (scm i);
-string scm_to_string (scm obj);
-string scm_to_symbol (scm obj);
-tree scm_to_tree (scm obj);
-tree scm_to_content (scm obj);
-list<string> scm_to_list_string (scm obj);
-list<tree> scm_to_list_tree (scm obj);
-path scm_to_path (scm obj);
-url scm_to_url (scm obj);
-scheme_tree scm_to_scheme_tree (scm obj);
-widget scm_to_widget (scm widget_smob);
+//int tmscm_to_bool (tmscm  obj);
+int tmscm_to_int (tmscm  obj);
+double tmscm_to_double (tmscm  i);
+string tmscm_to_string (tmscm  obj);
+string tmscm_to_symbol (tmscm  obj);
+tree tmscm_to_tree (tmscm  obj);
+tree tmscm_to_content (tmscm  obj);
+list<string> tmscm_to_list_string (tmscm  obj);
+list<tree> tmscm_to_list_tree (tmscm  obj);
+path tmscm_to_path (tmscm  obj);
+url tmscm_to_url (tmscm  obj);
+scheme_tree tmscm_to_scheme_tree (tmscm  obj);
+widget tmscm_to_widget (tmscm  widget_smob);
 
 #endif // defined GLUE_H
 

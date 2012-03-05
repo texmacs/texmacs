@@ -96,14 +96,14 @@
 ;; Build header
 
 (define (build-header-args type nr)
-  (output "SCM arg" nr)
+  (output "tmscm arg" nr)
   (if (not (null? (cdr type)))
       (begin
         (output ", ")
 	(build-header-args (cdr type) (+ nr 1)))))
 
 (define (build-header name type)
-  (output "\nSCM\n" (translate-name name) " (")
+  (output "\ntmscm\n" (translate-name name) " (")
   (if (not (null? type))
       (build-header-args type 1))
   (output ") {\n"))
@@ -113,9 +113,9 @@
 (define (build-assert-sub name type nr)
   (if (not (null? type))
       (begin
-        (output "  SCM_ASSERT_")
+        (output "  TMSCM_ASSERT_")
 	(output (string-upcase (symbol->string (car type))))
-	(output " (arg" nr ", SCM_ARG" nr ", \"" name "\");\n")
+	(output " (arg" nr ", TMSCM_ARG" nr ", \"" name "\");\n")
 	(build-assert-sub name (cdr type) (+ nr 1)))))
 
 (define (build-assert name type)
@@ -128,7 +128,7 @@
   (if (not (null? type))
       (begin
         (output "  " (car type) " in" nr "= ")
-	(output "scm_to_" (car type) " (arg" nr ");\n")
+	(output "tmscm_to_" (car type) " (arg" nr ");\n")
 	(build-get-in-sub (cdr type) (+ nr 1)))))
 
 (define (build-get-in arg-type)
@@ -145,7 +145,7 @@
         (build-code-args (cdr type) (+ nr 1)))))
 
 (define (build-code routine ret-type arg-type)
-  (output "  // SCM_DEFER_INTS;\n")
+  (output "  // TMSCM_DEFER_INTS;\n")
   (output "  ")
   (if (not (equal? ret-type 'void))
       (output ret-type " out= "))
@@ -153,14 +153,14 @@
   (if (not (null? arg-type))
       (build-code-args arg-type 1))
   (output ");\n")
-  (output "  // SCM_ALLOW_INTS;\n\n"))
+  (output "  // TMSCM_ALLOW_INTS;\n\n"))
 
 ;; Terminate
 
 (define (build-footer ret-type)
   (if (equal? ret-type 'void)
-      (output "  return SCM_UNSPECIFIED;\n")
-    (output "  return " ret-type "_to_scm (out);\n"))
+      (output "  return TMSCM_UNSPECIFIED;\n")
+    (output "  return " ret-type "_to_tmscm (out);\n"))
   (output "}\n"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -191,7 +191,7 @@
   (let ((name (car l))
 	(arg-type (cdaddr l)))
     ;; (output "\n" name ", " arg-type "\n")
-    (output "  scm_install_procedure (\"" name "\", ")
+    (output "  tmscm_install_procedure (\"" name "\", ")
     (output " " (translate-name name) ", ")
     (output (length arg-type) ", 0, 0);\n")))
 

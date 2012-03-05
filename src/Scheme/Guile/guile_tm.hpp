@@ -147,36 +147,98 @@ typedef SCM (*FN)(...);
 typedef SCM (*FN)();
 #endif
 
+#ifndef GUILE_C
+int scm_to_bool (SCM obj);
+int scm_to_int (SCM obj);
+double scm_to_double (SCM i);
+#endif
 
-typedef SCM scm;
 
-bool scm_is_blackbox (scm obj);
-scm blackbox_to_scm (blackbox b);
-blackbox scm_to_blackbox (scm obj);
+typedef SCM tmscm;
 
-inline scm scm_null () { return SCM_NULL; }
-inline scm scm_true () { return SCM_BOOL_T; }
-inline scm scm_false () { return SCM_BOOL_F; }
-inline void scm_set_car (scm a, scm b) { SCM_SETCAR(a,b); }
-inline void scm_set_cdr (scm a, scm b) { SCM_SETCDR(a,b); }
+bool tmscm_is_blackbox (tmscm obj);
+tmscm blackbox_to_tmscm (blackbox b);
+blackbox tmscm_to_blackbox (tmscm obj);
+
+inline tmscm tmscm_null () { return SCM_NULL; }
+inline tmscm tmscm_true () { return SCM_BOOL_T; }
+inline tmscm tmscm_false () { return SCM_BOOL_F; }
+inline void tmscm_set_car (tmscm a, tmscm b) { SCM_SETCAR(a,b); }
+inline void tmscm_set_cdr (tmscm a, tmscm b) { SCM_SETCDR(a,b); }
 	
 	
-inline bool scm_is_equal (scm o1, scm o2) { return SCM_NFALSEP ( scm_equal_p(o1, o2)); }
+inline bool tmscm_is_equal (tmscm o1, tmscm o2) { return SCM_NFALSEP ( scm_equal_p(o1, o2)); }
 
 
-scm eval_scheme_file (string name);
-scm eval_scheme (string s);
-scm call_scheme (scm fun);
-scm call_scheme (scm fun, scm a1);
-scm call_scheme (scm fun, scm a1, scm a2);
-scm call_scheme (scm fun, scm a1, scm a2, scm a3);
-scm call_scheme (scm fun, scm a1, scm a2, scm a3, scm a4);
-scm call_scheme (scm fun, array<scm> a);
+
+inline bool tmscm_is_null (tmscm obj) { return scm_is_null (obj); }
+inline bool tmscm_is_pair (tmscm obj) { return scm_is_pair (obj); }
+inline bool tmscm_is_list (tmscm obj) { return scm_is_list (obj); }
+inline bool tmscm_is_bool (tmscm obj) { return scm_is_bool (obj); }
+inline bool tmscm_is_int (tmscm obj) { return scm_is_int (obj); }
+inline bool tmscm_is_double (tmscm obj) { return scm_is_double (obj); }
+inline bool tmscm_is_string (tmscm obj) { return scm_is_string (obj); }
+inline bool tmscm_is_symbol (tmscm obj) { return scm_is_symbol (obj); }
+
+inline tmscm tmscm_cons (tmscm obj1, tmscm obj2) { return scm_cons (obj1, obj2); }
+inline tmscm tmscm_car (tmscm obj) { return SCM_CAR (obj); }
+inline tmscm tmscm_cdr (tmscm obj) { return SCM_CDR (obj); }
+inline tmscm tmscm_caar (tmscm obj) { return SCM_CAAR (obj); }
+inline tmscm tmscm_cadr (tmscm obj) { return SCM_CADR (obj); }
+inline tmscm tmscm_cdar (tmscm obj) { return SCM_CDAR (obj); }
+inline tmscm tmscm_cddr (tmscm obj) { return SCM_CDDR (obj); }
+inline tmscm tmscm_caddr (tmscm obj) { return SCM_CADDR (obj); }
+inline tmscm tmscm_cadddr (tmscm obj) { return SCM_CADDDR (obj); }
 
 
-#define scm_install_procedure(name, func, args, p0, p1) \
+
+SCM bool_to_scm (bool b);
+SCM int_to_scm (int i);
+SCM double_to_scm (double i);
+
+
+
+inline tmscm bool_to_tmscm (bool b) { return bool_to_scm (b); }
+inline tmscm int_to_tmscm (int i) {   return int_to_scm (i); }
+inline tmscm double_to_tmscm (double i) { return double_to_scm (i); }
+tmscm string_to_tmscm (string s);
+tmscm symbol_to_tmscm (string s);
+
+inline bool tmscm_to_bool (tmscm obj) { return scm_to_bool (obj); }
+inline int tmscm_to_int (tmscm obj) { return scm_to_int (obj); }
+inline double tmscm_to_double (tmscm obj) { return scm_to_double (obj); }
+string tmscm_to_string (tmscm obj);
+string tmscm_to_symbol (tmscm obj);
+
+
+
+
+tmscm eval_scheme_file (string name);
+tmscm eval_scheme (string s);
+tmscm call_scheme (tmscm fun);
+tmscm call_scheme (tmscm fun, tmscm a1);
+tmscm call_scheme (tmscm fun, tmscm a1, tmscm a2);
+tmscm call_scheme (tmscm fun, tmscm a1, tmscm a2, tmscm a3);
+tmscm call_scheme (tmscm fun, tmscm a1, tmscm a2, tmscm a3, tmscm a4);
+tmscm call_scheme (tmscm fun, array<tmscm> a);
+
+
+#define tmscm_install_procedure(name, func, args, p0, p1) \
   scm_new_procedure (name, ( FN )( func ), args, p0, p1)
 
+#define TMSCM_ASSERT(_cond, _arg, _pos, _subr) \
+ SCM_ASSERT(_cond, _arg, _pos, _subr)
+
+#define TMSCM_ARG1 SCM_ARG1
+#define TMSCM_ARG2 SCM_ARG2
+#define TMSCM_ARG3 SCM_ARG3
+#define TMSCM_ARG4 SCM_ARG4
+#define TMSCM_ARG5 SCM_ARG5
+#define TMSCM_ARG6 SCM_ARG6
+#define TMSCM_ARG7 SCM_ARG7
+#define TMSCM_ARG8 SCM_ARG8
+
+#define TMSCM_UNSPECIFIED SCM_UNSPECIFIED
 
 
 string scheme_dialect ();

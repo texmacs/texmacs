@@ -27,6 +27,7 @@
 
 #include <QtGui>
 #include "string.hpp"
+#include "scheme.hpp"
 
 
 widget
