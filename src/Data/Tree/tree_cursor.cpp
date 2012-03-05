@@ -358,7 +358,7 @@ right_correct (tree t, path p) {
   int i=p->item;
   if (is_atom (p)) return p;
   if (is_concat (t) && (i<N(t)-1) && right_most (t[i], p->next))
-    return path (i+1, pre_correct (t[i-1], path (0)));
+    return path (i+1, pre_correct (t[i+1], path (0)));
   if (is_prime (t)) return path (1);
   return path (i, right_correct (t[i], p->next));
 }

@@ -27,9 +27,12 @@ empty_cell () {
   return "";
 }
 
-static bool
+bool
 is_empty_cell (tree t) {
-  return t == "" || t == tree (DOCUMENT, "");
+  return
+    t == "" || t == tree (DOCUMENT, "") ||
+    (is_compound (t, "cell-input", 3) && is_empty_cell (t[1])) ||
+    (is_compound (t, "cell-output", 3) && is_empty_cell (t[2]));
 }
 
 static tree

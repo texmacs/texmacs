@@ -29,3 +29,8 @@
 
 (tm-define (calc-ref-context? t)
   (tree-in? t '(calc-ref cell-ref)))
+
+(tm-define (calc-range-context? t)
+  (and (tree-is? t 'cell-range)
+       (tree-is? t 0 'cell-ref)
+       (tree-is? t 1 'cell-ref)))
