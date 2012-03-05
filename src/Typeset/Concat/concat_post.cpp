@@ -233,8 +233,8 @@ concater_rep::handle_matching (int start, int end) {
           for (j=0; j<N(ls); j++)
             if (ls[j] == '-') break;
           if (j<N(ls) && ls[N(ls)-1] == '>') s= ls (j+1, N(ls)-1);
-          if (N(s) != 1 && s[0] != '<') s= "<" * s * ">";
-          else if (s == ".") s= "<nobracket>";
+          if (N(s) > 1 && s[0] != '<') s= "<" * s * ">";
+          else if (N(s) == 0 || s == ".") s= "<nobracket>";
           a[i]->b= text_box (a[i]->b->ip, 0, s, lf, lc);
           tp= STD_ITEM;
         }
