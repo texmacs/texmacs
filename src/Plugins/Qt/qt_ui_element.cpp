@@ -553,12 +553,10 @@ qt_ui_element_rep::as_qaction () {
         QTMKeyCommand* c= new QTMKeyCommand (ks);
         c->setParent (a);
         QObject::connect (a, SIGNAL (triggered ()), c, SLOT (apply ()));
-//                          Qt::QueuedConnection);    
       } else {
         QTMCommand* c= new QTMCommand (cmd);
         c->setParent (a);
-        QObject::connect (a, SIGNAL (triggered ()), c, SLOT (apply ()),
-                          Qt::QueuedConnection);    
+        QObject::connect (a, SIGNAL (triggered ()), c, SLOT (apply ()));    
       }
       // FIXME: implement complete prefix handling
       a->setEnabled (ok? true: false);
@@ -1045,7 +1043,7 @@ qt_ui_element_rep::as_qwidget () {
       command tcmd = tm_new<qt_toggle_command_rep> (w, cmd);
       QTMCommand* c = new QTMCommand (tcmd);
       c->setParent (w);
-      QObject::connect (w, SIGNAL (stateChanged(int)), c, SLOT (apply()), Qt::QueuedConnection);
+      QObject::connect (w, SIGNAL (stateChanged(int)), c, SLOT (apply()));
 
       return w;
     }
