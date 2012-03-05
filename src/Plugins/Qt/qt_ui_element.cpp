@@ -551,10 +551,10 @@ qt_ui_element_rep::as_qaction () {
         a->setShortcut (qks);
         QTMKeyCommand* c= new QTMKeyCommand (ks);
         c->setParent (a);
-        QObject::connect (a, SIGNAL (triggered ()), c, SLOT (apply ()),
-                          Qt::QueuedConnection);    
+        QObject::connect (a, SIGNAL (triggered ()), c, SLOT (apply ()));
+//                          Qt::QueuedConnection);    
       } else {
-        QTMCommand* c= new QTMCommand (cmd.rep);
+        QTMCommand* c= new QTMCommand (cmd);
         c->setParent (a);
         QObject::connect (a, SIGNAL (triggered ()), c, SLOT (apply ()),
                           Qt::QueuedConnection);    
@@ -718,7 +718,8 @@ qt_ui_element_rep::as_qlayoutitem () {
       array<widget> rhs = x.x2;
       T1 y = x.x3;
       SI hsep = y.x1; SI vsep = y.x2; SI lpad = y.x3; SI rpad = y.x4; 
-      
+      if (N(lhs) != N(rhs)) FAILED("aligned_widget: N(lhs) != N(rhs) ");
+
       //  a table with two columns
       
       QGridLayout* l= new QGridLayout ();
@@ -729,8 +730,10 @@ qt_ui_element_rep::as_qlayoutitem () {
       for (int i=0; i < N(lhs); i++) {
         QLayoutItem *lli = concrete(lhs[i])->as_qlayoutitem();
         QLayoutItem *rli = concrete(rhs[i])->as_qlayoutitem();
-        l->addItem(lli, i, 0);
-        l->addItem(rli, i, 1);
+        if(lli) l->addItem(lli, i, 0);
+        //else FAILED("aligned_widget: null layout");
+        if (rli) l->addItem(rli, i, 1);
+        //else FAILED("aligned_widget: null layout");
       }
       return l;
     }
