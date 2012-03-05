@@ -1131,6 +1131,7 @@ edit_table_rep::table_insert_row (bool forward) {
   table_insert (fp, row + (forward? 1: 0), col, 1, 0);
   table_go_to (fp, row + (forward? 1: 0), col);
   table_correct_block_content ();
+  table_resize_notify ();
 }
 
 void
@@ -1145,6 +1146,7 @@ edit_table_rep::table_insert_column (bool forward) {
   table_insert (fp, row, col + (forward? 1: 0), 0, 1);
   table_go_to (fp, row, col + (forward? 1: 0));
   table_correct_block_content ();
+  table_resize_notify ();
 }
 
 void
@@ -1170,6 +1172,7 @@ edit_table_rep::table_remove_row (bool forward, bool flag) {
     else if (forward || row < 0) table_go_to_border (fp, !forward);
   }
   table_correct_block_content ();
+  table_resize_notify ();
 }
 
 void
@@ -1195,6 +1198,7 @@ edit_table_rep::table_remove_column (bool forward, bool flag) {
     else if (forward || col < 0) table_go_to_border (fp, !forward);
   }
   table_correct_block_content ();
+  table_resize_notify ();
 }
 
 int
@@ -1352,6 +1356,13 @@ edit_table_rep::table_correct_block_content () {
       else if (f2 && !is_document (st))
 	insert_node (cp * 0, DOCUMENT);
     }
+}
+
+void
+edit_table_rep::table_resize_notify () {
+  path p= search_table ();
+  if (!is_nil (p))
+    call ("table-resize-notify", object (subtree (et, p)));
 }
 
 void

@@ -107,6 +107,7 @@ public:
   void   table_row_decoration (bool forward);
   void   table_column_decoration (bool forward);
   void   table_correct_block_content ();
+  void   table_resize_notify ();
   void   set_cell_mode (string mode);
   string get_cell_mode ();
   void   cell_set_format (string var, tree val);

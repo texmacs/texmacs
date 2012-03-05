@@ -133,6 +133,7 @@
 ;(display "Booting table mode\n")
 (lazy-keyboard (table table-kbd) in-table?)
 (lazy-menu (table table-menu) insert-table-menu)
+(lazy-define (table table-edit) table-resize-notify)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting graphics mode\n")
