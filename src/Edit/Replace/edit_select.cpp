@@ -825,6 +825,19 @@ edit_select_rep::raw_cut (path p1, path p2) {
 
     if (is_func (st, TFORMAT))
       table_del_format (fp, row1+1, col1+1, row2+1, col2+1, "");
+
+    if (fp == search_format ()) {
+      table_correct_block_content ();
+      table_resize_notify ();
+    }
+    else {
+      observer obs= position_new (tp);
+      go_to (start (et, fp * ::table_search_cell (st, row1, col1)));
+      table_correct_block_content ();
+      table_resize_notify ();
+      go_to (position_get (obs));
+      position_delete (obs);
+    }
     return;
   }
 
