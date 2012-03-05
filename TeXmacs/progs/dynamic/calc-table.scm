@@ -22,7 +22,7 @@
 
 (tm-define (calc-rename-formulas t)
   (cond ((tree-atomic? t) (noop))
-        ((tree-in? t '(calc-ref))
+        ((calc-ref-context? t)
          (with var (texmacs->string (tree-ref t 0))
            (with new (ahash-ref calc-rename-table var)
              (when new
@@ -53,7 +53,7 @@
   ;;(display* "Renaming " cell "\n")
   (with s (cell-name cell)
     (with body (tree-ref cell 0)
-      (when (tree-in? body '(calc-comment calc-input calc-output))
+      (when (calc-data-context? body)
         (with id (tree->string (tree-ref body 0))
           (if (!= s id) (ahash-set! calc-rename-table id s))
           (tree-set body 0 s))))))
@@ -62,8 +62,8 @@
   ;;(display* "Updating " cell "\n")
   (with s (cell-name cell)
     (with body (tree-ref cell 0)
-      (when (not (tree-in? body '(calc-comment calc-input calc-output)))
-        (tree-insert-node! body 1 `(calc-input ,s ""))))))
+      (when (not (calc-data-context? body))
+        (tree-insert-node! body 1 `(cell-input ,s ""))))))
 
 (tm-define (calc-table-update)
   (with-innermost t 'calc-table

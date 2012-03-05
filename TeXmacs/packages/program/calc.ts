@@ -26,7 +26,7 @@
     </src-comment>
   </active*>
 
-  <assign|calc-comment|<macro|ref|in|<locus|<id|<arg|ref>>|<arg|in>>>>
+  <assign|calc-inert|<macro|ref|in|<locus|<id|<arg|ref>>|<arg|in>>>>
 
   <assign|calc-input|<macro|ref|in|out|<locus|<id|<arg|ref>>|<arg|in>>>>
 
@@ -38,17 +38,19 @@
 
   <assign|calc-table|<macro|ref|body|<locus|<id|<arg|ref>>|<arg|body>>>>
 
-  <assign|cell-comment|<macro|ref|body|<calc-comment|<arg|ref>|<arg|body>>>>
+  <assign|cell-inert|<macro|ref|body|<calc-inert|<arg|ref>|<arg|body>>>>
 
   <assign|cell-input|<macro|ref|in|out|<calc-input|<arg|ref>|<arg|in>|<arg|out>>>>
 
   <assign|cell-output|<macro|ref|in|out|<calc-output|<arg|ref>|<arg|in>|<arg|out>>>>
 
-  <drd-props|cell-comment|arity|2|border|no>
+  <assign|cell-ref|<macro|ref|<calc-ref|<arg|ref>>>>
 
-  <drd-props|cell-comment|arity|3|border|no>
+  <drd-props|cell-inert|arity|2|border|no|accessible|1>
 
-  <drd-props|cell-comment|arity|3|border|no>
+  <drd-props|cell-input|arity|3|border|no|accessible|1>
+
+  <drd-props|cell-output|arity|3|border|no|accessible|2>
 
   \;
 </body>

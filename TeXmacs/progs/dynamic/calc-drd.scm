@@ -15,3 +15,17 @@
   (:use (dynamic dynamic-drd)))
 
 (define-toggle calc-input calc-output)
+(define-toggle cell-input cell-output)
+
+(tm-define (calc-data-context? t)
+  (tree-in? t '(calc-inert calc-input calc-output
+                cell-inert cell-input cell-output)))
+
+(tm-define (calc-inert-context? t)
+  (tree-in? t '(calc-inert cell-inert)))
+
+(tm-define (calc-toggle-context? t)
+  (tree-in? t '(calc-input calc-output cell-input cell-output)))
+
+(tm-define (calc-ref-context? t)
+  (tree-in? t '(calc-ref cell-ref)))
