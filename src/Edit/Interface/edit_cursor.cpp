@@ -65,7 +65,7 @@ edit_cursor_rep::make_cursor_accessible (path p, bool forwards) {
 path
 edit_cursor_rep::tree_path (path sp, SI x, SI y, SI delta) {
   path stp= find_scrolled_tree_path (eb, sp, x, y, delta);
-  path p= correct_cursor (et, stp);
+  path p= correct_cursor (et, stp, searching_forwards);
   return make_cursor_accessible (p, searching_forwards);
 }
 

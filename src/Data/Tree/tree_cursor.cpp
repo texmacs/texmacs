@@ -259,13 +259,18 @@ pre_correct (tree t, path p) {
 
   if (is_nil (p)) return pre_correct (t, path(0));
   if (is_atom (p)) {
-    if (the_drd->is_child_enforcing (t)) {
-      if ((p->item == 0) && the_drd->is_accessible_child (t, 0))
-	return path (0, pre_correct (t[0], path (0)));
-      else {
-	int l= N(t)-1;
-	return path (l, pre_correct (t[l], path (right_index (t[l]))));
+    if (!is_atomic (t) && the_drd->is_child_enforcing (t)) {
+      if (p->item == 0) {
+        for (int i=0; i<N(t); i++)
+          if (i == N(t)-1 || the_drd->is_accessible_child (t, i))
+            return path (i, pre_correct (t[i], path (0)));
       }
+      else {
+        for (int i=N(t)-1; i>=0; i--)
+          if (i == 0 || the_drd->is_accessible_child (t, i))
+            return path (i, pre_correct (t[i], path (right_index (t[i]))));
+      }
+      FAILED ("nullary tree with no border");
     }
     return p;
   }
@@ -363,9 +368,11 @@ right_correct (tree t, path p) {
 ******************************************************************************/
 
 path
-correct_cursor (tree t, path p) {
+correct_cursor (tree t, path p, bool forwards) {
   //cout << "Correct cursor " << p << " in " << t << "\n";
-  return left_correct (t, pre_correct (t, p));
+  path pp= pre_correct (t, p);
+  if (forwards) return right_correct (t, pp);
+  else return left_correct (t, pp);
 }
 
 path
@@ -396,13 +403,14 @@ up_correct (tree t, path p, bool active= true) {
 }
 
 path
-super_correct (tree t, path p) {
+super_correct (tree t, path p, bool forwards) {
   path q= path_up (p);
   path r= up_correct (t, q);
   if (q != r) {
     ASSERT (!is_nil (r), "unexpected situation");
-    if (is_atomic (subtree (t, r))) p= path_up (r) * 0;
-    else p= r * 0;
+    int last= (forwards? 1: 0);
+    if (is_atomic (subtree (t, r))) p= path_up (r) * last;
+    else p= r * last;
   }
-  return correct_cursor (t, p);
+  return correct_cursor (t, p, forwards);
 }
