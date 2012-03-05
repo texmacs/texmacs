@@ -38,12 +38,6 @@
   (and (tree-is? cell 'cell)
        (+ (tree-index cell) 1)))
 
-(tm-define (number->row r)
-  (if (< r 27)
-      (list->string (list (integer->char (+ r 96))))
-      (string-append (number->row (quotient r 26))
-                     (number->row (+ (modulo (- r 1) 26) 1)))))
-
 (tm-define (cell-name cell)
   (and-with r (cell-row cell)
     (and-with c (cell-column cell)

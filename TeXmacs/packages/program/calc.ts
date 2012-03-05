@@ -46,6 +46,8 @@
 
   <assign|cell-ref|<macro|ref|<calc-ref|<arg|ref>>>>
 
+  <assign|cell-range|<macro|start|end|<arg|start>:<arg|end>>>
+
   <drd-props|cell-inert|arity|2|border|no|accessible|1>
 
   <drd-props|cell-input|arity|3|border|no|accessible|1>
