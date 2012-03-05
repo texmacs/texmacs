@@ -172,6 +172,14 @@
   (calc-repeat-update-inputs (buffer-tree))
   (calc-continue))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Keyboard interaction
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (remove-with-like t)
+  (if (not (with-like? t)) t
+      (remove-with-like (tree-ref t :last))))
+
 (tm-define (alternate-toggle t)
   (:require (tree-is? t 'calc-output))
   (tree-assign-node t 'calc-input)
@@ -179,9 +187,13 @@
 
 (tm-define (alternate-toggle t)
   (:require (tree-is? t 'calc-input))
-  (tree-assign-node t 'calc-output)
-  (tree-go-to t 2 :end)
-  (calc))
+  (calc)
+  (when (and (tree-is? t 'calc-input)
+             (== (remove-with-like (tree-ref t 1))
+                 (remove-with-like (tree-ref t 2))))
+    (tree-assign-node t 'calc-output)
+    (tree-go-to t 2 :end)))
+
 
 (tm-define (alternate-toggle t)
   (:require (tree-is? t 'cell-output))
@@ -190,9 +202,12 @@
 
 (tm-define (alternate-toggle t)
   (:require (tree-is? t 'cell-input))
-  (tree-assign-node t 'cell-output)
-  (tree-go-to t 2 :end)
-  (calc))
+  (calc)
+  (when (and (tree-is? t 'calc-input)
+             (== (remove-with-like (tree-ref t 1))
+                 (remove-with-like (tree-ref t 2))))
+    (tree-assign-node t 'cell-output)
+    (tree-go-to t 2 :end)))
 
 (tm-define (kbd-enter t forwards?)
   (:require (calc-inert-context? t))
