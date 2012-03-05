@@ -122,6 +122,9 @@
 	 (plugin-input (car args))
 	 (plugin-input-concat (cdr args)))))
 
+(define (plugin-input-math args)
+  (plugin-input (car args)))
+
 (define (plugin-input-frac args)
   (display "(")
   (plugin-input-arg (car args))
@@ -284,6 +287,7 @@
   (with plugin-input-with)
   (concat plugin-input-concat)
   (document plugin-input-concat)
+  (math plugin-input-math)
   (frac plugin-input-frac)
   (sqrt plugin-input-sqrt)
   (rsub plugin-input-rsub)
