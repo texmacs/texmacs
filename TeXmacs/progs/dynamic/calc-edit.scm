@@ -20,6 +20,16 @@
         (dynamic calc-drd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Creation of new identifiers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define calc-serial 0)
+
+(tm-define (calc-new prefix)
+  (set! calc-serial (+ calc-serial 1))
+  (string-append prefix (number->string calc-serial)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for naming cells
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -73,7 +83,8 @@
 (tm-define (calc-updated? prefix t)
   (cond ((tree-atomic? t) #t)
         ((calc-ref-context? t)
-         (let* ((var (texmacs->string (tree-ref t 0))))
+         (let* ((raw-var (texmacs->string (tree-ref t 0)))
+                (var (string-append prefix raw-var)))
            (not (ahash-ref calc-invalid var))))
         ((calc-range-context? t)
 	 (with l (cell-ref-range (tree-ref t 0) (tree-ref t 1))
@@ -84,14 +95,16 @@
 (tm-define (calc-update-inputs prefix t)
   (cond ((tree-atomic? t) (noop))
         ((calc-inert-context? t)
-         (let* ((var (texmacs->string (tree-ref t 0)))
+         (let* ((raw-var (texmacs->string (tree-ref t 0)))
+                (var (string-append prefix raw-var))
                 (old-val (ahash-ref calc-output var))
                 (new-val (tree->stree (tree-ref t 1))))
            (when (!= new-val old-val)
              (ahash-set! calc-output var new-val)
              (ahash-set! calc-invalid var #t))))
         ((calc-toggle-context? t)
-         (let* ((var (texmacs->string (tree-ref t 0)))
+         (let* ((raw-var (texmacs->string (tree-ref t 0)))
+                (var (string-append prefix raw-var))
                 (in-tree (tree-ref t 1))
                 (in (tree->stree in-tree))
                 (out (tree->stree (tree-ref t 2))))
@@ -100,7 +113,11 @@
                      (not (calc-updated? prefix in-tree)))
              (ahash-set! calc-input var in)
              (ahash-set! calc-invalid var #t)
-             (ahash-set! calc-todo var t))))
+             (ahash-set! calc-todo var (list prefix t)))))
+        ((tree-is? t 'calc-table)
+         (with x (texmacs->string (tree-ref t 0))
+           (calc-update-inputs (string-append prefix x "-")
+                               (tree-ref t 1))))
         (else (for-each (cut calc-update-inputs prefix <>)
                         (tree-children t)))))
 
@@ -113,7 +130,8 @@
 (tm-define (calc-available? prefix t)
   (cond ((tree-atomic? t) #t)
         ((calc-ref-context? t)
-         (let* ((var (texmacs->string (tree-ref t 0))))
+         (let* ((raw-var (texmacs->string (tree-ref t 0)))
+                (var (string-append prefix raw-var)))
            (not (ahash-ref calc-todo var))))
         ((calc-range-context? t)
 	 (with l (cell-ref-range (tree-ref t 0) (tree-ref t 1))
@@ -124,8 +142,10 @@
 (tm-define (calc-substitute prefix t)
   (cond ((tree-atomic? t) t)
         ((calc-ref-context? t)
-         (let* ((var (texmacs->string (tree-ref t 0))))
-           (or (ahash-ref calc-output var) t)))
+         (let* ((raw-var (texmacs->string (tree-ref t 0)))
+                (var (string-append prefix raw-var))
+                (val (ahash-ref calc-output var)))
+           (if val (tm->tree `(concat "(" ,val ")")) t)))
  	((calc-range-context? t)
 	 (with l (cell-ref-range (tree-ref t 0) (tree-ref t 1))
 	   (with cc `(concat ,@(list-intersperse l ","))
@@ -139,7 +159,8 @@
   (when (calc-available? prefix (tree-ref t 1))
     ;;(display* "Reevaluate output " t "\n")
     ;;(display* "src= " (calc-substitute prefix (tree-ref t 1)) "\n")
-    (let* ((var (texmacs->string (tree-ref t 0)))
+    (let* ((raw-var (texmacs->string (tree-ref t 0)))
+           (var (string-append prefix raw-var))
            (in (tm->tree (calc-substitute prefix (tree-ref t 1))))
            (out (tree-ref t 2)))
       ;;(display* "var= " var "\n")
@@ -149,16 +170,17 @@
       (ahash-remove! calc-todo var)
       (tree-set t 2 dest))))
 
-(tm-define (calc-repeat-reevaluate-outputs prefix)
+(tm-define (calc-repeat-reevaluate-outputs)
   (with n (ahash-size calc-todo)
     (for (p (ahash-table->list calc-todo))
-      (calc-reevaluate-output prefix (cdr p)))
+      (with (prefix t) (cdr p)
+        (calc-reevaluate-output prefix t)))
     (when (!= n (ahash-size calc-todo))
-      (calc-repeat-reevaluate-outputs prefix))))
+      (calc-repeat-reevaluate-outputs))))
 
 (tm-define (calc-reevaluate prefix t)
   (calc-repeat-update-inputs prefix t)
-  (calc-repeat-reevaluate-outputs prefix)
+  (calc-repeat-reevaluate-outputs)
   (set! calc-invalid (make-ahash-table))
   (set! calc-todo (make-ahash-table)))
 
@@ -199,6 +221,7 @@
                       (tree-pointer-detach ptr)
                       (when (== check out)
                         (tree-set! out r)
+                        ;;(display* var " := " (tm->stree r) "\n")
 			(calc-normalize (tree-ref out :up))
                         (ahash-set! calc-output var (tm->stree r))
                         (ahash-remove! calc-todo var)
@@ -206,7 +229,8 @@
           (silent-feed* lan ses in ret '(:simplify-output)))))))
 
 (tm-define (calc-continue-with prefix t)
-  (let* ((var (texmacs->string (tree-ref t 0)))
+  (let* ((raw-var (texmacs->string (tree-ref t 0)))
+         (var (string-append prefix raw-var))
          (in (tm->tree (calc-substitute prefix (tree-ref t 1))))
          (out (tree-ref t 2)))
     (calc-feed var in out)))
@@ -215,8 +239,10 @@
   (cond ((null? l)
          (set! calc-invalid (make-ahash-table))
          (set! calc-todo (make-ahash-table)))
-        ((calc-available? "" (tree-ref (cdar l) 1))
-         (calc-continue-with "" (cdar l)))
+        ((with (prefix t) (cdar l)
+           (calc-available? prefix (tree-ref t 1)))
+         (with (prefix t) (cdar l)
+           (calc-continue-with prefix t)))
         (else
          (calc-continue-first (cdr l)))))
 

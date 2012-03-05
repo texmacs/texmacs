@@ -66,7 +66,7 @@
     (set! calc-rename-table (make-ahash-table))
     (for-each calc-table-rename-cell cells)
     ;;(display* "Renaming formulas\n")
-    (calc-rename-formulas (buffer-tree))
+    (calc-rename-formulas t)
     (set! calc-rename-table (make-ahash-table))
     ;;(display* "Updating cells\n")
     (for-each calc-table-update-cell cells)))
@@ -76,7 +76,7 @@
     (calc-table-update-table t)))
 
 (tm-define (make-calc-table)
-  (insert-go-to '(calc-table "" "") '(1 0))
+  (insert-go-to `(calc-table ,(calc-new "sheet") "") '(1 0))
   (make 'block)
   (calc-table-update))
 
