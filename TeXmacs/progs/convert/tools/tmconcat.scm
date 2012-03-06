@@ -25,22 +25,29 @@
 
 (tm-define (tmconcat-simplify l)
   (cond ((null? l) l)
-	((func? (car l) 'concat) (tmconcat-simplify (append (cdar l) (cdr l))))
-	((== (car l) "") (tmconcat-simplify (cdr l)))
-        (else
-          (with r (tmconcat-simplify (cdr l))
-            (if (and (string? (car l)) (nnull? r) (string? (car r)))
-                (cons (string-append (car l) (car r)) (cdr r))
-                (cons (car l) r))))))
+        ((tm-atomic? (car l))
+         (let* ((head (tm->string (car l)))
+                (tail (tmconcat-simplify (cdr l))))
+           (cond ((== head "") head)
+                 ((and (nnull? tail) (string? (car tail)))
+                  (cons (string-append head (car tail)) (cdr tail)))
+                 (else (cons head tail)))))
+	((tm-func? (car l) 'concat)
+         (tmconcat-simplify (append (tm-cdr (car l)) (cdr l))))
+        (else (cons (car l) (tmconcat-simplify (cdr l))))))
+
+;; (tm-define (tmconcat . in)
+;;   (:synopsis "Constructor of horizontal concatenations with corrections.")
+;;   (let* ((l (tmconcat-simplify in))
+;; 	 (o (length (list-filter l (lambda (x) (tm-func? x 'left)))))
+;; 	 (c (length (list-filter l (lambda (x) (tm-func? x 'right))))))
+;;     (if (> o c) (set! l (append l (make-list (- o c) '(right ".")))))
+;;     (if (< o c) (set! l (append l '(right ".") (make-list (- o c)))))
+;;     (apply tmconcat* l)))
 
 (tm-define (tmconcat . in)
   (:synopsis "Constructor of horizontal concatenations with corrections.")
-  (let* ((l (tmconcat-simplify in))
-	 (o (length (list-filter l (lambda (x) (func? 'left x)))))
-	 (c (length (list-filter l (lambda (x) (func? 'right x))))))
-    (if (> o c) (set! l (append l (make-list (- o c) '(right ".")))))
-    (if (< o c) (set! l (append l '(right ".") (make-list (- o c)))))
-    (apply tmconcat* l)))
+  (apply tmconcat* (tmconcat-simplify in)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Replacing mathematical string by list of tokens
