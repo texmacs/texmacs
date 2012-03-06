@@ -162,7 +162,7 @@
 	   plugin-eval-menu plugin-eval-toggle-menu plugin-plot-menu)
 (lazy-menu (dynamic calc-menu) calc-table-menu)
 (lazy-define (dynamic session-edit) scheme-eval)
-(lazy-define (dynamic calc-edit) calc-ready?)
+(lazy-define (dynamic calc-edit) calc-ready? calc-table-renumber)
 (lazy-initialize (dynamic session-menu) (in-session?))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
