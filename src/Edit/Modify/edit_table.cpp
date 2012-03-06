@@ -32,6 +32,7 @@ is_empty_cell (tree t) {
   return
     t == "" ||
     (is_func (t, DOCUMENT, 1) && is_empty_cell (t[0])) ||
+    (is_compound (t, "cell-inert", 2) && is_empty_cell (t[1])) ||
     (is_compound (t, "cell-input", 3) && is_empty_cell (t[1])) ||
     (is_compound (t, "cell-output", 3) && is_empty_cell (t[2]));
 }

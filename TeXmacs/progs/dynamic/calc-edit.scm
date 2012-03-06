@@ -19,48 +19,6 @@
         (dynamic calc-drd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Subroutines for naming cells
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (number->row r)
-  (if (< r 27)
-      (list->string (list (integer->char (+ r 96))))
-      (string-append (number->row (quotient r 26))
-                     (number->row (+ (modulo (- r 1) 26) 1)))))
-
-(tm-define (row->number s)
-  (with n (string-length s)
-    (if (== n 1)
-	(- (char->integer (car (string->list s))) 96)
-	(+ (* 26 (row->number (substring s 0 (- n 1))))
-	   (row->number (substring s (- n 1) n))))))
-
-(tm-define (cell-ref-encode p)
-  (with (r c) p
-    (with s (string-append (number->row r) (number->string c))
-      (tm->tree `(cell-ref ,s)))))
-
-(tm-define (cell-ref-decode s)
-  (if (string? s)
-      (and-with i (list-find-index
-		    (string->list s)
-		    (lambda (c) (and (char>=? c #\0) (char<=? c #\9))))
-	(list (row->number (substring s 0 i))
-	      (string->number (substring s i (string-length s)))))
-      (and (tree-is? s 'cell-ref)
-	   (cell-ref-decode (texmacs->string (tree-ref s 0))))))
-
-(define ((cell-ref-range-sub c1 c2) r)
-  (map (lambda (c) (cell-ref-encode (list r c)))
-       (.. c1 (+ c2 1))))
-
-(tm-define (cell-ref-range x1 x2)
-  (with (r1 c1) (cell-ref-decode x1)
-    (with (r2 c2) (cell-ref-decode x2)
-      (with rows (map (cell-ref-range-sub c1 c2) (.. r1 (+ r2 1)))
-	(apply append rows)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Spreadsheet evaluation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -74,9 +32,6 @@
         ((tree-is? t 'calc-ref)
          (with var (texmacs->string (tree-ref t 0))
            (not (ahash-ref calc-invalid var))))
-        ((calc-range-context? t)
-	 (with l (cell-ref-range (tree-ref t 0) (tree-ref t 1))
-           (list-and (map calc-updated? l))))
         (else (list-and (map calc-updated? (tree-children t))))))
 
 (tm-define (calc-get-input t)
@@ -130,9 +85,6 @@
         ((tree-is? t 'calc-ref)
          (with var (texmacs->string (tree-ref t 0))
            (not (ahash-ref calc-todo var))))
-        ((calc-range-context? t)
-	 (with l (cell-ref-range (tree-ref t 0) (tree-ref t 1))
-           (list-and (map calc-available? l))))
         (else (list-and (map calc-available? (tree-children t))))))
 
 (tm-define (calc-substitute t)
@@ -141,10 +93,6 @@
          (let* ((var (texmacs->string (tree-ref t 0)))
                 (val (ahash-ref calc-output var)))
            (if val (tm->tree `(concat "(" ,val ")")) t)))
- 	((calc-range-context? t)
-	 (with l (cell-ref-range (tree-ref t 0) (tree-ref t 1))
-	   (with cc `(concat ,@(list-intersperse l ","))
-	     (calc-substitute (tm->tree cc)))))
 	(else (tree-map-children calc-substitute t))))
 
 (tm-define (calc-reevaluate-output var in out)

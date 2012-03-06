@@ -247,7 +247,8 @@ edit_text_rep::remove_text (bool forward) {
     default:
       if (is_graphical_text (u))
         back_in_text_at (u, p, forward);
-      else if (is_compound (u, "cell-input") ||
+      else if (is_compound (u, "cell-inert") ||
+               is_compound (u, "cell-input") ||
                is_compound (u, "cell-output")) {
         tree st= subtree (et, path_up (p, 2));
         back_in_table (u, p, forward);
