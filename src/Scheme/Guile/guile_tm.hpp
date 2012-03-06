@@ -34,7 +34,16 @@
 #define MY_MENU_EVENT MENU_EVENT
 #undef MENU_EVENT
 #endif
+#endif // __MINGW32__
+
+#if defined(GUILE_D) || defined(GUILE_C) 
+#include <libguile.h>
+#else
 #include <guile/gh.h>
+#endif
+
+#ifdef __MINGW32__
+// put things back
 #undef STRING
 #undef ERROR
 #undef PATTERN
@@ -54,14 +63,81 @@
 #define OUT MY_OUT
 #undef MY_OUT
 #endif
-#else
-#include <guile/gh.h>
-#endif
+#endif // __MINGW32__
 
+#ifdef GUILE_D
+
+#define SCM_NULL scm_list_n (SCM_UNDEFINED)
+#define scm_bool2scm scm_from_bool
+#define scm_is_list(x) scm_is_true(scm_list_p(x))
+#define scm_scm2bool scm_is_true
+#define scm_is_int scm_is_integer
+#define scm_is_double scm_is_real
+#define scm_new_procedure(name,r,a,b,c) scm_c_define_gsubr(name,a,b,c,(scm_t_subr)r)
+#define scm_lookup_string(name) scm_variable_ref(scm_c_lookup(name))
+#define scm_long2scm scm_long2num
+#define scm_scm2long(x) scm_num2long(x,SCM_ARG1,"scm2long")
+#define scm_double2scm scm_from_double
+#define scm_scm2double scm_to_double
+#define scm_str2scm scm_from_locale_stringn
+#define scm_scm2str scm_to_locale_stringn
+#define scm_symbol2scm scm_from_locale_symbol
+#define scm_scm2symbol(x,y) scm_to_locale_stringn(scm_symbol_to_string(x),y)
+
+#else
+#ifdef GUILE_C
+
+#define SCM_NULL scm_list_n (SCM_UNDEFINED)
+#define scm_bool2scm scm_from_bool
+#define scm_is_list(x) scm_is_true(scm_list_p(x))
+#define scm_scm2bool scm_is_true
+#define scm_is_int scm_is_integer
+#define scm_is_double scm_is_real
+#define scm_new_procedure(name,r,a,b,c) scm_c_define_gsubr(name,a,b,c,r)
+#define scm_lookup_string(name) scm_variable_ref(scm_c_lookup(name))
+#define scm_long2scm scm_long2num
+#define scm_scm2long(x) scm_num2long(x,SCM_ARG1,"scm2long")
+#define scm_double2scm scm_from_double
+#define scm_scm2double scm_to_double
+#define scm_str2scm scm_from_locale_stringn
+#define scm_scm2str scm_to_locale_stringn
+#define scm_symbol2scm scm_from_locale_symbol
+#define scm_scm2symbol(x,y) scm_to_locale_stringn(scm_symbol_to_string(x),y)
+
+#else
+#ifdef GUILE_B
+
+#define SCM_NULL scm_list_n (SCM_UNDEFINED)
+#define scm_is_list(x) SCM_NFALSEP(scm_list_p(x))
+#define scm_new_procedure(name,r,a,b,c) scm_c_define_gsubr(name,a,b,c,r)
+#define scm_lookup_string(name) scm_variable_ref(scm_c_lookup(name))
+#define scm_long2scm scm_long2num
+#define scm_scm2long(x) scm_num2long(x,SCM_ARG1,"scm2long")
+
+#define scm_is_null(x) SCM_NFALSEP(scm_null_p(x))
+#define scm_is_pair(x) SCM_NFALSEP(scm_pair_p(x))
+#define scm_is_bool(x) SCM_NFALSEP(scm_boolean_p(x))
+#define scm_is_int SCM_INUMP
+#define scm_is_double SCM_REALP
+#define scm_is_string(obj) (SCM_NIMP(obj) && SCM_STRINGP(obj))
+#define scm_is_symbol(x) SCM_NFALSEP(scm_symbol_p(x))
+
+#define scm_bool2scm SCM_BOOL
+#define scm_scm2bool SCM_NFALSEP
+#define scm_long2scm scm_long2num
+#define scm_scm2long(x) scm_num2long(x,SCM_ARG1,"scm2long")
+#define scm_double2scm scm_make_real
+#define scm_scm2double(x) scm_num2dbl(x,"scm2double")
+#define scm_symbol2scm scm_str2symbol
+#define scm_scm2symbol gh_symbol2newstr
+
+#define scm_str2scm scm_mem2string
+#define scm_scm2str gh_scm2newstr
+
+#else
+#ifdef GUILE_A
 
 #define SCM_NULL gh_list (SCM_UNDEFINED)
-
-#ifdef GUILE_A
 #define scm_is_bool gh_boolean_p
 #define scm_is_int SCM_INUMP
 #define scm_is_double SCM_REALP
@@ -94,49 +170,15 @@
 
 typedef SCM (*scm_t_catch_body) (void *data);
 typedef SCM (*scm_t_catch_handler) (void *data, SCM tag, SCM throw_args);
-#endif
 
-#ifndef GUILE_A
-#define scm_is_bool(x) SCM_NFALSEP(scm_boolean_p(x))
-#ifdef GUILE_B
-#define scm_is_int SCM_INUMP
-#define scm_is_double SCM_REALP
-#define scm_is_string(obj) (SCM_NIMP(obj) && SCM_STRINGP(obj))
-#define scm_str2scm scm_mem2string
-#define scm_scm2str gh_scm2newstr
 #else
-#define scm_is_int scm_is_integer
-#define scm_is_double scm_is_real
-#define scm_str2scm scm_from_locale_stringn
-#define scm_scm2str scm_to_locale_stringn
-#endif
-#ifndef scm_is_symbol
-#define scm_is_symbol(x) SCM_NFALSEP(scm_symbol_p(x))
-#endif
-#ifndef scm_is_null
-#define scm_is_null(x) SCM_NFALSEP(scm_null_p(x))
-#endif
-#define scm_is_pair(x) SCM_NFALSEP(scm_pair_p(x))
-#define scm_is_list(x) SCM_NFALSEP(scm_list_p(x))
 
-#define scm_bool2scm SCM_BOOL
-#define scm_scm2bool SCM_NFALSEP
-#define scm_long2scm scm_long2num
-#define scm_scm2long(x) scm_num2long(x,SCM_ARG1,"scm2long")
-#define scm_double2scm scm_make_real
-#define scm_scm2double(x) scm_num2dbl(x,"scm2double")
-#define scm_symbol2scm scm_str2symbol
-#define scm_scm2symbol gh_symbol2newstr
+#error "At least one of the macros GUILE_{A,B,C,D} should be defined" 
 
-#ifdef GUILE_C
-#define scm_new_procedure(name,r,a,b,c) scm_c_define_gsubr(name,a,b,c,r)
-#define scm_lookup_string(name) scm_variable_ref(scm_c_lookup(name))
-#else
-#define scm_new_procedure gh_new_procedure
-#define scm_lookup_string gh_lookup
-#endif
-#endif
-
+#endif // defined(GUILE_A)
+#endif // defined(GUILE_B)
+#endif // defined(GUILE_C)
+#endif // defined(GUILE_D)
 
 #define SCM_ARG8 8
 #define SCM_ARG9 9
@@ -147,7 +189,7 @@ typedef SCM (*FN)(...);
 typedef SCM (*FN)();
 #endif
 
-#ifndef GUILE_C
+#if defined(GUILE_A) || defined(GUILE_B)
 int scm_to_bool (SCM obj);
 int scm_to_int (SCM obj);
 double scm_to_double (SCM i);

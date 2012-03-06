@@ -21,17 +21,16 @@
 #include "../Scheme/glue.hpp"
 #include "convert.hpp" // tree_to_texmacs (should not belong here)
 
-//SCM object_stack;
-
 /******************************************************************************
  * Installation of guile and initialization of guile
  ******************************************************************************/
 
-#ifdef GUILE_C
+#if (defined(GUILE_C) || defined(GUILE_D))
 static void (*old_call_back) (int, char**)= NULL;
 static void
 new_call_back (void *closure, int argc, char** argv) {
 	(void) closure;
+  
 	old_call_back (argc, argv);
 }
 #endif
@@ -44,7 +43,7 @@ void
 start_scheme (int argc, char** argv, void (*call_back) (int, char**)) {
 	guile_argc = argc;
 	guile_argv = argv;
-#ifdef GUILE_C
+#if (defined(GUILE_C) || defined(GUILE_D))
 	old_call_back= call_back;
 	scm_boot_guile (argc, argv, new_call_back, 0);
 #else
@@ -233,13 +232,17 @@ scheme_dialect () {
 #ifdef GUILE_C
 	return "guile-c";
 #else
+#ifdef GUILE_D
+	return "guile-d";
+#else
 	return "unknown";
+#endif
 #endif
 #endif
 #endif
 }
 
-#ifdef GUILE_C
+#if (defined(GUILE_C) || defined(GUILE_D))
 #define SET_SMOB(smob,data,type)   \
 SCM_NEWSMOB (smob, SCM_UNPACK (type), data);
 #else
@@ -260,7 +263,7 @@ bool_to_scm (bool flag) {
 	return scm_bool2scm (flag);
 }
 
-#ifndef GUILE_C
+#if (defined(GUILE_A) || defined(GUILE_B))
 int
 scm_to_bool (SCM flag) {
 	return scm_scm2bool (flag);
@@ -277,7 +280,7 @@ int_to_scm (int i) {
 	return scm_long2scm ((long) i);
 }
 
-#ifndef GUILE_C
+#if (defined(GUILE_A) || defined(GUILE_B))
 int
 scm_to_int (SCM i) {
 	return (int) scm_scm2long (i);
@@ -298,7 +301,7 @@ double_to_scm (double i) {
 	return scm_double2scm (i);
 }
 
-#ifndef GUILE_C
+#if (defined(GUILE_A) || defined(GUILE_B))
 double
 scm_to_double (SCM i) {
 	return scm_scm2double (i);
@@ -495,5 +498,8 @@ initialize_scheme () {
 	
 // uncomment to have a guile repl available at startup	
 //	gh_repl(guile_argc, guile_argv);
+  //scm_shell (guile_argc, guile_argv);
+  
+
 }
 
