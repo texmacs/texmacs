@@ -186,7 +186,7 @@
   (if (not (with-like? t)) t
       (remove-with-like (tree-ref t :last))))
 
-(define (calc-normalize t)
+(tm-define (calc-normalize t)
   (when (and t
 	     (tree-in? t '(calc-output cell-output))
 	     (== (remove-with-like (tree-ref t 1))
@@ -255,57 +255,6 @@
   (calc-continue))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Cell input rewriting
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (calc-eat-cell-name cs num?)
-  (cond ((null? cs) (and num? 0))
-        ((and (not num?) (char>=? (car cs) #\a) (char<=? (car cs) #\z))
-         (with i (calc-eat-cell-name (cdr cs) #f)
-           (and i (+ i 1))))
-        ((and (char>=? (car cs) #\0) (char<=? (car cs) #\9))
-         (with i (calc-eat-cell-name (cdr cs) #t)
-           (and i (+ i 1))))
-        (else (and num? 0))))
-
-(tm-define (calc-input-encode-sub cs)
-  (cond ((null? cs) cs)
-        ((and (char>=? (car cs) #\a) (char<=? (car cs) #\z))
-         (with i (calc-eat-cell-name cs #f)
-           (if (not i)
-               (cons (list->string (list (car cs)))
-                     (calc-input-encode-sub (cdr cs)))
-               (cons `(cell-ref ,(list->string (sublist cs 0 i)))
-                     (calc-input-encode-sub (sublist cs i (length cs)))))))
-        (else
-          (cons (list->string (list (car cs)))
-                (calc-input-encode-sub (cdr cs))))))
-
-(tm-define (cell-input-encode t)
-  (cond ((tree-atomic? t)
-         (with l (calc-input-encode-sub (string->list (tree->string t)))
-           (with r (tm->tree (apply tmconcat l))
-             (when (!= r t)
-               (tree-set t r)))))
-        ((tree-is? t 'concat)
-         (for-each cell-input-encode (tree-children t))
-         (with r (tm->tree (apply tmconcat (tree-children t)))
-           (when (!= r t)
-             (tree-set t r))))
-        ((tree-is? t 'cell-ref) (noop))
-        (else (for-each cell-input-encode (tree-accessible-children t)))))
-
-(tm-define (cell-input-decode t)
-  (cond ((tree-atomic? t) (noop))
-        ((tree-is? t 'concat)
-         (for-each cell-input-decode (tree-children t))
-         (with r (tm->tree (apply tmconcat (tree-children t)))
-           (when (!= r t)
-             (tree-set t r))))
-        ((tree-is? t 'cell-ref) (tree-set t (tree-ref t 0)))
-        (else (for-each cell-input-decode (tree-accessible-children t)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keyboard interaction
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -317,21 +266,6 @@
 (tm-define (alternate-toggle t)
   (:require (tree-is? t 'calc-input))
   (tree-assign-node t 'calc-output)
-  (tree-go-to t 2 :end)
-  (calc)
-  (when (== (ahash-size calc-todo) 0)
-    (calc-normalize t)))
-
-(tm-define (alternate-toggle t)
-  (:require (tree-is? t 'cell-output))
-  (tree-assign-node t 'cell-input)
-  (cell-input-decode (tree-ref t 1))
-  (tree-go-to t 1 :end))
-
-(tm-define (alternate-toggle t)
-  (:require (tree-is? t 'cell-input))
-  (cell-input-encode (tree-ref t 1))
-  (tree-assign-node t 'cell-output)
   (tree-go-to t 2 :end)
   (calc)
   (when (== (ahash-size calc-todo) 0)

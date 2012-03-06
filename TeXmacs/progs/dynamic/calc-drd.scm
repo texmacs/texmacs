@@ -14,6 +14,10 @@
 (texmacs-module (dynamic calc-drd)
   (:use (dynamic dynamic-drd)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Groups
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define-group calc-table-tag
   textual-table numeric-dot-table numeric-comma-table)
 
@@ -22,6 +26,22 @@
 
 (define-toggle calc-input calc-output)
 (define-toggle cell-input cell-output)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Contexts
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (calc-table-search t)
+  (:synopsis "Return calc-table ancestor for @t or #f")
+  (or (and (tree-is? t 'calc-table) t)
+      (and (tree-ref t :up)
+	   (not (tree-is? t :up 'table))
+	   (calc-table-search (tree-up t)))))
+
+(tm-define (calc-table-context? t)
+  (:synopsis "Check whether @t is a table inside a calc-table")
+  (and (tree-is? t 'table)
+       (nnot (calc-table-search (tree-up t)))))
 
 (tm-define (calc-data-context? t)
   (tree-in? t '(calc-inert calc-input calc-output

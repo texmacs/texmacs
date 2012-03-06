@@ -15,19 +15,8 @@
   (:use (dynamic calc-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Spreadsheets in tables
+;; Get standard name of table cell
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define calc-rename-table (make-ahash-table))
-
-(tm-define (calc-rename-formulas t)
-  (cond ((tree-atomic? t) (noop))
-        ((calc-ref-context? t)
-         (with var (texmacs->string (tree-ref t 0))
-           (with new (ahash-ref calc-rename-table var)
-             (when new
-               (tree-set t 0 new)))))
-        (else (for-each calc-rename-formulas (tree-children t)))))
 
 (tm-define (cell-row cell)
   (and (tree-is? cell 'cell)
@@ -42,6 +31,21 @@
   (and-with r (cell-row cell)
     (and-with c (cell-column cell)
       (string-append (number->row r) (number->string c)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Standard (re)naming of cells inside a table
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define calc-rename-table (make-ahash-table))
+
+(tm-define (calc-rename-formulas t)
+  (cond ((tree-atomic? t) (noop))
+        ((calc-ref-context? t)
+         (with var (texmacs->string (tree-ref t 0))
+           (with new (ahash-ref calc-rename-table var)
+             (when new
+               (tree-set t 0 new)))))
+        (else (for-each calc-rename-formulas (tree-children t)))))
 
 (tm-define (calc-table-rename-cell cell)
   ;;(display* "Renaming " cell "\n")
@@ -84,16 +88,76 @@
   (make tag)
   (calc-table-update))
 
-(define (calc-table-search t)
-  (or (and (tree-is? t 'calc-table) t)
-      (and (tree-ref t :up)
-	   (not (tree-is? t :up 'table))
-	   (calc-table-search (tree-up t)))))
-
-(tm-define (calc-table-context? t)
-  (and (tree-is? t 'table)
-       (nnot (calc-table-search (tree-up t)))))
-
 (tm-define (table-resize-notify t)
   (:require (calc-table-context? t))
   (calc-table-update-table (calc-table-search t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Cell input rewriting
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (calc-eat-cell-name cs num?)
+  (cond ((null? cs) (and num? 0))
+        ((and (not num?) (char>=? (car cs) #\a) (char<=? (car cs) #\z))
+         (with i (calc-eat-cell-name (cdr cs) #f)
+           (and i (+ i 1))))
+        ((and (char>=? (car cs) #\0) (char<=? (car cs) #\9))
+         (with i (calc-eat-cell-name (cdr cs) #t)
+           (and i (+ i 1))))
+        (else (and num? 0))))
+
+(tm-define (calc-input-encode-sub cs)
+  (cond ((null? cs) cs)
+        ((and (char>=? (car cs) #\a) (char<=? (car cs) #\z))
+         (with i (calc-eat-cell-name cs #f)
+           (if (not i)
+               (cons (list->string (list (car cs)))
+                     (calc-input-encode-sub (cdr cs)))
+               (cons `(cell-ref ,(list->string (sublist cs 0 i)))
+                     (calc-input-encode-sub (sublist cs i (length cs)))))))
+        (else
+          (cons (list->string (list (car cs)))
+                (calc-input-encode-sub (cdr cs))))))
+
+(tm-define (cell-input-encode t)
+  (cond ((tree-atomic? t)
+         (with l (calc-input-encode-sub (string->list (tree->string t)))
+           (tm->tree (apply tmconcat l))))
+        ((tree-is? t 'concat)
+         (with l (map cell-input-encode (tree-children t))
+           (tm->tree (apply tmconcat l))))
+        ((tree-is? t 'cell-ref) t)
+        (else (tree-map-accessible-children cell-input-encode t))))
+
+(tm-define (cell-input-decode t)
+  (cond ((tree-atomic? t) t)
+        ((tree-is? t 'concat)
+         (with l (map cell-input-decode (tree-children t))
+           (tm->tree (apply tmconcat l))))
+        ((tree-is? t 'cell-ref) (tree-ref t 0))
+        (else (tree-map-accessible-children cell-input-decode t))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Keyboard interaction
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (alternate-toggle t)
+  (:require (tree-is? t 'cell-output))
+  (tree-assign-node t 'cell-input)
+  (with u (tree-ref t 1)
+    (with r (cell-input-decode u)
+      (when (!= r u)
+        (tree-set u r))))
+  (tree-go-to t 1 :end))
+
+(tm-define (alternate-toggle t)
+  (:require (tree-is? t 'cell-input))
+  (with u (tree-ref t 1)
+    (with r (cell-input-encode u)
+      (when (!= r u)
+        (tree-set u r))))
+  (tree-assign-node t 'cell-output)
+  (tree-go-to t 2 :end)
+  (calc)
+  (when (== (ahash-size calc-todo) 0)
+    (calc-normalize t)))

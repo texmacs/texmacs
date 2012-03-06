@@ -47,6 +47,18 @@
   (and (compound-tree? t)
        (apply func? (cons (tree->list t) args))))
 
+(define-public (tree-map-children fun t)
+  (tm->tree `(,(tree-label t)
+              ,@(map fun ,(tree-children t)))))
+
+(define-public (tree-map-accessible-children fun t)
+  (with rew (lambda (i)
+              (if (tree-accessible-child? t i)
+                  (fun (tree-ref t i))
+                  (tree-ref t i)))
+    (tm->tree `(,(tree-label t)
+                ,@(map rew (.. 0 (tree-arity t)))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Navigation inside trees
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
