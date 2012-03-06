@@ -679,7 +679,10 @@ qt_tm_widget_rep::install_main_menu () {
   QMenu* m= concrete (main_menu_widget)->get_qmenu();
   if (m) {
     {
-      QMenuBar *dest = tm_mainwindow()->menuBar();
+      // Explicitly creating the menubar allows it to be shared across windows in MacOS
+      // See http://doc.qt.nokia.com/4.7/qmainwindow.html#menuBar
+      QMenuBar *dest = new QMenuBar(0);
+      tm_mainwindow()->setMenuBar(dest);
       QWidget *src = m;
       replaceActions(dest,src);
       QList<QAction*> list = dest->actions();
