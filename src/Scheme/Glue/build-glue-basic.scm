@@ -115,6 +115,7 @@
   (tree-child-name get_child_name (string content int ))
   (tree-child-long-name get_child_long_name (string content int))
   (tree-child-type get_child_type (string content int))
+  (tree-child-env get_env_child (tree content int string content))
   (tree-load-inclusion load_inclusion (tree url))
   (tree-as-string tree_as_string (string content))
   (tree-extents tree_extents (tree content))

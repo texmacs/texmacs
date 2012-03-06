@@ -12,6 +12,7 @@
 #include "Widkit/attribute_widget.hpp"
 #include "Widkit/layout.hpp"
 #include "handwriting.hpp"
+#include "scheme.hpp"
 
 /******************************************************************************
 * Ink widget

@@ -100,6 +100,11 @@ get_child_type (tree t, int i) {
   return drd_decode_type (the_drd->get_type_child (t, i));
 }
 
+tree
+get_env_child (tree t, int i, string var, tree val) {
+  return the_drd->get_env_child (t, i, var, val);
+}
+
 /******************************************************************************
 * Traversal of a tree
 ******************************************************************************/

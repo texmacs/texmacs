@@ -28,7 +28,7 @@
         ((tm-atomic? (car l))
          (let* ((head (tm->string (car l)))
                 (tail (tmconcat-simplify (cdr l))))
-           (cond ((== head "") head)
+           (cond ((== head "") tail)
                  ((and (nnull? tail) (string? (car tail)))
                   (cons (string-append head (car tail)) (cdr tail)))
                  (else (cons head tail)))))

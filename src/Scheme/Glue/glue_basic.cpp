@@ -1182,6 +1182,25 @@ tmg_tree_child_type (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_tree_child_env (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "tree-child-env");
+  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "tree-child-env");
+  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "tree-child-env");
+  TMSCM_ASSERT_CONTENT (arg4, TMSCM_ARG4, "tree-child-env");
+
+  content in1= tmscm_to_content (arg1);
+  int in2= tmscm_to_int (arg2);
+  string in3= tmscm_to_string (arg3);
+  content in4= tmscm_to_content (arg4);
+
+  // TMSCM_DEFER_INTS;
+  tree out= get_env_child (in1, in2, in3, in4);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
 tmg_tree_load_inclusion (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "tree-load-inclusion");
 
@@ -5483,6 +5502,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tree-child-name",  tmg_tree_child_name, 2, 0, 0);
   tmscm_install_procedure ("tree-child-long-name",  tmg_tree_child_long_name, 2, 0, 0);
   tmscm_install_procedure ("tree-child-type",  tmg_tree_child_type, 2, 0, 0);
+  tmscm_install_procedure ("tree-child-env",  tmg_tree_child_env, 4, 0, 0);
   tmscm_install_procedure ("tree-load-inclusion",  tmg_tree_load_inclusion, 1, 0, 0);
   tmscm_install_procedure ("tree-as-string",  tmg_tree_as_string, 1, 0, 0);
   tmscm_install_procedure ("tree-extents",  tmg_tree_extents, 1, 0, 0);
