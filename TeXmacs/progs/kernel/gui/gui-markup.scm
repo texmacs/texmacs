@@ -328,8 +328,14 @@
      ,@l))
 
 (tm-define (form-proposals name field l)
-  (if (nnull? l) (form-named-set name field (car l)))
+  (if (nnull? l) (form-named-set name field (car l)))  ; FIXME? Is always returning the car ok?
   l)
+
+(tm-define (form-proposals-sel name field l selected)
+  (:synopsis "Inits the value of @field in form @name to the @selected value and returns the list @l unmodified")
+  (if (nnull? l) (form-named-set name field selected))
+  l)
+
 
 (tm-define-macro ($form-input field type proposals width)
   (:synopsis "Make form textual input field")
@@ -337,6 +343,32 @@
      (set! form-entries (append form-entries (list ,field)))
      ($input (form-named-set form-name ,field answer)
              ,type (form-proposals form-name ,field ,proposals) ,width)))
+
+(tm-define-macro ($form-enum field proposals selected width)
+  ; @field is the name of the field, @proposals is a list of strings, @selected is a string
+  (:synopsis "Make an enumeration field for the current form")
+  `($execute
+     (set! form-entries (append form-entries (list ,field)))
+     ($enum (form-named-set form-name ,field answer)
+            (form-proposals-sel form-name ,field ,proposals ,selected)
+            ,selected ,width)))
+
+(tm-define-macro ($form-choice field proposals selected) 
+  (:synopsis "Make a single choice field for the current form") 
+  `($execute 
+     (set! form-entries (append form-entries (list ,field))) 
+     ($choice (form-named-set form-name ,field answer)
+              (form-proposals-sel form-name ,field ,proposals ,selected)
+              ,selected)))
+
+(tm-define-macro ($form-choices field proposals selected) 
+  (:synopsis "Make a multiple choice field for the current form") 
+  `($execute 
+     (set! form-entries (append form-entries (list ,field))) 
+     ($choices (form-named-set form-name ,field answer)
+               (form-proposals-sel form-name ,field ,proposals ,selected)
+               ,selected)))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic text markup

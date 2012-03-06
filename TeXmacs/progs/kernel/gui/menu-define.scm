@@ -20,7 +20,7 @@
 
 (define (require-format x pattern)
   (if (not (match? x pattern))
-      (texmacs-error "gui-make" "invalid menu item ~S" x)))
+    (texmacs-error "gui-make" "invalid menu item ~S" x)))
 
 (define (gui-make-eval x)
   (require-format x '(eval :%1))
@@ -278,6 +278,19 @@
   (require-format x '(form-input :%4))
   `($form-input ,@(cdr x)))
 
+(define (gui-make-form-enum x)
+  (require-format x '(form-enum :%4))
+  `($form-enum ,@(cdr x)))
+
+(define (gui-make-form-choice x)
+  (require-format x '(form-choice :%3))
+  `($form-choice ,@(cdr x)))
+
+(define (gui-make-form-choices x)
+  (require-format x '(form-choices :%3))
+  `($form-choices ,@(cdr x)))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Table with Gui primitives and dispatching
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -342,7 +355,11 @@
   (promise ,gui-make-promise)
   (ink ,gui-make-ink)
   (form ,gui-make-form)
-  (form-input ,gui-make-form-input))
+  (form-input ,gui-make-form-input)
+  (form-enum ,gui-make-form-enum)
+  (form-choice ,gui-make-form-choice)
+  (form-choices ,gui-make-form-choices)
+  )
 
 (tm-define (gui-make x)
   ;;(display* "x= " x "\n")
