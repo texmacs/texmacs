@@ -290,7 +290,6 @@
   (require-format x '(form-choices :%3))
   `($form-choices ,@(cdr x)))
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Table with Gui primitives and dispatching
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -358,8 +357,7 @@
   (form-input ,gui-make-form-input)
   (form-enum ,gui-make-form-enum)
   (form-choice ,gui-make-form-choice)
-  (form-choices ,gui-make-form-choices)
-  )
+  (form-choices ,gui-make-form-choices))
 
 (tm-define (gui-make x)
   ;;(display* "x= " x "\n")

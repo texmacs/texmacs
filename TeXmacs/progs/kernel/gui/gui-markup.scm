@@ -328,7 +328,7 @@
      ,@l))
 
 (tm-define (form-proposals name field l)
-  (if (nnull? l) (form-named-set name field (car l)))  ; FIXME? Is always returning the car ok?
+  (if (nnull? l) (form-named-set name field (car l)))
   l)
 
 (tm-define (form-proposals-sel name field l selected)
@@ -336,16 +336,14 @@
   (if (nnull? l) (form-named-set name field selected))
   l)
 
-
 (tm-define-macro ($form-input field type proposals width)
-  (:synopsis "Make form textual input field")
+  (:synopsis "Make a textual input field for the current form")
   `($execute
      (set! form-entries (append form-entries (list ,field)))
      ($input (form-named-set form-name ,field answer)
              ,type (form-proposals form-name ,field ,proposals) ,width)))
 
 (tm-define-macro ($form-enum field proposals selected width)
-  ; @field is the name of the field, @proposals is a list of strings, @selected is a string
   (:synopsis "Make an enumeration field for the current form")
   `($execute
      (set! form-entries (append form-entries (list ,field)))
@@ -368,7 +366,6 @@
      ($choices (form-named-set form-name ,field answer)
                (form-proposals-sel form-name ,field ,proposals ,selected)
                ,selected)))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic text markup
