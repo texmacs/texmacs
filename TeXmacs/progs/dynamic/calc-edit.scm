@@ -17,17 +17,8 @@
 	(utils plugins plugin-cmd)
 	(convert tools tmconcat)
         (text tm-structure)
+        (link locus-edit)
         (dynamic calc-drd)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Creation of new identifiers
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define calc-serial 0)
-
-(tm-define (calc-new prefix)
-  (set! calc-serial (+ calc-serial 1))
-  (string-append prefix (number->string calc-serial)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for naming cells
@@ -205,6 +196,12 @@
       (tree-assign-node t new-l)
       (when (cursor-inside? t)
         (tree-go-to t 1 :end)))))
+
+(tm-define (calc-ready?)
+  (let* ((lan (get-init "prog-scripts"))
+	 (ses (get-init "prog-session")))
+    (and (connection-defined? lan)
+         (supports-scripts? lan))))
 
 (tm-define (calc-feed var in out)
   (let* ((lan (get-init "prog-scripts"))

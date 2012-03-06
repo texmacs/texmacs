@@ -14,6 +14,12 @@
 (texmacs-module (dynamic calc-drd)
   (:use (dynamic dynamic-drd)))
 
+(define-group calc-table-tag
+  textual-table numeric-dot-table numeric-comma-table)
+
+(define-group variant-tag (calc-table-tag))
+(define-group similar-tag (calc-table-tag))
+
 (define-toggle calc-input calc-output)
 (define-toggle cell-input cell-output)
 

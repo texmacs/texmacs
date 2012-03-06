@@ -26,6 +26,8 @@
     </src-comment>
   </active*>
 
+  <assign|calc-table|<macro|ref|body|<locus|<id|<arg|ref>>|<arg|body>>>>
+
   <assign|calc-inert|<macro|ref|in|<locus|<id|<arg|ref>>|<arg|in>>>>
 
   <assign|calc-input|<macro|ref|in|out|<locus|<id|<arg|ref>>|<arg|in>>>>
@@ -36,7 +38,17 @@
 
   \;
 
-  <assign|calc-table|<macro|ref|body|<locus|<id|<arg|ref>>|<arg|body>>>>
+  <assign|calc-table|<macro|ref|body|<arg|body>>>
+
+  <assign|calc-inert|<macro|ref|in|<arg|in>>>
+
+  <assign|calc-input|<macro|ref|in|out|<arg|in>>>
+
+  <assign|calc-output|<macro|ref|in|out|<arg|out>>>
+
+  <assign|calc-ref|<macro|ref|<with|color|dark magenta|<arg|ref>>>>
+
+  \;
 
   <assign|cell-inert|<macro|ref|body|<calc-inert|<arg|ref>|<arg|body>>>>
 
@@ -54,7 +66,17 @@
 
   <drd-props|cell-output|arity|3|border|no|accessible|2>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Extra tables
+    </src-comment>
+  </active*>
+
+  <assign|textual-table|<macro|body|<tformat|<cwith|1|-1|1|-1|cell-rborder|1ln>|<cwith|1|-1|1|-1|cell-bborder|1ln>|<cwith|1|1|1|-1|cell-tborder|1ln>|<cwith|1|-1|1|1|cell-lborder|1ln>|<cwith|1|-1|1|-1|cell-width|6em>|<cwith|1|-1|1|-1|cell-hmode|max>|<arg|body>>>>
+
+  <assign|numeric-dot-table|<macro|body|<tformat|<cwith|1|-1|1|-1|cell-rborder|1ln>|<cwith|1|-1|1|-1|cell-bborder|1ln>|<cwith|1|1|1|-1|cell-tborder|1ln>|<cwith|1|-1|1|1|cell-lborder|1ln>|<cwith|1|-1|1|-1|cell-width|6em>|<cwith|1|-1|1|-1|cell-hmode|max>|<cwith|1|-1|1|-1|cell-halign|R.>|<arg|body>>>>
+
+  <assign|numeric-comma-table|<macro|body|<tformat|<cwith|1|-1|1|-1|cell-rborder|1ln>|<cwith|1|-1|1|-1|cell-bborder|1ln>|<cwith|1|1|1|-1|cell-tborder|1ln>|<cwith|1|-1|1|1|cell-lborder|1ln>|<cwith|1|-1|1|-1|cell-width|6em>|<cwith|1|-1|1|-1|cell-hmode|max>|<cwith|1|-1|1|-1|cell-halign|R,>|<arg|body>>>>
 </body>
 
 <\initial>

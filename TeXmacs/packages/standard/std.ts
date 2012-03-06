@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.9>
+<TeXmacs|1.0.7.14>
 
 <style|source>
 
@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|std-counter|std-markup|std-utils|std-symbol|std-math|std-list|std-automatic|std-pattern|std-fold|std-graphics|session|scripts>
+  <use-package|std-counter|std-markup|std-utils|std-symbol|std-math|std-list|std-automatic|std-pattern|std-fold|std-graphics|session|scripts|calc>
 
   \;
 </body>

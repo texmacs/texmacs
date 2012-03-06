@@ -155,13 +155,15 @@
 ;(display "Booting dynamic features\n")
 (lazy-keyboard (dynamic fold-kbd) always?)
 (lazy-keyboard (dynamic scripts-kbd) always?)
+(lazy-keyboard (dynamic calc-table) always?)
 (lazy-menu (dynamic fold-menu) insert-fold-menu dynamic-menu dynamic-icons)
 (lazy-menu (dynamic session-menu) insert-session-menu session-help-icons)
 (lazy-menu (dynamic scripts-menu) scripts-eval-menu scripts-plot-menu
 	   plugin-eval-menu plugin-eval-toggle-menu plugin-plot-menu)
+(lazy-menu (dynamic calc-menu) calc-table-menu)
 (lazy-define (dynamic session-edit) scheme-eval)
+(lazy-define (dynamic calc-edit) calc-ready?)
 (lazy-initialize (dynamic session-menu) (in-session?))
-(lazy-keyboard (dynamic calc-table) always?)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting documentation\n")
