@@ -54,6 +54,7 @@
 
 (define-public tm-defined-table (make-ahash-table))
 (define-public tm-defined-name (make-ahash-table))
+(define-public tm-defined-module (make-ahash-table))
 (define-public define-option-table (make-hash-table 100))
 
 (define-public cur-conds '())
@@ -244,6 +245,9 @@
            (ahash-set! tm-defined-table ',var
                        (cons ',nval (ahash-ref tm-defined-table ',var)))
            (ahash-set! tm-defined-name ,var ',var)
+	   (ahash-set! tm-defined-module ',var
+		       (cons (module-name temp-module)
+			     (ahash-ref tm-defined-module ',var)))
            ,@(map property-rewrite cur-props))
         `(begin
            (when (nnull? cur-conds)
@@ -258,6 +262,7 @@
            (set-current-module temp-module)
            (ahash-set! tm-defined-table ',var (list ',nval))
            (ahash-set! tm-defined-name ,var ',var)
+	   (ahash-set! tm-defined-module ',var (list (module-name temp-module)))
            ,@(map property-rewrite cur-props)))))
 
 (define-public (tm-define-sub head body)
