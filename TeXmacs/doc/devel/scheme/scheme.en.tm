@@ -17,6 +17,9 @@
 
     <branch|Scheme interface for the graphical
     mode|graphics/scheme-graphics.en.tm>
+    
+    <branch|Customizing and extending the graphical
+    user interface|gui/scheme-gui.en.tm>
 
     <branch|Writing <TeXmacs> bibliography
     styles|bibliography/bibliography.en.tm>
