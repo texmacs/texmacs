@@ -137,6 +137,10 @@
         ((tree-is? t 'cell-ref) (tree-ref t 0))
         (else (tree-map-accessible-children cell-input-decode t))))
 
+(tm-define (calc-get-input t)
+  (:require (tree-in? t '(cell-input cell-output)))
+  (cell-input-encode (tree-ref t 1)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keyboard interaction
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -144,20 +148,10 @@
 (tm-define (alternate-toggle t)
   (:require (tree-is? t 'cell-output))
   (tree-assign-node t 'cell-input)
-  (with u (tree-ref t 1)
-    (with r (cell-input-decode u)
-      (when (!= r u)
-        (tree-set u r))))
   (tree-go-to t 1 :end))
 
 (tm-define (alternate-toggle t)
   (:require (tree-is? t 'cell-input))
-  (with u (tree-ref t 1)
-    (with r (cell-input-encode u)
-      (when (!= r u)
-        (tree-set u r))))
   (tree-assign-node t 'cell-output)
   (tree-go-to t 2 :end)
-  (calc)
-  (when (== (ahash-size calc-todo) 0)
-    (calc-normalize t)))
+  (calc))

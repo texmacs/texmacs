@@ -49,7 +49,7 @@
 
 (define-public (tree-map-children fun t)
   (tm->tree `(,(tree-label t)
-              ,@(map fun ,(tree-children t)))))
+              ,@(map fun (tree-children t)))))
 
 (define-public (tree-map-accessible-children fun t)
   (with rew (lambda (i)
