@@ -94,7 +94,9 @@
         ((tree-is? t 'calc-ref)
          (let* ((var (texmacs->string (tree-ref t 0)))
                 (val (ahash-ref calc-output var)))
-           (if val (tm->tree `(concat "(" ,val ")")) t)))
+           (cond ((not val) t)
+                 ((tm-equal? val "") (string->tree "0"))
+                 (else (tm->tree `(concat "(" ,val ")"))))))
 	(else (tree-map-children calc-substitute t))))
 
 (tm-define (calc-reevaluate-output var in out)
