@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.11>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
@@ -23,6 +23,8 @@
     <branch|Selecting the input method|man-session-input.en.tm>
 
     <branch|Scripting languages|man-scripting-language.en.tm>
+
+    <branch|Spreadsheets|man-spreadsheet.en.tm>
   </traverse>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
