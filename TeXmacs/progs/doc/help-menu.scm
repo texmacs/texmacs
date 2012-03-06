@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (doc help-menu)
-  (:use (doc help-funcs)))
+  (:use (doc help-funcs) (doc scheme-help)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Help menu
@@ -210,6 +210,7 @@
       (when (url-exists-in-help? "devel/scheme/scheme.en.tm")
 	(-> "Scheme extensions"
 	    ("Browse" (load-help-buffer "devel/scheme/scheme"))
+      ("List all commands" (help-all-scheme-commands))
 	    ---
 	    ("Overview of the scheme extension language"
 	     (load-help-article "devel/scheme/overview/scheme-overview"))
@@ -219,6 +220,8 @@
 	     (load-help-article "devel/scheme/edit/scheme-edit"))
 	    ("Scheme interface for the graphical mode"
 	     (load-help-article "devel/scheme/graphics/scheme-graphics"))
+      ("Customizing and extending the user interface"
+       (load-help-article "devel/scheme/gui/scheme-gui"))
 	    ("Writing TeXmacs bibliography styles"
 	     (load-help-article "devel/scheme/bibliography/bibliography")))))
   ---
