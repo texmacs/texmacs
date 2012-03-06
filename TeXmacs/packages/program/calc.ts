@@ -60,11 +60,19 @@
 
   <assign|cell-range|<macro|start|end|<arg|start>:<arg|end>>>
 
+  <assign|cell-sum|<macro|start|end|<arg|start><cell-plusses><arg|end>>>
+
   <drd-props|cell-inert|arity|2|border|no|accessible|1>
 
   <drd-props|cell-input|arity|3|border|no|accessible|1>
 
   <drd-props|cell-output|arity|3|border|no|accessible|2>
+
+  \;
+
+  <assign|cell-commas|<macro|<math|,\<ldots\>,>>>
+
+  <assign|cell-plusses|<macro|<math|+\<cdots\>+>>>
 
   <\active*>
     <\src-comment>
