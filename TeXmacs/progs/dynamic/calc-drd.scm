@@ -60,3 +60,6 @@
   (and (tree-is? t 'cell-range)
        (tree-is? t 0 'cell-ref)
        (tree-is? t 1 'cell-ref)))
+
+(tm-define (calc-cell-context? t)
+  (tree-in? t '(cell-inert cell-input cell-output cell-ref cell-range)))

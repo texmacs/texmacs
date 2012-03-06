@@ -77,13 +77,17 @@
 (tm-define calc-rename-table (make-ahash-table))
 
 (tm-define (calc-rename-formulas t)
-  (cond ((tree-atomic? t) (noop))
-        ((calc-ref-context? t)
+  (cond ((tree-atomic? t) t)
+        ((tree-in? t '(cell-input cell-output))
+         (let* ((enc (cell-input-encode (tree-ref t 1)))
+                (ren (calc-rename-formulas enc))
+                (dec (cell-input-decode ren)))
+           (tm->tree `(,(tree-label t) ,(tree-ref t 0) ,dec ,(tree-ref t 2)))))
+        ((tree-is? t 'cell-ref)
          (with var (texmacs->string (tree-ref t 0))
            (with new (ahash-ref calc-rename-table var)
-             (when new
-               (tree-set t 0 new)))))
-        (else (for-each calc-rename-formulas (tree-children t)))))
+             (if new (tm->tree `(cell-ref ,new)) t))))
+        (else (tree-map-accessible-children calc-rename-formulas t))))
 
 (tm-define (calc-table-rename-cell cell)
   ;;(display* "Renaming " cell "\n")
@@ -97,13 +101,22 @@
           (tree-set body 0 s))))))
 
 (tm-define (calc-table-update-cell cell)
-  ;;(display* "Updating " cell "\n")
   (with s (cell-name cell)
     (with body (tree-ref cell 0)
       (if (tree-func? body 'document 1)
           (set! body (tree-ref body 0)))
       (when (not (calc-data-context? body))
         (tree-insert-node! body 1 `(cell-inert ,s))))))
+
+(define (tree-replace-cells t r)
+  (cond ((== t r) (noop))
+        ((or (tree-atomic? t) (tree-atomic? r)
+             (!= (tree-label t) (tree-label r))
+             (!= (tree-arity t) (tree-arity r)))
+         (tree-set t r))
+        (else (for-each tree-replace-cells
+                        (tree-children t)
+                        (tree-children r)))))
 
 (tm-define (calc-table-update-table t)
   (let* ((tid (tree->string (tree-ref t 0)))
@@ -112,9 +125,10 @@
     (set! calc-rename-table (make-ahash-table))
     (for-each calc-table-rename-cell cells)
     ;;(display* "Renaming formulas\n")
-    (calc-rename-formulas t)
+    (tree-replace-cells t (calc-rename-formulas t))
     (set! calc-rename-table (make-ahash-table))
     ;;(display* "Updating cells\n")
+    (set! cells (select t '(1 :* table :* row :* cell)))
     (for-each calc-table-update-cell cells)))
 
 (tm-define (calc-table-update)
@@ -193,12 +207,6 @@
          (with l (map cell-input-encode (tree-children t))
            (tm->tree (apply tmconcat l))))
         ((tree-is? t 'cell-ref) t)
-        ((tree-is? t 'cell-range)
-         (let* ((c1 (cell-input-encode (tree-ref t 0)))
-                (c2 (cell-input-encode (tree-ref t 1)))
-                (l (cell-ref-range c1 c2))
-                (cc `(concat ,@(list-intersperse l ","))))
-           (tm->tree cc)))
         (else (tree-map-accessible-children cell-input-encode t))))
 
 (tm-define (cell-input-decode t)
@@ -209,9 +217,22 @@
         ((tree-is? t 'cell-ref) (tree-ref t 0))
         (else (tree-map-accessible-children cell-input-decode t))))
 
+(tm-define (cell-input-expand t)
+  (cond ((tree-atomic? t) t)
+        ((tree-is? t 'concat)
+         (with l (map cell-input-expand (tree-children t))
+           (tm->tree (apply tmconcat l))))
+        ((tree-is? t 'cell-range)
+         (let* ((c1 (tree-ref t 0))
+                (c2 (tree-ref t 1))
+                (l (cell-ref-range c1 c2))
+                (cc `(concat ,@(list-intersperse l ","))))
+           (tm->tree cc)))
+        (else (tree-map-accessible-children cell-input-expand t))))
+
 (tm-define (calc-get-input t)
   (:require (tree-in? t '(cell-input cell-output)))
-  (cell-input-encode (remove-equal (tree-ref t 1))))
+  (cell-input-expand (cell-input-encode (remove-equal (tree-ref t 1)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keyboard interaction
