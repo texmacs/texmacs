@@ -45,16 +45,16 @@
 
 (menu-bind graphics-resize-menu
   (group "Width")
-  ("Fast decrease" (graphics-change-extents "-1cm" "0cm"))
-  ("Slow decrease" (graphics-change-extents "-0.1cm" "0cm"))
-  ("Slow increase" (graphics-change-extents "+0.1cm" "0cm"))
-  ("Fast increase" (graphics-change-extents "+1cm" "0cm"))
+  ("Fast decrease" (graphics-decrease-hsize-fast))
+  ("Slow decrease" (graphics-decrease-hsize))
+  ("Slow increase" (graphics-increase-hsize))
+  ("Fast increase" (graphics-increase-hsize-fast))
   ---
   (group "Height")
-  ("Fast decrease" (graphics-change-extents "0cm" "-1cm"))
-  ("Slow decrease" (graphics-change-extents "0cm" "-0.1cm"))
-  ("Slow increase" (graphics-change-extents "0cm" "+0.1cm"))
-  ("Fast increase" (graphics-change-extents "0cm" "+1cm")))
+  ("Fast decrease" (graphics-decrease-vsize-fast))
+  ("Slow decrease" (graphics-decrease-vsize))
+  ("Slow increase" (graphics-increase-vsize))
+  ("Fast increase" (graphics-increase-vsize-fast)))
 
 (menu-bind graphics-frame-unit-menu
   ("1 cm" (graphics-set-unit "1cm"))
@@ -74,20 +74,20 @@
 
 (menu-bind graphics-move-menu
   (group "Slow")
-  ("Left" (graphics-move-origin "+0.01gw" "0gh"))
-  ("Right" (graphics-move-origin "-0.01gw" "0gh"))
-  ("Down" (graphics-move-origin "0gw" "+0.01gh"))
-  ("Up" (graphics-move-origin "0gw" "-0.01gh"))
+  ("Left" (graphics-move-origin-left))
+  ("Right" (graphics-move-origin-right))
+  ("Down" (graphics-move-origin-down))
+  ("Up" (graphics-move-origin-up))
   ---
   (group "Fast")
-  ("Left" (graphics-move-origin "+0.1gw" "0gh"))
-  ("Right" (graphics-move-origin "-0.1gw" "0gh"))
-  ("Down" (graphics-move-origin "0gw" "+0.1gh"))
-  ("Up" (graphics-move-origin "0gw" "-0.1gh")))
+  ("Left" (graphics-move-origin-left-fast))
+  ("Right" (graphics-move-origin-right-fast))
+  ("Down" (graphics-move-origin-down-fast))
+  ("Up" (graphics-move-origin-up-fast)))
 
 (menu-bind graphics-zoom-menu
-  ("Zoom in" (graphics-zoom 1.189207115))
-  ("Zoom out" (graphics-zoom 0.840896415))
+  ("Zoom in" (graphics-zoom-in))
+  ("Zoom out" (graphics-zoom-out))
   ---
   ("10%" (graphics-set-zoom 0.1))
   ("25%" (graphics-set-zoom 0.25))
@@ -428,7 +428,7 @@
 
 (menu-bind graphics-insert-menu
   (-> "Geometry" (link graphics-global-menu))
-  (-> "Grids" (link graphics-grids-menu))
+  (-> "Grid" (link graphics-grids-menu))
   ---
   (link graphics-mode-menu))
 

@@ -16,6 +16,8 @@
 
     <branch|Links and automatically generated content|links/man-links.en.tm>
 
+    <branch|Creating technical pictures|graphics/man-graphics.en.tm>
+
     <branch|Advanced layout features|layout/man-layout.en.tm>
 
     <branch|Editing tools|editing/man-editing-tools.en.tm>

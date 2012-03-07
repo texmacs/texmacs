@@ -59,8 +59,10 @@
 	     (load-help-article "main/math/man-math"))
 	    ("Tabular material"
 	     (load-help-article "main/table/man-table"))
-	    ("Automatically generated content"
+	    ("Automatic content generation"
 	     (load-help-article "main/links/man-links"))
+	    ("Creating technical pictures"
+	     (load-help-article "main/graphics/man-graphics"))
 	    ("Advanced layout features"
 	     (load-help-article "main/layout/man-layout"))
             ---
