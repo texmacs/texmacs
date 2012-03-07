@@ -421,6 +421,31 @@ qt_ui_element_rep::get_qmenu() {
   return (cachedAction ? cachedAction->menu() : NULL);
 }
 
+/*! Ad-hoc command to be used to simulate keypresses
+ * 
+ * \sa qt_ui_element, , qt_ui_element_rep::as_qaction
+ */
+
+class qt_key_command_rep: public command_rep {
+  string ks; 
+    
+public:
+  qt_key_command_rep(string ks_) : ks(ks_) { }
+  
+  void apply () {
+  if (N(ks)) { 
+    QTMWidget *w = qobject_cast<QTMWidget*>(qApp->focusWidget());
+      if (w && w->tm_widget()) {
+        if (DEBUG_QT) cout << "shortcut: " << ks << LF;
+        the_gui -> process_keypress (w->tm_widget(), ks, texmacs_time());
+      }
+    }
+  }
+  
+  tm_ostream& print (tm_ostream& out) { return out << "qt_key_command_rep"; }
+};
+
+
 QAction* 
 qt_ui_element_rep::as_qaction () {
   switch (type) {
@@ -543,24 +568,24 @@ qt_ui_element_rep::as_qaction () {
 #ifdef Q_WS_MAC
       if (search_forwards (" ", ks) != -1) ks= "";
 #endif
+      QTMCommand* c;
       if (N(ks) > 0) {
         string qtks = conv (ks);
         QKeySequence qks (to_qstring (qtks));
         if (DEBUG_QT)
           cout << "ks: " << ks << " " << qks.toString().toAscii().data() << "\n";
         a->setShortcut (qks);
-        QTMKeyCommand* c= new QTMKeyCommand (ks);
-        c->setParent (a);
-        // NOTE: this used to be a Qt::QueuedConnection, but the slot would not
-        // be called if in a contextual menu
-        QObject::connect (a, SIGNAL (triggered ()), c, SLOT (apply ()));
+        command key_cmd = tm_new<qt_key_command_rep>(ks);
+        c= new QTMCommand (key_cmd);
       } else {
-        QTMCommand* c= new QTMCommand (cmd);
-        c->setParent (a);
-        // NOTE: this used to be a Qt::QueuedConnection, but the slot would not
-        // be called if in a contextual menu
-        QObject::connect (a, SIGNAL (triggered ()), c, SLOT (apply ()));    
+        c= new QTMCommand (cmd);
       }
+      c->setParent (a);
+        
+      // NOTE: this used to be a Qt::QueuedConnection, but the slot would not
+      // be called if in a contextual menu
+      QObject::connect (a, SIGNAL (triggered ()), c, SLOT (apply ()));    
+  
       // FIXME: implement complete prefix handling
       a->setEnabled (ok? true: false);
       

@@ -27,7 +27,7 @@
  * Texmacs expects widgets to behave in three different ways: as embedded widgets,
  * as menus and as regular widgets, all of which are essentially different in QT. Hence
  * the need to construct the QT widgets differently on a request basis via the 4 methods
- * @as_qaction(), @get_qmenu(), @as_qlayoutmenu(), @as_qwidget
+ * @as_qaction(), @get_qmenu(), @as_qlayoutmenu(), @as_qwidget()
  */
 class qt_ui_element_rep: public qt_widget_rep {
 public:

@@ -36,18 +36,6 @@ public slots:
 };
 
 
-class QTMKeyCommand: public QObject {
-  Q_OBJECT
-  string ks;
-  
-public:
-  inline QTMKeyCommand (string _ks):
-  ks (_ks) {  }
-  
-public slots:
-  void apply();
-};
-
 class QTMLazyMenu: public QMenu {
   Q_OBJECT
   promise<widget> pm;
