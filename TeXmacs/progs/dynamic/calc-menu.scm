@@ -17,3 +17,8 @@
 (menu-bind calc-table-menu
   ("Textual spreadsheet" (make-calc-table 'textual-table))
   ("Numeric spreadsheet" (make-calc-table 'numeric-dot-table)))
+
+(menu-bind calc-insert-menu
+  ("Input field" (make-calc-inert))
+  ("Executable input field" (make-calc-input))
+  ("Field reference" (make 'calc-ref)))

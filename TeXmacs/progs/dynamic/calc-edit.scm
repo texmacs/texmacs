@@ -203,6 +203,18 @@
 ;; Keyboard interaction
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define calc-serial 0)
+
+(define (calc-auto)
+  (set! calc-serial (+ calc-serial 1))
+  (string-append "field" (number->string calc-serial)))
+
+(tm-define (make-calc-inert)
+  (insert-go-to `(calc-inert ,(calc-auto) "") '(1 0)))
+
+(tm-define (make-calc-input)
+  (insert-go-to `(calc-input ,(calc-auto) "" "") '(1 0)))
+
 (tm-define (alternate-toggle t)
   (:require (tree-is? t 'calc-output))
   (tree-assign-node t 'calc-input)
@@ -215,9 +227,9 @@
   (calc))
 
 (tm-define (kbd-enter t forwards?)
-  (:require (calc-inert-context? t))
+  (:require (and (calc-inert-context? t) (not (tree-is? t :up 'inactive))))
   (calc))
 
 (tm-define (kbd-enter t forwards?)
-  (:require (calc-toggle-context? t))
+  (:require (and (calc-toggle-context? t) (not (tree-is? t :up 'inactive))))
   (alternate-toggle t))

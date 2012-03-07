@@ -19,3 +19,9 @@
   (:require (inside? 'calc-table))
   (", ," (make 'cell-commas))
   ("+ +" (make 'cell-plusses)))
+
+(kbd-map
+  (:require (calc-ready?))
+  ("\\ \\" (make-calc-inert))
+  ("\\ !" (make-calc-input))
+  ("\\ ?" (make 'calc-ref)))

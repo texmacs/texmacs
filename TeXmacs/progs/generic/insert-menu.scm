@@ -68,7 +68,10 @@
 	  ("Explained" (make 'glossary-explain))
 	  ("Duplicate" (make 'glossary-dup))
 	  ---
-	  ("Interjection" (make 'glossary-line)))))
+	  ("Interjection" (make 'glossary-line))))
+  (if (and (style-has? "calc-dtd") (calc-ready?))
+      ---
+      (link calc-insert-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Insert images

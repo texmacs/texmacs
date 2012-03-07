@@ -24,13 +24,13 @@
       ("Small table" (make 'small-table))
       ("Big table" (make 'big-table))
       ---)
+  (if (and (style-has? "calc-dtd") (calc-ready?))
+      (link calc-table-menu)
+      ---)
   ("Plain tabular" (make 'tabular))
   ("Centered tabular" (make 'tabular*))
   ("Plain block" (make 'block))
   ("Centered block" (make 'block*))
-  (if (and (style-has? "calc-dtd") (calc-ready?))
-      ---
-      (link calc-table-menu))
   (if (and (style-has? "std-dtd") (in-math?))
       ---
       ("Matrix" (make 'matrix))
