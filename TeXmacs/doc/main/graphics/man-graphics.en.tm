@@ -17,7 +17,9 @@
   <\traverse>
     <branch|Starting a new picture|man-graphics-new.en.tm>
 
-    <branch|Inserting and editing objects|man-graphics-edit.en.tm>
+    <branch|Inserting new objects|man-graphics-insert.en.tm>
+
+    <branch|Editing objects|man-graphics-edit.en.tm>
 
     <branch|Specification of style properties|man-graphics-style.en.tm>
 
