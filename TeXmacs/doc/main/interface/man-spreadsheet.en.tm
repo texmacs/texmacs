@@ -78,59 +78,7 @@
   Similarly, automatic renumbering is used when inserting new columns or
   rows, or when removing existing columns or rows.
 
-  <TeXmacs> also allows you to use some of the spreadsheet capacities outside
-  tables. For instance, assuming that you selected a scripting language from
-  <menu|Document|Scripts>, you may insert a new <em|executable input field>
-  using <shortcut|(make-calc-input)> or <menu|Insert|Link|Executable input
-  field>. The behaviour is similar to the one of <hlink|executable
-  switches|man-scripting-language.en.tm>: when pressing <key|return>, the
-  current input is evaluated and you will see the corresponding output; you
-  may switch back to the input by pressing <key|return> once more. In
-  particular, the input does not need to be preceded by <samp|=> (as in the
-  case of spreadsheet cells).
-
-  Contrary to executable switches, you may attach an identifier to the
-  executable input field by disactivating the field or by editing the
-  <samp|Ref> field in the focus bar. Inside other executable input fields,
-  you may then refer to the value of the field by inserting a <em|field
-  reference> using <shortcut|(make 'calc-ref)> or <menu|Insert|Link|Field
-  reference>. As a variant to executable input fields, you may sometimes
-  prefer to insert plain <em|input fields> using <shortcut|(make-calc-inert)>
-  or <menu|Insert|Link|Input field>. These fields can only be used as inputs
-  and pressing <key|return> inside such a field will only recompute those
-  other fields which depend on it.
-
-  <\example>
-    The excutable input fields may for instance be nice in pedagogic
-    documents in which parts of the document may be modified and recomputed
-    by the reader. For instance, evaluation of the input fragment
-
-    <\quote-env>
-      The derivative of <with|prog-scripts|maxima|<calc-inert|function|<math|x<rsup|x>>>>
-      equals <with|prog-scripts|maxima|<calc-input|derivative|diff(<calc-ref|function>,x)|<math|x<rsup|x>*<around*|(|log
-      <around*|(|x|)>+1|)>>>>.
-
-      The second derivative is given by <with|prog-scripts|maxima|<calc-input|second|diff(<calc-ref|derivative>,x)|<math|x<rsup|x>*<around*|(|log
-      <around*|(|x|)>+1|)><rsup|2>+x<rsup|x-1>>>>.
-    </quote-env>
-
-    yields
-
-    <\quote-env>
-      The derivative of <with|prog-scripts|maxima|<calc-inert|function2|<math|x<rsup|x>>>>
-      equals <with|prog-scripts|maxima|<calc-output|derivative2|diff(<calc-ref|function2>,x)|<math|x<rsup|x>*<around*|(|log
-      <around*|(|x|)>+1|)>>>>.
-
-      The second derivative is given by <with|prog-scripts|maxima|<calc-output|second2|diff(<calc-ref|derivative2>,x)|<math|x<rsup|x>*<around*|(|log
-      <around*|(|x|)>+1|)><rsup|2>+x<rsup|x-1>>>>.
-    </quote-env>
-
-    Of course, if the reader changes the input function <math|x<rsup|x>> into
-    something else and presses <key|return>, then the first and second
-    derivatives will be updated automatically.
-  </example>
-
-  We notice that field references can also be used inside spreadsheet cells
+  We also notice that field references can be used inside spreadsheet cells
   in order to refer to some computational markup outside the table.
   Inversely, each spreadsheet also carries an invisible <samp|Ref> field
   which can be edited by deactivating the spreadsheet or from the focus bar
@@ -138,7 +86,7 @@
   spreadsheet is used as a prefix for refering to the contents of cells
   outside the table or from within other spreadsheets. For instance, if
   <samp|Ref> equals <samp|sheet>, then <samp|sheet-c4> will refer to the
-  field <samp|c4> inside the table.
+  field <samp|c4> inside the spreadsheet.
 
   <tmdoc-copyright|2012|Joris van der Hoeven>
 
