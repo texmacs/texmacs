@@ -73,19 +73,6 @@ QTMCommand::apply()  {
 }
 
 
-void 
-QTMKeyCommand::apply()  {
-  if (N(ks)) { 
-    QTMWidget *w = qobject_cast<QTMWidget*>(qApp->focusWidget());
-    if (w && w->tm_widget()) {
-      if (DEBUG_QT)
-        cout << "shortcut: " << ks << LF;
-      the_gui -> process_keypress (w->tm_widget(), ks, texmacs_time());
-    }
-  }
-}
-
-
 /*******************************************************************************
 * Default action is empty.
 *******************************************************************************/
