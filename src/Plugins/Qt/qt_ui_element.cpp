@@ -421,7 +421,6 @@ qt_ui_element_rep::get_qmenu() {
   return (cachedAction ? cachedAction->menu() : NULL);
 }
 
-
 QAction* 
 qt_ui_element_rep::as_qaction () {
   switch (type) {
@@ -552,10 +551,14 @@ qt_ui_element_rep::as_qaction () {
         a->setShortcut (qks);
         QTMKeyCommand* c= new QTMKeyCommand (ks);
         c->setParent (a);
+        // NOTE: this used to be a Qt::QueuedConnection, but the slot would not
+        // be called if in a contextual menu
         QObject::connect (a, SIGNAL (triggered ()), c, SLOT (apply ()));
       } else {
         QTMCommand* c= new QTMCommand (cmd);
         c->setParent (a);
+        // NOTE: this used to be a Qt::QueuedConnection, but the slot would not
+        // be called if in a contextual menu
         QObject::connect (a, SIGNAL (triggered ()), c, SLOT (apply ()));    
       }
       // FIXME: implement complete prefix handling
@@ -1078,7 +1081,8 @@ qt_ui_element_rep::as_qwidget () {
       command ecmd = tm_new<qt_enum_command_rep> (w, cmd);
       QTMCommand* c = new QTMCommand (ecmd);
       c->setParent (w);
-      QObject::connect (w, SIGNAL (currentIndexChanged(int)), c, SLOT (apply()), Qt::QueuedConnection);
+      // NOTE: with QueuedConnections, the slots are sometimes not invoked.
+      QObject::connect (w, SIGNAL (currentIndexChanged(int)), c, SLOT (apply()));//, Qt::QueuedConnection);
       
       return w;
     }
@@ -1109,7 +1113,7 @@ qt_ui_element_rep::as_qwidget () {
       command ecmd = tm_new<qt_choice_command_rep> (w, cmd, multiple_sel);
       QTMCommand* qcmd = new QTMCommand (ecmd);
       qcmd->setParent (w);
-      QObject::connect (w, SIGNAL (itemSelectionChanged()), qcmd, SLOT (apply()), Qt::QueuedConnection);
+      QObject::connect (w, SIGNAL (itemSelectionChanged()), qcmd, SLOT (apply()));//, Qt::QueuedConnection);
       
       return w;      
     }
@@ -1185,7 +1189,7 @@ qt_ui_element_rep::as_qwidget () {
       QWidget* qw = concrete(w)->as_qwidget();
       QTMCommand* c = new QTMCommand (cmd);
       c->setParent (qw);
-      QObject::connect (qw, SIGNAL (destroyed()), c, SLOT (apply()), Qt::QueuedConnection);
+      QObject::connect (qw, SIGNAL (destroyed()), c, SLOT (apply()));//, Qt::QueuedConnection);
       
       return qw;
     }
