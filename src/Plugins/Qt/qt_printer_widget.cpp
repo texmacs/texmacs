@@ -51,8 +51,11 @@ qt_printer_widget_rep::send (slot s, blackbox val) {
       if (open_box<bool>(val) == true)
         showDialog();
       break;
-    default:
-      qt_widget_rep::send (s, val);
+    case SLOT_REFRESH:   // ignore: this widget doesn't need refreshing.
+      break;
+    default:  // unsupported slots
+      qt_widget_rep::send (s, val);  // throws FAILED()
+      break;
   }
 }
 
