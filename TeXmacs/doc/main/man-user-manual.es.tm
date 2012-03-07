@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
@@ -16,9 +16,9 @@
 
     <branch|Enlaces y contenido generado automáticamente|links/man-links.en.tm>
 
-    <branch|Herramientas de edición|editing/man-editing-tools.es.tm>
-
     <branch|Características de esquema avanzadas|layout/man-layout.es.tm>
+
+    <branch|Herramientas de edición|editing/man-editing-tools.es.tm>
 
     <branch|Usando <TeXmacs> como una interface|interface/man-itf.es.tm>
 

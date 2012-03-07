@@ -61,20 +61,22 @@
 	     (load-help-article "main/table/man-table"))
 	    ("Automatically generated content"
 	     (load-help-article "main/links/man-links"))
-	    ("Editing tools"
-	     (load-help-article "main/editing/man-editing-tools"))
 	    ("Advanced layout features"
 	     (load-help-article "main/layout/man-layout"))
+            ---
+	    ("Editing tools"
+	     (load-help-article "main/editing/man-editing-tools"))
 	    ("Laptop presentations"
 	     (load-help-article "main/beamer/man-beamer"))
-	    ("TeXmacs plug-ins"
-	     (load-help-article "devel/plugin/plugins"))
 	    ("TeXmacs as an interface"
 	     (load-help-article "main/interface/man-itf"))
+            ---
 	    ("Writing your own style files"
 	     (load-help-article "devel/style/style"))
 	    ("Customizing TeXmacs"
-	     (load-help-article "main/scheme/man-scheme"))))
+	     (load-help-article "main/scheme/man-scheme"))
+	    ("The TeXmacs plug-in system"
+	     (load-help-article "devel/plugin/plugins"))))
   (when (url-exists-in-help? "main/man-manual.en.tm")
 	(-> "Reference guide"
 	    ("Browse" (load-help-buffer "main/man-reference"))

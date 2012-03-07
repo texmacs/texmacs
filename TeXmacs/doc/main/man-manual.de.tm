@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.2>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
@@ -17,19 +17,19 @@
     <branch|Verknüpfungen, Hyperlinks und automatisch erzeugte
     Verzeichnisse|links/man-links.de.tm>
 
+    <branch|Fortgeschrittene Layout-Eigenschaften|layout/man-layout.de.tm>
+
     <branch|Werkzeuge zum Editieren|editing/man-editing-tools.de.tm>
 
     <branch|Dokumente im Quellcode darstellen und
     editieren|../devel/source/viewdocassource.de.tm>
 
-    <branch|Fortgeschrittene Layout-Eigenschaften|layout/man-layout.de.tm>
-
-    <branch|<TeXmacs> und andere Programme
-    (Plugins)|../devel/plugin/plugins.de.tm>
-
     <branch|GNU <TeXmacs> als Schnittstelle benutzen|interface/man-itf.de.tm>
 
     <branch|So schreiben Sie ihre erste <TeXmacs>-Stil-Definition|../devel/style/style.de.tm>
+
+    <branch|<TeXmacs> und andere Programme
+    (Plug-ins)|../devel/plugin/plugins.de.tm>
 
     <branch|Referenzhandbuch für fundamentale
     <TeXmacs>-Konstrukte|../devel/format/regular/regular.de.tm>

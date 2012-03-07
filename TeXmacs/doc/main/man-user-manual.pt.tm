@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
@@ -16,15 +16,15 @@
 
     <branch|Ligações e conteúdo gerado automaticamente|links/man-links.pt.tm>
 
-    <branch|Ferramentas de edição|editing/man-editing-tools.pt.tm>
-
     <branch|Ferramentas de diagramação avançada|layout/man-layout.pt.tm>
 
-    <branch|Plugins para o <TeXmacs>|../devel/plugin/plugins.en.tm>
+    <branch|Ferramentas de edição|editing/man-editing-tools.pt.tm>
 
     <branch|Usando <TeXmacs> como uma interface |interface/man-itf.pt.tm>
 
     <branch|Arquivos de estilo <TeXmacs> |../devel/style/style.pt.tm>
+
+    <branch|Plug-ins para o <TeXmacs>|../devel/plugin/plugins.en.tm>
 
     <branch|Resumo das principais etiquetas do
     <TeXmacs>|styles/std-dtds/dtds.pt.tm>

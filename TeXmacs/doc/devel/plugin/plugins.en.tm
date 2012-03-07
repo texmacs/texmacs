@@ -1,9 +1,9 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|<TeXmacs> plug-ins>
+  <tmdoc-title|The <TeXmacs> plug-in system>
 
   There are many ways in which <TeXmacs> can be customized or extended: users
   may define their own style files, customize the user interface, or write
@@ -17,8 +17,7 @@
 
     <branch|Writing your own plug-ins|plugin-write.en.tm>
 
-    <branch|Example of a plug-in with <value|scheme>
-    code|plugin-simple.en.tm>
+    <branch|Example of a plug-in with <scheme> code|plugin-simple.en.tm>
 
     <branch|Example of a plug-in with <name|C++> code|plugin-binary.en.tm>
 
@@ -39,17 +38,5 @@
 <\initial>
   <\collection>
     <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
   </collection>
 </initial>

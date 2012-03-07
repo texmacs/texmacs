@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.6>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
@@ -16,13 +16,11 @@
 
     <branch|Links and automatically generated content|links/man-links.en.tm>
 
-    <branch|Editing tools|editing/man-editing-tools.en.tm>
-
     <branch|Advanced layout features|layout/man-layout.en.tm>
 
-    <branch|Laptop presentations|beamer/man-beamer.en.tm>
+    <branch|Editing tools|editing/man-editing-tools.en.tm>
 
-    <branch|<TeXmacs> plugins|../devel/plugin/plugins.en.tm>
+    <branch|Laptop presentations|beamer/man-beamer.en.tm>
 
     <branch|Using <TeXmacs> as an interface|interface/man-itf.en.tm>
 
@@ -30,6 +28,8 @@
     packages|../devel/style/style.en.tm>
 
     <branch|Customizing <TeXmacs>|scheme/man-scheme.en.tm>
+
+    <branch|The <TeXmacs> plug-in system|../devel/plugin/plugins.en.tm>
 
     <branch|The <TeXmacs> format|../devel/format/basics/basics.en.tm>
 
