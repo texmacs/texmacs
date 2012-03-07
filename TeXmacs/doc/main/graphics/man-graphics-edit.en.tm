@@ -28,8 +28,8 @@
     possible to remove control points (and eventually the object itself).
 
     <item*|Removing the entire object>Using the middle mouse button while
-    simultaneously pressing the shift key <key|shift> removes the entire
-    object which is currently highlighted.
+    simultaneously pressing the shift key <key|S-> removes the entire object
+    which is currently highlighted.
   </description>
 
   While editing, it should also be noticed that <TeXmacs> attempts to
