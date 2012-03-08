@@ -418,16 +418,14 @@ qt_ui_element_rep::plain_window_widget (string s, command quit)  {
   else if (li->layout())
     win->setLayout(li->layout());
   
-/*
+
   QTMCommand* qtmcmd = new QTMCommand(quit);
   qtmcmd->setParent(win);
   QObject::connect(win, SIGNAL(closed()), qtmcmd, SLOT(apply()));
 
-  return tm_new<qt_plain_window_widget_rep>(win);
- */
-  
-  // FIXME: using qt_plain_window_widget causes a crash when closing the
-  // example widget6 (in scheme)
+  // FIXME: using qt_plain_window_widget causes a crash when closing "secondary"
+  // windows. (example widget6 in menu-test.scm)
+  //return tm_new<qt_plain_window_widget_rep>(win);
   return tm_new<qt_window_widget_rep>(win, quit);
 }
 
