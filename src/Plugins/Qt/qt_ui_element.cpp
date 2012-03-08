@@ -1110,10 +1110,13 @@ qt_ui_element_rep::as_qwidget () {
       w->setEditable(value.isEmpty() || values.last().isEmpty());  // weird convention?!
       if (values.last().isEmpty())
         values.removeLast();
+      
+      w->addItems(values);
       int index = w->findText(value, Qt::MatchFixedString | Qt::MatchCaseSensitive);
       if (index != -1)
         w->setCurrentIndex(index);
       
+       w->setStyleSheet(style);
       // FIXME? we assume the size is given in chacters and a size of 0 (the 
       // empty string in the arguments) mean autoadjust
       /*
@@ -1122,8 +1125,6 @@ qt_ui_element_rep::as_qwidget () {
         w->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
       }
       */
-      w->addItems(values);
-      w->setStyleSheet(style);
       
       command ecmd = tm_new<qt_enum_command_rep> (w, cmd);
       QTMCommand* c = new QTMCommand (ecmd);
