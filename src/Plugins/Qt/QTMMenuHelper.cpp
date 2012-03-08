@@ -13,7 +13,7 @@
 
 #include "qt_gui.hpp"
 #include "qt_utilities.hpp"
-#include "object.hpp"
+#include "Scheme/object.hpp"
 
 
 //////////////////////////////// QTMCommand ////////////////////////////////////
