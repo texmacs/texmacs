@@ -23,6 +23,32 @@
 #include "qt_gui.hpp"
 #include "qt_basic_widgets.hpp"
 
+
+/*! Handles TeXmacs commands in the QT way.
+ *
+ * Most TeXmacs widgets accept one command_rep as an argument. This is a scheme
+ * closure which will usually  be executed when the widget is closed, in the
+ * case of dialogs, or activated in the case of checkboxes, combo boxes, etc.
+ * This means connecting them to signals emmitted by our QWidgets and that's the
+ * purpose of this wrapping class. Furthermore, this commands must be processed
+ * in a separate queue. The slot apply() takes care of that.
+ *
+ * To use this class, one typically takes some given command "cmd" and does the
+ * following:
+ 
+    QTMCommand* qtmcmd = new QTMCommand(cmd);
+    theQWidget->setParent(qtmcmd);
+    QObject::connect(theQWidget, SIGNAL(somethingHappened()), qtmcmd, SLOT(apply()));
+ 
+ * Since the slot in this class accepts no arguments, commands which require
+ * access to the QWidget must be subclassed from command_rep to accept the
+ * particular QWidget as a parameter. Then their invocation (which apply() will
+ * call) must access it.
+ *
+ * An alternative would be to subclass QTMCommand to add slots accepting arguments
+ * but making sure that the underlying command_rep is properly sent to the mentioned
+ * queue.
+ */
 class QTMCommand: public QObject {
   Q_OBJECT
   command cmd;
@@ -36,6 +62,9 @@ public slots:
 };
 
 
+/*!
+ *
+ */
 class QTMLazyMenu: public QMenu {
   Q_OBJECT
   promise<widget> pm;
@@ -50,7 +79,7 @@ public slots:
   void force();
 };
 
-// this custom action frees its menu if it does not already have an owner.
+/*! This custom action frees its menu if it does not already have an owner. */
 class QTMAction : public QAction {
   Q_OBJECT
   
@@ -69,9 +98,7 @@ struct QLineEdit;
 class QTMInputTextWidgetHelper : public QObject {
   Q_OBJECT
 
-  widget p_wid; 
-  // we keep reference to the texmacs widget
-  // which is always a qt_input_text_widget_rep
+  widget p_wid; /*!< A reference to the tm widget, always a qt_input_text_widget_rep */
 
   bool done;
   

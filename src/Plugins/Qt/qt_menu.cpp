@@ -67,11 +67,6 @@ QTMAction::doRefresh() {
 }
 
 
-void 
-QTMCommand::apply()  {
-  if (!is_nil(cmd)) { the_gui->process_command(cmd); }
-}
-
 
 /*******************************************************************************
 * Default action is empty.
@@ -200,31 +195,5 @@ simple_widget_rep::as_qaction () {
   QIcon icon (pxm);
   a->setIcon (icon);
   return a;
-}
-
-void
-rerootActions (QWidget* dest, QWidget* src) {
-  QList<QAction *> list = dest->actions();
-  while (!list.isEmpty()) {
-    QAction* a= list.takeFirst();
-    dest->removeAction (a);
-    //    delete a;
-    a->deleteLater();
-  }
-  list = src->actions();
-  while (!list.isEmpty()) {
-    QAction* a= list.takeFirst();
-    dest->addAction (a);
-    a->setParent (dest);
-  }
-}
-
-void
-QTMLazyMenu::force () {
-  if (DEBUG_QT)  
-    cout << "Force lazy menu" << LF;
-  widget w= pm ();
-  QMenu *menu2 = concrete(w)->get_qmenu();
-  rerootActions (this, menu2);
 }
 
