@@ -349,35 +349,47 @@ qt_ui_element_rep::popup_window_widget (string s)  {
 
 
 
-
-class qt_plain_widget_rep: public qt_view_widget_rep {
-  
+/*! Models the simplest top-level window possible
+ *
+ * When any simple TeXmacs widgets needs promotion into a TeXmacs window, we
+ * encapsulate it into a qt_plain_window_widget. This class handles the necessary
+ * slots, in particular all those already handled by qt_view_widget_rep. It also
+ * marks the enclosed QWidget as a "texmacs_window_widget" using QObject::setProperty().
+ * This will be checked by qt_view_widget_rep::read()'s SLOT_WINDOW.
+ */
+class qt_plain_window_widget_rep: public qt_view_widget_rep {
+  // QWidget* view;   // inherited
 public:
-  qt_plain_widget_rep (QWidget *v) : qt_view_widget_rep(v) {};
-  ~qt_plain_widget_rep () {};
+
+  qt_plain_window_widget_rep (QWidget* w) : qt_view_widget_rep(w) {
+    ASSERT(w != NULL, "Null QWidgets cannot be promoted to windows");
+    w->setProperty ("texmacs_window_widget", QVariant::fromValue ((void*) this));
+  };
+  ~qt_plain_window_widget_rep () {};
   
   virtual void send (slot s, blackbox val);
-//  virtual blackbox query (slot s, int type_id);
-//  virtual widget read (slot s, blackbox index);
-//  virtual void write (slot s, blackbox index, widget w);
-//  virtual void notify (slot s, blackbox new_val);
-  
- // virtual widget plain_window_widget (string s);
- // void set_current_renderer(basic_renderer _r) { current_renderer = _r;  }
- // basic_renderer get_current_renderer() {  return current_renderer; }
- // virtual QWidget* as_qwidget () { return view ; };
-  
 };
 
 
 void
-qt_plain_widget_rep::send (slot s, blackbox val) {
+qt_plain_window_widget_rep::send (slot s, blackbox val) {
   if (DEBUG_QT)
     cout << "qt_plain_widget_rep::send " << slot_name(s) << LF;
   switch (s) {
     case SLOT_POSITION:
-      ASSERT (type_box (val) == type_helper<coord2>::id, "type mismatch");
-      NOT_IMPLEMENTED;
+    {
+      TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
+      coord2 p= open_box<coord2> (val);
+      if (view) {
+        QPoint pt = to_qpoint (p);
+        pt.ry() += 40;
+        // to avoid window under menu bar on MAC when moving at (0,0)
+        if (DEBUG_QT) 
+          cout << "Moving to (" << pt.x() << "," 
+          << pt.y() << ")" << LF;
+        view->move (pt);
+      }
+    }
       break;
     case SLOT_VISIBILITY:
     {   
@@ -397,20 +409,26 @@ qt_plain_widget_rep::send (slot s, blackbox val) {
 
 widget 
 qt_ui_element_rep::plain_window_widget (string s, command quit)  {
-  //cout << "plain_window_widget " << ui_type_string[type] << LF;
-  QLayoutItem *li = as_qlayoutitem();
-  QTMPlainWindow* w = new QTMPlainWindow();
+  QLayoutItem *li     = as_qlayoutitem();
+  QTMPlainWindow* win = new QTMPlainWindow();
+  win->setWindowTitle (to_qstring (s));  
+  
   if (li->widget()) 
-    w->layout()->addItem(li);
+    win->layout()->addItem(li);
   else if (li->layout())
-    w->setLayout(li->layout());
+    win->setLayout(li->layout());
+  
+/*
+  QTMCommand* qtmcmd = new QTMCommand(quit);
+  qtmcmd->setParent(win);
+  QObject::connect(win, SIGNAL(closed()), qtmcmd, SLOT(apply()));
 
-  QTMCommand* qcmd = new QTMCommand(quit);
-  QObject::connect(w, SIGNAL(closed()), qcmd, SLOT(apply()));
-                   
-  w->setWindowTitle (to_qstring (s));
-  return tm_new<qt_plain_widget_rep>(w);
-//  concrete(make_popup_widget())->plain_window_widget(s);
+  return tm_new<qt_plain_window_widget_rep>(win);
+ */
+  
+  // FIXME: using qt_plain_window_widget causes a crash when closing the
+  // example widget6 (in scheme)
+  return tm_new<qt_window_widget_rep>(win, quit);
 }
 
 QMenu *
@@ -420,6 +438,7 @@ qt_ui_element_rep::get_qmenu() {
   }
   return (cachedAction ? cachedAction->menu() : NULL);
 }
+
 
 /*! Ad-hoc command to be used to simulate keypresses
  * 
@@ -1091,7 +1110,10 @@ qt_ui_element_rep::as_qwidget () {
       w->setEditable(value.isEmpty() || values.last().isEmpty());  // weird convention?!
       if (values.last().isEmpty())
         values.removeLast();
-
+      int index = w->findText(value, Qt::MatchFixedString | Qt::MatchCaseSensitive);
+      if (index != -1)
+        w->setCurrentIndex(index);
+      
       // FIXME? we assume the size is given in chacters and a size of 0 (the 
       // empty string in the arguments) mean autoadjust
       /*
@@ -1107,7 +1129,7 @@ qt_ui_element_rep::as_qwidget () {
       QTMCommand* c = new QTMCommand (ecmd);
       c->setParent (w);
       // NOTE: with QueuedConnections, the slots are sometimes not invoked.
-      QObject::connect (w, SIGNAL (currentIndexChanged(int)), c, SLOT (apply()));//, Qt::QueuedConnection);
+      QObject::connect (w, SIGNAL (currentIndexChanged(int)), c, SLOT (apply()));
       
       return w;
     }
