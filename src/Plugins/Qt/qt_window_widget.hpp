@@ -17,8 +17,8 @@
 class QWidget;
 
 
-/**
- * TODO: description.
+/*! Wrapper for QTMWindow, TeXmacs' QMainWindow.
+ *
  */
 class qt_window_widget_rep: public widget_rep {
 public:

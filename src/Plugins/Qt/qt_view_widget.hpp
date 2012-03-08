@@ -19,7 +19,7 @@
 class QWidget;
 
 /*!
- * 
+ * \sa qt_plain_window_widget_rep
  */
 class qt_view_widget_rep: public qt_widget_rep {
 public:
@@ -31,19 +31,10 @@ public:
   ~qt_view_widget_rep ();
   
   virtual void send (slot s, blackbox val);
-    // send a message val to the slot s
   virtual blackbox query (slot s, int type_id);
-    // obtain information of a given type from the slot s
   virtual widget read (slot s, blackbox index);
-    // abstract read access (of type s) of a subwidget at position index
   virtual void write (slot s, blackbox index, widget w);
-    // abstract write access (of type s) of a subwidget at position index
   virtual void notify (slot s, blackbox new_val);
-    // notification of a change on a slot s which contains a state variable
-  //virtual void connect (slot s, widget w2, slot s2);
-    // connect a state slot s to another slot s2 of another widget w2
-  //virtual void deconnect (slot s, widget w2, slot s2);
-    // deconnect a state slot s from another slot s2 of another widget w2
   
   virtual widget plain_window_widget (string s, command q);
   void set_current_renderer(basic_renderer _r) { current_renderer = _r;  }

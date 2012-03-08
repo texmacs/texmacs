@@ -143,7 +143,7 @@ qt_glue_widget_rep::as_qwidget() {
 
 // Window widgets creating functions
 
-/*! Creates a decorated window.
+/*! Creates a decorated window using the given widget.
  * The window will have name s, contents w and perform command q upon closing.
  */
 widget

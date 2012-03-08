@@ -60,6 +60,23 @@ qt_printer_widget_rep::send (slot s, blackbox val) {
 }
 
 
+
+/*! Return the widget as a top-level window to the eyes of TeXmacs. */
+widget
+qt_printer_widget_rep::plain_window_widget (string s, command q)
+{
+  // Identify ourselves as already being a top-level window, even though
+  // the dialog won't be displayed until later.
+  //view->setProperty ("texmacs_window_widget",
+  //                 QVariant::fromValue ((void*) this));
+  (void) s;
+  commandAfterExecution = q;
+
+  return this;
+}
+
+
+
 /*!
  * Shows the printer dialog. The native ones have more options than we can 
  * handle so we don't use them.

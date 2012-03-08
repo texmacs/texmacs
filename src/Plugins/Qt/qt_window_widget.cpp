@@ -24,6 +24,7 @@ widget_rep(), wid(_wid), quit(q)
 {
   wid->setProperty ("texmacs_window_widget",
                     QVariant::fromValue ((void*) this));
+  (void) q;
   nr_windows++;
 }
 

@@ -168,6 +168,10 @@ qt_chooser_widget_rep::write (slot s, blackbox index, widget w) {
 widget
 qt_chooser_widget_rep::plain_window_widget (string s, command q)
 {
+  // Identify ourselves as already being a top-level window, even though
+  // the dialog won't be displayed until later.
+  //view->setProperty ("texmacs_window_widget",
+  //                 QVariant::fromValue ((void*) this));
   win_title = s;
   quit = q;       // (NOT USED)
   return this;
