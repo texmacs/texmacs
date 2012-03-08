@@ -85,11 +85,15 @@
 
       \ \ \ \ \ \ \ \ \ \ (toggle (display* "Second " answer "\\n") #f))))))
     <|unfolded-io>
-      ((guile-user) (guile-user))
+      ((guile-user) (kernel gui menu-test))
     </unfolded-io>
 
     <\input|Scheme] >
       (top-window widget1 "A bigger window")
+    </input>
+
+    <\input|Scheme] >
+      \;
     </input>
   </session>
 
@@ -153,58 +157,63 @@
   <scm|form-> :
 
   <\session|scheme|default>
-    <\unfolded-io|Scheme] >
+    <\folded-io|Scheme] >
       (tm-widget (form3 cmd)
 
-      \ \ (form "Test"
+      \ \ (resize "500px" "500px"
 
-      \ \ \ \ (centered
+      \ \ \ \ (padded
 
-      \ \ \ \ \ \ (aligned
+      \ \ \ \ \ \ (form "Test"
 
-      \ \ \ \ \ \ \ \ (item (text "Input:")
+      \ \ \ \ \ \ \ \ (aligned
 
-      \ \ \ \ \ \ \ \ \ \ (form-input "fieldname1" "string" '("one" "two"
-      "three") "1w"))
+      \ \ \ \ \ \ \ \ \ \ (item (text "Input:")
 
-      \ \ \ \ \ \ \ \ (item (text "Enum:")
+      \ \ \ \ \ \ \ \ \ \ \ \ (form-input "fieldname1" "string" '("one")
+      "1w"))
 
-      \ \ \ \ \ \ \ \ \ \ (form-enum "fieldname2" '("one" "two" "three")
+      \ \ \ \ \ \ \ \ \ \ (item === ===)
+
+      \ \ \ \ \ \ \ \ \ \ (item (text "Enum:")
+
+      \ \ \ \ \ \ \ \ \ \ \ \ (form-enum "fieldname2" '("one" "two" "three")
       "two" "1w"))
 
-      \ \ \ \ \ \ \ \ (item (text "Choice")
+      \ \ \ \ \ \ \ \ \ \ (item === ===)
 
-      \ \ \ \ \ \ \ \ \ \ (form-choice "fieldname3" '("one" "two" "three")
-      "one"))
+      \ \ \ \ \ \ \ \ \ \ (item (text "Choice:")
 
-      \ \ \ \ \ \ \ \ (item (text "Choices")
+      \ \ \ \ \ \ \ \ \ \ \ \ (form-choice "fieldname3" '("one" "two"
+      "three") "one"))
 
-      \ \ \ \ \ \ \ \ \ \ (form-choices "fieldname4"\ 
+      \ \ \ \ \ \ \ \ \ \ (item === ===)
 
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ '("one" "two" "three")\ 
+      \ \ \ \ \ \ \ \ \ \ (item (text "Choices:")
 
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ '("one" "two"))))
+      \ \ \ \ \ \ \ \ \ \ \ \ (form-choices "fieldname4"\ 
 
-      \ \ \ \ \ \ (bottom-buttons
+      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ '("one" "two"
+      "three")\ 
 
-      \ \ \ \ \ \ \ \ ("Cancel" (cmd "cancel")) \<gtr\>\<gtr\>
+      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ '("one" "two"))))
 
-      \ \ \ \ \ \ \ \ ("Ok"
+      \ \ \ \ \ \ \ \ (bottom-buttons
 
-      \ \ \ \ \ \ \ \ \ (display* (form-fields) " -\<gtr\> " (form-values)
-      "\\n")
+      \ \ \ \ \ \ \ \ \ \ ("Cancel" (cmd "cancel")) \<gtr\>\<gtr\>
 
-      \ \ \ \ \ \ \ \ \ (cmd "ok"))))))
-    <|unfolded-io>
+      \ \ \ \ \ \ \ \ \ \ ("Ok"
+
+      \ \ \ \ \ \ \ \ \ \ \ (display* (form-fields) " -\<gtr\> "
+      (form-values) "\\n")
+
+      \ \ \ \ \ \ \ \ \ \ \ (cmd "ok")))))))
+    <|folded-io>
       ((guile-user) (guile-user))
-    </unfolded-io>
+    </folded-io>
 
     <\input|Scheme] >
       (dialogue-window form3 (lambda (x) (display* x "\\n")) "Test of form3")
-    </input>
-
-    <\input|Scheme] >
-      \;
     </input>
   </session>
 

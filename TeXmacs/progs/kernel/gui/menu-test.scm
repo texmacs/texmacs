@@ -173,24 +173,28 @@
   (bottom-buttons >> ("Ok" (cmd "Ok"))))
 
 (tm-widget (form3 cmd)
-  (form "Test"
-    (centered
-      (aligned
-        (item (text "Input:")
-          (form-input "fieldname1" "string" '("one" "two" "three") "1w"))
-        (item (text "Enum:")
-          (form-enum "fieldname2" '("one" "two" "three") "two" "1w"))
-        (item (text "Choice")
-          (form-choice "fieldname3" '("one" "two" "three") "one"))
-        (item (text "Choices")
-          (form-choices "fieldname4" 
-                        '("one" "two" "three") 
-                        '("one" "two"))))
-      (bottom-buttons
-        ("Cancel" (cmd "cancel")) >>
-        ("Ok"
-         (display* (form-fields) " -> " (form-values) "\n")
-         (cmd "ok"))))))
+  (resize "500px" "500px"
+    (padded
+      (form "Test"
+        (aligned
+          (item (text "Input:")
+            (form-input "fieldname1" "string" '("one") "1w"))
+          (item === ===)
+          (item (text "Enum:")
+            (form-enum "fieldname2" '("one" "two" "three") "two" "1w"))
+          (item === ===)
+          (item (text "Choice:")
+            (form-choice "fieldname3" '("one" "two" "three") "one"))
+          (item === ===)
+          (item (text "Choices:")
+            (form-choices "fieldname4" 
+                          '("one" "two" "three") 
+                          '("one" "two"))))
+        (bottom-buttons
+          ("Cancel" (cmd "cancel")) >>
+          ("Ok"
+           (display* (form-fields) " -> " (form-values) "\n")
+           (cmd "ok")))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Font selector
