@@ -127,7 +127,7 @@
 (define graphics-keys
   '("+" "-" "1" "2" "3" "4" "5" "6" "7" "8" "9"
     "left" "right" "down" "up" "home" "end" "pageup" "pagedown"
-    "backspace" "delete"))
+    "backspace" "delete" "tab"))
 
 (tm-define (keyboard-press key time)
   (:mode in-active-graphics?)
