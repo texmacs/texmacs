@@ -367,6 +367,7 @@ edit_cursor_rep::go_to_here () {
 void
 edit_cursor_rep::go_to (path p) {
   if (rp <= p) {
+    //if (tp != p) cout << "Go to " << p << "\n";
     tp= p;
     mv_status= DIRECT;
     if (!has_changed (THE_TREE+THE_ENVIRONMENT)) {

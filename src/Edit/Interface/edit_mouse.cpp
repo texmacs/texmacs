@@ -346,7 +346,11 @@ detect_right_drag (void* handle, string type, SI x, SI y, time_t t, SI d) {
 void
 edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
   //cout << "Mouse any " << type << ", " << x << ", " << y << "; " << mods << ", " << t << "\n";
-  last_x= x; last_y= y;
+  if (t < last_t && (last_x != 0 || last_y != 0 || last_t != 0)) {
+    //cout << "Ignored " << type << ", " << x << ", " << y << "; " << mods << ", " << t << "\n";
+    return;
+  }
+  last_x= x; last_y= y; last_t= t;
   bool move_like=
     (type == "move" || type == "dragging-left" || type == "dragging-right");
   if ((!move_like) || (is_attached (this) && !check_event (MOTION_EVENT)))
@@ -411,10 +415,12 @@ call_mouse_event (string kind, SI x, SI y, SI m, time_t t) {
 
 static void
 delayed_call_mouse_event (string kind, SI x, SI y, SI m, time_t t) {
+  // NOTE: interestingly, the (:idle 1) is not necessary for the Qt port
+  // but is required for appropriate updating when using the X11 port
   string cmd=
-    "(delayed (mouse-event " * scm_quote (kind) * " " *
+    "(delayed (:idle 1) (mouse-event " * scm_quote (kind) * " " *
     as_string (x) * " " * as_string (y) * " " *
-    as_string (m) * " " * as_string (((double) t)) * "))";
+    as_string (m) * " " * as_string ((long int) t) * "))";
   eval (cmd);
 }
 
@@ -425,7 +431,7 @@ edit_interface_rep::handle_mouse (string kind, SI x, SI y, int m, time_t t) {
   x *= sfactor;
   y *= sfactor;
   //cout << kind << " (" << x << ", " << y << "; " << m << ")"
-  //<< " at " << t << "\n";
+  //     << " at " << t << "\n";
 
   string rew= kind;
   rew= detect_left_drag ((void*) this, rew, x, y, t, 5 * PIXEL * sfactor);

@@ -517,6 +517,9 @@
                     (cons (cAr p0) layer-of-last-removed-object)
                     (cAr p0))
                 #f))
+      (when (list-starts? (cursor-path) p0)
+        (with-innermost t 'graphics
+          (tree-go-to t 0 :start)))
       (tree-remove (path->tree (cDr p0)) (cAr p0) 1))))
 
 (tm-define (graphics-assign p t)

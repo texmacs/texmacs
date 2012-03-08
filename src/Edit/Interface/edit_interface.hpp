@@ -48,6 +48,7 @@ protected:
 
 protected:
   SI            last_x, last_y;
+  time_t        last_t;
   SI            start_x, start_y;
   SI            end_x, end_y;
   bool          made_selection;
