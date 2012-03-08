@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.12>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
@@ -647,6 +647,54 @@
 
         <item>Shortcut for circulating among homoglyphs.
       </with>
+    </itemize>
+  </description>
+
+  <section|Universal spreadsheet>
+
+  <name|Rationale:> We started to incorporate a ``universal spreadsheet''
+  facility into <TeXmacs>. The idea is that all dependencies between the
+  cells in the sheet are analyzed by <TeXmacs>, but all actual computations
+  are delegated to an extern system of your choice, like one of the currently
+  supported computer algebra systems. Also, the data of the spreadsheet will
+  not necessarily be formatted in a rectangular table; one can also imagine
+  dependencies between nodes of a tree, elements of a graph, or anything
+  else.
+
+  <\description>
+    <item*|Implementation and dependencies>
+
+    <\itemize>
+      <item>It would be better to use links for dependencies between cells
+      instead of going through the entire document at each re-evaluation, as
+      well as links to auxiliary cache for storing the last computed values.
+      This can for instance be done by defining an environment variable with
+      the ID of the current cell and adding a link to this ID for any
+      <markup|calc-ref> or <markup|cell-ref> inside the cell.
+
+      <item>Implementation of the possibility to associate an alternative
+      name to a cell.
+
+      <item>Possibility to send all inputs at once to the plug-in instead of
+      evaluating them one by one, so as to speed up computations.
+
+      <item>How to deal with errors?
+    </itemize>
+
+    <item*|Interface>
+
+    <\itemize>
+      <item>The focus bar should be adapted. Inside a spreadsheet, the
+      facilities for editing tables should still be available and we should
+      be able to edit the input fields for <markup|cell-output> tags (at
+      least when the input is a string).
+
+      <item>Possibilitity to apply operations to subtable selections. For
+      instance, when selecting part of a column and applying ``sum'', the sum
+      of the column should be computed at the bottom of the selection.
+      Similarly, applying a unary operation such as ``sin'' might apply the
+      operation to each cell in the selection and put the result right next
+      to it.
     </itemize>
   </description>
 

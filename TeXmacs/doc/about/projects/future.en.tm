@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.12>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
@@ -76,16 +76,6 @@
     the <name|Texinfo> format, which is the standard documentation format for
     the GNU project.
   </itemize>
-
-  <section|A universal spreadsheet>
-
-  We would like to incorporate a ``universal spreadsheet'' facility into
-  <TeXmacs>. The idea is that all dependencies between the cells in the sheet
-  are analyzed by <TeXmacs>, but all actual computations are delegated to an
-  extern system of your choice, like one of the currently supported computer
-  algebra systems. Also, the data of the spreadsheet will not necessarily be
-  formatted in a rectangular table; one can also imagine dependencies between
-  nodes of a tree, elements of a graph, or anything else.
 
   <section|Technical pictures>
 
