@@ -81,7 +81,7 @@
 
   <assign|tmweb-help-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|General|help>|<tmweb-link|FAQ|faq>|<tmweb-link|Tutorials|tutorial>|<tmweb-link|Manual|manual>|<tmweb-link|Articles|articles>>>>>
 
-  <assign|tmweb-contribute-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Contribute|contribute>|<tmweb-link|Team|team>|<tmweb-link|Documentation|documentation>|<tmweb-link|Translations|translations>|<tmweb-link|Extensions|plugins>|<tmweb-link|Donations|donations>>>>>
+  <assign|tmweb-contribute-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Contributing|contribute>|<tmweb-link|Team|team>|<tmweb-link|Documentation|documentation>|<tmweb-link|Translations|translations>|<tmweb-link|Extensions|plugins>|<tmweb-link|Donations|donations>>>>>
 
   <assign|tmweb-plugin-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|All|plugins>|<tmweb-link|Mathematics|cas>|<tmweb-link|Numerics|numerics>|<tmweb-link|Statistics|statistics>|<tmweb-link|Physics|physics>|<tmweb-link|Graphics|graphics>|<tmweb-link|Tools|tools>>>>>
 
