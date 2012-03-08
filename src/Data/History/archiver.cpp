@@ -67,9 +67,12 @@ archiver_rep::show_all () {
   cout << HRULE << archive << LF << HRULE << LF;
 }
 
+////extern tree the_et;
+
 void
 archive_announce (archiver_rep* arch, modification mod) {
   //cout << "Archive " << mod << "\n";
+  ////stretched_print (the_et, true);
   if (DEBUG_HISTORY) cout << "Archive " << mod << "\n";
   ASSERT (arch->rp <= mod->p, "invalid modification");
   if (!arch->versioning) {
@@ -373,6 +376,8 @@ archiver_rep::simplify () {
     {
       patch p1= car (get_undo (archive));
       patch p2= car (get_undo (cdr (get_undo (archive))));
+      ////show_all ();
+      ////stretched_print (the_et, true);
       //cout << "p1= " << p1 << "\n";
       //cout << "p2= " << p2 << "\n";
       bool r= join (p1, p2, the_et);
@@ -534,6 +539,11 @@ archiver_rep::mark_start (double m) {
 void
 archiver_rep::mark_end (double m) {
   //cout << "Mark end " << m << "\n";
+  if (active ()) {
+    if (does_modify (current))
+      cout << "CONFIRM: " << current << "\n";
+    confirm ();
+  }
   archive= remove_marker (archive, m);
   depth--;
   simplify ();

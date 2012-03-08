@@ -685,3 +685,22 @@ remove_set_cursor (patch p) {
   }
   return p;
 }
+
+bool
+does_modify (patch p) {
+  switch (get_type (p)) {
+  case PATCH_MODIFICATION:
+    return get_modification (p)->k != MOD_SET_CURSOR;
+  case PATCH_COMPOUND:
+  case PATCH_BRANCH:
+    for (int i=0; i<N(p); i++)
+      if (does_modify (p[i]))
+        return true;
+    return false;
+  case PATCH_BIRTH:
+  case PATCH_AUTHOR:
+    return false;
+  default:
+    return true;
+  }
+}

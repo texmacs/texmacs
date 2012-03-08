@@ -107,5 +107,6 @@ bool commute (patch p1, patch p2);
 bool swap (patch& p1, patch& p2);
 bool join (patch& p1, patch p2, tree t);
 patch remove_set_cursor (patch p);
+bool does_modify (patch p);
 
 #endif // defined PATCH_H
