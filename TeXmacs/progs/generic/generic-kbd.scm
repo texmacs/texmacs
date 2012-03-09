@@ -405,6 +405,9 @@
   ;;("std S-tab" (previous-tab))
   ;;("std +" (zoom-in))
   ;;("std -" (zoom-out))
+
+  ("search std f" (search-next))      ;; added for convenience
+  ("search std F" (search-previous))  ;; added for convenience
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
