@@ -47,8 +47,10 @@ glue_widget_rep::operator tree () {
 void
 glue_widget_rep::handle_get_size (get_size_event ev) {
   if (ev->mode==0) {
-    if (!hflag) ev->w= minw;
-    if (!vflag) ev->h= minh;
+    ev->w= minw;
+    ev->h= minh;
+    //if (!hflag) ev->w= minw;
+    //if (!vflag) ev->h= minh;
   }
   if (ev->mode==-1) {
     ev->w= minw;

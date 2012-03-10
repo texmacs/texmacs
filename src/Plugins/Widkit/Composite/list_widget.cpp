@@ -60,7 +60,7 @@ horizontal_list_rep::handle_get_size (get_size_event ev) {
     h= min (h, hh);
     ww= w; hh= h;
     this << get_size (ww, hh, -1);
-    w= max (w, ww);
+    w= ww; //max (w, ww);
     h= hh;
   }
   else {
@@ -153,15 +153,15 @@ vertical_list_rep::handle_get_size (get_size_event ev) {
   SI& h= ev->h;
 
   if (menu_flag) {
-      int i;
-      SI m1=0, m2=0, c1=0, c2=0;
-      for (i=0; i<N(a); i++) {
-	a[i] << get_coord2 ("extra width", c1, c2);
-	m1= max (m1, c1); m2= max (m2, c2);
-      }
-      for (i=0; i<N(a); i++)
-	a[i] << set_coord2 ("extra width", m1, m2);
+    int i;
+    SI m1=0, m2=0, c1=0, c2=0;
+    for (i=0; i<N(a); i++) {
+      a[i] << get_coord2 ("extra width", c1, c2);
+      m1= max (m1, c1); m2= max (m2, c2);
     }
+    for (i=0; i<N(a); i++)
+      a[i] << set_coord2 ("extra width", m1, m2);
+  }
 
   if (ev->mode==0) {
     SI ww= w, hh= h;
@@ -171,7 +171,7 @@ vertical_list_rep::handle_get_size (get_size_event ev) {
     ww= w; hh= h;
     this << get_size (ww, hh, -1);
     w= ww;
-    h= max (h, hh);
+    h= hh; //max (h, hh);
   }
   else {
     int i, ww=0, hh=0;

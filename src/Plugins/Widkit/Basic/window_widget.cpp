@@ -54,7 +54,7 @@ wk_widget
 plain_window_widget (wk_widget wid, string s, command quit) {
   SI W, H;
   gui_root_extents (W, H);
-  SI min_w= 0, min_h= 0, def_w= H, def_h= H, max_w= H, max_h= H;
+  SI min_w= 0, min_h= 0, def_w= W, def_h= H, max_w= W, max_h= H;
   wid << get_size (min_w, min_h, -1);
   wid << get_size (def_w, def_h, 0);
   wid << get_size (max_w, max_h, 1);
@@ -68,7 +68,7 @@ wk_widget
 popup_window_widget (wk_widget wid, string s) {
   SI W, H;
   gui_root_extents (W, H);
-  SI min_w= 0, min_h= 0, def_w= H, def_h= H, max_w= H, max_h= H;
+  SI min_w= 0, min_h= 0, def_w= W, def_h= H, max_w= W, max_h= H;
   wid << get_size (min_w, min_h, -1);
   wid << get_size (def_w, def_h, 0);
   wid << get_size (max_w, max_h, 1);
