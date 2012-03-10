@@ -49,6 +49,7 @@ cp -r -f $GUILE_LOAD_PATH $RPM_BUILD_ROOT%{_datadir}/TeXmacs/progs
 chmod -f 644 $RPM_BUILD_ROOT%{_datadir}/TeXmacs/progs/ice-9/*
 chmod -f 755 $RPM_BUILD_ROOT%{_datadir}/TeXmacs/progs/ice-9
 mkdir -p $RPM_BUILD_ROOT/etc/X11/applnk/Applications
+mkdir -p $RPM_BUILD_ROOT/usr/share/applications
 mkdir -p $RPM_BUILD_ROOT/usr/share/application-registry
 mkdir -p $RPM_BUILD_ROOT/usr/share/mime-info
 mkdir -p $RPM_BUILD_ROOT/usr/share/mime
@@ -60,13 +61,14 @@ mkdir -p $RPM_BUILD_ROOT/usr/share/icons/gnome/scalable
 mkdir -p $RPM_BUILD_ROOT/usr/share/icons/gnome/scalable/apps
 mkdir -p $RPM_BUILD_ROOT/usr/share/icons/gnome/scalable/mimetypes
 cp -f $RPM_BUILD_ROOT%{_datadir}/TeXmacs/misc/mime/texmacs.desktop $RPM_BUILD_ROOT/etc/X11/applnk/Applications
+cp -f $RPM_BUILD_ROOT%{_datadir}/TeXmacs/misc/mime/texmacs.desktop $RPM_BUILD_ROOT/usr/share/applications
 cp -f $RPM_BUILD_ROOT%{_datadir}/TeXmacs/misc/mime/texmacs.applications $RPM_BUILD_ROOT/usr/share/application-registry
-cp $RPM_BUILD_ROOT%{_datadir}/TeXmacs/misc/mime/texmacs.keys $RPM_BUILD_ROOT/usr/share/mime-info
-cp $RPM_BUILD_ROOT%{_datadir}/TeXmacs/misc/mime/texmacs.mime $RPM_BUILD_ROOT/usr/share/mime-info
-cp $RPM_BUILD_ROOT%{_datadir}/TeXmacs/misc/mime/texmacs.xml $RPM_BUILD_ROOT/usr/share/mime/packages
-cp $RPM_BUILD_ROOT%{_datadir}/TeXmacs/misc/pixmaps/TeXmacs.xpm $RPM_BUILD_ROOT/usr/share/pixmaps
-cp $RPM_BUILD_ROOT%{_datadir}/TeXmacs/misc/images/TeXmacs.svg $RPM_BUILD_ROOT/usr/share/icons/gnome/scalable/apps
-cp $RPM_BUILD_ROOT%{_datadir}/TeXmacs/misc/images/text-texmacs.svg $RPM_BUILD_ROOT/usr/share/icons/gnome/scalable/mimetypes
+cp -f $RPM_BUILD_ROOT%{_datadir}/TeXmacs/misc/mime/texmacs.keys $RPM_BUILD_ROOT/usr/share/mime-info
+cp -f $RPM_BUILD_ROOT%{_datadir}/TeXmacs/misc/mime/texmacs.mime $RPM_BUILD_ROOT/usr/share/mime-info
+cp -f $RPM_BUILD_ROOT%{_datadir}/TeXmacs/misc/mime/texmacs.xml $RPM_BUILD_ROOT/usr/share/mime/packages
+cp -f $RPM_BUILD_ROOT%{_datadir}/TeXmacs/misc/pixmaps/TeXmacs.xpm $RPM_BUILD_ROOT/usr/share/pixmaps
+cp -f $RPM_BUILD_ROOT%{_datadir}/TeXmacs/misc/images/TeXmacs.svg $RPM_BUILD_ROOT/usr/share/icons/gnome/scalable/apps
+cp -f $RPM_BUILD_ROOT%{_datadir}/TeXmacs/misc/images/text-texmacs.svg $RPM_BUILD_ROOT/usr/share/icons/gnome/scalable/mimetypes
 
 %files
 %{_bindir}/fig2ps
@@ -76,6 +78,7 @@ cp $RPM_BUILD_ROOT%{_datadir}/TeXmacs/misc/images/text-texmacs.svg $RPM_BUILD_RO
 %{_libexecdir}/TeXmacs
 %{_datadir}/TeXmacs
 /etc/X11/applnk/Applications/texmacs.desktop
+/usr/share/applications/texmacs.desktop
 /usr/share/application-registry/texmacs.applications
 /usr/share/mime-info/texmacs.keys
 /usr/share/mime-info/texmacs.mime
@@ -88,6 +91,9 @@ cp $RPM_BUILD_ROOT%{_datadir}/TeXmacs/misc/images/text-texmacs.svg $RPM_BUILD_RO
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+
+* Sun Mar 10 2012   Joris van der Hoeven <vdhoeven@texmacs.org>
+- 1.0.7.14 Updated mimetype support
 
 * Sun Aug 18 2011   Joris van der Hoeven <vdhoeven@texmacs.org>
 - 1.0.7.11 Remove dependency on TeTeX and add dependency on Qt
