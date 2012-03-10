@@ -166,6 +166,30 @@ INSTALL:
 	$(RM) -r $(DESTDIR)$(tmdata)/plugins/*/bin
 	$(RM) -r $(DESTDIR)$(tmdata)/plugins/*/lib
 	@echo installed TeXmacs plugins data in $(DESTDIR)$(tmdata)/plugins
+	$(MKDIR) $(DESTDIR)$(datadir)/applications
+	$(CP) $(tmdir)/misc/mime/texmacs.desktop \
+	$(DESTDIR)$(datadir)/applications
+	$(MKDIR) $(DESTDIR)$(datadir)/application-registry
+	$(CP) $(tmdir)/misc/mime/texmacs.applications \
+	$(DESTDIR)$(datadir)/application-registry
+	$(MKDIR) $(DESTDIR)$(datadir)/mime-info
+	$(CP) $(tmdir)/misc/mime/texmacs.keys $(DESTDIR)$(datadir)/mime-info
+	$(CP) $(tmdir)/misc/mime/texmacs.mime $(DESTDIR)$(datadir)/mime-info
+	$(MKDIR) $(DESTDIR)$(datadir)/mime
+	$(MKDIR) $(DESTDIR)$(datadir)/mime/packages
+	$(CP) $(tmdir)/misc/mime/texmacs.xml $(DESTDIR)$(datadir)/mime/packages
+	$(MKDIR) $(DESTDIR)$(datadir)/pixmaps
+	$(CP) $(tmdir)/misc/pixmaps/TeXmacs.xpm $(DESTDIR)$(datadir)/pixmaps
+	$(MKDIR) $(DESTDIR)$(datadir)/icons
+	$(MKDIR) $(DESTDIR)$(datadir)/icons/gnome
+	$(MKDIR) $(DESTDIR)$(datadir)/icons/gnome/scalable
+	$(MKDIR) $(DESTDIR)$(datadir)/icons/gnome/scalable/apps
+	$(CP) $(tmdir)/misc/images/TeXmacs.svg \
+	$(DESTDIR)$(datadir)/icons/gnome/scalable/apps
+	$(MKDIR) $(DESTDIR)$(datadir)/icons/gnome/scalable/mimetypes
+	$(CP) $(tmdir)/misc/images/text-texmacs.svg \
+	$(DESTDIR)$(datadir)/icons/gnome/scalable/mimetypes
+	@echo installed TeXmacs mime info in $(DESTDIR)$(datadir)
 	$(MKDIR) $(DESTDIR)$(bindir)
 	$(CHMOD) 755 $(tmdir)/bin/*
 	$(CP) $(tmdir)/bin/fig2ps $(DESTDIR)$(bindir)
@@ -192,6 +216,15 @@ UNINSTALL:
 	@echo removed TeXmacs executables from $(tmbin)
 	$(RM) -r $(tmdata)
 	@echo removed TeXmacs data from $(tmdata)
+	$(RM) $(datadir)/applications/texmacs.desktop
+	$(RM) $(datadir)/application-registry/texmacs.applications
+	$(RM) $(datadir)/mime-info/texmacs.keys
+	$(RM) $(datadir)/mime-info/texmacs.mime
+	$(RM) $(datadir)/mime/packages/texmacs.xml
+	$(RM) $(datadir)/pixmaps/TeXmacs.xpm
+	$(RM) $(datadir)/icons/gnome/scalable/apps/TeXmacs.svg
+	$(RM) $(datadir)/icons/gnome/scalable/mimetypes/text-texmacs.svg
+	@echo removed TeXmacs mime info from $(datadir)
 	$(RM) $(includedir)/TeXmacs.h
 	@echo removed TeXmacs include files from $(includedir)
 	$(RM) $(bindir)/fig2ps
