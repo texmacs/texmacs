@@ -368,15 +368,15 @@ tm_data_rep::auto_save () {
       url name= buf->name;
       tree vname= verbatim (as_string (name));
       if (!is_scratch (name))
-	name= glue (buf->name, rescue_mode? "#": "~");
+        name= glue (buf->name, rescue_mode? "#": "~");
       if (N(buf->vws)!=0) {
-	tree doc= make_document (buf->vws[0]);
+        tree doc= make_document (buf->vws[0]);
         bool err= save_string (name, tree_to_texmacs (doc));
         if (!rescue_mode) {
           if (!err)
             call ("set-temporary-message",
                   "saved " * as_string (name), "save TeXmacs file", 2500);
-	  else
+          else
             set_message (concat ("Error: ", vname, " did not open"),
                          "save TeXmacs file");
         }
