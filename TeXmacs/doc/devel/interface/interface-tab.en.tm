@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.10>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
@@ -10,9 +10,9 @@
   customize this behaviour, so as to complete built-in commands. In order to
   do this, you have to specify the configuration option
 
-  <\scheme-fragment>
+  <\scm-code>
     (:tab-completion #t)
-  </scheme-fragment>
+  </scm-code>
 
   in your <verbatim|init-<em|myplugin>.scm> file, so that <TeXmacs> will send
   special tab-completion requests to your application whenever you press
@@ -36,8 +36,9 @@
 
   <\quotation>
     <\framed-fragment>
-      <verbatim|<render-key|DATA_BEGIN>scheme:(tuple <em|root> <em|completion-1>
-      ><with|mode|math|\<cdots\>><verbatim| <em|completion-n>)><render-key|DATA_END>
+      <verbatim|<render-key|DATA_BEGIN>scheme:(tuple <em|root>
+      <em|completion-1> ><math|\<cdots\>><verbatim|
+      <em|completion-n>)><render-key|DATA_END>
     </framed-fragment>
   </quotation>
 
@@ -77,7 +78,7 @@
   The startup banner in <verbatim|complete.cpp> takes care of part of the
   configuration:
 
-  <\cpp-fragment>
+  <\cpp-code>
     cout \<less\>\<less\> DATA_BEGIN \<less\>\<less\> "verbatim:";
 
     format_plugin ();
@@ -87,11 +88,11 @@
     cout \<less\>\<less\> DATA_END;
 
     fflush (stdout);
-  </cpp-fragment>
+  </cpp-code>
 
-  Here <cpp-code|format_plugin> is given by
+  Here <cpp|format_plugin> is given by
 
-  <\cpp-fragment>
+  <\cpp-code>
     void
 
     format_plugin () {
@@ -108,11 +109,11 @@
     \ \ cout \<less\>\<less\> DATA_END;
 
     }
-  </cpp-fragment>
+  </cpp-code>
 
   In the main loop, we first deal with regular input:
 
-  <\cpp-fragment>
+  <\cpp-code>
     char buffer[100];
 
     cin.getline (buffer, 100, '\\n');
@@ -126,12 +127,12 @@
     \ \ cout \<less\>\<less\> DATA_END;
 
     }
-  </cpp-fragment>
+  </cpp-code>
 
   We next treat the case when a tab-completion command is sent to the
   application:
 
-  <\cpp-fragment>
+  <\cpp-code>
     else {
 
     \ \ cout \<less\>\<less\> DATA_BEGIN \<less\>\<less\> "scheme:";
@@ -143,8 +144,8 @@
 
     }
 
-    fflush (stdout);
-  </cpp-fragment>
+    cout.flush ();
+  </cpp-code>
 
   As you notice, the actual command is ignored, so our example is really very
   rudimentary.

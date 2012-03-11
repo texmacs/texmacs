@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
@@ -40,7 +40,7 @@
 
   The routine for displaying the next prompt is given by
 
-  <\cpp-fragment>
+  <\cpp-code>
     void
 
     next_input () {
@@ -55,11 +55,11 @@
     \ \ cout \<less\>\<less\> DATA_END;
 
     }
-  </cpp-fragment>
+  </cpp-code>
 
   This routine is both used for displaying the startup banner
 
-  <\cpp-fragment>
+  <\cpp-code>
     cout \<less\>\<less\> DATA_BEGIN \<less\>\<less\> "verbatim:";
 
     cout \<less\>\<less\> "A LaTeX -\<gtr\> TeXmacs converter";
@@ -68,12 +68,12 @@
 
     cout \<less\>\<less\> DATA_END;
 
-    fflush (stdout);
-  </cpp-fragment>
+    cout.flush ();
+  </cpp-code>
 
   and in the body of the main loop
 
-  <\cpp-fragment>
+  <\cpp-code>
     char buffer[100];
 
     cin.getline (buffer, 100, '\\n');
@@ -91,8 +91,8 @@
 
     cout \<less\>\<less\> DATA_END;
 
-    fflush (stdout);
-  </cpp-fragment>
+    cout.flush ();
+  </cpp-code>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
@@ -107,17 +107,5 @@
 <\initial>
   <\collection>
     <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
   </collection>
 </initial>

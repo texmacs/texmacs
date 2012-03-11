@@ -1,12 +1,12 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|Formatted and structured output>
 
-  In the <hyper-link|previous section|interface-pipes.en.tm>, we have seen
-  that output from applications is encapsulated in blocks of the form
+  In the <hlink|previous section|interface-pipes.en.tm>, we have seen that
+  output from applications is encapsulated in blocks of the form
 
   <\quotation>
     <framed-fragment|<verbatim|<render-key|DATA_BEGIN><em|format>:<em|message><render-key|DATA_END>>>
@@ -16,7 +16,7 @@
   same form. Currently implemented formats include <verbatim|verbatim>,
   <verbatim|latex>, <verbatim|html>, <verbatim|ps>, <verbatim|scheme>. The
   <verbatim|scheme> format is used for sending <TeXmacs> trees in the form of
-  <value|scheme> expressions.
+  <scheme> expressions.
 
   <paragraph*|The <verbatim|formula> plug-in>
 
@@ -33,7 +33,7 @@
 
   The body of the main loop of <verbatim|formula.cpp> is given by
 
-  <\cpp-fragment>
+  <\cpp-code>
     int i, nr;
 
     cin \<gtr\>\<gtr\> nr;
@@ -50,8 +50,8 @@
 
     cout \<less\>\<less\> DATA_END;
 
-    fflush (stdout);
-  </cpp-fragment>
+    cout.flush ();
+  </cpp-code>
 
   Similarly, the use of nested output blocks is demonstrated by the
   <verbatim|nested> plug-in; see in particular the source file
@@ -72,14 +72,13 @@
       \ \ \ \ a \\* (b + c)
     </verbatim>
 
-    (<abbr|i.e.> <with|mode|math|a> multiplied by <with|mode|math|b+c>) and
+    (<abbr|i.e.> <math|a> multiplied by <math|b+c>) and
 
     <\verbatim>
       \ \ \ \ f(x + y)
     </verbatim>
 
-    (<abbr|i.e.> <with|mode|math|f> applied to <with|mode|math|x+y>).
-    Similarly, in
+    (<abbr|i.e.> <math|f> applied to <math|x+y>). Similarly, in
 
     <\verbatim>
       \ \ \ \ \\sum_{i=1}^m a_i \\bignone + \\sum_{j=1}^n b_j \\bignone
@@ -119,13 +118,13 @@
   for <markup|foo>:
 
   <\tm-fragment>
-    <inactive*|<with|mode|math|<assign|foo|<macro|x|<frac|1|1+<arg|x>>>>>>
+    <inactive*|<math|<assign|foo|<macro|x|<frac|1|1+<arg|x>>>>>>
   </tm-fragment>
 
   The <markup|foo> tag is used in the following way in the body of the main
   loop of <verbatim|markup.cpp>:
 
-  <\cpp-fragment>
+  <\cpp-code>
     char buffer[100];
 
     cin.getline (buffer, 100, '\\n');
@@ -137,8 +136,8 @@
 
     cout \<less\>\<less\> DATA_END;
 
-    fflush (stdout);
-  </cpp-fragment>
+    cout.flush ();
+  </cpp-code>
 
   Notice that the style package <tmpackage|markup.ts> also defines the
   <markup|markup-output> environment:

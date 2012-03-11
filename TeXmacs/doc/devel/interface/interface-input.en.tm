@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.10>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
@@ -14,9 +14,9 @@
   There are two methods to customize the way input is sent to your
   application. First of all, the configuration option
 
-  <\scheme-fragment>
+  <\scm-code>
     (:serializer ,<em|routine>)
-  </scheme-fragment>
+  </scm-code>
 
   specifies a scheme function for converting <TeXmacs> trees to string input
   for your application, thereby overriding the default method. This method
@@ -27,14 +27,14 @@
   way to customize input: it forces you to write a complete input
   transformation function. In many circumstances, the user really wants to
   rewrite two dimensional mathematical input to a more standard form, like
-  rewriting <no-break><with|mode|math|<frac|a|b>> to <verbatim|((a)/(b))>.
-  Therefore, a second way for customizing the input is to use the command
+  rewriting <no-break><math|<frac|a|b>> to <verbatim|((a)/(b))>. Therefore, a
+  second way for customizing the input is to use the command
 
-  <\scheme-fragment>
+  <\scm-code>
     \ (plugin-input-converters <em|myplugin>
 
     \ \ \ <em|rules>)
-  </scheme-fragment>
+  </scm-code>
 
   This command specifies input conversion rules for <verbatim|<em|myplugin>>
   for ``mathematical input'' and reasonable defaults are provided by
@@ -46,27 +46,26 @@
     Given two strings <verbatim|<em|symbol>> and <verbatim|<em|conversion>>,
     the rule
 
-    <\scheme-fragment>
+    <\scm-code>
       (<verbatim|<em|symbol>> <verbatim|<em|conversion>>)
-    </scheme-fragment>
+    </scm-code>
 
     specifies that the <TeXmacs> symbol <verbatim|<em|symbol>> should be
     converted to <verbatim|<em|conversion>>.
 
     <item*|Tag transformation rules>
 
-    Given a symbol <verbatim|<em|tag>> and a <value|scheme> function
+    Given a symbol <verbatim|<em|tag>> and a <scheme> function
     <verbatim|<em|routine>>, the rule
 
-    <\scheme-fragment>
+    <\scm-code>
       (<em|tag> <em|routine>)
-    </scheme-fragment>
+    </scm-code>
 
     specifies that <verbatim|<em|routine>> will be used as the conversion
     routine for <verbatim|<em|tag>>. This routine should just write a string
-    to the standard output. The <value|scheme> function
-    <scheme-code|plugin-input> may be used for the recursive transformation
-    of the arguments of the tag.
+    to the standard output. The <scheme> function <scm|plugin-input> may be
+    used for the recursive transformation of the arguments of the tag.
   </description>
 
   <paragraph*|The <verbatim|input> plug-in>
@@ -86,10 +85,9 @@
     \ \ \ \ <example-plugin-link|input/src/input.cpp>
   </verbatim>
 
-  The <value|scheme> configuration code in <verbatim|init-input.scm> is given
-  by
+  The <scheme> configuration code in <verbatim|init-input.scm> is given by
 
-  <\scheme-fragment>
+  <\scm-code>
     (plugin-configure input
 
     \ \ (:require (url-exists-in-path? "input.bin"))
@@ -99,24 +97,24 @@
     \ \ (:launch "input.bin")
 
     \ \ (:session "Input"))
-  </scheme-fragment>
+  </scm-code>
 
   Here <verbatim|input-initialize> is an initialization routine which adds
   the new input conversion rules in a lazy way:
 
-  <\scheme-fragment>
+  <\scm-code>
     (define (input-initialize)
 
     \ \ (import-from (texmacs plugin plugin-convert))
 
     \ \ (lazy-input-converter (input-input) input))
-  </scheme-fragment>
+  </scm-code>
 
   In other words, the module <verbatim|input-input.scm> will only be loaded
   when we explicitly request to make a conversion. The conversion rules in
   <verbatim|input-input.scm> are given by
 
-  <\scheme-fragment>
+  <\scm-code>
     (plugin-input-converters input
 
     \ \ (frac input-input-frac)
@@ -126,14 +124,13 @@
     \ \ ("\<less\>vee\<gtr\>" "\|\|")
 
     \ \ ("\<less\>wedge\<gtr\>" "&&"))
-  </scheme-fragment>
+  </scm-code>
 
-  This will cause <with|mode|math|\<vee\>> and <with|mode|math|\<wedge\>> to
-  be rewritten as <verbatim|\|\|> and <verbatim|&&> respectively. Fractions
-  <with|mode|math|<frac|a|b>> are rewritten as <verbatim|((a):(b))> using the
-  routine
+  This will cause <math|\<vee\>> and <math|\<wedge\>> to be rewritten as
+  <verbatim|\|\|> and <verbatim|&&> respectively. Fractions <math|<frac|a|b>>
+  are rewritten as <verbatim|((a):(b))> using the routine
 
-  <\scheme-fragment>
+  <\scm-code>
     (define (input-input-frac t)
 
     \ \ (display "((")
@@ -145,7 +142,7 @@
     \ \ (plugin-input (cadr t))
 
     \ \ (display "))"))
-  </scheme-fragment>
+  </scm-code>
 
   In the additional style file <verbatim|input.ts> we also defined some
   additional markup <markup|special>:
@@ -157,7 +154,7 @@
 
   This tag is rewritten using the special conversion rule
 
-  <\scheme-fragment>
+  <\scm-code>
     (define (input-input-special t)
 
     \ \ (display "[[[SPECIAL:")
@@ -165,12 +162,12 @@
     \ \ (plugin-input (car t))
 
     \ \ (display "]]]"))
-  </scheme-fragment>
+  </scm-code>
 
-  As to the <value|cpp> code in <verbatim|input.cpp>, the startup banner
+  As to the <c++> code in <verbatim|input.cpp>, the startup banner
   automatically puts the shell session in mathematical input mode:
 
-  <\cpp-fragment>
+  <\cpp-code>
     cout \<less\>\<less\> DATA_BEGIN \<less\>\<less\> "verbatim:";
 
     cout \<less\>\<less\> DATA_BEGIN \<less\>\<less\>
@@ -182,12 +179,12 @@
 
     cout \<less\>\<less\> DATA_END;
 
-    fflush (stdout);
-  </cpp-fragment>
+    cout.flush ();
+  </cpp-code>
 
   In the main loop, we content ourselves the reproduce the input as output:
 
-  <\cpp-fragment>
+  <\cpp-code>
     char buffer[100];
 
     cin.getline (buffer, 100, '\\n');
@@ -198,8 +195,8 @@
 
     cout \<less\>\<less\> DATA_END;
 
-    fflush (stdout);
-  </cpp-fragment>
+    cout.flush ();
+  </cpp-code>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 

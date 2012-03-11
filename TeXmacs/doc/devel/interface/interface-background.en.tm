@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.1>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
@@ -7,15 +7,15 @@
 
   Until now, we have always considered interfaces between <TeXmacs> and
   applications which are intended to be used interactively in shell sessions.
-  But there also exists a <value|scheme> command
+  But there also exists a <scheme> command
 
-  <\scheme-fragment>
+  <\scm-code>
     (plugin-eval <em|plugin> <em|session> <em|expression>)
-  </scheme-fragment>
+  </scm-code>
 
   for evaluating an expression using the application. Here
   <verbatim|<em|plugin>> is the name of the plug-in, <verbatim|<em|session>>
-  the name of the session and <verbatim|<em|expression>> a <value|scheme>
+  the name of the session and <verbatim|<em|expression>> a <scheme>
   expression which represents a <TeXmacs> tree.
 
   <paragraph*|The <verbatim|substitute> plug-in>
@@ -24,8 +24,9 @@
   feature which allows the user to select an expression and replace it by its
   evaluation. For instance, the <verbatim|substitute> plug-in converts
   mathematical <LaTeX> expressions into <TeXmacs>, and it provides the
-  <shortcut|(substitute-substitute)> keyboard shortcut for replacing a selected text by its
-  conversion. The plug-in consists of the following files
+  <shortcut|(substitute-substitute)> keyboard shortcut for replacing a
+  selected text by its conversion. The plug-in consists of the following
+  files
 
   <\verbatim>
     \ \ \ \ <example-plugin-link|substitute/Makefile>
@@ -37,7 +38,7 @@
 
   The main evaluation loop of <verbatim|substitute.cpp> simply consists of
 
-  <\cpp-fragment>
+  <\cpp-code>
     char buffer[100];
 
     cin.getline (buffer, 100, '\\n');
@@ -49,13 +50,13 @@
 
     cout \<less\>\<less\> DATA_END;
 
-    fflush (stdout);
-  </cpp-fragment>
+    cout.flush ();
+  </cpp-code>
 
   Moreover, the configuration file <verbatim|init-substitute.scm> contains
   the following code for replacing a selected region by its evaluation
 
-  <\scheme-fragment>
+  <\scm-code>
     (define (substitute-substitute)
 
     \ \ (import-from (texmacs plugin plugin-cmd))
@@ -69,15 +70,15 @@
     \ \ \ \ \ \ \ \ (clipboard-cut "primary")
 
     \ \ \ \ \ \ \ \ (insert (stree-\<gtr\>tree u)))))
-  </scheme-fragment>
+  </scm-code>
 
   as well as the keyboard shortcut for <shortcut|(substitute-substitute)>:
 
-  <\scheme-fragment>
+  <\scm-code>
     (kbd-map
 
     \ \ ("C-F12" (substitute-substitute)))
-  </scheme-fragment>
+  </scm-code>
 
   Notice that these routines should really be defined in a separate module
   for larger plug-ins.
@@ -102,9 +103,9 @@
   Just as <verbatim|substitute.cpp> above, the main program
   <verbatim|secure.cpp> just converts mathematical <LaTeX> expressions to
   <TeXmacs>. The <verbatim|secure-secure.scm> module contains the <em|secure>
-  <value|scheme> routine <verbatim|latexer>:
+  <scheme> routine <verbatim|latexer>:
 
-  <\scheme-fragment>
+  <\scm-code>
     (tm-define (latexer s)
 
     \ \ (:type (tree -\<gtr\> object))
@@ -114,7 +115,7 @@
     \ \ (:secure #t)
 
     \ \ (plugin-eval "secure" "default" (tree-\<gtr\>string s)))
-  </scheme-fragment>
+  </scm-code>
 
   It is important to define <verbatim|latexer> as being secure, so that it
   can be used in order to define additional markup using the <markup|extern>

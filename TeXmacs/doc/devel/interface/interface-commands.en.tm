@@ -51,7 +51,7 @@
 
     cout \<less\>\<less\> DATA_END;
 
-    fflush (stdout);
+    cout.flush ();
   </cpp-code>
 
   The <scheme> macro <scm|menus-add> is defined in <verbatim|init-menus.scm>:
