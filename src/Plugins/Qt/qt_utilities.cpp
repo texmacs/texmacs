@@ -29,6 +29,8 @@
 #include "converter.hpp"
 #include "language.hpp"
 
+#include "qt_gui.hpp"    // gui_maximal_extents()
+
 #ifdef USE_GS
 #include "Ghostscript/gs_utilities.hpp"
 #endif
@@ -59,7 +61,7 @@ to_qsize (const coord2 & p) {
 }
 
 
-// TODO
+// TODO: really? is this ever going to be used?
 QString
 to_qstylesheet(int style) {
   QString sheet("* {");
@@ -82,6 +84,45 @@ to_qstylesheet(int style) {
 
   sheet += "}";
   return sheet;
+}
+
+
+/*! Try to convert a TeXmacs lenght (em, px, w, h) in a QSize.
+ *
+ * Uses the widget current size to compute relative sizes as specified with "1w"
+ * Should not affect the widget size in that particular case.
+ * FIXME: probably everything.
+ */
+QSize
+qt_decode_length (string width, QWidget* qwid) {
+  QSize size;
+  if (qwid)
+    size= qwid->minimumSizeHint();
+  else 
+    gui_maximal_extents (size.rwidth(), size.rheight());
+  
+  if (ends (width, "w") && is_double (width (0, N(width) - 1))) {
+    double x= as_double (width (0, N(width) - 1));
+    size.rwidth() *= x;
+  }
+  else if (ends (width, "h") && is_double (width (0, N(width) - 1))) {
+    double y= as_double (width (0, N(width) - 1));
+    size.rheight() *= y;
+  }
+  else if (ends (width, "em") && is_double (width (0, N(width) - 2))) {
+    double x= as_double (width (0, N(width) - 2));
+    if (qwid) {
+      size.setWidth(x * qwid->fontInfo().pointSize()); 
+    } else {
+      QFontInfo info = QFontInfo(QApplication::font());
+      size.setWidth(x * info.pointSize());
+    }
+  }
+  else if (ends (width, "px") && is_double (width (0, N(width) - 2))) {
+    double x= as_double (width (0, N(width) - 2));
+    size.setWidth(x);
+  }
+  return size;
 }
 
 coord4

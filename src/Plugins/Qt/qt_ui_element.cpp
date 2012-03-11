@@ -727,16 +727,16 @@ qt_ui_element_rep::as_qlayoutitem () {
       return l;
     }
       break;
-      
+
+    // a menu rendered as a table of 'cols' columns wide & made up of widgets in
+    // the array 'a'
     case tile_menu: 
     {
       typedef pair<array<widget>, int> T;
       T x = open_box<T>(load);
       array<widget> a = x.x1;
       int cols = x.x2;
-      
-      // a menu rendered as a table of cols columns wide & made up of widgets in a
-      
+            
       QGridLayout* l= new QGridLayout ();
       l->setSizeConstraint (QLayout::SetFixedSize);
       l->setHorizontalSpacing (2);
@@ -753,7 +753,8 @@ qt_ui_element_rep::as_qlayoutitem () {
     }
       break;
 
-    case aligned_widget: 
+    //  a table with two columns
+    case aligned_widget:       
     {
       typedef quartet<SI, SI, SI, SI> T1;
       typedef triple<array<widget>, array<widget>, T1 > T;
@@ -761,22 +762,23 @@ qt_ui_element_rep::as_qlayoutitem () {
       array<widget> lhs = x.x1;
       array<widget> rhs = x.x2;
       T1 y = x.x3;
-      SI hsep = y.x1; SI vsep = y.x2; SI lpad = y.x3; SI rpad = y.x4; 
+
+      // FIXME: lpad and rpad ignored.
+      SI hsep = y.x1; SI vsep = y.x2; SI lpad = y.x3; SI rpad = y.x4;
+      
       if (N(lhs) != N(rhs)) FAILED("aligned_widget: N(lhs) != N(rhs) ");
 
-      //  a table with two columns
-      
       QGridLayout* l= new QGridLayout ();
       l->setSizeConstraint (QLayout::SetFixedSize);
-      l->setHorizontalSpacing (2);
-      l->setVerticalSpacing (2);
+      l->setHorizontalSpacing (hsep/PIXEL); // HACK: PIXEL=256 ?!?!? 
+      l->setVerticalSpacing (vsep/PIXEL);
       l->setContentsMargins (4, 0, 4, 0);
       for (int i=0; i < N(lhs); i++) {
         QLayoutItem *lli = concrete(lhs[i])->as_qlayoutitem();
         QLayoutItem *rli = concrete(rhs[i])->as_qlayoutitem();
-        if(lli) l->addItem(lli, i, 0);
+        if (lli) l->addItem(lli, i, 0, 1, 1, Qt::AlignRight);
         //else FAILED("aligned_widget: null layout");
-        if (rli) l->addItem(rli, i, 1);
+        if (rli) l->addItem(rli, i, 1, 1, 1, Qt::AlignLeft);
         //else FAILED("aligned_widget: null layout");
       }
       return l;
@@ -1084,7 +1086,8 @@ qt_ui_element_rep::as_qwidget () {
       T x = open_box<T>(load);
       command cmd = x.x1;
       bool check  = x.x2;
-      QString style = to_qstylesheet(x.x3);
+      QString style = to_qstylesheet(x.x3);  // not used (yet)?
+      
       QCheckBox* w  = new QCheckBox (NULL);  
       w->setCheckState(check ? Qt::Checked : Qt::Unchecked);
       w->setStyleSheet(style);
@@ -1104,9 +1107,8 @@ qt_ui_element_rep::as_qwidget () {
       command cmd        = x.x1;
       QStringList values = to_qstringlist(x.x2);
       QString value      = to_qstring(x.x3);
-      QString style      = to_qstylesheet(x.x4);
-      //SI width           = decode_length(x.x5);  // see below
-      
+      QString style      = to_qstylesheet(x.x4);   // not used (yet?)
+            
       QComboBox* w = new QComboBox(NULL);
       w->setEditable(value.isEmpty() || values.last().isEmpty());  // weird convention?!
       if (values.last().isEmpty())
@@ -1116,16 +1118,13 @@ qt_ui_element_rep::as_qwidget () {
       int index = w->findText(value, Qt::MatchFixedString | Qt::MatchCaseSensitive);
       if (index != -1)
         w->setCurrentIndex(index);
-      
-       w->setStyleSheet(style);
-      // FIXME? we assume the size is given in chacters and a size of 0 (the 
-      // empty string in the arguments) mean autoadjust
-      /*
-      if(width != 0) {  
-        w->setMinimumContentsLength(width);
-        w->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
-      }
-      */
+   
+      // The QComboBox must be already filled to calculate relative widths
+      QSize size= qt_decode_length(x.x5, w);
+      w->setMinimumSize(size);
+      // QComboBox::AdjustToContentsOnFirstShow would fix the size. Better?
+      w->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+      w->setStyleSheet(style);
       
       command ecmd = tm_new<qt_enum_command_rep> (w, cmd);
       QTMCommand* c = new QTMCommand (ecmd);
@@ -1250,32 +1249,7 @@ qt_ui_element_rep::as_qwidget () {
   
   return NULL;
 }
-/*
-SI
-decode_length (string width, wk_widget wid, int style) {
-  SI ex, ey;
-  if (wid->win == NULL) gui_maximal_extents (ex, ey);
-  else wid->win->get_size (ex, ey);
-  if (ends (width, "w") && is_double (width (0, N(width) - 1))) {
-    double x= as_double (width (0, N(width) - 1));
-    return (SI) (x * ex);
-  }
-  else if (ends (width, "h") && is_double (width (0, N(width) - 1))) {
-    double y= as_double (width (0, N(width) - 1));
-    return (SI) (y * ey);
-  }
-  else if (ends (width, "em") && is_double (width (0, N(width) - 2))) {
-    font fn= get_default_styled_font (style);
-    double x= as_double (width (0, N(width) - 2));
-    return (SI) ((x * fn->wquad) / SHRINK);
-  }
-  else if (ends (width, "px") && is_double (width (0, N(width) - 2))) {
-    double x= as_double (width (0, N(width) - 2));
-    return (SI) (x * PIXEL);
-  }
-  else return ex;
-}
-*/
+
 
 /******************************************************************************
 * Widgets for the construction of menus and dialogs

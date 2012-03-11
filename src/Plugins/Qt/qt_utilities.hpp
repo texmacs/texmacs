@@ -33,6 +33,7 @@ coord4 from_qrect (const QRect & rect);
 coord2 from_qpoint (const QPoint & pt);
 coord2 from_qsize (const QSize & s);
 QString to_qstylesheet(int style);
+QSize qt_decode_length (string width, QWidget* qwid);
 
 QStringList to_qstringlist(array<string> l);
 array<string> from_qstringlist(const QStringList& l);
