@@ -322,6 +322,7 @@ edit_main_rep::print_snippet (url name, tree t) {
 void
 edit_main_rep::footer_eval (string s) {
   // s= unslash (s); // FIXME: dirty fix; should not be necessary
+  s= tm_decode (s);
   string r= object_to_string (eval (s));
   set_message (verbatim (r), "evaluate expression");
 }
