@@ -3,21 +3,25 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|The Python plugin>
+  \;
 
-  <\traverse>
-    \;
+  <tmdoc-title|Limitations>
 
-    <branch|Abstract|python-abstract.en.tm>
+  <\itemize>
+    <item>In the <name|Qt> version of <TeXmacs> the postscript file is not
+    presented properly, and crops most of the figure. The X version properly
+    displays the figure.
 
-    <branch|How to use this plugin|python-instructions.en.tm>
+    <item>The figures produced by the plugin are small. This can be fixed by
+    manually resizing the image.
 
-    <branch|Simple Example|python-demo.en.tm>
+    <item>TODO: We should display the <name|Python> version in the terminal.
 
-    <branch|Limitations|python-limitations.en.tm>
-  </traverse>
+    <item>TODO: Need to test the <verbatim|ps_out> function for things other
+    than outputing files.
+  </itemize>
 
-  <tmdoc-copyright|2004|Ero Carrera|Adrián Soto>\ 
+  <tmdoc-copyright|2004|Adrián Soto>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

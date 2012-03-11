@@ -1,21 +1,26 @@
 #!/usr/bin/env python
-#
-# Ero Carrera (c) 2004
-# ero@dkbza.org
-#
-# Distributed under GPL.
+#####################################################################
+##
+## MODULE      : tm_python.scm
+## DESCRIPTION : Initialize python plugin
+## COPYRIGHT   : (C) 2004  Ero Carrera, ero@dkbza.org
+##               (C) 2012  Adrian Soto
+## This software falls under the GNU general public license version 3 or later.
+## It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+## in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 
 import os
 import traceback
 import keyword
 import re
 import string
-
-__version__='0.8.1'
-__author__='Ero Carrera'
-
+DATA_BEGIN = chr(2)
+DATA_END = chr(5)
 DATA_ESCAPE = chr(27)
 DATA_COMMAND = chr(16)
+
+__version__='1.0'
+__author__='Ero Carrera, Adrian Soto'
 
 class Capture:
 	"""Capture python output.
@@ -31,6 +36,7 @@ class Capture:
 	def getOutput(self):
 		return self.text
 	def flush(self):
+		os.sys.stdout.flush()#Needed?
 		self.text = ''
 
 def data_begin():
@@ -50,6 +56,7 @@ def texmacs_out(out_str):
 	data_begin()
 	os.sys.stdout.write(out_str)
 	data_end()
+	os.sys.stdout.flush()
 
 def ps_out(ps_file):
 	"""Outputs Postscript within TeXmacs.
@@ -92,7 +99,6 @@ def ps_out(ps_file):
 				break
 		else:
 			raise IOError('File \''+ps_file+'+'+str(ext_list)+'\' not found.')
-
 	return chr(2)+'ps:'+data+chr(5)
 
 def compose_output(data):
@@ -214,31 +220,18 @@ def complete(cmd, my_globals):
 			pos = offset
 		res += '"%s" ' % c[pos:]
 	return 'scheme:(tuple "'+cmpl_str+'" '+res+')'
-		
-texmacs_out("""verbatim:Welcome to Python
-TeXmacs Python interface version """+__version__+""". """+__author__+""" (c) 2004
-http://dkbza.org/tmPython.html""")
+
+##FIXME:  It should display the Python version, just as when one starts python.
+texmacs_out("""verbatim:Python plugin for TeXmacs.
+Please see the documentation in Help -> plugins -> Python
+""")
 
 my_globals = {}
 # We insert into the session's namespace the 'ps_out' method.
 my_globals['ps_out'] = ps_out
 
 # As well as some documentation.
-my_globals['__doc__'] = """TeXmacs Python plugin.
-
-	TeXmacs Python interface v0.8.1. Ero Carrera (c) 2004
-	
-	The plugin homepage:
-		http://dkbza.org/tmPython.html
-
-	The version distributed with TeXmacs is always the latest.
-	
-	This plugin has been programed and tested under Python 2.3.3,
-	the degree of compatibility with older version is unknown.
-	
-	For bugs/suggestions/requests I can be reached at ero@dkbza.org.
-	
-	Enjoy it!
+my_globals['__doc__'] = """Python plugin for TeXmacs.  It provides autocompletion, and can insert postscript files into TeXmacs.
 	"""
 
 capt = Capture()
@@ -249,33 +242,34 @@ os.sys.stdout = stdout_saved
 
 # Main session loop.
 while 1:
-	line = os.sys.stdin.readline()
-	if not line:
-		texmacs_out('')
-	else:
-		if line[0]  ==  DATA_COMMAND:
-			if line[1:].find('(complete ')  ==  0:
-				texmacs_out(complete(line[11:], my_globals))
-			continue
-		capt = Capture()
-		result = None
-		# We guess where the lines will break.
-		line = re.sub(r' {2}(\s*)', r'\n \1', line)
+	line=raw_input();
+	if line[0]  ==  DATA_COMMAND:
+		if line[1:].find('(complete ')  ==  0:
+			#The replace is due to texmacs sending " as two characters
+			texmacs_out(complete(line[11:].replace("\\\"","\""), my_globals))
+		continue
+	lines=[line]
+	while line<>"<EOF>":
+		line=raw_input()
+		if line == '': continue
+		lines.append(line)
+	text='\n'.join(lines[:-1])
+	capt=Capture()
+	try:
+		out = eval(text, my_globals)
+		result = out
+	except:
 		try:
-			out = eval(line, my_globals)
-			result = out
-		except:
-			try:
-				stdout_saved, os.sys.stdout  =  os.sys.stdout, capt
-				co = compile(line, 'tm_python', 'exec')
-				eval(co, my_globals)
-				os.sys.stdout = stdout_saved
-				result = capt.getOutput()
-			except Exception:
-				traceback.print_exc(file = os.sys.stdout, limit = 0)
-				os.sys.stdout = stdout_saved
-				result = capt.getOutput()
-		del capt
-		
-		out = compose_output(result)
-		texmacs_out(out.strip())
+			stdout_saved, os.sys.stdout  =  os.sys.stdout, capt
+			co = compile(text, 'tm_python', 'exec')
+			eval(co, my_globals)
+			os.sys.stdout = stdout_saved
+			result = capt.getOutput()
+		except Exception:
+			traceback.print_exc(file = os.sys.stdout, limit = 0)
+			os.sys.stdout = stdout_saved
+			result = capt.getOutput()
+	del capt
+
+	out = compose_output(result)
+	texmacs_out(out.strip())
