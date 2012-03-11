@@ -43,7 +43,7 @@ bib_parse_char (string s, int& pos, int& depth, bool& special, int& math) {
           r << s[pos];
           pos++;
         }
-	else {
+        else {
           while (pos < N(s) && (is_alpha (s[pos]) || is_digit (s[pos]))) {
             r << s[pos];
             pos++;
@@ -139,7 +139,7 @@ bib_to_latex (string s) {
   while (pos < N(s)) {
     specialsav= special;
     string ch= bib_parse_char (s, pos, depth, special, math);
-//    cerr << ch << " " << as_string (keepcase) << " " << as_string (depth) << "\n";
+    //    cerr << ch << " " << as_string (keepcase) << " " << as_string (depth) << "\n";
     if (ch == "$$") r << "$";
     else if (special || math) r << ch;
     else if (bib_is_space (ch)) {
@@ -151,7 +151,7 @@ bib_to_latex (string s) {
     }
     else if (ch == "%") r << "\\%";
     else if (bib_is_char (ch, '{') && depth > 0 &&
-	     bib_get_char (s, pos) != "\\") {
+             bib_get_char (s, pos) != "\\") {
       if (keepcase == -1) {
         r << "\\keepcase{";
         keepcase= depth;
@@ -165,7 +165,7 @@ bib_to_latex (string s) {
   }
   for (int i= keepcase; i>0; i--) r << "}";
   r << "}";
-//  cerr << r << "\n";
+  //  cerr << r << "\n";
   return r;
 }
 
@@ -803,12 +803,12 @@ bib_get_fields (tree t, string& latex) {
         tree f= t[i][2][j];
         if (bib_is_field (f)) {
           if ((f[0]->label == "author" || f[0]->label == "editor") &&
-	      is_atomic (f[1])) {
+              is_atomic (f[1])) {
             latex << bib_names (f[1]->label, nbfields);
           }
-	  else if (is_atomic (f[1]) && f[0]->label != "pages") {
+          else if (is_atomic (f[1]) && f[0]->label != "pages") {
             if (!bib_is_blank_string (f[1]->label)) {
-	      latex << "\\nextbib{}" << bib_to_latex (f[1]->label);
+              latex << "\\nextbib{}" << bib_to_latex (f[1]->label);
               nbfields++;;
             }
             else {
@@ -835,7 +835,7 @@ bib_set_fields (tree& t, array<tree> latex, int& ind) {
         //cout << "  Field " << f << "\n";
         if (bib_is_field (f)) {
           if ((f[0]->label == "author" || f[0]->label == "editor") &&
-	      is_atomic (f[1])) {
+              is_atomic (f[1])) {
             tree res= compound ("bib-names"); ind++;
             while (latex[ind] == compound ("bibname")) {
               tree name= compound ("bib-name"); ind++;
@@ -847,9 +847,9 @@ bib_set_fields (tree& t, array<tree> latex, int& ind) {
             }
             f[1]= res;
           }
-	  else if (f[0]->label == "pages" && is_atomic (f[1]))
+          else if (f[0]->label == "pages" && is_atomic (f[1]))
             f[1]= bib_field_pages (f[1]->label);
-	  else {
+          else {
             f[1]= latex[ind];
             ind++;
           }
@@ -984,7 +984,7 @@ bib_strings_dict (tree t) {
           }
           dict(key)= sval;
         }
-	else if (is_atomic (val))
+        else if (is_atomic (val))
           dict(key)= val->label;
       }
     }
