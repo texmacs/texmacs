@@ -17,6 +17,7 @@ class tree;
 class hard_link_rep;
 class observer;
 class modification;
+class blackbox;
 template<class T> class list;
 template<class T> class array;
 typedef hard_link_rep* weak_link;
@@ -27,9 +28,10 @@ typedef list<int> path;
 #define OBSERVER_IP         2
 #define OBSERVER_POINTER    3
 #define OBSERVER_POSITION   4
-#define OBSERVER_EDIT       5
-#define OBSERVER_UNDO       6
-#define OBSERVER_HIGHLIGHT  7
+#define OBSERVER_ADDENDUM   5
+#define OBSERVER_EDIT       6
+#define OBSERVER_UNDO       7
+#define OBSERVER_HIGHLIGHT  8
 
 /******************************************************************************
 * The observer class
@@ -79,6 +81,7 @@ public:
   virtual observer& get_child (int which);
   virtual list<observer> get_tree_pointers ();
   virtual bool get_tree (tree& t);
+  virtual bool get_contents (int kind, blackbox& bb);
   virtual bool set_highlight (int lan, int col, int start, int end);
   virtual bool get_highlight (int lan, array<int>& cols);
 };
@@ -154,6 +157,9 @@ observer tree_pointer_new (tree t);
 void tree_pointer_delete (observer o);
 
 path obtain_position (observer o);
+
+observer tree_addendum_new (tree t, int kind, blackbox bb);
+void tree_addendum_new (observer o);
 
 observer search_observer (tree& ref, int type);
 bool admits_edit_observer (tree t);

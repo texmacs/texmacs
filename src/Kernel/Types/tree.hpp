@@ -88,6 +88,7 @@ public:
   friend list<tree> as_trees (list<pointer> l);
   friend class tree_pointer_rep;
   friend class tree_position_rep;
+  friend class tree_addendum_rep;
   friend class edit_observer_rep;
   friend class undo_observer_rep;
   friend class tree_links_rep;

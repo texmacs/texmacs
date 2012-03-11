@@ -12,6 +12,7 @@
 #include "modification.hpp"
 #include "analyze.hpp"
 #include "hashmap.hpp"
+#include "blackbox.hpp"
 
 #define DETACHED (-5)
 
@@ -725,6 +726,12 @@ observer_rep::get_tree_pointers () {
 bool
 observer_rep::get_tree (tree& t) {
   (void) t;
+  return false;
+}
+
+bool
+observer_rep::get_contents (int kind, blackbox& bb) {
+  (void) kind; (void) bb;
   return false;
 }
 

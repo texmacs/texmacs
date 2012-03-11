@@ -13,6 +13,7 @@
 ******************************************************************************/
 
 #include "modification.hpp"
+#include "blackbox.hpp"
 
 #define DETACHED (-5)
 
@@ -56,6 +57,7 @@ public:
   observer& get_child (int which);
   list<observer> get_tree_pointers ();
   bool get_tree (tree& t);
+  bool get_contents (int kind, blackbox& bb);
   bool set_highlight (int lan, int col, int start, int end);
   bool get_highlight (int lan, array<int>& cols);
 };
@@ -204,6 +206,12 @@ bool
 list_observer_rep::get_tree (tree& t) {
   return (!is_nil (o1) && o1->get_tree (t)) |
          (!is_nil (o2) && o2->get_tree (t));
+}
+
+bool
+list_observer_rep::get_contents (int kind, blackbox& bb) {
+  return (!is_nil (o1) && o1->get_contents (kind, bb)) |
+         (!is_nil (o2) && o2->get_contents (kind, bb));
 }
 
 bool
