@@ -3,8 +3,6 @@
 <style|tmdoc>
 
 <\body>
-  \;
-
   <tmdoc-title|Limitations>
 
   <\itemize>

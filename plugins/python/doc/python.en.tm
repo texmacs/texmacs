@@ -6,8 +6,6 @@
   <tmdoc-title|The Python plugin>
 
   <\traverse>
-    \;
-
     <branch|Abstract|python-abstract.en.tm>
 
     <branch|How to use this plugin|python-instructions.en.tm>

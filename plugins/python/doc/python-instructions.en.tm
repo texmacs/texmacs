@@ -5,8 +5,6 @@
 <\body>
   <tmdoc-title|Usage of the Python Plugin>
 
-  \;
-
   Separate sentences by using <key|shift return>, when you are ready to have
   <name|Python> evaluate your input press <key|return>. \ If you would like
   this behaviour reversed, go to <verbatim|Focus-\<gtr\>multiline-session-\<gtr\>option-methods>
