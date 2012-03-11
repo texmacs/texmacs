@@ -679,10 +679,28 @@ qt_tm_widget_rep::install_main_menu () {
   QMenu* m= concrete (main_menu_widget)->get_qmenu();
   if (m) {
     {
-      // Explicitly creating the menubar allows it to be shared across windows in MacOS
-      // See http://doc.qt.nokia.com/4.7/qmainwindow.html#menuBar
-      QMenuBar *dest = new QMenuBar(0);
-      tm_mainwindow()->setMenuBar(dest);
+      // REMARK: We do not want the menubar shared across windows as suggested  
+      // in http://doc.qt.nokia.com/4.7/qmainwindow.html#menuBar
+      // e.g. :
+      //
+      //     QMenuBar *dest = new QMenuBar(0);
+      //     tm_mainwindow()->setMenuBar(dest);
+      //
+      // as the default behavior on MacOS. The main reason is that in TeXmacs
+      // different widows can have different main menus so that it is indeed
+      // appropriate change the main menu as the window focus changes. 
+      // So we kindly ask to each window to give us its own menu and we install
+      // there our actions.
+      // So we do:
+
+      QMenuBar *dest = tm_mainwindow()->menuBar();
+      
+      // and everything is fine.
+      // Also please note that we have to do the replacement and not simply 
+      // install the menu returned by get_qmenu() since the main menu there 
+      // could contain some defaults items appropriate for the give OS (like the
+      // service menu on MacOS) which are not present in our menu widget.
+      
       QWidget *src = m;
       replaceActions(dest,src);
       QList<QAction*> list = dest->actions();
