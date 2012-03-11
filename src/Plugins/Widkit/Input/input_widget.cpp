@@ -202,6 +202,8 @@ input_widget_rep::handle_keypress (keypress_event ev) {
   while ((N(key) >= 5) && (key(0,3) == "Mod") && (key[4] == '-') &&
 	 (key[3] >= '1') && (key[3] <= '5')) key= key (5, N(key));
   if (key == "space") key= " ";
+  if (key == "<") key= "<less>";
+  if (key == ">") key= "<gtr>";
 
   /* tab-completion */
   if ((key == "tab" || key == "S-tab") && N(tabs) != 0) {
@@ -292,6 +294,7 @@ input_widget_rep::handle_keypress (keypress_event ev) {
   }
   else {
     if (starts (key, "<#"));
+    else if (key == "<less>" || key == "<gtr>");
     else {
       if (N(key)!=1) return;
       int i (key[0]);
@@ -336,6 +339,7 @@ input_widget_rep::handle_mouse (mouse_event ev) {
     (void) get_selection ("primary", t, sel, "verbatim");
     if (is_tuple (t, "extern", 1)) {
       string ins= as_string (t[1]);
+      ins= tm_encode (ins);
       s= s (0, pos) * ins * s(pos, N(s));
       pos += N(ins);
       this << emit_invalidate_all ();
