@@ -926,11 +926,14 @@ public:
     if (qwid) {
       QList<QListWidgetItem*> items = qwid->selectedItems();
       array<string> selected;
-      for(int i=0; i<items.size(); ++i)
+      for(int i = 0; i < items.size(); ++i)
         selected << from_qstring (items[i]->text());
       object l= null_object ();
-      for (int i=N(selected)-1; i>=0; i--)
-        l= cons (selected[i], l);
+      if(multiple)
+        for (int i = N(selected)-1; i >= 0; --i)
+          l= cons (selected[i], l);
+      else if(N(selected)>0)  //Do not return a list with the item if only one
+        l= selected[0];
       cmd (list_object (l));
     }
   }
