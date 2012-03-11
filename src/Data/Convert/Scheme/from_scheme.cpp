@@ -52,50 +52,49 @@ string_to_scheme_tree (string s, int& i) {
     case '\t':
     case '\n':
       break;
-
-    case '(':
+      case '(':
       {
-	scheme_tree p (TUPLE);
-	i++;
-	while (true) {
-	  while ((i<N(s)) && is_spc(s[i])) i++;
-	  if ((i==N(s)) || (s[i]==')')) break;
-	  p << string_to_scheme_tree (s, i);
-	}
-	if (i<N(s)) i++;
-	return p;
+        scheme_tree p (TUPLE);
+        i++;
+        while (true) {
+          while ((i<N(s)) && is_spc(s[i])) i++;
+          if ((i==N(s)) || (s[i]==')')) break;
+          p << string_to_scheme_tree (s, i);
+        }
+        if (i<N(s)) i++;
+        return p;
       }
-
-    case '\'':
-      i++;
-      return scheme_tree (TUPLE, "\'", string_to_scheme_tree (s, i));
-      
-    case '\"':
+        
+      case '\'':
+        i++;
+        return scheme_tree (TUPLE, "\'", string_to_scheme_tree (s, i));
+        
+      case '\"':
       { // "
-	int start= i++;
-	while ((i<N(s)) && (s[i]!='\"')) { // "
-	  if ((i<N(s)-1) && (s[i]=='\\')) i++;
-	  i++;
-	}
-	if (i<N(s)) i++;
-	return scheme_tree (unslash (s (start, i)));
+        int start= i++;
+        while ((i<N(s)) && (s[i]!='\"')) { // "
+          if ((i<N(s)-1) && (s[i]=='\\')) i++;
+          i++;
+        }
+        if (i<N(s)) i++;
+        return scheme_tree (unslash (s (start, i)));
       }
-
-    case ';':
-      while ((i<N(s)) && (s[i]!='\n')) i++;
-      break;
-
-    default:
+        
+      case ';':
+        while ((i<N(s)) && (s[i]!='\n')) i++;
+        break;
+        
+      default:
       {
-	int start= i;
-	while ((i<N(s)) && (!is_spc(s[i])) && (s[i]!='(') && (s[i]!=')')) {
-	  if ((i<N(s)-1) && (s[i]=='\\')) i++;
-	  i++;
-	}
-	return scheme_tree (unslash (s (start, i)));
+        int start= i;
+        while ((i<N(s)) && (!is_spc(s[i])) && (s[i]!='(') && (s[i]!=')')) {
+          if ((i<N(s)-1) && (s[i]=='\\')) i++;
+          i++;
+        }
+        return scheme_tree (unslash (s (start, i)));
       }
     }
-
+  
   return "";
 }
 
@@ -181,15 +180,15 @@ scheme_document_to_tree (string s) {
   if (starts (s, "(document (apply \"TeXmacs\" ") ||
       starts (s, "(document (expand \"TeXmacs\" ") ||
       starts (s, "(document (TeXmacs "))
-    {
-      int i, begin=27;
-      if (starts (s, "(document (expand \"TeXmacs\" ")) begin= 28;
-      if (starts (s, "(document (TeXmacs ")) begin= 19;
-      for (i=begin; i<N(s); i++)
-	if (s[i] == ')') break;
-      string version= s (begin, i);
-      tree t  = string_to_scheme_tree (s);
-      return scheme_tree_to_tree (t, version);
-    }
+  {
+    int i, begin=27;
+    if (starts (s, "(document (expand \"TeXmacs\" ")) begin= 28;
+    if (starts (s, "(document (TeXmacs ")) begin= 19;
+    for (i=begin; i<N(s); i++)
+      if (s[i] == ')') break;
+    string version= s (begin, i);
+    tree t  = string_to_scheme_tree (s);
+    return scheme_tree_to_tree (t, version);
+  }
   return error;
 }
