@@ -9,7 +9,8 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include <iostream.h>
+#include <iostream>
+using namespace std;
 
 #define DATA_BEGIN   ((char) 2)
 #define DATA_END     ((char) 5)

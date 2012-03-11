@@ -9,8 +9,8 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include <stdio.h>
-#include <iostream.h>
+#include <iostream>
+using namespace std;
 
 #define DATA_BEGIN   ((char) 2)
 #define DATA_END     ((char) 5)
@@ -23,7 +23,7 @@ main () {
   cout << "Can also be used outside sessions: select a LaTeX expression\n";
   cout << "and press C-F12\n";
   cout << DATA_END;
-  fflush (stdout);
+  cout.flush ();
 
   while (true) {
     char buffer[100];
@@ -31,7 +31,7 @@ main () {
     cout << DATA_BEGIN;
     cout << "latex:$" << buffer << "$";
     cout << DATA_END;
-    fflush (stdout);
+    cout.flush ();
   }
   return 0;
 }

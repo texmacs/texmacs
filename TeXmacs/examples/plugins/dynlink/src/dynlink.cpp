@@ -11,8 +11,10 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <iostream>
 #include <TeXmacs.h>
+
+//#include <iostream>
+//using namespace std;
 
 static char* output= NULL;
 
@@ -36,8 +38,8 @@ dynlink_eval (char* what, char* session, char** errors) {
 }
 
 package_exports_1 dynlink_exports= {
-  "TeXmacs communication protocol 1",
-  "Dynlink 1",
+  (char*) "TeXmacs communication protocol 1",
+  (char*) "Dynlink 1",
   dynlink_install,
   dynlink_eval
 };

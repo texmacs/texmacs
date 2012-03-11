@@ -9,8 +9,8 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include <stdio.h>
-#include <iostream.h>
+#include <iostream>
+using namespace std;
 
 #define DATA_BEGIN   ((char) 2)
 #define DATA_END     ((char) 5)
@@ -32,7 +32,7 @@ main () {
   cout << "A LaTeX -> TeXmacs converter";
   next_input ();
   cout << DATA_END;
-  fflush (stdout);
+  cout.flush ();
 
   while (true) {
     char buffer[100];
@@ -43,7 +43,7 @@ main () {
     cout << DATA_END;
     next_input ();
     cout << DATA_END;
-    fflush (stdout);
+    cout.flush ();
   }
   return 0;
 }

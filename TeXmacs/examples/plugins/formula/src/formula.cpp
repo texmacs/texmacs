@@ -9,8 +9,8 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include <stdio.h>
-#include <iostream.h>
+#include <iostream>
+using namespace std;
 
 #define DATA_BEGIN   ((char) 2)
 #define DATA_END     ((char) 5)
@@ -21,7 +21,7 @@ main () {
   cout << DATA_BEGIN << "verbatim:";
   cout << "Please enter a positive integer at each input";
   cout << DATA_END;
-  fflush (stdout);
+  cout.flush ();
 
   while (true) {
     int i, nr;
@@ -32,7 +32,7 @@ main () {
       cout << "x_{" << i << "}+";
     cout << "x_{" << i << "}$";
     cout << DATA_END;
-    fflush (stdout);
+    cout.flush ();
   }
   return 0;
 }
