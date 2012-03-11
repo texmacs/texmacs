@@ -212,9 +212,10 @@ x_gui_rep::process_event (x_window win, XEvent* ev) {
     break;
   case DestroyNotify:
     // cout << "Destroy\n";
-    win->destroy_event ();
-    event_loop ();
-    exit (0);
+    // win->destroy_event ();
+    // event_loop ();
+    // exit (0);
+    break;
   case UnmapNotify:
     // cout << "Unmap\n";
     break;
