@@ -3457,6 +3457,9 @@ case "$GUILE_VERSION" in
   1.6* | 1.7*)
     CONFIG_GUILE_SERIAL="B"
   ;;
+  2.*)
+    CONFIG_GUILE_SERIAL="D"
+  ;;
   *)
     CONFIG_GUILE_SERIAL="C"
   ;;
