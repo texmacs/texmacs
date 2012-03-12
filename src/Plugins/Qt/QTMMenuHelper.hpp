@@ -54,7 +54,7 @@
 class QTMCommand: public QObject {
   Q_OBJECT
   command cmd;
-        
+
 public:
   inline QTMCommand (command _cmd):
     cmd (_cmd) {  }
@@ -81,20 +81,34 @@ public slots:
   void force();
 };
 
-/*! This custom action frees its menu if it does not already have an owner. */
+
+/*! This custom action frees its menu if it does not already have an owner. 
+ *
+ * What's with the timer? the toolTips are not shown for items in the
+ * menu bar, because no mouse related events are ever sent to QActions placed
+ * there under MacOSX. We must use the signal hover() and add a timer to avoid
+ * instantly displaying the tooltip. This implies however ugly tradeoffs,
+ * see doShowToolTip().
+ */
 class QTMAction : public QAction {
   Q_OBJECT
   
+  QTimer* _timer;
+  QPoint    _pos;
 public:
   string str;
   
   QTMAction(QObject *parent = NULL);
   ~QTMAction();
-  
+
 public slots:
   void doRefresh();
-  
+  void showToolTip();   //<! Force the display of the tooltip (starts a timer)
+
+protected slots:
+  void doShowToolTip();  // Actually show it.
 };
+
 
 struct QLineEdit;
 class QTMInputTextWidgetHelper : public QObject {

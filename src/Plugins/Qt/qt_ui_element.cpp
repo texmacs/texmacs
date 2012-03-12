@@ -638,6 +638,8 @@ qt_ui_element_rep::as_qaction () {
         T1 x = open_box<T1>(static_cast<qt_ui_element_rep*>(help.rep)->load);
         string str = x.x1;
         a->setToolTip (to_qstring (str));
+        // HACK: force displaying of the tooltip (needed for items in the QMenuBar)
+        QObject::connect(a, SIGNAL(hovered()), a, SLOT(showToolTip()));
       }
       return a;
     }

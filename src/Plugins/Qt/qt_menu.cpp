@@ -50,6 +50,8 @@
 
 QTMAction::QTMAction(QObject *parent) : QAction(parent) { 
   QObject::connect(the_gui->gui_helper, SIGNAL(refresh()), this, SLOT(doRefresh()));
+  _timer = new QTimer(this);
+  QObject::connect(_timer, SIGNAL(timeout()), this, SLOT(doShowToolTip()));
 }
 
 QTMAction::~QTMAction() { 
@@ -66,6 +68,33 @@ QTMAction::doRefresh() {
   }
 }
 
+void
+QTMAction::showToolTip()
+{
+  _timer->start(500);   // Restarts the timer if already running
+  _pos = QCursor::pos();
+}
+
+/*
+ * This is the best I could come up with: under MacOSX menu items receive no
+ * mouse events, nor are they QWidgets whose geometry we can query. As far as I
+ * know, it is not possible to know whether the menu item currently under the
+ * cursor is this particular one, so in order to avoid displaying outdated
+ * toolTips (because the user moved fast over items) we compute distances.
+ * This is obviously wrong, and will behave weirdly under certain resolutions,
+ * for given menu item sizes, etc. Also, one typically moves for a while 
+ * horizontally over the first item in an extensible menu, so once the user
+ * stops, the distance is bigger than the given constant and no tooltip is
+ * displayed.
+ */
+void
+QTMAction::doShowToolTip() {
+  _timer->stop();
+  if((QCursor::pos() - _pos).manhattanLength() < 10)  // Hideous HACK
+    QToolTip::showText(QCursor::pos(), toolTip());
+  else
+    QToolTip::hideText();
+}
 
 
 /*******************************************************************************
