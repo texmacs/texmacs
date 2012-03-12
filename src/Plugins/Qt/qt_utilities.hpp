@@ -25,6 +25,7 @@ typedef quartet<SI,SI,SI,SI> coord4;
 typedef pair<SI,SI> coord2;
 
 QColor to_qcolor (const string& );
+QColor to_qcolor (color c);
 string from_qcolor (const QColor& );
 QRect to_qrect (const coord4 & p);
 QPoint to_qpoint (const coord2 & p);
@@ -33,6 +34,7 @@ coord4 from_qrect (const QRect & rect);
 coord2 from_qpoint (const QPoint & pt);
 coord2 from_qsize (const QSize & s);
 QString to_qstylesheet(int style);
+QString to_qstylesheet(int style, color c);
 QSize qt_decode_length (string width, QWidget* qwid);
 
 QStringList to_qstringlist(array<string> l);

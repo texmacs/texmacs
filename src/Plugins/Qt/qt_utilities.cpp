@@ -61,16 +61,15 @@ to_qsize (const coord2 & p) {
 }
 
 
-// TODO: really? is this ever going to be used?
 QString
-to_qstylesheet(int style) {
-  QString sheet("* {");
+parse_tm_style(int style) {
+  QString sheet;
   if (style & WIDGET_STYLE_MINI)  // use smaller text font inside widget
-    sheet += "";
+    sheet += "font-size: 10pt;";
   if (style & WIDGET_STYLE_MONOSPACED)  // use monospaced font inside widget
-    sheet += "";
+    sheet += "font-family: \"monospace\";";
   if (style & WIDGET_STYLE_GREY)  // use grey text font
-    sheet += "";
+    sheet += "font-color: #eeeeee";
   if (style & WIDGET_STYLE_PRESSED)   // indicate that a button is currently pressed
     sheet += "";
   if (style & WIDGET_STYLE_INERT)  // only render but don't associate any action to widget
@@ -78,12 +77,26 @@ to_qstylesheet(int style) {
   if (style & WIDGET_STYLE_BUTTON)  // indicate that a button should explicitly rendered as a button
     sheet += "";
   if (style & WIDGET_STYLE_CENTERED)  // use centered text
-    sheet += "";
+    sheet += "text-align: center;";
   if (style & WIDGET_STYLE_BOLD)
-    sheet += "";
-
-  sheet += "}";
+    sheet += "font-weight: bold;";
   return sheet;
+}
+
+/*! */
+QString
+to_qstylesheet(int style) {
+  return "* {" + parse_tm_style(style) + "}";
+}
+
+QString
+to_qstylesheet(int style, color c) {
+  int r,g,b,a;
+  get_rgb_color(c, r, g, b, a);
+  a = a*100/255;
+  return "* {" + parse_tm_style(style)
+    + QString("color: rgba(%1, %2, %3, %4%);").arg(r).arg(g).arg(b).arg(a)
+    + "}";
 }
 
 
@@ -91,7 +104,7 @@ to_qstylesheet(int style) {
  *
  * Uses the widget current size to compute relative sizes as specified with "1w"
  * Should not affect the widget size in that particular case.
- * FIXME: probably everything.
+ * FIXME: should we use the constant PIXEL somewhere? 
  */
 QSize
 qt_decode_length (string width, QWidget* qwid) {
@@ -203,8 +216,6 @@ from_qstring (const QString &s) {
   return utf8_to_cork (from_qstring_utf8(s));
 }
 
-// <MBD> 
-
 // Although slow to build, this should provide better lookup times than
 // linearly traversing the array of colors.
 static QHash<QString, QColor> _NamedColors;
@@ -237,15 +248,19 @@ to_qcolor (const string& col) {
   return QColor(100,100,100);  // FIXME? 
 }
 
-/*!
- * Returns a color encoded as a string with hexadecimal RGB values, as in #e3a1ff
- */
+/*! Returns a color encoded as a string with hexadecimal RGB values, as in #e3a1ff */
 string
 from_qcolor (const QColor& col) {
   return from_qstring(col.name());
 }
 
-// </MBD> 
+// FIXME: Unnecessary? QColor::setRgba() does this.
+QColor
+to_qcolor(color c) {
+  int r, g, b, a;
+  get_rgb_color (c, r, g, b, a);
+  return QColor (r, g, b, a);
+}
 
 
 string

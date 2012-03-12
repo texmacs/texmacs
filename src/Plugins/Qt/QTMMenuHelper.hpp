@@ -19,6 +19,8 @@
 #include <QMenu>
 #include <QWidgetAction>
 #include <QLineEdit>
+#include <QTabWidget>
+#include <QLayout>
 
 #include "qt_gui.hpp"
 #include "qt_basic_widgets.hpp"
@@ -140,6 +142,15 @@ public slots:
 protected:
   QWidget * createWidget ( QWidget * parent );
   
+};
+
+/*! Implements a QTabWidget which resizes itself to the currently displayed page. */
+class QTMTabWidget : public QTabWidget {
+  Q_OBJECT
+public:
+  QTMTabWidget(QWidget* p=NULL);
+protected slots:
+  void resizeOthers(int index);
 };
 
 

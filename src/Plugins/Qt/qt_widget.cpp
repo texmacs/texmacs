@@ -199,6 +199,27 @@ popup_widget (widget w) {
   return concrete(w)->make_popup_widget();
 }
 
+#include "qt_ui_element.hpp"
+
+widget
+glue_widget (bool hx, bool vx, SI w, SI h) {
+  
+  // an empty widget of minimal width w and height h and which is horizontally
+  // resp. vertically extensible if hx resp. vx is true
+  
+  // glue_widget is used when detaching a canvas from the texmacs window
+  // in view of attaching another one, e.g. when changing buffer.
+  //return glue_widget("", hx, vx, w, h);
+  // Bypass qt_glue_widget and use QSpacers instead:
+  return qt_ui_element_rep::create (qt_ui_element_rep::glue_widget,
+                                    hx, vx, w/PIXEL, h/PIXEL);
+}
+
+widget
+glue_widget (tree col, bool hx, bool vx, SI w, SI h) {
+  return tm_new<qt_glue_widget_rep> (col, hx, vx, w, h);
+}
+
 /******************************************************************************
 *  Widgets which are not strictly required by TeXmacs
 *  their implementation is void
@@ -209,23 +230,6 @@ empty_widget () {
   // an empty widget of size zero
   NOT_IMPLEMENTED;
   return widget();
-}
-
-widget
-glue_widget (bool hx, bool vx, SI w, SI h) {
-
-  // an empty widget of minimal width w and height h and which is horizontally
-  // resp. vertically extensible if hx resp. vx is true
-  
-  // glue_widget is used when detaching a canvas from the texmacs window
-  // in view of attaching another one, e.g. when changing buffer.
-  
-  return glue_widget("", hx, vx, w, h);
-}
-
-widget
-glue_widget (tree col, bool hx, bool vx, SI w, SI h) {
-  return tm_new<qt_glue_widget_rep> (col, hx, vx, w, h);
 }
 
 widget

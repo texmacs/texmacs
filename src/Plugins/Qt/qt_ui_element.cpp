@@ -523,15 +523,20 @@ qt_ui_element_rep::as_qaction () {
       return a;
     }
       break;
-      
+    case glue_widget:
+    {
+      QTMAction* a = new QTMAction();
+      a->setEnabled(false);
+      return a;
+    }
+      break;
     case menu_group: 
     {
       typedef pair<string, int> T;
       T x = open_box<T>(load);
       string name = x.x1;
       int style = x.x2;
-      
-      (void) style;
+
       // a menu group; the name should be greyed and centered
       QAction* a= new QTMAction (NULL);
       a->setText(to_qstring(tm_var_encode ((name))));
@@ -651,7 +656,7 @@ qt_ui_element_rep::as_qaction () {
 
       QTMAction* a= new QTMAction (NULL);
       string t= tm_var_encode (str);
-      if (t == "Help") t= "Help ";
+      if (t == "Help") t= "Help "; // HACK to avoid MacOS autodetection of the Help menu?
       a->setText(to_qstring (t));
       a->str = str;
       if (style == WIDGET_STYLE_MINI) {
@@ -769,17 +774,14 @@ qt_ui_element_rep::as_qlayoutitem () {
       if (N(lhs) != N(rhs)) FAILED("aligned_widget: N(lhs) != N(rhs) ");
 
       QGridLayout* l= new QGridLayout ();
-      l->setSizeConstraint (QLayout::SetFixedSize);
-      l->setHorizontalSpacing (hsep/PIXEL); // HACK: PIXEL=256 ?!?!? 
-      l->setVerticalSpacing (vsep/PIXEL);
-      l->setContentsMargins (4, 0, 4, 0);
+      l->setSizeConstraint (QLayout::SetMinimumSize);
+      l->setHorizontalSpacing (6+hsep/PIXEL);
+      l->setVerticalSpacing (2+vsep/PIXEL);
       for (int i=0; i < N(lhs); i++) {
-        QLayoutItem *lli = concrete(lhs[i])->as_qlayoutitem();
-        QLayoutItem *rli = concrete(rhs[i])->as_qlayoutitem();
+        QLayoutItem* lli = concrete(lhs[i])->as_qlayoutitem();
+        QLayoutItem* rli = concrete(rhs[i])->as_qlayoutitem();
         if (lli) l->addItem(lli, i, 0, 1, 1, Qt::AlignRight);
-        //else FAILED("aligned_widget: null layout");
         if (rli) l->addItem(rli, i, 1, 1, 1, Qt::AlignLeft);
-        //else FAILED("aligned_widget: null layout");
       }
       return l;
     }
@@ -805,10 +807,11 @@ qt_ui_element_rep::as_qlayoutitem () {
     {
       typedef bool T;
       bool vertical = open_box<T> (load);
-      // a horizontal or vertical menu separator
-      (void) vertical;
-      //FIXME: implement h/v
-      return new QSpacerItem(1,1);
+      QSizePolicy::Policy hpolicy = vertical ? QSizePolicy::Fixed 
+                                             : QSizePolicy::Preferred;
+      QSizePolicy::Policy vpolicy = vertical ? QSizePolicy::Preferred 
+                                             : QSizePolicy::Fixed;
+      return new QSpacerItem (1, 1, hpolicy, vpolicy);
     }
       break;
       
@@ -856,16 +859,26 @@ qt_ui_element_rep::as_qlayoutitem () {
       QLayoutItem* li= concrete(text)->as_qlayoutitem();
       if (li->widget())
       {
-        typedef quartet<string, int, color, bool> T1;
-        T1 x = open_box<T1>(static_cast<qt_ui_element_rep*>(help.rep)->load);
+        typedef quartet<string, int, color, bool> T;
+        T x = open_box<T>(static_cast<qt_ui_element_rep*>(help.rep)->load);
         string str = x.x1;
         li->widget()->setToolTip (to_qstring (str));
       }
       return li;
     }
       break;
-      
-      
+
+    case glue_widget:
+    {
+      typedef quartet<bool, bool, SI, SI> T;
+      T x = open_box<T>(load);
+      QSizePolicy::Policy hpolicy = x.x1 ? QSizePolicy::Preferred 
+                                         : QSizePolicy::Fixed;
+      QSizePolicy::Policy vpolicy = x.x2 ? QSizePolicy::Preferred
+                                         : QSizePolicy::Fixed;
+      return new QSpacerItem (x.x3, x.x4, hpolicy, vpolicy);
+    }
+      break;
     default:
       ;
   }
@@ -970,7 +983,8 @@ qt_ui_element_rep::as_qwidget () {
       break;
       
     case menu_separator: 
-    case menu_group: 
+    case menu_group:
+    case glue_widget:
     {
       return NULL;
     }
@@ -1040,11 +1054,8 @@ qt_ui_element_rep::as_qwidget () {
     {
       typedef quartet<string, int, color, bool> T;
       T x = open_box<T>(load);
-      string str = x.x1;
-      int style = x.x2;
-      //color col = x.x3;
-      //bool tsp = x.x4;
-      //str= "<font color=#f00>" * str * "</font>";
+      string str    = x.x1;
+      QString style = to_qstylesheet(x.x2, x.x3);
       
       // a text widget with a given color and transparency
       QLabel *w = new QLabel();
@@ -1057,11 +1068,7 @@ qt_ui_element_rep::as_qwidget () {
       if (t == "Help") t= "Help ";
       //w->setTextFormat(Qt::RichText);
       w->setText(to_qstring (t));
-      if (style == WIDGET_STYLE_MINI) {
-        QFont f = w->font();
-        f.setPointSize(10);
-        w->setFont(f);
-      }
+      w->setStyleSheet(style);
       return w;
     }
       break;
@@ -1086,7 +1093,7 @@ qt_ui_element_rep::as_qwidget () {
       T x = open_box<T>(load);
       command cmd = x.x1;
       bool check  = x.x2;
-      QString style = to_qstylesheet(x.x3);  // not used (yet)?
+      QString style = to_qstylesheet(x.x3);
       
       QCheckBox* w  = new QCheckBox (NULL);  
       w->setCheckState(check ? Qt::Checked : Qt::Unchecked);
@@ -1107,7 +1114,7 @@ qt_ui_element_rep::as_qwidget () {
       command cmd        = x.x1;
       QStringList values = to_qstringlist(x.x2);
       QString value      = to_qstring(x.x3);
-      QString style      = to_qstylesheet(x.x4);   // not used (yet?)
+      QString style      = to_qstylesheet(x.x4);
             
       QComboBox* w = new QComboBox(NULL);
       w->setEditable(value.isEmpty() || values.last().isEmpty());  // weird convention?!
@@ -1171,11 +1178,12 @@ qt_ui_element_rep::as_qwidget () {
     {
       typedef pair<widget, int> T;
       T x = open_box<T>(load);
-      widget wid = x.x1;
-      int style  = x.x2;
+      widget wid    = x.x1;
+      QString style = to_qstylesheet(x.x2);
       
       QScrollArea* scroll = new QScrollArea();
       scroll->setBackgroundRole(QPalette::NoRole);
+      scroll->setStyleSheet(style);
       QWidget* w = concrete(wid)->as_qwidget();
       scroll->setWidget(w);
     
@@ -1213,7 +1221,7 @@ qt_ui_element_rep::as_qwidget () {
       array<widget> tabs = x.x1;
       array<widget> bodies = x.x2;
       
-      QTabWidget* tw = new QTabWidget ();
+      QTMTabWidget* tw = new QTMTabWidget ();
       
       for (int i = 0; i < N(tabs); i++) {
         if (is_nil (tabs[i])) break;

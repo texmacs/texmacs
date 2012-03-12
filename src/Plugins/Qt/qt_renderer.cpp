@@ -95,13 +95,6 @@ qt_renderer_rep::begin (void* handle) {
 
 void qt_renderer_rep::end () { painter->end (); }
 
-QColor
-qt_color(color c) {
-  int r, g, b, a;
-  get_rgb_color (c, r, g, b, a);
-  return QColor (r, g, b, a);
-}
-
 void 
 qt_renderer_rep::get_extents (int& w2, int& h2) {  
   if (painter->device()) {
@@ -142,8 +135,8 @@ qt_renderer_rep::set_color (color c) {
   basic_renderer_rep::set_color(c);
   QPen p (painter->pen ());
   QBrush b (painter->brush ());
-  p.setColor (qt_color(cur_fg));
-  b.setColor (qt_color(cur_fg));
+  p.setColor (to_qcolor(cur_fg));
+  b.setColor (to_qcolor(cur_fg));
   painter->setPen (p);
   painter->setBrush (b);
 }
@@ -195,7 +188,7 @@ qt_renderer_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   decode (x1, y1);
   decode (x2, y2);
   if ((x1>=x2) || (y1<=y2)) return;
-  QBrush brush (qt_color(cur_bg));
+  QBrush brush (to_qcolor(cur_bg));
   painter->setRenderHints (0);
   painter->fillRect (x1, y2, x2-x1, y1-y2, brush);       
 }
@@ -221,7 +214,7 @@ qt_renderer_rep::fill (SI x1, SI y1, SI x2, SI y2) {
   decode (x1, y1);
   decode (x2, y2);
 
-  QBrush brush (qt_color(cur_fg));
+  QBrush brush (to_qcolor(cur_fg));
   painter->setRenderHints (0);
   painter->fillRect (x1, y2, x2-x1, y1-y2, brush);       
 }
@@ -242,7 +235,7 @@ qt_renderer_rep::fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
   if ((x1>=x2) || (y1>=y2)) return;
   decode (x1, y1);
   decode (x2, y2);
-  QBrush brush(qt_color(cur_fg));
+  QBrush brush(to_qcolor(cur_fg));
   QPainterPath pp;
   pp.arcMoveTo (x1, y2, x2-x1, y1-y2, alpha / 64);
   pp.arcTo (x1, y2, x2-x1, y1-y2, alpha / 64, delta / 64);
@@ -262,7 +255,7 @@ qt_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
     decode (xx, yy);
     poly[i] = QPointF (xx, yy);
   }
-  QBrush brush(qt_color(cur_fg));
+  QBrush brush(to_qcolor(cur_fg));
   QPainterPath pp;
   pp.addPolygon (poly);
   pp.closeSubpath ();

@@ -132,3 +132,24 @@ QTMInputTextWidgetHelper::doit () {
 }
 
 
+//////////////////////////////// QTMTabWidget /////////////////////////////////
+
+
+QTMTabWidget::QTMTabWidget(QWidget *p) : QTabWidget(p) {
+  QObject::connect(this, SIGNAL(currentChanged(int)), this, SLOT(resizeOthers(int)));
+}
+
+void
+QTMTabWidget::resizeOthers(int index) {
+  for(int i = 0; i < count(); ++i) {
+    if (i != index)
+      widget(i)->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+      else
+        widget(i)->setSizePolicy(QSizePolicy::MinimumExpanding, 
+                                 QSizePolicy::MinimumExpanding);
+        }
+  if(layout())
+    layout()->activate();
+
+  setFixedSize(minimumSizeHint());
+}
