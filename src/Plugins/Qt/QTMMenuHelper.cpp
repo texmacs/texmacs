@@ -148,8 +148,8 @@ QTMTabWidget::resizeOthers(int index) {
         widget(i)->setSizePolicy(QSizePolicy::MinimumExpanding, 
                                  QSizePolicy::MinimumExpanding);
         }
-  if(layout())
-    layout()->activate();
 
-  setFixedSize(minimumSizeHint());
+  if (layout())
+    layout()->activate();
+  window()->resize(minimumSizeHint());
 }

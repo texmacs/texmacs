@@ -1225,7 +1225,8 @@ qt_ui_element_rep::as_qwidget () {
       
       QTMTabWidget* tw = new QTMTabWidget ();
       
-      for (int i = 0; i < N(tabs); i++) {
+      int i;
+      for (i = 0; i < N(tabs); i++) {
         if (is_nil (tabs[i])) break;
         QWidget* prelabel = concrete (tabs[i]) -> as_qwidget();
         QLabel* label = qobject_cast<QLabel*> (prelabel);
@@ -1233,7 +1234,8 @@ qt_ui_element_rep::as_qwidget () {
         tw->addTab(body, label ? label->text() : "");
         delete prelabel;
       }
-      
+      if (i>0) tw->resizeOthers(0);   // Force the automatic resizing
+
       return tw;
     }
 

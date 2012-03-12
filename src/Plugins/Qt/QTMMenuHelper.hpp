@@ -163,7 +163,7 @@ class QTMTabWidget : public QTabWidget {
   Q_OBJECT
 public:
   QTMTabWidget(QWidget* p=NULL);
-protected slots:
+public slots:
   void resizeOthers(int index);
 };
 
