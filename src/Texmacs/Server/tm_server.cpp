@@ -19,6 +19,7 @@
 #include "dictionary.hpp"
 #include "tm_link.hpp"
 #include "socket_notifier.hpp"
+#include "new_style.hpp"
 
 server* the_server= NULL;
 bool texmacs_started= false;
@@ -79,11 +80,7 @@ gui_set_output_language (string lan) {
 server_rep::server_rep () {}
 server_rep::~server_rep () {}
 
-tm_server_rep::tm_server_rep ():
-  vw (NULL), def_sfactor (5),
-  style_cache (hashmap<string,tree> (UNINIT)),
-  style_drd (tree (COLLECTION))
-{
+tm_server_rep::tm_server_rep (): vw (NULL), def_sfactor (5) {
   the_server= tm_new<server> (this);
   initialize_scheme ();
   gui_interpose (texmacs_interpose_handler);
@@ -227,23 +224,9 @@ tm_server_rep::get_remove_package_menu () {
 * Caching style files
 ******************************************************************************/
 
-static string
-cache_file_name (tree t) {
-  if (is_atomic (t)) return t->label;
-  else {
-    string s;
-    int i, n= N(t);
-    for (i=0; i<n; i++)
-      s << "__" << cache_file_name (t[i]);
-    return s * "__";
-  }
-}
-
 void
 tm_server_rep::style_clear_cache () {
-  style_cache=
-    hashmap<tree,hashmap<string,tree> > (hashmap<string,tree> (UNINIT));
-  remove ("$TEXMACS_HOME_PATH/system/cache" * url_wildcard ("__*"));
+  new_style_clear_cache ();
 
   int i, j, n= N(bufs);
   for (i=0; i<n; i++) {
@@ -255,40 +238,14 @@ tm_server_rep::style_clear_cache () {
 
 void
 tm_server_rep::style_set_cache (tree style, hashmap<string,tree> H, tree t) {
-  // cout << "set cache " << style << LF;
-  style_cache (copy (style))= H;
-  style_drd   (copy (style))= t;
-  url name ("$TEXMACS_HOME_PATH/system/cache", cache_file_name (style));
-  if (!exists (name)) {
-    save_string (name, tree_to_scheme (tuple ((tree) H, t)));
-    // cout << "saved " << name << LF;
-  }
+  new_style_set_cache (style, H, t);
 }
 
 void
 tm_server_rep::style_get_cache (
   tree style, hashmap<string,tree>& H, tree& t, bool& f)
 {
-  //cout << "get cache " << style << LF;
-  if ((style == "") || (style == tree (TUPLE))) { f= false; return; }
-  f= style_cache->contains (style);
-  if (f) {
-    H= style_cache [style];
-    t= style_drd   [style];
-  }
-  else {
-    string s;
-    url name ("$TEXMACS_HOME_PATH/system/cache", cache_file_name (style));
-    if (exists (name) && (!load_string (name, s, false))) {
-      //cout << "loaded " << name << LF;
-      tree p= scheme_to_tree (s);
-      H= hashmap<string,tree> (UNINIT, p[0]);
-      t= p[1];
-      style_cache (copy (style))= H;
-      style_drd   (copy (style))= t;
-      f= true;
-    }
-  }
+  new_style_get_cache (style, H, t, f);
 }
 
 /******************************************************************************

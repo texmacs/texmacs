@@ -26,9 +26,6 @@ protected:
   tm_view vw;             // current editor
   int def_sfactor;        // default shrinking factor
 
-  hashmap<tree,hashmap<string,tree> > style_cache; // style environments cache
-  hashmap<tree,tree> style_drd;                    // style drd cache
-
 public:
   tm_server_rep ();
   ~tm_server_rep ();

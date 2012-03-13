@@ -9,6 +9,8 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#ifndef NEW_DOCUMENT_H
+#define NEW_DOCUMENT_H
 #include "tree.hpp"
 #include "path.hpp"
 
@@ -17,3 +19,5 @@ extern tree the_et;
 path new_document ();
 void delete_document (path rp);
 void set_document (path rp, tree t);
+
+#endif // NEW_DOCUMENT_H
