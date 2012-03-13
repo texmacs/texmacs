@@ -16,7 +16,6 @@
 	(generic generic-edit)
 	(generic format-edit)
 	(generic format-geometry-edit)
-	(generic document-menu)
         (source source-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -365,3 +364,9 @@
     (dynamic (graphics-focus-icons)))
   (assuming (not (in-graphics?))
     (dynamic (standard-focus-icons (focus-tree)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Immediately load document-menu
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-modules (generic document-menu))

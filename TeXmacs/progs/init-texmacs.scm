@@ -67,7 +67,7 @@
 (use-modules (bibtex bib-utils))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
-;(display "Booting main TeXmacs functionality\n")
+;;(display "Booting main TeXmacs functionality\n")
 (use-modules (texmacs texmacs tm-server) (texmacs texmacs tm-view)
 	     (texmacs texmacs tm-files) (texmacs texmacs tm-print))
 (use-modules (texmacs keyboard config-kbd))
