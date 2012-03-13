@@ -413,6 +413,12 @@ x_drawable_rep::image (
   else {
     // rendering
     Window gs_win= gui->gswindow->win;
+
+    // XCreatePixmap does not allow for zero sized images.
+    // This fixes bug #10425.
+    w = (w==0 ? 1 : w);
+    h = (h==0 ? 1 : h);
+
     pm= XCreatePixmap (gui->dpy, gs_win, w, h, gui->depth);
     if (imlib2_supports (u))
       imlib2_display (dpy, pm, u, w, h, cx1, cy1, cx2, cy2);
