@@ -355,4 +355,4 @@
   (let* ((im (ahash-ref lazy-define-table name))
 	 (modules (if im im '())))
     (ahash-remove! lazy-define-table name)
-    (map module-load modules)))
+    (for-each module-provide modules)))

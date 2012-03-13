@@ -142,3 +142,11 @@
     `(begin
        (define-module ,name)
        ,@l)))
+
+(define-public (module-available? module-name)
+  (catch #t
+    (lambda () (resolve-interface module-name) #t)
+    (lambda (key . args) #f)))
+
+(define-public (module-provide m)
+  (if (not (module-available? m)) (module-load m)))

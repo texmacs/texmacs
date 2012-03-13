@@ -30,7 +30,7 @@
   `(delayed
      (:idle 250)
      (ahash-set! lazy-keyboard-done ',module #t)
-     (import-from ,module)))
+     (module-provide ',module)))
 
 (define lazy-force-all? #f)
 (define lazy-force-busy? #f)
@@ -40,7 +40,7 @@
 	((ahash-ref lazy-keyboard-done (cdar l))
 	 (lazy-keyboard-force-do (cdr l)))
 	((or lazy-force-all? (texmacs-in-mode? (caar l)))
-	 (module-load (cdar l))
+         (module-provide (cdar l))
 	 (ahash-set! lazy-keyboard-done (cdar l) #t)
 	 (lazy-keyboard-force-do (cdr l)))
 	(else (cons (car l) (lazy-keyboard-force-do (cdr l))))))
