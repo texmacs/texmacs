@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.13>
+<TeXmacs|1.0.7.14>
 
 <style|source>
 
@@ -43,7 +43,7 @@
   </active*>
 
   <assign|render-enunciation|<\macro|which|body>
-    <padded-normal|1fn|1fn|<surround|<arg|which>||<arg|body>>>
+    <padded-normal|1fn|1fn|<surround|<arg|which>|<yes-indent*>|<arg|body>>>
   </macro>>
 
   <assign|render-remark|<\macro|which|body>
@@ -58,7 +58,7 @@
     <\padded-normal|0.5fn|0.5fn>
       <\indent-left|1.5fn>
         <\small>
-          <surround|<exercise-name|<arg|which><exercise-sep>>||<arg|body>>
+          <surround|<exercise-name|<arg|which><exercise-sep>>|<yes-indent*>|<arg|body>>
         </small>
       </indent-left>
     </padded-normal>
