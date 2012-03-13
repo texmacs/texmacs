@@ -16,6 +16,7 @@
 #include "analyze.hpp"
 #include "timer.hpp"
 #include "Bridge/impl_typesetter.hpp"
+#include "new_style.hpp"
 #ifdef EXPERIMENTAL
 #include "../../Style/Environment/std_environment.hpp"
 #endif // EXPERIMENTAL
@@ -119,7 +120,7 @@ edit_typeset_rep::typeset_style_use_cache (tree style) {
   bool ok;
   hashmap<string,tree> H;
   tree t;
-  SERVER (style_get_cache (style, H, t, ok));
+  style_get_cache (style, H, t, ok);
   if (ok) {
     env->patch_env (H);
     ok= drd->set_locals (t);
@@ -132,7 +133,7 @@ edit_typeset_rep::typeset_style_use_cache (tree style) {
     env->exec (t);
     env->read_env (H);
     drd->heuristic_init (H);
-    SERVER (style_set_cache (style, H, drd->get_locals ()));
+    style_set_cache (style, H, drd->get_locals ());
   }
   use_modules (env->read (THE_MODULES));
 }

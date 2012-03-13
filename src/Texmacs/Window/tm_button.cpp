@@ -35,6 +35,7 @@
 #include "convert.hpp"
 #include "formatter.hpp"
 #include "Format/format.hpp"
+#include "new_style.hpp"
 
 void use_modules (tree t);
 
@@ -46,7 +47,7 @@ get_init_environment (tree doc, drd_info& drd) {
   bool ok;
   tree t, style= extract (doc, "style");
   hashmap<string,tree> H;
-  get_server () -> style_get_cache (style, H, t, ok);
+  style_get_cache (style, H, t, ok);
   if (ok) {
     env->patch_env (H);
     ok= drd->set_locals (t);

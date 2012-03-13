@@ -1,16 +1,15 @@
 
 /******************************************************************************
- * MODULE     : glue.cpp
- * DESCRIPTION: Glue for linking TeXmacs commands to scheme
- * COPYRIGHT  : (C) 1999-2011  Joris van der Hoeven and Massimiliano Gubinelli
- *******************************************************************************
- * This software falls under the GNU general public license version 3 or later.
- * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
- * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
- ******************************************************************************/
+* MODULE     : glue.cpp
+* DESCRIPTION: Glue for linking TeXmacs commands to scheme
+* COPYRIGHT  : (C) 1999-2011  Joris van der Hoeven and Massimiliano Gubinelli
+*******************************************************************************
+* This software falls under the GNU general public license version 3 or later.
+* It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+* in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+******************************************************************************/
 
 #include "glue.hpp"
-
 
 #include "promise.hpp"
 #include "tree.hpp"
@@ -22,13 +21,11 @@
 #include "file.hpp"
 #include "tmfs.hpp"
 
-
 tmscm 
 blackboxP (tmscm  t) {
   bool b= tmscm_is_blackbox (t);
   return bool_to_tmscm (b);
 }
-
 
 #if 0
 template<class T> tmscm  box_to_tmscm (T o) {
@@ -44,11 +41,9 @@ template<class T> tmscm  boxP (tmscm  t) {
 }
 #endif
 
-
-
 /******************************************************************************
- * Miscellaneous routines for use by glue only
- ******************************************************************************/
+* Miscellaneous routines for use by glue only
+******************************************************************************/
 
 string
 texmacs_version (string which) {
@@ -107,8 +102,8 @@ get_bounding_rectangle (tree t) {
 }
 
 /******************************************************************************
- * Redirections
- ******************************************************************************/
+* Redirections
+******************************************************************************/
 
 void
 cout_buffer () {
@@ -120,12 +115,9 @@ cout_unbuffer () {
   return cout.unbuffer ();
 }
 
-
-
 /******************************************************************************
- * Basic assertions
- ******************************************************************************/
-
+* Basic assertions
+******************************************************************************/
 
 #define TMSCM_ASSERT_STRING(s,arg,rout) \
 TMSCM_ASSERT (tmscm_is_string (s), s, arg, rout)
@@ -148,8 +140,8 @@ TMSCM_ASSERT (tmscm_is_blackbox (t), t, arg, rout)
 // no check
 
 /******************************************************************************
- * Tree labels
- ******************************************************************************/
+* Tree labels
+******************************************************************************/
 
 #define TMSCM_ASSERT_TREE_LABEL(p,arg,rout) TMSCM_ASSERT_SYMBOL(p,arg,rout)
 
@@ -166,8 +158,8 @@ tmscm_to_tree_label (tmscm  p) {
 }
 
 /******************************************************************************
- * Trees
- ******************************************************************************/
+* Trees
+******************************************************************************/
 
 #define TMSCM_ASSERT_TREE(t,arg,rout) TMSCM_ASSERT (tmscm_is_tree (t), t, arg, rout)
 
@@ -245,8 +237,8 @@ tree_child_insert (tree t, int pos, tree x) {
 }
 
 /******************************************************************************
- * Document modification routines
- ******************************************************************************/
+* Document modification routines
+******************************************************************************/
 
 extern tree the_et;
 
@@ -355,8 +347,8 @@ tree_remove_node (tree r, int pos) {
 }
 
 /******************************************************************************
- * Scheme trees
- ******************************************************************************/
+* Scheme trees
+******************************************************************************/
 
 #define TMSCM_ASSERT_SCHEME_TREE(p,arg,rout)
 
@@ -402,8 +394,8 @@ tmscm_to_scheme_tree (tmscm  p) {
 }
 
 /******************************************************************************
- * Content
- ******************************************************************************/
+* Content
+******************************************************************************/
 
 bool
 tmscm_is_content (tmscm  p) {
@@ -445,8 +437,8 @@ contentP (tmscm  t) {
 }
 
 /******************************************************************************
- * Paths
- ******************************************************************************/
+* Paths
+******************************************************************************/
 
 bool
 tmscm_is_path (tmscm  p) {
@@ -472,8 +464,8 @@ tmscm_to_path (tmscm  p) {
 
 
 /******************************************************************************
- * Observers
- ******************************************************************************/
+* Observers
+******************************************************************************/
 
 #define TMSCM_ASSERT_OBSERVER(o,arg,rout) \
 TMSCM_ASSERT (tmscm_is_observer (o), o, arg, rout)
@@ -504,8 +496,8 @@ observerP (tmscm  t) {
 
 
 /******************************************************************************
- * Widgets
- ******************************************************************************/
+* Widgets
+******************************************************************************/
 
 #define TMSCM_ASSERT_WIDGET(o,arg,rout) \
 TMSCM_ASSERT (tmscm_is_widget (o), o, arg, rout)
@@ -528,8 +520,8 @@ tmscm_to_widget (tmscm  o) {
 }
 
 /******************************************************************************
- * Commands
- ******************************************************************************/
+* Commands
+******************************************************************************/
 
 #define TMSCM_ASSERT_COMMAND(o,arg,rout) \
 TMSCM_ASSERT (tmscm_is_command (o), o, arg, rout)
@@ -552,8 +544,8 @@ tmscm_to_command (tmscm  o) {
 
 
 /******************************************************************************
- *  Widget Factory
- ******************************************************************************/
+*  Widget Factory
+******************************************************************************/
 
 typedef promise<widget> promise_widget;
 
@@ -578,13 +570,9 @@ tmscm_to_promise_widget (tmscm  o) {
   return open_box<promise_widget> (tmscm_to_blackbox (o));
 }
 
-
-
 /******************************************************************************
- * Urls
- ******************************************************************************/
-
-
+* Urls
+******************************************************************************/
 
 bool
 tmscm_is_url (tmscm  u) {
@@ -624,8 +612,8 @@ url url_ref (url u, int i) { return u[i]; }
 
 
 /******************************************************************************
- * Table types
- ******************************************************************************/
+* Table types
+******************************************************************************/
 
 typedef hashmap<string,string> table_string_string;
 
@@ -675,8 +663,8 @@ TMSCM_ASSERT (tmscm_is_solution(p), p, arg, rout)
 #define tmscm_to_solution tmscm_to_table_string_string
 
 /******************************************************************************
- * Several array types
- ******************************************************************************/
+* Several array types
+******************************************************************************/
 
 typedef array<int> array_int;
 typedef array<string> array_string;
@@ -959,8 +947,8 @@ tmscm_to_solutions (tmscm  p) {
 }
 
 /******************************************************************************
- * List types
- ******************************************************************************/
+* List types
+******************************************************************************/
 
 typedef list<string> list_string;
 
@@ -1017,8 +1005,8 @@ tmscm_to_list_tree (tmscm  p) {
 }
 
 /******************************************************************************
- * Other wrapper types
- ******************************************************************************/
+* Other wrapper types
+******************************************************************************/
 
 #define TMSCM_ASSERT_COLLECTION(p,arg,rout) \
 TMSCM_ASSERT (tmscm_is_array_string (p), p, arg, rout)
@@ -1033,10 +1021,9 @@ tmscm_to_collection (tmscm  p) {
   return as_collection (tmscm_to_array_string (p));
 }
 
-
 /******************************************************************************
- * Gluing
- ******************************************************************************/
+* Gluing
+******************************************************************************/
 
 #include "server.hpp"
 #include "tm_window.hpp"
@@ -1066,13 +1053,11 @@ tmscm_to_collection (tmscm  p) {
 #include "dictionary.hpp"
 #include "patch.hpp"
 #include "packrat.hpp"
-
-
+#include "new_style.hpp"
 
 #include "../Glue/glue_basic.cpp"
 #include "../Glue/glue_editor.cpp"
 #include "../Glue/glue_server.cpp"
-
 
 void
 initialize_glue () {
@@ -1086,4 +1071,3 @@ initialize_glue () {
   initialize_glue_editor ();
   initialize_glue_server ();
 }
-

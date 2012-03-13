@@ -5168,6 +5168,33 @@ tmg_show_balloon (tmscm arg1, tmscm arg2, tmscm arg3) {
 }
 
 tmscm
+tmg_get_style_menu () {
+  // TMSCM_DEFER_INTS;
+  object out= get_style_menu ();
+  // TMSCM_ALLOW_INTS;
+
+  return object_to_tmscm (out);
+}
+
+tmscm
+tmg_get_add_package_menu () {
+  // TMSCM_DEFER_INTS;
+  object out= get_add_package_menu ();
+  // TMSCM_ALLOW_INTS;
+
+  return object_to_tmscm (out);
+}
+
+tmscm
+tmg_get_remove_package_menu () {
+  // TMSCM_DEFER_INTS;
+  object out= get_remove_package_menu ();
+  // TMSCM_ALLOW_INTS;
+
+  return object_to_tmscm (out);
+}
+
+tmscm
 tmg_window_handle () {
   // TMSCM_DEFER_INTS;
   int out= window_handle ();
@@ -5784,6 +5811,9 @@ initialize_glue_basic () {
   tmscm_install_procedure ("object->promise-widget",  tmg_object_2promise_widget, 1, 0, 0);
   tmscm_install_procedure ("tree-bounding-rectangle",  tmg_tree_bounding_rectangle, 1, 0, 0);
   tmscm_install_procedure ("show-balloon",  tmg_show_balloon, 3, 0, 0);
+  tmscm_install_procedure ("get-style-menu",  tmg_get_style_menu, 0, 0, 0);
+  tmscm_install_procedure ("get-add-package-menu",  tmg_get_add_package_menu, 0, 0, 0);
+  tmscm_install_procedure ("get-remove-package-menu",  tmg_get_remove_package_menu, 0, 0, 0);
   tmscm_install_procedure ("window-handle",  tmg_window_handle, 0, 0, 0);
   tmscm_install_procedure ("window-create",  tmg_window_create, 4, 0, 0);
   tmscm_install_procedure ("window-create-quit",  tmg_window_create_quit, 4, 0, 0);

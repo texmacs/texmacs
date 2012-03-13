@@ -884,33 +884,6 @@ tmg_auto_save () {
 }
 
 tmscm
-tmg_get_style_menu () {
-  // TMSCM_DEFER_INTS;
-  object out= get_server()->get_style_menu ();
-  // TMSCM_ALLOW_INTS;
-
-  return object_to_tmscm (out);
-}
-
-tmscm
-tmg_get_add_package_menu () {
-  // TMSCM_DEFER_INTS;
-  object out= get_server()->get_add_package_menu ();
-  // TMSCM_ALLOW_INTS;
-
-  return object_to_tmscm (out);
-}
-
-tmscm
-tmg_get_remove_package_menu () {
-  // TMSCM_DEFER_INTS;
-  object out= get_server()->get_remove_package_menu ();
-  // TMSCM_ALLOW_INTS;
-
-  return object_to_tmscm (out);
-}
-
-tmscm
 tmg_style_clear_cache () {
   // TMSCM_DEFER_INTS;
   get_server()->style_clear_cache ();
@@ -1188,9 +1161,6 @@ initialize_glue_server () {
   tmscm_install_procedure ("texmacs-load-buffer",  tmg_texmacs_load_buffer, 4, 0, 0);
   tmscm_install_procedure ("texmacs-save-buffer",  tmg_texmacs_save_buffer, 2, 0, 0);
   tmscm_install_procedure ("auto-save",  tmg_auto_save, 0, 0, 0);
-  tmscm_install_procedure ("get-style-menu",  tmg_get_style_menu, 0, 0, 0);
-  tmscm_install_procedure ("get-add-package-menu",  tmg_get_add_package_menu, 0, 0, 0);
-  tmscm_install_procedure ("get-remove-package-menu",  tmg_get_remove_package_menu, 0, 0, 0);
   tmscm_install_procedure ("style-clear-cache",  tmg_style_clear_cache, 0, 0, 0);
   tmscm_install_procedure ("set-script-status",  tmg_set_script_status, 1, 0, 0);
   tmscm_install_procedure ("set-printing-command",  tmg_set_printing_command, 1, 0, 0);

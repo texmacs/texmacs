@@ -45,15 +45,6 @@ public:
   virtual tm_window   get_window () = 0;
   virtual int         get_nr_windows () = 0;
 
-  virtual object get_style_menu () = 0;
-  virtual object get_add_package_menu () = 0;
-  virtual object get_remove_package_menu () = 0;
-  virtual void style_clear_cache () = 0;
-  virtual void style_set_cache (
-            tree style, hashmap<string,tree> H, tree drd) = 0;
-  virtual void style_get_cache (
-	    tree style, hashmap<string,tree>& H, tree& drd, bool& flag) = 0;
-
   /* Control global server parameters */
   virtual void   set_font_rules (scheme_tree rules) = 0;
   virtual bool   kbd_get_command (string s, string& help, command& cmd) = 0;
@@ -168,6 +159,7 @@ public:
   virtual void pretend_save_buffer () = 0;
 
   /* Miscellaneous routines */
+  virtual void   style_clear_cache () = 0;
   virtual void   refresh () = 0;
   virtual void   interpose_handler () = 0;
   virtual void   wait_handler (string message, string arg) = 0;

@@ -96,9 +96,6 @@
   (texmacs-save-buffer save_buffer (void url string))
   (auto-save auto_save (void))
   
-  (get-style-menu get_style_menu (object))
-  (get-add-package-menu get_add_package_menu (object))
-  (get-remove-package-menu get_remove_package_menu (object))
   (style-clear-cache style_clear_cache (void))
   (set-script-status set_script_status (void int))
   (set-printing-command set_printing_command (void string))

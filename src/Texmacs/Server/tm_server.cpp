@@ -165,68 +165,12 @@ tm_server_rep::get_nr_windows () {
 }
 
 /******************************************************************************
-* The style and package menus
-******************************************************************************/
-
-static string
-compute_style_menu (url u, int kind) {
-  if (is_or (u)) {
-    string sep= "\n";
-    if (is_atomic (u[1]) &&
-	((is_concat (u[2]) && (u[2][1] != "CVS") && (u[2][1] != ".svn")) ||
-	 (is_or (u[2]) && is_concat (u[2][1]))))
-      sep= "\n---\n";
-    return
-      compute_style_menu (u[1], kind) * sep *
-      compute_style_menu (u[2], kind);
-  }
-  if (is_concat (u)) {
-    string dir= upcase_first (as_string (u[1]));
-    string sub= compute_style_menu (u[2], kind);
-    if ((dir == "Test") || (dir == "Obsolete") ||
-	(dir == "CVS") || (dir == ".svn")) return "";
-    return "(-> \"" * dir * "\" " * sub * ")";
-  }
-  if (is_atomic (u)) {
-    string l  = as_string (u);
-    if (!ends (l, ".ts")) return "";
-    l= l(0, N(l)-3);
-    string cmd ("init-style");
-    if (kind == 1) cmd= "init-add-package";
-    if (kind == 2) cmd= "init-remove-package";
-    return "((verbatim \"" * l * "\") (" * cmd * " \"" * l * "\"))";
-  }
-  return "";
-}
-
-object
-tm_server_rep::get_style_menu () {
-  url sty_u= descendance ("$TEXMACS_STYLE_ROOT");
-  string sty= compute_style_menu (sty_u, 0);
-  return eval ("(menu-dynamic " * sty * ")");
-}
-
-object
-tm_server_rep::get_add_package_menu () {
-  url pck_u= descendance ("$TEXMACS_PACKAGE_ROOT");
-  string pck= compute_style_menu (pck_u, 1);
-  return eval ("(menu-dynamic " * pck * ")");
-}
-
-object
-tm_server_rep::get_remove_package_menu () {
-  url pck_u= descendance ("$TEXMACS_PACKAGE_ROOT");
-  string pck= compute_style_menu (pck_u, 2);
-  return eval ("(menu-dynamic " * pck * ")");
-}
-
-/******************************************************************************
-* Caching style files
+* Miscellaneous routines
 ******************************************************************************/
 
 void
 tm_server_rep::style_clear_cache () {
-  new_style_clear_cache ();
+  style_invalidate_cache ();
 
   int i, j, n= N(bufs);
   for (i=0; i<n; i++) {
@@ -235,22 +179,6 @@ tm_server_rep::style_clear_cache () {
       ((tm_view) (buf->vws[j]))->ed->init_style ();
   }
 }
-
-void
-tm_server_rep::style_set_cache (tree style, hashmap<string,tree> H, tree t) {
-  new_style_set_cache (style, H, t);
-}
-
-void
-tm_server_rep::style_get_cache (
-  tree style, hashmap<string,tree>& H, tree& t, bool& f)
-{
-  new_style_get_cache (style, H, t, f);
-}
-
-/******************************************************************************
-* Miscellaneous routines
-******************************************************************************/
 
 void
 tm_server_rep::refresh () {

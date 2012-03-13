@@ -61,7 +61,7 @@ cache_file_name (tree t) {
 }
 
 void
-new_style_clear_cache () {
+style_invalidate_cache () {
   init_style_data ();
   sd->style_cache=
     hashmap<tree,hashmap<string,tree> > (hashmap<string,tree> (UNINIT));
@@ -69,7 +69,7 @@ new_style_clear_cache () {
 }
 
 void
-new_style_set_cache (tree style, hashmap<string,tree> H, tree t) {
+style_set_cache (tree style, hashmap<string,tree> H, tree t) {
   init_style_data ();
   // cout << "set cache " << style << LF;
   sd->style_cache (copy (style))= H;
@@ -82,7 +82,7 @@ new_style_set_cache (tree style, hashmap<string,tree> H, tree t) {
 }
 
 void
-new_style_get_cache (tree style, hashmap<string,tree>& H, tree& t, bool& f) {
+style_get_cache (tree style, hashmap<string,tree>& H, tree& t, bool& f) {
   init_style_data ();
   //cout << "get cache " << style << LF;
   if ((style == "") || (style == tree (TUPLE))) { f= false; return; }
@@ -133,7 +133,7 @@ compute_env_and_drd (tree style) {
   if (!busy) {
     tree t;
     bool ok;
-    new_style_get_cache (style, H, t, ok);
+    style_get_cache (style, H, t, ok);
     if (ok) {
       env->patch_env (H);
       ok= drd->set_locals (t);
@@ -223,4 +223,60 @@ get_document_drd (tree doc) {
     drd->heuristic_init (H);
   }
   return drd;
+}
+
+/******************************************************************************
+* The style and package menus
+******************************************************************************/
+
+static string
+compute_style_menu (url u, int kind) {
+  if (is_or (u)) {
+    string sep= "\n";
+    if (is_atomic (u[1]) &&
+	((is_concat (u[2]) && (u[2][1] != "CVS") && (u[2][1] != ".svn")) ||
+	 (is_or (u[2]) && is_concat (u[2][1]))))
+      sep= "\n---\n";
+    return
+      compute_style_menu (u[1], kind) * sep *
+      compute_style_menu (u[2], kind);
+  }
+  if (is_concat (u)) {
+    string dir= upcase_first (as_string (u[1]));
+    string sub= compute_style_menu (u[2], kind);
+    if ((dir == "Test") || (dir == "Obsolete") ||
+	(dir == "CVS") || (dir == ".svn")) return "";
+    return "(-> \"" * dir * "\" " * sub * ")";
+  }
+  if (is_atomic (u)) {
+    string l  = as_string (u);
+    if (!ends (l, ".ts")) return "";
+    l= l(0, N(l)-3);
+    string cmd ("init-style");
+    if (kind == 1) cmd= "init-add-package";
+    if (kind == 2) cmd= "init-remove-package";
+    return "((verbatim \"" * l * "\") (" * cmd * " \"" * l * "\"))";
+  }
+  return "";
+}
+
+object
+get_style_menu () {
+  url sty_u= descendance ("$TEXMACS_STYLE_ROOT");
+  string sty= compute_style_menu (sty_u, 0);
+  return eval ("(menu-dynamic " * sty * ")");
+}
+
+object
+get_add_package_menu () {
+  url pck_u= descendance ("$TEXMACS_PACKAGE_ROOT");
+  string pck= compute_style_menu (pck_u, 1);
+  return eval ("(menu-dynamic " * pck * ")");
+}
+
+object
+get_remove_package_menu () {
+  url pck_u= descendance ("$TEXMACS_PACKAGE_ROOT");
+  string pck= compute_style_menu (pck_u, 2);
+  return eval ("(menu-dynamic " * pck * ")");
 }

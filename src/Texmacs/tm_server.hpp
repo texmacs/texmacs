@@ -41,15 +41,8 @@ public:
   tm_window   get_window ();
   int         get_nr_windows ();
 
-  /* Caching style files */
-  object get_style_menu ();
-  object get_add_package_menu ();
-  object get_remove_package_menu ();
-  void style_clear_cache ();
-  void style_set_cache (tree st, hashmap<string,tree> H, tree t);
-  void style_get_cache (tree st, hashmap<string,tree>& H, tree& t, bool& flag);
-
   /* Miscellaneous routines */
+  void   style_clear_cache ();
   void   refresh ();
   void   interpose_handler ();
   void   wait_handler (string message, string arg);
