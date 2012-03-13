@@ -174,13 +174,8 @@ tm_data_rep::new_buffer (url name, tree doc) {
   int nr= find_buffer (name);
   if (nr != -1) return bufs[nr];
   tm_buffer buf= new_buffer (name);
-  set_document (buf->rp, extract (doc, "body"));
-  buf->data->project= extract (doc, "project");
-  buf->data->style  = extract (doc, "style");
-  buf->data->init   = hashmap<string,tree> (UNINIT, extract (doc, "initial"));
-  buf->data->fin    = hashmap<string,tree> (UNINIT, extract (doc, "final"));
-  buf->data->ref    = hashmap<string,tree> (UNINIT, extract (doc, "references"));
-  buf->data->aux    = hashmap<string,tree> (UNINIT, extract (doc, "auxiliary"));
+  tree body= detach_data (doc, buf->data);
+  set_document (buf->rp, body);
   if (buf->data->project != "") {
     url prj_name= head (name) * as_string (buf->data->project);
     buf->prj= load_passive_buffer (prj_name);
@@ -193,16 +188,11 @@ tm_data_rep::revert_buffer (url name, tree doc) {
   int i, nr= find_buffer (name);
   if (nr == -1) return;
   tm_buffer buf= bufs[nr];
-  buf->data->project= extract (doc, "project");
-  buf->data->style  = extract (doc, "style");
-  buf->data->init   = hashmap<string,tree> (UNINIT, extract (doc, "initial"));
-  buf->data->fin    = hashmap<string,tree> (UNINIT, extract (doc, "final"));
-  buf->data->ref    = hashmap<string,tree> (UNINIT, extract (doc, "references"));
-  buf->data->aux    = hashmap<string,tree> (UNINIT, extract (doc, "auxiliary"));
-  if (N(buf->vws)==0) set_document (buf->rp, extract (doc, "body"));
+  tree body= detach_data (doc, buf->data);
+  if (N(buf->vws)==0) set_document (buf->rp, body);
   else for (i=0; i<N(buf->vws); i++) {
     tm_view vw= buf->vws[i];
-    if (i==0) assign (vw->ed->rp, extract (doc, "body"));
+    if (i==0) assign (vw->ed->rp, body);
     vw->ed->set_style (buf->data->style);
     vw->ed->set_init  (buf->data->init);
     vw->ed->set_fin   (buf->data->fin);
