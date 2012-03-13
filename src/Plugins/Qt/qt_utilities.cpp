@@ -127,8 +127,7 @@ qt_decode_length (string width, QWidget* qwid) {
     if (qwid) {
       size.setWidth(x * qwid->fontInfo().pointSize()); 
     } else {
-      QFontInfo info = QFontInfo(QApplication::font());
-      size.setWidth(x * info.pointSize());
+      size.setWidth(x * QApplication::font().pointSize());
     }
   }
   else if (ends (width, "px") && is_double (width (0, N(width) - 2))) {

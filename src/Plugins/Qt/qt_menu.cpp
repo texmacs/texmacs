@@ -52,6 +52,7 @@ QTMAction::QTMAction(QObject *parent) : QAction(parent) {
   QObject::connect(the_gui->gui_helper, SIGNAL(refresh()), this, SLOT(doRefresh()));
   _timer = new QTimer(this);
   QObject::connect(_timer, SIGNAL(timeout()), this, SLOT(doShowToolTip()));
+  
 }
 
 QTMAction::~QTMAction() { 
@@ -89,8 +90,9 @@ QTMAction::showToolTip()
  */
 void
 QTMAction::doShowToolTip() {
+  static int step = QApplication::font().pointSize();
   _timer->stop();
-  if((QCursor::pos() - _pos).manhattanLength() < 10)  // Hideous HACK
+  if((QCursor::pos() - _pos).manhattanLength() < step)  // Hideous HACK
     QToolTip::showText(QCursor::pos(), toolTip());
   else
     QToolTip::hideText();
