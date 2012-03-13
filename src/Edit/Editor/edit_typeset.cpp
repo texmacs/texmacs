@@ -40,8 +40,8 @@ edit_typeset_rep::edit_typeset_rep ():
   cur (hashmap<string,tree> (UNINIT)),
   pre (UNINIT), init (UNINIT), fin (UNINIT),
   env (drd, is_aux (buf->name)? buf->extra: buf->name,
-       buf->ref, (buf->prj==NULL? buf->ref: buf->prj->ref),
-       buf->aux, (buf->prj==NULL? buf->aux: buf->prj->aux)),
+       buf->data->ref, (buf->prj==NULL? buf->data->ref: buf->prj->data->ref),
+       buf->data->aux, (buf->prj==NULL? buf->data->aux: buf->prj->data->aux)),
   ttt (new_typesetter (env, subtree (et, rp), reverse (rp))) {}
 edit_typeset_rep::~edit_typeset_rep () { delete_typesetter (ttt); }
 
@@ -72,8 +72,8 @@ edit_typeset_rep::set_base_name (url name) {
 
 void
 edit_typeset_rep::clear_local_info () {
-  buf->ref= hashmap<string,tree> ();
-  buf->aux= hashmap<string,tree> ();
+  buf->data->ref= hashmap<string,tree> ();
+  buf->data->aux= hashmap<string,tree> ();
 }
 
 /******************************************************************************
@@ -379,7 +379,7 @@ edit_typeset_rep::exec (tree t, hashmap<string,tree> H, bool expand_refs) {
   env->write_env (H);
   t= env->exec (t);
   if (expand_refs)
-    t= expand_references (t, buf->ref);
+    t= expand_references (t, buf->data->ref);
   t= simplify_execed (t);
   t= simplify_correct (t);
   env->write_env (H2);

@@ -50,8 +50,8 @@ edit_process_rep::generate_bibliography (
   if (DEBUG_AUTO)
     cout << "TeXmacs] Generating bibliography"
 	 << " [" << bib << ", " << style << ", " << fname << "]\n";
-  tree bib_t= buf->aux[bib];
-  if (buf->prj != NULL) bib_t= buf->prj->aux[bib];
+  tree bib_t= buf->data->aux[bib];
+  if (buf->prj != NULL) bib_t= buf->prj->data->aux[bib];
   tree t;
   url bib_file= find_bib_file (buf->name, fname);
   if (is_none (bib_file)) {
@@ -97,8 +97,8 @@ void
 edit_process_rep::generate_table_of_contents (string toc) {
   if (DEBUG_AUTO)
     cout << "TeXmacs] Generating table of contents [" << toc << "]\n";
-  tree toc_t= buf->aux[toc];
-  if (buf->prj != NULL) toc_t= copy (buf->prj->aux[toc]);
+  tree toc_t= buf->data->aux[toc];
+  if (buf->prj != NULL) toc_t= copy (buf->prj->data->aux[toc]);
   if (N(toc_t)>0) insert_tree (toc_t);
 }
 
@@ -248,8 +248,8 @@ void
 edit_process_rep::generate_index (string idx) {
   if (DEBUG_AUTO)
     cout << "TeXmacs] Generating index [" << idx << "]\n";
-  tree I= copy (buf->aux[idx]);
-  if (buf->prj != NULL) I= copy (buf->prj->aux[idx]);
+  tree I= copy (buf->data->aux[idx]);
+  if (buf->prj != NULL) I= copy (buf->prj->data->aux[idx]);
   if (N(I)>0) {
     followup= hashmap<string,tree> (TUPLE);
     int i, n= N(I);
@@ -289,8 +289,8 @@ void
 edit_process_rep::generate_glossary (string gly) {
   if (DEBUG_AUTO)
     cout << "TeXmacs] Generating glossary [" << gly << "]\n";
-  tree G= copy (buf->aux[gly]);
-  if (buf->prj != NULL) G= copy (buf->prj->aux[gly]);
+  tree G= copy (buf->data->aux[gly]);
+  if (buf->prj != NULL) G= copy (buf->prj->data->aux[gly]);
   if (N(G)>0) {
     int i, n= N(G);
     tree D (DOCUMENT);

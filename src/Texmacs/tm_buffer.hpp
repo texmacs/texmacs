@@ -12,6 +12,7 @@
 #ifndef TM_BUFFER_H
 #define TM_BUFFER_H
 #include "server.hpp"
+#include "new_data.hpp"
 
 extern tree the_et;
 path new_document ();
@@ -32,22 +33,15 @@ public:
   tm_buffer prj;          // buffer which corresponds to the project
   bool in_menu;           // should the buffer be listed in the menus?
 
-  path rp;                    // path to the document's root in the_et
-  tree project;               // a project the document belongs to
-  tree style;                 // the style of the buffer
-  hashmap<string,tree> init;  // initial values of environment variables
-  hashmap<string,tree> fin;   // final values of environment variables
-  hashmap<string,tree> ref;   // all labels with references
-  hashmap<string,tree> aux;   // auxiliary output: toc, bib, etc.
+  path rp;                // path to the document's root in the_et
+  new_data data;          // data associated to document
 
   inline tm_buffer_rep (url name2):
     name (name2), abbr (as_string (tail (name))),
     fm ("texmacs"), extra (url_none ()), vws (0),
     read_only (false), secure (is_secure (name2)),
     prj (NULL), in_menu (true),
-    rp (new_document ()),
-    project (""), style ("style"),
-    init ("?"), fin ("?"), ref ("?"), aux ("?") {}
+    rp (new_document ()), data () {}
 
   inline ~tm_buffer_rep () {
     delete_document (rp); }

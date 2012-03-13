@@ -168,8 +168,8 @@ tm_data_rep::make_document (tm_view vw, string fm) {
   object arg2 (body);
   tree links= as_tree (call ("get-link-locations", arg1, arg2));
 
-  if (vw->buf->project != "")
-    doc << compound ("project", vw->buf->project);
+  if (vw->buf->data->project != "")
+    doc << compound ("project", vw->buf->data->project);
   if (vw->ed->get_style() != tree (TUPLE))
     doc << compound ("style", copy (vw->ed->get_style()));
   if (body != tree (DOCUMENT, ""))
@@ -181,10 +181,10 @@ tm_data_rep::make_document (tm_view vw, string fm) {
   if (N (links) != 0)
     doc << compound ("links", links);
   if (vw->ed->get_save_aux()) {
-    if (N (vw->buf->ref) != 0)
-      doc << compound ("references", make_collection (vw->buf->ref));
-    if (N (vw->buf->aux) != 0)
-      doc << compound ("auxiliary", make_collection (vw->buf->aux));
+    if (N (vw->buf->data->ref) != 0)
+      doc << compound ("references", make_collection (vw->buf->data->ref));
+    if (N (vw->buf->data->aux) != 0)
+      doc << compound ("auxiliary", make_collection (vw->buf->data->aux));
   }
   return doc;
 }
