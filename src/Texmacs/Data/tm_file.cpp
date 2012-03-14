@@ -39,7 +39,7 @@ tm_data_rep::load_tree (url u, string fm) {
     set_message (concat ("Error: file ", vname, " not found"), action);
     return "error";
   }
-  if ((fm == "generic") || (fm == "help")) fm= get_format (s, suf);
+  if (fm == "generic" || fm == "help") fm= get_format (s, suf);
   tree t= generic_to_tree (s, fm * "-document");
   tree links= extract (t, "links");
   if (N (links) != 0)
@@ -59,7 +59,7 @@ tm_data_rep::load_buffer (url u, string fm, int where, bool autosave_flag) {
   url v= u;
   u= resolve (u);
   if (is_none (u)) {
-    if ((fm == "generic") || (fm == "texmacs"))
+    if (fm == "generic" || fm == "texmacs")
       if (is_name (v) || (is_rooted_name (v) && is_rooted (v, "default"))) {
         tree doc (DOCUMENT,
                   compound ("style", "generic"),
@@ -100,15 +100,15 @@ tm_data_rep::load_buffer (url u, string fm, int where, bool autosave_flag) {
   nr= find_buffer (v);
   if (nr != -1) {
     tm_buffer buf= bufs[nr];
-    if(autosave_flag && (N(buf->vws) == 1) && (buf->vws[0]->ed != NULL))
+    if (autosave_flag && N(buf->vws) == 1 && buf->vws[0]->ed != NULL)
       buf->vws[0]->ed->require_save();
     buf->fm= fm;
-    if ((fm == "help") || is_rooted_web (v)) {
+    if (fm == "help" || is_rooted_web (v)) {
       tm_buffer buf= get_buffer ();
       buf->read_only= true;
     }
   }
-  if ((fm == "generic") || (fm == "texmacs"))
+  if (fm == "generic" || fm == "texmacs")
     notify_recent_buffer (as_string (u));
 }
 
