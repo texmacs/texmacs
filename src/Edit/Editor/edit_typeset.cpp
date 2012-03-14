@@ -538,6 +538,7 @@ void
 edit_typeset_rep::init_env (string var, tree by) {
   if (init (var) == by) return;
   init (var)= by;
+  require_save();
   notify_change (THE_ENVIRONMENT);
 }
 
