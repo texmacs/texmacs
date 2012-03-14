@@ -83,11 +83,11 @@
   (let* ((b (bib-field x "booktitle"))
 	 (e (bib-field x "editor")))
     (if (bib-null? b)
-	""
-	(if (bib-null? e)
-	    `(concat ,(bib-translate "in ") (with "font-shape" "italic" ,b))
-	    `(concat ,(bib-translate "in ") ,(bib-format-editor x) ", "
-		     (with "font-shape" "italic" ,b))))))
+        ""
+        (if (bib-null? e)
+            `(concat ,(bib-translate "in ") (with "font-shape" "italic" ,b))
+            `(concat ,(bib-translate "in ") ,(bib-format-editor x) ", "
+                     (with "font-shape" "italic" ,b))))))
 
 (tm-define (bib-format-bvolume x)
   (:mode bib-plain?)
@@ -530,6 +530,7 @@
 		(else
 		  (author-sort-key x "author")))))
     (string-append pre "    "
-		   (bib-field x "year") "    "
+		   (if (bib-empty? x "year") "" (bib-field x "year"))
+       "    "
 		   (bib-purify (bib-field x "title")))))
 

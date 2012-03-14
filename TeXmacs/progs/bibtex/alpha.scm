@@ -17,9 +17,11 @@
 (bib-define-style "alpha" "plain")
 
 (define (bib-format-label-year x)
-  (let* ((y (bib-field x "year"))
-	 (l (string-length y)))
-    (if (<= l 2) y (substring y (- l 2) l))))
+  (if (bib-empty? x "year")
+      "--"
+      (let* ((y (bib-field x "year"))
+             (l (string-length y)))
+            (if (<= l 2) y (substring y (- l 2) l)))))
 
 (define (bib-format-label-names a)
   (let* ((n (length a))
@@ -48,13 +50,13 @@
 (define (bib-format-book-inbook-label n x)
   (with key (list-ref x 2)
     (if (bib-empty? x "author")
-	(if (bib-empty? x "editor")
-	    (if (bib-null? key)
-		(number->string n)
-		(bib-prefix key 3))
+      (if (bib-empty? x "editor")
+        (if (bib-null? key)
+          (number->string n)
+        (bib-prefix key 3))
 	    (bib-format-label-names (bib-field x "editor")))
-	(bib-format-label-names (bib-field x "author")))))
-
+    (bib-format-label-names (bib-field x "author")))))
+    
 (define (bib-format-proceedings-misc-label ae n x)
   (with key (list-ref x 2)
     (if (bib-empty? x ae)
