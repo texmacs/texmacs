@@ -227,6 +227,13 @@ latex_symbol_to_tree (string s) {
       if (s == "\\gets") return "<leftarrow>";
     }
 
+    if (latex_type (s) == "symbol") {
+      if (s == "\\lnot") return "<neg>";
+      if (s == "\\land") return "<wedge>";
+      if (s == "\\lor") return "<vee>";
+      return "<" * s(1,N(s)) * ">";
+    }
+
     if (latex_type (s) == "texmacs") {
       if (s == "\\tmdummy")  return "";
     }
@@ -303,7 +310,6 @@ latex_symbol_to_tree (string s) {
     if (latex_type (s) == "control") return s(1,N(s));
     if ((s == "\\ldots") && (command_type ("!mode") != "math")) return "...";
     if (s == "\\bignone") return tree (BIG, ".");
-    if (latex_type (s) == "symbol")  return "<" * s(1,N(s)) * ">";
     if (latex_type (s) == "big-symbol") {
       if (s(0,4)=="\\big") return tree (BIG, s(4,N(s)));
       else return tree (BIG, s(1,N(s)));

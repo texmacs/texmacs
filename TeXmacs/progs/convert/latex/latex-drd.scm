@@ -231,7 +231,7 @@
   ;; Binary operations
   pm mp times div ast star circ bullet cdot
   cap cup uplus sqcap sqcup vee wedge setminus wr
-  diamond triangleleft triangleright
+  diamond triangleleft triangleright land lor lnot
   oplus ominus otimes oslash odot bigcirc amalg notin
 
   ;; Relations

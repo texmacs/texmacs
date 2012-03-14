@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.9>
+<TeXmacs|1.0.7.14>
 
 <style|<tuple|source|std>>
 
@@ -132,15 +132,19 @@
 
   <new-list|itemize-3|<value|aligned-space-item>|<macro|name|<active*|<with|mode|math|<rigid|->>>>>
 
+  <new-list|itemize-4|<value|aligned-space-item>|<macro|name|<active*|<with|mode|math|<rigid|.>>>>>
+
+  <assign|itemize-reduce|<macro|nr|<plus|<mod|<minus|<arg|nr>|1>|3>|1>>>
+
   <assign|itemize|<\macro|body>
-    <\with|itemize-level|<plus|<mod|<value|itemize-level>|3>|1>>
-      <compound|<merge|itemize-|<value|itemize-level>>|<arg|body>>
+    <\with|itemize-level|<plus|<value|itemize-level>|1>>
+      <compound|<merge|itemize-|<itemize-reduce|<value|itemize-level>>>|<arg|body>>
     </with>
   </macro>>
 
   <assign|itemize*|<\macro|body>
-    <\with|itemize-level|<plus|<mod|<value|itemize-level>|3>|1>>
-      <compound|<merge|itemize-|<value|itemize-level>|*>|<arg|body>>
+    <\with|itemize-level|<plus|<value|itemize-level>|1>>
+      <compound|<merge|itemize-|<itemize-reduce|<value|itemize-level>>|*>|<arg|body>>
     </with>
   </macro>>
 
@@ -158,15 +162,19 @@
 
   <new-list|enumerate-3|<value|aligned-dot-item>|<macro|name|<number|<arg|name>|roman>>>
 
+  <new-list|enumerate-4|<value|aligned-dot-item>|<macro|name|<number|<arg|name>|Alpha>>>
+
+  <assign|enumerate-reduce|<macro|nr|<plus|<mod|<minus|<arg|nr>|1>|3>|1>>>
+
   <assign|enumerate|<\macro|body>
-    <\with|enumerate-level|<plus|<mod|<value|enumerate-level>|3>|1>>
-      <compound|<merge|enumerate-|<value|enumerate-level>>|<arg|body>>
+    <\with|enumerate-level|<plus|<value|enumerate-level>|1>>
+      <compound|<merge|enumerate-|<enumerate-reduce|<value|enumerate-level>>>|<arg|body>>
     </with>
   </macro>>
 
   <assign|enumerate*|<\macro|body>
-    <\with|enumerate-level|<plus|<mod|<value|enumerate-level>|3>|1>>
-      <compound|<merge|enumerate-|<value|enumerate-level>|*>|<arg|body>>
+    <\with|enumerate-level|<plus|<value|enumerate-level>|1>>
+      <compound|<merge|enumerate-|<enumerate-reduce|<value|enumerate-level>>|*>|<arg|body>>
     </with>
   </macro>>
 

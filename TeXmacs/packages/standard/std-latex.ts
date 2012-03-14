@@ -142,7 +142,13 @@
 
   <assign|eqn-ver-sep|<macro|<style-with|src-compact|none|<over|<style-with|src-compact|none|<minus|<tex-above-display-skip>|<tex-below-display-skip>|<plus|<tex-above-display-short-skip>|<tex-below-display-short-skip>>>>|2>>>>
 
-  \;
+  <active*|<\src-comment>
+    TeX style lists.
+  </src-comment>>
+
+  <assign|itemize-reduce|<macro|nr|<minimum|<arg|nr>|4>>>
+
+  <assign|enumerate-reduce|<macro|nr|<minimum|<arg|nr>|4>>>
 </body>
 
 <\initial>
