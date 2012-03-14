@@ -115,24 +115,42 @@ CPPFLAGS="$ac_save_cppflags"
 m4_include([misc/autotroll/autotroll.m4])
 
 AC_DEFUN([HACKED_AT_WITH_QT],[
-  if test "$QT_LDFLAGS" == ""; then
-    if test -r "/c/Qt"; then
-      MOC="`which moc`"
-      qt_bin="`dirname $MOC`"
-      qt_home="`dirname $qt_bin`"
-      qt_version="`basename $qt_home`"
-      qt_parent="`dirname $qt_home`"
-      QT_CPPFLAGS="-I$qt_home/mkspecs/macx-g++ -I$qt_home/include/QtCore -I$qt_home/include/QtGui -I$qt_home/include -I/$qt_home/include/ActiveQt -I."
-      QT_CXXFLAGS="-pipe -g -Wall -W -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT"
-      QT_LDFLAGS="-enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc -mthreads -Wl -Wl,-subsystem,windows"
-      QT_LIBS="-L'c:/Qt/$qt_version/lib' -lmingw32 -lqtmaind -lQtGuid4 -lQtCored4"
-      if test "$qt_parent" != "/c/Qt"; then
-        at_cv_qt_build="ko"
-      fi
-    else
-      AT_WITH_QT
-    fi
-  fi
+if test -z $TMBUILDENV; then #QT has he install dir hard coded in library so we need to fix it manually for relocatable environment
+	if test "$QT_LDFLAGS" == ""; then
+	if test -r "/c/Qt"; then
+		MOC="`which moc`"
+		qt_bin="`dirname $MOC`"
+		qt_home="`dirname $qt_bin`"
+		qt_version="`basename $qt_home`"
+		qt_parent="`dirname $qt_home`"
+		QT_CPPFLAGS="-I$qt_home/mkspecs/macx-g++ -I$qt_home/include/QtCore -I$qt_home/include/QtGui -I$qt_home/include -I/$qt_home/include/ActiveQt -I."
+		QT_CXXFLAGS="-pipe -g -Wall -W -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT"
+		QT_LDFLAGS="-enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc -mthreads -Wl -Wl,-subsystem,windows"
+		QT_LIBS="-L'c:/Qt/$qt_version/lib' -lmingw32 -lqtmaind -lQtGuid4 -lQtCored4"
+		
+		if test "$qt_parent" != "/c/Qt"; then
+			at_cv_qt_build="ko"
+		fi
+	else
+		AT_WITH_QT
+	fi;fi
+else
+	if test -r "/Qt"; then
+		QT_FRAMEWORKS_PATH=/Qt
+		QT_PATH=$QT_FRAMEWORKS_PATH/bin
+		QT_LIBS="-L/Qt/lib -lmingw32 -lQtGui4 -lQtCore4"
+		MOCFLAGS="-DUNICODE -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT"
+		QT_DEFINES="-DUNICODE -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT"
+		QT_CPPFLAGS="$QT_DEFINES -I/Qt/include -I/Qt/include/Qt -I/Qt/include/QtCore -I/Qt/include/QtGui"
+		QT_CXXFLAGS="-O2 -frtti -fexceptions -mthreads -Wall $(QT_DEFINES)"
+		QT_CFLAGS="-O2 -Wall $(QT_DEFINES)"
+		MOCFLAGS=$QT_DEFINES
+		MOC=$QT_PATH/moc
+		QMAKE=$QT_PATH/qmake
+	else
+		AT_WITH_QT
+	fi
+fi
 ])
 
 #-------------------------------------------------------------------

@@ -586,8 +586,10 @@ case "${host}" in
   ;;
   *mingw*)
     AC_MSG_RESULT([final adjustments for mingw host])
+    CONFIG_OS=MINGW
     CONFIG_OS_COMPAT="Windows"
-    CONFIG_LDRT="-lmingw32 -lmingwex -mwindows"
+    CONFIG_LDRT="-L/mingw/lib -lmingw32 -lmingwex"
+    GUILE_LDFLAGS="-lmingwex $GUILE_LDFLAGS -lintl" #added mingwex to mask the internal guile readdir function
   ;;
   *-*-cygwin)
     AC_MSG_RESULT(final adjustments for cygwin host)

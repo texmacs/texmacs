@@ -450,10 +450,12 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
     }
 
     string r;
+#ifdef __MINGW32__
     // denis begin
     if (event->text().count() == 1) {
       QChar c= event->text()[0];
-      if (c.isPrint()) { // not a control character or dead key or modifier
+      if (c.isPrint() && event->modifiers() != Qt::MetaModifier) {
+	// not a control character or dead key or modifier
 	char ac=c.toAscii();
 	if (ac && ac != ' ') { // a true ascii printable
 	  r= ac;
@@ -464,6 +466,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
       }
     }
     // denis end
+#endif
     if (qtkeymap->contains (key)) {
       r = qtkeymap[key];
     }

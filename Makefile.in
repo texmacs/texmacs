@@ -502,7 +502,7 @@ WINDOWS_BUILD_BIN_DIR = $(WINDOWS_BUILD_DIR)/bin
 ## WARNING: the following path list needs to be adapted manually 
 DLLPATH = $(PATH)
 DLLS_IN_PATH = $(wildcard $(addsuffix /$(1),$(subst :, ,$(DLLPATH))))
-DLL_LIST = QtCore4.dll QtGui4.dll QtSvg4.dll mingwm10.dll libgmp*.dll libguile*.dll libfreetype*.dll libltdl*.dll libiconv*.dll $(GS_EXE) $(GS_DLL) wget.exe
+DLL_LIST = pthreadGC2.dll libgcc_s_dw2-1.dll QtCore4.dll QtGui4.dll QtSvg4.dll mingwm10.dll libgmp*.dll libguile*.dll libfreetype*.dll libltdl*.dll libiconv*.dll libintl-8.dll libstdc++*.dll $(GS_EXE) $(GS_DLL) wget.exe
 DLLS = $(foreach DLL,$(DLL_LIST),$(call DLLS_IN_PATH,$(DLL)))
 
 WINDOWS_BUNDLE: TEXMACS
@@ -529,6 +529,7 @@ WINDOWS_BUNDLE: TEXMACS
 	$(RM) -r $(WINDOWS_BUILD_DIR)/*/*/*/*/*/*/.svn
 	$(RM) -r $(WINDOWS_BUILD_DIR)/*/*/*/*/*/*/*/.svn
 	for DLL in $(DLLS) ; do $(CP) $$DLL $(WINDOWS_BUILD_BIN_DIR) ; done
+	$(CP) /local/share/gsv*/* $(WINDOWS_BUILD_BIN_DIR)
 
 WINDOWS_PACKAGE: WINDOWS_BUNDLE
 	iscc $(WINDOWS_PACKAGE_SRC)/TeXmacs.iss

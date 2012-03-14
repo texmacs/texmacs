@@ -101,9 +101,11 @@
   (cond ((!= preview-command "default")
 	 (shell (string-append preview-command
 			       " $TEXMACS_HOME_PATH/system/tmp/preview.ps &")))
-        ((os-win32?)
-	 (shell "__previewps__ $TEXMACS_HOME_PATH/system/tmp/preview.ps"))
-        ((os-macos?)
+	((or (os-mingw?) (os-win32?))
+	 (shell (string-append "gsview32 \""
+			       (getenv "TEXMACS_HOME_PATH")
+			       "\\system\\tmp\\preview.ps\"")))
+	((os-macos?)
          (shell "open $TEXMACS_HOME_PATH/system/tmp/preview.ps"))
         ((url-exists-in-path? "ggv")
 	 (shell "ggv $TEXMACS_HOME_PATH/system/tmp/preview.ps &"))

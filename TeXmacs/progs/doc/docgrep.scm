@@ -26,7 +26,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (get-score-sub file keyword-list)
-  (with r (system-search-score (string->url file) keyword-list)
+  (with r (system-search-score (url-system file) keyword-list)
     (cons file r)))
 
 (define (get-score-list keyword-list file-list)
@@ -66,6 +66,8 @@
 ;; Find documentation in given path and matching a given pattern
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define path-separator (if (or (os-mingw?) (os-win32?)) #\; #\:))
+
 (define (url-collect path pattern)
   (let* ((u (url-append (string->url path) (url-any)))
 	 (v (url-expand (url-complete u "dr")))
@@ -76,8 +78,8 @@
 (define (docgrep what path . patterns)
   (let* ((l1 (map (lambda (pat) (url-collect path pat)) patterns))
 	 (l2 (map url->string l1))
-	 (l3 (append-map (cut string-tokenize-by-char <> #\:) l2)))
-    (build-link-page what l3)))
+	 (l3 (append-map (cut string-tokenize-by-char <> path-separator) l2)))
+     (build-link-page what l3)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; External interface
