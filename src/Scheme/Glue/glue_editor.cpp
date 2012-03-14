@@ -2357,6 +2357,15 @@ tmg_search_button_next () {
 }
 
 tmscm
+tmg_search_tree () {
+  // TMSCM_DEFER_INTS;
+  tree out= get_server()->get_editor()->search_tree ();
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
 tmg_replace_start (tmscm arg1, tmscm arg2, tmscm arg3) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "replace-start");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "replace-start");
@@ -3030,6 +3039,7 @@ initialize_glue_editor () {
   tmscm_install_procedure ("in-spell-mode?",  tmg_in_spell_modeP, 0, 0, 0);
   tmscm_install_procedure ("search-start",  tmg_search_start, 1, 0, 0);
   tmscm_install_procedure ("search-button-next",  tmg_search_button_next, 0, 0, 0);
+  tmscm_install_procedure ("search-tree",  tmg_search_tree, 0, 0, 0);
   tmscm_install_procedure ("replace-start",  tmg_replace_start, 3, 0, 0);
   tmscm_install_procedure ("spell-start",  tmg_spell_start, 0, 0, 0);
   tmscm_install_procedure ("spell-replace",  tmg_spell_replace, 1, 0, 0);

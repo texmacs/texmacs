@@ -62,6 +62,10 @@
       ("Clear" (clipboard-clear "primary")))
   ---
   ("Search" (search-start #t))
+  (if (detailed-menus?)
+    (when (!= (tree->string (search-tree)) "")
+      ("  Next match" (search-next))
+      ("  Previous match" (seach-previous))))
   ("Replace" (interactive replace-start-forward))
 
   (if (not (in-math?))

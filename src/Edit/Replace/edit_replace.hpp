@@ -66,6 +66,7 @@ public:
   void search_stop ();
   void search_button_next ();
   bool search_keypress (string s);
+  tree search_tree ();
   void replace_start (tree what, tree by, bool forward= true);
   void replace_next ();
   bool replace_keypress (string s);
