@@ -30,15 +30,6 @@
 #include "scheme.hpp"
 
 
-widget
-file_chooser_widget (command cmd, string type, bool save)  {
-  // file chooser widget for files of a given type; for files of type "image",
-  // the widget includes a previsualizer and a default magnification
-  // for importation can be specified
-  return tm_new<qt_chooser_widget_rep> (cmd, type, save);
-}
-
-
 class qt_field_widget;
 
 class qt_input_widget_rep: public qt_widget_rep {
@@ -59,6 +50,7 @@ public:
   // virtual void connect (slot s, widget w2, slot s2);
   // virtual void deconnect (slot s, widget w2, slot s2);
   virtual widget plain_window_widget (string s, command q);
+  //virtual QLayoutItem* as_qlayoutitem () { return NULL; }
   void perform_dialog();
 };
 
@@ -73,6 +65,7 @@ public:
     widget_rep(), prompt(""), input(""),  proposals(), parent(_parent) {}
   virtual void send (slot s, blackbox val);
   virtual blackbox query (slot s, int type_id);
+  //virtual QLayoutItem* as_qlayoutitem () { return NULL; }
 
   friend class qt_input_widget_rep;
 };
@@ -457,22 +450,16 @@ qt_input_text_widget_rep::as_qwidget () {
     // so must be retained by Qt objects
   }
   QLineEdit *le;
+  // FIXME: how is this check necessary (out of memory check seems unlikely...)
   if (helper) {
     le = new QTMLineEdit (NULL, helper->wid()->width);
     helper -> add (le);
     QObject::connect(le, SIGNAL(returnPressed ()), helper, SLOT(commit ()));
     QObject::connect(le, SIGNAL(editingFinished ()), helper, SLOT(leave ()));
     le -> setText (to_qstring (helper->wid()->text));
-    QFont f= le->font();
-    f.setPixelSize(10);
-    le->setFont(f);
-    //le->setFrame(false);
-    if (ends(helper->wid()->width,"w")) {
-      le->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
-    } else {
-      le->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    }
     
+    le -> setStyleSheet (to_qstylesheet (style));
+    le -> setMinimumSize(qt_decode_length(width, le));
     
     if (ends (type, "file") || type == "directory") {
       // autocompletion
@@ -491,8 +478,6 @@ qt_input_text_widget_rep::as_qwidget () {
       le->setCompleter(completer);
     }
     
-    //le->selectAll();
-    
   } else {
     le = new QLineEdit(NULL);
   }
@@ -507,8 +492,9 @@ qt_input_text_widget_rep::as_qlayoutitem () {
 
 
 qt_input_text_widget_rep::qt_input_text_widget_rep 
-  (command _cmd, string _type, array<string> _def, string _width)
-  : cmd (_cmd), type (_type), def (_def), text (""), width(_width), helper(NULL), ok(false) 
+  (command _cmd, string _type, array<string> _def, int _style, string _width)
+: cmd (_cmd), type (_type), def (_def), text (""), style(_style), width(_width),
+  helper(NULL), ok(false) 
 {
   if (N(def) > 0) {
     text = def[0];
@@ -538,8 +524,7 @@ input_text_widget (command call_back, string type, array<string> def,
                    int style, string width) {
   // a textual input widget for input of a given type and a list of suggested
   // default inputs (the first one should be displayed, if there is one)
-  (void) style; (void) width;
-  return tm_new<qt_input_text_widget_rep> (call_back, type, def, width);
+  return tm_new<qt_input_text_widget_rep> (call_back, type, def, style, width);
 }
 
 widget
@@ -550,6 +535,14 @@ color_picker_widget (command call_back, bool bg, array<tree> proposals) {
   // the bg flag specifies whether we are picking a background color or fill
   
   return tm_new<qt_color_picker_widget_rep>(call_back, bg, proposals);  
+}
+
+widget
+file_chooser_widget (command cmd, string type, bool save)  {
+  // file chooser widget for files of a given type; for files of type "image",
+  // the widget includes a previsualizer and a default magnification
+  // for importation can be specified
+  return tm_new<qt_chooser_widget_rep> (cmd, type, save);
 }
 
 widget 
