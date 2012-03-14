@@ -42,7 +42,7 @@ qt_system (string cmd, string& result) {
     return 1;
   }
   proc.closeWriteChannel ();
-  if (! proc.waitForFinished ()) {
+  if (! proc.waitForFinished (-1)) {
     if (DEBUG_STD) cerr << "TeXmacs] System: waiting for too long\n";
     return 1;
   }

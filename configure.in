@@ -589,6 +589,7 @@ case "${host}" in
     CONFIG_OS=MINGW
     CONFIG_OS_COMPAT="Windows"
     CONFIG_LDRT="-L/mingw/lib -lmingw32 -lmingwex"
+#    CONFIG_LDRT="$CONFIX_LDRT -mwindows"
     GUILE_LDFLAGS="-lmingwex $GUILE_LDFLAGS -lintl" #added mingwex to mask the internal guile readdir function
   ;;
   *-*-cygwin)
