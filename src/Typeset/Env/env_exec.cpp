@@ -787,9 +787,9 @@ edit_env_rep::exec_get_arity (tree t) {
 tree
 edit_env_rep::exec_eval_args (tree t) {
   if (N(t)<1) return tree (ERROR, "bad eval-args");
+  if(is_nil(macro_arg)) return tree(ERROR, "nil argument");
   tree v= macro_arg->item [as_string (t[0])];
-  if (is_atomic (v) || is_nil (macro_arg))
-    return tree (ERROR, "eval arguments " * t[0]->label);
+  if (is_atomic (v)) return tree (ERROR, "eval arguments " * t[0]->label);
   list<hashmap<string,tree> > old_var= macro_arg;
   list<hashmap<string,path> > old_src= macro_src;
   if (!is_nil (macro_arg)) macro_arg= macro_arg->next;
