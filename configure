@@ -768,6 +768,7 @@ enable_experimental
 enable_macosx_extensions
 enable_macosx_distr
 enable_pdf_renderer
+enable_console
 enable_qt
 with_qt
 enable_qtpipes
@@ -1414,6 +1415,7 @@ Optional Features:
   --disable-macosx-extensions  don't use Mac specific services (spellchecker, image handling, ...)
   --enable-macosx-distr=ARCH   build for MacOSX >= 10.4 and arch ARCH
   --enable-pdf-renderer   use experimental PDF renderer for pdf export
+  --enable-console        enable windows console
   --disable-qt            replace Qt by X11 interface
   --enable-qtpipes        replace UNIX pipes by Qt pipes
   --enable-cocoa          replace X11 by Cocoa interface
@@ -6750,6 +6752,33 @@ $as_echo "disabling experimental PDF renderer" >&6; }
 	;;
 esac
 
+
+#--------------------------------------------------------------------
+# Windows console
+#--------------------------------------------------------------------
+
+if test x"$CONFIG_OS" = xMINGW; then
+
+# Check whether --enable-console was given.
+if test "${enable_console+set}" = set; then :
+  enableval=$enable_console;
+else
+  enable_windows_console="no"
+fi
+
+case "$enable_windows_console" in
+    yes)
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling Windows console" >&5
+$as_echo "enabling Windows console" >&6; }
+        ;;
+    *)
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling Windows console" >&5
+$as_echo "disabling Windows console" >&6; }
+	CONFIG_LDRT="$CONFIG_LDRT -mwindows"
+	;;
+esac
+
+fi
 
 #--------------------------------------------------------------------
 # Gui selection

@@ -589,7 +589,6 @@ case "${host}" in
     CONFIG_OS=MINGW
     CONFIG_OS_COMPAT="Windows"
     CONFIG_LDRT="-L/mingw/lib -lmingw32 -lmingwex"
-#    CONFIG_LDRT="$CONFIX_LDRT -mwindows"
     GUILE_LDFLAGS="-lmingwex $GUILE_LDFLAGS -lintl" #added mingwex to mask the internal guile readdir function
   ;;
   *-*-cygwin)
@@ -834,6 +833,27 @@ case "$enable_pdf_renderer" in
 	;;
 esac
 AC_SUBST(CONFIG_PDF)
+
+#--------------------------------------------------------------------
+# Windows console
+#--------------------------------------------------------------------
+
+if test x"$CONFIG_OS" = xMINGW; then
+
+AC_ARG_ENABLE(console,
+[  --enable-console        enable windows console],
+    [], [enable_windows_console="no"])
+case "$enable_windows_console" in
+    yes)
+	AC_MSG_RESULT([enabling Windows console])
+        ;;
+    *)
+	AC_MSG_RESULT([disabling Windows console])
+	CONFIG_LDRT="$CONFIG_LDRT -mwindows"
+	;;
+esac
+
+fi
 
 #--------------------------------------------------------------------
 # Gui selection
