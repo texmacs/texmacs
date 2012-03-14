@@ -55,27 +55,27 @@ tm_data_rep::load_buffer (url u, string fm, int where, bool autosave_flag) {
   string action= "load " * fm * " file";
   if (fm == "generic")
     action= "load " * suffix_to_format (suffix (u)) * " file";
-
+  
   url v= u;
   u= resolve (u);
   if (is_none (u)) {
     if ((fm == "generic") || (fm == "texmacs"))
       if (is_name (v) || (is_rooted_name (v) && is_rooted (v, "default"))) {
-	tree doc (DOCUMENT,
-		  compound ("style", "generic"),
-		  compound ("body", tree (DOCUMENT, "")));
-	switch (where) {
-	case 0: new_buffer_in_this_window (v, doc); break;
-	case 1: new_buffer_in_new_window (v, doc); break;
-	case 2: new_buffer (v, doc); break;
-	default: FAILED ("bad value for 'where'");
-	}
+        tree doc (DOCUMENT,
+                  compound ("style", "generic"),
+                  compound ("body", tree (DOCUMENT, "")));
+        switch (where) {
+          case 0: new_buffer_in_this_window (v, doc); break;
+          case 1: new_buffer_in_new_window (v, doc); break;
+          case 2: new_buffer (v, doc); break;
+          default: FAILED ("bad value for 'where'");
+        }
       }
     if (!no_bufs ())
       set_message (concat ("Error: file ", vname, " not found"), action);
     return;
   }
-
+  
   if (fm == "help") {
     extern string get_help_title (url name, tree t);
     tree doc= load_tree (u, fm);
@@ -85,21 +85,23 @@ tm_data_rep::load_buffer (url u, string fm, int where, bool autosave_flag) {
     set_help_buffer (u, doc);
     return;
   }
-
+  
   v= u;
   if (autosave_flag) v= unglue (v, 1);
   int nr= find_buffer (v);
   tree doc= ((nr == -1)? load_tree (u, fm): tree (DOCUMENT));
   if (doc == "error") return;
   switch (where) {
-  case 0: new_buffer_in_this_window (v, doc); break;
-  case 1: new_buffer_in_new_window (v, doc); break;
-  case 2: new_buffer (v, doc); break;
-  default: FAILED ("bad value for 'where'");
+    case 0: new_buffer_in_this_window (v, doc); break;
+    case 1: new_buffer_in_new_window (v, doc); break;
+    case 2: new_buffer (v, doc); break;
+    default: FAILED ("bad value for 'where'");
   }
   nr= find_buffer (v);
   if (nr != -1) {
     tm_buffer buf= bufs[nr];
+    if(autosave_flag && (N(buf->vws) == 1) && (buf->vws[0]->ed != NULL))
+      buf->vws[0]->ed->require_save();
     buf->fm= fm;
     if ((fm == "help") || is_rooted_web (v)) {
       tm_buffer buf= get_buffer ();
