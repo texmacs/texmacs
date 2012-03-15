@@ -33,11 +33,12 @@
 class qt_field_widget;
 
 class qt_input_widget_rep: public qt_widget_rep {
-protected:      
+protected:
   command cmd;
   array<qt_field_widget> fields;
   coord2 size, position;
-  string win_title;     
+  string win_title;
+  int style;
 public:
   qt_input_widget_rep (command, array<string>);
   ~qt_input_widget_rep ();
@@ -122,7 +123,7 @@ qt_input_widget_rep::qt_input_widget_rep
     qt_widget_rep (), cmd (_cmd),
     fields (N (_prompts)),
     size (coord2 (100, 100)), position (coord2 (0, 0)),
-    win_title ("")
+    win_title (""), style (0)
 {
   for (int i=0; i < N(_prompts); i++) {
     fields[i] = tm_new<qt_field_widget_rep> (this);
@@ -458,7 +459,7 @@ qt_input_text_widget_rep::as_qwidget () {
     QObject::connect(le, SIGNAL(editingFinished ()), helper, SLOT(leave ()));
     le -> setText (to_qstring (helper->wid()->text));
     
-    //le -> setStyleSheet (to_qstylesheet (style));
+    le -> setStyleSheet (to_qstylesheet (style));
     le -> setMinimumSize(qt_decode_length(width, le));
     
     if (ends (type, "file") || type == "directory") {
