@@ -132,9 +132,16 @@ void gui_set_output_language (string lan);
 
 /* low level */
 tm_buffer create_buffer (url name, tree doc);
+int find_buffer (path p);
+int find_buffer (url name);
 void attach_view (tm_window win, tm_view vw);
 tm_view get_passive_view (tm_buffer buf);
 void delete_buffer (tm_buffer buf);
+void delete_view (tm_view vw);
+void new_buffer_in_this_window (url name, tree t);
+tm_window new_window (bool map_flag= true, tree geom= "");
+tm_buffer load_passive_buffer (url name);
+tree make_document (tm_view vw, string fm= "texmacs");
 
 /* Buffer management */
 url  get_all_buffers ();
