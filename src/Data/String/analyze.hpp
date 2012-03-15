@@ -99,6 +99,7 @@ bool ends (string s, const char* test);
 bool ends (string s, const string test);
 bool read (string s, int& i, const char* test);
 bool read (string s, int& i, string test);
+bool read (string s, string test);
 bool read_line (string s, int& i, string& result);
 bool read_int (string s, int& i, int& result);
 bool read_double (string s, int& i, double& result);

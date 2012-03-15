@@ -962,6 +962,12 @@ read (string s, int& i, const char* test) {
 }
 
 bool
+read (string s, string test) {
+  int i = 0;
+  return read (s, i, test);
+}
+
+bool
 read (string s, int& i, string test) {
   int n= N(s), m= N(test), j=0, k=i;
   while (j<m) {
