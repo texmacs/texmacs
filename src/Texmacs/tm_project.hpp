@@ -14,7 +14,7 @@
 #include "server.hpp"
 #include "tm_buffer.hpp"
 
-class tm_project_rep: public tm_data_rep {
+class tm_project_rep: virtual public server_rep {
 protected:
   tm_buffer prj;                // current project being processed
   tree et;                      // the edit tree of the project

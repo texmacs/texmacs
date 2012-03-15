@@ -19,7 +19,6 @@
 
 class tm_server_rep:
   public tm_config_rep,
-  public tm_data_rep,
   public tm_frame_rep
 {
 protected:

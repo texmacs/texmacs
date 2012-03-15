@@ -531,7 +531,6 @@ public:
   virtual void edit_test () = 0;
 
   friend class tm_window_rep;
-  friend class tm_data_rep;
   friend class tm_server_rep;
   friend class server_command_rep;
   friend void   edit_announce (editor_rep* ed, modification mod);

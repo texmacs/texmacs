@@ -97,8 +97,6 @@ public:
   void     typeset (SI& x1, SI& y1, SI& x2, SI& y2);
 
   friend class tm_window_rep;
-  friend class tm_data_rep;
-  friend class tm_project_rep;
   friend class tm_server_rep;
 };
 

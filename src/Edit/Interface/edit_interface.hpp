@@ -186,7 +186,6 @@ public:
 
   friend class interactive_command_rep;
   friend class tm_window_rep;
-  friend class tm_project_rep;
 };
 
 #endif // defined EDIT_INTERFACE_H

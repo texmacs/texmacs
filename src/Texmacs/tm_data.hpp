@@ -104,14 +104,7 @@ bool buffer_unsaved ();
 bool exists_unsaved_buffer ();
 void pretend_save_buffer ();
 
-class tm_data_rep: virtual public server_rep {
-protected:
-
-public:
-  tm_data_rep ();
-  ~tm_data_rep ();
-};
-
+/* Commodity macros */
 inline tm_buffer get_buffer () {
   return get_server () -> get_buffer (); }
 inline tm_view get_view (bool must_be_valid= true) {
