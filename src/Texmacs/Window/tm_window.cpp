@@ -91,7 +91,7 @@ public:
 void
 close_embedded_command_rep::apply () {
   //cout << "Destroy " << vw->buf->buf->name << "\n";
-  get_server () -> window_focus (vw->ed->mvw->win->id);
+  window_focus (vw->ed->mvw->win->id);
   //cout << "Changed focus\n";
   tm_window win= vw->win;
   ASSERT (N(vw->buf->vws) == 1, "invalid cloned embedded TeXmacs widget");

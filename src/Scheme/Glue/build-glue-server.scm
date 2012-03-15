@@ -51,18 +51,6 @@
   (buffer-unsaved? buffer_unsaved (bool))
   (exists-unsaved-buffer? exists_unsaved_buffer (bool))
 
-  (project-attach project_attach (void string))
-  (project-detach project_attach (void))
-  (project-attached? project_attached (bool))
-  (get-project-buffer-menu get_project_buffer_menu (object))
-
-  (window-current window_current (int))
-  (window-list windows_list (path))
-  (buffer->windows buffer_to_windows (path url))
-  (window->buffer window_to_buffer (url int))
-  (window-set-buffer window_set_buffer (void int url))
-  (window-focus window_focus (void int))
-
   (texmacs-load-tree load_tree (tree url string))
   (texmacs-load-buffer load_buffer (void url string int bool))
   (texmacs-save-buffer save_buffer (void url string))

@@ -686,7 +686,7 @@ get_buffer_tree (url name) {
 ******************************************************************************/
 
 void
-tm_data_rep::project_attach (string prj_name) {
+project_attach (string prj_name) {
   int i;
   tm_buffer buf= get_buffer ();
   buf->data->project= prj_name;
@@ -703,13 +703,13 @@ tm_data_rep::project_attach (string prj_name) {
 }
 
 bool
-tm_data_rep::project_attached () {
+project_attached () {
   tm_buffer buf= get_buffer ();
   return buf->data->project != "";
 }
 
 object
-tm_data_rep::get_project_buffer_menu () {
+get_project_buffer_menu () {
   tm_buffer buf= get_buffer ();
   if (buf->prj == NULL) return eval ("(menu-dynamic)");
   string s ("(menu-dynamic ");
@@ -757,18 +757,18 @@ destroy_window_id (int i) {
 }
 
 int
-tm_data_rep::window_current () {
+window_current () {
   tm_window win= get_window ();
   return win->id;
 }
 
 path
-tm_data_rep::windows_list () {
+windows_list () {
   return the_windows;
 }
 
 path
-tm_data_rep::buffer_to_windows (url name) {
+buffer_to_windows (url name) {
   path p;
   int nr= find_buffer (name);
   if (nr == -1) return path ();
@@ -780,7 +780,7 @@ tm_data_rep::buffer_to_windows (url name) {
 }
 
 url
-tm_data_rep::window_to_buffer (int id) {
+window_to_buffer (int id) {
   for (int i=0; i<N(bufs); i++)
     for (int j=0; j<N(bufs[i]->vws); j++)
       if (bufs[i]->vws[j]->win != NULL)
@@ -790,7 +790,7 @@ tm_data_rep::window_to_buffer (int id) {
 }
 
 tm_view
-tm_data_rep::window_find_view (int id) {
+window_find_view (int id) {
   for (int i=0; i<N(bufs); i++)
     for (int j=0; j<N(bufs[i]->vws); j++)
       if (bufs[i]->vws[j]->win != NULL)
@@ -800,7 +800,7 @@ tm_data_rep::window_find_view (int id) {
 }
 
 void
-tm_data_rep::window_set_buffer (int id, url name) {
+window_set_buffer (int id, url name) {
   tm_view old_vw= window_find_view (id);
   if (old_vw == NULL || old_vw->buf->buf->name == name) return;
   tm_window win= old_vw->win;
@@ -813,11 +813,11 @@ tm_data_rep::window_set_buffer (int id, url name) {
 }
 
 void
-tm_data_rep::window_focus (int id) {
+window_focus (int id) {
   if (id == window_current ()) return;
   tm_view vw= window_find_view (id);
   if (vw == NULL) return;
-  set_view (vw);
+  get_server () -> set_view (vw);
   menu_focus_buffer (vw->buf);
 }
 

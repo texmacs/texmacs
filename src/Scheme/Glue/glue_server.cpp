@@ -384,118 +384,6 @@ tmg_exists_unsaved_bufferP () {
 }
 
 tmscm
-tmg_project_attach (tmscm arg1) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "project-attach");
-
-  string in1= tmscm_to_string (arg1);
-
-  // TMSCM_DEFER_INTS;
-  get_server()->project_attach (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return TMSCM_UNSPECIFIED;
-}
-
-tmscm
-tmg_project_detach () {
-  // TMSCM_DEFER_INTS;
-  get_server()->project_attach ();
-  // TMSCM_ALLOW_INTS;
-
-  return TMSCM_UNSPECIFIED;
-}
-
-tmscm
-tmg_project_attachedP () {
-  // TMSCM_DEFER_INTS;
-  bool out= get_server()->project_attached ();
-  // TMSCM_ALLOW_INTS;
-
-  return bool_to_tmscm (out);
-}
-
-tmscm
-tmg_get_project_buffer_menu () {
-  // TMSCM_DEFER_INTS;
-  object out= get_server()->get_project_buffer_menu ();
-  // TMSCM_ALLOW_INTS;
-
-  return object_to_tmscm (out);
-}
-
-tmscm
-tmg_window_current () {
-  // TMSCM_DEFER_INTS;
-  int out= get_server()->window_current ();
-  // TMSCM_ALLOW_INTS;
-
-  return int_to_tmscm (out);
-}
-
-tmscm
-tmg_window_list () {
-  // TMSCM_DEFER_INTS;
-  path out= get_server()->windows_list ();
-  // TMSCM_ALLOW_INTS;
-
-  return path_to_tmscm (out);
-}
-
-tmscm
-tmg_buffer_2windows (tmscm arg1) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer->windows");
-
-  url in1= tmscm_to_url (arg1);
-
-  // TMSCM_DEFER_INTS;
-  path out= get_server()->buffer_to_windows (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return path_to_tmscm (out);
-}
-
-tmscm
-tmg_window_2buffer (tmscm arg1) {
-  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "window->buffer");
-
-  int in1= tmscm_to_int (arg1);
-
-  // TMSCM_DEFER_INTS;
-  url out= get_server()->window_to_buffer (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return url_to_tmscm (out);
-}
-
-tmscm
-tmg_window_set_buffer (tmscm arg1, tmscm arg2) {
-  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "window-set-buffer");
-  TMSCM_ASSERT_URL (arg2, TMSCM_ARG2, "window-set-buffer");
-
-  int in1= tmscm_to_int (arg1);
-  url in2= tmscm_to_url (arg2);
-
-  // TMSCM_DEFER_INTS;
-  get_server()->window_set_buffer (in1, in2);
-  // TMSCM_ALLOW_INTS;
-
-  return TMSCM_UNSPECIFIED;
-}
-
-tmscm
-tmg_window_focus (tmscm arg1) {
-  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "window-focus");
-
-  int in1= tmscm_to_int (arg1);
-
-  // TMSCM_DEFER_INTS;
-  get_server()->window_focus (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return TMSCM_UNSPECIFIED;
-}
-
-tmscm
 tmg_texmacs_load_tree (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "texmacs-load-tree");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "texmacs-load-tree");
@@ -789,16 +677,6 @@ initialize_glue_server () {
   tmscm_install_procedure ("pretend-save-buffer",  tmg_pretend_save_buffer, 0, 0, 0);
   tmscm_install_procedure ("buffer-unsaved?",  tmg_buffer_unsavedP, 0, 0, 0);
   tmscm_install_procedure ("exists-unsaved-buffer?",  tmg_exists_unsaved_bufferP, 0, 0, 0);
-  tmscm_install_procedure ("project-attach",  tmg_project_attach, 1, 0, 0);
-  tmscm_install_procedure ("project-detach",  tmg_project_detach, 0, 0, 0);
-  tmscm_install_procedure ("project-attached?",  tmg_project_attachedP, 0, 0, 0);
-  tmscm_install_procedure ("get-project-buffer-menu",  tmg_get_project_buffer_menu, 0, 0, 0);
-  tmscm_install_procedure ("window-current",  tmg_window_current, 0, 0, 0);
-  tmscm_install_procedure ("window-list",  tmg_window_list, 0, 0, 0);
-  tmscm_install_procedure ("buffer->windows",  tmg_buffer_2windows, 1, 0, 0);
-  tmscm_install_procedure ("window->buffer",  tmg_window_2buffer, 1, 0, 0);
-  tmscm_install_procedure ("window-set-buffer",  tmg_window_set_buffer, 2, 0, 0);
-  tmscm_install_procedure ("window-focus",  tmg_window_focus, 1, 0, 0);
   tmscm_install_procedure ("texmacs-load-tree",  tmg_texmacs_load_tree, 2, 0, 0);
   tmscm_install_procedure ("texmacs-load-buffer",  tmg_texmacs_load_buffer, 4, 0, 0);
   tmscm_install_procedure ("texmacs-save-buffer",  tmg_texmacs_save_buffer, 2, 0, 0);

@@ -97,19 +97,6 @@ public:
   virtual void choose_file (object fun, string title, string type) = 0;
   virtual void interactive (object fun, scheme_tree p) = 0;
 
-  /* Projects */
-  virtual void project_attach (string prj_name= "") = 0;
-  virtual bool project_attached () = 0;
-  virtual object get_project_buffer_menu () = 0;
-
-  /* Window management */
-  virtual int  window_current () = 0;
-  virtual path windows_list () = 0;
-  virtual path buffer_to_windows (url name) = 0;
-  virtual url  window_to_buffer (int id) = 0;
-  virtual void window_set_buffer (int id, url name) = 0;
-  virtual void window_focus (int id) = 0;
-
   /* Loading and saving files */
   virtual tree load_tree (url name, string f) = 0;
   virtual void load_buffer (url name, string f, int w=0, bool a=false)=0;
@@ -195,6 +182,20 @@ void set_help_buffer (url name, tree doc);
 void browse_help (int delta);
 void set_buffer_tree (url name, tree doc);
 tree get_buffer_tree (url name);
+
+/* Project management */
+void project_attach (string prj_name= "");
+bool project_attached ();
+object get_project_buffer_menu ();
+
+/* Window management */
+int  window_current ();
+path windows_list ();
+path buffer_to_windows (url name);
+url  window_to_buffer (int id);
+tm_view window_find_view (int id);
+void window_set_buffer (int id, url name);
+void window_focus (int id);
 
 
 #endif // defined SERVER_H

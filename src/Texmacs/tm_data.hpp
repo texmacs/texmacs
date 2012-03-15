@@ -81,26 +81,26 @@ void browse_help (int delta);
 void set_buffer_tree (url name, tree doc);
 tree get_buffer_tree (url name);
 
+/* Project management */
+//void project_attach (string prj_name= "");
+bool project_attached ();
+object get_project_buffer_menu ();
+
+/* Window management */
+int  window_current ();
+path windows_list ();
+path buffer_to_windows (url name);
+url  window_to_buffer (int id);
+tm_view window_find_view (int id);
+void window_set_buffer (int id, url name);
+void window_focus (int id);
+
 class tm_data_rep: virtual public server_rep {
 protected:
 
 public:
   tm_data_rep ();
   ~tm_data_rep ();
-
-  /* Project management */
-  void project_attach (string prj_name);
-  bool project_attached ();
-  object get_project_buffer_menu ();
-
-  /* Window management */
-  int  window_current ();
-  path windows_list ();
-  path buffer_to_windows (url name);
-  url  window_to_buffer (int id);
-  tm_view window_find_view (int id);
-  void window_set_buffer (int id, url name);
-  void window_focus (int id);
 
   /* File management */
   tree load_tree (url name, string fm);

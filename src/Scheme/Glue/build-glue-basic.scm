@@ -469,6 +469,18 @@
   (set-buffer-tree set_buffer_tree (void url content))
   (get-buffer-tree get_buffer_tree (tree url))
 
+  (project-attach project_attach (void string))
+  (project-detach project_attach (void))
+  (project-attached? project_attached (bool))
+  (get-project-buffer-menu get_project_buffer_menu (object))
+
+  (window-current window_current (int))
+  (window-list windows_list (path))
+  (buffer->windows buffer_to_windows (path url))
+  (window->buffer window_to_buffer (url int))
+  (window-set-buffer window_set_buffer (void int url))
+  (window-focus window_focus (void int))
+
   ;; windows
   (window-handle window_handle (int))
   (window-create window_create (void int widget string bool))
