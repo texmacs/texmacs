@@ -2,8 +2,6 @@
 # you need to properly set ARCH, PREFIX and DEVTOOLS before invoking the script
 
 
-set -k
-
 #---------------------------------------------------------------------------------------------------
 # main parameters
 
@@ -11,13 +9,13 @@ set -k
 #you need to set DEVTOOLS to the root of the development tools (usually /Developer)
 
 ARCH=i386
-PREFIX=`(cd ..; pwd)`/usr
-DEVTOOLS=/Developer_3.2.6
+PREFIX=`(cd ..; pwd)`/tm-devel/usr
+DEVTOOLS=/Developer_3.2.5
 
-PATH=$DEVTOOLS/usr/bin:$PREFIX/bin:$PATH
-PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig
 
-SDK=$DEVTOOLS/SDKs/MacOSX10.5.sdk 
+PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig/
+
+SDK=$DEVTOOLS/SDKs/MacOSX10.6.sdk 
 
 #---------------------------------------------------------------------------------------------------
 # setup target architecure
@@ -38,6 +36,7 @@ TARGET_x86_64=x86_64-apple-darwin10
 TARGET_ppc=powerpc-apple-darwin10
 
 TARGET_ARCH=TARGET_${ARCH}
+
 
 # the TeXmacs configure script do not know how to use info from pkg-config
 # so we override its behaviour to take into account this
@@ -60,17 +59,20 @@ TARGET_ARCH=TARGET_${ARCH}
 
 #printenv
 
-./configure \
+
+PATH=$DEVTOOLS/usr/bin:$PREFIX/bin:$PATH \
+PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig/ \
+  ./configure \
   --host=${!TARGET_ARCH} \
   --enable-macosx-extensions\
   --enable-qt\
-  CC="gcc -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $SDK  -I$SDK/usr/include/c++/4.2.1/i686-apple-darwin10" \
-  CXX="g++ -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $SDK -I$SDK/usr/include/c++/4.2.1/i686-apple-darwin10" \
-  CPP="gcc -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $SDK -E" \
-  CPPCXX="g++ -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $DEVTOOLS/SDKs/MacOSX10.5.sdk -E" \
+  CC="gcc -arch $ARCH  -mmacosx-version-min=10.6 -isysroot $SDK  -I$SDK/usr/include/c++/4.2.1/i686-apple-darwin10" \
+  CXX="g++ -arch $ARCH  -mmacosx-version-min=10.6 -isysroot $SDK -I$SDK/usr/include/c++/4.2.1/i686-apple-darwin10" \
+  CPP="gcc -arch $ARCH  -mmacosx-version-min=10.6 -isysroot $SDK -E" \
+  CPPCXX="g++ -arch $ARCH  -mmacosx-version-min=10.6 -isysroot $DEVTOOLS/SDKs/MacOSX10.6.sdk -E" \
   CPPFLAGS="-I$PREFIX/include" CFLAGS="-I$PREFIX/include" CXXFLAGS="-I$PREFIX/include" \
   LDFLAGS="-Wl,-search_paths_first -Wl,-syslibroot $SDK -L$PREFIX/lib" \
-  GUILE_CFLAGS=`pkg-config --static --cflags guile-1.8` \
+  GUILE_CFLAGS=`PKG_CONGIF_PATH= pkg-config --static --cflags guile-1.8` \
   GUILE_LDFLAGS=`pkg-config --static --libs guile-1.8` \
   GUILE_DATA_PATH=`pkg-config --variable=datadir guile-1.8` \
   GUILE_VERSION=`pkg-config --modversion guile-1.8` \

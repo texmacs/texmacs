@@ -5,8 +5,8 @@
 # Qt
 PKG             := qt
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 4.7.4
-$(PKG)_CHECKSUM := af9016aa924a577f7b06ffd28c9773b56d74c939
+$(PKG)_VERSION  := 4.8.0
+$(PKG)_CHECKSUM := 2ba35adca8fb9c66a58eca61a15b21df6213f22e
 $(PKG)_SUBDIR   := $(PKG)-everywhere-opensource-src-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(PKG)-everywhere-opensource-src-$($(PKG)_VERSION).tar.gz
 $(PKG)_WEBSITE  := http://qt.nokia.com/
@@ -59,7 +59,6 @@ define $(PKG)_BUILD
         -qt-libpng \
         -qt-libmng \
         -qt-libjpeg \
-        -qt-gif \
         -openssl \
         -no-sql-db2 -no-sql-ibase -no-sql-mysql -no-sql-oci \
 		-no-sql-odbc -no-sql-psql -no-sql-sqlite -no-sql-sqlite2 \
