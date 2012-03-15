@@ -39,7 +39,7 @@ edit_typeset_rep::edit_typeset_rep ():
   the_style (TUPLE),
   cur (hashmap<string,tree> (UNINIT)),
   pre (UNINIT), init (UNINIT), fin (UNINIT),
-  env (drd, is_aux (buf->name)? buf->extra: buf->name,
+  env (drd, is_aux (buf->buf->name)? buf->buf->extra: buf->buf->name,
        buf->data->ref, (buf->prj==NULL? buf->data->ref: buf->prj->data->ref),
        buf->data->aux, (buf->prj==NULL? buf->data->aux: buf->prj->data->aux)),
   ttt (new_typesetter (env, subtree (et, rp), reverse (rp))) {}
@@ -168,7 +168,7 @@ edit_typeset_rep::typeset_preamble () {
 
 void
 edit_typeset_rep::typeset_prepare () {
-  env->read_only= buf->read_only;
+  env->read_only= buf->buf->read_only;
   env->write_default_env ();
   env->patch_env (pre);
   env->style_init_env ();

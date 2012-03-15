@@ -90,7 +90,7 @@ public:
 
 void
 close_embedded_command_rep::apply () {
-  //cout << "Destroy " << vw->buf->name << "\n";
+  //cout << "Destroy " << vw->buf->buf->name << "\n";
   get_server () -> window_focus (vw->ed->mvw->win->id);
   //cout << "Changed focus\n";
   tm_window win= vw->win;
@@ -152,7 +152,7 @@ texmacs_input_widget (tree doc, command cmd, bool continuous) {
   tm_window win  = tm_new<tm_window_rep> (doc, command ());
   get_server () -> set_aux (name, name);
   vw->win= win;
-  vw->buf->in_menu= false;
+  vw->buf->buf->in_menu= false;
   set_scrollable (win->wid, vw->ed);
   vw->ed->cvw= win->wid.rep;
   vw->ed->mvw= curvw;

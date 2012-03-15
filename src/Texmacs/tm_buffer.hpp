@@ -13,6 +13,7 @@
 #define TM_BUFFER_H
 #include "server.hpp"
 #include "new_data.hpp"
+#include "new_buffer.hpp"
 
 extern tree the_et;
 path new_document ();
@@ -23,25 +24,15 @@ void destroy_window_id (int);
 
 class tm_buffer_rep {
 public:
-  url name;               // full name
-  string abbr;            // abbreviated name
-  string fm;              // buffer format
-  url extra;              // for special buffers, like help buffer
-  array<tm_view> vws;     // views attached to buffer
-  bool read_only;         // buffer is read only?
-  bool secure;            // is the buffer secure?
-  tm_buffer prj;          // buffer which corresponds to the project
-  bool in_menu;           // should the buffer be listed in the menus?
-
-  path rp;                // path to the document's root in the_et
+  new_buffer buf;         // file related information
   new_data data;          // data associated to document
+  array<tm_view> vws;     // views attached to buffer
+  tm_buffer prj;          // buffer which corresponds to the project
+  path rp;                // path to the document's root in the_et
 
-  inline tm_buffer_rep (url name2):
-    name (name2), abbr (as_string (tail (name))),
-    fm ("texmacs"), extra (url_none ()), vws (0),
-    read_only (false), secure (is_secure (name2)),
-    prj (NULL), in_menu (true),
-    rp (new_document ()), data () {}
+  inline tm_buffer_rep (url name):
+    buf (name), data (),
+    vws (0), prj (NULL), rp (new_document ()) {}
 
   inline ~tm_buffer_rep () {
     delete_document (rp); }

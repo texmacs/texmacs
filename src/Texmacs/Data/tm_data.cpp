@@ -45,7 +45,7 @@ int
 tm_data_rep::find_buffer (url name) {
   int i;
   for (i=0; i<N(bufs); i++)
-    if (bufs[i]->name == name)
+    if (bufs[i]->buf->name == name)
       return i;
   return -1;
 }
@@ -73,20 +73,20 @@ tm_data_rep::new_menu_name (url u) {
     string ret (name);
     if (j>1) ret= name * " (" * as_string (j) * ")";
     for (i=0; i<N(bufs); i++)
-      if (bufs[i]->abbr == ret) flag= false;
+      if (bufs[i]->buf->abbr == ret) flag= false;
     if (flag) return ret;
   }
 }
 
 static void
 menu_append_buffer (string& s, tm_buffer buf) {
-  if (buf->in_menu) {
-    string name= copy (buf->abbr);
+  if (buf->buf->in_menu) {
+    string name= copy (buf->buf->abbr);
     if (buf->needs_to_be_saved ()) name << " *"; 
     string mname= scm_quote (name);
     if (!starts (name, "Help")) mname= "(verbatim " * mname * ")";
     s << " (" << mname;
-    s << " (switch-to-buffer " * scm_quote (as_string (buf->name)) * "))";
+    s << " (switch-to-buffer " * scm_quote (as_string (buf->buf->name)) * "))";
   }
 }
 
@@ -96,17 +96,17 @@ tm_data_rep::get_buffer_menu () {
   bool two_types= false;;
   string s ("(menu-dynamic");
   for (i=0, count=0; i<N(bufs); i++) {
-    if (is_none (bufs[i]->extra) == is_none (bufs[0]->extra)) {
+    if (is_none (bufs[i]->buf->extra) == is_none (bufs[0]->buf->extra)) {
       menu_append_buffer (s, bufs[i]);
       count++;
     }
-    else if (bufs[i]->in_menu) two_types= true;
+    else if (bufs[i]->buf->in_menu) two_types= true;
     if (count == 10) break;
   }
   if (two_types) {
     s << " ---";
     for (i=0, count=0; i<N(bufs); i++) {
-      if (is_none (bufs[i]->extra) != is_none (bufs[0]->extra)) {
+      if (is_none (bufs[i]->buf->extra) != is_none (bufs[0]->buf->extra)) {
 	menu_append_buffer (s, bufs[i]);
 	count++;
       }
@@ -122,8 +122,8 @@ tm_data_rep::buffer_in_menu (url u, bool flag) {
   int nr= find_buffer (u);
   if (nr == -1) return false;
   tm_buffer buf= bufs[nr];
-  bool old= buf->in_menu;
-  buf->in_menu= flag;
+  bool old= buf->buf->in_menu;
+  buf->buf->in_menu= flag;
   return old;
 }
 
@@ -164,7 +164,7 @@ tm_data_rep::new_buffer (url name) {
   int nr= find_buffer (name);
   if (nr != -1) return bufs[nr];
   tm_buffer buf= tm_new<tm_buffer_rep> (name);
-  buf->abbr= new_menu_name (name);
+  buf->buf->abbr= new_menu_name (name);
   menu_insert_buffer (buf);
   return buf;
 }
@@ -210,28 +210,28 @@ tm_data_rep::delete_buffer (tm_buffer buf) {
 void
 tm_data_rep::set_name_buffer (url name) {
   tm_buffer buf= get_buffer ();
-  if (buf->name == name) return;
-  buf->name= name;
+  if (buf->buf->name == name) return;
+  buf->buf->name= name;
   set_abbr_buffer (new_menu_name (name));
 }
 
 string
 tm_data_rep::get_abbr_buffer () {
   tm_buffer buf= get_buffer ();
-  return buf->abbr;
+  return buf->buf->abbr;
 }
 
 void
 tm_data_rep::set_abbr_buffer (string abbr) {
   int i;
   tm_buffer buf= get_buffer ();
-  if (buf->abbr == abbr) return;
-  buf->abbr= abbr;
+  if (buf->buf->abbr == abbr) return;
+  buf->buf->abbr= abbr;
   for (i=0; i<N(buf->vws); i++) {
     tm_view vw2= buf->vws[i];
     if (vw2->win != NULL) {
-      vw2->win->set_window_name (buf->abbr);
-      vw2->win->set_window_url (is_none (buf->extra)? buf->name: buf->extra);
+      vw2->win->set_window_name (buf->buf->abbr);
+      vw2->win->set_window_url (is_none (buf->buf->extra)? buf->buf->name: buf->buf->extra);
     }
   }
 }
@@ -239,22 +239,22 @@ tm_data_rep::set_abbr_buffer (string abbr) {
 url
 tm_data_rep::get_name_buffer () {
   tm_buffer buf= get_buffer ();
-  if (!is_none (buf->extra)) return buf->extra;
-  return buf->name;
+  if (!is_none (buf->buf->extra)) return buf->buf->extra;
+  return buf->buf->name;
 }
 
 url
 tm_data_rep::get_name_buffer (path p) {
   int nr= find_buffer (p);
   if (nr == -1) return url_none ();
-  return bufs[nr]->name;
+  return bufs[nr]->buf->name;
 }
 
 url
 tm_data_rep::get_all_buffers () {
   url u= url_none ();
   for (int i=N(bufs)-1; i>=0; i--)
-    u= bufs[i]->name | u;
+    u= bufs[i]->buf->name | u;
   return u;
 }
 
@@ -270,14 +270,7 @@ tm_data_rep::new_view (url name) {
   editor    ed = new_editor (get_server (), buf);
   tm_view   vw = tm_new<tm_view_rep> (buf, ed);
   buf->vws << vw;
-
-  ed->set_style (buf->data->style);
-  ed->set_init (buf->data->init);
-  ed->set_fin (buf->data->fin);
-  ed->notify_page_change ();
-  ed->add_init (buf->data->init);
-  ed->notify_change (THE_DECORATIONS);
-  ed->typeset_invalidate_env ();
+  ed->set_data (buf->data);
 
   tm_view temp_vw= get_view (false);
   set_view (vw);
@@ -299,7 +292,7 @@ tm_data_rep::get_passive_view (tm_buffer buf) {
   for (i=0; i<N(buf->vws); i++)
     if (buf->vws[i]->win == NULL)
       return buf->vws[i];
-  return new_view (buf->name);
+  return new_view (buf->buf->name);
 }
 
 void
@@ -321,21 +314,21 @@ tm_data_rep::delete_view (tm_view vw) {
 
 void
 tm_data_rep::attach_view (tm_window win, tm_view vw) {
-  // cout << "Attach view " << vw->buf->name << "\n";
+  // cout << "Attach view " << vw->buf->buf->name << "\n";
   vw->win= win;
   widget wid= win->wid;
   set_scrollable (wid, vw->ed);
   vw->ed->cvw= wid.rep;
   ASSERT (is_attached (wid), "widget should be attached");
   vw->ed->resume ();
-  win->set_window_name (vw->buf->abbr);
-  win->set_window_url (is_none (vw->buf->extra)? vw->buf->name: vw->buf->extra);
+  win->set_window_name (vw->buf->buf->abbr);
+  win->set_window_url (is_none (vw->buf->buf->extra)? vw->buf->buf->name: vw->buf->buf->extra);
   // cout << "View attached\n";
 }
 
 void
 tm_data_rep::detach_view (tm_view vw) {
-  // cout << "Detach view " << vw->buf->name << "\n";
+  // cout << "Detach view " << vw->buf->buf->name << "\n";
   tm_window win= vw->win;
   if (win == NULL) return;
   vw->win= NULL;
@@ -518,10 +511,10 @@ tm_data_rep::switch_to_active_buffer (url name) {
 void
 tm_data_rep::revert_buffer () {
   tm_buffer buf= get_buffer ();
-  web_cache_invalidate (buf->name);
-  tree doc= load_tree (buf->name, buf->fm);
+  web_cache_invalidate (buf->buf->name);
+  tree doc= load_tree (buf->buf->name, buf->buf->fm);
   if (doc == "error") set_message ("Error: file not found", "revert buffer");
-  else revert_buffer (buf->name, doc);
+  else revert_buffer (buf->buf->name, doc);
 }
 
 void
@@ -617,10 +610,10 @@ tm_data_rep::set_aux (string aux, url name) {
   int i, nr= find_buffer (aux);
   if (nr != -1) {
     tm_buffer buf= bufs[nr];
-    buf->extra= name;
+    buf->buf->extra= name;
     if (starts (aux, "Help - ")) {
-      buf->fm= "help";
-      buf->read_only= true;
+      buf->buf->fm= "help";
+      buf->buf->read_only= true;
     }
     for (i=0; i<N(buf->vws); i++) {
       tm_view vw= buf->vws[i];
@@ -703,7 +696,7 @@ tm_data_rep::project_attach (string prj_name) {
   }
   if (prj_name == "") buf->prj= NULL;
   else {
-    url full_name= head (buf->name) * prj_name;
+    url full_name= head (buf->buf->name) * prj_name;
     buf->prj= load_passive_buffer (full_name);
   }
 }
@@ -719,14 +712,14 @@ tm_data_rep::get_project_buffer_menu () {
   tm_buffer buf= get_buffer ();
   if (buf->prj == NULL) return eval ("(menu-dynamic)");
   string s ("(menu-dynamic ");
-  s << "(" << scm_quote (buf->prj->abbr) << " ";
-  s << "(switch-to-buffer " * scm_quote (as_string (buf->prj->name)) * "))";
+  s << "(" << scm_quote (buf->prj->buf->abbr) << " ";
+  s << "(switch-to-buffer " * scm_quote (as_string (buf->prj->buf->name)) * "))";
 
   tree t= subtree (the_et, buf->prj->rp);
   int i, j, n= N(t);
   for (i=0; i<n; i++)
     if (is_func (t[i], INCLUDE, 1) && is_atomic (t[i][0])) {
-      string name= as_string (head (buf->prj->name) * as_string (t[i][0]));
+      string name= as_string (head (buf->prj->buf->name) * as_string (t[i][0]));
       for (j=N(name)-1; j>=0; j--)
 	if (name[j]=='/') break;
       s << " ((verbatim " << scm_quote (name (j+1, N(name))) << ") ";
@@ -791,7 +784,7 @@ tm_data_rep::window_to_buffer (int id) {
     for (int j=0; j<N(bufs[i]->vws); j++)
       if (bufs[i]->vws[j]->win != NULL)
 	if (bufs[i]->vws[j]->win->id == id)
-	  return bufs[i]->name;
+	  return bufs[i]->buf->name;
   return url_none ();
 }
 
@@ -808,7 +801,7 @@ tm_data_rep::window_find_view (int id) {
 void
 tm_data_rep::window_set_buffer (int id, url name) {
   tm_view old_vw= window_find_view (id);
-  if (old_vw == NULL || old_vw->buf->name == name) return;
+  if (old_vw == NULL || old_vw->buf->buf->name == name) return;
   tm_window win= old_vw->win;
   int nr= find_buffer (name);
   if (nr == -1) return;
@@ -833,7 +826,7 @@ tm_data_rep::window_focus (int id) {
 
 bool
 tm_buffer_rep::needs_to_be_saved () {
-  if (!in_menu) return false;
+  if (!buf->in_menu) return false;
   for (int i=0; i<N(vws); i++)
     if (vws[i]->ed->need_save ())
       return true;
@@ -842,7 +835,7 @@ tm_buffer_rep::needs_to_be_saved () {
 
 bool
 tm_buffer_rep::needs_to_be_autosaved () {
-  if (!in_menu) return false;
+  if (!buf->in_menu) return false;
   for (int i=0; i<N(vws); i++)
     if (vws[i]->ed->need_save (false))
       return true;

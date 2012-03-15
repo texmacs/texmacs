@@ -53,9 +53,9 @@ edit_process_rep::generate_bibliography (
   tree bib_t= buf->data->aux[bib];
   if (buf->prj != NULL) bib_t= buf->prj->data->aux[bib];
   tree t;
-  url bib_file= find_bib_file (buf->name, fname);
+  url bib_file= find_bib_file (buf->buf->name, fname);
   if (is_none (bib_file)) {
-    url bbl_file= find_bib_file (buf->name, fname, ".bbl");
+    url bbl_file= find_bib_file (buf->buf->name, fname, ".bbl");
     if (is_none (bbl_file)) {
       set_message ("Could not find bibliography file", "compile bibliography");
       return;
@@ -80,7 +80,7 @@ edit_process_rep::generate_bibliography (
       t= stree_to_tree (call (string ("bibstyle"), style (3, N(style)), ot));
     }
     else {
-      string dir= concretize (head (buf->name));
+      string dir= concretize (head (buf->buf->name));
       t= bibtex_run (bib, style, bib_file, bib_t);
     }
   }

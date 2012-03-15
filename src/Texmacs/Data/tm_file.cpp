@@ -102,10 +102,10 @@ tm_data_rep::load_buffer (url u, string fm, int where, bool autosave_flag) {
     tm_buffer buf= bufs[nr];
     if (autosave_flag && N(buf->vws) == 1 && buf->vws[0]->ed != NULL)
       buf->vws[0]->ed->require_save();
-    buf->fm= fm;
+    buf->buf->fm= fm;
     if (fm == "help" || is_rooted_web (v)) {
       tm_buffer buf= get_buffer ();
-      buf->read_only= true;
+      buf->buf->read_only= true;
     }
   }
   if (fm == "generic" || fm == "texmacs")
@@ -167,7 +167,7 @@ tm_data_rep::make_document (tm_view vw, string fm) {
   vw->ed->get_data (vw->buf->data);
   tree doc= attach_data (body, vw->buf->data, !vw->ed->get_save_aux());
 
-  object arg1 (vw->buf->name);
+  object arg1 (vw->buf->buf->name);
   object arg2 (body);
   tree links= as_tree (call ("get-link-locations", arg1, arg2));
   if (N (links) != 0)
@@ -192,14 +192,14 @@ tm_data_rep::save_buffer (url u, string fm) {
   }
 
   tm_buffer buf= get_buffer ();
-  if ((u == buf->name && buf->read_only) ||
-      (u == buf->name && has_permission (u,"r") && !has_permission (u,"w")) ||
-      (!is_none (buf->extra) && buf->name != "* Aux *")) {
+  if ((u == buf->buf->name && buf->buf->read_only) ||
+      (u == buf->buf->name && has_permission (u,"r") && !has_permission (u,"w")) ||
+      (!is_none (buf->buf->extra) && buf->buf->name != "* Aux *")) {
     set_message ("Error: file is read only", action);
     return;
   }
   if ((fm == "texmacs") && (!buf->needs_to_be_saved ()))
-    if (buf->name == u) {
+    if (buf->buf->name == u) {
       set_message ("No changes need to be saved", action);
       return;
     }
@@ -232,11 +232,11 @@ tm_data_rep::auto_save () {
   int i, n= N(bufs);
   for (i=0; i<n; i++) {
     tm_buffer buf= bufs[i];
-    if ((buf->needs_to_be_autosaved () && (!buf->read_only))) {
-      url name= buf->name;
+    if ((buf->needs_to_be_autosaved () && (!buf->buf->read_only))) {
+      url name= buf->buf->name;
       tree vname= verbatim (as_string (name));
       if (!is_scratch (name))
-        name= glue (buf->name, rescue_mode? "#": "~");
+        name= glue (buf->buf->name, rescue_mode? "#": "~");
       if (N(buf->vws)!=0) {
         tree doc= make_document (buf->vws[0]);
         bool err= save_string (name, tree_to_texmacs (doc));
@@ -264,13 +264,13 @@ tm_data_rep::auto_save () {
 bool
 tm_data_rep::no_name () {
   tm_buffer buf= get_buffer ();
-  return is_scratch (buf->name);
+  return is_scratch (buf->buf->name);
 }
 
 bool
 tm_data_rep::help_buffer () {
   tm_buffer buf= get_buffer ();
-  return buf->fm == "help";
+  return buf->buf->fm == "help";
 }
 
 bool
