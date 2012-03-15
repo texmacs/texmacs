@@ -481,6 +481,14 @@
   (window-set-buffer window_set_buffer (void int url))
   (window-focus window_focus (void int))
 
+  (pretend-save-buffer pretend_save_buffer (void))
+  (buffer-unsaved? buffer_unsaved (bool))
+  (exists-unsaved-buffer? exists_unsaved_buffer (bool))
+  (texmacs-load-tree load_tree (tree url string))
+  (texmacs-load-buffer load_buffer (void url string int bool))
+  (texmacs-save-buffer save_buffer (void url string))
+  (auto-save auto_save (void))
+
   ;; windows
   (window-handle window_handle (int))
   (window-create window_create (void int widget string bool))

@@ -274,14 +274,14 @@ new_view (url name) {
   ed->set_data (buf->data);
 
   tm_view temp_vw= get_view (false);
-  get_server () -> set_view (vw);
+  set_view (vw);
   if (is_none (tm_init_buffer_file))
     tm_init_buffer_file= "$TEXMACS_PATH/progs/init-buffer.scm";
   if (is_none (my_init_buffer_file))
     my_init_buffer_file= "$TEXMACS_HOME_PATH/progs/my-init-buffer.scm";
   if (exists (tm_init_buffer_file)) exec_file (tm_init_buffer_file);
   if (exists (my_init_buffer_file)) exec_file (my_init_buffer_file);
-  get_server () -> set_view (temp_vw);
+  set_view (temp_vw);
 
   // cout << "View created\n";
   return vw;
@@ -413,7 +413,7 @@ new_buffer_in_new_window (url name, tree doc, tree geom) {
   tm_buffer buf= create_buffer (name, doc);
   tm_view   vw = get_passive_view (buf);
   attach_view (win, vw);
-  get_server () -> set_view (vw);
+  set_view (vw);
   menu_focus_buffer (buf);
 }
 
@@ -461,7 +461,7 @@ switch_to_buffer (int nr) {
   tm_view   new_vw = get_passive_view (buf);
   detach_view (old_vw);
   attach_view (win, new_vw);
-  get_server () -> set_view (new_vw);
+  set_view (new_vw);
   menu_focus_buffer (buf);
   tm_window nwin= new_vw->win;
   nwin->set_shrinking_factor (nwin->get_shrinking_factor ());
@@ -501,7 +501,7 @@ switch_to_active_buffer (url name) {
     for (i=0; i<N(buf->vws); i++) // search active view
       if (buf->vws[i]->win != NULL) {
         tm_view vw= buf->vws[i];
-        get_server () -> set_view (vw);
+        set_view (vw);
         menu_focus_buffer (buf);
         return;
       }
@@ -513,8 +513,8 @@ void
 revert_buffer () {
   tm_buffer buf= get_buffer ();
   web_cache_invalidate (buf->buf->name);
-  tree doc= get_server () -> load_tree (buf->buf->name, buf->buf->fm);
-  if (doc == "error") get_server () -> set_message ("Error: file not found", "revert buffer");
+  tree doc= load_tree (buf->buf->name, buf->buf->fm);
+  if (doc == "error") set_message ("Error: file not found", "revert buffer");
   else revert_buffer (buf->buf->name, doc);
 }
 
@@ -536,7 +536,7 @@ kill_buffer () {
       tm_view new_vw= get_passive_view (new_buf);
       detach_view (old_vw);
       attach_view (win, new_vw);
-      if (get_view () == old_vw) get_server () -> set_view (new_vw);
+      if (get_view () == old_vw) set_view (new_vw);
     }
   }
   delete_buffer (buf);
@@ -562,7 +562,7 @@ clone_window () {
   tm_buffer buf= get_buffer ();
   tm_view   vw = get_passive_view (buf);
   attach_view (win, vw);
-  get_server () -> set_view (vw);
+  set_view (vw);
   menu_focus_buffer (buf);
 }
 
@@ -575,7 +575,7 @@ kill_window () {
     for (j=0; j<N(buf->vws); j++) {
       tm_view vw= buf->vws[j];
       if ((vw->win != NULL) && (vw->win != win)) {
-	get_server () -> set_view (vw);
+	set_view (vw);
 	menu_focus_buffer (vw->buf);
 	delete_window (win);
 	return;
@@ -817,7 +817,7 @@ window_focus (int id) {
   if (id == window_current ()) return;
   tm_view vw= window_find_view (id);
   if (vw == NULL) return;
-  get_server () -> set_view (vw);
+  set_view (vw);
   menu_focus_buffer (vw->buf);
 }
 

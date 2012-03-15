@@ -29,7 +29,7 @@ notify_recent_buffer (string name) {
 }
 
 tree
-tm_data_rep::load_tree (url u, string fm) {
+load_tree (url u, string fm) {
   string s, suf= suffix (u);
   string action= "load " * fm * " file";
   u= resolve (u);
@@ -48,7 +48,7 @@ tm_data_rep::load_tree (url u, string fm) {
 }
 
 void
-tm_data_rep::load_buffer (url u, string fm, int where, bool autosave_flag) {
+load_buffer (url u, string fm, int where, bool autosave_flag) {
   // cout << "Load= " << u << ", " << fm << "\n";
   string name= as_string (tail (u));
   tree vname= verbatim (name);
@@ -116,7 +116,7 @@ tm_buffer
 load_passive_buffer (url u) {
   int nr= find_buffer (u);
   if (nr != -1) return bufs[nr];
-  get_server () -> load_buffer (u, "texmacs", 2, false);
+  load_buffer (u, "texmacs", 2, false);
   nr= find_buffer (u);
   if (nr != -1) return bufs[nr];
   return NULL;
@@ -145,7 +145,7 @@ load_inclusion (url name) {
   string name_s= as_string (name);
   if (document_inclusions->contains (name_s))
     return document_inclusions [name_s];
-  tree doc= extract_document (get_server() -> load_tree (name, "generic"));
+  tree doc= extract_document (load_tree (name, "generic"));
   if (!is_func (doc, ERROR)) document_inclusions (name_s)= doc;
   return doc;
 }
@@ -177,7 +177,7 @@ make_document (tm_view vw, string fm) {
 }
 
 void
-tm_data_rep::save_buffer (url u, string fm) {
+save_buffer (url u, string fm) {
   string name= as_string (u);
   tree vname= verbatim (name);
   if (fm == "generic") {
@@ -217,7 +217,7 @@ tm_data_rep::save_buffer (url u, string fm) {
           remove (get_name_buffer ());
         set_name_buffer (u);
         pretend_save_buffer ();
-        if (suffix (u) == "ts") style_clear_cache ();
+        if (suffix (u) == "ts") get_server () -> style_clear_cache ();
         if ((fm == "generic") || (fm == "texmacs"))
           if (!no_name ())
             notify_recent_buffer (as_string (u));
@@ -228,7 +228,7 @@ tm_data_rep::save_buffer (url u, string fm) {
 }
 
 void
-tm_data_rep::auto_save () {
+auto_save () {
   int i, n= N(bufs);
   for (i=0; i<n; i++) {
     tm_buffer buf= bufs[i];
@@ -274,13 +274,13 @@ help_buffer () {
 }
 
 bool
-tm_data_rep::buffer_unsaved () {
+buffer_unsaved () {
   tm_buffer buf= get_buffer ();
   return buf->needs_to_be_saved ();
 }
 
 bool
-tm_data_rep::exists_unsaved_buffer () {
+exists_unsaved_buffer () {
   bool flag= false;
   int i, n= N(bufs);
   for (i=0; i<n; i++) {
@@ -291,7 +291,7 @@ tm_data_rep::exists_unsaved_buffer () {
 }
 
 void
-tm_data_rep::pretend_save_buffer () {
+pretend_save_buffer () {
   tm_buffer buf= get_buffer ();
   for (int i=0; i<N(buf->vws); i++)
     buf->vws[i]->ed->notify_save ();

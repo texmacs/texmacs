@@ -333,7 +333,7 @@ TeXmacs_main (int argc, char** argv) {
     if ((N(s)>=2) && (s(0,2)=="--")) s= s (1, N(s));
     if ((s[0] != '-') && (s[0] != '+')) {
       if (DEBUG_STD) cout << "TeXmacs] Loading " << s << "...\n";
-      sv->load_buffer (url_system (s), "generic", 1);
+      load_buffer (url_system (s), "generic", 1);
     }
     if ((s == "-b") || (s == "-initialize-buffer") ||
 	(s == "-c") || (s == "-convert") ||
@@ -345,12 +345,11 @@ TeXmacs_main (int argc, char** argv) {
   }
   if (install_status == 1) {
     if (DEBUG_STD) cout << "TeXmacs] Loading welcome message...\n";
-    sv->load_buffer (
-      "$TEXMACS_PATH/doc/about/welcome/first.en.tm", "help", 1);
+    load_buffer ("$TEXMACS_PATH/doc/about/welcome/first.en.tm", "help", 1);
   }
   else if (install_status == 2) {
     if (DEBUG_STD) cout << "TeXmacs] Loading upgrade message...\n";
-    sv->load_buffer (
+    load_buffer (
       "$TEXMACS_HOME_PATH/doc/about/changes/changes-recent.en.tm", "help", 1);
   }
   if (no_bufs ()) {

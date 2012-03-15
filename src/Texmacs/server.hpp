@@ -97,15 +97,6 @@ public:
   virtual void choose_file (object fun, string title, string type) = 0;
   virtual void interactive (object fun, scheme_tree p) = 0;
 
-  /* Loading and saving files */
-  virtual tree load_tree (url name, string f) = 0;
-  virtual void load_buffer (url name, string f, int w=0, bool a=false)=0;
-  virtual void save_buffer (url name, string fm) = 0;
-  virtual void auto_save () = 0;
-  virtual bool buffer_unsaved () = 0;
-  virtual bool exists_unsaved_buffer () = 0;
-  virtual void pretend_save_buffer () = 0;
-
   /* Miscellaneous routines */
   virtual void   style_clear_cache () = 0;
   virtual void   refresh () = 0;
@@ -138,7 +129,6 @@ extern bool rescue_mode;
 scheme_tree menu_merge (scheme_tree m1, scheme_tree m2);
 server get_server ();
 void gui_set_output_language (string lan);
-
 
 /* low level */
 tm_buffer create_buffer (url name, tree doc);
@@ -197,5 +187,13 @@ tm_view window_find_view (int id);
 void window_set_buffer (int id, url name);
 void window_focus (int id);
 
+/* File management */
+tree load_tree (url name, string fm);
+void load_buffer (url name, string fm, int where= 0, bool asf= false);
+void save_buffer (url name, string fm);
+void auto_save ();
+bool buffer_unsaved ();
+bool exists_unsaved_buffer ();
+void pretend_save_buffer ();
 
 #endif // defined SERVER_H

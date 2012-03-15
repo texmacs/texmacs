@@ -5637,6 +5637,91 @@ tmg_window_focus (tmscm arg1) {
 }
 
 tmscm
+tmg_pretend_save_buffer () {
+  // TMSCM_DEFER_INTS;
+  pretend_save_buffer ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_buffer_unsavedP () {
+  // TMSCM_DEFER_INTS;
+  bool out= buffer_unsaved ();
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_exists_unsaved_bufferP () {
+  // TMSCM_DEFER_INTS;
+  bool out= exists_unsaved_buffer ();
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_texmacs_load_tree (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "texmacs-load-tree");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "texmacs-load-tree");
+
+  url in1= tmscm_to_url (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  tree out= load_tree (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
+tmg_texmacs_load_buffer (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "texmacs-load-buffer");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "texmacs-load-buffer");
+  TMSCM_ASSERT_INT (arg3, TMSCM_ARG3, "texmacs-load-buffer");
+  TMSCM_ASSERT_BOOL (arg4, TMSCM_ARG4, "texmacs-load-buffer");
+
+  url in1= tmscm_to_url (arg1);
+  string in2= tmscm_to_string (arg2);
+  int in3= tmscm_to_int (arg3);
+  bool in4= tmscm_to_bool (arg4);
+
+  // TMSCM_DEFER_INTS;
+  load_buffer (in1, in2, in3, in4);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_texmacs_save_buffer (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "texmacs-save-buffer");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "texmacs-save-buffer");
+
+  url in1= tmscm_to_url (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  save_buffer (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_auto_save () {
+  // TMSCM_DEFER_INTS;
+  auto_save ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_window_handle () {
   // TMSCM_DEFER_INTS;
   int out= window_handle ();
@@ -6294,6 +6379,13 @@ initialize_glue_basic () {
   tmscm_install_procedure ("window->buffer",  tmg_window_2buffer, 1, 0, 0);
   tmscm_install_procedure ("window-set-buffer",  tmg_window_set_buffer, 2, 0, 0);
   tmscm_install_procedure ("window-focus",  tmg_window_focus, 1, 0, 0);
+  tmscm_install_procedure ("pretend-save-buffer",  tmg_pretend_save_buffer, 0, 0, 0);
+  tmscm_install_procedure ("buffer-unsaved?",  tmg_buffer_unsavedP, 0, 0, 0);
+  tmscm_install_procedure ("exists-unsaved-buffer?",  tmg_exists_unsaved_bufferP, 0, 0, 0);
+  tmscm_install_procedure ("texmacs-load-tree",  tmg_texmacs_load_tree, 2, 0, 0);
+  tmscm_install_procedure ("texmacs-load-buffer",  tmg_texmacs_load_buffer, 4, 0, 0);
+  tmscm_install_procedure ("texmacs-save-buffer",  tmg_texmacs_save_buffer, 2, 0, 0);
+  tmscm_install_procedure ("auto-save",  tmg_auto_save, 0, 0, 0);
   tmscm_install_procedure ("window-handle",  tmg_window_handle, 0, 0, 0);
   tmscm_install_procedure ("window-create",  tmg_window_create, 4, 0, 0);
   tmscm_install_procedure ("window-create-quit",  tmg_window_create_quit, 4, 0, 0);

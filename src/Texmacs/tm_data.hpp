@@ -95,21 +95,21 @@ tm_view window_find_view (int id);
 void window_set_buffer (int id, url name);
 void window_focus (int id);
 
+/* File management */
+tree load_tree (url name, string fm);
+//void load_buffer (url name, string fm, int where= 0, bool asf= false);
+void save_buffer (url name, string fm);
+void auto_save ();
+bool buffer_unsaved ();
+bool exists_unsaved_buffer ();
+void pretend_save_buffer ();
+
 class tm_data_rep: virtual public server_rep {
 protected:
 
 public:
   tm_data_rep ();
   ~tm_data_rep ();
-
-  /* File management */
-  tree load_tree (url name, string fm);
-  void load_buffer (url name, string fm, int where= 0, bool asf= false);
-  void save_buffer (url name, string fm);
-  void auto_save ();
-  bool buffer_unsaved ();
-  bool exists_unsaved_buffer ();
-  void pretend_save_buffer ();
 };
 
 inline tm_buffer get_buffer () {
@@ -118,5 +118,9 @@ inline tm_view get_view (bool must_be_valid= true) {
   return get_server () -> get_view (must_be_valid); }
 inline tm_window get_window () {
   return get_server () -> get_window (); }
+inline void set_view (tm_view vw) {
+  get_server () -> set_view (vw); }
+inline void set_message (tree left, tree right, bool temp= false) {
+  get_server () -> set_message (left, right, temp); }
 
 #endif // defined TM_DATA_H
