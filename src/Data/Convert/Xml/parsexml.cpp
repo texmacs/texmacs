@@ -691,6 +691,7 @@ xml_html_parser::finalize_space (tree t) {
       }
     if (!is_tuple (t[n-1], "attr"))
       last= n-1;
+    (void) first; (void) last;
     for (i=2; i<n; i++) {
       if (is_atomic (t[i])) {
 	if (finalize_preserve_space (t[1]->label)) r << t[i];

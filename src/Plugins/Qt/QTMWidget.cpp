@@ -732,7 +732,8 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     if (pos <  preedit_string.count()) {
       for(int i=0; i< attrs.count(); i++) 
         if ((attrs[i].type == QInputMethodEvent::TextFormat) &&
-            (attrs[i].start <= pos) && (pos < attrs[i].start + attrs[i].length)) {
+            (attrs[i].start <= pos) &&
+            (pos < attrs[i].start + attrs[i].length)) {
           sel_start = attrs[i].start;
           sel_length =  attrs[i].length;
           if (!visible_cur) pos += attrs[i].length;
@@ -741,9 +742,9 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
       sel_start = pos;
       sel_length = 0;
     }
+    (void) sel_start; (void) sel_length;
     
-    r = r * as_string(pos) * ":" 
-    * from_qstring(preedit_string);
+    r = r * as_string(pos) * ":" * from_qstring(preedit_string);
   }
   simple_widget_rep *wid =  tm_widget();
   if (wid)

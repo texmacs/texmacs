@@ -524,7 +524,8 @@
 	      ((== type 'detailed)
 	       (if nsubd
 		   (set-car! (cdr (list-ref aspect 3))
-			     (number->string nsubd))
+                             (or (and (string? nsubd) nsubd)
+                                 (number->string nsubd)))
 		   (set-car! (cdr (list-ref aspect 3))
 			     (cadr (list-ref
                                     (get-default-val "gr-grid-aspect")
