@@ -715,7 +715,7 @@ edit_env_rep::exec_arg (tree t) {
   if (is_compound (r))
     return tree (ERROR, "bad arg");
   if (is_nil (macro_arg) || (!macro_arg->item->contains (r->label)))
-    return tree (ERROR, "argument " * r->label);
+    return tree (ERROR, "arg " * r->label);
   r= macro_arg->item [r->label];
   list<hashmap<string,tree> > old_var= macro_arg;
   list<hashmap<string,path> > old_src= macro_src;
@@ -732,7 +732,7 @@ edit_env_rep::exec_arg (tree t) {
       r= r[nr];
     }
   }
-  if (err) r= tree (ERROR, "bad arg");
+  if (err) r= tree (ERROR, "arg " * r->label);
   else r= exec (r);
   macro_arg= old_var;
   macro_src= old_src;
@@ -1299,7 +1299,6 @@ edit_env_rep::exec_number (tree t) {
   string s1= t1->label;
   string s2= t2->label;
   int nr= as_int (s1);
-  if (s2 == "arabic") return as_string (nr);
   if (s2 == "roman") return roman_nr (nr);
   if (s2 == "Roman") return Roman_nr (nr);
   if (s2 == "alpha") return alpha_nr (nr);

@@ -222,9 +222,17 @@ concater_rep::typeset_argument (tree t, path ip) {
     int i, n= N(t);
     for (i=1; i<n; i++) {
       tree r= env->exec (t[i]);
-      if (!is_int (r)) break;
+      if (!is_int (r)) {
+        value= tree (ERROR, "arg " * name);
+        valip= decorate_right (ip);
+        break;
+      }
       int nr= as_int (r);
-      if ((!is_compound (value)) || (nr<0) || (nr>=N(value))) break;
+      if ((!is_compound (value)) || (nr<0) || (nr>=N(value))) {
+        value= tree (ERROR, "arg " * name);
+        valip= decorate_right (ip);
+        break;
+      }
       value= value[nr];
       valip= descend (valip, nr);
     }
