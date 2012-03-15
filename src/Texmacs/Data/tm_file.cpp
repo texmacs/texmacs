@@ -164,30 +164,15 @@ tm_data_rep::make_document (tm_view vw, string fm) {
   if (fm == "latex")
     body= vw->ed->exec_latex (body);
 
-  tree doc (DOCUMENT);
-  doc << compound ("TeXmacs", TEXMACS_VERSION);
+  vw->ed->get_data (vw->buf->data);
+  tree doc= attach_data (body, vw->buf->data, !vw->ed->get_save_aux());
+
   object arg1 (vw->buf->name);
   object arg2 (body);
   tree links= as_tree (call ("get-link-locations", arg1, arg2));
-
-  if (vw->buf->data->project != "")
-    doc << compound ("project", vw->buf->data->project);
-  if (vw->ed->get_style() != tree (TUPLE))
-    doc << compound ("style", copy (vw->ed->get_style()));
-  if (body != tree (DOCUMENT, ""))
-    doc << compound ("body", body);
-  if (N (vw->ed->get_init()) != 0)
-    doc << compound ("initial", make_collection (vw->ed->get_init()));
-  if (N (vw->ed->get_fin()) != 0)
-    doc << compound ("final", make_collection (vw->ed->get_fin()));
   if (N (links) != 0)
     doc << compound ("links", links);
-  if (vw->ed->get_save_aux()) {
-    if (N (vw->buf->data->ref) != 0)
-      doc << compound ("references", make_collection (vw->buf->data->ref));
-    if (N (vw->buf->data->aux) != 0)
-      doc << compound ("auxiliary", make_collection (vw->buf->data->aux));
-  }
+
   return doc;
 }
 

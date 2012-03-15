@@ -42,6 +42,8 @@ public:
   edit_typeset_rep ();
   ~edit_typeset_rep ();
   void clear_local_info ();
+  void set_data (new_data data);
+  void get_data (new_data& data);
 
   SI       as_length (string l);
   string   add_lengths (string l1, string l2);

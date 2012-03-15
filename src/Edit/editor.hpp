@@ -27,6 +27,7 @@
 #include "../Style/Environment/environment.hpp"
 #include "../Style/Memorizer/memorizer.hpp"
 #endif
+#include "new_data.hpp"
 #define TEXMACS_COPYRIGHT (string("(c) 1999-2006 by Joris van der Hoeven"))
 
 #define THE_CURSOR 1
@@ -230,6 +231,8 @@ public:
 
   /* public routines from edit_typeset */
   virtual void     clear_local_info () = 0;
+  virtual void     set_data (new_data data) = 0;
+  virtual void     get_data (new_data& data) = 0;
   virtual SI       as_length (string l) = 0;
   virtual string   add_lengths (string l1, string l2) = 0;
   virtual string   multiply_length (double x, string l) = 0;

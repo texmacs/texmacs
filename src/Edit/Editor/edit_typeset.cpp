@@ -45,6 +45,24 @@ edit_typeset_rep::edit_typeset_rep ():
   ttt (new_typesetter (env, subtree (et, rp), reverse (rp))) {}
 edit_typeset_rep::~edit_typeset_rep () { delete_typesetter (ttt); }
 
+void
+edit_typeset_rep::set_data (new_data data) {
+  set_style (data->style);
+  set_init  (data->init);
+  set_fin   (data->fin);
+  notify_page_change ();
+  add_init (data->init);
+  notify_change (THE_DECORATIONS);
+  typeset_invalidate_env ();
+}
+
+void
+edit_typeset_rep::get_data (new_data& data) {
+  data->style= get_style ();
+  data->init = get_init ();
+  data->fin  = get_fin ();
+}
+
 typesetter edit_typeset_rep::get_typesetter () { return ttt; }
 tree edit_typeset_rep::get_style () { return the_style; }
 void edit_typeset_rep::set_style (tree t) { the_style= copy (t); }

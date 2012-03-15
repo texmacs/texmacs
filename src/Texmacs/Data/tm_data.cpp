@@ -193,13 +193,7 @@ tm_data_rep::revert_buffer (url name, tree doc) {
   else for (i=0; i<N(buf->vws); i++) {
     tm_view vw= buf->vws[i];
     if (i==0) assign (vw->ed->rp, body);
-    vw->ed->set_style (buf->data->style);
-    vw->ed->set_init  (buf->data->init);
-    vw->ed->set_fin   (buf->data->fin);
-    vw->ed->notify_page_change ();
-    vw->ed->add_init (buf->data->init);
-    vw->ed->notify_change (THE_DECORATIONS);
-    vw->ed->typeset_invalidate_env ();
+    vw->ed->set_data (buf->data);
     vw->ed->notify_save ();
   }
 }
