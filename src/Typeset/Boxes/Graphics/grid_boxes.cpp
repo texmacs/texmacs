@@ -76,7 +76,7 @@ grid_box_rep::display (renderer ren) {
     ASSERT (!fnull (L1t, 1e-6) && !fnull (L2t, 1e-6) &&
 	    !fnull (L3t, 1e-6) && !fnull (L4t, 1e-6),
 	    "one side of the grid has length zero");
-    array<grid_curve> grads= g->get_curves (l1, l2, 0.0);
+    array<grid_curve> grads= g->get_curves (l1, l2);
 
     for (i=0; i<N(grads); i++) {
       curve c= f (grads[i]->c);
