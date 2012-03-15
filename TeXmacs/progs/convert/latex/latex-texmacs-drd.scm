@@ -567,8 +567,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (logic-table latex-preamble-language-def%
+  ;; FIXME : unicode export should be conditionnally available for each language
+  ;; FIXME : only the babel option is needed in the table
   ("bulgarian"
-   "\\usepackage[cp1251]{inputenc}\n\\usepackage[bulgarian]{babel}")
+   "\\usepackage[utf8]{inputenc}\n\\usepackage[bulgarian]{babel}")
   ("czech" "\\usepackage[czech]{babel}")
   ("danish" "\\usepackage[danish]{babel}")
   ("dutch" "\\usepackage[dutch]{babel}")
@@ -580,12 +582,12 @@
   ("polish" "\\usepackage[polish]{babel}")
   ("portuguese" "\\usepackage[portuges]{babel}")
   ("romanian" "\\usepackage[romanian]{babel}")
-  ("russian" "\\usepackage[cp1251]{inputenc}\n\\usepackage[russian]{babel}")
+  ("russian" "\\usepackage[utf8]{inputenc}\n\\usepackage[russian]{babel}")
   ("slovene" "\\usepackage[slovene]{babel}")
   ("spanish" "\\usepackage[spanish]{babel}")
   ("swedish" "\\usepackage[swedish]{babel}")
   ("ukrainian"
-   "\\usepackage[cp1251]{inputenc}\n\\usepackage[ukrainian]{babel}"))
+   "\\usepackage[utf8]{inputenc}\n\\usepackage[ukrainian]{babel}"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Catcode tables

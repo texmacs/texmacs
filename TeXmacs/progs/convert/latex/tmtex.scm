@@ -42,6 +42,7 @@
 (define tmtex-japanese? #f)
 (define tmtex-korean? #f)
 (define tmtex-taiwanese? #f)
+(define tmtex-cyrillic? #f)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Style
@@ -65,7 +66,8 @@
   (set! tmtex-korean? (== lan "korean"))
   (set! tmtex-taiwanese? (== lan "taiwanese"))
   (set! tmtex-oriental? (or tmtex-chinese? tmtex-japanese?
-			    tmtex-korean? tmtex-taiwanese?)))
+			    tmtex-korean? tmtex-taiwanese?))
+  (set! tmtex-cyrillic? (in? lan '("bulgarian" "russian" "ukrainian"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initialization from options
@@ -273,6 +275,10 @@
 		       ;;(cv (string-convert qs "Cork" "cp950")) ; Taiwanese ?
 		       (cv (string-convert qs "Cork" "UTF-8")))
 		  (list '!widechar (string->symbol cv))))))
+	((and (string-starts? s "#") tmtex-cyrillic?)
+	 	(let* ((qs (string-append "<" s ">"))
+		       (cv (string-convert qs "Cork" "UTF-8")))
+		   (list '!widechar (string->symbol cv))))	 	
 	(else (let ((ss (list (string->symbol s))))
 		(cond ((not (logic-in? (car ss) latex-symbol%))
 		       (display* "TeXmacs] non converted symbol: " s "\n")
