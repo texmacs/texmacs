@@ -910,8 +910,6 @@ accented_to_Cork (tree t) {
 	    return tree (string ((char) (i+128)));
     }
   }
-  // FIXME: \\i in math mode should also be treated...
-  if (r == tuple ("\\i")) return "\\i";
   return r;
 }
 
