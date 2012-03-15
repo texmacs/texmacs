@@ -458,7 +458,7 @@ qt_input_text_widget_rep::as_qwidget () {
     QObject::connect(le, SIGNAL(editingFinished ()), helper, SLOT(leave ()));
     le -> setText (to_qstring (helper->wid()->text));
     
-    le -> setStyleSheet (to_qstylesheet (style));
+    //le -> setStyleSheet (to_qstylesheet (style));
     le -> setMinimumSize(qt_decode_length(width, le));
     
     if (ends (type, "file") || type == "directory") {
