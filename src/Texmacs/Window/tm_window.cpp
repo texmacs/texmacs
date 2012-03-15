@@ -95,7 +95,7 @@ close_embedded_command_rep::apply () {
   //cout << "Changed focus\n";
   tm_window win= vw->win;
   ASSERT (N(vw->buf->vws) == 1, "invalid cloned embedded TeXmacs widget");
-  get_server () -> delete_buffer (vw->buf);
+  delete_buffer (vw->buf);
   //cout << "Deleted buffer\n";
   tm_delete (win);
   //cout << "Deleted window\n";
@@ -147,10 +147,10 @@ texmacs_input_widget (tree doc, command cmd, bool continuous) {
   doc= enrich_embedded_document (doc);
   tm_view   curvw=  get_server () -> get_view ();
   string    name = embedded_name ();
-  tm_buffer buf  = get_server () -> new_buffer (url (name), doc);
-  tm_view   vw   = get_server () -> get_passive_view (buf);
+  tm_buffer buf  = create_buffer (url (name), doc);
+  tm_view   vw   = get_passive_view (buf);
   tm_window win  = tm_new<tm_window_rep> (doc, command ());
-  get_server () -> set_aux (name, name);
+  set_aux (name, name);
   vw->win= win;
   vw->buf->buf->in_menu= false;
   set_scrollable (win->wid, vw->ed);

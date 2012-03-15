@@ -353,9 +353,9 @@ TeXmacs_main (int argc, char** argv) {
     sv->load_buffer (
       "$TEXMACS_HOME_PATH/doc/about/changes/changes-recent.en.tm", "help", 1);
   }
-  if (sv->no_bufs ()) {
+  if (no_bufs ()) {
     if (DEBUG_STD) cout << "TeXmacs] Creating 'no name' buffer...\n";
-    sv->open_window ();
+    open_window ();
   }
 
   bench_print ();

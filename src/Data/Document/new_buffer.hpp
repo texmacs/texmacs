@@ -32,10 +32,20 @@ public:
     read_only (false), secure (is_secure (name2)), in_menu (true) {}
 };
 
+class new_buffer;
 class new_buffer {
 CONCRETE(new_buffer);
   inline new_buffer (url name): rep (tm_new<new_buffer_rep> (name)) {}
 };
-CONCRETE_CODE(new_buffer);
+//CONCRETE_CODE(new_buffer);
+
+inline new_buffer::new_buffer (const new_buffer& x):
+  rep(x.rep) { INC_COUNT (this->rep); }
+inline new_buffer::~new_buffer () { DEC_COUNT (this->rep); }
+inline new_buffer_rep* new_buffer::operator -> () {
+  return rep; }
+inline new_buffer& new_buffer::operator = (new_buffer x) {
+  INC_COUNT (x.rep); DEC_COUNT (this->rep);
+  this->rep=x.rep; return *this; }
 
 #endif // NEW_BUFFER_H

@@ -67,7 +67,7 @@ tm_data_rep::load_buffer (url u, string fm, int where, bool autosave_flag) {
         switch (where) {
           case 0: new_buffer_in_this_window (v, doc); break;
           case 1: new_buffer_in_new_window (v, doc); break;
-          case 2: new_buffer (v, doc); break;
+          case 2: ::create_buffer (v, doc); break;
           default: FAILED ("bad value for 'where'");
         }
       }
@@ -94,7 +94,7 @@ tm_data_rep::load_buffer (url u, string fm, int where, bool autosave_flag) {
   switch (where) {
     case 0: new_buffer_in_this_window (v, doc); break;
     case 1: new_buffer_in_new_window (v, doc); break;
-    case 2: new_buffer (v, doc); break;
+    case 2: ::create_buffer (v, doc); break;
     default: FAILED ("bad value for 'where'");
   }
   nr= find_buffer (v);
@@ -113,10 +113,10 @@ tm_data_rep::load_buffer (url u, string fm, int where, bool autosave_flag) {
 }
 
 tm_buffer
-tm_data_rep::load_passive_buffer (url u) {
+load_passive_buffer (url u) {
   int nr= find_buffer (u);
   if (nr != -1) return bufs[nr];
-  load_buffer (u, "texmacs", 2, false);
+  get_server () -> load_buffer (u, "texmacs", 2, false);
   nr= find_buffer (u);
   if (nr != -1) return bufs[nr];
   return NULL;
@@ -155,7 +155,7 @@ load_inclusion (url name) {
 ******************************************************************************/
 
 tree
-tm_data_rep::make_document (tm_view vw, string fm) {
+make_document (tm_view vw, string fm) {
   tree body= subtree (the_et, vw->buf->rp);
   if (fm == "verbatim")
     body= vw->ed->exec_verbatim (body);
@@ -262,13 +262,13 @@ tm_data_rep::auto_save () {
 ******************************************************************************/
 
 bool
-tm_data_rep::no_name () {
+no_name () {
   tm_buffer buf= get_buffer ();
   return is_scratch (buf->buf->name);
 }
 
 bool
-tm_data_rep::help_buffer () {
+help_buffer () {
   tm_buffer buf= get_buffer ();
   return buf->buf->fm == "help";
 }

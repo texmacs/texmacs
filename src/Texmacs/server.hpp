@@ -28,12 +28,6 @@ public:
   server_rep ();
   virtual ~server_rep ();
 
-  /* low level */
-  virtual tm_buffer new_buffer (url name, tree doc) = 0;
-  virtual void attach_view (tm_window win, tm_view vw) = 0;
-  virtual tm_view get_passive_view (tm_buffer buf) = 0;
-  virtual void delete_buffer (tm_buffer buf) = 0;
-
   /* Get and set objects associated to server */
   virtual server_rep* get_server () = 0;
   virtual bool        has_view () = 0;
@@ -103,39 +97,6 @@ public:
   virtual void choose_file (object fun, string title, string type) = 0;
   virtual void interactive (object fun, scheme_tree p) = 0;
 
-  /* Buffer management */
-  virtual int  nr_bufs () = 0;
-  virtual tm_buffer get_buf (int i) = 0;
-  virtual tm_buffer get_buf (path p) = 0;
-  virtual void set_name_buffer (url name) = 0;
-  virtual url  get_name_buffer () = 0;
-  virtual url  get_name_buffer (path p) = 0;
-  virtual void set_abbr_buffer (string abbr) = 0;
-  virtual string get_abbr_buffer () = 0;
-  virtual url  new_buffer () = 0;
-  virtual void switch_to_buffer (url name) = 0;
-  virtual bool switch_to_buffer (path p) = 0;
-  virtual void switch_to_active_buffer (url name) = 0;
-  virtual void revert_buffer () = 0;
-  virtual void kill_buffer () = 0;
-  virtual void new_buffer_in_new_window (url name, tree t, tree geom= "") = 0;
-  virtual url  open_window (tree geom= "") = 0;
-  virtual void clone_window () = 0;
-  virtual void kill_window () = 0;
-  virtual void kill_window_and_buffer () = 0;
-  virtual bool no_bufs () = 0;
-  virtual bool no_name () = 0;
-  virtual bool help_buffer () = 0;
-  virtual void revert_buffer (url name, tree doc) = 0;
-  virtual void set_aux (string aux, url name) = 0;
-  virtual void set_aux_buffer (string aux, url name, tree doc) = 0;
-  virtual void set_help_buffer (url name, tree doc) = 0;
-  virtual void set_buffer_tree (url name, tree doc) = 0;
-  virtual tree get_buffer_tree (url name) = 0;
-  virtual url  get_all_buffers () = 0;
-  virtual object get_buffer_menu () = 0;
-  virtual bool buffer_in_menu (url name, bool flag) = 0;
-
   /* Projects */
   virtual void project_attach (string prj_name= "") = 0;
   virtual bool project_attached () = 0;
@@ -190,5 +151,50 @@ extern bool rescue_mode;
 scheme_tree menu_merge (scheme_tree m1, scheme_tree m2);
 server get_server ();
 void gui_set_output_language (string lan);
+
+
+/* low level */
+tm_buffer create_buffer (url name, tree doc);
+void attach_view (tm_window win, tm_view vw);
+tm_view get_passive_view (tm_buffer buf);
+void delete_buffer (tm_buffer buf);
+
+/* Buffer management */
+url  get_all_buffers ();
+object get_buffer_menu ();
+bool buffer_in_menu (url name, bool flag);
+void set_name_buffer (url name);
+url  get_name_buffer ();
+url  get_name_buffer (path p);
+void set_abbr_buffer (string abbr);
+string get_abbr_buffer ();
+void revert_buffer (url name, tree doc);
+void new_buffer_in_new_window (url name, tree t, tree geom= "");
+
+/* Buffer management */
+int  nr_bufs ();
+tm_buffer get_buf (int i);
+tm_buffer get_buf (path p);
+url  create_buffer ();
+void switch_to_buffer (int nr);
+bool switch_to_buffer (path p);
+void switch_to_buffer (url name);
+void switch_to_active_buffer (url name);
+void revert_buffer ();
+void kill_buffer ();
+url  open_window (tree geom= "");
+void clone_window ();
+void kill_window ();
+void kill_window_and_buffer ();
+bool no_bufs ();
+bool no_name ();
+bool help_buffer ();
+void set_aux (string aux, url name);
+void set_aux_buffer (string aux, url name, tree doc);
+void set_help_buffer (url name, tree doc);
+void browse_help (int delta);
+void set_buffer_tree (url name, tree doc);
+tree get_buffer_tree (url name);
+
 
 #endif // defined SERVER_H
