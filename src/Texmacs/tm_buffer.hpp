@@ -11,9 +11,13 @@
 
 #ifndef TM_BUFFER_H
 #define TM_BUFFER_H
-#include "server.hpp"
 #include "new_data.hpp"
 #include "new_buffer.hpp"
+
+class tm_buffer_rep;
+class tm_view_rep;
+typedef tm_buffer_rep* tm_buffer;
+typedef tm_view_rep*   tm_view;
 
 extern tree the_et;
 path new_document ();

@@ -11,6 +11,7 @@
 
 #ifndef TM_WINDOW_H
 #define TM_WINDOW_H
+#include "server.hpp"
 #include "tm_buffer.hpp"
 
 class tm_window_rep {

@@ -13,6 +13,7 @@
 #define NEW_BUFFER_H
 #include "tree.hpp"
 #include "hashmap.hpp"
+#include "url.hpp"
 
 class new_buffer;
 class new_buffer_rep: public concrete_struct {
