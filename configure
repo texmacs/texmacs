@@ -6459,7 +6459,7 @@ $as_echo "final adjustments for an Intel or AMS Solaris host" >&6; }
 $as_echo "final adjustments for mingw host" >&6; }
     CONFIG_OS=MINGW
     CONFIG_OS_COMPAT="Windows"
-    CPPFLAGS="$CPPFLAGS -I."
+    CPPFLAGS="$CPPFLAGS -I/usr/local/include -I."
     CONFIG_LDRT="-L/mingw/lib -lmingw32 -lmingwex"
     GUILE_LDFLAGS="-lmingwex $GUILE_LDFLAGS -lintl" #added mingwex to mask the internal guile readdir function
   ;;

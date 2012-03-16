@@ -26,7 +26,7 @@ gs_prefix () {
       gs= url_system (get_env ("TEXMACS_PATH")) * "bin" * "gswin32c";
     cmd= sys_concretize (gs) * " ";
   }
-  return cmd;
+  return copy (cmd);
 #else
   return "gs ";
 #endif
