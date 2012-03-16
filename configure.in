@@ -588,6 +588,7 @@ case "${host}" in
     AC_MSG_RESULT([final adjustments for mingw host])
     CONFIG_OS=MINGW
     CONFIG_OS_COMPAT="Windows"
+    CPPFLAGS="$CPPFLAGS -I."
     CONFIG_LDRT="-L/mingw/lib -lmingw32 -lmingwex"
     GUILE_LDFLAGS="-lmingwex $GUILE_LDFLAGS -lintl" #added mingwex to mask the internal guile readdir function
   ;;
@@ -841,9 +842,8 @@ AC_SUBST(CONFIG_PDF)
 if test x"$CONFIG_OS" = xMINGW; then
 
 AC_ARG_ENABLE(console,
-[  --enable-console        enable windows console],
-    [], [enable_windows_console="no"])
-case "$enable_windows_console" in
+[  --enable-console        enable windows console], [], [])
+case "$enable_console" in
     yes)
 	AC_MSG_RESULT([enabling Windows console])
         ;;
