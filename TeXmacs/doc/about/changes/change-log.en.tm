@@ -8,8 +8,15 @@
   <section|Changes from version 1.0.7 to 1.0.7.15>
 
   <\itemize>
+    <item>First rudimentary spreadsheet facility (1.0.7.15).
+
     <item>Special editing mode for writing <TeXmacs> documentation
     (1.0.7.15).
+
+    <item>Added new widgets to X version, with Qt analogues in progress
+    (1.0.7.15).
+
+    <item>Many bug fixes (1.0.7.15).
 
     <item>New icons for Qt version of <TeXmacs> (1.0.7.14).
 
