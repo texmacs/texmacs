@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : gs_utilities.mm
 * DESCRIPTION: Utilities for Ghostscript
-* COPYRIGHT  : (C) 2010 David MICHEL
+* COPYRIGHT  : (C) 2010-2012 David Michel, Joris van der Hoeven, Denis Raux
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -16,6 +16,22 @@
 #include "analyze.hpp"
 #include "file.hpp"
 
+string
+gs_prefix () {
+#if defined (__MINGW__) || defined (__MINGW32__)
+  static string cmd; // no need to resolve each time
+  if (cmd == "") {
+    url gs= resolve_in_path ("gswin32c");
+    if(is_none(gs))
+      gs= url_system (get_env ("TEXMACS_PATH")) * "bin" * "gswin32c";
+    cmd= sys_concretize (gs) * " ";
+  }
+  return cmd;
+#else
+  return "gs ";
+#endif
+}
+
 bool
 gs_supports (url image) {
   string s= suffix (image);
@@ -23,52 +39,52 @@ gs_supports (url image) {
   return false;
 }
 
+bool
+gs_image_size_sub (string buf, int& w_pt, int& h_pt) {
+  int pos= search_forwards (buf, "\n%%BoundingBox: ");
+  if (pos < 0) search_forwards (buf, "%%BoundingBox: ");
+  if (pos < 0) return false;
+  if (buf[pos] == '\n') pos++;
+  bool ok= read (buf, pos, "%%BoundingBox: ");
+  int x1, y1, x2, y2;
+  skip_spaces (buf, pos);
+  ok= ok && read_int (buf, pos, x1);
+  skip_spaces (buf, pos);
+  ok= ok && read_int (buf, pos, y1);
+  skip_spaces (buf, pos);
+  ok= ok && read_int (buf, pos, x2);
+  skip_spaces (buf, pos);
+  ok= ok && read_int (buf, pos, y2);
+  if (!ok) return false;
+  w_pt= x2-x1;
+  h_pt= y2-y1;
+  return true;
+}
+
 void
 gs_image_size (url image, int& w_pt, int& h_pt) {
-  string cmd;
-  cmd= "grep -m 1 '^%%BoundingBox: ' ";
-  cmd << sys_concretize (image);
-  string buf= eval_system (cmd);
-  int pos= 0;
-  int ok= read (buf, pos, "%%BoundingBox: ");
-  if (!ok) {
-#if defined (__MINGW__) || defined (__MINGW32__)
-    cmd= "\"";
-    cmd << get_env ("TEXMACS_PATH") << string ("\\bin\\gswin32c\" ");
-#else
-    cmd= "gs ";
-#endif
+  string buf;
+  bool err= load_string (image, buf, false);
+  if (!err && gs_image_size_sub (buf, w_pt, h_pt)) return;
+  if (!err) {
+    string cmd= gs_prefix ();
     cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER -dEPSCrop -sDEVICE=bbox ";
     cmd << sys_concretize (image);
-    string buf= eval_system (cmd);
-    int pos= 0;
-    ok= read (buf, pos, "%%BoundingBox: ");
+    buf= eval_system (cmd);
   }
-  if (ok) {
-    int x1, y1, x2, y2;
-    skip_spaces (buf, pos);
-    ok= ok && read_int (buf, pos, x1);
-    skip_spaces (buf, pos);
-    ok= ok && read_int (buf, pos, y1);
-    skip_spaces (buf, pos);
-    ok= ok && read_int (buf, pos, x2);
-    skip_spaces (buf, pos);
-    ok= ok && read_int (buf, pos, y2);
-    if (ok) {
-      w_pt= x2-x1;
-      h_pt= y2-y1;
-      return;
-    }
-  }
+  if (!err && gs_image_size_sub (buf, w_pt, h_pt)) return;
   cerr << "TeXmacs Cannot read image file '" << image << "'"
        << " in gs_image_size" << LF;
-  w_pt= 35; h_pt= 35;
+  w_pt= 0; h_pt= 0;
 }
 
 void ps_bounding_box (url image, int& x1, int& y1, int& x2, int& y2);
 
 static bool
 use_converts (url image) {
+#ifdef __MINGW__
+  (void) image; return false;
+#else
   // NOTE: determine whether we should use image magick.
   // Indeed, EPSCrop unfortunately does not correctly handle
   // non trivial offsets of bounding boxes
@@ -76,6 +92,7 @@ use_converts (url image) {
   int bx1, by1, bx2, by2;
   ps_bounding_box (image, bx1, by1, bx2, by2);
   return has_image_magick && (bx1 != 0 || by1 != 0);
+#endif
 }
 
 void
@@ -88,12 +105,7 @@ gs_to_png (url image, url png, int w, int h) {
     system (cmd);
   }
   else {
-#if defined (__MINGW__) || defined (__MINGW32__)
-    string cmd= "\"";
-    cmd << get_env ("TEXMACS_PATH") << string ("\\bin\\gswin32c\" ");
-#else
-    string cmd= "gs ";
-#endif
+    string cmd= gs_prefix ();
     cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER ";
     cmd << "-sDEVICE=png16m -dGraphicsAlphaBits=4 -dEPSCrop ";
     cmd << "-g" << as_string (w) << "x" << as_string (h) << " ";
@@ -118,12 +130,7 @@ gs_to_eps (url image, url eps) {
     system (cmd);
   }
   else {
-#if defined (__MINGW__) || defined (__MINGW32__)
-    string cmd= "\"";
-    cmd << get_env ("TEXMACS_PATH") << string ("\\bin\\gswin32c\" ");
-#else
-    string cmd= "gs ";
-#endif
+    string cmd= gs_prefix ();
     cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER ";
     cmd << "-sDEVICE=epswrite -dEPSCrop ";
     cmd << "-sOutputFile=" << sys_concretize (eps) << " ";
@@ -134,12 +141,7 @@ gs_to_eps (url image, url eps) {
 
 void
 gs_to_pdf (url doc, url pdf) {
-#if defined (__MINGW__) || defined (__MINGW32__)
-  string cmd= "\"";
-  cmd << get_env ("TEXMACS_PATH") << string ("\\bin\\gswin32c\" ");
-#else
-  string cmd= "gs ";
-#endif
+  string cmd= gs_prefix ();
   cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pdfwrite ";
   cmd << "-sOutputFile=" << sys_concretize (pdf) << " ";
   cmd << sys_concretize (doc);
@@ -149,18 +151,13 @@ gs_to_pdf (url doc, url pdf) {
   // incorrectly referring to the name of the temporary file
   // so we add some PS code to override the PDF document title with
   // the name of the PDF file.
-  
+
   system (cmd);
 }
 
 void
 tm_gs (url image) {
-#if defined (__MINGW__) || defined (__MINGW32__)
-  string cmd= "\"";
-  cmd << get_env ("TEXMACS_PATH") << string ("\\bin\\gswin32c\" ");
-#else
-  string cmd= "gs ";
-#endif
+  string cmd= gs_prefix ();
   cmd << "-q -sDEVICE=x11alpha -dBATCH -dNOPAUSE -dSAFER -dNOEPS ";
   cmd << sys_concretize (image);
   system (cmd);
