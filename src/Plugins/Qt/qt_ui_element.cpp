@@ -29,7 +29,7 @@
 #include "qt_window_widget.hpp"
 #include "qt_menu.hpp"
 
-#include "Style/Evaluate/evaluate_main.hpp" // required for as_length(string)
+#include "../../Style/Evaluate/evaluate_main.hpp" // required for as_length(string)
 
 
 const char *ui_type_string[]= {

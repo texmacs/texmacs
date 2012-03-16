@@ -14,7 +14,6 @@
 #include "path.hpp"
 #include "boot.hpp"
 #include "Freetype/tt_file.hpp"
-#include "Freetype/tt_face.hpp"
 #include "timer.hpp"
 #include "data_cache.hpp"
 

@@ -12,9 +12,15 @@
 #ifndef TT_FILE_H
 #define TT_FILE_H
 #include "url.hpp"
+#include "bitmap_font.hpp"
 
 bool   tt_font_exists (string name);
 url    tt_font_find (string name);
 string tt_find_name (string name, int size);
+
+
+#ifdef USE_FREETYPE
+font_glyphs tt_font_glyphs (string family, int size, int dpi);
+#endif // USE_FREETYPE
 
 #endif // TT_FILE_H

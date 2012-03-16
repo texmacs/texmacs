@@ -15,7 +15,6 @@
 #include "sys_utils.hpp"
 #include "convert.hpp"
 #include "tex_files.hpp"
-#include "Freetype/free_type.hpp"
 
 /******************************************************************************
 * Determine installed programs

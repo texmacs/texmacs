@@ -49,7 +49,7 @@ struct tt_font_glyphs_rep: font_glyphs_rep {
 
 tt_face load_tt_face (string name);
 font_metric tt_font_metric (string family, int size, int dpi);
-font_glyphs tt_font_glyphs (string family, int size, int dpi);
+//font_glyphs tt_font_glyphs (string family, int size, int dpi);
 
 #endif // USE_FREETYPE
 

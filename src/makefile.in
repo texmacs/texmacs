@@ -97,7 +97,7 @@ kernel_src   := $(call findsrc,Kernel)
 system_src   := $(call findsrc,System)
 data_src     := $(call findsrc,Data)
 graphics_src := $(call findsrc,Graphics)
-plugins_src  := $(call findsrc_in,Plugins,Bibtex Freetype Cairo Imlib2 \
+plugins_src  := $(call findsrc_in,Plugins,Bibtex Cairo Imlib2 \
                                           Ispell Metafont Openssl @CONFIG_PDF@)
 plugins_c_src:= $(call findc_in,Plugins,@CONFIG_PDF@)
 x11_src      := $(call findsrc_in,Plugins,@CONFIG_X11@)
@@ -110,7 +110,8 @@ style_src    := $(call findsrc_in,Style,@CONFIG_EXPERIMENTAL@)
 typeset_src  := $(call findsrc,Typeset)
 edit_src     := $(call findsrc,Edit)
 texmacs_src  := $(call findsrc,Texmacs)
-guile_src    := $(call findsrc_in,Scheme,Scheme Guile)
+scheme_src    := $(call findsrc_in,Scheme,Scheme Guile)
+freetype_src := $(call findsrc_in,Plugins,Freetype)
 
 # Each makefile will have its own Deps directory. Okay that is a bit
 # inefficient, but that is much simpler to maintain.
@@ -125,9 +126,10 @@ make_m_deps = $(patsubst %.m,Deps/%.d,$(notdir $(1)))
 make_mm_deps = $(patsubst %.mm,Deps/%.d,$(notdir $(1)))
 
 texmacs_cpp_deps := $(call make_cpp_deps,$(system_src) $(kernel_src) $(data_src)\
- $(edit_src) $(guile_src) $(graphics_src)\
+ $(edit_src) $(scheme_src) $(graphics_src)\
  $(plugins_src) $(x11_src) $(texmacs_src)\
- $(typeset_src) $(style_src) $(qt_src) $(gs_src) $(os_src))
+ $(typeset_src) $(style_src) $(qt_src) $(gs_src) $(os_src)\
+ $(freetype_src))
 texmacs_m_deps += $(call make_m_deps,$(cocoa_m_src))
 texmacs_mm_deps += $(call make_mm_deps,$(cocoa_mm_src))
 texmacs_c_deps += $(call make_c_deps,$(plugins_c_src))
@@ -140,7 +142,14 @@ deps += $(texmacs_cpp_deps) $(texmacs_c_deps) $(texmacs_m_deps) $(texmacs_mm_dep
 
 incl_flags = $(patsubst %,-I%,$(1))
 
-system_incl   := $(call incl_flags,System System/Boot System/Classes System/Files System/Link System/Misc System/Language Kernel/Abstractions Kernel/Containers Kernel/Types Data/Convert Data/Drd Data/History Data/Observers Data/Document Data/String Data/Tmfs Data/Tree Scheme Graphics/Bitmap_fonts Graphics/Fonts Graphics/Gui Graphics/Mathematics Graphics/Renderer Graphics/Handwriting Plugins)
+system_incl   := $(call incl_flags,System System/Boot System/Classes \
+  System/Files System/Link System/Misc System/Language Kernel/Abstractions \
+  Kernel/Containers Kernel/Types Data/Convert Data/Drd Data/History \
+  Data/Observers Data/Document Data/String Data/Tmfs Data/Tree \
+  Scheme \
+  Graphics/Bitmap_fonts Graphics/Fonts Graphics/Gui Graphics/Mathematics \
+  Graphics/Renderer Graphics/Handwriting \
+  Plugins)
 kernel_incl   := $(system_incl)
 data_incl     := $(system_incl)
 graphics_incl := $(system_incl)
@@ -150,11 +159,15 @@ cocoa_incl    := $(system_incl)
 os_incl       := $(system_incl)
 qt_incl       := $(system_incl)
 gs_incl       := $(system_incl)
-style_incl    := $(system_incl) $(call incl_flags,Style/Memorizer Style/Environment Style/Evaluate)
-typeset_incl  := $(system_incl) $(call incl_flags,Typeset Typeset/Bridge Typeset/Concat Typeset/Page Edit)
-guile_incl    := $(typeset_incl) $(call incl_flags,Plugins Texmacs)
-edit_incl     := $(guile_incl) $(call incl_flags,Edit/Editor Edit/Interface Edit/Modify)
-texmacs_incl  := $(guile_incl)
+style_incl    := $(system_incl) \
+  $(call incl_flags,Style/Memorizer Style/Environment Style/Evaluate)
+typeset_incl  := $(system_incl) \
+  $(call incl_flags,Typeset Typeset/Bridge Typeset/Concat Typeset/Page Edit)
+scheme_incl    := $(typeset_incl) $(call incl_flags,Plugins Texmacs)
+edit_incl     := $(scheme_incl) \
+  $(call incl_flags,Edit/Editor Edit/Interface Edit/Modify)
+texmacs_incl  := $(scheme_incl)
+freetype_incl := $(system_incl)
 
 ###############################################################################
 # MOC files
@@ -166,7 +179,10 @@ texmacs_incl  := $(guile_incl)
 ifeq "@CONFIG_QT@" ""
 qt_moc := 
 else
-qt_moc := QTMStyle.hpp QTMGuiHelper.hpp QTMInteractiveInputHelper.hpp QTMMenuHelper.hpp QTMWidget.hpp  QTMWindow.hpp QTMScrollView.hpp QTMPipeLink.hpp QTMInteractivePrompt.hpp QTMFileDialog.hpp QTMPrintDialog.hpp QTMPrinterSettings.hpp
+qt_moc := QTMStyle.hpp QTMGuiHelper.hpp QTMInteractiveInputHelper.hpp \
+  QTMMenuHelper.hpp QTMWidget.hpp  QTMWindow.hpp QTMScrollView.hpp \
+  QTMPipeLink.hpp QTMInteractivePrompt.hpp QTMFileDialog.hpp \
+  QTMPrintDialog.hpp QTMPrinterSettings.hpp
 endif
 
 qt_moc_src = $(patsubst %.hpp, moc_%.cpp,$(qt_moc))
@@ -180,7 +196,13 @@ $(qt_moc_paths): ./Plugins/Qt/moc_%.cpp: ./Plugins/Qt/%.hpp
 # Dependencies
 ###############################################################################
 
-deps_incl = $(call incl_flags,System System/Boot System/Classes System/Files System/Link System/Misc System/Language Kernel/Abstractions Kernel/Containers Kernel/Types Data/Convert Data/Drd Data/History Data/Observers Data/Document Data/String Data/Tmfs Data/Tree Graphics Plugins Style/Environment Style/Evaluate Style/Memorizer Typeset Edit Texmacs Scheme Graphics/Bitmap_fonts Graphics/Fonts Graphics/Gui Graphics/Mathematics Graphics/Renderer Graphics/Handwriting)
+deps_incl = $(call incl_flags,System System/Boot System/Classes System/Files \
+  System/Link System/Misc System/Language Kernel/Abstractions Kernel/Containers\
+  Kernel/Types Data/Convert Data/Drd Data/History Data/Observers Data/Document\
+  Data/String Data/Tmfs Data/Tree Graphics Plugins Style/Environment\
+  Style/Evaluate Style/Memorizer Typeset Edit Texmacs Scheme\
+  Graphics/Bitmap_fonts Graphics/Fonts Graphics/Gui Graphics/Mathematics\
+  Graphics/Renderer Graphics/Handwriting)
 
 deps_flags = $(deps_incl)\
  $(CPPFLAGS) $(CXXAXEL) $(CXXCAIRO) $(CXXIMLIB2) $(CXXFREETYPE) $(CXXICONV) $(CXXGUILE) \
@@ -225,7 +247,7 @@ system_obj   := $(call makeobj,$(system_src))
 kernel_obj   := $(call makeobj,$(kernel_src))
 data_obj     := $(call makeobj,$(data_src))
 edit_obj     := $(call makeobj,$(edit_src))
-guile_obj    := $(call makeobj,$(guile_src))
+scheme_obj    := $(call makeobj,$(scheme_src))
 graphics_obj := $(call makeobj,$(graphics_src))
 x11_obj      := $(call makeobj,$(x11_src))
 cocoa_m_obj  := $(call makeobj_m,$(cocoa_m_src))
@@ -239,6 +261,7 @@ plugins_c_obj:= $(call makeobj_c,$(plugins_c_src))
 texmacs_obj  := $(call makeobj,$(texmacs_src))
 typeset_obj  := $(call makeobj,$(typeset_src))
 style_obj    := $(call makeobj,$(style_src))
+freetype_obj := $(call makeobj,$(freetype_src))
 
 # To enforce some degree of modularity, each object file must be
 # compiled with only a specific set of include flags. To achieve that,
@@ -251,8 +274,7 @@ style_obj    := $(call makeobj,$(style_src))
 
 cxx_flags    = $(strip $(CXX) $(1) -c $< -o $@)
 cxx_incl     = $(call cxx_flags,$(1) \
-  $(CXXAXEL) $(CXXCAIRO) $(CXXIMLIB2) $(CXXFREETYPE) $(CXXICONV) \
-  $(CXXGUILE) $(CPPFLAGS) $(CXXFLAGS)) 
+ $(CPPFLAGS) $(CXXFLAGS)) 
 cc_flags    = $(strip $(CC) $(1) -c $< -o $@)
 cc_incl     = $(call cc_flags,$(1) \
   $(CPPFLAGS) $(CXXFLAGS)) 
@@ -265,12 +287,12 @@ $(data_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(data_incl) -I$(tmsrc)/include)
 $(edit_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(edit_incl))
-$(guile_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(guile_incl))
+$(scheme_obj): Objects/%.o: %.cpp
+	$(call cxx_incl,$(scheme_incl)  $(CXXGUILE) )
 $(graphics_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(graphics_incl))
 $(plugins_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(plugins_incl))
+	$(call cxx_incl,$(plugins_incl) $(CXXAXEL) $(CXXCAIRO) $(CXXIMLIB2) $(CXXICONV))
 $(plugins_c_obj): Objects/%.o: %.c
 	$(call cc_incl,$(plugins_incl))
 $(x11_obj): Objects/%.o: %.cpp
@@ -293,6 +315,8 @@ $(typeset_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(typeset_incl))
 $(style_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(style_incl))
+$(freetype_obj): Objects/%.o: %.cpp
+	$(call cxx_incl,$(freetype_incl) $(CXXFREETYPE))
 
 ###############################################################################
 # Make editor
@@ -345,13 +369,14 @@ uses_cocoa    := $(cocoa_m_obj) $(cocoa_mm_obj)
 uses_typeset  := $(typeset_obj)
 uses_style    := $(style_obj)
 uses_edit     := $(edit_obj)
-uses_glue     := $(guile_obj)
+uses_scheme   := $(scheme_obj)
 uses_texmacs  := $(texmacs_obj)
+uses_freetype := $(freetype_obj)
 
 # Compilation rules
 
 TEXMACS_objects := $(strip $(call uses,system kernel data graphics\
- plugins x11 os qt gs cocoa style typeset edit glue texmacs))
+ plugins x11 os qt gs cocoa style typeset edit scheme texmacs freetype))
 
 link_options:=-L$(tmsrc)/lib $(LDRT) -lm $(LDPATH) $(LDGUI) $(LDGUILE) \
   $(LDAXEL) $(LDCAIRO) $(LDIMLIB2) $(LDFREETYPE) $(LDICONV) $(LDDL)

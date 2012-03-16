@@ -1045,7 +1045,6 @@ tmscm_to_collection (tmscm  p) {
 #include "converter.hpp"
 #include "timer.hpp"
 #include "Metafont/tex_files.hpp"
-#include "Freetype/free_type.hpp"
 #include "Freetype/tt_file.hpp"
 #include "Bibtex/bibtex.hpp"
 #include "Bibtex/bibtex_functions.hpp"
