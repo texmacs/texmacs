@@ -41,8 +41,8 @@ gs_supports (url image) {
 
 bool
 gs_image_size_sub (string buf, int& w_pt, int& h_pt) {
-  int pos= search_forwards (buf, "\n%%BoundingBox: ");
-  if (pos < 0) search_forwards (buf, "%%BoundingBox: ");
+  int pos= search_forwards ("\n%%BoundingBox: ", buf);
+  if (pos < 0) search_forwards ("%%BoundingBox: ", buf);
   if (pos < 0) return false;
   if (buf[pos] == '\n') pos++;
   bool ok= read (buf, pos, "%%BoundingBox: ");
