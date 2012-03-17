@@ -9,13 +9,13 @@
 #you need to set DEVTOOLS to the root of the development tools (usually /Developer)
 
 ARCH=i386
-PREFIX=`(cd ..; pwd)`/tm-devel/usr
-DEVTOOLS=/Developer_3.2.5
+PREFIX=`(cd ..; pwd)`/usr
+DEVTOOLS=/Developer_3.2.6
 
 
 PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig/
 
-SDK=$DEVTOOLS/SDKs/MacOSX10.6.sdk 
+SDK=$DEVTOOLS/SDKs/MacOSX10.5.sdk 
 
 #---------------------------------------------------------------------------------------------------
 # setup target architecure
@@ -66,18 +66,18 @@ PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig/ \
   --host=${!TARGET_ARCH} \
   --enable-macosx-extensions\
   --enable-qt\
-  CC="gcc -arch $ARCH  -mmacosx-version-min=10.6 -isysroot $SDK  -I$SDK/usr/include/c++/4.2.1/i686-apple-darwin10" \
-  CXX="g++ -arch $ARCH  -mmacosx-version-min=10.6 -isysroot $SDK -I$SDK/usr/include/c++/4.2.1/i686-apple-darwin10" \
-  CPP="gcc -arch $ARCH  -mmacosx-version-min=10.6 -isysroot $SDK -E" \
-  CPPCXX="g++ -arch $ARCH  -mmacosx-version-min=10.6 -isysroot $DEVTOOLS/SDKs/MacOSX10.6.sdk -E" \
+  CC="gcc -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $SDK  -I$SDK/usr/include/c++/4.2.1/i686-apple-darwin10" \
+  CXX="g++ -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $SDK -I$SDK/usr/include/c++/4.2.1/i686-apple-darwin10" \
+  CPP="gcc -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $SDK -E" \
+  CPPCXX="g++ -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $SDK -E" \
   CPPFLAGS="-I$PREFIX/include" CFLAGS="-I$PREFIX/include" CXXFLAGS="-I$PREFIX/include" \
   LDFLAGS="-Wl,-search_paths_first -Wl,-syslibroot $SDK -L$PREFIX/lib" \
-  GUILE_CFLAGS=`PKG_CONGIF_PATH= pkg-config --static --cflags guile-1.8` \
-  GUILE_LDFLAGS=`pkg-config --static --libs guile-1.8` \
-  GUILE_DATA_PATH=`pkg-config --variable=datadir guile-1.8` \
-  GUILE_VERSION=`pkg-config --modversion guile-1.8` \
-  FREETYPE_CFLAGS=`pkg-config --static --cflags freetype2` \
-  FREETYPE_LDFLAGS=`pkg-config --static --libs freetype2` \
+  GUILE_CFLAGS="`pkg-config --static --cflags guile-1.8`" \
+  GUILE_LDFLAGS="`pkg-config --static --libs guile-1.8`" \
+  GUILE_DATA_PATH="`pkg-config --variable=datadir guile-1.8`" \
+  GUILE_VERSION="`pkg-config --modversion guile-1.8`" \
+  FREETYPE_CFLAGS="`pkg-config --static --cflags freetype2`" \
+  FREETYPE_LDFLAGS="`pkg-config --static --libs freetype2`" \
   QT_FRAMEWORKS_PATH="$PREFIX/lib" \
   QT_PLUGINS_PATH="$PREFIX/plugins" \
   QT_CPPFLAGS="-DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED -I$PREFIX/mkspecs/macx-g++ -I$PREFIX/lib/QtCore.framework/Versions/4/Headers -I$PREFIX/include/QtCore -I$PREFIX/lib/QtGui.framework/Versions/4/Headers -I$PREFIX/include/QtGui -I$PREFIX/include -F$PREFIX/lib" \
