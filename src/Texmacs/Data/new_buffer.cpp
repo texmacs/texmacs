@@ -21,8 +21,48 @@
 array<tm_buffer> bufs;
 
 /******************************************************************************
+* Check for changes in the buffer
+******************************************************************************/
+
+bool
+tm_buffer_rep::needs_to_be_saved () {
+  if (!buf->in_menu) return false;
+  for (int i=0; i<N(vws); i++)
+    if (vws[i]->ed->need_save ())
+      return true;
+  return false;
+}
+
+bool
+tm_buffer_rep::needs_to_be_autosaved () {
+  if (!buf->in_menu) return false;
+  for (int i=0; i<N(vws); i++)
+    if (vws[i]->ed->need_save (false))
+      return true;
+  return false;
+}
+
+/******************************************************************************
 * Finding buffers
 ******************************************************************************/
+
+url
+get_all_buffers () {
+  url u= url_none ();
+  for (int i=N(bufs)-1; i>=0; i--)
+    u= bufs[i]->buf->name | u;
+  return u;
+}
+
+int
+nr_bufs () {
+  return N(bufs);
+}
+
+bool
+no_bufs () {
+  return N(bufs) == 0;
+}
 
 int
 find_buffer (path p) {
@@ -42,8 +82,20 @@ find_buffer (url name) {
   return -1;
 }
 
+tm_buffer
+get_buf (int i) {
+  return (tm_buffer) bufs[i];
+}
+
+tm_buffer
+get_buf (path p) {
+  int nr= find_buffer (p);
+  if (nr >= 0) return bufs[nr];
+  else return NULL;
+}
+
 /******************************************************************************
-* Low level functions for maintaining the buffer menu
+* Information attached to buffers
 ******************************************************************************/
 
 string
@@ -73,6 +125,80 @@ new_menu_name (url u) {
     if (flag) return ret;
   }
 }
+
+url
+get_name_buffer () {
+  tm_buffer buf= get_buffer ();
+  if (!is_none (buf->buf->extra)) return buf->buf->extra;
+  return buf->buf->name;
+}
+
+url
+get_name_buffer (path p) {
+  int nr= find_buffer (p);
+  if (nr == -1) return url_none ();
+  return bufs[nr]->buf->name;
+}
+
+void
+set_name_buffer (url name) {
+  tm_buffer buf= get_buffer ();
+  if (buf->buf->name == name) return;
+  buf->buf->name= name;
+  set_abbr_buffer (new_menu_name (name));
+}
+
+string
+get_abbr_buffer () {
+  tm_buffer buf= get_buffer ();
+  return buf->buf->abbr;
+}
+
+void
+set_abbr_buffer (string abbr) {
+  int i;
+  tm_buffer buf= get_buffer ();
+  if (buf->buf->abbr == abbr) return;
+  buf->buf->abbr= abbr;
+  for (i=0; i<N(buf->vws); i++) {
+    tm_view vw2= buf->vws[i];
+    if (vw2->win != NULL) {
+      vw2->win->set_window_name (buf->buf->abbr);
+      vw2->win->set_window_url (is_none (buf->buf->extra)? buf->buf->name: buf->buf->extra);
+    }
+  }
+}
+
+bool
+buffer_in_menu (url u, bool flag) {
+  int nr= find_buffer (u);
+  if (nr == -1) return false;
+  tm_buffer buf= bufs[nr];
+  bool old= buf->buf->in_menu;
+  buf->buf->in_menu= flag;
+  return old;
+}
+
+void
+set_buffer_tree (url name, tree doc) {
+  int nr= find_buffer (name);
+  if (nr == -1) create_buffer (name, tree (DOCUMENT));
+  nr= find_buffer (name);
+  tm_buffer buf= bufs[nr];
+  assign (buf->rp, doc);
+}
+
+tree
+get_buffer_tree (url name) {
+  int nr= find_buffer (name);
+  if (nr == -1) return "";
+  tm_buffer buf= bufs[nr];
+  return subtree (the_et, buf->rp);
+}
+
+/******************************************************************************
+* Maintaining the buffer menu
+******************************************************************************/
 
 static void
 menu_append_buffer (string& s, tm_buffer buf) {
@@ -113,16 +239,6 @@ get_buffer_menu () {
   return eval (s);
 }
 
-bool
-buffer_in_menu (url u, bool flag) {
-  int nr= find_buffer (u);
-  if (nr == -1) return false;
-  tm_buffer buf= bufs[nr];
-  bool old= buf->buf->in_menu;
-  buf->buf->in_menu= flag;
-  return old;
-}
-
 void
 menu_insert_buffer (tm_buffer buf) {
   // bufs << ((pointer) buf); // causes compilation error
@@ -152,7 +268,7 @@ menu_focus_buffer (tm_buffer buf) {
 }
 
 /******************************************************************************
-* Low level buffer routines
+* Creating and destroying buffers
 ******************************************************************************/
 
 tm_buffer
@@ -179,6 +295,20 @@ create_buffer (url name, tree doc) {
   return buf;
 }
 
+url
+create_buffer () {
+  int i=1;
+  while (true) {
+    url name= url_scratch ("no_name_", ".tm", i);
+    int nr= find_buffer (name);
+    if (nr == -1) {
+      new_buffer_in_this_window (name, tree (DOCUMENT));
+      return name;
+    }
+    else i++;
+  }
+}
+
 void
 revert_buffer (url name, tree doc) {
   int i, nr= find_buffer (name);
@@ -195,6 +325,15 @@ revert_buffer (url name, tree doc) {
 }
 
 void
+revert_buffer () {
+  tm_buffer buf= get_buffer ();
+  web_cache_invalidate (buf->buf->name);
+  tree doc= load_tree (buf->buf->name, buf->buf->fm);
+  if (doc == "error") set_message ("Error: file not found", "revert buffer");
+  else revert_buffer (buf->buf->name, doc);
+}
+
+void
 delete_buffer (tm_buffer buf) {
   int i;
   menu_delete_buffer (buf);
@@ -204,90 +343,32 @@ delete_buffer (tm_buffer buf) {
 }
 
 void
-set_name_buffer (url name) {
-  tm_buffer buf= get_buffer ();
-  if (buf->buf->name == name) return;
-  buf->buf->name= name;
-  set_abbr_buffer (new_menu_name (name));
-}
+kill_buffer () {
+  int i, nr;
+  if (N(bufs) <= 1) get_server () -> quit();
+  tm_buffer buf= get_buffer();
+  for (nr=0; nr<N(bufs); nr++) if (buf == bufs[nr]) break;
+  ASSERT (nr != N(bufs), "buffer not found");
+  for (nr=0; nr<N(bufs); nr++) if (buf != bufs[nr]) break;
+  ASSERT (nr != N(bufs), "no suitable new buffer");
+  tm_buffer new_buf = bufs[nr];
 
-string
-get_abbr_buffer () {
-  tm_buffer buf= get_buffer ();
-  return buf->buf->abbr;
-}
-
-void
-set_abbr_buffer (string abbr) {
-  int i;
-  tm_buffer buf= get_buffer ();
-  if (buf->buf->abbr == abbr) return;
-  buf->buf->abbr= abbr;
   for (i=0; i<N(buf->vws); i++) {
-    tm_view vw2= buf->vws[i];
-    if (vw2->win != NULL) {
-      vw2->win->set_window_name (buf->buf->abbr);
-      vw2->win->set_window_url (is_none (buf->buf->extra)? buf->buf->name: buf->buf->extra);
+    tm_view old_vw= buf->vws[i];
+    if (old_vw->win != NULL) {
+      tm_window win = old_vw->win;
+      tm_view new_vw= get_passive_view (new_buf);
+      detach_view (old_vw);
+      attach_view (win, new_vw);
+      if (get_view () == old_vw) set_view (new_vw);
     }
   }
-}
-
-url
-get_name_buffer () {
-  tm_buffer buf= get_buffer ();
-  if (!is_none (buf->buf->extra)) return buf->buf->extra;
-  return buf->buf->name;
-}
-
-url
-get_name_buffer (path p) {
-  int nr= find_buffer (p);
-  if (nr == -1) return url_none ();
-  return bufs[nr]->buf->name;
-}
-
-url
-get_all_buffers () {
-  url u= url_none ();
-  for (int i=N(bufs)-1; i>=0; i--)
-    u= bufs[i]->buf->name | u;
-  return u;
+  delete_buffer (buf);
 }
 
 /******************************************************************************
-* Exported routines
+* Switching to another buffer
 ******************************************************************************/
-
-int
-nr_bufs () {
-  return N(bufs);
-}
-
-tm_buffer
-get_buf (int i) {
-  return (tm_buffer) bufs[i];
-}
-
-tm_buffer
-get_buf (path p) {
-  int nr= find_buffer (p);
-  if (nr >= 0) return bufs[nr];
-  else return NULL;
-}
-
-url
-create_buffer () {
-  int i=1;
-  while (true) {
-    url name= url_scratch ("no_name_", ".tm", i);
-    int nr= find_buffer (name);
-    if (nr == -1) {
-      new_buffer_in_this_window (name, tree (DOCUMENT));
-      return name;
-    }
-    else i++;
-  }
-}
 
 void
 switch_to_buffer (int nr) {
@@ -346,43 +427,9 @@ switch_to_active_buffer (url name) {
   switch_to_buffer (name);
 }
 
-void
-revert_buffer () {
-  tm_buffer buf= get_buffer ();
-  web_cache_invalidate (buf->buf->name);
-  tree doc= load_tree (buf->buf->name, buf->buf->fm);
-  if (doc == "error") set_message ("Error: file not found", "revert buffer");
-  else revert_buffer (buf->buf->name, doc);
-}
-
-void
-kill_buffer () {
-  int i, nr;
-  if (N(bufs) <= 1) get_server () -> quit();
-  tm_buffer buf= get_buffer();
-  for (nr=0; nr<N(bufs); nr++) if (buf == bufs[nr]) break;
-  ASSERT (nr != N(bufs), "buffer not found");
-  for (nr=0; nr<N(bufs); nr++) if (buf != bufs[nr]) break;
-  ASSERT (nr != N(bufs), "no suitable new buffer");
-  tm_buffer new_buf = bufs[nr];
-
-  for (i=0; i<N(buf->vws); i++) {
-    tm_view old_vw= buf->vws[i];
-    if (old_vw->win != NULL) {
-      tm_window win = old_vw->win;
-      tm_view new_vw= get_passive_view (new_buf);
-      detach_view (old_vw);
-      attach_view (win, new_vw);
-      if (get_view () == old_vw) set_view (new_vw);
-    }
-  }
-  delete_buffer (buf);
-}
-
-bool
-no_bufs () {
-  return N(bufs) == 0;
-}
+/******************************************************************************
+* Auxiliary buffers and help buffers
+******************************************************************************/
 
 void
 set_aux (string aux, url name) {
@@ -440,43 +487,4 @@ get_help_title (url name, tree t) {
 void
 set_help_buffer (url name, tree doc) {
   set_aux_buffer (get_help_title (name, doc), name, doc);
-}
-
-void
-set_buffer_tree (url name, tree doc) {
-  int nr= find_buffer (name);
-  if (nr == -1) create_buffer (name, tree (DOCUMENT));
-  nr= find_buffer (name);
-  tm_buffer buf= bufs[nr];
-  assign (buf->rp, doc);
-}
-
-tree
-get_buffer_tree (url name) {
-  int nr= find_buffer (name);
-  if (nr == -1) return "";
-  tm_buffer buf= bufs[nr];
-  return subtree (the_et, buf->rp);
-}
-
-/******************************************************************************
-* Check for changes in the buffer
-******************************************************************************/
-
-bool
-tm_buffer_rep::needs_to_be_saved () {
-  if (!buf->in_menu) return false;
-  for (int i=0; i<N(vws); i++)
-    if (vws[i]->ed->need_save ())
-      return true;
-  return false;
-}
-
-bool
-tm_buffer_rep::needs_to_be_autosaved () {
-  if (!buf->in_menu) return false;
-  for (int i=0; i<N(vws); i++)
-    if (vws[i]->ed->need_save (false))
-      return true;
-  return false;
 }
