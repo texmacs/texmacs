@@ -224,7 +224,6 @@ create_buffer (url name) {
   tm_buffer buf= tm_new<tm_buffer_rep> (name);
   buf->buf->abbr= new_menu_name (name);
   bufs << buf;
-  menu_insert_buffer (buf);
   return buf;
 }
 
@@ -282,7 +281,7 @@ revert_buffer () {
 
 void
 delete_buffer (tm_buffer buf) {
-  int nr= find_buffer (buf);
+  int nr= find_buffer (buf), n= N(bufs);
   if (nr >= 0) {
     for (int i=nr; i<(n-1); i++) bufs[i]= bufs[i+1];
     bufs->resize (n-1);
