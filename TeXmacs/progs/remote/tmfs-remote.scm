@@ -41,7 +41,7 @@
 	       (file (url->name u)))
       (new-buffer)
       (set-name-buffer u)
-      (set-abbr-buffer (remote-name u))
+      (set-abbr-buffer u (remote-name u))
       (set-style-tree style)
       (remote-request `(tmfs-set-properties ,file project ,@prjs))
       (when (nnull? prjs)
@@ -106,7 +106,7 @@
 	       (type (and (string? prop) (string->symbol prop)))
 	       (vals (if (== val "") '() (string-tokenize-comma val)))
 	       (ok (remote-request `(tmfs-set-properties ,name ,type ,@vals))))
-      (if (== type 'name) (set-abbr-buffer val))
+      (if (== type 'name) (set-abbr-buffer (this-buffer) val))
       #t)))
 
 (tm-define (interactive-remote-set-property prop)

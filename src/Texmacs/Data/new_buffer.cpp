@@ -127,6 +127,12 @@ new_menu_name (url u) {
 }
 
 url
+get_this_buffer () {
+  tm_buffer buf= get_buffer ();
+  return buf->buf->name;
+}
+
+url
 get_name_buffer () {
   tm_buffer buf= get_buffer ();
   if (!is_none (buf->buf->extra)) return buf->buf->extra;
@@ -145,22 +151,24 @@ set_name_buffer (url name) {
   tm_buffer buf= get_buffer ();
   if (buf->buf->name == name) return;
   buf->buf->name= name;
-  set_abbr_buffer (new_menu_name (name));
+  set_abbr_buffer (name, new_menu_name (name));
 }
 
 string
-get_abbr_buffer () {
-  tm_buffer buf= get_buffer ();
-  return buf->buf->abbr;
+get_abbr_buffer (url name) {
+  int nr= find_buffer (name);
+  if (nr == -1) return "";
+  else return bufs[nr]->buf->abbr;
 }
 
 void
-set_abbr_buffer (string abbr) {
-  int i;
-  tm_buffer buf= get_buffer ();
+set_abbr_buffer (url name, string abbr) {
+  int nr= find_buffer (name);
+  if (nr == -1) return;
+  tm_buffer buf= bufs[nr];
   if (buf->buf->abbr == abbr) return;
   buf->buf->abbr= abbr;
-  for (i=0; i<N(buf->vws); i++) {
+  for (int i=0; i<N(buf->vws); i++) {
     tm_view vw2= buf->vws[i];
     if (vw2->win != NULL) {
       vw2->win->set_window_name (buf->buf->abbr);
@@ -177,6 +185,13 @@ buffer_in_menu (url u, bool flag) {
   bool old= buf->buf->in_menu;
   buf->buf->in_menu= flag;
   return old;
+}
+
+bool
+is_aux_buffer (url name) {
+  int nr= find_buffer (name);
+  if (nr == -1) return false;
+  else return !is_none (bufs[nr]->buf->extra);
 }
 
 void

@@ -439,11 +439,12 @@
   (get-remove-package-menu get_remove_package_menu (object))
 
   ;; buffers
+  (this-buffer get_this_buffer (url))
   (set-name-buffer set_name_buffer (void url))
   (get-name-buffer get_name_buffer (url))
   (get-name-buffer-path get_name_buffer (url path))
-  (set-abbr-buffer set_abbr_buffer (void string))
-  (get-abbr-buffer get_abbr_buffer (string))
+  (set-abbr-buffer set_abbr_buffer (void url string))
+  (get-abbr-buffer get_abbr_buffer (string url))
   (open-buffer-in-window new_buffer_in_new_window (void url content content))
   (get-all-buffers get_all_buffers (url))
   (get-buffer-menu get_buffer_menu (object))
@@ -463,6 +464,7 @@
   (kill-window-and-buffer kill_window_and_buffer (void))
   (no-name? no_name (bool))
   (help-buffer? help_buffer (bool))
+  (aux-buffer? is_aux_buffer (bool url))
   (set-aux set_aux (void string url))
   (set-aux-buffer set_aux_buffer (void string url content))
   (set-help-buffer set_help_buffer (void url content))
