@@ -14,6 +14,7 @@
 #include "tree.hpp"
 #include "hashmap.hpp"
 #include "url.hpp"
+#include "timer.hpp"
 
 class new_buffer;
 class new_buffer_rep: public concrete_struct {
@@ -25,11 +26,13 @@ public:
   bool read_only;         // buffer is read only?
   bool secure;            // is the buffer secure?
   bool in_menu;           // should the buffer be listed in the menus?
+  time_t last_visit;      // time that the buffer was visited last
 
   inline new_buffer_rep (url name2):
     name (name2), extra (url_none ()),
     fm ("texmacs"), abbr (as_string (tail (name))),
-    read_only (false), secure (is_secure (name2)), in_menu (true) {}
+    read_only (false), secure (is_secure (name2)), in_menu (true),
+    last_visit (texmacs_time ()) {}
 };
 
 class new_buffer;

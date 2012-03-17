@@ -449,6 +449,7 @@
   (get-all-buffers get_all_buffers (url))
   (get-buffer-menu get_buffer_menu (object))
   (buffer-in-menu? buffer_in_menu (bool url))
+  (buffer-last-visited last_visited (double url))
   (set-buffer revert_buffer (void url content))
 
   (new-buffer create_buffer (url))

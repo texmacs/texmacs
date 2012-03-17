@@ -158,6 +158,7 @@ void set_abbr_buffer (url name, string abbr);
 string get_abbr_buffer (url name);
 void revert_buffer (url name, tree doc);
 void new_buffer_in_new_window (url name, tree t, tree geom= "");
+double last_visited (url name);
 
 /* Buffer management */
 int  nr_bufs ();

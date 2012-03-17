@@ -5315,6 +5315,19 @@ tmg_buffer_in_menuP (tmscm arg1) {
 }
 
 tmscm
+tmg_buffer_last_visited (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-last-visited");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  double out= last_visited (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return double_to_tmscm (out);
+}
+
+tmscm
 tmg_set_buffer (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "set-buffer");
   TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "set-buffer");
@@ -6377,6 +6390,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("get-all-buffers",  tmg_get_all_buffers, 0, 0, 0);
   tmscm_install_procedure ("get-buffer-menu",  tmg_get_buffer_menu, 0, 0, 0);
   tmscm_install_procedure ("buffer-in-menu?",  tmg_buffer_in_menuP, 1, 0, 0);
+  tmscm_install_procedure ("buffer-last-visited",  tmg_buffer_last_visited, 1, 0, 0);
   tmscm_install_procedure ("set-buffer",  tmg_set_buffer, 2, 0, 0);
   tmscm_install_procedure ("new-buffer",  tmg_new_buffer, 0, 0, 0);
   tmscm_install_procedure ("switch-to-buffer-path",  tmg_switch_to_buffer_path, 1, 0, 0);

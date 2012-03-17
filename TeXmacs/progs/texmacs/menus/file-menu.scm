@@ -26,12 +26,18 @@
   (for (name l)
     (let* ((short-name (get-abbr-buffer name))
            (long-name (url->string name)))
-      ((balloon (eval short-name) (eval long-name)) (load-buffer name)))))
+      ((balloon (eval short-name) (eval long-name))
+       (switch-to-buffer name)))))
+
+(tm-define (buffer-more-recent? b1 b2)
+  (>= (buffer-last-visited b1)
+      (buffer-last-visited b2)))
 
 (tm-define (buffer-menu-list aux?)
   (let* ((l1 (list-filter (buffer-list) buffer-in-menu?))
-         (l2 (list-filter l1 (lambda (x) (== aux? (aux-buffer? x))))))
-    (sublist l2 0 (min (length l2) 10))))
+         (l2 (list-filter l1 (lambda (x) (== aux? (aux-buffer? x)))))
+         (l3 (list-sort l2 buffer-more-recent?)))
+    (sublist l3 0 (min (length l3) 10))))
 
 (tm-define (buffer-same-list)
   (buffer-menu-list (aux-buffer? (this-buffer))))
@@ -194,7 +200,6 @@
   (if (nnull? (buffer-other-list))
       ---
       (link buffer-other-menu))
-  ;;(link buffer-menu)
   (if (nnull? (recent-unloaded-file-list 1))
       ---
       (link recent-unloaded-file-menu))

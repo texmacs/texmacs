@@ -180,6 +180,13 @@ is_aux_buffer (url name) {
   else return !is_none (bufs[nr]->buf->extra);
 }
 
+double
+last_visited (url name) {
+  int nr= find_buffer (name);
+  if (nr == -1) return (double) texmacs_time ();
+  else return (double) bufs[nr]->buf->last_visit;
+}
+
 void
 set_buffer_tree (url name, tree doc) {
   int nr= find_buffer (name);
@@ -382,6 +389,7 @@ switch_to_buffer (int nr) {
   attach_view (win, new_vw);
   set_view (new_vw);
   menu_focus_buffer (buf);
+  buf->buf->last_visit= texmacs_time ();
   tm_window nwin= new_vw->win;
   nwin->set_shrinking_factor (nwin->get_shrinking_factor ());
   // cout << "Switched to buffer " << nr << "\n";
@@ -422,6 +430,7 @@ switch_to_active_buffer (url name) {
         tm_view vw= buf->vws[i];
         set_view (vw);
         menu_focus_buffer (buf);
+        buf->buf->last_visit= texmacs_time ();
         return;
       }
   }
