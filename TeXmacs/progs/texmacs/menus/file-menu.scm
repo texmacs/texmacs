@@ -19,8 +19,40 @@
     (texmacs texmacs tm-print)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Dynamic menu for existing buffers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (buffer-list-menu l)
+  (for (name l)
+    (let* ((short-name (get-abbr-buffer name))
+           (long-name (url->string name)))
+      ((balloon (eval short-name) (eval long-name)) (load-buffer name)))))
+
+(tm-define (buffer-menu-list aux?)
+  (let* ((l1 (list-filter (buffer-list) buffer-in-menu?))
+         (l2 (list-filter l1 (lambda (x) (== aux? (aux-buffer? x))))))
+    (sublist l2 0 (min (length l2) 10))))
+
+(tm-define (buffer-same-list)
+  (buffer-menu-list (aux-buffer? (this-buffer))))
+
+(tm-define (buffer-other-list)
+  (buffer-menu-list (not (aux-buffer? (this-buffer)))))
+
+(tm-define (buffer-same-menu)
+  (buffer-list-menu (buffer-same-list)))
+
+(tm-define (buffer-other-menu)
+  (buffer-list-menu (buffer-other-list)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dynamic menu for recent files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (file-list-menu l)
+  (for (name l)
+    (let* ((short-name (url->string (url-tail name))))
+      ((balloon (eval short-name) (eval name)) (load-buffer name)))))
 
 (tm-define (recent-file-list nr)
   (with l (map cdar (learned-interactive "recent-buffer"))
@@ -31,11 +63,6 @@
          (l2 (map url->string (url->list (get-all-buffers))))
          (dl (list-difference l1 l2)))
     (sublist dl 0 (min (length dl) nr))))
-
-(tm-menu (file-list-menu l)
-  (for (name l)
-    (let* ((short-name (url->string (url-tail name))))
-      ((balloon (eval short-name) (eval name)) (load-buffer name)))))
 
 (tm-define (recent-file-menu)
   (file-list-menu (recent-file-list 25)))
@@ -163,7 +190,11 @@
   (when (cursor-has-future?)
     ("Forward" (cursor-history-forward)))
   ---
-  (link buffer-menu)
+  (link buffer-same-menu)
+  (if (nnull? (buffer-other-list))
+      ---
+      (link buffer-other-menu))
+  ;;(link buffer-menu)
   (if (nnull? (recent-unloaded-file-list 1))
       ---
       (link recent-unloaded-file-menu))
