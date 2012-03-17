@@ -73,7 +73,7 @@
 
 (tm-define (recent-unloaded-file-list nr)
   (let* ((l1 (map cdar (learned-interactive "recent-buffer")))
-         (l2 (map url->string (url->list (get-all-buffers))))
+         (l2 (map url->string (buffer-list)))
          (dl (list-difference l1 l2)))
     (sublist dl 0 (min (length dl) nr))))
 

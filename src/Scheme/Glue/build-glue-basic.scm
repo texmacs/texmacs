@@ -440,13 +440,13 @@
 
   ;; buffers
   (this-buffer get_this_buffer (url))
+  (all-buffers get_all_buffers (url))
   (set-name-buffer set_name_buffer (void url))
   (get-name-buffer get_name_buffer (url))
   (get-name-buffer-path get_name_buffer (url path))
   (buffer-set-short-name set_abbr_buffer (void url string))
   (buffer-get-short-name get_abbr_buffer (string url))
   (open-buffer-in-window new_buffer_in_new_window (void url content content))
-  (get-all-buffers get_all_buffers (url))
   (buffer-in-menu? buffer_in_menu (bool url))
   (buffer-last-visited last_visited (double url))
   (buffer-modified? buffer_modified (bool url))

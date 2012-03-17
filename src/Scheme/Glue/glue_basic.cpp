@@ -5204,6 +5204,15 @@ tmg_this_buffer () {
 }
 
 tmscm
+tmg_all_buffers () {
+  // TMSCM_DEFER_INTS;
+  url out= get_all_buffers ();
+  // TMSCM_ALLOW_INTS;
+
+  return url_to_tmscm (out);
+}
+
+tmscm
 tmg_set_name_buffer (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "set-name-buffer");
 
@@ -5281,15 +5290,6 @@ tmg_open_buffer_in_window (tmscm arg1, tmscm arg2, tmscm arg3) {
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;
-}
-
-tmscm
-tmg_get_all_buffers () {
-  // TMSCM_DEFER_INTS;
-  url out= get_all_buffers ();
-  // TMSCM_ALLOW_INTS;
-
-  return url_to_tmscm (out);
 }
 
 tmscm
@@ -6385,13 +6385,13 @@ initialize_glue_basic () {
   tmscm_install_procedure ("get-add-package-menu",  tmg_get_add_package_menu, 0, 0, 0);
   tmscm_install_procedure ("get-remove-package-menu",  tmg_get_remove_package_menu, 0, 0, 0);
   tmscm_install_procedure ("this-buffer",  tmg_this_buffer, 0, 0, 0);
+  tmscm_install_procedure ("all-buffers",  tmg_all_buffers, 0, 0, 0);
   tmscm_install_procedure ("set-name-buffer",  tmg_set_name_buffer, 1, 0, 0);
   tmscm_install_procedure ("get-name-buffer",  tmg_get_name_buffer, 0, 0, 0);
   tmscm_install_procedure ("get-name-buffer-path",  tmg_get_name_buffer_path, 1, 0, 0);
   tmscm_install_procedure ("buffer-set-short-name",  tmg_buffer_set_short_name, 2, 0, 0);
   tmscm_install_procedure ("buffer-get-short-name",  tmg_buffer_get_short_name, 1, 0, 0);
   tmscm_install_procedure ("open-buffer-in-window",  tmg_open_buffer_in_window, 3, 0, 0);
-  tmscm_install_procedure ("get-all-buffers",  tmg_get_all_buffers, 0, 0, 0);
   tmscm_install_procedure ("buffer-in-menu?",  tmg_buffer_in_menuP, 1, 0, 0);
   tmscm_install_procedure ("buffer-last-visited",  tmg_buffer_last_visited, 1, 0, 0);
   tmscm_install_procedure ("buffer-modified?",  tmg_buffer_modifiedP, 1, 0, 0);

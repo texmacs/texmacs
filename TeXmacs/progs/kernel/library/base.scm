@@ -288,7 +288,7 @@
     (get-name-buffer-path p)))
 
 (define-public (buffer-list)
-  (url->list (get-all-buffers)))
+  (url->list (all-buffers)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Redirections
