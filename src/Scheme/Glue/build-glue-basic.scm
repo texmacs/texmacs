@@ -441,9 +441,9 @@
   ;; buffers
   (this-buffer get_this_buffer (url))
   (all-buffers get_all_buffers (url))
+  (path->buffer get_name_buffer (url path))
   (set-name-buffer set_name_buffer (void url))
   (get-name-buffer get_name_buffer (url))
-  (get-name-buffer-path get_name_buffer (url path))
   (buffer-set-short-name set_abbr_buffer (void url string))
   (buffer-get-short-name get_abbr_buffer (string url))
   (buffer-modified? buffer_modified (bool url))

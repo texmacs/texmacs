@@ -280,12 +280,16 @@
     (url->list d)))
 
 (define-public (buffer->tree u)
-  (with t (get-buffer-tree u)
+  (with t (buffer-get-tree u)
     (and (tree-active? t) t)))
 
 (define-public (tree->buffer t)
   (and-with p (tree->path t)
-    (get-name-buffer-path p)))
+    (path->buffer p)))
+
+(define-public (buffer->path u)
+  (with t (buffer->tree u)
+    (and t (tree->path t))))
 
 (define-public (buffer-list)
   (url->list (all-buffers)))

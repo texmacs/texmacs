@@ -38,6 +38,10 @@
   (deprecated-function "get-buffer-tree" "buffer-get-tree")
   (get-buffer-tree name))
 
+(tm-define (get-name-buffer-path p)
+  (deprecated-function "get-name-buffer-path" "path->buffer")
+  (path->buffer name))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Activation of color highlighting
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

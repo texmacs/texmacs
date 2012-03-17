@@ -30,7 +30,7 @@
 (tm-define (project-file-list)
   (if (project-attached?)
       (let* ((prj (project-get))
-             (t (get-buffer-tree prj)))
+             (t (buffer->tree prj)))
         (include-list prj t))
       (list)))
 
