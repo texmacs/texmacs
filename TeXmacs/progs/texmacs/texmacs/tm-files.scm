@@ -15,34 +15,6 @@
   (:use (texmacs texmacs tm-server) (texmacs texmacs tm-print)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Deprecated functionality
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (set-abbr-buffer name abbr)
-  (deprecated-function "set-abbr-buffer" "buffer-set-short-name")
-  (buffer-set-short-name (this-buffer) abbr))
-
-(tm-define (get-abbr-buffer name)
-  (deprecated-function "get-abbr-buffer" "buffer-get-short-name")
-  (buffer-get-short-name (this-buffer)))
-
-(tm-define (set-buffer name doc)
-  (deprecated-function "set-buffer" "buffer-revert-tree")
-  (buffer-revert-tree name doc))
-
-(tm-define (set-buffer-tree name doc)
-  (deprecated-function "set-buffer-tree" "buffer-set-tree")
-  (set-buffer-tree name doc))
-
-(tm-define (get-buffer-tree name)
-  (deprecated-function "get-buffer-tree" "buffer-get-tree")
-  (get-buffer-tree name))
-
-(tm-define (get-name-buffer-path p)
-  (deprecated-function "get-name-buffer-path" "path->buffer")
-  (path->buffer name))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Activation of color highlighting
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -205,3 +177,31 @@
   (:interactive #t)
   (print-to-file "$TEXMACS_HOME_PATH/system/tmp/tmpprint.ps")
   (interactive-print '() "$TEXMACS_HOME_PATH/system/tmp/tmpprint.ps"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Deprecated functionality
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (set-abbr-buffer name abbr)
+  (deprecated-function "set-abbr-buffer" "buffer-set-short-name")
+  (buffer-set-short-name (this-buffer) abbr))
+
+(tm-define (get-abbr-buffer name)
+  (deprecated-function "get-abbr-buffer" "buffer-get-short-name")
+  (buffer-get-short-name (this-buffer)))
+
+(tm-define (set-buffer name doc)
+  (deprecated-function "set-buffer" "buffer-revert-tree")
+  (buffer-revert-tree name doc))
+
+(tm-define (set-buffer-tree name doc)
+  (deprecated-function "set-buffer-tree" "buffer-set-tree")
+  (set-buffer-tree name doc))
+
+(tm-define (get-buffer-tree name)
+  (deprecated-function "get-buffer-tree" "buffer-get-tree")
+  (get-buffer-tree name))
+
+(tm-define (get-name-buffer-path p)
+  (deprecated-function "get-name-buffer-path" "path->buffer")
+  (path->buffer name))

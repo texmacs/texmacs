@@ -116,12 +116,16 @@
 
 (define deprecated-done (list))
 
-(define-public (deprecated-function old new)
+(define-public (deprecated-function old . l)
   (if (not (member old deprecated-done))
       (begin
         (set! deprecated-done (cons old deprecated-done))
-        (display* "TeXmacs] warning, deprecated function '" old "\n")
-        (display* "       ] please reimplement using '" new "' \n"))))
+        (display* "TeXmacs] warning, deprecated function '" old "'\n")
+        (if (not (null? l))
+            (begin
+              (display* "       ] please reimplement using '" (car l) "'")
+              (for-each (lambda (x) (display* ", '" x "'")) (cdr l))
+              (display* "\n"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Regression testing

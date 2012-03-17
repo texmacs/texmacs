@@ -509,3 +509,12 @@
       ("Cancel" (cmd #f)))
     (glue #f #f 3 0))
   (glue #f #f 0 3))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Deprecated functionality
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define-macro (menu-extend name . l)
+  (deprecated-function "menu-extend" "tm-menu" "former")
+  (receive (opts body) (list-break l not-define-option?)
+    `(tm-define (,name) ,@opts (menu-dynamic (former) ,@body))))
