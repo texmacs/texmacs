@@ -120,8 +120,8 @@
   (if (not (member old deprecated-done))
       (begin
         (set! deprecated-done (cons old deprecated-done))
-        (display* "TeXmacs] warning, deprecated function '" old
-                  "' should be replaced by '" new "'\n"))))
+        (display* "TeXmacs] warning, deprecated function '" old "\n")
+        (display* "       ] please reimplement using '" new "' \n"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Regression testing

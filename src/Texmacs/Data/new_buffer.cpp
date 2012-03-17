@@ -206,7 +206,7 @@ buffer_modified (url name) {
 void
 set_buffer_tree (url name, tree doc) {
   int nr= find_buffer (name);
-  if (nr == -1) create_buffer (name, tree (DOCUMENT));
+  if (nr == -1) create_buffer (name, tree (DOCUMENT, ""));
   nr= find_buffer (name);
   tm_buffer buf= bufs[nr];
   assign (buf->rp, doc);

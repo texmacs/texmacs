@@ -26,6 +26,18 @@
   (deprecated-function "get-abbr-buffer" "buffer-get-short-name")
   (buffer-get-short-name (this-buffer)))
 
+(tm-define (set-buffer name doc)
+  (deprecated-function "set-buffer" "buffer-revert-tree")
+  (buffer-revert-tree name doc))
+
+(tm-define (set-buffer-tree name doc)
+  (deprecated-function "set-buffer-tree" "buffer-set-tree")
+  (set-buffer-tree name doc))
+
+(tm-define (get-buffer-tree name)
+  (deprecated-function "get-buffer-tree" "buffer-get-tree")
+  (get-buffer-tree name))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Activation of color highlighting
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
