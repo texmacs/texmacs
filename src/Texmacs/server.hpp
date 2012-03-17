@@ -131,10 +131,13 @@ server get_server ();
 void gui_set_output_language (string lan);
 
 /* low level */
+tm_buffer create_buffer (url name);
 tm_buffer create_buffer (url name, tree doc);
 int find_buffer (path p);
 int find_buffer (url name);
+void menu_focus_buffer (tm_buffer buf);
 void attach_view (tm_window win, tm_view vw);
+void detach_view (tm_view vw);
 tm_view get_passive_view (tm_buffer buf);
 void delete_buffer (tm_buffer buf);
 void delete_view (tm_view vw);
