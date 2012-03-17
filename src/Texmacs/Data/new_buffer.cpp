@@ -65,6 +65,15 @@ no_bufs () {
 }
 
 int
+find_buffer (tm_buffer buf) {
+  int i;
+  for (i=0; i<N(bufs); i++)
+    if (bufs[i] == buf)
+      return i;
+  return -1;
+}
+
+int
 find_buffer (path p) {
   int i;
   for (i=0; i<N(bufs); i++)
@@ -205,77 +214,6 @@ get_buffer_tree (url name) {
 }
 
 /******************************************************************************
-* Maintaining the buffer menu
-******************************************************************************/
-
-static void
-menu_append_buffer (string& s, tm_buffer buf) {
-  if (buf->buf->in_menu) {
-    string name= copy (buf->buf->abbr);
-    if (buf->needs_to_be_saved ()) name << " *"; 
-    string mname= scm_quote (name);
-    if (!starts (name, "Help")) mname= "(verbatim " * mname * ")";
-    s << " (" << mname;
-    s << " (switch-to-buffer " * scm_quote (as_string (buf->buf->name)) * "))";
-  }
-}
-
-object
-get_buffer_menu () {
-  int i, count;
-  bool two_types= false;;
-  string s ("(menu-dynamic");
-  for (i=0, count=0; i<N(bufs); i++) {
-    if (is_none (bufs[i]->buf->extra) == is_none (bufs[0]->buf->extra)) {
-      menu_append_buffer (s, bufs[i]);
-      count++;
-    }
-    else if (bufs[i]->buf->in_menu) two_types= true;
-    if (count == 10) break;
-  }
-  if (two_types) {
-    s << " ---";
-    for (i=0, count=0; i<N(bufs); i++) {
-      if (is_none (bufs[i]->buf->extra) != is_none (bufs[0]->buf->extra)) {
-	menu_append_buffer (s, bufs[i]);
-	count++;
-      }
-      if (count == 10) break;
-    }
-  }
-  s << ")";
-  return eval (s);
-}
-
-void
-menu_insert_buffer (tm_buffer buf) {
-  // bufs << ((pointer) buf); // causes compilation error
-  bufs << buf; // WARNING: that one compile, what was the use of the cast?
-}
-
-void
-menu_delete_buffer (tm_buffer buf) {
-  int i, nr, n=N(bufs);
-  for (nr=0; nr<n; nr++)
-    if (bufs[nr] == ((pointer) buf)) break;
-  if (nr==N(bufs)) return;
-
-  for (i=nr; i<(n-1); i++) bufs[i]= bufs[i+1];
-  bufs->resize (n-1);
-}
-
-void
-menu_focus_buffer (tm_buffer buf) {
-  int i, nr;
-  for (nr=0; nr<N(bufs); nr++)
-    if (bufs[nr] == ((pointer) buf)) break;
-  if (nr==N(bufs)) return;
-
-  for (i=nr; i>=1; i--) bufs[i]= bufs[i-1];
-  bufs[0]= buf;
-}
-
-/******************************************************************************
 * Creating and destroying buffers
 ******************************************************************************/
 
@@ -285,6 +223,7 @@ create_buffer (url name) {
   if (nr != -1) return bufs[nr];
   tm_buffer buf= tm_new<tm_buffer_rep> (name);
   buf->buf->abbr= new_menu_name (name);
+  bufs << buf;
   menu_insert_buffer (buf);
   return buf;
 }
@@ -343,9 +282,12 @@ revert_buffer () {
 
 void
 delete_buffer (tm_buffer buf) {
-  int i;
-  menu_delete_buffer (buf);
-  for (i=0; i<N(buf->vws); i++)
+  int nr= find_buffer (buf);
+  if (nr >= 0) {
+    for (int i=nr; i<(n-1); i++) bufs[i]= bufs[i+1];
+    bufs->resize (n-1);
+  }
+  for (int i=0; i<N(buf->vws); i++)
     delete_view (buf->vws[i]);
   tm_delete (buf);
 }
@@ -388,7 +330,6 @@ switch_to_buffer (int nr) {
   detach_view (old_vw);
   attach_view (win, new_vw);
   set_view (new_vw);
-  menu_focus_buffer (buf);
   buf->buf->last_visit= texmacs_time ();
   tm_window nwin= new_vw->win;
   nwin->set_shrinking_factor (nwin->get_shrinking_factor ());
@@ -429,7 +370,6 @@ switch_to_active_buffer (url name) {
       if (buf->vws[i]->win != NULL) {
         tm_view vw= buf->vws[i];
         set_view (vw);
-        menu_focus_buffer (buf);
         buf->buf->last_visit= texmacs_time ();
         return;
       }

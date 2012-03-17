@@ -135,7 +135,6 @@ tm_buffer create_buffer (url name);
 tm_buffer create_buffer (url name, tree doc);
 int find_buffer (path p);
 int find_buffer (url name);
-void menu_focus_buffer (tm_buffer buf);
 void attach_view (tm_window win, tm_view vw);
 void detach_view (tm_view vw);
 tm_view get_passive_view (tm_buffer buf);
@@ -148,7 +147,6 @@ tree make_document (tm_view vw, string fm= "texmacs");
 
 /* Buffer management */
 url  get_all_buffers ();
-object get_buffer_menu ();
 bool buffer_in_menu (url name);
 url  get_this_buffer ();
 void set_name_buffer (url name);

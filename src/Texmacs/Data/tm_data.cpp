@@ -176,7 +176,6 @@ new_buffer_in_new_window (url name, tree doc, tree geom) {
   tm_view   vw = get_passive_view (buf);
   attach_view (win, vw);
   set_view (vw);
-  menu_focus_buffer (buf);
   buf->buf->last_visit= texmacs_time ();
 }
 
@@ -205,7 +204,6 @@ clone_window () {
   tm_view   vw = get_passive_view (buf);
   attach_view (win, vw);
   set_view (vw);
-  menu_focus_buffer (buf);
   buf->buf->last_visit= texmacs_time ();
 }
 
@@ -219,7 +217,6 @@ kill_window () {
       tm_view vw= buf->vws[j];
       if ((vw->win != NULL) && (vw->win != win)) {
 	set_view (vw);
-	menu_focus_buffer (vw->buf);
         vw->buf->buf->last_visit= texmacs_time ();
 	delete_window (win);
 	return;
@@ -382,6 +379,5 @@ window_focus (int id) {
   tm_view vw= window_find_view (id);
   if (vw == NULL) return;
   set_view (vw);
-  menu_focus_buffer (vw->buf);
   vw->buf->buf->last_visit= texmacs_time ();
 }
