@@ -172,19 +172,17 @@ set_abbr_buffer (url name, string abbr) {
     tm_view vw2= buf->vws[i];
     if (vw2->win != NULL) {
       vw2->win->set_window_name (buf->buf->abbr);
-      vw2->win->set_window_url (is_none (buf->buf->extra)? buf->buf->name: buf->buf->extra);
+      vw2->win->set_window_url (is_none (buf->buf->extra)?
+                                buf->buf->name: buf->buf->extra);
     }
   }
 }
 
 bool
-buffer_in_menu (url u, bool flag) {
-  int nr= find_buffer (u);
+buffer_in_menu (url name) {
+  int nr= find_buffer (name);
   if (nr == -1) return false;
-  tm_buffer buf= bufs[nr];
-  bool old= buf->buf->in_menu;
-  buf->buf->in_menu= flag;
-  return old;
+  else return bufs[nr]->buf->in_menu;
 }
 
 bool

@@ -149,7 +149,7 @@ tree make_document (tm_view vw, string fm= "texmacs");
 /* Buffer management */
 url  get_all_buffers ();
 object get_buffer_menu ();
-bool buffer_in_menu (url name, bool flag);
+bool buffer_in_menu (url name);
 url  get_this_buffer ();
 void set_name_buffer (url name);
 url  get_name_buffer ();
