@@ -15,6 +15,18 @@
   (:use (texmacs texmacs tm-server) (texmacs texmacs tm-print)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Deprecated functionality
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (set-abbr-buffer name abbr)
+  (deprecated-function "set-abbr-buffer" "buffer-set-short-name")
+  (buffer-set-short-name (this-buffer) abbr))
+
+(tm-define (get-abbr-buffer name)
+  (deprecated-function "get-abbr-buffer" "buffer-get-short-name")
+  (buffer-get-short-name (this-buffer)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Activation of color highlighting
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

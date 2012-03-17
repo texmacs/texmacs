@@ -111,6 +111,19 @@
   (texmacs-error "former" "no next method"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Deprecated features
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define deprecated-done (list))
+
+(define-public (deprecated-function old new)
+  (if (not (member old deprecated-done))
+      (begin
+        (set! deprecated-done (cons old deprecated-done))
+        (display* "TeXmacs] warning, deprecated function '" old
+                  "' should be replaced by '" new "'\n"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Regression testing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

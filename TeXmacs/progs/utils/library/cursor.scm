@@ -211,10 +211,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (list-abbrs)
-  (map get-abbr-buffer (buffer-sorted-list)))
+  (map buffer-get-short-name (buffer-sorted-list)))
 
 (define (abbr->buffer abbr)
-  (assoc-ref (map (lambda (x) (cons (get-abbr-buffer x) x))
+  (assoc-ref (map (lambda (x) (cons (buffer-get-short-name x) x))
                   (buffer-sorted-list))
              abbr))
 

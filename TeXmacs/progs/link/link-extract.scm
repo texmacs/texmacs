@@ -50,7 +50,7 @@
     (set-aux-buffer name name doc)))
 
 (tm-define (build-locus-page)
-  (let* ((name (string-append (get-abbr-buffer (this-buffer)) " - loci"))
+  (let* ((name (string-append (buffer-get-short-name (this-buffer)) " - loci"))
 	 (style (tree->stree (get-style-tree)))
 	 (l (tree-search (buffer-tree) (cut tm-func? <> 'locus))))
     (build-locus-page-sub name style l #t)))
@@ -63,7 +63,7 @@
 	 (l (append-map (cut tree-search (buffer-tree) <>) pred-l)))
     (with cont
 	(lambda ()
-	  (let* ((name (string-append (get-abbr-buffer (this-buffer))
+	  (let* ((name (string-append (buffer-get-short-name (this-buffer))
                                       " - " env))
 		 (style (tree->stree (get-style-tree)))
 		 (r (filter-map environment->locus l)))

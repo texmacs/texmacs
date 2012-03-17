@@ -13,7 +13,8 @@
 
 (texmacs-module (generic document-menu)
   (:use (generic document-edit)
-        (generic generic-menu)))
+        (generic generic-menu)
+        (texmacs menus file-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Project menu
