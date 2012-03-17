@@ -540,8 +540,8 @@ void
 archiver_rep::mark_end (double m) {
   //cout << "Mark end " << m << "\n";
   if (active ()) {
-    if (does_modify (current))
-      cout << "CONFIRM: " << current << "\n";
+    //if (does_modify (current))
+    //  cout << "CONFIRM: " << current << "\n";
     confirm ();
   }
   archive= remove_marker (archive, m);
