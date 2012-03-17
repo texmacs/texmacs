@@ -449,6 +449,7 @@
   (get-all-buffers get_all_buffers (url))
   (buffer-in-menu? buffer_in_menu (bool url))
   (buffer-last-visited last_visited (double url))
+  (buffer-modified? buffer_modified (bool url))
   (set-buffer revert_buffer (void url content))
 
   (new-buffer create_buffer (url))
@@ -474,7 +475,7 @@
   (project-attach project_attach (void string))
   (project-detach project_attach (void))
   (project-attached? project_attached (bool))
-  (get-project-buffer-menu get_project_buffer_menu (object))
+  (project-get project_get (url))
 
   (window-current window_current (int))
   (window-list windows_list (path))

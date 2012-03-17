@@ -5319,6 +5319,19 @@ tmg_buffer_last_visited (tmscm arg1) {
 }
 
 tmscm
+tmg_buffer_modifiedP (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-modified?");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= buffer_modified (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_set_buffer (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "set-buffer");
   TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "set-buffer");
@@ -5586,12 +5599,12 @@ tmg_project_attachedP () {
 }
 
 tmscm
-tmg_get_project_buffer_menu () {
+tmg_project_get () {
   // TMSCM_DEFER_INTS;
-  object out= get_project_buffer_menu ();
+  url out= project_get ();
   // TMSCM_ALLOW_INTS;
 
-  return object_to_tmscm (out);
+  return url_to_tmscm (out);
 }
 
 tmscm
@@ -6381,6 +6394,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("get-all-buffers",  tmg_get_all_buffers, 0, 0, 0);
   tmscm_install_procedure ("buffer-in-menu?",  tmg_buffer_in_menuP, 1, 0, 0);
   tmscm_install_procedure ("buffer-last-visited",  tmg_buffer_last_visited, 1, 0, 0);
+  tmscm_install_procedure ("buffer-modified?",  tmg_buffer_modifiedP, 1, 0, 0);
   tmscm_install_procedure ("set-buffer",  tmg_set_buffer, 2, 0, 0);
   tmscm_install_procedure ("new-buffer",  tmg_new_buffer, 0, 0, 0);
   tmscm_install_procedure ("switch-to-buffer-path",  tmg_switch_to_buffer_path, 1, 0, 0);
@@ -6404,7 +6418,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("project-attach",  tmg_project_attach, 1, 0, 0);
   tmscm_install_procedure ("project-detach",  tmg_project_detach, 0, 0, 0);
   tmscm_install_procedure ("project-attached?",  tmg_project_attachedP, 0, 0, 0);
-  tmscm_install_procedure ("get-project-buffer-menu",  tmg_get_project_buffer_menu, 0, 0, 0);
+  tmscm_install_procedure ("project-get",  tmg_project_get, 0, 0, 0);
   tmscm_install_procedure ("window-current",  tmg_window_current, 0, 0, 0);
   tmscm_install_procedure ("window-list",  tmg_window_list, 0, 0, 0);
   tmscm_install_procedure ("buffer->windows",  tmg_buffer_2windows, 1, 0, 0);

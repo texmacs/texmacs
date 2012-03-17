@@ -24,7 +24,10 @@
 
 (tm-menu (buffer-list-menu l)
   (for (name l)
-    (let* ((short-name (get-abbr-buffer name))
+    (let* ((abbr (get-abbr-buffer name))
+           (abbr* (if (== abbr "") (url->string (url-tail name)) abbr))
+           (mod? (buffer-modified? name))
+           (short-name (string-append abbr* (if mod? " *" "")))
            (long-name (url->string name)))
       ((balloon (eval short-name) (eval long-name))
        (switch-to-buffer name)))))
@@ -32,6 +35,10 @@
 (tm-define (buffer-more-recent? b1 b2)
   (>= (buffer-last-visited b1)
       (buffer-last-visited b2)))
+
+(tm-define (buffer-sorted-list)
+  (with l (list-filter (buffer-list) buffer-in-menu?)
+    (list-sort l buffer-more-recent?)))
 
 (tm-define (buffer-menu-list aux?)
   (let* ((l1 (list-filter (buffer-list) buffer-in-menu?))

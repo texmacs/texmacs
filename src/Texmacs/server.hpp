@@ -157,6 +157,7 @@ string get_abbr_buffer (url name);
 void revert_buffer (url name, tree doc);
 void new_buffer_in_new_window (url name, tree t, tree geom= "");
 double last_visited (url name);
+bool buffer_modified (url name);
 
 /* Buffer management */
 int  nr_bufs ();
@@ -185,7 +186,7 @@ tree get_buffer_tree (url name);
 /* Project management */
 void project_attach (string prj_name= "");
 bool project_attached ();
-object get_project_buffer_menu ();
+url  project_get ();
 
 /* Window management */
 int  window_current ();

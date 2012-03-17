@@ -269,27 +269,11 @@ project_attached () {
   return buf->data->project != "";
 }
 
-object
-get_project_buffer_menu () {
+url
+project_get () {
   tm_buffer buf= get_buffer ();
-  if (buf->prj == NULL) return eval ("(menu-dynamic)");
-  string s ("(menu-dynamic ");
-  s << "(" << scm_quote (buf->prj->buf->abbr) << " ";
-  s << "(switch-to-buffer " * scm_quote (as_string (buf->prj->buf->name)) * "))";
-
-  tree t= subtree (the_et, buf->prj->rp);
-  int i, j, n= N(t);
-  for (i=0; i<n; i++)
-    if (is_func (t[i], INCLUDE, 1) && is_atomic (t[i][0])) {
-      string name= as_string (head (buf->prj->buf->name) * as_string (t[i][0]));
-      for (j=N(name)-1; j>=0; j--)
-	if (name[j]=='/') break;
-      s << " ((verbatim " << scm_quote (name (j+1, N(name))) << ") ";
-      s << "(switch-to-buffer " * scm_quote (name) * "))";
-    }
-
-  s << ")";
-  return eval (s);
+  if (buf->data->project == "") return url_none ();
+  return buf->prj->buf->name;
 }
 
 /******************************************************************************

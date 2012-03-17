@@ -22,8 +22,6 @@
 (menu-bind texmacs-extra-icons)
 (menu-bind plugin-menu)
 (menu-bind plugin-icons)
-(tm-define (buffer-menu) (get-buffer-menu))
-(tm-define (project-buffer-menu) (get-project-buffer-menu))
 (tm-define (style-menu) (get-style-menu))
 (tm-define (add-package-menu) (get-add-package-menu))
 (tm-define (remove-package-menu) (get-remove-package-menu))

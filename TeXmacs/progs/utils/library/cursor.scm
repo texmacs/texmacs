@@ -210,29 +210,23 @@
 ;; Changing buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (menu-flatten x)
-  (cond ((string? x) x)
-        ((pair? x) (apply string-append (map menu-flatten (cdr x))))
-        (else "")))
+(define (list-abbrs)
+  (map get-abbr-buffer (buffer-sorted-list)))
 
-(define (list-buffers)
-  (with bm (list-filter (get-buffer-menu) pair?)
-    (with fun (lambda (p) (cons (menu-flatten (car p)) (cdr p)))
-      (map fun bm))))
-
-(define (menu-name p)
-  (menu-flatten (car p)))
+(define (abbr->buffer abbr)
+  (assoc-ref (map (lambda (x) (cons (get-abbr-buffer x) x))
+                  (buffer-sorted-list))
+             abbr))
 
 (tm-define (go-to-buffer name)
   (:argument  name "Switch to buffer")
-  (:proposals name (map car (list-buffers)))
-  (let* ((m  (list-buffers))
-	 (l1 (assoc name m))
-	 (l2 (assoc (string-append name " *") m)))
-    (cond (l1 ((cadr l1)))
-	  (l2 ((cadr l2)))
-	  (else (set-message `(concat "Error: no buffer " ,name)
-			     "switch to buffer")))))
+  (:proposals name (list-abbrs))
+  (cond ((abbr->buffer name)
+         (switch-to-buffer (abbr->buffer name)))
+        ((in? (string->url name) (buffer-list))
+         (switch-to-buffer (string->url name)))
+        (else (set-message `(concat "Error: no buffer " (verbatim ,name))
+                           "switch to buffer"))))
 
 (tm-define (with-active-buffer-sub name cmd)
   (let ((old (get-name-buffer)))

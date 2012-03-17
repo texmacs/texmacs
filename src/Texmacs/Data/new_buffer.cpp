@@ -196,6 +196,13 @@ last_visited (url name) {
   else return (double) bufs[nr]->buf->last_visit;
 }
 
+bool
+buffer_modified (url name) {
+  int nr= find_buffer (name);
+  if (nr == -1) return false;
+  return bufs[nr]->needs_to_be_saved ();
+}
+
 void
 set_buffer_tree (url name, tree doc) {
   int nr= find_buffer (name);

@@ -16,11 +16,29 @@
         (generic generic-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Submenus for the Document menu and the iconbars
+;; Project menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind project-menu
-  (link project-buffer-menu))
+(tm-define (include-list base t)
+  (cond ((tree-is? t 'document)
+         (apply append (map (cut include-list base <>) (tree-children t))))
+        ((and (tree-is? t 'include) (tree-atomic? (tree-ref t 0)))
+         (list (url-relative base (tree->string (tree-ref t 0)))))
+        (else (list))))
+
+(tm-define (project-file-list)
+  (if (project-attached?)
+      (let* ((prj (project-get))
+             (t (get-buffer-tree prj)))
+        (include-list prj t))
+      (list)))
+
+(tm-define (project-menu)
+  (buffer-list-menu (project-file-list)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Submenus for the Document menu and the iconbars
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind document-style-menu
   ("No style" (init-style "none"))
