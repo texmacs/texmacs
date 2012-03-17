@@ -161,8 +161,6 @@ void new_buffer_in_new_window (url name, tree t, tree geom= "");
 
 /* Buffer management */
 int  nr_bufs ();
-tm_buffer get_buf (int i);
-tm_buffer get_buf (path p);
 url  create_buffer ();
 void switch_to_buffer (int nr);
 bool switch_to_buffer (path p);

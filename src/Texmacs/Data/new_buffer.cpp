@@ -82,18 +82,6 @@ find_buffer (url name) {
   return -1;
 }
 
-tm_buffer
-get_buf (int i) {
-  return (tm_buffer) bufs[i];
-}
-
-tm_buffer
-get_buf (path p) {
-  int nr= find_buffer (p);
-  if (nr >= 0) return bufs[nr];
-  else return NULL;
-}
-
 /******************************************************************************
 * Information attached to buffers
 ******************************************************************************/
