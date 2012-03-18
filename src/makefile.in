@@ -286,7 +286,7 @@ $(kernel_obj): Objects/%.o: %.cpp
 $(data_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(data_incl) -I$(tmsrc)/include $(CXXGUILE))
 $(edit_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(edit_incl) $(CXXGUILE))
+	$(call cxx_incl,$(edit_incl))
 $(scheme_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(scheme_incl) $(CXXGUILE))
 $(graphics_obj): Objects/%.o: %.cpp
@@ -310,7 +310,7 @@ $(cocoa_m_obj): Objects/%.o: %.m
 $(cocoa_mm_obj): Objects/%.o: %.mm
 	$(call cxx_incl,$(cocoa_incl) $(CXXCOCOA))
 $(texmacs_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(texmacs_incl) $(CXXGUILE))
+	$(call cxx_incl,$(texmacs_incl))
 $(typeset_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(typeset_incl))
 $(style_obj): Objects/%.o: %.cpp
