@@ -11,7 +11,13 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (xypic-present?)
+  (and (url-exists-in-path? "latex")
+       (cond ((url-exists-in-path? "kpsewhich")
+              (!= (eval-system "kpsewhich xy.sty") ""))
+             (else #f))))
+
 (plugin-configure xypic
-  (:require (url-exists-in-path? "latex"))
+  (:require (xypic-present?))
   (:launch "tm_xypic --texmacs")
   (:session "XYpic"))
