@@ -12,7 +12,7 @@
 #ifndef NEW_STYLE_H
 #define NEW_STYLE_H
 #include "drd_std.hpp"
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 
 void style_invalidate_cache ();
 void style_set_cache (tree style, hashmap<string,tree> H, tree t);
