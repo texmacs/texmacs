@@ -70,9 +70,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (id-locations id)
-  (let* ((get-name (lambda (t) (get-name-buffer-path (tree->path t))))
-	 (l1 (id->trees id))
-	 (l2 (map get-name l1))
+  (let* ((l1 (id->trees id))
+	 (l2 (map tree->buffer l1))
 	 (l2* (id->locations id))
 	 (l3 (if (null? l2) l2* l2))
 	 (l4 (list-filter l3 (lambda (u) (not (url-none? u))))))

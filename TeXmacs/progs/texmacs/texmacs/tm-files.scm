@@ -204,4 +204,4 @@
 
 (tm-define (get-name-buffer-path p)
   (deprecated-function "get-name-buffer-path" "path->buffer")
-  (path->buffer name))
+  (path->buffer p))
