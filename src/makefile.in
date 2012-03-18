@@ -300,7 +300,7 @@ $(x11_obj): Objects/%.o: %.cpp
 $(os_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(os_incl))
 $(qt_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(qt_incl) $(CXXQT) $(CXXGUILE))
+	$(call cxx_incl,$(qt_incl) $(CXXQT))
 $(moc_obj): Objects/%.o: ./Plugins/Qt/%.cpp
 	$(call cxx_incl,$(qt_incl) $(CXXQT))
 $(gs_obj): Objects/%.o: %.cpp
