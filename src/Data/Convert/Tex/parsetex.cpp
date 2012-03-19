@@ -56,6 +56,7 @@ struct latex_parser {
   tree parse_unknown     (string s, int& i, string which);
   bool can_parse_length  (string s, int i);
   tree parse_length      (string s, int& i);
+  tree parse_length      (string s, int& i, int e);
   tree parse_length_name (string s, int& i);
   tree parse_verbatim    (string s, int& i, string end);
 
@@ -614,7 +615,8 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     command_type  (var)= "environment";
     command_arity (var)= 0;
   }
-  if (is_tuple (t, "\\newdimen", 1) || is_tuple (t, "\\newlength", 1)) {
+  if (is_tuple (t, "\\newdimen", 1) || is_tuple (t, "\\newlength", 1)
+      || is_tuple (t, "\\newskip", 1)) {
     string var= string_arg (t[1]);
     command_type  (var)= "length";
     command_arity (var)= 0;
@@ -725,6 +727,7 @@ latex_parser::can_parse_length (string s, int i) {
       else if (read (s, i, "pt")) stage= 2;
       else if (read (s, i, "in")) stage= 2;
       else if (read (s, i, "em")) stage= 2;
+      else if (read (s, i, "ex")) stage= 2;
       else if (read (s, i, "pc")) stage= 2;
       else if (read (s, i, "bp")) stage= 2;
       else if (read (s, i, "dd")) stage= 2;
@@ -747,6 +750,11 @@ latex_parser::can_parse_length (string s, int i) {
 
 tree
 latex_parser::parse_length (string s, int& i) {
+  return parse_length(s, i, 0);
+}
+
+tree
+latex_parser::parse_length (string s, int& i, int e) {
   int n= N(s);
   tree r= tree (CONCAT);
   while (i<n) {
@@ -771,22 +779,21 @@ latex_parser::parse_length (string s, int& i) {
     else if (is_tex_alpha (s[i]) && N(r) > 0 && is_atomic (r[N(r)-1]) &&
 	     (is_numeric (r[N(r)-1]->label) ||
 	      r[N(r)-1] == "." || r[N(r)-1] == "-")) {
-      for (;i<n && is_tex_alpha (s[i]); i++)
+      for (;i<n && is_tex_alpha (s[i]); i++) {
 	r << s (i, i+1);
+        e += 1;
+      }
       continue;
     }
     else if (s[i] == '\\') {
-      i++;
-      int start= i;
+      int start= i++;
       while (i<n && is_tex_alpha (s[i])) i++;
-      string unit= s (start, i);
-      if (latex_type (unit) != "length") { i= start-1; break; }
-      // FIXME
-      if (unit == "p@")
-	r << string ("p") << string ("t");
-      else if (unit == "z@")
-	r << string ("0") << string ("p") << string ("t");
-      // FIXME
+      if (latex_type (s (start+1, i)) != "length" || e > 0) { 
+        i= start; 
+        break;
+      }
+      r << as_string(latex_symbol_to_tree (s (start, i)));
+      e += 1;
       continue;
     }
     else if (is_space (s[i]));
