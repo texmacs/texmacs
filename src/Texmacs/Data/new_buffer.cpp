@@ -144,11 +144,27 @@ get_name_buffer (path p) {
 }
 
 void
-set_name_buffer (url name) {
-  tm_buffer buf= get_buffer ();
-  if (buf->buf->name == name) return;
-  buf->buf->name= name;
-  set_abbr_buffer (name, new_menu_name (name));
+set_name_buffer (url name, url new_name) {
+  if (new_name == name) return;
+  int nr= find_buffer (name);
+  if (nr == -1) return;
+  tm_buffer buf= bufs[nr];
+  buf->buf->name= new_name;
+  set_abbr_buffer (new_name, new_menu_name (new_name));
+}
+
+url
+get_base_url_buffer (url name) {
+  int nr= find_buffer (name);
+  if (nr == -1) return url_none ();
+  return bufs[nr]->buf->base_name;
+}
+
+void
+set_base_url_buffer (url name, url base_name) {
+  int nr= find_buffer (name);
+  if (nr == -1) return;
+  bufs[nr]->buf->base_name= base_name;
 }
 
 string
@@ -393,6 +409,7 @@ set_aux (string aux, url name) {
   if (nr != -1) {
     tm_buffer buf= bufs[nr];
     buf->buf->extra= name;
+    buf->buf->base_name= name;
     if (starts (aux, "Help - ")) {
       buf->buf->fm= "help";
       buf->buf->read_only= true;

@@ -40,7 +40,7 @@
 
 (tm-define (buffer-expand-includes)
   (with t (buffer-tree)
-    (tree-assign! t (expand-includes (buffer-tree) (get-name-buffer)))))
+    (tree-assign! t (expand-includes (buffer-tree) (buffer-base-url)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main internal representations for document parts:

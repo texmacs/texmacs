@@ -30,7 +30,7 @@
 	   (list-and (map textual-tree? (tree-children t))))))
 
 (define (activate-highlighting)
-  (and-let* ((suffix   (url-suffix (get-name-buffer)))
+  (and-let* ((suffix (url-suffix (current-buffer)))
 	     (prog-lan (suffix->programming-language suffix)))
     (when (textual-tree? (buffer-tree))
       (init-env "prog-language" prog-lan)
@@ -55,7 +55,7 @@
 (tm-define (save-buffer . l)
   (if (and (pair? l) (url? (car l)))
       (set! current-save-target (car l)))
-  (cond ((= (length l) 0) (save-buffer (get-name-buffer)))
+  (cond ((= (length l) 0) (save-buffer (current-buffer)))
 	((url-scratch? (car l))
 	 (choose-file save-buffer "Save TeXmacs file" "texmacs"))
 	((= (length l) 1) (texmacs-save-buffer (car l) "generic"))
@@ -63,7 +63,7 @@
 
 (tm-define (export-buffer to)
   ;; Temporary fix for saving to postscript or pdf
-  (if (string? to) (set! to (url-relative (get-name-buffer) to)))
+  (if (string? to) (set! to (url-relative (buffer-base-url) to)))
   (if (url? to) (set! current-save-target to))
   (if (in? (url-suffix to) '("ps" "pdf"))
       (print-to-file to)
@@ -137,7 +137,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (propose-name-buffer)
-  (with name (url->string (get-name-buffer))
+  (with name (url->string (current-buffer))
     (cond ((not (url-scratch? name)) name)
 	  ((os-win32?) "")
 	  (else (string-append (var-eval-system "pwd") "/")))))
@@ -184,11 +184,11 @@
 
 (tm-define (set-abbr-buffer name abbr)
   (deprecated-function "set-abbr-buffer" "buffer-set-short-name")
-  (buffer-set-short-name (this-buffer) abbr))
+  (buffer-set-short-name (current-buffer) abbr))
 
 (tm-define (get-abbr-buffer name)
   (deprecated-function "get-abbr-buffer" "buffer-get-short-name")
-  (buffer-get-short-name (this-buffer)))
+  (buffer-get-short-name (current-buffer)))
 
 (tm-define (set-buffer name doc)
   (deprecated-function "set-buffer" "buffer-revert-tree")
@@ -205,3 +205,11 @@
 (tm-define (get-name-buffer-path p)
   (deprecated-function "get-name-buffer-path" "path->buffer")
   (path->buffer p))
+
+(tm-define (get-name-buffer)
+  (deprecated-function "get-name-buffer" "current-buffer")
+  (current-buffer))
+
+(tm-define (set-name-buffer name)
+  (deprecated-function "set-name-buffer" "buffer-rename")
+  (buffer-rename (current-buffer) name))

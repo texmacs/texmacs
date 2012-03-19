@@ -55,11 +55,11 @@
   ---
   (when (remote-buffer?)
     (-> "Permissions"
-	("Owner" (check "o" (remote-permission? (get-name-buffer) "owner"))
+	("Owner" (check "o" (remote-permission? (current-buffer) "owner"))
 	 (interactive-remote-set-property "owner"))
-	("Read" (check "o" (remote-permission? (get-name-buffer) "read"))
+	("Read" (check "o" (remote-permission? (current-buffer) "read"))
 	 (interactive-remote-set-property "read"))
-	("Write" (check "o" (remote-permission? (get-name-buffer) "write"))
+	("Write" (check "o" (remote-permission? (current-buffer) "write"))
 	 (interactive-remote-set-property "write")))
     (-> "Properties" (link remote-set-property-menu)))
   (-> "Project"
@@ -74,10 +74,10 @@
        (choose-file interactive-remote-export "Export to remote server" ""))
       (when (not (remote-buffer?))
 	("Export current file"
-	 (interactive-remote-export (get-name-buffer))))
+	 (interactive-remote-export (current-buffer))))
       (when (remote-buffer?)
 	("Import current file"
-	 (choose-file (lambda (u) (remote-import (get-name-buffer) u))
+	 (choose-file (lambda (u) (remote-import (current-buffer) u))
 		      "Import from remote server" ""))))
   (-> "Browse"
       ("Home directory" (remote-home-directory))

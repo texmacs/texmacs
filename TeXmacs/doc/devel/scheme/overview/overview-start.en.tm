@@ -99,10 +99,10 @@
   <\scm-code>
     (if (no-name?)
 
-    \ \ \ \ (make-session "maxima" (url-\<gtr\>string (get-name-buffer))))
+    \ \ \ \ (make-session "maxima" (url-\<gtr\>string (current-buffer))))
   </scm-code>
 
-  Using <scm|(url-\<gtr\>string (get-name-buffer))> as the second argument of
+  Using <scm|(url-\<gtr\>string (current-buffer))> as the second argument of
   <scm|make-session> ensures that a different session will be opened for
   every new buffer. If you want all buffers to share a common instance of
   <name|Maxima>, then you should use <scm|"default"> instead, for the second

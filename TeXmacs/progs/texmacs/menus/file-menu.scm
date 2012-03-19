@@ -47,10 +47,10 @@
     (sublist l3 0 (min (length l3) 10))))
 
 (tm-define (buffer-same-list)
-  (buffer-menu-list (aux-buffer? (this-buffer))))
+  (buffer-menu-list (aux-buffer? (current-buffer))))
 
 (tm-define (buffer-other-list)
-  (buffer-menu-list (not (aux-buffer? (this-buffer)))))
+  (buffer-menu-list (not (aux-buffer? (current-buffer)))))
 
 (tm-define (buffer-same-menu)
   (buffer-list-menu (buffer-same-list)))

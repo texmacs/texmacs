@@ -5195,7 +5195,7 @@ tmg_get_remove_package_menu () {
 }
 
 tmscm
-tmg_this_buffer () {
+tmg_current_buffer () {
   // TMSCM_DEFER_INTS;
   url out= get_this_buffer ();
   // TMSCM_ALLOW_INTS;
@@ -5226,22 +5226,43 @@ tmg_path_2buffer (tmscm arg1) {
 }
 
 tmscm
-tmg_set_name_buffer (tmscm arg1) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "set-name-buffer");
+tmg_buffer_rename (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-rename");
+  TMSCM_ASSERT_URL (arg2, TMSCM_ARG2, "buffer-rename");
 
   url in1= tmscm_to_url (arg1);
+  url in2= tmscm_to_url (arg2);
 
   // TMSCM_DEFER_INTS;
-  set_name_buffer (in1);
+  set_name_buffer (in1, in2);
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;
 }
 
 tmscm
-tmg_get_name_buffer () {
+tmg_buffer_set_base_url (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-set-base-url");
+  TMSCM_ASSERT_URL (arg2, TMSCM_ARG2, "buffer-set-base-url");
+
+  url in1= tmscm_to_url (arg1);
+  url in2= tmscm_to_url (arg2);
+
   // TMSCM_DEFER_INTS;
-  url out= get_name_buffer ();
+  set_base_url_buffer (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_buffer_get_base_url (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-get-base-url");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  url out= get_base_url_buffer (in1);
   // TMSCM_ALLOW_INTS;
 
   return url_to_tmscm (out);
@@ -6384,11 +6405,12 @@ initialize_glue_basic () {
   tmscm_install_procedure ("get-style-menu",  tmg_get_style_menu, 0, 0, 0);
   tmscm_install_procedure ("get-add-package-menu",  tmg_get_add_package_menu, 0, 0, 0);
   tmscm_install_procedure ("get-remove-package-menu",  tmg_get_remove_package_menu, 0, 0, 0);
-  tmscm_install_procedure ("this-buffer",  tmg_this_buffer, 0, 0, 0);
+  tmscm_install_procedure ("current-buffer",  tmg_current_buffer, 0, 0, 0);
   tmscm_install_procedure ("all-buffers",  tmg_all_buffers, 0, 0, 0);
   tmscm_install_procedure ("path->buffer",  tmg_path_2buffer, 1, 0, 0);
-  tmscm_install_procedure ("set-name-buffer",  tmg_set_name_buffer, 1, 0, 0);
-  tmscm_install_procedure ("get-name-buffer",  tmg_get_name_buffer, 0, 0, 0);
+  tmscm_install_procedure ("buffer-rename",  tmg_buffer_rename, 2, 0, 0);
+  tmscm_install_procedure ("buffer-set-base-url",  tmg_buffer_set_base_url, 2, 0, 0);
+  tmscm_install_procedure ("buffer-get-base-url",  tmg_buffer_get_base_url, 1, 0, 0);
   tmscm_install_procedure ("buffer-set-short-name",  tmg_buffer_set_short_name, 2, 0, 0);
   tmscm_install_procedure ("buffer-get-short-name",  tmg_buffer_get_short_name, 1, 0, 0);
   tmscm_install_procedure ("buffer-modified?",  tmg_buffer_modifiedP, 1, 0, 0);

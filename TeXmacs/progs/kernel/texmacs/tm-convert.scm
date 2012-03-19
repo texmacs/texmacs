@@ -294,7 +294,7 @@
 (define-public-macro (with-aux u . prg)
   `(let* ((u ,u)
 	  (t (texmacs-load-tree u "texmacs"))
-	  (name (get-name-buffer)))
+	  (name (buffer-base-url)))
      (set-aux-buffer "* Aux *" u t)
      (with r (begin ,@prg)
        (switch-to-buffer name)

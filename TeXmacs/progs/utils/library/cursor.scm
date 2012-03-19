@@ -229,7 +229,7 @@
                            "switch to buffer"))))
 
 (tm-define (with-active-buffer-sub name cmd)
-  (let ((old (get-name-buffer)))
+  (let ((old (current-buffer)))
     (switch-to-active-buffer name)
     (eval cmd)
     (switch-to-active-buffer old)))

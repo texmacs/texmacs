@@ -164,7 +164,7 @@
   (system-wait "Finishing manual" "(soon ready)"))))))))))
 
 (tm-define (tmdoc-expand-this level)
-  (tmdoc-expand-help (get-name-buffer) level))
+  (tmdoc-expand-help (current-buffer) level))
 
 (define (tmdoc-remove-hyper-links l)
   (cond ((npair? l) l)
