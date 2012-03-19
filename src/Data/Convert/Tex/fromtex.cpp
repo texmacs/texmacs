@@ -142,104 +142,104 @@ tree
 latex_symbol_to_tree (string s) {
   if (s == "") return "";
   if (s[0] == '\\') {
+    s= s(1,N(s));
     if (latex_type (s) == "command") {
-      if (s == "\\ ") return " ";
-      if (s == "\\-") return "";
-      if (s == "\\/") return "";
-      if (s == "\\AA") return "\xC5";
-      if (s == "\\AE") return "\xC6";
-      if (s == "\\DH") return "\xD0";
-      if (s == "\\L") return "\x8A";
-      if (s == "\\NG") return "\x8D";
-      if (s == "\\O") return "\xD8";
-      if (s == "\\OE") return "\xD7";
-      if (s == "\\S") return "\x9F";
-      if (s == "\\SS") return "\xDF";
-      if (s == "\\TH") return "\xDE";
-      if (s == "\\aa") return "\xE5";
-      if (s == "\\ae") return "\xE6";
-      if (s == "\\dh") return "\xF0";
-      if (s == "\\dj") return "\x9E";
-      if (s == "\\i") return "\x19";
-      if (s == "\\j") return "\x1A";
-      if (s == "\\l") return "\xAA";
-      if (s == "\\ng") return "\xAD";
-      if (s == "\\o") return "\xF8";
-      if (s == "\\oe") return "\xF7";
-      if (s == "\\ss") return "\xFF";
-      if (s == "\\th") return "\xFE";
-      if (s == "\\pounds") return "\xBF";
-      if (s == "\\\\") return tree (FORMAT, "next line");
-      if (s == "\\cr") return tree (FORMAT, "next line");
-      if (s == "\\noindent")  return tree (FORMAT, "no first indentation");
-      if (s == "\\linebreak")  return tree (FORMAT, "line break");
-      if (s == "\\newline")  return tree (FORMAT, "new line");
-      if (s == "\\nobreak")  return tree (FORMAT, "no line break");
-      if (s == "\\nolinebreak")  return tree (FORMAT, "no line break");
-      if (s == "\\pagebreak")  return tree (FORMAT, "page break");
-      if (s == "\\nopagebreak")  return tree (FORMAT, "no page break after");
-      if (s == "\\newpage")  return tree (FORMAT, "new page");
-      if (s == "\\newdoublepage")  return tree (FORMAT, "new double page");
-      if (s == "\\clearpage")  return tree (FORMAT, "new page");
-      if (s == "\\cleardoublepage")  return tree (FORMAT, "new double page");
-      if (s == "\\!")  return tree (SPACE, "-0.25spc");
-      if (s == "\\,")  return tree (SPACE, "0.25spc");
-      if (s == "\\:")  return tree (SPACE, "0.5spc");
-      if (s == "\\;")  return tree (SPACE, "0.75spc");
-      if (s == "\\*")  return "*";
-      if (s == "\\|")  return "<||>";
-      if (s == "\\quad")  return tree (SPACE, "1em");
-      if (s == "\\qquad")  return tree (SPACE, "2em");
-      if (s == "\\par")  return tree (VSPACE, "1fn");
-      if (s == "\\smallskip")  return tree (VSPACE, "0.5fn");
-      if (s == "\\medskip")  return tree (VSPACE, "1fn");
-      if (s == "\\bigskip")  return tree (VSPACE, "2fn");
-      if (s == "\\hfill")  return tree (HTAB, "1fn");
-      if (s == "\\hline")  return tree (APPLY, "hline");
-      if (s == "\\appendix") { textm_appendices= true; return ""; }
-      if (s == "\\limits") return ""; // tree (FORMAT, "with limits");
-      if (s == "\\nolimits") return ""; // temporarily
-      if (s == "\\vert") return "|";
-      if (s == "\\Vert") return "<||>";
-      if (s == "\\notin") return "<nin>";
-      if (s == "\\addots") return "<udots>";
-      if (s == "\\dots") return "<ldots>";
-      if (s == "\\infin") return "<infty>";
-      if (s == "\\rang") return "<rangle>";
-      if (s == "\\today") return compound ("date", "");
-      if (s == "\\tableofcontents")
+      if (s == " ") return " ";
+      if (s == "-") return "";
+      if (s == "/") return "";
+      if (s == "AA") return "\xC5";
+      if (s == "AE") return "\xC6";
+      if (s == "DH") return "\xD0";
+      if (s == "L") return "\x8A";
+      if (s == "NG") return "\x8D";
+      if (s == "O") return "\xD8";
+      if (s == "OE") return "\xD7";
+      if (s == "S") return "\x9F";
+      if (s == "SS") return "\xDF";
+      if (s == "TH") return "\xDE";
+      if (s == "aa") return "\xE5";
+      if (s == "ae") return "\xE6";
+      if (s == "dh") return "\xF0";
+      if (s == "dj") return "\x9E";
+      if (s == "i") return "\x19";
+      if (s == "j") return "\x1A";
+      if (s == "l") return "\xAA";
+      if (s == "ng") return "\xAD";
+      if (s == "o") return "\xF8";
+      if (s == "oe") return "\xF7";
+      if (s == "ss") return "\xFF";
+      if (s == "th") return "\xFE";
+      if (s == "pounds") return "\xBF";
+      if (s == "\\") return tree (FORMAT, "next line");
+      if (s == "cr") return tree (FORMAT, "next line");
+      if (s == "noindent")  return tree (FORMAT, "no first indentation");
+      if (s == "linebreak")  return tree (FORMAT, "line break");
+      if (s == "newline")  return tree (FORMAT, "new line");
+      if (s == "nobreak")  return tree (FORMAT, "no line break");
+      if (s == "nolinebreak")  return tree (FORMAT, "no line break");
+      if (s == "pagebreak")  return tree (FORMAT, "page break");
+      if (s == "nopagebreak")  return tree (FORMAT, "no page break after");
+      if (s == "newpage")  return tree (FORMAT, "new page");
+      if (s == "newdoublepage")  return tree (FORMAT, "new double page");
+      if (s == "clearpage")  return tree (FORMAT, "new page");
+      if (s == "cleardoublepage")  return tree (FORMAT, "new double page");
+      if (s == "!")  return tree (SPACE, "-0.25spc");
+      if (s == ",")  return tree (SPACE, "0.25spc");
+      if (s == ":")  return tree (SPACE, "0.5spc");
+      if (s == ";")  return tree (SPACE, "0.75spc");
+      if (s == "*")  return "*";
+      if (s == "|")  return "<||>";
+      if (s == "quad")  return tree (SPACE, "1em");
+      if (s == "qquad")  return tree (SPACE, "2em");
+      if (s == "par")  return tree (VSPACE, "1fn");
+      if (s == "smallskip")  return tree (VSPACE, "0.5fn");
+      if (s == "medskip")  return tree (VSPACE, "1fn");
+      if (s == "bigskip")  return tree (VSPACE, "2fn");
+      if (s == "hfill")  return tree (HTAB, "1fn");
+      if (s == "hline")  return tree (APPLY, "hline");
+      if (s == "appendix") { textm_appendices= true; return ""; }
+      if (s == "limits") return ""; // tree (FORMAT, "with limits");
+      if (s == "nolimits") return ""; // temporarily
+      if (s == "vert") return "|";
+      if (s == "Vert") return "<||>";
+      if (s == "notin") return "<nin>";
+      if (s == "addots") return "<udots>";
+      if (s == "dots") return "<ldots>";
+      if (s == "infin") return "<infty>";
+      if (s == "rang") return "<rangle>";
+      if (s == "today") return compound ("date", "");
+      if (s == "tableofcontents")
 	return compound ("table-of-contents", "toc", tree (DOCUMENT, ""));
-      if (s == "\\bgroup") return "";
-      if (s == "\\egroup") return "";
-      if (s == "\\colon") return ":";
-      if (s == "\\dotsc") return "<ldots>";
-      if (s == "\\dotsb") return "<cdots>";
-      if (s == "\\dotsm") return "<cdots>";
-      if (s == "\\dotsi") return "<cdots>";
-      if (s == "\\dotso") return "<ldots>";
-      if (s == "\\lvert") return "|";
-      if (s == "\\rvert") return "|";
-      if (s == "\\lVert") return "<||>";
-      if (s == "\\rVert") return "<||>";
-      if (s == "\\qed") return compound ("math", "<Box>");
-      if (s == "\\implies") return "<Longrightarrow>";
-      if (s == "\\iff") return "<Longleftrightarrow>";
-      if (s == "\\gets") return "<leftarrow>";
+      if (s == "bgroup") return "";
+      if (s == "egroup") return "";
+      if (s == "colon") return ":";
+      if (s == "dotsc") return "<ldots>";
+      if (s == "dotsb") return "<cdots>";
+      if (s == "dotsm") return "<cdots>";
+      if (s == "dotsi") return "<cdots>";
+      if (s == "dotso") return "<ldots>";
+      if (s == "lvert") return "|";
+      if (s == "rvert") return "|";
+      if (s == "lVert") return "<||>";
+      if (s == "rVert") return "<||>";
+      if (s == "qed") return compound ("math", "<Box>");
+      if (s == "implies") return "<Longrightarrow>";
+      if (s == "iff") return "<Longleftrightarrow>";
+      if (s == "gets") return "<leftarrow>";
     }
 
     if (latex_type (s) == "symbol") {
-      if (s == "\\lnot") return "<neg>";
-      if (s == "\\land") return "<wedge>";
-      if (s == "\\lor") return "<vee>";
-      return "<" * s(1,N(s)) * ">";
+      if (s == "lnot") return "<neg>";
+      if (s == "land") return "<wedge>";
+      if (s == "lor") return "<vee>";
+      return "<" * s * ">";
     }
 
     if (latex_type (s) == "texmacs") {
-      if (s == "\\tmdummy")  return "";
+      if (s == "tmdummy")  return "";
     }
 
     if ((latex_type (s) == "modifier") && (latex_arity (s) == 0)) {
-      s= s(1,N(s));
       if (s == "rmfamily") return tree (SET, FONT_FAMILY, "rm");
       if (s == "ttfamily") return tree (SET, FONT_FAMILY, "tt");
       if (s == "sffamily") return tree (SET, FONT_FAMILY, "sf");
@@ -302,29 +302,27 @@ latex_symbol_to_tree (string s) {
       if (s == "brown") return tree (SET, COLOR, "brown");
       if (s == "pink") return tree (SET, COLOR, "pink");
 
-      cerr << "The symbol was " << s << "\n";
+      cerr << "The symbol was " << "\\"*s << "\n";
       FAILED ("unexpected situation");
     }
-    if (latex_type (s) == "operator")
-      return s(1,N(s));
-    if (latex_type (s) == "control") return s(1,N(s));
-    if ((s == "\\ldots") && (command_type ("!mode") != "math")) return "...";
-    if (s == "\\bignone") return tree (BIG, ".");
+    if (latex_type (s) == "operator" || latex_type (s) == "control") return s;
+    if ((s == "ldots") && (command_type ("!mode") != "math")) return "...";
+    if (s == "bignone") return tree (BIG, ".");
     if (latex_type (s) == "big-symbol") {
-      if (s(0,4)=="\\big") return tree (BIG, s(4,N(s)));
-      else return tree (BIG, s(1,N(s)));
+      if (s(0,3)=="big") return tree (BIG, s(3,N(s)));
+      else return tree (BIG, s);
     }
 
-    if ((N(s) > 7) && (s(0,7) == "\\begin-"))
-      return tree (BEGIN, s(7,N(s)));
-    if ((N(s) > 5) && (s(0,5) == "\\end-"))
-      return tree (END, s(5,N(s)));
+    if ((N(s) > 6) && (s(0,6) == "begin-"))
+      return tree (BEGIN, s(6,N(s)));
+    if ((N(s) > 4) && (s(0,4) == "end-"))
+      return tree (END, s(4,N(s)));
 
-    if (starts (s, "\\#") && s != "\\#") {
+    if (starts (s, "#") && s != "#") {
       textm_unicode= true;
-      return "<" * s (1, N(s)) * ">";
+      return "<" * s * ">";
     }
-    return tree (APPLY, s(1,N(s)));
+    return tree (APPLY, s);
   }
   if ((N(s) == 2) && (s[0] == '#') && (s[1] >= '0') && (s[1] <= '9'))
     return tree (APPLY, s(1,2));
