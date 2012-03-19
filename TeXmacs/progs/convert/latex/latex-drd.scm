@@ -70,7 +70,7 @@
   citetext citeauthor citeauthor* citeyear
   epsfig url penalty centerline fbox framebox
   enlargethispage
-  newlength newdimen)
+  newlength newdimen newskip)
 
 (logic-group latex-command-1% ;; . needs a special treatment
   ,(string->symbol "."))
@@ -301,18 +301,60 @@
   ((latex-symbol% 'x) (latex-stmary-symbol% 'x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Counters
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(logic-group latex-counter%
+  badness enumi enumii enumiii enumiv equation figure inputlineno
+  mpfootnote page setlanguage table)
+
+(logic-rules
+  ((latex-arity% 'x 0) (latex-counter% 'x)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Names
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(logic-group latex-name%
+  abstractname appendixname contentname figurename indexname
+  litfigurename littablename partname refname tablename)
+
+(logic-rules
+  ((latex-arity% 'x 0) (latex-name% 'x)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Lengths
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (logic-group latex-length%
-  oddsidemargin evensidemargin textwidth
-  topmargin headheight headsep topskip textheight
-  footskip footnotesep columnsep floatsep
-  marginparwidth marginparsep parindent
-  jot mathindent
-  abovedisplayskip belowdisplayskip
-  abovedisplayshortskip belowdisplayshortskip
-  p@ z@)
+  ;; From latex.ltx
+  ;; -- lengths
+  @textfloatsheight arraycolsep arrayrulewidth columnsep columnseprule
+  columnwidth doublerulesep emergencystretch evensidemargin fboxrule
+  fboxsep footnotesep footskip headheight headsep itemindent labelsep
+  labelwidth leftmargin leftmargini leftmarginii leftmarginiii
+  leftmarginiv leftmarginv leftmarginvi linewidth listparindent
+  marginparpush marginparsep marginparwidth oddsidemargin p@ paperheight
+  paperwidth rightmargin tabbingsep tabcolsep textheight textwidth
+  topmargin unitlength z@ @bls @vpt @vipt @viipt @viiipt @ixpt @xpt @xipt
+  @xiipt @xivpt @xviipt @xxpt @xxvpt 
+  ;; -- skips
+  topsep partopsep itemsep parsep floatsep textfloatsep intextsep
+  dblfloatsep dbltextfloatsep 
+  ;; From latex classes
+  abovecaptionskip belowcaptionskip bibindent
+  ;; From fleqn
+  mathindent
+  ;; Plain TeX
+  maxdimen hfuzz vfuzz overfullrule hsize vsize maxdepth lineskiplimit
+  delimitershortfall nulldelimiterspace scriptspace mathsurround
+  predisplaysize displaywidth displayindent parindent hangindent hoffset
+  voffset baselineskip lineskip parskip abovedisplayskip
+  abovedisplayshortskip belowdisplayskip belowdisplayshortskip leftskip
+  rightskip topskip splittopskip tabskip spaceskip xspaceskip parfillskip
+  thinmuskip medmuskip thickmuskip hideskip smallskipamount medskipamount
+  bigskipamount normalbaselineskip normallineskip normallineskiplimit jot 
+  )
 
 (logic-rules
   ((latex-arity% 'x 0) (latex-length% 'x)))
@@ -454,6 +496,8 @@
     (cond ((not arity) "undefined")
           ((logic-in? s latex-command%) "command")
           ((logic-in? s latex-length%) "length")
+          ((logic-in? s latex-name%) "name")
+          ((logic-in? s latex-counter%) "counter")
 	  ((logic-in? s latex-modifier%) "modifier")
 	  ((logic-in? s latex-control%) "control")
 	  ((logic-in? s latex-operator%) "operator")
