@@ -195,7 +195,8 @@ save_buffer (url u, string fm) {
   if ((u == buf->buf->name && buf->buf->read_only) ||
       (u == buf->buf->name &&
        has_permission (u,"r") && !has_permission (u,"w")) ||
-      (!is_none (buf->buf->extra) && buf->buf->name != "* Aux *")) {
+      (buf->buf->base_name != buf->buf->name &&
+       buf->buf->name != "* Aux *")) {
     set_message ("Error: file is read only", action);
     return;
   }

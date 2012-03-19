@@ -194,7 +194,7 @@ bool
 is_aux_buffer (url name) {
   int nr= find_buffer (name);
   if (nr == -1) return false;
-  else return !is_none (bufs[nr]->buf->extra);
+  else return bufs[nr]->buf->base_name != bufs[nr]->buf->name;
 }
 
 double
@@ -400,7 +400,6 @@ set_aux (string aux, url name) {
   int i, nr= find_buffer (aux);
   if (nr != -1) {
     tm_buffer buf= bufs[nr];
-    buf->buf->extra= name;
     buf->buf->base_name= name;
     if (starts (aux, "Help - ")) {
       buf->buf->fm= "help";
