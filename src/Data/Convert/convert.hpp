@@ -64,6 +64,7 @@ tree   latex_to_tree (tree t);
 tree   latex_document_to_tree (string s);
 tree   latex_class_document_to_tree (string s);
 tree   latex_symbol_to_tree (string s);
+tree   substitute (tree t, tree which, tree by);
 
 /*** Xml / Html / Mathml ***/
 tree   parse_xml (string s);
