@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.11>
+<TeXmacs|1.0.7.15>
 
 <style|tmdoc>
 
@@ -7,6 +7,8 @@
 
   <\traverse>
     <branch|Short description|eukleides-abstract.en.tm>
+
+    <branch|Example <name|Eukleides> session|eukleides-demo.en.tm>
   </traverse>
 
   <tmdoc-copyright|2011|Joris van der Hoeven>
