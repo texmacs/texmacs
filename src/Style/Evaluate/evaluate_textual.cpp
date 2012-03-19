@@ -100,10 +100,11 @@ evaluate_number (tree t) {
   string s1= t1->label;
   string s2= t2->label;
   int nr= as_int (s1);
-  if (s2 == "roman") return roman_nr (nr);
-  if (s2 == "Roman") return Roman_nr (nr);
-  if (s2 == "alpha") return alpha_nr (nr);
-  if (s2 == "Alpha") return Alpha_nr (nr);
+  if (s2 == "arabic") return as_string (nr);
+  if (s2 == "roman")  return roman_nr  (nr);
+  if (s2 == "Roman")  return Roman_nr  (nr);
+  if (s2 == "alpha")  return alpha_nr  (nr);
+  if (s2 == "Alpha")  return Alpha_nr  (nr);
   if (s2 == "fnsymbol")
     return tree (WITH, MODE, "math", tree (RIGID, fnsymbol_nr (nr)));
   return evaluate_error ("bad number");

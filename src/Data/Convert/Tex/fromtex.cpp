@@ -630,11 +630,36 @@ latex_command_to_tree (tree t) {
     return tree (ASSIGN, var, e);
   }
 
+  if (is_tuple (t, "\\Roman", 1)) {
+    tree u= l2e (t[1]);
+    if (is_compound (u)) return "";
+    return tree (NUMBER, tree(APPLY, u->label*"-nr"), "Roman");
+  }
+
+   if (is_tuple (t, "\\roman", 1)) {
+    tree u= l2e (t[1]);
+    if (is_compound (u)) return "";
+    return tree (NUMBER, tree(APPLY, u->label*"-nr"), "roman");
+  }
+  
+  if (is_tuple (t, "\\Alph", 1)) {
+    tree u= l2e (t[1]);
+    if (is_compound (u)) return "";
+    return tree (NUMBER, tree(APPLY, u->label*"-nr"), "Alpha");
+  }
+
+  if (is_tuple (t, "\\alph", 1)) {
+    tree u= l2e (t[1]);
+    if (is_compound (u)) return "";
+    return tree (NUMBER, tree(APPLY, u->label*"-nr"), "alpha");
+  }
+  
   if (is_tuple (t, "\\arabic", 1)) {
     tree u= l2e (t[1]);
     if (is_compound (u)) return "";
-    return tree (APPLY, u->label * "nr");
+    return tree (NUMBER, tree(APPLY, u->label*"-nr"), "arabic");
   }
+  
   if (is_tuple (t, "\\equal", 2))
     return tree (EQUAL, l2e (t[1]), l2e (t[2]));
   if (is_tuple (t, "\\ifthenelse", 3))

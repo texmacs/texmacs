@@ -62,7 +62,7 @@
   ^ over atop ~ = u v H t c d b k r textsuperscript textsubscript
   thispagestyle ensuremath
   mathord mathbin mathopen mathpunct mathop mathrel mathclose mathalpha
-  arabic displaylines cases underbrace overbrace
+  arabic alph Alph roman Roman displaylines cases underbrace overbrace
   title author thanks
   phantom hphantom vphantom smash
   newcounter stepcounter refstepcounter value
