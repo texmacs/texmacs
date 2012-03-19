@@ -28,4 +28,3 @@
   (:serializer ,eukleides-serialize)
   (:session "Eukleides")
   (:scripts "Eukleides"))
-
