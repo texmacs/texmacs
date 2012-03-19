@@ -580,6 +580,9 @@ latex_parser::parse_command (string s, int& i, string cmd) {
       t[0]->label= t[0]->label * "*";
       option= false;
     }
+    else if (s[i] == '%') {
+      while(i < N(s) && s[i] != '\n') i++;
+    }
     else {
       if (arity>0) {
 	i=j;
