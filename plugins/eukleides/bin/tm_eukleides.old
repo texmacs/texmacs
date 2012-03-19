@@ -54,7 +54,8 @@ echo $DATA_END
 echo -n $DATA_BEGIN
 echo verbatim:A Euclidean Geometry Drawing Language
 echo 1. Angles are followed by \"\:\" \for degrees and \"\<\" \for radians.
-echo 2. Use \"\%\" to comment a line.echo $(eukleides -v)
+echo 2. Use \"\%\" to comment a line.
+echo $(eukleides -v)
 
 # prompt-input-eukleides-output loop
 while [ 1 ]; do
@@ -71,12 +72,14 @@ while [ 1 ]; do
 	#create .euk file
 	echo $input | tr  "~" "\n" | cat > $TEMP_FILE.euk
 
-
-	#begin creation of TeX file#; Is this needed?
-	#echo "\input pst-eps\input pst-plot\input pst-node\TeXtoEPS" > $TEMP_FILE.tex
+	#begin creation of TeX file
+	echo "\input pst-eps\input pst-plot\input pst-node\TeXtoEPS" > $TEMP_FILE.tex
 
 	#run eukleides on the .euk file and redirect into .tex and keep track of errors
-	eukleides $TEMP_FILE.euk >>$TEMP_FILE.eps 2>$TEMP_FILE.err
+	eukleides $TEMP_FILE.euk >>$TEMP_FILE.tex 2>$TEMP_FILE.err
+
+	#finish TeX file
+	echo "\endTeXtoEPS\nopagenumbers\end" >> $TEMP_FILE.tex
 
 	#check if error occured, then cat .err else cat .eps to TeXmacs.
 	if [ -s $TEMP_FILE.err ]
@@ -90,6 +93,8 @@ while [ 1 ]; do
 	  echo -ne "\n"
 	  rm $TEMP_FILE.*
 	else
+	  tex --interaction=nonstopmode $TEMP_FILE.tex > /dev/null
+	  dvips -q -f -E $TEMP_FILE.dvi -o $TEMP_FILE.eps > /dev/null
 	  echo -n $DATA_BEGIN
 	  echo -n verbatim:
 	  echo -n $DATA_BEGIN
