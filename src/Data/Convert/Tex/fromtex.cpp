@@ -305,6 +305,60 @@ latex_symbol_to_tree (string s) {
       cerr << "The symbol was " << "\\"*s << "\n";
       FAILED ("unexpected situation");
     }
+    
+    if (latex_type (s) == "length") {
+      if (s == "@vpt")      return  "5"   ;
+      if (s == "@vipt")     return  "6"   ;
+      if (s == "@viipt")    return  "7"   ;
+      if (s == "@viiipt")   return  "8"   ;
+      if (s == "@ixpt")     return  "9"   ;
+      if (s == "@xpt")      return "10"   ;
+      if (s == "@xipt")     return "10.95";
+      if (s == "@xiipt")    return "12"   ;
+      if (s == "@xivpt")    return "14.4" ;
+      if (s == "@xviipt")   return "17.28";
+      if (s == "@xxpt")     return "20.74";
+      if (s == "@xxvpt")    return "24.88";
+
+      if (s == "@bls")      return "par-sep";
+      if (s == "p@")        return "pt";
+      if (s == "z@")        return "0pt";
+
+      if (s == "abovedisplayshortskip") return "tex-above-display-short-skip";
+      if (s == "abovedisplayskip")      return "tex-above-display-skip";
+      if (s == "belowdisplayshortskip") return "tex-below-display-short-skip";
+      if (s == "belowdisplayskip")      return "tex-below-display-skip";
+      if (s == "columnsep")             return "tex-column-sep";
+      if (s == "evensidemargin")        return "tex-even-side-margin";
+      if (s == "footnotesep")           return "tex-footnote-sep";
+      if (s == "footskip")              return "tex-foot-skip";
+      if (s == "headheight")            return "tex-head-height";
+      if (s == "headsep")               return "tex-head-sep";
+      if (s == "jot")                   return "tex-jot";
+      if (s == "marginparwidth")        return "tex-margin-par-width";
+      if (s == "mathindent")            return "tex-math-indent";
+      if (s == "oddsidemargin")         return "tex-odd-side-margin";
+      if (s == "parindent")             return "par-first";
+      if (s == "textheight")            return "tex-text-height";
+      if (s == "textwidth")             return "tex-text-width";
+      if (s == "topmargin")             return "tex-top-margin";
+      if (s == "topskip")               return "tex-top-skip";
+    }   
+
+    // FIXME: avoid redefinition of command_type in parsetex.cpp
+    if (latex_type (s) == "name" || latex_type (s) == "user") {
+      if (s == "abstractname")	  return "abstract-text";
+      if (s == "appendixname")	  return "appendix-text";
+      if (s == "contentsname")	  return "table-of-contents-text";
+      if (s == "figurename")	  return "figure-text";
+      if (s == "indexname")	  return "index-text";
+      if (s == "listfigurename")  return "list-of-figures-text";
+      if (s == "listtablename")	  return "list-of-tables-text";
+      if (s == "partname")	  return "part-text";
+      if (s == "refname")	  return "bibliography-text";
+      if (s == "tablename")	  return "table-text";
+    }
+
     if (latex_type (s) == "operator" || latex_type (s) == "control") return s;
     if ((s == "ldots") && (command_type ("!mode") != "math")) return "...";
     if (s == "bignone") return tree (BIG, ".");
@@ -567,6 +621,49 @@ latex_accent (tree t, string acc) {
 }
 
 tree
+abs_length(tree t) {
+  string s;
+  tree r;
+  if (is_atomic(t)) {
+    s = as_string(t);
+    if (s[0] == '-')
+      return tree(s(1,N(s)));
+    else
+      return s;
+  }
+  else {
+    r = tree(L(t));
+    for (int i=0 ; i < N(t) ; i++)
+      r << abs_length(t[i]);
+    return r;
+  }
+}
+
+tree
+find_next_length(tree t) {
+  if (is_atomic(t))
+    return t;
+  else
+    if(is_func(t, APPLY)) 
+      if (t[0] == "tex-len") 
+        return find_next_length (t[1]);
+  return tree();
+}
+
+bool
+is_negative_length(tree t) {
+  t = find_next_length(t);
+  string s= t->label;
+    for (int i=0 ; i < N(s) ; i++){
+      if (s[i] == '-') return true;
+      else if (is_space(s[i]));
+      else if (is_numeric(s[i]) || is_alpha(s[i]) || 
+          s[i] == '+' || s[i] == '.' || s[i] == ',') return false;
+    }
+  return false;
+}
+
+tree
 latex_eps_get (tree t, string var) {
   if (!is_atomic (t)) return "";
   string s= t->label;
@@ -770,31 +867,60 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\setlength", 2)) {
     if (!textm_class_flag) return "";
     else {
-      string len= (is_atomic (t[1])? t[1]->label: v2e (t[1]));
+      tree len= l2e (t[1]);
       tree val= l2e (t[2]);
-      if (len == "\\oddsidemargin") len= "tex-odd-side-margin";
-      if (len == "\\evensidemargin") len= "tex-even-side-margin";
-      if (len == "\\textwidth") len= "tex-text-width";
-      if (len == "\\topmargin") len= "tex-top-margin";
-      if (len == "\\headheight") len= "tex-head-height";
-      if (len == "\\headsep") len= "tex-head-sep";
-      if (len == "\\topskip") len= "tex-top-skip";
-      if (len == "\\textheight") len= "tex-text-height";
-      if (len == "\\footskip") len= "tex-foot-skip";
-      if (len == "\\footnotesep") len= "tex-footnote-sep";
-      if (len == "\\columnsep") len= "tex-column-sep";
-      if (len == "\\marginparwidth") len= "tex-margin-par-width";
-      if (len == "\\par-indent") len= "par-first";
-      if (len == "\\jot") len= "tex-jot";
-      if (len == "\\mathindent") len= "tex-math-indent";
-      if (len == "\\abovedisplayskip") len= "tex-above-display-skip";
-      if (len == "\\belowdisplayskip") len= "tex-below-display-skip";
-      if (len == "\\abovedisplayshortskip")
-	len= "tex-above-display-short-skip";
-      if (len == "\\belowdisplayshortskip")
-	len= "tex-below-display-short-skip";
       return tree (ASSIGN, len, tree (MACRO, val));
     }
+  }
+
+  if (is_tuple (t, "\\@startsection")) {
+    tree name, indent, spa, spb, style, r, indentafter;
+    name = l2e(t[1]);
+    indent = l2e(t[3]);
+    spb = l2e(t[4]);
+    spa = l2e(t[5]);
+    style = concat();
+    r = concat();
+    bool inserted = false, center = false;
+
+    for (int i = 0 ; i < N(t[6]) ; i++){
+      if (is_tuple(t[6][i], "\\centering", 0)) center = true;
+      else if (is_tuple(t[6][i], "\\normalfont", 0)) ;
+      else style << t[6][i];
+    }
+    style = l2e(style);
+
+    if (is_negative_length(spb)) indentafter = tree();
+    else indentafter = tree(HSPACE, "par-first");
+    spb = compound("vspace*", abs_length(spb));
+
+    if (is_negative_length(spa))
+      spa = tree(HSPACE, abs_length(spa));
+    else
+      spa = tree(VSPACE, spa);
+
+    for (int i = 0 ; i < N(style) ; i++) {
+      if (is_func(style[i], RESET) && !inserted) {
+        if (center)
+          r << spb << compound("center", tree(ARG, "name")) 
+            << spa << indentafter;
+        else
+          r << spb << tree(HSPACE, indent) << tree(ARG, "name") 
+            << spa << indentafter;
+        inserted = true;
+      }
+      else
+        r << style[i];
+    }
+    if (is_func(spa, VSPACE)) r = compound("sectional-normal", r);
+    return tree (ASSIGN, concat(name->label, "-title"),
+        tree (MACRO, "name", r));
+  }
+  if (is_tuple (t, "\\@setfontsize", 3)) {
+    tree fontsize = l2e(t[2]);
+    tree baselineskip = l2e(t[3]);
+    return tree(WITH, "font-size-base", fontsize, "par-sep", 
+      (tree(MINUS, concat(baselineskip, "pt"), concat(fontsize, "pt"))));
   }
   if (is_tuple (t, "\\addtolength")) return "";
   if (is_tuple (t, "\\enlargethispage")) return "";

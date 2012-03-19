@@ -82,7 +82,10 @@
   scalebox)
 
 (logic-group latex-command-3%
-  ifthenelse resizebox)
+  ifthenelse resizebox @setfontsize)
+
+(logic-group latex-command-6%
+  @startsection)
 
 (logic-rules
   ((latex-command% 'x) (latex-command-0% 'x))
@@ -92,7 +95,9 @@
   ((latex-command% 'x) (latex-command-2% 'x))
   ((latex-arity% 'x 2) (latex-command-2% 'x))
   ((latex-command% 'x) (latex-command-3% 'x))
-  ((latex-arity% 'x 3) (latex-command-3% 'x)))
+  ((latex-arity% 'x 3) (latex-command-3% 'x))
+  ((latex-command% 'x) (latex-command-6% 'x))
+  ((latex-arity% 'x 6) (latex-command-6% 'x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; LaTeX commands with optional arguments
