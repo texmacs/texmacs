@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (eukleides-initialize)
-  (import-from (eukleides-menus))
+  ;;(import-from (eukleides-menus))
   (import-from (utils plugins plugin-convert)))
 
 (define (eukleides-serialize lan t)
