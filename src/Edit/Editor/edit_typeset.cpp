@@ -28,18 +28,11 @@ bool enable_fastenv= false;
 * Contructors, destructors and notification of modifications
 ******************************************************************************/
 
-static bool
-is_aux (url u) {
-  if (!is_atomic (u->t)) return false;
-  string s= u->t->label;
-  return starts (s, "* ") && ends (s, " *");
-}
-
 edit_typeset_rep::edit_typeset_rep ():
   the_style (TUPLE),
   cur (hashmap<string,tree> (UNINIT)),
   pre (UNINIT), init (UNINIT), fin (UNINIT),
-  env (drd, is_aux (buf->buf->name)? buf->buf->extra: buf->buf->name,
+  env (drd, buf->buf->base_name,
        buf->data->ref, (buf->prj==NULL? buf->data->ref: buf->prj->data->ref),
        buf->data->aux, (buf->prj==NULL? buf->data->aux: buf->prj->data->aux)),
   ttt (new_typesetter (env, subtree (et, rp), reverse (rp))) {}

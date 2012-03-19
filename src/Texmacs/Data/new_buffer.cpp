@@ -178,8 +178,7 @@ set_abbr_buffer (url name, string abbr) {
     tm_view vw2= buf->vws[i];
     if (vw2->win != NULL) {
       vw2->win->set_window_name (buf->buf->abbr);
-      vw2->win->set_window_url (is_none (buf->buf->extra)?
-                                buf->buf->name: buf->buf->extra);
+      vw2->win->set_window_url (buf->buf->base_name);
     }
   }
 }
