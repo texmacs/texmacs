@@ -5234,7 +5234,7 @@ tmg_buffer_rename (tmscm arg1, tmscm arg2) {
   url in2= tmscm_to_url (arg2);
 
   // TMSCM_DEFER_INTS;
-  set_name_buffer (in1, in2);
+  rename_buffer (in1, in2);
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;

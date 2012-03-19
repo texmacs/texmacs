@@ -111,7 +111,7 @@ gcd (int i, int j) {
 
 void
 tm_frame_rep::choose_file (object fun, string title, string type) {
-  url      name= get_name_buffer ();
+  url      name= get_base_url_buffer (get_this_buffer ());
   command  cb  = dialogue_command (get_server(), fun, 1);
   bool     save= starts (title, "Save") || starts (title, "Export");
   widget   wid = file_chooser_widget (cb, type, save);

@@ -213,9 +213,9 @@ save_buffer (url u, string fm) {
     else {
       set_message (concat ("saved ", vname), action);
       if (fm == "texmacs") {
-        if (no_name () && exists (get_name_buffer ()))
-          remove (get_name_buffer ());
-        set_name_buffer (buf->buf->name, u);
+        if (no_name () && exists (get_this_buffer ()))
+          remove (get_this_buffer ());
+        rename_buffer (buf->buf->name, u);
         pretend_save_buffer ();
         if (suffix (u) == "ts") get_server () -> style_clear_cache ();
         if ((fm == "generic") || (fm == "texmacs"))

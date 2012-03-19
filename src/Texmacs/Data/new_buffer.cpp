@@ -130,13 +130,6 @@ get_this_buffer () {
 }
 
 url
-get_name_buffer () {
-  tm_buffer buf= get_buffer ();
-  if (!is_none (buf->buf->extra)) return buf->buf->extra;
-  return buf->buf->name;
-}
-
-url
 get_name_buffer (path p) {
   int nr= find_buffer (p);
   if (nr == -1) return url_none ();
@@ -144,7 +137,7 @@ get_name_buffer (path p) {
 }
 
 void
-set_name_buffer (url name, url new_name) {
+rename_buffer (url name, url new_name) {
   if (new_name == name) return;
   int nr= find_buffer (name);
   if (nr == -1) return;

@@ -442,7 +442,7 @@
   (current-buffer get_this_buffer (url))
   (all-buffers get_all_buffers (url))
   (path->buffer get_name_buffer (url path))
-  (buffer-rename set_name_buffer (void url url))
+  (buffer-rename rename_buffer (void url url))
   (buffer-set-base-url set_base_url_buffer (void url url))
   (buffer-get-base-url get_base_url_buffer (url url))
   (buffer-set-short-name set_abbr_buffer (void url string))
