@@ -466,7 +466,6 @@
   (no-name? no_name (bool))
   (aux-buffer? is_aux_buffer (bool url))
 
-  (exists-unsaved-buffer? exists_unsaved_buffer (bool))
   (texmacs-load-tree load_tree (tree url string))
   (texmacs-load-buffer load_buffer (void url string int bool))
   (texmacs-save-buffer save_buffer (void url string))

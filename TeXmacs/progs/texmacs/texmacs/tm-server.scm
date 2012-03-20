@@ -120,6 +120,9 @@
 ;; Killing buffers, windows and TeXmacs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (buffers-modified?)
+  (list-or (map buffer-modified? (buffer-list))))
+
 (tm-define (safely-kill-buffer)
   (if (not (buffer-modified? (current-buffer))) (kill-buffer)
       (user-confirm "The buffer has not been saved. Really close it?" #f  
@@ -131,6 +134,6 @@
       (kill-window)))
 
 (tm-define (safely-quit-TeXmacs)
-  (if (not (exists-unsaved-buffer?)) (quit-TeXmacs)
+  (if (not (buffers-modified?)) (quit-TeXmacs)
       (user-confirm "There are unsaved files. Really quit?" #f  
         (lambda (answ) (when answ (quit-TeXmacs))))))

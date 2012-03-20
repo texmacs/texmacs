@@ -5506,15 +5506,6 @@ tmg_aux_bufferP (tmscm arg1) {
 }
 
 tmscm
-tmg_exists_unsaved_bufferP () {
-  // TMSCM_DEFER_INTS;
-  bool out= exists_unsaved_buffer ();
-  // TMSCM_ALLOW_INTS;
-
-  return bool_to_tmscm (out);
-}
-
-tmscm
 tmg_texmacs_load_tree (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "texmacs-load-tree");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "texmacs-load-tree");
@@ -6395,7 +6386,6 @@ initialize_glue_basic () {
   tmscm_install_procedure ("kill-buffer",  tmg_kill_buffer, 0, 0, 0);
   tmscm_install_procedure ("no-name?",  tmg_no_nameP, 0, 0, 0);
   tmscm_install_procedure ("aux-buffer?",  tmg_aux_bufferP, 1, 0, 0);
-  tmscm_install_procedure ("exists-unsaved-buffer?",  tmg_exists_unsaved_bufferP, 0, 0, 0);
   tmscm_install_procedure ("texmacs-load-tree",  tmg_texmacs_load_tree, 2, 0, 0);
   tmscm_install_procedure ("texmacs-load-buffer",  tmg_texmacs_load_buffer, 4, 0, 0);
   tmscm_install_procedure ("texmacs-save-buffer",  tmg_texmacs_save_buffer, 2, 0, 0);

@@ -200,6 +200,5 @@ tree load_tree (url name, string fm);
 void load_buffer (url name, string fm, int where= 0, bool asf= false);
 void save_buffer (url name, string fm);
 void auto_save ();
-bool exists_unsaved_buffer ();
 
 #endif // defined SERVER_H

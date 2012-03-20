@@ -253,21 +253,3 @@ no_name () {
   tm_buffer buf= get_buffer ();
   return is_scratch (buf->buf->name);
 }
-
-bool
-exists_unsaved_buffer () {
-  bool flag= false;
-  int i, n= N(bufs);
-  for (i=0; i<n; i++) {
-    tm_buffer buf= bufs[i];
-    flag = flag || buf->needs_to_be_saved ();
-  }
-  return flag;
-}
-
-void
-pretend_save_buffer () {
-  tm_buffer buf= get_buffer ();
-  for (int i=0; i<N(buf->vws); i++)
-    buf->vws[i]->ed->notify_save ();
-}
