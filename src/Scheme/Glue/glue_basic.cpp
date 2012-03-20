@@ -5254,56 +5254,56 @@ tmg_buffer_rename (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
-tmg_buffer_set_base_url (tmscm arg1, tmscm arg2) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-set-base-url");
-  TMSCM_ASSERT_URL (arg2, TMSCM_ARG2, "buffer-set-base-url");
+tmg_buffer_set_master (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-set-master");
+  TMSCM_ASSERT_URL (arg2, TMSCM_ARG2, "buffer-set-master");
 
   url in1= tmscm_to_url (arg1);
   url in2= tmscm_to_url (arg2);
 
   // TMSCM_DEFER_INTS;
-  set_base_url_buffer (in1, in2);
+  set_master_buffer (in1, in2);
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;
 }
 
 tmscm
-tmg_buffer_get_base_url (tmscm arg1) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-get-base-url");
+tmg_buffer_get_master (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-get-master");
 
   url in1= tmscm_to_url (arg1);
 
   // TMSCM_DEFER_INTS;
-  url out= get_base_url_buffer (in1);
+  url out= get_master_buffer (in1);
   // TMSCM_ALLOW_INTS;
 
   return url_to_tmscm (out);
 }
 
 tmscm
-tmg_buffer_set_short_name (tmscm arg1, tmscm arg2) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-set-short-name");
-  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "buffer-set-short-name");
+tmg_buffer_set_title (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-set-title");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "buffer-set-title");
 
   url in1= tmscm_to_url (arg1);
   string in2= tmscm_to_string (arg2);
 
   // TMSCM_DEFER_INTS;
-  set_abbr_buffer (in1, in2);
+  set_title_buffer (in1, in2);
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;
 }
 
 tmscm
-tmg_buffer_get_short_name (tmscm arg1) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-get-short-name");
+tmg_buffer_get_title (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-get-title");
 
   url in1= tmscm_to_url (arg1);
 
   // TMSCM_DEFER_INTS;
-  string out= get_abbr_buffer (in1);
+  string out= get_title_buffer (in1);
   // TMSCM_ALLOW_INTS;
 
   return string_to_tmscm (out);
@@ -6365,10 +6365,10 @@ initialize_glue_basic () {
   tmscm_install_procedure ("all-buffers",  tmg_all_buffers, 0, 0, 0);
   tmscm_install_procedure ("path->buffer",  tmg_path_2buffer, 1, 0, 0);
   tmscm_install_procedure ("buffer-rename",  tmg_buffer_rename, 2, 0, 0);
-  tmscm_install_procedure ("buffer-set-base-url",  tmg_buffer_set_base_url, 2, 0, 0);
-  tmscm_install_procedure ("buffer-get-base-url",  tmg_buffer_get_base_url, 1, 0, 0);
-  tmscm_install_procedure ("buffer-set-short-name",  tmg_buffer_set_short_name, 2, 0, 0);
-  tmscm_install_procedure ("buffer-get-short-name",  tmg_buffer_get_short_name, 1, 0, 0);
+  tmscm_install_procedure ("buffer-set-master",  tmg_buffer_set_master, 2, 0, 0);
+  tmscm_install_procedure ("buffer-get-master",  tmg_buffer_get_master, 1, 0, 0);
+  tmscm_install_procedure ("buffer-set-title",  tmg_buffer_set_title, 2, 0, 0);
+  tmscm_install_procedure ("buffer-get-title",  tmg_buffer_get_title, 1, 0, 0);
   tmscm_install_procedure ("buffer-modified?",  tmg_buffer_modifiedP, 1, 0, 0);
   tmscm_install_procedure ("buffer-in-menu?",  tmg_buffer_in_menuP, 1, 0, 0);
   tmscm_install_procedure ("buffer-last-visited",  tmg_buffer_last_visited, 1, 0, 0);

@@ -24,7 +24,7 @@
 
 (tm-menu (buffer-list-menu l)
   (for (name l)
-    (let* ((abbr (buffer-get-short-name name))
+    (let* ((abbr (buffer-get-title name))
            (abbr* (if (== abbr "") (url->string (url-tail name)) abbr))
            (mod? (buffer-modified? name))
            (short-name (string-append abbr* (if mod? " *" "")))

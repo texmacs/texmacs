@@ -199,12 +199,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (set-abbr-buffer name abbr)
-  (deprecated-function "set-abbr-buffer" "buffer-set-short-name")
-  (buffer-set-short-name (current-buffer) abbr))
+  (deprecated-function "set-abbr-buffer" "buffer-set-title")
+  (buffer-set-title (current-buffer) abbr))
 
 (tm-define (get-abbr-buffer name)
-  (deprecated-function "get-abbr-buffer" "buffer-get-short-name")
-  (buffer-get-short-name (current-buffer)))
+  (deprecated-function "get-abbr-buffer" "buffer-get-title")
+  (buffer-get-title (current-buffer)))
 
 (tm-define (set-buffer name doc)
   (deprecated-function "set-buffer" "buffer-set")

@@ -32,7 +32,7 @@ edit_typeset_rep::edit_typeset_rep ():
   the_style (TUPLE),
   cur (hashmap<string,tree> (UNINIT)),
   pre (UNINIT), init (UNINIT), fin (UNINIT),
-  env (drd, buf->buf->base_name,
+  env (drd, buf->buf->master,
        buf->data->ref, (buf->prj==NULL? buf->data->ref: buf->prj->data->ref),
        buf->data->aux, (buf->prj==NULL? buf->data->aux: buf->prj->data->aux)),
   ttt (new_typesetter (env, subtree (et, rp), reverse (rp))) {}
@@ -77,7 +77,7 @@ edit_typeset_rep::add_init (hashmap<string,tree> H) {
 }
 
 void
-edit_typeset_rep::set_base_name (url name) {
+edit_typeset_rep::set_master (url name) {
   env->base_file_name= name;
 }
 

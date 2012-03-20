@@ -36,7 +36,7 @@ protected:
   void                 set_init (hashmap<string,tree> init= tree ("?"));
   void                 add_init (hashmap<string,tree> init);
   void                 set_fin (hashmap<string,tree> fin);
-  void                 set_base_name (url name);
+  void                 set_master (url name);
 
 public:
   edit_typeset_rep ();

@@ -143,40 +143,40 @@ rename_buffer (url name, url new_name) {
   if (nr == -1) return;
   tm_buffer buf= bufs[nr];
   buf->buf->name= new_name;
-  buf->buf->base_name= new_name;
+  buf->buf->master= new_name;
   tree doc= subtree (the_et, buf->rp);
-  set_abbr_buffer (new_name, new_menu_name (new_name, doc));
+  set_title_buffer (new_name, new_menu_name (new_name, doc));
 }
 
 url
-get_base_url_buffer (url name) {
+get_master_buffer (url name) {
   int nr= find_buffer (name);
   if (nr == -1) return url_none ();
-  return bufs[nr]->buf->base_name;
+  return bufs[nr]->buf->master;
 }
 
 void
-set_base_url_buffer (url name, url base_name) {
+set_master_buffer (url name, url master) {
   int nr= find_buffer (name);
   if (nr == -1) return;
   tm_buffer buf= bufs[nr];
-  if (buf->buf->base_name == base_name) return;
-  buf->buf->base_name= base_name;
+  if (buf->buf->master == master) return;
+  buf->buf->master= master;
   for (int i=0; i<N(buf->vws); i++) {
     tm_view vw= buf->vws[i];
-    vw->ed->set_base_name (name);
+    vw->ed->set_master (name);
   }
 }
 
 string
-get_abbr_buffer (url name) {
+get_title_buffer (url name) {
   int nr= find_buffer (name);
   if (nr == -1) return "";
   else return bufs[nr]->buf->abbr;
 }
 
 void
-set_abbr_buffer (url name, string abbr) {
+set_title_buffer (url name, string abbr) {
   int nr= find_buffer (name);
   if (nr == -1) return;
   tm_buffer buf= bufs[nr];
@@ -202,7 +202,7 @@ bool
 is_aux_buffer (url name) {
   int nr= find_buffer (name);
   if (nr == -1) return false;
-  else return bufs[nr]->buf->base_name != bufs[nr]->buf->name;
+  else return bufs[nr]->buf->master != bufs[nr]->buf->name;
 }
 
 double

@@ -192,5 +192,5 @@
 
 (define-public (aux-set-master aux master)
   (with name (aux-name aux)
-    (buffer-set-base-url name master)    
-    (ahash-set! aux-masters aux (buffer-get-base-url name))))
+    (buffer-set-master name master)    
+    (ahash-set! aux-masters aux (buffer-get-master name))))

@@ -295,7 +295,7 @@
   (url->list (all-buffers)))
 
 (define-public (buffer-base-url)
-  (buffer-get-base-url (current-buffer)))
+  (buffer-get-master (current-buffer)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Redirections

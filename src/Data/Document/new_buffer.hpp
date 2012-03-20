@@ -20,7 +20,7 @@ class new_buffer;
 class new_buffer_rep: public concrete_struct {
 public:
   url name;               // full name
-  url base_name;          // base name for linking and navigation
+  url master;             // base name for linking and navigation
   string fm;              // buffer format
   string abbr;            // abbreviated name
   bool read_only;         // buffer is read only?
@@ -29,7 +29,7 @@ public:
   time_t last_visit;      // time that the buffer was visited last
 
   inline new_buffer_rep (url name2):
-    name (name2), base_name (name2),
+    name (name2), master (name2),
     fm ("texmacs"), abbr (as_string (tail (name))),
     read_only (false), secure (is_secure (name2)), in_menu (true),
     last_visit (texmacs_time ()) {}
