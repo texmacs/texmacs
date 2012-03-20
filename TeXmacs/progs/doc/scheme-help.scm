@@ -14,7 +14,6 @@
 (texmacs-module (doc scheme-help)
   (:use (generic generic-menu)))  ; FIXME: set this to the real dependency
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; A first attempt at automatically generated documentation.
 ;; TODO: (among many other things)
@@ -28,7 +27,6 @@
 ;;  - Devise a sensible method of documenting modules (keyword in texmacs-module ?)
 ;;  - ...
 ;;
-
 
 ; A hash of character -> (list of symbols starting with that character)
 (define indexed-commands (make-ahash-table)) 
@@ -88,15 +86,19 @@
               "times in the code. Click on a module name to open it.")
           ($para
             ($for (entry sorted)
-              (output-commands-folded-section entry)))))))                          
-
+              (output-commands-folded-section entry)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Public interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  
+
+(tmfs-load-handler (scheme-help query)
+  (tm->stree (all-commands-index)))
+
+(tmfs-title-handler (scheme-help query doc)
+  "Alphabetic list of tm-defined Scheme commands")
+
 (tm-define (help-all-scheme-commands)
   (:synopsis "Opens a help buffer with a list of all commands defined using tm-define")
   (cursor-history-add (cursor-path))
-  (set-help-buffer "All commands, alphabetically" (all-commands-index)))
-
+  (load-buffer "tmfs://scheme-help/all-commands"))

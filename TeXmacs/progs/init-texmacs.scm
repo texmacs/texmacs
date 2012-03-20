@@ -176,6 +176,8 @@
 (lazy-define (doc tmweb) tmweb-convert-dir tmweb-update-dir
              tmweb-interactive-build tmweb-interactive-update)
 (lazy-tmfs-handler (doc docgrep) grep)
+(lazy-tmfs-handler (doc tmdoc) help)
+(lazy-tmfs-handler (doc scheme-help) scheme-help)
 (define-secure-symbols tmdoc-include)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
