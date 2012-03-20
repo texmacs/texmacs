@@ -245,6 +245,19 @@ get_buffer_tree (url name) {
   return attach_data (body, buf->data, true);
 }
 
+void
+set_buffer_body (url name, tree body) {
+  int nr= find_buffer (name);
+  if (nr == -1) {
+    new_data data;
+    create_buffer (name, attach_data (body, data));
+  }
+  else {
+    tm_buffer buf= bufs[nr];
+    assign (buf->rp, body);
+  }
+}
+
 tree
 get_buffer_body (url name) {
   int nr= find_buffer (name);

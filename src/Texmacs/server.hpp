@@ -155,6 +155,10 @@ url get_master_buffer (url name);
 void set_master_buffer (url name, url master);
 void set_title_buffer (url name, string abbr);
 string get_title_buffer (url name);
+void set_buffer_tree (url name, tree doc);
+tree get_buffer_tree (url name);
+void set_buffer_body (url name, tree body);
+tree get_buffer_body (url name);
 void new_buffer_in_new_window (url name, tree t, tree geom= "");
 double last_visited (url name);
 bool buffer_modified (url name);
@@ -175,9 +179,6 @@ void kill_window_and_buffer ();
 bool no_bufs ();
 bool no_name ();
 bool is_aux_buffer (url name);
-void set_buffer_tree (url name, tree doc);
-tree get_buffer_tree (url name);
-tree get_buffer_body (url name);
 
 /* Project management */
 void project_attach (string prj_name= "");

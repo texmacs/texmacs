@@ -26,7 +26,7 @@ public:
   hashmap<string,tree> aux;   // auxiliary output: toc, bib, etc.
 
   inline new_data_rep ():
-    project (""), style ("style"),
+    project (""), style (tuple ("generic")),
     init ("?"), fin ("?"), ref ("?"), aux ("?") {}
 };
 

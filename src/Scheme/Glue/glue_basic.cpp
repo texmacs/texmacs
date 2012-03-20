@@ -5254,6 +5254,62 @@ tmg_buffer_rename (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_buffer_set (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-set");
+  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "buffer-set");
+
+  url in1= tmscm_to_url (arg1);
+  content in2= tmscm_to_content (arg2);
+
+  // TMSCM_DEFER_INTS;
+  set_buffer_tree (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_buffer_get (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-get");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  tree out= get_buffer_tree (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
+tmg_buffer_set_body (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-set-body");
+  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "buffer-set-body");
+
+  url in1= tmscm_to_url (arg1);
+  content in2= tmscm_to_content (arg2);
+
+  // TMSCM_DEFER_INTS;
+  set_buffer_body (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_buffer_get_body (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-get-body");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  tree out= get_buffer_body (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
 tmg_buffer_set_master (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-set-master");
   TMSCM_ASSERT_URL (arg2, TMSCM_ARG2, "buffer-set-master");
@@ -5310,6 +5366,19 @@ tmg_buffer_get_title (tmscm arg1) {
 }
 
 tmscm
+tmg_buffer_last_visited (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-last-visited");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  double out= last_visited (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return double_to_tmscm (out);
+}
+
+tmscm
 tmg_buffer_modifiedP (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-modified?");
 
@@ -5333,60 +5402,6 @@ tmg_buffer_in_menuP (tmscm arg1) {
   // TMSCM_ALLOW_INTS;
 
   return bool_to_tmscm (out);
-}
-
-tmscm
-tmg_buffer_last_visited (tmscm arg1) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-last-visited");
-
-  url in1= tmscm_to_url (arg1);
-
-  // TMSCM_DEFER_INTS;
-  double out= last_visited (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return double_to_tmscm (out);
-}
-
-tmscm
-tmg_buffer_set (tmscm arg1, tmscm arg2) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-set");
-  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "buffer-set");
-
-  url in1= tmscm_to_url (arg1);
-  content in2= tmscm_to_content (arg2);
-
-  // TMSCM_DEFER_INTS;
-  set_buffer_tree (in1, in2);
-  // TMSCM_ALLOW_INTS;
-
-  return TMSCM_UNSPECIFIED;
-}
-
-tmscm
-tmg_buffer_get (tmscm arg1) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-get");
-
-  url in1= tmscm_to_url (arg1);
-
-  // TMSCM_DEFER_INTS;
-  tree out= get_buffer_tree (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return tree_to_tmscm (out);
-}
-
-tmscm
-tmg_buffer_get_body (tmscm arg1) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-get-body");
-
-  url in1= tmscm_to_url (arg1);
-
-  // TMSCM_DEFER_INTS;
-  tree out= get_buffer_body (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return tree_to_tmscm (out);
 }
 
 tmscm
@@ -6365,16 +6380,17 @@ initialize_glue_basic () {
   tmscm_install_procedure ("all-buffers",  tmg_all_buffers, 0, 0, 0);
   tmscm_install_procedure ("path->buffer",  tmg_path_2buffer, 1, 0, 0);
   tmscm_install_procedure ("buffer-rename",  tmg_buffer_rename, 2, 0, 0);
+  tmscm_install_procedure ("buffer-set",  tmg_buffer_set, 2, 0, 0);
+  tmscm_install_procedure ("buffer-get",  tmg_buffer_get, 1, 0, 0);
+  tmscm_install_procedure ("buffer-set-body",  tmg_buffer_set_body, 2, 0, 0);
+  tmscm_install_procedure ("buffer-get-body",  tmg_buffer_get_body, 1, 0, 0);
   tmscm_install_procedure ("buffer-set-master",  tmg_buffer_set_master, 2, 0, 0);
   tmscm_install_procedure ("buffer-get-master",  tmg_buffer_get_master, 1, 0, 0);
   tmscm_install_procedure ("buffer-set-title",  tmg_buffer_set_title, 2, 0, 0);
   tmscm_install_procedure ("buffer-get-title",  tmg_buffer_get_title, 1, 0, 0);
+  tmscm_install_procedure ("buffer-last-visited",  tmg_buffer_last_visited, 1, 0, 0);
   tmscm_install_procedure ("buffer-modified?",  tmg_buffer_modifiedP, 1, 0, 0);
   tmscm_install_procedure ("buffer-in-menu?",  tmg_buffer_in_menuP, 1, 0, 0);
-  tmscm_install_procedure ("buffer-last-visited",  tmg_buffer_last_visited, 1, 0, 0);
-  tmscm_install_procedure ("buffer-set",  tmg_buffer_set, 2, 0, 0);
-  tmscm_install_procedure ("buffer-get",  tmg_buffer_get, 1, 0, 0);
-  tmscm_install_procedure ("buffer-get-body",  tmg_buffer_get_body, 1, 0, 0);
   tmscm_install_procedure ("new-buffer",  tmg_new_buffer, 0, 0, 0);
   tmscm_install_procedure ("switch-to-buffer-path",  tmg_switch_to_buffer_path, 1, 0, 0);
   tmscm_install_procedure ("switch-to-buffer",  tmg_switch_to_buffer, 1, 0, 0);
