@@ -156,8 +156,7 @@
 (tm-define (buffer-loader fm) (lambda (s) (load-buffer s fm)))
 (tm-define (buffer-saver fm) (lambda (s) (save-buffer s fm)))
 (tm-define (load-in-new-window s) (load-buffer s 1))
-(tm-define (load-browse-buffer s)
-  (if (help-buffer?) (load-buffer s "help") (load-buffer s)))
+(tm-define (load-browse-buffer s) (load-buffer s))
 
 (tm-define (open-buffer)
   (:synopsis "Open a new file")

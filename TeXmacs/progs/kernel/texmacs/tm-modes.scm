@@ -119,7 +119,7 @@
   (in-tmdoc% (style-has? "tmdoc-style"))
   (in-tmweb% (style-has? "tmweb-style") in-tmdoc%)
   (in-mmxdoc% (style-has? "mmxdoc-style") in-tmdoc%)
-  (in-manual% (not (help-buffer?)) in-tmdoc%)
+  (in-manual% (not (url-rooted-tmfs? (current-buffer))) in-tmdoc%)
   (in-plugin-with-converters%
    (plugin-supports-math-input-ref (get-env "prog-language")))
   (in-screens% (inside? 'screens))

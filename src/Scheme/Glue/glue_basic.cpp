@@ -3248,6 +3248,19 @@ tmg_url_rooted_webP (tmscm arg1) {
 }
 
 tmscm
+tmg_url_rooted_tmfsP (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "url-rooted-tmfs?");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= is_rooted_tmfs (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_url_concatP (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "url-concat?");
 
@@ -5452,15 +5465,6 @@ tmg_no_nameP () {
 }
 
 tmscm
-tmg_help_bufferP () {
-  // TMSCM_DEFER_INTS;
-  bool out= help_buffer ();
-  // TMSCM_ALLOW_INTS;
-
-  return bool_to_tmscm (out);
-}
-
-tmscm
 tmg_aux_bufferP (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "aux-buffer?");
 
@@ -5500,21 +5504,6 @@ tmg_set_aux_buffer (tmscm arg1, tmscm arg2, tmscm arg3) {
 
   // TMSCM_DEFER_INTS;
   set_aux_buffer (in1, in2, in3);
-  // TMSCM_ALLOW_INTS;
-
-  return TMSCM_UNSPECIFIED;
-}
-
-tmscm
-tmg_set_help_buffer (tmscm arg1, tmscm arg2) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "set-help-buffer");
-  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "set-help-buffer");
-
-  url in1= tmscm_to_url (arg1);
-  content in2= tmscm_to_content (arg2);
-
-  // TMSCM_DEFER_INTS;
-  set_help_buffer (in1, in2);
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;
@@ -6266,6 +6255,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("url->string",  tmg_url_2string, 1, 0, 0);
   tmscm_install_procedure ("url-none?",  tmg_url_noneP, 1, 0, 0);
   tmscm_install_procedure ("url-rooted-web?",  tmg_url_rooted_webP, 1, 0, 0);
+  tmscm_install_procedure ("url-rooted-tmfs?",  tmg_url_rooted_tmfsP, 1, 0, 0);
   tmscm_install_procedure ("url-concat?",  tmg_url_concatP, 1, 0, 0);
   tmscm_install_procedure ("url-or?",  tmg_url_orP, 1, 0, 0);
   tmscm_install_procedure ("url-ref",  tmg_url_ref, 2, 0, 0);
@@ -6424,11 +6414,9 @@ initialize_glue_basic () {
   tmscm_install_procedure ("revert-buffer",  tmg_revert_buffer, 0, 0, 0);
   tmscm_install_procedure ("kill-buffer",  tmg_kill_buffer, 0, 0, 0);
   tmscm_install_procedure ("no-name?",  tmg_no_nameP, 0, 0, 0);
-  tmscm_install_procedure ("help-buffer?",  tmg_help_bufferP, 0, 0, 0);
   tmscm_install_procedure ("aux-buffer?",  tmg_aux_bufferP, 1, 0, 0);
   tmscm_install_procedure ("set-aux",  tmg_set_aux, 2, 0, 0);
   tmscm_install_procedure ("set-aux-buffer",  tmg_set_aux_buffer, 3, 0, 0);
-  tmscm_install_procedure ("set-help-buffer",  tmg_set_help_buffer, 2, 0, 0);
   tmscm_install_procedure ("open-buffer-in-window",  tmg_open_buffer_in_window, 3, 0, 0);
   tmscm_install_procedure ("open-window",  tmg_open_window, 0, 0, 0);
   tmscm_install_procedure ("open-window-geometry",  tmg_open_window_geometry, 1, 0, 0);
