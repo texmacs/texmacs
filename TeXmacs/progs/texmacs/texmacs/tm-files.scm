@@ -178,6 +178,15 @@
   (print-to-file "$TEXMACS_HOME_PATH/system/tmp/tmpprint.ps")
   (interactive-print '() "$TEXMACS_HOME_PATH/system/tmp/tmpprint.ps"))
 
+(tm-define (open-auxiliary aux body . opt-master)
+  (let* ((name (string->url (string-append "tmfs://aux/" aux)))
+         (master (if (null? opt-master) (buffer-base-url) (car opt-master))))
+    (buffer-set name body)
+    (buffer-set-base-url name master)
+    (aux-set-document aux (buffer-get name))
+    (aux-set-master aux master)
+    (switch-to-buffer name)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Deprecated functionality
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -191,15 +200,15 @@
   (buffer-get-short-name (current-buffer)))
 
 (tm-define (set-buffer name doc)
-  (deprecated-function "set-buffer" "buffer-revert-tree")
-  (buffer-revert-tree name doc))
+  (deprecated-function "set-buffer" "buffer-set")
+  (buffer-set name doc))
 
 (tm-define (set-buffer-tree name doc)
-  (deprecated-function "set-buffer-tree" "buffer-set-tree")
+  (deprecated-function "set-buffer-tree" "buffer-set")
   (set-buffer-tree name doc))
 
 (tm-define (get-buffer-tree name)
-  (deprecated-function "get-buffer-tree" "buffer-get-tree")
+  (deprecated-function "get-buffer-tree" "buffer-get-body")
   (get-buffer-tree name))
 
 (tm-define (get-name-buffer-path p)

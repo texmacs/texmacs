@@ -155,7 +155,6 @@ url get_base_url_buffer (url name);
 void set_base_url_buffer (url name, url base_name);
 void set_abbr_buffer (url name, string abbr);
 string get_abbr_buffer (url name);
-void revert_buffer (url name, tree doc);
 void new_buffer_in_new_window (url name, tree t, tree geom= "");
 double last_visited (url name);
 bool buffer_modified (url name);
@@ -183,6 +182,7 @@ void set_help_buffer (url name, tree doc);
 void browse_help (int delta);
 void set_buffer_tree (url name, tree doc);
 tree get_buffer_tree (url name);
+tree get_buffer_body (url name);
 
 /* Project management */
 void project_attach (string prj_name= "");

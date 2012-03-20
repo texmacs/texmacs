@@ -5336,9 +5336,9 @@ tmg_buffer_last_visited (tmscm arg1) {
 }
 
 tmscm
-tmg_buffer_set_tree (tmscm arg1, tmscm arg2) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-set-tree");
-  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "buffer-set-tree");
+tmg_buffer_set (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-set");
+  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "buffer-set");
 
   url in1= tmscm_to_url (arg1);
   content in2= tmscm_to_content (arg2);
@@ -5351,8 +5351,8 @@ tmg_buffer_set_tree (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
-tmg_buffer_get_tree (tmscm arg1) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-get-tree");
+tmg_buffer_get (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-get");
 
   url in1= tmscm_to_url (arg1);
 
@@ -5364,18 +5364,16 @@ tmg_buffer_get_tree (tmscm arg1) {
 }
 
 tmscm
-tmg_buffer_revert_tree (tmscm arg1, tmscm arg2) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-revert-tree");
-  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "buffer-revert-tree");
+tmg_buffer_get_body (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-get-body");
 
   url in1= tmscm_to_url (arg1);
-  content in2= tmscm_to_content (arg2);
 
   // TMSCM_DEFER_INTS;
-  revert_buffer (in1, in2);
+  tree out= get_buffer_body (in1);
   // TMSCM_ALLOW_INTS;
 
-  return TMSCM_UNSPECIFIED;
+  return tree_to_tmscm (out);
 }
 
 tmscm
@@ -6416,9 +6414,9 @@ initialize_glue_basic () {
   tmscm_install_procedure ("buffer-modified?",  tmg_buffer_modifiedP, 1, 0, 0);
   tmscm_install_procedure ("buffer-in-menu?",  tmg_buffer_in_menuP, 1, 0, 0);
   tmscm_install_procedure ("buffer-last-visited",  tmg_buffer_last_visited, 1, 0, 0);
-  tmscm_install_procedure ("buffer-set-tree",  tmg_buffer_set_tree, 2, 0, 0);
-  tmscm_install_procedure ("buffer-get-tree",  tmg_buffer_get_tree, 1, 0, 0);
-  tmscm_install_procedure ("buffer-revert-tree",  tmg_buffer_revert_tree, 2, 0, 0);
+  tmscm_install_procedure ("buffer-set",  tmg_buffer_set, 2, 0, 0);
+  tmscm_install_procedure ("buffer-get",  tmg_buffer_get, 1, 0, 0);
+  tmscm_install_procedure ("buffer-get-body",  tmg_buffer_get_body, 1, 0, 0);
   tmscm_install_procedure ("new-buffer",  tmg_new_buffer, 0, 0, 0);
   tmscm_install_procedure ("switch-to-buffer-path",  tmg_switch_to_buffer_path, 1, 0, 0);
   tmscm_install_procedure ("switch-to-buffer",  tmg_switch_to_buffer, 1, 0, 0);

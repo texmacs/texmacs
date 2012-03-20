@@ -280,7 +280,7 @@
     (url->list d)))
 
 (define-public (buffer->tree u)
-  (with t (buffer-get-tree u)
+  (with t (buffer-get-body u)
     (and (tree-active? t) t)))
 
 (define-public (tree->buffer t)

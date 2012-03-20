@@ -450,9 +450,9 @@
   (buffer-modified? buffer_modified (bool url))
   (buffer-in-menu? buffer_in_menu (bool url))
   (buffer-last-visited last_visited (double url))
-  (buffer-set-tree set_buffer_tree (void url content))
-  (buffer-get-tree get_buffer_tree (tree url))
-  (buffer-revert-tree revert_buffer (void url content))
+  (buffer-set set_buffer_tree (void url content))
+  (buffer-get get_buffer_tree (tree url))
+  (buffer-get-body get_buffer_body (tree url))
 
   (new-buffer create_buffer (url))
   (switch-to-buffer-path switch_to_buffer (bool path))

@@ -537,7 +537,8 @@ public:
   friend void   edit_done (editor_rep* ed, modification mod);
   friend string get_editor_status_report ();
   friend void   tm_failure (const char* msg);
-  friend void   revert_buffer (url name, tree doc);
+  friend void   set_buffer_tree (url name, tree doc);
+  friend void   set_base_url_buffer (url name, url base_name);
   friend void   set_aux (string aux, url name);
 };
 

@@ -84,6 +84,14 @@
 	  (else
 	   ((ahash-ref tmfs-handler-table (cons #t 'permission?)) u type)))))
 
+(define-public (tmfs-master u)
+  "Get a master url @u for linking and navigation."
+  (with (class name) (tmfs-decompose-name u)
+    (lazy-tmfs-force class)
+    (cond ((ahash-ref tmfs-handler-table (cons class 'master)) =>
+	   (lambda (handler) (handler name)))
+	  (else u))))
+
 (define-public (tmfs-remote? u)
   "Check whether the url @u is handled remotedly."
   (with (class name) (tmfs-decompose-name u)
@@ -138,12 +146,44 @@
     `(tmfs-handler ,(symbol->string type) 'permission?
                    (lambda (,what ,kind) ,@body))))
 
+(define-public-macro (tmfs-master-handler head . body)
+  (with (type what) head
+    `(tmfs-handler ,(symbol->string type) 'master
+                   (lambda (,what) ,@body))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Example
+;; Simple example
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;(tmfs-load-handler (id what)
-;;  `(document
-;;     (TeXmacs "1.0.6.3")
-;;     (style (tuple "generic"))
-;;     (body (document ,what))))
+(tmfs-load-handler (id what)
+  `(document
+     (TeXmacs ,(texmacs-version))
+     (style (tuple "generic"))
+     (body (document ,what))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Auxiliary buffers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public aux-buffers (make-ahash-table))
+(define-public aux-masters (make-ahash-table))
+
+(tmfs-load-handler (aux name)
+  (or (ahash-ref aux-buffers name)
+      `(document
+         (TeXmacs ,(texmacs-version))
+         (style (tuple "generic"))
+         (body (document "")))))
+
+(tmfs-title-handler (aux name doc)
+  name)
+
+(tmfs-master-handler (aux name)
+  (or (ahash-ref aux-masters name)
+      (string->url (string-append "tmfs://aux/" name))))
+
+(define-public (aux-set-document name doc)
+  (ahash-set! aux-buffers name (tm->stree doc)))
+
+(define-public (aux-set-master name master)
+  (ahash-set! aux-masters name master))

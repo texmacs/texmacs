@@ -158,7 +158,13 @@ void
 set_base_url_buffer (url name, url base_name) {
   int nr= find_buffer (name);
   if (nr == -1) return;
-  bufs[nr]->buf->base_name= base_name;
+  tm_buffer buf= bufs[nr];
+  if (buf->buf->base_name == base_name) return;
+  buf->buf->base_name= base_name;
+  for (int i=0; i<N(buf->vws); i++) {
+    tm_view vw= buf->vws[i];
+    vw->ed->set_base_name (name);
+  }
 }
 
 string
@@ -215,17 +221,31 @@ buffer_modified (url name) {
 void
 set_buffer_tree (url name, tree doc) {
   int nr= find_buffer (name);
-  if (nr == -1) {
-    create_buffer (name, doc);
-    return;
+  if (nr == -1) create_buffer (name, doc);
+  else {
+    tm_buffer buf= bufs[nr];
+    tree body= detach_data (doc, buf->data);
+    if (N(buf->vws)==0) set_document (buf->rp, body);
+    else for (int i=0; i<N(buf->vws); i++) {
+      tm_view vw= buf->vws[i];
+      if (i==0) assign (vw->ed->rp, body);
+      vw->ed->set_data (buf->data);
+      vw->ed->notify_save ();
+    }
   }
-  nr= find_buffer (name);
-  tm_buffer buf= bufs[nr];
-  assign (buf->rp, doc);
 }
 
 tree
 get_buffer_tree (url name) {
+  int nr= find_buffer (name);
+  if (nr == -1) return "";
+  tm_buffer buf= bufs[nr];
+  tree body= subtree (the_et, buf->rp);
+  return attach_data (body, buf->data, true);
+}
+
+tree
+get_buffer_body (url name) {
   int nr= find_buffer (name);
   if (nr == -1) return "";
   tm_buffer buf= bufs[nr];
@@ -277,27 +297,12 @@ create_buffer () {
 }
 
 void
-revert_buffer (url name, tree doc) {
-  int i, nr= find_buffer (name);
-  if (nr == -1) return;
-  tm_buffer buf= bufs[nr];
-  tree body= detach_data (doc, buf->data);
-  if (N(buf->vws)==0) set_document (buf->rp, body);
-  else for (i=0; i<N(buf->vws); i++) {
-    tm_view vw= buf->vws[i];
-    if (i==0) assign (vw->ed->rp, body);
-    vw->ed->set_data (buf->data);
-    vw->ed->notify_save ();
-  }
-}
-
-void
 revert_buffer () {
   tm_buffer buf= get_buffer ();
   web_cache_invalidate (buf->buf->name);
   tree doc= load_tree (buf->buf->name, buf->buf->fm);
   if (doc == "error") set_message ("Error: file not found", "revert buffer");
-  else revert_buffer (buf->buf->name, doc);
+  else set_buffer_tree (buf->buf->name, doc);
 }
 
 void
@@ -422,7 +427,7 @@ void
 set_aux_buffer (string aux, url name, tree doc) {
   int nr= find_buffer (aux);
   if (nr == -1) create_buffer (aux, doc);
-  else revert_buffer (aux, doc);
+  else set_buffer_tree (aux, doc);
   nr= find_buffer (aux);
   if (nr != -1) {
     set_aux (aux, name);
