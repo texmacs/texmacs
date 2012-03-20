@@ -434,32 +434,3 @@ set_aux_buffer (string aux, url name, tree doc) {
     switch_to_buffer (nr);
   }
 }
-
-static string
-get_doc_title (tree t) {
-  if (is_atomic (t)) return "";
-  if (is_compound (t, "doc-title") ||
-      is_compound (t, "tmdoc-title") ||
-      is_compound (t, "tmdoc-title*") ||
-      is_compound (t, "tmweb-title"))
-    return tree_to_verbatim (t[0]);
-  else {
-    for (int i=0; i<N(t); i++) {
-      string r= get_doc_title (t[i]);
-      if (r != "") return r;
-    }
-    return "";
-  }
-}
-
-string
-get_help_title (url name, tree t) {
-  string s= get_doc_title (t);
-  if (s == "") return "Help - " * as_string (tail (name));
-  else return "Help - " * s;
-}
-
-void
-set_help_buffer (url name, tree doc) {
-  set_aux_buffer (get_help_title (name, doc), name, doc);
-}
