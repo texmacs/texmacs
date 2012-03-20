@@ -255,12 +255,6 @@ no_name () {
 }
 
 bool
-buffer_unsaved () {
-  tm_buffer buf= get_buffer ();
-  return buf->needs_to_be_saved ();
-}
-
-bool
 exists_unsaved_buffer () {
   bool flag= false;
   int i, n= N(bufs);

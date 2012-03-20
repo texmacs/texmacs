@@ -121,7 +121,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (safely-kill-buffer)
-  (if (not (buffer-unsaved?)) (kill-buffer)
+  (if (not (buffer-modified? (current-buffer))) (kill-buffer)
       (user-confirm "The buffer has not been saved. Really close it?" #f  
         (lambda (answ) (when answ (kill-buffer))))))
 

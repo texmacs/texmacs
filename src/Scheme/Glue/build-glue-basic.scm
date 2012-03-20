@@ -466,6 +466,12 @@
   (no-name? no_name (bool))
   (aux-buffer? is_aux_buffer (bool url))
 
+  (exists-unsaved-buffer? exists_unsaved_buffer (bool))
+  (texmacs-load-tree load_tree (tree url string))
+  (texmacs-load-buffer load_buffer (void url string int bool))
+  (texmacs-save-buffer save_buffer (void url string))
+  (auto-save auto_save (void))
+
   (open-buffer-in-window new_buffer_in_new_window (void url content content))
   (open-window open_window (url))
   (open-window-geometry open_window (url content))
@@ -484,13 +490,6 @@
   (window->buffer window_to_buffer (url int))
   (window-set-buffer window_set_buffer (void int url))
   (window-focus window_focus (void int))
-
-  (buffer-unsaved? buffer_unsaved (bool))
-  (exists-unsaved-buffer? exists_unsaved_buffer (bool))
-  (texmacs-load-tree load_tree (tree url string))
-  (texmacs-load-buffer load_buffer (void url string int bool))
-  (texmacs-save-buffer save_buffer (void url string))
-  (auto-save auto_save (void))
 
   ;; windows
   (window-handle window_handle (int))

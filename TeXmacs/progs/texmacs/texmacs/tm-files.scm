@@ -233,3 +233,7 @@
 (tm-define (pretend-save-buffer)
   (deprecated-function "pretend-save-buffer" "buffer-pretend-saved")
   (buffer-pretend-saved (current-buffer)))
+
+(tm-define (buffer-unsaved?)
+  (deprecated-function "buffer-unsaved?" "buffer-modified?")
+  (buffer-modified? (current-buffer)))
