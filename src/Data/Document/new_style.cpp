@@ -45,7 +45,7 @@ init_style_data () {
 }
 
 /******************************************************************************
-* Caching style files
+* Caching style files on disk
 ******************************************************************************/
 
 static string
@@ -155,6 +155,7 @@ compute_env_and_drd (tree style) {
 
 hashmap<string,tree>
 get_style_env (tree style) {
+  //cout << "get_style_env " << style << "\n";
   init_style_data ();
   if (sd->style_cached->contains (style))
     return sd->style_cached [style];
@@ -168,6 +169,7 @@ get_style_env (tree style) {
 
 drd_info
 get_style_drd (tree style) {
+  //cout << "get_style_drd " << style << "\n";
   init_style_data ();
   init_std_drd ();
   if (sd->drd_cached->contains (style))

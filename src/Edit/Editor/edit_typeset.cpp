@@ -140,11 +140,10 @@ edit_typeset_rep::typeset_style_use_cache (tree style) {
   if (!ok) {
     //cout << "Typeset without cache " << style << LF;
     if (!is_tuple (style)) FAILED ("tuple expected as style");
-    tree t (USE_PACKAGE, A (style));
-    env->exec (t);
-    env->read_env (H);
-    drd->heuristic_init (H);
+    H= get_style_env (style);
+    drd= get_style_drd (style);
     style_set_cache (style, H, drd->get_locals ());
+    env->read_env (H);
   }
   use_modules (env->read (THE_MODULES));
 }

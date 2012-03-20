@@ -54,11 +54,11 @@ get_init_environment (tree doc, drd_info& drd) {
     drd->set_environment (H);
   }
   if (!ok) {
-    ASSERT (is_tuple (style), "tuple expected as style");
-    tree t (USE_PACKAGE, A (style));
-    env->exec (t);
+    if (!is_tuple (style)) FAILED ("tuple expected as style");
+    H= get_style_env (style);
+    drd= get_style_drd (style);
+    style_set_cache (style, H, drd->get_locals ());
     env->read_env (H);
-    drd->heuristic_init (H);
   }
   use_modules (env->read (THE_MODULES));
   // FIXME: extract (doc, "init")
