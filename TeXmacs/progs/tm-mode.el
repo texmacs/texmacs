@@ -55,7 +55,8 @@
     user-ask
     tab form item meti
     $when $let $let* $for
-    tmfs-load-handler tmfs-save-handler))
+    tmfs-load-handler tmfs-save-handler
+    tmfs-name-handler tmfs-permission-handler))
 
 (setq unary-definitions
   '(define define-public define-macro define-public-macro

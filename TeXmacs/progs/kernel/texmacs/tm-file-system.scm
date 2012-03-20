@@ -123,17 +123,27 @@
     `(tmfs-handler ,(symbol->string type) 'load
                    (lambda (,what) ,@body))))
 
+(define-public-macro (tmfs-save-handler head . body)
+  (with (type what doc) head
+    `(tmfs-handler ,(symbol->string type) 'save
+                   (lambda (,what ,doc) ,@body))))
+
 (define-public-macro (tmfs-name-handler head . body)
   (with (type what) head
     `(tmfs-handler ,(symbol->string type) 'name
                    (lambda (,what) ,@body))))
 
+(define-public-macro (tmfs-permission-handler head . body)
+  (with (type what kind) head
+    `(tmfs-handler ,(symbol->string type) 'permission?
+                   (lambda (,what ,kind) ,@body))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Example
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tmfs-load-handler (id what)
-  `(document
-     (TeXmacs "1.0.6.3")
-     (style (tuple "generic"))
-     (body (document ,what))))
+;;(tmfs-load-handler (id what)
+;;  `(document
+;;     (TeXmacs "1.0.6.3")
+;;     (style (tuple "generic"))
+;;     (body (document ,what))))
