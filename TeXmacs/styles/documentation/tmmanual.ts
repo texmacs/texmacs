@@ -1,11 +1,11 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.7.15>
 
 <style|source>
 
 <\body>
   <\active*>
     <\src-title>
-      <src-style-file|tmdoc|1.0>
+      <src-style-file|tmmanual|1.0>
 
       <\src-purpose>
         Style for the <TeXmacs> manual(s).
@@ -16,11 +16,10 @@
       </src-copyright>
 
       <\src-license>
-        This software falls under the <hlink|GNU general public
-        license, version 3 or later|$TEXMACS_PATH/LICENSE>.
-        It comes WITHOUT ANY WARRANTY WHATSOEVER.
-        You should have received a copy of the license which the software.
-        If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
+        This software falls under the <hlink|GNU general public license,
+        version 3 or later|$TEXMACS_PATH/LICENSE>. It comes WITHOUT ANY
+        WARRANTY WHATSOEVER. You should have received a copy of the license
+        which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
       </src-license>
     </src-title>
   </active*>

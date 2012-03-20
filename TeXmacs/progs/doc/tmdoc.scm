@@ -110,22 +110,16 @@
 	 (lan (and init (tmdoc-search-env-var (cadr init) "language"))))
     (if lan lan "english")))
 
-(define (tmdoc-get-aux-title doc)
-  (cond ((or (nlist? doc) (null? doc)) doc)
-	((func? (car doc) 'title) (car doc))
-	(else (tmdoc-get-aux-title (cdr doc)))))
-
-(define (tmdoc-get-aux-body doc)
-  (cond ((or (nlist? doc) (null? doc)) doc)
-	((func? (car doc) 'title) (cdr doc))
-	(else (tmdoc-get-aux-body (cdr doc)))))
-
 (define (tmdoc-add-aux doc)
-  (cons* 'document
-	 (tmdoc-get-aux-title doc)
-	 '(table-of-contents toc (document ""))
-	 (rcons (tmdoc-get-aux-body doc)
-		'(the-index idx (document "")))))
+  (let* ((l0 (cdr doc))
+         (i  (list-find-index l0 (lambda (x) (func? x 'title))))
+         (l1 (if i (sublist l0 0 (+ i 1)) '()))
+         (l2 (if i (sublist l0 (+ i 1) (length l0)) l0)))
+    `(document
+       ,@l1
+       (table-of-contents "toc" (document ""))
+       ,@l2
+       (the-index "idx" (document "")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User interface
