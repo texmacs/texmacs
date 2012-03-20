@@ -310,7 +310,7 @@
 
 (define (build-navigation-page-sub style l)
   (with doc (navigation-list->document style l)
-    (set-aux-buffer "Link page" "Link page" doc)))
+    (open-auxiliary "Link page" doc)))
 
 (define (build-navigation-page l)
   (let* ((style (tree->stree (get-style-tree)))

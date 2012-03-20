@@ -42,18 +42,19 @@
 ;; Locus and environment pages
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (build-locus-page-sub name style l enum?)
+(define (build-locus-page-sub base name style l enum?)
   (let* ((ids (map (cut list 'id <>) (filter-map locus-id l)))
 	 (loci (if (null? ids) '("No loci") (map automatic-link ids)))
 	 (body (if enum? (build-enumeration loci) loci))
 	 (doc `(document (style ,style) (body (document ,@body)))))
-    (set-aux-buffer name name doc)))
+    (open-auxiliary name doc base)))
 
 (tm-define (build-locus-page)
-  (let* ((name (string-append (buffer-get-short-name (current-buffer)) " - loci"))
+  (let* ((base (current-buffer))
+         (name (string-append (buffer-get-short-name base) " - loci"))
 	 (style (tree->stree (get-style-tree)))
 	 (l (tree-search (buffer-tree) (cut tm-func? <> 'locus))))
-    (build-locus-page-sub name style l #t)))
+    (build-locus-page-sub base name style l #t)))
 
 (tm-define (build-environment-page env)
   (:synopsis "Build page with environments of type @env in current buffer.")
@@ -85,4 +86,4 @@
 	 (l (map (lambda (x) `(hlink ,x ,x)) cl))
 	 (body (if (null? l) '("No linked files") l))
 	 (doc `(document (style ,style) (body (document ,@body)))))
-    (set-aux-buffer name name doc)))
+    (open-auxiliary name doc)))
