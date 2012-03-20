@@ -402,36 +402,3 @@ switch_to_active_buffer (url name) {
   }
   switch_to_buffer (name);
 }
-
-/******************************************************************************
-* Auxiliary buffers and help buffers
-******************************************************************************/
-
-void
-set_aux (string aux, url name) {
-  int i, nr= find_buffer (aux);
-  if (nr != -1) {
-    tm_buffer buf= bufs[nr];
-    buf->buf->base_name= name;
-    if (starts (aux, "Help - ")) {
-      buf->buf->fm= "help";
-      buf->buf->read_only= true;
-    }
-    for (i=0; i<N(buf->vws); i++) {
-      tm_view vw= buf->vws[i];
-      vw->ed->set_base_name (name);
-    }
-  }
-}
-
-void
-set_aux_buffer (string aux, url name, tree doc) {
-  int nr= find_buffer (aux);
-  if (nr == -1) create_buffer (aux, doc);
-  else set_buffer_tree (aux, doc);
-  nr= find_buffer (aux);
-  if (nr != -1) {
-    set_aux (aux, name);
-    switch_to_buffer (nr);
-  }
-}
