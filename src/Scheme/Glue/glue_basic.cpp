@@ -5405,6 +5405,19 @@ tmg_buffer_in_menuP (tmscm arg1) {
 }
 
 tmscm
+tmg_buffer_pretend_saved (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-pretend-saved");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  pretend_buffer_saved (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_new_buffer () {
   // TMSCM_DEFER_INTS;
   url out= create_buffer ();
@@ -5665,15 +5678,6 @@ tmg_window_focus (tmscm arg1) {
 
   // TMSCM_DEFER_INTS;
   window_focus (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return TMSCM_UNSPECIFIED;
-}
-
-tmscm
-tmg_pretend_save_buffer () {
-  // TMSCM_DEFER_INTS;
-  pretend_save_buffer ();
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;
@@ -6391,6 +6395,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("buffer-last-visited",  tmg_buffer_last_visited, 1, 0, 0);
   tmscm_install_procedure ("buffer-modified?",  tmg_buffer_modifiedP, 1, 0, 0);
   tmscm_install_procedure ("buffer-in-menu?",  tmg_buffer_in_menuP, 1, 0, 0);
+  tmscm_install_procedure ("buffer-pretend-saved",  tmg_buffer_pretend_saved, 1, 0, 0);
   tmscm_install_procedure ("new-buffer",  tmg_new_buffer, 0, 0, 0);
   tmscm_install_procedure ("switch-to-buffer-path",  tmg_switch_to_buffer_path, 1, 0, 0);
   tmscm_install_procedure ("switch-to-buffer",  tmg_switch_to_buffer, 1, 0, 0);
@@ -6415,7 +6420,6 @@ initialize_glue_basic () {
   tmscm_install_procedure ("window->buffer",  tmg_window_2buffer, 1, 0, 0);
   tmscm_install_procedure ("window-set-buffer",  tmg_window_set_buffer, 2, 0, 0);
   tmscm_install_procedure ("window-focus",  tmg_window_focus, 1, 0, 0);
-  tmscm_install_procedure ("pretend-save-buffer",  tmg_pretend_save_buffer, 0, 0, 0);
   tmscm_install_procedure ("buffer-unsaved?",  tmg_buffer_unsavedP, 0, 0, 0);
   tmscm_install_procedure ("exists-unsaved-buffer?",  tmg_exists_unsaved_bufferP, 0, 0, 0);
   tmscm_install_procedure ("texmacs-load-tree",  tmg_texmacs_load_tree, 2, 0, 0);

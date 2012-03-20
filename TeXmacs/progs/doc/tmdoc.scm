@@ -195,7 +195,7 @@
   (delayed-update "(pass 1/3)" (lambda ()
   (delayed-update "(pass 2/3)" (lambda ()
   (delayed-update "(pass 3/3)" (lambda ()
-  (pretend-save-buffer)
+  (buffer-pretend-saved (current-buffer))
   (system-wait "Finishing manual" "(soon ready)"))))))))))
 
 (tm-define (tmdoc-expand-this level)

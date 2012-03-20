@@ -162,6 +162,7 @@ tree get_buffer_body (url name);
 void new_buffer_in_new_window (url name, tree t, tree geom= "");
 double last_visited (url name);
 bool buffer_modified (url name);
+void pretend_buffer_saved (url name);
 
 /* Buffer management */
 int  nr_bufs ();
@@ -201,6 +202,5 @@ void save_buffer (url name, string fm);
 void auto_save ();
 bool buffer_unsaved ();
 bool exists_unsaved_buffer ();
-void pretend_save_buffer ();
 
 #endif // defined SERVER_H

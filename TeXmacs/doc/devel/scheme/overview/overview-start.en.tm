@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.0.7.15>
 
 <style|tmdoc>
 
@@ -82,12 +82,12 @@
 
     \ \ \ \ \ \ (init-style "article")
 
-    \ \ \ \ \ \ (pretend-save-buffer)))
+    \ \ \ \ \ \ (buffer-pretend-saved (current-buffer))))
   </scm-code>
 
   Notice that the check <verbatim|(no-name?)> is important: when omitted, the
   styles of existing documents would also be changed to <tmstyle|article>.
-  The command <scm|(pretend-save-buffer)> is used in order to avoid <TeXmacs>
+  The function <scm|buffer-pretend-saved> is used in order to avoid <TeXmacs>
   to complain about unsaved documents when leaving <TeXmacs> without changing
   the document.
 

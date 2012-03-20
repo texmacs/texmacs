@@ -229,3 +229,7 @@
 (tm-define (set-name-buffer name)
   (deprecated-function "set-name-buffer" "buffer-rename")
   (buffer-rename (current-buffer) name))
+
+(tm-define (pretend-save-buffer)
+  (deprecated-function "pretend-save-buffer" "buffer-pretend-saved")
+  (buffer-pretend-saved (current-buffer)))

@@ -220,19 +220,33 @@ buffer_modified (url name) {
 }
 
 void
+pretend_buffer_saved (url name) {
+  int nr= find_buffer (name);
+  if (nr == -1) return;
+  tm_buffer buf= bufs[nr];
+  for (int i=0; i<N(buf->vws); i++)
+    buf->vws[i]->ed->notify_save ();
+}
+
+void
+set_buffer_data (url name, new_data data) {
+  int nr= find_buffer (name);
+  if (nr == -1) return;
+  tm_buffer buf= bufs[nr];
+  for (int i=0; i<N(buf->vws); i++)
+    buf->vws[i]->ed->set_data (data);
+}
+
+void
 set_buffer_tree (url name, tree doc) {
   int nr= find_buffer (name);
   if (nr == -1) create_buffer (name, doc);
   else {
     tm_buffer buf= bufs[nr];
     tree body= detach_data (doc, buf->data);
-    if (N(buf->vws)==0) set_document (buf->rp, body);
-    else for (int i=0; i<N(buf->vws); i++) {
-      tm_view vw= buf->vws[i];
-      if (i==0) assign (vw->ed->rp, body);
-      vw->ed->set_data (buf->data);
-      vw->ed->notify_save ();
-    }
+    assign (buf->rp, body);
+    set_buffer_data (name, buf->data);
+    pretend_buffer_saved (name);
   }
 }
 
@@ -255,6 +269,7 @@ set_buffer_body (url name, tree body) {
   else {
     tm_buffer buf= bufs[nr];
     assign (buf->rp, body);
+    pretend_buffer_saved (name);
   }
 }
 

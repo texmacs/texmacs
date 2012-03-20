@@ -203,7 +203,7 @@ save_buffer (url u, string fm) {
         if (no_name () && exists (get_this_buffer ()))
           remove (get_this_buffer ());
         rename_buffer (buf->buf->name, u);
-        pretend_save_buffer ();
+        pretend_buffer_saved (u);
         if (suffix (u) == "ts") get_server () -> style_clear_cache ();
         if ((fm == "generic") || (fm == "texmacs"))
           if (!no_name ())

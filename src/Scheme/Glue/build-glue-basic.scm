@@ -455,6 +455,7 @@
   (buffer-last-visited last_visited (double url))
   (buffer-modified? buffer_modified (bool url))
   (buffer-in-menu? buffer_in_menu (bool url))
+  (buffer-pretend-saved pretend_buffer_saved (void url))
 
   (new-buffer create_buffer (url))
   (switch-to-buffer-path switch_to_buffer (bool path))
@@ -484,7 +485,6 @@
   (window-set-buffer window_set_buffer (void int url))
   (window-focus window_focus (void int))
 
-  (pretend-save-buffer pretend_save_buffer (void))
   (buffer-unsaved? buffer_unsaved (bool))
   (exists-unsaved-buffer? exists_unsaved_buffer (bool))
   (texmacs-load-tree load_tree (tree url string))

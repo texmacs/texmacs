@@ -54,7 +54,7 @@
 (tm-define (remote-save u what)
   (with-server (tmfs-server)
     (when (remote-request `(tmfs-save ,(url->name u) ,what))
-      (pretend-save-buffer))))
+      (buffer-pretend-saved (current-buffer)))))
 
 (tm-define (remote-title u doc)
   (with-server (tmfs-server)
