@@ -39,6 +39,7 @@ load_tree (url u, string fm) {
     set_message (concat ("Error: file ", vname, " not found"), action);
     return "error";
   }
+  if (fm == "texmacs" && starts (s, "(")) fm= "generic";
   if (fm == "generic" || fm == "help") fm= get_format (s, suf);
   tree t= generic_to_tree (s, fm * "-document");
   tree links= extract (t, "links");

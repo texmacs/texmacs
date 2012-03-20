@@ -324,4 +324,4 @@
 (tm-define (focus-help)
   (lazy-initialize-force)
   (cursor-history-add (cursor-path))
-  (set-help-buffer "Contextual help" (focus-doc (focus-tree))))
+  (open-auxiliary "Contextual help" (focus-doc (focus-tree))))
