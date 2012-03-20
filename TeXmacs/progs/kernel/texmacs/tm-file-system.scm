@@ -61,15 +61,15 @@
 	   (lambda (handler) (handler name (string->object what))))
 	  (else ((ahash-ref tmfs-handler-table (cons #t 'save)) u what)))))
 
-(define-public (tmfs-name u)
-  "Get a nice name for url @u on TeXmacs file system."
+(define-public (tmfs-title u doc)
+  "Get a nice title for url @u on TeXmacs file system."
   (with (class name) (tmfs-decompose-name u)
     (lazy-tmfs-force class)
-    (cond ((ahash-ref tmfs-handler-table (cons class 'name)) =>
-	   (lambda (handler) (handler name)))
+    (cond ((ahash-ref tmfs-handler-table (cons class 'title)) =>
+	   (lambda (handler) (handler name doc)))
 	  ((ahash-ref tmfs-handler-table (cons class 'load))
 	   (if (url? u) (url->string u) u))
-	  (else ((ahash-ref tmfs-handler-table (cons #t 'name)) u)))))
+	  (else ((ahash-ref tmfs-handler-table (cons #t 'title)) u doc)))))
 
 (define-public (tmfs-permission? u type)
   "Check whether we have the permission of a given @type for the url @u."
@@ -128,10 +128,10 @@
     `(tmfs-handler ,(symbol->string type) 'save
                    (lambda (,what ,doc) ,@body))))
 
-(define-public-macro (tmfs-name-handler head . body)
-  (with (type what) head
-    `(tmfs-handler ,(symbol->string type) 'name
-                   (lambda (,what) ,@body))))
+(define-public-macro (tmfs-title-handler head . body)
+  (with (type what doc) head
+    `(tmfs-handler ,(symbol->string type) 'title
+                   (lambda (,what ,doc) ,@body))))
 
 (define-public-macro (tmfs-permission-handler head . body)
   (with (type what kind) head

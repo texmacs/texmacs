@@ -96,7 +96,7 @@ find_buffer (url name) {
 ******************************************************************************/
 
 string
-new_menu_name (url u) {
+new_menu_name (url u, tree doc) {
   string name= as_string (tail (u));
   if (starts (name, "no_name_") && ends (name, ".tm")) {
     string no_name= translate ("No name");
@@ -110,7 +110,7 @@ new_menu_name (url u) {
   if ((name == "") || (name == "."))
     name= as_string (u);
   if (is_rooted_tmfs (u))
-    name= as_string (call ("tmfs-name", as_string (u)));
+    name= as_string (call ("tmfs-title", as_string (u), object (doc)));
 
   int i, j;
   for (j=1; true; j++) {
@@ -143,7 +143,8 @@ rename_buffer (url name, url new_name) {
   if (nr == -1) return;
   tm_buffer buf= bufs[nr];
   buf->buf->name= new_name;
-  set_abbr_buffer (new_name, new_menu_name (new_name));
+  tree doc= subtree (the_et, buf->rp);
+  set_abbr_buffer (new_name, new_menu_name (new_name, doc));
 }
 
 url
@@ -214,7 +215,10 @@ buffer_modified (url name) {
 void
 set_buffer_tree (url name, tree doc) {
   int nr= find_buffer (name);
-  if (nr == -1) create_buffer (name, tree (DOCUMENT, ""));
+  if (nr == -1) {
+    create_buffer (name, doc);
+    return;
+  }
   nr= find_buffer (name);
   tm_buffer buf= bufs[nr];
   assign (buf->rp, doc);
@@ -237,7 +241,7 @@ create_buffer (url name) {
   int nr= find_buffer (name);
   if (nr != -1) return bufs[nr];
   tm_buffer buf= tm_new<tm_buffer_rep> (name);
-  buf->buf->abbr= new_menu_name (name);
+  buf->buf->abbr= new_menu_name (name, tree (DOCUMENT, ""));
   bufs << buf;
   return buf;
 }
@@ -246,8 +250,10 @@ tm_buffer
 create_buffer (url name, tree doc) {
   int nr= find_buffer (name);
   if (nr != -1) return bufs[nr];
-  tm_buffer buf= create_buffer (name);
+  tm_buffer buf= tm_new<tm_buffer_rep> (name);
   tree body= detach_data (doc, buf->data);
+  buf->buf->abbr= new_menu_name (name, body);
+  bufs << buf;
   set_document (buf->rp, body);
   if (buf->data->project != "") {
     url prj_name= head (name) * as_string (buf->data->project);

@@ -106,7 +106,7 @@
  	  (else
  	   (docgrep what "$TEXMACS_DOC_PATH" "*.en.tm")))))
 
-(tmfs-name-handler (grep query)
+(tmfs-title-handler (grep query doc)
   (with what (query-ref query "what")
     (string-append "Help - Search results for ``" what "''")))
 

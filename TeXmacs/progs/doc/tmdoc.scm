@@ -33,24 +33,26 @@
 ;; Main expansions routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmdoc-branch x base-name level done)
+(define (tmdoc-branch x root cur level done)
   (let* ((name (caddr x))
-	 (rel-name (url-relative base-name name)))
-    (tmdoc-expand rel-name level done)))
+	 (rel-name (url-relative cur name)))
+    (tmdoc-expand root rel-name level done)))
 
-(define (tmdoc-substitute-sub l base-name)
+(define (tmdoc-substitute-sub l root cur)
   (if (null? l) l
-      (cons (tmdoc-substitute (car l) base-name)
-	    (tmdoc-substitute-sub (cdr l) base-name))))
+      (cons (tmdoc-substitute (car l) root cur)
+	    (tmdoc-substitute-sub (cdr l) root cur))))
 
-(define (tmdoc-substitute x base-name)
-  (cond ((match? x '(hyper-link :%1))
-	 (list 'hyper-link (cadr x)
-	       (url->string (url-relative base-name (caddr x)))))
-	((list? x) (cons (car x) (tmdoc-substitute-sub (cdr x) base-name)))
+(define (tmdoc-substitute x root cur)
+  (cond ((or (match? x '(hlink :%2)) (match? x '(hyper-link :%2)))
+         (let* ((u1 (url-relative cur (caddr x)))
+                (u2 (url-delta root u1)))
+           ;;(display* root ", " cur ", " (caddr x) " -> " u2 "\n")
+           (list (car x) (cadr x) (url->string u2))))
+	((list? x) (cons (car x) (tmdoc-substitute-sub (cdr x) root cur)))
 	(else x)))
 
-(define (tmdoc-rewrite-one x base-name the-level done)
+(define (tmdoc-rewrite-one x root cur the-level done)
   (let* ((omit? (list? the-level))
 	 (level (if omit? (car the-level) the-level)))
     (cond ((or (func? x 'tmdoc-title) (func? x 'tmdoc-title*))
@@ -58,38 +60,38 @@
 	  ((func? x 'tmdoc-license)
 	   '(document))
 	  ((func? x 'traverse)
-	   (cons 'document (tmdoc-rewrite (cdadr x) base-name level done)))
+	   (cons 'document (tmdoc-rewrite (cdadr x) root cur level done)))
 	  ((match? x '(branch :%2))
-	   (tmdoc-branch x base-name (tmdoc-down level) done))
+	   (tmdoc-branch x root cur (tmdoc-down level) done))
 	  ((match? x '(continue :%2))
-	   (tmdoc-branch x base-name (list level) done))
+	   (tmdoc-branch x root cur (list level) done))
 	  ((match? x '(extra-branch :%2))
-	   (tmdoc-branch x base-name 'appendix done))
+	   (tmdoc-branch x root cur 'appendix done))
 	  ((match? x '(tmdoc-copyright :*))
 	   '(document))
-	  (else (tmdoc-substitute x base-name)))))
+	  (else (tmdoc-substitute x root cur)))))
 
-(define (tmdoc-rewrite l base-name level done)
+(define (tmdoc-rewrite l root cur level done)
   (if (null? l) l
-      (let ((d1 (tmdoc-rewrite-one (car l) base-name level done))
-	    (d2 (tmdoc-rewrite (cdr l) base-name level done)))
+      (let ((d1 (tmdoc-rewrite-one (car l) root cur level done))
+	    (d2 (tmdoc-rewrite (cdr l) root cur level done)))
 	(if (func? d1 'document) (append (cdr d1) d2) (cons d1 d2)))))
 
-(define (tmdoc-expand file-name level . opts)
-  ;;(display* "tmdoc-expand " file-name "\n")
+(define (tmdoc-expand root cur level . opts)
+  ;;(display* "tmdoc-expand " cur "\n")
   (let* ((done (if (null? opts) (make-ahash-table) (car opts)))
-	 (done? (ahash-ref done file-name)))
-    (ahash-set! done file-name #t)
+	 (done? (ahash-ref done cur)))
+    (ahash-set! done cur #t)
     (if done?
 	'(document "")
-	(with t (tree->stree (texmacs-load-tree file-name "texmacs"))
+	(with t (tree->stree (texmacs-load-tree cur "texmacs"))
 	  (if (string? t)
 	      (begin
-		(display* "TeXmacs] bad link or file " file-name "\n")
+		(display* "TeXmacs] bad link or file " cur "\n")
 		'(document ""))
 	      (with u (cadr (assoc 'body (cdr t)))
 		(cons 'document
-		      (tmdoc-rewrite (cdr u) file-name level done))))))))
+		      (tmdoc-rewrite (cdr u) root cur level done))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Further subroutines
@@ -129,23 +131,60 @@
 ;; User interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (tmdoc-expand-help file-name level)
-  (if (== level 'title)
-      (let* ((body (tmdoc-expand file-name level))
-	     (lan (tmdoc-language file-name))
-	     (doc `(document
-		    (style "tmmanual")
-		    (body ,(tmdoc-add-aux body))
-		    (initial (collection (associate "language" ,lan)
-					 (associate "page-medium" "paper"))))))
-	(set-help-buffer file-name (stree->tree doc)))
-      (let* ((body (tmdoc-expand file-name level))
-	     (lan (tmdoc-language file-name))
-	     (doc `(document
-		    (style "tmdoc")
-		    (body ,body)
-		    (initial (collection (associate "language" ,lan))))))
-	(set-help-buffer file-name (stree->tree doc)))))
+(tmfs-load-handler (help name)
+  (let* ((i (string-index name #\/))
+         (n (string-length name))
+         (level (string->symbol (if i (substring name 0 i) "section")))
+         (root (string->url (if i (substring name i n) name))))
+    (cond ((not (url-exists? root))
+           `(document
+              (TeXmacs ,(texmacs-version))
+              (style "tmdoc")
+              (body (document "Broken link."))))
+          ((== level 'title)
+           (let* ((body (tmdoc-expand root root level))
+                  (lan (tmdoc-language root)))
+             (tm->stree
+              `(document
+                 (TeXmacs ,(texmacs-version))
+                 (style "tmmanual")
+                 (body ,(tmdoc-add-aux body))
+                 (initial (collection (associate "language" ,lan)
+                                      (associate "page-medium" "paper")))))))
+          (else
+           (let* ((body (tmdoc-expand root root level))
+                  (lan (tmdoc-language root)))
+             (tm->stree
+              `(document
+                 (TeXmacs ,(texmacs-version))
+                 (style "tmdoc")
+                 (body ,body)
+                 (initial (collection (associate "language" ,lan))))))))))
+
+(define (tmdoc-find-title-list l)
+  (and (nnull? l)
+       (or (tmdoc-find-title (car l))
+           (tmdoc-find-title-list (cdr l)))))
+
+(tm-define (tmdoc-find-title doc)
+  (cond ((tm-atomic? doc) #f)
+        ((tm-in? doc '(doc-title tmdoc-title tmdoc-title* tmweb-title))
+         (with title (cpp-texmacs->verbatim (tm-ref doc 0) #f "default")
+           (string-append "Help - " title)))
+        (else (tmdoc-find-title-list (tm-children doc)))))
+
+(tmfs-title-handler (help name doc)
+  (or (tmdoc-find-title doc)
+      (string-append "tmfs://help/" (url->string name))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; User interface
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tmdoc-expand-help root level)
+  (load-buffer (string-append "tmfs://help/"
+                              (symbol->string level) "/"
+                              (url->string root))))
 
 (tm-define (delayed-update nr cont)
   (system-wait "Generating automatic content" nr)
@@ -153,9 +192,9 @@
   (update-buffer)
   (user-delayed cont))
 
-(tm-define (tmdoc-expand-help-manual file-name)
+(tm-define (tmdoc-expand-help-manual root)
   (system-wait "Generating manual" "(can be long)")
-  (tmdoc-expand-help file-name 'title)
+  (tmdoc-expand-help root 'title)
   (user-delayed (lambda ()
   (delayed-update "(pass 1/3)" (lambda ()
   (delayed-update "(pass 2/3)" (lambda ()
@@ -172,7 +211,8 @@
 	(else (cons (tmdoc-remove-hyper-links (car l))
 		    (tmdoc-remove-hyper-links (cdr l))))))
 
-(tm-define (tmdoc-include file-name)
-  (let* ((body (tmdoc-expand (tree->string file-name) 'chapter))
+(tm-define (tmdoc-include incl)
+  (let* ((root (tree->string incl))
+         (body (tmdoc-expand root root 'chapter))
 	 (filt (list-filter body (lambda (x) (not (func? x 'chapter))))))
     (stree->tree (tmdoc-remove-hyper-links filt))))

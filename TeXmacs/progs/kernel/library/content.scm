@@ -62,6 +62,9 @@
 (define-public (tm-cdr x)
   (cdr (if (pair? x) x (tree->list x))))
 
+(define-public (tm-children x)
+  (if (pair? x) (cdr x) (tree-children x)))
+
 (define-public (tm-range x from to)
   (cond ((string? x) (substring x from to))
 	((list? x) (cons (car x) (sublist (cdr x) from to)))

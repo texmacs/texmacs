@@ -41,7 +41,7 @@
 	       (file (url->name u)))
       (new-buffer)
       (buffer-rename u)
-      (buffer-set-short-name u (remote-name u))
+      (buffer-set-short-name u (remote-title u ""))
       (set-style-tree style)
       (remote-request `(tmfs-set-properties ,file project ,@prjs))
       (when (nnull? prjs)
@@ -56,9 +56,9 @@
     (when (remote-request `(tmfs-save ,(url->name u) ,what))
       (pretend-save-buffer))))
 
-(tm-define (remote-name u)
+(tm-define (remote-title u doc)
   (with-server (tmfs-server)
-    (remote-request `(tmfs-name ,(url->name u)))))
+    (remote-request `(tmfs-title ,(url->name u) ,(tm->stree doc)))))
 
 (tm-define (remote-permission? u prop)
   (with-server (tmfs-server)
