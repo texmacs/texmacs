@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.0.7.15>
 
 <style|tmdoc>
 
@@ -32,7 +32,7 @@
     each row. On the right-hand side, we have shown the result after
     evaluation.
 
-    <\big-figure|<small|<with|prog-scripts|maxima|<calc-table|simple1|<numeric-dot-table|<tformat|<cwith|1|-1|1|-1|cell-width|5em>|<cwith|1|-1|1|-1|cell-hmode|max>|<table|<row|<cell|<cell-inert|a1|1>>|<cell|<cell-inert|a2|10>>|<cell|<cell-inert|a3|=a1+a2>>>|<row|<cell|<cell-inert|b1|100>>|<cell|<cell-inert|b2|1000>>|<cell|<cell-inert|b3|=b1+b2>>>>>>><space|2em><calc-table|simple2|<numeric-dot-table|<tformat|<cwith|1|-1|1|-1|cell-width|5em>|<cwith|1|-1|1|-1|cell-hmode|max>|<table|<row|<cell|<cell-inert|a1|1>>|<cell|<cell-inert|a2|10>>|<cell|<cell-output|a3|=a1+a2|<math|11>>>>|<row|<cell|<cell-inert|b1|100>>|<cell|<cell-inert|b2|1000>>|<cell|<cell-output|b3|=b1+b2|<math|1100>>>>>>>>>>>
+    <\big-figure|<small|<with|prog-scripts|maxima|<calc-table|simple1|<numeric-dot-table|<tformat|<cwith|1|-1|1|-1|cell-width|5em>|<cwith|1|-1|1|-1|cell-hmode|max>|<table|<row|<cell|<cell-inert|a1|1>>|<cell|<cell-inert|b1|10>>|<cell|<cell-inert|c1|=a1+b1>>>|<row|<cell|<cell-inert|a2|100>>|<cell|<cell-inert|b2|1000>>|<cell|<cell-inert|c2|=a2+b2>>>>>>><space|2em><calc-table|simple2|<numeric-dot-table|<tformat|<cwith|1|-1|1|-1|cell-width|5em>|<cwith|1|-1|1|-1|cell-hmode|max>|<table|<row|<cell|<cell-inert|a1|1>>|<cell|<cell-inert|b1|10>>|<cell|<cell-output|c1|=a1+b1|<math|11>>>>|<row|<cell|<cell-inert|a2|100>>|<cell|<cell-inert|b2|1000>>|<cell|<cell-output|c2|=a2+b2|<math|1100>>>>>>>>>>>
       Evaluation of a simple spreadsheet.
     </big-figure>
   </example>
@@ -43,10 +43,10 @@
     instance, the figure below demonstrates another possible use of
     <name|Maxima>.
 
-    <\big-figure|<small|<with|prog-scripts|maxima|<calc-table|derivatives1|<textual-table|<tformat|<cwith|1|-1|1|1|cell-width|15em>|<cwith|1|-1|1|1|cell-hmode|max>|<table|<row|<cell|<cell-inert|a1|<math|sin<around*|(|x<rsup|2>|)>>>>>|<row|<cell|<cell-inert|b1|=diff(a1,x)>>>|<row|<cell|<cell-inert|c1|=diff(b1,x)>>>|<row|<cell|<cell-inert|d1|=diff(c1,x)>>>>>>><space|2em><calc-table|derivatives2|<textual-table|<tformat|<cwith|1|-1|1|1|cell-width|15em>|<cwith|1|-1|1|1|cell-hmode|max>|<table|<row|<cell|<cell-inert|a1|<math|sin<around*|(|x<rsup|2>|)>>>>>|<row|<cell|<cell-output|b1|=diff(a1,x)|<math|2*x*cos
-    <around*|(|x<rsup|2>|)>>>>>|<row|<cell|<cell-output|c1|=diff(b1,x)|<math|2*cos
+    <\big-figure|<small|<with|prog-scripts|maxima|<calc-table|derivatives1|<textual-table|<tformat|<cwith|1|-1|1|1|cell-width|15em>|<cwith|1|-1|1|1|cell-hmode|max>|<table|<row|<cell|<cell-inert|a1|<math|sin<around*|(|x<rsup|2>|)>>>>>|<row|<cell|<cell-inert|a2|=diff(a1,x)>>>|<row|<cell|<cell-inert|a3|=diff(a2,x)>>>|<row|<cell|<cell-inert|a4|=diff(a3,x)>>>>>>><space|2em><calc-table|derivatives2|<textual-table|<tformat|<cwith|1|-1|1|1|cell-width|15em>|<cwith|1|-1|1|1|cell-hmode|max>|<table|<row|<cell|<cell-inert|a1|<math|sin<around*|(|x<rsup|2>|)>>>>>|<row|<cell|<cell-output|a2|=diff(a1,x)|<math|2*x*cos
+    <around*|(|x<rsup|2>|)>>>>>|<row|<cell|<cell-output|a3|=diff(a2,x)|<math|2*cos
     <around*|(|x<rsup|2>|)>-4*x<rsup|2>*sin
-    <around*|(|x<rsup|2>|)>>>>>|<row|<cell|<cell-output|d1|=diff(c1,x)|<math|-12*x*sin
+    <around*|(|x<rsup|2>|)>>>>>|<row|<cell|<cell-output|a4|=diff(a3,x)|<math|-12*x*sin
     <around*|(|x<rsup|2>|)>-8*x<rsup|3>*cos
     <around*|(|x<rsup|2>|)>>>>>>>>>>>>
       Computation of successive derivatives using <name|Maxima>.
@@ -67,7 +67,7 @@
     The figure below shows an example on how to use taking sums of cells.
     Notice that empty cells count for zero.
 
-    <\big-figure|<small|<with|prog-scripts|maxima|<calc-table|sum1|<numeric-dot-table|<tformat|<cwith|1|-1|1|-1|cell-width|5em>|<cwith|1|-1|1|-1|cell-hmode|max>|<table|<row|<cell|<cell-inert|a1|15.10>>|<cell|<cell-inert|a2|15.10>>|<cell|<cell-inert|a3|30.20>>>|<row|<cell|<cell-inert|b1|100>>|<cell|<cell-inert|b2|125>>|<cell|<cell-inert|b3|75>>>|<row|<cell|<cell-inert|c1|28.50>>|<cell|<cell-inert|c2|>>|<cell|<cell-inert|c3|14.25>>>|<row|<cell|<cell-inert|d1|12>>|<cell|<cell-inert|d2|16>>|<cell|<cell-inert|d3|20>>>|<row|<cell|<cell-inert|e1|=a1<cell-plusses>d1>>|<cell|<cell-inert|e2|=a2<cell-plusses>d2>>|<cell|<cell-inert|e3|=a3<cell-plusses>c3>>>>>>><space|2em><calc-table|sum2|<numeric-dot-table|<tformat|<cwith|1|-1|1|-1|cell-width|5em>|<cwith|1|-1|1|-1|cell-hmode|max>|<cwith|5|5|1|3|cell-width|5em>|<cwith|5|5|1|3|cell-hmode|max>|<table|<row|<cell|<cell-inert|a1|15.10>>|<cell|<cell-inert|a2|15.10>>|<cell|<cell-inert|a3|30.20>>>|<row|<cell|<cell-inert|b1|100>>|<cell|<cell-inert|b2|125>>|<cell|<cell-inert|b3|75>>>|<row|<cell|<cell-inert|c1|28.50>>|<cell|<cell-inert|c2|>>|<cell|<cell-inert|c3|14.25>>>|<row|<cell|<cell-inert|d1|12>>|<cell|<cell-inert|d2|16>>|<cell|<cell-inert|d3|20>>>|<row|<cell|<cell-output|e1|=a1<cell-plusses>d1|<math|155.6>>>|<cell|<cell-output|e2|=a2<cell-plusses>d2|<math|156.1>>>|<cell|<cell-output|e3|=a3<cell-plusses>c3|<math|119.45>>>>>>>>>>>
+    <\big-figure|<small|<with|prog-scripts|maxima|<calc-table|sum1|<numeric-dot-table|<tformat|<cwith|1|-1|1|-1|cell-width|5em>|<cwith|1|-1|1|-1|cell-hmode|max>|<table|<row|<cell|<cell-inert|a1|15.10>>|<cell|<cell-inert|b1|15.10>>|<cell|<cell-inert|c1|30.20>>>|<row|<cell|<cell-inert|a2|100>>|<cell|<cell-inert|b2|125>>|<cell|<cell-inert|c2|75>>>|<row|<cell|<cell-inert|a3|28.50>>|<cell|<cell-inert|b3|>>|<cell|<cell-inert|c3|14.25>>>|<row|<cell|<cell-inert|a4|12>>|<cell|<cell-inert|b4|16>>|<cell|<cell-inert|c4|20>>>|<row|<cell|<cell-inert|a5|=a1<cell-plusses>a4>>|<cell|<cell-inert|b5|=b1<cell-plusses>b4>>|<cell|<cell-inert|c5|=c1<cell-plusses>c4>>>>>>><space|2em><calc-table|sum2|<numeric-dot-table|<tformat|<cwith|1|-1|1|-1|cell-width|5em>|<cwith|1|-1|1|-1|cell-hmode|max>|<cwith|5|5|1|3|cell-width|5em>|<cwith|5|5|1|3|cell-hmode|max>|<table|<row|<cell|<cell-inert|a1|15.10>>|<cell|<cell-inert|b1|15.10>>|<cell|<cell-inert|c1|30.20>>>|<row|<cell|<cell-inert|a2|100>>|<cell|<cell-inert|b2|125>>|<cell|<cell-inert|c2|75>>>|<row|<cell|<cell-inert|a3|28.50>>|<cell|<cell-inert|b3|>>|<cell|<cell-inert|c3|14.25>>>|<row|<cell|<cell-inert|a4|12>>|<cell|<cell-inert|b4|16>>|<cell|<cell-inert|c4|20>>>|<row|<cell|<cell-output|a5|=a1<cell-plusses>a4|<math|155.6>>>|<cell|<cell-output|b5|=b1<cell-plusses>b4|<math|156.1>>>|<cell|<cell-output|c5|=c1<cell-plusses>c4|<math|139.45>>>>>>>>>>>
       Evaluation of a simple spreadsheet.
     </big-figure>
   </example>

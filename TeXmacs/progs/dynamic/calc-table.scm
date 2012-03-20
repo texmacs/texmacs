@@ -18,18 +18,18 @@
 ;; Subroutines for naming cells
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (number->row r)
+(tm-define (number->column r)
   (if (< r 27)
       (list->string (list (integer->char (+ r 96))))
-      (string-append (number->row (quotient r 26))
-                     (number->row (+ (modulo (- r 1) 26) 1)))))
+      (string-append (number->column (quotient r 26))
+                     (number->column (+ (modulo (- r 1) 26) 1)))))
 
-(tm-define (row->number s)
+(tm-define (column->number s)
   (with n (string-length s)
     (if (== n 1)
 	(- (char->integer (car (string->list s))) 96)
-	(+ (* 26 (row->number (substring s 0 (- n 1))))
-	   (row->number (substring s (- n 1) n))))))
+	(+ (* 26 (column->number (substring s 0 (- n 1))))
+	   (column->number (substring s (- n 1) n))))))
 
 (tm-define (cell-row cell)
   (and (tree-is? cell 'cell)
@@ -43,11 +43,11 @@
 (tm-define (cell-name cell)
   (and-with r (cell-row cell)
     (and-with c (cell-column cell)
-      (string-append (number->row r) (number->string c)))))
+      (string-append (number->column c) (number->string r)))))
 
 (tm-define (cell-ref-encode p)
   (with (r c) p
-    (with s (string-append (number->row r) (number->string c))
+    (with s (string-append (number->column c) (number->string r))
       (tm->tree `(cell-ref ,s)))))
 
 (tm-define (cell-ref-decode s)
@@ -55,8 +55,8 @@
       (and-with i (list-find-index
 		    (string->list s)
 		    (lambda (c) (and (char>=? c #\0) (char<=? c #\9))))
-	(list (row->number (substring s 0 i))
-	      (string->number (substring s i (string-length s)))))
+	(list (string->number (substring s i (string-length s)))
+              (column->number (substring s 0 i))))
       (and (tree-is? s 'cell-ref)
 	   (cell-ref-decode (texmacs->string (tree-ref s 0))))))
 
@@ -90,7 +90,7 @@
         ((tree-is? t 'cell)
          (let* ((body (tree-ref t 0))
                 (block? (tree-func? (tree-ref t 0) 'document 1))
-                (new (string-append (number->row r) (number->string c))))
+                (new (string-append (number->column c) (number->string r))))
            (if block? (set! body (tree-ref t 0)))
            (set! body
                  (if (tree-in? body '(cell-inert cell-input cell-output))
