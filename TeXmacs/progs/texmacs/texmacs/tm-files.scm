@@ -178,11 +178,9 @@
   (interactive-print '() "$TEXMACS_HOME_PATH/system/tmp/tmpprint.ps"))
 
 (tm-define (open-auxiliary aux body . opt-master)
-  (let* ((name (string->url (string-append "tmfs://aux/" aux)))
+  (let* ((name (aux-name aux))
          (master (if (null? opt-master) (buffer-base-url) (car opt-master))))
-    (buffer-set name body)
-    (buffer-set-base-url name master)
-    (aux-set-document aux (buffer-get name))
+    (aux-set-document aux body)
     (aux-set-master aux master)
     (switch-to-buffer name)))
 

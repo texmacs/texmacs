@@ -182,8 +182,15 @@
   (or (ahash-ref aux-masters name)
       (string->url (string-append "tmfs://aux/" name))))
 
-(define-public (aux-set-document name doc)
-  (ahash-set! aux-buffers name (tm->stree doc)))
+(define-public (aux-name aux)
+  (string->url (string-append "tmfs://aux/" aux)))
 
-(define-public (aux-set-master name master)
-  (ahash-set! aux-masters name master))
+(define-public (aux-set-document aux doc)
+  (with name (aux-name aux)
+    (buffer-set name doc)
+    (ahash-set! aux-buffers aux (buffer-get name))))
+
+(define-public (aux-set-master aux master)
+  (with name (aux-name aux)
+    (buffer-set-base-url name master)    
+    (ahash-set! aux-masters aux (buffer-get-base-url name))))
