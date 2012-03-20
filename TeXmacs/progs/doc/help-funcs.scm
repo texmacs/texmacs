@@ -58,11 +58,7 @@
     (if (url-none? name)
 	(set-message `(concat "Error: help file " (verbatim ,s) " not found")
 		     "load help file")
-	(cond ((== type "normal")
-	       (let ((doc (texmacs-load-tree name "help")))
-		 (if (== (tree->stree doc) "error")
-		     (set-message "Bad help file" "load help file")
-		     (set-help-buffer name doc))))
+	(cond ((== type "normal") (tmdoc-expand-help name 'plain))
 	      ((== type "article") (tmdoc-expand-help name 'tmdoc-title))
 	      ((== type "book") (tmdoc-expand-help-manual name))))))
 

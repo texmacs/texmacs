@@ -141,6 +141,8 @@
               (TeXmacs ,(texmacs-version))
               (style "tmdoc")
               (body (document "Broken link."))))
+          ((== level 'plain)
+           (tm->stree (texmacs-load-tree root "texmacs")))
           ((== level 'title)
            (let* ((body (tmdoc-expand root root level))
                   (lan (tmdoc-language root)))
