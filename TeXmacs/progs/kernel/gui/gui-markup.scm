@@ -469,7 +469,8 @@
   (with lan (get-output-language)
     ($quote
       `(document
-         (style "tmdoc")
+         (TeXmacs ,(texmacs-version))
+         (style (tuple "tmdoc"))
          (body ($unquote ($localize ($block ,@l))))
          (initial (collection (associate "language" ,lan)))))))
 

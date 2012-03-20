@@ -175,6 +175,7 @@
 (lazy-define (doc docgrep) docgrep-in-doc docgrep-in-src docgrep-in-texts)
 (lazy-define (doc tmweb) tmweb-convert-dir tmweb-update-dir
              tmweb-interactive-build tmweb-interactive-update)
+(lazy-tmfs-handler (doc docgrep) grep)
 (define-secure-symbols tmdoc-include)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 

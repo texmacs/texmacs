@@ -13,6 +13,26 @@
 
 (texmacs-module (kernel texmacs tm-file-system))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Lazy handlers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public lazy-tmfs-table (make-ahash-table))
+
+(define-public-macro (lazy-tmfs-handler module . classes)
+  `(for-each (lambda (class) (ahash-set! lazy-tmfs-table class ',module))
+             ',classes))
+
+(define-public (lazy-tmfs-force class)
+  (if (string? class) (set! class (string->symbol class)))
+  (and-with module (ahash-ref lazy-tmfs-table class)
+    (ahash-remove! lazy-tmfs-table class)
+    (eval `(use-modules ,module))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Handler system
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define tmfs-handler-table (make-ahash-table))
 
 (define-public (tmfs-handler class action handle)
@@ -28,6 +48,7 @@
 (define-public (tmfs-load u)
   "Load url @u on TeXmacs file system."
   (with (class name) (tmfs-decompose-name u)
+    (lazy-tmfs-force class)
     (cond ((ahash-ref tmfs-handler-table (cons class 'load)) =>
 	   (lambda (handler) (object->string (handler name))))
 	  (else ((ahash-ref tmfs-handler-table (cons #t 'load)) u)))))
@@ -35,6 +56,7 @@
 (define-public (tmfs-save u what)
   "Save string @what to url @u on TeXmacs file system."
   (with (class name) (tmfs-decompose-name u)
+    (lazy-tmfs-force class)
     (cond ((ahash-ref tmfs-handler-table (cons class 'save)) =>
 	   (lambda (handler) (handler name (string->object what))))
 	  (else ((ahash-ref tmfs-handler-table (cons #t 'save)) u what)))))
@@ -42,6 +64,7 @@
 (define-public (tmfs-name u)
   "Get a nice name for url @u on TeXmacs file system."
   (with (class name) (tmfs-decompose-name u)
+    (lazy-tmfs-force class)
     (cond ((ahash-ref tmfs-handler-table (cons class 'name)) =>
 	   (lambda (handler) (handler name)))
 	  ((ahash-ref tmfs-handler-table (cons class 'load))
@@ -51,6 +74,7 @@
 (define-public (tmfs-permission? u type)
   "Check whether we have the permission of a given @type for the url @u."
   (with (class name) (tmfs-decompose-name u)
+    (lazy-tmfs-force class)
     (cond ((string-ends? (url->string u) "~") #f)
 	  ((string-ends? (url->string u) "#") #f)
 	  ((ahash-ref tmfs-handler-table (cons class 'permission?)) =>
@@ -63,12 +87,53 @@
 (define-public (tmfs-remote? u)
   "Check whether the url @u is handled remotedly."
   (with (class name) (tmfs-decompose-name u)
+    (lazy-tmfs-force class)
     (not (ahash-ref tmfs-handler-table (cons class 'load)))))
 
-;(define (id-load what)
-;  `(document
-;    (TeXmacs "1.0.6.3")
-;    (style (tuple "generic"))
-;    (body (document ,what))))
-;
-;(tmfs-handler "id" 'load id-load)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Routines for making and decomposing queries
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (pair->entry p)
+  (string-append (car p) "=" (cdr p)))
+
+(define-public (list->query l)
+  (with r (map pair->entry l)
+    (string-recompose r "&")))
+
+(define (entry->pair e)
+  (with l (string-tokenize-by-char-n e #\= 1)
+    (cond ((== (length l) 0) (cons "" ""))
+          ((== (length l) 1) (cons (car l) ""))
+          (else (cons (car l) (cadr l))))))
+
+(define-public (query->list q)
+  (with l (string-tokenize-by-char q #\&)
+    (map entry->pair l)))
+
+(define-public (query-ref q var)
+  (or (assoc-ref (query->list q) var) ""))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Macros for defining handlers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public-macro (tmfs-load-handler head . body)
+  (with (type what) head
+    `(tmfs-handler ,(symbol->string type) 'load
+                   (lambda (,what) ,@body))))
+
+(define-public-macro (tmfs-name-handler head . body)
+  (with (type what) head
+    `(tmfs-handler ,(symbol->string type) 'name
+                   (lambda (,what) ,@body))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Example
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tmfs-load-handler (id what)
+  `(document
+     (TeXmacs "1.0.6.3")
+     (style (tuple "generic"))
+     (body (document ,what))))

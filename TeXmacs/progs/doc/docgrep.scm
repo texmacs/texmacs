@@ -59,8 +59,7 @@
 (define (build-link-page keyword file-list)
   (let* ((keyword-list (string-tokenize-by-char keyword #\space))
 	 (the-result (get-score-list keyword-list file-list)))
-    (set-help-buffer "Results of search"
-		     (build-search-results keyword the-result))))
+    (tm->stree (build-search-results keyword the-result))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Find documentation in given path and matching a given pattern
@@ -79,33 +78,49 @@
   (let* ((l1 (map (lambda (pat) (url-collect path pat)) patterns))
 	 (l2 (map url->string l1))
 	 (l3 (append-map (cut string-tokenize-by-char <> path-separator) l2)))
-     (build-link-page what l3)))
+    (build-link-page what l3)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; External interface
+;; Integration in TeXmacs file system
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tmfs-load-handler (grep query)
+  (let* ((type (query-ref query "type"))
+         (what (query-ref query "what"))
+         (lan  (get-output-language)))
+    (cond ((== type "src")
+           (docgrep what "$TEXMACS_PATH/progs:$TEXMACS_SOURCE_PATH/src"
+                    "*.scm" "*.hpp" "*.cpp"))
+          ((== type "texts")
+           (docgrep what "$TEXMACS_FILE_PATH" "*.tm"))
+          ((and (== lan "french") (== type "doc"))
+ 	   (docgrep what "$TEXMACS_DOC_PATH" "*.fr.tm"))
+ 	  ((and (== lan "german") (== type "doc"))
+ 	   (docgrep what "$TEXMACS_DOC_PATH" "*.de.tm"))
+ 	  ((and (== lan "italian") (== type "doc"))
+ 	   (docgrep what "$TEXMACS_DOC_PATH" "*.it.tm"))
+ 	  ((and (== lan "spanish") (== type "doc"))
+ 	   (docgrep what "$TEXMACS_DOC_PATH" "*.es.tm"))
+ 	  ((and (== lan "portuguese") (== type "doc"))
+ 	   (docgrep what "$TEXMACS_DOC_PATH" "*.pt.tm"))
+ 	  (else
+ 	   (docgrep what "$TEXMACS_DOC_PATH" "*.en.tm")))))
+
+(tmfs-name-handler (grep query)
+  (with what (query-ref query "what")
+    (string-append "Help - Search results for ``" what "''")))
 
 (tm-define (docgrep-in-doc what)
   (:argument what "Search words in the documentation")
-  (with lan (get-output-language)
-    (cond ((== lan "french")
-	   (docgrep what "$TEXMACS_DOC_PATH" "*.fr.tm"))
-	  ((== lan "german")
-	   (docgrep what "$TEXMACS_DOC_PATH" "*.de.tm"))
-	  ((== lan "italian")
-	   (docgrep what "$TEXMACS_DOC_PATH" "*.it.tm"))
-	  ((== lan "spanish")
-	   (docgrep what "$TEXMACS_DOC_PATH" "*.es.tm"))
-	  ((== lan "portuguese")
-	   (docgrep what "$TEXMACS_DOC_PATH" "*.pt.tm"))
-	  (else
-	   (docgrep what "$TEXMACS_DOC_PATH" "*.en.tm")))))
+  (with query (list->query (list (cons "type" "doc") (cons "what" what)))
+    (load-buffer (string-append "tmfs://grep/" query))))
 
 (tm-define (docgrep-in-src what)
   (:argument what "Search words in the source code")
-  (docgrep what "$TEXMACS_PATH/progs:$TEXMACS_SOURCE_PATH/src"
-	   "*.scm" "*.hpp" "*.cpp"))
+  (with query (list->query (list (cons "type" "src") (cons "what" what)))
+    (load-buffer (string-append "tmfs://grep/" query))))
 
 (tm-define (docgrep-in-texts what)
   (:argument what "Search words in my documents")
-  (docgrep what "$TEXMACS_FILE_PATH" "*.tm"))
+  (with query (list->query (list (cons "type" "texts") (cons "what" what)))
+    (load-buffer (string-append "tmfs://grep/" query))))

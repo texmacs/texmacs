@@ -54,7 +54,8 @@
     with-aux with-action with-module with-cursor with-server
     user-ask
     tab form item meti
-    $when $let $let* $for))
+    $when $let $let* $for
+    tmfs-load-handler tmfs-save-handler))
 
 (setq unary-definitions
   '(define define-public define-macro define-public-macro
@@ -94,7 +95,7 @@
     define-secure-symbols map-in-order link promise
     plugin-input-converters use-modules export import-from inherit-modules
     lazy-menu lazy-keyboard lazy-define lazy-initialize
-    lazy-format lazy-language lazy-input-converter
+    lazy-format lazy-language lazy-input-converter lazy-tmfs-handler
     $if))
 
 (setq highlight-definitions
