@@ -143,6 +143,7 @@ rename_buffer (url name, url new_name) {
   if (nr == -1) return;
   tm_buffer buf= bufs[nr];
   buf->buf->name= new_name;
+  buf->buf->base_name= new_name;
   tree doc= subtree (the_et, buf->rp);
   set_abbr_buffer (new_name, new_menu_name (new_name, doc));
 }

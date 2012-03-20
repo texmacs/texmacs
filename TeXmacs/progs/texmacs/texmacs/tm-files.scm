@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (texmacs texmacs tm-files)
-  (:use (texmacs texmacs tm-server) (texmacs texmacs tm-print)))
+  (:use (texmacs texmacs tm-server)
+        (texmacs texmacs tm-print)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Activation of color highlighting
@@ -183,6 +184,15 @@
     (aux-set-document aux body)
     (aux-set-master aux master)
     (switch-to-buffer name)))
+
+(define-public-macro (with-aux u . prg)
+  `(let* ((u ,u)
+	  (t (texmacs-load-tree u "texmacs"))
+	  (name (current-buffer)))
+     (open-auxiliary "* Aux *" t u)
+     (with r (begin ,@prg)
+       (switch-to-buffer name)
+       r)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Deprecated functionality

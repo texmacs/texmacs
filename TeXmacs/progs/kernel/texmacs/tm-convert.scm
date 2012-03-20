@@ -291,15 +291,6 @@
 	(with item (list-find (cdr init) (lambda (x) (== (cadr x) var)))
 	  (if item (caddr item) (default-init var))))))
 
-(define-public-macro (with-aux u . prg)
-  `(let* ((u ,u)
-	  (t (texmacs-load-tree u "texmacs"))
-	  (name (buffer-base-url)))
-     (set-aux-buffer "* Aux *" u t)
-     (with r (begin ,@prg)
-       (switch-to-buffer name)
-       r)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Adding new formats
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
