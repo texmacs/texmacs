@@ -110,11 +110,11 @@ close_embedded_command (tm_view vw) {
 * Embedded TeXmacs widgets
 ******************************************************************************/
 
-string
+url
 embedded_name () {
   static int nr= 0;
   nr++;
-  return "* Embedded " * as_string (nr) * " *";
+  return url (string ("tmfs://aux/TeXmacs-input-" * as_string (nr)));
 }
 
 tree
@@ -145,12 +145,13 @@ widget
 texmacs_input_widget (tree doc, command cmd, bool continuous) {
   (void) cmd; (void) continuous;
   doc= enrich_embedded_document (doc);
-  tm_view   curvw=  get_server () -> get_view ();
-  string    name = embedded_name ();
-  tm_buffer buf  = create_buffer (url (name), doc);
+  url       base = get_base_url_buffer (get_this_buffer ());
+  tm_view   curvw= get_server () -> get_view ();
+  url       name = embedded_name ();
+  tm_buffer buf  = create_buffer (name, doc);
   tm_view   vw   = get_passive_view (buf);
   tm_window win  = tm_new<tm_window_rep> (doc, command ());
-  set_aux (name, name);
+  set_base_url_buffer (name, base);
   vw->win= win;
   vw->buf->buf->in_menu= false;
   set_scrollable (win->wid, vw->ed);

@@ -175,8 +175,6 @@ void kill_window_and_buffer ();
 bool no_bufs ();
 bool no_name ();
 bool is_aux_buffer (url name);
-void set_aux (string aux, url name);
-void set_aux_buffer (string aux, url name, tree doc);
 void set_buffer_tree (url name, tree doc);
 tree get_buffer_tree (url name);
 tree get_buffer_body (url name);

@@ -539,7 +539,6 @@ public:
   friend void   tm_failure (const char* msg);
   friend void   set_buffer_tree (url name, tree doc);
   friend void   set_base_url_buffer (url name, url base_name);
-  friend void   set_aux (string aux, url name);
 };
 
 class editor {

@@ -463,8 +463,6 @@
   (kill-buffer kill_buffer (void))
   (no-name? no_name (bool))
   (aux-buffer? is_aux_buffer (bool url))
-  (set-aux set_aux (void string url))
-  (set-aux-buffer set_aux_buffer (void string url content))
 
   (open-buffer-in-window new_buffer_in_new_window (void url content content))
   (open-window open_window (url))
