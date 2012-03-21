@@ -15,6 +15,9 @@
 		492ED6D0150FD27D00DB0FB5 /* new_data.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 492ED6C8150FD27D00DB0FB5 /* new_data.cpp */; };
 		492ED6D1150FD27D00DB0FB5 /* new_style.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 492ED6CA150FD27D00DB0FB5 /* new_style.cpp */; };
 		4931F7B5127EDC4C007C92CC /* QTMInteractivePrompt.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 4931F77E127ED51C007C92CC /* QTMInteractivePrompt.hpp */; };
+		493D309A15190AEA00A19C3D /* new_buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493D309915190AEA00A19C3D /* new_buffer.cpp */; };
+		493D309B15190AEA00A19C3D /* new_buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493D309915190AEA00A19C3D /* new_buffer.cpp */; };
+		493D309C15190AEA00A19C3D /* new_buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493D309915190AEA00A19C3D /* new_buffer.cpp */; };
 		49D662FC128B331A0006E948 /* QTMFileDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D662FA128B331A0006E948 /* QTMFileDialog.cpp */; };
 		49D662FD128B333F0006E948 /* QTMFileDialog.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D662FB128B331A0006E948 /* QTMFileDialog.hpp */; };
 		49EAD66C128AC177009919E5 /* QTMGuiHelper.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EAD66B128AC168009919E5 /* QTMGuiHelper.hpp */; };
@@ -1128,6 +1131,13 @@
 		492ED6CB150FD27D00DB0FB5 /* new_style.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = new_style.hpp; sourceTree = "<group>"; };
 		4931F77E127ED51C007C92CC /* QTMInteractivePrompt.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMInteractivePrompt.hpp; sourceTree = "<group>"; };
 		4931F77F127ED5B3007C92CC /* QTMInteractivePrompt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMInteractivePrompt.cpp; sourceTree = "<group>"; };
+		493D309915190AEA00A19C3D /* new_buffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = new_buffer.cpp; sourceTree = "<group>"; };
+		49A3D96615111151002A127B /* new_data.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = new_data.cpp; sourceTree = "<group>"; };
+		49A3D96715111151002A127B /* new_data.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = new_data.hpp; sourceTree = "<group>"; };
+		49A3D96815111151002A127B /* new_document.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = new_document.cpp; sourceTree = "<group>"; };
+		49A3D96915111151002A127B /* new_document.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = new_document.hpp; sourceTree = "<group>"; };
+		49A3D96A15111151002A127B /* new_style.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = new_style.cpp; sourceTree = "<group>"; };
+		49A3D96B15111151002A127B /* new_style.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = new_style.hpp; sourceTree = "<group>"; };
 		49D662FA128B331A0006E948 /* QTMFileDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMFileDialog.cpp; sourceTree = "<group>"; };
 		49D662FB128B331A0006E948 /* QTMFileDialog.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMFileDialog.hpp; sourceTree = "<group>"; };
 		49DEECC01289A694002ACC66 /* qt_simple_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_simple_widget.cpp; sourceTree = "<group>"; };
@@ -1568,7 +1578,6 @@
 		9C0B496C10A8CC110097A335 /* tm_config.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tm_config.hpp; sourceTree = "<group>"; };
 		9C0B496D10A8CC110097A335 /* tm_data.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tm_data.hpp; sourceTree = "<group>"; };
 		9C0B496E10A8CC110097A335 /* tm_frame.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tm_frame.hpp; sourceTree = "<group>"; };
-		9C0B496F10A8CC110097A335 /* tm_project.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tm_project.hpp; sourceTree = "<group>"; };
 		9C0B497010A8CC110097A335 /* tm_server.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tm_server.hpp; sourceTree = "<group>"; };
 		9C0B497110A8CC110097A335 /* tm_window.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tm_window.hpp; sourceTree = "<group>"; };
 		9C0B497310A8CC110097A335 /* tm_button.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tm_button.cpp; sourceTree = "<group>"; };
@@ -1967,6 +1976,7 @@
 		29B97314FDCFA39411CA2CEA /* TeXmacs */ = {
 			isa = PBXGroup;
 			children = (
+				49A3D96515111151002A127B /* Document */,
 				9C0B475B10A8CBE40097A335 /* Resources */,
 				29B97315FDCFA39411CA2CEA /* Sources */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
@@ -1993,6 +2003,20 @@
 			name = Sources;
 			path = ../..;
 			sourceTree = "<group>";
+		};
+		49A3D96515111151002A127B /* Document */ = {
+			isa = PBXGroup;
+			children = (
+				49A3D96615111151002A127B /* new_data.cpp */,
+				49A3D96715111151002A127B /* new_data.hpp */,
+				49A3D96815111151002A127B /* new_document.cpp */,
+				49A3D96915111151002A127B /* new_document.hpp */,
+				49A3D96A15111151002A127B /* new_style.cpp */,
+				49A3D96B15111151002A127B /* new_style.hpp */,
+			);
+			name = Document;
+			path = ../../src/Data/Document;
+			sourceTree = SOURCE_ROOT;
 		};
 		9C0B09A514FF0A1C004ABDCE /* Handwriting */ = {
 			isa = PBXGroup;
@@ -2645,61 +2669,61 @@
 		9C0B489D10A8CC100097A335 /* Qt */ = {
 			isa = PBXGroup;
 			children = (
-				9C088F7312B1BAD000A18E04 /* qt_color_picker_widget.cpp */,
-				9C088F7412B1BAD000A18E04 /* qt_color_picker_widget.hpp */,
-				9CF1389412A9B65F009F02C9 /* qt_ui_element.hpp */,
-				9CF1389512A9B65F009F02C9 /* qt_ui_element.cpp */,
-				4901F0E3128B4F7200CC54C6 /* qt_printer_widget.hpp */,
-				4901F0E4128B4F7200CC54C6 /* qt_printer_widget.cpp */,
+				9C0B48A510A8CC100097A335 /* qt_basic_widgets.hpp */,
 				9C225A63128B5EB00039258C /* qt_chooser_widget.cpp */,
 				9C225A64128B5EB00039258C /* qt_chooser_widget.hpp */,
-				9CF5BC6B128A13CB00F691BF /* qt_tm_widget.cpp */,
-				9CF5BC6C128A13CB00F691BF /* qt_tm_widget.hpp */,
-				9CF5BC6D128A13CB00F691BF /* qt_view_widget.cpp */,
-				9CF5BC6E128A13CB00F691BF /* qt_view_widget.hpp */,
-				9CF5BC6F128A13CB00F691BF /* qt_window_widget.cpp */,
-				9CF5BC70128A13CB00F691BF /* qt_window_widget.hpp */,
-				9C722BEB10D2F7C700C41915 /* qt_sys_utils.cpp */,
-				9C722BEC10D2F7C700C41915 /* qt_sys_utils.hpp */,
-				9C1D126510D102B300232476 /* qt_pipe_link.cpp */,
-				9C0B48A510A8CC100097A335 /* qt_basic_widgets.hpp */,
-				9C0B48A710A8CC100097A335 /* qt_dialogues.hpp */,
+				9C088F7312B1BAD000A18E04 /* qt_color_picker_widget.cpp */,
+				9C088F7412B1BAD000A18E04 /* qt_color_picker_widget.hpp */,
 				9C0B48A610A8CC100097A335 /* qt_dialogues.cpp */,
+				9C0B48A710A8CC100097A335 /* qt_dialogues.hpp */,
 				9C0B48A810A8CC100097A335 /* qt_gui.cpp */,
 				9C0B48A910A8CC100097A335 /* qt_gui.hpp */,
 				9C0B48AA10A8CC100097A335 /* qt_menu.cpp */,
 				9C0B48AB10A8CC100097A335 /* qt_menu.hpp */,
+				9C1D126510D102B300232476 /* qt_pipe_link.cpp */,
+				4901F0E4128B4F7200CC54C6 /* qt_printer_widget.cpp */,
+				4901F0E3128B4F7200CC54C6 /* qt_printer_widget.hpp */,
 				9C0B48AD10A8CC100097A335 /* qt_renderer.cpp */,
 				9C0B48AE10A8CC100097A335 /* qt_renderer.hpp */,
-				9C0B48AF10A8CC100097A335 /* qt_simple_widget.hpp */,
 				49DEECC01289A694002ACC66 /* qt_simple_widget.cpp */,
+				9C0B48AF10A8CC100097A335 /* qt_simple_widget.hpp */,
+				9C722BEB10D2F7C700C41915 /* qt_sys_utils.cpp */,
+				9C722BEC10D2F7C700C41915 /* qt_sys_utils.hpp */,
+				9CF5BC6B128A13CB00F691BF /* qt_tm_widget.cpp */,
+				9CF5BC6C128A13CB00F691BF /* qt_tm_widget.hpp */,
+				9CF1389512A9B65F009F02C9 /* qt_ui_element.cpp */,
+				9CF1389412A9B65F009F02C9 /* qt_ui_element.hpp */,
 				9C0B48B010A8CC100097A335 /* qt_utilities.cpp */,
 				9C0B48B110A8CC100097A335 /* qt_utilities.hpp */,
+				9CF5BC6D128A13CB00F691BF /* qt_view_widget.cpp */,
+				9CF5BC6E128A13CB00F691BF /* qt_view_widget.hpp */,
 				9C0B48B210A8CC100097A335 /* qt_widget.cpp */,
 				9C0B48B310A8CC100097A335 /* qt_widget.hpp */,
-				49EAD66B128AC168009919E5 /* QTMGuiHelper.hpp */,
+				9CF5BC6F128A13CB00F691BF /* qt_window_widget.cpp */,
+				9CF5BC70128A13CB00F691BF /* qt_window_widget.hpp */,
+				49D662FA128B331A0006E948 /* QTMFileDialog.cpp */,
+				49D662FB128B331A0006E948 /* QTMFileDialog.hpp */,
 				9CF5BC71128A13CB00F691BF /* QTMGuiHelper.cpp */,
+				49EAD66B128AC168009919E5 /* QTMGuiHelper.hpp */,
 				9C0B48B510A8CC100097A335 /* QTMInteractiveInputHelper.hpp */,
+				4931F77F127ED5B3007C92CC /* QTMInteractivePrompt.cpp */,
+				4931F77E127ED51C007C92CC /* QTMInteractivePrompt.hpp */,
 				9C0B48B610A8CC100097A335 /* QTMMenuHelper.cpp */,
 				9C0B48B710A8CC100097A335 /* QTMMenuHelper.hpp */,
+				9C1D126610D102B300232476 /* QTMPipeLink.cpp */,
+				9C1D126710D102B300232476 /* QTMPipeLink.hpp */,
+				9C855ABC12BEB4EC00DCBE1D /* QTMPrintDialog.cpp */,
+				9C855ABD12BEB4EC00DCBE1D /* QTMPrintDialog.hpp */,
+				9C855ABE12BEB4EC00DCBE1D /* QTMPrinterSettings.cpp */,
+				9C855ABF12BEB4EC00DCBE1D /* QTMPrinterSettings.hpp */,
+				9C99F04610AD84DE00B2113D /* QTMScrollView.cpp */,
+				9C99F04510AD84DE00B2113D /* QTMScrollView.hpp */,
 				9C0B48B810A8CC100097A335 /* QTMStyle.cpp */,
 				9C0B48B910A8CC100097A335 /* QTMStyle.hpp */,
 				9C0B48BA10A8CC100097A335 /* QTMWidget.cpp */,
 				9C0B48BB10A8CC100097A335 /* QTMWidget.hpp */,
 				9C0B48BC10A8CC100097A335 /* QTMWindow.cpp */,
 				9C0B48BD10A8CC100097A335 /* QTMWindow.hpp */,
-				9C99F04510AD84DE00B2113D /* QTMScrollView.hpp */,
-				9C99F04610AD84DE00B2113D /* QTMScrollView.cpp */,
-				49D662FA128B331A0006E948 /* QTMFileDialog.cpp */,
-				49D662FB128B331A0006E948 /* QTMFileDialog.hpp */,
-				9C1D126610D102B300232476 /* QTMPipeLink.cpp */,
-				9C1D126710D102B300232476 /* QTMPipeLink.hpp */,
-				4931F77F127ED5B3007C92CC /* QTMInteractivePrompt.cpp */,
-				4931F77E127ED51C007C92CC /* QTMInteractivePrompt.hpp */,
-				9C855ABC12BEB4EC00DCBE1D /* QTMPrintDialog.cpp */,
-				9C855ABD12BEB4EC00DCBE1D /* QTMPrintDialog.hpp */,
-				9C855ABE12BEB4EC00DCBE1D /* QTMPrinterSettings.cpp */,
-				9C855ABF12BEB4EC00DCBE1D /* QTMPrinterSettings.hpp */,
 				9C0B48A410A8CC100097A335 /* NOTES */,
 				9C0B48BE10A8CC100097A335 /* TODO */,
 			);
@@ -2754,11 +2778,11 @@
 		9C0B48CB10A8CC100097A335 /* Button */ = {
 			isa = PBXGroup;
 			children = (
-				9C7FA62314FC57FF006F4449 /* toggle_widget.cpp */,
 				9C0B48CC10A8CC100097A335 /* button_widget.cpp */,
 				9C0B48CD10A8CC100097A335 /* button_widget.hpp */,
 				9C0B48CE10A8CC100097A335 /* popup_button.cpp */,
 				9C0B48CF10A8CC100097A335 /* popup_widget.cpp */,
+				9C7FA62314FC57FF006F4449 /* toggle_widget.cpp */,
 			);
 			path = Button;
 			sourceTree = "<group>";
@@ -2766,15 +2790,15 @@
 		9C0B48D010A8CC100097A335 /* Composite */ = {
 			isa = PBXGroup;
 			children = (
-				9C7FA62514FC5807006F4449 /* split_widget.cpp */,
-				9C7FA62614FC5807006F4449 /* tabs_widget.cpp */,
-				9C3DA71E12932990009617C4 /* extend_widget.cpp */,
-				9C75B71F128973D5008DE84F /* minibar_widget.cpp */,
 				9C75B68512895366008DE84F /* aligned_widget.cpp */,
 				9C0B48D110A8CC100097A335 /* array_widget.cpp */,
 				9C0B48D210A8CC100097A335 /* composite_widget.cpp */,
+				9C3DA71E12932990009617C4 /* extend_widget.cpp */,
 				9C0B48D310A8CC100097A335 /* list_widget.cpp */,
+				9C75B71F128973D5008DE84F /* minibar_widget.cpp */,
+				9C7FA62514FC5807006F4449 /* split_widget.cpp */,
 				9C0B48D410A8CC100097A335 /* switch_widget.cpp */,
+				9C7FA62614FC5807006F4449 /* tabs_widget.cpp */,
 				9C0B48D510A8CC100097A335 /* tile_widget.cpp */,
 			);
 			path = Composite;
@@ -2810,11 +2834,11 @@
 		9C0B48E610A8CC100097A335 /* Misc */ = {
 			isa = PBXGroup;
 			children = (
+				9C0B48E710A8CC100097A335 /* balloon_widget.cpp */,
+				9C75B76B12897795008DE84F /* color_picker_widget.cpp */,
+				9C0B48E810A8CC100097A335 /* file_chooser_widget.cpp */,
 				9C7FA62D14FC581A006F4449 /* ink_widget.cpp */,
 				9C7FA62E14FC581A006F4449 /* refresh_widget.cpp */,
-				9C75B76B12897795008DE84F /* color_picker_widget.cpp */,
-				9C0B48E710A8CC100097A335 /* balloon_widget.cpp */,
-				9C0B48E810A8CC100097A335 /* file_chooser_widget.cpp */,
 				9C0B48E910A8CC100097A335 /* texmacs_widget.cpp */,
 				9C0B48EA10A8CC100097A335 /* wait_widget.cpp */,
 			);
@@ -3049,7 +3073,6 @@
 				9C0B496C10A8CC110097A335 /* tm_config.hpp */,
 				9C0B496D10A8CC110097A335 /* tm_data.hpp */,
 				9C0B496E10A8CC110097A335 /* tm_frame.hpp */,
-				9C0B496F10A8CC110097A335 /* tm_project.hpp */,
 				9C0B497010A8CC110097A335 /* tm_server.hpp */,
 				9C0B497110A8CC110097A335 /* tm_window.hpp */,
 				9C0B497210A8CC110097A335 /* Window */,
@@ -3061,6 +3084,7 @@
 		9C0B496210A8CC110097A335 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				493D309915190AEA00A19C3D /* new_buffer.cpp */,
 				9C0B496310A8CC110097A335 /* tm_data.cpp */,
 				9C0B496410A8CC110097A335 /* tm_file.cpp */,
 			);
@@ -4185,6 +4209,7 @@
 				9C4FCFF7150F73100087378D /* new_document.cpp in Sources */,
 				492ED6CE150FD27D00DB0FB5 /* new_data.cpp in Sources */,
 				492ED6CF150FD27D00DB0FB5 /* new_style.cpp in Sources */,
+				493D309B15190AEA00A19C3D /* new_buffer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4533,6 +4558,7 @@
 				9C4FCFF9150F73100087378D /* new_document.cpp in Sources */,
 				492ED6D0150FD27D00DB0FB5 /* new_data.cpp in Sources */,
 				492ED6D1150FD27D00DB0FB5 /* new_style.cpp in Sources */,
+				493D309C15190AEA00A19C3D /* new_buffer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4909,6 +4935,7 @@
 				9C4FCFF8150F73100087378D /* new_document.cpp in Sources */,
 				492ED6CC150FD27D00DB0FB5 /* new_data.cpp in Sources */,
 				492ED6CD150FD27D00DB0FB5 /* new_style.cpp in Sources */,
+				493D309A15190AEA00A19C3D /* new_buffer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
