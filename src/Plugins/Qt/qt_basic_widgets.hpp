@@ -27,8 +27,8 @@ public:
   QTMInputTextWidgetHelper *helper;
   bool ok;
   
-  
-  qt_input_text_widget_rep (command _cmd, string _type, array<string> _def, int _style, string _width);
+  qt_input_text_widget_rep (command _cmd, string _type, array<string> _def, 
+                            int _style, string _width);
   ~qt_input_text_widget_rep();
 
   QAction* as_qaction ();

@@ -20,6 +20,7 @@
 #include <QTextCodec>
 #include <QHash>
 #include <QStringList>
+#include <QKeySequence>
 
 #include <QPrinter>
 #include <QPrintDialog>
@@ -102,9 +103,10 @@ to_qstylesheet(int style, color c) {
 
 /*! Try to convert a TeXmacs lenght (em, px, w, h) in a QSize.
  *
- * Uses the widget current size to compute relative sizes as specified with "1w"
- * Should not affect the widget size in that particular case.
- * FIXME: should we use the constant PIXEL somewhere? 
+ * This uses the widget current size to compute relative sizes as specified
+ * with "1w". This should not affect the widget size in that particular case.
+ * 
+ * FIXME: does 1w mean 100% of the contents' size or 100% of the available size?
  */
 QSize
 qt_decode_length (string width, QWidget* qwid) {
@@ -135,6 +137,48 @@ qt_decode_length (string width, QWidget* qwid) {
     size.setWidth(x);
   }
   return size;
+}
+
+
+
+// used only by to_qkeysequence
+static string
+conv_sub (string ks) {
+  string r(ks);
+#ifdef Q_WS_MAC
+  r = replace (r, "S-", "Shift+");
+  r = replace (r, "C-", "Meta+");
+  r = replace (r, "A-", "Alt+");
+  r = replace (r, "M-", "Ctrl+");
+  //r = replace (r, "K-", "");
+  r = replace (r, " ", ",");
+#else
+  r = replace (r, "S-", "Shift+");
+  r = replace (r, "C-", "Ctrl+");
+  r = replace (r, "A-", "Alt+");
+  r = replace (r, "M-", "Meta+");
+  //r = replace (r, "K-", "");
+  r = replace (r, " ", ",");
+#endif
+  if (N(r) == 1 || (N(r) > 2 && r[N(r)-2] == '+')) {
+    if (is_locase (r[N(r)-1]))
+      r= r (0, N(r)-1) * upcase_all (r (N(r)-1, N(r)));
+    else if (is_upcase (r[N(r)-1]))
+      r= r (0, N(r)-1) * "Shift+" * upcase_all (r (N(r)-1, N(r)));
+  }
+  return r;
+}
+
+QKeySequence
+to_qkeysequence (string s) {
+  int i=0, k;
+  string r;
+  for (k=0; k<=N(s); k++)
+    if (k == N(s) || s[k] == ' ') {
+      r << conv_sub (s (i, k));
+      i= k;
+    }
+  return QKeySequence(to_qstring(r));
 }
 
 coord4
