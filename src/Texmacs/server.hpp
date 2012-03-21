@@ -131,7 +131,6 @@ server get_server ();
 void gui_set_output_language (string lan);
 
 /* low level */
-tm_buffer create_buffer (url name);
 tm_buffer create_buffer (url name, tree doc);
 int find_buffer (path p);
 int find_buffer (url name);

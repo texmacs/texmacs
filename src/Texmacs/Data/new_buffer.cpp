@@ -335,17 +335,6 @@ get_buffer_body (url name) {
 ******************************************************************************/
 
 tm_buffer
-create_buffer (url name) {
-  int nr= find_buffer (name);
-  if (nr != -1) return bufs[nr];
-  insert_buffer (name);
-  tm_buffer buf= bufs [find_buffer (name)];
-  buf->buf->title= "";
-  buf->buf->title= propose_title (name, tree (DOCUMENT, ""));
-  return buf;
-}
-
-tm_buffer
 create_buffer (url name, tree doc) {
   int nr= find_buffer (name);
   if (nr != -1) return bufs[nr];

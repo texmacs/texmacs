@@ -27,9 +27,10 @@ url my_init_buffer_file= url_none ();
 
 tm_view
 new_view (url name) {
-  // cout << "Creating new view\n";
+  //cout << "Creating new view\n";
 
-  tm_buffer buf= create_buffer (name);
+  tree      doc= attach_data (tree (DOCUMENT, ""), new_data ());
+  tm_buffer buf= create_buffer (name, doc);
   editor    ed = new_editor (get_server () -> get_server (), buf);
   tm_view   vw = tm_new<tm_view_rep> (buf, ed);
   buf->vws << vw;
@@ -45,7 +46,7 @@ new_view (url name) {
   if (exists (my_init_buffer_file)) exec_file (my_init_buffer_file);
   set_view (temp_vw);
 
-  // cout << "View created\n";
+  //cout << "View created\n";
   return vw;
 }
 
