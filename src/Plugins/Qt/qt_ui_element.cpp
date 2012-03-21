@@ -463,6 +463,15 @@ public:
 };
 
 
+
+qt_ui_element_rep::operator tree () {
+  if (type == refresh_widget) {
+    return tree (TUPLE, "refresh", open_box<string> (load));
+  } else {
+    return tree();
+  }
+}
+
 QAction* 
 qt_ui_element_rep::as_qaction () {
   switch (type) {
@@ -843,6 +852,7 @@ qt_ui_element_rep::as_qlayoutitem () {
     case vsplit_widget:
     case tabs_widget:
     case wrapped_widget:
+    case refresh_widget:
     {
       QWidget *w = this->as_qwidget();
       return new QWidgetItem(w);
@@ -1254,7 +1264,13 @@ qt_ui_element_rep::as_qwidget () {
       return qw;
     }
       break;
-      
+    case refresh_widget:
+    {
+      string tmwid = open_box<string> (load);
+      QWidget* rw  = new QTMRefreshWidget (tmwid);
+      return rw;
+    }
+      break;
     default:
       ;
   }
@@ -1309,9 +1325,8 @@ widget resize_widget (widget w, int style, string w1, string h1,
 }
 widget hsplit_widget (widget l, widget r) { return qt_ui_element_rep::create(qt_ui_element_rep::hsplit_widget, l, r); }
 widget vsplit_widget (widget t, widget b) { return qt_ui_element_rep::create(qt_ui_element_rep::vsplit_widget, t, b); }
+widget refresh_widget (string tmwid) {
+  return qt_ui_element_rep::create(qt_ui_element_rep::refresh_widget, tmwid); }
 widget ink_widget (command cb) {
   (void) cb;
-  FAILED ("not yet implemented"); }
-widget refresh_widget (string tmwid) {
-  (void) tmwid;
   FAILED ("not yet implemented"); }

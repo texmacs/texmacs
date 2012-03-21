@@ -9,9 +9,9 @@
  * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
  ******************************************************************************/
 
-
 #include "QTMGuiHelper.hpp"
 #include "qt_tm_widget.hpp"
+
 
 void
 QTMGuiHelper::aboutToShowMainMenu() {
@@ -39,3 +39,69 @@ QTMGuiHelper::doPopWaitingWidgets() {
   }
 }
 
+void
+QTMGuiHelper::emitTmSlotRefresh () {
+  emit tmSlotRefresh();
+}
+
+
+/******************************************************************************
+ * QTMRefreshWidget
+ ******************************************************************************/
+
+QTMRefreshWidget::QTMRefreshWidget (string _tmwid)
+: QWidget (), tmwid (_tmwid), curobj (false), cur (), cache (widget ()) 
+{   
+  QObject::connect(the_gui->gui_helper, SIGNAL(tmSlotRefresh()), 
+                   this, SLOT(doRefresh()));
+  doRefresh();
+}
+
+
+widget make_menu_widget (object wid);
+
+
+bool
+QTMRefreshWidget::recompute () {
+  string s= "'(vertical (link " * tmwid * "))";
+  eval ("(lazy-initialize-force)");
+  //cout << "Recompute " << tmwid << "\n";
+  object xwid= call ("menu-expand", eval (s));
+  //cout << "xwid= " << xwid << "\n";
+  if (cache->contains (xwid)) {
+    //if (curobj == xwid) cout << "Same " << s << "\n";
+    if (curobj == xwid) return false;
+    curobj= xwid;
+    cur   = cache [xwid];
+    //cout << "Cached " << s << "\n";
+    return true;
+  }
+  else {
+    curobj= xwid;
+    //cout << "Compute " << s << "\n";
+    object uwid= eval (s);
+    //cout << "uwid= " << uwid << "\n";
+    cur= make_menu_widget (uwid);
+    //cout << "cur= " << cur << "\n";
+    cache (xwid)= cur;
+    return true;
+  }
+}
+
+void 
+QTMRefreshWidget::doRefresh() {
+  if (recompute()) {
+    if (layout()) {
+      QLayoutItem* item;
+      while ((item = layout()->takeAt(0)) != 0) {		
+        if (item->widget()) {
+          layout()->removeWidget(item->widget());
+          delete item->widget();
+        }	
+        delete item;
+      }
+      delete layout();
+    }
+    setLayout(concrete(cur)->as_qlayoutitem()->layout());
+  }
+}

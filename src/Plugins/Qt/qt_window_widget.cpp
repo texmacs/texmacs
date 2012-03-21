@@ -11,7 +11,9 @@
 
 #include "qt_window_widget.hpp"
 #include "qt_utilities.hpp"
+#include "qt_gui.hpp"
 #include "QTMWindow.hpp"
+#include "QTMGuiHelper.hpp"
 
 #include "message.hpp"
 #include "analyze.hpp"
@@ -19,8 +21,8 @@
 #include <QWidget>
 #include <QVariant>
 
-qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, command q):
-qt_widget_rep(), wid(_wid), quit(q)
+qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, command q)
+: qt_widget_rep(), wid(_wid), quit(q)
 {
   wid->setProperty ("texmacs_window_widget",
                     QVariant::fromValue ((void*) this));
@@ -107,10 +109,8 @@ qt_window_widget_rep::send (slot s, blackbox val) {
         //send_update (THIS, val);
       break;
     case SLOT_REFRESH:
-        //NOT_IMPLEMENTED ;
-        //send_refresh (THIS, val);
-      break;
-      
+      the_gui->gui_helper->emitTmSlotRefresh();
+      break;      
     default:
       qt_widget_rep::send(s, val);
   }

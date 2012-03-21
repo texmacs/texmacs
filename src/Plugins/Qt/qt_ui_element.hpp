@@ -16,18 +16,20 @@
 #include "ntuple.hpp"
 #include "promise.hpp"
 #include "url.hpp"
+#include "object.hpp"
+#include "hashmap.hpp"
 
 #include <QAction>
 
-/*******************************************************************************
- * ui element widget  
- *******************************************************************************/
 
-/*!
- * Texmacs expects widgets to behave in three different ways: as embedded widgets,
- * as menus and as regular widgets, all of which are essentially different in QT. Hence
- * the need to construct the QT widgets differently on a request basis via the 4 methods
- * @as_qaction(), @get_qmenu(), @as_qlayoutmenu(), @as_qwidget()
+/*! Construction of UI elements / widgets.
+ *
+ * Most (see the enum types) of the items in the UI are constructed using the
+ * factory methods create(). Notable exceptions are the classes 
+ * plain_window_widget_rep and refresh_widget_rep.
+ *
+ * See the documentation of qt_widget_rep for the rationale behind the four
+ * methods as_qaction(), get_qmenu(), as_qlayoutmenu(), as_qwidget()
  */
 class qt_ui_element_rep: public qt_widget_rep {
 public:
@@ -39,14 +41,14 @@ public:
     balloon_widget, text_widget, xpm_widget, toggle_widget,
     enum_widget, choice_widget, scrollable_widget,
     hsplit_widget, vsplit_widget,
-    aligned_widget, tabs_widget, wrapped_widget,
+    aligned_widget, tabs_widget, wrapped_widget, refresh_widget,
     glue_widget //!< just for non-colored ones (skips qt_glue_widget_rep)
   } ;
   
   types type;
   blackbox load;
   
-  QAction *cachedAction;
+  QAction* cachedAction;
   
   qt_ui_element_rep (types _type, blackbox _load) 
   : type(_type), load(_load), cachedAction(NULL)  {};
@@ -56,11 +58,13 @@ public:
   virtual widget make_popup_widget ();
   virtual widget popup_window_widget (string s);
   virtual widget plain_window_widget (string s, command q);
-  virtual QAction* as_qaction ();
-  virtual QMenu *get_qmenu();
-  virtual QLayoutItem *as_qlayoutitem ();
-  virtual QWidget *as_qwidget ();
-    
+  
+  virtual QAction*     as_qaction ();
+  virtual QMenu*       get_qmenu();
+  virtual QLayoutItem* as_qlayoutitem ();
+  virtual QWidget*     as_qwidget ();
+  
+  operator tree ();
 
   template<class X1> static widget create (types _type, X1 x1) {
     return tm_new <qt_ui_element_rep> (_type, close_box<X1>(x1));
