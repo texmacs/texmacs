@@ -92,7 +92,7 @@ tm_buffer_rep::needs_to_be_autosaved () {
 }
 
 /******************************************************************************
-* Finding buffers
+* Main buffer management
 ******************************************************************************/
 
 url
@@ -101,6 +101,27 @@ get_all_buffers () {
   for (int i=N(bufs)-1; i>=0; i--)
     u= bufs[i]->buf->name | u;
   return u;
+}
+
+void
+insert_buffer (url name) {
+  int nr= find_buffer (name);
+  if (nr != -1) return;
+  tm_buffer buf= tm_new<tm_buffer_rep> (name);
+  bufs << buf;
+}
+
+void
+remove_buffer (url name) {
+  int nr= find_buffer (name);
+  if (nr == -1) return;
+  int n= N(bufs);
+  tm_buffer buf= bufs[nr];
+  for (int i=nr; i<n-1; i++)
+    bufs[i]= bufs[i+1];
+  bufs->resize (n-1);
+  delete_views (buf->vws);
+  tm_delete (buf);
 }
 
 int
@@ -145,7 +166,7 @@ find_buffer (url name) {
 ******************************************************************************/
 
 string
-new_menu_name (url u, tree doc) {
+propose_title (url u, tree doc) {
   string name= as_string (tail (u));
   if (starts (name, "no_name_") && ends (name, ".tm")) {
     string no_name= translate ("No name");
@@ -194,7 +215,8 @@ rename_buffer (url name, url new_name) {
   buf->buf->name= new_name;
   buf->buf->master= new_name;
   tree doc= subtree (the_et, buf->rp);
-  set_title_buffer (new_name, new_menu_name (new_name, doc));
+  buf->buf->title= "";
+  set_title_buffer (new_name, propose_title (new_name, doc));
 }
 
 url
@@ -271,7 +293,8 @@ set_buffer_data (url name, new_data data) {
 void
 set_buffer_tree (url name, tree doc) {
   int nr= find_buffer (name);
-  if (nr == -1) create_buffer (name, doc);
+  if (nr == -1)
+    create_buffer (name, doc);
   else {
     tm_buffer buf= bufs[nr];
     tree body= detach_data (doc, buf->data);
@@ -295,7 +318,7 @@ set_buffer_body (url name, tree body) {
   int nr= find_buffer (name);
   if (nr == -1) {
     new_data data;
-    create_buffer (name, attach_data (body, data));
+    set_buffer_tree (name, attach_data (body, data));
   }
   else {
     tm_buffer buf= bufs[nr];
@@ -320,9 +343,10 @@ tm_buffer
 create_buffer (url name) {
   int nr= find_buffer (name);
   if (nr != -1) return bufs[nr];
-  tm_buffer buf= tm_new<tm_buffer_rep> (name);
-  buf->buf->title= new_menu_name (name, tree (DOCUMENT, ""));
-  bufs << buf;
+  insert_buffer (name);
+  tm_buffer buf= bufs [find_buffer (name)];
+  buf->buf->title= "";
+  buf->buf->title= propose_title (name, tree (DOCUMENT, ""));
   return buf;
 }
 
@@ -330,11 +354,12 @@ tm_buffer
 create_buffer (url name, tree doc) {
   int nr= find_buffer (name);
   if (nr != -1) return bufs[nr];
-  tm_buffer buf= tm_new<tm_buffer_rep> (name);
+  insert_buffer (name);
+  tm_buffer buf= bufs [find_buffer (name)];
   tree body= detach_data (doc, buf->data);
-  buf->buf->title= new_menu_name (name, body);
-  bufs << buf;
   set_document (buf->rp, body);
+  buf->buf->title= "";
+  buf->buf->title= propose_title (name, body);
   if (buf->data->project != "") {
     url prj_name= head (name) * as_string (buf->data->project);
     buf->prj= load_passive_buffer (prj_name);
@@ -366,20 +391,10 @@ revert_buffer () {
 }
 
 void
-delete_buffer (tm_buffer buf) {
-  int nr= find_buffer (buf), n= N(bufs);
-  if (nr >= 0) {
-    for (int i=nr; i<(n-1); i++) bufs[i]= bufs[i+1];
-    bufs->resize (n-1);
-  }
-  delete_views (buf->vws);
-  tm_delete (buf);
-}
-
-void
 kill_buffer () {
   int i, nr;
   if (N(bufs) <= 1) get_server () -> quit();
+  url name= get_this_buffer ();
   tm_buffer buf= get_buffer();
   for (nr=0; nr<N(bufs); nr++) if (buf == bufs[nr]) break;
   ASSERT (nr != N(bufs), "buffer not found");
@@ -397,7 +412,7 @@ kill_buffer () {
       if (get_view () == old_vw) set_view (new_vw);
     }
   }
-  delete_buffer (buf);
+  remove_buffer (name);
 }
 
 /******************************************************************************

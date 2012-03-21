@@ -230,6 +230,7 @@ kill_window () {
 void
 kill_window_and_buffer () {
   if (N(bufs) <= 1) get_server () -> quit();
+  url name= get_this_buffer ();
   int i;
   bool kill= true;
   tm_buffer buf= get_buffer();
@@ -239,7 +240,7 @@ kill_window_and_buffer () {
     if (old_vw->win != win) kill= false;
   }
   kill_window ();
-  if (kill) delete_buffer (buf);
+  if (kill) remove_buffer (name);
 }
 
 /******************************************************************************

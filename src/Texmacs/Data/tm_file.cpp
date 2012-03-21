@@ -68,7 +68,7 @@ load_buffer (url u, string fm, int where, bool autosave_flag) {
         switch (where) {
           case 0: new_buffer_in_this_window (v, doc); break;
           case 1: new_buffer_in_new_window (v, doc); break;
-          case 2: ::create_buffer (v, doc); break;
+        case 2: (void) create_buffer (v, doc); break;
           default: FAILED ("bad value for 'where'");
         }
       }
@@ -85,7 +85,7 @@ load_buffer (url u, string fm, int where, bool autosave_flag) {
   switch (where) {
     case 0: new_buffer_in_this_window (v, doc); break;
     case 1: new_buffer_in_new_window (v, doc); break;
-    case 2: ::create_buffer (v, doc); break;
+  case 2: (void) create_buffer (v, doc); break;
     default: FAILED ("bad value for 'where'");
   }
   nr= find_buffer (v);

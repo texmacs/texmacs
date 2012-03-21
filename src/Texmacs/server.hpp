@@ -138,7 +138,6 @@ int find_buffer (url name);
 void attach_view (tm_window win, tm_view vw);
 void detach_view (tm_view vw);
 tm_view get_passive_view (tm_buffer buf);
-void delete_buffer (tm_buffer buf);
 void delete_view (tm_view vw);
 void new_buffer_in_this_window (url name, tree t);
 tm_window new_window (bool map_flag= true, tree geom= "");
@@ -148,6 +147,7 @@ tree make_document (tm_view vw, string fm= "texmacs");
 /* Buffer management */
 url  get_all_buffers ();
 url  get_this_buffer ();
+void remove_buffer (url name);
 url  get_name_buffer (path p);
 void rename_buffer (url name, url new_name);
 url get_master_buffer (url name);
