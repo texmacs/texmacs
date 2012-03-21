@@ -288,10 +288,9 @@ set_buffer_data (url name, new_data data) {
 void
 set_buffer_tree (url name, tree doc) {
   int nr= find_buffer (name);
-  tm_buffer buf;
   if (nr == -1) {
     insert_buffer (name);
-    buf= bufs [find_buffer (name)];
+    tm_buffer buf= bufs [find_buffer (name)];
     tree body= detach_data (doc, buf->data);
     set_document (buf->rp, body);
     buf->buf->title= propose_title (buf->buf->title, name, body);
@@ -301,12 +300,17 @@ set_buffer_tree (url name, tree doc) {
     }
   }
   else {
-    //string old_title= buf->buf->title;
-    //string old_project= buf->data->project;
-    buf= bufs[nr];
+    tm_buffer buf= bufs[nr];
+    string old_title= buf->buf->title;
+    string old_project= buf->data->project->label;
     tree body= detach_data (doc, buf->data);
     assign (buf->rp, body);
     set_buffer_data (name, buf->data);
+    buf->buf->title= propose_title (old_title, name, body);
+    if (buf->data->project != "" && buf->data->project != old_project) {
+      url prj_name= head (name) * as_string (buf->data->project);
+      buf->prj= load_passive_buffer (prj_name);
+    }
     pretend_buffer_saved (name);
   }
 }
