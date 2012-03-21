@@ -18,15 +18,96 @@
 #include "dictionary.hpp"
 #include "new_document.hpp"
 
+url tm_init_buffer_file= url_none ();
+url my_init_buffer_file= url_none ();
+
+/******************************************************************************
+* Low level view routines
+******************************************************************************/
+
+tm_view
+new_view (url name) {
+  //cout << "Creating new view\n";
+
+  create_buffer (name, tree (DOCUMENT));
+  tm_buffer buf= search_buffer (name);
+  editor    ed = new_editor (get_server () -> get_server (), buf);
+  tm_view   vw = tm_new<tm_view_rep> (buf, ed);
+  buf->vws << vw;
+  ed->set_data (buf->data);
+
+  tm_view temp_vw= get_view (false);
+  set_view (vw);
+  if (is_none (tm_init_buffer_file))
+    tm_init_buffer_file= "$TEXMACS_PATH/progs/init-buffer.scm";
+  if (is_none (my_init_buffer_file))
+    my_init_buffer_file= "$TEXMACS_HOME_PATH/progs/my-init-buffer.scm";
+  if (exists (tm_init_buffer_file)) exec_file (tm_init_buffer_file);
+  if (exists (my_init_buffer_file)) exec_file (my_init_buffer_file);
+  set_view (temp_vw);
+
+  //cout << "View created\n";
+  return vw;
+}
+
+tm_view
+get_passive_view (tm_buffer buf) {
+  int i;
+  for (i=0; i<N(buf->vws); i++)
+    if (buf->vws[i]->win == NULL)
+      return buf->vws[i];
+  return new_view (buf->buf->name);
+}
+
+void
+delete_view (tm_view vw) {
+  tm_buffer buf= vw->buf;
+  int i, j, n= N(buf->vws);
+  for (i=0; i<n; i++)
+    if (buf->vws[i] == vw) {
+      array<tm_view> a (n-1);
+      for (j=0; j<n-1; j++)
+	if (j<i) a[j]= buf->vws[j];
+	else a[j]= buf->vws[j+1];
+      buf->vws= a;
+    }
+  // tm_delete (vw);
+  // FIXME: causes very annoying segfault;
+  // recently introduced during reorganization
+}
+
+void
+attach_view (tm_window win, tm_view vw) {
+  // cout << "Attach view " << vw->buf->buf->name << "\n";
+  vw->win= win;
+  widget wid= win->wid;
+  set_scrollable (wid, vw->ed);
+  vw->ed->cvw= wid.rep;
+  ASSERT (is_attached (wid), "widget should be attached");
+  vw->ed->resume ();
+  win->set_window_name (vw->buf->buf->title);
+  win->set_window_url (vw->buf->buf->name);
+  // cout << "View attached\n";
+}
+
+void
+detach_view (tm_view vw) {
+  // cout << "Detach view " << vw->buf->buf->name << "\n";
+  tm_window win= vw->win;
+  if (win == NULL) return;
+  vw->win= NULL;
+  widget wid= win->wid;
+  ASSERT (is_attached (wid), "widget should be attached");
+  vw->ed->suspend ();
+  set_scrollable (wid, glue_widget ());
+  win->set_window_name ("TeXmacs");
+  win->set_window_url (url_none ());
+  // cout << "View detached\n";
+}
+
 /******************************************************************************
 * Creating and destroying buffers
 ******************************************************************************/
-
-void
-create_buffer (url name, tree doc) {
-  if (!is_nil (search_buffer (name))) return;
-  set_buffer_tree (name, doc);
-}
 
 url
 create_buffer () {
