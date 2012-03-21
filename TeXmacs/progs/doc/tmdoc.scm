@@ -134,6 +134,8 @@
               (TeXmacs ,(texmacs-version))
               (style "tmdoc")
               (body (document "Broken link."))))
+          ((!= (url-suffix root) "tm")
+           (string-load root))
           ((== type "normal")
            (tm->stree (texmacs-load-tree root "texmacs")))
           ((== type "book")

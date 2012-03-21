@@ -50,7 +50,9 @@
   (with (class name) (tmfs-decompose-name u)
     (lazy-tmfs-force class)
     (cond ((ahash-ref tmfs-handler-table (cons class 'load)) =>
-	   (lambda (handler) (object->string (handler name))))
+	   (lambda (handler)
+             (with r (handler name)
+               (if (string? r) r (object->string r)))))
 	  (else ((ahash-ref tmfs-handler-table (cons #t 'load)) u)))))
 
 (define-public (tmfs-save u what)
@@ -91,6 +93,14 @@
     (cond ((ahash-ref tmfs-handler-table (cons class 'master)) =>
 	   (lambda (handler) (handler name)))
 	  (else u))))
+
+(define-public (tmfs-format u)
+  "Get file format for url @u."
+  (with (class name) (tmfs-decompose-name u)
+    (lazy-tmfs-force class)
+    (cond ((ahash-ref tmfs-handler-table (cons class 'format)) =>
+	   (lambda (handler) (handler name)))
+	  (else "stm"))))
 
 (define-public (tmfs-remote? u)
   "Check whether the url @u is handled remotedly."
@@ -184,6 +194,11 @@
 (define-public-macro (tmfs-master-handler head . body)
   (with (type what) head
     `(tmfs-handler ,(symbol->string type) 'master
+                   (lambda (,what) ,@body))))
+
+(define-public-macro (tmfs-format-handler head . body)
+  (with (type what) head
+    `(tmfs-handler ,(symbol->string type) 'format
                    (lambda (,what) ,@body))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
