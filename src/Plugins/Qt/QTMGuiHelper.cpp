@@ -11,7 +11,7 @@
 
 #include "QTMGuiHelper.hpp"
 #include "qt_tm_widget.hpp"
-
+#include "scheme.hpp"
 
 void
 QTMGuiHelper::aboutToShowMainMenu() {
