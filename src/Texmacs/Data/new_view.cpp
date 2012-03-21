@@ -59,6 +59,19 @@ get_passive_view (tm_buffer buf) {
   return new_view (buf->buf->name);
 }
 
+tm_view
+get_recent_view (url name) {
+  tm_buffer buf= search_buffer (name);
+  if (is_nil (buf) || N(buf->vws) == 0) return new_view (name);
+  tm_view vw= get_view ();
+  if (vw->buf == buf) return vw;
+  // FIXME: rather/also prefer recent views
+  for (int i=0; i<N(buf->vws); i++)
+    if (buf->vws[i]->win != NULL)
+      return buf->vws[i];
+  return buf->vws[0];
+}
+
 void
 delete_view (tm_view vw) {
   tm_buffer buf= vw->buf;

@@ -306,24 +306,73 @@ pretend_buffer_saved (url name) {
 
 tree
 import_tree (url u, string fm) {
-  string s, suf= suffix (u);
-  string action= "load " * fm * " file";
+  string s;
   u= resolve (u);
   set_file_focus (u);
   if (is_none (u) || load_string (u, s, false)) return "error";
-  if (fm == "generic") fm= get_format (s, suf);
+  if (fm == "generic") fm= get_format (s, suffix (u));
   if (fm == "texmacs" && starts (s, "(document (TeXmacs")) fm= "stm";
   if (fm == "verbatim" && starts (s, "(document (TeXmacs")) fm= "stm";
   tree t= generic_to_tree (s, fm * "-document");
-  tree links= extract (t, "links");
-  if (N (links) != 0)
-    (void) call ("register-link-locations", object (u), object (links));
   return t;
 }
 
-void
+bool
+buffer_import (url name, url src, string fm) {
+  tree t= import_tree (src, fm);
+  if (t == "error") return true;
+  set_buffer_tree (name, t);
+  tree links= extract (t, "links");
+  if (N (links) != 0)
+    (void) call ("register-link-locations", object (src), object (links));
+  return false;
+}
+
+bool
 buffer_load (url name) {
   string fm= file_format (name);
-  tree t= import_tree (name, fm);
-  set_buffer_tree (name, t);
+  return buffer_import (name, name, fm);
+}
+
+/******************************************************************************
+* Saving
+******************************************************************************/
+
+bool
+export_tree (tree doc, url u, string fm) {
+  if (fm == "generic") fm= "verbatim";
+  string s= tree_to_generic (doc, fm * "-document");
+  if (s == "* error: unknown format *") return true;
+  return save_string (u, s);
+}
+
+bool
+buffer_export (url name, url dest, string fm) {
+  tm_view vw= get_recent_view (name);
+
+  tree body= subtree (the_et, vw->buf->rp);
+  if (fm == "verbatim")
+    body= vw->ed->exec_verbatim (body);
+  if (fm == "html")
+    body= vw->ed->exec_html (body);
+  if (fm == "latex")
+    body= vw->ed->exec_latex (body);
+
+  vw->ed->get_data (vw->buf->data);
+  tree doc= attach_data (body, vw->buf->data, !vw->ed->get_save_aux());
+
+  object arg1 (vw->buf->buf->name);
+  object arg2 (body);
+  tree links= as_tree (call ("get-link-locations", arg1, arg2));
+  if (N (links) != 0)
+    doc << compound ("links", links);
+  
+  export_tree (doc, dest, fm);
+}
+
+bool
+buffer_save (url name) {
+  string fm= file_format (name);
+  if (fm == "generic") fm= "verbatim";
+  return buffer_export (name, name, fm);
 }

@@ -136,6 +136,7 @@ void create_buffer (url name, tree doc);
 tm_buffer search_buffer (url name);
 void attach_view (tm_window win, tm_view vw);
 void detach_view (tm_view vw);
+tm_view get_recent_view (url name);
 tm_view get_passive_view (tm_buffer buf);
 void delete_view (tm_view vw);
 void new_buffer_in_this_window (url name, tree t);
@@ -164,6 +165,10 @@ double last_visited (url name);
 bool buffer_modified (url name);
 void pretend_buffer_saved (url name);
 bool buffer_has_name (url name);
+bool buffer_import (url name, url src, string fm);
+bool buffer_load (url name);
+bool buffer_export (url name, url dest, string fm);
+bool buffer_save (url name);
 
 /* View management */
 url  create_buffer ();

@@ -462,6 +462,10 @@
   (buffer-modified? buffer_modified (bool url))
   (buffer-pretend-saved pretend_buffer_saved (void url))
   (buffer-has-name? buffer_has_name (bool url))
+  (buffer-import buffer_import (bool url url string))
+  (buffer-load buffer_load (bool url))
+  (buffer-export buffer_export (bool url url string))
+  (buffer-save buffer_save (bool url))
 
   (new-buffer create_buffer (url))
   (switch-to-buffer-path switch_to_buffer (bool path))
