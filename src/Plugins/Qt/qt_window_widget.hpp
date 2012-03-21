@@ -20,7 +20,7 @@ class QWidget;
 /*! Wrapper for QTMWindow, TeXmacs' QMainWindow.
  *
  */
-class qt_window_widget_rep: public widget_rep {
+class qt_window_widget_rep: public qt_widget_rep {
 public:
   QWidget *wid;
   command quit;    // Ignored

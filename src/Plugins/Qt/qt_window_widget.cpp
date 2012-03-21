@@ -20,7 +20,7 @@
 #include <QVariant>
 
 qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, command q):
-widget_rep(), wid(_wid), quit(q)
+qt_widget_rep(), wid(_wid), quit(q)
 {
   wid->setProperty ("texmacs_window_widget",
                     QVariant::fromValue ((void*) this));
@@ -112,7 +112,7 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       break;
       
     default:
-      FAILED ("cannot handle slot type");
+      qt_widget_rep::send(s, val);
   }
 }
 

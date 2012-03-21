@@ -113,7 +113,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
       // This message is sent to refresh special widgets. Usually we just ignore it.
       break;
     default:
-      FAILED ("unhandled slot type");
+      qt_widget_rep::send(s, val);
   }
 }
 

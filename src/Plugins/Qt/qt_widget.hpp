@@ -13,6 +13,7 @@
 #define QT_WIDGET_HPP
 
 #include "widget.hpp"
+#include "message.hpp"
 
 class QWidget;
 class QAction;
@@ -83,6 +84,17 @@ public:
    */
   virtual QLayoutItem *as_qlayoutitem () { return NULL; }
   
+  
+  ////////////////////// Handling of TeXmacs' messages
+  
+  virtual void      send (slot s, blackbox val) {
+    if (DEBUG_QT)
+      cout << "qt_widget_rep::send(), unhandled slot: " << slot_name (s) << LF;
+  }
+  //virtual blackbox query (slot s, int type_id);
+  //virtual widget    read (slot s, blackbox index);
+  //virtual void     write (slot s, blackbox index, widget w);
+  //virtual void    notify (slot s, blackbox new_val);
 };
 
 

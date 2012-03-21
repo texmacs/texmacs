@@ -54,7 +54,7 @@ qt_printer_widget_rep::send (slot s, blackbox val) {
     case SLOT_REFRESH:   // ignore: this widget doesn't need refreshing.
       break;
     default:  // unsupported slots
-      qt_widget_rep::send (s, val);  // throws FAILED()
+      qt_widget_rep::send (s, val);
       break;
   }
 }
