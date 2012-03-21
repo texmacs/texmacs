@@ -14,6 +14,7 @@
 #include "editor.hpp"
 #include "url.hpp"
 #include "scheme.hpp"
+#include "new_data.hpp"
 
 class tm_buffer_rep;
 class tm_view_rep;
@@ -164,7 +165,7 @@ bool buffer_modified (url name);
 void pretend_buffer_saved (url name);
 bool buffer_has_name (url name);
 
-/* Buffer management */
+/* View management */
 url  create_buffer ();
 bool switch_to_buffer (path p);
 void switch_to_buffer (url name);
@@ -175,6 +176,14 @@ void clone_window ();
 void kill_window ();
 void kill_window_and_buffer ();
 bool is_aux_buffer (url name);
+
+bool needs_to_be_saved (array<tm_view> vws);
+bool needs_to_be_autosaved (array<tm_view> vws);
+void set_master (array<tm_view> vws, url master);
+void set_title (array<tm_view> vws, string title, url name);
+void pretend_saved (array<tm_view> vws);
+void set_data (array<tm_view> vws, new_data data);
+void delete_views (array<tm_view> vws);
 
 /* Project management */
 void project_attach (string prj_name= "");
