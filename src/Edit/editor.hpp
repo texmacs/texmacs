@@ -13,19 +13,19 @@
 #define EDITOR_H
 #include "typesetter.hpp"
 #ifdef AQUATEXMACS
-#include "Cocoa/aqua_simple_widget.h"
+#  include "Cocoa/aqua_simple_widget.h"
 #else
-#ifdef QTTEXMACS
-#include "Qt/qt_simple_widget.hpp"
-#else
-#include "Widkit/simple_wk_widget.hpp"
-#endif
+#  ifdef QTTEXMACS
+#    include "Qt/qt_simple_widget.hpp"
+#  else
+#    include "Widkit/simple_wk_widget.hpp"
+#  endif
 #endif
 #include "server.hpp"
 #include "drd_info.hpp"
 #ifdef EXPERIMENTAL
-#include "../Style/Environment/environment.hpp"
-#include "../Style/Memorizer/memorizer.hpp"
+#  include "../Style/Environment/environment.hpp"
+#  include "../Style/Memorizer/memorizer.hpp"
 #endif
 #include "new_data.hpp"
 #define TEXMACS_COPYRIGHT (string("(c) 1999-2006 by Joris van der Hoeven"))
@@ -40,9 +40,10 @@
 #define THE_LOCUS 128
 
 class tm_buffer_rep;
-typedef tm_buffer_rep* tm_buffer;
 class tm_view_rep;
 class server_rep;
+typedef tm_buffer_rep* tm_buffer;
+typedef tm_view_rep* tm_view;
 class modification;
 extern bool enable_fastenv;
 
@@ -538,7 +539,7 @@ public:
   friend string get_editor_status_report ();
   friend void   tm_failure (const char* msg);
   friend void   set_buffer_tree (url name, tree doc);
-  friend void   set_master_buffer (url name, url master);
+  friend void   set_master (array<tm_view> vws, url master);
 };
 
 class editor {

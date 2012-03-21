@@ -460,7 +460,6 @@
   (new-buffer create_buffer (url))
   (switch-to-buffer-path switch_to_buffer (bool path))
   (switch-to-buffer switch_to_buffer (void url))
-  (switch-to-active-buffer switch_to_active_buffer (void url))
   (revert-buffer revert_buffer (void))
   (kill-buffer kill_buffer (void))
   (no-name? no_name (bool))

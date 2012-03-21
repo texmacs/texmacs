@@ -21,12 +21,11 @@
 array<tm_buffer> bufs;
 
 /******************************************************************************
-* Check for changes in the buffer
+* Routines on collections of views
 ******************************************************************************/
 
 bool
-tm_buffer_rep::needs_to_be_saved () {
-  if (!buf->in_menu) return false;
+needs_to_be_saved (array<tm_view> vws) {
   for (int i=0; i<N(vws); i++)
     if (vws[i]->ed->need_save ())
       return true;
@@ -34,12 +33,62 @@ tm_buffer_rep::needs_to_be_saved () {
 }
 
 bool
-tm_buffer_rep::needs_to_be_autosaved () {
-  if (!buf->in_menu) return false;
+needs_to_be_autosaved (array<tm_view> vws) {
   for (int i=0; i<N(vws); i++)
     if (vws[i]->ed->need_save (false))
       return true;
   return false;
+}
+
+void
+set_master (array<tm_view> vws, url master) {
+  for (int i=0; i<N(vws); i++)
+    vws[i]->ed->set_master (master);
+}
+
+void
+set_title (array<tm_view> vws, string title, url name) {
+  for (int i=0; i<N(vws); i++) {
+    tm_view vw= vws[i];
+    if (vw->win != NULL) {
+      vw->win->set_window_name (title);
+      vw->win->set_window_url (name);
+    }
+  }
+}
+
+void
+pretend_saved (array<tm_view> vws) {
+  for (int i=0; i<N(vws); i++)
+    vws[i]->ed->notify_save ();
+}
+
+void
+set_data (array<tm_view> vws, new_data data) {
+  for (int i=0; i<N(vws); i++)
+    vws[i]->ed->set_data (data);
+}
+
+void
+delete_views (array<tm_view> vws) {
+  for (int i=0; i<N(vws); i++)
+    delete_view (vws[i]);
+}
+
+/******************************************************************************
+* Check for changes in the buffer
+******************************************************************************/
+
+bool
+tm_buffer_rep::needs_to_be_saved () {
+  if (!buf->in_menu) return false;
+  return ::needs_to_be_saved (vws);
+}
+
+bool
+tm_buffer_rep::needs_to_be_autosaved () {
+  if (!buf->in_menu) return false;
+  return ::needs_to_be_autosaved (vws);
 }
 
 /******************************************************************************
@@ -118,7 +167,7 @@ new_menu_name (url u, tree doc) {
     string ret (name);
     if (j>1) ret= name * " (" * as_string (j) * ")";
     for (i=0; i<N(bufs); i++)
-      if (bufs[i]->buf->abbr == ret) flag= false;
+      if (bufs[i]->buf->title == ret) flag= false;
     if (flag) return ret;
   }
 }
@@ -162,33 +211,24 @@ set_master_buffer (url name, url master) {
   tm_buffer buf= bufs[nr];
   if (buf->buf->master == master) return;
   buf->buf->master= master;
-  for (int i=0; i<N(buf->vws); i++) {
-    tm_view vw= buf->vws[i];
-    vw->ed->set_master (name);
-  }
+  set_master (buf->vws, master);
 }
 
 string
 get_title_buffer (url name) {
   int nr= find_buffer (name);
   if (nr == -1) return "";
-  else return bufs[nr]->buf->abbr;
+  else return bufs[nr]->buf->title;
 }
 
 void
-set_title_buffer (url name, string abbr) {
+set_title_buffer (url name, string title) {
   int nr= find_buffer (name);
   if (nr == -1) return;
   tm_buffer buf= bufs[nr];
-  if (buf->buf->abbr == abbr) return;
-  buf->buf->abbr= abbr;
-  for (int i=0; i<N(buf->vws); i++) {
-    tm_view vw2= buf->vws[i];
-    if (vw2->win != NULL) {
-      vw2->win->set_window_name (buf->buf->abbr);
-      vw2->win->set_window_url (buf->buf->name);
-    }
-  }
+  if (buf->buf->title == title) return;
+  buf->buf->title= title;
+  set_title (buf->vws, buf->buf->title, buf->buf->name);
 }
 
 bool
@@ -224,8 +264,7 @@ pretend_buffer_saved (url name) {
   int nr= find_buffer (name);
   if (nr == -1) return;
   tm_buffer buf= bufs[nr];
-  for (int i=0; i<N(buf->vws); i++)
-    buf->vws[i]->ed->notify_save ();
+  pretend_saved (buf->vws);
 }
 
 void
@@ -233,8 +272,7 @@ set_buffer_data (url name, new_data data) {
   int nr= find_buffer (name);
   if (nr == -1) return;
   tm_buffer buf= bufs[nr];
-  for (int i=0; i<N(buf->vws); i++)
-    buf->vws[i]->ed->set_data (data);
+  set_data (buf->vws, data);
 }
 
 void
@@ -290,7 +328,7 @@ create_buffer (url name) {
   int nr= find_buffer (name);
   if (nr != -1) return bufs[nr];
   tm_buffer buf= tm_new<tm_buffer_rep> (name);
-  buf->buf->abbr= new_menu_name (name, tree (DOCUMENT, ""));
+  buf->buf->title= new_menu_name (name, tree (DOCUMENT, ""));
   bufs << buf;
   return buf;
 }
@@ -301,7 +339,7 @@ create_buffer (url name, tree doc) {
   if (nr != -1) return bufs[nr];
   tm_buffer buf= tm_new<tm_buffer_rep> (name);
   tree body= detach_data (doc, buf->data);
-  buf->buf->abbr= new_menu_name (name, body);
+  buf->buf->title= new_menu_name (name, body);
   bufs << buf;
   set_document (buf->rp, body);
   if (buf->data->project != "") {
@@ -341,8 +379,7 @@ delete_buffer (tm_buffer buf) {
     for (int i=nr; i<(n-1); i++) bufs[i]= bufs[i+1];
     bufs->resize (n-1);
   }
-  for (int i=0; i<N(buf->vws); i++)
-    delete_view (buf->vws[i]);
+  delete_views (buf->vws);
   tm_delete (buf);
 }
 
@@ -353,8 +390,8 @@ kill_buffer () {
   tm_buffer buf= get_buffer();
   for (nr=0; nr<N(bufs); nr++) if (buf == bufs[nr]) break;
   ASSERT (nr != N(bufs), "buffer not found");
-  for (nr=0; nr<N(bufs); nr++) if (buf != bufs[nr]) break;
-  ASSERT (nr != N(bufs), "no suitable new buffer");
+  for (nr=N(bufs)-1; nr>=0; nr--) if (buf != bufs[nr]) break;
+  ASSERT (nr >= 0, "no suitable new buffer");
   tm_buffer new_buf = bufs[nr];
 
   for (i=0; i<N(buf->vws); i++) {
@@ -405,28 +442,4 @@ switch_to_buffer (url name) {
     nr= find_buffer (name);
   }
   if (nr != -1) switch_to_buffer (nr);
-}
-
-void
-switch_to_active_buffer (url name) {
-  // This function is a temporary hack for coq
-  // Switching to buffers in other windows should be completely rewritten
-
-  int nr= find_buffer (name);
-  if (nr == -1) {
-    load_passive_buffer (name);
-    nr= find_buffer (name);
-  }
-  if (nr != -1) {
-    int i;
-    tm_buffer buf= bufs[nr];
-    for (i=0; i<N(buf->vws); i++) // search active view
-      if (buf->vws[i]->win != NULL) {
-        tm_view vw= buf->vws[i];
-        set_view (vw);
-        buf->buf->last_visit= texmacs_time ();
-        return;
-      }
-  }
-  switch_to_buffer (name);
 }

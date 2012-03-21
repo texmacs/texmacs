@@ -22,7 +22,7 @@ public:
   url name;               // full name
   url master;             // base name for linking and navigation
   string fm;              // buffer format
-  string abbr;            // abbreviated name
+  string title;           // buffer title (for menus)
   bool read_only;         // buffer is read only?
   bool secure;            // is the buffer secure?
   bool in_menu;           // should the buffer be listed in the menus?
@@ -30,7 +30,7 @@ public:
 
   inline new_buffer_rep (url name2):
     name (name2), master (name2),
-    fm ("texmacs"), abbr (as_string (tail (name))),
+    fm ("texmacs"), title (as_string (tail (name))),
     read_only (false), secure (is_secure (name2)), in_menu (true),
     last_visit (texmacs_time ()) {}
 };

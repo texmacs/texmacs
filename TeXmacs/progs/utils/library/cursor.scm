@@ -228,15 +228,6 @@
         (else (set-message `(concat "Error: no buffer " (verbatim ,name))
                            "switch to buffer"))))
 
-(tm-define (with-active-buffer-sub name cmd)
-  (let ((old (current-buffer)))
-    (switch-to-active-buffer name)
-    (eval cmd)
-    (switch-to-active-buffer old)))
-
-(tm-define-macro (with-active-buffer buf . body)
-  `(with-active-buffer-sub ,buf `(begin ,@body)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search and replace
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

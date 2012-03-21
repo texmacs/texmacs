@@ -84,7 +84,7 @@ attach_view (tm_window win, tm_view vw) {
   vw->ed->cvw= wid.rep;
   ASSERT (is_attached (wid), "widget should be attached");
   vw->ed->resume ();
-  win->set_window_name (vw->buf->buf->abbr);
+  win->set_window_name (vw->buf->buf->title);
   win->set_window_url (vw->buf->buf->name);
   // cout << "View attached\n";
 }

@@ -5453,19 +5453,6 @@ tmg_switch_to_buffer (tmscm arg1) {
 }
 
 tmscm
-tmg_switch_to_active_buffer (tmscm arg1) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "switch-to-active-buffer");
-
-  url in1= tmscm_to_url (arg1);
-
-  // TMSCM_DEFER_INTS;
-  switch_to_active_buffer (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return TMSCM_UNSPECIFIED;
-}
-
-tmscm
 tmg_revert_buffer () {
   // TMSCM_DEFER_INTS;
   revert_buffer ();
@@ -6381,7 +6368,6 @@ initialize_glue_basic () {
   tmscm_install_procedure ("new-buffer",  tmg_new_buffer, 0, 0, 0);
   tmscm_install_procedure ("switch-to-buffer-path",  tmg_switch_to_buffer_path, 1, 0, 0);
   tmscm_install_procedure ("switch-to-buffer",  tmg_switch_to_buffer, 1, 0, 0);
-  tmscm_install_procedure ("switch-to-active-buffer",  tmg_switch_to_active_buffer, 1, 0, 0);
   tmscm_install_procedure ("revert-buffer",  tmg_revert_buffer, 0, 0, 0);
   tmscm_install_procedure ("kill-buffer",  tmg_kill_buffer, 0, 0, 0);
   tmscm_install_procedure ("no-name?",  tmg_no_nameP, 0, 0, 0);
