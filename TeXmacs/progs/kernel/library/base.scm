@@ -301,6 +301,13 @@
 (define-public (buffer-base-url)
   (buffer-get-master (current-buffer)))
 
+(define-public (buffer-in-recent-menu? u)
+  (not (url-rooted-tmfs? u)))
+
+(define-public (buffer-in-menu? u)
+  (or (buffer-in-recent-menu? u)
+      (string-starts? (url->string u) "tmfs://help/")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Redirections
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

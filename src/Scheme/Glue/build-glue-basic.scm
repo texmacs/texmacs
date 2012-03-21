@@ -454,7 +454,6 @@
   (buffer-get-title get_title_buffer (string url))
   (buffer-last-visited last_visited (double url))
   (buffer-modified? buffer_modified (bool url))
-  (buffer-in-menu? buffer_in_menu (bool url))
   (buffer-pretend-saved pretend_buffer_saved (void url))
 
   (new-buffer create_buffer (url))

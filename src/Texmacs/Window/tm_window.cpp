@@ -153,7 +153,6 @@ texmacs_input_widget (tree doc, command cmd, bool continuous) {
   tm_window win  = tm_new<tm_window_rep> (doc, command ());
   set_master_buffer (name, base);
   vw->win= win;
-  vw->buf->buf->in_menu= false;
   set_scrollable (win->wid, vw->ed);
   vw->ed->cvw= win->wid.rep;
   vw->ed->mvw= curvw;

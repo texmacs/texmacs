@@ -81,13 +81,13 @@ delete_views (array<tm_view> vws) {
 
 bool
 tm_buffer_rep::needs_to_be_saved () {
-  if (!buf->in_menu) return false;
+  if (buf->read_only) return false;
   return ::needs_to_be_saved (vws);
 }
 
 bool
 tm_buffer_rep::needs_to_be_autosaved () {
-  if (!buf->in_menu) return false;
+  if (buf->read_only) return false;
   return ::needs_to_be_autosaved (vws);
 }
 
@@ -229,13 +229,6 @@ set_title_buffer (url name, string title) {
   if (buf->buf->title == title) return;
   buf->buf->title= title;
   set_title (buf->vws, buf->buf->title, buf->buf->name);
-}
-
-bool
-buffer_in_menu (url name) {
-  int nr= find_buffer (name);
-  if (nr == -1) return false;
-  else return bufs[nr]->buf->in_menu;
 }
 
 bool

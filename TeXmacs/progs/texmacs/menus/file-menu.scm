@@ -40,17 +40,13 @@
   (with l (list-filter (buffer-list) buffer-in-menu?)
     (list-sort l buffer-more-recent?)))
 
-(define (ok-for-menu? x)
-  (not (string-starts? (url->string x) "tmfs://aux/")))
-
-(tm-define (buffer-menu-list)
+(tm-define (buffer-menu-list nr)
   (let* ((l1 (list-filter (buffer-list) buffer-in-menu?))
-         (l2 (list-filter l1 ok-for-menu?))
-         (l3 (list-sort l2 buffer-more-recent?)))
-    (sublist l3 0 (min (length l3) 15))))
+         (l2 (list-sort l1 buffer-more-recent?)))
+    (sublist l2 0 (min (length l2) nr))))
 
 (tm-define (buffer-go-menu)
-  (buffer-list-menu (buffer-menu-list)))
+  (buffer-list-menu (buffer-menu-list 15)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dynamic menu for recent files
@@ -63,12 +59,12 @@
 
 (tm-define (recent-file-list nr)
   (let* ((l1 (map cdar (learned-interactive "recent-buffer")))
-         (l2 (list-filter l1 ok-for-menu?)))
+         (l2 (list-filter l1 buffer-in-recent-menu?)))
     (sublist l2 0 (min (length l2) nr))))
 
 (tm-define (recent-unloaded-file-list nr)
   (let* ((l1 (map cdar (learned-interactive "recent-buffer")))
-         (l2 (list-filter l1 ok-for-menu?))
+         (l2 (list-filter l1 buffer-in-recent-menu?))
          (l3 (map url->string (buffer-list)))
          (dl (list-difference l2 l3)))
     (sublist dl 0 (min (length dl) nr))))

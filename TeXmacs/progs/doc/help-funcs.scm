@@ -55,12 +55,12 @@
 
 (define (load-help-buffer-sub s type)
   (let ((name (url-resolve-help s)))
-    (if (url-none? name)
-	(set-message `(concat "Error: help file " (verbatim ,s) " not found")
-		     "load help file")
-	(cond ((== type "normal") (tmdoc-expand-help name 'plain))
-	      ((== type "article") (tmdoc-expand-help name 'tmdoc-title))
-	      ((== type "book") (tmdoc-expand-help-manual name))))))
+    (cond ((url-none? name)
+           (set-message
+            `(concat "Error: help file " (verbatim ,s) " not found")
+            "load help file"))
+          ((== type "book") (tmdoc-expand-help-manual name))
+          (else (tmdoc-expand-help name type)))))
 
 (tm-define (load-help-buffer s) (load-help-buffer-sub s "normal"))
 (tm-define (load-help-article s) (load-help-buffer-sub s "article"))

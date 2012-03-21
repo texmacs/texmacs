@@ -246,8 +246,8 @@
 	    ("Developers guide" (load-help-book "devel/source/source")))
 	  ---
 	  (when (style-has? "tmdoc-style")
-	    ("Compile article" (tmdoc-expand-this 'tmdoc-title))
-	    ("Compile book" (tmdoc-expand-this 'title))))
+	    ("Compile article" (tmdoc-expand-this "article"))
+	    ("Compile book" (tmdoc-expand-this "book"))))
 ;;       (when (url-exists-in-path? "wget")
 ;; 	(-> "Online help"
 ;; 	    ("Wiki" (load-buffer "tmfs://file/+R28HzRqmu}tA69.scm"))

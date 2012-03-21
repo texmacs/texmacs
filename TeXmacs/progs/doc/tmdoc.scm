@@ -128,17 +128,17 @@
 (tmfs-load-handler (help name)
   (let* ((i (string-index name #\/))
          (n (string-length name))
-         (level (string->symbol (if i (substring name 0 i) "section")))
+         (type (if i (substring name 0 i) "section"))
          (root (string->url (if i (substring name i n) name))))
     (cond ((not (url-exists? root))
            `(document
               (TeXmacs ,(texmacs-version))
               (style "tmdoc")
               (body (document "Broken link."))))
-          ((== level 'plain)
+          ((== type "normal")
            (tm->stree (texmacs-load-tree root "texmacs")))
-          ((== level 'title)
-           (let* ((body (tmdoc-expand root root level))
+          ((== type "book")
+           (let* ((body (tmdoc-expand root root 'title))
                   (lan (tmdoc-language root)))
              (tm->stree
               `(document
@@ -148,7 +148,7 @@
                  (initial (collection (associate "language" ,lan)
                                       (associate "page-medium" "paper")))))))
           (else
-           (let* ((body (tmdoc-expand root root level))
+           (let* ((body (tmdoc-expand root root 'tmdoc-title))
                   (lan (tmdoc-language root)))
              (tm->stree
               `(document
@@ -164,7 +164,7 @@
 
 (tm-define (tmdoc-find-title doc)
   (cond ((tm-atomic? doc) #f)
-        ((tm-in? doc '(doc-title tmdoc-title tmdoc-title* tmweb-title))
+        ((tm-in? doc '(title doc-title tmdoc-title tmdoc-title* tmweb-title))
          (with title (cpp-texmacs->verbatim (tm-ref doc 0) #f "default")
            (string-append "Help - " title)))
         (else (tmdoc-find-title-list (tm-children doc)))))
@@ -177,10 +177,8 @@
 ;; User interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (tmdoc-expand-help root level)
-  (load-buffer (string-append "tmfs://help/"
-                              (symbol->string level) "/"
-                              (url->string root))))
+(tm-define (tmdoc-expand-help root type)
+  (load-buffer (string-append "tmfs://help/" type "/" (url->string root))))
 
 (tm-define (delayed-update nr cont)
   (system-wait "Generating automatic content" nr)
@@ -190,16 +188,20 @@
 
 (tm-define (tmdoc-expand-help-manual root)
   (system-wait "Generating manual" "(can be long)")
-  (tmdoc-expand-help root 'title)
-  (user-delayed (lambda ()
-  (delayed-update "(pass 1/3)" (lambda ()
-  (delayed-update "(pass 2/3)" (lambda ()
-  (delayed-update "(pass 3/3)" (lambda ()
-  (buffer-pretend-saved (current-buffer))
-  (system-wait "Finishing manual" "(soon ready)"))))))))))
+  (tmdoc-expand-help root "book")
+  (user-delayed
+    (lambda ()
+      (delayed-update "(pass 1/3)"
+        (lambda ()
+          (delayed-update "(pass 2/3)"
+            (lambda ()
+              (delayed-update "(pass 3/3)"
+                (lambda ()
+                  (buffer-pretend-saved (current-buffer))
+                  (system-wait "Finishing manual" "(soon ready)"))))))))))
 
-(tm-define (tmdoc-expand-this level)
-  (tmdoc-expand-help (current-buffer) level))
+(tm-define (tmdoc-expand-this type)
+  (tmdoc-expand-help (current-buffer) type))
 
 (define (tmdoc-remove-hyper-links l)
   (cond ((npair? l) l)

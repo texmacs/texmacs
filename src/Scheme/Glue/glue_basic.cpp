@@ -5392,19 +5392,6 @@ tmg_buffer_modifiedP (tmscm arg1) {
 }
 
 tmscm
-tmg_buffer_in_menuP (tmscm arg1) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-in-menu?");
-
-  url in1= tmscm_to_url (arg1);
-
-  // TMSCM_DEFER_INTS;
-  bool out= buffer_in_menu (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return bool_to_tmscm (out);
-}
-
-tmscm
 tmg_buffer_pretend_saved (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-pretend-saved");
 
@@ -6363,7 +6350,6 @@ initialize_glue_basic () {
   tmscm_install_procedure ("buffer-get-title",  tmg_buffer_get_title, 1, 0, 0);
   tmscm_install_procedure ("buffer-last-visited",  tmg_buffer_last_visited, 1, 0, 0);
   tmscm_install_procedure ("buffer-modified?",  tmg_buffer_modifiedP, 1, 0, 0);
-  tmscm_install_procedure ("buffer-in-menu?",  tmg_buffer_in_menuP, 1, 0, 0);
   tmscm_install_procedure ("buffer-pretend-saved",  tmg_buffer_pretend_saved, 1, 0, 0);
   tmscm_install_procedure ("new-buffer",  tmg_new_buffer, 0, 0, 0);
   tmscm_install_procedure ("switch-to-buffer-path",  tmg_switch_to_buffer_path, 1, 0, 0);
