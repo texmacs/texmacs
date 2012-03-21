@@ -103,26 +103,19 @@ insert_buffer (url name) {
   bufs << buf;
 }
 
-int
-find_buffer (url name) {
-  int i;
-  for (i=0; i<N(bufs); i++)
-    if (bufs[i]->buf->name == name)
-      return i;
-  return -1;
-}
-
 void
 remove_buffer (url name) {
-  int nr= find_buffer (name);
-  if (nr == -1) return;
-  int n= N(bufs);
-  tm_buffer buf= bufs[nr];
-  for (int i=nr; i<n-1; i++)
-    bufs[i]= bufs[i+1];
-  bufs->resize (n-1);
-  delete_views (buf->vws);
-  tm_delete (buf);
+  int nr, n= N(bufs);
+  for (nr=0; nr<n; nr++)
+    if (bufs[nr]->buf->name == name) {
+      tm_buffer buf= bufs[nr];
+      for (int i=nr; i<n-1; i++)
+        bufs[i]= bufs[i+1];
+      bufs->resize (n-1);
+      delete_views (buf->vws);
+      tm_delete (buf);
+      return;
+    }
 }
 
 int
@@ -140,9 +133,11 @@ get_all_buffers () {
 
 tm_buffer
 search_buffer (url name) {
-  int nr= find_buffer (name);
-  if (nr == -1) return nil_buffer ();
-  return bufs[nr];
+  int i, n= N(bufs);
+  for (i=0; i<n; i++)
+    if (bufs[i]->buf->name == name)
+      return bufs[i];
+  return nil_buffer ();
 }
 
 /******************************************************************************
