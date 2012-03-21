@@ -125,7 +125,7 @@ remove_buffer (url name) {
 }
 
 int
-nr_bufs () {
+number_buffers () {
   return N(bufs);
 }
 

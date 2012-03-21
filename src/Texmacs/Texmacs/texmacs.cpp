@@ -355,7 +355,7 @@ TeXmacs_main (int argc, char** argv) {
     url r= "tmfs://help/plain" * concretize (u);
     load_buffer (r, "generic", 1);
   }
-  if (nr_bufs () == 0) {
+  if (number_buffers () == 0) {
     if (DEBUG_STD) cout << "TeXmacs] Creating 'no name' buffer...\n";
     open_window ();
   }

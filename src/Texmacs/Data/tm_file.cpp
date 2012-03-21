@@ -72,7 +72,7 @@ load_buffer (url u, string fm, int where, bool autosave_flag) {
           default: FAILED ("bad value for 'where'");
         }
       }
-    if (nr_bufs () != 0)
+    if (number_buffers () != 0)
       set_message (concat ("Error: file ", vname, " not found"), action);
     return;
   }
