@@ -447,6 +447,7 @@
   (current-buffer get_this_buffer (url))
   (all-buffers get_all_buffers (url))
   (path->buffer get_name_buffer (url path))
+  (buffer-new make_new_buffer (url))
   (buffer-rename rename_buffer (void url url))
   (buffer-set set_buffer_tree (void url content))
   (buffer-get get_buffer_tree (tree url))

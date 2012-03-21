@@ -186,16 +186,9 @@ new_buffer_in_new_window (url name, tree doc, tree geom) {
 
 url
 open_window (tree geom) {
-  int i=1;
-  while (true) {
-    url name= url_scratch ("no_name_", ".tm", i);
-    int nr= find_buffer (name);
-    if (nr == -1) {
-      new_buffer_in_new_window (name, tree (DOCUMENT), geom);
-      return name;
-    }
-    else i++;
-  }
+  url name= make_new_buffer ();
+  new_buffer_in_new_window (name, tree (DOCUMENT), geom);
+  return name;
 }
 
 void

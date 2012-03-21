@@ -357,17 +357,24 @@ create_buffer (url name, tree doc) {
 }
 
 url
-create_buffer () {
+make_new_buffer () {
   int i=1;
   while (true) {
     url name= url_scratch ("no_name_", ".tm", i);
     int nr= find_buffer (name);
     if (nr == -1) {
-      new_buffer_in_this_window (name, tree (DOCUMENT));
+      (void) create_buffer (name, tree (DOCUMENT));
       return name;
     }
     else i++;
   }
+}
+
+url
+create_buffer () {
+  url name= make_new_buffer ();
+  switch_to_buffer (name);
+  return name;
 }
 
 void

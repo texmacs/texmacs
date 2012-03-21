@@ -144,10 +144,11 @@ tm_buffer load_passive_buffer (url name);
 tree make_document (tm_view vw, string fm= "texmacs");
 
 /* Buffer management */
+url  make_new_buffer ();
+void remove_buffer (url name);
 int  number_buffers ();
 url  get_all_buffers ();
 url  get_this_buffer ();
-void remove_buffer (url name);
 url  get_name_buffer (path p);
 void rename_buffer (url name, url new_name);
 url get_master_buffer (url name);
