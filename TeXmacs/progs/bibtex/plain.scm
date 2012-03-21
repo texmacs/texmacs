@@ -530,7 +530,6 @@
 		(else
 		  (author-sort-key x "author")))))
     (string-append pre "    "
-		   (if (bib-empty? x "year") "" (bib-field x "year"))
-       "    "
+		   (if (bib-empty? x "year") "" (string-append (bib-field x "year") "    "))
 		   (bib-purify (bib-field x "title")))))
 

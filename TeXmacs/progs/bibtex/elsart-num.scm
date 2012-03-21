@@ -77,6 +77,7 @@
 	 (y `(concat "(" ,(bib-field x "year") ")"))
 	 (p (let* ((pp (bib-field x "pages")))
 	      (cond
+               ((bib-null? pp) "")
 	       ((equal? 1 (length pp)) "")
 	       ((equal? 2 (length pp)) (list-ref pp 1))
 	       (else `(concat ,(list-ref pp 1) "--" ,(list-ref pp 2)))))))

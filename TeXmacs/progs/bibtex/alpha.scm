@@ -18,7 +18,7 @@
 
 (define (bib-format-label-year x)
   (if (bib-empty? x "year")
-      "--"
+      ""
       (let* ((y (bib-field x "year"))
              (l (string-length y)))
             (if (<= l 2) y (substring y (- l 2) l)))))
