@@ -68,11 +68,11 @@ load_buffer (url u, string fm, int where, bool autosave_flag) {
         switch (where) {
           case 0: new_buffer_in_this_window (v, doc); break;
           case 1: new_buffer_in_new_window (v, doc); break;
-        case 2: (void) create_buffer (v, doc); break;
+          case 2: (void) create_buffer (v, doc); break;
           default: FAILED ("bad value for 'where'");
         }
       }
-    if (!no_bufs ())
+    if (nr_bufs () != 0)
       set_message (concat ("Error: file ", vname, " not found"), action);
     return;
   }
@@ -85,7 +85,7 @@ load_buffer (url u, string fm, int where, bool autosave_flag) {
   switch (where) {
     case 0: new_buffer_in_this_window (v, doc); break;
     case 1: new_buffer_in_new_window (v, doc); break;
-  case 2: (void) create_buffer (v, doc); break;
+    case 2: (void) create_buffer (v, doc); break;
     default: FAILED ("bad value for 'where'");
   }
   nr= find_buffer (v);

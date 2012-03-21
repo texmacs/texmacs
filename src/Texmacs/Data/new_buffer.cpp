@@ -129,11 +129,6 @@ nr_bufs () {
   return N(bufs);
 }
 
-bool
-no_bufs () {
-  return N(bufs) == 0;
-}
-
 int
 find_buffer (tm_buffer buf) {
   int i;

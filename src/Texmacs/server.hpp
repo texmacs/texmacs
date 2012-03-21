@@ -145,6 +145,7 @@ tm_buffer load_passive_buffer (url name);
 tree make_document (tm_view vw, string fm= "texmacs");
 
 /* Buffer management */
+int  nr_bufs ();
 url  get_all_buffers ();
 url  get_this_buffer ();
 void remove_buffer (url name);
@@ -164,7 +165,6 @@ bool buffer_modified (url name);
 void pretend_buffer_saved (url name);
 
 /* Buffer management */
-int  nr_bufs ();
 url  create_buffer ();
 void switch_to_buffer (int nr);
 bool switch_to_buffer (path p);
@@ -175,7 +175,6 @@ url  open_window (tree geom= "");
 void clone_window ();
 void kill_window ();
 void kill_window_and_buffer ();
-bool no_bufs ();
 bool no_name ();
 bool is_aux_buffer (url name);
 
