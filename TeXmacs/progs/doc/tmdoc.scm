@@ -126,11 +126,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tmfs-load-handler (help name)
-  (let* ((i (string-index name #\/))
-         (n (string-length name))
-         (type (if i (substring name 0 i) "section"))
-         (root (string->url (if i (substring name i n) name))))
-    (cond ((not (url-exists? root))
+  (let* ((type (or (tmfs-car name) "normal"))
+         (file (or (tmfs-cdr name) ""))
+         (root (tmfs-string->url file)))
+    (cond ((or (== file "") (not (url-exists? root)))
            `(document
               (TeXmacs ,(texmacs-version))
               (style "tmdoc")
@@ -178,7 +177,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmdoc-expand-help root type)
-  (load-buffer (string-append "tmfs://help/" type "/" (url->string root))))
+  (load-buffer (string-append "tmfs://help/" type "/"
+                              (url->tmfs-string root))))
 
 (tm-define (delayed-update nr cont)
   (system-wait "Generating automatic content" nr)

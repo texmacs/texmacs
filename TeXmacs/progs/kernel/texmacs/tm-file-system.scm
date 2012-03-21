@@ -123,6 +123,41 @@
   (or (assoc-ref (query->list q) var) ""))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Subroutines for building and analyzing TMFS URLs
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public (tmfs-pair? s)
+  (string-index s #\/))
+
+(define-public (tmfs-car s)
+  (with i (string-index s #\/)
+    (and i (substring s 0 i))))
+
+(define-public (tmfs-cdr s)
+  (with i (string-index s #\/)
+    (and i (substring s (+ i 1) (string-length s)))))
+
+(define-public (url->tmfs-string u)
+  (if (url-descends? u (get-texmacs-path))
+      (with base (url-append (get-texmacs-path) "x")
+        (string-append "tm/" (url->string (url-delta base u))))
+      (let* ((protocol (url-root u))
+             (file (url->string (url-unroot u))))
+        (cond ((== protocol "") (string-append "here" file))
+              ((== protocol "default") (string-append "file/" file))
+              (else (string-append protocol "/" file))))))
+
+(define-public (tmfs-string->url s)
+  (if (not (tmfs-pair? s))
+      (string->url s)
+      (let* ((protocol (tmfs-car s))
+             (file (string->url (tmfs-cdr s))))
+        (cond ((== protocol "tm") (url-append (get-texmacs-path) file))
+              ((== protocol "here") file)
+              ((== protocol "file") (url-append (root->url "default") file))
+              (else (url-append (root->url protocol) file))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Macros for defining handlers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
