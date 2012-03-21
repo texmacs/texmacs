@@ -20,6 +20,8 @@
 
 array<tm_buffer> bufs;
 
+string propose_title (string old_title, url u, tree doc);
+
 /******************************************************************************
 * Check for changes in the buffer
 ******************************************************************************/
@@ -37,7 +39,7 @@ tm_buffer_rep::needs_to_be_autosaved () {
 }
 
 /******************************************************************************
-* Main buffer management
+* Manipulation of buffer list
 ******************************************************************************/
 
 void
@@ -86,7 +88,55 @@ search_buffer (url name) {
 }
 
 /******************************************************************************
-* Information attached to buffers
+* Buffer names
+******************************************************************************/
+
+url
+get_this_buffer () {
+  tm_buffer buf= get_buffer ();
+  return buf->buf->name;
+}
+
+url
+get_name_buffer (path p) {
+  int i;
+  for (i=0; i<N(bufs); i++)
+    if (bufs[i]->rp <= p)
+      return bufs[i]->buf->name;
+  return url_none ();
+}
+
+void
+rename_buffer (url name, url new_name) {
+  if (new_name == name) return;
+  tm_buffer buf= search_buffer (name);
+  if (is_nil (buf)) return;
+  buf->buf->name= new_name;
+  buf->buf->master= new_name;
+  tree doc= subtree (the_et, buf->rp);
+  set_title_buffer (new_name, propose_title (buf->buf->title, new_name, doc));
+}
+
+url
+make_new_buffer () {
+  int i=1;
+  while (true) {
+    url name= url_scratch ("no_name_", ".tm", i);
+    if (is_nil (search_buffer (name))) {
+      set_buffer_tree (name, tree (DOCUMENT));
+      return name;
+    }
+    else i++;
+  }
+}
+
+bool
+buffer_has_name (url name) {
+  return !is_scratch (name);
+}
+
+/******************************************************************************
+* Buffer title
 ******************************************************************************/
 
 string
@@ -118,48 +168,6 @@ propose_title (string old_title, url u, tree doc) {
   }
 }
 
-url
-get_this_buffer () {
-  tm_buffer buf= get_buffer ();
-  return buf->buf->name;
-}
-
-url
-get_name_buffer (path p) {
-  int i;
-  for (i=0; i<N(bufs); i++)
-    if (bufs[i]->rp <= p)
-      return bufs[i]->buf->name;
-  return url_none ();
-}
-
-void
-rename_buffer (url name, url new_name) {
-  if (new_name == name) return;
-  tm_buffer buf= search_buffer (name);
-  if (is_nil (buf)) return;
-  buf->buf->name= new_name;
-  buf->buf->master= new_name;
-  tree doc= subtree (the_et, buf->rp);
-  set_title_buffer (new_name, propose_title (buf->buf->title, new_name, doc));
-}
-
-url
-get_master_buffer (url name) {
-  tm_buffer buf= search_buffer (name);
-  if (is_nil (buf)) return url_none ();
-  return buf->buf->master;
-}
-
-void
-set_master_buffer (url name, url master) {
-  tm_buffer buf= search_buffer (name);
-  if (is_nil (buf)) return;
-  if (buf->buf->master == master) return;
-  buf->buf->master= master;
-  set_master (buf->vws, master);
-}
-
 string
 get_title_buffer (url name) {
   tm_buffer buf= search_buffer (name);
@@ -176,33 +184,9 @@ set_title_buffer (url name, string title) {
   set_title (buf->vws, buf->buf->title, buf->buf->name);
 }
 
-bool
-is_aux_buffer (url name) {
-  tm_buffer buf= search_buffer (name);
-  if (is_nil (buf)) return false;
-  return buf->buf->master != buf->buf->name;
-}
-
-double
-last_visited (url name) {
-  tm_buffer buf= search_buffer (name);
-  if (is_nil (buf)) return (double) texmacs_time ();
-  return (double) buf->buf->last_visit;
-}
-
-bool
-buffer_modified (url name) {
-  tm_buffer buf= search_buffer (name);
-  if (is_nil (buf)) return false;
-  return buf->needs_to_be_saved ();
-}
-
-void
-pretend_buffer_saved (url name) {
-  tm_buffer buf= search_buffer (name);
-  if (is_nil (buf)) return;
-  pretend_saved (buf->vws);
-}
+/******************************************************************************
+* Setting and getting the buffer tree contents
+******************************************************************************/
 
 void
 set_buffer_data (url name, new_data data) {
@@ -268,20 +252,50 @@ get_buffer_body (url name) {
   return subtree (the_et, buf->rp);
 }
 
+/******************************************************************************
+* Further information attached to buffers
+******************************************************************************/
+
 url
-make_new_buffer () {
-  int i=1;
-  while (true) {
-    url name= url_scratch ("no_name_", ".tm", i);
-    if (is_nil (search_buffer (name))) {
-      set_buffer_tree (name, tree (DOCUMENT));
-      return name;
-    }
-    else i++;
-  }
+get_master_buffer (url name) {
+  tm_buffer buf= search_buffer (name);
+  if (is_nil (buf)) return url_none ();
+  return buf->buf->master;
+}
+
+void
+set_master_buffer (url name, url master) {
+  tm_buffer buf= search_buffer (name);
+  if (is_nil (buf)) return;
+  if (buf->buf->master == master) return;
+  buf->buf->master= master;
+  set_master (buf->vws, master);
 }
 
 bool
-buffer_has_name (url name) {
-  return !is_scratch (name);
+is_aux_buffer (url name) {
+  tm_buffer buf= search_buffer (name);
+  if (is_nil (buf)) return false;
+  return buf->buf->master != buf->buf->name;
+}
+
+double
+last_visited (url name) {
+  tm_buffer buf= search_buffer (name);
+  if (is_nil (buf)) return (double) texmacs_time ();
+  return (double) buf->buf->last_visit;
+}
+
+bool
+buffer_modified (url name) {
+  tm_buffer buf= search_buffer (name);
+  if (is_nil (buf)) return false;
+  return buf->needs_to_be_saved ();
+}
+
+void
+pretend_buffer_saved (url name) {
+  tm_buffer buf= search_buffer (name);
+  if (is_nil (buf)) return;
+  pretend_saved (buf->vws);
 }
