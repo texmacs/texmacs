@@ -304,7 +304,6 @@ pretend_buffer_saved (url name) {
 * Loading
 ******************************************************************************/
 
-/*
 tree
 import_tree (url u, string fm) {
   string s, suf= suffix (u);
@@ -312,8 +311,9 @@ import_tree (url u, string fm) {
   u= resolve (u);
   set_file_focus (u);
   if (is_none (u) || load_string (u, s, false)) return "error";
-  //if (fm == "texmacs" && starts (s, "(document")) fm= "generic";
-  //if (fm == "generic") fm= get_format (s, suf);
+  if (fm == "generic") fm= get_format (s, suf);
+  if (fm == "texmacs" && starts (s, "(document (TeXmacs")) fm= "stm";
+  if (fm == "verbatim" && starts (s, "(document (TeXmacs")) fm= "stm";
   tree t= generic_to_tree (s, fm * "-document");
   tree links= extract (t, "links");
   if (N (links) != 0)
@@ -327,4 +327,3 @@ buffer_load (url name) {
   tree t= import_tree (name, fm);
   set_buffer_tree (name, t);
 }
-*/

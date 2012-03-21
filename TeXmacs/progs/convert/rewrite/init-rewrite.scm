@@ -56,7 +56,7 @@
 
 (define-format stm
   (:name "Scheme")
-  (:suffix "stm" "scm")
+  (:suffix "stm")
   (:must-recognize stm-recognizes?))
 
 (converter texmacs-tree stm-document
