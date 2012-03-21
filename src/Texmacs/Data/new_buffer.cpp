@@ -95,14 +95,6 @@ tm_buffer_rep::needs_to_be_autosaved () {
 * Main buffer management
 ******************************************************************************/
 
-url
-get_all_buffers () {
-  url u= url_none ();
-  for (int i=N(bufs)-1; i>=0; i--)
-    u= bufs[i]->buf->name | u;
-  return u;
-}
-
 void
 insert_buffer (url name) {
   int nr= find_buffer (name);
@@ -127,6 +119,14 @@ remove_buffer (url name) {
 int
 number_buffers () {
   return N(bufs);
+}
+
+url
+get_all_buffers () {
+  url u= url_none ();
+  for (int i=N(bufs)-1; i>=0; i--)
+    u= bufs[i]->buf->name | u;
+  return u;
 }
 
 int
