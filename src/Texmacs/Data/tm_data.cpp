@@ -30,7 +30,7 @@ new_view (url name) {
   //cout << "Creating new view\n";
 
   create_buffer (name, tree (DOCUMENT));
-  tm_buffer buf= bufs [find_buffer (name)];
+  tm_buffer buf= search_buffer (name);
   editor    ed = new_editor (get_server () -> get_server (), buf);
   tm_view   vw = tm_new<tm_view_rep> (buf, ed);
   buf->vws << vw;
@@ -162,19 +162,17 @@ delete_window (tm_window win) {
 
 void
 new_buffer_in_this_window (url name, tree doc) {
-  int nr= find_buffer (name);
-  if (nr != -1) switch_to_buffer (nr);
-  else {
+  if (is_nil (search_buffer (name)))
     create_buffer (name, doc);
-    switch_to_buffer (name);
-  }
+  switch_to_buffer (name);
 }
 
 void
 new_buffer_in_new_window (url name, tree doc, tree geom) {
-  create_buffer (name, doc);
+  if (is_nil (search_buffer (name)))
+    create_buffer (name, doc);
   tm_window win= new_window (true, geom);
-  tm_buffer buf= bufs [find_buffer (name)];
+  tm_buffer buf= search_buffer (name);
   tm_view   vw = get_passive_view (buf);
   attach_view (win, vw);
   set_view (vw);
@@ -311,9 +309,8 @@ windows_list () {
 path
 buffer_to_windows (url name) {
   path p;
-  int nr= find_buffer (name);
-  if (nr == -1) return path ();
-  tm_buffer buf= bufs[nr];
+  tm_buffer buf= search_buffer (name);
+  if (is_nil (buf)) return path ();
   for (int i=0; i<N(buf->vws); i++)
     if (buf->vws[i]->win != NULL)
       p= path (buf->vws[i]->win->id, p);
@@ -345,9 +342,8 @@ window_set_buffer (int id, url name) {
   tm_view old_vw= window_find_view (id);
   if (old_vw == NULL || old_vw->buf->buf->name == name) return;
   tm_window win= old_vw->win;
-  int nr= find_buffer (name);
-  if (nr == -1) return;
-  tm_buffer buf   = bufs[nr];
+  tm_buffer buf= search_buffer (name);
+  if (is_nil (buf)) return;
   tm_view   new_vw= get_passive_view (buf);
   detach_view (old_vw);
   attach_view (win, new_vw);

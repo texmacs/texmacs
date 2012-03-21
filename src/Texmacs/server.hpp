@@ -132,6 +132,7 @@ void gui_set_output_language (string lan);
 
 /* low level */
 void create_buffer (url name, tree doc);
+tm_buffer search_buffer (url name);
 int find_buffer (path p);
 int find_buffer (url name);
 void attach_view (tm_window win, tm_view vw);

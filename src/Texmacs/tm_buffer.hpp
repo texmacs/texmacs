@@ -45,4 +45,7 @@ public:
   bool needs_to_be_autosaved ();
 };
 
+inline tm_buffer nil_buffer () { return (tm_buffer) NULL; }
+inline bool is_nil (tm_buffer buf) { return buf == NULL; }
+
 #endif // defined TM_BUFFER_H

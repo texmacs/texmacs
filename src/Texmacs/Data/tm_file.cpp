@@ -79,8 +79,8 @@ load_buffer (url u, string fm, int where, bool autosave_flag) {
   
   v= u;
   if (autosave_flag) v= unglue (v, 1);
-  int nr= find_buffer (v);
-  tree doc= ((nr == -1)? load_tree (u, fm): tree (DOCUMENT));
+  tm_buffer buf= search_buffer (v);
+  tree doc= (is_nil (buf)? load_tree (u, fm): tree (DOCUMENT));
   if (doc == "error") return;
   switch (where) {
     case 0: new_buffer_in_this_window (v, doc); break;
@@ -88,9 +88,8 @@ load_buffer (url u, string fm, int where, bool autosave_flag) {
     case 2: create_buffer (v, doc); break;
     default: FAILED ("bad value for 'where'");
   }
-  nr= find_buffer (v);
-  if (nr != -1) {
-    tm_buffer buf= bufs[nr];
+  buf= search_buffer (v);
+  if (!is_nil (buf)) {
     if (autosave_flag && N(buf->vws) == 1 && buf->vws[0]->ed != NULL)
       buf->vws[0]->ed->require_save();
     buf->buf->fm= fm;
@@ -101,12 +100,10 @@ load_buffer (url u, string fm, int where, bool autosave_flag) {
 
 tm_buffer
 load_passive_buffer (url u) {
-  int nr= find_buffer (u);
-  if (nr != -1) return bufs[nr];
+  tm_buffer buf= search_buffer (u);
+  if (!is_nil (buf)) return buf;
   load_buffer (u, "texmacs", 2, false);
-  nr= find_buffer (u);
-  if (nr != -1) return bufs[nr];
-  return NULL;
+  return search_buffer (u);
 }
 
 /******************************************************************************
