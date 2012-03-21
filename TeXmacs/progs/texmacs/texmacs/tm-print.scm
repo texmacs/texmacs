@@ -107,6 +107,8 @@
 			       "\\system\\tmp\\preview.ps\"")))
 	((os-macos?)
          (shell "open $TEXMACS_HOME_PATH/system/tmp/preview.ps"))
+        ((url-exists-in-path? "xdg-open")
+	 (shell "xdg-open $TEXMACS_HOME_PATH/system/tmp/preview.ps"))
         ((url-exists-in-path? "ggv")
 	 (shell "ggv $TEXMACS_HOME_PATH/system/tmp/preview.ps &"))
 	((url-exists-in-path? "ghostview")
