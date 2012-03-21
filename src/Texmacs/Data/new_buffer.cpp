@@ -288,10 +288,23 @@ set_buffer_data (url name, new_data data) {
 void
 set_buffer_tree (url name, tree doc) {
   int nr= find_buffer (name);
-  if (nr == -1)
-    create_buffer (name, doc);
+  tm_buffer buf;
+  if (nr == -1) {
+    insert_buffer (name);
+    buf= bufs [find_buffer (name)];
+    tree body= detach_data (doc, buf->data);
+    set_document (buf->rp, body);
+    buf->buf->title= "";
+    buf->buf->title= propose_title (name, body);
+    if (buf->data->project != "") {
+      url prj_name= head (name) * as_string (buf->data->project);
+      buf->prj= load_passive_buffer (prj_name);
+    }
+  }
   else {
-    tm_buffer buf= bufs[nr];
+    //string old_title= buf->buf->title;
+    //string old_project= buf->data->project;
+    buf= bufs[nr];
     tree body= detach_data (doc, buf->data);
     assign (buf->rp, body);
     set_buffer_data (name, buf->data);
@@ -330,6 +343,20 @@ get_buffer_body (url name) {
   return subtree (the_et, buf->rp);
 }
 
+url
+make_new_buffer () {
+  int i=1;
+  while (true) {
+    url name= url_scratch ("no_name_", ".tm", i);
+    int nr= find_buffer (name);
+    if (nr == -1) {
+      set_buffer_tree (name, tree (DOCUMENT));
+      return name;
+    }
+    else i++;
+  }
+}
+
 bool
 buffer_has_name (url name) {
   return !is_scratch (name);
@@ -343,30 +370,7 @@ void
 create_buffer (url name, tree doc) {
   int nr= find_buffer (name);
   if (nr != -1) return;
-  insert_buffer (name);
-  tm_buffer buf= bufs [find_buffer (name)];
-  tree body= detach_data (doc, buf->data);
-  set_document (buf->rp, body);
-  buf->buf->title= "";
-  buf->buf->title= propose_title (name, body);
-  if (buf->data->project != "") {
-    url prj_name= head (name) * as_string (buf->data->project);
-    buf->prj= load_passive_buffer (prj_name);
-  }
-}
-
-url
-make_new_buffer () {
-  int i=1;
-  while (true) {
-    url name= url_scratch ("no_name_", ".tm", i);
-    int nr= find_buffer (name);
-    if (nr == -1) {
-      create_buffer (name, tree (DOCUMENT));
-      return name;
-    }
-    else i++;
-  }
+  set_buffer_tree (name, doc);
 }
 
 url
