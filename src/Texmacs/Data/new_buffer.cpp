@@ -299,3 +299,32 @@ pretend_buffer_saved (url name) {
   if (is_nil (buf)) return;
   pretend_saved (buf->vws);
 }
+
+/******************************************************************************
+* Loading
+******************************************************************************/
+
+/*
+tree
+import_tree (url u, string fm) {
+  string s, suf= suffix (u);
+  string action= "load " * fm * " file";
+  u= resolve (u);
+  set_file_focus (u);
+  if (is_none (u) || load_string (u, s, false)) return "error";
+  //if (fm == "texmacs" && starts (s, "(document")) fm= "generic";
+  //if (fm == "generic") fm= get_format (s, suf);
+  tree t= generic_to_tree (s, fm * "-document");
+  tree links= extract (t, "links");
+  if (N (links) != 0)
+    (void) call ("register-link-locations", object (u), object (links));
+  return t;
+}
+
+void
+buffer_load (url name) {
+  string fm= file_format (name);
+  tree t= import_tree (name, fm);
+  set_buffer_tree (name, t);
+}
+*/

@@ -294,6 +294,7 @@
   (url-ref url_ref (url url int))
   (url-head head (url url))
   (url-tail tail (url url))
+  (url-format file_format (string url))
   (url-suffix suffix (string url))
   (url-glue glue (url url string))
   (url-unglue unglue (url url int))

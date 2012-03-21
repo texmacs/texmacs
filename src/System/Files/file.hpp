@@ -28,6 +28,7 @@ url  url_temp (string suffix= "");
 url  url_numbered (url dir, string prefix, string postfix, int i=1);
 url  url_scratch (string prefix= "no_name_", string postfix= ".tm", int i=1);
 bool is_scratch (url u);
+string file_format (url u);
 
 array<string> read_directory (url name, bool& error_flag);
 

@@ -18,6 +18,7 @@
 #include "data_cache.hpp"
 #include "web_files.hpp"
 #include "scheme.hpp"
+#include "convert.hpp"
 
 #include <stddef.h>
 #include <stdio.h>
@@ -381,6 +382,13 @@ url_scratch (string prefix, string postfix, int i) {
 bool
 is_scratch (url u) {
   return head (u) == url ("$TEXMACS_HOME_PATH/texts/scratch");
+}
+
+string
+file_format (url u) {
+  if (is_rooted_tmfs (u))
+    return as_string (call ("tmfs-format", object (u)));
+  else return suffix_to_format (suffix (u));
 }
 
 /******************************************************************************

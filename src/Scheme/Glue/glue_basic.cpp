@@ -3380,6 +3380,19 @@ tmg_url_tail (tmscm arg1) {
 }
 
 tmscm
+tmg_url_format (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "url-format");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= file_format (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_url_suffix (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "url-suffix");
 
@@ -6273,6 +6286,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("url-ref",  tmg_url_ref, 2, 0, 0);
   tmscm_install_procedure ("url-head",  tmg_url_head, 1, 0, 0);
   tmscm_install_procedure ("url-tail",  tmg_url_tail, 1, 0, 0);
+  tmscm_install_procedure ("url-format",  tmg_url_format, 1, 0, 0);
   tmscm_install_procedure ("url-suffix",  tmg_url_suffix, 1, 0, 0);
   tmscm_install_procedure ("url-glue",  tmg_url_glue, 2, 0, 0);
   tmscm_install_procedure ("url-unglue",  tmg_url_unglue, 2, 0, 0);
