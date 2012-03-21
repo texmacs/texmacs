@@ -161,7 +161,7 @@ find_buffer (url name) {
 ******************************************************************************/
 
 string
-propose_title (url u, tree doc) {
+propose_title (string old_title, url u, tree doc) {
   string name= as_string (tail (u));
   if (starts (name, "no_name_") && ends (name, ".tm")) {
     string no_name= translate ("No name");
@@ -182,6 +182,7 @@ propose_title (url u, tree doc) {
     bool flag= true;
     string ret (name);
     if (j>1) ret= name * " (" * as_string (j) * ")";
+    if (ret == old_title) return ret;
     for (i=0; i<N(bufs); i++)
       if (bufs[i]->buf->title == ret) flag= false;
     if (flag) return ret;
@@ -210,8 +211,7 @@ rename_buffer (url name, url new_name) {
   buf->buf->name= new_name;
   buf->buf->master= new_name;
   tree doc= subtree (the_et, buf->rp);
-  buf->buf->title= "";
-  set_title_buffer (new_name, propose_title (new_name, doc));
+  set_title_buffer (new_name, propose_title (buf->buf->title, new_name, doc));
 }
 
 url
@@ -294,8 +294,7 @@ set_buffer_tree (url name, tree doc) {
     buf= bufs [find_buffer (name)];
     tree body= detach_data (doc, buf->data);
     set_document (buf->rp, body);
-    buf->buf->title= "";
-    buf->buf->title= propose_title (name, body);
+    buf->buf->title= propose_title (buf->buf->title, name, body);
     if (buf->data->project != "") {
       url prj_name= head (name) * as_string (buf->data->project);
       buf->prj= load_passive_buffer (prj_name);
