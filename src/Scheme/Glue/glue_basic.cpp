@@ -3102,6 +3102,19 @@ tmg_string_2url (tmscm arg1) {
 }
 
 tmscm
+tmg_root_2url (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "root->url");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  url out= url_root (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return url_to_tmscm (out);
+}
+
+tmscm
 tmg_url (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "url");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "url");
@@ -3235,6 +3248,19 @@ tmg_url_noneP (tmscm arg1) {
 }
 
 tmscm
+tmg_url_rootedP (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "url-rooted?");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= is_rooted (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_url_rooted_webP (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "url-rooted-web?");
 
@@ -3258,6 +3284,32 @@ tmg_url_rooted_tmfsP (tmscm arg1) {
   // TMSCM_ALLOW_INTS;
 
   return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_url_root (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "url-root");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= get_root (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
+tmg_url_unroot (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "url-unroot");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  url out= unroot (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return url_to_tmscm (out);
 }
 
 tmscm
@@ -6186,6 +6238,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("upgrade-tmml",  tmg_upgrade_tmml, 1, 0, 0);
   tmscm_install_procedure ("upgrade-mathml",  tmg_upgrade_mathml, 1, 0, 0);
   tmscm_install_procedure ("string->url",  tmg_string_2url, 1, 0, 0);
+  tmscm_install_procedure ("root->url",  tmg_root_2url, 1, 0, 0);
   tmscm_install_procedure ("url",  tmg_url, 2, 0, 0);
   tmscm_install_procedure ("url-system",  tmg_url_system, 1, 0, 0);
   tmscm_install_procedure ("url-none",  tmg_url_none, 0, 0, 0);
@@ -6197,8 +6250,11 @@ initialize_glue_basic () {
   tmscm_install_procedure ("url-or",  tmg_url_or, 2, 0, 0);
   tmscm_install_procedure ("url->string",  tmg_url_2string, 1, 0, 0);
   tmscm_install_procedure ("url-none?",  tmg_url_noneP, 1, 0, 0);
+  tmscm_install_procedure ("url-rooted?",  tmg_url_rootedP, 1, 0, 0);
   tmscm_install_procedure ("url-rooted-web?",  tmg_url_rooted_webP, 1, 0, 0);
   tmscm_install_procedure ("url-rooted-tmfs?",  tmg_url_rooted_tmfsP, 1, 0, 0);
+  tmscm_install_procedure ("url-root",  tmg_url_root, 1, 0, 0);
+  tmscm_install_procedure ("url-unroot",  tmg_url_unroot, 1, 0, 0);
   tmscm_install_procedure ("url-concat?",  tmg_url_concatP, 1, 0, 0);
   tmscm_install_procedure ("url-or?",  tmg_url_orP, 1, 0, 0);
   tmscm_install_procedure ("url-ref",  tmg_url_ref, 2, 0, 0);

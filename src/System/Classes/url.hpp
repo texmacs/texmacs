@@ -121,6 +121,8 @@ url    unglue (url u, int nr);     // remove nr chars from suffix
 url    unblank (url u);            // a/b/ -> a/b
 url    relative (url base, url u); // a/b, c -> a/c
 url    delta (url base, url u);    // relative (a, delta (a, b)) == b
+string get_root (url u);           // get root
+url    unroot (url u);             // remove root
 url    reroot (url u, string s);   // reroot using new protocol
 url    expand (url u);             // rewrite a/{b:c} -> a/b:a/c
 url    sort (url u);               // order items in ors

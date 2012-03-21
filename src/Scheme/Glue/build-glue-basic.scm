@@ -272,6 +272,7 @@
 
   ;; routines for urls
   (string->url url (url string))
+  (root->url url_root (url string))
   (url url (url string string))
   (url-system url_system (url string))
   (url-none url_none (url))
@@ -283,8 +284,11 @@
   (url-or url_or (url url url))
   (url->string as_string (string url))
   (url-none? is_none (bool url))
+  (url-rooted? is_rooted (bool url))
   (url-rooted-web? is_rooted_web (bool url))
   (url-rooted-tmfs? is_rooted_tmfs (bool url))
+  (url-root get_root (string url))
+  (url-unroot unroot (url url))
   (url-concat? is_concat (bool url))
   (url-or? is_or (bool url))
   (url-ref url_ref (url url int))
