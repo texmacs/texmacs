@@ -459,13 +459,13 @@
   (buffer-last-visited last_visited (double url))
   (buffer-modified? buffer_modified (bool url))
   (buffer-pretend-saved pretend_buffer_saved (void url))
+  (buffer-has-name? buffer_has_name (bool url))
 
   (new-buffer create_buffer (url))
   (switch-to-buffer-path switch_to_buffer (bool path))
   (switch-to-buffer switch_to_buffer (void url))
   (revert-buffer revert_buffer (void))
   (kill-buffer kill_buffer (void))
-  (no-name? no_name (bool))
   (aux-buffer? is_aux_buffer (bool url))
 
   (texmacs-load-tree load_tree (tree url string))

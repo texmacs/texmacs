@@ -76,7 +76,7 @@
   automatically select a certain style when starting a new document:
 
   <\scm-code>
-    (if (no-name?)
+    (if (not (buffer-has-name? (current-buffer)))
 
     \ \ \ \ (begin
 
@@ -85,11 +85,11 @@
     \ \ \ \ \ \ (buffer-pretend-saved (current-buffer))))
   </scm-code>
 
-  Notice that the check <verbatim|(no-name?)> is important: when omitted, the
-  styles of existing documents would also be changed to <tmstyle|article>.
-  The function <scm|buffer-pretend-saved> is used in order to avoid <TeXmacs>
-  to complain about unsaved documents when leaving <TeXmacs> without changing
-  the document.
+  Notice that the ``no name'' check is important: when omitted, the styles of
+  existing documents would also be changed to <tmstyle|article>. The function
+  <scm|buffer-pretend-saved> is used in order to avoid <TeXmacs> to complain
+  about unsaved documents when leaving <TeXmacs> without changing the
+  document.
 
   Another typical use of <verbatim|my-init-buffer.scm> is when you mainly
   want to use <TeXmacs> as a front-end to another system. For instance, the
@@ -97,7 +97,7 @@
   session for every newly opened document:
 
   <\scm-code>
-    (if (no-name?)
+    (if (not (buffer-has-name? (current-buffer)))
 
     \ \ \ \ (make-session "maxima" (url-\<gtr\>string (current-buffer))))
   </scm-code>

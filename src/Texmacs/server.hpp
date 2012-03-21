@@ -162,6 +162,7 @@ void new_buffer_in_new_window (url name, tree t, tree geom= "");
 double last_visited (url name);
 bool buffer_modified (url name);
 void pretend_buffer_saved (url name);
+bool buffer_has_name (url name);
 
 /* Buffer management */
 url  create_buffer ();
@@ -174,7 +175,6 @@ url  open_window (tree geom= "");
 void clone_window ();
 void kill_window ();
 void kill_window_and_buffer ();
-bool no_name ();
 bool is_aux_buffer (url name);
 
 /* Project management */

@@ -200,13 +200,14 @@ save_buffer (url u, string fm) {
     else {
       set_message (concat ("saved ", vname), action);
       if (fm == "texmacs") {
-        if (no_name () && exists (get_this_buffer ()))
+        if (!buffer_has_name (get_this_buffer ()) &&
+            exists (get_this_buffer ()))
           remove (get_this_buffer ());
         rename_buffer (buf->buf->name, u);
         pretend_buffer_saved (u);
         if (suffix (u) == "ts") get_server () -> style_clear_cache ();
         if ((fm == "generic") || (fm == "texmacs"))
-          if (!no_name ())
+          if (buffer_has_name (get_this_buffer ()))
             notify_recent_buffer (as_string (u));
       }
     }
@@ -242,14 +243,4 @@ auto_save () {
     }
   }
   call ("delayed-auto-save");
-}
-
-/******************************************************************************
-* Other routines concerning loading and saving buffers
-******************************************************************************/
-
-bool
-no_name () {
-  tm_buffer buf= get_buffer ();
-  return is_scratch (buf->buf->name);
 }

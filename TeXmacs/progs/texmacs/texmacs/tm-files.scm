@@ -237,3 +237,7 @@
 (tm-define (buffer-unsaved?)
   (deprecated-function "buffer-unsaved?" "buffer-modified?")
   (buffer-modified? (current-buffer)))
+
+(tm-define (no-name?)
+  (deprecated-function "no-name?" "buffer-has-name?")
+  (not (buffer-has-name? (current-buffer))))

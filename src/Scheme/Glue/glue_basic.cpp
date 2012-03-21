@@ -5457,6 +5457,19 @@ tmg_buffer_pretend_saved (tmscm arg1) {
 }
 
 tmscm
+tmg_buffer_has_nameP (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-has-name?");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= buffer_has_name (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_new_buffer () {
   // TMSCM_DEFER_INTS;
   url out= create_buffer ();
@@ -5507,15 +5520,6 @@ tmg_kill_buffer () {
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;
-}
-
-tmscm
-tmg_no_nameP () {
-  // TMSCM_DEFER_INTS;
-  bool out= no_name ();
-  // TMSCM_ALLOW_INTS;
-
-  return bool_to_tmscm (out);
 }
 
 tmscm
@@ -6407,12 +6411,12 @@ initialize_glue_basic () {
   tmscm_install_procedure ("buffer-last-visited",  tmg_buffer_last_visited, 1, 0, 0);
   tmscm_install_procedure ("buffer-modified?",  tmg_buffer_modifiedP, 1, 0, 0);
   tmscm_install_procedure ("buffer-pretend-saved",  tmg_buffer_pretend_saved, 1, 0, 0);
+  tmscm_install_procedure ("buffer-has-name?",  tmg_buffer_has_nameP, 1, 0, 0);
   tmscm_install_procedure ("new-buffer",  tmg_new_buffer, 0, 0, 0);
   tmscm_install_procedure ("switch-to-buffer-path",  tmg_switch_to_buffer_path, 1, 0, 0);
   tmscm_install_procedure ("switch-to-buffer",  tmg_switch_to_buffer, 1, 0, 0);
   tmscm_install_procedure ("revert-buffer",  tmg_revert_buffer, 0, 0, 0);
   tmscm_install_procedure ("kill-buffer",  tmg_kill_buffer, 0, 0, 0);
-  tmscm_install_procedure ("no-name?",  tmg_no_nameP, 0, 0, 0);
   tmscm_install_procedure ("aux-buffer?",  tmg_aux_bufferP, 1, 0, 0);
   tmscm_install_procedure ("texmacs-load-tree",  tmg_texmacs_load_tree, 2, 0, 0);
   tmscm_install_procedure ("texmacs-load-buffer",  tmg_texmacs_load_buffer, 4, 0, 0);

@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(when (no-name?)
+(when (not (buffer-has-name? (current-buffer)))
   (use-modules (generic document-edit) (texmacs texmacs tm-print))
   (init-style "generic")
   (with lan (get-preference "language")

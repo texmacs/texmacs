@@ -330,6 +330,11 @@ get_buffer_body (url name) {
   return subtree (the_et, buf->rp);
 }
 
+bool
+buffer_has_name (url name) {
+  return !is_scratch (name);
+}
+
 /******************************************************************************
 * Creating and destroying buffers
 ******************************************************************************/
