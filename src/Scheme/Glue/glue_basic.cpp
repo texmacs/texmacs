@@ -5291,6 +5291,15 @@ tmg_path_2buffer (tmscm arg1) {
 }
 
 tmscm
+tmg_buffer_new () {
+  // TMSCM_DEFER_INTS;
+  url out= make_new_buffer ();
+  // TMSCM_ALLOW_INTS;
+
+  return url_to_tmscm (out);
+}
+
+tmscm
 tmg_buffer_rename (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-rename");
   TMSCM_ASSERT_URL (arg2, TMSCM_ARG2, "buffer-rename");
@@ -6399,6 +6408,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("current-buffer",  tmg_current_buffer, 0, 0, 0);
   tmscm_install_procedure ("all-buffers",  tmg_all_buffers, 0, 0, 0);
   tmscm_install_procedure ("path->buffer",  tmg_path_2buffer, 1, 0, 0);
+  tmscm_install_procedure ("buffer-new",  tmg_buffer_new, 0, 0, 0);
   tmscm_install_procedure ("buffer-rename",  tmg_buffer_rename, 2, 0, 0);
   tmscm_install_procedure ("buffer-set",  tmg_buffer_set, 2, 0, 0);
   tmscm_install_procedure ("buffer-get",  tmg_buffer_get, 1, 0, 0);

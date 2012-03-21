@@ -339,10 +339,10 @@ buffer_has_name (url name) {
 * Creating and destroying buffers
 ******************************************************************************/
 
-tm_buffer
+void
 create_buffer (url name, tree doc) {
   int nr= find_buffer (name);
-  if (nr != -1) return bufs[nr];
+  if (nr != -1) return;
   insert_buffer (name);
   tm_buffer buf= bufs [find_buffer (name)];
   tree body= detach_data (doc, buf->data);
@@ -353,7 +353,6 @@ create_buffer (url name, tree doc) {
     url prj_name= head (name) * as_string (buf->data->project);
     buf->prj= load_passive_buffer (prj_name);
   }
-  return buf;
 }
 
 url
@@ -363,7 +362,7 @@ make_new_buffer () {
     url name= url_scratch ("no_name_", ".tm", i);
     int nr= find_buffer (name);
     if (nr == -1) {
-      (void) create_buffer (name, tree (DOCUMENT));
+      create_buffer (name, tree (DOCUMENT));
       return name;
     }
     else i++;

@@ -29,8 +29,8 @@ tm_view
 new_view (url name) {
   //cout << "Creating new view\n";
 
-  tree      doc= attach_data (tree (DOCUMENT, ""), new_data ());
-  tm_buffer buf= create_buffer (name, doc);
+  create_buffer (name, tree (DOCUMENT));
+  tm_buffer buf= bufs [find_buffer (name)];
   editor    ed = new_editor (get_server () -> get_server (), buf);
   tm_view   vw = tm_new<tm_view_rep> (buf, ed);
   buf->vws << vw;
@@ -165,15 +165,16 @@ new_buffer_in_this_window (url name, tree doc) {
   int nr= find_buffer (name);
   if (nr != -1) switch_to_buffer (nr);
   else {
-    (void) create_buffer (name, doc);
+    create_buffer (name, doc);
     switch_to_buffer (name);
   }
 }
 
 void
 new_buffer_in_new_window (url name, tree doc, tree geom) {
+  create_buffer (name, doc);
   tm_window win= new_window (true, geom);
-  tm_buffer buf= create_buffer (name, doc);
+  tm_buffer buf= bufs [find_buffer (name)];
   tm_view   vw = get_passive_view (buf);
   attach_view (win, vw);
   set_view (vw);
