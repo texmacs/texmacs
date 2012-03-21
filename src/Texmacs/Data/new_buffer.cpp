@@ -103,6 +103,15 @@ insert_buffer (url name) {
   bufs << buf;
 }
 
+int
+find_buffer (url name) {
+  int i;
+  for (i=0; i<N(bufs); i++)
+    if (bufs[i]->buf->name == name)
+      return i;
+  return -1;
+}
+
 void
 remove_buffer (url name) {
   int nr= find_buffer (name);
@@ -127,35 +136,6 @@ get_all_buffers () {
   for (int i=N(bufs)-1; i>=0; i--)
     u= bufs[i]->buf->name | u;
   return u;
-}
-
-int
-find_buffer (tm_buffer buf) {
-  int i;
-  for (i=0; i<N(bufs); i++)
-    if (bufs[i] == buf)
-      return i;
-  return -1;
-}
-
-/*
-int
-find_buffer (path p) {
-  int i;
-  for (i=0; i<N(bufs); i++)
-    if (bufs[i]->rp <= p)
-      return i;
-  return -1;
-}
-*/
-
-int
-find_buffer (url name) {
-  int i;
-  for (i=0; i<N(bufs); i++)
-    if (bufs[i]->buf->name == name)
-      return i;
-  return -1;
 }
 
 tm_buffer
