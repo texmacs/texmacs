@@ -168,7 +168,6 @@ bool buffer_has_name (url name);
 
 /* Buffer management */
 url  create_buffer ();
-void switch_to_buffer (int nr);
 bool switch_to_buffer (path p);
 void switch_to_buffer (url name);
 void revert_buffer ();

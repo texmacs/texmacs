@@ -97,6 +97,7 @@ tm_buffer_rep::needs_to_be_autosaved () {
 
 void
 insert_buffer (url name) {
+  if (is_none (name)) return;
   if (!is_nil (search_buffer (name))) return;
   tm_buffer buf= tm_new<tm_buffer_rep> (name);
   bufs << buf;
@@ -137,6 +138,7 @@ find_buffer (tm_buffer buf) {
   return -1;
 }
 
+/*
 int
 find_buffer (path p) {
   int i;
@@ -145,6 +147,7 @@ find_buffer (path p) {
       return i;
   return -1;
 }
+*/
 
 int
 find_buffer (url name) {
@@ -203,9 +206,11 @@ get_this_buffer () {
 
 url
 get_name_buffer (path p) {
-  int nr= find_buffer (p);
-  if (nr == -1) return url_none ();
-  return bufs[nr]->buf->name;
+  int i;
+  for (i=0; i<N(bufs); i++)
+    if (bufs[i]->rp <= p)
+      return bufs[i]->buf->name;
+  return url_none ();
 }
 
 void
@@ -348,8 +353,7 @@ make_new_buffer () {
   int i=1;
   while (true) {
     url name= url_scratch ("no_name_", ".tm", i);
-    int nr= find_buffer (name);
-    if (nr == -1) {
+    if (is_nil (search_buffer (name))) {
       set_buffer_tree (name, tree (DOCUMENT));
       return name;
     }
@@ -418,10 +422,16 @@ kill_buffer () {
 ******************************************************************************/
 
 void
-switch_to_buffer (int nr) {
-  // cout << "Switching to buffer " << nr << "\n";
+switch_to_buffer (url name) {
+  tm_buffer buf= search_buffer (name);
+  if (is_nil (buf)) {
+    load_passive_buffer (name);
+    buf= search_buffer (name);
+    if (is_nil (buf)) return;
+  }
+  
+  // cout << "Switching to buffer " << buf->buf->name << "\n";
   tm_window win    = get_window ();
-  tm_buffer buf    = bufs[nr];
   tm_view   old_vw = get_view ();
   tm_view   new_vw = get_passive_view (buf);
   detach_view (old_vw);
@@ -430,22 +440,12 @@ switch_to_buffer (int nr) {
   buf->buf->last_visit= texmacs_time ();
   tm_window nwin= new_vw->win;
   nwin->set_shrinking_factor (nwin->get_shrinking_factor ());
-  // cout << "Switched to buffer " << nr << "\n";
+  // cout << "Switched to buffer " << buf->buf->name << "\n";
 }
 
 bool
 switch_to_buffer (path p) {
-  int nr= find_buffer (p);
-  if (nr != -1) switch_to_buffer (nr);
-  return nr != -1;
-}
-
-void
-switch_to_buffer (url name) {
-  int nr= find_buffer (name);
-  if (nr == -1) {
-    load_passive_buffer (name);
-    nr= find_buffer (name);
-  }
-  if (nr != -1) switch_to_buffer (nr);
+  url name= get_name_buffer (p);
+  if (!is_none (name)) switch_to_buffer (name);
+  return !is_none (name);
 }
