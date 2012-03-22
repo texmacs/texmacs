@@ -3882,6 +3882,83 @@ tmg_system_2 (tmscm arg1, tmscm arg2, tmscm arg3) {
 }
 
 tmscm
+tmg_persistent_set (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "persistent-set");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "persistent-set");
+  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "persistent-set");
+
+  url in1= tmscm_to_url (arg1);
+  string in2= tmscm_to_string (arg2);
+  string in3= tmscm_to_string (arg3);
+
+  // TMSCM_DEFER_INTS;
+  persistent_set (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_persistent_reset (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "persistent-reset");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "persistent-reset");
+
+  url in1= tmscm_to_url (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  persistent_reset (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_persistent_hasP (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "persistent-has?");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "persistent-has?");
+
+  url in1= tmscm_to_url (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  bool out= persistent_contains (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_persistent_get (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "persistent-get");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "persistent-get");
+
+  url in1= tmscm_to_url (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  string out= persistent_get (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
+tmg_persistent_file_name (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "persistent-file-name");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "persistent-file-name");
+
+  url in1= tmscm_to_url (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  url out= persistent_file_name (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return url_to_tmscm (out);
+}
+
+tmscm
 tmg_tmfs_set (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tmfs-set");
   TMSCM_ASSERT_COLLECTION (arg2, TMSCM_ARG2, "tmfs-set");
@@ -6382,6 +6459,11 @@ initialize_glue_basic () {
   tmscm_install_procedure ("system-search-score",  tmg_system_search_score, 2, 0, 0);
   tmscm_install_procedure ("system-1",  tmg_system_1, 2, 0, 0);
   tmscm_install_procedure ("system-2",  tmg_system_2, 3, 0, 0);
+  tmscm_install_procedure ("persistent-set",  tmg_persistent_set, 3, 0, 0);
+  tmscm_install_procedure ("persistent-reset",  tmg_persistent_reset, 2, 0, 0);
+  tmscm_install_procedure ("persistent-has?",  tmg_persistent_hasP, 2, 0, 0);
+  tmscm_install_procedure ("persistent-get",  tmg_persistent_get, 2, 0, 0);
+  tmscm_install_procedure ("persistent-file-name",  tmg_persistent_file_name, 2, 0, 0);
   tmscm_install_procedure ("tmfs-set",  tmg_tmfs_set, 2, 0, 0);
   tmscm_install_procedure ("tmfs-reset",  tmg_tmfs_reset, 2, 0, 0);
   tmscm_install_procedure ("tmfs-get",  tmg_tmfs_get, 1, 0, 0);

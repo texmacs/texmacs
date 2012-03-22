@@ -1053,6 +1053,7 @@ tmscm_to_collection (tmscm  p) {
 #include "patch.hpp"
 #include "packrat.hpp"
 #include "new_style.hpp"
+#include "persistent.hpp"
 
 #include "../Glue/glue_basic.cpp"
 #include "../Glue/glue_editor.cpp"

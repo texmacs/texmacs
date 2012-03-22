@@ -306,9 +306,9 @@ pretend_buffer_saved (url name) {
 
 tree
 import_tree (url u, string fm) {
-  string s;
-  u= resolve (u);
+  u= resolve (u, "fr");
   set_file_focus (u);
+  string s;
   if (is_none (u) || load_string (u, s, false)) return "error";
   if (fm == "generic") fm= get_format (s, suffix (u));
   if (fm == "texmacs" && starts (s, "(document (TeXmacs")) fm= "stm";
@@ -340,6 +340,7 @@ buffer_load (url name) {
 
 bool
 export_tree (tree doc, url u, string fm) {
+  u= resolve (u, "fw");
   if (fm == "generic") fm= "verbatim";
   string s= tree_to_generic (doc, fm * "-document");
   if (s == "* error: unknown format *") return true;
