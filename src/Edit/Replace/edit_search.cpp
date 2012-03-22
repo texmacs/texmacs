@@ -500,11 +500,6 @@ edit_replace_rep::search_keypress (string s) {
   return true;
 }
 
-tree
-edit_replace_rep::search_tree() {
-  return search_what;
-}
-
 /******************************************************************************
 * Replacing
 ******************************************************************************/

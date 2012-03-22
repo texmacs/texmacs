@@ -247,7 +247,6 @@
   (in-spell-mode? in_spell_mode (bool))
   (search-start search_start (void bool))
   (search-button-next search_button_next (void))
-  (search-tree search_tree (tree))
   (replace-start replace_start (void string string bool))
   (spell-start spell_start (void))
   (spell-replace spell_replace (void string))

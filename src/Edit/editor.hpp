@@ -490,7 +490,6 @@ public:
   virtual void search_start (bool forward= true) = 0;
   virtual void search_button_next () = 0;
   virtual bool search_keypress (string s) = 0;
-  virtual tree search_tree () = 0;
   virtual void replace_start (tree what, tree by, bool forward= true) = 0;
   virtual bool replace_keypress (string s) = 0;
   virtual void spell_start () = 0;
