@@ -160,21 +160,22 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (buffer-notify-recent name)
-  (learn-interactive 'recent-buffer (cons "0" (url->string name))))
+  (learn-interactive 'recent-buffer
+                     (list (cons "0" (url->string name)))))
 
 (define (buffer-faithful-save? name)
-  (in? (url-suffix name) "tm" "ts" "tp" "stm" "tmml"))
+  (in? (url-suffix name) '("tm" "ts" "tp" "stm" "tmml")))
 
 (define (save-buffer-save name opts)
-  (if (buffer-save name)
-      (with vname `(verbatim ,(url->string name))
-        (set-message `(concat "Could not save '" ,vname "'") "Save file"))
-      (begin
-        (autosave-remove name)
-        (buffer-notify-recent name)
-        ;;(buffer-highlight name)
-        ;;(pretend-saved...))
-        )))
+  (with vname `(verbatim ,(url->string name))
+    (if (buffer-save name)
+        (set-message `(concat "Could not save '" ,vname "'") "Save file")
+        (begin
+          (autosave-remove name)
+          (buffer-notify-recent name)
+          ;;(buffer-highlight name)
+          ;;(pretend-saved...))
+          (set-message `(concat "Saved '" ,vname "'") "Save file")))))
 
 (define (save-buffer-check-faithful name opts)
   (if (buffer-faithful-save? name)
@@ -220,6 +221,8 @@
   ;; ask for confirmation when changing the file format
   (if (and (url-scratch? name) (url-exists? name)) (system-remove name))
   (buffer-rename name new-name)
+  ;; FIXME: what to do if buffer is currently being visited?
+  ;; the current implementation of buffer-rename is incorrect in that case
   (apply save-buffer-main (cons new-name opts)))
 
 (define (save-buffer-as-check-exists new-name name opts)
@@ -241,7 +244,7 @@
             (set! current-save-target (car l)))
         (cond ((url-scratch? (car l))
                (choose-file save-buffer "Save TeXmacs file" "texmacs"))
-              ((= (length l) 1) (texmacs-save-buffer (car l) "generic"))
+              ((= (length l) 1) (save-buffer-as-main (car l)))
               (else (secure-save-buffer (car l) (cadr l)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
