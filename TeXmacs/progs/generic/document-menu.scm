@@ -587,7 +587,7 @@
 	      ("Other" (init-interactive-env "page-flexibility")))))
   ---
   (-> "Update"
-      ("All" (generate-all-aux) (update-buffer))
+      ("All" (generate-all-aux) (image-gc) (update-buffer))
       ---
       ("Buffer" (update-buffer))
       ("Bibliography" (generate-all-aux) (update-buffer))
