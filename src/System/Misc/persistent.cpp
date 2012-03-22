@@ -18,10 +18,10 @@
 * Global data
 ******************************************************************************/
 
-#define MAX_BRANCH 3
-#define MAX_INNER 3
+#define MAX_BRANCH 26
+#define MAX_INNER 10
 #define MAX_SIZE 4096
-#define MAX_FILES 3
+#define MAX_FILES 26
 
 static hashmap<string,string>       persistent_pre   ("");
 static hashmap<string,url>          persistent_file  (url_none ());
