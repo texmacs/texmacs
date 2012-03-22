@@ -39,7 +39,8 @@ const char *ui_type_string[]= {
   "balloon_widget", "text_widget", "xpm_widget", "toggle_widget",
   "enum_widget", "choice_widget", "scrollable_widget",
   "hsplit_widget", "vsplit_widget", 
-  "aligned_widget", "tabs_widget", "wrapped_widget"
+  "aligned_widget", "tabs_widget", "wrapped_widget", "refresh_widget",
+  "glue_widget"
 };
 
 
@@ -47,11 +48,12 @@ const char *ui_type_string[]= {
  * Auxiliary classes
  ******************************************************************************/
 
-// we use this class to properly initialize style options
-// for our QWidgets which have to blend into QMenus
-// see #QTBUG-1993.
-// see #QTBUG-7707.
-
+/*!
+ * We use this class to properly initialize style options for our QWidgets
+ * which have to blend into QMenus
+ *   see #QTBUG-1993.
+ *   see #QTBUG-7707.
+ */
 class QTMAuxMenu: public QMenu {
 public:
   QTMAuxMenu (): QMenu() {}
@@ -63,13 +65,13 @@ public:
 };
 
 
-// we need to subclass QToolButton for two reasons
-// 1) custom appearence
-// 2) if used in QWidgetAction the menu do not disappear upon triggering the
-//    button. See QTBUG-10427.
-
-// QTMMenuButton is a custom button appropriate for menus
-
+/*! QTMMenuButton is a custom button appropriate for menus
+ *
+ * We need to subclass QToolButton for two reasons
+ *  1) custom appearence
+ *  2) if used in QWidgetAction the menu do not disappear upon triggering the
+ *     button. See QTBUG-10427.
+ */
 class QTMMenuButton: public QToolButton {
   QStyleOptionMenuItem option;
 public:
@@ -143,6 +145,19 @@ QTMMenuWidget::paintEvent(QPaintEvent* event) {
 }
 
 
+class QTMUIButton: public QToolButton {
+public:
+  QTMUIButton (QWidget* parent = 0): QToolButton(parent) {}
+  void paintEvent(QPaintEvent *event);
+};
+
+
+void
+QTMUIButton::paintEvent(QPaintEvent* event) {
+  (void) event;
+  QPainter p (this);
+  defaultAction()->icon().paint (&p, rect ());
+}
 
 
 QTMWidgetAction::QTMWidgetAction (widget _wid, QObject *parent)
@@ -193,13 +208,13 @@ public:
   //   cout << "TRIG\n"; QWidgetAction::activate (event); }
 };
 
-
-// FIXME: QTMTileAction::createWidget is called twice:
-// the first time when the action is added to the menu,
-// the second when from the menu it is transferred to the toolbar.
-// This is weird since the first widget does not ever use
-// the widget so it results in a waste of time.
-
+/*!
+ * FIXME: QTMTileAction::createWidget is called twice:
+ * the first time when the action is added to the menu,
+ * the second when from the menu it is transferred to the toolbar.
+ * This is weird since the first widget does not ever use
+ * the widget so it results in a waste of time.
+ */
 QWidget*
 QTMTileAction::createWidget(QWidget* parent) {
   if (DEBUG_QT) 
@@ -246,12 +261,13 @@ public:
   //   cout << "TRIG\n"; QWidgetAction::activate (event); }
 };
 
-// FIXME: QTMMinibarAction::createWidget is called twice:
-// the first time when the action is added to the menu,
-// the second when from the menu it is transferred to the toolbar.
-// This is weird since the first widget does not ever use
-// the widget so it results in a waste of time.
-
+/*!
+ * FIXME: QTMMinibarAction::createWidget is called twice:
+ * the first time when the action is added to the menu,
+ * the second when from the menu it is transferred to the toolbar.
+ * This is weird since the first widget does not ever use
+ * the widget so it results in a waste of time. 
+ */
 QWidget*
 QTMMinibarAction::createWidget(QWidget* parent) {
   if (DEBUG_QT) cout << "QTMMinibarAction::createWidget\n";
@@ -291,63 +307,9 @@ QTMMinibarAction::createWidget(QWidget* parent) {
 }
 
 
-
-static string
-conv_sub (string ks) {
-  string r(ks);
-#ifdef Q_WS_MAC
-  r = replace (r, "S-", "Shift+");
-  r = replace (r, "C-", "Meta+");
-  r = replace (r, "A-", "Alt+");
-  r = replace (r, "M-", "Ctrl+");
-  //r = replace (r, "K-", "");
-  r = replace (r, " ", ",");
-#else
-  r = replace (r, "S-", "Shift+");
-  r = replace (r, "C-", "Ctrl+");
-  r = replace (r, "A-", "Alt+");
-  r = replace (r, "M-", "Meta+");
-  //r = replace (r, "K-", "");
-  r = replace (r, " ", ",");
-#endif
-  if (N(r) == 1 || (N(r) > 2 && r[N(r)-2] == '+')) {
-    if (is_locase (r[N(r)-1]))
-      r= r (0, N(r)-1) * upcase_all (r (N(r)-1, N(r)));
-    else if (is_upcase (r[N(r)-1]))
-      r= r (0, N(r)-1) * "Shift+" * upcase_all (r (N(r)-1, N(r)));
-  }
-  return r;
-}
-
-static string
-conv (string s) {
-  int i=0, k;
-  string r;
-  for (k=0; k<=N(s); k++)
-    if (k == N(s) || s[k] == ' ') {
-      r << conv_sub (s (i, k));
-      i= k;
-    }
-  return r;
-}
-
-
-qt_ui_element_rep::~qt_ui_element_rep()
-{
-  if (cachedAction) delete cachedAction;
-}
-
-widget 
-qt_ui_element_rep::make_popup_widget () {
-  return tm_new<qt_menu_rep>(as_qaction());
-}
-
-widget 
-qt_ui_element_rep::popup_window_widget (string s)  {
-  return concrete(make_popup_widget())->popup_window_widget(s);
-}
-
-
+/******************************************************************************
+ * qt_plain_window_widget_rep
+ ******************************************************************************/
 
 /*! Models the simplest top-level window possible
  *
@@ -356,14 +318,23 @@ qt_ui_element_rep::popup_window_widget (string s)  {
  * slots, in particular all those already handled by qt_view_widget_rep. It also
  * marks the enclosed QWidget as a "texmacs_window_widget" using QObject::setProperty().
  * This will be checked by qt_view_widget_rep::read()'s SLOT_WINDOW.
+ *
+ * qt_ui_element_rep::plain_window_widget should use this.
  */
 class qt_plain_window_widget_rep: public qt_view_widget_rep {
   // QWidget* view;   // inherited
+  command quit;
 public:
 
-  qt_plain_window_widget_rep (QWidget* w) : qt_view_widget_rep(w) {
+  qt_plain_window_widget_rep (QWidget* w, command q) 
+  : qt_view_widget_rep(w), quit(q) {
     ASSERT(w != NULL, "Null QWidgets cannot be promoted to windows");
     w->setProperty ("texmacs_window_widget", QVariant::fromValue ((void*) this));
+    
+    // We already do this before instantiating qt_plain_window_widget_rep...
+    //QTMCommand* qcmd = new QTMCommand (quit);
+    //qcmd->setParent (w);
+    //QObject::connect (w, SIGNAL (destroyed()), qcmd, SLOT (apply()));
   };
   ~qt_plain_window_widget_rep () {};
   
@@ -401,42 +372,18 @@ qt_plain_window_widget_rep::send (slot s, blackbox val) {
         view->hide();
     }   
       break;
+    case SLOT_REFRESH:
+      the_gui->gui_helper->emitTmSlotRefresh();
+      break;  
     default:
       qt_view_widget_rep::send (s,val);
   }
 }
 
 
-widget 
-qt_ui_element_rep::plain_window_widget (string s, command quit)  {
-  QLayoutItem *li     = as_qlayoutitem();
-  QTMPlainWindow* win = new QTMPlainWindow();
-  win->setWindowTitle (to_qstring (s));  
-  
-  if (li->widget()) 
-    win->layout()->addItem(li);
-  else if (li->layout())
-    win->setLayout(li->layout());
-  
-
-  QTMCommand* qtmcmd = new QTMCommand(quit);
-  qtmcmd->setParent(win);
-  QObject::connect(win, SIGNAL(closed()), qtmcmd, SLOT(apply()));
-
-  // FIXME: using qt_plain_window_widget causes a crash when closing "secondary"
-  // windows. (example widget6 in menu-test.scm)
-  //return tm_new<qt_plain_window_widget_rep>(win);
-  return tm_new<qt_window_widget_rep>(win, quit);
-}
-
-QMenu *
-qt_ui_element_rep::get_qmenu() {
-  if (!cachedAction) {
-    cachedAction = as_qaction();
-  }
-  return (cachedAction ? cachedAction->menu() : NULL);
-}
-
+/******************************************************************************
+ * Ad-hoc command_rep derivates for different UI elements in qt_ui_element_rep
+ ******************************************************************************/
 
 /*! Ad-hoc command to be used to simulate keypresses
  * 
@@ -445,13 +392,13 @@ qt_ui_element_rep::get_qmenu() {
 
 class qt_key_command_rep: public command_rep {
   string ks; 
-    
+  
 public:
   qt_key_command_rep(string ks_) : ks(ks_) { }
   
   void apply () {
-  if (N(ks)) { 
-    QTMWidget *w = qobject_cast<QTMWidget*>(qApp->focusWidget());
+    if (N(ks)) { 
+      QTMWidget *w = qobject_cast<QTMWidget*>(qApp->focusWidget());
       if (w && w->tm_widget()) {
         if (DEBUG_QT) cout << "shortcut: " << ks << LF;
         the_gui -> process_keypress (w->tm_widget(), ks, texmacs_time());
@@ -463,6 +410,123 @@ public:
 };
 
 
+/*! Ad-hoc command to be used with toggle widgets.
+ * The command associated with a qt_ui_element::toggle_widget has as a parameter the state
+ * of the QCheckBox. Since it is assumed everywhere else that commands injected into
+ * the gui's queue accept no parameters, and changes would be too big, we choose to
+ * encapsulate the original command in a new one which will execute the first with 
+ * its argument.
+ * \sa qt_ui_element, , qt_ui_element_rep::as_qwidget, qt_ui_element_rep::toggle_widget
+ */
+class qt_toggle_command_rep: public command_rep {
+  QPointer<QCheckBox> qwid;
+  command cmd; 
+  
+public:
+  qt_toggle_command_rep(QCheckBox* w, command c) : qwid(w), cmd(c) { }
+  void apply () { if(qwid) cmd (list_object (object (qwid->isChecked()))); }
+
+  tm_ostream& print (tm_ostream& out) { return out << "Toggle"; }
+};
+
+/*! Ad-hoc command to be used with enum widgets.
+ * The command associated with a qt_ui_element::enum_widget has one parameter. For the
+ * reason to be of this class, see \sa qt_toggle_command_rep .
+ * \sa qt_ui_element, , qt_ui_element_rep::as_qwidget, qt_ui_element_rep::enum_widget
+ */
+class qt_enum_command_rep: public command_rep {
+  QPointer<QComboBox> qwid;
+  command cmd; 
+  
+public:
+  qt_enum_command_rep(QComboBox* w, command c) : qwid(w), cmd(c) {}
+  void apply () { 
+    if (qwid)
+      cmd (list_object (object (from_qstring(qwid->currentText()))));
+  }
+  
+  tm_ostream& print (tm_ostream& out) { return out << "Enum"; }
+};
+
+/*! Ad-hoc command to be used with choice widgets.
+ * The command associated with a qt_ui_element::choice_widget has one parameter. (a
+ * list of selected items).
+ * For the reason to be of this class, see \sa qt_toggle_command_rep.
+ * \sa qt_ui_element, , qt_ui_element_rep::as_qwidget, qt_ui_element_rep::choice_widget
+ */
+class qt_choice_command_rep: public command_rep {
+  QPointer<QListWidget> qwid;
+  command cmd;
+  bool multiple;  //<! Whether multiple choices are allowed in the widget.
+  
+public:
+  qt_choice_command_rep(QListWidget* w, command c, bool m) : qwid(w), cmd(c), multiple(m) {}
+  void apply () { 
+    if (qwid) {
+      QList<QListWidgetItem*> items = qwid->selectedItems();
+      array<string> selected;
+      for(int i = 0; i < items.size(); ++i)
+        selected << from_qstring (items[i]->text());
+      object l= null_object ();
+      if(multiple)
+        for (int i = N(selected)-1; i >= 0; --i)
+          l= cons (selected[i], l);
+      else if(N(selected)>0)  //Do not return a list with the item if only one
+        l= selected[0];
+      cmd (list_object (l));
+    }
+  }
+  
+  tm_ostream& print (tm_ostream& out) { return out << "Choice"; }
+};
+
+
+/******************************************************************************
+ * qt_ui_element_rep
+ ******************************************************************************/
+
+qt_ui_element_rep::~qt_ui_element_rep()
+{
+  if (cachedAction) delete cachedAction;
+}
+
+
+widget 
+qt_ui_element_rep::make_popup_widget () {
+  return tm_new<qt_menu_rep>(as_qaction());
+}
+
+
+widget 
+qt_ui_element_rep::popup_window_widget (string s)  {
+  return concrete(make_popup_widget())->popup_window_widget(s);
+}
+
+
+QMenu *
+qt_ui_element_rep::get_qmenu() {
+  if (!cachedAction) {
+    cachedAction = as_qaction();
+  }
+  return (cachedAction ? cachedAction->menu() : NULL);
+}
+
+
+widget 
+qt_ui_element_rep::plain_window_widget (string s, command quit)  {
+  QLayoutItem *li     = as_qlayoutitem();
+  QTMPlainWindow* win = new QTMPlainWindow();
+  win->setWindowTitle (to_qstring (s));  
+  win->setLayout(li->layout());
+  
+  QTMCommand* qtmcmd = new QTMCommand(quit);
+  qtmcmd->setParent(win);
+  QObject::connect(win, SIGNAL(closed()), qtmcmd, SLOT(apply()));
+  
+  // FIXME: using qt_plain_window_widget causes a crash when closing "secondary"
+  // windows. (example widget6 in menu-test.scm)
+  return tm_new<qt_window_widget_rep>(win, quit);
+}
 
 qt_ui_element_rep::operator tree () {
   if (type == refresh_widget) {
@@ -471,6 +535,7 @@ qt_ui_element_rep::operator tree () {
     return tree();
   }
 }
+
 
 QAction* 
 qt_ui_element_rep::as_qaction () {
@@ -601,8 +666,7 @@ qt_ui_element_rep::as_qaction () {
 #endif
       QTMCommand* c;
       if (N(ks) > 0) {
-        string qtks = conv (ks);
-        QKeySequence qks (to_qstring (qtks));
+        QKeySequence qks = to_qkeysequence (ks);
         if (DEBUG_QT)
           cout << "ks: " << ks << " " << qks.toString().toAscii().data() << "\n";
         a->setShortcut (qks);
@@ -700,20 +764,6 @@ qt_ui_element_rep::as_qaction () {
   return NULL;
 }
 
-
-class QTMUIButton: public QToolButton {
-public:
-  QTMUIButton (QWidget* parent = 0): QToolButton(parent) {}
-  void paintEvent(QPaintEvent *event);
-};
-
-
-void
-QTMUIButton::paintEvent(QPaintEvent* event) {
-  (void) event;
-  QPainter p (this);
-  defaultAction()->icon().paint (&p, rect ());
-}
 
 QLayoutItem *
 qt_ui_element_rep::as_qlayoutitem () {
@@ -897,75 +947,6 @@ qt_ui_element_rep::as_qlayoutitem () {
   
   return NULL;
 }
-
-/*! Ad-hoc command to be used with toggle widgets.
- * The command associated with a qt_ui_element::toggle_widget has as a parameter the state
- * of the QCheckBox. Since it is assumed everywhere else that commands injected into
- * the gui's queue accept no parameters, and changes would be too big, we choose to
- * encapsulate the original command in a new one which will execute the first with 
- * its argument.
- * \sa qt_ui_element, , qt_ui_element_rep::as_qwidget, qt_ui_element_rep::toggle_widget
- */
-class qt_toggle_command_rep: public command_rep {
-  QPointer<QCheckBox> qwid;
-  command cmd; 
-
-public:
-  qt_toggle_command_rep(QCheckBox* w, command c) : qwid(w), cmd(c) { }
-  void apply () { if(qwid) cmd (list_object (object (qwid->isChecked()))); }
-  tm_ostream& print (tm_ostream& out) {
-    return out << "Toggle"; }
-};
-
-/*! Ad-hoc command to be used with enum widgets.
- * The command associated with a qt_ui_element::enum_widget has one parameter. For the
- * reason to be of this class, see \sa qt_toggle_command_rep .
- * \sa qt_ui_element, , qt_ui_element_rep::as_qwidget, qt_ui_element_rep::enum_widget
- */
-class qt_enum_command_rep: public command_rep {
-  QPointer<QComboBox> qwid;
-  command cmd; 
-  
-public:
-  qt_enum_command_rep(QComboBox* w, command c) : qwid(w), cmd(c) {}
-  void apply () { 
-    if (qwid)
-      cmd (list_object (object (from_qstring(qwid->currentText()))));
-  }
-  tm_ostream& print (tm_ostream& out) {
-    return out << "Enum"; }
-};
-
-/*! Ad-hoc command to be used with choice widgets.
- * The command associated with a qt_ui_element::choice_widget has one parameter. (a
- * list of selected items).
- * For the reason to be of this class, see \sa qt_toggle_command_rep.
- * \sa qt_ui_element, , qt_ui_element_rep::as_qwidget, qt_ui_element_rep::choice_widget
- */
-class qt_choice_command_rep: public command_rep {
-  QPointer<QListWidget> qwid;
-  command cmd;
-  bool multiple;  //<! Whether multiple choices are allowed in the widget.
-  
-public:
-  qt_choice_command_rep(QListWidget* w, command c, bool m) : qwid(w), cmd(c), multiple(m) {}
-  void apply () { 
-    if (qwid) {
-      QList<QListWidgetItem*> items = qwid->selectedItems();
-      array<string> selected;
-      for(int i = 0; i < items.size(); ++i)
-        selected << from_qstring (items[i]->text());
-      object l= null_object ();
-      if(multiple)
-        for (int i = N(selected)-1; i >= 0; --i)
-          l= cons (selected[i], l);
-      else if(N(selected)>0)  //Do not return a list with the item if only one
-        l= selected[0];
-      cmd (list_object (l));
-    }
-  }
-  tm_ostream& print (tm_ostream& out) { return out << "Choice"; }
-};
 
 
 QWidget *
@@ -1280,53 +1261,73 @@ qt_ui_element_rep::as_qwidget () {
 
 
 /******************************************************************************
-* Widgets for the construction of menus and dialogs
+* TeXmacs interface
 ******************************************************************************/
 
-// TeXmacs interface
-
-
-
-widget horizontal_menu (array<widget> arr) { return qt_ui_element_rep::create (qt_ui_element_rep::horizontal_menu, arr); }
-widget vertical_menu (array<widget> arr)  { return qt_ui_element_rep::create (qt_ui_element_rep::vertical_menu, arr); }
-widget horizontal_list (array<widget> arr) { return qt_ui_element_rep::create (qt_ui_element_rep::horizontal_list, arr); }
-widget vertical_list (array<widget> arr) { return qt_ui_element_rep::create (qt_ui_element_rep::vertical_list, arr); }
+widget horizontal_menu (array<widget> arr) { 
+  return qt_ui_element_rep::create (qt_ui_element_rep::horizontal_menu, arr); }
+widget vertical_menu (array<widget> arr)  { 
+  return qt_ui_element_rep::create (qt_ui_element_rep::vertical_menu, arr); }
+widget horizontal_list (array<widget> arr) { 
+  return qt_ui_element_rep::create (qt_ui_element_rep::horizontal_list, arr); }
+widget vertical_list (array<widget> arr) { 
+  return qt_ui_element_rep::create (qt_ui_element_rep::vertical_list, arr); }
 widget aligned_widget (array<widget> lhs, array<widget> rhs, SI hsep, SI vsep, SI lpad, SI rpad) { 
   typedef quartet<SI, SI, SI, SI> T1;
   typedef triple<array<widget>, array<widget>, T1> T;
   return tm_new <qt_ui_element_rep> (qt_ui_element_rep::aligned_widget, 
                                      close_box (T (lhs,rhs, T1 (hsep, vsep, lpad, rpad)))); 
 }
-widget tabs_widget (array<widget> tabs, array<widget> bodies) { return qt_ui_element_rep::create (qt_ui_element_rep::tabs_widget, tabs, bodies); }
-widget wrapped_widget (widget w, command cmd) { return qt_ui_element_rep::create (qt_ui_element_rep::wrapped_widget, w, cmd); }
-widget tile_menu (array<widget> a, int cols) { return qt_ui_element_rep::create (qt_ui_element_rep::tile_menu, a, cols); }
-widget minibar_menu (array<widget> arr) { return qt_ui_element_rep::create (qt_ui_element_rep::minibar_menu, arr); }
-widget menu_separator (bool vertical) { return qt_ui_element_rep::create (qt_ui_element_rep::menu_separator, vertical); }
-widget menu_group (string name, int style) { return qt_ui_element_rep::create (qt_ui_element_rep::menu_group , name, style); }
-widget pulldown_button (widget w, promise<widget> pw) { return qt_ui_element_rep::create (qt_ui_element_rep::pulldown_button, w, pw); }
-widget pullright_button (widget w, promise<widget> pw) { return qt_ui_element_rep::create (qt_ui_element_rep::pullright_button, w, pw); }
-widget menu_button (widget w, command cmd, string pre, string ks, int style) { return qt_ui_element_rep::create (qt_ui_element_rep::menu_button, w, cmd, pre, ks, style); }
-widget balloon_widget (widget w, widget help) { return qt_ui_element_rep::create (qt_ui_element_rep::balloon_widget, w, help); }
-widget text_widget (string s, int style, color col, bool tsp) { return qt_ui_element_rep::create (qt_ui_element_rep::text_widget, s, style, col, tsp); }
-widget xpm_widget (url file_name) { return qt_ui_element_rep::create (qt_ui_element_rep::xpm_widget, file_name); }
-widget toggle_widget (command cmd, bool on, int style) { return qt_ui_element_rep::create (qt_ui_element_rep::toggle_widget, cmd, on, style); }
-widget enum_widget (command cmd, array<string> vals, string val, int style, string width) { return qt_ui_element_rep::create (qt_ui_element_rep::enum_widget, cmd, vals, val, style, width); }
-widget choice_widget (command cmd, array<string> vals, array<string> chosen) { return qt_ui_element_rep::create(qt_ui_element_rep::choice_widget, cmd, vals, chosen, true); }
+widget tabs_widget (array<widget> tabs, array<widget> bodies) {
+  return qt_ui_element_rep::create (qt_ui_element_rep::tabs_widget, tabs, bodies); }
+widget wrapped_widget (widget w, command cmd) {
+  return qt_ui_element_rep::create (qt_ui_element_rep::wrapped_widget, w, cmd); }
+widget tile_menu (array<widget> a, int cols) { 
+  return qt_ui_element_rep::create (qt_ui_element_rep::tile_menu, a, cols); }
+widget minibar_menu (array<widget> arr) { 
+  return qt_ui_element_rep::create (qt_ui_element_rep::minibar_menu, arr); }
+widget menu_separator (bool vertical) { 
+  return qt_ui_element_rep::create (qt_ui_element_rep::menu_separator, vertical); }
+widget menu_group (string name, int style) { 
+  return qt_ui_element_rep::create (qt_ui_element_rep::menu_group , name, style); }
+widget pulldown_button (widget w, promise<widget> pw) { 
+  return qt_ui_element_rep::create (qt_ui_element_rep::pulldown_button, w, pw); }
+widget pullright_button (widget w, promise<widget> pw) { 
+  return qt_ui_element_rep::create (qt_ui_element_rep::pullright_button, w, pw); }
+widget menu_button (widget w, command cmd, string pre, string ks, int style) { 
+  return qt_ui_element_rep::create (qt_ui_element_rep::menu_button, w, cmd, pre, ks, style); }
+widget balloon_widget (widget w, widget help) { 
+  return qt_ui_element_rep::create (qt_ui_element_rep::balloon_widget, w, help); }
+widget text_widget (string s, int style, color col, bool tsp) { 
+  return qt_ui_element_rep::create (qt_ui_element_rep::text_widget, s, style, col, tsp); }
+widget xpm_widget (url file_name) { 
+  return qt_ui_element_rep::create (qt_ui_element_rep::xpm_widget, file_name); }
+widget toggle_widget (command cmd, bool on, int style) { 
+  return qt_ui_element_rep::create (qt_ui_element_rep::toggle_widget, cmd, on, style); }
+widget enum_widget (command cmd, array<string> vals, string val, int style, string width) { 
+  return qt_ui_element_rep::create (qt_ui_element_rep::enum_widget, cmd, vals, val, style, width); }
+widget choice_widget (command cmd, array<string> vals, array<string> chosen) { 
+  return qt_ui_element_rep::create(qt_ui_element_rep::choice_widget, cmd, vals, chosen, true); }
 widget choice_widget (command cmd, array<string> vals, string cur) {
   array<string> chosen (1);
   chosen[0]= cur;
   return qt_ui_element_rep::create(qt_ui_element_rep::choice_widget, cmd, vals, chosen, false); }
-widget user_canvas_widget (widget wid, int style) { return qt_ui_element_rep::create(qt_ui_element_rep::scrollable_widget, wid, style); }
+widget user_canvas_widget (widget wid, int style) { 
+  return qt_ui_element_rep::create(qt_ui_element_rep::scrollable_widget, wid, style); }
 widget resize_widget (widget w, int style, string w1, string h1,
                       string w2, string h2, string w3, string h3) {
-  (void) w; (void) style; (void) w1; (void) h1; (void) w2; (void) h2; (void) w3; (void) h3;
+  (void) w; (void) style; (void) w1; (void) h1; (void) w2; (void) h2; 
+  (void) w3; (void) h3;
   //FIXME: add a meaningul semantics
   return w;
 }
-widget hsplit_widget (widget l, widget r) { return qt_ui_element_rep::create(qt_ui_element_rep::hsplit_widget, l, r); }
-widget vsplit_widget (widget t, widget b) { return qt_ui_element_rep::create(qt_ui_element_rep::vsplit_widget, t, b); }
+widget hsplit_widget (widget l, widget r) { 
+  return qt_ui_element_rep::create(qt_ui_element_rep::hsplit_widget, l, r); }
+widget vsplit_widget (widget t, widget b) { 
+  return qt_ui_element_rep::create(qt_ui_element_rep::vsplit_widget, t, b); }
 widget refresh_widget (string tmwid) {
   return qt_ui_element_rep::create(qt_ui_element_rep::refresh_widget, tmwid); }
 widget ink_widget (command cb) {
   (void) cb;
   FAILED ("not yet implemented"); }
+
