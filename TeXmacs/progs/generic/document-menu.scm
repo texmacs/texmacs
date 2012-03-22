@@ -595,8 +595,6 @@
       ("Table of contents" (generate-aux "table-of-contents"))
       ("Index" (generate-aux "index"))
       ("Glossary" (generate-aux "glossary"))
-      ("Linked images" (image-gc))
-      ("Inclusions" (inclusions-gc))
       (if (project-attached?)
 	  ---
 	  ("Clear local information" (clear-local-info)))))
