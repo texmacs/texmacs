@@ -157,21 +157,24 @@ popup_window_widget (widget w, string s) {
   return concrete(w)->popup_window_widget (s);
 }
 
+/*! Destroys a window as created by the above routines.
+ *
+ * In the QT implementation explicitly destroying window widgets should not be
+ * necessary since the widget itself destroy the Qt widget as soon as its
+ * destructor is called. No memory leak should be caused by this trivial
+ * implementation.
+ *
+ * FIXME: Handle correcly
+ */
 void
 destroy_window_widget (widget w) {
-  // FIXME: Handle correcly
-  // destroys a window as created by the above routines
   (void) w;
-
-  // In the QT implementation explicitly destroying window widgets should not be necessary
-  // since the widget itself destroy the Qt widget as soon as its destructor is called.
-  // No memory leak should be caused by this trivial implementation.
 }
 
 /******************************************************************************
-* Top-level widgets (??)
-* See also message.hpp for specific messages for these widgets
-******************************************************************************/
+ * Top-level widgets (??)
+ * See also message.hpp for specific messages for these widgets
+ ******************************************************************************/
 
 /*!
  * A factory for the main TeXmacs window.
@@ -201,14 +204,14 @@ popup_widget (widget w) {
 
 #include "qt_ui_element.hpp"
 
+/*
+ * An empty widget of minimal width w and height h and which is horizontally
+ * resp. vertically extensible if hx resp. vx is true
+ * glue_widget is used when detaching a canvas from the texmacs window
+ * in view of attaching another one, e.g. when changing buffer.
+ */
 widget
 glue_widget (bool hx, bool vx, SI w, SI h) {
-  
-  // an empty widget of minimal width w and height h and which is horizontally
-  // resp. vertically extensible if hx resp. vx is true
-  
-  // glue_widget is used when detaching a canvas from the texmacs window
-  // in view of attaching another one, e.g. when changing buffer.
   //return glue_widget("", hx, vx, w, h);
   // Bypass qt_glue_widget and use QSpacers instead:
   return qt_ui_element_rep::create (qt_ui_element_rep::glue_widget,
@@ -221,9 +224,8 @@ glue_widget (tree col, bool hx, bool vx, SI w, SI h) {
 }
 
 /******************************************************************************
-*  Widgets which are not strictly required by TeXmacs
-*  their implementation is void
-******************************************************************************/
+ *  Widgets which are not strictly required by TeXmacs have void implementations
+ ******************************************************************************/
 
 widget
 empty_widget () {

@@ -24,11 +24,21 @@ class QLayoutItem;
  * 
  * Ever TeXmacs Widget is an entity which can be manipulated from within scheme.
  * The interface to this is provided by widget_rep, which we extend. The methods
- * here declared must be implemented by the QT wrappers. We explictly FAIL() in
- * case not, to clearly signal to ourselves that there's a problem.
+ * here declared must be implemented by the QT wrappers.
+ *
+ * Additionally, we provide several methods to cope with the fact that TeXmacs
+ * expects widgets to behave in three different ways: as embedded widgets,
+ * as menus and as regular widgets, all of which are essentially different in QT.
+ * Hence the need to construct the QT widgets differently on a request basis via
+ * the four methods as_qaction(), get_qmenu(), as_qlayoutmenu() and as_qwidget()
+ * Reimplementations of these should cope with the basic differences these
+ * concepts have in QT.
+ *
+ * Most of the UI items are implemented by qt_ui_element_rep, with some
+ * exceptions.
  *
  * See \link src/Graphics/Gui/widget.hpp \endlink and the relevant sections of the
- * developer's guide.
+ * developer's guide as well.
  */
 class qt_widget_rep : public widget_rep {
 public:
@@ -39,16 +49,16 @@ public:
    * Each TeXmacs widget can at some point be asked to present itself into a window.
    * The scheme-originating function window_create() expects this method in every
    * widget.
-   * Widgets which are windows must declare themselves to be via the QProperty
-   * "texmacs_window_widget". This will be checked when processing messages from scheme
-   * asking to actually display the window. See qt_view_widget_rep::read() and
-   * qt_window_widget_rep::qt_window_widget_rep().
+   * Widgets which are windows must declare themselves to be so via the QProperty
+   * "texmacs_window_widget". This will be checked when processing messages from 
+   * scheme asking to actually display the window. See qt_view_widget_rep::read()
+   * and qt_window_widget_rep::qt_window_widget_rep().
    *
-   *   \param s (Often?) a title for the window.
-   *   \param q 
+   *   \param title (Often?) a title for the window.
+   *   \param quit Scheme closure to be executed upon close. 
    *   \return A pointer to this widget.
    */
-  virtual widget plain_window_widget (string s, command q);
+  virtual widget plain_window_widget (string title, command quit);
   
   /*!  */
   virtual widget make_popup_widget ();
@@ -111,11 +121,9 @@ public:
   inline bool operator != (qt_widget w) { return rep != w.rep; }
 };
 
-/*
- * Automagically create definitions for the stuff declared inside qt_widget with
- * the macro ABSTRACT_NULL(). See src/Kernel/Abstractions/basic.hpp
- */
 
+// Automagically create definitions for the stuff declared inside qt_widget with
+// the macro ABSTRACT_NULL(). See src/Kernel/Abstractions/basic.hpp
 ABSTRACT_NULL_CODE(qt_widget);
 
 /*! casting form qt_widget to widget */
