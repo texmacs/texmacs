@@ -75,6 +75,10 @@
 (define-public (load-object file)
   (read (open-file (url-materialize file "r") OPEN_READ)))
 
+(define-public (persistent-ref dir key)
+  (and (persistent-has? dir key)
+       (persistent-get dir key)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Common programming constructs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
