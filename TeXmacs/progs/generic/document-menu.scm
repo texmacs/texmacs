@@ -587,7 +587,7 @@
 	      ("Other" (init-interactive-env "page-flexibility")))))
   ---
   (-> "Update"
-      ("All" (generate-all-aux) (image-gc) (update-buffer))
+      ("All" (generate-all-aux) (image-gc) (inclusions-gc) (update-buffer))
       ---
       ("Buffer" (update-buffer))
       ("Bibliography" (generate-all-aux) (update-buffer))
@@ -595,6 +595,8 @@
       ("Table of contents" (generate-aux "table-of-contents"))
       ("Index" (generate-aux "index"))
       ("Glossary" (generate-aux "glossary"))
+      ("Linked images" (image-gc))
+      ("Inclusions" (inclusions-gc))
       (if (project-attached?)
 	  ---
 	  ("Clear local information" (clear-local-info)))))

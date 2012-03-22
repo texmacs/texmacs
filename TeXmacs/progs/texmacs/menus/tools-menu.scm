@@ -40,8 +40,6 @@
       (-> "Import" (link clipboard-import-preference-menu))
       (-> "Export" (link clipboard-export-preference-menu)))
   (-> "Update"
-      ("Image links" (image-gc))
-      ("Inclusions" (inclusions-gc))
       ("Styles" (style-clear-cache)))
   (-> "Web"
       ("Create web site" (tmweb-interactive-build))
