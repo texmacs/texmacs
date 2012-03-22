@@ -156,6 +156,171 @@
 	  (else (load-buffer-sub file (cadr l) (caddr l))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; New way to save buffers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (buffer-notify-recent name)
+  (learn-interactive 'recent-buffer (cons "0" (url->string name))))
+
+(define (buffer-faithful-save? name)
+  (in? (url-suffix name) "tm" "ts" "tp" "stm" "tmml"))
+
+(define (save-buffer-save name opts)
+  (if (buffer-save name)
+      (with vname `(verbatim ,(url->string name))
+        (set-message `(concat "Could not save '" ,vname "'") "Save file"))
+      (begin
+        (autosave-remove name)
+        (buffer-notify-recent name)
+        ;;(buffer-highlight name)
+        ;;(pretend-saved...))
+        )))
+
+(define (save-buffer-check-faithful name opts)
+  (if (buffer-faithful-save? name)
+      (save-buffer-save name opts)
+      (user-confirm "Save requires data conversion. Really proceed?" #f
+        (lambda (answ)
+          (when answ
+            (save-buffer-save name opts))))))
+
+(define (save-buffer-check-permissions name opts)
+  (set! current-save-target name)
+  (with vname `(verbatim ,(url->string name))
+    (cond ((url-scratch? name)
+           (choose-file
+             (lambda (x) (apply save-buffer-as-main (cons x name opts)))
+             "Save TeXmacs file" ""))
+          ((not (in? name (buffer-list)))
+           (with msg `(concat "The buffer '" ,vname "' does not exist")
+             (set-message msg "Save file")))
+          ((not (buffer-modified? name))
+           (with msg "No changes need to be saved"
+             (set-message msg "Save file")))
+          ((and (not (url-test? name "f")) (not (url-test? name "c")))
+           (with msg `(concat "The file '" ,vname "' cannot be created")
+             (set-message msg "Save file")))
+          ((and (url-test? name "f") (not (url-test? name "w")))
+           (with msg `(concat "You do not have write access for '" ,vname "'")
+             (set-message msg "Save file")))
+;;          ((buffer-more-recent-on-disk? name)
+;;           (user-confirm "The file has changed on disk. Really save?" #f
+;;             (lambda (answ)
+;;               (when answ
+;;                 (save-buffer-check-faithful name opts)))))
+          (else (save-buffer-check-faithful name opts)))))
+
+(tm-define (save-buffer-main . args)
+  (if (or (null? args) (not (url? (car args))))
+      (save-buffer-check-permissions (current-buffer) args)
+      (save-buffer-check-permissions (car args) (cdr args))))
+
+(define (save-buffer-as-save new-name name opts)
+  ;; FIXME: we might want to check further permissions and
+  ;; ask for confirmation when changing the file format
+  (if (and (url-scratch? name) (url-exists? name)) (system-remove name))
+  (buffer-rename name new-name)
+  (apply save-buffer-main (cons new-name opts)))
+
+(define (save-buffer-as-check-exists new-name name opts)
+  (if (url-test? new-name "f")
+      (user-confirm "File already exists. Really overwrite?" #f
+        (lambda (answ)
+          (when answ (save-buffer-as-save new-name name opts))))
+      (save-buffer-as-save new-name name opts)))
+
+(tm-define (save-buffer-as-main new-name . args)
+  (if (or (null? args) (not (url? (car args))))
+      (save-buffer-as-check-exists new-name (current-buffer) args)
+      (save-buffer-as-check-exists new-name (car args) (cdr args))))
+
+(tm-define (xsave-buffer . l)
+  (if (null? l) (save-buffer-main)
+      (begin
+        (if (and (pair? l) (url? (car l)))
+            (set! current-save-target (car l)))
+        (cond ((url-scratch? (car l))
+               (choose-file save-buffer "Save TeXmacs file" "texmacs"))
+              ((= (length l) 1) (texmacs-save-buffer (car l) "generic"))
+              (else (secure-save-buffer (car l) (cadr l)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; New way to load buffers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (load-buffer-open name opts)
+  (cond ((in? :background opts) (noop))
+        ((in? :new-window opts)
+         (open-buffer-in-window name (buffer-get name) ""))
+        (else (buffer-select name)))
+  (buffer-notify-recent name)
+  ;;(buffer-highlight name)
+  )
+
+(define (load-buffer-load name opts)
+  (if (url-exists? name)
+      (if (buffer-load name)
+          (with vname `(verbatim ,(url->string name))
+            (set-message `(concat "Could not load '" ,vname "'") "Load file"))
+          (load-buffer-open name opts))
+      (begin
+        (buffer-set-body name '(document ""))
+        (load-buffer-open name opts))))
+
+(define (load-buffer-check-permissions name opts)
+  (with vname `(verbatim ,(url->string name))
+    (cond ((and (not (url-test? name "f")) (not (url-test? name "c")))
+           (with msg `(concat "The file '" ,vname
+                              "' cannot be loaded or created")
+             (set-message msg "Load file")))
+          ((and (url-test? name "f") (not (url-test? name "r")))
+           (with msg `(concat "You do not have read access to '" ,vname "'")
+             (set-message msg "Load file")))
+          (else (load-buffer-load name opts)))))
+
+(define (load-buffer-check-autosave name opts)
+  (if (autosave-propose name)
+      (with question (if (autosave-rescue? name)
+                         "Rescue file from crash?"
+                         "Load more recent autosave file?")
+        (user-confirm question #t
+          (lambda (answ)
+            (if answ
+                (begin
+                  (buffer-load (autosave-propose name))
+                  (buffer-set name (buffer-get (autosave-propose name)))
+                  ;;(buffer-requires-save name)
+                  (load-buffer-open name opts))
+                (load-buffer-load name opts)))))
+      (load-buffer-load name opts)))
+
+(tm-define (load-buffer-main name . opts)
+  (if (and (not (url-exists? name))
+           (url-exists? (url-append "$TEXMACS_FILE_PATH" name)))
+      (set! name (url-resolve (url-append "$TEXMACS_FILE_PATH" name) "f")))
+  (load-buffer-check-autosave name opts))
+
+(tm-define (xload-buffer . l)
+  (cond ((null? l)
+         (noop))
+        ((= (length l) 1)
+         (load-buffer (car l) "generic" 0))
+        ((and (= (length l) 2) (string? (cadr l)))
+         (load-buffer (car l) (cadr l) 0))
+        ((and (= (length l) 2) (integer? (cadr l)))
+         (load-buffer (car l) "generic" (cadr l)))
+        ((!= (cadr l) "generic")
+         (load-buffer-sub (car l) (cadr l) (caddr l)))
+        ((== (caddr l) 0)
+         (load-buffer-main (car l)))
+        ((== (caddr l) 1)
+         (load-buffer-main :new-window))
+        ((== (caddr l) 2)
+         (load-buffer-main :background))
+        (else
+         (load-buffer-sub (car l) (cadr l) (caddr l)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Miscellaneous
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -263,124 +428,3 @@
 (tm-define (no-name?)
   (deprecated-function "no-name?" "buffer-has-name?")
   (not (buffer-has-name? (current-buffer))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; New way to save buffers
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (buffer-notify-recent name)
-  (learn-interactive 'recent-buffer (cons "0" (url->string name))))
-
-(define (buffer-faithful-save? name)
-  (in? (url-suffix name) "tm" "ts" "tp" "stm" "tmml"))
-
-(define (save-buffer-save name opts)
-  (if (buffer-save name)
-      (with vname `(verbatim ,(url->string name))
-        (set-message `(concat "Could not save '" ,vname "'") "Save file"))
-      (begin
-        (autosave-remove name)
-        (buffer-notify-recent name)
-        ;;(buffer-highlight name)
-        )))
-
-(define (save-buffer-check-faithful name opts)
-  (if (buffer-faithful-save? name)
-      (save-buffer-save name opts)
-      (user-confirm "Save requires data conversion. Really proceed?" #f
-        (lambda (answ)
-          (when answ
-            (save-buffer-save name opts))))))
-
-(define (save-buffer-check-permissions name opts)
-  (set! current-save-target name)
-  (with vname `(verbatim ,(url->string name))
-    (cond 
-;;        ((url-scratch? name)
-;;         (choose-file (lambda (x) (apply save-buffer-as-main (cons x opts)))
-;;                      "Save TeXmacs file" ""))
-          ((not (in? name (buffer-list)))
-           (with msg `(concat "The buffer '" ,vname "' does not exist")
-             (set-message msg "Save file")))
-          ((not (buffer-modified? name))
-           (with msg "No changes need to be saved"
-             (set-message msg "Save file")))
-          ((and (not (url-test? name "f")) (not (url-test? name "c")))
-           (with msg `(concat "The file '" ,vname "' cannot be created")
-             (set-message msg "Save file")))
-          ((and (url-test? name "f") (not (url-test? name "w")))
-           (with msg `(concat "You do not have write access for '" ,vname "'")
-             (set-message msg "Save file")))
-;;          ((buffer-more-recent-on-disk? name)
-;;           (user-confirm "The file has changed on disk. Really save?" #f
-;;             (lambda (answ)
-;;               (when answ
-;;                 (save-buffer-check-faithful name opts)))))
-          (else (save-buffer-check-faithful name opts)))))
-
-(tm-define (save-buffer-main . args)
-  (if (or (null? args) (not (url? (car args))))
-      (save-buffer-check-permissions (current-buffer) args)
-      (save-buffer-check-permissions (car args) (cdr args))))
-
-;;(define (save-buffer-as name new-name . args)
-;;  (if (and (url-scratch? name) (url-exists? name)) (system-remove name))
-;;  (check-overwrite...)
-;;  (rename...)
-;;  (pretend-saved...))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; New way to load buffers
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (load-buffer-open name opts)
-  (cond ((in? :background opts) (noop))
-        ((in? :new-window opts)
-         (open-buffer-in-window name (buffer-get name) ""))
-        (else (buffer-select name)))
-  (buffer-notify-recent name)
-  ;;(buffer-highlight name)
-  )
-
-(define (load-buffer-load name opts)
-  (if (url-exists? name)
-      (if (buffer-load name)
-          (with vname `(verbatim ,(url->string name))
-            (set-message `(concat "Could not load '" ,vname "'") "Load file"))
-          (load-buffer-open name opts))
-      (begin
-        (buffer-set-body name '(document ""))
-        (load-buffer-open name opts))))
-
-(define (load-buffer-check-permissions name opts)
-  (with vname `(verbatim ,(url->string name))
-    (cond ((and (not (url-test? name "f")) (not (url-test? name "c")))
-           (with msg `(concat "The file '" ,vname
-                              "' cannot be loaded or created")
-             (set-message msg "Load file")))
-          ((and (url-test? name "f") (not (url-test? name "r")))
-           (with msg `(concat "You do not have read access to '" ,vname "'")
-             (set-message msg "Load file")))
-          (else (load-buffer-load name opts)))))
-
-(define (load-buffer-check-autosave name opts)
-  (if (autosave-propose name)
-      (with question (if (autosave-rescue? name)
-                         "Rescue file from crash?"
-                         "Load more recent autosave file?")
-        (user-confirm question #t
-          (lambda (answ)
-            (if answ
-                (begin
-                  (buffer-load (autosave-propose name))
-                  (buffer-set name (buffer-get (autosave-propose name)))
-                  ;;(buffer-requires-save name)
-                  (load-buffer-open name opts))
-                (load-buffer-load name opts)))))
-      (load-buffer-load name opts)))
-
-(tm-define (load-buffer-main name . opts)
-  (if (and (not (url-exists? name))
-           (url-exists? (url-append "$TEXMACS_FILE_PATH" name)))
-      (set! name (url-resolve (url-append "$TEXMACS_FILE_PATH" name) "f")))
-  (load-buffer-check-autosave name opts))
