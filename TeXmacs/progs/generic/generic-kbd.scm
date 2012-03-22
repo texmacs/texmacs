@@ -440,10 +440,10 @@
   ("A-left" (cursor-history-backward))
   ("A-right" (cursor-history-forward))
 
-  ("F3" (search-next))
-  ("S-F3" (search-previous))
-  ("gnome g" (search-next))
-  ("gnome G" (search-previous))
+  ("search F3" (search-next))
+  ("search S-F3" (search-previous))
+  ("search gnome g" (search-next))
+  ("search gnome G" (search-previous))
 
   ;; not yet implemented
   ;;("gnome delete" (delete-end-word))
@@ -498,8 +498,8 @@
   ("A-left" (cursor-history-backward))
   ("A-right" (cursor-history-forward))
 
-  ("F3" (search-next))
-  ("S-F3" (search-previous))
+  ("search F3" (search-next))
+  ("search S-F3" (search-previous))
 
   ;; not yet implemented
   ;;("kde N" (add-tab))
@@ -547,7 +547,8 @@
   ("macos S-up" (kbd-select go-start))
   ("macos S-down" (kbd-select go-end))
 
-  ("macos g" (search-next))
+  ("search macos g" (search-next))
+  ("search macos G" (search-previous))
 
   ;; not yet supported
   ;;("macos :" (display-spelling-window))
@@ -636,10 +637,10 @@
   ("A-left" (cursor-history-backward))
   ("A-right" (cursor-history-forward))
 
-  ("windows g" (search-next))
-  ("windows G" (search-previous))
-  ("F3" (search-next))
-  ("S-F3" (search-previous))
+  ("search windows g" (search-next))
+  ("search windows G" (search-previous))
+  ("search F3" (search-next))
+  ("search S-F3" (search-previous))
 
   ;; not yet implemented
   ;;("F4" (go-to-different-folder))
