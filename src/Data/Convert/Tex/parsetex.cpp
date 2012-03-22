@@ -12,9 +12,11 @@
 #include "Tex/convert_tex.hpp"
 #include "converter.hpp"
 
-string string_arg (tree t);
 extern bool textm_class_flag;
 hashmap<string,int> textm_recursion_level (0);
+
+string string_arg (tree t);
+tree latex_symbol_to_tree (string s);
 
 /******************************************************************************
 * The latex_parser structure
@@ -795,7 +797,7 @@ latex_parser::parse_length (string s, int& i, int e) {
         i= start; 
         break;
       }
-      r << as_string(latex_symbol_to_tree (s (start, i)));
+      r << as_string (latex_symbol_to_tree (s (start, i)));
       e += 1;
       continue;
     }

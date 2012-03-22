@@ -39,6 +39,7 @@ tree   change_doc_attr (tree doc, string attr, tree val);
 hashmap<string,int> get_codes (string version);
 tree   string_to_tree (string s, string version);
 tree   upgrade (tree t, string version);
+tree   substitute (tree t, tree which, tree by);
 
 /*** Scheme ***/
 string scheme_tree_to_string (scheme_tree t);
@@ -63,8 +64,6 @@ tree   parse_latex_document (string s, bool change= false);
 tree   latex_to_tree (tree t);
 tree   latex_document_to_tree (string s);
 tree   latex_class_document_to_tree (string s);
-tree   latex_symbol_to_tree (string s);
-tree   substitute (tree t, tree which, tree by);
 
 /*** Xml / Html / Mathml ***/
 tree   parse_xml (string s);
