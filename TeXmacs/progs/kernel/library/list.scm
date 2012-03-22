@@ -149,6 +149,12 @@
   "Extract sublist from @l beginning at @i and ending at @j."
   (list-head (list-tail l i) (- j i)))
 
+(define-public (list-delete l x)
+  "Remove all occurrences of @x from list @l."
+  (cond ((null? l) l)
+        ((== (car l) x) (list-delete (cdr l) x))
+        (else (cons (car l) (list-delete (cdr l) x)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Circulating lists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
