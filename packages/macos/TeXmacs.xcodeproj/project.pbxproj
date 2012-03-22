@@ -21,6 +21,9 @@
 		49D662FC128B331A0006E948 /* QTMFileDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D662FA128B331A0006E948 /* QTMFileDialog.cpp */; };
 		49D662FD128B333F0006E948 /* QTMFileDialog.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D662FB128B331A0006E948 /* QTMFileDialog.hpp */; };
 		49EAD66C128AC177009919E5 /* QTMGuiHelper.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EAD66B128AC168009919E5 /* QTMGuiHelper.hpp */; };
+		49F251D4151B70840091FF99 /* persistent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F251D2151B70840091FF99 /* persistent.cpp */; };
+		49F251D5151B70840091FF99 /* persistent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F251D2151B70840091FF99 /* persistent.cpp */; };
+		49F251D6151B70840091FF99 /* persistent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F251D2151B70840091FF99 /* persistent.cpp */; };
 		9C060A9C10FC6D8B00C51583 /* tm_ostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */; };
 		9C060A9D10FC6D8B00C51583 /* tm_ostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */; };
 		9C060A9E10FC6D8B00C51583 /* tm_ostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */; };
@@ -1142,6 +1145,8 @@
 		49D662FB128B331A0006E948 /* QTMFileDialog.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMFileDialog.hpp; sourceTree = "<group>"; };
 		49DEECC01289A694002ACC66 /* qt_simple_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_simple_widget.cpp; sourceTree = "<group>"; };
 		49EAD66B128AC168009919E5 /* QTMGuiHelper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMGuiHelper.hpp; sourceTree = "<group>"; };
+		49F251D2151B70840091FF99 /* persistent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = persistent.cpp; sourceTree = "<group>"; };
+		49F251D3151B70840091FF99 /* persistent.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = persistent.hpp; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* TeXmacsQt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeXmacsQt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tm_ostream.cpp; sourceTree = "<group>"; };
 		9C060A9B10FC6D8B00C51583 /* tm_ostream.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tm_ostream.hpp; sourceTree = "<group>"; };
@@ -3051,6 +3056,8 @@
 		9C0B495710A8CC110097A335 /* Misc */ = {
 			isa = PBXGroup;
 			children = (
+				49F251D2151B70840091FF99 /* persistent.cpp */,
+				49F251D3151B70840091FF99 /* persistent.hpp */,
 				9C61B443141A21630035D78F /* stack_trace.cpp */,
 				9C0B495810A8CC110097A335 /* data_cache.cpp */,
 				9C0B495910A8CC110097A335 /* data_cache.hpp */,
@@ -4210,6 +4217,7 @@
 				492ED6CE150FD27D00DB0FB5 /* new_data.cpp in Sources */,
 				492ED6CF150FD27D00DB0FB5 /* new_style.cpp in Sources */,
 				493D309B15190AEA00A19C3D /* new_buffer.cpp in Sources */,
+				49F251D4151B70840091FF99 /* persistent.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4559,6 +4567,7 @@
 				492ED6D0150FD27D00DB0FB5 /* new_data.cpp in Sources */,
 				492ED6D1150FD27D00DB0FB5 /* new_style.cpp in Sources */,
 				493D309C15190AEA00A19C3D /* new_buffer.cpp in Sources */,
+				49F251D6151B70840091FF99 /* persistent.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4936,6 +4945,7 @@
 				492ED6CC150FD27D00DB0FB5 /* new_data.cpp in Sources */,
 				492ED6CD150FD27D00DB0FB5 /* new_style.cpp in Sources */,
 				493D309A15190AEA00A19C3D /* new_buffer.cpp in Sources */,
+				49F251D5151B70840091FF99 /* persistent.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
