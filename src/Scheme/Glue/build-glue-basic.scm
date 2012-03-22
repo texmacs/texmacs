@@ -333,7 +333,7 @@
   (system-2 system (void string url url))
 
   (persistent-set persistent_set (void url string string))
-  (persistent-reset persistent_reset (void url string))
+  (persistent-remove persistent_reset (void url string))
   (persistent-has? persistent_contains (bool url string))
   (persistent-get persistent_get (string url string))
   (persistent-file-name persistent_file_name (url url string))

@@ -3899,9 +3899,9 @@ tmg_persistent_set (tmscm arg1, tmscm arg2, tmscm arg3) {
 }
 
 tmscm
-tmg_persistent_reset (tmscm arg1, tmscm arg2) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "persistent-reset");
-  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "persistent-reset");
+tmg_persistent_remove (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "persistent-remove");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "persistent-remove");
 
   url in1= tmscm_to_url (arg1);
   string in2= tmscm_to_string (arg2);
@@ -6460,7 +6460,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("system-1",  tmg_system_1, 2, 0, 0);
   tmscm_install_procedure ("system-2",  tmg_system_2, 3, 0, 0);
   tmscm_install_procedure ("persistent-set",  tmg_persistent_set, 3, 0, 0);
-  tmscm_install_procedure ("persistent-reset",  tmg_persistent_reset, 2, 0, 0);
+  tmscm_install_procedure ("persistent-remove",  tmg_persistent_remove, 2, 0, 0);
   tmscm_install_procedure ("persistent-has?",  tmg_persistent_hasP, 2, 0, 0);
   tmscm_install_procedure ("persistent-get",  tmg_persistent_get, 2, 0, 0);
   tmscm_install_procedure ("persistent-file-name",  tmg_persistent_file_name, 2, 0, 0);
