@@ -70,7 +70,7 @@ parse_tm_style(int style) {
   if (style & WIDGET_STYLE_MONOSPACED)  // use monospaced font inside widget
     sheet += "font-family: \"monospace\";";
   if (style & WIDGET_STYLE_GREY)  // use grey text font
-    sheet += "font-color: #eeeeee";
+    sheet += "color: #414141";
   if (style & WIDGET_STYLE_PRESSED)   // indicate that a button is currently pressed
     sheet += "";
   if (style & WIDGET_STYLE_INERT)  // only render but don't associate any action to widget
