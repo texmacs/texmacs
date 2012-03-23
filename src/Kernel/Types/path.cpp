@@ -156,7 +156,12 @@ has_subtree (tree t, path p) {
 tree&
 subtree (tree& t, path p) {
   if (is_nil (p)) return t;
-  else return subtree (t[p->item], p->next);
+  else
+    if (N(t) > p->item) return subtree (t[p->item], p->next);
+    else {
+      cerr << "TeXmacs] warning, the required path does not exist\n";
+      return t;
+    }
 }
 
 tree&
