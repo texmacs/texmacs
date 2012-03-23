@@ -19,6 +19,8 @@
 ;; Outputting preamble and postamble
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define in-preamble? #t)
+
 (define (collection->ahash-table init)
   (let* ((t (make-ahash-table))
 	 (l (if (func? init 'collection) (cdr init) '()))
@@ -69,6 +71,7 @@
     (output-text "\\begin{document}")
     (output-lf)
     (output-lf)
+    (set! in-preamble? #f)
     (texout doc-body)
     (output-lf)
     (output-lf)
@@ -269,7 +272,9 @@
 
 (tm-define (texout x)
   ;; (display* "texout " x "\n")
-  (cond ((string? x) (output-text x))
+  (cond ((string? x) (begin
+                       (if in-preamble? (output-text "% "))
+                       (output-text x)))
 	((== (car x) '!widechar) (output-text (symbol->string (cadr x))))
 	((== (car x) '!file) (texout-file (cdr x)))
 	((== (car x) '!document) (texout-document (cdr x)))
