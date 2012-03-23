@@ -16,6 +16,7 @@
   (vdots (enlarge (join (0.2 0.3 cdot) (0.2 0 cdot) (0.2 -0.3 cdot)) 0.2 0.2))
   (ddots (join (0 0.3 cdot) (0.3 0 cdot) (0.6 -0.3 cdot)))
   (udots (join (0.6 0.3 cdot) (0.3 0 cdot) (0 -0.3 cdot)))
+  (doteq (enlarge (join (0 0 =) (0.25 0.4 cdot)) 0 0 0 -0.4))
   (dotamalg (enlarge (join (0 0 amalg) (0.25 0.6 cdot)) 0 0 0 -0.5))
   (dottimes (enlarge (join (0 0 times) (0.25 0.4 cdot)) 0 0 0 -0.4))
   (dotoplus (enlarge (join (0 0 oplus) (0.25 0.5 cdot)) 0 0 0 -0.5))

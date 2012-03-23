@@ -485,7 +485,7 @@
 ("<asymp>"		"#224D")
 ("<Bumpeq>"		"#224E")
 ("<bumpeq>"		"#224F")
-; <doteq>		"#2250"
+("<doteq>"		"#2250")
 ("<doteqdot>"		"#2251")
 ("<fallingdoteq>"	"#2252")
 ("<risingdoteq>"	"#2253")
