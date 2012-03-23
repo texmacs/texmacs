@@ -124,9 +124,11 @@
   (list-or (map buffer-modified? (buffer-list))))
 
 (tm-define (safely-kill-buffer)
-  (if (not (buffer-modified? (current-buffer))) (kill-buffer)
+  (if (not (buffer-modified? (current-buffer)))
+      (buffer-close (current-buffer))
       (user-confirm "The buffer has not been saved. Really close it?" #f  
-        (lambda (answ) (when answ (kill-buffer))))))
+        (lambda (answ)
+          (when answ (buffer-close (current-buffer)))))))
 
 (tm-define (safely-kill-window)
   (if (<= (get-nr-windows) 1)

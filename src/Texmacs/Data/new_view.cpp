@@ -132,18 +132,20 @@ create_buffer () {
 void
 revert_buffer () {
   tm_buffer buf= get_buffer ();
-  web_cache_invalidate (buf->buf->name);
-  tree doc= load_tree (buf->buf->name, buf->buf->fm);
+  url name= buf->buf->name;
+  web_cache_invalidate (name);
+  tree doc= load_tree (name, buf->buf->fm);
   if (doc == "error") set_message ("Error: file not found", "revert buffer");
-  else set_buffer_tree (buf->buf->name, doc);
+  else set_buffer_tree (name, doc);
 }
 
 void
-kill_buffer () {
-  int i, nr;
+kill_buffer (url name) {
+  tm_buffer buf= search_buffer (name);
+  if (is_nil (buf)) return;
   if (N(bufs) <= 1) get_server () -> quit();
-  url name= get_this_buffer ();
-  tm_buffer buf= get_buffer();
+  
+  int i, nr;
   for (nr=0; nr<N(bufs); nr++) if (buf == bufs[nr]) break;
   ASSERT (nr != N(bufs), "buffer not found");
   for (nr=N(bufs)-1; nr>=0; nr--) if (buf != bufs[nr]) break;
@@ -160,6 +162,7 @@ kill_buffer () {
       if (get_view () == old_vw) set_view (new_vw);
     }
   }
+
   remove_buffer (name);
 }
 
@@ -231,6 +234,12 @@ set_title (array<tm_view> vws, string title, url name) {
       vw->win->set_window_url (name);
     }
   }
+}
+
+void
+pretend_modified (array<tm_view> vws) {
+  for (int i=0; i<N(vws); i++)
+    vws[i]->ed->require_save ();
 }
 
 void

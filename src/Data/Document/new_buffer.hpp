@@ -25,12 +25,14 @@ public:
   string title;           // buffer title (for menus)
   bool read_only;         // buffer is read only?
   bool secure;            // is the buffer secure?
+  int last_save;          // last time that the buffer was saved
   time_t last_visit;      // time that the buffer was visited last
 
   inline new_buffer_rep (url name2):
     name (name2), master (name2),
     fm ("texmacs"), title (as_string (tail (name))),
     read_only (false), secure (is_secure (name2)),
+    last_save (- (int) (((unsigned int) (-1)) >> 1)),
     last_visit (texmacs_time ()) {}
 };
 

@@ -298,6 +298,9 @@
 (define-public (buffer-list)
   (url->list (all-buffers)))
 
+(define-public (buffer-exists? name)
+  (in? name (buffer-list)))
+
 (define-public (buffer-base-url)
   (buffer-get-master (current-buffer)))
 

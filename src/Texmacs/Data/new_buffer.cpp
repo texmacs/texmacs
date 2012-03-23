@@ -52,11 +52,10 @@ insert_buffer (url name) {
 }
 
 void
-remove_buffer (url name) {
+remove_buffer (tm_buffer buf) {
   int nr, n= N(bufs);
   for (nr=0; nr<n; nr++)
-    if (bufs[nr]->buf->name == name) {
-      tm_buffer buf= bufs[nr];
+    if (bufs[nr] == buf) {
       for (int i=nr; i<n-1; i++)
         bufs[i]= bufs[i+1];
       bufs->resize (n-1);
@@ -64,6 +63,12 @@ remove_buffer (url name) {
       tm_delete (buf);
       return;
     }
+}
+
+void
+remove_buffer (url name) {
+  tm_buffer buf= search_buffer (name);
+  if (!is_nil (buf)) remove_buffer (buf);
 }
 
 int
@@ -109,13 +114,15 @@ get_name_buffer (path p) {
 
 void
 rename_buffer (url name, url new_name) {
-  if (new_name == name) return;
+  if (new_name == name || is_nil (search_buffer (name))) return;
+  kill_buffer (new_name);
   tm_buffer buf= search_buffer (name);
   if (is_nil (buf)) return;
   buf->buf->name= new_name;
   buf->buf->master= new_name;
   tree doc= subtree (the_et, buf->rp);
-  set_title_buffer (new_name, propose_title (buf->buf->title, new_name, doc));
+  string title= propose_title (buf->buf->title, new_name, doc);
+  set_title_buffer (new_name, title);
 }
 
 url
@@ -273,6 +280,19 @@ set_master_buffer (url name, url master) {
   set_master (buf->vws, master);
 }
 
+void
+set_last_save_buffer (url name, int t) {
+  tm_buffer buf= search_buffer (name);
+  if (!is_nil (buf)) buf->buf->last_save= t;
+}
+
+int
+get_last_save_buffer (url name) {
+  tm_buffer buf= search_buffer (name);
+  if (is_nil (buf)) return - (int) (((unsigned int) (-1)) >> 1);
+  return (int) buf->buf->last_save;
+}
+
 bool
 is_aux_buffer (url name) {
   tm_buffer buf= search_buffer (name);
@@ -295,10 +315,18 @@ buffer_modified (url name) {
 }
 
 void
+pretend_buffer_modified (url name) {
+  tm_buffer buf= search_buffer (name);
+  if (is_nil (buf)) return;
+  pretend_modified (buf->vws);
+}
+
+void
 pretend_buffer_saved (url name) {
   tm_buffer buf= search_buffer (name);
   if (is_nil (buf)) return;
   pretend_saved (buf->vws);
+  set_last_save_buffer (name, last_modified (name));
 }
 
 /******************************************************************************
@@ -390,5 +418,7 @@ bool
 buffer_save (url name) {
   string fm= file_format (name);
   if (fm == "generic") fm= "verbatim";
-  return buffer_export (name, name, fm);
+  bool r= buffer_export (name, name, fm);
+  if (!r) pretend_buffer_saved (name);
+  return r;
 }

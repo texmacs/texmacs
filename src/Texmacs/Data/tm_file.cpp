@@ -93,6 +93,7 @@ load_buffer (url u, string fm, int where, bool autosave_flag) {
   }
   buf= search_buffer (v);
   if (!is_nil (buf)) {
+    set_last_save_buffer (v, last_modified (v));
     if (autosave_flag && N(buf->vws) == 1 && buf->vws[0]->ed != NULL)
       buf->vws[0]->ed->require_save();
     buf->buf->fm= fm;

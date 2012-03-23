@@ -276,24 +276,25 @@ is_of_type (url name, string filter) {
   for (i=0; i<n; i++)
     preserve_links= preserve_links || (filter[i] == 'l');
   struct stat buf;
-  if (get_attributes (name, &buf, preserve_links)) return false;
+  bool err= get_attributes (name, &buf, preserve_links);
   for (i=0; i<n; i++)
     switch (filter[i]) {
       // FIXME: should check user id and group id for r, w and x
     case 'f':
-      if (!S_ISREG (buf.st_mode)) return false;
+      if (err || !S_ISREG (buf.st_mode)) return false;
       break;
     case 'd':
-      if (!S_ISDIR (buf.st_mode)) return false;
+      if (err || !S_ISDIR (buf.st_mode)) return false;
       break;
     case 'l':
 #ifdef __MINGW32__
       return false;
 #else
-      if (!S_ISLNK (buf.st_mode)) return false;
+      if (err || !S_ISLNK (buf.st_mode)) return false;
 #endif
       break;
     case 'r':
+      if (err) return false;
 #ifndef __MINGW32__
       if ((buf.st_mode & (S_IRUSR | S_IRGRP | S_IROTH)) == 0) return false;
 #else
@@ -301,6 +302,7 @@ is_of_type (url name, string filter) {
 #endif
       break;
     case 'w':
+      if (err) return false;
 #ifndef __MINGW32__
       if ((buf.st_mode & (S_IWUSR | S_IWGRP | S_IWOTH)) == 0) return false;
 #else
@@ -308,6 +310,7 @@ is_of_type (url name, string filter) {
 #endif
       break;
     case 'x':
+      if (err) return false;
 #if defined (OS_WIN32) || defined (__MINGW__) || defined (__MINGW32__)
       if (suffix(name) == "bat") break;
 #endif
@@ -327,8 +330,13 @@ bool is_symbolic_link (url name) { return is_of_type (name, "l"); }
 
 int
 last_modified (url u, bool cache_flag) {
+  if (is_rooted_web (u))
+    return - (int) (((unsigned int) (-1)) >> 1);
+  if (is_rooted_tmfs (u))
+    return - (int) (((unsigned int) (-1)) >> 1);
   struct stat u_stat;
-  if (get_attributes (u, &u_stat, true, cache_flag)) return 0;
+  if (get_attributes (u, &u_stat, true, cache_flag))
+    return - (int) (((unsigned int) (-1)) >> 1);
   return u_stat.st_mtime;
 }
 
