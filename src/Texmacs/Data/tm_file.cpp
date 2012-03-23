@@ -28,6 +28,8 @@ notify_recent_buffer (string name) {
   call ("learn-interactive", object ("recent-buffer"), a);
 }
 
+tree attach_subformat (tree t, url u, string fm);
+
 tree
 load_tree (url u, string fm) {
   string s, suf= suffix (u);
@@ -46,7 +48,7 @@ load_tree (url u, string fm) {
   tree links= extract (t, "links");
   if (N (links) != 0)
     (void) call ("register-link-locations", object (u), object (links));
-  return t;
+  return attach_subformat (t, u, fm);
 }
 
 void

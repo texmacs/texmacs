@@ -17,6 +17,7 @@
 #include "message.hpp"
 #include "dictionary.hpp"
 #include "new_document.hpp"
+#include "merge_sort.hpp"
 
 array<tm_buffer> bufs;
 
@@ -305,6 +306,20 @@ pretend_buffer_saved (url name) {
 ******************************************************************************/
 
 tree
+attach_subformat (tree t, url u, string fm) {
+  if (fm != "verbatim") return t;
+  string s= suffix (u);
+  if (s == "scm") fm= "scheme";
+  if (s == "cpp" || s == "hpp" || s == "cc" || s == "hh") fm= "cpp";
+  if (s == "mmx" || s == "mmh") fm= "mathemagix";
+  if (fm == "verbatim") return t;
+  hashmap<string,tree> h (UNINIT, extract (t, "initial"));
+  h (MODE)= "prog";
+  h (PROG_LANGUAGE)= fm;
+  return change_doc_attr (t, "initial", make_collection (h));
+}
+
+tree
 import_tree (url u, string fm) {
   u= resolve (u, "fr");
   set_file_focus (u);
@@ -314,7 +329,7 @@ import_tree (url u, string fm) {
   if (fm == "texmacs" && starts (s, "(document (TeXmacs")) fm= "stm";
   if (fm == "verbatim" && starts (s, "(document (TeXmacs")) fm= "stm";
   tree t= generic_to_tree (s, fm * "-document");
-  return t;
+  return attach_subformat (t, u, fm);
 }
 
 bool

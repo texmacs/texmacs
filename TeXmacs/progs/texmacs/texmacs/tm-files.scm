@@ -69,28 +69,6 @@
     (system-remove (url-glue name "#"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Activation of color highlighting
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (suffix->programming-language s)
-  (cond ((== s "scm") "scheme")
-	((in? s '("cpp" "hpp" "cc" "hh")) "cpp")
-	((in? s '("mmx" "mmh")) "mathemagix")
-	(else #f)))
-
-(define (textual-tree? t)
-  (or (atomic-tree? t)
-      (and (== (tree-label t) 'document)
-	   (list-and (map textual-tree? (tree-children t))))))
-
-(define (activate-highlighting)
-  (and-let* ((suffix (url-suffix (current-buffer)))
-	     (prog-lan (suffix->programming-language suffix)))
-    (when (textual-tree? (buffer-tree))
-      (init-env "prog-language" prog-lan)
-      (init-env "mode" "prog"))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Saving
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -103,8 +81,7 @@
 	  "File already exists. Overwrite existing file?" #f
 	(lambda (answ)
 	  (when answ
-	    (texmacs-save-buffer file fm)
-	    (activate-highlighting))))))
+	    (texmacs-save-buffer file fm))))))
 
 (tm-define (save-buffer . l)
   (if (and (pair? l) (url? (car l)))
@@ -139,11 +116,9 @@
 	  (lambda (answ)
 	    (if answ
 		(texmacs-load-buffer (url-glue file suffix) fm where #t)
-		(texmacs-load-buffer file fm where #f))
-	    (activate-highlighting)))
+		(texmacs-load-buffer file fm where #f))))
 	(begin
-	  (texmacs-load-buffer file fm where #f)
-	  (activate-highlighting)))))
+	  (texmacs-load-buffer file fm where #f)))))
 
 (tm-define (load-buffer . l)
   (with file (url-append "$TEXMACS_FILE_PATH" (car l))
@@ -173,7 +148,6 @@
         (begin
           (autosave-remove name)
           (buffer-notify-recent name)
-          ;;(buffer-highlight name)
           ;;(pretend-saved...))
           (set-message `(concat "Saved '" ,vname "'") "Save file")))))
 
@@ -256,9 +230,7 @@
         ((in? :new-window opts)
          (open-buffer-in-window name (buffer-get name) ""))
         (else (buffer-select name)))
-  (buffer-notify-recent name)
-  ;;(buffer-highlight name)
-  )
+  (buffer-notify-recent name))
 
 (define (load-buffer-load name opts)
   (if (url-exists? name)
