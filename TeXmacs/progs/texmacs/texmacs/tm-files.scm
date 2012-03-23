@@ -49,8 +49,8 @@
       (if (more-recent file "#" "") "#" "")))
 
 (define (autosave-eligible? name)
-  (and (not (url-rooted-web? file))
-       (not (url-rooted-tmfs? file))))
+  (and (not (url-rooted-web? name))
+       (not (url-rooted-tmfs? name))))
 
 (define (autosave-propose name)
   (and (autosave-eligible? name)
@@ -263,13 +263,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (load-buffer-open name opts)
+  (display* "load-buffer-open " name ", " opts "\n")
   (cond ((in? :background opts) (noop))
         ((in? :new-window opts)
          (open-buffer-in-window name (buffer-get name) ""))
-        (else (buffer-select name)))
+        (else (switch-to-buffer name)))
   (buffer-notify-recent name))
 
 (define (load-buffer-load name opts)
+  (display* "load-buffer-load " name ", " opts "\n")
   (if (url-exists? name)
       (if (buffer-load name)
           (with vname `(verbatim ,(url->string name))
@@ -280,6 +282,7 @@
         (load-buffer-open name opts))))
 
 (define (load-buffer-check-permissions name opts)
+  (display* "load-buffer-check-permissions " name ", " opts "\n")
   (with vname `(verbatim ,(url->string name))
     (cond ((and (not (url-test? name "f")) (not (url-test? name "c")))
            (with msg `(concat "The file '" ,vname
@@ -291,6 +294,7 @@
           (else (load-buffer-load name opts)))))
 
 (define (load-buffer-check-autosave name opts)
+  (display* "load-buffer-check-autosave " name ", " opts "\n")
   (if (autosave-propose name)
       (with question (if (autosave-rescue? name)
                          "Rescue file from crash?"
@@ -308,12 +312,14 @@
       (load-buffer-load name opts)))
 
 (tm-define (load-buffer-main name . opts)
+  (display* "load-buffer-main " name ", " opts "\n")
   (if (and (not (url-exists? name))
            (url-exists? (url-append "$TEXMACS_FILE_PATH" name)))
       (set! name (url-resolve (url-append "$TEXMACS_FILE_PATH" name) "f")))
   (load-buffer-check-autosave name opts))
 
 (tm-define (xload-buffer . l)
+  (display* "load-buffer " l "\n")
   (cond ((null? l)
          (noop))
         ((= (length l) 1)
