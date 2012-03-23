@@ -298,9 +298,10 @@
         (user-confirm question #t
           (lambda (answ)
             (if answ
-                (begin
-                  (buffer-load (autosave-propose name))
-                  (buffer-set name (buffer-get (autosave-propose name)))
+                (let* ((autosave-name (autosave-propose name))
+                       (format (url-format name))
+                       (doc (texmacs-load-tree autosave-name format)))
+                  (buffer-set name doc)
                   (buffer-pretend-modified name)
                   (load-buffer-open name opts))
                 (load-buffer-load name opts)))))

@@ -357,6 +357,9 @@ import_tree (url u, string fm) {
   if (fm == "texmacs" && starts (s, "(document (TeXmacs")) fm= "stm";
   if (fm == "verbatim" && starts (s, "(document (TeXmacs")) fm= "stm";
   tree t= generic_to_tree (s, fm * "-document");
+  tree links= extract (t, "links");
+  if (N (links) != 0)
+    (void) call ("register-link-locations", object (u), object (links));
   return attach_subformat (t, u, fm);
 }
 
@@ -365,9 +368,6 @@ buffer_import (url name, url src, string fm) {
   tree t= import_tree (src, fm);
   if (t == "error") return true;
   set_buffer_tree (name, t);
-  tree links= extract (t, "links");
-  if (N (links) != 0)
-    (void) call ("register-link-locations", object (src), object (links));
   return false;
 }
 
