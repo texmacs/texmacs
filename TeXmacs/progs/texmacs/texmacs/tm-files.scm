@@ -120,7 +120,7 @@
 	(begin
 	  (texmacs-load-buffer file fm where #f)))))
 
-(tm-define (load-buffer . l)
+(tm-define (xload-buffer . l)
   (with file (url-append "$TEXMACS_FILE_PATH" (car l))
     (cond ((= (length l) 1)
 	   (load-buffer-sub file "generic" 0))
@@ -142,10 +142,12 @@
   (in? (url-suffix name) '("tm" "ts" "tp" "stm" "tmml")))
 
 (define (save-buffer-save name opts)
-  ;;(display* "save-buffer-check-save " name "\n")
+  ;;(display* "save-buffer-save " name "\n")
   (with vname `(verbatim ,(url->string name))
     (if (buffer-save name)
-        (set-message `(concat "Could not save '" ,vname "'") "Save file")
+        (begin
+          (buffer-pretend-modified name)
+          (set-message `(concat "Could not save '" ,vname "'") "Save file"))
         (begin
           (autosave-remove name)
           (buffer-notify-recent name)
@@ -263,26 +265,31 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (load-buffer-open name opts)
-  (display* "load-buffer-open " name ", " opts "\n")
+  ;;(display* "load-buffer-open " name ", " opts "\n")
   (cond ((in? :background opts) (noop))
         ((in? :new-window opts)
          (open-buffer-in-window name (buffer-get name) ""))
-        (else (switch-to-buffer name)))
-  (buffer-notify-recent name))
+        (else
+          (switch-to-buffer name)))
+  (buffer-notify-recent name)
+  (noop))
 
 (define (load-buffer-load name opts)
-  (display* "load-buffer-load " name ", " opts "\n")
-  (if (url-exists? name)
-      (if (buffer-load name)
-          (with vname `(verbatim ,(url->string name))
-            (set-message `(concat "Could not load '" ,vname "'") "Load file"))
-          (load-buffer-open name opts))
-      (begin
-        (buffer-set-body name '(document ""))
-        (load-buffer-open name opts))))
+  ;;(display* "load-buffer-load " name ", " opts "\n")
+  (with vname `(verbatim ,(url->string name))
+    (if (url-exists? name)
+        (if (buffer-load name)
+            (set-message `(concat "Could not load '" ,vname "'") "Load file")
+            (load-buffer-open name opts))
+        (begin
+          (buffer-set-body name '(document ""))
+          (load-buffer-open name opts)
+          (set-message `(concat "Could not load '" ,vname
+                                "'. Created new document")
+                       "Load file")))))
 
 (define (load-buffer-check-permissions name opts)
-  (display* "load-buffer-check-permissions " name ", " opts "\n")
+  ;;(display* "load-buffer-check-permissions " name ", " opts "\n")
   (with vname `(verbatim ,(url->string name))
     (cond ((and (not (url-test? name "f")) (not (url-test? name "c")))
            (with msg `(concat "The file '" ,vname
@@ -294,7 +301,7 @@
           (else (load-buffer-load name opts)))))
 
 (define (load-buffer-check-autosave name opts)
-  (display* "load-buffer-check-autosave " name ", " opts "\n")
+  ;;(display* "load-buffer-check-autosave " name ", " opts "\n")
   (if (autosave-propose name)
       (with question (if (autosave-rescue? name)
                          "Rescue file from crash?"
@@ -306,20 +313,20 @@
                        (format (url-format name))
                        (doc (texmacs-load-tree autosave-name format)))
                   (buffer-set name doc)
-                  (buffer-pretend-modified name)
-                  (load-buffer-open name opts))
-                (load-buffer-load name opts)))))
-      (load-buffer-load name opts)))
+                  (load-buffer-open name opts)
+                  (buffer-pretend-modified name))
+                (load-buffer-check-permissions name opts)))))
+      (load-buffer-check-permissions name opts)))
 
 (tm-define (load-buffer-main name . opts)
-  (display* "load-buffer-main " name ", " opts "\n")
+  ;;(display* "load-buffer-main " name ", " opts "\n")
   (if (and (not (url-exists? name))
            (url-exists? (url-append "$TEXMACS_FILE_PATH" name)))
       (set! name (url-resolve (url-append "$TEXMACS_FILE_PATH" name) "f")))
   (load-buffer-check-autosave name opts))
 
-(tm-define (xload-buffer . l)
-  (display* "load-buffer " l "\n")
+(tm-define (load-buffer . l)
+  ;;(display* "load-buffer " l "\n")
   (cond ((null? l)
          (noop))
         ((= (length l) 1)

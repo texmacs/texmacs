@@ -383,7 +383,6 @@ buffer_load (url name) {
 
 bool
 export_tree (tree doc, url u, string fm) {
-  u= resolve (u, "fw");
   if (fm == "generic") fm= "verbatim";
   string s= tree_to_generic (doc, fm * "-document");
   if (s == "* error: unknown format *") return true;
@@ -411,7 +410,7 @@ buffer_export (url name, url dest, string fm) {
   if (N (links) != 0)
     doc << compound ("links", links);
   
-  export_tree (doc, dest, fm);
+  return export_tree (doc, dest, fm);
 }
 
 bool
