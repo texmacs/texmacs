@@ -165,7 +165,9 @@
         (cond ((== protocol "tm") (url-append (get-texmacs-path) file))
               ((== protocol "here") file)
               ((== protocol "file") (url-append (root->url "default") file))
-              (else (url-append (root->url protocol) file))))))
+              ((in? protocol '("http" "ftp"))
+               (url-append (root->url protocol) file))
+              (else (url-append (root->url "default") s))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Macros for defining handlers
