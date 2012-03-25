@@ -345,15 +345,13 @@ TeXmacs_main (int argc, char** argv) {
   }
   if (install_status == 1) {
     if (DEBUG_STD) cout << "TeXmacs] Loading welcome message...\n";
-    url u= "$TEXMACS_PATH/doc/about/welcome/first.en.tm";
-    url r= "tmfs://help/plain" * concretize (u);
-    load_buffer (r, "generic", 1);
+    url u= "tmfs://help/plain/tm/doc/about/welcome/first.en.tm";
+    load_buffer (u, "generic", 1);
   }
   else if (install_status == 2) {
     if (DEBUG_STD) cout << "TeXmacs] Loading upgrade message...\n";
-    url u= "$TEXMACS_HOME_PATH/doc/about/changes/changes-recent.en.tm";
-    url r= "tmfs://help/plain" * concretize (u);
-    load_buffer (r, "generic", 1);
+    url u= "tmfs://help/plain/tm/doc/about/changes/changes-recent.en.tm";
+    load_buffer (u, "generic", 1);
   }
   if (number_buffers () == 0) {
     if (DEBUG_STD) cout << "TeXmacs] Creating 'no name' buffer...\n";

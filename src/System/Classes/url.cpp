@@ -765,6 +765,7 @@ complete (url base, url u, string filter, bool flag) {
       return url_none ();
     }
     cerr << LF << "base= " << base << LF;
+    cerr << "u= " << u << LF;
     ASSERT (is_rooted (comp), "unrooted url");
     FAILED ("bad protocol in url");
   }
