@@ -138,12 +138,12 @@ edit_interface_rep::key_press (string gkey) {
     int i, n= N(s), pos= N(s);
     for (i=0; i<n; i++)
       if (s[i] == ':' && is_int (s (0, i))) {
-	int k= as_int (s (0, i));
-	s= s (i+1, n);
-	pos= 0;
-	for (int j=0; j<k && pos<N(s); j++)
-	  tm_char_forwards (s, pos);
-	break;
+        int k= as_int (s (0, i));
+        s= s (i+1, n);
+        pos= 0;
+        for (int j=0; j<k && pos<N(s); j++)
+          tm_char_forwards (s, pos);
+        break;
       }
     pre_edit_s= s;
     pre_edit_mark= new_marker ();
@@ -152,21 +152,21 @@ edit_interface_rep::key_press (string gkey) {
     insert_tree (compound ("pre-edit", s), path (0, pos));
     return;
   }
-
+  
   string new_sh= N(sh_s)==0? key: sh_s * " " * key;
   if (try_shortcut (new_sh)) return;
   if (new_sh != key) {
     interrupt_shortcut ();
     if (try_shortcut (key)) return;
   }
-
+  
   string rew= sv->kbd_post_rewrite (key);
   if (N(rew) == 1) {
     int i ((unsigned char) rew[0]);
     if ((i >= 32 && i <= 127) || (i >= 128 && i <= 255) || (i == 25))
       if (!inside_active_graphics ()) {
         archive_state ();
-	insert_tree (rew);
+        insert_tree (rew);
       }
     interrupt_shortcut ();
   }
@@ -174,7 +174,9 @@ edit_interface_rep::key_press (string gkey) {
     archive_state ();
     insert_tree (key);
     interrupt_shortcut ();    
-  }
+  } else if (DEBUG_KEYBOARD)
+    cout << "Keyboard] unrecognized key " << key 
+         << " is probably missing in the encoding files.\n";
 }
 
 void

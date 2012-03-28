@@ -150,7 +150,7 @@
 ;("<paragraph>"	"#A7") ; see symbol-unicode-math.scm
 ;("<ddot>"	"#A8") ; see symbol-unicode-math.scm
 ("<copyright>"	"#A9")
-; feminine ordinal indicator "#AA"
+("<ordfeminine>" "#AA") ; feminine ordinal indicator "#AA"
 ; left pointing double angle quotation mark "#AB"
 ("<neg>"	"#AC")
 ; soft hyphen	"#AD"
@@ -166,7 +166,7 @@
 ("<centerdot>"	"#B7")
 ;("<cedille>"	"#B8") ; see symbol-unicode-math.scm
 ; superscript one "#B9"
-; masculine ordinal indicator "#BA"
+("<masculine>" "#BA") ; masculine ordinal indicator "#BA"
 ; right pointing double angle quotation mark "#BB"
 ; vulgar fraction one quarter "#BC"
 ; vulgar fraction one half "#BD"

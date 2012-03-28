@@ -455,14 +455,14 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
     if (event->text().count() == 1) {
       QChar c= event->text()[0];
       if (c.isPrint() && event->modifiers() != Qt::MetaModifier) {
-	// not a control character or dead key or modifier
-	char ac=c.toAscii();
-	if (ac && ac != ' ') { // a true ascii printable
-	  r= ac;
-	  if (DEBUG_QT) cout << "ascii key= " <<r << "\n";	
-	  the_gui->process_keypress(wid, r, texmacs_time());
-	  return;
-	}
+        // not a control character or dead key or modifier
+        char ac=c.toAscii();
+        if (ac && ac != ' ') { // a true ascii printable
+          r= ac;
+          if (DEBUG_QT) cout << "ascii key= " <<r << "\n";	
+          the_gui->process_keypress(wid, r, texmacs_time());
+          return;
+        }
       }
     }
     // denis end
@@ -486,27 +486,37 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
         r= string ((char) key);
       } else {
         switch(unic) {
-        case 96:   r= "`"; 
+          case 96:   r= "`"; 
             // unicode to cork conversion not appropriate for this case...
 #ifdef Q_WS_MAC
-          // CHECKME: are these two MAC exceptions really needed?
-                   if (mods & Qt::AltModifier) r= "grave";
+            // CHECKME: are these two MAC exceptions really needed?
+            if (mods & Qt::AltModifier) r= "grave";
 #endif
-                   break;
-        case 168:  r= "umlaut"; break;
-        case 180:  r= "acute"; break;
-        // the following combining characters should be caught by qtdeadmap
-        case 0x300: r= "grave"; break;
-        case 0x301: r= "acute"; break;
-        case 0x302: r= "hat"; break;
-        case 0x308: r= "umlaut"; break;
-        case 0x33e: r= "tilde"; break;
-        default:
-          QByteArray buf= nss.toUtf8();
-          string rr (buf.constData(), buf.count());
-          r= utf8_to_cork (rr);
-          if (r == "<less>") r= "<";
-          if (r == "<gtr>") r= ">";
+            break;
+          case 168:  r= "umlaut"; break;
+          case 180:  r= "acute"; break;
+            // the following combining characters should be caught by qtdeadmap
+          case 0x300: r= "grave"; break;
+          case 0x301: r= "acute"; break;
+          case 0x302: r= "hat"; break;
+          case 0x308: r= "umlaut"; break;
+          case 0x33e: r= "tilde"; break;
+          default:
+            QByteArray buf= nss.toUtf8();
+            string rr (buf.constData(), buf.count());
+            string tstr= utf8_to_cork (rr);
+            // HACK! The encodings defined in langs/encoding and which utf8_to_cork uses
+            // (via the converters loaded in converter_rep::load()), enclose the texmacs
+            // symbols in "< >", but this seems to be an abandoned convention (or not
+            // used for keypresses), so we must remove them. (MBD)
+            int len= N(tstr);
+            if (len >= 1 && tstr(0,1) == "<" && tstr(len-1,len) == ">")
+              r= tstr(1, len-1);
+            else
+              r= tstr;
+            if (r == "less") r= "<";
+            else if (r == "gtr")r= ">";
+
         }
 #ifdef Q_WS_MAC
         // CHECKME: are these two MAC exceptions really needed?
@@ -515,7 +525,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
         mods &=~ Qt::ShiftModifier;
       }
     }
-
+    
     if (r == "") return;
 
 #ifdef Q_WS_MAC
@@ -539,10 +549,10 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
     the_gui -> process_keypress (wid, r, texmacs_time());
     //int end= texmacs_time ();
     //if (end > start) cout << "Keypress " << end - start << "\n";
-  //  the_gui->update (); // FIXME: remove this line when
+    //the_gui->update (); // FIXME: remove this line when
                         // edit_typeset_rep::get_env_value will be faster
     
-//    needs_update();
+    //needs_update();
   }
 }
 
