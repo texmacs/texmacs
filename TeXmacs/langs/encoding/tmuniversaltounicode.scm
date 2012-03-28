@@ -140,49 +140,49 @@
 ;;; Controls and Latin-1 Supplement		0080--00FF
 
 ; 0080--009F are control chars (several of would be useful in texmacs)
-; no break space "#A0"
-;("<flip-!>"	"#A1") ; see symbol-unicode-math.scm
-("<cent>"	"#A2")
-; pound sign	"#A3"
-("<currency>"	"#A4")
-("<yen>"	"#A5")
-("<brokenvert>"	"#A6")
-;("<paragraph>"	"#A7") ; see symbol-unicode-math.scm
-;("<ddot>"	"#A8") ; see symbol-unicode-math.scm
-("<copyright>"	"#A9")
-("<ordfeminine>" "#AA") ; feminine ordinal indicator "#AA"
-; left pointing double angle quotation mark "#AB"
-("<neg>"	"#AC")
-; soft hyphen	"#AD"
-("<circledR>"	"#AE") ; for MathML compatility. Maybe U+24C7 more correct.
+("<varspace>"        "#A0") ; no break space
+;("<flip-!>"          "#A1") ; see symbol-unicode-math.scm
+("<cent>"            "#A2")
+("<sterling>"        "#A3") ; pound sign
+("<currency>"        "#A4")
+("<yen>"             "#A5")
+("<brokenvert>"      "#A6")
+;("<paragraph>"       "#A7") ; see symbol-unicode-math.scm
+;("<ddot>"            "#A8") ; see symbol-unicode-math.scm
+("<copyright>"       "#A9")
+("<ordfeminine>"     "#AA")
+("<guillemotleft>"   "#AB") ; left pointing double angle quotation mark
+("<neg>"             "#AC")
+("<hyphen>"          "#AD")
+("<circledR>"        "#AE") ; for MathML compatility. Maybe U+24C7 more correct.
 ;("<bar>"	"#AF") ; see symbol-unicode-math.scm
-; degree sign	"#B0"
-("<pm>"		"#B1")
-; superscript two "#B2"
-; superscript three "#B3"
+("<degree>"          "#B0")
+("<pm>"              "#B1")
+("<twosuperior>"     "#B2") ; superscript two
+("<threesuperior>"   "#B3") ; superscript three
 ;("<acute>"	"#B4") ; see symbol-unicode-math.scm
-; micro sign	"#B5"
-("<endofline>"	"#B6")
-("<centerdot>"	"#B7")
-;("<cedille>"	"#B8") ; see symbol-unicode-math.scm
-; superscript one "#B9"
-("<masculine>" "#BA") ; masculine ordinal indicator "#BA"
-; right pointing double angle quotation mark "#BB"
-; vulgar fraction one quarter "#BC"
-; vulgar fraction one half "#BD"
-; vulgar fraction three quarters "#BE"
-;("<flip-?>"	"#BF") ; see symbol-unicode-math.scm
-;("<AA>"	"#C5") ; see symbol-unicode-math.scm
-;("<AE>"	"#C6") ; see symbol-unicode-math.scm
-;("<Thorn>"	"#DE") ; see symbol-unicode-math.scm
-("<times>"	"#D7")
-;("<O/>"	"#D8") ; see symbol-unicode-math.scm
-;("<sz>"	"#DF") ; see symbol-unicode-math.scm
-;("<aa>"	"#E5") ; see symbol-unicode-math.scm
-;("<ae>"	"#E6") ; see symbol-unicode-math.scm
-;("<dh>"	"#F0") ; see symbol-unicode-math.scm
-("<div>"	"#F7")
-;("<thorn>"	"#FE") ; see symbol-unicode-math.scm
+("<mu>"              "#B5") ; micro sign
+("<endofline>"       "#B6")
+("<centerdot>"       "#B7")
+;("<cedille>"         "#B8") ; see symbol-unicode-math.scm
+("<onesuperior>"     "#B9") ; superscript one
+("<masculine>"       "#BA") ; masculine ordinal indicator
+("<guillemotright>"  "#BB") ; right pointing double angle quotation mark
+("<onequarter>"      "#BC") ; vulgar fraction one quarter
+("<onehalf>"         "#BD") ; vulgar fraction one half
+("<threequarters>"   "#BE") ; vulgar fraction three quarters
+;("<flip-?>"          "#BF") ; see symbol-unicode-math.scm
+;("<AA>"              "#C5") ; see symbol-unicode-math.scm
+;("<AE>"              "#C6") ; see symbol-unicode-math.scm
+;("<Thorn>"           "#DE") ; see symbol-unicode-math.scm
+("<times>"            "#D7")
+;("<O/>"              "#D8") ; see symbol-unicode-math.scm
+;("<sz>"              "#DF") ; see symbol-unicode-math.scm
+;("<aa>"              "#E5") ; see symbol-unicode-math.scm
+;("<ae>"              "#E6") ; see symbol-unicode-math.scm
+;("<dh>"              "#F0") ; see symbol-unicode-math.scm
+("<div>"              "#F7")
+;("<thorn>"            "#FE") ; see symbol-unicode-math.scm
 
 
 ;;; Latin Extended-A				0100--017F
