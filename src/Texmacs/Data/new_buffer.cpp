@@ -228,8 +228,8 @@ set_buffer_tree (url name, tree doc) {
       url prj_name= head (name) * as_string (buf->data->project);
       buf->prj= load_passive_buffer (prj_name);
     }
-    pretend_buffer_saved (name);
   }
+  pretend_buffer_saved (name);
 }
 
 tree
@@ -284,12 +284,17 @@ void
 set_last_save_buffer (url name, int t) {
   tm_buffer buf= search_buffer (name);
   if (!is_nil (buf)) buf->buf->last_save= t;
+  //cout << "Set last save " << name << " -> " << t << "\n";
 }
 
 int
 get_last_save_buffer (url name) {
   tm_buffer buf= search_buffer (name);
-  if (is_nil (buf)) return - (int) (((unsigned int) (-1)) >> 1);
+  if (is_nil (buf)) {
+    //cout << "Get last save " << name << " -> *\n";
+    return - (int) (((unsigned int) (-1)) >> 1);
+  }
+  //cout << "Get last save " << name << " -> " << buf->buf->last_save << "\n";
   return (int) buf->buf->last_save;
 }
 
