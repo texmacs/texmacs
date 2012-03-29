@@ -240,10 +240,12 @@
   ("masculine var" (make 'varmasculine))
   ("ordfeminine var" (make 'varordfeminine)))
 
-(kbd-map
-  (:mode in-german?)
-  ("ß" "ÿ")
-  ("ÿ" "¸"))
+; This breaks ß for german keyboards on all systems.
+; Maybe it was an old fix for bug #2092 ? It now seems incorrect.
+;(kbd-map
+;  (:mode in-german?)
+;  ("ß" "ÿ")
+;  ("ÿ" "¸"))
 
 (kbd-map
   (:mode in-hungarian?)
