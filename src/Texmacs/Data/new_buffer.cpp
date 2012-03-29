@@ -398,6 +398,13 @@ bool
 buffer_export (url name, url dest, string fm) {
   tm_view vw= get_recent_view (name);
 
+  if (fm == "postscript" || fm == "pdf") {
+    int old_stamp= last_modified (dest, false);
+    vw->ed->print_to_file (dest);
+    int new_stamp= last_modified (dest, false);
+    return new_stamp <= old_stamp;
+  }
+
   tree body= subtree (the_et, vw->buf->rp);
   if (fm == "verbatim")
     body= vw->ed->exec_verbatim (body);

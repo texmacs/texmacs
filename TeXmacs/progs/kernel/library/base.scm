@@ -301,7 +301,7 @@
 (define-public (buffer-exists? name)
   (in? name (buffer-list)))
 
-(define-public (buffer-base-url)
+(define-public (buffer-master)
   (buffer-get-master (current-buffer)))
 
 (define-public (buffer-in-recent-menu? u)

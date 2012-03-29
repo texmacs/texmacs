@@ -267,7 +267,7 @@
 
 (define (load-tag-file relative_filename)
   (let ((filename (string-append
-		   (dirname (url->string (buffer-base-url)))
+		   (dirname (url->string (buffer-master)))
 		   "/" relative_filename)))
     (if (access? filename R_OK)
 	(let ((nst (stat:mtime (stat filename)))

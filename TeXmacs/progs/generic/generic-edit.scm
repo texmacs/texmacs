@@ -579,7 +579,7 @@
    (lambda (dir) 
      (let* ((find (url-append dir (thumbnail-suffixes)))
 	          (files (url->list (url-expand (url-complete find "r"))))
-	          (base (buffer-base-url))
+	          (base (buffer-master))
 	          (rel-files (map (lambda (x) (url-delta base x)) files)))
            (if (nnull? rel-files) (make-thumbnails-sub rel-files))))))
    

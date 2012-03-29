@@ -345,10 +345,10 @@
   (with (name label) (decompose-url name-label)
     (cond ((== name "") (go-to-label label))
 	  ((== label "")
-	   (with u (url-relative (buffer-base-url) name)
+	   (with u (url-relative (buffer-master) name)
 	     (load-browse-buffer u)))
 	  (else
-	   (with u (url-relative (buffer-base-url) name)
+	   (with u (url-relative (buffer-master) name)
 	     (load-browse-buffer u)
 	     (go-to-label label)))))
   (if (nnull? opt-from) (cursor-history-add (cursor-path))))

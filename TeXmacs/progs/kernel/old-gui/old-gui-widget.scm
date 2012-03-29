@@ -166,11 +166,11 @@
 
 (tm-define (widget-popup aux w)
   (let* ((name (aux-name aux))
-         (master (buffer-base-url))
+         (master (buffer-master))
          (body* (tm->tree (eval (widget-armour (build-content w)))))
 	 (body `(document (disable-writability ,body*)))
 	 (doc (stand-alone body))
 	 (geom (tree-extents doc)))
     (aux-set-document aux doc)
-    (aux-set-master aux (buffer-base-url))
+    (aux-set-master aux (buffer-master))
     (open-buffer-in-window name doc geom)))

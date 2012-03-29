@@ -92,9 +92,9 @@
 	((= (length l) 1) (texmacs-save-buffer (car l) "generic"))
 	(else (secure-save-buffer (car l) (cadr l)))))
 
-(tm-define (export-buffer to)
+(tm-define (xexport-buffer to)
   ;; Temporary fix for saving to postscript or pdf
-  (if (string? to) (set! to (url-relative (buffer-base-url) to)))
+  (if (string? to) (set! to (url-relative (buffer-master) to)))
   (if (url? to) (set! current-save-target to))
   (if (in? (url-suffix to) '("ps" "pdf"))
       (print-to-file to)
@@ -162,15 +162,15 @@
           (when answ
             (save-buffer-save name opts))))))
 
-(define (cannot-write? name)
+(define (cannot-write? name action)
   (with vname `(verbatim ,(url->string name))
     (cond ((and (not (url-test? name "f")) (not (url-test? name "c")))
            (with msg `(concat "The file '" ,vname "' cannot be created")
-             (set-message msg "Save file"))
+             (set-message msg action))
            #t)
           ((and (url-test? name "f") (not (url-test? name "w")))
            (with msg `(concat "You do not have write access for '" ,vname "'")
-             (set-message msg "Save file"))
+             (set-message msg action))
            #t)
           (else #f))))
 
@@ -188,7 +188,7 @@
           ((not (buffer-modified? name))
            (with msg "No changes need to be saved"
              (set-message msg "Save file")))
-          ((cannot-write? name)
+          ((cannot-write? name "Save file")
            (noop))
           ((and (url-test? name "fr")
                 (> (url-last-modified name)
@@ -238,7 +238,7 @@
 
 (define (save-buffer-as-check-permissions new-name name opts)
   ;;(display* "save-buffer-as-check-permissions " new-name ", " name "\n")
-  (cond ((cannot-write? new-name)
+  (cond ((cannot-write? new-name "Save file")
          (noop))
         ((url-test? new-name "f")
          (user-confirm "File already exists. Really overwrite?" #f
@@ -259,6 +259,39 @@
             (set! current-save-target (car l)))
         (cond ((= (length l) 1) (save-buffer-as-main (car l)))
               (else (secure-save-buffer (car l) (cadr l)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Exporting buffers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (export-buffer-export name to fm opts)
+  ;;(display* "export-buffer-export " name ", " to ", " fm "\n")
+  (with vto `(verbatim ,(url->string to))
+    (if (buffer-export name to fm)
+        (set-message `(concat "Could not save '" ,vto "'") "Export file")
+        (set-message `(concat "Exported to '" ,vto "'") "Export file"))))
+
+(define (export-buffer-check-permissions name to fm opts)
+  ;;(display* "export-buffer-check-permissions " name ", " to ", " fm "\n")
+  (cond ((cannot-write? to "Export file")
+         (noop))
+        ((and (url-test? to "f") (nin? :overwrite opts))
+         (user-confirm "File already exists. Really overwrite?" #f
+           (lambda (answ)
+             (when answ (export-buffer-export name to fm opts)))))
+        (else (export-buffer-export name to fm opts))))
+
+(tm-define (export-buffer-main name to fm opts)
+  ;;(display* "export-buffer-main " name ", " to ", " fm "\n")
+  (if (string? to) (set! to (url-relative (buffer-get-master name) to)))
+  (if (url? to) (set! current-save-target to))
+  (export-buffer-check-permissions name to fm opts))
+
+(tm-define (export-buffer to)
+  (export-buffer-main (current-buffer) to (url-format to) (list :overwrite)))
+
+(tm-define (buffer-exporter fm)
+  (lambda (s) (export-buffer-main (current-buffer) s fm)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Loading buffers
@@ -393,7 +426,7 @@
 
 (tm-define (open-auxiliary aux body . opt-master)
   (let* ((name (aux-name aux))
-         (master (if (null? opt-master) (buffer-base-url) (car opt-master))))
+         (master (if (null? opt-master) (buffer-master) (car opt-master))))
     (aux-set-document aux body)
     (aux-set-master aux master)
     (switch-to-buffer name)))
