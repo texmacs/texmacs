@@ -474,6 +474,8 @@
   (buffer-load buffer_load (bool url))
   (buffer-export buffer_export (bool url url string))
   (buffer-save buffer_save (bool url))
+  (tree-import import_tree (tree url string))
+  (tree-export export_tree (bool tree url string))
 
   (new-buffer create_buffer (url))
   (switch-to-buffer-path switch_to_buffer (bool path))

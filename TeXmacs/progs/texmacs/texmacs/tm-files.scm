@@ -291,7 +291,7 @@
   (export-buffer-main (current-buffer) to (url-format to) (list :overwrite)))
 
 (tm-define (buffer-exporter fm)
-  (lambda (s) (export-buffer-main (current-buffer) s fm)))
+  (lambda (s) (export-buffer-main (current-buffer) s fm (list))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Loading buffers
@@ -378,6 +378,42 @@
          (load-buffer-main :background))
         (else
          (load-buffer-sub (car l) (cadr l) (caddr l)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Importing buffers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (import-buffer-import name fm opts)
+  ;;(display* "import-buffer-import " name ", " fm "\n")
+  (if (== fm (url-format name))
+      (load-buffer-main name opts)
+      (let* ((s (url->tmfs-string name))
+             (u (string-append "tmfs://import/" fm "/" s)))
+        (load-buffer-main u opts))))
+
+(define (import-buffer-check-permissions name fm opts)
+  ;;(display* "import-buffer-check-permissions " name ", " fm "\n")
+  (with vname `(verbatim ,(url->string name))
+    (cond ((not (url-test? name "f"))
+           (with msg `(concat "The file '" ,vname "' does not exist")
+             (set-message msg "Import file")))
+          ((not (url-test? name "r"))
+           (with msg `(concat "You do not have read access to '" ,vname "'")
+             (set-message msg "Import file")))
+          (else (import-buffer-import name fm opts)))))
+
+(tm-define (import-buffer-main name fm opts)
+  ;;(display* "import-buffer-main " name ", " fm "\n")
+  (if (and (not (url-exists? name))
+           (url-exists? (url-append "$TEXMACS_FILE_PATH" name)))
+      (set! name (url-resolve (url-append "$TEXMACS_FILE_PATH" name) "f")))
+  (import-buffer-check-permissions name fm opts))
+
+(tm-define (import-buffer name fm . opts)
+  (import-buffer-main name fm opts))
+
+(tm-define (buffer-importer fm)
+  (lambda (s) (import-buffer s fm)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Miscellaneous

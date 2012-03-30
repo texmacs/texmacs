@@ -246,3 +246,29 @@
   (with name (aux-name aux)
     (buffer-set-master name master)    
     (ahash-set! aux-masters aux (buffer-get-master name))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Importation of files using a different format
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tmfs-load-handler (import name)
+  (if (and (tmfs-pair? name) (tmfs-pair? (tmfs-cdr name)))
+      (let* ((fm (tmfs-car name))
+             (u (tmfs-string->url (tmfs-cdr name)))
+             (doc (tm->stree (tree-import u fm))))
+        (when (and (tm-func? doc 'document)
+                   (not (tm-func? (tm-ref doc 0) 'TeXmacs)))
+          (set! doc `(document (TeXmacs ,(texmacs-version)) ,@(cdr doc))))
+        doc)
+      `(document
+         (TeXmacs ,(texmacs-version))
+         (style (tuple "generic"))
+         (body (document "")))))
+
+(tmfs-title-handler (import name doc)
+  (if (and (tmfs-pair? name) (tmfs-pair? (tmfs-cdr name)))
+      (let* ((fm (tmfs-car name))
+             (u (tmfs-string->url (tmfs-cdr name)))
+             (last (url->string (url-tail u))))
+        (string-append last " - " (upcase-first fm)))
+      (url-tail name)))

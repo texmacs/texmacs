@@ -87,7 +87,7 @@
              (import-text `(concat "Import " ,name))
              (text (if flag? import-text name))
              (format (if (== fm "verbatim") "" fm)))
-        ((eval text) (choose-file (buffer-loader fm) load-text format))))))
+        ((eval text) (choose-file (buffer-importer fm) load-text format))))))
 
 (tm-define (import-top-menu) (import-menu #t))
 (tm-define (import-import-menu) (import-menu #f))
@@ -99,7 +99,7 @@
              (save-text (string-append "Save " (string-downcase name) " file"))
              (export-text `(concat "Export as " ,name))
              (text (if flag? export-text name)))
-        ((eval text) (choose-file (buffer-saver fm) save-text fm))))))
+        ((eval text) (choose-file (buffer-exporter fm) save-text fm))))))
 
 (tm-define (export-top-menu) (export-menu #t))
 (tm-define (export-export-menu) (export-menu #f))
