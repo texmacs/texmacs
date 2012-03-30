@@ -1215,6 +1215,27 @@
       (list 'tmtexttt (tmtex (car l)))))
 ;;(list '!verb (tmtex-tt (car l)))))
 
+(define (tmtex-number-renderer l)
+  (let ((r 
+          (cond ((string? l) l)
+                ((list? l) (tmtex-number-renderer (car l)))
+                (else ""))))
+        (cond
+          ((== r "alpha") "alph")
+          ((== r "Alpha") "Alph")
+          (else      r))))
+
+(define (tmtex-number-counter l)
+    (cond ((func? l 'value) (tmtex-number-counter (cdr l)))
+      ((and (list? l) (== 1 (length l))) (tmtex-number-counter (car l)))
+      ((symbol? l) (tmtex-number-counter (symbol->string l)))
+      ((string? l) (if (string-ends? l "-nr") (string-drop-right l 3) l))
+      (else "")))
+
+(define (tmtex-number l)
+     (tmtex-default 
+       (tmtex-number-renderer (cdr l)) (list (tmtex-number-counter (car l)))))
+
 (define (tmtex-indent s l)
   (list (list '!begin "tmindent") (tmtex (car l))))
 
@@ -1568,6 +1589,7 @@
   (float tmtex-float)
   ((:or datoms dlines dpages dbox) tmtex-noop)
 
+  (number tmtex-number)
   (with-limits tmtex-noop)
   (line-break tmtex-line-break)
   (new-line tmtex-new-line)
@@ -1633,7 +1655,7 @@
   (syntax tmtex-syntax)
 
   ((:or or xor and not plus minus times over div mod
-	merge length range number translate change-case find-file
+	merge length range translate change-case find-file
 	is-tuple look-up
 	equal unequal less lesseq greater greatereq) tmtex-noop)
 

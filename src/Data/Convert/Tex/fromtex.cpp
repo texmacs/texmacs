@@ -749,6 +749,12 @@ latex_command_to_tree (tree t) {
     return tree (NUMBER, tree(APPLY, u->label*"-nr"), "alpha");
   }
   
+  if (is_tuple (t, "\\fnsymbol", 1)) {
+    tree u= l2e (t[1]);
+    if (is_compound (u)) return "";
+    return tree (NUMBER, tree(APPLY, u->label*"-nr"), "fnsymbol");
+  }
+  
   if (is_tuple (t, "\\arabic", 1)) {
     tree u= l2e (t[1]);
     if (is_compound (u)) return "";
