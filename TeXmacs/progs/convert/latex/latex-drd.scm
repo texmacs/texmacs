@@ -467,6 +467,9 @@
   (citeauthor* "natbib")
   (citeyear "natbib")
 
+  (index "makeidx")
+  (printindex "makeidx")
+
   (inparaenum "paralist"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

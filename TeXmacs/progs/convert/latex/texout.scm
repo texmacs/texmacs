@@ -52,6 +52,8 @@
 	  (output-verbatim "\\usepackage{CJK}\n"))
       (output-verbatim tm-uses)
       (for-each texout-usepackage (cdr styles))
+      (if (nnull? (member "makeidx" (cdr styles)))
+        (output-verbatim "\\makeindex"))
       (output-verbatim tm-init)
 
       (if (!= tm-preamble "")

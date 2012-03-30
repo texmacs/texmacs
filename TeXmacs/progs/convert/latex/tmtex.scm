@@ -1338,8 +1338,8 @@
 (define (tmtex-syntax s l)
   (tmtex (car l)))
 
-(define (tmtex-dummy s l)
-  "")
+(define (tmtex-theindex s l)
+    (list 'printindex))
 
 (define (tmtex-toc s l)
   (tex-apply 'tableofcontents))
@@ -1771,7 +1771,7 @@
   ((:or eqnarray eqnarray* leqnarray*) (,tmtex-eqnarray 1))
   (eq-number (,tmtex-default -1))
 
-  (the-index (,tmtex-dummy -1))
+  (the-index (,tmtex-theindex -1))
   (glossary (,tmtex-glossary 1))
   (glossary-explain (,tmtex-glossary 2))
   (glossary-2 (,tmtex-glossary-entry 3))
