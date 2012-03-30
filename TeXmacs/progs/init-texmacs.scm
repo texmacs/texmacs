@@ -238,6 +238,6 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "------------------------------------------------------\n")
-(delayed (:idle 10000) (delayed-auto-save))
+(delayed (:idle 10000) (autosave-delayed))
 (texmacs-banner)
 ;(display "Initialization done\n")

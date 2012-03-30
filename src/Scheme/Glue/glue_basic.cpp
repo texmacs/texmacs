@@ -169,6 +169,15 @@ tmg_cpp_error () {
 }
 
 tmscm
+tmg_rescue_modeP () {
+  // TMSCM_DEFER_INTS;
+  bool out= in_rescue_mode ();
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_scheme_dialect () {
   // TMSCM_DEFER_INTS;
   string out= scheme_dialect ();
@@ -5556,6 +5565,19 @@ tmg_buffer_modifiedP (tmscm arg1) {
 }
 
 tmscm
+tmg_buffer_modified_since_autosaveP (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-modified-since-autosave?");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= buffer_modified_since_autosave (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_buffer_pretend_modified (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-pretend-modified");
 
@@ -5576,6 +5598,19 @@ tmg_buffer_pretend_saved (tmscm arg1) {
 
   // TMSCM_DEFER_INTS;
   pretend_buffer_saved (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_buffer_pretend_autosaved (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-pretend-autosaved");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  pretend_buffer_autosaved (in1);
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;
@@ -6248,6 +6283,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tm-errput",  tmg_tm_errput, 1, 0, 0);
   tmscm_install_procedure ("win32-display",  tmg_win32_display, 1, 0, 0);
   tmscm_install_procedure ("cpp-error",  tmg_cpp_error, 0, 0, 0);
+  tmscm_install_procedure ("rescue-mode?",  tmg_rescue_modeP, 0, 0, 0);
   tmscm_install_procedure ("scheme-dialect",  tmg_scheme_dialect, 0, 0, 0);
   tmscm_install_procedure ("get-texmacs-path",  tmg_get_texmacs_path, 0, 0, 0);
   tmscm_install_procedure ("plugin-list",  tmg_plugin_list, 0, 0, 0);
@@ -6639,8 +6675,10 @@ initialize_glue_basic () {
   tmscm_install_procedure ("buffer-last-save",  tmg_buffer_last_save, 1, 0, 0);
   tmscm_install_procedure ("buffer-last-visited",  tmg_buffer_last_visited, 1, 0, 0);
   tmscm_install_procedure ("buffer-modified?",  tmg_buffer_modifiedP, 1, 0, 0);
+  tmscm_install_procedure ("buffer-modified-since-autosave?",  tmg_buffer_modified_since_autosaveP, 1, 0, 0);
   tmscm_install_procedure ("buffer-pretend-modified",  tmg_buffer_pretend_modified, 1, 0, 0);
   tmscm_install_procedure ("buffer-pretend-saved",  tmg_buffer_pretend_saved, 1, 0, 0);
+  tmscm_install_procedure ("buffer-pretend-autosaved",  tmg_buffer_pretend_autosaved, 1, 0, 0);
   tmscm_install_procedure ("buffer-has-name?",  tmg_buffer_has_nameP, 1, 0, 0);
   tmscm_install_procedure ("buffer-import",  tmg_buffer_import, 3, 0, 0);
   tmscm_install_procedure ("buffer-load",  tmg_buffer_load, 1, 0, 0);

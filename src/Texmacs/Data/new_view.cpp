@@ -249,6 +249,12 @@ pretend_saved (array<tm_view> vws) {
 }
 
 void
+pretend_autosaved (array<tm_view> vws) {
+  for (int i=0; i<N(vws); i++)
+    vws[i]->ed->notify_save (false);
+}
+
+void
 set_data (array<tm_view> vws, new_data data) {
   for (int i=0; i<N(vws); i++)
     vws[i]->ed->set_data (data);

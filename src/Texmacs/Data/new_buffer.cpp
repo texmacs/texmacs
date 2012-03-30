@@ -319,6 +319,13 @@ buffer_modified (url name) {
   return buf->needs_to_be_saved ();
 }
 
+bool
+buffer_modified_since_autosave (url name) {
+  tm_buffer buf= search_buffer (name);
+  if (is_nil (buf)) return false;
+  return buf->needs_to_be_autosaved ();
+}
+
 void
 pretend_buffer_modified (url name) {
   tm_buffer buf= search_buffer (name);
@@ -332,6 +339,13 @@ pretend_buffer_saved (url name) {
   if (is_nil (buf)) return;
   pretend_saved (buf->vws);
   set_last_save_buffer (name, last_modified (name));
+}
+
+void
+pretend_buffer_autosaved (url name) {
+  tm_buffer buf= search_buffer (name);
+  if (is_nil (buf)) return;
+  pretend_autosaved (buf->vws);
 }
 
 /******************************************************************************

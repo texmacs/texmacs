@@ -130,6 +130,7 @@ extern bool rescue_mode;
 scheme_tree menu_merge (scheme_tree m1, scheme_tree m2);
 server get_server ();
 void gui_set_output_language (string lan);
+inline bool in_rescue_mode () { return rescue_mode; }
 
 /* low level */
 void create_buffer (url name, tree doc);
@@ -165,8 +166,10 @@ int  get_last_save_buffer (url name);
 void set_last_save_buffer (url name, int t);
 double last_visited (url name);
 bool buffer_modified (url name);
+bool buffer_modified_since_autosave (url name);
 void pretend_buffer_modified (url name);
 void pretend_buffer_saved (url name);
+void pretend_buffer_autosaved (url name);
 bool buffer_has_name (url name);
 bool buffer_import (url name, url src, string fm);
 bool buffer_load (url name);
@@ -193,6 +196,7 @@ void set_master (array<tm_view> vws, url master);
 void set_title (array<tm_view> vws, string title, url name);
 void pretend_modified (array<tm_view> vws);
 void pretend_saved (array<tm_view> vws);
+void pretend_autosaved (array<tm_view> vws);
 void set_data (array<tm_view> vws, new_data data);
 void delete_views (array<tm_view> vws);
 

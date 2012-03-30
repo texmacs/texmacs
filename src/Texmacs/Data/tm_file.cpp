@@ -227,6 +227,7 @@ auto_save () {
       if (!is_scratch (name))
         name= glue (buf->buf->name, rescue_mode? "#": "~");
       if (N(buf->vws)!=0) {
+        cout << "Autosave " << name << "\n";
         tree doc= make_document (buf->vws[0]);
         bool err= save_string (name, tree_to_texmacs (doc));
         if (!rescue_mode) {
@@ -243,5 +244,5 @@ auto_save () {
           buf->vws[j]->ed->notify_save (false);
     }
   }
-  call ("delayed-auto-save");
+  call ("autosave-delayed");
 }

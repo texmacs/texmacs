@@ -16,59 +16,6 @@
         (texmacs texmacs tm-print)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Autosave
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (delayed-auto-save)
-  (let* ((pref (get-preference "autosave"))
-	 (len (if (and (string? pref) (integer? (string->number pref)))
-		  (* (string->number pref) 1000) 120000)))
-    (if (> len 0)
-	(delayed
-	  (:pause len)
-	  (auto-save)))))
-
-(define (notify-autosave var val)
-  (if (has-view?) ; delayed-autosave would crash at initialization time
-      (delayed-auto-save)))
-
-(define-preferences
-  ("autosave" "120" notify-autosave))
-
-;;;
-
-(define (more-recent file suffix1 suffix2)
-  (and (url-exists? (url-glue file suffix1))
-       (url-exists? (url-glue file suffix2))
-       (url-newer? (url-glue file suffix1) (url-glue file suffix2))))
-
-(define (most-recent-suffix file)
-  (if (more-recent file "~" "")
-      (if (not (more-recent file "#" "")) "~"
-          (if (more-recent file "#" "~") "#" "~"))
-      (if (more-recent file "#" "") "#" "")))
-
-(define (autosave-eligible? name)
-  (and (not (url-rooted-web? name))
-       (not (url-rooted-tmfs? name))))
-
-(define (autosave-propose name)
-  (and (autosave-eligible? name)
-       (with s (most-recent-suffix name)
-         (and (!= s "")
-              (url-glue name s)))))
-
-(define (autosave-rescue? name) 
-  (and (autosave-eligible? name)
-       (== (most-recent-suffix name) "#")))
-
-(define (autosave-remove name)
-  (when (file-exists? (url-glue name "~"))
-    (system-remove (url-glue name "~")))
-  (when (file-exists? (url-glue name "#"))
-    (system-remove (url-glue name "#"))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Saving
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -292,6 +239,90 @@
 
 (tm-define (buffer-exporter fm)
   (lambda (s) (export-buffer-main (current-buffer) s fm (list))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Autosave
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (more-recent file suffix1 suffix2)
+  (and (url-exists? (url-glue file suffix1))
+       (url-exists? (url-glue file suffix2))
+       (url-newer? (url-glue file suffix1) (url-glue file suffix2))))
+
+(define (most-recent-suffix file)
+  (if (more-recent file "~" "")
+      (if (not (more-recent file "#" "")) "~"
+          (if (more-recent file "#" "~") "#" "~"))
+      (if (more-recent file "#" "") "#" "")))
+
+(define (autosave-eligible? name)
+  (and (not (url-rooted-web? name))
+       (not (url-rooted-tmfs? name))))
+
+(define (autosave-propose name)
+  (and (autosave-eligible? name)
+       (with s (most-recent-suffix name)
+         (and (!= s "")
+              (url-glue name s)))))
+
+(define (autosave-rescue? name) 
+  (and (autosave-eligible? name)
+       (== (most-recent-suffix name) "#")))
+
+(define (autosave-remove name)
+  (when (file-exists? (url-glue name "~"))
+    (system-remove (url-glue name "~")))
+  (when (file-exists? (url-glue name "#"))
+    (system-remove (url-glue name "#"))))
+
+(tm-define (autosave-buffer name)
+  (when (and (buffer-modified-since-autosave? name)
+             (or (url-scratch? name)
+                 (url-test? name "fw")
+                 (and (not (url-exists? name))
+                      (url-test? name "c"))))
+    ;;(display* "Autosave " name "\n")
+    ;; FIXME: incorrectly autosaves after cursor movements only
+    (let* ((vname `(verbatim ,(url->string name)))
+           (suffix (if (rescue-mode?) "#" "~"))
+           (aname (url-glue name suffix))
+           (fm (url-format name)))
+      (if (url-scratch? name) (set! aname name))
+      (cond ((!= fm "texmacs")
+             (when (not (rescue-mode?))
+               (set-message `(concat "Warning: '" ,vname "' not auto-saved")
+                            "Auto-save file")))
+            ((buffer-export name aname "texmacs")
+             (when (not (rescue-mode?))
+               (set-message `(concat "Failed to auto-save '" ,vname "'")
+                            "Auto-save file")))
+            (else
+             (when (not (rescue-mode?))
+               (buffer-pretend-autosaved name)
+               (set-temporary-message `(concat "Auto-saved '" ,vname "'")
+                                      "Auto-save file" 2500)))))))
+
+(tm-define (autosave-all)
+  (for-each autosave-buffer (buffer-list))
+  (autosave-delayed))
+
+(tm-define (autosave-delayed)
+  (let* ((pref (get-preference "autosave"))
+	 (len (if (and (string? pref) (integer? (string->number pref)))
+		  (* (string->number pref) 1000) 120000)))
+    (if (> len 0)
+	(delayed
+	  (:pause len)
+	  ;;(auto-save)
+	  (autosave-all)
+          ))))
+
+(define (notify-autosave var val)
+  (if (has-view?) ; delayed-autosave would crash at initialization time
+      (autosave-delayed)))
+
+(define-preferences
+  ("autosave" "120" notify-autosave))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Loading buffers
