@@ -162,7 +162,7 @@
 ("<threesuperior>"   "#B3") ; superscript three
 ;("<acute>"	"#B4") ; see symbol-unicode-math.scm
 ("<mu>"              "#B5") ; micro sign
-("<endofline>"       "#B6")
+("<paragraph>"       "#B6")
 ("<centerdot>"       "#B7")
 ;("<cedille>"         "#B8") ; see symbol-unicode-math.scm
 ("<onesuperior>"     "#B9") ; superscript one
