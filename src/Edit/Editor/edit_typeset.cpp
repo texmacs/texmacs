@@ -143,7 +143,8 @@ edit_typeset_rep::typeset_style_use_cache (tree style) {
     H= get_style_env (style);
     drd= get_style_drd (style);
     style_set_cache (style, H, drd->get_locals ());
-    env->read_env (H);
+    env->patch_env (H);
+    drd->set_environment (H);
   }
   use_modules (env->read (THE_MODULES));
 }
