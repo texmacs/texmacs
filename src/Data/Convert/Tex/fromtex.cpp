@@ -226,6 +226,7 @@ latex_symbol_to_tree (string s) {
       if (s == "implies") return "<Longrightarrow>";
       if (s == "iff") return "<Longleftrightarrow>";
       if (s == "gets") return "<leftarrow>";
+      if (s == "printindex") return compound("the-index", "idx", "");
     }
 
     if (latex_type (s) == "symbol") {

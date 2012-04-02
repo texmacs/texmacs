@@ -33,7 +33,7 @@
   pagebreak nopagebreak newpage newdoublepage clearpage cleardoublepage
   newblock bgroup egroup protect cr date hfill appendix limits nolimits
   dots maketitle tableofcontents TeX LaTeX
-  begingroup endgroup
+  begingroup endgroup printindex
 
   ;; AMS commands
   qed dotsc dotsb dotsm dotsi dotso
