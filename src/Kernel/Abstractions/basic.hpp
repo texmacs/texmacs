@@ -48,7 +48,7 @@ typedef void* pointer;
 * debugging
 ******************************************************************************/
 
-#if (defined OS_WIN32 || defined __SUNPRO_CC)
+#if (defined OS_WIN32 || defined __SUNPRO_CC || defined __clang__)
 #define STACK_NEW_ARRAY(name,T,size) T* name= tm_new_array<T> (size)
 #define STACK_DELETE_ARRAY(name) tm_delete_array (name)
 #else
