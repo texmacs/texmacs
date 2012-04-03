@@ -98,6 +98,7 @@ public:
   ////////////////////// Handling of TeXmacs' messages
   
   virtual void      send (slot s, blackbox val) {
+    (void) val;
     if (DEBUG_QT)
       cout << "qt_widget_rep::send(), unhandled slot: " << slot_name (s) << LF;
   }

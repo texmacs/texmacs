@@ -678,7 +678,7 @@ latex_parser::parse_argument (string s, int& i) {
     i++;
     return parse (s, i, "}");
   }
-  else parse_symbol (s, i);
+  else return parse_symbol (s, i);
 }
 
 tree
