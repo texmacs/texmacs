@@ -15,10 +15,9 @@
 #include "tm_link.hpp"
 #include "convert.hpp"
 
-string ispell_dictionary (string lang);
-string ispell_extra_args (string lang);
 string ispell_encode (string lan, string s);
 string ispell_decode (string lan, string s);
+string ietf_languages_code (string s);
 
 /******************************************************************************
 * The connection resource
@@ -58,27 +57,29 @@ ispeller_rep::start () {
         cmd= "\"C:\\Program Files\\Aspell\\bin\\aspell.exe\"";
       else
 #endif
-        cmd= "ispell";
-    cmd << " -a -d " * ispell_dictionary (lan) * ispell_extra_args (lan);
+        return "Error: Aspell is not installed";
+    cmd << " -a --encoding=utf-8 ";
+    if (ietf_languages_code (lan) != "")
+      cmd << "-l " << ietf_languages_code (lan);
 #endif
     ln= make_pipe_link (cmd);
   }
   if (ln->alive) return "ok";
   string message= ln->start ();
-  if (DEBUG_IO) cout << "Ispell] Received " << message << "\n";
+  if (DEBUG_IO) cout << "Aspell] Received " << message << "\n";
   if (starts (message, "Error: ")) {
     if (ln->alive) ln->stop ();
     return message;
   }
   message= retrieve ();
-  if (DEBUG_IO) cout << "Ispell] Received " << message << "\n";
+  if (DEBUG_IO) cout << "Aspell] Received " << message << "\n";
 #ifdef OS_WIN32
   if (search_forwards (message, 0, "@(#)")) return "ok";
 #else
   if (starts (message, "@(#)")) return "ok";
 #endif
   if (ln->alive) ln->stop ();
-  return "Error: no dictionary for#" * lan;
+  return "Error: no dictionary for " * lan;
 }
 
 string
@@ -95,10 +96,10 @@ ispeller_rep::retrieve () {
       ln->listen (10000);
       string mess = ln->read (LINK_ERR);
       string extra= ln->read (LINK_OUT);
-      if (mess  != "") cerr << "TeXmacs] ispell error: " << mess << "\n";
+      if (mess  != "") cerr << "TeXmacs] aspell error: " << mess << "\n";
       if (extra == "") {
 	ln->stop ();
-	return "Error: ispell does not respond";
+	return "Error: aspell does not respond";
       }
       ret << extra;
     }
@@ -114,61 +115,32 @@ ispeller_rep::send (string cmd) {
 * Ispell dictionaries
 ******************************************************************************/
 
-static hashmap<string,string> the_dict ("");
-
-static void
-init_dictionary (string lang, string dict) {
-  if (the_dict->contains (lang)) return;
-  if (exists ("/usr/lib/ispell/" * dict * ".hash") ||
-      exists ("/usr/lib/aspell/" * dict) ||
-      exists ("/usr/lib/aspell/" * dict * ".multi"))
-    the_dict (lang)= dict;
-}
-
 string
-ispell_dictionary (string lang) {
-  if (N(the_dict) == 0) {
-    init_dictionary ("english", "english");
-    init_dictionary ("english", "american");
-    init_dictionary ("danish", "danish");
-    init_dictionary ("danish", "dansk");
-    init_dictionary ("dutch", "dutch");
-    init_dictionary ("dutch", "nederlands");
-    init_dictionary ("french", "french");
-    init_dictionary ("french", "francais");
-    init_dictionary ("german", "german");
-    init_dictionary ("german", "deutsch");
-    init_dictionary ("german", "ngerman");
-    init_dictionary ("german", "ndeutsch");
-    init_dictionary ("german", "ogerman");
-    init_dictionary ("german", "odeutsch");
-    init_dictionary ("german", "swiss");
-    init_dictionary ("portuguese", "portuguese");
-    init_dictionary ("portuguese", "portugues");
-    init_dictionary ("portuguese", "brazilian");
-    init_dictionary ("portuguese", "brasileiro");
-    init_dictionary ("spanish", "spanish");
-    init_dictionary ("spanish", "español");
-    init_dictionary ("spanish", "espa~nol");
-    init_dictionary ("spanish", "espanol");
-    init_dictionary ("spanish", "castellano");
-    init_dictionary ("swedish", "swedish");
-    init_dictionary ("swedish", "svenska");
-  }
-  if (the_dict->contains (lang)) return the_dict [lang];
-  return lang;
-}
-
-/******************************************************************************
-* Language dependent arguments to ispell
-******************************************************************************/
-
-string
-ispell_extra_args (string lan) {
-  if (lan == "german")
-    return " -T latin1";
-  else
-    return "";
+ietf_languages_code (string lang) {
+  if (lang == "british")    return "en_GB";
+  if (lang == "bulgarian")  return "bg_BG";
+  if (lang == "chinese")    return "zh_CN";
+  if (lang == "czech")      return "cs_CZ";
+  if (lang == "danish")     return "da_DK";
+  if (lang == "dutch")      return "nl_NL";
+  if (lang == "finnish")    return "fi_FI";
+  if (lang == "french")     return "fr_FR";
+  if (lang == "german")     return "de_DE";
+  if (lang == "hungarian")  return "hu_HU";
+  if (lang == "italian")    return "it_IT";
+  if (lang == "japanese")   return "ja_JP";
+  if (lang == "korean")     return "ko_KR";
+  if (lang == "polish")     return "pl_PL";
+  if (lang == "portuguese") return "pt_PT";
+  if (lang == "romanian")   return "ro_RO";
+  if (lang == "russian")    return "ru_RU";
+  if (lang == "slovene")    return "sl_SI";
+  if (lang == "spanish")    return "es_ES";
+  if (lang == "swedish")    return "sv_SE";
+  if (lang == "taiwanese")  return "th_TH";
+  if (lang == "ukrainian")  return "uk_UA";
+  if (lang == "english")    return "en_US";
+  return "";
 }
 
 /******************************************************************************
@@ -177,34 +149,16 @@ ispell_extra_args (string lan) {
 
 string
 ispell_encode (string lan, string s) {
-  if ((lan == "czech") || (lan == "hungarian") ||
-      (lan == "polish") || (lan == "slovene"))
-    return cork_to_il2 (s);
-  else if ((lan == "bulgarian") || (lan == "russian"))
-    return koi8_to_iso (s);
-  else if (lan == "ukrainian")
-    return koi8uk_to_iso (s);
-  else if (lan == "spanish")
-    return spanish_to_ispanish (s);
-  else if (lan == "german")
-    return german_to_igerman (s);
-  else return s;
+  if (lan == "bulgarian" || lan == "russian" || lan == "ukrainian")
+    return t2a_to_utf8 (s);
+  else return cork_to_utf8 (s);
 }
 
 string
 ispell_decode (string lan, string s) {
-  if ((lan == "czech") || (lan == "hungarian") ||
-      (lan == "polish") || (lan == "slovene"))
-    return il2_to_cork (s);
-  else if ((lan == "bulgarian") || (lan == "russian"))
-    return iso_to_koi8 (s);
-  else if (lan == "ukrainian")
-    return iso_to_koi8uk (s);
-  else if (lan == "spanish")
-    return ispanish_to_spanish (s);
-  else if (lan == "german")
-    return igerman_to_german (s);
-  else return s;
+  if (lan == "bulgarian" || lan == "russian" || lan == "ukrainian")
+    return utf8_to_t2a (s);
+  return utf8_to_cork (s);
 }
 
 /******************************************************************************
@@ -262,7 +216,7 @@ ispell_eval (string lan, string s) {
 
 string
 ispell_start (string lan) {
-  if (DEBUG_IO) cout << "Ispell] Start " << lan << "\n";
+  if (DEBUG_IO) cout << "Aspell] Start " << lan << "\n";
   ispeller sc= ispeller (lan);
   if (is_nil (sc)) sc= tm_new<ispeller_rep> (lan);
   return sc->start ();
@@ -270,7 +224,7 @@ ispell_start (string lan) {
 
 tree
 ispell_check (string lan, string s) {
-  if (DEBUG_IO) cout << "Ispell] Check " << s << "\n";
+  if (DEBUG_IO) cout << "Aspell] Check " << s << "\n";
   ispeller sc= ispeller (lan);
   if (is_nil (sc) || (!sc->ln->alive)) {
     string message= ispell_start (lan);
@@ -283,18 +237,18 @@ ispell_check (string lan, string s) {
 
 void
 ispell_accept (string lan, string s) {
-  if (DEBUG_IO) cout << "Ispell] Accept " << s << "\n";
+  if (DEBUG_IO) cout << "Aspell] Accept " << s << "\n";
   ispell_send (lan, "@" * s);
 }
 
 void
 ispell_insert (string lan, string s) {
-  if (DEBUG_IO) cout << "Ispell] Insert " << s << "\n";
+  if (DEBUG_IO) cout << "Aspell] Insert " << s << "\n";
   ispell_send (lan, "*" * s);
 }
 
 void
 ispell_done (string lan) {
-  if (DEBUG_IO) cout << "Ispell] End " << lan << "\n";
+  if (DEBUG_IO) cout << "Aspell] End " << lan << "\n";
   ispell_send (lan, "#");
 }

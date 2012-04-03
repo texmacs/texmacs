@@ -209,6 +209,23 @@ cork_to_utf8 (string input) {
 }
 
 string
+utf8_to_t2a (string input) {
+  converter conv= load_converter ("UTF-8", "T2A");
+  int start, i, n= N(input);
+  string output;
+  for (i=0; i<n; ) {
+    start= i;
+    unsigned int code= decode_from_utf8 (input, i);
+    string s= input (start, i);
+    string r= apply (conv, s);
+    if (r == s && code >= 256)
+      r= "<#" * as_hexadecimal (code) * ">";
+    output << r;
+  }
+  return output;
+}
+
+string
 t2a_to_utf8 (string input) {
   converter conv= load_converter ("T2A", "UTF-8");
   int start= 0, i, n= N(input);
