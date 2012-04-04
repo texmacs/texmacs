@@ -187,10 +187,11 @@ INSTALL:
 	$(MKDIR) $(DESTDIR)$(datadir)/icons/gnome/scalable
 	$(MKDIR) $(DESTDIR)$(datadir)/icons/gnome/scalable/apps
 	$(CP) $(tmdir)/misc/images/TeXmacs.svg \
-	$(DESTDIR)$(datadir)/icons/gnome/scalable/apps
+	$(DESTDIR)$(datadir)/icons/gnome/scalable/apps 
 	$(MKDIR) $(DESTDIR)$(datadir)/icons/gnome/scalable/mimetypes
 	$(CP) $(tmdir)/misc/images/text-texmacs.svg \
-	$(DESTDIR)$(datadir)/icons/gnome/scalable/mimetypes
+	$(DESTDIR)$(datadir)/icons/gnome/scalable/mimetypes \
+	&& gtk-update-icon-cache --force $(DESTDIR)$(datadir)/icons/gnome
 	@echo installed TeXmacs mime info in $(DESTDIR)$(datadir)
 	$(MKDIR) $(DESTDIR)$(bindir)
 	$(CHMOD) 755 $(tmdir)/bin/*
@@ -219,15 +220,16 @@ UNINSTALL:
 	$(RM) -r $(tmdata)
 	@echo removed TeXmacs data from $(tmdata)
 	$(RM) $(datadir)/applications/texmacs.desktop \
-		&& update-desktop-database
+	update-desktop-database
 	$(RM) $(datadir)/application-registry/texmacs.applications
 	$(RM) $(datadir)/mime-info/texmacs.keys
 	$(RM) $(datadir)/mime-info/texmacs.mime
 	$(RM) $(datadir)/mime/packages/texmacs.xml \
-		&& update-mime-database $(DESTDIR)$(datadir)/mime/
+	update-mime-database $(DESTDIR)$(datadir)/mime/
 	$(RM) $(datadir)/pixmaps/TeXmacs.xpm
 	$(RM) $(datadir)/icons/gnome/scalable/apps/TeXmacs.svg
 	$(RM) $(datadir)/icons/gnome/scalable/mimetypes/text-texmacs.svg
+	gtk-update-icon-cache --force $(DESTDIR)$(datadir)/icons/gnome
 	@echo removed TeXmacs mime info from $(datadir)
 	$(RM) $(includedir)/TeXmacs.h
 	@echo removed TeXmacs include files from $(includedir)
