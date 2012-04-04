@@ -285,13 +285,18 @@ url::url (string path_name, string name):
 ******************************************************************************/
 
 static bool
+is_special_root (url u) {
+#ifdef WINPATHS
+  return is_root (u);
+#else
+  return is_root_web (u);
+#endif
+}
+
+static bool
 is_semi_root (url u) {
   // url u such that u/.. == u (website or windows drive name)
-#ifdef WINPATHS
-  return is_concat (u) && is_root (u[1]) && is_atomic (u[2]);
-#else
-  return is_concat (u) && is_root_web (u[1]) && is_atomic (u[2]);
-#endif
+  return is_concat (u) && is_special_root (u[1]) && is_atomic (u[2]);
 }
 
 url
@@ -607,6 +612,7 @@ expand (url u1, url u2) {
   if (is_or (u2)) return expand (u1, u2[1]) | expand (u1, u2[2]);
   if (is_ancestor (u2)) {
     if (is_concat (u1)) return u1 | expand (u1[1], u2);
+    if (is_special_root (u1)) return u2;
     return u1 | u2;
   }
   if (is_concat (u2) && is_ancestor (u2[1]))
