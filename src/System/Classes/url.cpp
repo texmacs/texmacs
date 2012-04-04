@@ -583,16 +583,16 @@ relative (url base, url u) {
 
 url
 delta_sub (url base, url u) {
-#ifdef WINPATHS
-  if (is_atomic (base) || heuristic_is_default (as_string (base), URL_SYSTEM))
-    return u;
-#else
   if (is_atomic (base))
     return u;
-#endif
-  if (is_concat (base) && is_concat (u) && (base[1] == u[1]))
+  if (is_concat (base) && is_concat (u) && (base[1] == u[1])) {
+    if (is_special_root (base[1]) &&
+	is_concat (base[2]) && is_concat (u[2]) &&
+	base[2][1] != u[2][1])
+      return url_none ();
     return delta_sub (base[2], u[2]);
-  if (is_concat (base))
+  }
+  if (is_concat (base) && !is_semi_root (base))
     return url_parent () * delta_sub (head (base), u);
   return url_none ();
 }
