@@ -352,6 +352,7 @@ bool check_using_iconv (string input, string encoding) {
 
 string
 convert_using_iconv (string input, string from, string to) {
+  if (from == to) return input;
 #ifdef USE_ICONV
   iconv_converter conv (from, to, true);
   return apply (conv, input);
