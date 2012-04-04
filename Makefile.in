@@ -168,7 +168,8 @@ INSTALL:
 	@echo installed TeXmacs plugins data in $(DESTDIR)$(tmdata)/plugins
 	$(MKDIR) $(DESTDIR)$(datadir)/applications
 	$(CP) $(tmdir)/misc/mime/texmacs.desktop \
-	$(DESTDIR)$(datadir)/applications
+	$(DESTDIR)$(datadir)/applications \
+		&& update-desktop-database
 	$(MKDIR) $(DESTDIR)$(datadir)/application-registry
 	$(CP) $(tmdir)/misc/mime/texmacs.applications \
 	$(DESTDIR)$(datadir)/application-registry
@@ -177,7 +178,8 @@ INSTALL:
 	$(CP) $(tmdir)/misc/mime/texmacs.mime $(DESTDIR)$(datadir)/mime-info
 	$(MKDIR) $(DESTDIR)$(datadir)/mime
 	$(MKDIR) $(DESTDIR)$(datadir)/mime/packages
-	$(CP) $(tmdir)/misc/mime/texmacs.xml $(DESTDIR)$(datadir)/mime/packages
+	$(CP) $(tmdir)/misc/mime/texmacs.xml $(DESTDIR)$(datadir)/mime/packages \
+		&& update-mime-database $(DESTDIR)$(datadir)/mime/
 	$(MKDIR) $(DESTDIR)$(datadir)/pixmaps
 	$(CP) $(tmdir)/misc/pixmaps/TeXmacs.xpm $(DESTDIR)$(datadir)/pixmaps
 	$(MKDIR) $(DESTDIR)$(datadir)/icons
@@ -216,11 +218,13 @@ UNINSTALL:
 	@echo removed TeXmacs executables from $(tmbin)
 	$(RM) -r $(tmdata)
 	@echo removed TeXmacs data from $(tmdata)
-	$(RM) $(datadir)/applications/texmacs.desktop
+	$(RM) $(datadir)/applications/texmacs.desktop \
+		&& update-desktop-database
 	$(RM) $(datadir)/application-registry/texmacs.applications
 	$(RM) $(datadir)/mime-info/texmacs.keys
 	$(RM) $(datadir)/mime-info/texmacs.mime
-	$(RM) $(datadir)/mime/packages/texmacs.xml
+	$(RM) $(datadir)/mime/packages/texmacs.xml \
+		&& update-mime-database $(DESTDIR)$(datadir)/mime/
 	$(RM) $(datadir)/pixmaps/TeXmacs.xpm
 	$(RM) $(datadir)/icons/gnome/scalable/apps/TeXmacs.svg
 	$(RM) $(datadir)/icons/gnome/scalable/mimetypes/text-texmacs.svg
