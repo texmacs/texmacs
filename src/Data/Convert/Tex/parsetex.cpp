@@ -292,7 +292,11 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
 	t << parse_length (s, i);
       else if (unicode && ((unsigned char) s[i]) >= 128) {
 	unsigned int code= decode_from_utf8 (s, i);
-	t << tree (TUPLE, "\\#" * as_hexadecimal (code));
+        string c = utf8_to_cork(encode_as_utf8(code));
+        if (c(0,1) == "<#")
+	  t << tree (TUPLE, "\\" * c(1, N(c)-1));
+        else
+          t << c;
       }
       else if (!unicode && is_iso_alpha (s[i])) {
 	// If we encounter too much text in math mode, then return
@@ -1023,118 +1027,185 @@ latex_parser::parse (string s, bool change) {
   return t;
 }
 
-static bool
-japanese_tex (string& s) {
-  if (search_forwards ("\\documentclass{jarticle}", s) != -1) {
-    s= replace (s, "\\documentclass{jarticle}", "\\documentclass{article}");
-    s= convert (s, "ISO-2022-JP", "UTF-8");
-    return true;
+/******************************************************************************
+* Internationalization
+******************************************************************************/
+
+int
+get_latex_package_idx (string s, string which) {
+  int i = 0;
+  while (search_forwards ("\\usepackage", i, s) != -1) {
+    int state = 0;
+    i = search_forwards ("\\usepackage", i, s) + 1;
+    for (int j = i ; j < N(s) ; j++) {
+      if      (test (s, j, "\n")  || test (s, j, "\\")) break;
+      else if (test (s, j, "{")   && state == 0) state = 1;
+      else if (test (s, j, "}")   && state == 1) break;
+      else if (test (s, j, which) && state == 1)
+        return search_backwards ("\\usepackage", j, s);
+    }
   }
-  if (search_forwards ("\\documentclass{jbook}", s) != -1) {
-    s= replace (s, "\\documentclass{jbook}", "\\documentclass{book}");
-    s= convert (s, "ISO-2022-JP", "UTF-8");
-    return true;
-  }
-  return false;
+  return -1;
 }
 
-static bool
-korean_tex (string& s) {
+string
+get_latex_language (string s) {
+  int start, stop;
+  stop = get_latex_package_idx (s, "babel");
+  if (stop == -1) return "";
+  stop = search_forwards  ("babel", stop, s);
+  stop = search_backwards ("]", stop, s) - 1;
+  while (!is_alpha(s[stop])) stop--;
+  for (start = stop ; stop > 0 ; start--)
+    if (test(s, start, ' ') || test(s, start, '[') || test(s, start, ','))
+      break;
+  string r = s(start+1, stop+1);
+
+  tree langs = concat(); 
+  langs << "british" << "bulgarian" << "chinese" << "czech" << "danish"
+    << "dutch" << "finnish" << "french" << "german" << "hungarian" << "italian"
+    << "japanese" << "korean" << "polish" << "portuguese" << "romanian"
+    << "russian" << "slovene" << "spanish" << "swedish" << "taiwanese"
+    << "ukrainian"; 
+
+  for (int i = 0 ; i < N(langs) ; i++)
+    if (test(r, 0 , as_string(langs[i])))
+      return as_string(langs[i]);
+  if (r == "ngermanb") return "german";
+  if (r == "magyar") return "hungarian";
+  return "";
+}
+
+string
+get_latex_encoding (string s) {
+  int start, stop;
+  
+  // Try if inputenc is called
+  stop = get_latex_package_idx (s, "inputenc");
+  if (stop != -1) {
+    stop = search_forwards  ("inputenc", stop, s);
+    stop = search_backwards ("]", stop, s);
+    start = search_backwards ("[", stop, s) + 1;
+    s = s(start, stop);
+    s = replace(s, " ", "");
+    s = replace(s, "\t", "");
+    s = replace(s, ",", "");
+    return s;
+  }
+
+  // Try if inputenc is called
+  stop = get_latex_package_idx (s, "CJK");
+  if (stop != -1) {
+    tree encs = concat();
+    encs << "Bg5" <<  "GB" << "GBK" << "JIS" << "SJIS" << "KS" << "UTF8"
+      << "EUC-TW" << "EUC-JP" << "EUC-KR";
+
+    for (int i = 0 ; i < N(encs) ; i++)
+      if (occurs("\\begin{CJK}{"*as_string(encs[i]), s))
+        return as_string(encs[i]);
+  }
+
+  // Try other tricky tests
+  if (search_forwards ("\\documentclass[CJK]{cctart}", s) != -1 ||
+      search_forwards ("\\documentclass{cctart}", s) != -1 ||
+      search_forwards ("\\kaishu", s) != 1)
+    return "GB";
+
   if (search_forwards ("\\usepackage{hangul}", s) != -1 ||
       search_forwards ("\\usepackage{hfont}", s) != -1 ||
       search_forwards ("]{hangul}", s) != -1 ||
       search_forwards ("]{hfont}", s) != -1)
-    {
-      s= replace (s, "\\usepackage{hangul}", "");
-      s= replace (s, "\\usepackage{hfont}", "");
-      s= convert (s, "EUC-KR", "UTF-8");
-      return true;
-    }
+    return "KS";
+
   if (search_forwards ("\\usepackage{dhucs}", s) != -1 ||
       search_forwards ("\\usepackage{memhangul-ucs}", s) != -1 ||
       search_forwards ("]{dhucs}", s) != -1 ||
       search_forwards ("]{memhangul-ucs}", s) != -1)
-    {
-      s= replace (s, "\\usepackage{dhucs}", "");
-      s= replace (s, "\\usepackage{memhangul-ucs}", "");
-      return true;
-    }
-  return false;
+    return "UTF8";
+
+  if (search_forwards ("\\documentclass{jarticle}", s) != -1 ||
+      search_forwards ("]{jarticle}", s) != -1 ||
+      search_forwards ("\\documentclass{jbook}", s) != -1 ||
+      search_forwards ("]{jbook}", s) != -1 ||
+      search_forwards ("\\documentclass{jreport}", s) != -1 ||
+      search_forwards ("]{jreport}", s) != -1)
+    return "JIS";
+
+  return "";
 }
 
-static bool
-chinese_tex (string& s) {
-  if (search_forwards ("\\kaishu", s) != -1)
-    s= replace (s, "\\kaishu", "");
-  if (search_forwards ("\\begin{CJK}{GBK}{kai}", s) != -1)
-    s= replace (s, "\\begin{CJK}{GBK}{kai}", "");
-  if (search_forwards ("\\begin{CJK*}{GBK}{kai}", s) != -1)
-    s= replace (s, "\\begin{CJK*}{GBK}{kai}", "");
-  if (search_forwards ("\\end{CJK}", s) != -1)
-    s= replace (s, "\\end{CJK}", "");
-  if (search_forwards ("\\end{CJK*}", s) != -1)
-    s= replace (s, "\\end{CJK*}", "");
-  if (search_forwards ("\\CJKindent", s) != -1)
-    s= replace (s, "\\CJKindent", "");
-  if (search_forwards ("\\CJKcaption{GBk}", s) != -1)
-    s= replace (s, "\\CJKcaption{GBK}", "");
-  if (search_forwards ("\\usepackage{CJK}", s) != -1) {
-    s= replace (s, "\\usepackage{CJK}", "");
-    s= convert (s, "cp936", "UTF-8");
-    return true;
-  }
-  if (search_forwards ("\\documentclass{cctart}", s) != -1) {
-    s= replace (s, "\\documentclass{cctart}", "\\documentclass{article}");
-    s= convert (s, "cp936", "UTF-8");
-    return true;
-  }
-  if (search_forwards ("\\documentclass[CJK]{cctart}", s) != -1) {
-    s= replace (s, "\\documentclass[CJK]{cctart}", "\\documentclass{article}");
-    s= convert (s, "cp936", "UTF-8");
-    return true;
-  }
-  return false;
-}
+string
+latex_encoding_to_iconv (string s) {
+  // Encodings used for LaTeX import.
+  // Thanks LyX developpers. Adapted from lyx-devel/lib/encodings
 
-static bool
-taiwanese_tex (string& s) {
-  if (search_forwards ("\\usepackage{CJKvert,type1cm}", s) != -1)
-    s= replace (s, "\\usepackage{CJKvert,type1cm}", "");
-  if (search_forwards ("\\begin{CJK}{Bg5}{aming}", s) != -1)
-    s= replace (s, "\\begin{CJK}{Bg5}{aming}", "");
-  if (search_forwards ("\\begin{CJK}{Bg5}{kai}", s) != -1)
-    s= replace (s, "\\begin{CJK}{Bg5}{kai}", "");
-  if (search_forwards ("\\end{CJK}", s) != -1)
-    s= replace (s, "\\end{CJK}", "");
-  if (search_forwards ("\\CJKcaption{Bg5}", s) != -1)
-    s= replace (s, "\\CJKcaption{Bg5}", "");
-  if (search_forwards ("\\CJKindent", s) != -1)
-    s= replace (s, "\\CJKindent", "");
-  if (search_forwards ("\\usepackage{CJK}", s) != -1) {
-    s= replace (s, "\\usepackage{CJK}", "");
-    s= convert (s, "cp950", "UTF-8");
-    return true;
-  }
-  if (search_forwards ("\\usepackage{CJK*}", s) != -1) {
-    s= replace (s, "\\usepackage{CJK*}", "");
-    s= convert (s, "cp950", "UTF-8");
-    return true;
-  }
-  return false;
+  if (s == "utf8")     return "UTF-8";
+  if (s == "utf8x")    return "UTF-8";
+  if (s == "UTF8")     return "UTF-8";
+  // This encoding is used to typeset Armenian using the armTeX package
+  if (s == "armscii8") return "ARMSCII-8";
+  if (s == "latin1")   return "ISO-8859-1";
+  if (s == "latin2")   return "ISO-8859-2";
+  if (s == "latin3")   return "ISO-8859-3";
+  if (s == "latin4")   return "ISO-8859-4";
+  if (s == "latin5")   return "ISO-8859-9";
+  if (s == "latin9")   return "ISO-8859-15";
+  if (s == "latin10")  return "ISO-8859-16";
+  if (s == "iso88595") return "ISO-8859-5";
+  // Not standard, see http://tug.ctan.org/tex-archive/language/arabic/arabi/arabi/texmf/latex/arabi/
+  if (s == "8859-6")     return "ISO-8859-6";
+  if (s == "iso-8859-7") return "ISO-8859-7";
+  if (s == "8859-8")     return "ISO-8859-8";
+  // Not standard, see http://www.vtex.lt/tex/littex/index.html
+  if (s == "l7xenc")   return "ISO-8859-13";
+  if (s == "applemac") return "Macintosh";
+  if (s == "cp437")    return "CP437";
+  // cp437, but on position 225 is sz instead of beta
+  if (s == "cp437de") return "CP437";
+  if (s == "cp850")   return "CP850";
+  if (s == "cp852")   return "CP852";
+  if (s == "cp855")   return "CP855";
+  if (s == "cp858")   return "CP858";
+  if (s == "cp862")   return "CP862";
+  if (s == "cp865")   return "CP865";
+  if (s == "cp866")   return "CP866";
+  if (s == "cp1250")  return "CP1250";
+  if (s == "cp1251")  return "CP1251";
+  if (s == "ansinew") return "CP1252";
+  if (s == "cp1252")  return "CP1252";
+  if (s == "cp1255")  return "CP1255";
+  // Not standard, see http://tug.ctan.org/tex-archive/language/arabic/arabi/arabi/texmf/latex/arabi/
+  if (s == "cp1256")  return "CP1256";
+  if (s == "cp1257")  return "CP1257";
+  if (s == "koi8-r")  return "KOI8-R";
+  if (s == "koi8-u")  return "KOI8-U";
+  if (s == "pt154")   return "PT154";
+  if (s == "pt254")   return "PT254";
+  // For simplified chinese
+  if (s == "GB")      return "EUC-CN";
+  if (s == "GBK")     return "GBK";
+  // For japanese
+  if (s == "JIS")     return "ISO-2022-JP";
+  // For korean
+  if (s == "KS")      return "EUC-KR";
+  // For traditional chinese
+  if (s == "EUC-TW")  return "EUC-TW";
+  // For japanese
+  if (s == "EUC-JP")  return "EUC-JP";
+
+  return "";
 }
 
 tree
 parse_latex (string s, bool change) {
   s= dos_to_better (s);
-  string lan= "";
-  if (japanese_tex (s)) lan= "japanese";
-  else if (korean_tex (s)) lan= "korean";
-  else if (taiwanese_tex (s)) lan= "taiwanese";
-  else if (chinese_tex (s)) lan= "chinese";
-  bool unicode= (lan == "chinese" || lan == "japanese" ||
-		 lan == "korean" || lan == "taiwanese");
-  latex_parser ltx (unicode);
-  tree r= accented_to_Cork (ltx.parse (s, change));
+  string lan= get_latex_language (s);
+  string encoding= latex_encoding_to_iconv (get_latex_encoding (s));
+  if (encoding != "UTF-8") s= convert (s, encoding, "UTF-8");
+
+  latex_parser ltx (true);
+  tree r= ltx.parse (s, change);
+  r= accented_to_Cork (ltx.parse (s, change));
   if (lan == "") return r;
   return compound ("!language", r, lan);
 }
