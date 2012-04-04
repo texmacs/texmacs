@@ -52,7 +52,7 @@
 	  (output-verbatim "\\usepackage{CJK}\n"))
       (output-verbatim tm-uses)
       (for-each texout-usepackage (cdr styles))
-      (if (nnull? (member "makeidx" (cdr styles)))
+      (if (string-occurs? "makeidx" (latex-use-package-command doc-body))
         (output-verbatim "\\makeindex"))
       (output-verbatim tm-init)
 
