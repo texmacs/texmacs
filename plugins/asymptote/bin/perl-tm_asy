@@ -36,4 +36,3 @@ sub psoutput($) {
   my ($str) = @_;
   output ("ps:$str");
 }
-
