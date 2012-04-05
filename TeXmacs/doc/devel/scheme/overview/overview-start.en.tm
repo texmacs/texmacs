@@ -22,7 +22,7 @@
   </verbatim>
 
   The file <verbatim|my-init-texmacs.scm> is loaded when booting <TeXmacs>
-  and <verbatim|my-init-texmacs.scm> is booted each time you open a file.
+  and <verbatim|my-init-buffer.scm> is booted each time you open a file.
 
   Usually, the file <verbatim|my-init-texmacs.scm> contains personal keyboard
   bindings and menus. For instance, when putting the following piece of code
