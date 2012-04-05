@@ -1,5 +1,5 @@
 
-/******************************************************************************
+/******************************************************************************			
 * MODULE     : new_style.hpp
 * DESCRIPTION: Style and DRD computation and caching
 * COPYRIGHT  : (C) 1999-2012  Joris van der Hoeven
