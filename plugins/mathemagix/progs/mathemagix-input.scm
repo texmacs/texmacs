@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : init-mathemagix.scm
+;; MODULE      : mathemagix-input.scm
 ;; DESCRIPTION : Initialize mathemagix plugin
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven, 2005  Andrey Grozin
 ;;
