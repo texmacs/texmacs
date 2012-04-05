@@ -70,7 +70,7 @@ tt_font_metric_rep::tt_font_metric_rep (
 
 metric&
 tt_font_metric_rep::get (int i) {
-  if (!fnm->contains(i)) {
+  if (!face->bad_face && !fnm->contains(i)) {
     ft_set_char_size (face->ft_face, 0, size<<6, dpi, dpi);
     FT_UInt glyph_index= ft_get_char_index (face->ft_face, i);
     if (ft_load_glyph (face->ft_face, glyph_index, FT_LOAD_DEFAULT))
@@ -123,7 +123,7 @@ tt_font_glyphs_rep::tt_font_glyphs_rep (
 
 glyph&
 tt_font_glyphs_rep::get (int i) {
-  if (!fng->contains(i)) {
+  if (!face->bad_face && !fng->contains(i)) {
     ft_set_char_size (face->ft_face, 0, size<<6, dpi, dpi);
     FT_UInt glyph_index= ft_get_char_index (face->ft_face, i);
     if (ft_load_glyph (face->ft_face, glyph_index, FT_LOAD_DEFAULT))
