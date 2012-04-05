@@ -55,7 +55,7 @@
 	(string-append (escape-verbatim w) "\n")))))
 
 (define mathemagix-launcher
-  (if (url-exists-in-path? "mmi")
+  (if #f;;(url-exists-in-path? "mmi")
       "mmi --texmacs"
       "mmx-light --texmacs"))
 
