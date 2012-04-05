@@ -3,7 +3,7 @@
 ;;
 ;; MODULE      : doxygen.scm
 ;; DESCRIPTION : 'doxygen' support for C++
-;; COPYRIGHT   : (C) 2007  Gregoire Lecerf
+;; COPYRIGHT   : (C) 2007--2012  Gregoire Lecerf
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -33,6 +33,9 @@
 ; Time stamps are stored for tag files in order to
 ; refresh them when needed.
 (define file->stamp (make-ahash-table))
+
+; Web tag files are only loaded once
+(define web->loaded? (make-ahash-table))
 
 ;; Parsing
 
@@ -267,7 +270,7 @@
 
 (define (load-tag-file relative_filename)
   (let ((filename (string-append
-		   (dirname (url->string (buffer-master)))
+		   (dirname (url->string (current-buffer)))
 		   "/" relative_filename)))
     (if (access? filename R_OK)
 	(let ((nst (stat:mtime (stat filename)))
@@ -281,12 +284,25 @@
 		(parse-main s))))
 	(texmacs-error "Doxygen: file not found" filename))))
 
+(define (load-tag-web relative_filename)
+  (let* ((filename (url-append (url-head (current-buffer)) relative_filename))
+	 (loaded? (ahash-ref* web->loaded? filename #f)))
+    (if (not loaded?)
+	(if (url-exists? filename)
+	    (let ((s (string-load filename)))
+	      (set! current-dir (dirname relative_filename))
+	      (parse-main s)
+	      (ahash-set! web->loaded? filename #t))
+	    (texmacs-error "Doxygen: file not found" filename)))))
+
 ;; TeXmacs exports
 
 (tm-define (doxygen-load l)
   (:secure #t)
   (:synopsis "Load Doxygen tag file.")
-  (load-tag-file (tree-as-string l))
+  (if (url-rooted-web? (current-buffer))
+      (load-tag-web  (tree-as-string l))
+      (load-tag-file (tree-as-string l)))
   "")
 
 (tm-define (doxygen-ref x)
