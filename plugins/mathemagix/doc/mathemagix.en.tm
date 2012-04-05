@@ -1,11 +1,17 @@
-<TeXmacs|1.0.7.11>
+<TeXmacs|1.0.7.14>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|The <name|Mathemagix> plug-in>
 
-  <tmdoc-copyright|2011|Joris van der Hoeven>
+  <\traverse>
+    <branch|Short description|mathemagix-abstract.en.tm>
+
+    <branch|Example session|mathemagix-demo.en.tm>
+  </traverse>
+
+  <tmdoc-copyright|2011|Joris van der Hoeven and Grégoire Lecerf>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
