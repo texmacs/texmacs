@@ -510,8 +510,9 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
             // symbols in "< >", but this seems to be an abandoned convention (or not
             // used for keypresses), so we must remove them. (MBD)
             int len= N(tstr);
-            if (len >= 1 && tstr(0,1) == "<" && tstr(len-1,len) == ">")
-              r= tstr(1, len-1);
+            if (len >= 1 && tstr(0,1) == "<" && 
+                tstr(1,2) != "#" && tstr(len-1,len) == ">")  
+	      r= tstr(1, len-1);
             else
               r= tstr;
             if (r == "less") r= "<";
