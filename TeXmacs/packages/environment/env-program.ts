@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.0.7.15>
 
 <style|<tuple|source|std>>
 
@@ -33,7 +33,7 @@
   <assign|pseudo-code|<\macro|body>
     <\padded-normal|1fn|1fn>
       <\indent>
-        <\with|par-first|0fn|par-par-sep|0fn>
+        <\with|par-first|0fn|par-par-sep|0fn|item-hsep|<macro|1.5fn>>
           <arg|body>
         </with>
       </indent>
@@ -42,7 +42,7 @@
 
   <assign|render-algorithm|<\macro|name|body>
     <\padded-normal|1fn|1fn>
-      <\with|par-first|0fn|par-par-sep|0fn>
+      <\with|par-first|0fn|par-par-sep|0fn|item-hsep|<macro|1.5fn>>
         <surround||<vspace|0.5fn>|<algorithm-name|<arg|name>>>
 
         <\surround||<yes-indent*>>
@@ -56,7 +56,7 @@
 
   <assign|render-specified-algorithm|<\macro|name|intro|body>
     <\padded-normal|1fn|1fn>
-      <\with|par-first|0fn|par-par-sep|0fn>
+      <\with|par-first|0fn|par-par-sep|0fn|item-hsep|<macro|1.5fn>>
         <\surround||<vspace|0.5fn>>
           <algorithm-name|<arg|name>>
 
