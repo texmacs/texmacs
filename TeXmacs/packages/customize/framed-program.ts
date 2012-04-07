@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.9>
+<TeXmacs|1.0.7.15>
 
 <style|<tuple|source|std>>
 
@@ -68,7 +68,7 @@
 
   <assign|pseudo-code|<\macro|body>
     <\framed-quoted>
-      <\with|par-first|0fn|par-par-sep|0fn|par-mode|>
+      <\with|par-first|0fn|par-par-sep|0fn|item-hsep|<macro|1.5fn>>
         <\framed-program>
           <arg|body>
         </framed-program>
@@ -78,7 +78,7 @@
 
   <assign|render-algorithm|<\macro|name|body>
     <\framed-quoted>
-      <\with|par-first|0fn|par-par-sep|0fn>
+      <\with|par-first|0fn|par-par-sep|0fn|item-hsep|<macro|1.5fn>>
         <\framed-program*|<algorithm-name|<arg|name>>>
           <arg|body>
         </framed-program*>
@@ -88,7 +88,7 @@
 
   <assign|render-specified-algorithm|<\macro|name|intro|body>
     <\framed-quoted>
-      <\with|par-first|0fn|par-par-sep|0fn>
+      <\with|par-first|0fn|par-par-sep|0fn|item-hsep|<macro|1.5fn>>
         <\framed-program*>
           <algorithm-name|<arg|name>>
 
