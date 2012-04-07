@@ -538,7 +538,25 @@ lazy_paragraph_rep::query (lazy_type request, format fm) {
     if (N (qvw->before) != 0) li= join (qvw->before, li);
     if (N (qvw->after ) != 0) li= join (li, qvw->after);
 
-    SI w= 0;
+    // determine the first indentation
+    SI first= env->as_length (style [PAR_FIRST]);
+    bool no_first= (style [PAR_NO_FIRST] == "true");
+    style (PAR_NO_FIRST)= "false";
+    if (no_first) style (PAR_FIRST)= "0cm";
+    for (int j=0; j<N(a); j++)
+      if (a[j]->type == CONTROL_ITEM)
+	if (is_tuple (a[j]->t, "env_par")) {
+	  if (a[j]->t[1]->label == PAR_FIRST) {
+            int k;
+	    for (k=j-1; k>=0; k--)
+	      if (a[k]->b->w () != 0) break;
+	    if (k >= 0) continue;
+            else first= env->as_length (a[j]->t[2]);
+	  }
+	}
+    if (mode == "center") first= 0;
+
+    SI w= left + first;
     int i, n= N(li);
     for (i=0; i<n-1; i++)
       w += li[i]->spc->def + li[i]->b->x2;

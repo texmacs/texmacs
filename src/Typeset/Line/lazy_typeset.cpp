@@ -104,9 +104,9 @@ lazy_surround_rep::lazy_surround_rep (edit_env env, tree t, path ip):
   par= make_lazy (env, t[2], descend (ip, 2));
 }
 
-lazy_surround_rep::lazy_surround_rep (
-  array<line_item> a2, array<line_item> b2, lazy par2, path ip):
-  lazy_rep (LAZY_SURROUND, ip), a (a2), b (b2), par (par2) {}
+lazy_surround_rep::lazy_surround_rep
+  (array<line_item> a2, array<line_item> b2, lazy par2, path ip):
+    lazy_rep (LAZY_SURROUND, ip), a (a2), b (b2), par (par2) {}
 
 format
 lazy_surround_rep::query (lazy_type request, format fm) {
@@ -131,7 +131,7 @@ lazy_surround_rep::produce (lazy_type request, format fm) {
     array<line_item> after = b;
     if (fm->type == FORMAT_VSTREAM) {
       format_vstream fs= (format_vstream) fm;
-      width = fs->width ;
+      width = fs->width;
       before= join (fs->before, before);
       after = join (after, fs->after);
     }
