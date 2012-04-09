@@ -20,4 +20,5 @@
   (:require (url-exists-in-path? "fricas"))
   ;(:initialize (fricas-initialize))
   (:launch "fricas -texmacs")
-  (:session "Fricas"))
+  (:session "Fricas")
+  (:scripts "Fricas"))
