@@ -1,63 +1,6 @@
 #!/bin/sh
 # if there is an argument, find maxima_toc.html
 
-find_old_help()
-{
-  if grep -F 'MAXIMA_DIRECTORY=' $MAXIMA >/dev/null
-  then
-    MAXIMA_DIRECTORY=`grep -F 'MAXIMA_DIRECTORY=' $MAXIMA | sed -e 's/MAXIMA_DIRECTORY=//'`
-    if [ -f "$MAXIMA_DIRECTORY/doc/html/maxima_toc.html" ]
-    then echo "\"$MAXIMA_DIRECTORY/doc/html/maxima_toc.html\""
-    elif [ -f "$MAXIMA_DIRECTORY/info/maxima_toc.html" ]
-    then echo "\"$MAXIMA_DIRECTORY/info/maxima_toc.html\""
-    else echo '#f'
-    fi
-  else
-    # resorting to locate
-    MAXIMA_HELP=`locate maxima_toc.html`
-    if [ $? -eq 0 ]
-    then
-      MAXIMA_HELP2=`echo "$MAXIMA_HELP" | grep -F /doc/html/maxima_toc.html`
-      if [ $? -eq 0 ]
-      then MAXIMA_HELP="$MAXIMA_HELP2"
-      else
-        MAXIMA_HELP2=`echo "$MAXIMA_HELP" | grep -F /info/maxima_toc.html`
-        if [ $? -eq 0 ]
-        then MAXIMA_HELP="$MAXIMA_HELP2"
-        fi
-      fi
-      MAXIMA_HELP2=`echo "$MAXIMA_HELP" | grep '^/usr'`
-      if [ $? -eq 0 ]
-      then MAXIMA_HELP="$MAXIMA_HELP2"
-      fi
-      echo "$MAXIMA_HELP" | sed -e 's/^/"/' -e 's/$/"/' -e '1s/^/(/' -e '$s/$/)/'
-    else echo '#f'
-    fi
-  fi
-}
-
-# maximum version
-V1=0; V2=0; V3=0
-
-max_ver() {
-  while [ -n "$1" ]; do
-    if [ $1 -gt $V1 ]
-    then V1=$1; V2=$2; V3=$3
-    elif [ $1 -eq $V1 ]
-    then
-      if [ $2 -gt $V2 ]
-      then V2=$2; V3=$3
-      elif [ $2 -eq $V2 ]
-      then
-        if [ $3 -gt $V3 ]
-        then V3=$3
-        fi
-      fi
-    fi
-    shift; shift; shift
-  done
-}
-
 if [ "$OSTYPE" = "cygwin" ] ; then EXT='.bat'; else EXT=''; fi
 MAXIMA=`which maxima$EXT 2>/dev/null`
 if [ $? -eq 0 ]
@@ -73,57 +16,16 @@ then
       echo '("cygwin")'
     fi
   else
-    if grep -F list-avail $MAXIMA >/dev/null
+    if [ "$1" ]
     then
-      # 5.9.0 or later
-      if [ "$1" ]
-      then
-        max_ver `maxima --list-avail | \
-          grep '^version [A-Za-z0-9\.][A-Za-z0-9\.]*, lisp [A-Za-z0-9][A-Za-z0-9]*$' |\
-          sed -e 's/^version \([0-9][0-9]*\)\.\([0-9][0-9]*\)\.\([0-9][0-9]*\).*$/\1 \2 \3/'`
-
-        GOOD=no
-        if [ $V1 -gt 5 ]
-        then GOOD=yes
-        elif [ $V1 -eq 5 ]
-        then
-          if [ $V2 -gt 9 ]
-          then GOOD=yes
-          elif [ $V2 -eq 9 ]
-          then
-            if [ $V3 -gt 0 ]
-            then GOOD=yes
-            fi
-          fi
-        fi
-
-        if [ $GOOD = yes ]
-        then
-          # 5.9.1 or later
-          maxima -d | grep -F 'maxima-htmldir=' |\
-	    sed -e 's/maxima-htmldir=/"/' -e 's|$|/maxima_toc.html"|'
-        else
-          # 5.9.0
-          find_old_help
-        fi
-      else
-        echo '('
-        maxima --list-avail |\
-          grep '^version [A-Za-z0-9\.][A-Za-z0-9\.]*, lisp [A-Za-z0-9][A-Za-z0-9]*$' |\
-          sed -e 's/^version \([A-Za-z0-9\.][A-Za-z0-9\.]*\), lisp \([A-Za-z0-9][A-Za-z0-9]*\)$/"\1 \2"/'
-        echo ')'
-      fi
+      maxima -d | grep -F 'maxima-htmldir=' |\
+        sed -e 's/maxima-htmldir=/"/' -e 's|$|/maxima_toc.html"|'
     else
-      # 5.6
-      if [ "$1" ]
-      then
-        find_old_help
-      else
-        if grep -F clisp $MAXIMA >/dev/null
-        then echo '("5.6 clisp")'
-        else echo '("5.6 gcl")'
-        fi
-      fi
+      echo '('
+      maxima --list-avail |\
+        grep '^version [A-Za-z0-9\.][A-Za-z0-9\.]*, lisp [A-Za-z0-9][A-Za-z0-9]*$' |\
+        sed -e 's/^version \([A-Za-z0-9\.][A-Za-z0-9\.]*\), lisp \([A-Za-z0-9][A-Za-z0-9]*\)$/"\1 \2"/'
+      echo ')'
     fi
   fi
 else
