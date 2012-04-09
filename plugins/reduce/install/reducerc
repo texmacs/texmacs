@@ -1,8 +1,2 @@
-lisp <<
-   if not getenv("NOREDUCERC") then <<
-      loaddirectories!* := nconc(
-         {"","$HOME/.reduce/lisp/$LISP/$MACHINE/"},loaddirectories!*);
-      if getenv("TEXMACS_REDUCE_PATH") then load tmprint
-  >>
->> $
+lisp << if getenv("TEXMACS_REDUCE_PATH") then load tmprint >>$
 end$

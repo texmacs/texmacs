@@ -18,77 +18,135 @@
 ;; Help menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind reduce-help-menu
-  ("Abstract" (load-buffer "$reduce/doc/manual/abstract.tex"))
-  ("Acknowledgement" (load-buffer "$reduce/doc/manual/acknowl.tex"))
-  ("Introduction" (load-buffer "$reduce/doc/manual/intro.tex"))
-  ---
-  (-> "Programming"
-      ("Structure of programs"
-       (load-buffer "$reduce/doc/manual/progstr.tex"))
-      ("Expressions"
-       (load-buffer "$reduce/doc/manual/exprn.tex"))
-      ("Lists"
-       (load-buffer "$reduce/doc/manual/list.tex"))
-      ("Statements"
-       (load-buffer "$reduce/doc/manual/statemnt.tex"))
-      ("Commands and declarations"
-       (load-buffer "$reduce/doc/manual/command.tex"))
-      ("Procedures"
-       (load-buffer "$reduce/doc/manual/proc.tex"))
-      ("The remember statement"
-       (load-buffer "$reduce/doc/manual/rememb.tex")))
-  (-> "Operators"
-      ("Built-in prefix operators"
-       (load-buffer "$reduce/doc/manual/oper.tex"))
-      ("Operators with special properties"
-       (load-buffer "$reduce/doc/manual/oper2.tex"))
-      ("Map operator"
-       (load-buffer "$reduce/doc/manual/map.tex"))
-      ("Substitutions"
-       (load-buffer "$reduce/doc/manual/subst.tex"))
-      ("Solve operator"
-       (load-buffer "$reduce/doc/manual/solve.tex"))
-      ("Root val operator"
-       (load-buffer "$reduce/doc/manual/rest.tex")))
-  (-> "Data types"
-      ;;("conversions"
-      ;;(load-buffer "$reduce/doc/manual/convert.tex"))
-      ("Polynomials and rational functions"
-       (load-buffer "$reduce/doc/manual/polyrat.tex"))
-      ("Matrix calculations"
-       (load-buffer "$reduce/doc/manual/matrix.tex")))
-  (-> "Using reduce"
-      ("Structure of expressions"
-       (load-buffer "$reduce/doc/manual/structr.tex"))
-      ("File handling"
-       (load-buffer "$reduce/doc/manual/io.tex"))
-      ("Interactive use"
-       (load-buffer "$reduce/doc/manual/inter.tex"))
-      ("Symbolic mode"
-       (load-buffer "$reduce/doc/manual/symbolic.tex"))
-      ("Rlisp '88"
-       (load-buffer "$reduce/doc/manual/rlisp88.tex"))
-      ("Reduce and rlisp utilities"
-       (load-buffer "$reduce/doc/manual/util.tex")))
-  (-> "Miscellaneous"
-      ("Algebraic properties"
-       (load-buffer "$reduce/doc/manual/aprop.tex"))
-      ("Continued fractions"
-       (load-buffer "$reduce/doc/manual/cfrac.tex"))
-      ("Heuristic g.c.d."
-       (load-buffer "$reduce/doc/manual/heugcd.tex"))
-      ("High energy physics"
-       (load-buffer "$reduce/doc/manual/hephys.tex")))
-  ---
-  ("Maintaining reduce"
-   (load-buffer "$reduce/doc/manual/maintain.tex"))
-  ("Reserved identifiers"
-   (load-buffer "$reduce/doc/manual/appenda.tex")))
+(define reduce-help (getenv "REDUCE_HELP"))
 
-(menu-bind session-help-icons
-  (:require (and (in-reduce?)
-                 (url-exists? "$reduce/doc/manual/abstract.tex")))
-  /
-  (=> (balloon (icon "tm_help.xpm") "Reduce documentation")
-      (link reduce-help-menu)))
+(menu-bind reduce-help-menu
+	   ("Contents"
+	      (if reduce-help (begin (display* reduce-help) (load-in-new-window reduce-help)))))
+			 
+(define reduce-apply script-apply)
+(define (reduce-package package) (insert (string-append "load_package " package ";")))
+
+(menu-bind reduce-menu
+  (if (not-in-session?)
+      (link scripts-eval-menu)
+      ---)
+  (-> "Packages"
+      (-> "Calculis"
+          ("Integrals with sqrt" (reduce-package "algint"))
+          ("Definite integrals"  (reduce-package "defint"))
+          ---
+          ("Truncated power series" (reduce-package "tps"))
+          ("Taylor series"          (reduce-package "taylor"))
+          ("Formal power series"    (reduce-package "fps"))
+          ("Series summation"       (reduce-package "sum"))
+          ("Summation"              (reduce-package "zeilberg"))
+          ("Summing q-hypergeometric terms" (reduce-package "qsum"))
+          ---
+          ("Limits"                      (reduce-package "limits"))
+          ("Limits of exp-log functions" (reduce-package "mrvlimits"))
+          ---
+          ("Derivatives of generic functions" (reduce-package "dfpart"))
+          ---
+          ("Residues" (reduce-package "residue"))
+          ---
+          ("Laplace transforsms" (reduce-package "laplace"))
+          ("Z transforsms"       (reduce-package "ztrans"))
+          ---
+          ("Differential geometry"         (reduce-package "excalc"))
+          ("Exterior differential systems" (reduce-package "eds")))
+      (-> "Functions"
+          ("Special functions"                     (reduce-package "specfn"))
+          ("Hypergeometric and Meijer G functions" (reduce-package "specfn2")))
+      (-> "Simplification"
+          ("Trigonometric functions"               (reduce-package "trigsimp"))
+          ("Expressions with dependent varianbles" (reduce-package "compact")))
+      (-> "Solving equations"
+          ("Roots of polynomials"  (reduce-package "roots"))
+          ("Recurrence relations"  (reduce-package "rsolve"))
+          ("Modular polynomials"   (reduce-package "modsr"))
+          ("Inequalities"          (reduce-package "ineq"))
+          ---
+          ("Ordinary differential equations" (reduce-package "odesolve"))
+          ("Change of variables in DEs"      (reduce-package "changevar"))
+          ("Linear DE near a singular point" (reduce-package "desir"))
+          ("Symmetries of DEs"               (reduce-package "applysym"))
+          ("Overdetermined systems of DEs"   (reduce-package "crack"))
+          ---
+          ("Symmetries of PDEs"       (reduce-package "spde"))
+          ("Geometry of PDEs"         (reduce-package "cdiff"))
+          ("Finite-difference method" (reduce-package "fide")))
+
+      (-> "Linear algebra, vectors, tensors"
+          ("Linear algebra"     (reduce-package "linalg"))
+          ("Normal forms"       (reduce-package "normform"))
+          ("Sparse matrices"    (reduce-package "sparse"))
+          ("Symmetric matrices" (reduce-package "symmetry"))
+          ---
+          ("3d vectors"                           (reduce-package "avector"))
+          ("3d vectors in orthogonal coordinates" (reduce-package "orthovec"))
+          ("Tensors with symmetries"              (reduce-package "atensor"))
+          ("Dummy indices"                        (reduce-package "dummy")))
+      (-> "Groebner bases"
+          ("Groebner bases"              (reduce-package "groebner"))
+          ("With parameters"             (reduce-package "cgb"))
+          ("Polynomial ideals"           (reduce-package "ideals"))
+          ("Exterior algebra"            (reduce-package "xideal"))
+          ("Non-commutative polynomials" (reduce-package "ncpoly"))
+          ("Involutive bases"            (reduce-package "invbase"))
+          ("Wu algorithm"                (reduce-package "wu"))
+          ("Commutative algebra"         (reduce-package "cali"))
+          ("Random polynomials"          (reduce-package "randpoly")))
+      (-> "Aggebra"
+          ("Algebraic numbers" (reduce-package "arnum"))
+          ("Lie symmetries"    (reduce-package "lie")))
+      (-> "Logic"
+          ("Boolean algebra"      (reduce-package "boolean"))
+          ("First-order formulas" (reduce-package "redlog"))
+          ("Finite sets"          (reduce-package "sets")))
+      (-> "Physics, chemistry"
+          ("Dirac matrices"              (reduce-package "cvit"))
+          ("Color factors"               (reduce-package "xcolor"))
+          ("Supersymmetry"               (reduce-package "susy2"))
+          ("Quantum mechanics operators" (reduce-package "physop"))
+          ("Celestial mechanics"         (reduce-package "camal"))
+          ---
+          ("Chemical reaction equations" (reduce-package "reacteqn")))
+      (-> "Code generation"
+          ("Fortran, C, Pascal" (reduce-package "gentran"))
+          ("Optimization"       (reduce-package "scope"))
+          ---
+          ("LaTeX"  (reduce-package "rlfi"))
+          ("TeX"    (reduce-package "tri"))
+          ("mathml" (reduce-package "mathml")))
+      ("Numeric calculations"    (reduce-package "numeric"))
+      ("Plots"                   (reduce-package "gnuplot"))
+      ("Pattern matching"        (reduce-package "pm"))
+      ("Rational approximations" (reduce-package "rataprx"))
+      ("General utilities"       (reduce-package "assist"))
+      ("Debugging"               (reduce-package "rdebug"))
+      ("Reset"                   (reduce-package "reset")))
+  (-> "Calculus"
+      ("Differentiate" (reduce-apply "df" 2))
+      ("Integrate"     (reduce-apply "int" 2))
+      ("Limit"         (reduce-apply "limit" 3))
+      ---
+      ("Sum"     (reduce-apply "sum" 3))
+      ("Product" (reduce-apply "prod" 3))
+      ---
+      ("Solve an equation" (reduce-apply "solve" 2)))
+  (-> "Polynomials and rational functions"
+      ("Factorize"            (reduce-apply "factorize"))
+      ("List of coefficients" (reduce-apply "coeff" 2))
+      ("n-th coefficient"     (reduce-apply "coeffn" 3))
+      ---
+      ("Numerator"         (reduce-apply "num"))
+      ("Denominator"       (reduce-apply "den"))
+      ("Partial fractions" (reduce-apply "pf" 2)))
+  (-> "Linear algebra"
+      ("Determinant" (reduce-apply "det"))
+      ("Trace"       (reduce-apply "trace"))
+      ("Transpose"   (reduce-apply "tp")))
+  (if (not-in-session?)
+      ---
+      (link scripts-eval-toggle-menu)))
