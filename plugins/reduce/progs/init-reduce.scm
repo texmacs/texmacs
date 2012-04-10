@@ -11,19 +11,16 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define reduce-help #f)
+
 (define (reduce-initialize)
   (import-from (utils plugins plugin-convert))
+  (import-from (utils plugins plugin-cmd))
+  (import-from (dynamic session-menu))
   (import-from (reduce-menus))
   (lazy-input-converter (reduce-input) reduce)
-  (menu-extend session-help-icons
-    (if (and (in-reduce?) (url-exists? "/home/grozin/reduce-1556/cslbuild/i686-pc-linux-gnu/csl/reduce.doc/index.html"))
-	|
-	(=> (balloon (icon "tm_help.xpm") "Reduce documentation")
-	    (link reduce-help-menu))))
-  (menu-extend texmacs-extra-menu
-    (if (or (in-reduce?) (and (not-in-session?) (reduce-scripts?)))
-	(=> "Reduce"
-	    (link reduce-menu)))))
+  (let ((help (getenv "REDUCE_HELP")))
+    (if (and help (url-exists? help)) (set! reduce-help help))))
 
 (define (reduce-serialize lan t)
   (import-from (utils plugins plugin-cmd))

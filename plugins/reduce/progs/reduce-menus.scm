@@ -13,18 +13,9 @@
 
 (texmacs-module (reduce-menus)
   (:use (texmacs texmacs tm-files)
+	(doc help-funcs)
 	(dynamic scripts-edit)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Help menus
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define reduce-help (getenv "REDUCE_HELP"))
-
-(menu-bind reduce-help-menu
-	   ("Contents"
-	      (if reduce-help (begin (display* reduce-help) (load-in-new-window reduce-help)))))
-			 
 (define reduce-apply script-apply)
 (define (reduce-package package) (insert (string-append "load_package " package ";")))
 
@@ -151,3 +142,21 @@
   (if (not-in-session?)
       ---
       (link scripts-eval-toggle-menu)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Help menus
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind reduce-help-icons
+  (if (and (in-reduce?) reduce-help)
+      /
+      ((balloon (icon "tm_help.xpm") "Reduce manual")
+       (load-in-new-window reduce-help))))
+
+(menu-bind session-help-icons
+  (:require (and (in-reduce?) (in-session?)))
+  (link reduce-help-icons))
+
+(menu-bind plugin-menu
+  (:require (or (in-reduce?) (and (not-in-session?) (reduce-scripts?))))
+  (=> "Reduce" (link reduce-menu)))
