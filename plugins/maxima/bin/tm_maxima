@@ -4,6 +4,6 @@ TEXMACS_MAXIMA_PATH="$TEXMACS_PATH/plugins/maxima/lisp"
 export TEXMACS_MAXIMA_PATH
 
 case $1 in
-  cygwin) exec maxima.bat -p "`echo $TEXMACS_MAXIMA_PATH/texmacs-maxima-5.11.0.lisp|cygpath --windows -f -`";;
+  cygwin) exec maxima.bat -p "`echo $TEXMACS_MAXIMA_PATH/texmacs-maxima.lisp|cygpath --windows -f -`";;
   *) exec maxima -u $1 -l $2 -p "$TEXMACS_MAXIMA_PATH/texmacs-maxima.lisp";;
 esac
