@@ -17,6 +17,7 @@
   (import-from (utils plugins plugin-convert))
   (import-from (utils plugins plugin-cmd))
   (import-from (dynamic session-menu))
+  (import-from (reduce-kbd))
   (import-from (reduce-menus))
   (lazy-input-converter (reduce-input) reduce)
   (let ((help (getenv "REDUCE_HELP")))

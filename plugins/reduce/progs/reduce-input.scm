@@ -97,4 +97,6 @@
   ("<emptyset>"   "{}")
   ("<mathd>"      ",")
   ("<mathi>"      "i")
-  ("<mathe>"      "e"))
+  ("<mathe>"      "e")
+  ("<ldots>"      " .. ")
+  ("<cdots>"      " .. "))
