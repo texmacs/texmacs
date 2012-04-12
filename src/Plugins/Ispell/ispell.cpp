@@ -117,15 +117,11 @@ ispeller_rep::send (string cmd) {
 
 string
 ispell_encode (string lan, string s) {
-  if (lan == "bulgarian" || lan == "russian" || lan == "ukrainian")
-    return t2a_to_utf8 (s);
-  else return cork_to_utf8 (s);
+  return cork_to_utf8 (s);
 }
 
 string
 ispell_decode (string lan, string s) {
-  if (lan == "bulgarian" || lan == "russian" || lan == "ukrainian")
-    return utf8_to_t2a (s);
   return utf8_to_cork (s);
 }
 
