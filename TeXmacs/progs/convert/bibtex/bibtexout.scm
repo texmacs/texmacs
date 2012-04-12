@@ -36,7 +36,7 @@
 		   ("texmacs->latex:expand-macros" "on")
 		   ("texmacs->latex:expand-user-macros" "off")
 		   ("texmacs->latex:indirect-bib" "off")
-		   ("texmacs->latex:use-catcodes" "off")
+		   ("texmacs->latex:encoding" "ascii")
 		   ("texmacs->latex:use-macros" "on"))))
     (with old (output-set-exact #t)
       (output-set-exact #t)

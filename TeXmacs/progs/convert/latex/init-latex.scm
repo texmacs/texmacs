@@ -76,5 +76,5 @@
   (:option "texmacs->latex:expand-macros" "on")
   (:option "texmacs->latex:expand-user-macros" "off")
   (:option "texmacs->latex:indirect-bib" "off")
-  (:option "texmacs->latex:use-catcodes" "off")
-  (:option "texmacs->latex:use-macros" "on"))
+  (:option "texmacs->latex:use-macros" "on")
+  (:option "texmacs->latex:encoding" "ascii"))

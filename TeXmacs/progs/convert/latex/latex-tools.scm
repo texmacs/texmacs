@@ -17,11 +17,12 @@
   (:use (convert latex latex-drd)
 	(convert latex texout)))
 
-(tm-define tmtex-use-catcodes? #t)
+(tm-define tmtex-use-catcodes? #f)
+(tm-define tmtex-use-unicode? #f)
+(tm-define tmtex-use-ascii? #f)
 (tm-define tmtex-use-macros? #f)
 
 (define latex-language "english")
-(define latex-cyrillic-catcode? #f)
 (define latex-style "generic")
 (define latex-style-hyp 'generic-style%)
 (define latex-packages '())
@@ -38,9 +39,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (latex-set-language lan)
-  (set! latex-language lan)
-  (set! latex-cyrillic-catcode?
-	(in? lan '("bulgarian" "russian" "ukrainian"))))
+  (set! latex-language lan))
 
 (tm-define (latex-set-style sty)
   (set! latex-style sty)
@@ -54,51 +53,30 @@
 (tm-define (latex-book-style?)
   (in? latex-style '("book")))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Catcode expansion
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (latex-replace-catcode s)
-  (or (if latex-cyrillic-catcode?
-	  (logic-ref cyrillic-catcodes% s)
-	  (logic-ref corkT1-to-latex-catcodes% s))
-      s))
-
-(tm-define (latex-expand-catcodes t)
-  (:synopsis "Expand all catcodes in @t")
-  (cond ((string? t)
-	 (with l (map string (string->list t))
-	   (apply string-append (map latex-replace-catcode l))))
-	((pair? t) (cons (car t) (map latex-expand-catcodes (cdr t))))
-	(else t)))
-
-(define (latex-expand-catcodes* t)
-  (if tmtex-use-catcodes? t (latex-expand-catcodes t)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Compute catcode definitions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (define (latex-catcode-defs-char c)
-  (let* ((s (list->string (list c)))
-	 (r (latex-replace-catcode s)))
-    (if (!= r s) (ahash-set! latex-catcode-table s r))))
+  (let* ((s (string-convert (list->string (list c)) "Cork" "UTF-8"))
+         (r (string-convert s "UTF-8" "LaTeX")))
+    (if (and (!= r s) (!= (string c) "\n"))
+      (ahash-set! latex-catcode-table (string c) r))))
 
 (define (latex-catcode-defs-sub doc)
   (cond ((string? doc) (for-each latex-catcode-defs-char (string->list doc)))
-	((list? doc) (for-each latex-catcode-defs-sub doc))))
+        ((list? doc) (for-each latex-catcode-defs-sub doc))))
 
 (define (latex-catcode-def key im)
   (string-append "\\catcode`\\" key "=\\active \\def" key "{" im "}\n"))
 
 (tm-define (latex-catcode-defs doc)
   (:synopsis "Return necessary catcode definitions for @doc")
-  (set! latex-catcode-table (make-ahash-table))
-  (latex-catcode-defs-sub doc)
-  (let* ((l1 (ahash-table->list latex-catcode-table))
-	 (l2 (list-sort l1 (lambda (x y) (string<=? (car x) (car y)))))
-	 (l3 (map (lambda (x) (latex-catcode-def (car x) (cdr x))) l2)))
-    (apply string-append l3)))
+  (if tmtex-use-catcodes?
+    (begin
+      (set! latex-catcode-table (make-ahash-table))
+      (latex-catcode-defs-sub doc)
+      (let* ((l1 (ahash-table->list latex-catcode-table))
+             (l2 (list-sort l1 (lambda (x y) (string<=? (car x) (car y)))))
+             (l3 (map (lambda (x) (latex-catcode-def (car x) (cdr x))) l2)))
+             (apply string-append l3)))
+  ""))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Macro and environment expansion
@@ -284,9 +262,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (latex-preamble-language lan)
-  (if (logic-ref latex-preamble-language-def% lan)
-      (string-append (logic-ref latex-preamble-language-def% lan) "\n")
-      ""))
+      (string-append "\\usepackage[" lan "]{babel}\n"))
 
 (define (latex-preamble-page-type init)
   (let* ((page-type (ahash-ref init "page-type"))
@@ -299,11 +275,9 @@
 
 (tm-define (latex-preamble text style lan init)
   (:synopsis "Compute preamble for @text")
-  (let* ((Expand       latex-expand-catcodes*)
-	 (Page         (Expand (latex-preamble-page-type init)))
-	 (Macro        (Expand (latex-macro-defs text)))
+  (let* ((Page         (latex-preamble-page-type init))
+	 (Macro        (latex-macro-defs text))
 	 (Text         (list '!tuple Page Macro text))
-	 (pre-language (latex-preamble-language lan))
 	 (pre-page     (latex-serialize-preamble Page))
 	 (pre-macro    (latex-serialize-preamble Macro))
 	 (pre-catcode  (latex-catcode-defs Text))
@@ -312,4 +286,4 @@
       (if (in? "amsthm" latex-packages) "[amsthm]" "")
       (string-append pre-uses)
       (string-append pre-page)
-      (string-append pre-language pre-catcode pre-macro))))
+      (string-append pre-catcode pre-macro))))

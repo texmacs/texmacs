@@ -126,7 +126,8 @@ converter_rep::load () {
     hashtree_from_dictionary (dic, "HTMLspecial", CHAR_ENTITY, ENTITY_NAME, true);
     hashtree_from_dictionary (dic, "HTMLsymbol" , CHAR_ENTITY, ENTITY_NAME, true);
     ht = dic;
-  } else if ( from=="T2A" && to=="UTF-8" ) {
+  }
+  else if ( from=="T2A" && to=="UTF-8" ) {
     hashtree<char,string> dic;
     hashtree_from_dictionary (dic,"corktounicode", BIT2BIT, UTF8, false);
     hashtree_from_dictionary (dic,"cork-unicode-oneway", BIT2BIT, UTF8, false);
@@ -136,6 +137,11 @@ converter_rep::load () {
     hashtree_from_dictionary (dic,"t2atounicode", BIT2BIT, UTF8, false);
     ht = dic;
   }  
+  else if ( from=="UTF-8" && to=="LaTeX" ) {
+    hashtree<char,string> dic;
+    hashtree_from_dictionary (dic,"unicodetolatex", BIT2BIT, BIT2BIT, false);
+    ht = dic;
+  }
 }
 
 /******************************************************************************
@@ -154,6 +160,8 @@ convert (string input, string from, string to) {
     return convert_from_cork (input, to);
   else if (to == "Cork")
     return convert_to_cork (input,from);
+  else if (from == "UTF-8" && to == "LaTeX")
+    return convert_utf8_to_LaTeX (input);
   else
     return convert_using_iconv (input, from, to);
 }
@@ -163,15 +171,40 @@ convert_to_cork (string input, string from) {
   string str;
   if (from != "UTF-8")
     str = convert_using_iconv (input, from, "UTF-8");
-  return utf8_to_cork (str);
+  return utf8_to_cork (input);
 }
 
 string 
 convert_from_cork (string input, string to) {
-  string str = cork_to_utf8 (input);
+  string str;
   if (to != "UTF-8")
     str = convert_using_iconv (str, "UTF-8", to);
-  return str;
+  return cork_to_utf8 (input);
+}
+
+string
+convert_utf8_to_LaTeX (string input) {
+  converter conv= load_converter ("UTF-8", "LaTeX");
+  int i, start, n= N(input);
+  string output, r;
+  for (i=0; i<n; ) {
+    if (((unsigned char) input[i]) < 128) {
+      output << input[i++];
+      continue;
+    }
+    else {
+      start = i;
+      string hex_code = as_hexadecimal (decode_from_utf8 (input, i));
+      r = apply (conv, hex_code);
+      if (r != hex_code) output << r;
+      else {
+	output << input(start, i);
+        cout << "TeXmacs] non ascii character 0x" << hex_code << " on output: "
+          << input(start, i) << "\nLaTeX output may not compile.\n";
+      }
+    }
+  }
+  return output;
 }
 
 string

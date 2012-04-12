@@ -1675,7 +1675,6 @@
 ("use blackboard bold font" "")
 ("use bold font series" "")
 ("use calligraphical font" "")
-("use catcode definitions in preamble" "在导言中使用类别码定义")
 ("use footnote font size" "")
 ("use fraktur font" "")
 ("use huge font size" "")

@@ -158,10 +158,12 @@
 		     "texmacs->latex:expand-user-macros"))
 	    (toggle ("Export bibliographies as links"
 		     "texmacs->latex:indirect-bib"))
-	    (toggle ("Use catcode definitions in preamble"
-		     "texmacs->latex:use-catcodes"))
 	    (toggle ("Allow for macro definitions in preamble"
-		     "texmacs->latex:use-macros")))
+		     "texmacs->latex:use-macros"))
+	    (enum ("Encoding" "texmacs->latex:encoding")
+                  ("Strict Ascii" "ascii")
+                  ("Cork charset with TeX catcode definition in preamble" "cork")
+                  ("Utf-8 with inputenc LaTeX package" "utf-8")))
 	(-> "TeXmacs -> Verbatim"
 	    (toggle ("Wrap lines"
 		     "texmacs->verbatim:wrap"))
@@ -439,6 +441,11 @@
       (toggle (set-boolean-preference "texmacs->html:images" answer)
               (get-boolean-preference "texmacs->html:images")))))
 
+(define-preference-names "texmacs->latex:encoding"
+  ("Strict Ascii" "ascii")
+  ("Cork charset with catcode definitions in preamble" "cork")
+  ("Unicode with inputenc LaTeX package" "utf-8"))
+
 (tm-widget (latex-preferences-widget)
   ===
   (bold (text "TeXmacs -> LaTeX"))
@@ -456,12 +463,14 @@
     (meti (text "Export bibliographies as links")
       (toggle (set-boolean-preference "texmacs->latex:indirect-bib" answer)
               (get-boolean-preference "texmacs->latex:indirect-bib")))
-    (meti (text "Allow for catcode definitions in preamble")
-      (toggle (set-boolean-preference "texmacs->latex:use-catcodes" answer)
-              (get-boolean-preference "texmacs->latex:use-catcodes")))
     (meti (text "Allow for macro definitions in preamble")
       (toggle (set-boolean-preference "texmacs->latex:use-macros" answer)
-              (get-boolean-preference "texmacs->latex:use-macros")))))
+              (get-boolean-preference "texmacs->latex:use-macros"))))
+    (item (text "Character encoding:")
+      (enum (set-pretty-preference "texmacs->latex:encoding" answer)
+            '("ascii" "cork" "utf-8")
+            (get-pretty-preference "texmacs->latex:encoding")
+            "5em")))
 
 (define-preference-names "texmacs->verbatim:encoding"
   ("cork" "Cork")

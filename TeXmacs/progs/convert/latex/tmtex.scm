@@ -37,12 +37,6 @@
 (define tmtex-appendices? #f)
 (define tmtex-replace-style? #t)
 (define tmtex-indirect-bib? #f)
-(define tmtex-oriental? #f)
-(define tmtex-chinese? #f)
-(define tmtex-japanese? #f)
-(define tmtex-korean? #f)
-(define tmtex-taiwanese? #f)
-(define tmtex-cyrillic? #f)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Style
@@ -55,19 +49,6 @@
 
 (tm-define (tmtex-style-init body)
   (noop))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Language
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (tmtex-set-language lan)
-  (set! tmtex-chinese? (== lan "chinese"))
-  (set! tmtex-japanese? (== lan "japanese"))
-  (set! tmtex-korean? (== lan "korean"))
-  (set! tmtex-taiwanese? (== lan "taiwanese"))
-  (set! tmtex-oriental? (or tmtex-chinese? tmtex-japanese?
-			    tmtex-korean? tmtex-taiwanese?))
-  (set! tmtex-cyrillic? (in? lan '("bulgarian" "russian" "ukrainian"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initialization from options
@@ -91,10 +72,14 @@
 	(== (assoc-ref opts "texmacs->latex:replace-style") "on"))
   (set! tmtex-indirect-bib?
 	(== (assoc-ref opts "texmacs->latex:indirect-bib") "on"))
-  (set! tmtex-use-catcodes?
-	(== (assoc-ref opts "texmacs->latex:use-catcodes") "on"))
   (set! tmtex-use-macros?
-	(== (assoc-ref opts "texmacs->latex:use-macros") "on")))
+	(== (assoc-ref opts "texmacs->latex:use-macros") "on"))
+  (set! tmtex-use-unicode?
+	(== (assoc-ref opts "texmacs->latex:encoding") "utf-8"))
+  (set! tmtex-use-catcodes? 
+        (== (assoc-ref opts "texmacs->latex:encoding") "cork"))
+  (set! tmtex-use-ascii? 
+        (== (assoc-ref opts "texmacs->latex:encoding") "ascii")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Data
@@ -258,27 +243,15 @@
 	 (tex-apply 'tmmathbf (tmtex-modified-token 'mathcal s 6)))
 	((string-starts? s "b-up-") (tmtex-modified-token 'mathbf s 5))
 	((string-starts? s "b-") (tmtex-modified-token 'tmmathbf s 2))
-	((and (string-starts? s "#") tmtex-oriental?)
-	 (cond (tmtex-japanese?
-		(let* ((qs (string-append "<" s ">"))
-		       (cv (string-convert qs "Cork" "ISO-2022-JP"))
-		       (ex (list->string (list #\33 #\50 #\102))))
-		  (set! cv (string-append cv ex))
-		  (list '!widechar (string->symbol cv))))
-	       (tmtex-korean?
-		(let* ((qs (string-append "<" s ">"))
-		       (cv (string-convert qs "Cork" "UTF-8")))
-		  (list '!widechar (string->symbol cv))))
-	       ((or tmtex-chinese? tmtex-taiwanese?)
-		(let* ((qs (string-append "<" s ">"))
-		       ;;(cv (string-convert qs "Cork" "cp936")) ; Chinese?
-		       ;;(cv (string-convert qs "Cork" "cp950")) ; Taiwanese ?
-		       (cv (string-convert qs "Cork" "UTF-8")))
-		  (list '!widechar (string->symbol cv))))))
-	((and (string-starts? s "#") tmtex-cyrillic?)
+	((and (string-starts? s "#") (not tmtex-use-catcodes?)) 
 	 	(let* ((qs (string-append "<" s ">"))
 		       (cv (string-convert qs "Cork" "UTF-8")))
-		   (list '!widechar (string->symbol cv))))	 	
+		   (list '!widechar (string->symbol cv))))
+	((and (string-starts? s "#") tmtex-use-catcodes?) 
+	 	(let* ((qs (string-append "<" s ">"))
+                       (us (string-convert qs "Cork" "UTF-8"))
+		       (cv (string-convert us "UTF-8" "LaTeX")))
+		   (list '!widechar (string->symbol cv))))
 	(else (let ((ss (list (string->symbol s))))
 		(cond ((not (logic-in? (car ss) latex-symbol%))
 		       (display* "TeXmacs] non converted symbol: " s "\n")
@@ -323,7 +296,11 @@
 	      ((== c #\22) (tmtex-text-sub ",," l))
 	      ((== c #\25) (tmtex-text-sub "--" l))
 	      ((== c #\26) (tmtex-text-sub "---" l))
-	      (else (cons c (tmtex-text-list (cdr l))))))))
+	      (else 
+		(cons
+		  (if (or tmtex-use-unicode? tmtex-use-ascii?)
+		    (list (string-convert (char->string c) "Cork" "UTF-8")) c)
+		    (tmtex-text-list (cdr l))))))))
 
 (define (tmtex-math-operator l)
   (receive (p q) (list-break l (lambda (c) (not (char-alphabetic? c))))
@@ -1889,17 +1866,14 @@
 	     (doc (list '!file body style lan init (get-texmacs-path))))
 	(latex-set-style main-style)
 	(latex-set-packages '())
-	(latex-set-language lan)
 	(set! tmtex-style (car style))
 	(set! tmtex-packages (cdr style))
 	(when (elsevier-style?)
 	  (import-from (convert latex tmtex-elsevier)))
 	(tmtex-style-init body)
-	(tmtex-set-language lan)
 	(with result (texmacs->latex doc opts)
 	  (set! tmtex-style "generic")
 	  (set! tmtex-packages '())
-	  (tmtex-set-language "english")
 	  result))
       (let* ((x2 (tmtm-eqnumber->nonumber x))
 	     (x3 (tmtm-match-brackets x2)))
@@ -1907,6 +1881,4 @@
 	(with r (tmtex (tmpre-produce x3))
 	  (if (not tmtex-use-macros?)
 	      (set! r (latex-expand-macros r)))
-	  (if (not tmtex-use-catcodes?)
-	      (set! r (latex-expand-catcodes r)))
 	  r))))

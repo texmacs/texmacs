@@ -16,6 +16,13 @@
 	(convert tools output)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Interface for unicode output
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (output-tex s)
+  (output-text (if tmtex-use-ascii? (string-convert s "UTF-8" "LaTeX") s)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Outputting preamble and postamble
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -54,6 +61,9 @@
       (for-each texout-usepackage (cdr styles))
       (if (string-occurs? "makeidx" (latex-use-package-command doc-body))
         (output-verbatim "\\makeindex"))
+      (if tmtex-use-unicode?
+        (output-verbatim "\\usepackage[utf8]{inputenc}\n"))
+      (output-verbatim "\\usepackage[" lan "]{babel}\n")
       (output-verbatim tm-init)
 
       (if (!= tm-preamble "")
@@ -68,13 +78,13 @@
 	    (map-in-order (lambda (x) (texout x) (output-lf)) doc-preamble))))
 
     (output-lf)
-    (output-text "\\begin{document}")
+    (output-tex "\\begin{document}")
     (output-lf)
     (output-lf)
     (texout doc-body)
     (output-lf)
     (output-lf)
-    (output-text "\\end{document}")
+    (output-tex "\\end{document}")
     (output-lf)))
 
 (define (texout-usepackage x)
@@ -109,7 +119,7 @@
 	      (texout-row* (cdar l))
 	      (if (nnull? (cdr l))
 		  (begin
-		    (output-text "\\\\")
+		    (output-tex "\\\\")
 		    (output-lf))))
 	    (begin
 	      (texout (car l))
@@ -120,7 +130,7 @@
   (if (nnull? l)
       (begin
 	(texout (car l))
-	(if (nnull? (cdr l)) (output-text " & "))
+	(if (nnull? (cdr l)) (output-tex " & "))
 	(texout-row (cdr l)))))
 
 (define (texout-row* l)
@@ -164,14 +174,14 @@
   (output-lf))
 
 (define (texout-nextline)
-  (output-text "\\\\")
+  (output-tex "\\\\")
   (output-lf))
 
 (define (texout-nbsp)
-  (output-text "~"))
+  (output-tex "~"))
 
 (define (texout-nbhyph)
-  (output-text "\\mbox{-}"))
+  (output-tex "\\mbox{-}"))
 
 (define (texout-verb x)
   (cond ((not (string-index x #\|)) (output-verb "\\verb|" x "|"))
@@ -186,9 +196,9 @@
   (output-lf-verbatim "\\begin{alltt}\n" x "\n\\end{alltt}"))
 
 (define (texout-group x)
-  (output-text "{")
+  (output-tex "{")
   (texout x)
-  (output-text "}"))
+  (output-tex "}"))
 
 (define (texout-empty? x)
   (cond ((== x "") #t)
@@ -209,60 +219,61 @@
 	 (texout `((!begin "equation") ,(cadr x))))
 	((and (output-test-end? "$") (not (output-test-end? "\\$")))
 	 (output-remove 1)
-	 (output-text " ")
+	 (output-tex " ")
 	 (texout x)
-	 (output-text "$"))
+	 (output-tex "$"))
 	(else
-	 (output-text "$")
+	 (output-tex "$")
 	 (texout x)
-	 (output-text "$"))))
+	 (output-tex "$"))))
 
 (define (texout-eqn x)
-  (output-text "\\[ ")
+  (output-tex "\\[ ")
   (output-indent 3)
   (texout x)
   (output-indent -3)
-  (output-text " \\]"))
+  (output-tex " \\]"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Outputting macro applications and environments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (texout-arg x)
-  (output-text "#" x))
+  (output-tex (string-append "#" x)))
 
 (define (texout-args l)
   (if (nnull? l)
       (begin
 	(if (and (list? (car l)) (== (caar l) '!option))
 	    (begin
-	      (output-text "[")
+	      (output-tex "[")
 	      (texout (cadar l))
-	      (output-text "]"))
+	      (output-tex "]"))
 	    (begin
-	      (output-text "{")
+	      (output-tex "{")
 	      (texout (car l))
-	      (output-text "}")))
+	      (output-tex "}")))
 	(texout-args (cdr l)))))
 
 (define (texout-apply what args)
-  (output-text "\\" (symbol->string what))
+  (output-tex
+    (if (string? what) what (string-append "\\" (symbol->string what))))
   (texout-args args))
 
 (define (texout-begin what args inside)
-  (output-text "\\begin{" what "}")
+  (output-tex (string-append "\\begin{" what "}"))
   (texout-args args)
   (output-indent 2)
   (output-lf)
   (texout inside)
   (output-indent -2)
   (output-lf)
-  (output-text "\\end{" what "}"))
+  (output-tex (string-append "\\end{" what "}")))
 
 (define (texout-script where l)
-  (output-text where)
+  (output-tex where)
   (let ((x (car l)))
-    (cond ((and (string? x) (= (string-length x) 1)) (output-text x))
+    (cond ((and (string? x) (= (string-length x) 1)) (output-tex x))
 	  (else (texout-args l)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -271,8 +282,8 @@
 
 (tm-define (texout x)
   ;; (display* "texout " x "\n")
-  (cond ((string? x) (output-text x))
-	((== (car x) '!widechar) (output-text (symbol->string (cadr x))))
+  (cond ((string? x) (output-tex x))
+	((== (car x) '!widechar) (output-tex (symbol->string (cadr x))))
 	((== (car x) '!file) (texout-file (cdr x)))
 	((== (car x) '!document) (texout-document (cdr x)))
 	((== (car x) '!paragraph) (texout-paragraph (cdr x)))

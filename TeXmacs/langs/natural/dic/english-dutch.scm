@@ -1473,7 +1473,6 @@
 ("use blackboard bold font" "gebruik schoolbord letters")
 ("use bold font series" "gebruik vette letters")
 ("use calligraphical font" "gebruik kalligrafische letters")
-("use catcode definitions in preamble" "gebruik catcodes in preambule")
 ("use footnote font size" "gebruik erg kleine letters")
 ("use fraktur font" "gebruik Gotische letters")
 ("use huge font size" "gebruik enorm grote letters")
