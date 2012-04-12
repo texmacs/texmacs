@@ -234,30 +234,30 @@ locale_to_language (string s) {
 
 string
 language_to_locale (string s) {
-  if (s == "american") return "en_US";
-  if (s == "british") return "en_GB";
-  if (s == "bulgarian") return "bg_BG";
-  if (s == "chinese") return "zh_CN";
-  if (s == "czech") return "cs_CZ";
-  if (s == "danish") return "da_DK";
-  if (s == "dutch") return "nl_NL";
-  if (s == "english") return "en_US";
-  if (s == "finnish") return "fi_FI";
-  if (s == "french") return "fr_FR";
-  if (s == "german") return "de_DE";
-  if (s == "hungarian") return "hu_HU";
-  if (s == "italian") return "it_IT";
-  if (s == "japanese") return "ja_JP";
-  if (s == "korean") return "ko_KR";
-  if (s == "polish") return "pl_PL";
+  if (s == "american")   return "en_US";
+  if (s == "british")    return "en_GB";
+  if (s == "bulgarian")  return "bg_BG";
+  if (s == "chinese")    return "zh_CN";
+  if (s == "czech")      return "cs_CZ";
+  if (s == "danish")     return "da_DK";
+  if (s == "dutch")      return "nl_NL";
+  if (s == "english")    return "en_US";
+  if (s == "finnish")    return "fi_FI";
+  if (s == "french")     return "fr_FR";
+  if (s == "german")     return "de_DE";
+  if (s == "hungarian")  return "hu_HU";
+  if (s == "italian")    return "it_IT";
+  if (s == "japanese")   return "ja_JP";
+  if (s == "korean")     return "ko_KR";
+  if (s == "polish")     return "pl_PL";
   if (s == "portuguese") return "pt_PT";
-  if (s == "romanian") return "ro_RO";
-  if (s == "russian") return "ru_RU";
-  if (s == "slovene") return "sl_SI";
-  if (s == "spanish") return "es_ES";
-  if (s == "swedish") return "sv_SV";
-  if (s == "taiwanese") return "zh_TW";
-  if (s == "ukrainian") return "uk_UA";
+  if (s == "romanian")   return "ro_RO";
+  if (s == "russian")    return "ru_RU";
+  if (s == "slovene")    return "sl_SI";
+  if (s == "spanish")    return "es_ES";
+  if (s == "swedish")    return "sv_SV";
+  if (s == "taiwanese")  return "zh_TW";
+  if (s == "ukrainian")  return "uk_UA";
   return "en_US";
 }
 

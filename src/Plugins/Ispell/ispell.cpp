@@ -14,10 +14,10 @@
 #include "resource.hpp"
 #include "tm_link.hpp"
 #include "convert.hpp"
+#include "language.hpp"
 
 string ispell_encode (string lan, string s);
 string ispell_decode (string lan, string s);
-string ietf_languages_code (string s);
 
 /******************************************************************************
 * The connection resource
@@ -59,8 +59,8 @@ ispeller_rep::start () {
 #endif
         return "Error: Aspell is not installed";
     cmd << " -a --encoding=utf-8 ";
-    if (ietf_languages_code (lan) != "")
-      cmd << "-l " << ietf_languages_code (lan);
+    if (language_to_locale (lan) != "")
+      cmd << "-l " << language_to_locale (lan);
 #endif
     ln= make_pipe_link (cmd);
   }
@@ -109,38 +109,6 @@ ispeller_rep::retrieve () {
 void
 ispeller_rep::send (string cmd) {
   ln->write (ispell_encode (lan, cmd) * "\n", LINK_IN);
-}
-
-/******************************************************************************
-* Ispell dictionaries
-******************************************************************************/
-
-string
-ietf_languages_code (string lang) {
-  if (lang == "british")    return "en_GB";
-  if (lang == "bulgarian")  return "bg_BG";
-  if (lang == "chinese")    return "zh_CN";
-  if (lang == "czech")      return "cs_CZ";
-  if (lang == "danish")     return "da_DK";
-  if (lang == "dutch")      return "nl_NL";
-  if (lang == "finnish")    return "fi_FI";
-  if (lang == "french")     return "fr_FR";
-  if (lang == "german")     return "de_DE";
-  if (lang == "hungarian")  return "hu_HU";
-  if (lang == "italian")    return "it_IT";
-  if (lang == "japanese")   return "ja_JP";
-  if (lang == "korean")     return "ko_KR";
-  if (lang == "polish")     return "pl_PL";
-  if (lang == "portuguese") return "pt_PT";
-  if (lang == "romanian")   return "ro_RO";
-  if (lang == "russian")    return "ru_RU";
-  if (lang == "slovene")    return "sl_SI";
-  if (lang == "spanish")    return "es_ES";
-  if (lang == "swedish")    return "sv_SE";
-  if (lang == "taiwanese")  return "th_TH";
-  if (lang == "ukrainian")  return "uk_UA";
-  if (lang == "english")    return "en_US";
-  return "";
 }
 
 /******************************************************************************
