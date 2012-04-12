@@ -80,6 +80,7 @@ string cork_to_utf8 (string input);
 string convert_utf8_to_LaTeX (string input);
 string utf8_to_html (string input);
 string t2a_to_utf8 (string input);
+string cyrillic_subset_in_t2a_to_code_point (string input);
 bool check_using_iconv (string input, string encoding);
 string convert_using_iconv (string input, string from, string to); 
 

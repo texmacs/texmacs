@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "convert.hpp"
+#include "converter.hpp"
 #include "hashset.hpp"
 #include "path.hpp"
 #include "vars.hpp"
@@ -3446,6 +3447,72 @@ upgrade_cursor (tree t) {
 }
 
 /******************************************************************************
+* Upgrade encoding to unicode whenever cyrillic font is used
+******************************************************************************/
+
+bool
+become_cyrillic (string s1, string s2) {
+  return (s1 == "font" && s2 == "cyrillic");}
+
+bool
+become_other (string s1, string s2) {
+  return (s1 == "font" && s2 != "cyrillic");
+}
+
+tree
+upgrade_cyrillic_encoding (tree t, bool cyrillic) {
+  if (is_atomic (t)) {
+    if (cyrillic) return cyrillic_subset_in_t2a_to_code_point (as_string(t));
+    else          return t;
+  }
+  else {
+    int i = 0;
+    if (is_func(t, WITH)) {
+      for (i = 0 ; i < N(t) - 1 ; i++) {
+        if (!cyrillic && become_cyrillic (as_string (t[i]), as_string (t[i+1])))
+          cyrillic = true;
+        else if (cyrillic && become_other (as_string (t[i]), as_string (t[i+1])))
+          cyrillic = false;
+      }
+      t[i] = upgrade_cyrillic_encoding (t[i], cyrillic);
+    }
+    else {
+      for (i = 0 ; i < N(t) ; i++) 
+        t[i] = upgrade_cyrillic_encoding (t[i], cyrillic);
+    }
+    return t;
+  }
+}
+
+array<tree>
+get_childs_by_name (tree t, string s) {
+  array<tree> r = array<tree>();
+  if (!is_atomic (t))
+    for (int i = 0 ; i < N(t) ; i++) {
+      if (as_string (L(t[i])) == s) r << t[i];
+    }
+  return r;
+}
+
+static tree
+upgrade_cyrillic (tree t) {
+  bool cyrillic = false;
+  array<tree> initial, collection, associate;
+  initial = get_childs_by_name (t, "initial");
+  for (int i = 0 ; i < N(initial) ; i++){
+    collection = get_childs_by_name (initial[i], "collection");
+    for (int j = 0 ; j < N(collection) ; j++){
+      associate = get_childs_by_name (collection[j], "associate");
+      for (int k = 0 ; k < N(associate) ; k++) {
+        if (is_func(associate[k], ASSOCIATE, 2) && associate[k][0] == "font")
+          cyrillic = (associate[k][1] == "cyrillic");
+      }
+    }
+  }
+  return upgrade_cyrillic_encoding(t, cyrillic);
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -3611,6 +3678,8 @@ upgrade (tree t, string version) {
     t= upgrade_gr_attributes (t);
   if (version_inf_eq (version, "1.0.7.14"))
     t= upgrade_cursor (t);
+  if (version_inf_eq (version, "1.0.7.15"))
+    t= upgrade_cyrillic (t);
 
   if (is_non_style_document (t))
     t= automatic_correct (t, version);

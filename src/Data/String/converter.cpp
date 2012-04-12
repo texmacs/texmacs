@@ -137,6 +137,12 @@ converter_rep::load () {
     hashtree_from_dictionary (dic,"t2atounicode", BIT2BIT, UTF8, false);
     ht = dic;
   }  
+  else if ( from=="T2A.CY" && to=="CODEPOINT" ) {
+    hashtree<char,string> dic;
+    hashtree_from_dictionary (dic,"t2atounicode", BIT2BIT, CHAR_ENTITY, false);
+    hashtree_from_dictionary (dic,"t2atounicode", CHAR_ENTITY, CHAR_ENTITY, false);
+    ht = dic;
+  }
   else if ( from=="UTF-8" && to=="LaTeX" ) {
     hashtree<char,string> dic;
     hashtree_from_dictionary (dic,"unicodetolatex", BIT2BIT, BIT2BIT, false);
@@ -256,6 +262,27 @@ utf8_to_t2a (string input) {
     output << r;
   }
   return output;
+}
+
+string
+cyrillic_subset_in_t2a_to_code_point (string input) {
+  converter conv= load_converter ("T2A.CY", "CODEPOINT");
+  string r, tmp;
+  int i, j, n = N(input);
+
+  for (i = 0 ; i < n ; i++) {
+    if (input[i] == '<') {
+      for (j = i + 1 ; j < n && input[j] != '>' ; j++) ;
+      r << input(i, j+1);
+      i = j;
+    }
+    else {
+      tmp = apply (conv, input[i]);
+      if (tmp == input[i]) r << tmp;
+      else r << '<'*tmp*'>';
+    }
+  }
+  return r;
 }
 
 string
