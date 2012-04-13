@@ -25,10 +25,6 @@ selection_encode (string lan, string s) {
   if ((lan == "czech") || (lan == "hungarian") ||
       (lan == "polish") || (lan == "slovene"))
     return cork_to_il2 (s);
-  else if ((lan == "bulgarian") || (lan == "russian"))
-    return koi8_to_iso (s);
-  else if (lan == "ukrainian")
-    return koi8uk_to_iso (s);
   else if (lan == "spanish")
     return spanish_to_ispanish (s);
   else if (lan == "german")
@@ -41,10 +37,6 @@ selection_decode (string lan, string s) {
   if ((lan == "czech") || (lan == "hungarian") ||
       (lan == "polish") || (lan == "slovene"))
     return il2_to_cork (s);
-  else if ((lan == "bulgarian") || (lan == "russian"))
-    return iso_to_koi8 (s);
-  else if (lan == "ukrainian")
-    return iso_to_koi8uk (s);
   else if (lan == "spanish")
     return ispanish_to_spanish (s);
   else if (lan == "german")
