@@ -143,7 +143,7 @@ latex_symbol_to_tree (string s) {
   if (s == "") return "";
   if (s[0] == '\\') {
     s= s(1,N(s));
-    if (latex_type (s) == "command") {
+    if (latex_type ('\\' * s) == "command") {
       if (s == " ") return " ";
       if (s == "-") return "";
       if (s == "/") return "";
