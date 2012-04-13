@@ -549,7 +549,8 @@ void
 edit_typeset_rep::init_env (string var, tree by) {
   if (init (var) == by) return;
   init (var)= by;
-  require_save();
+  if (var != PAGE_SCREEN_WIDTH && var != PAGE_SCREEN_HEIGHT)
+    require_save ();
   notify_change (THE_ENVIRONMENT);
 }
 
