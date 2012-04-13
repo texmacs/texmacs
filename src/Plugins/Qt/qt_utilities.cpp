@@ -225,14 +225,7 @@ from_qstringlist(const QStringList& l) {
 
 QString
 to_qstring (string s) {
-  string out_lan= get_output_language ();
-  if ((out_lan == "bulgarian") || 
-      (out_lan == "russian") ||
-      (out_lan == "ukrainian"))
-    s = t2a_to_utf8 (s);
-  else
-    s = cork_to_utf8 (s);
-      
+  s = cork_to_utf8 (s);
   char* p= as_charp (s);
   QString nss= QString::fromUtf8 (p, N(s));
   tm_delete_array (p);
