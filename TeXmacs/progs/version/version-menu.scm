@@ -12,13 +12,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (version version-menu)
-  (:use (version version-compare)))
+  (:use (version version-compare)
+        (version version-tmfs)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main version menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind version-menu
+  (when (versioned? (current-buffer))
+    ("History" (load-buffer (url-history (current-buffer)))))
+  ---
   (-> "File"
       ;;("Merge" (noop))
       ("Compare" (choose-file compare-file "Compare with file" ""))
