@@ -1,13 +1,15 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.0.7.15>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.7 to 1.0.7.15>
+  <section|Changes from version 1.0.7 to 1.0.7.16>
 
   <\itemize>
+    <item>Rudimentary support for SVN (1.0.7.16).
+
     <item>First rudimentary spreadsheet facility (1.0.7.15).
 
     <item>Special editing mode for writing <TeXmacs> documentation
