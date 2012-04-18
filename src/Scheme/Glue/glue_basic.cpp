@@ -3098,6 +3098,19 @@ tmg_upgrade_mathml (tmscm arg1) {
 }
 
 tmscm
+tmg_url_2url (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "url->url");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  url out= url (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return url_to_tmscm (out);
+}
+
+tmscm
 tmg_string_2url (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "string->url");
 
@@ -6502,6 +6515,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("parse-bib",  tmg_parse_bib, 1, 0, 0);
   tmscm_install_procedure ("upgrade-tmml",  tmg_upgrade_tmml, 1, 0, 0);
   tmscm_install_procedure ("upgrade-mathml",  tmg_upgrade_mathml, 1, 0, 0);
+  tmscm_install_procedure ("url->url",  tmg_url_2url, 1, 0, 0);
   tmscm_install_procedure ("string->url",  tmg_string_2url, 1, 0, 0);
   tmscm_install_procedure ("root->url",  tmg_root_2url, 1, 0, 0);
   tmscm_install_procedure ("url",  tmg_url, 2, 0, 0);

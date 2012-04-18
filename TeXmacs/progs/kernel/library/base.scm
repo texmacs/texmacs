@@ -307,7 +307,7 @@
   (url->list (all-buffers)))
 
 (define-public (buffer-exists? name)
-  (in? name (buffer-list)))
+  (in? (url->url name) (buffer-list)))
 
 (define-public (buffer-master)
   (buffer-get-master (current-buffer)))

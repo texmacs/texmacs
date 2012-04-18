@@ -29,7 +29,22 @@
         (else (cons (car l) (remove-empty-strings (cdr l))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; File history using SVN
+;; File status
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (version-status name)
+  (:require (== (version-tool name) "svn"))
+  (let* ((name-s (url->string name))
+         (cmd (string-append "svn status " name-s))
+         (ret (eval-system cmd)))
+    (cond ((== ret "") "unmodified")
+          ((string-starts? ret "I") "unknown")
+          ((string-starts? ret "?") "unknown")
+          ;; FIXME: support further possibilities
+          (else "modified"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; File history
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (svn-history-item s)
@@ -51,7 +66,7 @@
          (map svn-history-item (cdr (cDr l))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; File revisions using SVN
+;; File revisions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (version-revision name rev)
@@ -65,7 +80,7 @@
     ret))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Updating and committing a file
+;; Updating, registering committing a file
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (version-update name)
@@ -75,6 +90,14 @@
          (ret (eval-system cmd))
          (l (remove-empty-strings (string-decompose ret "\n"))))
     ;;(display* "ret= " ret "\n")
+    (if (null? l) "" (cAr l))))
+
+(tm-define (version-register name)
+  (:require (== (version-tool name) "svn"))
+  (let* ((name-s (url->string name))
+         (cmd (string-append "svn add " name-s))
+         (ret (eval-system cmd))
+         (l (remove-empty-strings (string-decompose ret "\n"))))
     (if (null? l) "" (cAr l))))
 
 (tm-define (version-commit name msg)

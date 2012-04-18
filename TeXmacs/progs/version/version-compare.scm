@@ -27,7 +27,11 @@
   (:synopsis "Set versioning grain.")
   (:argument w "detailed")
   (:check-mark "*" version-test-grain?)
-  (set! version-grain w))
+  (set-preference "versioning grain" w)
+  (reactualize-differences))
+
+(define-preferences
+  ("versioning grain" "detailed" (lambda (var val) (set! version-grain val))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful subroutines for document comparison
@@ -233,7 +237,7 @@
 ;; Top-level interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (compare-file old)
+(tm-define (compare-with-older old)
   (let* ((t1 (tree-load-inclusion old))
 	 (t2 (buffer-tree))
 	 (u1 (tree->stree t1))
@@ -244,6 +248,23 @@
     ;;(display* "rt= " rt "\n")
     (tree-set (buffer-tree) rt)
     (version-first-difference)))
+
+(tm-define (compare-with-newer new)
+  (let* ((t1 (tree-load-inclusion new))
+	 (t2 (buffer-tree))
+	 (u1 (tree->stree t1))
+	 (u2 (tree->stree t2))
+	 (x1 (if (tm-is? u1 'with) (cAr u1) u1))
+	 (mv (compare-versions u2 x1))
+	 (rt (stree->tree mv)))
+    ;;(display* "rt= " rt "\n")
+    (tree-set (buffer-tree) rt)
+    (version-first-difference)))
+
+(tm-define (compare-with-newer* new)
+  (with old (current-buffer)
+    (switch-to-buffer new)
+    (compare-with-older old)))
 
 (define (version-get t which)
   (cond ((string? t) t)

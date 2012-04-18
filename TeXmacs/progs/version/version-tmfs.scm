@@ -41,6 +41,15 @@
   (nnot (version-tool name)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Getting the main status of a file
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (version-status name)
+  (if (version-tool name)
+      (version-status name)
+      "unknown"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; File history
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -49,7 +58,7 @@
 (tm-define (version-show-history name)
   (cursor-history-add (cursor-path))
   (with s (url->tmfs-string name)
-    (load-buffer (string-append "tmfs://history/" s))))
+    (revert-buffer (string-append "tmfs://history/" s))))
 
 (tmfs-load-handler (history name)
   (with u (tmfs-string->url name)
@@ -74,6 +83,16 @@
 ;; Showing a particular revision
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (version-revision? u)
+  (and (url-rooted-tmfs? u)
+       (with (class name) (tmfs-decompose-name u)
+         (== class "revision"))))
+
+(tm-define (version-head u)
+  (and (url-rooted-tmfs? u)
+       (with (class name) (tmfs-decompose-name u)
+         (tmfs-string->url (tmfs-cdr name)))))
+
 (tmfs-format-handler (revision name)
   (with u (tmfs-string->url (tmfs-cdr name))
     (url-format u)))
@@ -86,10 +105,11 @@
     (version-revision u rev)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Updating and committing a file
+;; Updating, registering and committing a file
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (version-update name) "file is not under version control")
+(tm-define (version-register name) "file is not under version control")
 (tm-define (version-commit name comment) "file is not under version control")
 
 (tm-define (update-buffer name)
@@ -101,6 +121,11 @@
     (when (> new-stamp old-stamp)
       (revert-buffer name))
     (set-message ret2 "Update buffer")))
+
+(tm-define (register-buffer name)
+  (let* ((ret1 (version-register name))
+         (ret2 (string-replace ret1 "\n" "; ")))
+    (set-message ret2 "Register file")))
 
 (tm-define (commit-buffer-message name message)
   (let* ((ret1 (version-commit name message))

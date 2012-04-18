@@ -272,6 +272,7 @@
   (upgrade-mathml upgrade_mathml (tree content))
 
   ;; routines for urls
+  (url->url url (url url))
   (string->url url (url string))
   (root->url url_root (url string))
   (url url (url string string))

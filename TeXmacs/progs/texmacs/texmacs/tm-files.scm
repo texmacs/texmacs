@@ -425,11 +425,16 @@
 
 (tm-define (revert-buffer . l)
   (with name (if (null? l) (current-buffer) (car l))
-    (url-cache-invalidate name)
-    (with t (tree-import name (url-format name))
-      (if (== t (tm->tree "error"))
-          (set-message "Error: file not found" "Revert buffer")
-          (buffer-set name t)))))
+    (if (not (buffer-exists? name))
+        (load-buffer name)
+        (begin
+          (when (!= name (current-buffer))
+            (switch-to-buffer name))
+          (url-cache-invalidate name)
+          (with t (tree-import name (url-format name))
+            (if (== t (tm->tree "error"))
+                (set-message "Error: file not found" "Revert buffer")
+                (buffer-set name t)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Importing buffers
