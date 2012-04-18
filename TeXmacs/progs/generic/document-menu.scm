@@ -587,10 +587,10 @@
 	      ("Other" (init-interactive-env "page-flexibility")))))
   ---
   (-> "Update"
-      ("All" (generate-all-aux) (image-gc) (inclusions-gc) (update-buffer))
+      ("All" (generate-all-aux) (image-gc) (inclusions-gc) (update-current-buffer))
       ---
-      ("Buffer" (update-buffer))
-      ("Bibliography" (generate-all-aux) (update-buffer))
+      ("Buffer" (update-current-buffer))
+      ("Bibliography" (generate-all-aux) (update-current-buffer))
 ;;    ("Bibliography" (generate-aux "bibliography"))
       ("Table of contents" (generate-aux "table-of-contents"))
       ("Index" (generate-aux "index"))

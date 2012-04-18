@@ -190,7 +190,7 @@
 (tm-define (delayed-update nr cont)
   (system-wait "Generating automatic content" nr)
   (generate-all-aux)
-  (update-buffer)
+  (update-current-buffer)
   (user-delayed cont))
 
 (tm-define (tmdoc-expand-help-manual root)

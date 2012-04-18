@@ -21,7 +21,9 @@
 
 (menu-bind version-menu
   (when (versioned? (current-buffer))
-    ("History" (load-buffer (url-history (current-buffer)))))
+    ("History" (version-show-history (current-buffer)))
+    ("Update" (version-interactive-update (current-buffer)))
+    ("Commit" (version-interactive-commit (current-buffer))))
   ---
   (-> "File"
       ;;("Merge" (noop))
@@ -34,10 +36,6 @@
       ("Retain current version" (version-retain-all 'current))
       ("Retain old version" (version-retain-all 0))
       ("Retain new version" (version-retain-all 1)))
-  ;;(-> "Subversion"
-  ;;    ("Update" (noop))
-  ;;    ("Changes" (noop))
-  ;;    ("Commit" (noop)))
   ---
   (-> "Move"
       ("First difference" (version-first-difference))

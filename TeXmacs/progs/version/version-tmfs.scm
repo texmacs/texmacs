@@ -46,9 +46,10 @@
 
 (tm-define (version-history name) #f)
 
-(tm-define (url-history name)
+(tm-define (version-show-history name)
+  (cursor-history-add (cursor-path))
   (with s (url->tmfs-string name)
-    (string-append "tmfs://history/" s)))
+    (load-buffer (string-append "tmfs://history/" s))))
 
 (tmfs-load-handler (history name)
   (with u (tmfs-string->url name)
@@ -62,24 +63,59 @@
         ($when h
           ($description-long
             ($for (x h)
-              ($with (rel by date msg) x
-                ($with dest (string-append "tmfs://release/" rel "/" name)
+              ($with (rev by date msg) x
+                ($with dest (string-append "tmfs://revision/" rev "/" name)
                   ($describe-item
-                      ($inline "Version " ($link dest rel)
+                      ($inline "Version " ($link dest rev)
                                " by " by " on " date)
                     msg))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Showing a particular release
+;; Showing a particular revision
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tmfs-format-handler (release name)
+(tmfs-format-handler (revision name)
   (with u (tmfs-string->url (tmfs-cdr name))
     (url-format u)))
 
-(tm-define (version-release name rel) "")
+(tm-define (version-revision name rev) "")
 
-(tmfs-load-handler (release name)
-  (let* ((rel (tmfs-car name))
+(tmfs-load-handler (revision name)
+  (let* ((rev (tmfs-car name))
          (u (tmfs-string->url (tmfs-cdr name))))
-    (version-release u rel)))
+    (version-revision u rev)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Updating and committing a file
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (version-update name) "file is not under version control")
+(tm-define (version-commit name comment) "file is not under version control")
+
+(tm-define (update-buffer name)
+  (let* ((old-stamp (url-last-modified name))
+         (ret1 (version-update name))
+         (ret2 (string-replace ret1 "\n" "; "))
+         (new-stamp (url-last-modified name)))
+    ;;(display* "ret2= " ret2 "\n")
+    (when (> new-stamp old-stamp)
+      (revert-buffer name))
+    (set-message ret2 "Update buffer")))
+
+(tm-define (commit-buffer-message name message)
+  (let* ((ret1 (version-commit name message))
+         (ret2 (string-replace ret1 "\n" "; "))
+         (ret3 (if (!= ret2 "") ret2
+                   "The current version has already been committed")))
+    (set-message ret3 "Commit file")))
+
+(tm-define (commit-buffer name)
+  (interactive (lambda (message) (commit-buffer-message name message))))
+
+(tm-define (version-interactive-update name)
+  (:interactive #t)
+  (save-buffer-main name :update))
+
+(tm-define (version-interactive-commit name)
+  (:interactive #t)
+  (save-buffer-main name :commit))

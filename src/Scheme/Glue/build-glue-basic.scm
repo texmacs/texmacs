@@ -323,6 +323,7 @@
   (url-temp url_temp (url))
   (url-scratch url_scratch (url string string int))
   (url-scratch? is_scratch (bool url))
+  (url-cache-invalidate web_cache_invalidate (void url))
   (string-save string_save (void string url))
   (string-load string_load (string url))
   (system-move move (void url url))
@@ -483,7 +484,6 @@
   (new-buffer create_buffer (url))
   (switch-to-buffer-path switch_to_buffer (bool path))
   (switch-to-buffer switch_to_buffer (void url))
-  (revert-buffer revert_buffer (void))
   (buffer-close kill_buffer (void url))
   (aux-buffer? is_aux_buffer (bool url))
 

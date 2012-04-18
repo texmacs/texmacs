@@ -88,6 +88,13 @@
 (define (has-faithful-format? name)
   (in? (url-suffix name) '("tm" "ts" "tp" "stm" "tmml")))
 
+(define (save-buffer-post name opts)
+  ;;(display* "save-buffer-post " name "\n")
+  (cond ((in? :update opts)
+         (update-buffer name))
+        ((in? :commit opts)
+         (commit-buffer name))))
+
 (define (save-buffer-save name opts)
   ;;(display* "save-buffer-save " name "\n")
   (with vname `(verbatim ,(url->string name))
@@ -98,7 +105,8 @@
         (begin
           (autosave-remove name)
           (buffer-notify-recent name)
-          (set-message `(concat "Saved '" ,vname "'") "Save file")))))
+          (set-message `(concat "Saved '" ,vname "'") "Save file")
+          (save-buffer-post name opts)))))
 
 (define (save-buffer-check-faithful name opts)
   ;;(display* "save-buffer-check-faithful " name "\n")
@@ -134,7 +142,8 @@
              (set-message msg "Save file")))
           ((not (buffer-modified? name))
            (with msg "No changes need to be saved"
-             (set-message msg "Save file")))
+             (set-message msg "Save file"))
+           (save-buffer-post name opts))
           ((cannot-write? name "Save file")
            (noop))
           ((and (url-test? name "fr")
@@ -409,6 +418,18 @@
          (load-buffer-main :background))
         (else
          (load-buffer-sub (car l) (cadr l) (caddr l)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Reverting a buffer
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (revert-buffer . l)
+  (with name (if (null? l) (current-buffer) (car l))
+    (url-cache-invalidate name)
+    (with t (tree-import name (url-format name))
+      (if (== t (tm->tree "error"))
+          (set-message "Error: file not found" "Revert buffer")
+          (buffer-set name t)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Importing buffers

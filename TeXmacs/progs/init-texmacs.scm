@@ -221,6 +221,7 @@
 ;(display "Booting versioning facilities\n")
 (lazy-menu (version version-menu) version-menu)
 (lazy-keyboard (version version-kbd) with-versioning-tool?)
+(lazy-define (version version-tmfs) update-buffer commit-buffer)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting debugging facilities\n")

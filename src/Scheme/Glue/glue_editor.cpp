@@ -2490,7 +2490,7 @@ tmg_update_path (tmscm arg1) {
 }
 
 tmscm
-tmg_update_buffer () {
+tmg_update_current_buffer () {
   // TMSCM_DEFER_INTS;
   get_server()->get_editor()->typeset_invalidate_all ();
   // TMSCM_ALLOW_INTS;
@@ -3041,7 +3041,7 @@ initialize_glue_editor () {
   tmscm_install_procedure ("tex-buffer",  tmg_tex_buffer, 0, 0, 0);
   tmscm_install_procedure ("clear-local-info",  tmg_clear_local_info, 0, 0, 0);
   tmscm_install_procedure ("update-path",  tmg_update_path, 1, 0, 0);
-  tmscm_install_procedure ("update-buffer",  tmg_update_buffer, 0, 0, 0);
+  tmscm_install_procedure ("update-current-buffer",  tmg_update_current_buffer, 0, 0, 0);
   tmscm_install_procedure ("generate-all-aux",  tmg_generate_all_aux, 0, 0, 0);
   tmscm_install_procedure ("generate-aux",  tmg_generate_aux, 1, 0, 0);
   tmscm_install_procedure ("notify-page-change",  tmg_notify_page_change, 0, 0, 0);

@@ -23,16 +23,20 @@
 (define (dos->unix s)
   (string-replace s "\r\n" "\n"))
 
+(define (remove-empty-strings l)
+  (cond ((null? l) l)
+        ((== (car l) "") (remove-empty-strings (cdr l)))
+        (else (cons (car l) (remove-empty-strings (cdr l))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; File history using SVN
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (svn-history-item s)
-  (let* ((lines (string-decompose s "\n"))
+  (let* ((lines (remove-empty-strings (string-decompose s "\n")))
          (data (string-decompose (car lines) " | "))
          (date-info (string-decompose (caddr data) " "))
-         (msg-lines (cDDr (cddr lines)))
-         (msg (string-recompose msg-lines " ")))
+         (msg (string-recompose (cdr lines) " ")))
     (list (car data) (cadr data) (car date-info) msg)))
 
 (tm-define (version-history name)
@@ -47,15 +51,37 @@
          (map svn-history-item (cdr (cDr l))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; File releases using SVN
+;; File revisions using SVN
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (version-release name rel)
+(tm-define (version-revision name rev)
   (:require (== (version-tool name) "svn"))
-  ;;(display* "Loading release " rel " of " name "\n")
+  ;;(display* "Loading revision " rev " of " name "\n")
   (let* ((name-s (url->string name))
-         (nr (substring rel 1 (string-length rel)))
+         (nr (substring rev 1 (string-length rev)))
          (cmd (string-append "svn cat -r " nr " " name-s))
          (ret (eval-system cmd)))
     ;;(display* "Got " ret "\n")
     ret))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Updating and committing a file
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (version-update name)
+  (:require (== (version-tool name) "svn"))
+  (let* ((name-s (url->string name))
+         (cmd (string-append "svn up --accept theirs-full " name-s))
+         (ret (eval-system cmd))
+         (l (remove-empty-strings (string-decompose ret "\n"))))
+    ;;(display* "ret= " ret "\n")
+    (if (null? l) "" (cAr l))))
+
+(tm-define (version-commit name msg)
+  (:require (== (version-tool name) "svn"))
+  (let* ((name-s (url->string name))
+         (msg-s (string-replace msg "\"" "\\\""))
+         (cmd (string-append "svn commit -m \"" msg-s "\" " name-s))
+         (ret (eval-system cmd))
+         (l (remove-empty-strings (string-decompose ret "\n"))))
+    (if (null? l) "" (cAr l))))

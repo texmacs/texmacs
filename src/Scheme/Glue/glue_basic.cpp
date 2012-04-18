@@ -3760,6 +3760,19 @@ tmg_url_scratchP (tmscm arg1) {
 }
 
 tmscm
+tmg_url_cache_invalidate (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "url-cache-invalidate");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  web_cache_invalidate (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_string_save (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "string-save");
   TMSCM_ASSERT_URL (arg2, TMSCM_ARG2, "string-save");
@@ -5757,15 +5770,6 @@ tmg_switch_to_buffer (tmscm arg1) {
 }
 
 tmscm
-tmg_revert_buffer () {
-  // TMSCM_DEFER_INTS;
-  revert_buffer ();
-  // TMSCM_ALLOW_INTS;
-
-  return TMSCM_UNSPECIFIED;
-}
-
-tmscm
 tmg_buffer_close (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-close");
 
@@ -6548,6 +6552,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("url-temp",  tmg_url_temp, 0, 0, 0);
   tmscm_install_procedure ("url-scratch",  tmg_url_scratch, 3, 0, 0);
   tmscm_install_procedure ("url-scratch?",  tmg_url_scratchP, 1, 0, 0);
+  tmscm_install_procedure ("url-cache-invalidate",  tmg_url_cache_invalidate, 1, 0, 0);
   tmscm_install_procedure ("string-save",  tmg_string_save, 2, 0, 0);
   tmscm_install_procedure ("string-load",  tmg_string_load, 1, 0, 0);
   tmscm_install_procedure ("system-move",  tmg_system_move, 2, 0, 0);
@@ -6689,7 +6694,6 @@ initialize_glue_basic () {
   tmscm_install_procedure ("new-buffer",  tmg_new_buffer, 0, 0, 0);
   tmscm_install_procedure ("switch-to-buffer-path",  tmg_switch_to_buffer_path, 1, 0, 0);
   tmscm_install_procedure ("switch-to-buffer",  tmg_switch_to_buffer, 1, 0, 0);
-  tmscm_install_procedure ("revert-buffer",  tmg_revert_buffer, 0, 0, 0);
   tmscm_install_procedure ("buffer-close",  tmg_buffer_close, 1, 0, 0);
   tmscm_install_procedure ("aux-buffer?",  tmg_aux_bufferP, 1, 0, 0);
   tmscm_install_procedure ("texmacs-load-tree",  tmg_texmacs_load_tree, 2, 0, 0);

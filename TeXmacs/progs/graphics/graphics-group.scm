@@ -391,7 +391,7 @@
   (if (== (car (graphics-mode)) 'group-edit)
       (with copied-objects (list-copy (sketch-get))
         (any_unselect-all #f #f)
-        (update-buffer)
+        (update-current-buffer)
         (if (null? copied-objects)
             (stree->tree "")
             (stree->tree (cons 'graphics copied-objects))))

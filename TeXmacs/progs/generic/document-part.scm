@@ -128,7 +128,7 @@
 	   (buffer-hide-preamble)
 	   (buffer-flatten-parts)
 	   (tree-go-to (car (buffer-body-paragraphs)) :start)
-	   (update-buffer))
+	   (update-current-buffer))
 	  (else
 	   (buffer-hide-preamble)
 	   (buffer-make-parts)
@@ -137,7 +137,7 @@
 	     (if (== mode :one)
 		 (buffer-show-part first)
 		 (buffer-go-to-part first)))
-	   (update-buffer)))))
+	   (update-current-buffer)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Listing the document parts

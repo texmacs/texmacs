@@ -182,7 +182,6 @@ bool export_tree (tree doc, url u, string fm);
 url  create_buffer ();
 bool switch_to_buffer (path p);
 void switch_to_buffer (url name);
-void revert_buffer ();
 void kill_buffer (url name);
 url  open_window (tree geom= "");
 void clone_window ();

@@ -130,16 +130,6 @@ create_buffer () {
 }
 
 void
-revert_buffer () {
-  tm_buffer buf= get_buffer ();
-  url name= buf->buf->name;
-  web_cache_invalidate (name);
-  tree doc= load_tree (name, buf->buf->fm);
-  if (doc == "error") set_message ("Error: file not found", "revert buffer");
-  else set_buffer_tree (name, doc);
-}
-
-void
 kill_buffer (url name) {
   tm_buffer buf= search_buffer (name);
   if (is_nil (buf)) return;
