@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.13>
+<TeXmacs|1.0.7.15>
 
 <style|<tuple|source|std>>
 
@@ -337,6 +337,11 @@
   <assign|underline|<macro|body|<eval|<quasiquote|<style-with|src-compact|none|<datoms|<macro|body|<with|color|<unquote|<value|color>>|<wide*|<arg|body>|\<wide-bar\>>>>|<arg|body>>>>>>>
 
   <drd-props|underline|with-like|yes|arity|1|accessible|all>
+
+  <assign|tmfs-title|<\macro|name>
+    <surround||<vspace|1fn>|<block*|<tformat|<cwith|1|1|1|1|cell-background|pastel
+    blue>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-lsep|2spc>|<cwith|1|1|1|1|cell-rsep|2spc>|<cwith|1|1|1|1|cell-bsep|2spc>|<cwith|1|1|1|1|cell-tsep|2spc>|<table|<row|<cell|<large|<strong|<arg|name>>>>>>>>>
+  </macro>>
 
   <\active*>
     <\src-comment>
