@@ -251,15 +251,18 @@
 ;; Importation of files using a different format
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-public (tmfs-document t)
+  (with doc (tm->stree t)
+    (if (and (tm-func? doc 'document)
+             (not (tm-func? (tm-ref doc 0) 'TeXmacs)))
+        `(document (TeXmacs ,(texmacs-version)) ,@(cdr doc))
+        doc)))
+
 (tmfs-load-handler (import name)
   (if (and (tmfs-pair? name) (tmfs-pair? (tmfs-cdr name)))
       (let* ((fm (tmfs-car name))
-             (u (tmfs-string->url (tmfs-cdr name)))
-             (doc (tm->stree (tree-import u fm))))
-        (when (and (tm-func? doc 'document)
-                   (not (tm-func? (tm-ref doc 0) 'TeXmacs)))
-          (set! doc `(document (TeXmacs ,(texmacs-version)) ,@(cdr doc))))
-        doc)
+             (u (tmfs-string->url (tmfs-cdr name))))
+        (tmfs-document (tree-import u fm)))
       `(document
          (TeXmacs ,(texmacs-version))
          (style (tuple "generic"))

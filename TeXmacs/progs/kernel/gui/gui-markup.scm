@@ -458,12 +458,22 @@
 (tm-define-macro ($strong . l)
   ($quote `(strong ($unquote ($inline ,@l)))))
 
+(tm-define-macro ($verbatim . l)
+  ($quote `(verbatim ($unquote ($inline ,@l)))))
+
 (tm-define-macro ($link dest . l)
   ($quote `(hlink ($unquote ($inline ,@l)) ($unquote ($textual ,dest)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Specific markup for TeXmacs documentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define-macro ($generic . l)
+  ($quote
+   `(document
+      (TeXmacs ,(texmacs-version))
+      (style (tuple "generic"))
+      (body ($unquote ($block ,@l))))))
 
 (tm-define-macro ($tmdoc . l)
   (with lan (get-output-language)
@@ -479,6 +489,9 @@
 
 (tm-define-macro ($tmdoc-title . l)
   ($quote `(document (tmdoc-title ($unquote ($inline ,@l))))))
+
+(tm-define-macro ($tmfs-title . l)
+  ($quote `(document (tmfs-title ($unquote ($inline ,@l))))))
 
 (tm-define-macro ($folded-documentation key . l)
   ($quote `(document (folded-documentation ($unquote ($inline ,key))
