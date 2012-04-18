@@ -127,6 +127,7 @@ use_modules (tree t) {
 
 void
 edit_typeset_rep::typeset_style_use_cache (tree style) {
+  style= preprocess_style (style, buf->buf->name);
   //cout << "Typesetting style using cache " << style << LF;
   bool ok;
   hashmap<string,tree> H;

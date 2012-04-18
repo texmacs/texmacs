@@ -45,12 +45,33 @@ init_style_data () {
 }
 
 /******************************************************************************
+* Modify style so as to search in all ancestor directories
+******************************************************************************/
+
+tree
+preprocess_style (tree st, url name) {
+  if (is_rooted_tmfs (name)) return st;
+  if (is_atomic (st)) st= tree (TUPLE, st);
+  if (!is_tuple (st)) return st;
+  tree r (TUPLE, N(st));
+  for (int i=0; i<N(st); i++) {
+    r[i]= st[i];
+    if (!is_atomic (st[i])) continue;
+    string pack= st[i]->label * ".ts";
+    url stf= resolve (expand (head (name) * url_ancestor () * pack));
+    if (!is_none (stf)) r[i]= as_string (stf);
+  }
+  //if (r != st) cout << "old: " << st << "\nnew: " << r << "\n";
+  return r;
+}
+
+/******************************************************************************
 * Caching style files on disk
 ******************************************************************************/
 
 static string
 cache_file_name (tree t) {
-  if (is_atomic (t)) return t->label;
+  if (is_atomic (t)) return replace (t->label, "/", "%");
   else {
     string s;
     int i, n= N(t);

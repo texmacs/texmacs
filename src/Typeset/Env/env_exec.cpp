@@ -914,14 +914,15 @@ tree
 edit_env_rep::exec_use_package (tree t) {
   int i, n= N(t);
   for (i=0; i<n; i++) {
+    //cout << "Package " << as_string (t[i]) << "\n";
+    url name= url_none ();
     url styp= "$TEXMACS_STYLE_PATH";
-    url name= as_string (t[i]) * string (".ts");
-    //cout << "Package " << name << "\n";
-    if (is_rooted_web (base_file_name))
-      styp= styp | head (base_file_name);
-    else styp= ::expand (head (base_file_name) * url_ancestor ()) | styp;
+    if (ends (as_string (t[i]), ".ts")) name= as_string (t[i]);
+    else name= styp * (as_string (t[i]) * string (".ts"));
+    name= resolve (name);
+    //cout << as_string (t[i]) << " -> " << name << "\n";
     string doc_s;
-    if (!load_string (styp * name, doc_s, false)) {
+    if (!load_string (name, doc_s, false)) {
       tree doc= texmacs_document_to_tree (doc_s);
       if (is_compound (doc))
 	exec (filter_style (extract (doc, "body")));
