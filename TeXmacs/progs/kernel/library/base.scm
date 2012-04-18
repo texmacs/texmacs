@@ -157,6 +157,14 @@
 				 sep
 				 (- n 1))))))
 
+(define-public (string-decompose s sep)
+  (with d (string-search-forwards sep 0 s)
+    (if (< d 0)
+        (list s)
+        (cons (substring s 0 d)
+              (string-decompose (substring s (+ d (string-length sep))
+                                           (string-length s)) sep)))))
+
 (define-public (string-recompose l sep)
   "Turn list @l of strings into one string using @sep as separator."
   (if (char? sep) (set! sep (list->string (list sep))))
