@@ -8,7 +8,7 @@
   <section|Changes from version 1.0.7 to 1.0.7.16>
 
   <\itemize>
-    <item>Rudimentary support for SVN (1.0.7.16).
+    <item>Rudimentary support for version control using SVN (1.0.7.16).
 
     <item>First rudimentary spreadsheet facility (1.0.7.15).
 
