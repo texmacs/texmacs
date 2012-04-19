@@ -917,6 +917,8 @@ edit_env_rep::exec_use_package (tree t) {
     //cout << "Package " << as_string (t[i]) << "\n";
     url name= url_none ();
     url styp= "$TEXMACS_STYLE_PATH";
+    //if (is_rooted_web (base_file_name)) styp= styp | head (base_file_name);
+    //else styp= ::expand (head (base_file_name) * url_ancestor ()) | styp;
     if (ends (as_string (t[i]), ".ts")) name= as_string (t[i]);
     else name= styp * (as_string (t[i]) * string (".ts"));
     name= resolve (name);
