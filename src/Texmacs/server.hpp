@@ -143,7 +143,6 @@ void delete_view (tm_view vw);
 void new_buffer_in_this_window (url name, tree t);
 tm_window new_window (bool map_flag= true, tree geom= "");
 tm_buffer load_passive_buffer (url name);
-tree make_document (tm_view vw, string fm= "texmacs");
 
 /* Buffer management */
 url  make_new_buffer ();
@@ -216,6 +215,5 @@ void window_focus (int id);
 /* File management */
 tree load_tree (url name, string fm);
 void load_buffer (url name, string fm, int where= 0, bool asf= false);
-void save_buffer (url name, string fm);
 
 #endif // defined SERVER_H
