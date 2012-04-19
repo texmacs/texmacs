@@ -33,7 +33,7 @@
   ---
   (-> "Compare"
       (assuming (version-revision? (current-buffer))
-        ("With most recent version"
+        ("With current user version"
          (compare-with-newer* (version-head (current-buffer)))))          
       ("With older version"
        (choose-file compare-with-older "Compare with older version" ""))

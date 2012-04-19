@@ -162,6 +162,19 @@
 ;; Show old and new versions into a single document
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (similar-tables? t1 t2)
+  (cond ((or (nlist? t1) (nlist? t2)
+             (!= (car t1) (car t2))
+             (!= (length t1) (length t2))) #f)
+        ((in? (car t1) '(tformat))
+         (and (== (cDr (cdr t1)) (cDr (cdr t2)))
+              (similar-tables? (cAr t1) (cAr t2))))
+        ((in? (car t1) '(table row))
+         (list-and (map similar-tables? (cdr t1) (cdr t2))))
+        ((in? (car t1) '(cell))
+         #t)
+        (else (== t1 t2))))
+
 (define (compare-versions-list tag l1 l2)
   ;;(display* "compare-versions-list " tag ", " l1 ", " l2 "\n\n")
   (cond ((and (null? l1) (null? l2)) '())
@@ -218,6 +231,9 @@
 	       ((!= (length t1) (length t2))
 		(diff t1 t2))
 	       ((in? (car t1) '(graphics))
+		(diff t1 t2))
+	       ((and (in? (car t1) '(table tformat))
+                     (not (similar-tables? t1 t2)))
 		(diff t1 t2))
 	       (else
 		 (let* ((tt1 (tm->tree t1))
