@@ -96,7 +96,7 @@
                  (save-buffer-check-faithful name opts)))))
           (else (save-buffer-check-faithful name opts)))))
 
-(define (save-buffer-main . args)
+(tm-define (save-buffer-main . args)
   ;;(display* "save-buffer-main\n")
   (if (or (null? args) (not (url? (car args))))
       (save-buffer-check-permissions (current-buffer) args)

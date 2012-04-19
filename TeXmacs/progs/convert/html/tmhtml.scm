@@ -1225,6 +1225,21 @@
   (list `(h:script (@ (language "javascript")
 		      (src ,(tmhtml-force-string (car l)))))))
 
+(define (tmhtml-html-video l)
+  (let* ((dest (cork->html (force-string (car l))))
+         (mp4 (string-append dest ".mp4"))
+         (ogg (string-append dest ".ogg"))
+         (webm (string-append dest ".webm"))
+         (swf (string-append dest ".swf"))
+         (width (force-string (cadr l)))
+         (height (force-string (caddr l))))
+    (list `(h:video (@ (width ,width) (height ,height) (controls "controls"))
+             (h:source (@ (src ,mp4) (type "video/mp4")))
+             (h:source (@ (src ,ogg) (type "video/ogg")))
+             (h:source (@ (src ,webm) (type "video/webm")))
+             (h:object (@ (data ,mp4) (width ,width) (height ,height))
+               (h:embed (@ (src ,swf) (width ,width) (height ,height))))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tmdoc tags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1502,6 +1517,7 @@
   (html-style ,tmhtml-html-style)
   (html-javascript ,tmhtml-html-javascript)
   (html-javascript-src ,tmhtml-html-javascript-src)
+  (html-video ,tmhtml-html-video)
   ;; tmdoc tags
   (tmdoc-title ,tmhtml-tmdoc-title)
   (tmdoc-title* ,tmhtml-tmdoc-title*)

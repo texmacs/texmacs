@@ -361,6 +361,10 @@
   yellow|<with|font-family|ss|Javascript source:
   ><href|<arg|source-file>>>>>>
 
+  <assign|html-video|<macro|dest|width|height|<small|<colored-frame|pastel
+  yellow|<tabular*|<tformat|<table|<row|<cell|<small|<with|font-family|tt|<arg|dest>>>>>|<row|<cell|<arg|width>
+  <math|\<times\>> <arg|height>>>>>>>>>>
+
   <\active*>
     <\src-comment>
       Miscellaneous.

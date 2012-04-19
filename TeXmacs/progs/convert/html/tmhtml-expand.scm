@@ -41,7 +41,8 @@
 	     verbatim code tt
 	     hidden-title doc-title-block
 	     equation* equation-lab equations-base
-	     html-div html-style html-javascript html-javascript-src
+	     html-div html-style
+             html-javascript html-javascript-src html-video
 	     tmdoc-title tmdoc-flag tmdoc-license key
 	     tmdoc-title* tmdoc-title** tmdoc-copyright
 	     hlink action hyper-link))))
