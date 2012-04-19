@@ -101,12 +101,12 @@
     (if (buffer-save name)
         (begin
           (buffer-pretend-modified name)
-          (set-message `(concat "Could not save '" ,vname "'") "Save file"))
+          (set-message `(concat "Could not save " ,vname) "Save file"))
         (begin
           (if (== (url-suffix name) "ts") (style-clear-cache))
           (autosave-remove name)
           (buffer-notify-recent name)
-          (set-message `(concat "Saved '" ,vname "'") "Save file")
+          (set-message `(concat "Saved " ,vname) "Save file")
           (save-buffer-post name opts)))))
 
 (define (save-buffer-check-faithful name opts)
@@ -121,11 +121,11 @@
 (define (cannot-write? name action)
   (with vname `(verbatim ,(url->string name))
     (cond ((and (not (url-test? name "f")) (not (url-test? name "c")))
-           (with msg `(concat "The file '" ,vname "' cannot be created")
+           (with msg `(concat "The file " ,vname " cannot be created")
              (set-message msg action))
            #t)
           ((and (url-test? name "f") (not (url-test? name "w")))
-           (with msg `(concat "You do not have write access for '" ,vname "'")
+           (with msg `(concat "You do not have write access for " ,vname)
              (set-message msg action))
            #t)
           (else #f))))
@@ -139,7 +139,7 @@
              (lambda (x) (apply save-buffer-as-main (cons x name opts)))
              "Save TeXmacs file" ""))
           ((not (buffer-exists? name))
-           (with msg `(concat "The buffer '" ,vname "' does not exist")
+           (with msg `(concat "The buffer " ,vname " does not exist")
              (set-message msg "Save file")))
           ((not (buffer-modified? name))
            (with msg "No changes need to be saved"
@@ -186,8 +186,8 @@
 (define (save-buffer-as-check-other new-name name opts)
   ;;(display* "save-buffer-as-check-other " new-name ", " name "\n")
   (cond ((buffer-exists? new-name)
-         (with s (string-append "The file '" (url->string new-name)
-                                "' is being edited. Discard edits?")
+         (with s (string-append "The file " (url->string new-name)
+                                " is being edited. Discard edits?")
            (user-confirm s #f
              (lambda (answ)
                (when answ (save-buffer-as-save new-name name opts))))))
@@ -225,8 +225,8 @@
   ;;(display* "export-buffer-export " name ", " to ", " fm "\n")
   (with vto `(verbatim ,(url->string to))
     (if (buffer-export name to fm)
-        (set-message `(concat "Could not save '" ,vto "'") "Export file")
-        (set-message `(concat "Exported to '" ,vto "'") "Export file"))))
+        (set-message `(concat "Could not save " ,vto) "Export file")
+        (set-message `(concat "Exported to " ,vto) "Export file"))))
 
 (define (export-buffer-check-permissions name to fm opts)
   ;;(display* "export-buffer-check-permissions " name ", " to ", " fm "\n")
@@ -300,16 +300,16 @@
       (if (url-scratch? name) (set! aname name))
       (cond ((!= fm "texmacs")
              (when (not (rescue-mode?))
-               (set-message `(concat "Warning: '" ,vname "' not auto-saved")
+               (set-message `(concat "Warning: " ,vname " not auto-saved")
                             "Auto-save file")))
             ((buffer-export name aname "texmacs")
              (when (not (rescue-mode?))
-               (set-message `(concat "Failed to auto-save '" ,vname "'")
+               (set-message `(concat "Failed to auto-save " ,vname)
                             "Auto-save file")))
             (else
              (when (not (rescue-mode?))
                (buffer-pretend-autosaved name)
-               (set-temporary-message `(concat "Auto-saved '" ,vname "'")
+               (set-temporary-message `(concat "Auto-saved " ,vname)
                                       "Auto-save file" 2500)))))))
 
 (tm-define (autosave-all)
@@ -353,24 +353,24 @@
   (with vname `(verbatim ,(url->string name))
     (if (url-exists? name)
         (if (buffer-load name)
-            (set-message `(concat "Could not load '" ,vname "'") "Load file")
+            (set-message `(concat "Could not load " ,vname) "Load file")
             (load-buffer-open name opts))
         (begin
           (buffer-set-body name '(document ""))
           (load-buffer-open name opts)
-          (set-message `(concat "Could not load '" ,vname
-                                "'. Created new document")
+          (set-message `(concat "Could not load " ,vname
+                                ". Created new document")
                        "Load file")))))
 
 (define (load-buffer-check-permissions name opts)
   ;;(display* "load-buffer-check-permissions " name ", " opts "\n")
   (with vname `(verbatim ,(url->string name))
     (cond ((and (not (url-test? name "f")) (not (url-test? name "c")))
-           (with msg `(concat "The file '" ,vname
-                              "' cannot be loaded or created")
+           (with msg `(concat "The file " ,vname
+                              " cannot be loaded or created")
              (set-message msg "Load file")))
           ((and (url-test? name "f") (not (url-test? name "r")))
-           (with msg `(concat "You do not have read access to '" ,vname "'")
+           (with msg `(concat "You do not have read access to " ,vname)
              (set-message msg "Load file")))
           (else (load-buffer-load name opts)))))
 
@@ -453,10 +453,10 @@
   ;;(display* "import-buffer-check-permissions " name ", " fm "\n")
   (with vname `(verbatim ,(url->string name))
     (cond ((not (url-test? name "f"))
-           (with msg `(concat "The file '" ,vname "' does not exist")
+           (with msg `(concat "The file " ,vname " does not exist")
              (set-message msg "Import file")))
           ((not (url-test? name "r"))
-           (with msg `(concat "You do not have read access to '" ,vname "'")
+           (with msg `(concat "You do not have read access to " ,vname)
              (set-message msg "Import file")))
           (else (import-buffer-import name fm opts)))))
 
