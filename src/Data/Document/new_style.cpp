@@ -11,6 +11,7 @@
 
 #include "new_style.hpp"
 #include "file.hpp"
+#include "data_cache.hpp"
 #include "convert.hpp"
 #include "../../Typeset/env.hpp"
 
@@ -83,9 +84,11 @@ cache_file_name (tree t) {
 
 void
 style_invalidate_cache () {
+  if (sd != NULL) {
+    tm_delete<style_data_rep> (sd);
+    sd= NULL;
+  }
   init_style_data ();
-  sd->style_cache=
-    hashmap<tree,hashmap<string,tree> > (hashmap<string,tree> (UNINIT));
   remove ("$TEXMACS_HOME_PATH/system/cache" * url_wildcard ("__*"));
 }
 

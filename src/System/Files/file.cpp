@@ -159,7 +159,7 @@ save_string (url u, string s, bool fatal) {
     if (!err && N(s) <= 10000)
       if (file_flag || doc_flag)
 	cache_set (cache_type, name, s);
-    (bool) is_up_to_date (url_parent (r), true);
+    out_of_date (url_parent (r));
     // End caching
   }
 
@@ -186,9 +186,10 @@ get_attributes (url name, struct stat* buf,
       is_cached ("stat_cache.scm", name_s) &&
       is_up_to_date (url_parent (name)))
     {
-      string r= cache_get ("stat_cache.scm", name_s) -> label;
+      tree r= cache_get ("stat_cache.scm", name_s);
       if (r == "#f") return true;
-      buf->st_mode= ((unsigned int) as_int (r));
+      buf->st_mode = ((unsigned int) as_int (r[0]->label));
+      buf->st_mtime= ((unsigned int) as_int (r[1]->label));
       return false;
     }
   // End caching
@@ -214,8 +215,11 @@ get_attributes (url name, struct stat* buf,
 	cache_set ("stat_cache.scm", name_s, "#f");
     }
     else {
-      if (do_cache_stat (name_s))
-	cache_set ("stat_cache.scm", name_s, as_string ((int) buf->st_mode));
+      if (do_cache_stat (name_s)) {
+        string s1= as_string ((int) buf->st_mode);
+        string s2= as_string ((int) buf->st_mtime);
+	cache_set ("stat_cache.scm", name_s, tree (TUPLE, s1, s2));
+      }
     }
   }
   // End caching
@@ -337,6 +341,8 @@ last_modified (url u, bool cache_flag) {
   struct stat u_stat;
   if (get_attributes (u, &u_stat, true, cache_flag))
     return - (int) (((unsigned int) (-1)) >> 1);
+  if (suffix (u) == "ts")
+    cout << u << ", " << cache_flag << " -> " << u_stat.st_mtime << "\n";
   return u_stat.st_mtime;
 }
 

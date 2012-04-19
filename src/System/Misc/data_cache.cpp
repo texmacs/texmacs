@@ -84,6 +84,15 @@ is_recursively_up_to_date (url dir) {
   return true;
 }
 
+void
+out_of_date (url dir) {
+  //cout << "out of date: " << dir << "\n";
+  string name_dir= concretize (dir);
+  int l= last_modified (dir, false);
+  cache_set ("validate_cache.scm", name_dir, as_string (l));
+  cache_valid (name_dir)= false;
+}
+
 /******************************************************************************
 * Which files should be stored in the cache?
 ******************************************************************************/
