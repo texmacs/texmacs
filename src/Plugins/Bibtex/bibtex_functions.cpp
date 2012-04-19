@@ -863,6 +863,7 @@ bib_set_fields (tree& t, array<tree> latex, int& ind) {
 
 static array<tree>
 bib_latex_array (tree latex) {
+  if (is_func(latex, WITH)) latex= latex[N(latex) - 1];
   int i= 0;
   array<tree> res;
   while (i < N(latex) && latex[i] == compound ("nextbib", "")) {
