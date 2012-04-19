@@ -103,6 +103,7 @@
           (buffer-pretend-modified name)
           (set-message `(concat "Could not save '" ,vname "'") "Save file"))
         (begin
+          (if (== (url-suffix name) "ts") (style-clear-cache))
           (autosave-remove name)
           (buffer-notify-recent name)
           (set-message `(concat "Saved '" ,vname "'") "Save file")
