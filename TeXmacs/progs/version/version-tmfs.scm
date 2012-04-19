@@ -60,6 +60,10 @@
   (with s (url->tmfs-string name)
     (revert-buffer (string-append "tmfs://history/" s))))
 
+(tmfs-title-handler (history name doc)
+  (with u (tmfs-string->url name)
+    (string-append (url->string (url-tail u)) " - History")))
+
 (tmfs-load-handler (history name)
   (with u (tmfs-string->url name)
     (with h (version-history u)
@@ -96,6 +100,11 @@
 (tmfs-format-handler (revision name)
   (with u (tmfs-string->url (tmfs-cdr name))
     (url-format u)))
+
+(tmfs-title-handler (revision name doc)
+  (let* ((rev (tmfs-car name))
+         (u (tmfs-string->url (tmfs-cdr name))))
+    (string-append (url->string (url-tail u)) " - Revision " rev)))
 
 (tm-define (version-revision name rev) "")
 
