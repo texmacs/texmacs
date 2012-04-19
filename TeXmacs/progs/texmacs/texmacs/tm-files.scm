@@ -16,70 +16,10 @@
         (texmacs texmacs tm-print)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Saving
+;; Saving buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define current-save-target (url-none))
-
-(define (secure-save-buffer file fm)
-  (if (not (url-exists? file))
-      (texmacs-save-buffer file fm)
-      (user-confirm
-	  "File already exists. Overwrite existing file?" #f
-	(lambda (answ)
-	  (when answ
-	    (texmacs-save-buffer file fm))))))
-
-(tm-define (xsave-buffer . l)
-  (if (and (pair? l) (url? (car l)))
-      (set! current-save-target (car l)))
-  (cond ((= (length l) 0) (save-buffer (current-buffer)))
-	((url-scratch? (car l))
-	 (choose-file save-buffer "Save TeXmacs file" "texmacs"))
-	((= (length l) 1) (texmacs-save-buffer (car l) "generic"))
-	(else (secure-save-buffer (car l) (cadr l)))))
-
-(tm-define (xexport-buffer to)
-  ;; Temporary fix for saving to postscript or pdf
-  (if (string? to) (set! to (url-relative (buffer-master) to)))
-  (if (url? to) (set! current-save-target to))
-  (if (in? (url-suffix to) '("ps" "pdf"))
-      (print-to-file to)
-      (texmacs-save-buffer to "generic")))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Loading
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (load-buffer-sub file fm where)
-  (let* ((suffix (most-recent-suffix file))
-         (question (if (== suffix "#")
-                       "Rescue file from crash?"
-                       "Load more recent autosave file?")))
-    (if (and (!= fm "help")
-	     (not (url-rooted-web? file))
-	     (!= suffix ""))
-	(user-confirm question #t
-	  (lambda (answ)
-	    (if answ
-		(texmacs-load-buffer (url-glue file suffix) fm where #t)
-		(texmacs-load-buffer file fm where #f))))
-	(begin
-	  (texmacs-load-buffer file fm where #f)))))
-
-(tm-define (xload-buffer . l)
-  (with file (url-append "$TEXMACS_FILE_PATH" (car l))
-    (cond ((= (length l) 1)
-	   (load-buffer-sub file "generic" 0))
-	  ((and (= (length l) 2) (string? (cadr l)))
-	   (load-buffer-sub file (cadr l) 0))
-	  ((and (= (length l) 2) (integer? (cadr l)))
-	   (load-buffer-sub file "generic" (cadr l)))
-	  (else (load-buffer-sub file (cadr l) (caddr l))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Saving buffers
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (buffer-notify-recent name)
   (learn-interactive 'recent-buffer
@@ -313,7 +253,10 @@
                                       "Auto-save file" 2500)))))))
 
 (tm-define (autosave-all)
-  (for-each autosave-buffer (buffer-list))
+  (for-each autosave-buffer (buffer-list)))
+
+(tm-define (autosave-now)
+  (autosave-all)
   (autosave-delayed))
 
 (tm-define (autosave-delayed)
@@ -323,9 +266,7 @@
     (if (> len 0)
 	(delayed
 	  (:pause len)
-	  ;;(auto-save)
-	  (autosave-all)
-          ))))
+	  (autosave-now)))))
 
 (define (notify-autosave var val)
   (if (has-view?) ; delayed-autosave would crash at initialization time
@@ -421,7 +362,7 @@
          (load-buffer-sub (car l) (cadr l) (caddr l)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Reverting a buffer
+;; Reverting buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (revert-buffer . l)

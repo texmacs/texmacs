@@ -149,7 +149,7 @@ tm_failure (const char* msg) {
          << "TeXmacs] Dumping report below\n\n"
          << buf << "\n";
 
-  auto_save ();
+  call ("autosave-all");
   close_all_pipes ();
   call ("quit-TeXmacs-scheme");
   clear_pending_commands ();

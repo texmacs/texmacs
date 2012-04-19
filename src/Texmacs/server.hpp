@@ -217,6 +217,5 @@ void window_focus (int id);
 tree load_tree (url name, string fm);
 void load_buffer (url name, string fm, int where= 0, bool asf= false);
 void save_buffer (url name, string fm);
-void auto_save ();
 
 #endif // defined SERVER_H

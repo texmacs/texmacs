@@ -215,34 +215,3 @@ save_buffer (url u, string fm) {
   }
   else set_message ("Error: unknown format", action);
 }
-
-void
-auto_save () {
-  int i, n= N(bufs);
-  for (i=0; i<n; i++) {
-    tm_buffer buf= bufs[i];
-    if ((buf->needs_to_be_autosaved () && (!buf->buf->read_only))) {
-      url name= buf->buf->name;
-      tree vname= verbatim (as_string (name));
-      if (!is_scratch (name))
-        name= glue (buf->buf->name, rescue_mode? "#": "~");
-      if (N(buf->vws)!=0) {
-        cout << "Autosave " << name << "\n";
-        tree doc= make_document (buf->vws[0]);
-        bool err= save_string (name, tree_to_texmacs (doc));
-        if (!rescue_mode) {
-          if (!err)
-            call ("set-temporary-message",
-                  "saved " * as_string (name), "save TeXmacs file", 2500);
-          else
-            set_message (concat ("Error: ", vname, " did not open"),
-                         "save TeXmacs file");
-        }
-      }
-      if (!rescue_mode)
-        for (int j=0; j<N(buf->vws); j++)
-          buf->vws[j]->ed->notify_save (false);
-    }
-  }
-  call ("autosave-delayed");
-}
