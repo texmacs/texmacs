@@ -341,8 +341,6 @@ last_modified (url u, bool cache_flag) {
   struct stat u_stat;
   if (get_attributes (u, &u_stat, true, cache_flag))
     return - (int) (((unsigned int) (-1)) >> 1);
-  if (suffix (u) == "ts")
-    cout << u << ", " << cache_flag << " -> " << u_stat.st_mtime << "\n";
   return u_stat.st_mtime;
 }
 
