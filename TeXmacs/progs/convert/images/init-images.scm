@@ -55,8 +55,20 @@
   (:shell "inkscape" "-z" "-f" from "-P" to))
 
 (converter svg-file png-file
-   (:require (url-exists-in-path? "rsvg"))
-   (:shell "rsvg" "-f png" from to))
+  (:require (url-exists-in-path? "rsvg"))
+  (:shell "rsvg" "-f png" from to))
+
+(define-format geogebra
+  (:name "Geogebra")
+  (:suffix "ggb"))
+
+(converter geogebra-file postscript-file
+  (:require (url-exists-in-path? "geogebra"))
+  (:shell "geogebra" "--export=" to "--dpi=600" from))
+
+(converter geogebra-file svg-file
+  (:require (url-exists-in-path? "geogebra"))
+  (:shell "geogebra" "--export=" to "--dpi=600" from))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Bitmap image formats
@@ -117,6 +129,10 @@
 (converter png-file pnm-file
   (:require (url-exists-in-path? "convert"))
   (:shell "convert" from to))
+
+(converter geogebra-file png-file
+  (:require (url-exists-in-path? "geogebra"))
+  (:shell "geogebra" "--export=" to "--dpi=600" from))
 
 (define-format pnm
   (:name "Pnm")

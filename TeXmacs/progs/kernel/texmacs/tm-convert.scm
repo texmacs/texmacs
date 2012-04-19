@@ -122,7 +122,8 @@
 	(string-append (cond ((== x 'from) (url-concretize from))
 			     ((== x 'to) (url-concretize to))
 			     (else x))
-		       " "
+		       (cond ((and (string? x) (string-ends? x "=")) "")
+                             (else " "))
 		       (converter-shell-cmd (cdr l) from to)))))
 
 (define (converter-shell l from to-format opts)
@@ -423,3 +424,25 @@
 	  (cond ((not fm) "verbatim")
 		((ahash-ref format-must-recognize fm) "verbatim")
 		(else fm))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Viewers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (define viewer-table (make-ahash-table))
+
+;; (define-public (suffix->viewer suf)
+;;   (ahash-ref viewer-table suf))
+
+;; (define-public (save-viewers)
+;;   "Save viewers from disk"
+;;   (with u "$TEXMACS_HOME_PATH/system/viewers.scm"
+;;     (save-object u (ahash-table->list viewer-table))))
+
+;; (define (retrieve-viewers)
+;;   "Retrieve viewers from disk"
+;;   (with u "$TEXMACS_HOME_PATH/system/viewers.scm"
+;;     (when (url-exists? u)
+;;       (set! viewer-table (list->ahash-table (load-object u))))))
+
+;; (retrieve-viewers)
