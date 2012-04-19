@@ -52,9 +52,8 @@ cache_get (string buffer, tree key) {
 }
 
 bool
-is_up_to_date (url dir, bool reset) {
+is_up_to_date (url dir) {
   string name_dir= concretize (dir);
-  if (reset) cache_valid->reset (name_dir);
   if (cache_valid->contains (name_dir)) return cache_valid [name_dir];
   int l= last_modified (dir, false);
   if (is_cached ("validate_cache.scm", name_dir)) {
@@ -85,7 +84,7 @@ is_recursively_up_to_date (url dir) {
 }
 
 void
-out_of_date (url dir) {
+declare_out_of_date (url dir) {
   //cout << "out of date: " << dir << "\n";
   string name_dir= concretize (dir);
   int l= last_modified (dir, false);

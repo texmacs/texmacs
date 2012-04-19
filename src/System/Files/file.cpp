@@ -159,7 +159,7 @@ save_string (url u, string s, bool fatal) {
     if (!err && N(s) <= 10000)
       if (file_flag || doc_flag)
 	cache_set (cache_type, name, s);
-    out_of_date (url_parent (r));
+    declare_out_of_date (url_parent (r));
     // End caching
   }
 
