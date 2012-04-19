@@ -96,11 +96,14 @@
                  (save-buffer-check-faithful name opts)))))
           (else (save-buffer-check-faithful name opts)))))
 
-(tm-define (save-buffer-main . args)
+(define (save-buffer-main . args)
   ;;(display* "save-buffer-main\n")
   (if (or (null? args) (not (url? (car args))))
       (save-buffer-check-permissions (current-buffer) args)
       (save-buffer-check-permissions (car args) (cdr args))))
+
+(tm-define (save-buffer . l)
+  (apply save-buffer-main l))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Saving buffers under a new name
@@ -137,7 +140,7 @@
   ;;(display* "save-buffer-as-check-permissions " new-name ", " name "\n")
   (cond ((cannot-write? new-name "Save file")
          (noop))
-        ((url-test? new-name "f")
+        ((and (url-test? new-name "f") (nin? :overwrite opts))
          (user-confirm "File already exists. Really overwrite?" #f
            (lambda (answ)
              (when answ (save-buffer-as-check-other new-name name opts)))))
@@ -149,13 +152,11 @@
       (save-buffer-as-check-permissions new-name (current-buffer) args)
       (save-buffer-as-check-permissions new-name (car args) (cdr args))))
 
-(tm-define (save-buffer . l)
-  (if (null? l) (save-buffer-main)
-      (begin
-        (if (and (pair? l) (url? (car l)))
-            (set! current-save-target (car l)))
-        (cond ((= (length l) 1) (save-buffer-as-main (car l)))
-              (else (secure-save-buffer (car l) (cadr l)))))))
+(tm-define (save-buffer-as new-name)
+  (:argument name texmacs-file "Save as")
+  (:default  name (propose-name-buffer))
+  (with opts (if (x-gui?) (list) (list :overwrite))
+    (apply save-buffer-as-main (cons new-name opts))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Exporting buffers
@@ -188,7 +189,8 @@
   (export-buffer-main (current-buffer) to (url-format to) (list :overwrite)))
 
 (tm-define (buffer-exporter fm)
-  (lambda (s) (export-buffer-main (current-buffer) s fm (list))))
+  (with opts (if (x-gui?) (list) (list :overwrite))
+    (lambda (s) (export-buffer-main (current-buffer) s fm opts))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Autosave
@@ -435,8 +437,6 @@
 (tm-property (choose-file fun text type)
   (:interactive #t))
 
-(tm-define (buffer-loader fm) (lambda (s) (load-buffer s fm)))
-(tm-define (buffer-saver fm) (lambda (s) (save-buffer s fm)))
 (tm-define (load-in-new-window s) (load-buffer s 1))
 (tm-define (load-browse-buffer s) (load-buffer s))
 

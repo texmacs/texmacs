@@ -185,7 +185,7 @@
 	(load-buffer remote-url)
 	(delayed
 	  (:pause 10)
-	  (save-buffer local-url "generic")))
+	  (save-buffer-as local-url)))
       (with-server (tmfs-server)
 	(and-let* ((name (url->name remote-url))
 		   (u (remote-request `(tmfs-revision ,name main)))

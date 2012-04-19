@@ -148,8 +148,8 @@
 
 (tm-define (version-interactive-update name)
   (:interactive #t)
-  (save-buffer-main name :update))
+  (save-buffer name :update))
 
 (tm-define (version-interactive-commit name)
   (:interactive #t)
-  (save-buffer-main name :commit))
+  (save-buffer name :commit))
