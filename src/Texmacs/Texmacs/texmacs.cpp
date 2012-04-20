@@ -326,13 +326,17 @@ TeXmacs_main (int argc, char** argv) {
   // (see as_double() in string.cpp)
   setlocale(LC_NUMERIC, "C");    
     
+  string where= "";
   for (i=1; i<argc; i++) {
     if (argv[i] == NULL) break;
     string s= argv[i];
     if ((N(s)>=2) && (s(0,2)=="--")) s= s (1, N(s));
     if ((s[0] != '-') && (s[0] != '+')) {
       if (DEBUG_STD) cout << "TeXmacs] Loading " << s << "...\n";
-      load_buffer (url_system (s), "generic", 1);
+      string b= scm_quote (as_string (url_system (s)));
+      string cmd= "(load-buffer " * b * " " * where * ")";
+      where= " :new-window";
+      exec_delayed (scheme_cmd (cmd));
     }
     if ((s == "-b") || (s == "-initialize-buffer") ||
 	(s == "-c") || (s == "-convert") ||
@@ -345,12 +349,18 @@ TeXmacs_main (int argc, char** argv) {
   if (install_status == 1) {
     if (DEBUG_STD) cout << "TeXmacs] Loading welcome message...\n";
     url u= "tmfs://help/plain/tm/doc/about/welcome/first.en.tm";
-    load_buffer (u, "generic", 1);
+    string b= scm_quote (as_string (u));
+    string cmd= "(load-buffer " * b * " " * where * ")";
+    where= " :new-window";
+    exec_delayed (scheme_cmd (cmd));
   }
   else if (install_status == 2) {
     if (DEBUG_STD) cout << "TeXmacs] Loading upgrade message...\n";
     url u= "tmfs://help/plain/tm/doc/about/changes/changes-recent.en.tm";
-    load_buffer (u, "generic", 1);
+    string b= scm_quote (as_string (u));
+    string cmd= "(load-buffer " * b * " " * where * ")";
+    where= " :new-window";
+    exec_delayed (scheme_cmd (cmd));
   }
   if (number_buffers () == 0) {
     if (DEBUG_STD) cout << "TeXmacs] Creating 'no name' buffer...\n";
