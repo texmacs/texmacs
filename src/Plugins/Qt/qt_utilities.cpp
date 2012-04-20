@@ -29,6 +29,7 @@
 #include "dictionary.hpp"
 #include "converter.hpp"
 #include "language.hpp"
+#include "scheme.hpp"
 
 #include "qt_gui.hpp"    // gui_maximal_extents()
 
@@ -327,9 +328,17 @@ qt_image_size (url image, int& w, int& h) {
   //cout <<  concretize (image) << LF;
   QImage im= QImage (utf8_to_qstring (concretize (image)));
   if (im.isNull ()) {
-    cerr << "TeXmacs] cannot read image file '" << image << "'" 
-	 << " in qt_image_size" << LF;
-    w= 35; h= 35;
+    if (as_bool (call ("file-converter-exists?", image, "x.png"))) {
+      url temp= url_temp (".png");
+      call ("file-convert", object (image), object (temp));
+      qt_image_size (temp, w, h);
+      remove (temp);
+    }
+    else {
+      cerr << "TeXmacs] cannot read image file '" << image << "'" 
+           << " in qt_image_size" << LF;
+      w= 35; h= 35;
+    }
   }
   else {
     w= im.width ();

@@ -426,6 +426,21 @@
 		(else fm))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Utilities for file conversions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public (file-format u)
+  (string-append (format-from-suffix (url-suffix u)) "-file"))
+
+(define-public (file-converter-exists? what dest)
+  (nnot (converter-search (file-format what) (file-format dest))))
+
+(define-public (file-convert what dest . options)
+  (let* ((from (file-format what))
+         (to   (file-format dest)))
+    (apply convert (cons* what from to (acons 'dest dest options)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Viewers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

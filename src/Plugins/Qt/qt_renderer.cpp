@@ -15,6 +15,7 @@
 #include "qt_utilities.hpp"
 #include "file.hpp"
 #include "image_files.hpp"
+#include "scheme.hpp"
 
 #include <QObject>
 #include <QWidget>
@@ -299,9 +300,9 @@ qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
          << as_string (cx1) << as_string (cy1)
          << as_string (cx2) << as_string (cy2) << "qt-image" ;
   cache_image_element ci = get_image_cache(lookup);
-  if (!is_nil(ci)) {
+  if (!is_nil(ci))
     pm= static_cast<QImage*> (ci->ptr);
-  } else {
+  else {
     // rendering
     bool needs_crop= false;
     if (qt_supports (u)) {
@@ -365,9 +366,22 @@ qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
       remove (temp);
     }
     if (pm == NULL || pm->isNull ()) {
-      cout << "TeXmacs] warning: cannot render " << concretize (u) << "\n";
-      if (pm != NULL) delete pm;
-      return;
+      if (pm != NULL) {
+        delete pm;
+        pm= NULL;
+      }
+      if (as_bool (call ("file-converter-exists?", u, "x.png"))) {
+        url temp= url_temp (".png");
+        call ("file-convert", object (u), object (temp));
+        needs_crop= true;
+        pm= new QImage (to_qstring (as_string (temp)));
+        remove (temp);
+      }
+      if (pm == NULL || pm->isNull ()) {
+        if (pm != NULL) delete pm;
+        cout << "TeXmacs] warning: cannot render " << concretize (u) << "\n";
+        return;
+      }
     }
 
     if(needs_crop) {
