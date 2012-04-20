@@ -137,9 +137,8 @@ void create_buffer (url name, tree doc);
 tm_buffer search_buffer (url name);
 tm_buffer search_buffer_insist (url name);
 tm_view search_view (url name);
+tm_window search_window (int id);
 url get_name_view (tm_view vw);
-void attach_view (tm_window win, tm_view vw);
-void detach_view (tm_view vw);
 void new_buffer_in_this_window (url name, tree t);
 tm_window new_window (bool map_flag= true, tree geom= "");
 
@@ -185,6 +184,8 @@ url  get_new_view (url name);
 url  get_recent_view (url name);
 url  get_passive_view (url name);
 void delete_view (url u);
+void attach_view (int id, url u);
+void detach_view (url u);
 
 url  create_buffer ();
 bool switch_to_buffer (path p);

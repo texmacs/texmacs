@@ -191,11 +191,14 @@ delete_view (url u) {
 }
 
 /******************************************************************************
-* Other low level routines on views
+* Attaching and detaching views
 ******************************************************************************/
 
 void
-attach_view (tm_window win, tm_view vw) {
+attach_view (int id, url u) {
+  tm_window win= search_window (id);
+  tm_view   vw = search_view (u);
+  if (win == NULL || vw == NULL) return;
   // cout << "Attach view " << vw->buf->buf->name << "\n";
   vw->win= win;
   widget wid= win->wid;
@@ -209,10 +212,12 @@ attach_view (tm_window win, tm_view vw) {
 }
 
 void
-detach_view (tm_view vw) {
-  // cout << "Detach view " << vw->buf->buf->name << "\n";
+detach_view (url u) {
+  tm_view vw = search_view (u);
+  if (vw == NULL) return;
   tm_window win= vw->win;
   if (win == NULL) return;
+  // cout << "Detach view " << vw->buf->buf->name << "\n";
   vw->win= NULL;
   widget wid= win->wid;
   ASSERT (is_attached (wid), "widget should be attached");
@@ -252,8 +257,8 @@ kill_buffer (url name) {
     if (old_vw->win != NULL) {
       tm_window win = old_vw->win;
       tm_view new_vw= search_view (get_passive_view (new_buf->buf->name));
-      detach_view (old_vw);
-      attach_view (win, new_vw);
+      detach_view (get_name_view (old_vw));
+      attach_view (win->id, get_name_view (new_vw));
       if (get_view () == old_vw) set_view (new_vw);
     }
   }
@@ -272,8 +277,8 @@ switch_to_buffer (url name) {
   tm_view   old_vw = get_view ();
   tm_view   new_vw = search_view (get_passive_view (name));
   if (new_vw == NULL) return;
-  detach_view (old_vw);
-  attach_view (win, new_vw);
+  detach_view (get_name_view (old_vw));
+  attach_view (win->id, get_name_view (new_vw));
   set_view (new_vw);
   new_vw->buf->buf->last_visit= texmacs_time ();
   tm_window nwin= new_vw->win;

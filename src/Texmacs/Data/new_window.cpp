@@ -22,6 +22,8 @@
 * Low level window routines
 ******************************************************************************/
 
+static hashmap<int,tm_window> tm_window_table (NULL);
+
 class kill_window_command_rep: public command_rep {
 public:
   inline kill_window_command_rep () {}
@@ -40,6 +42,7 @@ new_window (bool map_flag, tree geom) {
   if (get_preference ("status bar") == "on") mask += 32;
   command quit= tm_new<kill_window_command_rep> ();
   tm_window win= tm_new<tm_window_rep> (texmacs_widget (mask, quit), geom);
+  tm_window_table (win->id)= win;
   if (map_flag) win->map ();
   return win;
 }
@@ -52,7 +55,7 @@ delete_view_from_window (tm_window win) {
     for (j=0; j<N(buf->vws); j++) {
       tm_view vw= buf->vws[j];
       if (vw->win == win) {
-	detach_view (vw);
+	detach_view (get_name_view (vw));
 	delete_view (get_name_view (vw));
 	return true;
       }
@@ -65,6 +68,7 @@ void
 delete_window (tm_window win) {
   while (delete_view_from_window (win)) {}
   win->unmap ();
+  tm_window_table->reset (win->id);
   destroy_window_widget (win->win);
   tm_delete (win);
 }
@@ -92,7 +96,7 @@ new_buffer_in_new_window (url name, tree doc, tree geom) {
     create_buffer (name, doc);
   tm_window win= new_window (true, geom);
   tm_view   vw = search_view (get_passive_view (name));
-  attach_view (win, vw);
+  attach_view (win->id, get_name_view (vw));
   set_view (vw);
   vw->buf->buf->last_visit= texmacs_time ();
 }
@@ -112,7 +116,7 @@ void
 clone_window () {
   tm_window win= new_window ();
   tm_view   vw = search_view (get_passive_view (get_this_buffer ()));
-  attach_view (win, vw);
+  attach_view (win->id, get_name_view (vw));
   set_view (vw);
   vw->buf->buf->last_visit= texmacs_time ();
 }
@@ -184,6 +188,11 @@ window_current () {
   return win->id;
 }
 
+tm_window
+search_window (int id) {
+  return tm_window_table[id];
+}
+
 path
 windows_list () {
   return the_windows;
@@ -227,8 +236,8 @@ window_set_buffer (int id, url name) {
   tm_window win   = old_vw->win;
   tm_view   new_vw= search_view (get_passive_view (name));
   if (new_vw == NULL) return;
-  detach_view (old_vw);
-  attach_view (win, new_vw);
+  detach_view (get_name_view (old_vw));
+  attach_view (win->id, get_name_view (new_vw));
 }
 
 void
