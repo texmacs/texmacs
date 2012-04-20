@@ -53,7 +53,7 @@ delete_view_from_window (tm_window win) {
       tm_view vw= buf->vws[j];
       if (vw->win == win) {
 	detach_view (vw);
-	delete_view (vw);
+	delete_view (get_name_view (vw));
 	return true;
       }
     }

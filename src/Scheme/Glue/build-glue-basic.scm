@@ -489,6 +489,7 @@
   (buffer-new-view get_new_view (url url))
   (buffer-passive-view get_passive_view (url url))
   (buffer-recent-view get_recent_view (url url))
+  (view-delete delete_view (void url))
 
   (new-buffer create_buffer (url))
   (switch-to-buffer-path switch_to_buffer (bool path))

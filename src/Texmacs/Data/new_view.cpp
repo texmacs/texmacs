@@ -168,11 +168,13 @@ get_recent_view (url name) {
 }
 
 /******************************************************************************
-* Other low level routines on views
+* Destroying a view
 ******************************************************************************/
 
 void
-delete_view (tm_view vw) {
+delete_view (url u) {
+  tm_view vw= search_view (u);
+  if (vw == NULL) return;
   tm_buffer buf= vw->buf;
   int i, j, n= N(buf->vws);
   for (i=0; i<n; i++)
@@ -187,6 +189,10 @@ delete_view (tm_view vw) {
   // FIXME: causes very annoying segfault;
   // recently introduced during reorganization
 }
+
+/******************************************************************************
+* Other low level routines on views
+******************************************************************************/
 
 void
 attach_view (tm_window win, tm_view vw) {
@@ -346,5 +352,5 @@ set_data (array<tm_view> vws, new_data data) {
 void
 delete_views (array<tm_view> vws) {
   for (int i=0; i<N(vws); i++)
-    delete_view (vws[i]);
+    delete_view (get_name_view (vws[i]));
 }
