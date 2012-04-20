@@ -37,9 +37,9 @@
     <big|int>f<around*|(|x|)> \<mathd\>x
   </equation*>
 
-  work. Note that the differential <math|\<mathd\>> is obtained by <key|d>
-  <key|tab> <key|Tab>; there should be no <key|*> before it, but you may
-  insert <key|Space>. Definite integrals work, too, as well as sums like
+  work. Note that the differential <math|\<mathd\>> is obtained by
+  <shortcut|\<mathd\>>; there should be no <key|*> before it, but you may
+  insert <key|space>. Definite integrals work, too, as well as sums like
 
   <\equation*>
     <big|sum><rsub|n=0><rsup|10>f<around*|(|n|)>
@@ -57,20 +57,20 @@
 
   You can use <menu|Insert> <menu|Fold> <menu|Executable> <menu|Reduce>. This
   produces a two-state fold in which you can write a <name|Reduce> statement.
-  When you press <key|Enter>, <name|Reduce> is called to evaluate this
+  When you press <key|return>, <name|Reduce> is called to evaluate this
   statement, and it is replaced by the resulting formula. Later, going to
-  this formula and pressing <key|Enter> again, you switch back to the source
+  this formula and pressing <key|return> again, you switch back to the source
   statement. You can edit it and execute again.
 
-  You can also do <menu|Edit> <menu|Preferences> <menu|Scripts>
-  <menu|Reduce>. Then you can write some formula, like
+  You can also do <menu|Edit|Preferences|Scripts|Reduce>. Then you can write
+  some formula, like
 
   <\equation*>
     y=<big|int>sin<around*|(|x|)> \<mathd\>x
   </equation*>
 
   Then you select a part of this formula, e.g., its right-hand side, and
-  press <key|Ctrl>-<key|Enter>. The selected part is replaced by the result
+  press <shortcut|(script-eval)>. The selected part is replaced by the result
   of its evaluation by <name|Reduce>, and the formula becomes
 
   <\equation*>
