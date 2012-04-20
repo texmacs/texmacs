@@ -21,13 +21,6 @@
 * Loading files
 ******************************************************************************/
 
-static void
-notify_recent_buffer (string name) {
-  if (ends (name, "~") || ends (name, "#")) name= name (0, N(name) - 1);
-  object a= call ("assoc-set!", null_object (), object ("0"), object (name));
-  call ("learn-interactive", object ("recent-buffer"), a);
-}
-
 tree attach_subformat (tree t, url u, string fm);
 
 tree
@@ -51,62 +44,11 @@ load_tree (url u, string fm) {
   return attach_subformat (t, u, fm);
 }
 
-void
-load_buffer (url u, string fm, int where, bool autosave_flag) {
-  // cout << "Load= " << u << ", " << fm << "\n";
-  string name= as_string (tail (u));
-  tree vname= verbatim (name);
-  string action= "load " * fm * " file";
-  if (fm == "generic")
-    action= "load " * suffix_to_format (suffix (u)) * " file";
-  
-  url v= u;
-  u= resolve (u);
-  if (is_none (u)) {
-    if (fm == "generic" || fm == "texmacs")
-      if (is_name (v) || (is_rooted_name (v) && is_rooted (v, "default"))) {
-        tree doc (DOCUMENT,
-                  compound ("style", "generic"),
-                  compound ("body", tree (DOCUMENT, "")));
-        switch (where) {
-          case 0: new_buffer_in_this_window (v, doc); break;
-          case 1: new_buffer_in_new_window (v, doc); break;
-          case 2: create_buffer (v, doc); break;
-          default: FAILED ("bad value for 'where'");
-        }
-      }
-    if (number_buffers () != 0)
-      set_message (concat ("Error: file ", vname, " not found"), action);
-    return;
-  }
-  
-  v= u;
-  if (autosave_flag) v= unglue (v, 1);
-  tm_buffer buf= search_buffer (v);
-  tree doc= (is_nil (buf)? load_tree (u, fm): tree (DOCUMENT));
-  if (doc == "error") return;
-  switch (where) {
-    case 0: new_buffer_in_this_window (v, doc); break;
-    case 1: new_buffer_in_new_window (v, doc); break;
-    case 2: create_buffer (v, doc); break;
-    default: FAILED ("bad value for 'where'");
-  }
-  buf= search_buffer (v);
-  if (!is_nil (buf)) {
-    set_last_save_buffer (v, last_modified (v));
-    if (autosave_flag && N(buf->vws) == 1 && buf->vws[0]->ed != NULL)
-      buf->vws[0]->ed->require_save();
-    buf->buf->fm= fm;
-  }
-  if (fm == "generic" || fm == "texmacs")
-    notify_recent_buffer (as_string (u));
-}
-
 tm_buffer
 load_passive_buffer (url u) {
   tm_buffer buf= search_buffer (u);
   if (!is_nil (buf)) return buf;
-  load_buffer (u, "texmacs", 2, false);
+  buffer_load (u);
   return search_buffer (u);
 }
 

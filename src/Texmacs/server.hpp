@@ -214,6 +214,5 @@ void window_focus (int id);
 
 /* File management */
 tree load_tree (url name, string fm);
-void load_buffer (url name, string fm, int where= 0, bool asf= false);
 
 #endif // defined SERVER_H

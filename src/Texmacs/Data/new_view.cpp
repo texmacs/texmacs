@@ -162,12 +162,8 @@ kill_buffer (url name) {
 
 void
 switch_to_buffer (url name) {
-  tm_buffer buf= search_buffer (name);
-  if (is_nil (buf)) {
-    load_passive_buffer (name);
-    buf= search_buffer (name);
-    if (is_nil (buf)) return;
-  }
+  tm_buffer buf= load_passive_buffer (name);
+  if (is_nil (buf)) return;
   
   // cout << "Switching to buffer " << buf->buf->name << "\n";
   tm_window win    = get_window ();
