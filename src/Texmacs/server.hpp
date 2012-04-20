@@ -136,10 +136,9 @@ inline bool in_rescue_mode () { return rescue_mode; }
 void create_buffer (url name, tree doc);
 tm_buffer search_buffer (url name);
 tm_buffer search_buffer_insist (url name);
+tm_view search_view (url name);
 void attach_view (tm_window win, tm_view vw);
 void detach_view (tm_view vw);
-tm_view get_recent_view (url name);
-tm_view get_passive_view (tm_buffer buf);
 void delete_view (tm_view vw);
 void new_buffer_in_this_window (url name, tree t);
 tm_window new_window (bool map_flag= true, tree geom= "");
@@ -181,6 +180,8 @@ bool export_tree (tree doc, url u, string fm);
 url  get_this_view ();
 url  get_window_view (int id);
 url  get_buffer_views (url name);
+url  get_recent_view (url name);
+url  get_passive_view (url name);
 
 url  create_buffer ();
 bool switch_to_buffer (path p);
