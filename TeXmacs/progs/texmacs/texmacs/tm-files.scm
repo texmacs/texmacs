@@ -16,6 +16,35 @@
         (texmacs texmacs tm-print)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Miscellaneous subroutines
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (propose-name-buffer)
+  (with name (url->string (current-buffer))
+    (cond ((not (url-scratch? name)) name)
+	  ((os-win32?) "")
+	  (else (string-append (var-eval-system "pwd") "/")))))
+
+(tm-property (choose-file fun text type)
+  (:interactive #t))
+
+(tm-define (open-auxiliary aux body . opt-master)
+  (let* ((name (aux-name aux))
+         (master (if (null? opt-master) (buffer-master) (car opt-master))))
+    (aux-set-document aux body)
+    (aux-set-master aux master)
+    (switch-to-buffer name)))
+
+(define-public-macro (with-aux u . prg)
+  `(let* ((u ,u)
+	  (t (texmacs-load-tree u "texmacs"))
+	  (name (current-buffer)))
+     (open-auxiliary "* Aux *" t u)
+     (with r (begin ,@prg)
+       (switch-to-buffer name)
+       r)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Saving buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -347,6 +376,18 @@
   (:default  name (propose-name-buffer))
   (apply load-buffer-main (cons name opts)))
 
+(tm-define (load-buffer-in-new-window name . opts)
+  (:argument name smart-file "File name")
+  (:default  name (propose-name-buffer))
+  (apply load-buffer-main (cons name (cons :new-window opts))))
+
+(tm-define (load-browse-buffer name)
+  (load-buffer name))
+
+(tm-define (open-buffer)
+  (:synopsis "Open a new file")
+  (choose-file load-buffer "Load file" ""))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Reverting buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -401,28 +442,8 @@
   (lambda (s) (import-buffer s fm)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Miscellaneous
+;; Printing buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (propose-name-buffer)
-  (with name (url->string (current-buffer))
-    (cond ((not (url-scratch? name)) name)
-	  ((os-win32?) "")
-	  (else (string-append (var-eval-system "pwd") "/")))))
-
-(tm-property (save-buffer name)
-  (:argument name texmacs-file "Save as")
-  (:default  name (propose-name-buffer)))
-
-(tm-property (choose-file fun text type)
-  (:interactive #t))
-
-(tm-define (load-in-new-window s) (load-buffer s :new-window))
-(tm-define (load-browse-buffer s) (load-buffer s))
-
-(tm-define (open-buffer)
-  (:synopsis "Open a new file")
-  (choose-file load-buffer "Load file" ""))
 
 (tm-define (print-buffer)
   (:synopsis "Print the current buffer")
@@ -438,22 +459,6 @@
   (:interactive #t)
   (print-to-file "$TEXMACS_HOME_PATH/system/tmp/tmpprint.ps")
   (interactive-print '() "$TEXMACS_HOME_PATH/system/tmp/tmpprint.ps"))
-
-(tm-define (open-auxiliary aux body . opt-master)
-  (let* ((name (aux-name aux))
-         (master (if (null? opt-master) (buffer-master) (car opt-master))))
-    (aux-set-document aux body)
-    (aux-set-master aux master)
-    (switch-to-buffer name)))
-
-(define-public-macro (with-aux u . prg)
-  `(let* ((u ,u)
-	  (t (texmacs-load-tree u "texmacs"))
-	  (name (current-buffer)))
-     (open-auxiliary "* Aux *" t u)
-     (with r (begin ,@prg)
-       (switch-to-buffer name)
-       r)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Deprecated functionality

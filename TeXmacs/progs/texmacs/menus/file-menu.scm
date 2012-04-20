@@ -116,7 +116,7 @@
 (menu-bind load-menu
   ("Load" (open-buffer))
   ("Revert" (revert-buffer))
-  ("Load in new window" (choose-file load-in-new-window "Load file" ""))
+  ("Load in new window" (choose-file load-buffer-in-new-window "Load file" ""))
   ---
   (link import-top-menu)
   (if (nnull? (recent-file-list 1))
@@ -156,7 +156,6 @@
 (menu-bind file-menu
   ("New" (new-buffer))
   ("Load" (open-buffer))
-  ;("Load in new window" (choose-file "Load file" "" 'load-in-new-window))
   ("Revert" (revert-buffer))
   (-> "Recent"
       (link recent-file-menu)

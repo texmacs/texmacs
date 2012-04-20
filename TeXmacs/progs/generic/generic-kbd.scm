@@ -340,7 +340,7 @@
 
   ;; further shortcuts for the Emacs mode
   ("F2" (open-buffer))
-  ("S-F2" (choose-file load-in-new-window "Load file" ""))
+  ("S-F2" (choose-file load-buffer-in-new-window "Load file" ""))
   ("C-F2" (revert-buffer))
   ("M-F2" (new-buffer))
   ("M-S-F2" (open-window))
