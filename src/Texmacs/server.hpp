@@ -180,6 +180,8 @@ bool export_tree (tree doc, url u, string fm);
 url  get_this_view ();
 url  get_window_view (int id);
 url  get_buffer_views (url name);
+url  get_view_buffer (url u);
+url  get_new_view (url name);
 url  get_recent_view (url name);
 url  get_passive_view (url name);
 

@@ -5783,6 +5783,32 @@ tmg_buffer_views (tmscm arg1) {
 }
 
 tmscm
+tmg_view_2buffer (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "view->buffer");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  url out= get_view_buffer (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return url_to_tmscm (out);
+}
+
+tmscm
+tmg_buffer_new_view (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-new-view");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  url out= get_new_view (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return url_to_tmscm (out);
+}
+
+tmscm
 tmg_buffer_passive_view (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-passive-view");
 
@@ -6711,6 +6737,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("current-view",  tmg_current_view, 0, 0, 0);
   tmscm_install_procedure ("window->view",  tmg_window_2view, 1, 0, 0);
   tmscm_install_procedure ("buffer-views",  tmg_buffer_views, 1, 0, 0);
+  tmscm_install_procedure ("view->buffer",  tmg_view_2buffer, 1, 0, 0);
+  tmscm_install_procedure ("buffer-new-view",  tmg_buffer_new_view, 1, 0, 0);
   tmscm_install_procedure ("buffer-passive-view",  tmg_buffer_passive_view, 1, 0, 0);
   tmscm_install_procedure ("buffer-recent-view",  tmg_buffer_recent_view, 1, 0, 0);
   tmscm_install_procedure ("new-buffer",  tmg_new_buffer, 0, 0, 0);

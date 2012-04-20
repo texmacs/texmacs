@@ -485,6 +485,8 @@
   (current-view get_this_view (url))
   (window->view get_window_view (url int))
   (buffer-views get_buffer_views (url url))
+  (view->buffer get_view_buffer (url url))
+  (buffer-new-view get_new_view (url url))
   (buffer-passive-view get_passive_view (url url))
   (buffer-recent-view get_recent_view (url url))
 

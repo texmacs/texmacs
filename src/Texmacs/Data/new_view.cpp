@@ -100,6 +100,13 @@ get_buffer_views (url name) {
   return u;
 }
 
+url
+get_view_buffer (url u) {
+  tm_view vw= search_view (u);
+  if (vw == NULL) return url_none ();
+  return vw->buf->buf->name;
+}
+
 /******************************************************************************
 * Creation of views on buffers
 ******************************************************************************/
@@ -107,8 +114,8 @@ get_buffer_views (url name) {
 url tm_init_buffer_file= url_none ();
 url my_init_buffer_file= url_none ();
 
-tm_view
-new_view (url name) {
+url
+get_new_view (url name) {
   //cout << "Creating new view\n";
 
   create_buffer (name, tree (DOCUMENT));
@@ -129,7 +136,7 @@ new_view (url name) {
   set_view (temp_vw);
 
   //cout << "View created\n";
-  return vw;
+  return get_name_view (vw);
 }
 
 url
@@ -141,7 +148,7 @@ get_passive_view (url name) {
   for (int i=0; i<N(buf->vws); i++)
     if (buf->vws[i]->win == NULL)
       return get_name_view (buf->vws[i]);
-  return get_name_view (new_view (buf->buf->name));
+  return get_new_view (buf->buf->name);
 }
 
 url
@@ -150,7 +157,7 @@ get_recent_view (url name) {
   // the current buffer or another view attached to a window
   tm_buffer buf= search_buffer (name);
   if (is_nil (buf) || N(buf->vws) == 0)
-    return get_name_view (new_view (name));
+    return get_new_view (name);
   tm_view vw= get_view ();
   if (vw->buf == buf) return get_name_view (vw);
   // FIXME: rather/also prefer recent views
