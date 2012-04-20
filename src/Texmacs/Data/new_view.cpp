@@ -256,7 +256,6 @@ attach_view (int id, url u) {
   win->set_window_name (vw->buf->buf->title);
   win->set_window_url (vw->buf->buf->name);
   notify_set_view (u);
-  vw->buf->buf->last_visit= texmacs_time ();
   // cout << "View attached\n";
 }
 
@@ -278,16 +277,22 @@ detach_view (url u) {
 }
 
 void
-window_set_view (int id, url new_u) {
+window_set_view (int id, url new_u, bool focus) {
+  //cout << "set view " << id << ", " << new_u << ", " << focus << "\n";
   tm_window win= search_window (id);
   if (win == NULL) return;
+  //cout << "Found window\n";
   tm_view new_vw= search_view (new_u);
   if (new_vw == NULL || new_vw->win == win) return;
+  //cout << "Found view\n";
   ASSERT (new_vw->win == NULL, "view attached to other window");
   tm_view old_vw= window_find_view (id);
   if (old_vw != NULL) detach_view (get_name_view (old_vw));
   attach_view (win->id, new_u);
-  if (get_view () == old_vw) set_view (new_vw);
+  if (focus || get_view () == old_vw) {
+    set_view (new_vw);
+    new_vw->buf->buf->last_visit= texmacs_time ();
+  }
 }
 
 /******************************************************************************
@@ -314,7 +319,7 @@ kill_buffer (url name) {
         prev= get_recent_view (name, false, true, false, false);
         prev= get_new_view (get_view_buffer (prev));
       }
-      window_set_view (old_vw->win->id, prev);
+      window_set_view (old_vw->win->id, prev, false);
     }
   }
   remove_buffer (name);
@@ -327,7 +332,7 @@ switch_to_buffer (url name) {
   url u= get_passive_view (name);
   tm_view vw= search_view (u);
   if (vw == NULL) return;
-  window_set_view (win->id, u);
+  window_set_view (win->id, u, true);
   tm_window nwin= vw->win;
   nwin->set_shrinking_factor (nwin->get_shrinking_factor ());
   // cout << "Switched to buffer " << new_vw->buf->buf->name << "\n";

@@ -95,10 +95,7 @@ new_buffer_in_new_window (url name, tree doc, tree geom) {
   if (is_nil (search_buffer (name)))
     create_buffer (name, doc);
   tm_window win= new_window (true, geom);
-  tm_view   vw = search_view (get_passive_view (name));
-  attach_view (win->id, get_name_view (vw));
-  set_view (vw);
-  vw->buf->buf->last_visit= texmacs_time ();
+  window_set_view (win->id, get_passive_view (name), true);
 }
 
 /******************************************************************************
@@ -115,10 +112,7 @@ open_window (tree geom) {
 void
 clone_window () {
   tm_window win= new_window ();
-  tm_view   vw = search_view (get_passive_view (get_this_buffer ()));
-  attach_view (win->id, get_name_view (vw));
-  set_view (vw);
-  vw->buf->buf->last_visit= texmacs_time ();
+  window_set_view (win->id, get_passive_view (get_this_buffer ()), true);
 }
 
 void
@@ -233,11 +227,7 @@ void
 window_set_buffer (int id, url name) {
   tm_view old_vw= window_find_view (id);
   if (old_vw == NULL || old_vw->buf->buf->name == name) return;
-  tm_window win   = old_vw->win;
-  tm_view   new_vw= search_view (get_passive_view (name));
-  if (new_vw == NULL) return;
-  detach_view (get_name_view (old_vw));
-  attach_view (win->id, get_name_view (new_vw));
+  window_set_view (id, get_passive_view (name), false);
 }
 
 void
