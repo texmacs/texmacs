@@ -151,7 +151,7 @@
   (if (and (in-reduce?) reduce-help)
       /
       ((balloon (icon "tm_help.xpm") "Reduce manual")
-       (load-in-new-window reduce-help))))
+       (load-buffer-in-new-window reduce-help))))
 
 (menu-bind session-help-icons
   (:require (and (in-reduce?) (in-session?)))
