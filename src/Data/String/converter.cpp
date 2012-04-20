@@ -431,11 +431,13 @@ convert_using_iconv (string input, string from, string to) {
 
 void
 put_prefix_code (string key, string value, hashtree<char,string> tree) {
+  /*
   if (DEBUG_STD) {
     hashtree<char,string> ht= find_node (key,tree);
     if (ht->label != "")
       cout << "overwriting: " << ht->label << " with " << value << '\n';
   }
+  */
   find_node (key,tree)->set_label(value);
 }
 
