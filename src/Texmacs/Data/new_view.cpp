@@ -90,14 +90,14 @@ get_window_view (int id) {
   return get_name_view (vw);
 }
 
-url
+array<url>
 get_buffer_views (url name) {
   tm_buffer buf= search_buffer (name);
-  url u= url_none ();
-  if (is_nil (buf)) return u;
+  array<url> r;
+  if (is_nil (buf)) return r;
   for (int i=0; i<N(buf->vws); i++)
-    u= get_name_view (buf->vws[i]) | u;
-  return u;
+    r << get_name_view (buf->vws[i]);
+  return r;
 }
 
 url
@@ -116,13 +116,14 @@ array<url> view_history;
 void
 notify_set_view (url u) {
   int i;
-  for (i= N(view_history)-1; i >= 0; i--)
+  for (i= 0; i<N(view_history); i++)
     if (view_history[i] == u) break;
-  if (i < 0) view_history << u;
+  if (i >= N(view_history))
+    view_history= append (u, view_history);
   else {
     int j;
-    for (j=i; j<N(view_history)-1; j++)
-      view_history[j]= view_history[j+1];
+    for (j=i; j>0; j--)
+      view_history[j]= view_history[j-1];
     view_history[j]= u;
   }
 }
@@ -135,7 +136,7 @@ get_recent_view (url name, bool same, bool other, bool active, bool passive) {
   //   If active, then the buffer must be active
   //   If passive, then the buffer must be passive
   int i;
-  for (i= N(view_history)-1; i >= 0; i--) {
+  for (i= 0; i < N(view_history); i++) {
     tm_view vw= search_view (view_history[i]);
     if (vw != NULL) {
       if (same && vw->buf->buf->name != name) continue;
@@ -206,10 +207,10 @@ get_recent_view (url name) {
     return get_new_view (name);
   tm_view vw= get_view ();
   if (vw->buf == buf) return get_name_view (vw);
-  // FIXME: rather/also prefer recent views
-  for (int i=0; i<N(buf->vws); i++)
-    if (buf->vws[i]->win != NULL)
-      return get_name_view (buf->vws[i]);
+  url r= get_recent_view (name, true, false, true, false);
+  if (!is_none (r)) return r;
+  r= get_recent_view (name, true, false, false, false);
+  if (!is_none (r)) return r;
   return get_name_view (buf->vws[0]);
 }
 
@@ -255,6 +256,7 @@ attach_view (int id, url u) {
   win->set_window_name (vw->buf->buf->title);
   win->set_window_url (vw->buf->buf->name);
   notify_set_view (u);
+  vw->buf->buf->last_visit= texmacs_time ();
   // cout << "View attached\n";
 }
 
@@ -276,7 +278,7 @@ detach_view (url u) {
 }
 
 void
-set_view (int id, url new_u) {
+window_set_view (int id, url new_u) {
   tm_window win= search_window (id);
   if (win == NULL) return;
   tm_view new_vw= search_view (new_u);
@@ -289,7 +291,7 @@ set_view (int id, url new_u) {
 }
 
 /******************************************************************************
-* Creating and destroying buffers
+* Creating, destroying, and changing buffers
 ******************************************************************************/
 
 url
@@ -304,44 +306,29 @@ kill_buffer (url name) {
   tm_buffer buf= search_buffer (name);
   if (is_nil (buf)) return;
   if (N(bufs) <= 1) get_server () -> quit();
-  
-  int i, nr;
-  for (nr=0; nr<N(bufs); nr++) if (buf == bufs[nr]) break;
-  ASSERT (nr != N(bufs), "buffer not found");
-  for (nr=N(bufs)-1; nr>=0; nr--) if (buf != bufs[nr]) break;
-  ASSERT (nr >= 0, "no suitable new buffer");
-  tm_buffer new_buf = bufs[nr];
-
-  for (i=0; i<N(buf->vws); i++) {
+  for (int i=0; i<N(buf->vws); i++) {
     tm_view old_vw= buf->vws[i];
     if (old_vw->win != NULL) {
-      tm_window win = old_vw->win;
-      tm_view new_vw= search_view (get_passive_view (new_buf->buf->name));
-      detach_view (get_name_view (old_vw));
-      attach_view (win->id, get_name_view (new_vw));
-      if (get_view () == old_vw) set_view (new_vw);
+      url prev= get_recent_view (name, false, true, false, true);
+      if (is_none (prev)) {
+        prev= get_recent_view (name, false, true, false, false);
+        prev= get_new_view (get_view_buffer (prev));
+      }
+      window_set_view (old_vw->win->id, prev);
     }
   }
-
   remove_buffer (name);
 }
-
-/******************************************************************************
-* Switching to another buffer
-******************************************************************************/
 
 void
 switch_to_buffer (url name) {
   // cout << "Switching to buffer " << buf->buf->name << "\n";
-  tm_window win    = get_window ();
-  tm_view   old_vw = get_view ();
-  tm_view   new_vw = search_view (get_passive_view (name));
-  if (new_vw == NULL) return;
-  detach_view (get_name_view (old_vw));
-  attach_view (win->id, get_name_view (new_vw));
-  set_view (new_vw);
-  new_vw->buf->buf->last_visit= texmacs_time ();
-  tm_window nwin= new_vw->win;
+  tm_window win= get_window ();
+  url u= get_passive_view (name);
+  tm_view vw= search_view (u);
+  if (vw == NULL) return;
+  window_set_view (win->id, u);
+  tm_window nwin= vw->win;
   nwin->set_shrinking_factor (nwin->get_shrinking_factor ());
   // cout << "Switched to buffer " << new_vw->buf->buf->name << "\n";
 }

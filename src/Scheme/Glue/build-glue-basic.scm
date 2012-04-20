@@ -454,8 +454,8 @@
   (get-remove-package-menu get_remove_package_menu (object))
 
   ;; buffers
+  (buffer-list get_all_buffers (array_url))
   (current-buffer get_this_buffer (url))
-  (all-buffers get_all_buffers (url))
   (path->buffer get_name_buffer (url path))
   (buffer-new make_new_buffer (url))
   (buffer-rename rename_buffer (void url url))
@@ -483,9 +483,9 @@
   (tree-export export_tree (bool tree url string))
 
   (view-history get_view_history (array_url))
+  (buffer->views get_buffer_views (array_url url))
   (current-view get_this_view (url))
   (window->view get_window_view (url int))
-  (buffer-views get_buffer_views (url url))
   (view->buffer get_view_buffer (url url))
   (buffer-new-view get_new_view (url url))
   (buffer-passive-view get_passive_view (url url))

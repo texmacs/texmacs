@@ -303,9 +303,6 @@
   (with t (buffer->tree u)
     (and t (tree->path t))))
 
-(define-public (buffer-list)
-  (url->list (all-buffers)))
-
 (define-public (buffer-exists? name)
   (in? (url->url name) (buffer-list)))
 
@@ -318,9 +315,6 @@
 (define-public (buffer-in-menu? u)
   (or (buffer-in-recent-menu? u)
       (string-starts? (url->string u) "tmfs://help/")))
-
-(define-public (buffer->views u)
-  (url->list (buffer-views u)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Redirections

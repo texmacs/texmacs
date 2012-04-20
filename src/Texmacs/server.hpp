@@ -143,10 +143,10 @@ void new_buffer_in_this_window (url name, tree t);
 tm_window new_window (bool map_flag= true, tree geom= "");
 
 /* Buffer management */
+array<url> get_all_buffers ();
 url  make_new_buffer ();
 void remove_buffer (url name);
 int  number_buffers ();
-url  get_all_buffers ();
 url  get_this_buffer ();
 url  get_name_buffer (path p);
 void rename_buffer (url name, url new_name);
@@ -177,9 +177,9 @@ bool export_tree (tree doc, url u, string fm);
 
 /* View management */
 array<url> get_view_history ();
+array<url> get_buffer_views (url name);
 url  get_this_view ();
 url  get_window_view (int id);
-url  get_buffer_views (url name);
 url  get_view_buffer (url u);
 url  get_new_view (url name);
 url  get_recent_view (url name);

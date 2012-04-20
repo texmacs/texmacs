@@ -76,12 +76,12 @@ number_buffers () {
   return N(bufs);
 }
 
-url
+array<url>
 get_all_buffers () {
-  url u= url_none ();
+  array<url> r;
   for (int i=N(bufs)-1; i>=0; i--)
-    u= bufs[i]->buf->name | u;
-  return u;
+    r << bufs[i]->buf->name;
+  return r;
 }
 
 tm_buffer
