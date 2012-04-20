@@ -31,7 +31,8 @@ from_nsstring (NSString *s) {
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename 
 {
   (void) theApplication;
-  call ("texmacs-load-buffer", object(url_system (from_nsstring(filename))), object("generic"), object(1), object(false));
+  call ("load-buffer", object (url_system (from_nsstring (filename))),
+                       eval (":new-window"));
   return YES;
 }
 @end

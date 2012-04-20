@@ -261,8 +261,7 @@ TeXmacs_main (int argc, char** argv) {
 	  url in  ("$PWD", argv[i-1]);
 	  url out ("$PWD", argv[ i ]);
 	  my_init_cmds= my_init_cmds * " " *
-	    "(texmacs-load-buffer " * scm_quote (as_string (in)) *
-	    " \"generic\" 0 #f) " *
+	    "(load-buffer " * scm_quote (as_string (in)) * ") " *
 	    "(export-buffer " * scm_quote (as_string (out)) * ")";
 	}
       }

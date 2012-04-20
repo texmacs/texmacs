@@ -489,7 +489,6 @@
   (aux-buffer? is_aux_buffer (bool url))
 
   (texmacs-load-tree load_tree (tree url string))
-  (texmacs-load-buffer load_buffer (void url string int bool))
 
   (open-buffer-in-window new_buffer_in_new_window (void url content content))
   (open-window open_window (url))

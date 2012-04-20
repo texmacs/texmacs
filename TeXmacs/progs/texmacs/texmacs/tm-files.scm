@@ -152,10 +152,10 @@
       (save-buffer-as-check-permissions new-name (current-buffer) args)
       (save-buffer-as-check-permissions new-name (car args) (cdr args))))
 
-(tm-define (save-buffer-as new-name)
+(tm-define (save-buffer-as new-name . args)
   (:argument name texmacs-file "Save as")
   (:default  name (propose-name-buffer))
-  (with opts (if (x-gui?) (list) (list :overwrite))
+  (with opts (if (x-gui?) args (cons :overwrite args))
     (apply save-buffer-as-main (cons new-name opts))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -342,26 +342,10 @@
       (set! name (url-resolve (url-append "$TEXMACS_FILE_PATH" name) "f")))
   (load-buffer-check-autosave name opts))
 
-(tm-define (load-buffer . l)
-  ;;(display* "load-buffer " l "\n")
-  (cond ((null? l)
-         (noop))
-        ((= (length l) 1)
-         (load-buffer (car l) "generic" 0))
-        ((and (= (length l) 2) (string? (cadr l)))
-         (load-buffer (car l) (cadr l) 0))
-        ((and (= (length l) 2) (integer? (cadr l)))
-         (load-buffer (car l) "generic" (cadr l)))
-        ((!= (cadr l) "generic")
-         (load-buffer-sub (car l) (cadr l) (caddr l)))
-        ((== (caddr l) 0)
-         (load-buffer-main (car l)))
-        ((== (caddr l) 1)
-         (load-buffer-main :new-window))
-        ((== (caddr l) 2)
-         (load-buffer-main :background))
-        (else
-         (load-buffer-sub (car l) (cadr l) (caddr l)))))
+(tm-define (load-buffer name . opts)
+  (:argument name smart-file "File name")
+  (:default  name (propose-name-buffer))
+  (apply load-buffer-main (cons name opts)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Reverting buffers
@@ -426,10 +410,6 @@
 	  ((os-win32?) "")
 	  (else (string-append (var-eval-system "pwd") "/")))))
 
-(tm-property (load-buffer name)
-  (:argument name smart-file "File name")
-  (:default  name (propose-name-buffer)))
-
 (tm-property (save-buffer name)
   (:argument name texmacs-file "Save as")
   (:default  name (propose-name-buffer)))
@@ -437,7 +417,7 @@
 (tm-property (choose-file fun text type)
   (:interactive #t))
 
-(tm-define (load-in-new-window s) (load-buffer s 1))
+(tm-define (load-in-new-window s) (load-buffer s :new-window))
 (tm-define (load-browse-buffer s) (load-buffer s))
 
 (tm-define (open-buffer)

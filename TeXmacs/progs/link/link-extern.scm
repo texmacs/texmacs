@@ -133,8 +133,8 @@
   (cond ((null? l) #f)
 	((not (url-exists? (car l))) (resolve-id-sub id (cdr l)))
 	(else
-	 (ahash-set! already-loaded-table (car l) #t)
-	 (texmacs-load-buffer (car l) "generic" 0 #f))))
+          (ahash-set! already-loaded-table (car l) #t)
+          (load-buffer (car l)))))
 
 (tm-define (resolve-id id)
   (:synopsis "Load file which contains locus with a given @id.")
