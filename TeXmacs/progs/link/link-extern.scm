@@ -74,7 +74,7 @@
 	 (l2 (map tree->buffer l1))
 	 (l2* (id->locations id))
 	 (l3 (if (null? l2) l2* l2))
-	 (l4 (list-filter l3 (lambda (u) (not (url-none? u))))))
+	 (l4 (list-filter l3 nnot)))
     (map (cut cons id <>) l4)))
 
 (define (vertex-locations v)

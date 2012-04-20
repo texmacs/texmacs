@@ -5403,8 +5403,8 @@ tmg_current_buffer () {
 }
 
 tmscm
-tmg_path_2buffer (tmscm arg1) {
-  TMSCM_ASSERT_PATH (arg1, TMSCM_ARG1, "path->buffer");
+tmg_path_to_buffer (tmscm arg1) {
+  TMSCM_ASSERT_PATH (arg1, TMSCM_ARG1, "path-to-buffer");
 
   path in1= tmscm_to_path (arg1);
 
@@ -5857,25 +5857,27 @@ tmg_view_delete (tmscm arg1) {
 }
 
 tmscm
+tmg_window_set_view (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "window-set-view");
+  TMSCM_ASSERT_URL (arg2, TMSCM_ARG2, "window-set-view");
+
+  int in1= tmscm_to_int (arg1);
+  url in2= tmscm_to_url (arg2);
+
+  // TMSCM_DEFER_INTS;
+  window_set_view (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_new_buffer () {
   // TMSCM_DEFER_INTS;
   url out= create_buffer ();
   // TMSCM_ALLOW_INTS;
 
   return url_to_tmscm (out);
-}
-
-tmscm
-tmg_switch_to_buffer_path (tmscm arg1) {
-  TMSCM_ASSERT_PATH (arg1, TMSCM_ARG1, "switch-to-buffer-path");
-
-  path in1= tmscm_to_path (arg1);
-
-  // TMSCM_DEFER_INTS;
-  bool out= switch_to_buffer (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return bool_to_tmscm (out);
 }
 
 tmscm
@@ -6731,7 +6733,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("get-remove-package-menu",  tmg_get_remove_package_menu, 0, 0, 0);
   tmscm_install_procedure ("buffer-list",  tmg_buffer_list, 0, 0, 0);
   tmscm_install_procedure ("current-buffer",  tmg_current_buffer, 0, 0, 0);
-  tmscm_install_procedure ("path->buffer",  tmg_path_2buffer, 1, 0, 0);
+  tmscm_install_procedure ("path-to-buffer",  tmg_path_to_buffer, 1, 0, 0);
   tmscm_install_procedure ("buffer-new",  tmg_buffer_new, 0, 0, 0);
   tmscm_install_procedure ("buffer-rename",  tmg_buffer_rename, 2, 0, 0);
   tmscm_install_procedure ("buffer-set",  tmg_buffer_set, 2, 0, 0);
@@ -6765,8 +6767,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("buffer-passive-view",  tmg_buffer_passive_view, 1, 0, 0);
   tmscm_install_procedure ("buffer-recent-view",  tmg_buffer_recent_view, 1, 0, 0);
   tmscm_install_procedure ("view-delete",  tmg_view_delete, 1, 0, 0);
+  tmscm_install_procedure ("window-set-view",  tmg_window_set_view, 2, 0, 0);
   tmscm_install_procedure ("new-buffer",  tmg_new_buffer, 0, 0, 0);
-  tmscm_install_procedure ("switch-to-buffer-path",  tmg_switch_to_buffer_path, 1, 0, 0);
   tmscm_install_procedure ("switch-to-buffer",  tmg_switch_to_buffer, 1, 0, 0);
   tmscm_install_procedure ("buffer-close",  tmg_buffer_close, 1, 0, 0);
   tmscm_install_procedure ("aux-buffer?",  tmg_aux_bufferP, 1, 0, 0);

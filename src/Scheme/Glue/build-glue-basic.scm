@@ -456,7 +456,7 @@
   ;; buffers
   (buffer-list get_all_buffers (array_url))
   (current-buffer get_this_buffer (url))
-  (path->buffer get_name_buffer (url path))
+  (path-to-buffer get_name_buffer (url path))
   (buffer-new make_new_buffer (url))
   (buffer-rename rename_buffer (void url url))
   (buffer-set set_buffer_tree (void url content))
@@ -491,11 +491,9 @@
   (buffer-passive-view get_passive_view (url url))
   (buffer-recent-view get_recent_view (url url))
   (view-delete delete_view (void url))
-  ;;(view-attach attach_view (void int url))
-  ;;(view-detach detach_view (void url))
+  (window-set-view window_set_view (void int url))
 
   (new-buffer create_buffer (url))
-  (switch-to-buffer-path switch_to_buffer (bool path))
   (switch-to-buffer switch_to_buffer (void url))
   (buffer-close kill_buffer (void url))
   (aux-buffer? is_aux_buffer (bool url))

@@ -238,7 +238,7 @@ delete_view (url u) {
 }
 
 /******************************************************************************
-* Attaching and detaching views
+* Replacing views
 ******************************************************************************/
 
 void
@@ -331,13 +331,6 @@ switch_to_buffer (url name) {
   tm_window nwin= vw->win;
   nwin->set_shrinking_factor (nwin->get_shrinking_factor ());
   // cout << "Switched to buffer " << new_vw->buf->buf->name << "\n";
-}
-
-bool
-switch_to_buffer (path p) {
-  url name= get_name_buffer (p);
-  if (!is_none (name)) switch_to_buffer (name);
-  return !is_none (name);
 }
 
 /******************************************************************************

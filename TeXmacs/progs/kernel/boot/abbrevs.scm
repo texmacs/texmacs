@@ -163,5 +163,6 @@
 	 (lp (length p))
 	 (lr (length r)))
     (and (or (and (<= lr lp) (== (sublist p 0 lr) r))
-	     (switch-to-buffer-path p))
+             (and-with buf (path->buffer p)
+               (switch-to-buffer buf) #t))
 	 (go-to-path p))))

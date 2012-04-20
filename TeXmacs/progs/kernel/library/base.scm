@@ -291,6 +291,10 @@
 ;; Buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-public (path->buffer p)
+  (with u (path-to-buffer p)
+    (and (not (url-none? u)) u)))
+
 (define-public (buffer->tree u)
   (with t (buffer-get-body u)
     (and (tree-active? t) t)))
