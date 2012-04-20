@@ -162,7 +162,7 @@ kill_buffer (url name) {
 
 void
 switch_to_buffer (url name) {
-  tm_buffer buf= load_passive_buffer (name);
+  tm_buffer buf= search_buffer_insist (name);
   if (is_nil (buf)) return;
   
   // cout << "Switching to buffer " << buf->buf->name << "\n";

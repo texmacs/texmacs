@@ -172,7 +172,7 @@ project_attach (string prj_name) {
   if (prj_name == "") buf->prj= NULL;
   else {
     url full_name= head (buf->buf->name) * prj_name;
-    buf->prj= load_passive_buffer (full_name);
+    buf->prj= search_buffer_insist (full_name);
   }
 }
 

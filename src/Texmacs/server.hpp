@@ -135,6 +135,7 @@ inline bool in_rescue_mode () { return rescue_mode; }
 /* low level */
 void create_buffer (url name, tree doc);
 tm_buffer search_buffer (url name);
+tm_buffer search_buffer_insist (url name);
 void attach_view (tm_window win, tm_view vw);
 void detach_view (tm_view vw);
 tm_view get_recent_view (url name);
@@ -142,7 +143,6 @@ tm_view get_passive_view (tm_buffer buf);
 void delete_view (tm_view vw);
 void new_buffer_in_this_window (url name, tree t);
 tm_window new_window (bool map_flag= true, tree geom= "");
-tm_buffer load_passive_buffer (url name);
 
 /* Buffer management */
 url  make_new_buffer ();

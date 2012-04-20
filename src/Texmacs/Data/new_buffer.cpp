@@ -93,6 +93,14 @@ search_buffer (url name) {
   return nil_buffer ();
 }
 
+tm_buffer
+search_buffer_insist (url u) {
+  tm_buffer buf= search_buffer (u);
+  if (!is_nil (buf)) return buf;
+  buffer_load (u);
+  return search_buffer (u);
+}
+
 /******************************************************************************
 * Buffer names
 ******************************************************************************/
@@ -214,7 +222,7 @@ set_buffer_tree (url name, tree doc) {
     buf->buf->title= propose_title (buf->buf->title, name, body);
     if (buf->data->project != "") {
       url prj_name= head (name) * as_string (buf->data->project);
-      buf->prj= load_passive_buffer (prj_name);
+      buf->prj= search_buffer_insist (prj_name);
     }
   }
   else {
@@ -226,7 +234,7 @@ set_buffer_tree (url name, tree doc) {
     buf->buf->title= propose_title (old_title, name, body);
     if (buf->data->project != "" && buf->data->project != old_project) {
       url prj_name= head (name) * as_string (buf->data->project);
-      buf->prj= load_passive_buffer (prj_name);
+      buf->prj= search_buffer_insist (prj_name);
     }
   }
   pretend_buffer_saved (name);
@@ -446,4 +454,32 @@ buffer_save (url name) {
   bool r= buffer_export (name, name, fm);
   if (!r) pretend_buffer_saved (name);
   return r;
+}
+
+/******************************************************************************
+* Loading inclusions
+******************************************************************************/
+
+static hashmap<string,tree> document_inclusions ("");
+
+void
+reset_inclusions () {
+  document_inclusions= hashmap<string,tree> ("");
+}
+
+void
+reset_inclusion (url name) {
+  string name_s= as_string (name);
+  document_inclusions->reset (name_s);
+}
+
+tree
+load_inclusion (url name) {
+  // url name= relative (base_file_name, file_name);
+  string name_s= as_string (name);
+  if (document_inclusions->contains (name_s))
+    return document_inclusions [name_s];
+  tree doc= extract_document (load_tree (name, "generic"));
+  if (!is_func (doc, ERROR)) document_inclusions (name_s)= doc;
+  return doc;
 }

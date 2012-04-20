@@ -43,39 +43,3 @@ load_tree (url u, string fm) {
     (void) call ("register-link-locations", object (u), object (links));
   return attach_subformat (t, u, fm);
 }
-
-tm_buffer
-load_passive_buffer (url u) {
-  tm_buffer buf= search_buffer (u);
-  if (!is_nil (buf)) return buf;
-  buffer_load (u);
-  return search_buffer (u);
-}
-
-/******************************************************************************
-* Loading inclusions
-******************************************************************************/
-
-static hashmap<string,tree> document_inclusions ("");
-
-void
-reset_inclusions () {
-  document_inclusions= hashmap<string,tree> ("");
-}
-
-void
-reset_inclusion (url name) {
-  string name_s= as_string (name);
-  document_inclusions->reset (name_s);
-}
-
-tree
-load_inclusion (url name) {
-  // url name= relative (base_file_name, file_name);
-  string name_s= as_string (name);
-  if (document_inclusions->contains (name_s))
-    return document_inclusions [name_s];
-  tree doc= extract_document (load_tree (name, "generic"));
-  if (!is_func (doc, ERROR)) document_inclusions (name_s)= doc;
-  return doc;
-}
