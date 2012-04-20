@@ -81,8 +81,8 @@ public:
   tm_buffer buf;
   editor    ed;
   tm_window win;
-  inline tm_view_rep (tm_buffer buf2, editor ed2):
-    buf (buf2), ed (ed2), win (NULL) {}
+  int       nr;
+  tm_view_rep (tm_buffer buf2, editor ed2);
 };
 
 typedef tm_buffer_rep* tm_buffer;

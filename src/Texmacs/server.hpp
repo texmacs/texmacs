@@ -178,6 +178,10 @@ tree import_tree (url u, string fm);
 bool export_tree (tree doc, url u, string fm);
 
 /* View management */
+url  get_this_view ();
+url  get_window_view (int id);
+url  get_buffer_views (url name);
+
 url  create_buffer ();
 bool switch_to_buffer (path p);
 void switch_to_buffer (url name);

@@ -18,12 +18,80 @@
 #include "dictionary.hpp"
 #include "new_document.hpp"
 
-url tm_init_buffer_file= url_none ();
-url my_init_buffer_file= url_none ();
+/******************************************************************************
+* Associating URLs to views
+******************************************************************************/
+
+static hashmap<tree,int> view_number_table (0);
+static hashmap<tree,pointer> view_table (NULL);
+
+static int
+new_view_number (url u) {
+  view_number_table (u->t) += 1;
+  return view_number_table [u->t];
+}
+
+tm_view_rep::tm_view_rep (tm_buffer buf2, editor ed2):
+  buf (buf2), ed (ed2), win (NULL), nr (new_view_number (buf->buf->name)) {}
+
+url
+name_view (tm_view vw) {
+  string name= as_string (call ("url->tmfs-string", vw->buf->buf->name));
+  string nr  = as_string (vw->nr);
+  return "tmfs://view/" * nr * "/" * name;
+}
+
+tm_view
+search_view (url u) {
+  string s= as_string (u);
+  if (!starts (s, "tmfs://view/")) return NULL;
+  s= s (N (string ("tmfs://view/")), N(s));
+  int i= search_forwards ("/", 0, s);
+  if (i < 0) return NULL;
+  int nr= as_int (s (0, i));
+  url name= as_url (call ("tmfs-string->url", s (i, N(s))));
+  tm_buffer buf= search_buffer (name);
+  if (is_nil (buf)) return NULL;
+  for (i=0; i<N(buf->vws); i++)
+    if (buf->vws[i]->nr == nr)
+      return buf->vws[i];
+  return NULL;
+}
 
 /******************************************************************************
-* Low level view routines
+* Views associated to editor, window, or buffer
 ******************************************************************************/
+
+url
+get_this_view () {
+  tm_view vw= get_view ();
+  if (vw == NULL) return url_none ();
+  return name_view (vw);
+}
+
+url
+get_window_view (int id) {
+  tm_view vw= window_find_view (id);
+  if (vw == NULL) return url_none ();
+  return name_view (vw);
+}
+
+url
+get_buffer_views (url name) {
+  tm_buffer buf= search_buffer (name);
+  url u= url_none ();
+  if (is_nil (buf)) return u;
+  for (int i=0; i<N(buf->vws); i++)
+    u= name_view (buf->vws[i]) | u;
+  return u;
+}
+
+/******************************************************************************
+* Creation of views on buffers
+******************************************************************************/
+
+url tm_init_buffer_file= url_none ();
+url my_init_buffer_file= url_none ();
 
 tm_view
 new_view (url name) {
@@ -71,6 +139,10 @@ get_recent_view (url name) {
       return buf->vws[i];
   return buf->vws[0];
 }
+
+/******************************************************************************
+* Other low level routines on views
+******************************************************************************/
 
 void
 delete_view (tm_view vw) {

@@ -319,6 +319,9 @@
   (or (buffer-in-recent-menu? u)
       (string-starts? (url->string u) "tmfs://help/")))
 
+(define-public (buffer->views u)
+  (url->list (buffer-views u)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Redirections
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
