@@ -176,6 +176,7 @@ tree import_tree (url u, string fm);
 bool export_tree (tree doc, url u, string fm);
 
 /* View management */
+array<url> get_view_history ();
 url  get_this_view ();
 url  get_window_view (int id);
 url  get_buffer_views (url name);

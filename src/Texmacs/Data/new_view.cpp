@@ -108,6 +108,52 @@ get_view_buffer (url u) {
 }
 
 /******************************************************************************
+* Viewing history
+******************************************************************************/
+
+array<url> view_history;
+
+void
+notify_set_view (url u) {
+  int i;
+  for (i= N(view_history)-1; i >= 0; i--)
+    if (view_history[i] == u) break;
+  if (i < 0) view_history << u;
+  else {
+    int j;
+    for (j=i; j<N(view_history)-1; j++)
+      view_history[j]= view_history[j+1];
+    view_history[j]= u;
+  }
+}
+
+url
+get_recent_view (url name, bool same, bool other, bool active, bool passive) {
+  // Get most recent view with the following filters:
+  //   If same, then the name of the buffer much be name
+  //   If other, then the name of the buffer much be other than name
+  //   If active, then the buffer must be active
+  //   If passive, then the buffer must be passive
+  int i;
+  for (i= N(view_history)-1; i >= 0; i--) {
+    tm_view vw= search_view (view_history[i]);
+    if (vw != NULL) {
+      if (same && vw->buf->buf->name != name) continue;
+      if (other && vw->buf->buf->name == name) continue;
+      if (active && vw->win == NULL) continue;
+      if (passive && vw->win != NULL) continue;
+      return view_history[i];
+    }
+  }
+  return url_none ();
+}
+
+array<url>
+get_view_history () {
+  return view_history;
+}
+
+/******************************************************************************
 * Creation of views on buffers
 ******************************************************************************/
 
@@ -208,6 +254,7 @@ attach_view (int id, url u) {
   vw->ed->resume ();
   win->set_window_name (vw->buf->buf->title);
   win->set_window_url (vw->buf->buf->name);
+  notify_set_view (u);
   // cout << "View attached\n";
 }
 
@@ -226,6 +273,19 @@ detach_view (url u) {
   win->set_window_name ("TeXmacs");
   win->set_window_url (url_none ());
   // cout << "View detached\n";
+}
+
+void
+set_view (int id, url new_u) {
+  tm_window win= search_window (id);
+  if (win == NULL) return;
+  tm_view new_vw= search_view (new_u);
+  if (new_vw == NULL || new_vw->win == win) return;
+  ASSERT (new_vw->win == NULL, "view attached to other window");
+  tm_view old_vw= window_find_view (id);
+  if (old_vw != NULL) detach_view (get_name_view (old_vw));
+  attach_view (win->id, new_u);
+  if (get_view () == old_vw) set_view (new_vw);
 }
 
 /******************************************************************************

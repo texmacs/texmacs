@@ -482,6 +482,7 @@
   (tree-import import_tree (tree url string))
   (tree-export export_tree (bool tree url string))
 
+  (view-history get_view_history (array_url))
   (current-view get_this_view (url))
   (window->view get_window_view (url int))
   (buffer-views get_buffer_views (url url))
