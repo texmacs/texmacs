@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : new_project.cpp
 * DESCRIPTION: Project management
-* COPYRIGHT  : (C) 1999--2012  Joris van der Hoeven
+* COPYRIGHT  : (C) 1999-2012  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE

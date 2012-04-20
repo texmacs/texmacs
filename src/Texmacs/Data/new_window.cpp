@@ -1,8 +1,8 @@
 
 /******************************************************************************
-* MODULE     : tm_data.cpp
-* DESCRIPTION: Buffer management for TeXmacs server
-* COPYRIGHT  : (C) 1999  Joris van der Hoeven
+* MODULE     : new_window.cpp
+* DESCRIPTION: Global window management
+* COPYRIGHT  : (C) 1999-2012  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
