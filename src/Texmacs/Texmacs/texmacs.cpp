@@ -333,7 +333,9 @@ TeXmacs_main (int argc, char** argv) {
     if ((N(s)>=2) && (s(0,2)=="--")) s= s (1, N(s));
     if ((s[0] != '-') && (s[0] != '+')) {
       if (DEBUG_STD) cout << "TeXmacs] Loading " << s << "...\n";
-      string b= scm_quote (as_string (url_system (s)));
+      url u= url_system (s);
+      if (!is_rooted (u)) u= resolve (url_pwd (), "") * u;
+      string b= scm_quote (as_string (u));
       string cmd= "(load-buffer " * b * " " * where * ")";
       where= " :new-window";
       exec_delayed (scheme_cmd (cmd));
