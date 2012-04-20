@@ -84,7 +84,7 @@
     (ahash-set! done cur #t)
     (if done?
 	'(document "")
-	(with t (tree->stree (texmacs-load-tree cur "texmacs"))
+	(with t (tree->stree (tree-import cur "texmacs"))
 	  (if (string? t)
 	      (begin
 		(display* "TeXmacs] bad link or file " cur "\n")
@@ -105,7 +105,7 @@
 		(if val val (tmdoc-search-env-var (cdr t) which))))))
 
 (define (tmdoc-language file-name)
-  (let* ((t (texmacs-load-tree file-name "texmacs"))
+  (let* ((t (tree-import file-name "texmacs"))
 	 (init (assoc 'initial (cdr (tree->stree t))))
 	 (lan (and init (tmdoc-search-env-var (cadr init) "language"))))
     (if lan lan "english")))
@@ -135,14 +135,14 @@
               (style "tmdoc")
               (body (document "Broken link."))))
           ((== (url-suffix root) "html")
-           (with doc (tm->stree (texmacs-load-tree root "html"))
+           (with doc (tm->stree (tree-import root "html"))
              `(document
                 (TeXmacs ,(texmacs-version))
                 ,@(cdr doc))))
           ((!= (url-suffix root) "tm")
            (string-load root))
           ((== type "normal")
-           (tm->stree (texmacs-load-tree root fm)))
+           (tm->stree (tree-import root fm)))
           ((== type "book")
            (let* ((body (tmdoc-expand root root 'title))
                   (lan (tmdoc-language root)))

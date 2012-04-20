@@ -488,8 +488,6 @@
   (buffer-close kill_buffer (void url))
   (aux-buffer? is_aux_buffer (bool url))
 
-  (texmacs-load-tree load_tree (tree url string))
-
   (open-buffer-in-window new_buffer_in_new_window (void url content content))
   (open-window open_window (url))
   (open-window-geometry open_window (url content))

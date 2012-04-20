@@ -5809,21 +5809,6 @@ tmg_aux_bufferP (tmscm arg1) {
 }
 
 tmscm
-tmg_texmacs_load_tree (tmscm arg1, tmscm arg2) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "texmacs-load-tree");
-  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "texmacs-load-tree");
-
-  url in1= tmscm_to_url (arg1);
-  string in2= tmscm_to_string (arg2);
-
-  // TMSCM_DEFER_INTS;
-  tree out= load_tree (in1, in2);
-  // TMSCM_ALLOW_INTS;
-
-  return tree_to_tmscm (out);
-}
-
-tmscm
 tmg_open_buffer_in_window (tmscm arg1, tmscm arg2, tmscm arg3) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "open-buffer-in-window");
   TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "open-buffer-in-window");
@@ -6667,7 +6652,6 @@ initialize_glue_basic () {
   tmscm_install_procedure ("switch-to-buffer",  tmg_switch_to_buffer, 1, 0, 0);
   tmscm_install_procedure ("buffer-close",  tmg_buffer_close, 1, 0, 0);
   tmscm_install_procedure ("aux-buffer?",  tmg_aux_bufferP, 1, 0, 0);
-  tmscm_install_procedure ("texmacs-load-tree",  tmg_texmacs_load_tree, 2, 0, 0);
   tmscm_install_procedure ("open-buffer-in-window",  tmg_open_buffer_in_window, 3, 0, 0);
   tmscm_install_procedure ("open-window",  tmg_open_window, 0, 0, 0);
   tmscm_install_procedure ("open-window-geometry",  tmg_open_window_geometry, 1, 0, 0);

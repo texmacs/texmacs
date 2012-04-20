@@ -212,7 +212,4 @@ tm_view window_find_view (int id);
 void window_set_buffer (int id, url name);
 void window_focus (int id);
 
-/* File management */
-tree load_tree (url name, string fm);
-
 #endif // defined SERVER_H

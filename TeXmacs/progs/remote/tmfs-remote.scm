@@ -155,7 +155,7 @@
 
 (define (load-following-suffix u)
   (if (tm-like? u)
-      (object->string (tree->stree (texmacs-load-tree u "generic")))
+      (object->string (tree->stree (tree-import u "generic")))
       (string-load u)))
 
 (tm-define (remote-export local-url remote-name)

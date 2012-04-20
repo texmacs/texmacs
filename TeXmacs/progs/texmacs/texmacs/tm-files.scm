@@ -37,7 +37,7 @@
 
 (define-public-macro (with-aux u . prg)
   `(let* ((u ,u)
-	  (t (texmacs-load-tree u "texmacs"))
+	  (t (tree-import u "texmacs"))
 	  (name (current-buffer)))
      (open-auxiliary "* Aux *" t u)
      (with r (begin ,@prg)
@@ -357,7 +357,7 @@
             (if answ
                 (let* ((autosave-name (autosave-propose name))
                        (format (url-format name))
-                       (doc (texmacs-load-tree autosave-name format)))
+                       (doc (tree-import autosave-name format)))
                   (buffer-set name doc)
                   (load-buffer-open name opts)
                   (buffer-pretend-modified name))
