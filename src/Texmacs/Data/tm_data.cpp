@@ -156,40 +156,6 @@ kill_window_and_buffer () {
 }
 
 /******************************************************************************
-* Projects
-******************************************************************************/
-
-void
-project_attach (string prj_name) {
-  int i;
-  tm_buffer buf= get_buffer ();
-  buf->data->project= prj_name;
-  for (i=0; i<N(buf->vws); i++) {
-    tm_view vw= buf->vws[i];
-    vw->ed->notify_change (THE_DECORATIONS);
-    vw->ed->require_save ();
-  }
-  if (prj_name == "") buf->prj= NULL;
-  else {
-    url full_name= head (buf->buf->name) * prj_name;
-    buf->prj= search_buffer_insist (full_name);
-  }
-}
-
-bool
-project_attached () {
-  tm_buffer buf= get_buffer ();
-  return buf->data->project != "";
-}
-
-url
-project_get () {
-  tm_buffer buf= get_buffer ();
-  if (buf->data->project == "") return url_none ();
-  return buf->prj->buf->name;
-}
-
-/******************************************************************************
 * Window management
 ******************************************************************************/
 
