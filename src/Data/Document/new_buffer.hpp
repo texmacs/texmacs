@@ -57,7 +57,16 @@ inline new_buffer& new_buffer::operator = (new_buffer x) {
   this->rep=x.rep; return *this; }
 
 /******************************************************************************
-* Routines
+* Low level types and routines
+******************************************************************************/
+
+class tm_buffer_rep;
+typedef tm_buffer_rep* tm_buffer;
+tm_buffer search_buffer (url name);
+tm_buffer search_buffer_insist (url name);
+
+/******************************************************************************
+* High level routines
 ******************************************************************************/
 
 array<url> get_all_buffers ();

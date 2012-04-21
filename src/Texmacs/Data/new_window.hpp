@@ -21,4 +21,10 @@ url  window_to_buffer (url win);
 void window_set_buffer (url win, url name);
 void window_focus (url win);
 
+// Low level types and routines
+class tm_window_rep;
+typedef tm_window_rep* tm_window;
+tm_window search_window (url win);
+url get_name_window (tm_window win);
+
 #endif // defined NEW_WINDOW_H

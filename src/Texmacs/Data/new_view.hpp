@@ -14,9 +14,6 @@
 #include "tree.hpp"
 #include "url.hpp"
 
-class tm_view_rep;
-typedef tm_view_rep* tm_view;
-
 array<url> get_view_history ();
 array<url> get_buffer_views (url name);
 url  get_this_view ();
@@ -36,6 +33,13 @@ void clone_window ();
 void kill_window ();
 void kill_window_and_buffer ();
 bool is_aux_buffer (url name);
+
+// Low level types and routines
+class tm_view_rep;
+typedef tm_view_rep* tm_view;
+tm_view search_view (url name);
+url get_name_view (tm_view vw);
+void detach_view (url u);
 
 bool needs_to_be_saved (array<tm_view> vws);
 bool needs_to_be_autosaved (array<tm_view> vws);

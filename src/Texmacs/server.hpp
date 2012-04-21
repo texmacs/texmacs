@@ -20,12 +20,6 @@
 #include "Data/new_window.hpp"
 #include "Data/new_project.hpp"
 
-class tm_buffer_rep;
-class tm_view_rep;
-class tm_window_rep;
-typedef tm_buffer_rep* tm_buffer;
-typedef tm_view_rep*   tm_view;
-typedef tm_window_rep* tm_window;
 class editor;
 
 class server_rep: public abstract_struct {
@@ -138,13 +132,6 @@ inline bool in_rescue_mode () { return rescue_mode; }
 
 /* low level */
 void create_buffer (url name, tree doc);
-tm_buffer search_buffer (url name);
-tm_buffer search_buffer_insist (url name);
-tm_view search_view (url name);
-tm_window search_window (url win);
-url get_name_view (tm_view vw);
 void new_buffer_in_this_window (url name, tree t);
-void detach_view (url u);
-url get_name_window (tm_window win);
 
 #endif // defined SERVER_H
