@@ -236,7 +236,7 @@ delete_view (url u) {
 
 void
 attach_view (url win_u, url u) {
-  tm_window win= search_window (get_window_id (win_u));
+  tm_window win= search_window (win_u);
   tm_view   vw = search_view (u);
   if (win == NULL || vw == NULL) return;
   // cout << "Attach view " << vw->buf->buf->name << "\n";
@@ -272,7 +272,7 @@ detach_view (url u) {
 void
 window_set_view (url win_u, url new_u, bool focus) {
   //cout << "set view " << win_u << ", " << new_u << ", " << focus << "\n";
-  tm_window win= search_window (get_window_id (win_u));
+  tm_window win= search_window (win_u);
   if (win == NULL) return;
   //cout << "Found window\n";
   tm_view new_vw= search_view (new_u);
@@ -312,7 +312,7 @@ kill_buffer (url name) {
         prev= get_recent_view (name, false, true, false, false);
         prev= get_new_view (get_view_buffer (prev));
       }
-      window_set_view (get_window_name (old_vw->win->id), prev, false);
+      window_set_view (get_name_window (old_vw->win), prev, false);
     }
   }
   remove_buffer (name);
@@ -325,7 +325,7 @@ switch_to_buffer (url name) {
   url u= get_passive_view (name);
   tm_view vw= search_view (u);
   if (vw == NULL) return;
-  window_set_view (get_window_name (win->id), u, true);
+  window_set_view (get_name_window (win), u, true);
   tm_window nwin= vw->win;
   nwin->set_shrinking_factor (nwin->get_shrinking_factor ());
   // cout << "Switched to buffer " << new_vw->buf->buf->name << "\n";

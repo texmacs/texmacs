@@ -98,18 +98,18 @@ destroy_window_id (int i) {
   the_windows= reset (the_windows, i);
 }
 
-tm_window
-search_window (int id) {
-  return tm_window_table[id];
-}
-
 /******************************************************************************
 * Window names as URLs
 ******************************************************************************/
 
 url
-get_window_name (int id) {
+get_name_window (int id) {
   return "tmfs://window/" * as_string (id);
+}
+
+url
+get_name_window (tm_window win) {
+  return "tmfs://window/" * as_string (win->id);
 }
 
 int
@@ -120,6 +120,11 @@ get_window_id (url win) {
   return as_int (s (N(p), N(s)));
 }
 
+tm_window
+search_window (url win) {
+  return tm_window_table[get_window_id (win)];
+}
+
 /******************************************************************************
 * Manage global list of windows
 ******************************************************************************/
@@ -128,14 +133,14 @@ array<url>
 windows_list () {
   array<url> r;
   for (path l= the_windows; !is_nil (l); l= l->next)
-    r << get_window_name (l->item);
+    r << get_name_window (l->item);
   return r;
 }
 
 url
 get_this_window () {
   tm_window win= get_window ();
-  return get_window_name (win->id);
+  return get_name_window (win);
 }
 
 array<url>
@@ -145,7 +150,7 @@ buffer_to_windows (url name) {
   if (is_nil (buf)) return r;
   for (int i=0; i<N(buf->vws); i++)
     if (buf->vws[i]->win != NULL)
-      r << get_window_name (buf->vws[i]->win->id);
+      r << get_name_window (buf->vws[i]->win);
   return r;
 }
 
@@ -210,7 +215,7 @@ new_buffer_in_new_window (url name, tree doc, tree geom) {
   if (is_nil (search_buffer (name)))
     create_buffer (name, doc);
   tm_window win= new_window (true, geom);
-  window_set_view (get_window_name (win->id), get_passive_view (name), true);
+  window_set_view (get_name_window (win), get_passive_view (name), true);
 }
 
 /******************************************************************************
@@ -227,7 +232,7 @@ open_window (tree geom) {
 void
 clone_window () {
   tm_window win= new_window ();
-  window_set_view (get_window_name (win->id),
+  window_set_view (get_name_window (win),
                    get_passive_view (get_this_buffer ()), true);
 }
 
