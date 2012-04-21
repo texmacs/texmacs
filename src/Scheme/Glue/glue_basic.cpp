@@ -5821,9 +5821,9 @@ tmg_current_view () {
 
 tmscm
 tmg_window_2view (tmscm arg1) {
-  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "window->view");
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "window->view");
 
-  int in1= tmscm_to_int (arg1);
+  url in1= tmscm_to_url (arg1);
 
   // TMSCM_DEFER_INTS;
   url out= get_window_view (in1);
@@ -5899,11 +5899,11 @@ tmg_view_delete (tmscm arg1) {
 
 tmscm
 tmg_window_set_view (tmscm arg1, tmscm arg2, tmscm arg3) {
-  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "window-set-view");
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "window-set-view");
   TMSCM_ASSERT_URL (arg2, TMSCM_ARG2, "window-set-view");
   TMSCM_ASSERT_BOOL (arg3, TMSCM_ARG3, "window-set-view");
 
-  int in1= tmscm_to_int (arg1);
+  url in1= tmscm_to_url (arg1);
   url in2= tmscm_to_url (arg2);
   bool in3= tmscm_to_bool (arg3);
 

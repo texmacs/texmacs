@@ -182,13 +182,13 @@ bool export_tree (tree doc, url u, string fm);
 array<url> get_view_history ();
 array<url> get_buffer_views (url name);
 url  get_this_view ();
-url  get_window_view (int id);
+url  get_window_view (url win);
 url  get_view_buffer (url u);
 url  get_new_view (url name);
 url  get_recent_view (url name);
 url  get_passive_view (url name);
 void delete_view (url u);
-void window_set_view (int id, url new_u, bool focus);
+void window_set_view (url win, url new_u, bool focus);
 
 url  create_buffer ();
 void switch_to_buffer (url name);
