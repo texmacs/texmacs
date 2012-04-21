@@ -321,11 +321,10 @@ kill_buffer (url name) {
 void
 switch_to_buffer (url name) {
   // cout << "Switching to buffer " << buf->buf->name << "\n";
-  tm_window win= get_window ();
   url u= get_passive_view (name);
   tm_view vw= search_view (u);
   if (vw == NULL) return;
-  window_set_view (get_name_window (win), u, true);
+  window_set_view (get_this_window (), u, true);
   tm_window nwin= vw->win;
   nwin->set_shrinking_factor (nwin->get_shrinking_factor ());
   // cout << "Switched to buffer " << new_vw->buf->buf->name << "\n";

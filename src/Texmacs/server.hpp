@@ -140,7 +140,6 @@ tm_view search_view (url name);
 tm_window search_window (url win);
 url get_name_view (tm_view vw);
 void new_buffer_in_this_window (url name, tree t);
-tm_window new_window (bool map_flag= true, tree geom= "");
 void detach_view (url u);
 url get_name_window (tm_window win);
 

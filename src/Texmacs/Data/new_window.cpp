@@ -19,61 +19,6 @@
 #include "new_document.hpp"
 
 /******************************************************************************
-* Low level creation and destruction of windows
-******************************************************************************/
-
-static hashmap<url,tm_window> tm_window_table (NULL);
-
-class kill_window_command_rep: public command_rep {
-public:
-  inline kill_window_command_rep () {}
-  inline void apply () { exec_delayed (scheme_cmd ("(safely-kill-window)")); }
-  tm_ostream& print (tm_ostream& out) { return out << "kill window"; }
-};
-
-tm_window
-new_window (bool map_flag, tree geom) {
-  int mask= 0;
-  if (get_preference ("header") == "on") mask += 1;
-  if (get_preference ("main icon bar") == "on") mask += 2;
-  if (get_preference ("mode dependent icons") == "on") mask += 4;
-  if (get_preference ("focus dependent icons") == "on") mask += 8;
-  if (get_preference ("user provided icons") == "on") mask += 16;
-  if (get_preference ("status bar") == "on") mask += 32;
-  command quit= tm_new<kill_window_command_rep> ();
-  tm_window win= tm_new<tm_window_rep> (texmacs_widget (mask, quit), geom);
-  tm_window_table (win->id)= win;
-  if (map_flag) win->map ();
-  return win;
-}
-
-static bool
-delete_view_from_window (tm_window win) {
-  int i, j;
-  for (i=0; i<N(bufs); i++) {
-    tm_buffer buf= bufs[i];
-    for (j=0; j<N(buf->vws); j++) {
-      tm_view vw= buf->vws[j];
-      if (vw->win == win) {
-	detach_view (get_name_view (vw));
-	delete_view (get_name_view (vw));
-	return true;
-      }
-    }
-  }
-  return false;
-}
-
-void
-delete_window (tm_window win) {
-  while (delete_view_from_window (win)) {}
-  win->unmap ();
-  tm_window_table->reset (win->id);
-  destroy_window_widget (win->win);
-  tm_delete (win);
-}
-
-/******************************************************************************
 * Manage global list of windows
 ******************************************************************************/
 
@@ -108,6 +53,63 @@ destroy_window_id (url win) {
 url
 get_name_window (tm_window win) {
   return win->id;
+}
+
+/******************************************************************************
+* Low level creation and destruction of windows
+******************************************************************************/
+
+static hashmap<url,tm_window> tm_window_table (NULL);
+
+class kill_window_command_rep: public command_rep {
+public:
+  inline kill_window_command_rep () {}
+  inline void apply () { exec_delayed (scheme_cmd ("(safely-kill-window)")); }
+  tm_ostream& print (tm_ostream& out) { return out << "kill window"; }
+};
+
+url
+new_window (bool map_flag= true, tree geom= "") {
+  int mask= 0;
+  if (get_preference ("header") == "on") mask += 1;
+  if (get_preference ("main icon bar") == "on") mask += 2;
+  if (get_preference ("mode dependent icons") == "on") mask += 4;
+  if (get_preference ("focus dependent icons") == "on") mask += 8;
+  if (get_preference ("user provided icons") == "on") mask += 16;
+  if (get_preference ("status bar") == "on") mask += 32;
+  command quit= tm_new<kill_window_command_rep> ();
+  tm_window win= tm_new<tm_window_rep> (texmacs_widget (mask, quit), geom);
+  tm_window_table (win->id)= win;
+  if (map_flag) win->map ();
+  return get_name_window (win);
+}
+
+static bool
+delete_view_from_window (tm_window win) {
+  int i, j;
+  for (i=0; i<N(bufs); i++) {
+    tm_buffer buf= bufs[i];
+    for (j=0; j<N(buf->vws); j++) {
+      tm_view vw= buf->vws[j];
+      if (vw->win == win) {
+	detach_view (get_name_view (vw));
+	delete_view (get_name_view (vw));
+	return true;
+      }
+    }
+  }
+  return false;
+}
+
+void
+delete_window (url win_u) {
+  tm_window win= search_window (win_u);
+  if (win == NULL) return;
+  while (delete_view_from_window (win)) {}
+  win->unmap ();
+  tm_window_table->reset (win->id);
+  destroy_window_widget (win->win);
+  tm_delete (win);
 }
 
 tm_window
@@ -199,8 +201,8 @@ void
 new_buffer_in_new_window (url name, tree doc, tree geom) {
   if (is_nil (search_buffer (name)))
     create_buffer (name, doc);
-  tm_window win= new_window (true, geom);
-  window_set_view (get_name_window (win), get_passive_view (name), true);
+  url win= new_window (true, geom);
+  window_set_view (win, get_passive_view (name), true);
 }
 
 /******************************************************************************
@@ -216,20 +218,19 @@ open_window (tree geom) {
 
 void
 clone_window () {
-  tm_window win= new_window ();
-  window_set_view (get_name_window (win),
-                   get_passive_view (get_this_buffer ()), true);
+  url win= new_window ();
+  window_set_view (win, get_passive_view (get_this_buffer ()), true);
 }
 
 void
 kill_window () {
   int i, j;
-  tm_window win= get_window ();
+  url win= get_this_window ();
   for (i=0; i<N(bufs); i++) {
     tm_buffer buf= bufs[i];
     for (j=0; j<N(buf->vws); j++) {
       tm_view vw= buf->vws[j];
-      if ((vw->win != NULL) && (vw->win != win)) {
+      if (vw->win != NULL && get_name_window (vw->win) != win) {
 	set_view (vw);
         vw->buf->buf->last_visit= texmacs_time ();
 	delete_window (win);
