@@ -44,11 +44,15 @@
 (tm-define (inside-graphical-text?)
   (tree-innermost graphical-text-context?))
 
-(tm-define gr-tags-all          (graphical-tag-list))
-(tm-define gr-tags-curves       (graphical-curve-tag-list))
-(tm-define gr-tags-noncurves    (append (graphical-atomic-tag-list)
-                                        (graphical-text-tag-list)
-                                        (graphical-group-tag-list)))
+(tm-define gr-tags-user      (list))
+(tm-define gr-tags-all       (graphical-tag-list))
+(tm-define gr-tags-curves    (graphical-curve-tag-list))
+(tm-define gr-tags-noncurves (append (graphical-atomic-tag-list)
+                                     (graphical-text-tag-list)
+                                     (graphical-group-tag-list)))
+
+(tm-define (graphical-user-tag? l)
+  (in? l gr-tags-user))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; List of graphical attributes and their properties
@@ -129,7 +133,7 @@
             "point-style")))
 
 (tm-define (graphics-attributes tag)
-  (:require (graphical-curve-tag? tag))
+  (:require (or (graphical-curve-tag? tag) (graphical-user-tag? tag)))
   (append (graphics-common-attributes)
           '("fill-color"
             "line-width" "line-join" "line-caps" "line-effects"

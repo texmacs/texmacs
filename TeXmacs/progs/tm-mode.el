@@ -66,7 +66,7 @@
     tm-menu define-menu tm-widget define-widget tm-generate
     tm-build tm-build-macro tm-build-widget
     menu-bind define-table extend-table
-    define-format define-language))
+    define-format define-language define-graphics))
 
 (setq unary-no-highlight
   '(format interactive

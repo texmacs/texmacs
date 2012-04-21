@@ -63,7 +63,7 @@
   (object-set! `(point ,x ,y) 'new))
 
 (tm-define (object_create tag x y)
-  (:require (in? tag gr-tags-curves))
+  (:require (or (in? tag gr-tags-curves) (in? tag gr-tags-user)))
   (with o (graphics-enrich `(,tag (point ,x ,y) (point ,x ,y)))
     (graphics-store-state 'start-create)
     (set! current-point-no 1)

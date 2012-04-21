@@ -243,7 +243,8 @@ point_box_rep::display (renderer ren) {
   x[3]= ((SI) p[0]) + r;
   y[3]= ((SI) p[1]) - r;
   ren->set_line_style (PIXEL);
-  if (style == "square") {
+  if (style == "none");
+  else if (style == "square") {
     if (fill == FILL_MODE_INSIDE || fill == FILL_MODE_BOTH) {
       ren->set_color (fill_col);
       ren->line (x[0], y[0], x[1], y[1]);
@@ -261,8 +262,8 @@ point_box_rep::display (renderer ren) {
     }
   }
   else {
-    if (style == "disk"
-     || fill == FILL_MODE_INSIDE || fill == FILL_MODE_BOTH) {
+    if (style == "disk" ||
+        fill == FILL_MODE_INSIDE || fill == FILL_MODE_BOTH) {
       ren->set_color (style == "disk" ? col : fill_col);
       ren->arc (x[0], y[0]+ren->pixel, x[2], y[2]+ren->pixel, 0, 64*360);
       ren->fill_arc (x[0], y[0]+ren->pixel, x[2], y[2]+ren->pixel, 0, 64*360);

@@ -173,6 +173,7 @@
 	  (with submode (cadr mode)
 	     (cond ((== submode 'point) (noop))
 		   ((in? submode gr-tags-curves) (noop))
+		   ((in? submode gr-tags-user) (noop))
 		   ((graphical-text-tag? submode) (noop))
 		   (else (display* "Uncaptured finish (edit)\n")))))
 	 ((== (car mode) 'group-edit) (noop))

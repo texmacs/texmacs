@@ -267,6 +267,11 @@
   ("Circle" (graphics-set-mode '(edit carc)))
   ("Text" (graphics-set-mode '(edit text-at)))
   ("Mathematics" (graphics-set-mode '(edit math-at)))
+  (assuming (style-has? "std-markup-dtd")
+    ---
+    (for (tag (sort gr-tags-user symbol<=?))
+      ((eval (upcase-first (symbol->string tag)))
+       (graphics-set-mode `(edit ,tag)))))
   ---
   ("Set properties" (graphics-set-mode '(group-edit props)))
   ("Move objects" (graphics-set-mode '(group-edit move)))
@@ -621,6 +626,8 @@
         ((== s '(group-edit zoom)) "resize")
         ((== s '(group-edit rotate)) "rotate")
         ((== s '(group-edit group-ungroup)) "group/ungroup")
+        ((and (list-2? s) (== (car s) 'edit) (in? (cadr s) gr-tags-user))
+         (symbol->string (cadr s)))
         (else "unknown")))
 
 (tm-menu (graphics-icons)
