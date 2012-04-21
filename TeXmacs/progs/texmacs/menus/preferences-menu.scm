@@ -466,11 +466,13 @@
     (meti (text "Allow for macro definitions in preamble")
       (toggle (set-boolean-preference "texmacs->latex:use-macros" answer)
               (get-boolean-preference "texmacs->latex:use-macros"))))
+  ===
+  (aligned
     (item (text "Character encoding:")
       (enum (set-pretty-preference "texmacs->latex:encoding" answer)
             '("ascii" "cork" "utf-8")
             (get-pretty-preference "texmacs->latex:encoding")
-            "5em")))
+            "5em"))))
 
 (define-preference-names "texmacs->verbatim:encoding"
   ("cork" "Cork")
