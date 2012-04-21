@@ -102,9 +102,9 @@ tmg_set_font_rules (tmscm arg1) {
 }
 
 tmscm
-tmg_window_get_id () {
+tmg_window_get_serial () {
   // TMSCM_DEFER_INTS;
-  int out= get_server()->get_window_id ();
+  int out= get_server()->get_window_serial ();
   // TMSCM_ALLOW_INTS;
 
   return int_to_tmscm (out);
@@ -568,7 +568,7 @@ initialize_glue_server () {
   tmscm_install_procedure ("kbd-post-rewrite",  tmg_kbd_post_rewrite, 2, 0, 0);
   tmscm_install_procedure ("kbd-system-rewrite",  tmg_kbd_system_rewrite, 1, 0, 0);
   tmscm_install_procedure ("set-font-rules",  tmg_set_font_rules, 1, 0, 0);
-  tmscm_install_procedure ("window-get-id",  tmg_window_get_id, 0, 0, 0);
+  tmscm_install_procedure ("window-get-serial",  tmg_window_get_serial, 0, 0, 0);
   tmscm_install_procedure ("window-set-property",  tmg_window_set_property, 2, 0, 0);
   tmscm_install_procedure ("window-get-property",  tmg_window_get_property, 1, 0, 0);
   tmscm_install_procedure ("show-header",  tmg_show_header, 1, 0, 0);

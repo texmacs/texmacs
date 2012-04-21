@@ -53,7 +53,7 @@ public:
 			      command& cmd, string& sh, string& help) = 0;
 
   /* TeXmacs frames */
-  virtual int  get_window_id () = 0;
+  virtual int  get_window_serial () = 0;
   virtual void set_window_property (scheme_tree what, scheme_tree val) = 0;
   virtual void set_bool_window_property (string what, bool val) = 0;
   virtual void set_int_window_property (string what, int val) = 0;
@@ -143,7 +143,6 @@ void new_buffer_in_this_window (url name, tree t);
 tm_window new_window (bool map_flag= true, tree geom= "");
 void detach_view (url u);
 url get_name_window (tm_window win);
-int get_window_id (url u);
 
 /* Buffer management */
 array<url> get_all_buffers ();

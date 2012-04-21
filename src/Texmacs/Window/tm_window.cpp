@@ -41,7 +41,7 @@ tm_window_rep::tm_window_rep (widget wid2, tree geom):
 
 tm_window_rep::tm_window_rep (tree doc, command quit):
   win (texmacs_widget (0, quit)),
-  wid (win), id (-1),
+  wid (win), id (url_none ()),
   serial (tm_window_serial++),
   menu_current (object ()), menu_cache (widget ()),
   text_ptr (NULL)
@@ -50,7 +50,7 @@ tm_window_rep::tm_window_rep (tree doc, command quit):
 }
 
 tm_window_rep::~tm_window_rep () {
-  if (id != -1) destroy_window_id (id);
+  if (!is_none (id)) destroy_window_id (id);
 }
 
 /******************************************************************************

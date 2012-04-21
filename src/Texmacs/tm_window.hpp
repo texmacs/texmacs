@@ -18,7 +18,7 @@ class tm_window_rep {
 public:
   widget win;
   widget wid;
-  int    id;
+  url    id;
 
 public:
   hashmap<tree,tree> props;

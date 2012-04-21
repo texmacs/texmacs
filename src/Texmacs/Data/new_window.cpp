@@ -22,7 +22,7 @@
 * Low level creation and destruction of windows
 ******************************************************************************/
 
-static hashmap<int,tm_window> tm_window_table (NULL);
+static hashmap<url,tm_window> tm_window_table (NULL);
 
 class kill_window_command_rep: public command_rep {
 public:
@@ -77,8 +77,8 @@ delete_window (tm_window win) {
 * Manage global list of windows
 ******************************************************************************/
 
-static int  last_window= 1;
-static path the_windows;
+static int last_window= 1;
+static array<url> all_windows;
 
 static path
 reset (path p, int i) {
@@ -87,42 +87,32 @@ reset (path p, int i) {
   else return path (p->item, reset (p->next, i));
 }
 
-int
+url
 create_window_id () {
-  the_windows= path (last_window, the_windows);
-  return last_window++;
+  url r= "tmfs://window/" * as_string (last_window);
+  all_windows << r;
+  last_window++;
+  return r;
 }
 
 void
-destroy_window_id (int i) {
-  the_windows= reset (the_windows, i);
-}
-
-/******************************************************************************
-* Window names as URLs
-******************************************************************************/
-
-url
-get_name_window (int id) {
-  return "tmfs://window/" * as_string (id);
+destroy_window_id (url win) {
+  for (int i=0; i<N(all_windows); i++)
+    if (all_windows[i] == win) {
+      all_windows= append (range (all_windows, 0, i),
+                           range (all_windows, i+1, N(all_windows)));
+      return;
+    }
 }
 
 url
 get_name_window (tm_window win) {
-  return "tmfs://window/" * as_string (win->id);
-}
-
-int
-get_window_id (url win) {
-  string s= as_string (win);
-  string p= "tmfs://window/";
-  if (!starts (s, p) || !is_int (s (N(p), N(s)))) return -1;
-  return as_int (s (N(p), N(s)));
+  return win->id;
 }
 
 tm_window
 search_window (url win) {
-  return tm_window_table[get_window_id (win)];
+  return tm_window_table [win];
 }
 
 /******************************************************************************
@@ -131,10 +121,7 @@ search_window (url win) {
 
 array<url>
 windows_list () {
-  array<url> r;
-  for (path l= the_windows; !is_nil (l); l= l->next)
-    r << get_name_window (l->item);
-  return r;
+  return all_windows;
 }
 
 url
@@ -156,22 +143,20 @@ buffer_to_windows (url name) {
 
 url
 window_to_buffer (url win) {
-  int id= get_window_id (win);
   for (int i=0; i<N(bufs); i++)
     for (int j=0; j<N(bufs[i]->vws); j++)
       if (bufs[i]->vws[j]->win != NULL)
-	if (bufs[i]->vws[j]->win->id == id)
+	if (get_name_window (bufs[i]->vws[j]->win) == win)
 	  return bufs[i]->buf->name;
   return url_none ();
 }
 
 url
 get_window_view (url win) {
-  int id= get_window_id (win);
   for (int i=0; i<N(bufs); i++)
     for (int j=0; j<N(bufs[i]->vws); j++)
       if (bufs[i]->vws[j]->win != NULL)
-	if (bufs[i]->vws[j]->win->id == id)
+	if (get_name_window (bufs[i]->vws[j]->win) == win)
 	  return get_name_view (bufs[i]->vws[j]);
   return url_none ();
 }

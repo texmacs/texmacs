@@ -24,7 +24,7 @@
   (kbd-system-rewrite kbd_system_rewrite (tree string))
   (set-font-rules set_font_rules (void scheme_tree))
 
-  (window-get-id get_window_id (int))
+  (window-get-serial get_window_serial (int))
   (window-set-property set_window_property (void scheme_tree scheme_tree))
   (window-get-property get_window_property (scheme_tree scheme_tree))
   (show-header show_header (void bool))

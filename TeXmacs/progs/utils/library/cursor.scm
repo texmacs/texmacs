@@ -141,10 +141,10 @@
 (define cursor-history (make-ahash-table))
 (define cursor-future (make-ahash-table))
 
-(define (history-get) (ahash-ref* cursor-history (window-get-id) '()))
-(define (history-set l) (ahash-set! cursor-history (window-get-id) l))
-(define (future-get) (ahash-ref* cursor-future (window-get-id) '()))
-(define (future-set l) (ahash-set! cursor-future (window-get-id) l))
+(define (history-get) (ahash-ref* cursor-history (window-get-serial) '()))
+(define (history-set l) (ahash-set! cursor-history (window-get-serial) l))
+(define (future-get) (ahash-ref* cursor-future (window-get-serial) '()))
+(define (future-set l) (ahash-set! cursor-future (window-get-serial) l))
 
 (define (cursor-same? l p)
   (and (nnull? l) (== (position-get (car l)) p)))

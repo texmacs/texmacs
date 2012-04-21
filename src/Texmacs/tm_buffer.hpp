@@ -23,8 +23,8 @@ extern tree the_et;
 path new_document ();
 void delete_document (path rp);
 void set_document (path rp, tree t);
-int  create_window_id ();
-void destroy_window_id (int);
+url  create_window_id ();
+void destroy_window_id (url);
 
 class tm_buffer_rep {
 public:

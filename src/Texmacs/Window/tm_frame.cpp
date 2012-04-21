@@ -50,7 +50,7 @@ icon_bar_name (int which) {
 ******************************************************************************/
 
 int
-tm_frame_rep::get_window_id () {
+tm_frame_rep::get_window_serial () {
   return get_window () -> serial;
 }
 

@@ -25,7 +25,7 @@ public:
   ~tm_frame_rep ();
 
   /* properties */
-  int get_window_id ();
+  int get_window_serial ();
   void set_window_property (scheme_tree what, scheme_tree val);
   void set_bool_window_property (string what, bool val);
   void set_int_window_property (string what, int val);
