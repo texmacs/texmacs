@@ -164,28 +164,29 @@ window_to_buffer (url win) {
 * Manage global list of windows (old style)
 ******************************************************************************/
 
-tm_view
+url
 window_find_view (int id) {
   for (int i=0; i<N(bufs); i++)
     for (int j=0; j<N(bufs[i]->vws); j++)
       if (bufs[i]->vws[j]->win != NULL)
 	if (bufs[i]->vws[j]->win->id == id)
-	  return bufs[i]->vws[j];
-  return NULL;
+	  return get_name_view (bufs[i]->vws[j]);
+  return url_none ();
 }
 
 void
 window_set_buffer (int id, url name) {
-  tm_view old_vw= window_find_view (id);
-  if (old_vw == NULL || old_vw->buf->buf->name == name) return;
+  url old= window_find_view (id);
+  if (is_none (old) || get_view_buffer (old) == name) return;
   window_set_view (id, get_passive_view (name), false);
 }
 
 void
 window_focus (int id) {
   if (get_window_name (id) == get_this_window ()) return;
-  tm_view vw= window_find_view (id);
-  if (vw == NULL) return;
+  url old= window_find_view (id);
+  if (is_none (old)) return;
+  tm_view vw= search_view (old);
   set_view (vw);
   vw->buf->buf->last_visit= texmacs_time ();
 }

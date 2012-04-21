@@ -184,8 +184,8 @@ void
 tm_server_rep::refresh () {
   array<url> l= windows_list ();
   for (int i=0; i<N(l); i++) {
-    tm_view vw= window_find_view (::get_window_id (l[i]));
-    if (vw != NULL) vw->win->refresh ();
+    url u= window_find_view (::get_window_id (l[i]));
+    if (!is_none (u)) search_view (u)->win->refresh ();
   }
 }
 

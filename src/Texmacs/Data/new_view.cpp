@@ -85,9 +85,7 @@ get_this_view () {
 
 url
 get_window_view (int id) {
-  tm_view vw= window_find_view (id);
-  if (vw == NULL) return url_none ();
-  return get_name_view (vw);
+  return window_find_view (id);
 }
 
 array<url>
@@ -286,10 +284,10 @@ window_set_view (int id, url new_u, bool focus) {
   if (new_vw == NULL || new_vw->win == win) return;
   //cout << "Found view\n";
   ASSERT (new_vw->win == NULL, "view attached to other window");
-  tm_view old_vw= window_find_view (id);
-  if (old_vw != NULL) detach_view (get_name_view (old_vw));
+  url old_u= window_find_view (id);
+  if (!is_none (old_u)) detach_view (old_u);
   attach_view (win->id, new_u);
-  if (focus || get_view () == old_vw) {
+  if (focus || get_this_view () == old_u) {
     set_view (new_vw);
     new_vw->buf->buf->last_visit= texmacs_time ();
   }
