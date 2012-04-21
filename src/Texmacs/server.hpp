@@ -219,8 +219,7 @@ array<url> windows_list ();
 array<url> buffer_to_windows (url name);
 url  get_this_window ();
 url  window_to_buffer (url win);
-
-void window_set_buffer (int id, url name);
-void window_focus (int id);
+void window_set_buffer (url win, url name);
+void window_focus (url win);
 
 #endif // defined SERVER_H

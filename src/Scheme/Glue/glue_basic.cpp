@@ -6114,10 +6114,10 @@ tmg_window_to_buffer (tmscm arg1) {
 
 tmscm
 tmg_window_set_buffer (tmscm arg1, tmscm arg2) {
-  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "window-set-buffer");
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "window-set-buffer");
   TMSCM_ASSERT_URL (arg2, TMSCM_ARG2, "window-set-buffer");
 
-  int in1= tmscm_to_int (arg1);
+  url in1= tmscm_to_url (arg1);
   url in2= tmscm_to_url (arg2);
 
   // TMSCM_DEFER_INTS;
@@ -6129,9 +6129,9 @@ tmg_window_set_buffer (tmscm arg1, tmscm arg2) {
 
 tmscm
 tmg_window_focus (tmscm arg1) {
-  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "window-focus");
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "window-focus");
 
-  int in1= tmscm_to_int (arg1);
+  url in1= tmscm_to_url (arg1);
 
   // TMSCM_DEFER_INTS;
   window_focus (in1);

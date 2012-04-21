@@ -517,9 +517,8 @@
   (current-window get_this_window (url))
   (buffer->windows buffer_to_windows (array_url url))
   (window-to-buffer window_to_buffer (url url))
-
-  (window-set-buffer window_set_buffer (void int url))
-  (window-focus window_focus (void int))
+  (window-set-buffer window_set_buffer (void url url))
+  (window-focus window_focus (void url))
 
   ;; windows
   (window-handle window_handle (int))

@@ -171,21 +171,17 @@ get_window_view (url win) {
   return url_none ();
 }
 
-/******************************************************************************
-* Manage global list of windows (old style)
-******************************************************************************/
-
 void
-window_set_buffer (int id, url name) {
-  url old= get_window_view (get_window_name (id));
+window_set_buffer (url win, url name) {
+  url old= get_window_view (win);
   if (is_none (old) || get_view_buffer (old) == name) return;
-  window_set_view (get_window_name (id), get_passive_view (name), false);
+  window_set_view (win, get_passive_view (name), false);
 }
 
 void
-window_focus (int id) {
-  if (get_window_name (id) == get_this_window ()) return;
-  url old= get_window_view (get_window_name (id));
+window_focus (url win) {
+  if (win == get_this_window ()) return;
+  url old= get_window_view (win);
   if (is_none (old)) return;
   tm_view vw= search_view (old);
   set_view (vw);
