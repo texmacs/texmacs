@@ -49,7 +49,6 @@
 (tm-define gr-tags-noncurves    (append (graphical-atomic-tag-list)
                                         (graphical-text-tag-list)
                                         (graphical-group-tag-list)))
-(tm-define gr-tags-oneshot      '(point arc carc text-at gr-group))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; List of graphical attributes and their properties
@@ -164,6 +163,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Refined properties concerning arity and types of children
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (graphics-minimal? obj)
+  (or (tm-is? obj 'point)
+      (== (tm-arity obj) (tag-minimal-arity (tm-car obj)))))
 
 (tm-define (graphics-incomplete? obj)
   (< (tm-arity obj) (tag-minimal-arity (tm-car obj))))

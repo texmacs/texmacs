@@ -272,7 +272,7 @@
          (set! leftclick-waiting #t))))
 
 (define (remove-point)
-  (if (or (current-in? gr-tags-oneshot) (null? (cdddr current-obj))
+  (if (or (graphics-minimal? current-obj)
 	  (not (current-in? gr-tags-all))
 	  (!= (logand (get-keyboard-modifiers) ShiftMask) 0))
       (begin
