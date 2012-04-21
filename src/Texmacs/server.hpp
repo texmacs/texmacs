@@ -220,7 +220,6 @@ array<url> buffer_to_windows (url name);
 url  get_this_window ();
 url  window_to_buffer (url win);
 
-url window_find_view (int id);
 void window_set_buffer (int id, url name);
 void window_focus (int id);
 

@@ -165,7 +165,7 @@ window_to_buffer (url win) {
 ******************************************************************************/
 
 url
-window_find_view (int id) {
+get_window_view (int id) {
   for (int i=0; i<N(bufs); i++)
     for (int j=0; j<N(bufs[i]->vws); j++)
       if (bufs[i]->vws[j]->win != NULL)
@@ -176,7 +176,7 @@ window_find_view (int id) {
 
 void
 window_set_buffer (int id, url name) {
-  url old= window_find_view (id);
+  url old= get_window_view (id);
   if (is_none (old) || get_view_buffer (old) == name) return;
   window_set_view (id, get_passive_view (name), false);
 }
@@ -184,7 +184,7 @@ window_set_buffer (int id, url name) {
 void
 window_focus (int id) {
   if (get_window_name (id) == get_this_window ()) return;
-  url old= window_find_view (id);
+  url old= get_window_view (id);
   if (is_none (old)) return;
   tm_view vw= search_view (old);
   set_view (vw);

@@ -83,11 +83,6 @@ get_this_view () {
   return get_name_view (vw);
 }
 
-url
-get_window_view (int id) {
-  return window_find_view (id);
-}
-
 array<url>
 get_buffer_views (url name) {
   tm_buffer buf= search_buffer (name);
@@ -284,7 +279,7 @@ window_set_view (int id, url new_u, bool focus) {
   if (new_vw == NULL || new_vw->win == win) return;
   //cout << "Found view\n";
   ASSERT (new_vw->win == NULL, "view attached to other window");
-  url old_u= window_find_view (id);
+  url old_u= get_window_view (id);
   if (!is_none (old_u)) detach_view (old_u);
   attach_view (win->id, new_u);
   if (focus || get_this_view () == old_u) {
