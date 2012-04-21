@@ -520,13 +520,13 @@
   (window-set-buffer window_set_buffer (void url url))
   (window-focus window_focus (void url))
 
-  ;; windows
-  (window-handle window_handle (int))
-  (window-create window_create (void int widget string bool))
-  (window-create-quit window_create (void int widget string command))
-  (window-delete window_delete (void int))
-  (window-show window_show (void int))
-  (window-hide window_hide (void int))
+  ;; transitional alternative windows; to be replaced by better solution
+  (alt-window-handle window_handle (int))
+  (alt-window-create window_create (void int widget string bool))
+  (alt-window-create-quit window_create (void int widget string command))
+  (alt-window-delete window_delete (void int))
+  (alt-window-show window_show (void int))
+  (alt-window-hide window_hide (void int))
 
   ;; routines for BibTeX
   (bib-add-period bib_add_period (scheme_tree scheme_tree))

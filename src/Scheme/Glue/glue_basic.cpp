@@ -6151,10 +6151,10 @@ tmg_window_handle () {
 
 tmscm
 tmg_window_create (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
-  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "window-create");
-  TMSCM_ASSERT_WIDGET (arg2, TMSCM_ARG2, "window-create");
-  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "window-create");
-  TMSCM_ASSERT_BOOL (arg4, TMSCM_ARG4, "window-create");
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "alt-window-create");
+  TMSCM_ASSERT_WIDGET (arg2, TMSCM_ARG2, "alt-window-create");
+  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "alt-window-create");
+  TMSCM_ASSERT_BOOL (arg4, TMSCM_ARG4, "alt-window-create");
 
   int in1= tmscm_to_int (arg1);
   widget in2= tmscm_to_widget (arg2);
@@ -6170,10 +6170,10 @@ tmg_window_create (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
 
 tmscm
 tmg_window_create_quit (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
-  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "window-create-quit");
-  TMSCM_ASSERT_WIDGET (arg2, TMSCM_ARG2, "window-create-quit");
-  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "window-create-quit");
-  TMSCM_ASSERT_COMMAND (arg4, TMSCM_ARG4, "window-create-quit");
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "alt-window-create-quit");
+  TMSCM_ASSERT_WIDGET (arg2, TMSCM_ARG2, "alt-window-create-quit");
+  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "alt-window-create-quit");
+  TMSCM_ASSERT_COMMAND (arg4, TMSCM_ARG4, "alt-window-create-quit");
 
   int in1= tmscm_to_int (arg1);
   widget in2= tmscm_to_widget (arg2);
@@ -6189,7 +6189,7 @@ tmg_window_create_quit (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
 
 tmscm
 tmg_window_delete (tmscm arg1) {
-  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "window-delete");
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "alt-window-delete");
 
   int in1= tmscm_to_int (arg1);
 
@@ -6202,7 +6202,7 @@ tmg_window_delete (tmscm arg1) {
 
 tmscm
 tmg_window_show (tmscm arg1) {
-  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "window-show");
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "alt-window-show");
 
   int in1= tmscm_to_int (arg1);
 
@@ -6215,7 +6215,7 @@ tmg_window_show (tmscm arg1) {
 
 tmscm
 tmg_window_hide (tmscm arg1) {
-  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "window-hide");
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "alt-window-hide");
 
   int in1= tmscm_to_int (arg1);
 
@@ -6834,12 +6834,12 @@ initialize_glue_basic () {
   tmscm_install_procedure ("window-to-buffer",  tmg_window_to_buffer, 1, 0, 0);
   tmscm_install_procedure ("window-set-buffer",  tmg_window_set_buffer, 2, 0, 0);
   tmscm_install_procedure ("window-focus",  tmg_window_focus, 1, 0, 0);
-  tmscm_install_procedure ("window-handle",  tmg_window_handle, 0, 0, 0);
-  tmscm_install_procedure ("window-create",  tmg_window_create, 4, 0, 0);
-  tmscm_install_procedure ("window-create-quit",  tmg_window_create_quit, 4, 0, 0);
-  tmscm_install_procedure ("window-delete",  tmg_window_delete, 1, 0, 0);
-  tmscm_install_procedure ("window-show",  tmg_window_show, 1, 0, 0);
-  tmscm_install_procedure ("window-hide",  tmg_window_hide, 1, 0, 0);
+  tmscm_install_procedure ("alt-window-handle",  tmg_window_handle, 0, 0, 0);
+  tmscm_install_procedure ("alt-window-create",  tmg_window_create, 4, 0, 0);
+  tmscm_install_procedure ("alt-window-create-quit",  tmg_window_create_quit, 4, 0, 0);
+  tmscm_install_procedure ("alt-window-delete",  tmg_window_delete, 1, 0, 0);
+  tmscm_install_procedure ("alt-window-show",  tmg_window_show, 1, 0, 0);
+  tmscm_install_procedure ("alt-window-hide",  tmg_window_hide, 1, 0, 0);
   tmscm_install_procedure ("bib-add-period",  tmg_bib_add_period, 1, 0, 0);
   tmscm_install_procedure ("bib-upcase-first",  tmg_bib_upcase_first, 1, 0, 0);
   tmscm_install_procedure ("bib-locase",  tmg_bib_locase, 1, 0, 0);
