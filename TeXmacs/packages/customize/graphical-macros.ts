@@ -32,6 +32,16 @@
 
   <assign|circle|<macro|p1|p2|<extern|circle|<arg|p1>|<arg|p2>>>>
 
+  <\active*>
+    <\src-comment>
+      Electrical.
+    </src-comment>
+  </active*>
+
+  <assign|condensator|<macro|p1|p2|p3|<extern|condensator|<arg|p1>|<arg|p2>|<arg|p3>>>>
+
+  <assign|diode|<macro|p1|p2|p3|<extern|diode|<arg|p1>|<arg|p2>|<arg|p3>>>>
+
   \;
 </body>
 
