@@ -15,6 +15,10 @@
 #include "url.hpp"
 #include "scheme.hpp"
 #include "new_data.hpp"
+#include "new_buffer.hpp"
+#include "Data/new_view.hpp"
+#include "Data/new_window.hpp"
+#include "Data/new_project.hpp"
 
 class tm_buffer_rep;
 class tm_view_rep;
@@ -142,82 +146,5 @@ url get_name_view (tm_view vw);
 void new_buffer_in_this_window (url name, tree t);
 void detach_view (url u);
 url get_name_window (tm_window win);
-
-/* Buffer management */
-array<url> get_all_buffers ();
-url  make_new_buffer ();
-void remove_buffer (url name);
-int  number_buffers ();
-url  get_this_buffer ();
-url  get_name_buffer (path p);
-void rename_buffer (url name, url new_name);
-url get_master_buffer (url name);
-void set_master_buffer (url name, url master);
-void set_title_buffer (url name, string title);
-string get_title_buffer (url name);
-void set_buffer_tree (url name, tree doc);
-tree get_buffer_tree (url name);
-void set_buffer_body (url name, tree body);
-tree get_buffer_body (url name);
-void new_buffer_in_new_window (url name, tree t, tree geom= "");
-int  get_last_save_buffer (url name);
-void set_last_save_buffer (url name, int t);
-double last_visited (url name);
-bool buffer_modified (url name);
-bool buffer_modified_since_autosave (url name);
-void pretend_buffer_modified (url name);
-void pretend_buffer_saved (url name);
-void pretend_buffer_autosaved (url name);
-bool buffer_has_name (url name);
-bool buffer_import (url name, url src, string fm);
-bool buffer_load (url name);
-bool buffer_export (url name, url dest, string fm);
-bool buffer_save (url name);
-tree import_tree (url u, string fm);
-bool export_tree (tree doc, url u, string fm);
-
-/* View management */
-array<url> get_view_history ();
-array<url> get_buffer_views (url name);
-url  get_this_view ();
-url  get_window_view (url win);
-url  get_view_buffer (url u);
-url  get_new_view (url name);
-url  get_recent_view (url name);
-url  get_passive_view (url name);
-void delete_view (url u);
-void window_set_view (url win, url new_u, bool focus);
-
-url  create_buffer ();
-void switch_to_buffer (url name);
-void kill_buffer (url name);
-url  open_window (tree geom= "");
-void clone_window ();
-void kill_window ();
-void kill_window_and_buffer ();
-bool is_aux_buffer (url name);
-
-bool needs_to_be_saved (array<tm_view> vws);
-bool needs_to_be_autosaved (array<tm_view> vws);
-void set_master (array<tm_view> vws, url master);
-void set_title (array<tm_view> vws, string title, url name);
-void pretend_modified (array<tm_view> vws);
-void pretend_saved (array<tm_view> vws);
-void pretend_autosaved (array<tm_view> vws);
-void set_data (array<tm_view> vws, new_data data);
-void delete_views (array<tm_view> vws);
-
-/* Project management */
-void project_attach (string prj_name= "");
-bool project_attached ();
-url  project_get ();
-
-/* Window management */
-array<url> windows_list ();
-array<url> buffer_to_windows (url name);
-url  get_this_window ();
-url  window_to_buffer (url win);
-void window_set_buffer (url win, url name);
-void window_focus (url win);
 
 #endif // defined SERVER_H
