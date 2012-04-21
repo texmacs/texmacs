@@ -147,7 +147,7 @@ texmacs_input_widget (tree doc, command cmd, bool continuous) {
   (void) cmd; (void) continuous;
   doc= enrich_embedded_document (doc);
   url       base = get_master_buffer (get_this_buffer ());
-  tm_view   curvw= get_server () -> get_view ();
+  tm_view   curvw= get_view ();
   url       name = embedded_name (); create_buffer (name, doc);
   tm_view   vw   = search_view (get_passive_view (name));
   tm_window win  = tm_new<tm_window_rep> (doc, command ());

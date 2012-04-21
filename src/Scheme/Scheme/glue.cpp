@@ -89,7 +89,7 @@ cpp_error () {
 
 array<int>
 get_bounding_rectangle (tree t) {
-  editor ed= get_server () -> get_editor ();
+  editor ed= get_editor ();
   rectangle wr= ed -> get_window_extents ();
   path p= reverse (obtain_ip (t));
   selection sel= ed->search_selection (p * 0, p * right_index (t));

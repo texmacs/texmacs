@@ -520,6 +520,9 @@
   (window-set-buffer window_set_buffer (void url url))
   (window-focus window_focus (void url))
 
+  (has-view? has_view (bool))
+  (get-nr-windows get_nr_windows (int))
+
   ;; transitional alternative windows; to be replaced by better solution
   (alt-window-handle window_handle (int))
   (alt-window-create window_create (void int widget string bool))

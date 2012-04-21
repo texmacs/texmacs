@@ -418,7 +418,7 @@ edit_interface_rep::apply_changes () {
   // cout << "Handling automatic resizing\n";
   int sb= 1;
   if (is_attached (this) &&
-      get_server() -> has_window() &&
+      has_window () &&
       get_init_string (PAGE_MEDIUM) == "automatic")
     {
       SI wx, wy;
@@ -440,8 +440,8 @@ edit_interface_rep::apply_changes () {
     }
   if (sb != cur_sb) {
     cur_sb= sb;
-    if (get_server() -> has_window()) {
-      tm_window win= get_server () -> get_window ();
+    if (has_window ()) {
+      tm_window win= get_window ();
       win -> set_scrollbars (sb);
     }
   }

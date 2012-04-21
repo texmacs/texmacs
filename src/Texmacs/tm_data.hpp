@@ -17,14 +17,6 @@
 extern array<tm_buffer> bufs;
 
 /* Commodity macros */
-inline tm_buffer get_buffer () {
-  return get_server () -> get_buffer (); }
-inline tm_view get_view (bool must_be_valid= true) {
-  return get_server () -> get_view (must_be_valid); }
-inline tm_window get_window () {
-  return get_server () -> get_window (); }
-inline void set_view (tm_view vw) {
-  get_server () -> set_view (vw); }
 inline void set_message (tree left, tree right, bool temp= false) {
   get_server () -> set_message (left, right, temp); }
 

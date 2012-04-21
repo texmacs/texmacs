@@ -831,7 +831,8 @@ qt_ui_element_rep::as_qlayoutitem () {
 
       // FIXME: lpad and rpad ignored.
       SI hsep = y.x1; SI vsep = y.x2; SI lpad = y.x3; SI rpad = y.x4;
-      
+      (void) lpad; (void) rpad;
+     
       if (N(lhs) != N(rhs)) FAILED("aligned_widget: N(lhs) != N(rhs) ");
 
       QGridLayout* l= new QGridLayout ();

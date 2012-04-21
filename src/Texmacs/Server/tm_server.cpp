@@ -22,6 +22,7 @@
 #include "new_style.hpp"
 
 server* the_server= NULL;
+tm_view the_view= NULL;
 bool texmacs_started= false;
 url tm_init_file= url_none ();
 url my_init_file= url_none ();
@@ -67,7 +68,7 @@ in_presentation_mode () {
 
 tree
 get_subtree (path p) {
-  return get_server()->get_editor()->the_subtree (p);
+  return get_editor () -> the_subtree (p);
 }
 
 void
@@ -80,7 +81,7 @@ gui_set_output_language (string lan) {
 server_rep::server_rep () {}
 server_rep::~server_rep () {}
 
-tm_server_rep::tm_server_rep (): vw (NULL), def_sfactor (5) {
+tm_server_rep::tm_server_rep (): def_sfactor (5) {
   the_server= tm_new<server> (this);
   initialize_scheme ();
   gui_interpose (texmacs_interpose_handler);
@@ -106,61 +107,57 @@ tm_server_rep::tm_server_rep (): vw (NULL), def_sfactor (5) {
 
 tm_server_rep::~tm_server_rep () {}
 server::server (): rep (tm_new<tm_server_rep> ()) {}
+server_rep* tm_server_rep::get_server () { return this; }
 
 /******************************************************************************
 * Get and set objects associated to server
 ******************************************************************************/
 
-server_rep*
-tm_server_rep::get_server () {
-  return this;
+bool
+has_view () {
+  return the_view != NULL;
 }
 
 bool
-tm_server_rep::has_view () {
-  return vw != NULL;
-}
-
-bool
-tm_server_rep::has_window () {
-  return vw != NULL && vw->win != NULL;
+has_window () {
+  return the_view != NULL && the_view->win != NULL;
 }
 
 tm_view
-tm_server_rep::get_view (bool must_be_valid) {
-  ASSERT (!must_be_valid || vw != NULL, "no active view");
-  return vw;
+get_view (bool must_be_valid) {
+  ASSERT (!must_be_valid || the_view != NULL, "no active view");
+  return the_view;
 }
 
 void
-tm_server_rep::set_view (tm_view vw2) {
-  vw= vw2;
-  if (vw != NULL)
-    the_drd= vw->ed->drd;
+set_view (tm_view vw2) {
+  the_view= vw2;
+  if (the_view != NULL)
+    the_drd= the_view->ed->drd;
 }
 
 tm_buffer
-tm_server_rep::get_buffer () {
+get_buffer () {
   tm_view vw= get_view ();
   return vw->buf;
 }
 
 editor
-tm_server_rep::get_editor () {
+get_editor () {
   tm_view vw= get_view ();
   // cout << "Get editor" << vw->ed << "\n";
   return vw->ed;
 }
 
 tm_window
-tm_server_rep::get_window () {
+get_window () {
   tm_view vw= get_view ();
   ASSERT (vw->win != NULL, "no window attached to view");
   return vw->win;
 }
 
 int
-tm_server_rep::get_nr_windows () {
+get_nr_windows () {
   return nr_windows;
 }
 

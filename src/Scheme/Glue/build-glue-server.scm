@@ -45,8 +45,6 @@
   (dialogue-end dialogue_end (void))
   (choose-file choose_file (void object string string))
   (tm-interactive interactive (void object scheme_tree))
-
-  (has-view? has_view (bool))
   
   (style-clear-cache style_clear_cache (void))
   (set-script-status set_script_status (void int))
@@ -56,7 +54,6 @@
   (set-printer-dpi set_printer_dpi (void string))
   (set-default-shrinking-factor set_default_shrinking_factor (void int))
   (get-default-shrinking-factor get_default_shrinking_factor (int))
-  (get-nr-windows get_nr_windows (int))
   (image-gc image_gc (void))
   (inclusions-gc inclusions_gc (void))
   (update-all-path typeset_update (void path))

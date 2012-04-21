@@ -348,15 +348,6 @@ tmg_tm_interactive (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
-tmg_has_viewP () {
-  // TMSCM_DEFER_INTS;
-  bool out= get_server()->has_view ();
-  // TMSCM_ALLOW_INTS;
-
-  return bool_to_tmscm (out);
-}
-
-tmscm
 tmg_style_clear_cache () {
   // TMSCM_DEFER_INTS;
   get_server()->style_clear_cache ();
@@ -443,15 +434,6 @@ tmscm
 tmg_get_default_shrinking_factor () {
   // TMSCM_DEFER_INTS;
   int out= get_server()->get_default_shrinking_factor ();
-  // TMSCM_ALLOW_INTS;
-
-  return int_to_tmscm (out);
-}
-
-tmscm
-tmg_get_nr_windows () {
-  // TMSCM_DEFER_INTS;
-  int out= get_server()->get_nr_windows ();
   // TMSCM_ALLOW_INTS;
 
   return int_to_tmscm (out);
@@ -588,7 +570,6 @@ initialize_glue_server () {
   tmscm_install_procedure ("dialogue-end",  tmg_dialogue_end, 0, 0, 0);
   tmscm_install_procedure ("choose-file",  tmg_choose_file, 3, 0, 0);
   tmscm_install_procedure ("tm-interactive",  tmg_tm_interactive, 2, 0, 0);
-  tmscm_install_procedure ("has-view?",  tmg_has_viewP, 0, 0, 0);
   tmscm_install_procedure ("style-clear-cache",  tmg_style_clear_cache, 0, 0, 0);
   tmscm_install_procedure ("set-script-status",  tmg_set_script_status, 1, 0, 0);
   tmscm_install_procedure ("set-printing-command",  tmg_set_printing_command, 1, 0, 0);
@@ -597,7 +578,6 @@ initialize_glue_server () {
   tmscm_install_procedure ("set-printer-dpi",  tmg_set_printer_dpi, 1, 0, 0);
   tmscm_install_procedure ("set-default-shrinking-factor",  tmg_set_default_shrinking_factor, 1, 0, 0);
   tmscm_install_procedure ("get-default-shrinking-factor",  tmg_get_default_shrinking_factor, 0, 0, 0);
-  tmscm_install_procedure ("get-nr-windows",  tmg_get_nr_windows, 0, 0, 0);
   tmscm_install_procedure ("image-gc",  tmg_image_gc, 0, 0, 0);
   tmscm_install_procedure ("inclusions-gc",  tmg_inclusions_gc, 0, 0, 0);
   tmscm_install_procedure ("update-all-path",  tmg_update_all_path, 1, 0, 0);

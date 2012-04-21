@@ -26,17 +26,7 @@ class server_rep: public abstract_struct {
 public:
   server_rep ();
   virtual ~server_rep ();
-
-  /* Get and set objects associated to server */
   virtual server_rep* get_server () = 0;
-  virtual bool        has_view () = 0;
-  virtual bool        has_window () = 0;
-  virtual tm_view     get_view (bool must_be_valid= true) = 0;
-  virtual void        set_view (tm_view vw) = 0;
-  virtual tm_buffer   get_buffer () = 0;
-  virtual editor      get_editor () = 0;
-  virtual tm_window   get_window () = 0;
-  virtual int         get_nr_windows () = 0;
 
   /* Control global server parameters */
   virtual void   set_font_rules (scheme_tree rules) = 0;
@@ -133,5 +123,15 @@ inline bool in_rescue_mode () { return rescue_mode; }
 /* low level */
 void create_buffer (url name, tree doc);
 void new_buffer_in_this_window (url name, tree t);
+
+/* Get and set objects associated to server */
+bool      has_view ();
+bool      has_window ();
+tm_view   get_view (bool must_be_valid= true);
+void      set_view (tm_view vw);
+tm_buffer get_buffer ();
+editor    get_editor ();
+tm_window get_window ();
+int       get_nr_windows ();
 
 #endif // defined SERVER_H

@@ -14,7 +14,7 @@
 (output-copyright "build-glue-editor.scm")
 
 (build
-  "get_server()->get_editor()->"
+  "get_editor()->"
   "initialize_glue_editor"
 
   ;; important paths and trees
