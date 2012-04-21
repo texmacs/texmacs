@@ -513,10 +513,11 @@
   (project-attached? project_attached (bool))
   (project-get project_get (url))
 
-  (window-current window_current (int))
-  (window-list windows_list (path))
-  (buffer->windows buffer_to_windows (path url))
-  (window->buffer window_to_buffer (url int))
+  (window-list windows_list (array_url))
+  (current-window get_this_window (url))
+  (buffer->windows buffer_to_windows (array_url url))
+  (window-to-buffer window_to_buffer (url url))
+
   (window-set-buffer window_set_buffer (void int url))
   (window-focus window_focus (void int))
 

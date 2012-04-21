@@ -142,6 +142,8 @@ url get_name_view (tm_view vw);
 void new_buffer_in_this_window (url name, tree t);
 tm_window new_window (bool map_flag= true, tree geom= "");
 void detach_view (url u);
+url get_window_name (int id);
+int get_window_id (url u);
 
 /* Buffer management */
 array<url> get_all_buffers ();
@@ -213,10 +215,11 @@ bool project_attached ();
 url  project_get ();
 
 /* Window management */
-int  window_current ();
-path windows_list ();
-path buffer_to_windows (url name);
-url  window_to_buffer (int id);
+array<url> windows_list ();
+array<url> buffer_to_windows (url name);
+url  get_this_window ();
+url  window_to_buffer (url win);
+
 tm_view window_find_view (int id);
 void window_set_buffer (int id, url name);
 void window_focus (int id);

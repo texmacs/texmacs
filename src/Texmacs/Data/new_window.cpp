@@ -19,7 +19,7 @@
 #include "new_document.hpp"
 
 /******************************************************************************
-* Low level window routines
+* Low level creation and destruction of windows
 ******************************************************************************/
 
 static hashmap<int,tm_window> tm_window_table (NULL);
@@ -47,7 +47,7 @@ new_window (bool map_flag, tree geom) {
   return win;
 }
 
-bool
+static bool
 delete_view_from_window (tm_window win) {
   int i, j;
   for (i=0; i<N(bufs); i++) {
@@ -71,6 +71,123 @@ delete_window (tm_window win) {
   tm_window_table->reset (win->id);
   destroy_window_widget (win->win);
   tm_delete (win);
+}
+
+/******************************************************************************
+* Manage global list of windows
+******************************************************************************/
+
+static int  last_window= 1;
+static path the_windows;
+
+static path
+reset (path p, int i) {
+  if (is_nil (p)) return p;
+  else if (p->item == i) return p->next;
+  else return path (p->item, reset (p->next, i));
+}
+
+int
+create_window_id () {
+  the_windows= path (last_window, the_windows);
+  return last_window++;
+}
+
+void
+destroy_window_id (int i) {
+  the_windows= reset (the_windows, i);
+}
+
+tm_window
+search_window (int id) {
+  return tm_window_table[id];
+}
+
+/******************************************************************************
+* Window names as URLs
+******************************************************************************/
+
+url
+get_window_name (int id) {
+  return "tmfs://window/" * as_string (id);
+}
+
+int
+get_window_id (url win) {
+  string s= as_string (win);
+  string p= "tmfs://window/";
+  if (!starts (s, p) || !is_int (s (N(p), N(s)))) return -1;
+  return as_int (s (N(p), N(s)));
+}
+
+/******************************************************************************
+* Manage global list of windows
+******************************************************************************/
+
+array<url>
+windows_list () {
+  array<url> r;
+  for (path l= the_windows; !is_nil (l); l= l->next)
+    r << get_window_name (l->item);
+  return r;
+}
+
+url
+get_this_window () {
+  tm_window win= get_window ();
+  return get_window_name (win->id);
+}
+
+array<url>
+buffer_to_windows (url name) {
+  array<url> r;
+  tm_buffer buf= search_buffer (name);
+  if (is_nil (buf)) return r;
+  for (int i=0; i<N(buf->vws); i++)
+    if (buf->vws[i]->win != NULL)
+      r << get_window_name (buf->vws[i]->win->id);
+  return r;
+}
+
+url
+window_to_buffer (url win) {
+  int id= get_window_id (win);
+  for (int i=0; i<N(bufs); i++)
+    for (int j=0; j<N(bufs[i]->vws); j++)
+      if (bufs[i]->vws[j]->win != NULL)
+	if (bufs[i]->vws[j]->win->id == id)
+	  return bufs[i]->buf->name;
+  return url_none ();
+}
+
+/******************************************************************************
+* Manage global list of windows (old style)
+******************************************************************************/
+
+tm_view
+window_find_view (int id) {
+  for (int i=0; i<N(bufs); i++)
+    for (int j=0; j<N(bufs[i]->vws); j++)
+      if (bufs[i]->vws[j]->win != NULL)
+	if (bufs[i]->vws[j]->win->id == id)
+	  return bufs[i]->vws[j];
+  return NULL;
+}
+
+void
+window_set_buffer (int id, url name) {
+  tm_view old_vw= window_find_view (id);
+  if (old_vw == NULL || old_vw->buf->buf->name == name) return;
+  window_set_view (id, get_passive_view (name), false);
+}
+
+void
+window_focus (int id) {
+  if (get_window_name (id) == get_this_window ()) return;
+  tm_view vw= window_find_view (id);
+  if (vw == NULL) return;
+  set_view (vw);
+  vw->buf->buf->last_visit= texmacs_time ();
 }
 
 /******************************************************************************
@@ -149,92 +266,4 @@ kill_window_and_buffer () {
   }
   kill_window ();
   if (kill) remove_buffer (name);
-}
-
-/******************************************************************************
-* Window management
-******************************************************************************/
-
-static int  last_window= 1;
-static path the_windows;
-
-int
-create_window_id () {
-  the_windows= path (last_window, the_windows);
-  return last_window++;
-}
-
-static path
-reset (path p, int i) {
-  if (is_nil (p)) return p;
-  else if (p->item == i) return p->next;
-  else return path (p->item, reset (p->next, i));
-}
-
-void
-destroy_window_id (int i) {
-  the_windows= reset (the_windows, i);
-}
-
-int
-window_current () {
-  tm_window win= get_window ();
-  return win->id;
-}
-
-tm_window
-search_window (int id) {
-  return tm_window_table[id];
-}
-
-path
-windows_list () {
-  return the_windows;
-}
-
-path
-buffer_to_windows (url name) {
-  path p;
-  tm_buffer buf= search_buffer (name);
-  if (is_nil (buf)) return path ();
-  for (int i=0; i<N(buf->vws); i++)
-    if (buf->vws[i]->win != NULL)
-      p= path (buf->vws[i]->win->id, p);
-  return p;
-}
-
-url
-window_to_buffer (int id) {
-  for (int i=0; i<N(bufs); i++)
-    for (int j=0; j<N(bufs[i]->vws); j++)
-      if (bufs[i]->vws[j]->win != NULL)
-	if (bufs[i]->vws[j]->win->id == id)
-	  return bufs[i]->buf->name;
-  return url_none ();
-}
-
-tm_view
-window_find_view (int id) {
-  for (int i=0; i<N(bufs); i++)
-    for (int j=0; j<N(bufs[i]->vws); j++)
-      if (bufs[i]->vws[j]->win != NULL)
-	if (bufs[i]->vws[j]->win->id == id)
-	  return bufs[i]->vws[j];
-  return NULL;
-}
-
-void
-window_set_buffer (int id, url name) {
-  tm_view old_vw= window_find_view (id);
-  if (old_vw == NULL || old_vw->buf->buf->name == name) return;
-  window_set_view (id, get_passive_view (name), false);
-}
-
-void
-window_focus (int id) {
-  if (id == window_current ()) return;
-  tm_view vw= window_find_view (id);
-  if (vw == NULL) return;
-  set_view (vw);
-  vw->buf->buf->last_visit= texmacs_time ();
 }

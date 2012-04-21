@@ -320,6 +320,10 @@
   (or (buffer-in-recent-menu? u)
       (string-starts? (url->string u) "tmfs://help/")))
 
+(define-public (window->buffer win)
+  (with u (window-to-buffer win)
+    (and (not (url-none? u)) u)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Redirections
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

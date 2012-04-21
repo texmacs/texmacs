@@ -6069,21 +6069,21 @@ tmg_project_get () {
 }
 
 tmscm
-tmg_window_current () {
+tmg_window_list () {
   // TMSCM_DEFER_INTS;
-  int out= window_current ();
+  array_url out= windows_list ();
   // TMSCM_ALLOW_INTS;
 
-  return int_to_tmscm (out);
+  return array_url_to_tmscm (out);
 }
 
 tmscm
-tmg_window_list () {
+tmg_current_window () {
   // TMSCM_DEFER_INTS;
-  path out= windows_list ();
+  url out= get_this_window ();
   // TMSCM_ALLOW_INTS;
 
-  return path_to_tmscm (out);
+  return url_to_tmscm (out);
 }
 
 tmscm
@@ -6093,17 +6093,17 @@ tmg_buffer_2windows (tmscm arg1) {
   url in1= tmscm_to_url (arg1);
 
   // TMSCM_DEFER_INTS;
-  path out= buffer_to_windows (in1);
+  array_url out= buffer_to_windows (in1);
   // TMSCM_ALLOW_INTS;
 
-  return path_to_tmscm (out);
+  return array_url_to_tmscm (out);
 }
 
 tmscm
-tmg_window_2buffer (tmscm arg1) {
-  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "window->buffer");
+tmg_window_to_buffer (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "window-to-buffer");
 
-  int in1= tmscm_to_int (arg1);
+  url in1= tmscm_to_url (arg1);
 
   // TMSCM_DEFER_INTS;
   url out= window_to_buffer (in1);
@@ -6828,10 +6828,10 @@ initialize_glue_basic () {
   tmscm_install_procedure ("project-detach",  tmg_project_detach, 0, 0, 0);
   tmscm_install_procedure ("project-attached?",  tmg_project_attachedP, 0, 0, 0);
   tmscm_install_procedure ("project-get",  tmg_project_get, 0, 0, 0);
-  tmscm_install_procedure ("window-current",  tmg_window_current, 0, 0, 0);
   tmscm_install_procedure ("window-list",  tmg_window_list, 0, 0, 0);
+  tmscm_install_procedure ("current-window",  tmg_current_window, 0, 0, 0);
   tmscm_install_procedure ("buffer->windows",  tmg_buffer_2windows, 1, 0, 0);
-  tmscm_install_procedure ("window->buffer",  tmg_window_2buffer, 1, 0, 0);
+  tmscm_install_procedure ("window-to-buffer",  tmg_window_to_buffer, 1, 0, 0);
   tmscm_install_procedure ("window-set-buffer",  tmg_window_set_buffer, 2, 0, 0);
   tmscm_install_procedure ("window-focus",  tmg_window_focus, 1, 0, 0);
   tmscm_install_procedure ("window-handle",  tmg_window_handle, 0, 0, 0);

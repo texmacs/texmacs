@@ -182,13 +182,11 @@ tm_server_rep::style_clear_cache () {
 
 void
 tm_server_rep::refresh () {
-  path p= windows_list ();
-  while (!is_nil (p)) {
-    tm_view vw= window_find_view (p->item);
-    vw->win->refresh ();
-    p= p->next;
+  array<url> l= windows_list ();
+  for (int i=0; i<N(l); i++) {
+    tm_view vw= window_find_view (::get_window_id (l[i]));
+    if (vw != NULL) vw->win->refresh ();
   }
-  
 }
 
 void
