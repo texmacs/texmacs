@@ -20,6 +20,21 @@
 ******************************************************************************/
 
 int
+minimal_arity (tree_label l) {
+  return the_drd->get_minimal_arity (l);
+}
+
+int
+maximal_arity (tree_label l) {
+  return the_drd->get_maximal_arity (l);
+}
+
+bool
+correct_arity (tree_label l, int n) {
+  return the_drd->correct_arity (l, n);
+}
+
+int
 minimal_arity (tree t) {
   return the_drd->get_minimal_arity (L(t));
 }

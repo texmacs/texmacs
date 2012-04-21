@@ -93,7 +93,7 @@
 
 (define (object_add-point no xcur ycur x y dirn)
   (define obj (stree-radical (car (sketch-get1))))
-  (if (not (and (in? (car obj) '(arc carc)) (> (length obj) 3)))
+  (if (not (graphics-complete? obj))
       (with l (list-tail (cdr obj) no)
   	(graphics-store-state #f)
  	(if dirn
@@ -135,7 +135,7 @@
 
 (define (object_commit)
   (define obj (stree-radical (car (sketch-get1))))
-  (if (not (and (in? (car obj) '(arc carc)) (<= (length obj) 3)))
+  (if (not (graphics-incomplete? obj))
       (with tab (make-ahash-table)
         (for (var (graphics-all-attributes))
           (when (nin? var '("gid"))
@@ -230,9 +230,7 @@
   (graphics-group-start)
   (set! current-edge-sel? #t)
   (set! leftclick-waiting #f)
-  (if (and edge
-	   (not (and (current-in? '(arc carc))
-                     (> (length current-obj) 3))))
+  (if (and edge (not (graphics-complete? current-obj)))
       (begin
 	 (object_add-point current-point-no #f #f current-x current-y #t)
 	 (graphics-decorations-update)))

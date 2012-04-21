@@ -160,3 +160,13 @@
 
 (tm-define (graphics-mode-attribute? mode attr)
   (in? attr (graphics-mode-attributes mode)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Refined properties concerning arity and types of children
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (graphics-incomplete? obj)
+  (< (tm-arity obj) (tag-minimal-arity (tm-car obj))))
+
+(tm-define (graphics-complete? obj)
+  (>= (tm-arity obj) (tag-maximal-arity (tm-car obj))))

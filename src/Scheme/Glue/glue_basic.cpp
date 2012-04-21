@@ -1288,6 +1288,47 @@ tmg_tree_search_sections (tmscm arg1) {
 }
 
 tmscm
+tmg_tag_minimal_arity (tmscm arg1) {
+  TMSCM_ASSERT_TREE_LABEL (arg1, TMSCM_ARG1, "tag-minimal-arity");
+
+  tree_label in1= tmscm_to_tree_label (arg1);
+
+  // TMSCM_DEFER_INTS;
+  int out= minimal_arity (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_tag_maximal_arity (tmscm arg1) {
+  TMSCM_ASSERT_TREE_LABEL (arg1, TMSCM_ARG1, "tag-maximal-arity");
+
+  tree_label in1= tmscm_to_tree_label (arg1);
+
+  // TMSCM_DEFER_INTS;
+  int out= maximal_arity (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_tag_possible_arityP (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_TREE_LABEL (arg1, TMSCM_ARG1, "tag-possible-arity?");
+  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "tag-possible-arity?");
+
+  tree_label in1= tmscm_to_tree_label (arg1);
+  int in2= tmscm_to_int (arg2);
+
+  // TMSCM_DEFER_INTS;
+  bool out= correct_arity (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_tree_assign (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "tree-assign");
   TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "tree-assign");
@@ -6442,6 +6483,9 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tree-empty?",  tmg_tree_emptyP, 1, 0, 0);
   tmscm_install_procedure ("tree-is-buffer?",  tmg_tree_is_bufferP, 1, 0, 0);
   tmscm_install_procedure ("tree-search-sections",  tmg_tree_search_sections, 1, 0, 0);
+  tmscm_install_procedure ("tag-minimal-arity",  tmg_tag_minimal_arity, 1, 0, 0);
+  tmscm_install_procedure ("tag-maximal-arity",  tmg_tag_maximal_arity, 1, 0, 0);
+  tmscm_install_procedure ("tag-possible-arity?",  tmg_tag_possible_arityP, 2, 0, 0);
   tmscm_install_procedure ("tree-assign",  tmg_tree_assign, 2, 0, 0);
   tmscm_install_procedure ("tree-var-insert",  tmg_tree_var_insert, 3, 0, 0);
   tmscm_install_procedure ("tree-remove",  tmg_tree_remove, 3, 0, 0);
