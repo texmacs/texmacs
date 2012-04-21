@@ -235,8 +235,8 @@ delete_view (url u) {
 ******************************************************************************/
 
 void
-attach_view (int id, url u) {
-  tm_window win= search_window (id);
+attach_view (url win_u, url u) {
+  tm_window win= search_window (get_window_id (win_u));
   tm_view   vw = search_view (u);
   if (win == NULL || vw == NULL) return;
   // cout << "Attach view " << vw->buf->buf->name << "\n";
@@ -272,8 +272,7 @@ detach_view (url u) {
 void
 window_set_view (url win_u, url new_u, bool focus) {
   //cout << "set view " << win_u << ", " << new_u << ", " << focus << "\n";
-  int id= get_window_id (win_u);
-  tm_window win= search_window (id);
+  tm_window win= search_window (get_window_id (win_u));
   if (win == NULL) return;
   //cout << "Found window\n";
   tm_view new_vw= search_view (new_u);
@@ -282,7 +281,7 @@ window_set_view (url win_u, url new_u, bool focus) {
   ASSERT (new_vw->win == NULL, "view attached to other window");
   url old_u= get_window_view (win_u);
   if (!is_none (old_u)) detach_view (old_u);
-  attach_view (win->id, new_u);
+  attach_view (win_u, new_u);
   if (focus || get_this_view () == old_u) {
     set_view (new_vw);
     new_vw->buf->buf->last_visit= texmacs_time ();
