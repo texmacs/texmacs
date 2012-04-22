@@ -87,6 +87,7 @@ tree get_buffer_body (url name);
 void new_buffer_in_new_window (url name, tree t, tree geom= "");
 int  get_last_save_buffer (url name);
 void set_last_save_buffer (url name, int t);
+bool is_aux_buffer (url name);
 double last_visited (url name);
 bool buffer_modified (url name);
 bool buffer_modified_since_autosave (url name);

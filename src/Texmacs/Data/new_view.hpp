@@ -37,7 +37,6 @@ url  open_window (tree geom= "");
 void clone_window ();
 void kill_window ();
 void kill_window_and_buffer ();
-bool is_aux_buffer (url name);
 
 // Low level types and routines
 class tm_view_rep;
