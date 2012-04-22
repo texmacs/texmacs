@@ -24,6 +24,7 @@
 
 static int last_window= 1;
 static array<url> all_windows;
+extern int nr_windows;
 
 static path
 reset (path p, int i) {
@@ -124,6 +125,24 @@ search_window (url win) {
 array<url>
 windows_list () {
   return all_windows;
+}
+
+int
+get_nr_windows () {
+  return nr_windows;
+}
+
+bool
+has_window () {
+  tm_view vw= get_view (false);
+  return vw != NULL && vw->win != NULL;
+}
+
+tm_window
+get_window () {
+  tm_view vw= get_view ();
+  ASSERT (vw->win != NULL, "no window attached to view");
+  return vw->win;
 }
 
 url

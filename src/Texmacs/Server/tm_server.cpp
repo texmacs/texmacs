@@ -118,11 +118,6 @@ has_view () {
   return the_view != NULL;
 }
 
-bool
-has_window () {
-  return the_view != NULL && the_view->win != NULL;
-}
-
 tm_view
 get_view (bool must_be_valid) {
   ASSERT (!must_be_valid || the_view != NULL, "no active view");
@@ -141,18 +136,6 @@ get_editor () {
   tm_view vw= get_view ();
   // cout << "Get editor" << vw->ed << "\n";
   return vw->ed;
-}
-
-tm_window
-get_window () {
-  tm_view vw= get_view ();
-  ASSERT (vw->win != NULL, "no window attached to view");
-  return vw->win;
-}
-
-int
-get_nr_windows () {
-  return nr_windows;
 }
 
 /******************************************************************************

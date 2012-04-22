@@ -126,11 +126,8 @@ void new_buffer_in_this_window (url name, tree t);
 
 /* Get and set objects associated to server */
 bool      has_view ();
-bool      has_window ();
 tm_view   get_view (bool must_be_valid= true);
 void      set_view (tm_view vw);
 editor    get_editor ();
-tm_window get_window ();
-int       get_nr_windows ();
 
 #endif // defined SERVER_H
