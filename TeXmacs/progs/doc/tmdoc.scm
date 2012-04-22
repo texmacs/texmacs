@@ -142,7 +142,7 @@
           ((!= (url-suffix root) "tm")
            (string-load root))
           ((== type "normal")
-           (tm->stree (tree-import root fm)))
+           (tm->stree (tree-import root "texmacs")))
           ((== type "book")
            (let* ((body (tmdoc-expand root root 'title))
                   (lan (tmdoc-language root)))
