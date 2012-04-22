@@ -129,7 +129,6 @@ bool      has_view ();
 bool      has_window ();
 tm_view   get_view (bool must_be_valid= true);
 void      set_view (tm_view vw);
-tm_buffer get_buffer ();
 editor    get_editor ();
 tm_window get_window ();
 int       get_nr_windows ();

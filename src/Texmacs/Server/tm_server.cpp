@@ -136,12 +136,6 @@ set_view (tm_view vw2) {
     the_drd= the_view->ed->drd;
 }
 
-tm_buffer
-get_buffer () {
-  tm_view vw= get_view ();
-  return vw->buf;
-}
-
 editor
 get_editor () {
   tm_view vw= get_view ();
