@@ -116,12 +116,9 @@ void
 tm_server_rep::style_clear_cache () {
   style_invalidate_cache ();
 
-  int i, j, n= N(bufs);
-  for (i=0; i<n; i++) {
-    tm_buffer buf= ((tm_buffer) bufs[i]);
-    for (j=0; j<N(buf->vws); j++)
-      ((tm_view) (buf->vws[j]))->ed->init_style ();
-  }
+  array<url> vs= get_all_views ();
+  for (int i=0; i<N(vs); i++)
+    get_view_editor (vs[i]) -> init_style ();
 }
 
 void
@@ -147,7 +144,7 @@ tm_server_rep::interpose_handler () {
   exec_pending_commands ();
 #endif
 
-  int i,j;
+  int i, j;
   for (i=0; i<N(bufs); i++) {
     tm_buffer buf= (tm_buffer) bufs[i];
     for (j=0; j<N(buf->vws); j++) {
@@ -218,22 +215,16 @@ tm_server_rep::inclusions_gc (string which) {
 
 void
 tm_server_rep::typeset_update (path p) {
-  int i, j, n= N(bufs);
-  for (i=0; i<n; i++) {
-    tm_buffer buf= ((tm_buffer) bufs[i]);
-    for (j=0; j<N(buf->vws); j++)
-      ((tm_view) (buf->vws[j]))->ed->typeset_invalidate (p);
-  }
+  array<url> vs= get_all_views ();
+  for (int i=0; i<N(vs); i++)
+    get_view_editor (vs[i]) -> typeset_invalidate (p);
 }
 
 void
 tm_server_rep::typeset_update_all () {
-  int i, j, n= N(bufs);
-  for (i=0; i<n; i++) {
-    tm_buffer buf= ((tm_buffer) bufs[i]);
-    for (j=0; j<N(buf->vws); j++)
-      ((tm_view) (buf->vws[j]))->ed->typeset_invalidate_all ();
-  }
+  array<url> vs= get_all_views ();
+  for (int i=0; i<N(vs); i++)
+    get_view_editor (vs[i]) -> typeset_invalidate_all ();
 }
 
 bool
