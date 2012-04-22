@@ -487,7 +487,7 @@
   (aux-buffer? is_aux_buffer (bool url))
 
   (view-history get_view_history (array_url))
-  (buffer->views get_buffer_views (array_url url))
+  (buffer->views buffer_to_views (array_url url))
   (view-list get_all_views (array_url))
   (current-view-url get_current_view_safe (url))
   (window->view window_to_view (url url))

@@ -118,7 +118,7 @@ tm_server_rep::style_clear_cache () {
 
   array<url> vs= get_all_views ();
   for (int i=0; i<N(vs); i++)
-    get_view_editor (vs[i]) -> init_style ();
+    view_to_editor (vs[i]) -> init_style ();
 }
 
 void
@@ -217,14 +217,14 @@ void
 tm_server_rep::typeset_update (path p) {
   array<url> vs= get_all_views ();
   for (int i=0; i<N(vs); i++)
-    get_view_editor (vs[i]) -> typeset_invalidate (p);
+    view_to_editor (vs[i]) -> typeset_invalidate (p);
 }
 
 void
 tm_server_rep::typeset_update_all () {
   array<url> vs= get_all_views ();
   for (int i=0; i<N(vs); i++)
-    get_view_editor (vs[i]) -> typeset_invalidate_all ();
+    view_to_editor (vs[i]) -> typeset_invalidate_all ();
 }
 
 bool

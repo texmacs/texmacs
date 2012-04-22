@@ -115,7 +115,7 @@ get_current_editor () {
 }
 
 array<url>
-get_buffer_views (url name) {
+buffer_to_views (url name) {
   tm_buffer buf= concrete_buffer (name);
   array<url> r;
   if (is_nil (buf)) return r;
@@ -129,7 +129,7 @@ get_all_views () {
   array<url> r;
   array<url> bufs= get_all_buffers ();
   for (int i=0; i<N(bufs); i++)
-    r << get_buffer_views (bufs[i]);
+    r << buffer_to_views (bufs[i]);
   return r;
 }
 
@@ -148,7 +148,7 @@ view_to_window (url u) {
 }
 
 editor
-get_view_editor (url u) {
+view_to_editor (url u) {
   tm_view vw= concrete_view (u);
   ASSERT (vw != NULL, "view admits no editor");
   return vw->ed;

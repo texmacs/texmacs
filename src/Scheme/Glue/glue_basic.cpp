@@ -5817,7 +5817,7 @@ tmg_buffer_2views (tmscm arg1) {
   url in1= tmscm_to_url (arg1);
 
   // TMSCM_DEFER_INTS;
-  array_url out= get_buffer_views (in1);
+  array_url out= buffer_to_views (in1);
   // TMSCM_ALLOW_INTS;
 
   return array_url_to_tmscm (out);

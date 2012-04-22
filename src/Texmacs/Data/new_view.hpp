@@ -16,10 +16,10 @@
 class editor;
 
 array<url> get_view_history ();
-array<url> get_buffer_views (url name);
+array<url> buffer_to_views (url name);
 array<url> get_all_views ();
 editor get_current_editor ();
-editor get_view_editor (url u);
+editor view_to_editor (url u);
 bool has_current_view ();
 void set_current_view (url u);
 url  get_current_view ();
