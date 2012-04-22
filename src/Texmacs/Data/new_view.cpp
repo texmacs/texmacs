@@ -17,6 +17,7 @@
 #include "message.hpp"
 #include "dictionary.hpp"
 #include "new_document.hpp"
+#include "drd_std.hpp"
 
 /******************************************************************************
 * Associating URLs to views
@@ -75,6 +76,33 @@ search_view (url u) {
 /******************************************************************************
 * Views associated to editor, window, or buffer
 ******************************************************************************/
+
+tm_view the_view= NULL;
+
+bool
+has_view () {
+  return the_view != NULL;
+}
+
+tm_view
+get_view (bool must_be_valid) {
+  ASSERT (!must_be_valid || the_view != NULL, "no active view");
+  return the_view;
+}
+
+void
+set_view (tm_view vw2) {
+  the_view= vw2;
+  if (the_view != NULL)
+    the_drd= the_view->ed->drd;
+}
+
+editor
+get_editor () {
+  tm_view vw= get_view ();
+  // cout << "Get editor" << vw->ed << "\n";
+  return vw->ed;
+}
 
 url
 get_this_view () {

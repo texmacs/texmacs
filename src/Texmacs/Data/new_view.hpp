@@ -37,9 +37,14 @@ bool is_aux_buffer (url name);
 // Low level types and routines
 class tm_view_rep;
 typedef tm_view_rep* tm_view;
+class editor;
+bool    has_view ();
+tm_view get_view (bool must_be_valid= true);
+void    set_view (tm_view vw);
+editor  get_editor ();
 tm_view search_view (url name);
-url get_name_view (tm_view vw);
-void detach_view (url u);
+url     get_name_view (tm_view vw);
+void    detach_view (url u);
 
 bool needs_to_be_saved (array<tm_view> vws);
 bool needs_to_be_autosaved (array<tm_view> vws);

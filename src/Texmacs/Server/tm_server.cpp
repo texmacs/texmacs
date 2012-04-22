@@ -22,7 +22,6 @@
 #include "new_style.hpp"
 
 server* the_server= NULL;
-tm_view the_view= NULL;
 bool texmacs_started= false;
 url tm_init_file= url_none ();
 url my_init_file= url_none ();
@@ -108,35 +107,6 @@ tm_server_rep::tm_server_rep (): def_sfactor (5) {
 tm_server_rep::~tm_server_rep () {}
 server::server (): rep (tm_new<tm_server_rep> ()) {}
 server_rep* tm_server_rep::get_server () { return this; }
-
-/******************************************************************************
-* Get and set objects associated to server
-******************************************************************************/
-
-bool
-has_view () {
-  return the_view != NULL;
-}
-
-tm_view
-get_view (bool must_be_valid) {
-  ASSERT (!must_be_valid || the_view != NULL, "no active view");
-  return the_view;
-}
-
-void
-set_view (tm_view vw2) {
-  the_view= vw2;
-  if (the_view != NULL)
-    the_drd= the_view->ed->drd;
-}
-
-editor
-get_editor () {
-  tm_view vw= get_view ();
-  // cout << "Get editor" << vw->ed << "\n";
-  return vw->ed;
-}
 
 /******************************************************************************
 * Miscellaneous routines

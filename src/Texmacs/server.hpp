@@ -124,10 +124,4 @@ inline bool in_rescue_mode () { return rescue_mode; }
 void create_buffer (url name, tree doc);
 void new_buffer_in_this_window (url name, tree t);
 
-/* Get and set objects associated to server */
-bool      has_view ();
-tm_view   get_view (bool must_be_valid= true);
-void      set_view (tm_view vw);
-editor    get_editor ();
-
 #endif // defined SERVER_H
