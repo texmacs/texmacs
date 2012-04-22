@@ -35,7 +35,6 @@ public:
   void   interpose_handler ();
   void   wait_handler (string message, string arg);
   void   set_script_status (int i);
-  void   focus_on_editor (editor ed);
   void   set_printing_command (string s);
   void   set_printer_page_type (string s);
   string get_printer_page_type ();

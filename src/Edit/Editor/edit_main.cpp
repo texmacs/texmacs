@@ -144,7 +144,7 @@ edit_main_rep::get_name () {
 
 void
 edit_main_rep::focus_on_this_editor () {
-  sv->focus_on_editor (this);
+  focus_on_editor (this);
 }
 
 void

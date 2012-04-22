@@ -358,6 +358,22 @@ switch_to_buffer (url name) {
   // cout << "Switched to buffer " << new_vw->buf->buf->name << "\n";
 }
 
+void
+focus_on_editor (editor ed) {
+  int i, j;
+  for (i=0; i<N(bufs); i++) {
+    tm_buffer buf= (tm_buffer) bufs[i];
+    for (j=0; j<N(buf->vws); j++) {
+      tm_view vw= (tm_view) buf->vws[j];
+      if (vw->ed == ed) {
+	set_view (vw);
+	return;
+      }
+    }
+  }
+  FAILED ("invalid situation");
+}
+
 /******************************************************************************
 * Routines on collections of views
 ******************************************************************************/

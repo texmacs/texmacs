@@ -92,7 +92,6 @@ public:
   virtual void   interpose_handler () = 0;
   virtual void   wait_handler (string message, string arg) = 0;
   virtual void   set_script_status (int i) = 0;
-  virtual void   focus_on_editor (editor ed) = 0;
   virtual void   set_printing_command (string s) = 0;
   virtual void   set_printer_page_type (string s) = 0;
   virtual string get_printer_page_type () = 0;

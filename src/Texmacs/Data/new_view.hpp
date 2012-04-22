@@ -13,6 +13,7 @@
 #define NEW_VIEW_H
 #include "tree.hpp"
 #include "url.hpp"
+class editor;
 
 array<url> get_view_history ();
 array<url> get_buffer_views (url name);
@@ -27,6 +28,7 @@ void window_set_view (url win, url new_u, bool focus);
 
 url  create_buffer ();
 void switch_to_buffer (url name);
+void focus_on_editor (editor ed);
 void kill_buffer (url name);
 url  open_window (tree geom= "");
 void clone_window ();
@@ -37,7 +39,6 @@ bool is_aux_buffer (url name);
 // Low level types and routines
 class tm_view_rep;
 typedef tm_view_rep* tm_view;
-class editor;
 bool    has_view ();
 tm_view get_view (bool must_be_valid= true);
 void    set_view (tm_view vw);
