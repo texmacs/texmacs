@@ -26,6 +26,7 @@ url  get_current_view ();
 url  get_current_view_safe ();
 url  get_window_view (url win);
 url  get_view_buffer (url u);
+url  get_view_window (url u);
 url  get_new_view (url name);
 url  get_recent_view (url name);
 url  get_passive_view (url name);

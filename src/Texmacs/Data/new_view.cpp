@@ -140,6 +140,13 @@ get_view_buffer (url u) {
   return vw->buf->buf->name;
 }
 
+url
+get_view_window (url u) {
+  tm_view vw= concrete_view (u);
+  if (vw == NULL) return url_none ();
+  return abstract_window (vw->win);
+}
+
 editor
 get_view_editor (url u) {
   tm_view vw= concrete_view (u);

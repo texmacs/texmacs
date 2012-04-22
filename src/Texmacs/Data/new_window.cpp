@@ -86,19 +86,14 @@ new_window (bool map_flag= true, tree geom= "") {
 }
 
 static bool
-delete_view_from_window (tm_window win) {
-  int i, j;
-  for (i=0; i<N(bufs); i++) {
-    tm_buffer buf= bufs[i];
-    for (j=0; j<N(buf->vws); j++) {
-      tm_view vw= buf->vws[j];
-      if (vw->win == win) {
-	detach_view (abstract_view (vw));
-	delete_view (abstract_view (vw));
-	return true;
-      }
+delete_view_from_window (url win) {
+  array<url> vs= get_all_views ();
+  for (int i=0; i<N(vs); i++)
+    if (get_view_window (vs[i]) == win) {
+      detach_view (vs[i]);
+      delete_view (vs[i]);
+      return true;
     }
-  }
   return false;
 }
 
@@ -106,7 +101,7 @@ void
 delete_window (url win_u) {
   tm_window win= concrete_window (win_u);
   if (win == NULL) return;
-  while (delete_view_from_window (win)) {}
+  while (delete_view_from_window (win_u)) {}
   win->unmap ();
   tm_window_table->reset (win->id);
   destroy_window_widget (win->win);
