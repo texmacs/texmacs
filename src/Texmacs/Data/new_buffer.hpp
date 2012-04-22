@@ -74,7 +74,7 @@ url  make_new_buffer ();
 void remove_buffer (url name);
 int  number_buffers ();
 url  get_current_buffer ();
-url  abstract_buffer (path p);
+url  path_to_buffer (path p);
 void rename_buffer (url name, url new_name);
 url get_master_buffer (url name);
 void set_master_buffer (url name, url master);

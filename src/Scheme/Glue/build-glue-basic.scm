@@ -459,7 +459,7 @@
   ;; buffers
   (buffer-list get_all_buffers (array_url))
   (current-buffer get_current_buffer (url))
-  (path-to-buffer abstract_buffer (url path))
+  (path-to-buffer path_to_buffer (url path))
   (buffer-new make_new_buffer (url))
   (buffer-rename rename_buffer (void url url))
   (buffer-set set_buffer_tree (void url content))

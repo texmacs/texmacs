@@ -24,13 +24,14 @@
 
 void
 project_attach (string prj_name) {
-  int i;
-  tm_buffer buf= concrete_buffer (get_current_buffer ());
+  url name= get_current_buffer ();
+  tm_buffer buf= concrete_buffer (name);
   buf->data->project= prj_name;
-  for (i=0; i<N(buf->vws); i++) {
-    tm_view vw= buf->vws[i];
-    vw->ed->notify_change (THE_DECORATIONS);
-    vw->ed->require_save ();
+  array<url> vs= buffer_to_views (name);
+  for (int i=0; i<N(vs); i++) {
+    editor ed= view_to_editor (vs[i]);
+    ed->notify_change (THE_DECORATIONS);
+    ed->require_save ();
   }
   if (prj_name == "") buf->prj= NULL;
   else {

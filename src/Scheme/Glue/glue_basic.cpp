@@ -5450,7 +5450,7 @@ tmg_path_to_buffer (tmscm arg1) {
   path in1= tmscm_to_path (arg1);
 
   // TMSCM_DEFER_INTS;
-  url out= abstract_buffer (in1);
+  url out= path_to_buffer (in1);
   // TMSCM_ALLOW_INTS;
 
   return url_to_tmscm (out);

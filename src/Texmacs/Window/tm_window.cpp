@@ -95,7 +95,8 @@ close_embedded_command_rep::apply () {
   window_focus (abstract_window (vw->ed->mvw->win));
   //cout << "Changed focus\n";
   tm_window win= vw->win;
-  ASSERT (N(vw->buf->vws) == 1, "invalid cloned embedded TeXmacs widget");
+  ASSERT (N (buffer_to_views (vw->buf->buf->name)) == 1,
+          "invalid cloned embedded TeXmacs widget");
   remove_buffer (vw->buf->buf->name);
   //cout << "Deleted buffer\n";
   tm_delete (win);

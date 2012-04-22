@@ -121,7 +121,7 @@ get_current_buffer () {
 }
 
 url
-abstract_buffer (path p) {
+path_to_buffer (path p) {
   int i;
   for (i=0; i<N(bufs); i++)
     if (bufs[i]->rp <= p)
