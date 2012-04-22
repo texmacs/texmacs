@@ -62,7 +62,6 @@ inline new_buffer& new_buffer::operator = (new_buffer x) {
 
 class tm_buffer_rep;
 typedef tm_buffer_rep* tm_buffer;
-tm_buffer get_buffer ();
 tm_buffer search_buffer (url name);
 tm_buffer search_buffer_insist (url name);
 

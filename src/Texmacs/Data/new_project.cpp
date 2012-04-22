@@ -25,7 +25,7 @@
 void
 project_attach (string prj_name) {
   int i;
-  tm_buffer buf= get_buffer ();
+  tm_buffer buf= search_buffer (get_this_buffer ());
   buf->data->project= prj_name;
   for (i=0; i<N(buf->vws); i++) {
     tm_view vw= buf->vws[i];
@@ -41,13 +41,13 @@ project_attach (string prj_name) {
 
 bool
 project_attached () {
-  tm_buffer buf= get_buffer ();
+  tm_buffer buf= search_buffer (get_this_buffer ());
   return buf->data->project != "";
 }
 
 url
 project_get () {
-  tm_buffer buf= get_buffer ();
+  tm_buffer buf= search_buffer (get_this_buffer ());
   if (buf->data->project == "") return url_none ();
   return buf->prj->buf->name;
 }

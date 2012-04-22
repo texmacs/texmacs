@@ -264,7 +264,7 @@ kill_window_and_buffer () {
   url name= get_this_buffer ();
   int i;
   bool kill= true;
-  tm_buffer buf= get_buffer();
+  tm_buffer buf= search_buffer (get_this_buffer ());
   tm_window win= get_window ();
   for (i=0; i<N(buf->vws); i++) {
     tm_view old_vw= buf->vws[i];

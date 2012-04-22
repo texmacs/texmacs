@@ -105,16 +105,10 @@ search_buffer_insist (url u) {
 * Buffer names
 ******************************************************************************/
 
-tm_buffer
-get_buffer () {
-  tm_view vw= search_view (get_this_view ());
-  return vw->buf;
-}
-
 url
 get_this_buffer () {
-  tm_buffer buf= get_buffer ();
-  return buf->buf->name;
+  tm_view vw= search_view (get_this_view ());
+  return vw->buf->buf->name;
 }
 
 url
