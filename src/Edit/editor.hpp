@@ -538,7 +538,7 @@ public:
   friend string get_editor_status_report ();
   friend void   tm_failure (const char* msg);
   friend void   set_buffer_tree (url name, tree doc);
-  friend void   set_master (array<tm_view> vws, url master);
+  friend void   set_master_buffer (url name, url master);
   friend void   set_current_view (url u);
 };
 

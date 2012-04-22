@@ -43,10 +43,6 @@ url     abstract_view (tm_view vw);
 void    detach_view (url u);
 url     get_recent_view (url name, bool s, bool o, bool a, bool p);
 
-bool needs_to_be_saved (array<tm_view> vws);
-bool needs_to_be_autosaved (array<tm_view> vws);
-void set_master (array<tm_view> vws, url master);
-void set_title (array<tm_view> vws, string title, url name);
 void pretend_modified (array<tm_view> vws);
 void pretend_saved (array<tm_view> vws);
 void pretend_autosaved (array<tm_view> vws);

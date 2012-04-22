@@ -376,39 +376,6 @@ focus_on_editor (editor ed) {
 * Routines on collections of views
 ******************************************************************************/
 
-bool
-needs_to_be_saved (array<tm_view> vws) {
-  for (int i=0; i<N(vws); i++)
-    if (vws[i]->ed->need_save ())
-      return true;
-  return false;
-}
-
-bool
-needs_to_be_autosaved (array<tm_view> vws) {
-  for (int i=0; i<N(vws); i++)
-    if (vws[i]->ed->need_save (false))
-      return true;
-  return false;
-}
-
-void
-set_master (array<tm_view> vws, url master) {
-  for (int i=0; i<N(vws); i++)
-    vws[i]->ed->set_master (master);
-}
-
-void
-set_title (array<tm_view> vws, string title, url name) {
-  for (int i=0; i<N(vws); i++) {
-    tm_view vw= vws[i];
-    if (vw->win != NULL) {
-      vw->win->set_window_name (title);
-      vw->win->set_window_url (name);
-    }
-  }
-}
-
 void
 pretend_modified (array<tm_view> vws) {
   for (int i=0; i<N(vws); i++)

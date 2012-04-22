@@ -30,13 +30,19 @@ string propose_title (string old_title, url u, tree doc);
 bool
 tm_buffer_rep::needs_to_be_saved () {
   if (buf->read_only) return false;
-  return ::needs_to_be_saved (vws);
+  for (int i=0; i<N(vws); i++)
+    if (vws[i]->ed->need_save ())
+      return true;
+  return false;
 }
 
 bool
 tm_buffer_rep::needs_to_be_autosaved () {
   if (buf->read_only) return false;
-  return ::needs_to_be_autosaved (vws);
+  for (int i=0; i<N(vws); i++)
+    if (vws[i]->ed->need_save (false))
+      return true;
+  return false;
 }
 
 /******************************************************************************
@@ -199,7 +205,14 @@ set_title_buffer (url name, string title) {
   if (is_nil (buf)) return;
   if (buf->buf->title == title) return;
   buf->buf->title= title;
-  set_title (buf->vws, buf->buf->title, buf->buf->name);
+  array<url> vs= buffer_to_views (name);
+  for (int i=0; i<N(vs); i++) {
+    tm_window win= concrete_window (view_to_window (vs[i]));
+    if (win != NULL) {
+      win->set_window_name (title);
+      win->set_window_url (name);
+    }
+  }
 }
 
 /******************************************************************************
@@ -287,7 +300,9 @@ set_master_buffer (url name, url master) {
   if (is_nil (buf)) return;
   if (buf->buf->master == master) return;
   buf->buf->master= master;
-  set_master (buf->vws, master);
+  array<url> vs= buffer_to_views (name);
+  for (int i=0; i<N(vs); i++)
+    view_to_editor (vs[i]) -> set_master (master);
 }
 
 void
