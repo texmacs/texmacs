@@ -53,6 +53,7 @@ destroy_window_id (url win) {
 
 url
 abstract_window (tm_window win) {
+  if (win == NULL) return url_none ();
   return win->id;
 }
 
@@ -148,32 +149,23 @@ get_current_window () {
 
 array<url>
 buffer_to_windows (url name) {
-  array<url> r;
-  tm_buffer buf= concrete_buffer (name);
-  if (is_nil (buf)) return r;
-  for (int i=0; i<N(buf->vws); i++)
-    if (buf->vws[i]->win != NULL)
-      r << abstract_window (buf->vws[i]->win);
+  array<url> r, vs= get_buffer_views (name);
+  for (int i=0; i<N(vs); i++)
+    r << get_view_window (vs[i]);
   return r;
 }
 
 url
 window_to_buffer (url win) {
-  for (int i=0; i<N(bufs); i++)
-    for (int j=0; j<N(bufs[i]->vws); j++)
-      if (bufs[i]->vws[j]->win != NULL)
-	if (abstract_window (bufs[i]->vws[j]->win) == win)
-	  return bufs[i]->buf->name;
-  return url_none ();
+  return get_view_buffer (get_window_view (win));
 }
 
 url
 get_window_view (url win) {
-  for (int i=0; i<N(bufs); i++)
-    for (int j=0; j<N(bufs[i]->vws); j++)
-      if (bufs[i]->vws[j]->win != NULL)
-	if (abstract_window (bufs[i]->vws[j]->win) == win)
-	  return abstract_view (bufs[i]->vws[j]);
+  array<url> vs= get_all_views ();
+  for (int i=0; i<N(vs); i++)
+    if (get_view_window (vs[i]) == win)
+      return vs[i];
   return url_none ();
 }
 
