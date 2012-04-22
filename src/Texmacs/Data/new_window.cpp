@@ -194,9 +194,7 @@ window_focus (url win) {
   if (win == get_this_window ()) return;
   url old= get_window_view (win);
   if (is_none (old)) return;
-  tm_view vw= search_view (old);
-  set_view (vw);
-  vw->buf->buf->last_visit= texmacs_time ();
+  set_this_view (old);
 }
 
 /******************************************************************************
@@ -250,8 +248,7 @@ kill_window () {
     for (j=0; j<N(buf->vws); j++) {
       tm_view vw= buf->vws[j];
       if (vw->win != NULL && get_name_window (vw->win) != win) {
-	set_view (vw);
-        vw->buf->buf->last_visit= texmacs_time ();
+	set_this_view (get_name_view (vw));
 	delete_window (win);
 	return;
       }

@@ -17,6 +17,7 @@ class editor;
 
 array<url> get_view_history ();
 array<url> get_buffer_views (url name);
+void set_this_view (url u);
 url  get_this_view ();
 url  get_window_view (url win);
 url  get_view_buffer (url u);
@@ -41,7 +42,6 @@ class tm_view_rep;
 typedef tm_view_rep* tm_view;
 bool    has_view ();
 tm_view get_view (bool must_be_valid= true);
-void    set_view (tm_view vw);
 editor  get_editor ();
 tm_view search_view (url name);
 url     get_name_view (tm_view vw);

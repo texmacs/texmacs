@@ -539,7 +539,7 @@ public:
   friend void   tm_failure (const char* msg);
   friend void   set_buffer_tree (url name, tree doc);
   friend void   set_master (array<tm_view> vws, url master);
-  friend void   set_view (tm_view vw2);
+  friend void   set_this_view (url u);
 };
 
 class editor {
@@ -556,7 +556,7 @@ editor new_editor (server_rep* sv, tm_buffer buf);
   tm_view temp_vw= get_view (false); \
   focus_on_this_editor ();           \
   sv->cmd;                           \
-  set_view (temp_vw);                \
+  set_this_view (get_name_view (temp_vw));      \
 }
 
 #endif // defined EDITOR_H

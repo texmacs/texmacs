@@ -49,6 +49,7 @@ decode_url (string s) {
 
 url
 get_name_view (tm_view vw) {
+  if (vw == NULL) return url_none ();
   string name= encode_url (vw->buf->buf->name);
   //cout << vw->buf->buf->name << " -> " << name << "\n";
   string nr  = as_string (vw->nr);
@@ -57,6 +58,7 @@ get_name_view (tm_view vw) {
 
 tm_view
 search_view (url u) {
+  if (is_none (u)) return NULL;
   string s= as_string (u);
   if (!starts (s, "tmfs://view/")) return NULL;
   s= s (N (string ("tmfs://view/")), N(s));
@@ -90,18 +92,21 @@ get_view (bool must_be_valid) {
   return the_view;
 }
 
-void
-set_view (tm_view vw2) {
-  the_view= vw2;
-  if (the_view != NULL)
-    the_drd= the_view->ed->drd;
-}
-
 editor
 get_editor () {
   tm_view vw= get_view ();
   // cout << "Get editor" << vw->ed << "\n";
   return vw->ed;
+}
+
+void
+set_this_view (url u) {
+  tm_view vw= search_view (u);
+  the_view= vw;
+  if (vw != NULL) {
+    the_drd= vw->ed->drd;
+    vw->buf->buf->last_visit= texmacs_time ();
+  }
 }
 
 url
@@ -194,14 +199,14 @@ get_new_view (url name) {
   ed->set_data (buf->data);
 
   tm_view temp_vw= get_view (false);
-  set_view (vw);
+  set_this_view (get_name_view (vw));
   if (is_none (tm_init_buffer_file))
     tm_init_buffer_file= "$TEXMACS_PATH/progs/init-buffer.scm";
   if (is_none (my_init_buffer_file))
     my_init_buffer_file= "$TEXMACS_HOME_PATH/progs/my-init-buffer.scm";
   if (exists (tm_init_buffer_file)) exec_file (tm_init_buffer_file);
   if (exists (my_init_buffer_file)) exec_file (my_init_buffer_file);
-  set_view (temp_vw);
+  set_this_view (get_name_view (temp_vw));
 
   //cout << "View created\n";
   return get_name_view (vw);
@@ -310,10 +315,8 @@ window_set_view (url win_u, url new_u, bool focus) {
   url old_u= get_window_view (win_u);
   if (!is_none (old_u)) detach_view (old_u);
   attach_view (win_u, new_u);
-  if (focus || get_this_view () == old_u) {
-    set_view (new_vw);
-    new_vw->buf->buf->last_visit= texmacs_time ();
-  }
+  if (focus || get_this_view () == old_u)
+    set_this_view (new_u);
 }
 
 /******************************************************************************
@@ -366,7 +369,7 @@ focus_on_editor (editor ed) {
     for (j=0; j<N(buf->vws); j++) {
       tm_view vw= (tm_view) buf->vws[j];
       if (vw->ed == ed) {
-	set_view (vw);
+        set_this_view (get_name_view (vw));
 	return;
       }
     }
