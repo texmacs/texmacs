@@ -239,9 +239,11 @@ get_passive_view (url name) {
   // Create a new view if no such view exists
   tm_buffer buf= concrete_buffer_insist (name);
   if (is_nil (buf)) return url_none ();
-  for (int i=0; i<N(buf->vws); i++)
-    if (buf->vws[i]->win == NULL)
-      return abstract_view (buf->vws[i]);
+  array<url> vs= buffer_to_views (name);
+  for (int i=0; i<N(vs); i++) {
+    url win= view_to_window (vs[i]);
+    if (is_none (win)) return vs[i];
+  }
   return get_new_view (buf->buf->name);
 }
 
@@ -249,16 +251,15 @@ url
 get_recent_view (url name) {
   // Get (most) recent view on a buffer, with a preference for
   // the current buffer or another view attached to a window
-  tm_buffer buf= concrete_buffer (name);
-  if (is_nil (buf) || N(buf->vws) == 0)
-    return get_new_view (name);
+  array<url> vs= buffer_to_views (name);
+  if (N(vs) == 0) return get_new_view (name);
   url u= get_current_view ();
   if (view_to_buffer (u) == name) return u;
   url r= get_recent_view (name, true, false, true, false);
   if (!is_none (r)) return r;
   r= get_recent_view (name, true, false, false, false);
   if (!is_none (r)) return r;
-  return abstract_view (buf->vws[0]);
+  return vs[0];
 }
 
 /******************************************************************************
@@ -358,16 +359,14 @@ switch_to_buffer (url name) {
 
 void
 focus_on_editor (editor ed) {
-  int i, j;
-  for (i=0; i<N(bufs); i++) {
-    tm_buffer buf= (tm_buffer) bufs[i];
-    for (j=0; j<N(buf->vws); j++) {
-      tm_view vw= (tm_view) buf->vws[j];
-      if (vw->ed == ed) {
-        set_current_view (abstract_view (vw));
-	return;
-      }
+  array<url> vs= get_all_views ();
+  for (int i=0; i<N(vs); i++)
+    if (view_to_editor (vs[i]) == ed) {
+      set_current_view (vs[i]);
+      return;
     }
-  }
-  FAILED ("invalid situation");
+  cout << "Warning: editor no longer exists, "
+       << "may indicate synchronization error\n";
+  //cout << "Warning: name of buffer: " << ed->buf->buf->name << "\n";
+  //FAILED ("invalid situation");
 }

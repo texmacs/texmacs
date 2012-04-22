@@ -45,6 +45,7 @@ class server_rep;
 typedef tm_buffer_rep* tm_buffer;
 typedef tm_view_rep* tm_view;
 class modification;
+class editor;
 extern bool enable_fastenv;
 
 class editor_rep: public simple_widget_rep {
@@ -540,6 +541,7 @@ public:
   friend void   set_buffer_tree (url name, tree doc);
   friend void   set_master_buffer (url name, url master);
   friend void   set_current_view (url u);
+  friend void   focus_on_editor (editor ed);
 };
 
 class editor {
