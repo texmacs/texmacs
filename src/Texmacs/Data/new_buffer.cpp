@@ -67,7 +67,8 @@ remove_buffer (tm_buffer buf) {
       for (int i=nr; i<n-1; i++)
         bufs[i]= bufs[i+1];
       bufs->resize (n-1);
-      delete_views (buf->vws);
+      for (int i=0; i<N(buf->vws); i++)
+        delete_view (abstract_view (buf->vws[i]));
       tm_delete (buf);
       return;
     }
@@ -221,9 +222,9 @@ set_title_buffer (url name, string title) {
 
 void
 set_buffer_data (url name, new_data data) {
-  tm_buffer buf= concrete_buffer (name);
-  if (is_nil (buf)) return;
-  set_data (buf->vws, data);
+  array<url> vs= buffer_to_views (name);
+  for (int i=0; i<N(vs); i++)
+    view_to_editor (vs[i]) -> set_data (data);
 }
 
 void
@@ -355,14 +356,18 @@ void
 pretend_buffer_modified (url name) {
   tm_buffer buf= concrete_buffer (name);
   if (is_nil (buf)) return;
-  pretend_modified (buf->vws);
+  array<url> vs= buffer_to_views (name);
+  for (int i=0; i<N(vs); i++)
+    view_to_editor (vs[i]) -> require_save ();
 }
 
 void
 pretend_buffer_saved (url name) {
   tm_buffer buf= concrete_buffer (name);
   if (is_nil (buf)) return;
-  pretend_saved (buf->vws);
+  array<url> vs= buffer_to_views (name);
+  for (int i=0; i<N(vs); i++)
+    view_to_editor (vs[i]) -> notify_save ();
   set_last_save_buffer (name, last_modified (name));
 }
 
@@ -370,7 +375,9 @@ void
 pretend_buffer_autosaved (url name) {
   tm_buffer buf= concrete_buffer (name);
   if (is_nil (buf)) return;
-  pretend_autosaved (buf->vws);
+  array<url> vs= buffer_to_views (name);
+  for (int i=0; i<N(vs); i++)
+    view_to_editor (vs[i]) -> notify_save (false);
 }
 
 /******************************************************************************

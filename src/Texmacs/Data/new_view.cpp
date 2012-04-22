@@ -371,37 +371,3 @@ focus_on_editor (editor ed) {
   }
   FAILED ("invalid situation");
 }
-
-/******************************************************************************
-* Routines on collections of views
-******************************************************************************/
-
-void
-pretend_modified (array<tm_view> vws) {
-  for (int i=0; i<N(vws); i++)
-    vws[i]->ed->require_save ();
-}
-
-void
-pretend_saved (array<tm_view> vws) {
-  for (int i=0; i<N(vws); i++)
-    vws[i]->ed->notify_save ();
-}
-
-void
-pretend_autosaved (array<tm_view> vws) {
-  for (int i=0; i<N(vws); i++)
-    vws[i]->ed->notify_save (false);
-}
-
-void
-set_data (array<tm_view> vws, new_data data) {
-  for (int i=0; i<N(vws); i++)
-    vws[i]->ed->set_data (data);
-}
-
-void
-delete_views (array<tm_view> vws) {
-  for (int i=0; i<N(vws); i++)
-    delete_view (abstract_view (vws[i]));
-}

@@ -43,10 +43,4 @@ url     abstract_view (tm_view vw);
 void    detach_view (url u);
 url     get_recent_view (url name, bool s, bool o, bool a, bool p);
 
-void pretend_modified (array<tm_view> vws);
-void pretend_saved (array<tm_view> vws);
-void pretend_autosaved (array<tm_view> vws);
-void set_data (array<tm_view> vws, new_data data);
-void delete_views (array<tm_view> vws);
-
 #endif // defined NEW_VIEW_H
