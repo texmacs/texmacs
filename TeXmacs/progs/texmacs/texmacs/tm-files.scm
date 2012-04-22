@@ -300,7 +300,7 @@
 	  (autosave-now)))))
 
 (define (notify-autosave var val)
-  (if (has-view?) ; delayed-autosave would crash at initialization time
+  (if (current-view) ; delayed-autosave would crash at initialization time
       (autosave-delayed)))
 
 (define-preferences

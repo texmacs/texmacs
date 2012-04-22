@@ -97,8 +97,13 @@ set_current_view (url u) {
 }
 
 url
-get_current_view (bool must_be_valid) {
-  ASSERT (!must_be_valid || the_view != NULL, "no active view");
+get_current_view () {
+  ASSERT (the_view != NULL, "no active view");
+  return abstract_view (the_view);
+}
+
+url
+get_current_view_safe () {
   if (the_view == NULL) return url_none ();
   return abstract_view (the_view);
 }
@@ -207,7 +212,7 @@ get_new_view (url name) {
   buf->vws << vw;
   ed->set_data (buf->data);
 
-  url temp= get_current_view (false);
+  url temp= get_current_view_safe ();
   set_current_view (abstract_view (vw));
   if (is_none (tm_init_buffer_file))
     tm_init_buffer_file= "$TEXMACS_PATH/progs/init-buffer.scm";

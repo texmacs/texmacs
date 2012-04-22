@@ -134,7 +134,7 @@ get_nr_windows () {
 
 bool
 has_current_window () {
-  tm_view vw= concrete_view (get_current_view (false));
+  tm_view vw= concrete_view (get_current_view_safe ());
   return vw != NULL && vw->win != NULL;
 }
 

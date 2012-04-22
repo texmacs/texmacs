@@ -552,10 +552,10 @@ EXTEND_NULL_CODE(widget,editor);
 
 editor new_editor (server_rep* sv, tm_buffer buf);
 
-#define SERVER(cmd) {              \
-  url temp= get_current_view (false); \
-  focus_on_this_editor ();         \
-  sv->cmd;                         \
+#define SERVER(cmd) {                 \
+  url temp= get_current_view_safe (); \
+  focus_on_this_editor ();            \
+  sv->cmd;                            \
   set_current_view (temp);            \
 }
 

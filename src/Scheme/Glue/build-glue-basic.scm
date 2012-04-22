@@ -484,10 +484,12 @@
   (buffer-save buffer_save (bool url))
   (tree-import import_tree (tree url string))
   (tree-export export_tree (bool tree url string))
+  (aux-buffer? is_aux_buffer (bool url))
 
   (view-history get_view_history (array_url))
   (buffer->views get_buffer_views (array_url url))
-  (current-view get_current_view (url))
+  (view-list get_all_views (array_url))
+  (current-view-url get_current_view_safe (url))
   (window->view get_window_view (url url))
   (view->buffer get_view_buffer (url url))
   (buffer-new-view get_new_view (url url))
@@ -495,16 +497,22 @@
   (buffer-recent-view get_recent_view (url url))
   (view-delete delete_view (void url))
   (window-set-view window_set_view (void url url bool))
+  (switch-to-buffer switch_to_buffer (void url))
+
+  (window-list windows_list (array_url))
+  (windows-number get_nr_windows (int))
+  (current-window get_current_window (url))
+  (buffer->windows buffer_to_windows (array_url url))
+  (window-to-buffer window_to_buffer (url url))
+  (window-set-buffer window_set_buffer (void url url))
+  (window-focus window_focus (void url))
 
   (new-buffer create_buffer (url))
-  (switch-to-buffer switch_to_buffer (void url))
-  (buffer-close kill_buffer (void url))
-  (aux-buffer? is_aux_buffer (bool url))
-
   (open-buffer-in-window new_buffer_in_new_window (void url content content))
   (open-window open_window (url))
   (open-window-geometry open_window (url content))
   (clone-window clone_window (void))
+  (buffer-close kill_buffer (void url))
   (kill-window kill_window (void))
   (kill-window-and-buffer kill_window_and_buffer (void))
 
@@ -512,16 +520,6 @@
   (project-detach project_attach (void))
   (project-attached? project_attached (bool))
   (project-get project_get (url))
-
-  (window-list windows_list (array_url))
-  (current-window get_current_window (url))
-  (buffer->windows buffer_to_windows (array_url url))
-  (window-to-buffer window_to_buffer (url url))
-  (window-set-buffer window_set_buffer (void url url))
-  (window-focus window_focus (void url))
-
-  (has-view? has_current_view (bool))
-  (get-nr-windows get_nr_windows (int))
 
   ;; transitional alternative windows; to be replaced by better solution
   (alt-window-handle window_handle (int))

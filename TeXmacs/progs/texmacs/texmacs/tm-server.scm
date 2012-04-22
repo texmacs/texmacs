@@ -30,13 +30,13 @@
 
 (define (notify-language var val)
   (set-output-language val)
-  (if (and (has-view?) (== (buffer-tree) (stree->tree '(document ""))))
+  (if (and (current-view) (== (buffer-tree) (stree->tree '(document ""))))
       (init-language val))
   (cond ((or (== val "bulgarian") (== val "russian") (== val "ukrainian"))
 	 (notify-preference "cyrillic input method"))))
 
 (define (notify-scripting-language var val)
-  (if (has-view?)
+  (if (current-view)
       (if (== val "none")
 	  (init-default "prog-scripts")
 	  (init-env "prog-scripts" val))))
@@ -52,7 +52,7 @@
 (define (notify-tool var val)
   ;; FIXME: the menus sometimes don't get updated,
   ;; but the fix below does not work
-  (if (has-view?) (notify-change 1)))
+  (if (current-view) (notify-change 1)))
 
 (define (notify-fast-environments var val)
   (set-fast-environments (== val "on")))
@@ -131,7 +131,7 @@
           (when answ (buffer-close (current-buffer)))))))
 
 (tm-define (safely-kill-window)
-  (if (<= (get-nr-windows) 1)
+  (if (<= (windows-number) 1)
       (safely-quit-TeXmacs)
       (kill-window)))
 

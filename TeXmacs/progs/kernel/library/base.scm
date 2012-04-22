@@ -324,6 +324,10 @@
   (with u (window-to-buffer win)
     (and (not (url-none? u)) u)))
 
+(define-public (current-view)
+  (with u (current-view-url)
+    (and (not (url-none? u)) u)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Redirections
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -5789,6 +5789,19 @@ tmg_tree_export (tmscm arg1, tmscm arg2, tmscm arg3) {
 }
 
 tmscm
+tmg_aux_bufferP (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "aux-buffer?");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= is_aux_buffer (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_view_history () {
   // TMSCM_DEFER_INTS;
   array_url out= get_view_history ();
@@ -5811,9 +5824,18 @@ tmg_buffer_2views (tmscm arg1) {
 }
 
 tmscm
-tmg_current_view () {
+tmg_view_list () {
   // TMSCM_DEFER_INTS;
-  url out= get_current_view ();
+  array_url out= get_all_views ();
+  // TMSCM_ALLOW_INTS;
+
+  return array_url_to_tmscm (out);
+}
+
+tmscm
+tmg_current_view_url () {
+  // TMSCM_DEFER_INTS;
+  url out= get_current_view_safe ();
   // TMSCM_ALLOW_INTS;
 
   return url_to_tmscm (out);
@@ -5915,15 +5937,6 @@ tmg_window_set_view (tmscm arg1, tmscm arg2, tmscm arg3) {
 }
 
 tmscm
-tmg_new_buffer () {
-  // TMSCM_DEFER_INTS;
-  url out= create_buffer ();
-  // TMSCM_ALLOW_INTS;
-
-  return url_to_tmscm (out);
-}
-
-tmscm
 tmg_switch_to_buffer (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "switch-to-buffer");
 
@@ -5937,144 +5950,21 @@ tmg_switch_to_buffer (tmscm arg1) {
 }
 
 tmscm
-tmg_buffer_close (tmscm arg1) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-close");
-
-  url in1= tmscm_to_url (arg1);
-
-  // TMSCM_DEFER_INTS;
-  kill_buffer (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return TMSCM_UNSPECIFIED;
-}
-
-tmscm
-tmg_aux_bufferP (tmscm arg1) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "aux-buffer?");
-
-  url in1= tmscm_to_url (arg1);
-
-  // TMSCM_DEFER_INTS;
-  bool out= is_aux_buffer (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return bool_to_tmscm (out);
-}
-
-tmscm
-tmg_open_buffer_in_window (tmscm arg1, tmscm arg2, tmscm arg3) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "open-buffer-in-window");
-  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "open-buffer-in-window");
-  TMSCM_ASSERT_CONTENT (arg3, TMSCM_ARG3, "open-buffer-in-window");
-
-  url in1= tmscm_to_url (arg1);
-  content in2= tmscm_to_content (arg2);
-  content in3= tmscm_to_content (arg3);
-
-  // TMSCM_DEFER_INTS;
-  new_buffer_in_new_window (in1, in2, in3);
-  // TMSCM_ALLOW_INTS;
-
-  return TMSCM_UNSPECIFIED;
-}
-
-tmscm
-tmg_open_window () {
-  // TMSCM_DEFER_INTS;
-  url out= open_window ();
-  // TMSCM_ALLOW_INTS;
-
-  return url_to_tmscm (out);
-}
-
-tmscm
-tmg_open_window_geometry (tmscm arg1) {
-  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "open-window-geometry");
-
-  content in1= tmscm_to_content (arg1);
-
-  // TMSCM_DEFER_INTS;
-  url out= open_window (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return url_to_tmscm (out);
-}
-
-tmscm
-tmg_clone_window () {
-  // TMSCM_DEFER_INTS;
-  clone_window ();
-  // TMSCM_ALLOW_INTS;
-
-  return TMSCM_UNSPECIFIED;
-}
-
-tmscm
-tmg_kill_window () {
-  // TMSCM_DEFER_INTS;
-  kill_window ();
-  // TMSCM_ALLOW_INTS;
-
-  return TMSCM_UNSPECIFIED;
-}
-
-tmscm
-tmg_kill_window_and_buffer () {
-  // TMSCM_DEFER_INTS;
-  kill_window_and_buffer ();
-  // TMSCM_ALLOW_INTS;
-
-  return TMSCM_UNSPECIFIED;
-}
-
-tmscm
-tmg_project_attach (tmscm arg1) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "project-attach");
-
-  string in1= tmscm_to_string (arg1);
-
-  // TMSCM_DEFER_INTS;
-  project_attach (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return TMSCM_UNSPECIFIED;
-}
-
-tmscm
-tmg_project_detach () {
-  // TMSCM_DEFER_INTS;
-  project_attach ();
-  // TMSCM_ALLOW_INTS;
-
-  return TMSCM_UNSPECIFIED;
-}
-
-tmscm
-tmg_project_attachedP () {
-  // TMSCM_DEFER_INTS;
-  bool out= project_attached ();
-  // TMSCM_ALLOW_INTS;
-
-  return bool_to_tmscm (out);
-}
-
-tmscm
-tmg_project_get () {
-  // TMSCM_DEFER_INTS;
-  url out= project_get ();
-  // TMSCM_ALLOW_INTS;
-
-  return url_to_tmscm (out);
-}
-
-tmscm
 tmg_window_list () {
   // TMSCM_DEFER_INTS;
   array_url out= windows_list ();
   // TMSCM_ALLOW_INTS;
 
   return array_url_to_tmscm (out);
+}
+
+tmscm
+tmg_windows_number () {
+  // TMSCM_DEFER_INTS;
+  int out= get_nr_windows ();
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
 }
 
 tmscm
@@ -6141,21 +6031,131 @@ tmg_window_focus (tmscm arg1) {
 }
 
 tmscm
-tmg_has_viewP () {
+tmg_new_buffer () {
   // TMSCM_DEFER_INTS;
-  bool out= has_current_view ();
+  url out= create_buffer ();
+  // TMSCM_ALLOW_INTS;
+
+  return url_to_tmscm (out);
+}
+
+tmscm
+tmg_open_buffer_in_window (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "open-buffer-in-window");
+  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "open-buffer-in-window");
+  TMSCM_ASSERT_CONTENT (arg3, TMSCM_ARG3, "open-buffer-in-window");
+
+  url in1= tmscm_to_url (arg1);
+  content in2= tmscm_to_content (arg2);
+  content in3= tmscm_to_content (arg3);
+
+  // TMSCM_DEFER_INTS;
+  new_buffer_in_new_window (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_open_window () {
+  // TMSCM_DEFER_INTS;
+  url out= open_window ();
+  // TMSCM_ALLOW_INTS;
+
+  return url_to_tmscm (out);
+}
+
+tmscm
+tmg_open_window_geometry (tmscm arg1) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "open-window-geometry");
+
+  content in1= tmscm_to_content (arg1);
+
+  // TMSCM_DEFER_INTS;
+  url out= open_window (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return url_to_tmscm (out);
+}
+
+tmscm
+tmg_clone_window () {
+  // TMSCM_DEFER_INTS;
+  clone_window ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_buffer_close (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-close");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  kill_buffer (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_kill_window () {
+  // TMSCM_DEFER_INTS;
+  kill_window ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_kill_window_and_buffer () {
+  // TMSCM_DEFER_INTS;
+  kill_window_and_buffer ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_project_attach (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "project-attach");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  project_attach (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_project_detach () {
+  // TMSCM_DEFER_INTS;
+  project_attach ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_project_attachedP () {
+  // TMSCM_DEFER_INTS;
+  bool out= project_attached ();
   // TMSCM_ALLOW_INTS;
 
   return bool_to_tmscm (out);
 }
 
 tmscm
-tmg_get_nr_windows () {
+tmg_project_get () {
   // TMSCM_DEFER_INTS;
-  int out= get_nr_windows ();
+  url out= project_get ();
   // TMSCM_ALLOW_INTS;
 
-  return int_to_tmscm (out);
+  return url_to_tmscm (out);
 }
 
 tmscm
@@ -6822,9 +6822,11 @@ initialize_glue_basic () {
   tmscm_install_procedure ("buffer-save",  tmg_buffer_save, 1, 0, 0);
   tmscm_install_procedure ("tree-import",  tmg_tree_import, 2, 0, 0);
   tmscm_install_procedure ("tree-export",  tmg_tree_export, 3, 0, 0);
+  tmscm_install_procedure ("aux-buffer?",  tmg_aux_bufferP, 1, 0, 0);
   tmscm_install_procedure ("view-history",  tmg_view_history, 0, 0, 0);
   tmscm_install_procedure ("buffer->views",  tmg_buffer_2views, 1, 0, 0);
-  tmscm_install_procedure ("current-view",  tmg_current_view, 0, 0, 0);
+  tmscm_install_procedure ("view-list",  tmg_view_list, 0, 0, 0);
+  tmscm_install_procedure ("current-view-url",  tmg_current_view_url, 0, 0, 0);
   tmscm_install_procedure ("window->view",  tmg_window_2view, 1, 0, 0);
   tmscm_install_procedure ("view->buffer",  tmg_view_2buffer, 1, 0, 0);
   tmscm_install_procedure ("buffer-new-view",  tmg_buffer_new_view, 1, 0, 0);
@@ -6832,28 +6834,26 @@ initialize_glue_basic () {
   tmscm_install_procedure ("buffer-recent-view",  tmg_buffer_recent_view, 1, 0, 0);
   tmscm_install_procedure ("view-delete",  tmg_view_delete, 1, 0, 0);
   tmscm_install_procedure ("window-set-view",  tmg_window_set_view, 3, 0, 0);
-  tmscm_install_procedure ("new-buffer",  tmg_new_buffer, 0, 0, 0);
   tmscm_install_procedure ("switch-to-buffer",  tmg_switch_to_buffer, 1, 0, 0);
-  tmscm_install_procedure ("buffer-close",  tmg_buffer_close, 1, 0, 0);
-  tmscm_install_procedure ("aux-buffer?",  tmg_aux_bufferP, 1, 0, 0);
+  tmscm_install_procedure ("window-list",  tmg_window_list, 0, 0, 0);
+  tmscm_install_procedure ("windows-number",  tmg_windows_number, 0, 0, 0);
+  tmscm_install_procedure ("current-window",  tmg_current_window, 0, 0, 0);
+  tmscm_install_procedure ("buffer->windows",  tmg_buffer_2windows, 1, 0, 0);
+  tmscm_install_procedure ("window-to-buffer",  tmg_window_to_buffer, 1, 0, 0);
+  tmscm_install_procedure ("window-set-buffer",  tmg_window_set_buffer, 2, 0, 0);
+  tmscm_install_procedure ("window-focus",  tmg_window_focus, 1, 0, 0);
+  tmscm_install_procedure ("new-buffer",  tmg_new_buffer, 0, 0, 0);
   tmscm_install_procedure ("open-buffer-in-window",  tmg_open_buffer_in_window, 3, 0, 0);
   tmscm_install_procedure ("open-window",  tmg_open_window, 0, 0, 0);
   tmscm_install_procedure ("open-window-geometry",  tmg_open_window_geometry, 1, 0, 0);
   tmscm_install_procedure ("clone-window",  tmg_clone_window, 0, 0, 0);
+  tmscm_install_procedure ("buffer-close",  tmg_buffer_close, 1, 0, 0);
   tmscm_install_procedure ("kill-window",  tmg_kill_window, 0, 0, 0);
   tmscm_install_procedure ("kill-window-and-buffer",  tmg_kill_window_and_buffer, 0, 0, 0);
   tmscm_install_procedure ("project-attach",  tmg_project_attach, 1, 0, 0);
   tmscm_install_procedure ("project-detach",  tmg_project_detach, 0, 0, 0);
   tmscm_install_procedure ("project-attached?",  tmg_project_attachedP, 0, 0, 0);
   tmscm_install_procedure ("project-get",  tmg_project_get, 0, 0, 0);
-  tmscm_install_procedure ("window-list",  tmg_window_list, 0, 0, 0);
-  tmscm_install_procedure ("current-window",  tmg_current_window, 0, 0, 0);
-  tmscm_install_procedure ("buffer->windows",  tmg_buffer_2windows, 1, 0, 0);
-  tmscm_install_procedure ("window-to-buffer",  tmg_window_to_buffer, 1, 0, 0);
-  tmscm_install_procedure ("window-set-buffer",  tmg_window_set_buffer, 2, 0, 0);
-  tmscm_install_procedure ("window-focus",  tmg_window_focus, 1, 0, 0);
-  tmscm_install_procedure ("has-view?",  tmg_has_viewP, 0, 0, 0);
-  tmscm_install_procedure ("get-nr-windows",  tmg_get_nr_windows, 0, 0, 0);
   tmscm_install_procedure ("alt-window-handle",  tmg_alt_window_handle, 0, 0, 0);
   tmscm_install_procedure ("alt-window-create",  tmg_alt_window_create, 4, 0, 0);
   tmscm_install_procedure ("alt-window-create-quit",  tmg_alt_window_create_quit, 4, 0, 0);
