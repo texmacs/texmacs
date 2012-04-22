@@ -235,20 +235,17 @@ clone_window () {
 
 void
 kill_buffer (url name) {
-  tm_buffer buf= concrete_buffer (name);
-  if (is_nil (buf)) return;
-  if (N(bufs) <= 1) get_server () -> quit();
-  for (int i=0; i<N(buf->vws); i++) {
-    tm_view old_vw= buf->vws[i];
-    if (old_vw->win != NULL) {
+  array<url> vs= buffer_to_views (name);
+  for (int i=0; i<N(vs); i++)
+    if (!is_none (vs[i])) {
       url prev= get_recent_view (name, false, true, false, true);
       if (is_none (prev)) {
         prev= get_recent_view (name, false, true, false, false);
+        if (is_none (prev)) break;
         prev= get_new_view (view_to_buffer (prev));
       }
-      window_set_view (abstract_window (old_vw->win), prev, false);
+      window_set_view (view_to_window (vs[i]), prev, false);
     }
-  }
   remove_buffer (name);
 }
 
@@ -273,14 +270,12 @@ void
 kill_window_and_buffer () {
   if (N(bufs) <= 1) get_server () -> quit();
   url name= get_current_buffer ();
-  int i;
+  array<url> vs= buffer_to_views (get_current_buffer ());
+  url win= get_current_window ();
   bool kill= true;
-  tm_buffer buf= concrete_buffer (get_current_buffer ());
-  tm_window win= concrete_window (get_current_window ());
-  for (i=0; i<N(buf->vws); i++) {
-    tm_view old_vw= buf->vws[i];
-    if (old_vw->win != win) kill= false;
-  }
+  for (int i=0; i<N(vs); i++)
+    if (view_to_window (vs[i]) != win)
+      kill= false;
   kill_window ();
   if (kill) remove_buffer (name);
 }

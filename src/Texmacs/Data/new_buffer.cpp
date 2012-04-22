@@ -56,6 +56,8 @@ remove_buffer (tm_buffer buf) {
   int nr, n= N(bufs);
   for (nr=0; nr<n; nr++)
     if (bufs[nr] == buf) {
+      if (n == 1 && number_of_servers () == 0)
+        get_server () -> quit ();
       for (int i=nr; i<n-1; i++)
         bufs[i]= bufs[i+1];
       bufs->resize (n-1);
