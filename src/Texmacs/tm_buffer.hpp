@@ -12,7 +12,7 @@
 #ifndef TM_BUFFER_H
 #define TM_BUFFER_H
 #include "new_data.hpp"
-#include "new_buffer.hpp"
+#include "Data/new_buffer.hpp"
 
 class tm_buffer_rep;
 class tm_view_rep;

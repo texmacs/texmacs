@@ -15,7 +15,7 @@
 #include "url.hpp"
 #include "scheme.hpp"
 #include "new_data.hpp"
-#include "new_buffer.hpp"
+#include "Data/new_buffer.hpp"
 #include "Data/new_view.hpp"
 #include "Data/new_window.hpp"
 #include "Data/new_project.hpp"
