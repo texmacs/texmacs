@@ -440,10 +440,8 @@ edit_interface_rep::apply_changes () {
     }
   if (sb != cur_sb) {
     cur_sb= sb;
-    if (has_window ()) {
-      tm_window win= get_window ();
-      win -> set_scrollbars (sb);
-    }
+    if (has_window ())
+      access_window () -> set_scrollbars (sb);
   }
   
   // window decorations (menu bar, icon bars, footer)

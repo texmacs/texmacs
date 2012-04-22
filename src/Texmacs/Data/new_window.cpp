@@ -139,7 +139,7 @@ has_window () {
 }
 
 tm_window
-get_window () {
+access_window () {
   tm_view vw= search_view (get_this_view ());
   ASSERT (vw->win != NULL, "no window attached to view");
   return vw->win;
@@ -147,7 +147,7 @@ get_window () {
 
 url
 get_this_window () {
-  tm_window win= get_window ();
+  tm_window win= access_window ();
   return get_name_window (win);
 }
 
@@ -265,7 +265,7 @@ kill_window_and_buffer () {
   int i;
   bool kill= true;
   tm_buffer buf= search_buffer (get_this_buffer ());
-  tm_window win= get_window ();
+  tm_window win= search_window (get_this_window ());
   for (i=0; i<N(buf->vws); i++) {
     tm_view old_vw= buf->vws[i];
     if (old_vw->win != win) kill= false;

@@ -26,7 +26,7 @@ void window_focus (url win);
 // Low level types and routines
 class tm_window_rep;
 typedef tm_window_rep* tm_window;
-tm_window get_window ();
+tm_window access_window ();
 tm_window search_window (url win);
 url       get_name_window (tm_window win);
 

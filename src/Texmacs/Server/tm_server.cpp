@@ -165,7 +165,7 @@ tm_server_rep::interpose_handler () {
 
 void
 tm_server_rep::wait_handler (string message, string arg) {
-  show_wait_indicator (get_window () -> win, translate (message), arg);
+  show_wait_indicator (access_window () -> win, translate (message), arg);
 }
 
 void

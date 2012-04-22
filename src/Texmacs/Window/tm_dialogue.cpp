@@ -71,7 +71,7 @@ tm_frame_rep::dialogue_start (string name, widget wid) {
     dialogue_wid= wid;
     dialogue_win= plain_window_widget (dialogue_wid, name);
 
-    widget win= get_window () -> win;
+    widget win= access_window () -> win;
     SI ox, oy, dx, dy, ex= 0, ey= 0;
     get_position (win, ox, oy);
     get_size (win, dx, dy);
@@ -238,10 +238,10 @@ tm_frame_rep::interactive (object fun, scheme_tree p) {
     send_keyboard_focus (get_form_field (dialogue_wid, 0));
   }
   else {
-    if (get_window () -> get_interactive_mode ()) beep ();
+    if (access_window () -> get_interactive_mode ()) beep ();
     else {
       command interactive_cmd=
-	tm_new<interactive_command_rep> (this, get_window (), fun, p);
+	tm_new<interactive_command_rep> (this, access_window (), fun, p);
       interactive_cmd ();
     }
   }
