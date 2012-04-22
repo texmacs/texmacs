@@ -125,7 +125,7 @@ void
 tm_server_rep::refresh () {
   array<url> l= windows_list ();
   for (int i=0; i<N(l); i++) {
-    url u= get_window_view (l[i]);
+    url u= window_to_view (l[i]);
     if (!is_none (u)) concrete_view (u)->win->refresh ();
   }
 }

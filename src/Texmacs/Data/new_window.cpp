@@ -90,7 +90,7 @@ static bool
 delete_view_from_window (url win) {
   array<url> vs= get_all_views ();
   for (int i=0; i<N(vs); i++)
-    if (get_view_window (vs[i]) == win) {
+    if (view_to_window (vs[i]) == win) {
       detach_view (vs[i]);
       delete_view (vs[i]);
       return true;
@@ -151,35 +151,35 @@ array<url>
 buffer_to_windows (url name) {
   array<url> r, vs= get_buffer_views (name);
   for (int i=0; i<N(vs); i++)
-    r << get_view_window (vs[i]);
+    r << view_to_window (vs[i]);
   return r;
 }
 
 url
 window_to_buffer (url win) {
-  return get_view_buffer (get_window_view (win));
+  return view_to_buffer (window_to_view (win));
 }
 
 url
-get_window_view (url win) {
+window_to_view (url win) {
   array<url> vs= get_all_views ();
   for (int i=0; i<N(vs); i++)
-    if (get_view_window (vs[i]) == win)
+    if (view_to_window (vs[i]) == win)
       return vs[i];
   return url_none ();
 }
 
 void
 window_set_buffer (url win, url name) {
-  url old= get_window_view (win);
-  if (is_none (old) || get_view_buffer (old) == name) return;
+  url old= window_to_view (win);
+  if (is_none (old) || view_to_buffer (old) == name) return;
   window_set_view (win, get_passive_view (name), false);
 }
 
 void
 window_focus (url win) {
   if (win == get_current_window ()) return;
-  url old= get_window_view (win);
+  url old= window_to_view (win);
   if (is_none (old)) return;
   set_current_view (old);
 }
@@ -244,7 +244,7 @@ kill_buffer (url name) {
       url prev= get_recent_view (name, false, true, false, true);
       if (is_none (prev)) {
         prev= get_recent_view (name, false, true, false, false);
-        prev= get_new_view (get_view_buffer (prev));
+        prev= get_new_view (view_to_buffer (prev));
       }
       window_set_view (abstract_window (old_vw->win), prev, false);
     }

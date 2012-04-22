@@ -134,14 +134,14 @@ get_all_views () {
 }
 
 url
-get_view_buffer (url u) {
+view_to_buffer (url u) {
   tm_view vw= concrete_view (u);
   if (vw == NULL) return url_none ();
   return vw->buf->buf->name;
 }
 
 url
-get_view_window (url u) {
+view_to_window (url u) {
   tm_view vw= concrete_view (u);
   if (vw == NULL) return url_none ();
   return abstract_window (vw->win);
@@ -253,7 +253,7 @@ get_recent_view (url name) {
   if (is_nil (buf) || N(buf->vws) == 0)
     return get_new_view (name);
   url u= get_current_view ();
-  if (get_view_buffer (u) == name) return u;
+  if (view_to_buffer (u) == name) return u;
   url r= get_recent_view (name, true, false, true, false);
   if (!is_none (r)) return r;
   r= get_recent_view (name, true, false, false, false);
@@ -337,7 +337,7 @@ window_set_view (url win_u, url new_u, bool focus) {
   if (new_vw == NULL || new_vw->win == win) return;
   //cout << "Found view\n";
   ASSERT (new_vw->win == NULL, "view attached to other window");
-  url old_u= get_window_view (win_u);
+  url old_u= window_to_view (win_u);
   if (!is_none (old_u)) detach_view (old_u);
   attach_view (win_u, new_u);
   if (focus || get_current_view () == old_u)

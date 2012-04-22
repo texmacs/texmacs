@@ -5848,7 +5848,7 @@ tmg_window_2view (tmscm arg1) {
   url in1= tmscm_to_url (arg1);
 
   // TMSCM_DEFER_INTS;
-  url out= get_window_view (in1);
+  url out= window_to_view (in1);
   // TMSCM_ALLOW_INTS;
 
   return url_to_tmscm (out);
@@ -5861,7 +5861,7 @@ tmg_view_2buffer (tmscm arg1) {
   url in1= tmscm_to_url (arg1);
 
   // TMSCM_DEFER_INTS;
-  url out= get_view_buffer (in1);
+  url out= view_to_buffer (in1);
   // TMSCM_ALLOW_INTS;
 
   return url_to_tmscm (out);
