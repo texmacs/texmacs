@@ -17,10 +17,10 @@ class editor;
 
 array<url> get_view_history ();
 array<url> get_buffer_views (url name);
-editor get_editor ();
-bool has_view ();
-void set_this_view (url u);
-url  get_this_view (bool must_be_valid= true);
+editor get_current_editor ();
+bool has_current_view ();
+void set_current_view (url u);
+url  get_current_view (bool must_be_valid= true);
 url  get_window_view (url win);
 url  get_view_buffer (url u);
 url  get_new_view (url name);
@@ -42,8 +42,8 @@ bool is_aux_buffer (url name);
 // Low level types and routines
 class tm_view_rep;
 typedef tm_view_rep* tm_view;
-tm_view search_view (url name);
-url     get_name_view (tm_view vw);
+tm_view concrete_view (url name);
+url     abstract_view (tm_view vw);
 void    detach_view (url u);
 
 bool needs_to_be_saved (array<tm_view> vws);

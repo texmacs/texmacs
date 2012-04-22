@@ -539,7 +539,7 @@ public:
   friend void   tm_failure (const char* msg);
   friend void   set_buffer_tree (url name, tree doc);
   friend void   set_master (array<tm_view> vws, url master);
-  friend void   set_this_view (url u);
+  friend void   set_current_view (url u);
 };
 
 class editor {
@@ -553,10 +553,10 @@ EXTEND_NULL_CODE(widget,editor);
 editor new_editor (server_rep* sv, tm_buffer buf);
 
 #define SERVER(cmd) {              \
-  url temp= get_this_view (false); \
+  url temp= get_current_view (false); \
   focus_on_this_editor ();         \
   sv->cmd;                         \
-  set_this_view (temp);            \
+  set_current_view (temp);            \
 }
 
 #endif // defined EDITOR_H

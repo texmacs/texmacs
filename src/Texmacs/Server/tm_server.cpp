@@ -67,7 +67,7 @@ in_presentation_mode () {
 
 tree
 get_subtree (path p) {
-  return get_editor () -> the_subtree (p);
+  return get_current_editor () -> the_subtree (p);
 }
 
 void
@@ -129,7 +129,7 @@ tm_server_rep::refresh () {
   array<url> l= windows_list ();
   for (int i=0; i<N(l); i++) {
     url u= get_window_view (l[i]);
-    if (!is_none (u)) search_view (u)->win->refresh ();
+    if (!is_none (u)) concrete_view (u)->win->refresh ();
   }
 }
 
@@ -165,7 +165,7 @@ tm_server_rep::interpose_handler () {
 
 void
 tm_server_rep::wait_handler (string message, string arg) {
-  show_wait_indicator (access_window () -> win, translate (message), arg);
+  show_wait_indicator (concrete_window () -> win, translate (message), arg);
 }
 
 void

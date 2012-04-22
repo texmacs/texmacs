@@ -458,8 +458,8 @@
 
   ;; buffers
   (buffer-list get_all_buffers (array_url))
-  (current-buffer get_this_buffer (url))
-  (path-to-buffer get_name_buffer (url path))
+  (current-buffer get_current_buffer (url))
+  (path-to-buffer abstract_buffer (url path))
   (buffer-new make_new_buffer (url))
   (buffer-rename rename_buffer (void url url))
   (buffer-set set_buffer_tree (void url content))
@@ -487,7 +487,7 @@
 
   (view-history get_view_history (array_url))
   (buffer->views get_buffer_views (array_url url))
-  (current-view get_this_view (url))
+  (current-view get_current_view (url))
   (window->view get_window_view (url url))
   (view->buffer get_view_buffer (url url))
   (buffer-new-view get_new_view (url url))
@@ -514,13 +514,13 @@
   (project-get project_get (url))
 
   (window-list windows_list (array_url))
-  (current-window get_this_window (url))
+  (current-window get_current_window (url))
   (buffer->windows buffer_to_windows (array_url url))
   (window-to-buffer window_to_buffer (url url))
   (window-set-buffer window_set_buffer (void url url))
   (window-focus window_focus (void url))
 
-  (has-view? has_view (bool))
+  (has-view? has_current_view (bool))
   (get-nr-windows get_nr_windows (int))
 
   ;; transitional alternative windows; to be replaced by better solution

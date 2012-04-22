@@ -92,7 +92,7 @@ public:
 void
 close_embedded_command_rep::apply () {
   //cout << "Destroy " << vw->buf->buf->name << "\n";
-  window_focus (get_name_window (vw->ed->mvw->win));
+  window_focus (abstract_window (vw->ed->mvw->win));
   //cout << "Changed focus\n";
   tm_window win= vw->win;
   ASSERT (N(vw->buf->vws) == 1, "invalid cloned embedded TeXmacs widget");
@@ -146,10 +146,10 @@ widget
 texmacs_input_widget (tree doc, command cmd, bool continuous) {
   (void) cmd; (void) continuous;
   doc= enrich_embedded_document (doc);
-  url       base = get_master_buffer (get_this_buffer ());
-  tm_view   curvw= search_view (get_this_view ());
+  url       base = get_master_buffer (get_current_buffer ());
+  tm_view   curvw= concrete_view (get_current_view ());
   url       name = embedded_name (); create_buffer (name, doc);
-  tm_view   vw   = search_view (get_passive_view (name));
+  tm_view   vw   = concrete_view (get_passive_view (name));
   tm_window win  = tm_new<tm_window_rep> (doc, command ());
   set_master_buffer (name, base);
   vw->win= win;

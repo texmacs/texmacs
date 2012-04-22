@@ -51,47 +51,47 @@ icon_bar_name (int which) {
 
 int
 tm_frame_rep::get_window_serial () {
-  return access_window () -> serial;
+  return concrete_window () -> serial;
 }
 
 void
 tm_frame_rep::set_window_property (scheme_tree what, scheme_tree val) {
-  access_window () -> set_property (what, val);
+  concrete_window () -> set_property (what, val);
 }
 
 void
 tm_frame_rep::set_bool_window_property (string what, bool val) {
-  access_window () -> set_property (what, val? string ("true"): string ("false"));
+  concrete_window () -> set_property (what, val? string ("true"): string ("false"));
 }
 
 void
 tm_frame_rep::set_int_window_property (string what, int val) {
-  access_window () -> set_property (what, as_tree (val));
+  concrete_window () -> set_property (what, as_tree (val));
 }
 
 void
 tm_frame_rep::set_string_window_property (string what, string val) {
-  access_window () -> set_property (what, val);
+  concrete_window () -> set_property (what, val);
 }
 
 scheme_tree
 tm_frame_rep::get_window_property (scheme_tree what) {
-  return access_window () -> get_property (what);
+  return concrete_window () -> get_property (what);
 }
 
 bool
 tm_frame_rep::get_bool_window_property (string what) {
-  return as_bool (access_window () -> get_property (what));
+  return as_bool (concrete_window () -> get_property (what));
 }
 
 int
 tm_frame_rep::get_int_window_property (string what) {
-  return as_int (access_window () -> get_property (what));
+  return as_int (concrete_window () -> get_property (what));
 }
 
 string
 tm_frame_rep::get_string_window_property (string what) {
-  return as_string (access_window () -> get_property (what));
+  return as_string (concrete_window () -> get_property (what));
 }
 
 /******************************************************************************
@@ -106,77 +106,77 @@ tm_frame_rep::menu_widget (string menu, widget& w) {
 
 void
 tm_frame_rep::menu_main (string menu) {
-  if (!has_view ()) return;
-  access_window () -> menu_main (menu);
+  if (!has_current_view ()) return;
+  concrete_window () -> menu_main (menu);
 }
 
 void
 tm_frame_rep::menu_icons (int which, string menu) {
-  if ((which<0) || (which>3) || (!has_view())) return;
-  access_window () -> menu_icons (which, menu);
+  if ((which<0) || (which>3) || (!has_current_view())) return;
+  concrete_window () -> menu_icons (which, menu);
 }
 
 void
 tm_frame_rep::side_tools (int which, string tools) {
-  if ((which<0) || (which>0)|| (!has_view())) return;
-  access_window () -> side_tools (which, tools);
+  if ((which<0) || (which>0)|| (!has_current_view())) return;
+  concrete_window () -> side_tools (which, tools);
 }
 
 void
 tm_frame_rep::show_header (bool flag) {
-  if (!has_view ()) return;
-  access_window () -> set_header_flag (flag);
+  if (!has_current_view ()) return;
+  concrete_window () -> set_header_flag (flag);
 }
 
 void
 tm_frame_rep::show_icon_bar (int which, bool flag) {
-  if ((which<0) || (which>3) || (!has_view())) return;
-  access_window () -> set_icon_bar_flag (which, flag);
+  if ((which<0) || (which>3) || (!has_current_view())) return;
+  concrete_window () -> set_icon_bar_flag (which, flag);
 }
 
 void
 tm_frame_rep::show_side_tools (int which, bool flag) {
-  if ((which<0) || (which>0) || (!has_view())) return;
-  access_window () -> set_side_tools_flag (which, flag);
+  if ((which<0) || (which>0) || (!has_current_view())) return;
+  concrete_window () -> set_side_tools_flag (which, flag);
 }
 
 void
 tm_frame_rep::show_footer (bool flag) {
-  if (!has_view ()) return;
-  access_window () -> set_footer_flag (flag);
+  if (!has_current_view ()) return;
+  concrete_window () -> set_footer_flag (flag);
 }
 
 bool
 tm_frame_rep::visible_header () {
-  return access_window () -> get_header_flag ();
+  return concrete_window () -> get_header_flag ();
 }
 
 bool
 tm_frame_rep::visible_icon_bar (int which) {
   if ((which<0) || (which>3)) return false;
-  return access_window () -> get_icon_bar_flag (which);
+  return concrete_window () -> get_icon_bar_flag (which);
 }
 
 bool
 tm_frame_rep::visible_side_tools (int which) {
   if ((which<0) || (which>0)) return false;
-  return access_window () -> get_side_tools_flag (which);
+  return concrete_window () -> get_side_tools_flag (which);
 }
 
 bool
 tm_frame_rep::visible_footer () {
-  return access_window () -> get_footer_flag ();
+  return concrete_window () -> get_footer_flag ();
 }
 
 void
 tm_frame_rep::set_shrinking_factor (int sf) {
-  if (!has_view ()) return;
-  access_window () -> set_shrinking_factor (sf);
+  if (!has_current_view ()) return;
+  concrete_window () -> set_shrinking_factor (sf);
 }
 
 int
 tm_frame_rep::get_shrinking_factor () {
-  return access_window () -> get_shrinking_factor ();
+  return concrete_window () -> get_shrinking_factor ();
 }
 
 /******************************************************************************
@@ -185,56 +185,56 @@ tm_frame_rep::get_shrinking_factor () {
 
 void
 tm_frame_rep::get_visible (SI& x1, SI& y1, SI& x2, SI& y2) {
-  access_window () -> get_visible (x1, y1, x2, y2);
+  concrete_window () -> get_visible (x1, y1, x2, y2);
 }
 
 void
 tm_frame_rep::set_scrollbars (int sb) {
-  access_window () -> set_scrollbars (sb);
+  concrete_window () -> set_scrollbars (sb);
 }
 
 void
 tm_frame_rep::scroll_where (SI& x, SI& y) {
-  access_window () -> get_scroll_pos (x, y);
+  concrete_window () -> get_scroll_pos (x, y);
 }
 
 void
 tm_frame_rep::scroll_to (SI x, SI y) {
-  access_window () -> set_scroll_pos (x, y);
+  concrete_window () -> set_scroll_pos (x, y);
 }
 
 void
 tm_frame_rep::get_extents (SI& x1, SI& y1, SI& x2, SI& y2) {
-  access_window () -> get_extents (x1, y1, x2, y2);
+  concrete_window () -> get_extents (x1, y1, x2, y2);
 }
 
 void
 tm_frame_rep::set_extents (SI x1, SI y1, SI x2, SI y2) {
-  access_window () -> set_extents (x1, y1, x2, y2);
+  concrete_window () -> set_extents (x1, y1, x2, y2);
 }
 
 void
 tm_frame_rep::set_left_footer (string s) {
-  if (!has_window ()) return;
-  access_window () -> set_left_footer (s);
+  if (!has_current_window ()) return;
+  concrete_window () -> set_left_footer (s);
 }
 
 void
 tm_frame_rep::set_right_footer (string s) {
-  if (!has_window ()) return;
-  access_window () -> set_right_footer (s);
+  if (!has_current_window ()) return;
+  concrete_window () -> set_right_footer (s);
 }
 
 void
 tm_frame_rep::set_message (tree left, tree right, bool temp) {
-  if (!has_window ()) return;
-  get_editor() -> set_message (left, right, temp);
+  if (!has_current_window ()) return;
+  get_current_editor() -> set_message (left, right, temp);
 }
 
 void
 tm_frame_rep::recall_message () {
-  if (!has_window ()) return;
-  get_editor() -> recall_message ();
+  if (!has_current_window ()) return;
+  get_current_editor() -> recall_message ();
 }
 
 void
@@ -247,8 +247,8 @@ tm_frame_rep::full_screen_mode (bool on, bool edit) {
     show_header (true);
     show_footer (true);
   }
-  set_full_screen (access_window () -> win, on);
-  get_editor () -> full_screen_mode (on && !edit);
+  set_full_screen (concrete_window () -> win, on);
+  get_current_editor () -> full_screen_mode (on && !edit);
   full_screen = on;
   full_screen_edit = on && edit;
 }

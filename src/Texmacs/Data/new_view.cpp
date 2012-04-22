@@ -48,7 +48,7 @@ decode_url (string s) {
 }
 
 url
-get_name_view (tm_view vw) {
+abstract_view (tm_view vw) {
   if (vw == NULL) return url_none ();
   string name= encode_url (vw->buf->buf->name);
   //cout << vw->buf->buf->name << " -> " << name << "\n";
@@ -57,7 +57,7 @@ get_name_view (tm_view vw) {
 }
 
 tm_view
-search_view (url u) {
+concrete_view (url u) {
   if (is_none (u)) return NULL;
   string s= as_string (u);
   if (!starts (s, "tmfs://view/")) return NULL;
@@ -67,7 +67,7 @@ search_view (url u) {
   int nr= as_int (s (0, i));
   url name= decode_url (s (i+1, N(s)));
   //cout << s (i+1, N(s)) << " -> " << name << "\n";
-  tm_buffer buf= search_buffer (name);
+  tm_buffer buf= concrete_buffer (name);
   if (is_nil (buf)) return NULL;
   for (i=0; i<N(buf->vws); i++)
     if (buf->vws[i]->nr == nr)
@@ -82,13 +82,13 @@ search_view (url u) {
 tm_view the_view= NULL;
 
 bool
-has_view () {
+has_current_view () {
   return the_view != NULL;
 }
 
 void
-set_this_view (url u) {
-  tm_view vw= search_view (u);
+set_current_view (url u) {
+  tm_view vw= concrete_view (u);
   the_view= vw;
   if (vw != NULL) {
     the_drd= vw->ed->drd;
@@ -97,31 +97,31 @@ set_this_view (url u) {
 }
 
 url
-get_this_view (bool must_be_valid) {
+get_current_view (bool must_be_valid) {
   ASSERT (!must_be_valid || the_view != NULL, "no active view");
   if (the_view == NULL) return url_none ();
-  return get_name_view (the_view);
+  return abstract_view (the_view);
 }
 
 editor
-get_editor () {
-  tm_view vw= search_view (get_this_view ());
+get_current_editor () {
+  tm_view vw= concrete_view (get_current_view ());
   return vw->ed;
 }
 
 array<url>
 get_buffer_views (url name) {
-  tm_buffer buf= search_buffer (name);
+  tm_buffer buf= concrete_buffer (name);
   array<url> r;
   if (is_nil (buf)) return r;
   for (int i=0; i<N(buf->vws); i++)
-    r << get_name_view (buf->vws[i]);
+    r << abstract_view (buf->vws[i]);
   return r;
 }
 
 url
 get_view_buffer (url u) {
-  tm_view vw= search_view (u);
+  tm_view vw= concrete_view (u);
   if (vw == NULL) return url_none ();
   return vw->buf->buf->name;
 }
@@ -156,7 +156,7 @@ get_recent_view (url name, bool same, bool other, bool active, bool passive) {
   //   If passive, then the buffer must be passive
   int i;
   for (i= 0; i < N(view_history); i++) {
-    tm_view vw= search_view (view_history[i]);
+    tm_view vw= concrete_view (view_history[i]);
     if (vw != NULL) {
       if (same && vw->buf->buf->name != name) continue;
       if (other && vw->buf->buf->name == name) continue;
@@ -185,35 +185,35 @@ get_new_view (url name) {
   //cout << "Creating new view\n";
 
   create_buffer (name, tree (DOCUMENT));
-  tm_buffer buf= search_buffer (name);
+  tm_buffer buf= concrete_buffer (name);
   editor    ed = new_editor (get_server () -> get_server (), buf);
   tm_view   vw = tm_new<tm_view_rep> (buf, ed);
   buf->vws << vw;
   ed->set_data (buf->data);
 
-  url temp= get_this_view (false);
-  set_this_view (get_name_view (vw));
+  url temp= get_current_view (false);
+  set_current_view (abstract_view (vw));
   if (is_none (tm_init_buffer_file))
     tm_init_buffer_file= "$TEXMACS_PATH/progs/init-buffer.scm";
   if (is_none (my_init_buffer_file))
     my_init_buffer_file= "$TEXMACS_HOME_PATH/progs/my-init-buffer.scm";
   if (exists (tm_init_buffer_file)) exec_file (tm_init_buffer_file);
   if (exists (my_init_buffer_file)) exec_file (my_init_buffer_file);
-  set_this_view (temp);
+  set_current_view (temp);
 
   //cout << "View created\n";
-  return get_name_view (vw);
+  return abstract_view (vw);
 }
 
 url
 get_passive_view (url name) {
   // Get a view on a buffer, but not one which is attached to a window
   // Create a new view if no such view exists
-  tm_buffer buf= search_buffer_insist (name);
+  tm_buffer buf= concrete_buffer_insist (name);
   if (is_nil (buf)) return url_none ();
   for (int i=0; i<N(buf->vws); i++)
     if (buf->vws[i]->win == NULL)
-      return get_name_view (buf->vws[i]);
+      return abstract_view (buf->vws[i]);
   return get_new_view (buf->buf->name);
 }
 
@@ -221,16 +221,16 @@ url
 get_recent_view (url name) {
   // Get (most) recent view on a buffer, with a preference for
   // the current buffer or another view attached to a window
-  tm_buffer buf= search_buffer (name);
+  tm_buffer buf= concrete_buffer (name);
   if (is_nil (buf) || N(buf->vws) == 0)
     return get_new_view (name);
-  url u= get_this_view ();
+  url u= get_current_view ();
   if (get_view_buffer (u) == name) return u;
   url r= get_recent_view (name, true, false, true, false);
   if (!is_none (r)) return r;
   r= get_recent_view (name, true, false, false, false);
   if (!is_none (r)) return r;
-  return get_name_view (buf->vws[0]);
+  return abstract_view (buf->vws[0]);
 }
 
 /******************************************************************************
@@ -239,7 +239,7 @@ get_recent_view (url name) {
 
 void
 delete_view (url u) {
-  tm_view vw= search_view (u);
+  tm_view vw= concrete_view (u);
   if (vw == NULL) return;
   tm_buffer buf= vw->buf;
   int i, j, n= N(buf->vws);
@@ -262,8 +262,8 @@ delete_view (url u) {
 
 void
 attach_view (url win_u, url u) {
-  tm_window win= search_window (win_u);
-  tm_view   vw = search_view (u);
+  tm_window win= concrete_window (win_u);
+  tm_view   vw = concrete_view (u);
   if (win == NULL || vw == NULL) return;
   // cout << "Attach view " << vw->buf->buf->name << "\n";
   vw->win= win;
@@ -280,7 +280,7 @@ attach_view (url win_u, url u) {
 
 void
 detach_view (url u) {
-  tm_view vw = search_view (u);
+  tm_view vw = concrete_view (u);
   if (vw == NULL) return;
   tm_window win= vw->win;
   if (win == NULL) return;
@@ -298,18 +298,18 @@ detach_view (url u) {
 void
 window_set_view (url win_u, url new_u, bool focus) {
   //cout << "set view " << win_u << ", " << new_u << ", " << focus << "\n";
-  tm_window win= search_window (win_u);
+  tm_window win= concrete_window (win_u);
   if (win == NULL) return;
   //cout << "Found window\n";
-  tm_view new_vw= search_view (new_u);
+  tm_view new_vw= concrete_view (new_u);
   if (new_vw == NULL || new_vw->win == win) return;
   //cout << "Found view\n";
   ASSERT (new_vw->win == NULL, "view attached to other window");
   url old_u= get_window_view (win_u);
   if (!is_none (old_u)) detach_view (old_u);
   attach_view (win_u, new_u);
-  if (focus || get_this_view () == old_u)
-    set_this_view (new_u);
+  if (focus || get_current_view () == old_u)
+    set_current_view (new_u);
 }
 
 /******************************************************************************
@@ -325,7 +325,7 @@ create_buffer () {
 
 void
 kill_buffer (url name) {
-  tm_buffer buf= search_buffer (name);
+  tm_buffer buf= concrete_buffer (name);
   if (is_nil (buf)) return;
   if (N(bufs) <= 1) get_server () -> quit();
   for (int i=0; i<N(buf->vws); i++) {
@@ -336,7 +336,7 @@ kill_buffer (url name) {
         prev= get_recent_view (name, false, true, false, false);
         prev= get_new_view (get_view_buffer (prev));
       }
-      window_set_view (get_name_window (old_vw->win), prev, false);
+      window_set_view (abstract_window (old_vw->win), prev, false);
     }
   }
   remove_buffer (name);
@@ -346,9 +346,9 @@ void
 switch_to_buffer (url name) {
   // cout << "Switching to buffer " << buf->buf->name << "\n";
   url u= get_passive_view (name);
-  tm_view vw= search_view (u);
+  tm_view vw= concrete_view (u);
   if (vw == NULL) return;
-  window_set_view (get_this_window (), u, true);
+  window_set_view (get_current_window (), u, true);
   tm_window nwin= vw->win;
   nwin->set_shrinking_factor (nwin->get_shrinking_factor ());
   // cout << "Switched to buffer " << new_vw->buf->buf->name << "\n";
@@ -362,7 +362,7 @@ focus_on_editor (editor ed) {
     for (j=0; j<N(buf->vws); j++) {
       tm_view vw= (tm_view) buf->vws[j];
       if (vw->ed == ed) {
-        set_this_view (get_name_view (vw));
+        set_current_view (abstract_view (vw));
 	return;
       }
     }
@@ -434,5 +434,5 @@ set_data (array<tm_view> vws, new_data data) {
 void
 delete_views (array<tm_view> vws) {
   for (int i=0; i<N(vws); i++)
-    delete_view (get_name_view (vws[i]));
+    delete_view (abstract_view (vws[i]));
 }

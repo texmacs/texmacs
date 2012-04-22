@@ -46,7 +46,7 @@ tm_buffer_rep::needs_to_be_autosaved () {
 void
 insert_buffer (url name) {
   if (is_none (name)) return;
-  if (!is_nil (search_buffer (name))) return;
+  if (!is_nil (concrete_buffer (name))) return;
   tm_buffer buf= tm_new<tm_buffer_rep> (name);
   bufs << buf;
 }
@@ -67,7 +67,7 @@ remove_buffer (tm_buffer buf) {
 
 void
 remove_buffer (url name) {
-  tm_buffer buf= search_buffer (name);
+  tm_buffer buf= concrete_buffer (name);
   if (!is_nil (buf)) remove_buffer (buf);
 }
 
@@ -85,7 +85,7 @@ get_all_buffers () {
 }
 
 tm_buffer
-search_buffer (url name) {
+concrete_buffer (url name) {
   int i, n= N(bufs);
   for (i=0; i<n; i++)
     if (bufs[i]->buf->name == name)
@@ -94,11 +94,11 @@ search_buffer (url name) {
 }
 
 tm_buffer
-search_buffer_insist (url u) {
-  tm_buffer buf= search_buffer (u);
+concrete_buffer_insist (url u) {
+  tm_buffer buf= concrete_buffer (u);
   if (!is_nil (buf)) return buf;
   buffer_load (u);
-  return search_buffer (u);
+  return concrete_buffer (u);
 }
 
 /******************************************************************************
@@ -106,13 +106,13 @@ search_buffer_insist (url u) {
 ******************************************************************************/
 
 url
-get_this_buffer () {
-  tm_view vw= search_view (get_this_view ());
+get_current_buffer () {
+  tm_view vw= concrete_view (get_current_view ());
   return vw->buf->buf->name;
 }
 
 url
-get_name_buffer (path p) {
+abstract_buffer (path p) {
   int i;
   for (i=0; i<N(bufs); i++)
     if (bufs[i]->rp <= p)
@@ -122,9 +122,9 @@ get_name_buffer (path p) {
 
 void
 rename_buffer (url name, url new_name) {
-  if (new_name == name || is_nil (search_buffer (name))) return;
+  if (new_name == name || is_nil (concrete_buffer (name))) return;
   kill_buffer (new_name);
-  tm_buffer buf= search_buffer (name);
+  tm_buffer buf= concrete_buffer (name);
   if (is_nil (buf)) return;
   buf->buf->name= new_name;
   buf->buf->master= new_name;
@@ -138,7 +138,7 @@ make_new_buffer () {
   int i=1;
   while (true) {
     url name= url_scratch ("no_name_", ".tm", i);
-    if (is_nil (search_buffer (name))) {
+    if (is_nil (concrete_buffer (name))) {
       set_buffer_tree (name, tree (DOCUMENT));
       return name;
     }
@@ -186,14 +186,14 @@ propose_title (string old_title, url u, tree doc) {
 
 string
 get_title_buffer (url name) {
-  tm_buffer buf= search_buffer (name);
+  tm_buffer buf= concrete_buffer (name);
   if (is_nil (buf)) return "";
   return buf->buf->title;
 }
 
 void
 set_title_buffer (url name, string title) {
-  tm_buffer buf= search_buffer (name);
+  tm_buffer buf= concrete_buffer (name);
   if (is_nil (buf)) return;
   if (buf->buf->title == title) return;
   buf->buf->title= title;
@@ -206,23 +206,23 @@ set_title_buffer (url name, string title) {
 
 void
 set_buffer_data (url name, new_data data) {
-  tm_buffer buf= search_buffer (name);
+  tm_buffer buf= concrete_buffer (name);
   if (is_nil (buf)) return;
   set_data (buf->vws, data);
 }
 
 void
 set_buffer_tree (url name, tree doc) {
-  tm_buffer buf= search_buffer (name);
+  tm_buffer buf= concrete_buffer (name);
   if (is_nil (buf)) {
     insert_buffer (name);
-    buf= search_buffer (name);
+    buf= concrete_buffer (name);
     tree body= detach_data (doc, buf->data);
     set_document (buf->rp, body);
     buf->buf->title= propose_title (buf->buf->title, name, body);
     if (buf->data->project != "") {
       url prj_name= head (name) * as_string (buf->data->project);
-      buf->prj= search_buffer_insist (prj_name);
+      buf->prj= concrete_buffer_insist (prj_name);
     }
   }
   else {
@@ -234,7 +234,7 @@ set_buffer_tree (url name, tree doc) {
     buf->buf->title= propose_title (old_title, name, body);
     if (buf->data->project != "" && buf->data->project != old_project) {
       url prj_name= head (name) * as_string (buf->data->project);
-      buf->prj= search_buffer_insist (prj_name);
+      buf->prj= concrete_buffer_insist (prj_name);
     }
   }
   pretend_buffer_saved (name);
@@ -242,7 +242,7 @@ set_buffer_tree (url name, tree doc) {
 
 tree
 get_buffer_tree (url name) {
-  tm_buffer buf= search_buffer (name);
+  tm_buffer buf= concrete_buffer (name);
   if (is_nil (buf)) return "";
   tree body= subtree (the_et, buf->rp);
   return attach_data (body, buf->data, true);
@@ -250,7 +250,7 @@ get_buffer_tree (url name) {
 
 void
 set_buffer_body (url name, tree body) {
-  tm_buffer buf= search_buffer (name);
+  tm_buffer buf= concrete_buffer (name);
   if (is_nil (buf)) {
     new_data data;
     set_buffer_tree (name, attach_data (body, data));
@@ -263,7 +263,7 @@ set_buffer_body (url name, tree body) {
 
 tree
 get_buffer_body (url name) {
-  tm_buffer buf= search_buffer (name);
+  tm_buffer buf= concrete_buffer (name);
   if (is_nil (buf)) return "";
   return subtree (the_et, buf->rp);
 }
@@ -274,14 +274,14 @@ get_buffer_body (url name) {
 
 url
 get_master_buffer (url name) {
-  tm_buffer buf= search_buffer (name);
+  tm_buffer buf= concrete_buffer (name);
   if (is_nil (buf)) return url_none ();
   return buf->buf->master;
 }
 
 void
 set_master_buffer (url name, url master) {
-  tm_buffer buf= search_buffer (name);
+  tm_buffer buf= concrete_buffer (name);
   if (is_nil (buf)) return;
   if (buf->buf->master == master) return;
   buf->buf->master= master;
@@ -290,14 +290,14 @@ set_master_buffer (url name, url master) {
 
 void
 set_last_save_buffer (url name, int t) {
-  tm_buffer buf= search_buffer (name);
+  tm_buffer buf= concrete_buffer (name);
   if (!is_nil (buf)) buf->buf->last_save= t;
   //cout << "Set last save " << name << " -> " << t << "\n";
 }
 
 int
 get_last_save_buffer (url name) {
-  tm_buffer buf= search_buffer (name);
+  tm_buffer buf= concrete_buffer (name);
   if (is_nil (buf)) {
     //cout << "Get last save " << name << " -> *\n";
     return - (int) (((unsigned int) (-1)) >> 1);
@@ -308,42 +308,42 @@ get_last_save_buffer (url name) {
 
 bool
 is_aux_buffer (url name) {
-  tm_buffer buf= search_buffer (name);
+  tm_buffer buf= concrete_buffer (name);
   if (is_nil (buf)) return false;
   return buf->buf->master != buf->buf->name;
 }
 
 double
 last_visited (url name) {
-  tm_buffer buf= search_buffer (name);
+  tm_buffer buf= concrete_buffer (name);
   if (is_nil (buf)) return (double) texmacs_time ();
   return (double) buf->buf->last_visit;
 }
 
 bool
 buffer_modified (url name) {
-  tm_buffer buf= search_buffer (name);
+  tm_buffer buf= concrete_buffer (name);
   if (is_nil (buf)) return false;
   return buf->needs_to_be_saved ();
 }
 
 bool
 buffer_modified_since_autosave (url name) {
-  tm_buffer buf= search_buffer (name);
+  tm_buffer buf= concrete_buffer (name);
   if (is_nil (buf)) return false;
   return buf->needs_to_be_autosaved ();
 }
 
 void
 pretend_buffer_modified (url name) {
-  tm_buffer buf= search_buffer (name);
+  tm_buffer buf= concrete_buffer (name);
   if (is_nil (buf)) return;
   pretend_modified (buf->vws);
 }
 
 void
 pretend_buffer_saved (url name) {
-  tm_buffer buf= search_buffer (name);
+  tm_buffer buf= concrete_buffer (name);
   if (is_nil (buf)) return;
   pretend_saved (buf->vws);
   set_last_save_buffer (name, last_modified (name));
@@ -351,7 +351,7 @@ pretend_buffer_saved (url name) {
 
 void
 pretend_buffer_autosaved (url name) {
-  tm_buffer buf= search_buffer (name);
+  tm_buffer buf= concrete_buffer (name);
   if (is_nil (buf)) return;
   pretend_autosaved (buf->vws);
 }
@@ -418,7 +418,7 @@ export_tree (tree doc, url u, string fm) {
 
 bool
 buffer_export (url name, url dest, string fm) {
-  tm_view vw= search_view (get_recent_view (name));
+  tm_view vw= concrete_view (get_recent_view (name));
   ASSERT (vw != NULL, "view expected");
 
   if (fm == "postscript" || fm == "pdf") {

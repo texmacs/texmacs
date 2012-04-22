@@ -62,8 +62,8 @@ inline new_buffer& new_buffer::operator = (new_buffer x) {
 
 class tm_buffer_rep;
 typedef tm_buffer_rep* tm_buffer;
-tm_buffer search_buffer (url name);
-tm_buffer search_buffer_insist (url name);
+tm_buffer concrete_buffer (url name);
+tm_buffer concrete_buffer_insist (url name);
 
 /******************************************************************************
 * High level routines
@@ -73,8 +73,8 @@ array<url> get_all_buffers ();
 url  make_new_buffer ();
 void remove_buffer (url name);
 int  number_buffers ();
-url  get_this_buffer ();
-url  get_name_buffer (path p);
+url  get_current_buffer ();
+url  abstract_buffer (path p);
 void rename_buffer (url name, url new_name);
 url get_master_buffer (url name);
 void set_master_buffer (url name, url master);

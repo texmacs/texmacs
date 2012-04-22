@@ -71,7 +71,7 @@ tm_frame_rep::dialogue_start (string name, widget wid) {
     dialogue_wid= wid;
     dialogue_win= plain_window_widget (dialogue_wid, name);
 
-    widget win= access_window () -> win;
+    widget win= concrete_window () -> win;
     SI ox, oy, dx, dy, ex= 0, ey= 0;
     get_position (win, ox, oy);
     get_size (win, dx, dy);
@@ -111,7 +111,7 @@ gcd (int i, int j) {
 
 void
 tm_frame_rep::choose_file (object fun, string title, string type) {
-  url      name= get_master_buffer (get_this_buffer ());
+  url      name= get_master_buffer (get_current_buffer ());
   command  cb  = dialogue_command (get_server(), fun, 1);
   bool     save= starts (title, "Save") || starts (title, "Export");
   widget   wid = file_chooser_widget (cb, type, save);
@@ -238,10 +238,10 @@ tm_frame_rep::interactive (object fun, scheme_tree p) {
     send_keyboard_focus (get_form_field (dialogue_wid, 0));
   }
   else {
-    if (access_window () -> get_interactive_mode ()) beep ();
+    if (concrete_window () -> get_interactive_mode ()) beep ();
     else {
       command interactive_cmd=
-	tm_new<interactive_command_rep> (this, access_window (), fun, p);
+	tm_new<interactive_command_rep> (this, concrete_window (), fun, p);
       interactive_cmd ();
     }
   }

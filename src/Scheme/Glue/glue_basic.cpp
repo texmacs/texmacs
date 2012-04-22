@@ -5437,7 +5437,7 @@ tmg_buffer_list () {
 tmscm
 tmg_current_buffer () {
   // TMSCM_DEFER_INTS;
-  url out= get_this_buffer ();
+  url out= get_current_buffer ();
   // TMSCM_ALLOW_INTS;
 
   return url_to_tmscm (out);
@@ -5450,7 +5450,7 @@ tmg_path_to_buffer (tmscm arg1) {
   path in1= tmscm_to_path (arg1);
 
   // TMSCM_DEFER_INTS;
-  url out= get_name_buffer (in1);
+  url out= abstract_buffer (in1);
   // TMSCM_ALLOW_INTS;
 
   return url_to_tmscm (out);
@@ -5813,7 +5813,7 @@ tmg_buffer_2views (tmscm arg1) {
 tmscm
 tmg_current_view () {
   // TMSCM_DEFER_INTS;
-  url out= get_this_view ();
+  url out= get_current_view ();
   // TMSCM_ALLOW_INTS;
 
   return url_to_tmscm (out);
@@ -6080,7 +6080,7 @@ tmg_window_list () {
 tmscm
 tmg_current_window () {
   // TMSCM_DEFER_INTS;
-  url out= get_this_window ();
+  url out= get_current_window ();
   // TMSCM_ALLOW_INTS;
 
   return url_to_tmscm (out);
@@ -6143,7 +6143,7 @@ tmg_window_focus (tmscm arg1) {
 tmscm
 tmg_has_viewP () {
   // TMSCM_DEFER_INTS;
-  bool out= has_view ();
+  bool out= has_current_view ();
   // TMSCM_ALLOW_INTS;
 
   return bool_to_tmscm (out);
