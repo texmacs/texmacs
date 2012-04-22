@@ -227,6 +227,13 @@ new_buffer_in_new_window (url name, tree doc, tree geom) {
 ******************************************************************************/
 
 url
+create_buffer () {
+  url name= make_new_buffer ();
+  switch_to_buffer (name);
+  return name;
+}
+
+url
 open_window (tree geom) {
   url name= make_new_buffer ();
   new_buffer_in_new_window (name, tree (DOCUMENT), geom);
@@ -237,6 +244,25 @@ void
 clone_window () {
   url win= new_window ();
   window_set_view (win, get_passive_view (get_current_buffer ()), true);
+}
+
+void
+kill_buffer (url name) {
+  tm_buffer buf= concrete_buffer (name);
+  if (is_nil (buf)) return;
+  if (N(bufs) <= 1) get_server () -> quit();
+  for (int i=0; i<N(buf->vws); i++) {
+    tm_view old_vw= buf->vws[i];
+    if (old_vw->win != NULL) {
+      url prev= get_recent_view (name, false, true, false, true);
+      if (is_none (prev)) {
+        prev= get_recent_view (name, false, true, false, false);
+        prev= get_new_view (get_view_buffer (prev));
+      }
+      window_set_view (abstract_window (old_vw->win), prev, false);
+    }
+  }
+  remove_buffer (name);
 }
 
 void

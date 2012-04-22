@@ -257,7 +257,7 @@ delete_view (url u) {
 }
 
 /******************************************************************************
-* Replacing views
+* Attaching and detaching views
 ******************************************************************************/
 
 void
@@ -295,6 +295,10 @@ detach_view (url u) {
   // cout << "View detached\n";
 }
 
+/******************************************************************************
+* Switching views
+******************************************************************************/
+
 void
 window_set_view (url win_u, url new_u, bool focus) {
   //cout << "set view " << win_u << ", " << new_u << ", " << focus << "\n";
@@ -310,36 +314,6 @@ window_set_view (url win_u, url new_u, bool focus) {
   attach_view (win_u, new_u);
   if (focus || get_current_view () == old_u)
     set_current_view (new_u);
-}
-
-/******************************************************************************
-* Creating, destroying, and changing buffers
-******************************************************************************/
-
-url
-create_buffer () {
-  url name= make_new_buffer ();
-  switch_to_buffer (name);
-  return name;
-}
-
-void
-kill_buffer (url name) {
-  tm_buffer buf= concrete_buffer (name);
-  if (is_nil (buf)) return;
-  if (N(bufs) <= 1) get_server () -> quit();
-  for (int i=0; i<N(buf->vws); i++) {
-    tm_view old_vw= buf->vws[i];
-    if (old_vw->win != NULL) {
-      url prev= get_recent_view (name, false, true, false, true);
-      if (is_none (prev)) {
-        prev= get_recent_view (name, false, true, false, false);
-        prev= get_new_view (get_view_buffer (prev));
-      }
-      window_set_view (abstract_window (old_vw->win), prev, false);
-    }
-  }
-  remove_buffer (name);
 }
 
 void

@@ -28,15 +28,8 @@ url  get_recent_view (url name);
 url  get_passive_view (url name);
 void delete_view (url u);
 void window_set_view (url win, url new_u, bool focus);
-
-url  create_buffer ();
 void switch_to_buffer (url name);
 void focus_on_editor (editor ed);
-void kill_buffer (url name);
-url  open_window (tree geom= "");
-void clone_window ();
-void kill_window ();
-void kill_window_and_buffer ();
 
 // Low level types and routines
 class tm_view_rep;
@@ -44,6 +37,7 @@ typedef tm_view_rep* tm_view;
 tm_view concrete_view (url name);
 url     abstract_view (tm_view vw);
 void    detach_view (url u);
+url     get_recent_view (url name, bool s, bool o, bool a, bool p);
 
 bool needs_to_be_saved (array<tm_view> vws);
 bool needs_to_be_autosaved (array<tm_view> vws);
