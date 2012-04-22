@@ -17,8 +17,10 @@ class editor;
 
 array<url> get_view_history ();
 array<url> get_buffer_views (url name);
+editor get_editor ();
+bool has_view ();
 void set_this_view (url u);
-url  get_this_view ();
+url  get_this_view (bool must_be_valid= true);
 url  get_window_view (url win);
 url  get_view_buffer (url u);
 url  get_new_view (url name);
@@ -40,9 +42,6 @@ bool is_aux_buffer (url name);
 // Low level types and routines
 class tm_view_rep;
 typedef tm_view_rep* tm_view;
-bool    has_view ();
-tm_view get_view (bool must_be_valid= true);
-editor  get_editor ();
 tm_view search_view (url name);
 url     get_name_view (tm_view vw);
 void    detach_view (url u);

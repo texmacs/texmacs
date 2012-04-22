@@ -552,11 +552,11 @@ EXTEND_NULL_CODE(widget,editor);
 
 editor new_editor (server_rep* sv, tm_buffer buf);
 
-#define SERVER(cmd) {                \
-  tm_view temp_vw= get_view (false); \
-  focus_on_this_editor ();           \
-  sv->cmd;                           \
-  set_this_view (get_name_view (temp_vw));      \
+#define SERVER(cmd) {              \
+  url temp= get_this_view (false); \
+  focus_on_this_editor ();         \
+  sv->cmd;                         \
+  set_this_view (temp);            \
 }
 
 #endif // defined EDITOR_H

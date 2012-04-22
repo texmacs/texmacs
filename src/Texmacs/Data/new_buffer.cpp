@@ -107,7 +107,7 @@ search_buffer_insist (url u) {
 
 tm_buffer
 get_buffer () {
-  tm_view vw= get_view ();
+  tm_view vw= search_view (get_this_view ());
   return vw->buf;
 }
 

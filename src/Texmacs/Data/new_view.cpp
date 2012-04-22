@@ -86,19 +86,6 @@ has_view () {
   return the_view != NULL;
 }
 
-tm_view
-get_view (bool must_be_valid) {
-  ASSERT (!must_be_valid || the_view != NULL, "no active view");
-  return the_view;
-}
-
-editor
-get_editor () {
-  tm_view vw= get_view ();
-  // cout << "Get editor" << vw->ed << "\n";
-  return vw->ed;
-}
-
 void
 set_this_view (url u) {
   tm_view vw= search_view (u);
@@ -110,10 +97,16 @@ set_this_view (url u) {
 }
 
 url
-get_this_view () {
-  tm_view vw= get_view ();
-  if (vw == NULL) return url_none ();
-  return get_name_view (vw);
+get_this_view (bool must_be_valid) {
+  ASSERT (!must_be_valid || the_view != NULL, "no active view");
+  if (the_view == NULL) return url_none ();
+  return get_name_view (the_view);
+}
+
+editor
+get_editor () {
+  tm_view vw= search_view (get_this_view ());
+  return vw->ed;
 }
 
 array<url>
@@ -198,7 +191,7 @@ get_new_view (url name) {
   buf->vws << vw;
   ed->set_data (buf->data);
 
-  tm_view temp_vw= get_view (false);
+  url temp= get_this_view (false);
   set_this_view (get_name_view (vw));
   if (is_none (tm_init_buffer_file))
     tm_init_buffer_file= "$TEXMACS_PATH/progs/init-buffer.scm";
@@ -206,7 +199,7 @@ get_new_view (url name) {
     my_init_buffer_file= "$TEXMACS_HOME_PATH/progs/my-init-buffer.scm";
   if (exists (tm_init_buffer_file)) exec_file (tm_init_buffer_file);
   if (exists (my_init_buffer_file)) exec_file (my_init_buffer_file);
-  set_this_view (get_name_view (temp_vw));
+  set_this_view (temp);
 
   //cout << "View created\n";
   return get_name_view (vw);
@@ -231,8 +224,8 @@ get_recent_view (url name) {
   tm_buffer buf= search_buffer (name);
   if (is_nil (buf) || N(buf->vws) == 0)
     return get_new_view (name);
-  tm_view vw= get_view ();
-  if (vw->buf == buf) return get_name_view (vw);
+  url u= get_this_view ();
+  if (get_view_buffer (u) == name) return u;
   url r= get_recent_view (name, true, false, true, false);
   if (!is_none (r)) return r;
   r= get_recent_view (name, true, false, false, false);

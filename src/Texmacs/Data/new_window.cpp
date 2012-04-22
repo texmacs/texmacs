@@ -134,13 +134,13 @@ get_nr_windows () {
 
 bool
 has_window () {
-  tm_view vw= get_view (false);
+  tm_view vw= search_view (get_this_view (false));
   return vw != NULL && vw->win != NULL;
 }
 
 tm_window
 get_window () {
-  tm_view vw= get_view ();
+  tm_view vw= search_view (get_this_view ());
   ASSERT (vw->win != NULL, "no window attached to view");
   return vw->win;
 }
