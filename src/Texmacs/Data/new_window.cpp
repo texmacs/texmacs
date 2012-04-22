@@ -254,21 +254,19 @@ kill_buffer (url name) {
 
 void
 kill_window () {
-  int i, j;
-  url win= get_current_window ();
-  for (i=0; i<N(bufs); i++) {
-    tm_buffer buf= bufs[i];
-    for (j=0; j<N(buf->vws); j++) {
-      tm_view vw= buf->vws[j];
-      if (vw->win != NULL && abstract_window (vw->win) != win) {
-	set_current_view (abstract_view (vw));
-	delete_window (win);
-	return;
-      }
+  url cur= get_current_window ();
+  array<url> vs= get_view_history ();
+  for (int i=0; i<N(vs); i++) {
+    url win= view_to_window (vs[i]);
+    if (!is_none (win) && win != cur) {
+      set_current_view (vs[i]);
+      // FIXME: make sure that win obtains the focus of the GUI too
+      delete_window (cur);
+      return;
     }
   }
   if (number_of_servers () == 0) get_server () -> quit ();
-  else delete_window (win);
+  else delete_window (cur);
 }
 
 void
