@@ -8,7 +8,12 @@
   <section|Changes from version 1.0.7 to 1.0.7.16>
 
   <\itemize>
+    <item>Reorganized buffer management and documentation of the new API
+    (1.0.7.16).
+
     <item>Rudimentary support for version control using SVN (1.0.7.16).
+
+    <item>Rudimentary support for graphical macros without text (1.0.7.16).
 
     <item>First rudimentary spreadsheet facility (1.0.7.15).
 

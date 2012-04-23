@@ -79,6 +79,9 @@
   <|explain>
     Set the contents of the buffer <scm-arg|buf> to the rich tree
     <scm-arg|rich-t>, <abbr|resp.> get the rich contents of <scm-arg|buf>.
+    Rich trees do not only contain the actual body of the document, but also
+    some meta-data, such as its style, initial values of environment
+    variables, and other auxiliary data attached to the document.
   </explain>
 
   <\explain>
