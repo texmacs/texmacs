@@ -252,7 +252,7 @@ kill_buffer (url name) {
 void
 kill_window () {
   url cur= get_current_window ();
-  array<url> vs= get_view_history ();
+  array<url> vs= get_all_views ();
   for (int i=0; i<N(vs); i++) {
     url win= view_to_window (vs[i]);
     if (!is_none (win) && win != cur) {

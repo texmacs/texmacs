@@ -124,15 +124,6 @@ buffer_to_views (url name) {
   return r;
 }
 
-array<url>
-get_all_views () {
-  array<url> r;
-  array<url> bufs= get_all_buffers ();
-  for (int i=0; i<N(bufs); i++)
-    r << buffer_to_views (bufs[i]);
-  return r;
-}
-
 url
 view_to_buffer (url u) {
   tm_view vw= concrete_view (u);
@@ -163,7 +154,7 @@ array<url> view_history;
 void
 notify_set_view (url u) {
   int i;
-  for (i= 0; i<N(view_history); i++)
+  for (i=0; i<N(view_history); i++)
     if (view_history[i] == u) break;
   if (i >= N(view_history))
     view_history= append (u, view_history);
@@ -173,6 +164,16 @@ notify_set_view (url u) {
       view_history[j]= view_history[j-1];
     view_history[j]= u;
   }
+}
+
+void
+notify_delete_view (url u) {
+  for (int i=0; i<N(view_history); i++)
+    if (view_history[i] == u) {
+      view_history= append (range (view_history, 0, i),
+			    range (view_history, i+1, N(view_history)));
+      return;
+    }
 }
 
 url
@@ -197,7 +198,7 @@ get_recent_view (url name, bool same, bool other, bool active, bool passive) {
 }
 
 array<url>
-get_view_history () {
+get_all_views () {
   return view_history;
 }
 
@@ -280,6 +281,7 @@ delete_view (url u) {
 	else a[j]= buf->vws[j+1];
       buf->vws= a;
     }
+  notify_delete_view (u);
   // tm_delete (vw);
   // FIXME: causes very annoying segfault;
   // recently introduced during reorganization
@@ -359,12 +361,26 @@ switch_to_buffer (url name) {
 
 void
 focus_on_editor (editor ed) {
+  array<url> bufs= get_all_buffers ();
+  for (int i=0; i<N(bufs); i++) {
+    array<url> vs= buffer_to_views (bufs[i]);
+    for (int j=0; j<N(vs); j++)
+      if (view_to_editor (vs[j]) == ed) {
+	set_current_view (vs[j]);
+	return;
+      }
+  }
+
+  /* FIXME: directly using get_all_views produces synchronization error
   array<url> vs= get_all_views ();
   for (int i=0; i<N(vs); i++)
     if (view_to_editor (vs[i]) == ed) {
+      cout << "Focus on " << vs[i] << "\n";
       set_current_view (vs[i]);
       return;
     }
+  */
+
   cout << "Warning: editor no longer exists, "
        << "may indicate synchronization error\n";
   //cout << "Warning: name of buffer: " << ed->buf->buf->name << "\n";

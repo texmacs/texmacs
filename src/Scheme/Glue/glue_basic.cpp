@@ -5802,9 +5802,9 @@ tmg_aux_bufferP (tmscm arg1) {
 }
 
 tmscm
-tmg_view_history () {
+tmg_view_list () {
   // TMSCM_DEFER_INTS;
-  array_url out= get_view_history ();
+  array_url out= get_all_views ();
   // TMSCM_ALLOW_INTS;
 
   return array_url_to_tmscm (out);
@@ -5818,15 +5818,6 @@ tmg_buffer_2views (tmscm arg1) {
 
   // TMSCM_DEFER_INTS;
   array_url out= buffer_to_views (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return array_url_to_tmscm (out);
-}
-
-tmscm
-tmg_view_list () {
-  // TMSCM_DEFER_INTS;
-  array_url out= get_all_views ();
   // TMSCM_ALLOW_INTS;
 
   return array_url_to_tmscm (out);
@@ -5862,6 +5853,19 @@ tmg_view_2buffer (tmscm arg1) {
 
   // TMSCM_DEFER_INTS;
   url out= view_to_buffer (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return url_to_tmscm (out);
+}
+
+tmscm
+tmg_view_2window_url (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "view->window-url");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  url out= view_to_window (in1);
   // TMSCM_ALLOW_INTS;
 
   return url_to_tmscm (out);
@@ -6823,12 +6827,12 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tree-import",  tmg_tree_import, 2, 0, 0);
   tmscm_install_procedure ("tree-export",  tmg_tree_export, 3, 0, 0);
   tmscm_install_procedure ("aux-buffer?",  tmg_aux_bufferP, 1, 0, 0);
-  tmscm_install_procedure ("view-history",  tmg_view_history, 0, 0, 0);
-  tmscm_install_procedure ("buffer->views",  tmg_buffer_2views, 1, 0, 0);
   tmscm_install_procedure ("view-list",  tmg_view_list, 0, 0, 0);
+  tmscm_install_procedure ("buffer->views",  tmg_buffer_2views, 1, 0, 0);
   tmscm_install_procedure ("current-view-url",  tmg_current_view_url, 0, 0, 0);
   tmscm_install_procedure ("window->view",  tmg_window_2view, 1, 0, 0);
   tmscm_install_procedure ("view->buffer",  tmg_view_2buffer, 1, 0, 0);
+  tmscm_install_procedure ("view->window-url",  tmg_view_2window_url, 1, 0, 0);
   tmscm_install_procedure ("buffer-new-view",  tmg_buffer_new_view, 1, 0, 0);
   tmscm_install_procedure ("buffer-passive-view",  tmg_buffer_passive_view, 1, 0, 0);
   tmscm_install_procedure ("buffer-recent-view",  tmg_buffer_recent_view, 1, 0, 0);

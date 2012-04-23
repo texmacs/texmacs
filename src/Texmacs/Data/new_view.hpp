@@ -15,9 +15,8 @@
 #include "url.hpp"
 class editor;
 
-array<url> get_view_history ();
-array<url> buffer_to_views (url name);
 array<url> get_all_views ();
+array<url> buffer_to_views (url name);
 editor get_current_editor ();
 editor view_to_editor (url u);
 bool has_current_view ();

@@ -328,6 +328,10 @@
   (with u (current-view-url)
     (and (not (url-none? u)) u)))
 
+(define-public (view->window vw)
+  (with win (view->window-url vw)
+    (and (not (url-none? win)) win)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Redirections
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
