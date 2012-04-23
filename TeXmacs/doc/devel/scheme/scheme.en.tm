@@ -15,7 +15,7 @@
     <branch|Programming routines for editing
     documents|edit/scheme-edit.en.tm>
 
-    <branch|<TeXmacs> buffers and views|buffer/scheme-buffering.en.tm>
+    <branch|<TeXmacs> buffer management|buffer/scheme-buffer.en.tm>
 
     <branch|Scheme interface for the graphical
     mode|graphics/scheme-graphics.en.tm>
