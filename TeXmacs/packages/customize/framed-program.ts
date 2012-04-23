@@ -44,6 +44,12 @@
     </padded-centered>
   </macro>>
 
+  <assign|framed-code|<macro|body|<\surround|<no-indent>|>
+    <with|old-color|<value|color>|color|<value|frame-color>|<tabular|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-tsep|1spc>|<cwith|1|-1|1|-1|cell-bsep|1spc>|<cwith|1|-1|1|-1|cell-background|<value|body-color>>|<cwith|1|-1|1|-1|cell-lborder|0.5ln>|<cwith|1|-1|1|-1|cell-rborder|0.5ln>|<cwith|1|-1|1|-1|cell-tborder|0.5ln>|<cwith|1|-1|1|-1|cell-bborder|0.5ln>|<table|<row|<\cell>
+      <with|color|<value|old-color>|<arg|body>>
+    </cell>>>>>>
+  </surround>>>
+
   <assign|framed-program|<macro|body|<\surround|<no-indent>|>
     <with|old-color|<value|color>|color|<value|frame-color>|<tabular|<tformat|<twith|table-width|1par>|<twith|table-hmode|min>|<cwith|1|-1|1|-1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-tsep|1spc>|<cwith|1|-1|1|-1|cell-bsep|1spc>|<cwith|1|-1|1|-1|cell-background|<value|body-color>>|<cwith|1|-1|1|-1|cell-lborder|0.5ln>|<cwith|1|-1|1|-1|cell-rborder|0.5ln>|<cwith|1|-1|1|-1|cell-tborder|0.5ln>|<cwith|1|-1|1|-1|cell-bborder|0.5ln>|<table|<row|<\cell>
       <with|color|<value|old-color>|<arg|body>>
@@ -64,7 +70,7 @@
     </src-comment>
   </active*>
 
-  <assign|pseudo-code|<\macro|body>
+  <assign|render-code|<\macro|body>
     <\framed-quoted>
       <\with|par-first|0fn|par-par-sep|0fn|item-hsep|<macro|1.5fn>>
         <\framed-program>
@@ -97,6 +103,18 @@
       </with>
     </framed-quoted>
   </macro>>
+
+  <assign|pseudo-code|<\macro|body>
+    <\framed-quoted>
+      <\with|par-first|0fn|par-par-sep|0fn|item-hsep|<macro|1.5fn>>
+        <\framed-code>
+          <arg|body>
+        </framed-code>
+      </with>
+    </framed-quoted>
+  </macro>>
+
+  \;
 </body>
 
 <\initial>

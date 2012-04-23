@@ -30,7 +30,7 @@
 
   <assign|algorithm-sep|<macro|<enunciation-sep>>>
 
-  <assign|pseudo-code|<\macro|body>
+  <assign|render-code|<\macro|body>
     <\padded-normal|1fn|1fn>
       <\indent>
         <\with|par-first|0fn|par-par-sep|0fn|item-hsep|<macro|1.5fn>>
@@ -121,6 +121,12 @@
       Blocks of code for standard languages
     </src-comment>
   </active*>
+
+  <assign|pseudo-code|<\macro|body>
+    <\render-code>
+      <arg|body>
+    </render-code>
+  </macro>>
 
   <assign|verbatim-code|<\macro|body>
     <\pseudo-code>

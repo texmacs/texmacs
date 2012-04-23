@@ -125,7 +125,7 @@
 
 (menu-bind code-menu
   ("Algorithm" (make 'algorithm))
-  ("Pseudo code" (make 'pseudo-code))
+  ("Pseudo code" (make 'render-code))
   ---
   ("Indent" (make 'indent))
   ("Tabbed" (make 'tabbed))
