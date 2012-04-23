@@ -221,6 +221,8 @@
 	     (load-help-article "devel/scheme/utils/scheme-utils"))
 	    ("Programming routines for editing documents"
 	     (load-help-article "devel/scheme/edit/scheme-edit"))
+	    ("Program interface for buffer management"
+	     (load-help-article "devel/scheme/buffer/scheme-buffer"))
 	    ("Scheme interface for the graphical mode"
 	     (load-help-article "devel/scheme/graphics/scheme-graphics"))
             

@@ -3,7 +3,7 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|<TeXmacs> buffers and views>
+  <tmdoc-title|<TeXmacs> buffer management>
 
   <\traverse>
     <branch|Introduction|buffer-intro.en.tm>
