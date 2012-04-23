@@ -57,21 +57,21 @@
 ;; Basic macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-graphics (rectangle p1 p2)
-  (if (and (tm-point? p1) (tm-point? p2))
-      `(cline ,p1 (point ,(tm-x p2) ,(tm-y p1))
-              ,p2 (point ,(tm-x p1) ,(tm-y p2)))
-      `(line ,p1 ,p2)))
+(define-graphics (rectangle P1 P2)
+  (let* ((p1 (if (tm-point? P1) P1 '(point "0" "0")))
+         (p2 (if (tm-point? P2) P2 p1)))
+    `(cline ,p1 (point ,(tm-x p2) ,(tm-y p1))
+            ,p2 (point ,(tm-x p1) ,(tm-y p2)))))
 
-(define-graphics (circle c p)
-  (if (and (tm-point? c) (tm-point? p))
-      (let* ((cx (tm-x c)) (cy (tm-y c))
-             (px (tm-x p)) (py (tm-y p))
-             (dx `(minus ,px ,cx)) (dy `(minus ,py ,cy))
-             (q1 `(point (minus ,cx ,dx) (minus ,cy ,dy)))
-             (q2 `(point (minus ,cx ,dy) (plus ,cy ,dx))))
-        `(superpose (with "point-style" "none" ,c) (carc ,p ,q1 ,q2)))
-      `(line ,c ,p)))
+(define-graphics (circle C P)
+  (let* ((c  (if (tm-point? C) C '(point "0" "0")))
+         (p  (if (tm-point? P) P c))
+         (cx (tm-x c)) (cy (tm-y c))
+         (px (tm-x p)) (py (tm-y p))
+         (dx `(minus ,px ,cx)) (dy `(minus ,py ,cy))
+         (q1 `(point (minus ,cx ,dx) (minus ,cy ,dy)))
+         (q2 `(point (minus ,cx ,dy) (plus ,cy ,dx))))
+    `(superpose (with "point-style" "none" ,c) (carc ,p ,q1 ,q2))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Electrical diagrams
