@@ -5697,6 +5697,19 @@ tmg_buffer_has_nameP (tmscm arg1) {
 }
 
 tmscm
+tmg_buffer_auxP (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-aux?");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= is_aux_buffer (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_buffer_import (tmscm arg1, tmscm arg2, tmscm arg3) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-import");
   TMSCM_ASSERT_URL (arg2, TMSCM_ARG2, "buffer-import");
@@ -5789,19 +5802,6 @@ tmg_tree_export (tmscm arg1, tmscm arg2, tmscm arg3) {
 }
 
 tmscm
-tmg_aux_bufferP (tmscm arg1) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "aux-buffer?");
-
-  url in1= tmscm_to_url (arg1);
-
-  // TMSCM_DEFER_INTS;
-  bool out= is_aux_buffer (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return bool_to_tmscm (out);
-}
-
-tmscm
 tmg_view_list () {
   // TMSCM_DEFER_INTS;
   array_url out= get_all_views ();
@@ -5872,7 +5872,7 @@ tmg_view_2window_url (tmscm arg1) {
 }
 
 tmscm
-tmg_buffer_new_view (tmscm arg1) {
+tmg_view_new (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "view-new");
 
   url in1= tmscm_to_url (arg1);
@@ -5885,7 +5885,7 @@ tmg_buffer_new_view (tmscm arg1) {
 }
 
 tmscm
-tmg_buffer_passive_view (tmscm arg1) {
+tmg_view_passive (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "view-passive");
 
   url in1= tmscm_to_url (arg1);
@@ -5898,7 +5898,7 @@ tmg_buffer_passive_view (tmscm arg1) {
 }
 
 tmscm
-tmg_buffer_recent_view (tmscm arg1) {
+tmg_view_recent (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "view-recent");
 
   url in1= tmscm_to_url (arg1);
@@ -6820,22 +6820,22 @@ initialize_glue_basic () {
   tmscm_install_procedure ("buffer-pretend-saved",  tmg_buffer_pretend_saved, 1, 0, 0);
   tmscm_install_procedure ("buffer-pretend-autosaved",  tmg_buffer_pretend_autosaved, 1, 0, 0);
   tmscm_install_procedure ("buffer-has-name?",  tmg_buffer_has_nameP, 1, 0, 0);
+  tmscm_install_procedure ("buffer-aux?",  tmg_buffer_auxP, 1, 0, 0);
   tmscm_install_procedure ("buffer-import",  tmg_buffer_import, 3, 0, 0);
   tmscm_install_procedure ("buffer-load",  tmg_buffer_load, 1, 0, 0);
   tmscm_install_procedure ("buffer-export",  tmg_buffer_export, 3, 0, 0);
   tmscm_install_procedure ("buffer-save",  tmg_buffer_save, 1, 0, 0);
   tmscm_install_procedure ("tree-import",  tmg_tree_import, 2, 0, 0);
   tmscm_install_procedure ("tree-export",  tmg_tree_export, 3, 0, 0);
-  tmscm_install_procedure ("aux-buffer?",  tmg_aux_bufferP, 1, 0, 0);
   tmscm_install_procedure ("view-list",  tmg_view_list, 0, 0, 0);
   tmscm_install_procedure ("buffer->views",  tmg_buffer_2views, 1, 0, 0);
   tmscm_install_procedure ("current-view-url",  tmg_current_view_url, 0, 0, 0);
   tmscm_install_procedure ("window->view",  tmg_window_2view, 1, 0, 0);
   tmscm_install_procedure ("view->buffer",  tmg_view_2buffer, 1, 0, 0);
   tmscm_install_procedure ("view->window-url",  tmg_view_2window_url, 1, 0, 0);
-  tmscm_install_procedure ("view-new",  tmg_buffer_new_view, 1, 0, 0);
-  tmscm_install_procedure ("view-passive",  tmg_buffer_passive_view, 1, 0, 0);
-  tmscm_install_procedure ("view-recent",  tmg_buffer_recent_view, 1, 0, 0);
+  tmscm_install_procedure ("view-new",  tmg_view_new, 1, 0, 0);
+  tmscm_install_procedure ("view-passive",  tmg_view_passive, 1, 0, 0);
+  tmscm_install_procedure ("view-recent",  tmg_view_recent, 1, 0, 0);
   tmscm_install_procedure ("view-delete",  tmg_view_delete, 1, 0, 0);
   tmscm_install_procedure ("window-set-view",  tmg_window_set_view, 3, 0, 0);
   tmscm_install_procedure ("switch-to-buffer",  tmg_switch_to_buffer, 1, 0, 0);
