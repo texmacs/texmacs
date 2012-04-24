@@ -145,7 +145,7 @@ converter_rep::load () {
   }
   else if ( from=="UTF-8" && to=="LaTeX" ) {
     hashtree<char,string> dic;
-    hashtree_from_dictionary (dic,"unicodetolatex", BIT2BIT, BIT2BIT, false);
+    hashtree_from_dictionary (dic,"utf8tolatex", CHAR_ENTITY, BIT2BIT, false);
     ht = dic;
   }
 }
@@ -194,18 +194,18 @@ convert_utf8_to_LaTeX (string input) {
   int i, start, n= N(input);
   string output, r;
   for (i=0; i<n; ) {
-    if (((unsigned char) input[i]) < 128) {
+    if (((unsigned char) input[i]) < 128 && ((unsigned char) input[i]) > 31) {
       output << input[i++];
       continue;
     }
     else {
       start = i;
-      string hex_code = as_hexadecimal (decode_from_utf8 (input, i));
+      string hex_code = '#' * as_hexadecimal (decode_from_utf8 (input, i));
       r = apply (conv, hex_code);
       if (r != hex_code) output << r;
       else {
 	output << input(start, i);
-        cout << "TeXmacs] non ascii character 0x" << hex_code << " on output: "
+        cout << "TeXmacs] non ascii character " << hex_code << " on output: "
           << input(start, i) << "\nLaTeX output may not compile.\n";
       }
     }
