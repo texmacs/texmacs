@@ -261,7 +261,7 @@ TeXmacs_main (int argc, char** argv) {
 	  url in  ("$PWD", argv[i-1]);
 	  url out ("$PWD", argv[ i ]);
 	  my_init_cmds= my_init_cmds * " " *
-	    "(load-buffer " * scm_quote (as_string (in)) * ") " *
+	    "(load-buffer " * scm_quote (as_string (in)) * " :strict) " *
 	    "(export-buffer " * scm_quote (as_string (out)) * ")";
 	}
       }
@@ -340,13 +340,13 @@ TeXmacs_main (int argc, char** argv) {
       where= " :new-window";
       exec_delayed (scheme_cmd (cmd));
     }
-    if ((s == "-b") || (s == "-initialize-buffer") ||
-	(s == "-c") || (s == "-convert") ||
-	(s == "-fn") || (s == "-font") ||
-	(s == "-i") || (s == "-initialize") ||
-	(s == "-g") || (s == "-geometry") ||
-	(s == "-x") || (s == "-execute") ||
-	(s == "-log-file")) i++;
+    if      ((s == "-c") || (s == "-convert")) i+=2;
+    else if ((s == "-b") || (s == "-initialize-buffer") ||
+             (s == "-fn") || (s == "-font") ||
+             (s == "-i") || (s == "-initialize") ||
+             (s == "-g") || (s == "-geometry") ||
+             (s == "-x") || (s == "-execute") ||
+             (s == "-log-file")) i++;
   }
   if (install_status == 1) {
     if (DEBUG_STD) cout << "TeXmacs] Loading welcome message...\n";

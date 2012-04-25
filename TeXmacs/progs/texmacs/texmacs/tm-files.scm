@@ -348,7 +348,7 @@
 
 (define (load-buffer-check-autosave name opts)
   ;;(display* "load-buffer-check-autosave " name ", " opts "\n")
-  (if (autosave-propose name)
+  (if (and (autosave-propose name) (nin? :strict opts))
       (with question (if (autosave-rescue? name)
                          "Rescue file from crash?"
                          "Load more recent autosave file?")
@@ -374,6 +374,7 @@
 (tm-define (load-buffer name . opts)
   (:argument name smart-file "File name")
   (:default  name (propose-name-buffer))
+  ;;(display* "load-buffer " name ", " opts "\n")
   (apply load-buffer-main (cons name opts)))
 
 (tm-define (load-buffer-in-new-window name . opts)
