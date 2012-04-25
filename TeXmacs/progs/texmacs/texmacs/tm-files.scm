@@ -215,7 +215,9 @@
   (export-buffer-check-permissions name to fm opts))
 
 (tm-define (export-buffer to)
-  (export-buffer-main (current-buffer) to (url-format to) (list :overwrite)))
+  (with fm (url-format to)
+    (if (== fm "generic") (set! fm "verbatim"))
+    (export-buffer-main (current-buffer) to fm (list :overwrite))))
 
 (tm-define (buffer-exporter fm)
   (with opts (if (x-gui?) (list) (list :overwrite))
