@@ -50,6 +50,12 @@
 
       <item*|Alpha>Upper case letters: <inactive*|<number|18|Alpha>>
       <with|mode|math|\<longrightarrow\>> <number|18|Alpha>.
+
+      <item*|arabic>Arabic numbers: <inactive*|<number|18|arabic>>
+      <with|mode|math|\<longrightarrow\>> <number|18|arabic>.
+
+      <item*|fnsymbol>Footnotes symbols: <inactive*|<number|2|fnsymbol>>
+      <with|mode|math|\<longrightarrow\>> <number|2|fnsymbol>.
     </description>
   </explain>
 
