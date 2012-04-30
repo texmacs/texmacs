@@ -1108,46 +1108,44 @@
 ;;; Standard markup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmhtml-list-document list-doc)
-  ;; Convert a list-document to a list of <h:li> elements.
-  ;; WARNING: makes the xpath environment inconsistent
-  (define (item->li mark item)
-    (cond ((null? item) '(h:li))
-	  ((null? (cdr item)) `(h:li ,@(tmhtml (car item))))
-	  (else `(h:li ,@(tmhtml `(document ,@item))))))
-  (if (null? (cdr list-doc)) '((h:li))
-      (stm-list-map item->li
-		    (lambda (x) (== x '(item)))
-		    (cdr list-doc))))
+(define (transform-item-post l)
+  (if (not (tm-is? (car l) '!item))
+      `(document ,@l)
+      `(!item ,(cadar l) (document ,(caddar l) ,@(cdr l)))))
+
+(define (transform-items x)
+  (cond ((and (tm-is? x 'concat)
+              (nnull? (cdr x))
+              (tm-in? (cadr x) '(item item*)))
+         `(!item ,(cadr x) (concat ,@(cddr x))))
+        ((tm-is? x 'document)
+         (let* ((r  (map transform-items (cdr x)))
+                (p? (lambda (i) (tm-is? i '!item)))
+                (sr (list-scatter r p? #t))
+                (fr (list-filter sr nnull?)))
+           `(document ,@(map transform-item-post fr))))
+        (else x)))
 
 ;; TODO: when the first data of the list is a label, it must be used to set the
 ;; ID attribute of the resulting xhtml element. When that is done, remove the
 ;; warning comment from htmltm-handler.
 
+(define (tmhtml-post-item args)
+  (let* ((i (car args))
+         (r (tmhtml (cadr args))))
+    (if (or (tm-is? i 'item) (null? (cdr i)))
+        `((h:li ,@r))
+        `((h:dt ,@(tmhtml (cadr i)))
+          (h:dd ,@r)))))
+
 (define (tmhtml-itemize args)
-  `((h:ul ,@(tmhtml-list-document (car args)))))
+  `((h:ul ,@(tmhtml (transform-items (car args))))))
 
 (define (tmhtml-enumerate args)
-  `((h:ol ,@(tmhtml-list-document (car args)))))
-
-(define (tmhtml-desc-document desc-doc)
-  ;; WARNING: makes the xpath environment inconsistent
-  (define (item->dt-dd mark item)
-    (let ((html-item (if (null? (cdr item))
-			 (tmhtml (car item))
-			 (tmhtml `(document ,@item)))))
-      (append
-       (if mark (tmhtml mark) '())
-       (cond ((and (null? html-item) mark) '())
-	     ((null? html-item) '((h:dd)))
-	     (else `((h:dd ,@html-item)))))))
-  (if (null? (cdr desc-doc)) '((h:dd))
-      (apply append (stm-list-map item->dt-dd
-				  (lambda (x) (func? x 'item* 1))
-				  (cdr desc-doc)))))
+  `((h:ol ,@(tmhtml (transform-items (car args))))))
 
 (define (tmhtml-description args)
-  `((h:dl ,@(tmhtml-desc-document (car args)))))
+  `((h:dl ,@(tmhtml (transform-items (car args))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Verbatim
@@ -1487,6 +1485,7 @@
 	description-align description-long)
    ,tmhtml-description)
   (item* (h:dt))
+  (!item ,tmhtml-post-item)
   ;; Phrase elements
   (strong (h:strong))
   (em (h:em))
