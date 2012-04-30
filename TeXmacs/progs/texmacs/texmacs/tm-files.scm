@@ -371,6 +371,10 @@
   (if (and (not (url-exists? name))
            (url-exists? (url-append "$TEXMACS_FILE_PATH" name)))
       (set! name (url-resolve (url-append "$TEXMACS_FILE_PATH" name) "f")))
+  (if (not (url-rooted? name))
+      (if (current-buffer)
+          (set! name (url-relative (current-buffer) name))
+          (set! name (url-append (url-pwd) name))))
   (load-buffer-check-autosave name opts))
 
 (tm-define (load-buffer name . opts)

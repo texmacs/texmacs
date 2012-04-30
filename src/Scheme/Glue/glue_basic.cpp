@@ -3237,6 +3237,15 @@ tmg_url_wildcard (tmscm arg1) {
 }
 
 tmscm
+tmg_url_pwd () {
+  // TMSCM_DEFER_INTS;
+  url out= url_pwd ();
+  // TMSCM_ALLOW_INTS;
+
+  return url_to_tmscm (out);
+}
+
+tmscm
 tmg_url_parent () {
   // TMSCM_DEFER_INTS;
   url out= url_parent ();
@@ -5435,9 +5444,9 @@ tmg_buffer_list () {
 }
 
 tmscm
-tmg_current_buffer () {
+tmg_current_buffer_url () {
   // TMSCM_DEFER_INTS;
-  url out= get_current_buffer ();
+  url out= get_current_buffer_safe ();
   // TMSCM_ALLOW_INTS;
 
   return url_to_tmscm (out);
@@ -6644,6 +6653,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("url-none",  tmg_url_none, 0, 0, 0);
   tmscm_install_procedure ("url-any",  tmg_url_any, 0, 0, 0);
   tmscm_install_procedure ("url-wildcard",  tmg_url_wildcard, 1, 0, 0);
+  tmscm_install_procedure ("url-pwd",  tmg_url_pwd, 0, 0, 0);
   tmscm_install_procedure ("url-parent",  tmg_url_parent, 0, 0, 0);
   tmscm_install_procedure ("url-ancestor",  tmg_url_ancestor, 0, 0, 0);
   tmscm_install_procedure ("url-append",  tmg_url_append, 2, 0, 0);
@@ -6800,7 +6810,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("get-add-package-menu",  tmg_get_add_package_menu, 0, 0, 0);
   tmscm_install_procedure ("get-remove-package-menu",  tmg_get_remove_package_menu, 0, 0, 0);
   tmscm_install_procedure ("buffer-list",  tmg_buffer_list, 0, 0, 0);
-  tmscm_install_procedure ("current-buffer",  tmg_current_buffer, 0, 0, 0);
+  tmscm_install_procedure ("current-buffer-url",  tmg_current_buffer_url, 0, 0, 0);
   tmscm_install_procedure ("path-to-buffer",  tmg_path_to_buffer, 1, 0, 0);
   tmscm_install_procedure ("buffer-new",  tmg_buffer_new, 0, 0, 0);
   tmscm_install_procedure ("buffer-rename",  tmg_buffer_rename, 2, 0, 0);

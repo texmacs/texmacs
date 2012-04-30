@@ -291,6 +291,10 @@
 ;; Buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-public (current-buffer)
+  (with u (current-buffer-url)
+    (and (not (url-none? u)) u)))
+
 (define-public (path->buffer p)
   (with u (path-to-buffer p)
     (and (not (url-none? u)) u)))

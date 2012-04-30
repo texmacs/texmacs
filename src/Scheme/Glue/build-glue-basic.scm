@@ -283,6 +283,7 @@
   (url-none url_none (url))
   (url-any url_wildcard (url))
   (url-wildcard url_wildcard (url string))
+  (url-pwd url_pwd (url))
   (url-parent url_parent (url))
   (url-ancestor url_ancestor (url))
   (url-append url_concat (url url url))
@@ -458,7 +459,7 @@
 
   ;; buffers
   (buffer-list get_all_buffers (array_url))
-  (current-buffer get_current_buffer (url))
+  (current-buffer-url get_current_buffer_safe (url))
   (path-to-buffer path_to_buffer (url path))
   (buffer-new make_new_buffer (url))
   (buffer-rename rename_buffer (void url url))

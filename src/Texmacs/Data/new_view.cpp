@@ -37,6 +37,7 @@ tm_view_rep::tm_view_rep (tm_buffer buf2, editor ed2):
 
 static string
 encode_url (url u) {
+  if (!is_rooted (u)) return "here/" * as_string (u);
   return get_root (u) * "/" * as_string (unroot (u));
 }
 
@@ -44,6 +45,7 @@ static url
 decode_url (string s) {
   int i= search_forwards ("/", 0, s);
   if (i < 0) return url_none ();
+  if (s (0, i) == "here") return url (s (i+1, N(s)));
   return url_root (s (0, i)) * url (s (i+1, N(s)));
 }
 
@@ -89,9 +91,10 @@ has_current_view () {
 void
 set_current_view (url u) {
   tm_view vw= concrete_view (u);
+  //ASSERT (is_none (u) || starts (as_string (tail (u)), "no_name") || vw != NULL, "bad view");
   the_view= vw;
   if (vw != NULL) {
-    the_drd= vw->ed->drd;
+    the_drd = vw->ed->drd;
     vw->buf->buf->last_visit= texmacs_time ();
   }
 }
@@ -141,6 +144,7 @@ view_to_window (url u) {
 editor
 view_to_editor (url u) {
   tm_view vw= concrete_view (u);
+  if (vw == NULL) cout << "TeXmacs] view is " << u << "\n";
   ASSERT (vw != NULL, "view admits no editor");
   return vw->ed;
 }
@@ -211,7 +215,7 @@ url my_init_buffer_file= url_none ();
 
 url
 get_new_view (url name) {
-  //cout << "Creating new view\n";
+  //cout << "Creating new view " << name << "\n";
 
   create_buffer (name, tree (DOCUMENT));
   tm_buffer buf= concrete_buffer (name);
@@ -349,14 +353,14 @@ window_set_view (url win_u, url new_u, bool focus) {
 
 void
 switch_to_buffer (url name) {
-  // cout << "Switching to buffer " << buf->buf->name << "\n";
+  //cout << "Switching to buffer " << name << "\n";
   url u= get_passive_view (name);
   tm_view vw= concrete_view (u);
   if (vw == NULL) return;
   window_set_view (get_current_window (), u, true);
   tm_window nwin= vw->win;
   nwin->set_shrinking_factor (nwin->get_shrinking_factor ());
-  // cout << "Switched to buffer " << new_vw->buf->buf->name << "\n";
+  //cout << "Switched to buffer " << new_vw->buf->buf->name << "\n";
 }
 
 void

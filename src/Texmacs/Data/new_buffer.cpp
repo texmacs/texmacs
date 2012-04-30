@@ -121,6 +121,13 @@ get_current_buffer () {
 }
 
 url
+get_current_buffer_safe () {
+  url v= get_current_view_safe ();
+  if (is_none (v)) return v;
+  return concrete_view (v)->buf->buf->name;
+}
+
+url
 path_to_buffer (path p) {
   int i;
   for (i=0; i<N(bufs); i++)
