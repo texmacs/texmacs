@@ -118,6 +118,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("else")= c;
   t ("evolutive")= c;
   t ("exists")= d;
+  t ("explicit")= c;
   t ("explode")= c;
   t ("export")= d;
   t ("extend")= c;
@@ -134,6 +135,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("hidden")= c;
   t ("holds")= c;
   t ("if")= c;
+  t ("implicit")= c;
   t ("import")= c;
   t ("in")= c;
   t ("include")= c;
