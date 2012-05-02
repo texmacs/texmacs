@@ -8,6 +8,8 @@
   <section|Changes from version 1.0.7 to 1.0.7.16>
 
   <\itemize>
+    <item>New and improved <name|Reduce> interface (1.0.7.16).
+
     <item>Reorganized buffer management and documentation of the new API
     (1.0.7.16).
 
