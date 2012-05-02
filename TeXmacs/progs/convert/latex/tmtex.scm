@@ -1213,6 +1213,12 @@
     (tmtex-number-renderer (cdr l))
     (list (tmtex-number-counter (car l)))))
 
+(define (tmtex-change-case l)
+  (cond
+    ((== (cadr l) "UPCASE") (tex-apply 'uppercase (tmtex (car l))))
+    ((== (cadr l) "locase") (tex-apply 'lowercase (tmtex (car l))))
+    (else "")))
+
 (define (tmtex-indent s l)
   (list (list '!begin "tmindent") (tmtex (car l))))
 
@@ -1567,6 +1573,7 @@
   ((:or datoms dlines dpages dbox) tmtex-noop)
 
   (number tmtex-number)
+  (change-case tmtex-change-case)
   (with-limits tmtex-noop)
   (line-break tmtex-line-break)
   (new-line tmtex-new-line)
@@ -1632,7 +1639,7 @@
   (syntax tmtex-syntax)
 
   ((:or or xor and not plus minus times over div mod
-	merge length range translate change-case find-file
+	merge length range translate find-file
 	is-tuple look-up
 	equal unequal less lesseq greater greatereq) tmtex-noop)
 

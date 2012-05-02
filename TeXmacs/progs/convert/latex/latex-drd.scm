@@ -179,7 +179,8 @@
 (logic-group latex-modifier-1%
   textrm texttt textsf textmd textbf textup textit textsl textsc emph
   mathrm mathtt mathsf mathmd mathbf mathup mathit mathsl mathnormal
-  mathcal mathfrak mathbb mathbbm mathscr operatorname boldsymbol)
+  mathcal mathfrak mathbb mathbbm mathscr operatorname boldsymbol
+  lowercase uppercase)
 
 (logic-rules
   ((latex-modifier% 'x) (latex-modifier-0% 'x))
@@ -267,7 +268,7 @@
   imath jmath ell neg
   top flat natural sharp wp
   bot clubsuit diamondsuit heartsuit spadesuit
-  Re Im angle partial
+  Re Im angle partial textbackslash
   dag ddag dagger ddagger guillemotleft guillemotright
 
   ;; Delimiters

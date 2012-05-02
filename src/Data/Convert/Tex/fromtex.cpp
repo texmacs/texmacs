@@ -233,11 +233,13 @@ latex_symbol_to_tree (string s) {
       if (s == "lnot") return "<neg>";
       if (s == "land") return "<wedge>";
       if (s == "lor") return "<vee>";
+      if (s == "textbackslash") return "\\";
       return "<" * s * ">";
     }
 
     if (latex_type (s) == "texmacs") {
       if (s == "tmdummy")  return "";
+      if (s == "tmbsl") return "\\";
     }
 
     if ((latex_type (s) == "modifier") && (latex_arity (s) == 0)) {
@@ -794,6 +796,10 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\tmrsup", 1)) return tree (RSUP, l2e (t[1]));
   if (is_tuple (t, "\\textsubscript", 1)) return tree (RSUB, l2e (t[1]));
   if (is_tuple (t, "\\textsuperscript", 1)) return tree (RSUP, l2e (t[1]));
+  if (is_tuple (t, "\\lowercase", 1))
+    return tree (CHANGE_CASE, l2e (t[1]), "locase");
+  if (is_tuple (t, "\\uppercase", 1))
+    return tree (CHANGE_CASE, l2e (t[1]), "UPCASE");
   if (is_tuple (t, "\\tmtextrm", 1)) return m2e (t, FONT_FAMILY, "rm");
   if (is_tuple (t, "\\tmtexttt", 1)) return m2e (t, FONT_FAMILY, "tt");
   if (is_tuple (t, "\\tmtextsf", 1)) return m2e (t, FONT_FAMILY, "ss");
@@ -803,7 +809,7 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\tmtextit", 1)) return m2e (t, FONT_SHAPE, "italic");
   if (is_tuple (t, "\\tmtextsl", 1)) return m2e (t, FONT_SHAPE, "slanted");
   if (is_tuple (t, "\\tmtextsc", 1)) return m2e (t, FONT_SHAPE, "small-caps");
-  if (is_tuple (t, "\\emph", 1))   return m2e (t, FONT_SHAPE, "italic");
+  if (is_tuple (t, "\\emph", 1))   return compound ("em", l2e (t[1]));
   if (is_tuple (t, "\\operatorname", 1))
     return var_m2e (t, MATH_FONT_FAMILY, "rm");
   if (is_tuple (t, "\\boldsymbol", 1))
