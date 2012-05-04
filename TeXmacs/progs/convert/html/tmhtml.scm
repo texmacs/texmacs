@@ -949,6 +949,7 @@
 	(else #f)))
 
 (define (tmhtml-make-cell c cellf)
+  (if (not (tm-func? c 'cell 1)) (set! c `(cell ,c)))
   (ahash-with tmhtml-env :left-margin 0
     (with make (lambda (attr) (tmhtml-make-cell-attr attr cellf))
       `(h:td ,@(html-css-attrs (map* make cellf))
