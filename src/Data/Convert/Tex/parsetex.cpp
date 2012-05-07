@@ -499,6 +499,7 @@ latex_parser::parse_command (string s, int& i, string cmd) {
   //cout << cmd << " [" << latex_type (cmd) << ", "
   //<< command_type ["!mode"] << ", " << latex_arity (cmd) << "]" << LF;
   if (cmd == "\\newcommand") cmd= "\\def";
+  if (cmd == "\\providecommand") cmd= "\\def";
   if (cmd == "\\renewcommand") cmd= "\\def";
   if (cmd == "\\renewenvironment") cmd= "\\newenvironment";
   if (cmd == "\\begin-split") cmd= "\\begin-eqsplit";
