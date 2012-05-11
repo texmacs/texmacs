@@ -497,6 +497,8 @@
 	(else (cons (car l) (tmtex-rewrite-no-break (cdr l))))))
 
 (define (tmtex-concat l)
+  ;;(display* "l= " l "\n")
+  (set! l (pre-brackets-recurse l))
   (if (tmtex-math-mode?)
       (tex-concat (tmtex-math-concat-spaces (tmtex-list l)))
       (tex-concat (tmtex-list (tmtex-rewrite-no-break l)))))
@@ -577,6 +579,59 @@
 
 (define (tmtex-htab l)
   (tex-apply 'hspace* (list 'fill)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Make brackets small when necessary
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (disable-large? x level)
+  (cond ((string? x) #t)
+        ((func? x 'concat)
+         (list-and (map (cut disable-large? <> level) (cdr x))))
+        ((tm-in? x '(left mid right)) #t)
+        ((tm-in? x '(lsub lsup rsub rsup))
+         (and (> level 0) (disable-large? (cadr x) (- level 1))))
+        ((tm-in? x '(lprime rprime)) #t)
+        ((tm-in? x '(wide wide*))
+         (disable-large? (cadr x) (- level 1)))
+        ((tm-in? x '(with rigid locus))
+         (disable-large? (cAr x) level))
+        (else #f)))
+
+(define (make-small s)
+  (cond ((nstring? s) "<nobracket>")
+	((== s ".") "<nobracket>")
+	((<= (string-length s) 1) s)
+	(else (string-append "<" s ">"))))
+
+(define (make-small-bracket x)
+  (if (tm-in? x '(left mid right)) (make-small (cadr x)) x))
+
+(define (find-right l)
+  (cond ((null? l) #f)
+        ((func? (car l) 'left) #f)
+        ((func? (car l) 'right) 2)
+        (else (with i (find-right (cdr l)) (and i (+ i 1))))))
+
+(define (pre-brackets l)
+  (cond ((null? l) l)
+        ((func? (car l) 'left)
+         (with n (find-right (cdr l))
+           (if (not n) (cons (car l) (pre-brackets (cdr l)))
+               (let* ((r (pre-brackets (sublist l n (length l))))
+                      (m (sublist l 0 n)))
+                 (if (disable-large? `(concat ,@m) 2)
+                     (begin
+                       ;;(display* "< " m "\n")
+                       ;;(display* "> " (map make-small-bracket m) "\n")
+                       (append (map make-small-bracket m) r))
+                     (append m r))))))
+        (else (cons (car l) (pre-brackets (cdr l))))))
+
+(define (pre-brackets-recurse l)
+  (with r (pre-brackets l)
+    (if (== r l) r
+        (pre-brackets-recurse r))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Mathematics
@@ -1217,7 +1272,7 @@
   (cond
     ((== (cadr l) "UPCASE") (tex-apply 'uppercase (tmtex (car l))))
     ((== (cadr l) "locase") (tex-apply 'lowercase (tmtex (car l))))
-    (else "")))
+    (else (tmtex (car l)))))
 
 (define (tmtex-indent s l)
   (list (list '!begin "tmindent") (tmtex (car l))))
