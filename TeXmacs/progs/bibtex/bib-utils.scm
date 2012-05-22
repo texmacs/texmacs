@@ -119,6 +119,10 @@
 (tm-define (bib-new-sentence x)
   (bib-add-period (bib-upcase-first (bib-new-list ", " x))))
 
+(tm-define (bib-default-field x s)
+  (with e (bib-field x s)
+    (if (bib-null? e) e (bib-default e))))
+
 (tm-define (bib-format-field x s)
   (with e (bib-field x s)
     (if (bib-null? e) "" (bib-default e))))

@@ -80,7 +80,7 @@
 
 (tm-define (bib-format-in-ed-booktitle x)
   (:mode bib-plain?)
-  (let* ((b (bib-field x "booktitle"))
+  (let* ((b (bib-default-field x "booktitle"))
 	 (e (bib-field x "editor")))
     (if (bib-null? b)
         ""
@@ -92,7 +92,7 @@
 (tm-define (bib-format-bvolume x)
   (:mode bib-plain?)
   (let* ((v (bib-field x "volume"))
-	 (s (bib-field x "series")))
+	 (s (bib-default-field x "series")))
     (if (bib-null? v)
 	""
 	(let ((series (if (bib-null? s) ""
@@ -105,7 +105,7 @@
   (:mode bib-plain?)
   (let* ((v (bib-field x "volume"))
 	 (n (bib-field x "number"))
-	 (s (bib-field x "series")))
+	 (s (bib-default-field x "series")))
     (if (bib-null? v)
 	(if (bib-null? n)
 	    (if (bib-null? s) "" s)

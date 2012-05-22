@@ -288,6 +288,7 @@ bib_change_case (string s, string op) {
 
 void
 bib_change_case (tree& t, string (*change_case) (string)) {
+  //cout << "Change case " << t << "\n";
   if (is_atomic (t) && change_case) t->label= change_case (t->label);
   else if (is_compound (t, "verbatim"));
   else if (L(t) == WITH) bib_change_case (t[N(t)-1], change_case);
