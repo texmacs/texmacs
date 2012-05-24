@@ -80,6 +80,7 @@ tt_locate (string name) {
     search_sub_dirs ("/Library/Fonts") |
     search_sub_dirs ("/System/Library/Fonts");
 #else
+    search_sub_dirs ("$HOME/.fonts") |
     search_sub_dirs ("/usr/share/fonts/truetype") |
     search_sub_dirs ("/usr/local/share/fonts/truetype");
 #endif
