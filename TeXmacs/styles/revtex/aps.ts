@@ -1,0 +1,459 @@
+<TeXmacs|1.0.7.15>
+
+<style|source>
+
+<\body>
+  <\active*>
+    <\src-title>
+      <src-style-file|aps|1.0>
+
+      <\src-purpose>
+        The Revtex's American Physical Society style.
+      </src-purpose>
+
+      <\src-copyright|2012--2012>
+        Joris van der Hoeven, François Poulain
+      </src-copyright>
+
+      <\src-license>
+        This software falls under the <hlink|GNU general public license,
+        version 3 or later|$TEXMACS_PATH/LICENSE>. It comes WITHOUT ANY
+        WARRANTY WHATSOEVER. You should have received a copy of the license
+        which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
+      </src-license>
+    </src-title>
+  </active*>
+
+  <use-package|std|env-base|env-math|env-theorem|env-float|header-generic|section-book|title-generic|std-latex|cite-author-year|std-automatic|two-columns>
+
+  <active*|<\src-comment>
+    Page layout.
+  </src-comment>>
+
+  <assign|parindent|<value|par-first>>
+
+  <assign|page-type|a4>
+
+  <assign|par-columns|2>
+
+  <assign|tex-odd-side-margin|0pt>
+
+  <assign|tex-even-side-margin|0pt>
+
+  <assign|tex-margin-par-width|60pt>
+
+  <assign|tex-margin-par-sep|10pt>
+
+  <assign|tex-top-margin|-37pt>
+
+  <assign|tex-head-height|12pt>
+
+  <assign|tex-head-sep|25pt>
+
+  <assign|tex-top-skip|25pt>
+
+  <assign|tex-text-height|665.5pt>
+
+  <assign|tex-text-width|468pt>
+
+  <assign|tex-column-sep|10pt>
+
+  <assign|tex-footnote-sep|10pt>
+
+  <assign|tex-float-sep|<texlen|14pt|2pt|4pt>>
+
+  <assign|tex-text-float-sep|<texlen|20pt|2pt|4pt>>
+
+  <assign|tex-in-text-sep|<texlen|14pt|2pt|4pt>>
+
+  <active*|<\src-comment>
+    Sectionning macros.
+  </src-comment>>
+
+  <style-with|src-compact|none|<assign|part-title|<style-with|src-compact|none|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<vspace*|4ex><really-huge|<arg|name>><vspace|3ex><new-line>>>>>>>
+
+  <style-with|src-compact|none|<assign|<style-with|src-compact|none|part-numbered-title>|<style-with|src-compact|none|<macro|<style-with|src-compact|all|name>|<style-with|src-compact|none|<sectional-short-bold|<vspace*|4ex><very-large|<part-text>
+  <the-part><new-line><vspace*|<value|parindent>>><huge|<arg|name>><vspace|3ex><new-line>>>>>>>
+
+  <assign|section-title|<macro|name|<style-with|src-compact|none|<sectional-centered-bold|<vspace*|<tex-len|0.8cm|1ex|0.2ex>><small|<change-case|<arg|name>|UPCASE>><vspace|0.5cm>>>>>
+
+  <assign|subsection-title|<macro|name|<style-with|src-compact|none|<sectional-centered-bold|<vspace*|<tex-len|0.8cm|1ex|0.2ex>><small|<arg|name>><vspace|0.5cm>>>>>
+
+  <assign|subsubsection-title|<macro|name|<style-with|src-compact|none|<sectional-centered-italic|<vspace*|<tex-len|0.8cm|1ex|0.2ex>><small|<arg|name>><vspace|0.5cm>>>>>
+
+  <assign|paragraph-title|<macro|name|<style-with|src-compact|none|<sectional-short-italic|<space|<parindent>><normal-size|<arg|name>><space|<value|parindent>><vspace|-1em>>>>>
+
+  <assign|subparagraph-title|<macro|name|<style-with|src-compact|none|<sectional-short-bold|<vspace*|<tex-len|3.25ex|1ex|0.2ex>><space|<value|parindent>><normal-size|<arg|name>><space|<value|parindent>><vspace|-1em>>>>>
+
+  <assign|appendix-text|Appendix>
+
+  <assign|appendix-numbered-title|<\macro|title>
+    <assign|display-equation|<macro|nr|<the-appendix><number|<arg|nr>|arabic>>>
+
+    <assign|subsection-display|arabic><subsection-title|<appendix-text>
+    <the-appendix>: <arg|title>>
+  </macro>>
+
+  <active*|<\src-comment>
+    Section and environment numbering.
+  </src-comment>>
+
+  <assign|sectional-sep|<macro|<space|1.1fn>>>
+
+  <assign|section-clean|<macro|<reset-subsection>>>
+
+  <style-with|src-compact|all|<assign|display-std-env|<\macro|nr>
+    <arg|nr>
+  </macro>>>
+
+  <assign|part-display-numbers|<macro|true>>
+
+  <assign|section-display-numbers|<macro|true>>
+
+  <assign|subsection-display-numbers|<macro|true>>
+
+  <assign|subsubsection-display-numbers|<macro|true>>
+
+  <assign|paragraph-display-numbers|<macro|true>>
+
+  <assign|subparagraph-display-numbers|<macro|false>>
+
+  <assign|display-section|<macro|nr|<number|<arg|nr>|Roman>.>>
+
+  <assign|subsection-display|Alpha>
+
+  <assign|display-subsection|<macro|nr|<number|<arg|nr>|<subsection-display>>>>
+
+  <assign|display-subsubsection|<macro|nr|<arg|nr>.>>
+
+  <assign|display-paragraph|<macro|nr|<number|<arg|nr>|alpha>.>>
+
+  <assign|display-subparagraph|>
+
+  <active*|<\src-comment>
+    Headers and footers.
+  </src-comment>>
+
+  <set-header|<no-indent><tabular|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|1|cell-halign|r>|<table|<row|<cell|<quote|<page-the-page>>>>>>>>
+
+  <set-footer|>
+
+  <assign|header-title|<macro|name|>>
+
+  <assign|header-author|<macro|name|>>
+
+  <assign|header-primary|<macro|name|nr|what|>>
+
+  <assign|header-secondary|<macro|name|nr|what|>>
+
+  <assign|start-page|<macro|s|>>
+
+  <active*|<\src-comment>
+    Footnotes.
+  </src-comment>>
+
+  <assign|footnote-sep|>
+
+  <assign|render-footnote|<macro|nr|body|<style-with|src-compact|none|<\float|footnote|>
+    <smaller|<with|par-mode|justify|par-left|0cm|par-right|0cm|<style-with|src-compact|none|<surround|<rsup|<locus|<id|<hard-id|<arg|body>>>|<link|hyperlink|<id|<hard-id|<arg|body>>>|<url|<merge|#footnr-|<arg|nr>>>>|<arg|nr>>><footnote-sep>|<set-binding|<merge|footnote-|<arg|nr>>|<value|the-label>|body><right-flush>|<style-with|src-compact|none|<arg|body>>>>>>
+  </float>>>>
+
+  <\active*>
+    <\src-comment>
+      List environments.
+    </src-comment>
+  </active*>
+
+  <assign|render-list|<macro|body|<surround|<no-page-break*>|<right-flush><no-indent*>|<with|par-left|<plus|<value|<unquote|<merge|left-margin-|<plus|<itemize-level>|<enumerate-level>>>>>|<value|par-left>>|par-par-sep|<value|<unquote|<merge|par-par-sep-|<plus|<itemize-level>|<enumerate-level>>>>>|<arg|body>>>>>
+
+  \;
+
+  <new-list|itemize-1|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<rigid|\<bullet\>>>>>>
+
+  <new-list|itemize-2|<value|aligned-item>|<macro|x|<active*|<math|->>>>
+
+  <new-list|itemize-3|<value|aligned-item>|<macro|x|<active*|<math|\<ast\>>>>>
+
+  <new-list|itemize-4|<value|aligned-item>|<macro|x|<active*|<math|\<cdot\>>>>>
+
+  \;
+
+  <assign|item-hsep|<macro|6pt>>
+
+  \;
+
+  <assign|left-margin-1|24pt>
+
+  <assign|left-margin-2|20pt>
+
+  <assign|left-margin-3|16pt>
+
+  <assign|left-margin-4|14pt>
+
+  <assign|left-margin-5|6pt>
+
+  <assign|left-margin-6|6pt>
+
+  \;
+
+  <assign|top-sep-1|<tex-len|10pt|4pt|6pt>>
+
+  <assign|top-sep-2|<tex-len|5pt|2.5pt|1pt>>
+
+  <assign|top-sep-3|<tex-len|2.5pt|1pt|1pt>>
+
+  \;
+
+  <assign|par-par-sep-1|<tex-len|5pt|2.5pt|1pt>>
+
+  <assign|par-par-sep-2|<tex-len|2.5pt|1pt|1pt>>
+
+  <assign|par-par-sep-3|<tex-len|0pt|1pt|1pt>>
+
+  \;
+
+  <assign|enumerate-level|0>
+
+  <new-list|enumerate-1|<value|aligned-dot-item>|<macro|name|<number|<arg|name>|arabic>>>
+
+  <new-list|enumerate-2|<value|aligned-item>|<macro|name|(<number|<arg|name>|alpha>)>>
+
+  <new-list|enumerate-3|<value|aligned-dot-item>|<macro|name|<number|<arg|name>|roman>>>
+
+  <new-list|enumerate-4|<value|aligned-dot-item>|<macro|name|<number|<arg|name>|Alpha>>>
+
+  <assign|enumerate-reduce|<macro|nr|<plus|<mod|<minus|<arg|nr>|1>|4>|1>>>
+
+  <active*|<\src-comment>
+    Rendering of tables.
+  </src-comment>>
+
+  <assign|table-text|<macro|<localize|TABLE>>>
+
+  <assign|list-of-tables-text|<macro|<localize|List of Tables>>>
+
+  <assign|the-table|<macro|<number|<value|table-nr>|Roman>>>
+
+  <assign|ruledtabular|<macro|body|<with|tabular|<value|ruled-tabular>|tabular*|<value|ruled-tabular*>|<arg|body>>>>
+
+  <assign|table*|<macro|body|<with|par-columns|1|<arg|body>>>>
+
+  <assign|ruled-tabular|<macro|body|<tformat|<twith|table-width|1par>|<cwith|1|1|1|-1|cell-bborder|0.5pt>|<cwith|1|1|1|-1|cell-tborder|1pt>|<cwith|-1|-1|1|-1|cell-bborder|1pt>|<arg|body>>>>
+
+  <assign|ruled-tabular*|<macro|body|<with|par-columns|1|<tformat|<twith|table-width|1par>|<cwith|1|1|1|-1|cell-bborder|0.5pt>|<cwith|1|1|1|-1|cell-tborder|1pt>|<cwith|-1|-1|1|-1|cell-bborder|1pt>|<arg|body>>>>>
+
+  <assign|big-table-enlarge|<macro|body|<if|<greater|<times|2|<look-up|<box-info|<arg|body>|w>|0>>|<look-up|<box-info|<space|<tex-text-width>>|w>|0>>|<with|par-columns|1|<arg|body>>|<arg|body>>>>
+
+  <assign|big-table|<\macro|body|caption>
+    <\big-table-enlarge>
+      <\surround|<compound|next-table>|>
+        <\render-big-table>
+          table
+        </render-big-table|<compound|table-text>
+        <compound|the-table>|<arg|body>|<arg|caption>>
+      </surround>
+    </big-table-enlarge>
+  </macro>>
+
+  <assign|render-big-table|<\macro|type|name|fig|cap>
+    <padded-normal|1fn|1fn|<tabular*|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|2|2|1|1|cell-height|0.5fn>|<cwith|1|1|1|1|cell-lsep|1.5fn>|<cwith|1|1|1|1|cell-rsep|1.5fn>|<table|<row|<\cell>
+      <small|<\surround|<figure-name|<arg|name><figure-sep>><list-caption|<arg|type>|<arg|cap>>|>
+        <arg|cap>
+      </surround>>
+    </cell>>|<row|<cell|>>|<row|<cell|<arg|fig>>>>>>>
+  </macro>>
+
+  <active*|<\src-comment>
+    Rendering of figures.
+  </src-comment>>
+
+  <assign|figure-text|<macro|<localize|FIG.>>>
+
+  <assign|figure*|<macro|body|<with|par-columns|1|<arg|body>>>>
+
+  <assign|list-of-figures-text|<macro|<localize|List of Figures>>>
+
+  <assign|big-figure|<\macro|body|caption>
+    <surround|<compound|next-figure>||<render-big-figure|figure|<compound|figure-text>
+    <compound|the-figure>|<arg|body>|<arg|caption>>>
+  </macro>>
+
+  <assign|render-big-figure|<\macro|type|name|fig|cap>
+    <padded-normal|1fn|1fn|<tabular*|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|2|2|1|1|cell-height|0.5fn>|<cwith|1|1|1|1|cell-lsep|1.5fn>|<cwith|1|1|1|1|cell-rsep|1.5fn>|<table|<row|<\cell>
+      <arg|fig>
+    </cell>>|<row|<cell|>>|<row|<cell|<small|<\surround|<figure-name|<arg|name><figure-sep>><list-caption|<arg|type>|<arg|cap>>|>
+      <arg|cap>
+    </surround>>>>>>>>
+  </macro>>
+
+  <assign|figure-name|<macro|name|<arg|name>>>
+
+  <\active*>
+    <\src-comment>
+      Bibliography.
+    </src-comment>
+  </active*>
+
+  <assign|bib-list|<\macro|largest|body>
+    <\with|par-left|1em|par-first|-1em|font-size|1>
+      <arg|body>
+    </with>
+  </macro>>
+
+  <assign|bibliography-text|<macro|<rule|9cm|1pt>>>
+
+  <assign|bibliography-text|<\macro>
+    <\with|par-columns|1>
+      <tabular|<tformat|<cwith|1|-1|1|-1|cell-width|1cm>|<cwith|1|-1|1|-1|cell-hmode|exact>|<cwith|1|-1|1|-1|cell-height|0.1pt>|<cwith|1|-1|1|-1|cell-vmode|exact>|<cwith|1|1|4|6|cell-bborder|0.7pt>|<cwith|1|1|3|3|cell-bborder|0.5pt>|<cwith|1|1|7|7|cell-bborder|0.5pt>|<cwith|1|1|8|8|cell-bborder|0.4pt>|<cwith|1|1|2|2|cell-bborder|0.4pt>|<cwith|1|1|1|1|cell-bborder|0.3pt>|<cwith|1|1|9|9|cell-bborder|0.3pt>|<table|<row|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>>|<row|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>>>>>
+    </with>
+  </macro>>
+
+  <assign|render-bibliography|<macro|name|<with|par-columns|1|<section*|<arg|name>>>>>
+
+  <active*|<\src-comment>
+    Title rendering.
+  </src-comment>>
+
+  <assign|by-text|<macro|<localize|>>>
+
+  <assign|author-render-name|<macro|author|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<arg|author>>>>>
+
+  <assign|author-address|<\macro|address>
+    <surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<with|font-shape|italic|<arg|address>>>>
+  </macro>>
+
+  <assign|doc-author-main|<\macro|data>
+    <\quasi>
+      <unquote*|<select|<quote-arg|data>|author-name>>
+
+      <unquote*|<select|<quote-arg|data>|author-address>>
+    </quasi>
+  </macro>>
+
+  <assign|doc-author-data-note|<xmacro|data|<\quasi>
+    <unquote*|<select|<quote-arg|data>|author-homepage|<pat-any>>>
+
+    <unquote*|<select|<quote-arg|data>|author-note|document|<pat-any>>>
+  </quasi>>>
+
+  <assign|doc-date|<macro|body|<style-with|src-compact|none|<doc-title-block|(Dated:
+  <arg|body>)>>>>
+
+  <assign|abstract-text|>
+
+  <assign|doc-abstract|<macro|body|<\surround|<vspace|2fn>|>
+    <\with|par-columns|1>
+      <\with|par-mode|right>
+        <tabular|<tformat|<cwith|1|1|1|1|cell-width|400pt>|<cwith|1|1|1|1|cell-hmode|exact>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
+          <arg|body>
+        </cell>>>>>
+      </with>
+    </with>
+  </surround>>>
+
+  <assign|doc-data|<\xmacro|data>
+    <\with|par-columns|1>
+      <\surround|<assign|the-doc-data|<quote-arg|data>>|<with|doc-note-nr|0|<quasi|<doc-data-hidden|<unquote*|<quote-arg|data>>>>>>
+        <\doc-make-title>
+          <with|doc-note-nr|0|<\quasi>
+            <compound|<unquote|<if|<lesseq|<length|<select|<quote-arg|data>|doc-author-data>>|1>|<value|doc-data-main>|<value|doc-data-main*>>>|<unquote*|<quote-arg|data>>>
+          </quasi>>
+        </doc-make-title>
+      </surround>
+    </with>
+  </xmacro>>
+
+  <active*|<\src-comment>
+    Customization of other environments.
+  </src-comment>>
+
+  <assign|table-of-contents-text|<macro|<localize|Contents>>>
+
+  <active*|<\src-comment>
+    Specific macros from Revtex styles.
+  </src-comment>>
+
+  <style-with|src-compact|none|<assign|widetext|<macro|body|<\with|par-columns|1>
+    <tabular|<tformat|<twith|table-hmode|exact>|<twith|table-width|1par>|<cwith|1|1|1|-1|cell-height|1ex>|<cwith|1|1|1|-1|cell-vmode|exact>|<cwith|1|-1|1|1|cell-bborder|0.1pt>|<cwith|1|-1|1|1|cell-rborder|0.1pt>|<table|<row|<cell|>|<cell|>>>>>
+
+    <arg|body>
+
+    <tabular|<tformat|<twith|table-hmode|exact>|<twith|table-width|1par>|<cwith|1|1|1|2|cell-height|1ex>|<cwith|1|1|1|2|cell-vmode|exact>|<cwith|1|1|2|2|cell-lborder|0.1pt>|<cwith|1|1|2|2|cell-tborder|0.1pt>|<table|<row|<cell|>|<cell|>>>>>
+  </with>>>>
+
+  <assign|acknowledgments*|<\macro|body>
+    <section*|<localize|Acknowledgments>>
+
+    <arg|body>
+  </macro>>
+
+  <active*|<\src-comment>
+    Abbreviations from APS style.
+  </src-comment>>
+
+  <assign|ao|<macro|Appl. Opt.>>
+
+  <assign|ap|<macro|Appl. Phys.>>
+
+  <assign|apl|<macro|Appl. Phys. Lett.>>
+
+  <assign|apj|<macro|Astrophys. J.>>
+
+  <assign|bell|<macro|Bell Syst. Tech. J.>>
+
+  <assign|jqe|<macro|IEEE J. Quantum Electron.>>
+
+  <assign|assp|<macro|IEEE Trans. Acoust. Speech Signal Process.>>
+
+  <assign|aprop|<macro|IEEE Trans. Antennas Propag.>>
+
+  <assign|mtt|<macro|IEEE Trans. Microwave Theory Tech.>>
+
+  <assign|iovs|<macro|Invest. Ophthalmol. Vis. Sci.>>
+
+  <assign|jcp|<macro|J. Chem. Phys.>>
+
+  <assign|jmo|<macro|J. Mod. Opt.>>
+
+  <assign|josa|<macro|J. Opt. Soc. Am.>>
+
+  <assign|josaa|<macro|J. Opt. Soc. Am. A>>
+
+  <assign|josab|<macro|J. Opt. Soc. Am. B>>
+
+  <assign|jpp|<macro|J. Phys. (Paris)>>
+
+  <assign|nat|<macro|Nature (London)>>
+
+  <assign|oc|<macro|Opt. Commun.>>
+
+  <assign|ol|<macro|Opt. Lett.>>
+
+  <assign|pl|<macro|Phys. Lett.>>
+
+  <assign|pra|<macro|Phys. Rev. A>>
+
+  <assign|prb|<macro|Phys. Rev. B>>
+
+  <assign|prc|<macro|Phys. Rev. C>>
+
+  <assign|prd|<macro|Phys. Rev. D>>
+
+  <assign|pre|<macro|Phys. Rev. E>>
+
+  <assign|prl|<macro|Phys. Rev. Lett.>>
+
+  <assign|rmp|<macro|Rev. Mod. Phys.>>
+
+  <assign|pspie|<macro|Proc. Soc. Photo-Opt. Instrum. Eng.>>
+
+  <assign|sjqe|<macro|Sov. J. Quantum Electron.>>
+
+  <assign|vr|<macro|Vision Res.>>
+
+  <active*|<\src-comment>
+    Font sizes and APS layout.
+  </src-comment>>
+
+  <use-package|<merge|revtex-|<value|font-base-size>|pt>>
+</body>
