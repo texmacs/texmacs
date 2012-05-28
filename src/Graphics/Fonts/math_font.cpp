@@ -85,6 +85,9 @@ math_font_rep::init_font (int fn_nr, font& fn) {
 
 void
 math_font_rep::search_font (string& s, font& fn) {
+  if (s == "<noplus>" || s == "<nocomma>" || s == "<nospace>" ||
+      s == "<nobracket>" || s == "<nosymbol>")
+    s = "";
   if ((N(s)>=9) && (s[N(s)-2]>='0') && (s[N(s)-2]<='9')) {
     int i;
     for (i=N(s)-1; i>0; i--)
@@ -93,28 +96,28 @@ math_font_rep::search_font (string& s, font& fn) {
       string root= s(0,i) * ">";
       int c= rubber->dict [root];
       if ((c!=-1) && (s (N(s)-3, N(s)) != "-0>")) {
-	int fn_nr= c/256;
-	if (is_nil (rubber_table [fn_nr])) {
-	  fn= find_font (rubber_name [fn_nr]);
-	  ASSERT (!is_nil (fn), "font not found");
-	  fn->yfrac= base_fn->yfrac;
-	  // fn->copy_math_pars (base_fn);
-	  rubber_table [fn_nr]= fn;
-	}
-	else fn= rubber_table [fn_nr];
-	return;
+        int fn_nr= c/256;
+        if (is_nil (rubber_table [fn_nr])) {
+          fn= find_font (rubber_name [fn_nr]);
+          ASSERT (!is_nil (fn), "font not found");
+          fn->yfrac= base_fn->yfrac;
+            // fn->copy_math_pars (base_fn);
+          rubber_table [fn_nr]= fn;
+        }
+        else fn= rubber_table [fn_nr];
+        return;
       }
       c= math->dict [s(0,i) * "-#>"];
       if (c != -1) {
-	int fn_nr= c/256;
-	fn= font_table [fn_nr];
-	if (is_nil (fn)) init_font (fn_nr, fn);
-	s= string ((char) (c&255)) * s (i+1, N(s));
-	return;
+        int fn_nr= c/256;
+        fn= font_table [fn_nr];
+        if (is_nil (fn)) init_font (fn_nr, fn);
+        s= string ((char) (c&255)) * s (i+1, N(s));
+        return;
       }
     }
   }
-
+  
   int c= math->dict [s];
   if (c != -1) { 
     int fn_nr= c/256;
@@ -126,13 +129,13 @@ math_font_rep::search_font (string& s, font& fn) {
     int i, n= N(s);
     for (i=0; i<n; i++)
       if (((s[i]<'0') || (s[i]>'9')) &&
-	  ((s[i]<'a') || (s[i]>'z')) &&
-	  ((s[i]<'A') || (s[i]>'Z')) &&
-	  (s[i] != '.') && (s[i] != '\\') && (s[i] != '_'))
-	{
-	  fn= error_fn;
-	  return;
-	}
+          ((s[i]<'a') || (s[i]>'z')) &&
+          ((s[i]<'A') || (s[i]>'Z')) &&
+          (s[i] != '.') && (s[i] != '\\') && (s[i] != '_'))
+      {
+        fn= error_fn;
+        return;
+      }
     fn= base_fn;
   }
 }
