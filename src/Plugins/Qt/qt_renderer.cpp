@@ -88,8 +88,12 @@ qt_renderer_rep::~qt_renderer_rep () {}
 
 void
 qt_renderer_rep::begin (void* handle) {
-  QPaintDevice *device = (QPaintDevice*)handle;
-  painter->begin (device);
+  QPaintDevice *device = static_cast<QPaintDevice*>(handle);
+  if (!painter->begin (device) && DEBUG_QT)
+    cout << "qt_renderer_rep::begin(): uninitialized QPixmap of size "
+         << ((QPixmap*)handle)->width() << " x " << ((QPixmap*)handle)->height()
+         << LF;
+    
   w = painter->device()->width();
   h = painter->device()->height();
 }
@@ -222,7 +226,6 @@ qt_renderer_rep::fill (SI x1, SI y1, SI x2, SI y2) {
 
 void
 qt_renderer_rep::arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
-  (void) alpha; (void) delta;
   if ((x1>=x2) || (y1>=y2)) return;
   decode (x1, y1);
   decode (x2, y2);
@@ -232,7 +235,6 @@ qt_renderer_rep::arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
 
 void
 qt_renderer_rep::fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
-  (void) alpha; (void) delta;
   if ((x1>=x2) || (y1>=y2)) return;
   decode (x1, y1);
   decode (x2, y2);
@@ -567,7 +569,7 @@ the_qt_renderer () {
  * Shadow management methods 
  ******************************************************************************/
 
-/* Shadows are auxiliary renderers which allows double buffering and caching of
+/* Shadows are auxiliary renderers which allow double buffering and caching of
  * graphics. TeXmacs has explicit double buffering from the X11 port. Maybe
  * it would be better to design a better API abstracting from the low level 
  * details but for the moment the following code and the qt_proxy_renderer_rep
@@ -579,15 +581,15 @@ the_qt_renderer () {
  *    the drawback that if our widget is under another one we won't read the 
  *    right pixels)
  * 
- * qt_proxy_renderer_rep solve the double buffering problem: when texmacs ask
+ * qt_proxy_renderer_rep solves the double buffering problem: when texmacs asks
  * a qt_renderer_rep for a shadow it is given a proxy of the original renderer
  * texmacs uses this shadow for double buffering and the proxy will simply
  * forward the drawing operations to the original surface and neglect all the
  * syncronization operations
  *
  * to solve the second problem we do not draw directly on screen in QTMWidget.
- * Instead we maintain an internal pixmap which represent the state of the pixels
- * according to texmacs. when we are asked to initialize a qt_shadow_renderer_rep
+ * Instead we maintain an internal pixmap which represents the state of the pixels
+ * according to texmacs. When we are asked to initialize a qt_shadow_renderer_rep
  * we simply read the pixels form this backing store. At the Qt level then
  * (in QTMWidget) we make sure that the state of the backing store is in sync
  * with the screen via paintEvent/repaint mechanism.

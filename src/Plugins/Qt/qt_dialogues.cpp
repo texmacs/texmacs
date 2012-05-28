@@ -1,7 +1,7 @@
 
 /******************************************************************************
 * MODULE     : qt_dialogues.cpp
-* DESCRIPTION: QT dialogues widgets classes
+* DESCRIPTION: Widgets for automatically created dialogues (questions in popups)
 * COPYRIGHT  : (C) 2008  Massimiliano Gubinelli
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
@@ -14,7 +14,6 @@
 #include "qt_dialogues.hpp"
 #include "qt_utilities.hpp"
 #include "qt_tm_widget.hpp"
-#include "qt_basic_widgets.hpp"
 #include "qt_chooser_widget.hpp"
 #include "qt_printer_widget.hpp"
 #include "qt_color_picker_widget.hpp"
@@ -30,46 +29,93 @@
 #include "scheme.hpp"
 
 
-class qt_field_widget;
+  ////////////////////////// QTMLineEdit ////////////////////////////
 
-class qt_input_widget_rep: public qt_widget_rep {
+
+class QTMLineEdit : public QLineEdit {
+  
+public:
+  string ww; // width
+  
+  QTMLineEdit (QWidget *parent, string _ww) 
+  : QLineEdit (parent), ww (_ww) {
+    setStyle (qtmstyle());
+    QPalette pal (palette());
+    pal.setColor (QPalette::Base, QColor (252, 252, 248));
+    setPalette (pal);
+  };
+  
+  virtual QSize	sizeHint () const ;
 protected:
-  command cmd;
-  array<qt_field_widget> fields;
-  coord2 size, position;
-  string win_title;
-  int style;
-public:
-  qt_input_widget_rep (command, array<string>);
-  ~qt_input_widget_rep ();
-        
-  virtual void send (slot s, blackbox val);
-  virtual blackbox query (slot s, int type_id);
-  virtual widget read (slot s, blackbox index);
-  virtual void write (slot s, blackbox index, widget w);
-  virtual void notify (slot s, blackbox new_val);
-  // virtual void connect (slot s, widget w2, slot s2);
-  // virtual void deconnect (slot s, widget w2, slot s2);
-  virtual widget plain_window_widget (string s, command q);
-  //virtual QLayoutItem* as_qlayoutitem () { return NULL; }
-  void perform_dialog();
+  void keyPressEvent (QKeyEvent *event);
+  void focusInEvent (QFocusEvent *evenement);
+  
 };
 
-class qt_field_widget_rep: public widget_rep {
-  string prompt;
-  string input;
-  string type;
-  array<string> proposals;
-  qt_input_widget_rep *parent;
-public:
-  qt_field_widget_rep(qt_input_widget_rep *_parent):
-    widget_rep(), prompt(""), input(""),  proposals(), parent(_parent) {}
-  virtual void send (slot s, blackbox val);
-  virtual blackbox query (slot s, int type_id);
-  //virtual QLayoutItem* as_qlayoutitem () { return NULL; }
+void 
+QTMLineEdit::keyPressEvent(QKeyEvent *event)
+{
+  QCompleter *c = completer();
+    // reset completion
+  if (c) c->setCompletionPrefix (QString ());
+  
+  if (event->key() == Qt::Key_Up){
+    if (c) {
+      int row = c->currentRow();
+      c->setCurrentRow(row-1);
+      setText(c->currentCompletion());
+    }
+    event->accept();
+      // move back in history
+  } else if (event->key() == Qt::Key_Down){
+    if (c) {
+      int row = c->currentRow();
+      c->setCurrentRow(row+1);
+      setText(c->currentCompletion());
+    }
+    event->accept();
+      // move forward in history
+  } else if (event->key() == Qt::Key_Escape){
+    emit editingFinished();
+    event->accept();
+      // exit editing
+  }
+  else {
+      // default handler for event
+    QLineEdit::keyPressEvent(event);
+  }
+}
 
-  friend class qt_input_widget_rep;
-};
+QSize
+QTMLineEdit::sizeHint () const {
+  QSize sz(QLineEdit::sizeHint());
+  string s = ww; // to avoid const casting
+  if (ends (s, "w") && is_double (s (0, N(s) - 1)) && parentWidget()) {
+    double x= as_double (s (0, N(s) - 1));
+    sz.setWidth(parentWidget()->width() * x);
+      //    ev->w= max (ev->w, (4 * fn->wquad + 2*dw) / SHRINK);
+  } else if (ends (s, "em") && is_double (s (0, N(s) - 2))) {
+    double x= as_double (s (0, N(s) - 2));
+    QFontMetrics fm(fontMetrics());
+    sz.setWidth(x*fm.width("m")); //FIXME: put real font width
+  }  else if (ends (s, "px") && is_double (s (0, N(s) - 2))) {
+    double x= as_double (s (0, N(s) - 2));
+    sz.setWidth(x);
+  }  
+  return sz;
+}
+
+void 
+QTMLineEdit::focusInEvent (QFocusEvent *event)
+{
+  setCursorPosition (text().size());
+    //  selectAll ();
+  QLineEdit::focusInEvent (event);
+}
+
+
+  ////////////////////////// qt_field_widget_rep ////////////////////////////
+
 
 void
 qt_field_widget_rep::send (slot s, blackbox val) {
@@ -112,18 +158,12 @@ qt_field_widget_rep::query (slot s, int type_id) {
 }
 
 
-class qt_field_widget {
-public:
-ABSTRACT_NULL(qt_field_widget);
-};
-ABSTRACT_NULL_CODE(qt_field_widget);
+  ////////////////////////// qt_input_widget_rep ////////////////////////////
 
-qt_input_widget_rep::qt_input_widget_rep
-  (command _cmd, array<string> _prompts):
-    qt_widget_rep (), cmd (_cmd),
-    fields (N (_prompts)),
-    size (coord2 (100, 100)), position (coord2 (0, 0)),
-    win_title (""), style (0)
+
+qt_input_widget_rep::qt_input_widget_rep (command _cmd, array<string> _prompts):
+   qt_widget_rep (input_widget), cmd (_cmd), fields (N (_prompts)),
+   size (coord2 (100, 100)), position (coord2 (0, 0)), win_title (""), style (0)
 {
   for (int i=0; i < N(_prompts); i++) {
     fields[i] = tm_new<qt_field_widget_rep> (this);
@@ -189,16 +229,6 @@ qt_input_widget_rep::query (slot s, int type_id) {
   }
 }
 
-void
-qt_input_widget_rep::notify (slot s, blackbox new_val) {
-  if (DEBUG_QT)
-    cout << "[qt_input_widget_rep] ";
-  switch (s) {
-  default: ;
-  }
-  qt_widget_rep::notify (s, new_val);
-}
-
 widget
 qt_input_widget_rep::read (slot s, blackbox index) {
   if (DEBUG_QT)
@@ -209,19 +239,9 @@ qt_input_widget_rep::read (slot s, blackbox index) {
     return this;
   case SLOT_FORM_FIELD:
     check_type<int> (index, "SLOT_FORM_FIELD");
-    return (widget_rep*) (fields [open_box<int> (index)].rep);
+    return static_cast<widget_rep*>(fields [open_box<int> (index)].rep);
   default:
     return qt_widget_rep::read (s, index);
-  }
-}
-
-void
-qt_input_widget_rep::write (slot s, blackbox index, widget w) {
-  if (DEBUG_QT)
-    cout << "[qt_input_widget_rep] ";
-  switch (s) {
-  default:
-    qt_widget_rep::write (s, index, w);
   }
 }
 
@@ -351,90 +371,20 @@ qt_input_widget_rep::perform_dialog() {
 }
 
 
-/*******************************************************************************
-* Input text widget implementation
-*******************************************************************************/
+  ///////////////////////// qt_input_text_widget_rep //////////////////////////
 
-class QTMLineEdit : public QLineEdit {
-  
-public:
-  string ww; // width
-  
-  QTMLineEdit (QWidget *parent, string _ww) 
-  : QLineEdit (parent), ww (_ww) {
-    setStyle (qtmstyle());
-    QPalette pal (palette());
-    pal.setColor (QPalette::Base, QColor (252, 252, 248));
-    setPalette (pal);
-  };
-  
-  virtual QSize	sizeHint () const ;
-protected:
-  void keyPressEvent (QKeyEvent *event);
-  void focusInEvent (QFocusEvent *evenement);
 
-};
-
-void 
-QTMLineEdit::keyPressEvent(QKeyEvent *event)
+qt_input_text_widget_rep::qt_input_text_widget_rep 
+(command _cmd, string _type, array<string> _def, int _style, string _width)
+: cmd (_cmd), type (_type), def (_def), text (""), style(_style), width(_width),
+helper(NULL), ok(false) 
 {
-  QCompleter *c = completer();
-  // reset completion
-  if (c) c->setCompletionPrefix (QString ());
-
-  if (event->key() == Qt::Key_Up){
-    if (c) {
-      int row = c->currentRow();
-      c->setCurrentRow(row-1);
-      setText(c->currentCompletion());
-    }
-    event->accept();
-    // move back in history
-  } else if (event->key() == Qt::Key_Down){
-    if (c) {
-      int row = c->currentRow();
-      c->setCurrentRow(row+1);
-      setText(c->currentCompletion());
-    }
-    event->accept();
-    // move forward in history
-  } else if (event->key() == Qt::Key_Escape){
-    emit editingFinished();
-    event->accept();
-    // exit editing
-  }
-  else {
-    // default handler for event
-    QLineEdit::keyPressEvent(event);
+  if (N(def) > 0) {
+    text = def[0];
   }
 }
 
-QSize
-QTMLineEdit::sizeHint () const {
-  QSize sz(QLineEdit::sizeHint());
-  string s = ww; // to avoid const casting
-  if (ends (s, "w") && is_double (s (0, N(s) - 1)) && parentWidget()) {
-    double x= as_double (s (0, N(s) - 1));
-    sz.setWidth(parentWidget()->width() * x);
-//    ev->w= max (ev->w, (4 * fn->wquad + 2*dw) / SHRINK);
-  } else if (ends (s, "em") && is_double (s (0, N(s) - 2))) {
-    double x= as_double (s (0, N(s) - 2));
-    QFontMetrics fm(fontMetrics());
-    sz.setWidth(x*fm.width("m")); //FIXME: put real font width
-  }  else if (ends (s, "px") && is_double (s (0, N(s) - 2))) {
-    double x= as_double (s (0, N(s) - 2));
-    sz.setWidth(x);
-  }  
-  return sz;
-}
-
-void 
-QTMLineEdit::focusInEvent (QFocusEvent *event)
-{
-  setCursorPosition (text().size());
-//  selectAll ();
-  QLineEdit::focusInEvent (event);
-}
+qt_input_text_widget_rep::~qt_input_text_widget_rep() { }
 
 QAction *
 qt_input_text_widget_rep::as_qaction () {
@@ -460,7 +410,7 @@ qt_input_text_widget_rep::as_qwidget () {
     le -> setText (to_qstring (helper->wid()->text));
     
     le -> setStyleSheet (to_qstylesheet (style));
-    le -> setMinimumSize(qt_decode_length(width, le));
+    le -> setMinimumSize(qt_decode_length(le, width, ""));
     
     if (ends (type, "file") || type == "directory") {
       // autocompletion
@@ -485,70 +435,7 @@ qt_input_text_widget_rep::as_qwidget () {
   return le;
 }
 
-
 QLayoutItem *
 qt_input_text_widget_rep::as_qlayoutitem () {
   return new QWidgetItem (as_qwidget ());
-}
-
-
-qt_input_text_widget_rep::qt_input_text_widget_rep 
-  (command _cmd, string _type, array<string> _def, int _style, string _width)
-: cmd (_cmd), type (_type), def (_def), text (""), style(_style), width(_width),
-  helper(NULL), ok(false) 
-{
-  if (N(def) > 0) {
-    text = def[0];
-  }
-}
-
-
-qt_input_text_widget_rep::~qt_input_text_widget_rep() { 
-}
-
-
-/*******************************************************************************
-* Interface to texmacs. See src/Graphics/Gui/widget.hpp.
-*******************************************************************************/
-
-
-widget
-inputs_list_widget (command call_back, array<string> prompts) {
-  // a dialogue widget with Ok and Cancel buttons and a series of textual
-  // input widgets with specified prompts
-  if (DEBUG_QT) cout << "inputs_list_widget\n";
-  return tm_new<qt_input_widget_rep> (call_back, prompts);
-}
-
-widget
-input_text_widget (command call_back, string type, array<string> def,
-                   int style, string width) {
-  // a textual input widget for input of a given type and a list of suggested
-  // default inputs (the first one should be displayed, if there is one)
-  return tm_new<qt_input_text_widget_rep> (call_back, type, def, style, width);
-}
-
-widget
-color_picker_widget (command call_back, bool bg, array<tree> proposals) {
-  // widgets for selecting a color, a pattern or a background image,
-  // encoded by a tree. On input, we give a list of recently used proposals
-  // on termination the command is called with the selected color as argument
-  // the bg flag specifies whether we are picking a background color or fill
-  
-  return tm_new<qt_color_picker_widget_rep>(call_back, bg, proposals);  
-}
-
-widget
-file_chooser_widget (command cmd, string type, bool save)  {
-  // file chooser widget for files of a given type; for files of type "image",
-  // the widget includes a previsualizer and a default magnification
-  // for importation can be specified
-  return tm_new<qt_chooser_widget_rep> (cmd, type, save);
-}
-
-widget 
-printer_widget (command cmd, url ps_pdf_file) {
-  // widget to print the document, offering a way for selecting a page range,
-  // changing the paper type and orientation, previewing, etc.
-  return tm_new<qt_printer_widget_rep>(cmd, ps_pdf_file);
 }

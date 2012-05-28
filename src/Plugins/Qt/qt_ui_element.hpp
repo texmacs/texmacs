@@ -23,46 +23,41 @@
 
 
 /*! Construction of UI elements / widgets.
- *
- * Most (see the enum types) of the items in the UI are constructed using the
- * factory methods create(). Notable exceptions are the classes 
- * plain_window_widget_rep and refresh_widget_rep.
- *
- * See the documentation of qt_widget_rep for the rationale behind the four
- * methods as_qaction(), get_qmenu(), as_qlayoutmenu(), as_qwidget()
- */
+
+ Most of the items in the UI are constructed by this class, although in fact,
+ the actual QWidgets and layout items aren't instantiated until one of
+ as_qwidget(), as_qaction(), get_qmenu() or as_qlayoutmenu() is called.
+ 
+ A UI element is first created using the factory methods create(), these store
+ the parameters for the widget until they are needed upon creation. as_*()
+ is typically called by another instance of qt_ui_element_rep or sometimes
+ qt_plain_window_widget_rep and qt_refresh_widget_rep, who then gets ownership
+ of the QObjects returned.
+ 
+ See the documentation of qt_widget_rep for the rationale behind the four
+ methods as_qaction(), get_qmenu(), as_qlayoutmenu(), as_qwidget()
+ 
+ NOTE: although it might seem wasteful to instantiate the QObjects "on demand",
+ caching makes no sense given the current infrastructure, because TeXmacs always
+ discards the scheme-created widgets as soon as they exist.
+*/
 class qt_ui_element_rep: public qt_widget_rep {
-public:
   
-  enum types {
-    horizontal_menu, vertical_menu, horizontal_list, vertical_list,
-    tile_menu, minibar_menu, menu_separator, menu_group, 
-    pulldown_button, pullright_button, menu_button,
-    balloon_widget, text_widget, xpm_widget, toggle_widget,
-    enum_widget, choice_widget, scrollable_widget,
-    hsplit_widget, vsplit_widget,
-    aligned_widget, tabs_widget, wrapped_widget, refresh_widget,
-    glue_widget //!< just for non-colored ones (skips qt_glue_widget_rep)
-  } ;
-  
-  types type;
-  blackbox load;
-  
+    // NOTE: automatic deletion of the blackbox upon destruction will trigger
+    // deletion of all the nested widgets within.
+  blackbox         load;  
   QAction* cachedAction;
   
-  qt_ui_element_rep (types _type, blackbox _load) 
-  : type(_type), load(_load), cachedAction(NULL)  {};
-
-  ~qt_ui_element_rep(); 
+public:  
+  qt_ui_element_rep (types _type, blackbox _load);
+  virtual ~qt_ui_element_rep(); 
 
   virtual widget make_popup_widget ();
-  virtual widget popup_window_widget (string s);
-  virtual widget plain_window_widget (string s, command q);
   
-  virtual QAction*     as_qaction ();
-  virtual QMenu*       get_qmenu();
+  virtual QAction*         as_qaction ();
+  virtual QWidget*         as_qwidget ();
   virtual QLayoutItem* as_qlayoutitem ();
-  virtual QWidget*     as_qwidget ();
+  virtual QMenu*            get_qmenu ();
   
   operator tree ();
 
@@ -96,5 +91,25 @@ public:
   
 };
 
+
+class qt_glue_widget_rep: public qt_widget_rep {
+public:
+  
+  tree col;
+  bool hx, vx;
+  SI w,h;
+  
+  
+  qt_glue_widget_rep (tree _col, bool _hx, bool _vx, SI _w, SI _h)
+  : col(_col), hx(_hx), vx(_vx), w(_w), h(_h) 
+  {}
+  
+  qt_glue_widget_rep () {};
+  
+  QPixmap render ();
+  
+  virtual QAction *as_qaction();
+  virtual QWidget *as_qwidget();
+};
 
 #endif // defined QT_UI_ELEMENT_HPP

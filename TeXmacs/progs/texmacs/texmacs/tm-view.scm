@@ -74,6 +74,11 @@
   (:check-mark "v" visible-footer?)
   (show-footer (not (visible-footer?))))
 
+(tm-define (toggle-visible-side-tools n)
+  (:synopsis "Toggle the visibility of the @n-th window's side tools.")
+  (:check-mark "v" visible-side-tools?)
+  (show-side-tools n (not (visible-side-tools? n))))  
+
 (tm-define (toggle-visible-icon-bar n)
   (:synopsis "Toggle the visibility of the @n-th icon bar.")
   (:check-mark "v" visible-icon-bar?)

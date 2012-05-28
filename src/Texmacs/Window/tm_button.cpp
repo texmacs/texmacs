@@ -192,5 +192,15 @@ texmacs_output_widget (tree doc) {
   //SI dh1= env->get_length (PAGE_SCREEN_BOT);
   //SI dh2= env->get_length (PAGE_SCREEN_TOP);
   color col= light_grey;
+  
+    /// FIXME! HACK! 
+    // We need to set the extents (which is actually wrong) or QPainter
+    // won't have a valid surface to paint on, rendering an empty output widget.
+#ifdef QT_VERSION  // isn't there a QT_TEXMACS def anyhere?
+  widget wid= tm_new<box_widget_rep> (b, col, false, 5, 0, 0);
+  set_extents (wid, b->x1, b->y1, b->x2, b->y2);
+  return wid;
+#else
   return widget (tm_new<box_widget_rep> (b, col, false, 5, 0, 0));
+#endif
 }

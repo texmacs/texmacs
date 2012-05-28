@@ -3,22 +3,27 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|An introduction to widgets, dialogs and forms>
+  <tmdoc-title|An introduction to widgets, menus, dialogs and forms>
 
   <section|Widgets><label|sec:widgets>
 
-  In <TeXmacs> you create visual interfaces using <em|widgets>. This word
-  means either the basic building blocks you have at your disposal, like
-  buttons, popup lists, etc. or the collections of those into dialogs, menus
-  or whatever. This rather loose concept might be confusing, especially when
-  we refer to what usually are know as dialogs as widgets, but it makes sense
-  because all sorts of widgets can be aggregated to build more complicated
-  ones as well.<\footnote>
+  In <TeXmacs> you create and extend the visual interface using <em|widgets>.
+  This word means either the basic building blocks you have at your disposal,
+  like buttons, popup lists, etc. or the collections of those into dialogs,
+  menu bars or whatever. This rather loose concept might be confusing,
+  especially when we refer to what usually are know as dialogs as widgets,
+  but it makes sense because all sorts of widgets can be aggregated to build
+  more complicated ones as well.<\footnote>
     If you miss some particular ``building block'' from your OS, you might
     see whether it's feasible as an aggregation of simpler ones or try and
     play with the UI interface code in C++ (but you'll have to add it for
     every supported platform!).
   </footnote>
+
+  However, it must be kept in mind that items intended to be inserted in a
+  menu bar won't necessarily display as they do in a separate window:
+  complicated aggregations of widgets might be better placed in a separate
+  window or dialogue.
 
   A complete reference with all the available widgets is
   <hlink|here|scheme-gui-reference.en.tm>, some more examples are here and
@@ -67,8 +72,8 @@
 
   The next step is to add some text next to the button, i.e. a label. This is
   done with the <scm|text> keyword, as in <scm|(text "Hello")>, but in order
-  to have both widgets sit side by side, you'll need a
-  <inactive|<hlink|container widget|scheme-gui-.en.tm>>, such as <scm|hlist>:
+  to have both widgets sit side by side, you'll need a <hlink|container
+  widget|scheme-gui-container.en.tm>, such as <scm|hlist>:
 
   <\session|scheme|default>
     <\unfolded-io|Scheme] >
@@ -114,6 +119,13 @@
 
   The special symbol <scm|\<gtr\>\<gtr\>\<gtr\>> is just one of the
   predefined <hlink|glue widgets|scheme-gui-glue.en.tm>.\ 
+
+  <section|Menus>
+
+  As we said before, menus are special collections of widgets:
+
+  <with|color|red|Problems with toolbars, system menus, context menus... Menu
+  containers: horizontal menu, vertical menu. Separators.>
 
   <section|User dialogs><label|sec:dialogs>
 
@@ -188,11 +200,18 @@
     </input>
   </session>
 
-  <with|color|red|This should of course work! ALSO: what is resize with two
-  lists as first arguments?>
-
   <scm|resize> is one of the several available container or <hlink|content
-  management widgets|scheme-gui-container.en.tm>.
+  management widgets|scheme-gui-container.en.tm>. It accepts two sorts of
+  arguments. Either one sets a fixed size for the widget with two strings, as
+  in the example above, or one passes two lists, the first for widths, the
+  second for heights, with the minimum, default and maximum values in that
+  order, like this:\ 
+
+  <scm|(resize ("100px" "200px" "400px") ("100px" "200px" "400px")
+  (some-widget-here))>
+
+  This sets <scm|some-widget-here> to have a default square size of 200x200
+  pixels.
 
   If you want to add the usual buttons you use <scm|bottom-buttons> like in
   the following example. Notice that the widget now accepts one parameter
@@ -321,8 +340,6 @@
 
   A complete list of the widgets you can embed in a form is in the table
   <scm|gui-make-table> inside <hlink|menu-define.scm|$TEXMACS_PATH/progs/kernel/gui/menu-define.scm>.
-
-  \;
 
   <tmdoc-copyright|2012|the <TeXmacs> team.>
 

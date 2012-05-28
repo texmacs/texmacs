@@ -18,6 +18,7 @@
 #include <QPoint>
 #include <QString>
 #include <QColor>
+#include <QFont>
 
 class QStringList;
 class QKeySequence;
@@ -42,10 +43,11 @@ coord2 from_qpoint (const QPoint & pt);
 QSize    to_qsize (const coord2 & p);
 coord2 from_qsize (const QSize & s);
 
+QFont         to_qfont (int style, QFont font);
 QString to_qstylesheet (int style);
 QString to_qstylesheet (int style, color c);
 
-QSize qt_decode_length (string width, QWidget* qwid);
+QSize qt_decode_length (QWidget* qwid, string width, string height);
 
 QKeySequence to_qkeysequence (string s);
 

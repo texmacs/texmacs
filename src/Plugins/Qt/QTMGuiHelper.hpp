@@ -17,6 +17,8 @@
 #include <QObject>
 #include <QTranslator>
 
+/*!
+ */
 class QTMGuiHelper : public QObject {
   Q_OBJECT
   qt_gui_rep* gui;
@@ -38,6 +40,7 @@ public slots:
   void doPopWaitingWidgets ();
  
   void emitTmSlotRefresh ();
+
 signals:
   void refresh ();
   void tmSlotRefresh ();   //!< qt_widgets which need to refresh connect here.
@@ -68,7 +71,7 @@ public:
   
   bool recompute ();
   
-  public slots:
+public slots:
   void doRefresh ();  
 };
 

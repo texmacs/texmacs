@@ -65,10 +65,6 @@ qt_printer_widget_rep::send (slot s, blackbox val) {
 widget
 qt_printer_widget_rep::plain_window_widget (string s, command q)
 {
-  // Identify ourselves as already being a top-level window, even though
-  // the dialog won't be displayed until later.
-  //view->setProperty ("texmacs_window_widget",
-  //                 QVariant::fromValue ((void*) this));
   (void) s;
   commandAfterExecution = q;
 
@@ -95,8 +91,9 @@ qt_printer_widget_rep::showDialog () {
   _cmd = _settings->toSystemCommand();
   
   // Send the document to the printer
-  cout << "qt_printer_dialog_rep] Running command: " << from_qstring(_cmd) 
-       << "\n";
+  if (DEBUG_QT)
+    cout << "qt_printer_dialog_rep] Running command: " << from_qstring(_cmd) 
+         << "\n";
   qt_system(from_qstring(_cmd));  // FIXME? qt_system is synchronous (blocking!)
   
   // execute the scheme closure 

@@ -5,23 +5,25 @@
 <\body>
   <tmdoc-title|Containers, glue, refresh and cia.>
 
+  <section|Attribute widgets>
+
+  Setting attributes of widgets is achieved by enclosing them in the
+  following special widgets:
+
+  <scm|centered>, <scm|resize>, <scm|padded>, ...\ 
+
   <section|Container widgets>
 
-  <scm|centered>
+  You can arrange widgets horizontally or vertically, or in two column mode
+  as in forms. When running the QT version the latter will default to the OS
+  standard for arranging labels and their associated input widgets in
+  dialogs.
 
-  <\scm>
-    aligned
-  </scm>
-
-  <scm|hlist>
-
-  <scm|vlist>
-
-  <scm|padded>
+  <scm|aligned>, <scm|hlist>, <scm|vlist>, <scm|hsplit>, ...
 
   <section|Glue widgets>
 
-  From the definitions...
+  Shifting of widgets... From the definitions:
 
   <\verbatim>
     ((== x '---) '$---)
@@ -49,6 +51,8 @@
   executed...
 
   <section|Other topics>
+
+  \;
 
   \;
 </body>

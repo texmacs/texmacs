@@ -23,10 +23,10 @@
  * @param _cmd  Scheme closure to execute after the dialog is closed.
  * @param _type What kind of dialog to show. Can be one of "image", "directory",
  *              or any of the supported file formats: "texmacs", "tmml",
-                "postscript", etc. See @link perform_dialog()
+                "postscript", etc. See perform_dialog()
  */
 qt_chooser_widget_rep::qt_chooser_widget_rep (command _cmd, string _type, bool _save)
- : qt_widget_rep (), cmd (_cmd), type (_type), save (_save), 
+ : qt_widget_rep (file_chooser), cmd (_cmd), type (_type), save (_save), 
    position (coord2 (0, 0)), size (coord2 (100, 100)), file ("")
 {
   if (DEBUG_QT)
@@ -168,10 +168,6 @@ qt_chooser_widget_rep::write (slot s, blackbox index, widget w) {
 widget
 qt_chooser_widget_rep::plain_window_widget (string s, command q)
 {
-  // Identify ourselves as already being a top-level window, even though
-  // the dialog won't be displayed until later.
-  //view->setProperty ("texmacs_window_widget",
-  //                 QVariant::fromValue ((void*) this));
   win_title = s;
   quit = q;       // (NOT USED)
   return this;

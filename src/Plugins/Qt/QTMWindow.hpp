@@ -12,40 +12,82 @@
 #ifndef QTMWINDOW_HPP
 #define QTMWINDOW_HPP
 
-#include "qt_tm_widget.hpp"
-#include <QVariant>
 #include <QMainWindow>
-#include <QScrollArea>
 
+#include "qt_tm_widget.hpp"
+
+
+/*! The interface that any QWidget must implement to become a window in TeXmacs.
+ 
+ The underlying QWidget for a qt_window_widget_rep is of this type. We use it
+ to inform the texmacs widget that the window has been closed. Because windows
+ can be closed externally to TeXmacs, i.e. with the close button that the
+ window manager provides, we must handle QCloseEvent and send the appropriate
+ texmacs message to the owning texmacs widget (which is of type
+ qt_window_widget_rep). This will allow it to call the associated texmacs
+ quit command (and do anything else it requires).
+ 
+ NOTE: I would like to have a base class common to QTMPlainWindow and QTMWindow
+ to enforce the data type for a qt_window_widget. But we cannot "virtual
+ inherit" QWidget to do this in a nicer way because QMainWindow does not
+ inherit virtually from QWidget.
+ */
+class QTMPlainWindow : public QWidget {
+	Q_OBJECT
+	
+public:
+	
+	/*! The pointer to the main qt_widget in this window.
+	 
+	 This is NOT NECESSARILY a pointer to the qt_window_widget_rep (or is it?)
+	 */
+	qt_widget_rep* tmwid;
+	
+  QTMPlainWindow (QWidget* parent, qt_widget_rep* _tmwid) 
+  : QWidget (parent), tmwid (_tmwid) { 
+    if (DEBUG_QT) cout << "Create QTMPlainWindow" << LF;
+  }
+  virtual ~QTMPlainWindow () {
+	  if (DEBUG_QT) cout << "Delete QTMPlainWindow" << LF;
+	}
+	
+signals:
+	void closed ();
+	
+protected:
+  virtual void closeEvent (QCloseEvent* event);
+};
+
+/*! The underlying QWidget for a qt_tm_widget_rep.
+
+ \sa QTMPlainWindow
+ 
+ */
 class QTMWindow: public QMainWindow {
   Q_OBJECT
-
+	
 public:
-  inline QTMWindow(qt_tm_widget_rep *_wid): QMainWindow () {
-    setObjectName("A QTMWindow");
-    setProperty ("texmacs_tm_widget", QVariant::fromValue ((void*) _wid));
-  }
-
-  inline qt_tm_widget_rep *
-  tm_widget() {
-    QVariant v= property("texmacs_tm_widget");
-    return (qt_tm_widget_rep *)
-      (v.canConvert<void*> ()? v.value<void*> (): NULL);
-  }
-
-protected:
-  virtual void closeEvent (QCloseEvent *event);
-};
-
-class QTMPlainWindow: public QWidget {
-  Q_OBJECT
-  
-protected:
-  virtual void closeEvent (QCloseEvent *event);
+	
+	/*! The pointer to the qt_tm_widget_rep inside this window.
+   
+   This is NOT NECESSARILY a pointer to the qt_window_widget_rep (or is it?)
+   */
+	qt_widget_rep* tmwid;
+	
+  QTMWindow (QWidget* parent, qt_tm_widget_rep* _tmwid) 
+		: QMainWindow (parent), tmwid(_tmwid) { 
+    if (DEBUG_QT) cout << "Create QTMWindow" << LF;
+    }
+  virtual ~QTMWindow () {
+	  if (DEBUG_QT) cout << "Delete QTMWindow" << LF;
+	}
+	
 signals:
-  void closed();
+	void closed ();
+	
+protected:
+  virtual void closeEvent (QCloseEvent* event);
 };
-
 
 
 #endif // QTMWINDOW_HPP

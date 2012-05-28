@@ -21,12 +21,19 @@
 		493D309A15190AEA00A19C3D /* new_buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493D309915190AEA00A19C3D /* new_buffer.cpp */; };
 		493D309B15190AEA00A19C3D /* new_buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493D309915190AEA00A19C3D /* new_buffer.cpp */; };
 		493D309C15190AEA00A19C3D /* new_buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493D309915190AEA00A19C3D /* new_buffer.cpp */; };
+		49896901152B981400DB1E9E /* TeXmacs.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9C61B42A141A1B780035D78F /* TeXmacs.icns */; };
 		49D662FC128B331A0006E948 /* QTMFileDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D662FA128B331A0006E948 /* QTMFileDialog.cpp */; };
 		49D662FD128B333F0006E948 /* QTMFileDialog.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D662FB128B331A0006E948 /* QTMFileDialog.hpp */; };
 		49EAD66C128AC177009919E5 /* QTMGuiHelper.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EAD66B128AC168009919E5 /* QTMGuiHelper.hpp */; };
 		49F251D4151B70840091FF99 /* persistent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F251D2151B70840091FF99 /* persistent.cpp */; };
 		49F251D5151B70840091FF99 /* persistent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F251D2151B70840091FF99 /* persistent.cpp */; };
 		49F251D6151B70840091FF99 /* persistent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F251D2151B70840091FF99 /* persistent.cpp */; };
+		49F9FA131573BA86006C7258 /* new_project.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F9FA0E1573BA86006C7258 /* new_project.cpp */; };
+		49F9FA141573BA86006C7258 /* new_project.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F9FA0E1573BA86006C7258 /* new_project.cpp */; };
+		49F9FA151573BA86006C7258 /* new_project.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F9FA0E1573BA86006C7258 /* new_project.cpp */; };
+		49F9FA161573BA86006C7258 /* new_window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F9FA111573BA86006C7258 /* new_window.cpp */; };
+		49F9FA171573BA86006C7258 /* new_window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F9FA111573BA86006C7258 /* new_window.cpp */; };
+		49F9FA181573BA86006C7258 /* new_window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F9FA111573BA86006C7258 /* new_window.cpp */; };
 		9C060A9C10FC6D8B00C51583 /* tm_ostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */; };
 		9C060A9D10FC6D8B00C51583 /* tm_ostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */; };
 		9C060A9E10FC6D8B00C51583 /* tm_ostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */; };
@@ -206,8 +213,6 @@
 		9C0B4AF110A8CC110097A335 /* data_cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B495810A8CC110097A335 /* data_cache.cpp */; };
 		9C0B4AF210A8CC110097A335 /* fast_alloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B495A10A8CC110097A335 /* fast_alloc.cpp */; };
 		9C0B4AF310A8CC110097A335 /* sys_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B495C10A8CC110097A335 /* sys_utils.cpp */; };
-		9C0B4AF610A8CC110097A335 /* tm_data.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B496310A8CC110097A335 /* tm_data.cpp */; };
-		9C0B4AF710A8CC110097A335 /* tm_file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B496410A8CC110097A335 /* tm_file.cpp */; };
 		9C0B4AF810A8CC110097A335 /* tm_config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B496610A8CC110097A335 /* tm_config.cpp */; };
 		9C0B4AF910A8CC110097A335 /* tm_server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B496710A8CC110097A335 /* tm_server.cpp */; };
 		9C0B4AFA10A8CC110097A335 /* texmacs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B496A10A8CC110097A335 /* texmacs.cpp */; };
@@ -508,8 +513,6 @@
 		9CCC74AF10D303D900E88D90 /* data_cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B495810A8CC110097A335 /* data_cache.cpp */; };
 		9CCC74B010D303D900E88D90 /* fast_alloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B495A10A8CC110097A335 /* fast_alloc.cpp */; };
 		9CCC74B110D303D900E88D90 /* sys_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B495C10A8CC110097A335 /* sys_utils.cpp */; };
-		9CCC74B210D303D900E88D90 /* tm_data.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B496310A8CC110097A335 /* tm_data.cpp */; };
-		9CCC74B310D303D900E88D90 /* tm_file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B496410A8CC110097A335 /* tm_file.cpp */; };
 		9CCC74B410D303D900E88D90 /* tm_config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B496610A8CC110097A335 /* tm_config.cpp */; };
 		9CCC74B510D303D900E88D90 /* tm_server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B496710A8CC110097A335 /* tm_server.cpp */; };
 		9CCC74B610D303D900E88D90 /* texmacs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B496A10A8CC110097A335 /* texmacs.cpp */; };
@@ -749,8 +752,6 @@
 		9CD4E6A410B14AB300E0DD5C /* data_cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B495810A8CC110097A335 /* data_cache.cpp */; };
 		9CD4E6A510B14AB300E0DD5C /* fast_alloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B495A10A8CC110097A335 /* fast_alloc.cpp */; };
 		9CD4E6A610B14AB300E0DD5C /* sys_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B495C10A8CC110097A335 /* sys_utils.cpp */; };
-		9CD4E6A710B14AB300E0DD5C /* tm_data.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B496310A8CC110097A335 /* tm_data.cpp */; };
-		9CD4E6A810B14AB300E0DD5C /* tm_file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B496410A8CC110097A335 /* tm_file.cpp */; };
 		9CD4E6A910B14AB300E0DD5C /* tm_config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B496610A8CC110097A335 /* tm_config.cpp */; };
 		9CD4E6AA10B14AB300E0DD5C /* tm_server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B496710A8CC110097A335 /* tm_server.cpp */; };
 		9CD4E6AB10B14AB300E0DD5C /* texmacs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B496A10A8CC110097A335 /* texmacs.cpp */; };
@@ -1146,6 +1147,12 @@
 		49EAD66B128AC168009919E5 /* QTMGuiHelper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMGuiHelper.hpp; sourceTree = "<group>"; };
 		49F251D2151B70840091FF99 /* persistent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = persistent.cpp; sourceTree = "<group>"; };
 		49F251D3151B70840091FF99 /* persistent.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = persistent.hpp; sourceTree = "<group>"; };
+		49F9FA0D1573BA86006C7258 /* new_buffer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = new_buffer.hpp; sourceTree = "<group>"; };
+		49F9FA0E1573BA86006C7258 /* new_project.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = new_project.cpp; sourceTree = "<group>"; };
+		49F9FA0F1573BA86006C7258 /* new_project.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = new_project.hpp; sourceTree = "<group>"; };
+		49F9FA101573BA86006C7258 /* new_view.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = new_view.hpp; sourceTree = "<group>"; };
+		49F9FA111573BA86006C7258 /* new_window.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = new_window.cpp; sourceTree = "<group>"; };
+		49F9FA121573BA86006C7258 /* new_window.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = new_window.hpp; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* TeXmacsQt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeXmacsQt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tm_ostream.cpp; sourceTree = "<group>"; };
 		9C060A9B10FC6D8B00C51583 /* tm_ostream.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tm_ostream.hpp; sourceTree = "<group>"; };
@@ -1572,8 +1579,6 @@
 		9C0B495E10A8CC110097A335 /* tm_configure.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tm_configure.hpp; sourceTree = "<group>"; };
 		9C0B495F10A8CC110097A335 /* tm_configure.hpp.cmake */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tm_configure.hpp.cmake; sourceTree = "<group>"; };
 		9C0B496010A8CC110097A335 /* tm_configure.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tm_configure.in; sourceTree = "<group>"; };
-		9C0B496310A8CC110097A335 /* tm_data.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tm_data.cpp; sourceTree = "<group>"; };
-		9C0B496410A8CC110097A335 /* tm_file.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tm_file.cpp; sourceTree = "<group>"; };
 		9C0B496610A8CC110097A335 /* tm_config.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tm_config.cpp; sourceTree = "<group>"; };
 		9C0B496710A8CC110097A335 /* tm_server.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tm_server.cpp; sourceTree = "<group>"; };
 		9C0B496810A8CC110097A335 /* server.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = server.hpp; sourceTree = "<group>"; };
@@ -3075,10 +3080,14 @@
 		9C0B496210A8CC110097A335 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				49F9FA0D1573BA86006C7258 /* new_buffer.hpp */,
+				49F9FA0E1573BA86006C7258 /* new_project.cpp */,
+				49F9FA0F1573BA86006C7258 /* new_project.hpp */,
+				49F9FA101573BA86006C7258 /* new_view.hpp */,
+				49F9FA111573BA86006C7258 /* new_window.cpp */,
+				49F9FA121573BA86006C7258 /* new_window.hpp */,
 				4906929A151B743F006645F4 /* new_view.cpp */,
 				493D309915190AEA00A19C3D /* new_buffer.cpp */,
-				9C0B496310A8CC110097A335 /* tm_data.cpp */,
-				9C0B496410A8CC110097A335 /* tm_file.cpp */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -3746,6 +3755,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9C25212B14FFC7BC00C62749 /* build-glue.scm in Resources */,
+				49896901152B981400DB1E9E /* TeXmacs.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4018,8 +4028,6 @@
 				9C0B4AF110A8CC110097A335 /* data_cache.cpp in Sources */,
 				9C0B4AF210A8CC110097A335 /* fast_alloc.cpp in Sources */,
 				9C0B4AF310A8CC110097A335 /* sys_utils.cpp in Sources */,
-				9C0B4AF610A8CC110097A335 /* tm_data.cpp in Sources */,
-				9C0B4AF710A8CC110097A335 /* tm_file.cpp in Sources */,
 				9C0B4AF810A8CC110097A335 /* tm_config.cpp in Sources */,
 				9C0B4AF910A8CC110097A335 /* tm_server.cpp in Sources */,
 				9C0B4AFA10A8CC110097A335 /* texmacs.cpp in Sources */,
@@ -4205,6 +4213,8 @@
 				493D309B15190AEA00A19C3D /* new_buffer.cpp in Sources */,
 				49F251D4151B70840091FF99 /* persistent.cpp in Sources */,
 				4906929B151B743F006645F4 /* new_view.cpp in Sources */,
+				49F9FA131573BA86006C7258 /* new_project.cpp in Sources */,
+				49F9FA161573BA86006C7258 /* new_window.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4381,8 +4391,6 @@
 				9CCC74AF10D303D900E88D90 /* data_cache.cpp in Sources */,
 				9CCC74B010D303D900E88D90 /* fast_alloc.cpp in Sources */,
 				9CCC74B110D303D900E88D90 /* sys_utils.cpp in Sources */,
-				9CCC74B210D303D900E88D90 /* tm_data.cpp in Sources */,
-				9CCC74B310D303D900E88D90 /* tm_file.cpp in Sources */,
 				9CCC74B410D303D900E88D90 /* tm_config.cpp in Sources */,
 				9CCC74B510D303D900E88D90 /* tm_server.cpp in Sources */,
 				9CCC74B610D303D900E88D90 /* texmacs.cpp in Sources */,
@@ -4556,6 +4564,8 @@
 				493D309C15190AEA00A19C3D /* new_buffer.cpp in Sources */,
 				49F251D6151B70840091FF99 /* persistent.cpp in Sources */,
 				4906929D151B743F006645F4 /* new_view.cpp in Sources */,
+				49F9FA151573BA86006C7258 /* new_project.cpp in Sources */,
+				49F9FA181573BA86006C7258 /* new_window.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4712,8 +4722,6 @@
 				9CD4E6A410B14AB300E0DD5C /* data_cache.cpp in Sources */,
 				9CD4E6A510B14AB300E0DD5C /* fast_alloc.cpp in Sources */,
 				9CD4E6A610B14AB300E0DD5C /* sys_utils.cpp in Sources */,
-				9CD4E6A710B14AB300E0DD5C /* tm_data.cpp in Sources */,
-				9CD4E6A810B14AB300E0DD5C /* tm_file.cpp in Sources */,
 				9CD4E6A910B14AB300E0DD5C /* tm_config.cpp in Sources */,
 				9CD4E6AA10B14AB300E0DD5C /* tm_server.cpp in Sources */,
 				9CD4E6AB10B14AB300E0DD5C /* texmacs.cpp in Sources */,
@@ -4935,6 +4943,8 @@
 				493D309A15190AEA00A19C3D /* new_buffer.cpp in Sources */,
 				49F251D5151B70840091FF99 /* persistent.cpp in Sources */,
 				4906929C151B743F006645F4 /* new_view.cpp in Sources */,
+				49F9FA141573BA86006C7258 /* new_project.cpp in Sources */,
+				49F9FA171573BA86006C7258 /* new_window.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5012,6 +5022,7 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_VERSION = "";
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = MOCs;
 			};
@@ -5026,6 +5037,7 @@
 				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_VERSION = "";
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = MOCs;
 				ZERO_LINK = NO;
@@ -5102,7 +5114,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_VERSION = "";
 				INSTALL_PATH = "$(HOME)/Applications";
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
@@ -5117,7 +5129,7 @@
 				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_VERSION = "";
 				INSTALL_PATH = "$(HOME)/Applications";
 				WRAPPER_EXTENSION = app;
 			};
@@ -5130,7 +5142,7 @@
 				ARCHS = "$(ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1)";
 				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
@@ -5146,7 +5158,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1)";
 				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;

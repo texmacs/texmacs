@@ -1,7 +1,7 @@
 
 /******************************************************************************
  * MODULE     : qt_view_widget.hpp
- * DESCRIPTION: QT view widget class
+ * DESCRIPTION: A widget with a renderer.
  * COPYRIGHT  : (C) 2008  Massimiliano Gubinelli
  *******************************************************************************
  * This software falls under the GNU general public license version 3 or later.
@@ -12,35 +12,37 @@
 #ifndef QT_VIEW_WIDGET_HPP
 #define QT_VIEW_WIDGET_HPP
 
-#include "widget.hpp"
 #include "basic_renderer.hpp"
 #include "qt_widget.hpp"
 
 class QWidget;
 
-/*!
- * \sa qt_plain_window_widget_rep
- */
+/*! A widget with a renderer.
+ 
+ TeXmacs input and output buffers are based upon this widget: qt_tm_widget_rep
+ (for the main TeXmacs window), qt_tm_embedded_widget_rep (for simpler, 
+ auxilliary texmacs input buffers without toolbars, etc.) and
+ qt_simple_widget_rep inherit from this class. The latter is a bit different
+ because it is subclassed many times across all of TeXmacs.
+ 
+ Buffers are drawn in qt_view_widgets (...)
+ 
+ 
+*/
 class qt_view_widget_rep: public qt_widget_rep {
 public:
-  QWidget *view;
   basic_renderer current_renderer;
   
 public:
-  qt_view_widget_rep (QWidget *v);
+  qt_view_widget_rep (QWidget* _view, types _type=view_widget);
   ~qt_view_widget_rep ();
-  
-  virtual void send (slot s, blackbox val);
+
+  virtual void      send (slot s, blackbox val);
   virtual blackbox query (slot s, int type_id);
-  virtual widget read (slot s, blackbox index);
-  virtual void write (slot s, blackbox index, widget w);
-  virtual void notify (slot s, blackbox new_val);
+  virtual widget    read (slot s, blackbox index);
   
-  virtual widget plain_window_widget (string s, command q);
   void set_current_renderer(basic_renderer _r) { current_renderer = _r;  }
   basic_renderer get_current_renderer() {  return current_renderer; }
-  virtual QWidget* as_qwidget () { return view ; };
-
 };
 
 

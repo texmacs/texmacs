@@ -62,9 +62,28 @@ to_qsize (const coord2 & p) {
   return QSize (p.x1*c, p.x2*c);
 }
 
+QFont
+to_qfont (int style, QFont font) {
+  if (style & WIDGET_STYLE_MINI)  // use smaller text font inside widget
+    font.setPointSize(10);
+  if (style & WIDGET_STYLE_MONOSPACED)  // use monospaced font inside widget
+    font.setFixedPitch(true);     //FIXME?
+//if (style & WIDGET_STYLE_GREY)  // use grey text font
+//    font.set += "color: #414141";
+  if (style & WIDGET_STYLE_PRESSED)   // indicate that a button is currently pressed
+    ;
+  if (style & WIDGET_STYLE_INERT)  // only render but don't associate any action to widget
+    ;
+  if (style & WIDGET_STYLE_BUTTON)  // indicate that a button should explicitly rendered as a button
+    ;
+  if (style & WIDGET_STYLE_BOLD)
+    font.setBold(true);
+  return font;
+
+}
 
 QString
-parse_tm_style(int style) {
+parse_tm_style (int style) {
   QString sheet;
   if (style & WIDGET_STYLE_MINI)  // use smaller text font inside widget
     sheet += "font-size: 10pt;";
@@ -87,12 +106,12 @@ parse_tm_style(int style) {
 
 /*! */
 QString
-to_qstylesheet(int style) {
+to_qstylesheet (int style) {
   return "* {" + parse_tm_style(style) + "}";
 }
 
 QString
-to_qstylesheet(int style, color c) {
+to_qstylesheet (int style, color c) {
   int r,g,b,a;
   get_rgb_color(c, r, g, b, a);
   a = a*100/255;
@@ -102,40 +121,68 @@ to_qstylesheet(int style, color c) {
 }
 
 
-/*! Try to convert a TeXmacs lenght (em, px, w, h) in a QSize.
- *
- * This uses the widget current size to compute relative sizes as specified
- * with "1w". This should not affect the widget size in that particular case.
- * 
- * FIXME: does 1w mean 100% of the contents' size or 100% of the available size?
+/*! Try to convert a TeXmacs lenght (em, px, w, h) into a QSize.
+ 
+ This uses the widget's current size to compute relative sizes as specified
+ with "FFw", where FF is the string representation of a double.
+ A value of "1w" should not affect the widget size.
+ 
+ FIXME: does 1w mean 100% of the contents' size or 100% of the available size?
  */
 QSize
-qt_decode_length (string width, QWidget* qwid) {
+qt_decode_length (QWidget* qwid, string width, string height) {
   QSize size;
   if (qwid)
-    size= qwid->minimumSizeHint();
+    size = qwid->minimumSizeHint();
   else 
     gui_maximal_extents (size.rwidth(), size.rheight());
   
+    // Width as a function of the default width
   if (ends (width, "w") && is_double (width (0, N(width) - 1))) {
-    double x= as_double (width (0, N(width) - 1));
+    double x = as_double (width (0, N(width) - 1));
     size.rwidth() *= x;
   }
+    // Width as a function of the default height
   else if (ends (width, "h") && is_double (width (0, N(width) - 1))) {
-    double y= as_double (width (0, N(width) - 1));
-    size.rheight() *= y;
+    double y = as_double (width (0, N(width) - 1));
+    size.rwidth() = y * size.height();
   }
+    // Absolute EM units
   else if (ends (width, "em") && is_double (width (0, N(width) - 2))) {
-    double x= as_double (width (0, N(width) - 2));
+    double x = as_double (width (0, N(width) - 2));
     if (qwid) {
       size.setWidth(x * qwid->fontInfo().pointSize()); 
     } else {
       size.setWidth(x * QApplication::font().pointSize());
     }
   }
+    // Absolute pixel units 
   else if (ends (width, "px") && is_double (width (0, N(width) - 2))) {
-    double x= as_double (width (0, N(width) - 2));
+    double x = as_double (width (0, N(width) - 2));
     size.setWidth(x);
+  }
+
+    // Height as a function of the default width
+  if (ends (height, "w") && is_double (height (0, N(height) - 1))) {
+    double x = as_double (height (0, N(height) - 1));
+    size.rheight() = x * size.width();
+  }
+    // Height as a function of the default height
+  else if (ends (height, "h") && is_double (width (0, N(width) - 1))) {
+    double y = as_double (height (0, N(height) - 1));
+    size.rheight() *= y;
+  }
+  else if (ends (height, "em") && is_double (height (0, N(height) - 2))) {
+    double y = as_double (height (0, N(height) - 2));
+    if (qwid) {
+      size.setHeight(y * qwid->fontInfo().pointSize()); 
+    } else {
+      size.setHeight(y * QApplication::font().pointSize());
+    }
+  }
+  else if (ends (height, "px") && is_double (height (0, N(height) - 2))) {
+    double y = as_double (height (0, N(height) - 2));
+    size.setHeight(y);
   }
   return size;
 }

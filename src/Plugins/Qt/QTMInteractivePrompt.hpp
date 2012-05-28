@@ -12,8 +12,8 @@
 #define QTMINTERACTIVEPROMPT_HPP
 
 #include <QWidget>
-#include "qt_widget.hpp"
 
+class qt_widget;
 
 class QTMInteractivePrompt : public QWidget
 {

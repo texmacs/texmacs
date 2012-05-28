@@ -9,30 +9,29 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include <QtGui>
-
-#include "gui.hpp"
 #include "QTMWindow.hpp"
-#include "QTMWidget.hpp"
-#include "message.hpp"
 
-#include <QEvent>
+#include <QCloseEvent>
 
-void QTMWindow::closeEvent ( QCloseEvent *event )
+void QTMPlainWindow::closeEvent (QCloseEvent* event)
 {
-  if (DEBUG_QT)   cout << "CLOSE WINDOW" << LF;
-  qt_tm_widget_rep *wid = tm_widget ();
-  if (wid) {
-    wid -> quit ();
-    needs_update ();
-    event -> ignore ();
+  if (DEBUG_QT) cout << "Close QTMPlainWindow" << LF;
+
+  if (tmwid->ref_count != 0) {
+    tmwid->send (SLOT_DESTROY, NULL);
+      // Tell QT not to close the window, qt_window_widget_rep will.
+    event->ignore ();
   }
- // QMainWindow::closeEvent (event);
+  emit closed();
 }
 
-void QTMPlainWindow::closeEvent ( QCloseEvent *event )
+void QTMWindow::closeEvent (QCloseEvent* event)
 {
-  if (DEBUG_QT)   cout << "CLOSE PLAIN WINDOW" << LF;
-  (void) event;
+  if (DEBUG_QT) cout << "Close QTMWindow" << LF;
+	
+ if (tmwid->ref_count != 0) {
+    tmwid->send (SLOT_DESTROY, NULL);
+    event->ignore ();
+  }
   emit closed();
 }

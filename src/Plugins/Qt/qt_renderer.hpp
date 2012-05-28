@@ -80,7 +80,6 @@ public:
   /***** private section *****************************************************/
 
   QPixmap *xpm_image(url file_name);
-
 };
 
 

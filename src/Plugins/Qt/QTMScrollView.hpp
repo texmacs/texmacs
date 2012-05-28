@@ -15,14 +15,28 @@
 #include <QAbstractScrollArea>
 #include <QRect>
 
-// Forward declarations.
 class QResizeEvent;
 class QPaintEvent;
 
 
-//----------------------------------------------------------------------------
-// QTMScrollView -- abstract scroll view widget.
+/*! Scroll view widget.
 
+ The current structure of the central texmacs widget (the canvas) is the 
+ following: the canvas is a derived class of QTMScrollView which being
+ a QAbstractScrollArea owns a central widget called the "viewport".
+ QAbstractScrollArea coordinates the viewport with the scrollbars and maintains
+ informations like the real extent of the working surface and the current 
+ origin which can be acted upon via the scrollbars. This setup has been 
+ augmented via another widget child of the viewport which we call the 
+ "surface". The only purpose of this widget is to provide automatic centering
+ of the working area inside the viewport. To support this we "un-wired" the
+ event redirection built-in in QAbstractScrollArea (from the viewport widget 
+ to the QAbstractScrollArea) and re-wired event redirection from the surface
+ to the QTMScrollView. All relevant events like resize, I/O events and the 
+ like which are sent to the surface are resent to the QTMScrollView for 
+ handling. This allows to concentrate all the logic in only one object.
+ See QTMSurface::event for info about the redirected events.
+*/
 class QTMScrollView : public QAbstractScrollArea {
   Q_OBJECT
 
@@ -33,20 +47,20 @@ class QTMScrollView : public QAbstractScrollArea {
 public:
   
   QTMScrollView (QWidget *_parent = NULL);
-  virtual ~QTMScrollView();
+  virtual ~QTMScrollView () { }
   
-  void setOrigin ( QPoint newOrigin ) ;
-  void setExtents ( QRect newExtents ) ;
-  QRect extents() { return p_extents; }
-  QWidget* surface() ;
-  QPoint origin() { return p_origin; }
+  void setOrigin (QPoint newOrigin);
+  void setExtents (QRect newExtents);
+  QRect extents () { return p_extents; }
+  QWidget* surface () { return p_surface; }
+  QPoint origin () { return p_origin; }
   
   // Scrolls contents so that given point is visible.
   void ensureVisible (int cx, int cy, int mx = 50, int my = 50);
   
   // Viewport/contents position converters.
-  QPoint viewportToContents ( QPoint const& pos) const { return pos + p_origin; };
-  QPoint contentsToViewport ( QPoint const& pos) const { return pos - p_origin; };
+  QPoint viewportToContents (QPoint const& pos) const { return pos + p_origin; }
+  QPoint contentsToViewport (QPoint const& pos) const { return pos - p_origin; }
   
 protected:
   
@@ -54,11 +68,11 @@ protected:
   void updateScrollBars();
   
   // Scroll area updater.
-  void scrollContentsBy(int dx, int dy);
+  void scrollContentsBy (int dx, int dy);
   
-  virtual bool viewportEvent(QEvent *e);
-  virtual bool surfaceEvent(QEvent *e);
-  virtual bool event(QEvent *e);
+  virtual bool viewportEvent (QEvent *e);
+  virtual bool surfaceEvent (QEvent *e);
+  virtual bool event (QEvent *e);
 
   friend class QTMSurface;
 };

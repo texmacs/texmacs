@@ -18,6 +18,7 @@
 #include <QLabel>
 #include <QList>
 
+#include "qt_simple_widget.hpp"
 #include "timer.hpp"
 #include "gui.hpp"
 #include "font.hpp"
@@ -33,9 +34,10 @@
 typedef class qt_gui_rep* qt_gui;
 extern qt_gui the_gui;
 class QTMGuiHelper;
-class simple_widget_rep;
 
 class qt_gui_rep {
+  widget popup_wid;
+  widget popup_win;
 public:
   bool interrupted;
   time_t interrupt_time;
@@ -78,10 +80,10 @@ public:
   void enable_notifier (socket_notifier, bool);
   
   /* queued processing */
-  void process_keypress (simple_widget_rep *wid, string key, time_t t);
-  void process_keyboard_focus (simple_widget_rep *wid, bool has_focus, time_t t);
-  void process_mouse (simple_widget_rep *wid, string kind, SI x, SI y, int mods, time_t t);
-  void process_resize (simple_widget_rep *wid, SI x, SI y);
+  void process_keypress (qt_simple_widget_rep *wid, string key, time_t t);
+  void process_keyboard_focus (qt_simple_widget_rep *wid, bool has_focus, time_t t);
+  void process_mouse (qt_simple_widget_rep *wid, string kind, SI x, SI y, int mods, time_t t);
+  void process_resize (qt_simple_widget_rep *wid, SI x, SI y);
   void process_command (command _cmd);
   void process_command (command _cmd, object _args);
   void process_socket_notification (socket_notifier sn);
@@ -94,7 +96,7 @@ public:
   //void process_clear (SI x1, SI y1, SI x2, SI y2);
   //void process_repaint (SI x1, SI y1, SI x2, SI y2);
   
-  
+  void show_help_balloon (widget wid, SI x, SI y);
 };
 
 void force_update(); 

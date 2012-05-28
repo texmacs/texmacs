@@ -7,9 +7,6 @@ Port notes
   On Mac we can use the Apple Distiller instead of ghostscript to interpret pdf 
   and ps images. (What about Windows?)
 
-* gui.hpp:void show_help_balloon is useful only in the X11 port.
-  Maybe remove from the abstract interface.
-
 * wait_widget seems do not belong to the abstract interface 
   (it is not called in texmacs code)  
   

@@ -79,6 +79,7 @@ new_window (bool map_flag= true, tree geom= "") {
   if (get_preference ("focus dependent icons") == "on") mask += 8;
   if (get_preference ("user provided icons") == "on") mask += 16;
   if (get_preference ("status bar") == "on") mask += 32;
+  if (get_preference ("side tools") == "on") mask += 64;
   command quit= tm_new<kill_window_command_rep> ();
   tm_window win= tm_new<tm_window_rep> (texmacs_widget (mask, quit), geom);
   tm_window_table (win->id)= win;

@@ -12,6 +12,7 @@
 #include <QtGui>
 
 #include "QTMWidget.hpp"
+#include "qt_widget.hpp"
 #include "qt_renderer.hpp"
 #include "qt_gui.hpp"
 #include "qt_utilities.hpp"
@@ -29,7 +30,7 @@
 #include <QX11Info>
 extern Drawable qt_x11Handle(const QPaintDevice *pd);
 extern const QX11Info *qt_x11Info(const QPaintDevice *pd);
-#undef KeyPress  // conflict between QEvent::KeyPrees and X11 defintion
+#undef KeyPress  // conflict between QEvent::KeyPress and X11 defintion
 #endif // Q_WS_X11
 
 #endif // USE_CAIRO
@@ -150,20 +151,41 @@ initkeymap () {
 }
 
 
-
-QTMWidget::QTMWidget (simple_widget_rep *_wid) 
-  : QTMScrollView (), backingPixmap(), imwidget(NULL) {
+/*! Constructor
+ 
+  \param _parent The parent QWidget.
+  \param _tmwid the TeXmacs widget who owns this object.
+ */
+QTMWidget::QTMWidget (QWidget* _parent, qt_simple_widget_rep* _tmwid) 
+  : QTMScrollView (_parent), backingPixmap(1,1), tmwid(_tmwid), imwidget(NULL)
+{
   setObjectName("A QTMWidget");
-  setProperty ("texmacs_widget", QVariant::fromValue ((void*) _wid));
   surface()->setMouseTracking (true);
+
+  if (tmwid) {
+    int width, height;
+    tmwid->handle_get_size_hint (width, height);
+    QSize sz = QSize (width/PIXEL, height/PIXEL);
+    surface()->resize(sz);
+  }
   setFocusPolicy (Qt::StrongFocus);
   backing_pos = origin();
   setAttribute(Qt::WA_InputMethodEnabled);
+  all_widgets.insert(this);
 }
 
 
 QTMWidget::~QTMWidget () {
-  if (DEBUG_QT) cout << "destroying " << this << LF;
+  if (DEBUG_QT) cout << "destroying QTMWidget: " << (long)this << LF;
+  
+    // remove ourselves from the list of QWidgets to be repainted.
+  all_widgets.remove(this);
+    // remove ourselves from the containing stack (if any) or we'll crash
+    // when it gets freed.
+    // FIXME: Under what conditions happens this after ~QTMWidget?
+  QStackedWidget* stack = qobject_cast<QStackedWidget*> (parentWidget());
+  if (stack)
+    stack->removeWidget(this);
 }
 
 void 
@@ -220,20 +242,21 @@ QTMWidget::getRenderer() {
   return ren;
 }
 
+/*
+ This function is called by the qt_gui::update method to keep the backing
+ store in sync and propagate the changes to the surface on screen.
+ First we check that the backing store geometry is right and then we
+ request to the texmacs canvas widget to repaint the regions which were
+ marked invalid. Subsequently, for each succesfully repainted region, we
+ propagate its contents from the backing store to the onscreen surface.
+ If repaint has been interrupted we do not propagate the changes and proceed
+ to mark the region invalid again.
+*/
 void
 QTMWidget::repaint_invalid_regions () {
 
-  // this function is called by the qt_gui::update method to keep the backing
-  // store in sync and propagate the changes to the surface on screen.
-  // first we check that the backing store geometry is right and then we
-  // request to the texmacs canvas widget to repaint the regions which were
-  // marked invalid. Subsequently, for each succesfully repainted region, we
-  // propagate its contents from the backing store to the onscreen surface.
-  // If repaint has been interrupted we do not propagate the changes and proceed
-  // to mark the region invalid again.
-
   QRegion qrgn; 
-  // qrgn is to keep track of the area on the sceen which needs to be updated 
+  // qrgn is to keep track of the area on the screen which needs to be updated 
 
   // update backing store origin wrt. TeXmacs document
   if ( backing_pos != origin() ) {
@@ -261,9 +284,8 @@ QTMWidget::repaint_invalid_regions () {
       //cout << r << " ---> " << q << LF;
       invalid_regions = invalid_regions->next;
     }
-    invalid_regions= invalid & 
-    rectangles(rectangle(0,0,
-                         sz.width(),sz.height())) ;
+    invalid_regions= invalid & rectangles(rectangle(0,0,
+                                                    sz.width(),sz.height()));
     
     if (dy<0) 
       invalidate_rect(0,0,sz.width(),min(sz.height(),-dy));
@@ -275,8 +297,8 @@ QTMWidget::repaint_invalid_regions () {
     else if (dx>0)
       invalidate_rect(max(0,sz.width()-dx),0,sz.width(),sz.height());
     
-    // we cal update now to allow repainint of invalid regions
-    // this cannot be done directly since interpose handler needs
+    // we call update now to allow repainting of invalid regions
+    // this cannot be done directly since interpose_handler needs
     // to be run at least once in some situations
     // (for example when scrolling is initiated by TeXmacs itself)
     //the_gui->update();
@@ -285,11 +307,26 @@ QTMWidget::repaint_invalid_regions () {
     qrgn += QRect(QPoint(0,0),sz);
   }
   
-  
+    //cout << "   repaint QPixmap of size " << backingPixmap.width() << " x " 
+    // << backingPixmap.height() << LF;
   // update backing store size
   {
     QSize _oldSize = backingPixmap.size();
     QSize _newSize = surface()->size();
+    
+    /*
+      /////// HACK ALERT! HACK ALERT! HACK ALERT! HACK ALERT!
+    if (_newSize.width() == 0 || _newSize.height() == 0) { 
+      int width, height;
+      tmwid->handle_get_size_hint (width, height);
+      _newSize = QSize (width/PIXEL, height/PIXEL);
+      surface()->resize(_newSize);
+    }
+     */
+      //cout << "      surface size of " << _newSize.width() << " x " 
+      // << _newSize.height() << LF;
+    
+    
     if (_newSize != _oldSize) {
       // cout << "RESIZING BITMAP"<< LF;
       QPixmap newBackingPixmap (_newSize);
@@ -318,14 +355,14 @@ QTMWidget::repaint_invalid_regions () {
         invalid_regions= rectangles (lub);
       
       basic_renderer_rep* ren = getRenderer();
-      tm_widget()->set_current_renderer(ren);
+      tmwid->set_current_renderer(ren);
       
       SI ox = -backing_pos.x()*PIXEL;
       SI oy = backing_pos.y()*PIXEL;
       
       rectangles rects = invalid_regions;
       invalid_regions = rectangles();
-      
+
       while (!is_nil (rects)) {
         rectangle r = copy (rects->item);
         rectangle r0 = rects->item;
@@ -335,7 +372,7 @@ QTMWidget::repaint_invalid_regions () {
         ren->encode (r->x1, r->y1);
         ren->encode (r->x2, r->y2);
         ren->set_clipping (r->x1, r->y2, r->x2, r->y1);
-        tm_widget()->handle_repaint (r->x1, r->y2, r->x2, r->y1);
+        tmwid->handle_repaint (r->x1, r->y2, r->x2, r->y1);
         if (ren->interrupted ()) {
           //cout << "interrupted repainting of  " << r0 << "\n";
           //ren->set_color(green);
@@ -347,7 +384,7 @@ QTMWidget::repaint_invalid_regions () {
         rects = rects->next;
       }
       
-      tm_widget()->set_current_renderer(NULL);
+      tmwid->set_current_renderer(NULL);
       ren->end();
     } // !is_nil(invalid_regions)
     
@@ -374,11 +411,11 @@ QTMWidget::resizeEvent( QResizeEvent* event ) {
   // cout << "QTMWidget::resizeEvent (" << event->size().width()
   //      << "," << event->size().height() << ")" << LF;
   
-  the_gui -> process_resize(tm_widget(), 0, 0); // FIXME
+  the_gui -> process_resize(tmwid, 0, 0); // FIXME
 
   // force_update();
 
-  //FIXME: I would like to have a force_update here but this cause a failed
+  //FIXME: I would like to have a force_update here but this causes a failed
   //assertion in TeXmacs since the at the boot not every internal structure is
   //initialized at this point. It seems not too difficult to fix but I
   //postpone this to discuss with Joris. 
@@ -389,17 +426,16 @@ QTMWidget::resizeEvent( QResizeEvent* event ) {
 
 
 
-
+/*!
+ In the current implementation repainting takes place during the call to
+ the widget's repaint_invalid_regions() method in the_gui::update. All
+ we have to do is to take the backing store and put it on screen according
+ to the QRegion marked invalid. 
+ CHECK: Maybe just putting onscreen all the region bounding rectangles might 
+ be less expensive.
+*/
 void
 QTMWidget::paintEvent (QPaintEvent* event) {
-  // In the current implementation repainting take place during the call to
-  // the widget's repaint_invalid_regions method in the_gui::update. All
-  // we have to do is to take the backing store and put it on screen according
-  // to the QRegion marked invalid. 
-  // CHECK: Maybe just put onscreen all the region bounding rectangle could not 
-  // be so expensive.
-  
-  
   if (DEBUG_QT) 
   {
     QRect rect = event->rect ();
@@ -431,8 +467,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
 
   if (DEBUG_QT)
     cout << "keypressed\n";
-  simple_widget_rep *wid =  tm_widget();
-  if (!wid) return;
+  if (tmwid->ref_count == 0) return;
 
   {
     int key = event->key();
@@ -460,7 +495,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
         if (ac && ac != ' ') { // a true ascii printable
           r= ac;
           if (DEBUG_QT) cout << "ascii key= " <<r << "\n";	
-          the_gui->process_keypress(wid, r, texmacs_time());
+          the_gui->process_keypress(tmwid, r, texmacs_time());
           return;
         }
       }
@@ -505,14 +540,14 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
             QByteArray buf= nss.toUtf8();
             string rr (buf.constData(), buf.count());
             string tstr= utf8_to_cork (rr);
-            // HACK! The encodings defined in langs/encoding and which utf8_to_cork uses
-            // (via the converters loaded in converter_rep::load()), enclose the texmacs
-            // symbols in "< >", but this seems to be an abandoned convention (or not
-            // used for keypresses), so we must remove them. (MBD)
+            // HACK! The encodings defined in langs/encoding and which
+            // utf8_to_cork uses (via the converters loaded in
+            // converter_rep::load()), enclose the texmacs symbols in "< >", 
+            // but this format is not used for keypresses, so we must remove
+            // them.
             int len= N(tstr);
-            if (len >= 1 && tstr(0,1) == "<" && 
-                tstr(1,2) != "#" && tstr(len-1,len) == ">")  
-	      r= tstr(1, len-1);
+            if (len >= 1 && tstr(0,1) == "<" && tstr(len-1,len) == ">")
+              r= tstr(1, len-1);
             else
               r= tstr;
             if (r == "less") r= "<";
@@ -546,8 +581,8 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
     if (DEBUG_QT)
       cout << "key press: " << r << LF;
     //int start= texmacs_time ();
-    //wid -> handle_keypress (r, texmacs_time());
-    the_gui -> process_keypress (wid, r, texmacs_time());
+    //tmwid -> handle_keypress (r, texmacs_time());
+    the_gui -> process_keypress (tmwid, r, texmacs_time());
     //int end= texmacs_time ();
     //if (end > start) cout << "Keypress " << end - start << "\n";
     //the_gui->update (); // FIXME: remove this line when
@@ -757,9 +792,8 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     
     r = r * as_string(pos) * ":" * from_qstring(preedit_string);
   }
-  simple_widget_rep *wid =  tm_widget();
-  if (wid)
-    the_gui -> process_keypress (wid, r, texmacs_time());
+  if (tmwid->ref_count != 0)
+    the_gui -> process_keypress (tmwid, r, texmacs_time());
   event->accept();
 }  
 
@@ -780,50 +814,56 @@ QTMWidget::inputMethodQuery ( Qt::InputMethodQuery query ) const {
 
 void
 QTMWidget::mousePressEvent (QMouseEvent* event) {
-  simple_widget_rep *wid= tm_widget ();
-  if (!wid) return;
+  if (tmwid->ref_count == 0) return;
   QPoint point = event->pos() + origin();
   scale (point);
   unsigned int mstate= mouse_state (event, false);
   string s= "press-" * mouse_decode (mstate);
-  the_gui -> process_mouse (wid, s, point.x (), point.y (), 
+  the_gui -> process_mouse (tmwid, s, point.x (), point.y (), 
                             mstate, texmacs_time ());
- // wid -> handle_mouse (s, point.x (), point.y (), mstate, texmacs_time ());
+ // tmwid -> handle_mouse (s, point.x (), point.y (), mstate, texmacs_time ());
+  /*
   if (DEBUG_QT)
     cout << "mouse event: " << s << " at "
          << point.x () << ", " << point.y () << LF;
+   */
+  event->accept();
 }
 
 void
 QTMWidget::mouseReleaseEvent (QMouseEvent* event) {
-  simple_widget_rep *wid = tm_widget();
-  if (!wid) return;
+  if (tmwid->ref_count == 0) return;
   QPoint point = event->pos() + origin();
   scale (point);
   unsigned int mstate= mouse_state (event, true);
   string s= "release-" * mouse_decode (mstate);
-  the_gui -> process_mouse (wid, s, point.x (), point.y (), 
+  the_gui -> process_mouse (tmwid, s, point.x (), point.y (), 
                             mstate, texmacs_time ());
-//  wid -> handle_mouse (s, point.x (), point.y (), mstate, texmacs_time ());
+//  tmwid -> handle_mouse (s, point.x (), point.y (), mstate, texmacs_time ());
+  /*
   if (DEBUG_QT)
     cout << "mouse event: " << s << " at "
          << point.x () << ", " << point.y () << LF;
+   */
+  event->accept();
 }
 
 void
 QTMWidget::mouseMoveEvent (QMouseEvent* event) {
-  simple_widget_rep *wid = tm_widget();
-  if (!wid) return;
+  if (tmwid->ref_count == 0) return;
   QPoint point = event->pos() + origin();
   scale (point);
   unsigned int mstate= mouse_state (event, false);
   string s= "move";
-  the_gui -> process_mouse (wid, s, point.x (), point.y (), 
+  the_gui -> process_mouse (tmwid, s, point.x (), point.y (), 
                             mstate, texmacs_time ());
-//  wid -> handle_mouse (s, point.x (), point.y (), mstate, texmacs_time ());
+//  tmwid -> handle_mouse (s, point.x (), point.y (), mstate, texmacs_time ());
+  /*
   if (DEBUG_QT)
     cout << "mouse event: " << s << " at "
          << point.x () << ", " << point.y () << LF;
+   */
+  event->accept();
 }
 
 
@@ -840,22 +880,20 @@ QTMWidget::event (QEvent* event) {
 
 void
 QTMWidget::focusInEvent ( QFocusEvent * event ) {
-  if (DEBUG_QT) cout << "FOCUSIN" << LF;
-  simple_widget_rep *wid = tm_widget ();
-  if (wid) {
-    the_gui -> process_keyboard_focus (wid, true, texmacs_time());
-    //wid -> handle_keyboard_focus (true, texmacs_time ());
+  if (tmwid->ref_count != 0) {
+    if (DEBUG_QT) cout << "FOCUSIN: " << tmwid->type_as_string() << LF;
+    the_gui -> process_keyboard_focus (tmwid, true, texmacs_time());
+    //tmwid -> handle_keyboard_focus (true, texmacs_time ());
   }
   QTMScrollView::focusInEvent (event);
 }
 
 void
 QTMWidget::focusOutEvent ( QFocusEvent * event ) {
-  if (DEBUG_QT)   cout << "FOCUSOUT" << LF;
-  simple_widget_rep *wid = tm_widget ();
-  if (wid) {
-    the_gui -> process_keyboard_focus (wid, false, texmacs_time());
-//    wid -> handle_keyboard_focus (false, texmacs_time ());
+  if (tmwid->ref_count != 0) {
+    if (DEBUG_QT) cout << "FOCUSOUT: " << tmwid->type_as_string() << LF;
+    the_gui -> process_keyboard_focus (tmwid, false, texmacs_time());
+//    tmwid -> handle_keyboard_focus (false, texmacs_time ());
   }
   QTMScrollView::focusOutEvent (event);
 }

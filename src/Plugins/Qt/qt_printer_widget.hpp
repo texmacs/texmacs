@@ -36,8 +36,8 @@ public:
   qt_printer_widget_rep (command, url);
   ~qt_printer_widget_rep () { };
   
-  virtual void          send (slot s, blackbox val);
-  widget plain_window_widget (string s, command q);
+  virtual void send (slot s, blackbox val);
+  virtual widget plain_window_widget (string s, command q);
 
   void showDialog ();
 

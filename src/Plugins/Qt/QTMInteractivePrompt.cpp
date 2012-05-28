@@ -9,9 +9,9 @@
  ******************************************************************************/
 
 #include "QTMInteractivePrompt.hpp"
-
-#include <QHBoxLayout>
 #include "QTMStyle.hpp"
+#include "qt_widget.hpp"
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
 

@@ -230,8 +230,6 @@ void qt_gui_rep::set_mouse_pointer (string curs_name, string mask_name)
 
 void
 qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
-  (void) w; (void) message; (void) arg;
-  
   if (DEBUG_QT)  cout << "show_wait_indicator \"" << message << "\"\"" << arg << "\"" << LF;
 
   qt_window_widget_rep *wid = static_cast<qt_window_widget_rep*> (w.rep);
@@ -244,7 +242,7 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
   //FIXME: we must center the wait widget wrt the current active window
   
   if (!waitWindow) {
-    waitWindow = new QWidget (wid->wid->window());
+    waitWindow = new QWidget (wid->qwid->window());
     waitWindow->setWindowFlags (Qt::Window | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     QStackedLayout *layout = new QStackedLayout();
     layout->setSizeConstraint(QLayout::SetFixedSize);
@@ -283,7 +281,7 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
       // processEvents is needed to let Qt update windows coordinates in the case
       qApp->processEvents();
       //ENDHACK
-      QPoint pt = wid->wid->window()->geometry().center();
+      QPoint pt = wid->qwid->window()->geometry().center();
       rect.moveCenter(pt);
       waitWindow->move(rect.topLeft());
       
@@ -503,7 +501,7 @@ gui_maximal_extents (SI& width, SI& height) {
 void
 gui_refresh () {
   // called upon change of output language
-  // emit a signal which force every QTMAction to change his text
+  // emit a signal which forces every QTMAction to change his text
   // according to the new language
 
   the_gui->gui_helper->doRefresh();
@@ -755,17 +753,27 @@ add_event(const queued_event &ev)
 }
 
 void 
-qt_gui_rep::process_keypress (simple_widget_rep *wid, string key, time_t t) {
+qt_gui_rep::process_keypress (qt_simple_widget_rep *wid, string key, time_t t) {
   typedef triple<widget, string, time_t > T;
+  if (wid->type != qt_widget_rep::simple_widget) {
+    if (DEBUG_QT)
+      cout << "WTF! Situation] process_keypress() for non simple_widget.\n";
+    return;
+  }
   add_event( queued_event ( QP_KEYPRESS, close_box<T> (T(wid, key, t)))); 
  // wid -> handle_keypress (key, t);
  // needs_update ();
 }
 
 void 
-qt_gui_rep::process_keyboard_focus ( simple_widget_rep *wid, bool has_focus, 
+qt_gui_rep::process_keyboard_focus (qt_simple_widget_rep *wid, bool has_focus, 
                                      time_t t ) {
   typedef triple<widget, bool, time_t > T;
+  if (wid->type != qt_widget_rep::simple_widget) {
+    if (DEBUG_QT)
+      cout << "WTF! Situation] process_keyboard_focus() for non simple_widget.\n";
+    return;
+  }
   add_event( 
     queued_event ( QP_KEYBOARD_FOCUS, close_box<T> (T(wid, has_focus, t)))); 
   //wid -> handle_keyboard_focus (has_focus, t);
@@ -773,10 +781,15 @@ qt_gui_rep::process_keyboard_focus ( simple_widget_rep *wid, bool has_focus,
 }
 
 void 
-qt_gui_rep::process_mouse ( simple_widget_rep *wid, string kind, SI x, SI y, 
+qt_gui_rep::process_mouse (qt_simple_widget_rep *wid, string kind, SI x, SI y, 
                             int mods, time_t t ) {
   typedef quintuple<string, SI, SI, int, time_t > T1;
   typedef pair<widget, T1> T;
+  if (wid->type != qt_widget_rep::simple_widget) {
+    if (DEBUG_QT)
+      cout << "WTF! Situation] process_mouse() for non simple_widget.\n"; 
+    return;
+  }
   add_event ( 
     queued_event ( QP_MOUSE, close_box<T> ( T (wid, T1 (kind, x, y, mods, t))))); 
 //  wid -> handle_mouse (kind, x, y, mods, t);
@@ -784,8 +797,13 @@ qt_gui_rep::process_mouse ( simple_widget_rep *wid, string kind, SI x, SI y,
 }
 
 void 
-qt_gui_rep::process_resize ( simple_widget_rep *wid, SI x, SI y ) {
+qt_gui_rep::process_resize (qt_simple_widget_rep *wid, SI x, SI y ) {
   typedef triple<widget, SI, SI > T;
+  if (wid->type != qt_widget_rep::simple_widget) {
+    if (DEBUG_QT)
+      cout << "WTF! Situation] process_resize() for non simple_widget.\n";    
+    return;
+  }
   add_event(  queued_event ( QP_RESIZE, close_box<T> (T(wid, x, y)))); 
 //  wid -> handle_notify_resize (x, y);
 //  needs_update ();
@@ -940,11 +958,11 @@ qt_gui_rep::update () {
     QSetIterator<QTMWidget*> i(QTMWidget::all_widgets);
     while (i.hasNext()) {
       QTMWidget *w = i.next();
-      w->repaint_invalid_regions();
+      if (w->isVisible())
+        w->repaint_invalid_regions();
     }
     //cout << "AND END" << LF;
   }
-  
   
   if (N(waiting_events) > 0) needing_update = true;
   if (interrupted) needing_update = true;
@@ -972,7 +990,24 @@ qt_gui_rep::update () {
   //        The interval cannot be too small to keep CPU usage low in idle state
 } 
 
-
+/*
+ FIXME: implement fade out of popup after mouse out events, etc.
+ Maybe use a dedicated wrapper QWidget which handles events, giving it the
+ focus and which releases it as soon as some key is pressed or the mouse is
+ moved out of it (problem: the widget need not appear below the mouse pointer,
+ thus making it impossible to access links or widgets inside it.
+ Solution?: as soon as the mouse moves (out of the widget), start a timer, 
+ giving enough time to the user to move (back) into the widget, then abort the
+ close operation if he gets there.
+ */
+void
+qt_gui_rep::show_help_balloon (widget wid, SI x, SI y) {
+  popup_wid= popup_widget (wid);
+  popup_win= popup_window_widget(popup_wid, "Balloon");
+  set_position (popup_win, x, y);
+  set_visibility(popup_win, true);
+    //send_mouse_grab(popup_win, true);
+}
 
 /******************************************************************************
 * Font support
@@ -1082,7 +1117,7 @@ void
 show_help_balloon (widget balloon, SI x, SI y) {
   // Display a help balloon at position (x, y); the help balloon should
   // disappear as soon as the user presses a key or moves the mouse
-  (void) balloon; (void) x; (void) y;
+  the_gui->show_help_balloon(balloon, x, y);
 }
 
 void
@@ -1091,7 +1126,7 @@ show_wait_indicator (widget base, string message, string argument) {
   // The indicator might for instance be displayed at the center of
   // the base widget which triggered the lengthy operation;
   // the indicator should be removed if the message is empty
-  the_gui->show_wait_indicator(base,message,argument);
+  the_gui->show_wait_indicator(base, message, argument);
 }
 
 void
@@ -1099,7 +1134,7 @@ external_event (string type, time_t t) {
   // External events, such as pushing a button of a remote infrared commander
   QTMWidget *tm_focus = qobject_cast<QTMWidget*>(qApp->focusWidget());
   if (tm_focus) {
-    simple_widget_rep *wid = tm_focus->tm_widget();
+    simple_widget_rep* wid = tm_focus->tm_widget();
     if (wid) the_gui -> process_keypress (wid, type, t);
   }
 }
