@@ -243,9 +243,12 @@ latex_symbol_to_tree (string s) {
     }
 
     if ((latex_type (s) == "modifier") && (latex_arity (s) == 0)) {
-      if (s == "centering")   return tree (SET, PAR_MODE, "center");
-      if (s == "raggedright") return tree (SET, PAR_MODE, "left");
-      if (s == "raggedleft")  return tree (SET, PAR_MODE, "right");
+      if (s == "centering")
+        return tree (SET, PAR_MODE, "center");
+      if (s == "raggedright" || s == "flushleft")
+        return tree (SET, PAR_MODE, "left");
+      if (s == "raggedleft" || s == "flushright")
+        return tree (SET, PAR_MODE, "right");
 
       if (s == "rmfamily") return tree (SET, FONT_FAMILY, "rm");
       if (s == "ttfamily") return tree (SET, FONT_FAMILY, "tt");
