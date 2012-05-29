@@ -1015,6 +1015,8 @@ latex_command_to_tree (tree t) {
     }
   if (is_tuple (t, "\\citetext", 1))
     return compound ("render-cite", l2e (t[1]));
+  if (is_tuple (t, "\\onlinecite", 1))
+    return compound ("cite-arg", l2e (t[1]));
   if (is_tuple (t, "\\citeauthor", 1)) {
     textm_natbib= true; return compound ("cite-author-link", t2e (t[1])); }
   if (is_tuple (t, "\\citeauthor*", 1)) {

@@ -67,7 +67,7 @@
   phantom hphantom vphantom smash
   newcounter stepcounter refstepcounter value
   citet citep citet* citep* citealt citealp citealt* citealp*
-  citetext citeauthor citeauthor* citeyear
+  citetext citeauthor citeauthor* citeyear onlinecite
   epsfig url penalty centerline fbox framebox
   enlargethispage
   newlength newdimen newskip)
