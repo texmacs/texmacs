@@ -227,7 +227,11 @@ latex_symbol_to_tree (string s) {
       if (s == "implies")    return "<Longrightarrow>";
       if (s == "iff")        return "<Longleftrightarrow>";
       if (s == "gets")       return "<leftarrow>";
-      if (s == "printindex") return compound("the-index", "idx", "");
+      if (s == "printindex") return compound ("the-index", "idx", "");
+      if (s == "twocolumn")
+        return tree (SET, "par-columns", "2");
+      if (s == "onecolumn")
+        return tree (SET, "par-columns", "1");
     }
 
     if (latex_type (s) == "symbol") {
@@ -1512,6 +1516,16 @@ finalize_layout (tree t) {
 	  if (is_func (u[i], IMAGE)) r << u[i];
 	  else if (is_func (u[i], END, 1) && (u[i][0] == "picture"))
 	    break;
+	continue;
+      }
+
+      if (is_func (v, BEGIN) && ((v[0] == "multicols"))) {
+	r << tree (SET, "par-columns", v[1]);
+	continue;
+      }
+
+      if (is_func (v, END, 1) && (v[0] == "multicols")) {
+	r << tree (RESET, "par-columns");
 	continue;
       }
 

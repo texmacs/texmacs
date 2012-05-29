@@ -32,7 +32,7 @@
   noindent newline linebreak nobreak nolinebreak allowbreak
   pagebreak nopagebreak newpage newdoublepage clearpage cleardoublepage
   newblock bgroup egroup protect cr date hfill appendix limits nolimits
-  dots maketitle tableofcontents TeX LaTeX
+  dots maketitle tableofcontents TeX LaTeX onecolumn twocolumn
   begingroup endgroup printindex
 
   ;; AMS commands
@@ -145,7 +145,7 @@
   begin-figure begin-table)
 
 (logic-group latex-environment-1%
-  begin-tabbing begin-thebibliography)
+  begin-tabbing begin-thebibliography begin-multicols)
 
 (logic-group latex-environment-1*%
   begin-array begin-tabular)
