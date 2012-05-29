@@ -354,9 +354,9 @@
 
 (menu-bind paragraph-menu
   (-> "Alignment"
-      ("Left ragged" (make-line-with "par-mode" "left"))
+      ("Left aligned" (make-line-with "par-mode" "left"))
       ("Centered" (make-line-with "par-mode" "center"))
-      ("Right ragged" (make-line-with "par-mode" "right"))
+      ("Right aligned" (make-line-with "par-mode" "right"))
       ---
       ("Justified" (make-line-with "par-mode" "justify"))
       ("Flexibility" (make-interactive-line-with "par-flexibility")))

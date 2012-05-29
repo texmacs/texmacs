@@ -502,9 +502,9 @@
 	  ("Default" (init-default "par-mode"))
 	  ---
 	  ("Justified" (init-env "par-mode" "justify"))
-	  ("Left ragged" (init-env "par-mode" "left"))
+	  ("Left aligned" (init-env "par-mode" "left"))
 	  ("Centered" (init-env "par-mode" "center"))
-	  ("Right ragged" (init-env "par-mode" "right")))
+	  ("Right aligned" (init-env "par-mode" "right")))
       (-> "Hyphenation"
 	  ("Default" (init-default "par-hyphen"))
 	  ---
