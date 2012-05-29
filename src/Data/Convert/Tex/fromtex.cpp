@@ -183,6 +183,7 @@ latex_symbol_to_tree (string s) {
       if (s == "newdoublepage")   return tree (FORMAT, "new double page");
       if (s == "clearpage")       return tree (FORMAT, "new page");
       if (s == "cleardoublepage") return tree (FORMAT, "new double page");
+      if (s == "allowbreak")      return "";
       if (s == "!")         return tree (SPACE, "-0.25spc");
       if (s == ",")         return tree (SPACE, "0.25spc");
       if (s == ":")         return tree (SPACE, "0.5spc");
