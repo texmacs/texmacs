@@ -161,13 +161,15 @@ QTMWidget::QTMWidget (QWidget* _parent, qt_simple_widget_rep* _tmwid)
 {
   setObjectName("A QTMWidget");
   surface()->setMouseTracking (true);
-
+  
+/* Crash when compiled from the command line but not within XCode?!?!?
   if (tmwid) {
     int width, height;
     tmwid->handle_get_size_hint (width, height);
     QSize sz = QSize (width/PIXEL, height/PIXEL);
     surface()->resize(sz);
   }
+*/
   setFocusPolicy (Qt::StrongFocus);
   backing_pos = origin();
   setAttribute(Qt::WA_InputMethodEnabled);
