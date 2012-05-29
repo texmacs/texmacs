@@ -174,7 +174,8 @@
   displaystyle textstyle scriptstyle scriptscriptstyle cal frak Bbb
   tiny scriptsize footnotesize small normalsize
   large Large LARGE huge Huge
-  black white grey red blue yellow green orange magenta brown pink)
+  black white grey red blue yellow green orange magenta brown pink
+  centering raggedleft raggedright)
 
 (logic-group latex-modifier-1%
   textrm texttt textsf textmd textbf textup textit textsl textsc emph
