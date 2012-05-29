@@ -29,7 +29,12 @@ class qt_simple_widget_rep: public qt_view_widget_rep {
   
 public:
   qt_simple_widget_rep ()	
-    : qt_view_widget_rep (new QTMWidget (0, this), simple_widget) { }
+    : qt_view_widget_rep (new QTMWidget (0, 0), simple_widget) { 
+      // QTMWidget needs a pointer to an initiliazed qt_simple_widget_rep object
+      // That's why we use set_tm_widget(), instead of passing "this" in the
+      // initialization list, i.e.: "new QTMWidget(0, this)" is wrong.
+    static_cast<QTMWidget*>(qwid)->set_tm_widget(this); 
+  }
 
   virtual void handle_get_size_hint (SI& w, SI& h);
   virtual void handle_notify_resize (SI w, SI h);
@@ -44,12 +49,10 @@ public:
   virtual blackbox query (slot s, int type_id);
 
   virtual QAction* as_qaction();
-  virtual QWidget* get_canvas() { return qwid; }
-protected:
   QTMWidget* canvas () { return static_cast<QTMWidget*>(qwid); }
 };
 
-inline qt_simple_widget_rep *concrete_simple_widget (widget w) { 
+inline qt_simple_widget_rep* concrete_simple_widget (widget w) { 
   return static_cast<qt_simple_widget_rep*>(w.rep); 
 }
 

@@ -716,7 +716,8 @@ qt_tm_widget_rep::query (slot s, int type_id) {
     case SLOT_INTERACTIVE_INPUT:
       TYPE_CHECK (type_id == type_helper<string>::id);
     {
-      qt_input_text_widget_rep* w =((qt_input_text_widget_rep*) int_input.rep);
+      qt_input_text_widget_rep* w = 
+        static_cast<qt_input_text_widget_rep*>(int_input.rep);
       if (w->ok) {
         return close_box<string>(scm_quote(w->text));
       } else {
@@ -735,7 +736,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
 
 void
 qt_tm_widget_rep::install_main_menu () {
-  widget tmp = main_menu_widget;
+    //widget tmp = main_menu_widget;
   main_menu_widget = waiting_main_menu_widget;
   QMenu* m= concrete (main_menu_widget)->get_qmenu();
   if (m) {
@@ -747,7 +748,7 @@ qt_tm_widget_rep::install_main_menu () {
       //     mainwindow()->setMenuBar(dest);
       //
       // as the default behavior on MacOS. The main reason is that in TeXmacs
-      // different widows can have different main menus so that it is indeed
+      // different windows can have different main menus so that it is indeed
       // appropriate to change the main menu as the window focus changes. 
       // So we kindly ask to each window to give us its own menu and we install
       // there our actions.
@@ -786,7 +787,8 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     {
       check_type_void (index, "SLOT_SCROLLABLE");
       QStackedWidget* tw= centralwidget();
-      QWidget* new_widget= concrete(w)->get_canvas();
+      qt_simple_widget_rep* wid= static_cast<qt_simple_widget_rep*>(w.rep);
+      QWidget* new_widget= wid->canvas();
       QWidget* old_widget= tw->currentWidget();
       if (old_widget) {
         tw->removeWidget(old_widget);
@@ -933,7 +935,7 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
  ******************************************************************************/
 
 qt_tm_embedded_widget_rep::qt_tm_embedded_widget_rep (command _quit) 
-  : qt_view_widget_rep(new QTMWidget(0), embedded_tm_widget), quit(_quit) { }
+  : qt_view_widget_rep(new QTMWidget(0, 0), embedded_tm_widget), quit(_quit) { }
 
 qt_tm_embedded_widget_rep::~qt_tm_embedded_widget_rep () { }
 
@@ -1063,19 +1065,19 @@ qt_tm_embedded_widget_rep::write (slot s, blackbox index, widget w) {
 
   switch (s) {
         // Widget w is a qt_simple_widget_rep, with a QTMWidget as underlying
-        // widget. We must discard the current QWidget and display the new.
-        // Also, because upon construction we had no pointer to the owning
-        // tm-widget, we set it here.
+        // widget. We must discard the current QTMWidget and display the new.
+        // Also, because upon construction we created a dummy QTMWidget without
+        // an owning tm-widget, we set it here.
     case SLOT_SCROLLABLE:
     {
       check_type_void (index, "SLOT_SCROLLABLE");
-      QTMWidget* new_widget= qobject_cast<QTMWidget*>(concrete(w)->get_canvas());
-      QTMWidget* old_widget= canvas();
-      delete old_widget;
+      qt_simple_widget_rep* wid = static_cast<qt_simple_widget_rep*>(w.rep);
+      QTMWidget* new_widget     = wid->canvas();     
       if (new_widget) {
+        delete canvas();
         new_widget->setFocusPolicy (Qt::StrongFocus);
         new_widget->setFocus ();
-        new_widget->tmwid = static_cast<qt_simple_widget_rep*>(w.rep);
+        new_widget->set_tm_widget(wid);
         qwid = new_widget;
       } else {
         FAILED("Attempt to set an invalid scrollable widget for a qt_tm_embedded_widget");

@@ -775,7 +775,7 @@ qt_gui_rep::process_keyboard_focus (qt_simple_widget_rep *wid, bool has_focus,
     return;
   }
   add_event( 
-    queued_event ( QP_KEYBOARD_FOCUS, close_box<T> (T(wid, has_focus, t)))); 
+    queued_event (QP_KEYBOARD_FOCUS, close_box<T> (T(wid, has_focus, t)))); 
   //wid -> handle_keyboard_focus (has_focus, t);
   //needs_update ();
 }
@@ -791,7 +791,7 @@ qt_gui_rep::process_mouse (qt_simple_widget_rep *wid, string kind, SI x, SI y,
     return;
   }
   add_event ( 
-    queued_event ( QP_MOUSE, close_box<T> ( T (wid, T1 (kind, x, y, mods, t))))); 
+    queued_event (QP_MOUSE, close_box<T> ( T (wid, T1 (kind, x, y, mods, t))))); 
 //  wid -> handle_mouse (kind, x, y, mods, t);
 //  needs_update ();
 }
@@ -804,7 +804,7 @@ qt_gui_rep::process_resize (qt_simple_widget_rep *wid, SI x, SI y ) {
       cout << "WTF! Situation] process_resize() for non simple_widget.\n";    
     return;
   }
-  add_event(  queued_event ( QP_RESIZE, close_box<T> (T(wid, x, y)))); 
+  add_event( queued_event ( QP_RESIZE, close_box<T> (T(wid, x, y)))); 
 //  wid -> handle_notify_resize (x, y);
 //  needs_update ();
 }

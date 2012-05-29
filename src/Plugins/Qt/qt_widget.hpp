@@ -94,17 +94,8 @@ public:
   virtual QAction*         as_qaction ();
   virtual QWidget*         as_qwidget ();
   virtual QLayoutItem* as_qlayoutitem ();
+  virtual QMenu*            get_qmenu ();
   
-  /*! Returns the QMenu associated if any. 
-   This method must not give ownership of the menu to the caller, thus
-   allowing menu caching at the TeXmacs level. See the implementations in
-   qt_ui_element_rep and qt_menu_rep.
-   Called only by code which attaches root menus in the GUI elements.
-   */
-  virtual QMenu* get_qmenu() { return NULL; }
-  
-  /*! Get a texmacs canvas (if available). */
-  virtual QWidget* get_canvas () { return NULL; }
 
   ////////////////////// Debugging
   string type_as_string() { 

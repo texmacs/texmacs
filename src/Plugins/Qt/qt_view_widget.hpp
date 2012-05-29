@@ -27,7 +27,22 @@ class QWidget;
  
  Buffers are drawn in qt_view_widgets (...)
  
- 
+ MEMORY POLICY: 
+ It's qt_window_widget_rep, NOT qt_view_widget_rep who owns the QWidget. This
+ is to avoid crashing whenclosing other windows:
+ The same QWidget is owned by qt_view_widget_rep and qt_window_widget_rep after
+ a call to qt_view_widget_rep::plain_window_widget, so one of them has to 
+ destroy it, but we also must destroy windows which are not qt_views, so it 
+ seems to make more sense there. For example this is needed for dialogs
+ constructed with scheme code. Destroying in qt_widget_rep is of course 
+ impossible because of the same reason: two instances of its subclasses might 
+ share a QWidget.
+
+ FIXME?
+   - Qt specifies that widgets with a parent are deleted by the parent.
+   - Our policy is that qt_window_widget_rep owns the QWidget (so it is 
+     responsible to delete it)
+ Are these two requirements compatible?
 */
 class qt_view_widget_rep: public qt_widget_rep {
 public:
@@ -35,7 +50,7 @@ public:
   
 public:
   qt_view_widget_rep (QWidget* _view, types _type=view_widget);
-  ~qt_view_widget_rep ();
+  virtual ~qt_view_widget_rep () { }
 
   virtual void      send (slot s, blackbox val);
   virtual blackbox query (slot s, int type_id);

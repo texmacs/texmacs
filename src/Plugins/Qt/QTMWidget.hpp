@@ -24,41 +24,43 @@ class basic_renderer_rep;
 /*! The underlying QWidget for a qt_simple_widget_rep handles drawing for a 
     texmacs canvas, as well as keypresses, international input methods, etc.
  
+ QTMWidget needs a valid qt_simple_widget_rep object to function properly, see
+ set_tm_widget() for more on this.
+ 
  */
 class QTMWidget: public QTMScrollView {
   Q_OBJECT
+    /* 
+     NOTE: that if this were a smart pointer of type, say qt_widget, then
+     its count would be decreased upon our destruction, triggering the
+     deletion of the contained object which is precisely the one who is
+     probably deleting us to begin with!
+     Or the crash is because of something else altogether... :`(
+     */
+  qt_simple_widget_rep* tmwid;
 
   rectangles invalid_regions;
-  QPixmap backingPixmap;
-
-    // NOTE: that if this were a smart pointer of type, say qt_widget, then
-    // its count would be decreased upon our destruction, triggering the
-    // deletion of the contained object which is precisely the one who is
-    // probably deleting us to begin with!
-    // Or the crash is because of something else altogether... :`(
-  qt_simple_widget_rep* tmwid;
+  QPixmap      backingPixmap;
+  QLabel*           imwidget;
+  QPoint          cursor_pos;
 
 public:
 
   static QSet<QTMWidget*> all_widgets;  // needed by qt_gui_rep::update()
-  QPoint backing_pos;
-
-  QLabel *imwidget;
-  QPoint cursor_pos;
+  QPoint                  backing_pos;
 
   QTMWidget (QWidget* _parent=0, qt_simple_widget_rep* _tmwid=0);
-  ~QTMWidget ();
-
+  virtual ~QTMWidget ();
+  
   void invalidate_rect (int x1, int y1, int x2, int y2);
   void invalidate_all ();
   void repaint_invalid_regions ();
 
-  void scrollContentsBy(int dx, int dy);
-  void setCursorPos(QPoint pos) { cursor_pos = pos; }
+  void scrollContentsBy (int dx, int dy);
+  void setCursorPos (QPoint pos) { cursor_pos = pos; }
 
   qt_simple_widget_rep* tm_widget () { return tmwid; }
-  
-  friend class qt_tm_embedded_widget_rep;
+  void              set_tm_widget (qt_simple_widget_rep* _tmwid);
 
 protected:
   virtual void paintEvent (QPaintEvent* event);

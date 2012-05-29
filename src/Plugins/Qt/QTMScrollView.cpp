@@ -75,6 +75,7 @@ QTMScrollView::setExtents ( QRect newExtents ) {
   }
 }
 
+/*! Scrolls contents so that the given point is visible. */
 void 
 QTMScrollView::ensureVisible ( int cx, int cy, int mx, int my ) {
 	QWidget *_viewport = QAbstractScrollArea::viewport();

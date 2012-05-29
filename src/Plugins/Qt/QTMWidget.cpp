@@ -151,29 +151,23 @@ initkeymap () {
 }
 
 
-/*! Constructor
+/*! Constructor.
  
   \param _parent The parent QWidget.
   \param _tmwid the TeXmacs widget who owns this object.
  */
 QTMWidget::QTMWidget (QWidget* _parent, qt_simple_widget_rep* _tmwid) 
-  : QTMScrollView (_parent), backingPixmap(1,1), tmwid(_tmwid), imwidget(NULL)
+  : QTMScrollView (_parent), backingPixmap(1,1), imwidget(NULL)
 {
-  setObjectName("A QTMWidget");
-  surface()->setMouseTracking (true);
-  
-/* Crash when compiled from the command line but not within XCode?!?!?
-  if (tmwid) {
-    int width, height;
-    tmwid->handle_get_size_hint (width, height);
-    QSize sz = QSize (width/PIXEL, height/PIXEL);
-    surface()->resize(sz);
-  }
-*/
+  setObjectName ("A QTMWidget");
   setFocusPolicy (Qt::StrongFocus);
-  backing_pos = origin();
-  setAttribute(Qt::WA_InputMethodEnabled);
-  all_widgets.insert(this);
+  setAttribute (Qt::WA_InputMethodEnabled);
+  all_widgets.insert (this);
+
+  backing_pos = origin ();
+  surface()->setMouseTracking (true);
+  if (_tmwid) 
+    set_tm_widget (_tmwid);
 }
 
 
@@ -189,6 +183,23 @@ QTMWidget::~QTMWidget () {
   if (stack)
     stack->removeWidget(this);
 }
+
+/*! Sets the underlying qt_simple_widget_rep for this object.
+ 
+ Because construction of QTMWidgets is always done at a stage where either 
+ there is no such object (see qt_tm_embedded_rep's constructor) or it is not yet
+ properly initialized (see qt_simple_widget_rep's constructor), we need this
+ extra method.
+*/
+void
+QTMWidget::set_tm_widget (qt_simple_widget_rep* _tmwid) {
+  tmwid = _tmwid;
+  int width, height;
+  tmwid->handle_get_size_hint (width, height);
+  QSize sz = QSize (width/PIXEL, height/PIXEL);
+  surface()->resize(sz);
+}
+
 
 void 
 QTMWidget::invalidate_rect (int x1, int y1, int x2, int y2) {

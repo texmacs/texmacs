@@ -23,37 +23,11 @@
 #include "QTMStyle.hpp"
 
 
-/******************************************************************************
- * Policy: qt_window_widget_rep owns the QWidget
- ******************************************************************************/
- 
 /*!
- * Sets the view to the specified QWidget, of which it takes ownership.
+ Sets the view to the specified QWidget, of which it takes ownership.
  */
 qt_view_widget_rep::qt_view_widget_rep (QWidget* _view, types _type)
  : qt_widget_rep(_type, _view), current_renderer(NULL)  {}
-
-/*!
- FIXME: I'm (MG) not sure if we should delete manually all the QWidgets we 
- create or exclusively the top level ones (the windows)
-   - Qt specifies that widgets with a parent are deleted by the parent.
-   - Our policy is that qt_view_widget_rep owns the QWidget (so it is 
-     responsible to delete it)
-  Are these two requirements compatible ?
- 
- UPDATE: (mbd) I've shifted the responsibility of deletion to
- qt_window_widget_rep to avoid crashing when closing other windows:
- The same QWidget is owned by qt_view_widget_rep and qt_window_widget_rep after
- a call to qt_view_widget_rep::plain_window_widget, so one of them has to 
- destroy it, but we also must destroy windows which are not qt_views, so it 
- seems to make more sense there. For example this is needed for dialogs
- constructed with scheme code.
- Destroying in qt_widget_rep is of course impossible because of the same
- reason: two instances of its subclasses might share a QWidget.
-*/
-qt_view_widget_rep::~qt_view_widget_rep() {
-  //delete view;
-}
 
 
 void
@@ -120,8 +94,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
   }
 }
 
-/*! Querying
- */
+
 blackbox
 qt_view_widget_rep::query (slot s, int type_id) {
   //if ((DEBUG_QT) && (s != SLOT_RENDERER))
@@ -180,8 +153,6 @@ qt_view_widget_rep::query (slot s, int type_id) {
 }
 
 
-/*! Read access to subwidgets 
- */
 widget
 qt_view_widget_rep::read (slot s, blackbox index) {
   if (DEBUG_QT)

@@ -95,6 +95,19 @@ qt_widget_rep::as_qlayoutitem () {
 }
 
 
+/*! Returns the QMenu associated if any.
+ 
+ This method must not give ownership of the menu to the caller, thus
+ allowing menu caching at the TeXmacs level. See the implementations in
+ qt_ui_element_rep and qt_menu_rep.
+ Called only by code which attaches root menus in the GUI elements.
+ */
+QMenu*
+qt_widget_rep::get_qmenu () {
+  return NULL;
+}
+
+
 /*! Returns the widget as a window.
  
  Each TeXmacs widget can at some point be asked to present itself into a window.

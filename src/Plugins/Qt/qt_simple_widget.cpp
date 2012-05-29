@@ -146,9 +146,10 @@ qt_simple_widget_rep::query (slot s, int type_id) {
 
 
 /******************************************************************************
- * Tanslation into QWidgets
+ * Tanslation into QAction for insertion in menus (i.e. for buttons)
  ******************************************************************************/
 
+  // Prints the current contents of the canvas onto a QPixmap
 QPixmap
 impress (qt_simple_widget_rep* wid) {
   if (wid) {
