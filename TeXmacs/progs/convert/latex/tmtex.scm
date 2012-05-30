@@ -1335,7 +1335,7 @@
     r))
 
 (define (tmtex-math-up s l)
-  (list 'mathup (tmtex-textual (car l))))
+  (list 'mathrm (tmtex-textual (car l))))
 
 (define (tmtex-math-ss s l)
   (list 'mathsf (tmtex-textual (car l))))
