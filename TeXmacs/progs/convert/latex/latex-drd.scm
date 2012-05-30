@@ -29,7 +29,7 @@
   - / [ ] ! * ,(string->symbol "|") i j ss SS oe OE ae AE
   AA DH L NG O S TH aa dh dj l ng o th pounds colon
   quad qquad par smallskip medskip bigskip
-  noindent newline linebreak nobreak nolinebreak allowbreak
+  noindent newline linebreak nobreak nolinebreak
   pagebreak nopagebreak newpage newdoublepage clearpage cleardoublepage
   newblock bgroup egroup protect cr date hfill appendix limits nolimits
   dots maketitle tableofcontents TeX LaTeX onecolumn twocolumn
@@ -362,6 +362,25 @@
   ((latex-arity% 'x 0) (latex-length% 'x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; To be ignored
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(logic-group latex-ignore-0%
+	allowbreak notag)
+
+(logic-group latex-ignore-0*%
+	displaybreak allowdisplaybreak)
+
+(logic-group latex-ignore-1%
+	tag)
+
+(logic-rules
+	((latex-ignore% 'x) (latex-ignore-0% 'x))
+  ((latex-arity% 'x 0) (latex-ignore-0% 'x))
+  ((latex-arity% 'x 1) (latex-ignore-1% 'x))
+	((latex-ignore-0% 'x) (latex-ignore-0*% 'x)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Using packages
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -501,6 +520,7 @@
     (cond ((not arity) "undefined")
           ((logic-in? s latex-command%) "command")
           ((logic-in? s latex-length%) "length")
+          ((logic-in? s latex-ignore%) "ignore")
           ((logic-in? s latex-name%) "name")
           ((logic-in? s latex-counter%) "counter")
 	  ((logic-in? s latex-modifier%) "modifier")

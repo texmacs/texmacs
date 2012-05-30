@@ -183,7 +183,6 @@ latex_symbol_to_tree (string s) {
       if (s == "newdoublepage")   return tree (FORMAT, "new double page");
       if (s == "clearpage")       return tree (FORMAT, "new page");
       if (s == "cleardoublepage") return tree (FORMAT, "new double page");
-      if (s == "allowbreak")      return "";
       if (s == "!")         return tree (SPACE, "-0.25spc");
       if (s == ",")         return tree (SPACE, "0.25spc");
       if (s == ":")         return tree (SPACE, "0.5spc");
@@ -373,6 +372,8 @@ latex_symbol_to_tree (string s) {
       if (s == "refname")	  return "bibliography-text";
       if (s == "tablename")	  return "table-text";
     }
+
+		if (latex_type (s) == "ignore") return "";
 
     if (latex_type (s) == "operator" || latex_type (s) == "control") return s;
     if ((s == "ldots") && (command_type ("!mode") != "math")) return "...";
