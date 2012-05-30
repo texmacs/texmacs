@@ -450,7 +450,7 @@
   (cons '!document (tmtex-list l)))
 
 (define (tmtex-date l)
-  (tex-apply 'today))
+  (tmtex-default "tmdate" l))
 
 (define (tmtex-para l)
   (cons '!paragraph (tmtex-list l)))

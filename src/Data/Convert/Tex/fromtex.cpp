@@ -1161,6 +1161,7 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\tmstrong", 1)) return tree (APPLY, "strong", l2e (t[1]));
   if (is_tuple (t, "\\tmem", 1)) return tree (APPLY, "em", l2e (t[1]));
   if (is_tuple (t, "\\tmtt", 1)) return tree (APPLY, "tt", l2e (t[1]));
+  if (is_tuple (t, "\\tmdate", 1)) return tree (APPLY, "date", l2e (t[1]));
   if (is_tuple (t, "\\tmname", 1)) return tree (APPLY, "name", l2e (t[1]));
   if (is_tuple (t, "\\tmsamp", 1)) return tree (APPLY, "samp", l2e (t[1]));
   if (is_tuple (t, "\\tmabbr", 1)) return tree (APPLY, "abbr", l2e (t[1]));

@@ -183,6 +183,7 @@
   (tmstrong (textbf 1))
   (tmem (!group "\\em " 1 "\\/"))
   (tmtt (texttt 1))
+  (tmdate (today))
   (tmname (textsc 1))
   (tmsamp (textsf 1))
   (tmabbr 1)
