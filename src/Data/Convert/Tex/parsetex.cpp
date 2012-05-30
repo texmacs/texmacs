@@ -167,7 +167,20 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
       else t << s (i-1, i);
       break;
     case '\\':
-      if (((i+7)<n) && !is_tex_alpha (s (i+5, i+7)) &&
+      if (s (i+1, i+6) == "hskip" || s (i+1, i+6) == "vskip"){
+        string skip = s (i+1, i+6);
+        i+=7;
+        bool tmp_textm_class_flag = textm_class_flag;
+        textm_class_flag = true;
+        if (can_parse_length (s, i)) {
+          if (skip == "hskip")
+            t << tuple ("\\hspace", parse_length (s, i));
+          else
+            t << tuple ("\\vspace", parse_length (s, i));
+        }
+        textm_class_flag = tmp_textm_class_flag;
+      }
+			if (((i+7)<n) && !is_tex_alpha (s (i+5, i+7)) &&
 	  (s (i, i+5) == "\\over" || s (i, i+5) == "\\atop"))
 	{
 	  string fr_cmd= s(i,i+5);
@@ -732,7 +745,7 @@ latex_parser::can_parse_length (string s, int i) {
 	     read (s, i, "minus") || read (s, i, "\\@minus"))
       return stage >= 2;
     else if (is_tex_alpha (s[i])) {
-      if (read (s, i, "cm")) stage= 2;
+      if      (read (s, i, "cm")) stage= 2;
       else if (read (s, i, "mm")) stage= 2;
       else if (read (s, i, "pt")) stage= 2;
       else if (read (s, i, "in")) stage= 2;
@@ -744,6 +757,7 @@ latex_parser::can_parse_length (string s, int i) {
       else if (read (s, i, "cc")) stage= 2;
       else if (read (s, i, "sp")) stage= 2;
       else return false;
+      return stage >= 2;
       if (i<n && is_tex_alpha (s[i])) return false;
     }
     else if (s[i] == '\\') {
@@ -760,7 +774,7 @@ latex_parser::can_parse_length (string s, int i) {
 
 tree
 latex_parser::parse_length (string s, int& i) {
-  return parse_length(s, i, 0);
+  return parse_length (s, i, 0);
 }
 
 tree

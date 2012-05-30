@@ -873,12 +873,19 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\abovering", 1) || is_tuple (t, "\\mathring", 1))
     return tree (WIDE, l2e (t[1]), "<abovering>");
   if (is_tuple (t, "\\hspace", 1) || is_tuple (t, "\\hspace*", 1)) {
-    tree r= t2e (t[1]);
-    if (is_var_compound (r, "fill", 0)) return tree (HTAB, "1fn");
-    return tree (SPACE, r);
+    if (is_tuple (t[1], "\\tex-len", 3))
+          return tree (SPACE, l2e (t[1]));
+    else {
+      tree r= t2e (t[1]);
+      if (is_var_compound (r, "fill", 0)) return tree (HTAB, "1fn");
+      return tree (SPACE, r);
+    }
   }
-  if (is_tuple (t, "\\vspace", 1) || is_tuple (t, "\\vspace*", 1))
+  if (is_tuple (t, "\\vspace", 1) || is_tuple (t, "\\vspace*", 1)) {
+    if (is_tuple (t[1], "\\tex-len", 3))
+      return tree (VSPACE, l2e (t[1]));
     return tree (VSPACE, t2e (t[1]));
+  }
   if (is_tuple (t, "\\label", 1)) return tree (LABEL, t2e (t[1]));
   if (is_tuple (t, "\\ref", 1)) return tree (REFERENCE, t2e (t[1]));
   if (is_tuple (t, "\\newcounter", 1))
