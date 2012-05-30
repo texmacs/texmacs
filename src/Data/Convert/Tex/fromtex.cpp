@@ -316,6 +316,8 @@ latex_symbol_to_tree (string s) {
       if (s == "brown")        return tree (SET, COLOR, "brown");
       if (s == "pink")         return tree (SET, COLOR, "pink");
 
+			if (s == "boldmath") return tree (SET, MATH_FONT_SERIES, "bold");
+
       cerr << "The symbol was " << "\\"*s << "\n";
       FAILED ("unexpected situation");
     }
@@ -838,6 +840,7 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\mathcal", 1)) return m2e (t, MATH_FONT, "cal");
   if (is_tuple (t, "\\mathfrak", 1)) return m2e (t, MATH_FONT, "Euler");
   if (is_tuple (t, "\\mathbb", 1)) return m2e (t, MATH_FONT, "Bbb");
+  if (is_tuple (t, "\\bm", 1)) return m2e (t, MATH_FONT_SERIES, "bold");
   if (is_tuple (t, "\\mathbbm", 1)) return m2e (t, MATH_FONT, "Bbb*");
   if (is_tuple (t, "\\mathscr", 1)) return m2e (t, MATH_FONT, "cal*");
 

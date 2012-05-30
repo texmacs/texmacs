@@ -53,7 +53,7 @@
   footnote overline underline <sub> <sup> not left right
   big Big bigg Bigg bigl Bigl biggl Biggl
   bigm Bigm biggm Biggm bigr Bigr biggr Biggr
-  bar hat tilde widehat widetilde vec
+  bar hat tilde widehat widetilde vec bm
   grave acute check breve abovering mathring
   dot ddot dddot ddddot
   label ref pageref index hspace hspace* vspace vspace*
@@ -171,7 +171,7 @@
 (logic-group latex-modifier-0%
   rm tt sf md bf it em sl sc rmfamily ttfamily sffamily
   mdseries bfseries upshape itshape slshape scshape
-  displaystyle textstyle scriptstyle scriptscriptstyle cal frak Bbb
+  displaystyle textstyle scriptstyle scriptscriptstyle cal frak Bbb boldmath
   tiny scriptsize footnotesize small normalsize
   large Large LARGE huge Huge
   black white grey red blue yellow green orange magenta brown pink
