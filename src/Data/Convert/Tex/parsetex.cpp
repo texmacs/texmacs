@@ -1053,7 +1053,7 @@ get_latex_package_idx (string s, string which) {
     int state = 0;
     i = search_forwards ("\\usepackage", i, s) + 1;
     for (int j = i ; j < N(s) ; j++) {
-      if      (test (s, j, "\n")  || test (s, j, "\\")) break;
+      if (test (s, j, "\n")  || test (s, j, "\\") || test (s, j, "%")) break;
       else if (test (s, j, "{")   && state == 0) state = 1;
       else if (test (s, j, "}")   && state == 1) break;
       else if (test (s, j, which) && state == 1)
@@ -1214,7 +1214,7 @@ parse_latex (string s, bool change) {
   s= dos_to_better (s);
   string lan= get_latex_language (s);
   string encoding= latex_encoding_to_iconv (get_latex_encoding (s));
-  if (encoding != "UTF-8" && encoding != "Cork")
+  if (encoding != "UTF-8" && encoding != "Cork" && encoding != "")
     s= convert (s, encoding, "UTF-8");
 
   latex_parser ltx (encoding  != "Cork");
