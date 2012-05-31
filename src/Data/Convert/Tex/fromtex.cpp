@@ -185,6 +185,7 @@ latex_symbol_to_tree (string s) {
       if (s == "cleardoublepage") return tree (FORMAT, "new double page");
       if (s == "!")         return tree (SPACE, "-0.25spc");
       if (s == ",")         return tree (SPACE, "0.25spc");
+      if (s == "thinspace") return tree (SPACE, "0.25spc");
       if (s == ":")         return tree (SPACE, "0.5spc");
       if (s == ";")         return tree (SPACE, "0.75spc");
       if (s == "quad")      return tree (SPACE, "1em");
