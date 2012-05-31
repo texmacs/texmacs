@@ -1046,6 +1046,31 @@ latex_parser::parse (string s, bool change) {
 * Internationalization
 ******************************************************************************/
 
+string
+clean_latex_comments (string s) {
+  string r = "";
+  int start = 0, stop = 0;
+  while (stop < N(s)) {
+    //cout << start << " : " << stop << "\n";
+    stop = search_forwards ("%", stop, s);
+    //cout << s[stop -1] << s[stop ] << s[stop +1];
+    if (stop == -1) {
+      r << s (start, N(s));
+      return r;
+    }
+    else if (stop == 0 || s[stop -1] != '\\') {
+      r << s (start, stop) << "\n";
+      stop = search_forwards ("\n", stop, s) + 1;
+      start = stop;
+      continue;
+    }
+    else
+      stop++;
+  }
+  if (start < N(s)) r << s (start, N(s));
+  return r;
+}
+
 int
 get_latex_package_idx (string s, string which) {
   int i = 0;
@@ -1053,7 +1078,7 @@ get_latex_package_idx (string s, string which) {
     int state = 0;
     i = search_forwards ("\\usepackage", i, s) + 1;
     for (int j = i ; j < N(s) ; j++) {
-      if (test (s, j, "\n")  || test (s, j, "\\") || test (s, j, "%")) break;
+      if      (test (s, j, "\n")  || test (s, j, "\\")) break;
       else if (test (s, j, "{")   && state == 0) state = 1;
       else if (test (s, j, "}")   && state == 1) break;
       else if (test (s, j, which) && state == 1)
@@ -1065,6 +1090,7 @@ get_latex_package_idx (string s, string which) {
 
 string
 get_latex_language (string s) {
+  s = clean_latex_comments (s);
   int start, stop;
   stop = get_latex_package_idx (s, "babel");
   if (stop == -1) return "";
@@ -1093,6 +1119,7 @@ get_latex_language (string s) {
 
 string
 get_latex_encoding (string s) {
+  s = clean_latex_comments (s);
   int start, stop;
   
   // Try if inputenc is called
