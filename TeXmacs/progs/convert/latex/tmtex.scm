@@ -1270,8 +1270,8 @@
 
 (define (tmtex-change-case l)
   (cond
-    ((== (cadr l) "UPCASE") (tex-apply 'uppercase (tmtex (car l))))
-    ((== (cadr l) "locase") (tex-apply 'lowercase (tmtex (car l))))
+    ((== (cadr l) "UPCASE") (tex-apply 'MakeUppercase (tmtex (car l))))
+    ((== (cadr l) "locase") (tex-apply 'MakeLowercase (tmtex (car l))))
     (else (tmtex (car l)))))
 
 (define (tmtex-indent s l)

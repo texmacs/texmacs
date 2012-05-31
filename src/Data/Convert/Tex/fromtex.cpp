@@ -811,9 +811,9 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\tmrsup", 1)) return tree (RSUP, l2e (t[1]));
   if (is_tuple (t, "\\textsubscript", 1)) return tree (RSUB, l2e (t[1]));
   if (is_tuple (t, "\\textsuperscript", 1)) return tree (RSUP, l2e (t[1]));
-  if (is_tuple (t, "\\lowercase", 1))
+  if (is_tuple (t, "\\lowercase", 1) || is_tuple (t, "\\MakeLowercase", 1))
     return tree (CHANGE_CASE, l2e (t[1]), "locase");
-  if (is_tuple (t, "\\uppercase", 1))
+  if (is_tuple (t, "\\uppercase", 1) || is_tuple (t, "\\MakeUppercase", 1))
     return tree (CHANGE_CASE, l2e (t[1]), "UPCASE");
   if (is_tuple (t, "\\tmtextrm", 1)) return m2e (t, FONT_FAMILY, "rm");
   if (is_tuple (t, "\\tmtexttt", 1)) return m2e (t, FONT_FAMILY, "tt");

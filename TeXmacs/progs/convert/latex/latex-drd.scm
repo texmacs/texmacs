@@ -181,7 +181,7 @@
   textrm texttt textsf textmd textbf textup textit textsl textsc emph
   mathrm mathtt mathsf mathmd mathbf mathup mathit mathsl mathnormal
   mathcal mathfrak mathbb mathbbm mathscr operatorname boldsymbol
-  lowercase uppercase)
+  lowercase MakeLowercase uppercase MakeUppercase)
 
 (logic-rules
   ((latex-modifier% 'x) (latex-modifier-0% 'x))
