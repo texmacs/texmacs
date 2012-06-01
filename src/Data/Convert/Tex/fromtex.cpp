@@ -187,6 +187,7 @@ latex_symbol_to_tree (string s) {
       if (s == ",")         return tree (SPACE, "0.25spc");
       if (s == "thinspace") return tree (SPACE, "0.25spc");
       if (s == ":")         return tree (SPACE, "0.5spc");
+      if (s == "enspace")   return tree (SPACE, "0.5spc");
       if (s == ";")         return tree (SPACE, "0.75spc");
       if (s == "quad")      return tree (SPACE, "1em");
       if (s == "qquad")     return tree (SPACE, "2em");
@@ -360,6 +361,9 @@ latex_symbol_to_tree (string s) {
       if (s == "textwidth")             return "tex-text-width";
       if (s == "topmargin")             return "tex-top-margin";
       if (s == "topskip")               return "tex-top-skip";
+      if (s == "smallskipamount")       return "0.5fn";
+      if (s == "medskipamount")         return "1fn";
+      if (s == "bigskipamount")         return "2fn";
     }   
 
     // FIXME: avoid redefinition of command_type in parsetex.cpp

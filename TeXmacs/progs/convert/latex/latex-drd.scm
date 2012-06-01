@@ -28,7 +28,7 @@
   ,(string->symbol ",") ,(string->symbol ":") 
   - / [ ] ! * ,(string->symbol "|") i j ss SS oe OE ae AE
   AA DH L NG O S TH aa dh dj l ng o th pounds colon
-  quad qquad thinspace par smallskip medskip bigskip
+  quad qquad enspace thinspace par smallskip medskip bigskip
   noindent newline linebreak nobreak nolinebreak
   pagebreak nopagebreak newpage newdoublepage clearpage cleardoublepage
   newblock bgroup egroup protect cr date hfill appendix limits nolimits
@@ -366,7 +366,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (logic-group latex-ignore-0%
-	allowbreak notag)
+	allowbreak notag xspace)
 
 (logic-group latex-ignore-0*%
 	displaybreak allowdisplaybreak)
