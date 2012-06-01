@@ -759,6 +759,9 @@
       (tmtex-script '!sup (car l))
       (list 'tmrsup (tmtex (car l)))))
 
+(define (tmtex-modulo l)
+      (tmtex-script 'mod (car l)))
+
 (define (tmtex-frac l)
   (tmtex-function 'frac l))
 
@@ -1663,6 +1666,7 @@
   (lsup tmtex-lsup)
   (rsub tmtex-rsub)
   (rsup tmtex-rsup)
+  (modulo tmtex-modulo)
   (frac tmtex-frac)
   (sqrt tmtex-sqrt)
   (wide tmtex-wide)

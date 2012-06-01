@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.9>
+<TeXmacs|1.0.7.15>
 
 <style|<tuple|source|std>>
 
@@ -109,6 +109,14 @@
   <drd-props|shrink-inline|arity|1|accessible|all|syntax|<macro|x|<arg|x>>>
 
   <assign|binom|<macro|x|y|<style-only*|<with|mode|math|<shrink-inline|<left|(><resize|<tabular*|<tformat|<cwith|1|-1|1|1|cell-lsep|0spc>|<cwith|1|-1|1|1|cell-rsep|0spc>|<table|<row|<cell|<inactive*|<arg|x>>>>|<row|<cell|<inactive*|<arg|y>>>>>>>||<plus|1b|2.5sep>||<minus|1t|2.5sep>><right|)>>>>>>
+
+  <assign|modulo|<macro|x|<space|0.2spc>mod <arg|x>>>
+
+  <assign|bmod|<macro|x|<space|0.5spc>mod <arg|x>>>
+
+  <assign|pmod|<macro|x|<around*|(|mod <arg|x>|)>>>
+
+  <assign|pod|<macro|x|<around*|(|<arg|x>|)>>>
 
   <assign|ontop|<macro|x|y|<style-only*|<with|mode|math|<shrink-inline|<resize|<tabular*|<tformat|<cwith|1|-1|1|1|cell-lsep|0spc>|<cwith|1|-1|1|1|cell-rsep|0spc>|<table|<row|<cell|<inactive*|<arg|x>>>>|<row|<cell|<inactive*|<arg|y>>>>>>>||<plus|1b|2.5sep>||<minus|1t|2.5sep>>>>>>>
 
