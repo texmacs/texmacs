@@ -843,7 +843,10 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\mathbb", 1)) return m2e (t, MATH_FONT, "Bbb");
   if (is_tuple (t, "\\bm", 1)) return m2e (t, MATH_FONT_SERIES, "bold");
   if (is_tuple (t, "\\mathbbm", 1)) return m2e (t, MATH_FONT, "Bbb*");
+  if (is_tuple (t, "\\mathbbmss", 1)) return m2e (t, MATH_FONT, "Bbb**");
+  if (is_tuple (t, "\\mathds", 1)) return m2e (t, MATH_FONT, "Bbb****");
   if (is_tuple (t, "\\mathscr", 1)) return m2e (t, MATH_FONT, "cal*");
+  if (is_tuple (t, "\\EuScript", 1)) return m2e (t, MATH_FONT, "cal**");
 
   if (is_tuple (t, "\\prime", 1)) return tree (RPRIME, string_arg (t[1]));
   if (is_tuple (t, "\\frac", 2)) return tree (FRAC, l2e (t[1]), l2e (t[2]));
@@ -1532,6 +1535,16 @@ finalize_layout (tree t) {
 	continue;
       }
 
+      if (is_func (v, BEGIN) && ((v[0] == "tmparsep"))) {
+	r << tree (SET, "par-par-sep", v[1]);
+	continue;
+      }
+
+      if (is_func (v, END, 1) && (v[0] == "tmparsep")) {
+	r << tree (RESET, "par-par-sep");
+	continue;
+      }
+
       if (is_func (v, BEGIN) && ((v[0] == "multicols"))) {
 	r << tree (SET, "par-columns", v[1]);
 	continue;
@@ -1696,11 +1709,34 @@ finalize_sections (tree t) {
 }
 
 static tree
+finalize_tmindent (tree t) {
+  if (is_atomic (t)) return t;
+  tree r = concat ();
+  for (int i=0; i<N(t); i++) {
+    tree u= t[i];
+    if (is_concat (u)) r << finalize_tmindent (u);
+    else if (is_func (u, BEGIN, 1) && (u[0] == "tmindent")) {
+      tree sub = concat ();
+      i++;
+      while (i < N(t) && !(is_func (t[i], END, 1) && t[i][0] == "tmindent")) {
+        if (is_concat(t[i])) sub << finalize_tmindent (t[i]);
+        else sub << t[i];
+        i++;
+      }
+      r << tree (APPLY, "indent", sub);
+    }
+    else r << u;
+  }
+  return r;
+}
+
+static tree
 finalize_document (tree t) {
   if (is_atomic (t)) t= tree (CONCAT, t);
-  t= finalize_returns (t);
-  t= finalize_pmatrix (t);
-  t= finalize_layout (t);
+  t= finalize_tmindent (t); 
+  t= finalize_returns  (t); 
+  t= finalize_pmatrix  (t); 
+  t= finalize_layout   (t); 
   if (!is_func (t, CONCAT)) return tree (DOCUMENT, t);
 
   int i;
