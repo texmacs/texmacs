@@ -110,6 +110,10 @@
 
   <assign|binom|<macro|x|y|<style-only*|<with|mode|math|<shrink-inline|<left|(><resize|<tabular*|<tformat|<cwith|1|-1|1|1|cell-lsep|0spc>|<cwith|1|-1|1|1|cell-rsep|0spc>|<table|<row|<cell|<inactive*|<arg|x>>>>|<row|<cell|<inactive*|<arg|y>>>>>>>||<plus|1b|2.5sep>||<minus|1t|2.5sep>><right|)>>>>>>
 
+  <assign|tbinom|<macro|x|y|<with|mode|math|<with|math-display|false|<binom|<arg|x>|<arg|y>>>>>>
+
+  <assign|dbinom|<macro|x|y|<with|mode|math|<with|math-display|true|<binom|<arg|x>|<arg|y>>>>>>
+
   <assign|modulo|<macro|x|<space|0.2spc>mod <arg|x>>>
 
   <assign|bmod|<macro|x|<space|0.5spc>mod <arg|x>>>

@@ -76,7 +76,7 @@
   ,(string->symbol "."))
 
 (logic-group latex-command-2%
-  binom choose cfrac tfrac equal href
+  binom tbinom dbinom choose cfrac tfrac equal href
   sideset stackrel citeauthoryear
   setcounter addtocounter setlength addtolength
   scalebox)
@@ -366,7 +366,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (logic-group latex-ignore-0%
-	allowbreak notag xspace)
+	allowbreak notag xspace break sloppy)
 
 (logic-group latex-ignore-0*%
 	displaybreak allowdisplaybreak)
@@ -420,6 +420,9 @@
   (nleadsto "leadsto")
   (Diamond "amssymb")
   (text "amsmath")
+  (binom "amsmath")
+  (dbinom "amsmath")
+  (tbinom "amsmath")
   (dddot "amsmath")
   (ddddot "amsmath")
   (mod "amsmath")
