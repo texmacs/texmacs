@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.0.7.15>
 
 <style|source>
 
@@ -103,6 +103,10 @@
   <assign|smaller|<macro|x|<with|font-base-size|7|par-sep|1pt|<arg|x>>>>
 
   <assign|small|<macro|x|<with|font-base-size|7|par-sep|2pt|<arg|x>>>>
+
+  <assign|xxsmall|<macro|x|<style-with|src-compact|none|<with|font-base-size|8|par-sep|1pt|tex-above-display-skip|<macro|<tex-len|6.6pt|3pt|4pt>>|tex-below-display-skip|<macro|<tex-len|6.6pt|3pt|4pt>>|tex-above-display-short-skip|<macro|<tex-len|0pt|2pt|0pt>>|tex-below-display-short-skip|<macro|<tex-len|3.6pt|2pt|2pt>>|<arg|x>>>>>
+
+  <assign|xsmall|<macro|x|<style-with|src-compact|none|<with|font-base-size|9|par-sep|1pt|tex-above-display-skip|<macro|<tex-len|7.6pt|3pt|4pt>>|tex-below-display-skip|<macro|<tex-len|7.6pt|3pt|4pt>>|tex-above-display-short-skip|<macro|<tex-len|0pt|2pt|0pt>>|tex-below-display-short-skip|<macro|<tex-len|3.6pt|2pt|2pt>>|<arg|x>>>>>
 
   <assign|normal-size|<macro|x|<style-with|src-compact|none|<with|font-base-size|9|par-sep|1.5pt|tex-above-display-skip|<macro|<tex-len|6pt|2pt|1pt>>|tex-below-display-skip|<macro|<tex-len|6pt|2pt|1pt>>|tex-above-display-short-skip|<macro|<tex-len|6pt|0pt|3pt>>|tex-below-display-short-skip|<macro|<tex-len|6pt|0pt|3pt>>|<arg|x>>>>>
 
