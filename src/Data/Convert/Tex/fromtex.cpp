@@ -976,7 +976,7 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\underbrace", 1))
     return tree (VAR_WIDE, l2e (t[1]), "<wide-underbrace>");
 
-  if (is_tuple (t, "\\text", 1) ||
+  if (is_tuple (t, "\\text", 1) || is_tuple (t, "\\textnormal", 1) ||
       is_tuple (t, "\\mbox", 1) || is_tuple (t, "\\hbox", 1))
     return var_m2e (t, MODE, "text");
   if (is_tuple (t, "\\ensuremath", 1))

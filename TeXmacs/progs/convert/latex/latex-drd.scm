@@ -57,7 +57,7 @@
   grave acute check breve abovering mathring
   dot ddot dddot ddddot mod pod pmod bmod
   label ref pageref index hspace hspace* vspace vspace*
-  mbox hbox text not substack
+  mbox hbox textnormal text not substack
   ,(string->symbol "'") ,(string->symbol "`") ,(string->symbol "\"")
   ^ over atop ~ = u v H t c d b k r textsuperscript textsubscript
   thispagestyle ensuremath
