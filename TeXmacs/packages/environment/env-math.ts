@@ -138,6 +138,14 @@
     <align*|<tformat|<arg|body>>>
   </macro>>
 
+  <assign|alignedat|<\macro|ncol|body>
+    <align|<arg|body>>
+  </macro>>
+
+  <assign|aligned|<\macro|body>
+    <align|<arg|body>>
+  </macro>>
+
   <assign|alignat|<\macro|ncol|body>
     <align|<arg|body>>
   </macro>>
