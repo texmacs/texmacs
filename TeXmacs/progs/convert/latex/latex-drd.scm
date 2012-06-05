@@ -366,7 +366,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (logic-group latex-ignore-0%
-	allowbreak notag xspace break sloppy makeatother makeatletter)
+  allowbreak notag xspace break sloppy makeatother makeatletter
+  ignorespacesafterend ignorespaces)
 
 (logic-group latex-ignore-0*%
 	displaybreak allowdisplaybreaks)
