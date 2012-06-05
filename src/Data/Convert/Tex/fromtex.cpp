@@ -894,6 +894,8 @@ latex_command_to_tree (tree t) {
       return tree (SPACE, r);
     }
   }
+  if (is_tuple (t, "\\\\*", 1))
+    return concat(tree (NEW_LINE), tree (VAR_VSPACE, t2e (t[1])));
   if (is_tuple (t, "\\vspace", 1) || is_tuple (t, "\\vspace*", 1)) {
     if (is_tuple (t[1], "\\tex-len", 3))
       return tree (VSPACE, l2e (t[1]));
