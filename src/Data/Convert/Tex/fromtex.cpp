@@ -111,6 +111,9 @@ filter_preamble (tree t) {
       else if (is_tuple (u, "\\def") ||
 	       is_tuple (u, "\\def*"))
 	preamble << u << "\n" << "\n";
+      else if (is_tuple (u, "\\declaretheorem", 1) ||
+          is_tuple (u, "\\declaretheorem*", 2))
+	preamble << tuple("\\newtheorem", u[N(u)-1], u[N(u)-1]) << "\n" << "\n";
       else if (is_tuple (u, "\\newtheorem") ||
 	       is_tuple (u, "\\newtheorem*"))
 	preamble << u << "\n" << "\n";

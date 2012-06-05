@@ -617,6 +617,15 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     command_arity (var)= as_int (t[2]);
     command_def   (var)= as_string (u[3]);
   }
+  if (is_tuple (t, "\\declaretheorem*", 2) || 
+      is_tuple (t, "\\declaretheorem",  1)) {
+    string var= "\\begin-" * string_arg (t[N(t)-1]);
+    command_type  (var)= "environment";
+    command_arity (var)= 0;
+    var= "\\end-" * string_arg (t[N(t)-1]);
+    command_type  (var)= "environment";
+    command_arity (var)= 0;
+  }
   if (is_tuple (t, "\\newtheorem", 2) || is_tuple (t, "\\newtheorem*", 2)) {
     string var= "\\begin-" * string_arg (t[1]);
     command_type  (var)= "environment";
