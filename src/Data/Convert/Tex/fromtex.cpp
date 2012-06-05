@@ -240,6 +240,7 @@ latex_symbol_to_tree (string s) {
       if (s == "land")          return "<wedge>";
       if (s == "lor")           return "<vee>";
       if (s == "textbackslash") return "\\";
+      if (s == "hdots")         return "<ldots>";
                                 return "<" * s * ">";
     }
 

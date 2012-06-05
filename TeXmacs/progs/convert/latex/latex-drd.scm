@@ -263,7 +263,7 @@
   Longrightarrow Longleftarrow Longleftrightarrow 
   
   ;; Miscellaneous symbols
-  ldots cdots vdots ddots aleph
+  ldots cdots vdots ddots hdots aleph
   prime forall infty hbar emptyset
   exists nabla surd triangle
   imath jmath ell neg
