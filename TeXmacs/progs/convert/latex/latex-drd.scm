@@ -366,10 +366,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (logic-group latex-ignore-0%
-	allowbreak notag xspace break sloppy)
+	allowbreak notag xspace break sloppy makeatother makeatletter)
 
 (logic-group latex-ignore-0*%
-	displaybreak allowdisplaybreak)
+	displaybreak allowdisplaybreaks)
 
 (logic-group latex-ignore-1%
 	tag)
