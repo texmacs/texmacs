@@ -9,11 +9,20 @@
   only. They are documented for the sake of completeness, but you should only
   use them if you really know what you are doing.
 
+  <\explain|<explain-macro|uninit><explain-synopsis|unknown content or
+  unintialized data>>
+    This primitive is mainly used for default uninialized value of
+    environment variables; the main advantage of this tag is to be distinct
+    from the empty string.
+  </explain>
+
   <\explain|<explain-macro|unknown><explain-synopsis|unknown content or
   unintialized data>>
     This primitive is mainly used for default uninialized value of
     environment variables; the main advantage of this tag is to be distinct
     from the empty string.
+
+    This value is less likely to be encountered than <src-macro|uninit>
   </explain>
 
   <\explain|<explain-macro|error|message><explain-synopsis|error messages>>
@@ -88,6 +97,15 @@
   <|explain>
     This internal primitive is used for rewriting an inactive tree into a new
     tree whose rendering corresponds to the rendering of the inactive tree.
+    It may be successfully invoked from within a macro.
+
+    e.g. <inactive*|<assign|show-inactive|<macro|x|<rewrite-inactive|<arg|x>|>>>>
+
+    which might be invoked to show itself or another assigned variable using
+    <src-macro|quasiquote> in this manner:
+    <inactive*|<quasiquote|<show-inactive|<unquote|<value|show-inactive>>>>>
+
+    \;
   </explain>
 
   <\explain>
