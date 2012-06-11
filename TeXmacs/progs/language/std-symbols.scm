@@ -358,7 +358,9 @@
 
   (define Open-symbol
     (:type opening-bracket)
-    "(" "[" "{" "<lfloor>" "<lceil>" "<langle>"
+    "(" "[" "{"
+    "<lvert>" "<lVert>"
+    "<lfloor>" "<lceil>" "<langle>"
     "<llbracket>" "<llangle>"
     "<left-(>" "<left-[>" "<left-{>" "<left-less>"
     "<left-}>" "<left-]>" "<left-)>" "<left-gtr>"
@@ -372,7 +374,9 @@
 
   (define Close-symbol
     (:type closing-bracket)
-    "}" "]" ")" "<rfloor>" "<rceil>" "<rangle>"
+    "}" "]" ")"
+    "<rvert>" "<rVert>"
+    "<rfloor>" "<rceil>" "<rangle>"
     "<rrbracket>" "<rrangle>"
     "<right-(>" "<right-[>" "<right-{>" "<right-less>"
     "<right-}>" "<right-]>" "<right-)>" "<right-gtr>"

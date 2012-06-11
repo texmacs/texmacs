@@ -575,6 +575,7 @@ is_left_type (tree t) {
   string s= t->label;
   return
     (s == "(") || (s == "[") || (s == "\\{") ||
+    (s == "\\lvert") || (s == "lVert") ||
     (s == "\\lfloor") || (s == "\\lceil") || (s == "\\langle");
 }
 
@@ -582,8 +583,18 @@ static bool
 is_right_type (tree t) {
   if (is_compound (t)) return false;
   string s= t->label;
-  return (s == ")") || (s == "]") || (s == "\\}") ||
+  return
+    (s == ")") || (s == "]") || (s == "\\}") ||
+    (s == "\\rvert") || (s == "\\rVert") ||
     (s == "\\rfloor") || (s == "\\rceil") || (s == "\\rangle");
+}
+
+static bool
+is_mid_type (tree t) {
+  if (is_compound (t)) return false;
+  string s= t->label;
+  return
+    (s == "|") || (s == "||") || (s == "\\vert") || (s == "\\Vert");
 }
 
 static bool
@@ -603,7 +614,8 @@ is_large_delimiter (tree t, int& type) {
     type= 1;
     return true;
   }
-  if (s == "\\bigm") {
+  if ((s == "\\bigm") ||
+      ((s == "\\big") && is_mid_type (t[1]))) {
     type= 0;
     return true;
   }

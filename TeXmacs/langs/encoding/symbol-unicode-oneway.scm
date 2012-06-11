@@ -113,6 +113,11 @@
 ;; LEFT, RIGHT, MID and BIG primitive. If they are explicitly
 ;; present, they are exported as a regular-sized character.	
 
+("<lvert>"		"|")
+("<rvert>"		"|")
+("<lVert>"		"#2016")
+("<rVert>"		"#2016")
+
 ("<large-less-0>"	"<")
 ("<large-gtr-0>"	">")
 ("<large-(>"		"(")
@@ -136,9 +141,17 @@
 ("<large-{-0>"		"{")
 ("<large-}-0>"		"}")
 ("<large-|>"		"|")
+("<large-lvert>"	"|")
+("<large-rvert>"	"|")
 ("<large-||>"		"#2016")
+("<large-lVert>"	"#2016")
+("<large-rVert>"	"#2016")
 ("<large-|-0>"		"|")
+("<large-lvert-0>"	"|")
+("<large-rvert-0>"	"|")
 ("<large-||-0>"		"#2016")
+("<large-lvert-0>"	"#2016")
+("<large-rvert-0>"	"#2016")
 ("<large-llbracket>"	"#27E6")
 ("<large-rrbracket>"	"#27E7")
 ("<large-llbracket-0>"	"#27E6")

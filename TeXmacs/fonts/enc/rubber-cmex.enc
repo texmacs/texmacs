@@ -2,6 +2,8 @@
     "large-lfloor" "large-rfloor" "large-lceil" "large-rceil"
     "large-{" "large-}" "large-langle" "large-rangle"
     "large-|" "large-||" "large-/" "large-\\"
+12  "large-lvert" "large-lVert"
+12  "large-rvert" "large-rVert"
 70  "big-sqcup"
 72  "big-oint"
 72  "big-ointlim"

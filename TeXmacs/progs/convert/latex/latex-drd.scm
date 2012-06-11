@@ -37,7 +37,6 @@
 
   ;; AMS commands
   qed dotsc dotsb dotsm dotsi dotso
-  lvert rvert lVert rVert
   ;; temporarily
   hline
   ;; rewritten

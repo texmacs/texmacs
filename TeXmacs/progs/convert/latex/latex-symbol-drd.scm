@@ -32,7 +32,7 @@
   leftrightharpoons leftrightsquigarrow leftthreetimes leqq leqslant
   lessapprox lessdot lesseqgtr lesseqqgtr lessgtr lesssim lhd
   llcorner lll lnapprox lneq lneqq lnsim looparrowleft looparrowright
-  lozenge lrcorner ltimes lvertneqq maltese measuredangle models
+  lozenge lrcorner ltimes lvert lVert lvertneqq maltese measuredangle models
   multimap nLeftarrow nLeftrightarrow nRightarrow nVDash nVdash
   ncong nexists ngeq ngeqq ngeqslant ngtr nleftarrow nleftrightarrow
   nleq nleqq nleqslant nless nmid nparallel nprec npreceq nrightarrow
@@ -41,7 +41,7 @@
   ntrianglerighteq nvDash nvdash pitchfork precapprox preccurlyeq
   precnapprox precneqq precnsim precsim propto rhd rightarrowtail
   rightleftarrows rightleftharpoons rightrightarrows rightsquigarrow
-  rightthreetimes risingdotseq rtimes shortleftarrow shortmid
+  rightthreetimes risingdotseq rtimes rvert rVert shortleftarrow shortmid
   shortparallel shortrightarrow smalldash smallfrown smallsetminus
   smallsmile smile sphericalangle sqsubset sqsupset subseteqq
   subsetneq subsetneqq succapprox succcurlyeq succnapprox succneqq
