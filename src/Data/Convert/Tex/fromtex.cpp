@@ -985,6 +985,9 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\text", 1) || is_tuple (t, "\\textnormal", 1) ||
       is_tuple (t, "\\mbox", 1) || is_tuple (t, "\\hbox", 1))
     return var_m2e (t, MODE, "text");
+  if (is_tuple (t, "\\mathchoice", 4))
+    return compound ("math-choice", 
+        l2e (t[1]), l2e (t[2]), l2e (t[3]), l2e (t[4]));
   if (is_tuple (t, "\\ensuremath", 1))
     return var_m2e (t, MODE, "math");
   if (is_tuple (t, "\\Mvariable", 1))

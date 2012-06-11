@@ -84,6 +84,9 @@
 (logic-group latex-command-3%
   ifthenelse resizebox @setfontsize)
 
+(logic-group latex-command-4%
+  mathchoice)
+
 (logic-group latex-command-6%
   @startsection)
 
@@ -96,6 +99,8 @@
   ((latex-arity% 'x 2) (latex-command-2% 'x))
   ((latex-command% 'x) (latex-command-3% 'x))
   ((latex-arity% 'x 3) (latex-command-3% 'x))
+  ((latex-command% 'x) (latex-command-4% 'x))
+  ((latex-arity% 'x 4) (latex-command-4% 'x))
   ((latex-command% 'x) (latex-command-6% 'x))
   ((latex-arity% 'x 6) (latex-command-6% 'x)))
 
