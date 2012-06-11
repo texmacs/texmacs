@@ -204,8 +204,8 @@ latex_symbol_to_tree (string s) {
       if (s == "limits")   return ""; // tree (FORMAT, "with limits");
       if (s == "nolimits") return ""; // temporarily
       if (s == "*")        return "*";
-      if (s == "|")        return "<||>";
       if (s == "vert")     return "|";
+      if (s == "|")        return "<||>";
       if (s == "Vert")     return "<||>";
       if (s == "notin")    return "<nin>";
       if (s == "addots")   return "<udots>";
@@ -244,6 +244,10 @@ latex_symbol_to_tree (string s) {
       if (s == "lor")           return "<vee>";
       if (s == "textbackslash") return "\\";
       if (s == "hdots")         return "<ldots>";
+      if (s == "arrowvert")     return "|";
+      if (s == "Arrowvert")     return "<||>";
+      if (s == "lbrace")        return "{";
+      if (s == "rbrace")        return "}";
                                 return "<" * s * ">";
     }
 
@@ -594,10 +598,13 @@ is_mid_type (tree t) {
   if (is_compound (t)) return false;
   string s= t->label;
   return
-    (s == "|")       || (s == "||")       || (s == "\\|") || 
-    (s == "\\vert")  || (s == "\\Vert")   || 
-    (s == "\\lvert") || (s == "\\rvert")  || 
-    (s == "\\lVert") || (s == "\\rVert");
+    (s == "|")             || (s == "||")            || (s == "\\|")         || 
+    (s == "\\vert")        || (s == "\\Vert")        || (s == "\\lvert")     || 
+    (s == "\\rvert")       || (s == "\\lVert")       || (s == "\\rVert")     || 
+    (s == "/")             || (s == "\\arrowvert")   || (s == "\\backslash") || 
+    (s == "\\Arrowvert")   || (s == "\\bracevert")   || (s == "\\Uparrow")   || 
+    (s == "\\downarrow")   || (s == "\\uparrow")     || (s == "\\Downarrow") || 
+    (s == "\\updownarrow") || (s == "\\Updownarrow");
 }
 
 static bool
@@ -1032,8 +1039,10 @@ latex_command_to_tree (tree t) {
   if (is_large_delimiter (t, dtype)) {
     string s= t[1]->label;
     if ((N(s)>1) && (s[0]=='\\')) s=s(1,N(s));
-    if (s == "vert") s= "|";
-    if (s == "Vert") s= "||";
+    if (s == "vert" || s == "arrowvert") s= "|";
+    if (s == "Vert" || s == "Arrowvert") s= "||";
+    if (s == "lbrace") s= "{";
+    if (s == "rbrace") s= "}";
     if (dtype == -1) return tree (LEFT, s);
     else if (dtype == 1) return tree (RIGHT, s);
     else return tree (MID, s);

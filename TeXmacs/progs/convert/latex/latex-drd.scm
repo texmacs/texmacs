@@ -283,7 +283,7 @@
   langle rangle backslash
 
   ;; Big delimiters
-  rmoustache lmoustache rgroup lgroup
+  rmoustache lmoustache rgroup lgroup lbrace rbrace
   arrowvert Arrowvert bracevert
 
   ;; Binary operations (latexsym or amssymb required)
