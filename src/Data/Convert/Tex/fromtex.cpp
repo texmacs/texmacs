@@ -594,7 +594,10 @@ is_mid_type (tree t) {
   if (is_compound (t)) return false;
   string s= t->label;
   return
-    (s == "|") || (s == "||") || (s == "\\vert") || (s == "\\Vert");
+    (s == "|")       || (s == "||")       || (s == "\\|") || 
+    (s == "\\vert")  || (s == "\\Vert")   || 
+    (s == "\\lvert") || (s == "\\rvert")  || 
+    (s == "\\lVert") || (s == "\\rVert");
 }
 
 static bool
