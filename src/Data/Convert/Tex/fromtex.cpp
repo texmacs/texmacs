@@ -2120,15 +2120,17 @@ latex_to_tree (tree t1) {
     mods << tree (LANGUAGE) << tree (lan);
   }
 
-  string name= "modern";
+  string name= "";
   if (lan == "chinese") name= "fireflysung";
   // if (lan == "japanese") name= "ipa";
   // if (lan == "korean") name= "unbatang";
   if (lan == "taiwanese") name= "fireflysung";
   if (lan == "russian") name= "cyrillic";
-  initial << tree (ASSOCIATE, FONT, name);
-  mods << tree (FONT) << tree (name);
-  if (name != "modern") textm_unicode = true;
+  if (name != "") {
+    textm_unicode = true;
+    initial << tree (ASSOCIATE, FONT, name);
+    mods << tree (FONT) << tree (name);
+  }
 
   tree t12= t11;
   if (is_document) t12= simplify_correct (t11);
