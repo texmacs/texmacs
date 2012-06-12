@@ -917,7 +917,7 @@ latex_command_to_tree (tree t) {
     }
   }
   if (is_tuple (t, "\\\\*", 1))
-    return concat(tree (NEW_LINE), tree (VAR_VSPACE, t2e (t[1])));
+    return concat(tree (FORMAT, "next line"), tree (VAR_VSPACE, t2e (t[1])));
   if (is_tuple (t, "\\vspace", 1) || is_tuple (t, "\\vspace*", 1)) {
     if (is_tuple (t[1], "\\tex-len", 3))
       return tree (VSPACE, l2e (t[1]));
@@ -1348,6 +1348,9 @@ parse_pmatrix (tree& r, tree t, int& i, string lb, string rb, string fm) {
       E= tree (CONCAT);
       continue;
     }
+    else if (v == tree (FORMAT, "new line")) {
+      continue;
+    }
     else if (v == tree (FORMAT, "next line")) {
       L << simplify_concat (E);
       V << L;
@@ -1412,6 +1415,14 @@ parse_pmatrix (tree& r, tree t, int& i, string lb, string rb, string fm) {
       string how  = "1ln";
       tformat << tree (CWITH, row_s, row_s, "1", "-1", vbor, how);
     }
+    else if (is_func (v, VAR_VSPACE)) {
+      int row = N(V)+ (N(L)==0? 0: 1);
+      string row_s= row==0? as_string (row+1): as_string (row);
+      tformat << tree (CWITH, row_s, row_s, "1", "-1", "cell-valign", "top");
+      tformat << tree (CWITH, row_s, row_s, "1", "-1", "cell-vmode", "exact");
+      tformat << tree (CWITH, row_s, row_s, "1", "-1", "cell-height", 
+          tree (PLUS, "1fn", v[0]));
+    }
     else E << v;
   }
   if ((N(L)>0) || (N(E)>0)) {
@@ -1434,7 +1445,8 @@ parse_pmatrix (tree& r, tree t, int& i, string lb, string rb, string fm) {
       else R << tree (CELL, "");
     M << R;
   }
-  r << compound (fm, tree (TFORMAT, M));
+  tformat << M;
+  r << compound (fm, tformat);
   if (rb != "") r << tree (RIGHT, rb);
 }
 
