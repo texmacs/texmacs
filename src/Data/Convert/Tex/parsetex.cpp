@@ -171,7 +171,7 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
         }
         textm_class_flag = tmp_textm_class_flag;
       }
-			if (((i+7)<n) && !is_tex_alpha (s (i+5, i+7)) &&
+      else if (((i+7)<n) && !is_tex_alpha (s (i+5, i+7)) &&
 	  (s (i, i+5) == "\\over" || s (i, i+5) == "\\atop"))
 	{
 	  string fr_cmd= s(i,i+5);
