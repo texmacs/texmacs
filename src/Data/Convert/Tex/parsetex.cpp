@@ -493,9 +493,11 @@ is_text_argument (string cmd, int remaining_arity) {
 
 tree
 latex_parser::parse_command (string s, int& i, string cmd) {
+  bool delimdef = false;
   //cout << cmd << " [" << latex_type (cmd) << ", "
   //<< command_type ["!mode"] << ", " << latex_arity (cmd) << "]" << LF;
   if (cmd == "\\gdef" || cmd == "\\xdef" || cmd == "\\edef") cmd= "\\def";
+  if (cmd == "\\def" && s[i] == '\\') delimdef = true;
   if (cmd == "\\newcommand") cmd= "\\def";
   if (cmd == "\\providecommand") cmd= "\\def";
   if (cmd == "\\renewcommand") cmd= "\\def";
@@ -540,69 +542,100 @@ latex_parser::parse_command (string s, int& i, string cmd) {
   bool option= (arity<0);
   if (option) arity= -1-arity;
 
-  /************************ retrieve arguments *******************************/
-  tree t (TUPLE, copy (cmd)); // parsed arguments
-  tree u (TUPLE, copy (cmd)); // unparsed arguments
-  while (i<n && arity>=0 && (arity>0 || option)) {
-    int j= i;
-    while ((j<n) && is_space (s[j])) j++;
-    if (j==n) break;
-    if (option && (s[j]=='[')) {
-      j++;
-      i=j;
-      tree opt= parse (s, i, "]");
-      if (cmd != "\\newtheorem" && cmd != "\\newtheorem*")
-	t << opt;
-      u << s (j, i);
-      if ((i<n) && (s[i]==']')) i++;
-      if (cmd != "\\newtheorem" && cmd != "\\newtheorem*")
-	t[0]->label= t[0]->label * "*";
-      option= false;
-    }
-    else if ((arity>0) && (s[j]=='{')) {
-      bool text_arg=
-	(command_type["!mode"] == "math") && is_text_argument (cmd, arity);
-      j++;
-      i=j;
-      if (text_arg) command_type ("!mode")= "text";
-      if ((N(t)==1) && (cmd == "\\def")) {
-	while ((i<n) && (s[i]!='}')) i++;
-	t << s (j, i);
+  tree t, u;
+
+  // parsing exception for delimited parameters \\def
+  if (delimdef) {
+    int start = i;
+    string name, args= "";
+    i++;
+    while (i < N(s) && ((!textm_class_flag && is_alpha (s[i])) ||
+          (textm_class_flag && is_tex_alpha (s[i]))))
+      i++;
+    name = s(start, i);
+    while (i < N(s) && s[i] != '{') {
+      if (i < N(s) && s[i] == '#') {
+        while (i < N(s) && s[i] == '#') i++;
+        if (i < N(s) && is_digit (s[i])) args = s[i];
       }
-      else t << parse (s, i, "}");
-      if (text_arg) command_type ("!mode")= "math";
-      u << s (j, i);
-      if ((i<n) && (s[i]=='}')) i++;
-      arity--;
-      if (arity == 0) option= false;
+      else
+        i++;
     }
-    else if (s[j] == '}') break;
-    else if (option && (s[j]=='#') && (cmd == "\\def")) {
-      while ((j+3 <= n) && is_numeric (s[j+1]) && (s[j+2] == '#')) j+=2;
-      if (j+2<=n) {
-	t << s (j+1, j+2);
-	u << s (j+1, j+2);
-	i= j+2;
-      }
-      t[0]->label= t[0]->label * "*";
-      option= false;
-    }
-    else if (s[i] == '%') {
-      while(i < N(s) && s[i] != '\n') i++;
-    }
-    else {
-      if (arity>0) {
-	i=j;
-	tree st= parse_symbol (s, i);
-	t << st;
-	u << st;
-	arity--;
-	if (arity == 0) option= false;
-      }
-      else break;
-    }
+    i++;
+    tree st= parse (s, i, "}");
+    i++;
+    if (args == "")
+      t = tree (TUPLE, "\\def", name, st);
+    else
+      t = tree (TUPLE, "\\def*", name, args, st);
+    u = t;
   }
-  if (arity>0) latex_error (s, i, "too little arguments for " * cmd);
+  else {
+/************************ retrieve arguments *******************************/
+    t = tree(TUPLE, copy (cmd)); // parsed arguments
+    u = tree(TUPLE, copy (cmd)); // unparsed arguments
+
+    while (i<n && arity>=0 && (arity>0 || option)) {
+      int j= i;
+      while ((j<n) && is_space (s[j])) j++;
+      if (j==n) break;
+      if (option && (s[j]=='[')) {
+        j++;
+        i=j;
+        tree opt= parse (s, i, "]");
+        if (cmd != "\\newtheorem" && cmd != "\\newtheorem*")
+          t << opt;
+        u << s (j, i);
+        if ((i<n) && (s[i]==']')) i++;
+        if (cmd != "\\newtheorem" && cmd != "\\newtheorem*")
+          t[0]->label= t[0]->label * "*";
+        option= false;
+      }
+      else if ((arity>0) && (s[j]=='{')) {
+        bool text_arg=
+          (command_type["!mode"] == "math") && is_text_argument (cmd, arity);
+        j++;
+        i=j;
+        if (text_arg) command_type ("!mode")= "text";
+        if ((N(t)==1) && (cmd == "\\def")) {
+          while ((i<n) && (s[i]!='}')) i++;
+          t << s (j, i);
+        }
+        else t << parse (s, i, "}");
+        if (text_arg) command_type ("!mode")= "math";
+        u << s (j, i);
+        if ((i<n) && (s[i]=='}')) i++;
+        arity--;
+        if (arity == 0) option= false;
+      }
+      else if (s[j] == '}') break;
+      else if (option && (s[j]=='#') && (cmd == "\\def")) {
+        while ((j+3 <= n) && is_numeric (s[j+1]) && (s[j+2] == '#')) j+=2;
+        if (j+2<=n) {
+          t << s (j+1, j+2);
+          u << s (j+1, j+2);
+          i= j+2;
+        }
+        t[0]->label= t[0]->label * "*";
+        option= false;
+      }
+      else if (s[i] == '%') {
+        while(i < N(s) && s[i] != '\n') i++;
+      }
+      else {
+        if (arity>0) {
+          i=j;
+          tree st= parse_symbol (s, i);
+          t << st;
+          u << st;
+          arity--;
+          if (arity == 0) option= false;
+        }
+        else break;
+      }
+    }
+    if (arity>0) latex_error (s, i, "too little arguments for " * cmd);
+  }
 
   /******************** new commands and environments ************************/
   if (is_tuple (t, "\\def", 2)) {
