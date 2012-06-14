@@ -1606,22 +1606,26 @@ finalize_layout (tree t) {
       }
 
       if (is_func (v, BEGIN) && ((v[0] == "figure") || (v[0] == "figure*"))) {
-	r << tree (BEGIN, "bigfigure");
+	r << tree (NEW_LINE) << tree (BEGIN, "bigfigure");
 	continue;
       }
 
       if (is_func (v, END, 1) && (v[0] == "figure")) {
-	r << tree (END, "bigfigure");
+	r << tree (END, "bigfigure") << tree (NEW_LINE);
 	continue;
       }
 
       if (is_func (v, BEGIN) && ((v[0] == "table") || (v[0] == "table*"))) {
-	r << tree (BEGIN, "bigtable");
+	r << tree (NEW_LINE) << tree (BEGIN, "bigtable");
 	continue;
       }
 
       if (is_func (v, END, 1) && (v[0] == "table")) {
-	r << tree (END, "bigtable");
+	r << tree (END, "bigtable") << tree (NEW_LINE);
+	continue;
+      }
+      if (is_func (v, BEGIN) && (v[0] == "thebibliography")) {
+	r << tree (NEW_LINE) << v;
 	continue;
       }
 
@@ -1758,26 +1762,31 @@ finalize_sections (tree t) {
   return r;
 }
 
-static tree
-finalize_tmindent (tree t) {
+tree
+env2macro (tree t, string from, string to) {
   if (is_atomic (t)) return t;
   tree r = concat ();
   for (int i=0; i<N(t); i++) {
     tree u= t[i];
-    if (is_concat (u)) r << finalize_tmindent (u);
-    else if (is_func (u, BEGIN, 1) && (u[0] == "tmindent")) {
+    if (is_concat (u)) r << env2macro (u, from, to);
+    else if (is_func (u, BEGIN, 1) && (u[0] == from)) {
       tree sub = concat ();
       i++;
-      while (i < N(t) && !(is_func (t[i], END, 1) && t[i][0] == "tmindent")) {
-        if (is_concat(t[i])) sub << finalize_tmindent (t[i]);
+      while (i < N(t) && !(is_func (t[i], END, 1) && t[i][0] == from)) {
+        if (is_concat(t[i])) sub << env2macro (t[i], from, to);
         else sub << t[i];
         i++;
       }
-      r << tree (APPLY, "indent", sub);
+      r << tree (APPLY, to, sub);
     }
     else r << u;
   }
   return r;
+}
+
+static tree
+finalize_tmindent (tree t) {
+  return env2macro (t, "tmindent", "indent");
 }
 
 static tree
