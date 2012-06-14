@@ -158,6 +158,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("loop")= c;
   t ("macro")= c;
   t ("map")= c;
+  t ("match")= c;
   t ("melt")= c;
   t ("method")= c;
   t ("mod")= c;
@@ -183,6 +184,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("sequel")= c;
   t ("split")= c;
   t ("step")= c;
+  t ("structure")= e;
   t ("supports?")= c;
   t ("then")= c;
   t ("this")= c;
