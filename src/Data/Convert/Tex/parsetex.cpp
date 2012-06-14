@@ -549,9 +549,13 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     int start = i;
     string name, args= "";
     i++;
-    while (i < N(s) && ((!textm_class_flag && is_alpha (s[i])) ||
-          (textm_class_flag && is_tex_alpha (s[i]))))
-      i++;
+    if (is_alpha (s[i])) {
+      while (i < N(s) && ((!textm_class_flag && is_alpha (s[i])) ||
+            (textm_class_flag && is_tex_alpha (s[i]))))
+        i++;
+    }
+    else
+      start = i++;
     name = s(start, i);
     while (i < N(s) && s[i] != '{') {
       if (i < N(s) && s[i] == '#') {
