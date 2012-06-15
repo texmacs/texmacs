@@ -52,6 +52,68 @@ is_var_compound (tree t, string s, int n) {
 }
 
 /******************************************************************************
+* Clean extra spaces and linefeed (inspired from TeX tokenizing rules)
+******************************************************************************/
+
+bool
+might_not_be_typesetted (tree t) {
+  return (is_func (t, TUPLE, 1) && t[0] == "\\maketitle")      || 
+         (is_func (t, TUPLE, 1) && t[0] == "\\begin-document") || 
+         (is_func (t, TUPLE, 2) && t[0] == "\\author")         || 
+         (is_func (t, TUPLE, 2) && t[0] == "\\date")           || 
+         (is_func (t, TUPLE, 2) && t[0] == "\\label")          || 
+         (is_func (t, TUPLE, 3) && t[0] == "\\def")            || 
+         (is_func (t, TUPLE, 4) && t[0] == "\\def*");
+}
+
+tree
+kill_space_invaders (tree t, char &status) {
+  if (is_atomic (t)) return t;
+  tree r = concat ();
+  for (int i=0; i<N(t); i++) {
+    tree u= t[i];
+    if (is_concat (u)) r << kill_space_invaders (u, status);
+    else
+      switch (status) {
+        case 'N':
+          if (u == " " || u == "\n");
+          else if (might_not_be_typesetted (u))
+            r << u;
+          else {
+            r << u;
+            status = 'M';
+          }
+          break;
+        case 'M':
+          r << u;
+          if (u == " ") status = 'S';
+          if (u == "\n") status = 'N';
+          break;
+        case 'S':
+          if (u == " ");
+          else if (u == "\n") {
+            r << u;
+            status = 'N';
+          }
+          else if (might_not_be_typesetted (u))
+            r << u;
+          else {
+            r << u;
+            status = 'M';
+          }
+          break;
+    }
+  }
+  return r;
+}
+
+tree
+kill_space_invaders (tree t) {
+  char status = 'N';
+  return kill_space_invaders (t, status);
+}
+
+/******************************************************************************
 * Preprocess preamble
 ******************************************************************************/
 
@@ -124,7 +186,7 @@ filter_preamble (tree t) {
     else doc << u;
   }
   r << A(title_info);
-  r << A(doc);
+  r << A(kill_space_invaders (doc));
   if (in_preamble) return t;
   return r;
 }
@@ -1627,13 +1689,6 @@ finalize_layout (tree t) {
 
       if (is_func (v, BEGIN) && (v[0] == "thebibliography")) {
 	r << tree (NEW_LINE) << v;
-	continue;
-      }
-
-      if ((is_func (v, APPLY, 2) || is_func (v, APPLY, 3)) &&
-          ((v[0] == "section") || (v[0] == "subsection") || 
-           (v[0] == "subsubsection"))) {
-	r << v << tree (NEW_LINE);
 	continue;
       }
 
