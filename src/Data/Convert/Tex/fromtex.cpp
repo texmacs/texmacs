@@ -1624,8 +1624,16 @@ finalize_layout (tree t) {
 	r << tree (END, "bigtable") << tree (NEW_LINE);
 	continue;
       }
+
       if (is_func (v, BEGIN) && (v[0] == "thebibliography")) {
 	r << tree (NEW_LINE) << v;
+	continue;
+      }
+
+      if ((is_func (v, APPLY, 2) || is_func (v, APPLY, 3)) &&
+          ((v[0] == "section") || (v[0] == "subsection") || 
+           (v[0] == "subsubsection"))) {
+	r << v << tree (NEW_LINE);
 	continue;
       }
 
