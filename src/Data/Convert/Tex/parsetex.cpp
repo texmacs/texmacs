@@ -583,6 +583,7 @@ latex_parser::parse_command (string s, int& i, string cmd) {
       int j= i;
       while ((j<n) && is_space (s[j])) j++;
       if (j==n) break;
+      if (s[i]=='$') break; // in most cases, this should not be an argument
       if (option && (s[j]=='[')) {
         j++;
         i=j;
