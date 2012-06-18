@@ -66,6 +66,20 @@ might_not_be_typesetted (tree t) {
          (is_func (t, TUPLE, 4) && t[0] == "\\def*");
 }
 
+bool
+is_sectionnal (tree t) {
+  return (is_func (t, TUPLE, 2) && t[0] == "\\section")        || 
+         (is_func (t, TUPLE, 2) && t[0] == "\\section*")       || 
+         (is_func (t, TUPLE, 2) && t[0] == "\\subsection")     || 
+         (is_func (t, TUPLE, 2) && t[0] == "\\subsection*")    || 
+         (is_func (t, TUPLE, 2) && t[0] == "\\subsubsection")  || 
+         (is_func (t, TUPLE, 2) && t[0] == "\\subsubsection*") || 
+         (is_func (t, TUPLE, 2) && t[0] == "\\part")           || 
+         (is_func (t, TUPLE, 2) && t[0] == "\\part*")          || 
+         (is_func (t, TUPLE, 2) && t[0] == "\\chapter")        || 
+         (is_func (t, TUPLE, 2) && t[0] == "\\chapter*");
+}
+
 tree
 kill_space_invaders (tree t, char &status) {
   if (is_atomic (t)) return t;
@@ -85,14 +99,34 @@ kill_space_invaders (tree t, char &status) {
           }
           break;
         case 'M':
-          r << u;
-          if (u == " ") status = 'S';
-          if (u == "\n") status = 'N';
+          if (is_sectionnal (u)) {
+            r << "\n" << u;
+            i++;
+            while (might_not_be_typesetted (t[i]) || t[i] == " " || u == "\n")
+              r << t[i++];
+            i--;
+            r << "\n";
+            status = 'N';
+          }
+          else {
+            r << u;
+            if (u == " ") status = 'S';
+            if (u == "\n") status = 'N';
+          }
           break;
         case 'S':
           if (u == " ");
           else if (u == "\n") {
             r << u;
+            status = 'N';
+          }
+          else if (is_sectionnal (u)) {
+            r << "\n" << u;
+            i++;
+            while (might_not_be_typesetted (t[i]) || t[i] == " " || u == "\n")
+              r << t[i++];
+            i--;
+            r << "\n";
             status = 'N';
           }
           else if (might_not_be_typesetted (u))
