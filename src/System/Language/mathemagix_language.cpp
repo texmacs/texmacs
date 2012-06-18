@@ -167,6 +167,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("operator")= c;
   t ("or")= c;
   t ("packed")= c;
+  t ("pattern")= c;
   t ("penalty")= c;
   t ("postfix")= "postfix";
   t ("prefer")= c;
