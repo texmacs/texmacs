@@ -838,7 +838,64 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\def", 2)) {
     string var= string_arg (t[1]);
     if ((N(var)>0) && (var[0]=='\\')) var= var (1, N(var));
-    return tree (ASSIGN, var, tree (FUNC, l2e (t[2])));
+    if (is_func (t, TUPLE, 3) && is_func (t[2], TUPLE, 1) && 
+        latex_type (as_string (t[2][0])) != "undefined"   && 
+        latex_arity (as_string (t[2][0])) != 0) {
+      string s = as_string (t[2][0]);
+      tree f (FUNC), def = tuple (s), l2edef;
+      for (int a=1; a <= abs (latex_arity (s)) - (latex_arity (s) < 0); a++){
+        f << as_string (a);
+        def << tree (APPLY, as_string (a));
+      }
+      l2edef = l2e (def);
+      if (N(l2edef) != 0 && ! is_concat (l2edef))
+        f << l2edef;
+      else if (is_tuple (def)) {
+        tree adef (APPLY);
+        if (N(def) > 0 && N(def[0])>0) {
+          string cmd = def[0]->label;
+          if ((N(cmd)>0) && (cmd[0]=='\\')) cmd= cmd (1, N(cmd));  
+          adef << cmd;
+        }
+        for (int a=1; a < N(def); a++) adef << def[a];
+        f << adef;
+      }
+      else
+        f << def;
+      if (latex_arity (s) > 0)
+        return tree (ASSIGN, var, f);
+      else {
+        tree r = concat ();
+        r << tree (ASSIGN, var, f);
+        def = tuple (s * "*");
+        var = var * "*";
+        f = tree (FUNC);
+        for (int a=1; a <= abs (latex_arity (s)); a++){
+          f << as_string (a);
+          def << tree (APPLY, as_string (a));
+        }
+        l2edef = l2e (def);
+        if (N(l2edef) != 0 && ! is_concat (l2edef))
+          f << l2edef;
+        else if (is_tuple (def)) {
+          tree adef (APPLY);
+          if (N(def) > 0 && N(def[0])>0) {
+            string cmd = def[0]->label;
+            if ((N(cmd)>0) && (cmd[0]=='\\')) cmd= cmd (1, N(cmd));  
+            adef << cmd;
+          }
+          for (int a=1; a < N(def); a++) adef << def[a];
+          f << adef;
+        }
+        else
+          f << def;
+        r << tree (ASSIGN, var, f);
+        return r;
+      }
+    }
+    else {
+      return tree (ASSIGN, var, tree (FUNC, l2e (t[2])));
+    }
   }
   if (is_tuple (t, "\\def*", 3)) {
     string var= string_arg (t[1]);
@@ -1351,6 +1408,8 @@ l2e (tree t) {
     bool new_flag= false;
     return latex_concat_to_tree (t, new_flag);
   }
+  if (is_func (t, APPLY, 1) && is_atomic (t[0]))
+    return tree (APPLY, latex_symbol_to_tree (t[0]->label));
   if (is_tuple (t) && (N(t)==1)) return latex_symbol_to_tree (t[0]->label);
   return latex_command_to_tree (t);
 }

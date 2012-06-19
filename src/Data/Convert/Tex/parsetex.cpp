@@ -648,6 +648,10 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     command_type  (var)= "user";
     command_arity (var)= 0;
     command_def   (var)= as_string (u[2]);
+    if (is_func (t[2], TUPLE, 1) && 
+        latex_type (as_string (t[2][0])) != "undefined") {
+      command_arity (var)= latex_arity (as_string (t[2][0]));
+    }
   }
   if (is_tuple (t, "\\def*", 3)) {
     string var= string_arg (t[1]);
