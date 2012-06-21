@@ -111,6 +111,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("debugger")= c;
   t ("destructor")= c;
   t ("direct")= c;
+  t ("dispatch")= c;
   t ("div")= c;
   t ("do")= c;
   t ("downto")= c;
