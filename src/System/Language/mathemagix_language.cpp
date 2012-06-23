@@ -104,6 +104,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("category")= e;
   t ("class")= e;
   t ("concrete")= c;
+  t ("conjunction")= c;
   t ("constant")= c;
   t ("constructor")= c;
   t ("continue")= c;
