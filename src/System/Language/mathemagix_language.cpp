@@ -104,7 +104,6 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("category")= e;
   t ("class")= e;
   t ("concrete")= c;
-  t ("conjunction")= c;
   t ("constant")= c;
   t ("constructor")= c;
   t ("continue")= c;
@@ -112,6 +111,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("debugger")= c;
   t ("destructor")= c;
   t ("direct")= c;
+  t ("disjunction")= c;
   t ("dispatch")= c;
   t ("div")= c;
   t ("do")= c;
