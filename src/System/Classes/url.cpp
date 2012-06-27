@@ -149,6 +149,12 @@ url_default (string name, int type= URL_SYSTEM) {
 }
 
 static url
+url_mingw_default (string name, int type) {
+  string s= name (0, 2) * ":" * name (2, N(name));
+  return url_get_name (s, type);  
+}
+
+static url
 url_path (string s, int type= URL_SYSTEM) {
   url u= url_get_path (s, type);
   return u;
@@ -230,6 +236,17 @@ heuristic_is_ftp (string name) {
   return starts (name, "ftp.");
 }
 
+static bool
+heuristic_is_mingw_default (string name, int type) {
+#ifdef WINPATHS
+  return type != URL_SYSTEM && N(name) >= 2 &&
+         name[0] == '/' && is_alpha (name[1]) &&
+         (N(name) == 2 || name[2] == '/');
+#else
+  (void) name; (void) type; return false;
+#endif         
+}
+
 url
 url_general (string name, int type= URL_SYSTEM) {
   if (starts (name, "local:")) return url_local (name (6, N (name)));
@@ -240,6 +257,7 @@ url_general (string name, int type= URL_SYSTEM) {
   if (starts (name, "//")) return url_blank (name (2, N (name)));
   if (heuristic_is_path (name, type)) return url_path (name, type);
   if (heuristic_is_default (name, type)) return url_default (name, type);
+  if (heuristic_is_mingw_default (name, type)) return url_mingw_default (name, type);
   if (heuristic_is_http (name)) return url_http (name);
   if (heuristic_is_ftp (name)) return url_ftp (name);
   return url_get_name (name, type);
@@ -468,10 +486,19 @@ as_string (url u, int type) {
       s2= "{" * s2 * "}";
 #ifdef WINPATHS
     if (is_semi_root (u)) {
-      if (ends (s2, ":")) return s2 * "\\";
-      else return s2;
+      if (ends (s2, ":")) {
+        if (type == URL_SYSTEM) return s2 * "\\";
+        else return s1 * sep * s2 (0, N(s2) - 1);
+      }
+      else {
+        if (type == URL_SYSTEM) return s2;
+        else return s1 * sep * s2;
+      }
     }
-    if (is_root (u[1]) && stype == URL_SYSTEM) return s2;
+    if (is_root (u[1]) && type != URL_SYSTEM && N(s2) >= 2 && is_alpha (s2[0]) && s2[1] == ':')
+      return s1 * sep * s2 (0, 1) * s2 (2, N(s2));
+    if (is_root (u[1]) && stype == URL_SYSTEM)
+      return s2;
 #endif
     return s1 * sep * s2;
   }
