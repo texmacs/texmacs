@@ -58,7 +58,7 @@
   label ref pageref index hspace hspace* vspace vspace*
   mbox hbox textnormal text not substack
   ,(string->symbol "'") ,(string->symbol "`") ,(string->symbol "\"")
-  ^ over atop ~ = u v H t c d b k r textsuperscript textsubscript
+  ^ over atop choose ~ = u v H t c d b k r textsuperscript textsubscript
   thispagestyle ensuremath
   mathord mathbin mathopen mathpunct mathop mathrel mathclose mathalpha
   arabic alph Alph roman Roman fnsymbol displaylines cases underbrace overbrace
@@ -75,7 +75,7 @@
   ,(string->symbol "."))
 
 (logic-group latex-command-2%
-  binom tbinom dbinom choose cfrac tfrac equal href
+  binom tbinom dbinom cfrac tfrac equal href
   sideset stackrel citeauthoryear
   setcounter addtocounter setlength addtolength
   scalebox)
@@ -430,6 +430,7 @@
   (tbinom "amsmath")
   (dddot "amsmath")
   (ddddot "amsmath")
+  (ontop "amsmath")
   (mod "amsmath")
   (pod "amsmath")
   (overset "amsmath")

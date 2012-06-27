@@ -122,6 +122,7 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
 	 (stop != "denom" ||
 	  (s[i] != '$' && s[i] != '}' &&
 	   (i+2>n || s(i,i+2) != "\\]") &&
+	   (i+2>n || s(i,i+2) != "\\)") &&
 	   (i+4>n || s(i,i+4) != "\\end")))) {
     switch (s[i]) {
     case '~':
@@ -171,10 +172,14 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
         }
         textm_class_flag = tmp_textm_class_flag;
       }
-      else if (((i+7)<n) && !is_tex_alpha (s (i+5, i+7)) &&
-	  (s (i, i+5) == "\\over" || s (i, i+5) == "\\atop"))
+      else if (((i+7)<n && !is_tex_alpha (s (i+5, i+7)) &&
+	  (s (i, i+5) == "\\over" || s (i, i+5) == "\\atop")) ||
+	  ((i+9)<n && !is_tex_alpha (s (i+7, i+9)) && s (i, i+7) == "\\choose"))
 	{
-	  string fr_cmd= s(i,i+5);
+    int start = i;
+	  i++;
+    while (i<n && is_alpha (s[i])) i++;
+	  string fr_cmd= s(start, i);
 	  if (fr_cmd == "\\over") fr_cmd= "\\frac";
 	  if (fr_cmd == "\\atop") fr_cmd= "\\ontop";
 	  int j;
@@ -182,7 +187,6 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
 	  tree num= t (j, N(t));
 	  if (N(num) == 0) num= "";
 	  t= t (0, j);
-	  i+=5;
 	  while (i<n && (s[i] == ' ' || s[i] == '\n' || s[i] == '\t')) i++;
 	  tree den= parse (s, i, "denom");
 	  t << tree (TUPLE, fr_cmd, num, den);

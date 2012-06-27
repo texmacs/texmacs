@@ -205,6 +205,7 @@
 (logic-table latex-texmacs-2%
   (tmhlink (!group "\\color{blue} " 1))
   (tmaction (!group "\\color{blue} " 1))
+  (ontop ("{\\genfrac{}{}{0pt}{}{#1}{#2}}"))
   (subindex (index (!append 1 "!" 2))))
 
 (logic-table latex-texmacs-3%
