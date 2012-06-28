@@ -37,8 +37,9 @@ tm_view_rep::tm_view_rep (tm_buffer buf2, editor ed2):
 
 static string
 encode_url (url u) {
-  if (!is_rooted (u)) return "here/" * as_string (u);
-  return get_root (u) * "/" * as_string (unroot (u));
+  if (!is_rooted (u)) return "here/" * as_string (u, URL_UNIX);
+  if (get_root (u) == "default") return "default" * as_string (u, URL_UNIX);
+  return get_root (u) * "/" * as_string (unroot (u), URL_UNIX);
 }
 
 static url
@@ -46,6 +47,7 @@ decode_url (string s) {
   int i= search_forwards ("/", 0, s);
   if (i < 0) return url_none ();
   if (s (0, i) == "here") return url (s (i+1, N(s)));
+  if (s (0, i) == "default") return url (s (i, N(s)));
   return url_root (s (0, i)) * url (s (i+1, N(s)));
 }
 
