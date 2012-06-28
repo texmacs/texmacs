@@ -348,11 +348,8 @@ void
 edit_text_rep::make_image (
   string file_name, bool link, string w, string h, string x, string y)
 {
-  url image= url_system (file_name);
+  url image= url_unix (file_name);
   string type= "";
-  if (is_rooted (image))
-    image= delta (get_name (), image);
-
   tree t (IMAGE);
   if (link) {
     if (is_rooted (image, "default")) image= reroot (image, "file");
