@@ -26,7 +26,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (get-score-sub file keyword-list)
-  (with r (system-search-score (url-system file) keyword-list)
+  (with r (system-search-score (unix->url file) keyword-list)
     (cons file r)))
 
 (define (get-score-list keyword-list file-list)
@@ -68,7 +68,7 @@
 (define path-separator (if (or (os-mingw?) (os-win32?)) #\; #\:))
 
 (define (url-collect path pattern)
-  (let* ((u (url-append (string->url path) (url-any)))
+  (let* ((u (url-append (unix->url path) (url-any)))
 	 (v (url-expand (url-complete u "dr")))
 	 (w (url-append v (url-wildcard pattern)))
 	 (x (url-expand (url-complete w "fr"))))
@@ -76,7 +76,7 @@
 
 (define (docgrep what path . patterns)
   (let* ((l1 (map (lambda (pat) (url-collect path pat)) patterns))
-	 (l2 (map url->string l1))
+	 (l2 (map url->unix l1))
 	 (l3 (append-map (cut string-tokenize-by-char <> path-separator) l2)))
     (build-link-page what l3)))
 
