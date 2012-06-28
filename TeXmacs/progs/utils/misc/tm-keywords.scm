@@ -13,7 +13,7 @@
 
 (texmacs-module (utils misc tm-keywords))
 
-(define kws (string-load (string->url "$TEXMACS_PATH/progs/tm-mode.el")))
+(define kws (string-load (unix->url "$TEXMACS_PATH/progs/tm-mode.el")))
 (define kwo (string->object (string-append "(" kws ")")))
 
 (define (kw-transform l)

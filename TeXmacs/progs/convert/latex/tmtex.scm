@@ -32,7 +32,7 @@
 (define tmtex-serial 0)
 (define tmtex-auto-produce 0)
 (define tmtex-auto-consume 0)
-(define tmtex-image-root-url (string->url "image"))
+(define tmtex-image-root-url (unix->url "image"))
 (define tmtex-image-root-string "image")
 (define tmtex-appendices? #f)
 (define tmtex-replace-style? #t)
@@ -63,9 +63,9 @@
       (begin
 	(set! tmtex-image-root-url (url-unglue current-save-target 4))
 	(set! tmtex-image-root-string
-	      (url->string (url-tail tmtex-image-root-url))))
+	      (url->unix (url-tail tmtex-image-root-url))))
       (begin
-	(set! tmtex-image-root-url (string->url "image"))
+	(set! tmtex-image-root-url (unix->url "image"))
 	(set! tmtex-image-root-string "image")))
   (set! tmtex-appendices? #f)
   (set! tmtex-replace-style?
@@ -1099,7 +1099,7 @@
   (tmtex-eps (cons 'graphics l)))
 
 (define (tmtex-as-eps name)
-  (with u (url-relative current-save-target (string->url name))
+  (with u (url-relative current-save-target (unix->url name))
     (if (or (string-ends? name ".ps")
 	    (string-ends? name ".eps")
 	    (not (url-exists? u)))

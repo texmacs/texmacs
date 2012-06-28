@@ -25,7 +25,7 @@
 
 (define (expand-includes-one t r)
   (if (tree-is? t 'include)
-      (with u (url-relative r (string->url (tree->string (tree-ref t 0))))
+      (with u (url-relative r (unix->url (tree->string (tree-ref t 0))))
 	(inclusion-children (tree-load-inclusion u)))
       (list (expand-includes t r))))
 
