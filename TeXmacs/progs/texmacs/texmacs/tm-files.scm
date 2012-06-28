@@ -20,7 +20,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (propose-name-buffer)
-  (with name (url->string (current-buffer))
+  (with name (url->unix (current-buffer))
     (cond ((not (url-scratch? name)) name)
 	  ((os-win32?) "")
 	  (else (string-append (var-eval-system "pwd") "/")))))
@@ -51,8 +51,7 @@
 (tm-define current-save-target (url-none))
 
 (define (buffer-notify-recent name)
-  (learn-interactive 'recent-buffer
-                     (list (cons "0" (url->string name)))))
+  (learn-interactive 'recent-buffer (list (cons "0" (url->unix name)))))
 
 (define (has-faithful-format? name)
   (in? (url-suffix name) '("tm" "ts" "tp" "stm" "tmml")))
@@ -182,8 +181,8 @@
       (save-buffer-as-check-permissions new-name (car args) (cdr args))))
 
 (tm-define (save-buffer-as new-name . args)
-  (:argument name texmacs-file "Save as")
-  (:default  name (propose-name-buffer))
+  (:argument new-name texmacs-file "Save as")
+  (:default  new-name (propose-name-buffer))
   (with opts (if (x-gui?) args (cons :overwrite args))
     (apply save-buffer-as-main (cons new-name opts))))
 

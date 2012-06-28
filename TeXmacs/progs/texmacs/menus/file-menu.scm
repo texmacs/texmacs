@@ -54,19 +54,21 @@
 
 (tm-menu (file-list-menu l)
   (for (name l)
-    (let* ((short-name (url->system (url-tail name))))
-      ((balloon (eval short-name) (eval name)) (load-buffer name)))))
+    (let* ((short-name (url->system (url-tail name)))
+	   (long-name (url->system name)))
+      ((balloon (eval short-name) (eval long-name)) (load-buffer name)))))
 
 (tm-define (recent-file-list nr)
   (let* ((l1 (map cdar (learned-interactive "recent-buffer")))
-         (l2 (list-filter l1 buffer-in-recent-menu?)))
-    (sublist l2 0 (min (length l2) nr))))
+	 (l2 (map unix->url l1))
+         (l3 (list-filter l2 buffer-in-recent-menu?)))
+    (sublist l3 0 (min (length l3) nr))))
 
 (tm-define (recent-unloaded-file-list nr)
   (let* ((l1 (map cdar (learned-interactive "recent-buffer")))
-         (l2 (list-filter l1 buffer-in-recent-menu?))
-         (l3 (map url->string (buffer-list)))
-         (dl (list-difference l2 l3)))
+	 (l2 (map unix->url l1))
+         (l3 (list-filter l2 buffer-in-recent-menu?))
+         (dl (list-difference l3 (buffer-list))))
     (sublist dl 0 (min (length dl) nr))))
 
 (tm-define (recent-file-menu)
