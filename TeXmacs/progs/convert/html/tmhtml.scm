@@ -32,7 +32,7 @@
 (define tmhtml-images? #f)
 (define tmhtml-image-serial 0)
 (define tmhtml-image-cache (make-ahash-table))
-(define tmhtml-image-root-url (string->url "image"))
+(define tmhtml-image-root-url (unix->url "image"))
 (define tmhtml-image-root-string "image")
 
 (tm-define (tmhtml-initialize opts)
@@ -51,10 +51,10 @@
 	  (set! tmhtml-image-serial 0)
 	  (set! tmhtml-image-root-url (url-unglue current-save-target n))
 	  (set! tmhtml-image-root-string
-		(url->string (url-tail tmhtml-image-root-url))))
+		(url->unix (url-tail tmhtml-image-root-url))))
 	(begin
 	  (set! tmhtml-image-serial 0)
-	  (set! tmhtml-image-root-url (string->url "image"))
+	  (set! tmhtml-image-root-url (unix->url "image"))
 	  (set! tmhtml-image-root-string "image")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1074,7 +1074,7 @@
 
 (define (tmhtml-image-name name)
   ;; FIXME: we should replace ~, environment variables, etc.
-  (with u (url-relative current-save-target (string->url name))
+  (with u (url-relative current-save-target (unix->url name))
     (if (and (or (string-ends? name ".ps")
                  (string-ends? name ".eps")
                  (string-ends? name ".pdf"))
