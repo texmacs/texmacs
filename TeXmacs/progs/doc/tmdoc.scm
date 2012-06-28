@@ -48,7 +48,7 @@
          (let* ((u1 (url-relative cur (caddr x)))
                 (u2 (url-delta root u1)))
            ;;(display* root ", " cur ", " (caddr x) " -> " u2 "\n")
-           (list (car x) (cadr x) (url->string u2))))
+           (list (car x) (cadr x) (url->unix u2))))
 	((list? x) (cons (car x) (tmdoc-substitute-sub (cdr x) root cur)))
 	(else x)))
 
