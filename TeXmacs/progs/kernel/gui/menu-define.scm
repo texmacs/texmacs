@@ -456,7 +456,7 @@
 
 (define (standard-pattern-list)
   (with d (url-read-directory "$TEXMACS_PATH/misc/patterns" "*.png")
-    (map (lambda (x) `(pattern ,(url->string x) "" "")) d)))
+    (map (lambda (x) `(pattern ,(url->unix x) "" "")) d)))
 
 (tm-menu (standard-pattern-menu cmd)
   (tile 8
