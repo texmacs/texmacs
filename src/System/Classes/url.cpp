@@ -151,7 +151,7 @@ url_default (string name, int type= URL_SYSTEM) {
 static url
 url_mingw_default (string name, int type) {
   string s= name (0, 2) * ":" * name (2, N(name));
-  return url_get_name (s, type);  
+  return url_root ("default") * url_get_name (s, type);  
 }
 
 static url
