@@ -283,7 +283,7 @@
   (url->system as_system_string (string url))
   (unix->url url_unix (url string))
   (url->unix as_unix_string (string url))
-  (url url (url string string))
+  (url-unix url (url string string))
   (url-none url_none (url))
   (url-any url_wildcard (url))
   (url-wildcard url_wildcard (url string))

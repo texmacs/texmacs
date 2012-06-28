@@ -12,6 +12,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (plugin-configure dynlink
-  (:require (url-exists? (url "$LD_LIBRARY_PATH" "libtmdynlink.so")))
+  (:require (url-exists? (url-unix "$LD_LIBRARY_PATH" "libtmdynlink.so")))
   (:link "libtmdynlink.so" "dynlink_exports" "")
   (:session "Dynlink"))

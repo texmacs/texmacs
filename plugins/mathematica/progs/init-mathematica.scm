@@ -12,6 +12,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (plugin-configure mathematica
-  (:require (url-exists? (url "$PATH" "math")))
+  (:require (url-exists? (url-unix "$PATH" "math")))
   (:launch "tm_mathematica")
   (:session "Mathematica"))

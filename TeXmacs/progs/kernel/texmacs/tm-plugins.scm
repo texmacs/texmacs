@@ -206,7 +206,7 @@
   (if (ahash-ref plugin-initialize-todo name*)
       (let* ((name (symbol->string name*))
 	     (file (string-append "plugins/" name "/progs/init-" name ".scm"))
-	     (u (url "$TEXMACS_HOME_PATH:$TEXMACS_PATH" file)))
+	     (u (url-unix "$TEXMACS_HOME_PATH:$TEXMACS_PATH" file)))
 	(ahash-set! plugin-initialize-todo name* #f)
 	(if (url-exists? u)
 	    (with fname (url-materialize u "r")

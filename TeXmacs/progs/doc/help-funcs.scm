@@ -21,7 +21,7 @@
 (define help-file-path "$TEXMACS_DOC_PATH")
 
 (tm-define (url-exists-in-help? s)
-  (url-exists? (url help-file-path s)))
+  (url-exists? (url-unix help-file-path s)))
 
 (define (url-resolve-help s)
   (if (or (in? (url-suffix s) '("tex" "tm")) (url-exists? s))
@@ -46,11 +46,11 @@
 			((== lan "ukrainian") ".uk.tm")
 			(else ".en.tm")))
 	     (dir help-file-path))
-	(cond ((url-exists? (url dir (string-append s suf)))
-	       (url-resolve (url dir (string-append s suf)) "r"))
+	(cond ((url-exists? (url-unix dir (string-append s suf)))
+	       (url-resolve (url-unix dir (string-append s suf)) "r"))
 	      ((and (!= suf ".en.tm")
-		    (url-exists? (url dir (string-append s ".en.tm"))))
-	       (url-resolve (url dir (string-append s ".en.tm")) "r"))
+		    (url-exists? (url-unix dir (string-append s ".en.tm"))))
+	       (url-resolve (url-unix dir (string-append s ".en.tm")) "r"))
 	      (else (url-none))))))
 
 (define (load-help-buffer-sub s type)

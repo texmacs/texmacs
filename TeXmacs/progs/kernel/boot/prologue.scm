@@ -24,7 +24,7 @@
   (let* ((aux (lambda (s) (string-append "/" (symbol->string s))))
 	 (name* (apply string-append (map aux module)))
 	 (name (substring name* 1 (string-length name*)))
-	 (u (url "$GUILE_LOAD_PATH" (string-append name ".scm")))
+	 (u (url-unix "$GUILE_LOAD_PATH" (string-append name ".scm")))
 	 ;; FIXME: should use %load-path instead of $GUILE_LOAD_PATH
 	 )
     (url-materialize u "r")))

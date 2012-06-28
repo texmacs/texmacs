@@ -3243,9 +3243,9 @@ tmg_url_2unix (tmscm arg1) {
 }
 
 tmscm
-tmg_url (tmscm arg1, tmscm arg2) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "url");
-  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "url");
+tmg_url_unix (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "url-unix");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "url-unix");
 
   string in1= tmscm_to_string (arg1);
   string in2= tmscm_to_string (arg2);
@@ -6692,7 +6692,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("url->system",  tmg_url_2system, 1, 0, 0);
   tmscm_install_procedure ("unix->url",  tmg_unix_2url, 1, 0, 0);
   tmscm_install_procedure ("url->unix",  tmg_url_2unix, 1, 0, 0);
-  tmscm_install_procedure ("url",  tmg_url, 2, 0, 0);
+  tmscm_install_procedure ("url-unix",  tmg_url_unix, 2, 0, 0);
   tmscm_install_procedure ("url-none",  tmg_url_none, 0, 0, 0);
   tmscm_install_procedure ("url-any",  tmg_url_any, 0, 0, 0);
   tmscm_install_procedure ("url-wildcard",  tmg_url_wildcard, 1, 0, 0);
