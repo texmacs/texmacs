@@ -87,7 +87,7 @@ void ps_bounding_box (url image, int& x1, int& y1, int& x2, int& y2);
 
 static bool
 use_converts (url image) {
-#ifdef __MINGW__
+#if defined(__MINGW__) || defined(__MINGW32__)
   (void) image; return false;
 #else
   // NOTE: determine whether we should use image magick.
