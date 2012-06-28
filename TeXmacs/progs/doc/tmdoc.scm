@@ -177,7 +177,7 @@
 
 (tmfs-title-handler (help name doc)
   (or (tmdoc-find-title doc)
-      (string-append "tmfs://help/" (url->string name))))
+      (string-append "tmfs://help/" (url->unix name))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User interface

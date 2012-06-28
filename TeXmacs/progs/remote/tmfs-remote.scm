@@ -22,7 +22,7 @@
   (or (logged-server) (get-server) (default-server)))
 
 (define (url->name u)
-  (if (url? u) (set! u (url->string u)))
+  (if (url? u) (set! u (url->unix u)))
   (if (string-starts? u "tmfs://") (set! u (string-drop u 7)))
   (if (string-index u #\/) u (string-append "file/" u)))
 
@@ -73,7 +73,7 @@
 (tm-define (remote-buffer? . opt-u)
   (with u (if (null? opt-u) (current-buffer) (car opt-u))
     (and (not (url-none? u))
-	 (string-starts? (url->string u) "tmfs://")
+	 (string-starts? (url->unix u) "tmfs://")
 	 (tmfs-remote? u))))
 
 (tm-define (remote-get-property-types)

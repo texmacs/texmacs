@@ -39,7 +39,7 @@
   (ahash-set! tmfs-handler-table (cons class action) handle))
 
 (define-public (tmfs-decompose-name name)
-  (if (url? name) (set! name (url->string name)))
+  (if (url? name) (set! name (url->unix name)))
   (if (string-starts? name "tmfs://") (set! name (string-drop name 7)))
   (with i (string-index name #\/)
     (list (if i (substring name 0 i) "file")
@@ -70,15 +70,15 @@
     (cond ((ahash-ref tmfs-handler-table (cons class 'title)) =>
 	   (lambda (handler) (handler name doc)))
 	  ((ahash-ref tmfs-handler-table (cons class 'load))
-	   (if (url? u) (url->string u) u))
+	   (if (url? u) (url->system u) u))
 	  (else ((ahash-ref tmfs-handler-table (cons #t 'title)) u doc)))))
 
 (define-public (tmfs-permission? u type)
   "Check whether we have the permission of a given @type for the url @u."
   (with (class name) (tmfs-decompose-name u)
     (lazy-tmfs-force class)
-    (cond ((string-ends? (url->string u) "~") #f)
-	  ((string-ends? (url->string u) "#") #f)
+    (cond ((string-ends? (url->unix u) "~") #f)
+	  ((string-ends? (url->unix u) "#") #f)
 	  ((ahash-ref tmfs-handler-table (cons class 'permission?)) =>
 	   (lambda (handler) (handler name type)))
 	  ((ahash-ref tmfs-handler-table (cons class 'load))
@@ -150,18 +150,18 @@
 (define-public (url->tmfs-string u)
   (if (url-descends? u (get-texmacs-path))
       (with base (url-append (get-texmacs-path) "x")
-        (string-append "tm/" (url->string (url-delta base u))))
+        (string-append "tm/" (url->unix (url-delta base u))))
       (let* ((protocol (url-root u))
-             (file (url->string (url-unroot u))))
+             (file (url->unix (url-unroot u))))
         (cond ((== protocol "") (string-append "here" file))
               ((== protocol "default") (string-append "file/" file))
               (else (string-append protocol "/" file))))))
 
 (define-public (tmfs-string->url s)
   (if (not (tmfs-pair? s))
-      (string->url s)
+      (unix->url s)
       (let* ((protocol (tmfs-car s))
-             (file (string->url (tmfs-cdr s))))
+             (file (unix->url (tmfs-cdr s))))
         (cond ((== protocol "tm") (url-append (get-texmacs-path) file))
               ((== protocol "here") file)
               ((== protocol "file") (url-append (root->url "default") file))
@@ -232,10 +232,10 @@
 
 (tmfs-master-handler (aux name)
   (or (ahash-ref aux-masters name)
-      (string->url (string-append "tmfs://aux/" name))))
+      (unix->url (string-append "tmfs://aux/" name))))
 
 (define-public (aux-name aux)
-  (string->url (string-append "tmfs://aux/" aux)))
+  (unix->url (string-append "tmfs://aux/" aux)))
 
 (define-public (aux-set-document aux doc)
   (with name (aux-name aux)
@@ -272,6 +272,6 @@
   (if (and (tmfs-pair? name) (tmfs-pair? (tmfs-cdr name)))
       (let* ((fm (tmfs-car name))
              (u (tmfs-string->url (tmfs-cdr name)))
-             (last (url->string (url-tail u))))
+             (last (url->system (url-tail u))))
         (string-append last " - " (upcase-first fm)))
       (url-tail name)))

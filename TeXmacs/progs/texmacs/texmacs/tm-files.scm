@@ -66,7 +66,7 @@
 
 (define (save-buffer-save name opts)
   ;;(display* "save-buffer-save " name "\n")
-  (with vname `(verbatim ,(url->string name))
+  (with vname `(verbatim ,(url->system name))
     (if (buffer-save name)
         (begin
           (buffer-pretend-modified name)
@@ -88,7 +88,7 @@
             (save-buffer-save name opts))))))
 
 (define (cannot-write? name action)
-  (with vname `(verbatim ,(url->string name))
+  (with vname `(verbatim ,(url->system name))
     (cond ((and (not (url-test? name "f")) (not (url-test? name "c")))
            (with msg `(concat "The file " ,vname " cannot be created")
              (set-message msg action))
@@ -102,7 +102,7 @@
 (define (save-buffer-check-permissions name opts)
   ;;(display* "save-buffer-check-permissions " name "\n")
   (set! current-save-target name)
-  (with vname `(verbatim ,(url->string name))
+  (with vname `(verbatim ,(url->system name))
     (cond ((url-scratch? name)
            (choose-file
              (lambda (x) (apply save-buffer-as-main (cons x opts)))
@@ -158,7 +158,7 @@
 (define (save-buffer-as-check-other new-name name opts)
   ;;(display* "save-buffer-as-check-other " new-name ", " name "\n")
   (cond ((buffer-exists? new-name)
-         (with s (string-append "The file " (url->string new-name)
+         (with s (string-append "The file " (url->system new-name)
                                 " is being edited. Discard edits?")
            (user-confirm s #f
              (lambda (answ)
@@ -193,7 +193,7 @@
 
 (define (export-buffer-export name to fm opts)
   ;;(display* "export-buffer-export " name ", " to ", " fm "\n")
-  (with vto `(verbatim ,(url->string to))
+  (with vto `(verbatim ,(url->system to))
     (if (buffer-export name to fm)
         (set-message `(concat "Could not save " ,vto) "Export file")
         (set-message `(concat "Exported to " ,vto) "Export file"))))
@@ -266,7 +266,7 @@
                       (url-test? name "c"))))
     ;;(display* "Autosave " name "\n")
     ;; FIXME: incorrectly autosaves after cursor movements only
-    (let* ((vname `(verbatim ,(url->string name)))
+    (let* ((vname `(verbatim ,(url->system name)))
            (suffix (if (rescue-mode?) "#" "~"))
            (aname (url-glue name suffix))
            (fm (url-format name)))
@@ -324,7 +324,7 @@
 
 (define (load-buffer-load name opts)
   ;;(display* "load-buffer-load " name ", " opts "\n")
-  (with vname `(verbatim ,(url->string name))
+  (with vname `(verbatim ,(url->system name))
     (if (url-exists? name)
         (if (buffer-load name)
             (set-message `(concat "Could not load " ,vname) "Load file")
@@ -338,7 +338,7 @@
 
 (define (load-buffer-check-permissions name opts)
   ;;(display* "load-buffer-check-permissions " name ", " opts "\n")
-  (with vname `(verbatim ,(url->string name))
+  (with vname `(verbatim ,(url->system name))
     (cond ((and (not (url-test? name "f")) (not (url-test? name "c")))
            (with msg `(concat "The file " ,vname
                               " cannot be loaded or created")
@@ -426,7 +426,7 @@
 
 (define (import-buffer-check-permissions name fm opts)
   ;;(display* "import-buffer-check-permissions " name ", " fm "\n")
-  (with vname `(verbatim ,(url->string name))
+  (with vname `(verbatim ,(url->system name))
     (cond ((not (url-test? name "f"))
            (with msg `(concat "The file " ,vname " does not exist")
              (set-message msg "Import file")))

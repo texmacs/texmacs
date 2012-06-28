@@ -62,7 +62,7 @@
 
 (tmfs-title-handler (history name doc)
   (with u (tmfs-string->url name)
-    (string-append (url->string (url-tail u)) " - History")))
+    (string-append (url->system (url-tail u)) " - History")))
 
 (tmfs-load-handler (history name)
   (with u (tmfs-string->url name)
@@ -70,7 +70,7 @@
       ($generic
         ($tmfs-title "History of "
                      ($link (url->string u)
-                       ($verbatim (url->string (url-tail u)))))
+                       ($verbatim (url->system (url-tail u)))))
         ($when (not h)
           "This file is not under version control.")
         ($when h
@@ -104,7 +104,7 @@
 (tmfs-title-handler (revision name doc)
   (let* ((rev (tmfs-car name))
          (u (tmfs-string->url (tmfs-cdr name))))
-    (string-append (url->string (url-tail u)) " - Revision " rev)))
+    (string-append (url->system (url-tail u)) " - Revision " rev)))
 
 (tm-define (version-revision name rev) "")
 

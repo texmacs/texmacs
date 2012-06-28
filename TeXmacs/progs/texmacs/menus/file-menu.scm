@@ -25,10 +25,10 @@
 (tm-menu (buffer-list-menu l)
   (for (name l)
     (let* ((abbr (buffer-get-title name))
-           (abbr* (if (== abbr "") (url->string (url-tail name)) abbr))
+           (abbr* (if (== abbr "") (url->system (url-tail name)) abbr))
            (mod? (buffer-modified? name))
            (short-name (string-append abbr* (if mod? " *" "")))
-           (long-name (url->string name)))
+           (long-name (url->system name)))
       ((balloon (eval short-name) (eval long-name))
        (switch-to-buffer name)))))
 
@@ -54,7 +54,7 @@
 
 (tm-menu (file-list-menu l)
   (for (name l)
-    (let* ((short-name (url->string (url-tail name))))
+    (let* ((short-name (url->system (url-tail name))))
       ((balloon (eval short-name) (eval name)) (load-buffer name)))))
 
 (tm-define (recent-file-list nr)
