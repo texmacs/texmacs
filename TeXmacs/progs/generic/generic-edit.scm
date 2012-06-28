@@ -531,13 +531,13 @@
       (insert-go-to `(inactive (specific ,s "")) '(0 1 0))))
 
 (tm-define (make-include u)
-  (insert `(include ,(url->string u))))
+  (insert `(include ,(url->unix u))))
 
 (tm-define (make-inline-image l)
-  (apply make-image (cons* (url->string (car l)) #f (cdr l))))
+  (apply make-image (cons* (url->unix (car l)) #f (cdr l))))
 
 (tm-define (make-link-image l)
-  (apply make-image (cons* (url->string (car l)) #t (cdr l))))
+  (apply make-image (cons* (url->unix (car l)) #t (cdr l))))
 
 (tm-define (make-graphics-over-selection)
   (if (selection-active-any?)
@@ -565,7 +565,7 @@
 
 (define (make-thumbnails-sub l)
   (define (mapper x)
-    `(image ,(url->string x) "0.22par" "" "" ""))
+    `(image ,(url->unix x) "0.22par" "" "" ""))
   (let* ((l1 (map mapper l))
 	 (l2 (make-rows l1 4))
 	 (l3 (map (lambda (r) `(row ,@(map (lambda (c) `(cell ,c)) r))) l2)))
@@ -622,13 +622,13 @@
 
 (tm-define (make-sound u)
   (if (not (url-none? u))
-      (insert `(sound ,(url->string u)))))
+      (insert `(sound ,(url->unix u)))))
 
 (tm-define (make-animation u)
   (interactive
       (lambda (w h len rep)
 	(if (== rep "no") (set! rep "false"))
-	(insert `(video ,(url->string u) ,w ,h ,len ,rep)))
+	(insert `(video ,(url->unix u) ,w ,h ,len ,rep)))
     "Width" "Height" "Length" "Repeat?"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
