@@ -526,7 +526,7 @@ edit_cursor_rep::go_to_label (string s) {
       url u= relative (buf->buf->name, url (extra));
       if (u != buf->buf->name) {
 	string new_buf = scm_quote (as_string (u));
-	string load_buf= "(load-buffer (url-system " * new_buf * "))";
+	string load_buf= "(load-buffer (system->url " * new_buf * "))";
 	string jump_to = "(go-to-label " * scm_quote (s) * ")";
 	exec_delayed (scheme_cmd ("(begin " * load_buf * " " * jump_to * ")"));
       }

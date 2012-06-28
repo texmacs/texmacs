@@ -668,13 +668,13 @@ file_chooser_widget_rep::handle_get_string (get_string_event ev) {
       a[0]["directory"]["input"] << get_string ("input", name);
       if (name == "#f") { ev->s= "#f"; return; }
       url u= url_system (scm_unquote (dir));
-      ev->s= "(url-system " * scm_quote (as_string (u)) * ")";
+      ev->s= "(system->url " * scm_quote (as_string (u)) * ")";
     }
     else {
       a[0]["file"]["input"] << get_string ("input", name);
       if (name == "#f") { ev->s= "#f"; return; }
       url u= url_system (scm_unquote (dir)) * url_system (scm_unquote (name));
-      ev->s= "(url-system " * scm_quote (as_string (u)) * ")";
+      ev->s= "(system->url " * scm_quote (as_string (u)) * ")";
     }
     if (type == "image") {
       string hsize, vsize, xpos, ypos;

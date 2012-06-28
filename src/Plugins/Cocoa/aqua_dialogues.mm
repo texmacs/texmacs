@@ -242,7 +242,7 @@ void aqua_chooser_widget_rep::perform_dialog()
     if (count > 0) {
       file = from_nsstring([filesToOpen objectAtIndex:0]);
       url u= url_system (scm_unquote (file));
-      file = "(url-system " * scm_quote (as_string (u)) * ")";
+      file = "(system->url " * scm_quote (as_string (u)) * ")";
       
     }
   }
@@ -272,11 +272,11 @@ void aqua_chooser_widget_rep::perform_dialog()
     file = from_nsstring([oPanel filename]);
     url u= url_system (scm_unquote (file));
     if (type == "image")
-      file = "(list (url-system " * scm_quote (as_string (u)) *
+      file = "(list (system->url " * scm_quote (as_string (u)) *
              ") \"\" \"\" \"\" \"\")";
     //FIXME: fake image dimensions
     else
-      file = "(url-system " * scm_quote (as_string (u)) * ")";
+      file = "(system->url " * scm_quote (as_string (u)) * ")";
   } else {
     file = "#f";
   }

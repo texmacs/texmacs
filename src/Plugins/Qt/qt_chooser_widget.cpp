@@ -246,11 +246,11 @@ qt_chooser_widget_rep::perform_dialog () {
        params << "\"" << from_qstring(QString("%1px").arg(_pic.height())) << "\" ";
        params << "\"" << "" << "\" ";  // xps ??
        params << "\"" << "" << "\"";   // yps ??
-       file = "(list (url-system " * scm_quote (as_string (u)) * ") " * params * ")";
+       file = "(list (system->url " * scm_quote (as_string (u)) * ") " * params * ")";
        */
-      file = "(list (url-system " * scm_quote (localname) * ") \"\" \"\" \"\" \"\")";
+      file = "(list (system->url " * scm_quote (localname) * ") \"\" \"\" \"\" \"\")";
     } else {
-      file = "(url-system " * scm_quote (localname) * ")";
+      file = "(system->url " * scm_quote (localname) * ")";
     }
   }
   cmd ();
@@ -345,11 +345,11 @@ qt_chooser_widget_rep::perform_dialog () {
       const char* cstr= arr.constData ();
       string localname = string ((char*) cstr);
       if (type == "image")
-        file = "(list (url-system " *
+        file = "(list (system->url " *
         scm_quote (as_string (u)) *
         ") " * imgdialog->getParamsAsString () * ")";
       else
-        file = "(url-system " * scm_quote (localname) * ")";
+        file = "(system->url " * scm_quote (localname) * ")";
     }
   } else {
     file = "#f";
