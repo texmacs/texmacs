@@ -479,8 +479,9 @@
 
 (define (tmhtml-concat l)
   (set! l (tmhtml-glue-scripts l))
+  ;;(display* "l << " l "\n")
   (set! l (tmconcat-structure-tabs l))
-  ;; FIXME: tabs which are inside a 'with' are not treated correctly
+  ;;(display* "l >> " l "\n")
   (tmhtml-post-simplify-nodes
    (let ((l (tmhtml-list l)))
      (cond ((null? l) '())
