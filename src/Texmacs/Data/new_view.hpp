@@ -30,6 +30,8 @@ url  get_new_view (url name);
 url  get_recent_view (url name);
 url  get_passive_view (url name);
 void delete_view (url u);
+void notify_rename_before (url old_name);
+void notify_rename_after (url new_name);
 void window_set_view (url win, url new_u, bool focus);
 void switch_to_buffer (url name);
 void focus_on_editor (editor ed);

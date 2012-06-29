@@ -142,8 +142,10 @@ rename_buffer (url name, url new_name) {
   kill_buffer (new_name);
   tm_buffer buf= concrete_buffer (name);
   if (is_nil (buf)) return;
+  notify_rename_before (name);
   buf->buf->name= new_name;
   buf->buf->master= new_name;
+  notify_rename_after (new_name);
   tree doc= subtree (the_et, buf->rp);
   string title= propose_title (buf->buf->title, new_name, doc);
   set_title_buffer (new_name, title);

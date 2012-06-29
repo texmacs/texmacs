@@ -293,6 +293,20 @@ delete_view (url u) {
   // recently introduced during reorganization
 }
 
+void
+notify_rename_before (url old_name) {
+  array<url> vs= buffer_to_views (old_name);
+  for (int i=0; i<N(vs); i++)
+    notify_delete_view (vs[i]);
+}
+
+void
+notify_rename_after (url new_name) {
+  array<url> vs= buffer_to_views (new_name);
+  for (int i=0; i<N(vs); i++)
+    notify_set_view (vs[i]);
+}
+
 /******************************************************************************
 * Attaching and detaching views
 ******************************************************************************/
