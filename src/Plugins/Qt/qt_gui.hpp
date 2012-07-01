@@ -65,6 +65,7 @@ public:
   virtual bool get_selection (string key, tree& t, string& s, string format);
   virtual bool set_selection (string key, tree t, string s, string format);
   virtual void clear_selection (string key);
+  bool put_graphics_on_clipboard (url file);
 
   /* miscellaneous */
   void image_gc (string name= "*");

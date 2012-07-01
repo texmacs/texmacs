@@ -272,6 +272,7 @@
   (print print_buffer (void))
   (print-pages print_buffer (void string string))
   (print-snippet print_snippet (array_int url content))
+  (graphics-file-to-clipboard graphics_file_to_clipboard (bool url))
   (export-postscript export_ps (void url))
   (export-pages-postscript export_ps (void url string string))
   (footer-eval footer_eval (void string))

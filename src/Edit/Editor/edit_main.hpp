@@ -68,6 +68,7 @@ public:
   void print_buffer (string first="1", string last="1000000");
   void export_ps (url ps_name, string first="1", string last="1000000");
   array<int> print_snippet (url u, tree t);
+  bool graphics_file_to_clipboard (url output);
 
   void footer_eval (string s);
   tree the_line ();

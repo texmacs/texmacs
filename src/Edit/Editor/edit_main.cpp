@@ -20,6 +20,8 @@
 #include "drd_std.hpp"
 #include "message.hpp"
 #include <setjmp.h>
+#include "Plugins/Qt/qt_gui.hpp"
+
 #ifdef EXPERIMENTAL
 #include "../../Style/Memorizer/clean_copy.hpp"
 #endif
@@ -313,6 +315,16 @@ edit_main_rep::print_snippet (url name, tree t) {
   array<int> a;
   a << b->x3 << b->y3 << b->x4 << b->y4;
   return a;
+}
+
+bool
+edit_main_rep::graphics_file_to_clipboard (url name) {
+#ifdef QTTEXMACS
+  the_gui->put_graphics_on_clipboard (name);
+  return true;
+#else 
+  return false;
+#endif
 }
 
 /******************************************************************************

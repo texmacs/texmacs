@@ -134,7 +134,11 @@
   ((eval '(concat "Export as " "Pdf"))
    (choose-file print-to-file "Save pdf file" "pdf"))
   ((eval '(concat "Export as " "PostScript"))
-   (choose-file print-to-file "Save postscript file" "postscript")))
+   (choose-file print-to-file "Save postscript file" "postscript"))
+  (when (selection-active-any?)
+    ("Export selection as image" ;; FIXME: no warning on overwrite!
+     (choose-file (lambda (y) (export-selection-as-graphics (url->string y)))
+                  "Select export file with extension" ""))))
 
 (menu-bind print-menu
   ("Preview" (preview-buffer))
@@ -181,7 +185,12 @@
       ---
       ("Pdf" (choose-file print-to-file "Save pdf file" "pdf"))
       ("Postscript"
-       (choose-file print-to-file "Save postscript file" "postscript")))
+       (choose-file print-to-file "Save postscript file" "postscript"))
+      (when (selection-active-any?)
+        ("Export selection as image"
+         (choose-file ;; no warning on overwrite!
+          (lambda (y) (export-selection-as-graphics (url->string y))) 
+          "Save image file" ""))))
   ---
   ("Close document" (safely-kill-buffer))
   ("Close TeXmacs" (safely-quit-TeXmacs)))

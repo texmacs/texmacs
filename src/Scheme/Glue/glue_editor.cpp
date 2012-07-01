@@ -2612,6 +2612,19 @@ tmg_print_snippet (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_graphics_file_to_clipboard (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "graphics-file-to-clipboard");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= get_current_editor()->graphics_file_to_clipboard (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_export_postscript (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "export-postscript");
 
@@ -3051,6 +3064,7 @@ initialize_glue_editor () {
   tmscm_install_procedure ("print",  tmg_print, 0, 0, 0);
   tmscm_install_procedure ("print-pages",  tmg_print_pages, 2, 0, 0);
   tmscm_install_procedure ("print-snippet",  tmg_print_snippet, 2, 0, 0);
+  tmscm_install_procedure ("graphics-file-to-clipboard",  tmg_graphics_file_to_clipboard, 1, 0, 0);
   tmscm_install_procedure ("export-postscript",  tmg_export_postscript, 1, 0, 0);
   tmscm_install_procedure ("export-pages-postscript",  tmg_export_pages_postscript, 3, 0, 0);
   tmscm_install_procedure ("footer-eval",  tmg_footer_eval, 1, 0, 0);

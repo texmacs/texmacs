@@ -514,6 +514,7 @@ public:
   virtual void export_ps (url ps_name,
 			  string first="1", string last="1000000") = 0;
   virtual array<int> print_snippet (url u, tree t) = 0;
+  virtual bool graphics_file_to_clipboard (url output) = 0;
   virtual void footer_eval (string s) = 0;
   virtual tree the_line () = 0;
   virtual tree the_root () = 0;

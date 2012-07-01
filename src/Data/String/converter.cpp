@@ -103,7 +103,7 @@ converter_rep::load () {
   // to handle each case individually seems unelegant, but there is simply more
   // to be done here than just loading a file.
   // cout << "TeXmacs] load converter " << from << " -> " << to << "\n";
-  if ( from=="Cork" && to=="UTF-8" ) {
+  if (from=="Cork" && to=="UTF-8" ) {
     hashtree<char,string> dic;
     hashtree_from_dictionary (dic,"corktounicode", BIT2BIT, UTF8, false);
     hashtree_from_dictionary (dic,"cork-unicode-oneway", BIT2BIT, UTF8, false);
@@ -112,7 +112,7 @@ converter_rep::load () {
     hashtree_from_dictionary (dic,"symbol-unicode-math", BIT2BIT, UTF8, false);
     ht = dic;
   }
-  else if ( from=="UTF-8" && to=="Cork") {
+  else if (from=="UTF-8" && to=="Cork") {
     hashtree<char,string> dic;
     hashtree_from_dictionary (dic,"corktounicode", UTF8, BIT2BIT, true);
     hashtree_from_dictionary (dic,"unicode-cork-oneway", UTF8, BIT2BIT, false);
@@ -120,14 +120,14 @@ converter_rep::load () {
     hashtree_from_dictionary (dic,"unicode-symbol-oneway", UTF8, BIT2BIT, true);
     ht = dic;
   }
-  else if ( from=="UTF-8" && to=="HTML") {
+  else if (from=="UTF-8" && to=="HTML") {
     hashtree<char,string> dic;
     hashtree_from_dictionary (dic, "HTMLlat1"   , CHAR_ENTITY, ENTITY_NAME, true);
     hashtree_from_dictionary (dic, "HTMLspecial", CHAR_ENTITY, ENTITY_NAME, true);
     hashtree_from_dictionary (dic, "HTMLsymbol" , CHAR_ENTITY, ENTITY_NAME, true);
     ht = dic;
   }
-  else if ( from=="T2A" && to=="UTF-8" ) {
+  else if (from=="T2A" && to=="UTF-8" ) {
     hashtree<char,string> dic;
     hashtree_from_dictionary (dic,"corktounicode", BIT2BIT, UTF8, false);
     hashtree_from_dictionary (dic,"cork-unicode-oneway", BIT2BIT, UTF8, false);
@@ -137,17 +137,22 @@ converter_rep::load () {
     hashtree_from_dictionary (dic,"t2atounicode", BIT2BIT, UTF8, false);
     ht = dic;
   }  
-  else if ( from=="T2A.CY" && to=="CODEPOINT" ) {
+  else if (from=="T2A.CY" && to=="CODEPOINT" ) {
     hashtree<char,string> dic;
     hashtree_from_dictionary (dic,"t2atounicode", BIT2BIT, CHAR_ENTITY, false);
     hashtree_from_dictionary (dic,"t2atounicode", CHAR_ENTITY, CHAR_ENTITY, false);
     ht = dic;
   }
-  else if ( from=="UTF-8" && to=="LaTeX" ) {
+  else if (from=="UTF-8" && to=="LaTeX" ) {
     hashtree<char,string> dic;
     hashtree_from_dictionary (dic,"utf8tolatex", CHAR_ENTITY, BIT2BIT, false);
     ht = dic;
   }
+  else if (from=="Cork" && to=="ASCII") {
+    hashtree<char,string> dic;
+    hashtree_from_dictionary (dic, "cork-escaped-to-ascii", BIT2BIT, UTF8, false);
+    ht = dic;
+  }   
 }
 
 /******************************************************************************
@@ -307,6 +312,12 @@ utf8_to_html (string input) {
   converter conv = load_converter ("UTF-8", "HTML");
   string s = apply (conv, input);
   return utf8_to_hex_entities(s);
+}
+
+string
+cork_to_ascii (string input) {
+  converter conv = load_converter ("Cork", "ASCII");
+  return apply (conv, input);
 }
 
 #ifdef USE_ICONV

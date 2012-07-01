@@ -28,6 +28,11 @@
 #include "QTMWidget.hpp"
 #include "QTMWindow.hpp"
 #include "qt_renderer.hpp" // for the_qt_renderer
+#include "file.hpp" // added for copy_as_graphics
+#include <QMimeData>
+#include <QByteArray>
+#include <QApplication>
+#include <QImage>
 
 #ifdef MACOSX_EXTENSIONS
 #include "MacOS/mac_utilities.h"
@@ -1064,6 +1069,40 @@ void
 clear_selection (string key) {
   // Clear the selection on clipboard 'cb'
   the_gui->clear_selection (key);
+}
+
+bool
+qt_gui_rep::put_graphics_on_clipboard (url file) {
+   string extension= suffix (file) ;
+   
+  // for bitmaps this works :
+  if ((extension == "bmp") || (extension == "png") ||
+      (extension == "jpg") || (extension == "jpeg")) { 
+    QImage myqimage=QImage ( as_charp (as_string (file)) );
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setImage(myqimage);
+  }
+  else {
+    // vector formats
+    // Are there applications receiving eps, pdf,... through the clipboard?
+    // I have not experimented with EMF/WMF (windows) or SVM (Ooo)
+    QString mime="image/*"; // generic image format;
+    if (extension == "eps") mime= "application/postscript";
+    if (extension == "pdf") mime= "application/pdf";
+    if (extension == "svg") mime= "image/svg+xml"; //this works with Inskcape version >= 0.47
+   
+    string filecontent;
+    load_string (as_string (file), filecontent, true);
+
+    QByteArray rawdata= as_charp (filecontent);
+
+    QMimeData *mymimeData = new QMimeData;
+    mymimeData->setData(mime, rawdata);
+
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setMimeData(mymimeData);// default mode= QClipboard::Clipboard 
+  }
+  return true;
 }
 
 /******************************************************************************

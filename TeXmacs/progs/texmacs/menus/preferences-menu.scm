@@ -177,7 +177,14 @@
 	    (enum ("Encoding" "verbatim->texmacs:encoding")
 		  ("Cork" "cork")
 		  ("Iso-8859-1" "iso-8859-1")
-		  ("Utf-8" "utf-8"))))
+		  ("Utf-8" "utf-8")))
+	(-> "TeXmacs -> Image"
+	    (enum ("Format" "texmacs->graphics:format")
+		  ("Svg" "svg")
+		  ("Eps" "eps")
+		  ("Png" "png"))
+            (toggle ("Embed in svg as attr" "texmacs->graphics:attr"))
+            (toggle ("Embed in svg as tmml" "texmacs->graphics:tmml"))))
     (-> "Mathematics"
         (-> "Keyboard"
             (item ("Enforce brackets to match" (toggle-matching-brackets)))
@@ -474,6 +481,8 @@
             (get-pretty-preference "texmacs->latex:encoding")
             "5em"))))
 
+;;;;;;;;;;;;;;
+
 (define-preference-names "texmacs->verbatim:encoding"
   ("cork" "Cork")
   ("iso-8859-1" "Iso-8859-1")
@@ -514,6 +523,33 @@
             (get-pretty-preference "verbatim->texmacs:encoding")
             "5em"))))
 
+(define-preference-names "texmacs->graphics:format"
+  ("svg" "Svg")
+  ("eps" "Eps")
+  ("png" "Png"))
+
+(tm-widget (image-preferences-widget)
+  ===
+  (bold (text "TeXmacs -> Image"))
+  ===
+  (aligned
+    (item (text "Format:")
+      (enum (set-pretty-preference "texmacs->graphics:format" answer)
+            '("Svg" "Eps" "Png")
+            (get-pretty-preference "texmacs->graphics:format")
+            "5em")))
+  (when (== (get-preference "texmacs->graphics:format") "svg")
+    ===
+    (aligned
+      (meti (text "Embed TeXmacs data in Svg as string attribute")
+        (toggle (set-boolean-preference "texmacs->graphics:attr" answer)
+                (get-boolean-preference "texmacs->graphics:attr"))))
+    ===
+    (aligned
+      (meti (text "Embed TeXmacs data in Svg as tmml")
+        (toggle (set-boolean-preference "texmacs->graphics:tmml" answer)
+                (get-boolean-preference "texmacs->graphics:tmml"))))))
+
 (tm-widget (conversion-preferences-widget)
   ======
   (tabs
@@ -525,7 +561,10 @@
         (dynamic (latex-preferences-widget))))
     (tab (text "Verbatim")
       (centered
-        (dynamic (verbatim-preferences-widget))))))
+        (dynamic (verbatim-preferences-widget))))
+    (tab (text "Image")
+      (centered
+        (dynamic (image-preferences-widget))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences widget
