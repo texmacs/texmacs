@@ -132,44 +132,45 @@
        (svgroot (car (select buftree '(:* svg)))) ;; the <svg > node 
        (maingroup (car (select svgroot '(g))))
        ;; the main group in the svg, containing the drawing layout
-      (maingroup-attrib (car (select maingroup '(@))))
-      ;; attributes of the main group
-      (defs (car (select svgroot '(defs))))
-      ;; the defs, containing the glyph vector outlines,
-      ;; hyperlinked from the drawing (a.k.a cloned)
-      (idlist (select svgroot '(:* id :%1))) ; list of all ids in the drawing, used to label glyph outlines and clip-path definition
-      (hreflist (select maingroup '(:* @ xlink:href :%1))) ; list of hyperlinks to the glyphs labels
-      ;;define latex and texmacs string representation of selection
-      ;;we have to escape them to ascii so that they do not interfere with xml
-      ;; <  -> &lt;  > -> &gt; \ -> \\, all characters above #127->\xXX ... 
-      ;; see  TeXmacs/langs/encodings/cork-escaped-to-ascii.scm
-      ;;for the latex representation we mimick what is done when "copy to latex" is performed 
-      (latex-tree (latex-expand tm-fragment))
-      ;; expand or not macros according to preferences
-      (latex-code (texmacs->generic latex-tree "latex-snippet"))
-      ;; actual conversion
-      (latex-code (escape-to-ascii latex-code)) 
-      (tm-code (serialize-texmacs tm-fragment))
-      (tm-code (escape-to-ascii tm-code)) 
-      ;; define new attributes containing latex and texmacs code:
-      (extra-latex-attrib
-       `((xmlns:ns0 "http://www.iki.fi/pav/software/textext/") 
-         (ns0:text ,latex-code) (ns0:preamble "texmacs_latex.sty"))) 
-      (extra-tm-attrib `((xmlns:ns1 "http://www.texmacs.org/") 
-                         (ns1:texmacscode ,tm-code)))
-      ;; OK, the texmacs namespace maybe not correctly described at that url ;)
-      ;; as an alternative to inserting the tm-code as attribute string,
-      ;; we can embbed it as xml in the svg :
-      (tmml-fragment
-       `((desc (@ (id "texmacs"))
-               (TeXmacs (@ (xmlns "http://www.texmacs.org/")
-                           (version ,(texmacs-version-release "")))
-                        (tm-par ,(tmtmml (tree->stree tm-fragment)))))))
-      (old->new-labels (newids! idlist tm-code))
-      ;; rename all ids, create an association list of old to new ids
-      )
+       (maingroup-attrib (car (select maingroup '(@))))
+       ;; attributes of the main group
+       (defs (car (select svgroot '(defs))))
+       ;; the defs, containing the glyph vector outlines,
+       ;; hyperlinked from the drawing (a.k.a cloned)
+       (idlist (select svgroot '(:* id :%1))) ; list of all ids in the drawing, used to label glyph outlines and clip-path definition
+       (hreflist (select maingroup '(:* @ xlink:href :%1))) ; list of hyperlinks to the glyphs labels
+       ;; define latex and texmacs string representation of selection
+       ;; we escape them to ascii so that they do not interfere with xml
+       ;; <  -> &lt;  > -> &gt; \ -> \\, all characters above #127->\xXX ... 
+       ;; see  TeXmacs/langs/encodings/cork-escaped-to-ascii.scm
+       ;; for the latex representation we mimick what is done when
+       ;; "copy to latex" is performed 
+       (latex-tree (latex-expand tm-fragment))
+       ;; expand or not macros according to preferences
+       (latex-code (texmacs->generic latex-tree "latex-snippet"))
+       ;; actual conversion
+       (latex-code (escape-to-ascii latex-code)) 
+       (tm-code (serialize-texmacs tm-fragment))
+       (tm-code (escape-to-ascii tm-code)) 
+       ;; define new attributes containing latex and texmacs code:
+       (extra-latex-attrib
+        `((xmlns:ns0 "http://www.iki.fi/pav/software/textext/") 
+          (ns0:text ,latex-code) (ns0:preamble "texmacs_latex.sty"))) 
+       (extra-tm-attrib `((xmlns:ns1 "http://www.texmacs.org/") 
+                          (ns1:texmacscode ,tm-code)))
+       ;; OK, the texmacs namespace maybe not correctly described at that url
+       ;; as an alternative to inserting the tm-code as attribute string,
+       ;; we can embbed it as xml in the svg :
+       (tmml-fragment
+        `((desc (@ (id "texmacs"))
+                (TeXmacs (@ (xmlns "http://www.texmacs.org/")
+                            (version ,(texmacs-version-release "")))
+                         (tm-par ,(tmtmml (tree->stree tm-fragment)))))))
+       (old->new-labels (newids! idlist tm-code))
+       ;; rename all ids, create an association list of old to new ids
+       )
     ;;(display tm-code)
-
+    
     ;; Third: modify tree
     (replace-hlinks! hreflist old->new-labels)
     ;; replace hlinks with new pointers
