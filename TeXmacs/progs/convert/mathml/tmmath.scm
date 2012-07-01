@@ -61,14 +61,18 @@
 (define (tmmath-rigid l)
   `(m:mrow ,(tmmath (car l))))
 
+(define (convert-around x)
+  (with d (downgrade-brackets x)
+    (tmmath-concat (if (pair? d) (cdr d) (list d)))))
+
 (define (tmmath-around l)
-  (tmmath-concat (cdr (downgrade-brackets (cons 'around l)))))
+  (convert-around (cons 'around l)))
 
 (define (tmmath-around* l)
-  (tmmath-concat (cdr (downgrade-brackets (cons 'around* l)))))
+  (convert-around (cons 'around* l)))
 
 (define (tmmath-big-around l)
-  (tmmath-concat (cdr (downgrade-brackets (cons 'big-around l)))))
+  (convert-around (cons 'big-around l)))
 
 (define (tmmath-large x)
   (with y (logic-ref tm->mathml-large% x)

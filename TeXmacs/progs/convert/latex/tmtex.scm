@@ -638,14 +638,18 @@
 ;; Mathematics
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (convert-around x)
+  (with d (downgrade-brackets x)
+    (tmtex-concat (if (pair? d) (cdr d) (list d)))))
+
 (define (tmtex-around l)
-  (tmtex-concat (cdr (downgrade-brackets (cons 'around l)))))
+  (convert-around (cons 'around l)))
 
 (define (tmtex-around* l)
-  (tmtex-concat (cdr (downgrade-brackets (cons 'around* l)))))
+  (convert-around (cons 'around* l)))
 
 (define (tmtex-big-around l)
-  (tmtex-concat (cdr (downgrade-brackets (cons 'big-around l)))))
+  (convert-around (cons 'big-around l)))
 
 (define (tmtex-large-decode s)
   (cond ((nstring? s) ".")
