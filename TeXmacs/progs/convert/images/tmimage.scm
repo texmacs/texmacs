@@ -230,6 +230,8 @@
   ;; the svg and therefore lost when re-editing the svg
 
   ;; (import-from (convert html htmlout))
+  (if (== output "default")
+      (set! output (get-preference "texmacs->graphics:format")))
   (if (selection-active-any?) 
       (let* (;;step 1 figure what is the wanted destination
              (dest (string->url output))

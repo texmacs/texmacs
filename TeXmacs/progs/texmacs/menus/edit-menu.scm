@@ -75,9 +75,7 @@
       (when (selection-active-any?)
 	(-> "Copy to"
 	    (link clipboard-copy-export-menu)
-	    (if (qt-gui?)
-                ("Image" (export-selection-as-graphics
-                          (get-preference "texmacs->graphics:format"))))
+	    (if (qt-gui?) ("Image" (export-selection-as-graphics "default")))
 	    ---
 	    ("Primary" (clipboard-copy "primary"))
 	    ("Secondary" (clipboard-copy "secondary"))
