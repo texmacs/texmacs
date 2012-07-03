@@ -1284,6 +1284,8 @@ parse_latex (string s, bool change) {
   string encoding= latex_encoding_to_iconv (get_latex_encoding (s));
   if (encoding != "UTF-8" && encoding != "Cork" && encoding != "")
     s= convert (s, encoding, "UTF-8");
+  else if (encoding == "")
+    s= convert (s, "ISO-8859-1", "UTF-8");
 
   latex_parser ltx (encoding  != "Cork");
   tree r= ltx.parse (s, change);
