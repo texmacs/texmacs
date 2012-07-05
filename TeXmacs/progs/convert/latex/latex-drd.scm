@@ -377,13 +377,16 @@
 	displaybreak allowdisplaybreaks)
 
 (logic-group latex-ignore-1%
-	tag)
+	tag hyphenation)
 
 (logic-rules
-	((latex-ignore% 'x) (latex-ignore-0% 'x))
-  ((latex-arity% 'x 0) (latex-ignore-0% 'x))
-  ((latex-arity% 'x 1) (latex-ignore-1% 'x))
-	((latex-ignore-0% 'x) (latex-ignore-0*% 'x)))
+	((latex-ignore% 'x)       (latex-ignore-0% 'x))
+	((latex-ignore% 'x)       (latex-ignore-0*% 'x))
+	((latex-ignore% 'x)       (latex-ignore-1% 'x))
+  ((latex-arity% 'x 0)      (latex-ignore-0% 'x))
+  ((latex-arity% 'x 0)      (latex-ignore-0*% 'x))
+  ((latex-arity% 'x 1)      (latex-ignore-1% 'x))
+  ((latex-optional-arg% 'x) (latex-ignore-1*% 'x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Using packages

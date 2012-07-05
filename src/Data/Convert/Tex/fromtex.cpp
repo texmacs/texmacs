@@ -837,6 +837,12 @@ latex_eps_get (tree t, string var) {
 
 tree
 latex_command_to_tree (tree t) {
+  if (is_tuple (t) && N(t)>1) {
+    string s= as_string (t[0]);
+    s= s(1,N(s));
+    if (latex_type (s) == "ignore")
+      return tree ();
+  }
   if (is_tuple (t, "\\def", 2)) {
     string var= string_arg (t[1]);
     if ((N(var)>0) && (var[0]=='\\')) var= var (1, N(var));
