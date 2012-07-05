@@ -122,7 +122,7 @@
   def newcommand renewcommand newtheorem newtheorem* frac parbox)
 
 (logic-group latex-command-3*%
-  newenvironment renewenvironment)
+  category newenvironment renewenvironment)
 
 (logic-rules
   ((latex-command-0% 'x) (latex-command-0*% 'x))

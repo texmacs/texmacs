@@ -536,6 +536,19 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     return tuple (cmd, name, arg);
   }
 
+  if (cmd == "\\category") {
+    tree a= parse_argument (s, i); i++;
+    tree b= parse_argument (s, i); i++;
+    tree c= parse_argument (s, i); i++;
+    skip_spaces (s, i);
+    if (s[i] == '[') {
+      i++;
+      tree d= parse (s, i, ']'); i++;
+      return tree (TUPLE, cmd * "*", a, b, c, d);
+    }
+    return tuple (cmd, a, b, c);
+  }
+
   bool mbox_flag=
     ((cmd == "\\text") || (cmd == "\\mbox")) &&
     (command_type ["!mode"] == "math");
