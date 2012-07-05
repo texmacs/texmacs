@@ -31,7 +31,7 @@
   quad qquad enspace thinspace par smallskip medskip bigskip
   noindent newline linebreak nobreak nolinebreak strut
   pagebreak nopagebreak newpage newdoublepage clearpage cleardoublepage
-  newblock bgroup egroup protect cr hfill appendix limits nolimits
+  newblock bgroup egroup protect cr hfil hfill hfilll appendix limits nolimits
   dots maketitle tableofcontents TeX LaTeX onecolumn twocolumn
   begingroup endgroup printindex today
 

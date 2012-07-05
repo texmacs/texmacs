@@ -299,7 +299,9 @@ latex_symbol_to_tree (string s) {
       if (s == "smallskip") return tree (VSPACE, "0.5fn");
       if (s == "medskip")   return tree (VSPACE, "1fn");
       if (s == "bigskip")   return tree (VSPACE, "2fn");
-      if (s == "hfill")     return tree (HTAB, "1fn");
+      if (s == "hfil")      return tree (HTAB, "0pt");
+      if (s == "hfill")     return tree (HTAB, "0pt");
+      if (s == "hfilll")    return tree (HTAB, "0pt");
       if (s == "hline")     return tree (APPLY, "hline");
       if (s == "appendix") { textm_appendices= true; return ""; }
       if (s == "limits")   return ""; // tree (FORMAT, "with limits");
