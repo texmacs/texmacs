@@ -109,27 +109,6 @@ collect_metadata_acm (tree t) {
       for (int j=0; j<N(l); j++)
         r << l[j];
     }
-/*
-    else if (is_tuple (u, "\\address"))
-      r << u;
-    else if (is_tuple (u, "\\affiliation")) {
-      tree v= copy (u);
-      v[0]= "\\address";
-      r << v;
-    }
-    else if (is_tuple (u, "\\thanks")) {
-      tree v= copy (u);
-      v[0]= "\\title-thanks";
-      r << v;
-    }
-    else if (is_tuple (u, "\\email")) {
-      tree v= copy (u);
-      v[0]= "\\title-email";
-      r << v;
-    }
-    else if (is_tuple (u, "\\urladdr"))
-      r << u;
-*/
     else if (is_tuple (u, "\\footnotetext", 1) ||
              is_tuple (u, "\\footnotetext*", 2)) {
       tree v= tuple (u[0], u[N(u)-1]);
