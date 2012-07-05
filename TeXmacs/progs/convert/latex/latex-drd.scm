@@ -62,12 +62,12 @@
   thispagestyle ensuremath
   mathord mathbin mathopen mathpunct mathop mathrel mathclose mathalpha
   arabic alph Alph roman Roman fnsymbol displaylines cases underbrace overbrace
-  title author thanks
+  title author date thanks terms
   phantom hphantom vphantom smash
   newcounter stepcounter refstepcounter value
   citet citep citet* citep* citealt citealp citealt* citealp*
   citetext citeauthor citeauthor* citeyear onlinecite
-  epsfig url penalty centerline fbox framebox
+  epsfig url penalty centerline fbox framebox 
   enlargethispage
   newlength newdimen newskip)
 
