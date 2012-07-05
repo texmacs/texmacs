@@ -13,18 +13,29 @@
 
 bool
 is_metadata (tree u) {
-  return is_tuple (u, "\\address")        ||  is_tuple (u, "\\affiliation")     || 
-         is_tuple (u, "\\author")         ||  is_tuple (u, "\\classification")  || 
-         is_tuple (u, "\\category")       ||  is_tuple (u, "\\category*")       || 
-         is_tuple (u, "\\conferenceinfo") ||  is_tuple (u, "\\CopyrightYear")   || 
-         is_tuple (u, "\\date")           || 
-         is_tuple (u, "\\doc-acm")        ||  is_tuple (u, "\\doc-terms")       || 
-         is_tuple (u, "\\footnotetext")   ||  is_tuple (u, "\\footnotetext*")   || 
-         is_tuple (u, "\\email")          ||  is_tuple (u, "\\keywords")        || 
-         is_tuple (u, "\\pagenumbering")  ||  is_tuple (u, "\\numberofauthors") || 
-         is_tuple (u, "\\subjclass")      ||  is_tuple (u, "\\subjclass*")      || 
-         is_tuple (u, "\\subtitle")       ||  is_tuple (u, "\\terms")           || 
-         is_tuple (u, "\\title")          ||  is_tuple (u, "\\urladdr");
+  return is_tuple (u, "\\address")         || 
+         is_tuple (u, "\\affiliation")     || 
+         is_tuple (u, "\\author")          || 
+         is_tuple (u, "\\classification")  || 
+         is_tuple (u, "\\category")        || 
+         is_tuple (u, "\\category*")       || 
+         is_tuple (u, "\\conferenceinfo")  || 
+         is_tuple (u, "\\CopyrightYear")   || 
+         is_tuple (u, "\\date")            || 
+         is_tuple (u, "\\doc-acm")         || 
+         is_tuple (u, "\\doc-terms")       || 
+         is_tuple (u, "\\footnotetext")    || 
+         is_tuple (u, "\\footnotetext*")   || 
+         is_tuple (u, "\\email")           || 
+         is_tuple (u, "\\keywords")        || 
+         is_tuple (u, "\\pagenumbering")   || 
+         is_tuple (u, "\\numberofauthors") || 
+         is_tuple (u, "\\subjclass")       || 
+         is_tuple (u, "\\subjclass*")      || 
+         is_tuple (u, "\\subtitle")        || 
+         is_tuple (u, "\\terms")           || 
+         is_tuple (u, "\\title")           || 
+         is_tuple (u, "\\urladdr");
 }
 
 tree
