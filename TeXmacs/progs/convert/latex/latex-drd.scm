@@ -113,7 +113,7 @@
 (logic-group latex-command-1*%
   documentclass documentstyle sqrt bibitem cite
   includegraphics includegraphics*
-  subjclass declaretheorem
+  subjclass declaretheorem footnotetext
   xleftarrow xrightarrow xleftrightarrow xminus
   xLeftarrow xRightarrow xLeftrightarrow xequal
   xmapsto xmapsfrom)

@@ -181,40 +181,12 @@ filter_preamble (tree t) {
   tree r (CONCAT);
   tree doc (CONCAT);
   tree preamble (CONCAT);
-  tree title_info (CONCAT);
+  tree metadata (CONCAT);
+  tree latex_classe;
 
   for (i=0; i<n; i++) {
     tree u= t[i];
-    if (is_tuple (u, "\\title") ||
-        is_tuple (u, "\\author") ||
-        is_tuple (u, "\\address"))
-      title_info << u;
-    else if (is_tuple (u, "\\affiliation")) {
-      tree v= copy (u);
-      v[0]= "\\address";
-      title_info << v;
-    }
-    else if (is_tuple (u, "\\thanks")) {
-      tree v= copy (u);
-      v[0]= "\\title-thanks";
-      title_info << v;
-    }
-    else if (is_tuple (u, "\\email")) {
-      tree v= copy (u);
-      v[0]= "\\title-email";
-      title_info << v;
-    }
-    else if (is_tuple (u, "\\urladdr"))
-      title_info << u;
-    else if (is_tuple (u, "\\keywords"))
-      title_info << u;
-    else if (is_tuple (u, "\\classification"))
-      title_info << u;
-    else if (is_tuple (u, "\\subjclass"))
-      title_info << u;
-    else if (is_tuple (u, "\\subjclass*"))
-      title_info << u;
-    else if (in_preamble) {
+    if (in_preamble) {
       if (u == tuple ("\\begin-document")) {
 	r << u;
 	if (N(preamble) > 0)
@@ -226,7 +198,10 @@ filter_preamble (tree t) {
 	       is_tuple (u, "\\documentclass*") ||
 	       is_tuple (u, "\\documentstyle") ||
 	       is_tuple (u, "\\documentstyle*"))
-	doc << u;
+      {
+	      doc << u;
+        latex_classe = u;
+      }
       else if (is_tuple (u, "\\def") ||
 	       is_tuple (u, "\\def*"))
 	preamble << u << "\n" << "\n";
@@ -242,9 +217,12 @@ filter_preamble (tree t) {
 	       is_tuple (u, "\\newenvironment*"))
 	preamble << u << "\n" << "\n";
     }
-    else doc << u;
+    else if (!is_metadata (u))
+      doc << u;
   }
-  r << A(title_info);
+  metadata = collect_metadata (t, latex_classe);
+  r << A(kill_space_invaders (metadata));
+  // cout << "Parsed metadatas: " << kill_space_invaders (metadata) << "\n";
   r << A(kill_space_invaders (doc));
   if (in_preamble) return t;
   return r;
