@@ -230,6 +230,8 @@ filter_preamble (tree t) {
       else if (is_tuple (u, "\\def") ||
 	       is_tuple (u, "\\def*"))
 	preamble << u << "\n" << "\n";
+      else if (is_tuple (u, "\\newdef", 2))
+	preamble << tuple("\\newtheorem", u[1], u[2]) << "\n" << "\n";
       else if (is_tuple (u, "\\declaretheorem", 1) ||
           is_tuple (u, "\\declaretheorem*", 2))
 	preamble << tuple("\\newtheorem", u[N(u)-1], u[N(u)-1]) << "\n" << "\n";
@@ -938,7 +940,8 @@ latex_command_to_tree (tree t) {
     return tree (ASSIGN, var, f);
   }
 
-  if (is_tuple (t, "\\newtheorem", 2) || is_tuple (t, "\\newtheorem*", 2)) {
+  if (is_tuple (t, "\\newtheorem", 2) || is_tuple (t, "\\newdef", 2) ||
+      is_tuple (t, "\\newtheorem*", 2)) {
     string var= l2e(t[1])->label;
     string val= l2e(t[2])->label;
     return compound ("new-theorem", var, val);
