@@ -16,9 +16,9 @@ is_metadata (tree u) {
   return is_tuple (u, "\\address")         || 
          is_tuple (u, "\\affiliation")     || 
          is_tuple (u, "\\author")          || 
-         is_tuple (u, "\\classification")  || 
          is_tuple (u, "\\category")        || 
          is_tuple (u, "\\category*")       || 
+         is_tuple (u, "\\classification")  || 
          is_tuple (u, "\\conferenceinfo")  || 
          is_tuple (u, "\\CopyrightYear")   || 
          is_tuple (u, "\\date")            || 
