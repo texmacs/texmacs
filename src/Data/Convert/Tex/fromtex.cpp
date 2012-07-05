@@ -1122,10 +1122,18 @@ latex_command_to_tree (tree t) {
     return compound ("inc-counter", v2e (t[1]));
   if (is_tuple (t, "\\refstepcounter", 1))
     return compound ("next-counter", v2e (t[1]));
-  if (is_tuple (t, "\\setcounter", 2)) // FIXME: only reset works
-    return compound ("reset-counter", v2e (t[1]));
-  if (is_tuple (t, "\\addtocounter", 2)) // FIXME: only inc works
-    return compound ("inc-counter", v2e (t[1]));
+  if (is_tuple (t, "\\setcounter", 2)) {
+    if (v2e (t[2]) == "0")
+      return compound ("reset-counter", v2e (t[1]));
+    return tree (ASSIGN, v2e (t[1]) * "-nr", v2e (t[2]));
+  }
+  if (is_tuple (t, "\\addtocounter", 2)) {
+    cout << t << LF;
+    if (v2e (t[2]) == "1")
+      return compound ("inc-counter", v2e (t[1]));
+    return tree (ASSIGN, v2e (t[1]) * "-nr",
+        tree (PLUS, v2e (t[1]) * "-nr", v2e (t[2])));
+  }
   if (is_tuple (t, "\\setlength", 2)) {
     if (!textm_class_flag) return "";
     else {
