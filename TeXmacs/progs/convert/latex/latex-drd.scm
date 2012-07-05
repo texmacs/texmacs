@@ -29,9 +29,9 @@
   - / [ ] ! * ,(string->symbol "|") i j ss SS oe OE ae AE
   AA DH L NG O S TH aa dh dj l ng o th pounds colon
   quad qquad enspace thinspace par smallskip medskip bigskip
-  noindent newline linebreak nobreak nolinebreak
+  noindent newline linebreak nobreak nolinebreak strut
   pagebreak nopagebreak newpage newdoublepage clearpage cleardoublepage
-  newblock bgroup egroup protect cr date hfill appendix limits nolimits
+  newblock bgroup egroup protect cr hfill appendix limits nolimits
   dots maketitle tableofcontents TeX LaTeX onecolumn twocolumn
   begingroup endgroup printindex today
 
