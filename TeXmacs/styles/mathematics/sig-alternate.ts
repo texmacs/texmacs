@@ -258,12 +258,6 @@
   <assign|proof|<\macro|body>
     <render-proof|<proof-text>|<arg|body>>
   </macro>>
-
-  <active*|<\src-comment>
-    Other customization.
-  </src-comment>>
-
-  <assign|balancecolumns|>
 </body>
 
 <\initial>
