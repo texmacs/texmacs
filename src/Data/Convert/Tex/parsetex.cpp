@@ -278,7 +278,7 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
       while ((i<n) && is_space (s[i]))
 	if (s[i++]=='\n') ln++;
       if (ln >= 2) t << "\n";
-      else if (i<n) t << tree (TUPLE, "\\ ");
+      else if (i<n) t << " ";
       break;
     }
     case '$': {

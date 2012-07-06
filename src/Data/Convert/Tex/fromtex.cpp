@@ -65,38 +65,47 @@ is_vertical_space (tree t) {
 
 bool
 might_not_be_typesetted (tree t) {
-  return (is_func (t, TUPLE, 1) && t[0] == "\\maketitle")      || 
-         (is_func (t, TUPLE, 1) && t[0] == "\\\\")             || 
-         (is_func (t, TUPLE, 1) && t[0] == "\\begin-document") || 
-         (is_func (t, TUPLE, 2) && t[0] == "\\author")         || 
-         (is_func (t, TUPLE, 2) && t[0] == "\\date")           || 
-         (is_func (t, TUPLE, 2) && t[0] == "\\label")          || 
-         (is_func (t, TUPLE, 2) && t[0] == "\\hspace")         || 
-         (is_func (t, TUPLE, 2) && t[0] == "\\setcounter")     ||
-         (is_func (t, TUPLE, 2) && t[0] == "\\setlength")      ||
-         (is_func (t, TUPLE, 3) && t[0] == "\\def")            || 
-         (is_func (t, TUPLE, 4) && t[0] == "\\def*")           ||
-         (is_func (t, TUPLE, 4) && t[0] == "\\noindent*")      ||
+  return (is_func (t, TUPLE) && t[0] == "\\\\")              || 
+         (is_func (t, TUPLE) && t[0] == "\\author")          || 
+         (is_func (t, TUPLE) && t[0] == "\\begin-document")  || 
+         (is_func (t, TUPLE) && t[0] == "\\date")            || 
+         (is_func (t, TUPLE) && t[0] == "\\declaretheorem")  || 
+         (is_func (t, TUPLE) && t[0] == "\\declaretheorem*") || 
+         (is_func (t, TUPLE) && t[0] == "\\def")             || 
+         (is_func (t, TUPLE) && t[0] == "\\def*")            || 
+         (is_func (t, TUPLE) && t[0] == "\\hspace")          || 
+         (is_func (t, TUPLE) && t[0] == "\\label")           || 
+         (is_func (t, TUPLE) && t[0] == "\\newdef")          || 
+         (is_func (t, TUPLE) && t[0] == "\\newenvironment")  || 
+         (is_func (t, TUPLE) && t[0] == "\\newenvironment*") || 
+         (is_func (t, TUPLE) && t[0] == "\\newtheorem")      || 
+         (is_func (t, TUPLE) && t[0] == "\\newtheorem*")     || 
+         (is_func (t, TUPLE) && t[0] == "\\noindent*")       || 
+         (is_func (t, TUPLE) && t[0] == "\\setcounter")      || 
+         (is_func (t, TUPLE) && t[0] == "\\setlength")       || 
+         (is_func (t, TUPLE) && t[0] == "\\maketitle")       || 
          is_vertical_space (t);
 }
 
 bool
 is_sectionnal (tree t) {
-  return (is_func (t, TUPLE, 2) && t[0] == "\\section")        || 
-         (is_func (t, TUPLE, 2) && t[0] == "\\section*")       || 
-         (is_func (t, TUPLE, 2) && t[0] == "\\subsection")     || 
-         (is_func (t, TUPLE, 2) && t[0] == "\\subsection*")    || 
-         (is_func (t, TUPLE, 2) && t[0] == "\\subsubsection")  || 
-         (is_func (t, TUPLE, 2) && t[0] == "\\subsubsection*") || 
-         (is_func (t, TUPLE, 2) && t[0] == "\\part")           || 
-         (is_func (t, TUPLE, 2) && t[0] == "\\part*")          || 
-         (is_func (t, TUPLE, 2) && t[0] == "\\chapter")        || 
-         (is_func (t, TUPLE, 2) && t[0] == "\\chapter*");
+  return (is_func (t, TUPLE, 2) && t[0] == "\\section")            || 
+         (is_func (t, TUPLE, 2) && t[0] == "\\section*")           || 
+         (is_func (t, TUPLE, 2) && t[0] == "\\subsection")         || 
+         (is_func (t, TUPLE, 2) && t[0] == "\\subsection*")        || 
+         (is_func (t, TUPLE, 2) && t[0] == "\\subsubsection")      || 
+         (is_func (t, TUPLE, 2) && t[0] == "\\subsubsection*")     || 
+         (is_func (t, TUPLE, 2) && t[0] == "\\part")               || 
+         (is_func (t, TUPLE, 2) && t[0] == "\\part*")              || 
+         (is_func (t, TUPLE, 2) && t[0] == "\\chapter")            || 
+         (is_func (t, TUPLE, 2) && t[0] == "\\chapter*")           || 
+         (is_func (t, TUPLE) && t[0] == "\\end-thebibliography") || 
+         (is_func (t, TUPLE) && t[0] == "\\bibliography");
 }
 
 tree
 kill_space_invaders (tree t, char &status) {
-  //cout << "kill_space_invaders (" << status << "): " << t << LF;
+  // cout << "kill_space_invaders (" << status << "): " << t << LF;
   if (is_atomic (t)) return t;
   if (is_tuple (t)) {
     tree r= copy(t);
@@ -108,32 +117,23 @@ kill_space_invaders (tree t, char &status) {
   for (int i=0; i<N(t); i++) {
     tree u= t[i];
     if (is_concat (u)) r << kill_space_invaders (u, status);
-    else if (is_tuple (u)) {
-      if (is_sectionnal (u)) {
+    else if (is_tuple (u) && is_sectionnal (u)) {
         if (status != 'N') {
-          status = 'N';
           r << "\n";
+          status = 'N';
         }
         r << kill_space_invaders (u, status);
         i++;
-        while (might_not_be_typesetted (t[i]) || t[i] == " " || u == "\n")
-          r << t[i++];
+        while (i<N(t) && (might_not_be_typesetted (t[i]) ||
+             t[i] == "\t" || t[i] == "\n")) i++;
+        r << "\n";
+        status = 'N';
         i--;
-      }
-      else if (status == 'N' && is_vertical_space (u) && i > 0 &&
-          i+1 < N(t) && t[i-1] == "\n" && t[i+1] == "\n") {
-        r[N(r)-1] = u;
-        status = 'M';
-      }
-      else {
-        r << kill_space_invaders (u, status);
-        status = 'M';
-      }
     }
-    else
+    else {
       switch (status) {
         case 'N':
-          if (u == " " || u == "\n");
+          if (u == " " || u == "\t" || u == "\n");
           else if (might_not_be_typesetted (u))
             r << u;
           else {
@@ -143,11 +143,11 @@ kill_space_invaders (tree t, char &status) {
           break;
         case 'M':
           r << u;
-          if (u == " ") status = 'S';
+          if (u == " " || u == "\t") status = 'S';
           if (u == "\n") status = 'N';
           break;
         case 'S':
-          if (u == " ");
+          if (u == " " || u == "\t");
           else if (u == "\n") {
             r << u;
             status = 'N';
@@ -159,6 +159,7 @@ kill_space_invaders (tree t, char &status) {
             status = 'M';
           }
           break;
+      }
     }
   }
   return r;
