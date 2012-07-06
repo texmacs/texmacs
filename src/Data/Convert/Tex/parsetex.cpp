@@ -495,6 +495,14 @@ is_text_argument (string cmd, int remaining_arity) {
   return cmd == "\\label" || cmd == "\\ref";
 }
 
+void
+skip_linespaces (string s, int& i) {
+  int n=N(s);
+  skip_spaces (s, i);
+  if ((i<n) && (s[i]=='\n')) i++;
+  skip_spaces (s, i);
+}
+
 tree
 latex_parser::parse_command (string s, int& i, string cmd) {
   bool delimdef = false;
@@ -537,10 +545,15 @@ latex_parser::parse_command (string s, int& i, string cmd) {
   }
 
   if (cmd == "\\category") {
-    tree a= parse_argument (s, i); i++;
-    tree b= parse_argument (s, i); i++;
-    tree c= parse_argument (s, i); i++;
-    skip_spaces (s, i);
+    tree a= parse_argument (s, i);
+    i++;
+    skip_linespaces (s, i);
+    tree b= parse_argument (s, i);
+    i++;
+    skip_linespaces (s, i);
+    tree c= parse_argument (s, i);
+    i++;
+    skip_linespaces (s, i);
     if (s[i] == '[') {
       i++;
       tree d= parse (s, i, ']'); i++;
