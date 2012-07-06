@@ -108,6 +108,11 @@
 (define-public plugin-old-data-table (make-ahash-table))
 (define-public plugin-data-table (make-ahash-table))
 
+(define (determine-path-for-mingw x)
+  (let ((p1 (string-append "C:\\Program files\\" x) )
+        (p2 (string-append "C:\\Program files (x86)\\" x) ))
+        (if (url-exists? p2) p2 p1)))
+
 (define (plugin-configure-cmd name cmd)
   (cond ((or (func? cmd :require 1) (func? cmd :version 1))
 	 (ahash-set! plugin-data-table name ((second cmd))))
@@ -138,6 +143,10 @@
 	((func? cmd :handler 2)
 	 (connection-insert-handler
 	  name (second cmd) (symbol->string (third cmd))))
+	((func? cmd :winpath 1)
+	 (when (os-mingw?)
+	   (with path (determine-path-for-mingw (second cmd))
+	     (setenv "PATH" (string-append (getenv "PATH") ";" path)))))
 	((func? cmd :session 1)
 	 (supported-sessions-add name (second cmd)))
 	((func? cmd :scripts 1)

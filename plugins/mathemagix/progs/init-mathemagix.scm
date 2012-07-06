@@ -60,6 +60,7 @@
       "mmx-light --texmacs"))
 
 (plugin-configure mathemagix
+  (:winpath "Mathemagix\\bin")
   (:require (or (url-exists-in-path? "mmx-light")
 		(url-exists-in-path? "mmi")))
   (:serializer ,mathemagix-serialize)

@@ -24,6 +24,7 @@
 		 (char->string #\005) "\n"))
 
 (plugin-configure pari
+  (:winpath "PARI")
   (:require (url-exists-in-path? "gp"))
   (:initialize (pari-initialize))
   (:launch "gp --texmacs")
