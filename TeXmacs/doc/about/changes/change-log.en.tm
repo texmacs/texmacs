@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.0.7.16>
 
 <style|tmdoc>
 
@@ -8,6 +8,8 @@
   <section|Changes from version 1.0.7 to 1.0.7.16>
 
   <\itemize>
+    <item>Various improvements for <LaTeX> import (1.0.7.16).
+
     <item>New and improved <name|Reduce> interface (1.0.7.16).
 
     <item>Reorganized buffer management and documentation of the new API
@@ -16,6 +18,8 @@
     <item>Rudimentary support for version control using SVN (1.0.7.16).
 
     <item>Rudimentary support for graphical macros without text (1.0.7.16).
+
+    <item>Experimental interface with Inkscape (1.0.7.16).
 
     <item>First rudimentary spreadsheet facility (1.0.7.15).
 
