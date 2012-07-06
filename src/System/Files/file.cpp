@@ -187,12 +187,21 @@ get_attributes (url name, struct stat* buf,
       is_up_to_date (url_parent (name)))
     {
       tree r= cache_get ("stat_cache.scm", name_s);
+      // cout << "Cache : " << r << LF;
       if (r == "#f") return true;
-      buf->st_mode = ((unsigned int) as_int (r[0]->label));
-      buf->st_mtime= ((unsigned int) as_int (r[1]->label));
-      return false;
+      if ((is_compound(r)) && (N(r)==2)) {
+        buf->st_mode = ((unsigned int) as_int (r[0]));
+        buf->st_mtime= ((unsigned int) as_int (r[1]));
+        return false;
+      } 
+      cerr << "TeXmacs] Inconsistent value in stat_cache.scm for key:" << name_s << LF;
+      cerr << "TeXmacs] The current value is:" << r << LF;
+      cerr << "TeXmacs] I'm resetting this key" << LF;
+      // continue and recache, the current value is inconsistent. 
     }
   // End caching
+
+  //cout << "No cache" << LF;
 
   bench_start ("stat");
   bool flag;
@@ -424,7 +433,7 @@ cache_dir_set (string dir, array<string> a) {
 
 array<string>
 read_directory (url u, bool& error_flag) {
- //  cout << "Directory " << u << LF;
+  // cout << "Directory " << u << LF;
   u= resolve (u, "dr");
   if (is_none (u)) return array<string> ();
   string name= concretize (u);

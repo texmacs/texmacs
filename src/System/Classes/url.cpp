@@ -781,7 +781,7 @@ complete (url base, url sub, url u, string filter, bool flag) {
 
 url
 complete (url base, url u, string filter, bool flag) {
- // cout << "complete " << base << " |||| " << u << LF;
+  // cout << "complete " << base << " |||| " << u << LF;
   if (is_none (base)) return base;
   if (is_none (u)) return u;
   if ((!is_root (base)) && (!is_rooted_name (base))) {
@@ -854,7 +854,9 @@ complete (url u, string filter) {
   // This routine can be used in order to find all possible matches
   // for the wildcards in an url and replace the wildcards by these matches.
   // Moreover, matches are normalized (file root -> default root).
-  return complete (u, filter, false);
+  url r =  complete (u, filter, false);
+  // cout << "complete:" << u << " filter:" << filter << " result:" << r << LF;
+  return r;
 }
 
 url
