@@ -137,16 +137,25 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
       break;
     case '\n': {
       int ln=0;
-      while ((i<n) && (is_space (s[i]) || s[i] == '\n')) {
-        if (s[i] == '\n') ln ++;
-        i++;
+      while ((i<n) && is_space (s[i]))
+	if (s[i++]=='\n') ln++;
+      if (i<n) {
+	if (ln == 1) t << " ";
+	else t << "\n";
       }
-      if (ln >= 2) t << "\n";
-      else t << " ";
       break;
     }
     case '%': {
       while ((i<n) && (s[i]!='\n')) i++;
+      if (i<n) i++;
+      int ln=0;
+      while ((i<n) && is_space (s[i]))
+	if (s[i++]=='\n') ln++;
+      if (ln > 0) {
+	if ((N(t)>0) && ((t[N(t)-1]==" ") || (t[N(t)-1]=="\n")))
+	  t[N(t)-1]= "\n";
+	else t << "\n";
+      }
       break;
     }
     case '#':
@@ -263,6 +272,13 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
       i++;
       t << parse (s, i, "}");
       if ((i<n) && (s[i]=='}')) i++;
+
+      int ln=0;
+      if ((i<n) && (!is_space (s[i]))) break;
+      while ((i<n) && is_space (s[i]))
+	if (s[i++]=='\n') ln++;
+      if (ln >= 2) t << "\n";
+      else if (i<n) t << tree (TUPLE, "\\ ");
       break;
     }
     case '$': {
@@ -1089,6 +1105,7 @@ latex_parser::parse (string s, bool change) {
       command_type ("!mode") = "text";
       command_type ("!em") = "false";
       tree u= parse (a[i], j, "", true);
+      if ((N(t)>0) && (t[N(t)-1]!='\n') && (start==0)) t << "\n";
       if (is_concat (u)) t << A(u);
       else t << u;
       if (j == start) j++;
