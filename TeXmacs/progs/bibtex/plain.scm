@@ -133,7 +133,9 @@
 	 (t (bib-field x "type")))
     (if (bib-null? c)
 	(bib-format-pages x)
-	(let ((type (if (bib-null? t) ,(bib-translate "chapter") (bib-locase t)))
+	(let ((type (if (bib-null? t)
+			(bib-translate "chapter")
+			(bib-locase t)))
 	      (pages `(concat ", " ,(bib-format-pages x))))
 	  `(concat ,type " " ,c ,pages)))))
 
