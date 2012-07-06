@@ -286,6 +286,34 @@ init_misc () {
   set_env ("COMSPEC", "");
   set_env ("ComSpec", "");
 #endif
+
+}
+
+static void
+setup_inkscape_extension () {
+#if defined(__MINGW__) || defined(__MINGW32__) || defined (OS_WIN32)
+  url ink_ext = url( get_env ("APPDATA") * "/inkscape/extensions/");
+#else
+  url ink_ext = "~/.config/inkscape/extensions/";
+#endif 
+  if (exists_in_path ("inkscape") && exists (ink_ext)) {
+    // this detection is used in scheme.
+    // Does it really work for windows?
+    // Shouldn't we rather detect inkscape.exe?
+
+    url f1 = url (ink_ext * "texmacs.inx");
+    url f2 = url (ink_ext * "texmacs_reedit.py");
+    url f3 = url (ink_ext * "texmacs_latex.sty");
+    url plug_source = url ("$TEXMACS_PATH/misc/inkscape_plugin/");
+    cerr << "TeXmacs] installing or updating inkscape plugin\n";
+    copy (url (plug_source * "texmacs.inx"), f1);
+    copy (url (plug_source * "texmacs_reedit.py"), f2);
+    copy (url (plug_source * "texmacs_latex.sty"), f3);
+    if (!(exists (f1) && exists (f2))) {
+      cerr << "TeXmacs] automatic install of inkscape plugin failed\n; ";
+      cerr << "TeXmacs] see documentation for manual install\n";
+    }
+  }
 }
 
 /******************************************************************************
@@ -343,6 +371,7 @@ setup_texmacs () {
 
   set_setting ("VERSION", TEXMACS_VERSION);
   setup_tex ();
+  setup_inkscape_extension ();
   
   string s= scheme_tree_to_block (texmacs_settings);
   //cout << "settings_t= " << texmacs_settings << "\n";

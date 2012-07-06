@@ -14,8 +14,7 @@
 
 (texmacs-module (convert images tmimage)
   (:use (convert tmml tmmlout)
-        (convert tmml tmtmml)
-        (ice-9 regex)))
+        (convert tmml tmtmml)))
 
 ;; (display "Texmacs] Loading module tmimage\n")
 
@@ -26,10 +25,19 @@
 ;; the svg produced by this method can be pasted in inkscape via the clipboard
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; temporary files with extensions (for debugging)
+(define-preferences
+  ("texmacs->graphics:tmml" "off" noop)
+  ("texmacs->graphics:attr" "on" noop)
+  ("texmacs->graphics:format" "svg" noop))
 
-(define (temp-url-ext ext)
-  (url-unix "" (string-append (url->string (url-temp)) "." ext)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; private functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; temporary files with extensions
+
+(define (url-temp-ext ext)
+  (url-glue (url-temp) (string-append "." ext)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; commodity functions for tree manipulations
@@ -52,7 +60,7 @@
   (tree-assign! leaf (string->tree newtext)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 2 functions for remapping cross-referenced items (glyphs, clip-box)
+;; 2 functions for remapping cross-referenced items (glyphs)
 ;; in the svg using unique ids this is needed to avoid collisions between
 ;; definitions belonging to differents formulas in inkscape
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -63,8 +71,8 @@
   ;; we will use it to replace hyperlinks to the former ids to the new ones 
   (let* ((unique (number->string (random 1000000 (seed->random-state
                                                   seed-string))))
-         ;; generate a 6-digit number that depends on the tm-code of
-         ;; the selection should be reproducible for a given equation...
+         ;; generate a reproducible 6-digit number that depends 
+         ;; on the tm-code of the selection
          (basename (string-append "tm" unique "-"))
          (newalist '())
          (n (length lablist)))
@@ -85,33 +93,44 @@
            (replace-leaftext! leaf newtarget)))
        hreflist))
 
-(define (adjust-clippath! maingr old-new-labels-alist)
-  ;; again use the above association list to actualy replace
-  ;; the clip-path href items with updated targets
-  ;; alternatively the clip-path and first nested group
-  ;; in main group could probably be removed altogether
-  (let* ((clip (car (select maingr '(:* g @ clip-path :%1))))
-         (cliptarget (match:substring (string-match "^url\\((.*)\\)$"
-                                                    (tree->string clip)) 1))
-         (newtarget (assoc-ref old-new-labels-alist cliptarget))
-         (newurl (string-append "url(" newtarget ")"))
-         ;; (newurl (format #f "url(~A)" newtarget))
-         )
-    (replace-leaftext! clip newurl)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; define latex and texmacs string representation of selection
+;; we escape them to ascii so that they do not interfere with xml
+;; <  -> &lt;  > -> &gt; \ -> \\, all characters above #127->\xXX ... 
+;; see  TeXmacs/langs/encodings/cork-escaped-to-ascii.scm
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-preferences
-  ("texmacs->graphics:tmml" "on" noop)
-  ("texmacs->graphics:attr" "on" noop)
-  ("texmacs->graphics:format" "svg" noop))
+(define (latex-encode tm-fragment-tree) 
+  ;; for the latex representation we mimick what is done when
+  ;; "copy to latex" is performed 
+  (let* ((latex-tree (latex-expand tm-fragment-tree))
+         ;; expand or not macros according to preferences
+         (latex-code (texmacs->generic latex-tree "latex-snippet")))
+         ;; actual conversion
+    (escape-to-ascii latex-code)))
+ 
+(define (tm-encode tm-fragment-tree) 
+  (escape-to-ascii (serialize-texmacs tm-fragment-tree)))
 
 (define (refactor-svg dest tm-fragment)
   ;; reorganize svg file and inject attributes containing tm code of
-  ;; equation dest is the url of the svg file to be edited
+  ;; equation. dest is the url of the svg file to be edited
   ;; A latex fragment is also added for compatibility with
   ;; 'textext' inkscape extension
   ;; FIXME : no error checking, no return value... 
   ;; FIXME if the selection contains a postscript figure
   ;; it seems not escaped correctly.
+  ;; TODO/FIXME : choose what embedding format is preferred for
+  ;; native tm data, it is pointless to have both.
+  ;; presently 
+  ;; - the re-edition mechanism favors the attribute if both
+  ;;   are present (latex is always last choice).
+  ;; - the attribute method works best because tmml format is
+  ;;   *broken both on export and import* (and should be fixed IMHO).
+  ;; But tmml seems more natural to include in svg, and gives more room
+  ;; for improvements (we could pass the style that was used when
+  ;; the equation was created, the fonts,...)
+
 
   (let* 
       (;; first: load svg and transform to an active tree in
@@ -137,21 +156,14 @@
        (defs (car (select svgroot '(defs))))
        ;; the defs, containing the glyph vector outlines,
        ;; hyperlinked from the drawing (a.k.a cloned)
-       (idlist (select svgroot '(:* id :%1))) ; list of all ids in the drawing, used to label glyph outlines and clip-path definition
-       (hreflist (select maingroup '(:* @ xlink:href :%1))) ; list of hyperlinks to the glyphs labels
-       ;; define latex and texmacs string representation of selection
-       ;; we escape them to ascii so that they do not interfere with xml
-       ;; <  -> &lt;  > -> &gt; \ -> \\, all characters above #127->\xXX ... 
-       ;; see  TeXmacs/langs/encodings/cork-escaped-to-ascii.scm
-       ;; for the latex representation we mimick what is done when
-       ;; "copy to latex" is performed 
-       (latex-tree (latex-expand tm-fragment))
-       ;; expand or not macros according to preferences
-       (latex-code (texmacs->generic latex-tree "latex-snippet"))
-       ;; actual conversion
-       (latex-code (escape-to-ascii latex-code)) 
-       (tm-code (serialize-texmacs tm-fragment))
-       (tm-code (escape-to-ascii tm-code)) 
+       (idlist (select svgroot '(:* id :%1)))
+       ;; list of all ids in the drawing, used to label glyph outlines
+       (hreflist (select maingroup '(:* @ xlink:href :%1)))
+       ;; list of hyperlinks to the glyphs labels
+
+       ;; third: the new data we want to insert in the tree
+       (latex-code (latex-encode tm-fragment))
+       (tm-code (tm-encode tm-fragment)) 
        ;; define new attributes containing latex and texmacs code:
        (extra-latex-attrib
         `((xmlns:ns0 "http://www.iki.fi/pav/software/textext/") 
@@ -169,13 +181,10 @@
        (old->new-labels (newids! idlist tm-code))
        ;; rename all ids, create an association list of old to new ids
        )
-    ;;(display tm-code)
     
-    ;; Third: modify tree
+    ;; fourth: modify tree
     (replace-hlinks! hreflist old->new-labels)
     ;; replace hlinks with new pointers
-    (adjust-clippath! maingroup old->new-labels)
-    ;; clip path uses another hlink syntax, needs to be treated separately
     (tree-insert! maingroup-attrib 1 extra-latex-attrib)
     ;; for textext compatibility
     (if (== "on" (get-preference "texmacs->graphics:attr"))
@@ -185,18 +194,8 @@
     ;; so that they remain together in inkscape
     (if (== "on" (get-preference "texmacs->graphics:tmml"))
         (tree-insert! maingroup 4 tmml-fragment)) 
-    ;; TODO/FIXME : choose what embedding format is preferred for
-    ;; native tm data, it is pointless to have both.
-    ;; presently 
-    ;; - the re-edition mechanism favors the attribute if both
-    ;;   are present (latex is always last choice).
-    ;; - the attribute method works best because tmml format is
-    ;;   *broken both on export and import* (and should be fixed IMHO).
-    ;; But tmml seems more natural to include in svg, and gives more room
-    ;; for improvements (we could pass the style that was used when
-    ;; the equation was created, the fonts,...)
   
-    ;; Fourth : finally create output
+    ;; Fifth : finally create output
     (let* (;; convert back to stree, recreate the *TOP* node,
            ;; and restore *PI* xml 
            ;; (instead of *PI* "xml" given by tree->stree -
@@ -210,18 +209,34 @@
       ;; close temporary buffer
       (buffer-pretend-saved mybuf)
       (buffer-close mybuf)
-      ;; (display s-svg-out)
       (string-save xml-svg-out dest))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; public interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (export-selection-as-graphics output)
-  (:synopsis "Generates graphics format of the current selection")
-  (:argument output "A full file name (-> disk) or just an extension (-> clipboard)")
+(tm-define (clipboard-copy-image void)
+  (:synopsis "Places an image of the current selection on the clipboard")
+  (:argument void "not used")
   (:returns "nothing")
-  ;;output must either be a full file path or an extension type
+  ;;the format of the graphics is set in the preferences
+  (if (not (qt-gui?)) 
+    (set-message "Qt GUI only, sorry. Use \"Export selection...\"" "")
+    (if (not (selection-active-any?))
+      (set-message "no selection!" "")
+      (let* ((format (get-preference "texmacs->graphics:format"))
+             (tmpurl (url-temp-ext format)))
+        (export-selection-as-graphics tmpurl)
+	;; first generate an image file
+        (graphics-file-to-clipboard tmpurl)
+	;; place that image on the clipboard
+        ;;(system-remove tmpurl)
+	))))
+
+(tm-define (export-selection-as-graphics myurl)
+  (:synopsis "Generates graphics format of the current selection")
+  (:argument myurl "A full file url with extension")
+  (:returns "nothing")
   ;; FIXME : no error checking, no retun value... 
   ;; FIXME : external tools calls are not OS independent presently
   ;; no check is performed on presence of the required conversion tools
@@ -229,79 +244,77 @@
   ;; in the typesetting. However they are presently not passed to
   ;; the svg and therefore lost when re-editing the svg
 
-  ;; (import-from (convert html htmlout))
-  (if (== output "default")
-      (set! output (get-preference "texmacs->graphics:format")))
-  (if (selection-active-any?) 
-      (let* (;;step 1 figure what is the wanted destination
-             (dest (string->url output))
-             (clipboard (and (== (url-head dest) (url-unix "" "."))
-                             (== (url-suffix dest) "")))
-             ;; if name contains no extension & no path,
-             ;; then assume it's only an extension type and send to clipboard
-             (myurl (if clipboard (temp-url-ext output) dest))
-             (suffix (url-suffix myurl))
-             ;; step 2 preprare and typeset selection
-             ;;if selection is part of math need to re-encapsulate
-             ;; it with math to obtain proper typesetting :
-             (tm-fragment
-              (if (tree-multi-paragraph? (selection-tree)) (selection-tree) 
-                  (if (in-math?)
-                      (stree->tree `(equation* (document ,(selection-tree))))
-                      (selection-tree))))
-             ;; also if selection spans several lines of text,
-             ;; need to encapsulate it in a fixed-width table
-             ;;to enforce pagewidth :
-             (tm-fragment-enforce-pagewidth
-              (stree->tree
-               `(tabular
-                 (tformat (twith "table-width" "1par") 
-                          (twith "table-hmode" "exact") 
-                          (cwith "1" "1" "1" "1" "cell-hyphen" "t")
-                          (table (row (cell (document ,tm-fragment))))))))
-             (temp1 (temp-url-ext "eps")))
-        ;; (display temp1)
-        (print-snippet temp1 tm-fragment-enforce-pagewidth)
-        ;; typeset fragment to eps as starting point
-
-        ;; step 3 generate output according to desired output format
-        (cond ((== suffix "eps")
-               (system-copy temp1 myurl))
-              ((== suffix "pdf")
-               (system-2 "ps2pdf -dEPSCrop" temp1 myurl)
-               (system-remove temp1))
-              ((== suffix "svg")  
-               ;; assume target is inkscape with texmacs.ink plugin allowing to
-               ;; re-edit the original tm selection (presumably an equation) 
-               (let* ((temp2 (temp-url-ext "pdf")))
-                 ;; still need pdf as intermediate format                 
-                 (system-2 "ps2pdf -dEPSCrop" temp1 temp2) 
-                 (system-2 "pdf2svg" temp2 myurl) 
-                 ;; chaining these 2 specific converters is crucial
-                 ;; for svg inport in inkscape:
-                 ;; fonts are properly passed as vector outlines
-                 (refactor-svg myurl tm-fragment)
-                 ;; modify svg, embedding texmacs code
-                 ;; (system-remove temp2)
-                 ))
-              (else
-                ;; other formats : use imagemagick generic converter
-                ;; this is where png, jpg, etc is generated  
-                ;; we ask imagemagick to insert texmacs source
-                ;; in image metadata (comment)
-                (system-2
-                  (string-append "convert -comment \"" 
-                                 (escape-to-ascii
-                                  (serialize-texmacs tm-fragment)) "\"")
-                  temp1 myurl)))
-          
-        (system-remove temp1) ; temp eps file not needed anymore
-
-        (when clipboard
-          (if (qt-gui?)
-              (graphics-file-to-clipboard myurl)
-              (set-message "Qt GUI only, sorry. Use \"Export selection...\"" ""))
-          ;; (system-remove myurl)
-          ) ;; for the clipboard destination (to be removed afterwards)
-        ) ;; close let* for selection-any?==#t
-      (set-message "no selection!" "")))
+  (if (not (selection-active-any?))
+      (set-message "no selection!" "")
+      (let* (;; step 1 prepare and typeset selection
+	     ;;if selection is part of math need to re-encapsulate
+	     ;; it with math to obtain proper typesetting :
+	     (tm-fragment
+	      (if (tree-multi-paragraph? (selection-tree)) 
+	          (selection-tree) 
+	          (if (in-math?)
+		      (stree->tree `(equation* (document ,(selection-tree))))
+		      (selection-tree))))
+	     ;; also if selection spans several lines of text,
+	     ;; need to encapsulate it in a fixed-width table
+	     ;;to enforce pagewidth :
+	     (tm-fragment-enforce-pagewidth
+	      (stree->tree
+	       `(tabular
+		 (tformat (twith "table-width" "1par") 
+			  (twith "table-hmode" "exact") 
+			  (cwith "1" "1" "1" "1" "cell-hyphen" "t")
+			  (table (row (cell (document ,tm-fragment))))))))
+	     (temp0 (url-temp-ext "ps"))
+	     (temp1 (url-temp-ext "eps"))
+	     (dpi-pref (get-preference "printer dpi"))
+	     (suffix (url-suffix myurl)))
+	
+	(set-printer-dpi "236") ; 472 is ~ exact size 
+	;;set to a fixed value so our graphics does
+	;;not depend on the printer dpi
+	;;We need to set this weird dpi value so that the size of the svg
+	;;produced is about twice that of direct pdf or ps output. Why??
+	(print-snippet temp0 tm-fragment-enforce-pagewidth)
+	;;typeset fragment to ps as starting point
+	(set-printer-dpi dpi-pref)
+	;; revert to preference dpi
+	(system-2 "ps2epsi" temp0 temp1)
+	;;make eps to get optimized bounding box. We could generate
+	;; directly the eps, but then the bounding box width
+	;; is a full pagewidth 
+	(system-remove temp0)
+	;; step 2 generate output according to desired output format
+	
+	(cond ((== suffix "eps")
+	       (system-copy temp1 myurl))
+	      ((== suffix "pdf")
+	       (system-2 "ps2pdf -dEPSCrop" temp1 myurl)
+	       (system-remove temp1))
+	      ((== suffix "svg")  
+	       ;; assume target is inkscape with texmacs.ink plugin
+	       ;; allowing to re-edit the original tm selection
+	       ;; (presumably an equation) 
+	       (let* ((temp2 (url-temp-ext "pdf")))
+		 ;; still need pdf as intermediate format                 
+		 (system-2 "ps2pdf -dEPSCrop" temp1 temp2) 
+		 (system-2 "pdf2svg" temp2 myurl) 
+		 ;; chaining these 2 specific converters is crucial
+		 ;; for svg inport in inkscape:
+		 ;; fonts are properly passed as vector outlines
+		 (refactor-svg myurl tm-fragment)
+		 ;; modify svg, embedding texmacs code
+		 ;; (system-remove temp2)
+		 ))
+	      (else
+		;; other formats : use imagemagick generic converter
+		;; this is where png, jpg, etc is generated  
+		;; we ask imagemagick to insert texmacs source
+		;; in image metadata (comment)
+		(system-2
+		 (string-append "convert -density 300 -comment \"" 
+				(tm-encode tm-fragment) "\"")
+		 temp1 myurl)))
+	
+	(system-remove temp1) ;; temp eps file not needed anymore
+	)))

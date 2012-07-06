@@ -137,7 +137,7 @@
    (choose-file print-to-file "Save postscript file" "postscript"))
   (when (selection-active-any?)
     ("Export selection as image" ;; FIXME: no warning on overwrite!
-     (choose-file (lambda (y) (export-selection-as-graphics (url->string y)))
+     (choose-file export-selection-as-graphics
                   "Select export file with extension" ""))))
 
 (menu-bind print-menu
@@ -189,7 +189,7 @@
       (when (selection-active-any?)
         ("Export selection as image"
          (choose-file ;; no warning on overwrite!
-          (lambda (y) (export-selection-as-graphics (url->string y))) 
+          export-selection-as-graphics 
           "Save image file" ""))))
   ---
   ("Close document" (safely-kill-buffer))
