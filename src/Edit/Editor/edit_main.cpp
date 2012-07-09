@@ -20,7 +20,6 @@
 #include "drd_std.hpp"
 #include "message.hpp"
 #include <setjmp.h>
-#include "Plugins/Qt/qt_gui.hpp"
 
 #ifdef EXPERIMENTAL
 #include "../../Style/Memorizer/clean_copy.hpp"
@@ -35,6 +34,7 @@
 #endif
 
 #ifdef QTTEXMACS
+#include "Plugins/Qt/qt_gui.hpp"
 #include "Qt/qt_utilities.hpp"
 #endif
 
