@@ -46,15 +46,14 @@ edit_env_rep::rewrite (tree t) {
   case EXTERN:
     {
       int i, n= N(t);
-      if (n == 0) return tree (ERROR, "invalid extern");
+      if (n < 1) return tree (ERROR, "invalid extern");
+      string fun= exec_string (t[0]);
       tree r (TUPLE, n);
-      for (i=0; i<n; i++)
+      for (i=1; i<n; i++)
 	r[i]= exec (t[i]);
       object expr= null_object ();
       for (i=n-1; i>0; i--)
 	expr= cons (object (r[i]), expr);
-      if (N(t) < 1) return tree (ERROR, "invalid extern");
-      string fun= exec_string (t[0]);
       expr= cons (string_to_object (fun), expr);
       if (!secure && script_status < 2) {
 	if (!as_bool (call ("secure?", expr)))
