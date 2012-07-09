@@ -611,7 +611,7 @@ text_at_box_rep::graphical_select (SI x, SI y, SI dist) {
   if (norm (p - point (sx(0), sy(0))) <= dist) {
     gr_selection gs;
     gs->type= "text-handle";
-    gs->dist= norm (p - point (sx(0), sy(0)));
+    gs->dist= (SI) norm (p - point (sx(0), sy(0)));
     gs->p= point (sx(0), sy(0));
     gs->cp << reverse (path (0, path (1, ip)));
     gs->pts << gs->p;
@@ -634,7 +634,7 @@ text_at_box_rep::graphical_select (SI x, SI y, SI dist) {
       gr_selection gs;
       gs->type= "text-border-point";
       gs->p= special[i];
-      gs->dist= norm (gs->p - p);
+      gs->dist= (SI) norm (gs->p - p);
       gs->cp << box_rep::find_tree_path (x, y, dist);
       gs->pts << gs->p;
       gs->c= curve ();
@@ -645,7 +645,7 @@ text_at_box_rep::graphical_select (SI x, SI y, SI dist) {
       gr_selection gs;
       gs->type= "text-border";
       gs->p= closest (cs[i], p);
-      gs->dist= norm (gs->p - p);
+      gs->dist= (SI) norm (gs->p - p);
       gs->cp << box_rep::find_tree_path (x, y, dist);
       gs->pts << gs->p;
       gs->c= cs[i];

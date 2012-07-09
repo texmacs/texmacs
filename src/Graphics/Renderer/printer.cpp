@@ -45,7 +45,7 @@ printer_rep::printer_rep (
     nr_pages (nr_pages2), page_type (page_type2),
     landscape (landscape2), paper_w (paper_w2), paper_h (paper_h2),
     use_alpha (get_preference ("experimental alpha") == "on"),
-    linelen (0), fg (-1), bg (-1), ncols (0),
+    linelen (0), fg ((color) (-1)), bg ((color) (-1)), ncols (0),
     lw (-1), nwidths (0), cfn (""), nfonts (0),
     xpos (0), ypos (0), tex_flag (false),
     defs ("?"), tex_chars ("?"), tex_width ("?"),
@@ -158,8 +158,8 @@ printer_rep::next_page () {
   set_clipping (0, (int) (-(dpi*PIXEL*paper_h)/2.54),
 		(int) ((dpi*PIXEL*paper_w)/2.54), 0);
 
-  fg  = -1;
-  bg  = -1;
+  fg  = (color) (-1);
+  bg  = (color) (-1);
   lw  = -1;
   cfn = "";
   xpos= 0;

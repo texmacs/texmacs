@@ -103,10 +103,10 @@ ink_widget_rep::refresh_last () {
     poly_line& sh= shs [N(shs)-1];
     point& p = sh [max (0, N(sh)-2)];
     point& q = sh [N(sh)-1];
-    SI x1= min (p[0], q[0]) * PIXEL;
-    SI y1= min (p[1], q[1]) * PIXEL;
-    SI x2= max (p[0], q[0]) * PIXEL;
-    SI y2= max (p[1], q[1]) * PIXEL;
+    SI x1= (SI) (min (p[0], q[0]) * PIXEL);
+    SI y1= (SI) (min (p[1], q[1]) * PIXEL);
+    SI x2= (SI) (max (p[0], q[0]) * PIXEL);
+    SI y2= (SI) (max (p[1], q[1]) * PIXEL);
     this << emit_invalidate (x1 - 3*PIXEL, y1 - 3*PIXEL,
                              x2 + 3*PIXEL, y2 + 3*PIXEL);
   }

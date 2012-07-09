@@ -66,7 +66,7 @@ snap_to_guide (point p, gr_selections sels, double eps) {
 	      gr_selection sel;
 	      sel->type= sels[i]->type * "&" * sels[j]->type;
 	      sel->p   = ins[k];
-	      sel->dist= norm (ins[k] - p);
+	      sel->dist= (SI) norm (ins[k] - p);
 	      sel->cp  = append (sels[i]->cp, sels[j]->cp);
 	      sel->pts = append (sels[i]->pts, sels[j]->pts);
 	      best= sel;
@@ -210,7 +210,7 @@ edit_graphics_rep::adjust (point p) {
       gr_selection sel;
       sel->type= "grid-point";
       sel->p   = fq;
-      sel->dist= norm (fq - fp);
+      sel->dist= (SI) norm (fq - fp);
       sels << sel;
     }
     array<grid_curve> gc=
@@ -221,7 +221,7 @@ edit_graphics_rep::adjust (point p) {
         gr_selection sel;
         sel->type= "grid-curve-point";
         sel->p   = fc;
-        sel->dist= norm (fc - fp);
+        sel->dist= (SI) norm (fc - fp);
         sel->c   = f2 (gc[i]->c);
         sels << sel;
       }
