@@ -71,11 +71,11 @@ to_qfont (int style, QFont font) {
 //if (style & WIDGET_STYLE_GREY)  // use grey text font
 //    font.set += "color: #414141";
   if (style & WIDGET_STYLE_PRESSED)   // indicate that a button is currently pressed
-    ;
+    {}
   if (style & WIDGET_STYLE_INERT)  // only render but don't associate any action to widget
-    ;
+    {}
   if (style & WIDGET_STYLE_BUTTON)  // indicate that a button should explicitly rendered as a button
-    ;
+    {}
   if (style & WIDGET_STYLE_BOLD)
     font.setBold(true);
   return font;
