@@ -372,12 +372,6 @@
   (when current-obj
     (middle-button)))
 
-(tm-define (edit_middle-button mode x y)
-  (:require (and (== mode 'edit) (graphical-text-arg-context? current-obj)))
-  (:state graphics-state)
-  ;; FIXME: should destroy graphical macro
-  (noop))
-
 (tm-define (edit_start-drag mode x y)
   (:require (== mode 'edit))
   (:state graphics-state)
@@ -392,11 +386,6 @@
             (start-move)))
       (edit-insert x y))
   (set! previous-leftclick `(point ,current-x ,current-y)))
-
-(tm-define (edit_start-drag mode x y)
-  (:require (and (== mode 'edit) (graphical-text-arg-context? current-obj)))
-  (:state graphics-state)
-  (noop))
 
 (tm-define (edit_drag mode x y)
   (:require (== mode 'edit))
@@ -423,3 +412,22 @@
         (select-next inc)
         (graphics-update-decorations))
       (invalidate-graphical-object)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Don't dispatch certain actions on textual arguments of graphical macros
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (edit-macro-arg? mode)
+  (and (eq? mode 'group-edit)
+       (graphical-text-arg-context? current-obj)))
+
+(tm-define (edit_middle-button mode x y)
+  (:require (edit-macro-arg? mode))
+  (:state graphics-state)
+  ;; FIXME: should destroy graphical macro
+  (noop))
+
+(tm-define (edit_start-drag mode x y)
+  (:require (edit-macro-arg? mode))
+  (:state graphics-state)
+  (noop))

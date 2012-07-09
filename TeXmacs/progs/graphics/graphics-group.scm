@@ -379,6 +379,36 @@
   (edit_tab-key 'edit inc))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Don't act on
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (group-edit-macro-arg? mode)
+  (and (== mode 'group-edit)
+       current-path
+       (path->tree current-path)
+       (graphical-text-arg-context? (path->tree current-path))))
+
+(tm-define (edit_move mode x y)
+  (:require (group-edit-macro-arg? mode))
+  (:state graphics-state)
+  (noop))
+
+(tm-define (edit_left-button mode x y)
+  (:require (group-edit-macro-arg? mode))
+  (:state graphics-state)
+  (noop))
+
+(tm-define (edit_right-button mode x y)
+  (:require (group-edit-macro-arg? mode))
+  (:state graphics-state)
+  (noop))
+
+(tm-define (edit_middle-button mode x y)
+  (:require (group-edit-macro-arg? mode))
+  (:state graphics-state)
+  (noop))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Cut & paste actions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
