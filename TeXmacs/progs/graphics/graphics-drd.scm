@@ -177,3 +177,6 @@
 
 (tm-define (graphics-complete? obj)
   (>= (tm-arity obj) (tag-maximal-arity (tm-car obj))))
+
+(tm-define (graphics-complete obj)
+  (list obj #f))
