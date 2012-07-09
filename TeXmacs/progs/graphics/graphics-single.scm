@@ -376,6 +376,7 @@
   (:require (== mode 'edit))
   (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross)
+  (set! dragging-busy? #t)
   (set! dragging-create? (or sticky-point (not current-obj)))
   (if (or sticky-point current-obj)
       (begin
@@ -396,13 +397,15 @@
 (tm-define (edit_end-drag mode x y)
   (:require (== mode 'edit))
   (:state graphics-state)
-  (set-texmacs-pointer 'graphics-cross)
-  (if (or sticky-point current-obj)
-      (if dragging-create?
-          (edit_move mode x y)
-          (last-point)))
-  (set! dragging-create? #f)
-  (set! previous-leftclick `(point ,current-x ,current-y)))
+  (when dragging-busy?
+    (set-texmacs-pointer 'graphics-cross)
+    (if (or sticky-point current-obj)
+        (if dragging-create?
+            (edit_move mode x y)
+            (last-point)))
+    (set! dragging-busy? #f)
+    (set! dragging-create? #f)
+    (set! previous-leftclick `(point ,current-x ,current-y))))
 
 (tm-define (edit_tab-key mode inc)
   (:require (== mode 'edit))
@@ -418,7 +421,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (edit-macro-arg? mode)
-  (and (eq? mode 'group-edit)
+  (and (== mode 'edit)
        (graphical-text-arg-context? current-obj)))
 
 (tm-define (edit_middle-button mode x y)
@@ -428,6 +431,16 @@
   (noop))
 
 (tm-define (edit_start-drag mode x y)
+  (:require (edit-macro-arg? mode))
+  (:state graphics-state)
+  (noop))
+
+(tm-define (edit_drag mode x y)
+  (:require (edit-macro-arg? mode))
+  (:state graphics-state)
+  (noop))
+
+(tm-define (edit_end-drag mode x y)
   (:require (edit-macro-arg? mode))
   (:state graphics-state)
   (noop))
