@@ -118,7 +118,8 @@ concater_rep::typeset_superpose (tree t, path ip) {
   int i, n= N(t);
   array<box> bs (n);
   for (i=0; i<n; i++) {
-    bs[i]= typeset_as_concat (env, t[i], descend (ip, i));
+    bs[i]= typeset_as_atomic (env, t[i], descend (ip, i));
+    //bs[i]= typeset_as_concat (env, t[i], descend (ip, i));
     if (is_func (t[i], FREEZE))
       // FIXME: this dirty hack is necessary, because typeset_as_concat
       // would put an accessible concat_box around bs[i] otherwise

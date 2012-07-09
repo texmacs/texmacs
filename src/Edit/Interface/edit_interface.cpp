@@ -335,10 +335,13 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
     if (is_accessible_cursor (et, p * right_index (st)) || in_source ()) {
       bool right;
       path p1= p * 0, p2= p * 1, q1, q2;
-      if (is_script (subtree (et, p), right)) {
-	p1= start (et, p * 0);
-	p2= end   (et, p * 0);
-      }
+      if (is_script (subtree (et, p), right) ||
+          is_func (st, TEXT_AT) ||
+          is_func (st, MATH_AT))
+        {
+          p1= start (et, p * 0);
+          p2= end   (et, p * 0);
+        }
       if (is_func (st, CELL)) { q1= p1; q2= p2; }
       else selection_correct (p1, p2, q1, q2);
       selection sel= eb->find_check_selection (q1, q2);
