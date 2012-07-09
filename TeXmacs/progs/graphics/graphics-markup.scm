@@ -133,14 +133,14 @@
   (:require (tm-is? obj 'triangle-with-text))
   (if (> (tm-arity obj) 3)
       (list obj #f)
-      (list (append obj (list '(text-at "?" (point "0" "0")))) (list 3 2 0))))
+      (list (append obj (list '(text-at "X"))) (list 3 2 0))))
 
 (define-graphics (triangle-with-text P1 P2 P3 T)
   ;;(display* "twt " P1 ", " P2 ", " P3 ", " T "\n")
   (let* ((p1 (if (tm-point? P1) P1 '(point "0" "0")))
          (p2 (if (tm-point? P2) P2 p1))
          (p3 (if (tm-point? P3) P3 p2))
-         (t  (if (tm-is? T 'uninit) '(text-at "?" (point "0" "0")) T))
+         (t  (if (tm-is? T 'text-at) T '(text-at "X")))
          (z1 (point->complex p1))
          (z2 (point->complex p2))
          (z3 (point->complex p3))
@@ -149,3 +149,6 @@
        (cline ,p1 ,p2 ,p3)
        (with "text-at-halign" "center" "text-at-valign" "center"
          (text-at ,(tm-ref t 0) ,p)))))
+
+(define-group graphical-contains-text-tag
+  triangle-with-text)

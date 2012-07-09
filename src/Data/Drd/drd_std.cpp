@@ -551,11 +551,20 @@ init_std_drd () {
   init (GR_LINEAR_TRANSFORM, "gr-linear-transform",
 	fixed (1, 1, BIFORM) -> returns_graphical () ->
 	graphical (0));
+  /*
   init (TEXT_AT, "text-at",
 	fixed (1, 1, BIFORM) -> returns_graphical () ->
 	accessible (0) -> point_type (1));
   init (MATH_AT, "math-at",
 	fixed (1, 1, BIFORM) -> returns_graphical () ->
+	accessible (0) -> point_type (1) ->
+        locals (0, "mode", "math"));
+  */
+  init (TEXT_AT, "text-at",
+	options (1, 1, BIFORM) -> returns_graphical () ->
+	accessible (0) -> point_type (1));
+  init (MATH_AT, "math-at",
+	options (1, 1, BIFORM) -> returns_graphical () ->
 	accessible (0) -> point_type (1) ->
         locals (0, "mode", "math"));
   init (_POINT, "point",

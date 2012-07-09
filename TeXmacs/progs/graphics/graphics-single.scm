@@ -358,7 +358,7 @@
              (next-point)))
         ((and (current-in? (graphical-text-tag-list))
               (== (car (graphics-mode)) 'edit)
-              (graphical-text-tag? (cadr (graphics-mode))))
+              (graphical-contains-text-tag? (cadr (graphics-mode))))
          (set-texmacs-pointer 'text-arrow)
          (go-to (car (select-first (s2f current-x) (s2f current-y)))))
         (else
@@ -371,6 +371,12 @@
   (set-texmacs-pointer 'graphics-cross)
   (when current-obj
     (middle-button)))
+
+(tm-define (edit_middle-button mode x y)
+  (:require (and (== mode 'edit) (graphical-text-arg-context? current-obj)))
+  (:state graphics-state)
+  ;; FIXME: should destroy graphical macro
+  (noop))
 
 (tm-define (edit_start-drag mode x y)
   (:require (== mode 'edit))
@@ -386,6 +392,11 @@
             (start-move)))
       (edit-insert x y))
   (set! previous-leftclick `(point ,current-x ,current-y)))
+
+(tm-define (edit_start-drag mode x y)
+  (:require (and (== mode 'edit) (graphical-text-arg-context? current-obj)))
+  (:state graphics-state)
+  (noop))
 
 (tm-define (edit_drag mode x y)
   (:require (== mode 'edit))

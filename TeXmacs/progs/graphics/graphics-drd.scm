@@ -29,6 +29,9 @@
 (define-group graphical-text-tag
   text-at math-at)
 
+(define-group graphical-contains-text-tag
+  (graphical-text-tag))
+
 (define-group graphical-non-group-tag
   (graphical-curve-tag) (graphical-atomic-tag) (graphical-text-tag))
 
@@ -40,6 +43,12 @@
 
 (tm-define (graphical-text-context? t)
   (tm-in? t (graphical-text-tag-list)))
+
+(tm-define (graphical-text-at-context? t)
+  (and (graphical-text-context? t) (>= (tm-arity t) 2)))
+
+(tm-define (graphical-text-arg-context? t)
+  (and (graphical-text-context? t) (< (tm-arity t) 2)))
 
 (tm-define (inside-graphical-text?)
   (tree-innermost graphical-text-context?))
@@ -169,7 +178,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (graphics-minimal? obj)
-  (or (tm-is? obj 'point)
+  (or (tm-in? obj '(point text-at math-at))
       (== (tm-arity obj) (tag-minimal-arity (tm-car obj)))))
 
 (tm-define (graphics-incomplete? obj)

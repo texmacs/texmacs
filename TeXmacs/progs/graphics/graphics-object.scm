@@ -175,11 +175,11 @@
   (define (create-text-at-handle o)
     (cond ((func? o 'with)
            (create-text-at-handle (cAr o)))
-          ((graphical-text-context? o)
+          ((graphical-text-at-context? o)
            `((with "point-style" "disk" 
                ,(cAr o))))
           (else '())))
-  (let* ((o1 (with res (if (or (graphical-text-context? o)
+  (let* ((o1 (with res (if (or (graphical-text-at-context? o)
                                (== (car o) 'gr-group))
                            `(with "text-at-halign" ,ha0
                                   "text-at-valign" ,va0 ,o)
@@ -213,7 +213,7 @@
   (set! eps (length-decode eps))
   (let* ((ha (get-graphical-prop 'basic "text-at-halign"))
 	 (va (get-graphical-prop 'basic "text-at-valign"))
-	 (o1 (if (graphical-text-context? o)
+	 (o1 (if (graphical-text-at-context? o)
                  `(with "text-at-halign" ,ha
                         "text-at-valign" ,va ,o)
 		 o))
@@ -241,7 +241,7 @@
     (if draw-nonsticky-curp lp '()))
   (cond ((== (car o) 'point)
          (cons o '()))
-        ((graphical-text-context? o)
+        ((graphical-text-at-context? o)
          (let* ((ha (get-graphical-prop 'basic "text-at-halign"))
 	        (va (get-graphical-prop 'basic "text-at-valign"))
 	        (mag (get-graphical-prop 'basic "magnify")))
@@ -354,7 +354,7 @@
                  (set! t (if (== pts 'object)
                              `(,o)
                              (asc curscol #f `(,o)))))
-                ((graphical-text-context? o)
+                ((graphical-text-at-context? o)
                  (if (not curscol)
                      (set! curscol default-color-selected-points))
                  (set! t
@@ -417,6 +417,8 @@
   ;;      == flag used in group modes <=> 'group | 'no-group
   (define edge #t)
   ;;(display* "o[create-graphical-object](" mode "," pts "," no ")=")(write o)(newline)
+  (if (graphical-text-arg-context? o)
+      (set! o #f))
   (if (pair? no)
       (begin
         (set! edge (car no))
