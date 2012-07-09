@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.0.7.16>
 
 <style|<tuple|source|std>>
 
@@ -41,6 +41,16 @@
   <assign|condensator|<macro|p1|p2|p3|<extern|condensator|<arg|p1>|<arg|p2>|<arg|p3>>>>
 
   <assign|diode|<macro|p1|p2|p3|<extern|diode|<arg|p1>|<arg|p2>|<arg|p3>>>>
+
+  <\active*>
+    <\src-comment>
+      Testing.
+    </src-comment>
+  </active*>
+
+  <assign|triangle-with-text|<macro|p1|p2|p3|t|<extern|triangle-with-text|<quote-arg|p1>|<quote-arg|p2>|<quote-arg|p3>|<quote-arg|t>>>>
+
+  <drd-props|triangle-with-text|arity|4|accessible|3>
 
   \;
 </body>
