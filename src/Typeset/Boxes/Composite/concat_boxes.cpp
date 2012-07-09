@@ -16,7 +16,8 @@
 ******************************************************************************/
 
 struct concat_box_rep: public composite_box_rep {
-  concat_box_rep (path ip, array<box> bs, array<SI> spc);
+  bool indent;
+  concat_box_rep (path ip, array<box> bs, array<SI> spc, bool indent);
   operator tree ();
 
   void      finalize ();
@@ -84,10 +85,17 @@ concat_box_rep::position (array<SI> spc) {
     x2 += bs[i]->x2;
   }
   composite_box_rep::position ();
+  if (indent)
+    for (int i=0; i<N(bs); i++)
+      if (bs[i]->w () > 0) {
+        x1= sx1 (i);
+        break;
+      }
 }
 
-concat_box_rep::concat_box_rep (path ip, array<box> bs2, array<SI> spc):
-  composite_box_rep (ip)
+concat_box_rep::concat_box_rep
+  (path ip, array<box> bs2, array<SI> spc, bool indent2):
+    composite_box_rep (ip), indent (indent2)
 {
   bs = bs2;
   position (spc);
@@ -461,6 +469,7 @@ concat_box_rep::find_selection (path lbp, path rbp) {
     }
     if (is_nil (rs)) return selection (rectangles (), lp, rp);
     rectangle r= least_upper_bound (rs);
+    if (indent) r->x1= max (r->x1, x1);
     return selection (r, lp, rp);
   }
 }
@@ -532,7 +541,7 @@ public:
 };
 
 phrase_box_rep::phrase_box_rep (path ip, array<box> bs, array<SI> spc):
-  concat_box_rep (ip, bs, spc), logs_ptr (NULL) {}
+  concat_box_rep (ip, bs, spc, false), logs_ptr (NULL) {}
 
 phrase_box_rep::~phrase_box_rep () {
   if (logs_ptr != NULL) {
@@ -563,8 +572,8 @@ phrase_box_rep::display (renderer ren) {
 ******************************************************************************/
 
 box
-concat_box (path ip, array<box> bs, array<SI> spc) {
-  return tm_new<concat_box_rep> (ip, bs, spc);
+concat_box (path ip, array<box> bs, array<SI> spc, bool indent) {
+  return tm_new<concat_box_rep> (ip, bs, spc, indent);
 }
 
 box

@@ -46,7 +46,7 @@ box wide_sqobr_box (path ip, SI x1, SI x2, SI penw, color col);
 box control_box (path ip, tree t, font fn);
 box control_box (path ip, lazy lz, font fn);
 
-box concat_box (path ip, array<box> bs, array<SI> spc);
+box concat_box (path ip, array<box> bs, array<SI> spc, bool indent= false);
 box phrase_box (path ip, array<box> bs, array<SI> spc);
 box stack_box (path ip, array<box> bs, array<SI> spc);
 box composite_box (path ip, array<box> bs, bool bfl= true);

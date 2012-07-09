@@ -866,7 +866,7 @@ typeset_as_atomic (edit_env env, tree t, path ip) {
       }
       items[i]= a[i]->b;
     }
-    return concat_box (ip, items, spc);
+    return concat_box (ip, items, spc, true);
   }
 }
 
