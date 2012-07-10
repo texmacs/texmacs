@@ -125,6 +125,14 @@
 ;; User interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tmfs-permission-handler (help name type)
+  (and (== type "read")
+       (let* ((file (or (tmfs-cdr name) ""))
+              (root (tmfs-string->url file)))
+         (if (or (== file "") (not (url-exists? root)))
+             (in? (url-suffix root) (list "html" "tm"))
+             #t))))
+
 (tmfs-load-handler (help name)
   (let* ((type (or (tmfs-car name) "normal"))
          (file (or (tmfs-cdr name) ""))
