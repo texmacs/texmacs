@@ -445,6 +445,52 @@
       (for-each dynamic-make-slide (tree-children t)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Global filtering of switches
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (dynamic-filter-remove? t mode)
+  (and (tree-is? t :up 'document)
+       (cond ((toggle-first-context? t)
+              (cond ((== mode :remove-folded) #t)
+                    ((== mode :keep-unfolded) #t)
+                    (else #f)))
+             ((toggle-second-context? t)
+              (cond ((== mode :remove-unfolded) #t)
+                    ((== mode :keep-folded) #t)
+                    (else #f)))
+             ((and (or (switch-context? t)
+                       (alternative-context? t)
+                       (unroll-context? t))
+                   (== (switch-last-visible t) 0))
+              (cond ((== mode :remove-folded) #t)
+                    ((== mode :keep-unfolded) #t)
+                    (else #f)))
+             ((and (or (switch-context? t)
+                       (alternative-context? t)
+                       (unroll-context? t))
+                   (!= (switch-last-visible t) 0))
+              (cond ((== mode :remove-unfolded) #t)
+                    ((== mode :keep-folded) #t)
+                    (else #f)))
+             ((in? mode (list :remove-folded :remove-unfolded)) #f)
+             ((in? mode (list :keep-folded :keep-unfolded)) #t)
+             (else #f))))
+
+(define (dynamic-filter t mode)
+  (if (dynamic-filter-remove? t mode)
+      (with p (tree-up t)
+        (if (== (tree-arity p) 1)
+            (tree-assign! t "")
+            (tree-remove! p (tree-index t) 1)))
+      (if (and (tree-compound? t)
+               (or (not (tree-is? t :up 'document))
+                   (in? mode (list :remove-folded :remove-unfolded))))
+          (for-each (lambda (x) (dynamic-filter x mode)) (tree-children t)))))
+
+(tm-define (dynamic-filter-buffer mode)
+  (dynamic-filter (buffer-tree) mode))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global navigation in recursive fold/switch structure
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
