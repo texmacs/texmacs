@@ -34,7 +34,7 @@
 #endif
 
 #ifdef QTTEXMACS
-#include "Plugins/Qt/qt_gui.hpp"
+#include "Qt/qt_gui.hpp"
 #include "Qt/qt_utilities.hpp"
 #endif
 
