@@ -537,6 +537,7 @@ WINDOWS_BUNDLE: TEXMACS
 	$(RM) -r $(WINDOWS_BUILD_DIR)/*/*/*/*/*/*/.svn
 	$(RM) -r $(WINDOWS_BUILD_DIR)/*/*/*/*/*/*/*/.svn
 	for DLL in $(DLLS) ; do $(CP) $$DLL $(WINDOWS_BUILD_BIN_DIR) ; done
+	$(CP) -r $(QT_PLUGINS_PATH)/* $(WINDOWS_BUILD_BIN_DIR)
 	$(CP) /local/share/gsv*/* $(WINDOWS_BUILD_BIN_DIR)
 
 WINDOWS_PACKAGE: WINDOWS_BUNDLE
