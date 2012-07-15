@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.0.7.16>
 
 <style|source>
 
@@ -33,6 +33,8 @@
   <assign|tex-odd-side-margin|<macro|<if|<equal|<value|par-columns>|1>|20pt|20pt>>>
 
   <assign|tex-even-side-margin|<macro|<if|<equal|<value|par-columns>|1>|20pt|20pt>>>
+
+  <assign|tex-text-width|<macro|<if|<equal|<value|par-columns>|1>|32pc|32pc>>>
 
   <assign|tex-text-height|<macro|<if|<equal|<value|par-columns>|1>|47pc|47pc>>>
 
@@ -84,7 +86,7 @@
 
   <assign|section-title|<macro|name|<surround||<yes-indent*>|<style-with|src-compact|none|<sectional-normal-bold|<vspace*|<tex-len|19pt|3pt|2pt>><normal-size|<arg|name>><vspace|<tex-len|8pt|3pt|2pt>>>>>>>
 
-  <assign|subsection-title|<macro|name|<surround||<yes-indent*>|<style-with|src-compact|none|<sectional-normal-bold|<vspace*|<tex-len|19pt|3pt|2pt>><normal-size|<arg|name>><vspace|<tex-len|8pt|3pt|2pt>>>>>>>
+  <assign|subsection-title|<macro|name|<surround||<yes-indent*>|<sectional-normal-italic|<vspace*|<tex-len|9pt|3pt|2pt>><normal-size|<arg|name>><vspace|<tex-len|8pt|3pt|2pt>>>>>>
 
   <assign|subsubsection-title|<macro|name|<surround||<yes-indent*>|<style-with|src-compact|none|<sectional-normal-italic|<vspace*|<tex-len|9pt|3pt|2pt>><normal-size|<arg|name>><vspace|<tex-len|1pt|2pt|1pt>>>>>>>
 
