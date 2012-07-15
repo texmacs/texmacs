@@ -54,17 +54,19 @@ qt_window_widget_rep::popup_window_widget(string s)
   return this;
 }
 
-/*! 
- 
+/*! Looks among the widget's parents for the containing texmacs window
  */
 widget_rep* 
-qt_window_widget_rep::widget_from_qwidget(QWidget* qwin)
+qt_window_widget_rep::widget_from_qwidget(QWidget* qwid)
 {
-	QVariant v= qwin->window()->property ("texmacs_window_widget");
-	if (v.canConvert<void*> ())
-		return (widget_rep*) (v.value<void*> ());
-	else 
-		FAILED ("attempt to retrieve the window of a QWidget without one");
+  while (qwid != NULL) {
+    QVariant v = qwid->property ("texmacs_window_widget");
+    if (v.canConvert<void*> ())
+      return static_cast<widget_rep*> (v.value<void*> ());
+    else
+      qwid = qwid->parentWidget();
+  }
+  FAILED ("attempt to retrieve the window of a QWidget without one");
 }
 
 void
@@ -90,8 +92,11 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       coord2 p= open_box<coord2> (val);
       if (qwid) {
         QPoint pt = to_qpoint (p);
-        pt.ry() += 40;
+#ifdef OS_MACOS
+        pt.ry() = (pt.y() <= 40) ? 40 : pt.y();
           // to avoid window under menu bar on MAC when moving at (0,0)
+          // FIXME: use the real menu bar height.
+#endif
         if (DEBUG_QT) 
           cout << "Moving to (" << pt.x() << "," << pt.y() << ")" << LF;
         qwid->move (pt);
@@ -184,9 +189,11 @@ qt_window_widget_rep::query (slot s, int type_id) {
   }
 }
 
+
 /******************************************************************************
  * Notification of state changes
  ******************************************************************************/
+
 
 void
 qt_window_widget_rep::notify (slot s, blackbox new_val) {
@@ -195,36 +202,12 @@ qt_window_widget_rep::notify (slot s, blackbox new_val) {
   widget_rep::notify (s, new_val);
 }
 
-widget
-qt_window_widget_rep::read (slot s, blackbox index) {
-  (void) index;
-  if (DEBUG_QT)
-    cout << "qt_window_widget_rep::read " << slot_name(s) << LF;
-  switch (s) {
-    default:
-      FAILED ("cannot handle slot type");
-      return widget();
-  }
-}
-
-void
-qt_window_widget_rep::write (slot s, blackbox index, widget w) {
-  (void) w; (void) index;
-  if (DEBUG_QT)
-    cout << "qt_window_widget_rep::write " << slot_name(s) << LF;
-  
-  switch (s) {
-    default:
-      FAILED ("cannot handle slot type");
-  }
-}
-
-
 
 /******************************************************************************
  * popup widget
  *  /// TODO: timers, etc.
  ******************************************************************************/
+
 
 qt_popup_widget_rep::qt_popup_widget_rep (QWidget* _wid, command _quit)
 : qt_widget_rep(qt_widget_rep::popup_widget, _wid), quit(_quit) { }
@@ -332,35 +315,3 @@ qt_popup_widget_rep::query (slot s, int type_id) {
       return qt_widget_rep::query (s, type_id);
   }
 }
-
-/*
-Features and fixes (Qt):
- Support for widgets: texmacs-output, texmacs-input, resize, popup (for help 
- balloons), buttons in dialogs, tweaks here and there.
- Fixes to layouts and sizing, scroll widgets are dummy for most widgets.
- Consistent (partial) support for texmacs widget styles.
- Support for side tools as another (floatable) QToolBar.
- Support for some more widgets as menu items (i.e. QActions for QToolBar).
- Fix placement of context menus.
- New management of ownership of QWidgets.
- 
-Cleanup and maintenance (Qt):
- Comments. Many, many comments.
- Removed unnecessary files.
- Grouped common method definitions.
- Shifting around of code for consistency.
- Documentation regarding widgets and extension of the UI.
- XCode: update project for XCode4, new xcconfig for MOC objects fixes linker
- warnings.
- 
-To do (Qt):
- Fine tune the presentation of QWidgets: remove unnecessary spacing, provide
- default alignment policies, add better support for widgets in QToolBars
- (see as_qaction()).
- Finish the popup widget (timeout, etc.)
- Why are texmacs widgets so often wrapped into vertical widgets? This messes
- with scrollable_wid.
- Understand why QPainter is not properly initialized for output widgets. 
- 
- 
- */

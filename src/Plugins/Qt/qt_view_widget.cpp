@@ -161,7 +161,7 @@ qt_view_widget_rep::read (slot s, blackbox index) {
   switch (s) {
     case SLOT_WINDOW:
       check_type_void (index, "SLOT_WINDOW");
-      return qt_window_widget_rep::widget_from_qwidget(qwid->window());
+      return qt_window_widget_rep::widget_from_qwidget(qwid);
     default:
       return qt_widget_rep::read (s, index);
   }

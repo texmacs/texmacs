@@ -24,12 +24,12 @@ class QWidget;
  slots, in particular all those already handled by qt_widget_rep.
  
  This qt_widget takes ownership of the enclosed QWidget and marks it as a 
- "texmacs_window_widget" using QObject::property().
- This property must be set in this way, because any underlying QWidget
- belonging to any instance of a subclass of qt_widget_rep may be encapsulated
- into a qt_window_widget_rep. This is for instance the case in
- qt_view_widget_rep::plain_window_widget(), where we construct a new
- qt_window_widget_rep around an already existing QWidget.
+ "texmacs_window_widget" using QObject::property(). The value of the property is
+ set to this qt_window_widget_rep. This property must be set in this way, 
+ because any underlying QWidget belonging to any instance of a subclass of 
+ qt_widget_rep may be encapsulated into a qt_window_widget_rep. This is for 
+ instance the case in qt_view_widget_rep::plain_window_widget(), where we 
+ construct a new qt_window_widget_rep around an already existing QWidget.
 
  Later, the handling of some texmacs messages (SLOT_WINDOW, for instance) 
  will require access to an instance of qt_window_widget which they retrieve
@@ -52,11 +52,9 @@ public:
 
   virtual void      send (slot s, blackbox val);
   virtual blackbox query (slot s, int type_id);
-  virtual widget    read (slot s, blackbox index);
-  virtual void     write (slot s, blackbox index, widget w);
   virtual void    notify (slot s, blackbox new_val);
 	
-	static widget_rep* widget_from_qwidget(QWidget* qwin);
+	static widget_rep* widget_from_qwidget (QWidget* qwid);
 };
 
 /*!

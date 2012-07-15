@@ -62,7 +62,7 @@ qt_widget_rep::~qt_widget_rep() {
  NOTE: we could set qwid=NULL to ensure that delete qwid did nothing, but this
  might break things: if you nest a widget which needs access to qwid, like 
  qt_tm_embedded_widget_rep, *after* it's been enclosed in a vertical_menu or
- something like that, then the way the latter is built, taking all the qwidgets,
+ something like that, then the way the latter is built taking all the qwidgets,
  would result in a crash as soon as the nested widget did something with the
  QWidget.
 */
@@ -117,7 +117,7 @@ qt_widget_rep::get_qmenu () {
  This default implementation constructs a wrapper qt_window_widget for the 
  widget and returns it. This wrapper will hold a new QTMPlainWindow object
  which will manage close events and take ownership of the original QWidget.
- qt_window_widget owns the QTMPlainWindow and is responsible of its deletion.
+ qt_window_widget owns the QTMPlainWindow and is responsible for its deletion.
  
  The default implementation should suffice in most cases.
 
