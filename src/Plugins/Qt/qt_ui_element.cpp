@@ -973,10 +973,11 @@ qt_ui_element_rep::as_qlayoutitem () {
     {
       typedef quartet<bool, bool, SI, SI> T;
       T x = open_box<T>(load);
+
       QSizePolicy::Policy hpolicy = x.x1 ? QSizePolicy::Expanding 
-                                         : QSizePolicy::Preferred;
+                                         : QSizePolicy::Minimum;
       QSizePolicy::Policy vpolicy = x.x2 ? QSizePolicy::Expanding
-                                         : QSizePolicy::Preferred;
+                                         : QSizePolicy::Minimum;
 
       return new QSpacerItem (x.x3, x.x4, hpolicy, vpolicy);
     }
@@ -1041,6 +1042,10 @@ qt_ui_element_rep::as_qwidget () {
       else {
         qwid->setMinimumSize(minSize);
         qwid->setMaximumSize(maxSize);
+
+        QSizePolicy::Policy hpolicy = QSizePolicy::Minimum;
+        QSizePolicy::Policy vpolicy = QSizePolicy::Minimum;
+        qwid->setSizePolicy(hpolicy, vpolicy);
       }
       
       return qwid;
