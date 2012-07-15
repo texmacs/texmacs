@@ -973,10 +973,10 @@ qt_ui_element_rep::as_qlayoutitem () {
     {
       typedef quartet<bool, bool, SI, SI> T;
       T x = open_box<T>(load);
-      QSizePolicy::Policy hpolicy = x.x1 ? QSizePolicy::Preferred 
-                                         : QSizePolicy::Fixed;
-      QSizePolicy::Policy vpolicy = x.x2 ? QSizePolicy::Preferred
-                                         : QSizePolicy::Fixed;
+      QSizePolicy::Policy hpolicy = x.x1 ? QSizePolicy::Expanding 
+                                         : QSizePolicy::Preferred;
+      QSizePolicy::Policy vpolicy = x.x2 ? QSizePolicy::Expanding
+                                         : QSizePolicy::Preferred;
 
       return new QSpacerItem (x.x3, x.x4, hpolicy, vpolicy);
     }
