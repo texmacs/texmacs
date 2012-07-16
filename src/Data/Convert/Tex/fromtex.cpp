@@ -125,7 +125,11 @@ kill_space_invaders (tree t, char &status) {
         r << kill_space_invaders (u, status);
         i++;
         while (i<N(t) && (might_not_be_typesetted (t[i]) ||
-             t[i] == "\t" || t[i] == "\n")) i++;
+             t[i] == " "  || t[i] == "\t" || t[i] == "\n")) {
+          if (might_not_be_typesetted (t[i]))
+            r << kill_space_invaders (t[i], status);
+          i++;
+        }
         r << "\n";
         status = 'N';
         i--;
