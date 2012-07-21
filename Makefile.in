@@ -352,6 +352,8 @@ DEBIAN_PACKAGE: COPY_SOURCES_TGZ
 	$(MKDIR) $(BUILD_DIR)/debian ;
 	$(CP) $(DEBIAN_PACKAGE_SRC)/* $(BUILD_DIR)/debian
 	cd $(BUILD_DIR); debuild -us -uc
+	cd $(CURDIR)
+	$(MKDIR) $(DEBIAN_PACKAGE_DIR)
 	$(CP) -p ../distr/build/*.deb $(DEBIAN_PACKAGE_DIR)
 	$(RM) -r ../distr/build
 
