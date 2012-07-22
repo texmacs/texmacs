@@ -348,14 +348,14 @@ DEBIAN_PACKAGE_SRC = packages/debian
 DEBIAN_PACKAGE_DIR = ../distr/debian
 
 DEBIAN_PACKAGE: COPY_SOURCES_TGZ
-	$(CP) $(BUILD_TGZ) ../distr/build/$(tm_debian_name_devel).orig.tar.gz
+	$(CP) -p $(BUILD_TGZ) ../distr/build/$(tm_debian_name_devel).orig.tar.gz
 	$(MKDIR) $(BUILD_DIR)/debian ;
-	$(CP) $(DEBIAN_PACKAGE_SRC)/* $(BUILD_DIR)/debian
-	cd $(BUILD_DIR); debuild -us -uc
+	$(CP) -p $(DEBIAN_PACKAGE_SRC)/* $(BUILD_DIR)/debian
+	cd $(BUILD_DIR) && dh_shlibdeps;debuild -us -uc
 	cd $(CURDIR)
 	$(MKDIR) $(DEBIAN_PACKAGE_DIR)
-	$(CP) -p ../distr/build/*.deb $(DEBIAN_PACKAGE_DIR)
-	$(RM) -r ../distr/build
+	$(MV) ../distr/build/*.deb $(DEBIAN_PACKAGE_DIR)
+	$(RM) -fr ../distr/build
 
 .PHONY: DEBIAN_PACKAGE
 
