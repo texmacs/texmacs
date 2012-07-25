@@ -114,7 +114,7 @@
   </explain>
 
   <\explain>
-    <var-val|par-width|auto><explain-synopsis|paragraph with>
+    <var-val|par-width|auto><explain-synopsis|paragraph width>
   <|explain>
     This environment variable controls the width of paragraphs. By default,
     it is automatically determined as a function of the page (or screen) size
