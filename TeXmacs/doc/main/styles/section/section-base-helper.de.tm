@@ -28,7 +28,7 @@
 
     <explain-macro|sectional-normal-italic|body>
 
-    <explain-macro|sectional-short-bold|body>
+    <explain-macro|sectional-normal-bold|body>
   <|explain>
     Diese Makros sollten für normale linksbündige Titel verwendet werden. Sie
     gehen über die ganze Absatz-Breite.

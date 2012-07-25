@@ -27,7 +27,7 @@
 
     <explain-macro|sectional-normal-italic|body>
 
-    <explain-macro|sectional-short-bold|body>
+    <explain-macro|sectional-normal-bold|body>
   <|explain>
     These macros should be used for rendering ``normal left-aligned section
     titles''. Such titles span over the entire paragraph width.
