@@ -36,6 +36,10 @@
 (define (notify-status-bar var val)
   (show-footer (== val "on")))
 
+(define (notify-side-tools var val)
+  (cond ((== var "side tools")
+	 (show-side-tools 0 (== val "on")))))
+
 (define (notify-shrinking-factor var val)
   (set-default-shrinking-factor (string->number val))
   (set-shrinking-factor (string->number val)))
@@ -50,6 +54,7 @@
   ("focus dependent icons" "on" notify-icon-bar)
   ("user provided icons" "off" notify-icon-bar)
   ("status bar" "on" notify-status-bar)
+  ("side tools" "off" notify-side-tools)
   ("shrinking factor" "5" notify-shrinking-factor)
   ("ir-up" "home" notify-remote-control)
   ("ir-down" "end" notify-remote-control)
@@ -75,7 +80,7 @@
   (show-footer (not (visible-footer?))))
 
 (tm-define (toggle-visible-side-tools n)
-  (:synopsis "Toggle the visibility of the @n-th window's side tools.")
+  (:synopsis "Toggle the visibility of the @n-th side tools.")
   (:check-mark "v" visible-side-tools?)
   (show-side-tools n (not (visible-side-tools? n))))  
 

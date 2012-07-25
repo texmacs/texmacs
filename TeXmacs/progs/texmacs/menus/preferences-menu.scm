@@ -81,6 +81,7 @@
 	(toggle ("Focus dependent icons" "focus dependent icons"))
 	(toggle ("User provided icons" "user provided icons"))
 	(toggle ("Status bar" "status bar"))
+  (toggle ("Side tools" "side tools"))
 	---
 	(enum ("Shrinking factor" "shrinking factor")
 	      "1" "2" "3" "4" "5" "7" "10" *))
