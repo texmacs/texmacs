@@ -449,22 +449,20 @@ QTMWidget::resizeEvent( QResizeEvent* event ) {
 */
 void
 QTMWidget::paintEvent (QPaintEvent* event) {
-  if (DEBUG_QT) 
-  {
+  /*
+  if (DEBUG_QT) {
     QRect rect = event->rect ();
     cout << "paintEvent ("<< rect.x() << "," <<  rect.y()
     << "," <<  rect.width() << "," <<  rect.height() << ")" << LF ;
   }
-    
-  {    
-    QPainter p (surface());
-    QVector<QRect> rects = event->region().rects();
-    for (int i=0; i< rects.count(); i++) {
-      QRect qr = rects.at(i);
-      p.drawPixmap(qr,backingPixmap,qr);
-    }
-  } 
-  
+  */
+
+  QPainter p (surface());
+  QVector<QRect> rects = event->region().rects();
+  for (int i=0; i< rects.count(); i++) {
+    QRect qr = rects.at(i);
+    p.drawPixmap(qr,backingPixmap,qr);
+  }
 }
 
 

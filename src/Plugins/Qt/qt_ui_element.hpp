@@ -92,6 +92,8 @@ public:
 };
 
 
+/*! A rectangular separator widget with a colored background.
+ */
 class qt_glue_widget_rep: public qt_widget_rep {
 public:
   
@@ -108,8 +110,8 @@ public:
   
   QPixmap render ();
   
-  virtual QAction *as_qaction();
-  virtual QWidget *as_qwidget();
+  virtual QAction* as_qaction ();
+  virtual QWidget* as_qwidget ();
 };
 
 #endif // defined QT_UI_ELEMENT_HPP

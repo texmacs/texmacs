@@ -45,7 +45,8 @@ public:
   QToolBar *focusToolBar;
   QToolBar *userToolBar;
   QToolBar *sideToolBar;
-  
+
+  QDockWidget* sideDock;
 
 #ifdef Q_WS_MAC
   QToolBar *dumbToolBar;

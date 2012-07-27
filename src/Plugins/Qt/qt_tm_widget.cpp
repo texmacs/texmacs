@@ -185,13 +185,15 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   modeToolBar  = new QToolBar ("mode toolbar", mw);
   focusToolBar = new QToolBar ("focus toolbar", mw);
   userToolBar  = new QToolBar ("user toolbar", mw);
-  sideToolBar  = new QToolBar ("side toolbar", mw);
-
+    //sideToolBar  = new QToolBar ("side toolbar", mw);
+  sideDock     = new QDockWidget ("Side tools", mw);
+  
   mainToolBar->setStyle (qtmstyle ());
   modeToolBar->setStyle (qtmstyle ());
   focusToolBar->setStyle (qtmstyle ());
   userToolBar->setStyle (qtmstyle ());
-  sideToolBar->setStyle (qtmstyle());
+    //sideToolBar->setStyle (qtmstyle());
+  sideDock->setStyle(qtmstyle());
   
   {
     // set proper sizes for icons
@@ -274,12 +276,25 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
  // mw->addToolBarBreak ();
 #endif
   
+  /*
   sideToolBar->setAllowedAreas(Qt::LeftToolBarArea | Qt::RightToolBarArea);
     //This does nothing to forbid the toolbar from displaying horizontally when
     //floating...
     //sideToolBar->setOrientation(Qt::Vertical);
   sideToolBar->setMovable(true);
   mw->addToolBar(Qt::RightToolBarArea, sideToolBar);
+  */
+  sideDock->setAllowedAreas(Qt::AllDockWidgetAreas);
+  sideDock->setFeatures(QDockWidget::DockWidgetMovable |
+                        QDockWidget::DockWidgetFloatable);
+  sideDock->setFloating(false);
+  mw->addDockWidget(Qt::RightDockWidgetArea, sideDock);
+  
+    // FIXME? add DockWidgetClosable and connect the close signal
+    // to the scheme code
+    //  QObject::connect(sideDock, SIGNAL(closeEvent()), 
+    //                   someHelper, SLOT(call_scheme_hide_side_tools()));  
+
   
   // handles visibility
   // at this point all the toolbars are empty so we avoid showing them
@@ -290,21 +305,21 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   modeToolBar->setVisible (false);
   focusToolBar->setVisible (false);
   userToolBar->setVisible (false);
-  sideToolBar->setVisible(false);
+    //sideToolBar->setVisible(false);
+  sideDock->setVisible(false);
   mainwindow()->statusBar()->setVisible (true);
 #ifndef Q_WS_MAC
   mainwindow()->menuBar()->setVisible (false);
 #endif  
 }
 
+
 qt_tm_widget_rep::~qt_tm_widget_rep () {
   if (DEBUG_QT)
     cout << "qt_tm_widget_rep::~qt_tm_widget_rep\n";
   
-  
     // clear any residual waiting menu installation
   waiting_widgets = remove(waiting_widgets, this);
-
   
     // we must detach the QTMWidget canvas from the Qt widget hierarchy otherwise
     // it will be destroyed when the view member of this object is deallocated
@@ -347,7 +362,8 @@ void qt_tm_widget_rep::updateVisibility()
   bool old_modeVisibility = modeToolBar->isVisible();
   bool old_focusVisibility = focusToolBar->isVisible();
   bool old_userVisibility = userToolBar->isVisible();
-  bool old_sideVisibility = sideToolBar->isVisible();
+    //bool old_sideVisibility = sideToolBar->isVisible();
+  bool old_sideVisibility = sideDock->isVisible();
   bool old_statusVisibility = mainwindow()->statusBar()->isVisible();
 
   bool new_mainVisibility = visibility[1] && visibility[0];
@@ -366,7 +382,8 @@ void qt_tm_widget_rep::updateVisibility()
   if ( XOR(old_userVisibility,  new_userVisibility) )
     userToolBar->setVisible (new_userVisibility);
   if ( XOR(old_sideVisibility,  new_sideVisibility) )
-    sideToolBar->setVisible (new_sideVisibility);
+      //sideToolBar->setVisible (new_sideVisibility);
+    sideDock->setVisible (new_sideVisibility);
   if ( XOR(old_statusVisibility,  new_statusVisibility) )
     mainwindow()->statusBar()->setVisible (new_statusVisibility);
 
@@ -486,17 +503,6 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       QRect rect = to_qrect (p);
         //NOTE: rect.topLeft is ignored since it is always (0,0)
       canvas() -> setExtents(rect);
-#if 0
-        //cout << "p= " << p << "\n";
-      QSize sz= to_qrect (p).size ();
-      QSize ws= scrollarea () -> size ();
-      sz.setHeight (max (sz.height (), ws.height () - 4));
-        //FIXME: the above adjustment is not very nice and useful only in papyrus 
-        //       mode. When setting the size we should ask the GUI of some 
-        //       preferred max size and set that without post-processing.
-        //      canvas () -> setFixedSize (sz);
-      canvas() -> setExtentsSize(sz);
-#endif
     }
       break;
     case SLOT_HEADER_VISIBILITY:
@@ -865,9 +871,14 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       check_type_void (index, "SLOT_SIDE_TOOLS");
     {
       side_tools_widget = w;
-      QMenu* m= concrete (w)->get_qmenu();
-      replaceButtons (sideToolBar, m);
+        //QMenu* m= concrete (w)->get_qmenu();
+        //replaceButtons (sideToolBar, m);
+      QWidget* new_qwidget = concrete (w)->as_qwidget();
+      QWidget* old_qwidget = sideDock->widget();
+      delete old_qwidget;
+      sideDock->setWidget (new_qwidget); 
       updateVisibility();
+      new_qwidget->show();
     }
       break;
       

@@ -33,9 +33,9 @@ public:
                             int _style, string _width);
   ~qt_input_text_widget_rep();
   
-  QAction* as_qaction ();
-  QLayoutItem *as_qlayoutitem ();
-  QWidget *as_qwidget ();
+  virtual QAction*         as_qaction ();
+  virtual QWidget*         as_qwidget ();
+  virtual QLayoutItem* as_qlayoutitem ();
 };
 
 class qt_field_widget;

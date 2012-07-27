@@ -49,6 +49,7 @@ public:
   virtual blackbox query (slot s, int type_id);
 
   virtual QAction* as_qaction();
+  virtual QWidget* as_qwidget();
   QTMWidget* canvas () { return static_cast<QTMWidget*>(qwid); }
 };
 

@@ -19,7 +19,8 @@
 
 
 /******************************************************************************
- * Empty handlers for redefinition by our subclass editor_rep.
+ * Empty handlers for redefinition by our subclasses editor_rep, 
+ * box_widget_rep...
  ******************************************************************************/
 
 void
@@ -143,6 +144,32 @@ qt_simple_widget_rep::query (slot s, int type_id) {
       return qt_view_widget_rep::query (s, type_id);      
   }
 }
+
+/*!
+ HACK: sometimes the QTMWidget underlying this widget is deleted, for instance
+ when destroying the QWidgets in a QTMRefreshWidget. Because of this we cannot
+ simply return the qwid pointer. As a convention we could assume that if this
+ method is being called on this object, then a new QTMWidget is to be built.
+ However:
+ FIXME: this breaks stuff elsewhere. qt_simple_widget works in a different way
+ to qt_ui_element_rep and cia. There is no difference between parsing and
+ compilation of the scheme trees: upon parsing the QTMWidget is built and its
+ properties are set with TeXmacs messages. These properties are not remembered
+ by the qt_simple_widget_rep: if the QTMWidget is deleted, they are lost and we
+ cannot build a new copy.
+ 
+ We could fix this, by duplicating state information in the qt_simple_widget_rep.
+ A possibility is to add some stack of sent messages: we store the last of each
+ type (at the end of send(), write(), etc.) provided that each message totally
+ overwrites the previous, i.e. that its effect is independent of previous state.
+ */
+QWidget*
+qt_simple_widget_rep::as_qwidget () {
+    //qwid = new QTMWidget(0, this);
+    //reapply_changes_to_qwid();
+  return qwid;
+}
+
 
 
 /******************************************************************************

@@ -19,12 +19,27 @@ class QWidget;
 class QLayoutItem;
 class QAction;
 class QMenu;
+class qt_widget;
 
 /*! The base class of all TeXmacs widgets in the QT interface.
 
  Every TeXmacs Widget is an entity which can be manipulated from within scheme.
  The interface to this is provided by widget_rep, which we extend. The methods
  here declared must be implemented by the QT wrappers.
+ 
+ We must distinguish between three stages of widget creation:
+ 
+  1) Scheme widgets: these are scheme trees describing the widgets. These trees
+     are the result of several macro expansions on the code given by the user in
+     scheme (see under progs/kernel/gui) and are wholly handled by the TeXmacs
+     core. The Qt side plays no role here.
+  2) Parsed widgets: the C++ interpretation of the scheme widget. Merely a
+     collection of qt_widget instances, without any (visible) QWidgets
+     instantiated.
+  3) Compiled widgets: The Qt rendering of the parsed widgets. The outermost
+     widget receives a message to display which possibly translates to the
+     instantiation of a QWidget using as_qwidget(). This call will in turn
+     call this method for children widgets and so on down the chain.
 
  Additionally, we provide several methods to cope with the fact that TeXmacs
  expects widgets to behave in three different ways: as embedded widgets,

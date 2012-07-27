@@ -194,16 +194,17 @@ QTMTabWidget::QTMTabWidget(QWidget *p) : QTabWidget(p) {
 }
 
 void
-QTMTabWidget::resizeOthers(int index) {
+QTMTabWidget::resizeOthers(int current) {
   for(int i = 0; i < count(); ++i) {
-    if (i != index)
+    if (i != current)
       widget(i)->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-      else
-        widget(i)->setSizePolicy(QSizePolicy::MinimumExpanding, 
-                                 QSizePolicy::MinimumExpanding);
-        }
-
-  if (layout())
-    layout()->activate();
-  window()->resize(minimumSizeHint());
+    else
+      widget(i)->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+  }
+  
+  QWidget* p = this;
+  while (p != 0) {  // FIXME: this could loop indefinitely if parents are cyclic.
+    p->adjustSize();
+    p = p->parentWidget();
+  }
 }

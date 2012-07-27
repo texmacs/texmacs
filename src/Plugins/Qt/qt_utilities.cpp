@@ -47,7 +47,7 @@ operator << (tm_ostream& out, QRect rect) {
 QRect
 to_qrect (const coord4 & p) {
   float c= 1.0/PIXEL;
-  return QRect (p.x1*c, -p.x4*c, (p.x3-p.x1+PIXEL-1)*c, (p.x4-p.x2+PIXEL-1)*c);
+  return QRect (p.x1*c, p.x4*c, (p.x3-p.x1+PIXEL-1)*c, (p.x4-p.x2+PIXEL-1)*c);
 }
 
 QPoint
@@ -101,12 +101,18 @@ parse_tm_style (int style) {
     sheet += "text-align: center;";
   if (style & WIDGET_STYLE_BOLD)
     sheet += "font-weight: bold;";
+  if (DEBUG_QT)
+    sheet += "border:1px solid rgb(255, 0, 0);";
   return sheet;
 }
 
 /*! */
 QString
 to_qstylesheet (int style) {
+  if (DEBUG_QT) {
+    return "* {" + parse_tm_style(style) + "}" + 
+           "*:hover { background-color: rgb(255,220,220); }";
+  }
   return "* {" + parse_tm_style(style) + "}";
 }
 

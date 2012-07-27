@@ -36,7 +36,7 @@ widget the_keyboard_focus (NULL);
 static long widget_counter = 0;
 
 qt_widget_rep::qt_widget_rep(types _type, QWidget* _qwid)
-  : widget_rep (), id(widget_counter++), qwid(_qwid), type(_type)
+  : widget_rep (), id (widget_counter++), qwid (_qwid), type (_type)
 {
   if (DEBUG_QT)
     cout << "qt_widget_rep(), created: " << type_as_string() << LF;
@@ -78,9 +78,9 @@ qt_widget_rep::as_qwidget () {
  See the remarks about memory management and menu instantiation and insertion
  in the comments to class qt_menu_rep.
  */
-QAction *
+QAction*
 qt_widget_rep::as_qaction() {
-  QAction *a = new QTMAction (NULL); 
+  QAction* a = new QTMAction (NULL); 
   a->setEnabled(false);
   return a;
 }
@@ -90,8 +90,8 @@ qt_widget_rep::as_qaction() {
  The policy is to give ownership of the object to the caller.
 */
 inline QLayoutItem*
-qt_widget_rep::as_qlayoutitem () { 
-  return new QWidgetItem (as_qwidget()); 
+qt_widget_rep::as_qlayoutitem () {
+  return new QWidgetItem (as_qwidget ()); 
 }
 
 
@@ -129,25 +129,37 @@ widget
 qt_widget_rep::plain_window_widget (string title, command quit) {
   if (DEBUG_QT)
     cout << "qt_widget_rep::plain_window_widget() around a " << type_as_string() << LF;
+
   QTMPlainWindow* win = new QTMPlainWindow(0, this);
-  QLayoutItem* li     = as_qlayoutitem();
+  QLayoutItem*     li = as_qlayoutitem();
   if (li) {
-    win->setLayout(li->layout());  // Transfers ownership
+    QLayout* l = li->layout();
+    if (! l) {
+      l = new QVBoxLayout();
+      l->addItem(li);
+    }
+    win->setLayout(l);  // Transfers ownership
   } else {
     QWidget* qw = as_qwidget();
     if (qw) {
-      QLayout* l  = new QVBoxLayout();
+      QLayout* l = new QVBoxLayout();
       l->addWidget(qw);        // The original QWidget now belongs to the layout
       win->setLayout(l);       // And the QLayout to the QTMPlainWindow.
     } else {
       FAILED("attempt to create a window around a nil QWidget");
     }
   }
+  
   win->setWindowTitle (to_qstring (title));
+  int l,t,r,b;
+  win->layout()->getContentsMargins(&l, &t, &r, &b);
+  win->layout()->setContentsMargins(l+3, t+3, r+3, b+3);
+    //win->layout()->setSizeConstraint(QLayout::SetFixedSize);
+  
     // Makes Qt delete this widget when it has accepted a close event
     //win->setAttribute(Qt::WA_DeleteOnClose);
+    // qt_window_widget_rep will delete the QTMPlainWindow when destroyed
   
-    //qt_window_widget_rep will delete the QTMPlainWindow when destroyed:
   return tm_new<qt_window_widget_rep>(win, quit);
 }
 
@@ -242,9 +254,9 @@ destroy_window_widget (widget w) {
  * See Graphics/Gui/widget.hpp for comments. 
  ******************************************************************************/
 
-widget horizontal_menu (array<widget> arr) { 
+widget horizontal_menu (array<widget> arr) {
   return qt_ui_element_rep::create (qt_widget_rep::horizontal_menu, arr); }
-widget vertical_menu (array<widget> arr)  { 
+widget vertical_menu (array<widget> arr)  {
   return qt_ui_element_rep::create (qt_widget_rep::vertical_menu, arr); }
 widget horizontal_list (array<widget> arr) { 
   return qt_ui_element_rep::create (qt_widget_rep::horizontal_list, arr); }
