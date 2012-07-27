@@ -62,7 +62,7 @@
   thispagestyle ensuremath
   mathord mathbin mathopen mathpunct mathop mathrel mathclose mathalpha
   arabic alph Alph roman Roman fnsymbol displaylines cases underbrace overbrace
-  title author date thanks terms
+  date thanks terms
   phantom hphantom vphantom smash
   newcounter stepcounter refstepcounter value
   citet citep citet* citep* citealt citealp citealt* citealp*
@@ -112,7 +112,7 @@
 
 (logic-group latex-command-1*%
   documentclass documentstyle sqrt bibitem cite
-  includegraphics includegraphics*
+  title author includegraphics includegraphics*
   subjclass declaretheorem footnotetext
   xleftarrow xrightarrow xleftrightarrow xminus
   xLeftarrow xRightarrow xLeftrightarrow xequal

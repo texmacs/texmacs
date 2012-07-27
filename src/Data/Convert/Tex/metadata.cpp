@@ -16,6 +16,7 @@ is_metadata (tree u) {
   return is_tuple (u, "\\address")         || 
          is_tuple (u, "\\affiliation")     || 
          is_tuple (u, "\\author")          || 
+         is_tuple (u, "\\author*")         || 
          is_tuple (u, "\\category")        || 
          is_tuple (u, "\\category*")       || 
          is_tuple (u, "\\classification")  || 
@@ -35,6 +36,7 @@ is_metadata (tree u) {
          is_tuple (u, "\\subtitle")        || 
          is_tuple (u, "\\terms")           || 
          is_tuple (u, "\\title")           || 
+         is_tuple (u, "\\title*")          || 
          is_tuple (u, "\\urladdr");
 }
 
@@ -142,23 +144,36 @@ collect_metadata_latex (tree t) {
   tree r (CONCAT);
   for (i=0; i<n; i++) {
     tree u= t[i];
-    if (is_tuple (u, "\\title", 1) || is_tuple (u, "\\author", 1) || 
+    if (is_tuple (u, "\\title", 1)  || is_tuple (u, "\\title*", 2)  ||
+        is_tuple (u, "\\author", 1) || is_tuple (u, "\\author*", 2) ||
         is_tuple (u, "\\date", 1)) {
-      tree v= concat(), w=u[1];
+      tree v= concat(), w=u[N(u)-1];
       array<tree> l;
-      for (int j=0; j<N(w); j++) {
-        if (is_tuple (w[j], "\\thanks", 1)) {
-          if (u[0] == "\\title")
-            l << tuple ("\\title-thanks", w[j][1]);
-          else if (u[0] == "\\author")
-            l << tuple ("\\author-note", w[j][1]);
+      if (is_atomic (w))
+          r << tuple (u[0], w);
+      else {
+        for (int j=0; j<N(w); j++) {
+          if (is_tuple (w[j], "\\thanks", 1)) {
+            if (u[0] == "\\title" || u[0] == "\\title*")
+              l << tuple ("\\title-thanks", w[j][1]);
+            else if (u[0] == "\\author" || u[0] == "\\author*")
+              l << tuple ("\\author-note", w[j][1]);
+          }
+          else
+            v << w[j];
         }
-        else
-          v << w[j];
+        if (is_tuple (u, "\\title", 1)  || is_tuple (u, "\\title*", 2)) {
+          r << tuple ("\\title", v);
+        }
+        else if (is_tuple (u, "\\author", 1) || is_tuple (u, "\\author*", 2)) {
+          r << tuple ("\\author", v);
+        }
+        else {
+          r << tuple (u[0], v);
+        }
+        for (int j=0; j<N(l); j++)
+          r << l[j];
       }
-      r << tuple (u[0], v);
-      for (int j=0; j<N(l); j++)
-        r << l[j];
     }
   }
   return r;
