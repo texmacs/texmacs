@@ -60,7 +60,7 @@ parse_string_rep::get_char (int n) {
 
   list<string> ll= l;
   list<int>    pp= p;
-  while (!is_nil (l) && pp->item + n >= N (ll->item)) {
+  while (!is_nil (ll) && pp->item + n >= N (ll->item)) {
     n -= (N (ll->item) - pp->item);
     ll = ll->next;
     pp = pp->next;
