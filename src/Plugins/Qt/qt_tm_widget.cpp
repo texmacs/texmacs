@@ -1063,6 +1063,15 @@ qt_tm_embedded_widget_rep::query (slot s, int type_id) {
         cout << "   Visible Region " << c << LF;
       return close_box<coord4> (c);
     }
+    case SLOT_HEADER_VISIBILITY:
+    case SLOT_MAIN_ICONS_VISIBILITY:
+    case SLOT_MODE_ICONS_VISIBILITY:
+    case SLOT_FOCUS_ICONS_VISIBILITY:
+    case SLOT_USER_ICONS_VISIBILITY:
+    case SLOT_FOOTER_VISIBILITY:
+    case SLOT_SIDE_TOOLS_VISIBILITY:
+      TYPE_CHECK (type_id == type_helper<bool>::id);
+      return close_box<bool> (false);
 
     default:
       return qt_view_widget_rep::query (s, type_id);
