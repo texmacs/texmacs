@@ -72,30 +72,6 @@ void
 qt_simple_widget_rep::send (slot s, blackbox val) {
   //if (DEBUG_QT) cout << "qt_qt_simple_widget_rep::send " << slot_name(s) << LF;
   switch (s) {
-    case SLOT_INVALIDATE:
-    {
-      TYPE_CHECK (type_box (val) == type_helper<coord4>::id);
-      coord4 p = open_box<coord4> (val);
-      //if (DEBUG_QT)
-      //cout << "Invalidating rect " << rectangle(p.x1,p.x2,p.x3,p.x4) << LF;
-      qt_renderer_rep* ren = (qt_renderer_rep*)get_renderer (this);
-      if (ren) {
-        SI x1 = p.x1, y1 = p.x2, x2 = p.x3, y2 = p.x4;    
-        ren->outer_round (x1, y1, x2, y2);
-        ren->decode (x1, y1);
-        ren->decode (x2, y2);
-        canvas()->invalidate_rect (x1,y2,x2,y1);
-      }
-    }
-      break;
-    case SLOT_INVALIDATE_ALL:
-    {
-      ASSERT (is_nil (val), "type mismatch");
-      if (DEBUG_QT)
-        cout << "qt_simple_widget_rep(), invalidating all." <<  LF;
-      canvas()->invalidate_all ();
-    }
-      break;
     case SLOT_CURSOR:
     {
       TYPE_CHECK (type_box (val) == type_helper<coord2>::id);

@@ -50,7 +50,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
       coord4 p= open_box<coord4> (val);
       if (DEBUG_QT)
         cout << "   Invalidating rect " << rectangle(p.x1,p.x2,p.x3,p.x4) << LF;
-      qt_renderer_rep* ren = (qt_renderer_rep*)get_renderer (this);
+      qt_renderer_rep* ren = static_cast<qt_renderer_rep*>(get_renderer(this));
       QTMWidget *canvas = qobject_cast <QTMWidget*>(qwid);
       if (ren && canvas) {
         SI x1 = p.x1, y1 = p.x2, x2 = p.x3, y2 = p.x4;    
