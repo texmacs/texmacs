@@ -143,7 +143,7 @@ public:
   virtual blackbox query (slot s, int type_id) {
 		(void) type_id;
     if (DEBUG_QT)
-      cout << "qt_widget_rep::write(), unhandled " << slot_name (s) 
+      cout << "qt_widget_rep::query(), unhandled " << slot_name (s) 
            << " for widget of type: " << type_as_string() << LF;
 		return blackbox ();
 	}
