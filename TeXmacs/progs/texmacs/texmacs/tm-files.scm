@@ -140,9 +140,9 @@
 (define (save-buffer-as-save new-name name opts)
   ;;(display* "save-buffer-as-save " new-name ", " name "\n")
   (if (and (url-scratch? name) (url-exists? name)) (system-remove name))
-  (buffer-rename name new-name)
   (buffer-pretend-modified new-name)
-  (save-buffer-save new-name opts))
+  (save-buffer-save new-name opts)
+  (buffer-rename name new-name)) ; Rename last for prettier window title on Mac
 
 (define (save-buffer-as-check-faithful new-name name opts)
   ;;(display* "save-check-as-check-faithful " new-name ", " name "\n")
