@@ -415,8 +415,11 @@ qt_tm_widget_rep::read(slot s, blackbox index) {
   
   switch (s) {
     case SLOT_CANVAS:
+    {
       check_type_void (index, "SLOT_CANVAS");
       ret = widget(main_widget);
+    }
+      break;
     default:
       return qt_window_widget_rep::read(s, index);
   }
