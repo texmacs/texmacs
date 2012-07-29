@@ -209,9 +209,6 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   }  
   
 //#if 0
-#ifdef UNIFIED_TOOLBAR
-
-  mw->setUnifiedTitleAndToolBarOnMac(true);
 
   QWidget *cw= new QWidget() ;  // QMainWindow will take ownership later and delete it when needed.
   cw->setObjectName("central widget");         // this is important for styling toolbars.
@@ -224,7 +221,10 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   
   mw->setCentralWidget(cw);
   
-  
+#ifdef UNIFIED_TOOLBAR
+
+  mw->setUnifiedTitleAndToolBarOnMac(true);
+    
   //WARNING: dumbToolBar is the toolbar installed on the top area of the
   //main widget which is  then unified in the title bar. 
   //to overcome some limitations of the unified toolbar implementation we
@@ -260,8 +260,6 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   bar->setContentsMargins (0, 0, 0, 2);
 
 #else
-  mw->setCentralWidget(concrete(main_widget)->as_qwidget());  // force creation of QWidget
-  
   mw->addToolBar (mainToolBar);
   mw->addToolBarBreak ();
   mw->addToolBar (modeToolBar);
