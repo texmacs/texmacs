@@ -1421,7 +1421,6 @@
 		9C0B489B10A8CC100097A335 /* openssl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = openssl.cpp; sourceTree = "<group>"; };
 		9C0B489C10A8CC100097A335 /* openssl.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = openssl.hpp; sourceTree = "<group>"; };
 		9C0B48A410A8CC100097A335 /* NOTES */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NOTES; sourceTree = "<group>"; };
-		9C0B48A510A8CC100097A335 /* qt_basic_widgets.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_basic_widgets.hpp; sourceTree = "<group>"; };
 		9C0B48A610A8CC100097A335 /* qt_dialogues.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_dialogues.cpp; sourceTree = "<group>"; };
 		9C0B48A710A8CC100097A335 /* qt_dialogues.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_dialogues.hpp; sourceTree = "<group>"; };
 		9C0B48A810A8CC100097A335 /* qt_gui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_gui.cpp; sourceTree = "<group>"; };
@@ -2668,7 +2667,6 @@
 		9C0B489D10A8CC100097A335 /* Qt */ = {
 			isa = PBXGroup;
 			children = (
-				9C0B48A510A8CC100097A335 /* qt_basic_widgets.hpp */,
 				9C225A63128B5EB00039258C /* qt_chooser_widget.cpp */,
 				9C225A64128B5EB00039258C /* qt_chooser_widget.hpp */,
 				9C088F7312B1BAD000A18E04 /* qt_color_picker_widget.cpp */,
