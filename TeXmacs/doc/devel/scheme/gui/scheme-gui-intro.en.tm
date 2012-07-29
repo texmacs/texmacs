@@ -118,7 +118,7 @@
   </session>
 
   The special symbol <scm|\<gtr\>\<gtr\>\<gtr\>> is just one of the
-  predefined <hlink|glue widgets|scheme-gui-glue.en.tm>.\ 
+  predefined <hlink|glue widgets|scheme-gui-advanced.en.tm>.
 
   <section|Menus>
 
@@ -127,7 +127,13 @@
   <with|color|red|Problems with toolbars, system menus, context menus... Menu
   containers: horizontal menu, vertical menu. Separators.>
 
-  <section|User dialogs><label|sec:dialogs>
+  <section|More complex widgets>
+
+  In order to create more complex layouts you'll need a few containers. Among
+  these are <scm|aligned> and <scm|tabs>. A very useful macro is
+  <scm|dynamic>: it allows you to embed one widget into another.
+
+  <subsection|User dialogs><label|sec:dialogs>
 
   Let's see how you create a dialog. To get started here is one little
   example taken from <hlink|menu-test.scm|$TEXMACS_PATH/progs/kernel/gui/menu-test.scm>:
@@ -250,11 +256,35 @@
     </input>
   </session>
 
-  That special at the bottom <scm|\<gtr\>\<gtr\>> inserts as before
-  whitespace, but it stretches and aligns the <scm|bottom-buttons> to the
-  right (<with|color|red|right?>). This is just another example of a
-  <with|font-shape|italic|glue widget>, of which there are more described
-  <hlink|here|scheme-gui-glue.en.tm>.
+  That special <scm|\<gtr\>\<gtr\>> at the end of the widget inserts as
+  before whitespace, but it stretches and aligns the <scm|bottom-buttons> to
+  the right. This is just another example of a <hlink|glue
+  widget|scheme-gui-advanced.en.tm>.
+
+  <subsection|Composite widgets>
+
+  Note that our second dialog, <scm|widget1-buttons> is just a copy of
+  <scm|widget1> with an extra line at the end. We could have spared us the
+  keytrokes in this way:
+
+  <\session|scheme|default>
+    <\unfolded-io|Scheme] >
+      (tm-widget (widget1-buttons-smarter cmd)
+
+      \ \ (dynamic (widget1))
+
+      \ \ (bottom-buttons \<gtr\>\<gtr\> ("Ok" (cmd "Ok"))))
+    <|unfolded-io>
+      \;
+    </unfolded-io>
+
+    <\input|Scheme] >
+      (dialogue-window widget1-buttons-smarter (lambda (arg) (display* arg
+      "\\n")) "Two toggles")
+    </input>
+
+    \;
+  </session>
 
   As you can see, the approach we've shown has a shortcoming: there's no way
   to access all the values of the different widgets in your dialog at the
@@ -278,7 +308,7 @@
   <scm|form-> :
 
   <\session|scheme|default>
-    <\folded-io|Scheme] >
+    <\unfolded-io|Scheme] >
       (tm-widget (form3 cmd)
 
       \ \ (resize "500px" "500px"
@@ -329,9 +359,9 @@
       (form-values) "\\n")
 
       \ \ \ \ \ \ \ \ \ \ \ (cmd "ok")))))))
-    <|folded-io>
-      ((guile-user) (guile-user))
-    </folded-io>
+    <|unfolded-io>
+      \;
+    </unfolded-io>
 
     <\input|Scheme] >
       (dialogue-window form3 (lambda (x) (display* x "\\n")) "Test of form3")
