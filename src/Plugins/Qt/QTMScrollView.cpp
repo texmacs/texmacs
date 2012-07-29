@@ -38,7 +38,9 @@ QTMScrollView::QTMScrollView ( QWidget *_parent )
   _viewport->setAutoFillBackground(true);
 
   p_surface = new QTMSurface (_viewport, this);
-  p_surface->setAttribute(Qt::WA_PaintOnScreen);  // We implement our own double buffering.
+    // DON'T do this even if we do our own double buffering: this flag is only
+    // supported on X11 and anyway makes things slower.
+  //p_surface->setAttribute(Qt::WA_PaintOnScreen);
   p_surface->setAttribute(Qt::WA_NoSystemBackground);
   p_surface->setAttribute(Qt::WA_StaticContents); 
   p_surface->setAttribute(Qt::WA_MacNoClickThrough);
