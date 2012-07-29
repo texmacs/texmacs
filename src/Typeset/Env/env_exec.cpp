@@ -47,7 +47,7 @@ edit_env_rep::rewrite (tree t) {
     {
       int i, n= N(t);
       if (n < 1) return tree (ERROR, "invalid extern");
-      string fun= exec_string (t[0]);
+      string fun= tm_decode(exec_string (t[0]));
       tree r (TUPLE, n);
       for (i=1; i<n; i++)
 	r[i]= exec (t[i]);
