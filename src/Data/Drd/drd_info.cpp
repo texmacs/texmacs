@@ -441,8 +441,14 @@ drd_info_rep::get_type_child (tree t, int i) {
   tag_info ti= info[L(t)];
   int index= ti->get_index (i, N(t));
   if (is_func (t, EXTERN) && N(t)>0 && is_atomic (t[0])) {
-    ti= info[make_tree_label ("extern:" * t[0]->label)];
-    index= ti->get_index (i-1, N(t));
+    tree_label lab= make_tree_label ("extern:" * t[0]->label);
+    if (info->contains(lab)) {
+      ti= info[lab]; 
+    } else {
+      ti = info(EXTERN);
+      info(lab)= ti;
+    }
+    index= ti->get_index (i, N(t));
   }
   if ((index<0) || (index>=N(ti->ci))) return TYPE_INVALID;
   int r= ti->ci[index].type;
