@@ -13,9 +13,17 @@
 #include "qt_utilities.hpp"
 #include "qt_renderer.hpp"
 
-#include "message.hpp"
+#include "QTMWidget.hpp"
 #include "QTMMenuHelper.hpp"
 #include <QPixmap>
+
+qt_simple_widget_rep::qt_simple_widget_rep ()
+: qt_view_widget_rep (new QTMWidget (0, 0), simple_widget) { 
+    // QTMWidget needs a pointer to an initiliazed qt_simple_widget_rep object
+    // That's why we use set_tm_widget(), instead of passing "this" in the
+    // initialization list, i.e.: "new QTMWidget(0, this)" is wrong.
+  static_cast<QTMWidget*>(qwid)->set_tm_widget(this); 
+}
 
 
 /******************************************************************************
@@ -70,82 +78,25 @@ qt_simple_widget_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2) {
 
 void
 qt_simple_widget_rep::send (slot s, blackbox val) {
-  //if (DEBUG_QT) cout << "qt_qt_simple_widget_rep::send " << slot_name(s) << LF;
-  switch (s) {
-    case SLOT_CURSOR:
-    {
-      TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
-      coord2 p = open_box<coord2> (val);
-      canvas()->setCursorPos(to_qpoint(p));
-    }
-      break;
-    case SLOT_EXTENTS:
-    {
-      TYPE_CHECK (type_box (val) == type_helper<coord4>::id);
-      coord4 p= open_box<coord4> (val);
-      QRect rect = to_qrect (p);
-        //NOTE: rect.topLeft is ignored since it is always (0,0)
-      canvas()->setExtents(rect);
-    }
-      break;
-    default:
-      qt_view_widget_rep::send (s, val);
-  }
-}
-
-
-blackbox
-qt_simple_widget_rep::query (slot s, int type_id) {
-  //if ((DEBUG_QT) && (s != SLOT_RENDERER))
-  //cout << "qt_qt_simple_widget_rep::query " << slot_name(s) << LF;
-  switch (s) {
-    case SLOT_RENDERER:
-    {
-      TYPE_CHECK (type_id == type_helper<renderer>::id);
-      renderer r = get_current_renderer();
-        //FIXME: sometimes the renderer is queried outside repaint events 
-        //       (see e.g. edit_interface_rep::idle_time)
-        //       TeXmacs current policy is that we should return NULL only 
-        //       if the widget is not attached (in X11 sense)
-      if (!r) 
-        r = the_qt_renderer();
-      SI ox = - canvas()->backing_pos.x()*PIXEL;
-      SI oy = canvas()->backing_pos.y()*PIXEL;
-      r->set_origin(ox,oy);
-
-      return close_box<renderer> (r);
-    }
-      
-    default:
-      return qt_view_widget_rep::query (s, type_id);      
-  }
+  save_send_slot(s, val);
+  qt_view_widget_rep::send (s, val);
 }
 
 /*!
- HACK: sometimes the QTMWidget underlying this widget is deleted, for instance
+ NOTE: Sometimes the QTMWidget underlying this widget is deleted, for instance
  when destroying the QWidgets in a QTMRefreshWidget. Because of this we cannot
- simply return the qwid pointer. As a convention we could assume that if this
+ simply return the qwid pointer. As a convention we assume that if this
  method is being called on this object, then a new QTMWidget is to be built.
- However:
- FIXME: this breaks stuff elsewhere. qt_simple_widget works in a different way
- to qt_ui_element_rep and cia. There is no difference between parsing and
- compilation of the scheme trees: upon parsing the QTMWidget is built and its
- properties are set with TeXmacs messages. These properties are not remembered
- by the qt_simple_widget_rep: if the QTMWidget is deleted, they are lost and we
- cannot build a new copy.
  
- We could fix this, by duplicating state information in the qt_simple_widget_rep.
- A possibility is to add some stack of sent messages: we store the last of each
- type (at the end of send(), write(), etc.) provided that each message totally
- overwrites the previous, i.e. that its effect is independent of previous state.
- */
+ FIXME: It might be a good idea to apply this convention everywhere else (it 
+ almost is already)
+*/ 
 QWidget*
 qt_simple_widget_rep::as_qwidget () {
-    //qwid = new QTMWidget(0, this);
-    //reapply_changes_to_qwid();
+  qwid = new QTMWidget(0, this);
+  reapply_sent_slots();
   return qwid;
 }
-
 
 
 /******************************************************************************

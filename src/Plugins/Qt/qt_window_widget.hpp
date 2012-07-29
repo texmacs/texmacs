@@ -31,10 +31,10 @@ class QWidget;
  instance the case in qt_view_widget_rep::plain_window_widget(), where we 
  construct a new qt_window_widget_rep around an already existing QWidget.
 
- Later, the handling of some texmacs messages (SLOT_WINDOW, for instance) 
- will require access to an instance of qt_window_widget which they retrieve
- using the static member widget_from_qwidget(), who in turn uses the mentioned
- property.
+ Later, the handling of some texmacs messages (SLOT_WINDOW in qt_view_widget_rep 
+ for instance) will require access to an instance of qt_window_widget which they
+ retrieve using the static member widget_from_qwidget(), who in turn uses the
+ mentioned property.
  
  qt_window_widget_rep is the *sole responsible* for the deletion of QWidgets.
  This makes sense in as much as all QWidgets are owned by some texmacs widget

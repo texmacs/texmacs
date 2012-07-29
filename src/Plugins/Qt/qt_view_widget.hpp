@@ -14,8 +14,7 @@
 
 #include "basic_renderer.hpp"
 #include "qt_widget.hpp"
-
-class QWidget;
+#include "QTMWidget.hpp"
 
 /*! A widget with a renderer.
  
@@ -23,13 +22,14 @@ class QWidget;
  (for the main TeXmacs window), qt_tm_embedded_widget_rep (for simpler, 
  auxilliary texmacs input buffers without toolbars, etc.) and
  qt_simple_widget_rep inherit from this class. The latter is a bit different
- because it is subclassed many times across all of TeXmacs.
+ because it is subclassed many times across all of TeXmacs, for instance to
+ implement pure output widgets.
  
  Buffers are drawn in qt_view_widgets (...)
  
  MEMORY POLICY: 
  It's qt_window_widget_rep, NOT qt_view_widget_rep who owns the QWidget. This
- is to avoid crashing whenclosing other windows:
+ is to avoid crashing when closing other windows:
  The same QWidget is owned by qt_view_widget_rep and qt_window_widget_rep after
  a call to qt_view_widget_rep::plain_window_widget, so one of them has to 
  destroy it, but we also must destroy windows which are not qt_views, so it 
@@ -49,7 +49,7 @@ public:
   basic_renderer current_renderer;
   
 public:
-  qt_view_widget_rep (QWidget* _view, types _type=view_widget);
+  qt_view_widget_rep (QTMWidget* _view, types _type=view_widget);
   virtual ~qt_view_widget_rep () { }
 
   virtual void      send (slot s, blackbox val);
@@ -58,6 +58,9 @@ public:
   
   void set_current_renderer(basic_renderer _r) { current_renderer = _r;  }
   basic_renderer get_current_renderer() {  return current_renderer; }
+
+  QTMWidget*         canvas () { return static_cast<QTMWidget*> (qwid); }
+  QTMScrollView* scrollarea () { return static_cast<QTMScrollView*> (qwid); }
 };
 
 

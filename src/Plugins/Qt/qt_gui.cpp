@@ -762,7 +762,9 @@ qt_gui_rep::process_keypress (qt_simple_widget_rep *wid, string key, time_t t) {
   typedef triple<widget, string, time_t > T;
   if (wid->type != qt_widget_rep::simple_widget) {
     if (DEBUG_QT)
-      cout << "WTF! Situation] process_keypress() for non simple_widget.\n";
+      cout << "WTF! Situation] process_keypress() for non simple_widget. Widget: " 
+           << wid->type_as_string() << LF; 
+
     return;
   }
   add_event( queued_event ( QP_KEYPRESS, close_box<T> (T(wid, key, t)))); 
@@ -776,7 +778,9 @@ qt_gui_rep::process_keyboard_focus (qt_simple_widget_rep *wid, bool has_focus,
   typedef triple<widget, bool, time_t > T;
   if (wid->type != qt_widget_rep::simple_widget) {
     if (DEBUG_QT)
-      cout << "WTF! Situation] process_keyboard_focus() for non simple_widget.\n";
+      cout << "WTF! Situation] process_keyboard_focus() for non simple_widget. Widget: " 
+           << wid->type_as_string() << LF; 
+
     return;
   }
   add_event( 
@@ -790,9 +794,11 @@ qt_gui_rep::process_mouse (qt_simple_widget_rep *wid, string kind, SI x, SI y,
                             int mods, time_t t ) {
   typedef quintuple<string, SI, SI, int, time_t > T1;
   typedef pair<widget, T1> T;
+
   if (wid->type != qt_widget_rep::simple_widget) {
     if (DEBUG_QT)
-      cout << "WTF! Situation] process_mouse() for non simple_widget.\n"; 
+      cout << "WTF! Situation] process_mouse() for non simple_widget. Widget: " 
+           << wid->type_as_string() << LF; 
     return;
   }
   add_event ( 
@@ -806,7 +812,9 @@ qt_gui_rep::process_resize (qt_simple_widget_rep *wid, SI x, SI y ) {
   typedef triple<widget, SI, SI > T;
   if (wid->type != qt_widget_rep::simple_widget) {
     if (DEBUG_QT)
-      cout << "WTF! Situation] process_resize() for non simple_widget.\n";    
+      cout << "WTF! Situation] process_resize() for non simple_widget. Widget: " 
+           << wid->type_as_string() << LF; 
+   
     return;
   }
   add_event( queued_event ( QP_RESIZE, close_box<T> (T(wid, x, y)))); 

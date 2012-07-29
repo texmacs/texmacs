@@ -36,7 +36,7 @@ widget the_keyboard_focus (NULL);
 static long widget_counter = 0;
 
 qt_widget_rep::qt_widget_rep(types _type, QWidget* _qwid)
-  : widget_rep (), id (widget_counter++), qwid (_qwid), type (_type)
+  : widget_rep (), id (widget_counter++), qwid (_qwid), type (_type), sequencer(0)
 {
   if (DEBUG_QT)
     cout << "qt_widget_rep(), created: " << type_as_string() << LF;
@@ -154,11 +154,6 @@ qt_widget_rep::plain_window_widget (string title, command quit) {
   int l,t,r,b;
   win->layout()->getContentsMargins(&l, &t, &r, &b);
   win->layout()->setContentsMargins(l+3, t+3, r+3, b+3);
-    //win->layout()->setSizeConstraint(QLayout::SetFixedSize);
-  
-    // Makes Qt delete this widget when it has accepted a close event
-    //win->setAttribute(Qt::WA_DeleteOnClose);
-    // qt_window_widget_rep will delete the QTMPlainWindow when destroyed
   
   return tm_new<qt_window_widget_rep>(win, quit);
 }
@@ -188,6 +183,44 @@ qt_widget_rep::popup_window_widget (string s) {
 
 tm_ostream& operator << (tm_ostream& out, qt_widget w) {
   return out << "qt_widget of type: " << w.rep->type_as_string();
+}
+
+/*! Stores messages (SLOTS) sent to this widget for later replay.
+ 
+ This is useful for recompilation of the QWidget inside as_qwidget() in some
+ cases, where state information of the parsed widget (i.e. the qt_widget) is
+ stored by us directly in the QWidget, and thus is lost if we delete it. This
+ is used in qt_simple_widget_rep (and might make more sense there).
+ 
+ Each SLOT is stored only once, repeated occurrences of the same one overwriting
+ previous ones. Sequence information is also stored, allowing for correct replay. 
+ */
+void
+qt_widget_rep::save_send_slot (slot s, blackbox val) {
+  sent_slots[s].seq = sequencer;
+  sent_slots[s].val = val;
+  sent_slots[s].id  = s.sid;
+  sequencer = ++sequencer % slot_id__LAST;
+}
+
+
+void
+qt_widget_rep::reapply_sent_slots () {
+  if (DEBUG_QT)
+    cout << ">>>>>>>> reapply_sent_slots() for widget: " << type_as_string() << LF;
+  
+  t_slot_entry sorted_slots[slot_id__LAST];
+  for (int i = 0; i < slot_id__LAST; ++i)
+    sorted_slots[i] = sent_slots[i];
+  qSort(&sorted_slots[0], &sorted_slots[slot_id__LAST]);
+  
+  for (int i = 0; i < slot_id__LAST; ++i)
+    if (sorted_slots[i].seq >= 0)
+      this->send(sorted_slots[i].id, sorted_slots[i].val);
+  
+  if (DEBUG_QT)
+    cout << "<<<<<<<< reapply_sent_slots() for widget: " << type_as_string() << LF;
+  
 }
 
 

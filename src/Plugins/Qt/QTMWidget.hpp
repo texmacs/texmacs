@@ -30,14 +30,8 @@ class basic_renderer_rep;
  */
 class QTMWidget: public QTMScrollView {
   Q_OBJECT
-    /* 
-     NOTE: that if this were a smart pointer of type, say qt_widget, then
-     its count would be decreased upon our destruction, triggering the
-     deletion of the contained object which is precisely the one who is
-     probably deleting us to begin with!
-     Or the crash is because of something else altogether... :`(
-     */
-  qt_simple_widget_rep* tmwid;
+
+  widget tmwid;
 
   rectangles invalid_regions;
   QPixmap      backingPixmap;
@@ -59,7 +53,7 @@ public:
   void scrollContentsBy (int dx, int dy);
   void setCursorPos (QPoint pos) { cursor_pos = pos; }
 
-  qt_simple_widget_rep* tm_widget () { return tmwid; }
+  qt_simple_widget_rep* tm_widget ();
   void              set_tm_widget (qt_simple_widget_rep* _tmwid);
 
 protected:

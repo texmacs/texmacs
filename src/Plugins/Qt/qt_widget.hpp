@@ -130,9 +130,26 @@ public:
   }
   
   ////////////////////// Handling of TeXmacs' messages
-	
-	/// This might be just temporary, in order to see which slots are unhandled
   
+    /// Storage of sent messages (used by qt_simple_widget_rep)
+    /// FIXME: don't burden every widget with the construction of sent_slots
+  
+  typedef struct t_slot_entry {
+    int seq;
+    slot_id id;
+    blackbox val;
+    t_slot_entry() : seq(-1), id(slot_id__LAST), val(blackbox()) {}
+    t_slot_entry(const t_slot_entry& other) : seq(other.seq), id(other.id), val(other.val) { }; 
+    bool operator< (const t_slot_entry& b) const { return this->seq < b.seq; }
+  } t_slot_entry;
+  
+  t_slot_entry sent_slots[slot_id__LAST];
+  
+  int sequencer;
+  
+  virtual void save_send_slot (slot s, blackbox val);
+  virtual void reapply_sent_slots();
+
   virtual void send (slot s, blackbox val) {
     (void) val;
     if (DEBUG_QT)

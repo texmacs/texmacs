@@ -1037,7 +1037,7 @@ qt_ui_element_rep::as_qwidget () {
     case menu_group:
     case glue_widget:
     {
-      ret = NULL;
+      ret = new QWidget();
     }
       break;
       

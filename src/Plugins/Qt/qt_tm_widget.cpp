@@ -109,11 +109,13 @@ tweak_iconbar_size (QSize& sz) {
 }
 
 qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
- : qt_view_widget_rep (new QTMWindow (0, this)), helper (this), 
-   full_screen(false), quit(_quit)
+ : qt_window_widget_rep (new QTMWindow (0, this), _quit), helper (this), 
+   full_screen(false)
 {
   type = texmacs_widget;  // FIXME: remove this whole "type" thing
 
+  main_widget = tm_new<qt_simple_widget_rep>();
+  
   // decode mask
   visibility[0] = (mask & 1)  == 1;  // header
   visibility[1] = (mask & 2)  == 2;  // main
@@ -139,12 +141,6 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   mw->setIconSize (QSize (17, 17));
 #endif
   mw->setFocusPolicy (Qt::NoFocus);
-  
-  
-  // central widget
-  
-  QStackedWidget* tw = new QStackedWidget (mw);
-  tw->setObjectName("stacked widget"); // to easily find this object
   
   // status bar
   
@@ -185,14 +181,15 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   modeToolBar  = new QToolBar ("mode toolbar", mw);
   focusToolBar = new QToolBar ("focus toolbar", mw);
   userToolBar  = new QToolBar ("user toolbar", mw);
-    //sideToolBar  = new QToolBar ("side toolbar", mw);
-  sideDock     = new QDockWidget ("Side tools", mw);
+  
+  sideDock     = new QDockWidget ("Side tools", 0);
+    // Wrap the dock in a "virtual" window widget to have clicks report the right position
+  dock_window_widget = tm_new<qt_window_widget_rep>(sideDock, command());
   
   mainToolBar->setStyle (qtmstyle ());
   modeToolBar->setStyle (qtmstyle ());
   focusToolBar->setStyle (qtmstyle ());
   userToolBar->setStyle (qtmstyle ());
-    //sideToolBar->setStyle (qtmstyle());
   sideDock->setStyle(qtmstyle());
   
   {
@@ -216,14 +213,14 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
 
   mw->setUnifiedTitleAndToolBarOnMac(true);
 
-  QWidget *cw= new QWidget ();  // QMainWindow will take ownership later and delete it when needed.
-  cw->setObjectName("central widget"); // this is important for styling toolbars.
+  QWidget *cw= new QWidget() ;  // QMainWindow will take ownership later and delete it when needed.
+  cw->setObjectName("central widget");         // this is important for styling toolbars.
   
   QBoxLayout *bl = new QBoxLayout(QBoxLayout::TopToBottom, cw);
   bl->setContentsMargins(2,2,2,2);
   bl->setSpacing(0);
   cw->setLayout(bl);
-  bl->addWidget(tw);
+  bl->addWidget(concrete(main_widget)->as_qwidget());  // force creation of QWidget
   
   mw->setCentralWidget(cw);
   
@@ -259,12 +256,11 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   bl->insertWidget(2, focusToolBar);
   bl->insertWidget(3, userToolBar);
 
-  tw->setContentsMargins (2, 0, 2, 0);
   mw->setContentsMargins (-2, -2, -2, -2);
   bar->setContentsMargins (0, 0, 0, 2);
 
 #else
-  mw->setCentralWidget(tw);
+  mw->setCentralWidget(concrete(main_widget)->as_qwidget());  // force creation of QWidget
   
   mw->addToolBar (mainToolBar);
   mw->addToolBarBreak ();
@@ -275,15 +271,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   mw->addToolBar (userToolBar);
  // mw->addToolBarBreak ();
 #endif
-  
-  /*
-  sideToolBar->setAllowedAreas(Qt::LeftToolBarArea | Qt::RightToolBarArea);
-    //This does nothing to forbid the toolbar from displaying horizontally when
-    //floating...
-    //sideToolBar->setOrientation(Qt::Vertical);
-  sideToolBar->setMovable(true);
-  mw->addToolBar(Qt::RightToolBarArea, sideToolBar);
-  */
+
   sideDock->setAllowedAreas(Qt::AllDockWidgetAreas);
   sideDock->setFeatures(QDockWidget::DockWidgetMovable |
                         QDockWidget::DockWidgetFloatable);
@@ -305,8 +293,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   modeToolBar->setVisible (false);
   focusToolBar->setVisible (false);
   userToolBar->setVisible (false);
-    //sideToolBar->setVisible(false);
-  sideDock->setVisible(false);
+  sideDock->setVisible (false);
   mainwindow()->statusBar()->setVisible (true);
 #ifndef Q_WS_MAC
   mainwindow()->menuBar()->setVisible (false);
@@ -316,53 +303,29 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
 
 qt_tm_widget_rep::~qt_tm_widget_rep () {
   if (DEBUG_QT)
-    cout << "qt_tm_widget_rep::~qt_tm_widget_rep\n";
+    cout << "qt_tm_widget_rep::~qt_tm_widget_rep of widget" << type_as_string() << LF;
   
     // clear any residual waiting menu installation
   waiting_widgets = remove(waiting_widgets, this);
-  
-    // we must detach the QTMWidget canvas from the Qt widget hierarchy otherwise
-    // it will be destroyed when the view member of this object is deallocated
-    // this is another problem related to our choice of letting qt_widget own its
-    // underlying QWidget.
-    // NOTE: I (mbd) commented this out and added the call to all_widgets.remove
-    // to the destructor of QTMWidget, because other texmacs widgets can contain
-    // instances of QTMWidget (for instance box_widget, created by 
-    // texmacs_output_widget() )
-  /*
-  QTMWidget *canvas = canvas();
-  QStackedWidget* tw= centralwidget();
-  if (canvas) {
-    tw->removeWidget(canvas);
-    canvas->setParent(NULL);
-    QTMWidget::all_widgets.remove(canvas);
-  }
-   */
 }
 
-/*! Constructs a wrapper qt_window_widget for the widget and returns it.
- 
- qt_tm_widget_rep is special and needs overriding this method of the base class
- because we have assigned the underlying QWidget to be of type QTMWindow, which
- is a special QMainWindow, and don't want it replaced by a QTMPlainWindow, and
- that's what the default implementation does.
+/*! FIXME: should we overwrite the previous quit command?
  */
 widget
 qt_tm_widget_rep::plain_window_widget (string title, command quit) {
+  (void) quit;
   qwid->setWindowTitle (to_qstring (title));
-  widget w= tm_new<qt_window_widget_rep> (qwid, quit);
-  return w;
+  return this;
 }
 
-void qt_tm_widget_rep::updateVisibility()
-{
+void
+qt_tm_widget_rep::updateVisibility() {
 #define XOR(exp1,exp2) (((!exp1) && (exp2)) || ((exp1) && (!exp2)))
 
   bool old_mainVisibility = mainToolBar->isVisible();
   bool old_modeVisibility = modeToolBar->isVisible();
   bool old_focusVisibility = focusToolBar->isVisible();
   bool old_userVisibility = userToolBar->isVisible();
-    //bool old_sideVisibility = sideToolBar->isVisible();
   bool old_sideVisibility = sideDock->isVisible();
   bool old_statusVisibility = mainwindow()->statusBar()->isVisible();
 
@@ -382,7 +345,6 @@ void qt_tm_widget_rep::updateVisibility()
   if ( XOR(old_userVisibility,  new_userVisibility) )
     userToolBar->setVisible (new_userVisibility);
   if ( XOR(old_sideVisibility,  new_sideVisibility) )
-      //sideToolBar->setVisible (new_sideVisibility);
     sideDock->setVisible (new_sideVisibility);
   if ( XOR(old_statusVisibility,  new_statusVisibility) )
     mainwindow()->statusBar()->setVisible (new_statusVisibility);
@@ -451,60 +413,34 @@ void qt_tm_widget_rep::updateVisibility()
 
 widget
 qt_tm_widget_rep::read(slot s, blackbox index) {
-  if (DEBUG_QT)
-    cout << "qt_tm_widget_rep::read " << slot_name (s) << LF;
-
+  widget ret;
+  
   switch (s) {
     case SLOT_CANVAS:
       check_type_void (index, "SLOT_CANVAS");
-      return abstract (this);
+      ret = widget(main_widget);
     default:
-      return qt_view_widget_rep::read(s, index);
+      return qt_window_widget_rep::read(s, index);
   }
+  
+  if (DEBUG_QT)
+    cout << "qt_tm_widget_rep::read " << slot_name (s) << "\t\tfor widget\t" 
+         << type_as_string() << LF;
+  
+  return ret;
 }
 
 void
 qt_tm_widget_rep::send (slot s, blackbox val) {
-  if (DEBUG_QT)
-    cout << "qt_tm_widget_rep::send " << slot_name (s) << LF;
 
   switch (s) {
     case SLOT_INVALIDATE:
-    {
-      TYPE_CHECK (type_box (val) == type_helper<coord4>::id);
-      coord4 p= open_box<coord4> (val);
-      if (DEBUG_QT)
-        cout << "   Invalidating rect " << rectangle(p.x1,p.x2,p.x3,p.x4) << LF;
-      qt_renderer_rep* ren = (qt_renderer_rep*)get_renderer (this);
-      QTMWidget *canvas = qobject_cast <QTMWidget*>(qwid);
-      if (ren && canvas) {
-        SI x1 = p.x1, y1 = p.x2, x2 = p.x3, y2 = p.x4;    
-        ren->outer_round (x1, y1, x2, y2);
-        ren->decode (x1, y1);
-        ren->decode (x2, y2);
-        canvas->invalidate_rect (x1,y2,x2,y1);
-      }
-    }
-      break;
     case SLOT_INVALIDATE_ALL:
-    {
-      ASSERT (is_nil (val), "type mismatch");
-      if (DEBUG_QT)
-        cout << "   Invalidating all"<<  LF;
-      QTMWidget *canvas = qobject_cast <QTMWidget*>(qwid);
-      if (canvas) canvas->invalidate_all ();
-    }
+    case SLOT_EXTENTS:
+    case SLOT_SCROLL_POSITION:
+      main_widget->send(s, val);
       break;
       
-    case SLOT_EXTENTS:
-    {
-      TYPE_CHECK (type_box (val) == type_helper<coord4>::id);
-      coord4 p= open_box<coord4> (val);
-      QRect rect = to_qrect (p);
-        //NOTE: rect.topLeft is ignored since it is always (0,0)
-      canvas() -> setExtents(rect);
-    }
-      break;
     case SLOT_HEADER_VISIBILITY:
     {
       TYPE_CHECK (type_box (val) == type_helper<bool>::id);
@@ -581,17 +517,6 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     }
       break;
       
-    case SLOT_SCROLL_POSITION:
-    {
-      TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
-      coord2 p= open_box<coord2> (val);
-      QPoint pt= to_qpoint (p);
-      if (DEBUG_QT)
-        cout << "   Position (" << pt.x() << "," << pt.y() << ")\n ";
-      scrollarea()->setOrigin(pt);
-    }
-      break;
-      
     case SLOT_SCROLLBARS_VISIBILITY:
         // ignore this: qt handles scrollbars independently
         //                send_int (THIS, "scrollbars", val);
@@ -620,22 +545,13 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     }
       break;
       
-    case SLOT_SHRINKING_FACTOR:
-      TYPE_CHECK (type_box (val) == type_helper<int>::id);
-      if (canvas()) {
-        int new_sf = open_box<int> (val);
-        if (DEBUG_QT) cout << "   New shrinking factor :" << new_sf << LF;
-        canvas()->tm_widget()->handle_set_shrinking_factor (new_sf);
-      }
-      break;
-      
     case SLOT_FILE:
     {
       TYPE_CHECK (type_box (val) == type_helper<string>::id);
       string file = open_box<string> (val);
       if (DEBUG_QT) cout << "File: " << file << LF;
 #if (QT_VERSION >= 0x040400)
-      qwid->window()->setWindowFilePath(to_qstring(tm_var_encode(file)));
+      mainwindow()->setWindowFilePath(to_qstring(tm_var_encode(file)));
 #endif
     }
       break;
@@ -649,8 +565,13 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     }
       break;
     default:
-      qt_view_widget_rep::send (s, val);
+      qt_window_widget_rep::send (s, val);
+      return;
   }
+  
+  if (DEBUG_QT)
+    cout << "qt_tm_widget_rep: caught " << slot_name (s) << "\t\tsent to widget\t" 
+         << type_as_string() << LF;
 }
 
 
@@ -661,36 +582,9 @@ qt_tm_widget_rep::query (slot s, int type_id) {
   
   switch (s) {
     case SLOT_SCROLL_POSITION:
-    {
-      TYPE_CHECK (type_id == type_helper<coord2>::id);
-      QPoint pt= canvas()->origin();
-      if (DEBUG_QT)
-        cout << "   Position (" << pt.x() << "," << pt.y() << ")\n";
-      return close_box<coord2> (from_qpoint (pt));
-    }
-      
     case SLOT_EXTENTS:
-    {
-      TYPE_CHECK (type_id == type_helper<coord4>::id);
-      QRect rect= canvas()->extents();
-      coord4 c= from_qrect (rect);
-      //if (DEBUG_QT) 
-        cout << "   Canvas geometry " << rect << LF;
-      return close_box<coord4> (c);
-    }
-      
     case SLOT_VISIBLE_PART:
-    {
-      TYPE_CHECK (type_id == type_helper<coord4>::id);
-      QSize sz = canvas()->surface()->size();
-        //sz.setWidth(sz.width()-2);
-      QPoint pos = canvas()->backing_pos;
-      coord4 c = from_qrect(QRect(pos,sz));
-      if (DEBUG_QT) 
-        cout << "   Visible Region " << c << LF;
-      return close_box<coord4> (c);
-    }
-      
+      return main_widget->query(s, type_id);
     case SLOT_HEADER_VISIBILITY:
       TYPE_CHECK (type_id == type_helper<bool>::id);
       return close_box<bool> (visibility[0]);
@@ -736,13 +630,12 @@ qt_tm_widget_rep::query (slot s, int type_id) {
       return close_box<bool> (false); // FIXME: who needs this info?
       
     default:
-      return qt_view_widget_rep::query (s, type_id);
+      return qt_window_widget_rep::query (s, type_id);
   }
 }
 
 void
 qt_tm_widget_rep::install_main_menu () {
-    //widget tmp = main_menu_widget;
   main_menu_widget = waiting_main_menu_widget;
   QMenu* m= concrete (main_menu_widget)->get_qmenu();
   if (m) {
@@ -792,20 +685,18 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     case SLOT_SCROLLABLE:
     {
       check_type_void (index, "SLOT_SCROLLABLE");
-      QStackedWidget* tw= centralwidget();
-      qt_simple_widget_rep* wid= static_cast<qt_simple_widget_rep*>(w.rep);
-      QWidget* new_widget= wid->canvas();
-      QWidget* old_widget= tw->currentWidget();
-      if (old_widget) {
-        tw->removeWidget(old_widget);
-        old_widget->setParent(NULL);
+
+      QLayout* l= centralwidget()->layout();
+      l->removeWidget(canvas());
+      delete canvas();
+      concrete(main_widget)->qwid = 0;
+      main_widget = widget(w);
+      l->addWidget(concrete(main_widget)->as_qwidget());  // force (re)creation of QWidget
+      if (canvas()) {
+        canvas()->show();
+        canvas()->setFocusPolicy(Qt::StrongFocus);
+        canvas()->setFocus();
       }
-      if (new_widget) {
-        tw->addWidget(new_widget);
-        new_widget->setFocusPolicy (Qt::StrongFocus);
-        new_widget->setFocus ();
-      }
-        // QTMWidget takes care of QTMWidget::all_widgets
     }
       break;
       
@@ -871,8 +762,6 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       check_type_void (index, "SLOT_SIDE_TOOLS");
     {
       side_tools_widget = w;
-        //QMenu* m= concrete (w)->get_qmenu();
-        //replaceButtons (sideToolBar, m);
       QWidget* new_qwidget = concrete (w)->as_qwidget();
       QWidget* old_qwidget = sideDock->widget();
       delete old_qwidget;
@@ -893,7 +782,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       break;
 
     default:
-      qt_view_widget_rep::write (s, index, w);
+      qt_window_widget_rep::write (s, index, w);
   }
 }
 
@@ -943,6 +832,7 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
 
 /******************************************************************************
  * qt_tm_embedded_widget_rep
+ * FIXME: this might make more sense as a child of qt_simple_widget_rep
  ******************************************************************************/
 
 qt_tm_embedded_widget_rep::qt_tm_embedded_widget_rep (command _quit) 
@@ -952,67 +842,8 @@ qt_tm_embedded_widget_rep::~qt_tm_embedded_widget_rep () { }
 
 void
 qt_tm_embedded_widget_rep::send (slot s, blackbox val) {
-  if (DEBUG_QT)
-    cout << "qt_tm_embedded_widget_rep::send " << slot_name (s) << LF;
-  
-  switch (s) {
-    case SLOT_INVALIDATE:
-    {
-      TYPE_CHECK (type_box (val) == type_helper<coord4>::id);
-      coord4 p= open_box<coord4> (val);
-      if (DEBUG_QT)
-        cout << "Invalidating rect " << rectangle(p.x1,p.x2,p.x3,p.x4) << LF;
-      qt_renderer_rep* ren = (qt_renderer_rep*)get_renderer (this);
-      if (ren && canvas()) {
-        SI x1 = p.x1, y1 = p.x2, x2 = p.x3, y2 = p.x4;    
-        ren->outer_round (x1, y1, x2, y2);
-        ren->decode (x1, y1);
-        ren->decode (x2, y2);
-        canvas()->invalidate_rect (x1,y2,x2,y1);
-      }
-    }
-      break;
-    case SLOT_INVALIDATE_ALL:
-    {
-      ASSERT (is_nil (val), "type mismatch");
-      if (DEBUG_QT)
-        cout << "Invalidating all"<<  LF;
-      if (canvas()) canvas()->invalidate_all ();
-    }
-      break;
-      
-    case SLOT_EXTENTS:
-    {
-      TYPE_CHECK (type_box (val) == type_helper<coord4>::id);
-      coord4 p= open_box<coord4> (val);
-      QRect rect = to_qrect (p);
-        //NOTE: rect.topLeft is ignored since it is always (0,0)
-      canvas()->setExtents(rect);
-    }
-      break;
-      
-    case SLOT_SHRINKING_FACTOR:
-    {
-      TYPE_CHECK (type_box (val) == type_helper<int>::id);
-      if (canvas()) {
-        int new_sf = open_box<int> (val);
-        if (DEBUG_QT) cout << "   New shrinking factor :" << new_sf << LF;
-        canvas()->tm_widget()->handle_set_shrinking_factor (new_sf);
-      }
-      break;
-    }
-      
-    case SLOT_SCROLL_POSITION:
-    {
-      TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
-      coord2 p= open_box<coord2> (val);
-      QPoint pt= to_qpoint (p);
-      if (DEBUG_QT)
-        cout << "   Position (" << pt.x() << "," << pt.y() << ")\n ";
-      scrollarea()->setOrigin(pt);
-    }
-      break;
 
+  switch (s) {
     case SLOT_DESTROY:
     {  
       ASSERT (is_nil (val), "type mismatch");
@@ -1024,7 +855,11 @@ qt_tm_embedded_widget_rep::send (slot s, blackbox val) {
       
     default:
       qt_view_widget_rep::send (s, val);
+      return;
   }
+  if (DEBUG_QT)
+    cout << "qt_tm_embedded_widget_rep: caught " << slot_name (s) 
+         << "\t\tsent to widget\t" << type_as_string() << LF;  
 }
 
 blackbox
@@ -1033,36 +868,6 @@ qt_tm_embedded_widget_rep::query (slot s, int type_id) {
     cout << "qt_tm_embedded_widget_rep::query " << slot_name (s) << LF;
   
   switch (s) {
-    case SLOT_SCROLL_POSITION:
-    {
-      TYPE_CHECK (type_id == type_helper<coord2>::id);
-      QPoint pt= canvas()->origin();
-      if (DEBUG_QT)
-        cout << "   Position (" << pt.x() << "," << pt.y() << ")\n";
-      return close_box<coord2> (from_qpoint (pt));
-    }
-      
-    case SLOT_EXTENTS:
-    {
-      TYPE_CHECK (type_id == type_helper<coord4>::id);
-      QRect rect= canvas()->extents();
-      coord4 c= from_qrect (rect);
-      if (DEBUG_QT) 
-        cout << "   Canvas geometry " << rect << LF;
-      return close_box<coord4> (c);
-    }
-      
-    case SLOT_VISIBLE_PART:
-    {
-      TYPE_CHECK (type_id == type_helper<coord4>::id);
-      
-      QSize sz = canvas()->surface()->size();
-      QPoint pos = canvas()->backing_pos;
-      coord4 c = from_qrect(QRect(pos,sz));
-      if (DEBUG_QT) 
-        cout << "   Visible Region " << c << LF;
-      return close_box<coord4> (c);
-    }
     case SLOT_HEADER_VISIBILITY:
     case SLOT_MAIN_ICONS_VISIBILITY:
     case SLOT_MODE_ICONS_VISIBILITY:
@@ -1070,6 +875,8 @@ qt_tm_embedded_widget_rep::query (slot s, int type_id) {
     case SLOT_USER_ICONS_VISIBILITY:
     case SLOT_FOOTER_VISIBILITY:
     case SLOT_SIDE_TOOLS_VISIBILITY:
+        // FIXME: decide what to do with all these for embedded widgets.
+      
       TYPE_CHECK (type_id == type_helper<bool>::id);
       return close_box<bool> (false);
 
@@ -1092,9 +899,10 @@ qt_tm_embedded_widget_rep::write (slot s, blackbox index, widget w) {
     {
       check_type_void (index, "SLOT_SCROLLABLE");
       qt_simple_widget_rep* wid = static_cast<qt_simple_widget_rep*>(w.rep);
-      QTMWidget* new_widget     = wid->canvas();     
+      QTMWidget* new_widget     = static_cast<QTMWidget*>(wid->as_qwidget());
       if (new_widget) {
         delete canvas();
+        qwid = 0;
         new_widget->setFocusPolicy (Qt::StrongFocus);
         new_widget->setFocus ();
         new_widget->set_tm_widget(wid);
@@ -1103,7 +911,16 @@ qt_tm_embedded_widget_rep::write (slot s, blackbox index, widget w) {
         FAILED("Attempt to set an invalid scrollable widget for a qt_tm_embedded_widget");
       }
     }
-      break; 
+      break;
+      
+    case SLOT_MAIN_MENU:
+    case SLOT_MAIN_ICONS:
+    case SLOT_MODE_ICONS:
+    case SLOT_FOCUS_ICONS:
+    case SLOT_USER_ICONS:
+    case SLOT_SIDE_TOOLS:
+    case SLOT_INTERACTIVE_INPUT:
+        // FIXME: decide what to do with these for embedded widgets.
     default:
       qt_view_widget_rep::write (s, index, w);
   }

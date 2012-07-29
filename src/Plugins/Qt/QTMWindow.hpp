@@ -37,11 +37,7 @@ class QTMPlainWindow : public QWidget {
 	
 public:
 	
-	/*! The pointer to the main qt_widget in this window.
-	 
-	 This is NOT NECESSARILY a pointer to the qt_window_widget_rep (or is it?)
-	 */
-	qt_widget_rep* tmwid;
+	widget tmwid;  //<! The pointer to the qt_window_widget_rep
 	
   QTMPlainWindow (QWidget* parent, qt_widget_rep* _tmwid) 
   : QWidget (parent), tmwid (_tmwid) { 
@@ -68,11 +64,7 @@ class QTMWindow: public QMainWindow {
 	
 public:
 	
-	/*! The pointer to the qt_tm_widget_rep inside this window.
-   
-   This is NOT NECESSARILY a pointer to the qt_window_widget_rep (or is it?)
-   */
-	qt_widget_rep* tmwid;
+	widget tmwid;    //<! The pointer to the qt_tm_widget_rep owning this window.
 	
   QTMWindow (QWidget* parent, qt_tm_widget_rep* _tmwid) 
 		: QMainWindow (parent), tmwid(_tmwid) { 

@@ -15,6 +15,7 @@
 #include "list.hpp"
 
 #include "qt_widget.hpp"
+#include "qt_window_widget.hpp"
 #include "qt_view_widget.hpp"
 
 #include "QTMInteractiveInputHelper.hpp"
@@ -31,11 +32,11 @@ class QTMInteractivePrompt;
 
 /*! Models one main window with toolbars, an associated view, etc.
  
- The underlying QWidget is a QTMWindow, whose central widget is a 
- QStackedWidget holding the canvases for all the open buffers. Each canvas
+ The underlying QWidget is a QTMWindow, whose central widget is a QWidget
+ holding the extra toolbars and the canvas for the open buffer. Each canvas
  is of type QTMWidget and belongs to one qt_simple_widget_rep.
  */
-class qt_tm_widget_rep: public qt_view_widget_rep {
+class qt_tm_widget_rep: public qt_window_widget_rep {
 public: 
   QLabel *rightLabel;
   QLabel *leftLabel;
@@ -44,7 +45,6 @@ public:
   QToolBar *modeToolBar;
   QToolBar *focusToolBar;
   QToolBar *userToolBar;
-  QToolBar *sideToolBar;
 
   QDockWidget* sideDock;
 
@@ -56,9 +56,7 @@ public:
   
   QWidget *rulerWidget;
 #endif
-  
-  QWidget *centralWidget;
-  
+
   QTMInteractiveInputHelper helper;
   QTMInteractivePrompt *prompt;
   qt_widget int_prompt;
@@ -69,12 +67,14 @@ public:
   
   command quit;
   
+  widget main_widget;
   widget main_menu_widget;
   widget main_icons_widget;
   widget mode_icons_widget;
   widget focus_icons_widget;
   widget user_icons_widget;
   widget side_tools_widget;
+  widget dock_window_widget;   // trick to return correct widget position
   widget waiting_main_menu_widget;
   
 public:
@@ -97,14 +97,14 @@ protected:
   QMainWindow* mainwindow () {
     return qobject_cast<QMainWindow*> (qwid); 
   }
-  QStackedWidget* centralwidget () {
-    return qwid->findChild<QStackedWidget*>("stacked widget");
+  QWidget* centralwidget () {
+    return mainwindow()->centralWidget();
   }
   QTMScrollView* scrollarea () {
-    return qobject_cast<QTMScrollView*> (centralwidget()->currentWidget());
+    return qobject_cast<QTMScrollView*> (concrete(main_widget)->qwid);
   }
   QTMWidget* canvas () {
-    return qobject_cast<QTMWidget*> (scrollarea());
+    return qobject_cast<QTMWidget*> (concrete(main_widget)->qwid);
   }
 };
 
@@ -119,10 +119,8 @@ extern int menu_count;
 /*! A simple texmacs input widget.
  
  This is a stripped down version of qt_tm_widget_rep, whose underlying widget
- isn't a QTMWindow anymore, but a regular QWidget (right now a QStackedWidget)
- because it is intended to be embedded into a window.
- 
- FIXME: the QStackedWidget is not needed for embedded texmacs widgets.
+ isn't a QTMWindow anymore, but a regular QTMWidget because it is intended to be
+ embedded somewhere else.
 */
 class qt_tm_embedded_widget_rep: public qt_view_widget_rep {
 public:

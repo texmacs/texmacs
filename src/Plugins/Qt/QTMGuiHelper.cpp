@@ -64,20 +64,19 @@ QTMRefreshWidget::recompute () {
   string s = "'(vertical (link " * tmwid * "))";
   eval ("(lazy-initialize-force)");
   object xwid = call ("menu-expand", eval (s));
-  /*
+
   if (cache->contains (xwid)) {
     if (curobj == xwid) return false;
     curobj = xwid;
     cur    = cache [xwid];
     return true;
   } else {
-   */
     curobj = xwid;
     object uwid = eval (s);
     cur = make_menu_widget (uwid);
-    //cache (xwid) = cur;
+    cache (xwid) = cur;
     return true;
-    //}
+  }
 }
 
 void 
@@ -88,12 +87,7 @@ QTMRefreshWidget::doRefresh() {
       while ((item = layout()->takeAt(0)) != 0) {		
         if (item->widget()) {
           layout()->removeWidget(item->widget());
-            // HACK!!!!! We cannot simply delete a QTMWidget because it stores
-            // lots of information about canvas, renderer, which cannot be later
-            // recovered. See qt_simple_widget_rep.
-            // Ideally as_qwidget() would ALWAYS rebuild the QWidget.
-          if (item->widget()->objectName() != "A QTMWidget")
-            delete item->widget();
+          delete item->widget();
         }	
         delete item;
       }

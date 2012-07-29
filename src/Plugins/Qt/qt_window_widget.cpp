@@ -144,8 +144,9 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       check_type<bool> (val, "SLOT_FULL_SCREEN");
       QTMWindow* qwin = qobject_cast<QTMWindow*>(qwid);
       if (qwin && qwin->tmwid->ref_count != 0) {
-        qt_tm_widget_rep* wid = static_cast<qt_tm_widget_rep*>(qwin->tmwid);
-        wid->set_full_screen(open_box<bool> (val));
+        qt_tm_widget_rep* wid = static_cast<qt_tm_widget_rep*>(qwin->tmwid.rep);
+        if (wid)
+          wid->set_full_screen(open_box<bool> (val));
       }
 			else FAILED ("attempt to set full screen on a non qt_tm_widget");
     }
@@ -172,7 +173,13 @@ qt_window_widget_rep::query (slot s, int type_id) {
     case SLOT_POSITION:
     {
       TYPE_CHECK (type_id == type_helper<coord2>::id);
-      QPoint pt= qwid->pos();
+      QPoint pt;
+        // FIXME: dock widgets are embedded into qt_window_widget_reps as a temporary hack
+        // because of this the underlying widget is not always a top level window
+      if (qwid->isWindow())
+        pt = qwid->pos();
+      else
+        pt = qwid->mapToGlobal(QPoint(0,0));
       if (DEBUG_QT)
         cout << "Position (" << pt.x() << "," << pt.y() << ")\n";
       return close_box<coord2> (from_qpoint (pt));
