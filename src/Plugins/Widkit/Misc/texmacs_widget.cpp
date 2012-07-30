@@ -383,7 +383,7 @@ texmacs_widget_rep::handle_set_string (set_string_event ev) {
     set_subwidget_flag (THIS ["header"] ["focus"], ev->s == "on");
   else if (ev->which == "user icons")
     set_subwidget_flag (THIS ["header"] ["user"], ev->s == "on");
-  else if (use_side_tools && ev->which == "side tools")
+  else if (ev->which == "side tools")
     /*set_side_tools_flag (ev->s == "on")*/;
   else if (ev->which == "interactive mode")
     set_footer_mode (ev->s == "on"? 1: (footer_flag? 0: 2));
@@ -410,9 +410,9 @@ texmacs_widget_rep::handle_get_string (get_string_event ev) {
   else if (ev->which == "user icons")
     ev->s= get_subwidget_flag (THIS ["header"] ["user"])?
              string ("on"): string ("off");
-  else if (use_side_tools && ev->which == "side tools")
+  else if (ev->which == "side tools")
     //ev->s= get_side_tools_flag ()? string ("on"): string ("off");
-    ev->s= string ("on");
+    ev->s= string (use_side_tools? "on": "off");
   else if (ev->which == "interactive mode")
     ev->s= get_footer_mode () == 1? string ("on"): string ("off");
   else if (ev->which == "footer flag")
