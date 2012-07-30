@@ -1014,9 +1014,9 @@ qt_ui_element_rep::as_qwidget () {
       QWidget* qwid = wid->as_qwidget();
       qwid->setStyleSheet(sheet);
       
-      QSize minSize = qt_decode_length(qwid, y1.x1, y2.x1);
-      QSize defSize = qt_decode_length(qwid, y1.x2, y2.x2);
-      QSize maxSize = qt_decode_length(qwid, y1.x3, y2.x3);
+      QSize minSize = qt_decode_length(static_cast<const QWidget*>(qwid), y1.x1, y2.x1);
+      QSize defSize = qt_decode_length(static_cast<const QWidget*>(qwid), y1.x2, y2.x2);
+      QSize maxSize = qt_decode_length(static_cast<const QWidget*>(qwid), y1.x3, y2.x3);
 
       if (minSize == defSize && defSize == maxSize) {        
         qwid->setFixedSize(defSize);        
