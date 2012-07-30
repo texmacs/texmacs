@@ -407,12 +407,15 @@ QTMWidget::scrollContentsBy ( int dx, int dy ) {
 
 void 
 QTMWidget::resizeEvent( QResizeEvent* event ) {
-  (void) event;
-  
   // cout << "QTMWidget::resizeEvent (" << event->size().width()
   //      << "," << event->size().height() << ")" << LF;
   
-  the_gui -> process_resize(tm_widget(), 0, 0); // FIXME
+    // Is this ok?
+  coord2 s = from_qsize(event->size());
+    //cout << "   resizeEvent: coord2 ( " << s.x1 << ", " << s.x2 << ")\n";
+    //cout << "                QSize  ( " << event->size().width() << ", "
+    //                                << event->size().height() << ")\n";
+  the_gui -> process_resize(tm_widget(), s.x1, s.x2);
 
   // force_update();
 

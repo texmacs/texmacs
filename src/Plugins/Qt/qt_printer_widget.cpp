@@ -12,7 +12,7 @@
  ******************************************************************************/
 
 #include "qt_printer_widget.hpp"
-#include "qt_utilities.hpp"      // TYPE_CHECK and NOT_IMPLEMENTED
+#include "qt_utilities.hpp"      // check_type<T>
 #include "message.hpp"           // slot definitions
 #include "qt_sys_utils.hpp"      // qt_system(string)
 #include "QTMPrintDialog.hpp"
@@ -47,7 +47,7 @@ qt_printer_widget_rep::send (slot s, blackbox val) {
     cout << "qt_printer_widget_rep::send " << slot_name(s) << LF;
   switch (s) {
     case SLOT_VISIBILITY:   // Activates the widget
-      TYPE_CHECK (type_box (val) == type_helper<bool>::id);
+      check_type<bool>(val, s);
       if (open_box<bool>(val) == true)
         showDialog();
       break;

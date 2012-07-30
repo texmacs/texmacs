@@ -486,7 +486,8 @@ qt_ui_element_rep::~qt_ui_element_rep() {
 
 /*! Returns the ui element as a popup widget.
  If the widget is of type vertical_menu, it is understood that the popup widget
- must be of the standard OS dependent type implemented by QMenu.
+ must be of the standard OS dependent type implemented by qt_menu_rep using 
+ QMenu.
  */
 widget 
 qt_ui_element_rep::make_popup_widget () {
@@ -557,8 +558,7 @@ qt_ui_element_rep::as_qaction () {
     {
         //  a table with two columns FIXME!!!!
       
-      typedef quartet<SI, SI, SI, SI> T1;
-      typedef triple<array<widget>, array<widget>, T1 > T;
+      typedef triple<array<widget>, array<widget>, coord4 > T;
       T x = open_box<T>(load);
       array<widget> lhs = x.x1;
       array<widget> rhs = x.x2;
@@ -837,12 +837,11 @@ qt_ui_element_rep::as_qlayoutitem () {
     case aligned_widget:       
     {
       typedef array<widget> T2;
-      typedef quartet<SI, SI, SI, SI> T1;
-      typedef triple<T2, T2, T1 > T;
-      T  x   = open_box<T>(load);
-      T2 lhs = x.x1;
-      T2 rhs = x.x2;
-      T1 y   = x.x3;
+      typedef triple<T2, T2, coord4 > T;
+      T      x = open_box<T>(load);
+      T2   lhs = x.x1;
+      T2   rhs = x.x2;
+      coord4 y = x.x3;
 
       // FIXME: lpad and rpad ignored.
       SI hsep = y.x1; SI vsep = y.x2; SI lpad = y.x3; SI rpad = y.x4;

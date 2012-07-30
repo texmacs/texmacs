@@ -41,7 +41,7 @@ qt_color_picker_widget_rep::send (slot s, blackbox val) {
     cout << "qt_color_picker_widget_rep::send " << slot_name(s) << LF;
   switch (s) {
     case SLOT_VISIBILITY:   // Activates the widget
-      TYPE_CHECK (type_box (val) == type_helper<bool>::id);
+      check_type<bool>(val, s);
       if (open_box<bool>(val) == true)
         showDialog();
       break;

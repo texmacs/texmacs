@@ -35,3 +35,48 @@ void QTMWindow::closeEvent (QCloseEvent* event)
   }
   emit closed();
 }
+
+
+
+  ////////////////////
+
+
+QTMPopupWidget::QTMPopupWidget(QWidget* contents) {
+  
+  QVBoxLayout* l = new QVBoxLayout();
+  l->addWidget(contents);
+  l->setContentsMargins(0,0,0,0);
+  setLayout(l);
+
+  setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); 
+  
+  setWindowFlags(Qt::Popup);
+  setMouseTracking(true);
+  
+    //cout << "QTMPopupWidget created with size: " << contents->size().width() 
+    // << " x " << contents->size().height() << LF;
+
+}
+
+
+  /// FIXME: this is intended for popups which appear under the cursor!
+void
+QTMPopupWidget::mouseMoveEvent(QMouseEvent* event) {
+  if (! this->rect().contains(event->pos()))
+    this->hide();
+
+  event->ignore();
+  emit closed();
+}
+
+/*
+void
+QTMPopupWidget::resizeEvent (QResizeEvent* event) {
+
+  cout << "QTMPopupWidget " << (event->spontaneous() ? "(spontaneous)" : "") 
+       << " resizeEvent: " << event->size().width() 
+       << " x " << event->size().height() << LF;
+  
+  event->accept();
+}
+*/

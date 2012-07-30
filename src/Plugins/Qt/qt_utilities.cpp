@@ -47,7 +47,7 @@ operator << (tm_ostream& out, QRect rect) {
 QRect
 to_qrect (const coord4 & p) {
   float c= 1.0/PIXEL;
-  return QRect (p.x1*c, p.x4*c, (p.x3-p.x1+PIXEL-1)*c, (p.x4-p.x2+PIXEL-1)*c);
+  return QRect (p.x1*c, -p.x4*c, (p.x3-p.x1+PIXEL-1)*c, (-p.x4-p.x2+PIXEL-1)*c);
 }
 
 QPoint

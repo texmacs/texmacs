@@ -44,32 +44,31 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
   switch (s) {
     case SLOT_VISIBILITY:
     {   
-      check_type<bool> (val, "SLOT_VISIBILITY");
+      check_type<bool> (val, s);
       bool flag = open_box<bool> (val);
       (void) flag;
       NOT_IMPLEMENTED
     }
       break;
     case SLOT_SIZE:
-      TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
+      check_type<coord2>(val, s);
       size = open_box<coord2> (val);
       break;
     case SLOT_POSITION:
-      TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
+      check_type<coord2>(val, s);
       position = open_box<coord2> (val);
       break;
     case SLOT_KEYBOARD_FOCUS:
-      TYPE_CHECK (type_box (val) == type_helper<bool>::id);
+      check_type<bool>(val, s);
       perform_dialog ();
       break;              
     case SLOT_STRING_INPUT:
-        // send_string (THIS, "input", val);
-      TYPE_CHECK (type_box (val) == type_helper<string>::id);
+      check_type<string>(val, s);
       if (DEBUG_QT) cout << "string input: " << open_box<string> (val) << LF;
       NOT_IMPLEMENTED
       break;
     case SLOT_INPUT_TYPE:
-      TYPE_CHECK (type_box (val) == type_helper<string>::id);
+      check_type<string>(val, s);
       type = open_box<string> (val);
       break;
 #if 0
@@ -80,12 +79,12 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
 #endif
     case SLOT_FILE:
         //send_string (THIS, "file", val);
-      TYPE_CHECK (type_box (val) == type_helper<string>::id);
+      check_type<string>(val, s);
       if (DEBUG_QT) cout << "file: " << open_box<string> (val) << LF;
       file = open_box<string> (val);
       break;
     case SLOT_DIRECTORY:
-      TYPE_CHECK (type_box (val) == type_helper<string>::id);
+      check_type<string>(val, s);
       directory = open_box<string> (val);
       directory = as_string (url_pwd () * url_system (directory));
       break;
@@ -102,19 +101,17 @@ qt_chooser_widget_rep::query (slot s, int type_id) {
   switch (s) {
     case SLOT_POSITION:
     {
-      typedef pair<SI,SI> coord2;
-      TYPE_CHECK (type_id == type_helper<coord2>::id);
+      check_type_id<coord2> (type_id, s);
       return close_box<coord2> (position);
     }
     case SLOT_SIZE:
     {
-      typedef pair<SI,SI> coord2;
-      TYPE_CHECK (type_id == type_helper<coord2>::id);
+      check_type_id<coord2> (type_id, s);
       return close_box<coord2> (size);
     }
     case SLOT_STRING_INPUT:
     {
-      TYPE_CHECK (type_id == type_helper<string>::id);
+      check_type_id<string> (type_id, s);
       if (DEBUG_QT) cout << "String: " << file << LF;
       return close_box<string> (file);
     }
@@ -139,16 +136,16 @@ qt_chooser_widget_rep::read (slot s, blackbox index) {
     cout << "qt_chooser_widget_rep::read " << slot_name(s) << LF;
   switch (s) {
     case SLOT_WINDOW:
-      check_type_void (index, "SLOT_WINDOW");
+      check_type_void (index, s);
       return this;
     case SLOT_FORM_FIELD:
-      check_type<int> (index, "SLOT_FORM_FIELD");
+      check_type<int> (index, s);
       return this;
     case SLOT_FILE:
-      check_type_void (index, "SLOT_FILE");
+      check_type_void (index, s);
       return this;
     case SLOT_DIRECTORY:
-      check_type_void (index, "SLOT_DIRECTORY");
+      check_type_void (index, s);
       return this;
     default:
       return qt_widget_rep::read(s,index);

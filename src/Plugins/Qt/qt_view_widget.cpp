@@ -30,12 +30,17 @@
 qt_view_widget_rep::qt_view_widget_rep (QTMWidget* _view, types _type)
  : qt_widget_rep(_type, _view), current_renderer(NULL)  {}
 
+
+/******************************************************************************
+ * Handling of TeXmacs messages
+ ******************************************************************************/
+
 void
 qt_view_widget_rep::send (slot s, blackbox val) {
   switch (s) {
     case SLOT_NAME:
     {   
-      check_type<string> (val, "SLOT_NAME");
+      check_type<string> (val, s);
       string name = open_box<string> (val);
       qwid->window()->setWindowTitle (to_qstring (tm_var_encode(name)));
     }
@@ -43,10 +48,8 @@ qt_view_widget_rep::send (slot s, blackbox val) {
 
     case SLOT_INVALIDATE:
     {
-      TYPE_CHECK (type_box (val) == type_helper<coord4>::id);
+      check_type<coord4>(val, s);
       coord4 p= open_box<coord4> (val);
-      if (DEBUG_QT)
-        cout << "   Invalidating rect " << rectangle(p.x1,p.x2,p.x3,p.x4) << LF;
       qt_renderer_rep* ren = static_cast<qt_renderer_rep*>(get_renderer(this));
       if (ren && canvas()) {
         SI x1 = p.x1, y1 = p.x2, x2 = p.x3, y2 = p.x4;    
@@ -57,45 +60,51 @@ qt_view_widget_rep::send (slot s, blackbox val) {
       }
     }
       break;
+
     case SLOT_INVALIDATE_ALL:
     {
-      ASSERT (is_nil (val), "type mismatch");
-      if (DEBUG_QT)
-        cout << "   Invalidating all"<<  LF;
-      if (canvas())
-        canvas()->invalidate_all ();
+      check_type_void (val, s);
+      canvas()->invalidate_all ();
     }
       break;
 
     case SLOT_EXTENTS:
     {
-      TYPE_CHECK (type_box (val) == type_helper<coord4>::id);
-      coord4 p= open_box<coord4> (val);
-      QRect rect = to_qrect (p);
-        //NOTE: rect.topLeft is ignored since it is always (0,0)
-      canvas()->setExtents(rect);
+      check_type<coord4>(val, s);
+      coord4 p = open_box<coord4> (val);
+      canvas()->setExtents (to_qrect (p));
+        // NOTE: rect.topLeft is ignored since it is always (0,0)
+      
+        //QRect rect = to_qrect (p);
+        //cout << "Set size: " << rect.x() << ", " << rect.y() << " --- "
+        // << rect.width() << " x " << rect.height() << LF;
     }
       break;
-      
+    
+    case SLOT_SIZE:
+    {
+      check_type<coord2>(val, s);
+      coord2 p = open_box<coord2> (val);
+      canvas()->resize(to_qsize(p));
+        //QSize  s = to_qsize(p);
+        //cout << "Set size: (" << s.width() << "," << s.height() << ")\n ";
+    }
+      break;
+
     case SLOT_SCROLL_POSITION:
     {
-      TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
-      coord2 p= open_box<coord2> (val);
-      QPoint pt= to_qpoint (p);
-      if (DEBUG_QT)
-        cout << "   Position (" << pt.x() << "," << pt.y() << ")\n ";
-      scrollarea()->setOrigin(pt);
+      check_type<coord2>(val, s);
+      coord2 p = open_box<coord2> (val);
+      scrollarea()->setOrigin(to_qpoint (p));
     }
       break;
       
     case SLOT_SHRINKING_FACTOR:
     {  
-      TYPE_CHECK (type_box (val) == type_helper<int>::id);
-      if (canvas()) {
-        int new_sf = open_box<int> (val);
-        if (DEBUG_QT) cout << "   New shrinking factor :" << new_sf << LF;
+      check_type<int>(val, s);
+      int new_sf = open_box<int> (val);
+      if (canvas())
         canvas()->tm_widget()->handle_set_shrinking_factor (new_sf);
-      }
     }
       break;  
       
@@ -112,7 +121,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     case SLOT_KEYBOARD_FOCUS:
     {
       //send_keyboard_focus (THIS, val);
-      TYPE_CHECK (type_box (val) == type_helper<bool>::id);
+      check_type<bool>(val, s);
       if (open_box<bool> (val)) 
         the_keyboard_focus = this;
       if (DEBUG_QT)
@@ -122,7 +131,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
       
     case SLOT_CURSOR:
     {
-      TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
+      check_type<coord2>(val, s);
       coord2 p = open_box<coord2> (val);
       canvas()->setCursorPos(to_qpoint(p));
     }
@@ -147,7 +156,7 @@ qt_view_widget_rep::query (slot s, int type_id) {
   switch (s) {
     case SLOT_IDENTIFIER:
     {
-      TYPE_CHECK (type_id == type_helper<int>::id);
+      check_type_id<int> (type_id, s);
         // return close_box<int> ((int)view->window());
         // we need only to know if the widget is attached to some gui window
       return close_box<int> (qwid->window() ? 1 : 0);
@@ -155,7 +164,7 @@ qt_view_widget_rep::query (slot s, int type_id) {
 
     case SLOT_RENDERER:
     {
-      TYPE_CHECK (type_id == type_helper<renderer>::id);
+      check_type_id<renderer> (type_id, s);
       renderer r = get_current_renderer();
         //FIXME: sometimes the renderer is queried outside repaint events 
         //       (see e.g. edit_interface_rep::idle_time)
@@ -172,51 +181,35 @@ qt_view_widget_rep::query (slot s, int type_id) {
       
     case SLOT_POSITION:
     {
-      typedef pair<SI,SI> coord2;
-      TYPE_CHECK (type_id == type_helper<coord2>::id);
+      check_type_id<coord2> (type_id, s);
       QPoint pt = qwid->mapTo(qwid->window(), QPoint(0,0));
-      if (DEBUG_QT)
-        cout << "   Position (" << pt.x() << "," << pt.y() << ")\n";
       return close_box<coord2> (from_qpoint (pt));
     }
 
     case SLOT_SIZE:
     {
-      typedef pair<SI,SI> coord2;
-      TYPE_CHECK (type_id == type_helper<coord2>::id);
-      QSize s= qwid->size();
-      return close_box<coord2> (from_qsize (s));
+      check_type_id<coord2> (type_id, s);
+      return close_box<coord2> (from_qsize (qwid->size()));
     }
     
     case SLOT_SCROLL_POSITION:
     {
-      TYPE_CHECK (type_id == type_helper<coord2>::id);
-      QPoint pt= canvas()->origin();
-      if (DEBUG_QT)
-        cout << "   Position (" << pt.x() << "," << pt.y() << ")\n";
-      return close_box<coord2> (from_qpoint (pt));
+      check_type_id<coord2> (type_id, s);
+      return close_box<coord2> (from_qpoint (canvas()->origin()));
     }
       
     case SLOT_EXTENTS:
     {
-      TYPE_CHECK (type_id == type_helper<coord4>::id);
-      QRect rect= canvas()->extents();
-      coord4 c= from_qrect (rect);
-        //if (DEBUG_QT) 
-      cout << "   Canvas geometry " << rect << LF;
-      return close_box<coord4> (c);
+      check_type_id<coord4> (type_id, s);
+      return close_box<coord4> (from_qrect (canvas()->extents()));
     }
       
     case SLOT_VISIBLE_PART:
     {
-      TYPE_CHECK (type_id == type_helper<coord4>::id);
-      QSize sz = canvas()->surface()->size();
-        //sz.setWidth(sz.width()-2);
+      check_type_id<coord4> (type_id, s);
+      QSize sz = canvas()->surface()->size();     // sz.setWidth(sz.width()-2);
       QPoint pos = canvas()->backing_pos;
-      coord4 c = from_qrect(QRect(pos,sz));
-      if (DEBUG_QT) 
-        cout << "   Visible Region " << c << LF;
-      return close_box<coord4> (c);
+      return close_box<coord4> (from_qrect(QRect(pos,sz)));
     }
 
     default:
@@ -232,7 +225,7 @@ qt_view_widget_rep::read (slot s, blackbox index) {
   
   switch (s) {
     case SLOT_WINDOW:
-      check_type_void (index, "SLOT_WINDOW");
+      check_type_void (index, s);
       return qt_window_widget_rep::widget_from_qwidget(qwid);
     default:
       return qt_widget_rep::read (s, index);

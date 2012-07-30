@@ -166,9 +166,7 @@ qt_widget_rep::plain_window_widget (string title, command quit) {
  */
 widget
 qt_widget_rep::make_popup_widget () {
-  qwid= as_qwidget();
-    //qwid->setStyle(qtmstyle());
-  return tm_new<qt_popup_widget_rep>(qwid, command());
+  return tm_new<qt_popup_widget_rep>(this, command());
 }
 
 /*! Interface for the creation of popups.
@@ -177,7 +175,7 @@ qt_widget_rep::make_popup_widget () {
 widget
 qt_widget_rep::popup_window_widget (string s) {
   widget wid= make_popup_widget();
-  ASSERT((qt_widget_rep*)wid.rep != this, "Loop in call to popup_window_widget()");
+  ASSERT(concrete(wid) != this, "Loop in call to popup_window_widget()");
   return concrete(wid)->popup_window_widget(s);
 }
 
@@ -296,10 +294,9 @@ widget horizontal_list (array<widget> arr) {
 widget vertical_list (array<widget> arr) { 
   return qt_ui_element_rep::create (qt_widget_rep::vertical_list, arr); }
 widget aligned_widget (array<widget> lhs, array<widget> rhs, SI hsep, SI vsep, SI lpad, SI rpad) { 
-  typedef quartet<SI, SI, SI, SI> T1;
-  typedef triple<array<widget>, array<widget>, T1> T;
+  typedef triple<array<widget>, array<widget>, coord4> T;
   return tm_new <qt_ui_element_rep> (qt_widget_rep::aligned_widget, 
-                                     close_box (T (lhs,rhs, T1 (hsep, vsep, lpad, rpad)))); }
+                                     close_box (T (lhs,rhs, coord4 (hsep, vsep, lpad, rpad)))); }
 widget tabs_widget (array<widget> tabs, array<widget> bodies) {
   return qt_ui_element_rep::create (qt_widget_rep::tabs_widget, tabs, bodies); }
 widget wrapped_widget (widget w, command cmd) {

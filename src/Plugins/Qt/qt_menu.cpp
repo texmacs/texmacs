@@ -72,7 +72,7 @@ qt_menu_rep::send (slot s, blackbox val) {
   switch (s) {
   case SLOT_POSITION:
     {
-      TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
+      check_type<coord2>(val, s);
       QPoint pt = to_qpoint (open_box<coord2> (val));
       if (item)
         item->menu()->move (pt);
@@ -82,7 +82,7 @@ qt_menu_rep::send (slot s, blackbox val) {
     break;
   case SLOT_VISIBILITY:
     {   
-      check_type<bool> (val, "SLOT_VISIBILITY");
+      check_type<bool> (val, s);
       bool flag = open_box<bool> (val);
       if (flag)
         if (item)
@@ -93,7 +93,7 @@ qt_menu_rep::send (slot s, blackbox val) {
     break;
   case SLOT_MOUSE_GRAB:
     {   
-      check_type<bool> (val, "SLOT_MOUSE_GRAB");
+      check_type<bool> (val, s);
       bool flag = open_box<bool> (val);  // true= get grab, false= release grab
       if (flag)
         if (item)

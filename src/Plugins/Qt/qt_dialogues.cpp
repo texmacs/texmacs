@@ -123,16 +123,16 @@ qt_field_widget_rep::send (slot s, blackbox val) {
     cout << "qt_field_widget_rep::send " << slot_name(s) << LF;
   switch (s) {
   case SLOT_STRING_INPUT:
-    TYPE_CHECK (type_box (val) == type_helper<string>::id);
+    check_type<string>(val, s);
     input= open_box<string> (val);
     // send_string (THIS, "input", val);
     break;
   case SLOT_INPUT_TYPE:
-    TYPE_CHECK (type_box (val) == type_helper<string>::id);
+    check_type<string>(val, s);
     type= open_box<string> (val);
     break;
   case SLOT_INPUT_PROPOSAL:
-    TYPE_CHECK (type_box (val) == type_helper<string>::id);
+    check_type<string>(val, s);
     proposals << open_box<string> (val);
     // send_string (THIS, "default", val);
     break;
@@ -150,7 +150,7 @@ qt_field_widget_rep::query (slot s, int type_id) {
     cout << "qt_field_widget_rep::query " << slot_name(s) << LF;
   switch (s) {
   case SLOT_STRING_INPUT:
-    TYPE_CHECK (type_id == type_helper<string>::id);
+    check_type_id<string> (type_id, s);
     return close_box<string> (input);
   default:
     return widget_rep::query (s, type_id);
@@ -181,22 +181,22 @@ qt_input_widget_rep::send (slot s, blackbox val) {
   switch (s) {
   case SLOT_VISIBILITY:
     {   
-      check_type<bool> (val, "SLOT_VISIBILITY");
+      check_type<bool> (val, s);
       bool flag = open_box<bool> (val);
       (void) flag;
       NOT_IMPLEMENTED
     }   
     break;
   case SLOT_SIZE:
-    TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
+    check_type<coord2>(val, s);
     size = open_box<coord2> (val);
     break;
   case SLOT_POSITION:
-    TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
+    check_type<coord2>(val, s);
     position = open_box<coord2> (val);
     break;
   case SLOT_KEYBOARD_FOCUS:
-    TYPE_CHECK (type_box (val) == type_helper<bool>::id);
+    check_type<bool>(val, s);
     perform_dialog ();
     break;
   default:
@@ -212,14 +212,12 @@ qt_input_widget_rep::query (slot s, int type_id) {
   switch (s) {
   case SLOT_POSITION:
     {
-      typedef pair<SI,SI> coord2;
-      TYPE_CHECK (type_id == type_helper<coord2>::id);
+      check_type_id<coord2> (type_id, s);
       return close_box<coord2> (position);
     }
   case SLOT_SIZE:
     {
-      typedef pair<SI,SI> coord2;
-      TYPE_CHECK (type_id == type_helper<coord2>::id);
+      check_type_id<coord2> (type_id, s);
       return close_box<coord2> (size);
     }
   case SLOT_STRING_INPUT:
@@ -235,10 +233,10 @@ qt_input_widget_rep::read (slot s, blackbox index) {
     cout << "qt_input_widget_rep::read " << slot_name(s) << LF;
   switch (s) {
   case SLOT_WINDOW:
-    check_type_void (index, "SLOT_WINDOW");
+    check_type_void (index, s);
     return this;
   case SLOT_FORM_FIELD:
-    check_type<int> (index, "SLOT_FORM_FIELD");
+    check_type<int> (index, s);
     return static_cast<widget_rep*>(fields [open_box<int> (index)].rep);
   default:
     return qt_widget_rep::read (s, index);

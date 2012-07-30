@@ -1015,8 +1015,7 @@ qt_gui_rep::update () {
  */
 void
 qt_gui_rep::show_help_balloon (widget wid, SI x, SI y) {
-  popup_wid= popup_widget (wid);
-  popup_win= popup_window_widget(popup_wid, "Balloon");
+  popup_win= popup_window_widget(wid, "Balloon");
   set_position (popup_win, x, y);
   set_visibility(popup_win, true);
     //send_mouse_grab(popup_win, true);

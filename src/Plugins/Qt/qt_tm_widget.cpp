@@ -416,7 +416,7 @@ qt_tm_widget_rep::read(slot s, blackbox index) {
   switch (s) {
     case SLOT_CANVAS:
     {
-      check_type_void (index, "SLOT_CANVAS");
+      check_type_void (index, s);
       ret = widget(main_widget);
     }
       break;
@@ -444,7 +444,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       
     case SLOT_HEADER_VISIBILITY:
     {
-      TYPE_CHECK (type_box (val) == type_helper<bool>::id);
+      check_type<bool>(val, s);
       bool f= open_box<bool> (val);
       visibility[0] = f;
       updateVisibility();
@@ -452,7 +452,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       break;
     case SLOT_MAIN_ICONS_VISIBILITY:
     {
-      TYPE_CHECK (type_box (val) == type_helper<bool>::id);
+      check_type<bool>(val, s);
       bool f= open_box<bool> (val);
       visibility[1] = f;
       updateVisibility();
@@ -460,7 +460,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       break;
     case SLOT_MODE_ICONS_VISIBILITY:
     {
-      TYPE_CHECK (type_box (val) == type_helper<bool>::id);
+      check_type<bool>(val, s);
       bool f= open_box<bool> (val);
       visibility[2] = f;
       updateVisibility();
@@ -468,7 +468,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       break;
     case SLOT_FOCUS_ICONS_VISIBILITY:
     {
-      TYPE_CHECK (type_box (val) == type_helper<bool>::id);
+      check_type<bool>(val, s);
       bool f= open_box<bool> (val);
       visibility[3] = f;
       updateVisibility();
@@ -476,7 +476,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       break;
     case SLOT_USER_ICONS_VISIBILITY:
     {
-      TYPE_CHECK (type_box (val) == type_helper<bool>::id);
+      check_type<bool>(val, s);
       bool f= open_box<bool> (val);
       visibility[4] = f;
       updateVisibility();
@@ -485,7 +485,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
 
     case SLOT_FOOTER_VISIBILITY:
     {
-      TYPE_CHECK (type_box (val) == type_helper<bool>::id);
+      check_type<bool>(val, s);
       bool f= open_box<bool> (val);
       visibility[5] = f;
       updateVisibility();
@@ -494,7 +494,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
  
     case SLOT_SIDE_TOOLS_VISIBILITY:
     {
-      TYPE_CHECK (type_box (val) == type_helper<bool>::id);
+      check_type<bool>(val, s);
       bool f= open_box<bool> (val);
       visibility[6] = f;
       updateVisibility();
@@ -503,7 +503,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
 
     case SLOT_LEFT_FOOTER:
     {
-      TYPE_CHECK (type_box (val) == type_helper<string>::id);
+      check_type<string>(val, s);
       string msg= open_box<string> (val);
       leftLabel->setText (to_qstring (tm_var_encode (msg)));
       leftLabel->update ();
@@ -511,7 +511,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       break;
     case SLOT_RIGHT_FOOTER:
     {
-      TYPE_CHECK (type_box (val) == type_helper<string>::id);
+      check_type<string>(val, s);
       string msg= open_box<string> (val);
       rightLabel->setText (to_qstring (tm_var_encode (msg)));
       rightLabel->update ();
@@ -525,7 +525,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       
     case SLOT_INTERACTIVE_MODE:
     {
-      TYPE_CHECK (type_box (val) == type_helper<bool>::id);
+      check_type<bool>(val, s);
 
       if (open_box<bool> (val) == true) {
         prompt = new QTMInteractivePrompt (int_prompt, int_input);
@@ -548,7 +548,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       
     case SLOT_FILE:
     {
-      TYPE_CHECK (type_box (val) == type_helper<string>::id);
+      check_type<string>(val, s);
       string file = open_box<string> (val);
       if (DEBUG_QT) cout << "File: " << file << LF;
 #if (QT_VERSION >= 0x040400)
@@ -571,8 +571,8 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
   }
   
   if (DEBUG_QT)
-    cout << "qt_tm_widget_rep: caught " << slot_name (s) << "\t\tsent to widget\t" 
-         << type_as_string() << LF;
+    cout << "qt_tm_widget_rep: caught " << slot_name (s) 
+         << "\t\tsent to widget\t"      << type_as_string() << LF;
 }
 
 
@@ -587,35 +587,35 @@ qt_tm_widget_rep::query (slot s, int type_id) {
     case SLOT_VISIBLE_PART:
       return main_widget->query(s, type_id);
     case SLOT_HEADER_VISIBILITY:
-      TYPE_CHECK (type_id == type_helper<bool>::id);
+      check_type_id<bool> (type_id, s);
       return close_box<bool> (visibility[0]);
       
     case SLOT_MAIN_ICONS_VISIBILITY:
-      TYPE_CHECK (type_id == type_helper<bool>::id);
+      check_type_id<bool> (type_id, s);
       return close_box<bool> (visibility[1]);
     
     case SLOT_MODE_ICONS_VISIBILITY:
-      TYPE_CHECK (type_id == type_helper<bool>::id);
+      check_type_id<bool> (type_id, s);
       return close_box<bool> (visibility[2]);
 
     case SLOT_FOCUS_ICONS_VISIBILITY:
-      TYPE_CHECK (type_id == type_helper<bool>::id);
+      check_type_id<bool> (type_id, s);
       return close_box<bool> (visibility[3]);      
 
     case SLOT_USER_ICONS_VISIBILITY:
-      TYPE_CHECK (type_id == type_helper<bool>::id);
+      check_type_id<bool> (type_id, s);
       return close_box<bool> (visibility[4]);
       
     case SLOT_FOOTER_VISIBILITY:
-      TYPE_CHECK (type_id == type_helper<bool>::id);
+      check_type_id<bool> (type_id, s);
       return close_box<bool> (visibility[5]);
 
     case SLOT_SIDE_TOOLS_VISIBILITY:
-      TYPE_CHECK (type_id == type_helper<bool>::id);
+      check_type_id<bool> (type_id, s);
       return close_box<bool> (visibility[6]);
       
     case SLOT_INTERACTIVE_INPUT:
-      TYPE_CHECK (type_id == type_helper<string>::id);
+      check_type_id<string> (type_id, s);
     {
       qt_input_text_widget_rep* w = 
         static_cast<qt_input_text_widget_rep*>(int_input.rep);
@@ -627,7 +627,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
     }
       
     case SLOT_INTERACTIVE_MODE:
-      TYPE_CHECK (type_id == type_helper<bool>::id);
+      check_type_id<bool> (type_id, s);
       return close_box<bool> (false); // FIXME: who needs this info?
       
     default:
@@ -685,7 +685,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
   switch (s) {
     case SLOT_SCROLLABLE:
     {
-      check_type_void (index, "SLOT_SCROLLABLE");
+      check_type_void (index, s);
 
       QLayout* l= centralwidget()->layout();
       l->removeWidget(canvas());
@@ -702,7 +702,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       break;
       
     case SLOT_MAIN_MENU:
-      check_type_void (index, "SLOT_MAIN_MENU");
+      check_type_void (index, s);
     {
       waiting_main_menu_widget = w;
       if (menu_count <=0) {
@@ -719,7 +719,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       break;
       
     case SLOT_MAIN_ICONS:
-      check_type_void (index, "SLOT_MAIN_ICONS");
+      check_type_void (index, s);
     {
         //cout << "widget :" << (void*)w.rep << LF;
       main_icons_widget = w;
@@ -730,7 +730,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       break;
       
     case SLOT_MODE_ICONS:
-      check_type_void (index, "SLOT_MODE_ICONS");
+      check_type_void (index, s);
     {   
       mode_icons_widget = w;
       QMenu* m= concrete (w)->get_qmenu();
@@ -740,7 +740,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       break;
       
     case SLOT_FOCUS_ICONS:
-      check_type_void (index, "SLOT_FOCUS_ICONS");
+      check_type_void (index, s);
     {   
       focus_icons_widget = w;
       QMenu* m= concrete (w)->get_qmenu();
@@ -750,7 +750,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       break;
       
     case SLOT_USER_ICONS:
-      check_type_void (index, "SLOT_USER_ICONS");
+      check_type_void (index, s);
     {   
       user_icons_widget = w;
       QMenu* m= concrete (w)->get_qmenu();
@@ -760,7 +760,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       break;
       
     case SLOT_SIDE_TOOLS:
-      check_type_void (index, "SLOT_SIDE_TOOLS");
+      check_type_void (index, s);
     {
       side_tools_widget = w;
       QWidget* new_qwidget = concrete (w)->as_qwidget();
@@ -773,12 +773,12 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       break;
       
     case SLOT_INTERACTIVE_PROMPT:
-      check_type_void (index, "SLOT_INTERACTIVE_PROMPT");
+      check_type_void (index, s);
       int_prompt= concrete (w);
       break;
       
     case SLOT_INTERACTIVE_INPUT:
-      check_type_void (index, "SLOT_INTERACTIVE_INPUT");
+      check_type_void (index, s);
       int_input= concrete (w);
       break;
 
@@ -878,7 +878,7 @@ qt_tm_embedded_widget_rep::query (slot s, int type_id) {
     case SLOT_SIDE_TOOLS_VISIBILITY:
         // FIXME: decide what to do with all these for embedded widgets.
       
-      TYPE_CHECK (type_id == type_helper<bool>::id);
+      check_type_id<bool> (type_id, s);
       return close_box<bool> (false);
 
     default:
@@ -898,7 +898,7 @@ qt_tm_embedded_widget_rep::write (slot s, blackbox index, widget w) {
         // an owning tm-widget, we set it here.
     case SLOT_SCROLLABLE:
     {
-      check_type_void (index, "SLOT_SCROLLABLE");
+      check_type_void (index, s);
       qt_simple_widget_rep* wid = static_cast<qt_simple_widget_rep*>(w.rep);
       QTMWidget* new_widget     = static_cast<QTMWidget*>(wid->as_qwidget());
       if (new_widget) {

@@ -150,6 +150,9 @@ public:
   virtual void save_send_slot (slot s, blackbox val);
   virtual void reapply_sent_slots();
 
+    /// See widkit_wrapper.cpp for the reference list of slots. Based on the
+    /// handlers invoked by wk_widget_rep::send(), query() etc. we can decide
+    /// what slots must implement each qt_widget.
   virtual void send (slot s, blackbox val) {
     (void) val;
     if (DEBUG_QT)

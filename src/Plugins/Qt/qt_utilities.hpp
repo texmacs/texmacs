@@ -83,17 +83,25 @@ bool qt_print (bool&, bool&, string&, url&, string&, string&, string&);
  ******************************************************************************/
 
 inline void
-check_type_void (blackbox bb, string s) {
+check_type_void (blackbox bb, slot s) {
   if (!is_nil (bb)) {
-    cerr << "\nslot type= " << s << "\n";
+    cerr << "\nslot type= " << as_string(s) << LF;
+    FAILED ("type mismatch");
+  }
+}
+
+template<class T> inline void
+check_type_id (int type_id, slot s) {
+  if (type_id != type_helper<T>::id) {
+    cerr << "\nslot type= " << as_string(s) << LF;
     FAILED ("type mismatch");
   }
 }
 
 template<class T> void
-check_type (blackbox bb, string s) {
+check_type (blackbox bb, slot s) {
   if (type_box (bb) != type_helper<T>::id) {
-    cerr << "\nslot type= " << s << "\n";
+    cerr << "\nslot type= " << as_string(s) << LF;
     FAILED ("type mismatch");
   }
 }
@@ -113,7 +121,8 @@ extern int nr_windows;
  ******************************************************************************/
 extern tm_ostream& operator << (tm_ostream& out, QRect rect);
 
-#define TYPE_CHECK(b) ASSERT (b, "type mismatch")
+// deprecated, use check_type<T>(bb, slot) instead
+//#define TYPE_CHECK(b) ASSERT (b, "type mismatch")   
 
 #define NOT_IMPLEMENTED \
 { if (DEBUG_QT) cout << "NOT YET IMPLEMENTED\n"; }
