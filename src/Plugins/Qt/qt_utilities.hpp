@@ -47,7 +47,7 @@ QFont         to_qfont (int style, QFont font);
 QString to_qstylesheet (int style);
 QString to_qstylesheet (int style, color c);
 
-QSize qt_decode_length (QWidget* qwid, string width, string height);
+QSize qt_decode_length (const QWidget* qwid, string width, string height);
 
 QKeySequence to_qkeysequence (string s);
 

@@ -136,7 +136,7 @@ to_qstylesheet (int style, color c) {
  FIXME: does 1w mean 100% of the contents' size or 100% of the available size?
  */
 QSize
-qt_decode_length (QWidget* qwid, string width, string height) {
+qt_decode_length (const QWidget* qwid, string width, string height) {
   QSize size;
   if (qwid)
     size = qwid->minimumSizeHint();

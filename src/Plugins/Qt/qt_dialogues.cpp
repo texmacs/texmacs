@@ -35,7 +35,7 @@
 class QTMLineEdit : public QLineEdit {
   
 public:
-  string ww; // width
+  string ww; // width of the parsed widget
   
   QTMLineEdit (QWidget *parent, string _ww) 
   : QLineEdit (parent), ww (_ww) {
@@ -88,21 +88,7 @@ QTMLineEdit::keyPressEvent(QKeyEvent *event)
 
 QSize
 QTMLineEdit::sizeHint () const {
-  QSize sz(QLineEdit::sizeHint());
-  string s = ww; // to avoid const casting
-  if (ends (s, "w") && is_double (s (0, N(s) - 1)) && parentWidget()) {
-    double x= as_double (s (0, N(s) - 1));
-    sz.setWidth(parentWidget()->width() * x);
-      //    ev->w= max (ev->w, (4 * fn->wquad + 2*dw) / SHRINK);
-  } else if (ends (s, "em") && is_double (s (0, N(s) - 2))) {
-    double x= as_double (s (0, N(s) - 2));
-    QFontMetrics fm(fontMetrics());
-    sz.setWidth(x*fm.width("m")); //FIXME: put real font width
-  }  else if (ends (s, "px") && is_double (s (0, N(s) - 2))) {
-    double x= as_double (s (0, N(s) - 2));
-    sz.setWidth(x);
-  }  
-  return sz;
+  return qt_decode_length(this, ww, "");
 }
 
 void 
