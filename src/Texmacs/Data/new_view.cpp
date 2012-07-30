@@ -375,9 +375,8 @@ switch_to_buffer (url name) {
   if (vw == NULL) return;
   window_set_view (get_current_window (), u, true);
   tm_window nwin= vw->win;
-    // FIXME? switching buffers while focus on texmacs-input widget crashes...
-  if (nwin == NULL) return;  // ...without this line
-  nwin->set_shrinking_factor (nwin->get_shrinking_factor ());
+  if (nwin != NULL)
+    nwin->set_shrinking_factor (nwin->get_shrinking_factor ());
   //cout << "Switched to buffer " << new_vw->buf->buf->name << "\n";
 }
 
