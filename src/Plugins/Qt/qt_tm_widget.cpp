@@ -439,9 +439,10 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     case SLOT_INVALIDATE_ALL:
     case SLOT_EXTENTS:
     case SLOT_SCROLL_POSITION:
+    case SLOT_SHRINKING_FACTOR:
       main_widget->send(s, val);
       break;
-      
+
     case SLOT_HEADER_VISIBILITY:
     {
       check_type<bool>(val, s);
@@ -586,6 +587,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
     case SLOT_EXTENTS:
     case SLOT_VISIBLE_PART:
       return main_widget->query(s, type_id);
+
     case SLOT_HEADER_VISIBILITY:
       check_type_id<bool> (type_id, s);
       return close_box<bool> (visibility[0]);
