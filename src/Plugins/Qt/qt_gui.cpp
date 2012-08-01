@@ -42,7 +42,6 @@
 #include "tm_link.hpp" // for number_of_servers
 #include "scheme.hpp"
 //#include "TeXmacs/server.hpp" // for get_server
-
 /*
 #include "tm_window.hpp"
 #include "new_window.hpp"
@@ -109,11 +108,9 @@ qt_gui_rep::qt_gui_rep(int &argc, char **argv):
 /* important routines */
 void
 qt_gui_rep::get_extents (SI& width, SI& height) {
-  QDesktopWidget* d= QApplication::desktop();
-  int w = d->width();  // returns desktop width
-  int h = d->height(); // returns desktop height        
-  width = ((SI) w) * PIXEL;
-  height= ((SI) h) * PIXEL;
+  coord2 size = from_qsize(QApplication::desktop()->size());
+  width  = size.x1;
+  height = size.x2;
 }
 
 void
@@ -1019,14 +1016,13 @@ qt_gui_rep::update () {
 void
 qt_gui_rep::show_help_balloon (widget wid, SI x, SI y) {
   /*
-  widget popup_wid = popup_window_widget(wid, "Balloon");
+  _popup_wid = popup_window_widget(wid, "Balloon");
   SI winx, winy, widx, widy;
+    // OK? we assume widgets report and set their position wrt to their window.
+  get_position(get_canvas(concrete_window()->wid), widx, widy);
   get_position(concrete_window()->win, winx, winy);
-  get_position(concrete_window()->wid, widx, widy);
-  set_position (popup_wid, x+winx+widx, y+winy+widy); 
-    // we assume widgets report their position wrt to their window.
-  set_visibility(popup_wid, true);
-    //send_mouse_grab(popup_wid, true);
+  set_position (_popup_wid, x+widx+winx, y+widy+winy); 
+  set_visibility(_popup_wid, true);
    */
 }
 

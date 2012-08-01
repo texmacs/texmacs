@@ -404,7 +404,7 @@ public:
 
 QPixmap 
 qt_glue_widget_rep::render () {
-  QSize s = QSize (w/PIXEL, h/PIXEL);
+  QSize s = to_qsize(w, h);
   QPixmap pxm(s);
     //cout << "glue (" << s.width() << "," << s.height() << ")\n";
   pxm.fill (Qt::transparent);

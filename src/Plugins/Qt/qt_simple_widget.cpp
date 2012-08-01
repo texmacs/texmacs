@@ -97,9 +97,9 @@ qt_simple_widget_rep::as_qwidget () {
   reapply_sent_slots();
   SI width, height;
   handle_get_size_hint (width, height);
-  width /= PIXEL;  height /= PIXEL;
-  scrollarea()->setExtents (QRect (0, 0, width, height));
-  canvas()->resize(width, height);
+  QSize sz = to_qsize(width, height);
+  scrollarea()->setExtents (QRect (QPoint(0,0), sz));
+  canvas()->resize(sz);
   return qwid;
 }
 
@@ -114,7 +114,7 @@ impress (qt_simple_widget_rep* wid) {
   if (wid) {
     int width, height;
     wid->handle_get_size_hint (width, height);
-    QSize s = QSize (width/PIXEL, height/PIXEL);
+    QSize s = to_qsize(width, height);
     QPixmap pxm(s);
     if (DEBUG_QT)
       cout << "impress (" << s.width() << "," << s.height() << ")\n";

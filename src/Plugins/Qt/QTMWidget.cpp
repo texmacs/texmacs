@@ -358,9 +358,8 @@ QTMWidget::repaint_invalid_regions () {
       basic_renderer_rep* ren = getRenderer();
       tm_widget()->set_current_renderer(ren);
       
-      SI ox = -backing_pos.x()*PIXEL;
-      SI oy = backing_pos.y()*PIXEL;
-      
+      coord2 orig = from_qpoint(backing_pos);
+     
       rectangles rects = invalid_regions;
       invalid_regions = rectangles();
 
@@ -369,7 +368,7 @@ QTMWidget::repaint_invalid_regions () {
         rectangle r0 = rects->item;
         QRect qr = QRect(r0->x1, r0->y1, r0->x2 - r0->x1, r0->y2 - r0->y1);
         //cout << "repainting " << r0 << "\n";
-        ren->set_origin(ox,oy); 
+        ren->set_origin(orig.x1, orig.x2); 
         ren->encode (r->x1, r->y1);
         ren->encode (r->x2, r->y2);
         ren->set_clipping (r->x1, r->y2, r->x2, r->y1);
@@ -899,5 +898,5 @@ QSize
 QTMWidget::sizeHint () const {
   SI w,h;
   tm_widget()->handle_get_size_hint(w,h);
-  return QSize(w/PIXEL, h/PIXEL);
+  return to_qsize(w, h);
 }

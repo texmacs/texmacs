@@ -98,7 +98,6 @@ signals:
   
 protected:
   virtual void mouseMoveEvent (QMouseEvent* event);
-  virtual void resizeEvent (QResizeEvent* event);
 };
 
 

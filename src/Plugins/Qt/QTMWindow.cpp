@@ -46,12 +46,14 @@ QTMPopupWidget::QTMPopupWidget(QWidget* contents) {
   QHBoxLayout* l = new QHBoxLayout();
   l->addWidget(contents);
   l->setContentsMargins(0,0,0,0);
+  l->setEnabled(false); // Tell the layout not to adjust itself !!
   setLayout(l);
 
   resize(contents->size());
-  setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); 
-  
+  setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   setWindowFlags(Qt::Popup);
+  setAttribute(Qt::WA_NoSystemBackground);
+    //setWindowOpacity(0.9);
   setMouseTracking(true);
   
     //cout << "QTMPopupWidget created with size: " << size().width() 
@@ -64,20 +66,18 @@ QTMPopupWidget::QTMPopupWidget(QWidget* contents) {
 void
 QTMPopupWidget::mouseMoveEvent(QMouseEvent* event) {
   
-  if (! this->rect().contains(QCursor::pos()))
-    this->hide();
+  /* It'd be nice to have something like this...
+  if (! drawArea().contains(event->globalPos())) {
+    hide();
+    emit closed();
+  } else {
+    move(event->globalPos());
+  }
+   */
+    //if (! this->rect().contains(QCursor::pos())) {
+    hide();
+    emit closed();
+    //}
 
   event->ignore();
-  emit closed();
-}
-
-
-void
-QTMPopupWidget::resizeEvent (QResizeEvent* event) {
-
-    //cout << "QTMPopupWidget" << (event->spontaneous() ? " (spontaneous) " : " ") 
-    // << "resizeEvent: " << event->size().width() 
-    // << " x " << event->size().height() << LF;
-  
-  event->accept();
 }

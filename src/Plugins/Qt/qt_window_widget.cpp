@@ -210,7 +210,6 @@ qt_window_widget_rep::notify (slot s, blackbox new_val) {
 
 /******************************************************************************
  * popup widget
- *  /// TODO: timers, etc.
  ******************************************************************************/
 
 
@@ -218,11 +217,11 @@ qt_popup_widget_rep::qt_popup_widget_rep (widget wid, command _quit)
 : qt_widget_rep(qt_widget_rep::popup_widget, 0), quit(_quit) {
   
   qwid = new QTMPopupWidget(concrete(wid)->as_qwidget());
-  
+
   if (qwid->metaObject() ->
       indexOfSignal (QMetaObject::normalizedSignature ("closed()").constData ()) != -1) {
   QTMCommand* qtmcmd = new QTMCommand(qwid, quit);
-    QObject::connect(qwid, SIGNAL (closed()), qtmcmd, SLOT (apply()));
+  QObject::connect(qwid, SIGNAL (closed()), qtmcmd, SLOT (apply()));
   }
 }
 
@@ -247,24 +246,21 @@ qt_popup_widget_rep::send (slot s, blackbox val) {
     case SLOT_SIZE:
     {
       check_type<coord2>(val, s);
-      coord2 p= open_box<coord2> (val);
-      qwid->resize (to_qsize (p));
+      qwid->resize (to_qsize (open_box<coord2> (val)));
     }
       break;
       
     case SLOT_POSITION:
     {
       check_type<coord2>(val, s);
-      coord2 p= open_box<coord2> (val);
-      qwid->move (to_qpoint (p));
+      qwid->move (to_qpoint (open_box<coord2> (val)));
     }
       break;
       
     case SLOT_VISIBILITY:
     {
       check_type<bool> (val, s);
-      bool flag = open_box<bool> (val);
-      qwid->setVisible(flag);
+      qwid->setVisible(open_box<bool> (val));
     }
       break;
       
@@ -298,14 +294,12 @@ qt_popup_widget_rep::query (slot s, int type_id) {
     case SLOT_POSITION:
     {
       check_type_id<coord2> (type_id, s);
-      QPoint pt= qwid->pos();
-      return close_box<coord2> (from_qpoint (pt));
+      return close_box<coord2> (from_qpoint (qwid->pos()));
     }
     case SLOT_SIZE:
     {
       check_type_id<coord2> (type_id, s);
-      QSize s= qwid->size();
-      return close_box<coord2> (from_qsize (s));
+      return close_box<coord2> (from_qsize (qwid->size()));
     }
     default:
       return qt_widget_rep::query (s, type_id);

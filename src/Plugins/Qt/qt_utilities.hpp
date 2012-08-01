@@ -41,6 +41,7 @@ QPoint   to_qpoint (const coord2 & p);
 coord2 from_qpoint (const QPoint & pt);
 
 QSize    to_qsize (const coord2 & p);
+QSize    to_qsize (const SI& w, const SI& h);
 coord2 from_qsize (const QSize & s);
 
 QFont         to_qfont (int style, QFont font);

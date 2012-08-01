@@ -44,30 +44,6 @@ operator << (tm_ostream& out, QRect rect) {
   << rect.width() << "," << rect.height() << ")";
 }
 
-/*! Transforms a rectangle given by its lower left and upper right corners
- into one given by its upper left and width/height 
- */
-QRect
-to_qrect (const coord4 & p) {
-  float c= 1.0/PIXEL;
-  return QRect (p.x1*c, -p.x4*c, (p.x3-p.x1+PIXEL-1)*c, (p.x4-p.x2+PIXEL-1)*c);
-}
-
-/*! Transforms texmacs coordinates, with origin at the lower left corner, into Qt
- coordinates, with origin at the upper left corner
- */
-QPoint
-to_qpoint (const coord2 & p) {
-  float c= 1.0/PIXEL;
-  return QPoint (p.x1*c, -p.x2*c);
-}
-
-QSize
-to_qsize (const coord2 & p) {
-  float c= 1.0/PIXEL;
-  return QSize (p.x1*c, p.x2*c);
-}
-
 QFont
 to_qfont (int style, QFont font) {
   if (style & WIDGET_STYLE_MINI)  // use smaller text font inside widget
@@ -200,7 +176,6 @@ qt_decode_length (const QWidget* qwid, string width, string height) {
 }
 
 
-
 // used only by to_qkeysequence
 static string
 conv_sub (string ks) {
@@ -241,6 +216,7 @@ to_qkeysequence (string s) {
   return QKeySequence(to_qstring(r));
 }
 
+
 coord4
 from_qrect (const QRect & rect) {
   SI c1, c2, c3, c4;
@@ -251,28 +227,43 @@ from_qrect (const QRect & rect) {
   return coord4 (c1, c2, c3, c4);
 }
 
-coord2
-from_qpoint (const QPoint & pt) {
-  SI c1, c2;
-  c1= pt.x() * PIXEL;
-  c2= -pt.y() * PIXEL;
-  return coord2 (c1, c2);
+
+/*! Transforms a rectangle given by its lower left and upper right corners
+ into one given by its upper left and width/height */
+QRect
+to_qrect (const coord4 & p) {
+  float c= 1.0/PIXEL;
+  return QRect (p.x1*c, -p.x4*c, (p.x3-p.x1+PIXEL-1)*c, (p.x4-p.x2+PIXEL-1)*c);
 }
 
 coord2
 from_qsize (const QSize & s) {
-  SI c1, c2;
-  c1= s.width() * PIXEL;
-  c2= s.height() * PIXEL;
-  return coord2 (c1, c2);
+  return coord2 (s.width() * PIXEL, s.height() * PIXEL);
 }
 
-QStringList
-to_qstringlist(array<string> l) {
-  QStringList ql;
-  for(int i=0; i<N(l); ++i)
-    ql << to_qstring(l[i]);
-  return ql;
+QSize
+to_qsize (const coord2 & p) {
+  float c= 1.0/PIXEL;
+  return QSize (p.x1*c, p.x2*c);
+}
+
+QSize
+to_qsize (const SI& w, const SI& h) {
+  float c= 1.0/PIXEL;
+  return QSize (w*c, h*c);
+}
+
+coord2
+from_qpoint (const QPoint & pt) {
+  return coord2 (pt.x() * PIXEL, -pt.y() * PIXEL);
+}
+
+/*! Transforms texmacs coordinates, with origin at the lower left corner, into
+ Qt coordinates, with origin at the upper left corner */
+QPoint
+to_qpoint (const coord2 & p) {
+  float c= 1.0/PIXEL;
+  return QPoint (p.x1*c, -p.x2*c);
 }
 
 array<string>
@@ -281,6 +272,14 @@ from_qstringlist(const QStringList& l) {
   for(QStringList::const_iterator it = l.begin(); it != l.end(); ++it)
     tl << from_qstring(*it);
   return tl;
+}
+
+QStringList
+to_qstringlist(array<string> l) {
+  QStringList ql;
+  for(int i=0; i<N(l); ++i)
+    ql << to_qstring(l[i]);
+  return ql;
 }
 
 QString
