@@ -42,8 +42,11 @@
 #include "tm_link.hpp" // for number_of_servers
 #include "scheme.hpp"
 //#include "TeXmacs/server.hpp" // for get_server
+
+/*
 #include "tm_window.hpp"
 #include "new_window.hpp"
+*/
 
 #include "qt_simple_widget.hpp"
 #include "qt_window_widget.hpp"
@@ -1015,6 +1018,7 @@ qt_gui_rep::update () {
  */
 void
 qt_gui_rep::show_help_balloon (widget wid, SI x, SI y) {
+  /*
   widget popup_wid = popup_window_widget(wid, "Balloon");
   SI winx, winy, widx, widy;
   get_position(concrete_window()->win, winx, winy);
@@ -1023,6 +1027,7 @@ qt_gui_rep::show_help_balloon (widget wid, SI x, SI y) {
     // we assume widgets report their position wrt to their window.
   set_visibility(popup_wid, true);
     //send_mouse_grab(popup_wid, true);
+   */
 }
 
 /******************************************************************************
