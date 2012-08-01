@@ -40,14 +40,14 @@
 
 
 #include "tm_link.hpp" // for number_of_servers
-
 #include "scheme.hpp"
 //#include "TeXmacs/server.hpp" // for get_server
+#include "tm_window.hpp"
+#include "new_window.hpp"
 
 #include "qt_simple_widget.hpp"
 #include "qt_window_widget.hpp"
 
-extern window (*get_current_window) (void);
 
 qt_gui_rep* the_gui= NULL;
 int nr_windows = 0; // FIXME: fake variable, referenced in tm_server
@@ -1015,10 +1015,14 @@ qt_gui_rep::update () {
  */
 void
 qt_gui_rep::show_help_balloon (widget wid, SI x, SI y) {
-  popup_win= popup_window_widget(wid, "Balloon");
-  set_position (popup_win, x, y);
-  set_visibility(popup_win, true);
-    //send_mouse_grab(popup_win, true);
+  widget popup_wid = popup_window_widget(wid, "Balloon");
+  SI winx, winy, widx, widy;
+  get_position(concrete_window()->win, winx, winy);
+  get_position(concrete_window()->wid, widx, widy);
+  set_position (popup_wid, x+winx+widx, y+winy+widy); 
+    // we assume widgets report their position wrt to their window.
+  set_visibility(popup_wid, true);
+    //send_mouse_grab(popup_wid, true);
 }
 
 /******************************************************************************

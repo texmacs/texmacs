@@ -21,8 +21,8 @@
 class QTMSurface : public QWidget {
   QTMScrollView *sv;
 public:
-  QTMSurface(QWidget *parent, QTMScrollView* _sv) 
-  : QWidget (parent), sv (_sv) { }
+  QTMSurface(QWidget *p, QTMScrollView* _sv) : QWidget (p), sv (_sv) { }
+
 protected:
   virtual bool event(QEvent *event) {
     return (sv && sv->surfaceEvent(event) ? true : QWidget::event(event));
@@ -36,6 +36,7 @@ QTMScrollView::QTMScrollView ( QWidget *_parent )
   QWidget *_viewport = QAbstractScrollArea::viewport();
   _viewport->setBackgroundRole(QPalette::Mid);
   _viewport->setAutoFillBackground(true);
+  setFrameShape(QFrame::NoFrame);
   
   p_surface = new QTMSurface (_viewport, this);
     // DON'T do this even if we do our own double buffering: this flag is only
@@ -47,8 +48,8 @@ QTMScrollView::QTMScrollView ( QWidget *_parent )
   p_surface->setAutoFillBackground(false);
   p_surface->setBackgroundRole(QPalette::NoRole);
   p_surface->setAttribute(Qt::WA_OpaquePaintEvent);
-  p_surface->setGeometry(p_extents);
-  p_surface->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    //p_surface->setGeometry(p_extents);
+    //p_surface->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
   
   QHBoxLayout *layout = new QHBoxLayout();
   layout->addWidget(p_surface, 0, Qt::AlignHCenter);

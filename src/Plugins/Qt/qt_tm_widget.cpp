@@ -208,13 +208,13 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
     focusToolBar->setIconSize(sz);
   }  
   
-//#if 0
-
-  QWidget *cw= new QWidget() ;  // QMainWindow will take ownership later and delete it when needed.
-  cw->setObjectName("central widget");         // this is important for styling toolbars.
+  QWidget *cw= new QWidget();
+  cw->setObjectName("central widget");  // this is important for styling toolbars.
   
-  QBoxLayout *bl = new QBoxLayout(QBoxLayout::TopToBottom, cw);
-  bl->setContentsMargins(2,2,2,2);
+    // The main layout
+  
+  QVBoxLayout *bl = new QVBoxLayout(cw);
+  bl->setContentsMargins(0,1,0,0);
   bl->setSpacing(0);
   cw->setLayout(bl);
   bl->addWidget(concrete(main_widget)->as_qwidget());  // force creation of QWidget
@@ -240,7 +240,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   modeToolBarAction = NULL;
 
   
-  //a ruler
+  // A ruler
   rulerWidget = new QWidget(cw);
   rulerWidget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
   rulerWidget->setMinimumHeight(1);
@@ -250,14 +250,22 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   rulerWidget->setAutoFillBackground(true);
   // rulerWidget = new QLabel("pippo", cw);
   
+    // A second ruler (this one visible) to separate from the canvas.
+  QWidget* r2 = new QWidget(mw);
+  r2->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
+  r2->setMinimumHeight(1);
+  r2->setBackgroundRole(QPalette::Mid);
+  r2->setVisible(true);
+  r2->setAutoFillBackground(true);
 
   bl->insertWidget(0, modeToolBar);
   bl->insertWidget(1, rulerWidget);
   bl->insertWidget(2, focusToolBar);
   bl->insertWidget(3, userToolBar);
-
-  mw->setContentsMargins (-2, -2, -2, -2);
-  bar->setContentsMargins (0, 0, 0, 2);
+  bl->insertWidget(4, r2);
+  
+    //mw->setContentsMargins (-2, -2, -2, -2);  // Why this?
+  bar->setContentsMargins (0, 1, 0, 1);
 
 #else
   mw->addToolBar (mainToolBar);
@@ -297,7 +305,6 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   mainwindow()->menuBar()->setVisible (false);
 #endif  
 }
-
 
 qt_tm_widget_rep::~qt_tm_widget_rep () {
   if (DEBUG_QT)
@@ -433,16 +440,16 @@ qt_tm_widget_rep::read(slot s, blackbox index) {
 
 void
 qt_tm_widget_rep::send (slot s, blackbox val) {
-
   switch (s) {
     case SLOT_INVALIDATE:
     case SLOT_INVALIDATE_ALL:
     case SLOT_EXTENTS:
     case SLOT_SCROLL_POSITION:
     case SLOT_SHRINKING_FACTOR:
+    case SLOT_MOUSE_GRAB:
       main_widget->send(s, val);
       break;
-
+      
     case SLOT_HEADER_VISIBILITY:
     {
       check_type<bool>(val, s);
@@ -576,7 +583,6 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
          << "\t\tsent to widget\t"      << type_as_string() << LF;
 }
 
-
 blackbox
 qt_tm_widget_rep::query (slot s, int type_id) {
   if (DEBUG_QT)
@@ -586,6 +592,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
     case SLOT_SCROLL_POSITION:
     case SLOT_EXTENTS:
     case SLOT_VISIBLE_PART:
+    case SLOT_SHRINKING_FACTOR:
       return main_widget->query(s, type_id);
 
     case SLOT_HEADER_VISIBILITY:
@@ -694,8 +701,9 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       delete canvas();
       concrete(main_widget)->qwid = 0;
       main_widget = widget(w);
-      l->addWidget(concrete(main_widget)->as_qwidget());  // force (re)creation of QWidget
-      if (canvas()) {
+      concrete(main_widget)->as_qwidget();  // force (re)creation of QWidget 
+      if (canvas()) { // if the passed widget wasn't empty... (while switching buffers it is)
+        l->addWidget(canvas());
         canvas()->show();
         canvas()->setFocusPolicy(Qt::StrongFocus);
         canvas()->setFocus();
@@ -788,7 +796,6 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       qt_window_widget_rep::write (s, index, w);
   }
 }
-
 
 void
 qt_tm_widget_rep::set_full_screen(bool flag) {

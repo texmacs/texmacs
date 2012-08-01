@@ -18,11 +18,11 @@
 #include <QPixmap>
 
 qt_simple_widget_rep::qt_simple_widget_rep ()
-: qt_view_widget_rep (new QTMWidget (0, 0), simple_widget) { 
+: qt_view_widget_rep (new QTMWidget (0, 0), simple_widget) {
     // QTMWidget needs a pointer to an initiliazed qt_simple_widget_rep object
     // That's why we use set_tm_widget(), instead of passing "this" in the
     // initialization list, i.e.: "new QTMWidget(0, this)" is wrong.
-  static_cast<QTMWidget*>(qwid)->set_tm_widget(this); 
+  static_cast<QTMWidget*>(qwid)->set_tm_widget(this);
 }
 
 
@@ -95,6 +95,11 @@ QWidget*
 qt_simple_widget_rep::as_qwidget () {
   qwid = new QTMWidget(0, this);
   reapply_sent_slots();
+  SI width, height;
+  handle_get_size_hint (width, height);
+  width /= PIXEL;  height /= PIXEL;
+  scrollarea()->setExtents (QRect (0, 0, width, height));
+  canvas()->resize(width, height);
   return qwid;
 }
 

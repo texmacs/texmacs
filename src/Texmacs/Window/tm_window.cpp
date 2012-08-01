@@ -62,7 +62,9 @@ texmacs_window_widget (widget wid, tree geom) {
   int W, H;
   int w= geometry_w, h= geometry_h;
   int x= geometry_x, y= geometry_y;
+#ifndef QTTEXMACS
   if (use_side_tools) { w += 200; h += 100; }
+#endif
   if (is_tuple (geom) && N (geom) >= 2) {
     w= as_int (geom[0]);
     h= as_int (geom[1]);

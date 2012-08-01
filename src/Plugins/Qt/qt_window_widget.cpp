@@ -28,9 +28,12 @@ qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, command _quit)
 {
   qwid->setProperty ("texmacs_window_widget",
                      QVariant::fromValue ((void*) this));
-
-  QTMCommand* qtmcmd = new QTMCommand(qwid, quit);
-  QObject::connect(qwid, SIGNAL (closed()), qtmcmd, SLOT (apply()));
+  
+  if (qwid->metaObject() -> 
+      indexOfSignal (QMetaObject::normalizedSignature ("closed()").constData ()) != -1) {
+    QTMCommand* qtmcmd = new QTMCommand(qwid, quit);
+    QObject::connect(qwid, SIGNAL (closed()), qtmcmd, SLOT (apply()));
+  }
 
   nr_windows++;
 }
@@ -176,7 +179,8 @@ qt_window_widget_rep::query (slot s, int type_id) {
         // FIXME: dock widgets are embedded into qt_window_widget_reps as a temporary hack
         // because of this the underlying widget is not always a top level window
       if (qwid->isWindow()) pt = qwid->pos();
-      else                  pt = qwid->mapToGlobal(QPoint(0,0));
+      else                  pt = qwid->window()->pos();
+        //cout << "wpos: " << pt.x() << ", " << pt.y() << LF;
       return close_box<coord2> (from_qpoint (pt));
     }
     case SLOT_SIZE:
@@ -215,8 +219,11 @@ qt_popup_widget_rep::qt_popup_widget_rep (widget wid, command _quit)
   
   qwid = new QTMPopupWidget(concrete(wid)->as_qwidget());
   
+  if (qwid->metaObject() ->
+      indexOfSignal (QMetaObject::normalizedSignature ("closed()").constData ()) != -1) {
   QTMCommand* qtmcmd = new QTMCommand(qwid, quit);
-  QObject::connect(qwid, SIGNAL (closed()), qtmcmd, SLOT (apply()));
+    QObject::connect(qwid, SIGNAL (closed()), qtmcmd, SLOT (apply()));
+  }
 }
 
 /*!

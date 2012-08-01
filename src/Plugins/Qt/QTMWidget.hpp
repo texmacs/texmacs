@@ -31,7 +31,7 @@ class basic_renderer_rep;
 class QTMWidget: public QTMScrollView {
   Q_OBJECT
 
-  widget tmwid;
+  mutable widget tmwid;
 
   rectangles invalid_regions;
   QPixmap      backingPixmap;
@@ -53,8 +53,10 @@ public:
   void scrollContentsBy (int dx, int dy);
   void setCursorPos (QPoint pos) { cursor_pos = pos; }
 
-  qt_simple_widget_rep* tm_widget ();
+  qt_simple_widget_rep* tm_widget () const;
   void              set_tm_widget (qt_simple_widget_rep* _tmwid);
+  
+  virtual QSize	sizeHint () const;
 
 protected:
   virtual void paintEvent (QPaintEvent* event);

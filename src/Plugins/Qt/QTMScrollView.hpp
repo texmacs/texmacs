@@ -40,8 +40,8 @@ class QPaintEvent;
 class QTMScrollView : public QAbstractScrollArea {
   Q_OBJECT
 
-  QRect    p_extents;
-  QPoint    p_origin;
+  QRect    p_extents;   // The size of the virtual area where things are drawn.
+  QPoint    p_origin;   // The offset into that area
   QWidget* p_surface;
   
 public:

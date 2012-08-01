@@ -42,7 +42,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     {   
       check_type<string> (val, s);
       string name = open_box<string> (val);
-      qwid->window()->setWindowTitle (to_qstring (tm_var_encode(name)));
+      canvas()->window()->setWindowTitle (to_qstring (tm_var_encode(name)));
     }
       break;
 
@@ -72,12 +72,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     {
       check_type<coord4>(val, s);
       coord4 p = open_box<coord4> (val);
-      canvas()->setExtents (to_qrect (p));
-        // NOTE: rect.topLeft is ignored since it is always (0,0)
-      
-        //QRect rect = to_qrect (p);
-        //cout << "Set size: " << rect.x() << ", " << rect.y() << " --- "
-        // << rect.width() << " x " << rect.height() << LF;
+      scrollarea()->setExtents (to_qrect (p));
     }
       break;
     
@@ -85,9 +80,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     {
       check_type<coord2>(val, s);
       coord2 p = open_box<coord2> (val);
-      canvas()->resize(to_qsize(p));
-        //QSize  s = to_qsize(p);
-        //cout << "Set size: (" << s.width() << "," << s.height() << ")\n ";
+      canvas()->resize(to_qsize(p));   // FIXME?
     }
       break;
 
@@ -103,12 +96,12 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     {  
       check_type<int>(val, s);
       int new_sf = open_box<int> (val);
-      if (canvas())
-        canvas()->tm_widget()->handle_set_shrinking_factor (new_sf);
+      canvas()->tm_widget()->handle_set_shrinking_factor (new_sf);
     }
       break;  
       
     case SLOT_MOUSE_GRAB:
+        // Sent after a left click to indicate the start of cursor dragging.
       NOT_IMPLEMENTED;
       //send_mouse_grab (THIS, val);
       break;
@@ -147,7 +140,6 @@ qt_view_widget_rep::send (slot s, blackbox val) {
          << "\t\tsent to widget\t" << type_as_string() << LF;  
 }
 
-
 blackbox
 qt_view_widget_rep::query (slot s, int type_id) {
   if ((DEBUG_QT) && (s != SLOT_RENDERER))
@@ -159,7 +151,7 @@ qt_view_widget_rep::query (slot s, int type_id) {
       check_type_id<int> (type_id, s);
         // return close_box<int> ((int)view->window());
         // we need only to know if the widget is attached to some gui window
-      return close_box<int> (qwid->window() ? 1 : 0);
+      return close_box<int> (canvas()->window() ? 1 : 0);
     }
 
     case SLOT_RENDERER:
@@ -182,14 +174,15 @@ qt_view_widget_rep::query (slot s, int type_id) {
     case SLOT_POSITION:
     {
       check_type_id<coord2> (type_id, s);
-      QPoint pt = qwid->mapTo(qwid->window(), QPoint(0,0));
+      QPoint pt = scrollarea()->surface()->mapTo(scrollarea()->window(), QPoint(0,0));
+        //cout << "pos: " << pt.x() << ", " << pt.y() << LF;
       return close_box<coord2> (from_qpoint (pt));
     }
 
     case SLOT_SIZE:
     {
       check_type_id<coord2> (type_id, s);
-      return close_box<coord2> (from_qsize (qwid->size()));
+      return close_box<coord2> (from_qsize (canvas()->size()));
     }
     
     case SLOT_SCROLL_POSITION:
@@ -209,14 +202,13 @@ qt_view_widget_rep::query (slot s, int type_id) {
       check_type_id<coord4> (type_id, s);
       QSize sz = canvas()->surface()->size();     // sz.setWidth(sz.width()-2);
       QPoint pos = canvas()->backing_pos;
-      return close_box<coord4> (from_qrect(QRect(pos,sz)));
+      return close_box<coord4> (from_qrect(QRect(pos, sz)));
     }
 
     default:
       return qt_widget_rep::query(s, type_id);
   }
 }
-
 
 widget
 qt_view_widget_rep::read (slot s, blackbox index) {

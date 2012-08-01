@@ -193,7 +193,7 @@ QTMWidget::set_tm_widget (qt_simple_widget_rep* _tmwid) {
 }
 
 qt_simple_widget_rep*
-QTMWidget::tm_widget () { 
+QTMWidget::tm_widget () const { 
   return concrete_simple_widget(tmwid); 
 }
 
@@ -407,14 +407,8 @@ QTMWidget::scrollContentsBy ( int dx, int dy ) {
 
 void 
 QTMWidget::resizeEvent( QResizeEvent* event ) {
-  // cout << "QTMWidget::resizeEvent (" << event->size().width()
-  //      << "," << event->size().height() << ")" << LF;
-  
     // Is this ok?
   coord2 s = from_qsize(event->size());
-    //cout << "   resizeEvent: coord2 ( " << s.x1 << ", " << s.x2 << ")\n";
-    //cout << "                QSize  ( " << event->size().width() << ", "
-    //                                << event->size().height() << ")\n";
   the_gui -> process_resize(tm_widget(), s.x1, s.x2);
 
   // force_update();
@@ -898,4 +892,12 @@ QTMWidget::focusOutEvent ( QFocusEvent * event ) {
 //    tm_widget() -> handle_keyboard_focus (false, texmacs_time ());
   }
   QTMScrollView::focusOutEvent (event);
+}
+
+
+QSize
+QTMWidget::sizeHint () const {
+  SI w,h;
+  tm_widget()->handle_get_size_hint(w,h);
+  return QSize(w/PIXEL, h/PIXEL);
 }

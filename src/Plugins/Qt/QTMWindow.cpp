@@ -18,7 +18,7 @@ void QTMPlainWindow::closeEvent (QCloseEvent* event)
   if (DEBUG_QT) cout << "Close QTMPlainWindow" << LF;
 
   if (tmwid->ref_count != 0) {
-    tmwid->send (SLOT_DESTROY, NULL);
+    concrete(tmwid)->send (SLOT_DESTROY, NULL);
       // Tell QT not to close the window, qt_window_widget_rep will.
     event->ignore ();
   }
@@ -29,8 +29,8 @@ void QTMWindow::closeEvent (QCloseEvent* event)
 {
   if (DEBUG_QT) cout << "Close QTMWindow" << LF;
 	
- if (tmwid->ref_count != 0) {
-    tmwid->send (SLOT_DESTROY, NULL);
+  if (tmwid->ref_count != 0) {
+    concrete(tmwid)->send (SLOT_DESTROY, NULL);
     event->ignore ();
   }
   emit closed();
@@ -43,18 +43,19 @@ void QTMWindow::closeEvent (QCloseEvent* event)
 
 QTMPopupWidget::QTMPopupWidget(QWidget* contents) {
   
-  QVBoxLayout* l = new QVBoxLayout();
+  QHBoxLayout* l = new QHBoxLayout();
   l->addWidget(contents);
   l->setContentsMargins(0,0,0,0);
   setLayout(l);
 
+  resize(contents->size());
   setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); 
   
   setWindowFlags(Qt::Popup);
   setMouseTracking(true);
   
-    //cout << "QTMPopupWidget created with size: " << contents->size().width() 
-    // << " x " << contents->size().height() << LF;
+    //cout << "QTMPopupWidget created with size: " << size().width() 
+    // << " x " << size().height() << LF;
 
 }
 
@@ -62,21 +63,21 @@ QTMPopupWidget::QTMPopupWidget(QWidget* contents) {
   /// FIXME: this is intended for popups which appear under the cursor!
 void
 QTMPopupWidget::mouseMoveEvent(QMouseEvent* event) {
-  if (! this->rect().contains(event->pos()))
+  
+  if (! this->rect().contains(QCursor::pos()))
     this->hide();
 
   event->ignore();
   emit closed();
 }
 
-/*
+
 void
 QTMPopupWidget::resizeEvent (QResizeEvent* event) {
 
-  cout << "QTMPopupWidget " << (event->spontaneous() ? "(spontaneous)" : "") 
-       << " resizeEvent: " << event->size().width() 
-       << " x " << event->size().height() << LF;
+    //cout << "QTMPopupWidget" << (event->spontaneous() ? " (spontaneous) " : " ") 
+    // << "resizeEvent: " << event->size().width() 
+    // << " x " << event->size().height() << LF;
   
   event->accept();
 }
-*/

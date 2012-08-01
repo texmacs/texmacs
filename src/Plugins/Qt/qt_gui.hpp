@@ -36,7 +36,7 @@ extern qt_gui the_gui;
 class QTMGuiHelper;
 
 class qt_gui_rep {
-  widget popup_win;
+
 public:
   bool interrupted;
   time_t interrupt_time;

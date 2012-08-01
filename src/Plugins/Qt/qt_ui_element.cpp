@@ -1086,12 +1086,13 @@ qt_ui_element_rep::as_qwidget () {
       } else {
         QAction*     a = as_qaction();  // Create key shortcuts and actions
         QToolButton* b;
-        if (qw && concrete(w)->type == xpm_widget) {
+        if (concrete(w)->type == xpm_widget) {
           b = new QTMUIButton();
-        } else if (qw && concrete(w)->type == text_widget) {
+        } else { // text_widget
           b = new QToolButton();
-          b->setText(((QLabel*)qw)->text());
         }
+        if (qw && concrete(w)->type == text_widget)
+          b->setText(static_cast<QLabel*>(qw)->text());
         b->setDefaultAction(a);
         a->setParent(b);
         ret = b;

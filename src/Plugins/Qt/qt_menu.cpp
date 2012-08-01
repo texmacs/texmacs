@@ -56,53 +56,33 @@ qt_menu_rep::popup_window_widget (string s) {
   return this;
 }
 
-
-// FIXME: does this make sense?
-widget
-qt_menu_rep::plain_window_widget (string s, command q) {
-  qwid= as_qwidget();
-  qwid->setWindowTitle (to_qstring (s));
-  return tm_new<qt_window_widget_rep>(qwid, q);
-}
-
 void
 qt_menu_rep::send (slot s, blackbox val) {
-  if (DEBUG_QT)
-    cout << "qt_menu_rep::send " << slot_name(s) << LF;
   switch (s) {
   case SLOT_POSITION:
     {
       check_type<coord2>(val, s);
-      QPoint pt = to_qpoint (open_box<coord2> (val));
-      if (item)
-        item->menu()->move (pt);
-      else if (DEBUG_QT)
-        cout << "   Attempt to set position on empty menu." << LF;
+      if (item) item->menu()->move (to_qpoint (open_box<coord2> (val)));
     }
     break;
   case SLOT_VISIBILITY:
     {   
       check_type<bool> (val, s);
-      bool flag = open_box<bool> (val);
-      if (flag)
-        if (item)
-          item->menu()->show();
-        else if (DEBUG_QT)
-          cout << "   Attempt to set visibility on empty menu." << LF;
+      if (item) item->menu()->setVisible(open_box<bool> (val));
     }   
     break;
   case SLOT_MOUSE_GRAB:
     {   
       check_type<bool> (val, s);
       bool flag = open_box<bool> (val);  // true= get grab, false= release grab
-      if (flag)
-        if (item)
-          item->menu()->exec();
-        else if (DEBUG_QT)
-          cout << "   Attempt to set mouse grab on empty menu." << LF;
+      if (flag && item) item->menu()->exec();
     }   
     break;
   default:
       qt_widget_rep::send(s, val);
+      return;
   }
+  if (DEBUG_QT)
+    cout << "qt_menu_rep: caught " << slot_name (s) 
+         << "\t\tsent to widget\t" << type_as_string() << LF;
 }
