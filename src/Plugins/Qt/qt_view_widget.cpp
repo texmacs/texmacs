@@ -164,9 +164,10 @@ qt_view_widget_rep::query (slot s, int type_id) {
         //       if the widget is not attached (in X11 sense)
       if (!r) 
         r = the_qt_renderer();
-      coord2 orig = from_qpoint(canvas()->backing_pos);
-      r->set_origin(orig.x1, orig.x2);
-      
+      SI ox = - canvas()->backing_pos.x()*PIXEL;  // Warning: this is NOT from_qpoint()
+      SI oy = canvas()->backing_pos.y()*PIXEL;
+      r->set_origin(ox,oy);
+
       return close_box<renderer> (r);
     }      
       
