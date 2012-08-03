@@ -157,7 +157,8 @@ plugins_incl  := $(system_incl)
 x11_incl      := $(system_incl)
 cocoa_incl    := $(system_incl)
 os_incl       := $(system_incl)
-qt_incl       := $(system_incl)
+qt_incl       := $(system_incl) \
+	$(call incl_flags,Texmacs Texmacs/Data Edit Typeset)
 gs_incl       := $(system_incl)
 style_incl    := $(system_incl) \
   $(call incl_flags,Style/Memorizer Style/Environment Style/Evaluate)

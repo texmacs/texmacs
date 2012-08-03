@@ -40,11 +40,9 @@
 
 #include "tm_link.hpp" // for number_of_servers
 #include "scheme.hpp"
-//#include "TeXmacs/server.hpp" // for get_server
-/*
+//#include "server.hpp" // for get_server
 #include "tm_window.hpp"
 #include "new_window.hpp"
-*/
 #include "qt_simple_widget.hpp"
 #include "qt_window_widget.hpp"
 
@@ -951,7 +949,6 @@ qt_gui_rep::update () {
 /*! Display a popup help balloon (i.e. a tooltip) at window coordinates x, y */
 void
 qt_gui_rep::show_help_balloon (widget wid, SI x, SI y) {
-  /*
   if (popup_wid_time > 0) return;
 
   _popup_wid = popup_window_widget(wid, "Balloon");
@@ -959,7 +956,6 @@ qt_gui_rep::show_help_balloon (widget wid, SI x, SI y) {
   get_position(concrete_window()->win, winx, winy);
   set_position (_popup_wid, x+winx, y+winy);
   popup_wid_time = texmacs_time() + 666;  // update() will eventually show the widget
-   */
 }
 
 /******************************************************************************
