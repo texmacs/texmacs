@@ -36,23 +36,32 @@ extern qt_gui the_gui;
 class QTMGuiHelper;
 
 class qt_gui_rep {
-  widget _popup_wid;
-public:
-  bool interrupted;
-  time_t interrupt_time;
-  QTMGuiHelper *gui_helper;
-  QTimer *updatetimer;
-  QList<QLabel*> waitDialogs;
-  QWidget *waitWindow;
 
+  friend class   QTMGuiHelper;
+  friend void needs_update ();
+
+  bool           interrupted;
+  time_t      interrupt_time;
+  QTimer*        updatetimer;
+  QList<QLabel*> waitDialogs;
+  QWidget*        waitWindow;
+  widget          _popup_wid;
+  time_t      popup_wid_time; //!< 0 means not to show _popup_wid
+  
   hashmap<string,tree>   selection_t;
   hashmap<string,string> selection_s;
+  
+  hashmap<socket_notifier,pointer>  read_notifiers;
+  hashmap<socket_notifier,pointer> write_notifiers;
+
+public:
+  QTMGuiHelper*   gui_helper;
 
 public:
   qt_gui_rep (int &argc, char **argv);
   virtual ~qt_gui_rep ();
 
-  /********************* extents, grabbing, selections ***********************/
+  /* extents, grabbing, selections */
   void get_extents (SI& width, SI& height);
   void get_max_size (SI& width, SI& height);
   // void set_button_state (unsigned int state);
@@ -71,10 +80,12 @@ public:
   void set_mouse_pointer (string name);
   void set_mouse_pointer (string curs_name, string mask_name);
   void show_wait_indicator (widget w, string message, string arg);
+  void show_help_balloon (widget wid, SI x, SI y);  
   bool check_event (int type);
 
   void update();
   
+  /* socket notifications */
   void add_notifier (socket_notifier);
   void remove_notifier (socket_notifier);
   void enable_notifier (socket_notifier, bool);
@@ -88,18 +99,9 @@ public:
   void process_command (command _cmd, object _args);
   void process_socket_notification (socket_notifier sn);
   void process_delayed_commands (); 
-
   void process_queued_events (int max = -1);
-  //void process_get_size_hint (SI& w, SI& h);
-  //void process_notify_resize (SI w, SI h);
-  //void process_set_shrinking_factor (int sf);
-  //void process_clear (SI x1, SI y1, SI x2, SI y2);
-  //void process_repaint (SI x1, SI y1, SI x2, SI y2);
-  
-  void show_help_balloon (widget wid, SI x, SI y);
 };
 
-void force_update(); 
-// force an immediate update of the internal texmacs state
+void force_update(); //!< Force an immediate update of the internal texmacs state
 
 #endif // defined QT_GUI_HPP

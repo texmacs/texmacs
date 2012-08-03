@@ -38,7 +38,6 @@
 #include "MacOS/mac_utilities.h"
 #endif
 
-
 #include "tm_link.hpp" // for number_of_servers
 #include "scheme.hpp"
 //#include "TeXmacs/server.hpp" // for get_server
@@ -46,7 +45,6 @@
 #include "tm_window.hpp"
 #include "new_window.hpp"
 */
-
 #include "qt_simple_widget.hpp"
 #include "qt_window_widget.hpp"
 
@@ -72,7 +70,7 @@ bool wait_for_delayed_commands = true;
 ******************************************************************************/
 
 qt_gui_rep::qt_gui_rep(int &argc, char **argv):
-  interrupted (false), waitWindow (NULL)
+  interrupted (false), waitWindow (NULL), popup_wid_time(0)
 {
   (void) argc; (void) argv;
   // argc= argc2;
@@ -319,12 +317,10 @@ qt_gui_rep::event_loop () {
   app->exec();
 }
 
+
 /******************************************************************************
  * Sockets notifications
  ******************************************************************************/
-
-static hashmap<socket_notifier,pointer> read_notifiers;
-static hashmap<socket_notifier,pointer> write_notifiers;
 
 void 
 qt_gui_rep::add_notifier (socket_notifier sn)
@@ -386,7 +382,6 @@ qt_gui_rep::enable_notifier (socket_notifier sn, bool flag)
   qsn = (QSocketNotifier *)write_notifiers (sn);
   if (qsn) qsn->setEnabled (flag);
 }
-
 
 
 /******************************************************************************
@@ -514,69 +509,6 @@ gui_refresh () {
 
 
 /******************************************************************************
- * QTMGuiHelper methods
- ******************************************************************************/
-
-void
-QTMGuiHelper::doUpdate () {
-//  cout << "UPDATE " << texmacs_time () << LF;
-  gui->update();
-}
-
-void
-QTMGuiHelper::doRefresh () {
-  emit refresh();
-}
-
-bool
-QTMGuiHelper::eventFilter (QObject *obj, QEvent *event) {
-  if (event->type() == QEvent::FileOpen) {
-    QFileOpenEvent *openEvent = static_cast<QFileOpenEvent *>(event);
-    const char *s = openEvent->file().toAscii().constData();
-    //qDebug ("File Open Event %s", s);
-    call ("load-buffer", object (url_system (s)), eval (":new-window"));
-    return true;
-  }
-  else {
-    // standard event processing
-    return QObject::eventFilter(obj, event);
-  }
-}
-
-void
-QTMGuiHelper::doWriteSocketNotification (int socket) {
-  if (DEBUG_QT) 
-    cout << "WRITE SOCKET NOTIFICATION " << socket << " "
-         << texmacs_time () << LF;
-  iterator<socket_notifier> it = iterate (write_notifiers);
-  while (it->busy ()) {
-    socket_notifier sn= it->next ();
-    if (sn->fd == socket) {
-      //sn->notify();
-      the_gui->process_socket_notification (sn);
-      the_gui->enable_notifier (sn, false);
-    }
-  }
-}
-
-void
-QTMGuiHelper::doReadSocketNotification (int socket) {
-  if (DEBUG_QT) 
-    cout << "READ SOCKET NOTIFICATION " << socket << " "
-         << texmacs_time () << LF;
-  iterator<socket_notifier> it = iterate (read_notifiers);
-  while (it->busy ()) {
-    socket_notifier sn= it->next ();
-    if (sn->fd == socket) {
-      //sn->notify();
-      the_gui->process_socket_notification (sn);
-      the_gui->enable_notifier (sn, false);
-    }
-  }
-}
-
-
-/******************************************************************************
  * Queued processing
  ******************************************************************************/
 
@@ -617,6 +549,7 @@ public:
 
 static array<queued_event> waiting_events;
 
+void add_event(const queued_event &ev);
 
 void
 process_event (queued_event ev) {
@@ -671,7 +604,7 @@ process_event (queued_event ev) {
     case QP_COMMAND_ARGS :
     {
       typedef pair<command, object> T;
-      T x = open_box <T> (ev.x2) ;
+      T x = open_box <T> (ev.x2);
       // cout << "QP_COMMAND_ARGS" << LF;
       x.x1->apply(x.x2);
     }
@@ -683,13 +616,12 @@ process_event (queued_event ev) {
       wait_for_delayed_commands = true;
     }
       break;
+
     default:   
       FAILED("Unexpected queued event");
   }
   //cout << ">" << (qp_type_id) ev.x1 << LF;
 }
-
-
 
 queued_event 
 next_event() {
@@ -708,30 +640,30 @@ next_event() {
 
 void 
 qt_gui_rep::process_queued_events (int max) {
-  // we process a maximum of max events. There are two kind of events: those
-  // which need a pass on interpose_handler just after and the others. We count
-  // only the first kind of events. In update() we call this function with
-  // max=1 so that only one of these "sensible" events is handled. Otherwise
-  // updating of internal TeXmacs structure become very slow. This can be 
-  // considerer a limitation of the current implementation of interpose_handler
-  // Likewise this function is just an hack to get things working properly.
+    // we process a maximum of max events. There are two kind of events: those
+    // which need a pass on interpose_handler just after and the others. We count
+    // only the first kind of events. In update() we call this function with
+    // max=1 so that only one of these "sensible" events is handled. Otherwise
+    // updating of internal TeXmacs structure become very slow. This can be 
+    // considerer a limitation of the current implementation of interpose_handler
+    // Likewise this function is just an hack to get things working properly.
   
   int count = 0;
-  //cout << "(" << n << " events)"
+    //cout << "(" << n << " events)"
   while ((max < 0) || (count<max))  {
     queued_event ev = next_event();
     if (ev.x1 == QP_NULL) break;
     process_event(ev);
     switch (ev.x1) {
-        case QP_COMMAND:
-        case QP_COMMAND_ARGS:
-        case QP_SOCKET_NOTIFICATION:
-        case QP_RESIZE:
-        case QP_DELAYED_COMMANDS:
-          break;
-        default:
-          count++;
-          break;
+      case QP_COMMAND:
+      case QP_COMMAND_ARGS:
+      case QP_SOCKET_NOTIFICATION:
+      case QP_RESIZE:
+      case QP_DELAYED_COMMANDS:
+        break;
+      default:
+        count++;
+        break;
     }
   }
 }
@@ -930,7 +862,11 @@ qt_gui_rep::update () {
     }
   }
   
-  
+  if (popup_wid_time > 0 && now > popup_wid_time) {
+    popup_wid_time = 0;
+    _popup_wid->send(SLOT_VISIBILITY, close_box<bool>(true));
+  }
+
   // 2.
   // manage delayed commands
   
@@ -1004,25 +940,25 @@ qt_gui_rep::update () {
 } 
 
 /*
- FIXME: implement fade out of popup after mouse out events, etc.
- Maybe use a dedicated wrapper QWidget which handles events, giving it the
- focus and which releases it as soon as some key is pressed or the mouse is
- moved out of it (problem: the widget need not appear below the mouse pointer,
- thus making it impossible to access links or widgets inside it.
- Solution?: as soon as the mouse moves (out of the widget), start a timer, 
+ We use a dedicated wrapper QWidget which handles mouse events: as soon as the 
+ mouse is moved out of we hide it.
+ Problem: the widget need not appear below the mouse pointer, thus making it
+ impossible to access links or widgets inside it.
+ Solution?? as soon as the mouse moves (out of the widget), start a timer, 
  giving enough time to the user to move (back) into the widget, then abort the
  close operation if he gets there.
  */
+/*! Display a popup help balloon (i.e. a tooltip) at window coordinates x, y */
 void
 qt_gui_rep::show_help_balloon (widget wid, SI x, SI y) {
   /*
+  if (popup_wid_time > 0) return;
+
   _popup_wid = popup_window_widget(wid, "Balloon");
-  SI winx, winy, widx, widy;
-    // OK? we assume widgets report and set their position wrt to their window.
-  get_position(get_canvas(concrete_window()->wid), widx, widy);
+  SI winx, winy;
   get_position(concrete_window()->win, winx, winy);
-  set_position (_popup_wid, x+widx+winx, y+widy+winy); 
-  set_visibility(_popup_wid, true);
+  set_position (_popup_wid, x+winx, y+winy);
+  popup_wid_time = texmacs_time() + 666;  // update() will eventually show the widget
    */
 }
 
@@ -1089,10 +1025,9 @@ qt_gui_rep::put_graphics_on_clipboard (url file) {
    
   // for bitmaps this works :
   if ((extension == "bmp") || (extension == "png") ||
-      (extension == "jpg") || (extension == "jpeg")) { 
-    QImage myqimage=QImage ( as_charp (as_string (file)) );
+      (extension == "jpg") || (extension == "jpeg")) {
     QClipboard *clipboard = QApplication::clipboard();
-    clipboard->setImage(myqimage);
+    clipboard->setImage(QImage (as_charp (concretize (file))));
   }
   else {
     // vector formats
