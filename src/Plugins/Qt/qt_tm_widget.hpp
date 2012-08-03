@@ -37,28 +37,35 @@ class QTMInteractivePrompt;
  is of type QTMWidget and belongs to one qt_simple_widget_rep.
  */
 class qt_tm_widget_rep: public qt_window_widget_rep {
-public: 
-  QLabel *rightLabel;
-  QLabel *leftLabel;
-  
-  QToolBar *mainToolBar;
-  QToolBar *modeToolBar;
-  QToolBar *focusToolBar;
-  QToolBar *userToolBar;
 
-  QDockWidget* sideDock;
+  /*
+   enum { 
+   header_visibility        =  1, // all toolbars
+   main_toolbar_visibility  =  2, 
+   mode_toolbar_visibility  =  4,
+   focus_toolbar_visibility =  8,
+   user_toolbar_visibility  = 16,
+   footer_visibility        = 32,
+   side_tools_0_visibility  = 64
+   } visibility_t;
+   */
+  QLabel*     rightLabel;
+  QLabel*      leftLabel;
+  QToolBar*  mainToolBar;
+  QToolBar*  modeToolBar;
+  QToolBar* focusToolBar;
+  QToolBar*  userToolBar;
+  QDockWidget*  sideDock;
 
 #ifdef Q_WS_MAC
-  QToolBar *dumbToolBar;
-  
-  QAction *modeToolBarAction;
-  QAction *mainToolBarAction;
-  
-  QWidget *rulerWidget;
+  QToolBar*      dumbToolBar;
+  QAction* modeToolBarAction;
+  QAction* mainToolBarAction;
+  QWidget*       rulerWidget;
 #endif
 
   QTMInteractiveInputHelper helper;
-  QTMInteractivePrompt *prompt;
+  QTMInteractivePrompt*     prompt;
   qt_widget int_prompt;
   qt_widget int_input;
   
@@ -89,11 +96,15 @@ public:
   virtual void     write (slot s, blackbox index, widget w);
     
   void set_full_screen (bool flag);
-  void updateVisibility();
+  void update_visibility();
   void install_main_menu ();
 
-    ////// Convenience methods to access our QWidgets
+  friend class QTMInteractiveInputHelper;
+  
 protected:
+  
+      ////// Convenience methods to access our QWidgets
+  
   QMainWindow* mainwindow () {
     return qobject_cast<QMainWindow*> (qwid); 
   }
@@ -131,6 +142,7 @@ public:
 
   virtual void      send (slot s, blackbox val);
   virtual blackbox query (slot s, int type_id);
+  virtual widget    read (slot s, blackbox index);
   virtual void     write (slot s, blackbox index, widget w);
   
 protected:

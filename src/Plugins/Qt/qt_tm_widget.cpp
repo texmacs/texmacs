@@ -250,7 +250,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   rulerWidget->setAutoFillBackground(true);
   // rulerWidget = new QLabel("pippo", cw);
   
-    // A second ruler (this one visible) to separate from the canvas.
+    // A second ruler (this one always visible) to separate from the canvas.
   QWidget* r2 = new QWidget(mw);
   r2->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
   r2->setMinimumHeight(1);
@@ -324,7 +324,7 @@ qt_tm_widget_rep::plain_window_widget (string title, command quit) {
 }
 
 void
-qt_tm_widget_rep::updateVisibility() {
+qt_tm_widget_rep::update_visibility() {
 #define XOR(exp1,exp2) (((!exp1) && (exp2)) || ((exp1) && (!exp2)))
 
   bool old_mainVisibility = mainToolBar->isVisible();
@@ -422,10 +422,8 @@ qt_tm_widget_rep::read(slot s, blackbox index) {
   
   switch (s) {
     case SLOT_CANVAS:
-    {
       check_type_void (index, s);
-      ret = widget(main_widget);
-    }
+      ret = main_widget;
       break;
     default:
       return qt_window_widget_rep::read(s, index);
@@ -453,66 +451,59 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     case SLOT_HEADER_VISIBILITY:
     {
       check_type<bool>(val, s);
-      bool f= open_box<bool> (val);
-      visibility[0] = f;
-      updateVisibility();
+      visibility[0] = open_box<bool> (val);
+      update_visibility();
     }
       break;
     case SLOT_MAIN_ICONS_VISIBILITY:
     {
       check_type<bool>(val, s);
-      bool f= open_box<bool> (val);
-      visibility[1] = f;
-      updateVisibility();
+      visibility[1] = open_box<bool> (val);
+      update_visibility();
     }
       break;
     case SLOT_MODE_ICONS_VISIBILITY:
     {
       check_type<bool>(val, s);
-      bool f= open_box<bool> (val);
-      visibility[2] = f;
-      updateVisibility();
+      visibility[2] = open_box<bool> (val);
+      update_visibility();
     }
       break;
     case SLOT_FOCUS_ICONS_VISIBILITY:
     {
       check_type<bool>(val, s);
-      bool f= open_box<bool> (val);
-      visibility[3] = f;
-      updateVisibility();
+      visibility[3] = open_box<bool> (val);
+      update_visibility();
     }
       break;
     case SLOT_USER_ICONS_VISIBILITY:
     {
       check_type<bool>(val, s);
-      bool f= open_box<bool> (val);
-      visibility[4] = f;
-      updateVisibility();
+      visibility[4] = open_box<bool> (val);
+      update_visibility();
     }
       break;
 
     case SLOT_FOOTER_VISIBILITY:
     {
       check_type<bool>(val, s);
-      bool f= open_box<bool> (val);
-      visibility[5] = f;
-      updateVisibility();
+      visibility[5] = open_box<bool> (val);
+      update_visibility();
     }
       break;
  
     case SLOT_SIDE_TOOLS_VISIBILITY:
     {
       check_type<bool>(val, s);
-      bool f= open_box<bool> (val);
-      visibility[6] = f;
-      updateVisibility();
+      visibility[6] = open_box<bool> (val);
+      update_visibility();
     }
       break;
 
     case SLOT_LEFT_FOOTER:
     {
       check_type<string>(val, s);
-      string msg= open_box<string> (val);
+      string msg = open_box<string> (val);
       leftLabel->setText (to_qstring (tm_var_encode (msg)));
       leftLabel->update ();
     }
@@ -579,8 +570,8 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
   }
   
   if (DEBUG_QT)
-    cout << "qt_tm_widget_rep: caught " << slot_name (s) 
-         << "\t\tsent to widget\t"      << type_as_string() << LF;
+    cout << "qt_tm_widget_rep: sent " << slot_name (s) 
+         << "\t\tto widget\t"      << type_as_string() << LF;
 }
 
 blackbox
@@ -624,17 +615,36 @@ qt_tm_widget_rep::query (slot s, int type_id) {
       return close_box<bool> (visibility[6]);
       
     case SLOT_INTERACTIVE_INPUT:
-      check_type_id<string> (type_id, s);
     {
+      check_type_id<string> (type_id, s);
       qt_input_text_widget_rep* w = 
         static_cast<qt_input_text_widget_rep*>(int_input.rep);
-      if (w->ok) {
+      if (w->ok)
         return close_box<string>(scm_quote(w->text));
-      } else {
+      else
         return close_box<string>("#f");
-      }
     }
-      
+
+    case SLOT_POSITION:
+    {
+      check_type_id<coord2> (type_id, s);
+      QPoint pt = mainwindow()->pos();
+        // HACK: With a unified toobar, position of widgets relative to window
+        // (using QWidget::mapTo(window(), ...)) is reported without taking the
+        // main toolbar into account.
+      if (mainwindow()->unifiedTitleAndToolBarOnMac() && visibility[0]) {
+        if (visibility[1])
+          pt.ry() += mainToolBar->height();
+        else if (visibility[2])
+          // Yes, this is wrong, but modeToolBar reports a smaller height than
+          // that actually used by a unified toolbar
+          //pt.ry() += modeToolBar->height();
+          pt.ry() += mainToolBar->height();
+      }
+        //cout << "wpos: " << pt.x() << ", " << pt.y() << LF;
+      return close_box<coord2> (from_qpoint (pt));
+    }
+
     case SLOT_INTERACTIVE_MODE:
       check_type_id<bool> (type_id, s);
       return close_box<bool> (false); // FIXME: who needs this info?
@@ -696,11 +706,11 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     {
       check_type_void (index, s);
 
-      QLayout* l= centralwidget()->layout();
+      QLayout* l = centralwidget()->layout();
       l->removeWidget(canvas());
-      delete canvas();
+      delete canvas();  // remember: only windows delete QWidgets.
       concrete(main_widget)->qwid = 0;
-      main_widget = widget(w);
+      main_widget = w;
       concrete(main_widget)->as_qwidget();  // force (re)creation of QWidget 
       if (canvas()) { // if the passed widget wasn't empty... (while switching buffers it is)
         l->addWidget(canvas());
@@ -735,7 +745,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       main_icons_widget = w;
       QMenu* m= concrete (w)->get_qmenu();
       replaceButtons (mainToolBar, m);
-      updateVisibility();
+      update_visibility();
     }
       break;
       
@@ -745,7 +755,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       mode_icons_widget = w;
       QMenu* m= concrete (w)->get_qmenu();
       replaceButtons (modeToolBar, m);
-      updateVisibility();
+      update_visibility();
     }
       break;
       
@@ -755,7 +765,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       focus_icons_widget = w;
       QMenu* m= concrete (w)->get_qmenu();
       replaceButtons (focusToolBar, m);
-      updateVisibility();
+      update_visibility();
     }
       break;
       
@@ -765,7 +775,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       user_icons_widget = w;
       QMenu* m= concrete (w)->get_qmenu();
       replaceButtons (userToolBar, m);
-      updateVisibility();
+      update_visibility();
     }
       break;
       
@@ -777,7 +787,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       QWidget* old_qwidget = sideDock->widget();
       delete old_qwidget;
       sideDock->setWidget (new_qwidget); 
-      updateVisibility();
+      update_visibility();
       new_qwidget->show();
     }
       break;
@@ -818,12 +828,12 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
     } else {
       bool cache = visibility[0];
       visibility[0] = false;
-      updateVisibility();
+      update_visibility();
 //      win->showNormal();
       win->setWindowState(win->windowState() ^ Qt::WindowFullScreen);
 
       visibility[0] = cache;
-      updateVisibility();
+      update_visibility();
       // reset the borders of some widgets
       scrollarea()->setFrameShape(QFrame::Box);
 #ifdef UNIFIED_TOOLBAR
@@ -868,8 +878,8 @@ qt_tm_embedded_widget_rep::send (slot s, blackbox val) {
       return;
   }
   if (DEBUG_QT)
-    cout << "qt_tm_embedded_widget_rep: caught " << slot_name (s) 
-         << "\t\tsent to widget\t" << type_as_string() << LF;  
+    cout << "qt_tm_embedded_widget_rep: sent " << slot_name (s) 
+         << "\t\tto widget\t" << type_as_string() << LF;  
 }
 
 blackbox
@@ -893,6 +903,26 @@ qt_tm_embedded_widget_rep::query (slot s, int type_id) {
     default:
       return qt_view_widget_rep::query (s, type_id);
   }
+}
+
+widget
+qt_tm_embedded_widget_rep::read(slot s, blackbox index) {
+  widget ret;
+  
+  switch (s) {
+    case SLOT_CANVAS:
+      check_type_void (index, s);
+      ret = widget(this);
+      break;
+    default:
+      return qt_view_widget_rep::read(s, index);
+  }
+  
+  if (DEBUG_QT)
+    cout << "qt_tm_widget_rep::read " << slot_name (s) 
+         << "\t\tfor widget\t" << type_as_string() << LF;
+  
+  return ret;
 }
 
 void

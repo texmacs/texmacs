@@ -62,7 +62,13 @@ QTMPopupWidget::QTMPopupWidget(QWidget* contents) {
 }
 
 
-  /// FIXME: this is intended for popups which appear under the cursor!
+/*
+ If our contents QWidget is of type QTMWidget it will capture mouse events
+ and we won't get called until the cursor exits the contents, so the check 
+ inside is unnecessary unless the contents are of another kind.
+ 
+ NOTE that this is intended for popups which appear under the cursor!
+ */
 void
 QTMPopupWidget::mouseMoveEvent(QMouseEvent* event) {
   
@@ -74,10 +80,11 @@ QTMPopupWidget::mouseMoveEvent(QMouseEvent* event) {
     move(event->globalPos());
   }
    */
-    //if (! this->rect().contains(QCursor::pos())) {
+
+  if (! this->rect().contains(QCursor::pos())) {
     hide();
     emit closed();
-    //}
+  }
 
   event->ignore();
 }

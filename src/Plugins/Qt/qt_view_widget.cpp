@@ -136,14 +136,15 @@ qt_view_widget_rep::send (slot s, blackbox val) {
   }
 
   if (DEBUG_QT)
-    cout << "qt_view_widget_rep: caught " << slot_name (s) 
-         << "\t\tsent to widget\t" << type_as_string() << LF;  
+    cout << "qt_view_widget_rep: sent " << slot_name (s) 
+         << "\t\tto widget\t" << type_as_string() << LF;  
 }
 
 blackbox
 qt_view_widget_rep::query (slot s, int type_id) {
   if ((DEBUG_QT) && (s != SLOT_RENDERER))
-    cout << "qt_view_widget_rep::query() " << slot_name(s) << "\tWidget id: " << id << LF;
+    cout << "qt_view_widget_rep: queried " << slot_name(s)
+         << "\t\tto widget\t" << type_as_string() << LF;
   
   switch (s) {
     case SLOT_IDENTIFIER:
@@ -174,6 +175,8 @@ qt_view_widget_rep::query (slot s, int type_id) {
     case SLOT_POSITION:
     {
       check_type_id<coord2> (type_id, s);
+        // NOTE: mapTo() does not take into account the height of unified toolbars 
+        // on the Mac. We work around this in qt_tm_widget_rep::query(SLOT_POSITION)
       QPoint pt = scrollarea()->surface()->mapTo(scrollarea()->window(), QPoint(0,0));
         //cout << "pos: " << pt.x() << ", " << pt.y() << LF;
       return close_box<coord2> (from_qpoint (pt));
