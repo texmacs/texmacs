@@ -425,6 +425,7 @@ qt_tm_widget_rep::read(slot s, blackbox index) {
       check_type_void (index, s);
       ret = main_widget;
       break;
+      
     default:
       return qt_window_widget_rep::read(s, index);
   }
@@ -576,8 +577,9 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
 
 blackbox
 qt_tm_widget_rep::query (slot s, int type_id) {
-  if (DEBUG_QT)
-    cout << "qt_tm_widget_rep::query " << slot_name (s) << LF;
+  if ((DEBUG_QT) && (s != SLOT_RENDERER))
+    cout << "qt_tm_widget_rep: queried " << slot_name(s)
+         << "\t\tto widget\t" << type_as_string() << LF;
   
   switch (s) {
     case SLOT_SCROLL_POSITION:
@@ -628,19 +630,8 @@ qt_tm_widget_rep::query (slot s, int type_id) {
     case SLOT_POSITION:
     {
       check_type_id<coord2> (type_id, s);
-      QPoint pt = mainwindow()->pos();
-        // HACK: With a unified toobar, position of widgets relative to window
-        // (using QWidget::mapTo(window(), ...)) is reported without taking the
-        // main toolbar into account.
-      if (mainwindow()->unifiedTitleAndToolBarOnMac() && visibility[0]) {
-        if (visibility[1])
-          pt.ry() += mainToolBar->height();
-        else if (visibility[2])
-          // Yes, this is wrong, but modeToolBar reports a smaller height than
-          // that actually used by a unified toolbar
-          //pt.ry() += modeToolBar->height();
-          pt.ry() += mainToolBar->height();
-      }
+        // Skip title and toolbars
+      QPoint pt = QPoint(mainwindow()->geometry().x(), mainwindow()->geometry().y());
         //cout << "wpos: " << pt.x() << ", " << pt.y() << LF;
       return close_box<coord2> (from_qpoint (pt));
     }
@@ -856,7 +847,9 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
  ******************************************************************************/
 
 qt_tm_embedded_widget_rep::qt_tm_embedded_widget_rep (command _quit) 
-  : qt_view_widget_rep(new QTMWidget(0, 0), embedded_tm_widget), quit(_quit) { }
+  : qt_view_widget_rep(new QTMWidget(0, 0), embedded_tm_widget), quit(_quit) {
+      //static_cast<QTMWidget*>(qwid)->set_tm_widget(this);
+}
 
 qt_tm_embedded_widget_rep::~qt_tm_embedded_widget_rep () { }
 
@@ -895,8 +888,7 @@ qt_tm_embedded_widget_rep::query (slot s, int type_id) {
     case SLOT_USER_ICONS_VISIBILITY:
     case SLOT_FOOTER_VISIBILITY:
     case SLOT_SIDE_TOOLS_VISIBILITY:
-        // FIXME: decide what to do with all these for embedded widgets.
-      
+        // FIXME: decide what to do with all these for embedded widgets.      
       check_type_id<bool> (type_id, s);
       return close_box<bool> (false);
 
@@ -945,7 +937,6 @@ qt_tm_embedded_widget_rep::write (slot s, blackbox index, widget w) {
         qwid = 0;
         new_widget->setFocusPolicy (Qt::StrongFocus);
         new_widget->setFocus ();
-        new_widget->set_tm_widget(wid);
         qwid = new_widget;
       } else {
         FAILED("Attempt to set an invalid scrollable widget for a qt_tm_embedded_widget");

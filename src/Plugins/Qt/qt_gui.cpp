@@ -953,7 +953,10 @@ qt_gui_rep::show_help_balloon (widget wid, SI x, SI y) {
 
   _popup_wid = popup_window_widget(wid, "Balloon");
   SI winx, winy;
-  get_position(concrete_window()->win, winx, winy);
+    // HACK around wrong? reporting of window widget for embedded texmacs-inputs:
+    // call get_window on the current window (concrete_window()->win is set to
+    // the texmacs-input widget whenever there is one)
+  get_position (get_window (concrete_window()->win), winx, winy);
   set_position (_popup_wid, x+winx, y+winy);
   popup_wid_time = texmacs_time() + 666;  // update() will eventually show the widget
 }

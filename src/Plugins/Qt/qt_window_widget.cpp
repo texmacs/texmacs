@@ -178,13 +178,13 @@ qt_window_widget_rep::query (slot s, int type_id) {
     case SLOT_POSITION:
     {
       check_type_id<coord2> (type_id, s);
-      QPoint pt;
+      QRect g;
         // FIXME: dock widgets are embedded into qt_window_widget_reps as a temporary hack
         // because of this the underlying widget is not always a top level window
-      if (qwid->isWindow()) pt = qwid->pos();
-      else                  pt = qwid->window()->pos();
+      if (qwid->isWindow()) g = qwid->geometry();
+      else                  g = qwid->window()->geometry();
         //cout << "wpos: " << pt.x() << ", " << pt.y() << LF;
-      return close_box<coord2> (from_qpoint (pt));
+      return close_box<coord2> (from_qpoint (QPoint (g.x(), g.y())));
     }
 
     case SLOT_SIZE:
@@ -199,11 +199,20 @@ qt_window_widget_rep::query (slot s, int type_id) {
   }
 }
 
+widget
+qt_window_widget_rep::read (slot s, blackbox index) {
+  if (DEBUG_QT)
+    cout << "qt_window_widget_rep::read " << slot_name(s) << "\tWidget id: " << id << LF;
+  
+  switch (s) {
+    case SLOT_WINDOW:  // We use this in qt_gui_rep::show_help_balloon()
+      check_type_void (index, s);
+      return this;
 
-/******************************************************************************
- * Notification of state changes
- ******************************************************************************/
-
+    default:
+      return qt_widget_rep::read (s, index);
+  }
+}
 
 void
 qt_window_widget_rep::notify (slot s, blackbox new_val) {

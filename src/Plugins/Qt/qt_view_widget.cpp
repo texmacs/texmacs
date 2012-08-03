@@ -142,7 +142,8 @@ qt_view_widget_rep::send (slot s, blackbox val) {
 
 blackbox
 qt_view_widget_rep::query (slot s, int type_id) {
-  if ((DEBUG_QT) && (s != SLOT_RENDERER))
+    // Some slots are too noisy
+  if ((DEBUG_QT) && (s != SLOT_RENDERER) && (s != SLOT_IDENTIFIER))
     cout << "qt_view_widget_rep: queried " << slot_name(s)
          << "\t\tto widget\t" << type_as_string() << LF;
   

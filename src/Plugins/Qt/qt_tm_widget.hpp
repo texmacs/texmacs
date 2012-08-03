@@ -150,7 +150,7 @@ protected:
     return qobject_cast<QTMScrollView*> (qwid);
   }
   QTMWidget* canvas () {
-    return qobject_cast<QTMWidget*> (scrollarea());
+    return qobject_cast<QTMWidget*> (qwid);
   }
 };
 

@@ -174,7 +174,8 @@ QTMWidget::QTMWidget (QWidget* _parent, qt_simple_widget_rep* _tmwid)
 QTMWidget::~QTMWidget () {
   if (DEBUG_QT) 
     cout << "Destroying QTMWidget " << (long)this 
-         << " of widget " << tm_widget()->type_as_string() << LF;
+         << " of widget " << (tm_widget() ? tm_widget()->type_as_string() : "NULL") 
+         << LF;
   
     // remove ourselves from the list of QWidgets to be repainted.
   all_widgets.remove(this);
