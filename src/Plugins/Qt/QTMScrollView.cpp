@@ -48,11 +48,13 @@ QTMScrollView::QTMScrollView ( QWidget *_parent )
   p_surface->setAutoFillBackground(false);
   p_surface->setBackgroundRole(QPalette::NoRole);
   p_surface->setAttribute(Qt::WA_OpaquePaintEvent);
-    //p_surface->setGeometry(p_extents);
-    //p_surface->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    // Use all available space by default (this is needed by embedded widgets)
+    // In order to draw the vertical margins use a horizontal policy of Fixed
+    // This we do in qt_tm_widget_rep.
+  p_surface->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   
   QHBoxLayout *layout = new QHBoxLayout();
-  layout->addWidget(p_surface, 0, Qt::AlignHCenter);
+  layout->addWidget(p_surface);//, 0, Qt::AlignHCenter);
   layout->setContentsMargins(0,0,0,0);
   _viewport->setLayout(layout);
 }

@@ -112,7 +112,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
  : qt_window_widget_rep (new QTMWindow (0, this), _quit), helper (this), 
    full_screen(false)
 {
-  type = texmacs_widget;  // FIXME: remove this whole "type" thing
+  type = texmacs_widget;
 
   main_widget = tm_new<qt_simple_widget_rep>();
   
@@ -150,7 +150,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   leftLabel->setFrameStyle (QFrame::NoFrame);
   rightLabel->setFrameStyle (QFrame::NoFrame);
   {
-    QFont f=  leftLabel->font();
+    QFont f = leftLabel->font();
     f.setPixelSize(12);
     leftLabel->setFont(f);
     rightLabel->setFont(f);
@@ -174,7 +174,6 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   bar->setMinimumWidth(2);
   mw->setStatusBar (bar);
  
-  
   // toolbars
   
   mainToolBar  = new QToolBar ("main toolbar", mw);
@@ -708,6 +707,8 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
         canvas()->show();
         canvas()->setFocusPolicy(Qt::StrongFocus);
         canvas()->setFocus();
+          // Fix horizontal size to draw vertical margins around.
+        scrollarea()->surface()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
       }
     }
       break;
@@ -847,8 +848,8 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
  ******************************************************************************/
 
 qt_tm_embedded_widget_rep::qt_tm_embedded_widget_rep (command _quit) 
-  : qt_view_widget_rep(new QTMWidget(0, 0), embedded_tm_widget), quit(_quit) {
-      //static_cast<QTMWidget*>(qwid)->set_tm_widget(this);
+: qt_view_widget_rep(new QTMWidget(0, 0), embedded_tm_widget), quit(_quit) {
+
 }
 
 qt_tm_embedded_widget_rep::~qt_tm_embedded_widget_rep () { }
