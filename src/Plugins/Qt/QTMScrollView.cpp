@@ -17,8 +17,19 @@
 
 #include <QPaintEvent>
 
-
-QTMScrollView::QTMScrollView ( QWidget *_parent )
+/*! Constructor.
+ 
+ NOTE:
+ We tell the p_surface to use all available space by default (this is needed by 
+ embedded widgets) by setting the SizePolicy to (Expanding, Expanding).
+ In order to draw the vertical margins around the working area use a horizontal
+ policy of Fixedl, as in qt_tm_widget_rep (see SLOT_SCROLLABLE there)
+ 
+ NOTE:
+ Don't try to disable double buffering even if we do our own: the flag 
+ Qt::WA_PaintOnScreen is only supported on X11 and anyway makes things slower
+ */
+QTMScrollView::QTMScrollView (QWidget *_parent)
 : QAbstractScrollArea (_parent), p_extents(QRect(0,0,0,0))  {
   
   QWidget *_viewport = QAbstractScrollArea::viewport();
@@ -27,22 +38,16 @@ QTMScrollView::QTMScrollView ( QWidget *_parent )
   setFrameShape(QFrame::NoFrame);
   
   p_surface = new QTMSurface (_viewport, this);
-    // DON'T do this even if we do our own double buffering: this flag is only
-    // supported on X11 and anyway makes things slower.
-    //p_surface->setAttribute(Qt::WA_PaintOnScreen);
   p_surface->setAttribute(Qt::WA_NoSystemBackground);
   p_surface->setAttribute(Qt::WA_StaticContents); 
   p_surface->setAttribute(Qt::WA_MacNoClickThrough);
   p_surface->setAutoFillBackground(false);
   p_surface->setBackgroundRole(QPalette::NoRole);
   p_surface->setAttribute(Qt::WA_OpaquePaintEvent);
-    // Use all available space by default (this is needed by embedded widgets)
-    // In order to draw the vertical margins use a horizontal policy of Fixed
-    // This we do in qt_tm_widget_rep.
   p_surface->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   
   QHBoxLayout *layout = new QHBoxLayout();
-  layout->addWidget(p_surface);//, 0, Qt::AlignHCenter);
+  layout->addWidget(p_surface); //, 0, Qt::AlignHCenter);
   layout->setContentsMargins(0,0,0,0);
   _viewport->setLayout(layout);
 }
@@ -99,6 +104,7 @@ QTMScrollView::ensureVisible ( int cx, int cy, int mx, int my ) {
   setOrigin (QPoint(-dx, -dy));
 }
 
+/*! Scrollbar stabilization */
 void 
 QTMScrollView::updateScrollBars (void) {
   QWidget *_viewport = QAbstractScrollArea::viewport();
@@ -131,18 +137,7 @@ QTMScrollView::updateScrollBars (void) {
   updateGeometry();
 }
 
-#if 0
-  // this code is wrong
-void
-QTMScrollView::wheelEvent ( QWheelEvent *wheelEvent ) {
-  if (wheelEvent->modifiers()
-      & (Qt::ShiftModifier | Qt::ControlModifier)) {
-    setOrigin(QPoint(p_origin.x() + wheelEvent->delta(), p_origin.y()));
-  }
-  else QAbstractScrollArea::wheelEvent(wheelEvent);
-}
-#endif
-
+/*! Scroll area updater */
 void
 QTMScrollView::scrollContentsBy ( int dx, int dy ) {
   if (dx) p_origin.setX(p_origin.x() - dx);
@@ -237,3 +232,14 @@ QTMScrollView::event (QEvent *event) {
   return QAbstractScrollArea::event(event);
 }
 
+/*
+ // this code is wrong
+ void
+ QTMScrollView::wheelEvent ( QWheelEvent *wheelEvent ) {
+ if (wheelEvent->modifiers()
+ & (Qt::ShiftModifier | Qt::ControlModifier)) {
+ setOrigin(QPoint(p_origin.x() + wheelEvent->delta(), p_origin.y()));
+ }
+ else QAbstractScrollArea::wheelEvent(wheelEvent);
+ }
+ */

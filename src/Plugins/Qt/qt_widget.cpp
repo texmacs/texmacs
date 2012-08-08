@@ -54,22 +54,19 @@ qt_widget_rep::~qt_widget_rep() {
 
 /*! Returns the actual QWidget underlying this qt_widget_rep.
  
- This method often constructs the QWidget on the fly each time it's called,
- for example inside qt_ui_element_rep::as_qwidget(), so it is generally NOT safe
- to assume that as_qwidget() simply returns the qwid pointer.
+ Implementations of this method must comply with the following:
  
- The policy is to give ownership of the object to the caller.
- NOTE: we could set qwid=NULL to ensure that delete qwid did nothing, but this
- might break things: if you nest a widget which needs access to qwid, like 
- qt_tm_embedded_widget_rep, *after* it's been enclosed in a vertical_menu or
- something like that, then the way the latter is built taking all the qwidgets,
- would result in a crash as soon as the nested widget did something with the
- QWidget.
-*/
+  * The policy is to give ownership of the object to the caller.
+  * The pointer qt_widget_rep::qwid must be set to the returned object
+
+ Most implementations also build a new QWidget on each call, but we cannot rely
+ on that because for instance qt_view_widget_rep does not (cannot (yet)).
+ */
 inline QWidget*
 qt_widget_rep::as_qwidget () {
-  QWidget* ret = qwid;
-  return ret; 
+  if (DEBUG_QT)
+    cout << "qt_widget_rep::as_qwidget() for " << type_as_string() << LF;
+  return qwid;
 }
 
 /*! Returns the QAction associated to this qt_widget_rep.

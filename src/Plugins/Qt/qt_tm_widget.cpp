@@ -692,18 +692,22 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     cout << "qt_tm_widget_rep::write " << slot_name (s) << LF;
   
   switch (s) {
+        // Widget w is a qt_simple_widget_rep, with a QTMWidget as underlying
+        // widget. We must discard the current main_widget and display the new.
+        // But while switching buffers the widget w is a glue_widget. In this
+        // case we have nothing to do here.
     case SLOT_SCROLLABLE:
     {
       check_type_void (index, s);
 
-      QLayout* l = centralwidget()->layout();
-      l->removeWidget(canvas());
-      canvas()->deleteLater();  // remember: only windows delete QWidgets.
-      main_widget = w;
-      concrete(main_widget)->as_qwidget();  // force (re)creation of QWidget
-      // While switching buffers the widget w is a glue_widget. It's QWidget
-      // is a dummy one and canvas() returns 0 so we must check here.
-      if (canvas()) {
+      if (concrete(w)->type == simple_widget) {
+        QLayout* l = centralwidget()->layout();
+        l->removeWidget(canvas());
+        canvas()->deleteLater();
+
+        concrete(w)->as_qwidget();    // force (re)creation of QWidget
+        main_widget = w;              // canvas() now returns the new QWidget
+
         l->addWidget(canvas());
         canvas()->show();
         canvas()->setFocusPolicy(Qt::StrongFocus);
@@ -925,22 +929,16 @@ qt_tm_embedded_widget_rep::write (slot s, blackbox index, widget w) {
     cout << "qt_tm_embedded_widget_rep::write " << slot_name (s) << LF;
 
   switch (s) {
-        // Widget w is a qt_simple_widget_rep, with a QTMWidget as underlying
-        // widget. We must discard the current QTMWidget and display the new.
-        // Also, because upon construction we created a dummy QTMWidget without
-        // an owning tm-widget, we set it here.
+      // Widget w is a qt_simple_widget_rep, with a QTMWidget as underlying
+      // widget. We must discard the current QTMWidget and display the new.
     case SLOT_SCROLLABLE:
     {
       check_type_void (index, s);
-      qt_simple_widget_rep* wid = static_cast<qt_simple_widget_rep*>(w.rep);
-      QTMWidget* new_widget     = static_cast<QTMWidget*>(wid->as_qwidget());
-      if (new_widget) {
-        canvas()->deleteLater();
-        new_widget->setFocusPolicy (Qt::StrongFocus);
-        new_widget->setFocus ();
-        qwid = new_widget;
-      } else {
-        FAILED("Attempt to set an invalid scrollable widget for a qt_tm_embedded_widget");
+      if (concrete_simple_widget(w)->type == simple_widget) {
+        qwid->deleteLater();
+        qwid = concrete_simple_widget(w)->as_qwidget();
+        qwid->setFocusPolicy (Qt::StrongFocus);
+        qwid->setFocus ();
       }
     }
       break;

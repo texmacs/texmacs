@@ -57,10 +57,7 @@ public:
   
 protected:
   
-  // Scrollbar stabilization.
   void updateScrollBars();
-  
-  // Scroll area updater.
   void scrollContentsBy (int dx, int dy);
   
   virtual bool viewportEvent (QEvent *e);

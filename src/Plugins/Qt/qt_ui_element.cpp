@@ -464,12 +464,13 @@ qt_glue_widget_rep::as_qaction() {
 
 QWidget *
 qt_glue_widget_rep::as_qwidget() {
-  QLabel *w= new QLabel();
-  w->setText(to_qstring(as_string(col)));
+  QLabel* w = new QLabel();
+  w->setText (to_qstring (as_string (col)));
   QIcon icon;
   w->setPixmap (render ());  
     //  w->setEnabled(false);
-  return w;
+  qwid = w;
+  return qwid;
 }
 
 
@@ -610,6 +611,7 @@ qt_ui_element_rep::as_qaction () {
       return a;
     }
       break;
+
     case glue_widget:
     {
       QTMAction* a = new QTMAction();
@@ -617,6 +619,7 @@ qt_ui_element_rep::as_qaction () {
       return a;
     }
       break;
+
     case menu_group: 
     {
       typedef pair<string, int> T;
@@ -977,8 +980,6 @@ qt_ui_element_rep::as_qwidget () {
   if (DEBUG_QT)
     cout << "as_qwidget: " << type_as_string() << LF;
 
-  QWidget* ret = 0;  // return value
-
   switch (type) {
     case horizontal_menu:
     case vertical_menu:
@@ -997,7 +998,7 @@ qt_ui_element_rep::as_qwidget () {
       else if (DEBUG_QT)
           // should we create a default layout?
         cout << "qt_ui_element_rep::as_qwidget() : invalid situation" << LF;
-      ret = w;
+      qwid = w;
     }
       break;
       
@@ -1011,7 +1012,8 @@ qt_ui_element_rep::as_qwidget () {
       QString sheet = to_qstylesheet(x.x2);
       T1         y1 = x.x3;
       T1         y2 = x.x4;
-      QWidget* qwid = wid->as_qwidget();
+      
+      qwid = wid->as_qwidget();
       qwid->setStyleSheet(sheet);
       
       QSize minSize = qt_decode_length(static_cast<const QWidget*>(qwid), y1.x1, y2.x1);
@@ -1027,8 +1029,6 @@ qt_ui_element_rep::as_qwidget () {
         qwid->setMaximumSize(maxSize);
         qwid->resize(defSize);
       }
-      
-      ret = qwid;
     }
       break;
       
@@ -1036,7 +1036,7 @@ qt_ui_element_rep::as_qwidget () {
     case menu_group:
     case glue_widget:
     {
-      ret = new QWidget();
+      qwid = new QWidget();
     }
       break;
       
@@ -1055,7 +1055,7 @@ qt_ui_element_rep::as_qwidget () {
       QToolButton *b = new QTMUIButton();
       a->setParent(b);
       b->setDefaultAction(a);
-      ret = b;
+      qwid = b;
     }
       break;
       
@@ -1082,7 +1082,7 @@ qt_ui_element_rep::as_qwidget () {
         if (qw && concrete(w)->type == text_widget)
           b->setText(static_cast<QLabel*>(qw)->text());
         b->setEnabled(! (style & WIDGET_STYLE_INERT));
-        ret = b;
+        qwid = b;
       } else {
         QAction*     a = as_qaction();  // Create key shortcuts and actions
         QToolButton* b;
@@ -1095,7 +1095,7 @@ qt_ui_element_rep::as_qwidget () {
           b->setText(static_cast<QLabel*>(qw)->text());
         b->setDefaultAction(a);
         a->setParent(b);
-        ret = b;
+        qwid = b;
       }
       delete qw;
     }
@@ -1117,7 +1117,7 @@ qt_ui_element_rep::as_qwidget () {
         string str = x.x1;
         w->setToolTip (to_qstring (str));
       }
-      ret = w;
+      qwid = w;
     }
       break;
       
@@ -1140,7 +1140,7 @@ qt_ui_element_rep::as_qwidget () {
       //w->setTextFormat(Qt::RichText);
       w->setText(to_qstring (t));
       w->setStyleSheet(style);
-      ret = w;
+      qwid = w;
     }
       break;
       
@@ -1152,7 +1152,7 @@ qt_ui_element_rep::as_qwidget () {
       QPixmap* img= the_qt_renderer () -> xpm_image (image);
       QIcon icon (*img);
       l->setPixmap (*img);
-      ret = l;
+      qwid = l;
     }
       break;
       
@@ -1172,7 +1172,7 @@ qt_ui_element_rep::as_qwidget () {
       QTMCommand* c = new QTMCommand (w, tcmd);
       QObject::connect (w, SIGNAL (stateChanged(int)), c, SLOT (apply()));
 
-      ret = w;
+      qwid = w;
     }
       break;
       
@@ -1207,7 +1207,7 @@ qt_ui_element_rep::as_qwidget () {
       // NOTE: with QueuedConnections, the slots are sometimes not invoked.
       QObject::connect (w, SIGNAL (currentIndexChanged(int)), c, SLOT (apply()));
       
-      ret = w;
+      qwid = w;
     }
       break;
       
@@ -1246,7 +1246,7 @@ qt_ui_element_rep::as_qwidget () {
       QTMCommand* qcmd = new QTMCommand (w, ecmd);
       QObject::connect (w, SIGNAL (itemSelectionChanged()), qcmd, SLOT (apply()));
       
-      ret = w;      
+      qwid = w;      
     }
       break;
       
@@ -1266,7 +1266,7 @@ qt_ui_element_rep::as_qwidget () {
         // "Note that You must add the layout of widget before you call this function; 
         //  if you add it later, the widget will not be visible - regardless of when you show() the scroll area.
         //  In this case, you can also not show() the widget later."
-      ret = scroll;
+      qwid = scroll;
     }
       break;
       
@@ -1286,7 +1286,7 @@ qt_ui_element_rep::as_qwidget () {
       split->addWidget(qw1);
       split->addWidget(qw2);
       
-      ret = split;
+      qwid = split;
     }
       break;
       
@@ -1312,7 +1312,7 @@ qt_ui_element_rep::as_qwidget () {
 
       if (i>0) tw->resizeOthers(0);   // Force the automatic resizing
 
-      ret = tw;
+      qwid = tw;
     }
       break;
       
@@ -1327,20 +1327,20 @@ qt_ui_element_rep::as_qwidget () {
       QTMOnDestroyCommand* c = new QTMOnDestroyCommand (qw, cmd);
 				// See QTMOnDestroyCommand for an explanation of why it exists
       QObject::connect (qw, SIGNAL (destroyed ()), c, SLOT (apply ()));
-      ret = qw;
+      qwid = qw;
     }
       break;
       
     case refresh_widget:
     {
       string tmwid = open_box<string> (load);
-      ret = new QTMRefreshWidget (tmwid);
+      qwid = new QTMRefreshWidget (tmwid);
     }
       break;
       
     default:
-      ret = NULL;
+      qwid = NULL;
   }
 
-  return ret;
+  return qwid;
 }

@@ -66,9 +66,9 @@ class qt_widget;
  
  The underlying QWidget is NOT owned by the qt_widget, because several
  qt_widgets may have the same underlying QWidget, so we cannot delete it here.
- We leave the responsibility of that to the outmost widget, which will usually
- be a qt_window_widget and whose QWidget, typically a QTMPlainWindow or a
- QTMWindow, should be the parent of all the related QWidgets.
+ We leave the responsibility of that to the outmost widget, which will almost
+ exclusively be a qt_window_widget and whose QWidget, typically a QTMPlainWindow
+ or a QTMWindow, should be the parent of all the related QWidgets.
  */
 class qt_widget_rep : public widget_rep {
 public:
