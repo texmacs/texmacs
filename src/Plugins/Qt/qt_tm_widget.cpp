@@ -539,7 +539,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
         mainwindow()->statusBar()->addPermanentWidget(rightLabel);
         leftLabel->show();
         rightLabel->show();
-        delete prompt;
+        prompt->deleteLater();
         prompt = NULL;
       }
     }
@@ -698,11 +698,12 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
 
       QLayout* l = centralwidget()->layout();
       l->removeWidget(canvas());
-      delete canvas();  // remember: only windows delete QWidgets.
-      concrete(main_widget)->qwid = 0;
+      canvas()->deleteLater();  // remember: only windows delete QWidgets.
       main_widget = w;
-      concrete(main_widget)->as_qwidget();  // force (re)creation of QWidget 
-      if (canvas()) { // if the passed widget wasn't empty... (while switching buffers it is)
+      concrete(main_widget)->as_qwidget();  // force (re)creation of QWidget
+      // While switching buffers the widget w is a glue_widget. It's QWidget
+      // is a dummy one and canvas() returns 0 so we must check here.
+      if (canvas()) {
         l->addWidget(canvas());
         canvas()->show();
         canvas()->setFocusPolicy(Qt::StrongFocus);
@@ -777,7 +778,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       side_tools_widget = w;
       QWidget* new_qwidget = concrete (w)->as_qwidget();
       QWidget* old_qwidget = sideDock->widget();
-      delete old_qwidget;
+      old_qwidget->deleteLater();
       sideDock->setWidget (new_qwidget); 
       update_visibility();
       new_qwidget->show();
@@ -934,8 +935,7 @@ qt_tm_embedded_widget_rep::write (slot s, blackbox index, widget w) {
       qt_simple_widget_rep* wid = static_cast<qt_simple_widget_rep*>(w.rep);
       QTMWidget* new_widget     = static_cast<QTMWidget*>(wid->as_qwidget());
       if (new_widget) {
-        delete canvas();
-        qwid = 0;
+        canvas()->deleteLater();
         new_widget->setFocusPolicy (Qt::StrongFocus);
         new_widget->setFocus ();
         qwid = new_widget;

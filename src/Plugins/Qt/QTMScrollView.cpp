@@ -18,18 +18,6 @@
 #include <QPaintEvent>
 
 
-class QTMSurface : public QWidget {
-  QTMScrollView *sv;
-public:
-  QTMSurface(QWidget *p, QTMScrollView* _sv) : QWidget (p), sv (_sv) { }
-
-protected:
-  virtual bool event(QEvent *event) {
-    return (sv && sv->surfaceEvent(event) ? true : QWidget::event(event));
-  }  
-};
-
-
 QTMScrollView::QTMScrollView ( QWidget *_parent )
 : QAbstractScrollArea (_parent), p_extents(QRect(0,0,0,0))  {
   

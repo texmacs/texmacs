@@ -45,7 +45,7 @@ qt_window_widget_rep::~qt_window_widget_rep ()
 {
   nr_windows--;
 
-  delete qwid;
+  qwid->deleteLater();
 }
 
 widget
@@ -243,7 +243,7 @@ qt_popup_widget_rep::qt_popup_widget_rep (widget wid, command _quit)
  WARNING! This should be the only place were QWidgets are destroyed!
  */
 qt_popup_widget_rep::~qt_popup_widget_rep () {  
-  delete qwid;
+  qwid->deleteLater();
 }
 
 widget

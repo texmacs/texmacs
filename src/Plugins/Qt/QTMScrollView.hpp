@@ -18,7 +18,6 @@
 class QResizeEvent;
 class QPaintEvent;
 
-
 /*! Scroll view widget.
 
  The current structure of the central texmacs widget (the canvas) is the 
@@ -27,27 +26,20 @@ class QPaintEvent;
  QAbstractScrollArea coordinates the viewport with the scrollbars and maintains
  informations like the real extent of the working surface and the current 
  origin which can be acted upon via the scrollbars. This setup has been 
- augmented via another widget child of the viewport which we call the 
- "surface". The only purpose of this widget is to provide automatic centering
- of the working area inside the viewport. To support this we "un-wired" the
- event redirection built-in in QAbstractScrollArea (from the viewport widget 
- to the QAbstractScrollArea) and re-wired event redirection from the surface
- to the QTMScrollView. All relevant events like resize, I/O events and the 
- like which are sent to the surface are resent to the QTMScrollView for 
- handling. This allows to concentrate all the logic in only one object.
- See QTMSurface::event for info about the redirected events.
+ augmented via another widget child of the scrollview which we call the 
+ "surface", with the purpose of centering the working area. See the 
+ documentation for QTMSurface for more info on this.
 */
 class QTMScrollView : public QAbstractScrollArea {
   Q_OBJECT
 
   QRect    p_extents;   // The size of the virtual area where things are drawn.
   QPoint    p_origin;   // The offset into that area
-  QWidget* p_surface;
+  QWidget* p_surface;   // Actual drawing area, centered (or not) in the scrollarea
   
 public:
   
   QTMScrollView (QWidget *_parent = NULL);
-  virtual ~QTMScrollView () { }
 
   QPoint  origin () { return p_origin; }
   void setOrigin (QPoint newOrigin);
@@ -78,4 +70,28 @@ protected:
   friend class QTMSurface;
 };
 
+
+/*! Provide automatic centering of the working area inside the viewport.
+ 
+ The only purpose of this widget is to provide this centering. To support this
+ we "un-wired" the event redirection built-in in QAbstractScrollArea (from the
+ viewport widget to the QAbstractScrollArea) and re-wired event redirection 
+ from the surface to the QTMScrollView (see event())
+ 
+ All relevant events like resize, I/O events and the like which are sent to the
+ surface are resent QTMScrollView::surfaceEvent() for handling. This allows to 
+ concentrate all the logic in only one object.
+ */
+class QTMSurface : public QWidget {
+  Q_OBJECT
+
+  QTMScrollView* sv;
+public:
+  QTMSurface(QWidget* p, QTMScrollView* _sv) : QWidget (p), sv (_sv) { }
+  
+protected:
+  virtual bool event(QEvent *event) {
+    return sv->surfaceEvent(event) ? true : QWidget::event(event);
+  }  
+};
 #endif // QTMSCROLLVIEW_HPP
