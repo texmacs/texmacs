@@ -19,9 +19,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define help-file-path "$TEXMACS_DOC_PATH")
+(define help-url-cache (make-ahash-table))
 
 (tm-define (url-exists-in-help? s)
-  (url-exists? (url-unix help-file-path s)))
+  (with entry (ahash-ref help-url-cache s)
+    (if (list? entry)
+      (car entry)
+      (car (ahash-set! help-url-cache s
+                       (list (url-exists? (url-unix help-file-path s))))))))
 
 (define (url-resolve-help s)
   (if (or (in? (url-suffix s) '("tex" "tm")) (url-exists? s))
