@@ -544,9 +544,7 @@
     (aligned
       (meti (text "Embed TeXmacs data in Svg as string attribute")
         (toggle (set-boolean-preference "texmacs->graphics:attr" answer)
-                (get-boolean-preference "texmacs->graphics:attr"))))
-    ===
-    (aligned
+                (get-boolean-preference "texmacs->graphics:attr")))
       (meti (text "Embed TeXmacs data in Svg as tmml")
         (toggle (set-boolean-preference "texmacs->graphics:tmml" answer)
                 (get-boolean-preference "texmacs->graphics:tmml"))))))
