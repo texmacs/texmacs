@@ -169,7 +169,7 @@
   (pick-background (cell-set-background answer))
   ---
   ("Palette" (interactive-background
-              (lambda (col) (cell-set-background "color" col)) '()))
+              (lambda (col) (cell-set-background col)) '()))
   ("Other" (interactive cell-set-background)))
 
 (menu-bind cell-special-menu
