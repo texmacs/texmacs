@@ -31,7 +31,7 @@ qt_chooser_widget_rep::qt_chooser_widget_rep (command _cmd, string _type, bool _
 {
   if (DEBUG_QT)
     cout << "qt_chooser_widget_rep::qt_chooser_widget_rep type=\""
-    << type << "\" save=\"" << save << "\"" << LF;
+         << type << "\" save=\"" << save << "\"" << LF;
 }
 
 qt_chooser_widget_rep::~qt_chooser_widget_rep() {}
@@ -39,8 +39,7 @@ qt_chooser_widget_rep::~qt_chooser_widget_rep() {}
 
 void
 qt_chooser_widget_rep::send (slot s, blackbox val) {
-  if (DEBUG_QT)
-    cout << "qt_chooser_widget_rep::send " << slot_name(s) << LF;
+
   switch (s) {
     case SLOT_VISIBILITY:
     {   
@@ -92,6 +91,9 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
     default:
       qt_widget_rep::send (s, val);
   }
+  if (DEBUG_QT)
+    cout << "qt_chooser_widget_rep: sent " << slot_name (s) 
+         << "\t\tto widget\t"      << type_as_string() << LF;
 }
 
 blackbox
@@ -120,16 +122,6 @@ qt_chooser_widget_rep::query (slot s, int type_id) {
   }
 }
 
-void
-qt_chooser_widget_rep::notify (slot s, blackbox new_val) {
-  if (DEBUG_QT)
-    cout << "[qt_chooser_widget_rep ]";
-  switch (s) {
-    default: ;
-  }
-  qt_widget_rep::notify (s, new_val);
-}
-
 widget
 qt_chooser_widget_rep::read (slot s, blackbox index) {
   if (DEBUG_QT)
@@ -149,16 +141,6 @@ qt_chooser_widget_rep::read (slot s, blackbox index) {
       return this;
     default:
       return qt_widget_rep::read(s,index);
-  }
-}
-
-void
-qt_chooser_widget_rep::write (slot s, blackbox index, widget w) {
-  if (DEBUG_QT)
-    cout << "[qt_chooser_widget] ";
-  switch (s) {
-    default:
-      qt_widget_rep::write(s,index,w);
   }
 }
 

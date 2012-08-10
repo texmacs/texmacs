@@ -38,8 +38,6 @@ public:
   virtual void send (slot s, blackbox val);
   virtual blackbox query (slot s, int type_id);
   virtual widget read (slot s, blackbox index);
-  virtual void write (slot s, blackbox index, widget w);
-  virtual void notify (slot s, blackbox new_val);
   virtual widget plain_window_widget (string s, command q);
   
   void perform_dialog();
