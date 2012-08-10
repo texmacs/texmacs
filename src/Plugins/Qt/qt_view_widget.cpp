@@ -153,7 +153,7 @@ qt_view_widget_rep::query (slot s, int type_id) {
       check_type_id<int> (type_id, s);
         // return close_box<int> ((int)view->window());
         // we need only to know if the widget is attached to some gui window
-      return close_box<int> (canvas()->window() ? 1 : 0);
+      return close_box<int> ((qwid && qwid->window()) ? 1 : 0);
     }
 
     case SLOT_RENDERER:

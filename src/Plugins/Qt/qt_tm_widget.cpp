@@ -704,6 +704,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
         QLayout* l = centralwidget()->layout();
         l->removeWidget(canvas());
         canvas()->deleteLater();
+        concrete_simple_widget(main_widget)->qwid = 0; // HACK, FIXME
 
         concrete(w)->as_qwidget();    // force (re)creation of QWidget
         main_widget = w;              // canvas() now returns the new QWidget
@@ -783,6 +784,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       QWidget* new_qwidget = concrete (w)->as_qwidget();
       QWidget* old_qwidget = sideDock->widget();
       old_qwidget->deleteLater();
+      old_qwidget = 0;  // HACK, FIXME
       sideDock->setWidget (new_qwidget); 
       update_visibility();
       new_qwidget->show();
