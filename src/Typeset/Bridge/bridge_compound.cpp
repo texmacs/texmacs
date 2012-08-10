@@ -144,9 +144,11 @@ bridge_compound_rep::notify_macro (
       if (is_atomic (fun[i])) {
 	string var= fun[i]->label;
 	env->macro_arg->item (var)=
-	  i<m? st[i+delta]: attach_dip (tree (UNINIT), decorate_right (ip));
+	  i+delta<m? st[i+delta]:
+          attach_dip (tree (UNINIT), decorate_right (ip));
 	env->macro_src->item (var)=
-	  i<m? descend (ip,i+delta): decorate_right(ip);
+	  i+delta<m? descend (ip,i+delta):
+          decorate_right(ip);
       }
     flag= body->notify_macro (type, var, l+1, p, u);
     env->macro_arg= env->macro_arg->next;
