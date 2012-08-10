@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.6>
+<TeXmacs|1.0.7.16>
 
 <style|source>
 
@@ -16,16 +16,15 @@
       </src-copyright>
 
       <\src-license>
-        This software falls under the <hlink|GNU general public
-        license, version 3 or later|$TEXMACS_PATH/LICENSE>.
-        It comes WITHOUT ANY WARRANTY WHATSOEVER.
-        You should have received a copy of the license which the software.
-        If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
+        This software falls under the <hlink|GNU general public license,
+        version 3 or later|$TEXMACS_PATH/LICENSE>. It comes WITHOUT ANY
+        WARRANTY WHATSOEVER. You should have received a copy of the license
+        which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
       </src-license>
     </src-title>
   </active*>
 
-  <use-package|std|env-base|env-math|env-float|header-article|title-base|section-article|std-latex>
+  <use-package|std|env-base|env-math|env-float|env-program|header-article|title-base|section-article|std-latex>
 
   <assign|env-theorem-dtd|1.0>
 
@@ -163,19 +162,27 @@
 
   <group-common-counter|theorem-env>
 
-  <assign|theorem-name|<macro|name|<with|font-series|bold|<arg|name>>>>
+  <assign|enunciation-name|<macro|name|<with|font-series|bold|<arg|name>>>>
 
-  <assign|theorem-sep|<macro|. >>
+  <assign|enunciation-sep|<macro|. >>
+
+  <assign|theorem-name|<macro|name|<enunciation-name|<arg|name>>>>
+
+  <assign|theorem-sep|<macro|<enunciation-sep>>>
 
   <assign|remark-name|<macro|name|<with|font-shape|italic|<arg|name>>>>
 
-  <assign|remark-sep|<macro|. >>
+  <assign|remark-sep|<macro|<enunciation-sep>>>
 
-  <assign|exercise-name|<macro|name|<with|font-series|bold|<arg|name>>>>
+  <assign|exercise-name|<macro|name|<enunciation-name|<arg|name>>>>
 
-  <assign|exercise-sep|<macro|. >>
+  <assign|exercise-sep|<macro|<enunciation-sep>>>
 
   \;
+
+  <assign|render-enunciation|<\macro|which|body>
+    <padded-normal|1fn|1fn|<surround|<remark-name|<arg|which><theorem-sep>>||<arg|body>>>
+  </macro>>
 
   <assign|render-remark|<\macro|which|body>
     <padded-normal|1fn|1fn|<surround|<remark-name|<arg|which><theorem-sep>>||<arg|body>>>
@@ -277,9 +284,9 @@
   </active*>
 
   <assign|aligned-item|<macro|x|<style-with|src-compact|none|<with|par-first|-15pt|<yes-indent>><resize|<arg|x>
-  |r-15pt||r+0pt|>>>>
+  |<minus|1r|15pt>||<plus|1r|0pt>|>>>>
 
-  <assign|compact-item|<macro|x|<style-with|src-compact|none|<with|par-first|-15pt|<yes-indent>><resize|<arg|x>|||r]15pt|>>>>
+  <assign|compact-item|<macro|x|<style-with|src-compact|none|<with|par-first|-15pt|<yes-indent>><resize|<arg|x>|||<maximum|1r|15pt>|>>>>
 
   \;
 
@@ -299,17 +306,17 @@
 
   \;
 
-  <new-list|itemize-1|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<group|->>>>>
+  <new-list|itemize-1|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<rigid|->>>>>
 
-  <new-list|itemize-2|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<group|->>>>>
+  <new-list|itemize-2|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<rigid|->>>>>
 
   <new-list|itemize-3|<value|aligned-item>|<macro|x|<active*|<with|mode|math|\<bullet\>>>>>
 
-  <new-list|itemize-minus|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<group|->>>>>
+  <new-list|itemize-minus|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<rigid|->>>>>
 
   <new-list|itemize-dot|<value|aligned-item>|<macro|x|<active*|<with|mode|math|\<bullet\>>>>>
 
-  <new-list|itemize-arrow|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<group|\<rightarrow\>>>>>>
+  <new-list|itemize-arrow|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<rigid|\<rightarrow\>>>>>>
 
   \;
 
@@ -327,15 +334,15 @@
 
   <assign|long-compact-space-item|<macro|x|<item-long|<compact-space-item|<arg|x>>>>>
 
-  <new-list|description-compact|<value|compact-space-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
+  <new-list|description-compact|<value|compact-space-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
-  <new-list|description-aligned|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
+  <new-list|description-aligned|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
-  <new-list|description-dash|<value|compact-dash-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
+  <new-list|description-dash|<value|compact-dash-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
-  <new-list|description-long|<value|long-compact-space-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
+  <new-list|description-long|<value|long-compact-space-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
-  <new-list|description|<value|compact-space-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
+  <new-list|description|<value|compact-space-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
   <\active*>
     <\src-comment>
