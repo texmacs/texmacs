@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.0.7.16>
 
 <style|tmdoc>
 
@@ -6,7 +6,7 @@
   <tmdoc-title|Extending the graphical user interface>
 
   Most of the user interface to <TeXmacs> is dynamically created from within
-  the interpreted scheme code. New menus and buttons can be added, or the
+  the interpreted <scheme> code. New menus and buttons can be added, or the
   existing ones reused and rearranged, even the main editor can be embedded
   anywhere.
 
@@ -14,14 +14,20 @@
   the user. One possible approach is to use the facility <scm|interactive>,
   which according to the user's preferences will either popoup a dialog or
   ask in the footer bar, based in metadata you provide inside your
-  <scm|tm-define>'d function. See <with|color|red|here> for more on this
-  topic. However, automatically generated stuff is not always the best
-  approach, so you might want to explicitly design your interface placing it
-  inside a complicated dialog. The following sections should help with that.
+  <scm|tm-define>'d function. See ``<hlink|Meta information and logical
+  programming|../overview/overview-meta.en.tm>'' for more on this topic.
+  However, automatically generated content is not always the best approach,
+  so you might want to explicitly design your interface placing it inside a
+  complicated dialog. The following sections should help you with this.
 
   <\traverse>
-    <branch|An introduction to widgets, dialogs and
-    forms.|scheme-gui-intro.en.tm>
+    <branch|An introduction to widgets.|scheme-gui-intro.en.tm>
+
+    <branch|Menus and toolbars.|scheme-gui-menus.en.tm>
+
+    <branch|Dialogs and composite widgets.|scheme-gui-dialogs.en.tm>
+
+    <branch|Forms.|scheme-gui-forms.en.tm>
 
     <branch|Containers, glue and refresh widgets and other advanced
     topics.|scheme-gui-advanced.en.tm>

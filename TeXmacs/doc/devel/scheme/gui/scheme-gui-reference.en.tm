@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.0.7.16>
 
 <style|tmdoc>
 
@@ -6,14 +6,18 @@
   <tmdoc-title|Widgets reference guide>
 
   This should be a comprehensive list of all the widgets available to the
-  user.
+  user, following this schema:
+
+  <\explain>
+    <scm|some-symbol><explain-synopsis|Some synopsis>
+  <|explain>
+    Some explanation.
+  </explain>
 
   An excerpt from <verbatim|progs/kernel/gui/menu-define.scm>, as of SVN
   revision 5238:
 
   <\scm>
-    \;
-
     (define-table gui-make-table
 
     \ \ (eval ,gui-make-eval)
@@ -191,11 +195,7 @@
 
     \ \ \ \ \ \ \ \ \ \ (texmacs-error "gui-make" "invalid menu item ~S"
     x))))
-
-    \;
   </scm>
-
-  \;
 
   <tmdoc-copyright|2012|the <TeXmacs> team.>
 
