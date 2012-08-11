@@ -96,6 +96,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("alias")= c;
   t ("and")= c;
   t ("assume")= d;
+  t ("autofold")= d;
   t ("begin")= c;
   t ("break")= c;
   t ("case")= c;
@@ -168,6 +169,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("mutable")= c;
   t ("operator")= c;
   t ("or")= c;
+  t ("outline")= d;
   t ("packed")= c;
   t ("pattern")= c;
   t ("penalty")= c;
