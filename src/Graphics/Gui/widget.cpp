@@ -61,6 +61,8 @@ slot_name (const slot s) {
     "SLOT_FOCUS_ICONS",
     "SLOT_USER_ICONS_VISIBILITY",
     "SLOT_USER_ICONS",
+    "SLOT_SIDE_TOOLS_VISIBILITY",
+    "SLOT_SIDE_TOOLS",
     "SLOT_FOOTER_VISIBILITY",
     "SLOT_LEFT_FOOTER",
     "SLOT_RIGHT_FOOTER",
@@ -73,7 +75,9 @@ slot_name (const slot s) {
     "SLOT_INPUT_TYPE",
     "SLOT_INPUT_PROPOSAL",
     "SLOT_FILE",
-    "SLOT_DIRECTORY"
+    "SLOT_DIRECTORY",
+
+    "slot_id__LAST"
   };
   
   return slot_names[s.sid]; 
