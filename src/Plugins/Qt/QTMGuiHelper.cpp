@@ -11,6 +11,7 @@
 
 #include "QTMGuiHelper.hpp"
 #include "qt_tm_widget.hpp"
+#include "qt_utilities.hpp"
 #include "scheme.hpp"
 #include "iterator.hpp"
 #include <QFileOpenEvent>
@@ -155,4 +156,56 @@ QTMRefreshWidget::doRefresh() {
     }
     setLayout(concrete(cur)->as_qlayoutitem()->layout());
   }
+}
+
+
+/******************************************************************************
+ * QTMComboBox
+ ******************************************************************************/
+
+QTMComboBox::QTMComboBox (QWidget* parent) : QComboBox (parent) {
+    ///// Obtain the minimum vertical size
+  QComboBox cb;
+  cb.setSizeAdjustPolicy(AdjustToContents);
+  cb.addItem("");
+  minSize = cb.minimumSizeHint();  // we'll just keep the height
+  
+    ///// Add width of the arrow button
+  QStyleOptionComboBox opt;
+  opt.initFrom(&cb);
+  opt.activeSubControls = QStyle::SC_ComboBoxArrow;
+  QRect r = style()->subControlRect (QStyle::CC_ComboBox, &opt,
+                                     QStyle::SC_ComboBoxArrow, &cb);
+  minSize.setWidth(r.width());
+}
+
+/*! Add items and fix the ComboBox size using texmacs length units.
+ 
+ Relative sizes are set based on the minimum bounding box in which any item of
+ the list fits. Absolute sizes are set independently of the size of items in 
+ the list.
+ 
+ The QComboBox' minimum height is the original minimumSizeHint().
+ */
+void
+QTMComboBox::addItemsAndResize (const QStringList& texts, string ww, string hh) {
+  QComboBox::addItems(texts);
+
+    ///// Calculate the minimal contents size:
+  calcSize = QApplication::globalStrut ();
+  const QFontMetrics& fm = fontMetrics ();
+  
+  for (int i = 0; i < count(); ++i) {
+    QRect br = fm.boundingRect(itemText(i));
+    calcSize.setWidth (qMax (calcSize.width(), br.width()));
+    calcSize.setHeight (qMax (calcSize.height(), br.height()));
+  }
+  calcSize = qt_decode_length (ww, hh, calcSize, fm);
+  
+    ///// Add minimum constraints and fix size
+  calcSize.setHeight (qMax (calcSize.height(), minSize.height()));
+  calcSize.rwidth() += minSize.width();
+  
+  setMinimumSize (calcSize);
+  setMaximumSize (calcSize);
 }

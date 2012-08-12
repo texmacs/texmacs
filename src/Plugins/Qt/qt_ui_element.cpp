@@ -1016,9 +1016,9 @@ qt_ui_element_rep::as_qwidget () {
       qwid = wid->as_qwidget();
       qwid->setStyleSheet(sheet);
       
-      QSize minSize = qt_decode_length(static_cast<const QWidget*>(qwid), y1.x1, y2.x1);
-      QSize defSize = qt_decode_length(static_cast<const QWidget*>(qwid), y1.x2, y2.x2);
-      QSize maxSize = qt_decode_length(static_cast<const QWidget*>(qwid), y1.x3, y2.x3);
+      QSize minSize = qt_decode_length(y1.x1, y2.x1, qwid->minimumSizeHint(), qwid->fontMetrics());
+      QSize defSize = qt_decode_length(y1.x2, y2.x2, qwid->minimumSizeHint(), qwid->fontMetrics());
+      QSize maxSize = qt_decode_length(y1.x3, y2.x3, qwid->minimumSizeHint(), qwid->fontMetrics());
 
       if (minSize == defSize && defSize == maxSize) {        
         qwid->setFixedSize(defSize);        
@@ -1185,21 +1185,16 @@ qt_ui_element_rep::as_qwidget () {
       QString      value = to_qstring(x.x3);
       QString      style = to_qstylesheet(x.x4);
             
-      QComboBox* w = new QComboBox(NULL);
+      QTMComboBox* w = new QTMComboBox(NULL);
       w->setEditable(value.isEmpty() || values.last().isEmpty());  // weird convention?!
       if (values.last().isEmpty())
         values.removeLast();
       
-      w->addItems(values);
+      w->addItemsAndResize(values, x.x5, "");
       int index = w->findText(value, Qt::MatchFixedString | Qt::MatchCaseSensitive);
       if (index != -1)
         w->setCurrentIndex(index);
    
-      // The QComboBox must be already filled to calculate relative widths
-      QSize size= qt_decode_length(w, x.x5, "");
-      w->setMinimumSize(size);
-      // QComboBox::AdjustToContentsOnFirstShow would fix the size. Better?
-      w->setSizeAdjustPolicy(QComboBox::AdjustToContents);
       w->setStyleSheet(style);
       
       command ecmd = tm_new<qt_enum_command_rep> (w, cmd);

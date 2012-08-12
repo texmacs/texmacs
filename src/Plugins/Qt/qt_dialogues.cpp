@@ -88,7 +88,7 @@ QTMLineEdit::keyPressEvent(QKeyEvent *event)
 
 QSize
 QTMLineEdit::sizeHint () const {
-  return qt_decode_length(this, ww, "");
+  return qt_decode_length(ww, "", minimumSizeHint(), fontMetrics());
 }
 
 void 
@@ -391,10 +391,10 @@ qt_input_text_widget_rep::as_qwidget () {
     helper -> add (le);
     QObject::connect(le, SIGNAL(returnPressed ()), helper, SLOT(commit ()));
     QObject::connect(le, SIGNAL(editingFinished ()), helper, SLOT(leave ()));
-    le -> setText (to_qstring (helper->wid()->text));
+    le->setText (to_qstring (helper->wid()->text));
     
-    le -> setStyleSheet (to_qstylesheet (style));
-    le -> setMinimumSize(qt_decode_length(le, width, ""));
+    le->setStyleSheet (to_qstylesheet (style));
+    le->setMinimumSize(qt_decode_length(width, "", le->minimumSizeHint(), le->fontMetrics()));
     
     if (ends (type, "file") || type == "directory") {
       // autocompletion

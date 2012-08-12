@@ -118,13 +118,9 @@ to_qstylesheet (int style, color c) {
  FIXME: does 1w mean 100% of the contents' size or 100% of the available size?
  */
 QSize
-qt_decode_length (const QWidget* qwid, string width, string height) {
-  QSize size;
-  if (qwid)
-    size = qwid->minimumSizeHint();
-  else 
-    gui_maximal_extents (size.rwidth(), size.rheight());
-  
+qt_decode_length (string width, string height, const QSize& ref, const QFontMetrics& fm) {
+  QSize size = ref;
+
     // Width as a function of the default width
   if (ends (width, "w") && is_double (width (0, N(width) - 1))) {
     double x = as_double (width (0, N(width) - 1));
@@ -138,11 +134,7 @@ qt_decode_length (const QWidget* qwid, string width, string height) {
     // Absolute EM units
   else if (ends (width, "em") && is_double (width (0, N(width) - 2))) {
     double x = as_double (width (0, N(width) - 2));
-    if (qwid) {
-      size.setWidth(x * qwid->fontInfo().pointSize()); 
-    } else {
-      size.setWidth(x * QApplication::font().pointSize());
-    }
+    size.setWidth(x * fm.width("M")); 
   }
     // Absolute pixel units 
   else if (ends (width, "px") && is_double (width (0, N(width) - 2))) {
@@ -162,11 +154,7 @@ qt_decode_length (const QWidget* qwid, string width, string height) {
   }
   else if (ends (height, "em") && is_double (height (0, N(height) - 2))) {
     double y = as_double (height (0, N(height) - 2));
-    if (qwid) {
-      size.setHeight(y * qwid->fontInfo().pointSize()); 
-    } else {
-      size.setHeight(y * QApplication::font().pointSize());
-    }
+    size.setHeight(y * fm.width("M")); 
   }
   else if (ends (height, "px") && is_double (height (0, N(height) - 2))) {
     double y = as_double (height (0, N(height) - 2));
