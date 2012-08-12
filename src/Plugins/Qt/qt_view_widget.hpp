@@ -49,18 +49,18 @@ public:
   basic_renderer current_renderer;
   
 public:
-  qt_view_widget_rep (QTMWidget* _view, types _type=view_widget);
+  qt_view_widget_rep (types _type=view_widget);
   virtual ~qt_view_widget_rep () { }
 
   virtual void      send (slot s, blackbox val);
   virtual blackbox query (slot s, int type_id);
   virtual widget    read (slot s, blackbox index);
-  
-  void set_current_renderer(basic_renderer _r) { current_renderer = _r;  }
-  basic_renderer get_current_renderer() {  return current_renderer; }
 
-  QTMWidget*         canvas () { return static_cast<QTMWidget*> (qwid); }
-  QTMScrollView* scrollarea () { return static_cast<QTMScrollView*> (qwid); }
+  void set_current_renderer (basic_renderer _r) { current_renderer = _r;  }
+  basic_renderer get_current_renderer () {  return current_renderer; }
+
+  QTMWidget*         canvas () { return qobject_cast<QTMWidget*> (qwid); }
+  QTMScrollView* scrollarea () { return qobject_cast<QTMScrollView*> (qwid); }
 };
 
 

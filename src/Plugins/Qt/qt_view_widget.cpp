@@ -27,8 +27,8 @@
 /*!
  Sets the view to the specified QTMWidget.
  */
-qt_view_widget_rep::qt_view_widget_rep (QTMWidget* _view, types _type)
- : qt_widget_rep(_type, _view), current_renderer(NULL)  {}
+qt_view_widget_rep::qt_view_widget_rep (types _type)
+ : qt_widget_rep(_type), current_renderer(NULL)  { }
 
 
 /******************************************************************************

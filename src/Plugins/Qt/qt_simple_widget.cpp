@@ -18,11 +18,18 @@
 #include <QPixmap>
 
 qt_simple_widget_rep::qt_simple_widget_rep ()
-: qt_view_widget_rep (new QTMWidget (0, 0), simple_widget) {
-    // QTMWidget needs a pointer to an initiliazed qt_simple_widget_rep object
-    // That's why we use set_tm_widget(), instead of passing "this" in the
-    // initialization list, i.e.: "new QTMWidget(0, this)" is wrong.
-  static_cast<QTMWidget*>(qwid)->set_tm_widget(this);
+ : qt_view_widget_rep (simple_widget) { }
+
+QWidget*
+qt_simple_widget_rep::as_qwidget () {
+  qwid = new QTMWidget(0, this);
+  reapply_sent_slots();
+  SI width, height;
+  handle_get_size_hint (width, height);
+  QSize sz = to_qsize(width, height);
+  scrollarea()->setExtents (QRect (QPoint(0,0), sz));
+  canvas()->resize(sz);
+  return qwid;
 }
 
 
@@ -80,27 +87,6 @@ void
 qt_simple_widget_rep::send (slot s, blackbox val) {
   save_send_slot(s, val);
   qt_view_widget_rep::send (s, val);
-}
-
-/*!
- NOTE: Sometimes the QTMWidget underlying this widget is deleted, for instance
- when destroying the QWidgets in a QTMRefreshWidget. Because of this we cannot
- simply return the qwid pointer. As a convention we assume that if this
- method is being called on this object, then a new QTMWidget is to be built.
- 
- FIXME: It might be a good idea to apply this convention everywhere else (it 
- almost is already)
-*/ 
-QWidget*
-qt_simple_widget_rep::as_qwidget () {
-  qwid = new QTMWidget(0, this);
-  reapply_sent_slots();
-  SI width, height;
-  handle_get_size_hint (width, height);
-  QSize sz = to_qsize(width, height);
-  scrollarea()->setExtents (QRect (QPoint(0,0), sz));
-  canvas()->resize(sz);
-  return qwid;
 }
 
 

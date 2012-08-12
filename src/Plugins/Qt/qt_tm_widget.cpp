@@ -114,7 +114,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
 {
   type = texmacs_widget;
 
-  main_widget = tm_new<qt_simple_widget_rep>();
+  main_widget = ::glue_widget (true, true, 1, 1);
   
   // decode mask
   visibility[0] = (mask & 1)  == 1;  // header
@@ -446,7 +446,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     case SLOT_SHRINKING_FACTOR:
     case SLOT_MOUSE_GRAB:
       main_widget->send(s, val);
-      break;
+      return;
       
     case SLOT_HEADER_VISIBILITY:
     {
@@ -455,6 +455,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       update_visibility();
     }
       break;
+
     case SLOT_MAIN_ICONS_VISIBILITY:
     {
       check_type<bool>(val, s);
@@ -462,6 +463,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       update_visibility();
     }
       break;
+
     case SLOT_MODE_ICONS_VISIBILITY:
     {
       check_type<bool>(val, s);
@@ -469,6 +471,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       update_visibility();
     }
       break;
+
     case SLOT_FOCUS_ICONS_VISIBILITY:
     {
       check_type<bool>(val, s);
@@ -476,6 +479,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       update_visibility();
     }
       break;
+
     case SLOT_USER_ICONS_VISIBILITY:
     {
       check_type<bool>(val, s);
@@ -491,7 +495,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       update_visibility();
     }
       break;
- 
+
     case SLOT_SIDE_TOOLS_VISIBILITY:
     {
       check_type<bool>(val, s);
@@ -508,6 +512,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       leftLabel->update ();
     }
       break;
+
     case SLOT_RIGHT_FOOTER:
     {
       check_type<string>(val, s);
@@ -516,12 +521,12 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       rightLabel->update ();
     }
       break;
-      
+
     case SLOT_SCROLLBARS_VISIBILITY:
         // ignore this: qt handles scrollbars independently
         //                send_int (THIS, "scrollbars", val);
       break;
-      
+
     case SLOT_INTERACTIVE_MODE:
     {
       check_type<bool>(val, s);
@@ -555,7 +560,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
 #endif
     }
       break;
-      
+
     case SLOT_DESTROY:
     {  
       ASSERT (is_nil (val), "type mismatch");
@@ -564,6 +569,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       needs_update ();
     }
       break;
+
     default:
       qt_window_widget_rep::send (s, val);
       return;
@@ -692,24 +698,28 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     cout << "qt_tm_widget_rep::write " << slot_name (s) << LF;
   
   switch (s) {
-        // Widget w is a qt_simple_widget_rep, with a QTMWidget as underlying
-        // widget. We must discard the current main_widget and display the new.
-        // But while switching buffers the widget w is a glue_widget. In this
-        // case we have nothing to do here.
+        // Widget w is usually a qt_simple_widget_rep, with a QTMWidget as
+        // underlying widget. We must discard the current main_widget and 
+        // display the new. But while switching buffers the widget w is a
+        // glue_widget, so we may not just use canvas() everywhere.
     case SLOT_SCROLLABLE:
     {
       check_type_void (index, s);
+      
+      QLayout* l = centralwidget()->layout();
+      QWidget* q = concrete(main_widget)->qwid;
+      l->removeWidget(q);
+      q->setParent(qwid);  // HACK, TEST
+        //q->setParent(0);
+      q->deleteLater();
+      concrete(main_widget)->qwid = 0; // HACK, TEST
+      
+      q = concrete(w)->as_qwidget();   // force creation of the new QWidget
+      l->addWidget(q);
 
-      if (concrete(w)->type == simple_widget) {
-        QLayout* l = centralwidget()->layout();
-        l->removeWidget(canvas());
-        canvas()->deleteLater();
-        concrete_simple_widget(main_widget)->qwid = 0; // HACK, FIXME
+      main_widget = w; // canvas() now returns the new QTMWidget (or 0)
 
-        concrete(w)->as_qwidget();    // force (re)creation of QWidget
-        main_widget = w;              // canvas() now returns the new QWidget
-
-        l->addWidget(canvas());
+      if (canvas()) {
         canvas()->show();
         canvas()->setFocusPolicy(Qt::StrongFocus);
         canvas()->setFocus();
@@ -851,15 +861,12 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
 
 /******************************************************************************
  * qt_tm_embedded_widget_rep
- * FIXME: this might make more sense as a child of qt_simple_widget_rep
  ******************************************************************************/
 
 qt_tm_embedded_widget_rep::qt_tm_embedded_widget_rep (command _quit) 
-: qt_view_widget_rep(new QTMWidget(0, 0), embedded_tm_widget), quit(_quit) {
+ : qt_simple_widget_rep(), quit(_quit) {
 
 }
-
-qt_tm_embedded_widget_rep::~qt_tm_embedded_widget_rep () { }
 
 void
 qt_tm_embedded_widget_rep::send (slot s, blackbox val) {
@@ -875,7 +882,7 @@ qt_tm_embedded_widget_rep::send (slot s, blackbox val) {
       break;
       
     default:
-      qt_view_widget_rep::send (s, val);
+      qt_simple_widget_rep::send (s, val);
       return;
   }
   if (DEBUG_QT)
@@ -901,7 +908,7 @@ qt_tm_embedded_widget_rep::query (slot s, int type_id) {
       return close_box<bool> (false);
 
     default:
-      return qt_view_widget_rep::query (s, type_id);
+      return qt_simple_widget_rep::query (s, type_id);
   }
 }
 
@@ -915,7 +922,7 @@ qt_tm_embedded_widget_rep::read(slot s, blackbox index) {
       ret = widget(this);
       break;
     default:
-      return qt_view_widget_rep::read(s, index);
+      return qt_simple_widget_rep::read(s, index);
   }
   
   if (DEBUG_QT)
@@ -936,9 +943,9 @@ qt_tm_embedded_widget_rep::write (slot s, blackbox index, widget w) {
     case SLOT_SCROLLABLE:
     {
       check_type_void (index, s);
-      if (concrete_simple_widget(w)->type == simple_widget) {
+      if (concrete(w)->type == simple_widget) {
         qwid->deleteLater();
-        qwid = concrete_simple_widget(w)->as_qwidget();
+        qwid = concrete(w)->as_qwidget();
         qwid->setFocusPolicy (Qt::StrongFocus);
         qwid->setFocus ();
       }
@@ -954,6 +961,6 @@ qt_tm_embedded_widget_rep::write (slot s, blackbox index, widget w) {
     case SLOT_INTERACTIVE_INPUT:
         // FIXME: decide what to do with these for embedded widgets.
     default:
-      qt_view_widget_rep::write (s, index, w);
+      qt_simple_widget_rep::write (s, index, w);
   }
 }
