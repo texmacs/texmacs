@@ -60,14 +60,14 @@ qt_window_widget_rep::popup_window_widget(string s)
 /*! Looks among the widget's parents for the containing texmacs window
  */
 widget_rep* 
-qt_window_widget_rep::widget_from_qwidget(QWidget* qwid)
+qt_window_widget_rep::widget_from_qwidget(QWidget* q)
 {
-  while (qwid != NULL) {
-    QVariant v = qwid->property ("texmacs_window_widget");
+  while (q != NULL) {
+    QVariant v = q->property ("texmacs_window_widget");
     if (v.canConvert<void*> ())
       return static_cast<widget_rep*> (v.value<void*> ());
     else
-      qwid = qwid->parentWidget();
+      q = q->parentWidget();
   }
   FAILED ("attempt to retrieve the window of a QWidget without one");
 }

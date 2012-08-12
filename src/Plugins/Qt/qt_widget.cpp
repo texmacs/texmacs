@@ -39,13 +39,13 @@ qt_widget_rep::qt_widget_rep(types _type, QWidget* _qwid)
   : widget_rep (), id (widget_counter++), qwid (_qwid), type (_type), sequencer(0)
 {
   if (DEBUG_QT)
-    cout << "qt_widget_rep(), created: " << type_as_string() << LF;
+    cout << "qt_widget_rep: created a " << type_as_string() << LF;
 }
 
 
 qt_widget_rep::~qt_widget_rep() { 
   if (DEBUG_QT)
-    cout << "~qt_widget_rep(), deleted: " << type_as_string() << LF;
+    cout << "~qt_widget_rep: deleted a " << type_as_string() << LF;
   
   // DON'T DO THIS! (several qt_widget_rep may have the same underlying QWidget)
   //delete qwid; 
@@ -57,10 +57,9 @@ qt_widget_rep::~qt_widget_rep() {
  Implementations of this method must comply with the following:
  
   * The policy is to give ownership of the object to the caller.
-  * The pointer qt_widget_rep::qwid must be set to the returned object
+  * The pointer qt_widget_rep::qwid must be set to the returned object.
+  * A new QWidget is built on each call.
 
- Most implementations also build a new QWidget on each call, but we cannot rely
- on that because for instance qt_view_widget_rep does not (cannot (yet)).
  */
 inline QWidget*
 qt_widget_rep::as_qwidget () {

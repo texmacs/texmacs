@@ -55,7 +55,7 @@ public:
   virtual widget    read (slot s, blackbox index);
   virtual void    notify (slot s, blackbox new_val);
 	
-	static widget_rep* widget_from_qwidget (QWidget* qwid);
+  static widget_rep* widget_from_qwidget (QWidget* qwid);
 };
 
 /*!
