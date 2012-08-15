@@ -216,7 +216,9 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   bl->setContentsMargins(0,1,0,0);
   bl->setSpacing(0);
   cw->setLayout(bl);
-  bl->addWidget(concrete(main_widget)->as_qwidget());  // force creation of QWidget
+  QWidget* q = concrete(main_widget)->as_qwidget(); // force creation of QWidget
+  q->setParent(qwid); // q->layout()->removeWidget(q) will reset the parent to this
+  bl->addWidget(q);
   
   mw->setCentralWidget(cw);
   
@@ -707,14 +709,16 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       check_type_void (index, s);
       
       QLayout* l = centralwidget()->layout();
+      
+        //// Reparent the current main_widget's QWidget to the window
       QWidget* q = concrete(main_widget)->qwid;
       l->removeWidget(q);
-      q->setParent(qwid);  // HACK, TEST
-        //q->setParent(0);
-      q->deleteLater();
-      concrete(main_widget)->qwid = 0; // HACK, TEST
+
+      q->deleteLater();                 // careful with pending QEvents...
+      concrete(main_widget)->qwid = 0;  // Unnecessary in principle.
       
       q = concrete(w)->as_qwidget();   // force creation of the new QWidget
+      q->setParent(qwid);  // l->removeWidget(q) will reset ownership to this
       l->addWidget(q);
 
       main_widget = w; // canvas() now returns the new QTMWidget (or 0)

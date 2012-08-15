@@ -60,15 +60,17 @@ class qt_widget;
  * as_qwidget() returns a regular QWidget, for example to be embedded in a
    standalone window.
  
- Most of the UI items are implemented by qt_ui_element_rep, with some
- exceptions. Creation from the TeXmacs side is done using the global (yuk!)
- functions declared in Graphics/Gui/widget.hpp.
+ In all four cases a new instance of the QObject is created and ownership is
+ transferred to the caller. One reason why the underlying QWidget is NOT owned
+ by the qt_widget is that several qt_widgets may have the same underlying 
+ QWidget. The only exceptional qt_widgets are those whose compiled widgets are
+ windows to whom we leave the responsibility of deletion. They are the outmost
+ widget, typically a QTMPlainWindow or a QTMWindow, who should be the parent of
+ all the related QWidgets.
  
- The underlying QWidget is NOT owned by the qt_widget, because several
- qt_widgets may have the same underlying QWidget, so we cannot delete it here.
- We leave the responsibility of that to the outmost widget, which will almost
- exclusively be a qt_window_widget and whose QWidget, typically a QTMPlainWindow
- or a QTMWindow, should be the parent of all the related QWidgets.
+ Most of the UI items are implemented by qt_ui_element_rep, with some
+ exceptions. Creation from the TeXmacs side is done using the global functions
+ declared in Graphics/Gui/widget.hpp.
  */
 class qt_widget_rep : public widget_rep {
 public:

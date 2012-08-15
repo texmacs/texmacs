@@ -17,31 +17,29 @@
 
 QTMInteractivePrompt::QTMInteractivePrompt(qt_widget int_prompt, 
                                            qt_widget int_input, 
-																					 QWidget* parent)
-  : QWidget(parent)
+                                           QWidget* parent)
+: QWidget(parent)
 {
-  QLayoutItem *li = int_prompt->as_qlayoutitem ();
-  QLayoutItem *li2 = int_input->as_qlayoutitem ();
-  QHBoxLayout *_hl = new QHBoxLayout ();
-
-	setStyle (qtmstyle ());
+  QLayoutItem*  li = int_prompt->as_qlayoutitem ();
+  QLayoutItem* li2 = int_input->as_qlayoutitem ();
+  QHBoxLayout* _hl = new QHBoxLayout ();
+  
+  setStyle (qtmstyle ());
   setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   
-	if (QLabel *_la = qobject_cast<QLabel*> (li->widget ()))
+  if (QLabel *_la = qobject_cast<QLabel*> (li->widget ()))
     _la->setBuddy (li2->widget ());
-	if (QWidget *w = qobject_cast<QWidget*> (li2->widget ())) 
+  if (QWidget *w = qobject_cast<QWidget*> (li2->widget ())) 
     w->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   _hl->addItem (li);
   _hl->addSpacing (6);
   _hl->addItem (li2);
-	_hl->setContentsMargins (3,0,0,0);
+  _hl->setContentsMargins (3,0,0,0);
   setLayout (_hl);
-	
+  
   QFont f = font ();
   f.setPointSize (11);
   setFont (f);
-
-  
 }
 
 
