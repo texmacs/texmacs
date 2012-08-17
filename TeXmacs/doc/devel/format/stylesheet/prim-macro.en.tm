@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.2>
+<TeXmacs|1.0.7.16>
 
 <style|tmdoc>
 
@@ -15,13 +15,12 @@
   <markup|drd-props>.<htab|5mm>
 
   <\explain>
-    <explain-macro|macro|var-1|<with|mode|math|\<cdots\>>|var-n|body><explain-synopsis|macro
+    <explain-macro|macro|var-1|<math|\<cdots\>>|var-n|body><explain-synopsis|macro
     of fixed arity>
   <|explain>
     This primitive returns a macro (the <TeXmacs> analogue of a
-    <with|mode|math|\<lambda\>>-expression) with <with|mode|math|n>
-    arguments, named after the literal strings <src-arg|var-1> until
-    <src-arg|var-n>.
+    <math|\<lambda\>>-expression) with <math|n> arguments, named after the
+    literal strings <src-arg|var-1> until <src-arg|var-n>.
 
     New tags are defined by storing macros in the environment. Most of the
     time, macros are stored without scope with <markup|assign>, but it is
@@ -33,7 +32,7 @@
       Definition of the <markup|abbr> tag
 
       <\tm-fragment>
-        <inactive*|<assign|abbr|<macro|x|<group|<arg|x>>>>>
+        <inactive*|<assign|abbr|<macro|x|<rigid|<arg|x>>>>>
       </tm-fragment>
     </example>
 
@@ -42,7 +41,7 @@
   </explain>
 
   <\explain>
-    <explain-macro|arg|var|index-1|<with|mode|math|\<cdots\>>|index-n><explain-synopsis|retrieve
+    <explain-macro|arg|var|index-1|<math|\<cdots\>>|index-n><explain-synopsis|retrieve
     macro arguments>
   <|explain>
     This primitive is used to retrieve the arguments of a macro within its
@@ -64,11 +63,11 @@
     </itemize>
 
     When more than one arguments are specified,
-    <explain-macro|arg|var|index-1|<with|mode|math|\<cdots\>>|index-n>
-    expands to a subtree of the argument <src-arg|var>. The value of the
-    named argument must be a compound tree (not a string). The operands
-    <src-arg|var> until <src-arg|index-n> must all evaluate to positive
-    integers and give the path to the subtree of the macro argument.
+    <explain-macro|arg|var|index-1|<math|\<cdots\>>|index-n> expands to a
+    subtree of the argument <src-arg|var>. The value of the named argument
+    must be a compound tree (not a string). The operands <src-arg|var> until
+    <src-arg|index-n> must all evaluate to positive integers and give the
+    path to the subtree of the macro argument.
   </explain>
 
   <\explain>
@@ -76,11 +75,11 @@
     arity>
   <|explain>
     This primitive returns a macro (the <TeXmacs> analogue of a
-    <with|mode|math|\<lambda\>>-expression) capable of taking any number of
-    arguments. The arguments are stored in the macro variable with name
-    <src-arg|var> (a literal string) during the evaluation of the
-    <src-arg|body>. The <with|mode|math|i>-th individual argument can then be
-    accessed using <explain-macro|arg|var|i>.
+    <math|\<lambda\>>-expression) capable of taking any number of arguments.
+    The arguments are stored in the macro variable with name <src-arg|var> (a
+    literal string) during the evaluation of the <src-arg|body>. The
+    <math|i>-th individual argument can then be accessed using
+    <explain-macro|arg|var|i>.
   </explain>
 
   <\explain>
@@ -98,13 +97,12 @@
 
     By default, the macro <src-arg|foo> is applied to all children. If
     <src-arg|first> has been specified, then we rather start at the
-    <with|mode|math|i>-th child of <src-arg|var>, where <with|mode|math|i> is
-    the result of evaluating <src-arg|first>. If <src-arg|last> has been
-    specified too, then we stop at the <with|mode|math|j>-th child of
-    <src-arg|var> (the <with|mode|math|j>-th child not being included), where
-    <with|mode|math|j> is the result of evaluating <src-arg|last>. In this
-    last case, the arity of the returned tree is therefore
-    <with|mode|math|j-i>.
+    <math|i>-th child of <src-arg|var>, where <math|i> is the result of
+    evaluating <src-arg|first>. If <src-arg|last> has been specified too,
+    then we stop at the <math|j>-th child of <src-arg|var> (the <math|j>-th
+    child not being included), where <math|j> is the result of evaluating
+    <src-arg|last>. In this last case, the arity of the returned tree is
+    therefore <math|j-i>.
 
     Stated otherwise, <markup|map-args> applies <src-arg|foo> to all subtrees
     of the macro argument <src-arg|var> (or a range of subtrees if
@@ -142,7 +140,7 @@
   </explain>
 
   <\explain>
-    <explain-macro|compound|foo|arg-1|<with|mode|math|\<cdots\>>|arg-n><explain-synopsis|expand
+    <explain-macro|compound|foo|arg-1|<math|\<cdots\>>|arg-n><explain-synopsis|expand
     an unnamed macro>
   <|explain>
     This primitive is useful to expand macros which are the result of a
@@ -180,7 +178,7 @@
   </explain>
 
   <\explain>
-    <explain-macro|drd-props|var|prop-1|val-1|<with|mode|math|\<cdots\>>|prop-n|val-n><explain-synopsis|set
+    <explain-macro|drd-props|var|prop-1|val-1|<math|\<cdots\>>|prop-n|val-n><explain-synopsis|set
     <abbr|D.R.D.> properties of a tag>
   <|explain>
     The arity and children accessibility of tags defined by macros are
@@ -190,8 +188,8 @@
     are:
 
     <\description-dash>
-      <item*|(arity, <with|mode|math|n>)<verbatim|>>Sets the arity to the
-      given fixed value <with|mode|math|n> (literal integer).
+      <item*|(arity, <math|n>)>Sets the arity to the given fixed value
+      <math|n> (literal integer).
 
       <item*|(accessible, all)>Make it impossible to deactivate the tag with
       normal editor actions. Inaccessible children become effectively
@@ -215,7 +213,7 @@
     <explain-macro|get-arity|expression><explain-synopsis|arity of an
     expression>
   <|explain>
-    Returns the label of the tree obtained when evaluating
+    Returns the arity of the tree obtained when evaluating
     <src-arg|expression>.
   </explain>
 

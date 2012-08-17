@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.0.7.16>
 
 <style|tmdoc>
 
@@ -19,7 +19,12 @@
   <menu|Session|Input mode|Mathematical input>. If this feature is available,
   then it is usually also possible to copy and paste output back into the
   input. However, it depends on the particular application how well this
-  works.
+  works. Keep in mind that some key combinations may be used by the
+  <subsubmenu|Session|Input|Mathematical input> mode: for instance the key
+  <key|$> is usually redefined inside math mode, so if you want to input it
+  you'll have to type <key|S-F5><key|$>. You can read more about the prefix
+  key <key|S-F5> in ``<hlink|Keyboard shortcuts fot text
+  mode|../text/keyboard/man-text-kbd.en.tm>''.
 
   <\example>
     Below, you will find the <hlink|previous example
