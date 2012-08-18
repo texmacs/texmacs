@@ -67,6 +67,11 @@
   (:session "Maxima")
   (:scripts "Maxima"))
 
+(kbd-map
+  (:mode in-maxima?)
+  (:mode in-math?)
+  ("$" "$"))
+
 (tm-define (script-numeric-evaluation-command)
   (:mode in-maxima?)
   "float")
