@@ -162,7 +162,12 @@ converter_rep::load () {
 bool
 check_encoding (string input, string encoding) {
   if (encoding == "Cork") return true;
+#ifdef USE_ICONV
   else return check_using_iconv (input, encoding);
+#else
+  (void) input;
+  return true; // Assume everything is fine.
+#endif
 }
 
 string 
@@ -173,8 +178,12 @@ convert (string input, string from, string to) {
     return convert_to_cork (input,from);
   else if (from == "UTF-8" && to == "LaTeX")
     return convert_utf8_to_LaTeX (input);
+#ifdef USE_ICONV
   else
     return convert_using_iconv (input, from, to);
+#else
+  return input; // can't do anything.
+#endif
 }
 
 string 
