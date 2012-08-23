@@ -64,7 +64,7 @@
            ".en.tm")))
 
 (define ($module-source-link module)
-  "Builds a link to @module, which is a list of symbols like (some module)"
+  "Builds a link to the source code for @module"
   (let ((pm (module-source-path module)))
     ($link pm
       (if (url-exists? pm)
@@ -73,7 +73,7 @@
           (string-append "Path not found"))) ))
 
 (define ($module-doc-link module)
-  "Builds a link to @module, which is a list of symbols like (some module)"
+  "Builds a link to the documentation for @module"
   (let ((pm (module-doc-path module)))
     ($link (string-append (url-concretize "$TEXMACS_PATH/doc/") pm)
       (module->string module))))
@@ -102,30 +102,14 @@
   ; FIXME: look in global symbols, etc.
   (not (eq? #f (ahash-ref tm-defined-table sym))))
 
-(define (flat-module-list)
-  (apply append (map cdr (ahash-table->list tm-defined-module)) ))
-
-(define (list-modules module-list)
-  (cond
-    ((null? module-list) '())
-    ((member (car module-list) (cdr module-list)) 
-     (list-modules (cdr module-list)))
-    (else (cons (car module-list) (list-modules (cdr module-list)))) ))
-
-(define (list-modules-sub lst)
-  (cond
-    ((null? lst) '())
-    ((member (car lst) (cdr lst)) (list-modules-sub (cdr lst)))
-    (else (cons (car lst) (list-modules-sub (cdr lst)))) ))
-
 (define (list-modules)
-  (list-uniq (list-modules-sub
-      ; flatten the list
-      (apply append (map cdr (ahash-table->list tm-defined-module))))))
+  (list-sort
+    (list-uniq (apply append (map cdr (ahash-table->list tm-defined-module))))
+    module-leq?))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; To be used in <\doc-module-header>
+;;;; To be used in packages/documentation/scheme-api.ts
 
 (tm-define (doc-module-synopsis tname)
   ;TODO
@@ -148,6 +132,11 @@
   (with name (tree->string tname)
     ($module-source-link (string->module name))))
 
+(tm-define (doc-module-doc-link tname)
+  (:secure #t)
+  (with name (tree->string tname)
+    ($module-doc-link (string->module name))))
+
 (tm-define (doc-module-count-exported tname)
   (:secure #t)
   (with module (string->module (tree->string tname))
@@ -158,8 +147,19 @@
   (with module (string->module (tree->string tname))
     (number->string (count-undocumented module))))
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; To be used in <\doc-module-symbol>
+;; FIXME:
+
+(tm-define ($doc-module-branches root)
+  `(branch ,root ,root))
+
+(tm-define ($doc-module-traverse root)
+  (:secure #t)
+  `(traverse (document ,@($doc-module-branches (tree->string root)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; To be used in symbols documentation
 
 (tm-define (doc-symbol-symbol tsym)
   (:secure #t)
@@ -207,11 +207,12 @@
   (with sym (tree->symbol tsym)
     (doc-symbol-template* sym)))
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; module browser widget
 
 (tm-define module-widget-modules 
-  (map module->string (list-sort (list-modules) module-leq?)))
+  (map module->string (list-modules)))
 
 (tm-define module-widget-symbols
   (map symbol->string (module-exported '(guile))))
@@ -285,5 +286,6 @@
 (menu-bind tools-menu
   (:require (editing-module-doc?))
   (former)
-  ("Insert symbol documentation..." (interactive ask-insert-symbol-doc)))
+  ("Insert symbol documentation..." (interactive ask-insert-symbol-doc))
+  ("Open module browser..." (show-module-widget)))
 
