@@ -1,15 +1,18 @@
-<TeXmacs|1.0.7.16>
+<TeXmacs|1.0.7.15>
 
 <style|<tuple|tmdoc|scheme-api>>
 
 <\body>
   <tmdoc-title|Module <tt|init-buffer>>
 
-  <doc-module-header|init-buffer|>
+  <doc-module-header|init-buffer|This file is executed when creating a new
+  buffer and is not a module in itself.>
 
   \;
 
   <paragraph*|Exported symbols>
+
+  None.
 
   <tmdoc-copyright||>
 
