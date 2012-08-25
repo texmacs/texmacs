@@ -20,15 +20,15 @@
 
 (tm-define (list-uniq l)
   (:synopsis "Returns a list without any duplicate items.")
-  (cond ((null? l) '())
-        ((member (car l) (cdr l)) (list-uniq (cdr l)))
-        (else (cons (car l) (list-uniq (cdr l)))) ))
+  (list-fold-right
+    (lambda (x r) (if (member x r) r (cons x r))) '() l))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Conversions related to modules:
 
 (define (string->module str)
-  (map string->symbol (string-split str #\.)))
+  (if (== str "") '()
+      (map string->symbol (string-split str #\.))))
 
 (define (module->string module)
   (if (list? module)
@@ -51,32 +51,31 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Compute information related to a module
 
-(define (module-source-path module)
+(define (module-source-path module full?)
   (string-concatenate
-     (list (url-concretize "$TEXMACS_PATH/progs/")
+     (list (if full? (url-concretize "$TEXMACS_PATH/progs/") "progs/")
            (string-join (map symbol->string module) "/")
             ".scm")))
 
-(define (module-doc-path module)
+(define (module-doc-path module full?)
   (string-concatenate
-     (list "api/"
+     (list (if full? (url-concretize "$TEXMACS_PATH/doc/api/progs/")
+                     "api/progs/")
            (string-join (map symbol->string module) "/")
            ".en.tm")))
 
+(define (module-doc-index-path dir full?)
+  (string-concatenate
+    (list (if full? (url-concretize "$TEXMACS_PATH/doc/api/progs/")
+                     "api/progs/")
+           (string-join (map symbol->string dir) "/")
+           "/index.en.tm")))
+
 (define ($module-source-link module)
-  "Builds a link to the source code for @module"
-  (let ((pm (module-source-path module)))
-    ($link pm
-      (if (url-exists? pm)
-          (string-append "progs/"
-             (string-join (map symbol->string module) "/") ".scm")
-          (string-append "Path not found"))) ))
+  ($link (module-source-path module #t) (module-source-path module #f)))
 
 (define ($module-doc-link module)
-  "Builds a link to the documentation for @module"
-  (let ((pm (module-doc-path module)))
-    ($link (string-append (url-concretize "$TEXMACS_PATH/doc/") pm)
-      (module->string module))))
+  ($link (module-doc-path module #t) (module->string module)))
 
 (define (module-dependencies module)
  `(concat
@@ -107,10 +106,15 @@
     (list-uniq (apply append (map cdr (ahash-table->list tm-defined-module))))
     module-leq?))
 
+(define (list-submodules root)
+  (let ((l (length root)))
+    (list-filter (list-modules) 
+      (lambda (x)
+        (and (>= (length x) l) (== root (list-head x l)))))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; To be used in packages/documentation/scheme-api.ts
-
 (tm-define (doc-module-synopsis tname)
   ;TODO
   (:secure #t)
@@ -124,39 +128,56 @@
 
 (tm-define (doc-module-dependencies tname)
   (:secure #t)
-  (with module (string->module (tree->string tname))
-    (module-dependencies module)))
+  (module-dependencies (string->module (tree->string tname))))
 
 (tm-define (doc-module-source-link tname)
   (:secure #t)
-  (with name (tree->string tname)
-    ($module-source-link (string->module name))))
+  ($module-source-link (string->module (tree->string tname))))
 
 (tm-define (doc-module-doc-link tname)
   (:secure #t)
-  (with name (tree->string tname)
-    ($module-doc-link (string->module name))))
+  ($module-doc-link (string->module (tree->string tname))))
 
 (tm-define (doc-module-count-exported tname)
   (:secure #t)
-  (with module (string->module (tree->string tname))
-    (number->string (count-exported module))))
+  (number->string (count-exported (string->module (tree->string tname)))))
 
 (tm-define (doc-module-count-undocumented tname)
   (:secure #t)
-  (with module (string->module (tree->string tname))
-    (number->string (count-undocumented module))))
+  (number->string (count-undocumented (string->module (tree->string tname)))))
 
+(define (is-module-dir? m depth)
+  (> (- (length m) depth) 1))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; FIXME:
+(define ($doc-module-branch m depth) 
+  (cond ((null? m) '())
+        ((is-module-dir? m depth)
+         (with d (sublist m depth (+ 1 depth))
+           `(branch ,(module->string d) ,(module-doc-index-path d #t))))
+        (else `(branch ,(module->string (list-tail m depth))
+                       ,(module-doc-path m #t)))))
 
-(tm-define ($doc-module-branches root)
-  `(branch ,root ,root))
+; The branches returned are like a 'ls' in the directory:
+; both actual modules and subdirectories are returned, but nothing else
+(define ($doc-module-branches l depth done)
+  (let* (;(done (if (null? args) '() (car args)))
+         (m (if (null? l) '() (car l)))
+         (d (if (is-module-dir? m depth)
+                (sublist (car l) depth (+ 1 depth))
+                '())))
+    (if (null? m) '()
+        (if (member d done)
+            ($doc-module-branches (cdr l) depth done)
+            (cons ($doc-module-branch m depth)
+                  ($doc-module-branches (cdr l) depth `(,@done ,d)))))))
 
 (tm-define ($doc-module-traverse root)
+  `(traverse (document
+     ,@($doc-module-branches (list-submodules root) (length root) '()))))
+
+(tm-define (doc-module-traverse troot)
   (:secure #t)
-  `(traverse (document ,@($doc-module-branches (tree->string root)))))
+  ($doc-module-traverse (string->module (tree->string troot))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; To be used in symbols documentation

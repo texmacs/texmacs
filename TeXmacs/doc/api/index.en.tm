@@ -1,20 +1,25 @@
-<TeXmacs|1.0.7.16>
+<TeXmacs|1.0.7.15>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|scheme-api>>
 
 <\body>
-  <tmdoc-title|API documentation>
+  <tmdoc-title|<scheme> API documentation>
 
   The <scheme> API of <TeXmacs> is built from two different sources. On the
   one hand, the module system and on the other the <c++> functions exported
   using the glue. You can read more on this topic in ``<hlink|General
   architecture of the <scheme> API|../devel/scheme/overview/overview-architecture.en.tm>''.
+  (...)
 
   <subsection|The module system>
 
   <TeXmacs> modules are currently classified in the following families:
 
+  <extern|doc-module-traverse|>
+
   <subsection|The glue>
+
+  Glued functions are classified in the following main groups:
 
   <tmdoc-copyright||>
 

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.0.7.16>
 
 <style|source>
 
@@ -30,7 +30,7 @@
 
   <assign|link-to-module-doc|<macro|module|<extern|doc-module-doc-link|<arg|module>>>>
 
-  <assign|link-to-module-src|<macro|module|<extern|doc-module-src-link|<arg|module>>>>
+  <assign|link-to-module-source|<macro|module|<extern|doc-module-source-link|<arg|module>>>>
 
   \;
 
@@ -46,7 +46,7 @@
         <extern|doc-module-dependencies|<arg|module>>
       </right-aligned>
 
-      <with|font-series|bold|Source:><htab|><link-to-module-src|<arg|module>>
+      <with|font-series|bold|Source:><htab|><link-to-module-source|<arg|module>>
 
       <with|font-series|bold|Total exported
       symbols:><htab|><with|font-series|bold|<extern|doc-module-count-exported|<arg|module>>>
@@ -67,20 +67,33 @@
   \;
 
   <assign|doc-module-header|<\macro|module-name|module-description>
-    <\with|frame-color|light-grey|body-color|#f2fffc>
+    <\with|frame-color|light grey|body-color|#f2fffc>
       <\framed-table>
         <\with|color|black>
-          <tabular|<tformat|<table|<row|<\cell>
+          <table|<row|<\cell>
             <compound|doc-module-header-body|<arg|module-name>|<arg|module-description>>
-          </cell>>>>>
+          </cell>>>
         </with>
       </framed-table>
     </with>
   </macro>>
 
+  <drd-props|doc-module-header|arity|2>
+
   \;
 
-  <assign|traverse-modules-doc|<macro|root|<extern|doc-module-traverse|<arg|root>>>>
+  <assign|doc-module-traverse|<with|frame-color|light
+  grey|body-color|#f2fffc|<framed-table|<with|color|black|<compound|table|<row|<cell|<traverse|<macro|root|<extern|doc-module-traverse|<arg|root>>>>>>>>>>>
+
+  \;
+
+  <drd-props|doc-module-traverse|arity|1>
+
+  \;
+
+  <assign|doc-glue-traverse|<traverse|<macro|root|<extern|doc-glue-traverse|<arg|root>>>>>
+
+  <drd-props|doc-glue-traverse|arity|1>
 </body>
 
 <\initial>
