@@ -135,7 +135,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
       return;
   }
 
-  if (DEBUG_QT)
+  if (DEBUG_QT && s != SLOT_INVALIDATE)
     cout << "qt_view_widget_rep: sent " << slot_name (s) 
          << "\t\tto widget\t" << type_as_string() << LF;  
 }
@@ -160,12 +160,10 @@ qt_view_widget_rep::query (slot s, int type_id) {
     {
       check_type_id<renderer> (type_id, s);
       renderer r = get_current_renderer();
-        //FIXME: sometimes the renderer is queried outside repaint events 
-        //       (see e.g. edit_interface_rep::idle_time)
-        //       TeXmacs current policy is that we should return NULL only 
-        //       if the widget is not attached (in X11 sense)
+
       if (!r) 
         r = the_qt_renderer();
+
       if (canvas()) {
         SI ox = - canvas()->backing_pos.x()*PIXEL;  // Warning: this is NOT from_qpoint()
         SI oy = canvas()->backing_pos.y()*PIXEL;

@@ -868,14 +868,40 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
  ******************************************************************************/
 
 qt_tm_embedded_widget_rep::qt_tm_embedded_widget_rep (command _quit) 
- : qt_simple_widget_rep(), quit(_quit) {
+ : qt_widget_rep(embedded_tm_widget), quit(_quit) {
 
+  main_widget = ::glue_widget (true, true, 1, 1);
+  qwid = as_qwidget();
 }
 
 void
 qt_tm_embedded_widget_rep::send (slot s, blackbox val) {
 
   switch (s) {
+    case SLOT_INVALIDATE:
+    case SLOT_INVALIDATE_ALL:
+    case SLOT_EXTENTS:
+    case SLOT_SCROLL_POSITION:
+    case SLOT_SHRINKING_FACTOR:
+    case SLOT_MOUSE_GRAB:
+      main_widget->send(s, val);
+      return;
+
+       /// FIXME: decide what to do with these for embedded widgets
+    case SLOT_HEADER_VISIBILITY:
+    case SLOT_MAIN_ICONS_VISIBILITY:    
+    case SLOT_MODE_ICONS_VISIBILITY:
+    case SLOT_FOCUS_ICONS_VISIBILITY:
+    case SLOT_USER_ICONS_VISIBILITY:
+    case SLOT_FOOTER_VISIBILITY:
+    case SLOT_SIDE_TOOLS_VISIBILITY:
+    case SLOT_LEFT_FOOTER:
+    case SLOT_RIGHT_FOOTER:
+    case SLOT_SCROLLBARS_VISIBILITY:
+    case SLOT_INTERACTIVE_MODE:
+    case SLOT_FILE:
+      break;
+
     case SLOT_DESTROY:
     {  
       ASSERT (is_nil (val), "type mismatch");
@@ -886,7 +912,7 @@ qt_tm_embedded_widget_rep::send (slot s, blackbox val) {
       break;
       
     default:
-      qt_simple_widget_rep::send (s, val);
+      qt_widget_rep::send (s, val);
       return;
   }
   if (DEBUG_QT)
@@ -900,6 +926,15 @@ qt_tm_embedded_widget_rep::query (slot s, int type_id) {
     cout << "qt_tm_embedded_widget_rep::query " << slot_name (s) << LF;
   
   switch (s) {
+    case SLOT_SCROLL_POSITION:
+    case SLOT_EXTENTS:
+    case SLOT_VISIBLE_PART:
+    case SLOT_SHRINKING_FACTOR:
+    case SLOT_POSITION:
+    case SLOT_SIZE:
+      return main_widget->query(s, type_id);
+      
+        /// FIXME: decide what to do with these for embedded widgets
     case SLOT_HEADER_VISIBILITY:
     case SLOT_MAIN_ICONS_VISIBILITY:
     case SLOT_MODE_ICONS_VISIBILITY:
@@ -907,12 +942,11 @@ qt_tm_embedded_widget_rep::query (slot s, int type_id) {
     case SLOT_USER_ICONS_VISIBILITY:
     case SLOT_FOOTER_VISIBILITY:
     case SLOT_SIDE_TOOLS_VISIBILITY:
-        // FIXME: decide what to do with all these for embedded widgets.      
       check_type_id<bool> (type_id, s);
       return close_box<bool> (false);
 
     default:
-      return qt_simple_widget_rep::query (s, type_id);
+      return qt_widget_rep::query (s, type_id);
   }
 }
 
@@ -923,10 +957,10 @@ qt_tm_embedded_widget_rep::read(slot s, blackbox index) {
   switch (s) {
     case SLOT_CANVAS:
       check_type_void (index, s);
-      ret = widget(this);
+      ret = main_widget;
       break;
     default:
-      return qt_simple_widget_rep::read(s, index);
+      return qt_widget_rep::read(s, index);
   }
   
   if (DEBUG_QT)
@@ -944,18 +978,27 @@ qt_tm_embedded_widget_rep::write (slot s, blackbox index, widget w) {
   switch (s) {
       // Widget w is a qt_simple_widget_rep, with a QTMWidget as underlying
       // widget. We must discard the current QTMWidget and display the new.
+      // see qt_tm_widget_rep::write()
     case SLOT_SCROLLABLE:
     {
       check_type_void (index, s);
-      if (concrete(w)->type == simple_widget) {
-        qwid->deleteLater();
-        qwid = concrete(w)->as_qwidget();
-        qwid->setFocusPolicy (Qt::StrongFocus);
-        qwid->setFocus ();
-      }
+      
+      QLayout* l = qwid->layout();
+      QWidget* q = concrete(main_widget)->qwid;
+      l->removeWidget(q);
+      q->deleteLater();
+      concrete(main_widget)->qwid = 0;
+      q = concrete(w)->as_qwidget();
+      q->setParent(qwid);
+      l->addWidget(q);
+      main_widget = w;
+        //qwid->show();
+      qwid->setFocusPolicy (Qt::StrongFocus);
+      qwid->setFocus ();       
     }
       break;
-      
+
+        /// FIXME: decide what to do with these for embedded widgets
     case SLOT_MAIN_MENU:
     case SLOT_MAIN_ICONS:
     case SLOT_MODE_ICONS:
@@ -963,8 +1006,23 @@ qt_tm_embedded_widget_rep::write (slot s, blackbox index, widget w) {
     case SLOT_USER_ICONS:
     case SLOT_SIDE_TOOLS:
     case SLOT_INTERACTIVE_INPUT:
-        // FIXME: decide what to do with these for embedded widgets.
+    case SLOT_INTERACTIVE_PROMPT:
     default:
-      qt_simple_widget_rep::write (s, index, w);
+      qt_widget_rep::write (s, index, w);
   }
+}
+
+QWidget*
+qt_tm_embedded_widget_rep::as_qwidget() {
+  qwid = new QWidget();
+  QVBoxLayout* l = new QVBoxLayout();
+  l->setContentsMargins(0,0,0,0);
+  qwid->setLayout(l);
+  l->addWidget(concrete(main_widget)->as_qwidget());
+  return qwid;
+}
+
+QLayoutItem*
+qt_tm_embedded_widget_rep::as_qlayoutitem () {
+  return new QWidgetItem(as_qwidget());
 }

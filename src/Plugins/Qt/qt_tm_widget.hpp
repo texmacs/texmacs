@@ -133,12 +133,11 @@ extern int menu_count;
  This is a stripped down version of qt_tm_widget_rep, whose underlying widget
  isn't a QTMWindow anymore, but a regular QTMWidget because it is intended to be
  embedded somewhere else.
- 
- FIXME: It might be a mistake to have this as a child of qt_simple_widget_rep:
- the original editor widget will still be associated to the qwid after we use 
- it. We might want to do as in tm_widget_rep and keep a main_widget pointer.
+
 */
-class qt_tm_embedded_widget_rep: public qt_simple_widget_rep {
+class qt_tm_embedded_widget_rep: public qt_widget_rep {
+  widget main_widget;
+
 public:
   command quit;
   
@@ -148,6 +147,9 @@ public:
   virtual blackbox query (slot s, int type_id);
   virtual widget    read (slot s, blackbox index);
   virtual void     write (slot s, blackbox index, widget w);
+  
+  virtual QWidget*         as_qwidget ();
+  virtual QLayoutItem* as_qlayoutitem ();
 };
 
 #endif // QT_TM_WIDGET_HPP
