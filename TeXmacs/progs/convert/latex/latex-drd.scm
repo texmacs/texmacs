@@ -43,10 +43,16 @@
   notin vert Vert addots
   implies iff gets
   ;; wikipedia
-  infin rang)
+  infin rang
+
+  ;; Algorithms
+  AND BlankLine Ensure ENSURE FALSE GLOBALS NOT OR PRINT Require REQUIRE RETURN
+  State STATE TO KwTo TRUE XOR Else ENDBODY EndFor ENDFOR EndFunction EndIf
+  ENDIF ENDINPUTS EndLoop ENDLOOP ENDOUTPUTS EndProcedure ENDWHILE EndWhile
+  Loop)
 
 (logic-group latex-command-1%
-  usepackage part part* chapter chapter*
+  part part* chapter chapter*
   section section* subsection subsection* subsubsection subsubsection*
   paragraph paragraph* subparagraph subparagraph* nextbib
   footnote overline underline <sub> <sup> not left right
@@ -62,14 +68,16 @@
   thispagestyle ensuremath
   mathord mathbin mathopen mathpunct mathop mathrel mathclose mathalpha
   arabic alph Alph roman Roman fnsymbol displaylines cases underbrace overbrace
-  date thanks terms
+  title author date thanks terms
   phantom hphantom vphantom smash
   newcounter stepcounter refstepcounter value
   citet citep citet* citep* citealt citealp citealt* citealp*
   citetext citeauthor citeauthor* citeyear onlinecite
   epsfig url penalty centerline fbox framebox 
   enlargethispage
-  newlength newdimen newskip)
+  newlength newdimen newskip
+  Comment COMMENT For ForAll If Input KwData KwResult KwRet lnl nllabel
+  lElse uElse Output Repeat Until UNTIL While)
 
 (logic-group latex-command-1% ;; . needs a special treatment
   ,(string->symbol "."))
@@ -78,10 +86,11 @@
   binom tbinom dbinom cfrac tfrac equal href
   sideset stackrel citeauthoryear
   setcounter addtocounter setlength addtolength
-  scalebox)
+  scalebox
+  Call Function Procedure SetKw SetKwData SetKwFunction SetKwInOut)
 
 (logic-group latex-command-3%
-  ifthenelse resizebox @setfontsize)
+  ifthenelse resizebox @setfontsize eIf)
 
 (logic-group latex-command-4%
   mathchoice)
@@ -108,18 +117,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (logic-group latex-command-0*%
-  item ,(string->symbol "\\"))
+  item ,(string->symbol "\\")
+  BODY ELSE INPUTS LOOP OUTPUTS REPEAT)
 
 (logic-group latex-command-1*%
-  documentclass documentstyle sqrt bibitem cite
-  title author includegraphics includegraphics*
+  usepackage documentclass documentstyle sqrt bibitem cite
+  includegraphics includegraphics*
   subjclass declaretheorem footnotetext
   xleftarrow xrightarrow xleftrightarrow xminus
   xLeftarrow xRightarrow xLeftrightarrow xequal
-  xmapsto xmapsfrom)
+  xmapsto xmapsfrom
+  Begin ELSIF FORALL FOR IF WHILE tcp tcp* tcc tcc*)
 
 (logic-group latex-command-2*%
-  def newcommand renewcommand newtheorem newtheorem* frac parbox)
+  def newcommand renewcommand newtheorem newtheorem* frac parbox 
+  ElseIf uElseIf lElseIf ForEach lForEach lForAll lFor)
 
 (logic-group latex-command-3*%
   category newenvironment renewenvironment)
@@ -146,7 +158,7 @@
   begin-picture)
 
 (logic-group latex-environment-0*%
-  begin-figure begin-table)
+  begin-figure begin-table begin-algorithmic begin-algorithm begin-algorithm2e)
 
 (logic-group latex-environment-1%
   begin-tabbing begin-thebibliography begin-multicols)
@@ -370,7 +382,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (logic-group latex-ignore-0%
-  allowbreak notag xspace break sloppy makeatother makeatletter
+  allowbreak notag xspace break sloppy makeatother makeatletter relax
   ignorespacesafterend ignorespaces balancecolumns)
 
 (logic-group latex-ignore-0*%

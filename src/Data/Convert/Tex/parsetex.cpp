@@ -47,9 +47,11 @@ tree latex_symbol_to_tree (string s);
 struct latex_parser {
   int level;
   bool unicode;
+  hashmap<string,bool> loaded_package;
   latex_parser (bool unicode2): level (0), unicode (unicode2) {}
   void latex_error (string s, int i, string message);
 
+  bool is_opening_option (char c);
   tree parse             (string s, int& i, string stop= "", bool ch= false);
   tree parse_backslash   (string s, int& i);
   tree parse_symbol      (string s, int& i);
@@ -703,6 +705,22 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     if (arity>0) latex_error (s, i, "too little arguments for " * cmd);
   }
 
+  /******************** store and process loaded packages ********************/
+  if (is_tuple (t, "\\usepackage", 1) || is_tuple (t, "\\usepackage*", 2)) {
+    array<string> p = trim_spaces (tokenize (as_string(u[N(t)-1]), ","));
+    for (int i=0; i<N(p); i++) {
+      loaded_package (p[i]) = true;
+    }
+    if (loaded_package["algorithm2e"]) {
+      command_arity ("\\Else")   = -2;
+      command_arity ("\\For")    = -3;
+      command_arity ("\\ForAll") = -3;
+      command_arity ("\\If")     = -3;
+      command_arity ("\\Return") = -1;
+      command_arity ("\\While")  = -3;
+    }
+  }
+
   /******************** new commands and environments ************************/
   if (is_tuple (t, "\\def", 2)) {
     string var= string_arg (t[1]);
@@ -741,6 +759,21 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     command_arity (var)= 0;
     var= "\\end-" * string_arg (t[1]);
     command_type  (var)= "environment";
+    command_arity (var)= 0;
+  }
+  if (is_tuple (t, "\\SetKwData", 2) || is_tuple (t, "\\SetKwFunction", 2)) {
+    string var= "\\"*string_arg (t[1]);
+    command_type  (var)= "algorithm2e";
+    command_arity (var)= -1;
+  }
+  if (is_tuple (t, "\\SetKwInput", 2) || is_tuple (t, "\\SetKwInOut", 2)) {
+    string var= "\\"*string_arg (t[1]);
+    command_type  (var)= "algorithm2e";
+    command_arity (var)= 1;
+  }
+  if (is_tuple (t, "\\SetKw")) {
+    string var= "\\"*string_arg (t[1]);
+    command_type  (var)= "algorithm2e";
     command_arity (var)= 0;
   }
   if (is_tuple (t, "\\newdimen", 1) || is_tuple (t, "\\newlength", 1)

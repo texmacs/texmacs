@@ -104,7 +104,12 @@ might_not_be_typesetted (tree t) {
          (is_func (t, TUPLE) && t[0] == "\\setcounter")      || 
          (is_func (t, TUPLE) && t[0] == "\\setlength")       || 
          (is_func (t, TUPLE) && t[0] == "\\maketitle")       || 
-         is_vertical_space (t);
+         (is_func (t, TUPLE) && t[0] == "\\SetKw")           || 
+         (is_func (t, TUPLE) && t[0] == "\\SetKwData")       || 
+         (is_func (t, TUPLE) && t[0] == "\\SetKwInOut")      || 
+         (is_func (t, TUPLE) && t[0] == "\\SetKwInput")      || 
+         (is_func (t, TUPLE) && t[0] == "\\SetKwFunction")   || 
+          is_vertical_space (t);
 }
 
 bool
@@ -239,7 +244,14 @@ filter_preamble (tree t) {
 	       is_tuple (u, "\\newtheorem*"))
 	preamble << u << "\n" << "\n";
       else if (is_tuple (u, "\\newenvironment") ||
-	       is_tuple (u, "\\newenvironment*"))
+	       is_tuple (u, "\\newenvironment*")      ||
+	       is_tuple (u, "\\newenvironment**"))
+	preamble << u << "\n" << "\n";
+      else if (is_tuple (u, "\\SetKw", 2)          || 
+               is_tuple (u, "\\SetKwData", 2)      || 
+               is_tuple (u, "\\SetKwInOut", 2)     || 
+               is_tuple (u, "\\SetKwInput", 2)     || 
+               is_tuple (u, "\\SetKwFunction", 2))
 	preamble << u << "\n" << "\n";
     }
     else if (!is_metadata (u))
@@ -297,6 +309,47 @@ latex_symbol_to_tree (string s) {
       if (s == "ss")     return "\xFF";
       if (s == "th")     return "\xFE";
       if (s == "pounds") return "\xBF";
+      if (s == "BlankLine")    return "\n";
+      if (s == "AND")          return concat (tree (APPLY, "algo-and"), " ");
+      if (s == "NOT")          return concat (tree (APPLY, "algo-not"), " ");
+      if (s == "OR")           return concat (tree (APPLY, "algo-or"), " ");
+      if (s == "XOR")          return concat (tree (APPLY, "algo-xor"), " ");
+      if (s == "ENSURE")       return tree (APPLY, "algo-ensure");
+      if (s == "Ensure")       return tree (APPLY, "algo-ensure");
+      if (s == "FALSE")        return tree (APPLY, "algo-false");
+      if (s == "GLOBALS")      return tree (APPLY, "algo-globals");
+      if (s == "PRINT")        return tree (APPLY, "algo-print");
+      if (s == "REQUIRE")      return tree (APPLY, "algo-require");
+      if (s == "Require")      return tree (APPLY, "algo-require");
+      if (s == "RETURN")       return tree (APPLY, "algo-return");
+      if (s == "STATE")        return tree (APPLY, "algo-state");
+      if (s == "State")        return tree (APPLY, "algo-state");
+      if (s == "STMT")         return tree (APPLY, "algo-state");
+      if (s == "TO")           return tree (APPLY, "algo-to");
+      if (s == "KwTo")         return tree (APPLY, "algo-to");
+      if (s == "TRUE")         return tree (APPLY, "algo-true");
+      if (s == "BODY")         return tree (BEGIN, "algo-body");
+      if (s == "INPUTS")       return tree (BEGIN, "algo-inputs");
+      if (s == "OUTPUTS")      return tree (BEGIN, "algo-outputs");
+      if (s == "ELSE")         return tree (APPLY, "algo-else");
+      if (s == "Else")         return tree (APPLY, "algo-else");
+      if (s == "LOOP")         return tree (BEGIN, "algo-loop");
+      if (s == "Loop")         return tree (BEGIN, "algo-loop");
+      if (s == "REPEAT")       return tree (BEGIN, "algo-repeat");
+      if (s == "Repeat")       return tree (BEGIN, "algo-repeat");
+      if (s == "ENDBODY")      return tree (END, "algo-body");
+      if (s == "EndFor")       return tree (END, "algo-for");
+      if (s == "EndFunction")  return tree (END, "algo-function");
+      if (s == "ENDFOR")       return tree (END, "algo-for");
+      if (s == "ENDIF")        return tree (END, "algo-if-else-if");
+      if (s == "EndIf")        return tree (END, "algo-if-else-if");
+      if (s == "ENDINPUTS")    return tree (END, "algo-inputs");
+      if (s == "ENDLOOP")      return tree (END, "algo-loop");
+      if (s == "EndLoop")      return tree (END, "algo-loop");
+      if (s == "ENDOUTPUTS")   return tree (END, "algo-outputs");
+      if (s == "EndProcedure") return tree (END, "algo-procedure");
+      if (s == "ENDWHILE")     return tree (END, "algo-while");
+      if (s == "EndWhile")     return tree (END, "algo-while");
       if (s == "\\")              return tree (FORMAT, "next line");
       if (s == "cr")              return tree (FORMAT, "next line");
       if (s == "noindent")        return tree (FORMAT, "no first indentation");
@@ -521,6 +574,7 @@ latex_symbol_to_tree (string s) {
     if (latex_type (s) == "operator" || latex_type (s) == "control") return s;
     if ((s == "ldots") && (command_type ("!mode") != "math")) return "...";
     if (s == "bignone") return tree (BIG, ".");
+    if (s == "Return")  return tree (APPLY, "algo-return");
     if (latex_type (s) == "big-symbol") {
       if (s(0,3)=="big") return tree (BIG, s(3,N(s)));
       else return tree (BIG, s);
@@ -1110,6 +1164,140 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\mathds", 1)) return m2e (t, MATH_FONT, "Bbb****");
   if (is_tuple (t, "\\mathscr", 1)) return m2e (t, MATH_FONT, "cal*");
   if (is_tuple (t, "\\EuScript", 1)) return m2e (t, MATH_FONT, "cal**");
+
+  if (is_tuple (t, "\\COMMENT", 1) || is_tuple (t, "\\Comment", 1) ||
+      is_tuple (t, "\\tcp*", 1) || is_tuple (t, "\\tcp", 1) ||
+      is_tuple (t, "\\tcc*", 1) || is_tuple (t, "\\tcc", 1))
+    return tree (APPLY, "algo-comment", l2e (t[1]));
+  if (is_tuple (t, "\\tcp**", 2) || is_tuple (t, "\\tcp*", 2))
+    return tree (APPLY, "algo-comment", l2e (t[2]));
+  if (is_tuple (t, "\\UNTIL", 1) || is_tuple (t, "\\Until", 1))
+    return tree (END,   "algo-repeat", l2e (t[1]));
+  if (is_tuple (t, "\\If", 2) || is_tuple (t, "\\lIf", 2) ||
+      is_tuple (t, "\\uIf", 2))
+    return tree (APPLY, "algo-if", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\If*", 3) || is_tuple (t, "\\lIf*", 3) ||
+      is_tuple (t, "\\uIf*", 3))
+    return tree (APPLY, "algo-if", l2e (t[1]),
+        concat (tree (APPLY, "algo-comment", l2e (t[2])), "\n", l2e (t[3])));
+  if (is_tuple (t, "\\Else", 1) || is_tuple (t, "\\lElse", 1) ||
+      is_tuple (t, "\\uElse", 1))
+    return tree (APPLY, "algo-else", l2e (t[1]));
+  if (is_tuple (t, "\\Else*", 2) || is_tuple (t, "\\lElse*", 2) ||
+      is_tuple (t, "\\uElse*", 2))
+    return tree (APPLY, "algo-else",
+        concat (tree (APPLY, "algo-comment", l2e (t[1])), "\n", l2e (t[2])));
+  if (is_tuple (t, "\\eIf", 3))
+    return tree (APPLY, "algo-if-else-if", l2e (t[1]), l2e (t[2]), l2e (t[3]));
+  if (is_tuple (t, "\\ElseIf", 2) || is_tuple (t, "\\lElseIf", 2) ||
+      is_tuple (t, "\\uElseIf", 2))
+    return tree (APPLY, "algo-else-if", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\ElseIf*", 3) || is_tuple (t, "\\lElseIf*", 3) ||
+      is_tuple (t, "\\uElseIf*", 3))
+    return tree (APPLY, "algo-else-if", concat (l2e (t[2]), " ",
+          tree (APPLY, "algo-comment", l2e (t[1]))), l2e (t[3]));
+  if (is_tuple (t, "\\ELSIF", 1) || is_tuple (t, "\\ElsIf", 1))
+    return tree (APPLY, "algo-else-if", l2e (t[1]));
+  if (is_tuple (t, "\\ELSIF*", 2))
+    return tree (APPLY, "algo-else-if",
+        concat (l2e (t[2]), " ", tree (APPLY, "algo-comment", l2e (t[1]))));
+  if (is_tuple (t, "\\FOR", 1) || is_tuple (t, "\\For", 1)) {
+    return tree (BEGIN, "algo-for", l2e (t[1]));
+  }
+  if (is_tuple (t, "\\FOR*", 2))
+    return tree (BEGIN, "algo-for",
+        concat (l2e (t[2]), " ", tree (APPLY, "algo-comment", l2e (t[1]))));
+  if (is_tuple (t, "\\For", 2) || is_tuple (t, "\\lFor", 2)) {
+    return tree (APPLY, "algo-for", l2e (t[1]), l2e (t[2]));
+  }
+  if (is_tuple (t, "\\For*", 3) || is_tuple (t, "\\lFor*", 3)) {
+    return tree (APPLY, "algo-for", l2e (t[2]),
+        concat (tree (APPLY, "algo-comment", l2e (t[1])), " ", l2e (t[2])));
+  }
+  if (is_tuple (t, "\\ForEach", 2) || is_tuple (t, "\\lForEach", 2))
+    return tree (APPLY, "algo-for-each", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\ForEach*", 3) || is_tuple (t, "\\lForEach*", 3))
+    return tree (APPLY, "algo-for-each", concat (l2e (t[2]), " ",
+          tree (APPLY, "algo-comment", l2e (t[1]))), l2e (t[3]));
+  if (is_tuple (t, "\\ForAll", 2) || is_tuple (t, "\\lForAll", 2))
+    return tree (APPLY, "algo-for-all", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\ForAll*", 3) || is_tuple (t, "\\lForAll*", 3))
+    return tree (APPLY, "algo-for-all", concat (l2e (t[2]), " ",
+          tree (APPLY, "algo-comment", l2e (t[1]))), l2e (t[3]));
+  // Since \FOR and \FORALL are together closed by a \ENDFOR macro, there is no
+  // easy way to match here the begin/end environment. So we hack the arity.
+  if (is_tuple (t, "\\FORALL", 1) || is_tuple (t, "\\ForAll", 1))
+    return tree (BEGIN, "algo-for", "*", l2e (t[1]));
+  if (is_tuple (t, "\\FORALL*", 2))
+    return tree (BEGIN, "algo-for", "", "",
+        concat (l2e (t[2]), " ", tree (APPLY, "algo-comment", l2e (t[1]))));
+  if (is_tuple (t, "\\IF", 1) || is_tuple (t, "\\If", 1))
+    return tree (BEGIN, "algo-if-else-if", l2e (t[1]));
+  if (is_tuple (t, "\\IF*", 2))
+    return tree (BEGIN, "algo-if-else-if",
+        concat (l2e (t[2]), " ", tree (APPLY, "algo-comment", l2e (t[1]))));
+  if (is_tuple (t, "\\KwData", 1))
+    return tree (APPLY, "algo-data", l2e (t[1]));
+  if (is_tuple (t, "\\KwResult", 1))
+    return tree (APPLY, "algo-result", l2e (t[1]));
+  if (is_tuple (t, "\\WHILE", 1) || is_tuple (t, "\\While", 1))
+    return tree (BEGIN, "algo-while", l2e (t[1]));
+  if (is_tuple (t, "\\WHILE*", 2))
+    return tree (BEGIN, "algo-while",
+        concat (l2e (t[2]), " ", tree (APPLY, "algo-comment", l2e (t[1]))));
+  if (is_tuple (t, "\\While", 2))
+    return tree (APPLY, "algo-while", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\While*", 3))
+    return tree (APPLY, "algo-while", l2e (t[2]),
+        concat (tree (APPLY, "algo-comment", l2e (t[1])), "\n", l2e (t[2])));
+  if (is_tuple (t, "\\Begin", 1))
+    return tree (APPLY, "algo-begin", l2e (t[1]));
+  if (is_tuple (t, "\\Begin*", 2))
+    return tree (APPLY, "algo-begin",
+        concat (tree (APPLY, "algo-comment", l2e (t[1])), "\n", l2e (t[2])));
+  if (is_tuple (t, "\\BODY*", 1))
+    return concat (tree (BEGIN, "algo-body"),
+        tree (APPLY, "algo-comment", l2e (t[1])), "\n");
+  if (is_tuple (t, "\\Call", 2))
+    return tree (BEGIN, "algo-call", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\ELSE*", 1))
+    return tree (APPLY, "algo-else", tree (APPLY, "algo-comment", l2e (t[1])));
+  if (is_tuple (t, "\\Function", 2))
+    return tree (BEGIN, "algo-function", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\LOOP*", 1))
+    return concat (tree (BEGIN, "algo-loop"),
+        tree (APPLY, "algo-comment", l2e (t[1])), "\n");
+  if (is_tuple (t, "\\KwIn", 1))
+    return tree (APPLY, "algo-inputs", l2e (t[1])); 
+  if (is_tuple (t, "\\INPUTS*", 1))
+    return concat (tree (BEGIN, "algo-inputs"),
+        tree (APPLY, "algo-comment", l2e (t[1])), "\n");
+  if (is_tuple (t, "\\KwOut", 1))
+    return tree (APPLY, "algo-outputs", l2e (t[1]));
+  if (is_tuple (t, "\\OUTPUTS*", 1))
+    return concat (tree (BEGIN, "algo-outputs"),
+        tree (APPLY, "algo-comment", l2e (t[1])), "\n");
+  if (is_tuple (t, "\\Procedure", 2))
+    return tree (BEGIN, "algo-procedure", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\REPEAT*", 1))
+    return concat (tree (BEGIN, "algo-repeat"),
+        tree (APPLY, "algo-comment", l2e (t[1])), "\n");
+  if (is_tuple (t, "\\Return", 1) || is_tuple (t, "\\KwRet", 1))
+    return tree (APPLY, "algo-return", l2e (t[1]));
+  if (is_tuple (t, "\\SetKw", 2))
+      return tree (APPLY, "algo-new-keyword", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\SetKwData", 2))
+      return tree (APPLY, "algo-new-data", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\SetKwInput", 2))
+      return tree (APPLY, "algo-new-input", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\SetKwInOut", 2))
+      return tree (APPLY, "algo-new-in-out", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\SetKwFunction", 2))
+      return tree (APPLY, "algo-new-function", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\nllabel", 1))
+    return tree (APPLY, "algo-label", t2e (t[1]));
+  if (is_tuple (t, "\\lnl", 1))
+    return tree (APPLY, "algo-number-label", t2e (t[1]));
 
   if (is_tuple (t, "\\mod", 1)) return tree (APPLY, "modulo", l2e (t[1]));
   if (is_tuple (t, "\\prime", 1)) return tree (RPRIME, string_arg (t[1]));
@@ -1823,6 +2011,42 @@ finalize_layout (tree t) {
 	continue;
       }
 
+      if (is_func (v, BEGIN) &&
+          (v[0] == "algorithmic" || v[0] == "algorithmic*")) {
+	//r << tree (BEGIN, "algorithm");
+	continue;
+      }
+
+      if (is_func (v, END) &&
+          (v[0] == "algorithmic" || v[0] == "algorithmic*")) {
+	//r << tree (END, "algorithm");
+	continue;
+      }
+
+      if (is_func (v, BEGIN) &&
+          (v[0] == "algorithm"   || v[0] == "algorithm*" ||
+           v[0] == "algorithm2e" || v[0] == "algorithm2e*" )) {
+	r << tree (NEW_LINE) << tree (BEGIN, "algorithm");
+	continue;
+      }
+
+      if (is_func (v, END) &&
+          (v[0] == "algorithm"   || v[0] == "algorithm*" ||
+           v[0] == "algorithm2e" || v[0] == "algorithm2e*" )) {
+	r << tree (END, "algorithm") << tree (NEW_LINE);
+	continue;
+      }
+
+      if (is_func (v, BEGIN) && v[0] == "tmindent") {
+	r << tree (BEGIN, "indent");
+	continue;
+      }
+
+      if (is_func (v, END) && v[0] == "tmindent") {
+	r << tree (END, "indent");
+	continue;
+      }
+
       if (is_func (v, BEGIN, 1) && (v[0] == "picture")) {
 	for (; i<n; i++)
 	  if (is_func (u[i], IMAGE)) r << u[i];
@@ -1942,6 +2166,17 @@ finalize_layout (tree t) {
 	continue;
       }
       
+      // Needed for matching beginning/ending for unknown or user envs.
+      // It will be restored in finalize_misc.
+      if (is_func (v, BEGIN)) {
+	string var= as_string (v[0]);
+  if (var[N(var)-1] == '*') var= var(0,N(var)-1);
+  tree w (BEGIN, var);
+  for (int j=1; j<N(v); j++) w << v[j];
+	r << w;
+	continue;
+      }
+
       if ((v == tree (APPLY, "item")) ||
 	  (is_func (v, APPLY, 2) && (v[0]->label == "item*"))) {
 	if (!item_flag) insert_return (r);
@@ -2031,15 +2266,217 @@ env2macro (tree t, string from, string to) {
   return r;
 }
 
-static tree
-finalize_tmindent (tree t) {
-  return env2macro (t, "tmindent", "indent");
+bool
+textm_algorithm_break_after (tree t) {
+  string var;
+  if (is_func (t, APPLY, 2)) {
+    var = "\\"*as_string (t[0]);
+    var = (var[N(var)-1] == '*')? var(0, N(var)-1) : var;
+  }
+  return ((is_func (t, END) && 
+            (t[0] == "algo-inputs"     || t[0] == "algo-outputs"   || 
+             t[0] == "algo-for"        || t[0] == "algo-while"     || 
+             t[0] == "algo-function"   || t[0] == "algo-procedure" || 
+             t[0] == "algo-if-else-if" || t[0] == "algo-loop"      || 
+             t[0] == "algo-repeat"     || t[0] == "algo-body"))    || 
+         (is_apply (t, "algo-data") || is_apply (t, "algo-result")) ||
+         (latex_type (var) == "algorithm2e"));
+}
+
+bool
+textm_algorithm_space_after (tree t) {
+  return is_apply (t, "algo-to") || is_apply (t, "algo-true") || 
+         is_apply (t, "algo-false");
+}
+
+bool
+textm_algorithm_need_arg (tree t) {
+  return is_apply (t, "algo-ensure", 0)  ||  is_apply (t, "algo-globals", 0) ||
+         is_apply (t, "algo-require", 0) ||  is_apply (t, "algo-return", 0)  ||
+         is_apply (t, "algo-state", 0)   ||  is_apply (t, "algo-print", 0);
+}
+
+bool
+textm_algorithm_begin_algo (tree t) {
+  return (is_func (t, BEGIN) &&
+           (t[0] == "algorithm"   || t[0] == "algorithm*"    ||
+            t[0] == "algorithmic" || t[0] == "algorithmic*"  || 
+            t[0] == "algorithm2e" || t[0] == "algorithm2e*"));
+}
+
+bool
+textm_algorithm_end_algo (tree t) {
+  return (is_func (t, END) && (t[0] == "algorithmic" ||
+        t[0] == "algorithm2e" || t[0] == "algorithm"));
+}
+
+bool
+textm_algorithm_end_arg (tree t) {
+  return textm_algorithm_need_arg (t) || textm_algorithm_end_algo (t) ||
+         is_apply (t, "algo-else")    || is_apply (t, "algo-else-if") ||
+         (is_func (t, BEGIN) && 
+            (t[0] == "algo-inputs"    || t[0] == "algo-outputs"   || 
+             t[0] == "algo-for"       || t[0] == "algo-while"     || 
+             t[0] == "algo-function"  || t[0] == "algo-procedure" || 
+             t[0] == "algo-if-else-if"|| t[0] == "algo-loop"      || 
+             t[0] == "algo-repeat"    || t[0] == "algo-body"))    ||
+         textm_algorithm_break_after (t);
+}
+
+bool after_linefeed (tree r) {
+  return N(r) > 0 && (r[N(r)-1] == "\n");
+}
+
+tree
+textm_algorithm_parse_arg (tree t, int &i) {
+  tree r = copy (t[i++]), arg= concat ();
+  while (i<N(t) && !textm_algorithm_end_arg (t[i]))
+    arg << t[i++];
+  i--;
+  r << arg;
+  return r;
+}
+
+tree
+complete_algorithm_args (tree t, bool &in) {
+  if (is_atomic (t)) return t;
+  tree r = tree (L(t));
+  for (int i=0; i<N(t); i++) {
+    if (textm_algorithm_begin_algo (t[i])) in = true;
+    else if (in && textm_algorithm_end_algo (t[i])) {
+      in = false;
+      r << t[i];
+      continue;
+    }
+
+    if (in && textm_algorithm_need_arg (t[i])) {
+      r << textm_algorithm_parse_arg (t, i) << "\n";
+    }
+    else if (in && textm_algorithm_space_after (t[i]))
+      r << t[i] << " ";
+    else if (in && textm_algorithm_break_after (t[i]))
+      r << t[i] << "\n";
+    else if (in && is_func (t[i], SPACE, 1) && t[i][0] == "0.75spc")
+      r << "\n";
+    else if (!(in && after_linefeed (r) 
+          && (t[i] == " " || t[i] == "\t" || t[i] == "\n")))
+      r << complete_algorithm_args (t[i], in);
+    }
+  return r;
+}
+
+bool
+textm_algorithm_end_if (tree t) {
+  return textm_algorithm_end_algo (t) ||
+    (is_func (t, END) && t[0] == "algo-if-else-if");
+}
+
+bool
+textm_algorithm_end_if_arg (tree t) {
+  return textm_algorithm_end_if (t) ||
+    is_apply (t, "algo-else") || is_apply (t, "algo-else-if");
+}
+
+tree
+complete_algorithm_if_else_if (tree t, bool in) {
+  if (is_atomic (t)) return t;
+  tree r= tree (L(t)), arg, ifelse;
+  int c=0;
+  for (int i=0; i<N(t); i++) {
+    if      (textm_algorithm_begin_algo (t[i])) in = true;
+    else if (textm_algorithm_end_algo (t[i]))   in = false;
+
+    if (in && is_func (t[i], BEGIN) && t[i][0] == "algo-if-else-if") {
+      ifelse= copy (t[i]);
+      i++;
+      while (i<N(t) && !textm_algorithm_end_algo (t[i])
+          && !(textm_algorithm_end_if (t[i]) && c==0)) {
+        arg= concat();
+	      if (i>0 && is_apply (t[i-1], "algo-else") && N(t[i-1])>1)
+	        arg << t[i-1][1] << "\n";
+        while (i<N(t) && !textm_algorithm_end_algo (t[i])
+            && !(textm_algorithm_end_if_arg (t[i]) && c==0)) {
+          if (is_func (t[i], BEGIN) && t[i][0] == "algo-if-else-if") c++;
+          if (is_func (t[i], END) && t[i][0] == "algo-if-else-if") c--;
+          if ((t[i] == " " || t[i] == "\n") && (i==0 || i==N(t)-1 ||
+                (i+1<N(t) && textm_algorithm_end_if_arg (t[i+1]))))
+            i++;
+          else
+            arg << complete_algorithm_if_else_if (t[i++], in);
+        }
+        if (arg != concat ())
+          ifelse << arg;
+        else
+          i++;
+        if (i<N(t) && is_apply (t[i], "algo-else-if") && N(t[i])>1)
+          ifelse << t[i][1];
+      }
+      r << complete_algorithm_if_else_if (ifelse, in)
+        << tree (END, "algo-if-else-if");
+      if (i<N(t) && textm_algorithm_end_algo (t[i])) r << t[i];
+    }
+    else
+      r << complete_algorithm_if_else_if (t[i], in);
+  }
+  return r;
+}
+
+tree
+concatenate_algorithm_if_else_if (tree t, bool &in) {
+  if (is_atomic (t)) return t;
+  tree r = tree (L(t));
+  for (int i=0; i<N(t); i++) {
+    if (textm_algorithm_begin_algo (t[i])) in = true;
+    else if (in && textm_algorithm_end_algo (t[i])) {
+      in = false;
+      r << t[i];
+      continue;
+    }
+
+    if (in && is_apply (t[i], "algo-if")) {
+      tree ifelse = tree (APPLY, "algo-if-else-if");
+      for (int j=1; j< N(t[i]); j++)
+        ifelse << concatenate_algorithm_if_else_if (t[i][j], in);
+      while (i+1<N(t) && (t[i+1] == " " || t[i+1] == "\n")) i++;
+      while (i+1<N(t) && is_apply (t[i+1], "algo-else-if")) {
+        i++;
+        for (int j=1; j< N(t[i]); j++)
+          ifelse << concatenate_algorithm_if_else_if (t[i][j], in);
+      }
+      while (i+1<N(t) && (t[i+1] == " " || t[i+1] == "\n")) i++;
+      if (i+1<N(t) && is_apply (t[i+1], "algo-else")) {
+        i++;
+        for (int j=1; j< N(t[i]); j++)
+          ifelse << concatenate_algorithm_if_else_if (t[i][j], in);
+      }
+      while (i+1<N(t) && (t[i+1] == " " || t[i+1] == "\n")) i++;
+      r << ifelse << "\n";
+    }
+    else if (!(in && after_linefeed (r) 
+          && (t[i] == " " || t[i] == "\t" || t[i] == "\n")))
+      r << concatenate_algorithm_if_else_if (t[i], in);
+    }
+  return r;
+}
+
+tree
+finalize_algorithms (tree t) {
+  bool in = false;
+  t = complete_algorithm_args (t, in);
+  // cout << "complete_algorithm_args: " << LF << t << LF << LF;
+  in = false;
+  t = complete_algorithm_if_else_if (t, in);
+  // cout << "complete_algorithm_if_else_if: " << LF << t << LF << LF;
+  in = false;
+  t = concatenate_algorithm_if_else_if (t, in);
+  // cout << "concatenate_algorithm_if_else_if: " << LF << t << LF << LF;
+  return t;
 }
 
 static tree
 finalize_document (tree t) {
   if (is_atomic (t)) t= tree (CONCAT, t);
-  t= finalize_tmindent (t); 
+  t= finalize_algorithms (t); 
   t= finalize_returns  (t); 
   t= finalize_pmatrix  (t); 
   t= finalize_layout   (t); 
@@ -2245,6 +2682,7 @@ float_body (tree t) {
   if (is_atomic (t)) return t;
   else if (is_var_compound (t, "caption", 1)) return "";
   else if (is_var_compound (t, "center", 1)) return float_body (t[N(t)-1]);
+  else if (is_var_compound (t, "algorithm", 1)) return float_body (t[N(t)-1]);
   else {
     int i, n= N(t);
     tree r (t, n);
@@ -2281,6 +2719,14 @@ finalize_floats (tree t) {
     tree body= float_body (t[N(t)-1]);
     tree capt= find_caption (t[N(t)-1]);
     return tree (make_tree_label ("big-table"), body, capt);
+  }
+  else if (is_var_compound (t, "algorithm", 1)) {
+    tree body= float_body (t[N(t)-1]);
+    tree capt= find_caption (t[N(t)-1]);
+    if (capt == "")
+      return t;
+    else
+      return tree (make_tree_label ("specified-algorithm"), capt, body);
   }
   else {
     int i, n= N(t);
@@ -2320,9 +2766,24 @@ finalize_misc (tree t) {
            t[0][0] == "font-family" &&
            t[0][1] == "rm")
     return compound ("math-up", finalize_misc (t[0][2]));
+  else if (is_var_compound (t, "algo-for", 4)) {
+    return compound ("algo-for-all",
+        finalize_misc (t[N(t)-2]), finalize_misc (t[N(t)-1]));
+  }
   else {
     int i, n= N(t);
     tree r (t, n);
+    string l= as_string (L(t));
+    // Restore name of users envs, munged in finalize_layout.
+    if (latex_type ("\\begin-"*l) == "user" && latex_arity ("\\begin-"*l) < 0
+        && N(t) == abs (latex_arity ("\\begin-"*l))+1) {
+      r= compound (l*"*");
+      for (int i=0; i<n; i++)
+        r << finalize_misc (t[i]);
+      return r;
+    }
+    if (n > 1 && is_var_compound (t, "algo-if-else-if")
+        && (is_var_compound (t[N(t)-1], "document", 0))) n--;
     for (i=0; i<n; i++)
       r[i]= finalize_misc (t[i]);
     return r;
