@@ -1596,7 +1596,8 @@ parse_pmatrix (tree& r, tree t, int& i, string lb, string rb, string fm) {
     else if (v == tree (FORMAT, "new line")) {
       continue;
     }
-    else if (v == tree (FORMAT, "next line")) {
+    else if (v == tree (FORMAT, "next line") ||
+        is_apply (v, "tabularnewline", 0)) {
       L << simplify_concat (E);
       V << L;
       cols= max (cols, N(L));
