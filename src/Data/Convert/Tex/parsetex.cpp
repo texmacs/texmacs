@@ -569,14 +569,11 @@ latex_parser::parse_command (string s, int& i, string cmd) {
 
   if (cmd == "\\category") {
     tree a= parse_argument (s, i);
-    i++;
-    skip_linespaces (s, i);
+    skip_linespaces (s, ++i);
     tree b= parse_argument (s, i);
-    i++;
-    skip_linespaces (s, i);
+    skip_linespaces (s, ++i);
     tree c= parse_argument (s, i);
-    i++;
-    skip_linespaces (s, i);
+    skip_linespaces (s, ++i);
     if (s[i] == '[') {
       i++;
       tree d= parse (s, i, ']'); i++;
