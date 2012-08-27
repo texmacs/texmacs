@@ -519,11 +519,18 @@ skip_linespaces (string s, int& i) {
   skip_spaces (s, i);
 }
 
+bool
+latex_parser::is_opening_option (char c) {
+  if (c == '[') return true;
+  if (loaded_package["algorithm2e"] && c == '(') return true;
+  return false;
+}
+
 tree
 latex_parser::parse_command (string s, int& i, string cmd) {
   bool delimdef = false;
-  //cout << cmd << " [" << latex_type (cmd) << ", "
-  //<< command_type ["!mode"] << ", " << latex_arity (cmd) << "]" << LF;
+  // cout << cmd << " [" << latex_type (cmd) << ", "
+  // << command_type ["!mode"] << ", " << latex_arity (cmd) << "]" << LF;
   if (cmd == "\\gdef" || cmd == "\\xdef" || cmd == "\\edef") cmd= "\\def";
   if (cmd == "\\def" && s[i] == '\\') delimdef = true;
   if (cmd == "\\newcommand") cmd= "\\def";
@@ -584,6 +591,7 @@ latex_parser::parse_command (string s, int& i, string cmd) {
   if (mbox_flag) command_type ("!mode") = "text";
 
   int  n     = N(s);
+  string type= latex_type (cmd);
   int  arity = latex_arity (cmd);
   bool option= (arity<0);
   if (option) arity= -1-arity;
@@ -624,23 +632,32 @@ latex_parser::parse_command (string s, int& i, string cmd) {
 /************************ retrieve arguments *******************************/
     t = tree(TUPLE, copy (cmd)); // parsed arguments
     u = tree(TUPLE, copy (cmd)); // unparsed arguments
+    // Should be in a drd.
+    bool option2= (cmd == "\\def" || cmd == "\\newenvironment");
 
     while (i<n && arity>=0 && (arity>0 || option)) {
       int j= i;
       while ((j<n) && is_space (s[j])) j++;
       if (j==n) break;
       if (s[i]=='$') break; // in most cases, this should not be an argument
-      if (option && (s[j]=='[')) {
+      if (option && (is_opening_option (s[j]) ||
+                    (type == "algorithm2e" && s[j] == '{'))) {
+        char ec= closing_delimiter (s[j]);
         j++;
         i=j;
-        tree opt= parse (s, i, "]");
+        tree opt= parse (s, i, ec);
         if (cmd != "\\newtheorem" && cmd != "\\newtheorem*")
           t << opt;
         u << s (j, i);
-        if ((i<n) && (s[i]==']')) i++;
+        if ((i<n) && (s[i]==ec)) i++;
         if (cmd != "\\newtheorem" && cmd != "\\newtheorem*")
           t[0]->label= t[0]->label * "*";
         option= false;
+        if (!option && option2) {
+          option = true;
+          option2= false;
+          continue;
+        }
       }
       else if ((arity>0) && (s[j]=='{')) {
         bool text_arg=
@@ -657,7 +674,7 @@ latex_parser::parse_command (string s, int& i, string cmd) {
         u << s (j, i);
         if ((i<n) && (s[i]=='}')) i++;
         arity--;
-        if (arity == 0) option= false;
+        if (arity == 0) option= option2= false;
       }
       else if (s[j] == '}') break;
       else if (option && (s[j]=='#') && (cmd == "\\def")) {
@@ -668,7 +685,7 @@ latex_parser::parse_command (string s, int& i, string cmd) {
           i= j+2;
         }
         t[0]->label= t[0]->label * "*";
-        option= false;
+        option= option2= false;
       }
       else if (s[i] == '%') {
         while(i < N(s) && s[i] != '\n') i++;
@@ -680,7 +697,7 @@ latex_parser::parse_command (string s, int& i, string cmd) {
           t << st;
           u << st;
           arity--;
-          if (arity == 0) option= false;
+          if (arity == 0) option= option2= false;
         }
         else break;
       }
@@ -704,6 +721,12 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     command_type  (var)= "user";
     command_arity (var)= as_int (t[2]);
     command_def   (var)= as_string (u[3]);
+  }
+  if (is_tuple (t, "\\def**", 4)) {
+    string var= string_arg (t[1]);
+    command_type  (var)= "user";
+    command_arity (var)= - as_int (t[2]);
+    command_def   (var)= as_string (u[4]);
   }
   if (is_tuple (t, "\\declaretheorem*", 2) || 
       is_tuple (t, "\\declaretheorem",  1)) {
@@ -752,9 +775,22 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     command_def   (var)= as_string (u[4]);
     if (is_math_environment (t)) command_type (var)= "math-environment";
   }
+  if (is_tuple (t, "\\newenvironment**", 5)) {
+    string var= "\\begin-" * string_arg (t[1]);
+    command_type  (var)= "user";
+    command_arity (var)= -as_int (t[2]);
+    command_def   (var)= as_string (u[4]);
+    if (is_math_environment (t)) command_type (var)= "math-environment";
+    var= "\\end-" * string_arg (t[1]);
+    command_type  (var)= "user";
+    command_arity (var)= 0;
+    command_def   (var)= as_string (u[5]);
+    if (is_math_environment (t)) command_type (var)= "math-environment";
+  }
 
   /***************** environment changes for user commands  ******************/
-  if (latex_type (cmd) == "user") {
+  if ((is_tuple (t, "\\def", 2) || is_tuple (t, "\\def*", 3))
+      && latex_type (cmd) == "user") {
     int pos= 0;
     string body= command_def[cmd];
     textm_recursion_level (cmd)++;
@@ -786,7 +822,7 @@ latex_parser::parse_argument (string s, int& i) {
 tree
 latex_parser::parse_unknown (string s, int& i, string cmd) {
   int  n     = N(s);
-  bool option= false;
+  bool option= true;
 
   tree t (TUPLE, copy (cmd));
   while (i<n) {

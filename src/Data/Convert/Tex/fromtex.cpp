@@ -91,11 +91,13 @@ might_not_be_typesetted (tree t) {
          (is_func (t, TUPLE) && t[0] == "\\declaretheorem*") || 
          (is_func (t, TUPLE) && t[0] == "\\def")             || 
          (is_func (t, TUPLE) && t[0] == "\\def*")            || 
+         (is_func (t, TUPLE) && t[0] == "\\def**")           || 
          (is_func (t, TUPLE) && t[0] == "\\hspace")          || 
          (is_func (t, TUPLE) && t[0] == "\\label")           || 
          (is_func (t, TUPLE) && t[0] == "\\newdef")          || 
          (is_func (t, TUPLE) && t[0] == "\\newenvironment")  || 
          (is_func (t, TUPLE) && t[0] == "\\newenvironment*") || 
+         (is_func (t, TUPLE) && t[0] == "\\newenvironment**")|| 
          (is_func (t, TUPLE) && t[0] == "\\newtheorem")      || 
          (is_func (t, TUPLE) && t[0] == "\\newtheorem*")     || 
          (is_func (t, TUPLE) && t[0] == "\\noindent*")       || 
@@ -226,7 +228,7 @@ filter_preamble (tree t) {
         latex_classe = u;
       }
       else if (is_tuple (u, "\\def") ||
-	       is_tuple (u, "\\def*"))
+	       is_tuple (u, "\\def*") || is_tuple (u, "\\def**"))
 	preamble << u << "\n" << "\n";
       else if (is_tuple (u, "\\newdef", 2))
 	preamble << tuple("\\newtheorem", u[1], u[2]) << "\n" << "\n";
@@ -942,6 +944,26 @@ latex_command_to_tree (tree t) {
     f << l2e (t[3]);
     return tree (ASSIGN, var, f);
   }
+  if (is_tuple (t, "\\def**", 4)) {
+    string var= string_arg (t[1]);
+    if ((N(var)>0) && (var[0]=='\\')) var= var (1, N(var));
+    int i, arity= as_int (l2e(t[2]));
+    tree default_option= l2e(t[3]);
+    tree f1 (FUNC), f2 (MACRO), f3 (APPLY);
+    f3 << var*"*";
+    for (i=1; i<=arity; i++) {
+      f1 << as_string (i);
+      if (i > 1) {
+        f2 << as_string (i);
+        f3 << tree (ARG, as_string (i));
+      }
+      else
+        f3 << default_option;
+    }
+    f1 << l2e (t[4]);
+    f2 << f3;
+    return concat (tree (ASSIGN, var*"*", f1), tree (ASSIGN, var, f2));
+  }
 
   if (is_tuple (t, "\\newtheorem", 2) || is_tuple (t, "\\newdef", 2) ||
       is_tuple (t, "\\newtheorem*", 2)) {
@@ -962,6 +984,27 @@ latex_command_to_tree (tree t) {
     e << l2e (t[3]);
     e << l2e (t[4]);
     return tree (ASSIGN, var, e);
+  }
+  if (is_tuple (t, "\\newenvironment**", 5)) {
+    string var= l2e(t[1])->label;
+    int i, arity= as_int (l2e(t[2])->label);
+    tree default_option= l2e(t[3]);
+    tree e1 (ENV), e2 (MACRO), e3 (APPLY);
+    e3 << var*"*";
+    for (i=1; i<=arity; i++) {
+      e1 << as_string (i);
+      if (i > 1) {
+        e2 << as_string (i);
+        e3 << tree (ARG, as_string (i));
+      }
+      else
+        e3 << default_option;
+    }
+    e1 << l2e (t[4]);
+    e1 << l2e (t[5]);
+    e3 << tree (ARG, "body");
+    e2 << "body" << e3;
+    return concat (tree (ASSIGN, var*"*", e1), tree (ASSIGN, var, e2));
   }
 
   if (is_tuple (t, "\\Roman", 1)) {
