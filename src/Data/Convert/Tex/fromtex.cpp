@@ -1334,7 +1334,7 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\bibitem", 1))
     return compound ("bibitem", v2e (t[1]));
   if (is_tuple (t, "\\bibitem*", 2))
-    return compound ("bibitem*", v2e (t[1]), v2e (t[2]));
+    return compound ("bibitem-with-key", v2e (t[1]), v2e (t[2]));
   if (is_tuple (t, "\\index", 1)) {
     string s= v2e (t[1]);
     return latex_index_to_tree (s);
