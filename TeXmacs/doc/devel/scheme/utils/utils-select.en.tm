@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.16>
+<TeXmacs|1.0.7.15>
 
 <style|tmdoc>
 
@@ -33,7 +33,8 @@
   <\explain>
     <scm|:first>, <scm|:last><explain-synopsis|select first or last child>
   <|explain>
-    Select first or last child of the input tree.
+    Select first or last child of the input tree. <with|color|red|-This does
+    not work AFAICT>
   </explain>
 
   <\explain>
@@ -49,7 +50,7 @@
     Select all compound subtrees with the specified <scm-arg|label>. Example:
 
     <\session|scheme|default>
-      <\unfolded-io|scheme] >
+      <\unfolded-io|Scheme] >
         (select '(document (strong "x") (math "a+b") (strong "y")) '(strong))
       <|unfolded-io>
         ((strong "x") (strong "y"))
@@ -65,7 +66,7 @@
     of the <scm|n>-th generation. Example:
 
     <\session|scheme|default>
-      <\unfolded-io|scheme] >
+      <\unfolded-io|Scheme] >
         (select '(foo (bar "x" "y") (slash (dot))) '(:%2))
       <|unfolded-io>
         ("x" "y" (dot))
@@ -85,23 +86,34 @@
     <scm|(:match <scm-arg|pattern>)><explain-synopsis|matching>
   <|explain>
     This pattern matches the input tree if and only the input tree matches
-    the specified <scm-arg|pattern> according to <scm|match?>.
-  </explain>
-
-  <\explain>
-    <scm|(:match <scm-arg|pattern>)><explain-synopsis|matching>
-  <|explain>
-    This pattern matches the input tree if and only the input tree matches
     the specified <scm-arg|pattern> according to <scm|match?>. Example:
 
     <\session|scheme|default>
-      <\unfolded-io|scheme] >
+      <\unfolded-io|Scheme] >
         (select '(foo "x" (bar)) '(:%1 (:match :string?)))
       <|unfolded-io>
         ("x")
       </unfolded-io>
     </session>
+
+    Example with creation of a custom predicate:
+
+    <\session|scheme|default>
+      <\unfolded-io|Scheme] >
+        (select '(foo "x" (bar)) '(:* (:match :tree-atomic?)))
+      <|unfolded-io>
+        ()
+      </unfolded-io>
+
+      <\input|Scheme] >
+        \;
+      </input>
+    </session>
+
+    List of useful predicates:
   </explain>
+
+  \;
 
   <\explain>
     <scm|(:or <scm-arg|pattern-1> ... <scm-arg|pattern-n>)>
@@ -157,5 +169,6 @@
 <\initial>
   <\collection>
     <associate|language|english>
+    <associate|preamble|false>
   </collection>
 </initial>

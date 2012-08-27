@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.10>
+<TeXmacs|1.0.7.16>
 
 <style|tmdoc>
 
@@ -18,7 +18,9 @@
     satisfies a given <scm-arg|pattern>. It will be detailed below how to
     form valid patterns. The matching routines recursively understand that
     native trees match their scheme counterparts. For instance, <scm|(match?
-    (tree "x") "x<name|">)> will return <scm|#t>.
+    (tree "x") "x<name|">)> will return <scm|(())> (meaning <scm|<scm|>#t>
+    <with|color|red|-is this as intended?>) and <scm|(match? (tree "x")
+    "y<name|">)> will return <scm|#f>.
   </explain>
 
   <\explain>
@@ -31,11 +33,13 @@
     routine determines all substitutions of free variables by values
     (extending the given <scm-arg|bindings>), for which <scm-arg|l> matches
     the <scm-arg|pattern>.
+
+    <with|color|red|Give an example, please.>
   </explain>
 
   <\explain>
-    <scm|(define-grammar <scm-args|rules>)><explain-synopsis|user defined
-    matching grammars>
+    <scm|(define-regexp-grammar <scm-args|rules>)><explain-synopsis|user
+    defined matching grammars>
   <|explain>
     Given a list of rules of the form <scm|(:<scm-arg|var>
     <scm-arg|pattern-1> ... <scm-arg|pattern-n>)>, this instruction defines a
@@ -43,6 +47,7 @@
     matches the disjunction of the patterns <scm-arg|pattern-1> until
     <scm-arg|pattern-n>. This terminal symbol can then be used as an
     abbreviation in matching patterns. Grammar rules may be interdependent.
+    See example below.
   </explain>
 
   Valid patterns are formed in the following ways:
@@ -62,9 +67,9 @@
   </explain>
 
   <\explain>
-    <scm|:#1>, <scm|:#2>, <scm|:#3> ..., <scm|:*><explain-synopsis|wildcards>
+    <scm|:%1>, <scm|:%2>, <scm|:%3> ..., <scm|:*><explain-synopsis|wildcards>
   <|explain>
-    The wildcard <scm|:#n>, where <scm|n> is a number matches any list of
+    The wildcard <scm|:%n>, where <scm|n> is a number matches any list of
     length <scm|n>. The wildcard <scm|:*> matches any list, including the
     empty list.
   </explain>
@@ -83,16 +88,15 @@
     <scm|:<scm-arg|var>><explain-synopsis|user-provided grammar rules>
   <|explain>
     In the case when <scm|:<scm-arg|var>> is a user-provided terminal symbol
-    (see <scm|define-grammar> above), this pattern matches the corresponding
-    grammar.
+    (see <scm|define-regexp-grammar> above), this pattern matches the
+    corresponding grammar.
   </explain>
 
   <\explain>
-    <scm|:<scm-arg|pred?>><explain-synopsis|arbitrary <value|scheme>
-    predicates>
+    <scm|:<scm-arg|pred?>><explain-synopsis|arbitrary <scheme> predicates>
   <|explain>
-    Given a <value|scheme> predicate <scm-arg|pred?>, such as <scm|string?>,
-    this pattern matches any scheme expression which satisfies the predicate.
+    Given a <scheme> predicate <scm-arg|pred?>, such as <scm|string?>, this
+    pattern matches any scheme expression which satisfies the predicate.
   </explain>
 
   <\explain>
@@ -100,8 +104,8 @@
 
     <scm|(:or <scm-arg|pattern-1> ... <scm-arg|pattern-n>)>
 
-    <scm|><scm|(:and <scm-arg|pattern-1> ...
-    <scm-arg|pattern-n>)><explain-synopsis|logical operations>
+    <scm|(:and <scm-arg|pattern-1> ... <scm-arg|pattern-n>)><explain-synopsis|logical
+    operations>
   <|explain>
     Negation, disjunction and conjunction of patterns.
   </explain>
@@ -132,28 +136,68 @@
   <\example>
     The tree
 
-    <\scheme-fragment>
+    <\scm-code>
       (define t '(foo (bar "x") (bar "y") (option "z")))
-    </scheme-fragment>
+    </scm-code>
 
-    matches the pattern <scm|(foo (:repeat (bar :#1)) :*)>, but not <scm|(foo
+    matches the pattern <scm|(foo (:repeat (bar :%1)) :*)>, but not <scm|(foo
     (:repeat (bar 'x)) :*)>. The call <scm|(match t '(foo 'x 'y :*))> will
     return <scm|(((x . (bar "x")) (y . (bar "y"))))>.
+
+    <\with|color|red>
+      Actually this gives ``wrong-number-of-args'' but we have:
+    </with>
+
+    <\session|scheme|default>
+      <\input|Scheme] >
+        (define t '(foo (bar "x") (bar "y") (option "z")))
+      </input>
+
+      <\unfolded-io|Scheme] >
+        (match? t '(foo 'x 'y :*))
+      <|unfolded-io>
+        (((y bar "y") (x bar "x")))
+      </unfolded-io>
+    </session>
+
+    Which has a different format
   </example>
 
   <\example>
     Consider the grammar
 
-    <\scheme-fragment>
-      (define-grammar
+    <\scm-code>
+      (define-regexp-grammar
 
       \ \ (:a a b c)
 
       \ \ (:b (:repeat :a)))
-    </scheme-fragment>
+    </scm-code>
 
-    Then the list <scm|(a b x y c a a)> matches the pattern <scm|(:b :#2
+    Then the list <scm|(a b x y c a a)> matches the pattern <scm|(:b :%2
     :b)>.
+
+    <with|color|red|Does it?>
+
+    <\session|scheme|default>
+      <\input|Scheme] >
+        (define-regexp-grammar
+
+        \ \ (:a a b c)
+
+        \ \ (:b (:repeat :a)))
+      </input>
+
+      <\unfolded-io|Scheme] >
+        (match? \ '(a b x y c a a) \ (:b :%2 :b))
+      <|unfolded-io>
+        misc-error
+      </unfolded-io>
+
+      <\input|Scheme] >
+        \;
+      </input>
+    </session>
   </example>
 
   <tmdoc-copyright|2007|Joris van der Hoeven>
