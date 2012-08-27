@@ -32,6 +32,7 @@ bool is_numeric (string s);
 
 char   upcase (char s);
 char   locase (char s);
+char   closing_delimiter (char c);
 string upcase_first (string s);
 string locase_first (string s);
 string upcase_all (string s);

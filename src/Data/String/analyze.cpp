@@ -130,6 +130,14 @@ locase (char c) {
   else return c;
 }
 
+char
+closing_delimiter (char c) {
+  if (c == '{') return '}';
+  if (c == '(') return ')';
+  if (c == '[') return ']';
+  return c;
+}
+
 string
 upcase_first (string s) {
   if ((N(s)==0) || (!is_locase (s[0]))) return s;
@@ -1200,6 +1208,7 @@ tokenize (string s, string sep) {
       start= i;
     }
     else i++;
+  if (N(a) == 0) a << s;
   return a;
 }
 
