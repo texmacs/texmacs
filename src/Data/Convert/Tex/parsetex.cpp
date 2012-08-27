@@ -538,6 +538,7 @@ latex_parser::parse_command (string s, int& i, string cmd) {
   if (cmd == "\\renewcommand") cmd= "\\def";
   if (cmd == "\\DeclareMathOperator") cmd= "\\def";
   if (cmd == "\\DeclareMathOperator*") cmd= "\\def";
+  if (cmd == "\\RequirePackage") cmd= "\\usepackage";
   if (cmd == "\\renewenvironment") cmd= "\\newenvironment";
   if (cmd == "\\begin-split") cmd= "\\begin-eqsplit";
   if (cmd == "\\end-split") cmd= "\\end-eqsplit";
