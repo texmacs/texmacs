@@ -44,11 +44,29 @@ check_tree (tree t) {
 */
 
 static bool
+is_var_compound (tree t, string s) {
+  return
+    is_compound (t, s) ||
+    (is_func (t, APPLY) && t[0] == s) ||
+    (is_func (t, EXPAND) && t[0] == s);
+}
+
+static bool
 is_var_compound (tree t, string s, int n) {
   return
     is_compound (t, s, n) ||
     (is_func (t, APPLY, n+1) && t[0] == s) ||
     (is_func (t, EXPAND, n+1) && t[0] == s);
+}
+
+static bool
+is_apply (tree t, string s) {
+  return (L(t) == APPLY) && (N(t) > 0) && (t[0] == s);
+}
+
+static bool
+is_apply (tree t, string s, int n) {
+  return (L(t) == APPLY) && (N(t) == n+1) && (t[0] == s);
 }
 
 /******************************************************************************
