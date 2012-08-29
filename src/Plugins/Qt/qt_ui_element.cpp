@@ -1141,6 +1141,8 @@ qt_ui_element_rep::as_qwidget () {
       w->setText(to_qstring (t));
       w->setStyleSheet(style);
       w->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+      // Workaround too small sizeHint() when the text has letters with descent:
+      w->setMinimumHeight(w->fontMetrics().height());
       qwid = w;
     }
       break;
