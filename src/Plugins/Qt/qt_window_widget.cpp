@@ -22,7 +22,7 @@
 
 #include <QWidget>
 #include <QVariant>
-
+#include <QDockWidget>
 
 /*! Construct a qt_window_widget_rep around an already compiled widget.
  
@@ -89,8 +89,13 @@ qt_window_widget_rep::widget_from_qwidget(QWidget* q)
  */
 bool
 qt_window_widget_rep::has_resizable_children(QWidget* w, bool ret) {
-  if (!w) return false;     // Ignore any non QWidgets
-  if (qobject_cast<QMainWindow*>(w)) return true;  // These must always be resizable
+    // Ignore any non QWidgets
+  if (!w) return false;
+  
+    // Hack: these must always be resizable
+  if (qobject_cast<QMainWindow*>(w) || qobject_cast<QDockWidget*>(w))
+    return true;
+
   ret = (w->minimumSize() != QSize(0,0) && 
          w->maximumSize() != QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX) &&
          w->minimumSize() != w->maximumSize());
