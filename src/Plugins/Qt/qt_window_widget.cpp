@@ -97,7 +97,7 @@ qt_window_widget_rep::has_resizable_children(QWidget* w, bool ret) {
   
   QObjectList ch = w->children();
   for (int i=0; i<ch.size(); ++i)
-    ret = ret || hasResizableChildren(qobject_cast<QWidget*>(ch[i]), ret);
+    ret = ret || has_resizable_children(qobject_cast<QWidget*>(ch[i]), ret);
   
   return ret;
 }
