@@ -168,7 +168,7 @@ QTMComboBox::QTMComboBox (QWidget* parent) : QComboBox (parent) {
   QComboBox cb;
   cb.setSizeAdjustPolicy(AdjustToContents);
   cb.addItem("");
-  minSize = cb.minimumSizeHint();  // we'll just keep the height
+  minSize = cb.sizeHint();  // we'll just keep the height
   
     ///// Add width of the arrow button
   QStyleOptionComboBox opt;
