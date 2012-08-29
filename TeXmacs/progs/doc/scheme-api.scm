@@ -232,42 +232,38 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; module browser widget
 
-(tm-define module-widget-modules 
-  (map module->string (list-modules)))
+(tm-define mw-all-modules (map module->string (list-modules)))
+(tm-define mw-all-symbols (map symbol->string (module-exported '())))
+(tm-define mw-module "text.text-menu")
+(tm-define mw-symbol "")
 
-(tm-define module-widget-symbols
-  (map symbol->string (module-exported '(guile))))
-
-(tm-define module-widget-selected "")
-
-(tm-define (module-widget-update-symbols module)
-  (set! module-widget-symbols (map symbol->string (module-exported module))))
+(tm-define (mw-update-symbols module)
+  (set! mw-all-symbols (map symbol->string (module-exported module))))
 
 (tm-widget (module-symbols-widget)
-  (scrollable (choice (set! selected-symbol answer)
-                      module-widget-symbols
-                      "")))
+  (scrollable (choice (set! mw-symbol answer) mw-all-symbols "")))
 
 ; TO-DO: load real documentation
 (tm-widget (symbol-doc-widget)
   (texmacs-output
-    `(document ,(doc-symbol-template* module-widget-selected))))
+    (doc-symbol-template* (string->symbol mw-symbol))))
 
 (tm-widget (symbol-doc-buttons)
- (bottom-buttons >>
+ (explicit-buttons >>
    ("Insert template" (insert (doc-symbol-template* 
-                                (string->symbol module-widget-selected))))))
+                                (string->symbol mw-symbol))))))
 
 (tm-widget (module-widget)
   (vertical
     (hsplit
       (scrollable 
-        (choice (module-widget-update-symbols (string->module answer))
-                module-widget-names
+        (choice (mw-update-symbols (string->module answer))
+                mw-all-modules
                 ""))
       (refresh module-symbols-widget))
     ===
-    ;(refresh symbol-doc-widget)
+    (refresh symbol-doc-widget)
+    ===
     (refresh symbol-doc-buttons)))
 
 
@@ -284,7 +280,7 @@
 (define (get-current-doc-module)
   (let ((tt (select (buffer-tree) '(doc-module-header 0))))
     (if (null? tt)
-      '(guile) ; FIXME: don't depend on guile for this
+      '()
       (string->module (tree->string (car tt))))))
 
 (define (exp-modules)
@@ -296,16 +292,12 @@
   ;(:check-mark "*" (symbol-documented?)) ; right?
   (doc-symbol-template** ssym))
 
-; There is probably a faster way?
-(tm-define (editing-module-doc?)
-  (!= '() (select (buffer-tree) '(doc-module-header)) ))
-
 (kbd-map
-  (:require (editing-module-doc?))
+  (:require (in-tmdoc?))
   ("M-A-x" (interactive ask-insert-symbol-doc)))
 
 (menu-bind tools-menu
-  (:require (editing-module-doc?))
+  (:require (in-tmdoc?))
   (former)
   ("Insert symbol documentation..." (interactive ask-insert-symbol-doc))
   ("Open module browser..." (show-module-widget)))
