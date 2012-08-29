@@ -131,14 +131,14 @@ qt_widget_rep::plain_window_widget (string title, command quit) {
   if (li) {
     QLayout* l = li->layout();
     if (! l) {
-      l = new QVBoxLayout();
+      l = new QVBoxLayout(win);
       l->addItem(li);
     }
     win->setLayout(l);  // Transfers ownership
   } else {
     QWidget* qw = as_qwidget();
     if (qw) {
-      QLayout* l = new QVBoxLayout();
+      QLayout* l = new QVBoxLayout(win);
       l->addWidget(qw);        // The original QWidget now belongs to the layout
       win->setLayout(l);       // And the QLayout to the QTMPlainWindow.
     } else {

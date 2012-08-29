@@ -56,6 +56,8 @@ public:
   virtual void    notify (slot s, blackbox new_val);
 	
   static widget_rep* widget_from_qwidget (QWidget* qwid);
+
+  static bool has_resizable_children(QWidget* w, bool ret=false);
 };
 
 /*!

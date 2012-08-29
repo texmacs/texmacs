@@ -193,6 +193,13 @@ QTMTabWidget::QTMTabWidget(QWidget *p) : QTabWidget(p) {
   QObject::connect(this, SIGNAL(currentChanged(int)), this, SLOT(resizeOthers(int)));
 }
 
+/*! Resizes the widget to the size of the tab given by the index.
+ 
+ In particular, we must tell all parent widgets to adjustSize() as well as
+ possibly resize the window: qt_window_widget_rep's constructor sets a fixed
+ size for windows which do not contain variable size resize_widgets. In this 
+ case we must update the fixed size to reflect the change of tab.
+ */
 void
 QTMTabWidget::resizeOthers(int current) {
   for(int i = 0; i < count(); ++i) {
@@ -202,9 +209,16 @@ QTMTabWidget::resizeOthers(int current) {
       widget(i)->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   }
   
+    // FIXME? this could loop indefinitely if parents are cyclic.
   QWidget* p = this;
-  while (p != 0) {  // FIXME: this could loop indefinitely if parents are cyclic.
+  while (p != window()) {
     p->adjustSize();
     p = p->parentWidget();
   }
+  
+
+  if (window()->minimumSize()!=QSize(0,0) && 
+      window()->maximumSize() != QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX))
+    window()->setFixedSize(window()->sizeHint());
+  
 }

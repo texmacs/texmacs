@@ -23,18 +23,30 @@
 #include <QWidget>
 #include <QVariant>
 
+
+/*! Construct a qt_window_widget_rep around an already compiled widget.
+ 
+ This means that the QWidget passed as an argument already represents a fully 
+ parsed and compiled scheme widget. We use this fact to decide whether we must
+ be resizable or not, for instance.
+ */
 qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, command _quit)
 : qt_widget_rep(window_widget, _wid), quit(_quit)
 {
   qwid->setProperty ("texmacs_window_widget",
                      QVariant::fromValue ((void*) this));
   
+    // Try to connect only if the QWidget has a closed() signal
+    // We need this for the QDockWidgets we use in side tools (see qt_tm_widget_rep)
   if (qwid->metaObject() -> 
       indexOfSignal (QMetaObject::normalizedSignature ("closed()").constData ()) != -1) {
     QTMCommand* qtmcmd = new QTMCommand(qwid, quit);
     QObject::connect(qwid, SIGNAL (closed()), qtmcmd, SLOT (apply()));
   }
 
+  if (!has_resizable_children(_wid))
+    qwid->setFixedSize(qwid->sizeHint());
+  
   nr_windows++;
 }
 
@@ -70,6 +82,24 @@ qt_window_widget_rep::widget_from_qwidget(QWidget* q)
       q = q->parentWidget();
   }
   FAILED ("attempt to retrieve the window of a QWidget without one");
+}
+
+/*! Returns true if any of the child QWidgets has different minimum and maximum
+ sizes, as set by qt_ui_element_rep::as_qwidget() for resize_widgets.
+ */
+bool
+qt_window_widget_rep::has_resizable_children(QWidget* w, bool ret) {
+  if (!w) return false;     // Ignore any non QWidgets
+  if (qobject_cast<QMainWindow*>(w)) return true;  // These must always be resizable
+  ret = (w->minimumSize() != QSize(0,0) && 
+         w->maximumSize() != QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX) &&
+         w->minimumSize() != w->maximumSize());
+  
+  QObjectList ch = w->children();
+  for (int i=0; i<ch.size(); ++i)
+    ret = ret || hasResizableChildren(qobject_cast<QWidget*>(ch[i]), ret);
+  
+  return ret;
 }
 
 void
