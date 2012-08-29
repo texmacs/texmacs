@@ -1140,6 +1140,7 @@ qt_ui_element_rep::as_qwidget () {
       //w->setTextFormat(Qt::RichText);
       w->setText(to_qstring (t));
       w->setStyleSheet(style);
+      w->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
       qwid = w;
     }
       break;
