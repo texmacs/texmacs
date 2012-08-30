@@ -56,11 +56,11 @@ public:
 
 
 /*! QTMMenuButton is a custom button appropriate for menus
- *
- * We need to subclass QToolButton for two reasons
- *  1) custom appearence
- *  2) if used in QWidgetAction the menu do not disappear upon triggering the
- *     button. See QTBUG-10427.
+ 
+  We need to subclass QToolButton for two reasons
+   1) custom appearence
+   2) if used in QWidgetAction the menu does not disappear upon triggering the
+      button. See QTBUG-10427.
  */
 class QTMMenuButton: public QToolButton {
   QStyleOptionMenuItem option;
@@ -969,7 +969,6 @@ qt_ui_element_rep::as_qlayoutitem () {
   return NULL;
 }
 
-
 /*
  Because our policy is that the returned QWidget is owned by the caller, we
  must be careful and any QObjects we construct here must have the returned 
@@ -1059,6 +1058,8 @@ qt_ui_element_rep::as_qwidget () {
     }
       break;
       
+        // a command button with an optional prefix (o, * or v) and (sometimes) 
+        // keyboard shortcut
     case menu_button:
     {
       typedef quintuple<widget, command, string, string, int> T;
@@ -1070,33 +1071,24 @@ qt_ui_element_rep::as_qwidget () {
       int   style = x.x5;
       
       QWidget* qw = concrete(w)->as_qwidget();  // will be discarded at the end
-      
-      // a command button with an optional prefix (o, * or v) and (sometimes) 
-      // keyboard shortcut
 
-      if (style & WIDGET_STYLE_BUTTON) {
-        QPushButton*     b = new QPushButton();
-        QTMCommand* qtmcmd = new QTMCommand(b, cmd);
-        QObject::connect (b, SIGNAL (clicked ()), qtmcmd, SLOT (apply ()));
-
-        if (qw && concrete(w)->type == text_widget)
-          b->setText(static_cast<QLabel*>(qw)->text());
-        b->setEnabled(! (style & WIDGET_STYLE_INERT));
-        qwid = b;
-      } else {
-        QAction*     a = as_qaction();  // Create key shortcuts and actions
-        QToolButton* b;
-        if (concrete(w)->type == xpm_widget) {
-          b = new QTMUIButton();
-        } else { // text_widget
-          b = new QToolButton();
-        }
-        if (qw && concrete(w)->type == text_widget)
-          b->setText(static_cast<QLabel*>(qw)->text());
+      if (concrete(w)->type == xpm_widget) {  // Toolbar button
+        QAction*     a = as_qaction();        // Create key shortcuts and actions
+        QTMUIButton* b = new QTMUIButton();
         b->setDefaultAction(a);
         a->setParent(b);
         qwid = b;
+      } else { // text_widget
+        QPushButton*     b = new QPushButton();
+        QTMCommand* qtmcmd = new QTMCommand(b, cmd);
+        QObject::connect (b, SIGNAL (clicked ()), qtmcmd, SLOT (apply ()));
+        if (qw && concrete(w)->type == text_widget)
+          b->setText(static_cast<QLabel*>(qw)->text());
+        b->setEnabled (! (style & WIDGET_STYLE_INERT));
+        b->setFlat (! (style & WIDGET_STYLE_BUTTON));
+        qwid = b;
       }
+
       delete qw;
     }
       break;
