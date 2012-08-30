@@ -688,11 +688,13 @@ latex_concat_to_tree (tree t, bool& new_flag) {
 	    if (i>0 && is_tuple (t[i-1])) {
 	      string s= t[i-1][0]->label;
 	      if ((s[0] == '\\') && (latex_type (s) == "command") &&
-		  (s!="\\end-math") && (s!="\\end-displaymath"))
+		  (s!="\\end-math") && (s!="\\end-displaymath"))  {
+          r << u;
 		if ((arity(t[i-1])==1) || (s=="\\label")) continue;
 	      if (starts (s, "\\begin-") &&
 		  (command_type["!verbatim"] != "true"))
 		continue;
+        }
 	    }
 	    if (i+1<N(t) && is_tuple (t[i+1])) {
 	      string s= t[i+1][0]->label;
@@ -705,6 +707,9 @@ latex_concat_to_tree (tree t, bool& new_flag) {
       }
 
       string s= u->label;
+      if (operator_flag && i+1<n
+          && !(is_tuple (t[i+1], "\\<sub>") || is_tuple (t[i+1], "\\<sup>")))
+        s << " ";
       bool old_flag= new_flag;
       if (!cc_flag) new_flag= ((N(s)==1) && is_alpha(s));
       if ((command_type ["!mode"] == "math") &&
@@ -1362,7 +1367,6 @@ latex_command_to_tree (tree t) {
     return tree (ASSIGN, v2e (t[1]) * "-nr", v2e (t[2]));
   }
   if (is_tuple (t, "\\addtocounter", 2)) {
-    cout << t << LF;
     if (v2e (t[2]) == "1")
       return compound ("inc-counter", v2e (t[1]));
     return tree (ASSIGN, v2e (t[1]) * "-nr",

@@ -47,6 +47,7 @@ tree latex_symbol_to_tree (string s);
 struct latex_parser {
   int level;
   bool unicode;
+  char lf;
   hashmap<string,bool> loaded_package;
   latex_parser (bool unicode2): level (0), unicode (unicode2) {}
   void latex_error (string s, int i, string message);
@@ -54,6 +55,7 @@ struct latex_parser {
   bool is_opening_option (char c);
   tree parse             (string s, int& i, string stop= "", bool ch= false);
   tree parse_backslash   (string s, int& i);
+  tree parse_linefeed    (string s, int& i);
   tree parse_symbol      (string s, int& i);
   tree parse_command     (string s, int& i, string which);
   tree parse_argument    (string s, int& i);
@@ -106,6 +108,21 @@ is_tex_alpha (string s) {
 }
 
 tree
+latex_parser::parse_linefeed (string s, int& i) {
+  int ln=0;
+  tree r=concat ();
+  while ((i<N(s)) && is_space (s[i])) {
+    if (s[i++] == '\n') ln++;
+  }
+  if (i>N(s)) return "";
+  if (lf == 'N' && ln > 0) ln++;
+  if (lf != 'N' && ln == 1) r << " ";
+  else if (ln > 1) r << "\n";
+  if (ln > 0) lf = 'M';
+  return r;
+}
+
+tree
 latex_parser::parse (string s, int& i, string stop, bool change) {
   bool no_error= true;
   int n= N(s);
@@ -126,6 +143,7 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
 	   (i+2>n || s(i,i+2) != "\\]") &&
 	   (i+2>n || s(i,i+2) != "\\)") &&
 	   (i+4>n || s(i,i+4) != "\\end")))) {
+    if (lf == 'N' && s[i] != '\n') lf= 'M';
     switch (s[i]) {
     case '~':
       t << tuple ("\\nbsp");
@@ -137,16 +155,9 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
       while ((i<n) && ((s[i]==' ') || (s[i]=='\t') || (s[i]=='\r'))) i++;
       if ((i<n) && (s[i]!='\n')) t << " ";
       break;
-    case '\n': {
-      int ln=0;
-      while ((i<n) && is_space (s[i]))
-	if (s[i++]=='\n') ln++;
-      if (i<n) {
-	if (ln == 1) t << " ";
-	else t << "\n";
-      }
+    case '\n':
+      t << latex_parser::parse_linefeed (s, i);
       break;
-    }
     case '%': {
       while ((i<n) && (s[i]!='\n')) i++;
       if (i<n) i++;
@@ -170,6 +181,7 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
       else t << s (i-1, i);
       break;
     case '\\':
+      // TODO: move this in parse_command
       if (s (i+1, i+6) == "hskip" || s (i+1, i+6) == "vskip"){
         string skip = s (i+1, i+6);
         i+=7;
@@ -183,6 +195,7 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
         }
         textm_class_flag = tmp_textm_class_flag;
       }
+      // end of move
       else if (((i+7)<n && !is_tex_alpha (s (i+5, i+7)) &&
 	  (s (i, i+5) == "\\over" || s (i, i+5) == "\\atop")) ||
 	  ((i+9)<n && !is_tex_alpha (s (i+7, i+9)) && s (i, i+7) == "\\choose"))
@@ -233,7 +246,9 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
 	while ((i < N(s)) && (s[i] == '\'')) i++;
 	t << tuple ("\\prime", s (start, i));
       }
-      else t << s (i-1, i);
+      else {
+        t << s (i-1, i);
+      }
       break;
     case '*':
       if (command_type ["!mode"] == "math") t << tree (TUPLE, "\\ast");
@@ -434,6 +449,8 @@ latex_parser::parse_backslash (string s, int& i) {
   while ((i<n) && is_tex_alpha (s[i])) i++;
   if ((i<n) && (s[i]=='*') && latex_type (s (start, i+1)) != "undefined") i++;
   string r= s (start, i);
+  while ((i<n) && s[i] == ' ') i++;
+  if (s[i] == '\n') {lf= 'N'; i++;}
   if ((r == "\\begin") || (r == "\\end")) {
     while ((i<n) && is_space (s[i])) i++;
     if ((i==n) || (s[i]!='{')) {
@@ -463,7 +480,7 @@ sharp_to_arg (string s, tree args) {
 
 tree
 latex_parser::parse_symbol (string s, int& i) {
-  int start= i;
+  int start= i, end;
   if ((s[i] == '*') && (command_type ["!mode"] == "math")) {
     i++; return tree (TUPLE, "\\ast"); }
   if (s[i] == '<') { i++; return tree (TUPLE, "\\<less>"); }
@@ -471,10 +488,15 @@ latex_parser::parse_symbol (string s, int& i) {
   if (s[i] != '\\') { i++; return s(start, i); }
   i++;
   if (i == N(s)) return tree (TUPLE, "\\backslash");
-  if (!is_tex_alpha (s[i])) { i++; return s(start, i); }
-  while ((i<N(s)) && is_tex_alpha (s[i])) i++;
-  if ((i<N(s)) && (s[i]=='*')) i++;
-  return s(start,i);
+  if (!is_tex_alpha (s[i])) end= ++i;
+  else {
+    while ((i<N(s)) && is_tex_alpha (s[i])) i++;
+    if ((i<N(s)) && (s[i]=='*')) i++;
+    end= i;
+  }
+  while ((i<N(s)) && s[i] == ' ') i++;
+  if (s[i] == '\n') {lf= 'N'; i++;}
+  return s(start, end);
 }
 
 static bool
@@ -1397,7 +1419,8 @@ parse_latex (string s, bool change) {
   else if (encoding == "")
     s= convert (s, "ISO-8859-1", "UTF-8");
 
-  latex_parser ltx (encoding  != "Cork");
+  latex_parser ltx (encoding != "Cork");
+  ltx.lf= 'M';
   tree r= ltx.parse (s, change);
   r= accented_to_Cork (ltx.parse (s, change));
   if (lan == "") return r;
