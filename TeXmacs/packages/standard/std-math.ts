@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.0.7.16>
 
 <style|<tuple|source|std>>
 
@@ -118,7 +118,7 @@
 
   <assign|modulo|<macro|x|<space|0.2spc>mod <arg|x>>>
 
-  <assign|bmod|<macro|x|<space|0.5spc>mod <arg|x>>>
+  <assign|bmod|<macro|<space|0.2spc>mod >>
 
   <assign|pmod|<macro|x|<around*|(|mod <arg|x>|)>>>
 

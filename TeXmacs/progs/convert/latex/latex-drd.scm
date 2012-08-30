@@ -33,7 +33,7 @@
   pagebreak nopagebreak newpage newdoublepage clearpage cleardoublepage
   newblock bgroup egroup protect cr hfil hfill hfilll appendix limits nolimits
   dots maketitle tableofcontents TeX LaTeX onecolumn twocolumn
-  begingroup endgroup printindex today
+  begingroup endgroup printindex today bmod
 
   ;; AMS commands
   qed dotsc dotsb dotsm dotsi dotso
@@ -60,7 +60,7 @@
   bigm Bigm biggm Biggm bigr Bigr biggr Biggr
   bar hat tilde widehat widetilde vec bm
   grave acute check breve abovering mathring
-  dot ddot dddot ddddot mod pod pmod bmod
+  dot ddot dddot ddddot mod pod pmod
   label ref pageref index hspace hspace* vspace vspace*
   mbox hbox textnormal text not substack
   ,(string->symbol "'") ,(string->symbol "`") ,(string->symbol "\"")
