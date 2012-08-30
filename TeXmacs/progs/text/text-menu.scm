@@ -307,7 +307,7 @@
 
 (menu-bind text-icons
   ;;("Goedenmiddag" (display* "Hi there\n"))
-  ;;(input (display* answer "\n") "string" '("Hello" "Bonjour") "0.5w")
+  ;;(mini #t (input (display* answer "\n") "string" '("Hello" "Bonjour") "0.5w"))
   (if (style-has? "header-letter-dtd")
       (=> (balloon (icon "tm_title.xpm") "Make a letter environment")
 	  (link letter-header-menu)))

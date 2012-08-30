@@ -221,7 +221,7 @@
   "Make @(input :%1 :string? :%1 :string?) menu item."
   (with (tag cmd type props width) p
     (widget-input (object->command (menu-protect cmd)) type (props)
-		  (logior style widget-style-mini) width)))
+		  style width)))
 
 (define (make-enum p style)
   "Make @(enum :%3 :string?) item."

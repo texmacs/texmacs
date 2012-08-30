@@ -387,12 +387,16 @@ qt_input_text_widget_rep::as_qwidget () {
   QLineEdit *le;
   // FIXME: how is this check necessary (out of memory check seems unlikely...)
   if (helper) {
-    le = new QTMLineEdit (NULL, helper->wid()->width);
-    helper -> add (le);
+    if (style & WIDGET_STYLE_MINI)
+      le = new QTMLineEdit (NULL, helper->wid()->width);
+    else
+      le = new QLineEdit (NULL);
+    
+    helper->add (le);
     QObject::connect(le, SIGNAL(returnPressed ()), helper, SLOT(commit ()));
     QObject::connect(le, SIGNAL(editingFinished ()), helper, SLOT(leave ()));
     le->setText (to_qstring (helper->wid()->text));
-    
+
     le->setStyleSheet (to_qstylesheet (style));
     le->setMinimumSize(qt_decode_length(width, "", le->minimumSizeHint(), le->fontMetrics()));
     
