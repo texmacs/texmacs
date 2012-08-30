@@ -1030,7 +1030,7 @@ static char Cork_unaccented[128]= {
   'D', 'N', 'O', 'O', 'O', 'O', 'O', ' ',
   ' ', 'U', 'U', 'U', 'U', 'Y', ' ', ' ',
   'a', 'a', 'a', 'a', 'a', 'a', ' ', 'c',
-  'e', 'e', 'e', 'e', 25 , 25 , 25 , 25 ,
+  'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i',
   'd', 'n', 'o', 'o', 'o', 'o', 'o', ' ',
   ' ', 'u', 'u', 'u', 'u', 'y', ' ', ' '
 };
@@ -1085,7 +1085,7 @@ accented_to_Cork (tree t) {
     }
     else {
       char c1= v[0], c2= s[1];
-      if (v == "\\i") c1= (char) 25;
+      if (v == "\\i") c1= 'i';
       if ((N(v)==1) || (v=="\\i"))
 	for (i=0; i<127; i++)
 	  if ((Cork_unaccented[i]==c1) && (Cork_accent[i]==c2))
