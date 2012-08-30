@@ -1795,6 +1795,7 @@ parse_pmatrix (tree& r, tree t, int& i, string lb, string rb, string fm) {
       cols= max (cols, N(L));
       L= tree (CONCAT);
       E= tree (CONCAT);
+      while (i+1<N(t) && t[i+1] == " ")i++;
       continue;
     }
     else if (is_func (v, BEGIN) && (v[0] == "array" || v[0] == "tabular")) {
