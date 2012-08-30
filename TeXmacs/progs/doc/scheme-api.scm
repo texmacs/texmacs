@@ -245,8 +245,13 @@
 
 ; TO-DO: load real documentation
 (tm-widget (symbol-doc-widget)
-  (texmacs-output
-    (doc-symbol-template* (string->symbol mw-symbol))))
+  (resize ("100px" "200px" "400px") ("50px" "100px" "150px")
+    (texmacs-input
+     `(document
+        (surround (use-package "tmdoc-markup") ""
+         ,(doc-symbol-template* (string->symbol mw-symbol))))
+     (noop) #f)))
+;;    (doc-symbol-template* (string->symbol mw-symbol))))
 
 (tm-widget (symbol-doc-buttons)
  (explicit-buttons >>

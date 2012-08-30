@@ -22,6 +22,8 @@
 
   <use-package|tmdoc-markup>
 
+  <use-module|(doc scheme-api)>
+
   <\active*>
     <\src-comment>
       Module documentation
@@ -71,7 +73,7 @@
       <\framed-table>
         <\with|color|black>
           <table|<row|<\cell>
-            <compound|doc-module-header-body|<arg|module-name>|<arg|module-description>>
+            <doc-module-header-body|<arg|module-name>|<arg|module-description>>
           </cell>>>
         </with>
       </framed-table>
@@ -83,7 +85,7 @@
   \;
 
   <assign|doc-module-traverse|<with|frame-color|light
-  grey|body-color|#f2fffc|<framed-table|<with|color|black|<compound|table|<row|<cell|<traverse|<macro|root|<extern|doc-module-traverse|<arg|root>>>>>>>>>>>
+  grey|body-color|#f2fffc|<framed-table|<with|color|black|<table|<row|<cell|<traverse|<macro|root|<extern|doc-module-traverse|<arg|root>>>>>>>>>>>
 
   \;
 

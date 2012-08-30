@@ -179,14 +179,6 @@
 (lazy-tmfs-handler (doc tmdoc) help)
 (lazy-tmfs-handler (doc scheme-help) scheme-help)
 (define-secure-symbols tmdoc-include)
-(lazy-define (doc scheme-api) doc-module-synopsis doc-module-family
-             doc-module-dependencies doc-module-source-link
-             doc-module-count-exported doc-module-count-undocumented
-             doc-module-traverse)
-(define-secure-symbols doc-module-synopsis doc-module-family
-             doc-module-dependencies doc-module-source-link
-             doc-module-count-exported doc-module-count-undocumented
-             doc-module-traverse)
 
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
