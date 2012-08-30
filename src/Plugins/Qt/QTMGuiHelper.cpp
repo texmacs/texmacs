@@ -155,6 +155,13 @@ QTMRefreshWidget::doRefresh() {
       delete layout();
     }
     setLayout(concrete(cur)->as_qlayoutitem()->layout());
+
+      // Tell the window to fix its size to the new one if we had it fixed to
+      // begin with (this is indicated by minimum and maximum sizes set to 
+      // values other than the default)
+    if (window()->minimumSize() != QSize(0,0) && 
+        window()->maximumSize() != QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX))
+      window()->setFixedSize(window()->sizeHint());  
   }
 }
 
