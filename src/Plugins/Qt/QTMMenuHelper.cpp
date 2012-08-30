@@ -215,10 +215,8 @@ QTMTabWidget::resizeOthers(int current) {
     p->adjustSize();
     p = p->parentWidget();
   }
-  
 
   if (window()->minimumSize()!=QSize(0,0) && 
       window()->maximumSize() != QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX))
     window()->setFixedSize(window()->sizeHint());
-  
 }
