@@ -188,18 +188,26 @@ convert (string input, string from, string to) {
 
 string 
 convert_to_cork (string input, string from) {
-  string str;
-  if (from != "UTF-8")
-    str = convert_using_iconv (input, from, "UTF-8");
-  return utf8_to_cork (input);
+  if (from == "UTF-8")
+    return utf8_to_cork (input);
+#ifdef USE_ICONV
+  string str= convert_using_iconv (input, from, "UTF-8");
+  return utf8_to_cork (str);
+#else
+  return input; // can't do anything.
+#endif
 }
 
 string 
 convert_from_cork (string input, string to) {
-  string str;
-  if (to != "UTF-8")
-    str = convert_using_iconv (str, "UTF-8", to);
-  return cork_to_utf8 (input);
+  if (to == "UTF-8")
+    return cork_to_utf8 (input);
+#ifdef USE_ICONV
+  string str = cork_to_utf8 (input);
+  return convert_using_iconv (str, "UTF-8", to);
+#else
+  return input; // can't do anything.
+#endif
 }
 
 string
