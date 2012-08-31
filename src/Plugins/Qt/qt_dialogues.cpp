@@ -288,11 +288,9 @@ qt_inputs_list_widget_rep::perform_dialog() {
 qt_input_text_widget_rep::qt_input_text_widget_rep 
 (command _cmd, string _type, array<string> _def, int _style, string _width)
 : cmd (_cmd), type (_type), def (_def), text (""), style(_style), width(_width),
-helper(NULL), ok(false) 
+  helper(NULL), ok(false) 
 {
-  if (N(def) > 0) {
-    text = def[0];
-  }
+  if (N(def) > 0) text = def[0];
 }
 
 qt_input_text_widget_rep::~qt_input_text_widget_rep() { }
@@ -320,9 +318,7 @@ qt_input_text_widget_rep::as_qwidget () {
     QObject::connect(le, SIGNAL(returnPressed ()), helper, SLOT(commit ()));
     QObject::connect(le, SIGNAL(editingFinished ()), helper, SLOT(leave ()));
     le->setText (to_qstring (helper->wid()->text));
-
-    le->setMinimumSize(qt_decode_length(width, "", le->minimumSizeHint(), le->fontMetrics()));
-    
+ 
     if (ends (type, "file") || type == "directory") {
       // autocompletion
       QCompleter *completer = new QCompleter(le);
@@ -331,9 +327,9 @@ qt_input_text_widget_rep::as_qwidget () {
       le->setCompleter(completer);
     } else if (N(def) > 0) {
       QStringList items;
-      for (int j=0; j < N(def); j++) {
+      for (int j=0; j < N(def); j++)
         items << to_qstring(def[j]);
-      }
+
       QCompleter *completer = new QCompleter(items, le);
       completer->setCaseSensitivity(Qt::CaseSensitive);
       completer->setCompletionMode(QCompleter::InlineCompletion);

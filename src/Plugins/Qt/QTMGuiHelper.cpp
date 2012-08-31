@@ -213,6 +213,5 @@ QTMComboBox::addItemsAndResize (const QStringList& texts, string ww, string hh) 
   calcSize.setHeight (qMax (calcSize.height(), minSize.height()));
   calcSize.rwidth() += minSize.width();
   
-  setMinimumSize (calcSize);
-  setMaximumSize (calcSize);
+  setFixedSize(calcSize);
 }

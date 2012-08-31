@@ -230,7 +230,7 @@ QTMLineEdit::keyPressEvent(QKeyEvent *event)
 
 QSize
 QTMLineEdit::sizeHint () const {
-  return qt_decode_length(ww, "", minimumSizeHint(), fontMetrics());
+  return qt_decode_length(ww, "", QLineEdit::sizeHint(), fontMetrics());
 }
 
 void 

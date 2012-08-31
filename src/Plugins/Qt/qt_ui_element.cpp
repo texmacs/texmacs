@@ -858,12 +858,10 @@ qt_ui_element_rep::as_qlayoutitem () {
          layout when you create it, but before you do anything with it. 
          */
       QGridLayout* l= new QGridLayout ();
-      l->setSizeConstraint (QLayout::SetMinimumSize);
+      l->setAlignment(Qt::AlignLeft);  // Don't center items automatically
+      l->setSizeConstraint(QLayout::SetMinAndMaxSize);
       l->setHorizontalSpacing (6+hsep/PIXEL);
-      l->setVerticalSpacing (2+vsep/PIXEL);
-        // Columns with a higher stretch factor take more of the available space.
-        //l->setColumnStretch(0, 10);
-        //l->setColumnStretch(1, 1);
+      l->setVerticalSpacing (6+vsep/PIXEL);
       for (int i=0; i < N(lhs); i++) {
         QLayoutItem* lli = concrete(lhs[i])->as_qlayoutitem();
         QLayoutItem* rli = concrete(rhs[i])->as_qlayoutitem();
@@ -871,23 +869,6 @@ qt_ui_element_rep::as_qlayoutitem () {
         if (rli) l->addItem(rli, i, 1, 1, 1, Qt::AlignLeft);
       }
       return l;
-       /*
-        // Test:
-      QFormLayout* l= new QFormLayout ();
-      l->setSizeConstraint (QLayout::SetMinimumSize);
-      l->setHorizontalSpacing (6+hsep/PIXEL);
-      l->setVerticalSpacing (2+vsep/PIXEL);
-      l->setRowWrapPolicy(QFormLayout::DontWrapRows);
-      l->setFieldGrowthPolicy(QFormLayout::FieldsStayAtSizeHint);
-      l->setFormAlignment(Qt::AlignHCenter | Qt::AlignTop);
-      l->setLabelAlignment(Qt::AlignLeft);
-      for (int i=0; i < N(lhs); i++) {
-        QWidget* lw = concrete(lhs[i])->as_qwidget();
-        QWidget* rw = concrete(rhs[i])->as_qwidget();
-        if (lw && rw) l->addRow (lw, rw);
-      }
-      return l;
-       */
     }
       
     case minibar_menu: 
