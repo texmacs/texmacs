@@ -11,14 +11,15 @@
 
 #include "QTMMenuHelper.hpp"
 #include "QTMGuiHelper.hpp"
-
+#include "QTMStyle.hpp"
 #include "qt_gui.hpp"
 #include "qt_utilities.hpp"
+
 #include "analyze.hpp"
+
 #include <QtGui>
 
 //////////////////////////////// QTMCommand ////////////////////////////////////
-
 
 /*! Queues the object's command into the main queue. */
 void 
@@ -41,7 +42,6 @@ QTMAction::QTMAction(QObject *parent) : QAction(parent) {
 QTMAction::~QTMAction() { 
   if (menu() && !(menu()->parent())) delete menu(); 
 }
-
 
 void 
 QTMAction::doRefresh() {
@@ -100,7 +100,6 @@ rerootActions (QWidget* dest, QWidget* src) {
     a->setParent (dest);
   }
 }
-
 
 void
 QTMLazyMenu::force () {
@@ -164,8 +163,6 @@ QTMInputTextWidgetHelper::add(QLineEdit *obj) {
   }
 }
 
-
-
 void
 QTMInputTextWidgetHelper::doit () {
   if (done) return;
@@ -183,6 +180,65 @@ QTMInputTextWidgetHelper::doit () {
   the_gui -> process_command(wid()->cmd, wid()->ok ? list_object (object (wid() -> text)) : 
                              list_object (object (false)));
 #endif
+}
+
+
+  ////////////////////////// QTMLineEdit ////////////////////////////
+
+
+QTMLineEdit::QTMLineEdit (QWidget* parent, string _ww, int style)
+: QLineEdit (parent), ww (_ww) {
+  if (style & WIDGET_STYLE_MINI) {
+    setStyle (qtmstyle());
+      // FIXME: we should remove this and let the scheme code decide.
+    QPalette pal (palette());
+    pal.setColor (QPalette::Base, QColor (252, 252, 248));
+    setPalette (pal);      
+  }
+
+  setStyleSheet (to_qstylesheet (style)); 
+}
+
+void 
+QTMLineEdit::keyPressEvent(QKeyEvent *event)
+{
+  QCompleter* c = completer();
+  
+  if (c) c->setCompletionPrefix (QString ());      // reset completion
+  
+  if (event->key() == Qt::Key_Up) {                // move back in history
+    if (c) {
+      int row = c->currentRow ();
+      c->setCurrentRow (row-1);
+      setText (c->currentCompletion ());
+    }
+    event->accept();
+  } else if (event->key() == Qt::Key_Down) {       // move forward in history
+    if (c) {
+      int row = c->currentRow ();
+      c->setCurrentRow (row+1);
+      setText (c->currentCompletion ());
+    }
+    event->accept();
+  } else if (event->key() == Qt::Key_Escape) {     // exit editing
+    emit editingFinished();
+    event->accept();
+  } else {
+    QLineEdit::keyPressEvent(event);
+  }
+}
+
+QSize
+QTMLineEdit::sizeHint () const {
+  return qt_decode_length(ww, "", minimumSizeHint(), fontMetrics());
+}
+
+void 
+QTMLineEdit::focusInEvent (QFocusEvent *event)
+{
+  setCursorPosition (text().size());
+    //  selectAll ();
+  QLineEdit::focusInEvent (event);
 }
 
 

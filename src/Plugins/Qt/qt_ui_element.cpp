@@ -1120,7 +1120,8 @@ qt_ui_element_rep::as_qwidget () {
       T           x = open_box<T>(load);
       string    str = x.x1;
       QString style = to_qstylesheet(x.x2, x.x3);
-
+        //bool      tsp = x.x4;  // FIXME: add transparency support
+      
       QLabel* w = new QLabel();
 #if 0
       //FIXME: implement refresh when changing language

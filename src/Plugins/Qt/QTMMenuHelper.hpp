@@ -21,6 +21,7 @@
 #include <QLineEdit>
 #include <QTabWidget>
 #include <QLayout>
+#include <QLineEdit>
 
 #include "qt_gui.hpp"
 #include "qt_dialogues.hpp"
@@ -139,8 +140,31 @@ protected slots:
 };
 
 
-class QLineEdit;
+/*! A customized QLineEdit with special keyboard handling and styling. */
+class QTMLineEdit : public QLineEdit {
+  Q_OBJECT
 
+public:
+  string ww; // width of the parsed widget
+  
+  QTMLineEdit (QWidget *parent, string _ww, int style=0);
+  virtual QSize	sizeHint () const ;
+  
+protected:
+  void keyPressEvent (QKeyEvent *event);
+  void focusInEvent (QFocusEvent *evenement);
+};
+
+
+/*! A class to keep a QLineEdit object and a qt_input_text_widget_rep object in
+ sync.
+ 
+ After certain events we store state information about the QLineEdit into the 
+ qt_input_text_widget_rep: when the user has finished editing (i.e. has pressed
+ enter), or has left the QLineEdit for instance.
+ 
+ Actually we use this with a QTMLineEdit.
+ */
 class QTMInputTextWidgetHelper : public QObject {
   Q_OBJECT
 

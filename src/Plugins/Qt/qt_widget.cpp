@@ -346,7 +346,7 @@ widget glue_widget (bool hx, bool vx, SI w, SI h) {
 widget glue_widget (tree col, bool hx, bool vx, SI w, SI h) {
   return tm_new<qt_glue_widget_rep> (col, hx, vx, w, h); }
 widget inputs_list_widget (command call_back, array<string> prompts) {
-  return tm_new<qt_input_widget_rep> (call_back, prompts); }
+  return tm_new<qt_inputs_list_widget_rep> (call_back, prompts); }
 widget input_text_widget (command call_back, string type, array<string> def,
                           int style, string width) {
   return tm_new<qt_input_text_widget_rep> (call_back, type, def, style, width);}

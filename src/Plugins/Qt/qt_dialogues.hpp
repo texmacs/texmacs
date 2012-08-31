@@ -40,7 +40,15 @@ public:
 
 class qt_field_widget;
 
-class qt_input_widget_rep: public qt_widget_rep {
+/*! A dialog with a list of inputs and ok and cancel buttons.
+ 
+ TODO:
+ We try to use OS dialogs whenever possible, but this still needs improvement.
+ We should also use a custom Qt widget and then bundle it in a modal window if
+ required, so as to eventually be able to return something embeddable in 
+ as_qwidget(), in case we want to reuse this.
+ */
+class qt_inputs_list_widget_rep: public qt_widget_rep {
 protected:
   command cmd;
   array<qt_field_widget> fields;
@@ -48,31 +56,34 @@ protected:
   string win_title;
   int style;
 public:
-  qt_input_widget_rep (command, array<string>);
-  ~qt_input_widget_rep ();
+  qt_inputs_list_widget_rep (command, array<string>);
+  ~qt_inputs_list_widget_rep ();
   
   virtual void send (slot s, blackbox val);
   virtual blackbox query (slot s, int type_id);
   virtual widget read (slot s, blackbox index);
-
+  
   virtual widget plain_window_widget (string s, command q);
 
   void perform_dialog();
 };
 
+
+/*!
+ */
 class qt_field_widget_rep: public qt_widget_rep {
   string prompt;
   string input;
   string type;
   array<string> proposals;
-  qt_input_widget_rep *parent;
+  qt_inputs_list_widget_rep *parent;
 public:
-  qt_field_widget_rep(qt_input_widget_rep *_parent) :
+  qt_field_widget_rep(qt_inputs_list_widget_rep *_parent) :
     qt_widget_rep(), prompt(""), input(""),  proposals(), parent(_parent) { }
   virtual void send (slot s, blackbox val);
   virtual blackbox query (slot s, int type_id);
 
-  friend class qt_input_widget_rep;
+  friend class qt_inputs_list_widget_rep;
 };
 
 class qt_field_widget {

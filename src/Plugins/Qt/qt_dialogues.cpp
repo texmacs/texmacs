@@ -22,82 +22,10 @@
 #include "converter.hpp"
 #include "QTMMenuHelper.hpp"
 #include "QTMGuiHelper.hpp"
-#include "QTMStyle.hpp"
 
 #include <QtGui>
 #include "string.hpp"
 #include "scheme.hpp"
-
-
-  ////////////////////////// QTMLineEdit ////////////////////////////
-
-
-class QTMLineEdit : public QLineEdit {
-  
-public:
-  string ww; // width of the parsed widget
-  
-  QTMLineEdit (QWidget *parent, string _ww) 
-  : QLineEdit (parent), ww (_ww) {
-    setStyle (qtmstyle());
-    QPalette pal (palette());
-    pal.setColor (QPalette::Base, QColor (252, 252, 248));
-    setPalette (pal);
-  };
-  
-  virtual QSize	sizeHint () const ;
-protected:
-  void keyPressEvent (QKeyEvent *event);
-  void focusInEvent (QFocusEvent *evenement);
-  
-};
-
-void 
-QTMLineEdit::keyPressEvent(QKeyEvent *event)
-{
-  QCompleter *c = completer();
-    // reset completion
-  if (c) c->setCompletionPrefix (QString ());
-  
-  if (event->key() == Qt::Key_Up){
-    if (c) {
-      int row = c->currentRow();
-      c->setCurrentRow(row-1);
-      setText(c->currentCompletion());
-    }
-    event->accept();
-      // move back in history
-  } else if (event->key() == Qt::Key_Down){
-    if (c) {
-      int row = c->currentRow();
-      c->setCurrentRow(row+1);
-      setText(c->currentCompletion());
-    }
-    event->accept();
-      // move forward in history
-  } else if (event->key() == Qt::Key_Escape){
-    emit editingFinished();
-    event->accept();
-      // exit editing
-  }
-  else {
-      // default handler for event
-    QLineEdit::keyPressEvent(event);
-  }
-}
-
-QSize
-QTMLineEdit::sizeHint () const {
-  return qt_decode_length(ww, "", minimumSizeHint(), fontMetrics());
-}
-
-void 
-QTMLineEdit::focusInEvent (QFocusEvent *event)
-{
-  setCursorPosition (text().size());
-    //  selectAll ();
-  QLineEdit::focusInEvent (event);
-}
 
 
   ////////////////////////// qt_field_widget_rep ////////////////////////////
@@ -126,7 +54,7 @@ qt_field_widget_rep::send (slot s, blackbox val) {
     parent->send(s,val);
     break;
   default:
-    widget_rep::send (s, val);
+    qt_widget_rep::send (s, val);
   }
 }
 
@@ -139,15 +67,15 @@ qt_field_widget_rep::query (slot s, int type_id) {
     check_type_id<string> (type_id, s);
     return close_box<string> (input);
   default:
-    return widget_rep::query (s, type_id);
+    return qt_widget_rep::query (s, type_id);
   }
 }
 
 
-  ////////////////////////// qt_input_widget_rep ////////////////////////////
+  ////////////////////////// qt_inputs_list_widget_rep ////////////////////////////
 
 
-qt_input_widget_rep::qt_input_widget_rep (command _cmd, array<string> _prompts):
+qt_inputs_list_widget_rep::qt_inputs_list_widget_rep (command _cmd, array<string> _prompts):
    qt_widget_rep (input_widget), cmd (_cmd), fields (N (_prompts)),
    size (coord2 (100, 100)), position (coord2 (0, 0)), win_title (""), style (0)
 {
@@ -157,12 +85,20 @@ qt_input_widget_rep::qt_input_widget_rep (command _cmd, array<string> _prompts):
   }
 }
 
-qt_input_widget_rep::~qt_input_widget_rep()  {}
+qt_inputs_list_widget_rep::~qt_inputs_list_widget_rep()  {}
+
+widget
+qt_inputs_list_widget_rep::plain_window_widget (string s, command q)
+{
+  win_title = s;
+  (void) q;  // FIXME? ignore ok?
+  return this;
+}
 
 void
-qt_input_widget_rep::send (slot s, blackbox val) {
+qt_inputs_list_widget_rep::send (slot s, blackbox val) {
   if (DEBUG_QT)
-    cout << "qt_input_widget_rep::send " << slot_name(s) << LF;
+    cout << "qt_inputs_list_widget_rep::send " << slot_name(s) << LF;
 
   switch (s) {
   case SLOT_VISIBILITY:
@@ -190,11 +126,10 @@ qt_input_widget_rep::send (slot s, blackbox val) {
   }
 }
 
-
 blackbox
-qt_input_widget_rep::query (slot s, int type_id) {
+qt_inputs_list_widget_rep::query (slot s, int type_id) {
   if (DEBUG_QT)
-    cout << "qt_input_widget_rep::query " << slot_name(s) << LF;
+    cout << "qt_inputs_list_widget_rep::query " << slot_name(s) << LF;
   switch (s) {
   case SLOT_POSITION:
     {
@@ -214,9 +149,9 @@ qt_input_widget_rep::query (slot s, int type_id) {
 }
 
 widget
-qt_input_widget_rep::read (slot s, blackbox index) {
+qt_inputs_list_widget_rep::read (slot s, blackbox index) {
   if (DEBUG_QT)
-    cout << "qt_input_widget_rep::read " << slot_name(s) << LF;
+    cout << "qt_inputs_list_widget_rep::read " << slot_name(s) << LF;
   switch (s) {
   case SLOT_WINDOW:
     check_type_void (index, s);
@@ -229,16 +164,8 @@ qt_input_widget_rep::read (slot s, blackbox index) {
   }
 }
 
-widget
-qt_input_widget_rep::plain_window_widget (string s, command q)
-{
-  win_title = s;
-  (void) q;  // FIXME? ignore ok?
-  return this;
-}
-
 void
-qt_input_widget_rep::perform_dialog() {
+qt_inputs_list_widget_rep::perform_dialog() {
   if ((N(fields)==1) && (fields[0]->type == "question")) {
    // then use Qt messagebox for smoother, more standard UI
     QWidget * mainwindow = QApplication::activeWindow ();
@@ -387,17 +314,13 @@ qt_input_text_widget_rep::as_qwidget () {
   QLineEdit *le;
   // FIXME: how is this check necessary (out of memory check seems unlikely...)
   if (helper) {
-    if (style & WIDGET_STYLE_MINI)
-      le = new QTMLineEdit (NULL, helper->wid()->width);
-    else
-      le = new QLineEdit (NULL);
+    le = new QTMLineEdit (NULL, helper->wid()->width, style);
     
     helper->add (le);
     QObject::connect(le, SIGNAL(returnPressed ()), helper, SLOT(commit ()));
     QObject::connect(le, SIGNAL(editingFinished ()), helper, SLOT(leave ()));
     le->setText (to_qstring (helper->wid()->text));
 
-    le->setStyleSheet (to_qstylesheet (style));
     le->setMinimumSize(qt_decode_length(width, "", le->minimumSizeHint(), le->fontMetrics()));
     
     if (ends (type, "file") || type == "directory") {
@@ -416,7 +339,6 @@ qt_input_text_widget_rep::as_qwidget () {
       completer->setCompletionMode(QCompleter::InlineCompletion);
       le->setCompleter(completer);
     }
-    
   } else {
     le = new QLineEdit(NULL);
   }
