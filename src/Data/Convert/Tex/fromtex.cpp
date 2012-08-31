@@ -1738,11 +1738,12 @@ finalize_returns (tree t) {
 }
 
 static tree
-parse_matrix_params (tree t) {
+parse_matrix_params (tree t, string tr, string br, string hoff) {
+  // cout << "parse_matrix_params: " << hoff << LF;
   tree tformat (TFORMAT);
-  if (N(t) <= 1) return tformat;
-  string s= string_arg (t[1]);
-  int i, n= N(s), col=1;
+  string s= string_arg (t);
+  bool col_flag=true;
+  int i, n= N(s), col= as_int (hoff);
   for (i=0; i<n; i++) {
     switch (s[i]) {
     case 'l':
@@ -1752,16 +1753,27 @@ parse_matrix_params (tree t) {
 	string col_s = as_string (col);
 	string halign= copy (CELL_HALIGN);
 	string how   = s (i, i+1);
-	tformat << tree (CWITH, "1", "-1", col_s, col_s, halign, how);
+	tformat << tree (CWITH, tr, br, col_s, col_s, halign, how);
+  if (col_flag && col == 1)
+    tformat << tree (CWITH, tr, br, col_s, col_s, CELL_LBORDER, "0ln");
+	col_flag= true;
 	col++;
+	break;
+      }
+    case '*':
+      {
+	col_flag= true;
 	break;
       }
     case '|':
       {
+	col_flag= false;
 	string col_s= col==1? as_string (col): as_string (col-1);
 	string hbor = col==1? copy (CELL_LBORDER): copy (CELL_RBORDER);
-	string how  = "1ln";
-	tformat << tree (CWITH, "1", "-1", col_s, col_s, hbor, how);
+  int howmany=1;
+  while (i+1 < n && s[i+1] == '|') { howmany++; i++; }
+	string how  = as_string (howmany) * "ln";
+	tformat << tree (CWITH, tr, br, col_s, col_s, hbor, how);
 	break;
       }
     case '@':
@@ -1769,23 +1781,36 @@ parse_matrix_params (tree t) {
       return tformat;
     }
   }
+  if (col_flag) {
+    string col_s= col==1? as_string (col): as_string (col-1);
+    tformat << tree (CWITH, tr, br, col_s, col_s, CELL_RBORDER, "0ln");
+  }
   return tformat;
+}
+
+static tree
+parse_matrix_params (tree t) {
+  return parse_matrix_params (t, "1", "-1", "1");
 }
 
 static void
 parse_pmatrix (tree& r, tree t, int& i, string lb, string rb, string fm) {
-  tree tformat= parse_matrix_params (t[i]);
+  tree tformat (TFORMAT);
+  if (N(t[i]) > 1) tformat= parse_matrix_params (t[i][1]);
   if (lb != "") r << tree (LEFT, lb);
 
   int rows=0, cols=0;
   tree V (CONCAT);
   tree L (CONCAT);
   tree E (CONCAT);
+  tree F (CONCAT);
   for (i++; i<N(t); i++) {
     tree v= t[i];
     if (v == tree (FORMAT, "line separator")) {
       L << simplify_concat (E);
+      for (int j=0; j<N(F); j++) L << F[j];
       E= tree (CONCAT);
+      F= tree (CONCAT);
       continue;
     }
     else if (v == tree (FORMAT, "new line")) {
@@ -1794,11 +1819,13 @@ parse_pmatrix (tree& r, tree t, int& i, string lb, string rb, string fm) {
     else if (v == tree (FORMAT, "next line") ||
         is_apply (v, "tabularnewline", 0)) {
       L << simplify_concat (E);
+      for (int j=0; j<N(F); j++) L << F[j];
       V << L;
       cols= max (cols, N(L));
       L= tree (CONCAT);
       E= tree (CONCAT);
-      while (i+1<N(t) && t[i+1] == " ")i++;
+      F= tree (CONCAT);
+      while (i+1<N(t) && t[i+1] == " ") i++;
       continue;
     }
     else if (is_func (v, BEGIN) && (v[0] == "array" || v[0] == "tabular")) {
@@ -1856,6 +1883,17 @@ parse_pmatrix (tree& r, tree t, int& i, string lb, string rb, string fm) {
       string vbor = row==0? copy (CELL_TBORDER): copy (CELL_BBORDER);
       string how  = "1ln";
       tformat << tree (CWITH, row_s, row_s, "1", "-1", vbor, how);
+      while (i+1<N(t) && t[i+1] == " ") i++;
+    }
+    else if (is_apply (v, "multicolumn", 3)) {
+      string row_s= as_string (N(V) + 1);
+      string col_s= as_string (N(L) + N(F) + 1);
+      string width= as_string (v[1]);
+      tformat << tree (CWITH, row_s, row_s, col_s, col_s, CELL_COL_SPAN, width);
+      tree tmp= parse_matrix_params (v[2], row_s, row_s, col_s);
+      for (int j=0; j<N(tmp); j++) tformat << tmp[j];
+      E << v[3];
+      for (int j=1; j < as_int (width); j++) F << concat ();
     }
     else if (is_func (v, VAR_VSPACE)) {
       int row = N(V)+ (N(L)==0? 0: 1);
@@ -1867,8 +1905,10 @@ parse_pmatrix (tree& r, tree t, int& i, string lb, string rb, string fm) {
     }
     else E << v;
   }
-  if ((N(L)>0) || (N(E)>0)) {
+  if ((N(L)>0) || (N(E)>0) || (N(F)>0)) {
     L << simplify_concat (E);
+    for (int j=0; j<N(F); j++) L << F[j];
+    F= concat ();
     V << L;
   }
   if ((max (cols, N(L)) * N(V)) == 0) {

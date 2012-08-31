@@ -90,7 +90,7 @@
   Call Function Procedure SetKw SetKwData SetKwFunction SetKwInOut)
 
 (logic-group latex-command-3%
-  ifthenelse resizebox @setfontsize eIf)
+  ifthenelse resizebox @setfontsize eIf multicolumn)
 
 (logic-group latex-command-4%
   mathchoice)
