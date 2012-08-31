@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.0.7.16>
 
 <style|tmdoc>
 
@@ -232,7 +232,7 @@
 
   <paragraph*|Invoking <scheme> scrips from <TeXmacs> markup>
 
-  <label|markup-scripts><TeXmacs> provides three major tags for invoking
+  <label|markup-scripts><TeXmacs> provides two major tags for invoking
   <scheme> scripts from within the markup:
 
   <\description-long>
