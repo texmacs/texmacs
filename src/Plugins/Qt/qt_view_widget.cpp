@@ -204,9 +204,13 @@ qt_view_widget_rep::query (slot s, int type_id) {
     case SLOT_VISIBLE_PART:
     {
       check_type_id<coord4> (type_id, s);
-      QSize sz = canvas()->surface()->size();     // sz.setWidth(sz.width()-2);
-      QPoint pos = canvas()->backing_pos;
-      return close_box<coord4> (from_qrect(QRect(pos, sz)));
+      if (canvas()) {
+        QSize sz = canvas()->surface()->size();     // sz.setWidth(sz.width()-2);
+        QPoint pos = canvas()->backing_pos;
+        return close_box<coord4> (from_qrect(QRect(pos, sz)));
+      } else {
+        return close_box<coord4>(coord4(0,0,0,0));
+      }
     }
 
     default:
