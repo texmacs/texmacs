@@ -63,7 +63,7 @@ qt_window_widget_rep::~qt_window_widget_rep ()
 widget
 qt_window_widget_rep::popup_window_widget(string s)
 {
-  qwid->setWindowTitle(to_qstring(s));
+  qwid->setWindowTitle(qwid->tr (as_charp (s)));
   qwid->setWindowModality(Qt::NonModal);
   qwid->setWindowFlags(Qt::Popup);
   return this;
@@ -172,7 +172,7 @@ qt_window_widget_rep::send (slot s, blackbox val) {
     {   
       check_type<string> (val, s);
       string name = open_box<string> (val);
-      if (qwid) qwid->setWindowTitle (to_qstring (tm_var_encode(name)));
+      if (qwid) qwid->setWindowTitle (qwid->tr (as_charp (name)));
     }
       break;
       
@@ -283,7 +283,7 @@ qt_popup_widget_rep::~qt_popup_widget_rep () {
 
 widget
 qt_popup_widget_rep::popup_window_widget(string s) {
-  qwid->setWindowTitle(to_qstring(s)); // useless for Qt::Popup
+  qwid->setWindowTitle (qwid->tr (as_charp (s))); // useless for Qt::Popup
 
   return this;
 }

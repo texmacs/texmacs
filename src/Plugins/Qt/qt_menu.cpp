@@ -52,7 +52,7 @@ qt_menu_rep::make_popup_widget () {
 
 widget
 qt_menu_rep::popup_window_widget (string s) {
-  item->menu()->setWindowTitle (to_qstring (s));  // totally useless
+  item->menu()->setWindowTitle (QMenu::tr (as_charp (s)));  // totally useless
   return this;
 }
 

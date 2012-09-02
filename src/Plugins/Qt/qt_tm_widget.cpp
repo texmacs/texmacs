@@ -145,8 +145,8 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   // status bar
   
   QStatusBar* bar= new QStatusBar(mw);
-  leftLabel= new QLabel ("Welcome to TeXmacs", mw);
-  rightLabel= new QLabel ("Booting", mw);
+  leftLabel= new QLabel (QMainWindow::tr("Welcome to TeXmacs"), mw);
+  rightLabel= new QLabel (QMainWindow::tr("Booting"), mw);
   leftLabel->setFrameStyle (QFrame::NoFrame);
   rightLabel->setFrameStyle (QFrame::NoFrame);
   {
@@ -320,12 +320,12 @@ qt_tm_widget_rep::~qt_tm_widget_rep () {
 widget
 qt_tm_widget_rep::plain_window_widget (string title, command quit) {
   (void) quit;
-  qwid->setWindowTitle (to_qstring (title));
+  qwid->setWindowTitle (qwid->tr (as_charp (title)));
   return this;
 }
 
 void
-qt_tm_widget_rep::update_visibility() {
+qt_tm_widget_rep::update_visibility () {
 #define XOR(exp1,exp2) (((!exp1) && (exp2)) || ((exp1) && (!exp2)))
 
   bool old_mainVisibility = mainToolBar->isVisible();
@@ -510,7 +510,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     {
       check_type<string>(val, s);
       string msg = open_box<string> (val);
-      leftLabel->setText (to_qstring (tm_var_encode (msg)));
+      leftLabel->setText (QTMWidget::tr (as_charp (msg)));
       leftLabel->update ();
     }
       break;
@@ -519,7 +519,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     {
       check_type<string>(val, s);
       string msg= open_box<string> (val);
-      rightLabel->setText (to_qstring (tm_var_encode (msg)));
+      rightLabel->setText (QTMWidget::tr (as_charp (msg)));
       rightLabel->update ();
     }
       break;

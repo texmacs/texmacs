@@ -63,7 +63,7 @@ string       from_qstring (const QString & s);
 QString   utf8_to_qstring (string s);
 string  from_qstring_utf8 (const QString & s);
 
-string qt_translate (string s); //!< convert a QString to a TeXmacs cork string
+QString qt_translate (string s);  //!< Used by QTMTranslator
 
 
 /******************************************************************************

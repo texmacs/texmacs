@@ -353,12 +353,11 @@ to_qcolor(color c) {
 }
 
 
-string
+QString
 qt_translate (string s) {
   string in_lan= get_input_language ();
   string out_lan= get_output_language ();
-//  return tm_var_encode (translate (s, "english", out_lan));
-  return tm_var_encode (translate (s, in_lan, out_lan));
+  return to_qstring(tm_var_encode (translate (s, in_lan, out_lan)));
 }
 
 //FIXME!?!?

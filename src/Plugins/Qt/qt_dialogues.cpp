@@ -158,7 +158,7 @@ qt_inputs_list_widget_rep::read (slot s, blackbox index) {
     return this;
   case SLOT_FORM_FIELD:
     check_type<int> (index, s);
-    return static_cast<widget_rep*>(fields [open_box<int> (index)].rep);
+    return static_cast<widget_rep*> (fields[open_box<int> (index)].rep);
   default:
     return qt_widget_rep::read (s, index);
   }
@@ -168,25 +168,26 @@ void
 qt_inputs_list_widget_rep::perform_dialog() {
   if ((N(fields)==1) && (fields[0]->type == "question")) {
    // then use Qt messagebox for smoother, more standard UI
-    QWidget * mainwindow = QApplication::activeWindow ();
+    QWidget* mainwindow = QApplication::activeWindow ();
     // main texmacs window. There are probably better ways...
     // Presently not checking if the windows has the focus;
     // In case it has not, it should be brought into focus
     // before calling the dialog
-    QMessageBox * msgBox=new QMessageBox(mainwindow);
+    QMessageBox* msgBox=new QMessageBox (mainwindow);
     //sets parent widget, so that appears at proper location	
-    msgBox->setText(to_qstring (qt_translate (fields[0]->prompt)));
-    msgBox->setStandardButtons(QMessageBox::Cancel);
+    msgBox->setText (msgBox->tr (as_charp (fields[0]->prompt)));
+    msgBox->setStandardButtons (QMessageBox::Cancel);
     int choices = N(fields[0]->proposals);
     QVector<QPushButton*> buttonlist (choices);
     //allowing for any number of choices
     for(int i=0; i<choices; i++) {
       string blabel= "&" * upcase_first (fields[0]->proposals[i]);
       //capitalize the first character?
-      buttonlist[i] = msgBox->addButton (to_qstring (qt_translate (blabel)), QMessageBox::ActionRole);
+      buttonlist[i] = msgBox->addButton (QMessageBox::tr (as_charp (blabel)),
+                                         QMessageBox::ActionRole);
     }
     msgBox->setDefaultButton (buttonlist[0]); //default is first choice
-    msgBox->setWindowTitle (to_qstring (qt_translate ("Question")));
+    msgBox->setWindowTitle (msgBox->tr("Question"));
     msgBox->setIcon (QMessageBox::Question);
 
     msgBox->exec();
@@ -254,8 +255,8 @@ qt_inputs_list_widget_rep::perform_dialog() {
       vl -> addWidget (buttonBox);
     }
     //  d.setLayout (vl);
-    d.setWindowTitle(to_qstring(win_title));
-    QPoint pos = to_qpoint(position);
+    d.setWindowTitle (d.tr (as_charp (win_title)));
+    QPoint pos = to_qpoint (position);
     //cout << "Size :" << size.x1 << "," << size.x2 << LF;
     //cout << "Position :" << pos.x() << "," << pos.y() << LF;
     
@@ -317,7 +318,7 @@ qt_input_text_widget_rep::as_qwidget () {
     helper->add (le);
     QObject::connect(le, SIGNAL(returnPressed ()), helper, SLOT(commit ()));
     QObject::connect(le, SIGNAL(editingFinished ()), helper, SLOT(leave ()));
-    le->setText (to_qstring (helper->wid()->text));
+    le->setText (QTMLineEdit::tr(as_charp(helper->wid()->text)));
  
     if (ends (type, "file") || type == "directory") {
       // autocompletion

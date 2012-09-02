@@ -74,37 +74,35 @@ qt_gui_rep::qt_gui_rep(int &argc, char **argv):
   // argc= argc2;
   // argv= argv2;
 
-  interrupted   = false;
-  time_credit = 100;
-  timeout_time= texmacs_time () + time_credit;
+  interrupted  = false;
+  time_credit  = 100;
+  timeout_time = texmacs_time () + time_credit;
 
   //waitDialog = NULL;
   
   set_output_language (get_locale_language ());
   gui_helper = new QTMGuiHelper (this);
-  qApp -> installEventFilter (gui_helper);
+  qApp->installEventFilter (gui_helper);
   
 #ifdef QT_MAC_USE_COCOA
   //HACK: this filter is needed to overcome a bug in Qt/Cocoa
   extern void mac_install_filter(); // defined in src/Plugins/MacOS/mac_app.mm
   mac_install_filter();
 #endif
-  
-  
-  
-  qApp-> installTranslator(new QTMTranslator(qApp));
+
+  qApp->installTranslator (new QTMTranslator(qApp));
   
   updatetimer = new QTimer (gui_helper);
   updatetimer->setSingleShot (true);
-  QObject::connect ( updatetimer, SIGNAL(timeout()), 
-                     gui_helper, SLOT(doUpdate()));
+  QObject::connect (updatetimer, SIGNAL(timeout()),
+                    gui_helper, SLOT(doUpdate()));
 //  (void) default_font ();
 }
 
 /* important routines */
 void
 qt_gui_rep::get_extents (SI& width, SI& height) {
-  coord2 size = from_qsize(QApplication::desktop()->size());
+  coord2 size = from_qsize (QApplication::desktop()->size());
   width  = size.x1;
   height = size.x2;
 }
@@ -262,7 +260,7 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
     QLabel* lab = new  QLabel();
     lab->setFocusPolicy(Qt::NoFocus);
     lab->setMargin(15);
-    lab->setText (to_qstring (tm_var_encode(message)));
+    lab->setText (QTMGuiHelper::tr(as_charp(message)));
     waitDialogs << lab;
   } else {
     // pop the next wait message from the list
@@ -1139,7 +1137,7 @@ QTMTranslator::translate ( const char * context, const char * sourceText,
   (void) disambiguation;  (void) context;
   if (DEBUG_QT) {
     cout << "Translating: " << sourceText << LF;
-    cout << "Translation: " << qt_translate (sourceText) << LF;
+    cout << "Translation: " << from_qstring (qt_translate (sourceText)) << LF;
   }
-  return QString (to_qstring (qt_translate (sourceText)));
+  return qt_translate (sourceText);
 }

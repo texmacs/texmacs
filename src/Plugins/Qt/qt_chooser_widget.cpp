@@ -248,9 +248,11 @@ qt_chooser_widget_rep::perform_dialog () {
   QTMImageDialog *imgdialog= 0; // to avoid a dynamic_cast
   
   if (type  == "image")
-    dialog= imgdialog= new QTMImageDialog (NULL, to_qstring (win_title), to_qstring(directory * "/" * file));
+    dialog= imgdialog= new QTMImageDialog (NULL, QTMImageDialog::tr (as_charp (win_title)),
+                                           to_qstring(directory * "/" * file));
   else
-    dialog= new QTMFileDialog (NULL, to_qstring (win_title), to_qstring(directory * "/" * file));
+    dialog= new QTMFileDialog (NULL, QTMFileDialog::tr (as_charp (win_title)), 
+                               to_qstring(directory * "/" * file));
   
 #if (defined(Q_WS_MAC) && (QT_VERSION >= 0x040500))
   dialog->setOptions(QFileDialog::DontUseNativeDialog);

@@ -166,7 +166,7 @@ QTMWidgetAction::doRefresh() {
   if (N(str)) {
     string t= tm_var_encode (str);
     if (t == "Help") t= "Help ";
-    setText (to_qstring (t));
+    setText (QTMWidgetAction::tr(as_charp(t)));
   }
 #endif
 }
@@ -446,13 +446,13 @@ qt_glue_widget_rep::render () {
 QAction *
 qt_glue_widget_rep::as_qaction() {
   QAction *a= new QTMAction();
-  a->setText(to_qstring(as_string(col)));
+  a->setText (QTMAction::tr (as_charp (as_string (col))));
   QIcon icon;
 #if 0
   tree old_col = col;
-  icon.addPixmap(render(), QIcon::Active, QIcon::On);
+  icon.addPixmap (render(), QIcon::Active, QIcon::On);
   col = "";
-  icon.addPixmap(render(), QIcon::Normal, QIcon::On);
+  icon.addPixmap (render(), QIcon::Normal, QIcon::On);
   col = old_col;
 #else
   icon.addPixmap (render ());
@@ -465,7 +465,7 @@ qt_glue_widget_rep::as_qaction() {
 QWidget *
 qt_glue_widget_rep::as_qwidget() {
   QLabel* w = new QLabel();
-  w->setText (to_qstring (as_string (col)));
+  w->setText (QLabel::tr (as_charp (as_string (col))));
   QIcon icon;
   w->setPixmap (render ());  
     //  w->setEnabled(false);
@@ -533,11 +533,11 @@ qt_ui_element_rep::as_qaction () {
       array<widget> arr = open_box<T> (load);
       
       QAction* act= new QTMAction (NULL);
-      act->setText("Menu");
+      act->setText (QTMAction::tr ("Menu"));
       QMenu* m= new QMenu ();
       for (int i = 0; i < N(arr); i++) {
         if (is_nil (arr[i])) break;
-        QAction* a= concrete (arr[i]) -> as_qaction ();
+        QAction* a= concrete (arr[i])->as_qaction ();
         m->addAction (a);
         a->setParent (m);
       }
@@ -630,7 +630,7 @@ qt_ui_element_rep::as_qaction () {
       
       // a menu group; the name should be greyed and centered
       QAction* a= new QTMAction (NULL);
-      a->setText(to_qstring(tm_var_encode ((name))));
+      a->setText(QTMAction::tr(as_charp(tm_var_encode(name)))); // FIXME?
       a->setEnabled (false);
       a->setFont(to_qfont(style, a->font())); 
       return a;
@@ -745,7 +745,7 @@ qt_ui_element_rep::as_qaction () {
       QTMAction* a= new QTMAction (NULL);
       string t= tm_var_encode (str);
       if (t == "Help") t= "Help "; // HACK to avoid MacOS autodetection of the Help menu?
-      a->setText(to_qstring (t));
+      a->setText(QTMAction::tr(as_charp(t)));
       a->str = str;
       a->setFont(to_qfont(style, a->font()));
       return a;
@@ -1112,7 +1112,7 @@ qt_ui_element_rep::as_qwidget () {
       string t= tm_var_encode (str);
       if (t == "Help") t= "Help ";
       //w->setTextFormat(Qt::RichText);
-      w->setText(to_qstring (t));
+      w->setText(QLabel::tr(as_charp(t)));
       w->setStyleSheet(style);
       w->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
       // Workaround too small sizeHint() when the text has letters with descent:

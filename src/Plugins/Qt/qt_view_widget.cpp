@@ -42,7 +42,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     {   
       check_type<string> (val, s);
       string name = open_box<string> (val);
-      canvas()->window()->setWindowTitle (to_qstring (tm_var_encode(name)));
+      canvas()->window()->setWindowTitle (QTMWidget::tr (as_charp (name)));
     }
       break;
 
