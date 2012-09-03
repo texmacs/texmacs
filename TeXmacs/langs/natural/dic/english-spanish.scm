@@ -791,6 +791,7 @@
 ("new row" "nueva fila")
 ("new table" "nueva tabla")
 ("next line" "siguiente línea")
+("no" "no")
 ("no changes need to be saved" "no hay cambios que guardar")
 ("no dictionary for" "no hay diccionario para")
 ;?
@@ -1350,6 +1351,7 @@
 ("writing data converters" "escribir traductores de datos")
 ("writing your own style files" "escribir tus propios ficheros de estilo")
 ("yellow" "amarillo")
+("yes" "sí")
 ("you can also obtain" "también puedes obtener")
 ("your document is back in its original state" "el documento ha vuelto a su estado original")
 ("your first interface" "tu primer interfaz")

@@ -227,17 +227,13 @@ tm_server_rep::typeset_update_all () {
     view_to_editor (vs[i]) -> typeset_invalidate_all ();
 }
 
+#include "dictionary.hpp"
+
 bool
 tm_server_rep::is_yes (string s) {
   s= locase_all (s);
-  return
-    (s == "ano") || (s == "a") ||
-    (s == "yes") || (s == "y") ||
-    (s == "oui") || (s == "o") ||
-    (s == "ja") || (s == "j") ||
-    (s == "si") || (s == "s") ||
-    (s == "sim") || (s == "s") ||
-    (s == "tak") || (s == "t");
+  string st= translate ("yes");  
+  return s == st || (N(st)>0 && s == st[0]);
 }
 
 void

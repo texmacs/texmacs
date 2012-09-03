@@ -18,20 +18,6 @@
 ;; Questions with user interaction
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (yes)
-  (with lan (get-output-language)
-    (cond ((== lan "french") "oui")
-	  ((in? lan '("dutch" "german")) "ja")
-	  ((in? lan '("italian" "spanish")) "si")
-	  (else "yes"))))
-
-(define (no)
-  (with lan (get-output-language)
-    (cond ((== lan "french") "non")
-	  ((== lan "dutch") "nee")
-	  ((== lan "german") "nein")
-	  (else "no"))))
-
 (define-public (user-ask prompt cont)
   (tm-interactive cont
     (if (string? prompt)
@@ -41,8 +27,8 @@
 (define-public (user-confirm prompt default cont)
   (let ((k (lambda (answ) (cont (yes? answ)))))
     (if default
-	(user-ask (list prompt "question" (yes) (no)) k)
-	(user-ask (list prompt "question" (no) (yes)) k))))
+	(user-ask (list prompt "question" (translate "yes") (translate "no")) k)
+	(user-ask (list prompt "question" (translate "no") (translate "yes")) k))))
 
 (define-public (user-url prompt type cont)
   (user-delayed (lambda () (choose-file cont prompt type))))

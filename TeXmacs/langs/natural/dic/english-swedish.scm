@@ -399,6 +399,7 @@
 ("new row" "ny rad")
 ("new table" "ny tabell")
 ("next line" "nästa rad")
+("no" "nej")
 ("no changes need to be saved" "inge förändringar behöver sparas")
 ("no first indentation" "inget första indrag")
 ("no last indentation" "inget sista indrag")
@@ -681,4 +682,5 @@
 ("window height" "fönsterhöjd")
 ("window width" "fönsterbredd")
 ("yellow" "gult")
+("yes" "ja")
 ("you can also obtain" "du kan också få")
