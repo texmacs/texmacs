@@ -233,7 +233,7 @@ bool
 tm_server_rep::is_yes (string s) {
   s= locase_all (s);
   string st= translate ("yes");  
-  return s == st || (N(st)>0 && s == st[0]);
+  return s == st || (N(st)>0 && s == st[0]); //FIXME: fails for multibyte chars?
 }
 
 void
