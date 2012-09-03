@@ -175,7 +175,7 @@ qt_inputs_list_widget_rep::perform_dialog() {
     // before calling the dialog
     QMessageBox* msgBox=new QMessageBox (mainwindow);
     //sets parent widget, so that appears at proper location	
-    msgBox->setText (msgBox->tr (as_charp (fields[0]->prompt)));
+    msgBox->setText (to_qstring (fields[0]->prompt));
     msgBox->setStandardButtons (QMessageBox::Cancel);
     int choices = N(fields[0]->proposals);
     QVector<QPushButton*> buttonlist (choices);
@@ -183,11 +183,11 @@ qt_inputs_list_widget_rep::perform_dialog() {
     for(int i=0; i<choices; i++) {
       string blabel= "&" * upcase_first (fields[0]->proposals[i]);
       //capitalize the first character?
-      buttonlist[i] = msgBox->addButton (QMessageBox::tr (as_charp (blabel)),
+      buttonlist[i] = msgBox->addButton (to_qstring (blabel),
                                          QMessageBox::ActionRole);
     }
     msgBox->setDefaultButton (buttonlist[0]); //default is first choice
-    msgBox->setWindowTitle (msgBox->tr("Question"));
+    msgBox->setWindowTitle (qt_translate ("Question"));
     msgBox->setIcon (QMessageBox::Question);
 
     msgBox->exec();
@@ -211,7 +211,7 @@ qt_inputs_list_widget_rep::perform_dialog() {
     for(int i=0; i<N(fields); i++) {
       QHBoxLayout *hl = new QHBoxLayout();
 
-      QLabel *lab = new QLabel (to_qstring (tm_var_encode( (fields[i]->prompt))),&d);
+      QLabel* lab = new QLabel (to_qstring (fields[i]->prompt), &d);
       cbs[i] = new QComboBox(&d);
       cbs[i] -> setSizeAdjustPolicy (QComboBox::AdjustToMinimumContentsLength);
       cbs[i] -> setEditText (to_qstring(fields[i]->input));
@@ -255,7 +255,7 @@ qt_inputs_list_widget_rep::perform_dialog() {
       vl -> addWidget (buttonBox);
     }
     //  d.setLayout (vl);
-    d.setWindowTitle (d.tr (as_charp (win_title)));
+    d.setWindowTitle (to_qstring (win_title));
     QPoint pos = to_qpoint (position);
     //cout << "Size :" << size.x1 << "," << size.x2 << LF;
     //cout << "Position :" << pos.x() << "," << pos.y() << LF;
@@ -318,7 +318,7 @@ qt_input_text_widget_rep::as_qwidget () {
     helper->add (le);
     QObject::connect(le, SIGNAL(returnPressed ()), helper, SLOT(commit ()));
     QObject::connect(le, SIGNAL(editingFinished ()), helper, SLOT(leave ()));
-    le->setText (QTMLineEdit::tr(as_charp(helper->wid()->text)));
+    le->setText (to_qstring (helper->wid()->text));
  
     if (ends (type, "file") || type == "directory") {
       // autocompletion

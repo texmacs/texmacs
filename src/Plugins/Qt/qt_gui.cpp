@@ -90,8 +90,6 @@ qt_gui_rep::qt_gui_rep(int &argc, char **argv):
   mac_install_filter();
 #endif
 
-  qApp->installTranslator (new QTMTranslator(qApp));
-  
   updatetimer = new QTimer (gui_helper);
   updatetimer->setSingleShot (true);
   QObject::connect (updatetimer, SIGNAL(timeout()),
@@ -260,7 +258,7 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
     QLabel* lab = new  QLabel();
     lab->setFocusPolicy(Qt::NoFocus);
     lab->setMargin(15);
-    lab->setText (QTMGuiHelper::tr(as_charp(message)));
+    lab->setText (to_qstring (message));
     waitDialogs << lab;
   } else {
     // pop the next wait message from the list
@@ -1127,17 +1125,4 @@ font x_font (string family, int size, int dpi)
   (void) family; (void) size; (void) dpi;
   if (DEBUG_QT) cout << "x_font(): SHOULD NOT BE CALLED\n";
   return NULL;
-}
-
-
-QString 
-QTMTranslator::translate ( const char * context, const char * sourceText, 
-                           const char * disambiguation ) const 
-{
-  (void) disambiguation;  (void) context;
-  if (DEBUG_QT) {
-    cout << "Translating: " << sourceText << LF;
-    cout << "Translation: " << from_qstring (qt_translate (sourceText)) << LF;
-  }
-  return qt_translate (sourceText);
 }

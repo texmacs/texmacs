@@ -63,7 +63,17 @@ string       from_qstring (const QString & s);
 QString   utf8_to_qstring (string s);
 string  from_qstring_utf8 (const QString & s);
 
-QString qt_translate (string s);  //!< Used by QTMTranslator
+/*! Returns a QString with the translation of the argument to the current
+ language.
+ 
+ NOTE: translations of gui items are always done in the scheme side using 
+ (translate stuff-to-translate), and this is enabled by default for most widgets
+ displaying text. We need not and must not use Qt's mechanism for translations
+ nor even this function, unless the strings to be translated are hardcoded in
+ our code (which is wrong of course). While parsing widgets, etc. nothing is to
+ be done wrt. translations.
+ */
+QString qt_translate (string s);
 
 
 /******************************************************************************

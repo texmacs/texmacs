@@ -46,9 +46,8 @@ QTMAction::~QTMAction() {
 void 
 QTMAction::doRefresh() {
   if (N(str)) {
-    string t= tm_var_encode (str);
-    if (t == "Help") t= "Help ";
-    setText (tr (as_charp (t)));
+    if (str == "Help") str= "Help ";
+    setText (to_qstring (str));
   }
 }
 
@@ -140,7 +139,7 @@ QTMInputTextWidgetHelper::leave () {
   QLineEdit *le = qobject_cast <QLineEdit*> (sender());  
   if (le) {
     // reset the text according to the texmacs widget
-    le -> setText (tr (as_charp (wid()->text)));
+    le -> setText (to_qstring (wid()->text));
     //ok = false;
     QTimer::singleShot (0, this, SLOT (doit ()));
   }

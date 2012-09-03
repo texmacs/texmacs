@@ -145,8 +145,8 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   // status bar
   
   QStatusBar* bar= new QStatusBar(mw);
-  leftLabel= new QLabel (QMainWindow::tr("Welcome to TeXmacs"), mw);
-  rightLabel= new QLabel (QMainWindow::tr("Booting"), mw);
+  leftLabel= new QLabel (qt_translate ("Welcome to TeXmacs"), mw);
+  rightLabel= new QLabel (qt_translate ("Booting"), mw);
   leftLabel->setFrameStyle (QFrame::NoFrame);
   rightLabel->setFrameStyle (QFrame::NoFrame);
   {
@@ -320,7 +320,7 @@ qt_tm_widget_rep::~qt_tm_widget_rep () {
 widget
 qt_tm_widget_rep::plain_window_widget (string title, command quit) {
   (void) quit;
-  qwid->setWindowTitle (qwid->tr (as_charp (title)));
+  qwid->setWindowTitle (to_qstring (title));
   return this;
 }
 
@@ -510,7 +510,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     {
       check_type<string>(val, s);
       string msg = open_box<string> (val);
-      leftLabel->setText (QTMWidget::tr (as_charp (msg)));
+      leftLabel->setText (to_qstring (msg));
       leftLabel->update ();
     }
       break;
@@ -519,7 +519,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     {
       check_type<string>(val, s);
       string msg= open_box<string> (val);
-      rightLabel->setText (QTMWidget::tr (as_charp (msg)));
+      rightLabel->setText (to_qstring (msg));
       rightLabel->update ();
     }
       break;
@@ -558,7 +558,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       string file = open_box<string> (val);
       if (DEBUG_QT) cout << "File: " << file << LF;
 #if (QT_VERSION >= 0x040400)
-      mainwindow()->setWindowFilePath(to_qstring(tm_var_encode(file)));
+      mainwindow()->setWindowFilePath(to_qstring(file));
 #endif
     }
       break;

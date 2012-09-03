@@ -146,7 +146,7 @@ qt_widget_rep::plain_window_widget (string title, command quit) {
     }
   }
   
-  win->setWindowTitle (win->tr (as_charp (title)));
+  win->setWindowTitle (to_qstring (title));
   int l,t,r,b;
   win->layout()->getContentsMargins(&l, &t, &r, &b);
   win->layout()->setContentsMargins(l+3, t+3, r+3, b+3);

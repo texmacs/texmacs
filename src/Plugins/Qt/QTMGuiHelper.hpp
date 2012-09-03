@@ -48,16 +48,6 @@ signals:
 };
 
 
-class QTMTranslator : public QTranslator {
-  Q_OBJECT
-  
-public:
-  QTMTranslator(QObject * parent = NULL ) : QTranslator(parent) {};
-  virtual QString translate (const char* context, const char* sourceText, 
-                             const char* disambiguation = 0 ) const ;  
-};
-
-
 /*! A container widget which redraws the widgets it owns. */
 class QTMRefreshWidget : public QWidget {
   Q_OBJECT
@@ -91,4 +81,5 @@ public:
 
   void addItemsAndResize (const QStringList& texts, string ww, string h);
 };
+
 #endif // QTMGUIHELPER_HPP

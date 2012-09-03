@@ -164,9 +164,9 @@ void
 QTMWidgetAction::doRefresh() {
 #if 0
   if (N(str)) {
-    string t= tm_var_encode (str);
-    if (t == "Help") t= "Help ";
-    setText (QTMWidgetAction::tr(as_charp(t)));
+      //string t= tm_var_encode (str);
+    if (str == "Help") str= "Help ";
+    setText (to_qstring (str));
   }
 #endif
 }
@@ -446,7 +446,7 @@ qt_glue_widget_rep::render () {
 QAction *
 qt_glue_widget_rep::as_qaction() {
   QAction *a= new QTMAction();
-  a->setText (QTMAction::tr (as_charp (as_string (col))));
+  a->setText (to_qstring (as_string (col)));
   QIcon icon;
 #if 0
   tree old_col = col;
@@ -465,7 +465,7 @@ qt_glue_widget_rep::as_qaction() {
 QWidget *
 qt_glue_widget_rep::as_qwidget() {
   QLabel* w = new QLabel();
-  w->setText (QLabel::tr (as_charp (as_string (col))));
+  w->setText (to_qstring (as_string (col)));
   QIcon icon;
   w->setPixmap (render ());  
     //  w->setEnabled(false);
@@ -533,7 +533,7 @@ qt_ui_element_rep::as_qaction () {
       array<widget> arr = open_box<T> (load);
       
       QAction* act= new QTMAction (NULL);
-      act->setText (QTMAction::tr ("Menu"));
+      act->setText (qt_translate ("Menu"));
       QMenu* m= new QMenu ();
       for (int i = 0; i < N(arr); i++) {
         if (is_nil (arr[i])) break;
@@ -630,7 +630,7 @@ qt_ui_element_rep::as_qaction () {
       
       // a menu group; the name should be greyed and centered
       QAction* a= new QTMAction (NULL);
-      a->setText(QTMAction::tr(as_charp(tm_var_encode(name)))); // FIXME?
+      a->setText(to_qstring (name));
       a->setEnabled (false);
       a->setFont(to_qfont(style, a->font())); 
       return a;
@@ -743,9 +743,8 @@ qt_ui_element_rep::as_qaction () {
       // a text widget with a given color and transparency
 
       QTMAction* a= new QTMAction (NULL);
-      string t= tm_var_encode (str);
-      if (t == "Help") t= "Help "; // HACK to avoid MacOS autodetection of the Help menu?
-      a->setText(QTMAction::tr(as_charp(t)));
+      if (str == "Help") str= "Help "; // HACK to avoid MacOS autodetection of the Help menu?
+      a->setText(to_qstring (str));
       a->str = str;
       a->setFont(to_qfont(style, a->font()));
       return a;
@@ -1109,14 +1108,13 @@ qt_ui_element_rep::as_qwidget () {
       QTMAction* a= new QTMAction (NULL);
       //a->str = str;
 #endif
-      string t= tm_var_encode (str);
-      if (t == "Help") t= "Help ";
+      if (str == "Help") str= "Help ";
       //w->setTextFormat(Qt::RichText);
-      w->setText(QLabel::tr(as_charp(t)));
-      w->setStyleSheet(style);
-      w->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+      w->setText (to_qstring (str));
+      w->setStyleSheet (style);
+      w->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
       // Workaround too small sizeHint() when the text has letters with descent:
-      w->setMinimumHeight(w->fontMetrics().height());
+      w->setMinimumHeight (w->fontMetrics().height());
       qwid = w;
     }
       break;

@@ -80,7 +80,7 @@ simple_input (string s, QLineEdit* ledit, QWidget* parent= 0) {
 //  string in_lan= get_input_language ();
 //  string out_lan= get_output_language ();
 //  QLabel* label= new QLabel (to_qstring (tm_var_encode (translate (s, in_lan, out_lan))), parent);
-  QLabel* label= new QLabel (QTMImagePreview::tr(as_charp(s)), parent);
+  QLabel* label= new QLabel (to_qstring (s), parent);
   layout->addWidget (label);
   layout->addWidget (ledit);
   widget->setLayout (layout);
