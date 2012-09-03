@@ -216,6 +216,11 @@
 ;; Menu and widget elements
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (process-translate x)
+  (if (or (func? x 'concat) (func? x 'verbatim))
+      `(list ',(car x) ,@(map process-translate (cdr x)))
+      x))
+
 (tm-define-macro ($-> text . l)
   (:synopsis "Make pullright button")
   `(cons* '-> ,text ($list ,@l)))
@@ -256,11 +261,11 @@
 
 (tm-define-macro ($menu-group text)
   (:synopsis "Make a menu group")
-  `(list 'group ,text))
+  `(list 'group ,(process-translate text)))
 
 (tm-define-macro ($menu-text text)
   (:synopsis "Make text")
-  `(list 'text ,text))
+  `(list 'text ,(process-translate text)))
 
 (tm-define-macro ($input cmd type proposals width)
   (:synopsis "Make input field")

@@ -38,8 +38,8 @@
   (:menu-item (:or
     ---
     |
-    (group :string?)
-    (text :string?)
+    (group :%1)
+    (text :%1)
     (glue :boolean? :boolean? :integer? :integer?)
     (color :%1 :boolean? :boolean? :integer? :integer?)
     (:menu-wide-label :%1)
@@ -200,12 +200,12 @@
 
 (define (make-menu-group s style)
   "Make @(group :string?) menu item."
-  (widget-menu-group s style))
+  (widget-menu-group (translate s) style))
 
 (define (make-menu-text s style)
   "Make @(text :string?) menu item."
   ;;(widget-text s style (color "black") #t)
-  (widget-text s style (color "black") #f))
+  (widget-text (translate s) style (color "black") #f))
 
 (define (make-texmacs-output p style)
   "Make @(texmacs-output :%1) item."
@@ -572,9 +572,9 @@
          ,(lambda (p style bar?)
             (list (make-menu-color (second p) (third p)
                                    (fourth p) (fifth p) (sixth p)))))
-  (group (:string?)
+  (group (:%1)
 	 ,(lambda (p style bar?) (list (make-menu-group (cadr p) style))))
-  (text (:string?)
+  (text (:%1)
 	 ,(lambda (p style bar?) (list (make-menu-text (cadr p) style))))
   (symbol (:string? :*)
 	  ,(lambda (p style bar?) (list (make-menu-symbol p style))))
