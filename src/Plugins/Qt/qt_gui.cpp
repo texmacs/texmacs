@@ -67,8 +67,10 @@ bool wait_for_delayed_commands = true;
 * Constructor and geometry
 ******************************************************************************/
 
+#include <QLibraryInfo>
+
 qt_gui_rep::qt_gui_rep(int &argc, char **argv):
-  interrupted (false), waitWindow (NULL), popup_wid_time(0)
+  interrupted (false), waitWindow (NULL), popup_wid_time(0), q_translator(0)
 {
   (void) argc; (void) argv;
   // argc= argc2;
@@ -80,15 +82,17 @@ qt_gui_rep::qt_gui_rep(int &argc, char **argv):
 
   //waitDialog = NULL;
   
-  set_output_language (get_locale_language ());
   gui_helper = new QTMGuiHelper (this);
   qApp->installEventFilter (gui_helper);
-  
+
 #ifdef QT_MAC_USE_COCOA
   //HACK: this filter is needed to overcome a bug in Qt/Cocoa
   extern void mac_install_filter(); // defined in src/Plugins/MacOS/mac_app.mm
   mac_install_filter();
 #endif
+
+  set_output_language (get_locale_language ());
+  refresh_language();
 
   updatetimer = new QTimer (gui_helper);
   updatetimer->setSingleShot (true);
@@ -494,11 +498,7 @@ gui_maximal_extents (SI& width, SI& height) {
 
 void
 gui_refresh () {
-  // called upon change of output language
-  // emit a signal which forces every QTMAction to change his text
-  // according to the new language
-
-  the_gui->gui_helper->doRefresh();
+  the_gui->refresh_language(); 
 }
 
 
@@ -933,7 +933,32 @@ qt_gui_rep::update () {
   //        The interval cannot be too small to keep CPU usage low in idle state
 } 
 
-/*
+/*! Called upon change of output language.
+ 
+ We currently emit a signal which forces every QTMAction to change his text
+ according to the new language, but the preferred Qt way seems to use
+ LanguageChange events (these are triggered upon installation of QTranslators)
+ */ 
+void
+qt_gui_rep::refresh_language() {
+  QTranslator* qtr = new QTranslator();
+  if (qtr->load("qt_" + 
+        QLocale (to_qstring (language_to_locale (get_output_language()))).name(),
+        QLibraryInfo::location(QLibraryInfo::TranslationsPath))) {
+    if (q_translator) 
+      qApp->removeTranslator(q_translator);
+    qApp->installTranslator(qtr);
+    q_translator = qtr;
+  } else {
+    delete qtr;
+  }
+  gui_helper->doRefresh();
+}
+
+
+
+/*! Display a popup help balloon (i.e. a tooltip) at window coordinates x, y 
+ 
  We use a dedicated wrapper QWidget which handles mouse events: as soon as the 
  mouse is moved out of we hide it.
  Problem: the widget need not appear below the mouse pointer, thus making it
@@ -941,8 +966,7 @@ qt_gui_rep::update () {
  Solution?? as soon as the mouse moves (out of the widget), start a timer, 
  giving enough time to the user to move (back) into the widget, then abort the
  close operation if he gets there.
- */
-/*! Display a popup help balloon (i.e. a tooltip) at window coordinates x, y */
+*/
 void
 qt_gui_rep::show_help_balloon (widget wid, SI x, SI y) {
   if (popup_wid_time > 0) return;

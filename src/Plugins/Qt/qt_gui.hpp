@@ -54,8 +54,10 @@ class qt_gui_rep {
   hashmap<socket_notifier,pointer>  read_notifiers;
   hashmap<socket_notifier,pointer> write_notifiers;
 
+  QTranslator* q_translator;
+  
 public:
-  QTMGuiHelper*   gui_helper;
+  QTMGuiHelper*  gui_helper;
 
 public:
   qt_gui_rep (int &argc, char **argv);
@@ -84,6 +86,7 @@ public:
   bool check_event (int type);
 
   void update();
+  void refresh_language();
   
   /* socket notifications */
   void add_notifier (socket_notifier);
