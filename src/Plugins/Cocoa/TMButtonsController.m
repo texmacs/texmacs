@@ -11,6 +11,10 @@
 
 #import "TMButtonsController.h"
 
+@protocol TMMenuItemDoit
+- (void) doit;
+@end
+
 @implementation TMButtonsController
 
 - (id) init
@@ -30,10 +34,6 @@
 	[view release];
 	[super dealloc];
 }
-
-@protocol TMMenuItemDoit
-- (void) doit;
-@end
 
 - (void) buttonsAction:(id) sc
 {

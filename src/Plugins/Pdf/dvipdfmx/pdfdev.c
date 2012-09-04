@@ -52,6 +52,8 @@
 
 #include "pdfdev.h"
 
+#include "tfm.h"
+
 static int verbose = 0;
 
 void
@@ -1006,12 +1008,11 @@ void pdf_dev_pop_coord(void)
   if (num_dev_coords > 0) num_dev_coords--;
 }
 
-
-spt_t pdf_dev_string_width(int   font_id, unsigned char *str, unsigned len)
+spt_t pdf_dev_string_width(int font_id, unsigned char *str, unsigned len)
 {
   if (font_id < 0 || font_id >= num_dev_fonts) {
     ERROR("Invalid font: %d (%d)", font_id, num_dev_fonts);
-    return;
+    return -1;
   }
   
   return tfm_string_width(GET_FONT(font_id)->tfm_id, str, len);
