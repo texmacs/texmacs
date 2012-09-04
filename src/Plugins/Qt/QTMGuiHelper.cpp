@@ -31,7 +31,7 @@ bool
 QTMGuiHelper::eventFilter (QObject *obj, QEvent *event) {
   if (event->type() == QEvent::FileOpen) {
     QFileOpenEvent* openEvent = static_cast<QFileOpenEvent *>(event);
-    const char* s = openEvent->file().toAscii().constData();
+    const char* s = openEvent->file().toUtf8().constData();
       //qDebug ("File Open Event %s", s);
     call ("load-buffer", object (url_system (s)), eval (":new-window"));
     return true;

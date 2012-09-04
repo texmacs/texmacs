@@ -558,7 +558,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       string file = open_box<string> (val);
       if (DEBUG_QT) cout << "File: " << file << LF;
 #if (QT_VERSION >= 0x040400)
-      mainwindow()->setWindowFilePath(to_qstring(file));
+      mainwindow()->setWindowFilePath(utf8_to_qstring(file));
 #endif
     }
       break;

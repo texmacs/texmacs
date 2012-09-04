@@ -18,7 +18,7 @@
 static string 
 from_nsstring (NSString *s) {
   const char *cstr = [s cStringUsingEncoding:NSUTF8StringEncoding];
-  return utf8_to_cork(string((char*)cstr));
+  return string((char*)cstr); // don't convert filenames to cork!
 }
 
 
