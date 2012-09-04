@@ -47,7 +47,7 @@ qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, command _quit)
   if (!has_resizable_children(_wid))
     qwid->setFixedSize(qwid->sizeHint());
   
-  nr_windows++;
+  win_id = ++nr_windows;
 }
 
 /*!
@@ -206,8 +206,7 @@ qt_window_widget_rep::query (slot s, int type_id) {
     case SLOT_IDENTIFIER:
     {
       check_type_id<int> (type_id, s);
-        // we need only know if the widget has some QT window attached
-      return close_box<int> (qwid? 1: 0);
+      return close_box<int> (win_id);
     }
 
     case SLOT_POSITION:

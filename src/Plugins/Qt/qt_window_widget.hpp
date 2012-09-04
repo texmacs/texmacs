@@ -42,6 +42,8 @@ class QWidget;
  return a qt_window_widget_rep or we'll leak.
 */
 class qt_window_widget_rep: public qt_widget_rep {
+  int win_id;
+
 public:
   command quit;
   

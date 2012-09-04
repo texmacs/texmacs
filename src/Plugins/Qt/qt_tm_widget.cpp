@@ -713,7 +713,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
         //// Reparent the current main_widget's QWidget to the window
       QWidget* q = concrete(main_widget)->qwid;
       l->removeWidget(q);
-
+      q->setParent(qwid);
       q->deleteLater();                 // careful with pending QEvents...
       concrete(main_widget)->qwid = 0;  // Unnecessary in principle.
       
@@ -871,6 +871,7 @@ qt_tm_embedded_widget_rep::qt_tm_embedded_widget_rep (command _quit)
  : qt_widget_rep(embedded_tm_widget), quit(_quit) {
 
   main_widget = ::glue_widget (true, true, 1, 1);
+    // force creation of QWidget and reparent main_widget's QWidget to it.
   qwid = as_qwidget();
 }
 
@@ -926,6 +927,9 @@ qt_tm_embedded_widget_rep::query (slot s, int type_id) {
     cout << "qt_tm_embedded_widget_rep::query " << slot_name (s) << LF;
   
   switch (s) {
+    case SLOT_IDENTIFIER:
+      return qt_window_widget_rep::widget_from_qwidget(qwid)->query(s, type_id);
+
     case SLOT_SCROLL_POSITION:
     case SLOT_EXTENTS:
     case SLOT_VISIBLE_PART:
