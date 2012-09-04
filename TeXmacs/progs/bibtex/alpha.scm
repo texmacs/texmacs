@@ -36,14 +36,14 @@
 		  (with lab ""
 		    (do
 			((i 1 (+ 1 i)))
-			((>= i (min n 5)))
+			((>= i (min n (if (= 5 n) 5 4))))
 		      (with von (bib-purify (bib-abbreviate
 					     (list-ref (list-ref a i) 2)
 					     "" ""))
 			(set! lab (string-append
 				   lab von (bib-prefix
 					    (list-ref (list-ref a i) 3) 1)))))
-		    lab)))))
+                   lab)))))
     (if (> n 5) (string-append pre "+") pre)))
 
 (define (bib-format-book-inbook-label n x)
@@ -113,7 +113,8 @@
 
 (tm-define (bib-sort-key x)
   (:mode bib-alpha?)
-  (let ((label (hash-ref bib-key-table (list-ref x 2)))
+  (let* ((auths (bib-format-label-names (bib-field x "author")))
+         (year (bib-field x "year"))
 	(lplain (bib-with-style "plain" bib-sort-key x)))
     ;;(string-append (invert-label label) "    " lplain)
-    (string-append (string-upcase label) "    " lplain)))
+    (string-append (string-upcase auths) year "    " lplain)))

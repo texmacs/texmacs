@@ -703,6 +703,7 @@ bib_get_prefix (tree t, string& pre, int& i) {
 string
 bib_prefix (scheme_tree st, int i) {
   tree t= simplify_correct (scheme_tree_to_tree (st));
+  if (t == "others") return "+";
   string pre;
   int j= i;
   bib_get_prefix (t, pre, j);
