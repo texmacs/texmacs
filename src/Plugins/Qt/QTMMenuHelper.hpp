@@ -144,6 +144,7 @@ protected slots:
 class QTMLineEdit : public QLineEdit {
   Q_OBJECT
 
+  bool completing;
 public:
   string ww; // width of the parsed widget
   
@@ -151,8 +152,9 @@ public:
   virtual QSize	sizeHint () const ;
   
 protected:
-  void keyPressEvent (QKeyEvent *event);
-  void focusInEvent (QFocusEvent *evenement);
+  bool         event (QEvent* ev); 
+  void keyPressEvent (QKeyEvent* ev);
+  void  focusInEvent (QFocusEvent* ev);
 };
 
 

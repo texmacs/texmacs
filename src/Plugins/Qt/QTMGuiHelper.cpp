@@ -30,15 +30,14 @@ QTMGuiHelper::doRefresh () {
 bool
 QTMGuiHelper::eventFilter (QObject *obj, QEvent *event) {
   if (event->type() == QEvent::FileOpen) {
-    QFileOpenEvent *openEvent = static_cast<QFileOpenEvent *>(event);
-    const char *s = openEvent->file().toAscii().constData();
+    QFileOpenEvent* openEvent = static_cast<QFileOpenEvent *>(event);
+    const char* s = openEvent->file().toAscii().constData();
       //qDebug ("File Open Event %s", s);
     call ("load-buffer", object (url_system (s)), eval (":new-window"));
     return true;
-  }
-  else {
+  } else {
       // standard event processing
-    return QObject::eventFilter(obj, event);
+    return QObject::eventFilter (obj, event);
   }
 }
 

@@ -186,7 +186,7 @@ QTMInputTextWidgetHelper::doit () {
 
 
 QTMLineEdit::QTMLineEdit (QWidget* parent, string _ww, int style)
-: QLineEdit (parent), ww (_ww) {
+: QLineEdit (parent), completing (false), ww (_ww) {
   if (style & WIDGET_STYLE_MINI) {
     setStyle (qtmstyle());
       // FIXME: we should remove this and let the scheme code decide.
@@ -198,32 +198,82 @@ QTMLineEdit::QTMLineEdit (QWidget* parent, string _ww, int style)
   setStyleSheet (to_qstylesheet (style)); 
 }
 
+/*
+ We need to reimplement the main event handler because we need the tab key for
+ completions. (See Qt docs for QWidget::event())
+ */
+bool
+QTMLineEdit::event (QEvent* ev) {
+  if (ev->type() == QEvent::KeyPress)  // Handle ALL keys
+    keyPressEvent((QKeyEvent*)ev);
+  else
+    return QWidget::event (ev);
+
+  return true;
+}
+
 void 
-QTMLineEdit::keyPressEvent(QKeyEvent *event)
+QTMLineEdit::keyPressEvent(QKeyEvent* ev)
 {
   QCompleter* c = completer();
   
-  if (c) c->setCompletionPrefix (QString ());      // reset completion
-  
-  if (event->key() == Qt::Key_Up) {                // move back in history
-    if (c) {
-      int row = c->currentRow ();
-      c->setCurrentRow (row-1);
-      setText (c->currentCompletion ());
+  if (c) {
+    int row = 0;
+    switch (ev->key()) {
+      case Qt::Key_Up:
+        completing = true;
+        row = c->currentRow();
+        c->setCompletionPrefix (QString ());        // reset completion
+        if(! c->setCurrentRow (row-1))
+          c->setCurrentRow(c->completionCount()-1); // cycle
+        setText (c->currentCompletion ());
+        ev->accept();
+        return;
+      case Qt::Key_Down:
+        completing = true;
+        row = c->currentRow();
+        c->setCompletionPrefix (QString ());        // reset completion
+        if (! c->setCurrentRow (row+1))
+          c->setCurrentRow(0);                      // cycle
+        setText (c->currentCompletion ());
+        ev->accept();
+        return;
+          // Either complete the suggested text or advance in the list of
+          // completions
+      case Qt::Key_Tab:
+        if (completing) {
+          row = c->currentRow();
+          if(! c->setCurrentRow (row-1))
+            c->setCurrentRow(c->completionCount()-1); // cycle                    
+        } else {
+          completing = true;
+        }
+        setText (c->currentCompletion ());
+        ev->accept();
+        return;
+          // This is different on purpose: when "back-completing" suggested text
+          // we want to display the previous entry to that suggested
+      case Qt::Key_Backtab:
+        completing = true;
+        row = c->currentRow();
+        if(! c->setCurrentRow (row+1))
+          c->setCurrentRow(0);                      // cycle
+        setText (c->currentCompletion ());
+        ev->accept();        
+        return;
+      case Qt::Key_Shift:   // need to ignore this to correctly get shift-tabs
+        if (completing) return;
+      default:
+        completing = false;
+        break;
     }
-    event->accept();
-  } else if (event->key() == Qt::Key_Down) {       // move forward in history
-    if (c) {
-      int row = c->currentRow ();
-      c->setCurrentRow (row+1);
-      setText (c->currentCompletion ());
-    }
-    event->accept();
-  } else if (event->key() == Qt::Key_Escape) {     // exit editing
+  }
+
+  if (ev->key() == Qt::Key_Escape) {
     emit editingFinished();
-    event->accept();
+    ev->accept();
   } else {
-    QLineEdit::keyPressEvent(event);
+    QLineEdit::keyPressEvent(ev);
   }
 }
 
@@ -233,11 +283,11 @@ QTMLineEdit::sizeHint () const {
 }
 
 void 
-QTMLineEdit::focusInEvent (QFocusEvent *event)
+QTMLineEdit::focusInEvent (QFocusEvent* ev)
 {
   setCursorPosition (text().size());
-    //  selectAll ();
-  QLineEdit::focusInEvent (event);
+    // selectAll ();
+  QLineEdit::focusInEvent (ev);
 }
 
 
