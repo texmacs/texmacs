@@ -33,6 +33,7 @@
 #include <sys/stat.h>
 #endif
 #include <sys/types.h>
+#include <string.h>  // strerror
 
 #ifdef MACOSX_EXTENSIONS
 #include "MacOS/mac_images.h"
@@ -77,7 +78,7 @@ load_string (url u, string& s, bool fatal) {
       err= true;
       if (!occurs ("system", name))
         cerr << "TeXmacs] warning, load error for " << name << ", "
-             << sys_errlist[errno] << "\n";
+             << strerror(errno) << "\n";
     }
     int size= 0;
     if (!err) {
@@ -142,7 +143,7 @@ save_string (url u, string s, bool fatal) {
     if (fout == NULL) {
       err= true;
       cerr << "TeXmacs] warning, save error for " << name << ", "
-           << sys_errlist[errno] << "\n";
+           << strerror(errno) << "\n";
     }
     if (!err) {
       int i, n= N(s);
