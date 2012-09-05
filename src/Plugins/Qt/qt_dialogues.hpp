@@ -90,7 +90,7 @@ class qt_field_widget_rep: public qt_widget_rep {
   array<string> proposals;
   
   qt_inputs_list_widget_rep* parent;
-  QTMFieldWidgetHelper*      helper;
+  QTMFieldWidgetHelper*            helper;
 public:
   qt_field_widget_rep(qt_inputs_list_widget_rep* _parent, string _prompt);
 

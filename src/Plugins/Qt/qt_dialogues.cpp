@@ -78,39 +78,44 @@ qt_field_widget_rep::query (slot s, int type_id) {
 
 QWidget*
 qt_field_widget_rep::as_qwidget () {
-  if (! helper)
-    helper = new QTMFieldWidgetHelper (this);
-
   qwid = new QWidget ();
   
   QHBoxLayout* hl = new QHBoxLayout (qwid);
   QLabel*     lab = new QLabel (to_qstring (prompt), qwid);
-  QTMComboBox*   cb = new QTMComboBox (qwid);
-
-  cb -> addItems (to_qstringlist (proposals));
-  cb -> setEditText (to_qstring (scm_unquote (input)));
-  cb -> setEditable (true);
-  cb -> setLineEdit (new QTMLineEdit (cb, "1w", WIDGET_STYLE_MINI));
-  cb -> setSizeAdjustPolicy (QComboBox::AdjustToContents);
-  cb -> setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
-  cb -> setDuplicatesEnabled (true); 
-  cb -> completer() -> setCaseSensitivity (Qt::CaseSensitive);  
-  
-  helper -> add (cb);
-  lab -> setBuddy (cb);
   
   qwid -> setLayout (hl);
-  hl -> addWidget (lab, 0, Qt::AlignRight);
-  hl -> addWidget (cb);
+  hl   -> addWidget (lab, 0, Qt::AlignRight);
 
-    //FIXME: use a QTMLineEdit instead of a QComboBox in this case
   if (ends (type, "file") || type == "directory") {
-    QCompleter*     completer = cb->completer();
-    QFileSystemModel* fsModel = new QFileSystemModel();
-    fsModel->setRootPath (QDir::homePath());// this is NOT the starting location
-    completer->setModel (fsModel);
-  }
+    widget wid = input_text_widget (command(), type, NULL, 0, "20em");
+    QLineEdit* le = qobject_cast<QLineEdit*> (concrete(wid)->as_qwidget());
+    lab -> setBuddy (le);
+    hl  -> addWidget(le);
 
+    QCompleter*     completer = new QCompleter(le);
+    QFileSystemModel* fsModel = new QFileSystemModel(le);
+    fsModel->setRootPath(QDir::homePath()); // this is NOT the starting location
+    completer->setModel (fsModel);
+    le->setCompleter(completer);
+  } else {
+    if (! helper)
+      helper = new QTMFieldWidgetHelper (this);
+
+    QTMComboBox* cb = new QTMComboBox (qwid);
+    helper -> add (cb);
+    
+    cb -> addItems (to_qstringlist (proposals));
+    cb -> setEditText (to_qstring (scm_unquote (input)));
+    cb -> setEditable (true);
+    cb -> setLineEdit (new QTMLineEdit (cb, "1w", WIDGET_STYLE_MINI));
+    cb -> setSizeAdjustPolicy (QComboBox::AdjustToContents);
+    cb -> setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
+    cb -> setDuplicatesEnabled (true); 
+    cb -> completer() -> setCaseSensitivity (Qt::CaseSensitive);  
+    
+    lab -> setBuddy (cb);
+    hl  -> addWidget (cb);
+  }
   return qwid;
 }
 
@@ -299,9 +304,9 @@ qt_input_text_widget_rep::as_qwidget () {
     // in toolbars the widget is not referenced directly in texmacs code
     // so must be retained by Qt objects
   }
-  QTMLineEdit* le = new QTMLineEdit (NULL, helper->wid()->width, style);
+  QTMLineEdit* le = new QTMLineEdit (NULL, width, style);
   helper->add (le);
-  le->setText (to_qstring (helper->wid()->input));
+  le->setText (to_qstring (input));
   
   if (ends (type, "file") || type == "directory") {
     QCompleter*     completer = new QCompleter(le);

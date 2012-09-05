@@ -162,7 +162,6 @@ protected:
   void  focusInEvent (QFocusEvent* ev);
 };
 
-
 /*! A class to keep a QLineEdit object and a qt_input_text_widget_rep object in
  sync.
  
@@ -183,11 +182,10 @@ public:
   QTMInputTextWidgetHelper (qt_input_text_widget_rep*  _wid); 
   ~QTMInputTextWidgetHelper();
 
-  qt_input_text_widget_rep* wid () { 
+  qt_input_text_widget_rep* wid () { // useful cast
     return static_cast<qt_input_text_widget_rep*>(p_wid.rep); }
-  // useful cast
   
-  void add (QLineEdit *);
+  void add (QObject *);
 
 public slots:
   void commit ();
@@ -216,7 +214,7 @@ public:
   QTMFieldWidgetHelper (qt_field_widget  _wid); 
   ~QTMFieldWidgetHelper ();
   
-  void add (QComboBox* cb);
+  void add (QObject* cb);
 
 public slots:
   void commit (const QString& qst);

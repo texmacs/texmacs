@@ -152,16 +152,17 @@ QTMInputTextWidgetHelper::leave () {
   le->setText (to_qstring (wid()->input));
   
     // HACK: restore focus to the main editor widget
-  widget win = qt_window_widget_rep::widget_from_qwidget(le);
-  if (concrete(win)->type == qt_widget_rep::texmacs_widget)
+  widget_rep* win = qt_window_widget_rep::widget_from_qwidget(le);
+  if (win && concrete(win)->type == qt_widget_rep::texmacs_widget)
     concrete(get_canvas(win))->qwid->setFocus();
   
     // process the scheme command
   if (done) return;
   done = true;
-  the_gui->process_command (wid()->cmd, wid()->ok
-                            ? list_object (object (wid()->input))
-                            : list_object (object (false)));
+  if (win)  // HACK: this is 0 if inside a dialog, and then there's no command
+    the_gui->process_command (wid()->cmd, wid()->ok
+                              ? list_object (object (wid()->input))
+                              : list_object (object (false)));
 }
 
 void
@@ -172,8 +173,9 @@ QTMInputTextWidgetHelper::remove (QObject* obj) {
 }
 
 void
-QTMInputTextWidgetHelper::add (QLineEdit* le) {
-  if (!views.contains (le)) {
+QTMInputTextWidgetHelper::add (QObject* obj) {
+  QLineEdit* le = qobject_cast<QLineEdit*> (obj);
+  if (le && !views.contains (le)) {
     QObject::connect (le, SIGNAL (destroyed (QObject*)), this, SLOT (remove (QObject*)));
     QObject::connect (le, SIGNAL (returnPressed ()),     this, SLOT (commit ()));
     QObject::connect (le, SIGNAL (editingFinished ()),   this, SLOT (leave ()));
@@ -210,8 +212,9 @@ QTMFieldWidgetHelper::remove (QObject* obj) {
 }
 
 void
-QTMFieldWidgetHelper::add (QComboBox* cb) {
-  if (!views.contains (cb)) {
+QTMFieldWidgetHelper::add (QObject* obj) {
+  QComboBox* cb = qobject_cast<QComboBox*> (obj);
+  if (obj && !views.contains (cb)) {
     QObject::connect (cb, SIGNAL (destroyed (QObject*)), this, SLOT (remove (QObject*)));
     QObject::connect (cb, SIGNAL (editTextChanged (const QString&)), this, SLOT (commit (const QString&)));
     views << cb;
@@ -261,27 +264,8 @@ QTMLineEdit::keyPressEvent(QKeyEvent* ev)
   if (c) {
     int row = 0;
     switch (ev->key()) {
-      case Qt::Key_Up:
-        completing = true;
-        row = c->currentRow();
-        c->setCompletionPrefix (QString ());        // reset completion
-        if(! c->setCurrentRow (row-1))
-          c->setCurrentRow(c->completionCount()-1); // cycle
-        setText (c->currentCompletion ());
-        ev->accept();
-        return;
       case Qt::Key_Down:
         completing = true;
-        row = c->currentRow();
-        c->setCompletionPrefix (QString ());        // reset completion
-        if (! c->setCurrentRow (row+1))
-          c->setCurrentRow(0);                      // cycle
-        setText (c->currentCompletion ());
-        ev->accept();
-        return;
-        
-        // Either complete the suggested text or advance in the list of
-        // completions.
       case Qt::Key_Tab:
       {
         if (completing) {
@@ -300,27 +284,38 @@ QTMLineEdit::keyPressEvent(QKeyEvent* ev)
         }
         if (hasSelectedText())
           setCursorPosition(selectionStart());
-        int pos = cursorPosition();
-        setText (c->currentCompletion ());
-        setSelection (pos, text().length()-1);
+        if (c->currentCompletion() != "") {
+          int pos = cursorPosition();
+          setText (c->currentCompletion ());
+          setSelection (pos, text().length()-1);
+        } else {
+            //blink somehow 
+        }
+
         ev->accept();
       }
         return;
           // This is different on purpose: when "back-completing" suggested text
           // we want to display the previous entry to the one suggested
+      case Qt::Key_Up:
       case Qt::Key_Backtab:
       {
         completing = true;
         row = c->currentRow();
         if(! c->setCurrentRow (row+1))
           c->setCurrentRow(0);                      // cycle
-        int pos;
-        if (hasSelectedText())
-          pos = selectionStart();
-        else
-          pos = cursorPosition();
-        setText (c->currentCompletion ());
-        setSelection (pos, text().length()-1);
+        if (c->currentCompletion() != "") {
+          int pos;
+          if (hasSelectedText())
+            pos = selectionStart();
+          else
+            pos = cursorPosition();
+          setText (c->currentCompletion ());
+          setSelection (pos, text().length()-1);          
+        } else {
+            //blink somehow
+        }
+
         ev->accept();
       }
         return;

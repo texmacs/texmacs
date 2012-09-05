@@ -81,7 +81,7 @@ qt_window_widget_rep::widget_from_qwidget(QWidget* q)
     else
       q = q->parentWidget();
   }
-  FAILED ("attempt to retrieve the window of a QWidget without one");
+  return NULL;
 }
 
 /*! Returns true if any of the child QWidgets has different minimum and maximum
