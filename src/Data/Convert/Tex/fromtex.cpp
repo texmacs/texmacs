@@ -1796,7 +1796,6 @@ parse_matrix_params (tree t) {
 static tree
 parse_cline (tree t) {
   string s= as_string (t);
-  cout << s << LF;
   tree r= tree(CONCAT, 2);
   int i=0, j=0, k=0;
   while (i<N(s) && !is_digit (s[i])) i++;
@@ -1807,8 +1806,6 @@ parse_cline (tree t) {
   k=j;
   while (i<N(s) && is_digit (s[k])) k++;
   if (j<N(s)) r[1]= s(j,k);
-  cout << i << " " << j << " " << k << LF;
-  cout << r << LF;
   return r;
 }
 static void
