@@ -17,6 +17,8 @@
 
 class QTMInputTextWidgetHelper;
 
+/*! A text input field with autocompletion.
+ */
 class qt_input_text_widget_rep: public qt_widget_rep {
 public:
   command cmd;

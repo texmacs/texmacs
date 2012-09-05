@@ -155,8 +155,9 @@ public:
   QTMLineEdit (QWidget *parent, string _ww, int style=0);
   virtual QSize	sizeHint () const ;
   
+  bool event (QEvent* ev); 
+  
 protected:
-  bool         event (QEvent* ev); 
   void keyPressEvent (QKeyEvent* ev);
   void  focusInEvent (QFocusEvent* ev);
 };
@@ -182,8 +183,7 @@ public:
   
   QList<QLineEdit*> views;
 
-  QTMInputTextWidgetHelper ( qt_input_text_widget_rep*  _wid ) 
-    : QObject(NULL), p_wid(abstract(_wid)), done(false) { }
+  QTMInputTextWidgetHelper (qt_input_text_widget_rep*  _wid); 
   ~QTMInputTextWidgetHelper();
 
   qt_input_text_widget_rep* wid () { 
@@ -196,9 +196,7 @@ public slots:
   void commit ();
   void leave ();
   void remove (QObject *);
-  
-  void doit ();
-  
+
 };
 
 class QTMWidgetAction : public QWidgetAction {
@@ -255,12 +253,14 @@ public:
 class QTMComboBox : public QComboBox {
   Q_OBJECT
   
-  QSize calcSize;
-  QSize minSize;
+  QSize  calcSize;
+  QSize   minSize;
 public:
   QTMComboBox (QWidget* parent);
   
   void addItemsAndResize (const QStringList& texts, string ww, string h);
+  bool event (QEvent* ev);
+
 };
 
 

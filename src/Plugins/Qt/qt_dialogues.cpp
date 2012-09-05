@@ -212,7 +212,9 @@ qt_inputs_list_widget_rep::perform_dialog() {
       QHBoxLayout *hl = new QHBoxLayout();
 
       QLabel* lab = new QLabel (to_qstring (fields[i]->prompt), &d);
-      cbs[i] = new QComboBox(&d);
+      cbs[i] = new QTMComboBox(&d);
+      cbs[i] -> setEditable (true);
+      cbs[i] -> setLineEdit(new QTMLineEdit(cbs[i], "1w", WIDGET_STYLE_MINI));
       cbs[i] -> setSizeAdjustPolicy (QComboBox::AdjustToMinimumContentsLength);
       cbs[i] -> setEditText (to_qstring(fields[i]->input));
       int minlen = 0;
@@ -223,7 +225,7 @@ qt_inputs_list_widget_rep::perform_dialog() {
         if (c > minlen) minlen = c;
       }
       cbs[i] -> setMinimumContentsLength (minlen>50 ? 50 : (minlen < 2 ? 10 : minlen));
-      cbs[i] -> setEditable (true);
+
       // apparently the following flag prevents Qt from substituting
       // an history item for an input when they differ only from
       // the point of view of case (upper/lower)
@@ -304,40 +306,29 @@ qt_input_text_widget_rep::as_qaction () {
 
 QWidget *
 qt_input_text_widget_rep::as_qwidget () {
-  if (!helper) {
+  if (! helper) {
     helper = new QTMInputTextWidgetHelper(this);
     // helper retains the current widget
     // in toolbars the widget is not referenced directly in texmacs code
     // so must be retained by Qt objects
   }
-  QLineEdit *le;
-  // FIXME: how is this check necessary (out of memory check seems unlikely...)
-  if (helper) {
-    le = new QTMLineEdit (NULL, helper->wid()->width, style);
-    
-    helper->add (le);
-    QObject::connect(le, SIGNAL(returnPressed ()), helper, SLOT(commit ()));
-    QObject::connect(le, SIGNAL(editingFinished ()), helper, SLOT(leave ()));
-    le->setText (to_qstring (helper->wid()->text));
- 
-    if (ends (type, "file") || type == "directory") {
-      // autocompletion
-      QCompleter *completer = new QCompleter(le);
-      QDirModel *dirModel = new QDirModel(le);
-      completer->setModel(dirModel);
-      le->setCompleter(completer);
-    } else if (N(def) > 0) {
-      QStringList items;
-      for (int j=0; j < N(def); j++)
-        items << to_qstring(def[j]);
+  QTMLineEdit* le = new QTMLineEdit (NULL, helper->wid()->width, style);
+  helper->add (le);
+  le->setText (to_qstring (helper->wid()->text));
+  
+  if (ends (type, "file") || type == "directory") {
+    QCompleter*     completer = new QCompleter(le);
+    QFileSystemModel* fsModel = new QFileSystemModel(le);
+    fsModel->setRootPath(QDir::homePath());
+    completer->setModel (fsModel);
 
-      QCompleter *completer = new QCompleter(items, le);
-      completer->setCaseSensitivity(Qt::CaseSensitive);
-      completer->setCompletionMode(QCompleter::InlineCompletion);
-      le->setCompleter(completer);
-    }
-  } else {
-    le = new QLineEdit(NULL);
+    le->setCompleter(completer);
+  } else if (N(def) > 0 && ! (N(def) == 1 && N(def[0]) == 0)) {
+    QCompleter* completer = new QCompleter(to_qstringlist(def), le);
+    completer->setCaseSensitivity (Qt::CaseSensitive);
+    completer->setCompletionMode (QCompleter::InlineCompletion);
+
+    le->setCompleter (completer);
   }
   return le;
 }

@@ -14,6 +14,7 @@
 #include "QTMStyle.hpp"
 #include "qt_gui.hpp"
 #include "qt_utilities.hpp"
+#include "qt_window_widget.hpp"
 
 #include "analyze.hpp"
 
@@ -120,11 +121,16 @@ QTMLazyMenu::force () {
  * QTMInputTextWidgetHelper
  ******************************************************************************/
 
+
+QTMInputTextWidgetHelper::QTMInputTextWidgetHelper (qt_input_text_widget_rep*  _wid) 
+ : QObject(NULL), p_wid(abstract(_wid)), done(false) { }
+
+/*! Destructor.
+ Removes reference to the helper in the texmacs widget. If needed the texmacs
+ widget is automatically deleted.
+*/
 QTMInputTextWidgetHelper::~QTMInputTextWidgetHelper() {
-  //cout << "deleting" << LF;
-  // remove refernce to helper in the texmacs widget
   wid()->helper = NULL;
-  // if needed the texmacs widget is automatically deleted
 }
 
 
@@ -132,60 +138,49 @@ void
 QTMInputTextWidgetHelper::commit () {
   QLineEdit *le = qobject_cast <QLineEdit*> (sender());
   if (le) {
-    //    le -> setFrame(false);
-    wid()->ok = true;
-    done = false;
-    wid () -> text = from_qstring (le -> text());
+    done        = false;
+    wid()->ok   = true;
+    wid()->text = from_qstring (le->text());
   }
 }
 
+/*! Executed after commit of the input field (enter) and when losing focus */
 void
 QTMInputTextWidgetHelper::leave () {
-  // this is executed after commit
-  // and when losing focus
-  QLineEdit *le = qobject_cast <QLineEdit*> (sender());  
-  if (le) {
+  QLineEdit* le = qobject_cast <QLineEdit*> (sender());  
+  if (!le) return;
+  
     // reset the text according to the texmacs widget
-    le -> setText (to_qstring (wid()->text));
-    //ok = false;
-    QTimer::singleShot (0, this, SLOT (doit ()));
-  }
-}
+  le->setText (to_qstring (wid()->text));
 
-void
-QTMInputTextWidgetHelper::remove (QObject *obj) {
-  views.removeAll (qobject_cast<QLineEdit*> (obj));
-  if (views.count () == 0) {
-    // no more view, free the helper 
-    deleteLater();
-  }
-}
+    // HACK: restore focus to the main editor widget
+  widget win = qt_window_widget_rep::widget_from_qwidget(le);
+  if (concrete(win)->type == qt_widget_rep::texmacs_widget)
+    concrete(get_canvas(win))->qwid->setFocus();
 
-void
-QTMInputTextWidgetHelper::add(QLineEdit *obj) {
-  if (!views.contains (obj)) {
-    QObject::connect (obj, SIGNAL(destroyed (QObject*)), this, SLOT(remove (QObject*)));
-    views << obj;
-  }
-}
-
-void
-QTMInputTextWidgetHelper::doit () {
+    // process scheme quit command
   if (done) return;
   done = true;
-#if 0
-  if (wid()->ok) 
-    cout << "Committing: " << wid () -> text << LF;
-  else 
-    cout << "Leaving with text: " << wid () -> text << LF;
-#endif
-#if 0
-  wid () -> cmd (wid()->ok ? list_object (object (wid() -> text)) : 
-                 list_object (object (false)));
-#else
-  the_gui -> process_command(wid()->cmd, wid()->ok ? list_object (object (wid() -> text)) : 
-                             list_object (object (false)));
-#endif
+  the_gui->process_command (wid()->cmd, wid()->ok
+                            ? list_object (object (wid() -> text))
+                            : list_object (object (false)));
+}
+
+void
+QTMInputTextWidgetHelper::remove (QObject* obj) {
+  views.removeAll (qobject_cast<QLineEdit*> (obj));
+  if (views.count () == 0)
+    deleteLater();
+}
+
+void
+QTMInputTextWidgetHelper::add (QLineEdit* obj) {
+  if (!views.contains (obj)) {
+    QObject::connect (obj, SIGNAL (destroyed (QObject*)), this, SLOT (remove (QObject*)));
+    QObject::connect (obj, SIGNAL (returnPressed ()),     this, SLOT (commit ()));
+    QObject::connect (obj, SIGNAL (editingFinished ()),   this, SLOT (leave ()));
+    views << obj;
+  }
 }
 
 
@@ -200,8 +195,11 @@ QTMLineEdit::QTMLineEdit (QWidget* parent, string _ww, int style)
       // FIXME: we should remove this and let the scheme code decide.
     QPalette pal (palette());
     pal.setColor (QPalette::Base, QColor (252, 252, 248));
-    setPalette (pal);      
+    setPalette (pal);
   }
+  
+    // just to be sure we don't capture the wrong keys in keyPressEvent
+  setCompleter(0);
 
   setStyleSheet (to_qstylesheet (style)); 
 }
@@ -246,28 +244,50 @@ QTMLineEdit::keyPressEvent(QKeyEvent* ev)
         setText (c->currentCompletion ());
         ev->accept();
         return;
-          // Either complete the suggested text or advance in the list of
-          // completions
+        
+        // Either complete the suggested text or advance in the list of
+        // completions.
       case Qt::Key_Tab:
+      {
         if (completing) {
-          row = c->currentRow();
-          if(! c->setCurrentRow (row-1))
-            c->setCurrentRow(c->completionCount()-1); // cycle                    
+          if (c->completionCount() > 1) {
+            if(! c->setCurrentRow (c->currentRow()-1))
+              c->setCurrentRow(c->completionCount()-1); // cycle
+          } else {
+            setCursorPosition(text().length());
+          }
         } else {
-          completing = true;
+          if (hasSelectedText())
+            c->setCompletionPrefix(text().left(selectionStart()));
+          else
+            c->setCompletionPrefix(text().left(cursorPosition()));
+          completing = true;          
         }
+        if (hasSelectedText())
+          setCursorPosition(selectionStart());
+        int pos = cursorPosition();
         setText (c->currentCompletion ());
+        setSelection (pos, text().length()-1);
         ev->accept();
+      }
         return;
           // This is different on purpose: when "back-completing" suggested text
-          // we want to display the previous entry to that suggested
+          // we want to display the previous entry to the one suggested
       case Qt::Key_Backtab:
+      {
         completing = true;
         row = c->currentRow();
         if(! c->setCurrentRow (row+1))
           c->setCurrentRow(0);                      // cycle
+        int pos;
+        if (hasSelectedText())
+          pos = selectionStart();
+        else
+          pos = cursorPosition();
         setText (c->currentCompletion ());
-        ev->accept();        
+        setSelection (pos, text().length()-1);
+        ev->accept();
+      }
         return;
       case Qt::Key_Shift:   // need to ignore this to correctly get shift-tabs
         if (completing) return;
@@ -280,6 +300,10 @@ QTMLineEdit::keyPressEvent(QKeyEvent* ev)
   if (ev->key() == Qt::Key_Escape) {
     emit editingFinished();
     ev->accept();
+      // HACK: s
+    if (parentWidget())
+      parentWidget()->setFocus();
+
   } else {
     QLineEdit::keyPressEvent(ev);
   }
@@ -445,4 +469,22 @@ QTMComboBox::addItemsAndResize (const QStringList& texts, string ww, string hh) 
   calcSize.rwidth() += minSize.width();
   
   setFixedSize(calcSize);
+}
+
+/*
+ We need to reimplement the main event handler because we need the tab key for
+ completions. (See Qt docs for QWidget::event())
+ */
+bool
+QTMComboBox::event (QEvent* ev) {
+  if (ev->type() == QEvent::KeyPress && isEditable()) {       // Handle ALL keys
+    QKeyEvent* k = static_cast<QKeyEvent*> (ev);
+    if (k->key() == Qt::Key_Up || k->key() == Qt::Key_Down)
+      showPopup();
+    else
+      lineEdit()->event(ev);
+  } else
+    return QComboBox::event (ev);
+
+  return true;
 }
