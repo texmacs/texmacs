@@ -22,9 +22,13 @@
 #include <QTabWidget>
 #include <QLayout>
 #include <QLineEdit>
+#include <QComboBox>
+#include <QTranslator>
 
 #include "qt_gui.hpp"
 #include "qt_dialogues.hpp"
+#include "qt_ui_element.hpp"  // qt_refresh_widget_rep
+
 
 
 /*! Handles TeXmacs commands in the QT way.
@@ -214,7 +218,8 @@ protected:
   
 };
 
-/*! Implements a QTabWidget which resizes itself to the currently displayed page. */
+
+/*! A QTabWidget which resizes itself to the currently displayed page. */
 class QTMTabWidget : public QTabWidget {
   Q_OBJECT
 public:
@@ -223,6 +228,40 @@ public slots:
   void resizeOthers(int index);
 };
 
+
+/*! A container widget which redraws the widgets it owns. */
+class QTMRefreshWidget : public QWidget {
+  Q_OBJECT
+  
+  string tmwid;
+  object curobj;
+  widget cur;
+  hashmap<object,widget> cache;
+  
+public:
+  QTMRefreshWidget (string _tmwid);
+  
+  bool recompute ();
+  
+  public slots:
+  void doRefresh ();  
+};
+
+
+/*! A mutilated QComboBox which fixes its size using texmacs lengths.
+ 
+ To use just create the QWidget and call addItemsAndResize().
+ */
+class QTMComboBox : public QComboBox {
+  Q_OBJECT
+  
+  QSize calcSize;
+  QSize minSize;
+public:
+  QTMComboBox (QWidget* parent);
+  
+  void addItemsAndResize (const QStringList& texts, string ww, string h);
+};
 
 
 #endif // QTMMENUHELPER_HPP

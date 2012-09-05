@@ -19,7 +19,9 @@
 
 #include <QtGui>
 
-//////////////////////////////// QTMCommand ////////////////////////////////////
+/******************************************************************************
+ * QTMCommand
+ ******************************************************************************/
 
 /*! Queues the object's command into the main queue. */
 void 
@@ -30,7 +32,9 @@ QTMCommand::apply()  {
 }
 
 
-///////////////////////////////// QTMAction ////////////////////////////////////
+/******************************************************************************
+ * QTMAction
+ ******************************************************************************/
 
 QTMAction::QTMAction(QObject *parent) : QAction(parent) { 
   QObject::connect(the_gui->gui_helper, SIGNAL(refresh()), this, SLOT(doRefresh()));
@@ -81,7 +85,9 @@ QTMAction::doShowToolTip() {
 }
 
 
-/////////////////////////////// QTMLazyMenu ////////////////////////////////////
+/******************************************************************************
+ * QTMLazyMenu
+ ******************************************************************************/
 
 void
 rerootActions (QWidget* dest, QWidget* src) {
@@ -110,8 +116,9 @@ QTMLazyMenu::force () {
 }
 
 
-////////////////////////// QTMInputTextWidgetHelper ////////////////////////////
-
+/******************************************************************************
+ * QTMInputTextWidgetHelper
+ ******************************************************************************/
 
 QTMInputTextWidgetHelper::~QTMInputTextWidgetHelper() {
   //cout << "deleting" << LF;
@@ -182,8 +189,9 @@ QTMInputTextWidgetHelper::doit () {
 }
 
 
-  ////////////////////////// QTMLineEdit ////////////////////////////
-
+/******************************************************************************
+ * QTMLineEdit
+ ******************************************************************************/
 
 QTMLineEdit::QTMLineEdit (QWidget* parent, string _ww, int style)
 : QLineEdit (parent), completing (false), ww (_ww) {
@@ -291,8 +299,9 @@ QTMLineEdit::focusInEvent (QFocusEvent* ev)
 }
 
 
-//////////////////////////////// QTMTabWidget /////////////////////////////////
-
+/******************************************************************************
+ * QTMTabWidget
+ ******************************************************************************/
 
 QTMTabWidget::QTMTabWidget(QWidget *p) : QTabWidget(p) {
   QObject::connect(this, SIGNAL(currentChanged(int)), this, SLOT(resizeOthers(int)));
@@ -324,4 +333,116 @@ QTMTabWidget::resizeOthers(int current) {
   if (window()->minimumSize()!=QSize(0,0) && 
       window()->maximumSize() != QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX))
     window()->setFixedSize(window()->sizeHint());
+}
+
+
+
+/******************************************************************************
+ * QTMRefreshWidget
+ ******************************************************************************/
+
+widget make_menu_widget (object wid);
+
+QTMRefreshWidget::QTMRefreshWidget (string _tmwid)
+: QWidget (), tmwid (_tmwid), curobj (false), cur (), cache (widget ()) 
+{   
+  QObject::connect(the_gui->gui_helper, SIGNAL(tmSlotRefresh()), 
+                   this, SLOT(doRefresh()));
+  doRefresh();
+}
+
+bool
+QTMRefreshWidget::recompute () {
+  string s = "'(vertical (link " * tmwid * "))";
+  eval ("(lazy-initialize-force)");
+  object xwid = call ("menu-expand", eval (s));
+  
+  if (cache->contains (xwid)) {
+    if (curobj == xwid) return false;
+    curobj = xwid;
+    cur    = cache [xwid];
+    return true;
+  } else {
+    curobj = xwid;
+    object uwid = eval (s);
+    cur = make_menu_widget (uwid);
+    cache (xwid) = cur;
+    return true;
+  }
+}
+
+void 
+QTMRefreshWidget::doRefresh() {
+  if (recompute()) {
+    if (layout()) {
+      QLayoutItem* item;
+      while ((item = layout()->takeAt(0)) != 0) {		
+        if (item->widget()) {
+          layout()->removeWidget(item->widget());
+          delete item->widget();
+        }	
+        delete item;
+      }
+      delete layout();
+    }
+    setLayout(concrete(cur)->as_qlayoutitem()->layout());
+    
+      // Tell the window to fix its size to the new one if we had it fixed to
+      // begin with (this is indicated by minimum and maximum sizes set to 
+      // values other than the default)
+    if (window()->minimumSize() != QSize(0,0) && 
+        window()->maximumSize() != QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX))
+      window()->setFixedSize(window()->sizeHint());  
+  }
+}
+
+
+/******************************************************************************
+ * QTMComboBox
+ ******************************************************************************/
+
+QTMComboBox::QTMComboBox (QWidget* parent) : QComboBox (parent) {
+    ///// Obtain the minimum vertical size
+  QComboBox cb;
+  cb.setSizeAdjustPolicy(AdjustToContents);
+  cb.addItem("");
+  minSize = cb.sizeHint();  // we'll just keep the height
+  
+    ///// Add width of the arrow button
+  QStyleOptionComboBox opt;
+  opt.initFrom(&cb);
+  opt.activeSubControls = QStyle::SC_ComboBoxArrow;
+  QRect r = style()->subControlRect (QStyle::CC_ComboBox, &opt,
+                                     QStyle::SC_ComboBoxArrow, &cb);
+  minSize.setWidth(r.width());
+}
+
+/*! Add items and fix the ComboBox size using texmacs length units.
+ 
+ Relative sizes are set based on the minimum bounding box in which any item of
+ the list fits. Absolute sizes are set independently of the size of items in 
+ the list.
+ 
+ The QComboBox' minimum height is the original minimumSizeHint().
+ */
+void
+QTMComboBox::addItemsAndResize (const QStringList& texts, string ww, string hh) {
+  QComboBox::addItems(texts);
+  
+    ///// Calculate the minimal contents size:
+  calcSize = QApplication::globalStrut ();
+  const QFontMetrics& fm = fontMetrics ();
+  
+  for (int i = 0; i < count(); ++i) {
+    QRect br = fm.boundingRect(itemText(i));
+    calcSize.setWidth (qMax (calcSize.width(), br.width()));
+    calcSize.setHeight (qMax (calcSize.height(), br.height()));
+  }
+  calcSize = qt_decode_length (ww, hh, calcSize, fm);
+  
+    ///// Add minimum constraints and fix size
+  calcSize.setHeight (qMax (calcSize.height(), minSize.height()));
+  calcSize.rwidth() += minSize.width();
+  
+  setFixedSize(calcSize);
 }

@@ -24,6 +24,8 @@
 #include <QLabel>
 #include <QSocketNotifier>
 #include <QSetIterator>
+#include <QTranslator>
+#include <QLocale>
 #include "QTMGuiHelper.hpp"
 #include "QTMWidget.hpp"
 #include "QTMWindow.hpp"
