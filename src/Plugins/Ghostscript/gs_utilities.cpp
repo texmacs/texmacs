@@ -104,7 +104,7 @@ void
 gs_to_png (url image, url png, int w, int h) {
   if (use_converts (image)) {
     string cmd= "convert ";
-    cmd << "-geometry " << as_string (w) << "x" << as_string (h) << "! ";  
+    cmd << "-density 300x300 -geometry " << as_string (w) << "x" << as_string (h) << "! ";  
     cmd << sys_concretize (image) << " ";
     cmd << sys_concretize (png);
     system (cmd);
