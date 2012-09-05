@@ -592,6 +592,27 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     return tuple (cmd, name, arg);
   }
 
+  if (cmd == "\\multirow") {
+    tree a= parse_argument (s, i);
+    skip_linespaces (s, ++i);
+    if (s[i] == '[') {
+      i++;
+      parse (s, i, ']');
+      skip_linespaces (s, ++i);
+    }
+    tree b= parse_argument (s, i);
+    skip_linespaces (s, ++i);
+    if (s[i] == '[') {
+      i++;
+      parse (s, i, ']');
+      skip_linespaces (s, ++i);
+    }
+    tree c= parse_argument (s, i);
+    skip_linespaces (s, ++i);
+    cout << tuple (cmd, a, b, c) << LF;
+    return tuple (cmd, a, b, c);
+  }
+
   if (cmd == "\\category") {
     tree a= parse_argument (s, i);
     skip_linespaces (s, ++i);

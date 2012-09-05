@@ -1793,6 +1793,24 @@ parse_matrix_params (tree t) {
   return parse_matrix_params (t, "1", "-1", "1");
 }
 
+static tree
+parse_cline (tree t) {
+  string s= as_string (t);
+  cout << s << LF;
+  tree r= tree(CONCAT, 2);
+  int i=0, j=0, k=0;
+  while (i<N(s) && !is_digit (s[i])) i++;
+  j=i;
+  while (j<N(s) && is_digit (s[j])) j++;
+  if (j<N(s)) r[0]= s(i,j);
+  while (j<N(s) && !is_digit (s[j])) j++;
+  k=j;
+  while (i<N(s) && is_digit (s[k])) k++;
+  if (j<N(s)) r[1]= s(j,k);
+  cout << i << " " << j << " " << k << LF;
+  cout << r << LF;
+  return r;
+}
 static void
 parse_pmatrix (tree& r, tree t, int& i, string lb, string rb, string fm) {
   tree tformat (TFORMAT);
@@ -1884,6 +1902,29 @@ parse_pmatrix (tree& r, tree t, int& i, string lb, string rb, string fm) {
       string how  = "1ln";
       tformat << tree (CWITH, row_s, row_s, "1", "-1", vbor, how);
       while (i+1<N(t) && t[i+1] == " ") i++;
+    }
+    else if (is_apply (v, "cline", 1)) {
+      int    row  = N(V)+ (N(L)==0? 0: 1);
+      tree arg= parse_cline (v[1]);
+      string row_s= row==0? as_string (row+1): as_string (row);
+      string vbor = row==0? copy (CELL_TBORDER): copy (CELL_BBORDER);
+      string how  = "1ln";
+      tformat << tree (CWITH, row_s, row_s, arg[0], arg[1], vbor, how);
+      while (i+1<N(t) && t[i+1] == " ") i++;
+    }
+    else if (is_apply (v, "multirow", 3)) {
+      string row_t= as_string (N(V) + 1);
+      string col_s= as_string (N(L) + N(F) + 1);
+      string height= as_string (v[1]);
+      tformat << tree (CWITH, row_t, row_t, col_s, col_s, CELL_ROW_SPAN, height);
+      if (as_string (v[2]) != "*") {
+        tree width= tree (OVER, as_string (v[2]), height);
+        string row_b= as_string (as_int (row_t) + as_int (height) - 1);
+        tformat << tree (CWITH, row_t, row_b, col_s, col_s, CELL_HEIGHT, width);
+        tformat << tree (CWITH, row_t, row_b, col_s, col_s, CELL_HMODE, "exact");
+      }
+      tformat << tree (CWITH, row_t, row_t, col_s, col_s, CELL_VALIGN, "c");
+      E << v[3];
     }
     else if (is_apply (v, "multicolumn", 3)) {
       string row_s= as_string (N(V) + 1);

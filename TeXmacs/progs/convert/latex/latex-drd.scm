@@ -73,7 +73,7 @@
   newcounter stepcounter refstepcounter value
   citet citep citet* citep* citealt citealp citealt* citealp*
   citetext citeauthor citeauthor* citeyear onlinecite
-  epsfig url penalty centerline fbox framebox 
+  epsfig url penalty centerline fbox framebox cline
   enlargethispage
   newlength newdimen newskip
   Comment COMMENT For ForAll If Input KwData KwResult KwRet lnl nllabel
@@ -134,7 +134,7 @@
   ElseIf uElseIf lElseIf ForEach lForEach lForAll lFor)
 
 (logic-group latex-command-3*%
-  category newenvironment renewenvironment)
+  category newenvironment renewenvironment multirow)
 
 (logic-rules
   ((latex-command-0% 'x) (latex-command-0*% 'x))
