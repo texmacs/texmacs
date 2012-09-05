@@ -28,8 +28,15 @@
 #include "scheme.hpp"
 
 
-  ////////////////////////// qt_field_widget_rep ////////////////////////////
+/******************************************************************************
+ * qt_field_widget_rep
+ ******************************************************************************/
 
+qt_field_widget_rep::qt_field_widget_rep (qt_inputs_list_widget_rep* _parent, 
+                                          string _prompt)
+  : qt_widget_rep(field_widget), prompt(_prompt), input(""), proposals(), 
+    parent(_parent), helper(NULL)
+{ }
 
 void
 qt_field_widget_rep::send (slot s, blackbox val) {
@@ -38,8 +45,7 @@ qt_field_widget_rep::send (slot s, blackbox val) {
   switch (s) {
   case SLOT_STRING_INPUT:
     check_type<string>(val, s);
-    input= open_box<string> (val);
-    // send_string (THIS, "input", val);
+    input= scm_quote (open_box<string> (val));
     break;
   case SLOT_INPUT_TYPE:
     check_type<string>(val, s);
@@ -48,7 +54,6 @@ qt_field_widget_rep::send (slot s, blackbox val) {
   case SLOT_INPUT_PROPOSAL:
     check_type<string>(val, s);
     proposals << open_box<string> (val);
-    // send_string (THIS, "default", val);
     break;
   case SLOT_KEYBOARD_FOCUS:
     parent->send(s,val);
@@ -71,21 +76,56 @@ qt_field_widget_rep::query (slot s, int type_id) {
   }
 }
 
+QWidget*
+qt_field_widget_rep::as_qwidget () {
+  if (! helper)
+    helper = new QTMFieldWidgetHelper (this);
 
-  ////////////////////////// qt_inputs_list_widget_rep ////////////////////////////
+  qwid = new QWidget ();
+  
+  QHBoxLayout* hl = new QHBoxLayout (qwid);
+  QLabel*     lab = new QLabel (to_qstring (prompt), qwid);
+  QTMComboBox*   cb = new QTMComboBox (qwid);
 
+  cb -> addItems (to_qstringlist (proposals));
+  cb -> setEditText (to_qstring (scm_unquote (input)));
+  cb -> setEditable (true);
+  cb -> setLineEdit (new QTMLineEdit (cb, "1w", WIDGET_STYLE_MINI));
+  cb -> setSizeAdjustPolicy (QComboBox::AdjustToContents);
+  cb -> setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
+  cb -> setDuplicatesEnabled (true); 
+  cb -> completer() -> setCaseSensitivity (Qt::CaseSensitive);  
+  
+  helper -> add (cb);
+  lab -> setBuddy (cb);
+  
+  qwid -> setLayout (hl);
+  hl -> addWidget (lab, 0, Qt::AlignRight);
+  hl -> addWidget (cb);
+
+    //FIXME: use a QTMLineEdit instead of a QComboBox in this case
+  if (ends (type, "file") || type == "directory") {
+    QCompleter*     completer = cb->completer();
+    QFileSystemModel* fsModel = new QFileSystemModel();
+    fsModel->setRootPath (QDir::homePath());// this is NOT the starting location
+    completer->setModel (fsModel);
+  }
+
+  return qwid;
+}
+
+
+/******************************************************************************
+ * qt_inputs_list_widget_rep
+ ******************************************************************************/
 
 qt_inputs_list_widget_rep::qt_inputs_list_widget_rep (command _cmd, array<string> _prompts):
    qt_widget_rep (input_widget), cmd (_cmd), fields (N (_prompts)),
    size (coord2 (100, 100)), position (coord2 (0, 0)), win_title (""), style (0)
 {
-  for (int i=0; i < N(_prompts); i++) {
-    fields[i] = tm_new<qt_field_widget_rep> (this);
-    fields[i]->prompt = _prompts[i];
-  }
+  for (int i=0; i < N(_prompts); i++)
+    fields[i] = tm_new<qt_field_widget_rep> (this, _prompts[i]);
 }
-
-qt_inputs_list_widget_rep::~qt_inputs_list_widget_rep()  {}
 
 widget
 qt_inputs_list_widget_rep::plain_window_widget (string s, command q)
@@ -174,7 +214,7 @@ qt_inputs_list_widget_rep::perform_dialog() {
     // In case it has not, it should be brought into focus
     // before calling the dialog
     QMessageBox* msgBox=new QMessageBox (mainwindow);
-    //sets parent widget, so that appears at proper location	
+    //sets parent widget, so that it appears at the proper location	
     msgBox->setText (to_qstring (fields[0]->prompt));
     msgBox->setStandardButtons (QMessageBox::Cancel);
     int choices = N(fields[0]->proposals);
@@ -200,103 +240,50 @@ qt_inputs_list_widget_rep::perform_dialog() {
       }
     }
     if (!buttonclicked) {fields[0] -> input = "#f";} //cancelled
-  }
-
-  else {  //usual dialogue layout
+  } 
+  
+  else {  //usual dialog layout
     QDialog d (0, Qt::Sheet);
     QVBoxLayout* vl = new QVBoxLayout(&d);
 
-    QVector<QComboBox*> cbs (N (fields));
-
-    for(int i=0; i<N(fields); i++) {
-      QHBoxLayout *hl = new QHBoxLayout();
-
-      QLabel* lab = new QLabel (to_qstring (fields[i]->prompt), &d);
-      cbs[i] = new QTMComboBox(&d);
-      cbs[i] -> setEditable (true);
-      cbs[i] -> setLineEdit(new QTMLineEdit(cbs[i], "1w", WIDGET_STYLE_MINI));
-      cbs[i] -> setSizeAdjustPolicy (QComboBox::AdjustToMinimumContentsLength);
-      cbs[i] -> setEditText (to_qstring(fields[i]->input));
-      int minlen = 0;
-      for(int j=0; j < N(fields[i]->proposals); j++) {
-        QString str = to_qstring (fields[i]->proposals[j]);
-        cbs[i] -> addItem (str);
-        int c = str.count();
-        if (c > minlen) minlen = c;
-      }
-      cbs[i] -> setMinimumContentsLength (minlen>50 ? 50 : (minlen < 2 ? 10 : minlen));
-
-      // apparently the following flag prevents Qt from substituting
-      // an history item for an input when they differ only from
-      // the point of view of case (upper/lower)
-      // eg. if the history contains aAAAAa and you type AAAAAA then
-      // the combo box will retain the string aAAAAa    
-      cbs[i]->setDuplicatesEnabled(true); 
-      cbs[i]->completer()->setCaseSensitivity(Qt::CaseSensitive);
-      lab -> setBuddy (cbs[i]);
-      hl -> addWidget (lab);
-      hl -> addWidget (cbs[i]);
-      vl -> addLayout (hl);
-      
-      if (ends (fields[i]->type, "file") || fields[i]->type == "directory") {
-        // autocompletion
-        //QCompleter *completer = new QCompleter(cbs[i]);
-        QCompleter *completer = cbs[i]->completer();
-        QDirModel *dirModel = new QDirModel();
-        completer->setModel(dirModel);
-        //cbs[i]->setCompleter(completer);
-      }
-    }
+    for(int i=0; i<N(fields); i++)
+      vl->addWidget(fields[i]->as_qwidget());
     
-    {
-      QDialogButtonBox* buttonBox =
-        new QDialogButtonBox (QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
-                              Qt::Horizontal, &d);
-      QObject::connect (buttonBox, SIGNAL (accepted()), &d, SLOT (accept()));
-      QObject::connect (buttonBox, SIGNAL (rejected()), &d, SLOT (reject()));
-      vl -> addWidget (buttonBox);
-    }
-    //  d.setLayout (vl);
-    d.setWindowTitle (to_qstring (win_title));
-    QPoint pos = to_qpoint (position);
-    //cout << "Size :" << size.x1 << "," << size.x2 << LF;
-    //cout << "Position :" << pos.x() << "," << pos.y() << LF;
+    QDialogButtonBox* buttonBox =
+          new QDialogButtonBox (QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
+                                Qt::Horizontal, &d);
+    QObject::connect (buttonBox, SIGNAL (accepted()), &d, SLOT (accept()));
+    QObject::connect (buttonBox, SIGNAL (rejected()), &d, SLOT (reject()));
+    vl -> addWidget (buttonBox);
     
+    d.setWindowTitle (to_qstring (win_title)); 
     d.updateGeometry();
-    QSize sz = d.sizeHint();
-    QRect r; r.setSize(sz);
-    r.moveCenter(pos);
-    d.setGeometry(r);
+    QRect r;
+    r.setSize (d.sizeHint ());
+    r.moveCenter (to_qpoint (position));
+    d.setGeometry (r);
+    d.setSizePolicy (QSizePolicy::Preferred, QSizePolicy::Fixed);
     
-    int result = d.exec ();
-    if (result == QDialog::Accepted) {
-      for(int i=0; i<N(fields); i++) {
-        QString item = cbs[i]->currentText();
-        fields[i] -> input = scm_quote (from_qstring (item));
-      }
-    } else {
-      for(int i=0; i<N(fields); i++) {
-        fields[i] -> input = "#f";
-      }
-    }
+    if (d.exec() != QDialog::Accepted)
+      for(int i=0; i<N(fields); ++i)
+        fields[i]->input = "#f";
   }
 
   cmd ();
 }
 
 
-  ///////////////////////// qt_input_text_widget_rep //////////////////////////
-
+/******************************************************************************
+ * qt_input_text_widget_rep
+ ******************************************************************************/
 
 qt_input_text_widget_rep::qt_input_text_widget_rep 
-(command _cmd, string _type, array<string> _def, int _style, string _width)
-: cmd (_cmd), type (_type), def (_def), text (""), style(_style), width(_width),
-  helper(NULL), ok(false) 
+(command _cmd, string _type, array<string> _proposals, int _style, string _width)
+: cmd (_cmd), type (_type), proposals (_proposals), input (""), style(_style),
+  width(_width), ok(false), helper(NULL)
 {
-  if (N(def) > 0) text = def[0];
+  if (N(proposals) > 0) input = proposals[0];
 }
-
-qt_input_text_widget_rep::~qt_input_text_widget_rep() { }
 
 QAction *
 qt_input_text_widget_rep::as_qaction () {
@@ -314,26 +301,22 @@ qt_input_text_widget_rep::as_qwidget () {
   }
   QTMLineEdit* le = new QTMLineEdit (NULL, helper->wid()->width, style);
   helper->add (le);
-  le->setText (to_qstring (helper->wid()->text));
+  le->setText (to_qstring (helper->wid()->input));
   
   if (ends (type, "file") || type == "directory") {
     QCompleter*     completer = new QCompleter(le);
     QFileSystemModel* fsModel = new QFileSystemModel(le);
-    fsModel->setRootPath(QDir::homePath());
+    fsModel->setRootPath(QDir::homePath()); // this is NOT the starting location
     completer->setModel (fsModel);
 
     le->setCompleter(completer);
-  } else if (N(def) > 0 && ! (N(def) == 1 && N(def[0]) == 0)) {
-    QCompleter* completer = new QCompleter(to_qstringlist(def), le);
+  } else if (N(proposals) > 0 && ! (N(proposals) == 1 && N(proposals[0]) == 0)) {
+    QCompleter* completer = new QCompleter(to_qstringlist(proposals), le);
     completer->setCaseSensitivity (Qt::CaseSensitive);
     completer->setCompletionMode (QCompleter::InlineCompletion);
 
     le->setCompleter (completer);
   }
-  return le;
-}
-
-QLayoutItem *
-qt_input_text_widget_rep::as_qlayoutitem () {
-  return new QWidgetItem (as_qwidget ());
+  qwid = le;
+  return qwid;
 }

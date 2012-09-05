@@ -16,35 +16,43 @@
 #include "qt_utilities.hpp"
 
 class QTMInputTextWidgetHelper;
+class QTMFieldWidgetHelper;
+class qt_tm_widget_rep;
 
 /*! A text input field with autocompletion.
  */
 class qt_input_text_widget_rep: public qt_widget_rep {
-public:
+protected:
   command cmd;
   string type;
-  array<string> def;
-  string text;
+  array<string> proposals;
+  string input;
   int style;
   string width;
   
-  QTMInputTextWidgetHelper *helper;
-  bool ok;
-  
-  qt_input_text_widget_rep (command _cmd, string _type, array<string> _def, 
+  bool ok;  
+  QTMInputTextWidgetHelper* helper;
+public:
+  qt_input_text_widget_rep (command _cmd, string _type, array<string> _proposals, 
                             int _style, string _width);
-  ~qt_input_text_widget_rep();
   
-  virtual QAction*         as_qaction ();
-  virtual QWidget*         as_qwidget ();
-  virtual QLayoutItem* as_qlayoutitem ();
+  virtual QAction*  as_qaction ();
+  virtual QWidget*  as_qwidget ();
+  
+  friend class QTMInputTextWidgetHelper;
+  friend class QTMInteractiveInputHelper;
+  friend class qt_tm_widget_rep;
 };
 
 class qt_field_widget;
 
 /*! A dialog with a list of inputs and ok and cancel buttons.
  
- TODO:
+ In the general case each input is a qt_field_widget_rep which we lay out in a
+ vertical table. However, for simple yes/no/cancel questions we try to use a
+ system default dialog 
+ 
+ TODO?
  We try to use OS dialogs whenever possible, but this still needs improvement.
  We should also use a custom Qt widget and then bundle it in a modal window if
  required, so as to eventually be able to return something embeddable in 
@@ -57,13 +65,13 @@ protected:
   coord2 size, position;
   string win_title;
   int style;
+
 public:
   qt_inputs_list_widget_rep (command, array<string>);
-  ~qt_inputs_list_widget_rep ();
   
-  virtual void send (slot s, blackbox val);
+  virtual void      send (slot s, blackbox val);
   virtual blackbox query (slot s, int type_id);
-  virtual widget read (slot s, blackbox index);
+  virtual widget    read (slot s, blackbox index);
   
   virtual widget plain_window_widget (string s, command q);
 
@@ -71,21 +79,28 @@ public:
 };
 
 
-/*!
+/*! Each of the fields in a qt_inputs_list_widget_rep.
+ 
+ Each field is composed of a prompt (a label) and an input (a QTMComboBox).
  */
 class qt_field_widget_rep: public qt_widget_rep {
   string prompt;
   string input;
   string type;
   array<string> proposals;
-  qt_inputs_list_widget_rep *parent;
+  
+  qt_inputs_list_widget_rep* parent;
+  QTMFieldWidgetHelper*      helper;
 public:
-  qt_field_widget_rep(qt_inputs_list_widget_rep *_parent) :
-    qt_widget_rep(), prompt(""), input(""),  proposals(), parent(_parent) { }
-  virtual void send (slot s, blackbox val);
+  qt_field_widget_rep(qt_inputs_list_widget_rep* _parent, string _prompt);
+
+  virtual void      send (slot s, blackbox val);
   virtual blackbox query (slot s, int type_id);
 
+  virtual QWidget* as_qwidget ();
+
   friend class qt_inputs_list_widget_rep;
+  friend class QTMFieldWidgetHelper;
 };
 
 class qt_field_widget {
@@ -94,5 +109,4 @@ public:
 };
 
 ABSTRACT_NULL_CODE(qt_field_widget);
-
 #endif // defined QT_DIALOGUES_HPP

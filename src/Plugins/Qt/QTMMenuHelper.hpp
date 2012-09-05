@@ -176,13 +176,10 @@ class QTMInputTextWidgetHelper : public QObject {
   Q_OBJECT
 
   widget p_wid; /*!< A reference to the tm widget, always a qt_input_text_widget_rep */
-
   bool done;
+  QList<QLineEdit*> views;
   
 public:
-  
-  QList<QLineEdit*> views;
-
   QTMInputTextWidgetHelper (qt_input_text_widget_rep*  _wid); 
   ~QTMInputTextWidgetHelper();
 
@@ -199,6 +196,35 @@ public slots:
 
 };
 
+class QTMComboBox;
+
+/*! A class to keep a QComboBox object and a qt_field_widget_rep object in
+ sync.
+ 
+ After certain events we store state information about the QComboBox into the 
+ qt_input_text_widget_rep: when the user has finished editing (i.e. has pressed
+ enter), or has left the QComboBox for instance.
+*/
+class QTMFieldWidgetHelper : public QObject {
+  Q_OBJECT
+  
+  qt_field_widget wid;  
+  bool done;
+  QList<QComboBox*> views;
+
+public:
+  QTMFieldWidgetHelper (qt_field_widget  _wid); 
+  ~QTMFieldWidgetHelper ();
+  
+  void add (QComboBox* cb);
+
+public slots:
+  void commit (const QString& qst);
+  void remove (QObject* obj);  
+};
+
+/*!
+ */
 class QTMWidgetAction : public QWidgetAction {
   Q_OBJECT
 

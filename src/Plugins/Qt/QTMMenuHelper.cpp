@@ -121,26 +121,24 @@ QTMLazyMenu::force () {
  * QTMInputTextWidgetHelper
  ******************************************************************************/
 
-
-QTMInputTextWidgetHelper::QTMInputTextWidgetHelper (qt_input_text_widget_rep*  _wid) 
- : QObject(NULL), p_wid(abstract(_wid)), done(false) { }
+QTMInputTextWidgetHelper::QTMInputTextWidgetHelper (qt_input_text_widget_rep* _wid) 
+: QObject(NULL), p_wid(abstract(_wid)), done(false) { }
 
 /*! Destructor.
  Removes reference to the helper in the texmacs widget. If needed the texmacs
  widget is automatically deleted.
-*/
+ */
 QTMInputTextWidgetHelper::~QTMInputTextWidgetHelper() {
   wid()->helper = NULL;
 }
-
 
 void
 QTMInputTextWidgetHelper::commit () {
   QLineEdit *le = qobject_cast <QLineEdit*> (sender());
   if (le) {
-    done        = false;
-    wid()->ok   = true;
-    wid()->text = from_qstring (le->text());
+    done         = false;
+    wid()->ok    = true;
+    wid()->input = from_qstring (le->text());
   }
 }
 
@@ -149,20 +147,20 @@ void
 QTMInputTextWidgetHelper::leave () {
   QLineEdit* le = qobject_cast <QLineEdit*> (sender());  
   if (!le) return;
-  
+ 
     // reset the text according to the texmacs widget
-  le->setText (to_qstring (wid()->text));
-
+  le->setText (to_qstring (wid()->input));
+  
     // HACK: restore focus to the main editor widget
   widget win = qt_window_widget_rep::widget_from_qwidget(le);
   if (concrete(win)->type == qt_widget_rep::texmacs_widget)
     concrete(get_canvas(win))->qwid->setFocus();
-
-    // process scheme quit command
+  
+    // process the scheme command
   if (done) return;
   done = true;
   the_gui->process_command (wid()->cmd, wid()->ok
-                            ? list_object (object (wid() -> text))
+                            ? list_object (object (wid()->input))
                             : list_object (object (false)));
 }
 
@@ -174,12 +172,49 @@ QTMInputTextWidgetHelper::remove (QObject* obj) {
 }
 
 void
-QTMInputTextWidgetHelper::add (QLineEdit* obj) {
-  if (!views.contains (obj)) {
-    QObject::connect (obj, SIGNAL (destroyed (QObject*)), this, SLOT (remove (QObject*)));
-    QObject::connect (obj, SIGNAL (returnPressed ()),     this, SLOT (commit ()));
-    QObject::connect (obj, SIGNAL (editingFinished ()),   this, SLOT (leave ()));
-    views << obj;
+QTMInputTextWidgetHelper::add (QLineEdit* le) {
+  if (!views.contains (le)) {
+    QObject::connect (le, SIGNAL (destroyed (QObject*)), this, SLOT (remove (QObject*)));
+    QObject::connect (le, SIGNAL (returnPressed ()),     this, SLOT (commit ()));
+    QObject::connect (le, SIGNAL (editingFinished ()),   this, SLOT (leave ()));
+    views << le;
+  }
+}
+
+
+/******************************************************************************
+ * QTMFieldWidgetHelper
+ ******************************************************************************/
+
+QTMFieldWidgetHelper::QTMFieldWidgetHelper (qt_field_widget _wid) 
+  : QObject(NULL), wid(_wid), done(false) { }
+
+/*! Destructor.
+ Removes reference to the helper in the texmacs widget. Deletion of the texmacs
+ widget is automagic.
+ */
+QTMFieldWidgetHelper::~QTMFieldWidgetHelper() {
+  wid->helper = NULL;
+}
+
+void
+QTMFieldWidgetHelper::commit (const QString& qst) {
+  wid->input = scm_quote (from_qstring (qst));
+}
+
+void
+QTMFieldWidgetHelper::remove (QObject* obj) {
+  views.removeAll (qobject_cast<QTMComboBox*> (obj));
+  if (views.count () == 0)
+    deleteLater();
+}
+
+void
+QTMFieldWidgetHelper::add (QComboBox* cb) {
+  if (!views.contains (cb)) {
+    QObject::connect (cb, SIGNAL (destroyed (QObject*)), this, SLOT (remove (QObject*)));
+    QObject::connect (cb, SIGNAL (editTextChanged (const QString&)), this, SLOT (commit (const QString&)));
+    views << cb;
   }
 }
 
@@ -300,10 +335,8 @@ QTMLineEdit::keyPressEvent(QKeyEvent* ev)
   if (ev->key() == Qt::Key_Escape) {
     emit editingFinished();
     ev->accept();
-      // HACK: s
-    if (parentWidget())
+    if (parentWidget())        // HACK to return focus to the main editor widget
       parentWidget()->setFocus();
-
   } else {
     QLineEdit::keyPressEvent(ev);
   }
@@ -481,8 +514,10 @@ QTMComboBox::event (QEvent* ev) {
     QKeyEvent* k = static_cast<QKeyEvent*> (ev);
     if (k->key() == Qt::Key_Up || k->key() == Qt::Key_Down)
       showPopup();
+    else if (k->key() != Qt::Key_Escape) // HACK: QTMLineEdit won't need this
+      lineEdit()->event(ev);             // but we do.
     else
-      lineEdit()->event(ev);
+      return false;
   } else
     return QComboBox::event (ev);
 

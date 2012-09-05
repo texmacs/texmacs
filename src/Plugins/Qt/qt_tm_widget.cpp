@@ -82,7 +82,7 @@ void QTMInteractiveInputHelper::commit(int result) {
       if (cb) {
         item = cb->currentText();
       }      
-      static_cast<qt_input_text_widget_rep*>(wid->int_input.rep)->text= from_qstring (item);
+      static_cast<qt_input_text_widget_rep*>(wid->int_input.rep)->input = from_qstring (item);
       static_cast<qt_input_text_widget_rep*>(wid->int_input.rep)->cmd ();      
     }
   }
@@ -629,7 +629,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
       qt_input_text_widget_rep* w = 
         static_cast<qt_input_text_widget_rep*>(int_input.rep);
       if (w->ok)
-        return close_box<string>(scm_quote(w->text));
+        return close_box<string>(scm_quote(w->input));
       else
         return close_box<string>("#f");
     }
