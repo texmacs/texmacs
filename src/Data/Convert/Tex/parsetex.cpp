@@ -609,7 +609,6 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     }
     tree c= parse_argument (s, i);
     skip_linespaces (s, ++i);
-    cout << tuple (cmd, a, b, c) << LF;
     return tuple (cmd, a, b, c);
   }
 
