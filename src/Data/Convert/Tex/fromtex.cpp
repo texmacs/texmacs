@@ -1760,6 +1760,28 @@ parse_matrix_params (tree t, string tr, string br, string hoff) {
 	col++;
 	break;
       }
+    case 'p':
+    case 'm':
+    case 'b':
+      {
+	string col_s = as_string (col);
+	string halign= copy (CELL_HYPHEN);
+	char how_c   = s[i];
+  string how = (how_c == 'm')? 'c' : 
+              ((how_c == 'b')? 'b' : 't');
+	tformat << tree (CWITH, tr, br, col_s, col_s, halign, how);
+  int start= ++i;
+  while (i<n && (s[i] != ' ') && (s[i] != '|')
+             && (s[i] != '<') && (s[i] != '*')) i++;
+  string width= s(start, i);
+  tformat << tree (CWITH, tr, br, col_s, col_s, CELL_HMODE, "exact");
+  tformat << tree (CWITH, tr, br, col_s, col_s, CELL_WIDTH, width);
+  if (col_flag && col == 1)
+    tformat << tree (CWITH, tr, br, col_s, col_s, CELL_LBORDER, "0ln");
+	col_flag= true;
+	col++;
+	break;
+      }
     case '*':
       {
 	col_flag= true;
