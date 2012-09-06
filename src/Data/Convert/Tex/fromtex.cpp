@@ -1915,12 +1915,17 @@ parse_pmatrix (tree& r, tree t, int& i, string lb, string rb, string fm) {
     else if (v == tree (END, "vmatrix")) break;
     else if (v == tree (END, "smallmatrix")) break;
     else if (v == tree (APPLY, "hline")) {
+      int howmany= 1;
+      while (i+1<N(t) && (t[i+1] == tree (APPLY, "hline") || t[i+1] == " " )) {
+        if (t[i+1] == tree (APPLY, "hline")) howmany++;
+        i++;
+      }
+      while (i+1<N(t) && t[i+1] == " ") i++;
+      string how  = as_string (howmany)*"ln";
       int    row  = N(V)+ (N(L)==0? 0: 1);
       string row_s= row==0? as_string (row+1): as_string (row);
       string vbor = row==0? copy (CELL_TBORDER): copy (CELL_BBORDER);
-      string how  = "1ln";
       tformat << tree (CWITH, row_s, row_s, "1", "-1", vbor, how);
-      while (i+1<N(t) && t[i+1] == " ") i++;
     }
     else if (is_apply (v, "cline", 1)) {
       int    row  = N(V)+ (N(L)==0? 0: 1);
