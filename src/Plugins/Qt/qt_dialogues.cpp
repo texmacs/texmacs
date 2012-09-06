@@ -87,7 +87,7 @@ qt_field_widget_rep::as_qwidget () {
   hl   -> addWidget (lab, 0, Qt::AlignRight);
 
   if (ends (type, "file") || type == "directory") {
-    widget wid = input_text_widget (command(), type, NULL, 0, "20em");
+    widget wid = input_text_widget (command(), type, array<string>(0), 0, "20em");
     QLineEdit* le = qobject_cast<QLineEdit*> (concrete(wid)->as_qwidget());
     lab -> setBuddy (le);
     hl  -> addWidget(le);
