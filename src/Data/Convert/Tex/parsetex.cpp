@@ -568,6 +568,8 @@ latex_parser::parse_command (string s, int& i, string cmd) {
   if (cmd == "\\end-split") cmd= "\\end-eqsplit";
   if (cmd == "\\begin-split*") cmd= "\\begin-eqsplit*";
   if (cmd == "\\end-split*") cmd= "\\end-eqsplit*";
+  if (cmd == "\\begin-tabular*") cmd= "\\begin-tabularx";
+  if (cmd == "\\end-tabular*") cmd= "\\end-tabularx";
 
   if (latex_type (cmd) == "undefined")
     return parse_unknown (s, i, cmd);

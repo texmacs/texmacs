@@ -166,6 +166,9 @@
 (logic-group latex-environment-1*%
   begin-array begin-tabular)
 
+(logic-group latex-environment-2*%
+  begin-tabular* begin-tabularx)
+
 (logic-rules
   ((latex-environment% 'x) (latex-environment-0% 'x))
   ((latex-arity% 'x 0) (latex-environment-0% 'x))
@@ -178,7 +181,9 @@
   ((latex-environment-0% 'x) (latex-environment-0*% 'x))
   ((latex-optional-arg% 'x) (latex-environment-0*% 'x))
   ((latex-environment-1% 'x) (latex-environment-1*% 'x))
-  ((latex-optional-arg% 'x) (latex-environment-1*% 'x)))
+  ((latex-optional-arg% 'x) (latex-environment-1*% 'x))
+  ((latex-environment-2% 'x) (latex-environment-2*% 'x))
+  ((latex-optional-arg% 'x) (latex-environment-2*% 'x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Modifiers

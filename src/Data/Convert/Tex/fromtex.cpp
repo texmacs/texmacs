@@ -1763,6 +1763,7 @@ parse_matrix_params (tree t, string tr, string br, string hoff) {
     case 'p':
     case 'm':
     case 'b':
+    case 'X':
       {
 	string col_s = as_string (col);
 	string halign= copy (CELL_HYPHEN);
@@ -1770,12 +1771,17 @@ parse_matrix_params (tree t, string tr, string br, string hoff) {
   string how = (how_c == 'm')? 'c' : 
               ((how_c == 'b')? 'b' : 't');
 	tformat << tree (CWITH, tr, br, col_s, col_s, halign, how);
-  int start= ++i;
-  while (i<n && (s[i] != ' ') && (s[i] != '|')
-             && (s[i] != '<') && (s[i] != '*')) i++;
-  string width= s(start, i);
-  tformat << tree (CWITH, tr, br, col_s, col_s, CELL_HMODE, "exact");
-  tformat << tree (CWITH, tr, br, col_s, col_s, CELL_WIDTH, width);
+  if (how_c != 'X') {
+    int start= ++i;
+    while (i<n && (s[i] != ' ') && (s[i] != '|')
+        && (s[i] != '<') && (s[i] != '*')) i++;
+    string width= s(start, i);
+    tformat << tree (CWITH, tr, br, col_s, col_s, CELL_HMODE, "exact");
+    tformat << tree (CWITH, tr, br, col_s, col_s, CELL_WIDTH, width);
+  }
+  else {
+    tformat << tree (CWITH, tr, br, col_s, col_s, CELL_HALIGN, "l");
+  }
   if (col_flag && col == 1)
     tformat << tree (CWITH, tr, br, col_s, col_s, CELL_LBORDER, "0ln");
 	col_flag= true;
@@ -1830,10 +1836,38 @@ parse_cline (tree t) {
   if (j<N(s)) r[1]= s(j,k);
   return r;
 }
+
+static tree
+parse_matrix_valign (tree t) {
+  if (t == "t") return tree (CWITH, "1", "-1", "1", "-1", CELL_VALIGN, "t");
+  if (t == "b") return tree (CWITH, "1", "-1", "1", "-1", CELL_VALIGN, "b");
+  return tree (CWITH, "1", "-1", "1", "-1", CELL_VALIGN, "c");
+}
+
 static void
 parse_pmatrix (tree& r, tree t, int& i, string lb, string rb, string fm) {
   tree tformat (TFORMAT);
-  if (N(t[i]) > 1) tformat= parse_matrix_params (t[i][1]);
+  if (N(t[i]) == 2 && t[i][0] != "tabular") {
+    tformat= parse_matrix_params (t[i][1]);
+  }
+  else if (N(t[i]) == 2 && t[i][0] == "tabular") {
+    tformat= parse_matrix_params (t[i][1]);
+    tformat << parse_matrix_valign ("c");
+  }
+  else if (N(t[i]) == 3 && t[i][0] == "tabular*") {
+    tformat= parse_matrix_params (t[i][2]);
+    tformat << parse_matrix_valign (t[i][1]);
+  }
+  else if (N(t[i]) == 3 && t[i][0] == "tabularx") {
+    tformat= parse_matrix_params (t[i][2]);
+    tformat << parse_matrix_valign ("c");
+    tformat << tree (TWITH, TABLE_WIDTH, t[i][1]);
+  }
+  else if (N(t[i]) == 4 && t[i][0] == "tabularx*") {
+    tformat= parse_matrix_params (t[i][3]);
+    tformat << parse_matrix_valign (t[i][1]);
+    tformat << tree (TWITH, TABLE_WIDTH, t[i][2]);
+  }
   if (lb != "") r << tree (LEFT, lb);
 
   int rows=0, cols=0;
@@ -1865,7 +1899,8 @@ parse_pmatrix (tree& r, tree t, int& i, string lb, string rb, string fm) {
       while (i+1<N(t) && t[i+1] == " ") i++;
       continue;
     }
-    else if (is_func (v, BEGIN) && (v[0] == "array" || v[0] == "tabular")) {
+    else if (is_func (v, BEGIN) && (v[0] == "array" || v[0] == "tabular" ||
+          v[0] == "tabular*" || v[0] == "tabularx" || v[0] == "tabularx*")) {
       parse_pmatrix (E, t, i, "", "", "tabular*");
       if (i<N(t)) continue;
       break;
@@ -1907,6 +1942,7 @@ parse_pmatrix (tree& r, tree t, int& i, string lb, string rb, string fm) {
     }
     else if (v == tree (END, "array")) break;
     else if (v == tree (END, "tabular")) break;
+    else if (v == tree (END, "tabularx")) break;
     else if (v == tree (END, "cases")) break;
     else if (v == tree (END, "stack")) break;
     else if (v == tree (END, "matrix")) break;
@@ -2009,7 +2045,8 @@ finalize_pmatrix (tree t) {
       if (is_func (u[i], BEGIN)) {
 	if (u[i][0] == "array")
 	  parse_pmatrix (r, u, i, "", "", "tabular*");
-	else if (u[i][0] == "tabular")
+	else if (u[i][0] == "tabular"  || u[i][0] == "tabular*" ||
+	         u[i][0] == "tabularx" || u[i][0] == "tabularx*")
 	  parse_pmatrix (r, u, i, "", "", "tabular*");
 	else if (u[i][0] == "cases")
 	  parse_pmatrix (r, u, i, "", "", "choice");
