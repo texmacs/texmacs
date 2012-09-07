@@ -2242,7 +2242,8 @@ finalize_layout (tree t) {
 	continue;
       }
 
-      if (is_func (v, BEGIN) && ((v[0] == "figure") || (v[0] == "figure*"))) {
+      if ((is_func (v, BEGIN, 1) && (v[0] == "figure" ))  ||
+          (is_func (v, BEGIN, 2) && (v[0] == "figure*"))) {
 	r << tree (NEW_LINE) << tree (BEGIN, "bigfigure");
 	continue;
       }
@@ -2252,7 +2253,30 @@ finalize_layout (tree t) {
 	continue;
       }
 
-      if (is_func (v, BEGIN) && ((v[0] == "table") || (v[0] == "table*"))) {
+      if ((is_func (v, BEGIN, 1) && (v[0] == "figure*" ))  ||
+          (is_func (v, BEGIN, 2) && (v[0] == "figure**"))) {
+	r << tree (NEW_LINE) << tree (BEGIN, "bigfigure*");
+	continue;
+      }
+
+      if (is_func (v, END, 1) && (v[0] == "figure*")) {
+	r << tree (END, "bigfigure*") << tree (NEW_LINE);
+	continue;
+      }
+
+      if ((is_func (v, BEGIN, 1) && (v[0] == "table*" ))  ||
+          (is_func (v, BEGIN, 2) && (v[0] == "table**"))) {
+	r << tree (NEW_LINE) << tree (BEGIN, "bigtable*");
+	continue;
+      }
+
+      if (is_func (v, END, 1) && (v[0] == "table*")) {
+	r << tree (END, "bigtable*") << tree (NEW_LINE);
+	continue;
+      }
+
+      if ((is_func (v, BEGIN, 1) && (v[0] == "table" ))  ||
+          (is_func (v, BEGIN, 2) && (v[0] == "table*"))) {
 	r << tree (NEW_LINE) << tree (BEGIN, "bigtable");
 	continue;
       }
@@ -2886,6 +2910,18 @@ finalize_floats (tree t) {
     tree body= float_body (t[N(t)-1]);
     tree capt= find_caption (t[N(t)-1]);
     return tree (make_tree_label ("big-table"), body, capt);
+  }
+   else if (is_var_compound (t, "bigfigure*", 1)) {
+    tree body= float_body (t[N(t)-1]);
+    tree capt= find_caption (t[N(t)-1]);
+    return tree (WITH, "par-columns", "1",
+        tree (make_tree_label ("big-figure"), body, capt));
+  }
+  else if (is_var_compound (t, "bigtable*", 1)) {
+    tree body= float_body (t[N(t)-1]);
+    tree capt= find_caption (t[N(t)-1]);
+    return tree (WITH, "par-columns", "1",
+        tree (make_tree_label ("big-table"), body, capt));
   }
   else if (is_var_compound (t, "algorithm", 1)) {
     tree body= float_body (t[N(t)-1]);

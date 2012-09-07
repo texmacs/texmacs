@@ -158,7 +158,8 @@
   begin-picture)
 
 (logic-group latex-environment-0*%
-  begin-figure begin-table begin-algorithmic begin-algorithm begin-algorithm2e)
+  begin-figure begin-table begin-figure* begin-table*
+  begin-algorithmic begin-algorithm begin-algorithm2e)
 
 (logic-group latex-environment-1%
   begin-tabbing begin-thebibliography begin-multicols)
