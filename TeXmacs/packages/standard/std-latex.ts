@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.0.7.16>
 
 <style|<tuple|source|std>>
 
@@ -39,6 +39,10 @@
   <assign|tex-even-side-margin|<macro|<if|<equal|<value|par-columns>|1>|0pt|-30pt>>>
 
   <assign|tex-text-width|<macro|<if|<equal|<value|par-columns>|1>|25.5cc|17.5cm>>>
+
+  <assign|tex-line-width|<value|tex-text-width>>
+
+  <assign|tex-column-width|<value|tex-text-width>>
 
   \;
 

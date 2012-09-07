@@ -551,8 +551,8 @@ latex_symbol_to_tree (string s) {
       if (s == "parindent")             return "par-first";
       if (s == "textheight")            return "tex-text-height";
       if (s == "textwidth")             return "tex-text-width";
-      if (s == "columnwidth")           return "1par";
-      if (s == "linewidth")             return "1pag";
+      if (s == "columnwidth")           return "tex-column-width";
+      if (s == "linewidth")             return "tex-line-width";
       if (s == "topmargin")             return "tex-top-margin";
       if (s == "topskip")               return "tex-top-skip";
       if (s == "smallskipamount")       return "0.5fn";
