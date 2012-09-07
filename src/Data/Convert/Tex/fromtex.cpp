@@ -2363,10 +2363,28 @@ finalize_layout (tree t) {
       // It will be restored in finalize_misc.
       if (is_func (v, BEGIN)) {
 	string var= as_string (v[0]);
-  if (var[N(var)-1] == '*') var= var(0,N(var)-1);
-  tree w (BEGIN, var);
-  for (int j=1; j<N(v); j++) w << v[j];
-	r << w;
+  if (var[N(var)-1] == '*') {
+    var= var(0,N(var)-1);
+    tree w (BEGIN, var);
+    for (int j=1; j<N(v); j++) w << v[j];
+    r << w;
+    continue;
+  }
+      }
+
+      // Needed to transform some modifiers, when they are written as
+      // environments.
+      if ((is_func (v, BEGIN, 1) || is_func (v, END, 1)) &&
+          latex_type (as_string (v[0])) == "modifier") {
+        if (is_func (v, BEGIN)) {
+          r << parsed_latex_to_tree (tuple ("\\"*as_string (v[0])));
+        }
+        else {
+          tree w= parsed_latex_to_tree (tuple ("\\"*as_string (v[0])));
+          tree x = tree (RESET);
+          x << copy (w[0]);
+          r << x;
+        }
 	continue;
       }
 

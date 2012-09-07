@@ -121,7 +121,7 @@
   BODY ELSE INPUTS LOOP OUTPUTS REPEAT)
 
 (logic-group latex-command-1*%
-  usepackage documentclass documentstyle sqrt bibitem cite
+  usepackage documentclass documentstyle sqrt bibitem cite caption  
   includegraphics includegraphics*
   subjclass declaretheorem footnotetext
   xleftarrow xrightarrow xleftrightarrow xminus
