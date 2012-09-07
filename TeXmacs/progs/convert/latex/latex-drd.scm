@@ -73,7 +73,7 @@
   newcounter stepcounter refstepcounter value
   citet citep citet* citep* citealt citealp citealt* citealp*
   citetext citeauthor citeauthor* citeyear onlinecite
-  epsfig url penalty centerline fbox framebox cline
+  epsfig url penalty centerline fbox framebox cline cmidrule
   enlargethispage
   newlength newdimen newskip
   Comment COMMENT For ForAll If Input KwData KwResult KwRet lnl nllabel

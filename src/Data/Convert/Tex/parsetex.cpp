@@ -594,6 +594,22 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     return tuple (cmd, name, arg);
   }
 
+  if (cmd == "\\cmidrule") {
+    if (s[i] == '[') {
+      i++;
+      parse (s, i, ']');
+      skip_linespaces (s, ++i);
+    }
+    if (s[i] == '(') {
+      i++;
+      parse (s, i, ')');
+      skip_linespaces (s, ++i);
+    }
+    tree a= parse_argument (s, i);
+    skip_linespaces (s, ++i);
+    return tuple ("\\cline", a);
+  }
+
   if (cmd == "\\multirow") {
     tree a= parse_argument (s, i);
     skip_linespaces (s, ++i);
