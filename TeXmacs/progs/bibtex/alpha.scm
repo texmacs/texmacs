@@ -23,28 +23,29 @@
             (if (<= l 2) y (substring y (- l 2) l)))))
 
 (define (bib-format-label-names a)
-  (let* ((n (length a))
-	 (pre (cond
-		((equal? n 2)
-		 (with von (bib-purify (bib-abbreviate
-					(list-ref (list-ref a 1) 2) "" ""))
-		   (if (bib-null? von)
-		       (bib-prefix (list-ref (list-ref a 1) 3) 3)
-		       (string-append von (bib-prefix
-					   (list-ref (list-ref a 1) 3) 1)))))
-		(else
-		  (with lab ""
-		    (do
-			((i 1 (+ 1 i)))
-			((>= i (min n (if (= 5 n) 5 4))))
-		      (with von (bib-purify (bib-abbreviate
-					     (list-ref (list-ref a i) 2)
-					     "" ""))
-			(set! lab (string-append
-				   lab von (bib-prefix
-					    (list-ref (list-ref a i) 3) 1)))))
-                   lab)))))
-    (if (> n 5) (string-append pre "+") pre)))
+  (if (bib-null? a) ""
+    (let* ((n (length a))
+  	 (pre (cond
+  		((equal? n 2)
+  		 (with von (bib-purify (bib-abbreviate
+  					(list-ref (list-ref a 1) 2) "" ""))
+  		   (if (bib-null? von)
+  		       (bib-prefix (list-ref (list-ref a 1) 3) 3)
+  		       (string-append von (bib-prefix
+  					   (list-ref (list-ref a 1) 3) 1)))))
+  		(else
+  		  (with lab ""
+  		    (do
+  			((i 1 (+ 1 i)))
+  			((>= i (min n (if (= 5 n) 5 4))))
+  		      (with von (bib-purify (bib-abbreviate
+  					     (list-ref (list-ref a i) 2)
+  					     "" ""))
+  			(set! lab (string-append
+  				   lab von (bib-prefix
+  					    (list-ref (list-ref a i) 3) 1)))))
+                     lab)))))
+      (if (> n 5) (string-append pre "+") pre))))
 
 (define (bib-format-book-inbook-label n x)
   (with key (list-ref x 2)
