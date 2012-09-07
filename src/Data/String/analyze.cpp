@@ -1226,7 +1226,7 @@ string
 trim_spaces (string s) {
   int start, end;
   for (start=0; start<N(s) && is_space (s[start]); start++) ;
-  for (end=N(s)-1; end>=start && is_space (s[end]); end--) ;
+  for (end=N(s)-1; end > start && is_space (s[end]); end--) ;
   return s (start, end+1);
 }
 
@@ -1244,9 +1244,9 @@ trim_spaces (tree t) {
   else if (is_concat (t)) {
     int start, end;
     for (start=0; start < N(t) && t[start] == " "; start++);
-    for (end=N(t)-1; end >= start && t[end] == " "; end--);
+    for (end=N(t)-1; end > start && t[end] == " "; end--);
     tree r= tree (L(t));
-    for (int i=start; i<end; i++) r << t[i];
+    for (int i=start; i<=end; i++) r << t[i];
     return r;
   }
   else return t;
