@@ -543,7 +543,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
             // but this format is not used for keypresses, so we must remove
             // them.
             int len= N(tstr);
-            if (len >= 1 && tstr(0,1) == "<" && tstr(len-1,len) == ">")
+            if (len >= 1 && tstr[0] == '<' && tstr[1] != '#' && tstr[len-1] == '>')
               r= tstr(1, len-1);
             else
               r= tstr;
