@@ -1844,6 +1844,21 @@ parse_matrix_valign (tree t) {
   return tree (CWITH, "1", "-1", "1", "-1", CELL_VALIGN, "c");
 }
 
+static tree
+trim_cell_spaces (tree t) {
+  if (!is_func (t, TABLE)) return t;
+  for (int i=0; i<N(t); i++) {
+    tree row;
+    if (is_func (t[i], ROW)) row= t[i];
+    for (int j=0; j<N(row); j++) {
+      if (is_func (row[j], CELL, 1)) {
+        t[i][j][0]= trim_spaces (row[j][0]);
+      }
+    }
+  }
+  return t;
+}
+
 static void
 parse_pmatrix (tree& r, tree t, int& i, string lb, string rb, string fm) {
   tree tformat (TFORMAT);
@@ -2028,7 +2043,7 @@ parse_pmatrix (tree& r, tree t, int& i, string lb, string rb, string fm) {
       else R << tree (CELL, "");
     M << R;
   }
-  tformat << M;
+  tformat << trim_cell_spaces (M);
   r << compound (fm, tformat);
   if (rb != "") r << tree (RIGHT, rb);
 }
