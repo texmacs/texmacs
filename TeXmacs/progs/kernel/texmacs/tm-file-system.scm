@@ -112,8 +112,15 @@
 ;; Routines for making and decomposing queries
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+; FIXME: these two procedures should be more general and in the glue
+(define (escape-entry s)
+  (string-replace s ":" "%3A"))
+
+(define (unescape-entry s)
+  (string-replace s "%3A" ":"))
+
 (define (pair->entry p)
-  (string-append (car p) "=" (cdr p)))
+  (string-append (escape-entry (car p)) "=" (escape-entry (cdr p))))
 
 (define-public (list->query l)
   (with r (map pair->entry l)
@@ -122,8 +129,8 @@
 (define (entry->pair e)
   (with l (string-tokenize-by-char-n e #\= 1)
     (cond ((== (length l) 0) (cons "" ""))
-          ((== (length l) 1) (cons (car l) ""))
-          (else (cons (car l) (cadr l))))))
+          ((== (length l) 1) (cons (unescape-entry (car l)) ""))
+          (else (cons (unescape-entry (car l)) (unescape-entry (cadr l)))))))
 
 (define-public (query->list q)
   (with l (string-tokenize-by-char q #\&)
