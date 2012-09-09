@@ -51,7 +51,7 @@ edit_interface_rep::edit_interface_rep ():
   sfactor (sv->get_default_shrinking_factor ()),
   pixel (sfactor*PIXEL), copy_always (),
   last_x (0), last_y (0), last_t (0),
-  made_selection (false), table_selection (false),
+  made_selection (false), table_selection (false), mouse_adjusting(false),
   oc (0, 0), temp_invalid_cursor (false),
   shadow (NULL), stored (NULL),
   cur_sb (2), cur_wb (2)

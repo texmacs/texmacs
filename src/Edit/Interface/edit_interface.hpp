@@ -53,6 +53,7 @@ protected:
   SI            end_x, end_y;
   bool          made_selection;
   bool          table_selection;
+  int           mouse_adjusting;  // mask with active key modifiers upon click
   rectangles    selection_rects;
   rectangles    env_rects;
   rectangles    foc_rects;
@@ -153,6 +154,7 @@ public:
   void mouse_select (SI x, SI y, int mods, bool drag);
   void mouse_paste (SI x, SI y);
   void mouse_adjust (SI x, SI y);
+  void mouse_adjust_selection (SI x, SI y, int mods);
   void mouse_scroll (SI x, SI y, bool up);
   cursor get_cursor ();
   void set_pointer (string name);
