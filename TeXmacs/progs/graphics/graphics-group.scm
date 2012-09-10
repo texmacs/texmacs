@@ -15,7 +15,8 @@
 
 (texmacs-module (graphics graphics-group)
   (:use (graphics graphics-env)
-        (graphics graphics-single)))
+        (graphics graphics-single)
+        (kernel gui kbd-handlers)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Group edit mode
