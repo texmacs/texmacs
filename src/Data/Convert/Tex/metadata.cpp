@@ -159,6 +159,12 @@ collect_metadata_latex (tree t) {
             else if (u[0] == "\\author" || u[0] == "\\author*")
               l << tuple ("\\author-note", w[j][1]);
           }
+          else if (is_tuple (w[j], "\\and", 0)) {
+            if (u[0] == "\\author" || u[0] == "\\author*") {
+              r << tuple ("\\author", v);
+              v= concat ();
+            }
+          }
           else
             v << w[j];
         }
