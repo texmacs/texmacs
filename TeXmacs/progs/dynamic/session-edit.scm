@@ -87,11 +87,58 @@
   (with s (object->string t)
     (if (== s "#<unspecified>") "" (replace-newline (string->tmstring s)))))
 
+(define-public eval-stack #f)
+
+; TODO:
+(define (tag-file-line line) line)
+(define (tag-code-line line) '(scm ,line))
+
+(define (frame->tree* st fr)
+  (with outp (open-output-string)
+    (display-backtrace st outp fr 1)
+    (let* ((out   (get-output-string outp))
+           (rout  (string-replace out
+                    (url-concretize "$TEXMACS_PATH") "$TEXMACS_PATH"))
+           (rout2 (string-replace rout "<" "<less>"))
+           (lout  (string-split rout2 #\newline))
+           ;temp:
+           (str   (if (> (lenght lout) 1) (cadr lout) (car lout))))
+      `(concat ,str) ; add links here...
+      (close-output-port out))))
+
+;TODO: use tables, really display stuff, etc.
+(define (frame->tree fr)
+  (with src (frame-source fr)
+    (if src
+        (let* ((src (frame-source fr))
+               (num (frame-number fr))
+               (fprop (source-property src 'filename))
+               (file (if fprop fprop ""))
+               (lprop (source-property src 'line))
+               (line (if lprop (number->string lprop) ""))
+               (cprop (source-property src 'column))
+               (col (if cprop (number->string cprop) "")))
+          `(concat ,(number->string num) ": "
+                   (hlink ,(basename file) ,file) 
+                   " : " ,line " : " ,col
+                   " " ,(frame-line fr)))
+       "")))
+
+(define (stack-sub fr)
+  (if fr (cons (frame->tree fr) (stack-sub (frame-previous fr))) '("")))
+
+(define (stack->stree st key . args)
+  `(tt (document ,(string-append "ERROR: " (symbol->string key))
+       ,@(stack-sub (stack-ref st 0)))))
+
 (define (eval-string-with-catch s)
   (catch #t
 	 (lambda () (eval (string->object s)))
-	 (lambda (key msg . args)
-	   key)))
+	 (lambda (key . args)
+           (if (and (member 'backtrace (debug-options)) (stack? eval-stack)) 
+             (stree->tree (stack->stree eval-stack key args)) key))
+         (lambda (key . args)
+           (set! eval-stack (make-stack #t))) ))
 
 (tm-define (scheme-eval t)
   (let* ((s (texmacs->code t))
@@ -489,6 +536,11 @@
   (cond ((and (tree-cursor-at? t 1 :start) (not forwards?)) (noop))
         ((and (tree-cursor-at? t 1 :end) forwards?) (noop))
         (else (remove-text forwards?))))
+
+(tm-define (kbd-remove t forwards?)
+  (:require (and (field-input-context? t) (selection-active-any?)))
+  (clipboard-cut "nowhere")
+  (clipboard-clear "nowhere"))
 
 (tm-define (kbd-variant t forwards?)
   (:require (and (field-context? t) (session-supports-completions?)))
