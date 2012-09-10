@@ -1501,7 +1501,7 @@
 
 (define (tmtex-cite-list l)
   (cond ((null? l) "")
-	((nstring? (car l)) (tmtex-cite-list (cdr l)))
+	;((nstring? (car l)) (tmtex-cite-list (cdr l)))
 	((null? (cdr l)) (car l))
 	(else (string-append (car l) "," (tmtex-cite-list (cdr l))))))
 
