@@ -514,6 +514,7 @@
 (define (tmtex-new-line l) (tex-apply '!newline))
 (define (tmtex-next-line l) (list '!nextline))
 (define (tmtex-no-break l) '(!group (nobreak)))
+(define (tmtex-emdash l) "---")
 
 (define (tmtex-decode-length len)
   ;; FIXME: should be completed
@@ -1641,6 +1642,7 @@
   (line-break tmtex-line-break)
   (new-line tmtex-new-line)
   (next-line tmtex-next-line)
+  (emdash tmtex-emdash)
   (no-break tmtex-no-break)
   (no-indent tmtex-no-first-indentation)
   (yes-indent tmtex-noop)
