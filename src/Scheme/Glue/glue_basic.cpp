@@ -6310,6 +6310,66 @@ tmg_alt_window_hide (tmscm arg1) {
 }
 
 tmscm
+tmg_alt_window_get_size (tmscm arg1) {
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "alt-window-get-size");
+
+  int in1= tmscm_to_int (arg1);
+
+  // TMSCM_DEFER_INTS;
+  scheme_tree out= window_get_size (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return scheme_tree_to_tmscm (out);
+}
+
+tmscm
+tmg_alt_window_set_size (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "alt-window-set-size");
+  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "alt-window-set-size");
+  TMSCM_ASSERT_INT (arg3, TMSCM_ARG3, "alt-window-set-size");
+
+  int in1= tmscm_to_int (arg1);
+  int in2= tmscm_to_int (arg2);
+  int in3= tmscm_to_int (arg3);
+
+  // TMSCM_DEFER_INTS;
+  window_set_size (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_alt_window_get_position (tmscm arg1) {
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "alt-window-get-position");
+
+  int in1= tmscm_to_int (arg1);
+
+  // TMSCM_DEFER_INTS;
+  scheme_tree out= window_get_position (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return scheme_tree_to_tmscm (out);
+}
+
+tmscm
+tmg_alt_window_set_position (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "alt-window-set-position");
+  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "alt-window-set-position");
+  TMSCM_ASSERT_INT (arg3, TMSCM_ARG3, "alt-window-set-position");
+
+  int in1= tmscm_to_int (arg1);
+  int in2= tmscm_to_int (arg2);
+  int in3= tmscm_to_int (arg3);
+
+  // TMSCM_DEFER_INTS;
+  window_set_position (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_bib_add_period (tmscm arg1) {
   TMSCM_ASSERT_SCHEME_TREE (arg1, TMSCM_ARG1, "bib-add-period");
 
@@ -6930,6 +6990,10 @@ initialize_glue_basic () {
   tmscm_install_procedure ("alt-window-delete",  tmg_alt_window_delete, 1, 0, 0);
   tmscm_install_procedure ("alt-window-show",  tmg_alt_window_show, 1, 0, 0);
   tmscm_install_procedure ("alt-window-hide",  tmg_alt_window_hide, 1, 0, 0);
+  tmscm_install_procedure ("alt-window-get-size",  tmg_alt_window_get_size, 1, 0, 0);
+  tmscm_install_procedure ("alt-window-set-size",  tmg_alt_window_set_size, 3, 0, 0);
+  tmscm_install_procedure ("alt-window-get-position",  tmg_alt_window_get_position, 1, 0, 0);
+  tmscm_install_procedure ("alt-window-set-position",  tmg_alt_window_set_position, 3, 0, 0);
   tmscm_install_procedure ("bib-add-period",  tmg_bib_add_period, 1, 0, 0);
   tmscm_install_procedure ("bib-upcase-first",  tmg_bib_upcase_first, 1, 0, 0);
   tmscm_install_procedure ("bib-locase",  tmg_bib_locase, 1, 0, 0);

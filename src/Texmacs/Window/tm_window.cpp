@@ -122,11 +122,10 @@ embedded_name () {
 }
 
 tree
-enrich_embedded_document (tree body) {
+enrich_embedded_document (tree body, tree style) {
   tree orig= body;
   if (is_func (body, WITH)) body= body[N(body)-1];
   if (!is_func (body, DOCUMENT)) body= tree (DOCUMENT, body);
-  tree style= "generic";
   hashmap<string,tree> initial (UNINIT);
   initial (PAGE_MEDIUM)= "automatic";
   initial (PAGE_SCREEN_LEFT)= "4px";
@@ -139,7 +138,7 @@ enrich_embedded_document (tree body) {
         initial (orig[i]->label)= orig[i+1];
   tree doc (DOCUMENT);
   doc << compound ("TeXmacs", TEXMACS_VERSION);
-  doc << compound ("style", tree (TUPLE, "generic"));
+  doc << compound ("style", style);
   doc << compound ("body", body);
   doc << compound ("initial", make_collection (initial));
   return doc;
@@ -148,7 +147,7 @@ enrich_embedded_document (tree body) {
 widget
 texmacs_input_widget (tree doc, command cmd, bool continuous) {
   (void) cmd; (void) continuous;
-  doc= enrich_embedded_document (doc);
+  doc= enrich_embedded_document (doc, tree (TUPLE, "generic"));
   url       base = get_master_buffer (get_current_buffer ());
   tm_view   curvw= concrete_view (get_current_view ());
   url       name = embedded_name (); create_buffer (name, doc);
@@ -446,6 +445,38 @@ window_hide (int win) {
   ASSERT (window_table->contains (win), "window does not exist");
   widget pww= window_table [win];
   set_visibility (pww, false);
+}
+
+scheme_tree
+window_get_size (int win) {
+  ASSERT (window_table->contains (win), "window does not exist");
+  widget pww= window_table [win];
+  int w, h;
+  get_size(pww, w, h);
+  return tuple (as_string (w/PIXEL), as_string (h/PIXEL));
+}
+
+void
+window_set_size (int win, int w, int h) {
+  ASSERT (window_table->contains (win), "window does not exist");
+  widget pww= window_table [win];
+  set_size (pww, w*PIXEL, h*PIXEL);
+}
+
+scheme_tree
+window_get_position (int win) {
+  ASSERT (window_table->contains (win), "window does not exist");
+  widget pww= window_table [win];
+  int x, y;
+  get_position(pww, x, y);
+  return tuple (as_string (x/PIXEL), as_string (y/PIXEL));
+}
+
+void
+window_set_position (int win, int x, int y) {
+  ASSERT (window_table->contains (win), "window does not exist");
+  widget pww= window_table [win];
+  set_position (pww, x*PIXEL, y*PIXEL);
 }
 
 void

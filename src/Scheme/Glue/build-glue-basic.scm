@@ -533,6 +533,10 @@
   (alt-window-delete window_delete (void int))
   (alt-window-show window_show (void int))
   (alt-window-hide window_hide (void int))
+  (alt-window-get-size window_get_size (scheme_tree int))
+  (alt-window-set-size window_set_size (void int int int))
+  (alt-window-get-position window_get_position (scheme_tree int))
+  (alt-window-set-position window_set_position (void int int int))
 
   ;; routines for BibTeX
   (bib-add-period bib_add_period (scheme_tree scheme_tree))
