@@ -94,15 +94,27 @@ bibtex_load_bbl (string bib, url bbl_file) {
   return compound ("bib-list", largest, u);
 }
 
+static bool
+contain_space (string s) {
+  for (int i=0; i<N(s); i++)
+    if (s[i] == ' ')
+      return true;
+  return false;
+}
+
 tree
 bibtex_run (string bib, string style, url bib_file, tree bib_t) {
+  if (contain_space (style))
+    return "Error: bibtex disallows spaces in style name";
+  string bib_name= as_string (tail (bib_file));
+  if (contain_space (as_string (bib_file)))
+    return "Error: bibtex disallows spaces in bibliography name";
   int i;
   string bib_s= "\\bibstyle{" * style * "}\n";
   for (i=0; i<arity(bib_t); i++)
     bib_s << "\\citation{" << as_string (bib_t[i]) << "}\n";
 
   string dir= concretize (head (bib_file));
-  string bib_name= as_string (tail (bib_file));
   if ((N(bib_name) >= 4) && (bib_name (N(bib_name)-4, N(bib_name)) == ".bib"))
     bib_name= bib_name (0, N(bib_name)- 4);
   bib_s << "\\bibdata{" << bib_name << "}\n";
