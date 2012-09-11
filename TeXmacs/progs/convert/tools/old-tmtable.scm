@@ -72,7 +72,7 @@
 (define (tmformat-frame? f) (func? f 'twith))
 (define (tmformat-cell? f) (func? f 'cwith))
 (define (tmformat-cell-name f) (sixth f))
-(define (tmformat-cell-value f) (seventh f))
+(define (tmformat-cell-value f) (if (seventh f) (seventh f) '()))
 
 (define (tmtable-format-on-cell? t f i j)
   (and (tmformat-cell? f)
@@ -291,7 +291,8 @@
 			(append-map rows '(tborder bborder lborder rborder)))))
 
     (define (format-by axis name default)
-      (map (lambda (fs) (if (null? fs)
+      (map (lambda (fs)
+             (if (or (null? fs) (null? (last fs)) (null? (last (car fs))))
 			    default
 			    (tmformat-cell-value (first fs))))
 	   ((cond ((eq? axis :row) tmtable-format-partition-by-row)
