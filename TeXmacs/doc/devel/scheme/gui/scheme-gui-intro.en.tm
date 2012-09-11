@@ -72,7 +72,7 @@
   done with the <scm|text> keyword, as in <scm|(text "Hello")>, but in order
   to have both widgets sit side by side, you'll need a container widget as
   described in "<hlink|Containers, glue, refresh and
-  cia.|scheme-gui-advanced.en.tm>", such as <scm|hlist>:
+  co.|scheme-gui-advanced.en.tm>", such as <scm|hlist>:
 
   <\session|scheme|default>
     <\unfolded-io|Scheme] >
@@ -118,7 +118,7 @@
 
   The special symbol <scm|\<gtr\>\<gtr\>\<gtr\>> is just one of the
   predefined glue widgets described in "<hlink|Containers, glue, refresh and
-  cia.|scheme-gui-advanced.en.tm>".
+  co.|scheme-gui-advanced.en.tm>".
 
   <tmdoc-copyright|2012|the <TeXmacs> team.>
 
