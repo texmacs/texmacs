@@ -72,7 +72,8 @@ bibtex_load_bbl (string bib, url bbl_file) {
   for (int i=0; i<arity(t); i++) {
     if (is_concat (t[i]) &&
 	(is_compound (t[i][0], "bibitem") ||
-	 is_compound (t[i][0], "bibitem*")))
+	 is_compound (t[i][0], "bibitem*")||
+   is_compound (t[i][0], "bibitem-with-key")))
       {
 	tree item= t[i][0];
 	if (is_compound (item, "bibitem"))
