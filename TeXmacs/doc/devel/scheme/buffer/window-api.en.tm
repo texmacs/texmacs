@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.0.7.16>
 
 <style|tmdoc>
 
@@ -56,7 +56,7 @@
   <\explain>
     <scm|(window-focus <scm-arg|win>)><explain-synopsis|focus window>
   <|explain>
-    Set th current focus to the window <scm-arg|win>. The current
+    Set the current focus to the window <scm-arg|win>. The current
     implementation is still a bit bugged and only correct if you want to
     execute a sequence of commands under the assumption that <scm-arg|win>
     carries the focus and if you return the focus to the original window at
