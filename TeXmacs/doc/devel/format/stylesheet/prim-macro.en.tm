@@ -46,7 +46,7 @@
   <|explain>
     This primitive is used to retrieve the arguments of a macro within its
     body. For instance, <explain-macro|arg|var> expands the content of the
-    macro argument with name <src-arg|arg> (literal string). Of course, this
+    macro argument with name <src-arg|var> (literal string). Of course, this
     argument must be defined by a <markup|macro> containing the <markup|arg>
     tag.
 
