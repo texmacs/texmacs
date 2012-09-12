@@ -615,6 +615,7 @@ xml_html_parser::build_must_close (string tag) {
 
 bool
 xml_html_parser::build_can_close (string tag) {
+  if (N(stack) < 2) return false;
   tree counter= stack[1];
   while (counter != tuple ("<bottom>")) {
     if (counter[0]->label == tag) return true;
