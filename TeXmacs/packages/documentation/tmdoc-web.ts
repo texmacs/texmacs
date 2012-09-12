@@ -62,7 +62,7 @@
         contact <hlink|Joris van der Hoeven|http://www.texmacs.org/Web/Mail.html>.
 
         <hlink|Free Software Foundation|http://www.fsf.org/fsf/fsf.html>,
-        Inc., 59 Temple Place - Suite 330, Boston, MA 02111, USA
+        Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111, USA
       </with>>
     </tmdoc-license>
   </macro>>
