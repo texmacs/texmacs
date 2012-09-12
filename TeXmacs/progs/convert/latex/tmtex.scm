@@ -377,7 +377,7 @@
 
 (define (tmtex-transform-style x)
   (cond ((in? x '("article" "book" "letter")) x)
-	((in? x '("generic" "exam")) "letter")
+	((in? x '("generic" "exam")) "article")
 	((== x "seminar") "slides")
 	((in? x '("tmarticle" "tmdoc" "mmxdoc")) "article")
 	((in? x '("tmbook" "tmmanual")) "book")
@@ -1924,8 +1924,8 @@
   (cond ((not sty) (set! sty (list "generic")))
 	((string? sty) (set! sty (list sty)))
 	((func? sty 'tuple) (set! sty (cdr sty)))
-	((null? sty) (set! sty '("letter"))))
-  (if (== (car sty) "generic") (set! sty (cons "letter" (cdr sty))))
+	((null? sty) (set! sty '("article"))))
+  (if (== (car sty) "generic") (set! sty (cons "article" (cdr sty))))
   sty)
 
 (tm-define (texmacs->latex x opts)
@@ -1933,7 +1933,7 @@
   (if (tmfile? x)
       (let* ((body (tmfile-extract x 'body))
 	     (style (tmtex-get-style (tmfile-extract x 'style)))
-	     (main-style (or (tmtex-transform-style (car style)) "letter"))
+	     (main-style (or (tmtex-transform-style (car style)) "article"))
 	     (lan (tmfile-init x "language"))
 	     (init (tmfile-extract x 'initial))
 	     (doc (list '!file body style lan init (get-texmacs-path))))
