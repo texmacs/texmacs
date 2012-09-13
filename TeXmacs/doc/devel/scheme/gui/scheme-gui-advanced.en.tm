@@ -1,9 +1,9 @@
-<TeXmacs|1.0.7.16>
+<TeXmacs|1.0.7.15>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Containers, glue, refresh and cia.>
+  <tmdoc-title|Containers, glue, refresh and co.>
 
   <subsection|Attribute widgets>
 

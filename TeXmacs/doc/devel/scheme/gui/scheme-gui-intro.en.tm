@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.16>
+<TeXmacs|1.0.7.15>
 
 <style|tmdoc>
 
@@ -21,7 +21,8 @@
   However, it must be kept in mind that items intended to be inserted in a
   menu bar won't necessarily display as they do in a separate window:
   complicated aggregations of widgets might be better placed in a separate
-  window or dialogue.
+  window or dialogue, as explained in "<hlink|Dialogs and composite
+  widgets|scheme-gui-dialogs.en.tm>".
 
   A complete reference with all the available widgets is the "<hlink|Widgets
   reference guide|scheme-gui-reference.en.tm>", and you can find some
