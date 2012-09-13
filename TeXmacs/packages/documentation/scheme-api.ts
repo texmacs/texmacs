@@ -22,7 +22,7 @@
 
   <use-package|tmdoc-markup>
 
-  <use-module|(doc scheme-api)>
+  <use-module|(doc sapi-markup)>
 
   <\active*>
     <\src-comment>

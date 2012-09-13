@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : scheme-api.scm
-;; DESCRIPTION : Automated documentation for the scheme api
+;; MODULE      : sapi-funcs.scm
+;; DESCRIPTION : Routines for documentation of the scheme api
 ;; COPYRIGHT   : (C) 2012 Miguel de Benito Delgado
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
@@ -10,13 +10,13 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; The contents of this file are preliminary and simple. Things TO-DO are:
-;;  - this list 
-;;
+;; This file contains procedures needed for the display of documentation
+;; collected using module (doc collect).
+;; (...)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (doc scheme-api)
-  (:use (convert rewrite init-rewrite)))
+(texmacs-module (doc sapi-funcs)
+  (:use (convert rewrite init-rewrite) (doc collect)))
 
 (tm-define (list-uniq l)
   (:synopsis "Returns a list without any duplicate items.")
@@ -26,16 +26,19 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Conversions related to modules:
 
-(define (string->module str)
+(tm-define (string->module str)
+  (:synopsis "Returns a valid list of symbols for a module given as a string")
   (if (== str "") '()
       (map string->symbol (string-split str #\.))))
 
-(define (module->string module)
+(tm-define (module->string module)
+  (:synopsis "Formats a module in list format (some module) as some.module")
   (if (list? module)
       (string-join (map symbol->string module) ".")
       (symbol->string module)))
 
 (define (module->name module)
+  "Retrieves the name of the file for @module, without any extension"
   (symbol->string (cAr module)))
 
 (define (tree->symbol t)
@@ -47,9 +50,17 @@
 (define (module-leq? x y)
   (string<=? (module->string x) (module->string y)))
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Compute information related to a module
+;; Compute and display information related to a module
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (is-real-module? module)
+  (url-exists? 
+    (url-concretize 
+      (string-append
+        "$TEXMACS_PATH/progs/"
+        (string-join (map symbol->string module) "/")
+        ".scm"))))
 
 (define (module-source-path module full?)
   (string-concatenate
@@ -57,38 +68,36 @@
            (string-join (map symbol->string module) "/")
             ".scm")))
 
-(define (module-doc-path module full?)
-  (string-concatenate
-     (list (if full? (url-concretize "$TEXMACS_PATH/doc/api/progs/")
-                     "api/progs/")
-           (string-join (map symbol->string module) "/")
-           ".en.tm")))
+(define (module-doc-path module)
+  (string-append "tmfs://sapi/type=module&what=" (module->string module)))
 
-(define (module-doc-index-path dir full?)
-  (string-concatenate
-    (list (if full? (url-concretize "$TEXMACS_PATH/doc/api/progs/")
-                     "api/progs/")
-           (string-join (map symbol->string dir) "/")
-           "/index.en.tm")))
-
-(define ($module-source-link module)
+(tm-define ($module-source-link module)
   ($link (module-source-path module #t) (module-source-path module #f)))
 
-(define ($module-doc-link module)
-  ($link (module-doc-path module #t) (module->string module)))
+(tm-define ($module-doc-link module)
+  ($link (module-doc-path module) (module->string module)))
 
-(define (module-dependencies module)
+(tm-define ($module-dependencies module)
  `(concat
    ,@(list-intersperse 
        (map (lambda (x) ($module-doc-link (module-name x))) 
             (module-uses (resolve-module module)))
        ", ")))
 
-(define (count-exported module)
+(tm-define (module-count-exported module)
   (apply + (map (lambda (x) (if (member module (cdr x)) 1 0))
                 (ahash-table->list tm-defined-module))))
 
-(define (count-undocumented module)
+; FIXME! handle the case of no exported symbols
+(tm-define ($module-exported module)
+  (for-each 
+    (lambda (sym)
+      (with ref (ahash-ref tm-defined-module (car sym))
+        (if (and ref (member module ref))
+          ($explain-doc* (doc-scm-cache) (symbol->string (car sym))))))
+    (ahash-table->list tm-defined-table)))
+
+(tm-define (module-count-undocumented module)
   ; TODO
   -1)
 
@@ -107,44 +116,9 @@
     module-leq?))
 
 (define (list-submodules root)
-  (let ((l (length root)))
+  (with l (length root)
     (list-filter (list-modules) 
-      (lambda (x)
-        (and (>= (length x) l) (== root (list-head x l)))))))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; To be used in packages/documentation/scheme-api.ts
-(tm-define (doc-module-synopsis tname)
-  ;TODO
-  (:secure #t)
-  (with name (tree->string tname)
-    `(concat ,(string-append "synopsis for " name))))
-
-(tm-define (doc-module-family tname)
-  (:secure #t)
-  (with name (tree->string tname)
-    `(concat ,(module->string (cDr (string->module name))))))
-
-(tm-define (doc-module-dependencies tname)
-  (:secure #t)
-  (module-dependencies (string->module (tree->string tname))))
-
-(tm-define (doc-module-source-link tname)
-  (:secure #t)
-  ($module-source-link (string->module (tree->string tname))))
-
-(tm-define (doc-module-doc-link tname)
-  (:secure #t)
-  ($module-doc-link (string->module (tree->string tname))))
-
-(tm-define (doc-module-count-exported tname)
-  (:secure #t)
-  (number->string (count-exported (string->module (tree->string tname)))))
-
-(tm-define (doc-module-count-undocumented tname)
-  (:secure #t)
-  (number->string (count-undocumented (string->module (tree->string tname)))))
+      (lambda (x) (and (>= (length x) l) (== root (list-head x l)))))))
 
 (define (is-module-dir? m depth)
   (> (- (length m) depth) 1))
@@ -153,9 +127,9 @@
   (cond ((null? m) '())
         ((is-module-dir? m depth)
          (with d (sublist m depth (+ 1 depth))
-           `(branch ,(module->string d) ,(module-doc-index-path d #t))))
+           `(branch ,(module->string d) ,(module-doc-path d))))
         (else `(branch ,(module->string (list-tail m depth))
-                       ,(module-doc-path m #t)))))
+                       ,(module-doc-path m)))))
 
 ; The branches returned are like a 'ls' in the directory:
 ; both actual modules and subdirectories are returned, but nothing else
@@ -172,69 +146,79 @@
                   ($doc-module-branches (cdr l) depth `(,@done ,d)))))))
 
 (tm-define ($doc-module-traverse root)
-  `(traverse (document
-     ,@($doc-module-branches (list-submodules root) (length root) '()))))
-
-(tm-define (doc-module-traverse troot)
-  (:secure #t)
-  ($doc-module-traverse (string->module (tree->string troot))))
+  `(traverse 
+     (document
+       ,@($doc-module-branches (list-submodules root) (length root) '()))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; To be used in symbols documentation
-
-(tm-define (doc-symbol-symbol tsym)
-  (:secure #t)
-  (tree->string tsym))
+;; Symbols documentation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (doc-symbol-synopsis* sym)
-  (:secure #t)
   (with prop (property sym :synopsis)
-    (if (list? prop)
-        (car prop)
-        "No synopsis available")))
-
-(tm-define (doc-symbol-synopsis tsym)
-  (:secure #t)
-    (doc-symbol-synopsis* (tree->symbol tsym)))
+    (if (list? prop) (car prop) "No synopsis available")))
 
 (tm-define (doc-symbol-code* sym)
-  (:secure #t)
   (if (tm-exported? sym) 
       (object->string (procedure-sources (eval sym)))
       "Symbol not found"))
 
-(tm-define (doc-symbol-code tsym)
-  (:secure #t)
-  (with sym (tree->symbol tsym)
-    (doc-symbol-code* sym)))
-
-(tm-define (doc-symbol-template* sym)
+(tm-define ($doc-symbol-template sym)
   `(explain
      (document
        (concat
         (scm ,(symbol->string sym))
         (explain-synopsis ,(doc-symbol-synopsis* sym))))
-     (document "Description..."
-      (folded-explain
-        (document (with "color" "dark green" (em "Example..."))) 
-        (document (scm-code "")))
-      (folded-explain
-       (document (with "color" "dark green" (em "Source code...")))
-       (document (scm-code ,(doc-symbol-code* sym))))
-      )))
+     (document ""
+       (unfolded-explain
+         (document (with "color" "dark green" (em "Example..."))) 
+         (document (scm-code "")))
+       (unfolded-explain
+         (document (with "color" "dark green" (em "Source code...")))
+         (document (scm-code ,(doc-symbol-code* sym)))))))
 
-(tm-define (doc-symbol-template tsym)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Retrieval and display of documentation from the cache
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (docgrep-new-window what)
+  (let* ((query (list->query (list (cons "type" "doc") (cons "what" what))))
+         (name (string-append "tmfs://grep/" query)))
+    (buffer-load name)
+    (open-buffer-in-window name (buffer-get name) "")))
+
+(tm-define (docgrep-in-doc-secure what)
+  (:synopsis "Search in documentation. Secure routine to use in 'action tags.")
   (:secure #t)
-  (with sym (tree->symbol tsym)
-    (doc-symbol-template* sym)))
+  (docgrep-new-window what))
 
+(define ($explain-not-found key)
+  `(document
+    ,(string-append "Documentation for " key " not found. ")
+    ,($doc-symbol-template (string->symbol key))
+    (action "Search in documentation..." 
+            ,(string-append "(docgrep-in-doc-secure \"" key "\")"))))
+
+(tm-define ($explain-doc* cache key)
+  (if (persistent-has? cache key)
+      (tree->stree (parse-texmacs-snippet (persistent-get cache key)))
+      ($explain-not-found key)))
+
+(tm-define ($explain-doc cache key)
+  (:synopsis "Return a document with the documentation for @key in @cache")
+  `(document
+     (surround
+       (freeze (concat (locus (id "__doc__popup__") "")
+                       (use-package "tmdoc-markup")))
+     "" (document ,($explain-doc* cache key)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; module browser widget
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define mw-all-modules (map module->string (list-modules)))
 (tm-define mw-all-symbols (map symbol->string (module-exported '())))
-(tm-define mw-module "text.text-menu")
+(tm-define mw-module "")
 (tm-define mw-symbol "")
 
 (tm-define (mw-update-symbols module)
@@ -247,16 +231,14 @@
 (tm-widget (symbol-doc-widget)
   (resize ("100px" "200px" "400px") ("50px" "100px" "150px")
     (texmacs-input
-     `(document
-        (surround (use-package "tmdoc-markup") ""
-         ,(doc-symbol-template* (string->symbol mw-symbol))))
+     ,($explain-doc (doc-scm-cache) (symbol->string sym))
      (noop) #f)))
-;;    (doc-symbol-template* (string->symbol mw-symbol))))
+;;    ($doc-symbol-template (string->symbol mw-symbol))))
 
 (tm-widget (symbol-doc-buttons)
  (explicit-buttons >>
-   ("Insert template" (insert (doc-symbol-template* 
-                                (string->symbol mw-symbol))))))
+   ("Insert template"
+    (insert ($doc-symbol-template (string->symbol mw-symbol))))))
 
 (tm-widget (module-widget)
   (vertical
@@ -271,13 +253,8 @@
     ===
     (refresh symbol-doc-buttons)))
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Handy..
-
-(tm-define (doc-symbol-template** ssym)
-  (with sym (string->symbol ssym)
-    (insert (doc-symbol-template* sym))))
 
 (tm-define (show-module-widget)
   (top-window module-widget "Pick module and symbol..."))
@@ -295,7 +272,7 @@
   (:argument ssym "Symbol")
   (:proposals ssym (exp-modules))
   ;(:check-mark "*" (symbol-documented?)) ; right?
-  (doc-symbol-template** ssym))
+  (insert ($doc-symbol-template (string->symbol ssym))))
 
 (kbd-map
   (:require (in-tmdoc?))
