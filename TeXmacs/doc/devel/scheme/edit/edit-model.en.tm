@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.0.7.15>
 
 <style|tmdoc>
 
@@ -61,9 +61,9 @@
   the <scheme> variable <scm|t> contains the subscript <math|1> in formula
   (<reference|example-edit-formula>). Then the instruction
 
-  <\scm-fragment>
+  <\scm-code>
     (tree-set! t "2")
-  </scm-fragment>
+  </scm-code>
 
   will simultaneously change the subscript into a <math|2> and update the
   <scheme> variable <scm|t>. Another nicety is that the value of <scm|t> is
@@ -73,7 +73,7 @@
   its location. Of course, the location of <scm|t> may be lost when <scm|t>
   or one of its parents is modified. Nevertheless, the modification routines
   are designed in such a way that we try hard to remember locations. For
-  instance, when insert ``<math|a<rsub|0>+>'' in front of the formula
+  instance, if ``<math|a<rsub|0>+>'' is inserted in front of the formula
   (<reference|example-edit-formula>) using the routine <scm|tree-insert!>,
   then <scm|t> keeps its value <em|and> its location, even though one of its
   ancestors was altered.
@@ -117,7 +117,7 @@
   expression<nbsp>(<reference|example-edit-formula>). In this example, only
   the second cursor path is valid. Usually, the validity of a cursor path may
   be quickly detected using DRD (Data Relation Definition) information, which
-  is determined from the style file. In execeptional cases, the validity may
+  is determined from the style file. In exceptional cases, the validity may
   only be available after typesetting the document.
 
   It should also be noticed that all active trees are a subtree of the global
@@ -156,26 +156,26 @@
   instance, if<nbsp><scm|x> corresponds to the
   expression<nbsp>(<reference|example-edit-formula>), then
 
-  <\scm-fragment>
+  <\scm-code>
     (select x '(rsub :%1))
-  </scm-fragment>
+  </scm-code>
 
   returns a list with the two subscripts <math|1> and <math|n>. In fact,
   <scm|select> may also be used in order to navigate through a tree. For
   instance, if <scm|t> corresponds to the subscript <math|1>
   in<nbsp>(<reference|example-edit-formula>), then
 
-  <\scm-fragment>
+  <\scm-code>
     (select t '(:up :next))
-  </scm-fragment>
+  </scm-code>
 
   returns the list with one element ``<math|+\<cdots\>+a>''. The routine
   <scm|select> is implicitly called by many routines which operate on trees.
   For instance, with <scm|t> as above,
 
-  <\scm-fragment>
+  <\scm-code>
     (tree-ref t :up :next)
-  </scm-fragment>
+  </scm-code>
 
   directly returns the tree ``<math|+\<cdots\>+a>''.
 
@@ -201,13 +201,13 @@
   <scm|with-innermost>. Together with the routine <scm|tree-set!> for
   modifying a tree, this yields a first simple implementation:
 
-  <\scm-fragment>
+  <\scm-code>
     (define (swap-numerator-denominator)
 
     \ \ (with-innermost t 'frac
 
     \ \ \ \ (tree-set! t `(frac ,(tree-ref t 1) ,(tree-ref t 0)))))
-  </scm-fragment>
+  </scm-code>
 
   It should be noticed that the macro <scm|with-innermost> ignores its body
   whenever no innermost fraction is found.
@@ -217,7 +217,7 @@
   The following refined implementation allows us to remain at the ``same
   position'' modulo the exchange numerator/denominator:
 
-  <\scm-fragment>
+  <\scm-code>
     (define (swap-numerator-denominator)
 
     \ \ (with-innermost t 'frac
@@ -227,7 +227,7 @@
     \ \ \ \ \ \ (tree-set! t `(frac ,(tree-ref t 1) ,(tree-ref t 0)))
 
     \ \ \ \ \ \ (tree-go-to t (cons (- 1 (car p)) (cdr p))))))
-  </scm-fragment>
+  </scm-code>
 
   Here we used the routines <scm|tree-cursor-path> and <scm|tree-go-to>,
   which allow us to manipulate the cursor position relative to a given tree.
@@ -235,19 +235,19 @@
   As the icing on the cake, we may make our routine available through the
   mechanism of structured variants:
 
-  <\scm-fragment>
+  <\scm-code>
     (define (variant-circulate t forward?)
 
     \ \ (:require (tree-is? t 'frac))
 
     \ \ (swap-numerator-denominator))
-  </scm-fragment>
+  </scm-code>
 
   Notice that this implementation can be incorrect when operating on nested
   fractions. The implementation can be further improved by letting
   <scm|swap-numerator-denominator> operate on a specific<nbsp>tree:
 
-  <\scm-fragment>
+  <\scm-code>
     (define (swap-numerator-denominator t)
 
     \ \ (:require (tree-is? t 'frac))
@@ -257,17 +257,17 @@
     \ \ \ \ (tree-set! t `(frac ,(tree-ref t 1) ,(tree-ref t 0)))
 
     \ \ \ \ (tree-go-to t (cons (- 1 (car p)) (cdr p)))))
-  </scm-fragment>
+  </scm-code>
 
   The corresponding generic routine could be defined as
 
-  <\scm-fragment>
+  <\scm-code>
     (define (swap-numerator-denominator t)
 
     \ \ (and-with p (tree-outer t)
 
     \ \ \ \ (swap-numerator-denominator p)))
-  </scm-fragment>
+  </scm-code>
 
   This piece of code will perform an outward recursion until a specific
   handler is found. We may now replace the call
@@ -281,7 +281,7 @@
   the original state by toggling a second time. We may explicitly conserve
   the focus as follows:
 
-  <\scm-fragment>
+  <\scm-code>
     (define (swap-numerator-denominator t)
 
     \ \ (:require (tree-is? t 'frac))
@@ -293,7 +293,7 @@
     \ \ \ \ (tree-go-to t (cons (- 1 (car p)) (cdr p)))
 
     \ \ \ \ (tree-focus t)))
-  </scm-fragment>
+  </scm-code>
 
   This routine will even work when we are inside a nested fraction and
   operating on the outer fraction.
