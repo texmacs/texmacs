@@ -429,14 +429,19 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
       eval ("(graphics-reset-context 'text-cursor)");
   }
   
-  if (type == "press-left" && mods > 1) {
-    mouse_adjusting = mods;
-    mouse_adjust_selection(x, y, mods);
-  } else if (type == "press-left" || type == "start-drag-left") 
-    mouse_click (x, y);
+  if (type == "press-left" || type == "start-drag-left") {
+    if (mods > 1) {
+      mouse_adjusting = mods;
+      mouse_adjust_selection(x, y, mods);
+    } else
+      mouse_click (x, y);
+  }
   if (type == "dragging-left") {
-    if (is_attached (this) && check_event (DRAG_EVENT)) return;
-    mouse_drag (x, y);
+    if (mouse_adjusting && mods > 1) {
+      mouse_adjusting = mods;
+      mouse_adjust_selection(x, y, mods);
+    } else if (is_attached (this) && check_event (DRAG_EVENT)) return;
+    else mouse_drag (x, y);
   }
   if ((type == "release-left" || type == "end-drag-left")) {
     if (!(mouse_adjusting & ShiftMask))
