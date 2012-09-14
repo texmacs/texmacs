@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.0.7.15>
 
 <style|tmdoc>
 
@@ -101,6 +101,13 @@
   additional information to the function or macro. We will now describe these
   options and explain how the additional information attached to functions
   can be exploited.
+
+  <\warning>
+    A current limitation of the implementation is that functions overloaded
+    using <scm|:require> and <scm|:mode> cannot have different options. This
+    means in particular that you cannot specify different values for
+    <scm|:synopsis> depending on the context.
+  </warning>
 
   <\explain>
     <scm|(:synopsis <scm-arg|short-help>)><explain-synopsis|short
