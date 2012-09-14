@@ -524,6 +524,8 @@
 	  ((string-ends? s "par") (string-replace s "par" "\\columnwidth"))
 	  (else s))))
 
+(define (tmtex-hrule l) (list 'tmhrule))
+
 (define (tmtex-hspace l)
   (let ((s (if (= (length l) 1) (car l) (cadr l))))
     (cond ((== s "1fn") (list 'quad))
@@ -1625,6 +1627,7 @@
   (concat tmtex-concat)
   (rigid tmtex-rigid)
   (hidden tmtex-noop)
+  (hrule tmtex-hrule)
   (hspace tmtex-hspace)
   (vspace* tmtex-noop)
   (vspace tmtex-vspace)

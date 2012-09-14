@@ -574,12 +574,13 @@ latex_symbol_to_tree (string s) {
       if (s == "tablename")	  return "table-text";
     }
 
-		if (latex_type (s) == "ignore") return "";
+    if (latex_type (s) == "ignore") return "";
 
     if (latex_type (s) == "operator" || latex_type (s) == "control") return s;
     if ((s == "ldots") && (command_type ("!mode") != "math")) return "...";
     if (s == "bignone") return tree (BIG, ".");
     if (s == "Return")  return tree (APPLY, "algo-return");
+    if (s == "tmhrule")  return tree (APPLY, "hrule");
     if (latex_type (s) == "big-symbol") {
       if (s(0,3)=="big") return tree (BIG, s(3,N(s)));
       else return tree (BIG, s);

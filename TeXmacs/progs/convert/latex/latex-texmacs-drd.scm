@@ -156,6 +156,7 @@
 (logic-table latex-texmacs-0%
   (tmunsc "\\_")
   (emdash "---")
+  (tmhrule "\\noindent\\rule[0.3\\baselineskip]{\\textwidth}{0.4pt}")
   (tmat "\\symbol{\"40}")
   (tmbsl "\\ensuremath{\\backslash}")
   (tmdummy "$\\mbox{}$")
