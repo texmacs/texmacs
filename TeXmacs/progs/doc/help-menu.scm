@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (doc help-menu)
-  (:use (doc help-funcs) (doc sapi)))
+  (:use (doc help-funcs))); (doc sapi)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Help menu
@@ -229,10 +229,10 @@
             ("Customizing and extending the user interface"
              (load-help-article "devel/scheme/gui/scheme-gui"))
 	    ("Writing TeXmacs bibliography styles"
-	     (load-help-article "devel/scheme/bibliography/bibliography"))
-            ---
-            ("Browse modules documentation" (sapi-all-modules))
-            ("List all symbols" (sapi-all-symbols)))))
+	     (load-help-article "devel/scheme/bibliography/bibliography")))))
+            ;---
+            ;("Browse modules documentation" (sapi-all-modules))
+            ;("List all symbols" (sapi-all-symbols)))))
   ---
   (-> "Search"
       ("Documentation" (interactive docgrep-in-doc))
