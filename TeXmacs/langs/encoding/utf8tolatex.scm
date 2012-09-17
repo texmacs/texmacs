@@ -8,6 +8,7 @@
 ;;
 ;; Inspired from utf8enc.dfu
 
+("#A"  "\n")
 ("#A1" "{\\textexclamdown}")
 ("#A2" "{\\textcent}")
 ("#A3" "{\\textsterling}")

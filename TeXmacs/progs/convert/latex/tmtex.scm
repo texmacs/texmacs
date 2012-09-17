@@ -1208,9 +1208,9 @@
 	 (AMS-class* (tmtex-data-apply 'AMSclass AMS-class))
 	 (note* (tmtex-data-assemble "; " (list note keywords* AMS-class*)))
 	 (title* (append title (tmtex-data-apply 'thanks note*)))
-	 (author* (tmtex-data-assemble '(and) (map list authors))))
-    (tex-concat `((title ,(tex-concat title*))
-		  (author ,(tex-concat author*))
+	 (author* (tmtex-data-assemble " \\and " (map list authors))))
+    (tex-concat `((title ,(tex-concat title*)) "\n"
+		  (author ,(tex-concat author*)) "\n"
 		  (maketitle)))))
 
 (define (tmtex-doc-data-wrapper s l)
