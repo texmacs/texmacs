@@ -40,7 +40,7 @@
 (define (new-primitive-load filename)
   ; We explicitly circumvent guile's decision to set the current-reader to #f
   ; inside ice-9/boot-9.scm, try-module-autoload
-  (with-fluids ((current-reader new-read))
+  (with-fluids ((current-reader read))
     (old-primitive-load filename)))
 
 (set! primitive-load new-primitive-load)

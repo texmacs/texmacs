@@ -341,7 +341,7 @@
 (define (go-to-line n)
   (with-innermost t 'document
     (with p (tree-cursor-path t)
-      (tree-go-to t (+ 1 n) 0))))
+      (tree-go-to t n 0))))
 
 (tm-define (show-module-widget)
   (top-window module-widget "Pick module and symbol..."))
