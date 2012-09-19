@@ -1,22 +1,22 @@
-<TeXmacs|1.0.6.10>
+<TeXmacs|1.0.7.15>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|The module system and lazy definitions>
 
-  As explaned above, each <value|scheme> file inside <TeXmacs> or one of its
+  As explaned above, each <scheme> file inside <TeXmacs> or one of its
   plug-ins corresponds to a <em|<TeXmacs> module>. The individual <TeXmacs>
   modules are usually grouped together into an internal or external module,
   which corresponds to a directory on your hard disk.
 
   Any <TeXmacs> module should start with an instruction of the form
 
-  <\scheme-fragment>
+  <\scm-code>
     (texmacs-module <em|name>
 
     \ \ (:use <em|submodule-1> ... <em|submodule-n>))
-  </scheme-fragment>
+  </scm-code>
 
   The <verbatim|<em|name>> of the module is a list which corresponds to the
   location of the corresponding file. More precisely, <TeXmacs> searches for
@@ -41,11 +41,11 @@
   <scm|tm-define-macro>. Currently, because of implementation details for the
   <hlink|contextual overloading system|overview-overloading.en.tm>, as soon
   as a symbol is declared to be public, it becomes visible inside all other
-  modules. However, you should not rely on this: in the future, it explicit
+  modules. However, you should not rely on this: in the future, explicit
   importation with <scm|:use> might become<nbsp>necessary.
 
   Because the number of <TeXmacs> modules and plug-ins keeps on growing, it
-  is unefficient to load all modules when booting. Instead, initialization
+  is inefficient to load all modules when booting. Instead, initialization
   files are assumed to declare the provided functionality in a <em|lazy> way,
   so that the corresponding modules will only be loaded when the
   functionality is explictly needed. Some modules may also be loaded during
@@ -55,18 +55,18 @@
   <scm|foo-action> inside the module <scm|(foo-edit)>. Then your
   initialization file <verbatim|init-foo.scm> would typically contain a line
 
-  <\scheme-fragment>
+  <\scm-code>
     (lazy-define (foo-edit) foo-action)
-  </scheme-fragment>
+  </scm-code>
 
   Similarly, lazy keyboard shortcuts and menus for <verbatim|foo> might be
   defined using
 
-  <\scheme-fragment>
+  <\scm-code>
     (lazy-keyboard (foo-kbd) in-foo-mode?)
 
     (lazy-menu (foo-menu) foo-menu)
-  </scheme-fragment>
+  </scm-code>
 
   For more concrete examples, we recommend the user to take a look at the
   standard initialization file <hlink|<verbatim|init-texmacs.scm>|$TEXMACS_PATH/progs/init-texmacs.scm>.
@@ -94,13 +94,13 @@
   precedence in math mode. Alternatively, you may redefine the keyboard
   shortcut using
 
-  <\scheme-fragment>
+  <\scm-code>
     (kbd-map
 
     \ \ (:mode prevail?)
 
     \ \ ("x x x" <em|action>))
-  </scheme-fragment>
+  </scm-code>
 
   This redefinition will prevail both in general and in math mode.
 
