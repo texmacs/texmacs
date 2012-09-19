@@ -15,12 +15,13 @@
 
 ; FIXME: how do we update this list dynamically? 
 (define keywords-which-define 
-  '(define define-macro define-public define-public-macro
-    tm-define tm-define-macro tm-menu tm-widget))
+  '(define define-macro define-public define-public-macro provide-public
+    tm-define tm-define-macro tm-menu menu-bind tm-widget))
 
 (define old-read read)
 (define (new-read port)
   "A redefined reader which stores line number and file name in symbols."
+  ; FIXME: handle overloaded redefinitions
   (let ((form (old-read port)))
     (if (and (pair? form) (member (car form) keywords-which-define))
       (let* ((line (source-property form 'line))
