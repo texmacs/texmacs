@@ -248,6 +248,8 @@ tree
 clean_remove (tree t, path p, int nr) {
   if (is_nil (p->next) && is_atomic (t)) {
     string s= t->label;
+    if (N(s) < p->item+nr)
+      FAILED("clean_remove(): Invalid remove from atomic tree.");
     return s (0, p->item) * s (p->item+nr, N(s));
   }
   else if (is_nil (p->next)) {
