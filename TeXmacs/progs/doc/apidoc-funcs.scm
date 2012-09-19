@@ -19,11 +19,6 @@
 (texmacs-module (doc apidoc-funcs)
   (:use (convert rewrite init-rewrite) (doc apidoc-collect)))
 
-(tm-define (list-uniq l)
-  (:synopsis "Returns a list without any duplicate items.")
-  (list-fold-right
-    (lambda (x r) (if (member x r) r (cons x r))) '() l))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Conversions related to modules:
 

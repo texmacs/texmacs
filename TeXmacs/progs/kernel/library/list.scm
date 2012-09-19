@@ -275,6 +275,11 @@
 	      (cons* head (cons (car tail) (car r)) (cdr r))
 	      (cons head r))))))
 
+(define-public (list-uniq l)
+  "Remove any duplicate items from @l."
+  (list-fold-right
+    (lambda (x r) (if (member x r) r (cons x r))) '() l))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search and replace
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
