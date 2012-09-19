@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (prog scheme-edit)
-  (:use (prog prog-edit)
+  (:use (prog prog-edit) (prog scheme-autocomplete)
 	(utils misc tm-keywords)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -149,9 +149,17 @@
       (program-set-indent i)
       (program-go-to (program-row-number) i))))
 
+;(tm-define (kbd-variant t forwards?)
+;  (:require (in-prog-scheme?))
+;  (scheme-indent))
+
 (tm-define (kbd-variant t forwards?)
   (:require (in-prog-scheme?))
-  (scheme-indent))
+  (custom-complete (tm->tree (scheme-completions (cursor-word)))))
+
+(kbd-map
+  (:require (in-prog-scheme?))
+  ("C-i" (scheme-indent)))
 
 (tm-define (insert-return)
   (:mode in-prog-scheme?)
