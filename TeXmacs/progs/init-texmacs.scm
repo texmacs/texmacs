@@ -175,10 +175,10 @@
 (lazy-define (doc docgrep) docgrep-in-doc docgrep-in-src docgrep-in-texts)
 (lazy-define (doc tmweb) tmweb-convert-dir tmweb-update-dir
              tmweb-interactive-build tmweb-interactive-update)
-(lazy-define (doc sapi) sapi-all-modules sapi-all-symbols)
+(lazy-define (doc apidoc) apidoc-all-modules apidoc-all-symbols)
 (lazy-tmfs-handler (doc docgrep) grep)
 (lazy-tmfs-handler (doc tmdoc) help)
-(lazy-tmfs-handler (doc sapi) sapi)
+(lazy-tmfs-handler (doc apidoc) apidoc)
 (define-secure-symbols tmdoc-include)
 
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")

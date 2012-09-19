@@ -1,6 +1,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : sapi-markup.scm
+;; MODULE      : apidoc-markup.scm
 ;; DESCRIPTION : Markup for automatically collected scheme documentation
 ;; COPYRIGHT   : (C) 2012 Miguel de Benito Delgado
 ;;
@@ -11,14 +11,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; Most of the procedures in this file are wrappers to the procedures in 
-;; sapi-funcs which will be used in <extern> and <action> tags in the scheme 
+;; apidoc-funcs which will be used in <extern> and <action> tags in the scheme 
 ;; documentation. Most of them are needed for example in the style file
 ;; packages/documentation/scheme-api.ts.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (doc sapi-markup)
-  (:use (doc sapi-funcs)
+(texmacs-module (doc apidoc-markup)
+  (:use (doc apidoc-funcs)
         (kernel gui gui-markup)))
 
 (tm-define (doc-module-synopsis tname)

@@ -1,6 +1,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : sapi.scm
+;; MODULE      : apidoc.scm
 ;; DESCRIPTION : Automatically generated scheme documentation
 ;; COPYRIGHT   : (C) 2012 Miguel de Benito Delgado
 ;;
@@ -13,15 +13,15 @@
 ;; This file provides the tmfs interface to the scheme API help.
 ;; Queries accepted by this handler are of type
 ;;
-;;    tmfs://sapi/type=(symbol|module)&what=(name|)
+;;    tmfs://apidoc/type=(symbol|module)&what=(name|)
 ;;
 ;; An empty "what" parameter means to list all items of the specified type.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  
-(texmacs-module (doc sapi)
+(texmacs-module (doc apidoc)
   (:use (kernel gui gui-markup) 
-        (doc sapi-markup) (doc sapi-funcs) (doc collect)))
+        (doc apidoc-markup) (doc apidoc-funcs) (doc apidoc-collect)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Internal
@@ -62,7 +62,7 @@
 ;; Buffer contents for the different requests.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define-macro ($tmsapidoc . l)
+(tm-define-macro ($tmapidoc . l)
   (with lan (get-output-language)
     ($quote
       `(document
@@ -75,7 +75,7 @@
   (map append-command-alphabetically 
        (sort (map car (ahash-table->list tm-defined-table)) symbols>?))
   (with sorted (sort (reverse (ahash-table->list indexed-commands)) sort-by-car)
-    ($tmsapidoc
+    ($tmapidoc
       ($tmdoc-title "All TeXmacs commands")
       ($para 
         "This is an alphabetical list of TeXmacs's public interface. "
@@ -86,21 +86,25 @@
           (output-commands-folded-section entry))))))
 
 (define ($doc-symbol-buffer ssym)
-  ($tmsapidoc
+  ($tmapidoc
     ($tmdoc-title (string-append "Documentation for " ssym))
     ($explain-doc* (doc-scm-cache) ssym)))
 
 (define ($doc-all-modules-buffer)
-  ($tmsapidoc ($tmdoc-title "All TeXmacs modules")
+  ($tmapidoc ($tmdoc-title "All TeXmacs modules")
     ($doc-module-traverse '())))
 
 (define ($doc-module-buffer smod)
-  ($tmsapidoc ($tmdoc-title (string-append "Documentation for " smod))
-    (if (is-real-module? (string->module smod))
-      `(document (doc-module-header ,smod "Description TO-DO")
-                 ,($module-exported (string->module smod)))
-      `(document (doc-module-header ,smod "")
-                 ,($doc-module-traverse (string->module smod))))))
+  (with m (string->module smod)
+    (if (is-real-module? m)
+        ($tmapidoc
+          ($tmdoc-title (string-append "Documentation for " smod))
+          `(document
+            ,($doc-module-header m)
+            ,($doc-module-exported m)))
+        ($tmapidoc
+          ($tmdoc-title (string-append "Module family " smod))
+          ($doc-module-traverse m)))))
 
 (define ($query-not-implemented query)
  ($tmdoc 
@@ -111,36 +115,37 @@
 ;; Public interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tmfs-load-handler (sapi query)
+(tmfs-load-handler (apidoc query)
   (let* ((type (query-ref query "type"))
          (what (query-ref query "what")))
     (tm->stree
       (cond ((== type "symbol")
-             (if (== what "") ($doc-all-symbols-buffer))
-                              ($doc-symbol-buffer what))
+             (if (== what "") ($doc-all-symbols-buffer)
+                              ($doc-symbol-buffer what)))
             ((== type "module")
              (if (== what "") ($doc-all-modules-buffer)
                               ($doc-module-buffer what)))
             (else ($query-not-implemented query))))))
 
-(tmfs-title-handler (sapi query doc)
+(tmfs-title-handler (apidoc query doc)
   (let* ((type (query-ref query "type"))
          (what (query-ref query "what")))
     (cond ((== type "symbol")
-           (if (== what "") "Browse all symbols"
-               (string-append "Documentation for " what)))
-          ((== type "module") "Browse all modules"
-               (string-append "Documentation for module " what))
-          (else "Unknow request"))))
+           (if (== what "") "Help - Browse all symbols"
+               (string-append "Help - Documentation for " what)))
+          ((== type "module")
+           (if (== what "") "Help - Browse all modules"
+               (string-append "Help - Documentation for module " what)))
+          (else "Help - Unknow request"))))
 
-(tmfs-permission-handler (sapi name type) #t)
+(tmfs-permission-handler (apidoc name type) #t)
 
-(tm-define (sapi-all-symbols)
+(tm-define (apidoc-all-symbols)
   (:synopsis "Opens a help buffer with a list of all tm-defined symbols")
   (cursor-history-add (cursor-path))
-  (load-buffer "tmfs://sapi/type=symbol&what="))
+  (load-buffer "tmfs://apidoc/type=symbol&what="))
 
-(tm-define (sapi-all-modules)
+(tm-define (apidoc-all-modules)
   (:synopsis "Opens a help buffer with a list of all TeXmacs modules")
   (cursor-history-add (cursor-path))
-  (load-buffer "tmfs://sapi/type=module&what="))
+  (load-buffer "tmfs://apidoc/type=module&what="))
