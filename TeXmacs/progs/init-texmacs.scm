@@ -13,6 +13,38 @@
 
 (define boot-start (texmacs-time))
 
+; FIXME: how do we update this list dynamically? 
+(define keywords-which-define 
+  '(define define-macro define-public define-public-macro
+    tm-define tm-define-macro tm-menu tm-widget))
+
+(define old-read read)
+(define (new-read port)
+  "A redefined reader which stores line number and file name in symbols."
+  (let ((form (old-read port)))
+    (if (and (pair? form) (member (car form) keywords-which-define))
+      (let* ((line (source-property form 'line))
+             (file (source-property form 'filename))
+             (sym  (if (pair? (cadr form)) (caadr form) (cadr form))))
+        (if (symbol? sym) ; just in case...
+          (begin 
+            (set-symbol-property! sym 'line line)
+            (set-symbol-property! sym 'filename file)
+            ))))
+    form))
+
+(set! read new-read)
+(fluid-set! current-reader new-read) ; for sessions, etc.
+
+(define old-primitive-load primitive-load)
+(define (new-primitive-load filename)
+  ; We explicitly circumvent guile's decision to set the current-reader to #f
+  ; inside ice-9/boot-9.scm, try-module-autoload
+  (with-fluids ((current-reader new-read))
+    (old-primitive-load filename)))
+
+(set! primitive-load new-primitive-load)
+
 ;; TODO: scheme file caching using (set! primitive-load ...) and
 ;; (set! %search-load-path)
 
