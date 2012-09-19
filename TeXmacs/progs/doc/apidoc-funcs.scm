@@ -11,9 +11,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; This file contains procedures needed for the display of documentation
-;; collected using module (doc collect).
+;; collected using module (doc apidoc-collect).
 ;; As usual, procedures prefixed with a dollar sign return strees for display.
 ;; Most of the time they have an unprefixed counterpart which does the work.
+;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (doc apidoc-funcs)
@@ -211,25 +212,25 @@
   (with prop (property sym :synopsis)
     (if (list? prop) (car prop) "No synopsis available")))
 
-(tm-define (doc-symbol-code* sym)
-  (cond ((and (tm-exported? sym) (procedure? (eval sym)))
-         (object->string (procedure-sources (eval sym))))
-        ((and (defined? sym) 
-              (procedure? (eval sym))
-              (procedure-source (eval sym)))
-              => (lambda (x) x))
-        (else "Symbol not found or not a procedure")))
+(tm-define ($doc-symbol-code sym)
+  `(folded-explain
+     (document (with "color" "dark green" (em "Definition...")))
+     (scm-code
+       (document
+        ,(cond ((and (tm-exported? sym) (procedure? (eval sym)))
+                (object->string (procedure-sources (eval sym))))
+               ((and (defined? sym) 
+                     (procedure? (eval sym))
+                     (procedure-source (eval sym)))
+                 => object->string)
+               (else "Symbol not found or not a procedure"))))))
 
 (tm-define ($doc-symbol-template sym message)
   `(explain
      (document
-       (concat
-        (scm ,(symbol->string sym))
-        (explain-synopsis ,(doc-symbol-synopsis* sym))))
-     (document ,message
-       (folded-explain
-         (document (with "color" "dark green" (em "Definition...")))
-         (document (scm-code ,(doc-symbol-code* sym)))))))
+       (concat (scm ,(symbol->string sym))
+               (explain-synopsis ,(doc-symbol-synopsis* sym))))
+     (document ,message ,($doc-symbol-code sym))))
 
 (tm-define-macro ($ismall . l)
   ($quote `(small (with "font-shape" "italic" ($unquote ($inline ,@l))))))
@@ -244,7 +245,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Retrieval and display of documentation from the cache
-;; FIXME: this is not the right place for this.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (docgrep-new-window what)
@@ -259,24 +259,30 @@
   (docgrep-new-window what))
 
 (define ($explain-not-found key)
-  ($para
-    ($doc-symbol-template (string->symbol key)
-      ($inline "Documentation unavailable. Search"
-        `(action " in the manual" 
+  `(document
+    ,($doc-symbol-template (string->symbol key)
+      `(concat "Documentation unavailable. Search"
+        (action " in the manual" 
                  ,(string-append "(docgrep-in-doc-secure \"" key "\")"))
          ", or go to the definition in "
-         ($doc-symbol-properties (string->symbol key))))))
+         ,($doc-symbol-properties (string->symbol key))))))
 
 (define (doc-explain-sub entries)
   (if (or (null? entries) (not (func? (car entries) 'entry))) '()
     (with (key lan url doc) (cdar entries)
-      (cons `(document ,doc ,($doc-symbol-extra (string->symbol key) url))
+      (cons `(explain
+               ,(tm-ref doc 0)
+               (document 
+                 ,(tm-ref doc 1)
+                 ,($doc-symbol-code (string->symbol key))
+                 ,($doc-symbol-extra (string->symbol key) url)))
              (doc-explain-sub (cdr entries))))))
 
 (tm-define ($doc-explain-scm* key)
   (with docs (doc-retrieve (doc-scm-cache) key (get-output-language))
-    (if (null? docs) ($explain-not-found key) 
-      `(document ,@(doc-explain-sub docs)))))
+    (if (null? docs)
+      ($explain-not-found key) 
+     `(document ,@(doc-explain-sub docs)))))
 
 (tm-define ($doc-explain-scm key)
   (:synopsis "Return a document with the scheme documentation for @key")
