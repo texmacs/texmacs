@@ -41,6 +41,8 @@
   (eval-system eval_system (string string))
   (var-eval-system var_eval_system (string string))
   (get-locale-language get_locale_language (string))
+  (locale-to-language locale_to_language (string string))
+  (language-to-locale language_to_locale (string string))
   (texmacs-time texmacs_time (int))
   (texmacs-memory mem_used (int))
   (bench-print bench_print (void string))
