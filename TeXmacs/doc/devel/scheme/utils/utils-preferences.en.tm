@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.16>
+<TeXmacs|1.0.7.15>
 
 <style|tmdoc>
 
@@ -69,6 +69,18 @@
     Save preference <scm|name> with value <scm|value>. Then call the
     call-back associated to this preference, as defined in
     <scm|define-preferences>.
+  </explain>
+
+  <\explain>
+    <scm|(append-preference <scm-arg|name>
+    <scm-arg|value>)><explain-synopsis|appends a value to the list for a
+    preference>
+  <|explain>
+    This convenience function appends <scm|value> to the list of values of
+    preference <scm|name>, or creates a list with one element in case the
+    preference didn't exist. The call-back associated to this preference, as
+    defined in <scm|define-preferences> is called once the modification is
+    done.
   </explain>
 
   <\explain>

@@ -81,6 +81,12 @@
 				((== what "off") "on")
 				(else what)))))
 
+(tm-define (append-preference which val)
+  (:synopsis "Appends @val to the list of values of preference @which")
+  (with cur (get-preference which)
+    (if (not cur) (set! cur '()))
+    (set-preference which (rcons cur val))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Nicer names for preference values
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
