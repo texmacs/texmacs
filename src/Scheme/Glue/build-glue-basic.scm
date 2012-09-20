@@ -515,7 +515,7 @@
   (window-focus window_focus (void url))
 
   (new-buffer create_buffer (url))
-  (open-buffer-in-window new_buffer_in_new_window (void url content content))
+  (open-buffer-in-window new_buffer_in_new_window (url url content content))
   (open-window open_window (url))
   (open-window-geometry open_window (url content))
   (clone-window clone_window (void))

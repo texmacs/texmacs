@@ -8,7 +8,7 @@
   <\explain>
     <scm|(window-list)><explain-synopsis|list of all <TeXmacs> windows>
   <|explain>
-    This routine returns the list of all <TeXmacs> windows.
+    Return the list of all <TeXmacs> windows.
   </explain>
 
   <\explain>
@@ -61,6 +61,26 @@
     execute a sequence of commands under the assumption that <scm-arg|win>
     carries the focus and if you return the focus to the original window at
     the end.
+  </explain>
+
+  <\explain>
+    <scm|(open-window)><explain-synopsis|create new window>
+  <|explain>
+    Create a new window with an empty buffer and return the <abbr|URL> of the
+    window.
+  </explain>
+
+  <\explain>
+    <scm|(open-buffer-in-window <scm-arg|buf> <scm-arg|cnt> <scm-arg|attrs>)>
+    <explain-synopsis|No synopsis available>
+  <|explain>
+    Create a new window and set its main buffer to that identified by the
+    <abbr|URL> <scm-arg|buf>. If <scm-arg|buf> is not yet a valid buffer, it
+    is created and its contents set to <scm-arg|cnt>, otherwise the second
+    parameter is ignored. The window is created with its attributes set to
+    <scm-arg|attrs> (currently only the geometry is taken into account, but
+    this might be extended in the future, see the <c++> function <cpp|url
+    new_window (bool map_flag= true, tree geom= "")>)
   </explain>
 
   <tmdoc-copyright|2012|Joris van der Hoeven>

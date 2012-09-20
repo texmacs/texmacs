@@ -6141,10 +6141,10 @@ tmg_open_buffer_in_window (tmscm arg1, tmscm arg2, tmscm arg3) {
   content in3= tmscm_to_content (arg3);
 
   // TMSCM_DEFER_INTS;
-  new_buffer_in_new_window (in1, in2, in3);
+  url out= new_buffer_in_new_window (in1, in2, in3);
   // TMSCM_ALLOW_INTS;
 
-  return TMSCM_UNSPECIFIED;
+  return url_to_tmscm (out);
 }
 
 tmscm

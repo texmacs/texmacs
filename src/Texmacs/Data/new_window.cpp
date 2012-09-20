@@ -202,12 +202,13 @@ new_buffer_in_this_window (url name, tree doc) {
   switch_to_buffer (name);
 }
 
-void
+url
 new_buffer_in_new_window (url name, tree doc, tree geom) {
   if (is_nil (concrete_buffer (name)))
     create_buffer (name, doc);
   url win= new_window (true, geom);
   window_set_view (win, get_passive_view (name), true);
+  return win;
 }
 
 /******************************************************************************
@@ -224,8 +225,7 @@ create_buffer () {
 url
 open_window (tree geom) {
   url name= make_new_buffer ();
-  new_buffer_in_new_window (name, tree (DOCUMENT), geom);
-  return name;
+  return new_buffer_in_new_window (name, tree (DOCUMENT), geom);
 }
 
 void
