@@ -122,5 +122,7 @@
 
 (tm-define (scheme-completions root)
   (:synopsis "Provide the completions for @root as needed by custom-complete")
-  `(tuple ,root ,@(pt-words-below (pt-find pt-symbols root))))
+  `(tuple ,root 
+     ,@(map string->tmstring 
+            (pt-words-below (pt-find pt-symbols (tmstring->string root))))))
 
