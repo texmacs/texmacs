@@ -126,7 +126,7 @@ qt_widget_rep::plain_window_widget (string title, command quit) {
   if (DEBUG_QT)
     cout << "qt_widget_rep::plain_window_widget() around a " << type_as_string() << LF;
 
-  QTMPlainWindow* win = new QTMPlainWindow(0, this);
+  QTMPlainWindow* win = new QTMPlainWindow(0);
   QLayoutItem*     li = as_qlayoutitem();
   if (li) {
     QLayout* l = li->layout();

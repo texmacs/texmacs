@@ -16,27 +16,30 @@
 void QTMPlainWindow::closeEvent (QCloseEvent* event)
 {
   if (DEBUG_QT) cout << "Close QTMPlainWindow" << LF;
-
-  if (tmwid->ref_count != 0) {
-    concrete(tmwid)->send (SLOT_DESTROY, NULL);
-      // Tell QT not to close the window, qt_window_widget_rep will.
-    event->ignore ();
-  }
+  // Tell QT not to close the window, qt_window_widget_rep will if need be.
+  event->ignore ();
   emit closed();
 }
 
+/* We must basically do the same as QTMPlainWindow::closeEvent, but we
+ choose the other way: send a SLOT_DESTROY, which for qt_tm_widgets just
+ calls the command. This is not personal whim but a problem with the destruction
+ which has to be investigated further.
+ 
+ Also:
+ FIXME! For some reason, not emitting closed(), which actually is supposed to
+ execute the very same command, crashes TeXmacs upon exit.
+ */
 void QTMWindow::closeEvent (QCloseEvent* event)
 {
   if (DEBUG_QT) cout << "Close QTMWindow" << LF;
-	
+
   if (tmwid->ref_count != 0) {
     concrete(tmwid)->send (SLOT_DESTROY, NULL);
     event->ignore ();
   }
   emit closed();
 }
-
-
 
   ////////////////////
 

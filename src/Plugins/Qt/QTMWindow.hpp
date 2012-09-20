@@ -27,6 +27,9 @@
  qt_window_widget_rep). This will allow it to call the associated texmacs
  quit command (and do anything else it requires).
  
+ FIXME: Currently, we are bypassing this mechanism using QObject::connect()
+ inside qt_window_widget's constructor. However, for QTMWindows, we do use it.
+ 
  NOTE: I would like to have a base class common to QTMPlainWindow and QTMWindow
  to enforce the data type for a qt_window_widget. But we cannot "virtual
  inherit" QWidget to do this in a nicer way because QMainWindow does not
@@ -36,11 +39,9 @@ class QTMPlainWindow : public QWidget {
   Q_OBJECT
   
 public:
-  
-  widget tmwid;  //<! The pointer to the qt_window_widget_rep
-  
-  QTMPlainWindow (QWidget* parent, qt_widget_rep* _tmwid) 
-  : QWidget (parent), tmwid (_tmwid) { 
+
+  QTMPlainWindow (QWidget* parent) 
+  : QWidget (parent) { 
     if (DEBUG_QT) cout << "Create QTMPlainWindow" << LF;
   }
   virtual ~QTMPlainWindow () {
