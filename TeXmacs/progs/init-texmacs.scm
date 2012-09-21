@@ -12,40 +12,42 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define boot-start (texmacs-time))
+(define developer-mode-on #f) ; TODO: the C++ code should initialize this.
 
-; FIXME: how do we update this list dynamically? 
-(define keywords-which-define 
-  '(define define-macro define-public define-public-macro provide-public
-    tm-define tm-define-macro tm-menu menu-bind tm-widget))
+(if developer-mode-on
+  (begin
+    ; FIXME: how do we update this list dynamically? 
+    (define-public keywords-which-define 
+      '(define define-macro define-public define-public-macro provide-public
+        tm-define tm-define-macro tm-menu menu-bind tm-widget))
 
-(define old-read read)
-(define (new-read port)
-  "A redefined reader which stores line number and file name in symbols."
-  ; FIXME: handle overloaded redefinitions
-  (let ((form (old-read port)))
-    (if (and (pair? form) (member (car form) keywords-which-define))
-      (let* ((line (source-property form 'line))
-             (filename (source-property form 'filename))
-             (sym  (if (pair? (cadr form)) (caadr form) (cadr form))))
-        (if (and (symbol? sym) ; Just in case
-                 filename)     ; don't set props if read from stdin
-          (begin 
-            (set-symbol-property! sym 'line line)
-            (set-symbol-property! sym 'filename filename)
-            ))))
-    form))
+    (define-public old-read read)
+    (define-public (new-read port)
+      "A redefined reader which stores line number and file name in symbols."
+      ; FIXME: handle overloaded redefinitions
+      (let ((form (old-read port)))
+        (if (and (pair? form) (member (car form) keywords-which-define))
+          (let* ((line (source-property form 'line))
+                 (filename (source-property form 'filename))
+                 (sym  (if (pair? (cadr form)) (caadr form) (cadr form))))
+            (if (and (symbol? sym) ; Just in case
+                     filename)     ; don't set props if read from stdin
+             (begin 
+                (set-symbol-property! sym 'line line)
+                (set-symbol-property! sym 'filename filename)
+                ))))
+        form))
 
-(set! read new-read)
-(fluid-set! current-reader new-read) ; for sessions, etc.
+    (set! read new-read)
 
-(define old-primitive-load primitive-load)
-(define (new-primitive-load filename)
-  ; We explicitly circumvent guile's decision to set the current-reader to #f
-  ; inside ice-9/boot-9.scm, try-module-autoload
-  (with-fluids ((current-reader read))
-    (old-primitive-load filename)))
+    (define-public old-primitive-load primitive-load)
+    (define-public (new-primitive-load filename)
+      ; We explicitly circumvent guile's decision to set the current-reader
+      ; to #f inside ice-9/boot-9.scm, try-module-autoload
+      (with-fluids ((current-reader read))
+        (old-primitive-load filename)))
 
-(set! primitive-load new-primitive-load)
+    (set! primitive-load new-primitive-load)))
 
 ;; TODO: scheme file caching using (set! primitive-load ...) and
 ;; (set! %search-load-path)
