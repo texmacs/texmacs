@@ -204,8 +204,9 @@
   (let ((line (symbol-property sym 'line))
         (filename (symbol-property sym 'filename)))
     (if (and line filename)
-      `(hlink ,(string-append (basename filename) ":" (number->string line))
-              ,filename)
+      (with lno (number->string line)
+        `(hlink ,(string-append (basename filename) ":" lno)
+                ,(string-append filename "?line=" lno)))
       (translate "[symbol properties not found]"))))
 
 (tm-define (doc-symbol-synopsis* sym)
@@ -261,9 +262,9 @@
 (define ($explain-not-found key)
   `(document
     ,($doc-symbol-template (string->symbol key)
-      `(concat "Documentation unavailable. Search"
-        (action " in the manual" 
-                 ,(string-append "(docgrep-in-doc-secure \"" key "\")"))
+      `(concat "Documentation unavailable. Search "
+        (action "the manual"
+                ,(string-append "(docgrep-in-doc-secure \"" key "\")"))
          ", or go to the definition in "
          ,($doc-symbol-properties (string->symbol key))))))
 
@@ -335,39 +336,4 @@
     ===
     (refresh symbol-doc-buttons)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Handy..
-
-(define (go-to-line n)
-  (with-innermost t 'document
-    (with p (tree-cursor-path t)
-      (tree-go-to t n 0))))
-
-(tm-define (show-module-widget)
-  (top-window module-widget "Pick module and symbol..."))
-
-(define (get-current-doc-module)
-  (let ((tt (select (buffer-tree) '(doc-module-header 0))))
-    (if (null? tt)
-      '()
-      (string->module (tree->string (car tt))))))
-
-(define (exp-modules)
-  (map symbol->string (module-exported (get-current-doc-module))))
-
-(tm-define (ask-insert-symbol-doc ssym)
-  (:argument ssym "Symbol")
-  (:proposals ssym (exp-modules))
-  ;(:check-mark "*" (symbol-documented?)) ; right?
-  (insert ($doc-symbol-template (string->symbol ssym) "")))
-
-(kbd-map
-  (:require (in-tmdoc?))
-  ("M-A-x" (interactive ask-insert-symbol-doc)))
-
-(menu-bind tools-menu
-  (:require (in-tmdoc?))
-  (former)
-  ("Insert symbol documentation..." (interactive ask-insert-symbol-doc))
-  ("Open module browser..." (show-module-widget)))
 

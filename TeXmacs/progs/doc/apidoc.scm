@@ -88,7 +88,7 @@
 (define ($doc-symbol-buffer ssym)
   ($tmapidoc
     ($tmdoc-title (string-append "Documentation for " ssym))
-    ($explain-doc* (doc-scm-cache) ssym)))
+    ($doc-explain-scm* ssym)))
 
 (define ($doc-all-modules-buffer)
   ($tmapidoc ($tmdoc-title "All TeXmacs modules")
