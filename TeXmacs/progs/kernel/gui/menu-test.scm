@@ -117,13 +117,15 @@
   (centered
     (resize "500px" "50px"
       (texmacs-output
-        '(document (theorem (document "This is true.")))))
+        '(document (theorem (document "This is true.")))
+        '(style "generic")))
     ======
     (resize "500px" "300px"
       (texmacs-input
         '(with "bg-color" "#fcfcf8"
            (document (proof (document "Trivial."
                                       "But you may add more details."))))
+        '(style "generic")
         (noop) #f))))
 
 (tm-widget (widget7)
@@ -211,7 +213,8 @@
          "font" ,selector-font-family
          "font-series" ,selector-font-series
          "font-shape" ,selector-font-shape
-         "abcdefghij, ABCDEFGHIJ, 0123456789"))))
+         "abcdefghij, ABCDEFGHIJ, 0123456789"))
+     '(style "generic")))
 
 (tm-define (make-multi-with . l)
   (with t (if (selection-active-any?) (selection-tree) "")

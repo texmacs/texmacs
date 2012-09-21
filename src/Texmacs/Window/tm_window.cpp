@@ -138,16 +138,16 @@ enrich_embedded_document (tree body, tree style) {
         initial (orig[i]->label)= orig[i+1];
   tree doc (DOCUMENT);
   doc << compound ("TeXmacs", TEXMACS_VERSION);
-  doc << compound ("style", style);
+  doc << style; //compound ("style", style);
   doc << compound ("body", body);
   doc << compound ("initial", make_collection (initial));
   return doc;
 }
 
 widget
-texmacs_input_widget (tree doc, command cmd, bool continuous) {
+texmacs_input_widget (tree doc, tree style, command cmd, bool continuous) {
   (void) cmd; (void) continuous;
-  doc= enrich_embedded_document (doc, tree (TUPLE, "generic"));
+  doc= enrich_embedded_document (doc, style);
   url       base = get_master_buffer (get_current_buffer ());
   tm_view   curvw= concrete_view (get_current_view ());
   url       name = embedded_name (); create_buffer (name, doc);

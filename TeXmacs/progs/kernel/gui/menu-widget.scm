@@ -44,8 +44,8 @@
     (color :%1 :boolean? :boolean? :integer? :integer?)
     (:menu-wide-label :%1)
     (symbol :string? :*)
-    (texmacs-output :%1)
-    (texmacs-input :%3)
+    (texmacs-output :%2)
+    (texmacs-input :%4)
     (input :%1 :string? :%1 :string?)
     (enum :%3 :string?)
     (choice :%3)
@@ -208,14 +208,15 @@
   (widget-text (translate s) style (color "black") #f))
 
 (define (make-texmacs-output p style)
-  "Make @(texmacs-output :%1) item."
-  (with (tag t) p
-    (widget-texmacs-output (t))))
+  "Make @(texmacs-output :%2) item."
+  (with (tag t tmstyle) p
+    (widget-texmacs-output (t) (tmstyle))))
 
 (define (make-texmacs-input p style)
-  "Make @(texmacs-input :%3) item."
-  (with (tag t cmd cont?) p
-    (widget-texmacs-input (t) (object->command (menu-protect cmd)) cont?)))
+  "Make @(texmacs-input :%4) item."
+  (with (tag t tmstyle cmd cont?) p
+    (widget-texmacs-input (t) (tmstyle) (object->command (menu-protect cmd))
+                          cont?)))
 
 (define (make-menu-input p style)
   "Make @(input :%1 :string? :%1 :string?) menu item."
@@ -578,9 +579,9 @@
 	 ,(lambda (p style bar?) (list (make-menu-text (cadr p) style))))
   (symbol (:string? :*)
 	  ,(lambda (p style bar?) (list (make-menu-symbol p style))))
-  (texmacs-output (:%1)
+  (texmacs-output (:%2)
     ,(lambda (p style bar?) (list (make-texmacs-output p style))))
-  (texmacs-input (:%3)
+  (texmacs-input (:%4)
     ,(lambda (p style bar?) (list (make-texmacs-input p style))))
   (input (:%1 :string? :%1 :string?)
          ,(lambda (p style bar?) (list (make-menu-input p style))))
@@ -679,12 +680,13 @@
   "Expand texmacs-input item @p."
   `(texmacs-input ,(replace-procedures (cadr p))
                   ,(replace-procedures (caddr p))
-                  ,(cadddr p)))
+                  ,(replace-procedures (cadddr p))
+                  ,(car (cdddr p))))
 
 (define (menu-expand-texmacs-output p)
-  "Expand conditional menu @p."
-  (with (tag out) p
-    `(texmacs-output ',(out))))
+  "Expand output menu item @p."
+  (with (tag doc tmstyle) p
+    `(texmacs-output ',(doc) ',(tmstyle))))
 
 (define (menu-expand-input p)
   "Expand input menu item @p."

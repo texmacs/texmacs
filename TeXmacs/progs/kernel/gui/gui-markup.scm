@@ -288,13 +288,14 @@
   (:synopsis "Make a multiple choice list")
   `(list 'choices (lambda (answer) ,cmd) (lambda () ,vals) (lambda () ,mc)))
 
-(tm-define-macro ($texmacs-output doc)
+(tm-define-macro ($texmacs-output doc tmstyle)
   (:synopsis "Make TeXmacs output field")
-  `(list 'texmacs-output (lambda () ,doc)))
+  `(list 'texmacs-output (lambda () ,doc) (lambda () ,tmstyle)))
 
-(tm-define-macro ($texmacs-input doc cmd continuous?)
+(tm-define-macro ($texmacs-input doc tmstyle cmd continuous?)
   (:synopsis "Make TeXmacs input field")
-  `(list 'texmacs-input (lambda () ,doc) (lambda (answer) ,cmd) ,continuous?))
+  `(list 'texmacs-input (lambda () ,doc) (lambda () ,tmstyle) 
+                        (lambda (answer) ,cmd) ,continuous?))
 
 (tm-define-macro ($ink cmd)
   (:synopsis "Make an ink widget")

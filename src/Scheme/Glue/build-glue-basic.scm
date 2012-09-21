@@ -452,8 +452,9 @@
                                        string string string string))
   (widget-hsplit hsplit_widget (widget widget widget))
   (widget-vsplit vsplit_widget (widget widget widget))
-  (widget-texmacs-output texmacs_output_widget (widget content))
-  (widget-texmacs-input texmacs_input_widget (widget content command bool))
+  (widget-texmacs-output texmacs_output_widget (widget content content))
+  (widget-texmacs-input texmacs_input_widget (widget content content 
+                                                     command bool))
   (widget-ink ink_widget (widget command))
   (widget-refresh refresh_widget (widget string))
   (object->promise-widget as_promise_widget (promise_widget object))

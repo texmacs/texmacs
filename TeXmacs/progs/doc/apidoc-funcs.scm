@@ -287,10 +287,8 @@
 (tm-define ($doc-explain-scm key)
   (:synopsis "Return a document with the scheme documentation for @key")
   `(document
-     (surround
-       (freeze (concat (locus (id "__doc__popup__") "")
-                       (use-package "tmdoc-markup")))
-     "" ,($doc-explain-scm* key))))
+     ,($doc-explain-scm* key)
+     (freeze (concat (locus (id "__doc__popup__") "")))))
 
 (tm-define ($doc-explain-macro* key)
   (with docs (doc-retrieve (doc-macro-cache) key (get-output-language))
@@ -316,6 +314,7 @@
   (resize ("100px" "200px" "400px") ("50px" "100px" "150px")
     (texmacs-input
      ,($doc-explain-scm (symbol->string sym))
+     (style "tmdoc")
      (noop) #f)))
 
 (tm-widget (symbol-doc-buttons)

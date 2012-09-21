@@ -79,11 +79,11 @@
   `($colored-glue ,(second x) ,(third x) ,(fourth x) ,(fifth x) ,(sixth x)))
 
 (define (gui-make-texmacs-output x)
-  (require-format x '(texmacs-output :%1))
+  (require-format x '(texmacs-output :%2))
   `($texmacs-output ,@(cdr x)))
 
 (define (gui-make-texmacs-input x)
-  (require-format x '(texmacs-input :%3))
+  (require-format x '(texmacs-input :%4))
   `($texmacs-input ,@(cdr x)))
 
 (define (gui-make-input x)

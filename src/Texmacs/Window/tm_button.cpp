@@ -176,8 +176,8 @@ box_widget (scheme_tree p, string s, color col, bool trans, bool ink) {
 tree enrich_embedded_document (tree body, tree style);
 
 widget
-texmacs_output_widget (tree doc) {
-  doc= enrich_embedded_document (doc, tree (TUPLE, "generic"));
+texmacs_output_widget (tree doc, tree style) {
+  doc= enrich_embedded_document (doc, style);
   drd_info drd ("none", std_drd);
   edit_env env= get_init_environment (doc, drd);
   tree t= extract (doc, "body");
