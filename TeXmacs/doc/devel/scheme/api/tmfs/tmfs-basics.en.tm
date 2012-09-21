@@ -20,7 +20,7 @@
   (if possible or necessary), setting the window title and establishing
   access permissions are the basic operations. Predefined handlers which the
   user usually encounters are <tt|grep>, <tt|help>, <tt|history>,
-  <tt|revision> and <tt|sapi>: they accept a query representing search
+  <tt|revision> and <tt|apidoc>: they accept a query representing search
   strings, files or help pages and render results in the appropriate language
   into a new buffer. The <em|query> is a string in the usual format
   <tt|variable1=value1&variable2=value2>. Its parsing can be done using
@@ -29,10 +29,10 @@
   Situations where using this system makes more sense than regular documents
   are for instance documentation, which must be chosen from several languages
   and possibly be compiled on the fly from various sources (see module
-  <tt|<hlink|doc.sapi|tmfs://sapi/type=module&what=doc.sapi>>) and
-  automatically generated content, like that resulting from interacting from
-  an external system for version control of documents (see handler
-  <tt|version> in module <tt|<hlink|version.version-tmfs|tmfs://sapi/type=module&what=version.version-tmfs>>).
+  <tt|<hlink|doc.apidoc|tmfs://apidoc/type=module&what=doc.apidoc>> and
+  related modules) and automatically generated content, like that resulting
+  from interacting from an external system for version control of documents
+  (see handler <tt|version> in module <tt|<hlink|version.version-tmfs|tmfs://apidoc/type=module&what=version.version-tmfs>>).
 
   <subsection|Implementing a handler>
 
@@ -183,7 +183,8 @@
   <\explain>
     <scm|(tmfs-master-handler (<scm-arg|name> <scm-arg|qry> <scm-arg|doc>)
     <scm-arg|body>)><explain-synopsis|define title handler @name>
-  </explain|A <em|master handler> is...>
+  </explain|A <em|master handler> is... (possibly related to the concept of
+  master document in a project, but this needs checking)>
 
   <\explain>
     <scm|(query-ref <scm-arg|qry> <scm-arg|arg>)><explain-synopsis|return
@@ -216,14 +217,6 @@
     convenience macros <scm|tmfs-load-handler>, <scm|tmfs-save-handler>,
     <scm|tmfs-permission-handler> and <scm|tmfs-title-handler>.
   </explain>
-
-  <subsection|More advanced usage>
-
-  The <TeXmacs> file system is actually a much more complicated beast, with
-  versioning, network access and authentication built in among other things.
-  This documentation should be completed with all those features.
-
-  \;
 
   <tmdoc-copyright|2012|the <TeXmacs> team.>
 </body>
