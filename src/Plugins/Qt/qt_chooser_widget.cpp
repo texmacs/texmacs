@@ -165,7 +165,9 @@ qt_chooser_widget_rep::perform_dialog () {
   QStringList _files;
   QString _filter, _suffix, _caption, _directory;
   _caption = to_qstring (win_title);
-  _directory = QString::fromLocal8Bit (as_charp (directory * "/" * file));
+  char* tmp = as_charp (directory * "/" * file);
+  _directory = QString::fromLocal8Bit (tmp);
+  tm_delete_array (tmp);
   
 #if (QT_VERSION >= 0x040400)
   if (type == "directory") {

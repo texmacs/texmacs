@@ -1048,7 +1048,9 @@ qt_gui_rep::put_graphics_on_clipboard (url file) {
   if ((extension == "bmp") || (extension == "png") ||
       (extension == "jpg") || (extension == "jpeg")) {
     QClipboard *clipboard = QApplication::clipboard();
-    clipboard->setImage(QImage (as_charp (concretize (file))));
+    char* tmp = as_charp (concretize (file));
+    clipboard->setImage (QImage (tmp));
+    tm_delete_array (tmp);
   }
   else {
     // vector formats
@@ -1061,8 +1063,10 @@ qt_gui_rep::put_graphics_on_clipboard (url file) {
    
     string filecontent;
     load_string (as_string (file), filecontent, true);
-
-    QByteArray rawdata= as_charp (filecontent);
+    
+    char* tmp = as_charp (filecontent);
+    QByteArray rawdata (tmp);
+    tm_delete_array(tmp);
 
     QMimeData *mymimeData = new QMimeData;
     mymimeData->setData(mime, rawdata);
