@@ -109,7 +109,7 @@ object scheme_cmd (object cmd);
 
 
 void notify_preferences_loaded ();
-string get_preference (string var);
+string get_preference (string var, string def= "uninitialized");
 
 
 object eval (const char* expr);

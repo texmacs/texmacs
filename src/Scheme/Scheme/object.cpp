@@ -407,9 +407,12 @@ notify_preferences_loaded () {
 }
 
 string
-get_preference (string var) {
-  if (!preferences_ok) return "uninitialized";
-  else return as_string (call ("get-preference", var));
+get_preference (string var, string def) {
+  if (!preferences_ok) return def;
+  else {
+    string pref= as_string (call ("get-preference", var));
+    if (N(pref) == 0) return def; else return pref;    
+  }
 }
 
 /******************************************************************************
