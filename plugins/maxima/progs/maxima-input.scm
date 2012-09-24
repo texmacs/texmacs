@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : init-maxima.scm
+;; MODULE      : maxima-input.scm
 ;; DESCRIPTION : Initialize maxima plugin
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven, 2005  Andrey Grozin
 ;;
@@ -143,7 +143,7 @@
 
   ("<infty>"      "inf")
   ("<emptyset>"   "[]")
-  ("<mathd>"      ",")
+  ("<mathd>"      "1,")
   ("<mathi>"      "%i")
   ("<mathe>"      "%e")
   ("<in>"         "=")

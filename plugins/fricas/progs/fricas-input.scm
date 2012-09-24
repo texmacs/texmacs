@@ -1,8 +1,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : reduce-input.scm
-;; DESCRIPTION : Reduce input converters
+;; MODULE      : fricas-input.scm
+;; DESCRIPTION : Fricas input converters
 ;; COPYRIGHT   : (C) 1999, 2012  Joris van der Hoeven and Andrey Grozin
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
@@ -11,50 +11,50 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (reduce-input)
+(texmacs-module (fricas-input)
   (:use (utils plugins plugin-convert)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Specific conversion routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (reduce-input-var-row r)
+(define (fricas-input-var-row r)
   (if (nnull? r)
       (begin
 	(display ", ")
 	(plugin-input (car r))
-	(reduce-input-var-row (cdr r)))))
+	(fricas-input-var-row (cdr r)))))
 
-(define (reduce-input-row r)
-  (display "(")
+(define (fricas-input-row r)
+  (display "[")
   (plugin-input (car r))
-  (reduce-input-var-row (cdr r))
-  (display ")"))
+  (fricas-input-var-row (cdr r))
+  (display "]"))
 
-(define (reduce-input-var-rows t)
+(define (fricas-input-var-rows t)
   (if (nnull? t)
       (begin
 	(display ", ")
-	(reduce-input-row (car t))
-	(reduce-input-var-rows (cdr t)))))
+	(fricas-input-row (car t))
+	(fricas-input-var-rows (cdr t)))))
 
-(define (reduce-input-rows t)
-  (display "mat(")
-  (reduce-input-row (car t))
-  (reduce-input-var-rows (cdr t))
-  (display ")"))
+(define (fricas-input-rows t)
+  (display "matrix([")
+  (fricas-input-row (car t))
+  (fricas-input-var-rows (cdr t))
+  (display "])"))
 
-(define (reduce-input-descend-last args)
+(define (fricas-input-descend-last args)
   (if (null? (cdr args))
       (plugin-input (car args))
-      (reduce-input-descend-last (cdr args))))
+      (fricas-input-descend-last (cdr args))))
 
-(define (reduce-input-det args)
-  (display "det(")
-  (reduce-input-descend-last args)
+(define (fricas-input-det args)
+  (display "determinant(")
+  (fricas-input-descend-last args)
   (display ")"))
 
-(define (reduce-input-big-around args)
+(define (fricas-input-big-around args)
   (let* ((b `(big-around ,@args))
 	 (op (big-name b))
 	 (sub (big-subscript b))
@@ -62,25 +62,25 @@
 	 (body (big-body b)))
     (cond
         ((== op "int")
-            (begin (display "int(") (plugin-input body)
+            (begin (display "integrate(") (plugin-input body)
                 (if (and sub sup)
-                    (begin (display ",") (plugin-input sub)
-                        (display ",") (plugin-input sup)))))
+                    (begin (display "=") (plugin-input sub)
+                        (display "..") (plugin-input sup)))))
         ((== op "sum")
             (begin (display "sum(") (plugin-input body)
                 (cond
                     ((and sub sup)
                         (begin (display ",")
-                            (plugin-input (string-replace (texmacs->code (tm->tree sub)) "=" ","))
-                            (display ",") (plugin-input sup)))
+                            (plugin-input (texmacs->code (tm->tree sub)))
+                            (display "..") (plugin-input sup)))
                     (sub (begin (display ",") (plugin-input sub))))))
         ((== op "prod")
-            (begin (display "prod(") (plugin-input body)
+            (begin (display "product(") (plugin-input body)
                 (cond
                     ((and sub sup)
                         (begin (display ",")
-                            (plugin-input (string-replace (texmacs->code (tm->tree sub)) "=" ","))
-                            (display ",") (plugin-input sup)))
+                            (plugin-input (texmacs->code (tm->tree sub)))
+                            (display "..") (plugin-input sup)))
                     (sub (begin (display ",") (plugin-input sub))))))
         (else (display op) (display "(") (plugin-input body)))
     (display ")")))
@@ -89,14 +89,15 @@
 ;; Initialization
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(plugin-input-converters reduce
-  (rows reduce-input-rows)
-  (det reduce-input-det)
-  (big-around reduce-input-big-around)
-  ("<infty>"      "infinity")
-  ("<emptyset>"   "{}")
+(plugin-input-converters fricas
+  (rows fricas-input-rows)
+  (det fricas-input-det)
+  (big-around fricas-input-big-around)
+  ("<infty>"      "%infinity")
+  ("<emptyset>"   "[]")
   ("<mathd>"      "1,")
-  ("<mathi>"      "i")
-  ("<mathe>"      "e")
+  ("<mathi>"      "%i")
+  ("<mathe>"      "%e")
+  ("<pi>"         "%pi")
   ("<ldots>"      " .. ")
   ("<cdots>"      " .. "))
