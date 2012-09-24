@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.0.7.16>
 
 <style|tmdoc>
 
@@ -38,8 +38,8 @@
   </equation*>
 
   work. Note that the differential <math|\<mathd\>> is obtained by
-  <shortcut|\<mathd\>>; there should be no <key|*> before it, but you may
-  insert <key|space>. Definite integrals work, too, as well as sums like
+  <shortcut|\<mathd\>>; there should be <key|*> before it. Definite integrals
+  work, too, as well as sums like
 
   <\equation*>
     <big|sum><rsub|n=0><rsup|10>f<around*|(|n|)>
