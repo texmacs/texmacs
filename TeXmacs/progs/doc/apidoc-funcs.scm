@@ -15,6 +15,10 @@
 ;; As usual, procedures prefixed with a dollar sign return strees for display.
 ;; Most of the time they have an unprefixed counterpart which does the work.
 ;;
+;; TODO:
+;;  - use the code indexer when it's ready and ditch ad-hoc parsing made here
+;;  - fix the implementation of refresh-widget to fix the module browser
+;;  - this list
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (doc apidoc-funcs)
@@ -87,15 +91,9 @@
 (tm-define ($module-doc-link module)
   ($link (module-doc-path module) (module->string module)))
 
-(tm-define (module-dependencies module)
-  (throw 'not-implemented
-  "TODO: implement when the module system is decoupled from guile's"))
-
-(tm-define (module-dependencies module)
-  (:require (guile?))
-  (list-filter
-    (map module-name (module-uses (resolve-module module)))
-    (lambda (x) (and (!= x '(guile)) (!= x '(guile-user))))))
+(tm-define (module-dependencies module) 
+  ;TODO
+  '())
 
 (tm-define ($module-dependencies module)
  (cons 'concat
@@ -105,44 +103,39 @@
 (define (module-description m)
   "Description TO-DO")
 
-; (tm-define-macro name ...) creates symbol name$impl.
-; FIXME: symbol? fails for these symbols when read from tm-defined-module.
-; Some problem of scoping?
-(define (tm-demacroify sym)
-  (if (not (symbol? sym))
-    (display "WTF?")
-    (with str (symbol->string sym)
-      (if (and (> (string-length str) 5) (== "$impl" (string-take-right str 5)))
-          (string->symbol (string-drop-right str 5))
-          sym))))
+; This list is incomplete!
+(define keywords
+  '(define-public define-public-macro provide-public tm-define 
+    tm-define-macro tm-menu menu-bind tm-widget))
 
-(define (module-exported-texmacs module)
-  (if (null? module) '()
-      (map (lambda (x) (tm-demacroify (car x)))
-           (list-filter (ahash-table->list tm-defined-module)
-                        (lambda (x) (member module (cdr x)))))))
-
-; FIXME! remove non-exported symbols (but %module-public-interface seems not
-; to work (always empty?))
-(define (module-exported-guile module)
-  (catch #t
-    (lambda ()
-      (map car (ahash-table->list (module-obarray 
-                                    (module-ref (resolve-module module)
-                                                '%module-public-interface)))))
-    (lambda (key . args) '())))
+(define module-exported-cache (make-ahash-table))
 
 (tm-define (module-exported module)
   (:synopsis "List of exported symbols in @module")
-  (list-uniq (append (module-exported-texmacs module) 
-                     (module-exported-guile module))))
+  (or (ahash-ref module-exported-cache module)
+      (and (is-real-module? module)
+        (let* ((p (open-input-file (module-source-path module #t)))
+               (defs '())
+               (sym (lambda (f) (if (pair? (cadr f)) (caadr f) (cadr f))))
+               (add (lambda (f) ;f= form
+                      (if (and (pair? f) (member (car f) keywords))
+                          (set! defs (rcons defs (sym f)))))))
+          (letrec ((r (lambda () (with form (read p)
+                                   (or (eof-object? form) 
+                                       (begin (add form) (r)))))))
+            (r))
+          (ahash-set! module-exported-cache module defs)))))
 
 (tm-define (module-count-exported module)
   (length (module-exported module)))
 
 (tm-define (module-count-undocumented module)
-  ; TODO
-  -1)
+  (with l (module-exported module)
+    (- (length l)
+       (length
+         (list-filter l
+           (lambda (x)
+             (persistent-ref (doc-scm-cache) (symbol->string x))))))))
 
 (tm-define ($doc-module-exported module)
   (with l (module-exported module)
@@ -155,6 +148,7 @@
        `(document (subsection "Symbol documentation")
                   ,@(append-map fun l))))))
 
+; WRONG! what about unloaded modules
 (define (tm-exported? sym)
   (and (symbol? sym) (ahash-ref tm-defined-table sym)))
 
@@ -314,7 +308,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; module browser widget
 ;; FIXME: refresh of choice widgets is not working
-;; FIXME: input widget is not displayed ?
+;; FIXME: the input widget is not displayed ?
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define mw-module "")
