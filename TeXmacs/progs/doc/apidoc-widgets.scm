@@ -19,7 +19,7 @@
 
 (texmacs-module (doc apidoc-widgets)
   (:use (doc apidoc-funcs)
-        (doc apidoc-collet)
+        (doc apidoc-collect)
         (kernel texmacs tm-preferences)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
