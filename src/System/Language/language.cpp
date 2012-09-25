@@ -144,7 +144,7 @@ init_succession_status_table () {
 ******************************************************************************/
 
 language_rep::language_rep (string s):
-  rep<language> (s), hl_lan (0) {}
+  rep<language> (s), lan_name (s), hl_lan (0) {}
 
 string
 language_rep::get_group (string s) {
@@ -168,4 +168,84 @@ string
 language_rep::get_color (tree t, int start, int end) {
   (void) t; (void) start; (void) end;
   return "";
+}
+
+/******************************************************************************
+ * Encode and decode colors for syntax highlighting
+ ******************************************************************************/
+
+hashmap<string,int>
+language_rep::color_encoding(type_helper<int>::init, 32);
+
+void
+initialize_color_encodings () {
+  language_rep::color_encoding ("comment")= 1;
+  language_rep::color_encoding ("keyword")= 2;
+  language_rep::color_encoding ("error")= 3;
+  language_rep::color_encoding ("constant")= 10;
+  language_rep::color_encoding ("constant_identifier")= 11;
+  language_rep::color_encoding ("constant_function")= 12;
+  language_rep::color_encoding ("constant_type")= 13;
+  language_rep::color_encoding ("constant_category")= 14;
+  language_rep::color_encoding ("constant_module")= 15;
+  language_rep::color_encoding ("constant_number")= 16;
+  language_rep::color_encoding ("constant_string")= 17;
+  language_rep::color_encoding ("variable")= 20;
+  language_rep::color_encoding ("variable_identifier")= 21;
+  language_rep::color_encoding ("variable_function")= 22;
+  language_rep::color_encoding ("variable_type")= 23;
+  language_rep::color_encoding ("variable_category")= 24;
+  language_rep::color_encoding ("variable_module")= 25;
+  language_rep::color_encoding ("declare")= 30;
+  language_rep::color_encoding ("declare_identifier")= 31;
+  language_rep::color_encoding ("declare_function")= 32;
+  language_rep::color_encoding ("declare_type")= 33;
+  language_rep::color_encoding ("declare_category")= 34;
+  language_rep::color_encoding ("declare_module")= 35;
+}
+
+void
+initialize_color_decodings (string lan_name) {
+  language lan= prog_language(lan_name);
+  string pfx= "syntax:" * lan->lan_name * ":";
+  lan->color_decoding (-1)= get_preference (pfx * "none", "red");
+  lan->color_decoding (1) = get_preference (pfx * "comment", "brown");
+  lan->color_decoding (2) = get_preference (pfx * "keyword", "#309090");
+  lan->color_decoding (3) = get_preference (pfx * "error", "dark red");
+  lan->color_decoding (10)= get_preference (pfx * "constant", "#4040c0");
+  lan->color_decoding (11)= get_preference (pfx * "constant_identifier", "#4040c0");
+  lan->color_decoding (12)= get_preference (pfx * "constant_function", "#4040c0");
+  lan->color_decoding (13)= get_preference (pfx * "constant_type", "#4040c0");
+  lan->color_decoding (14)= get_preference (pfx * "constant_category", "#4040c0");
+  lan->color_decoding (15)= get_preference (pfx * "constant_module", "#4040c0");
+  lan->color_decoding (16)= get_preference (pfx * "constant_number", "#4040c0");
+  lan->color_decoding (17)= get_preference (pfx * "constant_string", "dark grey");
+  lan->color_decoding (20)= get_preference (pfx * "variable", "#606060");
+  lan->color_decoding (21)= get_preference (pfx * "variable_identifier", "#204080");
+  lan->color_decoding (22)= get_preference (pfx * "variable_function", "#606060");
+  lan->color_decoding (23)= get_preference (pfx * "variable_type", "#00c000");
+  lan->color_decoding (24)= get_preference (pfx * "variable_category", "#00c000");
+  lan->color_decoding (25)= get_preference (pfx * "variable_module", "#00c000");
+  lan->color_decoding (30)= get_preference (pfx * "declare", "#0000c0");
+  lan->color_decoding (31)= get_preference (pfx * "declare_identifier", "#0000c0");
+  lan->color_decoding (32)= get_preference (pfx * "declare_function", "#0000c0");
+  lan->color_decoding (33)= get_preference (pfx * "declare_type", "#0000c0");
+  lan->color_decoding (34)= get_preference (pfx * "declare_category", "magenta");
+  lan->color_decoding (35)= get_preference (pfx * "declare_module", "#0000c0");
+}
+
+int
+encode_color (string s) {
+  if (N(language_rep::color_encoding) == 0) initialize_color_encodings ();
+  if (language_rep::color_encoding->contains (s))
+    return language_rep::color_encoding[s];
+  else return -1;
+}
+
+string
+decode_color (string lan_name, int c) {
+  language lan= prog_language (lan_name);
+  if (N(lan->color_decoding) == 0) initialize_color_decodings (lan_name);
+  if (lan->color_decoding->contains (c)) return lan->color_decoding[c];
+  else return "";
 }

@@ -254,7 +254,8 @@
   (packrat-parse packrat_parse (path string string content))
   (packrat-correct? packrat_correct (bool string string content))
   (packrat-context packrat_context (object string string content path))
-
+  (syntax-read-preferences initialize_color_decodings (void string))
+  
   ;; further conversion routines for trees and strings
   (parse-texmacs texmacs_document_to_tree (tree string))
   (serialize-texmacs tree_to_texmacs (string tree))

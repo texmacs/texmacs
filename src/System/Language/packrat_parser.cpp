@@ -12,6 +12,7 @@
 #include "packrat_parser.hpp"
 #include "analyze.hpp"
 #include "drd_std.hpp"
+#include "language.hpp" //(en|de)code_color
 
 extern tree the_et;
 bool packrat_invalid_colors= false;
@@ -21,6 +22,7 @@ bool packrat_invalid_colors= false;
 ******************************************************************************/
 
 packrat_parser_rep::packrat_parser_rep (packrat_grammar gr):
+  lan_name(gr->lan_name),
   grammar (gr->grammar),
   productions (gr->productions),
   properties (gr->properties),

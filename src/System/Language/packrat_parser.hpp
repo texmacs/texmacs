@@ -18,6 +18,8 @@
 
 class packrat_parser_rep: concrete_struct {
 public:
+  string                    lan_name;
+
   hashmap<C,array<C> >      grammar;
   hashmap<C,tree>           productions;
   hashmap<D,string>         properties;

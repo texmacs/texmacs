@@ -66,7 +66,7 @@ verb_language_rep::get_color (tree t, int start, int end) {
   if (start >= end) return "";
   array<int> cols= obtain_highlight (t, hl_lan);
   if (start < N(cols) && cols[start] != 0)
-    return decode_color (cols[start]);
+    return decode_color (res_name, cols[start]);
   return "";
 }
 

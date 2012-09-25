@@ -26,8 +26,6 @@ object packrat_context (string lan, string s, tree in, path in_pos);
 bool   packrat_select (string lan, string s, tree in, path in_pos,
 		       path& p1, path& p2, int mode);
 
-int    encode_color (string s);
-string decode_color (int c);
 void   packrat_highlight (string lan, string s, tree t);
 //array<int> packrat_colors (string lan, string s, tree t);
 

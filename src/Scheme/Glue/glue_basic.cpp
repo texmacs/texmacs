@@ -2906,6 +2906,19 @@ tmg_packrat_context (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
 }
 
 tmscm
+tmg_syntax_read_preferences (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "syntax-read-preferences");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  initialize_color_decodings (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_parse_texmacs (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "parse-texmacs");
 
@@ -6770,6 +6783,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("packrat-parse",  tmg_packrat_parse, 3, 0, 0);
   tmscm_install_procedure ("packrat-correct?",  tmg_packrat_correctP, 3, 0, 0);
   tmscm_install_procedure ("packrat-context",  tmg_packrat_context, 4, 0, 0);
+  tmscm_install_procedure ("syntax-read-preferences",  tmg_syntax_read_preferences, 1, 0, 0);
   tmscm_install_procedure ("parse-texmacs",  tmg_parse_texmacs, 1, 0, 0);
   tmscm_install_procedure ("serialize-texmacs",  tmg_serialize_texmacs, 1, 0, 0);
   tmscm_install_procedure ("parse-texmacs-snippet",  tmg_parse_texmacs_snippet, 1, 0, 0);
