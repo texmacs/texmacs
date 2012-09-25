@@ -30,13 +30,25 @@
 
 (tm-define (module->string module)
   (:synopsis "Formats a module in list format (some module) as some.module")
-  (if (list? module)
-      (string-join (map symbol->string module) ".")
-      (symbol->string module)))
+  (cond ((list? module)
+         (string-join (map symbol->string module) "."))
+        ((symbol? module)
+         (symbol->string module))
+        (else "")))
 
 (define (module->name module)
-  "Retrieves the name of the file for @module, without any extension"
+  "Retrieves the name of the file for @module, without extension"
   (symbol->string (cAr module)))
+
+(define (module->path module)
+  "Returns the full path of the given module, without extension"
+  (url-concretize
+    (string-append "$TEXMACS_PATH/progs/"
+      (cond ((list? module)
+             (string-join (map symbol->string module) "/"))
+            ((symbol? module)
+             (symbol->string module))
+            (else "")))))
 
 (define (tree->symbol t)
   (string->symbol (tree->string t)))
@@ -58,11 +70,7 @@
     (and (string? sd) (== "guile" (string-take sd 5)))))
 
 (tm-define (is-real-module? module)
-  (url-exists? 
-    (string->url 
-      (string-append "$TEXMACS_PATH/progs/"
-                     (string-join (map symbol->string module) "/")
-                     ".scm"))))
+  (url-exists? (string->url (string-append (module->path module) ".scm"))))
 
 (define (module-source-path module full?)
   (string-concatenate
@@ -150,35 +158,42 @@
 (define (tm-exported? sym)
   (and (symbol? sym) (ahash-ref tm-defined-table sym)))
 
-; FIXME: traverse directories rather than using tm-defined-module
-; (will all modules be listed?)
-(define _list-modules_ #f) ; 
-(define (list-modules)
-  (if (== #f _list-modules_)
-      (set! _list-modules_
-        (list-sort
-          (list-filter
-            (list-uniq 
-              (append-map cdr (ahash-table->list tm-defined-module)))
-            (lambda (x) (!= x '(guile-user)))) ; HACK
-          module-leq?)))
-  _list-modules_)
+(define (dir-with-access? path)
+  (and (access? path (logior R_OK X_OK))
+       (== 'directory (stat:type (stat path)))))
 
-(define (list-submodules root)
-  (with l1 (length root)
-    (list-sort
-      (list-uniq
-        (list-fold 
-          (lambda (cur done)
-            (with l2 (length cur)
-              (cond ((or (< l2 l1) (== cur root)) done) 
-                    ((== root (list-head cur l1))
-                     (if (== l2 l1) 
-                         (cons (list-head cur l1) done)
-                         (cons (list-head cur (+ l1 1)) done)))
-                    (else done))))
-          '() (list-modules)))
-      module-leq?)))
+(define (list-submodules module)
+  (with full (module->path module)
+    (if (not (dir-with-access? full))
+      '()
+      (let* ((dir (opendir full))
+             (entries '())
+             (add (lambda (s)
+                  (set! entries 
+                    (rcons entries (rcons module (string->symbol s)))))))
+        (do ((entry (readdir dir) (readdir dir)))
+            ((eof-object? entry))
+            (cond ((string-starts? entry ".") (noop))
+                  ((string-ends? entry ".scm") 
+                   (add (string-drop-right entry 4)))
+                  ((dir-with-access? (string-append full "/" entry))
+                   (add entry))))
+        (closedir dir)
+        entries))))
+
+(define (recurse-modules ml) ;module list
+  (cond ((null? ml) '())
+        ((npair? ml)
+         (if (is-real-module? ml) (list ml)
+             (recurse-modules (list-submodules ml))))
+        ((null? (cdr ml))
+         (if (is-real-module? (car ml)) (list (car ml))
+             (recurse-modules (list-submodules (car ml)))))
+        (else
+         (if (is-real-module? (car ml))
+             (cons (car ml) (recurse-modules (cdr ml)))
+             (append (recurse-modules (list-submodules (car ml)))
+                     (recurse-modules (cdr ml)))))))
 
 (define ($doc-module-branch m)
   `(branch ,(symbol->string (cAr m)) ,(module-doc-path m)))
@@ -298,25 +313,27 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; module browser widget
+;; FIXME: refresh of choice widgets is not working
+;; FIXME: input widget is not displayed ?
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define mw-all-modules (map module->string (list-modules)))
-(tm-define mw-all-symbols (map symbol->string (module-exported '())))
 (tm-define mw-module "")
+
 (tm-define mw-symbol "")
 
-(tm-define (mw-update-symbols module)
-  (set! mw-all-symbols (map symbol->string (module-exported module))))
+; don't make this a variable or we'll construct it when this module loads
+(tm-define (mw-all-modules)
+  (map module->string (recurse-modules '(()))))
+
+(tm-define (mw-all-symbols)
+  (map symbol->string (module-exported (string->module mw-module))))
 
 (tm-widget (module-symbols-widget)
-  (scrollable (choice (set! mw-symbol answer) mw-all-symbols "")))
+  (scrollable (choice (set! mw-symbol answer) (mw-all-symbols) "")))
 
 (tm-widget (symbol-doc-widget)
   (resize ("100px" "200px" "400px") ("50px" "100px" "150px")
-    (texmacs-input
-     ,($doc-explain-scm (symbol->string sym))
-     (style "tmdoc")
-     (noop) #f)))
+    (texmacs-input ($doc-explain-scm mw-symbol) (style "tmdoc") (noop) #f)))
 
 (tm-widget (symbol-doc-buttons)
  (explicit-buttons >>
@@ -327,13 +344,12 @@
   (vertical
     (hsplit
       (scrollable 
-        (choice (mw-update-symbols (string->module answer))
-                mw-all-modules
+        (choice (set! mw-module answer)
+                (mw-all-modules)
                 ""))
       (refresh module-symbols-widget))
     ===
     (refresh symbol-doc-widget)
     ===
     (refresh symbol-doc-buttons)))
-
 

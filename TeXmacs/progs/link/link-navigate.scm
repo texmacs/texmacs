@@ -354,8 +354,8 @@
 
 ;; TEMPORARY: we have to decide whether this makes sense as one of the
 ;; properties of a format as defined in define-format. We also have to
-;; decide whether there is a default handler which won't work in some
-;; cases (most notably for texmacs files) or if require explicit naming
+;; decide whether to always use a default handler which won't work in some
+;; cases (most notably for texmacs files) or if we require explicit naming
 ;; of the handler for each format created.
 (define (query-handler-for-format fm)
   (if (== fm "generic-file") default-query-handler #f))
