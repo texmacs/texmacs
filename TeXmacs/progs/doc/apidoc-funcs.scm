@@ -175,19 +175,20 @@
         (closedir dir)
         entries))))
 
-(define (recurse-modules ml) ;module list
+(tm-define (list-submodules-recursive ml)
+  (:synopsis "Return all submodules, recursively, for module list @ml")
   (cond ((null? ml) '())
         ((npair? ml)
          (if (is-real-module? ml) (list ml)
-             (recurse-modules (list-submodules ml))))
+             (list-submodules-recursive (list-submodules ml))))
         ((null? (cdr ml))
          (if (is-real-module? (car ml)) (list (car ml))
-             (recurse-modules (list-submodules (car ml)))))
+             (list-submodules-recursive (list-submodules (car ml)))))
         (else
          (if (is-real-module? (car ml))
-             (cons (car ml) (recurse-modules (cdr ml)))
-             (append (recurse-modules (list-submodules (car ml)))
-                     (recurse-modules (cdr ml)))))))
+             (cons (car ml) (list-submodules-recursive (cdr ml)))
+             (append (list-submodules-recursive (list-submodules (car ml)))
+                     (list-submodules-recursive (cdr ml)))))))
 
 (define ($doc-module-branch m)
   `(branch ,(symbol->string (cAr m)) ,(module-doc-path m)))
@@ -303,47 +304,4 @@
 (tm-define ($doc-explain-macro* key)
   (with docs (doc-retrieve (doc-macro-cache) key (get-output-language))
     (if (null? docs) ($explain-not-found key) (doc-explain-sub docs))))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; module browser widget
-;; FIXME: refresh of choice widgets is not working
-;; FIXME: the input widget is not displayed ?
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define mw-module "")
-
-(tm-define mw-symbol "")
-
-; don't make this a variable or we'll construct it when this module loads
-(tm-define (mw-all-modules)
-  (map module->string (recurse-modules '(()))))
-
-(tm-define (mw-all-symbols)
-  (map symbol->string (module-exported (string->module mw-module))))
-
-(tm-widget (module-symbols-widget)
-  (scrollable (choice (set! mw-symbol answer) (mw-all-symbols) "")))
-
-(tm-widget (symbol-doc-widget)
-  (resize ("100px" "200px" "400px") ("50px" "100px" "150px")
-    (texmacs-input ($doc-explain-scm mw-symbol) (style "tmdoc") (noop) #f)))
-
-(tm-widget (symbol-doc-buttons)
- (explicit-buttons >>
-   ("Insert template"
-    (insert ($doc-symbol-template (string->symbol mw-symbol) "")))))
-
-(tm-widget (module-widget)
-  (vertical
-    (hsplit
-      (scrollable 
-        (choice (set! mw-module answer)
-                (mw-all-modules)
-                ""))
-      (refresh module-symbols-widget))
-    ===
-    (refresh symbol-doc-widget)
-    ===
-    (refresh symbol-doc-buttons)))
 
