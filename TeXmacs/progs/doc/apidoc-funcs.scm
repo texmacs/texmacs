@@ -135,7 +135,7 @@
        (length
          (list-filter l
            (lambda (x)
-             (persistent-ref (doc-scm-cache) (symbol->string x))))))))
+             (persistent-has? (doc-scm-cache) (symbol->string x))))))))
 
 (tm-define ($doc-module-exported module)
   (with l (module-exported module)
