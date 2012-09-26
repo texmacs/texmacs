@@ -27,7 +27,7 @@
   ,(string->symbol " ") ,(string->symbol ";") 
   ,(string->symbol ",") ,(string->symbol ":") 
   - / [ ] ! * ,(string->symbol "|") i j ss SS oe OE ae AE
-  AA DH L NG O S TH aa dh dj l ng o th pounds colon and
+  AA DH L NG O S TH aa dh dj l ng o th pounds colon and lq rq
   quad qquad enspace thinspace par smallskip medskip bigskip
   noindent newline linebreak nobreak nolinebreak strut
   pagebreak nopagebreak newpage newdoublepage clearpage cleardoublepage

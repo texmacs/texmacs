@@ -286,6 +286,8 @@ latex_symbol_to_tree (string s) {
       if (s == " ")      return " ";
       if (s == "-")      return "";
       if (s == "/")      return "";
+      if (s == "lq")     return "`";
+      if (s == "rq")     return "'";
       if (s == "AA")     return "\xC5";
       if (s == "AE")     return "\xC6";
       if (s == "DH")     return "\xD0";
