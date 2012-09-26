@@ -71,7 +71,10 @@ scheme_language_rep::get_color (tree t, int start, int end) {
   string s= t->label;
   for (int i= max (0, start-1000); i <= start; i++)
     switch (s[i]) {
-    case ';': return decode_color("scheme", encode_color("comment"));
+    case ';':
+      if (i>1 && s[i-1] == '\\' && s[i-2] == '#')
+        break;
+      return decode_color("scheme", encode_color("comment"));
     case '\042':
       i++;
       while (i <= start && s[i] != '\042')
