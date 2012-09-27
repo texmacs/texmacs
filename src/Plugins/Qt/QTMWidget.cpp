@@ -602,24 +602,27 @@ mouse_state (QMouseEvent* event, bool flag) {
   if ((bstate & Qt::XButton1       ) != 0) i += 8;
   if ((bstate & Qt::XButton2       ) != 0) i += 16;
 #ifdef Q_WS_MAC
-  if ((kstate & Qt::AltModifier    ) != 0) i = 2;
-  if ((kstate & Qt::MetaModifier   ) != 0) i = 4;
+    // We emulate right and middle clicks with ctrl and option, but we pass the
+    // modifiers anyway: old code continues to work and new one can use them.
+  if ((kstate & Qt::MetaModifier   ) != 0) i = 1024+4; // control key
+  if ((kstate & Qt::AltModifier    ) != 0) i = 2048+2; // option key
   if ((kstate & Qt::ShiftModifier  ) != 0) i += 256;
-  if ((kstate & Qt::ControlModifier) != 0) i += 2048;
+  if ((kstate & Qt::ControlModifier) != 0) i += 4096;   // cmd key
 #else
   if ((kstate & Qt::ShiftModifier  ) != 0) i += 256;
-  if ((kstate & Qt::ControlModifier) != 0) i += 512;
+  if ((kstate & Qt::ControlModifier) != 0) i += 1024;
   if ((kstate & Qt::AltModifier    ) != 0) i += 2048;
-  if ((kstate & Qt::MetaModifier   ) != 0) i += 16384;
+  if ((kstate & Qt::MetaModifier   ) != 0) i += 4096;
 #endif
   return i;
 }
 
 static string
 mouse_decode (unsigned int mstate) {
-  if      (mstate & 1 ) return "left";
-  else if (mstate & 2 ) return "middle";
+  if (mstate & 2 ) return "middle";
   else if (mstate & 4 ) return "right";
+    // we check for left clicks after the others for macos (see ifdef in mouse_state)
+  else if (mstate & 1 ) return "left";
   else if (mstate & 8 ) return "up";
   else if (mstate & 16) return "down";
   return "unknown";
