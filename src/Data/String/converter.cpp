@@ -152,7 +152,26 @@ converter_rep::load () {
     hashtree<char,string> dic;
     hashtree_from_dictionary (dic, "cork-escaped-to-ascii", BIT2BIT, UTF8, false);
     ht = dic;
-  }   
+  }
+  else if (from=="Cork" && to=="SourceCode" ) {
+    hashtree<char,string> dic;
+    hashtree_from_dictionary (dic,"corktounicode", BIT2BIT, UTF8, false);
+      //hashtree_from_dictionary (dic,"cork-unicode-oneway", BIT2BIT, UTF8, false);
+    hashtree_from_dictionary (dic,"tmuniversaltounicode", BIT2BIT, UTF8, false);
+    hashtree_from_dictionary (dic,"symbol-unicode-oneway", BIT2BIT, UTF8, false);
+    hashtree_from_dictionary (dic,"symbol-unicode-math", BIT2BIT, UTF8, false);
+    hashtree_from_dictionary (dic,"cork-to-real-ascii", BIT2BIT, UTF8, false);
+    ht = dic;
+  }
+  else if (from=="SourceCode" && to=="Cork") {
+    hashtree<char,string> dic;
+    hashtree_from_dictionary (dic,"corktounicode", UTF8, BIT2BIT, true);
+    hashtree_from_dictionary (dic,"unicode-cork-oneway", UTF8, BIT2BIT, false);
+    hashtree_from_dictionary (dic,"tmuniversaltounicode", UTF8, BIT2BIT, true);
+    hashtree_from_dictionary (dic,"unicode-symbol-oneway", UTF8, BIT2BIT, true);
+    hashtree_from_dictionary (dic,"cork-to-real-ascii", UTF8, BIT2BIT, true);
+    ht = dic;
+  }
 }
 
 /******************************************************************************
@@ -190,6 +209,8 @@ string
 convert_to_cork (string input, string from) {
   if (from == "UTF-8")
     return utf8_to_cork (input);
+  else if (from == "SourceCode")
+    return sourcecode_to_cork (input);
 #ifdef USE_ICONV
   string str= convert_using_iconv (input, from, "UTF-8");
   return utf8_to_cork (str);
@@ -202,6 +223,8 @@ string
 convert_from_cork (string input, string to) {
   if (to == "UTF-8")
     return cork_to_utf8 (input);
+  else if (to == "SourceCode")
+    return cork_to_sourcecode (input);
 #ifdef USE_ICONV
   string str = cork_to_utf8 (input);
   return convert_using_iconv (str, "UTF-8", to);
@@ -253,8 +276,42 @@ utf8_to_cork (string input) {
 }
 
 string
+sourcecode_to_cork (string input) {
+  converter conv= load_converter ("SourceCode", "Cork");
+  int start, i, n= N(input);
+  string output;
+  for (i=0; i<n; ) {
+    start= i;
+    unsigned int code= decode_from_utf8 (input, i);
+    string s= input (start, i);
+    string r= apply (conv, s);
+    if (r == s && code >= 256)
+      r= "<#" * as_hexadecimal (code) * ">";
+    output << r;
+  }
+  return output;
+}
+
+string
 cork_to_utf8 (string input) {
   converter conv= load_converter ("Cork", "UTF-8");
+  int start= 0, i, n= N(input);
+  string r;
+  for (i=0; i<n; i++)
+    if (input[i] == '<' && i+1<n && input[i+1] == '#') {
+      r << apply (conv, input (start, i));
+      start= i= i+2;
+      while (i<n && input[i] != '>') i++;
+      r << encode_as_utf8 (from_hexadecimal (input (start, i)));
+      start= i+1;
+    }
+  r << apply (conv, input (start, n));
+  return r;
+}
+
+string
+cork_to_sourcecode (string input) {
+  converter conv= load_converter ("Cork", "SourceCode");
   int start= 0, i, n= N(input);
   string r;
   for (i=0; i<n; i++)
