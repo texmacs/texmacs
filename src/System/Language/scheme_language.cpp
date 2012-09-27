@@ -76,6 +76,8 @@ scheme_language_rep::get_color (tree t, int start, int end) {
         break;
       return decode_color("scheme", encode_color("comment"));
     case '\042':
+      if (i>1 && s[i-1] == '\\' && s[i-2] == '#')
+        break;
       i++;
       while (i <= start && s[i] != '\042')
 	if (s[i] == '\\' && i < start) i += 2;
