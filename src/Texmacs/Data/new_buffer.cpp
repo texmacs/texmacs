@@ -395,7 +395,7 @@ pretend_buffer_autosaved (url name) {
 
 tree
 attach_subformat (tree t, url u, string fm) {
-  if (fm != "verbatim") return t;
+  if (fm != "verbatim" && fm != "scheme") return t;
   string s= suffix (u);
   if (s == "scm") fm= "scheme";
   if (s == "cpp" || s == "hpp" || s == "cc" || s == "hh") fm= "cpp";

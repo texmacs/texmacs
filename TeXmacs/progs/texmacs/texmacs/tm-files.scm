@@ -54,7 +54,7 @@
   (learn-interactive 'recent-buffer (list (cons "0" (url->unix name)))))
 
 (define (has-faithful-format? name)
-  (in? (url-suffix name) '("tm" "ts" "tp" "stm" "tmml")))
+  (in? (url-suffix name) '("tm" "ts" "tp" "stm" "tmml" "scm")))
 
 (define (save-buffer-post name opts)
   ;;(display* "save-buffer-post " name "\n")

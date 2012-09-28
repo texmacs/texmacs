@@ -20,9 +20,9 @@
 (define (texmacs-recognizes? s)
   (and (string? s)
        (or (string-starts? s "<TeXmacs")
-	   (string-starts? s "\\(\\)(TeXmacs")
-	   (string-starts? s "TeXmacs")
-	   (string-starts? s "edit"))))
+           (string-starts? s "\\(\\)(TeXmacs")
+           (string-starts? s "TeXmacs")
+           (string-starts? s "edit"))))
 
 (define-format texmacs
   (:name "TeXmacs")
@@ -55,7 +55,7 @@
   (and (string? s) (string-starts? s "(document (TeXmacs")))
 
 (define-format stm
-  (:name "Scheme")
+  (:name "TeXmacs Scheme")
   (:suffix "stm")
   (:must-recognize stm-recognizes?))
 
@@ -72,6 +72,26 @@
   (:function stm-snippet->texmacs))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Scheme source files
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-format scheme
+  (:name "Scheme source")
+  (:suffix "scm"))
+
+(define (texmacs->scheme x . opts)
+  (apply texmacs->verbatim (cons x opts)))
+
+(define (scheme->texmacs x . opts)
+  (apply verbatim->texmacs (cons x opts)))
+
+(converter texmacs-tree scheme-document
+  (:function texmacs->scheme))
+
+(converter scheme-document texmacs-tree
+  (:function scheme->texmacs))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Verbatim
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -84,13 +104,13 @@
 (tm-define (texmacs->verbatim x . opts)
   (if (list-1? opts) (set! opts (car opts)))
   (let* ((wrap? (== (assoc-ref opts "texmacs->verbatim:wrap") "on"))
-	 (enc (or (assoc-ref opts "texmacs->verbatim:encoding") "utf-8")))
+         (enc (or (assoc-ref opts "texmacs->verbatim:encoding") "utf-8")))
     (cpp-texmacs->verbatim x wrap? enc)))
 
 (tm-define (texmacs->verbatim-snippet x . opts)
   (if (list-1? opts) (set! opts (car opts)))
   (let* ((wrap? (== (assoc-ref opts "texmacs->verbatim:wrap") "on"))
-	 (enc (or (assoc-ref opts "texmacs->verbatim:encoding") "utf-8")))
+         (enc (or (assoc-ref opts "texmacs->verbatim:encoding") "utf-8")))
     ;; FIXME: dirty hack for "copy to verbatim" of code snippets
     (if (or (== (get-env "mode") "prog") (== (get-env "font-family") "tt"))
         (set! wrap? #f))
@@ -99,18 +119,18 @@
 (tm-define (verbatim->texmacs x . opts)
   (if (list-1? opts) (set! opts (car opts)))
   (let* ((wrap? (== (assoc-ref opts "verbatim->texmacs:wrap") "on"))
-	 (enc (or (assoc-ref opts "verbatim->texmacs:encoding") "utf-8")))
+         (enc (or (assoc-ref opts "verbatim->texmacs:encoding") "utf-8")))
     (cpp-verbatim->texmacs x wrap? enc)))
 
 (tm-define (verbatim-snippet->texmacs x . opts)
   (if (list-1? opts) (set! opts (car opts)))
   (let* ((wrap? (== (assoc-ref opts "verbatim->texmacs:wrap") "on"))
-	 (enc (or (assoc-ref opts "verbatim->texmacs:encoding") "utf-8")))
+         (enc (or (assoc-ref opts "verbatim->texmacs:encoding") "utf-8")))
     (cpp-verbatim-snippet->texmacs x wrap? enc)))
 
 (define-format verbatim
-  (:name "Verbatim")
-  (:suffix "txt"))
+  (:name "Verbatim"))
+;;(:suffix "txt"))
 
 (converter verbatim-document texmacs-tree
   (:function-with-options verbatim->texmacs)
