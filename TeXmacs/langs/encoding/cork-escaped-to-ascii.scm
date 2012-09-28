@@ -16,8 +16,7 @@
 ;; ! we need to input double backslash to really get only one
 ;; and 8 (!!!) to really get two! 
 
-("#00"	"\\x00");!! this character occurs in postscript images raw-data but never gets
-;; escaped through here. Don't know why. That breaks xml...
+("#00"	"\\x00")
 ("#01"	"\\x01")
 ("#02"	"\\x02")
 ("#03"	"\\x03")
@@ -52,7 +51,7 @@
 ("#20"	" ")
 ("#21"	"!")
 ("#22"	"&quot;")
-("#23"	"#")
+("#23"	"#23")      ; "#" alone would be interpreted as #00.  
 ("#24"	"$")
 ("#25"	"%")
 ("#26"	"&amp;")
