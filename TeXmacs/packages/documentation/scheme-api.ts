@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.16>
+<TeXmacs|1.0.7.15>
 
 <style|source>
 
@@ -22,7 +22,7 @@
 
   <use-package|tmdoc-markup>
 
-  <use-module|(doc sapi-markup)>
+  <use-module|(doc apidoc-markup)>
 
   <\active*>
     <\src-comment>
@@ -96,6 +96,8 @@
   <assign|doc-glue-traverse|<traverse|<macro|root|<extern|doc-glue-traverse|<arg|root>>>>>
 
   <drd-props|doc-glue-traverse|arity|1>
+
+  \;
 </body>
 
 <\initial>
