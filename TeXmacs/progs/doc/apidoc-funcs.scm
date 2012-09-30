@@ -212,11 +212,14 @@
 
 (tm-define ($doc-symbol-properties sym)
   (let ((line (symbol-property sym 'line))
+        (column (symbol-property sym 'column))
         (filename (symbol-property sym 'filename)))
-    (if (and line filename)
-      (with lno (number->string line)
+    (if (and line column filename)
+      (let ((lno (number->string line))
+            (cno (number->string column)))
         `(hlink ,(string-append (basename filename) ":" lno)
-                ,(string-append filename "?line=" lno)))
+                ,(string-append filename "?line=" lno
+                                         "&column=" cno)))
       (translate "[symbol properties not found]"))))
 
 (tm-define (doc-symbol-synopsis* sym)
