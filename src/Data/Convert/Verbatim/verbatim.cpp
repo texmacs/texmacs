@@ -224,11 +224,24 @@ var_cork_to_utf8 (string s) {
 }
 
 string
+var_cork_to_sourcecode (string s) {
+  string r;
+  for (int i=0; i<N(s); ) {
+    int start= i;
+    while (i<N(s) && s[i] != '\n') i++;
+    r << cork_to_sourcecode (s (start, i));
+    if (i<N(s)) { r << '\n'; i++; }
+  }
+  return r;
+}
+
+string
 tree_to_verbatim (tree t, bool wrap, string enc) {
   if (enc == "default") enc= "utf-8";
   string buf= as_verbatim (t, wrap);
   if (enc == "utf-8") buf= var_cork_to_utf8 (buf);
   else if (enc == "iso-8859-1") buf= tm_decode (buf);
+  else if (enc == "SourceCode") buf= var_cork_to_sourcecode (buf);
 #ifdef OS_WIN32
   return unix_to_dos (buf);
 #else
@@ -261,6 +274,7 @@ static string
 encode (string s, string enc) {
   if (enc == "utf-8") return utf8_to_cork (s);
   else if (enc == "iso-8859-1") return tm_encode (s);
+  else if (enc == "SourceCode") return sourcecode_to_cork(s);
   else return s;
 }
 

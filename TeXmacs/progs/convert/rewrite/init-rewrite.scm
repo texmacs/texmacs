@@ -80,10 +80,10 @@
   (:suffix "scm"))
 
 (define (texmacs->scheme x . opts)
-  (apply texmacs->verbatim (cons x opts)))
+  (texmacs->verbatim x (acons "texmacs->verbatim:encoding" "SourceCode" '())))
 
 (define (scheme->texmacs x . opts)
-  (apply verbatim->texmacs (cons x opts)))
+  (verbatim->texmacs x (acons "verbatim->texmacs:encoding" "SourceCode" '())))
 
 (converter texmacs-tree scheme-document
   (:function texmacs->scheme))
