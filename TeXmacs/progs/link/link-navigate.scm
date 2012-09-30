@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (link link-navigate)
-  (:use (utils library cursor) (link link-edit) (link link-extern)))
+  (:use (utils library cursor) (link link-edit) (link link-extern)
+        (generic generic-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Navigation mode
@@ -333,24 +334,15 @@
 	(and (resolve-id id)
 	     (delayed (:idle 25) (apply go-to-id (cons id opt-from)))))))
 
-(tm-define (go-to-line n)
-  (with-innermost t 'document
-    (tree-go-to t n 0)))
-
-(tm-define (go-to-column c)
-  (with-innermost t 'document
-    (with p (tree-cursor-path t)
-      (tree-go-to t (cADr p) (- c 1)))))
- 
 (define (default-query-handler qry)
   (let* ((lstr (or (query-ref qry "line") "0"))
          (cstr (or (query-ref qry "column") "0"))
-         (sstr (or (query-ref qry "search") ""))
-         (line (string->number lstr))
-         (column (string->number cstr)))
-    (if (and line (> line 0)) (go-to-line line))
-    (if (and column (> column 0)) (go-to-column column))
-    (if (!= sstr "") (noop)))) ;(search-in-buffer search))))
+         (sstr (or (query-ref qry "select") ""))
+         (line (or (string->number lstr) 0))
+         (column (or (string->number cstr) 0)))
+    (go-to-line line)
+    (go-to-column column)
+    (if (!= sstr "") (select-word sstr (cursor-tree) column))))
 
 ;; TEMPORARY: we have to decide whether this makes sense as one of the
 ;; properties of a format as defined in define-format. We also have to
@@ -358,7 +350,9 @@
 ;; cases (most notably for texmacs files) or if we require explicit naming
 ;; of the handler for each format created.
 (define (query-handler-for-format fm)
-  (if (== fm "generic-file") default-query-handler #f))
+  (cond ((== fm "generic-file") default-query-handler)
+        ((== fm "scheme-file") default-query-handler)
+        (else (display* "Unhandled format for queries: " fm "\n") #f)))
 
 (define (process-query file qry)
   (with handler (query-handler-for-format (file-format file))

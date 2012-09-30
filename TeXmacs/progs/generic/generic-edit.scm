@@ -510,6 +510,27 @@
 (tm-define (select-all)
   (tree-select (buffer-tree)))
 
+(tm-define (go-to-line n)
+  (with-innermost t 'document
+    (tree-go-to t n 0)))
+
+(tm-define (go-to-column c)
+  (with-innermost t 'document
+    (with p (tree-cursor-path t)
+      (tree-go-to t (cADr p) c))))
+
+(tm-define (select-word w t col)
+  (:synopsis "Selects word @w in tree @t, more or less around column @col.")
+  (let* ((st (tree->string t))
+         (pos (- col (string-length w)))
+         (beg (string-contains st w (if (> pos 0) pos 0))))
+    (if beg 
+        (with p (tree->path t)
+          (go-to (rcons p beg))
+          (selection-set-start)
+          (go-to (rcons p (+ beg (string-length w))))
+          (selection-set-end)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting various kinds of content
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
