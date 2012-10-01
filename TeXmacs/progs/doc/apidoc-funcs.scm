@@ -110,16 +110,28 @@
 
 (define module-exported-cache (make-ahash-table))
 
+; HACK: we use read (copying what's done in init-texmacs.scm) until the 
+; code indexer is implemented
+(define (parse-form form)
+  "Set symbol properties and return the symbol."
+  (let* ((line (source-property form 'line))
+         (column (source-property form 'column))
+         (filename (source-property form 'filename))
+         (sym  (if (pair? (cadr form)) (caadr form) (cadr form))))
+    (and (symbol? sym) ; Just in case
+         (begin 
+           (set-symbol-property! sym 'line line)
+           (set-symbol-property! sym 'column column)
+           (set-symbol-property! sym 'filename filename)
+           sym))))
+
 (tm-define (module-exported module)
   (:synopsis "List of exported symbols in @module")
   (or (ahash-ref module-exported-cache module)
       (and (is-real-module? module)
         (let* ((p (open-input-file (module-source-path module #t)))
                (defs '())
-               (sym (lambda (f) (if (pair? (cadr f)) (caadr f) (cadr f))))
-               (add (lambda (f) ;f= form
-                      (if (and (pair? f) (member (car f) keywords))
-                          (set! defs (rcons defs (sym f)))))))
+               (add (lambda (f) (set! defs (rcons defs (parse-form f))))))
           (letrec ((r (lambda () (with form (read p)
                                    (or (eof-object? form) 
                                        (begin (add form) (r)))))))
@@ -135,7 +147,8 @@
        (length
          (list-filter l
            (lambda (x)
-             (persistent-has? (doc-scm-cache) (symbol->string x))))))))
+             (and (symbol? x) 
+                  (persistent-has? (doc-scm-cache) (symbol->string x)))))))))
 
 (tm-define ($doc-module-exported module)
   (with l (module-exported module)
@@ -218,8 +231,8 @@
       (let ((lno (number->string line))
             (cno (number->string column)))
         `(hlink ,(string-append (basename filename) ":" lno)
-                ,(string-append filename "?line=" lno
-                                         "&column=" cno)))
+                ,(string-append filename "?line=" lno "&column=" cno
+                                         "&select=" (symbol->string sym))))
       (translate "[symbol properties not found]"))))
 
 (tm-define (doc-symbol-synopsis* sym)

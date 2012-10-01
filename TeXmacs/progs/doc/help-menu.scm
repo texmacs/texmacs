@@ -229,9 +229,9 @@
             ("Customizing and extending the user interface"
              (load-help-article "devel/scheme/gui/scheme-gui"))
 	    ("Writing TeXmacs bibliography styles"
-	     (load-help-article "devel/scheme/bibliography/bibliography")))))
-            ;---
-            ;("Browse modules documentation" (apidoc-all-modules))
+	     (load-help-article "devel/scheme/bibliography/bibliography"))
+            ---
+            ("Browse modules documentation" (apidoc-all-modules)))))
             ;("List all symbols" (apidoc-all-symbols)))))
   ---
   (-> "Search"
