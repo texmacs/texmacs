@@ -25,6 +25,8 @@
 
     <branch|Writing <TeXmacs> bibliography
     styles|bibliography/bibliography.en.tm>
+
+    <branch|Other topics (tmfs, links,...)|api/api.en.tm>
   </traverse>
 
   <tmdoc-copyright|2005|Joris van der Hoeven>
