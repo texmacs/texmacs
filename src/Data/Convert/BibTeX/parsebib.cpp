@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "convert.hpp"
+#include "wencoding.hpp"
 #include "analyze.hpp"
 #include "list.hpp"
 #include "tree_traverse.hpp"
@@ -123,12 +124,12 @@ void bib_atomic_arg (string s, int& pos, string ce, tree& a) {
   switch (s[pos]) {
     case '\"': {
       bib_within (s, pos, '\"', '\"', sa);
-      a= sa;
+      a= western_to_cork (sa);
       break;
     }
     case '{': {
       bib_within (s, pos, '{', '}', sa);
-      a= sa;
+      a= western_to_cork (sa);
       break;
     }
     default: {
@@ -136,11 +137,11 @@ void bib_atomic_arg (string s, int& pos, string ce, tree& a) {
       cs << ce;
       if (!is_digit (s[pos])) {
         bib_until (s, pos, cs, sa);
-        a= compound ("bib-var", sa);
+        a= compound ("bib-var", western_to_cork (sa));
       }
       else {
         bib_until (s, pos, cs, sa);
-        a= sa;
+        a= western_to_cork (sa);
       }
       break;
     }
