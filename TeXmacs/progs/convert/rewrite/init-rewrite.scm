@@ -85,11 +85,21 @@
 (define (scheme->texmacs x . opts)
   (verbatim->texmacs x (acons "verbatim->texmacs:encoding" "SourceCode" '())))
 
+(define (scheme-snippet->texmacs x . opts)
+  (verbatim-snippet->texmacs x 
+    (acons "verbatim->texmacs:encoding" "SourceCode" '())))
+
 (converter texmacs-tree scheme-document
   (:function texmacs->scheme))
 
 (converter scheme-document texmacs-tree
   (:function scheme->texmacs))
+  
+(converter texmacs-tree scheme-snippet
+  (:function texmacs->scheme))
+
+(converter scheme-snippet texmacs-tree
+  (:function scheme-snippet->texmacs))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Verbatim

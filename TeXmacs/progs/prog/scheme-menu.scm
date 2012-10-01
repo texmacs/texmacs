@@ -44,14 +44,8 @@
    (scheme-completions-rebuild)))
 
 ; Simpler popup menu.
-; FIXME: "verbatim" interprets backquotes as typographic backquotes, not as `
-;        we should use "scheme", but this is not a valid selection format.
 (menu-bind texmacs-popup-menu
   (:require (in-prog-scheme?))
-  ("Copy verbatim" (clipboard-copy-export "verbatim" "primary"))
-  ("Paste verbatim" (clipboard-paste-import "verbatim" "primary"))
-  (-> "Scheme" (link scheme-session-menu))
-  ---
   (-> "File" (link file-menu))
   (-> "Edit" (link edit-menu))
   (-> "View" (link view-menu))
@@ -60,5 +54,6 @@
   (if (with-remote-connections?) (-> "Remote" (link remote-menu)))
   (if (with-debugging-tool?) (-> "Debug" (link debug-menu)))
   (if (nnull? (test-menu)) (-> "Test" (link test-menu)))
+  (-> "Scheme" (link scheme-session-menu))
   ---
   (-> "Help" (link help-menu)))

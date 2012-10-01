@@ -159,7 +159,10 @@
 
 (kbd-map
   (:require (in-prog-scheme?))
-  ("C-i" (scheme-indent)))
+  ("C-i" (scheme-indent))
+  ("std c" (clipboard-copy-export "scheme" "primary"))
+  ("std v" (clipboard-paste-import "scheme" "primary"))
+  ("std x" (clipboard-cut-export "scheme" "primary")))
 
 (tm-define (insert-return)
   (:mode in-prog-scheme?)
