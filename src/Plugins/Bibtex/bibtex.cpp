@@ -13,6 +13,7 @@
 #include "file.hpp"
 #include "sys_utils.hpp"
 #include "convert.hpp"
+#include "wencoding.hpp"
 
 #ifdef OS_WIN32
 #include <sys/misc.h>
@@ -55,12 +56,24 @@ search_bib (tree t) {
   }
 }
 
+string
+bibtex_update_encoding (string s) {
+  string r;
+  array<string> a= tokenize (s, "\\bibitem");
+  for (int i=0; i<N(a); i++) {
+    if (i != 0) r << "\\bibitem";
+    r << western_to_cork (a[i]);
+  }
+  return r;
+}
+
 tree
 bibtex_load_bbl (string bib, url bbl_file) {
   string result;
   if (load_string (bbl_file, result, false))
     return "Error: bibtex failed to create bibliography";
 
+  result= bibtex_update_encoding (result);
   int count=1;
   tree t= generic_to_tree (result, "latex-snippet");
   t= search_bib (t);
