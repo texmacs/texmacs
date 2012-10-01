@@ -28,12 +28,14 @@
       (let ((form (old-read port)))
         (if (and (pair? form) (member (car form) keywords-which-define))
           (let* ((line (source-property form 'line))
+                 (column (source-property form 'column))
                  (filename (source-property form 'filename))
                  (sym  (if (pair? (cadr form)) (caadr form) (cadr form))))
             (if (and (symbol? sym) ; Just in case
                      filename)     ; don't set props if read from stdin
              (begin 
                 (set-symbol-property! sym 'line line)
+                (set-symbol-property! sym 'column column)
                 (set-symbol-property! sym 'filename filename)
                 ))))
         form))
