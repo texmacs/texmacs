@@ -226,6 +226,7 @@
   (utf8->cork utf8_to_cork (string string))
   (cork->utf8 cork_to_utf8 (string string))
   (utf8->html utf8_to_html (string string))
+  (guess-wencoding guess_wencoding (string string))
   (tm->xml-name tm_to_xml_name (string string))
   (old-tm->xml-cdata old_tm_to_xml_cdata (string string))
   (tm->xml-cdata tm_to_xml_cdata (object string))

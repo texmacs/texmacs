@@ -1067,6 +1067,7 @@ tmscm_to_collection (tmscm  p) {
 #include "tmfs.hpp"
 #include "client_server.hpp"
 #include "analyze.hpp"
+#include "wencoding.hpp"
 #include "tree_traverse.hpp"
 #include "tree_analyze.hpp"
 #include "tree_correct.hpp"

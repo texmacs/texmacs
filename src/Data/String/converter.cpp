@@ -757,11 +757,18 @@ decode_from_utf8 (string s, int& i) {
     i++;
     return (unsigned int) c;
   }
+  int start= i-1;
   for (; trail > 0; trail--) {
     i++;
     if (i >= N(s)) i= N(s)-1;
     c = s[i];
-    code = (code << 6) | (c & 0x3F);
+    if ((0xC0 & c) == 0x80)
+      code = (code << 6) | (c & 0x3F);
+    else {
+      i= start+1;
+      c= s[i];
+      return c;
+    }
   }
   i++;
   return code;
