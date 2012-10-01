@@ -262,6 +262,23 @@ language_to_locale (string s) {
 }
 
 string
+language_to_local_ISO_charset (string s) {
+  if (s == "bulgarian")  return "ISO-8859-5";
+  if (s == "chinese")    return "";
+  if (s == "czech")      return "ISO-8859-2";
+  if (s == "hungarian")  return "ISO-8859-2";
+  if (s == "japanese")   return "";
+  if (s == "korean")     return "";
+  if (s == "polish")     return "ISO-8859-2";
+  if (s == "romanian")   return "ISO-8859-2";
+  if (s == "russian")    return "ISO-8859-5";
+  if (s == "slovene")    return "ISO-8859-2";
+  if (s == "taiwanese")  return "";
+  if (s == "ukrainian")  return "ISO-8859-5";
+  return "ISO-8859-1";
+}
+
+string
 get_locale_language () {
 #if defined(_WIN32) || defined(__WIN32__)
   return windows_locale_to_language (setlocale (LC_ALL, ""));
