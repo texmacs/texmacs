@@ -1208,7 +1208,7 @@ tokenize (string s, string sep) {
       start= i;
     }
     else i++;
-  if (N(a) == 0) a << s;
+  a << s(start, N(s));
   return a;
 }
 
