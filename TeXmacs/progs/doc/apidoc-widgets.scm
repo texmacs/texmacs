@@ -128,7 +128,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define mw-module "")
-
 (tm-define mw-symbol "")
 
 ; don't make this a variable or we'll construct it when this module loads
@@ -142,8 +141,8 @@
   (scrollable (choice (set! mw-symbol answer) (mw-all-symbols) "")))
 
 (tm-widget (symbol-doc-widget)
-  (resize ("100px" "200px" "400px") ("50px" "100px" "150px")
-    (texmacs-input ($doc-explain-scm mw-symbol) (style "tmdoc") (noop) #f)))
+  (resize ("200px" "400px" "9000px") ("100px" "200px" "3000px")
+    (texmacs-input ($doc-explain-scm mw-symbol) '(style "tmdoc") (noop) #f)))
 
 (tm-widget (symbol-doc-buttons)
  (explicit-buttons >>
@@ -163,3 +162,5 @@
     ===
     (refresh symbol-doc-buttons)))
 
+(tm-define (show-module-widget) 
+  (top-window module-widget "Pick module and symbol..."))
