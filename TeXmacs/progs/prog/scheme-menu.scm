@@ -43,9 +43,11 @@
   ("(Re)Build autocompletion index"
    (scheme-completions-rebuild)))
 
-; Simpler popup menu:
+; Simpler popup menu.
+; FIXME: "verbatim" interprets backquotes as typographic backquotes, not as `
+;        we should use "scheme", but this is not a valid selection format.
 (menu-bind texmacs-popup-menu
-  (:require (and developer-mode-on (in-prog-scheme?)))
+  (:require (in-prog-scheme?))
   ("Copy verbatim" (clipboard-copy-export "verbatim" "primary"))
   ("Paste verbatim" (clipboard-paste-import "verbatim" "primary"))
   (-> "Scheme" (link scheme-session-menu))

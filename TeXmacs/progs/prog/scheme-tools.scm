@@ -161,7 +161,7 @@
       (string->module (tree->string (car tt))))))
 
 (define (exp-modules)
-  (map symbol->string (or (module-exported (get-current-doc-module)) '(""))))
+  (map symbol->string (or (module-exported (get-current-doc-module)) '())))
 
 (tm-define (ask-insert-symbol-doc ssym)
   (:argument ssym "Symbol")

@@ -86,7 +86,8 @@
     (-> "User interface" (link tmdoc-gui-menu))
     (-> "Annotate" (link tmdoc-annotate-menu)))
   (-> "Indication" (link tmdoc-indication-menu))
-  (-> "Scheme" (link apidoc-manual-menu)))
+  (if developer-mode-on
+    (-> "Scheme" (link apidoc-manual-menu))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Icons for TeXmacs documentation
