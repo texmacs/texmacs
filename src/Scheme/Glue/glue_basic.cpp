@@ -2554,6 +2554,19 @@ tmg_utf8_2html (tmscm arg1) {
 }
 
 tmscm
+tmg_guess_wencoding (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "guess-wencoding");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= guess_wencoding (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_tm_2xml_name (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tm->xml-name");
 
@@ -6759,6 +6772,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("utf8->cork",  tmg_utf8_2cork, 1, 0, 0);
   tmscm_install_procedure ("cork->utf8",  tmg_cork_2utf8, 1, 0, 0);
   tmscm_install_procedure ("utf8->html",  tmg_utf8_2html, 1, 0, 0);
+  tmscm_install_procedure ("guess-wencoding",  tmg_guess_wencoding, 1, 0, 0);
   tmscm_install_procedure ("tm->xml-name",  tmg_tm_2xml_name, 1, 0, 0);
   tmscm_install_procedure ("old-tm->xml-cdata",  tmg_old_tm_2xml_cdata, 1, 0, 0);
   tmscm_install_procedure ("tm->xml-cdata",  tmg_tm_2xml_cdata, 1, 0, 0);

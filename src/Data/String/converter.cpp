@@ -534,6 +534,16 @@ find_node (string key, hashtree<char,string> ht) {
   return ht;
 }
 
+static string
+str_unquote (string s) {
+  int start, end;
+  for (start=0; start<N(s) && (s[start] != '"' ||
+        (s[start] == '"' && s[start-1] == '\\')); start++) ;
+  for (end=N(s)-1; end > start && (s[end] != '"' ||
+        (s[end] == '"' && s[end-1] == '\\')); end--) ;
+  return s (start+1, end);
+}
+
 void
 hashtree_from_dictionary (
   hashtree<char,string> dic, string file_name, escape_type key_escape,
@@ -558,9 +568,8 @@ hashtree_from_dictionary (
         //cout << N(pairs[i]) << "\n" << as_string(pairs[i]) << "\n";
         reverse ? key_string = t[i][1]->label : key_string = t[i][0]->label;
         reverse ? val_string = t[i][0]->label : val_string = t[i][1]->label;
-        if (is_quoted (key_string)) key_string = scm_unquote (key_string);
-        if (is_quoted (val_string)) val_string = scm_unquote (val_string);
-        //cout << "key: " << key_string << " val: " << val_string << "\n";
+        if (is_quoted (key_string)) key_string = str_unquote (key_string);
+        if (is_quoted (val_string)) val_string = str_unquote (val_string);
         if (key_escape == BIT2BIT)
           key_string = convert_escapes (key_string, false);
         else if (key_escape == UTF8)

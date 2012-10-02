@@ -12,10 +12,6 @@
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
 ;; in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 
-
-;; ! we need to input double backslash to really get only one
-;; and 8 (!!!) to really get two! 
-
 ("#00"	"\\x00")
 ("#01"	"\\x01")
 ("#02"	"\\x02")
@@ -108,7 +104,7 @@
 ("#59"	"Y")
 ("#5A"	"Z")
 ("#5B"	"[")
-("#5C"	"\\\\\\\\") ; believe it or not this what's needed to get "\" -> "\\" in the end!
+("#5C"	"\\\\")
 ("#5D"	"]")
 ("#5E"	"^")
 ("#5F"	"_")
