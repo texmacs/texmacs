@@ -537,10 +537,8 @@ find_node (string key, hashtree<char,string> ht) {
 static string
 str_unquote (string s) {
   int start, end;
-  for (start=0; start<N(s) && (s[start] != '"' ||
-        (s[start] == '"' && s[start-1] == '\\')); start++) ;
-  for (end=N(s)-1; end > start && (s[end] != '"' ||
-        (s[end] == '"' && s[end-1] == '\\')); end--) ;
+  for (start=0; start<N(s) && s[start] != '"'; start++) ;
+  for (end=N(s)-1; end > start && s[end] != '"'; end--) ;
   return s (start+1, end);
 }
 
