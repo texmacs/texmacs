@@ -179,7 +179,7 @@ class Texmacs(inkex.Effect):
 		
 		f_tmp = open(self.tmp_name, 'w') # writes the content of the tmtext string
 		tm_file = tm_file_header + \
-				node.attrib.get('{%s}texmacscode'%TEXMACS_NS, '').decode('string-escape') +\
+				node.attrib.get('{%s}texmacscode'%TEXMACS_NS, '') +\
 				tm_file_trailer
         	try:
  	        	f_tmp.write(tm_file)
