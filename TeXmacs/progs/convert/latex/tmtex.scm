@@ -69,17 +69,17 @@
 	(set! tmtex-image-root-string "image")))
   (set! tmtex-appendices? #f)
   (set! tmtex-replace-style?
-	(== (assoc-ref opts "texmacs->latex:replace-style") "on"))
+    (== (assoc-ref opts "texmacs->latex:replace-style") "on"))
   (set! tmtex-indirect-bib?
-	(== (assoc-ref opts "texmacs->latex:indirect-bib") "on"))
+    (== (assoc-ref opts "texmacs->latex:indirect-bib") "on"))
   (set! tmtex-use-macros?
-	(== (assoc-ref opts "texmacs->latex:use-macros") "on"))
+    (== (assoc-ref opts "texmacs->latex:use-macros") "on"))
   (set! tmtex-use-unicode?
-	(== (assoc-ref opts "texmacs->latex:encoding") "utf-8"))
+    (== (assoc-ref opts "texmacs->latex:encoding") "utf-8"))
   (set! tmtex-use-catcodes? 
-        (== (assoc-ref opts "texmacs->latex:encoding") "cork"))
+    (== (assoc-ref opts "texmacs->latex:encoding") "cork"))
   (set! tmtex-use-ascii? 
-        (== (assoc-ref opts "texmacs->latex:encoding") "ascii")))
+    (== (assoc-ref opts "texmacs->latex:encoding") "ascii")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Data
