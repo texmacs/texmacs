@@ -273,13 +273,7 @@ to_qstringlist(array<string> l) {
 QString
 to_qstring (string s) {
   string out_lan= get_output_language ();
-    /* FIXME: although internal representation of cyrillic languages is supposed
-     to be in UTF8 and t2a deprecated, we still have to convert here or we won't
-     see chars properly in menus, etc. (svn 5653)
-     */
-  if ((out_lan == "bulgarian") || (out_lan == "russian") || (out_lan == "ukrainian"))
-    s = t2a_to_utf8 (s);
-  else
+  if ((out_lan != "bulgarian") && (out_lan != "russian") && (out_lan != "ukrainian"))
     s = cork_to_utf8 (s);
 
   return utf8_to_qstring(s);
