@@ -198,7 +198,9 @@ homoglyph_correct (array<tree> a) {
 
 static string
 get_submode (tree t, int i, string mode) {
-  if (is_func (t, WITH, 3) && t[0] == MATH_FONT_FAMILY && i == 2) return "text";
+  if (is_func (t, WITH) && i == N(t)-1)
+    for (int j=0; j<N(t)-1; j+=2)
+      if (t[j] == MATH_FONT_FAMILY) return "text";
   tree tmode= the_drd->get_env_child (t, i, MODE, mode);
   return (is_atomic (tmode)? tmode->label: string ("text"));
 }
