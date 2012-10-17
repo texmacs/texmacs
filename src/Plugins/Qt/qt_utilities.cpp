@@ -272,11 +272,7 @@ to_qstringlist(array<string> l) {
 
 QString
 to_qstring (string s) {
-  string out_lan= get_output_language ();
-  if ((out_lan != "bulgarian") && (out_lan != "russian") && (out_lan != "ukrainian"))
-    s = cork_to_utf8 (s);
-
-  return utf8_to_qstring(s);
+  return utf8_to_qstring (cork_to_utf8 (s));
 }
 
 QString
