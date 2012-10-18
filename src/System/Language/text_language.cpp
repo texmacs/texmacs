@@ -31,14 +31,21 @@ struct text_language_rep: language_rep {
   hashmap<string,string> hyphenations;
 
   text_language_rep (string lan_name, string hyph_name);
+  text_language_rep (string lan_name, string hyph_name, bool u);
   text_property advance (tree t, int& pos);
   array<int> get_hyphens (string s);
   void hyphenate (string s, int after, string& left, string& right);
+  bool unicode;
 };
 
-text_language_rep::text_language_rep (string lan_name, string hyph_name):
-  language_rep (lan_name), patterns ("?"), hyphenations ("?") {
+text_language_rep::text_language_rep (string lan_name,
+                                      string hyph_name, bool u):
+  language_rep (lan_name), patterns ("?"), hyphenations ("?"), unicode (u) {
     load_hyphen_tables (hyph_name, patterns, hyphenations); }
+
+text_language_rep::text_language_rep (string lan_name, string hyph_name):
+  language_rep (lan_name), patterns ("?"), hyphenations ("?"), unicode (false)
+  { load_hyphen_tables (hyph_name, patterns, hyphenations); }
 
 text_property
 text_language_rep::advance (tree t, int& pos) {
@@ -71,8 +78,15 @@ text_language_rep::advance (tree t, int& pos) {
     return &tp_hyph_rep;
   }
 
-  if (is_iso_alpha (s[pos])) {
-    while ((pos<N(s)) && is_iso_alpha (s[pos])) pos++;
+  if (is_iso_alpha (s[pos]) || (s[pos]=='<' && unicode)) {
+    while ((pos<N(s)) && (is_iso_alpha (s[pos]) || (s[pos]=='<' && unicode))) {
+      if (s[pos]=='<' && unicode) {
+        while ((pos<N(s)) && (s[pos]!='>')) pos++;
+        if (pos<N(s)) pos++;
+      }
+      else
+        pos++;
+    }
     return &tp_normal_rep;
   }
 
@@ -82,7 +96,7 @@ text_language_rep::advance (tree t, int& pos) {
     return &tp_normal_rep;
   }
 
-  if (s[pos]=='<') {
+  if (s[pos]=='<' && !unicode) {
     while ((pos<N(s)) && (s[pos]!='>')) pos++;
     if (pos<N(s)) pos++;
     return &tp_normal_rep;
@@ -94,7 +108,7 @@ text_language_rep::advance (tree t, int& pos) {
 
 array<int>
 text_language_rep::get_hyphens (string s) {
-  return ::get_hyphens (s, patterns, hyphenations);
+  return ::get_hyphens (s, patterns, hyphenations, unicode);
 }
 
 void
@@ -102,7 +116,7 @@ text_language_rep::hyphenate (
   string s, int after, string& left, string& right)
 {
   array<int> penalty= get_hyphens (s);
-  std_hyphenate (s, after, left, right, penalty[after]);
+  std_hyphenate (s, after, left, right, penalty[after], unicode);
 }
 
 /******************************************************************************
@@ -371,6 +385,11 @@ get_date (string lan, string fm) {
 typedef const char* const_char_ptr;
 
 static language
+make_text_language (string s, string h, bool u) {
+  return tm_new<text_language_rep> (s, h, u);
+}
+
+static language
 make_text_language (string s, string h) {
   return tm_new<text_language_rep> (s, h);
 }
@@ -380,7 +399,7 @@ text_language (string s) {
   if (language::instances -> contains (s)) return language (s);
   if (s == "american") return make_text_language (s, "us");
   if (s == "british") return make_text_language (s, "ukenglish");
-  if (s == "bulgarian") return make_text_language (s, "bulgarian");
+  if (s == "bulgarian") return make_text_language (s, "bulgarian", true);
   if (s == "chinese") return tm_new<oriental_language_rep> (s);
   if (s == "czech") return make_text_language (s, "czech");
   if (s == "danish") return make_text_language (s, "danish");
@@ -396,12 +415,12 @@ text_language (string s) {
   if (s == "polish") return make_text_language (s, "polish");
   if (s == "portuguese") return make_text_language (s, "portuguese");
   if (s == "romanian") return make_text_language (s, "romanian");
-  if (s == "russian") return make_text_language (s, "russian");
+  if (s == "russian") return make_text_language (s, "russian", true);
   if (s == "slovene") return make_text_language (s, "slovene");
   if (s == "spanish") return make_text_language (s, "spanish");
   if (s == "swedish") return make_text_language (s, "swedish");
   if (s == "taiwanese") return tm_new<oriental_language_rep> (s);
-  if (s == "ukrainian") return make_text_language (s, "ukrainian");
+  if (s == "ukrainian") return make_text_language (s, "ukrainian", true);
   if (s == "verbatim") return tm_new<verb_language_rep> ("verbatim");
   cerr << "\nThe language was " << s << "\n";
   FAILED ("unknown language");

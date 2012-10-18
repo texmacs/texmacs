@@ -109,7 +109,17 @@ array<int>
 get_hyphens (string s,
              hashmap<string,string> patterns,
              hashmap<string,string> hyphenations) {
+  return get_hyphens (s, patterns, hyphenations, false);
+}
+
+
+array<int>
+get_hyphens (string s,
+             hashmap<string,string> patterns,
+             hashmap<string,string> hyphenations, bool utf8) {
   ASSERT (N(s) != 0, "hyphenation of empty string");
+
+  if (utf8) s= cork_to_utf8 (s);
 
   if (hyphenations->contains (s)) {
     string h= hyphenations [s];
@@ -162,9 +172,24 @@ get_hyphens (string s,
 }
 
 void
-std_hyphenate (string s, int after, string& left, string& right, int penalty) {
-  left = s (0, after+1);
-  right= s (after+1, N(s));
+std_hyphenate (string s, int after, string& left, string& right, int penalty,
+               bool utf8) {
+  if (!utf8) {
+    left = s (0, after+1);
+    right= s (after+1, N(s));
+  }
+  else {
+    int i= 0, l= 0;
+    while (i < N(s) && l < after) {
+      if (s[i] == '<')
+        while (i < N(s) && s[i] != '>') i++;
+      i++;
+      l++;
+    }
+    left = s (0, i);
+    right= s (i, N(s));
+    if (i == N(s)) return;
+  }
   if (penalty >= HYPH_INVALID) left << string ("\\");
   else left << string ("-");
 }
