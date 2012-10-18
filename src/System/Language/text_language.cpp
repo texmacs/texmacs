@@ -49,6 +49,8 @@ text_language_rep::text_language_rep (string lan_name, string hyph_name):
 
 text_property
 text_language_rep::advance (tree t, int& pos) {
+  //TODO: replace methods is_punctuation (), is_iso_alpha () and is_numeric (),
+  //      by equivalents taking into account unicode entities.
   string s= t->label;
   if (pos == N(s)) return &tp_normal_rep;
 
@@ -397,31 +399,31 @@ make_text_language (string s, string h) {
 language
 text_language (string s) {
   if (language::instances -> contains (s)) return language (s);
-  if (s == "american") return make_text_language (s, "us");
-  if (s == "british") return make_text_language (s, "ukenglish");
-  if (s == "bulgarian") return make_text_language (s, "bulgarian", true);
-  if (s == "chinese") return tm_new<oriental_language_rep> (s);
-  if (s == "czech") return make_text_language (s, "czech");
-  if (s == "danish") return make_text_language (s, "danish");
-  if (s == "dutch") return make_text_language (s, "dutch");
-  if (s == "english") return make_text_language (s, "us");
-  if (s == "finnish") return make_text_language (s, "finnish");
-  if (s == "french") return make_text_language (s, "french");
-  if (s == "german") return make_text_language (s, "german");
-  if (s == "hungarian") return make_text_language (s, "hungarian");
-  if (s == "italian") return make_text_language (s, "italian");
-  if (s == "japanese") return tm_new<oriental_language_rep> (s);
-  if (s == "korean") return tm_new<oriental_language_rep> (s);
-  if (s == "polish") return make_text_language (s, "polish");
+  if (s == "american")   return make_text_language (s, "us");
+  if (s == "british")    return make_text_language (s, "ukenglish");
+  if (s == "bulgarian")  return make_text_language (s, "bulgarian", true);
+  if (s == "chinese")    return tm_new<oriental_language_rep> (s);
+  if (s == "czech")      return make_text_language (s, "czech");
+  if (s == "danish")     return make_text_language (s, "danish");
+  if (s == "dutch")      return make_text_language (s, "dutch");
+  if (s == "english")    return make_text_language (s, "us");
+  if (s == "finnish")    return make_text_language (s, "finnish");
+  if (s == "french")     return make_text_language (s, "french");
+  if (s == "german")     return make_text_language (s, "german");
+  if (s == "hungarian")  return make_text_language (s, "hungarian");
+  if (s == "italian")    return make_text_language (s, "italian");
+  if (s == "japanese")   return tm_new<oriental_language_rep> (s);
+  if (s == "korean")     return tm_new<oriental_language_rep> (s);
+  if (s == "polish")     return make_text_language (s, "polish");
   if (s == "portuguese") return make_text_language (s, "portuguese");
-  if (s == "romanian") return make_text_language (s, "romanian");
-  if (s == "russian") return make_text_language (s, "russian", true);
-  if (s == "slovene") return make_text_language (s, "slovene");
-  if (s == "spanish") return make_text_language (s, "spanish");
-  if (s == "swedish") return make_text_language (s, "swedish");
-  if (s == "taiwanese") return tm_new<oriental_language_rep> (s);
-  if (s == "ukrainian") return make_text_language (s, "ukrainian", true);
-  if (s == "verbatim") return tm_new<verb_language_rep> ("verbatim");
+  if (s == "romanian")   return make_text_language (s, "romanian");
+  if (s == "russian")    return make_text_language (s, "russian", true);
+  if (s == "slovene")    return make_text_language (s, "slovene");
+  if (s == "spanish")    return make_text_language (s, "spanish");
+  if (s == "swedish")    return make_text_language (s, "swedish");
+  if (s == "taiwanese")  return tm_new<oriental_language_rep> (s);
+  if (s == "ukrainian")  return make_text_language (s, "ukrainian", true);
+  if (s == "verbatim")   return tm_new<verb_language_rep> ("verbatim");
   cerr << "\nThe language was " << s << "\n";
   FAILED ("unknown language");
   return tm_new<verb_language_rep> ("verbatim");
