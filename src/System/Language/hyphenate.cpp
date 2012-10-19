@@ -12,6 +12,7 @@
 #include "file.hpp"
 #include "hyphenate.hpp"
 #include "analyze.hpp"
+#include "converter.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -112,6 +113,27 @@ get_hyphens (string s,
   return get_hyphens (s, patterns, hyphenations, false);
 }
 
+void
+goto_next_char (string s, int &i, bool utf8) {
+  if (i<N(s) && !utf8) {
+    i++;
+    return;
+  }
+  if (utf8)
+    decode_from_utf8 (s, i);
+  return;
+}
+
+int
+str_length (string s, bool utf8) {
+  if (!utf8) return N(s);
+  int i=0, r=0;
+  while (i<N(s)) {
+    decode_from_utf8 (s, i);
+    r++;
+  }
+  return r;
+}
 
 array<int>
 get_hyphens (string s,
@@ -123,17 +145,18 @@ get_hyphens (string s,
 
   if (hyphenations->contains (s)) {
     string h= hyphenations [s];
-    array<int> penalty (N(s)-1);
+    array<int> penalty (str_length (s, utf8)-1);
     int i=0, j=0;
     while (h[j] == '-') j++;
-    i++; j++;
-    while (i < N(s)) {
+    i++; goto_next_char (h, j, utf8);
+    while (i < N(penalty)+1) {
       penalty[i-1]= HYPH_INVALID;
       while (j < N(h) && h[j] == '-') {
         penalty[i-1]= HYPH_STD;
         j++;
       }
-      i++; j++;
+      i++;
+      goto_next_char (h, j, utf8);
     }
     //cout << s << " --> " << penalty << "\n";
     return penalty;
@@ -141,11 +164,11 @@ get_hyphens (string s,
   else {
     s= "." * lower_case (s) * ".";
     // cout << s << "\n";
-    int i, j, k, m, len;
-    array<int> T (N(s)+1);
-    for (i=0; i<N(s)+1; i++) T[i]=0;
+    int i, j, k, l, m, len;
+    array<int> T (str_length (s, utf8)+1);
+    for (i=0; i<N(T); i++) T[i]=0;
     for (len=1; len < MAX_SEARCH; len++)
-      for (i=0; i<N(s)-len; i++) {
+      for (i=0, l=0; i<N(s) - len; goto_next_char (s, i, utf8), l++) {
         string r= patterns [s (i, i+len)];
         if (!(r == "?")) {
           // cout << "  " << s (i, i+len) << " => " << r << "\n";
@@ -155,13 +178,13 @@ get_hyphens (string s,
               k++;
             }
             else m=0;
-            if (m>T[i+j]) T[i+j]=m;
+            if (m>T[l+j]) T[l+j]=m;
           }
         }
       }
 
-    array<int> penalty (N(s)-3);
-    for (i=2; i<N(s)-1; i++)
+    array<int> penalty (N(T)-4);
+    for (i=2; i < N(T)-4; i++)
       penalty [i-2]= (((T[i]&1)==1)? HYPH_STD: HYPH_INVALID);
     if (N(penalty)>0) penalty[0] = penalty[N(penalty)-1] = HYPH_INVALID;
     if (N(penalty)>1) penalty[1] = penalty[N(penalty)-2] = HYPH_INVALID;
