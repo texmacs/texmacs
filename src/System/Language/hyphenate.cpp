@@ -203,7 +203,7 @@ std_hyphenate (string s, int after, string& left, string& right, int penalty,
   }
   else {
     int i= 0, l= 0;
-    while (i < N(s) && l < after) {
+    while (i < N(s) && l < after+1) {
       if (s[i] == '<')
         while (i < N(s) && s[i] != '>') i++;
       i++;
