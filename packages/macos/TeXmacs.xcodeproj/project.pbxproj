@@ -34,6 +34,9 @@
 		49F9FA161573BA86006C7258 /* new_window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F9FA111573BA86006C7258 /* new_window.cpp */; };
 		49F9FA171573BA86006C7258 /* new_window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F9FA111573BA86006C7258 /* new_window.cpp */; };
 		49F9FA181573BA86006C7258 /* new_window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F9FA111573BA86006C7258 /* new_window.cpp */; };
+		49FFF7C61635D3690031CFDC /* wencoding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49FFF7C41635D3690031CFDC /* wencoding.cpp */; };
+		49FFF7C71635D3690031CFDC /* wencoding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49FFF7C41635D3690031CFDC /* wencoding.cpp */; };
+		49FFF7C81635D3690031CFDC /* wencoding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49FFF7C41635D3690031CFDC /* wencoding.cpp */; };
 		9C060A9C10FC6D8B00C51583 /* tm_ostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */; };
 		9C060A9D10FC6D8B00C51583 /* tm_ostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */; };
 		9C060A9E10FC6D8B00C51583 /* tm_ostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */; };
@@ -1156,6 +1159,8 @@
 		49F9FA101573BA86006C7258 /* new_view.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = new_view.hpp; sourceTree = "<group>"; };
 		49F9FA111573BA86006C7258 /* new_window.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = new_window.cpp; sourceTree = "<group>"; };
 		49F9FA121573BA86006C7258 /* new_window.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = new_window.hpp; sourceTree = "<group>"; };
+		49FFF7C41635D3690031CFDC /* wencoding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wencoding.cpp; sourceTree = "<group>"; };
+		49FFF7C51635D3690031CFDC /* wencoding.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = wencoding.hpp; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* TeXmacsQt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeXmacsQt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tm_ostream.cpp; sourceTree = "<group>"; };
 		9C060A9B10FC6D8B00C51583 /* tm_ostream.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tm_ostream.hpp; sourceTree = "<group>"; };
@@ -2179,6 +2184,8 @@
 		9C0B478F10A8CC0F0097A335 /* String */ = {
 			isa = PBXGroup;
 			children = (
+				49FFF7C41635D3690031CFDC /* wencoding.cpp */,
+				49FFF7C51635D3690031CFDC /* wencoding.hpp */,
 				9C0B479010A8CC0F0097A335 /* analyze.cpp */,
 				9C0B479110A8CC0F0097A335 /* analyze.hpp */,
 				9C0B479210A8CC0F0097A335 /* converter.cpp */,
@@ -4219,6 +4226,7 @@
 				49F9FA131573BA86006C7258 /* new_project.cpp in Sources */,
 				49F9FA161573BA86006C7258 /* new_window.cpp in Sources */,
 				9CD1513B15A72D0F006F2205 /* metadata.cpp in Sources */,
+				49FFF7C61635D3690031CFDC /* wencoding.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4571,6 +4579,7 @@
 				49F9FA151573BA86006C7258 /* new_project.cpp in Sources */,
 				49F9FA181573BA86006C7258 /* new_window.cpp in Sources */,
 				9CD1513D15A72D0F006F2205 /* metadata.cpp in Sources */,
+				49FFF7C81635D3690031CFDC /* wencoding.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4951,6 +4960,7 @@
 				49F9FA141573BA86006C7258 /* new_project.cpp in Sources */,
 				49F9FA171573BA86006C7258 /* new_window.cpp in Sources */,
 				9CD1513C15A72D0F006F2205 /* metadata.cpp in Sources */,
+				49FFF7C71635D3690031CFDC /* wencoding.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
