@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.3>
+<TeXmacs|1.0.7.17>
 
 <style|tmdoc>
 
@@ -16,6 +16,12 @@
     <item>David Allouche replaced the gencc preprocessor by the more standard
     C++ template system. He also made many other patches, bug reports and he
     did a lot of the administration of TeXmacs.
+
+    <item>François Poulain works on the <LaTeX> converters and character
+    transcodings.
+
+    <item>Miguel Benito Delgado works on the <name|Qt> port and automatic
+    documentation of the <name|Scheme> files.
 
     <item>Henri Lesourd developed a native mode for drawing technical
     pictures inside <TeXmacs>. He also fixed a bug in the presentation mode.

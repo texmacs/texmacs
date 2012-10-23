@@ -1,13 +1,19 @@
-<TeXmacs|1.0.7.16>
+<TeXmacs|1.0.7.17>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.7 to 1.0.7.16>
+  <section|Changes from version 1.0.7 to 1.0.7.17>
 
   <\itemize>
+    <item>Automated generation of documentation about the <name|Scheme> files
+    (1.0.7.17).
+
+    <item>Various improvements for <LaTeX> conversion en character encodings
+    (1.0.7.17).
+
     <item>Various improvements for <LaTeX> import (1.0.7.16).
 
     <item>New and improved <name|Reduce> interface (1.0.7.16).
