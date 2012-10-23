@@ -8,16 +8,16 @@ AppVerName=Texmacs
 DefaultDirName={pf}\TeXmacs
 DefaultGroupName=TeXmacs
 ;denis begin
-VersionInfoProductTextVersion=1.0.7.16
-VersionInfoVersion=1.0.7.16
+VersionInfoProductTextVersion=1.0.7.17
+VersionInfoVersion=1.0.7.17
 AppPublisher=MAGIX
 AppPublisherURL=http://www.texmacs.org/
-AppVersion=1.0.7.16
+AppVersion=1.0.7.17
 ;denis end
 
 UninstallDisplayIcon={app}\TeXmacs.ico
 OutputDir=..\..\..\distr
-OutputBaseFilename=TeXmacs-1.0.7.16-installer
+OutputBaseFilename=TeXmacs-1.0.7.17-installer
 ; SourceDir=../..
 ChangesAssociations=yes
 

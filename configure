@@ -2737,7 +2737,7 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 PACKAGE="TeXmacs"
 DEBIAN_NAME="texmacs"
-DEVEL_VERSION="1.0.7.16"
+DEVEL_VERSION="1.0.7.17"
 DEVEL_RELEASE="1"
 STABLE_VERSION="1.0.7"
 STABLE_RELEASE="1"
@@ -7432,12 +7432,13 @@ else
 	if test -r "/Qt"; then
 		QT_FRAMEWORKS_PATH=/Qt
 		QT_PATH=$QT_FRAMEWORKS_PATH/bin
+		QT_PLUGINS_PATH=$QT_FRAMEWORKS_PATH/plugins
 		QT_LIBS="-L/Qt/lib -lmingw32 -lQtGui4 -lQtCore4"
 		MOCFLAGS="-DUNICODE -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT"
 		QT_DEFINES="-DUNICODE -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT"
 		QT_CPPFLAGS="$QT_DEFINES -I/Qt/include -I/Qt/include/Qt -I/Qt/include/QtCore -I/Qt/include/QtGui"
-		QT_CXXFLAGS="-O2 -frtti -fexceptions -mthreads -Wall $(QT_DEFINES)"
-		QT_CFLAGS="-O2 -Wall $(QT_DEFINES)"
+		QT_CXXFLAGS="-O2 -frtti -fexceptions -mthreads -Wall $QT_DEFINES"
+		QT_CFLAGS="-O2 -Wall $QT_DEFINES"
 		MOCFLAGS=$QT_DEFINES
 		MOC=$QT_PATH/moc
 		QMAKE=$QT_PATH/qmake
@@ -9211,6 +9212,7 @@ do
     "misc/scripts/texmacs") CONFIG_FILES="$CONFIG_FILES misc/scripts/texmacs:misc/scripts/texmacs.in" ;;
     "TeXmacs/examples/plugins/dynlink/Makefile") CONFIG_FILES="$CONFIG_FILES TeXmacs/examples/plugins/dynlink/Makefile:TeXmacs/examples/plugins/dynlink/Makefile.in" ;;
     "packages/macos/Base.xcconfig") CONFIG_FILES="$CONFIG_FILES packages/macos/Base.xcconfig:packages/macos/Base.xcconfig.in" ;;
+    "packages/macos/Info-Xcode.plist") CONFIG_FILES="$CONFIG_FILES packages/macos/Info-Xcode.plist:packages/macos/Info-Xcode.plist.in" ;;
     "packages/fedora/TeXmacs.spec") CONFIG_FILES="$CONFIG_FILES packages/fedora/TeXmacs.spec:packages/fedora/TeXmacs.spec.in" ;;
     "packages/mandriva/TeXmacs.spec") CONFIG_FILES="$CONFIG_FILES packages/mandriva/TeXmacs.spec:packages/mandriva/TeXmacs.spec.in" ;;
     "packages/centos/TeXmacs.spec") CONFIG_FILES="$CONFIG_FILES packages/centos/TeXmacs.spec:packages/centos/TeXmacs.spec.in" ;;
