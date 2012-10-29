@@ -73,7 +73,8 @@
       (flush-all-ports)))
 
 (define-public (load-object file)
-  (read (open-file (url-materialize file "r") OPEN_READ)))
+  (let ((r (read (open-file (url-materialize file "r") OPEN_READ))))
+        (if (eof-object? r) '() r)))
 
 (define-public (persistent-ref dir key)
   (and (persistent-has? dir key)

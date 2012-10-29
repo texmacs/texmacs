@@ -314,8 +314,7 @@
 
 (define (retrieve-learned)
   (if (url-exists? "$TEXMACS_HOME_PATH/system/interactive.scm")
-      (let* ((i (load-object "$TEXMACS_HOME_PATH/system/interactive.scm"))
-             (l (if (eof-object? i) '() i))
+      (let* ((l (load-object "$TEXMACS_HOME_PATH/system/interactive.scm"))
 	     (old? (and (pair? l) (pair? (car l)) (list-2? (caar l))))
 	     (decode (if old? decode-old list->ahash-table)))
 	(set! interactive-arg-table (decode l)))))
