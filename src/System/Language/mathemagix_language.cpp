@@ -201,6 +201,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("upgrade")= c;
   t ("use")= c;
   t ("value")= c;
+  t ("virtual")= c;
   t ("while")= c;
   t ("with")= c;
   t ("xor")= c;
