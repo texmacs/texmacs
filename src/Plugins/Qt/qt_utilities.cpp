@@ -397,10 +397,12 @@ void
 qt_image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
   static const char* d= "0123456789ABCDEF";
   QImage im (utf8_to_qstring (concretize (image)));
+  string r;
   if (im.isNull ())
     cerr << "TeXmacs Cannot read image file '" << image << "'"
 	 << " in qt_image_to_eps" << LF;
   else {
+    bool alpha= false;
     if (dpi > 0 && w_pt > 0 && h_pt > 0) {
       int ww= w_pt * dpi / 72;
       int hh= h_pt * dpi / 72;
@@ -408,40 +410,79 @@ qt_image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
         im= im.scaled (ww, hh, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
       }
     }
-    string res;
     string sw= as_string (im.width ());
     string sh= as_string (im.height ());
-    res << "%!PS-Adobe-3.0 EPSF-3.0\n%%Creator: TeXmacs\n%%BoundingBox: ";
-    res << "0 0 " << sw << " " << sh << "\n";
-    res << "%%LanguageLevel: 2\n%%Pages: 1\n%%DocumentData: Clean7Bit\n";
-    res <<  sw << " " << sh << " scale\n";
-    res <<  sw << " " << sh << " 8 [" << sw << " 0 0 -" << sh << " 0 " << sh << "]\n";
-    res << "{currentfile 3 " << sw << " mul string readhexstring pop} bind\nfalse 3 colorimage\n";
-    int v, i= 0, j= 0, l= 0;
+    r << "%!PS-Adobe-3.0 EPSF-3.0\n%%Creator: TeXmacs\n%%BoundingBox: 0 0 "
+      << sw << " " << sh
+      << "\n\n% Created by qt_image_to_eps ()\n\n%%BeginProlog\nsave\n"
+      << "countdictstack\nmark\nnewpath\n/showpage {} def\n/setpagedevice "
+      << "{pop} def\n%%EndProlog\n%%Page 1 1\n/ImageWidth " << sw
+      << " def\n/ImageHeight " << sh << " def\nImageWidth ImageHeight max "
+      << "ImageWidth ImageHeight max scale\n\n/ImageDatas\n\tcurrentfile\n\t"
+      << "<< /Filter /ASCIIHexDecode >>\n\t/ReusableStreamDecode\n\tfilter\n";
+
+    int v, i= 0, j= 0, k= 0, l= 0;
+    string mask;
     for (j= 0; j < im.height (); j++) {
       for (i=0; i < im.width (); i++) {
         l++;
         QRgb p= im.pixel (i, j);
         v= qRed (p);
-        res << d [(v >> 4)] << d [v % 16];
+        r << d [(v >> 4)] << d [v % 16];
         v= qGreen (p);
-        res << d [(v >> 4)] << d [v % 16];
+        r << d [(v >> 4)] << d [v % 16];
         v= qBlue (p);
-        res << d [(v >> 4)] << d [v % 16];
-        if (l > 10) {
-          res << "\n";
+        r << d [(v >> 4)] << d [v % 16];
+        if (l > 12) {
+          r << "\n";
           l= 0;
+        }
+        if (!alpha && im.hasAlphaChannel () && qAlpha (p) < 0xFF)
+          alpha= true;
+      }
+      if (alpha) {
+        v= 0;
+        for (i=0; i < im.width (); i++) {
+          v+= (qAlpha (im.pixel (i, j)) == 0) << (3 - i % 4);
+          if (i % 4 == 3 || i + 1 == im.width ()) {
+            mask << d[v];
+            v= 0;
+            k++;
+            if (k >= 78) {
+              mask << "\n";
+              k= 0;
+            }
+          }
         }
       }
     }
-    res << "\n%%EOF";
-    save_string (eps, res);
-#ifdef USE_GS
-    url temp= url_temp (".eps");
-    gs_to_eps (eps, temp);
-    copy (temp, eps);
-    remove (temp);
-#endif
+    r << ">\ndef\n\n";
+
+    if (alpha) {
+      r << "/MaskDatas\n\tcurrentfile\n\t<< /Filter /ASCIIHexDecode >>\n"
+        << "\t/ReusableStreamDecode\n\tfilter\n"
+        << mask
+        << ">\ndef\n\n"
+        << "/TheMask\n<<\n\t/ImageType\t1\n\t/Width\t\tImageWidth\n\t/Height\t"
+        << "\tImageHeight\n\t/BitsPerComponent 1\n\t/Decode [ 0 1 ]\n\t"
+        << "/ImageMatrix [ ImageWidth 0 0 ImageWidth neg 0 ImageHeight ]\n\t"
+        << "/DataSource MaskDatas\n>> def\n\n";
+    }
+    r << "/TheImage\n<<\n\t/ImageType\t1\n\t/Width\t\tImageWidth\n\t/Height\t"
+      << "\tImageHeight\n\t/BitsPerComponent 8\n\t/Decode [ 0 1 0 1 0 1 ]\n\t"
+      << "/ImageMatrix [ ImageWidth 0 0 ImageWidth neg 0 ImageHeight ]\n\t"
+      << "/DataSource ImageDatas\n>> def\n\n"
+      << "/DeviceRGB setcolorspace\n";
+    if (alpha) {
+      r << "<<\n\t/ImageType 3\n\t/InterleaveType 3\n\t/DataDict TheImage\n"
+        << "\t/MaskDict TheMask\n>>";
+    }
+    else {
+      r << "\tTheImage";
+    }
+    r << "\nimage\nshowpage\n%%Trailer\ncleartomark\ncountdictstack\n"
+      << "exch sub { end } repeat\nrestore\n%%EOF\n";
+    save_string (eps, r);
   }
 }
 
