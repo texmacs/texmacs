@@ -148,7 +148,7 @@
   ("'e" "Insert é" (emulate-keyboard "acute e"))
   ("`A" "Insert À" (emulate-keyboard "grave A"))
   ("`E" "Insert È" (emulate-keyboard "grave E"))
-  ("`U" "Insert È" (emulate-keyboard "grave U"))
+  ("`U" "Insert Ù" (emulate-keyboard "grave U"))
   ("`a" "Insert à" (emulate-keyboard "grave a"))
   ("`e" "Insert è" (emulate-keyboard "grave e"))
   ("`u" "Insert ù" (emulate-keyboard "grave u"))
