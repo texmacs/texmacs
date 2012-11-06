@@ -113,10 +113,11 @@ exists_in_tex (url u) {
 void
 make_tex_tfm (string name) {
   string s;
+  int r;
   if (get_setting ("MAKETFM") == "MakeTeXTFM") {
     s= "MakeTeXTFM " * name;
     if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
-    system (s);
+    r= system (s);
   }
   if (get_setting ("MAKETFM") == "mktextfm") {
     url tfm_dir ("$TEXMACS_HOME_PATH/fonts/tfm");
@@ -124,7 +125,7 @@ make_tex_tfm (string name) {
       string ("--destdir ") * as_string (tfm_dir) * " " *
       name;
     if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
-    system (s);
+    r= system (s);
     string superfluous= name * ".600pk";
     if (ends (name, ".tfm")) superfluous= name (0, N(name)-4) * ".600pk";
     remove (tfm_dir * superfluous);
@@ -135,19 +136,21 @@ make_tex_tfm (string name) {
     s = "maketfm --dest-dir \"" * get_env("$TEXMACS_HOME_PATH")
       * "\\fonts\\tfm\" " * name;
     if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
-    system (s);
+    r= system (s);
   }
+  if (r) cout << "TeXmacs] system command failed: " << s << "\n";
 }
 
 void
 make_tex_pk (string name, int dpi, int design_dpi) {
   string s;
+  int r;
   if (get_setting ("MAKEPK") == "MakeTeXPK") {
     s="MakeTeXPK " * name * " " *
       as_string (dpi) * " " * as_string (design_dpi) * " " *
       as_string (dpi) * "/" * as_string (design_dpi) * " localfont";
     if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
-    system (s);
+    r= system (s);
   }
   if (get_setting ("MAKEPK") == "mktexpk") {
     url pk_dir ("$TEXMACS_HOME_PATH/fonts/pk");
@@ -158,7 +161,7 @@ make_tex_pk (string name, int dpi, int design_dpi) {
       string ("--destdir ") * as_string (pk_dir) * " " *
       name;
     if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
-    system (s);
+    r= system (s);
   }
   if (get_setting ("MAKEPK") == "makepk") {
 #ifdef OS_WIN32
@@ -173,8 +176,9 @@ make_tex_pk (string name, int dpi, int design_dpi) {
       * " " * as_string(dpi) * "/" * as_string(design_dpi);
 #endif
     if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
-    system (s);
+    r= system (s);
   }
+  if (r) cout << "TeXmacs] system command failed: " << s << "\n";
 }
 
 /******************************************************************************

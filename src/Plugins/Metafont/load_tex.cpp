@@ -45,8 +45,11 @@ try_tfm (string family, int size, int osize, tex_font_metric& tfm, bool make) {
   if (DEBUG_STD) cout << "TeXmacs] Try tfm " << name << "\n";
   url u= resolve_tex (name);
   if (is_none (u)) {
-    if (exists (url ("$TEXMACS_HOME_PATH/fonts/error", name)))
+    if (exists (url ("$TEXMACS_HOME_PATH/fonts/error", name))) {
+      if (DEBUG_STD)
+        cout << "TeXmacs] Error during " << name << " loading\n";
       return false;
+    }
     if (make) {
       system_wait ("Generating font file", name);
       make_tex_tfm (name);
@@ -216,8 +219,11 @@ try_pk (string family, int size, int dpi, int dsize,
   if (DEBUG_STD) cout << "TeXmacs] Open pk " << name << "\n";
   url u= resolve_tex (name);
   if (is_none (u)) {
-    if (exists (url ("$TEXMACS_HOME_PATH/fonts/error", name)))
+    if (exists (url ("$TEXMACS_HOME_PATH/fonts/error", name))) {
+      if (DEBUG_STD)
+        cout << "TeXmacs] Error during " << name << " loading\n";
       return false;
+    }
     if (get_setting ("MAKEPK") != "false") {
       system_wait ("Generating font file", name);
       make_tex_pk (family * size_name, dpi, as_int (get_setting ("DPI")));
@@ -230,6 +236,8 @@ try_pk (string family, int size, int dpi, int dsize,
     }
     if (is_none (u)) {
       save_string (url ("$TEXMACS_HOME_PATH/fonts/error", name), "");
+      if (DEBUG_STD)
+        cout << "TeXmacs] Error during " << name << " loading\n";
       return false;
     }
   }
