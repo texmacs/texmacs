@@ -26,14 +26,13 @@ recognize_glyph_one (contours gl, int& level, string& best, double& best_rec) {
 
   best= "";
   best_rec= -100.0;
-  int    best_i= -1;
   for (int i=0; i<N(learned_names); i++)
     if (N(learned_glyphs[i]) == N(gl) && disc1 == learned_disc1[i]) {
       string        name= learned_names[i];
       array<double> cont= learned_cont1[i];
       double        dist= l2_norm (cont - cont1) / sqrt (N(cont1));
       double        rec = 1.0 - dist;
-      if (rec > best_rec) { best_rec= rec; best= name; best_i= i; }
+      if (rec > best_rec) { best_rec= rec; best= name; }
       //cout << name << ": " << 100.0 * rec << "%\n";
     }
   if (best != "") {

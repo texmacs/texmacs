@@ -379,12 +379,10 @@ static bool begin_comment (string s, int i) {
 }
 
 static bool end_comment (string s, int i) {
-  bool comment;
   int pos= 0; int opos;
   do {
     do {
     opos= pos;
-    comment= false;
     parse_string (s, pos);
 	if (opos < pos) break;
     parse_end_comment (s, pos);

@@ -61,11 +61,6 @@ grid_box_rep::display (renderer ren) {
     point l2= point (max (p1[0], p2[0]), max (p1[1], p2[1]));
     point e1= l1, e2= point (l1[0], l2[1]);
     point e3= l2, e4= point (l2[0], l1[1]);
-    double L1, L2, L3, L4;
-    L1= norm (e2 - e1);
-    L2= norm (e3 - e2);
-    L3= norm (e4 - e3);
-    L4= norm (e1 - e4);
     point e1t= f (e1), e2t= f (e2);
     point e3t= f (e3), e4t= f (e4);
     double L1t, L2t, L3t, L4t;
