@@ -194,7 +194,7 @@ qt_widget_rep::save_send_slot (slot s, blackbox val) {
   sent_slots[s].seq = sequencer;
   sent_slots[s].val = val;
   sent_slots[s].id  = s.sid;
-  sequencer = ++sequencer % slot_id__LAST;
+  sequencer = (++sequencer) % slot_id__LAST;
 }
 
 
