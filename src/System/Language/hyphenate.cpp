@@ -58,11 +58,13 @@ hyphen_normalize (string s) {
 void
 load_hyphen_tables (string file_name,
                     hashmap<string,string>& patterns,
-                    hashmap<string,string>& hyphenations) {
+                    hashmap<string,string>& hyphenations, bool toCork) {
   string s;
   file_name= string ("hyphen.") * file_name;
   load_string (url ("$TEXMACS_PATH/langs/natural/hyphen", file_name), s, true);
   if (DEBUG_VERBOSE) cout << "TeXmacs] Loading " << file_name << "\n";
+
+  if (toCork) s= utf8_to_cork (s);
 
   hashmap<string,string> H ("?");
   bool pattern_flag=false;

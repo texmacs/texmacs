@@ -15,7 +15,7 @@
 
 void load_hyphen_tables (string language_name,
                          hashmap<string,string>& patterns,
-                         hashmap<string,string>& hyphenations);
+                         hashmap<string,string>& hyphenations, bool toCork);
 array<int> get_hyphens (string s,
                         hashmap<string,string> patterns,
                         hashmap<string,string> hyphenations);
