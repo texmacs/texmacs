@@ -3468,10 +3468,12 @@ upgrade_cyrillic_encoding (tree t, bool cyrillic) {
   else {
     int i = 0;
     if (is_func(t, WITH)) {
-      for (i = 0 ; i < N(t) - 1 ; i++) {
-        if (!cyrillic && become_cyrillic (as_string (t[i]), as_string (t[i+1])))
+      for (i = 0 ; i < N(t) - 1 ; i+=2) {
+        if (!cyrillic
+            && become_cyrillic (as_string (t[i]), as_string (t[i+1])))
           cyrillic = true;
-        else if (cyrillic && become_other (as_string (t[i]), as_string (t[i+1])))
+        else if (cyrillic
+            && become_other (as_string (t[i]), as_string (t[i+1])))
           cyrillic = false;
       }
       t[i] = upgrade_cyrillic_encoding (t[i], cyrillic);
