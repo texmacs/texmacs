@@ -22,6 +22,7 @@ array<int> get_hyphens (string s,
 array<int> get_hyphens (string s,
                         hashmap<string,string> patterns,
                         hashmap<string,string> hyphenations, bool utf8);
+void std_hyphenate (string s, int after, string& left, string& right, int pen);
 void std_hyphenate (string s, int after, string& left, string& right, int pen,
                     bool utf8);
 

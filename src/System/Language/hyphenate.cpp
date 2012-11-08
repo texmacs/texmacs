@@ -195,6 +195,10 @@ get_hyphens (string s,
 }
 
 void
+std_hyphenate (string s, int after, string& left, string& right, int penalty) {
+  std_hyphenate (s, after, left, right, penalty, false);
+}
+void
 std_hyphenate (string s, int after, string& left, string& right, int penalty,
                bool utf8) {
   if (!utf8) {

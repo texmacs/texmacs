@@ -23,7 +23,7 @@
 #endif
 
 /******************************************************************************
-* Western text languages
+* Western text languages / 8 bit charset
 ******************************************************************************/
 
 struct text_language_rep: language_rep {
@@ -31,24 +31,101 @@ struct text_language_rep: language_rep {
   hashmap<string,string> hyphenations;
 
   text_language_rep (string lan_name, string hyph_name);
-  text_language_rep (string lan_name, string hyph_name, bool u);
+  text_property advance (tree t, int& pos);
+  array<int> get_hyphens (string s);
+  void hyphenate (string s, int after, string& left, string& right);
+};
+
+text_language_rep::text_language_rep (string lan_name, string hyph_name):
+  language_rep (lan_name), patterns ("?"), hyphenations ("?") {
+    load_hyphen_tables (hyph_name, patterns, hyphenations); }
+
+text_property
+text_language_rep::advance (tree t, int& pos) {
+  string s= t->label;
+  if (pos == N(s)) return &tp_normal_rep;
+
+  if (s[pos]==' ') {
+    pos++;
+    // while ((pos<N(s)) && (s[pos]==' ')) pos++;
+    if ((pos == N(s)) || (!is_punctuation (s[pos])))
+      return &tp_space_rep;
+    return &tp_blank_rep;
+  }
+  
+  if (is_punctuation (s[pos])) {
+    while ((pos<N(s)) && is_punctuation (s[pos])) pos++;
+    if ((pos==N(s)) || (s[pos]!=' ')) return &tp_normal_rep;
+    switch (s[pos-1]) {
+    case ',': case ':': case ';': case '`': case '\'':
+      return &tp_space_rep;
+    case '.': case '!': case '?':
+      return &tp_period_rep;
+    }
+    return &tp_space_rep;
+  }
+
+  if (s[pos]=='-') {
+    pos++;
+    while ((pos<N(s)) && (s[pos]=='-')) pos++;
+    return &tp_hyph_rep;
+  }
+
+  if (is_iso_alpha (s[pos])) {
+    while ((pos<N(s)) && is_iso_alpha (s[pos])) pos++;
+    return &tp_normal_rep;
+  }
+
+  if (is_numeric (s[pos])) { // can not be a '.'
+    while ((pos<N(s)) && is_numeric (s[pos])) pos++;
+    while (s[pos-1]=='.') pos--;
+    return &tp_normal_rep;
+  }
+
+  if (s[pos]=='<') {
+    while ((pos<N(s)) && (s[pos]!='>')) pos++;
+    if (pos<N(s)) pos++;
+    return &tp_normal_rep;
+  }
+
+  pos++;
+  return &tp_normal_rep;
+}
+
+array<int>
+text_language_rep::get_hyphens (string s) {
+  return ::get_hyphens (s, patterns, hyphenations);
+}
+
+void
+text_language_rep::hyphenate (
+  string s, int after, string& left, string& right)
+{
+  array<int> penalty= get_hyphens (s);
+  std_hyphenate (s, after, left, right, penalty[after]);
+}
+
+/******************************************************************************
+* Eastern text languages / using UCS entities
+******************************************************************************/
+
+struct ucs_text_language_rep: language_rep {
+  hashmap<string,string> patterns;
+  hashmap<string,string> hyphenations;
+
+  ucs_text_language_rep (string lan_name, string hyph_name);
   text_property advance (tree t, int& pos);
   array<int> get_hyphens (string s);
   void hyphenate (string s, int after, string& left, string& right);
   bool unicode;
 };
 
-text_language_rep::text_language_rep (string lan_name,
-                                      string hyph_name, bool u):
-  language_rep (lan_name), patterns ("?"), hyphenations ("?"), unicode (u) {
-    load_hyphen_tables (hyph_name, patterns, hyphenations); }
-
-text_language_rep::text_language_rep (string lan_name, string hyph_name):
-  language_rep (lan_name), patterns ("?"), hyphenations ("?"), unicode (false)
+ucs_text_language_rep::ucs_text_language_rep (string lan_name, string hyph_name):
+  language_rep (lan_name), patterns ("?"), hyphenations ("?")
   { load_hyphen_tables (hyph_name, patterns, hyphenations); }
 
 text_property
-text_language_rep::advance (tree t, int& pos) {
+ucs_text_language_rep::advance (tree t, int& pos) {
   //TODO: replace methods is_punctuation (), is_iso_alpha () and is_numeric (),
   //      by equivalents taking into account unicode entities.
   string s= t->label;
@@ -80,9 +157,9 @@ text_language_rep::advance (tree t, int& pos) {
     return &tp_hyph_rep;
   }
 
-  if (is_iso_alpha (s[pos]) || (s[pos]=='<' && unicode)) {
-    while ((pos<N(s)) && (is_iso_alpha (s[pos]) || (s[pos]=='<' && unicode))) {
-      if (s[pos]=='<' && unicode) {
+  if (is_iso_alpha (s[pos]) || (s[pos]=='<')) {
+    while ((pos<N(s)) && (is_iso_alpha (s[pos]) || (s[pos]=='<'))) {
+      if (s[pos]=='<') {
         while ((pos<N(s)) && (s[pos]!='>')) pos++;
         if (pos<N(s)) pos++;
       }
@@ -98,27 +175,21 @@ text_language_rep::advance (tree t, int& pos) {
     return &tp_normal_rep;
   }
 
-  if (s[pos]=='<' && !unicode) {
-    while ((pos<N(s)) && (s[pos]!='>')) pos++;
-    if (pos<N(s)) pos++;
-    return &tp_normal_rep;
-  }
-
   pos++;
   return &tp_normal_rep;
 }
 
 array<int>
-text_language_rep::get_hyphens (string s) {
-  return ::get_hyphens (s, patterns, hyphenations, unicode);
+ucs_text_language_rep::get_hyphens (string s) {
+  return ::get_hyphens (s, patterns, hyphenations, true);
 }
 
 void
-text_language_rep::hyphenate (
+ucs_text_language_rep::hyphenate (
   string s, int after, string& left, string& right)
 {
   array<int> penalty= get_hyphens (s);
-  std_hyphenate (s, after, left, right, penalty[after], unicode);
+  std_hyphenate (s, after, left, right, penalty[after], true);
 }
 
 /******************************************************************************
@@ -387,8 +458,8 @@ get_date (string lan, string fm) {
 typedef const char* const_char_ptr;
 
 static language
-make_text_language (string s, string h, bool u) {
-  return tm_new<text_language_rep> (s, h, u);
+make_ucs_text_language (string s, string h) {
+  return tm_new<ucs_text_language_rep> (s, h);
 }
 
 static language
@@ -396,13 +467,18 @@ make_text_language (string s, string h) {
   return tm_new<text_language_rep> (s, h);
 }
 
+static language
+make_oriental_language (string s) {
+  return tm_new<oriental_language_rep> (s);
+}
+
 language
 text_language (string s) {
   if (language::instances -> contains (s)) return language (s);
   if (s == "american")   return make_text_language (s, "us");
   if (s == "british")    return make_text_language (s, "ukenglish");
-  if (s == "bulgarian")  return make_text_language (s, "bulgarian", true);
-  if (s == "chinese")    return tm_new<oriental_language_rep> (s);
+  if (s == "bulgarian")  return make_ucs_text_language (s, "bulgarian");
+  if (s == "chinese")    return make_oriental_language (s);
   if (s == "czech")      return make_text_language (s, "czech");
   if (s == "danish")     return make_text_language (s, "danish");
   if (s == "dutch")      return make_text_language (s, "dutch");
@@ -412,17 +488,17 @@ text_language (string s) {
   if (s == "german")     return make_text_language (s, "german");
   if (s == "hungarian")  return make_text_language (s, "hungarian");
   if (s == "italian")    return make_text_language (s, "italian");
-  if (s == "japanese")   return tm_new<oriental_language_rep> (s);
-  if (s == "korean")     return tm_new<oriental_language_rep> (s);
+  if (s == "japanese")   return make_oriental_language (s);
+  if (s == "korean")     return make_oriental_language (s);
   if (s == "polish")     return make_text_language (s, "polish");
   if (s == "portuguese") return make_text_language (s, "portuguese");
   if (s == "romanian")   return make_text_language (s, "romanian");
-  if (s == "russian")    return make_text_language (s, "russian", true);
+  if (s == "russian")    return make_ucs_text_language (s, "russian");
   if (s == "slovene")    return make_text_language (s, "slovene");
   if (s == "spanish")    return make_text_language (s, "spanish");
   if (s == "swedish")    return make_text_language (s, "swedish");
-  if (s == "taiwanese")  return tm_new<oriental_language_rep> (s);
-  if (s == "ukrainian")  return make_text_language (s, "ukrainian", true);
+  if (s == "taiwanese")  return make_oriental_language (s);
+  if (s == "ukrainian")  return make_ucs_text_language (s, "ukrainian");
   if (s == "verbatim")   return tm_new<verb_language_rep> ("verbatim");
   cerr << "\nThe language was " << s << "\n";
   FAILED ("unknown language");
