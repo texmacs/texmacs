@@ -1,3 +1,63 @@
+% This file is part of hyph-utf8 package and resulted from
+% semi-manual conversions of hyphenation patterns into UTF-8 in June 2008.
+%
+% Source: pthyph.tex (1994-10-13 - date on CTAN) or (1996-07-21 - date in file) - no idea
+% Author: Pedro J. de Rezende <rezende at dcc.unicamp.br>, J.Joao Dias Almeida <jj at di.uminho.pt>
+%
+% The above mentioned file should become obsolete,
+% and the author of the original file should preferaby modify this file instead.
+%
+% Modificatios were needed in order to support native UTF-8 engines,
+% but functionality (hopefully) didn't change in any way, at least not intentionally.
+% This file is no longer stand-alone; at least for 8-bit engines
+% you probably want to use loadhyph-foo.tex (which will load this file) instead.
+%
+% Modifications were done by Jonathan Kew, Mojca Miklavec & Arthur Reutenauer
+% with help & support from:
+% - Karl Berry, who gave us free hands and all resources
+% - Taco Hoekwater, with useful macros
+% - Hans Hagen, who did the unicodifisation of patterns already long before
+%               and helped with testing, suggestions and bug reports
+% - Norbert Preining, who tested & integrated patterns into TeX Live
+%
+% However, the "copyright/copyleft" owner of patterns remains the original author.
+%
+% The copyright statement of this file is thus:
+%
+%    Do with this file whatever needs to be done in future for the sake of
+%    "a better world" as long as you respect the copyright of original file.
+%    If you're the original author of patterns or taking over a new revolution,
+%    plese remove all of the TUG comments & credits that we added here -
+%    you are the Queen / the King, we are only the servants.
+%
+% If you want to change this file, rather than uploading directly to CTAN,
+% we would be grateful if you could send it to us (http://tug.org/tex-hyphen)
+% or ask for credentials for SVN repository and commit it yourself;
+% we will then upload the whole "package" to CTAN.
+%
+% Before a new "pattern-revolution" starts,
+% please try to follow some guidelines if possible:
+%
+% - \lccode is *forbidden*, and I really mean it
+% - all the patterns should be in UTF-8
+% - the only "allowed" TeX commands in this file are: \patterns, \hyphenation,
+%   and if you really cannot do without, also \input and \message
+% - in particular, please no \catcode or \lccode changes,
+%   they belong to loadhyph-foo.tex,
+%   and no \lefthyphenmin and \righthyphenmin,
+%   they have no influence here and belong elsewhere
+% - \begingroup and/or \endinput is not needed
+% - feel free to do whatever you want inside comments
+%
+% We know that TeX is extremely powerful, but give a stupid parser
+% at least a chance to read your patterns.
+%
+% For more unformation see
+%
+%    http://tug.org/tex-hyphen
+%
+%------------------------------------------------------------------------------
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % The Portuguese TeX hyphenation table.
 % (C) 1996 by  Pedro J. de Rezende (rezende@dcc.unicamp.br)
@@ -19,31 +79,10 @@
 % version 1 of the License, or any later version.
 % -----------------------------------------------------------------
 % Remember! If you *must* change it, then call the resulting file
-% something else and attach your name to your *documented* changes.
+% something  else and attach your name to your *documented* changes.
 % ======================================================================
 %
-\begingroup
-\lccode`\^^e0=`\^^e0 % \`a
-\lccode`\^^e1=`\^^e1 % \'a
-\lccode`\^^e2=`\^^e2 % \^a
-\lccode`\^^e3=`\^^e3 % \~a
-\lccode`\^^e7=`\^^e7 % \c{c}
-\lccode`\^^e9=`\^^e9 % \'e
-\lccode`\^^e8=`\^^e8 % \`e
-\lccode`\^^ea=`\^^ea % \^e
-\lccode`\^^ed=`\^^ed % \'\i{}
-\lccode`\^^ee=`\^^ee % \^\i{}
-\lccode`\^^ef=`\^^ef % \"\i{}
-\lccode`\^^f3=`\^^f3 % \'o
-\lccode`\^^f4=`\^^f4 % \^o
-\lccode`\^^f5=`\^^f5 % \~o
-\lccode`\^^f6=`\^^f6 % \"o
-\lccode`\^^fa=`\^^fa % \'u
-\lccode`\^^fb=`\^^fb % \^u
-\lccode`\'=`\'
-\lccode`\-=`\-
-\message{portuguese hiphenation 8 bits and -}
-\patterns{ % just type <return> if you're not using INITEX
+\patterns{
 1b2l
 1b2r
 1ba
@@ -51,15 +90,15 @@
 1bi
 1bo
 1bu
-1b^^e1
-1b^^e2
-1b^^e3
-1b^^e9
-1b^^ed
-1b^^f3
-1b^^fa
-1b^^ea
-1b^^f5
+1bá
+1bâ
+1bã
+1bé
+1bí
+1bó
+1bú
+1bê
+1bõ
 1c2h
 1c2l
 1c2r
@@ -68,29 +107,29 @@
 1ci
 1co
 1cu
-1c^^e1
-1c^^e2
-1c^^e3
-1c^^e9
-1c^^ed
-1c^^f3
-1c^^fa
-1c^^ea
-1c^^f5
-1^^e7a
-1^^e7e
-1^^e7i
-1^^e7o
-1^^e7u
-1^^e7^^e1
-1^^e7^^e2
-1^^e7^^e3
-1^^e7^^e9
-1^^e7^^ed
-1^^e7^^f3
-1^^e7^^fa
-1^^e7^^ea
-1^^e7^^f5
+1cá
+1câ
+1cã
+1cé
+1cí
+1có
+1cú
+1cê
+1cõ
+1ça
+1çe
+1çi
+1ço
+1çu
+1çá
+1çâ
+1çã
+1çé
+1çí
+1çó
+1çú
+1çê
+1çõ
 1d2l
 1d2r
 1da
@@ -98,15 +137,15 @@
 1di
 1do
 1du
-1d^^e1
-1d^^e2
-1d^^e3
-1d^^e9
-1d^^ed
-1d^^f3
-1d^^fa
-1d^^ea
-1d^^f5
+1dá
+1dâ
+1dã
+1dé
+1dí
+1dó
+1dú
+1dê
+1dõ
 1f2l
 1f2r
 1fa
@@ -114,15 +153,15 @@
 1fi
 1fo
 1fu
-1f^^e1
-1f^^e2
-1f^^e3
-1f^^e9
-1f^^ed
-1f^^f3
-1f^^fa
-1f^^ea
-1f^^f5
+1fá
+1fâ
+1fã
+1fé
+1fí
+1fó
+1fú
+1fê
+1fõ
 1g2l
 1g2r
 1ga
@@ -134,29 +173,29 @@
 1gu4e
 1gu4i
 1gu4o
-1g^^e1
-1g^^e2
-1g^^e3
-1g^^e9
-1g^^ed
-1g^^f3
-1g^^fa
-1g^^ea
-1g^^f5
+1gá
+1gâ
+1gã
+1gé
+1gí
+1gó
+1gú
+1gê
+1gõ
 1ja
 1je
 1ji
 1jo
 1ju
-1j^^e1
-1j^^e2
-1j^^e3
-1j^^e9
-1j^^ed
-1j^^f3
-1j^^fa
-1j^^ea
-1j^^f5
+1já
+1jâ
+1jã
+1jé
+1jí
+1jó
+1jú
+1jê
+1jõ
 1k2l
 1k2r
 1ka
@@ -164,59 +203,59 @@
 1ki
 1ko
 1ku
-1k^^e1
-1k^^e2
-1k^^e3
-1k^^e9
-1k^^ed
-1k^^f3
-1k^^fa
-1k^^ea
-1k^^f5
+1ká
+1kâ
+1kã
+1ké
+1kí
+1kó
+1kú
+1kê
+1kõ
 1l2h
 1la
 1le
 1li
 1lo
 1lu
-1l^^e1
-1l^^e2
-1l^^e3
-1l^^e9
-1l^^ed
-1l^^f3
-1l^^fa
-1l^^ea
-1l^^f5
+1lá
+1lâ
+1lã
+1lé
+1lí
+1ló
+1lú
+1lê
+1lõ
 1ma
 1me
 1mi
 1mo
 1mu
-1m^^e1
-1m^^e2
-1m^^e3
-1m^^e9
-1m^^ed
-1m^^f3
-1m^^fa
-1m^^ea
-1m^^f5
+1má
+1mâ
+1mã
+1mé
+1mí
+1mó
+1mú
+1mê
+1mõ
 1n2h
 1na
 1ne
 1ni
 1no
 1nu
-1n^^e1
-1n^^e2
-1n^^e3
-1n^^e9
-1n^^ed
-1n^^f3
-1n^^fa
-1n^^ea
-1n^^f5
+1ná
+1nâ
+1nã
+1né
+1ní
+1nó
+1nú
+1nê
+1nõ
 1p2l
 1p2r
 1pa
@@ -224,15 +263,15 @@
 1pi
 1po
 1pu
-1p^^e1
-1p^^e2
-1p^^e3
-1p^^e9
-1p^^ed
-1p^^f3
-1p^^fa
-1p^^ea
-1p^^f5
+1pá
+1pâ
+1pã
+1pé
+1pí
+1pó
+1pú
+1pê
+1põ
 1qu4a
 1qu4e
 1qu4i
@@ -242,29 +281,29 @@
 1ri
 1ro
 1ru
-1r^^e1
-1r^^e2
-1r^^e3
-1r^^e9
-1r^^ed
-1r^^f3
-1r^^fa
-1r^^ea
-1r^^f5
+1rá
+1râ
+1rã
+1ré
+1rí
+1ró
+1rú
+1rê
+1rõ
 1sa
 1se
 1si
 1so
 1su
-1s^^e1
-1s^^e2
-1s^^e3
-1s^^e9
-1s^^ed
-1s^^f3
-1s^^fa
-1s^^ea
-1s^^f5
+1sá
+1sâ
+1sã
+1sé
+1sí
+1só
+1sú
+1sê
+1sõ
 1t2l
 1t2r
 1ta
@@ -272,15 +311,15 @@
 1ti
 1to
 1tu
-1t^^e1
-1t^^e2
-1t^^e3
-1t^^e9
-1t^^ed
-1t^^f3
-1t^^fa
-1t^^ea
-1t^^f5
+1tá
+1tâ
+1tã
+1té
+1tí
+1tó
+1tú
+1tê
+1tõ
 1v2l
 1v2r
 1va
@@ -288,15 +327,15 @@
 1vi
 1vo
 1vu
-1v^^e1
-1v^^e2
-1v^^e3
-1v^^e9
-1v^^ed
-1v^^f3
-1v^^fa
-1v^^ea
-1v^^f5
+1vá
+1vâ
+1vã
+1vé
+1ví
+1vó
+1vú
+1vê
+1võ
 1w2l
 1w2r
 1xa
@@ -304,29 +343,29 @@
 1xi
 1xo
 1xu
-1x^^e1
-1x^^e2
-1x^^e3
-1x^^e9
-1x^^ed
-1x^^f3
-1x^^fa
-1x^^ea
-1x^^f5
+1xá
+1xâ
+1xã
+1xé
+1xí
+1xó
+1xú
+1xê
+1xõ
 1za
 1ze
 1zi
 1zo
 1zu
-1z^^e1
-1z^^e2
-1z^^e3
-1z^^e9
-1z^^ed
-1z^^f3
-1z^^fa
-1z^^ea
-1z^^f5
+1zá
+1zâ
+1zã
+1zé
+1zí
+1zó
+1zú
+1zê
+1zõ
 a3a
 a3e
 a3o
@@ -338,9 +377,9 @@ i3a
 i3e
 i3i
 i3o
-i3^^e2
-i3^^ea
-i3^^f4
+i3â
+i3ê
+i3ô
 o3a
 o3e
 o3o
@@ -353,5 +392,6 @@ u3u
 1-
 }
 \hyphenation{% Do NOT make any alterations to this list! --- PdR
-hard-ware soft-ware}
-\endgroup
+hard-ware
+soft-ware
+}
