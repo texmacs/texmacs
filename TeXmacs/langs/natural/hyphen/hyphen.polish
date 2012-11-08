@@ -1,749 +1,4166 @@
-% HYPHEN.POL
-% Polish hyphenation patterns by Hanna Ko{\l}odziejska
-% (made available for network distribution by J. S. Bie\'n,
-%  Institute of Informatics, Warsaw University)
+% This file is part of hyph-utf8 package and resulted from
+% semi-manual conversions of hyphenation patterns into UTF-8 in June 2008.
 %
-% The patterns use old Bie\'n's input conventions,
-% i.e. ª means z with dot and π means z with accent,
-% e.g.
-% PÛjdπ, ki´-ªe t¶ chmurno±¢ w g™°b flaszy.
-%                                 
-% If the patterns are used with {\TeX} 3.x, the x- and -xx breaks
-% should be disabled:
-% \lefthyphenmin=2 \righthyphenmin=3
+% Source: plhyph.tex (1995-06-26)
+% Author: Hanna Ko≈Çodziejska, Bogus≈Çaw Jackowski, Marek Ryƒáko
 %
-% The patterns were published in the report described below in the
-% BibTeX format:
+% The above mentioned file should become obsolete,
+% and the author of the original file should preferaby modify this file instead.
 %
-% @techreport{Kol87,
-%             author = "Hanna Ko{\l}odziejska",
-%             title = "Dzielenie wyraz\'ow polskich w systemie {\TeX}",
-%             institution = "Instytut Informatyki Uniwersytetu Warszawskiego",
-%             year = 1987,
-%             type = "Sprawozdania IInf UW",
-%             number = "nr.~165"
-%             }
+% Modificatios were needed in order to support native UTF-8 engines,
+% but functionality (hopefully) didn't change in any way, at least not intentionally.
+% This file is no longer stand-alone; at least for 8-bit engines
+% you probably want to use loadhyph-foo.tex (which will load this file) instead.
 %
-%% CharacterTable
-%%   Upper-case    ABCDEFGHIJKLMNOPQRSTUVWXYZ
-%%   Lower-case    abcdefghijklmnopqrstuvwxyz
-%%   Digits        0123456789
-%%   Exclamation   !     Double quote  "     Hash (number) #
-%%   Dollar        $     Percent       %     Ampersand     &
-%%   Acute accent  '     Left paren    (     Right paren   )
-%%   Asterisk      *     Plus          +     Comma         ,
-%%   Minus         -     Point         .     Solidus       /
-%%   Colon         :     Semicolon     ;     Less than     <
-%%   Equals        =     Greater than  >     Question mark ?
-%%   Commercial at @     Left bracket  [     Backslash     \
-%%   Right bracket ]     Circumflex    ^     Underscore    _
-%%   Grave accent  `     Left brace    {     Vertical bar  |
-%%   Right brace   }     Tilde         ~
-%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                                                                       %
-%   To jest  plik  WZORCE.TEX  zawierajacy  pelny zestaw  wzorcow       %
-%   dzielenia  wyrazow  polskich,  ktory  moze  byc  wykorzystany       %
-%   w systemie TeX  (zamiast  HYPHEN.TEX).                              %
-%      Niniejsze  wzorce  moga  byc  przekazywane  (nieodplatnie)       %
-%   wszystkim  zainteresowanym.                                         %
-%                                                                       %
-%                 Hanna Kolodziejska                                    %
-%                 Instytut Informatyki Uniwersytetu Warszawskiego       %
-%                                                                       %
-%   1987-12-15                                                          %
-%                                                                       %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Modifications were done by Jonathan Kew, Mojca Miklavec & Arthur Reutenauer
+% with help & support from:
+% - Karl Berry, who gave us free hands and all resources
+% - Taco Hoekwater, with useful macros
+% - Hans Hagen, who did the unicodifisation of patterns already long before
+%               and helped with testing, suggestions and bug reports
+% - Norbert Preining, who tested & integrated patterns into TeX Live
+%
+% However, the "copyright/copyleft" owner of patterns remains the original author.
+%
+% The copyright statement of this file is thus:
+%
+%    Do with this file whatever needs to be done in future for the sake of
+%    "a better world" as long as you respect the copyright of original file.
+%    If you're the original author of patterns or taking over a new revolution,
+%    plese remove all of the TUG comments & credits that we added here -
+%    you are the Queen / the King, we are only the servants.
+%
+% If you want to change this file, rather than uploading directly to CTAN,
+% we would be grateful if you could send it to us (http://tug.org/tex-hyphen)
+% or ask for credentials for SVN repository and commit it yourself;
+% we will then upload the whole "package" to CTAN.
+%
+% Before a new "pattern-revolution" starts,
+% please try to follow some guidelines if possible:
+%
+% - \lccode is *forbidden*, and I really mean it
+% - all the patterns should be in UTF-8
+% - the only "allowed" TeX commands in this file are: \patterns, \hyphenation,
+%   and if you really cannot do without, also \input and \message
+% - in particular, please no \catcode or \lccode changes,
+%   they belong to loadhyph-foo.tex,
+%   and no \lefthyphenmin and \righthyphenmin,
+%   they have no influence here and belong elsewhere
+% - \begingroup and/or \endinput is not needed
+% - feel free to do whatever you want inside comments
+%
+% We know that TeX is extremely powerful, but give a stupid parser
+% at least a chance to read your patterns.
+%
+% For more unformation see
+%
+%    http://tug.org/tex-hyphen
+%
+%------------------------------------------------------------------------------
+%
+% This is PLHYPH.TeX - the Polish hyphenation patterns
+%          version 3.0a, Wednesday, May 17th, 1995
+% to be used for the inclusion of Polish hyphenation patterns in any format,
+% not necessarily in the MeX or LaMeX ones. The patterns are exactly
+% the same as in the version 3.0 being the part of the MeX package,
+% only the surrounding of the \pattern command is changed. The authors
+% claim the upward compatibility, i.e., the version 3.0a can also be used
+% with the MeX or LaMeX formats.
 
-\catcode`\@=11 \lccode`@=`@
+% The history of development of the Polish hyphenation patterns:
+%
+% The first version of the patterns was developed
+% by Hanna Ko≈Çodziejska (1987).
+%
+% The adaptation to the LeX format (see below) and extensive modification
+% were done by Bogus≈Çaw Jackowski & Marek Ryƒáko (1987--1989).
+%
+% The hyphenation rules were further improved and adapted to the
+% TeX 3.x requirements by Hanna Ko≈Çodziejska (1991).
+%
+% Lone-standing version (3.0a) of patterns was prepared (under pressure
+% from LaTeX users) by Bogus≈Çaw Jackowski and Marek Ryƒáko, following
+% Mariusz Olko's suggestions, 1995.
+
+% The LeX format mentioned above was the first version of the adaptation
+% of TeX to the Polish language. The next version is called MeX.
+
 \patterns{
-%
-  a1  e1  i1  o1  u1  y1 
-%
-  i2a   i2°   i2e    i2¶  i2o   i2Û  i2u   i2y
-%
-  d4z   d4π   d4ª   c4z   r4z   s4z   c4h
-%
-  a2u  e2u
-%
-  e3u2sz       .na3u        .nie3u       .prze3u     .za3u       .za4uto
-%
-  .br4         .dr4         .kl4         .pl4        .skr4       .tr4  
-  .brz4        .drz4        .kr4         .p™4       .sm4        .trz4   
-  .ch4         .dz4         .krz4        .prz4       .st4        .zm4   
-  .chrz4       .dπ4        .™4         .rz4        .str4       .zw4   
-  .cz4         .dª4        .mk4         .rª4       .tch4       .πdπ4   
-  .¢4         .grz4        .pch4        .sch4       .tk4        .ª4   
-%
-%  PRZEDROSTKI ZAKOãCZONE NA SP”äGäOSKÜ
-%
-  .ad3
-            .ad4a        .ad4e        .ad5iu       .ad5op       .ad4u   
-            .ad5apt      .ad4i        .ad4o        .ad5or       .ad4y 
-  .be2z3
-            .be3z4an     .be3z4ik     .bezzw2      .odbe2z3     .ubezw2
-            .be3z4ec     .bezw2       .najbe2z3    .ube2z3               
-  .de2z3   
-            .de3z4abil   .de3z4awu    .de3z4el     .de3z4er     .de3z4y 
-  .dy2s3 
-            .dy3s4e      .dy3s4y      .zdy2s3kont  .zdy2s3kwal
-            .dy3s4o      .dy3sz       .zdy2s3kred
-  .dy2z3 
-            .dy3z4e
-  .eks3  
-            .eks4y       .po3e2ks3    .pod3e4ks3   .wye2ks3 
-  .hipe2r3    
-            .hipe3r4o
-  .in3     
-            .in4f3lan    .in4o        .ino3w2      .zai2n3  
-            .in4ic       .in5ok       .in4u        .zai3n4ic
-  .kon2t2r3  
-            .kon3tr4a    .kon4tr5akc  .kon4tr5ase  .kon3tr4ol  
-            .kon4tr5adm  .kon4tr5alt  .kon4tr5asy  .kon3tr4ow
-            .kon4tr5agi  .kon4tr5arg  .kon4tr5ata  .kon3tr4y
-% .na2d2
-            .na3d°      .na3d¶      .na3dy
-  .na2j 
-            .na3j°      .na3j¶      
-  .pe2r3
-            .pe3r4e      .pe3r4i      .pe3r4o      .pe3r4u      .pe3r4y
-% .po2d2          
-            .po3d°      .po3dy
-% .post
-            .po4st3d     .po4st3h     .po4st3p     .po4st3s
-  .przeci2w3
-            .przeci3w4ie .przeciww2  
-% .prze2d2
-            .prze3d°    .prze3d¶    .prze3dy
-  .ro2z3 
-            .ro3z4a      .ro4z5e4g3z  .roz±2      .naj3ro2z3   .nieroz±2 
-            .ro4z5agi    .ro4z5emo    .ro3z4u      .najro3z4u   .niero3z4u
-            .ro4z5anie   .ro4z5e4n3t               .niero2z3    .uro2z3 
-            .rozbrz2     .rozm2                    .nierozbrz2  .zro2z3       
-            .ro3z4e      .rozpo3w2                 .nierozm2    .zro3z4u
-  .su2b3 
-            .su3b4ie
-  .supe2r3 
-            .supe3r4at   .supe3r4io   .supero2d1rzut
-  .±rÛ2d5
-            .pod3±rÛ2d5
-  .tra2n2s3 
-            .tran3s4ep    .tran3s4y    .tran3sz     .przetra2n2s3
-% .we3s2
-            .we4st3f      .we4st3m
-%
-% PIERWSZE CZäONY ZäOõEã (zako´czone na spÛ™g™osk¶)
-%
-  .cztere2ch3
-  .czwÛ2r3   .czwÛ3r4a  .czwÛ3r4°  .czwÛ3r4e  .czwÛ3r4¶  .czwÛ3r4o
-  .¢wie2r¢3 
-  .dwÛ2j3    .dwÛ3j4a   .dwÛ3j4°   .dwÛ3j4e   .dwÛ3j4¶   .dwÛ3j4o
-  .dziewi¶2¢3
-  .kro2¢3
-  .osie2m3
-  .pi¶2¢3   
-  .pi¶¢se2t3
-  .pÛ2™3    .pÛ3™4°   .pÛ3™4¶    .pÛ3™4y    .pÛ3™4ecz
-  .siede2m3        
-  .spÛ2™3 
-  .sze2s3
-  .sze2±2¢3
-  .trÛ2j3    .trÛ3j4°   .trÛ3j4¶    .trÛ3j4ecz
-  .tysi°2c3  .tysi°3c4a  .tysi°3c4e   .tysi°3cz   
-  .wewn°2trz3
-  .wieluse2t3
-  .wspÛ2™3  
-  .wsze2ch3   .wszechw2
-%
-%  PIERWSZE CZäONY ZäOõEã (zako´czone na samog™osk¶)
-%
-  .auto3ch2                               .pierwo3w2
-  .ca™o3k2       .ca™o3±2              .pi¶cio3±2
-  .ciep™o3kr2                            .piono3w2
-  .cztero3±2                             .p™asko3w2
-  .daleko3w2                              .pra3s2         .pra3w2n
-  .d™ugo3tr2     .d™ugo3w2              .przed3si¶3w2
-  .dziesi¶cio3±2                        .siedmio3±2
-  .dziewi¶cio3±2                        .sze±cio3±2
-  .jad™o3w2                              .±wiat™o3w2  
-  .ko™o3w2                               .wielo3k2       .wielo3±2
-  .krÛtko3tr2    .krÛtko3w2             .wniebo3w2
-  .moªno3w2                              .wodo3w2
-  .ogÛlno3k2                             .zimno3kr2
-  .oka3m2                                 .z™o3w2
-  .o±mio3±2
-%
-%  PRZEDROSTKI: DO- , NAJDO- , NIEDO-
-%
-  .do3b2   .najdo3b2   .niedo3b2   
-  .dobr2   
-  .dobrz2  
-  .do3c2   .najdo3c2   .niedo3c2   
-  .doch2   .najdoch2   .niedoch2   
-  .docz2   .najdocz2   .niedocz2   
-  .do3¢2  .najdo3¢2  .niedo3¢2  
-  .do3d2   .najdo3d2   .niedo3d2   
-  .dodz2   .najdodz2   .niedodz2   
-  .dodπ2  .najdodπ2  .niedodπ2  
-  .dodª2  .najdodª2  .niedodª2  
-  .do3f2   .najdo3f2   .niedo3f2   
-  .do3g2   .najdo3g2   .niedo3g2   
-  .dogrz2
-  .do3h2   .najdo3h2   .niedo3h2   
-  .do3k2   .najdo3k2   .niedo3k2   
-                       .niedokr2
-  .do3l2   .najdo3l2   .niedo3l2   
-  .do3™2  .najdo3™2  .niedo3™2  
-  .do3m2   .najdo3m2   .niedo3m2   
-  .domk2               .niedomk2   
-  .do3n2   .najdo3n2   .niedo3n2   
-  .do3´2  .najdo3´2  .niedo3´2  
-  .do3p2   .najdo3p2   .niedo3p2     
-  .dopch2              .niedopch2
-  .do3r2   .najdo3r2   .niedo3r2   
-  .dorz2   .najdorz2   .niedorz2   
-  .dorª2  
-  .do3s2   .najdo3s2   .niedo3s2   
-  .dosm2   
-  .dosz2   .najdosz2   .niedosz2   
-  .do3±2  .najdo3±2  .niedo3±2  
-  .do3t2   .najdo3t2   .niedo3t2   
-  .dotk2   .najdotk2   .niedotk2   
-  .dotr2
-  .do3w2   .najdo3w2   .niedo3w2   
-  .do3z2   .najdo3z2   .niedo3z2   
-  .do3π2  .najdo3π2  .niedo3π2  
-  .do3ª2  .najdo3ª2  .niedo3ª2  
-%
-%  PRZEDROSTKI: NA(D)- , PONA(D)-
-%
-  .na3b2               .pona3b2    
-  .nabrz2              .ponabrz2     
-  .na3c2   .nad3c2     .pona3c2     .ponad3c2
-  .nach2   .nadch2     .ponach2     .ponad3ch2
-  .nacz2   .nadcz2     .pona3cz2    .ponad3cz2
-  .na3¢2  .nad3¢2    .pona3¢2    .ponad3¢2
-  .na2d2   .nad3d2     .pona2d2     .ponad3d2
-  .nadz2   .naddz2     .ponadz2     .ponad3dz2
-  .nadπ2  .naddπ2    .ponadπ2    .ponad3dπ2
-  .nadª2  .naddª2    .ponadª2    .ponad3dª2
-  .na3f2   .nad3f2     .pona3f2     .ponad3f2
-  .na3g2   .nad3g2     .pona3g2     .ponad3g2
-  .nagrz2
-  .na3h2   .nad3h2     .pona3h2     .ponad3h2
-           .nad3j2                  .ponad3j2 
-  .na3k2   .nad3k2     .pona3k2     .ponad3k2
-  .nakr2
-  .na3l2   .nad3l2     .pona3l2     .ponad3l2
-  .na3™2              .pona3™2   
-  .na3m2               .pona3m2    
-  .na3n2   .nad3n2     .pona3n2     .ponad3n2
-  .na3´2  .nad3´2    .pona3´2    .ponad3´2
-  .na3p2   .nad3p2     .pona3p2     .ponad3p2
-  .naprz2 
-  .na3r2   .nadr2      .pona3r2     
-  .na4r3r
-  .narz2               .ponarz2    
-  .narª2
-  .na3s2   .nad3s2     .pona3s2     .ponad3s2
-  .nasm2               .ponasm2
-  .nasz2   .nadsz2     .ponasz2    
-  .na3±2  .nad3±2    .pona3±2    .ponad3±2
-  .na3t2   .nad3t2     .pona3t2     .ponad3t2
-  .natch2
-  .natk2  
-  .na3w2   .nadw2      .pona3w2     
-  .na3z2               .pona3z2     
-  .naz3m2              .ponaz3m2 
-  .nazw2               .ponazw2 
-  .na3π2              .pona3π2   
-  .na3ª2              .pona3ª2   
-%
-%  PRZEDROSTKI: NADE- , ODE- , PODE-
-%
-  .nade3b2   .ode3b2   .pode3b2   
-  .nade3c2   .ode3c2   .pode3c2   
-  .nadech2   .odech2   .podech2   
-  .nadecz2   .odecz2   .podecz2   
-  .nade3¢2  .ode3¢2  .pode3¢2  
-  .nade3d2   .ode3d2   .pode3d2   
-  .nadedz2   .odedz2   .podedz2   
-  .nadedπ2  .odedπ2  .podedπ2  
-  .nadedª2  .odedª2  .podedª2  
-  .nade3f2   .ode3f2   .pode3f2   
-  .nade3g2   .ode3g2   .pode3g2   
-  .nade3h2   .ode3h2   .pode3h2   
-  .nade3k2   .ode3k2   .pode3k2   
-  .nade3l2   .ode3l2   .pode3l2   
-  .nade3™2  .ode3™2  .pode3™2  
-  .nade3m2   .ode3m2   .pode3m2   
-             .ode3mk2  
-  .nade3n2   .ode3n2   .pode3n2   
-  .nade3´2  .ode3´2  .pode3´2  
-  .nade3p2   .ode3p2   .pode3p2   
-             .odepch2  
-  .nade3r2   .ode3r2   .pode3r2   
-  .naderz2   .oderz2   .poderz2   
-  .naderª2  .oderª2  .poderª2  
-  .nade3s2   .ode3s2   .pode3s2   
-                       .podesch2  
-  .nadesz2   .odesz2   .podesz2   
-  .nade3±2  .ode3±2  .pode3±2  
-  .nade3t2   .ode3t2   .pode3t2   
-             .odetch2
-             .odetk2   .pode3tk2  
-  .nade3w2   .ode3w2   .pode3w2   
-  .nade3z2   .ode3z2   .pode3z2   
-  .nade3π2  .ode3π2  .pode3π2  
-  .nade3ª2  .ode3ª2  .pode3ª2  
-%
-%  PRZEDROSTKI: NAJ- 
-%
-  .naj3b2                       .naj3k2                       .najsz2     
-  .naj3c2                       .najkr2                       .naj3±2    
-  .najch2                       .naj3l2                       .naj3t2     
-  .najcz2                       .naj3™2                      .najtk2
-  .naj3¢2                      .naj3m2                       .najtr2  
-  .naj3d2                       .naj3n2                       .naj3w2     
-  .najdz2                       .naj3´2                      .naj3z2     
-  .najdπ2                      .naj3p2                       .najzw2
-  .najdª2                      .naj3r2                       .naj3π2    
-  .naj3f2                       .najrz2                       .naj3ª2    
-  .naj3g2                       .naj3s2     
-  .naj3h2                       .najsm2
-%
-%  PRZEDROSTKI: NIE- , ZNIE- 
-% 
-  .nie3b2     .znie3b2                         .nie3n2     .znie3n2
-  .nie3c2     .znie3c2                         .nie3´2    .znie3´2
-  .niech2     .zniech2                         .nie3p2     .znie3p2
-  .niecz2     .zniecz2                         .nie3r2     .znie3r2
-  .nie3¢2    .znie3¢2                        .nierz2     .znierz2
-  .nie3d2     .znie3d2                         .nie3s2     .znie3s2
-  .niedz2     .zniedz2                         .niesz2     .zniesz2
-  .niedπ2    .zniedπ2                        .nie3±2    .znie3±2
-  .niedª2    .zniedª2                        .nie3t2     .znie3t2
-  .nie3f2     .znie3f2                         .nietr2     
-  .nie3g2     .znie3g2                         .nietk2     
-  .nie3h2     .znie3h2                         .nie3w2     .znie3w2
-  .nie3k2     .znie3k2                         .nie3z2     .znie3z2
-  .nie3l2     .znie3l2                         .niezw2  
-  .nie3™2    .znie3™2                        .nie3π2    .znie3π2
-  .nie3m2     .znie3m2                         .nie3ª2    .znie3ª2
-%
-%  PRZEDROSTKI: OBE-
-%
-  .obe3b2                       .obe3h2                       .obe3s2    
-  .obe3c2                       .obe3k2                       .obesch2   
-  .obech2                       .obe3l2                       .obesz2    
-  .obecz2                       .obe3™2                      .obe3±2   
-  .obe3¢2                      .obe3m2                       .obe3t2    
-  .obe3d2                       .obe3n2                       .obetk2
-  .obedz2                       .obe3´2                      .obe3w2
-  .obedπ2                      .obe3p2                       .obe3z2
-  .obedª2                      .obe3r2                       .obe3π2 
-  .obe3f2                       .oberz2                       .obe3ª2 
-  .obe3g2                       .oberª2   
-%
-%  PRZEDROSTKI: O(B/D)- , NAJO(B/D)- , NIEO(B/D)-
-%
-  .ob2    .ob3b2                 .naj3o2b2    .najob3b2    
-  .oc2    .ob3c2    .od3c2       .naj3o3c2    .najob3c2    .najod3c2 
-  .och2   .obch2    .odch2       .najoch2     .najobch2    .najodch2 
-  .ochrz2 
-  .ocz2   .obcz2    .odcz2       .najocz2     .najobcz2    .najodcz2
-  .o¢2   .ob3¢2   .od3¢2      .naj3o3¢2   .najob3¢2   .najod3¢2
-  .od2    .ob3d2    .od3d2       .naj3o2d2    .najob3d2    .najod3d2
-  .odz2   .obdz2    .oddz2       .najodz2     .najobdz2    .najoddz2
-  .odπ2  .obdπ2   .oddπ2      .najodπ2    .najobdπ2   .najoddπ2 
-  .odª2  .obdª2   .oddª2      .najodª2    .najobdª2   .najoddª2
-  .of2    .ob3f2    .od3f2       .naj3o3f2    .najob3f2    .najod3f2
-  .og2    .ob3g2    .od3g2       .naj3o3g2    .najob3g2    .najod3g2 
-  .oh2    .ob3h2    .od3h2       .naj3o3h2    .najob3h2    .najod3h2 
-          .ob3j2    .od3j2                    .najob3j2    .najod3j2
-  .ok2    .ob3k2    .od3k2       .naj3o3k2    .najob3k2    .najod3k2
-  .okr2               
-                    .odkrz2
-  .ol2              .od3l2       .naj3o3l2                 .najod3l2
-  .o™2                          .naj3o3™2   
-  .om2    .ob3m2    .odm2        .naj3o3m2    .najob3m2    .najod3m2
-  .on2    .ob3n2    .od3n2       .naj3o3n2    .najob3n2    .najod3n2
-  .o´2   .ob3´2   .od3´2      .naj3o3´2   .najob3´2   .najod3´2
-  .op2    .ob3p2    .od3p2       .naj3o3p2    .najob3p2    .najod3p2
-  .opch2 
-  .or2              .odr2        .naj3o3r2                 
-  .orz2   .obrz2                 .najorz2     .najobrz2
-  .orª2 
-  .os2    .ob3s2    .od3s2       .naj3o3s2    .najob3s2    .najod3s2
-  .osz2   .obsz2    .odsz2       .najosz2     .najobsz2    .najodsz2 
-  .o±2   .ob3±2   .od3±2      .naj3o3±2   .najob3±2   .najod3±2
-  .ot2    .ob3t2    .od3t2       .naj3o3t2    .najob3t2    .najod3t2
-  .ow2    .ob3w2    .odw2        .naj3o3w2    .najob3w2    .najodw2
-                    .od3wr                                 .najod3wr
-  .oz2                           .naj3o3z2    
-  .oπ2   .ob3π2                .naj3o3π2   .najob3π2
-  .oª2   .ob3ª2                .naj3o3ª2   .najob3ª2
-%
-  .nieo2b2     .nieob3b2
-  .nieo3c2     .nieob3c2    .nieod3c2
-  .nieoch2     .nieobch2    .nieodch2      
-  .nieocz2     .nieobcz2    .nieodcz2 
-  .nieo3¢2    .nieob3¢2   .nieod3¢2       
-  .nieo2d2     .nieob3d2    .nieod3d2       
-  .nieodz2     .nieobdz2    .nieoddz2
-  .nieodπ2    .nieobdπ2   .nieoddπ2  
-  .nieodª2    .nieobdª2   .nieoddª2  
-  .nieo3f2     .nieob3f2    .nieod3f2    
-  .nieo3g2     .nieob3g2    .nieod3g2    
-  .nieo3h2     .nieob3h2    .nieod3h2
-               .nieob3j2    .nieod3j2        
-  .nieo3k2     .nieob3k2    .nieod3k2        
-  .nieo3l2                  .nieod3l2
-  .nieo3™2           
-  .nieo3m2     .nieob3m2  
-  .nieo3n2     .nieob3n2    .nieod3n2
-  .nieo3´2    .nieob3´2   .nieod3´2       
-  .nieo3p2     .nieob3p2    .nieod3p2       
-  .nieo3r2            
-  .nieorz2          
-  .nieo3s2     .nieob3s2    .nieod3s2       
-  .nieosz2     .nieobsz2    .nieodsz2     
-  .nieo3±2    .nieob3±2   .nieod3±2       
-  .nieo3t2                  .nieod3t2
-  .nieo3w2     .nieob3w2    .nieodw2   
-                            .nieod3wr
-  .nieo3z2            
-  .nieo3π2    .nieob3π2       
-  .nieo3ª2    .nieob3ª2       
-%
-%  PRZEDROSTKI: PO(D)- , NAPO(D)- , NIEPO(D)- , SPO(D)- , UPO(D)- , POPO-
-%
-  .po3b2             .napo3b2   .niepo3b2                .spo3b2  .upo3b2  
-  .pobr2            
-  .pobrz2           
-  .po3c2   .pod3c2   .napo3c2   .niepo3c2   .niepod3c2   .spo3c2  .upo3c2  
-  .poch2   .podch2   .napoch2   .niepoch2   .niepodch2   .spoch2  .upoch2  
-  .pochrz2          
-  .pocz2   .podcz2   .napocz2   .niepocz2   .niepodcz2   .spocz2  .upocz2  
-  .po3¢2  .pod3¢2  .napo3¢2  .niepo3¢2  .niepod3¢2  .spo3¢2 .upo3¢2 
-  .po2d2   .pod3d2   .napo2d2   .niepo2d2   .niepod3d2   .spo2d2  .upo2d2  
-                     .napod3d                            .spod3d  .upod3d
-  .podz2   .poddz2   .napodz2   .niepodz2   .niepoddz2   .spodz2  .upodz2
-  .podzw2
-  .podπ2  .poddπ2  .napodπ2  .niepodπ2  .niepoddπ2  .spodπ2 .upodπ2
-  .podª2  .poddª2  .napodª2  .niepodª2  .niepoddª2  .spodª2 .upodª2
-  .po3f2   .pod3f2   .napo3f2   .niepo3f2   .niepod3f2   .spo3f2  .upo3f2  
-  .po3g2   .pod3g2   .napo3g2   .niepo3g2   .niepod3g2   .spo3g2  .upo3g2  
-  .pogrz2           
-  .po3h2   .pod3h2   .napo3h2   .niepo3h2   .niepod3h2   .spo3h2  .upo3h2  
-           .pod3j2                          .niepod3j2
-  .po3k2   .pod3k2   .napo3k2   .niepo3k2   .niepod3k2   .spo3k2  .upo3k2  
-  .pokl2
-  .pokr2            
-  .po3l2   .pod3l2   .napo3l2   .niepo3l2   .niepod3l2   .spo3l2  .upo3l2  
-  .po3™2            .napo3™2  .niepo3™2               .spo3™2 .upo3™2 
-  .po™k2
-  .po3m2             .napo3m2   .niepo3m2                .spo3m2  .upo3m2  
-  .pomk2             .napomk2          
-  .po3n2   .pod3n2   .napo3n2   .niepo3n2   .niepod3n2   .spo3n2  .upo3n2  
-  .po3´2  .pod3´2  .napo3´2  .niepo3´2  .niepod3´2  .spo3´2 .upo3´2 
-  .po3p2   .pod3p2   .napo3p2   .niepo3p2   .niepod3p2   .spo3p2  .upo3p2  
-  .popch2           
-  .poprz2           
-  .po3r2   .podr2    .napo3r2   .niepo3r2   .niepodr2    .spo3r2  .upo3r2  
-  .porz2             .naporz2   .nieporz2                .sporz2  .uporz2  
-  .po3rª  
-  .po3s2   .pod3s2   .napo3s2   .niepo3s2   .niepod3s2   .spo3s2  .upo3s2  
-  .posm2   .podsm2              .nieposm2   .niepodsm2
-  .posz2   .podsz2   .naposz2   .nieposz2   .niepodsz2   .sposz2  .uposz2  
-  .po3±2  .pod3±2  .napo3±2  .niepo3±2  .niepod3±2  .spo3±2 .upo3±2 
-  .po3t2   .pod3t2   .napo3t2   .niepo3t2   .niepod3t2   .spo3t2  .upo3t2  
-  .potk2   
-  .potr2   
-  .po3w2   .podw2    .napo3w2   .niepo3w2   .niepodw2    .spo3w2  .upo3w2 
-  .popo3w2  
-  .po3z2             .napo3z2   .niepo3z2                .spo3z2  .upo3z2  
-  .poz4m2              
-  .pozw2
-  .po3π2            .napo3π2  .niepo3π2               .spo3π2 .upo3π2 
-  .po3ª2            .napo3ª2  .niepo3ª2               .spo3ª2 .upo3ª2 
-%
-%  PRZEDROSTKI: PRZE(D)- , NIEPRZE(D)-
-%
-  .prze3b2                .nieprze3b2     
-  .przebr2  
-  .przebrz2 
-  .prze3c2    .przed3c2   .nieprze3c2     .nieprzed3c2
-  .przech2    .przedch2   .nieprzech2     .nieprzedch2
-  .przechrz2                 
-  .przecz2    .przedcz2   .nieprzecz2     .nieprzedcz2
-  .prze3¢2   .przed3¢2  .nieprze3¢2    .nieprzed3¢2
-  .prze2d2    .przed3d2   .nieprze2d2     .nieprzed3d2
-  .przedz2    .przeddz2   .nieprzedz2     .nieprzeddz2
-  .przedπ2   .przeddπ2  .nieprzedπ2    .nieprzeddπ2
-  .przedª2   .przeddª2  .nieprzedª2    .nieprzeddª2
-  .prze3f2    .przed3f2   .nieprze3f2     .nieprzed3f2
-  .prze3g2    .przed3g2   .nieprze3g2     .nieprzed3g2
-  .przegrz2 
-  .prze3h2    .przed3h2   .nieprze3h2     .nieprzed3h2
-              .przed3j2                   .nieprzed3j2
-  .prze3k2    .przed3k2   .nieprze3k2     .nieprzed3k2
-  .przekl2
-  .przekr2  
-  .prze3l2    .przed3l2   .nieprze3l2     .nieprzed3l2
-  .prze3™2               .nieprze3™2    
-  .prze™k2   
-  .prze3m2                .nieprze3m2    
-  .przemk2    
-  .prze3n2    .przed3n2   .nieprze3n2     .nieprzed3n2
-  .prze3´2   .przed3´2  .nieprze3´2    .nieprzed3´2
-  .prze3p2    .przed3p2   .nieprze3p2     .nieprzed3p2
-  .przepch2 
-  .prze3r2                .nieprze3r2     
-  .przerz2                .nieprzerz2     
-  .przerª  
-  .prze3s2    .przed3s2   .nieprze3s2     .nieprzed3s2
-  .przesm2  
-  .przesz2    .przedsz2   .nieprzesz2     .nieprzedsz2
-  .prze3±2   .przed3±2  .nieprze3±2    .nieprzed3±2
-  .prze3t2    .przed3t2   .nieprze3t2     .nieprzed3t2
-  .przetk2  
-  .przetr2  
-  .prze3w2    .przedw2    .nieprze3w2     
-              .przed3wcz
-  .prze3z2                .nieprze3z2     
-  .prze3π2               .nieprze3π2    
-  .prze3ª2               .nieprze3ª2    
-%
-%  PRZEDROSTKI: PRZY-
-%
-  .przy3b2                      .przygrz2                     .przyrz2  
-  .przybr2                      .przy3h2                      .przyrª2 
-  .przy3c2                      .przy3k2                      .przy3s2  
-  .przych2                      .przy3l2                      .przysch2 
-  .przycz2                      .przy3™2                     .przysz2  
-  .przy3¢2                     .przy3m2                      .przy3±2 
-  .przy3d2                      .przymk2                      .przy3t2  
-  .przydz2                      .przy3n2                      .przytk2 
-  .przydπ2                     .przy3´2                     .przy3w2  
-  .przydª2                     .przy3p2                      .przy3z2  
-  .przy3f2                      .przypch2                     .przy3π2 
-  .przy3g2                      .przy3r2                      .przy3ª2 
-%
-%  PRZEDROSTKI: U- , OBU- , ODU-
-%
-  .ub2                                              .un2    
-  .uc2                                              .u´2   
-  .uch2                                             .up2    
-  .ucz2                                             .upch2  
-  .u¢2                                             .ur2    
-  .ud2                                              .urz2   
-  .udz2                                             .urª2  
-  .udπ2                                            .us2    
-  .udª2                                            .usch2  
-  .uf2                                              .usz2   
-  .ug2                                              .u±2   
-  .uh2                                              .ut2    
-  .uk2                                              .utk2   
-  .ukr2                                             .utr2
-  .ul2                                              .uw2    
-  .u™2                                             .uz2    
-  .um2       .obu3m2     .odu3m2                    .uπ2   
-  .umk2                                             .uª2   
-%
-%  PRZEDROSTKI:  WE(S/Z)
-%
-  .we3b2                        .we3k2                        .we4s3prz
-  .we3c2                        .we3l2                        .we4s3tch2      
-  .wech2                        .we3™2                       .wesz2   
-  .wecz2                        .we3m2                        .we3±2  
-  .we3¢2                       .wemk2                        .we3t2   
-  .we3d2                        .we3n2                        .wetk2   
-  .wedz2                        .we3´2                       .we3w2   
-  .wedπ2                       .we3p2                        .we3z2   
-  .wedª2                       .wepch2                       .we4z3br
-  .we3f2                        .we3r2                        .we4z3g™
-  .we3g2                        .werz2                        .we3π2  
-  .we3h2                        .we3s2                        .we3ª2  
-%
-%  PRZEDROSTKI: WY- , NIEWY-
-%
-  .wy3b2      .niewy3b2                        .wymk2   
-  .wybr2                                       .wy3n2      .niewy3n2     
-  .wybrz2                                      .wy3´2     .niewy3´2    
-  .wy3c2      .niewy3c2                        .wy3p2      .niewy3p2     
-  .wych2      .niewych2                        .wypch2  
-  .wycz2      .niewycz2                        .wyprz2
-  .wy3¢2     .niewy3¢2                       .wy3r2      .niewy3r2     
-  .wy3d2      .niewy3d2                        .wyrz2      .niewyrz2     
-  .wydr2                                       .wyrª2  
-  .wydz2      .niewydz2                        .wy3s2      .niewy3s2     
-  .wydπ2     .niewydπ2                       .wysm2   
-  .wydª2     .niewydª2                       .wysz2      .niewysz2     
-  .wy3f2      .niewy3f2                        .wy3±2     .niewy3±2    
-  .wy3g2      .niewy3g2                        .wy3t2      .niewy3t2     
-  .wygrz2                                      .wytch2     
-  .wy3h2      .niewy3h2                        .wytk2      .niewytk2
-  .wy3k2      .niewy3k2                        .wytr2      .niewytr2
-  .wykl2                                       .wy3w2      .niewy3w2    
-  .wykr2                                       .wy3z2      .niewy3z2
-  .wy3l2      .niewy3l2                        .wy3π2     .niewy3π2
-  .wy3™2     .niewy3™2                       .wy3ª2     .niewy3ª2
-  .wy3m2      .niewy3m2     
-%
-%  PRZEDROSTKI: ZA-
-%
-  .za3b2                        .zagrz2                       .zarz2
-  .zabr2                        .za3h2                        .zarª2
-  .zabrz2                       .za3k2                        .za3s2
-  .za3c2                        .zakl2                        .zasm2
-  .zach2                        .zakr2                        .zasz2
-  .zacz2                        .zakrz2                       .za3±2
-  .za3¢2                       .za3l2                        .za3t2
-  .za3d2                        .za3™2                       .zatk2
-  .zadr2                        .za3m2                        .zatr2
-  .zadz2                        .zamk2                        .za3w2
-  .zadπ2                       .za3n2                        .za3z2
-  .zadª2                       .za3´2                       .za3π2
-  .za3f2                        .za3p2                        .za3ª2
-  .za3g2                        .za3r2  
-%
-%  PRZEDROSTKI: ZE- , ROZE- , UZE-
-%
-  .ze3b2    .ro3z4e3b2                    .ze3n2    .ro3z4e3n2
-  .ze3c2    .ro3z4e3c2                    .ze3´2   .ro3z4e3´2
-  .zech2    .rozech2                      .ze3p2    .ro3z4e3p2
-  .zecz2    .rozecz2                      .zepch2   .rozepch2
-  .ze3¢2   .ro3z4e3¢2                   .ze3r2    .ro3z4e3r2
-  .ze3d2    .ro3z4e3d2                    .zerz2    .rozerz2
-  .zedz2    .rozedz2                      .zerª2   .rozerª2
-  .zedπ2   .rozedπ2                     .ze3s2    .ro3z4e3s2
-  .zedª2   .rozedª2                     .zesch2   .rozesch2
-  .ze3f2    .ro3z4e3f2                    .zesm4  
-  .ze3g2    .ro3z4e3g2                    .zesz2    .rozesz2
-  .ze3h2    .ro3z4e3h2                    .ze3±2   .ro3z4e3±2   
-            .ro3z4ej                      .ze3t2    .ro3z4e3t2
-  .ze3k2    .ro3z4e3k2                    .ze3tk2   
-  .zekl2                                  .ze3w2    .ro3z4e3w2     .uze3w2
-  .ze3l2    .ro3z4e3l2                    .ze3z2    .ro3z4e3z2
-  .ze3™2   .ro3z4e3™2                   .ze3π2   .ro3z4e3π2
-  .ze3m2    .ro3z4e3m2                    .ze3ª2   .ro3z4e3ª2
-%
-%  GRUPY SP”äGäOSKOWE
-%
-  2j1b    2l1b    2™1b    2m1b    2n1b    2´1b    2r1b    2rz1b    2w1b
-  2j1c    2l1c    2™1c    2m1c    2n1c    2´1c    2r1c    2rz1c    2w1c  
-  2j1¢   2l1¢   2™1¢   2m1¢   2n1¢   2´1¢   2r1¢   2rz1¢   2w1¢
-  2j1d    2l1d    2™1d    2m1d    2n1d    2´1d    2r1d    2rz1d    2w1d
-  2j1f    2l1f    2™1f    2m1f    2n1f    2´1f    2r1f    2rz1f    2w1f
-  2j1g    2l1g    2™1g    2m1g    2n1g    2´1g    2r1g    2rz1g    2w1g
-  2j1j    2l1j    2™1j    2m1j    2n1j    2´1j    2r1j    2rz1j    2w1j    
-  2j1k    2l1k    2™1k    2m1k    2n1k    2´1k    2r1k    2rz1k    2w1k
-  2j1l    2l1l    2™1l    2m1l    2n1l    2´1l    2r1l    2rz1l    2w1l
-  2j1™   2l1™   2™1™   2m1™   2n1™   2´1™   2r1™   2rz1™   2w1™
-  2j1m    2l1m    2™1m    2m1m    2n1m    2´1m    2r1m    2rz1m    2w1m
-  2j1n    2l1n    2™1n    2m1n    2n1n    2´1n    2r1n    2rz1n    2w1n    
-  2j1´   2l1´   2™1´   2m1´   2n1´   2´1´   2r1´   2rz1´   2w1´
-  2j1p    2l1p    2™1p    2m1p    2n1p    2´1p    2r1p    2rz1p    2w1p
-  2j1r    2l1r    2™1r    2m1r    2n1r    2´1r    2r1r    2rz1r    2w1r
-  2j1s    2l1s    2™1s    2m1s    2n1s    2´1s    2r1s    2rz1s    2w1s
-  2j1±   2l1±   2™1±   2m1±   2n1±   2´1±   2r1±   2rz1±   2w1±
-  2j1t    2l1t    2™1t    2m1t    2n1t    2´1t    2r1t    2rz1t    2w1t
-  2j1w    2l1w    2™1w    2m1w    2n1w    2´1w    2r1w    2rz1w    2w1w
-  2j1z    2l1z    2™1z    2m1z    2n1z    2´1z                     2w1z
-  2j1π   2l1π   2™1π   2m1π   2n1π   2´1π   2r1π   2rz1π   2w1π
-  2j1ª   2l1ª   2™1ª   2m1ª   2n1ª   2´1ª   2r1ª   2rz1ª   2w1ª
-%
-  2b1b    2d1b    2g1b     2k1b    2p1b    2t1b      
-  2b1c    2d1c    2g1c     2k1c    2p1c    2t1c
-  2b1¢   2d1¢   2g1¢    2k1¢   2p1¢   2t1¢
-  2b1d    2d1d    2g1d     2k1d    2p1d    2t1d
-  2b1f    2d1f    2g1f     2k1f    2p1f    2t1f
-  2b1g    2d1g    2g1g     2k1g    2p1g    2t1g
-  2b1k    2d1k    2g1k     2k1k    2p1k    2t1k
-  2b1m    2d1m    2g1m     2k1m    2p1m    2t1m
-  2b1n    2d1n             2k1n    2p1n    2t1n
-  2b1´   2d1´   2g1´    2k1´   2p1´   2t1´
-  2b1p    2d1p    2g1p     2k1p    2p1p    2t1p
-  2b1s    2d1s    2g1s                     2t1s
-                           2k1sz   2p1sz
-  2b1±   2d1±   2g1±    2k1±   2p1±   2t1±
-  2b1t    2d1t    2g1t     2k1t    2p1t    2t1t
-  2b1z            2g1z     2k1z    2p1z    2t1z
-  2b1π           2g1π    2k1π   2p1π   2t1π
-  2b1ª           2g1ª    2k1ª   2p1ª   2t1ª
-%
-  2c1b    2¢1b   2cz1b    2dz1b   2dπ1b  2dª1b
-  2c1c    2¢1c   2cz1c    2dz1c   2dπ1c  2dª1c
-  2c1¢   2¢1¢  2cz1¢   2dz1¢  2dπ1¢ 2dª1¢
-  2c1d    2¢1d   2cz1d    2dz1d   2dπ1d  2dª1d
-  2c1f    2¢1f   2cz1f    2dz1f   2dπ1f  2dª1f
-  2c1g    2¢1g   2cz1g    2dz1g   2dπ1g  2dª1g                         
-                                            dª2j
-  2c1k    2¢1k   2cz1k    2dz1k   2dπ1k  2dª1k
-  2c1l     ¢2l   2cz1l    2dz1l            dª2l
-                                            dª2™
-  2c1m    2¢1m   2cz1m    2dz1m   2dπ1m  2dª1m
-  2c1n    2¢1n   2cz1n    2dz1n   2dπ1n  2dª1n
-  2c1´   2¢1´  2cz1´   2dz1´  2dπ1´ 2dª1´
-  2c1p    2¢1p   2cz1p    2dz1p   2dπ1p  2dª1p
-                                            dª2r
-  2c1s    2¢1s   2cz1s    2dz1s   2dπ1s  2dª1s
-  2c1±   2¢1±  2cz1±   2dz1±  2dπ1± 2dª1±
-  2c1t    2¢1t   2cz1t    2dz1t   2dπ1t  2dª1t
-                                            dª2w   
-          2¢1z   2cz1z    2dz1z   2dπ1z  2dª1z
-  2c1π   2¢1π  2cz1π   2dz1π  2dπ1π 2dª1π
-  2c1ª   2¢1ª  2cz1ª   2dz1ª  2dπ1ª 2dª1ª
-%
-  2ch1b   2h1b    2ª1b            2s1b    2±1b            2π1b 
-  2ch1c   2h1c    2ª1c     sz2c            ±1c    2z1c    2π1c 
-                                           1±2ci   
-  2ch1¢  2h1¢   2ª1¢    sz2¢                   2z1¢   2π1¢
-  2ch1d   2h1d    2ª1d            2s1d    2±1d            2π1d  
-  2ch1f   2h1f    2ª1f     sz2f           2±1f    2z1f    2π1f 
-  2ch1g   2h1g    2ª1g            2s1g    2±1g            2π1g       
-          2h1h                                          
-   ch2j   2h1j    2ª1j                                 
-  2ch1k   2h1k    2ª1k     sz2k           2±1k    2z1k    2π1k  
-   ch2l   2h1l    2ª1l                                 
-   ch2™  2h1™   2ª1™                                 
-  2ch1m   2h1m    2ª1m                                 
-  2ch1n   2h1n    2ª1n                                 
-  2ch1´  2h1´   2ª1´                                 
-  2ch1p   2h1p    2ª1p     sz2p           2±1p    2z1p    2π1p 
-   ch2r   2h1r    2ª1r                                 
-  2ch1s   2h1s    2ª1s     sz2s   2s1s    2±1s    2z1s    2π1s
-  2ch1±  2h1±   2ª1±    sz2±          2±1±   2z1±   2π1±
-  2ch1t   2h1t    2ª1t     sz2t           2±1t    2z1t    2π1t  
-   ch2w   2h1w    2ª1w                                 
-  2ch1z   2h1z    2ª1z     sz2z           2±1z    2z1z    2π1z      
-  2ch1π  2h1π   2ª1π           2s1π   2±1π           2π1π
-  2ch1ª  2h1ª   2ª1ª           2s1ª   2±1ª           2π1ª 
-                                                             π2dπ
-%
-  2f1f     2f1n
-%
-%  R”õNE  
-%
-  3d2ni    3m2ni    2p1sk  2p1stw
-%
-  .do4k3t       .dy3s4ta      .is3lam     ma2r6z™.       .po4r3tr   
-  .do4l3n       .fi2l3h       ma2r5zn     na2d5z2wyczaj   turboo2d3rzut   
-  .do4w3c       .fi2s3harm    ma2r5zl     nie4m3cz        .ro2k3rocz    
-  .du2sz3past   .fi2sz3bin    ma2r5z™    .po4l3s         .sy2n3opt   
-%
-  2ch3kolwiek.     2m3kolwiek.     2±3kolwiek.
-%
-%  GRUPY SP”äGäOSKOWE NA KOãCU WYRAZ”W
-%
-  4ch™.      4k™.       4rz™.      4stw.       4±l.       4trz.    
-  4d™.       4kst.       4s™.       4szt.       4±m.       4z™.    
-  4dπ.       4prz.       4str.       4szcz.      4±´.      4π´.   
-  4g™.       4rsz.       4strz.      4±¢.      4t™.    
+.ƒáƒá8
+.ƒá≈Ç8
+.ƒá≈Ñ8
+.ƒá≈õ8
+.ƒá≈∫8
+.ƒá≈º8
+.ƒá8
+.ƒáb8
+.ƒác8
+.ƒád8
+.ƒáf8
+.ƒág8
+.ƒáh8
+.ƒáj8
+.ƒák8
+.ƒál8
+.ƒám8
+.ƒán8
+.ƒáp8
+.ƒár8
+.ƒás8
+.ƒát8
+.ƒáv8
+.ƒáw8
+.ƒáwier2ƒá3
+.ƒáx8
+.ƒáz8
+.≈Çƒá8
+.≈Ç≈Ç8
+.≈Ç≈Ñ8
+.≈Ç≈õ8
+.≈Ç≈∫8
+.≈Ç≈º8
+.≈Ç8
+.≈Çb8
+.≈Çc8
+.≈Çd8
+.≈Çf8
+.≈Çg8
+.≈Çh8
+.≈Çj8
+.≈Çk8
+.≈Çl8
+.≈Çm8
+.≈Çn8
+.≈Çp8
+.≈Çr8
+.≈Çs8
+.≈Çt8
+.≈Çv8
+.≈Çw8
+.≈Çx8
+.≈Çz8
+.≈Ñƒá8
+.≈Ñ≈Ç8
+.≈Ñ≈Ñ8
+.≈Ñ≈õ8
+.≈Ñ≈∫8
+.≈Ñ≈º8
+.≈Ñ8
+.≈Ñb8
+.≈Ñc8
+.≈Ñd8
+.≈Ñf8
+.≈Ñg8
+.≈Ñh8
+.≈Ñj8
+.≈Ñk8
+.≈Ñl8
+.≈Ñm8
+.≈Ñn8
+.≈Ñp8
+.≈Ñr8
+.≈Ñs8
+.≈Ñt8
+.≈Ñv8
+.≈Ñw8
+.≈Ñx8
+.≈Ñz8
+.≈õƒá8
+.≈õ≈Ç8
+.≈õ≈Ñ8
+.≈õ≈õ8
+.≈õ≈∫8
+.≈õ≈º8
+.≈õ8
+.≈õb8
+.≈õc8
+.≈õd8
+.≈õf8
+.≈õg8
+.≈õh8
+.≈õj8
+.≈õk8
+.≈õl8
+.≈õm8
+.≈õn8
+.≈õp8
+.≈õr√≥2d5
+.≈õr√≥dr2
+.≈õr8
+.≈õs8
+.≈õt8
+.≈õv8
+.≈õw8
+.≈õwiat≈Ço3w2
+.≈õx8
+.≈õz8
+.≈∫ƒá8
+.≈∫≈Ç8
+.≈∫≈Ñ8
+.≈∫≈õ8
+.≈∫≈∫8
+.≈∫≈º8
+.≈∫8
+.≈∫b8
+.≈∫c8
+.≈∫d≈∫8
+.≈∫d8
+.≈∫f8
+.≈∫g8
+.≈∫h8
+.≈∫j8
+.≈∫k8
+.≈∫l8
+.≈∫m8
+.≈∫n8
+.≈∫p8
+.≈∫r8
+.≈∫s8
+.≈∫t8
+.≈∫v8
+.≈∫w8
+.≈∫x8
+.≈∫z8
+.≈ºƒá8
+.≈º≈Ç8
+.≈º≈Ñ8
+.≈º≈õ8
+.≈º≈∫8
+.≈º≈º8
+.≈º8
+.≈ºb8
+.≈ºc8
+.≈ºd8
+.≈ºf8
+.≈ºg8
+.≈ºh8
+.≈ºj8
+.≈ºk8
+.≈ºl8
+.≈ºm8
+.≈ºn8
+.≈ºp8
+.≈ºr8
+.≈ºs8
+.≈ºt8
+.≈ºv8
+.≈ºw8
+.≈ºx8
+.≈ºz8
+.a2b2s3t
+.a2d3
+.ad4a
+.ad4e
+.ad4i
+.ad4o
+.ad4u
+.ad4y
+.ad5apt
+.ad5iu
+.ad5op
+.ad5or
+.ae3ro
+.aeroa2
+.aeroe2
+.aeroi2
+.aeroo2
+.aerou2
+.antya2
+.antye2
+.antyi2
+.antyo2
+.antyu2
+.arcy3≈Ç2
+.arcy3b2
+.arcy3bz2
+.arcy3k2
+.arcy3m2
+.arcya2
+.arcye2
+.arcyi2
+.arcyo2
+.arcyu2
+.au3g2
+.au3k2
+.au3t2
+.auto3ch2
+.autoa2
+.autoe2
+.autoi2
+.autoo2
+.autotran2s3
+.autou2
+.bƒá8
+.b≈Ç8
+.b≈Ñ8
+.b≈õ8
+.b≈∫8
+.b≈º8
+.b8
+.bb8
+.bc8
+.bd8
+.be2z3
+.be3z4an
+.be3z4ec
+.be3z4ik
+.bezch2
+.bezm2
+.bezo2
+.bezo2b1j
+.bezw2
+.bezzw2
+.bf8
+.bg8
+.bh8
+.bj8
+.bk8
+.bl8
+.bm8
+.bn8
+.bp8
+.br8
+.brz8
+.bs8
+.bt8
+.bv8
+.bw8
+.bx8
+.bz8
+.cƒá8
+.c≈Ç8
+.c≈Ñ8
+.c≈õ8
+.c≈∫8
+.c≈º8
+.c8
+.ca≈Ço3≈õ2
+.ca≈Ço3k2
+.cb8
+.cc8
+.cd8
+.cf8
+.cg8
+.ch8
+.chrz8
+.cienko3w2
+.ciep≈Ço3kr2
+.cj8
+.ck8
+.cl8
+.cm8
+.cn8
+.cp8
+.cr8
+.cs8
+.ct8
+.cv8
+.cw8
+.cx8
+.cz8
+.czarno3k2
+.czk8
+.cztere2ch3
+.czterechse2t3
+.cztero3≈õ2
+.czw√≥2r3
+.czw√≥3r4ƒÖ
+.czw√≥3r4ƒô
+.czw√≥3r4a
+.czw√≥3r4e
+.czw√≥3r4o
+.dƒá8
+.d≈Ç8
+.d≈Çugo3tr2
+.d≈Çugo3w2
+.d≈Ñ8
+.d≈õ8
+.d≈∫8
+.d≈º8
+.d8
+.daleko3w2
+.db8
+.dc8
+.dd8
+.de2z3
+.de3z4a3bil
+.de3z4a3wu
+.de3z4el
+.de3z4er
+.de3z4y
+.deza2
+.dezo2
+.df8
+.dg8
+.dh8
+.dj8
+.dk8
+.dl8
+.dm8
+.dn8
+.do3ƒá2
+.do3≈Ç2
+.do3≈õ2
+.do3≈∫2
+.do3≈º2
+.do3b2
+.do3c2
+.do3d2
+.do3f2
+.do3g2
+.do3h2
+.do3k2
+.do3l2
+.do3m2
+.do3p2
+.do3r2
+.do3s2
+.do3t2
+.do3w2
+.do3z2
+.do4≈Ç3k
+.do4k3t
+.do4l3n
+.do4m3k
+.do4r3s
+.do4w3c
+.do5m4k2n
+.dobr2
+.dobrz2
+.doch2
+.docz2
+.dod≈∫2
+.dod≈º2
+.dodz2
+.dogrz2
+.dopch2
+.doprz2
+.dor≈º2
+.dorz2
+.dosch2
+.dosm2
+.dosz2
+.dotk2
+.dotr2
+.dp8
+.dr8
+.drogo3w2
+.drz8
+.ds8
+.dt8
+.dv8
+.dw√≥2j3
+.dw√≥3j4ƒÖ
+.dw√≥3j4ƒô
+.dw√≥3j4a
+.dw√≥3j4e
+.dw√≥3j4o
+.dw8
+.dx8
+.dy2s3
+.dy2z3
+.dy3s4e
+.dy3s4o
+.dy3s4ta
+.dy3s4y
+.dy3sz
+.dy3z4e
+.dyzu2
+.dz8
+.dziesiƒôcio3≈õ2
+.dziewiƒôƒáse2t3
+.dziewiƒô2ƒá3
+.dziewiƒôcio3≈õ2
+.e2k2s3
+.e2m3e2s5ze2t
+.e2s1e2s1ma
+.e2s1ha
+.e2s1t
+.egoa2
+.egoe2
+.egoi2
+.egoo2
+.egou2
+.eks4y
+.elektroa2
+.elektroe2
+.elektroi2
+.elektroo2
+.elektrou2
+.fƒá8
+.f≈Ç8
+.f≈Ñ8
+.f≈õ8
+.f≈∫8
+.f≈º8
+.f8
+.fb8
+.fc8
+.fd8
+.ff8
+.fg8
+.fh8
+.fj8
+.fk8
+.fl8
+.fm8
+.fn8
+.fp8
+.fr8
+.fs8
+.ft8
+.fv8
+.fw8
+.fx8
+.fz8
+.gƒá8
+.g≈Ç8
+.g≈Ñ8
+.g≈õ8
+.g≈∫8
+.g≈º8
+.g8
+.gb8
+.gc8
+.gd8
+.ge2o3
+.gf8
+.gg8
+.gh8
+.gj8
+.gk8
+.gl8
+.gm8
+.gn8
+.go2u3
+.gp8
+.gr8
+.grubo3w2
+.grz8
+.gs8
+.gt8
+.gv8
+.gw8
+.gx8
+.gz8
+.hƒá8
+.h≈Ç8
+.h≈Ñ8
+.h≈õ8
+.h≈∫8
+.h≈º8
+.h8
+.hb8
+.hc8
+.hd8
+.hf8
+.hg8
+.hh8
+.hipe2r3
+.hipe3r4o
+.hipera2
+.hipere2
+.hj8
+.hk8
+.hl8
+.hm8
+.hn8
+.hp8
+.hr8
+.hs8
+.ht8
+.hv8
+.hw8
+.hx8
+.hz8
+.i2n3
+.i2s3l
+.i3n4ic
+.i3n4o
+.i3n4u
+.i4n5o2k
+.in4f3lan
+.ino3w2
+.izoa2
+.izoe2
+.izoi2
+.izoo2
+.izou2
+.jƒá8
+.j≈Ç8
+.j≈Ñ8
+.j≈õ8
+.j≈∫8
+.j≈º8
+.j8
+.jad≈Ço3w2
+.jb8
+.jc8
+.jd8
+.jf8
+.jg8
+.jh8
+.jj8
+.jk8
+.jl8
+.jm8
+.jn8
+.jp8
+.jr8
+.js8
+.jt8
+.jv8
+.jw8
+.jx8
+.jz8
+.kƒá8
+.k≈Ç8
+.k≈Ñ8
+.k≈õ8
+.k≈∫8
+.k≈º8
+.k8
+.kb8
+.kc8
+.kd8
+.kf8
+.kg8
+.kh8
+.kilkuse2t3
+.kilkuseto2
+.kj8
+.kk8
+.kl8
+.km8
+.kn8
+.ko≈Ço3w2
+.kon2t2r3
+.kon3tr4a
+.kon3tr4e
+.kon3tr4o3l
+.kon3tr4o3w
+.kon3tr4y
+.kon4tr5a2gi
+.kon4tr5a2se
+.kon4tr5a2sy
+.kon4tr5a2ta
+.kon4tr5adm
+.kon4tr5akc
+.kon4tr5alt
+.kon4tr5arg
+.kontro2
+.kontru2
+.kp8
+.kr√≥tko3tr2
+.kr√≥tko3w2
+.kr8
+.kro2ƒá3
+.krz8
+.ks8
+.kt8
+.kv8
+.kw8
+.kx8
+.kz8
+.lƒá8
+.l≈Ç8
+.l≈Ñ8
+.l≈õ8
+.l≈∫8
+.l≈º8
+.l8
+.lb8
+.lc8
+.ld8
+.lf8
+.lg8
+.lh8
+.lj8
+.lk8
+.ll8
+.lm8
+.ln8
+.lp8
+.lr8
+.ls8
+.lt8
+.ludo3w2
+.lv8
+.lw8
+.lx8
+.lz8
+.mƒá8
+.m≈Ç8
+.m≈Ñ8
+.m≈õ8
+.m≈∫8
+.m≈º8
+.m8
+.mb8
+.mc8
+.md8
+.mf8
+.mg8
+.mh8
+.mili3amp
+.mj8
+.mk8
+.ml8
+.mm8
+.mn8
+.mo≈ºno3w2
+.mp8
+.mr8
+.ms8
+.mt8
+.mv8
+.mw8
+.mx8
+.mz8
+.nƒá8
+.n≈Ç8
+.n≈Ñ8
+.n≈õ8
+.n≈∫8
+.n≈º8
+.n8
+.na2d2
+.na2j
+.na3ƒá2
+.na3≈Ç2
+.na3≈õ2
+.na3≈∫2
+.na3≈º2
+.na3b2
+.na3c2
+.na3dƒÖ
+.na3dƒô
+.na3d≈∫2
+.na3d4≈Çub
+.na3d4ir
+.na3d4much
+.na3d4rƒôcz
+.na3d4r2w
+.na3d4repcz
+.na3d4rept
+.na3d4ruk
+.na3d4rz
+.na3d4worn
+.na3daj
+.na3de
+.na3do
+.na3dy
+.na3dzi
+.na3f2
+.na3g2
+.na3h2
+.na3jƒÖ
+.na3jƒô
+.na3jazd
+.na3je
+.na3k2
+.na3l2
+.na3m2
+.na3p2
+.na3r2
+.na3s2
+.na3t2
+.na3u2
+.na3w2
+.na3z2
+.na4d3o2b2≈Ç
+.na4d3o2bojcz
+.na4d3o2bowi
+.na4d3o2brot
+.na4d3o2drz
+.na4d3o2kien
+.na4d3olbrz
+.na4d5rzƒÖ
+.na4d5rzƒô
+.na4d5rzecz
+.na4d5rzy
+.na4d5ziem
+.na4f3c
+.na4f3t
+.na4j3e2f
+.na4j3e2g
+.na4j3e2k2s
+.na4j3e2ko
+.na4j3e2n
+.na4j3e2r
+.na4j3e2s
+.na4j3e2w
+.na4j3emf
+.na4j3eu
+.na4r3c
+.na4r3d
+.na4r3k
+.na4r3r
+.na4r3t
+.nabrz2
+.nach2
+.nacz2
+.nad≈õrod5ziem
+.nad3ƒá2
+.nad3≈Ç2
+.nad3≈õ2
+.nad3b2
+.nad3c2
+.nad3d2
+.nad3e2tat
+.nad3f2
+.nad3g2
+.nad3h2
+.nad3i2
+.nad3j2
+.nad3k2
+.nad3l2
+.nad3m2
+.nad3n2
+.nad3p2
+.nad3r2
+.nad3s2
+.nad3t2
+.nad3u2
+.nad3w2
+.nad5≈º2
+.nad5z√≥
+.nad5z2mys
+.nad5zo
+.nad5zwycz
+.nadch2
+.nadcz2
+.nadd≈∫2
+.nade3ƒá2
+.nade3≈Ç2
+.nade3≈õ2
+.nade3≈∫2
+.nade3≈º2
+.nade3b2
+.nade3c2
+.nade3d2
+.nade3f2
+.nade3g2
+.nade3h2
+.nade3k2
+.nade3l2
+.nade3m2
+.nade3p2
+.nade3r2
+.nade3s2
+.nade3t2
+.nade3w2
+.nade3z2
+.nade4p3c
+.nade4p3n
+.nade4p3t
+.nadech2
+.nadecz2
+.naded≈∫2
+.naded≈º2
+.nadedz2
+.nader≈º2
+.naderz2
+.nadesz2
+.nadsz2
+.nadtr2
+.nadz2
+.nagrz2
+.naj3ƒá2
+.naj3≈Ç2
+.naj3≈õ2
+.naj3≈∫2
+.naj3≈º2
+.naj3akt
+.naj3au
+.naj3b2
+.naj3c2
+.naj3d2
+.naj3f2
+.naj3g2
+.naj3h2
+.naj3i2
+.naj3k2
+.naj3l2
+.naj3m2
+.naj3o2
+.naj3o2ƒá2
+.naj3o2≈Ç2
+.naj3o2≈õ2
+.naj3o2≈∫2
+.naj3o2≈º2
+.naj3o2b2
+.naj3o2c2
+.naj3o2d2
+.naj3o2f2
+.naj3o2g2
+.naj3o2h2
+.naj3o2k2
+.naj3o2l2
+.naj3o2m2
+.naj3o2p2
+.naj3o2r2
+.naj3o2s2
+.naj3o2t2
+.naj3o2w2
+.naj3o2z2
+.naj3p2
+.naj3r2
+.naj3ro2z3
+.naj3s2
+.naj3t2
+.naj3u2
+.naj3w2
+.naj3z2
+.najbe2z3
+.najbezw2
+.najch2
+.najcz2
+.najd≈∫2
+.najd≈º2
+.najdo3ƒá2
+.najdo3≈Ç2
+.najdo3≈õ2
+.najdo3≈∫2
+.najdo3≈º2
+.najdo3b2
+.najdo3c2
+.najdo3d2
+.najdo3f2
+.najdo3g2
+.najdo3h2
+.najdo3k2
+.najdo3l2
+.najdo3m2
+.najdo3p2
+.najdo3r2
+.najdo3s2
+.najdo3t2
+.najdo3w2
+.najdo3z2
+.najdoch2
+.najdocz2
+.najdod≈∫2
+.najdod≈º2
+.najdodz2
+.najdorz2
+.najdosz2
+.najdotk2
+.najdz2
+.najkr2
+.najob3ƒá2
+.najob3≈Ç2
+.najob3≈õ2
+.najob3≈∫2
+.najob3≈º2
+.najob3c2
+.najob3d2
+.najob3f2
+.najob3g2
+.najob3h2
+.najob3j2
+.najob3k2
+.najob3l2
+.najob3m2
+.najob3n2
+.najob3p2
+.najob3s2
+.najob3t2
+.najob3w2
+.najobch2
+.najobcz2
+.najobd≈∫2
+.najobd≈º2
+.najobdz2
+.najobrz2
+.najobsz2
+.najoch2
+.najocz2
+.najod≈∫2
+.najod3ƒá2
+.najod3≈õ2
+.najod3c2
+.najod3d2
+.najod3f2
+.najod3g2
+.najod3h2
+.najod3j2
+.najod3k2
+.najod3l2
+.najod3m2
+.najod3n2
+.najod3p2
+.najod3s2
+.najod3t2
+.najod3w2
+.najod5≈º2
+.najodch2
+.najodcz2
+.najodd≈∫2
+.najodd≈º2
+.najoddz2
+.najodsz2
+.najodz2
+.najorz2
+.najosz2
+.najro3z4u
+.najrz2
+.najsm2
+.najsz2
+.najtk2
+.najtr2
+.najucz2
+.najzw2
+.nakr2
+.napo2d2
+.napo3ƒá2
+.napo3≈Ç2
+.napo3≈õ2
+.napo3≈∫2
+.napo3≈º2
+.napo3b2
+.napo3c2
+.napo3f2
+.napo3g2
+.napo3h2
+.napo3k2
+.napo3l2
+.napo3m2
+.napo3p2
+.napo3r2
+.napo3s2
+.napo3t2
+.napo3w2
+.napo3z2
+.napo4m3p
+.napoch2
+.napocz2
+.napod≈∫2
+.napod≈º2
+.napod3d
+.napomk2
+.naporz2
+.naposz2
+.naprz2
+.nar≈º2
+.naro2z3
+.narz2
+.nasm2
+.nasz2
+.natch2
+.natk2
+.naz3m2
+.nazw2
+.nb8
+.nc8
+.nd8
+.ne2o3
+.nf8
+.ng8
+.nh8
+.nie3ƒá2
+.nie3≈Ç2
+.nie3≈õ2
+.nie3≈∫2
+.nie3≈º2
+.nie3b2
+.nie3c2
+.nie3d2
+.nie3f2
+.nie3g2
+.nie3h2
+.nie3k2
+.nie3l2
+.nie3m2
+.nie3p2
+.nie3r2
+.nie3s2
+.nie3t2
+.nie3u2
+.nie3w2
+.nie3z2
+.nie4c3c
+.nie4c3k
+.nie4d≈∫3
+.nie4m3c
+.nie4m3k
+.niech2
+.niecz2
+.nied≈º2
+.niedo3ƒá2
+.niedo3≈Ç2
+.niedo3≈õ2
+.niedo3≈∫2
+.niedo3≈º2
+.niedo3b2
+.niedo3c2
+.niedo3d2
+.niedo3f2
+.niedo3g2
+.niedo3h2
+.niedo3k2
+.niedo3l2
+.niedo3m2
+.niedo3p2
+.niedo3r2
+.niedo3s2
+.niedo3t2
+.niedo3w2
+.niedo3z2
+.niedobrz2
+.niedoch2
+.niedocz2
+.niedod≈∫2
+.niedod≈º2
+.niedodz2
+.niedokr2
+.niedomk2
+.niedopch2
+.niedorz2
+.niedosz2
+.niedotk2
+.niedz2
+.nieoƒá2
+.nieo≈Ç2
+.nieo≈õ2
+.nieo≈∫2
+.nieo≈º2
+.nieo2
+.nieob2
+.nieob3ƒá2
+.nieob3≈õ2
+.nieob3≈∫2
+.nieob3≈º2
+.nieob3c2
+.nieob3d2
+.nieob3f2
+.nieob3g2
+.nieob3h2
+.nieob3j2
+.nieob3k2
+.nieob3m2
+.nieob3p2
+.nieob3s2
+.nieob3w2
+.nieobch2
+.nieobcz2
+.nieobd≈∫2
+.nieobd≈º2
+.nieobdz2
+.nieobsz2
+.nieoc2
+.nieoch2
+.nieocz2
+.nieod≈∫2
+.nieod2
+.nieod3ƒá2
+.nieod3≈Ç2
+.nieod3≈õ2
+.nieod3c2
+.nieod3d2
+.nieod3f2
+.nieod3g2
+.nieod3h2
+.nieod3j2
+.nieod3k2
+.nieod3l2
+.nieod3n2
+.nieod3p2
+.nieod3s2
+.nieod3t2
+.nieod3wr
+.nieod5≈º2
+.nieodch2
+.nieodcz2
+.nieodd≈∫2
+.nieodd≈º2
+.nieoddz2
+.nieodsz2
+.nieodw2
+.nieodz2
+.nieof2
+.nieog2
+.nieoh2
+.nieok2
+.nieol2
+.nieom2
+.nieop2
+.nieor2
+.nieorz2
+.nieos2
+.nieosz2
+.nieot2
+.nieow2
+.nieoz2
+.niepo2d2
+.niepo3ƒá2
+.niepo3≈Ç2
+.niepo3≈õ2
+.niepo3≈∫2
+.niepo3≈º2
+.niepo3b2
+.niepo3c2
+.niepo3d≈∫2
+.niepo3d4≈Çu
+.niepo3d4much
+.niepo3d4rƒôcz
+.niepo3d4ra≈º
+.niepo3d4rap
+.niepo3d4repcz
+.niepo3d4rept
+.niepo3d4waj
+.niepo3d4woj
+.niepo3do
+.niepo3du
+.niepo3dz2
+.niepo3f2
+.niepo3g2
+.niepo3h2
+.niepo3k2
+.niepo3l2
+.niepo3m2
+.niepo3p2
+.niepo3r2
+.niepo3s2
+.niepo3t2
+.niepo3w2
+.niepo3z2
+.niepo4d3o2choc
+.niepo4d3o2strz
+.niepoch2
+.niepocz2
+.niepod3ƒá2
+.niepod3≈Ç2
+.niepod3≈õ2
+.niepod3b2
+.niepod3c2
+.niepod3d2
+.niepod3f2
+.niepod3g2
+.niepod3h2
+.niepod3j2
+.niepod3k2
+.niepod3l2
+.niepod3m2
+.niepod3n2
+.niepod3p2
+.niepod3r2
+.niepod3s2
+.niepod3t2
+.niepod3w2
+.niepod5≈º
+.niepodch2
+.niepodcz2
+.niepodd≈∫2
+.niepodd≈º2
+.niepodsm2
+.niepodsz2
+.nieporz2
+.nieposm2
+.nieposz2
+.nieprze≈Çk2
+.nieprze2d2
+.nieprze3ƒá2
+.nieprze3≈Ç2
+.nieprze3≈õ2
+.nieprze3≈∫2
+.nieprze3≈º2
+.nieprze3b2
+.nieprze3brz2
+.nieprze3c2
+.nieprze3d≈∫2
+.nieprze3d4≈Çu≈º
+.nieprze3d4much
+.nieprze3d4ramat
+.nieprze3d4ruk
+.nieprze3d4ryl
+.nieprze3d4rz2
+.nieprze3d4um
+.nieprze3dy
+.nieprze3dz2
+.nieprze3e2k2s3
+.nieprze3f2
+.nieprze3g2
+.nieprze3h2
+.nieprze3k2
+.nieprze3l2
+.nieprze3m2
+.nieprze3n2
+.nieprze3p2
+.nieprze3r2
+.nieprze3s2
+.nieprze3t2
+.nieprze3w2
+.nieprze3z2
+.nieprze4d5≈Çu≈ºyc
+.nieprze4d5≈º2
+.nieprze4d5z2a
+.nieprze4d5zg2
+.nieprze4d5zim
+.nieprze4d5zj
+.nieprze4d5zl
+.nieprze4d5zw2r
+.nieprze4d5zwoj
+.nieprzech2
+.nieprzecz2
+.nieprzed3ƒá2
+.nieprzed3≈Ç2
+.nieprzed3≈õ2
+.nieprzed3c2
+.nieprzed3d2
+.nieprzed3f2
+.nieprzed3g2
+.nieprzed3h2
+.nieprzed3i2
+.nieprzed3j2
+.nieprzed3k2
+.nieprzed3l2
+.nieprzed3m2
+.nieprzed3n2
+.nieprzed3p2
+.nieprzed3r2
+.nieprzed3s2
+.nieprzed3sz2
+.nieprzed3t2
+.nieprzed3u2
+.nieprzed3w2
+.nieprzedch2
+.nieprzedcz2
+.nieprzedd≈∫2
+.nieprzedd≈º2
+.nieprzeddz2
+.nieprzegrz2
+.nieprzekl2
+.nieprzekr2
+.nieprzepch2
+.nieprzer≈º2
+.nieprzerz2
+.nieprzesch2
+.nieprzesm2
+.nieprzesz2
+.nieprzetk2
+.nieprzetr2
+.niero2z3
+.niero3z4e
+.niero3z4u
+.nieroz≈õ2
+.nierozbrz2
+.nieroze3r2
+.nierozm2
+.nieroztr2
+.nierz2
+.niesu2b3
+.niesu3b4ie
+.niesz2
+.nietk2
+.nietr2
+.nieucz2
+.nieuw2
+.niewy3ƒá2
+.niewy3≈Ç2
+.niewy3≈õ2
+.niewy3≈∫2
+.niewy3≈º2
+.niewy3b2
+.niewy3c2
+.niewy3d2
+.niewy3f2
+.niewy3g2
+.niewy3h2
+.niewy3k2
+.niewy3l2
+.niewy3m2
+.niewy3p2
+.niewy3r2
+.niewy3s2
+.niewy3t2
+.niewy3w2
+.niewy3z2
+.niewybrz2
+.niewych2
+.niewycz2
+.niewyd≈∫2
+.niewyd≈º2
+.niewydz2
+.niewyrz2
+.niewysz2
+.niewytk2
+.niewytr2
+.niezw2
+.nj8
+.nk8
+.nl8
+.nm8
+.nn8
+.np8
+.nr8
+.ns8
+.nt8
+.nv8
+.nw8
+.nx8
+.nz8
+.oƒá2
+.o≈õ2
+.o≈õmio3≈õ2
+.o≈∫2
+.o≈º2
+.o2b2
+.o2d2
+.o2t3ch≈Ç
+.o3b4≈ÇƒÖ
+.o3b4≈Çƒô
+.o3b4≈Çoc
+.o3b4luzg
+.o3b4raƒá
+.o3b4raso
+.o3b4ro≈Ñ
+.o3b4ron
+.o3b4ry≈∫
+.o3b4ryz
+.o3b4rz2
+.o3be
+.o3bi
+.o3d4iu
+.o3d4rƒôt
+.o3d4rap
+.o3d4robin
+.o3d4rut
+.o3d4rwi
+.o3d4rzeƒá
+.o3d4rzw
+.o3d6zia
+.o3d6zie
+.o3de
+.o3l2≈õn
+.o4b5≈Çocz
+.o4b5rzƒÖ
+.o4b5rzƒôd
+.o4b5rzez
+.o4b5rzuc
+.o4b5rzut
+.o4b5rzyn
+.o4d7ziar
+.o4d7ziem
+.oa3z
+.ob3ƒá2
+.ob3≈Ç2
+.ob3≈õ2
+.ob3≈∫2
+.ob3≈º2
+.ob3c2
+.ob3d2
+.ob3f2
+.ob3g2
+.ob3h2
+.ob3j2
+.ob3k2
+.ob3l2
+.ob3m2
+.ob3n2
+.ob3o2strz
+.ob3p2
+.ob3r
+.ob3s2
+.ob3t2
+.ob3u2m2
+.ob3w2
+.obch2
+.obcz2
+.obd≈∫2
+.obd≈º2
+.obdz2
+.obe3ƒá2
+.obe3≈Ç2
+.obe3≈õ2
+.obe3≈∫2
+.obe3≈º2
+.obe3b2
+.obe3c2
+.obe3d2
+.obe3f2
+.obe3g2
+.obe3h2
+.obe3k2
+.obe3l2
+.obe3m2
+.obe3p2
+.obe3r2
+.obe3r3t
+.obe3s2
+.obe3t2
+.obe3w2
+.obe3z2
+.obe4c3n
+.obe4z3w
+.obech2
+.obecz2
+.obed≈∫2
+.obed≈º2
+.obedz2
+.ober≈º2
+.ober3m
+.oberz2
+.obesch2
+.obesz2
+.obetk2
+.obi3b2
+.obsz2
+.oc2
+.och2
+.ochrz2
+.ocz2
+.od≈∫2
+.od3ƒá2
+.od3≈õ2
+.od3au
+.od3b2
+.od3c2
+.od3d2
+.od3f2
+.od3g2
+.od3h2
+.od3i2
+.od3i2zo
+.od3j2
+.od3k2
+.od3l2
+.od3m2
+.od3n2
+.od3o2s
+.od3p2
+.od3r2
+.od3s2
+.od3t2
+.od3u2cz
+.od3u2m2
+.od3w2
+.od5≈º2
+.od5z2
+.odbe2z3
+.odch2
+.odcz2
+.odd≈∫2
+.odd≈º2
+.oddz2
+.ode3ƒá2
+.ode3≈Ç2
+.ode3≈õ2
+.ode3≈∫2
+.ode3≈º2
+.ode3b2
+.ode3c2
+.ode3d2
+.ode3f2
+.ode3g2
+.ode3h2
+.ode3k2
+.ode3l2
+.ode3m2
+.ode3mk2
+.ode3p2
+.ode3r2
+.ode3s2
+.ode3t2
+.ode3w2
+.ode3z2
+.odech2
+.odecz2
+.oded≈∫2
+.oded≈º2
+.odedz2
+.odepch2
+.oder≈º2
+.oderz2
+.odesz2
+.odetch2
+.odetk2
+.odkrz2
+.odrz2
+.odsz2
+.of2
+.og√≥lno3k2
+.og2
+.ognio3tr2
+.oh2
+.ok2
+.oka3m2
+.okr2
+.ole2o3
+.om2
+.op2
+.opch2
+.or2≈º2
+.or2tƒô
+.or2z2
+.os2
+.osie2m3
+.osiemse2t3
+.osz2
+.ot2
+.ow2
+.oz2
+.pƒá8
+.p≈Ç8
+.p≈Çasko3w2
+.p≈Ñ8
+.p√≥≈Çk2
+.p√≥≈Çkr2
+.p√≥≈Çm2
+.p√≥≈Ço2
+.p√≥≈Çob3r
+.p√≥≈Çom2d
+.p√≥≈Çprzy3m2k
+.p√≥2≈Ç3
+.p√≥3≈Ç4ƒÖ
+.p√≥3≈Ç4ƒô
+.p√≥3≈Ç4ecz
+.p√≥3≈Ç4y
+.p≈õ8
+.p≈∫8
+.p≈º8
+.p8
+.pb8
+.pc8
+.pch8
+.pd8
+.pe≈Çno3kr2
+.pe2r3
+.pe3c2k
+.pe3r4e
+.pe3r4i
+.pe3r4o
+.pe3r4u
+.pe3r4y
+.pe4r5i2n
+.pee2se2l
+.pepee2r
+.pepee2s
+.peze2t1pee2r
+.pf8
+.pg8
+.ph8
+.piƒôƒáse2t3
+.piƒô2ƒá3
+.piƒôcio3≈õ2
+.pierwo3w2
+.piono3w2
+.pj8
+.pk8
+.pl8
+.pm8
+.pn8
+.po≈Çk2
+.po2d2
+.po3ƒá2
+.po3≈Ç2
+.po3≈õ2
+.po3≈∫2
+.po3≈º2
+.po3b2
+.po3c2
+.po3dƒÖ
+.po3dƒô
+.po3d≈∫2
+.po3d4≈Çu
+.po3d4much
+.po3d4naw
+.po3d4rƒôcz
+.po3d4rƒôtw
+.po3d4r√≥≈º
+.po3d4r2wi
+.po3d4ra≈º
+.po3d4rap
+.po3d4repcz
+.po3d4rept
+.po3d4ro≈º
+.po3d4rob√≥
+.po3d4roba
+.po3d4robo
+.po3d4roby
+.po3d4rocz
+.po3d4ruzg
+.po3d4ryg
+.po3d4rze
+.po3d4w√≥jn
+.po3d4w√≥r
+.po3d4waj
+.po3d4woi
+.po3d4woj
+.po3d4worz
+.po3da
+.po3de
+.po3dej
+.po3diu
+.po3do
+.po3du
+.po3dy
+.po3dz2
+.po3e2k2s3
+.po3f2
+.po3g2
+.po3h2
+.po3k2
+.po3l2
+.po3m2
+.po3p2
+.po3r≈º
+.po3r2
+.po3s2
+.po3t2
+.po3w2
+.po3z2
+.po4≈Ñ3c
+.po4cz3d
+.po4cz3t
+.po4d3√≥w
+.po4d3e4k2s3
+.po4d3o2b√≥z
+.po4d3o2biad
+.po4d3o2bojcz
+.po4d3o2braz
+.po4d3o2choc
+.po4d3o2dm
+.po4d3o2f
+.po4d3o2g
+.po4d3o2kien
+.po4d3o2kn
+.po4d3o2krƒôg
+.po4d3o2kres
+.po4d3o2piecz
+.po4d3o2ryw
+.po4d3o2siniak
+.po4d3o2strz
+.po4d3obsz
+.po4d3odd
+.po4d3olbrz
+.po4d3u2cz
+.po4d3u2dz
+.po4d3u2pa
+.po4d3u2ral
+.po4d3u2sta
+.po4d3u2szcz
+.po4d5rƒôczn
+.po4d5zakr
+.po4d5zam
+.po4d5zast
+.po4d5zbi
+.po4d5ze
+.po4d5zieleniƒÖ
+.po4d5zieleniƒá
+.po4d5zieleniƒô
+.po4d5zieleni≈Ç
+.po4d5zielenic
+.po4d5zielenien
+.po4d5zielenil
+.po4d5zielenim
+.po4d5zielenio
+.po4d5zielenis
+.po4d5ziem
+.po4d5ziom
+.po4d5zw2r
+.po4l3s
+.po4m3p
+.po4r3c
+.po4r3f
+.po4r3n
+.po4r3t
+.po4st3d
+.po4st3f
+.po4st3g
+.po4st3h
+.po4st3i2
+.po4st3k
+.po4st3l
+.po4st3m
+.po4st3p
+.po4st3rom
+.po4st3s
+.po5d4uszczyn
+.po5r4tƒô
+.pobr2
+.pobrz2
+.poch2
+.pochrz2
+.pocz2
+.pod3ƒá2
+.pod3≈Ç2
+.pod3≈õ2
+.pod3≈õr√≥2d5
+.pod3alp
+.pod3b2
+.pod3c2
+.pod3d2
+.pod3f2
+.pod3g2
+.pod3h2
+.pod3i2n
+.pod3j2
+.pod3k2
+.pod3l2
+.pod3m2
+.pod3n2
+.pod3p2
+.pod3r2
+.pod3s2
+.pod3t2
+.pod3w2
+.pod5≈º2
+.podch2
+.podcz2
+.podd≈∫2
+.podd≈º2
+.pode3ƒá2
+.pode3≈Ç2
+.pode3≈õ2
+.pode3≈∫2
+.pode3≈º2
+.pode3b2
+.pode3c2
+.pode3d2
+.pode3f2
+.pode3g2
+.pode3h2
+.pode3k2
+.pode3l2
+.pode3m2
+.pode3p2
+.pode3r2
+.pode3s2
+.pode3t2
+.pode3tk2
+.pode3w2
+.pode3z2
+.podech2
+.podecz2
+.poded≈∫2
+.poded≈º2
+.podedz2
+.podepch2
+.poder≈º2
+.poderz2
+.podesch2
+.podesz2
+.podro2z3
+.podsm2
+.podsz2
+.pogrz2
+.pokl2
+.pokr2
+.pom4pk
+.pomk2
+.pona2d2
+.pona3ƒá2
+.pona3≈Ç2
+.pona3≈õ2
+.pona3≈∫2
+.pona3≈º2
+.pona3b2
+.pona3c2
+.pona3cz2
+.pona3d≈∫2
+.pona3do
+.pona3f2
+.pona3g2
+.pona3h2
+.pona3k2
+.pona3l2
+.pona3m2
+.pona3p2
+.pona3r2
+.pona3s2
+.pona3t2
+.pona3w2
+.pona3z2
+.pona4f3t
+.ponabrz2
+.ponach2
+.ponad3ƒá2
+.ponad3≈õ2
+.ponad3c2
+.ponad3ch2
+.ponad3cz2
+.ponad3d≈∫2
+.ponad3f2
+.ponad3g2
+.ponad3h2
+.ponad3j2
+.ponad3k2
+.ponad3l2
+.ponad3p2
+.ponad3s2
+.ponad3t2
+.ponadz2
+.ponarz2
+.ponasm2
+.ponasz2
+.ponaz3m2
+.ponazw2
+.ponie3k2
+.ponie3w2
+.popch2
+.popo3w2
+.poprz2
+.por4t1w
+.por4tf
+.por4tm
+.poro2z3
+.poro3z4u
+.porz2
+.posch2
+.posm2
+.posz2
+.potk2
+.potr2
+.poz4m2
+.poza3u2
+.pozw2
+.pp8
+.pr8
+.pra3s2
+.pra3w2nu
+.pra3w2z
+.prapra3w2nu
+.predy2s3po
+.prz8
+.prze≈Çk2
+.prze2d2
+.prze3ƒá2
+.prze3≈Ç2
+.prze3≈õ2
+.prze3≈∫2
+.prze3≈º2
+.prze3b2
+.prze3c2
+.prze3dƒÖ
+.prze3dƒô
+.prze3d≈∫2
+.prze3d4≈Çu≈º
+.prze3d4much
+.prze3d4o3br
+.prze3d4o3st
+.prze3d4o3zo
+.prze3d4ramat
+.prze3d4ruk
+.prze3d4ryl
+.prze3d4rz2
+.prze3d4um
+.prze3dy
+.prze3dz2
+.prze3e2k2s3
+.prze3f2
+.prze3g2
+.prze3h2
+.prze3k2
+.prze3l2
+.prze3m2
+.prze3n2
+.prze3p2
+.prze3r2
+.prze3s2
+.prze3t2
+.prze3u2
+.prze3w2
+.prze3z2
+.prze4d5≈Çu≈ºyc
+.prze4d5≈º2
+.prze4d5o4stat
+.prze4d5za
+.prze4d5zg2
+.prze4d5zim
+.prze4d5zj
+.prze4d5zl
+.prze4d5zw2r
+.prze4d5zwoj
+.przebr2
+.przebrz2
+.przech2
+.przechrz2
+.przeci2w3
+.przeci3w4ie
+.przeciwa2
+.przeciww2
+.przecz2
+.przed3ƒá2
+.przed3≈Ç2
+.przed3≈õ2
+.przed3a2gon
+.przed3a2kc
+.przed3alp
+.przed3b2
+.przed3c2
+.przed3d2
+.przed3e2gz
+.przed3e2mer
+.przed3f2
+.przed3g2
+.przed3h2
+.przed3i2
+.przed3j2
+.przed3k2
+.przed3l2
+.przed3m2
+.przed3n2
+.przed3o2
+.przed3p2
+.przed3r2
+.przed3s2
+.przed3siƒô3w2
+.przed3sz2
+.przed3t2
+.przed3u2
+.przed3w2
+.przedch2
+.przedcz2
+.przedd≈∫2
+.przedd≈º2
+.przeddz2
+.przedgrz2
+.przedy2s3ku
+.przegrz2
+.przekl2
+.przekr2
+.przemk2
+.przepch2
+.przer≈º2
+.przerz2
+.przesch2
+.przesm2
+.przesz2
+.przetk2
+.przetr2
+.przetran2s3
+.przy3ƒá2
+.przy3≈Ç2
+.przy3≈õ2
+.przy3≈∫2
+.przy3≈º2
+.przy3b2
+.przy3c2
+.przy3d2
+.przy3f2
+.przy3g2
+.przy3h2
+.przy3k2
+.przy3l2
+.przy3m2
+.przy3p2
+.przy3r2
+.przy3s2
+.przy3t2
+.przy3w2
+.przy3z2
+.przybr2
+.przych2
+.przycz2
+.przyd≈∫2
+.przyd≈º2
+.przydz2
+.przygrz2
+.przymk2
+.przyoz2
+.przypch2
+.przyr≈º2
+.przyrz2
+.przysch2
+.przysz2
+.przytk2
+.ps8
+.pt8
+.pv8
+.pw8
+.px8
+.pz8
+.rƒá8
+.r≈Ç8
+.r≈Ñ8
+.r≈õ8
+.r≈∫8
+.r≈º8
+.r8
+.rb8
+.rc8
+.rd8
+.retran2s3
+.rf8
+.rg8
+.rh8
+.rj8
+.rk8
+.rl8
+.rm8
+.rn8
+.ro2z3
+.ro3z4a
+.ro3z4e
+.ro3z4e3ƒá2
+.ro3z4e3≈Ç2
+.ro3z4e3≈õ2
+.ro3z4e3≈∫2
+.ro3z4e3≈º2
+.ro3z4e3b2
+.ro3z4e3c2
+.ro3z4e3d2
+.ro3z4e3f2
+.ro3z4e3g2
+.ro3z4e3h2
+.ro3z4e3k2
+.ro3z4e3l2
+.ro3z4e3m2
+.ro3z4e3p2
+.ro3z4e3r2
+.ro3z4e3s2
+.ro3z4e3t2
+.ro3z4e3w2
+.ro3z4e3z2
+.ro3z4ej
+.ro3z4u
+.ro4z5a2gi
+.ro4z5a2nie
+.ro4z5e2mo
+.ro4z5e4g3z
+.ro4z5e4n3t
+.roz≈õ2
+.rozbrz2
+.rozd2
+.rozech2
+.rozecz2
+.rozed≈∫2
+.rozed≈º2
+.rozedz2
+.rozepch2
+.rozer≈º2
+.rozerz2
+.rozesch2
+.rozesz2
+.rozi2
+.rozm2
+.rozo2
+.rozpo3w2
+.rozt2
+.roztr2
+.rozw2
+.rp8
+.rr8
+.rs8
+.rt8
+.rv8
+.rw8
+.rx8
+.rz8
+.sƒá8
+.s≈Ç8
+.s≈Ñ8
+.s≈õ8
+.s≈∫8
+.s≈º8
+.s8
+.samo3ch2
+.samo3k2
+.samo3p2
+.samo3w2
+.samoro2z3
+.sb8
+.sc8
+.sch8
+.sd8
+.sf8
+.sg8
+.sh8
+.siede2m3
+.siedemse2t3
+.siedmio3≈õ2
+.sj8
+.skƒÖ2d5≈ºe
+.sk8
+.skl8
+.skr8
+.sl8
+.sm8
+.sn8
+.sobo3w2
+.sp√≥2≈Ç3
+.sp8
+.spo2d2
+.spo3ƒá2
+.spo3≈Ç2
+.spo3≈õ2
+.spo3≈∫2
+.spo3≈º2
+.spo3b2
+.spo3c2
+.spo3dz2
+.spo3f2
+.spo3g2
+.spo3h2
+.spo3k2
+.spo3l2
+.spo3m2
+.spo3p2
+.spo3r2
+.spo3s2
+.spo3t2
+.spo3w2
+.spo3z2
+.spo4r3n
+.spo4r3t
+.spoch2
+.spocz2
+.spod≈∫2
+.spod≈º2
+.spod3d
+.sporz2
+.sposz2
+.sr8
+.ss8
+.st8
+.stere2o3
+.stereoa2
+.stereoe2
+.stereoi2
+.stereoo2
+.stereou2
+.su2b3
+.su3b4ie
+.su3b4otn
+.supe2r3
+.supe3r4at
+.supe3r4io
+.supe4r5a2tr
+.super5z2b
+.supere2
+.supero2d1rzut
+.sv8
+.sw8
+.sx8
+.sz8
+.sze≈õƒáse2t3
+.sze≈õcio3≈õ2
+.sze2≈õ2ƒá3
+.sze2s3
+.tƒá8
+.t≈Ç8
+.t≈Ñ8
+.t≈õ8
+.t≈∫8
+.t≈º8
+.t8
+.ta2o3
+.ta2r7zan
+.tb8
+.tc8
+.tch8
+.td8
+.te2o3
+.tf8
+.tg8
+.th8
+.tj8
+.tk8
+.tl8
+.tm8
+.tn8
+.toa3
+.tp8
+.tr√≥2j3
+.tr√≥3j4ƒÖ
+.tr√≥3j4ƒô
+.tr√≥3j4ecz
+.tr8
+.tran2s3
+.tran3s4e
+.tran3s4ie
+.tran3s4y
+.tran3sz
+.tran4s5eu
+.transa2
+.transo2
+.trz8
+.trze2ch3
+.trzechse2t3
+.ts8
+.tt8
+.tv8
+.tw8
+.tx8
+.tysiƒÖ2c3
+.tysiƒÖ3c4a
+.tysiƒÖ3c4e
+.tysiƒÖ3cz
+.tysiƒÖ4c5z≈Ç
+.tz8
+.uƒá2
+.u≈õ2
+.u3≈Ç2
+.u3≈∫2
+.u3≈º2
+.u3b2
+.u3c2
+.u3d2
+.u3f2
+.u3g2
+.u3h2
+.u3k2
+.u3l2
+.u3m2
+.u3n2
+.u3p2
+.u3r2
+.u3s2
+.u3t2
+.u3w2
+.u3z2
+.u4d3k
+.u4f3n
+.u4k3lej
+.u4l3s
+.u4l3t
+.u4m3br
+.u4n3c
+.u4n3d
+.u4p3p2s
+.u4r3s
+.u4st3n
+.u4stc
+.u4stk
+.u4z3be
+.ube2z3
+.ubezw2
+.ubr2
+.uch2
+.ucz2
+.ud≈∫2
+.ud≈º2
+.udz2
+.ukr2
+.umk2
+.upch2
+.upo2d2
+.upo3ƒá2
+.upo3≈Ç2
+.upo3≈õ2
+.upo3≈∫2
+.upo3≈º2
+.upo3b2
+.upo3c2
+.upo3da
+.upo3f2
+.upo3g2
+.upo3h2
+.upo3k2
+.upo3l2
+.upo3m2
+.upo3p2
+.upo3r2
+.upo3s2
+.upo3t2
+.upo3w2
+.upo3z2
+.upoch2
+.upocz2
+.upod≈∫2
+.upod≈º2
+.upod3d
+.uporz2
+.uposz2
+.ur≈º2
+.uro2z3
+.urz2
+.usch2
+.usz2
+.utk2
+.utr2
+.uze3w2
+.vƒá8
+.v≈Ç8
+.v≈Ñ8
+.v≈õ8
+.v≈∫8
+.v≈º8
+.v8
+.vb8
+.vc8
+.vd8
+.vf8
+.vg8
+.vh8
+.vj8
+.vk8
+.vl8
+.vm8
+.vn8
+.vp8
+.vr8
+.vs8
+.vt8
+.vv8
+.vw8
+.vx8
+.vz8
+.wƒá8
+.w≈Ç8
+.w≈Ñ8
+.w≈õ8
+.w≈∫8
+.w≈º8
+.w8
+.wb8
+.wc8
+.wd8
+.we3ƒá2
+.we3≈Ç2
+.we3≈õ2
+.we3≈º2
+.we3b2
+.we3c2
+.we3d2
+.we3f2
+.we3g2
+.we3h2
+.we3k2
+.we3l2
+.we3m2
+.we3n2
+.we3p2
+.we3r2
+.we3s2
+.we3t2
+.we3w2
+.we3z2
+.we4≈Ç3n
+.we4k3t
+.we4l3w
+.we4n3d
+.we4n3t
+.we4r3b
+.we4r3d
+.we4r3n
+.we4r3s
+.we4r3t
+.we4s3prz
+.we4s3tch2
+.we4z3br
+.we4z3g≈Ç
+.wech2
+.wecz2
+.wed≈∫2
+.wed≈º2
+.wedz2
+.wemk2
+.wepch2
+.werz2
+.wesz2
+.wetk2
+.wewnƒÖ2trz3
+.wf8
+.wg8
+.wh8
+.wielo3≈õ2
+.wielo3d2
+.wielo3k2
+.wieluse2t3
+.wilczo3m2
+.wj8
+.wk8
+.wl8
+.wm8
+.wn8
+.wniebo3w2
+.wodo3w2
+.wp8
+.wr8
+.ws8
+.wsp√≥≈Çi2
+.wsp√≥≈Ço2b3w
+.wsp√≥≈Çu2
+.wsp√≥≈Çw2
+.wsp√≥2≈Ç3
+.wsze2ch3
+.wszecho2
+.wszechw2
+.wt8
+.wv8
+.ww8
+.wx8
+.wy3ƒá2
+.wy3≈Ç2
+.wy3≈õ2
+.wy3≈∫2
+.wy3≈º2
+.wy3b2
+.wy3c2
+.wy3d2
+.wy3f2
+.wy3g2
+.wy3h2
+.wy3k2
+.wy3l2
+.wy3m2
+.wy3o2d3r
+.wy3p2
+.wy3r2
+.wy3s2
+.wy3t2
+.wy3w2
+.wy3z2
+.wy4≈º3sz
+.wy4cz3ha
+.wybr2
+.wybrz2
+.wych2
+.wycz2
+.wyd≈∫2
+.wyd≈º2
+.wydr2
+.wydz2
+.wye2k2s3
+.wygrz2
+.wyi2zo
+.wykl2
+.wykr2
+.wykrz2
+.wymk2
+.wypch2
+.wyprz2
+.wyr≈º2
+.wyrz2
+.wysch2
+.wysm2
+.wysz2
+.wytch2
+.wytk2
+.wytr2
+.wz8
+.xƒá8
+.x≈Ç8
+.x≈Ñ8
+.x≈õ8
+.x≈∫8
+.x≈º8
+.x8
+.xb8
+.xc8
+.xd8
+.xf8
+.xg8
+.xh8
+.xj8
+.xk8
+.xl8
+.xm8
+.xn8
+.xp8
+.xr8
+.xs8
+.xt8
+.xv8
+.xw8
+.xx8
+.xz8
+.zƒá8
+.z≈Ç8
+.z≈Ço3w2
+.z≈Ñ8
+.z≈õ8
+.z≈∫8
+.z≈º8
+.z8
+.za3ƒá2
+.za3≈Ç2
+.za3≈õ2
+.za3≈∫2
+.za3≈º2
+.za3b2
+.za3c2
+.za3d2
+.za3f2
+.za3g2
+.za3h2
+.za3k2
+.za3l2
+.za3m2
+.za3o2b3r
+.za3o2b3s
+.za3p2
+.za3r2
+.za3s2
+.za3t2
+.za3u2
+.za3w2
+.za3z2
+.za4k3t
+.za4l3g
+.za4l3k
+.za4l3t
+.za4m3k
+.za4r3ch
+.za4uto
+.za5m4k2n
+.zabr2
+.zabrz2
+.zach2
+.zacz2
+.zad≈∫2
+.zad≈º2
+.zado≈õƒáu4
+.zado2≈õƒá3
+.zadr2
+.zady2s3po
+.zadz2
+.zagrz2
+.zai2n3
+.zai2zo
+.zain4ic
+.zakl2
+.zakr2
+.zakrz2
+.zanie3d2
+.zar≈º2
+.zarz2
+.zasch2
+.zasm2
+.zasz2
+.zatk2
+.zatr2
+.zb8
+.zc8
+.zd8
+.zde2z3
+.zde3z4awu
+.zde3z4el
+.zde3z4er
+.zde3z4y
+.zdy2s3kont
+.zdy2s3kred
+.zdy2s3kwal
+.ze3ƒá2
+.ze3≈Ç2
+.ze3≈õ2
+.ze3≈∫2
+.ze3≈º2
+.ze3b2
+.ze3c2
+.ze3d2
+.ze3f2
+.ze3g2
+.ze3h2
+.ze3k2
+.ze3l2
+.ze3m2
+.ze3p2
+.ze3r2
+.ze3s2
+.ze3t2
+.ze3tk2
+.ze3w2
+.ze3z2
+.ze4r3k
+.ze4t3e2m1e2s
+.ze4t3e2s1e2l
+.ze4t3emp
+.ze4t3hap
+.zech2
+.zecz2
+.zed≈∫2
+.zed≈º2
+.zedz2
+.zekl2
+.zepch2
+.zer≈º2
+.zerz2
+.zesch2
+.zesm4
+.zesz2
+.zf8
+.zg8
+.zh8
+.zimno3kr2
+.zj8
+.zk8
+.zl8
+.zm8
+.zmartwy2ch3
+.zmartwychw2
+.zn8
+.znie3ƒá2
+.znie3≈Ç2
+.znie3≈Ñ2
+.znie3≈õ2
+.znie3≈∫2
+.znie3≈º2
+.znie3b2
+.znie3c2
+.znie3d2
+.znie3f2
+.znie3g2
+.znie3h2
+.znie3k2
+.znie3l2
+.znie3m2
+.znie3n2
+.znie3p2
+.znie3r2
+.znie3s2
+.znie3t2
+.znie3w2
+.znie3z2
+.znie4d≈∫3
+.znie4m3c
+.zniech2
+.zniecz2
+.znied≈º2
+.zniedz2
+.znierz2
+.zniesz2
+.zo2o3
+.zp8
+.zr8
+.zro2z3
+.zro3z4u
+.zs8
+.zt8
+.zv8
+.zw8
+.zx8
+.zz8
+ƒÖ1
+ƒô1
+√≥1
+√≥4w3cz
+≈õ1c
+≈∫2d≈∫
+1≈õ2ci
+2ƒá1≈Ñ
+2ƒá1≈õ
+2ƒá1≈∫
+2ƒá1≈º
+2ƒá1b
+2ƒá1c
+2ƒá1d
+2ƒá1f
+2ƒá1g
+2ƒá1k
+2ƒá1m
+2ƒá1n
+2ƒá1p
+2ƒá1s
+2ƒá1t
+2ƒá1z
+2≈Ç1ƒá
+2≈Ç1≈Ñ
+2≈Ç1≈õ
+2≈Ç1≈∫
+2≈Ç1≈º
+2≈Ç1b
+2≈Ç1c
+2≈Ç1d
+2≈Ç1f
+2≈Ç1g
+2≈Ç1h
+2≈Ç1j
+2≈Ç1k
+2≈Ç1l
+2≈Ç1m
+2≈Ç1n
+2≈Ç1p
+2≈Ç1r
+2≈Ç1s
+2≈Ç1t
+2≈Ç1w
+2≈Ç1z
+2≈Ñ1ƒá
+2≈Ñ1≈Ç
+2≈Ñ1≈Ñ
+2≈Ñ1≈õ
+2≈Ñ1≈∫
+2≈Ñ1≈º
+2≈Ñ1b
+2≈Ñ1c
+2≈Ñ1d
+2≈Ñ1f
+2≈Ñ1g
+2≈Ñ1h
+2≈Ñ1j
+2≈Ñ1k
+2≈Ñ1l
+2≈Ñ1m
+2≈Ñ1n
+2≈Ñ1p
+2≈Ñ1r
+2≈Ñ1s
+2≈Ñ1t
+2≈Ñ1w
+2≈Ñ1z
+2≈õƒác
+2≈õ1≈õ
+2≈õ1≈∫
+2≈õ1≈º
+2≈õ1b
+2≈õ1d
+2≈õ1f
+2≈õ1g
+2≈õ1k
+2≈õ1p
+2≈õ1s
+2≈õ1t
+2≈õ1z
+2≈õlm
+2≈õln
+2≈∫1ƒá
+2≈∫1≈õ
+2≈∫1≈º
+2≈∫1b
+2≈∫1c
+2≈∫1d
+2≈∫1f
+2≈∫1g
+2≈∫1k
+2≈∫1l
+2≈∫1m
+2≈∫1n
+2≈∫1p
+2≈∫1s
+2≈∫1t
+2≈∫1w
+2≈∫1z
+2≈º1ƒá
+2≈º1≈Ç
+2≈º1≈Ñ
+2≈º1≈õ
+2≈º1≈∫
+2≈º1b
+2≈º1c
+2≈º1d
+2≈º1f
+2≈º1g
+2≈º1j
+2≈º1k
+2≈º1l
+2≈º1m
+2≈º1n
+2≈º1p
+2≈º1r
+2≈º1s
+2≈º1t
+2≈º1w
+2≈º1z
+2b≈Çk
+2b1ƒá
+2b1≈Ñ
+2b1≈õ
+2b1≈∫
+2b1≈º
+2b1c
+2b1d
+2b1f
+2b1g
+2b1k
+2b1m
+2b1n
+2b1p
+2b1s
+2b1t
+2b1z
+2brn
+2c1ƒá
+2c1≈Ñ
+2c1≈õ
+2c1≈∫
+2c1≈º
+2c1b
+2c1d
+2c1f
+2c1g
+2c1k
+2c1l
+2c1m
+2c1n
+2c1p
+2c1s
+2c1t
+2ch1ƒá
+2ch1≈Ñ
+2ch1≈õ
+2ch1≈∫
+2ch1≈º
+2ch1b
+2ch1c
+2ch1d
+2ch1f
+2ch1g
+2ch1k
+2ch1m
+2ch1n
+2ch1p
+2ch1s
+2ch1t
+2ch1z
+2cz1ƒá
+2cz1≈Ñ
+2cz1≈õ
+2cz1≈∫
+2cz1≈º
+2cz1b
+2cz1c
+2cz1d
+2cz1f
+2cz1g
+2cz1k
+2cz1l
+2cz1m
+2cz1n
+2cz1p
+2cz1s
+2cz1t
+2cz1z
+2d≈Çb
+2d≈Çsz
+2d≈∫1ƒá
+2d≈∫1≈Ñ
+2d≈∫1≈õ
+2d≈∫1≈∫
+2d≈∫1≈º
+2d≈∫1b
+2d≈∫1c
+2d≈∫1d
+2d≈∫1f
+2d≈∫1g
+2d≈∫1k
+2d≈∫1m
+2d≈∫1n
+2d≈∫1p
+2d≈∫1s
+2d≈∫1t
+2d≈∫1z
+2d≈º1ƒá
+2d≈º1≈Ñ
+2d≈º1≈õ
+2d≈º1≈∫
+2d≈º1≈º
+2d≈º1b
+2d≈º1c
+2d≈º1d
+2d≈º1f
+2d≈º1g
+2d≈º1k
+2d≈º1m
+2d≈º1n
+2d≈º1p
+2d≈º1s
+2d≈º1t
+2d≈º1z
+2d1ƒá
+2d1≈Ñ
+2d1≈õ
+2d1b
+2d1c
+2d1f
+2d1g
+2d1k
+2d1m
+2d1n
+2d1p
+2d1s
+2d1t
+2drn
+2dz1ƒá
+2dz1≈Ñ
+2dz1≈õ
+2dz1≈∫
+2dz1≈º
+2dz1b
+2dz1c
+2dz1d
+2dz1f
+2dz1g
+2dz1k
+2dz1l
+2dz1m
+2dz1n
+2dz1p
+2dz1s
+2dz1t
+2dz1z
+2f1c
+2f1k
+2f1m
+2f1n
+2g≈Çb
+2g1ƒá
+2g1≈Ñ
+2g1≈õ
+2g1≈∫
+2g1≈º
+2g1b
+2g1c
+2g1d
+2g1f
+2g1k
+2g1m
+2g1p
+2g1s
+2g1t
+2g1z
+2h1ƒá
+2h1≈Ç
+2h1≈Ñ
+2h1≈õ
+2h1≈∫
+2h1≈º
+2h1b
+2h1c
+2h1d
+2h1f
+2h1g
+2h1j
+2h1k
+2h1l
+2h1m
+2h1n
+2h1p
+2h1r
+2h1s
+2h1t
+2h1w
+2h1z
+2j1ƒá
+2j1≈Ç
+2j1≈Ñ
+2j1≈õ
+2j1≈∫
+2j1≈º
+2j1b
+2j1c
+2j1d
+2j1f
+2j1g
+2j1h
+2j1k
+2j1l
+2j1m
+2j1n
+2j1p
+2j1r
+2j1s
+2j1t
+2j1w
+2j1z
+2k≈Çb
+2k1ƒá
+2k1≈Ñ
+2k1≈õ
+2k1≈∫
+2k1≈º
+2k1b
+2k1c
+2k1d
+2k1f
+2k1g
+2k1m
+2k1n
+2k1p
+2k1s
+2k1sz
+2k1t
+2k1z
+2l1ƒá
+2l1≈Ç
+2l1≈Ñ
+2l1≈õ
+2l1≈∫
+2l1≈º
+2l1b
+2l1c
+2l1d
+2l1f
+2l1g
+2l1h
+2l1j
+2l1k
+2l1m
+2l1n
+2l1p
+2l1r
+2l1s
+2l1t
+2l1w
+2l1z
+2m1ƒá
+2m1≈Ç
+2m1≈Ñ
+2m1≈õ
+2m1≈∫
+2m1≈º
+2m1b
+2m1c
+2m1d
+2m1f
+2m1g
+2m1h
+2m1j
+2m1k
+2m1l
+2m1n
+2m1p
+2m1r
+2m1s
+2m1t
+2m1w
+2m1z
+2n1ƒá
+2n1≈Ç
+2n1≈Ñ
+2n1≈õ
+2n1≈∫
+2n1≈º
+2n1b
+2n1c
+2n1d
+2n1f
+2n1g
+2n1h
+2n1j
+2n1k
+2n1l
+2n1m
+2n1p
+2n1r
+2n1s
+2n1t
+2n1w
+2n1z
+2ntn
+2p1ƒá
+2p1≈Ñ
+2p1≈õ
+2p1≈∫
+2p1≈º
+2p1b
+2p1c
+2p1d
+2p1f
+2p1g
+2p1k
+2p1m
+2p1n
+2p1s
+2p1sz
+2p1t
+2p1z
+2pln
+2r1ƒá
+2r1≈Ç
+2r1≈Ñ
+2r1≈õ
+2r1≈∫
+2r1≈º
+2r1b
+2r1c
+2r1d
+2r1f
+2r1g
+2r1h
+2r1j
+2r1k
+2r1l
+2r1m
+2r1n
+2r1p
+2r1s
+2r1t
+2r1w
+2rz1ƒá
+2rz1≈Ç
+2rz1≈Ñ
+2rz1≈õ
+2rz1≈∫
+2rz1≈º
+2rz1b
+2rz1c
+2rz1d
+2rz1f
+2rz1g
+2rz1h
+2rz1j
+2rz1k
+2rz1l
+2rz1m
+2rz1n
+2rz1p
+2rz1r
+2rz1s
+2rz1t
+2rz1w
+2s≈Çb
+2s1≈∫
+2s1≈º
+2s1b
+2s1d
+2s1f
+2s1g
+2s1s
+2snk
+2stk
+2stn
+2stsz
+2sz1ƒá
+2sz1≈õ
+2sz1c
+2sz1f
+2sz1k
+2sz1l
+2sz1m
+2sz1n
+2sz1p
+2sz1s
+2sz1t
+2sz1w
+2sz1z
+2szln
+2t1ƒá
+2t1≈Ñ
+2t1≈õ
+2t1≈∫
+2t1≈º
+2t1b
+2t1c
+2t1d
+2t1f
+2t1g
+2t1k
+2t1m
+2t1n
+2t1p
+2t1s
+2t1z
+2tln
+2trk
+2trzn
+2w1ƒá
+2w1≈Ç
+2w1≈Ñ
+2w1≈õ
+2w1≈∫
+2w1≈º
+2w1b
+2w1c
+2w1d
+2w1f
+2w1g
+2w1j
+2w1k
+2w1l
+2w1m
+2w1n
+2w1p
+2w1r
+2w1s
+2w1t
+2w1z
+2z1ƒá
+2z1≈õ
+2z1c
+2z1d
+2z1f
+2z1k
+2z1p
+2z1s
+2z1t
+2zdk
+2zdn
+3d2niow
+3k2sz2t
+3m2k2n
+3m2nest
+3m2nezj
+3m2sk2n
+3p2neu
+3w2≈Çad
+3w2≈Ços
+3w2czas
+4ƒá3ƒá
+4≈Ç3≈Ç
+4≈∫3≈∫
+4≈º3≈º
+4b3b
+4c3c
+4d3d
+4f3f
+4g3g
+4h3h
+4j3j
+4k3k
+4l3l
+4m3m
+4n3n
+4p3p
+4r3r
+4t3t
+4w3w
+4z3z
+8ƒá.
+8ƒáƒá.
+8ƒá≈Ç.
+8ƒá≈Ñ.
+8ƒá≈õ.
+8ƒá≈∫.
+8ƒá≈º.
+8ƒáb.
+8ƒác.
+8ƒád.
+8ƒáf.
+8ƒág.
+8ƒáh.
+8ƒáj.
+8ƒák.
+8ƒál.
+8ƒám.
+8ƒán.
+8ƒáp.
+8ƒár.
+8ƒás.
+8ƒát.
+8ƒáv.
+8ƒáw.
+8ƒáx.
+8ƒáz.
+8≈Ç.
+8≈Çƒá.
+8≈Ç≈Ç.
+8≈Ç≈Ñ.
+8≈Ç≈õ.
+8≈Ç≈∫.
+8≈Ç≈º.
+8≈Çb.
+8≈Çc.
+8≈Çd.
+8≈Çf.
+8≈Çg.
+8≈Çh.
+8≈Çj.
+8≈Çk.
+8≈Çl.
+8≈Çm.
+8≈Çn.
+8≈Çp.
+8≈Çr.
+8≈Çs.
+8≈Çt.
+8≈Çv.
+8≈Çw.
+8≈Çx.
+8≈Çz.
+8≈Ñ.
+8≈Ñƒá.
+8≈Ñ≈Ç.
+8≈Ñ≈Ñ.
+8≈Ñ≈õ.
+8≈Ñ≈∫.
+8≈Ñ≈º.
+8≈Ñb.
+8≈Ñc.
+8≈Ñd.
+8≈Ñf.
+8≈Ñg.
+8≈Ñh.
+8≈Ñj.
+8≈Ñk.
+8≈Ñl.
+8≈Ñm.
+8≈Ñn.
+8≈Ñp.
+8≈Ñr.
+8≈Ñs.
+8≈Ñt.
+8≈Ñv.
+8≈Ñw.
+8≈Ñx.
+8≈Ñz.
+8≈õ.
+8≈õƒá.
+8≈õ≈Ç.
+8≈õ≈Ñ.
+8≈õ≈õ.
+8≈õ≈∫.
+8≈õ≈º.
+8≈õb.
+8≈õc.
+8≈õd.
+8≈õf.
+8≈õg.
+8≈õh.
+8≈õj.
+8≈õk.
+8≈õl.
+8≈õm.
+8≈õn.
+8≈õp.
+8≈õr.
+8≈õs.
+8≈õt.
+8≈õv.
+8≈õw.
+8≈õx.
+8≈õz.
+8≈∫.
+8≈∫ƒá.
+8≈∫≈Ç.
+8≈∫≈Ñ.
+8≈∫≈õ.
+8≈∫≈∫.
+8≈∫≈º.
+8≈∫b.
+8≈∫c.
+8≈∫d.
+8≈∫f.
+8≈∫g.
+8≈∫h.
+8≈∫j.
+8≈∫k.
+8≈∫l.
+8≈∫m.
+8≈∫n.
+8≈∫p.
+8≈∫r.
+8≈∫s.
+8≈∫t.
+8≈∫v.
+8≈∫w.
+8≈∫x.
+8≈∫z.
+8≈º.
+8≈ºƒá.
+8≈º≈Ç.
+8≈º≈Ñ.
+8≈º≈õ.
+8≈º≈∫.
+8≈º≈º.
+8≈ºb.
+8≈ºc.
+8≈ºd.
+8≈ºf.
+8≈ºg.
+8≈ºh.
+8≈ºj.
+8≈ºk.
+8≈ºl.
+8≈ºm.
+8≈ºn.
+8≈ºp.
+8≈ºr.
+8≈ºs.
+8≈ºt.
+8≈ºv.
+8≈ºw.
+8≈ºx.
+8≈ºz.
+8b.
+8bƒá.
+8b≈Ç.
+8b≈Ñ.
+8b≈õ.
+8b≈∫.
+8b≈º.
+8bb.
+8bc.
+8bd.
+8bf.
+8bg.
+8bh.
+8bj.
+8bk.
+8bl.
+8bm.
+8bn.
+8bp.
+8br.
+8brz.
+8bs.
+8bt.
+8bv.
+8bw.
+8bx.
+8bz.
+8c.
+8cƒá.
+8c≈Ç.
+8c≈Ñ.
+8c≈õ.
+8c≈∫.
+8c≈º.
+8cb.
+8cc.
+8cd.
+8cf.
+8cg.
+8ch.
+8ch≈Ç.
+8chrz.
+8chw.
+8cj.
+8ck.
+8cl.
+8cm.
+8cn.
+8cp.
+8cr.
+8cs.
+8ct.
+8cv.
+8cw.
+8cx.
+8cz.
+8czt.
+8d.
+8dƒá.
+8d≈Ç.
+8d≈Ñ.
+8d≈õ.
+8d≈∫.
+8d≈º.
+8db.
+8dc.
+8dd.
+8df.
+8dg.
+8dh.
+8dj.
+8dk.
+8dl.
+8dm.
+8dn.
+8dp.
+8dr.
+8drz.
+8ds.
+8dt.
+8dv.
+8dw.
+8dx.
+8dz.
+8f.
+8fƒá.
+8f≈Ç.
+8f≈Ñ.
+8f≈õ.
+8f≈∫.
+8f≈º.
+8fb.
+8fc.
+8fd.
+8ff.
+8fg.
+8fh.
+8fj.
+8fk.
+8fl.
+8fm.
+8fn.
+8fp.
+8fr.
+8fs.
+8ft.
+8fv.
+8fw.
+8fx.
+8fz.
+8g.
+8gƒá.
+8g≈Ç.
+8g≈Ñ.
+8g≈õ.
+8g≈∫.
+8g≈º.
+8gb.
+8gc.
+8gd.
+8gf.
+8gg.
+8gh.
+8gj.
+8gk.
+8gl.
+8gm.
+8gn.
+8gp.
+8gr.
+8gs.
+8gt.
+8gv.
+8gw.
+8gx.
+8gz.
+8h.
+8hƒá.
+8h≈Ç.
+8h≈Ñ.
+8h≈õ.
+8h≈∫.
+8h≈º.
+8hb.
+8hc.
+8hd.
+8hf.
+8hg.
+8hh.
+8hj.
+8hk.
+8hl.
+8hm.
+8hn.
+8hp.
+8hr.
+8hs.
+8ht.
+8hv.
+8hw.
+8hx.
+8hz.
+8j.
+8jƒá.
+8j≈Ç.
+8j≈Ñ.
+8j≈õ.
+8j≈∫.
+8j≈º.
+8jb.
+8jc.
+8jd.
+8jf.
+8jg.
+8jh.
+8jj.
+8jk.
+8jl.
+8jm.
+8jn.
+8jp.
+8jr.
+8js.
+8jt.
+8jv.
+8jw.
+8jx.
+8jz.
+8k.
+8kƒá.
+8k≈Ç.
+8k≈Ñ.
+8k≈õ.
+8k≈∫.
+8k≈º.
+8kb.
+8kc.
+8kd.
+8kf.
+8kg.
+8kh.
+8kj.
+8kk.
+8kl.
+8km.
+8kn.
+8kp.
+8kr.
+8ks.
+8kst.
+8kt.
+8kv.
+8kw.
+8kx.
+8kz.
+8l.
+8lƒá.
+8l≈Ç.
+8l≈Ñ.
+8l≈õ.
+8l≈∫.
+8l≈º.
+8lb.
+8lc.
+8ld.
+8lf.
+8lg.
+8lh.
+8lj.
+8lk.
+8ll.
+8lm.
+8ln.
+8lp.
+8lr.
+8ls.
+8lt.
+8lv.
+8lw.
+8lx.
+8lz.
+8m.
+8mƒá.
+8m≈Ç.
+8m≈Ñ.
+8m≈õ.
+8m≈∫.
+8m≈º.
+8mb.
+8mc.
+8md.
+8mf.
+8mg.
+8mh.
+8mj.
+8mk.
+8ml.
+8mm.
+8mn.
+8mp.
+8mr.
+8ms.
+8mst.
+8mt.
+8mv.
+8mw.
+8mx.
+8mz.
+8n.
+8nƒá.
+8n≈Ç.
+8n≈Ñ.
+8n≈õ.
+8n≈∫.
+8n≈º.
+8nb.
+8nc.
+8nd.
+8nf.
+8ng.
+8nh.
+8nj.
+8nk.
+8nl.
+8nm.
+8nn.
+8np.
+8nr.
+8ns.
+8nt.
+8nv.
+8nw.
+8nx.
+8nz.
+8p.
+8pƒá.
+8p≈Ç.
+8p≈Ñ.
+8p≈õ.
+8p≈∫.
+8p≈º.
+8pb.
+8pc.
+8pd.
+8pf.
+8pg.
+8ph.
+8pj.
+8pk.
+8pl.
+8pm.
+8pn.
+8pp.
+8pr.
+8prz.
+8ps.
+8pt.
+8pv.
+8pw.
+8px.
+8pz.
+8r.
+8rƒá.
+8r≈Ç.
+8r≈Ñ.
+8r≈õ.
+8r≈∫.
+8r≈º.
+8rb.
+8rc.
+8rd.
+8rf.
+8rg.
+8rh.
+8rj.
+8rk.
+8rl.
+8rm.
+8rn.
+8rp.
+8rr.
+8rs.
+8rsz.
+8rt.
+8rv.
+8rw.
+8rx.
+8rz.
+8rz≈Ç.
+8s.
+8sƒá.
+8s≈Ç.
+8s≈Ñ.
+8s≈õ.
+8s≈∫.
+8s≈º.
+8sb.
+8sc.
+8sch.
+8sd.
+8sf.
+8sg.
+8sh.
+8sj.
+8sk.
+8skrz.
+8sl.
+8sm.
+8sn.
+8sp.
+8sr.
+8ss.
+8st.
+8str.
+8strz.
+8stw.
+8sv.
+8sw.
+8sx.
+8sz.
+8szcz.
+8szczb.
+8szk.
+8szn.
+8szt.
+8sztr.
+8t.
+8tƒá.
+8t≈Ç.
+8t≈Ñ.
+8t≈õ.
+8t≈∫.
+8t≈º.
+8tb.
+8tc.
+8td.
+8tf.
+8tg.
+8th.
+8tj.
+8tk.
+8tl.
+8tm.
+8tn.
+8tp.
+8tr.
+8trz.
+8ts.
+8tt.
+8tv.
+8tw.
+8tx.
+8tz.
+8v.
+8vƒá.
+8v≈Ç.
+8v≈Ñ.
+8v≈õ.
+8v≈∫.
+8v≈º.
+8vb.
+8vc.
+8vd.
+8vf.
+8vg.
+8vh.
+8vj.
+8vk.
+8vl.
+8vm.
+8vn.
+8vp.
+8vr.
+8vs.
+8vt.
+8vv.
+8vw.
+8vx.
+8vz.
+8w.
+8wƒá.
+8w≈Ç.
+8w≈Ñ.
+8w≈õ.
+8w≈∫.
+8w≈º.
+8wb.
+8wc.
+8wd.
+8wf.
+8wg.
+8wh.
+8wj.
+8wk.
+8wl.
+8wm.
+8wn.
+8wp.
+8wr.
+8ws.
+8wt.
+8wv.
+8ww.
+8wx.
+8wz.
+8x.
+8xƒá.
+8x≈Ç.
+8x≈Ñ.
+8x≈õ.
+8x≈∫.
+8x≈º.
+8xb.
+8xc.
+8xd.
+8xf.
+8xg.
+8xh.
+8xj.
+8xk.
+8xl.
+8xm.
+8xn.
+8xp.
+8xr.
+8xs.
+8xt.
+8xv.
+8xw.
+8xx.
+8xz.
+8z.
+8zƒá.
+8z≈Ç.
+8z≈Ñ.
+8z≈õ.
+8z≈∫.
+8z≈º.
+8zb.
+8zc.
+8zd.
+8zdr.
+8zdrz.
+8zf.
+8zg.
+8zh.
+8zj.
+8zk.
+8zl.
+8zm.
+8zn.
+8zp.
+8zr.
+8zs.
+8zt.
+8zv.
+8zw.
+8zx.
+8zz.
+a1
+a2u
+a2y
+aa2
+ae2
+ai2
+ao2
+be2eth
+be2f3sz2
+be2k1hend
+bi2n3o2ku
+bi2sz3kop
+bi2z3ne2s3m
+bi2z3nes
+birmin2g1ham
+blo2k1hauz
+bo2s3ma
+br2d
+bro2a2d3way
+bu2sz3me
+buk2sz3pan
+busine2ss3m
+busines2s
+c4h
+c4z
+cal2d1well
+ch2≈Ç
+ch2j
+ch2l
+ch2r
+ch2w
+chus1t
+cu2r7zon
+d≈º2≈Ç
+d≈º2j
+d≈º2l
+d≈º2r
+d≈º2w
+d≈ºe4z3b
+d≈ºe4z3m
+d4≈∫
+d4≈º
+d4z
+deut4sch3land
+drz2w
+du2sz3past
+e1
+e2r5zac
+e2u
+e2y
+e3u2sz
+ea2
+ee2
+ei2
+eo2
+fi2s3harm
+fi2sz3bin
+fo2k2s3t
+fo2r5zac
+fol2k1lor
+fos2f1a2zot
+ga3d2get
+gado3p2ta
+gol2f3s
+golfsz2
+gran2d1ilo
+gro4t3r
+hi2sz3p
+hu2cz1w
+hu2x3ley
+i1
+i2ƒÖ
+i2ƒô
+i2√≥
+i2a
+i2e
+i2i
+i2o
+i2u
+i2y
+in4nsbruck
+in4sbruc
+j2t1≈Ç
+j2t1r
+ja4z4z3b
+ja4z4z3m
+karl2s1kron
+karl2s1ruhe
+kir2chhoff
+kongre2s3m
+led1w
+lu2ft3waffe
+lu2ks1fer
+ly2o
+ma2r5z≈Ç
+ma2r5zl
+ma2r5zn
+mi2sz1masz
+mie2r5z≈Ç
+mie2r5zi
+mon2t3real
+moza2i3k
+mu2r7zasich3l
+na4≈Ç3kows
+na4r3v
+o1
+o2y
+oa2
+och3mistrz
+oe2
+of2f3set
+oi2
+oo2
+ou2
+pa2n3a2mer
+pa2s3cal
+pa2s3ch
+po≈Çu3d2ni
+po3d4nieprz
+po3m2nƒÖ
+po3m2nƒô
+po3m2ni
+po4rt2s3mo2uth
+po4rt3land
+poli3e2t
+poli3u2re
+powsze3d2ni
+pr2chal
+pre2sz3pa
+r4z
+ro2e3nt2gen
+ro2k3rocz
+ro2s3to3c2k
+s4z
+se2t3le
+sko2r5zoner
+sm2r
+sowi3z2
+sy2n3opt
+sy2s1tem
+sza2sz1≈Çy
+sze2z1long
+sze4≈õƒá
+szto2k1holm
+szyn2k1was
+to3y2o3t
+turboo2d3rzut
+tygo3d2ni
+u1
+u2y
+ua2
+ue2
+ui2
+uo2
+uu2
+vo2lk2s3
+we2e2k1end
+we4st3f
+we4st3m
+y1
+ya2
+ye2
+yi2
+yo2
+yu2
+ze4p3p
 }
- 
-\hyphenation{    %  WYJÅTKI
-  be-zami     be-zach     by-naj-mniej   ina-czej         ni-gdzie
-  pÛ-™ach   pÛ-™ami   pÛ-™ek       przy-naj-mniej   sk°d-in°d  
-  sk°d-ªe   trÛ-jach   trÛ-jami      trÛ-jek}
+
+\hyphenation{
+be-zach
+be-zami
+by-naj-mniej
+gdzie-nie-gdzie
+ina-czej
+na-dal
+ni-gdy
+ni-gdzie
+niech-≈ºe
+niech-by
+ow-szem
+p√≥-≈Çach
+p√≥-≈Çami
+p√≥-≈Çek
+pod-√≥w-czas
+przy-naj-mniej
+skƒÖd-inƒÖd
+tr√≥-jach
+tr√≥-jami
+tr√≥-jek
+}
+
