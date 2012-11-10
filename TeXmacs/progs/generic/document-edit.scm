@@ -141,6 +141,12 @@
   (init-env "page-width" w)
   (init-env "page-height" h))
 
+(define (test-default-page-orientation?) (test-default? "page-orientation"))
+(tm-define (init-default-page-orientation)
+  (:check-mark "*" test-default-page-orientation?)
+  (init-default "page-orientation")
+  (notify-page-change))
+
 (define (test-page-orientation? s) (string=? (get-env "page-orientation") s))
 (tm-define (init-page-orientation s)
   (:check-mark "*" test-page-orientation?)

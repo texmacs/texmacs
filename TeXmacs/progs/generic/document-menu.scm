@@ -537,9 +537,7 @@
       (-> "Size"
 	  (link document-page-size-menu))
       (-> "Orientation"
-	  ("Default" (check "*" (test-default? "page-orientation"))
-	   (init-default "page-orientation")
-	   (notify-page-change))
+	  ("Default" (init-default-page-orientation))
 	  ---
 	  ("Portrait" (init-page-orientation "portrait"))
 	  ("Landscape" (init-page-orientation "landscape")))
