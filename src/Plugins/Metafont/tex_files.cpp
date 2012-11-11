@@ -113,7 +113,7 @@ exists_in_tex (url u) {
 void
 make_tex_tfm (string name) {
   string s;
-  int r;
+  int r= 0;
   if (get_setting ("MAKETFM") == "MakeTeXTFM") {
     s= "MakeTeXTFM " * name;
     if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
@@ -144,7 +144,7 @@ make_tex_tfm (string name) {
 void
 make_tex_pk (string name, int dpi, int design_dpi) {
   string s;
-  int r;
+  int r= 0;
   if (get_setting ("MAKEPK") == "MakeTeXPK") {
     s="MakeTeXPK " * name * " " *
       as_string (dpi) * " " * as_string (design_dpi) * " " *
