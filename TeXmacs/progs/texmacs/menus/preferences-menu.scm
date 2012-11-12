@@ -434,6 +434,8 @@
 ;; Conversion preferences widget
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; Html ----------
+
 (tm-widget (html-preferences-widget)
   ===
   (bold (text "TeXmacs -> Html"))
@@ -448,6 +450,8 @@
     (meti (text "Export mathematical formulas as images")
       (toggle (set-boolean-preference "texmacs->html:images" answer)
               (get-boolean-preference "texmacs->html:images")))))
+
+;; LaTeX ----------
 
 (define-preference-names "texmacs->latex:encoding"
   ("Strict Ascii" "ascii")
@@ -482,7 +486,20 @@
             (get-pretty-preference "texmacs->latex:encoding")
             "5em"))))
 
-;;;;;;;;;;;;;;
+;; BibTeX ----------
+
+(tm-widget (bibtex-preferences-widget)
+  ===
+  (bold (text "BibTeX -> TeXmacs"))
+  ===
+  (aligned
+    (item (text "BibTeX command:")
+      (enum (set-pretty-preference "bibtex command" answer)
+            '("bibtex" "rubibtex" "")
+            (get-pretty-preference "bibtex command")
+            "15em"))))
+
+;; Verbatim ----------
 
 (define-preference-names "texmacs->verbatim:encoding"
   ("cork" "Cork")
@@ -524,6 +541,8 @@
             (get-pretty-preference "verbatim->texmacs:encoding")
             "5em"))))
 
+;; Images ----------
+
 (define-preference-names "texmacs->graphics:format"
   ("svg" "Svg")
   ("eps" "Eps")
@@ -549,6 +568,8 @@
         (toggle (set-boolean-preference "texmacs->graphics:tmml" answer)
                 (get-boolean-preference "texmacs->graphics:tmml"))))))
 
+;; All converters ----------
+
 (tm-widget (conversion-preferences-widget)
   ======
   (tabs
@@ -558,12 +579,57 @@
     (tab (text "LaTeX")
       (centered
         (dynamic (latex-preferences-widget))))
+    (tab (text "BibTeX")
+      (centered
+        (dynamic (bibtex-preferences-widget))))
     (tab (text "Verbatim")
       (centered
         (dynamic (verbatim-preferences-widget))))
     (tab (text "Image")
       (centered
         (dynamic (image-preferences-widget))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Other
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-preference-names "autosave"
+  ("5" "5 sec")
+  ("30" "30 sec")
+  ("120" "120 sec")
+  ("300" "300 sec")
+  ("0" "Disable"))
+
+(define-preference-names "security"
+  ("accept no scripts" "Accept no scripts")
+  ("prompt on scripts" "Prompt on scripts")
+  ("accept all scripts" "Accept all scripts"))
+
+(tm-define (scripts-preferences-list)
+  (lazy-plugin-force)
+  (with l (list-sort supported-scripts-list string<=?)
+    (with name (lambda (x) (ahash-ref supported-scripts-table x))
+      (set-preference-name "scripting language" "none" "None")
+      (for (x l) (set-preference-name "scripting language" x (name x)))
+      (cons "None" (map name l)))))
+
+(tm-widget (other-preferences-widget)
+  (aligned
+    (item (text "Automatically save:")
+      (enum (set-pretty-preference "autosave" answer)
+            '("5 sec" "30 sec" "120 sec" "300 sec" "Disable")
+            (get-pretty-preference "autosave")
+            "15em"))
+    (item (text "Security:")
+      (enum (set-pretty-preference "security" answer)
+            '("Accept no scripts" "Prompt on scripts" "Accept all scripts")
+            (get-pretty-preference "security")
+            "15em"))
+    (item (text "Scripting language:")
+      (enum (set-pretty-preference "scripting language" answer)
+            (scripts-preferences-list)
+            (get-pretty-preference "scripting language")
+            "15em"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences widget
@@ -578,7 +644,10 @@
       (centered
         (dynamic (keyboard-preferences-widget))))
     (tab (text "Converters")
-      (dynamic (conversion-preferences-widget)))))
+      (dynamic (conversion-preferences-widget)))
+    (tab (text "Others")
+      (centered
+        (dynamic (other-preferences-widget))))))
 
 (tm-define (open-preferences)
   (top-window preferences-widget "User preferences"))

@@ -110,6 +110,10 @@
 (tm-define (get-boolean-preference which)
   (== (get-preference which) "on"))
 
+(define-public (set-preference-name which var val)
+  (ahash-set! preference-encode-table (cons which var) val)
+  (ahash-set! preference-decode-table (cons which val) var))
+
 (define-public (set-preference-encode which x)
    `(ahash-set! preference-encode-table
                 (cons ,which ,(car x)) ,(cadr x)))
