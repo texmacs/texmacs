@@ -30,7 +30,7 @@
  parsed and compiled scheme widget. We use this fact to decide whether we must
  be resizable or not, for instance.
  */
-qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, command _quit)
+qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, command _quit, bool fake)
 : qt_widget_rep(window_widget, _wid), quit(_quit)
 {
   qwid->setProperty ("texmacs_window_widget",
@@ -47,7 +47,9 @@ qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, command _quit)
   if (!has_resizable_children(_wid))
     qwid->setFixedSize(qwid->sizeHint());
   
-  win_id = ++nr_windows;
+    // HACK: don't increment window count for side tools or any other fake windows
+  if (!fake)
+    win_id = ++nr_windows;
 }
 
 /*!

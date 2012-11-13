@@ -182,14 +182,15 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   userToolBar  = new QToolBar ("user toolbar", mw);
   
   sideDock     = new QDockWidget ("Side tools", 0);
-    // Wrap the dock in a "virtual" window widget to have clicks report the right position
-  dock_window_widget = tm_new<qt_window_widget_rep>(sideDock, command());
+    // HACK: Wrap the dock in a "fake" window widget (last parameter = true) to
+    // have clicks report the right position.
+  dock_window_widget = tm_new<qt_window_widget_rep> (sideDock, command(), true);
   
   mainToolBar->setStyle (qtmstyle ());
   modeToolBar->setStyle (qtmstyle ());
   focusToolBar->setStyle (qtmstyle ());
   userToolBar->setStyle (qtmstyle ());
-  sideDock->setStyle(qtmstyle());
+  sideDock->setStyle (qtmstyle ());
   
   {
     // set proper sizes for icons

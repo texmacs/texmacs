@@ -47,7 +47,7 @@ class qt_window_widget_rep: public qt_widget_rep {
 public:
   command quit;
   
-  qt_window_widget_rep (QWidget* _wid, command q);
+  qt_window_widget_rep (QWidget* _wid, command q, bool fake=false);
   ~qt_window_widget_rep ();
 
   virtual widget popup_window_widget (string s);
