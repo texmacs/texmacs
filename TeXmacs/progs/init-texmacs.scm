@@ -212,6 +212,7 @@
 	     tmdoc-expand-this tmdoc-include)
 (lazy-define (doc docgrep) docgrep-in-doc docgrep-in-src docgrep-in-texts)
 (lazy-define (doc tmweb) tmweb-convert-dir tmweb-update-dir
+             tmweb-convert-dir-keep-texmacs tmweb-update-dir-keep-texmacs
              tmweb-interactive-build tmweb-interactive-update)
 (lazy-define (doc apidoc) apidoc-all-modules apidoc-all-symbols)
 (lazy-tmfs-handler (doc docgrep) grep)

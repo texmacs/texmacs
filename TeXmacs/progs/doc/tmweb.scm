@@ -67,7 +67,7 @@
         (display* "TeXmacs] Copying " (url->system u1) "\n")
         (system-copy file u2)))))
 
-(define (tmweb-convert-directory tm-dir html-dir update?)
+(define (tmweb-convert-directory tm-dir html-dir update? keep?)
   (let* ((u1 (url-append tm-dir (url-any)))
 	 (u2 (url-expand (url-complete u1 "dr")))
 	 (u3 (url-append u2 (url-wildcard "*.tm")))
@@ -75,15 +75,22 @@
 	 (u5 (url-expand (url-complete u1 "fr"))))
     (when (!= html-dir tm-dir)
       (for-each (lambda (x) (tmweb-copy-file-dir x tm-dir html-dir update?))
-		(list-difference (url->list u5) (url->list u4))))
+                (if keep? (url->list u5)
+                    (list-difference (url->list u5) (url->list u4)))))
     (for-each (lambda (x) (tmweb-convert-file-dir x tm-dir html-dir update?))
 	      (url->list u4))))
 
 (tm-define (tmweb-convert-dir tm-dir html-dir)
-  (tmweb-convert-directory tm-dir html-dir #f))
+  (tmweb-convert-directory tm-dir html-dir #f #f))
 
 (tm-define (tmweb-update-dir tm-dir html-dir)
-  (tmweb-convert-directory tm-dir html-dir #t))
+  (tmweb-convert-directory tm-dir html-dir #t #f))
+
+(tm-define (tmweb-convert-dir-keep-texmacs tm-dir html-dir)
+  (tmweb-convert-directory tm-dir html-dir #f #t))
+
+(tm-define (tmweb-update-dir-keep-texmacs tm-dir html-dir)
+  (tmweb-convert-directory tm-dir html-dir #t #t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface
@@ -93,10 +100,10 @@
   (:interactive #t)
   (user-url "Source directory" "directory" 
     (lambda (src)  (user-url "Destination directory" "directory"
-      (lambda (dest) (tmweb-convert-dir src dest))))))
+      (lambda (dest) (tmweb-convert-directory src dest #f #f))))))
 
 (tm-define (tmweb-interactive-update)
   (:interactive #t)
   (user-url "Source directory" "directory" 
     (lambda (src)  (user-url "Destination directory" "directory"
-      (lambda (dest) (tmweb-update-dir src dest))))))
+      (lambda (dest) (tmweb-convert-directory src dest #t #f))))))

@@ -126,7 +126,9 @@ windows_list () {
 
 int
 get_nr_windows () {
-  return nr_windows;
+  return N(all_windows);
+  // FIXME: nr_windows contains twice the correct number under Qt
+  // return nr_windows;
 }
 
 bool

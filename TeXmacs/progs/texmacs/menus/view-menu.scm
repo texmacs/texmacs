@@ -40,12 +40,12 @@
   ("Remote control" (toggle-remote-control-mode))
   ---
   (-> "Shrinking factor"
-      ("1" (set-shrinking-factor 1))
-      ("2" (set-shrinking-factor 2))
-      ("3" (set-shrinking-factor 3))
-      ("4" (set-shrinking-factor 4))
-      ("5" (set-shrinking-factor 5))
-      ("7" (set-shrinking-factor 7))
-      ("10" (set-shrinking-factor 10))
+      ("1" (change-shrinking-factor 1))
+      ("2" (change-shrinking-factor 2))
+      ("3" (change-shrinking-factor 3))
+      ("4" (change-shrinking-factor 4))
+      ("5" (change-shrinking-factor 5))
+      ("7" (change-shrinking-factor 7))
+      ("10" (change-shrinking-factor 10))
       ---
       ("Other" (interactive other-shrinking-factor))))
