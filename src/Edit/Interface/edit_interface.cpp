@@ -19,6 +19,7 @@
 #include "drd_mode.hpp"
 #include "message.hpp"
 #include "tree_traverse.hpp"
+#include "boot.hpp"
 #ifdef EXPERIMENTAL
 #include "../../Style/Evaluate/evaluate_main.hpp"
 #endif
@@ -408,6 +409,7 @@ edit_interface_rep::apply_changes () {
       if (!get_renderer (this) -> interrupted ()) drd_update ();
       cache_memorize ();
       last_update= last_change;
+      save_user_preferences ();
     }
     return;
   }

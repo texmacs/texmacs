@@ -83,4 +83,9 @@ window get_window (int id);
 void windows_delayed_refresh (int ms);
   // Refresh all windows after ms milliseconds
 
+void notify_window_move (string name, SI x, SI y);
+  // Call this routine when the window 'name' moved to (x, y)
+void notify_window_resize (string name, SI w, SI h);
+  // Call this routine when the window 'name' is resized to width w and height h
+
 #endif // defined WINDOW_H

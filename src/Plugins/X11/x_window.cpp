@@ -11,6 +11,7 @@
 
 #include "X11/x_window.hpp"
 #include "message.hpp"
+#include "boot.hpp"
 
 extern int nr_windows;
 
@@ -21,7 +22,7 @@ hashmap<Window,pointer> Window_to_window (NULL);
 ******************************************************************************/
 
 void
-x_window_rep::set_hints (SI min_w, SI min_h, SI max_w, SI max_h) {
+x_window_rep::set_hints (int min_w, int min_h, int max_w, int max_h) {
   XSizeHints* size_hints;
   XWMHints*   wm_hints;
   XClassHint* class_hints;
@@ -157,7 +158,8 @@ x_window_rep::initialize () {
 x_window_rep::x_window_rep (widget w2, x_gui gui2, char* n2,
 			    SI min_w, SI min_h, SI def_w, SI def_h,
 			    SI max_w, SI max_h):
-  window_rep (), w (w2), gui (gui2), name (n2),
+  window_rep (), w (w2), gui (gui2),
+  orig_name (n2 == NULL? string ("popup"): n2), name (n2),
   ren (tm_new<x_drawable_rep> (gui2, this)),
   Min_w (min_w), Min_h (min_h), Def_w (def_w), Def_h (def_h),
   Max_w (max_w), Max_h (max_h),
@@ -167,6 +169,7 @@ x_window_rep::x_window_rep (widget w2, x_gui gui2, char* n2,
   //cout << "Min " << (min_w >> 8) << ", " << (min_h >> 8) << "\n";
   //cout << "Def " << (def_w >> 8) << ", " << (def_h >> 8) << "\n";
   //cout << "Max " << (max_w >> 8) << ", " << (max_h >> 8) << "\n";
+
   initialize ();
   gui->created_window (win);
 }
@@ -364,14 +367,21 @@ void
 x_window_rep::move_event (int x, int y) {
   bool flag= (win_x!=x) || (win_y!=y);
   win_x= x; win_y= y;
-  if (flag) notify_position (w, win_x*PIXEL, win_y*PIXEL);
+  if (flag) {
+    notify_position (w, win_x*PIXEL, win_y*PIXEL);
+    if (x != 0 || (y != 0 && y != 22))
+      notify_window_move (orig_name, x*PIXEL, (22-y)*PIXEL);
+  }
 }
 
 void
 x_window_rep::resize_event (int ww, int hh) {
   bool flag= (win_w!=ww) || (win_h!=hh);
   win_w= ww; win_h= hh;
-  if (flag) notify_size (w, win_w*PIXEL, win_h*PIXEL);
+  if (flag) {
+    notify_size (w, win_w*PIXEL, win_h*PIXEL);
+    notify_window_resize (orig_name, ww*PIXEL, hh*PIXEL);
+  }
 }
 
 void

@@ -24,6 +24,7 @@ class x_window_rep: public window_rep {
 public:
   widget           w;
   x_gui            gui;
+  string           orig_name;
   char*            name;
   string           the_name;
   x_drawable_rep*  ren;
@@ -60,7 +61,7 @@ public:
   renderer get_renderer ();
   void get_extents (int& w, int& h);
 
-  void set_hints (SI min_w, SI min_h, SI max_w, SI max_h);
+  void set_hints (int min_w, int min_h, int max_w, int max_h);
   void initialize ();
 
   void move_event (int x, int y);
