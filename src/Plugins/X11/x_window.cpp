@@ -368,9 +368,14 @@ x_window_rep::move_event (int x, int y) {
   bool flag= (win_x!=x) || (win_y!=y);
   win_x= x; win_y= y;
   if (flag) {
+    XWindowAttributes attrs;
+    XGetWindowAttributes (dpy, win, &attrs);
+    int border_x= attrs.x, border_y= attrs.y;
     notify_position (w, win_x*PIXEL, win_y*PIXEL);
-    if (x != 0 || (y != 0 && y != 22))
-      notify_window_move (orig_name, x*PIXEL, (22-y)*PIXEL);
+    if (border_x >= 0 && border_x <= 5 && border_y >= 0 && border_y <= 30) {
+      //cout << "Move to " << x-border_x << ", " << y-border_y << "\n";
+      notify_window_move (orig_name, (x-border_x)*PIXEL, (border_y-y)*PIXEL);
+    }
   }
 }
 
