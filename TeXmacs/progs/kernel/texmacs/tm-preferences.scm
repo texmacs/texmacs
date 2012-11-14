@@ -72,7 +72,8 @@
 
 (tm-define (get-preference which)
   (:synopsis "Get preference @which")
-  (cpp-get-preference which (ahash-ref preferences-default which)))
+  (with def (or (ahash-ref preferences-default which) "default")
+    (cpp-get-preference which def)))
 
 (define (preference-on? which)
   (test-preference? which "on"))
