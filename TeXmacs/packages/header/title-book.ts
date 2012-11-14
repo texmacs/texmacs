@@ -73,7 +73,7 @@
 
   <assign|author-render-name|<macro|x|<surround|<vspace*|1fn>||<doc-author-block|<with|font-shape|small-caps|<font-magnify|1.091|<arg|x>>>>>>>
 
-  <assign|author-address|<\macro|x>
+  <assign|author-affiliation|<\macro|x>
     <surround|<vspace*|2fn>|<vspace|2fn>|<doc-author-block|<arg|x>>>
   </macro>>
 

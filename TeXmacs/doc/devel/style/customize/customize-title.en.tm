@@ -22,7 +22,7 @@
   to specify data for each of the authors of the document. Each child of the
   <markup|doc-author-data> tag is a tag with information about the
   corresponding author. Currently implemented tags with author information
-  are <markup|author-name>, <markup|author-address>, <markup|author-email>,
+  are <markup|author-name>, <markup|author-affiliation>, <markup|author-email>,
   <markup|author-homepage> and <markup|author-misc>.
 
   Most of the tags listed above also correspond to macros for rendering the
@@ -77,7 +77,7 @@
         <\quasi>
           <unquote*|<select|<quote-arg|data>|author-name>>
 
-          <unquote*|<select|<quote-arg|data>|author-address>>
+          <unquote*|<select|<quote-arg|data>|author-affiliation>>
         </quasi>
       </macro>>
 

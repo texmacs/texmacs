@@ -67,8 +67,8 @@
     an author.
   </explain>
 
-  <\explain|<explain-macro|author-address|address>>
-    Renders the <src-arg|address> of the author.
+  <\explain|<explain-macro|author-affiliation|affiliation>>
+    Renders the <src-arg|affiliation> of the author.
   </explain>
 
   <\explain|<explain-macro|author-email|email>>

@@ -73,7 +73,7 @@
 
   <drd-props|author-name|border|no>
 
-  <drd-props|author-address|border|no>
+  <drd-props|author-affiliation|border|no>
 
   <drd-props|author-email|border|no>
 
@@ -294,7 +294,7 @@
 
   <assign|author-name|<macro|author|<author-render-name|<style-with|src-compact|none|<author-by|<arg|author>><style-with|src-compact|none|<doc-footnote-ref|<quasi|<doc-author-data-note|<unquote*|<quote-value|the-author-data>>>>>>>>>>
 
-  <assign|author-address|<\macro|address>
+  <assign|author-affiliation|<\macro|address>
     <surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<arg|address>>>
   </macro>>
 
@@ -318,7 +318,7 @@
     <\quasi>
       <unquote*|<select|<quote-arg|data>|author-name>>
 
-      <unquote*|<select|<quote-arg|data>|author-address>>
+      <unquote*|<select|<quote-arg|data>|author-affiliation>>
 
       <unquote*|<select|<quote-arg|data>|author-email>>
 

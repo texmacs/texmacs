@@ -326,7 +326,7 @@
 
   <assign|author-render-name|<macro|author|<doc-author-block|<with|font-family|ss|<arg|author>>>>>
 
-  <assign|author-address|<\macro|address>
+  <assign|author-affiliation|<\macro|address>
     <surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<with|font-shape|italic|<arg|address>>>>
   </macro>>
 
@@ -334,7 +334,7 @@
     <\quasi>
       <unquote*|<select|<quote-arg|data>|author-name>>
 
-      <unquote*|<select|<quote-arg|data>|author-address>>
+      <unquote*|<select|<quote-arg|data>|author-affiliation>>
     </quasi>
   </macro>>
 

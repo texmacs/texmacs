@@ -47,7 +47,7 @@
 
 (define (elsevier-author tag)
   (let* ((name (tmtex-select-data tag 'author-name))
-	 (address (tmtex-select-data tag 'author-address))
+	 (address (tmtex-select-data tag 'author-affiliation))
 	 (note (tmtex-select-data tag 'author-misc))
 	 (email (tmtex-select-data tag 'author-email))
 	 (homepage (tmtex-select-data tag 'author-homepage)))

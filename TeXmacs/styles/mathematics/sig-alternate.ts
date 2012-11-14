@@ -164,7 +164,7 @@
 
   <assign|author-render-name|<macro|author|<surround|<vspace*|0.25fn>|<vspace|0.25fn>|<doc-author-block|<title-ss|<arg|author>>>>>>
 
-  <assign|author-address|<\macro|address>
+  <assign|author-affiliation|<\macro|address>
     <surround|<vspace*|0.25fn>|<vspace|0.25fn>|<doc-author-block|<title-ss|<with|font-base-size|10|<arg|address>>>>>
   </macro>>
 

@@ -89,7 +89,7 @@
   zurück mit den gesammelten Daten als Kinder. Z.B.\ 
 
   <\tm-fragment>
-    <inactive*|<style-with|src-compact|none|<doc-author-main|<author-address|Somewhere
+    <inactive*|<style-with|src-compact|none|<doc-author-main|<author-affiliation|Somewhere
     in Africa>|<author-name|The big GNU>|<author-misc|Very hairy indeed!>>>>
   </tm-fragment>
 
@@ -97,7 +97,7 @@
 
   <\tm-fragment>
     <with|src-special|raw|<inactive*|<\style-with|src-compact|none>
-      <author-address|Somewhere in Africa>
+      <author-affiliation|Somewhere in Africa>
 
       <author-name|The big GNU>
     </style-with>>>

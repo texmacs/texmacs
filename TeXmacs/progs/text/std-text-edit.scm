@@ -73,7 +73,7 @@
 (tm-define (make-author-data-element l)
   (with-innermost t 'doc-author-data
     (with pos (1+ (tree-down-index t))
-      (cond ((in? l '(author-address author-misc))
+      (cond ((in? l '(author-affiliation author-misc))
 	     (tree-insert! t pos `((,l (document ""))))
 	     (tree-go-to t pos 0 0 0))
 	    (else
@@ -91,7 +91,7 @@
 
 (tm-define (kbd-enter t shift?)
   (:require (tree-is? t 'author-name))
-  (make-author-data-element 'author-address))
+  (make-author-data-element 'author-affiliation))
 
 (tm-define (kbd-enter t shift?)
   (:require (tree-is? t 'doc-inactive))

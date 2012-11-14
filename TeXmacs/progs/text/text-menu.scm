@@ -432,7 +432,7 @@
   #f)
 
 (tm-menu (focus-author-menu)
-  ("Address" (make-author-data-element 'author-address))
+  ("Affiliation" (make-author-data-element 'author-affiliation))
   ("Email" (make-author-data-element 'author-email))
   ("Homepage" (make-author-data-element 'author-homepage))
   ("Note" (make-author-data-element 'author-misc)))

@@ -1170,7 +1170,7 @@
 (tm-define (tmtex-select-data expr tag)
   (:synopsis "Get data matching @tag in @expr with nice separators")
   (let* ((data (select expr (list tag)))
-	 (sep (if (== tag 'author-address) '(!nextline) "; "))
+	 (sep (if (== tag 'author-affiliation) '(!nextline) "; "))
 	 (fun (lambda (x)
 		(cond ((func? x 'document)
 		       (list (tex-concat* (tmtex-compressed sep (cdr x)))))
@@ -1185,7 +1185,7 @@
 
 (define (tmtex-make-author tag)
   (let* ((name (tmtex-select-data tag 'author-name))
-	 (address (tmtex-select-data tag 'author-address))
+	 (address (tmtex-select-data tag 'author-affiliation))
 	 (misc (tmtex-select-data tag 'author-misc))
 	 (email (tmtex-select-data tag 'author-email))
 	 (homepage (tmtex-select-data tag 'author-homepage))
@@ -1761,7 +1761,7 @@
   (doc-data (,tmtex-doc-data-wrapper -1))
   ((:or doc-title doc-author-data doc-date doc-note
 	doc-keywords doc-msc) (,tmtex-default -1))
-  ((:or author-name author-address author-misc
+  ((:or author-name author-affiliation author-misc
 	author-email author-homepage) (,tmtex-default -1))
   (abstract (,tmtex-abstract-wrapper 1))
   (appendix (,tmtex-appendix 1))

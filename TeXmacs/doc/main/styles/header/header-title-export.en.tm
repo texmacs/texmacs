@@ -32,7 +32,7 @@
   </explain>
 
   <\explain|<explain-macro|doc-author-data|data-1|<with|mode|math|\<cdots\>>|data-n>>
-    Specify the data for one of the authors of the document (name, address,
+    Specify the data for one of the authors of the document (name, affiliation,
     <abbr|etc.>; see below).
   </explain>
 
@@ -77,8 +77,8 @@
     Specify the <src-arg|name> of the author.
   </explain>
 
-  <\explain|<explain-macro|author-address|address>>
-    An <src-arg|address> where the author can be reached.
+  <\explain|<explain-macro|author-affiliation|affiliation>>
+    The <src-arg|affiliation> of the author.
   </explain>
 
   <\explain|<explain-macro|author-email|email>>
@@ -90,7 +90,7 @@
   </explain>
 
   <\explain|<explain-macro|author-misc|note>>
-    A <src-arg|note> attached to the author, like a thank-word.
+    A miscellanous <src-arg|note> attached to the author, like a thank-word.
   </explain>
 
   As a general rule, the use of any of the subtags of <markup|doc-data> or
