@@ -18,7 +18,6 @@
 ;; Defining preference call back routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public preferences-table (make-ahash-table))
 (define-public preferences-default (make-ahash-table))
 (define-public preferences-call-back (make-ahash-table))
 
@@ -50,25 +49,30 @@
 (tm-define (set-preference which what)
   (:synopsis "Set preference @which to @what")
   (:check-mark "*" test-preference?)
-  (if (== what "default")
-      (reset-preference which)
-      (begin
-        (ahash-set! preferences-table which what)
-        ;;(display* "set-preference " which " := " what "\n")
-        ((get-call-back which) which (get-preference which))
-        (save-preferences))))
+  ;;(display* "set-preference " which " := " what "\n")
+  (cpp-set-preference which what)
+  (notify-preference which)
+  (save-preferences))
 
 (tm-define (reset-preference which)
   (:synopsis "Revert preference @which to default setting")
-  (ahash-remove! preferences-table which)
-  ((get-call-back which) which (get-preference which))
+  ;;(display* "reset-preference " which "\n")
+  (cpp-reset-preference which)
+  (notify-preference which)
   (save-preferences))
+
+(define (get-call-back what)
+  (let ((r (ahash-ref preferences-call-back what)))
+    (if r r (lambda args (noop)))))
+
+(tm-define (notify-preference which)
+  (:synopsis "Notify that the preference @which was changed")
+  ;;(display* "notify-preference " which ", " (get-preference which) "\n")
+  ((get-call-back which) which (get-preference which)))
 
 (tm-define (get-preference which)
   (:synopsis "Get preference @which")
-  (if (ahash-ref preferences-table which)
-      (ahash-ref preferences-table which)
-      (ahash-ref preferences-default which)))
+  (cpp-get-preference which (ahash-ref preferences-default which)))
 
 (define (preference-on? which)
   (test-preference? which "on"))
@@ -146,45 +150,7 @@
 (set! has-look-and-feel? test-look-and-feel)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Applying preferences
+;; Notify that the Scheme preferences system has been started
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (get-call-back what)
-  (let ((r (ahash-ref preferences-call-back what)))
-    (if r r (lambda args (noop)))))
-
-(define-public (notify-preference var)
-  "Notify a change in preference @var"
-  ;;(display* "notify-preference " var ", " (get-preference var) "\n")
-  ((get-call-back var) var (get-preference var)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Initialize preferences and consulting preferences
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define user-preferences '())
-(define saved-preferences '())
-
-(define (preferences->list table)
-  (let* ((folder (lambda (key im tail) (cons (list key im) tail)))
-	 (unsorted (ahash-fold folder '() table))
-	 (comp? (lambda (l1 l2) (string<=? (car l1) (car l2)))))
-    (list-sort unsorted comp?)))
-
-(define (save-preferences)
-  (set! user-preferences (preferences->list preferences-table))
-  (if (!= user-preferences saved-preferences)
-      (begin
-	(save-object "$TEXMACS_HOME_PATH/system/preferences.scm"
-		     user-preferences)
-	(set! saved-preferences user-preferences))))
-
-(define (retrieve-preferences)
-  "Retrieve preferences from disk"
-  (if (url-exists? "$TEXMACS_HOME_PATH/system/preferences.scm")
-      (set! saved-preferences
-	    (load-object "$TEXMACS_HOME_PATH/system/preferences.scm")))
-  (fill-dictionary preferences-table saved-preferences))
-
-(retrieve-preferences)
-(notify-preferences-loaded)
+(notify-preferences-booted)

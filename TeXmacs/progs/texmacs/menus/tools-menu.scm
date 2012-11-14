@@ -55,6 +55,7 @@
       ("Clear undo history" (clear-undo-history)))
   ---
   ("Debugging tool" (toggle-preference "debugging tool"))
+  ("Developer tool" (toggle-preference "developer tool"))
   ("Linking tool" (toggle-preference "linking tool"))
   ("Presentation tool" (toggle-preference "presentation tool"))
   ("Source macros tool" (toggle-preference "source tool"))

@@ -82,6 +82,7 @@
   ("bibtex command" "bibtex" notify-bibtex-command)
   ("scripting language" "none" notify-scripting-language)
   ("debugging tool" "off" notify-tool)
+  ("developer tool" "off" notify-tool)
   ("linking tool" "off" notify-tool)
   ("presentation tool" "off" notify-tool)
   ("source tool" "off" notify-tool)

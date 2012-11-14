@@ -402,6 +402,7 @@ init_texmacs () {
   init_std_drd ();
   init_main_paths ();
   init_user_dirs ();
+  load_user_preferences ();
   init_guile ();
   init_env_vars ();
   init_misc ();

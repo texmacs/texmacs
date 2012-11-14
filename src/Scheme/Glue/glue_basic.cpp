@@ -438,9 +438,74 @@ tmg_exec_delayed_pause (tmscm arg1) {
 }
 
 tmscm
-tmg_notify_preferences_loaded () {
+tmg_notify_preferences_booted () {
   // TMSCM_DEFER_INTS;
-  notify_preferences_loaded ();
+  notify_preferences_booted ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_cpp_has_preferenceP (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cpp-has-preference?");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= has_user_preference (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_cpp_get_preference (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cpp-get-preference");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "cpp-get-preference");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  string out= get_user_preference (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
+tmg_cpp_set_preference (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cpp-set-preference");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "cpp-set-preference");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  set_user_preference (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_cpp_reset_preference (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cpp-reset-preference");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  reset_user_preference (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_save_preferences () {
+  // TMSCM_DEFER_INTS;
+  save_user_preferences ();
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;
@@ -6618,7 +6683,12 @@ initialize_glue_basic () {
   tmscm_install_procedure ("object->command",  tmg_object_2command, 1, 0, 0);
   tmscm_install_procedure ("exec-delayed",  tmg_exec_delayed, 1, 0, 0);
   tmscm_install_procedure ("exec-delayed-pause",  tmg_exec_delayed_pause, 1, 0, 0);
-  tmscm_install_procedure ("notify-preferences-loaded",  tmg_notify_preferences_loaded, 0, 0, 0);
+  tmscm_install_procedure ("notify-preferences-booted",  tmg_notify_preferences_booted, 0, 0, 0);
+  tmscm_install_procedure ("cpp-has-preference?",  tmg_cpp_has_preferenceP, 1, 0, 0);
+  tmscm_install_procedure ("cpp-get-preference",  tmg_cpp_get_preference, 2, 0, 0);
+  tmscm_install_procedure ("cpp-set-preference",  tmg_cpp_set_preference, 2, 0, 0);
+  tmscm_install_procedure ("cpp-reset-preference",  tmg_cpp_reset_preference, 1, 0, 0);
+  tmscm_install_procedure ("save-preferences",  tmg_save_preferences, 0, 0, 0);
   tmscm_install_procedure ("set-input-language",  tmg_set_input_language, 1, 0, 0);
   tmscm_install_procedure ("get-input-language",  tmg_get_input_language, 0, 0, 0);
   tmscm_install_procedure ("set-output-language",  tmg_set_output_language, 1, 0, 0);

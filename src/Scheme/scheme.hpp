@@ -107,10 +107,10 @@ object scheme_cmd (const char* s);
 object scheme_cmd (string s);
 object scheme_cmd (object cmd);
 
-
-void notify_preferences_loaded ();
-string get_preference (string var, string def= "uninitialized");
-
+void notify_preferences_booted ();
+void set_preference (string var, string val);
+void notify_preference (string var);
+string get_preference (string var, string def= "default");
 
 object eval (const char* expr);
 object eval (string expr);
