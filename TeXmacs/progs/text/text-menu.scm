@@ -383,7 +383,7 @@
 
 (tm-menu (focus-title-menu)
   ("Subtitle" (make-doc-data-element 'doc-subtitle))
-  ("Author" (make-doc-data-element 'doc-author-data))
+  ("Author" (make-doc-data-element 'doc-author))
   ("Date" (make-doc-data-element 'doc-date))
   ("Today"
    (begin (make-doc-data-element 'doc-date) (make-arity 'date 0)))
