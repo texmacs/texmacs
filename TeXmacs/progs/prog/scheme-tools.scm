@@ -1,3 +1,4 @@
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; MODULE      : scheme-tools.scm
@@ -145,7 +146,7 @@
         (set-message "Symbol properties not found." ssym)))))
 
 (kbd-map
-  (:require (and developer-mode-on (in-prog-scheme?)))
+  (:require (and developer-mode? (in-prog-scheme?)))
   ("A-F1" (scheme-popup-help (cursor-word)))
   ("S-A-F1" (scheme-inbuffer-help (cursor-word)))
   ("M-F1" (scheme-go-to-definition (cursor-word))))
@@ -195,7 +196,7 @@
 ; check for events of type "press-" and "release-" in order to be compatible
 ; across platforms. (We could use :require for this too)
 (tm-define (mouse-event key x y mods time)
-  (:require (and developer-mode-on (opt-click? mods) (in-prog-scheme?)))
+  (:require (and developer-mode? (opt-click? mods) (in-prog-scheme?)))
   (with short (string-take key 4)
     (cond ((== short "pres")
            ; emulate a click to move the cursor
@@ -208,7 +209,7 @@
           (else (mouse-any key x y mods (+ time 0.0))))))
 
 (tm-define (mouse-event key x y mods time)
-  (:require (and developer-mode-on (cmd-click? mods) (in-prog-scheme?)))
+  (:require (and developer-mode? (cmd-click? mods) (in-prog-scheme?)))
   (with short (string-take key 4)
     (cond ((== short "pres")
            ; emulate a click to move the cursor
@@ -219,4 +220,3 @@
            (with cw2 (cursor-word)
              (if (== cw cw2) (scheme-go-to-definition cw))))
           (else (mouse-any key x y mods (+ time 0.0))))))
-

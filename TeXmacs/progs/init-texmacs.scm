@@ -12,9 +12,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define boot-start (texmacs-time))
-(define developer-mode-on #f) ; TODO: the C++ code should initialize this.
+(define developer-mode?
+  (equal? (cpp-get-preference "developer tool" "off") "on"))
 
-(if (equal? (cpp-get-preference "developer tool" "off") "on")
+(if developer-mode?
     (begin
       ;; FIXME: how do we update this list dynamically? 
       (define-public keywords-which-define 
@@ -157,6 +158,7 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting programming modes\n")
+;;(lazy-keyboard (prog scheme-tools) with-developer-tool?)
 (lazy-keyboard (prog scheme-edit) in-prog-scheme?)
 (lazy-menu (prog format-prog-menu) prog-format-menu prog-format-icons)
 (lazy-menu (prog prog-menu) prog-menu prog-icons)
