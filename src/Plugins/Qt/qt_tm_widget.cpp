@@ -113,6 +113,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
    full_screen(false)
 {
   type = texmacs_widget;
+  orig_name = "popup";
 
   main_widget = ::glue_widget (true, true, 1, 1);
   
@@ -321,6 +322,7 @@ qt_tm_widget_rep::~qt_tm_widget_rep () {
 widget
 qt_tm_widget_rep::plain_window_widget (string title, command quit) {
   (void) quit;
+  orig_name = title;
   qwid->setWindowTitle (to_qstring (title));
   return this;
 }

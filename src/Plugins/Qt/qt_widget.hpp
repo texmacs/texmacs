@@ -100,6 +100,7 @@ public:
   
   qt_widget_rep(types _type=none, QWidget* _qwid=0);
   virtual ~qt_widget_rep ();
+  virtual inline string get_nickname () { return "popup"; }
   
   virtual widget plain_window_widget (string title, command quit);
   virtual widget make_popup_widget ();
