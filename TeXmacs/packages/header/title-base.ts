@@ -107,16 +107,16 @@
     <doc-title-block|<font-magnify|1.297|<with|math-font-series|bold|font-series|bold|<arg|x>>>>
   </surround>>>
 
-  <assign|doc-author|<macro|body|<\surround|<vspace*|1fn>|<vspace|1fn>>
+  <assign|render-doc-author|<macro|body|<\surround|<vspace*|1fn>|<vspace|1fn>>
     <\with|par-par-sep|0fn>
       <doc-title-block|<arg|body>>
     </with>
   </surround>>>
 
-  <assign|doc-authors|<\macro|body>
-    <\doc-author>
+  <assign|render-doc-authors|<\macro|body>
+    <\render-doc-author>
       <font-magnify|0.917|<arg|body>>
-    </doc-author>
+    </render-doc-author>
   </macro>>
 
   <assign|doc-date|<macro|body|<style-with|src-compact|none|<vspace*|0.5fn><doc-title-block|<with|font-shape|italic|<arg|body>>><vspace|0.5fn>>>>
@@ -333,9 +333,9 @@
   <assign|doc-author-data|<\xmacro|data>
     <\quasi>
       <\with|the-author-data|<quote-arg|data>>
-        <\doc-author>
+        <\render-doc-author>
           <doc-author-block|<doc-author-main|<unquote|<quote-arg|data>>>>
-        </doc-author>
+        </render-doc-author>
       </with>
     </quasi>
   </xmacro>>
@@ -362,9 +362,9 @@
     <\style-with|src-compact|none>
       <\quasi>
         <\with|author-by|<macro|body|<arg|body>>>
-          <\doc-authors>
+          <\render-doc-authors>
             <space|0spc><unquote*|<map|doc-author-data*|<quote-arg|data>>>
-          </doc-authors>
+          </render-doc-authors>
         </with>
       </quasi>
     </style-with>

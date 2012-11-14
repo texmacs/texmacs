@@ -54,8 +54,8 @@
   In addition to the rendering macros which are present in the document, the
   main title (including author information, the date, <abbr|etc.>) is
   rendered using the <markup|doc-make-title> macro. The author information,
-  as part of the main title, is rendered using <markup|doc-author> or
-  <markup|doc-authors>, depending on whether the document has one or more
+  as part of the main title, is rendered using <markup|render-doc-author> or
+  <markup|render-doc-authors>, depending on whether the document has one or more
   authors. Footnotes to the title or to one of the authors are rendered using
   <markup|doc-title-note> <abbr|resp.> <markup|doc-author-note>. These
   footnote macros always expect a <markup|document> tag on input, because

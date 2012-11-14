@@ -388,9 +388,9 @@
     </style-with>
   </xmacro>>
 
-  <assign|doc-author|<macro|body|<arg|body>>>
+  <assign|render-doc-author|<macro|body|<arg|body>>>
 
-  <assign|doc-authors|<macro|body|<arg|body>>>
+  <assign|render-doc-authors|<macro|body|<arg|body>>>
 
   <active*|<\src-comment>
     Customization of other environments.

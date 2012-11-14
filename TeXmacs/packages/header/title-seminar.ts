@@ -55,7 +55,7 @@
 
   <assign|doc-render-title|<macro|x|<surround||<vspace|0.1pag>|<style-with|src-compact|none|<doc-title-block|<with|math-font-series|bold|font-series|bold|font-size|2|color|red|<arg|x>>>>>>>
 
-  <assign|doc-author|<macro|body|<\surround|<vspace*|0.1pag>|<vspace|0.1pag>>
+  <assign|render-doc-author|<macro|body|<\surround|<vspace*|0.1pag>|<vspace|0.1pag>>
     <\with|par-par-sep|0fn>
       <doc-title-block|<arg|body>>
     </with>

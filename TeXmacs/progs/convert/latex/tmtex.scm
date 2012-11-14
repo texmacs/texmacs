@@ -1217,7 +1217,7 @@
   (tmtex-doc-data s l))
 
 (tm-define (tmtex-abstract s l)
-  (tmtex-std-env s l))
+  (tmtex-std-env "abstract" l))
 
 (define (tmtex-abstract-wrapper s l)
   (tmtex-abstract s l))

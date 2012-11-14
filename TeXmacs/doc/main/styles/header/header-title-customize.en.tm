@@ -37,12 +37,12 @@
     This macro is used for rendering the <src-arg|subtitle> of the document.
   </explain>
 
-  <\explain|<explain-macro|doc-author|content>>
+  <\explain|<explain-macro|render-doc-author|content>>
     In the case when the document has a single author, then this macro is
     used for rendering the <src-arg|content> information about him or her.
   </explain>
 
-  <\explain|<explain-macro|doc-authors|content>>
+  <\explain|<explain-macro|render-doc-authors|content>>
     In the case when the document has several authors, then this macros is
     used for rendering all author-related <src-arg|content> which is part of
     the main title.
