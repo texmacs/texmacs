@@ -258,8 +258,9 @@ edit_dynamic_rep::remove_empty_argument (path p, bool forward) {
       correct (path_up (p, 3));
     }
     // FIXME: temporary hack for doc-data and doc-author-data
-    else if (is_compound (st, "doc-data") ||
-	     is_compound (st, "doc-author-data")) {
+    else if (is_compound (st, "doc-data")   ||
+	     is_compound (st, "doc-author") ||
+             is_compound (st, "author-data")) {
       if (N(st)==1) {
 	assign (path_up (p, 2), "");
 	correct (path_up (p, 3));
