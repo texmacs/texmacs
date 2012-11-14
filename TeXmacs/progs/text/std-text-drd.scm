@@ -80,7 +80,7 @@
   doc-title doc-subtitle doc-author-data doc-date)
 
 (define-group doc-title-inactive-tag
-  doc-running-title doc-running-author doc-keywords doc-AMS-class)
+  doc-running-title doc-running-author doc-keywords doc-msc)
 
 (define-group doc-author-tag
   author-name author-address author-email author-homepage author-note)

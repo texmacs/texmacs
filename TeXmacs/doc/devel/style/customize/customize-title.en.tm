@@ -17,7 +17,7 @@
   about the document. Currently implemented tags are <markup|doc-title>,
   <markup|doc-subtitle>, <markup|doc-author-data>, <markup|doc-date>,
   <markup|doc-running-title>, <markup|doc-running-author>,
-  <markup|doc-keywords>, <markup|doc-AMS-class> and <markup|doc-note>. The
+  <markup|doc-keywords>, <markup|doc-msc> and <markup|doc-note>. The
   <markup|doc-author-data> tag may occur several times and is used in order
   to specify data for each of the authors of the document. Each child of the
   <markup|doc-author-data> tag is a tag with information about the

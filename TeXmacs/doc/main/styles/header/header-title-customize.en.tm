@@ -98,7 +98,7 @@
     A macro for displaying a list of keywords.
   </explain>
 
-  <\explain|<explain-macro|doc-AMS-class|nr-1|<with|mode|math|\<cdots\>>|nr-n>>
+  <\explain|<explain-macro|doc-msc|nr-1|<with|mode|math|\<cdots\>>|nr-n>>
     A macro for displaying a list of <abbr|A.M.S.> subject classification
     numbers.
   </explain>

@@ -396,7 +396,7 @@
   ("Running author" (make-doc-data-element 'doc-running-author))
   ("Keywords" (make-doc-data-element 'doc-keywords))
   ("M.S.C."
-   (make-doc-data-element 'doc-AMS-class)))
+   (make-doc-data-element 'doc-msc)))
 
 (tm-menu (focus-title-icons)
   (assuming (doc-data-has-hidden?)

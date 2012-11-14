@@ -184,7 +184,7 @@
     <no-indent><concat-tuple|<copy|<quote-arg|args>>|, >
   </xmacro>>
 
-  <assign|doc-AMS-class|<\xmacro|args>
+  <assign|doc-msc|<\xmacro|args>
     <subsection*|<AMS-class-text>>
 
     <no-indent><concat-tuple|<copy|<map|msc-ref|<quote-arg|args>>>|, >

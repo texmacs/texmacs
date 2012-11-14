@@ -69,7 +69,7 @@
 
   <drd-props|doc-keywords|arity|<tuple|repeat|1|1>|accessible|all>
 
-  <drd-props|doc-AMS-class|arity|<tuple|repeat|1|1>|accessible|all>
+  <drd-props|doc-msc|arity|<tuple|repeat|1|1>|accessible|all>
 
   <drd-props|author-name|border|no>
 
@@ -172,7 +172,7 @@
 
   <assign|msc-ref|<macro|msc-id|<style-with|src-compact|none|<hlink|<arg|msc-id>|<style-with|src-compact|none|<merge|http://www.ams.org/mathscinet/search/mscbrowse.html?sk=default&sk=|<arg|msc-id>|&submit=Search>>>>>>
 
-  <assign|doc-AMS-class|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<AMS-class-text><localize|:>
+  <assign|doc-msc|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<AMS-class-text><localize|:>
   ><concat-tuple|<copy|<map|msc-ref|<quote-arg|args>>>|, >>>>
 
   \;
@@ -250,7 +250,7 @@
     <\quasi>
       <unquote*|<select|<quote-arg|data>|doc-keywords>>
 
-      <unquote*|<select|<quote-arg|data>|doc-AMS-class>>
+      <unquote*|<select|<quote-arg|data>|doc-msc>>
     </quasi>
   </xmacro>>
 

@@ -55,7 +55,7 @@
     Specify keywords <src-arg|kw-1> until <src-arg|kw-n> for your document.
   </explain>
 
-  <\explain|<explain-macro|doc-AMS-class|nr-1|<with|mode|math|\<cdots\>>|nr-n>>
+  <\explain|<explain-macro|doc-msc|nr-1|<with|mode|math|\<cdots\>>|nr-n>>
     Specify <abbr|A.M.S.> subject classification numbers <src-arg|nr-1> until
     <src-arg|nr-n> for your document.
   </explain>

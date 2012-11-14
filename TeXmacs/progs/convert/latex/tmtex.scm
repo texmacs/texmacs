@@ -1203,7 +1203,7 @@
 	 (date (tmtex-select-data tag 'doc-date))
 	 (note (tmtex-select-data tag 'doc-note))
 	 (keywords (tmtex-select-data tag 'doc-keywords))
-	 (AMS-class (tmtex-select-data tag 'doc-AMS-class))
+	 (AMS-class (tmtex-select-data tag 'doc-msc))
 	 (keywords* (tmtex-data-apply 'keywords keywords))
 	 (AMS-class* (tmtex-data-apply 'AMSclass AMS-class))
 	 (note* (tmtex-data-assemble "; " (list note keywords* AMS-class*)))
@@ -1760,7 +1760,7 @@
   (show-part (,tmtex-show-part -1))
   (doc-data (,tmtex-doc-data-wrapper -1))
   ((:or doc-title doc-author-data doc-date doc-note
-	doc-keywords doc-AMS-class) (,tmtex-default -1))
+	doc-keywords doc-msc) (,tmtex-default -1))
   ((:or author-name author-address author-note
 	author-email author-homepage) (,tmtex-default -1))
   (abstract (,tmtex-abstract-wrapper 1))
