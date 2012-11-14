@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.7.17>
 
 <style|tmdoc>
 
@@ -33,9 +33,9 @@
   macros are used for extracting title information:
 
   <\explain>
-    <explain-macro|doc-data-main|data-1|<with|mode|math|\<cdots\>>|data-n>
+    <explain-macro|doc-data-main|data-1|<math|\<cdots\>>|data-n>
 
-    <explain-macro|doc-data-main*|data-1|<with|mode|math|\<cdots\>>|data-n>
+    <explain-macro|doc-data-main*|data-1|<math|\<cdots\>>|data-n>
   <|explain>
     This macro only keeps and sorts the data which should be displayed in the
     main title. The <markup|doc-data-main*> variant is used in the case when
@@ -43,21 +43,21 @@
   </explain>
 
   <\explain>
-    <explain-macro|doc-data-note|data-1|<with|mode|math|\<cdots\>>|data-n>
+    <explain-macro|doc-data-note|data-1|<math|\<cdots\>>|data-n>
   <|explain>
     This macro only keeps and sorts the data which should be displayed as a
     footnote.
   </explain>
 
   <\explain>
-    <explain-macro|doc-data-abstract|data-1|<with|mode|math|\<cdots\>>|data-n>
+    <explain-macro|doc-data-abstract|data-1|<math|\<cdots\>>|data-n>
   <|explain>
     This macro only keeps and sorts the data which should be displayed in the
     abstract.
   </explain>
 
   <\explain>
-    <explain-macro|doc-data-hidden|data-1|<with|mode|math|\<cdots\>>|data-n>
+    <explain-macro|doc-data-hidden|data-1|<math|\<cdots\>>|data-n>
   <|explain>
     This macro only keeps and sorts the data which might or should not be
     displayed at all.
@@ -67,14 +67,14 @@
   information:
 
   <\explain>
-    <explain-macro|doc-author-main|<with|font-shape|right|<explain-macro|doc-author-data|data-1|<with|mode|math|\<cdots\>>|data-n>>>
+    <explain-macro|doc-author-main|<with|font-shape|right|<explain-macro|author-data|data-1|<math|\<cdots\>>|data-n>>>
   <|explain>
     This macro only keeps and sorts the data which should be displayed inside
     the main title.
   </explain>
 
   <\explain>
-    <explain-macro|doc-author-note|data-1|<with|mode|math|\<cdots\>>|data-n>
+    <explain-macro|doc-author-note|data-1|<math|\<cdots\>>|data-n>
   <|explain>
     This macro only keeps and sorts the data which should be displayed as a
     footnote.

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.7.17>
 
 <style|tmdoc>
 
@@ -8,7 +8,7 @@
   The <tmdtd|header-title> <abbr|d.t.d.> provides tags for entering
   information about the entire document. The two top-level tags are
 
-  <\explain|<explain-macro|doc-data|data-1|<with|mode|math|\<cdots\>>|data-n>>
+  <\explain|<explain-macro|doc-data|data-1|<math|\<cdots\>>|data-n>>
     Specify data attached to your document (title, authors, <abbr|etc.>; see
     below) and render the title.
   </explain>
@@ -17,11 +17,11 @@
     The abstract for your paper.
   </explain>
 
-  When creating a <markup|doc-data> tag using <menu|Insert|Title|Insert title>,
-  <TeXmacs> automatically inserts a <markup|doc-title> tag as its first
-  arguments. New data may be inserted from the <menu|Insert|Title> menu. Each
-  child <src-arg|data-1>, <with|mode|math|\<ldots\>>, <src-arg|data-n> of the
-  <markup|doc-data> tag is of one of the following forms:
+  When creating a <markup|doc-data> tag using <menu|Insert|Title|Insert
+  title>, <TeXmacs> automatically inserts a <markup|doc-title> tag as its
+  first arguments. New data may be inserted from the <menu|Insert|Title>
+  menu. Each child <src-arg|data-1>, <math|\<ldots\>>, <src-arg|data-n> of
+  the <markup|doc-data> tag is of one of the following forms:
 
   <\explain|<explain-macro|doc-title|title>>
     Specify the <src-arg|title> of the document.
@@ -31,8 +31,8 @@
     Specify the <src-arg|subtitle> of the document.
   </explain>
 
-  <\explain|<explain-macro|doc-author-data|data-1|<with|mode|math|\<cdots\>>|data-n>>
-    Specify the data for one of the authors of the document (name, affiliation,
+  <\explain|<explain-macro|doc-author|data-1|<math|\<cdots\>>|data-n>>
+    Specify datas for one of the authors of the document (name, affiliation,
     <abbr|etc.>; see below).
   </explain>
 
@@ -51,11 +51,11 @@
     page headers.
   </explain>
 
-  <\explain|<explain-macro|doc-keywords|kw-1|<with|mode|math|\<cdots\>>|kw-n>>
+  <\explain|<explain-macro|doc-keywords|kw-1|<math|\<cdots\>>|kw-n>>
     Specify keywords <src-arg|kw-1> until <src-arg|kw-n> for your document.
   </explain>
 
-  <\explain|<explain-macro|doc-msc|nr-1|<with|mode|math|\<cdots\>>|nr-n>>
+  <\explain|<explain-macro|doc-msc|nr-1|<math|\<cdots\>>|nr-n>>
     Specify <abbr|A.M.S.> subject classification numbers <src-arg|nr-1> until
     <src-arg|nr-n> for your document.
   </explain>
@@ -66,12 +66,17 @@
     to indicate that your document has been written using <TeXmacs>.
   </explain>
 
+  <\explain|<explain-macro|author-data|data-1|<math|\<cdots\>>|data-n>>
+    Specify structured datas for one of the authors of the document (name,
+    affiliation, <abbr|etc.>; see below).
+  </explain>
+
   When inserting an additional author using <menu|Insert|Title|Author|Insert
-  author>, <TeXmacs> inserts a <markup|doc-author-data> tag with an
-  <markup|author-name> tag as its first argument. New author data may be
-  inserted from the <menu|Insert|Title|Author> menu. Each child
-  <src-arg|data-1>, <with|mode|math|\<ldots\>>, <src-arg|data-n> of the
-  <markup|doc-author-data> tag is of one of the following forms:
+  author>, <TeXmacs> inserts a <explain-macro|doc-author|<with|font-shape|right|<explain-macro|author-data|...>>>
+  tree with an <markup|author-name> tag as its first argument. New author
+  data may be inserted from the <menu|Insert|Title|Author> menu. Each child
+  <src-arg|data-1>, <math|\<ldots\>>, <src-arg|data-n> of the
+  <markup|author-data> tag is of one of the following forms:
 
   <\explain|<explain-macro|author-name|name>>
     Specify the <src-arg|name> of the author.
@@ -94,7 +99,7 @@
   </explain>
 
   As a general rule, the use of any of the subtags of <markup|doc-data> or
-  <markup|doc-author-data> is optional. An individual subtag may also be
+  <markup|author-data> is optional. An individual subtag may also be
   specified several times. This is useful for documents with several authors,
   or authors with several addresses. The rendering of title information is
   very style-dependent: some styles render addresses in a single line or even
