@@ -172,7 +172,7 @@
 
   <assign|author-homepage|<macro|homepage|<doc-author-block|<title-ss|<arg|homepage>>>>>
 
-  <assign|doc-abstract|<\macro|body>
+  <assign|render-abstract|<\macro|body>
     <section*|<abstract-text>>
 
     <surround|<no-indent>||<arg|body>>

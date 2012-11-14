@@ -192,7 +192,7 @@
     Title rendering.
   </src-comment>>
 
-  <assign|abstract|<\macro|body>
+  <assign|doc-abstract|<\macro|body>
     <\with|par-columns|1|par-left|17mm|par-right|17mm>
       <surround|<abstract-text><localize|:> |<right-flush>|<arg|body>>
     </with>

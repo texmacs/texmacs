@@ -236,7 +236,7 @@
 
   <assign|by-text|<macro|<localize|>>>
 
-  <assign|doc-abstract|<macro|body|<\surround|<vspace*|2fn>|<right-flush><vspace|1fn>>
+  <assign|render-abstract|<macro|body|<\surround|<vspace*|2fn>|<right-flush><vspace|1fn>>
     <\with|par-first|10pt|par-par-sep|5pt|font-base-size|9>
       <\surround|<hrule><next-line>|<next-line><hrule><yes-indent>>
         <no-indent><with|font-series|bold|<abstract-text>><vspace|5pt><no-page-break>

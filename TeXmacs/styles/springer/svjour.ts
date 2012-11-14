@@ -368,7 +368,7 @@
     <doc-title-block|<arg|body>>
   </macro>>
 
-  <assign|doc-abstract|<\macro|body>
+  <assign|render-abstract|<\macro|body>
     <padded-normal|1fn|1.85fn|<surround|<sectional-short-bold|<abstract-text>><space|4mm>||<arg|body>>>
   </macro>>
 

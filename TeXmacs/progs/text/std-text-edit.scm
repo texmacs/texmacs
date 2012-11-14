@@ -35,7 +35,7 @@
 	   (<= (tree-index t) 1)
 	   (tree-is? bt 0 'doc-data)
 	   (or (== (tree-arity bt) 1)
-	       (not (tree-is? bt 1 'abstract)))))))
+	       (not (tree-is? bt 1 'doc-abstract)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting document and author data

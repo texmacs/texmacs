@@ -41,7 +41,7 @@
     <surround||<hflush>|<new-page>>
   </macro>>
 
-  <assign|doc-abstract|<\macro|body>
+  <assign|render-abstract|<\macro|body>
     <surround|<no-indent>||<chapter*|<abstract-text>>>
 
     <surround||<hflush>|<arg|body>>

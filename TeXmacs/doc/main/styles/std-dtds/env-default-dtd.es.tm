@@ -37,7 +37,7 @@
     <expand|item*|Otros entornos útiles.>Proveemos <markup|keywords> y
     <markup|AMS-class> (para la clasificación de temas de <abbr|A.M.S.>).
     Estos entornos deberían ser ingresados en el interior de un
-    <markup|abstract>.
+    <markup|doc-abstract>.
   </description>
 
   <apply|tmdoc-copyright|1998--2002|Joris van der Hoeven|Offray Vladimir Luna
@@ -201,7 +201,7 @@
       green>|AMS-class>>|<pageref|idx-27>>
 
       <tuple|<tuple|<with|font family|<quote|tt>|color|<quote|dark
-      green>|abstract>>|<pageref|idx-28>>
+      green>|doc-abstract>>|<pageref|idx-28>>
     </associate>
   </collection>
 </auxiliary>

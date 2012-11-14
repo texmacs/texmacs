@@ -33,7 +33,7 @@
     </src-comment>
   </active*>
 
-  <assign|doc-abstract|<\macro|body>
+  <assign|render-abstract|<\macro|body>
     <\padded-normal|2fn|1fn>
       <\with|par-left|15mm|par-right|15mm>
         <\small>

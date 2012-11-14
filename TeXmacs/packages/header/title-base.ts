@@ -81,7 +81,7 @@
 
   <drd-props|author-misc|arity|1|border|no|accessible|all>
 
-  <drd-props|abstract|arity|1|accessible|all>
+  <drd-props|doc-abstract|arity|1|accessible|all>
 
   <\active*>
     <\src-comment>
@@ -143,7 +143,7 @@
     </src-comment>
   </active*>
 
-  <assign|doc-abstract|<\macro|body>
+  <assign|render-abstract|<\macro|body>
     <\padded-normal|2fn|1fn>
       <\with|par-left|15mm|par-right|15mm>
         <\small>
@@ -155,15 +155,15 @@
     </padded-normal>
   </macro>>
 
-  <assign|doc-abstract*|<\macro|body|note>
+  <assign|render-abstract*|<\macro|body|note>
     <\quasi>
-      <\doc-abstract>
+      <\render-abstract>
         <surround||<vspace|0.5fn>|<unquote|<quote-arg|body>>>
 
         <\with|par-par-sep|0.25fn>
           <unquote*|<arg|note>>
         </with>
-      </doc-abstract>
+      </render-abstract>
     </quasi>
   </macro>>
 
@@ -177,8 +177,8 @@
 
   \;
 
-  <assign|abstract|<\macro|body>
-    <style-with|src-compact|none|<with|abstract-note|<look-up|<quasi|<doc-data-abstract|<unquote*|<quote-value|the-doc-data>>>>|0>|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<equal|<get-arity|<quote-value|abstract-note>>|0>|doc-abstract|doc-abstract*>>|<arg|body>|<quote-value|abstract-note>>>>>
+  <assign|doc-abstract|<\macro|body>
+    <style-with|src-compact|none|<with|abstract-note|<look-up|<quasi|<doc-data-abstract|<unquote*|<quote-value|the-doc-data>>>>|0>|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<equal|<get-arity|<quote-value|abstract-note>>|0>|render-abstract|render-abstract*>>|<arg|body>|<quote-value|abstract-note>>>>>
   </macro>>
 
   <\active*>

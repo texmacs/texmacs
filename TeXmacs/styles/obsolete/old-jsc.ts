@@ -32,7 +32,7 @@
     </src-comment>
   </active*>
 
-  <assign|doc-abstract|<\macro|body>
+  <assign|render-abstract|<\macro|body>
     <\with|par-left|15mm|par-right|15mm>
       <\small>
         <\padded-bothlined|2.5bls|2.5bls|1ln|1ln|0.5bls|0.5bls>

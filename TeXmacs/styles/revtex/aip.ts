@@ -348,7 +348,7 @@
 
   <assign|abstract-text|>
 
-  <assign|doc-abstract|<macro|body|<surround||<vspace|2fn>|<doc-author-block|<arg|body>>>>>
+  <assign|render-abstract|<macro|body|<surround||<vspace|2fn>|<doc-author-block|<arg|body>>>>>
 
   <assign|doc-authors-block|<macro|body|<doc-author-block|<arg|body>>>>
 

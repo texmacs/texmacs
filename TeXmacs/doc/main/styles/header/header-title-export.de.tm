@@ -40,7 +40,7 @@
   <markup|header-title> <abbr|bzw.> <markup|header-author> umdefinieren.
 
   Die <tmdtd|header-title> <abbr|D.T.D.> definiert auch den Befehl
-  <markup|abstract> für Zusammenfassungen. Innerhalb von Zusammenfassungen
+  <markup|doc-abstract> für Zusammenfassungen. Innerhalb von Zusammenfassungen
   (abstracts) können Sie den Befehl <markup|keywords> \ benutzen, um
   Schlüsselworte für Ihre Veröffentlichung zu definieren sowie den Befehl
   <markup|AMS-class>, um eine \R<abbr|A.M.S.>-subject-classification''

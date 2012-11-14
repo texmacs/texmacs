@@ -13,7 +13,7 @@
     below) and render the title.
   </explain>
 
-  <\explain|<explain-macro|abstract|body>>
+  <\explain|<explain-macro|doc-abstract|body>>
     The abstract for your paper.
   </explain>
 

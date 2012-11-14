@@ -341,7 +341,7 @@
 
   <assign|abstract-text|>
 
-  <assign|doc-abstract|<macro|body|<\surround|<vspace|2fn>|>
+  <assign|render-abstract|<macro|body|<\surround|<vspace|2fn>|>
     <\with|par-columns|1>
       <\with|par-mode|right>
         <tabular|<tformat|<cwith|1|1|1|1|cell-width|400pt>|<cwith|1|1|1|1|cell-hmode|exact>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>

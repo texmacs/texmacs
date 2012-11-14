@@ -39,7 +39,7 @@
     <new-page><right-flush>
   </macro>>
 
-  <assign|doc-abstract|<\macro|body>
+  <assign|render-abstract|<\macro|body>
     <section*|<abstract-text>>
 
     <\wide-normal>
