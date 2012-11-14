@@ -83,7 +83,7 @@
   doc-running-title doc-running-author doc-keywords doc-msc)
 
 (define-group doc-author-tag
-  author-name author-address author-email author-homepage author-note)
+  author-name author-address author-email author-homepage author-misc)
 
 ;; Enunciations
 

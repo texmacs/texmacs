@@ -89,7 +89,7 @@
     The <src-arg|homepage> of the author.
   </explain>
 
-  <\explain|<explain-macro|author-note|note>>
+  <\explain|<explain-macro|author-misc|note>>
     A <src-arg|note> attached to the author, like a thank-word.
   </explain>
 

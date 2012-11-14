@@ -85,7 +85,7 @@
 
   <\tm-fragment>
     <inactive*|<style-with|src-compact|none|<doc-author-main|<author-address|Somewhere
-    in Africa>|<author-name|The big GNU>|<author-note|Very hairy indeed!>>>>
+    in Africa>|<author-name|The big GNU>|<author-misc|Very hairy indeed!>>>>
   </tm-fragment>
 
   should typically return

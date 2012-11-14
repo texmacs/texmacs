@@ -435,7 +435,7 @@
   ("Address" (make-author-data-element 'author-address))
   ("Email" (make-author-data-element 'author-email))
   ("Homepage" (make-author-data-element 'author-homepage))
-  ("Note" (make-author-data-element 'author-note)))
+  ("Note" (make-author-data-element 'author-misc)))
 
 (tm-menu (focus-author-icons)
   (mini #t

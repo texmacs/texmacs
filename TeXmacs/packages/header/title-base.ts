@@ -79,7 +79,7 @@
 
   <drd-props|author-homepage|border|no>
 
-  <drd-props|author-note|arity|1|border|no|accessible|all>
+  <drd-props|author-misc|arity|1|border|no|accessible|all>
 
   <drd-props|abstract|arity|1|accessible|all>
 
@@ -304,7 +304,7 @@
   <assign|author-homepage|<macro|homepage|<doc-author-block|<style-with|src-compact|none|<with|font-shape|italic|<homepage-text><localize|:>
   ><with|font-family|tt|<arg|homepage>>>>>>
 
-  <assign|author-note|<\macro|note>
+  <assign|author-misc|<\macro|note>
     <arg|note>
   </macro>>
 
@@ -327,7 +327,7 @@
   </macro>>
 
   <assign|doc-author-data-note|<xmacro|data|<\quasi>
-    <unquote*|<select|<quote-arg|data>|author-note|document|<pat-any>>>
+    <unquote*|<select|<quote-arg|data>|author-misc|document|<pat-any>>>
   </quasi>>>
 
   <assign|doc-author-data|<\xmacro|data>

@@ -1186,12 +1186,12 @@
 (define (tmtex-make-author tag)
   (let* ((name (tmtex-select-data tag 'author-name))
 	 (address (tmtex-select-data tag 'author-address))
-	 (note (tmtex-select-data tag 'author-note))
+	 (misc (tmtex-select-data tag 'author-misc))
 	 (email (tmtex-select-data tag 'author-email))
 	 (homepage (tmtex-select-data tag 'author-homepage))
 	 (email* (tmtex-data-apply 'email email))
 	 (homepage* (tmtex-data-apply 'homepage homepage))
-	 (note* (tmtex-data-assemble "; " (list note email* homepage*)))
+	 (note* (tmtex-data-assemble "; " (list misc email* homepage*)))
 	 (name* (append name (tmtex-data-apply 'thanks note*))))
     (tex-concat* (tmtex-data-assemble '(!nextline)
 				      (list name* address)))))
@@ -1761,7 +1761,7 @@
   (doc-data (,tmtex-doc-data-wrapper -1))
   ((:or doc-title doc-author-data doc-date doc-note
 	doc-keywords doc-msc) (,tmtex-default -1))
-  ((:or author-name author-address author-note
+  ((:or author-name author-address author-misc
 	author-email author-homepage) (,tmtex-default -1))
   (abstract (,tmtex-abstract-wrapper 1))
   (appendix (,tmtex-appendix 1))

@@ -333,7 +333,7 @@
   <assign|doc-author-data-note|<xmacro|data|<\quasi>
     <unquote*|<select|<quote-arg|data>|author-homepage|<pat-any>>>
 
-    <unquote*|<select|<quote-arg|data>|author-note|document|<pat-any>>>
+    <unquote*|<select|<quote-arg|data>|author-misc|document|<pat-any>>>
   </quasi>>>
 
   <assign|doc-date|<macro|body|<style-with|src-compact|none|<doc-title-block|(Dated:
