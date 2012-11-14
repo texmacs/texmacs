@@ -3713,7 +3713,7 @@ upgrade (tree t, string version) {
     t= upgrade_cyrillic (t);
   if (version_inf_eq (version, "1.0.7.18"))
     t= upgrade_metadatas (t);
-  //cout << LF << t << LF << LF;
+  // cout << LF << t << LF << LF;
 
   if (is_non_style_document (t))
     t= automatic_correct (t, version);

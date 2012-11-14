@@ -356,7 +356,7 @@
       <\surround|<assign|the-doc-data|<quote-arg|data>>|<with|doc-note-nr|0|<quasi|<doc-data-hidden|<unquote*|<quote-arg|data>>>>>>
         <\doc-make-title>
           <with|doc-note-nr|0|<\quasi>
-            <compound|<unquote|<if|<lesseq|<length|<select|<quote-arg|data>|doc-author-data>>|1>|<value|doc-data-main>|<value|doc-data-main*>>>|<unquote*|<quote-arg|data>>>
+            <compound|<unquote|<if|<lesseq|<length|<select|<quote-arg|data>|doc-author|author-data>>|1>|<value|doc-data-main>|<value|doc-data-main*>>>|<unquote*|<quote-arg|data>>>
           </quasi>>
         </doc-make-title>
       </surround>

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.13>
+<TeXmacs|1.0.7.17>
 
 <style|<tuple|source|std-pattern>>
 
@@ -55,7 +55,9 @@
 
   <drd-props|doc-subtitle|border|no>
 
-  <drd-props|doc-author-data|arity|<tuple|repeat|1|1>|border|no|accessible|all>
+  <drd-props|doc-author|arity|<tuple|repeat|1|1>|border|no|accessible|all>
+
+  <drd-props|author-data|arity|<tuple|repeat|1|1>|border|no|accessible|all>
 
   <drd-props|doc-date|border|no>
 
@@ -219,7 +221,7 @@
 
       <unquote*|<select|<quote-arg|data>|doc-subtitle>>
 
-      <unquote*|<select|<quote-arg|data>|doc-author-data>>
+      <unquote*|<select|<quote-arg|data>|doc-author|author-data>>
 
       <unquote*|<select|<quote-arg|data>|doc-date>>
 
@@ -233,7 +235,7 @@
 
       <unquote*|<select|<quote-arg|data>|doc-subtitle>>
 
-      <doc-authors-data|<unquote*|<select|<quote-arg|data>|doc-author-data>>>
+      <doc-authors-data|<unquote*|<select|<quote-arg|data>|doc-author|author-data>>>
 
       <unquote*|<select|<quote-arg|data>|doc-date>>
 
@@ -244,7 +246,7 @@
   <assign|doc-note|<macro|body|>><active*|<src-short-comment|Added as a
   temporary fix for problem with doc-note>>
 
-  <assign|doc-data-hidden|<xmacro|data|<quasi|<style-with|src-compact|none|<style-with|src-compact|none|<doc-note|<unquote*|<select|<quote-arg|data>|doc-note>>>><doc-data-bis|<unquote*|<quote-arg|data>>><doc-authors-data-bis|<unquote*|<select|<quote-arg|data>|doc-author-data>>><style-with|src-compact|none|<doc-running-title|<unquote*|<select|<quote-arg|data>|doc-title|0>>>><style-with|src-compact|none|<doc-running-title|<unquote*|<select|<quote-arg|data>|doc-running-title|0>>>><doc-running-author|<style-with|src-compact|none|<author-from-authors|<unquote*|<select|<quote-arg|data>|doc-author-data|author-name|0>>>>><style-with|src-compact|none|<doc-running-author|<unquote*|<select|<quote-arg|data>|doc-running-author|0>>>>>>>>
+  <assign|doc-data-hidden|<xmacro|data|<quasi|<style-with|src-compact|none|<style-with|src-compact|none|<doc-note|<unquote*|<select|<quote-arg|data>|doc-note>>>><doc-data-bis|<unquote*|<quote-arg|data>>><doc-authors-data-bis|<unquote*|<select|<quote-arg|data>|doc-author|author-data>>><style-with|src-compact|none|<doc-running-title|<unquote*|<select|<quote-arg|data>|doc-title|0>>>><style-with|src-compact|none|<doc-running-title|<unquote*|<select|<quote-arg|data>|doc-running-title|0>>>><doc-running-author|<style-with|src-compact|none|<author-from-authors|<unquote*|<select|<quote-arg|data>|doc-author|author-data|author-name|0>>>>><style-with|src-compact|none|<doc-running-author|<unquote*|<select|<quote-arg|data>|doc-running-author|0>>>>>>>>
 
   <assign|doc-data-abstract|<\xmacro|data>
     <\quasi>
@@ -262,7 +264,7 @@
     <style-with|src-compact|none|<\surround|<assign|the-doc-data|<quote-arg|data>>|<with|doc-note-nr|0|<quasi|<doc-data-hidden|<unquote*|<quote-arg|data>>>>>>
       <\doc-make-title>
         <with|doc-note-nr|0|<\quasi>
-          <style-with|src-compact|none|<compound|<unquote|<style-with|src-compact|none|<if|<lesseq|<length|<select|<quote-arg|data>|doc-author-data>>|1>|<value|doc-data-main>|<value|doc-data-main*>>>>|<unquote*|<quote-arg|data>>>>
+          <style-with|src-compact|none|<compound|<unquote|<style-with|src-compact|none|<if|<lesseq|<length|<select|<quote-arg|data>|doc-author|author-data>>|1>|<value|doc-data-main>|<value|doc-data-main*>>>>|<unquote*|<quote-arg|data>>>>
         </quasi>>
       </doc-make-title>
     </surround>>
@@ -330,7 +332,7 @@
     <unquote*|<select|<quote-arg|data>|author-misc|document|<pat-any>>>
   </quasi>>>
 
-  <assign|doc-author-data|<\xmacro|data>
+  <assign|author-data|<\xmacro|data>
     <\quasi>
       <\with|the-author-data|<quote-arg|data>>
         <\render-doc-author>
