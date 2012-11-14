@@ -46,7 +46,7 @@
       (and (tree-is? t 'date) (tree-is? t :up 'doc-date))))
 
 (tm-define (doc-author-context? t)
-  (tree-in? t (doc-author-tag-list)))
+  (tree-in? t (author-data-tag-list)))
 
 (define doc-data-inactive-tags
   (doc-title-inactive-tag-list))
