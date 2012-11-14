@@ -1183,8 +1183,9 @@
   (if (null? l) l
       (list (list tag (tex-concat* l)))))
 
-(define (tmtex-make-author tag)
-  (let* ((name (tmtex-select-data tag 'author-name))
+(define (tmtex-make-author data)
+  (let* ((tag (select data '(:%2)))
+         (name (tmtex-select-data tag 'author-name))
 	 (address (tmtex-select-data tag 'author-affiliation))
 	 (misc (tmtex-select-data tag 'author-misc))
 	 (email (tmtex-select-data tag 'author-email))
@@ -1199,7 +1200,7 @@
 (tm-define (tmtex-doc-data s l)
   (let* ((tag (cons s l))
 	 (title (tmtex-select-data tag 'doc-title))
-	 (authors (map tmtex-make-author (select tag '(doc-author-data))))
+	 (authors (map tmtex-make-author (select tag '(doc-author))))
 	 (date (tmtex-select-data tag 'doc-date))
 	 (note (tmtex-select-data tag 'doc-note))
 	 (keywords (tmtex-select-data tag 'doc-keywords))
@@ -1759,7 +1760,7 @@
   (hide-part (,tmtex-hide-part -1))
   (show-part (,tmtex-show-part -1))
   (doc-data (,tmtex-doc-data-wrapper -1))
-  ((:or doc-title doc-author-data doc-date doc-note
+  ((:or doc-title doc-author author-data doc-date doc-note
 	doc-keywords doc-msc) (,tmtex-default -1))
   ((:or author-name author-affiliation author-misc
 	author-email author-homepage) (,tmtex-default -1))
