@@ -24,7 +24,7 @@
     </src-title>
   </active*>
 
-  <use-package|std|env-base|env-flush-math|env-theorem|env-float|header-article|section-article|title-generic|std-latex|cite-author-year>
+  <use-package|std|env-base|env-flush-math|env-theorem|env-float|header-article|section-article|title-generic|std-latex|cite-author-year|env-program>
 
   <active*|<\src-comment>
     TeX-like style parameters.
@@ -224,8 +224,14 @@
     </src-comment>
   </active*>
 
+  <assign|render-bibliography|<\macro|name|body>
+    <principal-section*|<arg|name>><yes-indent*>
+
+    <with|par-first|0fn|par-par-sep|0fn|font-size|0.84|<arg|body>>
+  </macro>>
+
   <assign|bib-list|<\macro|largest|body>
-    <\with|par-left|1em|par-first|-1em|font-size|1>
+    <\with|par-left|1em|par-first|-1em|font-size|1|bibitem*|>
       <arg|body>
     </with>
   </macro>>
