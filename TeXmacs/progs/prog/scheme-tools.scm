@@ -145,12 +145,6 @@
           (set-message filename (string-append lno ":" cno)))
         (set-message "Symbol properties not found." ssym)))))
 
-(kbd-map
-  (:require (and developer-mode? (in-prog-scheme?)))
-  ("A-F1" (scheme-popup-help (cursor-word)))
-  ("S-A-F1" (scheme-inbuffer-help (cursor-word)))
-  ("M-F1" (scheme-go-to-definition (cursor-word))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Handy.. (stuff previously in apidoc-funcs.scm)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

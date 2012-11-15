@@ -13,7 +13,7 @@
 
 (texmacs-module (prog scheme-edit)
   (:use (prog prog-edit)
-        (prog scheme-autocomplete)
+        (prog scheme-tools) (prog scheme-autocomplete)
 	(utils misc tm-keywords)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -164,6 +164,12 @@
   ("std c" (clipboard-copy-export "scheme" "primary"))
   ("std v" (clipboard-paste-import "scheme" "primary"))
   ("std x" (clipboard-cut-export "scheme" "primary")))
+
+(kbd-map
+  (:require (and developer-mode? (in-prog-scheme?)))
+  ("A-F1" (scheme-popup-help (cursor-word)))
+  ("S-A-F1" (scheme-inbuffer-help (cursor-word)))
+  ("M-F1" (scheme-go-to-definition (cursor-word))))
 
 (tm-define (insert-return)
   (:mode in-prog-scheme?)
