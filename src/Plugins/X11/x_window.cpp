@@ -392,6 +392,7 @@ x_window_rep::resize_event (int ww, int hh) {
 void
 x_window_rep::destroy_event () {
   send_destroy (w);
+  notify_window_destroy (orig_name);
 }
 
 /******************************************************************************

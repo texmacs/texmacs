@@ -28,6 +28,20 @@ void refresh_size (widget wid, bool exact);
 * User preference management concerning the geometry of windows
 ******************************************************************************/
 
+hashmap<string,string> window_names ("");
+
+string
+unique_window_name (string name) {
+  for (int i=1; true; i++) {
+    string wname= name;
+    if (i > 1) wname= wname * ":" * as_string (i);
+    if (!window_names->contains (wname)) {
+      window_names (wname)= name;
+      return wname;
+    }
+  }
+}
+
 void
 notify_window_move (string name, SI xx, SI yy) {
   int x=  xx / PIXEL;
@@ -48,6 +62,11 @@ notify_window_resize (string name, SI ww, SI hh) {
     set_user_preference ("width " * name, as_string (w));
     set_user_preference ("height " * name, as_string (h));
   }
+}
+
+void
+notify_window_destroy (string name) {
+  window_names->reset (name);
 }
 
 void
@@ -122,6 +141,7 @@ texmacs_window_widget (widget wid, tree geom) {
   if (x < 0) x= W + x + 1 - w;
   if (y < 0) y= H + y + 1 - h;
   string name= "TeXmacs";
+  name= unique_window_name (name);
   widget win= plain_window_widget (wid, name);
   SI xx= x * PIXEL, yy= -y * PIXEL;
   SI ww= w * PIXEL, hh=  h * PIXEL;

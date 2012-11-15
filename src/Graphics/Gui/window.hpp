@@ -87,5 +87,7 @@ void notify_window_move (string name, SI x, SI y);
   // Call this routine when the window 'name' moved to (x, y)
 void notify_window_resize (string name, SI w, SI h);
   // Call this routine when the window 'name' is resized to width w and height h
+void notify_window_destroy (string name);
+  // Call this routine when the window 'name' is destroyed
 
 #endif // defined WINDOW_H
