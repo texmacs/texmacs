@@ -24,8 +24,9 @@
 
 (tmfs-load-handler (email name)
   (if (== name "mailbox")
-      (eval-system "mmail --texmacs-list")
-      (eval-system (string-append "mmail --texmacs-show " name))))
+      (eval-system "mmail --list")
+      (with s (object->string (tmstring->string name))
+        (eval-system (string-append "mmail --show " s)))))
 
 (kbd-map
   ("m m a i l" (load-buffer "tmfs://email/mailbox")))
