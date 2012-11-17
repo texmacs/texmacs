@@ -20,7 +20,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tmfs-title-handler (email name doc)
-  (string-append "Email -- " name))
+  (if (== name "mailbox")
+      "Mailbox"
+      (with s (object->string (tmstring->string name))
+        (with r (eval-system (string-append "mmail --title " s))
+          (string-append "Email -- " r)))))
 
 (tmfs-load-handler (email name)
   (if (== name "mailbox")
