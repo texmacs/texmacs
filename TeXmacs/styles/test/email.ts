@@ -32,7 +32,7 @@
 
   <assign|email-header|<\macro|body>
     <\surround||<right-flush>>
-      <\with|font-family|rm>
+      <\with|font-family|rm|par-mode|left>
         <arg|body>
       </with>
     </surround>
