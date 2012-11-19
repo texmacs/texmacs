@@ -847,6 +847,8 @@ escape_sh (string s) {
   string r;
   for (i=0; i<n; i++)
     switch (s[i]) {
+    case '<':
+    case '>':
     case '?':
     case '&':
     case '$':
