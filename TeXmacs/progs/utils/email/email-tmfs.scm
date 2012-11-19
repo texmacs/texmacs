@@ -78,7 +78,7 @@
     (cond ((== t "text/html") (email-html-body id))
 	  ((== t "multipart/alternative")
 	   (email-body (email-best-alternative id)))
-	  ((== t "multipart/mixed")
+	  ((or (== t "multipart/mixed") (== t "multipart/related"))
 	   (email-mixed-body id))
           (else (email-verbatim-body id)))))
 
