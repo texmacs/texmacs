@@ -33,14 +33,17 @@
 
 (define (email-verbatim-body id)
   (with b (eval-system (string-append "mmail --body " (email-escape id)))
+    ;;(display* "body= " b "\n")
     (convert b "verbatim-snippet" "texmacs-stree")))
 
 (define (email-html-body id)
   (with b (eval-system (string-append "mmail --body " (email-escape id)))
+    ;;(display* "body= " b "\n")
     (convert b "html-snippet" "texmacs-stree")))
 
 (define (email-body id)
   (with t (email-mimetype id)
+    ;;(display* "mime type= " t "\n")
     (cond ((== t "text/html") (email-html-body id))
           (else (email-verbatim-body id)))))
 
@@ -53,6 +56,7 @@
   (let* ((h (email-header id))
          (b (email-body id))
          (d `(document ,@(paragraphs h) ,@(paragraphs b))))
+    ;;(display* "document= " d "\n")
     `(document
        (TeXmacs ,(texmacs-version))
        (style (tuple "email"))
