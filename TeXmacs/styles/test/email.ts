@@ -40,6 +40,14 @@
 
   <assign|email-header-table|<macro|body|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|-1|2|2|cell-hyphen|t>|<cwith|1|-1|1|1|cell-lsep|0spc>|<cwith|1|-1|2|2|cell-rsep|0spc>|<cwith|1|-1|1|1|cell-halign|r>|<twith|table-min-cols|2>|<twith|table-max-cols|2>|<twith|table-bsep|1em>|<arg|body>>>>
 
+  <assign|verbatim-message|<\macro|body>
+    <\surround||<right-flush>>
+      <\verbatim>
+        <arg|body>
+      </verbatim>
+    </surround>
+  </macro>>
+
   \;
 </body>
 

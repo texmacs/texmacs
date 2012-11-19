@@ -21,13 +21,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (svn-active? name)
-  (if (os-mingw?)
-      (let* ((dir (url-head name))
-	     (anc (url-append dir (url-ancestor)))
-	     (svn (url-append anc ".svn"))
-	     (l   (cDr (url->list (url-expand svn)))))
-	(list-or (map url-directory? l)))
-      (url-directory? (url-append (url-head name) ".svn"))))
+  (let* ((dir (url-head name))
+	 (anc (url-append dir (url-ancestor)))
+	 (svn (url-append anc ".svn"))
+	 (l   (cDr (url->list (url-expand svn)))))
+    (list-or (map url-directory? l))))
 
 (tm-define (version-tool name)
   (if (ahash-ref version-tool-table name)

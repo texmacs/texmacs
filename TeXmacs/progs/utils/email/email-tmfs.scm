@@ -34,7 +34,7 @@
 (define (email-verbatim-body id)
   (with b (eval-system (string-append "mmail --body " (email-escape id)))
     ;;(display* "body= " b "\n")
-    (convert b "verbatim-snippet" "texmacs-stree")))
+    `(verbatim-message ,(convert b "verbatim-snippet" "texmacs-stree"))))
 
 (define (email-html-body id)
   (with b (eval-system (string-append "mmail --body " (email-escape id)))
