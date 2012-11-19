@@ -18,10 +18,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (email-escape id)
-  (object->string (tmstring->string id)))
+  (escape-shell (tmstring->string id)))
 
-(define (email-mimetype id)
+(define (email-mime-type id)
   (eval-system (string-append "mmail --mime " (email-escape id))))
+
+(define (email-arity id)
+  (with n (eval-system (string-append "mmail --arity " (email-escape id)))
+    (string->number n)))
+
+(define (email-inline? id)
+  (with i (eval-system (string-append "mmail --attached " (email-escape id)))
+    (string-starts? i "no")))
 
 (define (email-header id)
   (with h (eval-system (string-append "mmail --header " (email-escape id)))
@@ -41,10 +49,37 @@
     ;;(display* "body= " b "\n")
     (convert b "html-snippet" "texmacs-stree")))
 
+(define (email-best-alternative-sub ids mts l)
+  (if (null? l) (car ids)
+      (with i (list-find-index mts (lambda (x) (== x (car l))))
+	(if i (list-ref ids i)
+	    (email-best-alternative-sub ids mts (cdr l))))))
+
+(define (email-best-alternative id)
+  (let* ((n (email-arity id))
+	 (ids (map (lambda (x) (string-append id "-" (number->string x)))
+		   (.. 1 (+ n 1))))
+	 (mts (map email-mime-type ids))
+	 (l (list "text/x-texmacs" "text/html" "text/plain")))
+    (email-best-alternative-sub ids mts l)))
+
+(define (email-mixed-body id)
+  (let* ((n (email-arity id))
+	 (ids (map (lambda (x) (string-append id "-" (number->string x)))
+		   (.. 1 (+ n 1))))
+	 (oks (list-filter ids email-inline?))
+	 (docs (map email-body oks))
+	 (l (append-map paragraphs docs)))
+    (if (null? l) "" `(document ,@l))))
+
 (define (email-body id)
-  (with t (email-mimetype id)
+  (with t (email-mime-type id)
     ;;(display* "mime type= " t "\n")
     (cond ((== t "text/html") (email-html-body id))
+	  ((== t "multipart/alternative")
+	   (email-body (email-best-alternative id)))
+	  ((== t "multipart/mixed")
+	   (email-mixed-body id))
           (else (email-verbatim-body id)))))
 
 (define (paragraphs doc)
