@@ -773,7 +773,7 @@ decode_from_utf8 (string s, int& i) {
       code = (code << 6) | (c & 0x3F);
     else {
       i= start+1;
-      c= s[i];
+      c= s[i++];
       return c;
     }
   }
