@@ -14,18 +14,62 @@
 (texmacs-module (utils email email-tmfs))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Building documents with email messages
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (email-escape id)
+  (object->string (tmstring->string id)))
+
+(define (email-mimetype id)
+  (eval-system (string-append "mmail --mime " (email-escape id))))
+
+(define (email-header id)
+  (with h (eval-system (string-append "mmail --header " (email-escape id)))
+    (string->object h)))
+
+(define (extract-body doc)
+  (with l (select doc '(body 0))
+    (if (null? l) '(document "") (car l))))
+
+(define (email-verbatim-body id)
+  (with b (eval-system (string-append "mmail --body " (email-escape id)))
+    (convert b "verbatim-snippet" "texmacs-stree")))
+
+(define (email-html-body id)
+  (with b (eval-system (string-append "mmail --body " (email-escape id)))
+    (convert b "html-snippet" "texmacs-stree")))
+
+(define (email-body id)
+  (with t (email-mimetype id)
+    (cond ((== t "text/html") (email-html-body id))
+          (else (email-verbatim-body id)))))
+
+(define (paragraphs doc)
+  (cond ((== doc "") '())
+        ((tm-is? doc 'document) (tm-children doc))
+        (else (list doc))))
+
+(define (email-message id)
+  (let* ((h (email-header id))
+         (b (email-body id))
+         (d `(document ,@(paragraphs h) ,@(paragraphs b))))
+    `(document
+       (TeXmacs ,(texmacs-version))
+       (style (tuple "email"))
+       (body ,d))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Reading email
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tmfs-title-handler (email name doc)
   (if (== name "mailbox")
       "Mailbox"
-      (with s (object->string (tmstring->string name))
+      (with s (email-escape name)
         (with r (eval-system (string-append "mmail --title " s))
           (string-append "Email -- " r)))))
 
 (tmfs-load-handler (email name)
   (if (== name "mailbox")
       (eval-system "mmail --list")
-      (with s (object->string (tmstring->string name))
-        (eval-system (string-append "mmail --show " s)))))
+      (email-message name)))
