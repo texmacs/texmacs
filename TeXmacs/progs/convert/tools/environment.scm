@@ -53,8 +53,9 @@
 (tm-define (environment-ref* env key)
   (let ((h (ahash-get-handle env key)))
     (if h (cdr h)
-	(texmacs-error "environment-ref*" "Unbound key ~S in environment: ~S"
-		       key env))))
+	(begin
+	  (display* "warning: unbound key " key " in environment " env "\n")
+	  ""))))
 
 (tm-define-macro (environment-ref env key)
   `(environment-ref* ,env (quote ,key)))
