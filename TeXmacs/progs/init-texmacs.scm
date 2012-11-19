@@ -100,8 +100,8 @@
 (lazy-define (utils cas cas-out) cas->stree)
 (use-modules (utils misc markup-funcs))
 (use-modules (utils handwriting handwriting))
-(if (url-exists-in-path? "mmail")
-    (use-modules (utils email email-tmfs)))
+(define supports-email? (url-exists-in-path? "mmail"))
+(if supports-email? (use-modules (utils email email-tmfs)))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting BibTeX style modules\n")

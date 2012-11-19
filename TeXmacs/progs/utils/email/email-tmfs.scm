@@ -13,8 +13,6 @@
 
 (texmacs-module (utils email email-tmfs))
 
-(define email-support? (url-exists-in-path? "mmail"))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Reading email
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -31,6 +29,3 @@
       (eval-system "mmail --list")
       (with s (object->string (tmstring->string name))
         (eval-system (string-append "mmail --show " s)))))
-
-(kbd-map
-  ("m m a i l" (load-buffer "tmfs://email/mailbox")))

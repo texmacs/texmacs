@@ -49,6 +49,9 @@
   (-> "Web"
       ("Create web site" (tmweb-interactive-build))
       ("Update web site" (tmweb-interactive-update)))
+  (if supports-email?
+      (-> "Email"
+          ("Open mailbox" (load-buffer "tmfs://email/mailbox"))))
   (-> "Project"
       (link project-manage-menu))
   (-> "Miscellaneous"
