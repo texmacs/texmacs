@@ -165,6 +165,7 @@
 	    (toggle ("Wrap lines"
 		     "verbatim->texmacs:wrap"))
 	    (enum ("Encoding" "verbatim->texmacs:encoding")
+		  ("Automated detection" "auto")
 		  ("Cork" "cork")
 		  ("Iso-8859-1" "iso-8859-1")
 		  ("Utf-8" "utf-8")))

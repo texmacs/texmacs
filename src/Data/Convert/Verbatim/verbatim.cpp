@@ -11,6 +11,7 @@
 
 #include "convert.hpp"
 #include "converter.hpp"
+#include "wencoding.hpp"
 #include "vars.hpp"
 #include "drd_std.hpp"
 #include "analyze.hpp"
@@ -272,7 +273,8 @@ un_special (string s) {
 
 static string
 encode (string s, string enc) {
-  if (enc == "utf-8") return utf8_to_cork (s);
+  if (enc == "auto") return western_to_cork (s);
+  else if (enc == "utf-8") return utf8_to_cork (s);
   else if (enc == "iso-8859-1") return tm_encode (s);
   else if (enc == "SourceCode") return sourcecode_to_cork(s);
   else return s;
@@ -317,7 +319,7 @@ mac_to_unix (string s) {
 
 tree
 verbatim_to_tree (string s, bool wrap, string enc) {
-  if (enc == "default") enc= "utf-8";
+  if (enc == "default") enc= "auto";
   s= mac_to_unix (dos_to_unix (s));
   if (wrap) {
     string r;
@@ -341,7 +343,7 @@ verbatim_to_tree (string s, bool wrap, string enc) {
 
 tree
 verbatim_document_to_tree (string s, bool wrap, string enc) {
-  if (enc == "default") enc= "utf-8";
+  if (enc == "default") enc= "auto";
   tree t    = verbatim_to_tree (s, wrap, enc);
   tree init = tree (COLLECTION,
 		    tree (ASSOCIATE, LANGUAGE, "verbatim"),

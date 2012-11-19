@@ -129,13 +129,13 @@
 (tm-define (verbatim->texmacs x . opts)
   (if (list-1? opts) (set! opts (car opts)))
   (let* ((wrap? (== (assoc-ref opts "verbatim->texmacs:wrap") "on"))
-         (enc (or (assoc-ref opts "verbatim->texmacs:encoding") "utf-8")))
+         (enc (or (assoc-ref opts "verbatim->texmacs:encoding") "auto")))
     (cpp-verbatim->texmacs x wrap? enc)))
 
 (tm-define (verbatim-snippet->texmacs x . opts)
   (if (list-1? opts) (set! opts (car opts)))
   (let* ((wrap? (== (assoc-ref opts "verbatim->texmacs:wrap") "on"))
-         (enc (or (assoc-ref opts "verbatim->texmacs:encoding") "utf-8")))
+         (enc (or (assoc-ref opts "verbatim->texmacs:encoding") "auto")))
     (cpp-verbatim-snippet->texmacs x wrap? enc)))
 
 (define-format verbatim
@@ -145,12 +145,12 @@
 (converter verbatim-document texmacs-tree
   (:function-with-options verbatim->texmacs)
   (:option "verbatim->texmacs:wrap" "off")
-  (:option "verbatim->texmacs:encoding" "utf-8"))
+  (:option "verbatim->texmacs:encoding" "auto"))
 
 (converter verbatim-snippet texmacs-tree
   (:function-with-options verbatim-snippet->texmacs)
   (:option "verbatim->texmacs:wrap" "off")
-  (:option "verbatim->texmacs:encoding" "utf-8"))
+  (:option "verbatim->texmacs:encoding" "auto"))
 
 (converter texmacs-tree verbatim-document
   (:function-with-options texmacs->verbatim)
