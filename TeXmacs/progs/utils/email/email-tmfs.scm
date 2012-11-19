@@ -39,15 +39,25 @@
   (with l (select doc '(body 0))
     (if (null? l) '(document "") (car l))))
 
-(define (email-verbatim-body id)
+(define (email-texmacs-body id)
   (with b (eval-system (string-append "mmail --body " (email-escape id)))
     ;;(display* "body= " b "\n")
-    `(verbatim-message ,(convert b "verbatim-snippet" "texmacs-stree"))))
+    (convert b "texmacs-snippet" "texmacs-stree")))
+
+(define (email-latex-body id)
+  (with b (eval-system (string-append "mmail --body " (email-escape id)))
+    ;;(display* "body= " b "\n")
+    (convert b "latex-snippet" "texmacs-stree")))
 
 (define (email-html-body id)
   (with b (eval-system (string-append "mmail --body " (email-escape id)))
     ;;(display* "body= " b "\n")
     (convert b "html-snippet" "texmacs-stree")))
+
+(define (email-verbatim-body id)
+  (with b (eval-system (string-append "mmail --body " (email-escape id)))
+    ;;(display* "body= " b "\n")
+    `(verbatim-message ,(convert b "verbatim-snippet" "texmacs-stree"))))
 
 (define (email-best-alternative-sub ids mts l)
   (if (null? l) (car ids)
@@ -60,7 +70,9 @@
 	 (ids (map (lambda (x) (string-append id "-" (number->string x)))
 		   (.. 1 (+ n 1))))
 	 (mts (map email-mime-type ids))
-	 (l (list "text/x-texmacs" "text/html" "text/plain")))
+	 (l (list "text/x-texmacs" "application/x-texmacs"
+                  "text/x-tex" "application/x-tex"
+                  "text/html" "text/plain")))
     (email-best-alternative-sub ids mts l)))
 
 (define (email-mixed-body id)
@@ -75,7 +87,11 @@
 (define (email-body id)
   (with t (email-mime-type id)
     ;;(display* "mime type= " t "\n")
-    (cond ((== t "text/html") (email-html-body id))
+    (cond ((== t "text/x-texmacs") (email-texmacs-body id))
+	  ((== t "text/x-tex") (email-latex-body id))
+	  ((== t "text/html") (email-html-body id))
+	  ((== t "application/x-texmacs") (email-texmacs-body id))
+	  ((== t "application/x-tex") (email-latex-body id))
 	  ((== t "multipart/alternative")
 	   (email-body (email-best-alternative id)))
 	  ((or (== t "multipart/mixed") (== t "multipart/related"))
