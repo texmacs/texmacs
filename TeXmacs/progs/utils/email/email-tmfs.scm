@@ -118,19 +118,23 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tmfs-title-handler (email name doc)
-  (if (== name "mailbox")
-      "Mailbox"
-      (with s (email-escape name)
-        (with r (eval-system (string-append "mmail --title " s))
-          (string-append "Email -- " r)))))
+  (cond ((== name "mailbox") "Mailbox")
+        ((== name "inbox") "Inbox")
+        (else
+          (with s (email-escape name)
+            (with r (eval-system (string-append "mmail --title " s))
+              (string-append "Email -- " r))))))
 
 (tmfs-load-handler (email name)
-  (if (== name "mailbox")
-      (eval-system "mmail --list")
-      (email-message name)))
+  (cond ((== name "mailbox") (eval-system "mmail --list"))
+        ((== name "inbox") (eval-system "mmail --inbox"))
+        (else (email-message name))))
 
-(tm-define (email-open)
-  (load-buffer "tmfs://email/mailbox"))
+(tm-define (email-open-mailbox)
+  (revert-buffer "tmfs://email/mailbox"))
+
+(tm-define (email-open-inbox)
+  (revert-buffer "tmfs://email/inbox"))
 
 (tm-define (email-pop)
   (system "mmail --pop-retrieve"))
