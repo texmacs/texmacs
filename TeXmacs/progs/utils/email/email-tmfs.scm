@@ -129,6 +129,9 @@
       (eval-system "mmail --list")
       (email-message name)))
 
+(tm-define (email-open)
+  (load-buffer "tmfs://email/mailbox"))
+
 (tm-define (email-pop)
   (system "mmail --pop-retrieve"))
 

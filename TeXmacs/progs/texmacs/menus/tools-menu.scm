@@ -51,8 +51,8 @@
       ("Update web site" (tmweb-interactive-update)))
   (if supports-email?
       (-> "Email"
-          ("Open mailbox" (load-buffer "tmfs://email/mailbox"))
-          ("Retrieve email" (email-pop))
+          ("Open mailbox" (email-open))
+          ("Retrieve email" (begin (email-pop) (email-open)))
           ---
           ("Pop server settings" (interactive email-settings))))
   (-> "Project"
