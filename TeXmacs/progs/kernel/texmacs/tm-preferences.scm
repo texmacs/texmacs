@@ -50,7 +50,7 @@
   (:synopsis "Set preference @which to @what")
   (:check-mark "*" test-preference?)
   ;;(display* "set-preference " which " := " what "\n")
-  (cpp-set-preference which what)
+  (cpp-set-preference which (if (string? what) what (object->string what)))
   (notify-preference which)
   (save-preferences))
 
@@ -72,8 +72,10 @@
 
 (tm-define (get-preference which)
   (:synopsis "Get preference @which")
-  (with def (or (ahash-ref preferences-default which) "default")
-    (cpp-get-preference which def)))
+  (let* ((def (or (ahash-ref preferences-default which) "default"))
+	 (s? (string? def))
+	 (r (cpp-get-preference which (if s? def (string->object def)))))
+    (if s? r (string->object r))))
 
 (define (preference-on? which)
   (test-preference? which "on"))
