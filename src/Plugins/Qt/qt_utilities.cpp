@@ -416,7 +416,9 @@ qt_image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
       << sw << " " << sh
       << "\n\n% Created by qt_image_to_eps ()\n\n%%BeginProlog\nsave\n"
       << "countdictstack\nmark\nnewpath\n/showpage {} def\n/setpagedevice "
-      << "{pop} def\n%%EndProlog\n%%Page 1 1\n/ImageWidth " << sw
+      << "{pop} def\n%%EndProlog\n%%Page 1 1\n"
+      << "/max { 2 copy lt { exch } if pop } bind def\n"
+      << "/ImageWidth " << sw
       << " def\n/ImageHeight " << sh << " def\nImageWidth ImageHeight max "
       << "ImageWidth ImageHeight max scale\n\n/ImageDatas\n\tcurrentfile\n\t"
       << "<< /Filter /ASCIIHexDecode >>\n\t/ReusableStreamDecode\n\tfilter\n";
