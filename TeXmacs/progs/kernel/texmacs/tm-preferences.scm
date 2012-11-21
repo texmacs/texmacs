@@ -74,7 +74,7 @@
   (:synopsis "Get preference @which")
   (let* ((def (or (ahash-ref preferences-default which) "default"))
 	 (s? (string? def))
-	 (r (cpp-get-preference which (if s? def (string->object def)))))
+	 (r (cpp-get-preference which (if s? def (object->string def)))))
     (if s? r (string->object r))))
 
 (define (preference-on? which)
