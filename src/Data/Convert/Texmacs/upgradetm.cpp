@@ -3476,7 +3476,7 @@ upgrade_cyrillic_encoding (tree t, bool cyrillic) {
             && become_other (as_string (t[i]), as_string (t[i+1])))
           cyrillic = false;
       }
-      t[i] = upgrade_cyrillic_encoding (t[i], cyrillic);
+      t[N(t)-1] = upgrade_cyrillic_encoding (t[N(t)-1], cyrillic);
     }
     else {
       for (i = 0 ; i < N(t) ; i++) 
