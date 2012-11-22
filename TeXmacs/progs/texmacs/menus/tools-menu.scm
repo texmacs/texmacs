@@ -11,7 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (texmacs menus tools-menu))
+(texmacs-module (texmacs menus tools-menu)
+  (:use (texmacs texmacs tm-tools)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dynamic menus for formats
@@ -58,6 +59,10 @@
   (-> "Project"
       (link project-manage-menu))
   (-> "Miscellaneous"
+      ("Count characters" (show-character-count))
+      ("Count words" (show-word-count))
+      ("Count lines" (show-line-count))
+      ---
       ("Clear undo history" (clear-undo-history)))
   ---
   ("Debugging tool" (toggle-preference "debugging tool"))
