@@ -58,11 +58,11 @@
           ("Pop server settings" (interactive email-settings))))
   (-> "Project"
       (link project-manage-menu))
-  (-> "Miscellaneous"
+  (-> "Statistics"
       ("Count characters" (show-character-count))
       ("Count words" (show-word-count))
-      ("Count lines" (show-line-count))
-      ---
+      ("Count lines" (show-line-count)))
+  (-> "Miscellaneous"
       ("Clear undo history" (clear-undo-history)))
   ---
   ("Debugging tool" (toggle-preference "debugging tool"))
