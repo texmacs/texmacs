@@ -28,7 +28,7 @@
 		    0))
 
 (define texmacs-seed (seed->random-state seed-val))
-(define texmacs-serial-id (random 19342813113834066795298816 texmacs-seed))
+(define texmacs-serial-id (random 9342813113834066795298815 texmacs-seed))
 
 (define (base64 x)
   (if (== x 0) '()
