@@ -89,19 +89,29 @@
 
 (define (eval-string-with-catch s)
   (catch #t
-	 (lambda () (eval (string->object s)))
-	 (lambda (key msg . args)
-	   key)))
+         (lambda () (eval (string->object s)))
+         (lambda (key msg . err-msg)
+           (let* ((msg (car err-msg))
+                  (args (cdr err-msg))
+                  (args (sublist args 0 (string-count-occurrences "~" msg)))
+                  (args (map car args))
+                  (err-msg (eval (apply format #f msg args))))
+             (stree->tree `(errput ,err-msg))))))
+
+(define (error-tree? t)
+  (and (tree? t) (tree-is? t 'errput)))
 
 (tm-define (scheme-eval t)
   (let* ((s (texmacs->code t))
 	 (r (eval-string-with-catch s)))
-    (cond ((and (tree? r) (session-scheme-trees?))
+    (cond ((and (tree? r) (error-tree? r) (session-scheme-trees?))
+           (tree-copy r))
+          ((and (tree? r) (session-scheme-trees?))
            (tree 'text (tree-copy r)))
-	  ((session-scheme-math?)
-	   (with m (cas->stree r)
-	     (if (tm? m) (tree 'math (tm->tree m)) (var-object->string r))))
-	  (else (var-object->string r)))))
+          ((session-scheme-math?)
+           (with m (cas->stree r)
+                 (if (tm? m) (tree 'math (tm->tree m)) (var-object->string r))))
+          (else (var-object->string r)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Low-level evaluation management

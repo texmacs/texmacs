@@ -2352,6 +2352,21 @@ tmg_string_occursP (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_string_count_occurrences (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "string-count-occurrences");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "string-count-occurrences");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  int out= count_occurrences (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
 tmg_string_search_forwards (tmscm arg1, tmscm arg2, tmscm arg3) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "string-search-forwards");
   TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "string-search-forwards");
@@ -6823,6 +6838,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("graphics-notify-update",  tmg_graphics_notify_update, 1, 0, 0);
   tmscm_install_procedure ("string-number?",  tmg_string_numberP, 1, 0, 0);
   tmscm_install_procedure ("string-occurs?",  tmg_string_occursP, 2, 0, 0);
+  tmscm_install_procedure ("string-count-occurrences",  tmg_string_count_occurrences, 2, 0, 0);
   tmscm_install_procedure ("string-search-forwards",  tmg_string_search_forwards, 3, 0, 0);
   tmscm_install_procedure ("string-search-backwards",  tmg_string_search_backwards, 3, 0, 0);
   tmscm_install_procedure ("string-replace",  tmg_string_replace, 3, 0, 0);
