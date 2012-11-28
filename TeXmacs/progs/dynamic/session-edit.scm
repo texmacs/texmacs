@@ -92,10 +92,9 @@
          (lambda () (eval (string->object s)))
          (lambda (key msg . err-msg)
            (let* ((msg (car err-msg))
-                  (args (cdr err-msg))
-                  (args (sublist args 0 (string-count-occurrences "~" msg)))
-                  (args (map car args))
-                  (err-msg (eval (apply format #f msg args))))
+                  (args (cadr err-msg))
+                  (err-msg 
+                    (if (list? args) (eval (apply format #f msg args)) msg)))
              (stree->tree `(errput ,err-msg))))))
 
 (define (error-tree? t)
