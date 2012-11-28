@@ -130,6 +130,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("forall")= d;
   t ("foreach")= c;
   t ("foreign")= c;
+  t ("former")= c;
   t ("from")= c;
   t ("fuse")= c;
   t ("generate")= c;

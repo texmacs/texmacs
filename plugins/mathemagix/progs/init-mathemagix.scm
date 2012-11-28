@@ -61,8 +61,8 @@
 
 (plugin-configure mathemagix
   (:winpath "Mathemagix\\bin")
-  (:require (or (url-exists-in-path? "mmx-light")
-		(url-exists-in-path? "mmi")))
+  (:require (or (url-exists-in-path? "mmi")
+                (url-exists-in-path? "mmx-light")))
   (:serializer ,mathemagix-serialize)
   (:initialize (mathemagix-initialize))
   (:launch ,mathemagix-launcher)
