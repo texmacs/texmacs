@@ -216,7 +216,20 @@
                   (system-wait "Finishing manual" "(soon ready)"))))))))))
 
 (tm-define (tmdoc-expand-this type)
-  (tmdoc-expand-help (current-buffer) type))
+  (system-wait (string-append "Generating " type) "(can be long)")
+  (with mmx? (style-has? "mmxdoc-style")
+    (tmdoc-expand-help (current-buffer) type)
+    (if mmx? (init-style "mmxmanual"))
+    (user-delayed
+      (lambda ()
+        (delayed-update "(pass 1/3)"
+          (lambda ()
+            (delayed-update "(pass 2/3)"
+              (lambda ()
+                (delayed-update "(pass 3/3)"
+                  (lambda ()
+                    (buffer-pretend-saved (current-buffer))
+                    (system-wait "Finishing" "(soon ready)")))))))))))
 
 (define (tmdoc-remove-hyper-links l)
   (cond ((npair? l) l)
