@@ -571,11 +571,17 @@ Alpha_nr (int nr) {
 string
 fnsymbol_nr (int nr) {
   string sym, r;
-  int i, m= (nr-1)%3, n= ((nr-1)/3)+1;
+  int i, m= (nr-1)%9, n= ((nr-1)/9)+1;
   switch (m) {
-  case 0: sym= "<ast>"; break;
-  case 1: sym= "<dag>"; break;
-  case 2: sym= "<ddag>"; break;
+    case 0: sym= "<ast>";        break;
+    case 1: sym= "<dag>";        break;
+    case 2: sym= "<ddag>";       break;
+    case 3: sym= "<paragraph>";  break;
+    case 4: sym= "<endofline>";  break;
+    case 5: sym= "||";           break;
+    case 6: sym= "<ast><ast>";   break;
+    case 7: sym= "<dag><dag>";   break;
+    case 8: sym= "<ddag><ddag>"; break;
   }
   for (i=0; i<n; i++) r << sym;
   return r;
