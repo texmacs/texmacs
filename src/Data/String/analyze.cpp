@@ -913,6 +913,27 @@ dos_to_better (string s) {
   return r;
 }
 
+string
+unescape_guile (string s) {
+  int i, n= N(s);
+  string r;
+  for (i=0; i<n; i++) {
+    if (s[i] == '\\') {
+      if (i+3 < n && s[i+1] == 'x'
+          && is_hex_digit (s[i+2]) && is_hex_digit (s[i+3])) {
+        string e= s(i+2, i+4);
+        r << (unsigned char) from_hexadecimal (e);
+        i+=3;
+      }
+      else
+        r << s[i];
+    }
+    else
+      r << s[i];
+  }
+  return r;
+}
+
 /******************************************************************************
 * Reading input from a string
 ******************************************************************************/

@@ -2578,6 +2578,19 @@ tmg_escape_to_ascii (tmscm arg1) {
 }
 
 tmscm
+tmg_unescape_guile (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "unescape-guile");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= unescape_guile (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_string_convert (tmscm arg1, tmscm arg2, tmscm arg3) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "string-convert");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "string-convert");
@@ -6854,6 +6867,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("escape-verbatim",  tmg_escape_verbatim, 1, 0, 0);
   tmscm_install_procedure ("escape-shell",  tmg_escape_shell, 1, 0, 0);
   tmscm_install_procedure ("escape-to-ascii",  tmg_escape_to_ascii, 1, 0, 0);
+  tmscm_install_procedure ("unescape-guile",  tmg_unescape_guile, 1, 0, 0);
   tmscm_install_procedure ("string-convert",  tmg_string_convert, 3, 0, 0);
   tmscm_install_procedure ("utf8->cork",  tmg_utf8_2cork, 1, 0, 0);
   tmscm_install_procedure ("cork->utf8",  tmg_cork_2utf8, 1, 0, 0);

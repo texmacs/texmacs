@@ -35,6 +35,8 @@
 
 (define tmfs-handler-table (make-ahash-table))
 
+(define (object->tmstring s) (unescape-guile (object->string s)))
+
 (define-public (tmfs-handler class action handle)
   (ahash-set! tmfs-handler-table (cons class action) handle))
 
@@ -52,7 +54,7 @@
     (cond ((ahash-ref tmfs-handler-table (cons class 'load)) =>
 	   (lambda (handler)
              (with r (handler name)
-               (if (string? r) r (object->string r)))))
+               (if (string? r) r (object->tmstring r)))))
 	  (else ((ahash-ref tmfs-handler-table (cons #t 'load)) u)))))
 
 (define-public (tmfs-save u what)
