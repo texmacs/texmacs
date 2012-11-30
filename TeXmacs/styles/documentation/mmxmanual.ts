@@ -24,7 +24,7 @@
     </src-title>
   </active*>
 
-  <use-package|tmmanual|tmdoc-web|doxygen|mathemagix|varsession>
+  <use-package|tmmanual|tmdoc-web|poorman-doxygen|mathemagix|varsession>
 
   <\active*>
     <\src-comment>
