@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.0.7.17>
 
 <style|source>
 
@@ -127,11 +127,15 @@
   </macro>>
 
   <assign|extra-branch|<\macro|body|destination>
-    <item><hlink|<with|color|brown|<arg|body>>|<arg|destination>>
+    <item><hlink|<with|color|#806040|<arg|body>>|<arg|destination>>
   </macro>>
 
   <assign|continue|<\macro|body|destination>
-    <item><hlink|<with|color|brown|<arg|body>>|<arg|destination>>
+    <item><hlink|<with|color|#806040|<arg|body>>|<arg|destination>>
+  </macro>>
+
+  <assign|doxygen-branch|<\macro|body|destination>
+    <item><hlink|<with|color|#208080|<arg|body>>|<arg|destination>>
   </macro>>
 
   <assign|tmdoc-include|<\macro|inclusion>

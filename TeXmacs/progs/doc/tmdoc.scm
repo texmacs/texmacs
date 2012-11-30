@@ -67,6 +67,8 @@
 	   (tmdoc-branch x root cur (list level) done))
 	  ((match? x '(extra-branch :%2))
 	   (tmdoc-branch x root cur 'appendix done))
+	  ((match? x '(doxygen-branch :%2))
+	   '(document))
 	  ((match? x '(tmdoc-copyright :*))
 	   '(document))
 	  (else (tmdoc-substitute x root cur)))))
