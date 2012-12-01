@@ -159,7 +159,7 @@ x_window_rep::x_window_rep (widget w2, x_gui gui2, char* n2,
 			    SI min_w, SI min_h, SI def_w, SI def_h,
 			    SI max_w, SI max_h):
   window_rep (), w (w2), gui (gui2),
-  orig_name (n2 == NULL? string ("popup"): n2), name (n2),
+  orig_name (n2 == ((char*) NULL)? string ("popup"): n2), name (n2),
   ren (tm_new<x_drawable_rep> (gui2, this)),
   Min_w (min_w), Min_h (min_h), Def_w (def_w), Def_h (def_h),
   Max_w (max_w), Max_h (max_h),
@@ -391,8 +391,8 @@ x_window_rep::resize_event (int ww, int hh) {
 
 void
 x_window_rep::destroy_event () {
-  send_destroy (w);
   notify_window_destroy (orig_name);
+  send_destroy (w);
 }
 
 /******************************************************************************
@@ -578,10 +578,8 @@ window
 popup_window (widget w, string name, SI min_w, SI min_h,
 	      SI def_w, SI def_h, SI max_w, SI max_h)
 {
-  char* _name= as_charp (name);
   window win= tm_new<x_window_rep> (w, the_gui, (char*) NULL,
 				    min_w, min_h, def_w, def_h, max_w, max_h);
-  tm_delete_array (_name);
   return win;
 }
 

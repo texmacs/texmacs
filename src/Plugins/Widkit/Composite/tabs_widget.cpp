@@ -191,5 +191,5 @@ icon_tabs_widget (array<url> us, array<wk_widget> a, array<wk_widget> b) {
     wk_widget vert= vertical_list (array<wk_widget> (icon, a[i]));
     tabs << vert;
   }
-  return tm_new<tabs_widget_rep> (a, b);
+  return tm_new<tabs_widget_rep> (tabs, b);
 }
