@@ -428,9 +428,10 @@
 
 (define (make-menu-icon-tabs p style)
   "Make @(icon-tabs :menu-item-list) menu item."
-  (widget-icon-tabs (map icon-tab-icon (cdr p))
-                    (make-menu-items (map icon-tab-key (cdr p)) style #f)
-                    (make-menu-items (map icon-tab-value (cdr p)) style #f)))
+  (with style* (logior style widget-style-mini)
+    (widget-icon-tabs (map icon-tab-icon (cdr p))
+                      (make-menu-items (map icon-tab-key (cdr p)) style* #f)
+                      (make-menu-items (map icon-tab-value (cdr p)) style #f))))
 
 (define (make-menu-icon-tab p style)
   "Make @(icon-tab :menu-item-list) menu item."
