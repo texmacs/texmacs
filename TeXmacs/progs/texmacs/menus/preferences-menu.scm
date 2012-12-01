@@ -640,4 +640,5 @@
         (dynamic (other-preferences-widget))))))
 
 (tm-define (open-preferences)
+  (:interactive #t)
   (top-window preferences-widget "User preferences"))
