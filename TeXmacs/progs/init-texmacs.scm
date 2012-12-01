@@ -119,7 +119,8 @@
 (lazy-menu (texmacs menus edit-menu) edit-menu)
 (lazy-menu (texmacs menus view-menu) view-menu)
 (lazy-menu (texmacs menus tools-menu) tools-menu)
-(lazy-menu (texmacs menus preferences-menu) preferences-menu page-setup-menu)
+(lazy-menu (texmacs menus preferences-menu)
+           preferences-menu page-setup-menu open-preferences)
 (use-modules (texmacs menus main-menu))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
