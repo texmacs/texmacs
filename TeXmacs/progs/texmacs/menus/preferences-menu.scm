@@ -626,16 +626,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget (preferences-widget)
-  (tabs
-    (tab (text "General")
+  (icon-tabs
+    (icon-tab "tm_open.xpm" (text "General")
       (centered
         (dynamic (general-preferences-widget))))
-    (tab (text "Keyboard")
+    (icon-tab "tm_save.xpm" (text "Keyboard")
       (centered
         (dynamic (keyboard-preferences-widget))))
-    (tab (text "Converters")
+    (icon-tab "tm_new.xpm" (text "Converters")
       (dynamic (conversion-preferences-widget)))
-    (tab (text "Others")
+    (icon-tab "tm_copy.xpm" (text "Others")
       (centered
         (dynamic (other-preferences-widget))))))
 

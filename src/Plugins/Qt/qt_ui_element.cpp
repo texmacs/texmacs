@@ -796,7 +796,9 @@ qt_ui_element_rep::as_qlayoutitem () {
 
       l->setSpacing(0);
 
-      if (N(arr) > 0 && concrete(arr[0]).rep && concrete(arr[0]).rep->type == tabs_widget)  // HACK!
+      if (N(arr) > 0 && concrete(arr[0]).rep &&
+          (concrete(arr[0]).rep->type == tabs_widget ||
+           concrete(arr[0]).rep->type == icon_tabs_widget))  // HACK!
         l->setContentsMargins(0, 6, 0, 0);
       else
         l->setContentsMargins(0, 0, 0, 0);
@@ -912,6 +914,7 @@ qt_ui_element_rep::as_qlayoutitem () {
     case hsplit_widget:
     case vsplit_widget:
     case tabs_widget:
+    case icon_tabs_widget:
     case wrapped_widget:
     case resize_widget:
     case refresh_widget:
@@ -1267,6 +1270,33 @@ qt_ui_element_rep::as_qwidget () {
       T       x = open_box<T>(load);
       T1   tabs = x.x1;
       T1 bodies = x.x2;
+      
+      QTMTabWidget* tw = new QTMTabWidget ();
+      
+      int i;
+      for (i = 0; i < N(tabs); i++) {
+        if (is_nil (tabs[i])) break;
+        QWidget* prelabel = concrete (tabs[i])->as_qwidget();
+        QLabel*     label = qobject_cast<QLabel*> (prelabel);
+        QWidget*     body = concrete (bodies[i])->as_qwidget();
+        tw->addTab(body, label ? label->text() : "");
+        delete prelabel;
+      }
+
+      if (i>0) tw->resizeOthers(0);   // Force the automatic resizing
+
+      qwid = tw;
+    }
+      break;
+      
+    case icon_tabs_widget:
+    {
+      typedef array<url> U1;
+      typedef array<widget> T1;
+      typedef triple<U1, T1, T1> T;
+      T       x = open_box<T>(load);
+      T1   tabs = x.x2;
+      T1 bodies = x.x3;
       
       QTMTabWidget* tw = new QTMTabWidget ();
       

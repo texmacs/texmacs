@@ -5434,6 +5434,23 @@ tmg_widget_tabs (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_widget_icon_tabs (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_ARRAY_URL (arg1, TMSCM_ARG1, "widget-icon-tabs");
+  TMSCM_ASSERT_ARRAY_WIDGET (arg2, TMSCM_ARG2, "widget-icon-tabs");
+  TMSCM_ASSERT_ARRAY_WIDGET (arg3, TMSCM_ARG3, "widget-icon-tabs");
+
+  array_url in1= tmscm_to_array_url (arg1);
+  array_widget in2= tmscm_to_array_widget (arg2);
+  array_widget in3= tmscm_to_array_widget (arg3);
+
+  // TMSCM_DEFER_INTS;
+  widget out= icon_tabs_widget (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return widget_to_tmscm (out);
+}
+
+tmscm
 tmg_widget_scrollable (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_WIDGET (arg1, TMSCM_ARG1, "widget-scrollable");
   TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "widget-scrollable");
@@ -7071,6 +7088,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("widget-vlist",  tmg_widget_vlist, 1, 0, 0);
   tmscm_install_procedure ("widget-aligned",  tmg_widget_aligned, 2, 0, 0);
   tmscm_install_procedure ("widget-tabs",  tmg_widget_tabs, 2, 0, 0);
+  tmscm_install_procedure ("widget-icon-tabs",  tmg_widget_icon_tabs, 3, 0, 0);
   tmscm_install_procedure ("widget-scrollable",  tmg_widget_scrollable, 2, 0, 0);
   tmscm_install_procedure ("widget-resize",  tmg_widget_resize, 8, 0, 0);
   tmscm_install_procedure ("widget-hsplit",  tmg_widget_hsplit, 2, 0, 0);

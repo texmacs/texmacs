@@ -99,6 +99,11 @@ tabs_widget (array<widget> tabs, array<widget> bodies) {
 }
 
 widget
+icon_tabs_widget (array<url> us, array<widget> tabs, array<widget> bodies) {
+  return abstract (icon_tabs_widget (us, concrete (tabs), concrete (bodies)));
+}
+
+widget
 horizontal_menu (array<widget> a) {
   return abstract (horizontal_list (concrete (a)));
   //return abstract (horizontal_array (concrete (a), -1));

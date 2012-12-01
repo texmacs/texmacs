@@ -160,6 +160,14 @@
   (:synopsis "One tab of a tab bar")
   `(cons* 'tab ($list ,@l)))
 
+(tm-define-macro ($icon-tabs . l)
+  (:synopsis "An icon tab bar")
+  `(cons* 'icon-tabs ($list ,@l)))
+
+(tm-define-macro ($icon-tab . l)
+  (:synopsis "One icon tab of an icon tab bar")
+  `(cons* 'icon-tab ($list ,@l)))
+
 (tm-define-macro ($horizontal . l)
   (:synopsis "Horizontal layout of widgets")
   `(cons* 'horizontal ($list ,@l)))

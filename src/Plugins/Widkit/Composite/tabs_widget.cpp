@@ -181,3 +181,9 @@ wk_widget
 tabs_widget (array<wk_widget> a, array<wk_widget> b) {
   return tm_new<tabs_widget_rep> (a, b);
 }
+
+wk_widget
+icon_tabs_widget (array<url> us, array<wk_widget> a, array<wk_widget> b) {
+  (void) us;
+  return tm_new<tabs_widget_rep> (a, b);
+}

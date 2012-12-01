@@ -59,6 +59,8 @@
     (aligned-item :%2)
     (tabs :menu-item-list)
     (tab :menu-item-list)
+    (icon-tabs :menu-item-list)
+    (icon-tab :menu-item-list)
     (minibar :menu-item-list)
     (extend :menu-item :menu-item-list)
     (style :integer? :menu-item-list)
@@ -415,6 +417,26 @@
   (display* "Error 'make-menu-tab', " p ", " style "\n")
   (list 'vlist))
 
+(define (icon-tab-icon x)
+  (string->url (cadr x)))
+
+(define (icon-tab-key x)
+  (caddr x))
+
+(define (icon-tab-value x)
+  (list 'vlist (cdddr x)))
+
+(define (make-menu-icon-tabs p style)
+  "Make @(icon-tabs :menu-item-list) menu item."
+  (widget-icon-tabs (map icon-tab-icon (cdr p))
+                    (make-menu-items (map icon-tab-key (cdr p)) style #f)
+                    (make-menu-items (map icon-tab-value (cdr p)) style #f)))
+
+(define (make-menu-icon-tab p style)
+  "Make @(icon-tab :menu-item-list) menu item."
+  (display* "Error 'make-menu-icon-tab', " p ", " style "\n")
+  (list 'vlist))
+
 (define (make-menu-extend p style bar?)
   "Make @(extend :menu-item :menu-item-list) menu item."
   (with l (make-menu-items (cdr p) style bar?)
@@ -611,6 +633,10 @@
         ,(lambda (p style bar?) (list (make-menu-tabs p style))))
   (tab (:*)
         ,(lambda (p style bar?) (list (make-menu-tab p style))))
+  (icon-tabs (:*)
+        ,(lambda (p style bar?) (list (make-menu-icon-tabs p style))))
+  (icon-tab (:*)
+        ,(lambda (p style bar?) (list (make-menu-icon-tab p style))))
   (minibar (:*)
 	    ,(lambda (p style bar?) (list (make-menu-minibar p style))))
   (extend (:%1 :*)
@@ -767,6 +793,8 @@
   (aligned-item ,(lambda (p) `(aligned-item ,@(menu-expand-list (cdr p)))))
   (tabs ,(lambda (p) `(tabs ,@(menu-expand-list (cdr p)))))
   (tab ,(lambda (p) `(tab ,@(menu-expand-list (cdr p)))))
+  (icon-tabs ,(lambda (p) `(icon-tabs ,@(menu-expand-list (cdr p)))))
+  (icon-tab ,(lambda (p) `(icon-tab ,@(menu-expand-list (cdr p)))))
   (minibar ,(lambda (p) `(minibar ,@(menu-expand-list (cdr p)))))
   (extend ,(lambda (p) `(extend ,@(menu-expand-list (cdr p)))))
   (style ,(lambda (p) `(extend ,@(menu-expand-list (cdr p)))))

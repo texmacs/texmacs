@@ -295,6 +295,9 @@ widget aligned_widget (array<widget> lhs, array<widget> rhs, SI hsep, SI vsep, S
                                      close_box (T (lhs,rhs, coord4 (hsep, vsep, lpad, rpad)))); }
 widget tabs_widget (array<widget> tabs, array<widget> bodies) {
   return qt_ui_element_rep::create (qt_widget_rep::tabs_widget, tabs, bodies); }
+widget icon_tabs_widget (array<url> us, array<widget> ts, array<widget> bs) {
+  return qt_ui_element_rep::create (qt_widget_rep::icon_tabs_widget,
+                                    us, ts, bs); }
 widget wrapped_widget (widget w, command cmd) {
   return qt_ui_element_rep::create (qt_widget_rep::wrapped_widget, w, cmd); }
 widget tile_menu (array<widget> a, int cols) { 

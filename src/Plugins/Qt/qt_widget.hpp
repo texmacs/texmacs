@@ -85,15 +85,15 @@ public:
    */
   enum types {
     none = 0,
-    input_widget,       file_chooser,      window_widget,   view_widget,
-    horizontal_menu,    vertical_menu,     horizontal_list, vertical_list,
-    tile_menu,          minibar_menu,      menu_separator,  menu_group, 
-    pulldown_button,    pullright_button,  menu_button,     balloon_widget,
-    text_widget,        xpm_widget,        toggle_widget,   enum_widget,
-    choice_widget,      scrollable_widget, hsplit_widget,   vsplit_widget,
-    aligned_widget,     tabs_widget,       wrapped_widget,  refresh_widget,
-    glue_widget,        resize_widget,     texmacs_widget,  simple_widget,
-    embedded_tm_widget, popup_widget,      field_widget
+    input_widget,    file_chooser,       window_widget,    view_widget,
+    horizontal_menu, vertical_menu,      horizontal_list,  vertical_list,
+    tile_menu,       minibar_menu,       menu_separator,   menu_group, 
+    pulldown_button, pullright_button,   menu_button,      balloon_widget,
+    text_widget,     xpm_widget,         toggle_widget,    enum_widget,
+    choice_widget,   scrollable_widget,  hsplit_widget,    vsplit_widget,
+    aligned_widget,  tabs_widget,        icon_tabs_widget, wrapped_widget,
+    refresh_widget,  glue_widget,        resize_widget,    texmacs_widget,
+    simple_widget,   embedded_tm_widget, popup_widget,     field_widget
   } ;
   
   types type;
@@ -119,15 +119,18 @@ public:
   string type_as_string() { 
     static const char* qt_widget_type_strings[] = {
       "none",
-      "input_widget",    "file_chooser",      "window_widget",   "view_widget",
-      "horizontal_menu", "vertical_menu",     "horizontal_list", "vertical_list",
-      "tile_menu",       "minibar_menu",      "menu_separator",  "menu_group", 
-      "pulldown_button", "pullright_button",  "menu_button",     "balloon_widget",
-      "text_widget",     "xpm_widget",        "toggle_widget",   "enum_widget",
-      "choice_widget",   "scrollable_widget", "hsplit_widget",   "vsplit_widget", 
-      "aligned_widget",  "tabs_widget",       "wrapped_widget",  "refresh_widget",
-      "glue_widget",     "resize_widget",     "texmacs_widget",  "simple_widget",
-      "embedded_tm_widget", "popup_widget",   "field_widget"
+      "input_widget",       "file_chooser",     "window_widget",
+      "view_widget",        "horizontal_menu",  "vertical_menu",
+      "horizontal_list",    "vertical_list",    "tile_menu",
+      "minibar_menu",       "menu_separator",   "menu_group", 
+      "pulldown_button",    "pullright_button", "menu_button",
+      "balloon_widget",     "text_widget",      "xpm_widget",
+      "toggle_widget",      "enum_widget",      "choice_widget",
+      "scrollable_widget",  "hsplit_widget",    "vsplit_widget", 
+      "aligned_widget",     "tabs_widget",      "icon_tabs_widget",
+      "wrapped_widget",     "refresh_widget",   "glue_widget",
+      "resize_widget",      "texmacs_widget",   "simple_widget",
+      "embedded_tm_widget", "popup_widget",     "field_widget"
     };
     return string(qt_widget_type_strings[type]) * "\t id: " * as_string(id);
   }

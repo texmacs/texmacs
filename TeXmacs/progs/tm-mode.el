@@ -29,7 +29,7 @@
     header-bar sequence short-bar short-tile minibar
     wrap-selection-any wrap-selection-small
     try-modification
-    tabs padded centered aligned bottom-buttons scrollable
+    tabs icon-tabs padded centered aligned bottom-buttons scrollable
     hlist vlist hsplit vsplit
     $begin $cond))
 
@@ -53,7 +53,7 @@
     logic-group logic-table logic-dispatcher
     with-aux with-action with-module with-cursor with-server
     user-ask
-    tab form item meti
+    tab icon-tab form item meti
     $when $let $let* $for
     tmfs-load-handler tmfs-save-handler
     tmfs-title-handler tmfs-permission-handler

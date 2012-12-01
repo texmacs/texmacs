@@ -98,6 +98,8 @@ wk_widget horizontal_array (array<wk_widget> a, int stretch_me= -1);
 wk_widget horizontal_array (array<wk_widget> a, array<string> s,
 			    int stretch_me= -1);
 wk_widget tabs_widget (array<wk_widget> tabs, array<wk_widget> bodies);
+wk_widget icon_tabs_widget (array<url> us, array<wk_widget> tabs,
+                            array<wk_widget> bodies);
 wk_widget switch_widget (array<wk_widget> a, array<string> name, int init= 0);
 wk_widget optional_widget (wk_widget w, bool on= true);
 wk_widget wrapped_widget (wk_widget w, command cmd);

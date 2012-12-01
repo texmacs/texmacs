@@ -456,6 +456,8 @@
   (widget-vlist vertical_list (widget array_widget))
   (widget-aligned aligned_widget (widget array_widget array_widget))
   (widget-tabs tabs_widget (widget array_widget array_widget))
+  (widget-icon-tabs icon_tabs_widget (widget array_url array_widget
+                                             array_widget))
   (widget-scrollable user_canvas_widget (widget widget int))
   (widget-resize resize_widget (widget widget int string string
                                        string string string string))
