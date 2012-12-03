@@ -87,7 +87,7 @@ aqua_set_color (color col) {
 }
 
 aqua_renderer_rep::aqua_renderer_rep (int w2, int h2) :
-  basic_renderer_rep(w2,h2), context(NULL)
+  basic_renderer_rep (5, w2, h2), context(NULL)
 {
 }
 
@@ -332,17 +332,17 @@ MyCreateBitmapContext (int pixelsWide, int pixelsHigh) {
 void
 aqua_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
 	// get the pixmap
-	basic_character xc (c, fng, sfactor, 0, 0);
+	basic_character xc (c, fng, shrinkf, 0, 0);
 	cg_image mi = character_image [xc];
 	if (is_nil(mi)) {
 		SI xo, yo;
 		glyph pre_gl= fng->get (c); if (is_nil (pre_gl)) return;
-		glyph gl= shrink (pre_gl, sfactor, sfactor, xo, yo);
+		glyph gl= shrink (pre_gl, shrinkf, shrinkf, xo, yo);
 		int i, j, w= gl->width, h= gl->height;
 		CGImageRef im = NULL;
 		{
 			CGContextRef ic = MyCreateBitmapContext(w,h);
-			int nr_cols= sfactor*sfactor;
+			int nr_cols= shrinkf*shrinkf;
 			if (nr_cols >= 64) nr_cols= 64;
 			//CGContextSetShouldAntialias(ic,true);
 			CGContextSetBlendMode(ic,kCGBlendModeCopy);
@@ -369,8 +369,8 @@ aqua_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
     CGContextRef cgc = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
 
 		(void) w; (void) h;
-		int x1= x- mi->xo*sfactor;
-		int y1=  y+ mi->yo*sfactor;
+		int x1= x- mi->xo*shrinkf;
+		int y1=  y+ mi->yo*shrinkf;
 		decode (x1, y1);
 		y1--; // top-left origin to bottom-left origin conversion
 		CGRect r = CGRectMake(x1,y1,mi->w,mi->h);
@@ -385,16 +385,16 @@ aqua_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
 #if 0
 void aqua_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
   // get the pixmap
-  basic_character xc (c, fng, sfactor, 0, 0);
+  basic_character xc (c, fng, shrinkf, 0, 0);
   cg_image mi = character_image [xc];
   if (is_nil(mi)) {
     // cout << "CACHING:" << c << "\n" ;
     SI xo, yo;
     glyph pre_gl= fng->get (c); if (is_nil (pre_gl)) return;
-    glyph gl= shrink (pre_gl, sfactor, sfactor, xo, yo);
+    glyph gl= shrink (pre_gl, shrinkf, shrinkf, xo, yo);
     int i, j, w= gl->width, h= gl->height;
     NSImage *im = [[NSImage alloc] initWithSize:NSMakeSize(w,h)];
-    int nr_cols= sfactor*sfactor;
+    int nr_cols= shrinkf*shrinkf;
     if (nr_cols >= 64) nr_cols= 64;
 
     [im lockFocus];
@@ -417,8 +417,8 @@ void aqua_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
   {
     CGContextRef cgc = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
     (void) w; (void) h;
-    int x1= x- mi->xo*sfactor;
-    int y1=  y+ mi->yo*sfactor;
+    int x1= x- mi->xo*shrinkf;
+    int y1=  y+ mi->yo*shrinkf;
     decode (x1, y1);
     y1--; // top-left origin to bottom-left origin conversion
     CGRect r = CGRectMake(x1,y1,mi->w,mi->h);
@@ -433,7 +433,7 @@ void aqua_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
   
   // draw the character
 //  draw_clipped (mi->img, mi->w, mi->h,
- //               x- mi->xo*sfactor, y+ mi->yo*sfactor);
+ //               x- mi->xo*shrinkf, y+ mi->yo*shrinkf);
 }
 #endif
 
@@ -547,7 +547,7 @@ void aqua_renderer_rep::xpm (url file_name, SI x, SI y) {
   ///name = [name stringByDeletingPathExtension];
   NSImage *image = xpm_image(file_name);
   
-  ASSERT (sfactor == 1, "shrinking factor should be 1");
+  ASSERT (shrinkf == 1, "shrinking factor should be 1");
   int w, h;
   NSSize imgSize = [image size];
   w = imgSize.width; h = imgSize.height;

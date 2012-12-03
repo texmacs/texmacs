@@ -202,7 +202,7 @@ void
 tex_rubber_font_rep::draw (renderer ren, int c, SI x, SI& y, SI& real_y) {
   ren->draw (c, pk, x, y);
   SI delta  = conv (tfm->h (c)+ tfm->d (c));
-  SI pixel  = PIXEL * ren->sfactor;
+  SI pixel  = ren->pixel;
   y        -= pixel * (delta/pixel);
   real_y   -= delta;
   while (y >= real_y + pixel) y -= pixel;

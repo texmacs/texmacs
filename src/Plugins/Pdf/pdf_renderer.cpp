@@ -130,6 +130,7 @@ pdf_renderer_rep::select_line_width (SI w) {
 pdf_renderer_rep::pdf_renderer_rep (
   url pdf_file_name2, int dpi2, int nr_pages2,
   string page_type2, bool landscape2, double paper_w2, double paper_h2):
+    renderer_rep (1),
     pdf_file_name (pdf_file_name2), dpi (dpi2),
     nr_pages (nr_pages2), page_type (page_type2),
     landscape (landscape2), paper_w (paper_w2), paper_h (paper_h2),

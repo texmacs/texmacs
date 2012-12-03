@@ -27,7 +27,7 @@ extern hashmap<tree,string> ps_bbox;
 ******************************************************************************/
 
 x_drawable_rep::x_drawable_rep (x_gui gui2, x_window_rep* x_win2):
-  gui (gui2), x_win (x_win2), w (0), h (0)
+  renderer_rep (5), gui (gui2), x_win (x_win2), w (0), h (0)
 {
   dpy         = gui->dpy;
   gc          = gui->gc;
@@ -36,7 +36,7 @@ x_drawable_rep::x_drawable_rep (x_gui gui2, x_window_rep* x_win2):
 }
 
 x_drawable_rep::x_drawable_rep (x_gui gui2, int w2, int h2):
-  gui (gui2), x_win (NULL), w (w2), h (h2)
+  renderer_rep (5), gui (gui2), x_win (NULL), w (w2), h (h2)
 {
   dpy         = gui->dpy;
   gc          = gui->gc;
@@ -348,7 +348,7 @@ x_drawable_rep::xpm (url file_name, SI x, SI y) {
   y -= pixel; // counter balance shift in draw_clipped
   if (!gui->xpm_pixmap->contains (as_string (file_name)))
     xpm_initialize (file_name);
-  ASSERT (sfactor == 1, "shrinking factor should be 1");
+  ASSERT (shrinkf == 1, "shrinking factor should be 1");
   int w, h;
   xpm_size (file_name, w, h);
   Pixmap bm= (Pixmap) gui->xpm_bitmap [as_string (file_name)];

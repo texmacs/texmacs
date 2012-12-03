@@ -35,16 +35,18 @@ class renderer_rep {
 public:
   SI  ox, oy;               // origin
   SI  cx1, cy1, cx2, cy2;   // visible region (clipping)
-  int sfactor;              // shrinking factor
-  int pixel;                // PIXEL*sfactor
-  int thicken;              // extra thinkening = (sfactor>>1)*PIXEL
+  int shrinkr;              // shrinking rate for anti-aliasing
+  double zoomf;             // zoom factor
+  int shrinkf;              // shrinking factor
+  int pixel;                // size of a pixel on the screen
+  int thicken;              // extra thinkening when anti-aliasing characters
   renderer master;          // master renderer in case of shadow renderers
   tree pattern;             // current background pattern
   int pattern_alpha;        // current background pattern transparency
   rectangles clip_stack;    // stack with clipping regions
 
 public:
-  renderer_rep ();
+  renderer_rep (int shrinkr);
   virtual ~renderer_rep ();
 
   /* routines for specific renderers */
@@ -59,7 +61,9 @@ public:
   /* basic routines */
   void set_origin (SI x, SI y);
   void move_origin (SI dx, SI dy);
-  void set_shrinking_factor (int sfactor);
+  void set_shrinking_rate (int sr);
+  void set_zoom_factor (double zoom);
+  void set_shrinking_factor (int sf);
   void round (SI& x, SI& y);
   void inner_round (SI& x1, SI& y1, SI& x2, SI& y2);
   void outer_round (SI& x1, SI& y1, SI& x2, SI& y2);

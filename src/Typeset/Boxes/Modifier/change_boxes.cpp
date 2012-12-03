@@ -296,7 +296,7 @@ cell_box_rep::pre_display (renderer& ren) {
   SI l= bl, r= br, b= bb, t= bt;
   SI lx1, rx1, by1, ty1;
   SI lx2, rx2, by2, ty2;
-  if (ren->sfactor > 1) { // correction for screen display only
+  if (ren->shrinkr > 1) { // correction for screen display only
     SI  pixel= ren->pixel;
     l= ((l + (pixel - 1)) / pixel) * pixel;
     r= ((r + (pixel - 1)) / pixel) * pixel;

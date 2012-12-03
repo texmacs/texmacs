@@ -18,9 +18,9 @@
 * Constructors
 ******************************************************************************/
 
-renderer_rep::renderer_rep ():
+renderer_rep::renderer_rep (int shr):
   ox (0), oy (0), cx1 (0), cy1 (0), cx2 (0), cy2 (0),
-  sfactor (1), pixel (PIXEL), thicken (0),
+  shrinkr (shr), zoomf (shr), shrinkf (1), pixel (PIXEL), thicken (0),
   master (NULL), pattern (UNINIT), pattern_alpha (255) {}
 
 renderer_rep::~renderer_rep () {}
@@ -95,16 +95,37 @@ renderer_rep::move_origin (SI dx, SI dy) {
 }
 
 void
+renderer_rep::set_shrinking_rate (int sr) {
+  shrinkf= (int) ::round (shrinkr / zoomf);
+  pixel  = (int) ::round ((shrinkr * PIXEL) / zoomf);
+  thicken= (shrinkf >> 1) * PIXEL;
+}
+
+void
+renderer_rep::set_zoom_factor (double zoom) {
+  if (shrinkf != ((int) ::round (shrinkr / zoomf)))
+    cout << "Invalid zoom " << zoomf << ", " << shrinkf << LF;
+  ox = (int) ::round (ox  * zoomf);
+  oy = (int) ::round (oy  * zoomf);
+  cx1= (int) ::round (cx1 * zoomf);
+  cx2= (int) ::round (cx2 * zoomf);
+  cy1= (int) ::round (cy1 * zoomf);
+  cy2= (int) ::round (cy2 * zoomf);
+  zoomf  = zoom;
+  shrinkf= (int) ::round (shrinkr / zoomf);
+  pixel  = (int) ::round ((shrinkr * PIXEL) / zoomf);
+  thicken= (shrinkf >> 1) * PIXEL;
+  ox = (int) ::round (ox  / zoomf);
+  oy = (int) ::round (oy  / zoomf);
+  cx1= (int) ::round (cx1 / zoomf);
+  cx2= (int) ::round (cx2 / zoomf);
+  cy1= (int) ::round (cy1 / zoomf);
+  cy2= (int) ::round (cy2 / zoomf);
+}
+
+void
 renderer_rep::set_shrinking_factor (int sf) {
-  ox  /= sfactor; oy  /= sfactor;
-  cx1 /= sfactor; cy1 /= sfactor;
-  cx2 /= sfactor; cy2 /= sfactor;
-  sfactor= sf;
-  pixel  = sf*PIXEL;
-  thicken= (sf>>1)*PIXEL;
-  ox  *= sfactor; oy  *= sfactor;
-  cx1 *= sfactor; cy1 *= sfactor;
-  cx2 *= sfactor; cy2 *= sfactor;
+  set_zoom_factor (((double) shrinkr) / ((double) sf));
 }
 
 /******************************************************************************
