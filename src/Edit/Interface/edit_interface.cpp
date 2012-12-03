@@ -49,8 +49,9 @@ edit_interface_rep::edit_interface_rep ():
   sh_s (""), sh_mark (0), pre_edit_s (""), pre_edit_mark (0),
   popup_win (),
   message_l (""), message_r (""), last_l (""), last_r (""),
-  sfactor (sv->get_default_shrinking_factor ()),
-  pixel (sfactor*PIXEL), copy_always (),
+  zoomf (5.0 / ((double) sv->get_default_shrinking_factor ())),
+  shrinkf ((int) ::round (5.0 / zoomf)),
+  pixel (::round ((5 * PIXEL) / zoomf)), copy_always (),
   last_x (0), last_y (0), last_t (0),
   made_selection (false), table_selection (false), mouse_adjusting(false),
   oc (0, 0), temp_invalid_cursor (false),
@@ -113,19 +114,25 @@ edit_interface_rep::get_pixel_size () {
 }
 
 void
-edit_interface_rep::set_shrinking_factor (int sf) {
-  if (sfactor != sf) {
-    sfactor= sf;
-    pixel  = sf*PIXEL;
-    init_env (SFACTOR, as_string (sf));
+edit_interface_rep::set_zoom_factor (double zoom) {
+  if (zoomf != zoom) {
+    zoomf   = zoom;
+    shrinkf = (int) ::round (5.0 / zoomf);
+    pixel   = (int) ::round ((5 * PIXEL) / zoomf);
+    init_env (SFACTOR, as_string (shrinkf));
     notify_change (THE_ENVIRONMENT);
   }
 }
 
 void
+edit_interface_rep::set_shrinking_factor (int sf) {
+  set_zoom_factor (5.0 / ((double) sf));
+}
+
+void
 edit_interface_rep::invalidate (SI x1, SI y1, SI x2, SI y2) {
-  send_invalidate (this, (x1-sfactor+1)/sfactor, (y1-sfactor+1)/sfactor,
-		         (x2+sfactor-1)/sfactor, (y2+sfactor-1)/sfactor);
+  send_invalidate (this, (x1-shrinkf+1)/shrinkf, (y1-shrinkf+1)/shrinkf,
+		         (x2+shrinkf-1)/shrinkf, (y2+shrinkf-1)/shrinkf);
 }
 
 void
@@ -140,7 +147,7 @@ edit_interface_rep::invalidate (rectangles rs) {
 void
 edit_interface_rep::update_visible () {
   SERVER (get_visible (vx1, vy1, vx2, vy2));
-  vx1 *= sfactor; vy1 *= sfactor; vx2 *= sfactor; vy2 *= sfactor;
+  vx1 *= shrinkf; vy1 *= shrinkf; vx2 *= shrinkf; vy2 *= shrinkf;
 }
 
 SI
@@ -153,15 +160,15 @@ void
 edit_interface_rep::scroll_to (SI x, SI y) {
   stored_rects= rectangles ();
   copy_always = rectangles ();
-  SERVER (scroll_to (x/sfactor, y/sfactor));
+  SERVER (scroll_to (x/shrinkf, y/shrinkf));
 }
 
 void
 edit_interface_rep::set_extents (SI x1, SI y1, SI x2, SI y2) {
   stored_rects= rectangles ();
   copy_always = rectangles ();
-  SERVER (set_extents ((x1-sfactor+1)/sfactor, (y1-sfactor+1)/sfactor,
-		       (x2+sfactor-1)/sfactor, (y2+sfactor-1)/sfactor));
+  SERVER (set_extents ((x1-shrinkf+1)/shrinkf, (y1-shrinkf+1)/shrinkf,
+		       (x2+shrinkf-1)/shrinkf, (y2+shrinkf-1)/shrinkf));
 }
 
 /******************************************************************************
@@ -438,8 +445,8 @@ edit_interface_rep::apply_changes () {
 #endif
       if (wx != cur_wx || wy != cur_wy) {
 	cur_wx= wx; cur_wy= wy;
-	init_env (PAGE_SCREEN_WIDTH, as_string (wx*sfactor) * "tmpt");
-	init_env (PAGE_SCREEN_HEIGHT, as_string (wy*sfactor) * "tmpt");
+	init_env (PAGE_SCREEN_WIDTH, as_string (wx*shrinkf) * "tmpt");
+	init_env (PAGE_SCREEN_HEIGHT, as_string (wy*shrinkf) * "tmpt");
 	notify_change (THE_ENVIRONMENT);
       }
     }
@@ -532,7 +539,7 @@ edit_interface_rep::apply_changes () {
     oc= copy (cu);
    
     // set hot spot in the gui
-    send_cursor (this, (cu->ox-sfactor+1)/sfactor, (cu->oy-sfactor+1)/sfactor);
+    send_cursor (this, (cu->ox-shrinkf+1)/shrinkf, (cu->oy-shrinkf+1)/shrinkf);
 
     path sp= selection_get_cursor_path ();
     bool semantic_flag= semantic_active (path_up (sp));

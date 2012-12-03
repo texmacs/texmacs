@@ -41,8 +41,9 @@ protected:
   tree          message_r;     // a right message to display
   tree          last_l;        // last displayed left message
   tree          last_r;        // last displayed right message
-  int           sfactor;       // the current shrinking factor
-  SI            pixel;         // sfactor*PIXEL
+  double        zoomf;         // the current zoom factor
+  int           shrinkf;       // the current shrinking factor
+  SI            pixel;         // current size of a pixel on the screen
   rectangles    copy_always;   // for wiping out cursor
   int           input_mode;    // INPUT_NORMAL, INPUT_SEARCH, INPUT_REPLACE
 
@@ -84,6 +85,7 @@ public:
 
   /* routines for dealing with shrinked coordinates */
   int  get_pixel_size ();
+  void set_zoom_factor (double zoom);
   void set_shrinking_factor (int sf);
   void invalidate (SI x1, SI y1, SI x2, SI y2);
   void invalidate (rectangles rs);

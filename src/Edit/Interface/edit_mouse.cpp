@@ -160,7 +160,7 @@ edit_interface_rep::mouse_paste (SI x, SI y) { (void) x; (void) y;
 void
 edit_interface_rep::mouse_adjust (SI x, SI y) {
   if (eb->action ("adjust", x, y, 0) != "") return;
-  x /= sfactor; y /= sfactor;
+  x /= shrinkf; y /= shrinkf;
   abs_round (x, y);
   if (is_nil (popup_win)) {
     SI wx, wy;
@@ -495,19 +495,19 @@ void
 edit_interface_rep::handle_mouse (string kind, SI x, SI y, int m, time_t t) {
   if (is_nil (eb)) apply_changes ();
   start_editing ();
-  x *= sfactor;
-  y *= sfactor;
+  x *= shrinkf;
+  y *= shrinkf;
   //cout << kind << " (" << x << ", " << y << "; " << m << ")"
   //     << " at " << t << "\n";
 
   string rew= kind;
-  rew= detect_left_drag ((void*) this, rew, x, y, t, 5 * PIXEL * sfactor);
+  rew= detect_left_drag ((void*) this, rew, x, y, t, 5 * PIXEL * shrinkf);
   if (rew == "start-drag-left") {
     call_mouse_event (rew, left_x, left_y, m, t);
     delayed_call_mouse_event ("dragging-left", x, y, m, t);
   }
   else {
-    rew= detect_right_drag ((void*) this, rew, x, y, t, 5 * PIXEL * sfactor);
+    rew= detect_right_drag ((void*) this, rew, x, y, t, 5 * PIXEL * shrinkf);
     if (rew == "start-drag-right") {
       call_mouse_event (rew, right_x, right_y, m, t);
       delayed_call_mouse_event ("dragging-right", x, y, m, t);
