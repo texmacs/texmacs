@@ -48,8 +48,8 @@ public:
   void side_tools (int which, string menu);
 
   /* canvas */
-  void set_zoom_factor (double zoom);
-  double get_zoom_factor ();
+  void set_window_zoom_factor (double zoom);
+  double get_window_zoom_factor ();
   void set_scrollbars (int sb);
   void get_visible (SI& x1, SI& y1, SI& x2, SI& y2);
   void scroll_where (SI& x, SI& y);

@@ -62,8 +62,8 @@ public:
   virtual void menu_icons (int which, string menu) = 0;
   virtual void side_tools (int which, string menu) = 0;
 
-  virtual void set_zoom_factor (double zoom) = 0;
-  virtual double get_zoom_factor () = 0;
+  virtual void set_window_zoom_factor (double zoom) = 0;
+  virtual double get_window_zoom_factor () = 0;
   virtual void set_scrollbars (int sb) = 0;
   virtual void get_visible (SI& x1, SI& y1, SI& x2, SI& y2) = 0;
   virtual void scroll_where (SI& x, SI& y) = 0;

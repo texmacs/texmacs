@@ -362,13 +362,13 @@ tm_window_rep::get_side_tools_flag (int which) {
 ******************************************************************************/
 
 void
-tm_window_rep::set_zoom_factor (double zoom) {
+tm_window_rep::set_window_zoom_factor (double zoom) {
   zoomf= zoom;
   ::set_zoom_factor (wid, zoom);
 }
 
 double
-tm_window_rep::get_zoom_factor () {
+tm_window_rep::get_window_zoom_factor () {
   return zoomf;
 }
 

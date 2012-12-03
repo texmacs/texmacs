@@ -38,8 +38,8 @@
   (full-screen-mode full_screen_mode (void bool bool))
   (full-screen? in_full_screen_mode (bool))
   (full-screen-edit? in_full_screen_edit_mode (bool))
-  (set-zoom-factor set_zoom_factor (void double))
-  (get-zoom-factor get_zoom_factor (double))
+  (set-window-zoom-factor set_window_zoom_factor (void double))
+  (get-window-zoom-factor get_window_zoom_factor (double))
 
   (shell shell (void string))
   (dialogue-end dialogue_end (void))

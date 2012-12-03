@@ -169,16 +169,16 @@ tm_frame_rep::visible_footer () {
 }
 
 void
-tm_frame_rep::set_zoom_factor (double zoom) {
+tm_frame_rep::set_window_zoom_factor (double zoom) {
   if (!has_current_view ()) return;
   if (zoom >= 10.0) zoom= 10.0;
   if (zoom <=  0.1) zoom=  0.1;
-  concrete_window () -> set_zoom_factor (zoom);
+  concrete_window () -> set_window_zoom_factor (zoom);
 }
 
 double
-tm_frame_rep::get_zoom_factor () {
-  return concrete_window () -> get_zoom_factor ();
+tm_frame_rep::get_window_zoom_factor () {
+  return concrete_window () -> get_window_zoom_factor ();
 }
 
 /******************************************************************************

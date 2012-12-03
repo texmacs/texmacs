@@ -272,22 +272,22 @@ tmg_full_screen_editP () {
 }
 
 tmscm
-tmg_set_zoom_factor (tmscm arg1) {
-  TMSCM_ASSERT_DOUBLE (arg1, TMSCM_ARG1, "set-zoom-factor");
+tmg_set_window_zoom_factor (tmscm arg1) {
+  TMSCM_ASSERT_DOUBLE (arg1, TMSCM_ARG1, "set-window-zoom-factor");
 
   double in1= tmscm_to_double (arg1);
 
   // TMSCM_DEFER_INTS;
-  get_server()->set_zoom_factor (in1);
+  get_server()->set_window_zoom_factor (in1);
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;
 }
 
 tmscm
-tmg_get_zoom_factor () {
+tmg_get_window_zoom_factor () {
   // TMSCM_DEFER_INTS;
-  double out= get_server()->get_zoom_factor ();
+  double out= get_server()->get_window_zoom_factor ();
   // TMSCM_ALLOW_INTS;
 
   return double_to_tmscm (out);
@@ -564,8 +564,8 @@ initialize_glue_server () {
   tmscm_install_procedure ("full-screen-mode",  tmg_full_screen_mode, 2, 0, 0);
   tmscm_install_procedure ("full-screen?",  tmg_full_screenP, 0, 0, 0);
   tmscm_install_procedure ("full-screen-edit?",  tmg_full_screen_editP, 0, 0, 0);
-  tmscm_install_procedure ("set-zoom-factor",  tmg_set_zoom_factor, 1, 0, 0);
-  tmscm_install_procedure ("get-zoom-factor",  tmg_get_zoom_factor, 0, 0, 0);
+  tmscm_install_procedure ("set-window-zoom-factor",  tmg_set_window_zoom_factor, 1, 0, 0);
+  tmscm_install_procedure ("get-window-zoom-factor",  tmg_get_window_zoom_factor, 0, 0, 0);
   tmscm_install_procedure ("shell",  tmg_shell, 1, 0, 0);
   tmscm_install_procedure ("dialogue-end",  tmg_dialogue_end, 0, 0, 0);
   tmscm_install_procedure ("choose-file",  tmg_choose_file, 3, 0, 0);

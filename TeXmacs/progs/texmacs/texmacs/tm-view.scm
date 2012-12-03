@@ -44,7 +44,7 @@
   (with z (string->number val)
     (set! z (max (min z 10.0) 0.1))
     (set-default-zoom-factor z)
-    (set-zoom-factor z)))
+    (set-window-zoom-factor z)))
 
 (define (notify-remote-control var val)
   (ahash-set! remote-control-remap val var))
@@ -123,14 +123,14 @@
   (set! remote-control-flag? (not remote-control-flag?)))
 
 (define (test-zoom-factor? z)
-  (<= (abs (- (get-zoom-factor) (eval z))) 0.001))
+  (<= (abs (- (get-window-zoom-factor) (eval z))) 0.001))
 
 (tm-define (change-zoom-factor z)
   (:check-mark "*" test-zoom-factor?)
   (set! z (max (min z 10.0) 0.1))
   (if (== (windows-number) 1)
       (set-preference "zoom factor" (number->string z))
-      (set-zoom-factor z)))
+      (set-window-zoom-factor z)))
 
 (tm-define (other-zoom-factor s)
   (:argument s "Zoom factor")
