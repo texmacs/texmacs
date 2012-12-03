@@ -77,8 +77,9 @@ public:
   color cur_fg, cur_bg;
 
 public:
-  basic_renderer_rep (int shr, int w2 = 0, int h2 = 0):
-    renderer_rep (shr), w (w2), h (h2), cur_fg(black), cur_bg(white) {};
+  basic_renderer_rep (bool screen_flag, int w2 = 0, int h2 = 0):
+    renderer_rep (screen_flag),
+    w (w2), h (h2), cur_fg(black), cur_bg(white) {};
   virtual ~basic_renderer_rep () {};
   
   virtual void get_extents (int& w, int& h);

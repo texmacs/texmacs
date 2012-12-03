@@ -87,7 +87,7 @@ aqua_set_color (color col) {
 }
 
 aqua_renderer_rep::aqua_renderer_rep (int w2, int h2) :
-  basic_renderer_rep (5, w2, h2), context(NULL)
+  basic_renderer_rep (true, w2, h2), context(NULL)
 {
 }
 

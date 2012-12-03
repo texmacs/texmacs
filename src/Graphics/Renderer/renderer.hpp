@@ -30,12 +30,13 @@ typedef renderer_rep* renderer;
 class x_drawable_rep;
 class rectangle;
 typedef list<rectangle> rectangles;
+extern int std_shrinkf;
 
 class renderer_rep {
 public:
   SI  ox, oy;               // origin
   SI  cx1, cy1, cx2, cy2;   // visible region (clipping)
-  int shrinkr;              // shrinking rate for anti-aliasing
+  bool is_screen;           // flag for renderers on screen
   double zoomf;             // zoom factor
   int shrinkf;              // shrinking factor
   int pixel;                // size of a pixel on the screen
@@ -46,7 +47,7 @@ public:
   rectangles clip_stack;    // stack with clipping regions
 
 public:
-  renderer_rep (int shrinkr);
+  renderer_rep (bool screen_flag);
   virtual ~renderer_rep ();
 
   /* routines for specific renderers */

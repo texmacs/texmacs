@@ -14,13 +14,16 @@
 #include "rectangles.hpp"
 #include "image_files.hpp"
 
+int std_shrinkf= 5;
+
 /******************************************************************************
 * Constructors
 ******************************************************************************/
 
-renderer_rep::renderer_rep (int shr):
+renderer_rep::renderer_rep (bool screen_flag):
   ox (0), oy (0), cx1 (0), cy1 (0), cx2 (0), cy2 (0),
-  shrinkr (shr), zoomf (shr), shrinkf (1), pixel (PIXEL), thicken (0),
+  is_screen (screen_flag),
+  zoomf (std_shrinkf), shrinkf (1), pixel (PIXEL), thicken (0),
   master (NULL), pattern (UNINIT), pattern_alpha (255) {}
 
 renderer_rep::~renderer_rep () {}
@@ -96,14 +99,14 @@ renderer_rep::move_origin (SI dx, SI dy) {
 
 void
 renderer_rep::set_shrinking_rate (int sr) {
-  shrinkf= (int) ::round (shrinkr / zoomf);
-  pixel  = (int) ::round ((shrinkr * PIXEL) / zoomf);
+  shrinkf= (int) ::round (std_shrinkf / zoomf);
+  pixel  = (int) ::round ((std_shrinkf * PIXEL) / zoomf);
   thicken= (shrinkf >> 1) * PIXEL;
 }
 
 void
 renderer_rep::set_zoom_factor (double zoom) {
-  if (shrinkf != ((int) ::round (shrinkr / zoomf)))
+  if (shrinkf != ((int) ::round (std_shrinkf / zoomf)))
     cout << "Invalid zoom " << zoomf << ", " << shrinkf << LF;
   ox = (int) ::round (ox  * zoomf);
   oy = (int) ::round (oy  * zoomf);
@@ -112,8 +115,8 @@ renderer_rep::set_zoom_factor (double zoom) {
   cy1= (int) ::round (cy1 * zoomf);
   cy2= (int) ::round (cy2 * zoomf);
   zoomf  = zoom;
-  shrinkf= (int) ::round (shrinkr / zoomf);
-  pixel  = (int) ::round ((shrinkr * PIXEL) / zoomf);
+  shrinkf= (int) ::round (std_shrinkf / zoomf);
+  pixel  = (int) ::round ((std_shrinkf * PIXEL) / zoomf);
   thicken= (shrinkf >> 1) * PIXEL;
   ox = (int) ::round (ox  / zoomf);
   oy = (int) ::round (oy  / zoomf);
@@ -125,7 +128,7 @@ renderer_rep::set_zoom_factor (double zoom) {
 
 void
 renderer_rep::set_shrinking_factor (int sf) {
-  set_zoom_factor (((double) shrinkr) / ((double) sf));
+  set_zoom_factor (((double) std_shrinkf) / ((double) sf));
 }
 
 /******************************************************************************

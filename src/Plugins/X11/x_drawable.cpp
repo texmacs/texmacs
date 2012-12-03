@@ -27,7 +27,7 @@ extern hashmap<tree,string> ps_bbox;
 ******************************************************************************/
 
 x_drawable_rep::x_drawable_rep (x_gui gui2, x_window_rep* x_win2):
-  renderer_rep (5), gui (gui2), x_win (x_win2), w (0), h (0)
+  renderer_rep (true), gui (gui2), x_win (x_win2), w (0), h (0)
 {
   dpy         = gui->dpy;
   gc          = gui->gc;
@@ -36,7 +36,7 @@ x_drawable_rep::x_drawable_rep (x_gui gui2, x_window_rep* x_win2):
 }
 
 x_drawable_rep::x_drawable_rep (x_gui gui2, int w2, int h2):
-  renderer_rep (5), gui (gui2), x_win (NULL), w (w2), h (h2)
+  renderer_rep (true), gui (gui2), x_win (NULL), w (w2), h (h2)
 {
   dpy         = gui->dpy;
   gc          = gui->gc;

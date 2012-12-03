@@ -82,7 +82,7 @@ static hashmap<string,qt_pixmap> images;
 ******************************************************************************/
 
 qt_renderer_rep::qt_renderer_rep (QPainter *_painter, int w2, int h2):
-  basic_renderer_rep (5, w2, h2), painter(_painter) {}
+  basic_renderer_rep (true, w2, h2), painter(_painter) {}
 
 qt_renderer_rep::~qt_renderer_rep () {}
 

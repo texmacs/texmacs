@@ -64,7 +64,7 @@ cg_set_color (CGContextRef cxt, color col) {
 }
 
 cg_renderer_rep::cg_renderer_rep (int w2, int h2):
-  basic_renderer_rep (5, w2, h2), context(NULL) {
+  basic_renderer_rep (true, w2, h2), context (NULL) {
 }
 
 cg_renderer_rep::~cg_renderer_rep () {
