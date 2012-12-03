@@ -91,14 +91,15 @@ tree_extents (tree doc) {
 ******************************************************************************/
 
 class box_widget_rep: public simple_widget_rep {
-  box   b;
-  color bg;
-  bool  transparent;
-  int   sf;
-  int   dw, dh;
+  box    b;
+  color  bg;
+  bool   transparent;
+  double zoomf;
+  double magf;
+  int    dw, dh;
 
 public:
-  box_widget_rep (box b, color bg, bool trans, int sf, int dw, int dh);
+  box_widget_rep (box b, color bg, bool trans, double zoom, int dw, int dh);
   operator tree ();
 
   void handle_get_size_hint (SI& w, SI& h);
@@ -106,9 +107,10 @@ public:
 };
 
 box_widget_rep::box_widget_rep
-  (box b2, color bg2, bool trans2, int sf2, int dw2, int dh2):
+  (box b2, color bg2, bool trans2, double zoom, int dw2, int dh2):
     simple_widget_rep (), b (b2),
-    bg (bg2), transparent (trans2), sf (sf2),
+    bg (bg2), transparent (trans2),
+    zoomf (zoom), magf (zoom / std_shrinkf),
     dw (dw2+2*PIXEL), dh (dh2+2*PIXEL) {}
 
 box_widget_rep::operator tree () {
@@ -119,8 +121,8 @@ void
 box_widget_rep::handle_get_size_hint (SI& w, SI& h) {
   SI X1= b->x1, Y1= b->y1;
   SI X2= b->x2, Y2= b->y2;
-  w = ((X2- X1+ sf- 1)/sf)+ 2*dw;
-  h = ((Y2- Y1+ sf- 1)/sf)+ 2*dh;
+  w = ((SI) ceil ((X2- X1) * magf)) + 2*dw;
+  h = ((SI) ceil ((Y2- Y1) * magf)) + 2*dh;
   abs_round (w, h);
 }
 
@@ -134,12 +136,12 @@ box_widget_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2) {
     ren->set_color (bg);
     ren->fill (x1, y1, x2, y2);
   }
-  ren->set_shrinking_factor (sf);
+  ren->set_zoom_factor (zoomf);
   rectangles l (rectangle (0, 0, w, h));
-  SI x= ((sf*w-b->w())>>1) - b->x1;
-  SI y= ((sf*h-b->h())>>1) - b->y1 - sf*h;
+  SI x= ((((SI) (w / magf)) - b->w()) >> 1) - b->x1;
+  SI y= ((((SI) (h / magf)) - b->h()) >> 1) - b->y1 - ((SI) (h / magf));
   b->redraw (ren, path(), l, x, y);
-  ren->set_shrinking_factor (1);
+  ren->reset_zoom_factor ();
 }
 
 /******************************************************************************
@@ -149,7 +151,7 @@ box_widget_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2) {
 widget
 box_widget (box b, bool tr) {
   color col= light_grey;
-  return widget (tm_new<box_widget_rep> (b, col, tr, 6, 3*PIXEL, 3*PIXEL));
+  return widget (tm_new<box_widget_rep> (b, col, tr, 5/6.0, 3*PIXEL, 3*PIXEL));
 }
 
 widget
@@ -193,5 +195,5 @@ texmacs_output_widget (tree doc, tree style) {
   //SI dh2= env->get_length (PAGE_SCREEN_TOP);
   color col= light_grey;
   
-  return widget (tm_new<box_widget_rep> (b, col, false, 5, 0, 0));
+  return widget (tm_new<box_widget_rep> (b, col, false, 1.0, 0, 0));
 }

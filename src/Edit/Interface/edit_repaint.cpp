@@ -190,15 +190,15 @@ edit_interface_rep::draw_pre (renderer ren, rectangle r) {
 void
 edit_interface_rep::draw_post (renderer ren, rectangle r) {
   renderer win= get_renderer (this);
-  win->set_shrinking_factor (shrinkf);
-  ren->set_shrinking_factor (shrinkf);
+  win->set_zoom_factor (zoomf);
+  ren->set_zoom_factor (zoomf);
   draw_context (ren, r);
   draw_env (ren);
   draw_selection (ren);
   draw_graphics (ren);
   draw_cursor (ren); // the text cursor must be drawn over the graphical object
-  ren->set_shrinking_factor (1);
-  win->set_shrinking_factor (1);
+  ren->reset_zoom_factor ();
+  win->reset_zoom_factor ();
 }
 
 void
@@ -210,15 +210,15 @@ edit_interface_rep::draw_with_shadow (rectangle r) {
   renderer ren= shadow;
 
   rectangles l;
-  win->set_shrinking_factor (shrinkf);
-  ren->set_shrinking_factor (shrinkf);
+  win->set_zoom_factor (zoomf);
+  ren->set_zoom_factor (zoomf);
   draw_pre (ren, r);
   draw_text (ren, l);
-  ren->set_shrinking_factor (1);
-  win->set_shrinking_factor (1);
+  ren->reset_zoom_factor ();
+  win->reset_zoom_factor ();
 
   if (ren->interrupted ()) {
-    ren->set_shrinking_factor (shrinkf);
+    ren->set_zoom_factor (zoomf);
     l= l & rectangles (translate (r, ren->ox, ren->oy));
     simplify (l);
     copy_always= translate (copy_always, ren->ox, ren->oy);
@@ -226,7 +226,7 @@ edit_interface_rep::draw_with_shadow (rectangle r) {
       l= rectangles (copy_always->item, l);
       copy_always= copy_always->next;
     }
-    ren->set_shrinking_factor (1);
+    ren->reset_zoom_factor ();
 
     draw_post (ren, r);
     while (!is_nil(l)) {
@@ -295,13 +295,13 @@ void
 edit_interface_rep::handle_clear (SI x1, SI y1, SI x2, SI y2) {
   renderer win= get_renderer (this);
   x1 *= shrinkf; y1 *= shrinkf; x2 *= shrinkf; y2 *= shrinkf;
-  win->set_shrinking_factor (shrinkf);
+  win->set_zoom_factor (zoomf);
   tree bg= get_init_value (BG_COLOR);
   win->set_background_pattern (bg);
   win->clear_pattern (max (eb->x1, x1), max (eb->y1, y1),
 		      min (eb->x2, x2), min (eb->y2, y2));
   draw_surround (win, rectangle (x1, y1, x2, y2));
-  win->set_shrinking_factor (1);
+  win->reset_zoom_factor ();
 }
 
 void

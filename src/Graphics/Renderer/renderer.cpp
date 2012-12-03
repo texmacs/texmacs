@@ -120,6 +120,11 @@ renderer_rep::set_zoom_factor (double zoom) {
 }
 
 void
+renderer_rep::reset_zoom_factor () {
+  set_zoom_factor (std_shrinkf);
+}
+
+void
 renderer_rep::set_shrinking_factor (int sf) {
   set_zoom_factor (((double) std_shrinkf) / ((double) sf));
 }

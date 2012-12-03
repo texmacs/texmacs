@@ -63,6 +63,7 @@ public:
   void set_origin (SI x, SI y);
   void move_origin (SI dx, SI dy);
   void set_zoom_factor (double zoom);
+  void reset_zoom_factor ();
   void set_shrinking_factor (int sf);
   void round (SI& x, SI& y);
   void inner_round (SI& x1, SI& y1, SI& x2, SI& y2);
