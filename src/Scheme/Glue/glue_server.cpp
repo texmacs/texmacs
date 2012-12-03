@@ -272,25 +272,25 @@ tmg_full_screen_editP () {
 }
 
 tmscm
-tmg_set_shrinking_factor (tmscm arg1) {
-  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "set-shrinking-factor");
+tmg_set_zoom_factor (tmscm arg1) {
+  TMSCM_ASSERT_DOUBLE (arg1, TMSCM_ARG1, "set-zoom-factor");
 
-  int in1= tmscm_to_int (arg1);
+  double in1= tmscm_to_double (arg1);
 
   // TMSCM_DEFER_INTS;
-  get_server()->set_shrinking_factor (in1);
+  get_server()->set_zoom_factor (in1);
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;
 }
 
 tmscm
-tmg_get_shrinking_factor () {
+tmg_get_zoom_factor () {
   // TMSCM_DEFER_INTS;
-  int out= get_server()->get_shrinking_factor ();
+  double out= get_server()->get_zoom_factor ();
   // TMSCM_ALLOW_INTS;
 
-  return int_to_tmscm (out);
+  return double_to_tmscm (out);
 }
 
 tmscm
@@ -418,25 +418,25 @@ tmg_set_printer_dpi (tmscm arg1) {
 }
 
 tmscm
-tmg_set_default_shrinking_factor (tmscm arg1) {
-  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "set-default-shrinking-factor");
+tmg_set_default_zoom_factor (tmscm arg1) {
+  TMSCM_ASSERT_DOUBLE (arg1, TMSCM_ARG1, "set-default-zoom-factor");
 
-  int in1= tmscm_to_int (arg1);
+  double in1= tmscm_to_double (arg1);
 
   // TMSCM_DEFER_INTS;
-  get_server()->set_default_shrinking_factor (in1);
+  get_server()->set_default_zoom_factor (in1);
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;
 }
 
 tmscm
-tmg_get_default_shrinking_factor () {
+tmg_get_default_zoom_factor () {
   // TMSCM_DEFER_INTS;
-  int out= get_server()->get_default_shrinking_factor ();
+  double out= get_server()->get_default_zoom_factor ();
   // TMSCM_ALLOW_INTS;
 
-  return int_to_tmscm (out);
+  return double_to_tmscm (out);
 }
 
 tmscm
@@ -564,8 +564,8 @@ initialize_glue_server () {
   tmscm_install_procedure ("full-screen-mode",  tmg_full_screen_mode, 2, 0, 0);
   tmscm_install_procedure ("full-screen?",  tmg_full_screenP, 0, 0, 0);
   tmscm_install_procedure ("full-screen-edit?",  tmg_full_screen_editP, 0, 0, 0);
-  tmscm_install_procedure ("set-shrinking-factor",  tmg_set_shrinking_factor, 1, 0, 0);
-  tmscm_install_procedure ("get-shrinking-factor",  tmg_get_shrinking_factor, 0, 0, 0);
+  tmscm_install_procedure ("set-zoom-factor",  tmg_set_zoom_factor, 1, 0, 0);
+  tmscm_install_procedure ("get-zoom-factor",  tmg_get_zoom_factor, 0, 0, 0);
   tmscm_install_procedure ("shell",  tmg_shell, 1, 0, 0);
   tmscm_install_procedure ("dialogue-end",  tmg_dialogue_end, 0, 0, 0);
   tmscm_install_procedure ("choose-file",  tmg_choose_file, 3, 0, 0);
@@ -576,8 +576,8 @@ initialize_glue_server () {
   tmscm_install_procedure ("set-printer-paper-type",  tmg_set_printer_paper_type, 1, 0, 0);
   tmscm_install_procedure ("get-printer-paper-type",  tmg_get_printer_paper_type, 0, 0, 0);
   tmscm_install_procedure ("set-printer-dpi",  tmg_set_printer_dpi, 1, 0, 0);
-  tmscm_install_procedure ("set-default-shrinking-factor",  tmg_set_default_shrinking_factor, 1, 0, 0);
-  tmscm_install_procedure ("get-default-shrinking-factor",  tmg_get_default_shrinking_factor, 0, 0, 0);
+  tmscm_install_procedure ("set-default-zoom-factor",  tmg_set_default_zoom_factor, 1, 0, 0);
+  tmscm_install_procedure ("get-default-zoom-factor",  tmg_get_default_zoom_factor, 0, 0, 0);
   tmscm_install_procedure ("image-gc",  tmg_image_gc, 0, 0, 0);
   tmscm_install_procedure ("inclusions-gc",  tmg_inclusions_gc, 0, 0, 0);
   tmscm_install_procedure ("update-all-path",  tmg_update_all_path, 1, 0, 0);

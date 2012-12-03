@@ -103,7 +103,7 @@ tm_window_rep::tm_window_rep (widget wid2, tree geom):
   menu_current (object ()), menu_cache (widget ()),
   text_ptr (NULL)
 {
-  sfactor= get_server () -> get_default_shrinking_factor ();
+  zoomf= get_server () -> get_default_zoom_factor ();
 }
 
 tm_window_rep::tm_window_rep (tree doc, command quit):
@@ -113,7 +113,7 @@ tm_window_rep::tm_window_rep (tree doc, command quit):
   menu_current (object ()), menu_cache (widget ()),
   text_ptr (NULL)
 {
-  sfactor= get_server () -> get_default_shrinking_factor ();
+  zoomf= get_server () -> get_default_zoom_factor ();
 }
 
 tm_window_rep::~tm_window_rep () {
@@ -362,14 +362,14 @@ tm_window_rep::get_side_tools_flag (int which) {
 ******************************************************************************/
 
 void
-tm_window_rep::set_shrinking_factor (int sf) {
-  sfactor= sf;
-  ::set_shrinking_factor (wid, sf);
+tm_window_rep::set_zoom_factor (double zoom) {
+  zoomf= zoom;
+  ::set_shrinking_factor (wid, (int) ::round (std_shrinkf / zoom));
 }
 
-int
-tm_window_rep::get_shrinking_factor () {
-  return sfactor;
+double
+tm_window_rep::get_zoom_factor () {
+  return zoomf;
 }
 
 void

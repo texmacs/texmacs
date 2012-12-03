@@ -23,7 +23,7 @@ public:
 public:
   hashmap<tree,tree> props;
   int                serial;
-  int                sfactor;       // the shrinking factor
+  double             zoomf;       // the zoom factor
 
 protected:
   hashmap<int,object>    menu_current;
@@ -56,8 +56,8 @@ public:
   bool get_icon_bar_flag (int which);
   bool get_side_tools_flag (int which);
 
-  int  get_shrinking_factor ();
-  void set_shrinking_factor (int sf);
+  double get_zoom_factor ();
+  void set_zoom_factor (double zoom);
   void get_visible (SI& x1, SI& y1, SI& x2, SI& y2);
   void get_extents (SI& x1, SI& y1, SI& x2, SI& y2);
   void set_extents (SI x1, SI y1, SI x2, SI y2);

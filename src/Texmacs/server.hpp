@@ -62,8 +62,8 @@ public:
   virtual void menu_icons (int which, string menu) = 0;
   virtual void side_tools (int which, string menu) = 0;
 
-  virtual void set_shrinking_factor (int sf) = 0;
-  virtual int  get_shrinking_factor () = 0;
+  virtual void set_zoom_factor (double zoom) = 0;
+  virtual double get_zoom_factor () = 0;
   virtual void set_scrollbars (int sb) = 0;
   virtual void get_visible (SI& x1, SI& y1, SI& x2, SI& y2) = 0;
   virtual void scroll_where (SI& x, SI& y) = 0;
@@ -96,8 +96,8 @@ public:
   virtual void   set_printer_page_type (string s) = 0;
   virtual string get_printer_page_type () = 0;
   virtual void   set_printer_dpi (string dpi) = 0;
-  virtual void   set_default_shrinking_factor (int sf) = 0;
-  virtual int    get_default_shrinking_factor () = 0;
+  virtual void   set_default_zoom_factor (double zoom) = 0;
+  virtual double get_default_zoom_factor () = 0;
   virtual void   image_gc (string which= "*") = 0;
   virtual void   inclusions_gc (string which= "*") = 0;
   virtual void   typeset_update (path p) = 0;

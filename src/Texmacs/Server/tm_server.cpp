@@ -80,7 +80,7 @@ gui_set_output_language (string lan) {
 server_rep::server_rep () {}
 server_rep::~server_rep () {}
 
-tm_server_rep::tm_server_rep (): def_sfactor (5) {
+tm_server_rep::tm_server_rep (): def_zoomf (1.0) {
   the_server= tm_new<server> (this);
   initialize_scheme ();
   gui_interpose (texmacs_interpose_handler);
@@ -191,13 +191,15 @@ tm_server_rep::set_printer_dpi (string dpi) {
 }
 
 void
-tm_server_rep::set_default_shrinking_factor (int sf) {
-  def_sfactor= sf;
+tm_server_rep::set_default_zoom_factor (double zoom) {
+  if (zoom >= 10.0) zoom= 10.0;
+  if (zoom <=  0.1) zoom=  0.1;
+  def_zoomf= zoom;
 }
 
-int
-tm_server_rep::get_default_shrinking_factor () {
-  return def_sfactor;
+double
+tm_server_rep::get_default_zoom_factor () {
+  return def_zoomf;
 }
 
 void

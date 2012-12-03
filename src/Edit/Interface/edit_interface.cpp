@@ -49,7 +49,7 @@ edit_interface_rep::edit_interface_rep ():
   sh_s (""), sh_mark (0), pre_edit_s (""), pre_edit_mark (0),
   popup_win (),
   message_l (""), message_r (""), last_l (""), last_r (""),
-  zoomf (std_shrinkf / ((double) sv->get_default_shrinking_factor ())),
+  zoomf (sv->get_default_zoom_factor ()),
   shrinkf ((int) ::round (std_shrinkf / zoomf)),
   pixel (::round ((std_shrinkf * PIXEL) / zoomf)), copy_always (),
   last_x (0), last_y (0), last_t (0),

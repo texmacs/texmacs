@@ -39,13 +39,13 @@
   ("Presentation mode" (toggle-full-screen-mode))
   ("Remote control" (toggle-remote-control-mode))
   ---
-  (-> "Shrinking factor"
-      ("1" (change-shrinking-factor 1))
-      ("2" (change-shrinking-factor 2))
-      ("3" (change-shrinking-factor 3))
-      ("4" (change-shrinking-factor 4))
-      ("5" (change-shrinking-factor 5))
-      ("7" (change-shrinking-factor 7))
-      ("10" (change-shrinking-factor 10))
+  (-> "Zoom"
+      ("500%" (change-zoom-factor (/ 5.0 1.0)))
+      ("250%" (change-zoom-factor (/ 5.0 2.0)))
+      ("167%" (change-zoom-factor (/ 5.0 3.0)))
+      ("125%" (change-zoom-factor (/ 5.0 4.0)))
+      ("100%" (change-zoom-factor 1.0))
+      ("71%" (change-zoom-factor (/ 5.0 7.0)))
+      ("50%" (change-zoom-factor (/ 5.0 10.0)))
       ---
-      ("Other" (interactive other-shrinking-factor))))
+      ("Other" (interactive other-zoom-factor))))

@@ -22,7 +22,7 @@ class tm_server_rep:
   public tm_frame_rep
 {
 protected:
-  int def_sfactor; // default shrinking factor
+  double def_zoomf; // default zoom factor
 
 public:
   tm_server_rep ();
@@ -39,8 +39,8 @@ public:
   void   set_printer_page_type (string s);
   string get_printer_page_type ();
   void   set_printer_dpi (string dpi);
-  void   set_default_shrinking_factor (int sf);
-  int    get_default_shrinking_factor ();
+  void   set_default_zoom_factor (double zoom);
+  double get_default_zoom_factor ();
   void   image_gc (string which);
   void   inclusions_gc (string which);
   void   typeset_update (path p);

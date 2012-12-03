@@ -376,7 +376,7 @@ switch_to_buffer (url name) {
   window_set_view (get_current_window (), u, true);
   tm_window nwin= vw->win;
   if (nwin != NULL)
-    nwin->set_shrinking_factor (nwin->get_shrinking_factor ());
+    nwin->set_zoom_factor (nwin->get_zoom_factor ());
   //cout << "Switched to buffer " << new_vw->buf->buf->name << "\n";
 }
 
