@@ -39,6 +39,8 @@ bool operator <= (rectangle r1, rectangle r2);
 rectangle translate (rectangle r, SI x, SI y);
 rectangle operator * (rectangle r, int d);
 rectangle operator / (rectangle r, int d);
+rectangle operator * (rectangle r, double x);
+rectangle operator / (rectangle r, double x);
 double area (rectangle r);
 
 typedef list<rectangle> rectangles;

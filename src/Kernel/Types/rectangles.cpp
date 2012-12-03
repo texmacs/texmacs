@@ -119,8 +119,20 @@ operator * (rectangle r, int d) {
 }
 
 rectangle
+operator * (rectangle r, double x) {
+  return rectangle ((SI) floor (r->x1 * x), (SI) floor (r->y1 * x),
+                    (SI) ceil  (r->x2 * x), (SI) ceil  (r->y2 * x));
+}
+
+rectangle
 operator / (rectangle r, int d) {
   return rectangle (r->x1/d, r->y1/d, r->x2/d, r->y2/d);
+}
+
+rectangle
+operator / (rectangle r, double x) {
+  return rectangle ((SI) floor (r->x1 / x), (SI) floor (r->y1 / x),
+                    (SI) ceil  (r->x2 / x), (SI) ceil  (r->y2 / x));
 }
 
 /******************************************************************************

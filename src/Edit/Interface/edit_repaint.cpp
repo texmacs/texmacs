@@ -204,7 +204,7 @@ edit_interface_rep::draw_post (renderer ren, rectangle r) {
 void
 edit_interface_rep::draw_with_shadow (rectangle r) {
   renderer win= get_renderer (this);
-  rectangle sr= r / shrinkf;
+  rectangle sr= r * magf;
   win->new_shadow (shadow);
   win->get_shadow (shadow, sr->x1, sr->y1, sr->x2, sr->y2);
   renderer ren= shadow;
@@ -230,10 +230,10 @@ edit_interface_rep::draw_with_shadow (rectangle r) {
 
     draw_post (ren, r);
     while (!is_nil(l)) {
-      SI x1= (l->item->x1)/shrinkf - ren->ox - PIXEL;
-      SI y1= (l->item->y1)/shrinkf - ren->oy - PIXEL;
-      SI x2= (l->item->x2)/shrinkf - ren->ox + PIXEL;
-      SI y2= (l->item->y2)/shrinkf - ren->oy + PIXEL;
+      SI x1= ((SI) (l->item->x1 * magf)) - ren->ox - PIXEL;
+      SI y1= ((SI) (l->item->y1 * magf)) - ren->oy - PIXEL;
+      SI x2= ((SI) (l->item->x2 * magf)) - ren->ox + PIXEL;
+      SI y2= ((SI) (l->item->y2 * magf)) - ren->oy + PIXEL;
       ren->outer_round (x1, y1, x2, y2);
       win->put_shadow (ren, x1, y1, x2, y2);
       l= l->next;
@@ -244,7 +244,7 @@ edit_interface_rep::draw_with_shadow (rectangle r) {
 void
 edit_interface_rep::draw_with_stored (rectangle r) {
   renderer win= get_renderer (this);
-  //cout << "Redraw " << (r/(shrinkf*PIXEL)) << "\n";
+  //cout << "Redraw " << (r*magf/PIXEL) << "\n";
 
   /* Verify whether the backing store is still valid */
   if (!is_nil (stored_rects)) {
@@ -259,7 +259,7 @@ edit_interface_rep::draw_with_stored (rectangle r) {
   }
 
   /* Either draw with backing store or regenerate */
-  rectangle sr= r / shrinkf;
+  rectangle sr= r * magf;
   if (is_nil (rectangles (r) - stored_rects) && !is_nil (stored_rects)) {
     // cout << "*"; cout.flush ();
     win->new_shadow (shadow);
@@ -294,7 +294,8 @@ edit_interface_rep::draw_with_stored (rectangle r) {
 void
 edit_interface_rep::handle_clear (SI x1, SI y1, SI x2, SI y2) {
   renderer win= get_renderer (this);
-  x1 *= shrinkf; y1 *= shrinkf; x2 *= shrinkf; y2 *= shrinkf;
+  x1= (SI) (x1 / magf); y1= (SI) (y1 / magf);
+  x2= (SI) (x2 / magf); y2= (SI) (y2 / magf);
   win->set_zoom_factor (zoomf);
   tree bg= get_init_value (BG_COLOR);
   win->set_background_pattern (bg);
@@ -319,14 +320,14 @@ edit_interface_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2) {
   // (x1, y1)--(x2, y2) does not correspond to the repaint region clipping.
   // Nevertheless, the code seems no longer necessary. In case it would be,
   // it should be moved somewhere inside the internal repaint routines.
-  SI extra= 3 * get_init_int (FONT_BASE_SIZE) * PIXEL / (2*shrinkf);
-  SI X1= (x1-extra) * shrinkf, Y1= (y1-extra) * shrinkf;
-  SI X2= (x2+extra) * shrinkf, Y2= (y2+extra) * shrinkf;
+  SI extra= 3 * get_init_int (FONT_BASE_SIZE) * PIXEL * magf / 2;
+  SI X1= (x1-extra) / magf, Y1= (y1-extra) / magf;
+  SI X2= (x2+extra) / magf, Y2= (y2+extra) / magf;
   draw_with_stored (rectangle (X1, Y1, X2, Y2));
   */
 
   // cout << "Repainting\n";
-  draw_with_stored (rectangle (x1, y1, x2, y2) * shrinkf);
+  draw_with_stored (rectangle (x1, y1, x2, y2) / magf);
   if (last_change-last_update > 0)
     last_change = texmacs_time ();
   // cout << "Repainted\n";

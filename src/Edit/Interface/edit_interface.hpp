@@ -42,6 +42,7 @@ protected:
   tree          last_l;        // last displayed left message
   tree          last_r;        // last displayed right message
   double        zoomf;         // the current zoom factor
+  double        magf;          // the current magnification factor
   int           shrinkf;       // the current shrinking factor
   SI            pixel;         // current size of a pixel on the screen
   rectangles    copy_always;   // for wiping out cursor
