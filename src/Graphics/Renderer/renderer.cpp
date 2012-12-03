@@ -98,13 +98,6 @@ renderer_rep::move_origin (SI dx, SI dy) {
 }
 
 void
-renderer_rep::set_shrinking_rate (int sr) {
-  shrinkf= (int) ::round (std_shrinkf / zoomf);
-  pixel  = (int) ::round ((std_shrinkf * PIXEL) / zoomf);
-  thicken= (shrinkf >> 1) * PIXEL;
-}
-
-void
 renderer_rep::set_zoom_factor (double zoom) {
   if (shrinkf != ((int) ::round (std_shrinkf / zoomf)))
     cout << "Invalid zoom " << zoomf << ", " << shrinkf << LF;
