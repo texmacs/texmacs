@@ -423,6 +423,14 @@ edit_interface_rep::apply_changes () {
   
   // cout << "Handling automatic resizing\n";
   int sb= 1;
+  if (is_attached (this) && has_current_window ()) {
+    tree new_zoom= as_string (zoomf);
+    tree old_zoom= get_init_value (ZOOM_FACTOR);
+    if (new_zoom != old_zoom) {
+      init_env (ZOOM_FACTOR, new_zoom);
+      notify_change (THE_ENVIRONMENT);
+    }
+  }
   if (is_attached (this) &&
       has_current_window () &&
       get_init_string (PAGE_MEDIUM) == "automatic")
@@ -439,19 +447,11 @@ edit_interface_rep::apply_changes () {
 #endif
       if (wx != cur_wx || wy != cur_wy) {
 	cur_wx= wx; cur_wy= wy;
-	init_env (PAGE_SCREEN_WIDTH, as_string ((SI) (wx*magf)) * "tmpt");
-	init_env (PAGE_SCREEN_HEIGHT, as_string ((SI) (wy*magf)) * "tmpt");
+	init_env (PAGE_SCREEN_WIDTH, as_string ((SI) (wx/magf)) * "tmpt");
+	init_env (PAGE_SCREEN_HEIGHT, as_string ((SI) (wy/magf)) * "tmpt");
 	notify_change (THE_ENVIRONMENT);
       }
     }
-  if (is_attached (this) && has_current_window ()) {
-    tree new_zoom= as_string (zoomf);
-    tree old_zoom= get_init_value (ZOOM_FACTOR);
-    if (new_zoom != old_zoom) {
-      init_env (ZOOM_FACTOR, new_zoom);
-      notify_change (THE_ENVIRONMENT);
-    }
-  }
   if (sb != cur_sb) {
     cur_sb= sb;
     if (has_current_window ())
