@@ -429,7 +429,7 @@ edit_env_rep::exec_pag_length () {
 tree edit_env_rep::exec_tmpt_length () {
   return tree (TMLEN, "1"); }
 tree edit_env_rep::exec_px_length () {
-  return tree (TMLEN, as_string (get_int (SFACTOR) * PIXEL)); }
+  return tree (TMLEN, as_string (pixel)); }
 
 tree edit_env_rep::exec_gw_length () {
   return tree (TMLEN, as_string (gw)); }

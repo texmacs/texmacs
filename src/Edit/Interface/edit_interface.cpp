@@ -115,13 +115,9 @@ edit_interface_rep::get_pixel_size () {
 
 void
 edit_interface_rep::set_zoom_factor (double zoom) {
-  if (zoomf != zoom) {
-    zoomf   = zoom;
-    shrinkf = (int) ::round (5.0 / zoomf);
-    pixel   = (int) ::round ((5 * PIXEL) / zoomf);
-    init_env (SFACTOR, as_string (shrinkf));
-    notify_change (THE_ENVIRONMENT);
-  }
+  zoomf   = zoom;
+  shrinkf = (int) ::round (5.0 / zoomf);
+  pixel   = (int) ::round ((5 * PIXEL) / zoomf);
 }
 
 void
@@ -450,6 +446,14 @@ edit_interface_rep::apply_changes () {
 	notify_change (THE_ENVIRONMENT);
       }
     }
+  if (is_attached (this) && has_current_window ()) {
+    tree new_zoom= as_string (zoomf);
+    tree old_zoom= get_init_value (ZOOM_FACTOR);
+    if (new_zoom != old_zoom) {
+      init_env (ZOOM_FACTOR, new_zoom);
+      notify_change (THE_ENVIRONMENT);
+    }
+  }
   if (sb != cur_sb) {
     cur_sb= sb;
     if (has_current_window ())

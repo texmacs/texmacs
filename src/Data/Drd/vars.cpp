@@ -16,7 +16,7 @@
 ******************************************************************************/
 
 string DPI ("dpi");
-string SFACTOR ("sfactor");
+string ZOOM_FACTOR ("zoom-factor");
 string PREAMBLE ("preamble");
 string SAVE_AUX ("save-aux");
 string MODE ("mode");

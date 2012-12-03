@@ -18,7 +18,7 @@
 ******************************************************************************/
 
 extern string DPI;
-extern string SFACTOR;
+extern string ZOOM_FACTOR;
 extern string PREAMBLE;
 extern string SAVE_AUX;
 extern string MODE;

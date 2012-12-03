@@ -68,9 +68,10 @@ canvas_properties
 get_canvas_properties (edit_env env, tree t) {
   bool printed= (env->get_string (PAGE_PRINTED) == "true");
   SI   border = env->get_length (ORNAMENT_BORDER);
-  SI   pixel  = env->get_int (SFACTOR) * PIXEL;
-  if (!printed)
+  if (!printed) {
+    SI pixel= env->pixel;
     border= max (pixel, ((border + pixel/2) / pixel) * pixel);
+  }
 
   canvas_properties props;
   props->env        = env;

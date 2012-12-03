@@ -33,7 +33,7 @@ initialize_default_env () {
 		       tuple ("10", "#e0e0ff"));
 
   env (DPI)              = "600";       // resolution in dots per inch
-  env (SFACTOR)          = "5";         // shrinking factor on screen
+  env (ZOOM_FACTOR)      = "1";         // zoom factor on screen
   env (PREAMBLE)         = "false";     // preamble mode ?
   env (SAVE_AUX)         = "true";      // save auxiliary data on disk ?
   env (MODE)             = "text";      // typesetting mode

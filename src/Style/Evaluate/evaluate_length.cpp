@@ -120,8 +120,8 @@ as_length (tree t) {
 
 inline SI std_inch () {
   return (SI) ((double) as_int (std_env [DPI]) * PIXEL); }
-inline int std_sfactor () {
-  return as_int (std_env [SFACTOR]); }
+inline double std_zoom () {
+  return as_double (std_env [ZOOM_FACTOR]); }
 inline int std_dpi () {
   return as_int (std_env [DPI]); }
 inline double std_magnification () {
@@ -311,7 +311,8 @@ evaluate_pag_length () {
 tree evaluate_tmpt_length () {
   return tree (TMLEN, "1"); }
 tree evaluate_px_length () {
-  return tree (TMLEN, as_string (std_sfactor () * PIXEL)); }
+  int px= (int) round ((std_shrinkf * PIXEL) / std_zoom ());
+  return tree (TMLEN, as_string (px)); }
 
 tree
 evaluate_gw_length () {

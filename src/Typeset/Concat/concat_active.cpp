@@ -166,7 +166,7 @@ concater_rep::typeset_locus (tree t, path ip) {
     tree old= env->local_begin (COLOR, col);
     box b= typeset_as_concat (env, t[last], descend (ip, last));
     env->local_end (COLOR, old);
-    print (locus_box (ip, b, ids, env->get_int (SFACTOR) * PIXEL, ref, anchor));
+    print (locus_box (ip, b, ids, env->pixel, ref, anchor));
   }
 }
 

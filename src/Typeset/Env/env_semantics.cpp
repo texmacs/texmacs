@@ -25,7 +25,7 @@ initialize_default_var_type () {
   hashmap<string,int>& var_type= default_var_type;
 
   var_type (DPI)               = Env_Fixed;
-  var_type (SFACTOR)           = Env_Fixed;
+  var_type (ZOOM_FACTOR)       = Env_Zoom;
   var_type (PREAMBLE)          = Env_Preamble;
   var_type (SAVE_AUX)          = Env_Fixed;
   var_type (MODE)              = Env_Mode;
@@ -540,6 +540,8 @@ edit_env_rep::update_line_arrows () {
 
 void
 edit_env_rep::update () {
+  zoomf          = get_double (ZOOM_FACTOR);
+  pixel          = ::round ((std_shrinkf * PIXEL) / zoomf);
   magn           = get_double (MAGNIFICATION);
   index_level    = get_int (MATH_LEVEL);
   display_style  = get_bool (MATH_DISPLAY);
@@ -579,6 +581,10 @@ edit_env_rep::update (string s) {
   case Env_User:
     break;
   case Env_Fixed:
+    break;
+  case Env_Zoom:
+    zoomf= get_double (ZOOM_FACTOR);
+    pixel= ::round ((std_shrinkf * PIXEL) / zoomf);
     break;
   case Env_Magnification:
     magn= get_double (MAGNIFICATION);
