@@ -29,7 +29,7 @@
 ;; TeXmacs documentation groups
 
 (define-group tmdoc-traversal-tag
-  branch extra-branch continue doxygen-branch)
+  branch extra-branch continue optional-branch)
 
 (define-group tmdoc-menu-tag
   menu submenu subsubmenu subsubsubmenu)
