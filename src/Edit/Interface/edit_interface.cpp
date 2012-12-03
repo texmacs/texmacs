@@ -121,11 +121,6 @@ edit_interface_rep::set_zoom_factor (double zoom) {
 }
 
 void
-edit_interface_rep::set_shrinking_factor (int sf) {
-  set_zoom_factor (5.0 / ((double) sf));
-}
-
-void
 edit_interface_rep::invalidate (SI x1, SI y1, SI x2, SI y2) {
   send_invalidate (this, (x1-shrinkf+1)/shrinkf, (y1-shrinkf+1)/shrinkf,
 		         (x2+shrinkf-1)/shrinkf, (y2+shrinkf-1)/shrinkf);
@@ -738,6 +733,6 @@ edit_interface_rep::handle_notify_resize (SI w, SI h) {
 }
 
 void
-edit_interface_rep::handle_set_shrinking_factor (int sf) {
-  set_shrinking_factor (sf);
+edit_interface_rep::handle_set_zoom_factor (double zoom) {
+  set_zoom_factor (zoom);
 }

@@ -451,6 +451,12 @@ send_int (wk_widget w, string key, blackbox val) {
 }
 
 void
+send_double (wk_widget w, string key, blackbox val) {
+  ASSERT (type_box (val) == type_helper<double>::id, "type mismatch");
+  w << set_double (key, open_box<double> (val));
+}
+
+void
 send_string (wk_widget w, string key, blackbox val) {
   ASSERT (type_box (val) == type_helper<string>::id, "type mismatch");
   w << set_string (key, open_box<string> (val));
@@ -651,8 +657,8 @@ wk_widget_rep::send (slot s, blackbox val) {
     // this message is currently ignored. Used only in TeXmacs/Qt
     break;
       
-  case SLOT_SHRINKING_FACTOR:
-    send_int (THIS, "shrinking factor", val);
+  case SLOT_ZOOM_FACTOR:
+    send_double (THIS, "zoom factor", val);
     break;
   case SLOT_EXTENTS:
     send_coord4 (THIS, "extents", val);

@@ -448,7 +448,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     case SLOT_INVALIDATE_ALL:
     case SLOT_EXTENTS:
     case SLOT_SCROLL_POSITION:
-    case SLOT_SHRINKING_FACTOR:
+    case SLOT_ZOOM_FACTOR:
     case SLOT_MOUSE_GRAB:
       main_widget->send(s, val);
       return;
@@ -595,7 +595,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
     case SLOT_SCROLL_POSITION:
     case SLOT_EXTENTS:
     case SLOT_VISIBLE_PART:
-    case SLOT_SHRINKING_FACTOR:
+    case SLOT_ZOOM_FACTOR:
       return main_widget->query(s, type_id);
 
     case SLOT_HEADER_VISIBILITY:
@@ -886,7 +886,7 @@ qt_tm_embedded_widget_rep::send (slot s, blackbox val) {
     case SLOT_INVALIDATE_ALL:
     case SLOT_EXTENTS:
     case SLOT_SCROLL_POSITION:
-    case SLOT_SHRINKING_FACTOR:
+    case SLOT_ZOOM_FACTOR:
     case SLOT_MOUSE_GRAB:
       main_widget->send(s, val);
       return;
@@ -936,7 +936,7 @@ qt_tm_embedded_widget_rep::query (slot s, int type_id) {
     case SLOT_SCROLL_POSITION:
     case SLOT_EXTENTS:
     case SLOT_VISIBLE_PART:
-    case SLOT_SHRINKING_FACTOR:
+    case SLOT_ZOOM_FACTOR:
     case SLOT_POSITION:
     case SLOT_SIZE:
       return main_widget->query(s, type_id);

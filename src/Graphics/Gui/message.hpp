@@ -43,7 +43,7 @@ enum slot_id {
   SLOT_DELAYED_MESSAGE,
   SLOT_DESTROY,
 
-  SLOT_SHRINKING_FACTOR,
+  SLOT_ZOOM_FACTOR,
   SLOT_EXTENTS,
   SLOT_VISIBLE_PART,
   SLOT_SCROLLBARS_VISIBILITY,
@@ -419,9 +419,9 @@ send_destroy (widget w) {
 ******************************************************************************/
 
 inline void
-set_shrinking_factor (widget w, int sf) {
-  // set shrinking factor for canvas
-  send<int> (w, SLOT_SHRINKING_FACTOR, sf);
+set_zoom_factor (widget w, double zoom) {
+  // set zoom factor for canvas
+  send<double> (w, SLOT_ZOOM_FACTOR, zoom);
 }
 
 inline void

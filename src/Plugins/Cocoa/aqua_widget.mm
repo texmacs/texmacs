@@ -502,14 +502,14 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
     }
     break;
     
-  case SLOT_SHRINKING_FACTOR:
+  case SLOT_ZOOM_FACTOR:
     {
       TYPE_CHECK (type_box (val) == type_helper<int>::id);
       simple_widget_rep *w = (simple_widget_rep *)[(TMView*)[sv documentView] widget];
       if (w) {
-        int new_sf = open_box<int> (val);
-        if (DEBUG_EVENTS) cout << "New shrinking factor :" << new_sf << LF;
-        w->handle_set_shrinking_factor (new_sf);
+        double new_zoom = open_box<double> (val);
+        if (DEBUG_EVENTS) cout << "New zoom factor :" << new_zoom << LF;
+        w->handle_set_zoom_factor (new_zoom);
       }
       break;
     }
@@ -925,8 +925,8 @@ simple_widget_rep::handle_mouse (string kind, SI x, SI y, int mods, time_t t) {
 }
 
 void
-simple_widget_rep::handle_set_shrinking_factor (int sf) {
-  (void) sf;
+simple_widget_rep::handle_set_zoom_factor (double zoom) {
+  (void) zoom;
 }
 
 void

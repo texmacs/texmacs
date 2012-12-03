@@ -92,11 +92,11 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     }
       break;
       
-    case SLOT_SHRINKING_FACTOR:
+    case SLOT_ZOOM_FACTOR:
     {  
-      check_type<int>(val, s);
-      int new_sf = open_box<int> (val);
-      canvas()->tm_widget()->handle_set_shrinking_factor (new_sf);
+      check_type<double> (val, s);
+      double new_zoom = open_box<double> (val);
+      canvas()->tm_widget()->handle_set_zoom_factor (new_zoom);
     }
       break;  
       

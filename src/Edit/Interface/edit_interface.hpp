@@ -86,7 +86,6 @@ public:
   /* routines for dealing with shrinked coordinates */
   int  get_pixel_size ();
   void set_zoom_factor (double zoom);
-  void set_shrinking_factor (int sf);
   void invalidate (SI x1, SI y1, SI x2, SI y2);
   void invalidate (rectangles rs);
   void update_visible ();
@@ -184,7 +183,7 @@ public:
   void handle_keypress (string key, time_t t);
   void handle_keyboard_focus (bool has_focus, time_t t);
   void handle_mouse (string kind, SI x, SI y, int mods, time_t t);
-  void handle_set_shrinking_factor (int sf);
+  void handle_set_zoom_factor (double zoomf);
   void handle_clear (SI x1, SI y1, SI x2, SI y2);
   void handle_repaint (SI x1, SI y1, SI x2, SI y2);
 

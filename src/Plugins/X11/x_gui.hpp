@@ -152,7 +152,6 @@ public:
   unsigned int get_button_mask (XButtonEvent* ev);
 
   /******************************** Fonts ************************************/
-  void set_shrinking_factor (int sfactor);
   void set_default_font (string name);
   font default_font_sub (bool tt, bool mini, bool bold);
   font default_font (bool tt= false, bool mini= false, bool bold= false);

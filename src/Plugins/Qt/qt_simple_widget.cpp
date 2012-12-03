@@ -64,8 +64,8 @@ qt_simple_widget_rep::handle_mouse (string kind, SI x, SI y, int mods, time_t t)
 }
 
 void
-qt_simple_widget_rep::handle_set_shrinking_factor (int sf) {
-  (void) sf;
+qt_simple_widget_rep::handle_set_zoom_factor (double zoom) {
+  (void) zoom;
 }
 
 void

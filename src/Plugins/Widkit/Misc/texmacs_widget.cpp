@@ -47,6 +47,7 @@ public:
   void handle_set_widget (set_widget_event ev);
   void handle_get_widget (get_widget_event ev);
   void handle_set_integer (set_integer_event ev);
+  void handle_set_double (set_double_event ev);
   void handle_set_string (set_string_event ev);
   void handle_get_string (get_string_event ev);
   void handle_set_coord2 (set_coord2_event ev);
@@ -362,11 +363,16 @@ texmacs_widget_rep::handle_set_widget (set_widget_event ev) {
 
 void
 texmacs_widget_rep::handle_set_integer (set_integer_event ev) {
-  if (ev->which == "shrinking factor")
-    THIS ["canvas"] << set_integer ("shrinking factor", ev->i);
-  else if (ev->which == "scrollbars")
+  if (ev->which == "scrollbars")
     THIS ["canvas"] << set_integer ("scrollbars", ev->i);
   else WK_FAILED ("could not set integer attribute " * ev->which);
+}
+
+void
+texmacs_widget_rep::handle_set_double (set_double_event ev) {
+  if (ev->which == "zoom factor")
+    THIS ["canvas"] << set_double ("zoom factor", ev->x);
+  else WK_FAILED ("could not set double attribute " * ev->which);
 }
 
 void
@@ -495,6 +501,9 @@ texmacs_widget_rep::handle (event ev) {
   switch (ev->type) {
   case SET_INTEGER_EVENT:
     handle_set_integer (ev);
+    return true;
+  case SET_DOUBLE_EVENT:
+    handle_set_double (ev);
     return true;
   case GET_STRING_EVENT:
     handle_get_string (ev);

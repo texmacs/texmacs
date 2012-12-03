@@ -49,8 +49,8 @@ simple_widget_rep::handle_mouse (string kind, SI x, SI y, int mods, time_t t) {
 }
 
 void
-simple_widget_rep::handle_set_shrinking_factor (int sf) {
-  (void) sf;
+simple_widget_rep::handle_set_zoom_factor (double zoom) {
+  (void) zoom;
 }
 
 void
@@ -99,8 +99,13 @@ simple_widget_rep::handle_mouse (mouse_event ev) {
 
 void
 simple_widget_rep::handle_set_integer (set_integer_event ev) {
-  if (ev->which == "shrinking factor")
-    handle_set_shrinking_factor (ev->i);
+  (void) ev;
+}
+
+void
+simple_widget_rep::handle_set_double (set_double_event ev) {
+  if (ev->which == "zoom factor")
+    handle_set_zoom_factor (ev->x);
 }
 
 void

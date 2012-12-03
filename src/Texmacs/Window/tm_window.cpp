@@ -364,7 +364,7 @@ tm_window_rep::get_side_tools_flag (int which) {
 void
 tm_window_rep::set_zoom_factor (double zoom) {
   zoomf= zoom;
-  ::set_shrinking_factor (wid, (int) ::round (std_shrinkf / zoom));
+  ::set_zoom_factor (wid, zoom);
 }
 
 double
