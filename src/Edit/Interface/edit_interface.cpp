@@ -51,7 +51,6 @@ edit_interface_rep::edit_interface_rep ():
   message_l (""), message_r (""), last_l (""), last_r (""),
   zoomf (sv->get_default_zoom_factor ()),
   magf (zoomf / std_shrinkf),
-  shrinkf ((int) ::round (std_shrinkf / zoomf)),
   pixel (::round ((std_shrinkf * PIXEL) / zoomf)), copy_always (),
   last_x (0), last_y (0), last_t (0),
   made_selection (false), table_selection (false), mouse_adjusting(false),
@@ -116,10 +115,9 @@ edit_interface_rep::get_pixel_size () {
 
 void
 edit_interface_rep::set_zoom_factor (double zoom) {
-  zoomf   = zoom;
-  magf    = zoomf / std_shrinkf;
-  shrinkf = (int) ::round (std_shrinkf / zoomf);
-  pixel   = (int) ::round ((std_shrinkf * PIXEL) / zoomf);
+  zoomf = zoom;
+  magf  = zoomf / std_shrinkf;
+  pixel = (int) ::round ((std_shrinkf * PIXEL) / zoomf);
 }
 
 void
