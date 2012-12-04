@@ -96,7 +96,9 @@ font_rep::draw (renderer ren, string s, SI x, SI y) {
     ren->pixel  = std_shrinkf * PIXEL;
     ren->thicken= (std_shrinkf >> 1) * PIXEL;
 
-    zoomed_fn->draw_fixed (ren, s, x, y);
+    SI xx= (SI) round (x * old_zoomf);
+    SI yy= (SI) round (y * old_zoomf);
+    zoomed_fn->draw_fixed (ren, s, xx, yy);
 
     ren->ox     = old_ox;
     ren->oy     = old_oy;
