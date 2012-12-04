@@ -26,6 +26,26 @@
   ("Clone window" (clone-window))
   ("Close window" (safely-kill-window))
   ---
+  (-> "Zoom"
+      ("Zoom in" (zoom-in (sqrt (sqrt 2.0))))
+      ("Zoom out" (zoom-out (sqrt (sqrt 2.0))))
+      ---
+      ("50%"  (change-zoom-factor 0.5))
+      ("71%"  (change-zoom-factor (sqrt 0.5)))
+      ("100%" (change-zoom-factor 1.0))
+      ("141%" (change-zoom-factor (sqrt 2.0)))
+      ("200%" (change-zoom-factor 2.0))
+      ---
+      ("Other" (interactive other-zoom-factor)))
+  (-> "Fit"
+      ("Fit to screen" (fit-to-screen))
+      ("Fit to screen width" (fit-to-screen-width))
+      ("Fit to screen height" (fit-to-screen-height)))
+  ---
+  ("Full screen mode"  (toggle-full-screen-edit-mode))
+  ("Presentation mode" (toggle-full-screen-mode))
+  ("Remote control" (toggle-remote-control-mode))
+  ---
   ("Header" (toggle-visible-header))
   (when (visible-header?)
 	("Main icon bar" (toggle-visible-icon-bar 0))
@@ -33,19 +53,4 @@
 	("Focus dependent icons" (toggle-visible-icon-bar 2))
 	("User provided icons" (toggle-visible-icon-bar 3)))
   ("Side tools" (toggle-visible-side-tools 0))
-  ("Status bar" (toggle-visible-footer))
-  ---
-  ("Full screen mode"  (toggle-full-screen-edit-mode))
-  ("Presentation mode" (toggle-full-screen-mode))
-  ("Remote control" (toggle-remote-control-mode))
-  ---
-  (-> "Zoom"
-      ("500%" (change-zoom-factor (/ 5.0 1.0)))
-      ("250%" (change-zoom-factor (/ 5.0 2.0)))
-      ("167%" (change-zoom-factor (/ 5.0 3.0)))
-      ("125%" (change-zoom-factor (/ 5.0 4.0)))
-      ("100%" (change-zoom-factor 1.0))
-      ("71%" (change-zoom-factor (/ 5.0 7.0)))
-      ("50%" (change-zoom-factor (/ 5.0 10.0)))
-      ---
-      ("Other" (interactive other-zoom-factor))))
+  ("Status bar" (toggle-visible-footer)))

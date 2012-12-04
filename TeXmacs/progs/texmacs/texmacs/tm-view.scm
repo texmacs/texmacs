@@ -138,3 +138,22 @@
       (with p (string->number (string-drop-right s 1))
         (change-zoom-factor (* 0.01 p)))
       (change-zoom-factor (string->number s))))
+
+(tm-define (zoom-in x)
+  (let* ((old (get-window-zoom-factor))
+	 (new (* x old)))
+    (when (< (abs (- (* new 100.0) (round (* new 100.0)))) 0.01)
+      (set! new (/ (round (* new 100)) 100.0)))
+    (change-zoom-factor new)))
+
+(tm-define (zoom-out x)
+  (zoom-in (/ 1.0 x)))
+
+(tm-define (fit-to-screen)
+  (noop))
+
+(tm-define (fit-to-screen-width)
+  (noop))
+
+(tm-define (fit-to-screen-height)
+  (noop))
