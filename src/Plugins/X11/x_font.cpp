@@ -399,7 +399,7 @@ x_font_rep::get_xpositions (string s, SI* xpos) {
 }
 
 void
-x_font_rep::draw (renderer ren, string s, SI x, SI y) {
+x_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   if (N(s)!=0) {
     int i;
     for (i=0; i<N(s); i++) {

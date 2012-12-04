@@ -52,13 +52,18 @@ struct font_rep: rep<font> {
   SI       wline;            // width of fraction bars and so
   SI       wquad;            // quad space (often width of widest character M)
 
+  double   last_zoom;        // last rendered zoom
+  font     zoomed_fn;        // zoomed font for last_zoom (or nil)
+
   font_rep (string name);
   font_rep (string name, font fn);
   void copy_math_pars (font fn);
 
   virtual void   get_extents (string s, metric& ex) = 0;
   virtual void   get_xpositions (string s, SI* xpos);
-  virtual void   draw (renderer ren, string s, SI x, SI y) = 0;
+  virtual void   draw_fixed (renderer ren, string s, SI x, SI y) = 0;
+  virtual font   magnify (double zoom);
+  virtual void   draw (renderer ren, string s, SI x, SI y);
 
   virtual double get_left_slope  (string s);
   virtual double get_right_slope (string s);

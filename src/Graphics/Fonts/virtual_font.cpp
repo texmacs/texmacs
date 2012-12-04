@@ -33,7 +33,7 @@ struct virtual_font_rep: font_rep {
   glyph get_glyph (string s);
 
   void get_extents (string s, metric& ex);
-  void draw (renderer ren, string s, SI x, SI y);
+  void draw_fixed (renderer ren, string s, SI x, SI y);
 };
 
 virtual_font_rep::virtual_font_rep (
@@ -283,7 +283,7 @@ virtual_font_rep::get_extents (string s, metric& ex) {
 }
 
 void
-virtual_font_rep::draw (renderer ren, string s, SI x, SI y) {
+virtual_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   font_metric cfnm;
   font_glyphs cfng;
   int c= get_char (s, cfnm, cfng);

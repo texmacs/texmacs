@@ -32,7 +32,7 @@ struct tex_rubber_font_rep: font_rep {
   void get_partial_extents (int c, metric& ex);
   void get_extents (string s, metric& ex);
   void draw (renderer ren, int c, SI x, SI& y, SI& real_y);
-  void draw (renderer ren, string s, SI x, SI y);
+  void draw_fixed (renderer ren, string s, SI x, SI y);
 
   double get_left_slope (string s);
   double get_right_slope (string s);
@@ -43,7 +43,7 @@ struct tex_dummy_rubber_font_rep: font_rep {
   font base_fn;
   tex_dummy_rubber_font_rep (string name, font base_fn);
   void get_extents (string s, metric& ex);
-  void draw (renderer ren, string s, SI x, SI y);
+  void draw_fixed (renderer ren, string s, SI x, SI y);
 };
 
 /******************************************************************************
@@ -209,7 +209,7 @@ tex_rubber_font_rep::draw (renderer ren, int c, SI x, SI& y, SI& real_y) {
 }
 
 void
-tex_rubber_font_rep::draw (renderer ren, string s, SI x, SI y) {
+tex_rubber_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   metric ex;
   get_extents (s, ex);
 
@@ -297,7 +297,7 @@ tex_dummy_rubber_font_rep::get_extents (string s, metric& ex) {
 }
 
 void
-tex_dummy_rubber_font_rep::draw (renderer ren, string s, SI x, SI y) {
+tex_dummy_rubber_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   (void) ren; (void) s; (void) x; (void) y;
 }
 

@@ -36,7 +36,7 @@ struct unicode_math_font_rep: font_rep {
 
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
-  void draw (renderer ren, string s, SI x, SI y);
+  void draw_fixed (renderer ren, string s, SI x, SI y);
   glyph get_glyph (string s);
 
   double get_left_slope  (string s);
@@ -199,9 +199,9 @@ unicode_math_font_rep::get_xpositions (string s, SI* xpos) {
 }
 
 void
-unicode_math_font_rep::draw (renderer ren, string s, SI x, SI y) {
+unicode_math_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   font fn= search_font (s);
-  fn->draw (ren, s, x, y);
+  fn->draw_fixed (ren, s, x, y);
 }
 
 glyph

@@ -23,7 +23,9 @@ font_rep::font_rep (string s):
   rep<font> (s),
   type      (FONT_TYPE_TEX),
   spc       (0),
-  extra     (0)
+  extra     (0),
+  last_zoom (0.0),
+  zoomed_fn (NULL)
 {
 }
 
@@ -36,7 +38,9 @@ font_rep::font_rep (string s, font fn):
   slope        (fn->slope),
   spc          (fn->spc),
   extra        (fn->extra),
-  sep          (fn->sep)
+  sep          (fn->sep),
+  last_zoom    (0.0),
+  zoomed_fn    (NULL)
 {
   copy_math_pars (fn);
 }
@@ -57,6 +61,24 @@ font_rep::copy_math_pars (font fn) {
   wfn          = fn->wfn;
   wline        = fn->wline;
   wquad        = fn->wquad;
+}
+
+font
+font_rep::magnify (double zoom) {
+  return this;
+}
+
+void
+font_rep::draw (renderer ren, string s, SI x, SI y) {
+  if (ren->zoomf == 1.0)
+    draw_fixed (ren, s, x, y);
+  else if (ren->zoomf == last_zoom)
+    zoomed_fn->draw_fixed (ren, s, x, y);
+  else {
+    last_zoom= ren->zoomf;
+    zoomed_fn= magnify (ren->zoomf);
+    zoomed_fn->draw_fixed (ren, s, x, y);
+  }
 }
 
 double font_rep::get_left_slope  (string s) { (void) s; return slope; }
@@ -150,7 +172,7 @@ struct error_font_rep: font_rep {
   error_font_rep (string name, font fn);
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
-  void draw (renderer ren, string s, SI x, SI y);
+  void draw_fixed (renderer ren, string s, SI x, SI y);
 };
 
 error_font_rep::error_font_rep (string name, font fnb):
@@ -167,9 +189,9 @@ error_font_rep::get_xpositions (string s, SI* xpos) {
 }
 
 void
-error_font_rep::draw (renderer ren, string s, SI x, SI y) {
+error_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   ren->set_color (red);
-  fn->draw (ren, s, x, y);
+  fn->draw_fixed (ren, s, x, y);
 }
 
 font
