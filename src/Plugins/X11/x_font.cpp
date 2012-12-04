@@ -68,15 +68,15 @@ x_drawable_rep::draw_clipped (Pixmap pm, Pixmap bm, int w, int h, SI x, SI y) {
 void
 x_drawable_rep::draw (int c, font_glyphs fng, SI x, SI y) {
   // get the pixmap
-  x_character xc (c, fng, shrinkf, cur_fg, cur_bg);
+  x_character xc (c, fng, std_shrinkf, cur_fg, cur_bg);
   Pixmap pm= (Pixmap) gui->character_pixmap [xc];
   if (pm == 0) {
-    gui->prepare_color (shrinkf, cur_fg, cur_bg);
-    x_character col_entry (0, font_glyphs (), shrinkf, cur_fg, cur_bg);
+    gui->prepare_color (std_shrinkf, cur_fg, cur_bg);
+    x_character col_entry (0, font_glyphs (), std_shrinkf, cur_fg, cur_bg);
     color* cols= (color*) gui->color_scale [col_entry];
     SI xo, yo;
     glyph pre_gl= fng->get (c); if (is_nil (pre_gl)) return;
-    glyph gl= shrink (pre_gl, shrinkf, shrinkf, xo, yo);
+    glyph gl= shrink (pre_gl, std_shrinkf, std_shrinkf, xo, yo);
     int i, j, w= gl->width, h= gl->height;
     pm= XCreatePixmap (gui->dpy, gui->root, w, h, gui->depth);
     for (j=0; j<h; j++)
@@ -89,12 +89,12 @@ x_drawable_rep::draw (int c, font_glyphs fng, SI x, SI y) {
   }
 
   // get the bitmap
-  xc= x_character (c, fng, shrinkf, 0, 0);
+  xc= x_character (c, fng, std_shrinkf, 0, 0);
   Bitmap bm= (Bitmap) gui->character_bitmap [xc];
   if (bm == NULL) {
     SI xo, yo;
     glyph pre_gl= fng->get (c); if (is_nil (pre_gl)) return;
-    glyph gl= shrink (pre_gl, shrinkf, shrinkf, xo, yo);
+    glyph gl= shrink (pre_gl, std_shrinkf, std_shrinkf, xo, yo);
     int i, j, b, on, w= gl->width, h= gl->height;
     int byte_width= ((w-1)>>3)+1;
     char* data= tm_new_array<char> (byte_width * h);
@@ -118,7 +118,7 @@ x_drawable_rep::draw (int c, font_glyphs fng, SI x, SI y) {
 
   // draw the character
   draw_clipped (pm, bm->bm, bm->width, bm->height,
-		x- bm->xoff*shrinkf, y+ bm->yoff*shrinkf);
+		x- bm->xoff*std_shrinkf, y+ bm->yoff*std_shrinkf);
 }
 
 #undef conv

@@ -536,7 +536,7 @@ void
 qt_renderer_rep::xpm (url file_name, SI x, SI y) {
   y -= pixel; // counter balance shift in draw_clipped
   QPixmap* image = xpm_image (file_name);
-  ASSERT (shrinkf == 1, "shrinking factor should be 1");
+  ASSERT (pixel == PIXEL, "pixel and PIXEL should coincide");
   int w, h;
   w = image->width ();
   h = image->height ();

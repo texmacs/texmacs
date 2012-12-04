@@ -348,7 +348,7 @@ x_drawable_rep::xpm (url file_name, SI x, SI y) {
   y -= pixel; // counter balance shift in draw_clipped
   if (!gui->xpm_pixmap->contains (as_string (file_name)))
     xpm_initialize (file_name);
-  ASSERT (shrinkf == 1, "shrinking factor should be 1");
+  ASSERT (pixel == PIXEL, "pixel and PIXEL should coincide");
   int w, h;
   xpm_size (file_name, w, h);
   Pixmap bm= (Pixmap) gui->xpm_bitmap [as_string (file_name)];
