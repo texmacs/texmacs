@@ -150,10 +150,15 @@
   (zoom-in (/ 1.0 x)))
 
 (tm-define (fit-to-screen)
-  (noop))
+  (let* ((wf (/ (* 1.0 (get-window-width)) (get-page-width)))
+         (hf (/ (* 1.0 (get-window-height)) (get-page-height)))
+         (f (min wf hf)))
+    (change-zoom-factor (- f 0.0001))))
 
 (tm-define (fit-to-screen-width)
-  (noop))
+  (with f (/ (* 1.0 (get-window-width)) (get-page-width))
+    (change-zoom-factor (- f 0.0001))))
 
 (tm-define (fit-to-screen-height)
-  (noop))
+  (with f (/ (* 1.0 (get-window-height)) (get-page-height))
+    (change-zoom-factor (- f 0.0001))))

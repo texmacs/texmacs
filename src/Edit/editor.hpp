@@ -68,7 +68,6 @@ protected:
 #endif
 
   /* exchanging information with the interface */
-  virtual SI        get_window_height () = 0;
   virtual void      get_selection (path& start, path& end) = 0;
   virtual void      set_selection (path start, path end) = 0;
   virtual cursor&   the_cursor () = 0;
@@ -136,6 +135,10 @@ public:
   virtual void suspend () = 0;
   virtual void resume () = 0;
   virtual int  get_pixel_size () = 0;
+  virtual SI   get_visible_width () = 0;
+  virtual SI   get_visible_height () = 0;
+  virtual SI   get_window_width () = 0;
+  virtual SI   get_window_height () = 0;
   virtual void invalidate (SI x1, SI y1, SI x2, SI y2) = 0;
   virtual void invalidate (rectangles rs) = 0;
   virtual void notify_change (int changed) = 0;
@@ -258,6 +261,8 @@ public:
   virtual double   get_env_double (string var_name) = 0;
   virtual double   get_init_double (string var_name) = 0;
   virtual language get_env_language () = 0;
+  virtual SI       get_page_width () = 0;
+  virtual SI       get_page_height () = 0;
   virtual tree     exec_texmacs (tree t, path p) = 0;
   virtual tree     exec_texmacs (tree t) = 0;
   virtual tree     exec_verbatim (tree t, path p) = 0;

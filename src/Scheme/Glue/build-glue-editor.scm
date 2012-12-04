@@ -82,6 +82,8 @@
   (context-has? defined_at_cursor (bool string))
   (style-has? defined_at_init (bool string))
   (init-has? defined_in_init (bool string))
+  (get-page-width get_page_width (int))
+  (get-page-height get_page_height (int))
 
   ;; modify text
   (make-htab make_htab (void string))
@@ -258,6 +260,8 @@
   ;; miscellaneous routines
   (view-set-property set_property (void scheme_tree scheme_tree))
   (view-get-property get_property (scheme_tree scheme_tree))
+  (get-window-width get_window_width (int))
+  (get-window-height get_window_height (int))
   (clear-buffer clear_buffer (void))
   (tex-buffer tex_buffer (void))
   (clear-local-info clear_local_info (void))

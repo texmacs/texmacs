@@ -143,9 +143,41 @@ edit_interface_rep::update_visible () {
 }
 
 SI
-edit_interface_rep::get_window_height () {
+edit_interface_rep::get_visible_width () {
+  update_visible ();
+  return vx2 - vx1;
+}
+
+SI
+edit_interface_rep::get_visible_height () {
   update_visible ();
   return vy2 - vy1;
+}
+
+SI
+edit_interface_rep::get_window_width () {
+  SI w, h;
+  widget me= ::get_canvas (widget (cvw));
+  ::get_size (me, w, h);
+  bool sb= (get_init_string (SCROLL_BARS) != "false");
+#ifdef QTTEXMACS
+#  ifdef OS_MACOS
+  if (sb) w -= 17 * PIXEL;
+#  else
+  if (sb) w -= 24 * PIXEL;
+#  endif
+#else
+  if (sb) w -= 20 * PIXEL;
+#endif
+  return w;
+}
+
+SI
+edit_interface_rep::get_window_height () {
+  SI w, h;
+  widget me= ::get_canvas (widget (cvw));
+  ::get_size (me, w, h);
+  return h;
 }
 
 void

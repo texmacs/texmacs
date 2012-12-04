@@ -26,10 +26,16 @@
   ("Clone window" (clone-window))
   ("Close window" (safely-kill-window))
   ---
+  ("Full screen mode"  (toggle-full-screen-edit-mode))
+  ("Presentation mode" (toggle-full-screen-mode))
+  ("Remote control" (toggle-remote-control-mode))
+  ---
+  ("Fit to screen" (fit-to-screen))
+  ("Fit to screen width" (fit-to-screen-width))
+  ;;("Fit to screen height" (fit-to-screen-height))
+  ("Zoom in" (zoom-in (sqrt (sqrt 2.0))))
+  ("Zoom out" (zoom-out (sqrt (sqrt 2.0))))
   (-> "Zoom"
-      ("Zoom in" (zoom-in (sqrt (sqrt 2.0))))
-      ("Zoom out" (zoom-out (sqrt (sqrt 2.0))))
-      ---
       ("50%"  (change-zoom-factor 0.5))
       ("71%"  (change-zoom-factor (sqrt 0.5)))
       ("100%" (change-zoom-factor 1.0))
@@ -37,14 +43,6 @@
       ("200%" (change-zoom-factor 2.0))
       ---
       ("Other" (interactive other-zoom-factor)))
-  (-> "Fit"
-      ("Fit to screen" (fit-to-screen))
-      ("Fit to screen width" (fit-to-screen-width))
-      ("Fit to screen height" (fit-to-screen-height)))
-  ---
-  ("Full screen mode"  (toggle-full-screen-edit-mode))
-  ("Presentation mode" (toggle-full-screen-mode))
-  ("Remote control" (toggle-remote-control-mode))
   ---
   ("Header" (toggle-visible-header))
   (when (visible-header?)

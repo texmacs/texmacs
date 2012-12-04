@@ -700,6 +700,24 @@ tmg_init_hasP (tmscm arg1) {
 }
 
 tmscm
+tmg_get_page_width () {
+  // TMSCM_DEFER_INTS;
+  int out= get_current_editor()->get_page_width ();
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_get_page_height () {
+  // TMSCM_DEFER_INTS;
+  int out= get_current_editor()->get_page_height ();
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
 tmg_make_htab (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "make-htab");
 
@@ -2450,6 +2468,24 @@ tmg_view_get_property (tmscm arg1) {
 }
 
 tmscm
+tmg_get_window_width () {
+  // TMSCM_DEFER_INTS;
+  int out= get_current_editor()->get_window_width ();
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_get_window_height () {
+  // TMSCM_DEFER_INTS;
+  int out= get_current_editor()->get_window_height ();
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
 tmg_clear_buffer () {
   // TMSCM_DEFER_INTS;
   get_current_editor()->clear_buffer ();
@@ -2898,6 +2934,8 @@ initialize_glue_editor () {
   tmscm_install_procedure ("context-has?",  tmg_context_hasP, 1, 0, 0);
   tmscm_install_procedure ("style-has?",  tmg_style_hasP, 1, 0, 0);
   tmscm_install_procedure ("init-has?",  tmg_init_hasP, 1, 0, 0);
+  tmscm_install_procedure ("get-page-width",  tmg_get_page_width, 0, 0, 0);
+  tmscm_install_procedure ("get-page-height",  tmg_get_page_height, 0, 0, 0);
   tmscm_install_procedure ("make-htab",  tmg_make_htab, 1, 0, 0);
   tmscm_install_procedure ("make-space",  tmg_make_space, 1, 0, 0);
   tmscm_install_procedure ("make-var-space",  tmg_make_var_space, 3, 0, 0);
@@ -3050,6 +3088,8 @@ initialize_glue_editor () {
   tmscm_install_procedure ("custom-complete",  tmg_custom_complete, 1, 0, 0);
   tmscm_install_procedure ("view-set-property",  tmg_view_set_property, 2, 0, 0);
   tmscm_install_procedure ("view-get-property",  tmg_view_get_property, 1, 0, 0);
+  tmscm_install_procedure ("get-window-width",  tmg_get_window_width, 0, 0, 0);
+  tmscm_install_procedure ("get-window-height",  tmg_get_window_height, 0, 0, 0);
   tmscm_install_procedure ("clear-buffer",  tmg_clear_buffer, 0, 0, 0);
   tmscm_install_procedure ("tex-buffer",  tmg_tex_buffer, 0, 0, 0);
   tmscm_install_procedure ("clear-local-info",  tmg_clear_local_info, 0, 0, 0);

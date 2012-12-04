@@ -85,11 +85,14 @@ public:
 
   /* routines for dealing with shrinked coordinates */
   int  get_pixel_size ();
+  SI   get_visible_width ();
+  SI   get_visible_height ();
+  SI   get_window_width ();
+  SI   get_window_height ();
   void set_zoom_factor (double zoom);
   void invalidate (SI x1, SI y1, SI x2, SI y2);
   void invalidate (rectangles rs);
   void update_visible ();
-  SI   get_window_height ();
   void scroll_to (SI x, SI y1);
   void set_extents (SI x1, SI y1, SI x2, SI y2);
 

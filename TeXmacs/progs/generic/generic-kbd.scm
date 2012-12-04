@@ -366,6 +366,8 @@
   ("C->" (cursor-history-forward))
   ("A-#" (numbered-toggle (focus-tree)))
   ("A-*" (alternate-toggle (focus-tree)))
+  ("A-+" (zoom-in (sqrt (sqrt 2.0))))
+  ("A--" (zoom-out (sqrt (sqrt 2.0))))
   ("A-tab" (make-htab "5mm"))
   ("A-space" (make-space "0.2spc"))
   ("A-S-space" (make-space "-0.2spc"))
@@ -398,13 +400,13 @@
   ("std x" (clipboard-cut "primary"))
   ("std z" (undo 0))
   ("std Z" (redo 0))
+  ("std +" (zoom-in (sqrt (sqrt 2.0))))
+  ("std -" (zoom-out (sqrt (sqrt 2.0))))
 
   ;; not yet implemented
   ;;("std t" (add-tab))
   ;;("std tab" (next-tab))
   ;;("std S-tab" (previous-tab))
-  ;;("std +" (zoom-in))
-  ;;("std -" (zoom-out))
 
   ("search std f" (search-next))      ;; added for convenience
   ("search std F" (search-previous))  ;; added for convenience

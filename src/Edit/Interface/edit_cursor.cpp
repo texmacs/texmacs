@@ -222,7 +222,7 @@ void
 edit_cursor_rep::go_page_up () {
   if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
   path sp= find_innermost_scroll (eb, tp);
-  if (is_nil (sp)) go_to (mv->ox, min (mv->oy + get_window_height (), eb->y2));
+  if (is_nil (sp)) go_to (mv->ox, min (mv->oy + get_visible_height (), eb->y2));
   else {
     SI x, y, sx, sy;
     rectangle outer, inner;
@@ -237,7 +237,7 @@ void
 edit_cursor_rep::go_page_down () {
   if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
   path sp= find_innermost_scroll (eb, tp);
-  if (is_nil (sp)) go_to (mv->ox, max (mv->oy - get_window_height (), eb->y1));
+  if (is_nil (sp)) go_to (mv->ox, max (mv->oy - get_visible_height (), eb->y1));
   else {
     SI x, y, sx, sy;
     rectangle outer, inner;
