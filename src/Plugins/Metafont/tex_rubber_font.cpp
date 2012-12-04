@@ -18,6 +18,7 @@
 ******************************************************************************/
 
 struct tex_rubber_font_rep: font_rep {
+  string           trl;
   string           family;
   int              dpi;
   int              dsize;
@@ -33,6 +34,7 @@ struct tex_rubber_font_rep: font_rep {
   void get_extents (string s, metric& ex);
   void draw (renderer ren, int c, SI x, SI& y, SI& real_y);
   void draw_fixed (renderer ren, string s, SI x, SI y);
+  font magnify (double zoom);
 
   double get_left_slope (string s);
   double get_right_slope (string s);
@@ -44,6 +46,7 @@ struct tex_dummy_rubber_font_rep: font_rep {
   tex_dummy_rubber_font_rep (string name, font base_fn);
   void get_extents (string s, metric& ex);
   void draw_fixed (renderer ren, string s, SI x, SI y);
+  font magnify (double zoom);
 };
 
 /******************************************************************************
@@ -54,7 +57,8 @@ struct tex_dummy_rubber_font_rep: font_rep {
 
 tex_rubber_font_rep::tex_rubber_font_rep (string name,
   string trl_name, string family2, int size2, int dpi2, int dsize2):
-    font_rep (name), dsize (dsize2), ext (load_translator (trl_name))
+    font_rep (name), trl (trl_name), dsize (dsize2),
+    ext (load_translator (trl_name))
 {
   load_tex (family2, size2, dpi2, dsize, tfm, pk);
 
@@ -243,6 +247,12 @@ tex_rubber_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   }
 }
 
+font
+tex_rubber_font_rep::magnify (double zoom) {
+  int ndpi= (int) round (dpi * zoom);
+  return tex_rubber_font (trl, family, size, ndpi, dsize);
+}
+
 /******************************************************************************
 * Metric properties of rubber boxes
 ******************************************************************************/
@@ -299,6 +309,11 @@ tex_dummy_rubber_font_rep::get_extents (string s, metric& ex) {
 void
 tex_dummy_rubber_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   (void) ren; (void) s; (void) x; (void) y;
+}
+
+font
+tex_dummy_rubber_font_rep::magnify (double zoom) {
+  return tex_dummy_rubber_font (base_fn->magnify (zoom));
 }
 
 font

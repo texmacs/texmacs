@@ -37,6 +37,7 @@ struct unicode_math_font_rep: font_rep {
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
   void draw_fixed (renderer ren, string s, SI x, SI y);
+  font magnify (double zoom);
   glyph get_glyph (string s);
 
   double get_left_slope  (string s);
@@ -202,6 +203,15 @@ void
 unicode_math_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   font fn= search_font (s);
   fn->draw_fixed (ren, s, x, y);
+}
+
+font
+unicode_math_font_rep::magnify (double zoom) {
+  return unicode_math_font (upright->magnify (zoom),
+			    italic->magnify (zoom),
+			    bold_upright->magnify (zoom),
+			    bold_italic->magnify (zoom),
+			    fall_back->magnify (zoom));
 }
 
 glyph

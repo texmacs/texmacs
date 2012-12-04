@@ -101,22 +101,22 @@ void
 renderer_rep::set_zoom_factor (double zoom) {
   if (shrinkf != ((int) ::round (std_shrinkf / zoomf)))
     cout << "Invalid zoom " << zoomf << ", " << shrinkf << LF;
-  ox = (int) ::round (ox  * zoomf);
-  oy = (int) ::round (oy  * zoomf);
-  cx1= (int) ::round (cx1 * zoomf);
-  cx2= (int) ::round (cx2 * zoomf);
-  cy1= (int) ::round (cy1 * zoomf);
-  cy2= (int) ::round (cy2 * zoomf);
+  ox = (SI) ::round (ox  * zoomf);
+  oy = (SI) ::round (oy  * zoomf);
+  cx1= (SI) ::round (cx1 * zoomf);
+  cx2= (SI) ::round (cx2 * zoomf);
+  cy1= (SI) ::round (cy1 * zoomf);
+  cy2= (SI) ::round (cy2 * zoomf);
   zoomf  = zoom;
   shrinkf= (int) ::round (std_shrinkf / zoomf);
-  pixel  = (int) ::round ((std_shrinkf * PIXEL) / zoomf);
+  pixel  = (SI)  ::round ((std_shrinkf * PIXEL) / zoomf);
   thicken= (shrinkf >> 1) * PIXEL;
-  ox = (int) ::round (ox  / zoomf);
-  oy = (int) ::round (oy  / zoomf);
-  cx1= (int) ::round (cx1 / zoomf);
-  cx2= (int) ::round (cx2 / zoomf);
-  cy1= (int) ::round (cy1 / zoomf);
-  cy2= (int) ::round (cy2 / zoomf);
+  ox = (SI) ::round (ox  / zoomf);
+  oy = (SI) ::round (oy  / zoomf);
+  cx1= (SI) ::round (cx1 / zoomf);
+  cx2= (SI) ::round (cx2 / zoomf);
+  cy1= (SI) ::round (cy1 / zoomf);
+  cy2= (SI) ::round (cy2 / zoomf);
 }
 
 void

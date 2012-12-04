@@ -21,6 +21,8 @@
 ******************************************************************************/
 
 struct tt_font_rep: font_rep {
+  string      family;
+  int         dpi;
   font_metric fnm;
   font_glyphs fng;
 
@@ -29,6 +31,7 @@ struct tt_font_rep: font_rep {
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
   void draw_fixed (renderer ren, string s, SI x, SI y);
+  font magnify (double zoom);
   glyph get_glyph (string s);
 };
 
@@ -38,8 +41,8 @@ struct tt_font_rep: font_rep {
 
 #define conv(x) ((SI) (((double) (x))*unit))
 
-tt_font_rep::tt_font_rep (string name, string family, int size2, int dpi):
-  font_rep (name)
+tt_font_rep::tt_font_rep (string name, string family2, int size2, int dpi2):
+  font_rep (name), family (family2), dpi (dpi2)
 {
   size= size2;
   fnm = tt_font_metric (family, size, dpi);
@@ -154,6 +157,11 @@ tt_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
       x += ex->x2;
     }
   }
+}
+
+font
+tt_font_rep::magnify (double zoom) {
+  return tt_font (family, size, (int) round (dpi * zoom));
 }
 
 glyph

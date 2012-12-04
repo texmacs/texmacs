@@ -23,6 +23,8 @@
 ******************************************************************************/
 
 struct unicode_font_rep: font_rep {
+  string      family;
+  int         dpi;
   font_metric fnm;
   font_glyphs fng;
 
@@ -31,6 +33,7 @@ struct unicode_font_rep: font_rep {
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
   void draw_fixed (renderer ren, string s, SI x, SI y);
+  font magnify (double zoom);
   glyph get_glyph (string s);
   SI get_left_correction  (string s);
   SI get_right_correction  (string s);
@@ -43,8 +46,8 @@ struct unicode_font_rep: font_rep {
 #define conv(x) ((SI) (((double) (x))*unit))
 
 unicode_font_rep::unicode_font_rep (string name,
-  string family, int size2, int dpi):
-  font_rep (name)
+  string family2, int size2, int dpi2):
+  font_rep (name), family (family2), dpi (dpi2)
 {
   type= FONT_TYPE_UNICODE;
   size= size2;
@@ -198,6 +201,11 @@ unicode_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
     metric_struct* ex= fnm->get (uc);
     x += ex->x2;
   }
+}
+
+font
+unicode_font_rep::magnify (double zoom) {
+  return unicode_font (family, size, (int) round (dpi * zoom));
 }
 
 glyph

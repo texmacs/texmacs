@@ -63,21 +63,51 @@ font_rep::copy_math_pars (font fn) {
   wquad        = fn->wquad;
 }
 
-font
-font_rep::magnify (double zoom) {
-  return this;
-}
-
 void
 font_rep::draw (renderer ren, string s, SI x, SI y) {
-  if (ren->zoomf == 1.0)
+  if (ren->zoomf == 1.0 || !ren->is_screen)
     draw_fixed (ren, s, x, y);
-  else if (ren->zoomf == last_zoom)
-    zoomed_fn->draw_fixed (ren, s, x, y);
-  else {
+  else if (ren->zoomf != last_zoom) {
     last_zoom= ren->zoomf;
     zoomed_fn= magnify (ren->zoomf);
+    draw (ren, s, x, y);
+  }
+  else {
+    // FIXME: low level rendering hack
+    SI     old_ox     = ren->ox;
+    SI     old_oy     = ren->oy;
+    SI     old_cx1    = ren->cx1;
+    SI     old_cy1    = ren->cy1;
+    SI     old_cx2    = ren->cx2;
+    SI     old_cy2    = ren->cy2;
+    double old_zoomf  = ren->zoomf;
+    int    old_shrinkf= ren->shrinkf;
+    SI     old_pixel  = ren->pixel;
+    SI     old_thicken= ren->thicken;
+
+    ren->ox     = (SI) ::round (old_ox  * old_zoomf);
+    ren->oy     = (SI) ::round (old_oy  * old_zoomf);
+    ren->cx1    = (SI) ::round (old_cx1 * old_zoomf);
+    ren->cx2    = (SI) ::round (old_cx2 * old_zoomf);
+    ren->cy1    = (SI) ::round (old_cy1 * old_zoomf);
+    ren->cy2    = (SI) ::round (old_cy2 * old_zoomf);
+    ren->zoomf  = 1.0;
+    ren->shrinkf= std_shrinkf;
+    ren->pixel  = std_shrinkf * PIXEL;
+    ren->thicken= (std_shrinkf >> 1) * PIXEL;
+
     zoomed_fn->draw_fixed (ren, s, x, y);
+
+    ren->ox     = old_ox;
+    ren->oy     = old_oy;
+    ren->cx1    = old_cx1;
+    ren->cx2    = old_cx2;
+    ren->cy1    = old_cy1;
+    ren->cy2    = old_cy2;
+    ren->zoomf  = old_zoomf;
+    ren->shrinkf= old_shrinkf;
+    ren->pixel  = old_pixel;
+    ren->thicken= old_thicken;
   }
 }
 
@@ -173,6 +203,7 @@ struct error_font_rep: font_rep {
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
   void draw_fixed (renderer ren, string s, SI x, SI y);
+  font magnify (double zoom);
 };
 
 error_font_rep::error_font_rep (string name, font fnb):
@@ -192,6 +223,11 @@ void
 error_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   ren->set_color (red);
   fn->draw_fixed (ren, s, x, y);
+}
+
+font
+error_font_rep::magnify (double zoom) {
+  return error_font (fn->magnify (zoom));
 }
 
 font

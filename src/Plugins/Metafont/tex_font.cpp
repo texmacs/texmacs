@@ -42,6 +42,7 @@ struct tex_font_rep: font_rep {
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
   void draw_fixed (renderer ren, string s, SI x, SI y);
+  font magnify (double zoom);
   SI   get_left_correction (string s);
   SI   get_right_correction (string s);
   glyph get_glyph (string s);
@@ -632,6 +633,24 @@ tex_font_rep::draw_fixed (renderer ren, string s, SI ox, SI y) {
   STACK_DELETE_ARRAY (str);
   STACK_DELETE_ARRAY (buf);
   STACK_DELETE_ARRAY (ker);
+}
+
+font
+tex_font_rep::magnify (double zoom) {
+  int ndpi= (int) round (dpi * zoom);
+  switch (status) {
+  case TEX_ANY:
+    return tex_font (family, size, ndpi, dsize);
+  case TEX_EC:
+    return tex_ec_font (family, size, ndpi, dsize);
+  case TEX_LA:
+    return tex_la_font (family, size, ndpi, dsize);
+  case TEX_CM:
+    return tex_cm_font (family, size, ndpi, dsize);
+  case TEX_ADOBE:
+    return tex_adobe_font (family, size, ndpi, dsize);
+  }
+  return tex_font (family, size, ndpi, dsize);
 }
 
 SI

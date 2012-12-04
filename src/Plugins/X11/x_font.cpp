@@ -411,6 +411,11 @@ x_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   }
 }
 
+font
+x_font_rep::magnify (double zoom) {
+  return x_font (family, size, (int) round (dpi * zoom));
+}
+
 glyph
 x_font_rep::get_glyph (string s) {
   if (N(s)!=1) return font_rep::get_glyph (s);

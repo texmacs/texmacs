@@ -178,6 +178,13 @@ find_font (tree t) {
   return fn;
 }
 
+font
+find_magnified_font (tree t, double zoom) {
+  font fn= find_font (t);
+  if (is_nil (fn)) return fn;
+  return fn->magnify (zoom);
+}
+
 /******************************************************************************
 * User interface
 ******************************************************************************/

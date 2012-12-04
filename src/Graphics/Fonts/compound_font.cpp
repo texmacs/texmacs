@@ -30,11 +30,13 @@ struct compound_font_rep: font_rep {
   scheme_tree  def;
   array<font>  fn;
   charmap      cm;
+  double       zf;
 
-  compound_font_rep (string name, scheme_tree def, array<font> fn);
+  compound_font_rep (string name, scheme_tree def, array<font> fn, double zf);
   void   advance (string s, int& pos, string& r, int& ch);
   void   get_extents (string s, metric& ex);
   void   draw_fixed (renderer ren, string s, SI x, SI y);
+  font   magnify (double zoom);
   glyph  get_glyph (string s);
   double get_left_slope  (string s);
   double get_right_slope (string s);
@@ -43,9 +45,10 @@ struct compound_font_rep: font_rep {
 };
 
 compound_font_rep::compound_font_rep (
-  string name, scheme_tree def2, array<font> fn2):
+  string name, scheme_tree def2, array<font> fn2, double zf2):
     font_rep (name, fn2[0]),
-    def (def2), fn (fn2), cm (load_charmap (map_car (def)))
+    def (def2), fn (fn2), cm (load_charmap (map_car (def))),
+    zf (zf2)
 {}
 
 void
@@ -56,7 +59,8 @@ compound_font_rep::advance (string s, int& pos, string& r, int& ch) {
     tree t= def[ch][1];
     if (is_tuple (t, "virtual", 3))
       fn[ch]= virtual_font (this, as_string(t[1]), as_int(t[2]), as_int(t[3]));
-    else fn[ch]= find_font (t);
+    else
+      fn[ch]= find_magnified_font (t, zf);
     ASSERT (!is_nil (fn[ch]), "font not found");
     //fn[ch]->copy_math_pars (fn[0]);
   }
@@ -106,6 +110,11 @@ compound_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
       }
     }
   }
+}
+
+font
+compound_font_rep::magnify (double zoom) {
+  return compound_font (def, zf * zoom);
 }
 
 /******************************************************************************
@@ -167,12 +176,12 @@ compound_font_rep::get_right_correction (string s) {
 ******************************************************************************/
 
 font
-compound_font (scheme_tree def) {
+compound_font (scheme_tree def, double zf) {
   string name= tree_to_scheme (def);
-  if (font::instances->contains (name))
-    return font (name);
+  if (zf != 1.0) name= name * "-zoom=" * as_string (zf);
+  if (font::instances->contains (name)) return font (name);
   array<font> fn (N(def));
-  fn[0]= find_font (def[0][1]);
+  fn[0]= find_magnified_font (def[0][1], zf);
   if (is_nil (fn[0])) return font ();
-  return make (font, name, tm_new<compound_font_rep> (name, def, fn));
+  return make (font, name, tm_new<compound_font_rep> (name, def, fn, zf));
 }

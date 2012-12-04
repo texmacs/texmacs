@@ -38,6 +38,7 @@ struct x_font_rep: font_rep {
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
   void draw_fixed (renderer ren, string s, SI x, SI y);
+  font magnify (double zoom);
   glyph get_glyph (string s);
 };
 

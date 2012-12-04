@@ -19,13 +19,13 @@
 typedef int SI;
 bool operator == (font fn1, font fn2) { return fn1.rep == fn2.rep; }
 bool operator != (font fn1, font fn2) { return fn1.rep == fn2.rep; }
-font find_font (tree t);
 
 /******************************************************************************
 * The compound font class
 ******************************************************************************/
 
 struct math_font_rep: font_rep {
+  tree         def;
   font         base_fn;
   font         error_fn;
   translator   math;
@@ -35,13 +35,15 @@ struct math_font_rep: font_rep {
   array<font>  font_table;
   array<tree>  rubber_name;
   array<font>  rubber_table;
+  double       zf;
 
-  math_font_rep (string name, scheme_tree t, font base, font error);
+  math_font_rep (string name, scheme_tree t, font base, font error, double zf);
   void init_font (int fn_nr, font& fn);
   void search_font (string& s, font& fn);
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
   void draw_fixed (renderer ren, string s, SI x, SI y);
+  font magnify (double zoom);
   glyph get_glyph (string s);
 
   double get_left_slope  (string s);
@@ -51,13 +53,14 @@ struct math_font_rep: font_rep {
 };
 
 math_font_rep::math_font_rep (
-  string name, scheme_tree t, font base, font error):
-    font_rep (name, base), base_fn (base), error_fn (error),
+  string name, scheme_tree t, font base, font error, double zf2):
+    font_rep (name, base), def (t), base_fn (base), error_fn (error),
     math (load_translator (as_string (t[1][0]))),
     rubber (load_translator (as_string (t[2][0]))),
     italic (load_translator ("italic")),
     font_name (N(t[1])-1), font_table (N(t[1])-1),
-    rubber_name (N(t[2])-1), rubber_table (N(t[2])-1)
+    rubber_name (N(t[2])-1), rubber_table (N(t[2])-1),
+    zf (zf2)
 {
   int i;
   for (i=1; i<N(t[1]); i++)
@@ -75,10 +78,9 @@ math_font_rep::init_font (int fn_nr, font& fn) {
   tree t= font_name [fn_nr];
   if (is_tuple (t, "virtual", 3))
     fn= virtual_font (this, as_string(t[1]), as_int(t[2]), as_int(t[3]));
-  else {
-    fn= find_font (t);
-    ASSERT (!is_nil (fn), "font not found");
-  }
+  else
+    fn= find_magnified_font (t, zf);
+  ASSERT (!is_nil (fn), "font not found");
   fn->copy_math_pars (base_fn);
   font_table [fn_nr]= fn;
 }
@@ -99,10 +101,10 @@ math_font_rep::search_font (string& s, font& fn) {
       if ((c!=-1) && (s (N(s)-3, N(s)) != "-0>")) {
         int fn_nr= c/256;
         if (is_nil (rubber_table [fn_nr])) {
-          fn= find_font (rubber_name [fn_nr]);
+          fn= find_magnified_font (rubber_name [fn_nr], zf);
           ASSERT (!is_nil (fn), "font not found");
           fn->yfrac= base_fn->yfrac;
-            // fn->copy_math_pars (base_fn);
+	  // fn->copy_math_pars (base_fn);
           rubber_table [fn_nr]= fn;
         }
         else fn= rubber_table [fn_nr];
@@ -174,6 +176,12 @@ math_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   fn->draw_fixed (ren, s, x, y);
 }
 
+font
+math_font_rep::magnify (double zoom) {
+  return math_font (def, base_fn->magnify (zoom), error_fn->magnify (zoom),
+		    zf * zoom);
+}
+
 glyph
 math_font_rep::get_glyph (string s) {
   font fn;
@@ -224,8 +232,9 @@ math_font_rep::get_right_correction (string s) {
 ******************************************************************************/
 
 font
-math_font (scheme_tree t, font base_fn, font error_fn) {
+math_font (scheme_tree t, font base_fn, font error_fn, double zf) {
   string full_name= "compound-" * scheme_tree_to_string (t);
+  if (zf != 1.0) full_name= full_name * "-zoom=" * as_string (zf);
   return make (font, full_name,
-    tm_new<math_font_rep> (full_name, t, base_fn, error_fn));
+	       tm_new<math_font_rep> (full_name, t, base_fn, error_fn, zf));
 }

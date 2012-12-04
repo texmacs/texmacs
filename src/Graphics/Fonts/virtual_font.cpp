@@ -20,6 +20,7 @@
 
 struct virtual_font_rep: font_rep {
   font         base_fn;
+  string       fn_name;
   translator   virt;
   int          size, dpi;
   int          last;
@@ -34,11 +35,12 @@ struct virtual_font_rep: font_rep {
 
   void get_extents (string s, metric& ex);
   void draw_fixed (renderer ren, string s, SI x, SI y);
+  font magnify (double zoom);
 };
 
 virtual_font_rep::virtual_font_rep (
   string name, font base, string vname, int size2, int dpi2):
-    font_rep (name, base), base_fn (base),
+    font_rep (name, base), base_fn (base), fn_name (vname),
     virt (load_translator (vname)), size (size2), dpi (dpi2),
     last (N(virt->virt_def)),
     fnm (std_font_metric (name, tm_new_array<metric> (last), 0, last-1)),
@@ -288,6 +290,12 @@ virtual_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   font_glyphs cfng;
   int c= get_char (s, cfnm, cfng);
   if (c != -1) ren->draw (c, cfng, x, y);
+}
+
+font
+virtual_font_rep::magnify (double zoom) {
+  return virtual_font (base_fn->magnify (zoom), fn_name,
+		       size, (int) round (dpi * zoom));
 }
 
 glyph

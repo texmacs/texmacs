@@ -62,7 +62,7 @@ struct font_rep: rep<font> {
   virtual void   get_extents (string s, metric& ex) = 0;
   virtual void   get_xpositions (string s, SI* xpos);
   virtual void   draw_fixed (renderer ren, string s, SI x, SI y) = 0;
-  virtual font   magnify (double zoom);
+  virtual font   magnify (double zoom) = 0;
   virtual void   draw (renderer ren, string s, SI x, SI y);
 
   virtual double get_left_slope  (string s);
@@ -97,11 +97,12 @@ font tex_dummy_rubber_font (font base_fn);
 
 void font_rule (tree which, tree by);
 font find_font (scheme_tree t);
+font find_magnified_font (scheme_tree t, double zf);
 font find_font (string family, string fn_class,
 		string series, string shape, int sz, int dpi);
 
-font math_font (scheme_tree t, font base_fn, font error_fn);
-font compound_font (scheme_tree def);
+font math_font (scheme_tree t, font base_fn, font error_fn, double zoom= 1.0);
+font compound_font (scheme_tree def, double zoom= 1.0);
 
 int  script (int sz, int level);
 
