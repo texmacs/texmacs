@@ -135,6 +135,12 @@ operator / (rectangle r, double x) {
                     (SI) ceil  (r->x2 / x), (SI) ceil  (r->y2 / x));
 }
 
+rectangle
+thicken (rectangle r, SI width, SI height) {
+  return rectangle (r->x1- width, r->y1- height,
+                    r->x2+ width, r->y2+ height);
+}
+
 /******************************************************************************
 * Exported routines for rectangles
 ******************************************************************************/

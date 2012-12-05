@@ -41,6 +41,7 @@ rectangle operator * (rectangle r, int d);
 rectangle operator / (rectangle r, int d);
 rectangle operator * (rectangle r, double x);
 rectangle operator / (rectangle r, double x);
+rectangle thicken (rectangle r, SI width, SI height);
 double area (rectangle r);
 
 typedef list<rectangle> rectangles;
