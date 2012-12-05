@@ -121,6 +121,7 @@ public:
   virtual void draw_selection (rectangles rs);
 };
 
+double normal_zoom (double zoom);
 void abs_round (SI& l);
 void abs_round (SI& x, SI& y);
 void abs_inner_round (SI& x1, SI& y1, SI& x2, SI& y2);

@@ -97,6 +97,11 @@ renderer_rep::move_origin (SI dx, SI dy) {
   oy += dy;
 }
 
+double
+normal_zoom (double zoom) {
+  return 320.0 / ceil (320.0 / zoom - 0.0001);
+}
+
 void
 renderer_rep::set_zoom_factor (double zoom) {
   if (shrinkf != ((int) ::round (std_shrinkf / zoomf)))

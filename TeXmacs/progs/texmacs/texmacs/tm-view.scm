@@ -123,7 +123,7 @@
   (set! remote-control-flag? (not remote-control-flag?)))
 
 (define (test-zoom-factor? z)
-  (<= (abs (- (get-window-zoom-factor) (eval z))) 0.001))
+  (<= (abs (- (get-window-zoom-factor) (eval z))) 0.01))
 
 (tm-define (change-zoom-factor z)
   (:check-mark "*" test-zoom-factor?)
@@ -139,11 +139,19 @@
         (change-zoom-factor (* 0.01 p)))
       (change-zoom-factor (string->number s))))
 
+(define (normalize-zoom-sub zoom l)
+  (cond ((null? l) zoom)
+        ((< (abs (- zoom (car l))) (* 0.02 zoom)) (car l))
+        (else (normalize-zoom-sub zoom (cdr l)))))
+
+(define (normalize-zoom zoom)
+  (with std-zooms (map (lambda (x) (exp (* x (/ (log 2.0) 4.0))))
+                       (.. -10 10))
+    (normalize-zoom-sub zoom std-zooms)))
+
 (tm-define (zoom-in x)
   (let* ((old (get-window-zoom-factor))
-	 (new (* x old)))
-    (when (< (abs (- (* new 100.0) (round (* new 100.0)))) 0.01)
-      (set! new (/ (round (* new 100)) 100.0)))
+	 (new (normalize-zoom (* x old))))
     (change-zoom-factor new)))
 
 (tm-define (zoom-out x)

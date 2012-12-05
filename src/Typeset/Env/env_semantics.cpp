@@ -540,7 +540,7 @@ edit_env_rep::update_line_arrows () {
 
 void
 edit_env_rep::update () {
-  zoomf          = get_double (ZOOM_FACTOR);
+  zoomf          = normal_zoom (get_double (ZOOM_FACTOR));
   pixel          = ::round ((std_shrinkf * PIXEL) / zoomf);
   magn           = get_double (MAGNIFICATION);
   index_level    = get_int (MATH_LEVEL);
@@ -583,7 +583,7 @@ edit_env_rep::update (string s) {
   case Env_Fixed:
     break;
   case Env_Zoom:
-    zoomf= get_double (ZOOM_FACTOR);
+    zoomf= normal_zoom (get_double (ZOOM_FACTOR));
     pixel= ::round ((std_shrinkf * PIXEL) / zoomf);
     break;
   case Env_Magnification:
