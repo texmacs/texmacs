@@ -107,3 +107,6 @@
     ((swab $a $b $c $s $d) (tex yswab $s $d 0))
     ((blackletter $a $b $c $s $d) (tex blackletter $s $d 0))
     ((old-english $a $b $c $s $d) (tex hge $s $d 0))))
+
+(set-font-rules
+  '(((qt-helvetica $x $a $b $s $d) (qt Helvetica $s $d))))

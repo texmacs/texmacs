@@ -42,6 +42,7 @@ public:
 public:
   qt_renderer_rep (QPainter *_painter, int w = 0, int h = 0);
   ~qt_renderer_rep ();
+  qt_renderer_rep* as_qt_renderer ();
 
   void begin (void* handle);
   void end ();
@@ -52,6 +53,7 @@ public:
   void set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore = false);
 
   void  draw (int char_code, font_glyphs fn, SI x, SI y);
+  void  draw (const QFont& qfn, const QString& s, SI x, SI y, double zoom);
   void  set_color (color c);
   void  set_line_style (SI w, int type=0, bool round=true);
   void  line (SI x1, SI y1, SI x2, SI y2);

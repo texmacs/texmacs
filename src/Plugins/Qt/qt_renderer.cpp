@@ -86,6 +86,11 @@ qt_renderer_rep::qt_renderer_rep (QPainter *_painter, int w2, int h2):
 
 qt_renderer_rep::~qt_renderer_rep () {}
 
+qt_renderer_rep*
+qt_renderer_rep::as_qt_renderer () {
+  return this;
+}
+
 void
 qt_renderer_rep::begin (void* handle) {
   QPaintDevice *device = static_cast<QPaintDevice*>(handle);
@@ -495,6 +500,17 @@ qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
   //cout << (char)c << ": " << cx1/256 << ","  << cy1/256 << ","  
   //<< cx2/256 << ","  << cy2/256 << LF; 
   draw_clipped (mi->img, mi->w, mi->h, x- mi->xo*std_shrinkf, y+ mi->yo*std_shrinkf);
+}
+
+void
+qt_renderer_rep::draw (const QFont& qfn, const QString& qs,
+                       SI x, SI y, double zoom) {
+  decode (x, y);
+  painter->setFont (qfn);
+  painter->translate (x, y);
+  painter->scale (zoom, zoom);
+  painter->drawText (0, 0, qs);
+  painter->resetTransform ();
 }
 
 /******************************************************************************

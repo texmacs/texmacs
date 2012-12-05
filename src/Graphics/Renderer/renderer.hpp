@@ -28,6 +28,7 @@ typedef unsigned int color;
 class renderer_rep;
 typedef renderer_rep* renderer;
 class x_drawable_rep;
+class qt_renderer_rep;
 class rectangle;
 typedef list<rectangle> rectangles;
 extern int std_shrinkf;
@@ -54,6 +55,7 @@ public:
   virtual bool is_printer ();
   virtual bool is_x_drawable ();
   virtual x_drawable_rep* as_x_drawable ();
+  virtual qt_renderer_rep* as_qt_renderer ();
   virtual void get_extents (int& w, int& h);
   virtual void next_page ();
   virtual bool repainted ();

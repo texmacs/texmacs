@@ -52,6 +52,11 @@ renderer_rep::as_x_drawable () {
   return NULL;
 }
 
+qt_renderer_rep*
+renderer_rep::as_qt_renderer () {
+  return NULL;
+}
+
 void
 renderer_rep::next_page () {
 }

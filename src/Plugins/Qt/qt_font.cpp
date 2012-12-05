@@ -11,13 +11,15 @@
 
 #include "Qt/qt_font.hpp"
 #include "Qt/qt_utilities.hpp"
+#include "Qt/qt_renderer.hpp"
 
 #include "analyze.hpp"
 #include "dictionary.hpp"
 
-#define ROUND(x) ((SI) round (1280.0*x))
-#define FLOOR(x) ((SI) floor (1280.0*x))
-#define CEIL(x)  ((SI) ceil  (1280.0*x))
+#define MAGN (dpi * PIXEL / 72.0)
+#define ROUND(x) ((SI) round (x * MAGN))
+#define FLOOR(x) ((SI) floor (x * MAGN))
+#define CEIL(x)  ((SI) ceil  (x * MAGN))
 
 /******************************************************************************
 * The implementation
@@ -80,11 +82,10 @@ qt_font_rep::get_extents (string s, metric& ex) {
   QString qs  = utf8_to_qstring (cork_to_utf8 (s));
   QRectF  rect= qfm.boundingRect (qs);
   qreal   w   = qfm.width (qs);
-
   ex->x1= 0;
   ex->x2= ROUND (w);
-  ex->y1= FLOOR (rect.bottom ());
-  ex->y2= CEIL  (rect.top ());
+  ex->y1= FLOOR (-rect.bottom ());
+  ex->y2= CEIL  (-rect.top ());
   ex->x3= FLOOR (rect.left ());
   ex->x4= CEIL  (rect.right ());
   ex->y3= ex->y1;
@@ -94,9 +95,9 @@ qt_font_rep::get_extents (string s, metric& ex) {
 void
 qt_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   if (N(s)!=0) {
-    (void) ren;
-    (void) x;
-    (void) y;
+    QString qs= utf8_to_qstring (cork_to_utf8 (s));
+    double zoom= dpi / (std_shrinkf * 72.0);
+    ren -> as_qt_renderer () -> draw (qfn, qs, x, y, zoom);
   }
 }
 
