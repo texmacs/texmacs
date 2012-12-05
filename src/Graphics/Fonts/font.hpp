@@ -86,6 +86,7 @@ font tt_font (string family, int size, int dpi);
 font unicode_font (string family, int size, int dpi);
 font unicode_math_font (font up, font it, font bup, font bit, font fb);
 font x_font (string family, int size, int dpi);
+font qt_font (string family, int size, int dpi);
 font tex_font (string fam, int size, int dpi, int dsize=10);
 font tex_cm_font (string fam, int size, int dpi, int dsize=10);
 font tex_ec_font (string fam, int size, int dpi, int dsize=10);
