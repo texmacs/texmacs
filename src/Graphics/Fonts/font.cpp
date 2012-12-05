@@ -87,6 +87,10 @@ font_rep::draw (renderer ren, string s, SI x, SI y) {
 
     ren->ox     = (SI) ::round (old_ox  * old_zoomf);
     ren->oy     = (SI) ::round (old_oy  * old_zoomf);
+    //ren->cx1    = (SI) ::floor (old_cx1 * old_zoomf);
+    //ren->cx2    = (SI) ::floor (old_cx2 * old_zoomf);
+    //ren->cy1    = (SI) ::ceil  (old_cy1 * old_zoomf);
+    //ren->cy2    = (SI) ::ceil  (old_cy2 * old_zoomf);
     ren->cx1    = (SI) ::round (old_cx1 * old_zoomf);
     ren->cx2    = (SI) ::round (old_cx2 * old_zoomf);
     ren->cy1    = (SI) ::round (old_cy1 * old_zoomf);

@@ -103,6 +103,10 @@ renderer_rep::set_zoom_factor (double zoom) {
     cout << "Invalid zoom " << zoomf << ", " << shrinkf << LF;
   ox = (SI) ::round (ox  * zoomf);
   oy = (SI) ::round (oy  * zoomf);
+  //cx1= (SI) ::floor (cx1 * zoomf);
+  //cx2= (SI) ::floor (cx2 * zoomf);
+  //cy1= (SI) ::ceil  (cy1 * zoomf);
+  //cy2= (SI) ::ceil  (cy2 * zoomf);
   cx1= (SI) ::round (cx1 * zoomf);
   cx2= (SI) ::round (cx2 * zoomf);
   cy1= (SI) ::round (cy1 * zoomf);
@@ -113,6 +117,10 @@ renderer_rep::set_zoom_factor (double zoom) {
   thicken= (shrinkf >> 1) * PIXEL;
   ox = (SI) ::round (ox  / zoomf);
   oy = (SI) ::round (oy  / zoomf);
+  //cx1= (SI) ::floor (cx1 / zoomf);
+  //cx2= (SI) ::floor (cx2 / zoomf);
+  //cy1= (SI) ::ceil  (cy1 / zoomf);
+  //cy2= (SI) ::ceil  (cy2 / zoomf);
   cx1= (SI) ::round (cx1 / zoomf);
   cx2= (SI) ::round (cx2 / zoomf);
   cy1= (SI) ::round (cy1 / zoomf);
