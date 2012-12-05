@@ -554,6 +554,9 @@ x_window_rep::translate (SI x1, SI y1, SI x2, SI y2, SI dx, SI dy) {
   invalid_intern = ::translate (invalid_intern, dx, dy) & region;
   invalid_regions= invalid_extern | invalid_intern;
 
+  rectangles extra= thicken (region - ::translate (region, dx, dy), 1, 1);
+  invalid_regions= invalid_regions | extra;
+
   if (x1<x2 && y2<y1)
     XCopyArea (dpy, win, win, gc, x1, y2, x2-x1, y1-y2, X1, Y2);
 }
