@@ -41,8 +41,7 @@ qt_font_rep::qt_font_rep (string name, string family2, int size2, int dpi2):
 
   // get character dimensions
   metric ex;
-  get_extents ("x", ex);
-  yx           = ex->y2;
+  yx           = ROUND (qfm.xHeight ());
   get_extents ("M", ex);
   wquad        = ex->x2;
 
@@ -80,7 +79,7 @@ qt_font_rep::qt_font_rep (string name, string family2, int size2, int dpi2):
 void
 qt_font_rep::get_extents (string s, metric& ex) {
   QString qs  = utf8_to_qstring (cork_to_utf8 (s));
-  QRectF  rect= qfm.boundingRect (qs);
+  QRectF  rect= qfm.tightBoundingRect (qs);
   qreal   w   = qfm.width (qs);
   ex->x1= 0;
   ex->x2= ROUND (w);
