@@ -29,6 +29,8 @@ qt_font_rep::qt_font_rep (string name, string family2, int size2, int dpi2):
   //qfn (to_qstring (family), size, QFont::Normal, false),
   qfm (qfn)
 {
+  type= FONT_TYPE_QT;
+
   // get main font parameters
   y1= FLOOR (-qfm.descent ());
   y2= CEIL  (qfm.ascent () + 1);

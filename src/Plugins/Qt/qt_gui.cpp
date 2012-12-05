@@ -1149,10 +1149,3 @@ external_event (string type, time_t t) {
     if (wid) the_gui -> process_keypress (wid, type, t);
   }
 }
-
-font x_font (string family, int size, int dpi)
-{
-  (void) family; (void) size; (void) dpi;
-  if (DEBUG_QT) cout << "x_font(): SHOULD NOT BE CALLED\n";
-  return NULL;
-}

@@ -531,11 +531,3 @@ external_event (string type, time_t t) {
   }
 #endif
 }
-
-font x_font (string family, int size, int dpi)
-{
-  (void) family; (void) size; (void) dpi;
-  if (DEBUG_EVENTS) cout << "x_font(): SHOULD NOT BE CALLED\n";
-  return NULL;
-}
-

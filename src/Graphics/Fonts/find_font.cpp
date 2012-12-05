@@ -92,6 +92,9 @@ find_font_bis (tree t) {
   if (is_tuple (t, "x", 3))
     return x_font (as_string (t[1]), as_int (t[2]), as_int (t[3]));
 
+  if (is_tuple (t, "qt", 3))
+    return qt_font (as_string (t[1]), as_int (t[2]), as_int (t[3]));
+
   if (is_tuple (t, "tex", 3))
     return tex_font (as_string (t[1]), as_int (t[2]), as_int (t[3]));
 

@@ -20,7 +20,8 @@ struct glyph;
 
 #define FONT_TYPE_TEX      0
 #define FONT_TYPE_UNICODE  1
-#define FONT_TYPE_OTHER    2
+#define FONT_TYPE_QT       2
+#define FONT_TYPE_OTHER    3
 
 /******************************************************************************
 * The font structure
