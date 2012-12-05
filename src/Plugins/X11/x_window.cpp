@@ -457,6 +457,7 @@ x_window_rep::repaint_invalid_regions () {
   while (!is_nil (invalid_regions)) {
     ren->set_origin (0, 0);
     rectangle r= copy (invalid_regions->item);
+    r= thicken (r, 1, 1);
     ren->encode (r->x1, r->y1);
     ren->encode (r->x2, r->y2);
     ren->set_clipping (r->x1, r->y2, r->x2, r->y1);
