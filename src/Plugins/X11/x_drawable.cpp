@@ -176,7 +176,7 @@ void
 x_drawable_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   x1= max (x1, cx1-ox); y1= max (y1, cy1-oy);
   x2= min (x2, cx2-ox); y2= min (y2, cy2-oy);
-  // outer_round (x1, y1, x2, y2); might still be needed somewhere
+  // outer_round (x1, y1, x2, y2); //might still be needed somewhere
   decode (x1, y1);
   decode (x2, y2);
   if ((x1>=x2) || (y1<=y2)) return;
@@ -200,7 +200,7 @@ x_drawable_rep::fill (SI x1, SI y1, SI x2, SI y2) {
 
   x1= max (x1, cx1-ox); y1= max (y1, cy1-oy);
   x2= min (x2, cx2-ox); y2= min (y2, cy2-oy);
-  // outer_round (x1, y1, x2, y2); might still be needed somewhere
+  // outer_round (x1, y1, x2, y2); //might still be needed somewhere
   if ((x1>=x2) || (y1>=y2)) return;
 
   decode (x1, y1);
