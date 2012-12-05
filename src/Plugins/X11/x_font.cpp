@@ -25,7 +25,7 @@ bool char_clip= true;
 void
 x_drawable_rep::draw_clipped (Pixmap pm, Pixmap bm, int w, int h, SI x, SI y) {
   int x1=cx1-ox, y1=cy2-oy, x2= cx2-ox, y2= cy1-oy;
-  //outer_round (x1, y1, x2, y2); // might be needed somewhere
+  // outer_round (x1, y1, x2, y2); // might be needed somewhere
   decode (x , y );
   decode (x1, y1);
   decode (x2, y2);
