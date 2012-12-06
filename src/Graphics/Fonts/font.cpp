@@ -12,6 +12,9 @@
 #include "font.hpp"
 #include "gui.hpp"
 #include "Freetype/tt_file.hpp"
+#include "iterator.hpp"
+#include "file.hpp"
+#include "convert.hpp"
 
 RESOURCE_CODE(font);
 

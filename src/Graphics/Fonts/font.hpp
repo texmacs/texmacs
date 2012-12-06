@@ -77,6 +77,16 @@ struct font_rep: rep<font> {
   virtual glyph get_glyph (string s);
 };
 
+extern hashmap<tree,tree> font_table;
+void font_database_build (url u);
+void font_database_load ();
+void font_database_save ();
+array<string> font_database_families ();
+array<string> font_database_styles (string family);
+array<string> font_database_search (string family, string style);
+array<string> font_database_search (string fam, string var,
+                                    string series, string shape);
+
 string default_chinese_font_name ();
 string default_japanese_font_name ();
 string default_korean_font_name ();

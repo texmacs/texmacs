@@ -14,8 +14,10 @@
 #include "font.hpp"
 #include "hashmap.hpp"
 #include "timer.hpp"
+#include "Freetype/tt_file.hpp"
 
 hashmap<string,tree> font_conversion ("rule");
+string suppress_suffix (string name);
 
 /******************************************************************************
 * Declare a new rule
@@ -160,7 +162,20 @@ find_font_bis (tree t) {
     return math_font (t, fn, error_fn);
   }
 
-  if (!font_conversion->contains (t[0]->label)) return font ();
+  if (!font_conversion->contains (t[0]->label)) {
+    font_database_load ();
+    if (is_tuple (t) && N(t) == 6) {
+      string family = as_string (t[0]);
+      string variant= as_string (t[1]);
+      string series = as_string (t[2]);
+      string shape  = as_string (t[3]);
+      array<string> a= font_database_search (family, variant, series, shape);
+      if (N(a) > 0 && tt_font_exists (suppress_suffix (a[0])))
+        return unicode_font (suppress_suffix (a[0]),
+                             as_int (t[4]), as_int (t[5]));
+    }
+    return font ();
+  }
 
   tree rule= font_conversion [t[0]->label];
   int i, n= N(rule);

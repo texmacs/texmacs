@@ -743,6 +743,74 @@ tmg_glyph_recognize (tmscm arg1) {
 }
 
 tmscm
+tmg_font_database_build (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "font-database-build");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  font_database_build (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_font_database_load () {
+  // TMSCM_DEFER_INTS;
+  font_database_load ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_font_database_save () {
+  // TMSCM_DEFER_INTS;
+  font_database_save ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_font_database_families () {
+  // TMSCM_DEFER_INTS;
+  array_string out= font_database_families ();
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
+tmg_font_database_styles (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "font-database-styles");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  array_string out= font_database_styles (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
+tmg_font_database_search (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "font-database-search");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "font-database-search");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  array_string out= font_database_search (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
 tmg_image_2psdoc (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "image->psdoc");
 
@@ -6753,6 +6821,12 @@ initialize_glue_basic () {
   tmscm_install_procedure ("mark-new",  tmg_mark_new, 0, 0, 0);
   tmscm_install_procedure ("glyph-register",  tmg_glyph_register, 2, 0, 0);
   tmscm_install_procedure ("glyph-recognize",  tmg_glyph_recognize, 1, 0, 0);
+  tmscm_install_procedure ("font-database-build",  tmg_font_database_build, 1, 0, 0);
+  tmscm_install_procedure ("font-database-load",  tmg_font_database_load, 0, 0, 0);
+  tmscm_install_procedure ("font-database-save",  tmg_font_database_save, 0, 0, 0);
+  tmscm_install_procedure ("font-database-families",  tmg_font_database_families, 0, 0, 0);
+  tmscm_install_procedure ("font-database-styles",  tmg_font_database_styles, 1, 0, 0);
+  tmscm_install_procedure ("font-database-search",  tmg_font_database_search, 2, 0, 0);
   tmscm_install_procedure ("image->psdoc",  tmg_image_2psdoc, 1, 0, 0);
   tmscm_install_procedure ("tree->stree",  tmg_tree_2stree, 1, 0, 0);
   tmscm_install_procedure ("stree->tree",  tmg_stree_2tree, 1, 0, 0);

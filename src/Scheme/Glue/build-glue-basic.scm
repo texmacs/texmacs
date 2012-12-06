@@ -81,6 +81,14 @@
   (glyph-register register_glyph (void string array_array_array_double))
   (glyph-recognize recognize_glyph (string array_array_array_double))
 
+  ;; routines for the font database
+  (font-database-build font_database_build (void url))
+  (font-database-load font_database_load (void))
+  (font-database-save font_database_save (void))
+  (font-database-families font_database_families (array_string))
+  (font-database-styles font_database_styles (array_string string))
+  (font-database-search font_database_search (array_string string string))
+
   ;; routines for images
   (image->psdoc image_to_psdoc (string url))
 
