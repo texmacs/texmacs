@@ -26,6 +26,27 @@ search_sub_dirs (url root) {
   return expand (dirs);
 }
 
+url
+tt_font_path () {
+  string xtt= get_env ("TEXMACS_FONT_PATH");
+  url xu= url_none ();
+  if (xtt != "") xu= search_sub_dirs (xtt);
+  return
+    xu |
+    search_sub_dirs ("$TEXMACS_HOME_PATH/fonts/truetype") |
+#if defined __MINGW32__
+    search_sub_dirs ("$windir/Fonts");
+#elif defined OS_MACOS
+    search_sub_dirs ("$HOME/Library/Fonts") |
+    search_sub_dirs ("/Library/Fonts") |
+    search_sub_dirs ("/System/Library/Fonts");
+#else
+    search_sub_dirs ("$HOME/.fonts") |
+    search_sub_dirs ("/usr/share/fonts/truetype") |
+    search_sub_dirs ("/usr/local/share/fonts/truetype");
+#endif
+}
+
 static url
 tt_locate (string name) {
   if (ends (name, ".pfb")) {
@@ -71,19 +92,7 @@ tt_locate (string name) {
 	}
     }
 
-  url tt_path=
-    search_sub_dirs ("$TEXMACS_HOME_PATH/fonts/truetype") |
-#if defined __MINGW32__
-    search_sub_dirs ("$windir/Fonts");
-#elif defined OS_MACOS
-    search_sub_dirs ("$HOME/Library/Fonts") |
-    search_sub_dirs ("/Library/Fonts") |
-    search_sub_dirs ("/System/Library/Fonts");
-#else
-    search_sub_dirs ("$HOME/.fonts") |
-    search_sub_dirs ("/usr/share/fonts/truetype") |
-    search_sub_dirs ("/usr/local/share/fonts/truetype");
-#endif
+  url tt_path= tt_font_path ();
   //cout << "Resolve " << name << " in " << tt_path << "\n";
   return resolve (tt_path * name);
 }

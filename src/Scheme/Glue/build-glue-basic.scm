@@ -85,6 +85,7 @@
   (font-database-build font_database_build (void url))
   (font-database-load font_database_load (void))
   (font-database-save font_database_save (void))
+  (font-database-filter font_database_filter (void))
   (font-database-families font_database_families (array_string))
   (font-database-styles font_database_styles (array_string string))
   (font-database-search font_database_search (array_string string string))

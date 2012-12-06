@@ -14,10 +14,10 @@
 #include "url.hpp"
 #include "bitmap_font.hpp"
 
+url    tt_font_path ();
 bool   tt_font_exists (string name);
 url    tt_font_find (string name);
 string tt_find_name (string name, int size);
-
 
 #ifdef USE_FREETYPE
 font_glyphs tt_font_glyphs (string family, int size, int dpi);

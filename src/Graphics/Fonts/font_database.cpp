@@ -14,6 +14,7 @@
 #include "file.hpp"
 #include "convert.hpp"
 #include "merge_sort.hpp"
+#include "Freetype/tt_file.hpp"
 
 /******************************************************************************
 * Global management of the font database
@@ -77,6 +78,72 @@ font_database_save () {
   merge_sort_leq<scheme_tree,font_less_eq_operator> (r);
   string s= scheme_tree_to_block (tree (TUPLE, r));
   save_string ("$TEXMACS_HOME_PATH/fonts/font-database.scm", s);
+}
+
+/******************************************************************************
+* Only keep existing files in database
+******************************************************************************/
+
+static hashmap<tree,tree> new_font_table (UNINIT);
+static hashmap<tree,tree> back_font_table (UNINIT);
+
+void
+build_back_table () {
+  iterator<tree> it= iterate (font_table);
+  while (it->busy ()) {
+    tree key= it->next ();
+    if (is_func (key, TUPLE, 2) && is_tuple (font_table [key])) {
+      tree im= font_table [key];
+      for (int i=0; i<N(im); i++) {
+        tree loc = im[i];
+        tree names (TUPLE);
+        if (back_font_table->contains (loc))
+          names= back_font_table [loc];
+        names << key;
+        back_font_table (loc)= names;
+      }
+    }
+  }  
+}
+
+void
+font_database_collect (url u) {
+  if (is_or (u)) {
+    font_database_collect (u[1]);
+    font_database_collect (u[2]);
+  }
+  else if (is_directory (u)) {
+    bool err;
+    array<string> a= read_directory (u, err);
+    for (int i=0; i<N(a); i++)
+      if (!starts (a[i], "."))
+        if (ends (a[i], ".ttf") ||
+            ends (a[i], ".ttc") ||
+            ends (a[i], ".otf"))
+          if (back_font_table->contains (a[i])) {
+            tree keys= back_font_table [a[i]];
+            for (int j=0; j<N(keys); j++) {
+              tree key= keys[j];
+              tree im (TUPLE);
+              if (new_font_table->contains (key))
+                im= new_font_table [key];
+              im << a[i];
+              new_font_table (key)= im;
+            }
+          }
+  }
+}
+
+void
+font_database_filter () {
+  new_font_table = hashmap<tree,tree> (UNINIT);
+  back_font_table= hashmap<tree,tree> (UNINIT);
+  build_back_table ();
+  url u= tt_font_path ();
+  font_database_collect (u);
+  font_table= new_font_table;
+  new_font_table = hashmap<tree,tree> (UNINIT);
+  back_font_table= hashmap<tree,tree> (UNINIT);
 }
 
 /******************************************************************************

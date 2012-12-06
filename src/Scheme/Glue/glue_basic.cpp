@@ -774,6 +774,15 @@ tmg_font_database_save () {
 }
 
 tmscm
+tmg_font_database_filter () {
+  // TMSCM_DEFER_INTS;
+  font_database_filter ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_font_database_families () {
   // TMSCM_DEFER_INTS;
   array_string out= font_database_families ();
@@ -6824,6 +6833,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("font-database-build",  tmg_font_database_build, 1, 0, 0);
   tmscm_install_procedure ("font-database-load",  tmg_font_database_load, 0, 0, 0);
   tmscm_install_procedure ("font-database-save",  tmg_font_database_save, 0, 0, 0);
+  tmscm_install_procedure ("font-database-filter",  tmg_font_database_filter, 0, 0, 0);
   tmscm_install_procedure ("font-database-families",  tmg_font_database_families, 0, 0, 0);
   tmscm_install_procedure ("font-database-styles",  tmg_font_database_styles, 1, 0, 0);
   tmscm_install_procedure ("font-database-search",  tmg_font_database_search, 2, 0, 0);

@@ -22,7 +22,7 @@
 ******************************************************************************/
 
 string
-suppress_suffix (string name) {
+strip_suffix (string name) {
   while (occurs (".", name)) {
     int pos= search_backwards (".", name);
     name= name (0, pos);
@@ -44,7 +44,7 @@ good_match_quality (string name, string fam, string sty) {
 
 int
 match_quality (string name, string fam, string sty) {
-  name= suppress_suffix (name);
+  name= strip_suffix (name);
   int q= good_match_quality (name, fam, sty);
   if (q > 0) return 20+q;
   name= replace (name, "Regular", "Normal");
@@ -87,7 +87,7 @@ qt_font_insert (const QFontDatabase& db, url u) {
           for (i=0; i<N(all); i++) {
             int qnew= match_quality (im, fam, sty);
             int qold= match_quality (all[i]->label, fam, sty);
-            if (qold > qnew) break;
+            if (qold > qnew || all[i]->label == im) break;
             if (qnew > qold) { all= tree (TUPLE); break; }
           }
           if (i >= N(all)) all << tree (im);

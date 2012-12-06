@@ -17,7 +17,7 @@
 #include "Freetype/tt_file.hpp"
 
 hashmap<string,tree> font_conversion ("rule");
-string suppress_suffix (string name);
+string strip_suffix (string name);
 
 /******************************************************************************
 * Declare a new rule
@@ -170,9 +170,10 @@ find_font_bis (tree t) {
       string series = as_string (t[2]);
       string shape  = as_string (t[3]);
       array<string> a= font_database_search (family, variant, series, shape);
-      if (N(a) > 0 && tt_font_exists (suppress_suffix (a[0])))
-        return unicode_font (suppress_suffix (a[0]),
-                             as_int (t[4]), as_int (t[5]));
+      for (int i=0; i<N(a); i++)
+        if (tt_font_exists (strip_suffix (a[i])))
+          return unicode_font (strip_suffix (a[i]),
+                               as_int (t[4]), as_int (t[5]));
     }
     return font ();
   }
