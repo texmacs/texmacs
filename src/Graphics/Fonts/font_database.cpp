@@ -50,15 +50,32 @@ font_database_load () {
   }
 }
 
+struct font_less_eq_operator {
+  static bool leq (scheme_tree t1, scheme_tree t2) {
+    if (is_atomic (t1) && is_atomic (t2))
+      return t1->label <= t2->label;
+    if (is_atomic (t1)) return true;
+    if (is_atomic (t2)) return false;
+    if (N(t1) < N(t2)) return true;
+    if (N(t2) > N(t1)) return false;
+    for (int i=0; i<N(t1); i++) {
+      if (leq (t1[i], t2[i]) && t1[i] != t2[i]) return true;
+      if (leq (t2[i], t1[i]) && t2[i] != t1[i]) return false;
+    }
+    return true;
+  }
+};
+
 void
 font_database_save () {
-  scheme_tree r (TUPLE);
+  array<scheme_tree> r;
   iterator<tree> it= iterate (font_table);
   while (it->busy ()) {
     tree key= it->next ();
     r << tuple (key, font_table [key]);
   }
-  string s= scheme_tree_to_block (r);
+  merge_sort_leq<scheme_tree,font_less_eq_operator> (r);
+  string s= scheme_tree_to_block (tree (TUPLE, r));
   save_string ("$TEXMACS_HOME_PATH/fonts/font-database.scm", s);
 }
 
