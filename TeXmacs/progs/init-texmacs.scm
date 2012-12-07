@@ -284,6 +284,7 @@
 (use-modules (fonts fonts-ec) (fonts fonts-adobe) (fonts fonts-x)
 	     (fonts fonts-math) (fonts fonts-foreign) (fonts fonts-misc)
 	     (fonts fonts-composite) (fonts fonts-truetype))
+(lazy-define (fonts font-selector) open-font-selector)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "------------------------------------------------------\n")
