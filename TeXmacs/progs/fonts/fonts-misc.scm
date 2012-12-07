@@ -81,3 +81,7 @@
     ((wsuipa $a medium right $s $d) (tex wsuipa $s $d))
     ((wsuipa $a medium slanted $s $d) (tex wslipa $s $d))
     ((wsuipa $a bold $b $s $d) (tex wbxipa $s $d))))
+
+;; FIXME: just a demo for how to declare a Qt font
+(set-font-rules
+  '(((qt-helvetica $x $a $b $s $d) (qt Helvetica $s $d))))

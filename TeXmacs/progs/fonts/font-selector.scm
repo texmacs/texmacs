@@ -17,6 +17,64 @@
   (:use (kernel gui menu-widget)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Correspondance between old and new font names
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-table decode-font-table*
+  ("roman" . "TeXmacs Computer Modern")
+  ("modern" . "TeXmacs Computer Modern Unicode")
+  ;;
+  ("concrete" . "TeXmacs Concrete")
+  ("ENR" . "TeXmacs Euler New Roman")
+  ("Euler" . "TeXmacs Euler")
+  ;;
+  ("blackletter" . "TeX Blackletter")
+  ("calligraphic" . "TeX Calligraphic")
+  ("duerer" . "TeX Duerer")
+  ("gothic" . "TeX Gothic")
+  ("hershey" . "TeX Hershey")
+  ("old-english" . "TeX Old English")
+  ("pacioli" . "TeX Pacioli")
+  ("pandora" . "TeX Pandora")
+  ("punk" . "TeX Punk")
+  ("schwell" . "TeX Schwell")
+  ("suet" . "TeX Suet")
+  ("swab" . "TeX Swab")
+  ;;
+  ("arab" . "TeX Nash Arab")
+  ("armenian" . "TeX Armenian")
+  ("cyrillic" . "TeX Cyrillic")
+  ("devangari" . "TeX Devangari")
+  ("greek" . "TeX Greek")
+  ("hebrew" . "TeX Hewbrew")
+  ("icelandic" . "TeX Icelandic")
+  ("irish" . "TeX Irish")
+  ("mxedruli" . "TeX Georgian Mxedruli")
+  ("osmanian" . "TeX Osmanian")
+  ("tamil" . "TeX Tamil")
+  ("thai" . "TeX Thai")
+  ("turkish" . "TeX Turkish")
+  ("xucuri" . "TeX Georgian Xucuri")
+  ;;
+  ("bard" . "TeX Bard")
+  ("cypriot" . "TeX Cypriot")
+  ("greek4cbc" . "TeX Greek 4 Centuries Before Christ")
+  ("greek6cbc" . "TeX Greek 6 Centuries Before Christ")
+  ("linearb" . "TeX Linear B")
+  ("ogham" . "TeX Ogham")
+  ("old-slavonic" . "TeX Slavonic")
+  ("phoenician" . "TeX Phoenician")
+  ("runic" . "TeX Runic Fut")
+  ("runic*" . "TeX Runic Futhol")
+  ("runic**" . "TeX Runic Futhor")
+  ("southarabian" . "TeX Southarabian")
+  ("syriac" . "TeX Syriac")
+  ("ugaritic" . "TeX Ugaritic"))
+
+(tm-define decode-font-table decode-font-table*)
+(tm-define encode-font-table (ahash-table-invert decode-font-table))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; From old style to new style font properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -29,13 +87,8 @@
 (define (decode-family fn)
   ;; Font family
   (with f (old-family fn)
-    (cond ((== f "roman") "Computer Modern")
-          ((== f "concrete") "Concrete")
-          ;;
-          ((== f "duerer") "Duerer")
-          ((== f "pandora") "Pandora")
-          ((== f "punk") "Punk")
-          (else f))))
+    (with nfn (ahash-ref decode-font-table f)
+      (or nfn f))))
 
 (define (decode-size fn)
   ;; Font name in points
@@ -167,13 +220,8 @@
 
 (define (encode-family fn)
   (with f (new-family fn)
-    (cond ((== f "Computer Modern") "roman")
-          ((== f "Concrete") "concrete")
-          ;;
-          ((== f "Duerer") "duerer")
-          ((== f "Pandora") "pandora")
-          ((== f "Punk") "punk")
-          (else f))))
+    (with ofn (ahash-ref encode-font-table f)
+      (or ofn f))))
 
 (define (encode-variant fn)
   (let* ((serif (new-serif fn))
@@ -230,7 +278,7 @@
 ;; Global state of font selector
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define selector-font-family "Computer Modern")
+(tm-define selector-font-family "TeXmacs Computer Modern")
 (tm-define selector-font-size "10")
 (tm-define selector-font-weight "Medium")
 (tm-define selector-font-slant "Normal")
@@ -310,8 +358,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (all-available-fonts)
-  (with l (cons* "Computer Modern"
-                 "Concrete"
+  (with l (cons* "TeXmacs Computer Modern"
+                 "TeXmacs Computer Modern Unicode"
+                 "TeXmacs Concrete"
+                 "TeXmacs Euler"
+                 "TeXmacs Euler New Roman"
                  (font-database-families))
     (list-sort l string<=?)))
 
