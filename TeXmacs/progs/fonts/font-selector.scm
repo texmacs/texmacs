@@ -28,6 +28,13 @@
   ("ENR" . "TeXmacs Euler New Roman")
   ("Euler" . "TeXmacs Euler")
   ;;
+  ("bookman" . "TeXmacs Bookman")
+  ("courier" . "TeXmacs Courier")
+  ("helvetica" . "TeXmacs Helvetica")
+  ("new-century-schoolbook" . "TeXmacs New Century Schoolbook")
+  ("palatino" . "TeXmacs Palatino")
+  ("times" . "TeXmacs Times")
+  ;;
   ("blackletter" . "TeX Blackletter")
   ("calligraphic" . "TeX Calligraphic")
   ("duerer" . "TeX Duerer")
@@ -360,9 +367,17 @@
 (tm-define (all-available-fonts)
   (with l (cons* "TeXmacs Computer Modern"
                  "TeXmacs Computer Modern Unicode"
+                 ;;
                  "TeXmacs Concrete"
                  "TeXmacs Euler"
                  "TeXmacs Euler New Roman"
+                 ;;
+                 "TeXmacs Bookman"
+                 "TeXmacs Courier"
+                 "TeXmacs Helvetica"
+                 "TeXmacs New Century Schoolbook"
+                 "TeXmacs Palatino"
+                 "TeXmacs Times"
                  (font-database-families))
     (list-sort l string<=?)))
 
