@@ -154,5 +154,7 @@ init_upgrade () {
   remove (url ("$TEXMACS_HOME_PATH/system/cache/doc_cache"));
   remove (url ("$TEXMACS_HOME_PATH/system/cache/file_cache"));
   remove (url ("$TEXMACS_HOME_PATH/system/cache/stat_cache.scm"));
+  remove (url ("$TEXMACS_HOME_PATH/fonts/font-database.scm"));
+  remove (url ("$TEXMACS_HOME_PATH/fonts/error") * url_wildcard ("*"));
   cache_refresh ();
 }

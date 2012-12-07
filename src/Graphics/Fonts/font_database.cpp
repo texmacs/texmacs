@@ -33,12 +33,7 @@ font_database_build (url u) {
 #endif
 
 void
-font_database_load () {
-  if (fonts_loaded) return;
-  fonts_loaded= true;
-  url home ("$TEXMACS_HOME_PATH");
-  url def ("$TEXMACS_PATH");
-  url u= (home | def) * url ("fonts/font-database.scm");
+font_database_load (url u) {
   u= resolve (u);
   if (!is_none (u)) {
     string s;
@@ -68,7 +63,7 @@ struct font_less_eq_operator {
 };
 
 void
-font_database_save () {
+font_database_save (url u) {
   array<scheme_tree> r;
   iterator<tree> it= iterate (font_table);
   while (it->busy ()) {
@@ -77,7 +72,24 @@ font_database_save () {
   }
   merge_sort_leq<scheme_tree,font_less_eq_operator> (r);
   string s= scheme_tree_to_block (tree (TUPLE, r));
-  save_string ("$TEXMACS_HOME_PATH/fonts/font-database.scm", s);
+  save_string (u, s);
+}
+
+void
+font_database_load () {
+  if (fonts_loaded) return;
+  fonts_loaded= true;
+  font_database_load ("$TEXMACS_HOME_PATH/fonts/font-database.scm");
+  if (N (font_table) == 0) {
+    font_database_load ("$TEXMACS_PATH/fonts/font-database.scm");
+    font_database_filter ();
+    font_database_save ("$TEXMACS_HOME_PATH/fonts/font-database.scm");
+  }
+}
+
+void
+font_database_save () {
+  font_database_save ("$TEXMACS_HOME_PATH/fonts/font-database.scm");
 }
 
 /******************************************************************************
@@ -152,6 +164,7 @@ font_database_filter () {
 
 array<string>
 font_database_families () {
+  font_database_load ();
   hashmap<string,bool> families;
   iterator<tree> it= iterate (font_table);
   while (it->busy ()) {
@@ -169,6 +182,7 @@ font_database_families () {
 
 array<string>
 font_database_styles (string family) {
+  font_database_load ();
   array<string> r;
   iterator<tree> it= iterate (font_table);
   while (it->busy ()) {
@@ -182,6 +196,7 @@ font_database_styles (string family) {
 
 array<string>
 font_database_search (string family, string style) {
+  font_database_load ();
   array<string> r;
   tree key= tuple (family, style);
   if (font_table->contains (key)) {
