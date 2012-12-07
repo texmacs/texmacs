@@ -20,6 +20,8 @@
     ((avant-garde rm bold right $s $d) (ec avant-garde-bx $s $d))
     ((avant-garde rm bold slanted $s $d) (ec avant-garde-bi $s $d))
     ((avant-garde rm bold italic $s $d) (ec avant-garde-bi $s $d))
+    ((avant-garde ss $series $shape $s $d) (avant-garde rm $series $shape $s $d))
+    ((avant-garde tt $series $shape $s $d) (courier rm $series $shape $s $d))
 
     ((bookman rm medium right $s $d) (ec bookman-rm $s $d))
     ((bookman rm medium slanted $s $d) (ec bookman-ti $s $d))
@@ -36,6 +38,8 @@
     ((courier rm bold right $s $d) (ec courier-bx $s $d))
     ((courier rm bold slanted $s $d) (ec courier-bx $s $d))
     ((courier rm bold italic $s $d) (ec courier-bi $s $d))
+    ((courier ss $series $shape $s $d) (helvetica rm $series $shape $s $d))
+    ((courier tt $series $shape $s $d) (courier rm $series $shape $s $d))
 
     ((helvetica rm medium right $s $d) (ec helvetica-rm $s $d))
     ((helvetica rm medium slanted $s $d) (ec helvetica-ti $s $d))
@@ -43,6 +47,7 @@
     ((helvetica rm bold right $s $d) (ec helvetica-bx $s $d))
     ((helvetica rm bold slanted $s $d) (ec helvetica-bx $s $d))
     ((helvetica rm bold italic $s $d) (ec helvetica-bi $s $d))
+    ((helvetica ss $series $shape $s $d) (helvetica rm $series $shape $s $d))
     ((helvetica tt $series $shape $s $d) (courier rm $series $shape $s $d))
 
     ((new-century-schoolbook rm medium right $s $d) (ec nc-schoolbook-rm $s $d))
