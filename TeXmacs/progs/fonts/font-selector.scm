@@ -27,14 +27,15 @@
 
 (tm-widget (font-sample-text)
   (texmacs-output
-    `(document
-       (with
-         "font" ,selector-font-family
-         "font-base-size" ,selector-font-base-size
-         "font-series" ,selector-font-series
-         "font-shape" ,selector-font-shape
-         "abcdefghij, ABCDEFGHIJ, 0123456789"))
-     '(style "generic")))
+    `(with "bg-color" "white"
+       (document
+         (with
+           "font" ,selector-font-family
+           "font-base-size" ,selector-font-base-size
+           "font-series" ,selector-font-series
+           "font-shape" ,selector-font-shape
+           "abcdefghij, ABCDEFGHIJ, 0123456789")))
+    '(style "generic")))
 
 (tm-define (make-multi-with . l)
   (with t (if (selection-active-any?) (selection-tree) "")
@@ -80,13 +81,13 @@
                   '("right" "italic" "slanted")
                   selector-font-shape "100px")))
         (horizontal (glue #f #t 0 0))))
-    === --- ===
+    === ===
     (bold (text "Font sample"))
     ===
     (resize ("300px" "300px" "2000px") ("100px" "100px" "100px")
       (scrollable
         (refresh font-sample-text)))
-    === --- ===
+    === ===
     (explicit-buttons
       (hlist >>> ("Ok" (begin (font-select-font) (quit)))))))
 

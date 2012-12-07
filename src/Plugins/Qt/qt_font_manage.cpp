@@ -17,18 +17,11 @@
 #include "iterator.hpp"
 #include "analyze.hpp"
 
+string strip_suffix (string name);
+
 /******************************************************************************
 * Heuristic correspondence between file name and family/style
 ******************************************************************************/
-
-string
-strip_suffix (string name) {
-  while (occurs (".", name)) {
-    int pos= search_backwards (".", name);
-    name= name (0, pos);
-  }
-  return name;
-}
 
 int
 good_match_quality (string name, string fam, string sty) {

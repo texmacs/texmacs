@@ -17,7 +17,6 @@
 #include "Freetype/tt_file.hpp"
 
 hashmap<string,tree> font_conversion ("rule");
-string strip_suffix (string name);
 
 /******************************************************************************
 * Declare a new rule
@@ -35,6 +34,15 @@ font_rule (tree which, tree by) {
 /******************************************************************************
 * Find a font
 ******************************************************************************/
+
+string
+strip_suffix (string name) {
+  while (occurs (".", name)) {
+    int pos= search_backwards (".", name);
+    name= name (0, pos);
+  }
+  return name;
+}
 
 static bool
 matches (tree t, tree which, hashmap<string,tree>& H) {
