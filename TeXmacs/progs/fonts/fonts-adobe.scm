@@ -51,6 +51,8 @@
     ((new-century-schoolbook rm bold right $s $d) (ec nc-schoolbook-bx $s $d))
     ((new-century-schoolbook rm bold slanted $s $d) (ec nc-schoolbook-bx $s $d))
     ((new-century-schoolbook rm bold italic $s $d) (ec nc-schoolbook-bi $s $d))
+    ((new-century-schoolbook ss $series $shape $s $d) (helvetica rm $series $shape $s $d))
+    ((new-century-schoolbook tt $series $shape $s $d) (courier rm $series $shape $s $d))
 
     ((palatino rm medium right $s $d) (ec palatino-rm $s $d))
     ((palatino rm medium slanted $s $d) (ec palatino-sl $s $d))

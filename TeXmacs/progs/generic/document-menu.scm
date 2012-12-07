@@ -317,13 +317,14 @@
 	  ("Default" (init-default "font"))
 	  ---
 	  ("Concrete" (init-env "font" "concrete"))
-	  ("Cyrillic" (init-env "font" "cyrillic"))
-	  ("Pandora" (init-env "font" "pandora"))
+          (if (url-exists-in-tex? "pnr10.mf")
+              ("Pandora" (init-env "font" "pandora")))
 	  ("Roman" (init-env "font" "roman"))
 	  ---
 	  ("Bookman" (init-env "font" "bookman"))
 	  ("Courier" (init-env "font" "courier"))
 	  ("Helvetica" (init-env "font" "helvetica"))
+	  ("N.C. Schoolbook" (init-env "font" "new-century-schoolbook"))
 	  ("Palatino" (init-env "font" "palatino"))
 	  ("Times" (init-env "font" "times"))
 	  ---
