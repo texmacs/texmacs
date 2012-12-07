@@ -60,8 +60,18 @@ qt_font_insert (const QFontDatabase& db, url u) {
     qt_font_insert (db, u[1]);
     qt_font_insert (db, u[2]);
   }
+  else if (is_directory (u)) {
+    bool err;
+    array<string> a= read_directory (u, err);
+    for (int i=0; i<N(a); i++)
+      if (!starts (a[i], "."))
+        if (ends (a[i], ".ttf") ||
+            ends (a[i], ".ttc") ||
+            ends (a[i], ".otf"))
+          qt_font_insert (db, u * url (a[i]));
+  }
   else if (is_regular (u)) {
-    //cout << "Process " << u << "\n";
+    cout << "Process " << u << "\n";
     string  s = materialize (u);
     QString qs= to_qstring (s);
     int     h = db.addApplicationFont (qs);

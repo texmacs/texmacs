@@ -159,6 +159,27 @@ font_database_filter () {
 }
 
 /******************************************************************************
+* Building the database
+******************************************************************************/
+
+void
+font_database_build_local () {
+  font_database_load ();
+  font_database_build (tt_font_path ());
+  font_database_save ();
+}
+
+void
+font_database_build_global () {
+  fonts_loaded= false;
+  font_table= hashmap<tree,tree> (UNINIT);
+  font_database_load ("$TEXMACS_PATH/fonts/font-database.scm");
+  font_database_build (tt_font_path ());
+  font_database_save ("$TEXMACS_PATH/fonts/font-database.scm");
+  fonts_loaded= false;
+}
+
+/******************************************************************************
 * Querying the database
 ******************************************************************************/
 
@@ -215,9 +236,53 @@ font_database_search (string fam, string var, string series, string shape) {
   if (series == "bold") {
     style= "Bold";
     if (shape == "italic") style= "Bold Italic";
+    if (shape == "slanted") style= "Bold Oblique";
   }
   else {
     if (shape == "italic") style= "Italic";
+    if (shape == "slanted") style= "Oblique";
   }
-  return font_database_search (family, style);
+  array<string> r= font_database_search (family, style);
+  if (N(r) != 0) return r;
+
+  if (style != "Normal") {
+    string style2= style;
+    if (style == "Italic") style2= "Oblique";
+    else if (style == "Bold Italic") style2= "Bold Oblique";
+    else if (style == "Oblique") style2= "Italic";
+    else if (style == "Bold Oblique") style2= "Bold Italic";
+    r= font_database_search (family, style2);
+    if (N(r) != 0) return r;
+  }
+
+  if (style != "Normal") {
+    string style2= style;
+    if (style == "Bold Italic") style2= "Bold";
+    if (style == "Bold Oblique") style2= "Bold";
+    r= font_database_search (family, style2);
+    if (N(r) != 0) return r;
+  }
+
+  if (style != "Normal") {
+    string style2= style;
+    if (style == "Bold Italic") style2= "Italic";
+    if (style == "Bold Oblique") style2= "Oblique";
+    r= font_database_search (family, style2);
+    if (N(r) != 0) return r;
+  }
+
+  if (style != "Normal") {
+    r= font_database_search (family, "Normal");
+    if (N(r) != 0) return r;
+  }
+
+  if (N(r) == 0) {
+    array<string> styles= font_database_styles (family);
+    for (int i=0; i<N(styles); i++) {
+      r= font_database_search (family, styles[i]);
+      if (N(r) != 0) return r;
+    }
+  }
+
+  return r;
 }

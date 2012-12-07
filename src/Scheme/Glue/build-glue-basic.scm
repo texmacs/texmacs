@@ -83,6 +83,8 @@
 
   ;; routines for the font database
   (font-database-build font_database_build (void url))
+  (font-database-build-local font_database_build_local (void))
+  (font-database-build-global font_database_build_global (void))
   (font-database-load font_database_load (void))
   (font-database-save font_database_save (void))
   (font-database-filter font_database_filter (void))
