@@ -281,16 +281,16 @@
 (tm-define (selector-apply-font)
   (with fn (encode-font (selector-get-font))
     (with l '()
-      (when (!= (old-family fn) (get-env "font"))
-        (set! l (cons* "font" (old-family fn) l)))
-      (when (!= (old-size fn) (get-env "font-base-size"))
-        (set! l (cons* "font-base-size" (old-size fn) l)))
-      (when (!= (old-series fn) (get-env "font-series"))
-        (set! l (cons* "font-series" (old-series fn) l)))
-      (when (!= (old-shape fn) (get-env "font-shape"))
-        (set! l (cons* "font-shape" (old-shape fn) l)))
       (when (!= (old-variant fn) (get-env "font-family"))
         (set! l (cons* "font-family" (old-variant fn) l)))
+      (when (!= (old-shape fn) (get-env "font-shape"))
+        (set! l (cons* "font-shape" (old-shape fn) l)))
+      (when (!= (old-series fn) (get-env "font-series"))
+        (set! l (cons* "font-series" (old-series fn) l)))
+      (when (!= (old-size fn) (get-env "font-base-size"))
+        (set! l (cons* "font-base-size" (old-size fn) l)))
+      (when (!= (old-family fn) (get-env "font"))
+        (set! l (cons* "font" (old-family fn) l)))
       (apply make-multi-with l))))
 
 (define (selector-font-demo-text)
@@ -327,7 +327,7 @@
     ===
     (horizontal
       (vertical
-        (resize ("400px" "400px" "2000px") ("250px" "250px" "2000px")
+        (resize ("300px" "300px" "2000px") ("250px" "250px" "2000px")
           (scrollable
             (choice (set! selector-font-family answer)
                     (all-available-fonts)
@@ -341,15 +341,15 @@
             (enum (set! selector-font-size answer)
                   '("5" "7" "8" "9" "10" "11" "12" "14" "18" "24"
                     "30" "36" "48" "64")
-                  selector-font-size "100px"))
+                  selector-font-size "125px"))
           (item (text "Weight:")
             (enum (set! selector-font-weight answer)
                   '("Light" "Medium" "Bold")
-                  selector-font-weight "100px"))
+                  selector-font-weight "125px"))
           (item (text "Slant:")
             (enum (set! selector-font-slant answer)
                   '("Normal" "Italic" "Oblique")
-                  selector-font-slant "100px")))
+                  selector-font-slant "125px")))
         === === === ===
         (horizontal (glue #f #f 0 0) (bold (text "Features")))
         ===
@@ -357,20 +357,20 @@
           (item (text "Serif:")
             (enum (set! selector-font-serif answer)
                   '("Serif" "Sans Serif")
-                  selector-font-serif "100px"))
+                  selector-font-serif "125px"))
           (item (text "Aspect:")
             (enum (set! selector-font-aspect answer)
                   '("Proportional" "Monospaced")
-                  selector-font-aspect "100px"))
+                  selector-font-aspect "125px"))
           (item (text "Case:")
             (enum (set! selector-font-case answer)
                   '("Mixed" "Small Capitals")
-                  selector-font-case "100px")))
+                  selector-font-case "125px")))
         (horizontal (glue #f #t 0 0))))
     === === ===
     (bold (text "Sample text"))
     ===
-    (resize ("400px" "400px" "2000px") ("100px" "100px" "100px")
+    (resize ("300px" "300px" "2000px") ("100px" "100px" "100px")
       (scrollable
         (refresh font-sample-text)))
     === ===
