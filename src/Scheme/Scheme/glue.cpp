@@ -20,6 +20,7 @@
 #include "convert.hpp"
 #include "file.hpp"
 #include "tmfs.hpp"
+#include "Freetype/tt_tools.hpp"
 
 tmscm 
 blackboxP (tmscm  t) {

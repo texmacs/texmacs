@@ -743,6 +743,32 @@ tmg_glyph_recognize (tmscm arg1) {
 }
 
 tmscm
+tmg_tt_dump (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "tt-dump");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  tt_dump (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_tt_font_name (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "tt-font-name");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  scheme_tree out= tt_font_name (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return scheme_tree_to_tmscm (out);
+}
+
+tmscm
 tmg_font_database_build (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "font-database-build");
 
@@ -6848,6 +6874,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("mark-new",  tmg_mark_new, 0, 0, 0);
   tmscm_install_procedure ("glyph-register",  tmg_glyph_register, 2, 0, 0);
   tmscm_install_procedure ("glyph-recognize",  tmg_glyph_recognize, 1, 0, 0);
+  tmscm_install_procedure ("tt-dump",  tmg_tt_dump, 1, 0, 0);
+  tmscm_install_procedure ("tt-font-name",  tmg_tt_font_name, 1, 0, 0);
   tmscm_install_procedure ("font-database-build",  tmg_font_database_build, 1, 0, 0);
   tmscm_install_procedure ("font-database-build-local",  tmg_font_database_build_local, 0, 0, 0);
   tmscm_install_procedure ("font-database-build-global",  tmg_font_database_build_global, 0, 0, 0);

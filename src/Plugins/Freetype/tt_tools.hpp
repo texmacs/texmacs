@@ -1,0 +1,19 @@
+
+/******************************************************************************
+* MODULE     : tt_tools.hpp
+* DESCRIPTION: Direct access of True Type font (independent from FreeType)
+* COPYRIGHT  : (C) 2012  Joris van der Hoeven
+*******************************************************************************
+* This software falls under the GNU general public license version 3 or later.
+* It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+* in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+******************************************************************************/
+
+#ifndef TT_TOOLS_H
+#define TT_TOOLS_H
+#include "url.hpp"
+
+void tt_dump (url u);
+scheme_tree tt_font_name (url u);
+
+#endif // TT_TOOLS_H
