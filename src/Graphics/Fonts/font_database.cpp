@@ -15,6 +15,7 @@
 #include "convert.hpp"
 #include "merge_sort.hpp"
 #include "Freetype/tt_file.hpp"
+#include "Freetype/tt_tools.hpp"
 
 /******************************************************************************
 * Global management of the font database
@@ -22,15 +23,6 @@
 
 static bool fonts_loaded= false;
 hashmap<tree,tree> font_table (UNINIT);
-
-#ifndef QTTEXMACS
-
-void
-font_database_build (url u) {
-  (void) u;
-}
-
-#endif
 
 void
 font_database_load (url u) {
@@ -93,6 +85,75 @@ font_database_save () {
 }
 
 /******************************************************************************
+* Building the database
+******************************************************************************/
+
+void
+font_database_build (url u) {
+  if (is_or (u)) {
+    font_database_build (u[1]);
+    font_database_build (u[2]);
+  }
+  else if (is_directory (u)) {
+    bool err;
+    array<string> a= read_directory (u, err);
+    for (int i=0; i<N(a); i++)
+      if (!starts (a[i], "."))
+        if (ends (a[i], ".ttf") ||
+            ends (a[i], ".ttc") ||
+            ends (a[i], ".otf"))
+          font_database_build (u * url (a[i]));
+  }
+  else if (is_regular (u)) {
+    cout << "Process " << u << "\n";
+    scheme_tree t= tt_font_name (u);
+    for (int i=0; i<N(t); i++)
+      if (is_func (t[i], TUPLE, 2) &&
+          is_atomic (t[i][0]) &&
+          is_atomic (t[i][1]))
+        {
+          tree key= t[i];
+          tree im = tuple (as_string (tail (u)), as_string (i));
+          tree all= tree (TUPLE);
+          if (font_table->contains (key))
+            all= font_table [key];
+          int j;
+          for (j=0; j<N(all); j++)
+            if (all[j] == im) break;
+          if (j >= N(all)) all << im;
+          font_table (key)= all;
+        }
+  }
+}
+
+void
+font_database_build_local () {
+  font_database_load ();
+  font_database_build (tt_font_path ());
+  font_database_save ();
+}
+
+void
+font_database_build_global () {
+  fonts_loaded= false;
+  font_table= hashmap<tree,tree> (UNINIT);
+  font_database_load ("$TEXMACS_PATH/fonts/font-database.scm");
+  font_database_build (tt_font_path ());
+  font_database_save ("$TEXMACS_PATH/fonts/font-database.scm");
+  fonts_loaded= false;
+}
+
+void
+font_database_build_global (url u) {
+  fonts_loaded= false;
+  font_table= hashmap<tree,tree> (UNINIT);
+  font_database_load ("$TEXMACS_PATH/fonts/font-database.scm");
+  font_database_build (u);
+  font_database_save ("$TEXMACS_PATH/fonts/font-database.scm");
+  fonts_loaded= false;
+}
+
+/******************************************************************************
 * Only keep existing files in database
 ******************************************************************************/
 
@@ -132,16 +193,20 @@ font_database_collect (url u) {
         if (ends (a[i], ".ttf") ||
             ends (a[i], ".ttc") ||
             ends (a[i], ".otf"))
-          if (back_font_table->contains (a[i])) {
-            tree keys= back_font_table [a[i]];
-            for (int j=0; j<N(keys); j++) {
-              tree key= keys[j];
-              tree im (TUPLE);
-              if (new_font_table->contains (key))
-                im= new_font_table [key];
-              im << a[i];
-              new_font_table (key)= im;
+          for (int j=0; j<65536; j++) {
+            tree ff= tuple (a[i], as_string (j));
+            if (back_font_table->contains (ff)) {
+              tree keys= back_font_table [ff];
+              for (int j=0; j<N(keys); j++) {
+                tree key= keys[j];
+                tree im (TUPLE);
+                if (new_font_table->contains (key))
+                  im= new_font_table [key];
+                im << ff;
+                new_font_table (key)= im;
+              }
             }
+            else break;
           }
   }
 }
@@ -156,27 +221,6 @@ font_database_filter () {
   font_table= new_font_table;
   new_font_table = hashmap<tree,tree> (UNINIT);
   back_font_table= hashmap<tree,tree> (UNINIT);
-}
-
-/******************************************************************************
-* Building the database
-******************************************************************************/
-
-void
-font_database_build_local () {
-  font_database_load ();
-  font_database_build (tt_font_path ());
-  font_database_save ();
-}
-
-void
-font_database_build_global () {
-  fonts_loaded= false;
-  font_table= hashmap<tree,tree> (UNINIT);
-  font_database_load ("$TEXMACS_PATH/fonts/font-database.scm");
-  font_database_build (tt_font_path ());
-  font_database_save ("$TEXMACS_PATH/fonts/font-database.scm");
-  fonts_loaded= false;
 }
 
 /******************************************************************************
@@ -223,7 +267,8 @@ font_database_search (string family, string style) {
   if (font_table->contains (key)) {
     tree im= font_table [key];
     for (int i=0; i<N(im); i++)
-      r << im[i]->label;
+      if (is_func (im[i], TUPLE, 2))
+        r << im[i][0]->label;
   }
   return r;
 }
