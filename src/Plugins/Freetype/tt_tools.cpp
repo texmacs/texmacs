@@ -195,14 +195,24 @@ name_record_string (string nt, int i) {
 }
 
 string
+filter_english (string s) {
+  string r;
+  for (int i=0; i<N(s); i++)
+    if (s[i] >= ' ' && (((unsigned int) s[i]) <= 127))
+      r << s[i];
+  return r;
+}
+
+string
 name_record_english_string (string nt, int name_id) {
   for (int i=0; i < name_nr_records (nt); i++)
-    if (name_record_name_id (nt, i) == name_id)
+    if (name_record_name_id (nt, i) == name_id) {
       if ((name_record_platform_id (nt, i) == 1 &&
            name_record_language_id (nt, i) == 0) ||
           (name_record_platform_id (nt, i) == 3 &&
            name_record_language_id (nt, i) == 0x0409))
-        return name_record_string (nt, i);
+        return filter_english (name_record_string (nt, i));
+    }
   return "";
 }
 
@@ -214,15 +224,6 @@ name_record_family (string nt) {
 string
 name_record_shape (string nt) {
   return name_record_english_string (nt, 2);
-}
-
-string
-compress (string s) {
-  string r;
-  for (int i=0; i<N(s); i++)
-    if (s[i] >= ' ' && (((unsigned int) s[i]) <= 127))
-      r << s[i];
-  return r;
 }
 
 /******************************************************************************
