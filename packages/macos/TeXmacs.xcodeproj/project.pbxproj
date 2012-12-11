@@ -327,6 +327,16 @@
 		9C646EBE12842B7A000ABCDF /* mac_utilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9C646EBD12842B7A000ABCDF /* mac_utilities.mm */; };
 		9C646EBF12842B7A000ABCDF /* mac_utilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9C646EBD12842B7A000ABCDF /* mac_utilities.mm */; };
 		9C646EC012842B7A000ABCDF /* mac_utilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9C646EBD12842B7A000ABCDF /* mac_utilities.mm */; };
+		9C6632DE1676B208000D7974 /* qt_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C6632DC1676B208000D7974 /* qt_font.cpp */; };
+		9C6632E21676B229000D7974 /* font_database.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C6632E11676B229000D7974 /* font_database.cpp */; };
+		9C6632E31676B229000D7974 /* font_database.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C6632E11676B229000D7974 /* font_database.cpp */; };
+		9C6632E41676B229000D7974 /* font_database.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C6632E11676B229000D7974 /* font_database.cpp */; };
+		9C6632E81676B272000D7974 /* preferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C6632E71676B272000D7974 /* preferences.cpp */; };
+		9C6632E91676B272000D7974 /* preferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C6632E71676B272000D7974 /* preferences.cpp */; };
+		9C6632EA1676B272000D7974 /* preferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C6632E71676B272000D7974 /* preferences.cpp */; };
+		9C6632EF1676B28E000D7974 /* tt_tools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C6632ED1676B28E000D7974 /* tt_tools.cpp */; };
+		9C6632F01676B28E000D7974 /* tt_tools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C6632ED1676B28E000D7974 /* tt_tools.cpp */; };
+		9C6632F11676B28E000D7974 /* tt_tools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C6632ED1676B28E000D7974 /* tt_tools.cpp */; };
 		9C6723D714FFD4EC005F1FE9 /* object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CD46A9214740A3F00A7E2FC /* object.cpp */; };
 		9C6723D814FFD4EE005F1FE9 /* guile_tm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CD46B11147429F900A7E2FC /* guile_tm.cpp */; };
 		9C6723D914FFD4F1005F1FE9 /* glue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4DE77A1475AA9A00F41E44 /* glue.cpp */; };
@@ -1753,6 +1763,12 @@
 		9C61B45C141A25200035D78F /* tm_debug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tm_debug.cpp; sourceTree = "<group>"; };
 		9C646EBC12842B7A000ABCDF /* mac_utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mac_utilities.h; sourceTree = "<group>"; };
 		9C646EBD12842B7A000ABCDF /* mac_utilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = mac_utilities.mm; sourceTree = "<group>"; };
+		9C6632DC1676B208000D7974 /* qt_font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_font.cpp; sourceTree = "<group>"; };
+		9C6632DD1676B208000D7974 /* qt_font.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_font.hpp; sourceTree = "<group>"; };
+		9C6632E11676B229000D7974 /* font_database.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_database.cpp; sourceTree = "<group>"; };
+		9C6632E71676B272000D7974 /* preferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = preferences.cpp; sourceTree = "<group>"; };
+		9C6632ED1676B28E000D7974 /* tt_tools.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tt_tools.cpp; sourceTree = "<group>"; };
+		9C6632EE1676B28E000D7974 /* tt_tools.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tt_tools.hpp; sourceTree = "<group>"; };
 		9C722BEB10D2F7C700C41915 /* qt_sys_utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_sys_utils.cpp; sourceTree = "<group>"; };
 		9C722BEC10D2F7C700C41915 /* qt_sys_utils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_sys_utils.hpp; sourceTree = "<group>"; };
 		9C722C0D10D2F88800C41915 /* unix_sys_utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unix_sys_utils.cpp; sourceTree = "<group>"; };
@@ -2346,6 +2362,7 @@
 		9C0B47D910A8CC100097A335 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				9C6632E11676B229000D7974 /* font_database.cpp */,
 				9C0B47DA10A8CC100097A335 /* charmap.cpp */,
 				9C0B47DB10A8CC100097A335 /* charmap.hpp */,
 				9C0B47DC10A8CC100097A335 /* compound_font.cpp */,
@@ -2574,6 +2591,8 @@
 		9C0B487010A8CC100097A335 /* Freetype */ = {
 			isa = PBXGroup;
 			children = (
+				9C6632ED1676B28E000D7974 /* tt_tools.cpp */,
+				9C6632EE1676B28E000D7974 /* tt_tools.hpp */,
 				9CEDAA351264FF88009630CC /* unicode_math_font.cpp */,
 				9C0B487110A8CC100097A335 /* free_type.cpp */,
 				9C0B487210A8CC100097A335 /* free_type.hpp */,
@@ -2674,6 +2693,8 @@
 		9C0B489D10A8CC100097A335 /* Qt */ = {
 			isa = PBXGroup;
 			children = (
+				9C6632DC1676B208000D7974 /* qt_font.cpp */,
+				9C6632DD1676B208000D7974 /* qt_font.hpp */,
 				9C225A63128B5EB00039258C /* qt_chooser_widget.cpp */,
 				9C225A64128B5EB00039258C /* qt_chooser_widget.hpp */,
 				9C088F7312B1BAD000A18E04 /* qt_color_picker_widget.cpp */,
@@ -2969,6 +2990,7 @@
 		9C0B492210A8CC110097A335 /* Boot */ = {
 			isa = PBXGroup;
 			children = (
+				9C6632E71676B272000D7974 /* preferences.cpp */,
 				9C0B492310A8CC110097A335 /* boot.hpp */,
 				9C0B492410A8CC110097A335 /* init_texmacs.cpp */,
 				9C0B492510A8CC110097A335 /* init_upgrade.cpp */,
@@ -4227,6 +4249,10 @@
 				49F9FA161573BA86006C7258 /* new_window.cpp in Sources */,
 				9CD1513B15A72D0F006F2205 /* metadata.cpp in Sources */,
 				49FFF7C61635D3690031CFDC /* wencoding.cpp in Sources */,
+				9C6632DE1676B208000D7974 /* qt_font.cpp in Sources */,
+				9C6632E21676B229000D7974 /* font_database.cpp in Sources */,
+				9C6632E81676B272000D7974 /* preferences.cpp in Sources */,
+				9C6632EF1676B28E000D7974 /* tt_tools.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4580,6 +4606,9 @@
 				49F9FA181573BA86006C7258 /* new_window.cpp in Sources */,
 				9CD1513D15A72D0F006F2205 /* metadata.cpp in Sources */,
 				49FFF7C81635D3690031CFDC /* wencoding.cpp in Sources */,
+				9C6632E41676B229000D7974 /* font_database.cpp in Sources */,
+				9C6632EA1676B272000D7974 /* preferences.cpp in Sources */,
+				9C6632F11676B28E000D7974 /* tt_tools.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4961,6 +4990,9 @@
 				49F9FA171573BA86006C7258 /* new_window.cpp in Sources */,
 				9CD1513C15A72D0F006F2205 /* metadata.cpp in Sources */,
 				49FFF7C71635D3690031CFDC /* wencoding.cpp in Sources */,
+				9C6632E31676B229000D7974 /* font_database.cpp in Sources */,
+				9C6632E91676B272000D7974 /* preferences.cpp in Sources */,
+				9C6632F01676B28E000D7974 /* tt_tools.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5033,14 +5065,15 @@
 			baseConfigurationReference = 4937B89A1521C59E00D87F22 /* MOCs.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = "";
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = MOCs;
+				SDKROOT = /Developer_3.2.6/SDKs/MacOSX10.5.sdk;
 			};
 			name = Debug;
 		};
@@ -5049,13 +5082,14 @@
 			baseConfigurationReference = 4937B89A1521C59E00D87F22 /* MOCs.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_VERSION = "";
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = MOCs;
+				SDKROOT = /Developer_3.2.6/SDKs/MacOSX10.5.sdk;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -5124,14 +5158,15 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C61B42F141A1B780035D78F /* TeXmacsQt.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = "";
 				INSTALL_PATH = "$(HOME)/Applications";
+				SDKROOT = /Developer_3.2.6/SDKs/MacOSX10.5.sdk;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
 			};
@@ -5141,12 +5176,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C61B42F141A1B780035D78F /* TeXmacsQt.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
 				GCC_VERSION = "";
 				INSTALL_PATH = "$(HOME)/Applications";
+				SDKROOT = /Developer_3.2.6/SDKs/MacOSX10.5.sdk;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -5155,16 +5191,16 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C61B41E141A1B780035D78F /* Base.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 			};
 			name = Debug;
 		};
@@ -5172,13 +5208,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C61B41E141A1B780035D78F /* Base.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 			};
 			name = Release;
 		};
