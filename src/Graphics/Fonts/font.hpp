@@ -91,6 +91,10 @@ array<string> font_database_search (string family, string style);
 array<string> font_database_search (string fam, string var,
                                     string series, string shape);
 
+string master_family (string f);
+array<string> family_features (string f);
+array<string> subfamily_features (string s);
+
 string default_chinese_font_name ();
 string default_japanese_font_name ();
 string default_korean_font_name ();

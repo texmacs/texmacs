@@ -16,8 +16,59 @@
 * Standardization of font features
 ******************************************************************************/
 
+string
+master_family (string f) {
+  f= replace (f, " Mono", "");
+  f= replace (f, "Mono", "");
+  f= replace (f, " Console", "");
+  f= replace (f, "Console", "");
+  f= replace (f, " Typewriter", "");
+  f= replace (f, "Typewriter", "");
+  f= replace (f, " Script", "");
+  f= replace (f, "Script", "");
+  f= replace (f, " Sans", "");
+  f= replace (f, "Sans", "");
+  f= replace (f, " Serif", "");
+  f= replace (f, "Serif", "");
+  f= replace (f, " Demi", "");
+  f= replace (f, "Demi", "");
+  f= replace (f, " Condensed", "");
+  f= replace (f, "Condensed", "");
+  f= replace (f, " Narrow", "");
+  f= replace (f, "Narrow", "");
+  f= replace (f, " Light", "");
+  f= replace (f, "Light", "");
+  f= replace (f, " Medium", "");
+  f= replace (f, "Medium", "");
+  f= replace (f, " Bold", "");
+  f= replace (f, "Bold", "");
+  f= replace (f, " Black", "");
+  f= replace (f, "Black", "");
+  return f;
+}
+
 array<string>
-font_features (string s) {
+family_features (string f) {
+  array<string> r;
+  if (occurs ("Mono", f) ||
+      occurs ("Console", f) ||
+      occurs ("Typewriter", f))
+    r << string ("Mono");
+  if (occurs ("Script", f))
+    r << string ("Script");    
+  if (occurs ("Sans", f))
+    r << string ("SansSerif");
+  if (occurs ("DemiCondensed", f) ||
+      occurs ("Demi Condensed", f))
+    r << string ("DemiCondensed");
+  else if (occurs ("Condensed", f) ||
+           occurs ("Narrow", f))
+    r << string ("Condensed");
+  return r;
+}
+
+array<string>
+subfamily_features (string s) {
   string r;
   for (int i=0; i<N(s); i++)
     if ((s[i] >= 'A' && s[i] <= 'Z') &&
@@ -57,4 +108,87 @@ font_features (string s) {
   for (int i=0; i<N(v); i++)
     v[i]= locase_all (v[i]);
   return v;
+}
+
+/******************************************************************************
+* Translation with respect to internal naming scheme
+******************************************************************************/
+
+string
+get_variant (array<string> v) {
+  array<string> r;
+  for (int i=0; i<N(v); i++)
+    if (v[i] == "mono" || v[i] == "typewriter")
+      r << string ("tt");
+  for (int i=0; i<N(v); i++)
+    if (v[i] == "sansserif")
+      r << string ("ss");
+  if (N(r) == 0) return "rm";
+  return recompose (r, "-");
+}
+
+string
+get_series (array<string> v) {
+  for (int i=0; i<N(v); i++)
+    if (ends (v[i], "light") ||
+        v[i] == "regular" ||
+        v[i] == "medium" ||
+        ends (v[i], "bold") ||
+        ends (v[i], "black"))
+      return v[i];
+  return "medium";
+}
+
+string
+get_shape (array<string> v) {
+  array<string> r;
+  for (int i=0; i<N(v); i++)
+    if (ends (v[i], "condensed") ||
+        ends (v[i], "extended"))
+      r << v[i];
+  for (int i=0; i<N(v); i++)
+    if (v[i] == "upright") r << string ("right");
+    else if (v[i] == "italic") r << string ("italic");
+    else if (v[i] == "oblique") r << string ("slanted");
+  for (int i=0; i<N(v); i++)
+    if (v[i] == "smallcaps") r << string ("small-caps");
+    else if (v[i] == "long") r << string ("long");
+    else if (v[i] == "flat") r << string ("flat");
+  if (N(r) == 0) return "right";
+  return recompose (r, "-");
+}
+
+array<string>
+variant_features (string s) {
+  array<string> v= tokenize (s, "-");
+  array<string> r;
+  for (int i=0; i<N(v); i++)
+    if (v[i] == "ss") r << string ("sansserif");
+    else if (v[i] == "tt") r << string ("typewriter");
+  return r;
+}
+
+array<string>
+series_features (string s) {
+  array<string> r;
+  r << s;
+  return r;
+}
+
+array<string>
+shape_features (string s) {
+  s= replace (s, "small-caps", "smallcaps");
+  array<string> v= tokenize (s, "-");
+  array<string> r;
+  for (int i=0; i<N(v); i++)
+    if (ends (v[i], "condensed") ||
+        ends (v[i], "extended") ||
+        v[i] == "italic" ||
+        v[i] == "smallcaps" ||
+        v[i] == "long" ||
+        v[i] == "flat")
+      r << v[i];
+    else if (v[i] == "right") r << string ("upright");
+    else if (v[i] == "slanted") r << string ("oblique");
+  return r;
 }

@@ -94,6 +94,9 @@
   (font-database-families font_database_families (array_string))
   (font-database-styles font_database_styles (array_string string))
   (font-database-search font_database_search (array_string string string))
+  (font-master-family master_family (string string))
+  (font-family-features family_features (array_string string))
+  (font-subfamily-features subfamily_features (array_string string))
 
   ;; routines for images
   (image->psdoc image_to_psdoc (string url))
