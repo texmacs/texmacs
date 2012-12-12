@@ -16,6 +16,7 @@
 #include "merge_sort.hpp"
 #include "Freetype/tt_file.hpp"
 #include "Freetype/tt_tools.hpp"
+#include "Metafont/tex_files.hpp"
 
 /******************************************************************************
 * Global management of the font database
@@ -192,7 +193,8 @@ font_database_collect (url u) {
       if (!starts (a[i], "."))
         if (ends (a[i], ".ttf") ||
             ends (a[i], ".ttc") ||
-            ends (a[i], ".otf"))
+            ends (a[i], ".otf") ||
+            ends (a[i], ".tfm"))
           for (int j=0; j<65536; j++) {
             tree ff= tuple (a[i], as_string (j));
             if (back_font_table->contains (ff)) {
@@ -216,8 +218,8 @@ font_database_filter () {
   new_font_table = hashmap<tree,tree> (UNINIT);
   back_font_table= hashmap<tree,tree> (UNINIT);
   build_back_table ();
-  url u= tt_font_path ();
-  font_database_collect (u);
+  font_database_collect (tt_font_path ());
+  font_database_collect (tfm_font_path ());
   font_table= new_font_table;
   new_font_table = hashmap<tree,tree> (UNINIT);
   back_font_table= hashmap<tree,tree> (UNINIT);

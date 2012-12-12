@@ -69,6 +69,11 @@ resolve_pfb (url name) {
   return resolve (the_pfb_path * name);
 }
 
+url
+tfm_font_path () {
+  return the_tfm_path;
+}
+
 /******************************************************************************
 * Caching results
 ******************************************************************************/
