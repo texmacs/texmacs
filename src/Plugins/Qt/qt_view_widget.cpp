@@ -163,8 +163,9 @@ qt_view_widget_rep::query (slot s, int type_id) {
         r = the_qt_renderer();
 
       if (canvas()) {
-        SI ox = - canvas()->backing_pos.x()*PIXEL;  // Warning: this is NOT from_qpoint()
-        SI oy = canvas()->backing_pos.y()*PIXEL;
+        coord2 pt_or = from_qpoint(canvas()->backing_pos);
+        SI ox = -pt_or.x1;
+        SI oy = -pt_or.x2;
         r->set_origin(ox,oy);
       }
 

@@ -11,6 +11,7 @@
 
 #include "QTMWindow.hpp"
 #include "window.hpp"
+#include "qt_utilities.hpp"
 
 #include <QCloseEvent>
 
@@ -46,12 +47,12 @@ void QTMWindow::closeEvent (QCloseEvent* event)
 void QTMWindow::moveEvent (QMoveEvent * event)
 {
   string name= concrete(tmwid)->get_nickname ();
+  QPoint p = event->pos();
   // FIXME: rather use a slot for this
-  int x= event->pos().x();
-  int y= event->pos().y();
   if (DEBUG_QT)
-    cout << "Move QTMWindow " << name << ": " << x << ", " << y << LF;
-  notify_window_move (name, x*PIXEL, -y*PIXEL);
+    cout << "Move QTMWindow " << name << ": " << p.x() << ", " << p.y() << LF;
+  coord2 pt = from_qpoint(p);
+  notify_window_move (name, pt.x1, pt.x2);
   QMainWindow::moveEvent (event);
 }
 
@@ -59,11 +60,11 @@ void QTMWindow::resizeEvent (QResizeEvent * event)
 {
   string name= concrete(tmwid)->get_nickname ();
   // FIXME: rather use a slot for this
-  int w= event->size().width();
-  int h= event->size().height();
+  QSize s = event->size();
   if (DEBUG_QT)
-    cout << "Resize QTMWindow " << name << ": " << w << ", " << h << LF;
-  notify_window_resize (name, w*PIXEL, h*PIXEL);
+      cout << "Resize QTMWindow " << name << ": " << s.width() << ", " << s.height() << LF;
+  coord2 sz = from_qsize(s);
+  notify_window_resize (name, sz.x1, sz.x2);
   QMainWindow::resizeEvent (event);
 }
 
