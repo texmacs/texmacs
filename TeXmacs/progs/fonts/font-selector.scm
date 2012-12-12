@@ -21,37 +21,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-table decode-font-table*
-  ("roman" . "TeXmacs Computer Modern")
-  ("modern" . "TeXmacs Computer Modern Unicode")
-  ;;
-  ("concrete" . "TeXmacs Concrete")
-  ("ENR" . "TeXmacs Euler New Roman")
-  ("Euler" . "TeXmacs Euler")
-  ;;
-  ("bookman" . "TeXmacs Bookman")
-  ("courier" . "TeXmacs Courier")
-  ("helvetica" . "TeXmacs Helvetica")
-  ("new-century-schoolbook" . "TeXmacs New Century Schoolbook")
-  ("palatino" . "TeXmacs Palatino")
-  ("times" . "TeXmacs Times")
-  ;;
-  ("blackletter" . "TeX Blackletter")
-  ("calligraphic" . "TeX Calligraphic")
-  ("capbas" . "TeX Capital Baseball")
-  ("duerer" . "TeX Duerer")
-  ("gothic" . "TeX Gothic")
-  ("hershey" . "TeX Hershey")
-  ("la" "TeX Children Handwriting")
-  ("old-english" . "TeX Old English")
-  ("pacioli" . "TeX Pacioli")
-  ("pandora" . "TeX Pandora")
-  ("punk" . "TeX Punk")
-  ("schwell" . "TeX Schwell")
-  ("suet" . "TeX Suet")
-  ("swab" . "TeX Swab")
-  ("twcal" . "TeX German Handwriting")
-  ("va" . "TeX Va Handwriting")
-  ;;
   ("arab" . "TeX Nash Arab")
   ("armenian" . "TeX Armenian")
   ("cyrillic" . "TeX Cyrillic")

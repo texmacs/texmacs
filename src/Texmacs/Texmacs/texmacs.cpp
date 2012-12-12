@@ -439,6 +439,7 @@ immediate_options (int argc, char** argv) {
       remove (url ("$TEXMACS_HOME_PATH/system/setup.scm"));
       remove (url ("$TEXMACS_HOME_PATH/system/cache") * url_wildcard ("*"));
       remove (url ("$TEXMACS_HOME_PATH/fonts/font-database.scm"));
+      remove (url ("$TEXMACS_HOME_PATH/fonts/font-features.scm"));
       remove (url ("$TEXMACS_HOME_PATH/fonts/error") * url_wildcard ("*"));
     }
     else if (s == "-delete-cache")
@@ -448,6 +449,7 @@ immediate_options (int argc, char** argv) {
     else if (s == "-delete-font-cache") {
       remove (url ("$TEXMACS_HOME_PATH/system/cache/font_cache.scm"));
       remove (url ("$TEXMACS_HOME_PATH/fonts/font-database.scm"));
+      remove (url ("$TEXMACS_HOME_PATH/fonts/font-features.scm"));
       remove (url ("$TEXMACS_HOME_PATH/fonts/error") * url_wildcard ("*"));
     }
     else if (s == "-delete-doc-cache") {
