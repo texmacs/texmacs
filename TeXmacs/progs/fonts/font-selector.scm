@@ -37,9 +37,11 @@
   ;;
   ("blackletter" . "TeX Blackletter")
   ("calligraphic" . "TeX Calligraphic")
+  ("capbas" . "TeX Capital Baseball")
   ("duerer" . "TeX Duerer")
   ("gothic" . "TeX Gothic")
   ("hershey" . "TeX Hershey")
+  ("la" "TeX Children Handwriting")
   ("old-english" . "TeX Old English")
   ("pacioli" . "TeX Pacioli")
   ("pandora" . "TeX Pandora")
@@ -47,6 +49,8 @@
   ("schwell" . "TeX Schwell")
   ("suet" . "TeX Suet")
   ("swab" . "TeX Swab")
+  ("twcal" . "TeX German Handwriting")
+  ("va" . "TeX Va Handwriting")
   ;;
   ("arab" . "TeX Nash Arab")
   ("armenian" . "TeX Armenian")
@@ -65,8 +69,8 @@
   ;;
   ("bard" . "TeX Bard")
   ("cypriot" . "TeX Cypriot")
-  ("greek4cbc" . "TeX Greek 4 Centuries Before Christ")
-  ("greek6cbc" . "TeX Greek 6 Centuries Before Christ")
+  ("greek4cbc" . "TeX Greek 4 CBC")
+  ("greek6cbc" . "TeX Greek 6 CBC")
   ("linearb" . "TeX Linear B")
   ("ogham" . "TeX Ogham")
   ("old-slavonic" . "TeX Slavonic")
