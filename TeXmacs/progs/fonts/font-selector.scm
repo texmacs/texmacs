@@ -16,44 +16,6 @@
 (texmacs-module (fonts font-selector)
   (:use (kernel gui menu-widget)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Correspondance between old and new font names
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define-table decode-font-table*
-  ("arab" . "TeX Nash Arab")
-  ("armenian" . "TeX Armenian")
-  ("cyrillic" . "TeX Cyrillic")
-  ("devangari" . "TeX Devangari")
-  ("greek" . "TeX Greek")
-  ("hebrew" . "TeX Hewbrew")
-  ("icelandic" . "TeX Icelandic")
-  ("irish" . "TeX Irish")
-  ("mxedruli" . "TeX Georgian Mxedruli")
-  ("osmanian" . "TeX Osmanian")
-  ("tamil" . "TeX Tamil")
-  ("thai" . "TeX Thai")
-  ("turkish" . "TeX Turkish")
-  ("xucuri" . "TeX Georgian Xucuri")
-  ;;
-  ("bard" . "TeX Bard")
-  ("cypriot" . "TeX Cypriot")
-  ("greek4cbc" . "TeX Greek 4 CBC")
-  ("greek6cbc" . "TeX Greek 6 CBC")
-  ("linearb" . "TeX Linear B")
-  ("ogham" . "TeX Ogham")
-  ("old-slavonic" . "TeX Slavonic")
-  ("phoenician" . "TeX Phoenician")
-  ("runic" . "TeX Runic Fut")
-  ("runic*" . "TeX Runic Futhol")
-  ("runic**" . "TeX Runic Futhor")
-  ("southarabian" . "TeX Southarabian")
-  ("syriac" . "TeX Syriac")
-  ("ugaritic" . "TeX Ugaritic"))
-
-(tm-define decode-font-table decode-font-table*)
-(tm-define encode-font-table (ahash-table-invert decode-font-table))
-
 ;; (tm-define selector-font-size "10")
 ;; (tm-define selector-font-weight "Medium")
 ;; (tm-define selector-font-slant "Normal")
