@@ -331,67 +331,20 @@ font_database_search (string family, string style) {
   if (font_table->contains (key)) {
     tree im= font_table [key];
     for (int i=0; i<N(im); i++)
-      if (is_func (im[i], TUPLE, 2))
-        r << im[i][0]->label;
+      if (is_func (im[i], TUPLE, 2)) {
+        string name= im[i][0]->label;
+        string nr  = im[i][1]->label;
+        if (!ends (name, ".ttc")) r << name;
+        else r << (name (0, N(name)-4) * "." * nr * ".ttf");
+      }
   }
   return r;
 }
 
 array<string>
 font_database_search (string fam, string var, string series, string shape) {
-  string family= fam;
-  (void) var;
-  string style = "Normal";
-  if (series == "bold") {
-    style= "Bold";
-    if (shape == "italic") style= "Bold Italic";
-    if (shape == "slanted") style= "Bold Oblique";
-  }
-  else {
-    if (shape == "italic") style= "Italic";
-    if (shape == "slanted") style= "Oblique";
-  }
-  array<string> r= font_database_search (family, style);
-  if (N(r) != 0) return r;
-
-  if (style != "Normal") {
-    string style2= style;
-    if (style == "Italic") style2= "Oblique";
-    else if (style == "Bold Italic") style2= "Bold Oblique";
-    else if (style == "Oblique") style2= "Italic";
-    else if (style == "Bold Oblique") style2= "Bold Italic";
-    r= font_database_search (family, style2);
-    if (N(r) != 0) return r;
-  }
-
-  if (style != "Normal") {
-    string style2= style;
-    if (style == "Bold Italic") style2= "Bold";
-    if (style == "Bold Oblique") style2= "Bold";
-    r= font_database_search (family, style2);
-    if (N(r) != 0) return r;
-  }
-
-  if (style != "Normal") {
-    string style2= style;
-    if (style == "Bold Italic") style2= "Italic";
-    if (style == "Bold Oblique") style2= "Oblique";
-    r= font_database_search (family, style2);
-    if (N(r) != 0) return r;
-  }
-
-  if (style != "Normal") {
-    r= font_database_search (family, "Normal");
-    if (N(r) != 0) return r;
-  }
-
-  if (N(r) == 0) {
-    array<string> styles= font_database_styles (family);
-    for (int i=0; i<N(styles); i++) {
-      r= font_database_search (family, styles[i]);
-      if (N(r) != 0) return r;
-    }
-  }
-
-  return r;
+  array<string> lfn= logical_font (fam, var, series, shape);
+  array<string> pfn= search_font (lfn, false);
+  //cout << "Physical font: " << pfn << "\n";
+  return font_database_search (pfn[0], pfn[1]);
 }

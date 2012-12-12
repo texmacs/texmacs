@@ -15,5 +15,6 @@
 
 void tt_dump (url u);
 scheme_tree tt_font_name (url u);
+url tt_unpack (string name);
 
 #endif // TT_TOOLS_H

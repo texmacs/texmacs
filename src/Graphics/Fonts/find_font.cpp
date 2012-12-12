@@ -37,7 +37,7 @@ font_rule (tree which, tree by) {
 
 string
 strip_suffix (string name) {
-  while (occurs (".", name)) {
+  if (occurs (".", name)) {
     int pos= search_backwards (".", name);
     name= name (0, pos);
   }
@@ -178,6 +178,7 @@ find_font_bis (tree t) {
       string series = as_string (t[2]);
       string shape  = as_string (t[3]);
       array<string> a= font_database_search (family, variant, series, shape);
+      //cout << t << " -> " << a << "\n";
       for (int i=0; i<N(a); i++)
         if (tt_font_exists (strip_suffix (a[i])))
           return unicode_font (strip_suffix (a[i]),

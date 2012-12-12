@@ -120,6 +120,7 @@ init_user_dirs () {
   make_dir ("$TEXMACS_HOME_PATH/fonts/tfm");
   make_dir ("$TEXMACS_HOME_PATH/fonts/truetype");
   make_dir ("$TEXMACS_HOME_PATH/fonts/type1");
+  make_dir ("$TEXMACS_HOME_PATH/fonts/unpacked");
   make_dir ("$TEXMACS_HOME_PATH/fonts/virtual");
   make_dir ("$TEXMACS_HOME_PATH/langs");
   make_dir ("$TEXMACS_HOME_PATH/langs/mathematical");

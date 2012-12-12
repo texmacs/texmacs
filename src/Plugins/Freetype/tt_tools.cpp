@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "tt_tools.hpp"
+#include "tt_file.hpp"
 #include "analyze.hpp"
 #include "file.hpp"
 
@@ -26,6 +27,8 @@
 #define U32 unsigned int
 #define U64 unsigned long long int
 #endif
+
+string strip_suffix (string name);
 
 /******************************************************************************
 * Data access
@@ -61,6 +64,16 @@ get_U32 (string s, int i) {
 F32
 get_F32 (string s, int i) {
   return (F32) get_U32 (s, i);
+}
+
+string
+pack_U32 (U32 i) {
+  string r;
+  r << ((char) ( i >> 24));
+  r << ((char) ((i >> 16) & 255));
+  r << ((char) ((i >>  8) & 255));
+  r << ((char) ( i        & 255));
+  return r;
 }
 
 /******************************************************************************
@@ -138,6 +151,37 @@ tt_table (string tt, int i, string tag) {
     if (tt_table_tag (tt, i, k) == tag)
       return tt_table (tt, i, k);
   return "";
+}
+
+/******************************************************************************
+* Extracting a subfont
+******************************************************************************/
+
+string
+tt_extract_subfont (string tt, int i) {
+  ASSERT (i >= 0 && i < tt_nr_fonts (tt), "index out of range");
+  if (!tt_is_collection (tt)) return tt;
+  string r;
+  int h= tt_header_index (tt, i);
+  r << get_sub (tt, h, h + 12);
+  int nr_tabs= tt_nr_tables (tt, i);
+  int offset= 12 + 16 * nr_tabs;
+  for (int k=0; k < nr_tabs; k++) {
+    int taboff= h + 12 + 16 * k;
+    r << get_sub (tt, taboff, taboff + 8);
+    r << pack_U32 (offset);
+    r << get_sub (tt, taboff + 12, taboff + 16);
+    int len= get_U32 (tt, taboff + 12);
+    offset += (((len + 3) >> 2) << 2);
+  }
+  for (int k=0; k < nr_tabs; k++) {
+    int taboff= h + 12 + 16 * k;
+    int start= get_U32 (tt, taboff + 8);
+    int len  = get_U32 (tt, taboff + 12);
+    int plen = (((len + 3) >> 2) << 2);
+    r << get_sub (tt, start, start + plen);
+  }
+  return r;
 }
 
 /******************************************************************************
@@ -277,4 +321,23 @@ tt_font_name (url u) {
     r << tuple (fam, sh);
   }
   return r;
+}
+
+url
+tt_unpack (string s) {
+  if (!is_int (suffix (url (s)))) return url_none ();
+  url dir= url ("$TEXMACS_HOME_PATH/fonts/unpacked");
+  if (!exists (dir)) mkdir (dir);
+  url name= dir * url (s * ".ttf");
+  if (exists (name)) return name;
+  //cout << "Extracting " << name << "\n";
+  int i= as_int (suffix (url (s)));
+  s= strip_suffix (s);
+  url u= tt_font_find (s);
+  if (is_none (u)) return url_none ();
+  string ttc;
+  if (load_string (u, ttc, false)) return url_none ();
+  string tt= tt_extract_subfont (ttc, i);
+  if (save_string (name, tt, false)) return url_none ();
+  return name;
 }

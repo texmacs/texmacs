@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "tt_file.hpp"
+#include "tt_tools.hpp"
 #include "file.hpp"
 #include "boot.hpp"
 #include "analyze.hpp"
@@ -100,7 +101,9 @@ tt_locate (string name) {
 url
 tt_font_find_sub (string name) {
   //cout << "tt_font_find " << name << "\n";
-  url u= tt_locate (name * ".pfb");
+  url u= tt_unpack (name);
+  if (!is_none (u)) return u;
+  u= tt_locate (name * ".pfb");
   //if (!is_none (u)) cout << name << " -> " << u << "\n";
   if (!is_none (u)) return u;
   u= tt_locate (name * ".ttf");
