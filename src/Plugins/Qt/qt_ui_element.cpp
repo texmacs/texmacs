@@ -428,7 +428,7 @@ qt_glue_widget_rep::render () {
         ren->set_color (c);
         ren->fill (r->x1, r->y2, r->x2, r->y1);
       } else {
-        ren->set_shrinking_factor (5);
+        ren->set_shrinking_factor (std_shrinkf);
         int  old_a;
         tree old_bg= ren->get_background_pattern (old_a);
         ren->set_background_pattern (col);
