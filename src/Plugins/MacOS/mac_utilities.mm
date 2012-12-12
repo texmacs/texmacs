@@ -404,3 +404,31 @@ void
 mac_remote_button (string button, bool pressed) {
   if (pressed) external_event (button, texmacs_time ());
 }
+
+
+// scale factor detection
+// from http://src.chromium.org/svn/trunk/src/ui/gfx/screen_mac.mm
+
+#if !defined(MAC_OS_X_VERSION_10_7) || \
+MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_7
+
+@interface NSScreen (LionAPI)
+- (CGFloat)backingScaleFactor;
+@end
+
+#endif  // 10.7
+
+double
+mac_screen_scale_factor() {
+  CGFloat scale;
+  NSScreen *screen = [NSScreen mainScreen];
+    
+  if ([screen respondsToSelector:@selector(backingScaleFactor)])
+      scale = [screen backingScaleFactor];
+  else
+      scale = [screen userSpaceScaleFactor];
+  return scale;
+}
+
+// end scale factor detection
+

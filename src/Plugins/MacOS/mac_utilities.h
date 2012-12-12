@@ -18,5 +18,6 @@ bool mac_alternate_startup();
 void mac_begin_remote();
 void mac_end_remote();
 void mac_remote_button (string button, bool pressed); 
+double mac_screen_scale_factor();
 
 #endif // MAC_UTILITIES_H
