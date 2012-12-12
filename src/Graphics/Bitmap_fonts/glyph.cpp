@@ -11,7 +11,6 @@
 
 #include "bitmap_font.hpp"
 
-#define PIXEL 256
 
 /******************************************************************************
 * Constructors and destructors for glyph

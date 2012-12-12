@@ -15,8 +15,6 @@
 #include "aqua_renderer.h"
 #include "aqua_gui.h"
 
-#define PIXEL 256
-
 extern bool aqua_update_flag;
 extern int time_credit;
 extern int timeout_time;

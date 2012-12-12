@@ -14,9 +14,9 @@
 
 #include "load_tex.hpp"
 #include "timer.hpp"
+#include "renderer.hpp" // for PIXEL
 
 typedef short HI;
-#define PIXEL 256
 
 /******************************************************************************
 * Initialize the pk_loader

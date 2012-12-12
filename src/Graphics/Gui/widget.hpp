@@ -16,7 +16,7 @@
 #include "blackbox.hpp"
 #include "command.hpp"
 #include "timer.hpp"
-#define PIXEL 256
+#include "renderer.hpp" // for PIXEL
 
 class window_rep;
 typedef window_rep* window;
