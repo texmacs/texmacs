@@ -37,6 +37,8 @@
 #include "Ghostscript/gs_utilities.hpp"
 #endif
 
+#define SCREEN_PIXEL (PIXEL)
+
 /*! some debugging infrastucture */
 tm_ostream&
 operator << (tm_ostream& out, QRect rect) {
@@ -208,10 +210,10 @@ to_qkeysequence (string s) {
 coord4
 from_qrect (const QRect & rect) {
   SI c1, c2, c3, c4;
-  c1= rect.x() * PIXEL;
-  c2= -(rect.y() + rect.height()) * PIXEL;       
-  c3= (rect.x() + rect.width()) * PIXEL;
-  c4= -rect.y() * PIXEL;
+  c1= rect.x() * SCREEN_PIXEL;
+  c2= -(rect.y() + rect.height()) * SCREEN_PIXEL;       
+  c3= (rect.x() + rect.width()) * SCREEN_PIXEL;
+  c4= -rect.y() * SCREEN_PIXEL;
   return coord4 (c1, c2, c3, c4);
 }
 
@@ -220,37 +222,37 @@ from_qrect (const QRect & rect) {
  into one given by its upper left and width/height */
 QRect
 to_qrect (const coord4 & p) {
-  float c= 1.0/PIXEL;
-  return QRect (p.x1*c, -p.x4*c, (p.x3-p.x1+PIXEL-1)*c, (p.x4-p.x2+PIXEL-1)*c);
+  float c= 1.0/SCREEN_PIXEL;
+  return QRect (p.x1*c, -p.x4*c, (p.x3-p.x1+SCREEN_PIXEL-1)*c, (p.x4-p.x2+SCREEN_PIXEL-1)*c);
 }
 
 coord2
 from_qsize (const QSize & s) {
-  return coord2 (s.width() * PIXEL, s.height() * PIXEL);
+  return coord2 (s.width() * SCREEN_PIXEL, s.height() * SCREEN_PIXEL);
 }
 
 QSize
 to_qsize (const coord2 & p) {
-  float c= 1.0/PIXEL;
+  float c= 1.0/SCREEN_PIXEL;
   return QSize (p.x1*c, p.x2*c);
 }
 
 QSize
 to_qsize (const SI& w, const SI& h) {
-  float c= 1.0/PIXEL;
+  float c= 1.0/SCREEN_PIXEL;
   return QSize (w*c, h*c);
 }
 
 coord2
 from_qpoint (const QPoint & pt) {
-  return coord2 (pt.x() * PIXEL, -pt.y() * PIXEL);
+  return coord2 (pt.x() * SCREEN_PIXEL, -pt.y() * SCREEN_PIXEL);
 }
 
 /*! Transforms texmacs coordinates, with origin at the lower left corner, into
  Qt coordinates, with origin at the upper left corner */
 QPoint
 to_qpoint (const coord2 & p) {
-  float c= 1.0/PIXEL;
+  float c= 1.0/SCREEN_PIXEL;
   return QPoint (p.x1*c, -p.x2*c);
 }
 
