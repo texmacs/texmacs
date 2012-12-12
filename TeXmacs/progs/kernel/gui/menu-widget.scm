@@ -733,8 +733,8 @@
 (define (menu-expand-choice p)
   "Expand choice item @p."
   `(,(car p) ,(replace-procedures (cadr p))
-             ,(replace-procedures (caddr p))
-             ,(replace-procedures (cadddr p))))
+             ,(caddr p)
+             ,(cadddr p)))
 
 (define (menu-expand-toggle p)
   "Expand toggle item @p."

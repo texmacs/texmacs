@@ -34,6 +34,7 @@
     ((roman tt medium flat $s $d) (ec ecltt $s $d))
     ((roman tt medium proportional $s $d) (ec ecvt $s $d))
     ((roman tt medium italic-proportional $s $d) (ec ecvi $s $d))
+    ((roman tt medium proportional-italic $s $d) (ec ecvi $s $d))
     ((roman tt bold right $s $d) (ec ectt $s $d))
     ((roman ss medium right $s $d) (ec ecss $s $d))
     ((roman ss medium slanted $s $d) (ec ecsi $s $d))

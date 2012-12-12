@@ -180,7 +180,7 @@
 (TeXmacs\ Euler Euler)
 (TeXmacs\ Euler\ New\ Roman ENR)
 (TeXmacs\ Helvetica helvetica SansSerif)
-(TeXmacs\ New\ Century\ Schoolbook new-century-schoolbool)
+(TeXmacs\ New\ Century\ Schoolbook new-century-schoolbook)
 (TeXmacs\ Palatino palatino)
 (TeXmacs\ Times times)
 (Thonburi Thonburi SansSerif)

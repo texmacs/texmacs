@@ -18,24 +18,46 @@
 #include "Freetype/tt_tools.hpp"
 #include "Metafont/tex_files.hpp"
 
+void font_database_filter_features ();
+
 /******************************************************************************
 * Global management of the font database
 ******************************************************************************/
 
 static bool fonts_loaded= false;
 hashmap<tree,tree> font_table (UNINIT);
+hashmap<tree,tree> font_features (UNINIT);
+hashmap<tree,tree> font_variants (UNINIT);
 
 void
 font_database_load (url u) {
-  u= resolve (u);
-  if (!is_none (u)) {
-    string s;
-    if (!load_string (u, s, false)) {
-      tree t= block_to_scheme_tree (s);
-      for (int i=0; i<N(t); i++)
-        if (is_func (t[i], TUPLE, 2))
-          font_table (t[i][0])= t[i][1];
-    }
+  if (!exists (u)) return;
+  string s;
+  if (!load_string (u, s, false)) {
+    tree t= block_to_scheme_tree (s);
+    for (int i=0; i<N(t); i++)
+      if (is_func (t[i], TUPLE, 2))
+        font_table (t[i][0])= t[i][1];
+  }
+}
+
+void
+font_database_load_features (url u) {
+  if (!exists (u)) return;
+  string s;
+  if (!load_string (u, s, false)) {
+    tree t= block_to_scheme_tree (s);
+    for (int i=0; i<N(t); i++)
+      if (is_func (t[i], TUPLE) && (N(t[i]) >= 2)) {
+        tree key= t[i][0];
+        tree im = t[i] (1, N(t[i]));
+        font_features (key)= im;
+        tree vars (TUPLE);
+        if (font_variants->contains (t[i][1]))
+          vars= font_variants [t[i][1]];
+        vars << t[i][0];
+        font_variants (t[i][1])= vars;
+      }
   }
 }
 
@@ -69,15 +91,36 @@ font_database_save (url u) {
 }
 
 void
+font_database_save_features (url u) {
+  array<scheme_tree> r;
+  iterator<tree> it= iterate (font_features);
+  while (it->busy ()) {
+    tree key  = it->next ();
+    tree entry= tuple (key);
+    entry << A (font_features [key]);
+    r << entry;
+  }
+  merge_sort_leq<scheme_tree,font_less_eq_operator> (r);
+  string s= scheme_tree_to_block (tree (TUPLE, r));
+  save_string (u, s);
+}
+
+void
 font_database_load () {
   if (fonts_loaded) return;
-  fonts_loaded= true;
   font_database_load ("$TEXMACS_HOME_PATH/fonts/font-database.scm");
   if (N (font_table) == 0) {
     font_database_load ("$TEXMACS_PATH/fonts/font-database.scm");
     font_database_filter ();
     font_database_save ("$TEXMACS_HOME_PATH/fonts/font-database.scm");
   }
+  font_database_load_features ("$TEXMACS_HOME_PATH/fonts/font-features.scm");
+  if (N (font_features) == 0) {
+    font_database_load_features ("$TEXMACS_PATH/fonts/font-features.scm");
+    font_database_filter_features ();
+    font_database_save_features ("$TEXMACS_HOME_PATH/fonts/font-features.scm");
+  }
+  fonts_loaded= true;
 }
 
 void
@@ -225,6 +268,25 @@ font_database_filter () {
   back_font_table= hashmap<tree,tree> (UNINIT);
 }
 
+void
+font_database_filter_features () {
+  hashmap<string,bool> families;
+  iterator<tree> it= iterate (font_table);
+  while (it->busy ()) {
+    tree key= it->next ();
+    if (is_func (key, TUPLE, 2) && is_atomic (key[0]))
+      families (key[0]->label)= true;
+  }
+  hashmap<tree,tree> new_font_features (UNINIT);
+  it= iterate (font_features);
+  while (it->busy ()) {
+    tree key= it->next ();
+    if (is_atomic (key) && families->contains (key->label))
+      new_font_features (key)= font_features [key];
+  }
+  font_features= new_font_features;
+}
+
 /******************************************************************************
 * Querying the database
 ******************************************************************************/
@@ -236,7 +298,7 @@ font_database_families () {
   iterator<tree> it= iterate (font_table);
   while (it->busy ()) {
     tree key= it->next ();
-    if (is_func (key, TUPLE, 2))
+    if (is_func (key, TUPLE, 2) && is_atomic (key[0]))
       families (key[0]->label)= true;
   }
   array<string> r;

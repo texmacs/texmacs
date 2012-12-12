@@ -94,9 +94,17 @@
   (font-database-families font_database_families (array_string))
   (font-database-styles font_database_styles (array_string string))
   (font-database-search font_database_search (array_string string string))
-  (font-master-family master_family (string string))
+  (font-family->master family_to_master (string string))
+  (font-master->families master_to_families (array_string string))
   (font-family-features family_features (array_string string))
   (font-subfamily-features subfamily_features (array_string string))
+  (logical-font-public logical_font (array_string string string))
+  (logical-font-private logical_font (array_string string string string string))
+  (logical-font-family get_family (string array_string))
+  (logical-font-variant get_variant (string array_string))
+  (logical-font-series get_series (string array_string))
+  (logical-font-shape get_shape (string array_string))
+  (logical-font-search search_font (array_string array_string bool))
 
   ;; routines for images
   (image->psdoc image_to_psdoc (string url))
