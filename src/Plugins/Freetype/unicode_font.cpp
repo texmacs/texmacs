@@ -18,6 +18,9 @@
 
 #ifdef USE_FREETYPE
 
+#define std_dpi 600
+#define conv(l) ((l*dpi)/std_dpi)
+
 /******************************************************************************
 * True Type fonts
 ******************************************************************************/
@@ -43,15 +46,13 @@ struct unicode_font_rep: font_rep {
 * Initialization of main font parameters
 ******************************************************************************/
 
-#define conv(x) ((SI) (((double) (x))*unit))
-
 unicode_font_rep::unicode_font_rep (string name,
   string family2, int size2, int dpi2):
   font_rep (name), family (family2), dpi (dpi2)
 {
   type= FONT_TYPE_UNICODE;
   size= size2;
-  fnm = tt_font_metric (family, size, dpi);
+  fnm = tt_font_metric (family, size, std_dpi);
   fng = tt_font_glyphs (family, size, dpi);
   if (fnm->bad_font_metric || fng->bad_font_glyphs) {
     fnm= std_font_metric (res_name, NULL, 0, -1);
@@ -159,20 +160,28 @@ unicode_font_rep::get_extents (string s, metric& ex) {
     int i= 0, n= N(s);
     unsigned int uc= read_unicode_char (s, i);
     metric_struct* first= fnm->get (uc);
-    ex->x1= first->x1; ex->y1= first->y1;
-    ex->x2= first->x2; ex->y2= first->y2;
-    ex->x3= first->x3; ex->y3= first->y3;
-    ex->x4= first->x4; ex->y4= first->y4;
-    SI x= first->x2;
+    ex->x1= conv (first->x1); ex->y1= conv (first->y1);
+    ex->x2= conv (first->x2); ex->y2= conv (first->y2);
+    ex->x3= conv (first->x3); ex->y3= conv (first->y3);
+    ex->x4= conv (first->x4); ex->y4= conv (first->y4);
+    SI x= conv (first->x2);
 
     while (i<n) {
+      unsigned int pc= uc;
       uc= read_unicode_char (s, i);
+      x += conv (fnm->kerning (pc, uc));
       metric_struct* next= fnm->get (uc);
-      ex->x1= min (ex->x1, x+ next->x1); ex->y1= min (ex->y1, next->y1);
-      ex->x2= max (ex->x2, x+ next->x2); ex->y2= max (ex->y2, next->y2);
-      ex->x3= min (ex->x3, x+ next->x3); ex->y3= min (ex->y3, next->y3);
-      ex->x4= max (ex->x4, x+ next->x4); ex->y4= max (ex->y4, next->y4);
-      x += next->x2;
+      ex->x1= min (ex->x1, x+ conv (next->x1));
+      ex->y1= min (ex->y1, conv (next->y1));
+      ex->x2= max (ex->x2, x+ conv (next->x2));
+      ex->y2= max (ex->y2, conv (next->y2));
+      ex->x3= min (ex->x3, x+ conv (next->x3));
+      ex->y3= min (ex->y3, conv (next->y3));
+      ex->x4= max (ex->x4, x+ conv (next->x4));
+      ex->y4= max (ex->y4, conv (next->y4));
+      x += conv (next->x2);
+      //if (fnm->kerning (pc, uc) != 0)
+      //cout << "Kerning " << ((char) pc) << ((char) uc) << " " << conv (fnm->kerning (pc, uc)) << ", " << conv (next->x2) << "\n";
     }
   }
 }
@@ -183,11 +192,17 @@ unicode_font_rep::get_xpositions (string s, SI* xpos) {
   if (n == 0) return;
   
   register SI x= 0;
+  unsigned int uc= 0xffffffff;
   while (i<n) {
     int start= i;
-    metric_struct* next= fnm->get (read_unicode_char (s, i));
+    unsigned int pc= uc;
+    uc= read_unicode_char (s, i);
+    if (pc != 0xffffffff) x += conv (fnm->kerning (pc, uc));
+    metric_struct* next= fnm->get (uc);
     for (int j= start; j<i; j++) xpos[j]= x;
-    x += next->x2;
+    x += conv (next->x2);
+    //if (fnm->kerning (pc, uc) != 0)
+    //cout << "Kerning " << ((char) pc) << ((char) uc) << " " << conv (fnm->kerning (pc, uc)) << ", " << conv (next->x2) << "\n";
   }
   xpos[n]= x;
 }
@@ -195,11 +210,16 @@ unicode_font_rep::get_xpositions (string s, SI* xpos) {
 void
 unicode_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   int i= 0, n= N(s);
+  unsigned int uc= 0xffffffff;
   while (i<n) {
-    unsigned int uc= read_unicode_char (s, i);
+    unsigned int pc= uc;
+    uc= read_unicode_char (s, i);
+    if (pc != 0xffffffff) x += conv (fnm->kerning (pc, uc));
     ren->draw (uc, fng, x, y);
     metric_struct* ex= fnm->get (uc);
-    x += ex->x2;
+    x += conv (ex->x2);
+    //if (fnm->kerning (pc, uc) != 0)
+    //cout << "Kerning " << ((char) pc) << ((char) uc) << " " << conv (fnm->kerning (pc, uc)) << ", " << conv (ex->x2) << "\n";
   }
 }
 

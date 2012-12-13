@@ -38,6 +38,11 @@ FT_Error (*ft_load_glyph)     (FT_Face        face,
 			       FT_Int         load_flags);
 FT_Error (*ft_render_glyph)   (FT_GlyphSlot   slot,
 			       FT_Render_Mode render_mode);
+FT_Error (*ft_get_kerning)    (FT_Face        face,
+                               FT_UInt        left_glyph,
+                               FT_UInt        right_glyph,
+                               FT_UInt        kern_mode,
+                               FT_Vector      *akerning);
 
 typedef FT_Error (*glyph_renderer) (FT_GlyphSlot, FT_Render_Mode);
 
@@ -53,6 +58,7 @@ ft_initialize () {
   ft_get_char_index= FT_Get_Char_Index;
   ft_load_glyph    = FT_Load_Glyph;
   ft_render_glyph  = (glyph_renderer) ((void*) FT_Render_Glyph);
+  ft_get_kerning   = FT_Get_Kerning;
   if (ft_init_freetype (&ft_library)) return true;
   if (DEBUG_AUTO) cout << "TeXmacs] With linked TrueType support\n";
 #else

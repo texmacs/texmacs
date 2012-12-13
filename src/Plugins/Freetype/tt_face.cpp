@@ -68,6 +68,14 @@ tt_font_metric_rep::tt_font_metric_rep (
   error_metric->x4= error_metric->y4= 0;
 }
 
+bool
+tt_font_metric_rep::exists (int i) {
+  if (face->bad_face) return false;
+  if (fnm->contains (i)) return true;
+  // FIXME: add genuine check here
+  return true;
+}
+
 metric&
 tt_font_metric_rep::get (int i) {
   if (!face->bad_face && !fnm->contains(i)) {
@@ -96,6 +104,17 @@ tt_font_metric_rep::get (int i) {
     M->y4= dy;
   }
   return *((metric*) ((void*) fnm [i]));
+}
+
+SI
+tt_font_metric_rep::kerning (int left, int right) {
+  if (face->bad_face || !FT_HAS_KERNING (face->ft_face)) return 0;
+  FT_Vector k;
+  FT_UInt l= ft_get_char_index (face->ft_face, left);
+  FT_UInt r= ft_get_char_index (face->ft_face, right);
+  ft_set_char_size (face->ft_face, 0, size<<6, dpi, dpi);
+  if (ft_get_kerning (face->ft_face, l, r, FT_KERNING_DEFAULT, &k)) return 0;
+  return tt_si (k.x);
 }
 
 font_metric

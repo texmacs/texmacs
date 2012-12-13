@@ -33,7 +33,9 @@ struct tt_font_metric_rep: font_metric_rep {
   //metric* fnm;
   //bool* done;
   tt_font_metric_rep (string name, string family, int size, int dpi);
+  bool exists (int char_code);
   metric& get (int char_code);
+  SI kerning (int left_code, int right_code);
 };
 
 struct tt_font_glyphs_rep: font_glyphs_rep {

@@ -93,7 +93,9 @@ struct font_metric_rep: rep<font_metric> {
   bool bad_font_metric; // when font metric could not be loaded
   font_metric_rep (string name);
   virtual ~font_metric_rep ();
+  virtual bool exists (int char_code);
   virtual metric& get (int char_code) = 0;
+  virtual SI kerning (int left_code, int right_code);
 };
 
 struct font_glyphs_rep: rep<font_glyphs> {

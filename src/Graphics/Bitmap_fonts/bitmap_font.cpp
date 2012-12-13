@@ -24,6 +24,12 @@ font_metric_rep::font_metric_rep (string name):
 font_metric_rep::~font_metric_rep () {
   FAILED ("not yet implemented"); }
 
+bool font_metric_rep::exists (int char_code) {
+  (void) char_code; return true; }
+
+SI font_metric_rep::kerning (int left_code, int right_code) {
+  (void) left_code; (void) right_code; return 0; }
+
 /******************************************************************************
 * Standard bitmap metrics
 ******************************************************************************/

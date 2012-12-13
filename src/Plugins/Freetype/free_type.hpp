@@ -40,6 +40,11 @@ extern FT_Error (*ft_load_glyph)     (FT_Face        face,
 				      FT_Int         load_flags);
 extern FT_Error (*ft_render_glyph)   (FT_GlyphSlot   slot,
 				      FT_Render_Mode render_mode);
+extern FT_Error (*ft_get_kerning)    (FT_Face        face,
+                                      FT_UInt        left_glyph,
+                                      FT_UInt        right_glyph,
+                                      FT_UInt        kern_mode,
+                                      FT_Vector      *akerning);
 
 #endif
 
