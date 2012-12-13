@@ -355,7 +355,7 @@ bib_list (string s, int& pos, tree& t) {
             while (pos+1 < N(s) && s[pos+1] != '@') pos++;
             if (bibtex_non_empty_comment (s(start, pos+1)))
               tentry << compound ("bib-comment",
-                  tree (DOCUMENT, s(start, pos+1)));
+                  tree (DOCUMENT, western_to_cork (s(start, pos+1))));
             /* end */
             if (comment) {
               if (N(te) == 1) tentry << compound ("bib-comment", te[0]);

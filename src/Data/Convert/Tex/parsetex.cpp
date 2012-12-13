@@ -1452,14 +1452,17 @@ latex_encoding_to_iconv (string s) {
 }
 
 tree
-parse_latex (string s, bool change) {
+parse_latex (string s, bool change, bool using_cork) {
   s= dos_to_better (s);
+  string encoding= "Cork";
   string lan= get_latex_language (s);
-  string encoding= latex_encoding_to_iconv (get_latex_encoding (s));
-  if (encoding != "UTF-8" && encoding != "Cork" && encoding != "")
-    s= convert (s, encoding, "UTF-8");
-  else if (encoding == "")
-    s= convert (s, "ISO-8859-1", "UTF-8");
+  if (!using_cork) {
+    encoding= latex_encoding_to_iconv (get_latex_encoding (s));
+    if (encoding != "UTF-8" && encoding != "Cork" && encoding != "")
+      s= convert (s, encoding, "UTF-8");
+    else if (encoding == "")
+      s= convert (s, "ISO-8859-1", "UTF-8");
+  }
 
   latex_parser ltx (encoding != "Cork");
   ltx.lf= 'M';

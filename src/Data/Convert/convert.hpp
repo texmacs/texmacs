@@ -59,7 +59,7 @@ tree   verbatim_to_tree (string s, bool wrap= false, string enc= "default");
 tree   verbatim_document_to_tree (string s, bool w= false, string e= "default");
 
 /*** Latex ***/
-tree   parse_latex (string s, bool change= false);
+tree   parse_latex (string s, bool change= false, bool using_cork= false);
 tree   parse_latex_document (string s, bool change= false);
 tree   latex_to_tree (tree t);
 tree   latex_document_to_tree (string s);

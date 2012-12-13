@@ -894,7 +894,8 @@ bib_parse_fields (tree& t) {
   string fields;
   int i= 0;
   int nb= bib_get_fields (t, fields);
-  array<tree> latex= bib_latex_array (latex_to_tree (parse_latex (fields)));
+  array<tree> latex= bib_latex_array (
+      latex_to_tree (parse_latex (fields, false, true)));
   if (nb == N(latex)) bib_set_fields (t, latex, i);
 }
 
