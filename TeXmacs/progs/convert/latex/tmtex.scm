@@ -1423,9 +1423,9 @@
 
 (define (tmtex-bibitem* s l)
   (cond ((= (length l) 1)
-	 `(bibitem ,(tmtex (car l))))
+	 `(bibitem ,(car l)))
 	((= (length l) 2)
-	 `(bibitem (!option ,(tmtex (car l))) ,(tmtex (cadr l))))
+	 `(bibitem (!option ,(tmtex (car l))) ,(cadr l)))
 	(else "")))
 
 (define (tmtex-figure s l)
