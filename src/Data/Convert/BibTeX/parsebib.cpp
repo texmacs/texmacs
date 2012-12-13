@@ -19,6 +19,13 @@
 static string bib_current_tag= "";
 
 bool
+bibtex_non_empty_comment (string s) {
+  for (int i=0; i<N(s); i++)
+    if (is_alpha (s[i]) || is_numeric (s[i])) return true;
+  return false;
+}
+
+bool
 bib_ok (string s, int pos) {
   return 0 <= pos && pos < N(s);
 }
@@ -343,6 +350,13 @@ bib_list (string s, int& pos, tree& t) {
             if (comment) te= tree (DOCUMENT);
             else te= tentry;
             bib_entry (s, pos, stype, te);
+            /* dirty hack to get comments between entries */
+            int start= pos;
+            while (pos+1 < N(s) && s[pos+1] != '@') pos++;
+            if (bibtex_non_empty_comment (s(start, pos+1)))
+              tentry << compound ("bib-comment",
+                  tree (DOCUMENT, s(start, pos+1)));
+            /* end */
             if (comment) {
               if (N(te) == 1) tentry << compound ("bib-comment", te[0]);
               else tentry << compound ("bib-comment", te);
