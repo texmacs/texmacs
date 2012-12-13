@@ -72,8 +72,8 @@ bool
 tt_font_metric_rep::exists (int i) {
   if (face->bad_face) return false;
   if (fnm->contains (i)) return true;
-  // FIXME: add genuine check here
-  return true;
+  FT_UInt glyph_index= ft_get_char_index (face->ft_face, i);
+  return glyph_index != 0;
 }
 
 metric&
