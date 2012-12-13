@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.0.7.17>
 
 <style|source>
 
@@ -312,7 +312,13 @@
     </with>
   </macro>>
 
-  <assign|render-bibliography|<macro|name|<with|par-columns|1|<section*|<arg|name>>>>>
+  <assign|render-bibliography|<\macro|name|body>
+    <\with|par-columns|1>
+      <center|<section*|<arg|name>>>
+    </with>
+
+    <arg|body>
+  </macro>>
 
   <active*|<\src-comment>
     Title rendering.
