@@ -19,7 +19,10 @@
 #ifdef USE_FREETYPE
 
 #define std_dpi 600
-#define conv(l) ((l*dpi)/std_dpi)
+#define std_pixel (std_shrinkf*256)
+#define ROUND(l) ((l*dpi+(std_dpi>>1))/std_dpi)
+#define FLOOR(l) ((((l*dpi)/std_dpi)/std_pixel)*std_pixel)
+#define CEIL(l) (((((l*dpi+(std_dpi-1))/std_dpi)+std_pixel-1)/std_pixel)*std_pixel)
 
 /******************************************************************************
 * True Type fonts
@@ -110,7 +113,7 @@ unicode_font_rep::unicode_font_rep (string name,
   // get_italic space
   get_extents ("f", ex);
   SI italic_spc= (ex->x4-ex->x3)-(ex->x2-ex->x1);
-  slope= ((double) italic_spc) / ((double) display_size);
+  slope= ((double) italic_spc) / ((double) display_size) - 0.05;
   if (slope<0.15) slope= 0.0;
 }
 
@@ -160,28 +163,32 @@ unicode_font_rep::get_extents (string s, metric& ex) {
     int i= 0, n= N(s);
     unsigned int uc= read_unicode_char (s, i);
     metric_struct* first= fnm->get (uc);
-    ex->x1= conv (first->x1); ex->y1= conv (first->y1);
-    ex->x2= conv (first->x2); ex->y2= conv (first->y2);
-    ex->x3= conv (first->x3); ex->y3= conv (first->y3);
-    ex->x4= conv (first->x4); ex->y4= conv (first->y4);
-    SI x= conv (first->x2);
+    ex->x1= ROUND (first->x1);
+    ex->y1= ROUND (first->y1);
+    ex->x2= ROUND (first->x2);
+    ex->y2= ROUND (first->y2);
+    ex->x3= FLOOR (first->x3);
+    ex->y3= FLOOR (first->y3);
+    ex->x4= CEIL  (first->x4);
+    ex->y4= CEIL  (first->y4);
+    SI x= ROUND (first->x2);
 
     while (i<n) {
       unsigned int pc= uc;
       uc= read_unicode_char (s, i);
-      x += conv (fnm->kerning (pc, uc));
+      x += ROUND (fnm->kerning (pc, uc));
       metric_struct* next= fnm->get (uc);
-      ex->x1= min (ex->x1, x+ conv (next->x1));
-      ex->y1= min (ex->y1, conv (next->y1));
-      ex->x2= max (ex->x2, x+ conv (next->x2));
-      ex->y2= max (ex->y2, conv (next->y2));
-      ex->x3= min (ex->x3, x+ conv (next->x3));
-      ex->y3= min (ex->y3, conv (next->y3));
-      ex->x4= max (ex->x4, x+ conv (next->x4));
-      ex->y4= max (ex->y4, conv (next->y4));
-      x += conv (next->x2);
+      ex->x1= min (ex->x1, x+ ROUND (next->x1));
+      ex->y1= min (ex->y1, ROUND (next->y1));
+      ex->x2= max (ex->x2, x+ ROUND (next->x2));
+      ex->y2= max (ex->y2, ROUND (next->y2));
+      ex->x3= min (ex->x3, x+ FLOOR (next->x3));
+      ex->y3= min (ex->y3, FLOOR (next->y3));
+      ex->x4= max (ex->x4, x+ CEIL (next->x4));
+      ex->y4= max (ex->y4, CEIL (next->y4));
+      x += ROUND (next->x2);
       //if (fnm->kerning (pc, uc) != 0)
-      //cout << "Kerning " << ((char) pc) << ((char) uc) << " " << conv (fnm->kerning (pc, uc)) << ", " << conv (next->x2) << "\n";
+      //cout << "Kerning " << ((char) pc) << ((char) uc) << " " << ROUND (fnm->kerning (pc, uc)) << ", " << ROUND (next->x2) << "\n";
     }
   }
 }
@@ -197,12 +204,12 @@ unicode_font_rep::get_xpositions (string s, SI* xpos) {
     int start= i;
     unsigned int pc= uc;
     uc= read_unicode_char (s, i);
-    if (pc != 0xffffffff) x += conv (fnm->kerning (pc, uc));
+    if (pc != 0xffffffff) x += ROUND (fnm->kerning (pc, uc));
     metric_struct* next= fnm->get (uc);
     for (int j= start; j<i; j++) xpos[j]= x;
-    x += conv (next->x2);
+    x += ROUND (next->x2);
     //if (fnm->kerning (pc, uc) != 0)
-    //cout << "Kerning " << ((char) pc) << ((char) uc) << " " << conv (fnm->kerning (pc, uc)) << ", " << conv (next->x2) << "\n";
+    //cout << "Kerning " << ((char) pc) << ((char) uc) << " " << ROUND (fnm->kerning (pc, uc)) << ", " << ROUND (next->x2) << "\n";
   }
   xpos[n]= x;
 }
@@ -214,12 +221,12 @@ unicode_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   while (i<n) {
     unsigned int pc= uc;
     uc= read_unicode_char (s, i);
-    if (pc != 0xffffffff) x += conv (fnm->kerning (pc, uc));
+    if (pc != 0xffffffff) x += ROUND (fnm->kerning (pc, uc));
     ren->draw (uc, fng, x, y);
     metric_struct* ex= fnm->get (uc);
-    x += conv (ex->x2);
+    x += ROUND (ex->x2);
     //if (fnm->kerning (pc, uc) != 0)
-    //cout << "Kerning " << ((char) pc) << ((char) uc) << " " << conv (fnm->kerning (pc, uc)) << ", " << conv (ex->x2) << "\n";
+    //cout << "Kerning " << ((char) pc) << ((char) uc) << " " << ROUND (fnm->kerning (pc, uc)) << ", " << ROUND (ex->x2) << "\n";
   }
 }
 
