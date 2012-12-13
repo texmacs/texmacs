@@ -17,7 +17,10 @@
 #ifdef USE_FREETYPE
 
 #define std_dpi 600
-#define conv(l) ((l*dpi)/std_dpi)
+#define std_pixel (std_shrinkf*256)
+#define ROUND(l) ((l*dpi+(std_dpi>>1))/std_dpi)
+#define FLOOR(l) ((((l*dpi)/std_dpi)/std_pixel)*std_pixel)
+#define CEIL(l) (((((l*dpi+(std_dpi-1))/std_dpi)+std_pixel-1)/std_pixel)*std_pixel)
 
 /******************************************************************************
 * True Type fonts
@@ -98,7 +101,7 @@ tt_font_rep::tt_font_rep (string name, string family2, int size2, int dpi2):
   // get_italic space
   get_extents ("f", ex);
   SI italic_spc= (ex->x4-ex->x3)-(ex->x2-ex->x1);
-  slope= ((double) italic_spc) / ((double) display_size);
+  slope= ((double) italic_spc) / ((double) display_size) - 0.05;
   if (slope<0.15) slope= 0.0;
 }
 
@@ -115,26 +118,30 @@ tt_font_rep::get_extents (string s, metric& ex) {
   else {
     QN c= s[0];
     metric_struct* first= fnm->get (c);
-    ex->x1= conv (first->x1); ex->y1= conv (first->y1);
-    ex->x2= conv (first->x2); ex->y2= conv (first->y2);
-    ex->x3= conv (first->x3); ex->y3= conv (first->y3);
-    ex->x4= conv (first->x4); ex->y4= conv (first->y4);
-    SI x= conv (first->x2);
+    ex->x1= ROUND (first->x1);
+    ex->y1= ROUND (first->y1);
+    ex->x2= ROUND (first->x2);
+    ex->y2= ROUND (first->y2);
+    ex->x3= FLOOR (first->x3);
+    ex->y3= FLOOR (first->y3);
+    ex->x4= CEIL  (first->x4);
+    ex->y4= CEIL  (first->y4);
+    SI x= ROUND (first->x2);
 
     int i;
     for (i=1; i<N(s); i++) {
-      if (i>0) x += conv (fnm->kerning ((QN) s[i-1], (QN) s[i]));
+      if (i>0) x += ROUND (fnm->kerning ((QN) s[i-1], (QN) s[i]));
       QN c= s[i];
       metric_struct* next= fnm->get (c);
-      ex->x1= min (ex->x1, x+ conv (next->x1));
-      ex->y1= min (ex->y1, conv (next->y1));
-      ex->x2= max (ex->x2, x+ conv (next->x2));
-      ex->y2= max (ex->y2, conv (next->y2));
-      ex->x3= min (ex->x3, x+ conv (next->x3));
-      ex->y3= min (ex->y3, conv (next->y3));
-      ex->x4= max (ex->x4, x+ conv (next->x4));
-      ex->y4= max (ex->y4, conv (next->y4));
-      x += conv (next->x2);
+      ex->x1= min (ex->x1, x+ ROUND (next->x1));
+      ex->y1= min (ex->y1, ROUND (next->y1));
+      ex->x2= max (ex->x2, x+ ROUND (next->x2));
+      ex->y2= max (ex->y2, ROUND (next->y2));
+      ex->x3= min (ex->x3, x+ FLOOR (next->x3));
+      ex->y3= min (ex->y3, FLOOR (next->y3));
+      ex->x4= max (ex->x4, x+ CEIL  (next->x4));
+      ex->y4= max (ex->y4, CEIL  (next->y4));
+      x += ROUND (next->x2);
     }
   }
 }
@@ -146,9 +153,9 @@ tt_font_rep::get_xpositions (string s, SI* xpos) {
   
   register SI x= 0;
   for (i=0; i<N(s); i++) {
-    if (i>0) x += conv (fnm->kerning ((QN) s[i-1], (QN) s[i]));
+    if (i>0) x += ROUND (fnm->kerning ((QN) s[i-1], (QN) s[i]));
     metric_struct* next= fnm->get ((QN) s[i]);
-    x += conv (next->x2);
+    x += ROUND (next->x2);
     xpos[i+1]= x;
   }
 }
@@ -158,11 +165,11 @@ tt_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   if (N(s)!=0) {
     int i;
     for (i=0; i<N(s); i++) {
-      if (i>0) x += conv (fnm->kerning ((QN) s[i-1], (QN) s[i]));
+      if (i>0) x += ROUND (fnm->kerning ((QN) s[i-1], (QN) s[i]));
       QN c= s[i];
       ren->draw (c, fng, x, y);
       metric_struct* ex= fnm->get (c);
-      x += conv (ex->x2);
+      x += ROUND (ex->x2);
     }
   }
 }
