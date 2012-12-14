@@ -19,57 +19,6 @@ extern hashmap<tree,tree> font_variants;
 * Standardization of font features
 ******************************************************************************/
 
-string
-family_to_master (string f) {
-  font_database_load ();
-  if (font_features->contains (tree (f))) {
-    tree t= font_features [tree (f)];
-    if (is_func (t, TUPLE) && N(t) >= 1 && is_atomic (t[0]))
-      return t[0]->label;
-  }
-  f= replace (f, " Mono", "");
-  f= replace (f, "Mono", "");
-  f= replace (f, " Console", "");
-  f= replace (f, "Console", "");
-  f= replace (f, " Typewriter", "");
-  f= replace (f, "Typewriter", "");
-  f= replace (f, " Script", "");
-  f= replace (f, "Script", "");
-  f= replace (f, " Sans", "");
-  f= replace (f, "Sans", "");
-  f= replace (f, " Serif", "");
-  f= replace (f, "Serif", "");
-  f= replace (f, " Demi", "");
-  f= replace (f, "Demi", "");
-  f= replace (f, " Condensed", "");
-  f= replace (f, "Condensed", "");
-  f= replace (f, " Narrow", "");
-  f= replace (f, "Narrow", "");
-  f= replace (f, " Light", "");
-  f= replace (f, "Light", "");
-  f= replace (f, " Medium", "");
-  f= replace (f, "Medium", "");
-  f= replace (f, " Bold", "");
-  f= replace (f, "Bold", "");
-  f= replace (f, " Black", "");
-  f= replace (f, "Black", "");
-  return f;
-}
-
-array<string>
-master_to_families (string m) {
-  font_database_load ();
-  array<string> r;
-  if (font_variants->contains (tree (m))) {
-    tree t= font_variants [tree (m)];
-    for (int i=0; i<N(t); i++)
-      if (is_atomic (t[i]))
-        r << t[i]->label;
-  }
-  if (N(r) == 0) r << m;
-  return r;
-}
-
 array<string>
 family_features (string f) { 
   font_database_load ();
@@ -158,9 +107,106 @@ logical_font (string family, string style) {
   //     << ", " << family_features (family)
   //     << ", " << subfamily_features (style) << "\n";
   r << family_to_master (family);
-  r << family_features (family);
+  r << family_strict_features (family);
   r << subfamily_features (style);
   return r;
+}
+
+/******************************************************************************
+* Master font families
+******************************************************************************/
+
+string
+family_to_master (string f) {
+  font_database_load ();
+  if (font_features->contains (tree (f))) {
+    tree t= font_features [tree (f)];
+    if (is_func (t, TUPLE) && N(t) >= 1 && is_atomic (t[0]))
+      return t[0]->label;
+  }
+  f= replace (f, " Mono", "");
+  f= replace (f, "Mono", "");
+  f= replace (f, " Console", "");
+  f= replace (f, "Console", "");
+  f= replace (f, " Typewriter", "");
+  f= replace (f, "Typewriter", "");
+  f= replace (f, " Script", "");
+  f= replace (f, "Script", "");
+  f= replace (f, " Sans", "");
+  f= replace (f, "Sans", "");
+  f= replace (f, " Serif", "");
+  f= replace (f, "Serif", "");
+  f= replace (f, " Demi", "");
+  f= replace (f, "Demi", "");
+  f= replace (f, " Condensed", "");
+  f= replace (f, "Condensed", "");
+  f= replace (f, " Narrow", "");
+  f= replace (f, "Narrow", "");
+  f= replace (f, " Light", "");
+  f= replace (f, "Light", "");
+  f= replace (f, " Medium", "");
+  f= replace (f, "Medium", "");
+  f= replace (f, " Bold", "");
+  f= replace (f, "Bold", "");
+  f= replace (f, " Black", "");
+  f= replace (f, "Black", "");
+  return f;
+}
+
+array<string>
+master_to_families (string m) {
+  font_database_load ();
+  array<string> r;
+  if (font_variants->contains (tree (m))) {
+    tree t= font_variants [tree (m)];
+    for (int i=0; i<N(t); i++)
+      if (is_atomic (t[i]))
+        r << t[i]->label;
+  }
+  if (N(r) == 0) r << m;
+  return r;
+}
+
+array<string>
+common (array<string> v1, array<string> v2) {
+  array<string> r;
+  for (int i=0; i<N(v1); i++)
+    for (int j=0; j<N(v2); j++)
+      if (v1[i] == v2[j]) {
+        r << v1[i];
+        break;
+      }
+  return r;
+}
+
+array<string>
+exclude (array<string> v1, array<string> v2) {
+  array<string> r;
+  for (int i=0; i<N(v1); i++) {
+    bool ok= true;
+    for (int j=0; j<N(v2); j++)
+      if (v1[i] == v2[j]) ok= false;
+    if (ok) r << v1[i];
+  }
+  return r;
+}
+
+array<string>
+master_features (string m) {
+  array<string> fams= master_to_families (m);
+  if (N(fams) == 0) return array<string> ();
+  array<string> r= family_features (fams[0]);
+  for (int i=1; i<N(fams); i++)
+    r= common (r, family_features (fams[i]));
+  return r;
+}
+
+array<string>
+family_strict_features (string f) {
+  string m= family_to_master (f);
+  array<string> ff= family_features (f);
+  array<string> mf= master_features (m);
+  return exclude (ff, mf);
 }
 
 /******************************************************************************

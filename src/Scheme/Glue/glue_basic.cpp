@@ -903,6 +903,19 @@ tmg_font_master_2families (tmscm arg1) {
 }
 
 tmscm
+tmg_font_master_features (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "font-master-features");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  array_string out= master_features (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
 tmg_font_family_features (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "font-family-features");
 
@@ -910,6 +923,19 @@ tmg_font_family_features (tmscm arg1) {
 
   // TMSCM_DEFER_INTS;
   array_string out= family_features (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
+tmg_font_family_strict_features (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "font-family-strict-features");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  array_string out= family_strict_features (in1);
   // TMSCM_ALLOW_INTS;
 
   return array_string_to_tmscm (out);
@@ -7054,7 +7080,9 @@ initialize_glue_basic () {
   tmscm_install_procedure ("font-database-search",  tmg_font_database_search, 2, 0, 0);
   tmscm_install_procedure ("font-family->master",  tmg_font_family_2master, 1, 0, 0);
   tmscm_install_procedure ("font-master->families",  tmg_font_master_2families, 1, 0, 0);
+  tmscm_install_procedure ("font-master-features",  tmg_font_master_features, 1, 0, 0);
   tmscm_install_procedure ("font-family-features",  tmg_font_family_features, 1, 0, 0);
+  tmscm_install_procedure ("font-family-strict-features",  tmg_font_family_strict_features, 1, 0, 0);
   tmscm_install_procedure ("font-subfamily-features",  tmg_font_subfamily_features, 1, 0, 0);
   tmscm_install_procedure ("logical-font-public",  tmg_logical_font_public, 2, 0, 0);
   tmscm_install_procedure ("logical-font-private",  tmg_logical_font_private, 4, 0, 0);
