@@ -303,15 +303,11 @@
   <assign|bibliography-text|<macro|<rule|9cm|1pt>>>
 
   <assign|bibliography-text|<\macro>
-    <\with|par-columns|1>
-      <tabular|<tformat|<cwith|1|-1|1|-1|cell-width|1cm>|<cwith|1|-1|1|-1|cell-hmode|exact>|<cwith|1|-1|1|-1|cell-height|0.1pt>|<cwith|1|-1|1|-1|cell-vmode|exact>|<cwith|1|1|4|6|cell-bborder|0.7pt>|<cwith|1|1|3|3|cell-bborder|0.5pt>|<cwith|1|1|7|7|cell-bborder|0.5pt>|<cwith|1|1|8|8|cell-bborder|0.4pt>|<cwith|1|1|2|2|cell-bborder|0.4pt>|<cwith|1|1|1|1|cell-bborder|0.3pt>|<cwith|1|1|9|9|cell-bborder|0.3pt>|<table|<row|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>>|<row|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>>>>>
-    </with>
+    <tabular|<tformat|<cwith|1|-1|1|-1|cell-width|0.04par>|<cwith|1|-1|1|-1|cell-hmode|exact>|<cwith|1|-1|1|-1|cell-height|0.1pt>|<cwith|1|-1|1|-1|cell-vmode|exact>|<cwith|1|1|4|6|cell-bborder|0.7pt>|<cwith|1|1|3|3|cell-bborder|0.5pt>|<cwith|1|1|7|7|cell-bborder|0.5pt>|<cwith|1|1|8|8|cell-bborder|0.4pt>|<cwith|1|1|2|2|cell-bborder|0.4pt>|<cwith|1|1|1|1|cell-bborder|0.3pt>|<cwith|1|1|9|9|cell-bborder|0.3pt>|<table|<row|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>>|<row|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>>>>>
   </macro>>
 
   <assign|render-bibliography|<\macro|name|body>
-    <\with|par-columns|1>
-      <section*|<arg|name>>
-    </with>
+    <section*|<arg|name>>
 
     <arg|body>
   </macro>>
@@ -349,7 +345,7 @@
 
   <assign|render-abstract|<macro|body|<\surround|<vspace|2fn>|>
     <\with|par-columns|1>
-      <\with|par-mode|right>
+      <\with|par-mode|center>
         <tabular|<tformat|<cwith|1|1|1|1|cell-width|400pt>|<cwith|1|1|1|1|cell-hmode|exact>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
           <arg|body>
         </cell>>>>>
