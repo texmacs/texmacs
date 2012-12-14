@@ -22,10 +22,12 @@
   (-> "Name"
       ;;("Modern" (make-with "font" "modern"))
       ("Roman" (make-with "font" "roman"))
-      (if (url-exists-in-tex? "pnr10.mf")
-	  ("Pandora" (make-with "font" "pandora")))
       (if (url-exists-in-tex? "ccr10.mf")
 	  ("Concrete" (make-with "font" "concrete")))
+      (if (url-exists-in-tex? "pnr10.mf")
+	  ("Pandora" (make-with "font" "pandora")))
+      (if (font-exists-in-tt? "STIX-Regular")
+          ("Stix" (make-with "font" "stix")))
       ---
       (-> "Adobe"
 	  ("Avant Garde" (make-with "font" "avant-garde"))
@@ -40,8 +42,7 @@
           ("Palatino" (make-with "font" "palatino"))
 	  ("Times" (make-with "font" "times")))
       (if (or (font-exists-in-tt? "luxirr")
-              (font-exists-in-tt? "Apple Symbols")
-              (font-exists-in-tt? "STIX-Regular"))
+              (font-exists-in-tt? "Apple Symbols"))
           (-> "True type"
               (if (font-exists-in-tt? "DejaVuSerif")
                   ("Dejavu" (make-with "font" "dejavu")))
@@ -49,8 +50,6 @@
                   ("Lucida Grande" (make-with "font" "apple-lucida")))
               (if (font-exists-in-tt? "luxirr")
                   ("Luxi" (make-with "font" "luxi")))
-              (if (font-exists-in-tt? "STIX-Regular")
-                  ("Stix" (make-with "font" "stix")))
               (if (font-exists-in-tt? "Apple Symbols")
                   ("Symbols" (make-with "font" "apple-symbols")))))
       (if (font-exists-in-tt? "times")

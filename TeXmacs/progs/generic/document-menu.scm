@@ -320,6 +320,8 @@
           (if (url-exists-in-tex? "pnr10.mf")
               ("Pandora" (init-env "font" "pandora")))
 	  ("Roman" (init-env "font" "roman"))
+	  (if (font-exists-in-tt? "STIX-Regular")
+	      ("Stix" (init-env "font" "stix")))
 	  ---
 	  ("Bookman" (init-env "font" "bookman"))
 	  ("Courier" (init-env "font" "courier"))
@@ -333,8 +335,6 @@
 	  ("Lucida" (init-env "font" "x-lucida"))
 	  (if (font-exists-in-tt? "luxirr")
               ("Luxi" (init-env "font" "luxi")))
-	  (if (font-exists-in-tt? "STIX-Regular")
-	      ("Stix" (init-env "font" "stix")))
 	  ("Utopia" (init-env "font" "x-utopia"))
 	  (if (or (supports-chinese?)
 		  (supports-japanese?)
