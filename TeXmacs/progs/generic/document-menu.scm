@@ -333,7 +333,7 @@
 	  ("Lucida" (init-env "font" "x-lucida"))
 	  (if (font-exists-in-tt? "luxirr")
               ("Luxi" (init-env "font" "luxi")))
-	  (if (font-exists-in-tt? "STIXGeneral")
+	  (if (font-exists-in-tt? "STIX-Regular")
 	      ("Stix" (init-env "font" "stix")))
 	  ("Utopia" (init-env "font" "x-utopia"))
 	  (if (or (supports-chinese?)
@@ -410,7 +410,7 @@
 	  (if (font-exists-in-tt? "LucidaGrande")
 	      ("Lucida" (init-env "math-font" "math-lucida")))
 	  ("Roman" (init-env "math-font" "roman"))
-	  (if (font-exists-in-tt? "STIXGeneral")
+	  (if (font-exists-in-tt? "STIX-Regular")
 	      ("Stix" (init-env "math-font" "math-stix"))))
       (-> "Program font"
 	  ("Default" (init-default "prog-font"))

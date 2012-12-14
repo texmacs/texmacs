@@ -45,7 +45,7 @@
       (if (url-exists-in-tex? "eurm10.mf")
 	  ("New Roman" (make-with "math-font" "ENR")))
       ("Roman" (make-with "math-font" "roman"))
-      (if (font-exists-in-tt? "STIXGeneral")
+      (if (font-exists-in-tt? "STIX-Regular")
 	  ("Stix" (make-with "math-font" "math-stix")))
       ---
       (if (url-exists-in-tex? "cdr10.mf")

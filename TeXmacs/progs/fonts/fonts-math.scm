@@ -317,20 +317,20 @@
      (roman $t $a $b $s $d)))
 
    ((math-stix $t bold right $s $d)
-    (unicode-math STIXGeneralBol STIXGeneralBol
-		  STIXGeneralBol STIXGeneralBol
+    (unicode-math STIX-Bold STIX-Bold
+		  STIX-Bold STIX-Bold
 		  $t bold $b $s $d))
    ((math-stix $t $a right $s $d)
-    (unicode-math STIXGeneral STIXGeneral
-		  STIXGeneralBol STIXGeneralBol
+    (unicode-math STIX-Regular STIX-Regular
+		  STIX-Bold STIX-Bold
 		  $t $a $b $s $d))
    ((math-stix $t bold $b $s $d)
-    (unicode-math STIXGeneralBol STIXGeneralBolIta
-		  STIXGeneralBol STIXGeneralBolIta
+    (unicode-math STIX-Bold STIX-BoldItalic
+		  STIX-Bold STIX-BoldItalic
 		  $t bold $b $s $d))
    ((math-stix $t $a $b $s $d)
-    (unicode-math STIXGeneral STIXGeneralItalic
-		  STIXGeneralBol STIXGeneralBolIta
+    (unicode-math STIX-Regular STIX-Italic
+		  STIX-Bold STIX-BoldItalic
 		  $t $a $b $s $d))
 
    ((math-asana $t $a $b $s $d)

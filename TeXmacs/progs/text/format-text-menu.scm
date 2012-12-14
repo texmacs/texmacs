@@ -41,7 +41,7 @@
 	  ("Times" (make-with "font" "times")))
       (if (or (font-exists-in-tt? "luxirr")
               (font-exists-in-tt? "Apple Symbols")
-              (font-exists-in-tt? "STIXGeneral"))
+              (font-exists-in-tt? "STIX-Regular"))
           (-> "True type"
               (if (font-exists-in-tt? "DejaVuSerif")
                   ("Dejavu" (make-with "font" "dejavu")))
@@ -49,7 +49,7 @@
                   ("Lucida Grande" (make-with "font" "apple-lucida")))
               (if (font-exists-in-tt? "luxirr")
                   ("Luxi" (make-with "font" "luxi")))
-              (if (font-exists-in-tt? "STIXGeneral")
+              (if (font-exists-in-tt? "STIX-Regular")
                   ("Stix" (make-with "font" "stix")))
               (if (font-exists-in-tt? "Apple Symbols")
                   ("Symbols" (make-with "font" "apple-symbols")))))
