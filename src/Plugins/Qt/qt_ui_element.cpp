@@ -866,8 +866,8 @@ qt_ui_element_rep::as_qlayoutitem () {
       for (int i=0; i < N(lhs); i++) {
         QLayoutItem* lli = concrete(lhs[i])->as_qlayoutitem();
         QLayoutItem* rli = concrete(rhs[i])->as_qlayoutitem();
-        if (lli) l->addItem(lli, i, 0, 1, 1, Qt::AlignRight);
-        if (rli) l->addItem(rli, i, 1, 1, 1, Qt::AlignLeft);
+        if (lli) l->addItem(lli, i, 0, 1, 1, Qt::AlignRight | Qt::AlignVCenter);
+        if (rli) l->addItem(rli, i, 1, 1, 1, Qt::AlignLeft | Qt::AlignVCenter);
       }
       return l;
     }
