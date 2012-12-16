@@ -217,7 +217,12 @@ interactive_command_rep::apply () {
 void
 tm_frame_rep::interactive (object fun, scheme_tree p) {
   ASSERT (is_tuple (p), "tuple expected");
-  if (get_preference ("interactive questions") == "popup") {
+  if (N(p) == 0) {
+    string ret= object_to_string (call (fun));
+    if (ret != "" && ret != "<unspecified>" && ret != "#<unspecified>")
+      set_message (verbatim (ret), "interactive command");
+  }
+  else if (get_preference ("interactive questions") == "popup") {
     int i, n= N(p);
     array<string> prompts (n);
     for (i=0; i<n; i++)
