@@ -42,12 +42,6 @@
     Doc-author Scheme wrapping
   </src-comment>>
 
-  <\inactive*>
-    <assign|author-data|<xmacro|args|<extern|author-data|<quote-arg|args>>>>
-
-    \;
-  </inactive*>
-
   <assign|doc-author|<macro|arg|<extern|doc-author|<quote-arg|arg>>>>
 
   <active*|<\src-comment>
@@ -91,6 +85,25 @@
   <assign|render-date-inline|<macro|body|<with|font-shape|italic|<arg|body>>>>
 
   <active*|<\src-comment>
+    Authors inline rendering
+  </src-comment>>
+
+  <assign|render-author-inline|<\macro|body>
+    <with|par-sep|0.1fn|<arg|body>>
+  </macro>>
+
+  <assign|render-author-name-inline*|<macro|body|<with|font-shape|small-caps|<by-text>
+  <arg|body>>>>
+
+  <assign|render-author-name-inline|<macro|body|<with|font-shape|small-caps|<arg|body>>>>
+
+  <assign|render-author-affiliation-inline|<value|identity>>
+
+  <assign|render-author-email-inline|<macro|body|<with|par-par-sep|0pt|<email-text><field-sep-text><with|font-family|tt|<arg|body>>>>>
+
+  <assign|render-author-homepage-inline|<macro|body|<with|par-par-sep|0pt|<homepage-text><field-sep-text><hlink|<with|font-family|tt|http://<arg|body>>|http://<arg|body>>>>>
+
+  <active*|<\src-comment>
     Authors bloc rendering
   </src-comment>>
 
@@ -106,6 +119,12 @@
     </cell>>>>>
   </macro>>
 
+  <assign|render-author-bloc*|<\macro|body>
+    <\with|render-author-name-inline|<value|render-author-name-inline*>>
+      <render-author-bloc|<arg|body>>
+    </with>
+  </macro>>
+
   <assign|render-author-name-bloc|<value|identity>>
 
   <assign|render-author-affiliation-bloc|<value|identity>>
@@ -113,22 +132,6 @@
   <assign|render-author-email-bloc|<value|identity>>
 
   <assign|render-author-homepage-bloc|<value|identity>>
-
-  <active*|<\src-comment>
-    Authors inline rendering
-  </src-comment>>
-
-  <assign|render-author-inline|<\macro|body>
-    <with|par-sep|0.1fn|<arg|body>>
-  </macro>>
-
-  <assign|render-author-name-inline|<macro|body|<with|font-shape|small-caps|<arg|body>>>>
-
-  <assign|render-author-affiliation-inline|<value|identity>>
-
-  <assign|render-author-email-inline|<macro|body|<with|par-par-sep|0pt|<email-text><field-sep-text><with|font-family|tt|<arg|body>>>>>
-
-  <assign|render-author-homepage-inline|<macro|body|<with|par-par-sep|0pt|<homepage-text><field-sep-text><hlink|<with|font-family|tt|http://<arg|body>>|http://<arg|body>>>>>
 
   <active*|<\src-comment>
     Notes management

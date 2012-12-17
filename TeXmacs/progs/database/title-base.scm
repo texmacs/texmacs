@@ -36,6 +36,9 @@
 (define (render-bloc-author body)
   `(render-author-bloc (render-author-inline ,body)))
 
+(define (render-bloc-author* body)
+  `(render-author-bloc* (render-author-inline ,body)))
+
 (define (render-bloc-date body)
   `(render-date-bloc (render-date-inline ,body)))
 
@@ -97,6 +100,11 @@
   ; map l using f and apply the result to c
   (apply c (list (map f l))))
 
+(define (create-authors-bloc t)
+  (cond ((list-1? t) (render-bloc-author* (car t)))
+        ((list>1? t) `(concat ,@(recompose '() (map render-bloc-author t) '(render-authors-sep))))
+        (else "")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Public interfaces
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -108,7 +116,7 @@
      ,(amap document render-bloc-subtitle (select t '(doc-subtitle :%1)))
      (concat
        (render-authors-bloc
-         ,(amap concat (lambda (x) `(concat ,(render-bloc-author x) (render-authors-sep))) (select t '(doc-author))))
+         ,(create-authors-bloc (select t '(doc-author))))
        (assign "count-title-note-nr" (quote "0"))
        ,(render-bloc-title-note (apply tmconcat (recompose '() (select t '(doc-note :%1)) '(sep-text))))
        ,(amap concat render-bloc-author-misc (select t '(doc-author author-data author-misc :%1))))
@@ -117,6 +125,7 @@
 (tm-define (doc-author t)
            (:secure #t)
                  `(document
+                    ;,(concat (author-by) (amap document render-bloc-author-name (append-name-labels t)))
                     ,(amap document render-bloc-author-name (append-name-labels t))
                     ,(amap document render-bloc-author-affiliation (select t '(author-affiliation :%1)))
                     ,(amap document render-bloc-author-email (select t '(author-email :%1)))
