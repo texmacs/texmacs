@@ -446,7 +446,7 @@
 (define-preference-names "texmacs->latex:encoding"
   ("Strict Ascii" "ascii")
   ("Cork charset with catcode definitions in preamble" "cork")
-  ("Unicode with inputenc LaTeX package" "utf-8"))
+  ("Utf-8 with inputenc LaTeX package" "utf-8"))
 
 (tm-widget (latex-preferences-widget)
   ===
@@ -497,6 +497,7 @@
   ("utf-8" "Utf-8"))
 
 (define-preference-names "verbatim->texmacs:encoding"
+  ("auto" "Auto")
   ("cork" "Cork")
   ("iso-8859-1" "Iso-8859-1")
   ("utf-8" "Utf-8"))
@@ -527,7 +528,7 @@
   (aligned
     (item (text "Character encoding:")
       (enum (set-pretty-preference "verbatim->texmacs:encoding" answer)
-            '("Cork" "Iso-8859-1" "Utf-8")
+            '("Auto" "Cork" "Iso-8859-1" "Utf-8")
             (get-pretty-preference "verbatim->texmacs:encoding")
             "5em"))))
 
