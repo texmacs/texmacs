@@ -165,7 +165,7 @@
   (insert ($doc-symbol-template (string->symbol ssym) "")))
 
 (kbd-map
-  (:require (in-tmdoc?))
+  (:require (and developer-mode? (in-tmdoc?)))
   ("M-A-x" (interactive ask-insert-symbol-doc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
