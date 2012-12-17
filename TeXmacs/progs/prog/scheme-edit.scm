@@ -156,6 +156,7 @@
 
 (tm-define (kbd-variant t forwards?)
   (:require (in-prog-scheme?))
+  (if (not scheme-completions-built?) (scheme-completions-rebuild))
   (custom-complete (tm->tree (scheme-completions (cursor-word)))))
 
 (kbd-map

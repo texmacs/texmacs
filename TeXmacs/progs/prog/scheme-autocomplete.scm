@@ -14,11 +14,10 @@
 ;; We provide very rudimentary autocompletion in scheme sessions using a prefix
 ;; tree of all publicly defined symbols. Things TO-DO are:
 ;;
+;;  - Truly index all code with an indexer, instead of patching scheme's read.
 ;;  - Be aware of context: create new ptrees on the fly based on the
-;;    environment. This needs online parsing and will be difficult.
-;;  - Add hooks for module and file loading which update the ptrees
-;;    Maybe redefining the reader? 
-;;  - Use metainformation in tm-define to suggest parameters.
+;;    environment. This needs online parsing and will be difficult. 
+;;  - Suggest parameters in function calls.
 ;;  - Provide an alternative interface using (non-modal) popups or greyed out
 ;;    text after the cursor.
 ;;  - Add a layer decoupling from the specific scheme implementation for
@@ -87,6 +86,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define pt-symbols '()) ; to store all the completions
+(define-public scheme-completions-built? #f)
 
 (define (obarray-fold-sub module prev)
   (with mi (module-public-interface module)
@@ -118,7 +118,8 @@
     (scheme-completions-add-list symbols)
     ;(scheme-completions-add-list (all-glued-symbols))
     (display* (length symbols) " symbols in "
-              (- (texmacs-time) start) " msec\n")))
+              (- (texmacs-time) start) " msec\n")
+    (set! scheme-completions-built? #t)))
 
 (tm-define (scheme-completions root)
   (:synopsis "Provide the completions for @root as needed by custom-complete")
@@ -126,3 +127,11 @@
      ,@(map string->tmstring 
             (pt-words-below (pt-find pt-symbols (tmstring->string root))))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Hook for new-read. See init-texmacs.scm
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (%read-symbol-hook sym)
+  (scheme-completions-add (symbol->string sym)))
+
+(if developer-mode? (set! %new-read-hook %read-symbol-hook ))

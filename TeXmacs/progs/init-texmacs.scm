@@ -17,6 +17,8 @@
 
 (if developer-mode?
     (begin
+      (define-public (%new-read-hook sym) (noop)) ; for autocompletion
+      
       ;; FIXME: how do we update this list dynamically? 
       (define-public keywords-which-define 
         '(define define-macro define-public define-public-macro provide-public
@@ -32,13 +34,14 @@
                      (column (source-property form 'column))
                      (filename (source-property form 'filename))
                      (sym  (if (pair? (cadr form)) (caadr form) (cadr form))))
-                (if (and (symbol? sym) ; Just in case
-                         filename)     ; don't set props if read from stdin
+                (if (symbol? sym) ; Just in case
                     (begin 
-                      (set-symbol-property! sym 'line line)
-                      (set-symbol-property! sym 'column column)
-                      (set-symbol-property! sym 'filename filename)
-                      ))))
+                      (%new-read-hook sym)
+                      (if filename     ; don't set props if read from stdin
+                          (begin
+                            (set-symbol-property! sym 'line line)
+                            (set-symbol-property! sym 'column column)
+                            (set-symbol-property! sym 'filename filename)))))))
           form))
 
       (set! read new-read)
