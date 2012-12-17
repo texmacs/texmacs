@@ -31,7 +31,7 @@
 (kbd-map
   ("F1" (interactive docgrep-in-doc))
   ("S-F1" (noop)) ;; FIXME: S-F1 should be 'What is This?'
-  ("M-F1" (load-help-buffer "about/welcome/welcome"))
+  ;("M-F1" (load-help-buffer "about/welcome/welcome")) ; Conflict with devtools
 
   ("<" "<less>")
   (">" "<gtr>")
@@ -630,7 +630,6 @@
   ("windows A-t" (make 'trademark))
   ("windows y" (redo 0))
 
-  ("M-F1" (load-help-buffer "about/welcome/welcome"))
   ("F2" (interactive replace-start-forward))
   ("S-delete" (clipboard-cut "primary"))
   ("S-insert" (clipboard-paste "primary"))
