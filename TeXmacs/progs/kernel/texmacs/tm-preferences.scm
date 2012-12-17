@@ -24,7 +24,7 @@
 (define (define-preference x)
   (with (which value call-back) x
     `(if (not (ahash-ref preferences-default ,which))
-	 (ahash-set! preferences-default ,which ,value))))
+         (ahash-set! preferences-default ,which ,value))))
 
 (define (define-preference-call-back x)
   (with (which value call-back) x
@@ -34,8 +34,8 @@
 
 (define-public-macro (define-preferences . l)
   (append '(begin)
-	  (map-in-order define-preference l)
-	  (map-in-order define-preference-call-back l)))
+          (map-in-order define-preference l)
+          (map-in-order define-preference-call-back l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Setting and getting preferences
@@ -73,8 +73,8 @@
 (tm-define (get-preference which)
   (:synopsis "Get preference @which")
   (let* ((def (or (ahash-ref preferences-default which) "default"))
-	 (s? (string? def))
-	 (r (cpp-get-preference which (if s? def (object->string def)))))
+         (s? (string? def))
+         (r (cpp-get-preference which (if s? def (object->string def)))))
     (if s? r (string->object r))))
 
 (define (preference-on? which)
@@ -85,13 +85,13 @@
   (:check-mark "v" preference-on?)
   (with what (get-preference which)
     (set-preference which (cond ((== what "on") "off")
-				((== what "off") "on")
-				(else what)))))
+                                ((== what "off") "on")
+                                (else what)))))
 
 (tm-define (append-preference which val)
   (:synopsis "Appends @val to the list of values of preference @which")
   (with cur (get-preference which)
-    (if (not cur) (set! cur '()))
+    (if (== cur "default") (set! cur '()))
     (set-preference which (rcons cur val))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -145,10 +145,10 @@
 (define (test-look-and-feel t)
   ;;(display* "Check look and feel " t "\n")
   (cond ((list? t) (list-or (map test-look-and-feel t)))
-	((symbol? t) (test-look-and-feel (symbol->string t)))
-	(else
-	  (with s (look-and-feel)
-	    (or (== t s) (and (== t "std") (!= s "emacs")))))))
+        ((symbol? t) (test-look-and-feel (symbol->string t)))
+        (else
+          (with s (look-and-feel)
+            (or (== t s) (and (== t "std") (!= s "emacs")))))))
 
 (set! has-look-and-feel? test-look-and-feel)
 

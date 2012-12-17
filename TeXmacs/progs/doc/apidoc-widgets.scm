@@ -59,8 +59,8 @@
                                                    "help-win-display")))))))
 
 (define (help-win-show)
-  (window-set-geometry
-    help-win-handle (get-preference "gui:help-window-geometry"))
+  (with geo (get-preference "gui:help-window-geometry")
+    (if (list? geo) (window-set-geometry help-win-handle geo)))
   (alt-window-show help-win-handle)
   (set-preference "gui:help-window-visible" #t))
 
@@ -104,7 +104,7 @@
                  (geo (get-preference "gui:help-window-geometry")))
             (alt-window-create-quit win wid "Documentation" qui)
             (alt-window-show win)
-            (if geo (window-set-geometry win geo))
+            (if (list? geo) (window-set-geometry win geo))
             (help-win-activate win)))))
 
 ;;;;; Preference handling for the help widget

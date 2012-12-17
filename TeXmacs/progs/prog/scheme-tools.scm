@@ -121,7 +121,7 @@
   (let  ((t (get-preference "doc:collect-timestamp"))
          (lan (get-output-language))
          (langs (get-preference "doc:collect-languages")))
-    (if (not (and t langs (member lan langs)))
+    (if (not (and (!= t "default") (list? langs) (member lan langs)))
       (doc-collect-all lan cont) (cont))))
 
 (tm-define (scheme-popup-help word)

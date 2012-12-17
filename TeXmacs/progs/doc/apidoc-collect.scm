@@ -74,7 +74,8 @@
 (tm-define (doc-scm-cache)
   (:synopsis "Url of the cache with the collected scheme documentation.")
   (with pref (get-preference "doc:doc-scm-cache")
-    (if pref (string->url pref)
+    (if (!= pref "default")
+      (string->url pref)
       (with new (persistent-file-name (string->url "$HOME/.TeXmacs/doc") "api")
         (set-preference "doc:doc-scm-cache" (url->string new))
         new))))
@@ -82,7 +83,8 @@
 (tm-define (doc-macro-cache)
   (:synopsis "Url of the cache with the collected macro documentation.")
   (with pref (get-preference "doc:doc-macro-cache")
-    (if pref (string->url pref)
+    (if (!= pref "default")
+      (string->url pref)
       (with new (persistent-file-name (string->url "$HOME/.TeXmacs/doc") "api")
         (set-preference "doc:doc-macro-cache" (url->string new))
         new))))
@@ -142,6 +144,19 @@
         (set! basedir (string-append basedir "/" (dirname (tm-ref l 1))))
         (for-each (lambda (t) (process-explain t lan furl)) ex)
         (for-each (lambda (t) (parse-branch t basedir)) br))));)
+
+;; Define preference defaults in order to have the correct data types
+
+(define (notify-doc-collect-preference pref val)
+  (cond ((== pref "doc:collect-timestamp") (noop))
+        ((== pref "doc:collect-languages")
+         (if (nnull? val)
+             (set-message "Finished collecting symbols documentation."
+                          (string-append "(" (cAr val) ")"))))))
+
+(define-preferences
+  ("doc:collect-timestamp" 0 notify-doc-collect-preference)
+  ("doc:collect-languages" '() notify-doc-collect-preference))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface
