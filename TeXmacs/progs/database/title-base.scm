@@ -22,7 +22,7 @@
 ;;; Renderers ; for style application.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; FIXME this may be factorized using Scheme macros.
+; FIXME: this may be factorized using Scheme macros.
 
 (define (render-bloc-data body)
   `(render-data-bloc (render-data-inline ,body)))
@@ -43,22 +43,23 @@
   `(render-date-bloc (render-date-inline ,body)))
 
 (define (render-bloc-title-note body)
-  `(render-title-note-bloc (render-title-note-inline ,body)))
+  (if (and (string? body) (string-null? body)) ""
+    `(render-title-note-bloc (render-title-note-inline ,body))))
 
 (define (render-bloc-author-name body)
-    `(render-author-name-bloc (render-author-name-inline ,body)))
+  `(render-author-name-bloc (render-author-name-inline ,body)))
 
 (define (render-bloc-author-affiliation body)
-    `(render-author-affiliation-bloc (render-author-affiliation-inline ,body)))
+  `(render-author-affiliation-bloc (render-author-affiliation-inline ,body)))
 
 (define (render-bloc-author-homepage body)
-    `(render-author-homepage-bloc (render-author-homepage-inline ,body)))
+  `(render-author-homepage-bloc (render-author-homepage-inline ,body)))
 
 (define (render-bloc-author-email body)
-    `(render-author-email-bloc (render-author-email-inline ,body)))
+  `(render-author-email-bloc (render-author-email-inline ,body)))
 
 (define (render-bloc-author-misc body)
-    `(render-author-misc-bloc (render-author-misc-inline ,body)))
+  `(render-author-misc-bloc (render-author-misc-inline ,body)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Content management macros
@@ -88,7 +89,8 @@
   ; append notes labels to the titles
   (let ((titles (select t '(doc-title :%1)))
         (notes  (select t '(doc-note  :%1))))
-    (map (lambda (title) `(concat ,title ,(render-grouped-title-note-labels notes))) titles)))
+    (if (null? notes) titles
+      (map (lambda (title) `(concat ,title ,(render-grouped-title-note-labels notes))) titles))))
 
 (define (append-name-labels t)
   ; append notes labels to the authors names
@@ -98,12 +100,23 @@
 
 (define (amap c f l)
   ; map l using f and apply the result to c
-  (apply c (list (map f l))))
+  (if (null? l) ""
+    (apply c (list (map f l)))))
 
 (define (create-authors-bloc t)
-  (cond ((list-1? t) (render-bloc-author* (car t)))
-        ((list>1? t) `(concat ,@(recompose '() (map render-bloc-author t) '(render-authors-sep))))
+  (cond ((list-1? t) `(render-authors-bloc ,(render-bloc-author* (car t))))
+        ((list>1? t) `(render-authors-bloc (concat ,@(recompose '() (map render-bloc-author t) '(render-authors-sep)))))
         (else "")))
+
+(define (typesetted? t)
+  (cond ((list? t)   (nnull? t))
+        ((pair? t)   (nnull? t))
+        ((tree? t)   (not (tree-empty? t)))
+        ((string? t) (not (string-null? t)))
+        (else #t)))
+
+(define (document-simplify . t)
+  `(document ,@(filter typesetted? t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Public interfaces
@@ -111,22 +124,20 @@
 
 (tm-define (doc-data t)
   (:secure #t)
-  `(document
-     ,(amap document render-bloc-title (append-title-labels t))
-     ,(amap document render-bloc-subtitle (select t '(doc-subtitle :%1)))
-     (concat
-       (render-authors-bloc
-         ,(create-authors-bloc (select t '(doc-author))))
+  (document-simplify
+     (amap document render-bloc-title (append-title-labels t))
+     (amap document render-bloc-subtitle (select t '(doc-subtitle :%1)))
+     `(concat
+       ,(create-authors-bloc (select t '(doc-author)))
        (assign "count-title-note-nr" (quote "0"))
        ,(render-bloc-title-note (apply tmconcat (recompose '() (select t '(doc-note :%1)) '(sep-text))))
        ,(amap concat render-bloc-author-misc (select t '(doc-author author-data author-misc :%1))))
-     ,(amap document render-bloc-date (select t '(doc-date :%1)))))
+     (amap document render-bloc-date (select t '(doc-date :%1)))))
 
 (tm-define (doc-author t)
            (:secure #t)
-                 `(document
-                    ;,(concat (author-by) (amap document render-bloc-author-name (append-name-labels t)))
-                    ,(amap document render-bloc-author-name (append-name-labels t))
-                    ,(amap document render-bloc-author-affiliation (select t '(author-affiliation :%1)))
-                    ,(amap document render-bloc-author-email (select t '(author-email :%1)))
-                    ,(amap document render-bloc-author-homepage (select t '(author-homepage :%1)))))
+                 (document-simplify
+                    (amap document render-bloc-author-name (append-name-labels t))
+                    (amap document render-bloc-author-affiliation (select t '(author-affiliation :%1)))
+                    (amap document render-bloc-author-email (select t '(author-email :%1)))
+                    (amap document render-bloc-author-homepage (select t '(author-homepage :%1)))))
