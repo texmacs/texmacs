@@ -19,7 +19,7 @@
 ;; Navigation mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define navigation-bidirectional-links? #t)
+(define navigation-bidirectional-links? #f)
 (define navigation-external-links? #t)
 (define navigation-link-pages? #t)
 (define navigation-blocked-types (make-ahash-table))
@@ -28,19 +28,22 @@
 (tm-define (navigation-toggle-bidirectional)
   (:synopsis "Toggle whether we may follow links in both directions.")
   (:check-mark "v" navigation-bidirectional?)
-  (toggle! navigation-bidirectional-links?))
+  (set-boolean-preference "bidirectional navigation"
+                          (not navigation-bidirectional-links?)))
 
 (define (navigation-external?) navigation-external-links?)
 (tm-define (navigation-toggle-external)
   (:synopsis "Toggle whether we may follow links defined in other loci.")
   (:check-mark "v" navigation-external?)
-  (toggle! navigation-external-links?))
+  (set-boolean-preference "external navigation"
+                          (not navigation-external-links?)))
 
 (define (navigation-build-link-pages?) navigation-link-pages?)
 (tm-define (navigation-toggle-build-link-pages)
   (:synopsis "Toggle whether we generate link pages.")
   (:check-mark "v" navigation-build-link-pages?)
-  (toggle! navigation-link-pages?))
+  (set-boolean-preference "link pages"
+                          (not navigation-link-pages?)))
 
 (define (navigation-allow-type? type)
   (not (ahash-ref navigation-blocked-types type)))
@@ -67,6 +70,24 @@
   (:synopsis "Allow all link types to be followed.")
   (:check-mark "v" navigation-allow-all-types?)
   (set! navigation-blocked-types (make-ahash-table)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Navigation preferences
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (notify-bidirectional-navigation var val)
+  (set! navigation-bidirectional-links? (== val "on")))
+
+(define (notify-external-navigation var val)
+  (set! navigation-external-links? (== val "on")))
+
+(define (notify-link-pages var val)
+  (set! navigation-link-pages? (== val "on")))
+
+(define-preferences
+  ("bidirectional navigation" "off" notify-bidirectional-navigation)
+  ("external navigation" "on" notify-external-navigation)
+  ("link pages" "on" notify-link-pages))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Finding links in the form of "link lists". Items in such a list
@@ -116,8 +137,8 @@
 (define (filter-link-list l event)
   (let* ((f1 (if (navigation-bidirectional?) l
                  (list-filter l filter-on-bidirectional)))
-         (f2 (list-filter l filter-on-type))
-         (f3 (list-filter l (filter-on-event event))))
+         (f2 (list-filter f1 filter-on-type))
+         (f3 (list-filter f2 (filter-on-event event))))
     f3))
 
 (tm-define (exact-link-list t filter?)
