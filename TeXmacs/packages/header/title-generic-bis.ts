@@ -276,33 +276,13 @@
     </src-comment>
   </active*>
 
-  <assign|doc-author-main|<\macro|data>
-    <\quasi>
-      <unquote*|<select|<quote-arg|data>|author-name>>
+  <assign|doc-author-main|<macro|data|<extern|doc-author-main|<quote-arg|data>>>>
 
-      <unquote*|<select|<quote-arg|data>|author-affiliation>>
+  <assign|doc-author-data-note|<xmacro|args|<extern|doc-author-data-note|<quote-arg|args>>>>
 
-      <unquote*|<select|<quote-arg|data>|author-email>>
+  <assign|author-data|<xmacro|args|<extern|author-data|<quote-arg|args>>>>
 
-      <unquote*|<select|<quote-arg|data>|author-homepage>>
-    </quasi>
-  </macro>>
-
-  <assign|doc-author-data-note|<xmacro|data|<\quasi>
-    <unquote*|<select|<quote-arg|data>|author-misc|document|<pat-any>>>
-  </quasi>>>
-
-  <assign|author-data|<\xmacro|data>
-    <\quasi>
-      <\with|the-author-data|<quote-arg|data>>
-        <\render-doc-author>
-          <doc-author-block|<doc-author-main|<unquote|<quote-arg|data>>>>
-        </render-doc-author>
-      </with>
-    </quasi>
-  </xmacro>>
-
-  <assign|doc-author-data-bis|<macro|body|<quasi|<style-with|src-compact|none|<doc-author-note|<unquote|<quasi|<doc-author-data-note|<unquote*|<quote-arg|body>>>>>>>>>>
+  <assign|doc-author-data-bis|<macro|data|<extern|doc-author-data-bis|<quote-arg|data>>>>
 
   <\active*>
     <\src-comment>

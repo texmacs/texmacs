@@ -13,7 +13,7 @@
 (texmacs-module (database title-bis))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Public interfaces
+;; Main document data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (doc-data-main t)
@@ -66,6 +66,38 @@
 (tm-define (doc-data-bis t)
   (:secure #t)
   `(doc-title-note
-    (tuple
-      (doc-data-note
-        ,@(tm-children t)))))
+     (tuple
+       (doc-data-note
+         ,@(tm-children t)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Author data
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (doc-author-main t)
+  (:secure #t)
+  `(document
+     ,@(select t '(author-name))
+     ,@(select t '(author-affiliation))
+     ,@(select t '(author-email))
+     ,@(select t '(author-homepage))))
+
+(tm-define (doc-author-data-note t)
+  (:secure #t)
+  `(document
+     ,@(select t '(author-misc document :%1))))
+
+(tm-define (author-data t)
+  (:secure #t)
+  `(with "the-author-data" (quote ,t)
+     (document
+       (render-doc-author
+        (document
+          (doc-author-block
+            (doc-author-main ,t)))))))
+
+(tm-define (doc-author-data-bis t)
+  (:secure #t)
+  `(doc-author-note
+     (tuple
+       (doc-author-data-note ,@(tm-children t)))))
