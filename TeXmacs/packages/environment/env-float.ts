@@ -71,14 +71,18 @@
   </active*>
 
   <assign|render-footnote-label|<macro|sym|id|body|<style-with|src-compact|none|<\float|footnote|>
-    <smaller|<with|par-mode|justify|par-left|0cm|par-right|0cm|<style-with|src-compact|none|||<\surround|<locus|<id|<hard-id|<arg|body>>>|<link|hyperlink|<hard-id|<arg|body>>|<url|<merge|#source-|<arg|id>>>>|<arg|sym>><footnote-sep>|<right-flush>>
-      <\tag|<merge|dest-|<arg|id>>>
-        <style-with|src-compact|none|<arg|body>>
-      </tag>
+    <smaller|<with|par-mode|justify|par-left|0cm|par-right|0cm|<style-with|src-compact|none|||<\surround|<locus|<id|<merge|dest-abbr-|<arg|id>>>|<link|footnote-source|<id|<merge|dest-abbr-|<arg|id>>>|<id|<merge|source-|<arg|id>>>>|<arg|sym>><footnote-sep>|<right-flush>>
+      <\with|locus-color|preserve|visited-color|preserve>
+        <\locus|<id|<merge|dest-|<arg|id>>>>
+          <style-with|src-compact|none|<arg|body>>
+        </locus>
+      </with>
     </surround>>>>
   </float>>>>
 
-  <assign|render-footnote-ref|<macro|sym|id|body|<tag|<merge|source-|<arg|id>>|<arg|body>><rsup|<locus|<link|hyperlink|<hard-id|<arg|body>>|<url|<merge|#dest-|<arg|id>>>>|<arg|sym>>>>>
+  <assign|render-footnote-ref|<macro|sym|id|body|<style-with|src-compact|none|<with|locus-color|preserve|visited-color|preserve|<locus|<id|<merge|source-|<arg|id>>>|<arg|body>>><rsup|<locus|<id|<merge|source-abbr-|<arg|id>>>|<link|footnote-text|<id|<merge|source-abbr-|<arg|id>>>|<id|<merge|dest-|<arg|id>>>>|<arg|sym>>>>>>
+
+  \;
 
   <assign|render-footnote*|<macro|sym|nr|body|<style-with|src-compact|none|<\float|footnote|>
     <smaller|<with|par-mode|justify|par-left|0cm|par-right|0cm|<style-with|src-compact|none|<surround|<locus|<id|<hard-id|<arg|body>>>|<link|hyperlink|<id|<hard-id|<arg|body>>>|<url|<merge|#footnr-|<arg|nr>>>>|<arg|sym>><footnote-sep>|<set-binding|<merge|footnote-|<arg|nr>>|<value|the-label>|body><right-flush>|<style-with|src-compact|none|<arg|body>>>>>>
