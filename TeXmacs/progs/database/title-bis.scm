@@ -92,9 +92,9 @@
   `(with "the-author-data" (quote ,t)
      (document
        (render-doc-author
-        (document
-          (doc-author-block
-            (doc-author-main ,t)))))))
+         (document
+           (doc-author-block
+             (doc-author-main ,t)))))))
 
 (tm-define (doc-author-data-bis t)
   (:secure #t)

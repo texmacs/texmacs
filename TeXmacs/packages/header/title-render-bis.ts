@@ -75,7 +75,7 @@
 
   <assign|render-doc-authors|<\macro|body>
     <\render-doc-author>
-      <font-magnify|0.917|<arg|body>>
+      <with|author-by|<macro|body|<arg|body>>|<font-magnify|0.917|<arg|body>>>
     </render-doc-author>
   </macro>>
 
@@ -224,11 +224,9 @@
   <assign|doc-authors-data|<\xmacro|data>
     <\style-with|src-compact|none>
       <\quasi>
-        <\with|author-by|<macro|body|<arg|body>>>
-          <\render-doc-authors>
-            <space|0spc><unquote*|<map|doc-author-data*|<quote-arg|data>>>
-          </render-doc-authors>
-        </with>
+        <\render-doc-authors>
+          <space|0spc><unquote*|<map|doc-author-data*|<quote-arg|data>>>
+        </render-doc-authors>
       </quasi>
     </style-with>
   </xmacro>>
