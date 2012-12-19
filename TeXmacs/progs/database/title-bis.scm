@@ -27,7 +27,7 @@
                ((list-1? authors)
                 (list `(render-doc-author ,@authors)))
                (else
-                (list `(doc-authors-data ,@authors))))
+                (list `(render-doc-authors ,@authors))))
        ,@(select t '(doc-date))
        ,@(select t '(doc-inactive)))))
 

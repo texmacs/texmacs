@@ -213,25 +213,19 @@
     </cell>>>>>>
   </macro>>
 
-  <assign|doc-author-data*|<macro|data|<quasi|<style-with|src-compact|none|<space|1em><authors-data|<unquote|<quote-arg|data>>><space|1em><line-break>>>>>
+  <assign|padded-author|<macro|data|<quasi|<style-with|src-compact|none|<space|1em><authors-data|<unquote|<quote-arg|data>>><space|1em><line-break>>>>>
 
-  <assign|doc-authors-data|<\xmacro|data>
+  <assign|render-doc-authors|<\xmacro|data>
     <\style-with|src-compact|none>
       <\quasi>
-        <\render-doc-authors>
-          <space|0spc><unquote*|<map|doc-author-data*|<quote-arg|data>>>
-        </render-doc-authors>
+        <\render-doc-author>
+          <with|author-by|<macro|body|<arg|body>>|<\font-magnify|0.917>
+            <space|0spc><unquote*|<map|padded-author|<quote-arg|data>>>
+          </font-magnify>>
+        </render-doc-author>
       </quasi>
     </style-with>
   </xmacro>>
-
-  <assign|render-doc-authors|<\macro|body>
-    <\render-doc-author>
-      <with|author-by|<macro|body|<arg|body>>|<font-magnify|0.917|<arg|body>>>
-    </render-doc-author>
-  </macro>>
-
-  \;
 </body>
 
 <\initial>
