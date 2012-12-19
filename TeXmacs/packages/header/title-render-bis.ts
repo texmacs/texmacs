@@ -219,8 +219,6 @@
     </cell>>>>>>
   </macro>>
 
-  <assign|authors-data|<macro|data|<quasi|<with|the-author-data|<quote-arg|data>|<style-with|src-compact|none|<doc-authors-block|<doc-author-main|<unquote|<quote-arg|data>>>>>>>>>
-
   <assign|doc-author-data*|<macro|data|<quasi|<style-with|src-compact|none|<space|1em><authors-data|<unquote|<quote-arg|data>>><space|1em><line-break>>>>>
 
   <assign|doc-authors-data|<\xmacro|data>

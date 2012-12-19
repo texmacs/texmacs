@@ -90,11 +90,15 @@
 (tm-define (author-data t)
   (:secure #t)
   `(with "the-author-data" (quote ,t)
-     (document
-       (render-doc-author
-         (document
-           (doc-author-block
-             (doc-author-main ,t)))))))
+     (render-doc-author
+       (doc-author-block
+         (doc-author-main ,t)))))
+
+(tm-define (authors-data t)
+  (:secure #t)
+  `(with "the-author-data" (quote ,t)
+     (doc-authors-block
+       (doc-author-main ,t))))
 
 (tm-define (doc-author-data-bis t)
   (:secure #t)

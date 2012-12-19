@@ -99,6 +99,8 @@
 
   <assign|author-data|<xmacro|args|<extern|author-data|<quote-arg|args>>>>
 
+  <assign|authors-data|<macro|data|<extern|authors-data|<quote-arg|data>>>>
+
   <assign|doc-author-data-bis|<macro|data|<extern|doc-author-data-bis|<quote-arg|data>>>>
 
   <assign|doc-authors-data-bis|<xmacro|args|<extern|doc-authors-data-bis|<quote-arg|args>>>>
