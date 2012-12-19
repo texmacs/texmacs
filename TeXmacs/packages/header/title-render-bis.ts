@@ -57,7 +57,7 @@
 
   <assign|doc-make-title|<macro|body|<surround||<vspace|2fn>|<doc-title-block|<arg|body>>>>>
 
-  <assign|doc-render-title|<macro|x|<\surround|<vspace*|0.5fn>|<vspace|0.5fn>>
+  <assign|doc-title|<macro|x|<\surround|<vspace*|0.5fn>|<vspace|0.5fn>>
     <doc-title-block|<font-magnify|1.682|<with|math-font-series|bold|font-series|bold|<arg|x>>>>
   </surround>>>
 
@@ -67,9 +67,9 @@
 
   <assign|doc-date|<macro|body|<style-with|src-compact|none|<vspace*|0.5fn><doc-title-block|<with|font-shape|italic|<arg|body>>><vspace|0.5fn>>>>
 
-  <assign|doc-running-title|<macro|body|<if|<unequal|<arg|body>|<uninit>>|<header-title|<arg|body>>>>>
+  <assign|doc-running-title|<macro|body|<header-title|<arg|body>>>>
 
-  <assign|doc-running-author|<macro|body|<if|<unequal|<arg|body>|<uninit>>|<header-author|<arg|body>>>>>
+  <assign|doc-running-author|<macro|body|<header-author|<arg|body>>>>
 
   <\active*>
     <\src-comment>

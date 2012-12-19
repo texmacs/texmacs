@@ -19,7 +19,7 @@
 
 (define (remove-annotations t)
   (if (tm-func? t 'doc-note-ref 3)
-      (remove-annotations (tree-ref t 2))
+      (remove-annotations (tm-ref t 2))
       t))
 
 (define (replace-title-note c syms ids)
@@ -75,16 +75,19 @@
      (tuple
        ,(doc-data-note t))))
 
+(define (title->running-title t)
+  `(doc-running-title ,(remove-annotations (tm-ref t 0))))
+
 (tm-define (doc-data-hidden t)
   `(concat
      ,@(select t '(doc-note-text))
      (doc-authors-data-bis ,@(select t '(doc-author author-data)))
-     (doc-running-title ,@(select t '(doc-title 0)))
-     (doc-running-title ,@(select t '(doc-running-title 0)))
+     ,@(map title->running-title (select t '(doc-title)))
+     ,@(select t '(doc-running-title))
      (doc-running-author
        (comma-separated
          ,@(select t '(doc-author author-data author-name 0))))
-     (doc-running-author ,@(select t '(doc-running-author 0)))))
+     ,@(select t '(doc-running-author))))
 
 (tm-define (doc-data-main t)
   `(document
