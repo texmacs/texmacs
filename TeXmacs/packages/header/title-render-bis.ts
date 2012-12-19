@@ -61,13 +61,17 @@
     <doc-title-block|<font-magnify|1.682|<with|math-font-series|bold|font-series|bold|<arg|x>>>>
   </surround>>>
 
-  <assign|doc-title|<macro|body|<doc-render-title|<style-with|src-compact|none|<arg|body><doc-footnote-ref|<quasi|<doc-data-note|<unquote*|<quote-value|the-doc-data>>>>>>>>>
-
   <assign|doc-subtitle|<macro|x|<\surround|<vspace*|0.25fn>|<vspace|0.5fn>>
     <doc-title-block|<font-magnify|1.297|<with|math-font-series|bold|font-series|bold|<arg|x>>>>
   </surround>>>
 
   <assign|doc-date|<macro|body|<style-with|src-compact|none|<vspace*|0.5fn><doc-title-block|<with|font-shape|italic|<arg|body>>><vspace|0.5fn>>>>
+
+  <\active*>
+    <\src-comment>
+      Miscellaneous document information.
+    </src-comment>
+  </active*>
 
   <assign|doc-running-title|<macro|body|<if|<unequal|<arg|body>|<uninit>>|<header-title|<arg|body>>>>>
 
@@ -101,18 +105,6 @@
         </small>
       </with>
     </padded-normal>
-  </macro>>
-
-  <assign|render-abstract*|<\macro|body|note>
-    <\quasi>
-      <\render-abstract>
-        <surround||<vspace|0.5fn>|<unquote|<quote-arg|body>>>
-
-        <\with|par-par-sep|0.25fn>
-          <unquote*|<arg|note>>
-        </with>
-      </render-abstract>
-    </quasi>
   </macro>>
 
   <assign|doc-keywords|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<keywords-text><localize|:>
@@ -170,8 +162,6 @@
   <assign|author-from-authors|<xmacro|x|<style-with|src-compact|none|<if|<unequal|<get-arity|<quote-arg|x>>|0>|<arg|x|0><map-args|author-from-authors*|concat|x|1>>>>>
 
   <assign|author-render-name|<macro|author|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<name|<arg|author>>>>>>
-
-  <assign|author-name|<macro|author|<author-render-name|<style-with|src-compact|none|<author-by|<arg|author>><style-with|src-compact|none|<doc-footnote-ref|<quasi|<doc-author-data-note|<unquote*|<quote-value|the-author-data>>>>>>>>>>
 
   <assign|author-affiliation|<\macro|address>
     <surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<arg|address>>>

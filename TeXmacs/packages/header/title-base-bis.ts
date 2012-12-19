@@ -87,9 +87,11 @@
 
   <assign|doc-data-bis|<xmacro|args|<extern|doc-data-bis|<quote-arg|args>>>>
 
+  <assign|doc-title|<macro|body|<doc-render-title|<style-with|src-compact|none|<arg|body><doc-footnote-ref|<quasi|<doc-data-note|<unquote*|<quote-value|the-doc-data>>>>>>>>>
+
   <\active*>
     <\src-comment>
-      Documents with one author.
+      Documents authors.
     </src-comment>
   </active*>
 
@@ -105,11 +107,25 @@
 
   <assign|doc-authors-data-bis|<xmacro|args|<extern|doc-authors-data-bis|<quote-arg|args>>>>
 
+  <assign|author-name|<macro|author|<author-render-name|<style-with|src-compact|none|<author-by|<arg|author>><style-with|src-compact|none|<doc-footnote-ref|<quasi|<doc-author-data-note|<unquote*|<quote-value|the-author-data>>>>>>>>>>
+
   <\active*>
     <\src-comment>
       Abstracts.
     </src-comment>
   </active*>
+
+  <assign|render-abstract*|<\macro|body|note>
+    <\quasi>
+      <\render-abstract>
+        <surround||<vspace|0.5fn>|<unquote|<quote-arg|body>>>
+
+        <\with|par-par-sep|0.25fn>
+          <unquote*|<arg|note>>
+        </with>
+      </render-abstract>
+    </quasi>
+  </macro>>
 
   <assign|abstract|<\macro|body>
     <style-with|src-compact|none|<with|abstract-note|<look-up|<quasi|<doc-data-abstract|<unquote*|<quote-value|the-doc-data>>>>|0>|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<equal|<get-arity|<quote-value|abstract-note>>|0>|render-abstract|render-abstract*>>|<arg|body>|<quote-value|abstract-note>>>>>
