@@ -85,10 +85,6 @@
     </src-comment>
   </active*>
 
-  <assign|doc-author-main|<macro|data|<extern|doc-author-main|<quote-arg|data>>>>
-
-  <assign|doc-author-data-note|<xmacro|args|<extern|doc-author-data-note|<quote-arg|args>>>>
-
   <assign|author-data|<xmacro|args|<extern|author-data|<quote-arg|args>>>>
 
   <assign|authors-data|<macro|data|<extern|authors-data|<quote-arg|data>>>>

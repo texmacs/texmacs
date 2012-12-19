@@ -66,7 +66,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (doc-author-data-note t)
-  (:secure #t)
   `(document
      ,@(select t '(author-misc document :%1))))
 
@@ -74,7 +73,7 @@
   (:secure #t)
   `(doc-author-note
      (tuple
-       (doc-author-data-note ,@(tm-children t)))))
+       ,(doc-author-data-note t))))
 
 (tm-define (doc-authors-data-bis t)
   (:secure #t)
@@ -82,7 +81,6 @@
      ,@(map doc-author-data-bis (tm-children t))))
 
 (tm-define (doc-author-main t)
-  (:secure #t)
   `(document
      ,@(select t '(author-name))
      ,@(select t '(author-affiliation))
@@ -93,13 +91,13 @@
   (:secure #t)
   `(with "the-author-data" (quote ,t)
      (doc-author-block
-       (doc-author-main ,t))))
+       ,(doc-author-main t))))
 
 (tm-define (authors-data t)
   (:secure #t)
   `(with "the-author-data" (quote ,t)
      (doc-authors-block
-       (doc-author-main ,t))))
+       ,(doc-author-main t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Abstract data
