@@ -70,20 +70,6 @@
     </src-comment>
   </active*>
 
-  <assign|render-footnote-label|<macro|sym|id|body|<style-with|src-compact|none|<\float|footnote|>
-    <smaller|<with|par-mode|justify|par-left|0cm|par-right|0cm|<style-with|src-compact|none|||<\surround|<locus|<id|<merge|dest-abbr-|<arg|id>>>|<link|footnote-source|<id|<merge|dest-abbr-|<arg|id>>>|<id|<merge|source-|<arg|id>>>>|<arg|sym>><footnote-sep>|<right-flush>>
-      <\with|locus-color|preserve|visited-color|preserve>
-        <\locus|<id|<merge|dest-|<arg|id>>>>
-          <style-with|src-compact|none|<arg|body>>
-        </locus>
-      </with>
-    </surround>>>>
-  </float>>>>
-
-  <assign|render-footnote-ref|<macro|sym|id|body|<style-with|src-compact|none|<with|locus-color|preserve|visited-color|preserve|<locus|<id|<merge|source-|<arg|id>>>|<arg|body>>><rsup|<locus|<id|<merge|source-abbr-|<arg|id>>>|<link|footnote-text|<id|<merge|source-abbr-|<arg|id>>>|<id|<merge|dest-|<arg|id>>>>|<arg|sym>>>>>>
-
-  \;
-
   <assign|render-footnote*|<macro|sym|nr|body|<style-with|src-compact|none|<\float|footnote|>
     <smaller|<with|par-mode|justify|par-left|0cm|par-right|0cm|<style-with|src-compact|none|<surround|<locus|<id|<hard-id|<arg|body>>>|<link|hyperlink|<id|<hard-id|<arg|body>>>|<url|<merge|#footnr-|<arg|nr>>>>|<arg|sym>><footnote-sep>|<set-binding|<merge|footnote-|<arg|nr>>|<value|the-label>|body><right-flush>|<style-with|src-compact|none|<arg|body>>>>>>
   </float>>>>
@@ -92,7 +78,33 @@
 
   <assign|footnote|<macro|body|<style-with|src-compact|none|<next-footnote><render-footnote|<the-footnote>|<arg|body>><space|0spc><label|<merge|footnr-|<the-footnote>>><rsup|<reference|<merge|footnote-|<the-footnote>>>>>>>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Customized notes.
+    </src-comment>
+  </active*>
+
+  <assign|custom-note-text|<\macro|sym|id|body>
+    <\style-with|src-compact|none>
+      <style-with|src-compact|none|||<\surround|<locus|<id|<merge|dest-abbr-|<arg|id>>>|<link|footnote-source|<id|<merge|dest-abbr-|<arg|id>>>|<id|<merge|source-|<arg|id>>>>|<arg|sym>><footnote-sep>|<right-flush>>
+        <\with|locus-color|preserve|visited-color|preserve>
+          <\locus|<id|<merge|dest-|<arg|id>>>>
+            <style-with|src-compact|none|<arg|body>>
+          </locus>
+        </with>
+      </surround>>
+    </style-with>
+  </macro>>
+
+  <assign|custom-footnote-text|<macro|sym|id|body|<style-with|src-compact|none|<\float|footnote|>
+    <smaller|<\with|par-mode|justify|par-left|0cm|par-right|0cm>
+      <\custom-note-text|<arg|sym>|<arg|id>>
+        <arg|body>
+      </custom-note-text>
+    </with>>
+  </float>>>>
+
+  <assign|custom-note-ref|<macro|sym|id|body|<style-with|src-compact|none|<with|locus-color|preserve|visited-color|preserve|<locus|<id|<merge|source-|<arg|id>>>|<arg|body>>><rsup|<locus|<id|<merge|source-abbr-|<arg|id>>>|<link|footnote-text|<id|<merge|source-abbr-|<arg|id>>>|<id|<merge|dest-|<arg|id>>>>|<arg|sym>>>>>>
 </body>
 
 <\initial>
