@@ -40,7 +40,7 @@
      (doc-running-title ,@(select t '(doc-title 0)))
      (doc-running-title ,@(select t '(doc-running-title 0)))
      (doc-running-author
-       (author-from-authors
+       (comma-separated
          ,@(select t '(doc-author author-data author-name 0))))
      (doc-running-author ,@(select t '(doc-running-author 0)))))
 

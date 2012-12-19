@@ -67,79 +67,9 @@
 
   <assign|doc-date|<macro|body|<style-with|src-compact|none|<vspace*|0.5fn><doc-title-block|<with|font-shape|italic|<arg|body>>><vspace|0.5fn>>>>
 
-  <\active*>
-    <\src-comment>
-      Miscellaneous document information.
-    </src-comment>
-  </active*>
-
   <assign|doc-running-title|<macro|body|<if|<unequal|<arg|body>|<uninit>>|<header-title|<arg|body>>>>>
 
   <assign|doc-running-author|<macro|body|<if|<unequal|<arg|body>|<uninit>>|<header-author|<arg|body>>>>>
-
-  <assign|doc-inactive|<\macro|body>
-    <\quasi>
-      <\surround|<vspace*|0.5fn>|>
-        <doc-title-block|<style-with|src-compact|none|<inline-tag|<unquote|<get-label|<quote-arg|body>>>|<unquote*|<quote-arg|body>>>>>
-      </surround>
-    </quasi>
-  </macro>>
-
-  <active*|<src-short-comment|For backward compatability>>
-
-  <assign|address-block|<macro|x|<tformat|<cwith|1|-1|1|1|cell-lsep|1.5fn>|<cwith|1|-1|-1|-1|cell-rsep|1.5fn>|<twith|table-valign|T>|<arg|x>>>>
-
-  <\active*>
-    <\src-comment>
-      Rendering the abstract.
-    </src-comment>
-  </active*>
-
-  <assign|render-abstract|<\macro|body>
-    <\padded-normal|2fn|1fn>
-      <\with|par-left|15mm|par-right|15mm>
-        <\small>
-          <sectional-centered-bold|<abstract-text>><vspace|0.5fn>
-
-          <arg|body>
-        </small>
-      </with>
-    </padded-normal>
-  </macro>>
-
-  <assign|doc-keywords|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<keywords-text><localize|:>
-  ><concat-tuple|<copy|<quote-arg|args>>|, >>>>
-
-  <assign|msc-ref|<macro|msc-id|<style-with|src-compact|none|<hlink|<arg|msc-id>|<style-with|src-compact|none|<merge|http://www.ams.org/mathscinet/search/mscbrowse.html?sk=default&sk=|<arg|msc-id>|&submit=Search>>>>>>
-
-  <assign|doc-msc|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<AMS-class-text><localize|:>
-  ><concat-tuple|<copy|<map|msc-ref|<quote-arg|args>>>|, >>>>
-
-  <\active*>
-    <\src-comment>
-      Rendering footnotes.
-    </src-comment>
-  </active*>
-
-  <new-counter|doc-note>
-
-  <assign|the-doc-note|<macro|<number|<value|doc-note-nr>|fnsymbol>>>
-
-  <assign|doc-author-note-next|<macro|<inc-doc-note><the-doc-note>>>
-
-  \;
-
-  <assign|doc-footnote-ref|<macro|body|<style-with|src-compact|none|<if|<quasi|<unequal|<get-arity|<unquote|<quote-arg|body>>>|0>>|<rsup|<doc-author-note-next>>>>>>
-
-  <assign|doc-footnote-sub|<macro|x|; <arg|x>>>
-
-  <assign|doc-footnote|<macro|body|<style-with|src-compact|none|<if|<unequal|<get-arity|<quote-arg|body>>|0>|<quasi|<style-with|src-compact|none|<render-footnote|<unquote|<doc-author-note-next>>|<arg|body|0><map-args|doc-footnote-sub|concat|body|1>>>>>>>>
-
-  \;
-
-  <assign|doc-title-note|<macro|body|<quasi|<doc-footnote|<unquote|<quote-arg|body>>>>>>
-
-  <assign|doc-author-note|<macro|body|<quasi|<doc-footnote|<unquote|<quote-arg|body>>>>>>
 
   <\active*>
     <\src-comment>
@@ -156,10 +86,6 @@
   </macro>>
 
   <assign|author-by|<macro|body|<by-text> <arg|body>>>
-
-  <assign|author-from-authors*|<macro|x|, <arg|x>>>
-
-  <assign|author-from-authors|<xmacro|x|<style-with|src-compact|none|<if|<unequal|<get-arity|<quote-arg|x>>|0>|<arg|x|0><map-args|author-from-authors*|concat|x|1>>>>>
 
   <assign|author-render-name|<macro|author|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<name|<arg|author>>>>>>
 
@@ -210,6 +136,78 @@
       </quasi>
     </style-with>
   </xmacro>>
+
+  <\active*>
+    <\src-comment>
+      Rendering the abstract.
+    </src-comment>
+  </active*>
+
+  <assign|render-abstract|<\macro|body>
+    <\padded-normal|2fn|1fn>
+      <\with|par-left|15mm|par-right|15mm>
+        <\small>
+          <sectional-centered-bold|<abstract-text>><vspace|0.5fn>
+
+          <arg|body>
+        </small>
+      </with>
+    </padded-normal>
+  </macro>>
+
+  <assign|doc-keywords|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<keywords-text><localize|:>
+  ><concat-tuple|<quote-arg|args>|, >>>>
+
+  <assign|msc-ref|<macro|msc-id|<style-with|src-compact|none|<hlink|<arg|msc-id>|<style-with|src-compact|none|<merge|http://www.ams.org/mathscinet/search/mscbrowse.html?sk=default&sk=|<arg|msc-id>|&submit=Search>>>>>>
+
+  <assign|doc-msc|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<AMS-class-text><localize|:>
+  ><concat-tuple|<map|msc-ref|<quote-arg|args>>|, >>>>
+
+  <\active*>
+    <\src-comment>
+      Rendering footnotes.
+    </src-comment>
+  </active*>
+
+  <new-counter|doc-note>
+
+  <assign|the-doc-note|<macro|<number|<value|doc-note-nr>|fnsymbol>>>
+
+  <assign|doc-author-note-next|<macro|<inc-doc-note><the-doc-note>>>
+
+  \;
+
+  <assign|doc-footnote-ref|<macro|body|<style-with|src-compact|none|<if|<quasi|<unequal|<get-arity|<unquote|<quote-arg|body>>>|0>>|<rsup|<doc-author-note-next>>>>>>
+
+  <assign|doc-footnote-sub|<macro|x|; <arg|x>>>
+
+  <assign|doc-footnote|<macro|body|<style-with|src-compact|none|<if|<unequal|<get-arity|<quote-arg|body>>|0>|<quasi|<style-with|src-compact|none|<render-footnote|<unquote|<doc-author-note-next>>|<arg|body|0><map-args|doc-footnote-sub|concat|body|1>>>>>>>>
+
+  \;
+
+  <assign|doc-title-note|<macro|body|<quasi|<doc-footnote|<unquote|<quote-arg|body>>>>>>
+
+  <assign|doc-author-note|<macro|body|<quasi|<doc-footnote|<unquote|<quote-arg|body>>>>>>
+
+  <\active*>
+    <\src-comment>
+      Miscellaneous.
+    </src-comment>
+  </active*>
+
+  <assign|doc-inactive|<\macro|body>
+    <\quasi>
+      <\surround|<vspace*|0.5fn>|>
+        <doc-title-block|<style-with|src-compact|none|<inline-tag|<unquote|<get-label|<quote-arg|body>>>|<unquote*|<quote-arg|body>>>>>
+      </surround>
+    </quasi>
+  </macro>>
+
+  <active*|<src-short-comment|For backward compatability>>
+
+  <assign|address-block|<macro|x|<tformat|<cwith|1|-1|1|1|cell-lsep|1.5fn>|<cwith|1|-1|-1|-1|cell-rsep|1.5fn>|<twith|table-valign|T>|<arg|x>>>>
+
+  \;
 </body>
 
 <\initial>

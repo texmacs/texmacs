@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.9>
+<TeXmacs|1.0.7.17>
 
 <style|<tuple|source|std>>
 
@@ -155,6 +155,14 @@
 
   <assign|concat-tuple|<macro|args|sep|fin|<extern|ext-concat-tuple|<arg|args>|<arg|sep>|<arg|fin>>>>
 
+  <assign|comma-separated|<xmacro|x|<concat-tuple|<quote-arg|x>|, >>>
+
+  <assign|semicolon-separated|<xmacro|x|<concat-tuple|<quote-arg|x>|; >>>
+
+  <drd-props|comma-separated|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <drd-props|semicolon-separated|arity|<tuple|repeat|1|1>|accessible|all>
+
   <assign|font-magnify|<macro|factor|body|<with|font-size|<times|<value|font-size>|<arg|factor>>|<arg|body>>>>
 
   <assign|hidden-title|<macro|title|>>
@@ -170,5 +178,6 @@
 <\initial>
   <\collection>
     <associate|preamble|true>
+    <associate|zoom-factor|1.35021>
   </collection>
 </initial>
