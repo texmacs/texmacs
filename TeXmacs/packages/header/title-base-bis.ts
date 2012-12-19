@@ -79,6 +79,8 @@
 
   <assign|doc-title|<macro|body|<doc-render-title|<style-with|src-compact|none|<arg|body><doc-footnote-ref|<quasi|<doc-data-note|<unquote*|<quote-value|the-doc-data>>>>>>>>>
 
+  <assign|doc-title|<macro|body|<doc-render-title|<arg|body>>>>
+
   <\active*>
     <\src-comment>
       Documents authors.
