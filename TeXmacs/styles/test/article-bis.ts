@@ -24,7 +24,7 @@
     </src-title>
   </active*>
 
-  <use-package|std|env|title-generic-bis|header-article|section-article>
+  <use-package|std|env|title-base-bis|header-article|section-article>
 
   \;
 </body>
