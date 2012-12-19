@@ -1764,7 +1764,7 @@
 	doc-keywords doc-msc) (,tmtex-default -1))
   ((:or author-name author-affiliation author-misc
 	author-email author-homepage) (,tmtex-default -1))
-  (doc-abstract (,tmtex-abstract-wrapper 1))
+  (abstract (,tmtex-abstract-wrapper 1))
   (appendix (,tmtex-appendix 1))
   ((:or theorem proposition lemma corollary proof axiom definition
 	notation conjecture remark note example exercise problem warning

@@ -32,7 +32,7 @@
 
     <expand|item*|Altri ambienti utili.>Sono disponibili <markup|keywords> e
     <markup|AMS-class> (per la classificazione <abbr|A.M.S.>). Questi
-    ambienti dovrebbero essere inseriti in un <markup|doc-abstract>.
+    ambienti dovrebbero essere inseriti in un <markup|abstract>.
   </description>
 
   <apply|tmdoc-copyright|1998--2003|Joris van der Hoeven|Lucia
@@ -183,7 +183,7 @@
       green>|AMS-class>>|<pageref|idx-27>>
 
       <tuple|<tuple|<with|font family|<quote|tt>|color|<quote|dark
-      green>|doc-abstract>>|<pageref|idx-28>>
+      green>|abstract>>|<pageref|idx-28>>
     </associate>
   </collection>
 </auxiliary>

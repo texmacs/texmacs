@@ -50,7 +50,7 @@
     specifies the physical layout of creation dates.
   </description>
 
-  The <tmdtd|header-title> <abbr|d.t.d.> also defines the <markup|doc-abstract>
+  The <tmdtd|header-title> <abbr|d.t.d.> also defines the <markup|abstract>
   tag for abstracts of documents.
 
   <apply|tmdoc-copyright|1998--2002|Joris van der Hoeven>

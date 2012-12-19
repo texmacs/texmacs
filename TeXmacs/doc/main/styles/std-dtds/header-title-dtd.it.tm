@@ -52,7 +52,7 @@
   </description>
 
   Il <abbr|d.t.d.> <tmdtd|header-title> definisce anche il tag
-  <markup|doc-abstract> per il sommario dei documenti.
+  <markup|abstract> per il sommario dei documenti.
 
   <apply|tmdoc-copyright|1998--2003|Joris van der Hoeven|Lucia
   Gecchelin|Andrea Centomo>
@@ -173,7 +173,7 @@
       magenta>|header-title>>|<pageref|idx-20>>
 
       <tuple|<tuple|<with|font family|<quote|tt>|color|<quote|dark
-      green>|doc-abstract>>|<pageref|idx-21>>
+      green>|abstract>>|<pageref|idx-21>>
     </associate>
   </collection>
 </auxiliary>

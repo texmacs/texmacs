@@ -3523,7 +3523,7 @@ upgrade_metadatas (tree t) {
   if (is_atomic (t)) return t;
   tree r;
   string l;
-  if (is_compound (t, "abstract"))       l= "doc-abstract";
+  // if (is_compound (t, "abstract"))       l= "doc-abstract";
   if (is_compound (t, "author-address")) l= "author-affiliation";
   if (is_compound (t, "author-note"))    l= "author-misc";
   if (is_compound (t, "doc-AMS-class"))  l= "doc-msc";

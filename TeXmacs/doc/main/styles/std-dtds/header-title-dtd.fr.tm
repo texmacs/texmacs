@@ -48,7 +48,7 @@
     mise en page physique des dates de création.
   </description>
 
-  Le d.t.d. <tmdtd|header-title> définit aussi la balise <markup|doc-abstract>
+  Le d.t.d. <tmdtd|header-title> définit aussi la balise <markup|abstract>
   pour les résumés de documents.
 
   <apply|tmdoc-copyright|1998--2003|Joris van der Hoeven|Michèle Garoche>
@@ -169,7 +169,7 @@
       magenta>|header-title>>|<pageref|idx-20>>
 
       <tuple|<tuple|<with|font family|<quote|tt>|color|<quote|dark
-      green>|doc-abstract>>|<pageref|idx-21>>
+      green>|abstract>>|<pageref|idx-21>>
     </associate>
   </collection>
 </auxiliary>

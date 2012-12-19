@@ -52,7 +52,7 @@
   </description>
 
   El d.t.d. <tmdtd|header-title> también<abbr|> defines la etiqueta
-  <markup|doc-abstract> para resúmenes de documentos.
+  <markup|abstract> para resúmenes de documentos.
 
   <apply|tmdoc-copyright|1998--2002|Joris van der Hoeven|Offray Vladimir Luna
   Cárdenas>
@@ -186,7 +186,7 @@
       magenta>|header-title>>|<pageref|idx-20>>
 
       <tuple|<tuple|<with|font family|<quote|tt>|color|<quote|dark
-      green>|doc-abstract>>|<pageref|idx-21>>
+      green>|abstract>>|<pageref|idx-21>>
     </associate>
   </collection>
 </auxiliary>

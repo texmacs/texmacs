@@ -31,7 +31,7 @@
 
     <expand|item*|Autres environnements.><markup|keywords> et
     <markup|AMS-class> (pour les classifications A.M.S). Ces environnements
-    doivent être saisis dans un <markup|doc-abstract>.
+    doivent être saisis dans un <markup|abstract>.
   </description>
 
   <apply|tmdoc-copyright|1998--2003|Joris van der Hoeven|Michèle Garoche>
@@ -180,7 +180,7 @@
       green>|AMS-class>>|<pageref|idx-27>>
 
       <tuple|<tuple|<with|font family|<quote|tt>|color|<quote|dark
-      green>|doc-abstract>>|<pageref|idx-28>>
+      green>|abstract>>|<pageref|idx-28>>
     </associate>
   </collection>
 </auxiliary>

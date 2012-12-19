@@ -24,8 +24,8 @@
 (menu-bind title-menu
   (when (not (inside? 'doc-data))
 	("Insert title" (make-doc-data)))
-  (when (and (not (inside? 'doc-data)) (not (inside? 'doc-abstract)))
-	("Abstract" (make 'doc-abstract))))
+  (when (and (not (inside? 'doc-data)) (not (inside? 'abstract)))
+	("Abstract" (make 'abstract))))
 
 (menu-bind letter-header-menu
   (when (not (inside? 'letter-header))
@@ -370,12 +370,12 @@
 
 (tm-menu (focus-document-extra-menu t)
   (:require (document-propose-abstract?))
-  ("Abstract" (make 'doc-abstract)))
+  ("Abstract" (make 'abstract)))
 
 (tm-menu (focus-document-extra-icons t)
   (:require (document-propose-abstract?))
   (minibar
-    ((balloon "Abstract" "Insert abstract") (make 'doc-abstract))))
+    ((balloon "Abstract" "Insert abstract") (make 'abstract))))
 
 (tm-define (focus-can-move? t)
   (:require (doc-title-context? t))

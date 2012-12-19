@@ -26,7 +26,7 @@
   (:synopsis "Initialize Elsevier style")
   (set! elsevier-counter 0)
   (set! elsevier-thanks '())
-  (with l (select body '(:* doc-abstract))
+  (with l (select body '(:* abstract))
     (set! elsevier-abstract (and (nnull? l) (list-2? (car l)) (cadar l)))))
 
 (tm-define (tmtex-style-init body)

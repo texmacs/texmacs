@@ -34,7 +34,7 @@
     <expand|item*|Outros ambientes úteis.>Fornecemos também <markup|keywords>
     e <markup|AMS-class> (para a classificação por assuntos da
     <abbr|A.M.S.>). Estes ambientes devem ser usados apenas dentro de um
-    <markup|doc-abstract>.
+    <markup|abstract>.
   </description>
 
   <apply|tmdoc-copyright|1998--2003|Joris van der Hoeven|Ramiro Brito
@@ -184,7 +184,7 @@
       green>|AMS-class>>|<pageref|idx-27>>
 
       <tuple|<tuple|<with|font family|<quote|tt>|color|<quote|dark
-      green>|doc-abstract>>|<pageref|idx-28>>
+      green>|abstract>>|<pageref|idx-28>>
     </associate>
   </collection>
 </auxiliary>
