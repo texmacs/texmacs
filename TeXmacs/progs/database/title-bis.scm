@@ -16,6 +16,31 @@
 ;; Main document data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (doc-data-note t)
+  (:secure #t)
+  `(document
+     ,@(select t '(doc-note document :%1))))
+
+(tm-define (doc-data-bis t)
+  (:secure #t)
+  `(doc-title-note
+     (tuple
+       (doc-data-note
+         ,@(tm-children t)))))
+
+(tm-define (doc-data-hidden t)
+  (:secure #t)
+  `(concat
+     (doc-note ,@(select t '(doc-note)))
+     (doc-data-bis ,@(tm-children t))
+     (doc-authors-data-bis ,@(select t '(doc-author author-data)))
+     (doc-running-title ,@(select t '(doc-title 0)))
+     (doc-running-title ,@(select t '(doc-running-title 0)))
+     (doc-running-author
+       (comma-separated
+         ,@(select t '(doc-author author-data author-name 0))))
+     (doc-running-author ,@(select t '(doc-running-author 0)))))
+
 (tm-define (doc-data-main t)
   (:secure #t)
   (with authors (select t '(doc-author author-data))
@@ -31,31 +56,6 @@
        ,@(select t '(doc-date))
        ,@(select t '(doc-inactive)))))
 
-(tm-define (doc-data-hidden t)
-  (:secure #t)
-  `(concat
-     (doc-note ,@(select t '(doc-note)))
-     (doc-data-bis ,@(tm-children t))
-     (doc-authors-data-bis ,@(select t '(doc-author author-data)))
-     (doc-running-title ,@(select t '(doc-title 0)))
-     (doc-running-title ,@(select t '(doc-running-title 0)))
-     (doc-running-author
-       (comma-separated
-         ,@(select t '(doc-author author-data author-name 0))))
-     (doc-running-author ,@(select t '(doc-running-author 0)))))
-
-(tm-define (doc-data-abstract t)
-  (:secure #t)
-  `(tuple
-     (document
-       ,@(select t '(doc-keywords))
-       ,@(select t '(doc-msc)))))
-
-(tm-define (doc-data-note t)
-  (:secure #t)
-  `(document
-     ,@(select t '(doc-note document :%1))))
-
 (tm-define (doc-data t)
   (:secure #t)
   `(surround
@@ -66,16 +66,25 @@
          (with "doc-note-nr" "0"
            (doc-data-main ,@(tm-children t)))))))
 
-(tm-define (doc-data-bis t)
-  (:secure #t)
-  `(doc-title-note
-     (tuple
-       (doc-data-note
-         ,@(tm-children t)))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Author data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (doc-author-data-note t)
+  (:secure #t)
+  `(document
+     ,@(select t '(author-misc document :%1))))
+
+(tm-define (doc-author-data-bis t)
+  (:secure #t)
+  `(doc-author-note
+     (tuple
+       (doc-author-data-note ,@(tm-children t)))))
+
+(tm-define (doc-authors-data-bis t)
+  (:secure #t)
+  `(concat
+     ,@(map doc-author-data-bis (tm-children t))))
 
 (tm-define (doc-author-main t)
   (:secure #t)
@@ -84,11 +93,6 @@
      ,@(select t '(author-affiliation))
      ,@(select t '(author-email))
      ,@(select t '(author-homepage))))
-
-(tm-define (doc-author-data-note t)
-  (:secure #t)
-  `(document
-     ,@(select t '(author-misc document :%1))))
 
 (tm-define (author-data t)
   (:secure #t)
@@ -102,13 +106,13 @@
      (doc-authors-block
        (doc-author-main ,t))))
 
-(tm-define (doc-author-data-bis t)
-  (:secure #t)
-  `(doc-author-note
-     (tuple
-       (doc-author-data-note ,@(tm-children t)))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Abstract data
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (doc-authors-data-bis t)
+(tm-define (doc-data-abstract t)
   (:secure #t)
-  `(concat
-     ,@(map doc-author-data-bis (tm-children t))))
+  `(tuple
+     (document
+       ,@(select t '(doc-keywords))
+       ,@(select t '(doc-msc)))))
