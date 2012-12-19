@@ -189,6 +189,12 @@
 
   <assign|doc-author-note|<macro|body|<quasi|<doc-footnote|<unquote|<quote-arg|body>>>>>>
 
+  \;
+
+  <assign|doc-footnote-label|<macro|sym|id|body|<render-footnote-label|<arg|sym>|<arg|id>|<arg|body>>>>
+
+  <assign|doc-footnote-ref|<macro|sym|id|body|<render-footnote-ref|<arg|sym>|<arg|id>|<arg|body>>>>
+
   <\active*>
     <\src-comment>
       Miscellaneous.

@@ -70,6 +70,16 @@
     </src-comment>
   </active*>
 
+  <assign|render-footnote-label|<macro|sym|id|body|<style-with|src-compact|none|<\float|footnote|>
+    <smaller|<with|par-mode|justify|par-left|0cm|par-right|0cm|<style-with|src-compact|none|||<\surround|<locus|<id|<hard-id|<arg|body>>>|<link|hyperlink|<hard-id|<arg|body>>|<url|<merge|#source-|<arg|id>>>>|<arg|sym>><footnote-sep>|<right-flush>>
+      <\tag|<merge|dest-|<arg|id>>>
+        <style-with|src-compact|none|<arg|body>>
+      </tag>
+    </surround>>>>
+  </float>>>>
+
+  <assign|render-footnote-ref|<macro|sym|id|body|<tag|<merge|source-|<arg|id>>|<arg|body>><rsup|<locus|<link|hyperlink|<hard-id|<arg|body>>|<url|<merge|#dest-|<arg|id>>>>|<arg|sym>>>>>
+
   <assign|render-footnote*|<macro|sym|nr|body|<style-with|src-compact|none|<\float|footnote|>
     <smaller|<with|par-mode|justify|par-left|0cm|par-right|0cm|<style-with|src-compact|none|<surround|<locus|<id|<hard-id|<arg|body>>>|<link|hyperlink|<id|<hard-id|<arg|body>>>|<url|<merge|#footnr-|<arg|nr>>>>|<arg|sym>><footnote-sep>|<set-binding|<merge|footnote-|<arg|nr>>|<value|the-label>|body><right-flush>|<style-with|src-compact|none|<arg|body>>>>>>
   </float>>>>
@@ -84,5 +94,6 @@
 <\initial>
   <\collection>
     <associate|preamble|true>
+    <associate|zoom-factor|1.35021>
   </collection>
 </initial>
