@@ -72,20 +72,10 @@
     </src-comment>
   </active*>
 
-  <assign|doc-data-main|<xmacro|args|<extern|doc-data-main|<quote-arg|args>>>>
-
   <assign|doc-note|<macro|body|>><active*|<src-short-comment|Added as a
   temporary fix for problem with doc-note>>
 
-  <assign|doc-data-hidden|<xmacro|args|<extern|doc-data-hidden|<quote-arg|args>>>>
-
-  <assign|doc-data-abstract|<xmacro|args|<extern|doc-data-abstract|<quote-arg|args>>>>
-
-  <assign|doc-data-note|<xmacro|args|<extern|doc-data-note|<quote-arg|args>>>>
-
   <assign|doc-data|<xmacro|args|<extern|doc-data|<quote-arg|args>>>>
-
-  <assign|doc-data-bis|<xmacro|args|<extern|doc-data-bis|<quote-arg|args>>>>
 
   <assign|doc-title|<macro|body|<doc-render-title|<style-with|src-compact|none|<arg|body><doc-footnote-ref|<quasi|<doc-data-note|<unquote*|<quote-value|the-doc-data>>>>>>>>>
 
@@ -114,6 +104,8 @@
       Abstracts.
     </src-comment>
   </active*>
+
+  <assign|doc-data-abstract|<xmacro|args|<extern|doc-data-abstract|<quote-arg|args>>>>
 
   <assign|render-abstract*|<\macro|body|note>
     <\quasi>

@@ -17,22 +17,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (doc-data-note t)
-  (:secure #t)
   `(document
      ,@(select t '(doc-note document :%1))))
 
 (tm-define (doc-data-bis t)
-  (:secure #t)
   `(doc-title-note
      (tuple
-       (doc-data-note
-         ,@(tm-children t)))))
+       ,(doc-data-note t))))
 
 (tm-define (doc-data-hidden t)
-  (:secure #t)
   `(concat
      (doc-note ,@(select t '(doc-note)))
-     (doc-data-bis ,@(tm-children t))
+     ,(doc-data-bis t)
      (doc-authors-data-bis ,@(select t '(doc-author author-data)))
      (doc-running-title ,@(select t '(doc-title 0)))
      (doc-running-title ,@(select t '(doc-running-title 0)))
@@ -42,7 +38,6 @@
      (doc-running-author ,@(select t '(doc-running-author 0)))))
 
 (tm-define (doc-data-main t)
-  (:secure #t)
   (with authors (select t '(doc-author author-data))
     `(document
        ,@(select t '(doc-title))
@@ -60,11 +55,11 @@
   (:secure #t)
   `(surround
      (assign "the-doc-data" (quote ,t))
-     (with "doc-note-nr" "0" (doc-data-hidden ,@(tm-children t)))
+     (with "doc-note-nr" "0" ,(doc-data-hidden t))
      (document
        (doc-make-title
          (with "doc-note-nr" "0"
-           (doc-data-main ,@(tm-children t)))))))
+           ,(doc-data-main t))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Author data
