@@ -67,18 +67,6 @@
     <doc-title-block|<font-magnify|1.297|<with|math-font-series|bold|font-series|bold|<arg|x>>>>
   </surround>>>
 
-  <assign|render-doc-author|<macro|body|<\surround|<vspace*|1fn>|<vspace|1fn>>
-    <\with|par-par-sep|0fn>
-      <doc-title-block|<arg|body>>
-    </with>
-  </surround>>>
-
-  <assign|render-doc-authors|<\macro|body>
-    <\render-doc-author>
-      <with|author-by|<macro|body|<arg|body>>|<font-magnify|0.917|<arg|body>>>
-    </render-doc-author>
-  </macro>>
-
   <assign|doc-date|<macro|body|<style-with|src-compact|none|<vspace*|0.5fn><doc-title-block|<with|font-shape|italic|<arg|body>>><vspace|0.5fn>>>>
 
   <assign|doc-running-title|<macro|body|<if|<unequal|<arg|body>|<uninit>>|<header-title|<arg|body>>>>>
@@ -205,6 +193,12 @@
     <arg|note>
   </macro>>
 
+  <assign|render-doc-author|<macro|body|<\surround|<vspace*|1fn>|<vspace|1fn>>
+    <\with|par-par-sep|0fn>
+      <doc-title-block|<arg|body>>
+    </with>
+  </surround>>>
+
   <\active*>
     <\src-comment>
       Documents with several authors.
@@ -230,6 +224,12 @@
       </quasi>
     </style-with>
   </xmacro>>
+
+  <assign|render-doc-authors|<\macro|body>
+    <\render-doc-author>
+      <with|author-by|<macro|body|<arg|body>>|<font-magnify|0.917|<arg|body>>>
+    </render-doc-author>
+  </macro>>
 
   \;
 </body>

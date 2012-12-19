@@ -22,9 +22,12 @@
     `(document
        ,@(select t '(doc-title))
        ,@(select t '(doc-subtitle))
-       ,@(if (<= (length authors) 1)
-             authors
-             (list `(doc-authors-data ,@authors)))
+       ,@(cond ((null? authors)
+                (list))
+               ((list-1? authors)
+                (list `(render-doc-author ,@authors)))
+               (else
+                (list `(doc-authors-data ,@authors))))
        ,@(select t '(doc-date))
        ,@(select t '(doc-inactive)))))
 
@@ -90,9 +93,8 @@
 (tm-define (author-data t)
   (:secure #t)
   `(with "the-author-data" (quote ,t)
-     (render-doc-author
-       (doc-author-block
-         (doc-author-main ,t)))))
+     (doc-author-block
+       (doc-author-main ,t))))
 
 (tm-define (authors-data t)
   (:secure #t)
