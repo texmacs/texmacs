@@ -66,15 +66,6 @@
 ;; Main document data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (doc-data-note t)
-  `(document
-     ,@(select t '(doc-note document :%1))))
-
-(tm-define (doc-data-bis t)
-  `(doc-title-note
-     (tuple
-       ,(doc-data-note t))))
-
 (define (title->running-title t)
   `(doc-running-title ,(remove-annotations (tm-ref t 0))))
 
