@@ -133,12 +133,6 @@
   <assign|doc-msc|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<AMS-class-text><localize|:>
   ><concat-tuple|<copy|<map|msc-ref|<quote-arg|args>>>|, >>>>
 
-  \;
-
-  <assign|abstract|<\macro|body>
-    <style-with|src-compact|none|<with|abstract-note|<look-up|<quasi|<doc-data-abstract|<unquote*|<quote-value|the-doc-data>>>>|0>|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<equal|<get-arity|<quote-value|abstract-note>>|0>|render-abstract|render-abstract*>>|<arg|body>|<quote-value|abstract-note>>>>>
-  </macro>>
-
   <\active*>
     <\src-comment>
       Rendering footnotes.

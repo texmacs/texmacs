@@ -162,6 +162,18 @@
   </xmacro>>
 
   <assign|doc-author-data-bis|<macro|body|<quasi|<style-with|src-compact|none|<doc-author-note|<unquote|<quasi|<doc-author-data-note|<unquote*|<quote-arg|body>>>>>>>>>>
+
+  <\active*>
+    <\src-comment>
+      Abstracts.
+    </src-comment>
+  </active*>
+
+  <assign|abstract|<\macro|body>
+    <style-with|src-compact|none|<with|abstract-note|<look-up|<quasi|<doc-data-abstract|<unquote*|<quote-value|the-doc-data>>>>|0>|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<equal|<get-arity|<quote-value|abstract-note>>|0>|render-abstract|render-abstract*>>|<arg|body>|<quote-value|abstract-note>>>>>
+  </macro>>
+
+  \;
 </body>
 
 <\initial>
