@@ -219,7 +219,9 @@
     </cell>>>>>>
   </macro>>
 
-  <assign|doc-author-data*|<macro|data|<quasi|<style-with|src-compact|none|<space|1em><with|the-author-data|<quote-arg|data>|<style-with|src-compact|none|<doc-authors-block|<doc-author-main|<unquote|<quote-arg|data>>>>>><space|1em><line-break>>>>>
+  <assign|authors-data|<macro|data|<quasi|<with|the-author-data|<quote-arg|data>|<style-with|src-compact|none|<doc-authors-block|<doc-author-main|<unquote|<quote-arg|data>>>>>>>>>
+
+  <assign|doc-author-data*|<macro|data|<quasi|<style-with|src-compact|none|<space|1em><authors-data|<unquote|<quote-arg|data>>><space|1em><line-break>>>>>
 
   <assign|doc-authors-data|<\xmacro|data>
     <\style-with|src-compact|none>
@@ -230,8 +232,6 @@
       </quasi>
     </style-with>
   </xmacro>>
-
-  <assign|doc-authors-data-bis|<xmacro|x|<style-with|src-compact|none|<quasi|<space|0spc><unquote*|<map|doc-author-data-bis|<quote-arg|x>>>>>>>
 
   \;
 </body>

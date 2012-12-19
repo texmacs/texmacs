@@ -101,3 +101,8 @@
   `(doc-author-note
      (tuple
        (doc-author-data-note ,@(tm-children t)))))
+
+(tm-define (doc-authors-data-bis t)
+  (:secure #t)
+  `(concat
+     ,@(map doc-author-data-bis (tm-children t))))

@@ -101,6 +101,8 @@
 
   <assign|doc-author-data-bis|<macro|data|<extern|doc-author-data-bis|<quote-arg|data>>>>
 
+  <assign|doc-authors-data-bis|<xmacro|args|<extern|doc-authors-data-bis|<quote-arg|args>>>>
+
   \;
 </body>
 
