@@ -132,19 +132,17 @@
      ,@(select t '(doc-subtitle))
      ,@(with authors (select t '(doc-author))
          (if (<= (length authors) 1) authors
-             (with f (lambda (a) a) ;;(lambda (a) (tm-ref a 0))
-               (list `(doc-authors ,@(map f authors))))))
+             (list `(doc-authors ,@authors))))
      ,@(select t '(doc-date))
      ,@(select t '(doc-inactive))))
 
 (tm-define (doc-data-sub t)
   `(surround
      (assign "the-doc-data" (quote ,t))
-     (with "doc-note-nr" "0" ,(doc-data-hidden t))
+     ,(doc-data-hidden t)
      (document
        (doc-make-title
-         (with "doc-note-nr" "0"
-           ,(doc-data-main t))))))
+         ,(doc-data-main t)))))
 
 (tm-define (doc-data t)
   (:secure #t)
