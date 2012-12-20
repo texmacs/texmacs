@@ -168,15 +168,13 @@
 
 (tm-define (author-data t)
   (:secure #t)
-  `(with "the-author-data" (quote ,t)
-     (doc-author-block
-       ,(doc-author-main t))))
+  `(doc-author-block
+     ,(doc-author-main t)))
 
 (tm-define (authors-data t)
   (:secure #t)
-  `(with "the-author-data" (quote ,t)
-     (doc-authors-block
-       ,(doc-author-main t))))
+  `(doc-authors-block
+    ,(doc-author-main t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Abstract data
