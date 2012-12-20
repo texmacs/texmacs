@@ -13,6 +13,7 @@
 #include "new_data.hpp"
 #include "convert.hpp"
 #include "merge_sort.hpp"
+#include "vars.hpp"
 
 tree
 attach_data (tree body, new_data data, bool no_aux) {
@@ -24,8 +25,13 @@ attach_data (tree body, new_data data, bool no_aux) {
     doc << compound ("style", copy (data->style));
   if (body != tree (DOCUMENT, ""))
     doc << compound ("body", body);
-  if (N (data->init) != 0)
-    doc << compound ("initial", make_collection (data->init));
+  if (N (data->init) != 0) {
+    hashmap<string,tree> init= copy (data->init);
+    init->reset (PAGE_SCREEN_WIDTH);
+    init->reset (PAGE_SCREEN_HEIGHT);
+    init->reset (ZOOM_FACTOR);
+    doc << compound ("initial", make_collection (init));
+  }
   if (N (data->fin) != 0)
     doc << compound ("final", make_collection (data->fin));
   if (!no_aux) {
