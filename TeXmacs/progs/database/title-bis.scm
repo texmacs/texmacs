@@ -42,7 +42,7 @@
     (append-map (cut retrieve-note <> h) l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Collect notes
+;; Modifying notes into footnotes and references
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (remove-notes c)
@@ -106,6 +106,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main document data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (remove-annotations t)
+  (if (tm-func? t 'doc-note-ref 3)
+      (remove-annotations (tm-ref t 2))
+      t))
 
 (define (title->running-title t)
   `(doc-running-title ,(remove-annotations (tm-ref t 0))))
