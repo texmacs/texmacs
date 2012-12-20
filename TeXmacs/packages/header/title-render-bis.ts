@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-module|(database title-bis)>
+  <use-module|(database title-markup)>
 
   <\active*>
     <\src-comment>
@@ -219,6 +219,5 @@
 <\initial>
   <\collection>
     <associate|preamble|true>
-    <associate|zoom-factor|1.35021>
   </collection>
 </initial>
