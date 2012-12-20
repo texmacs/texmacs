@@ -72,7 +72,9 @@
 (tm-define (doc-data-hidden t)
   `(concat
      ,@(select t '(doc-note-text))
-     (doc-authors-data-bis ,@(select t '(doc-author author-data)))
+     ,@(let* ((h (map author-data-hidden (select t '(doc-author author-data))))
+              (c (map tm-children h)))
+         (apply append c))
      ,@(map title->running-title (select t '(doc-title)))
      ,@(select t '(doc-running-title))
      (doc-running-author
@@ -113,20 +115,13 @@
 ;; Author data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (doc-author-data-note t)
-  `(document
-     ,@(select t '(author-misc document :%1))))
-
-(tm-define (doc-author-data-bis t)
-  (:secure #t)
+(define (author-misc->note t)
   `(doc-author-note
-     (tuple
-       ,(doc-author-data-note t))))
+     (tuple ,(tm-ref t 0))))
 
-(tm-define (doc-authors-data-bis t)
-  (:secure #t)
+(tm-define (author-data-hidden t)
   `(concat
-     ,@(map doc-author-data-bis (tm-children t))))
+     ,@(map author-misc->note (select t '(author-misc)))))
 
 (tm-define (doc-author-main t)
   `(document

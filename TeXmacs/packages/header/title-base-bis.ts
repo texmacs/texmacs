@@ -87,10 +87,6 @@
 
   <assign|authors-data|<macro|data|<extern|authors-data|<quote-arg|data>>>>
 
-  <assign|doc-author-data-bis|<macro|data|<extern|doc-author-data-bis|<quote-arg|data>>>>
-
-  <assign|doc-authors-data-bis|<xmacro|args|<extern|doc-authors-data-bis|<quote-arg|args>>>>
-
   <assign|author-name|<macro|author|<author-render-name|<style-with|src-compact|none|<author-by|<arg|author>><style-with|src-compact|none|<doc-footnote-ref|<quasi|<doc-author-data-note|<unquote*|<quote-value|the-author-data>>>>>>>>>>
 
   <\active*>
