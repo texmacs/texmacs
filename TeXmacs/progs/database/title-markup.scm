@@ -130,13 +130,10 @@
   `(document
      ,@(select t '(doc-title))
      ,@(select t '(doc-subtitle))
-     ,@(with authors (select t '(doc-author author-data))
-         (cond ((null? authors)
-                (list))
-               ((list-1? authors)
-                (list `(doc-author ,@authors)))
-               (else
-                (list `(doc-authors ,@authors)))))
+     ,@(with authors (select t '(doc-author))
+         (if (<= (length authors) 1) authors
+             (with f (lambda (a) (tm-ref a 0))
+               (list `(doc-authors ,@(map f authors))))))
      ,@(select t '(doc-date))
      ,@(select t '(doc-inactive))))
 
