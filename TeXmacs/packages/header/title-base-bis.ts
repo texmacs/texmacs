@@ -111,12 +111,17 @@
 
   <assign|doc-date|<macro|body|<style-with|src-compact|none|<vspace*|0.5fn><doc-title-block|<with|font-shape|italic|<arg|body>>><vspace|0.5fn>>>>
 
+  <assign|doc-note|<\macro|note>
+    <arg|note>
+  </macro>>
+
   <assign|doc-running-title|<macro|body|<header-title|<arg|body>>>>
 
   <assign|doc-running-author|<macro|body|<header-author|<arg|body>>>>
 
-  <assign|doc-note|<macro|body|>><active*|<src-short-comment|Added as a
-  temporary fix for problem with doc-note>>
+  <assign|doc-note-text|<macro|sym|id|body|<custom-footnote-text|<arg|sym>|<arg|id>|<arg|body>>>>
+
+  <assign|doc-note-ref|<macro|sym|id|body|<custom-note-ref|<arg|sym>|<arg|id>|<arg|body>>>>
 
   <assign|doc-data|<xmacro|args|<extern|doc-data|<quote-arg|args>>>>
 
@@ -233,38 +238,6 @@
   <assign|abstract|<\macro|body>
     <style-with|src-compact|none|<with|abstract-note|<look-up|<quasi|<doc-data-abstract|<unquote*|<quote-value|the-doc-data>>>>|0>|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<equal|<get-arity|<quote-value|abstract-note>>|0>|render-abstract|render-abstract*>>|<arg|body>|<quote-value|abstract-note>>>>>
   </macro>>
-
-  <\active*>
-    <\src-comment>
-      Rendering footnotes.
-    </src-comment>
-  </active*>
-
-  <new-counter|doc-note>
-
-  <assign|the-doc-note|<macro|<number|<value|doc-note-nr>|fnsymbol>>>
-
-  <assign|doc-author-note-next|<macro|<inc-doc-note><the-doc-note>>>
-
-  \;
-
-  <assign|doc-footnote-ref|<macro|body|<style-with|src-compact|none|<if|<quasi|<unequal|<get-arity|<unquote|<quote-arg|body>>>|0>>|<rsup|<doc-author-note-next>>>>>>
-
-  <assign|doc-footnote-sub|<macro|x|; <arg|x>>>
-
-  <assign|doc-footnote|<macro|body|<style-with|src-compact|none|<if|<unequal|<get-arity|<quote-arg|body>>|0>|<quasi|<style-with|src-compact|none|<render-footnote|<unquote|<doc-author-note-next>>|<arg|body|0><map-args|doc-footnote-sub|concat|body|1>>>>>>>>
-
-  \;
-
-  <assign|doc-title-note|<macro|body|<quasi|<doc-footnote|<unquote|<quote-arg|body>>>>>>
-
-  <assign|doc-author-note|<macro|body|<quasi|<doc-footnote|<unquote|<quote-arg|body>>>>>>
-
-  \;
-
-  <assign|doc-note-text|<macro|sym|id|body|<custom-footnote-text|<arg|sym>|<arg|id>|<arg|body>>>>
-
-  <assign|doc-note-ref|<macro|sym|id|body|<custom-note-ref|<arg|sym>|<arg|id>|<arg|body>>>>
 
   <\active*>
     <\src-comment>
