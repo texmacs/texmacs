@@ -179,21 +179,25 @@
     </cell>>>>>>
   </macro>>
 
-  <assign|padded-author|<macro|data|<quasi|<style-with|src-compact|none|<space|1em><authors-data|<unquote|<quote-arg|data>>><space|1em><line-break>>>>>
+  <assign|padded-author|<macro|data|<quasi|<style-with|src-compact|none|<space|1em><unquote|<quote-arg|data>><space|1em><line-break>>>>>
+
+  <assign|doc-author*|<\macro|body>
+    <\with|author-by|<macro|x|<arg|x>>>
+      <doc-authors-block|<arg|body>>
+    </with>
+  </macro>>
 
   <assign|doc-authors|<\xmacro|data>
     <\style-with|src-compact|none>
       <\quasi>
         <\doc-author>
-          <with|author-by|<macro|body|<arg|body>>|<\font-magnify|0.917>
+          <with|doc-author|<value|doc-author*>|<\font-magnify|0.917>
             <space|0spc><unquote*|<map|padded-author|<quote-arg|data>>>
           </font-magnify>>
         </doc-author>
       </quasi>
     </style-with>
   </xmacro>>
-
-  <assign|authors-data|<macro|data|<extern|authors-data|<quote-arg|data>>>>
 
   <\active*>
     <\src-comment>

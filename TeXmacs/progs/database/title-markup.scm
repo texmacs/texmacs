@@ -132,7 +132,7 @@
      ,@(select t '(doc-subtitle))
      ,@(with authors (select t '(doc-author))
          (if (<= (length authors) 1) authors
-             (with f (lambda (a) (tm-ref a 0))
+             (with f (lambda (a) a) ;;(lambda (a) (tm-ref a 0))
                (list `(doc-authors ,@(map f authors))))))
      ,@(select t '(doc-date))
      ,@(select t '(doc-inactive))))
@@ -156,22 +156,13 @@
 ;; Author data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (doc-author-main t)
+(tm-define (author-data t)
+  (:secure #t)
   `(document
      ,@(select t '(author-name))
      ,@(select t '(author-affiliation))
      ,@(select t '(author-email))
      ,@(select t '(author-homepage))))
-
-(tm-define (author-data t)
-  (:secure #t)
-  `(doc-author-block
-     ,(doc-author-main t)))
-
-(tm-define (authors-data t)
-  (:secure #t)
-  `(doc-authors-block
-    ,(doc-author-main t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Abstract data
