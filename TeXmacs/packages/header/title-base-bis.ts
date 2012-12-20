@@ -157,7 +157,7 @@
     <arg|note>
   </macro>>
 
-  <assign|render-doc-author|<macro|body|<\surround|<vspace*|1fn>|<vspace|1fn>>
+  <assign|doc-author|<macro|body|<\surround|<vspace*|1fn>|<vspace|1fn>>
     <\with|par-par-sep|0fn>
       <doc-title-block|<arg|body>>
     </with>
@@ -181,14 +181,14 @@
 
   <assign|padded-author|<macro|data|<quasi|<style-with|src-compact|none|<space|1em><authors-data|<unquote|<quote-arg|data>>><space|1em><line-break>>>>>
 
-  <assign|render-doc-authors|<\xmacro|data>
+  <assign|doc-authors|<\xmacro|data>
     <\style-with|src-compact|none>
       <\quasi>
-        <\render-doc-author>
+        <\doc-author>
           <with|author-by|<macro|body|<arg|body>>|<\font-magnify|0.917>
             <space|0spc><unquote*|<map|padded-author|<quote-arg|data>>>
           </font-magnify>>
-        </render-doc-author>
+        </doc-author>
       </quasi>
     </style-with>
   </xmacro>>

@@ -134,9 +134,9 @@
          (cond ((null? authors)
                 (list))
                ((list-1? authors)
-                (list `(render-doc-author ,@authors)))
+                (list `(doc-author ,@authors)))
                (else
-                (list `(render-doc-authors ,@authors)))))
+                (list `(doc-authors ,@authors)))))
      ,@(select t '(doc-date))
      ,@(select t '(doc-inactive))))
 
