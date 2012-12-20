@@ -14,53 +14,94 @@
 (texmacs-module (database title-bis))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Adding notes to the document title
+;; Collect notes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (remove-annotations t)
-  (if (tm-func? t 'doc-note-ref 3)
-      (remove-annotations (tm-ref t 2))
-      t))
+(define (insert-note note h)
+  (with n (tm->stree note)
+    (when (not (ahash-ref h n))
+      (let* ((nr (+ (ahash-size h) 1))
+             (sym `(number ,(number->string nr) "fnsymbol"))
+             (id (string-append "title-note-" (number->string nr))))
+        ;; TODO: use hard-id of the doc-data tree as a prefix
+        ;; otherwise, links will be ambiguous in case of multiple titles
+        (ahash-set! h n (list note sym id))))))
 
-(define (replace-title-note c syms ids)
-  (cond ((or (null? c) (null? syms)) c)
-        ((tm-func? (car c) 'doc-note 1)
-         (let* ((h (car c))
-                (sym (car syms))
-                (id (car ids))
-                (note `(doc-note-text ,sym ,id ,(tm-ref h 0))))
-           (cons note (replace-title-note (cdr c) (cdr syms) (cdr ids)))))
-        (else (cons (car c) (replace-title-note (cdr c) syms ids)))))
+(define (retrieve-note note h)
+  (with n (tm->stree note)
+    (with val (ahash-ref h n)
+      (if (eq? (car val) note)
+          (list (cons n val))
+          (list)))))
 
-(define (annotate-title c syms ids)
-  (cond ((or (null? c) (null? syms)) c)
-        ((tm-func? (car c) 'doc-title 1)
-         (let* ((h (car c))
-                (sym (car syms))
-                (id (car ids))
-                (tit `(doc-title (doc-note-ref ,sym ,id ,(tm-ref h 0)))))
-           (annotate-title (cons tit (cdr c)) (cdr syms) (cdr ids))))
-        (else (cons (car c) (annotate-title (cdr c) syms ids)))))
+(tm-define (collect-notes t)
+  (let* ((l (append (select t '(doc-note))
+                    (select t '(doc-author author-data author-misc))))
+         (h (make-ahash-table)))
+    (for-each (cut insert-note <> h) l)
+    (append-map (cut retrieve-note <> h) l)))
 
-(define (make-title-note-sym nr)
-  ;;`(number ,(number->string nr) "fnsymbol")
-  `(number ,(number->string nr) "alpha"))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Collect notes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (make-title-note-id nr)
-  ;; TODO: use hard-id of the doc-data tree as a prefix
-  ;; otherwise, links will be ambiguous in case of multiple titles
-  (string-append "title-note-" (number->string nr)))
+(define (remove-notes c)
+  (cond ((null? c) c)
+        ((tm-func? (car c) 'doc-note 1) (remove-notes (cdr c)))
+        ((tm-func? (car c) 'author-misc 1) (remove-notes (cdr c)))
+        ((tm-in? (car c) '(doc-author author-data))
+         (let* ((f (car c))
+                (h `(,(tm-label f) ,@(remove-notes (tm-children f))))
+                (t (remove-notes (cdr c))))
+           (cons h t)))
+        (else (cons (car c) (remove-notes (cdr c))))))
 
-(tm-define (add-title-notes t)
-  (with l (select t '(doc-note))
-    (if (null? l) l
-        (let* ((c1  (tm-children t))
-               (nrs (.. 1 (+ (length l) 1)))
-               (syms (map make-title-note-sym nrs))
-               (ids (map make-title-note-id nrs))
-               (c2  (replace-title-note c1 syms ids))
-               (c3  (annotate-title c2 syms ids)))
-          `(,(tm-label t) ,@c3)))))
+(define (retain-title-notes notes)
+  (cond ((null? notes) notes)
+        ((tm-is? (caar notes) 'doc-note)
+         (cons (car notes) (retain-title-notes (cdr notes))))
+        (else (retain-title-notes (cdr notes)))))
+
+(define (find-note sel notes)
+  (cond ((null? notes) (list))
+        ((== (caar notes) sel)
+         (list (car notes)))
+        (else (find-note sel (cdr notes)))))
+
+(define (add-annotations c notes)
+  (if (null? notes) c
+      (with (n note sym id) (car notes)
+        (with c2 (add-annotations c (cdr notes))
+          `(doc-note-ref ,sym ,id ,c2)))))
+
+(define (annotate c notes)
+  (cond ((tm-func? c 'doc-title 1)
+         (with new-notes (retain-title-notes notes)
+           `(doc-title ,(add-annotations (tm-ref c 0) new-notes))))
+        ((tm-func? c 'author-name 1)
+         `(author-name ,(add-annotations (tm-ref c 0) notes)))
+        ((tm-func? c 'doc-author 1)
+         (let* ((sels (map tm->stree (select c '(author-data author-misc))))
+                (new-notes (append-map (cut find-note <> notes) sels)))
+           (with ann (cut annotate <> new-notes)
+             `(doc-author ,@(map ann (tm-children c))))))
+        ((tm-is? c 'author-data)
+         (with ann (cut annotate <> notes)
+           `(author-data ,@(map ann (tm-children c)))))
+        (else c)))
+
+(define (make-note l)
+  (with (n note sym id) l
+    `(doc-note-text ,sym ,id ,(tm-ref note 0))))
+
+(tm-define (add-notes t)
+  (with notes (collect-notes t)
+    (if (null? notes) t
+        (let* ((c1 (tm-children t))
+               (c2 (map (cut annotate <> notes) c1))
+               (c3 (remove-notes c2))
+               (c4 (map make-note notes)))
+          `(,(tm-label t) ,@c3 ,@c4)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main document data
@@ -72,14 +113,12 @@
 (tm-define (doc-data-hidden t)
   `(concat
      ,@(select t '(doc-note-text))
-     ,@(let* ((h (map author-data-hidden (select t '(doc-author author-data))))
-              (c (map tm-children h)))
-         (apply append c))
      ,@(map title->running-title (select t '(doc-title)))
      ,@(select t '(doc-running-title))
      (doc-running-author
        (comma-separated
-         ,@(select t '(doc-author author-data author-name 0))))
+         ,@(map remove-annotations
+                (select t '(doc-author author-data author-name 0)))))
      ,@(select t '(doc-running-author))))
 
 (tm-define (doc-data-main t)
@@ -108,20 +147,12 @@
 (tm-define (doc-data t)
   (:secure #t)
   ;;(display* "t= " t "\n")
-  ;;(display* "r= " (add-title-notes t) "\n")
-  (doc-data-sub (add-title-notes t)))
+  ;;(display* "r= " (add-notes t) "\n")
+  (doc-data-sub (add-notes t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Author data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (author-misc->note t)
-  `(doc-author-note
-     (tuple ,(tm-ref t 0))))
-
-(tm-define (author-data-hidden t)
-  `(concat
-     ,@(map author-misc->note (select t '(author-misc)))))
 
 (tm-define (doc-author-main t)
   `(document
