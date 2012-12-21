@@ -85,6 +85,8 @@
 
   <drd-props|author-misc|arity|1|border|no|accessible|all>
 
+  <drd-props|doc-data-abstract|arity|<tuple|repeat|1|1>|accessible|all>
+
   <drd-props|abstract|arity|1|accessible|all>
 
   <\active*>
@@ -240,7 +242,7 @@
   </macro>>
 
   <assign|abstract|<\macro|body>
-    <style-with|src-compact|none|<with|abstract-note|<look-up|<quasi|<doc-data-abstract|<unquote*|<quote-value|the-doc-data>>>>|0>|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<equal|<get-arity|<quote-value|abstract-note>>|0>|render-abstract|render-abstract*>>|<arg|body>|<quote-value|abstract-note>>>>>
+    <render-abstract|<arg|body>>
   </macro>>
 
   <\active*>

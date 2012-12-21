@@ -138,7 +138,6 @@
 
 (tm-define (doc-data-sub t)
   `(surround
-     (assign "the-doc-data" (quote ,t))
      ,(doc-data-hidden t)
      (document
        (doc-make-title
@@ -168,7 +167,8 @@
 
 (tm-define (doc-data-abstract t)
   (:secure #t)
-  `(tuple
-     (document
-       ,@(select t '(doc-keywords))
-       ,@(select t '(doc-msc)))))
+  (let ((opts `(document ,@(select t '(doc-keywords)) ,@(select t '(doc-msc))))
+        (abst (select t '(document abstract 0))))
+    (if (list>1? opts)
+      `(render-abstract* (document ,@abst) ,opts)
+      `(render-abstract  (document ,@abst)))))
