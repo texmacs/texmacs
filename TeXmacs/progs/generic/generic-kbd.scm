@@ -538,6 +538,7 @@
   ("macos F4" (safely-kill-buffer))
   ("macos ;" (spell-start))
   ("macos ?" (interactive docgrep-in-doc))
+  ("macos ," (interactive open-preferences))
   ("macos [" (cursor-history-backward))
   ("macos ]" (cursor-history-forward))
   ("macos left" (kbd-start-line))
