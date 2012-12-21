@@ -70,8 +70,8 @@
 
 (define (add-annotations c notes)
   (if (null? notes) c
-      (with (n note sym id) (car notes)
-        (with c2 (add-annotations c (cdr notes))
+      (with (n note sym id) (cAr notes)
+        (with c2 (add-annotations c (cDr notes))
           `(doc-note-ref ,sym ,id ,c2)))))
 
 (define (annotate c notes)
