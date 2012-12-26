@@ -518,3 +518,55 @@ QTMComboBox::event (QEvent* ev) {
 
   return true;
 }
+
+/******************************************************************************
+ * QTMScrollArea
+ ******************************************************************************/
+
+
+/*! Sets the widget for the scrollarea and looks for QListWidgets.
+ 
+ This is needed to correctly update the scrollbars when the user navigates with
+ the keys through items in a QListWidget contained in the QTMScrollArea.
+ It also scrolls the viewport to the position of selected items in QListWidgets.
+ */
+void
+QTMScrollArea::setWidgetAndConnect (QWidget* w)
+{
+  setWidget (w);
+ 
+  QList<QListWidget*> all = w->findChildren<QListWidget*>();
+  if (all.count() > 0) {
+    for (QList<QListWidget*>::iterator it = all.begin(); it != all.end(); ++it) {
+      QObject::connect(*it, SIGNAL (currentItemChanged (QListWidgetItem*, QListWidgetItem*)),
+                       this, SLOT (scrollToSelection (QListWidgetItem*, QListWidgetItem*)));
+      
+        // Jump to selection if any
+      QList<QListWidgetItem*> selection = (*it)->selectedItems();
+      if (! selection.isEmpty())
+        scrollToSelection (selection.last(), selection.last());
+    }
+  }
+}
+
+/*! Scrolls the area to a QListWidgetItem in a child QListWidget.
+ 
+ The second parameter is unused but needed to match signatures with the signal
+ QListWidget::currentItemChanged() 
+ */
+void
+QTMScrollArea::scrollToSelection (QListWidgetItem* c, QListWidgetItem* p)
+{
+  (void) p;
+  QListWidget* lw = c->listWidget();
+  ensureWidgetVisible (lw);
+  QRect r = lw->visualItemRect (c);
+  QRect g = lw->geometry();
+  int   x = r.x() + g.x();
+  int   y = r.y() + g.y();
+
+  if (! viewport()->geometry().contains (x, y)) {
+      //cout << "Jump to: " << from_qstring (c->text()) << " at " << x << ", " << y << LF;
+    ensureVisible (x, y, r.width(), r.height());
+  }
+}

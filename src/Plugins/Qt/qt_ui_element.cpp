@@ -33,7 +33,6 @@
 
 #include "../../Style/Evaluate/evaluate_main.hpp" // required for as_length(string)
 
-
 /******************************************************************************
  * Auxiliary classes
  ******************************************************************************/
@@ -328,12 +327,13 @@ public:
 
 
 /*! Ad-hoc command to be used with toggle widgets.
- * The command associated with a qt_ui_element::toggle_widget has as a parameter the state
- * of the QCheckBox. Since it is assumed everywhere else that commands injected into
- * the gui's queue accept no parameters, and changes would be too big, we choose to
- * encapsulate the original command in a new one which will execute the first with 
- * its argument.
- * \sa qt_ui_element, , qt_ui_element_rep::as_qwidget, qt_ui_element_rep::toggle_widget
+ 
+ The command associated with a qt_ui_element::toggle_widget has as a parameter the state
+ of the QCheckBox. Since it is assumed everywhere else that commands injected into
+ the gui's queue accept no parameters, and changes would be too big, we choose to
+ encapsulate the original command in a new one which will execute the first with
+ its argument.
+ \sa qt_ui_element, , qt_ui_element_rep::as_qwidget, qt_ui_element_rep::toggle_widget
  */
 class qt_toggle_command_rep: public command_rep {
   QPointer<QCheckBox> qwid;
@@ -347,9 +347,10 @@ public:
 };
 
 /*! Ad-hoc command to be used with enum widgets.
- * The command associated with a qt_ui_element::enum_widget has one parameter. For the
- * reason to be of this class, see \sa qt_toggle_command_rep .
- * \sa qt_ui_element, , qt_ui_element_rep::as_qwidget, qt_ui_element_rep::enum_widget
+ 
+ The command associated with a qt_ui_element::enum_widget has one parameter. For the
+ reason to be of this class, see \sa qt_toggle_command_rep .
+ \sa qt_ui_element, , qt_ui_element_rep::as_qwidget, qt_ui_element_rep::enum_widget
  */
 class qt_enum_command_rep: public command_rep {
   QPointer<QComboBox> qwid;
@@ -366,10 +367,11 @@ public:
 };
 
 /*! Ad-hoc command to be used with choice widgets.
- * The command associated with a qt_ui_element::choice_widget has one parameter. (a
- * list of selected items).
- * For the reason to be of this class, see \sa qt_toggle_command_rep.
- * \sa qt_ui_element, , qt_ui_element_rep::as_qwidget, qt_ui_element_rep::choice_widget
+ 
+ The command associated with a qt_ui_element::choice_widget has one parameter
+ (a list of selected items).
+ For the reason to be of this class, see \sa qt_toggle_command_rep.
+ \sa qt_ui_element, , qt_ui_element_rep::as_qwidget, qt_ui_element_rep::choice_widget
  */
 class qt_choice_command_rep: public command_rep {
   QPointer<QListWidget> qwid;
@@ -1198,23 +1200,23 @@ qt_ui_element_rep::as_qwidget () {
       w->addItems(items);
 
       if (multiple_sel)
-        w->setSelectionMode(QAbstractItemView::ExtendedSelection);  // Support CTRL and SHIFT multiple selections.
+         // Support CTRL and SHIFT multiple selections.
+        w->setSelectionMode (QAbstractItemView::ExtendedSelection);
       else
-        w->setSelectionMode(QAbstractItemView::SingleSelection);
+        w->setSelectionMode (QAbstractItemView::SingleSelection);
       
       for (int i = 0; i < items.size(); ++i) {
-        QListWidgetItem* item = w->item(i);
-        item->setSelected(chosen.contains(item->text(), Qt::CaseSensitive));  // Qt::CaseSensitive is the default anyway
+        QListWidgetItem* item = w->item (i);
+          // Qt::CaseSensitive is the default anyway
+        item->setSelected (chosen.contains (item->text(), Qt::CaseSensitive));
       }
-      
-      w->setMinimumWidth(w->sizeHintForColumn(0));
-      w->setMinimumHeight(w->sizeHintForRow(0)*items.count());
-      w->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-      w->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-      w->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-      w->setFrameStyle(QFrame::NoFrame);
-        //w->setFocusPolicy(Qt::NoFocus);
-      
+      w->setMinimumWidth (w->sizeHintForColumn(0));
+      w->setMinimumHeight (w->sizeHintForRow(0)*items.count());
+      w->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+      w->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+      w->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+      w->setFrameStyle (QFrame::NoFrame);
+
       command ecmd = tm_new<qt_choice_command_rep> (w, cmd, multiple_sel);
       QTMCommand* qcmd = new QTMCommand (w, ecmd);
       QObject::connect (w, SIGNAL (itemSelectionChanged()), qcmd, SLOT (apply()));
@@ -1226,20 +1228,22 @@ qt_ui_element_rep::as_qwidget () {
     case scrollable_widget:
     {
       typedef pair<widget, int> T;
-      T           x = open_box<T>(load);
-      qt_widget wid = concrete(x.x1);
-      QString style = to_qstylesheet(x.x2);
-            
-      QScrollArea* scroll = new QScrollArea();
-      scroll->setStyleSheet(style);
-      scroll->setWidget(wid->as_qwidget());
-      scroll->setWidgetResizable(true);
+      T           x = open_box<T> (load);
+      qt_widget wid = concrete (x.x1);
+      QString style = to_qstylesheet (x.x2);
       
+      QTMScrollArea* scroll = new QTMScrollArea();
+      scroll->setStyleSheet (style);
+      scroll->setWidgetAndConnect (wid->as_qwidget());
+      scroll->setWidgetResizable (true);
+
         // FIXME????
-        // "Note that You must add the layout of widget before you call this function; 
-        //  if you add it later, the widget will not be visible - regardless of when you show() the scroll area.
-        //  In this case, you can also not show() the widget later."
+        // "Note that You must add the layout of widget before you call this function;
+        //  if you add it later, the widget will not be visible - regardless of when
+        //  you show() the scroll area. In this case, you can also not show() the widget
+        //  later."
       qwid = scroll;
+
     }
       break;
       
@@ -1341,6 +1345,9 @@ qt_ui_element_rep::as_qwidget () {
     default:
       qwid = NULL;
   }
-
+  
+  qwid->setFocusPolicy (Qt::StrongFocus);
+  if (qwid->objectName().isEmpty())
+    qwid->setObjectName (to_qstring (type_as_string()));
   return qwid;
 }

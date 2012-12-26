@@ -24,6 +24,8 @@
 #include <QLineEdit>
 #include <QComboBox>
 #include <QTranslator>
+#include <QListWidgetItem>
+#include <QScrollArea>
 
 #include "qt_gui.hpp"
 #include "qt_dialogues.hpp"
@@ -285,6 +287,28 @@ public:
   void addItemsAndResize (const QStringList& texts, string ww, string h);
   bool event (QEvent* ev);
 
+};
+
+
+/*! A QScrollArea which automatically scrolls to selected items in QListWidgets.
+ 
+ This is needed because of our implementation of choice_widget which disables
+ the default scrollbars in QListWidget. Instead we add an explicit QScrollArea
+ which then has to be scrolled, for instance when the user navigates with the
+ cursor keys. To this end we use the slot scrollToSelection(), connected to the
+ signal currentIndexChanged() of each QListWidget contained in the ScrollArea.
+ 
+ 
+ */
+class QTMScrollArea : public QScrollArea
+{
+  Q_OBJECT
+public:
+  QTMScrollArea (QWidget* p=0) : QScrollArea(p) { };
+  void setWidgetAndConnect (QWidget* w);
+  
+public slots:
+  void scrollToSelection (QListWidgetItem* c, QListWidgetItem* p);
 };
 
 
