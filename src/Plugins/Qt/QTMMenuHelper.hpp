@@ -294,19 +294,29 @@ public:
  
  This is needed because of our implementation of choice_widget which disables
  the default scrollbars in QListWidget. Instead we add an explicit QScrollArea
- which then has to be scrolled, for instance when the user navigates with the
- cursor keys. To this end we use the slot scrollToSelection(), connected to the
- signal currentIndexChanged() of each QListWidget contained in the ScrollArea.
+ which then has to be scrolled manually, for instance when the user navigates 
+ with the cursor keys. To this end we use the slot scrollToSelection(), 
+ connected to the signal currentIndexChanged() of each QListWidget contained in
+ the QScrollArea.
  
- 
+ Furthermore, we must implement showEvent() because scrolling at the time of
+ widget compilation in qt_ui_element_rep::as_qwidget() before the widget
+ is shown results in an unsufficient scroll performed (by an amount roughly the
+ size of the viewport).
  */
 class QTMScrollArea : public QScrollArea
 {
   Q_OBJECT
-public:
-  QTMScrollArea (QWidget* p=0) : QScrollArea(p) { };
-  void setWidgetAndConnect (QWidget* w);
   
+  QListWidgetItem* selectedItem;
+  
+public:
+  QTMScrollArea (QWidget* p=0) : QScrollArea(p), selectedItem(0) { };
+  void setWidgetAndConnect (QWidget* w);
+
+protected:
+  virtual void showEvent (QShowEvent* ev);
+
 public slots:
   void scrollToSelection (QListWidgetItem* c, QListWidgetItem* p);
 };

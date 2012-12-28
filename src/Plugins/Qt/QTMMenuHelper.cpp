@@ -519,10 +519,10 @@ QTMComboBox::event (QEvent* ev) {
   return true;
 }
 
+
 /******************************************************************************
  * QTMScrollArea
  ******************************************************************************/
-
 
 /*! Sets the widget for the scrollarea and looks for QListWidgets.
  
@@ -540,11 +540,10 @@ QTMScrollArea::setWidgetAndConnect (QWidget* w)
     for (QList<QListWidget*>::iterator it = all.begin(); it != all.end(); ++it) {
       QObject::connect(*it, SIGNAL (currentItemChanged (QListWidgetItem*, QListWidgetItem*)),
                        this, SLOT (scrollToSelection (QListWidgetItem*, QListWidgetItem*)));
-      
-        // Jump to selection if any
+
       QList<QListWidgetItem*> selection = (*it)->selectedItems();
       if (! selection.isEmpty())
-        scrollToSelection (selection.last(), selection.last());
+        selectedItem = selection.last();
     }
   }
 }
@@ -552,21 +551,34 @@ QTMScrollArea::setWidgetAndConnect (QWidget* w)
 /*! Scrolls the area to a QListWidgetItem in a child QListWidget.
  
  The second parameter is unused but needed to match signatures with the signal
- QListWidget::currentItemChanged() 
+ QListWidget::currentItemChanged().
  */
 void
 QTMScrollArea::scrollToSelection (QListWidgetItem* c, QListWidgetItem* p)
 {
   (void) p;
+  if (!c)
+    return;
+
+  selectedItem = c;
   QListWidget* lw = c->listWidget();
-  ensureWidgetVisible (lw);
   QRect r = lw->visualItemRect (c);
   QRect g = lw->geometry();
   int   x = r.x() + g.x();
   int   y = r.y() + g.y();
 
-  if (! viewport()->geometry().contains (x, y)) {
-      //cout << "Jump to: " << from_qstring (c->text()) << " at " << x << ", " << y << LF;
+  if (! viewport()->geometry().contains (x, y))
     ensureVisible (x, y, r.width(), r.height());
-  }
+}
+
+/*! Work around problem with scrolling before the widget is shown.
+ 
+ Calling ensureVisible() before the widget is shown scrolls the viewport by an
+ insufficient amount. See the comments to QTMScrollArea.
+ */
+void
+QTMScrollArea::showEvent (QShowEvent* ev)
+{
+  scrollToSelection (selectedItem, selectedItem);
+  QScrollArea::showEvent (ev);
 }
