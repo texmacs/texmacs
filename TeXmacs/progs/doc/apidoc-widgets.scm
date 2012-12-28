@@ -135,10 +135,14 @@
   (map module->string (list-submodules-recursive '(()))))
 
 (tm-define (mw-all-symbols)
-  (map symbol->string (module-exported (string->module mw-module))))
+  (map symbol->string 
+       (or (module-exported (string->module mw-module))
+           '())))
 
 (tm-widget (module-symbols-widget)
-  (scrollable (choice (set! mw-symbol answer) (mw-all-symbols) "")))
+  (vertical
+    (bold (text "Symbols"))
+    (scrollable (choice (set! mw-symbol answer) (mw-all-symbols) mw-symbol))))
 
 (tm-widget (symbol-doc-widget)
   (resize ("200px" "400px" "9000px") ("100px" "200px" "3000px")
@@ -152,10 +156,12 @@
 (tm-widget (module-widget)
   (vertical
     (hsplit
-      (scrollable 
-        (choice (set! mw-module answer)
-                (mw-all-modules)
-                ""))
+      (vertical
+        (bold (text "Module"))
+        (scrollable 
+          (choice (set! mw-module answer)
+                  (mw-all-modules)
+                  mw-module)))
       (refresh module-symbols-widget))
     ===
     (refresh symbol-doc-widget)

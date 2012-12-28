@@ -110,7 +110,7 @@
 
 (define module-exported-cache (make-ahash-table))
 
-; HACK: we use read (copying what's done in init-texmacs.scm) until the 
+; HACK: we use read (copying what's done in init-texmacs.scm) until the
 ; code indexer is implemented
 (define (parse-form form)
   "Set symbol properties and return the symbol."
@@ -131,7 +131,9 @@
       (and (is-real-module? module)
         (let* ((p (open-input-file (module-source-path module #t)))
                (defs '())
-               (add (lambda (f) (set! defs (rcons defs (parse-form f))))))
+               (add (lambda (f) 
+                      (with pf (parse-form f)
+                        (and (!= pf #f) (set! defs (rcons defs pf)))))))
           (letrec ((r (lambda () (with form (read p)
                                    (or (eof-object? form) 
                                        (begin (add form) (r)))))))
