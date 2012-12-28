@@ -1299,18 +1299,19 @@ qt_ui_element_rep::as_qwidget () {
       typedef array<widget> T1;
       typedef triple<U1, T1, T1> T;
       T       x = open_box<T>(load);
+      U1  icons = x.x1;
       T1   tabs = x.x2;
       T1 bodies = x.x3;
-      
+
       QTMTabWidget* tw = new QTMTabWidget ();
-      
       int i;
       for (i = 0; i < N(tabs); i++) {
         if (is_nil (tabs[i])) break;
+        QPixmap*      img = the_qt_renderer()->xpm_image (icons[i]);
         QWidget* prelabel = concrete (tabs[i])->as_qwidget();
         QLabel*     label = qobject_cast<QLabel*> (prelabel);
         QWidget*     body = concrete (bodies[i])->as_qwidget();
-        tw->addTab(body, label ? label->text() : "");
+        tw->addTab(body, QIcon (*img), label ? label->text() : "");
         delete prelabel;
       }
 
