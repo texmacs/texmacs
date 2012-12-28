@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.0.7.17>
 
 <style|source>
 
@@ -38,30 +38,20 @@
 
   <assign|doc-module-header-body|<\macro|module|desc>
     <\explain>
-      <tt|<arg|module>> <explain-synopsis|<extern|doc-module-synopsis|<arg|module>>>
+      <link-to-module-source|<arg|module>>
+      <explain-synopsis|<extern|doc-module-synopsis|<arg|module>>>
     <|explain>
-      <with|font-series|bold|Module family:><htab|><tt|<extern|doc-module-family|<arg|module>>>
-
       <with|font-series|bold|Dependencies:>
 
       <\right-aligned>
         <extern|doc-module-dependencies|<arg|module>>
       </right-aligned>
 
-      <with|font-series|bold|Source:><htab|><link-to-module-source|<arg|module>>
-
-      <with|font-series|bold|Total exported
-      symbols:><htab|><with|font-series|bold|<extern|doc-module-count-exported|<arg|module>>>
-
-      <with|font-series|bold|Undocumented
-      symbols:><htab|><with|font-series|bold|<with|color|red|<extern|doc-module-count-undocumented|<arg|module>>>>
-
-      \;
+      <with|font-series|bold|Exported: <extern|doc-module-count-exported|<arg|module>>><htab|><with|font-series|bold|Undocumented:
+      <with|color|red|<extern|doc-module-count-undocumented|<arg|module>>>>
 
       <arg|desc>
     </explain>
-
-    \;
   </macro>>
 
   <drd-props|doc-module-header-body|arity|2|accesible|all>
