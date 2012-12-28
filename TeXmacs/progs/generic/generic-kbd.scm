@@ -402,6 +402,7 @@
   ("std Z" (redo 0))
   ("std +" (zoom-in (sqrt (sqrt 2.0))))
   ("std -" (zoom-out (sqrt (sqrt 2.0))))
+  ("std 0" (fit-to-screen-width))
 
   ;; not yet implemented
   ;;("std t" (add-tab))
