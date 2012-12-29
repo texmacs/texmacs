@@ -215,12 +215,6 @@
   ("table N b" (make 'block))
   ("table N B" (make 'block*)))
 
-(kbd-map                       ; conflicts with in-prog?
-  (:mode in-text?)
-  ("- var" (make 'nbhyph))
-  ("space var" (make 'nbsp))
-  ("space var var" (make-space "1em")))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Emacs keymap
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
