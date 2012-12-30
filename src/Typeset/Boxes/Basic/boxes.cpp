@@ -494,25 +494,25 @@ box_rep::redraw (renderer ren, path p, rectangles& l) {
     rectangles ll;
     l= rectangles();
     pre_display (ren);
-
+    
     int i, item=-1, n=subnr (), i1= n, i2= -1;
     if (!is_nil(p)) i1= i2= item= p->item;
     for (i=0; i<n; i++) {
       int k= reindex (i, item, n-1);
       if (is_nil(p)) subbox (k)->redraw (ren, path (), ll);
       else if (i!=0) {
-	if (k > item) subbox(k)->redraw (ren, path (0), ll);
-	else subbox(k)->redraw (ren, path (subbox(k)->subnr()-1), ll);
+        if (k > item) subbox(k)->redraw (ren, path (0), ll);
+        else subbox(k)->redraw (ren, path (subbox(k)->subnr()-1), ll);
       }
       else subbox(k)->redraw (ren, p->next, ll);
       if (!is_nil(ll)) {
-	i1= min (i1, k);
-	i2= max (i2, k);
-	l = ll * l;
-	ll= rectangles ();
+        i1= min (i1, k);
+        i2= max (i2, k);
+        l = ll * l;
+        ll= rectangles ();
       }
     }
-
+    
     if (((nr_painted&15) == 15) && ren->interrupted ()) {
       l= translate (l, -ren->ox, -ren->oy);
       clear_incomplete (l, ren->pixel, item, i1, i2);

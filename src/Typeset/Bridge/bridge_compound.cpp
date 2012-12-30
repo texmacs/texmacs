@@ -135,20 +135,20 @@ bridge_compound_rep::notify_macro (
       hashmap<string,path> (path (DECORATION)), env->macro_src);
     if (L(fun) == XMACRO) {
       if (is_atomic (fun[0])) {
-	string var= fun[0]->label;
-	env->macro_arg->item (var)= st;
-	env->macro_src->item (var)= ip;
+        string var= fun[0]->label;
+        env->macro_arg->item (var)= st;
+        env->macro_src->item (var)= ip;
       }
     }
     else for (i=0; i<n; i++)
       if (is_atomic (fun[i])) {
-	string var= fun[i]->label;
-	env->macro_arg->item (var)=
-	  i+delta<m? st[i+delta]:
-          attach_dip (tree (UNINIT), decorate_right (ip));
-	env->macro_src->item (var)=
-	  i+delta<m? descend (ip,i+delta):
-          decorate_right(ip);
+        string var= fun[i]->label;
+        env->macro_arg->item (var)=
+        i+delta<m? st[i+delta]:
+        attach_dip (tree (UNINIT), decorate_right (ip));
+        env->macro_src->item (var)=
+        i+delta<m? descend (ip,i+delta):
+        decorate_right(ip);
       }
     flag= body->notify_macro (type, var, l+1, p, u);
     env->macro_arg= env->macro_arg->next;
@@ -202,21 +202,21 @@ bridge_compound_rep::my_typeset (int desired_status) {
       hashmap<string,path> (path (DECORATION)), env->macro_src);
     if (L(f) == XMACRO) {
       if (is_atomic (f[0])) {
-	string var= f[0]->label;
-	env->macro_arg->item (var)= st;
-	env->macro_src->item (var)= ip;
+        string var= f[0]->label;
+        env->macro_arg->item (var)= st;
+        env->macro_src->item (var)= ip;
       }
     }
     else for (i=0; i<n; i++)
       if (is_atomic (f[i])) {
-	string var= f[i]->label;
-	env->macro_arg->item (var)=
-	  i<m? st[i+d]: attach_dip (tree (UNINIT), decorate_right (ip));
-	env->macro_src->item (var)=
-	  i<m? descend (ip,i+d): decorate_right(ip);
+        string var= f[i]->label;
+        env->macro_arg->item (var)=
+        i<m? st[i+d]: attach_dip (tree (UNINIT), decorate_right (ip));
+        env->macro_src->item (var)=
+        i<m? descend (ip,i+d): decorate_right(ip);
       }
     initialize (f[n], d, f);
-    // /*IF_NON_CHILD_ENFORCING(st)*/ ttt->insert_marker (st, ip);
+      // /*IF_NON_CHILD_ENFORCING(st)*/ ttt->insert_marker (st, ip);
     if (!the_drd->is_child_enforcing (st))
       ttt->insert_marker (st, ip);
     body->typeset (desired_status);
