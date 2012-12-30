@@ -35,6 +35,7 @@ struct tex_font_rep: font_rep {
   tex_font_metric  tfm;
   font_glyphs      pk;
   double           unit;
+  bool             exec;             // execute ligature and kerning program?
 
   tex_font_rep (string name, int status,
 		string family, int size, int dpi, int dsize);
@@ -85,6 +86,7 @@ tex_font_rep::tex_font_rep (string name, int status2,
   extra->min   = extra->min >> 1;
   extra->max   = extra->min << 1;
   sep          = ((((dpi*PIXEL)/72)*design_size) >> 8) / 10;
+  exec         = ! ends (family, "tt");
 
   y1           = conv (-262080);   // -0.25 quad
   y2           = y1+ display_size; //  0.75 quad
@@ -499,8 +501,17 @@ tex_font_rep::get_extents (string s, metric& ex) {
   STACK_NEW_ARRAY (s_copy, int, n);
   STACK_NEW_ARRAY (buf, int, m);
   STACK_NEW_ARRAY (ker, int, m);
+
+  if (exec) {
   for (i=0; i<n; i++) s_copy[i]= ((QN) s[i]);
   tfm->execute (s_copy, n, buf, ker, m);
+  } else {
+    m = n;
+    for (i=0; i<m; ++i) {
+      buf[i]= s[i];
+      ker[i]= 0;
+    }
+  }
 
   SI x1= 0;
   SI x2= 0;
@@ -620,8 +631,17 @@ tex_font_rep::draw_fixed (renderer ren, string s, SI ox, SI y) {
   STACK_NEW_ARRAY (str, int, n);
   STACK_NEW_ARRAY (buf, int, m);
   STACK_NEW_ARRAY (ker, int, m);
+
+  if (exec) {
   for (i=0; i<n; i++) str[i]= ((QN) s[i]);
   tfm->execute (str, n, buf, ker, m);
+  } else {
+    m = n;
+    for (i=0; i<m; ++i) {
+      buf[i]= s[i];
+      ker[i]= 0;
+    }
+  }
 
   for (i=0; i<m; i++) {
     register int c= buf[i];
