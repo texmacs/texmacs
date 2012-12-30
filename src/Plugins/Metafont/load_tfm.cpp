@@ -143,59 +143,59 @@ tex_font_metric_rep::execute (int* s, int n, int* buf, int* ker, int& m) {
       if (byte0 (lig_kern [pc]) > 128) pc= word1 (lig_kern [pc]);
 
       while (true) {
-	register int instr= lig_kern [pc];
+        register int instr= lig_kern [pc];
 
-	//if (byte0 (instr) >= 128) { // halt
-	//  // cout << "  Halt\n";
-	//  ker [bp]  = 0;
-	//  buf [bp++]= stack[sp--];
-	//  break;
-	//}
+        //if (byte0 (instr) >= 128) { // halt
+        //  // cout << "  Halt\n";
+        //  ker [bp]  = 0;
+        //  buf [bp++]= stack[sp--];
+        //  break;
+        //}
 
-	if (byte1 (instr) != next_char) { // continue
-	  // cout << "  " << (char) byte1 (instr) << " != " << (char) next_char
-	  //      << " => pc := pc + " << (byte0 (instr)+1) << "\n";
-	  int skip_byte = byte0(instr);
-  	  if (skip_byte >= 128) { // current instruction is the final instruction
-	    // cout << "  Halt\n";
-	    ker [bp]  = 0;
-	    buf [bp++]= stack[sp--];
-	    break;
-	  }
-	  else {
-	    pc += skip_byte+1;
-	    continue;
-	  }
-	}
+        if (byte1 (instr) != next_char) { // continue
+      	  // cout << "  " << (char) byte1 (instr) << " != " << (char) next_char
+	        //      << " => pc := pc + " << (byte0 (instr)+1) << "\n";
+          int skip_byte = byte0(instr);
+          if (skip_byte >= 128) { // current instruction is the final instruction
+      	    // cout << "  Halt\n";
+            ker [bp]  = 0;
+            buf [bp++]= stack[sp--];
+            break;
+          }
+          else {
+            pc += skip_byte+1;
+            continue;
+          }
+        }
 
-	// cout << "  " << (char) byte1 (instr) << " == "
-	//      << (char) next_char << " => ";
-
-	if (byte2 (instr) < 128) { // ligature
-	  // cout << "Ligature ";
-	  int code= byte2 (instr);
-	  int a   = code>>2;
-	  int b   = (code>>1)&1;
-	  int c   = code&1;
-	  // cout << "(" << a << "," << b << "," << c << ")\n";
-	  if (b==0) sp--;
-	  stack [sp++]= byte3 (instr);
-	  if (c!=0) stack[sp++]= cur_char;
-	  sp--;
-	  while (a>0) {
-	    ker [bp]  = 0;
-	    buf [bp++]= stack [sp--];
-	    a--;
-	  }
-	  break;
-	}
-
-	else { // kerning
-	  // cout << "Kerning (" << kern  [word1x (instr)] << ")\n";
-	  ker [bp]  = kern  [word1x (instr)];
-	  buf [bp++]= stack [sp--];
-	  break;
-	}
+        // cout << "  " << (char) byte1 (instr) << " == "
+        //      << (char) next_char << " => ";
+        
+        if (byte2 (instr) < 128) { // ligature
+          // cout << "Ligature ";
+          int code= byte2 (instr);
+          int a   = code>>2;
+          int b   = (code>>1)&1;
+          int c   = code&1;
+            // cout << "(" << a << "," << b << "," << c << ")\n";
+          if (b==0) sp--;
+          stack [sp++]= byte3 (instr);
+          if (c!=0) stack[sp++]= cur_char;
+          sp--;
+          while (a>0) {
+            ker [bp]  = 0;
+            buf [bp++]= stack [sp--];
+            a--;
+          }
+          break;
+        }
+        
+        else { // kerning
+          // cout << "Kerning (" << kern  [word1x (instr)] << ")\n";
+          ker [bp]  = kern  [word1x (instr)];
+          buf [bp++]= stack [sp--];
+          break;
+        }
       }
     }
     else {
