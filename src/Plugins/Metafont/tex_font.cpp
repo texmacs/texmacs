@@ -561,32 +561,32 @@ void
 tex_font_rep::get_xpositions (string s, SI* xpos) {
   register int i, n= N(s);
   if (n == 0) return;
-
+  
   switch (status) {
-  case TEX_ANY:
-    break;
-  case TEX_EC:
-  case TEX_LA:
-    for (i=0; i<n; i++)
-      if (s[i]=='<') {
-	special_get_xpositions (s, xpos);
-	return;
+    case TEX_ANY:
+      break;
+    case TEX_EC:
+    case TEX_LA:
+      for (i=0; i<n; i++)
+        if (s[i]=='<') {
+          special_get_xpositions (s, xpos);
+          return;
+        }
+      break;
+    case TEX_CM:
+    case TEX_ADOBE:
+      for (i=0; i<n; i++) {
+        if (s[i]=='<') {
+          special_get_xpositions (s, xpos);
+          return;
+        }
+        if ((s[i] & 128) != 0) {
+          ACCENTS_PREPARE;
+          accented_get_xpositions (s, xpos);
+          return;
+        }
       }
-    break;
-  case TEX_CM:
-  case TEX_ADOBE:
-    for (i=0; i<n; i++) {
-      if (s[i]=='<') {
-	special_get_xpositions (s, xpos);
-	return;
-      }
-      if ((s[i] & 128) != 0) {
-	ACCENTS_PREPARE;
-	accented_get_xpositions (s, xpos);
-	return;
-      }
-    }
-    break;
+      break;
   }
 
   STACK_NEW_ARRAY (s_copy, int, n);
@@ -599,30 +599,30 @@ void
 tex_font_rep::draw_fixed (renderer ren, string s, SI ox, SI y) {
   register int i;
   switch (status) {
-  case TEX_ANY:
-    break;
-  case TEX_EC:
-  case TEX_LA:
-    for (i=0; i<N(s); i++)
-      if (s[i]=='<') {
-	special_draw (ren, s, ox, y);
-	return;
+    case TEX_ANY:
+      break;
+    case TEX_EC:
+    case TEX_LA:
+      for (i=0; i<N(s); i++)
+        if (s[i]=='<') {
+          special_draw (ren, s, ox, y);
+          return;
+        }
+      break;
+    case TEX_CM:
+    case TEX_ADOBE:
+      for (i=0; i<N(s); i++) {
+        if (s[i]=='<') {
+          special_draw (ren, s, ox, y);
+          return;
+        }
+        if ((s[i] & 128) != 0) {
+          ACCENTS_PREPARE;
+          accented_draw (ren, s, ox, y);
+          return;
+        }
       }
-    break;
-  case TEX_CM:
-  case TEX_ADOBE:
-    for (i=0; i<N(s); i++) {
-      if (s[i]=='<') {
-	special_draw (ren, s, ox, y);
-	return;
-      }
-      if ((s[i] & 128) != 0) {
-	ACCENTS_PREPARE;
-	accented_draw (ren, s, ox, y);
-	return;
-      }
-    }
-    break;
+      break;
   }
 
   SI  x= ox;
