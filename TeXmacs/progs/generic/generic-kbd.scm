@@ -588,8 +588,8 @@
   ("altcmd x" (interactive footer-eval))
   ("altcmd X" (interactive footer-eval))
 
-  ("C-A" (kbd-start-line))
-  ("C-E" (kbd-end-line))
+  ("C-a" (kbd-start-line))
+  ("C-e" (kbd-end-line))
   ("C-g" (selection-cancel))
   ("C-k" (kill-paragraph))
   ("C-y" (yank-paragraph))
