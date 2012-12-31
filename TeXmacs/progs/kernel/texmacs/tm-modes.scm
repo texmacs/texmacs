@@ -22,25 +22,25 @@
 
 (define (texmacs-mode-pred mode)
   (let* ((mode-str (symbol->string mode))
-	 (mode-root (substring mode-str 0 (- (string-length mode-str) 1)))
-	 (pred-str (string-append mode-root "?")))
+         (mode-root (substring mode-str 0 (- (string-length mode-str) 1)))
+         (pred-str (string-append mode-root "?")))
     (string->symbol pred-str)))
 
 (define-public (texmacs-mode item)
   (with (mode action . deps) item
     (let* ((pred (texmacs-mode-pred mode))
-	   (deps* (map list (map texmacs-mode-pred deps)))
-	   (l (if (== action #t) deps* (cons action deps*)))
-	   (test (if (null? l) #t (if (null? (cdr l)) (car l) (cons 'and l))))
-	   (defn `(define-public (,pred) ,test))
-	   (rules (map (lambda (dep) (list dep mode)) deps))
-	   (logic-cmd `(logic-rules ,@rules))
-	   (arch1 `(set-symbol-procedure! ',mode ,pred))
-	   (arch2 `(set-symbol-procedure! ',pred ,pred)))
+           (deps* (map list (map texmacs-mode-pred deps)))
+           (l (if (== action #t) deps* (cons action deps*)))
+           (test (if (null? l) #t (if (null? (cdr l)) (car l) (cons 'and l))))
+           (defn `(define-public (,pred) ,test))
+           (rules (map (lambda (dep) (list dep mode)) deps))
+           (logic-cmd `(logic-rules ,@rules))
+           (arch1 `(set-symbol-procedure! ',mode ,pred))
+           (arch2 `(set-symbol-procedure! ',pred ,pred)))
       (if (== mode 'always%) (set! defn '(noop)))
       (if (null? deps)
-	  (list 'begin defn arch1 arch2)
-	  (list 'begin defn arch1 arch2 logic-cmd)))))
+          (list 'begin defn arch1 arch2)
+          (list 'begin defn arch1 arch2 logic-cmd)))))
 
 (define-public-macro (texmacs-modes . l)
   `(begin
@@ -56,32 +56,32 @@
 (define-public (texmacs-in-mode? mode)
   (with proc (symbol-procedure mode)
     (if proc (proc)
-	(catch #t (lambda () (eval (list mode))) (lambda err #f)))))
+        (catch #t (lambda () (eval (list mode))) (lambda err #f)))))
 
 (define-public (texmacs-mode-mode pred)
   "Get drd predicate name associated to scheme predicate or symbol"
   (if (procedure? pred)
       (with name (procedure-name pred)
-	(if name (texmacs-mode-mode name) 'unknown%))
+        (if name (texmacs-mode-mode name) 'unknown%))
       (let* ((pred-str (symbol->string pred))
-	     (pred-root (substring pred-str 0 (- (string-length pred-str) 1)))
-	     (mode-str (string-append pred-root "%")))
-	(string->symbol mode-str))))
+             (pred-root (substring pred-str 0 (- (string-length pred-str) 1)))
+             (mode-str (string-append pred-root "%")))
+        (string->symbol mode-str))))
 
 (define texmacs-submode-table (make-ahash-table))
 
 (define-public (texmacs-submode? what* of*)
   "Test whether @what* is a sub-mode of @of*"
   (let* ((key (cons what* of*))
-	 (handle (ahash-get-handle texmacs-submode-table key)))
+         (handle (ahash-get-handle texmacs-submode-table key)))
     (if handle (cdr handle)
-	(let* ((what (texmacs-mode-mode what*))
-	       (of (texmacs-mode-mode of*))
-	       (result (or (== of 'always%)
-			   (== what 'prevail%)
-			   (nnull? (query of what)))))
-	  (ahash-set! texmacs-submode-table key result)
-	  result))))
+        (let* ((what (texmacs-mode-mode what*))
+               (of (texmacs-mode-mode of*))
+               (result (or (== of 'always%)
+                           (== what 'prevail%)
+                           (nnull? (query of what)))))
+          (ahash-set! texmacs-submode-table key result)
+          result))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Checking whether certain features are supported
@@ -126,7 +126,8 @@
   (with-any-selection% (selection-active-any?))
   (with-active-selection% (selection-active-normal?))
   (in-scheme% (== (get-env "prog-language") "scheme"))
-  (in-prog-scheme% #t in-prog% in-scheme%))
+  (in-prog-scheme% #t in-prog% in-scheme%)
+  (in-verbatim% (inside? 'verbatim) in-text%))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Language related
@@ -134,9 +135,9 @@
 
 (texmacs-modes
   (in-cyrillic% (in? (get-env "language")
-		     '("bulgarian" "russian" "ukrainian")) in-text%)
+                     '("bulgarian" "russian" "ukrainian")) in-text%)
   (in-oriental% (in? (get-env "language")
-		     '("chinese" "japanese" "korean" "taiwanese")) in-text%)
+                     '("chinese" "japanese" "korean" "taiwanese")) in-text%)
   (in-bulgarian% (== (get-env "language") "bulgarian") in-cyrillic%)
   (in-chinese% (== (get-env "language") "chinese") in-oriental%)
   (in-czech% (== (get-env "language") "czech") in-text%)
@@ -209,29 +210,29 @@
 
 (define-public (lazy-initialize-impl id pred? module)
   (set! lazy-initialize-pending
-	(cons (list id pred? module) lazy-initialize-pending)))
+        (cons (list id pred? module) lazy-initialize-pending)))
 
 (define-public (lazy-initialize-do l id)
   (cond ((null? l) l)
-	((or (== (caar l) id) (and (== id #t) ((cadar l))))
-	 ((caddar l))
-	 (lazy-initialize-do (cdr l) id))
-	(else (cons (car l) (lazy-initialize-do (cdr l) id)))))
+        ((or (== (caar l) id) (and (== id #t) ((cadar l))))
+         ((caddar l))
+         (lazy-initialize-do (cdr l) id))
+        (else (cons (car l) (lazy-initialize-do (cdr l) id)))))
 
 (define-public-macro (lazy-initialize module pred?)
   `(with id lazy-initialize-id
      (set! lazy-initialize-id (+ id 1))
      (lazy-initialize-impl id
        (lambda ()
-	 ,pred?)
+         ,pred?)
        (lambda ()
-	 (import-from ,module)))
+         (import-from ,module)))
      (delayed
        (:idle 5000)
        (set! lazy-initialize-pending
-	     (lazy-initialize-do lazy-initialize-pending id))
+             (lazy-initialize-do lazy-initialize-pending id))
        (import-from ,module))))
 
 (define-public (lazy-initialize-force)
   (set! lazy-initialize-pending
-	(lazy-initialize-do lazy-initialize-pending #t)))
+        (lazy-initialize-do lazy-initialize-pending #t)))
