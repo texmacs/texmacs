@@ -95,12 +95,13 @@
   </explain>
 
   <\explain>
-    <scm|texmacs-modes><explain-synopsis|define new texmacs modes>
+    <scm|(texmacs-modes . <scm-arg|modedefs>)> <explain-synopsis|define new
+    texmacs modes>
   <|explain>
     Use this macro to define new modes that you can use for contextual
     overloading, for instance in <scm|kbd-map>. Modes may be made dependent
     on other modes. This macro takes a variable number of definitions as
-    argument, each of the form <scm|(mode-name conditions . dependencies)>.
+    arguments, each of the form <scm|(mode-name conditions . dependencies)>.
     End your <scm|mode-name> and any dependencies with one <scm|%>, like
     this:
 
