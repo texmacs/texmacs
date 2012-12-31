@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.0.7.17>
 
 <style|tmdoc>
 
@@ -83,15 +83,37 @@
     redeclaration will be used. Inside a redeclaration, one may also use the
     <scm|former> keyword in order to explicitly access the former value of
     the redefined symbol.
+  </explain>
 
-    <\explain>
-      <scm|(:mode <scm-arg|mode>)><explain-synopsis|mode-based overloading>
-    <|explain>
-      This option is equivalent to <scm|(:require (<scm-arg|mode>))> and
-      specifies that the definition is only valid when we are in a given
-      <scm-arg|mode>. New modes are defined using <scm|texmacs-modes> and
-      modes can inherit from other modes.
-    </explain>
+  <\explain>
+    <scm|(:mode <scm-arg|mode>)><explain-synopsis|mode-based overloading>
+  <|explain>
+    This option is equivalent to <scm|(:require (<scm-arg|mode>))> and
+    specifies that the definition is only valid when we are in a given
+    <scm-arg|mode>. New modes are defined using <scm|texmacs-modes> and modes
+    can inherit from other modes.
+  </explain>
+
+  <\explain>
+    <scm|texmacs-modes><explain-synopsis|define new texmacs modes>
+  <|explain>
+    Use this macro to define new modes that you can use for contextual
+    overloading, for instance in <scm|kbd-map>. Modes may be made dependent
+    on other modes. This macro takes a variable number of definitions as
+    argument, each of the form <scm|(mode-name conditions . dependencies)>.
+    End your <scm|mode-name> and any dependencies with one <scm|%>, like
+    this:
+
+    <\scm-code>
+      (texmacs-modes
+
+      \ \ (in-verbatim% (inside? 'verbatim) in-text%)
+
+      \ \ (in-tt% (inside? 'tt)))
+    </scm-code>
+
+    When creating new modes remember to place first the faster checks
+    (against booleans, etc.) for speed.
   </explain>
 
   <paragraph*|Other options for function and macro declarations>
