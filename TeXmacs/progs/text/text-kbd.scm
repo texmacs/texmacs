@@ -294,3 +294,11 @@
 (kbd-map
   (:mode in-cyrillic?)
   ("modeswitch" (make-with "language" "english") (make-with "font" "roman")))
+  
+(kbd-map                       ; overwrite shortcuts inappropriate for verbatim
+  (:mode in-verbatim?)
+  (", ," ",,")
+  ("- - -" "---")
+  ("- var" "-")
+  ("space var" "    ")         ; FIXME: arbitrarily set to 4 spaces
+  ("space var var" "    "))    ; FIXME: arbitrarily set to 4 spaces
