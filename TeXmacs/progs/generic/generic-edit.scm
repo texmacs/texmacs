@@ -13,8 +13,8 @@
 
 (texmacs-module (generic generic-edit)
   (:use (utils library tree)
-	(utils library cursor)
-	(utils edit variants)))
+        (utils library cursor)
+        (utils edit variants)))
 
 (tm-define (generic-context? t) #t) ;; overridden in, e.g., graphics mode
 
@@ -115,8 +115,8 @@
   (:require (tree-is-buffer? t))
   (if (and (not (complete-try?)) forwards?)
       (with sh (kbd-system-rewrite (kbd-find-inv-binding '(make-htab "5mm")))
-	(set-message `(concat "Use " ,sh " in order to insert a tab")
-		     "tab"))))
+        (set-message `(concat "Use " ,sh " in order to insert a tab")
+                     "tab"))))
 
 (tm-define (kbd-variant t forwards?)
   (:require (and (tree-in? t '(label reference pageref)) (cursor-inside? t)))
@@ -149,7 +149,7 @@
 (tm-define (simple-context? t)
   (or (leaf? t)
       (and (tree-in? t (simple-tags))
-	   (simple-context? (tree-down t)))))
+           (simple-context? (tree-down t)))))
 
 (tm-define (document-context? t)
   (tree-is? t 'document))
@@ -463,13 +463,13 @@
   (apply tree-go-to l)
   (if (tree-is? (cursor-tree) 'tree)
       (with last (cAr l)
-	(if (nin? last '(:start :end)) (set! last :start))
-	(tree-go-to (cursor-tree) 0 last))))
+        (if (nin? last '(:start :end)) (set! last :start))
+        (tree-go-to (cursor-tree) 0 last))))
 
 (tm-define (structured-horizontal t* forwards?)
   (:require (tree-is? t* 'tree))
   (let* ((t (branch-active t*))
-	 (i (tree-down-index t)))
+         (i (tree-down-index t)))
     (cond ((and (not forwards?) (> i 1))
            (branch-go-to t (- i 1) :end))
           ((and forwards? (!= i 0) (< i (- (tree-arity t) 1)))
@@ -478,7 +478,7 @@
 (tm-define (structured-vertical t* downwards?)
   (:require (tree-is? t* 'tree))
   (let* ((t (branch-active t*))
-	 (i (tree-down-index t)))
+         (i (tree-down-index t)))
     (cond ((and (not downwards?) (!= i 0))
            (tree-go-to t 0 :end))
           ((and downwards? (== (tree-down-index t*) 0))
@@ -487,7 +487,7 @@
 (tm-define (structured-extremal t* forwards?)
   (:require (tree-is? t* 'tree))
   (let* ((t (branch-active t*))
-	 (i (tree-down-index t)))
+         (i (tree-down-index t)))
     (cond ((not forwards?)
            (branch-go-to t 1 :start))
           (forwards?
@@ -506,6 +506,12 @@
   (go-end-paragraph)
   (selection-set-end)
   (clipboard-cut "primary"))
+
+(tm-define (yank-paragraph)
+  (selection-set-start)
+  (go-end-paragraph)
+  (selection-set-end)
+  (clipboard-copy "primary"))
 
 (tm-define (select-all)
   (tree-select (buffer-tree)))
@@ -576,12 +582,12 @@
 
 (define (thumbnail-suffixes)
   (list->url (map url-wildcard
-		  '("*.gif" "*.jpg" "*.jpeg" "*.JPG" "*.JPEG"))))
+                  '("*.gif" "*.jpg" "*.jpeg" "*.JPG" "*.JPEG"))))
 
 (define (fill-row l nr)
   (cond ((= nr 0) '())
-	((nnull? l) (cons (car l) (fill-row (cdr l) (- nr 1))))
-	(else (cons "" (fill-row l (- nr 1))))))
+        ((nnull? l) (cons (car l) (fill-row (cdr l) (- nr 1))))
+        (else (cons "" (fill-row l (- nr 1))))))
 
 (define (make-rows l nr)
   (if (> (length l) nr)
@@ -592,20 +598,20 @@
   (define (mapper x)
     `(image ,(url->delta-unix x) "0.22par" "" "" ""))
   (let* ((l1 (map mapper l))
-	 (l2 (make-rows l1 4))
-	 (l3 (map (lambda (r) `(row ,@(map (lambda (c) `(cell ,c)) r))) l2)))
+         (l2 (make-rows l1 4))
+         (l3 (map (lambda (r) `(row ,@(map (lambda (c) `(cell ,c)) r))) l2)))
     (insert `(tabular* (tformat (twith "table-width" "1par")
-				(twith "table-hyphen" "yes")
-				(table ,@l3))))))
+                                (twith "table-hyphen" "yes")
+                                (table ,@l3))))))
 
 (tm-define (make-thumbnails)
   (:interactive #t)
   (user-url "Picture directory" "directory" 
    (lambda (dir) 
      (let* ((find (url-append dir (thumbnail-suffixes)))
-	          (files (url->list (url-expand (url-complete find "r"))))
-	          (base (buffer-master))
-	          (rel-files (map (lambda (x) (url-delta base x)) files)))
+                  (files (url->list (url-expand (url-complete find "r"))))
+                  (base (buffer-master))
+                  (rel-files (map (lambda (x) (url-delta base x)) files)))
            (if (nnull? rel-files) (make-thumbnails-sub rel-files))))))
    
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -616,13 +622,13 @@
   (:synopsis "Make an insertion of type @s.")
   (with pos (if (== s "float") "tbh" "")
     (insert-go-to (list 'float s pos (list 'document ""))
-		  (list 2 0 0))))
+                  (list 2 0 0))))
 
 (tm-define (insertion-positioning what flag)
   (:synopsis "Allow/disallow the position @what for innermost float.")
   (with-innermost t 'float
     (let ((op (if flag string-union string-minus))
-	  (st (tree-ref t 1)))
+          (st (tree-ref t 1)))
       (tree-set! st (op (tree->string st) what)))))
 
 (define (test-insertion-positioning? what)
@@ -652,8 +658,8 @@
 (tm-define (make-animation u)
   (interactive
       (lambda (w h len rep)
-	(if (== rep "no") (set! rep "false"))
-	(insert `(video ,(url->delta-unix u) ,w ,h ,len ,rep)))
+        (if (== rep "no") (set! rep "false"))
+        (insert `(video ,(url->delta-unix u) ,w ,h ,len ,rep)))
     "Width" "Height" "Length" "Repeat?"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -672,8 +678,8 @@
   (:mode search-mode?)
   (with cmd (key-press-command (string-append "search " key))
     (cond (cmd (cmd))
-	  ((key-press-search key) (noop))
-	  (else (key-press key)))))
+          ((key-press-search key) (noop))
+          (else (key-press key)))))
 
 (tm-define (search-next)
   (key-press-search "next"))
@@ -685,28 +691,28 @@
   (:mode replace-mode?)
   (with cmd (key-press-command (string-append "replace " key))
     (cond (cmd (cmd))
-	  ((key-press-replace key) (noop))
-	  (else (key-press key)))))
+          ((key-press-replace key) (noop))
+          (else (key-press key)))))
 
 (tm-define (keyboard-press key time)
   (:mode spell-mode?)
   (with cmd (key-press-command (string-append "spell " key))
     (cond (cmd (cmd))
-	  ((key-press-spell key) (noop))
-	  (else (key-press key)))))
+          ((key-press-spell key) (noop))
+          (else (key-press key)))))
 
 (tm-define (keyboard-press key time)
   (:mode complete-mode?)
   (with cmd (key-press-command (string-append "complete " key))
     (cond (cmd (cmd))
-	  ((key-press-complete key) (noop))
-	  (else (key-press key)))))
+          ((key-press-complete key) (noop))
+          (else (key-press key)))))
 
 (tm-define (keyboard-press key time)
   (:mode remote-control-mode?)
   ;;(display* "Press " key "\n")
   (if (ahash-ref remote-control-remap key)
       (begin
-	;;(display* "Remap " (ahash-ref remote-control-remap key) "\n")
-	(key-press (ahash-ref remote-control-remap key)))
+        ;;(display* "Remap " (ahash-ref remote-control-remap key) "\n")
+        (key-press (ahash-ref remote-control-remap key)))
       (key-press key)))
