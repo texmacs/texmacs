@@ -42,7 +42,8 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     {   
       check_type<string> (val, s);
       string name = open_box<string> (val);
-      canvas()->window()->setWindowTitle (to_qstring (name));
+      if (canvas() && canvas()->window())
+        canvas()->window()->setWindowTitle (to_qstring (name));
     }
       break;
 
