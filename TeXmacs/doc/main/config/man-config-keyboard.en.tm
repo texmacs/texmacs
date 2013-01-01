@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.0.7.17>
 
 <style|tmdoc>
 
@@ -67,8 +67,8 @@
   word back/forward>>|<row|<cell|Emacs>|<cell|<key|M-a>/<key|M-e>>|<cell|<key|C-up>/<key|C-down>>|<cell|Move
   paragraph back/forward>>|<row|<cell|Emacs>|<cell|<key|M-b>/<key|M-f>>|<cell|<key|C-left>/<key|C-right>>|<cell|Move
   word back/forward>>|<row|<cell|Emacs>|<cell|<key|M-l>/<key|M-t>>|<cell|>|<cell|Locase/transpose
-  words>>|<row|<cell|Windows>|<cell|<key|F5>>|<cell|>|<cell|Refresh/Switch to
-  next pane>>|<row|<cell|Windows>|<cell|<key|F6>/<key|C-F6>/<key|C-S-F6>>|<cell|>|<cell|Switch
+  words (not impl.)>>|<row|<cell|Windows>|<cell|<key|F5>>|<cell|>|<cell|Refresh/Switch
+  to next pane>>|<row|<cell|Windows>|<cell|<key|F6>/<key|C-F6>/<key|C-S-F6>>|<cell|>|<cell|Switch
   to next/previous pane/tab>>|<row|<cell|Windows>|<cell|<key|C-space>>|<cell|>|<cell|Remove
   formatting>>|<row|<cell|Windows>|<cell|<key|C-tab>>|<cell|>|<cell|Switch to
   next child window>>|<row|<cell|Windows>|<cell|<key|C-backspace>/<key|C-delete>>|<cell|>|<cell|Delete
