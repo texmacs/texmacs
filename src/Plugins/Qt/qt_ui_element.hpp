@@ -20,6 +20,7 @@
 #include "hashmap.hpp"
 
 #include <QAction>
+#include <QtGui>
 
 
 /*! Construction of UI elements / widgets.
@@ -112,6 +113,50 @@ public:
   
   virtual QAction* as_qaction ();
   virtual QWidget* as_qwidget ();
+};
+
+
+/*!
+ We use this class to properly initialize style options for our QWidgets
+ which have to blend into QMenus
+    see #QTBUG-1993.
+    see #QTBUG-7707.
+ */
+class QTMAuxMenu: public QMenu {
+public:
+  QTMAuxMenu (): QMenu() {}
+  
+  void myInitStyleOption (QStyleOptionMenuItem *option) const {
+    QAction action (NULL);
+    initStyleOption(option,&action);
+  }
+};
+
+
+/*! QTMMenuButton is a custom button appropriate for menus
+ 
+ We need to subclass QToolButton for two reasons
+ 1) custom appearence
+ 2) if used in QWidgetAction the menu does not disappear upon triggering the
+ button. See QTBUG-10427.
+ */
+class QTMMenuButton: public QToolButton {
+  QStyleOptionMenuItem option;
+  
+public:
+  QTMMenuButton (QWidget* parent = NULL);
+  void mouseReleaseEvent (QMouseEvent *event);
+  void mousePressEvent (QMouseEvent *event);
+  void paintEvent (QPaintEvent *event);
+};
+
+
+class QTMMenuWidget: public QWidget {
+  QStyleOptionMenuItem option;
+  
+public:
+  QTMMenuWidget (QWidget* parent = NULL);
+  void paintEvent(QPaintEvent *event);
 };
 
 #endif // defined QT_UI_ELEMENT_HPP

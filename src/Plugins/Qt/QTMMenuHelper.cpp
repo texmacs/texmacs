@@ -48,12 +48,18 @@ QTMAction::~QTMAction() {
   if (menu() && !(menu()->parent())) delete menu(); 
 }
 
+void
+QTMAction::set_text (string s) {
+  if (N(s)) {
+    if (s == "Help") s = "Help ";
+    str = s;
+    setText (to_qstring (s));
+  }  
+}
+
 void 
 QTMAction::doRefresh() {
-  if (N(str)) {
-    if (str == "Help") str= "Help ";
-    setText (to_qstring (str));
-  }
+  set_text (str);
 }
 
 void
@@ -83,6 +89,136 @@ QTMAction::doShowToolTip() {
     QToolTip::showText(QCursor::pos(), toolTip());
   else
     QToolTip::hideText();
+}
+
+
+/******************************************************************************
+ * QTMWidgetAction
+ ******************************************************************************/
+
+
+QTMWidgetAction::QTMWidgetAction (widget _wid, QObject *parent)
+: QWidgetAction (parent), wid (_wid) {
+  QObject::connect (the_gui->gui_helper, SIGNAL(refresh()), this, SLOT(doRefresh()));
+}
+
+QWidget *
+QTMWidgetAction::createWidget (QWidget * parent) {
+  QWidget* qw = concrete(wid)->as_qwidget();
+  qw->setParent(parent);
+  return qw;
+}
+
+
+/******************************************************************************
+ * QTMTileAction
+ ******************************************************************************/
+
+QTMTileAction::QTMTileAction (QWidget* parent, array<widget>& arr, int _cols)
+: QWidgetAction (parent), cols (_cols)
+{
+  actions.reserve(N(arr));
+  for(int i = 0; i < N(arr); i++) {
+    if (is_nil(arr[i])) break;
+    QAction *act = concrete(arr[i])->as_qaction();
+    act->setParent(this);
+    actions.append(act);
+  };
+}
+
+/*!
+ FIXME: QTMTileAction::createWidget is called twice:
+ the first time when the action is added to the menu,
+ the second when from the menu it is transferred to the toolbar.
+ This is weird since the first widget does not ever use
+ the widget so it results in a waste of time.
+ */
+QWidget*
+QTMTileAction::createWidget(QWidget* parent)
+{
+  if (DEBUG_QT)
+    cout << "QTMTileAction::createWidget\n";
+  QWidget* wid= new QTMMenuWidget (parent);
+  QGridLayout* l= new QGridLayout (wid);
+    // wid->setAutoFillBackground(true);
+    // wid->setBackgroundRole(QPalette::Base);
+  wid->setLayout (l);
+  l->setSizeConstraint (QLayout::SetFixedSize);
+  l->setHorizontalSpacing (2);
+  l->setVerticalSpacing (2);
+  l->setContentsMargins (4, 0, 4, 0);
+  int row= 0, col= 0;
+  for (int i=0; i < actions.count(); i++) {
+    QAction* sa= actions[i];
+    QToolButton* tb= new QTMMenuButton (wid);
+    tb->setDefaultAction (sa);
+    QObject::connect(tb, SIGNAL(released()), this, SLOT(trigger()));
+      //  tb->setStyle (qtmstyle ());
+    l->addWidget (tb, row, col);
+    col++;
+    if (col >= cols) { col = 0; row++; }
+  }
+  return wid;
+}
+
+
+/******************************************************************************
+ * QTMMinibarAction
+ ******************************************************************************/
+
+QTMMinibarAction::QTMMinibarAction (QWidget* parent, array<widget>& arr)
+: QWidgetAction (parent)
+{
+  actions.reserve(N(arr));
+  for(int i = 0; i < N(arr); i++) {
+    if (is_nil(arr[i])) break;
+    QAction *act = concrete(arr[i])->as_qaction();
+    act->setParent(this);
+    actions.append(act);
+  };
+}
+
+/*!
+ FIXME: QTMMinibarAction::createWidget is called twice:
+ the first time when the action is added to the menu, the second when from the
+ menu it is transferred to the toolbar. This is weird since the first widget
+ does not ever use the widget so it results in a waste of time.
+ */
+QWidget*
+QTMMinibarAction::createWidget(QWidget* parent) {
+  if (DEBUG_QT) cout << "QTMMinibarAction::createWidget\n";
+  QWidget* wid= new QWidget (parent);
+  QBoxLayout* l= new QBoxLayout (QBoxLayout::LeftToRight, wid);
+  wid->setLayout (l);
+    //  l->setSizeConstraint (QLayout::SetFixedSize);
+  l->setContentsMargins (0, 0, 0, 0);
+  l->setSpacing(0);
+  for (int i=0; i < actions.count(); i++) {
+    QAction* sa= actions[i];
+    if (QWidgetAction * wa = qobject_cast<QWidgetAction*>(sa)) {
+      QWidget *w = wa->requestWidget(wid);
+      l->addWidget(w);
+    } else if ((sa->text().isNull())&&(sa->icon().isNull())) {
+      l->addSpacing(8);
+    } else {
+      QToolButton *tb = new QToolButton(wid);
+      
+        //HACK: texmacs does not use the checked state of the action
+        // if the action is checkable then it means that it should be checked
+      sa->setChecked(sa->isCheckable());
+      
+      tb->setDefaultAction(sa);
+      tb->setAutoRaise(true);
+      tb->setPopupMode (QToolButton::InstantPopup);
+      tb->setStyle(qtmstyle());
+        //  tb->setIconSize(QSize(12,12));
+      QFont f = tb->font();
+      f.setPixelSize(10);
+      tb->setFont(f);
+      l->addWidget(tb);
+    }
+  }
+  return wid;
 }
 
 

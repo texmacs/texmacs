@@ -23,7 +23,6 @@
 #include "promise.hpp"
 #include "scheme.hpp"
 
-#include <QtGui>
 #include "QTMWindow.hpp"
 #include "QTMGuiHelper.hpp"
 #include "QTMMenuHelper.hpp"
@@ -31,48 +30,15 @@
 
 #include "qt_gui.hpp"
 
-#include "../../Style/Evaluate/evaluate_main.hpp" // required for as_length(string)
-
 /******************************************************************************
  * Auxiliary classes
  ******************************************************************************/
 
-/*!
- * We use this class to properly initialize style options for our QWidgets
- * which have to blend into QMenus
- *   see #QTBUG-1993.
- *   see #QTBUG-7707.
- */
-class QTMAuxMenu: public QMenu {
-public:
-  QTMAuxMenu (): QMenu() {}
-  
-  void myInitStyleOption (QStyleOptionMenuItem *option) const {
-    QAction action (NULL);
-    initStyleOption(option,&action);
-  }
-};
-
-
-/*! QTMMenuButton is a custom button appropriate for menus
- 
-  We need to subclass QToolButton for two reasons
-   1) custom appearence
-   2) if used in QWidgetAction the menu does not disappear upon triggering the
-      button. See QTBUG-10427.
- */
-class QTMMenuButton: public QToolButton {
-  QStyleOptionMenuItem option;
-public:
-  QTMMenuButton (QWidget* parent = 0): QToolButton(parent) {
-    QTMAuxMenu m;
-    m.myInitStyleOption (&option);
-    setAttribute (Qt::WA_Hover);
-  }  
-  void mouseReleaseEvent (QMouseEvent *event);
-  void mousePressEvent (QMouseEvent *event);
-  void paintEvent (QPaintEvent *event);
-};
+QTMMenuButton::QTMMenuButton (QWidget* parent) : QToolButton(parent) {
+  QTMAuxMenu m;
+  m.myInitStyleOption (&option);
+  setAttribute (Qt::WA_Hover);
+}
 
 void
 QTMMenuButton::mousePressEvent (QMouseEvent* event) {
@@ -88,7 +54,7 @@ QTMMenuButton::mouseReleaseEvent (QMouseEvent* event) {
   // this one triggers the action and untoggles the button
   QToolButton::mouseReleaseEvent (event);
   // this one forwards the event to the parent
-  // (which eventually is the menu which then close itself)
+  // (which eventually is the menu which then closes itself)
   QWidget::mouseReleaseEvent (event);
 }
 
@@ -112,16 +78,10 @@ QTMMenuButton::paintEvent (QPaintEvent* event) {
   defaultAction ()-> icon ().paint (&p, r);
 }
 
-
-class QTMMenuWidget: public QWidget {
-  QStyleOptionMenuItem option;
-public:
-  QTMMenuWidget (QWidget* parent = 0): QWidget(parent) {
-    QTMAuxMenu m;
-    m.myInitStyleOption (&option);
-  }
-  void paintEvent(QPaintEvent *event);
-};
+QTMMenuWidget::QTMMenuWidget (QWidget* parent): QWidget(parent) {
+  QTMAuxMenu m;
+  m.myInitStyleOption (&option);
+}
 
 void
 QTMMenuWidget::paintEvent(QPaintEvent* event) {
@@ -137,7 +97,7 @@ QTMMenuWidget::paintEvent(QPaintEvent* event) {
 /*! A QToolButton which draws itself using its defaultAction()'s icon. */
 class QTMUIButton: public QToolButton {
 public:
-  QTMUIButton (QWidget* parent = 0): QToolButton(parent) {}
+  QTMUIButton (QWidget* parent = NULL): QToolButton(parent) {}
   void paintEvent(QPaintEvent *event);
 };
 
@@ -150,160 +110,13 @@ QTMUIButton::paintEvent(QPaintEvent* event) {
 }
 
 
-QTMWidgetAction::QTMWidgetAction (widget _wid, QObject *parent)
-: QWidgetAction (parent), wid (_wid) { 
-  QObject::connect (the_gui->gui_helper, SIGNAL(refresh()), this, SLOT(doRefresh()));
-}
-
-QTMWidgetAction::~QTMWidgetAction() {
-}
-
-
-void 
-QTMWidgetAction::doRefresh() {
-#if 0
-  if (N(str)) {
-      //string t= tm_var_encode (str);
-    if (str == "Help") str= "Help ";
-    setText (to_qstring (str));
-  }
-#endif
-}
-
-QWidget * 
-QTMWidgetAction::createWidget (QWidget * parent) {
-  QWidget* qw = concrete(wid)->as_qwidget();
-  qw->setParent(parent);
-  return qw;
-}
-
-
-class QTMTileAction: public QWidgetAction {
-  QVector <QAction*> actions;
-  int cols;
-public:
-  QTMTileAction (QWidget* parent, array<widget>& arr, int _cols)
-  : QWidgetAction (parent), cols (_cols)
-  {
-    actions.reserve(N(arr));
-    for(int i = 0; i < N(arr); i++) {
-      if (is_nil(arr[i])) break;
-      QAction *act = concrete(arr[i])->as_qaction();
-      act->setParent(this);
-      actions.append(act);
-    };
-  }
-  QWidget* createWidget(QWidget* parent);
-  // virtual void activate (ActionEvent event) {
-  //   cout << "TRIG\n"; QWidgetAction::activate (event); }
-};
-
-/*!
-  FIXME: QTMTileAction::createWidget is called twice:
-  the first time when the action is added to the menu,
-  the second when from the menu it is transferred to the toolbar.
-  This is weird since the first widget does not ever use
-  the widget so it results in a waste of time.
- */
-QWidget*
-QTMTileAction::createWidget(QWidget* parent) {
-  if (DEBUG_QT) 
-    cout << "QTMTileAction::createWidget\n";
-  QWidget* wid= new QTMMenuWidget (parent);
-  QGridLayout* l= new QGridLayout (wid);
-  // wid->setAutoFillBackground(true);
-  // wid->setBackgroundRole(QPalette::Base);
-  wid->setLayout (l);
-  l->setSizeConstraint (QLayout::SetFixedSize);
-  l->setHorizontalSpacing (2);
-  l->setVerticalSpacing (2);
-  l->setContentsMargins (4, 0, 4, 0);
-  int row= 0, col= 0;
-  for (int i=0; i < actions.count(); i++) {
-    QAction* sa= actions[i];
-    QToolButton* tb= new QTMMenuButton (wid);
-    tb->setDefaultAction (sa);
-    QObject::connect(tb, SIGNAL(released()), this, SLOT(trigger()));
-    //  tb->setStyle (qtmstyle ());
-    l->addWidget (tb, row, col);
-    col++;
-    if (col >= cols) { col = 0; row++; }
-  }
-  return wid;
-}
-
-class QTMMinibarAction : public QWidgetAction {
-  QVector <QAction*> actions;
-public:
-  QTMMinibarAction (QWidget* parent, array<widget>& arr)
-  : QWidgetAction (parent)
-  {
-    actions.reserve(N(arr));
-    for(int i = 0; i < N(arr); i++) {
-      if (is_nil(arr[i])) break;
-      QAction *act = concrete(arr[i])->as_qaction();
-      act->setParent(this);
-      actions.append(act);
-    };
-  }
-  QWidget* createWidget(QWidget* parent);
-  // virtual void activate (ActionEvent event) {
-  //   cout << "TRIG\n"; QWidgetAction::activate (event); }
-};
-
-/*!
-  FIXME: QTMMinibarAction::createWidget is called twice:
-  the first time when the action is added to the menu,
-  the second when from the menu it is transferred to the toolbar.
-  This is weird since the first widget does not ever use
-  the widget so it results in a waste of time. 
- */
-QWidget*
-QTMMinibarAction::createWidget(QWidget* parent) {
-  if (DEBUG_QT) cout << "QTMMinibarAction::createWidget\n";
-  QWidget* wid= new QWidget (parent);
-  QBoxLayout* l= new QBoxLayout (QBoxLayout::LeftToRight, wid);
-  wid->setLayout (l);
-  //  l->setSizeConstraint (QLayout::SetFixedSize);
-  l->setContentsMargins (0, 0, 0, 0);
-  l->setSpacing(0);
-  for (int i=0; i < actions.count(); i++) {
-    QAction* sa= actions[i];
-    if (QWidgetAction * wa = qobject_cast<QWidgetAction*>(sa)) {
-      QWidget *w = wa->requestWidget(wid);
-      l->addWidget(w);
-    } else if ((sa->text().isNull())&&(sa->icon().isNull())) {
-      l->addSpacing(8);
-    } else {
-      QToolButton *tb = new QToolButton(wid);
-      
-      //HACK: texmacs does not use the checked state of the action
-      // if the action is checkable then it means that it should be
-      // checked
-      sa->setChecked(sa->isCheckable());
-      
-      tb->setDefaultAction(sa);
-      tb->setAutoRaise(true);
-      tb->setPopupMode (QToolButton::InstantPopup);
-      tb->setStyle(qtmstyle());
-      //  tb->setIconSize(QSize(12,12));
-      QFont f = tb->font();
-      f.setPixelSize(10);
-      tb->setFont(f);
-      l->addWidget(tb);
-    }
-  }
-  return wid;
-}
-
-
 /******************************************************************************
  * Ad-hoc command_rep derivates for different UI elements in qt_ui_element_rep
  ******************************************************************************/
 
 /*! Ad-hoc command to be used to simulate keypresses
- * 
- * \sa qt_ui_element, , qt_ui_element_rep::as_qaction
+ 
+ \sa qt_ui_element, , qt_ui_element_rep::as_qaction
  */
 
 class qt_key_command_rep: public command_rep {
@@ -666,11 +479,12 @@ qt_ui_element_rep::as_qaction () {
     {
       typedef quintuple<widget, command, string, string, int> T;
       T x = open_box<T>(load);
-      widget w = x.x1;
+
+      widget w    = x.x1;
       command cmd = x.x2;
-      string pre = x.x3;
-      string ks = x.x4;
-      int style = x.x5;
+      string pre  = x.x3;
+      string ks   = x.x4;
+      int style   = x.x5;
       
       // a command button with an optional prefix (o, * or v) and
       // keyboard shortcut; if ok does not hold, then the button is greyed
@@ -745,9 +559,7 @@ qt_ui_element_rep::as_qaction () {
       // a text widget with a given color and transparency
 
       QTMAction* a= new QTMAction (NULL);
-      if (str == "Help") str= "Help "; // HACK to avoid MacOS autodetection of the Help menu?
-      a->setText(to_qstring (str));
-      a->str = str;
+      a->set_text (str);
       a->setFont(to_qfont(style, a->font()));
       return a;
     }
@@ -1108,13 +920,11 @@ qt_ui_element_rep::as_qwidget () {
         //bool      tsp = x.x4;  // FIXME: add transparency support
       
       QLabel* w = new QLabel();
-#if 0
+      /*
       //FIXME: implement refresh when changing language
       QTMAction* a= new QTMAction (NULL);
-      //a->str = str;
-#endif
-      if (str == "Help") str= "Help ";
-      //w->setTextFormat(Qt::RichText);
+      a->set_text (str);
+       */
       w->setText (to_qstring (str));
       w->setStyleSheet (style);
       w->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
