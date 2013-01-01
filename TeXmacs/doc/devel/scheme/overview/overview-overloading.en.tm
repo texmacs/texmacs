@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.0.7.17>
 
 <style|tmdoc>
 
@@ -79,7 +79,7 @@
   Besides <scm|tm-define>, several other added language primitives support
   the contextual overloading mechanism. For instance, <scm|kbd-map> and
   <scm|menu-bind> support overloading on mode. The <scm|tm-define-macro> and
-  <scm|tm-property> primitives are analoguous to<nbsp><scm|tm-define>.
+  <scm|tm-property> primitives are analoguous to <scm|tm-define>.
 
   <tmdoc-copyright|2005|Joris van der Hoeven>
 
@@ -90,3 +90,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>

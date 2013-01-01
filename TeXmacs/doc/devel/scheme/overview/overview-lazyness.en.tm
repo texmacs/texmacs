@@ -1,11 +1,11 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.0.7.17>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|The module system and lazy definitions>
 
-  As explaned above, each <scheme> file inside <TeXmacs> or one of its
+  As explained above, each <scheme> file inside <TeXmacs> or one of its
   plug-ins corresponds to a <em|<TeXmacs> module>. The individual <TeXmacs>
   modules are usually grouped together into an internal or external module,
   which corresponds to a directory on your hard disk.
@@ -113,3 +113,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>
