@@ -162,6 +162,7 @@
 (kbd-map
   (:require (in-prog-scheme?))
   ("C-i" (scheme-indent))
+  ("C-tab" (scheme-indent))
   ("std c" (clipboard-copy-export "scheme" "primary"))
   ("std v" (clipboard-paste-import "scheme" "primary"))
   ("std x" (clipboard-cut-export "scheme" "primary")))

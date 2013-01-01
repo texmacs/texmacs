@@ -364,13 +364,7 @@
   ("A-#" (numbered-toggle (focus-tree)))
   ("A-*" (alternate-toggle (focus-tree)))
   ("A-+" (zoom-in (sqrt (sqrt 2.0))))
-  ("A--" (zoom-out (sqrt (sqrt 2.0))))
-  ("A-tab" (make-htab "5mm"))
-  ("A-space" (make-space "0.2spc"))
-  ("A-S-space" (make-space "-0.2spc"))
-  ("M-space" (make-space "0.2spc"))
-  ("M-S-space" (make-space "-0.2spc"))
-  ("M-tab" (make-htab "5mm")))
+  ("A--" (zoom-out (sqrt (sqrt 2.0)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Standard cross-platform keybindings
@@ -407,8 +401,17 @@
   ;;("std S-tab" (previous-tab))
 
   ("search std f" (search-next))      ;; added for convenience
-  ("search std F" (search-previous))  ;; added for convenience
-  )
+  ("search std F" (search-previous)))  ;; added for convenience
+
+(kbd-map
+  (:profile emacs)
+  (:require (not (in-prog?)))
+  ("A-tab" (make-htab "5mm"))
+  ("A-space" (make-space "0.2spc"))
+  ("A-S-space" (make-space "-0.2spc"))
+  ("M-space" (make-space "0.2spc"))
+  ("M-S-space" (make-space "-0.2spc"))
+  ("M-tab" (make-htab "5mm")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Gnome keymap
@@ -463,7 +466,11 @@
   ("M-A-C-home" (traverse-first))
   ("M-A-C-end" (traverse-last))
   ("M-A-C-S-home" (kbd-select traverse-first))
-  ("M-A-C-S-end" (kbd-select traverse-last))
+  ("M-A-C-S-end" (kbd-select traverse-last)))
+
+(kbd-map
+  (:profile gnome)
+  (:require (not (in-prog?)))
   ("M-tab" (make-htab "5mm"))
   ("M-space" (make-space "0.2spc"))
   ("M-S-space" (make-space "-0.2spc")))
@@ -520,7 +527,11 @@
   ("M-A-C-home" (traverse-first))
   ("M-A-C-end" (traverse-last))
   ("M-A-C-S-home" (kbd-select traverse-first))
-  ("M-A-C-S-end" (kbd-select traverse-last))
+  ("M-A-C-S-end" (kbd-select traverse-last)))
+  
+(kbd-map
+  (:profile kde)
+  (:require (not (in-prog?)))
   ("M-tab" (make-htab "5mm"))
   ("M-space" (make-space "0.2spc"))
   ("M-S-space" (make-space "-0.2spc")))
@@ -588,17 +599,21 @@
   ("altcmd x" (interactive footer-eval))
   ("altcmd X" (interactive footer-eval))
 
-  ("C-a" (kbd-start-line))
-  ("C-e" (kbd-end-line))
+  ;("C-a" (kbd-start-line)) ; conflict with ("text a" (make 'abbr))
+  ;("C-e" (kbd-end-line))   ; conflict with ("text e" (make-tmlist 'enumerate))
   ("C-g" (selection-cancel))
   ("C-k" (kill-paragraph))
   ("C-y" (yank-paragraph))
   ("C-q" (make 'symbol))
-  ("C-tab" (make-htab "5mm"))
-  ("C-space" (make-space "0.2spc"))
-  ("C-S-space" (make-space "-0.2spc"))
   ("C-!" (make-label))
   ("C-?" (make 'reference)))
+
+(kbd-map
+  (:profile macos)
+  (:require (not (in-prog?)))
+  ("C-tab" (make-htab "5mm"))
+  ("C-space" (make-space "0.2spc"))
+  ("C-S-space" (make-space "-0.2spc")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Windows keymap
@@ -720,7 +735,11 @@
   ("M-A-C-home" (traverse-first))
   ("M-A-C-end" (traverse-last))
   ("M-A-C-S-home" (kbd-select traverse-first))
-  ("M-A-C-S-end" (kbd-select traverse-last))
+  ("M-A-C-S-end" (kbd-select traverse-last)))
+
+(kbd-map
+  (:profile windows)
+  (:require (not (in-prog?)))
   ("M-tab" (make-htab "5mm"))
   ("M-space" (make-space "0.2spc"))
   ("M-S-space" (make-space "-0.2spc")))
