@@ -173,10 +173,11 @@ class qt_choice_command_rep: public command_rep {
   QPointer<QTMListView> qwid;
   command                cmd;
   bool              multiple;  //<! Are multiple choices allowed in the widget?
+  bool              filtered;
   
 public:
-  qt_choice_command_rep (QTMListView* w, command c, bool m)
-    : qwid(w), cmd(c), multiple(m) {}
+  qt_choice_command_rep (QTMListView* w, command c, bool m, bool f=false)
+  : qwid(w), cmd(c), multiple(m), filtered(f) {}
   
   virtual void apply () {
     if (qwid) {
@@ -190,12 +191,16 @@ public:
           l = cons (from_qstring (selected[i]), l);
       else if (selected.size() > 0)
         l = from_qstring (selected[0]);
+      else
+        l = "";
       
-      cmd (list_object (l, from_qstring (qwid->filter()->filterRegExp().pattern())));
+      if (filtered)
+        l = cons (l, from_qstring (qwid->filter()->filterRegExp().pattern()));
+      
+      cmd (list_object (l));
     }
   }
   
   tm_ostream& print (tm_ostream& out) { return out << "Choice"; }
 };
-
 #endif // defined QT_UI_ELEMENT_HPP
