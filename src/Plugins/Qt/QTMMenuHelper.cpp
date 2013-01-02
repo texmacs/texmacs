@@ -747,6 +747,7 @@ QTMListView::QTMListView (const command& cmd,
                           const QStringList& selections,
                           bool multiple,
                           bool scroll,
+                          bool filtered,
                           QWidget* parent)
 : QListView (parent) {
   
@@ -778,7 +779,7 @@ QTMListView::QTMListView (const command& cmd,
   setUniformItemSizes (true);
   setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-  command     ecmd = tm_new<qt_choice_command_rep> (this, cmd, multiple);
+  command     ecmd = tm_new<qt_choice_command_rep> (this, cmd, multiple, filtered);
   QTMCommand* qcmd = new QTMCommand (this, ecmd);
   QObject::connect (selectionModel(),
                     SIGNAL (selectionChanged (const QItemSelection&, const QItemSelection&)),

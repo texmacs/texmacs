@@ -978,11 +978,11 @@ qt_ui_element_rep::as_qwidget () {
       string filter = x.x4;
       QTMListView* choiceWidget = new QTMListView (x.x1, to_qstringlist (x.x2),
                                                    QStringList (to_qstring (x.x3)),
-                                                   false, true);
+                                                   false, true, true);
 
       QTMLineEdit* lineEdit = new QTMLineEdit (0, "1w");
-      QObject::connect(lineEdit, SIGNAL (textChanged(const QString&)),
-                       choiceWidget->filter(), SLOT (setFilterRegExp(const QString&)));
+      QObject::connect(lineEdit, SIGNAL (textChanged (const QString&)),
+                       choiceWidget->filter(), SLOT (setFilterRegExp (const QString&)));
       lineEdit->setText (to_qstring (filter));
       lineEdit->setFocusPolicy (Qt::StrongFocus);
 

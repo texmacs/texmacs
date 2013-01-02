@@ -323,7 +323,8 @@ class QTMListView : public QListView {
 
 public:
   QTMListView (const command& cmd, const QStringList& vals, const QStringList&,
-               bool multiple, bool _scroll = false, QWidget* parent = NULL);
+               bool multiple, bool scroll = false, bool filtered = false,
+               QWidget* parent = NULL);
   
   QSortFilterProxyModel* filter() const { return filterModel; }
   bool isScrollable() const {

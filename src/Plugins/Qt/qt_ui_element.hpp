@@ -195,9 +195,9 @@ public:
         l = "";
       
       if (filtered)
-        l = cons (l, from_qstring (qwid->filter()->filterRegExp().pattern()));
-      
-      cmd (list_object (l));
+        cmd (list_object (l, from_qstring (qwid->filter()->filterRegExp().pattern())));
+      else
+        cmd (list_object (l));
     }
   }
   
