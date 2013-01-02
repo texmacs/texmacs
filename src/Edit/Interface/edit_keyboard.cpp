@@ -176,7 +176,7 @@ edit_interface_rep::key_press (string gkey) {
     interrupt_shortcut ();    
   } else if (DEBUG_KEYBOARD)
     cout << "Keyboard] unrecognized key " << key 
-         << " is probably missing in the encoding files.\n";
+         << ". Undefined shortcut or key missing in the encoding files.\n";
 }
 
 void
