@@ -29,7 +29,7 @@
 
 (tm-define (string->module str)
   (:synopsis "Returns the list representation of a module given as a string")
-  (if (== str "") '()
+  (if (or (not (string? str)) (== str "")) '()
       (map string->symbol (string-split str #\.))))
 
 (tm-define (module->string module)

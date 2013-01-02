@@ -123,12 +123,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; module browser widget
-;; FIXME: refresh of choice widgets is not working
-;; FIXME: the input widget is not displayed ?
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define mw-module "")
 (tm-define mw-symbol "")
+(tm-define mw-module-filter "")
+(tm-define mw-symbol-filter "")
 
 ; don't make this a variable or we'll construct it when this module loads
 (tm-define (mw-all-modules)
@@ -139,11 +139,6 @@
        (or (module-exported (string->module mw-module))
            '())))
 
-(tm-widget (module-symbols-widget)
-  (vertical
-    (bold (text "Symbols"))
-    (scrollable (choice (set! mw-symbol answer) (mw-all-symbols) mw-symbol))))
-
 (tm-widget (symbol-doc-widget)
   (resize ("200px" "400px" "9000px") ("100px" "200px" "3000px")
     (texmacs-input ($doc-explain-scm mw-symbol) '(style "tmdoc") (noop) #f)))
@@ -153,20 +148,37 @@
    ("Insert template"
     (insert ($doc-symbol-template (string->symbol mw-symbol) "")))))
 
-(tm-widget (module-widget)
+(tm-widget (module-list-widget)
   (vertical
-    (hsplit
-      (vertical
-        (bold (text "Module"))
-        (scrollable 
-          (choice (set! mw-module answer)
-                  (mw-all-modules)
-                  mw-module)))
-      (refresh module-symbols-widget))
-    ===
-    (refresh symbol-doc-widget)
-    ===
-    (refresh symbol-doc-buttons)))
+   (bold (text "Module"))
+   (filtered-choice (begin (set! mw-module answer)
+                           (set! mw-symbol "")
+                           (set! mw-module-filter filter))
+                    (mw-all-modules)
+                    mw-module
+                    mw-module-filter)))
 
-(tm-define (show-module-widget) 
-  (top-window module-widget "Pick module and symbol..."))
+(tm-widget (module-symbols-widget)
+  (vertical
+    (bold (text "Symbols"))
+    (filtered-choice (begin (set! mw-symbol answer) 
+                            (set! mw-symbol-filter filter))
+                     (mw-all-symbols) 
+                     mw-symbol
+                     mw-symbol-filter)))
+
+(tm-widget (module-browser)
+  (vertical
+   (hsplit
+     ; HACK: placing the resize outermost resizes to minimal size
+     ;        (vertical size is still set to min!)
+     (resize ("200px" "300px" "4000px") ("300px" "500px" "4000px")
+       (link module-list-widget))
+       (refresh module-symbols-widget))))
+
+(tm-define (open-module-browser)
+  (set! mw-module "")
+  (set! mw-symbol "")
+  (set! mw-module-filter "")
+  (set! mw-symbol-filter "")
+  (top-window module-browser "Pick module and symbol..."))
