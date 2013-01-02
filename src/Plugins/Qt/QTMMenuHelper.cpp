@@ -660,10 +660,10 @@ QTMComboBox::event (QEvent* ev) {
  * QTMScrollArea
  ******************************************************************************/
 
-/*! Sets the widget for the scrollarea and looks for QListWidgets.
+/*! Sets the widget for the scrollarea and looks for QListViews.
  
  This is needed to correctly update the scrollbars when the user navigates with
- the keys through items in a QListWidget contained in the QTMScrollArea.
+ the keys through items in a QListView contained in the QTMScrollArea.
  It also scrolls the viewport to the position of selected items in QListWidgets.
  */
 void
@@ -671,43 +671,34 @@ QTMScrollArea::setWidgetAndConnect (QWidget* w)
 {
   setWidget (w);
  
-  QList<QListWidget*> all = w->findChildren<QListWidget*>();
-  if (all.count() > 0) {
-    for (QList<QListWidget*>::iterator it = all.begin(); it != all.end(); ++it) {
-      QObject::connect(*it, SIGNAL (currentItemChanged (QListWidgetItem*, QListWidgetItem*)),
-                       this, SLOT (scrollToSelection (QListWidgetItem*, QListWidgetItem*)));
-
-      QList<QListWidgetItem*> selection = (*it)->selectedItems();
-      if (! selection.isEmpty())
-        selectedItem = selection.last();
-    }
+  listViews = w->findChildren<QTMListView*>();
+  for (ListViewsIterator it = listViews.begin(); it != listViews.end(); ++it) {
+    if (! (*it)->isScrollable())
+      QObject::connect (*it, SIGNAL (selectionChanged (const QItemSelection&)),
+                        this,  SLOT (scrollToSelection (const QItemSelection&)));
   }
 }
 
-/*! Scrolls the area to a QListWidgetItem in a child QListWidget.
- 
- The second parameter is unused but needed to match signatures with the signal
- QListWidget::currentItemChanged().
- */
+/*! Scrolls the area to a given index in a QTMListView. */
 void
-QTMScrollArea::scrollToSelection (QListWidgetItem* c, QListWidgetItem* p)
+QTMScrollArea::scrollToSelection (const QItemSelection& sel)
 {
-  (void) p;
-  if (!c)
+  if (sel.isEmpty())
     return;
 
-  selectedItem = c;
-  QListWidget* lw = c->listWidget();
-  QRect r = lw->visualItemRect (c);
-  QRect g = lw->geometry();
-  int   x = r.x() + g.x();
-  int   y = r.y() + g.y();
-
-  if (! viewport()->geometry().contains (x, y))
-    ensureVisible (x, y, r.width(), r.height());
+  QTMListView* lw = qobject_cast<QTMListView*> (sender());
+  if (lw) {
+    QRect r = lw->visualRect (sel.indexes().last());
+    QRect g = lw->geometry();
+    int   x = r.x() + g.x();
+    int   y = r.y() + g.y();
+    
+    if (! viewport()->geometry().contains (x, y))
+      ensureVisible (x, y, r.width(), r.height());
+  }
 }
 
-/*! Work around problem with scrolling before the widget is shown.
+/*! Work around a problem with scrolling before the widget is shown.
  
  Calling ensureVisible() before the widget is shown scrolls the viewport by an
  insufficient amount. See the comments to QTMScrollArea.
@@ -715,7 +706,8 @@ QTMScrollArea::scrollToSelection (QListWidgetItem* c, QListWidgetItem* p)
 void
 QTMScrollArea::showEvent (QShowEvent* ev)
 {
-  scrollToSelection (selectedItem, selectedItem);
+  for (ListViewsIterator it = listViews.begin(); it != listViews.end(); ++it)
+    scrollToSelection ((*it)->selectionModel()->selection());
   QScrollArea::showEvent (ev);
 }
 
@@ -766,4 +758,15 @@ QTMListView::QTMListView (const command& cmd,
                     SIGNAL (selectionChanged (const QItemSelection&, const QItemSelection&)),
                     qcmd,
                     SLOT (apply()));
+}
+
+/*! Reimplemented from QListView.
+ 
+ We simply emit another signal, mainly to notify QTMScrollArea that we have a new
+ selection for those cases were we don't have our own scrollbars.
+ */
+void
+QTMListView::selectionChanged (const QItemSelection& c, const QItemSelection& p) {
+  QListView::selectionChanged (c, p);
+  emit selectionChanged (c);
 }

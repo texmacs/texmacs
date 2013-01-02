@@ -305,10 +305,34 @@ class QTMComboBox : public QComboBox {
   QSize   minSize;
 public:
   QTMComboBox (QWidget* parent);
-  
+
   void addItemsAndResize (const QStringList& texts, string ww, string h);
   bool event (QEvent* ev);
+};
 
+
+/*! A QListView with a sorting proxy model. */
+class QTMListView : public QListView {
+  Q_OBJECT
+
+  QStringListModel*      stringModel;
+  QSortFilterProxyModel* filterModel;
+
+public:
+  QTMListView (const command& cmd, const QStringList& vals, const QStringList&,
+               bool multiple, bool _scroll = false, QWidget* parent = NULL);
+  
+  QSortFilterProxyModel* filter() const { return filterModel; }
+  bool isScrollable() const {
+    return (verticalScrollBarPolicy() != Qt::ScrollBarAlwaysOff) &&
+           (horizontalScrollBarPolicy() != Qt::ScrollBarAlwaysOff);
+  }
+
+signals:
+  void selectionChanged (const QItemSelection& c);
+
+protected slots:
+  virtual void selectionChanged (const QItemSelection& c, const QItemSelection& p);
 };
 
 
@@ -329,32 +353,19 @@ public:
 class QTMScrollArea : public QScrollArea {
   Q_OBJECT
   
-  QListWidgetItem* selectedItem;
+  QList<QTMListView*> listViews;
+  
+  typedef QList<QTMListView*>::iterator ListViewsIterator;
   
 public:
-  QTMScrollArea (QWidget* p = NULL) : QScrollArea(p), selectedItem(0) { };
+  QTMScrollArea (QWidget* p = NULL) : QScrollArea(p) { };
   void setWidgetAndConnect (QWidget* w);
 
 protected:
   virtual void showEvent (QShowEvent* ev);
 
 public slots:
-  void scrollToSelection (QListWidgetItem* c, QListWidgetItem* p);
+  void scrollToSelection (const QItemSelection& selected);
 };
-
-/*! A QListView with a sorting proxy model. */
-class QTMListView : public QListView {
-  Q_OBJECT
-  
-  QStringListModel*      stringModel;
-  QSortFilterProxyModel* filterModel;
-  
-public:
-  QTMListView (const command& cmd, const QStringList& vals, const QStringList&,
-               bool multiple, bool scroll = false, QWidget* parent = NULL);
-  
-  QSortFilterProxyModel* filter() { return filterModel; }
-};
-
 
 #endif // QTMMENUHELPER_HPP
