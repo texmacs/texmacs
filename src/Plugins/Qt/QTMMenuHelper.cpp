@@ -532,10 +532,16 @@ QTMTabWidget::resizeOthers(int current) {
 widget make_menu_widget (object wid);
 
 QTMRefreshWidget::QTMRefreshWidget (string _tmwid)
-: QWidget (), tmwid (_tmwid), curobj (false), cur (), cache (widget ()) 
+: QWidget (), tmwid (_tmwid), curobj (false), cur (), qwid(NULL),
+  cache (widget ())
 {   
   QObject::connect(the_gui->gui_helper, SIGNAL(tmSlotRefresh()), 
                    this, SLOT(doRefresh()));
+  QVBoxLayout* l = new QVBoxLayout (this);
+  l->setContentsMargins (0, 0, 0, 0);
+  l->setMargin (0);
+  setLayout (l);
+  
   doRefresh();
 }
 
@@ -559,28 +565,48 @@ QTMRefreshWidget::recompute () {
   }
 }
 
-void 
+/*
+void
+QTMRefreshWidget::deleteLayout (QLayout* l) {
+  if (!l)
+    return;
+
+  QLayoutItem* item;
+  while ((item = l->takeAt(0)) != 0) {
+    if (item->widget()) {
+        //qDebug() << "Deleting widget: " << item->widget();
+      l->removeWidget (item->widget());
+      item->widget()->setParent (NULL);
+      delete item->widget();
+    }	else if (item->layout()) {
+        //qDebug() << "Deleting layout: " << item->layout();
+      item->layout()->setParent (NULL);
+      deleteLayout (item->layout());
+    }
+  }
+
+  delete l;
+}
+*/
+
+void
 QTMRefreshWidget::doRefresh() {
   if (recompute()) {
-    if (layout()) {
-      QLayoutItem* item;
-      while ((item = layout()->takeAt(0)) != 0) {		
-        if (item->widget()) {
-          layout()->removeWidget(item->widget());
-          delete item->widget();
-        }	
-        delete item;
-      }
-      delete layout();
-    }
-    setLayout(concrete(cur)->as_qlayoutitem()->layout());
+    if (qwid) qwid->setParent (NULL);
+    delete qwid;
+    qwid = concrete (cur)->as_qwidget();
+    qwid->setParent (this);
+
+    delete layout()->takeAt(0);
+    layout()->addWidget (qwid);
+    update();
     
       // Tell the window to fix its size to the new one if we had it fixed to
       // begin with (this is indicated by minimum and maximum sizes set to 
       // values other than the default)
-    if (window()->minimumSize() != QSize(0,0) && 
-        window()->maximumSize() != QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX))
-      window()->setFixedSize(window()->sizeHint());  
+    if (window()->minimumSize() != QSize (0,0) &&
+        window()->maximumSize() != QSize (QWIDGETSIZE_MAX, QWIDGETSIZE_MAX))
+      window()->setFixedSize (window()->sizeHint());  
   }
 }
 

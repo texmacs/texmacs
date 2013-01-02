@@ -283,12 +283,15 @@ class QTMRefreshWidget : public QWidget {
   string  tmwid;
   object curobj;
   widget    cur;
+  QWidget* qwid;
   hashmap<object,widget> cache;
   
 public:
   QTMRefreshWidget (string _tmwid);
+
   bool recompute ();
-  
+    //static void deleteLayout (QLayout*);
+
 public slots:
   void doRefresh ();  
 };
