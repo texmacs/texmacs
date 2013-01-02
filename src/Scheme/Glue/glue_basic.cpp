@@ -5617,6 +5617,25 @@ tmg_widget_choices (tmscm arg1, tmscm arg2, tmscm arg3) {
 }
 
 tmscm
+tmg_widget_filtered_choice (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
+  TMSCM_ASSERT_COMMAND (arg1, TMSCM_ARG1, "widget-filtered-choice");
+  TMSCM_ASSERT_ARRAY_STRING (arg2, TMSCM_ARG2, "widget-filtered-choice");
+  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "widget-filtered-choice");
+  TMSCM_ASSERT_STRING (arg4, TMSCM_ARG4, "widget-filtered-choice");
+
+  command in1= tmscm_to_command (arg1);
+  array_string in2= tmscm_to_array_string (arg2);
+  string in3= tmscm_to_string (arg3);
+  string in4= tmscm_to_string (arg4);
+
+  // TMSCM_DEFER_INTS;
+  widget out= choice_widget (in1, in2, in3, in4);
+  // TMSCM_ALLOW_INTS;
+
+  return widget_to_tmscm (out);
+}
+
+tmscm
 tmg_widget_xpm (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "widget-xpm");
 
@@ -7418,6 +7437,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("widget-enum",  tmg_widget_enum, 5, 0, 0);
   tmscm_install_procedure ("widget-choice",  tmg_widget_choice, 3, 0, 0);
   tmscm_install_procedure ("widget-choices",  tmg_widget_choices, 3, 0, 0);
+  tmscm_install_procedure ("widget-filtered-choice",  tmg_widget_filtered_choice, 4, 0, 0);
   tmscm_install_procedure ("widget-xpm",  tmg_widget_xpm, 1, 0, 0);
   tmscm_install_procedure ("widget-box",  tmg_widget_box, 5, 0, 0);
   tmscm_install_procedure ("widget-glue",  tmg_widget_glue, 4, 0, 0);

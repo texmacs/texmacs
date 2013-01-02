@@ -10,12 +10,12 @@
 
 #include "qt_utilities.hpp"
 #include "qt_renderer.hpp"
-
 #include "qt_widget.hpp"
 #include "qt_ui_element.hpp"
 #include "qt_simple_widget.hpp"
 #include "qt_window_widget.hpp"
 #include "qt_menu.hpp"
+#include "qt_gui.hpp"
 
 #include "analyze.hpp"
 #include "widget.hpp"
@@ -28,7 +28,6 @@
 #include "QTMMenuHelper.hpp"
 #include "QTMStyle.hpp"
 
-#include "qt_gui.hpp"
 
 /******************************************************************************
  * Auxiliary classes
@@ -101,14 +100,12 @@ public:
   void paintEvent(QPaintEvent *event);
 };
 
-
 void
 QTMUIButton::paintEvent(QPaintEvent* event) {
   (void) event;
   QPainter p (this);
   defaultAction()->icon().paint (&p, rect ());
 }
-
 
 /******************************************************************************
  * Ad-hoc command_rep derivates for different UI elements in qt_ui_element_rep
@@ -177,39 +174,6 @@ public:
   }
   
   tm_ostream& print (tm_ostream& out) { return out << "Enum"; }
-};
-
-/*! Ad-hoc command to be used with choice widgets.
- 
- The command associated with a qt_ui_element::choice_widget has one parameter
- (a list of selected items).
- For the reason to be of this class, see \sa qt_toggle_command_rep.
- \sa qt_ui_element, , qt_ui_element_rep::as_qwidget, qt_ui_element_rep::choice_widget
- */
-class qt_choice_command_rep: public command_rep {
-  QPointer<QListWidget> qwid;
-  command cmd;
-  bool multiple;  //<! Whether multiple choices are allowed in the widget.
-  
-public:
-  qt_choice_command_rep(QListWidget* w, command c, bool m) : qwid(w), cmd(c), multiple(m) {}
-  void apply () { 
-    if (qwid) {
-      QList<QListWidgetItem*> items = qwid->selectedItems();
-      array<string> selected;
-      for(int i = 0; i < items.size(); ++i)
-        selected << from_qstring (items[i]->text());
-      object l= null_object ();
-      if(multiple)
-        for (int i = N(selected)-1; i >= 0; --i)
-          l= cons (selected[i], l);
-      else if(N(selected)>0)  //Do not return a list with the item if only one
-        l= selected[0];
-      cmd (list_object (l));
-    }
-  }
-  
-  tm_ostream& print (tm_ostream& out) { return out << "Choice"; }
 };
 
 
@@ -724,6 +688,7 @@ qt_ui_element_rep::as_qlayoutitem () {
     case toggle_widget:
     case enum_widget:
     case choice_widget:
+    case filtered_choice_widget:
     case scrollable_widget:
     case hsplit_widget:
     case vsplit_widget:
@@ -806,24 +771,24 @@ qt_ui_element_rep::as_qwidget () {
 
       qt_widget wid = concrete(x.x1);
       QString sheet = to_qstylesheet(x.x2);
-      T1         y1 = x.x3;
-      T1         y2 = x.x4;
+      T1         widths = x.x3;
+      T1         heights = x.x4;
       
       qwid = wid->as_qwidget();
       qwid->setStyleSheet(sheet);
       
-      QSize minSize = qt_decode_length(y1.x1, y2.x1, qwid->minimumSizeHint(), qwid->fontMetrics());
-      QSize defSize = qt_decode_length(y1.x2, y2.x2, qwid->minimumSizeHint(), qwid->fontMetrics());
-      QSize maxSize = qt_decode_length(y1.x3, y2.x3, qwid->minimumSizeHint(), qwid->fontMetrics());
+      QSize minSize = qt_decode_length(widths.x1, heights.x1, qwid->minimumSizeHint(), qwid->fontMetrics());
+      QSize defSize = qt_decode_length(widths.x2, heights.x2, qwid->minimumSizeHint(), qwid->fontMetrics());
+      QSize maxSize = qt_decode_length(widths.x3, heights.x3, qwid->minimumSizeHint(), qwid->fontMetrics());
 
       if (minSize == defSize && defSize == maxSize) {        
-        qwid->setFixedSize(defSize);        
-        qwid->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        qwid->setFixedSize (defSize);
+        qwid->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
       } else {
-        qwid->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-        qwid->setMinimumSize(minSize);
-        qwid->setMaximumSize(maxSize);
-        qwid->resize(defSize);
+        qwid->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Ignored);
+        qwid->setMinimumSize (minSize);
+        qwid->setMaximumSize (maxSize);
+        qwid->resize (defSize);
       }
     }
       break;
@@ -999,39 +964,36 @@ qt_ui_element_rep::as_qwidget () {
       // select one or multiple values from a list
     case choice_widget:
     {
-      typedef quartet<command, array<string>, array<string>, bool > T;
-      T                x = open_box<T>(load);
-      command        cmd = x.x1;
-      QStringList  items = to_qstringlist(x.x2);
-      QStringList chosen = to_qstringlist(x.x3);
-      bool  multiple_sel = x.x4;
-      
-      QListWidget* w = new QListWidget();
-      w->addItems(items);
+      typedef quartet<command, array<string>, array<string>, bool> T;
+      T         x = open_box<T>(load);
+      qwid = new QTMListView (x.x1, to_qstringlist(x.x2), to_qstringlist(x.x3),
+                              x.x4);
+    }
+      break;
+    
+    case filtered_choice_widget:
+    {
+      typedef quartet<command, array<string>, string, string> T;
+      T           x = open_box<T>(load);
+      string filter = x.x4;
+      QTMListView* choiceWidget = new QTMListView (x.x1, to_qstringlist (x.x2),
+                                                   QStringList (to_qstring (x.x3)),
+                                                   false, true);
 
-      if (multiple_sel)
-         // Support CTRL and SHIFT multiple selections.
-        w->setSelectionMode (QAbstractItemView::ExtendedSelection);
-      else
-        w->setSelectionMode (QAbstractItemView::SingleSelection);
-      
-      for (int i = 0; i < items.size(); ++i) {
-        QListWidgetItem* item = w->item (i);
-          // Qt::CaseSensitive is the default anyway
-        item->setSelected (chosen.contains (item->text(), Qt::CaseSensitive));
-      }
-      w->setMinimumWidth (w->sizeHintForColumn(0));
-      w->setMinimumHeight (w->sizeHintForRow(0)*items.count());
-      w->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-      w->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
-      w->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
-      w->setFrameStyle (QFrame::NoFrame);
+      QTMLineEdit* lineEdit = new QTMLineEdit (0, "1w");
+      QObject::connect(lineEdit, SIGNAL (textChanged(const QString&)),
+                       choiceWidget->filter(), SLOT (setFilterRegExp(const QString&)));
+      lineEdit->setText (to_qstring (filter));
+      lineEdit->setFocusPolicy (Qt::StrongFocus);
 
-      command ecmd = tm_new<qt_choice_command_rep> (w, cmd, multiple_sel);
-      QTMCommand* qcmd = new QTMCommand (w, ecmd);
-      QObject::connect (w, SIGNAL (itemSelectionChanged()), qcmd, SLOT (apply()));
+      QVBoxLayout* layout = new QVBoxLayout ();
+      layout->addWidget (lineEdit);
+      layout->addWidget (choiceWidget);
+      layout->setSpacing (0);
+      layout->setContentsMargins (0, 0, 0, 0);
       
-      qwid = w;      
+      qwid = new QWidget();
+      qwid->setLayout (layout);
     }
       break;
       
@@ -1093,7 +1055,7 @@ qt_ui_element_rep::as_qwidget () {
         QWidget* prelabel = concrete (tabs[i])->as_qwidget();
         QLabel*     label = qobject_cast<QLabel*> (prelabel);
         QWidget*     body = concrete (bodies[i])->as_qwidget();
-        tw->addTab(body, label ? label->text() : "");
+        tw->addTab (body, label ? label->text() : "");
         delete prelabel;
       }
 
@@ -1157,7 +1119,7 @@ qt_ui_element_rep::as_qwidget () {
       qwid = NULL;
   }
   
-  qwid->setFocusPolicy (Qt::StrongFocus);
+    //qwid->setFocusPolicy (Qt::StrongFocus); // Bad idea: containers get focus
   if (qwid->objectName().isEmpty())
     qwid->setObjectName (to_qstring (type_as_string()));
   return qwid;

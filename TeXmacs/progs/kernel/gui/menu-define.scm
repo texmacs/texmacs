@@ -102,6 +102,10 @@
   (require-format x '(choices :%3))
   `($choices ,@(cdr x)))
 
+(define (gui-make-filtered-choice x)
+  (require-format x '(filtered-choice :%4))
+  `($filtered-choice ,@(cdr x)))
+
 (define (gui-make-toggle x)
   (require-format x '(toggle :%2))
   `($toggle ,@(cdr x)))
@@ -324,6 +328,7 @@
   (enum ,gui-make-enum)
   (choice ,gui-make-choice)
   (choices ,gui-make-choices)
+  (filtered-choice ,gui-make-filtered-choice)
   (toggle ,gui-make-toggle)
   (icon ,gui-make-icon)
   (concat ,gui-make-concat)
@@ -383,11 +388,11 @@
                ((== x (string->symbol "|")) '$/)
                (else
                  (texmacs-error "gui-make" "invalid menu item ~S" x))))
-	((string? x) x)
+        ((string? x) x)
         ((and (pair? x) (ahash-ref gui-make-table (car x)))
          (apply (car (ahash-ref gui-make-table (car x))) (list x)))
-	((and (pair? x) (or (string? (car x)) (pair? (car x))))
-	 `($> ,(gui-make (car x)) ,@(cdr x)))
+        ((and (pair? x) (or (string? (car x)) (pair? (car x))))
+         `($> ,(gui-make (car x)) ,@(cdr x)))
         (else
           (texmacs-error "gui-make" "invalid menu item ~S" x))))
 

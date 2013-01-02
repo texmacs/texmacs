@@ -93,7 +93,8 @@ public:
     choice_widget,   scrollable_widget,  hsplit_widget,    vsplit_widget,
     aligned_widget,  tabs_widget,        icon_tabs_widget, wrapped_widget,
     refresh_widget,  glue_widget,        resize_widget,    texmacs_widget,
-    simple_widget,   embedded_tm_widget, popup_widget,     field_widget
+    simple_widget,   embedded_tm_widget, popup_widget,     field_widget,
+    filtered_choice_widget
   } ;
   
   types type;
@@ -130,7 +131,8 @@ public:
       "aligned_widget",     "tabs_widget",      "icon_tabs_widget",
       "wrapped_widget",     "refresh_widget",   "glue_widget",
       "resize_widget",      "texmacs_widget",   "simple_widget",
-      "embedded_tm_widget", "popup_widget",     "field_widget"
+      "embedded_tm_widget", "popup_widget",     "field_widget",
+      "filtered_choice_widget"
     };
     return string(qt_widget_type_strings[type]) * "\t id: " * as_string(id);
   }

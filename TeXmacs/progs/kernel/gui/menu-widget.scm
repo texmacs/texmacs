@@ -50,6 +50,7 @@
     (enum :%3 :string?)
     (choice :%3)
     (choices :%3)
+    (filtered-choice :%4)
     (toggle :%2)
     (horizontal :menu-item-list)
     (vertical :menu-item-list)
@@ -241,6 +242,12 @@
   "Make @(choices :%3) item."
   (with (tag cmd vals mc) p
     (widget-choices (object->command (menu-protect cmd)) (vals) (mc))))
+
+(define (make-filtered-choice p style)
+  "Make @(filtered-choice :%4) item."
+  (with (tag cmd vals val filterstr) p
+    (widget-filtered-choice (object->command (menu-protect cmd)) (vals) (val)
+                            (filterstr))))
 
 (define (make-toggle p style)
   "Make @(toggle :%2) item."
@@ -614,6 +621,8 @@
           ,(lambda (p style bar?) (list (make-choice p style))))
   (choices (:%3)
            ,(lambda (p style bar?) (list (make-choices p style))))
+  (filtered-choice (:%4)
+           ,(lambda (p style bar?) (list (make-filtered-choice p style))))
   (toggle (:%2)
 	  ,(lambda (p style bar?) (list (make-toggle p style))))
   (link (:%1)
@@ -736,6 +745,13 @@
              ,(caddr p)
              ,(cadddr p)))
 
+(define (menu-expand-filtered-choice p)
+  "Expand filtered choice item @p."
+  `(,(car p) ,(replace-procedures (cadr p))
+             ,(caddr p)
+             ,(cadddr p)
+             ,(car (cddddr p))))
+
 (define (menu-expand-toggle p)
   "Expand toggle item @p."
   `(toggle ,(replace-procedures (cadr p))
@@ -784,6 +800,7 @@
   (enum ,menu-expand-enum)
   (choice ,menu-expand-choice)
   (choices ,menu-expand-choice)
+  (filtered-choice ,menu-expand-filtered-choice)
   (toggle ,menu-expand-toggle)
   (link ,menu-expand-link p)
   (horizontal ,(lambda (p) `(horizontal ,@(menu-expand-list (cdr p)))))

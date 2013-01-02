@@ -296,6 +296,11 @@
   (:synopsis "Make a multiple choice list")
   `(list 'choices (lambda (answer) ,cmd) (lambda () ,vals) (lambda () ,mc)))
 
+(tm-define-macro ($filtered-choice cmd vals val filterstr)
+  (:synopsis "Make a scrollable choice list with a filter on top")
+  `(list 'filtered-choice (lambda (answer filter) ,cmd) (lambda () ,vals)
+                           (lambda () ,val) (lambda () ,filterstr)))
+
 (tm-define-macro ($texmacs-output doc tmstyle)
   (:synopsis "Make TeXmacs output field")
   `(list 'texmacs-output (lambda () ,doc) (lambda () ,tmstyle)))

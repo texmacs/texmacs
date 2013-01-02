@@ -292,6 +292,12 @@ choice_widget (command cb, array<string> vals, array<string> mc) {
 }
 
 widget
+choice_widget (command cb, array<string> vals, string v, string f) {
+    // FIXME: not implemented
+  return abstract (choice_wk_widget (cb, vals, v));
+}
+
+widget
 file_chooser_widget (command cmd, string type, bool save) {
   return abstract (file_chooser_wk_widget (cmd, type));
 }

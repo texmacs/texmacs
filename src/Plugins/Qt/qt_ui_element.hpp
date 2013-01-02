@@ -12,14 +12,15 @@
 #ifndef QT_UI_ELEMENT_HPP
 #define QT_UI_ELEMENT_HPP
 
-#include "qt_widget.hpp"
 #include "ntuple.hpp"
 #include "promise.hpp"
 #include "url.hpp"
 #include "Scheme/object.hpp"
 #include "hashmap.hpp"
 
-#include <QAction>
+#include "qt_widget.hpp"
+#include "QTMMenuHelper.hpp"
+
 #include <QtGui>
 
 
@@ -151,12 +152,50 @@ public:
 };
 
 
+/*!
+ */
 class QTMMenuWidget: public QWidget {
   QStyleOptionMenuItem option;
   
 public:
   QTMMenuWidget (QWidget* parent = NULL);
   void paintEvent(QPaintEvent *event);
+};
+
+/*! Ad-hoc command to be used with choice widgets.
+ 
+ The command associated with a qt_ui_element::choice_widget has one parameter
+ (a list of selected items).
+ For the reason to be of this class, see \sa qt_toggle_command_rep.
+ \sa qt_ui_element, , qt_ui_element_rep::as_qwidget, qt_ui_element_rep::choice_widget
+ */
+class qt_choice_command_rep: public command_rep {
+  QPointer<QTMListView> qwid;
+  command                cmd;
+  bool              multiple;  //<! Are multiple choices allowed in the widget?
+  
+public:
+  qt_choice_command_rep (QTMListView* w, command c, bool m)
+    : qwid(w), cmd(c), multiple(m) {}
+  
+  virtual void apply () {
+    if (qwid) {
+      QStringList selected;
+      foreach (QModelIndex item, qwid->selectionModel()->selectedIndexes())
+      selected << qwid->model()->data(item).toString();
+      
+      object l= null_object ();
+      if (multiple)
+        for (int i = selected.size() - 1; i >= 0; --i)
+          l = cons (from_qstring (selected[i]), l);
+      else if (selected.size() > 0)
+        l = from_qstring (selected[0]);
+      
+      cmd (list_object (l, from_qstring (qwid->filter()->filterRegExp().pattern())));
+    }
+  }
+  
+  tm_ostream& print (tm_ostream& out) { return out << "Choice"; }
 };
 
 #endif // defined QT_UI_ELEMENT_HPP

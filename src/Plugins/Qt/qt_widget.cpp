@@ -324,13 +324,15 @@ widget toggle_widget (command cmd, bool on, int style) {
   return qt_ui_element_rep::create (qt_widget_rep::toggle_widget, cmd, on, style); }
 widget enum_widget (command cmd, array<string> vals, string val, int style, string width) { 
   return qt_ui_element_rep::create (qt_widget_rep::enum_widget, cmd, vals, val, style, width); }
-widget choice_widget (command cmd, array<string> vals, array<string> chosen) { 
+widget choice_widget (command cmd, array<string> vals, array<string> chosen) {
   return qt_ui_element_rep::create(qt_widget_rep::choice_widget, cmd, vals, chosen, true); }
 widget choice_widget (command cmd, array<string> vals, string cur) {
   array<string> chosen (1);
   chosen[0]= cur;
   return qt_ui_element_rep::create(qt_widget_rep::choice_widget, cmd, vals, chosen, false); }
-widget user_canvas_widget (widget wid, int style) { 
+widget choice_widget (command cmd, array<string> vals, string cur, string filter) {
+  return qt_ui_element_rep::create(qt_widget_rep::filtered_choice_widget, cmd, vals, cur, filter); }
+widget user_canvas_widget (widget wid, int style) {
   return qt_ui_element_rep::create(qt_widget_rep::scrollable_widget, wid, style); }
 widget resize_widget (widget w, int style, string w1, string h1,
                       string w2, string h2, string w3, string h3) {

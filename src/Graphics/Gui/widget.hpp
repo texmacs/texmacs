@@ -183,6 +183,8 @@ widget choice_widget (command cb, array<string> vals, string val);
   // select a value from a long list of possible values
 widget choice_widget (command cb, array<string> vals, array<string> mc);
   // select multiple values from a long list
+widget choice_widget (command cb, array<string> vals, string val, string filt);
+  // select a value from a long list with scrollbars and an input to filter
 
 /******************************************************************************
 * Other widgets
