@@ -297,6 +297,9 @@
   
 (kbd-map                       ; overwrite shortcuts inappropriate for verbatim
   (:mode in-verbatim?)
+  ("\"" "\"")
+  ("< <" "<less><less>")
+  ("> >" "<gtr><gtr>")
   (", ," ",,")
   ("- - -" "---")
   ("- var" "-")
