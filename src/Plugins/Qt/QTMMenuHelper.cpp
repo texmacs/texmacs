@@ -15,7 +15,7 @@
 #include "qt_gui.hpp"
 #include "qt_utilities.hpp"
 #include "qt_window_widget.hpp"
-
+#include "qt_ui_element.hpp"  // qt_choice_command_rep
 #include "analyze.hpp"
 
 #include <QtGui>
@@ -717,4 +717,53 @@ QTMScrollArea::showEvent (QShowEvent* ev)
 {
   scrollToSelection (selectedItem, selectedItem);
   QScrollArea::showEvent (ev);
+}
+
+
+/******************************************************************************
+ * QTMListView
+ ******************************************************************************/
+
+QTMListView::QTMListView (const command& cmd,
+                          const QStringList& strings,
+                          const QStringList& selections,
+                          bool multiple,
+                          bool scroll,
+                          QWidget* parent)
+: QListView (parent) {
+  
+  stringModel = new QStringListModel (strings, this);
+  filterModel = new QSortFilterProxyModel (this);
+  
+  filterModel->setSourceModel (stringModel);
+    //filterModel->setDynamicSortFilter (true);
+  filterModel->setFilterCaseSensitivity (Qt::CaseSensitive);
+  
+  setModel (filterModel);
+  
+  setSelectionMode (multiple ? ExtendedSelection : SingleSelection);
+  
+  for (int i = 0; i < model()->rowCount(); ++i) {
+    QModelIndex item = model()->index (i, 0);
+    if (selections.contains (model()->data(item, Qt::DisplayRole).toString(), Qt::CaseSensitive))
+      selectionModel()->select (item, QItemSelectionModel::SelectCurrent);
+  }
+
+  if (!scroll) {
+    setMinimumWidth (sizeHintForColumn(0));
+    setMinimumHeight (sizeHintForRow(0) * model()->rowCount());
+    setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+    setFrameStyle (QFrame::NoFrame);
+  }
+
+  setUniformItemSizes (true);
+  setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+
+  command     ecmd = tm_new<qt_choice_command_rep> (this, cmd, multiple);
+  QTMCommand* qcmd = new QTMCommand (this, ecmd);
+  QObject::connect (selectionModel(),
+                    SIGNAL (selectionChanged (const QItemSelection&, const QItemSelection&)),
+                    qcmd,
+                    SLOT (apply()));
 }

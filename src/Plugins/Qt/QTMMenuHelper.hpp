@@ -14,22 +14,12 @@
 
 #include "message.hpp"
 #include "promise.hpp"
-#include <QObject>
-#include <QAction>
-#include <QMenu>
-#include <QWidgetAction>
-#include <QLineEdit>
-#include <QTabWidget>
-#include <QLayout>
-#include <QLineEdit>
-#include <QComboBox>
-#include <QTranslator>
-#include <QListWidgetItem>
-#include <QScrollArea>
+#include "Scheme/object.hpp"
 
 #include "qt_gui.hpp"
 #include "qt_dialogues.hpp"
-#include "qt_ui_element.hpp"  // qt_refresh_widget_rep
+
+#include <QtGui>
 
 
 /*! Handles TeXmacs commands in the QT way.
@@ -350,6 +340,20 @@ protected:
 
 public slots:
   void scrollToSelection (QListWidgetItem* c, QListWidgetItem* p);
+};
+
+/*! A QListView with a sorting proxy model. */
+class QTMListView : public QListView {
+  Q_OBJECT
+  
+  QStringListModel*      stringModel;
+  QSortFilterProxyModel* filterModel;
+  
+public:
+  QTMListView (const command& cmd, const QStringList& vals, const QStringList&,
+               bool multiple, bool scroll = false, QWidget* parent = NULL);
+  
+  QSortFilterProxyModel* filter() { return filterModel; }
 };
 
 
