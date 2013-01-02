@@ -318,6 +318,8 @@ public:
 class QTMListView : public QListView {
   Q_OBJECT
 
+  friend class QTMScrollArea;
+
   QStringListModel*      stringModel;
   QSortFilterProxyModel* filterModel;
 
@@ -360,7 +362,7 @@ class QTMScrollArea : public QScrollArea {
   QList<QTMListView*> listViews;
   
   typedef QList<QTMListView*>::iterator ListViewsIterator;
-  
+
 public:
   QTMScrollArea (QWidget* p = NULL) : QScrollArea(p) { };
   void setWidgetAndConnect (QWidget* w);

@@ -732,8 +732,10 @@ QTMScrollArea::scrollToSelection (const QItemSelection& sel)
 void
 QTMScrollArea::showEvent (QShowEvent* ev)
 {
-  for (ListViewsIterator it = listViews.begin(); it != listViews.end(); ++it)
-    scrollToSelection ((*it)->selectionModel()->selection());
+  for (ListViewsIterator it = listViews.begin(); it != listViews.end(); ++it) {
+    QItemSelection sel = (*it)->selectionModel()->selection();
+    (*it)->selectionChanged (sel, sel);
+  }
   QScrollArea::showEvent (ev);
 }
 
