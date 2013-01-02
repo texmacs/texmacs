@@ -273,12 +273,12 @@ to_qstringlist(array<string> l) {
 }
 
 QString
-to_qstring (string s) {
+to_qstring (const string& s) {
   return utf8_to_qstring (cork_to_utf8 (s));
 }
 
 QString
-utf8_to_qstring (string s) {
+utf8_to_qstring (const string& s) {
   char* p= as_charp (s);
   QString nss= QString::fromUtf8 (p, N(s));
   tm_delete_array (p);
@@ -345,7 +345,7 @@ to_qcolor(color c) {
 
 
 QString
-qt_translate (string s) {
+qt_translate (const string& s) {
   string in_lan= get_input_language ();
   string out_lan= get_output_language ();
   return to_qstring(tm_var_encode (translate (s, in_lan, out_lan)));

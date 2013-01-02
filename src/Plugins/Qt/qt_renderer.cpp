@@ -518,7 +518,10 @@ qt_renderer_rep::draw (const QFont& qfn, const QString& qs,
 ******************************************************************************/
 
 extern int char_clip;
-
+/*! Loads and caches pixmaps.
+ 
+ Returns a newly allocated QPixmap object or one from the cache.
+ */
 QPixmap*
 qt_renderer_rep::xpm_image (url file_name) {
   QPixmap *pxm= NULL;

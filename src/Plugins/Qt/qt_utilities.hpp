@@ -58,9 +58,9 @@ array<string> from_qstringlist (const QStringList& l);
 
 ///// String conversion: Assumes UTF8 encodings both in QT and TeXmacs.
 
-QString        to_qstring (string s);
+QString        to_qstring (const string& s);
 string       from_qstring (const QString & s);
-QString   utf8_to_qstring (string s);
+QString   utf8_to_qstring (const string& s);
 string  from_qstring_utf8 (const QString & s);
 
 /*! Returns a QString with the translation of the argument to the current
@@ -73,7 +73,7 @@ string  from_qstring_utf8 (const QString & s);
  our code (which is wrong of course). While parsing widgets, etc. nothing is to
  be done wrt. translations.
  */
-QString qt_translate (string s);
+QString qt_translate (const string& s);
 
 
 /******************************************************************************
