@@ -121,6 +121,9 @@
               (- (texmacs-time) start) " msec\n")
     (set! scheme-completions-built? #t)))
 
+(tm-define (scheme-completions-dump)
+  (pt-words-below (pt-find pt-symbols "")))
+
 (tm-define (scheme-completions root)
   (:synopsis "Provide the completions for @root as needed by custom-complete")
   `(tuple ,root 
