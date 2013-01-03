@@ -181,4 +181,28 @@
   (set! mw-symbol "")
   (set! mw-module-filter "")
   (set! mw-symbol-filter "")
-  (top-window module-browser "Pick module and symbol..."))
+  (top-window module-browser "Module browser"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; symbol browser widget
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define clw-string "")
+(tm-define clw-string-filter "")
+
+(tm-widget (symbol-browser)
+  (vertical
+   (bold (text "Symbol"))
+   (resize ("200px" "350üpx" "4000px") ("300px" "600px" "4000px")
+     (filtered-choice (begin (set! clw-string answer)
+                             (set! clw-string-filter filter))
+                      (list-sort (scheme-completions-dump) string<?)
+                      clw-string
+                      clw-string-filter))
+   (explicit-buttons
+    ("See definition" (noop)))))
+
+(tm-define (open-symbol-browser)
+  (set! clw-string "")
+  (set! clw-string-filter "")
+  (top-window symbol-browser "Symbol browser"))
