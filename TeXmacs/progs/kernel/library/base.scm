@@ -322,7 +322,8 @@
 
 (define-public (buffer-in-menu? u)
   (or (buffer-in-recent-menu? u)
-      (string-starts? (url->unix u) "tmfs://help/")))
+      (string-starts? (url->unix u) "tmfs://help/")
+      (string-starts? (url->unix u) "tmfs://apidoc/")))
 
 (define-public (window->buffer win)
   (with u (window-to-buffer win)
