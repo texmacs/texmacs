@@ -569,6 +569,19 @@ tmg_translate (tmscm arg1) {
 }
 
 tmscm
+tmg_string_translate (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "string-translate");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= translate (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_translate_from_to (tmscm arg1, tmscm arg2, tmscm arg3) {
   TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "translate-from-to");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "translate-from-to");
@@ -7071,6 +7084,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("set-output-language",  tmg_set_output_language, 1, 0, 0);
   tmscm_install_procedure ("get-output-language",  tmg_get_output_language, 0, 0, 0);
   tmscm_install_procedure ("translate",  tmg_translate, 1, 0, 0);
+  tmscm_install_procedure ("string-translate",  tmg_string_translate, 1, 0, 0);
   tmscm_install_procedure ("translate-from-to",  tmg_translate_from_to, 3, 0, 0);
   tmscm_install_procedure ("tree-translate",  tmg_tree_translate, 1, 0, 0);
   tmscm_install_procedure ("tree-translate-from-to",  tmg_tree_translate_from_to, 3, 0, 0);

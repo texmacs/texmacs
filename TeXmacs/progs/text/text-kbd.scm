@@ -295,7 +295,7 @@
   (:mode in-cyrillic?)
   ("modeswitch" (make-with "language" "english") (make-with "font" "roman")))
   
-(kbd-map                       ; overwrite shortcuts inappropriate for verbatim
+(kbd-map                       ; overwrite shortcuts inadequate for verbatim
   (:mode in-verbatim?)
   ("\"" "\"")
   ("< <" "<less><less>")

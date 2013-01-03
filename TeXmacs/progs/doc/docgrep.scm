@@ -43,10 +43,9 @@
 
 (define (build-search-results keyword the-result)
   ($tmdoc
-    ($tmdoc-title
-      "Search results for ``" keyword "''")
+    ($tmdoc-title (tr "Search results for ``%1''" keyword))
     ($when (null? the-result)
-      "No matches found for ``" keyword "''.")
+      (tr "No matches found for ``%1''." keyword))
     ($when (nnull? the-result)
       ($with highest-score (cdar the-result)
         ($description-aligned
@@ -87,28 +86,20 @@
 (tmfs-load-handler (grep query)
   (let* ((type (query-ref query "type"))
          (what (query-ref query "what"))
-         (lan  (get-output-language)))
+         (lan  (string-take (language-to-locale (get-output-language)) 2)))
     (cond ((== type "src")
            (docgrep what "$TEXMACS_PATH/progs:$TEXMACS_SOURCE_PATH/src"
                     "*.scm" "*.hpp" "*.cpp"))
           ((== type "texts")
            (docgrep what "$TEXMACS_FILE_PATH" "*.tm"))
-          ((and (== lan "french") (== type "doc"))
- 	   (docgrep what "$TEXMACS_DOC_PATH" "*.fr.tm"))
- 	  ((and (== lan "german") (== type "doc"))
- 	   (docgrep what "$TEXMACS_DOC_PATH" "*.de.tm"))
- 	  ((and (== lan "italian") (== type "doc"))
- 	   (docgrep what "$TEXMACS_DOC_PATH" "*.it.tm"))
- 	  ((and (== lan "spanish") (== type "doc"))
- 	   (docgrep what "$TEXMACS_DOC_PATH" "*.es.tm"))
- 	  ((and (== lan "portuguese") (== type "doc"))
- 	   (docgrep what "$TEXMACS_DOC_PATH" "*.pt.tm"))
+          ((== type "doc")
+           (docgrep what "$TEXMACS_DOC_PATH" (string-append "*." lan ".tm")))
  	  (else
  	   (docgrep what "$TEXMACS_DOC_PATH" "*.en.tm")))))
 
 (tmfs-title-handler (grep query doc)
   (with what (query-ref query "what")
-    (string-append "Help - Search results for ``" what "''")))
+    (tr "Help - Search results for ``%1''" what)))
 
 (tm-define (docgrep-in-doc what)
   (:argument what "Search words in the documentation")

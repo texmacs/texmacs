@@ -66,6 +66,7 @@
   (set-output-language gui_set_output_language (void string))
   (get-output-language get_output_language (string))
   (translate translate (string content))
+  (string-translate translate (string string))
   (translate-from-to translate (string content string string))
   (tree-translate tree_translate (tree content))
   (tree-translate-from-to tree_translate (tree content string string))
