@@ -500,7 +500,7 @@
       `(document
          (TeXmacs ,(texmacs-version))
          (style (tuple "tmdoc"))
-         (body ($unquote ($localize ($block ,@l))))
+         (body ($unquote ($block ,@l)))
          (initial (collection (associate "language" ,lan)))))))
 
 (tm-define-macro ($localize . l)
