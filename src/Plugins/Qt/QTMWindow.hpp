@@ -52,7 +52,10 @@ signals:
   void closed ();
   
 protected:
-  virtual void closeEvent (QCloseEvent* event);
+  virtual void  closeEvent (QCloseEvent* event);
+  virtual void   moveEvent (QMoveEvent* event);
+  virtual void resizeEvent (QResizeEvent* event);
+
 };
 
 /*! The underlying QWidget for a qt_tm_widget_rep.
@@ -79,9 +82,9 @@ signals:
   void closed ();
   
 protected:
-  virtual void closeEvent (QCloseEvent* event);
-  virtual void moveEvent (QMoveEvent * event);
-  virtual void resizeEvent (QResizeEvent * event);
+  virtual void  closeEvent (QCloseEvent* event);
+  virtual void   moveEvent (QMoveEvent* event);
+  virtual void resizeEvent (QResizeEvent* event);
 };
 
 

@@ -90,4 +90,7 @@ void notify_window_resize (string name, SI w, SI h);
 void notify_window_destroy (string name);
   // Call this routine when the window 'name' is destroyed
 
+void get_preferred_position (string name, SI& xx, SI& yy);
+void get_preferred_size (string name, SI& ww, SI& hh);
+
 #endif // defined WINDOW_H

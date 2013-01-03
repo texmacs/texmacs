@@ -23,6 +23,30 @@ void QTMPlainWindow::closeEvent (QCloseEvent* event)
   emit closed();
 }
 
+void QTMPlainWindow::moveEvent (QMoveEvent* event)
+{
+  string name= from_qstring (windowTitle ());
+    // FIXME: rather use a slot for this
+  int x= event->pos().x();
+  int y= event->pos().y();
+  if (DEBUG_QT)
+    cout << "Move QTMPlainWindow " << name << ": " << x << ", " << y << LF;
+  notify_window_move (name, x*PIXEL, -y*PIXEL);
+  QWidget::moveEvent (event);
+}
+
+void QTMPlainWindow::resizeEvent (QResizeEvent* event)
+{
+  string name= from_qstring (windowTitle ());
+    // FIXME: rather use a slot for this
+  int w= event->size().width();
+  int h= event->size().height();
+  if (DEBUG_QT)
+    cout << "Resize QTMPlainWindow " << name << ": " << w << ", " << h << LF;
+  notify_window_resize (name, w*PIXEL, h*PIXEL);
+  QWidget::resizeEvent (event);
+}
+
 /* We must basically do the same as QTMPlainWindow::closeEvent, but we
  choose the other way: send a SLOT_DESTROY, which for qt_tm_widgets just
  calls the command. This is not personal whim but a problem with the destruction

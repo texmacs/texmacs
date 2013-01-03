@@ -21,6 +21,8 @@
 #include "qt_color_picker_widget.hpp"
 #include "qt_printer_widget.hpp"
 
+#include "window.hpp"
+
 #include <QWidget>
 #include <QWidgetItem>
 #include "QTMMenuHelper.hpp"
@@ -233,7 +235,18 @@ qt_widget_rep::reapply_sent_slots () {
 */
 widget
 plain_window_widget (widget w, string s, command q) {
-  return concrete(w)->plain_window_widget (s, q);
+  widget win= concrete(w)->plain_window_widget (s, q);
+  if (s != "popup") {
+    int xx, yy, ww, hh;
+    xx = yy = ww = hh = -1;
+    get_preferred_position (s, xx, yy);
+    get_preferred_size (s, ww, hh);
+    if (xx != -1)
+      set_position (win, xx, yy);
+    if (ww != -1)
+      set_size (win, ww, hh);
+  }
+  return win;
 }
 
 /*! Creates an undecorated window with name s and contents w.

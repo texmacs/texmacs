@@ -31,7 +31,7 @@
  be resizable or not, for instance.
  */
 qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, command _quit, bool fake)
-: qt_widget_rep(window_widget, _wid), quit(_quit)
+: qt_widget_rep (window_widget, _wid), quit(_quit)
 {
   qwid->setProperty ("texmacs_window_widget",
                      QVariant::fromValue ((void*) this));
