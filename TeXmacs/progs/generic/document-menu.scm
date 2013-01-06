@@ -416,7 +416,8 @@
 	  ("Default" (init-default "prog-font"))
 	  ---
 	  ("Concrete" (init-env "prog-font" "concrete"))
-	  ("Pandora" (init-env "prog-font" "pandora"))
+          (if (url-exists-in-tex? "pnr10.mf")
+              ("Pandora" (init-env "prog-font" "pandora")))
 	  ("Roman" (init-env "prog-font" "roman"))
 	  ("Times" (init-env "prog-font" "times")))
       ---
