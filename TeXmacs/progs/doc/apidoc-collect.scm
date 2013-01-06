@@ -149,10 +149,8 @@
 
 (define (notify-doc-collect-preference pref val)
   (cond ((== pref "doc:collect-timestamp") (noop))
-        ((== pref "doc:collect-languages")
-         (if (nnull? val)
-             (set-message "Finished collecting symbols documentation."
-                          (string-append "(" (cAr val) ")"))))))
+        ((== pref "doc:collect-languages") (noop))
+        (else (noop))))
 
 (define-preferences
   ("doc:collect-timestamp" 0 notify-doc-collect-preference)
@@ -193,6 +191,8 @@
               (lambda ()
                 (set-preference "doc:collect-timestamp" (current-time))
                 (append-preference "doc:collect-languages" lan)
+                (set-message "Finished collecting symbols documentation."
+                             (string-append "(" lan ")"))
                 (cont)))))))))))))))
 
 (tm-define (doc-retrieve cache key lan)
