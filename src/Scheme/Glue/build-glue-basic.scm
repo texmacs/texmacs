@@ -70,6 +70,7 @@
   (translate-from-to translate (string content string string))
   (tree-translate tree_translate (tree content))
   (tree-translate-from-to tree_translate (tree content string string))
+  (force-load-translations force_load_dictionary (void string string))
   (color named_color (int string))
   (new-author new_author (double))
   (set-author set_author (void double))

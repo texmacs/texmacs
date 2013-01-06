@@ -629,6 +629,21 @@ tmg_tree_translate_from_to (tmscm arg1, tmscm arg2, tmscm arg3) {
 }
 
 tmscm
+tmg_force_load_translations (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "force-load-translations");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "force-load-translations");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  force_load_dictionary (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_color (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "color");
 
@@ -7088,6 +7103,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("translate-from-to",  tmg_translate_from_to, 3, 0, 0);
   tmscm_install_procedure ("tree-translate",  tmg_tree_translate, 1, 0, 0);
   tmscm_install_procedure ("tree-translate-from-to",  tmg_tree_translate_from_to, 3, 0, 0);
+  tmscm_install_procedure ("force-load-translations",  tmg_force_load_translations, 2, 0, 0);
   tmscm_install_procedure ("color",  tmg_color, 1, 0, 0);
   tmscm_install_procedure ("new-author",  tmg_new_author, 0, 0, 0);
   tmscm_install_procedure ("set-author",  tmg_set_author, 1, 0, 0);

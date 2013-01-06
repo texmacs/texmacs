@@ -41,16 +41,16 @@ dictionary_rep::load (url u) {
   int i, n= N(t);
   for (i=0; i<n; i++)
     if (is_func (t[i], TUPLE, 2) &&
-	is_atomic (t[i][0]) && is_atomic (t[i][1]))
-      {
-	string l= t[i][0]->label; if (is_quoted (l)) l= scm_unquote (l);
-	string r= t[i][1]->label; if (is_quoted (r)) r= scm_unquote (r);
-	if ( to == "chinese" ||  to == "japanese"  || 
-	     to == "korean"  ||  to == "taiwanese" ||
-	     to == "russian" ||  to == "ukrainian" ||  to == "bulgarian")
-	  r= utf8_to_cork (r);
-	table (l)= r;
-      }
+        is_atomic (t[i][0]) && is_atomic (t[i][1]))
+    {
+      string l= t[i][0]->label; if (is_quoted (l)) l= scm_unquote (l);
+      string r= t[i][1]->label; if (is_quoted (r)) r= scm_unquote (r);
+      if (to == "chinese" ||  to == "japanese"  ||
+          to == "korean"  ||  to == "taiwanese" ||
+          to == "russian" ||  to == "ukrainian" || to == "bulgarian")
+        r= utf8_to_cork (r);
+      table (l)= r;
+    }
 }
 
 void
@@ -62,10 +62,12 @@ dictionary_rep::load (string fname) {
 }
 
 dictionary
-load_dictionary (string from, string to) {
+load_dictionary (string from, string to, bool use_cache) {
   string name= from * "-" * to;
-  if (dictionary::instances -> contains (name))
-    return dictionary (name);
+  if (dictionary::instances -> contains (name)) {
+    if (use_cache) return dictionary (name);
+    else           dictionary::instances -> reset (name);
+  }
   dictionary dict= tm_new<dictionary_rep> (from, to);
   if (from != to) dict->load (name);
   return dict;
@@ -153,6 +155,11 @@ translate (string s) {
 string
 translate (const char* s) {
   return translate (string (s), "english", out_lan);
+}
+
+void
+force_load_dictionary (string from, string to) {
+  load_dictionary (from, to, false);
 }
 
 /******************************************************************************
