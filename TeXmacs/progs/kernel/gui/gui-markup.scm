@@ -33,9 +33,9 @@
 
 (tm-define (gui-normalize l)
   (cond ((null? l) l)
-	((func? (car l) 'list)
-	 (append (gui-normalize (cdar l)) (gui-normalize (cdr l))))
-	(else (cons (car l) (gui-normalize (cdr l))))))
+        ((func? (car l) 'list)
+         (append (gui-normalize (cdar l)) (gui-normalize (cdr l))))
+        (else (cons (car l) (gui-normalize (cdr l))))))
 
 (tm-define-macro ($list . l)
   (:synopsis "Make widgets")
@@ -224,6 +224,9 @@
 ;; Menu and widget elements
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+; Temporary hack:
+(tm-define all-translations (make-ahash-table))
+
 (define (process-translate x)
   (if (or (func? x 'concat) (func? x 'verbatim))
       `(list ',(car x) ,@(map process-translate (cdr x)))
@@ -231,22 +234,32 @@
 
 (tm-define-macro ($-> text . l)
   (:synopsis "Make pullright button")
+  (if developer-mode?
+    (ahash-set! all-translations text #t))
   `(cons* '-> ,text ($list ,@l)))
 
 (tm-define-macro ($=> text . l)
   (:synopsis "Make pulldown button")
+  (if developer-mode?
+    (ahash-set! all-translations text #t))
   `(cons* '=> ,text ($list ,@l)))
 
 (tm-define-macro ($> text . cmds)
   (:synopsis "Make button")
+  (if developer-mode?
+    (ahash-set! all-translations text #t))
   `(list ,text (lambda () ,@cmds)))
 
 (tm-define-macro ($check text check pred?)
   (:synopsis "Make button")
+  (if developer-mode?
+    (ahash-set! all-translations text #t))
   `(list 'check ,text ,check (lambda () ,pred?)))
 
 (tm-define-macro ($balloon text balloon)
   (:synopsis "Make balloon")
+  (if developer-mode?
+    (ahash-set! all-translations text #t))
   `(list 'balloon ,text ,balloon))
 
 (tm-define-macro ($concat-text . l)
@@ -273,6 +286,8 @@
 
 (tm-define-macro ($menu-text text)
   (:synopsis "Make text")
+  (if developer-mode?
+    (ahash-set! all-translations text #t))
   `(list 'text ,(process-translate text)))
 
 (tm-define-macro ($input cmd type proposals width)
@@ -522,7 +537,7 @@
 
 (tm-define-macro ($explain key . l)
   ($quote `(document (explain ($unquote ($inline ,key))
-			      ($unquote ($block ,@l))))))
+                              ($unquote ($block ,@l))))))
 
 (tm-define-macro ($tm-fragment . l)
   ($quote `(document (tm-fragment ($unquote ($block ,@l))))))
