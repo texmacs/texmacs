@@ -26,7 +26,7 @@ RESOURCE(converter);
 * The hashtree and converter classes are used.
 ******************************************************************************/
 
-class converter_rep: public rep<converter> {
+struct converter_rep: rep<converter> {
   hashtree<char,string> ht;
   string output, nil_string, from, to;
   bool copy_unmatched;
@@ -40,7 +40,7 @@ public:
 
   inline bool has_value(hashtree<char,string> node);
 
-  friend class converter;
+  friend struct converter;
   friend string flush (converter c);
   friend string apply (converter c, string str);
   friend void operator << (converter c, string str);
