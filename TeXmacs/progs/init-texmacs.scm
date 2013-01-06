@@ -276,8 +276,9 @@
 (lazy-define (version version-tmfs) update-buffer commit-buffer)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
-;(display "Booting debugging facilities\n")
+;(display "Booting debugging and developer facilities\n")
 (lazy-menu (texmacs menus debug-menu) debug-menu)
+(lazy-menu (texmacs menus developer-menu) developer-menu)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting plugins\n")
