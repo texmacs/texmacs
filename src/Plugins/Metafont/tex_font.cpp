@@ -508,7 +508,7 @@ tex_font_rep::get_extents (string s, metric& ex) {
   } else {
     m = n;
     for (i=0; i<m; ++i) {
-      buf[i]= s[i];
+      buf[i]= s[i] & 255;
       ker[i]= 0;
     }
   }
@@ -638,7 +638,7 @@ tex_font_rep::draw_fixed (renderer ren, string s, SI ox, SI y) {
   } else {
     m = n;
     for (i=0; i<m; ++i) {
-      buf[i]= s[i];
+      buf[i]= s[i] & 255;
       ker[i]= 0;
     }
   }
