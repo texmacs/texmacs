@@ -143,7 +143,7 @@
           (go-to-url (string-append filename "?line=" lno "&column=" cno
                                              "&select=" ssym))
           (set-message filename (string-append lno ":" cno)))
-        (set-message "Symbol properties not found." ssym)))))
+        (set-message (tr "Symbol properties not found") ssym)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Handy.. (stuff previously in apidoc-funcs.scm)
