@@ -14,6 +14,7 @@
 #include "convert.hpp"
 #include "converter.hpp"
 #include "drd_std.hpp"
+#include "object.hpp"
 
 RESOURCE_CODE(dictionary);
 
@@ -160,6 +161,7 @@ translate (const char* s) {
 void
 force_load_dictionary (string from, string to) {
   load_dictionary (from, to, false);
+  eval ("(notify-preference \"language\")");
 }
 
 /******************************************************************************
