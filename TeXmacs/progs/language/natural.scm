@@ -22,9 +22,14 @@
 (define (replace-arg str arg val)
   (let ((i (string-contains str arg))
         (r (string-length arg)))
-    (if i (string-append (substring str 0 i) 
+    (if i 
+        (begin
+          (if (number? val) (set! val (number->string val)))
+          (if (list? val) (set! val (list->string val)))
+          (if (symbol? val) (set! val (symbol->string val)))
+          (string-append (substring str 0 i) 
                          val 
-                         (string-drop str (+ i r)))
+                         (string-drop str (+ i r))))
         str)))
 
 (tm-define (tr origstr . vals)
@@ -88,6 +93,7 @@
          (p (open-input-file f))
          (h (tr-hash language))
          (r (tr-read p h)))
+    (close-input-port p)
     (if r (display* (tr "Read %1 items from %2" (ahash-size h) f))
         (display* (tr "Error reading from file %1" f)))))
 

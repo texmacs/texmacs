@@ -19,20 +19,20 @@
              (language natural))
 
 (menu-bind developer-menu
-  (when (and (in-prog-scheme?) (in-session?))
-    ;(group "Scheme")
-    (link scheme-session-menu))
+  (group "Scheme")
+  (link scheme-menu)
   ---
-  ;(group "Translations")
+  (group "Translations")
   (link translations-menu)
   ---
-  ;(group "Documentation")
+  (group "Documentation")
   ("Browse modules documentation" (apidoc-all-modules))
   ; This one isn't exactly useful: (and should be removed)
   ;("List all symbols" (apidoc-all-symbols))
   ("Open module browser" (open-module-browser))
   ("Open symbol browser" (open-symbol-browser))
   ---
+  (group "Configuration")
   ("Load my-init-texmacs.scm" 
     (load-buffer 
      (url-concretize "$TEXMACS_HOME_PATH/progs/my-init-texmacs.scm")))

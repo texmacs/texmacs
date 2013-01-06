@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; MODULE      : scheme-menu.scm
-;; DESCRIPTION : Menus for scheme sessions
+;; DESCRIPTION : Menus for scheme files and sessions
 ;; COPYRIGHT   : (C) 2012 Miguel de Benito Delgado
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
@@ -24,22 +24,24 @@
 
 (tm-menu (scheme-contextual-menu)
   (let* ((word (cursor-word))
-         (str1 (string-append "Help with \"" word "\""))
-         (str2 (string-append "Definition of \"" word "\"")))
+         (str1 (tr "Help with \"%1\"" word))
+         (str2 (tr "Definition of \"%1\"" word)))
     (if (!= word "")
         ((eval str1) (scheme-popup-help word)))
     (if (!= word "")
         ((eval str2) (scheme-go-to-definition word)))))
 
-(menu-bind scheme-session-menu
-  (link scheme-contextual-menu)
-  (if (selection-active-any?)
-    ("Export selection"
-     (choose-file export-selected-sessions "Export sessions" "scheme")))
-  ("Export scheme sessions"
-    (choose-file export-sessions "Export sessions" "scheme"))
-  ("Import scheme sessions"
-    (choose-file import-sessions "Import sessions" "scheme"))
+(menu-bind scheme-menu
+  (if (in-prog-scheme?)
+      (link scheme-contextual-menu))
+  (if (and (in-prog-scheme?) (selection-active-any?))
+      ("Export selection"
+       (choose-file export-selected-sessions "Export sessions" "scheme")))
+  (when (and (in-prog-scheme?) (in-session?))
+    ("Export sessions"
+     (choose-file export-sessions "Export sessions" "scheme")))
+  ("Import sessions"
+   (choose-file import-sessions "Import sessions" "scheme"))
   ("(Re)Build autocompletion index"
    (scheme-completions-rebuild)))
 
