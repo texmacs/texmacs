@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.0.7.17>
 
 <style|tmdoc>
 
@@ -257,20 +257,20 @@
   <\explain>
     <scm|\|><explain-synopsis|horizontal separator>
   <|explain>
-    (That's a vertical bar: <scm|\|>)
+    (A vertical bar)
   </explain>
 
   <\explain>
     <scm|---><explain-synopsis|vertical separator>
   <|explain>
-    (That's <with|font-series|bold|three> dashes. If you see only two, that's
-    a bug which hasn't yet been fixed)
+    (Three dashes)
   </explain>
 
   <subsection|Refresh widgets>
 
-  Refresh widgets reevaluate their contents every time a command is
-  executed...
+  Refresh widgets redraw their contents every time a command is executed.
+  They achieve this re-evaluating the code for the whole widget, so you can
+  have new values in your variables...
 
   <tmdoc-copyright|2012|the <TeXmacs> team.>
 
@@ -281,3 +281,6 @@
   with no Back-Cover Texts. A copy of\nthe license is included in the section
   entitled "GNU Free Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>
