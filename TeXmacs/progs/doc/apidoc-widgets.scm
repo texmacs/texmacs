@@ -189,7 +189,7 @@
 (tm-define clw-string "")
 (tm-define clw-string-filter "")
 
-(tm-widget (symbol-browser)
+(tm-widget (symbol-browser-widget)
   (vertical
    (bold (text "Symbol"))
    (resize ("200px" "350üpx" "4000px") ("300px" "600px" "4000px")
@@ -204,4 +204,4 @@
 (tm-define (open-symbol-browser)
   (set! clw-string "")
   (set! clw-string-filter "")
-  (top-window symbol-browser "Symbol browser"))
+  (top-window symbol-browser-widget "Symbol browser"))
