@@ -378,7 +378,7 @@ tex_font_rep::accented_get_extents (string s, metric& ex) {
   string acc= get_accents (s);
   s= get_unaccented (s);
   get_extents (s, ex);
-
+  
   for (i=0; i<N(acc); i++)
     if (acc[i] != ' ') {
       SI xx, yy;
@@ -392,9 +392,9 @@ tex_font_rep::accented_get_extents (string s, metric& ex) {
       if (c == 24) yy=PIXEL;
       else if (c == ((char) 203)) yy= 0;
       else if (c == ((char) 206)) {
-	yy= 0;
-	if ((s[i] == 'a') || (s[i] == 'A')) xx += (ey->x2 - ey->x1) / 3;
-	else xx += (ey->x2 - ey->x1) / 5;
+        yy= 0;
+        if ((s[i] == 'a') || (s[i] == 'A')) xx += (ey->x2 - ey->x1) / 3;
+        else xx += (ey->x2 - ey->x1) / 5;
       }
       else xx += (SI) (((double) yy) * slope);
       ex->x3 = min (ex->x3, xx + ez->x3);
@@ -402,7 +402,7 @@ tex_font_rep::accented_get_extents (string s, metric& ex) {
       ex->x4 = max (ex->x4, xx + ez->x4);
       ex->y4 = max (ex->y4, yy + ez->y4);
     }
-
+  
   status= old_status;
 }
 
@@ -439,14 +439,14 @@ tex_font_rep::accented_draw (renderer ren, string s, SI x, SI y) {
       if (c == 24) yy=PIXEL;
       else if (c == ((char) 203)) yy= 0;
       else if (c == ((char) 206)) {
-	yy= 0;
-	if ((s[i] == 'a') || (s[i] == 'A')) xx += (ey->x2 - ey->x1) / 3;
-	else xx += (ey->x2 - ey->x1) / 5;
+        yy= 0;
+        if ((s[i] == 'a') || (s[i] == 'A')) xx += (ey->x2 - ey->x1) / 3;
+        else xx += (ey->x2 - ey->x1) / 5;
       }
       else xx += (SI) (((double) yy) * slope);
       draw_fixed (ren, string (c), x+ xx, y+ yy);
     }
-
+  
   status= old_status;
 }
 
@@ -470,30 +470,30 @@ void
 tex_font_rep::get_extents (string s, metric& ex) {
   register int i;
   switch (status) {
-  case TEX_ANY:
-    break;
-  case TEX_EC:
-  case TEX_LA:
-    for (i=0; i<N(s); i++)
-      if (s[i]=='<') {
-	special_get_extents (s, ex);
-	return;
+    case TEX_ANY:
+      break;
+    case TEX_EC:
+    case TEX_LA:
+      for (i=0; i<N(s); i++)
+        if (s[i]=='<') {
+          special_get_extents (s, ex);
+          return;
+        }
+      break;
+    case TEX_CM:
+    case TEX_ADOBE:
+      for (i=0; i<N(s); i++) {
+        if (s[i]=='<') {
+          special_get_extents (s, ex);
+          return;
+        }
+        if ((s[i] & 128) != 0) {
+          ACCENTS_PREPARE;
+          accented_get_extents (s, ex);
+          return;
+        }
       }
-    break;
-  case TEX_CM:
-  case TEX_ADOBE:
-    for (i=0; i<N(s); i++) {
-      if (s[i]=='<') {
-	special_get_extents (s, ex);
-	return;
-      }
-      if ((s[i] & 128) != 0) {
-	ACCENTS_PREPARE;
-	accented_get_extents (s, ex);
-	return;
-      }
-    }
-    break;
+      break;
   }
 
   int n= N(s);
