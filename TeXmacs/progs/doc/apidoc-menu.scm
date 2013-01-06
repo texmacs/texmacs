@@ -21,4 +21,4 @@
 
 (menu-bind apidoc-manual-menu
   ("Insert symbol documentation..." (interactive ask-insert-symbol-doc))
-  ("Open module browser..." (show-module-widget)))
+  ("Open module browser..." (open-module-browser)))

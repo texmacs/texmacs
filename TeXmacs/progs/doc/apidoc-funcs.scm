@@ -159,8 +159,8 @@
                   (list ($doc-explain-scm* (symbol->string sym)))
                   '()))
       (if (null? l)
-       '(document "No symbols exported")
-       `(document (subsection "Symbol documentation")
+       `(document ,(tr "No symbols exported"))
+       `(document (subsection ,(tr "Symbol documentation"))
                   ,@(append-map fun l))))))
 
 ; WRONG! what about unloaded modules
@@ -235,15 +235,15 @@
         `(hlink ,(string-append (basename filename) ":" lno)
                 ,(string-append filename "?line=" lno "&column=" cno
                                          "&select=" (symbol->string sym))))
-      (translate "[symbol properties not found]"))))
+      (tr "[symbol properties not found]"))))
 
 (tm-define (doc-symbol-synopsis* sym)
   (with prop (property sym :synopsis)
-    (if (list? prop) (car prop) "No synopsis available")))
+    (if (list? prop) (car prop) (tr "No synopsis available"))))
 
 (tm-define ($doc-symbol-code sym)
   `(folded-explain
-     (document (with "color" "dark green" (em "Definition...")))
+     (document (with "color" "dark green" (em ,(tr "Definition..."))))
      (scm-code
        (document
         ,(cond ((and (tm-exported? sym) (procedure? (eval sym)))
@@ -252,7 +252,7 @@
                      (procedure? (eval sym))
                      (procedure-source (eval sym)))
                  => object->string)
-               (else "Symbol not found or not a procedure"))))))
+               (else (tr "Symbol not found or not a procedure")))))))
 
 (tm-define ($doc-symbol-template sym message)
   `(explain
@@ -268,9 +268,9 @@
   ($inline
     '(htab "")
      (if (nnull? docurl)
-       ($inline ($ismall ($link (car docurl) (translate "Open doc."))) " | ")
+       ($inline ($ismall ($link (car docurl) (tr "Open doc."))) " | ")
        "")
-    ($ismall (translate "Go to") " " ($doc-symbol-properties sym))))
+    ($ismall (tr "Go to") " " ($doc-symbol-properties sym))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Retrieval and display of documentation from the cache
