@@ -129,9 +129,10 @@
 
 (tm-define (tr-rebuild language)
   (:synopsis "Rebuild translations file adding the missing ones (up to now)")
+  (tr-parse language)
   (user-confirm 
-    (tr "This will overwrite your current dictionary %1. Are you sure?" 
-        (tr-file language))
+    (tr "This will overwrite the dictionary %1 with %2 entries. Are you sure?" 
+        (tr-file language) (ahash-size (tr-hash language)))
     #f
     (lambda (answ)
       (if answ
