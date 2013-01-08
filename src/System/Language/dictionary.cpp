@@ -63,11 +63,11 @@ dictionary_rep::load (string fname) {
 }
 
 dictionary
-load_dictionary (string from, string to, bool use_cache) {
+load_dictionary (string from, string to, bool reset_cache) {
   string name= from * "-" * to;
   if (dictionary::instances -> contains (name)) {
-    if (use_cache) return dictionary (name);
-    else           dictionary::instances -> reset (name);
+    if (reset_cache) dictionary::instances -> reset (name);
+    else             return dictionary (name);
   }
   dictionary dict= tm_new<dictionary_rep> (from, to);
   if (from != to) dict->load (name);
@@ -79,14 +79,22 @@ load_dictionary (string from, string to, bool use_cache) {
 ******************************************************************************/
 
 string
-dictionary_rep::translate (string s) {
-  // Is s in dictionary?
+dictionary_rep::translate (string s, bool guess) {
   if (s == "" || from == to) return s;
   //cout << "Translate <" << s << ">\n";
+  // Is s in dictionary?
   if (table->contains (s) && table[s] != "")
     return table[s];
-
-  // remove trailing non iso_alpha characters
+  
+  // Is lowercase version of s in dictionary?
+  string ls= locase_first (s);
+  if (table->contains (ls) && table[ls] != "")
+    return upcase_first (table[ls]);
+  
+  // Attempt to split the string and translate its parts?
+  if (!guess) return s;
+  
+  // Remove trailing non iso_alpha characters
   int i, n= N(s);
   for (i=0; i<n; i++)
     if (is_iso_alpha (s[i]))
@@ -110,12 +118,7 @@ dictionary_rep::translate (string s) {
     return s1 * s2 * s3;
   }
 
-  // Is lowercase version of s in dictionary?
-  string ls= locase_first (s);
-  if (table->contains (ls) && table[ls] != "")
-    return upcase_first (table[ls]);
-
-  // break at last non iso_alpha character which is not a space
+  // Break at last non iso_alpha character which is not a space
   for (i=n; i>0; i--)
     if (!is_iso_alpha (s[i-1]) && s[i-1] != ' ')
       break;
@@ -125,7 +128,7 @@ dictionary_rep::translate (string s) {
     return s1 * s2;
   }
 
-  // no translation available
+  // No translation available
   return s;
 }
 
@@ -160,8 +163,14 @@ translate (const char* s) {
 
 void
 force_load_dictionary (string from, string to) {
-  load_dictionary (from, to, false);
+  load_dictionary (from, to, true);
   eval ("(notify-preference \"language\")");
+}
+
+string
+translate_as_is (string s) {
+  dictionary dict= load_dictionary ("english", out_lan);
+  return dict->translate (s, false);
 }
 
 /******************************************************************************

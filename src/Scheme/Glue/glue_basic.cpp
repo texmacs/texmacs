@@ -575,7 +575,7 @@ tmg_string_translate (tmscm arg1) {
   string in1= tmscm_to_string (arg1);
 
   // TMSCM_DEFER_INTS;
-  string out= translate (in1);
+  string out= translate_as_is (in1);
   // TMSCM_ALLOW_INTS;
 
   return string_to_tmscm (out);
