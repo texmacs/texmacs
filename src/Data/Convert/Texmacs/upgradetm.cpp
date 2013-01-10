@@ -3542,6 +3542,77 @@ upgrade_metadatas (tree t) {
   return r;
 }
 
+static tree
+remove_abstract_data (tree t, array<tree> &abstract_datas) {
+  // Remove all doc-msc and doc-keywords found in a doc-data structure,
+  // and store them in abstract_datas.
+  tree r(L(t));
+  if (is_compound (t, "doc-data")) {
+    for (int i=0; i<N(t); i++) {
+      if (is_compound (t[i], "doc-msc") ||
+          is_compound (t[i], "doc-keywords"))
+        abstract_datas << t[i];
+      else r << t[i];
+    }
+  }
+  else if (is_atomic (t))
+    return t;
+  else {
+    r= tree (t, N(t));
+    for (int i=0; i<N(t); i++)
+      r[i]= remove_abstract_data (t[i], abstract_datas);
+  }
+  return r;
+}
+
+static tree
+merge_abstract_data (tree t, array<tree> abstract_datas, bool &stop) {
+  // Merge abstract_datas with the first abstract found.
+  tree r;
+  if (stop || is_atomic (t)) return t;
+  else if (is_compound (t, "abstract", 1)) {
+    stop= true;
+    tree doc_msc (make_tree_label ("doc-msc"));
+    tree doc_keywords (make_tree_label ("doc-keywords"));
+    bool has_doc_msc= false, has_doc_keywords= false;
+    r= tree (make_tree_label ("abstract-data"));
+    r << tree (DOCUMENT, t);
+    for (int i=0; i<N(abstract_datas); i++) {
+      if (is_compound (abstract_datas[i], "doc-msc")) {
+        has_doc_msc= true;
+        for (int j=0; j<N(abstract_datas[i]); j++)
+         doc_msc << abstract_datas[i][j];
+      }
+      if (is_compound (abstract_datas[i], "doc-keywords")) {
+        has_doc_keywords= true;
+        for (int j=0; j<N(abstract_datas[i]); j++)
+         doc_keywords << abstract_datas[i][j];
+      }
+    }
+    if (has_doc_msc) r[0] << doc_msc;
+    if (has_doc_keywords) r[0] << doc_keywords;
+  }
+  else {
+    r= tree (t, N(t));
+    for (int i=0; i<N(t); i++)
+      r[i]= merge_abstract_data (t[i], abstract_datas, stop);
+  }
+  return r;
+}
+
+static tree
+upgrade_abstract_data (tree t) {
+  // Remove all doc-msc and doc-keywords found in a doc-data structure,
+  // and merge them with the first abstract found.
+  array<tree> abstract_datas;
+  tree r= remove_abstract_data (t, abstract_datas);
+  bool stop= false;
+  if (N(abstract_datas)> 0) {
+    r= merge_abstract_data (r, abstract_datas, stop);
+    if (stop) return r;
+  }
+  return t;
+}
 
 /******************************************************************************
 * Upgrade from previous versions
@@ -3713,6 +3784,7 @@ upgrade (tree t, string version) {
     t= upgrade_cyrillic (t);
   if (version_inf_eq (version, "1.0.7.18"))
     t= upgrade_metadatas (t);
+    // t= upgrade_abstract_data (t);
   // cout << LF << t << LF << LF;
 
   if (is_non_style_document (t))

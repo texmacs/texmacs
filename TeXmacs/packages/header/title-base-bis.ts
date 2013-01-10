@@ -85,7 +85,7 @@
 
   <drd-props|author-misc|arity|1|border|no|accessible|all>
 
-  <drd-props|doc-data-abstract|arity|<tuple|repeat|1|1>|accessible|all>
+  <drd-props|abstract-data|arity|<tuple|repeat|1|1>|accessible|all>
 
   <drd-props|abstract|arity|1|accessible|all>
 
@@ -222,12 +222,14 @@
   <assign|doc-keywords|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<keywords-text><localize|:>
   ><concat-tuple|<quote-arg|args>|, >>>>
 
-  <assign|msc-ref|<macro|msc-id|<style-with|src-compact|none|<hlink|<arg|msc-id>|<style-with|src-compact|none|<merge|http://www.ams.org/mathscinet/search/mscbrowse.html?sk=default&sk=|<arg|msc-id>|&submit=Search>>>>>>
+  <assign|msc-ref|<\macro|msc-id>
+    <style-with|src-compact|none|<hlink|<arg|msc-id>|<style-with|src-compact|none|<merge|http://www.ams.org/mathscinet/search/mscbrowse.html?sk=default&sk=|<arg|msc-id>|&submit=Search>>>>
+  </macro>>
 
   <assign|doc-msc|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<AMS-class-text><localize|:>
   ><concat-tuple|<map|msc-ref|<quote-arg|args>>|, >>>>
 
-  <assign|doc-data-abstract|<xmacro|args|<extern|doc-data-abstract|<quote-arg|args>>>>
+  <assign|abstract-data|<xmacro|args|<extern|abstract-data|<quote-arg|args>>>>
 
   <assign|render-abstract*|<\macro|body|note>
     <\quasi>
