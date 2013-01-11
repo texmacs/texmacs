@@ -167,8 +167,8 @@
 
 (tm-define (abstract-data t)
   (:secure #t)
-  (let ((opts `(document ,@(select t '(document doc-keywords)) ,@(select t '(document doc-msc))))
-        (abst (select t '(document abstract 0))))
+  (let ((opts `(document ,@(select t '(doc-keywords)) ,@(select t '(doc-msc))))
+        (abst (select t '(:* abstract 0))))
     (if (list>1? opts)
       `(render-abstract* (document ,@abst) ,opts)
       `(render-abstract  (document ,@abst)))))

@@ -3565,6 +3565,32 @@ remove_abstract_data (tree t, array<tree> &abstract_datas) {
   return r;
 }
 
+static array<tree>
+sort_abstract_data (array<tree> abstract_datas) {
+  // Sort and merge doc-msc and doc-keywords compounds
+  bool has_doc_msc= false, has_doc_keywords= false;
+  tree doc_msc (make_tree_label ("doc-msc"));
+  tree doc_keywords (make_tree_label ("doc-keywords"));
+  array<tree> r;
+
+  for (int i=0; i<N(abstract_datas); i++) {
+    if (is_compound (abstract_datas[i], "doc-msc")) {
+      has_doc_msc= true;
+      for (int j=0; j<N(abstract_datas[i]); j++)
+        doc_msc << abstract_datas[i][j];
+    }
+    if (is_compound (abstract_datas[i], "doc-keywords")) {
+      has_doc_keywords= true;
+      for (int j=0; j<N(abstract_datas[i]); j++)
+        doc_keywords << abstract_datas[i][j];
+    }
+  }
+  if (has_doc_msc) r << doc_msc;
+  if (has_doc_keywords) r << doc_keywords;
+
+  return r;
+}
+
 static tree
 merge_abstract_data (tree t, array<tree> abstract_datas, bool &stop) {
   // Merge abstract_datas with the first abstract found.
@@ -3572,30 +3598,34 @@ merge_abstract_data (tree t, array<tree> abstract_datas, bool &stop) {
   if (stop || is_atomic (t)) return t;
   else if (is_compound (t, "abstract", 1)) {
     stop= true;
-    tree doc_msc (make_tree_label ("doc-msc"));
-    tree doc_keywords (make_tree_label ("doc-keywords"));
-    bool has_doc_msc= false, has_doc_keywords= false;
     r= tree (make_tree_label ("abstract-data"));
-    r << tree (DOCUMENT, t);
-    for (int i=0; i<N(abstract_datas); i++) {
-      if (is_compound (abstract_datas[i], "doc-msc")) {
-        has_doc_msc= true;
-        for (int j=0; j<N(abstract_datas[i]); j++)
-         doc_msc << abstract_datas[i][j];
-      }
-      if (is_compound (abstract_datas[i], "doc-keywords")) {
-        has_doc_keywords= true;
-        for (int j=0; j<N(abstract_datas[i]); j++)
-         doc_keywords << abstract_datas[i][j];
-      }
-    }
-    if (has_doc_msc) r[0] << doc_msc;
-    if (has_doc_keywords) r[0] << doc_keywords;
+    r << t;
+    for (int i=0; i<N(abstract_datas); i++)
+      r << abstract_datas[i];
   }
   else {
     r= tree (t, N(t));
     for (int i=0; i<N(t); i++)
       r[i]= merge_abstract_data (t[i], abstract_datas, stop);
+  }
+  return r;
+}
+
+static tree
+add_abstract_data (tree t, array<tree> abstract_datas, bool &stop) {
+  // Add abstract_datas after the first doc-data found.
+  if (stop || is_atomic (t)) return t;
+  tree r= tree (L(t));
+  for (int i=0; i<N(t); i++) {
+    if (is_compound (t[i], "doc-data")) {
+      stop= true;
+      r << t[i];
+      r << tree (make_tree_label ("abstract-data"));
+      for (int j=0; j<N(abstract_datas); j++)
+        r[N(r)-1] << abstract_datas[j];
+    }
+    else
+      r << add_abstract_data (t[i], abstract_datas, stop);
   }
   return r;
 }
@@ -3607,9 +3637,11 @@ upgrade_abstract_data (tree t) {
   array<tree> abstract_datas;
   tree r= remove_abstract_data (t, abstract_datas);
   bool stop= false;
-  if (N(abstract_datas)> 0) {
+  if (N(abstract_datas) > 0) {
+    abstract_datas= sort_abstract_data (abstract_datas);
     r= merge_abstract_data (r, abstract_datas, stop);
     if (stop) return r;
+    else return add_abstract_data (r, abstract_datas, stop);
   }
   return t;
 }
@@ -3784,7 +3816,7 @@ upgrade (tree t, string version) {
     t= upgrade_cyrillic (t);
   if (version_inf_eq (version, "1.0.7.18"))
     t= upgrade_metadatas (t);
-    // t= upgrade_abstract_data (t);
+  // t= upgrade_abstract_data (t);
   // cout << LF << t << LF << LF;
 
   if (is_non_style_document (t))
