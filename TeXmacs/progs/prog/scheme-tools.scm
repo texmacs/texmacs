@@ -141,7 +141,8 @@
         (let ((lno (number->string line))
               (cno (number->string column)))
           (go-to-url (string-append filename "?line=" lno "&column=" cno
-                                             "&select=" ssym))
+                                             "&select=" ssym)
+                     (cursor-path))
           (set-message filename (string-append lno ":" cno)))
         (set-message (tr "Symbol properties not found") ssym)))))
 
