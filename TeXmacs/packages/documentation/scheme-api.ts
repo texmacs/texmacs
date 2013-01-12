@@ -61,11 +61,11 @@
   <assign|doc-module-header|<\macro|module-name|module-description>
     <\with|frame-color|light grey|body-color|#f2fffc>
       <\framed-table>
-        <\with|color|black>
-          <table|<row|<\cell>
+        <table|<row|<\cell>
+          <\with|color|black>
             <doc-module-header-body|<arg|module-name>|<arg|module-description>>
-          </cell>>>
-        </with>
+          </with>
+        </cell>>>
       </framed-table>
     </with>
   </macro>>
@@ -75,7 +75,7 @@
   \;
 
   <assign|doc-module-traverse|<with|frame-color|light
-  grey|body-color|#f2fffc|<framed-table|<with|color|black|<table|<row|<cell|<traverse|<macro|root|<extern|doc-module-traverse|<arg|root>>>>>>>>>>>
+  grey|body-color|#f2fffc|<framed-table|<table|<row|<cell|<with|color|black|<traverse|<macro|root|<extern|doc-module-traverse|<arg|root>>>>>>>>>>>
 
   \;
 
