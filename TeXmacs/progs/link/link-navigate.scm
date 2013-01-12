@@ -51,17 +51,17 @@
   (:synopsis "Toggle whether we may follow links of a given @type.")
   (:check-mark "v" navigation-allow-type?)
   (ahash-set! navigation-blocked-types type
-	      (not (ahash-ref navigation-blocked-types type))))
+              (not (ahash-ref navigation-blocked-types type))))
 
 (define (navigation-allow-no-types?)
   (with l (ahash-table->list navigation-blocked-types)
     (null? (list-difference (current-link-types)
-			    (map car (list-filter l cdr))))))
+                            (map car (list-filter l cdr))))))
 (tm-define (navigation-allow-no-types)
   (:synopsis "Disallow any link types from being followed.")
   (:check-mark "v" navigation-allow-no-types?)
   (for-each (cut ahash-set! navigation-blocked-types <> #t)
-	    (current-link-types)))
+            (current-link-types)))
 
 (define (navigation-allow-all-types?)
   (with l (ahash-table->list navigation-blocked-types)
@@ -104,7 +104,7 @@
 
 (define (id->link-list id)
   (let* ((lns (vertex->links `(id ,id)))
-	 (sts (map link-flatten lns)))
+         (sts (map link-flatten lns)))
     (map (cut cons id <>) (map cdr sts))))
 
 (tm-define (ids->link-list ids)
@@ -117,9 +117,9 @@
 (define (exact-link-list-local t)
   (if (not (tm-func? t 'locus)) '()
       (let* ((id (locus-id t))
-	     (lc (list-filter (cdr (tree-children t)) (cut tm-func? <> 'link)))
-	     (lns (map link-flatten lc)))
-	(map (cut cons id <>) (map cdr lns)))))
+             (lc (list-filter (cdr (tree-children t)) (cut tm-func? <> 'link)))
+             (lns (map link-flatten lc)))
+        (map (cut cons id <>) (map cdr lns)))))
 
 (define (filter-on-bidirectional item)
   (== (link-item-id item)
@@ -149,8 +149,8 @@
   ;;(display* "local : " (exact-link-list-local  t) "\n")
   ;;(display* "global: " (exact-link-list-global t) "\n")
   (with l (if (and filter? (not (navigation-external?)))
-	      (exact-link-list-local t)
-	      (exact-link-list-global t))
+              (exact-link-list-local t)
+              (exact-link-list-global t))
     (if filter? (filter-link-list l "click") l)))
 
 (tm-define (upward-link-list t filter?)
@@ -159,8 +159,8 @@
   (:argument filter? "Filter on navigation mode?")
   (if (or (not t) (null? (tree->path t))) '()
       (with l (exact-link-list t filter?)
-	(if (root? t) l
-	    (append l (upward-link-list (tree-up t) filter?))))))
+        (if (root? t) l
+            (append l (upward-link-list (tree-up t) filter?))))))
 
 (tm-define (complete-link-list t filter?)
   (:synopsis "Build possibly filtered link list for @t and its descendants.")
@@ -168,8 +168,8 @@
   (:argument filter? "Filter on navigation mode?")
   (with l (exact-link-list t filter?)
     (if (tree-atomic? t) l
-	(with ls (map (cut complete-link-list <> filter?) (tree-children t))
-	  (apply append (cons l ls))))))
+        (with ls (map (cut complete-link-list <> filter?) (tree-children t))
+          (apply append (cons l ls))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Prospect for active links
@@ -182,10 +182,10 @@
 (define (link-active-upwards-sub t active-ids)
   (if (or (not t) (null? (tree->path t))) '()
       (let* ((ids (tree->ids t))
-	     (add? (nnull? (list-intersection ids active-ids)))
-	     (r (if add? (list t) '())))
-	(if (root? t) r
-	    (append r (link-active-upwards-sub (tree-up t) active-ids))))))
+             (add? (nnull? (list-intersection ids active-ids)))
+             (r (if add? (list t) '())))
+        (if (root? t) r
+            (append r (link-active-upwards-sub (tree-up t) active-ids))))))
 
 (tm-define (link-active-upwards t)
   (:synopsis "Return active ancestor trees for the tree @t.")
@@ -216,61 +216,61 @@
 (define (navigation-list-sub type attrs nr source l)
   (if (null? l) l
       (let* ((head (list type attrs nr source (car l)))
-	     (tail (navigation-list-sub type attrs (+ nr 1) source (cdr l))))
-	(if (== source (vertex->id (car l))) tail
-	    (cons head tail)))))
+             (tail (navigation-list-sub type attrs (+ nr 1) source (cdr l))))
+        (if (== source (vertex->id (car l))) tail
+            (cons head tail)))))
 
 (tm-define (link-list->navigation-list l)
   (:synopsis "Transforms the link list @t into a navigation list")
   (if (null? l) l
       (let* ((item (car l))
-	     (source (link-item-id item))
-	     (type (link-item-type item))
-	     (attrs (link-item-attributes item))
-	     (vertices (link-item-vertices item))
-	     (h (navigation-list-sub type attrs 0 source vertices))
-	     (r (link-list->navigation-list (cdr l))))
-	(list-remove-duplicates (append h r)))))
+             (source (link-item-id item))
+             (type (link-item-type item))
+             (attrs (link-item-attributes item))
+             (vertices (link-item-vertices item))
+             (h (navigation-list-sub type attrs 0 source vertices))
+             (r (link-list->navigation-list (cdr l))))
+        (list-remove-duplicates (append h r)))))
 
 (tm-define (upward-navigation-list t)
   (link-list->navigation-list (upward-link-list t #t)))
 
 (tm-define (navigation-list-filter l type nr jumpable?)
   (cond ((null? l) l)
-	((and (or (== type #t) (== (navigation-type (car l)) type))
-	      (or (== nr #t) (== (navigation-pos (car l)) nr))
-	      (or (not jumpable?)
-		  (func? (navigation-target (car l)) 'id 1)
-		  (func? (navigation-target (car l)) 'url 1)
-		  (func? (navigation-target (car l)) 'script)))
-	 (cons (car l) (navigation-list-filter (cdr l) type nr jumpable?)))
-	(else (navigation-list-filter (cdr l) type nr jumpable?))))
+        ((and (or (== type #t) (== (navigation-type (car l)) type))
+              (or (== nr #t) (== (navigation-pos (car l)) nr))
+              (or (not jumpable?)
+                  (func? (navigation-target (car l)) 'id 1)
+                  (func? (navigation-target (car l)) 'url 1)
+                  (func? (navigation-target (car l)) 'script)))
+         (cons (car l) (navigation-list-filter (cdr l) type nr jumpable?)))
+        (else (navigation-list-filter (cdr l) type nr jumpable?))))
 
 (tm-define (navigation-list-types l)
   (list-remove-duplicates (map navigation-type l)))
 
 (tm-define (navigation-list-xtypes l)
   (let* ((direct (navigation-list-filter l #t 1 #t))
-	 (inverse (navigation-list-filter l #t 0 #t))
-	 (dtypes (map navigation-type direct))
-	 (itypes (map (cut string-append <> "*")
-		      (map navigation-type inverse))))
+         (inverse (navigation-list-filter l #t 0 #t))
+         (dtypes (map navigation-type direct))
+         (itypes (map (cut string-append <> "*")
+                      (map navigation-type inverse))))
     (list-remove-duplicates (append dtypes itypes))))
 
 (tm-define (navigation-list-first-xtype l xtype)
   (let* ((inverse? (string-ends? xtype "*"))
-	 (type (if inverse? (string-drop-right xtype 1) xtype))
-	 (fl (navigation-list-filter l type (if inverse? 0 1) #t)))
+         (type (if inverse? (string-drop-right xtype 1) xtype))
+         (fl (navigation-list-filter l type (if inverse? 0 1) #t)))
     (and (nnull? fl) (navigation-type fl))))
 
 (define (resolve-navigation-list l fun)
   (if (null? l) (fun)
       (let* ((id (vertex->id (navigation-target (car l))))
-	     (ok (or (nstring? id) (nnull? (id->trees id)))))
-	(if ok (resolve-navigation-list (cdr l) fun)
-	    (begin
-	      (resolve-id id)
-	      (delayed (:idle 25) (resolve-navigation-list (cdr l) fun)))))))
+             (ok (or (nstring? id) (nnull? (id->trees id)))))
+        (if ok (resolve-navigation-list (cdr l) fun)
+            (begin
+              (resolve-id id)
+              (delayed (:idle 25) (resolve-navigation-list (cdr l) fun)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Link pages
@@ -278,57 +278,57 @@
 
 (define (automatic-link-text back)
   (cond ((func? back 'id 1)
-	 (with ts (id->trees (vertex->id back))
-	   (and (nnull? ts) (tree->stree (car ts)))))
-	((func? back 'url 1)
-	 `(verbatim ,(vertex->url back)))
-	((func? back 'script)
-	 `(verbatim ,(vertex->script back)))
-	(else #f)))
+         (with ts (id->trees (vertex->id back))
+           (and (nnull? ts) (tree->stree (car ts)))))
+        ((func? back 'url 1)
+         `(verbatim ,(vertex->url back)))
+        ((func? back 'script)
+         `(verbatim ,(vertex->script back)))
+        (else #f)))
 
 (tm-define (automatic-link back . opt)
   (let* ((broken-text (if (null? opt) "Broken" (car opt)))
-	 (id (create-unique-id))
-	 (text (automatic-link-text back)))
+         (id (create-unique-id))
+         (text (automatic-link-text back)))
     (if (not text) `(with "color" "red" ,broken-text)
-	`(locus (id ,id) (link "automatic" (id ,id) ,back) ,text))))
+        `(locus (id ,id) (link "automatic" (id ,id) ,back) ,text))))
 
 (tm-define (build-enumeration l)
   (if (<= (length l) 1) l
       `((enumerate
-	 (document
-	  ,@(map (lambda (x) `(surround (item) "" ,x)) l))))))
+         (document
+          ,@(map (lambda (x) `(surround (item) "" ,x)) l))))))
 
 (define (navigation-item->document item)
   (automatic-link (navigation-target item)))
 
 (define (navigation-list-by-type->document type l)
   (cons `(strong ,type)
-	(build-enumeration (map navigation-item->document l))))
+        (build-enumeration (map navigation-item->document l))))
 
 (define (navigation-list->document style l)
   (let* ((direct (navigation-list-filter l #t 1 #t))
-	 (inverse (navigation-list-filter l #t 0 #t))
-	 (direct-types (navigation-list-types direct))
-	 (inverse-types (navigation-list-types inverse))
-	 (direct-by-type (map (cut navigation-list-filter direct <> #t #f)
-			      direct-types))
-	 (inverse-by-type (map (cut navigation-list-filter inverse <> #t #f)
-			       inverse-types)))
+         (inverse (navigation-list-filter l #t 0 #t))
+         (direct-types (navigation-list-types direct))
+         (inverse-types (navigation-list-types inverse))
+         (direct-by-type (map (cut navigation-list-filter direct <> #t #f)
+                              direct-types))
+         (inverse-by-type (map (cut navigation-list-filter inverse <> #t #f)
+                               inverse-types)))
     `(document
       (style ,style)
       (body (document
-	     (strong "Source")
-	     ,(automatic-link `(id ,(navigation-source (car l)))
-			      "Unaccessible")
-	     ,@(append-map
-		navigation-list-by-type->document
-		(map (cut string-append "Direct " <>) direct-types)
-		direct-by-type)
-	     ,@(append-map
-		navigation-list-by-type->document
-		(map (cut string-append "Inverse " <>) inverse-types)
-		inverse-by-type))))))
+             (strong "Source")
+             ,(automatic-link `(id ,(navigation-source (car l)))
+                              "Unaccessible")
+             ,@(append-map
+                navigation-list-by-type->document
+                (map (cut string-append "Direct " <>) direct-types)
+                direct-by-type)
+             ,@(append-map
+                navigation-list-by-type->document
+                (map (cut string-append "Inverse " <>) inverse-types)
+                inverse-by-type))))))
 
 (define (build-navigation-page-sub style l)
   (with doc (navigation-list->document style l)
@@ -336,7 +336,7 @@
 
 (define (build-navigation-page l)
   (let* ((style (tree->stree (get-style-tree)))
-	 (fun (lambda () (build-navigation-page-sub style l))))
+         (fun (lambda () (build-navigation-page-sub style l))))
     (resolve-navigation-list l fun)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -348,14 +348,18 @@
   (:argument opt-from "Optional path for the cursor history")
   (with l (id->trees id)
     (if (nnull? l)
-	(begin
-	  (if (nnull? opt-from) (cursor-history-add (car opt-from)))
-	  (tree-go-to (car l) :end)
-	  (if (nnull? opt-from) (cursor-history-add (cursor-path))))
-	(and (resolve-id id)
-	     (delayed (:idle 25) (apply go-to-id (cons id opt-from)))))))
+        (begin
+          (if (nnull? opt-from) (cursor-history-add (car opt-from)))
+          (tree-go-to (car l) :end)
+          (if (nnull? opt-from) (cursor-history-add (cursor-path))))
+        (and (resolve-id id)
+             (delayed (:idle 25) (apply go-to-id (cons id opt-from)))))))
 
-(define (default-query-handler qry)
+(define (generic-query-handler qry)
+  (if (and (string? qry) (not (string-null? qry)))
+      (go-to-label qry)))
+
+(define (source-query-handler qry)
   (let* ((lstr (or (query-ref qry "line") "0"))
          (cstr (or (query-ref qry "column") "0"))
          (sstr (or (query-ref qry "select") ""))
@@ -365,41 +369,59 @@
     (go-to-column column)
     (if (!= sstr "") (select-word sstr (cursor-tree) column))))
 
+(define (html-query-handler qry)
+  ; FIXME: implement jumping to anchors.
+  (noop))
+
 ;; TEMPORARY: we have to decide whether this makes sense as one of the
-;; properties of a format as defined in define-format. We also have to
-;; decide whether to always use a default handler which won't work in some
-;; cases (most notably for texmacs files) or if we require explicit naming
-;; of the handler for each format created.
-(define (query-handler-for-format fm)
-  (cond ((== fm "generic-file") default-query-handler)
-        ((== fm "scheme-file") default-query-handler)
-        (else (display* "Unhandled format for queries: " fm "\n") #f)))
+;; properties of a format as defined in define-format.
+(define (query-handler fm)
+  "Define an action to be executed after a jump to a file with format @fm"
+  (cond ((== fm "generic-file") generic-query-handler)
+        ((== fm "scheme-file") source-query-handler)
+        ((== fm "html-file") html-query-handler)
+        (else (display* "Unhandled format for queries: " fm "\n")
+              generic-query-handler)))
 
-(define (process-query file qry)
-  (with handler (query-handler-for-format (file-format file))
-    (if handler (handler qry) #f)))
+(define (default-protocol-handler u qry)
+  (with rel (url-relative (buffer-master) u)
+    (load-browse-buffer rel)))
 
-(define (process-url s)
-  (let* ((m (string-length s))
+(define tmfs-protocol-handler default-protocol-handler)
+
+(define (http-protocol-handler u qry)
+  (default-protocol-handler (string-append (url->string u) "?" qry) ""))
+
+(define (protocol-handler protocol)
+  "Define actions to be taken to jump to a kind of url"
+  (cond ((== protocol "default") default-protocol-handler)
+        ((== protocol "tmfs") tmfs-protocol-handler)
+        ((== protocol "http") http-protocol-handler)
+        (else (display* "Unhandled protocol: " protocol "\n") 
+              default-protocol-handler)))
+
+(define (process-url u)
+  "Parse a url and return the actions to be take for loading and after it"
+  (let* ((s (url->string u))
+         (protocol (url-root u))
+         (m (string-length s))
          (h (or (string-index s #\#) m))
          (a (or (string-index s #\?) m))
          (i (min m h a))
-         (name (substring s 0 i))
-         (rest (substring s (min m (+ 1 i)) m)))
+         (base (substring s 0 i))
+         (qry (substring s (min m (+ 1 i)) m)))
     (if (< i m)  ; was there either a '?' or a '#' (with args)?
-        (if (< h a) ; was it a hash?
-            (list name (lambda () (go-to-label rest)))         ; '#'
-            (list name (lambda () (process-query name rest)))) ; '?'
-        (list name noop))))
+        (list (lambda () ((protocol-handler protocol) base qry))
+              (lambda () ((query-handler (file-format base)) qry)))
+        (list (lambda () ((protocol-handler protocol) base ""))
+              noop))))
 
 (tm-define (go-to-url u . opt-from)
   (:synopsis "Jump to the url @u")
   (:argument opt-from "Optional path for the cursor history")
   (if (nnull? opt-from) (cursor-history-add (car opt-from)))
-  (with (name action) (process-url u)
-    (with u (url-relative (buffer-master) name)
-      (load-browse-buffer u) 
-      (action)))
+  (with (action post) (process-url u)
+    (action) (post))
   (if (nnull? opt-from) (cursor-history-add (cursor-path))))
 
 
@@ -409,34 +431,34 @@
 
 (tm-define (execute-script s secure-origin? . opt-location)
   (let* ((secure-s (string-append "(secure? '" s ")"))
-	 (ok? (or secure-origin? (eval (string->object secure-s))))
-	 (cmd-s (string-append "(lambda () " s ")"))
-	 (cmd (eval (string->object cmd-s))))
+         (ok? (or secure-origin? (eval (string->object secure-s))))
+         (cmd-s (string-append "(lambda () " s ")"))
+         (cmd (eval (string->object cmd-s))))
     (cond ((or ok? (== (get-preference "security") "accept all scripts"))
-	   (execute-at cmd opt-location))
-	  ((== (get-preference "security") "prompt on scripts")
-	   (user-confirm `(concat "Execute " ,s "?") #f
-	     (lambda (answ)
-	       (when answ (execute-at cmd opt-location)))))
-	  (else (set-message "Unsecure script refused" "Evaluate script")))))
+           (execute-at cmd opt-location))
+          ((== (get-preference "security") "prompt on scripts")
+           (user-confirm `(concat "Execute " ,s "?") #f
+             (lambda (answ)
+               (when answ (execute-at cmd opt-location)))))
+          (else (set-message "Unsecure script refused" "Evaluate script")))))
 
 (define (go-to-vertex v attrs)
   (cond ((func? v 'id 1) (go-to-id (cadr v) (cursor-path)))
-	((func? v 'url 1) (go-to-url (cadr v) (cursor-path)))
-	((func? v 'script)
-	 (with ok? (== (assoc-ref attrs "secure") "true")
-	   (apply execute-script (cons* (cadr v) ok? (cddr v)))))
-	(else (noop))))
+        ((func? v 'url 1) (go-to-url (cadr v) (cursor-path)))
+        ((func? v 'script)
+         (with ok? (== (assoc-ref attrs "secure") "true")
+           (apply execute-script (cons* (cadr v) ok? (cddr v)))))
+        (else (noop))))
 
 (define (vertex-linked-ids v)
   (let* ((lns (vertex->links v))
-	 (vs (list-difference (append-map link-vertices lns) (list v))))
+         (vs (list-difference (append-map link-vertices lns) (list v))))
     (list-remove-duplicates (filter-map vertex->id vs))))
 
 (define (id-update id)
   (let* ((ts1 (id->trees id))
-	 (ts2 (id->trees (string-append "&" id)))
-	 (pl (filter-map tree->path (append ts1 ts2))))
+         (ts2 (id->trees (string-append "&" id)))
+         (pl (filter-map tree->path (append ts1 ts2))))
     (for-each update-all-path pl)))
 
 (define (id-set-visited id)
@@ -450,7 +472,7 @@
 
 (define (navigation-item-follow hit)
   (let* ((source (navigation-source hit))
-	 (target (navigation-target hit)))
+         (target (navigation-target hit)))
     (id-set-visited source)
     (and-with target-id (vertex->id target)
       (id-set-visited target-id))
@@ -471,17 +493,17 @@
   (:synopsis "Follow one of the links in the navigation list @nl.")
   (with types (navigation-list-types nl)
     (if (and (>= (length types) 2) (in? "automatic" types))
-	(with auto-nl (navigation-list-filter nl "automatic" #t #f)
-	  (set! nl (list-difference nl auto-nl))))
+        (with auto-nl (navigation-list-filter nl "automatic" #t #f)
+          (set! nl (list-difference nl auto-nl))))
     (with xtypes (navigation-list-xtypes nl)
       (cond ((null? xtypes) (noop))
-	    ((and (navigation-build-link-pages?) (>= (length nl) 2))
-	     (id-set-visited (navigation-source (car nl)))
-	     (build-navigation-page nl))
-	    ((null? (cdr xtypes)) (navigation-item-follow (car nl)))
-	    (else
-	     (set! the-navigation-list nl)
-	     (interactive navigation-list-follow-xtyped))))))
+            ((and (navigation-build-link-pages?) (>= (length nl) 2))
+             (id-set-visited (navigation-source (car nl)))
+             (build-navigation-page nl))
+            ((null? (cdr xtypes)) (navigation-item-follow (car nl)))
+            (else
+             (set! the-navigation-list nl)
+             (interactive navigation-list-follow-xtyped))))))
 
 (tm-define (link-follow-ids ids event)
   (:synopsis "Follow one of the links for identifiers in @ids.")
@@ -492,5 +514,5 @@
 (tm-define (locus-link-follow)
   (:synopsis "Follow one of the links in the current locus.")
   (let* ((ts (link-active-upwards (cursor-tree)))
-	 (ids (append-map tree->ids ts)))
+         (ids (append-map tree->ids ts)))
     (link-follow-ids ids "click")))
