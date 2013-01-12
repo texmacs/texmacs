@@ -388,7 +388,8 @@
   (apply load-buffer-main (cons name (cons :new-window opts))))
 
 (tm-define (load-browse-buffer name)
-  (load-buffer name))
+  (:synopsis "Load a buffer or switch to it if already open")
+  (if (buffer-exists? name) (switch-to-buffer name) (load-buffer name)))
 
 (tm-define (open-buffer)
   (:synopsis "Open a new file")
