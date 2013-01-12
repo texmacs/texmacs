@@ -516,11 +516,13 @@
 (tm-define (select-all)
   (tree-select (buffer-tree)))
 
-(tm-define (go-to-line n)
+(tm-define (go-to-line n . opt-from)
+  (if (nnull? opt-from) (cursor-history-add (car opt-from)))
   (with-innermost t 'document
     (tree-go-to t n 0)))
 
-(tm-define (go-to-column c)
+(tm-define (go-to-column c . opt-from)
+  (if (nnull? opt-from) (cursor-history-add (car opt-from)))
   (with-innermost t 'document
     (with p (tree-cursor-path t)
       (tree-go-to t (cADr p) c))))
