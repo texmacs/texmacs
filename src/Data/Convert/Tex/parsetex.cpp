@@ -15,7 +15,7 @@
 extern bool textm_class_flag;
 hashmap<string,int> textm_recursion_level (0);
 
-string string_arg (tree t);
+string string_arg (tree t, bool url= false);
 tree latex_symbol_to_tree (string s);
 
 /******************************************************************************

@@ -625,21 +625,23 @@ test_alpha_on_end (tree t) {
 }
 
 string
-string_arg (tree t) {
+string_arg (tree t, bool url= false) {
   if (is_atomic (t)) return t->label;
   else if (is_concat (t)) {
     string r;
     int i, n= N(t);
     for (i=0; i<n; i++)
-      r << string_arg (t[i]);
+      r << string_arg (t[i], url);
     return r;
   }
   else if (is_func (t, RSUB, 1))
-    return "_" * string_arg (t[0]);
+    return "_" * string_arg (t[0], url);
   else if (is_func (t, RSUP, 1))
-    return "^" * string_arg (t[0]);
-  else if (is_func (t, APPLY, 1) && t[0] == "nbsp")
+    return "^" * string_arg (t[0], url);
+  else if (is_func (t, APPLY, 1) && t[0] == "nbsp" && !url)
     return " ";
+  else if (is_func (t, APPLY, 1) && t[0] == "nbsp" && url)
+    return "~";
   else {
     //cout << "t= " << t << "\n";
     return "";
@@ -761,6 +763,11 @@ var_m2e (tree t, string var, string val) {
 	       tree (SET, copy (var), copy (val)),
 	       t2e (t[1], false),
 	       tree (RESET, copy (var)));
+}
+
+string
+url_arg_to_string (tree t) {
+  return string_arg (t2e (t, false), true);
 }
 
 string
@@ -1601,9 +1608,9 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\natexlab", 1)) return t2e (t[1]);
   if (is_tuple (t, "\\penalty", 1)) return "";
   if (is_tuple (t, "\\url", 1))
-    return tree (APPLY, "href", t2e (t[1]));
+    return tree (APPLY, "href", url_arg_to_string (t[1]));
   if (is_tuple (t, "\\href", 2))
-    return tree (APPLY, "hlink", l2e (t[2]), t2e (t[1]));
+    return tree (APPLY, "hlink", l2e (t[2]), url_arg_to_string (t[1]));
 
   if (is_tuple (t, "\\xminus", 1))
     return tree (LONG_ARROW, "<rubber-minus>", l2e (t[1]));
