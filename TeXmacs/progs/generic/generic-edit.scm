@@ -121,13 +121,13 @@
   (:require (and (tree-in? t '(label reference pageref)) (cursor-inside? t)))
   (if (complete-try?) (noop)))
 
-; FIXME: only completes in the first argument of the cite tag
 (tm-define (kbd-variant t forwards?)
-  (:require (and (tree-in? t '(cite)) (cursor-inside? t)))
+  (:require (and (tree-in? t '(cite nocite cite-detail)) (cursor-inside? t)))
   (with u (current-bib-file)
-    (if (url-none? u)
-        (set-message "No completions" "You must add a bibliography file")
-        (custom-complete (tm->tree (citekey-completions u (tree-ref t 0)))))))
+    (with ttxt (tree-ref t (cADr (cursor-path)))
+      (if (or (url-none? u) (not ttxt))
+          (set-message "No completions" "You must add a bibliography file")
+          (custom-complete (tm->tree (citekey-completions u ttxt)))))))
 
 (tm-define (kbd-return)
   (kbd-enter (focus-tree) #f))
