@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.10>
+<TeXmacs|1.0.7.17>
 
 <style|tmdoc>
 
@@ -13,7 +13,9 @@
     BiB-<TeX> file. The citations are displayed in the same way as they are
     referenced in the bibliography and they also provide hyperlinks to the
     corresponding references. The citations are displayed as question marks
-    if you did not generate the bibliography.
+    if you did not generate the bibliography. Once you've added a
+    bibliography file, pressing <key|tab> inside the arguments will
+    auto-complete with the cite-keys in your file.
   </explain>
 
   <\explain|<explain-macro|nocite|ref-1|<math|\<cdots\>>|ref-n>>
@@ -22,8 +24,9 @@
   </explain>
 
   <\explain|<explain-macro|cite-detail|ref|info>>
-    A bibliographic reference <src-arg|ref> like above, but with some
-    additional information <src-arg|info>, like a chapter or a page number.
+    A bibliographic reference <src-arg|ref> like <markup|cite> and
+    <markup|nocite>, but with some additional information <src-arg|info>,
+    like a chapter or a page number.
   </explain>
 
   The following macros may be redefined if you want to customize the

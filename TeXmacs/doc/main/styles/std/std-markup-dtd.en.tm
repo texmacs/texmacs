@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.7.17>
 
 <style|tmdoc>
 
@@ -49,8 +49,8 @@
 
   <\explain|<explain-macro|abbr|content>>
     An abbreviation. Example: I work at the <abbr|C.N.R.S.> An abbreviation
-    is created using <menu|Insert|Content tag|Abbreviation> or the <key|text a>
-    keyboard shortcut.
+    is created using <menu|Insert|Content tag|Abbreviation> or the <key|text
+    a> keyboard shortcut.
   </explain>
 
   <\explain|<explain-macro|acronym|content>>
@@ -62,9 +62,9 @@
 
   <\explain|<explain-macro|verbatim|content>>
     Verbatim text like output from a computer program. Example: the program
-    said <verbatim|hello>. You may enter verbatim text via <menu|Insert|Content
-    tag|Verbatim>. The tag may also be used as an environment for
-    multi-paragraph text.
+    said <verbatim|hello>. You may enter verbatim text via
+    <menu|Insert|Content tag|Verbatim>. The tag may also be used as an
+    environment for multi-paragraph text.
   </explain>
 
   <\explain|<explain-macro|kbd|content>>
@@ -87,17 +87,15 @@
   </explain>
 
   <\explain|<explain-macro|math|content>>
-    This is a tag which will be used in the future for mathematics inside
-    regular text. Example: the formula <math|sin<rsup|2> x+cos<rsup|2> x=1>
-    is well-known.
+    This tag is used for mathematics inside regular text. Example: the
+    formula <math|sin<rsup|2> x+cos<rsup|2> x=1> is well-known.
   </explain>
 
   <\explain|<explain-macro|op|content>>
     This is a tag which can be used inside mathematics for specifying that an
     operator should be considered on itself, without any arguments. Example:
-    the operation <math|<op|+>> is a function from
-    <with|mode|math|\<bbb-R\><rsup|2>> to <with|mode|math|\<bbb-R\>>. This
-    tag may become depreciated.
+    the operation <math|<op|+>> is a function from <math|\<bbb-R\><rsup|2>>
+    to <math|\<bbb-R\>>. This tag may become depreciated.
   </explain>
 
   <\explain|<explain-macro|tt|content>>
@@ -129,33 +127,31 @@
     are rendered as follows:
 
     <\tm-fragment>
-      <\with|par-par-sep|0fn>
-        <really-tiny|Really tiny>
+      <really-tiny|Really tiny>
 
-        <tiny|Tiny>
+      <tiny|Tiny>
 
-        <really-small|Really small>
+      <really-small|Really small>
 
-        <very-small|Very small>
+      <very-small|Very small>
 
-        <smaller|Smaller>
+      <smaller|Smaller>
 
-        <small|Small>
+      <small|Small>
 
-        <normal-size|Normal size>
+      <normal-size|Normal size>
 
-        <large|Large>
+      <large|Large>
 
-        <larger|Larger>
+      <larger|Larger>
 
-        <very-large|Very large>
+      <very-large|Very large>
 
-        <really-large|Really large>
+      <really-large|Really large>
 
-        <huge|Huge>
+      <huge|Huge>
 
-        <really-huge|Really huge>
-      </with>
+      <really-huge|Really huge>
     </tm-fragment>
   </explain>
 
