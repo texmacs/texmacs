@@ -43,7 +43,10 @@
   ("Import sessions"
    (choose-file import-sessions "Import sessions" "scheme"))
   ("(Re)Build autocompletion index"
-   (scheme-completions-rebuild)))
+   (scheme-completions-rebuild))
+   (if (and (in-prog-scheme?)
+            (== "scheme-file" (file-format (current-buffer-url))))
+       ("Run current file" (run-scheme-file (current-buffer-url)))))
 
 ; Simpler popup menu.
 (menu-bind texmacs-popup-menu

@@ -147,7 +147,7 @@
         (set-message (tr "Symbol properties not found") ssym)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Handy.. (stuff previously in apidoc-funcs.scm)
+;; Miscelaneous
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (get-current-doc-module)
@@ -168,6 +168,18 @@
 (kbd-map
   (:require (and developer-mode? (in-tmdoc?)))
   ("M-A-x" (interactive ask-insert-symbol-doc)))
+
+(tm-define (run-scheme-file u)
+  (:synopsis "Load the file @u into the scheme interpreter")
+  (with run (lambda (save?)
+              (if save? (buffer-save u))
+              (load (url->string u))
+              (set-message (tr "File %1 was executed" u) ""))
+    (if (and (buffer-exists? u) (buffer-modified? u))
+        (user-confirm 
+          (tr "File %1 is currently open and modified. Save before running?" u)
+          #t run)
+        (run #f))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Browsing of sources with the mouse.
