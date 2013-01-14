@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.0.7.17>
 
 <style|tmdoc>
 
@@ -94,7 +94,8 @@
     <scm|(get-preference <scm-arg|name>)><explain-synopsis|get user
     preference>
   <|explain>
-    Returns the value of preference <scm|name>.
+    Returns the value of preference <scm|name>. If the preference is not
+    defined the string <scm|"default"> is returned.
   </explain>
 
   <tmdoc-copyright|2012|>
