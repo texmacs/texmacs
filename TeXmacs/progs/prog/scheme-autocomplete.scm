@@ -26,68 +26,12 @@
 ;;    add them to the completions tree.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (prog scheme-autocomplete))
+(texmacs-module (prog scheme-autocomplete)
+  (:use (utils library ptrees)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Prefix trees for autocompletion in scheme sessions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define completions (make-ptree))
 
-(define pt-marker
-  (lambda args 
-    (if (null? args) (acons "" '() '()) (acons "" '() (car args)))))
-
-(define (pt-terminal? pt)
-  (== pt (pt-marker)))
-
-(define (pt-word-mark? pt)
-  (!= #f (assoc-ref pt "")))
-
-(define (pt-add pt str)
-  (if (== str "")  ; We are done with the input
-    (cond ((== pt #f) (pt-marker))  ; The last letter was a new node
-          ((pt-word-mark? pt) pt)   ; The word was already there
-          (else (pt-marker pt)))    ; This was a new word
-    (let ((char (string-take str 1))
-          (rest (string-drop str 1))
-          (npt (if (== pt #f) '() pt)))
-      (assoc-set! npt char (pt-add (assoc-ref npt char) rest)) )))
-
-(define (pt-find pt str)
-  (if (== str "") pt
-    (let* ((char (string-take str 1))
-           (rest (string-drop str 1))
-           (val  (assoc-ref pt char)))
-      (if (== val #f) #f (pt-find val rest)))))
-
-(define (pt-add-list pt l)
-  (if (null? l) pt
-      (pt-add-list (pt-add pt (car l)) (cdr l))))
-
-(define (pt-has? pt str)
-  (!= #f (pt-find pt str)))
-
-(define (pt-has-list? pt l) 
-  "Check whether a given ptree @pt contains all items in the list @l"
-  (list-fold (lambda (val prior) (and (pt-has? pt val) prior)) #t l))
-
-(define (pt-words-below-sub pt step)
-  (cond ((or (null? pt) (== #f pt)) '())
-        ((pt-terminal? pt) 
-         `(,step))
-        (else (append (pt-words-below-sub (cdar pt)
-                                          (string-append step (caar pt)))
-                      (pt-words-below-sub (cdr pt) step)) )))
-
-(define (pt-words-below pt)
-  (pt-words-below-sub pt ""))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Interface
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define pt-symbols '()) ; to store all the completions
-(define-public scheme-completions-built? #f)
-
+; Subroutine for all-used-symbols
 (define (obarray-fold-sub module prev)
   (with mi (module-public-interface module)
     (append
@@ -99,6 +43,12 @@
             (or (not mi) (!= #f (module-local-variable mi (car x)))))))
       prev)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Interface
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public scheme-completions-built? #f)
+
 (tm-define (all-used-modules)
   (cons (current-module) (module-uses (current-module))))
 
@@ -106,10 +56,10 @@
   (list-fold obarray-fold-sub '() (all-used-modules)))
 
 (tm-define (scheme-completions-add str)
-  (set! pt-symbols (pt-add pt-symbols str)))
+  (set! completions (pt-add completions str)))
 
 (tm-define (scheme-completions-add-list lst)
-  (set! pt-symbols (pt-add-list pt-symbols lst)))
+  (set! completions (pt-add-list completions lst)))
 
 (tm-define (scheme-completions-rebuild)
   (display "Texmacs] Populating autocompletions tree... ")
@@ -122,13 +72,13 @@
     (set! scheme-completions-built? #t)))
 
 (tm-define (scheme-completions-dump)
-  (pt-words-below (pt-find pt-symbols "")))
+  (pt-words-below (pt-find completions "")))
 
 (tm-define (scheme-completions root)
   (:synopsis "Provide the completions for @root as needed by custom-complete")
   `(tuple ,root 
      ,@(map string->tmstring 
-            (pt-words-below (pt-find pt-symbols (tmstring->string root))))))
+            (pt-words-below (pt-find completions (tmstring->string root))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Hook for new-read. See init-texmacs.scm
