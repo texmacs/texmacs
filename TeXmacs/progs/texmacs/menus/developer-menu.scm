@@ -14,7 +14,7 @@
 
 (texmacs-module (texmacs menus developer-menu))
 
-(use-modules (prog scheme-menu)
+(use-modules (prog scheme-tools) (prog scheme-menu)
              (doc apidoc) (doc apidoc-widgets)
              (language natural))
 
@@ -31,15 +31,16 @@
   ;("List all symbols" (apidoc-all-symbols))
   ("Open module browser" (open-module-browser))
   ("Open symbol browser" (open-symbol-browser))
+  (if (in-tmdoc?)
+      ("Insert symbol documentation" (interactive ask-insert-symbol-doc)))
   ---
   (group "Configuration")
-  ("Load my-init-texmacs.scm" 
+  ((tr "Open %1" "my-init-texmacs.scm") 
     (load-buffer 
      (url-concretize "$TEXMACS_HOME_PATH/progs/my-init-texmacs.scm")))
-  ("Load my-init-buffer.scm"
+  ((tr "Open %1" "my-init-buffer.scm")
     (load-buffer 
      (url-concretize "$TEXMACS_HOME_PATH/progs/my-init-buffer.scm")))
-    ("Load preferences.scm"
+    ((tr "Open %1" "preferences.scm")
     (load-buffer 
      (url-concretize "$TEXMACS_HOME_PATH/system/preferences.scm"))))
-  ;("Execute current buffer" (blahblah)))
