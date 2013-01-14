@@ -32,7 +32,7 @@ public:
   string translate (string s, bool guess=true);
 };
 
-dictionary load_dictionary (string from, string to, bool reset_cache=false);
+dictionary load_dictionary (string from, string to);
 void force_load_dictionary (string from, string to);
 void set_input_language (string s);
 string get_input_language ();

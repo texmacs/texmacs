@@ -63,12 +63,10 @@ dictionary_rep::load (string fname) {
 }
 
 dictionary
-load_dictionary (string from, string to, bool reset_cache) {
+load_dictionary (string from, string to) {
   string name= from * "-" * to;
-  if (dictionary::instances -> contains (name)) {
-    if (reset_cache) dictionary::instances -> reset (name);
-    else             return dictionary (name);
-  }
+  if (dictionary::instances -> contains (name))
+    return dictionary (name);
   dictionary dict= tm_new<dictionary_rep> (from, to);
   if (from != to) dict->load (name);
   return dict;
@@ -163,7 +161,10 @@ translate (const char* s) {
 
 void
 force_load_dictionary (string from, string to) {
-  load_dictionary (from, to, true);
+  string name= from * "-" * to;
+  if (dictionary::instances -> contains (name))
+    dictionary::instances -> reset (name);
+  load_dictionary (from, to);
   eval ("(notify-preference \"language\")");
 }
 
