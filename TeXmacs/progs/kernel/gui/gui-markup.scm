@@ -232,6 +232,12 @@
       `(list ',(car x) ,@(map process-translate (cdr x)))
       x))
 
+(tm-define-macro ($tr str . x)
+  (:synopsis "Translate a string with arguments")
+  (if developer-mode?
+      (ahash-set! all-translations (car x) #t))
+  `(eval '(apply tr ,str ',@x)))
+
 (tm-define-macro ($-> text . l)
   (:synopsis "Make pullright button")
   (if developer-mode?

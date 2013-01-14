@@ -114,6 +114,10 @@
   (require-format x '(icon :%1))
   `($icon ,(cadr x)))
 
+(define (gui-make-tr x)
+  (require-format x '(tr :%1 :*))
+  `($tr ,(cadr x) ,(cddr x)))
+
 (define (gui-make-concat x)
   (require-format x '(concat :*))
   `($concat-text ,@(cdr x)))
@@ -128,7 +132,7 @@
 
 (define (gui-make-balloon x)
   (require-format x '(balloon :%2))
-  `($balloon ,(gui-make (cadr x)) ,(caddr x)))
+  `($balloon ,(gui-make (cadr x)) ,(gui-make (caddr x))))
 
 (define (gui-make-submenu x)
   (require-format x '(-> :%1 :*))
@@ -331,6 +335,7 @@
   (filtered-choice ,gui-make-filtered-choice)
   (toggle ,gui-make-toggle)
   (icon ,gui-make-icon)
+  (tr ,gui-make-tr)
   (concat ,gui-make-concat)
   (verbatim ,gui-make-verbatim)
   (check ,gui-make-check)
