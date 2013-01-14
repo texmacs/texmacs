@@ -13,6 +13,7 @@
 #include "hashset.hpp"
 #include "analyze.hpp"
 #include "connect.hpp"
+#include "dictionary.hpp"
 
 /******************************************************************************
 * Finding completions in text
@@ -87,13 +88,14 @@ edit_interface_rep::complete_try () {
 void
 edit_interface_rep::complete_message () {
   int i, n= N(completions);
-  string s= "Other completions: ";
+  string s= "";
+  string sep= translate (", ");  // Might be needed for oriental languages
   for (i=1; i<min(n,11); i++) {
     int j= (completion_pos + i) % n;
-    if (i != 1) s << ", ";
+    if (i != 1) s << sep;
     s << completion_prefix << completions[j];
   }
-  set_message (s, "tab");
+  set_message (concat ("Other completions: ", verbatim (s)), "tab");
 }
 
 void
