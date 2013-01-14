@@ -383,14 +383,15 @@
         (else (display* "Unhandled format for queries: " fm "\n")
               generic-query-handler)))
 
-(define (default-protocol-handler u qry)
-  (with rel (url-relative (buffer-master) u)
-    (load-browse-buffer rel)))
-
+(define (default-protocol-handler fname qry)
+  (load-browse-buffer fname))
+        
 (define tmfs-protocol-handler default-protocol-handler)
 
-(define (http-protocol-handler u qry)
-  (default-protocol-handler (string-append (url->string u) "?" qry) ""))
+(define (http-protocol-handler fname qry)
+  (default-protocol-handler
+   (if (string-null? qry) fname (string-append fname "?" qry)) 
+   ""))
 
 (define (protocol-handler protocol)
   "Define actions to be taken to jump to a kind of url"
@@ -416,14 +417,19 @@
         (list (lambda () ((protocol-handler protocol) base ""))
               noop))))
 
+; FIXME: we expand the url in case it contained some env. variable with multiple
+; paths. In this case we open the first existent file because opening several
+; in succession crashes.
 (tm-define (go-to-url u . opt-from)
   (:synopsis "Jump to the url @u")
   (:argument opt-from "Optional path for the cursor history")
   (if (nnull? opt-from) (cursor-history-add (car opt-from)))
-  (with (action post) (process-url u)
-    (action) (post))
+  (with l (url->list (url-expand u))
+    (if (> (length l) 1)
+        (set! l (list-filter l url-exists?)))
+    (with (action post) (process-url (car l))
+      (action) (post)))
   (if (nnull? opt-from) (cursor-history-add (cursor-path))))
-
 
 (define (execute-at cmd opt-location)
   (if (null? opt-location) (exec-delayed cmd)
