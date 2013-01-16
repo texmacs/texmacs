@@ -100,3 +100,20 @@ set_env (string var, string with) {
   // -> known memory leak, but solution more complex than it is worth
 #endif
 }
+
+url
+get_texmacs_path () {
+  string tmpath= get_env ("TEXMACS_PATH");
+    // FIXME: Why is this?
+  while ((N(tmpath)>0) && (tmpath [N(tmpath) - 1] == '/'))
+    tmpath= tmpath (0, N(tmpath)-1);
+  return tmpath;
+}
+
+url
+get_texmacs_home_path () {
+  url path= get_env ("TEXMACS_HOME_PATH");
+  if (path == "")
+    path= url_system ("$HOME/.TeXmacs");
+  return path;
+}

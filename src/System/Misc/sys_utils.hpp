@@ -12,6 +12,7 @@
 #ifndef SYS_UTILS_H
 #define SYS_UTILS_H
 #include "string.hpp"
+#include "url.hpp"
 
 extern int script_status; // 0: never accept, 1: prompt, 2: always accept
 
@@ -21,5 +22,8 @@ string var_eval_system (string s);
 string get_env (string var);
 void   set_env (string var, string with);
 string get_stacktrace (unsigned int max_frames= 127);
+
+url get_texmacs_path ();
+url get_texmacs_home_path ();
 
 #endif // defined SYS_UTILS_H

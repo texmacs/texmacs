@@ -25,14 +25,6 @@ is_snippet (tree doc) {
   return true;
 }
 
-string
-get_texmacs_path () {
-  string tmpath= get_env ("TEXMACS_PATH");
-  while ((N(tmpath)>0) && (tmpath [N(tmpath) - 1] == '/'))
-    tmpath= tmpath (0, N(tmpath)-1);
-  return tmpath;
-}
-
 url
 get_file_focus () {
   return current_file_focus;

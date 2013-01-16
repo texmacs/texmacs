@@ -1940,7 +1940,7 @@
 	     (main-style (or (tmtex-transform-style (car style)) "article"))
 	     (lan (tmfile-init x "language"))
 	     (init (tmfile-extract x 'initial))
-	     (doc (list '!file body style lan init (get-texmacs-path))))
+	     (doc (list '!file body style lan init (url->string (get-texmacs-path)))))
 	(latex-set-style main-style)
 	(latex-set-packages '())
 	(set! tmtex-style (car style))

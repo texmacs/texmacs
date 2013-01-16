@@ -1577,7 +1577,7 @@
 	     (style* (tmfile-extract x 'style))
 	     (style (if (list? style*) style* (list style*)))
 	     (lan (tmfile-init x "language"))
-	     (doc (list '!file body style lan (get-texmacs-path))))
+	     (doc (list '!file body style lan (url->string (get-texmacs-path)))))
 	(texmacs->html doc opts))
       (begin
 	(tmhtml-initialize opts)

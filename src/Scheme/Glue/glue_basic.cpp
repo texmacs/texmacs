@@ -189,10 +189,19 @@ tmg_scheme_dialect () {
 tmscm
 tmg_get_texmacs_path () {
   // TMSCM_DEFER_INTS;
-  string out= get_texmacs_path ();
+  url out= get_texmacs_path ();
   // TMSCM_ALLOW_INTS;
 
-  return string_to_tmscm (out);
+  return url_to_tmscm (out);
+}
+
+tmscm
+tmg_get_texmacs_home_path () {
+  // TMSCM_DEFER_INTS;
+  url out= get_texmacs_home_path ();
+  // TMSCM_ALLOW_INTS;
+
+  return url_to_tmscm (out);
 }
 
 tmscm
@@ -7068,6 +7077,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("rescue-mode?",  tmg_rescue_modeP, 0, 0, 0);
   tmscm_install_procedure ("scheme-dialect",  tmg_scheme_dialect, 0, 0, 0);
   tmscm_install_procedure ("get-texmacs-path",  tmg_get_texmacs_path, 0, 0, 0);
+  tmscm_install_procedure ("get-texmacs-home-path",  tmg_get_texmacs_home_path, 0, 0, 0);
   tmscm_install_procedure ("plugin-list",  tmg_plugin_list, 0, 0, 0);
   tmscm_install_procedure ("set-fast-environments",  tmg_set_fast_environments, 1, 0, 0);
   tmscm_install_procedure ("font-exists-in-tt?",  tmg_font_exists_in_ttP, 1, 0, 0);
