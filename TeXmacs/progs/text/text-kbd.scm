@@ -294,14 +294,18 @@
 (kbd-map
   (:mode in-cyrillic?)
   ("modeswitch" (make-with "language" "english") (make-with "font" "roman")))
-  
-(kbd-map                       ; overwrite shortcuts inadequate for verbatim
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Overwrite shortcuts inadequate in certain contexts
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(kbd-map
   (:mode in-verbatim?)
   ("\"" "\"")
   ("< <" "<less><less>")
   ("> >" "<gtr><gtr>")
   (", ," ",,")
   ("- - -" "---")
-  ("- var" "-")
-  ("space var" "    ")         ; FIXME: arbitrarily set to 4 spaces
-  ("space var var" "    "))    ; FIXME: arbitrarily set to 4 spaces
+  ("- var" (begin (insert "-") (kbd-tab)))
+  ("space var" (insert-tabstop))
+  ("space var var" (begin (insert-tabstop) (insert-tabstop))))

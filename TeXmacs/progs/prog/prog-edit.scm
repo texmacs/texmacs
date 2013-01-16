@@ -13,7 +13,7 @@
 
 (texmacs-module (prog prog-edit)
   (:use (utils library tree)
-	(utils library cursor)))
+        (utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic routines for textual programs
@@ -22,13 +22,13 @@
 (tm-define (inside-program?)
   (:synopsis "are we inside the line of a textual document?")
   (let* ((ct (cursor-tree))
-	 (dt (tree-ref ct :up)))
+         (dt (tree-ref ct :up)))
     (and (tree-atomic? ct) (tree-is? dt 'document))))
 
 (tm-define (program-tree)
   (:synopsis "get the entire program tree")
   (let* ((ct (cursor-tree))
-	 (dt (tree-ref ct :up)))
+         (dt (tree-ref ct :up)))
     (and (tree-atomic? ct) (tree-is? dt 'document) dt)))
 
 (tm-define (program-row row)
@@ -61,12 +61,12 @@
 
 (define (string-bracket-find* s pos inc br ibr level)
   (cond ((or (< pos 0) (>= pos (string-length s))) (- -1 level))
-	((and (== level 0) (== (string-ref s pos) br)) pos)
-	((== (string-ref s pos) br)
-	 (string-bracket-find* s (+ pos inc) inc br ibr (- level 1)))
-	((== (string-ref s pos) ibr)
-	 (string-bracket-find* s (+ pos inc) inc br ibr (+ level 1)))
-	(else (string-bracket-find* s (+ pos inc) inc br ibr level))))
+        ((and (== level 0) (== (string-ref s pos) br)) pos)
+        ((== (string-ref s pos) br)
+         (string-bracket-find* s (+ pos inc) inc br ibr (- level 1)))
+        ((== (string-ref s pos) ibr)
+         (string-bracket-find* s (+ pos inc) inc br ibr (+ level 1)))
+        (else (string-bracket-find* s (+ pos inc) inc br ibr level))))
 
 (define (string-bracket-find s pos inc br ibr level)
   (with r (string-bracket-find* s pos inc br ibr level)
@@ -75,7 +75,7 @@
 (define (string-bracket-level s pos inc br ibr)
   (with ret (string-bracket-find* s pos inc br ibr 0)
     (if (< ret 0) (- -1 ret)
-	(string-bracket-level s (+ ret inc) br ibr))))
+        (string-bracket-level s (+ ret inc) br ibr))))
 
 (tm-define (string-bracket-forward s pos br ibr)
   (:synopsis "find previous bracket @br with inverse @ibr in @s at @pos")
@@ -89,22 +89,22 @@
   (and-with s (program-row row)
     (with ret (string-bracket-find* s col inc br ibr level)
       (if (>= ret 0) (cons row ret)
-	  (with level* (- -1 ret)
-	    (and-with s* (program-row (+ row inc))
-	      (with col* (if (> inc 0) 0 (- (string-length s*) 1))
-		(program-bracket-find (+ row inc) col* inc
-				      br ibr level*))))))))
+          (with level* (- -1 ret)
+            (and-with s* (program-row (+ row inc))
+              (with col* (if (> inc 0) 0 (- (string-length s*) 1))
+                (program-bracket-find (+ row inc) col* inc
+                                      br ibr level*))))))))
 
 (tm-define (program-previous-match row br ibr)
   (:synopsis "find matching opening row for @row and bracket @br")
   (let* ((s (program-row row))
-	 (last (- (string-length s) 1)))    
+         (last (- (string-length s) 1)))    
     (if (not s) row
-	(with ret (string-bracket-level s last -1 br ibr)
-	  (if (== ret 0) row
-	      (with pos (program-bracket-find row last -1 br ibr -1)
-		(if (not pos) row
-		    (car pos))))))))
+        (with ret (string-bracket-level s last -1 br ibr)
+          (if (== ret 0) row
+              (with pos (program-bracket-find row last -1 br ibr -1)
+                (if (not pos) row
+                    (car pos))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Whitespace handling
@@ -128,7 +128,7 @@
 (tm-define (string-set-indent s i)
   (:synopsis "set the indentation of @s to @i spaces")
   (let* ((l (make-string i #\space))
-	 (r (substring s (string-get-indent s) (string-length s))))
+         (r (substring s (string-get-indent s) (string-length s))))
     (string-append l r)))
 
 (tm-define (program-get-indent)
@@ -141,3 +141,17 @@
   (when (inside-program?)
     (with t (cursor-tree)
       (tree-set t (string-set-indent (tree->string t) i)))))
+      
+(tm-define (get-tabstop)
+  (with tabstop* (get-preference "editor:verbatim:tabstop")
+    (cond ((and (string? tabstop*) (string->number tabstop*))
+           (string->number tabstop*))
+          ((and (number? tabstop*) (> tabstop* 0)) tabstop*)
+          (else (set-message
+                 (tr "Wrong tabstop: %1" tabstop*) "User preferences")
+                8))))
+
+(tm-define (insert-tabstop)
+  (with w (get-tabstop)
+    (with fill (- w (remainder (cAr (cursor-path)) w))
+      (if (> fill 0) (insert (make-string fill #\space))))))

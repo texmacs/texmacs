@@ -127,7 +127,8 @@
   (with-active-selection% (selection-active-normal?))
   (in-scheme% (== (get-env "prog-language") "scheme"))
   (in-prog-scheme% #t in-prog% in-scheme%)
-  (in-verbatim% (inside? 'verbatim) in-text%))
+  (in-verbatim% (or (inside? 'verbatim) (inside? 'verbatim-code) 
+                    (inside? 'code)) in-text%))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Language related

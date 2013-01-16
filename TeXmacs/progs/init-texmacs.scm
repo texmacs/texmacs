@@ -165,8 +165,7 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting programming modes\n")
-;;(lazy-keyboard (prog scheme-tools) with-developer-tool?)
-(lazy-keyboard (prog scheme-edit) in-prog-scheme?)
+(lazy-keyboard (prog prog-kbd) in-prog?)
 (lazy-menu (prog format-prog-menu) prog-format-menu prog-format-icons)
 (lazy-menu (prog prog-menu) prog-menu prog-icons)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
