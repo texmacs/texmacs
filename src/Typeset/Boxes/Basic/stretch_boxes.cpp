@@ -102,6 +102,13 @@ wide_breve_box (path ip, SI x1, SI x2, SI penw, color col) {
 }
 
 box
+wide_invbreve_box (path ip, SI x1, SI x2, SI penw, color col) {
+  SI width, height;
+  get_wide_parameters (x1, x2, penw, width, height);
+  return arc_box (ip, 0, -height, width, 1.1*height, 370<<6, 530<<6, penw, col);
+}
+
+box
 wide_squbr_box (path ip, SI x1, SI x2, SI penw, color col) {
   path dip= decorate_middle (ip);
   SI width= max (x2-x1, 6*penw), height= 6*penw;

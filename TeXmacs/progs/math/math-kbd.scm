@@ -31,6 +31,7 @@
   ("accent:abovedot" (make-wide "<dot>"))        ; yields M-.
   ("accent:umlaut" (make-wide "<ddot>"))         ; yields M-\"
   ("accent:breve" (make-wide "<breve>"))         ; yields M-U
+  ("accent:invbreve" (make-wide "<invbreve>"))   ; yields M-A
   ("accent:check" (make-wide "<check>"))         ; yields M-V
   ("math:under accent:tilde" (make-wide-under "~"))
   ("math:under accent:deadhat" (make-wide-under "^"))
@@ -39,6 +40,7 @@
   ("math:under accent:abovedot" (make-wide-under "<dot>"))
   ("math:under accent:umlaut" (make-wide-under "<ddot>"))
   ("math:under accent:breve" (make-wide-under "<breve>"))
+  ("math:under accent:invbreve" (make-wide-under "<invbreve>"))
   ("math:under accent:check" (make-wide-under "<check>"))
   ;; end
 
@@ -98,6 +100,7 @@
   ("math B" (make-wide "<bar>"))
   ("math C" (make-wide "<check>"))
   ("math U" (make-wide "<breve>"))
+  ("math A" (make-wide "<invbreve>"))
   ("math T" (make-wide "<bind>"))
   ("math V" (make-wide "<vect>"))
   ("math ~" (make-wide "~"))
@@ -119,6 +122,7 @@
   ("math:under B" (make-wide-under "<bar>"))
   ("math:under C" (make-wide-under "<check>"))
   ("math:under U" (make-wide-under "<breve>"))
+  ("math:under A" (make-wide-under "<invbreve>"))
   ("math:under T" (make-wide-under "<bind>"))
   ("math:under V" (make-wide-under "<vect>"))
   ("math:under ~" (make-wide-under "~"))

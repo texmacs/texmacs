@@ -136,6 +136,7 @@
   ("<vect>" "&RightVector;")
   ("<check>" "&Hacek;")
   ("<breve>" "&Breve;")
+  ("<invbreve>" "&#x311;") ; combining inverted breve
   ("<acute>" "&DiacriticalAcute;")
   ("<grave>" "&DiacriticalGrave;")
   ("<dot>" "&DiacriticalDot;")

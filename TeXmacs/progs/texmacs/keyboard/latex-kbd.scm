@@ -34,7 +34,7 @@
   "Zeta" "Eta" "Theta" "Iota" "Kappa" "Lambda"
   "Mu" "Nu" "Xi" "Omicron" "Pi" "Rho"
   "Sigma" "Tau" "Upsilon" "Phi" "Chi" "Psi" "Omega"
-  "grave" "acute" "check" "breve" "bar"
+  "grave" "acute" "check" "breve" "invbreve" "bar"
   "cedille"
   "AA" "AE" "DH" "L" "NG" "O" "OE" "S" "SS" "TH"
   "aa" "ae" "dh" "dj" "i" "j" "l" "ng" "o" "oe" "ss" "sz" "th"
@@ -225,6 +225,7 @@
   ("acute" "Make acute" (make-wide "<acute>"))
   ("bar" "Make bar" (make-wide "<bar>"))
   ("breve" "Make breve" (make-wide "<breve>"))
+  ("invbreve" "Make inverted breve" (make-wide "<invbreve>"))
   ("check" "Make check" (make-wide "<check>"))
   ("grave" "Make grave" (make-wide "<grave>"))
   ("hat" "Make hat" (make-wide "^"))

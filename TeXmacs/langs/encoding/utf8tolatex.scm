@@ -172,6 +172,7 @@
 ("#2DC" "{\\textasciitilde}")
 ("#2D8" "{\\textasciibreve}")
 ("#2DD" "{\\textacutedbl}")
+("#311" "{\\textroundcap}")
 ("#400" "{\\`\CYRE}")
 ("#401" "{\\CYRYO}")
 ("#402" "{\\CYRDJE}")

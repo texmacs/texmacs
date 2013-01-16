@@ -1350,6 +1350,8 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\acute", 1)) return tree (WIDE, l2e (t[1]), "<acute>");
   if (is_tuple (t, "\\vec", 1)) return tree (WIDE, l2e (t[1]), "<vect>");
   if (is_tuple (t, "\\breve", 1)) return tree (WIDE, l2e (t[1]), "<breve>");
+  if (is_tuple (t, "\\textroundcap", 1))
+    return tree (WIDE, l2e (t[1]), "<invbreve>");
   if (is_tuple (t, "\\abovering", 1) || is_tuple (t, "\\mathring", 1))
     return tree (WIDE, l2e (t[1]), "<abovering>");
   if (is_tuple (t, "\\hspace", 1) || is_tuple (t, "\\hspace*", 1)) {

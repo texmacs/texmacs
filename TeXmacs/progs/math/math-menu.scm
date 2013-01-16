@@ -50,6 +50,7 @@
       ("Vector" (make-wide "<vect>"))
       ("Check" (make-wide "<check>"))
       ("Breve" (make-wide "<breve>"))
+      ("Inverted breve" (make-wide "<invbreve>"))
       ---
       ("Acute" (make-wide "<acute>"))
       ("Grave" (make-wide "<grave>"))
@@ -71,6 +72,7 @@
       ("Vector" (make-wide-under "<vect>"))
       ("Check" (make-wide-under "<check>"))
       ("Breve" (make-wide-under "<breve>"))
+      ("Inverted breve" (make-wide-under "<invbreve>"))
       ---
       ("Acute" (make-wide-under "<acute>"))
       ("Grave" (make-wide-under "<grave>"))
@@ -96,7 +98,7 @@
   (-> "Link" (link insert-link-menu))
   (if (detailed-menus?)
       (if (style-has? "std-fold-dtd")
-	  (-> "Fold" (link insert-fold-menu)))
+          (-> "Fold" (link insert-fold-menu)))
       (-> "Animation" (link insert-animation-menu))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -289,9 +291,9 @@
   (symbol "<right-lceil-2>" (math-bracket-close "<lceil>" "<rceil>" #t))
   (symbol "<right-rceil-2>" (math-bracket-close "<rceil>" "<lceil>" #t))
   (symbol "<right-llbracket-2>"
-	  (math-bracket-close "<llbracket>" "<rrbracket>" #t))
+          (math-bracket-close "<llbracket>" "<rrbracket>" #t))
   (symbol "<right-rrbracket-2>"
-	  (math-bracket-close "<rrbracket>" "<llbracket>" #t))
+          (math-bracket-close "<rrbracket>" "<llbracket>" #t))
   (symbol "<right-|-4>" (math-bracket-close "|" "|" #t))
   (symbol "<right-||-4>" (math-bracket-close "<||>" "<||>" #t))
   (symbol "<right-/-2>" (math-bracket-close "/" "\\" #t))
@@ -1065,6 +1067,7 @@
             ((icon "tm_vect.xpm") (make-wide "<vect>"))
             ((icon "tm_check.xpm") (make-wide "<check>"))
             ((icon "tm_breve.xpm") (make-wide "<breve>"))
+            ((icon "tm_invbreve.xpm") (make-wide "<invbreve>"))
             ((icon "tm_dot.xpm") (make-wide "<dot>"))
             ((icon "tm_ddot.xpm") (make-wide "<ddot>"))
             ((icon "tm_acute.xpm") (make-wide "<acute>"))
@@ -1098,7 +1101,7 @@
       ---
       (tile 8 (link upper-greek-menu)))
   (=> (balloon (icon "tm_mathbold.xpm")
-	       "Insert a bold character")
+               "Insert a bold character")
       (tile 15 (link bold-num-menu))
       ---
       (tile 13 (link bold-alpha-menu))
@@ -1107,13 +1110,13 @@
       ---
       (tile 15 (link bold-greek-menu)))
   (=> (balloon (icon "tm_cal.xpm")
-	       "Insert a calligraphic character")
+               "Insert a calligraphic character")
       (tile 13 (link cal-menu)))
   (=> (balloon (icon "tm_frak.xpm")
-	       "Insert a fraktur character")
+               "Insert a fraktur character")
       (tile 13 (link frak-menu)))
   (=> (balloon (icon "tm_bbb.xpm")
-	       "Insert a blackboard bold character")
+               "Insert a blackboard bold character")
       (tile 13 (link bbb-menu)))
   (=> (balloon (icon "tm_op.xpm") "Insert a textual operator")
       (link textual-operator-menu))
@@ -1239,13 +1242,13 @@
 (tm-menu (focus-toggle-menu t)
   (:require (tree-in? t '(wide wide*)))
   ((check "Accent below" "v"
-	  (alternate-second? (focus-tree)))
+          (alternate-second? (focus-tree)))
    (alternate-toggle (focus-tree))))
 
 (tm-menu (focus-toggle-icons t)
   (:require (tree-in? t '(wide wide*)))
   ((check (balloon (icon "tm_wide_under.xpm") "Accent below") "v"
-	  (alternate-second? (focus-tree)))
+          (alternate-second? (focus-tree)))
    (alternate-toggle (focus-tree))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1263,13 +1266,13 @@
 (tm-menu (focus-toggle-menu t)
   (:require (tree-in? t '(around around*)))
   ((check "Large brackets" "v"
-	  (alternate-second? (focus-tree)))
+          (alternate-second? (focus-tree)))
    (alternate-toggle (focus-tree))))
 
 (tm-menu (focus-toggle-icons t)
   (:require (tree-in? t '(around around*)))
   ((check (balloon (icon "tm_large_around.xpm") "Large brackets") "v"
-	  (alternate-second? (focus-tree)))
+          (alternate-second? (focus-tree)))
    (alternate-toggle (focus-tree))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

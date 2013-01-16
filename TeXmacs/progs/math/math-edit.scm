@@ -244,7 +244,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define wide-list-1
-  '("~" "^" "<bar>" "<vect>" "<check>" "<breve>"))
+  '("~" "^" "<bar>" "<vect>" "<check>" "<breve>" "<invbreve>"))
 
 (define wide-list-2
   '("<acute>" "<grave>" "<dot>" "<ddot>" "<abovering>"))

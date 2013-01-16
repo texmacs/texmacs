@@ -52,6 +52,9 @@
 ("<dot>"	"#02D9")
 ("<abovering>"	"#02DA")
 
+;;; Other
+
+("<invbreve>" "#0311")
 
 ;;; General Punctuation				2000--206F
 

@@ -271,6 +271,9 @@ concater_rep::typeset_wide (tree t, path ip, bool above) {
     s= "<" * s (6, N(s));
     wide= true;
   }
+  else if (s == "<invbreve>") {  //HACK: fonts don't provide invbreve
+    wide = true;
+  }
   else {
     wide= (b->w() >= (env->fn->wfn)) || is_func (t, VAR_WIDE);
     if (ends (s, "dot>") || (s == "<acute>") ||
@@ -292,6 +295,8 @@ concater_rep::typeset_wide (tree t, path ip, bool above) {
       wideb= wide_check_box (decorate_middle (ip), b->x1, b->x2, w, env->col);
     else if (s == "<breve>")
       wideb= wide_breve_box (decorate_middle (ip), b->x1, b->x2, w, env->col);
+    else if (s == "<invbreve>")
+      wideb= wide_invbreve_box(decorate_middle (ip), b->x1, b->x2, w, env->col);
     else if (s == "<squnderbrace>" || s == "<squnderbrace*>")
       wideb= wide_squbr_box (decorate_middle (ip), b->x1, b->x2, w, env->col);
     else if (s == "<sqoverbrace>" || s == "<sqoverbrace*>")

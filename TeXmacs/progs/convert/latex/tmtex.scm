@@ -832,6 +832,7 @@
 	  ((== acc "<bar>") (list (if wide 'overline 'bar) arg))
 	  ((== acc "<vect>") (list (if wide 'overrightarrow 'vec) arg))
 	  ((== acc "<breve>") (list 'breve arg))
+	  ((== acc "<invbreve>") (list 'invbreve arg))
 	  ((== acc "<check>") (list 'check arg))
 	  ((== acc "<acute>") (list 'acute arg))
 	  ((== acc "<grave>") (list 'grave arg))

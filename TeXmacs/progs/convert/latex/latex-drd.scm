@@ -59,7 +59,7 @@
   big Big bigg Bigg bigl Bigl biggl Biggl
   bigm Bigm biggm Biggm bigr Bigr biggr Biggr
   bar hat tilde widehat widetilde vec bm
-  grave acute check breve abovering mathring
+  grave acute check breve invbreve abovering mathring
   dot ddot dddot ddddot mod pod pmod
   label ref pageref index hspace hspace* vspace vspace*
   mbox hbox textnormal text not substack
