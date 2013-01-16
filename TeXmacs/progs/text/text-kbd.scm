@@ -300,6 +300,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (kbd-map
+  (:mode in-variants-disabled?)
+  ("- var" (begin (insert "-") (kbd-tab)))
+  ("space var" (begin (insert " ") (kbd-tab)))
+  ("space var var" (begin (insert " ") (kbd-tab) (kbd-tab))))
+
+(kbd-map
   (:mode in-verbatim?)
   ("\"" "\"")
   ("< <" "<less><less>")
