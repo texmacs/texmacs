@@ -29,6 +29,9 @@
  This means that the QWidget passed as an argument already represents a fully 
  parsed and compiled scheme widget. We use this fact to decide whether we must
  be resizable or not, for instance.
+ 
+ The parameter "fake" means this qt_window_widget_rep is not part of the window
+ list, so the nr_windows global variable must not be updated.
  */
 qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, command _quit, bool fake)
 : qt_widget_rep (window_widget, _wid), quit(_quit)

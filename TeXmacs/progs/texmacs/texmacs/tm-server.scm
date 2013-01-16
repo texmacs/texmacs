@@ -25,26 +25,28 @@
   (if (qt-gui?) "on" "off"))
 
 (define (notify-look-and-feel var val)
+  (set-preference "gui:line-input:autocommit" (== val "macos"))
+  (set-preference "gui:line-input:enter key applies" (== val "macos"))
   (set-message "Restart in order to let the new look and feel take effect"
-	       "configure look and feel"))
+               "configure look and feel"))
 
 (define (notify-language var val)
   (set-output-language val)
   (if (and (current-view) (== (buffer-tree) (stree->tree '(document ""))))
       (init-language val))
   (cond ((or (== val "bulgarian") (== val "russian") (== val "ukrainian"))
-	 (notify-preference "cyrillic input method"))))
+         (notify-preference "cyrillic input method"))))
 
 (define (notify-scripting-language var val)
   (if (current-view)
       (if (== val "none")
-	  (init-default "prog-scripts")
-	  (init-env "prog-scripts" val))))
+          (init-default "prog-scripts")
+          (init-env "prog-scripts" val))))
 
 (define (notify-security var val)
   (cond ((== val "accept no scripts") (set-script-status 0))
-	((== val "prompt on scripts") (set-script-status 1))
-	((== val "accept all scripts") (set-script-status 2))))
+        ((== val "prompt on scripts") (set-script-status 1))
+        ((== val "accept all scripts") (set-script-status 2))))
 
 (define (notify-bibtex-command var val)
   (set-bibtex-command val))
@@ -108,13 +110,13 @@
 
 (define (get-interactive-function-list)
   (let* ((funs (get-function-list))
-	 (pred? (lambda (fun) (not (not (property fun :arguments))))))
+         (pred? (lambda (fun) (not (not (property fun :arguments))))))
     (list-filter funs pred?)))
 
 (tm-define (exec-interactive-command cmd)
   (:argument  cmd "Interactive command")
   (:proposals cmd (cons "" (map symbol->string
-				(get-interactive-function-list))))
+                                (get-interactive-function-list))))
   (interactive (eval (string->symbol cmd))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

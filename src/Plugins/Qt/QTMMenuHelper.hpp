@@ -208,16 +208,22 @@ protected:
  sync.
  
  After certain events we store state information about the QLineEdit into the 
- qt_input_text_widget_rep: when the user has finished editing (i.e. has pressed
- enter), or has left the QLineEdit for instance.
+ qt_input_text_widget_rep: 
+  - When the user has finished editing (i.e. has pressed enter) we save the text
+    from the QWidget in the texmacs widget and set a "modified" flag.
+  - When the user leaves the QWidget we restore the text from the texmacs widget
+    and in case there was a modification we execute the scheme command.
  
- Actually we use this with a QTMLineEdit.
+ or has left the QLineEdit for instance. We actually use this with a
+ QTMLineEdit.
+ 
+ When 
  */
 class QTMInputTextWidgetHelper : public QObject {
   Q_OBJECT
 
   widget            p_wid; //<! A reference to a qt_input_text_widget_rep
-  bool               done;
+  bool               done; //<! Has the command been executed after a modif.?
   QList<QLineEdit*> views;
   
 public:
@@ -228,6 +234,7 @@ public:
     return static_cast<qt_input_text_widget_rep*>(p_wid.rep); }
   
   void add (QObject *);
+  void apply ();
 
 public slots:
   void commit ();

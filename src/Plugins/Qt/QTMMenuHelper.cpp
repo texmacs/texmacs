@@ -269,22 +269,38 @@ QTMInputTextWidgetHelper::~QTMInputTextWidgetHelper() {
 }
 
 void
+QTMInputTextWidgetHelper::apply () {
+  if (done) return;
+  done = true;
+  the_gui->process_command (wid()->cmd, wid()->ok
+                            ? list_object (object (wid()->input))
+                            : list_object (object (false)));
+}
+
+/*! Executed when the enter key is pressed. */
+void
 QTMInputTextWidgetHelper::commit () {
   QLineEdit *le = qobject_cast <QLineEdit*> (sender());
-  if (le) {
-    done         = false;
-    wid()->ok    = true;
-    wid()->input = from_qstring (le->text());
-  }
+  if (!le) return;
+
+  done         = false;
+  wid()->ok    = true;
+  wid()->input = from_qstring (le->text());
+
+    // HACK: this is 0 inside a dialog => no command
+  widget_rep* win = qt_window_widget_rep::widget_from_qwidget (le);
+  if (win && get_preference("gui:line-input:enter key applies") == "#t") apply();
 }
 
 /*! Executed after commit of the input field (enter) and when losing focus */
 void
 QTMInputTextWidgetHelper::leave () {
-  QLineEdit* le = qobject_cast <QLineEdit*> (sender());  
+  QLineEdit* le = qobject_cast <QLineEdit*> (sender());
   if (!le) return;
- 
-    // reset the text according to the texmacs widget
+
+  if (get_preference ("gui:line-input:autocommit") == "#t")
+    commit();
+
   le->setText (to_qstring (wid()->input));
   
     // HACK: restore focus to the main editor widget
@@ -292,13 +308,8 @@ QTMInputTextWidgetHelper::leave () {
   if (win && concrete(win)->type == qt_widget_rep::texmacs_widget)
     concrete(get_canvas(win))->qwid->setFocus();
   
-    // process the scheme command
-  if (done) return;
-  done = true;
-  if (win)  // HACK: this is 0 if inside a dialog, and then there's no command
-    the_gui->process_command (wid()->cmd, wid()->ok
-                              ? list_object (object (wid()->input))
-                              : list_object (object (false)));
+    // HACK: this is 0 inside a dialog => no command
+  if (win) apply();
 }
 
 void
@@ -396,30 +407,34 @@ void
 QTMLineEdit::keyPressEvent(QKeyEvent* ev)
 {
   QCompleter* c = completer();
-  
+
   if (c) {
     int row = 0;
     switch (ev->key()) {
       case Qt::Key_Down:
         completing = true;
+        c->complete();
       case Qt::Key_Tab:
       {
         if (completing) {
           if (c->completionCount() > 1) {
             if(! c->setCurrentRow (c->currentRow()-1))
-              c->setCurrentRow(c->completionCount()-1); // cycle
+              c->setCurrentRow (c->completionCount()-1); // cycle
           } else {
-            setCursorPosition(text().length());
+            setCursorPosition (text().length());
+            completing = false;
+              //c->popup()->hide();
           }
         } else {
           if (hasSelectedText())
-            c->setCompletionPrefix(text().left(selectionStart()));
+            c->setCompletionPrefix (text().left (selectionStart()));
           else
-            c->setCompletionPrefix(text().left(cursorPosition()));
-          completing = true;          
+            c->setCompletionPrefix (text().left (cursorPosition()));
+          completing = true;
+          c->complete();
         }
         if (hasSelectedText())
-          setCursorPosition(selectionStart());
+          setCursorPosition (selectionStart());
         if (c->currentCompletion() != "") {
           int pos = cursorPosition();
           setText (c->currentCompletion ());
@@ -437,6 +452,7 @@ QTMLineEdit::keyPressEvent(QKeyEvent* ev)
       case Qt::Key_Backtab:
       {
         completing = true;
+        c->complete();
         row = c->currentRow();
         if(! c->setCurrentRow (row+1))
           c->setCurrentRow(0);                      // cycle
@@ -449,28 +465,44 @@ QTMLineEdit::keyPressEvent(QKeyEvent* ev)
           setText (c->currentCompletion ());
           setSelection (pos, text().length()-1);          
         } else {
-            //blink somehow
+            // TODO: blink somehow
         }
-
         ev->accept();
       }
         return;
       case Qt::Key_Shift:   // need to ignore this to correctly get shift-tabs
         if (completing) return;
+        break;
+      case Qt::Key_Enter:
+      case Qt::Key_Return:
+        if (completing || c->popup()) {
+          setText (c->currentCompletion());
+          setCursorPosition (text().length());
+          if (c->popup()) c->popup()->hide();
+          completing = false;
+        }
+        emit returnPressed();
+        ev->accept();
+        return;
+      case Qt::Key_Escape:
+        if (completing) {
+          if (c->popup()) c->popup()->hide();
+          completing = false;
+        } else {
+          emit editingFinished();
+          ev->accept();
+          if (parentWidget())        // HACK to return focus to the main editor widget
+            parentWidget()->setFocus();
+        }
+        return;
       default:
         completing = false;
-        break;
+        QLineEdit::keyPressEvent(ev);
+        return;
     }
   }
 
-  if (ev->key() == Qt::Key_Escape) {
-    emit editingFinished();
-    ev->accept();
-    if (parentWidget())        // HACK to return focus to the main editor widget
-      parentWidget()->setFocus();
-  } else {
-    QLineEdit::keyPressEvent(ev);
-  }
+  QLineEdit::keyPressEvent(ev);
 }
 
 QSize
