@@ -559,6 +559,7 @@
   ("macos S-up" (kbd-select go-start))
   ("macos S-down" (kbd-select go-end))
 
+  ("macos N" (open-window))
   ("search macos g" (search-next))
   ("search macos G" (search-previous))
 
