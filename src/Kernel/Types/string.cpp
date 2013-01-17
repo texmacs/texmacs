@@ -269,6 +269,14 @@ as_string (long int i) {
 }
 
 string
+as_string (long long int i) {
+  char buf[64];
+  sprintf (buf, "%lli", i);
+  // sprintf (buf, "%i\0", i);
+  return string (buf);
+}
+
+string
 as_string (unsigned long int i) {
   char buf[64];
   sprintf (buf, "%li", i);
