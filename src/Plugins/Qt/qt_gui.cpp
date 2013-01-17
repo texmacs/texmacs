@@ -155,8 +155,6 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
   if (md->hasFormat ("application/x-texmacs-pid")) {
     buf= md->data ("application/x-texmacs-pid");
     if (!(buf.isEmpty())) {
-      //cout << "buf: " << string (buf.constData(), buf.size()) << LF;
-      //cout << "pid: " << as_string (QCoreApplication::applicationPid ()) << LF;
       owns= string (buf.constData(), buf.size())
             == as_string (QCoreApplication::applicationPid ());
     }
@@ -166,7 +164,6 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
     if (!selection_t->contains (key)) return false;
     t= copy (selection_t [key]);
     s= copy (selection_s [key]);
-    cout << "Pasted as: internal data\n";
     return true;
   }
 
@@ -200,9 +197,6 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
   if (input_format != "")
     s= as_string (call ("convert", s, input_format, "texmacs-snippet"));
   t= tuple ("extern", s);
-  cout << "Pasted as: "
-    << ((format == "default")? "default -> " * input_format: format) << LF;
-  cout << t << LF << LF;
   return true;
 }
 
@@ -211,8 +205,6 @@ qt_gui_rep::set_selection (string key, tree t, string s, string format) {
   selection_t (key)= copy (t);
   selection_s (key)= copy (s);
 
-  cout << s << LF << t << LF << LF;
-        
   QClipboard *cb= QApplication::clipboard ();
   QClipboard::Mode mode= QClipboard::Clipboard;
   if (key == "primary");
