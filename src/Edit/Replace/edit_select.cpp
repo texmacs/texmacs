@@ -50,7 +50,7 @@ selection_decode (string lan, string s) {
 
 edit_select_rep::edit_select_rep ():
   selecting (false), shift_selecting (false), mid_p (),
-  selection_import ("texmacs"), selection_export ("texmacs"),
+  selection_import ("default"), selection_export ("default"),
   focus_p (), focus_hold (false) {}
 edit_select_rep::~edit_select_rep () {}
 
@@ -637,7 +637,9 @@ edit_select_rep::selection_set (string key, tree t, bool persistant) {
     if (selection_export == "latex") t= exec_latex (t, tp);
     if ((selection_export == "latex") && (mode == "math"))
       t= compound ("math", t);
-    s= tree_to_generic (t, selection_export * "-snippet");
+    if (selection_export != "default")
+      s= tree_to_generic (t, selection_export * "-snippet");
+    else s= tree_to_generic (t, "texmacs-snippet");
     s= selection_encode (lan, s);
   }
   if (::set_selection (key, sel, s, selection_export) && !persistant)
@@ -679,10 +681,12 @@ edit_select_rep::selection_paste (string key) {
   if (is_tuple (t, "extern", 1)) {
     string mode= get_env_string (MODE);
     string lan = get_env_string (MODE_LANGUAGE (mode));
+    string fm;
     if ((selection_import == "latex") && (mode == "prog")) mode= "verbatim";
     if ((selection_import == "latex") && (mode == "math")) mode= "latex-math";
     if ((selection_import == "html") && (mode == "prog")) mode= "verbatim";
-    string fm= selection_import * "-snippet";
+    if (selection_import == "default") fm= "texmacs-snippet";
+    else fm= selection_import * "-snippet";
     tree doc= generic_to_tree (selection_decode(lan, as_string(t[1])), fm);
     if (is_func (doc, DOCUMENT, 1)) doc= doc[0]; // temporary fix
     insert_tree (doc);

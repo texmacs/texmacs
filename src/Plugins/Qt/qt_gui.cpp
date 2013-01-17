@@ -9,6 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include "convert.hpp"
 #include "iterator.hpp"
 #include "dictionary.hpp"
 #include "qt_gui.hpp"
@@ -34,6 +35,7 @@
 #include <QMimeData>
 #include <QByteArray>
 #include <QApplication>
+#include <QCoreApplication>
 #include <QImage>
 
 #ifdef MACOSX_EXTENSIONS
@@ -137,42 +139,79 @@ qt_gui_rep::~qt_gui_rep()  {
 
 bool
 qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
-  (void) format;
   QClipboard *cb= QApplication::clipboard ();
   QClipboard::Mode mode= QClipboard::Clipboard;
-  bool owns= false;
-  if (key == "primary" || (key == "mouse" && cb->supportsSelection ())) {
+  if (key == "primary" || (key == "mouse" && cb->supportsSelection ()))
     if (key == "mouse") mode= QClipboard::Selection;
-    const QMimeData *md= cb->mimeData (mode);
-    if (md) owns= md->hasFormat ("application/x-texmacs-clipboard");  
-  }
-  else owns= true;
-  
+
+  QString originalText= cb->text (mode);
+  const QMimeData *md= cb->mimeData (mode);
+  QByteArray buf;
+  string input_format;
+
   s= "";
   t= "none";
+  bool owns= false;
+  if (md->hasFormat ("application/x-texmacs-pid")) {
+    buf= md->data ("application/x-texmacs-pid");
+    if (!(buf.isEmpty())) {
+      //cout << "buf: " << string (buf.constData(), buf.size()) << LF;
+      //cout << "pid: " << as_string (QCoreApplication::applicationPid ()) << LF;
+      owns= string (buf.constData(), buf.size())
+            == as_string (QCoreApplication::applicationPid ());
+    }
+  }
+
   if (owns) {
     if (!selection_t->contains (key)) return false;
     t= copy (selection_t [key]);
     s= copy (selection_s [key]);
+    cout << "Pasted as: internal data\n";
     return true;
   }
+
+  if (format == "default") {
+    if (md->hasFormat ("application/x-texmacs-clipboard")) {
+      buf= md->data ("application/x-texmacs-clipboard");
+      input_format= "texmacs-snippet";
+    }
+    else if (md->hasHtml ()) {
+      buf= md->html().toUtf8 ();
+      input_format= "html-snippet";
+    }
+    else if (md->hasFormat ("text/plain;charset=utf8")) {
+      buf= md->data ("text/plain;charset=utf8");
+      input_format= "verbatim-snippet";
+    }
+    else {
+      buf= md->text().toUtf8 ();
+      input_format= "verbatim-snippet";
+    }
+  }
+  else if (format == "verbatim" && (
+        get_preference ("texmacs->verbatim:encoding") == "utf-8" ||
+        get_preference ("texmacs->verbatim:encoding") == "auto"  ))
+    buf= md->text().toUtf8 ();
   else {
-    QString originalText= cb->text (mode);
-    QByteArray buf;
-    if (format == "verbatim" &&
-	get_preference ("verbatim->texmacs:encoding") == "utf-8")
-      buf= originalText.toUtf8 ();
-    else buf= originalText.toAscii ();
-    if (!(buf.isEmpty())) s << string (buf.constData(), buf.size());
-    t= tuple ("extern", s);
-    return true;
+    if (md->hasFormat ("plain/text")) buf= md->data ("plain/text").data();
+    else buf= md->text().toUtf8 ();
   }
+  if (!(buf.isEmpty())) s << string (buf.constData(), buf.size());
+  if (input_format != "")
+    s= as_string (call ("convert", s, input_format, "texmacs-snippet"));
+  t= tuple ("extern", s);
+  cout << "Pasted as: "
+    << ((format == "default")? "default -> " * input_format: format) << LF;
+  cout << t << LF << LF;
+  return true;
 }
 
 bool
 qt_gui_rep::set_selection (string key, tree t, string s, string format) {
   selection_t (key)= copy (t);
   selection_s (key)= copy (s);
+
+  cout << s << LF << t << LF << LF;
         
   QClipboard *cb= QApplication::clipboard ();
   QClipboard::Mode mode= QClipboard::Clipboard;
@@ -182,16 +221,37 @@ qt_gui_rep::set_selection (string key, tree t, string s, string format) {
   else return true;
   cb->clear (mode);
 
-  char *selection = as_charp (s);
+  char *selection= as_charp (s);
   cb->setText (selection, mode);
-  QByteArray ba (selection);
   QMimeData *md= new QMimeData;
-  md->setData ("application/x-texmacs-clipboard", ba);
-  if (format == "verbatim" &&
-      get_preference ("texmacs->verbatim:encoding") == "utf-8")
-    md->setText (QString::fromUtf8 (selection));
-  else md->setText (selection);
-  cb->setMimeData (md, mode); 
+
+  if (format == "verbatim" || format == "default") {
+    if (format == "default") {
+      md->setData ("application/x-texmacs-clipboard", selection);
+
+      selection= as_charp (as_string (QCoreApplication::applicationPid ()));
+      md->setData ("application/x-texmacs-pid", selection);
+
+      string html_s= as_string (call ("convert", s,
+                                      "texmacs-snippet", "html-snippet"));
+      selection= as_charp (html_s);
+      md->setHtml (selection);
+
+      s= as_string (call ("convert", s,
+                          "texmacs-snippet", "verbatim-snippet"));
+      selection= as_charp (s);
+    }
+
+    if (get_preference ("texmacs->verbatim:encoding") == "utf-8")
+      md->setText (QString::fromUtf8 (selection));
+    else if (get_preference ("texmacs->verbatim:encoding") == "iso-8859-1")
+      md->setText (QString::fromLatin1 (selection));
+    else
+      md->setText (selection);
+  }
+  else
+    md->setText (selection);
+  cb->setMimeData (md, mode);
   // according to the docs, ownership of mimedata is transferred to clipboard
   // so no memory leak here
   tm_delete_array (selection);
@@ -205,14 +265,14 @@ qt_gui_rep::clear_selection (string key) {
   
   QClipboard *cb= QApplication::clipboard();
   QClipboard::Mode mode= QClipboard::Clipboard;
-  bool owns= false;
   if (key == "primary");
   else if (key == "mouse" && cb->supportsSelection())
     mode= QClipboard::Selection;
   else return;
 
+  bool owns= false;
   const QMimeData *md= cb->mimeData (mode);
-  if (md) owns= md->hasFormat ("application/x-texmacs");
+  if (md) owns= md->hasFormat ("application/x-texmacs-clipboard");
   if (owns) cb->clear (mode);
 }
 
