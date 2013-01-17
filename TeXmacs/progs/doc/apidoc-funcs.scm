@@ -112,16 +112,15 @@
 
 ; HACK: we use read (copying what's done in init-texmacs.scm) until the
 ; code indexer is implemented
-(define (parse-form form)
+(define (parse-form form filename)
   "Set symbol properties and return the symbol."
   (and (pair? form) 
        (member (car form) keywords-which-define)
        (let* ((line (source-property form 'line))
               (column (source-property form 'column))
-              (filename (source-property form 'filename))
               (sym  (if (pair? (cadr form)) (caadr form) (cadr form))))
          (and (symbol? sym) ; Just in case
-              (begin 
+              (begin
                 (set-symbol-property! sym 'line line)
                 (set-symbol-property! sym 'column column)
                 (set-symbol-property! sym 'filename filename)
@@ -131,11 +130,11 @@
   (:synopsis "List of exported symbols in @module")
   (or (ahash-ref module-exported-cache module)
       (and (is-real-module? module)
-        (let* ((p (open-input-string 
-                   (string-load (module-source-path module #t))))
+        (let* ((fname (module-source-path module #t))
+               (p (open-input-string (string-load fname)))
                (defs '())
                (add (lambda (f) 
-                      (with pf (parse-form f)
+                      (with pf (parse-form f fname)
                         (and (!= pf #f) (set! defs (rcons defs pf)))))))
           (letrec ((r (lambda () (with form (read p)
                                    (or (eof-object? form) 
