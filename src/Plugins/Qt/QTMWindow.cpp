@@ -60,11 +60,8 @@ void QTMWindow::closeEvent (QCloseEvent* event)
 {
   string name= concrete(tmwid)->get_nickname ();
   if (DEBUG_QT) cout << "Close QTMWindow " << name << LF;
-  if (tmwid->ref_count != 0) {
-    concrete(tmwid)->send (SLOT_DESTROY, NULL);
-    event->ignore ();
-    notify_window_destroy (name);
-  }
+  event->ignore ();
+  notify_window_destroy (name);
   emit closed();
 }
 

@@ -192,20 +192,23 @@ class QTMLineEdit : public QLineEdit {
 
   bool completing;
   string       ww; // width of the parsed widget
-public:
   
+public:
   QTMLineEdit (QWidget *parent, string _ww, int style=0);
   virtual QSize	sizeHint () const ;
   virtual bool event (QEvent* ev);
-  
+
+signals:
+  void focusOut ();
 protected:
   virtual void keyPressEvent (QKeyEvent* ev);
-  virtual void  focusInEvent (QFocusEvent* ev);
+  virtual void focusInEvent (QFocusEvent* ev);
+  virtual void focusOutEvent (QFocusEvent* ev);
 };
 
 
-/*! A class to keep a QLineEdit object and a qt_input_text_widget_rep object in
- sync.
+/*! A class to keep a QTMLineEdit object and a qt_input_text_widget_rep object
+ in sync.
  
  After certain events we store state information about the QLineEdit into the 
  qt_input_text_widget_rep: 
@@ -214,17 +217,15 @@ protected:
   - When the user leaves the QWidget we restore the text from the texmacs widget
     and in case there was a modification we execute the scheme command.
  
- or has left the QLineEdit for instance. We actually use this with a
- QTMLineEdit.
- 
- When 
- */
+ Additionally and depending on user configuration we may always store the text
+ when leaving or apply the command when pressing enter.
+*/
 class QTMInputTextWidgetHelper : public QObject {
   Q_OBJECT
 
   widget            p_wid; //<! A reference to a qt_input_text_widget_rep
   bool               done; //<! Has the command been executed after a modif.?
-  QList<QLineEdit*> views;
+  QList<QTMLineEdit*> views;
   
 public:
   QTMInputTextWidgetHelper (qt_input_text_widget_rep*  _wid); 
@@ -240,7 +241,6 @@ public slots:
   void commit ();
   void leave ();
   void remove (QObject *);
-
 };
 
 class QTMComboBox;
