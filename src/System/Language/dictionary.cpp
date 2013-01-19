@@ -14,7 +14,7 @@
 #include "convert.hpp"
 #include "converter.hpp"
 #include "drd_std.hpp"
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 
 RESOURCE_CODE(dictionary);
 

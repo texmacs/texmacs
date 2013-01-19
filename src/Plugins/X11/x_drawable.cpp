@@ -16,6 +16,8 @@
 #include "analyze.hpp"
 #include "iterator.hpp"
 #include "Ghostscript/ghostscript.hpp"
+
+#define IMLIB2_X11TEXMACS // for imlib2_display
 #include "Imlib2/imlib2.hpp"
 
 extern int  nr_windows;

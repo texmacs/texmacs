@@ -9,6 +9,10 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#ifdef X11TEXMACS
+#define IMLIB2_X11TEXMACS
+#endif
+
 #include "Imlib2/imlib2.hpp"
 #include "dyn_link.hpp"
 #include "hashmap.hpp"

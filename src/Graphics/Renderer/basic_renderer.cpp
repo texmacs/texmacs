@@ -9,7 +9,6 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "config.h" // for QTTEXMACS and AQUATEXMACS
 #if (defined(QTTEXMACS) || defined(AQUATEXMACS))
 
 #include "basic_renderer.hpp"
