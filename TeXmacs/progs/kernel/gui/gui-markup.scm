@@ -228,15 +228,9 @@
 (tm-define all-translations (make-ahash-table))
 
 (define (process-translate x)
-  (if (or (func? x 'concat) (func? x 'verbatim))
+  (if (or (func? x 'concat) (func? x 'verbatim) (func? x 'tr))
       `(list ',(car x) ,@(map process-translate (cdr x)))
       x))
-
-(tm-define-macro ($tr str . x)
-  (:synopsis "Translate a string with arguments")
-  (if developer-mode?
-      (ahash-set! all-translations (car x) #t))
-  `(eval '(apply tr ,str ',@x)))
 
 (tm-define-macro ($-> text . l)
   (:synopsis "Make pullright button")
@@ -275,6 +269,12 @@
 (tm-define-macro ($verbatim-text . l)
   (:synopsis "Make verbatim text")
   `(quote (verbatim ,@l)))
+
+(tm-define-macro ($tr-text str . x)
+  (:synopsis "Make text to be translated with arguments")
+  (if developer-mode?
+      (ahash-set! all-translations (car x) #t))
+  `(tr ,str ,@x))
 
 (tm-define-macro ($icon name)
   (:synopsis "Make icon")
@@ -500,6 +500,9 @@
 
 (tm-define-macro ($verbatim . l)
   ($quote `(verbatim ($unquote ($inline ,@l)))))
+
+(tm-define-macro ($tr str . l)
+  `(tree-translate ($tr-text ,str ,@l)))
 
 (tm-define-macro ($link dest . l)
   ($quote `(hlink ($unquote ($inline ,@l)) ($unquote ($textual ,dest)))))

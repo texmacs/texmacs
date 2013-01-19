@@ -169,9 +169,14 @@ force_load_dictionary (string from, string to) {
 }
 
 string
-translate_as_is (string s) {
-  dictionary dict= load_dictionary ("english", out_lan);
+translate_as_is (string s, string from, string to) {
+  dictionary dict= load_dictionary (from, to);
   return dict->translate (s, false);
+}
+
+string
+translate_as_is (string s) {
+  return translate_as_is (s, "english", out_lan);
 }
 
 /******************************************************************************
@@ -179,10 +184,45 @@ translate_as_is (string s) {
 ******************************************************************************/
 
 tree
+translate_replace (tree t, string from, string to, int n=1)
+{
+  if (N(t) < 2) return t[0];
+  
+  string s= t[0]->label;
+  string arg= "%" * as_string (n);
+  
+  if (is_atomic (t[1])) {
+    s= replace (s, arg, translate (t[1]->label, from, to));
+    return translate_replace (concat (s) * t(2, N(t)), from, to, n+1);
+  }
+  else {
+    int l= search_forwards (arg, s);
+    if (l < 0) return t;
+    int r= l + N(arg);
+    tree r1= tree_translate (t[1], from, to);
+    tree r2= translate_replace (tuple (s (r, N(s))) * t(2, N(t)), from, to, n+1);
+    s= s(0, l);
+    if (is_atomic (r1)) {
+      if (is_atomic (r2)) return s * r1->label * r2->label;
+      else                return concat (s * r1->label, r2);
+    }
+    return concat (s, r1, r2);
+  }
+}
+
+tree
 tree_translate (tree t, string from, string to) {
   //cout << "Translating " << t << " from " << from << " into " << to << "\n";
   if (is_atomic (t))
     return translate (t->label, from, to);
+  else if (is_compound (t, "tr")) {
+    if (!is_atomic (t[0])) {
+        //cout << "tree_translate() ERROR: first child should be a string\n";
+      return t;
+    }
+    t[0]->label= translate_as_is (t[0]->label, from, to);
+    return translate_replace (t, from, to);
+  }
   else if (is_compound (t, "verbatim", 1))
     return t[0];
   else if (is_compound (t, "localize", 1))

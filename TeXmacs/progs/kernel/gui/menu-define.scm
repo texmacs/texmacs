@@ -116,7 +116,7 @@
 
 (define (gui-make-tr x)
   (require-format x '(tr :%1 :*))
-  `($tr ,(cadr x) ,(cddr x)))
+  `($tr-text ,(cadr x) ,@(cddr x)))
 
 (define (gui-make-concat x)
   (require-format x '(concat :*))

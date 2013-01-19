@@ -59,9 +59,9 @@
 
 (define (build-search-results keyword the-result)
   ($tmdoc
-    ($tmdoc-title (tr "Search results for ``%1''" keyword))
+    ($tmdoc-title ($tr "Search results for ``%1''" keyword))
     ($when (null? the-result)
-      (tr "No matches found for ``%1''." keyword))
+      ($tr "No matches found for ``%1''." keyword))
     ($when (nnull? the-result)
       ($with highest-score (cdar the-result)
         ($description-aligned
@@ -69,9 +69,10 @@
             ($describe-item
                 ($inline (quotient (* (cdr x) 100) highest-score) "%")
               ($link (car x) (help-file-title (car x)))
-              ($verbatim " ("
-                         (cAr (string-tokenize-by-char (car x) #\/)))
-                         ")" )))))))
+              ($verbatim 
+                (string-append " ("
+                               (cAr (string-tokenize-by-char (car x) #\/)))
+                               ")" ))))))))
 
 (define (build-link-page keyword file-list)
   (let* ((keyword-list (string-tokenize-by-char keyword #\space))

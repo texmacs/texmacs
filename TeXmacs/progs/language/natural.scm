@@ -11,8 +11,7 @@
 ;;
 ;; TODO:
 ;;   - !! Fix the mess with the widgets and gui-make-tr, etc. It's just wrong.
-;;   - Is tr-normalize ok? Am I doing the right thing? 
-;;   - Use xgettext to gather strings to be translated rather than the hack in
+;;   - Use a better way to gather strings to be translated than the hack in
 ;;     gui-markup.scm.
 ;;   - Add plural forms and other tweaks to tr
 ;;   - Use TeXmacs to convert files with encodings different from that used by
@@ -25,52 +24,16 @@
 ;; Translation 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (replace-arg str arg val)
-  (cond ((number? val) (set! val (number->string val)))
-        ((symbol? val) (set! val (symbol->string val)))
-        ((tree? val) (set! val (tree->stree val)))
-        ((url? val) (set! val (url->string val))))                   
-  (let ((i (string-contains str arg))
-        (r (string-length arg)))
-    (if (== i #f) str
-        (with left (substring str 0 i)
-          (with right (string-drop str (+ i r))
-            (if (list? val)
-                (if (string-null? right) ; what about left?
-                    (list left val)
-                    (list left val right))
-                (string-concatenate `(,left ,val ,right))))))))
-
-(tm-define (tr-apply origstr . vals)
-  (with str (string-translate origstr)
-    (with n 0
-      (list-fold
-       (lambda (v x)
-         (set! n (+ n 1))
-         (with arg (string-append "%" (number->string n))
-           (cond ((string? x)
-                  (replace-arg x arg v))
-                 ((list? x)
-                  (append (cDr x) (replace-arg (cAr x) arg v)))
-                 (else
-                   (texmacs-error "tr-apply" "wrong replace-arg")))))
-       str vals))))
-
+(define (reformat-arg val)
+  (cond ((number? val) (number->string val))
+        ((symbol? val) `(verbatim ,(symbol->string val)))
+        ((tree? val) (tree->stree val))
+        ((url? val) `(verbatim ,(url->string val)))
+        (else val)))
+  
 (tm-define (tr origstr . vals)
   (:synopsis "Translate a string with arguments")
-  (with res (apply tr-apply origstr vals)
-    (cond ((string? res) `(verbatim ,res))
-          ((pair? res) `(verbatim (concat ,@res)))
-          (else
-            (texmacs-error "tr" "wrong tr-apply")))))
-
-(tm-define (tr-normalize l)
-  (:synopsis "Flatten some sublists")
-  (cond ((string? l) l)
-        ((null? l) l)
-        ((or (func? (car l) 'verbatim) (func? (car l) 'concat))
-         (append (tr-normalize (cdar l)) (tr-normalize (cdr l))))
-        (else (cons (car l) (tr-normalize (cdr l))))))
+  (translate `(tr ,origstr ,(apply reformat-arg vals))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Reading and writing dictionaries
@@ -186,6 +149,10 @@
    '()
    (tr-current)))
 
+(tm-define (tr-reload-translations)
+  (force-load-translations "english" (get-output-language))
+  (set-message "Translations loaded" (get-output-language)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu entries
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -197,6 +164,5 @@
         (group "Close translations to rebuild"))
     (if (not (buffer-exists? (tr-file (get-output-language))))
         ("Rebuild translations file" (tr-rebuild (get-output-language))))
-    ("Force reloading of translations"
-     (force-load-translations "english" (get-output-language)))))
+    ("Force reloading of translations" (tr-reload-translations))))
 

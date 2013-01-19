@@ -144,7 +144,7 @@
                                              "&select=" ssym)
                      (cursor-path))
           (set-message filename (string-append lno ":" cno)))
-        (set-message (tr "Symbol properties not found") ssym)))))
+        (set-message "Symbol properties not found" ssym)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Miscelaneous
@@ -171,15 +171,17 @@
 
 (tm-define (run-scheme-file u)
   (:synopsis "Load the file @u into the scheme interpreter")
-  (with run (lambda (save?)
-              (if save? (buffer-save u))
-              (load (url->string u))
-              (set-message (tr "File %1 was executed" u) ""))
-    (if (and (buffer-exists? u) (buffer-modified? u))
-        (user-confirm 
-          (tr "File %1 is currently open and modified. Save before running?" u)
-          #t run)
-        (run #f))))
+  (with s (url->string u)
+    (with run (lambda (save?)          
+                (if save? (buffer-save u))
+                (load s)
+                (set-message `(tr "File %1 was executed" (verbatim ,s)) ""))
+      (if (and (buffer-exists? u) (buffer-modified? u))
+          (user-confirm 
+              `(tr "File %1 is currently open and modified. Save before running?" 
+                   (verbatim ,s))
+            #t run)
+          (run #f)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Browsing of sources with the mouse.
