@@ -285,7 +285,7 @@ $(system_obj): Objects/%.o: %.cpp
 $(kernel_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(kernel_incl))
 $(data_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(data_incl) -I$(tmsrc)/include)
+	$(call cxx_incl,$(data_incl) -I$(tmsrc)/include $(CXXGUILE))
 $(edit_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(edit_incl))
 $(scheme_obj): Objects/%.o: %.cpp
@@ -293,7 +293,7 @@ $(scheme_obj): Objects/%.o: %.cpp
 $(graphics_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(graphics_incl))
 $(plugins_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(plugins_incl) $(CXXAXEL) $(CXXCAIRO) $(CXXIMLIB2) $(CXXICONV) $(CXXX11))
+	$(call cxx_incl,$(plugins_incl) $(CXXAXEL) $(CXXCAIRO) $(CXXIMLIB2) $(CXXICONV))
 $(plugins_c_obj): Objects/%.o: %.c
 	$(call cc_incl,$(plugins_incl))
 $(x11_obj): Objects/%.o: %.cpp
@@ -301,11 +301,11 @@ $(x11_obj): Objects/%.o: %.cpp
 $(os_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(os_incl))
 $(qt_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(qt_incl) $(CXXQT))
+	$(call cxx_incl,$(qt_incl) $(CXXQT) $(CXXGUILE))
 $(moc_obj): Objects/%.o: ./Plugins/Qt/%.cpp
-	$(call cxx_incl,$(qt_incl) $(CXXQT))
+	$(call cxx_incl,$(qt_incl) $(CXXQT) $(CXXGUILE))
 $(gs_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(gs_incl) $(CXXX11))
+	$(call cxx_incl,$(gs_incl))
 $(cocoa_m_obj): Objects/%.o: %.m
 	$(call cxx_incl,$(cocoa_incl) $(CXXCOCOA))
 $(cocoa_mm_obj): Objects/%.o: %.mm
