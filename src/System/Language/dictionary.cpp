@@ -165,7 +165,7 @@ force_load_dictionary (string from, string to) {
   if (dictionary::instances -> contains (name))
     dictionary::instances -> reset (name);
   load_dictionary (from, to);
-  eval ("(notify-preference \"language\")");
+  notify_preference ("language");
 }
 
 string
