@@ -15,7 +15,7 @@
 #include "ntuple.hpp"
 #include "promise.hpp"
 #include "url.hpp"
-#include "Scheme/object.hpp"
+#include "scheme.hpp"
 #include "hashmap.hpp"
 
 #include "qt_widget.hpp"
