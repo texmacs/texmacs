@@ -22,7 +22,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (doc apidoc-funcs)
-  (:use (convert rewrite init-rewrite) (doc apidoc-collect)))
+  (:use (convert rewrite init-rewrite) (doc apidoc-collect) 
+        (kernel gui gui-markup)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Conversions related to modules:
@@ -262,9 +263,6 @@
        (concat (scm ,(symbol->string sym))
                (explain-synopsis ,(doc-symbol-synopsis* sym))))
      (document ,message ,($doc-symbol-code sym))))
-
-(tm-define-macro ($ismall . l)
-  ($quote `(small (with "font-shape" "italic" ($unquote ($inline ,@l))))))
 
 (tm-define ($doc-symbol-extra sym . docurl)
   ($inline

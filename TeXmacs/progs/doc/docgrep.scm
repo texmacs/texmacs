@@ -69,10 +69,12 @@
             ($describe-item
                 ($inline (quotient (* (cdr x) 100) highest-score) "%")
               ($link (car x) (help-file-title (car x)))
-              ($verbatim 
-                (string-append " ("
-                               (cAr (string-tokenize-by-char (car x) #\/)))
-                               ")" ))))))))
+              ($quote '(htab ""))
+              ($ismall
+                ($verbatim
+                  (string-append " ("
+                                 (cAr (string-tokenize-by-char (car x) #\/)))
+                                 ")" )))))))))
 
 (define (build-link-page keyword file-list)
   (let* ((keyword-list (string-tokenize-by-char keyword #\space))

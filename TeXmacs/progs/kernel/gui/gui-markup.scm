@@ -498,6 +498,9 @@
 (tm-define-macro ($strong . l)
   ($quote `(strong ($unquote ($inline ,@l)))))
 
+(tm-define-macro ($ismall . l)
+  ($quote `(small (with "font-shape" "italic" ($unquote ($inline ,@l))))))
+
 (tm-define-macro ($verbatim . l)
   ($quote `(verbatim ($unquote ($inline ,@l)))))
 
