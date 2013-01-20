@@ -26,7 +26,7 @@
     (concat :*)
     (verbatim :%1)
     (text :tuple? :string?)
-    (tr :string? :translatable?)))
+    (replace :string? :translatable?)))
   (:menu-label (:or
     :translatable?
     (color :%5)
@@ -141,7 +141,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (translatable? s)
-  (or (string? s) (func? s 'concat) (func? s 'verbatim) (func? s 'tr)))
+  (or (string? s) (func? s 'concat) (func? s 'verbatim) (func? s 'replace)))
 
 (define (active? style)
   (== (logand style widget-style-inert) 0))

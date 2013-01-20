@@ -114,9 +114,9 @@
   (require-format x '(icon :%1))
   `($icon ,(cadr x)))
 
-(define (gui-make-tr x)
-  (require-format x '(tr :%1 :*))
-  `($tr-text ,(cadr x) ,@(cddr x)))
+(define (gui-make-replace x)
+  (require-format x '(replace :%1 :*))
+  `($replace-text ,(cadr x) ,@(cddr x)))
 
 (define (gui-make-concat x)
   (require-format x '(concat :*))
@@ -335,7 +335,7 @@
   (filtered-choice ,gui-make-filtered-choice)
   (toggle ,gui-make-toggle)
   (icon ,gui-make-icon)
-  (tr ,gui-make-tr)
+  (replace ,gui-make-replace)
   (concat ,gui-make-concat)
   (verbatim ,gui-make-verbatim)
   (check ,gui-make-check)

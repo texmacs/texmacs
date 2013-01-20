@@ -215,7 +215,7 @@ tree_translate (tree t, string from, string to) {
   //cout << "Translating " << t << " from " << from << " into " << to << "\n";
   if (is_atomic (t))
     return translate (t->label, from, to);
-  else if (is_compound (t, "tr")) {
+  else if (is_compound (t, "replace")) {
     if (!is_atomic (t[0])) {
         //cout << "tree_translate() ERROR: first child should be a string\n";
       return t;

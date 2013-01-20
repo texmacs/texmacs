@@ -148,7 +148,7 @@
            (string->number tabstop*))
           ((and (number? tabstop*) (> tabstop* 0)) tabstop*)
           (else (set-message
-                 `(tr "Wrong tabstop: %1" ,tabstop*) "User preferences")
+                 `(replace "Wrong tabstop: %1" ,tabstop*) "User preferences")
                 8))))
 
 (tm-define (insert-tabstop)

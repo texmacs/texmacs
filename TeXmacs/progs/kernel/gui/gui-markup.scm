@@ -228,7 +228,7 @@
 (tm-define all-translations (make-ahash-table))
 
 (define (process-translate x)
-  (if (or (func? x 'concat) (func? x 'verbatim) (func? x 'tr))
+  (if (or (func? x 'concat) (func? x 'verbatim) (func? x 'replace))
       `(list ',(car x) ,@(map process-translate (cdr x)))
       x))
 
@@ -270,11 +270,11 @@
   (:synopsis "Make verbatim text")
   `(quote (verbatim ,@l)))
 
-(tm-define-macro ($tr-text str . x)
+(tm-define-macro ($replace-text str . x)
   (:synopsis "Make text to be translated with arguments")
   (if developer-mode?
       (ahash-set! all-translations (car x) #t))
-  `(tr ,str ,@x))
+  `(quote (replace ,str ,@x)))
 
 (tm-define-macro ($icon name)
   (:synopsis "Make icon")
@@ -504,8 +504,8 @@
 (tm-define-macro ($verbatim . l)
   ($quote `(verbatim ($unquote ($inline ,@l)))))
 
-(tm-define-macro ($tr str . l)
-  `(tree-translate ($tr-text ,str ,@l)))
+(tm-define-macro ($replace str . l)
+  `(tree-translate ($replace-text ,str ,@l)))
 
 (tm-define-macro ($link dest . l)
   ($quote `(hlink ($unquote ($inline ,@l)) ($unquote ($textual ,dest)))))

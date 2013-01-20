@@ -59,9 +59,9 @@
 
 (define (build-search-results keyword the-result)
   ($tmdoc
-    ($tmdoc-title ($tr "Search results for ``%1''" keyword))
+    ($tmdoc-title ($replace "Search results for ``%1''" keyword))
     ($when (null? the-result)
-      ($tr "No matches found for ``%1''." keyword))
+      ($replace "No matches found for ``%1''." keyword))
     ($when (nnull? the-result)
       ($with highest-score (cdar the-result)
         ($description-aligned
@@ -120,7 +120,7 @@
 
 (tmfs-title-handler (grep query doc)
   (with what (query-ref query "what")
-    (tr "Help - Search results for ``%1''" what)))
+    (replace "Help - Search results for ``%1''" what)))
 
 (tm-define (docgrep-in-doc what)
   (:argument what "Search words in the documentation")

@@ -10,10 +10,9 @@
 ;; in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ;;
 ;; TODO:
-;;   - !! Fix the mess with the widgets and gui-make-tr, etc. It's just wrong.
 ;;   - Use a better way to gather strings to be translated than the hack in
 ;;     gui-markup.scm.
-;;   - Add plural forms and other tweaks to tr
+;;   - Add plural forms and other tweaks to replace
 ;;   - Use TeXmacs to convert files with encodings different from that used by
 ;;     Guile (in tr-parse and ...)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -31,9 +30,9 @@
         ((url? val) `(verbatim ,(url->string val)))
         (else val)))
   
-(tm-define (tr origstr . vals)
+(tm-define (replace origstr . vals)
   (:synopsis "Translate a string with arguments")
-  (translate `(tr ,origstr ,(apply reformat-arg vals))))
+  (translate `(replace ,origstr ,(apply reformat-arg vals))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Reading and writing dictionaries
@@ -87,8 +86,8 @@
          (h (tr-hash language))
          (r (tr-read p h)))
     (close-input-port p)
-    (if r (display* (tr "Read %1 items from %2" (ahash-size h) f))
-        (display* (tr "Error reading from file %1" f)))))
+    (if r (display* (replace "Read %1 items from %2" (ahash-size h) f))
+        (display* (replace "Error reading from file %1" f)))))
 
 (define (tr-all language)
   "Merge the strings from the translations file with those misssing"
@@ -124,8 +123,9 @@
   (:synopsis "Rebuild translations file adding the missing ones (up to now)")
   (tr-parse language)
   (user-confirm 
-    (tr "This will overwrite the dictionary %1 with %2 entries. Are you sure?" 
-        (tr-file language) (ahash-size (tr-hash language)))
+    (replace 
+      "This will overwrite the dictionary %1 with %2 entries. Are you sure?"
+      (tr-file language) (ahash-size (tr-hash language)))
     #f
     (lambda (answ)
       (if answ
@@ -134,8 +134,8 @@
               (lambda ()
                 (tr-write (map (lambda (str) (tr-match language str))
                                (tr-all language)))))
-            (set-message (tr "Wrote file %1" (tr-file language)) ""))
-          (set-message (tr "Rebuild cancelled") language)))))
+            (set-message (replace "Wrote file %1" (tr-file language)) ""))
+          (set-message (replace "Rebuild cancelled") language)))))
 
 (tm-define (tr-missing language)
   (:synopsis "Translations missing in the dictionary (up to now)")

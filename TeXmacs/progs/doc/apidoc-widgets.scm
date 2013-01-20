@@ -55,7 +55,8 @@
   (with t (help-win-tree)
     (cond ((== where "scheme") (tree-set! t ($doc-explain-scm key)))
           ((== where "macros") (tree-set! t ($doc-explain-macro key)))
-          (else (tree-set! t ($para (tr "Error: %1" "help-win-display")))))))
+          (else 
+            (tree-set! t ($para (replace "Error: %1" "help-win-display")))))))
 
 (define (help-win-show)
   (with geo (get-preference "gui:help-window-geometry")

@@ -196,7 +196,7 @@
 ;(display "Booting formal languages\n")
 (lazy-language (language minimal) minimal)
 (lazy-language (language std-math) std-math)
-(lazy-define (language natural) tr)
+(lazy-define (language natural) replace)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting dynamic features\n")

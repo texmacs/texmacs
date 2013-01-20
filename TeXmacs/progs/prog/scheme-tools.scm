@@ -175,11 +175,13 @@
     (with run (lambda (save?)          
                 (if save? (buffer-save u))
                 (load s)
-                (set-message `(tr "File %1 was executed" (verbatim ,s)) ""))
+                (set-message `(replace "File %1 was executed" (verbatim ,s)) 
+                             ""))
       (if (and (buffer-exists? u) (buffer-modified? u))
           (user-confirm 
-              `(tr "File %1 is currently open and modified. Save before running?" 
-                   (verbatim ,s))
+             `(replace
+                "File %1 is currently open and modified. Save before running?"
+                (verbatim ,s))
             #t run)
           (run #f)))))
 
