@@ -437,6 +437,12 @@ edit_interface_rep::apply_changes () {
       if (use_side_tools)
         { SERVER (side_tools (0, "(vertical (link texmacs-side-tools))")); }
       set_footer ();
+      if (has_current_window ()) {
+        if (need_save())
+          concrete_window () -> set_window_name (buf->buf->title * " *");
+        else
+          concrete_window () -> set_window_name (buf->buf->title);
+      }
       if (!get_renderer (this) -> interrupted ()) drd_update ();
       cache_memorize ();
       last_update= last_change;
