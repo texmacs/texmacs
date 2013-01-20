@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; MODULE      : ptrees.scm
-;; DESCRIPTION : Prefix trees for autocompletion
+;; DESCRIPTION : (Simple) Prefix trees for autocompletion
 ;; COPYRIGHT   : (C) 2012 Miguel de Benito Delgado
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
@@ -10,16 +10,15 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; This simple implementation of prefix trees might make more sense in the C++
-;; side for speed.
+;; This simple implementation of prefix trees would make more sense in the C++
+;; side for better speed and availability.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (utils library ptrees))
 
-(define pt-marker
-  (lambda args 
-    (if (null? args) (acons "" '() '()) (acons "" '() (car args)))))
+(define (pt-marker . l)
+  (if (null? l) (acons "" '() '()) (acons "" '() (car l))))
 
 (define (pt-terminal? pt)
   (== pt (pt-marker)))
@@ -61,11 +60,12 @@
 
 (define (pt-words-below-sub pt step)
   (cond ((or (null? pt) (== #f pt)) '())
-        ((pt-terminal? pt) 
-         `(,step))
+        ((pt-terminal? pt) (list step))
+        ((== "" (caar pt))
+         (append (list step) (pt-words-below-sub (cdr pt) step)))
         (else (append (pt-words-below-sub (cdar pt)
                                           (string-append step (caar pt)))
-                      (pt-words-below-sub (cdr pt) step)) )))
+                      (pt-words-below-sub (cdr pt) step)))))
 
 (tm-define (pt-words-below pt)
   (:synopsis "Return the list of words below the given p-tree node @pt")
