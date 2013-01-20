@@ -271,9 +271,6 @@ concater_rep::typeset_wide (tree t, path ip, bool above) {
     s= "<" * s (6, N(s));
     wide= true;
   }
-  else if (s == "<invbreve>") {  //HACK: fonts don't provide invbreve
-    wide = true;
-  }
   else {
     wide= (b->w() >= (env->fn->wfn)) || is_func (t, VAR_WIDE);
     if (ends (s, "dot>") || (s == "<acute>") ||
