@@ -504,9 +504,6 @@
 (tm-define-macro ($verbatim . l)
   ($quote `(verbatim ($unquote ($inline ,@l)))))
 
-(tm-define-macro ($replace str . l)
-  `(tree-translate ($replace-text ,str ,@l)))
-
 (tm-define-macro ($link dest . l)
   ($quote `(hlink ($unquote ($inline ,@l)) ($unquote ($textual ,dest)))))
 
