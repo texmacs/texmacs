@@ -20,7 +20,7 @@
 (texmacs-module (language natural))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Translation 
+;; Translation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (reformat-arg val)
@@ -29,10 +29,13 @@
         ((tree? val) (tree->stree val))
         ((url? val) `(verbatim ,(url->string val)))
         (else val)))
-  
+
+; Recall that for menu and widget creation one must use the homonymous tag
+; instead of this function
 (tm-define (replace origstr . vals)
   (:synopsis "Translate a string with arguments")
-  (translate `(replace ,origstr ,(apply reformat-arg vals))))
+  (tm->stree
+   (translate (stree->tree `(replace ,origstr ,@(map reformat-arg vals))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Reading and writing dictionaries
@@ -122,10 +125,10 @@
 (tm-define (tr-rebuild language)
   (:synopsis "Rebuild translations file adding the missing ones (up to now)")
   (tr-parse language)
-  (user-confirm 
-    (replace 
-      "This will overwrite the dictionary %1 with %2 entries. Are you sure?"
-      (tr-file language) (ahash-size (tr-hash language)))
+  (user-confirm
+    `(replace 
+       "This will overwrite the dictionary %1 with %2 entries. Are you sure?"
+      (verbatim ,(tr-file language)) ,(ahash-size (tr-hash language)))
     #f
     (lambda (answ)
       (if answ
@@ -134,8 +137,10 @@
               (lambda ()
                 (tr-write (map (lambda (str) (tr-match language str))
                                (tr-all language)))))
-            (set-message (replace "Wrote file %1" (tr-file language)) ""))
-          (set-message (replace "Rebuild cancelled") language)))))
+            (set-message `(replace "Wrote file %1"
+                                   (verbatim ,(tr-file language)))
+                         ""))
+          (set-message '(replace "Rebuild cancelled") language)))))
 
 (tm-define (tr-missing language)
   (:synopsis "Translations missing in the dictionary (up to now)")
