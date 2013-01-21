@@ -59,9 +59,9 @@
 
 (define (build-search-results keyword the-result)
   ($tmdoc
-    ($tmdoc-title ($replace "Search results for ``%1''" keyword))
+    ($tmdoc-title (replace "Search results for ``%1''" keyword))
     ($when (null? the-result)
-      ($replace "No matches found for ``%1''." keyword))
+      (replace "No matches found for ``%1''." keyword))
     ($when (nnull? the-result)
       ($with highest-score (cdar the-result)
         ($description-aligned
