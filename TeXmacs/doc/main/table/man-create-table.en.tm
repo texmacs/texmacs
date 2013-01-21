@@ -38,8 +38,8 @@
 
   <\with|par-mode|center>
     <small-table|<tabular|<tformat|<table|<row|<cell|boom>|<cell|tree>>|<row|<cell|hallo>|<cell|hello>>|<row|<cell|wiskunde>|<cell|mathematics>>>>>|A
-    plain table.><small-table|<block|<tformat|<table|<row|<cell|boom>|<cell|tree>>|<row|<cell|hallo>|<cell|hello>>|<row|<cell|wiskunde>|<cell|mathematics>>>>>|A
-    centered block.><small-table|<with|mode|math|<with|math-display|true|<matrix|<tformat|<table|<row|<cell|a>|<cell|b>>|<row|<cell|c>|<cell|d>>>>>>>|A
+    plain table.><small-table|<block*|<tformat|<table|<row|<cell|boom>|<cell|tree>>|<row|<cell|hallo>|<cell|hello>>|<row|<cell|wiskunde>|<cell|mathematics>>>>>|A
+    centered block.><small-table|<math|<with|math-display|true|<matrix|<tformat|<table|<row|<cell|a>|<cell|b>>|<row|<cell|c>|<cell|d>>>>>>>|A
     matrix.>
   </with>
 
