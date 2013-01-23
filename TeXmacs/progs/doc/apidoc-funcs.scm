@@ -242,7 +242,7 @@
     `(concat 
        ,@(list-intersperse 
           (map (lambda (x) (build-link sym x))
-               (reverse (list-uniq defs)))
+               (reverse (list-remove-duplicates defs)))
           " | "))))
 
 (tm-define (doc-symbol-synopsis* sym)

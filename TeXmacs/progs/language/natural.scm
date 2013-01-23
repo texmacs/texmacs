@@ -96,7 +96,7 @@
   "Merge the strings from the translations file with those misssing"
   (if (== 0 (ahash-size (tr-hash language))) (tr-parse language))
   (list-sort 
-   (list-uniq
+   (list-remove-duplicates
     (append (tr-current) 
             (map car (ahash-table->list (tr-hash language)))))
    string<?))
