@@ -136,7 +136,7 @@
          (defs (symbol-property sym 'defs)))
     (cond ((or (nlist? defs) (null? defs))
            (set-message "Symbol properties not found" ssym))
-          ((> (length defs) 1) (display* "Need disambiguation"))
+          ((> (length defs) 1) (display "*** Need disambiguation!\n"))
           (else
             (with (file line column) (car defs)
               (if (and line file)

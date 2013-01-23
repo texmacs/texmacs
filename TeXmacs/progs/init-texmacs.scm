@@ -35,9 +35,11 @@
                      (f (source-property form 'filename))
                      (sym  (if (pair? (cadr form)) (caadr form) (cadr form))))
                 (if (symbol? sym) ; Just in case
-                    (let ((old (or (symbol-property sym 'defs) '())))
-                     (%new-read-hook sym)
-                     (set-symbol-property! sym 'defs (cons `(,f ,l ,c) old))))))
+                    (let ((old (or (symbol-property sym 'defs) '()))
+                          (new `(,f ,l ,c)))
+                      (%new-read-hook sym)
+                      (if (not (member new old))
+                          (set-symbol-property! sym 'defs (cons new old)))))))
           form))
 
       (set! read new-read)

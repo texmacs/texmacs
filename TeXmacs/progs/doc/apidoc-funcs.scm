@@ -122,7 +122,8 @@
               (sym  (if (pair? (cadr form)) (caadr form) (cadr form))))
          (and (symbol? sym) ; Just in case
               (with old (or (symbol-property sym 'defs) '())
-                (set-symbol-property! sym 'defs (cons `(,f ,l ,c) old))
+                (if (not (member `(,f ,l ,c) old))
+                    (set-symbol-property! sym 'defs (cons `(,f ,l ,c) old)))
                 sym)))))
 
 (tm-define (module-exported module)
@@ -240,7 +241,8 @@
   (with defs (or (symbol-property sym 'defs) '((#f #f #f)))
     `(concat 
        ,@(list-intersperse 
-          (map (lambda (x) (build-link sym x)) defs)
+          (map (lambda (x) (build-link sym x))
+               (reverse (list-uniq defs)))
           " | "))))
 
 (tm-define (doc-symbol-synopsis* sym)
