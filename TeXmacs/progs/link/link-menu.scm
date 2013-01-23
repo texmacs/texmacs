@@ -38,7 +38,7 @@
   (:interactive #t)
   (interactive (lambda (val) (change-locus-rendering var val))
     (list (logic-ref env-var-description% var) "string"
-	  (get-locus-rendering var))))
+          (get-locus-rendering var))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dynamic submenus
@@ -46,15 +46,15 @@
 
 (tm-menu (link-create-menu)
   (let* ((l1 (current-link-types))
-	 (l2 (list-remove-duplicates (cons* "hyperlink" "action" l1)))
-	 (l3 (list-sort l2 string<=?)))
+         (l2 (list-remove-duplicates (cons* "hyperlink" "action" l1)))
+         (l3 (list-sort l2 string<=?)))
     (for (name l3) ((eval name) (make-link name)))
     ---
     ("Other" (interactive make-link))))
 
 (tm-menu (link-delete-menu)
   (let* ((l1 (locus-link-types #t))
-	 (l2 (list-sort l1 string<=?)))
+         (l2 (list-sort l1 string<=?)))
     ("All" (remove-all-links))
     ---
     (for (name l2) ((eval name) (remove-link-of-types name)))
@@ -63,7 +63,7 @@
 
 (tm-menu (navigation-type-menu)
   (let* ((l1 (current-link-types))
-	 (l2 (list-sort l1 string<=?)))
+         (l2 (list-sort l1 string<=?)))
     (for (name l2)
       ((eval name)
        (navigation-toggle-type name)))))
@@ -83,35 +83,35 @@
     ("Source" (link-set-locus 0)))
   (-> "Target"
       (when (inside? 'locus)
-	("Locus" (link-set-locus 1)))
-      ("Url" (check "o" (link-target-is-url?))
+        ("Locus" (link-set-locus 1)))
+      ((check "Url" "o" (link-target-is-url?))
        (interactive link-set-target-url))
-      ("Script" (check "o" (link-target-is-script?))
+      ((check "Script" "o" (link-target-is-script?))
        (interactive link-set-target-script)))
   (when (link-completed?)
     (-> "Create link" (link link-create-menu)))
   (if (null? (locus-link-types #t))
       (when #f
-	("Delete link" (noop))))
+        ("Delete link" (noop))))
   (if (nnull? (locus-link-types #t))
     (-> "Delete link" (link link-delete-menu)))
   ---
   (-> "Locus rendering"
       ("Disable coloring on paper" (toggle-locus-preserve-on-paper))
       (-> "Normal loci"
-	  ("Default" (change-locus-rendering "locus-color" "#404080"))
-	  ("Preserve" (change-locus-rendering "locus-color" "preserve"))
-	  ("Blue" (change-locus-rendering "locus-color" "dark blue"))
-	  ("Red" (change-locus-rendering "locus-color" "red"))
-	  ---
-	  ("Other" (interactive-change-locus-rendering "locus-color")))
+          ("Default" (change-locus-rendering "locus-color" "#404080"))
+          ("Preserve" (change-locus-rendering "locus-color" "preserve"))
+          ("Blue" (change-locus-rendering "locus-color" "dark blue"))
+          ("Red" (change-locus-rendering "locus-color" "red"))
+          ---
+          ("Other" (interactive-change-locus-rendering "locus-color")))
       (-> "Visited loci"
-	  ("Default" (change-locus-rendering "visited-color" "#702070"))
-	  ("Preserve" (change-locus-rendering "visited-color" "preserve"))
-	  ("Magenta" (change-locus-rendering "visited-color" "dark magenta"))
-	  ("Red" (change-locus-rendering "visited-color" "red"))
-	  ---
-	  ("Other" (interactive-change-locus-rendering "visited-color"))))
+          ("Default" (change-locus-rendering "visited-color" "#702070"))
+          ("Preserve" (change-locus-rendering "visited-color" "preserve"))
+          ("Magenta" (change-locus-rendering "visited-color" "dark magenta"))
+          ("Red" (change-locus-rendering "visited-color" "red"))
+          ---
+          ("Other" (interactive-change-locus-rendering "visited-color"))))
   (-> "Navigation options"
       ("Follow inverse links" (navigation-toggle-bidirectional))
       ("Follow external links" (navigation-toggle-external))
@@ -120,8 +120,8 @@
       ("None" (navigation-allow-no-types))
       ("All" (navigation-allow-all-types))
       (if (nnull? (current-link-types))
-	  ---
-	  (link navigation-type-menu)))
+          ---
+          (link navigation-type-menu)))
   (-> "Extract"
       ("Constellation" (build-constellation-page))
       ("Loci" (build-locus-page))
