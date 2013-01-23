@@ -30,18 +30,14 @@
         ;; FIXME: handle overloaded redefinitions
         (let ((form (old-read port)))
           (if (and (pair? form) (member (car form) keywords-which-define))
-              (let* ((line (source-property form 'line))
-                     (column (source-property form 'column))
-                     (filename (source-property form 'filename))
+              (let* ((l (source-property form 'line))
+                     (c (source-property form 'column))
+                     (f (source-property form 'filename))
                      (sym  (if (pair? (cadr form)) (caadr form) (cadr form))))
                 (if (symbol? sym) ; Just in case
-                    (begin 
-                      (%new-read-hook sym)
-                      (if filename     ; don't set props if read from stdin
-                          (begin
-                            (set-symbol-property! sym 'line line)
-                            (set-symbol-property! sym 'column column)
-                            (set-symbol-property! sym 'filename filename)))))))
+                    (let ((old (or (symbol-property sym 'defs) '())))
+                     (%new-read-hook sym)
+                     (set-symbol-property! sym 'defs (cons `(,f ,l ,c) old))))))
           form))
 
       (set! read new-read)

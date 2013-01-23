@@ -20,5 +20,15 @@
         (doc apidoc-widgets)))
 
 (menu-bind apidoc-manual-menu
-  ("Insert symbol documentation..." (interactive ask-insert-symbol-doc))
-  ("Open module browser..." (open-module-browser)))
+  ("Insert symbol documentation" (interactive ask-insert-symbol-doc))
+  ("Open module browser" (open-module-browser)))
+
+(menu-bind apidoc-menu
+  ("Delete documentation cache" (doc-delete-cache))
+  ("Browse modules documentation" (apidoc-all-modules))
+  ; This one isn't exactly useful: (and should be removed)
+  ;("List all symbols" (apidoc-all-symbols))
+  ("Open module browser" (open-module-browser))
+  ("Open symbol browser" (open-symbol-browser))
+  (if (in-tmdoc?)
+      ("Insert symbol documentation" (interactive ask-insert-symbol-doc))))

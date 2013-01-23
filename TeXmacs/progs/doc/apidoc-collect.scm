@@ -74,20 +74,22 @@
 (tm-define (doc-scm-cache)
   (:synopsis "Url of the cache with the collected scheme documentation.")
   (with pref (get-preference "doc:doc-scm-cache")
-    (if (!= pref "default")
-      (string->url pref)
-      (with new (persistent-file-name (string->url "$HOME/.TeXmacs/doc") "api")
-        (set-preference "doc:doc-scm-cache" (url->string new))
-        new))))
+    (if (and (!= pref "default") (url-exists? (string->url pref)))
+        (string->url pref)
+        (with new (persistent-file-name
+                   (string->url "$HOME/.TeXmacs/system/cache/") "api")
+          (set-preference "doc:doc-scm-cache" (url->string new))
+          new))))
 
 (tm-define (doc-macro-cache)
   (:synopsis "Url of the cache with the collected macro documentation.")
   (with pref (get-preference "doc:doc-macro-cache")
-    (if (!= pref "default")
-      (string->url pref)
-      (with new (persistent-file-name (string->url "$HOME/.TeXmacs/doc") "api")
-        (set-preference "doc:doc-macro-cache" (url->string new))
-        new))))
+    (if (and (!= pref "default") (url-exists? (string->url pref)))
+        (string->url pref)
+        (with new (persistent-file-name 
+                   (string->url "$HOME/.TeXmacs/system/cache/") "api")
+          (set-preference "doc:doc-macro-cache" (url->string new))
+          new))))
 
 (define (explain-scm? t)
   "Is the tree an explain macro for some scheme routine(s)?"
@@ -195,14 +197,49 @@
                              (string-append "(" lan ")"))
                 (cont)))))))))))))))
 
-(tm-define (doc-retrieve cache key lan)
-  (:synopsis "A list with all help items for @key in language @lan in @cache")
+; FIXME: running this at doc-retrieve crashes, so we call it at each entry point
+; like showing the help window etc. though we ought not to have to.
+(tm-define (doc-check-cache-do cont)
+  (:synopsis "Call @cont after ensuring that the doc cache is built.")
+  (let  ((t (get-preference "doc:collect-timestamp"))
+         (lan (get-output-language))
+         (langs (get-preference "doc:collect-languages")))
+    (if (not (and (!= t "default") (list? langs) (member lan langs)))
+      (doc-collect-all lan cont) (cont))))
+
+(define (doc-retrieve* cache key lan)
   (let ((docs (string->object (persistent-get cache key)))
         (aux (lambda (i) (== (tm-ref i 1) lan))))
     (if (eof-object? docs) '() ; (string->object "") => #<eof>
       (with res (list-filter docs aux)
         (if (and (null? res) (!= lan "english")) ; second check just in case 
-          (doc-retrieve cache key "english") 
+          (doc-retrieve* cache key "english") 
           res)))))
-
   
+(tm-define (doc-retrieve cache key lan)
+  (:synopsis "A list with all help items for @key in language @lan in @cache")
+  (doc-check-cache-do (lambda () (doc-retrieve* cache key lan))))
+
+(define (doc-delete-cache*)
+  (with s (url-root (doc-scm-cache))
+    (display* "I WOULD HAVE deleted the cache. \n")
+    (reset-preference "doc:doc-scm-cache")
+    (set-message `(replace "The cache at %1 was deleted" (verbatim ,s)) ""))
+  (with s (url-root (doc-macro-cache))
+    (display* "I WOULD HAVE deleted the cache. \n")
+    (reset-preference "doc:doc-macro-cache")
+    (set-message `(replace "The cache at %1 was deleted" (verbatim ,s)) ""))
+  (reset-preference "doc:collect-timestamp")
+  (reset-preference "doc:collect-languages")
+  (set! _scm_ (url-none))
+  (set! _macro_ (url-none)))
+
+(tm-define (doc-delete-cache)
+  (:synopsis "Delete the documentation cache")
+  (with run 
+      (lambda (go?) (if go? (doc-delete-cache*) (set-message "Cancelled" "")))
+    (user-confirm 
+        `(replace "All the files at %1 and %2 will be deleted. Are you sure?"
+                  (verbatim ,(url->string (doc-scm-cache))) 
+                  (verbatim ,(url->string (doc-macro-cache))))
+      #t run)))

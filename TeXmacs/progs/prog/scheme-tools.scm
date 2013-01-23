@@ -100,6 +100,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface for contextual help
+;; FIXME: the calls to doc-check-cache-do shouldn't be necessary, because
+;; cache-retrieve already does it, but we crash if we do the collecting that
+;; late.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (word-at str pos)
@@ -117,35 +120,33 @@
   (with ct (cursor-tree)
     (word-at (tree->string ct) (car (tree-cursor-path ct)))))
 
-(define (check-build-cache cont)
-  (let  ((t (get-preference "doc:collect-timestamp"))
-         (lan (get-output-language))
-         (langs (get-preference "doc:collect-languages")))
-    (if (not (and (!= t "default") (list? langs) (member lan langs)))
-      (doc-collect-all lan cont) (cont))))
-
 (tm-define (scheme-popup-help word)
   (:synopsis "Pops up the help window for the scheme symbol @word")
-  (check-build-cache (lambda () (help-window "scheme" word))))
+  (doc-check-cache-do (lambda () (help-window "scheme" word))))
 
 (tm-define (scheme-inbuffer-help word)
-  (load-buffer (string-append "tmfs://apidoc/type=symbol&what=" word)))
+  (:synopsis "Opens a help buffer for the scheme symbol @word")
+  (doc-check-cache-do
+   (lambda ()
+     (load-buffer (string-append "tmfs://apidoc/type=symbol&what=" word)))))
 
 ; TODO: check if a symbol is in the glue
 (tm-define (scheme-go-to-definition ssym)
-  (with sym (string->symbol ssym)
-    (let ((line (symbol-property sym 'line))
-          (column (symbol-property sym 'column))
-          (filename (symbol-property sym 'filename)))
-      (if (and line filename)
-        (let ((lno (number->string line))
-              (cno (number->string column)))
-          (go-to-url (string-append filename "?line=" lno "&column=" cno
-                                             "&select=" ssym)
-                     (cursor-path))
-          (set-message filename (string-append lno ":" cno)))
-        (set-message "Symbol properties not found" ssym)))))
-
+  (let* ((sym (string->symbol ssym))
+         (defs (symbol-property sym 'defs)))
+    (cond ((or (nlist? defs) (null? defs))
+           (set-message "Symbol properties not found" ssym))
+          ((> (length defs) 1) (display* "Need disambiguation"))
+          (else
+            (with (file line column) (car defs)
+              (if (and line file)
+                  (let ((lno (number->string line))
+                        (cno (number->string column)))
+                    (go-to-url (string-append file "?line=" lno "&column=" cno
+                                              "&select=" ssym)
+                               (cursor-path))
+                    (set-message file (string-append lno ":" cno)))))))))
+  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Miscelaneous
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

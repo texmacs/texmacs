@@ -113,18 +113,16 @@
 
 ; HACK: we use read (copying what's done in init-texmacs.scm) until the
 ; code indexer is implemented
-(define (parse-form form filename)
+(define (parse-form form f)
   "Set symbol properties and return the symbol."
   (and (pair? form) 
        (member (car form) keywords-which-define)
-       (let* ((line (source-property form 'line))
-              (column (source-property form 'column))
+       (let* ((l (source-property form 'line))
+              (c (source-property form 'column))
               (sym  (if (pair? (cadr form)) (caadr form) (cadr form))))
          (and (symbol? sym) ; Just in case
-              (begin
-                (set-symbol-property! sym 'line line)
-                (set-symbol-property! sym 'column column)
-                (set-symbol-property! sym 'filename filename)
+              (with old (or (symbol-property sym 'defs) '())
+                (set-symbol-property! sym 'defs (cons `(,f ,l ,c) old))
                 sym)))))
 
 (tm-define (module-exported module)
@@ -228,17 +226,22 @@
 ;; Symbols documentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (build-link s def)
+  (with (file line column) def
+    (if (and file line column)
+        (let ((lno (number->string line))
+              (cno (number->string column)))
+          `(hlink ,(string-append (basename file) ":" lno)
+                  ,(string-append file "?line=" lno "&column=" cno
+                                       "&select=" (symbol->string s))))
+        "")))
+  
 (tm-define ($doc-symbol-properties sym)
-  (let ((line (symbol-property sym 'line))
-        (column (symbol-property sym 'column))
-        (filename (symbol-property sym 'filename)))
-    (if (and line column filename)
-      (let ((lno (number->string line))
-            (cno (number->string column)))
-        `(hlink ,(string-append (basename filename) ":" lno)
-                ,(string-append filename "?line=" lno "&column=" cno
-                                         "&select=" (symbol->string sym))))
-      (replace "[symbol properties not found]"))))
+  (with defs (or (symbol-property sym 'defs) '(#f #f #f))
+    `(concat 
+       ,@(list-intersperse 
+          (map (lambda (x) (build-link sym x)) defs)
+          " | "))))
 
 (tm-define (doc-symbol-synopsis* sym)
   (with prop (property sym :synopsis)
@@ -297,7 +300,7 @@
          ,($doc-symbol-properties (string->symbol key))))))
 
 (define (doc-explain-sub entries)
-  (if (or (null? entries) (not (func? (car entries) 'entry))) '()
+  (if (or (nlist? entries) (null? entries) (not (func? (car entries) 'entry))) '()
     (with (key lan url doc) (cdar entries)
       (cons `(explain
                ,(tm-ref doc 0)

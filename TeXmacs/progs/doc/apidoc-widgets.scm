@@ -93,7 +93,7 @@
 
 (tm-define (help-window where key)
   (:synopsis "Display the help window for @key in the @where documentation")
-  (if (!= key "")
+  (if (and (string? key) (!= key ""))
       (if (help-win-active?)
           (begin (help-win-display where key) (help-win-show))
           (let* ((win (alt-window-handle))
@@ -200,7 +200,8 @@
                       clw-string
                       clw-string-filter))
    (explicit-buttons
-    ("See definition" (noop)))))
+    ("See documentation" 
+     (doc-check-cache-do (lambda () (help-window "scheme" clw-string)))))))
 
 (tm-define (open-symbol-browser)
   (set! clw-string "")
