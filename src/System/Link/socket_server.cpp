@@ -110,6 +110,10 @@ socket_server_rep::start () {
 }
 
 void
+socket_server_rep::activate () {
+}
+
+void
 socket_server_rep::start_client () {
 #ifndef __MINGW32__
   struct sockaddr_in remote_address;
@@ -124,7 +128,9 @@ socket_server_rep::start_client () {
       if (incoming[i]->alive)
 	update << incoming[i];
     incoming= update;
-    incoming << make_socket_link (addr, -1, SOCKET_SERVER, client);
+    tm_link new_ln= make_socket_link (addr, -1, SOCKET_SERVER, client);
+    incoming << new_ln;
+    new_ln->activate ();
   }
 #endif
 }

@@ -50,7 +50,8 @@ tm_link_rep::write_packet (string s, int channel) {
 
 bool
 tm_link_rep::complete_packet (int channel) {
-  return message_complete (watch (channel));
+  string s= watch (channel);
+  return message_complete (s);
 }
 
 string

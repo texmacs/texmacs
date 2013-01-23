@@ -117,12 +117,17 @@ socket_link_rep::start () {
   if (fcntl (io, F_SETFL, flags) < 0)
     return "Error: non working connection to '" * where * "'";
   alive = true;
-  sn = socket_notifier (io, &socket_callback, this, NULL);  
-  add_notifier (sn);
+  activate ();
   return "ok";
 #else
   return "Error: sockets not implemented";
 #endif
+}
+
+void
+socket_link_rep::activate () {
+  sn = socket_notifier (io, &socket_callback, this, NULL);  
+  add_notifier (sn);
 }
 
 static string
