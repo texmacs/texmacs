@@ -47,7 +47,6 @@ public:
   inline virtual ~tm_link_rep () {}
 
   virtual string  start () = 0;
-  virtual void    activate () = 0;
   virtual void    write (string s, int channel) = 0;
   virtual string& watch (int channel) = 0;
   virtual string  read (int channel) = 0;

@@ -43,8 +43,13 @@ socket_link_rep::socket_link_rep (string host2, int port2, int type2, int fd):
   io     = fd;
   outbuf = "";
   alive  = (fd != -1);
-  if (type == SOCKET_SERVER) call ("server-add", object (io));
-  else if (type == SOCKET_CLIENT) call ("client-add");
+  if (type == SOCKET_SERVER) {
+    sn = socket_notifier (io, &socket_callback, this, NULL);  
+    add_notifier (sn);
+    call ("server-add", object (io));
+  } 
+  else if (type == SOCKET_CLIENT)
+    call ("client-add");
 }
 
 socket_link_rep::~socket_link_rep () {
@@ -117,17 +122,12 @@ socket_link_rep::start () {
   if (fcntl (io, F_SETFL, flags) < 0)
     return "Error: non working connection to '" * where * "'";
   alive = true;
-  activate ();
+  sn = socket_notifier (io, &socket_callback, this, NULL);  
+  add_notifier (sn);
   return "ok";
 #else
   return "Error: sockets not implemented";
 #endif
-}
-
-void
-socket_link_rep::activate () {
-  sn = socket_notifier (io, &socket_callback, this, NULL);  
-  add_notifier (sn);
 }
 
 static string

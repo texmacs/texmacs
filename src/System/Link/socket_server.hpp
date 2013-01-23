@@ -30,7 +30,6 @@ public:
   ~socket_server_rep ();
 
   string  start ();
-  void    activate ();
   void    write (string s, int channel);
   string& watch (int channel);
   string  read (int channel);
