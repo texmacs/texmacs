@@ -241,8 +241,6 @@ socket_link_rep::stop () {
   close (io);
   io= -1;
   alive= false;
-  sn->fd= -1;
-  sn->cmd= command ();
   remove_notifier (sn);
   sn = socket_notifier ();
   wait (NULL);
@@ -276,6 +274,7 @@ socket_callback (void *obj, void* info) {
       //cout << "socket_callback OUT" << LF;
       con->feed (LINK_OUT);
       busy= news= true;
+      if (!con->alive) break;
     }
   }
   if (!is_nil (con->feed_cmd) && news)
