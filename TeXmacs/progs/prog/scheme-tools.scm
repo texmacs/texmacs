@@ -118,7 +118,7 @@
 (tm-define (cursor-word)
   (:synopsis "Returns the word under the cursor, delimited by char-set:stopmark")
   (with ct (cursor-tree)
-    (word-at (texmacs->verbatim ct) (car (tree-cursor-path ct)))))
+    (word-at (tree->string ct) (car (tree-cursor-path ct)))))
 
 (tm-define (scheme-popup-help word)
   (:synopsis "Pops up the help window for the scheme symbol @word")
@@ -131,11 +131,12 @@
      (load-buffer (string-append "tmfs://apidoc/type=symbol&what=" word)))))
 
 ; TODO: check if a symbol is in the glue
-(tm-define (scheme-go-to-definition ssym)
-  (let* ((sym (string->symbol ssym))
+(tm-define (scheme-go-to-definition tmstr)
+  (let* ((str (tmstring->string tmstr))
+         (sym (string->symbol str))
          (defs (symbol-property sym 'defs)))
     (cond ((or (nlist? defs) (null? defs))
-           (set-message "Symbol properties not found" ssym))
+           (set-message "Symbol properties not found" tmstr))
           ((> (length defs) 1) (display "*** Need disambiguation!\n"))
           (else
             (with (file line column) (car defs)
@@ -143,7 +144,7 @@
                   (let ((lno (number->string line))
                         (cno (number->string column)))
                     (go-to-url (string-append file "?line=" lno "&column=" cno
-                                              "&select=" ssym)
+                                              "&select=" tmstr)
                                (cursor-path))
                     (set-message file (string-append lno ":" cno)))))))))
   
