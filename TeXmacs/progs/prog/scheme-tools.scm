@@ -118,7 +118,7 @@
 (tm-define (cursor-word)
   (:synopsis "Returns the word under the cursor, delimited by char-set:stopmark")
   (with ct (cursor-tree)
-    (word-at (tree->string ct) (car (tree-cursor-path ct)))))
+    (word-at (texmacs->verbatim ct) (car (tree-cursor-path ct)))))
 
 (tm-define (scheme-popup-help word)
   (:synopsis "Pops up the help window for the scheme symbol @word")
