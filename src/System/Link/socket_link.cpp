@@ -118,6 +118,7 @@ socket_link_rep::start () {
     return "Error: non working connection to '" * where * "'";
   alive = true;
   sn = socket_notifier (io, &socket_callback, this, NULL);  
+  add_notifier (sn);
   return "ok";
 #else
   return "Error: sockets not implemented";

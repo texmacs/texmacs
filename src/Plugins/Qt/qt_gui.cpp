@@ -384,7 +384,6 @@ qt_gui_rep::add_notifier (socket_notifier sn)
   remove_notifier (sn);
 
   if (DEBUG_QT) cout << "ADD NOTIFIER " << sn->fd << LF;
-
   
   // installs both a read and a write notifier 
   // (the texmacs interface does not specify enough its needs)
