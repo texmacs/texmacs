@@ -33,6 +33,11 @@
 static hashset<socket_notifier> notifiers;
 
 void
+socket_notifier_rep::notify () {
+  if (!is_nil (cmd)) cmd->apply ();
+}
+
+void
 add_notifier (socket_notifier sn)  {
   //cout << "enable notifier " << LF;
   notifiers->insert (sn);

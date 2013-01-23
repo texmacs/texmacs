@@ -241,6 +241,9 @@ socket_link_rep::stop () {
   close (io);
   io= -1;
   alive= false;
+  sn->fd= -1;
+  sn->cmd= command ();
+  remove_notifier (sn);
   sn = socket_notifier ();
   wait (NULL);
 #endif
@@ -254,7 +257,7 @@ void
 socket_callback (void *obj, void* info) {
 #ifndef __MINGW32__
   (void) info;
-  socket_link_rep* con= (socket_link_rep*) obj;  
+  socket_link_rep* con= (socket_link_rep*) obj;
   bool busy= true;
   bool news= false;
   while (busy) {

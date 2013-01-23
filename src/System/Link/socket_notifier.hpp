@@ -23,7 +23,7 @@ struct socket_notifier_rep: concrete_struct {
 public:
   socket_notifier_rep (int _fd, command _cmd):
     fd (_fd), cmd (_cmd) {}
-  void notify () { if (!is_nil (cmd)) cmd->apply (); } 
+  void notify ();
 };
 
 class socket_notifier {

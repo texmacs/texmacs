@@ -167,8 +167,10 @@ socket_server_rep::stop () {
   if (!alive) return;
   incoming= array<tm_link> ();
   alive= false;
-  
+  sn->fd= -1;
+  sn->cmd= command ();
   remove_notifier (sn);
+  sn= socket_notifier ();
   close (server);
   wait (NULL);
 #endif
