@@ -554,10 +554,13 @@
   ("< var var var var = /" "<nsqsubseteq>")
   ("> var var var var = /" "<nsqsupseteq>")
 
+  ("< < var var" "<Subset>")
+  ("< < var var" "<Subset>")
+
   ("< var var var var var" (math-bracket-open "<langle>" "<rangle>" 'default))
   ("> var var var var var" (math-bracket-close "<rangle>" "<langle>" 'default))
-  ("< < var var" (math-bracket-open "<llangle>" "<rrangle>" 'default))
-  ("> > var var" (math-bracket-close "<rrangle>" "<llangle>" 'default))
+  ("< < var var var" (math-bracket-open "<llangle>" "<rrangle>" 'default))
+  ("> > var var var" (math-bracket-close "<rrangle>" "<llangle>" 'default))
 
   ("- >" "<rightarrow>")
   ("- > var" "<downarrow>")
