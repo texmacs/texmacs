@@ -237,7 +237,7 @@
         "")))
   
 (tm-define ($doc-symbol-properties sym)
-  (with defs (or (symbol-property sym 'defs) '(#f #f #f))
+  (with defs (or (symbol-property sym 'defs) '((#f #f #f)))
     `(concat 
        ,@(list-intersperse 
           (map (lambda (x) (build-link sym x)) defs)
