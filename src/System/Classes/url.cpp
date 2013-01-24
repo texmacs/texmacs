@@ -587,7 +587,7 @@ glue (url u, string s) {
 url
 unglue (url u, int nr) {
   if (is_atomic (u))
-    return as_url (tree (u->t->label (0, N(u->t->label) - nr)));
+    return as_url (tree (u->t->label (0, max (N(u->t->label) - nr, 0))));
   if (is_concat (u)) return u[1] * unglue (u[2], nr);
   if (is_or (u)) return unglue (u[1], nr) | unglue (u[2], nr);
   cerr << "\nu= " << u << "\n";
