@@ -108,10 +108,15 @@
 (define-public plugin-old-data-table (make-ahash-table))
 (define-public plugin-data-table (make-ahash-table))
 
+
+(define winunit '("C:" "D:" "E:"))
+
+
 (define (determine-path-for-mingw x)
-  (let ((p1 (string-append "C:\\Program files\\" x) )
-        (p2 (string-append "C:\\Program files (x86)\\" x) ))
-        (if (url-exists? p2) p2 p1)))
+   (letrec ((get-path (lambda (unit) (if(eq? unit '())
+      (url-none) (url-or (url-complete (url-append (url-append (car unit) (url-wildcard "Program File*")) x)"r") (get-path (cdr unit)))))))
+      (url->string(url-expand(get-path winunit)))))
+      
 
 (define (plugin-configure-cmd name cmd)
   (cond ((or (func? cmd :require 1) (func? cmd :version 1))
@@ -146,6 +151,7 @@
 	((func? cmd :winpath 1)
 	 (when (os-mingw?)
 	   (with path (determine-path-for-mingw (second cmd))
+		(display* "WINPATH=" path "\n")
 	     (setenv "PATH" (string-append (getenv "PATH") ";" path)))))
 	((func? cmd :session 1)
 	 (supported-sessions-add name (second cmd)))
