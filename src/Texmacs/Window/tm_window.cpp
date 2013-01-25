@@ -243,7 +243,10 @@ texmacs_input_widget (tree doc, tree style, command cmd, bool continuous) {
 
 void
 tm_window_rep::set_window_name (string s) {
-  set_name (wid, s);
+  if (cur_title != s) {
+    cur_title= s;
+    set_name (wid, s);
+  }
 }
 
 void
