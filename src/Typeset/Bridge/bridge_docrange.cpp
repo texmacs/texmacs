@@ -239,12 +239,14 @@ bridge_docrange_rep::my_exec_until (path p) {
 bool
 bridge_docrange_rep::my_typeset_will_be_complete () {
   int i, n= N(acc);
-  if (divide)
+  if (divide) {
     for (i=0; i<n; i++)
       if (!acc[i]->my_typeset_will_be_complete ()) return false;
-  else
+  }
+  else {
     for (i=begin; i<end; i++)
       if (!brs[i]->my_typeset_will_be_complete ()) return false;
+  }
   return true;
 }
 
