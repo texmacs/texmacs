@@ -35,40 +35,36 @@
 	   (string-append s "\n"))
 	  (else (string-append s ";\n")))))
 
-(define version-list "f") ; updated by maxima-detect
-(define (maxima-detect)   ; always returns boolean
-  (if(os-mingw?)
-     (url-exists-in-path? "maxima")
-     (let ((maxima-detected #f)) (when (not maxima-detected)
-       (set!  version-list (string->object(var-eval-system "maxima_detect")))
-       (set! maxima-detected (list? version-list)))
-       maxima-detected)))
+(define (maxima-detect)
+  (if (os-mingw?)
+      (url-exists-in-path? "maxima")
+      (with version-list (string->object (var-eval-system "maxima_detect"))
+        (and (list? version-list) (nnull? version-list) version-list))))
       
 (define (maxima-versions)  ; returns list of versions if any
-  (if (maxima-detect) 
-	(let* ((default (car version-list))
-	       (rest (cdr version-list))
-	       (launch-default
-		(list :launch (string-append "tm_maxima " default)))
-	       (launch-rest
-		(map
-		 (lambda (version-name)
-		   (list :launch version-name
-			 (string-append "tm_maxima " version-name)))
-		 rest)))
-	  (cons launch-default launch-rest))
-	'()))
-
-; builds the windows command string
-(define win-start-maxima (if(os-mingw?) (string-append "maxima.bat -p " (getenv "TEXMACS_PATH")  "\\plugins\\maxima\\lisp\\texmacs-maxima.lisp")))
-
-; build the launch string according the  os version
-(define (lm) (if(os-mingw?) `((:launch ,win-start-maxima)) (maxima-versions)))
+  (if (os-mingw?)
+      `((:launch
+         ,(string-append "maxima.bat -p " (getenv "TEXMACS_PATH")
+                         "\\plugins\\maxima\\lisp\\texmacs-maxima.lisp")))
+      (with version-list (maxima-detect)
+        (if version-list
+            (let* ((default (car version-list))
+                   (rest (cdr version-list))
+                   (launch-default
+                    (list :launch (string-append "tm_maxima " default)))
+                   (launch-rest
+                    (map
+                     (lambda (version-name)
+                       (list :launch version-name
+                             (string-append "tm_maxima " version-name)))
+                     rest)))
+              (cons launch-default launch-rest))
+            '()))))
 
 (plugin-configure maxima
   (:winpath ,(url-append (url-wildcard "Maxima*") "bin"))
   (:require (maxima-detect))
-  ,@(lm)
+  ,@(maxima-versions)
   (:initialize (maxima-initialize))
   (:serializer ,maxima-serialize)
   (:session "Maxima")
