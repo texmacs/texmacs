@@ -155,7 +155,7 @@ left_tail (string s, tree t) {
       return r;
     }
   }
-  else compound ("or");
+  else return compound ("or");
 }
 
 /******************************************************************************
