@@ -99,7 +99,7 @@
   <assign|custom-footnote-text|<macro|sym|id|body|<style-with|src-compact|none|<\float|footnote|>
     <smaller|<\with|par-mode|justify|par-left|0cm|par-right|0cm>
       <\custom-note-text|<arg|sym>|<arg|id>>
-        <arg|body>
+        <surround||<right-flush>|<arg|body>>
       </custom-note-text>
     </with>>
   </float>>>>
