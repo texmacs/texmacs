@@ -164,8 +164,11 @@
   `(document
      ,@(select t '(author-name))
      ,@(select t '(author-affiliation))
+     ,@(select t '(author-affiliation-note))
      ,@(select t '(author-email))
-     ,@(select t '(author-homepage))))
+     ,@(select t '(author-email-note))
+     ,@(select t '(author-homepage))
+     ,@(select t '(author-homepage-note))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Abstract data
