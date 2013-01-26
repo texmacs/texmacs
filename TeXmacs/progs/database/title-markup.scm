@@ -146,9 +146,12 @@
 
 (tm-define (doc-data t)
   (:secure #t)
-  ;;(display* "t= " t "\n")
-  ;;(display* "r= " (add-notes t) "\n")
-  (doc-data-sub (add-notes t)))
+  ;;(display* "t1= " t "\n")
+  (set! t (single-author-list t))
+  ;;(display* "t2= " t "\n")
+  (set! t (add-notes t))
+  ;;(display* "t3= " t "\n")
+  (doc-data-sub t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Author data
