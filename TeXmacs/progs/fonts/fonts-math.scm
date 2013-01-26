@@ -316,6 +316,16 @@
      (unicode $bit $s $d)
      (roman $t $a $b $s $d)))
 
+   ((math-pagella $t $a $b $s $d)
+    (unicode-math texgyrepagella-math texgyrepagella-math
+		  texgyrepagella-bold texgyrepagella-bolditalic
+		  $t $a $b $s $d))
+
+   ((math-termes $t $a $b $s $d)
+    (unicode-math texgyretermes-math texgyretermes-math
+		  texgyretermes-bold texgyretermes-bolditalic
+		  $t $a $b $s $d))
+
    ((math-stix $t bold right $s $d)
     (unicode-math STIX-Bold STIX-Bold
 		  STIX-Bold STIX-Bold

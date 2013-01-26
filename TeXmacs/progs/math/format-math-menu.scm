@@ -44,9 +44,13 @@
 	  ("Lucida" (make-with "math-font" "math-lucida")))
       (if (url-exists-in-tex? "eurm10.mf")
 	  ("New Roman" (make-with "math-font" "ENR")))
+      (if (font-exists-in-tt? "texgyrepagella-math")
+	  ("Pagella" (make-with "math-font" "math-pagella")))
       ("Roman" (make-with "math-font" "roman"))
       (if (font-exists-in-tt? "STIX-Regular")
 	  ("Stix" (make-with "math-font" "math-stix")))
+      (if (font-exists-in-tt? "texgyretermes-math")
+	  ("Termes" (make-with "math-font" "math-termes")))
       ---
       (if (url-exists-in-tex? "cdr10.mf")
 	  ("Duerer" (make-with "math-font" "Duerer")))

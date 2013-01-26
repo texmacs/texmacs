@@ -409,9 +409,13 @@
 	  ("Euler new roman" (init-env "math-font" "ENR"))
 	  (if (font-exists-in-tt? "LucidaGrande")
 	      ("Lucida" (init-env "math-font" "math-lucida")))
+          (if (font-exists-in-tt? "texgyrepagella-math")
+              ("Pagella" (init-env "math-font" "math-pagella")))
 	  ("Roman" (init-env "math-font" "roman"))
 	  (if (font-exists-in-tt? "STIX-Regular")
-	      ("Stix" (init-env "math-font" "math-stix"))))
+	      ("Stix" (init-env "math-font" "math-stix")))
+          (if (font-exists-in-tt? "texgyretermes-math")
+              ("Termes" (init-env "math-font" "math-termes"))))
       (-> "Program font"
 	  ("Default" (init-default "prog-font"))
 	  ---
