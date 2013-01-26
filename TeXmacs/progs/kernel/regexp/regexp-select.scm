@@ -52,6 +52,21 @@
 	       (select-symbol (cdr l) (+ nr 1) sym bl)))
 	(else (select-symbol (cdr l) (+ nr 1) sym bl))))
 
+(define (select-not-symbol l nr sym bl)
+  "Select all except a given symbol"
+  (cond ((null? l) l)
+	((and (tm-compound? (car l)) (!= (tm-car (car l)) sym))
+	 (cons (cons* (list nr) (car l) bl)
+	       (select-not-symbol (cdr l) (+ nr 1) sym bl)))
+	(else (select-not-symbol (cdr l) (+ nr 1) sym bl))))
+
+(define (select-not x args bl)
+  "Select :not patterns"
+  ;; NOTE: only implemented for symbols
+  (when (not (and (list-1? args) (symbol? (car args))))
+    (texmacs-error "select-not" "~S is not a single symbol argument" args))
+  (select-not-symbol (cdr (tm->list x)) 0 (car args) bl))
+
 (define (select-range l nr begin end bl)
   "Select ranges"
   (cond ((or (null? l) (>= nr end)) '())
@@ -165,6 +180,7 @@
 
 (define select-table (make-ahash-table))
 (ahash-set! select-table :range select-range*)
+(ahash-set! select-table :not select-not)
 (ahash-set! select-table :or select-or)
 (ahash-set! select-table :and select-and)
 (ahash-set! select-table :and-not select-and-not)
