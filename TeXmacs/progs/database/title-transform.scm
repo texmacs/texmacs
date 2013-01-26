@@ -21,4 +21,6 @@
 (tm-define (single-author-list t)
   (:secure #t)
   (with authors (select t '(doc-author))
-    (if (<= (length authors) 1) t t)))
+    (if (<= (length authors) 1) t
+        (with other (select t '((:exclude doc-author)))
+          t))))
