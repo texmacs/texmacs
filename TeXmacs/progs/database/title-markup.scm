@@ -92,7 +92,7 @@
 
 (define (make-note l)
   (with (n note sym id) l
-    `(doc-note-text ,sym ,id ,(tm-ref note 0))))
+    `(doc-footnote-text ,sym ,id ,(tm-ref note 0))))
 
 (tm-define (add-notes t)
   (with notes (collect-notes t)
@@ -117,7 +117,7 @@
 
 (tm-define (doc-data-hidden t)
   `(concat
-     ,@(select t '(doc-note-text))
+     ,@(select t '(doc-footnote-text))
      ,@(map title->running-title (select t '(doc-title)))
      ,@(select t '(doc-running-title))
      (doc-running-author
