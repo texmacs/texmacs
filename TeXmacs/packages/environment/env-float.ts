@@ -86,7 +86,7 @@
 
   <assign|custom-note-text|<\macro|sym|id|body>
     <\style-with|src-compact|none>
-      <style-with|src-compact|none|||<\surround|<locus|<id|<merge|dest-abbr-|<arg|id>>>|<link|footnote-source|<id|<merge|dest-abbr-|<arg|id>>>|<id|<merge|source-|<arg|id>>>>|<arg|sym>><footnote-sep>|<right-flush>>
+      <style-with|src-compact|none|||<\surround|<locus|<id|<merge|dest-abbr-|<arg|id>>>|<link|footnote-source|<id|<merge|dest-abbr-|<arg|id>>>|<id|<merge|source-|<arg|id>>>>|<arg|sym>><footnote-sep>|>
         <\with|locus-color|preserve|visited-color|preserve>
           <\locus|<id|<merge|dest-|<arg|id>>>>
             <style-with|src-compact|none|<arg|body>>

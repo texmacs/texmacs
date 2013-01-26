@@ -151,7 +151,10 @@
   ;;(display* "t2= " t "\n")
   (set! t (add-notes t))
   ;;(display* "t3= " t "\n")
-  (doc-data-sub t))
+  (set! t (doc-data-sub t))
+  ;;(display* "t4= " t "\n")
+  t)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Author data
