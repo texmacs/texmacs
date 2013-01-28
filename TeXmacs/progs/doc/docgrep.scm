@@ -18,7 +18,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (doc docgrep))
+(texmacs-module (doc docgrep)
+  (:use (doc help-funcs)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Get scores for the different files
@@ -40,23 +41,6 @@
 ;; occur on top of the list.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define parse-results (make-ahash-table))
-(define parse-times (make-ahash-table))
-
-(define (parse-title u)
-  (with t (tree-import u "texmacs")
-    (with tt (select t '(:* tmdoc-title :%1))
-      (if (null? tt) '() (car tt)))))
-
-(define (help-file-title u)
-  (let ((mod-time (url-last-modified u))
-        (parse-time (or (ahash-ref parse-times u) 0)))
-    (if (> mod-time parse-time) ; handy: false also if url invalid
-        (begin
-          (ahash-set! parse-times u mod-time)
-          (ahash-set! parse-results u (parse-title u))))
-    (ahash-ref parse-results u)))
-
 (define (build-search-results keyword the-result)
   ($tmdoc
     ($tmdoc-title (replace "Search results for ``%1''" keyword))
@@ -69,7 +53,7 @@
             ($describe-item
                 ($inline (quotient (* (cdr x) 100) highest-score) "%")
               ($link (car x) (help-file-title (car x)))
-              ($quote '(htab ""))
+              '(htab "")
               ($ismall
                 ($verbatim
                   (string-append " ("

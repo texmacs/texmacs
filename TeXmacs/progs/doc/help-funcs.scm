@@ -20,6 +20,22 @@
 
 (define help-file-path "$TEXMACS_DOC_PATH")
 (define help-url-cache (make-ahash-table))
+(define help-titles (make-ahash-table))
+(define parse-times (make-ahash-table))
+
+(define (parse-title u)
+  (with t (tree-import u "texmacs")
+    (with tt (select t '(:* tmdoc-title :%1))
+      (if (null? tt) '() (car tt)))))
+
+(tm-define (help-file-title u)
+  (let ((mod-time (url-last-modified u))
+        (parse-time (or (ahash-ref parse-times u) 0)))
+    (if (> mod-time parse-time) ; handy: false also if url invalid
+        (begin
+          (ahash-set! parse-times u mod-time)
+          (ahash-set! help-titles u (parse-title u))))
+    (ahash-ref help-titles u)))
 
 (tm-define (url-exists-in-help? s)
   (with entry (ahash-ref help-url-cache s)
@@ -32,14 +48,14 @@
   (if (or (in? (url-suffix s) '("tex" "tm")) (url-exists? s))
       s
       (let* ((lan (string-take (language-to-locale (get-output-language)) 2)) 
-	     (suf (string-append "." lan ".tm"))
+             (suf (string-append "." lan ".tm"))
              (dir help-file-path))
-	(cond ((url-exists? (url-unix dir (string-append s suf)))
-	       (url-resolve (url-unix dir (string-append s suf)) "r"))
-	      ((and (!= suf ".en.tm")
-		    (url-exists? (url-unix dir (string-append s ".en.tm"))))
-	       (url-resolve (url-unix dir (string-append s ".en.tm")) "r"))
-	      (else (url-none))))))
+        (cond ((url-exists? (url-unix dir (string-append s suf)))
+               (url-resolve (url-unix dir (string-append s suf)) "r"))
+              ((and (!= suf ".en.tm")
+                    (url-exists? (url-unix dir (string-append s ".en.tm"))))
+               (url-resolve (url-unix dir (string-append s ".en.tm")) "r"))
+              (else (url-none))))))
 
 (define (load-help-buffer-sub s type)
   (let ((name (url-resolve-help s)))
