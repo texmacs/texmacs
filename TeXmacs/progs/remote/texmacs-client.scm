@@ -13,16 +13,25 @@
 
 (texmacs-module (remote texmacs-client))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Establishing and finishing connections with servers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define client-active? #f)
-(define client-waiting? #f)
+(define client-serial 0)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Asynchroneous clients
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(tm-define (client-send cmd)
+  (client-write (object->string* (list client-serial cmd)))
+  (set! client-serial (+ client-serial 1)))
 
-(define (client-eval cmd)
-  ;;(display* "Client command: " cmd "\n")
-  (object->string* (eval (string->object cmd))))
+(define (client-return msg-id ret-val)
+  (client-send `(server-remote-result ,msg-id ,ret-val)))
+
+(define (client-eval msg-id cmd)
+  ;;(display* "Client command [" msg-id "]: " cmd "\n")
+  (with ret (object->string* (eval cmd))
+    (when (not (func? cmd 'client-remote-result))
+      (client-return msg-id ret))))
 
 (tm-define (client-add)
   (set! client-active? #t)
@@ -30,28 +39,27 @@
     (delayed
       (:while client-active?)
       (:pause ((lambda () (inexact->exact wait))))
-      (:do (set! wait (min (* 1.001 wait) 2500)))
-      (when (not client-waiting?)
-	(with cmd (client-read)
-	  (when (!= cmd "")
-	    (with result (client-eval cmd)
-	      (client-write result)
-	      (set! wait 1))))))))
+      (:do (set! wait (min (* 1.01 wait) 2500)))
+      (with msg (client-read)
+        (when (!= msg "")
+          (with (msg-id msg-cmd) (string->object msg)
+            (client-eval msg-id msg-cmd)
+            (set! wait 1)))))))
 
 (tm-define (client-remove)
   (set! client-active? #f))
 
-(tm-define (client-remote cmd cont)
-  (when (not client-waiting?)
-    (set! client-waiting? #t)
-    (client-write (object->string* cmd))
-    (with wait 1
-      (delayed
-	(:while client-waiting?)
-	(:pause ((lambda () (inexact->exact wait))))
-	(:do (set! wait (min (* 1.001 wait) 2500)))
-	(with result (client-read)
-	  (when (!= result "")
-	    (set! client-waiting? #f)
-	    (set! wait 1)
-	    (cont (string->object result))))))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Sending asynchroneous commands to servers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define client-continuations (make-ahash-table))
+
+(tm-define (client-remote-eval cmd cont)
+  (ahash-set! client-continuations client-serial cont)
+  (client-send cmd))
+
+(tm-define (client-remote-result msg-id ret)
+  (and-with cont (ahash-ref client-continuations msg-id)
+    (ahash-remove! client-continuations msg-id)
+    (cont ret)))

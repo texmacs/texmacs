@@ -13,19 +13,28 @@
 
 (texmacs-module (remote texmacs-server))
 
-(define server-client-active? (make-ahash-table))
-(define server-client-waiting? (make-ahash-table))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Establishing and finishing connections with clients
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Asynchroneous servers
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define server-client-active? (make-ahash-table))
+(define server-serial 0)
 
 (tm-define (server-clients)
   (ahash-set->list server-client-active?))
 
-(define (server-eval cmd)
-  ;;(display* "Server command: " cmd "\n")
-  (object->string* (eval (string->object cmd))))
+(tm-define (server-send client cmd)
+  (server-write client (object->string* (list server-serial cmd)))
+  (set! server-serial (+ server-serial 1)))
+
+(define (server-return client msg-id ret-val)
+  (server-send client `(client-remote-result ,msg-id ,ret-val)))
+
+(define (server-eval client msg-id cmd)
+  ;;(display* "Server command [" client ", " msg-id "]: " cmd "\n")
+  (with ret (object->string* (eval cmd))
+    (when (not (func? cmd 'server-remote-result))
+      (server-return client msg-id ret))))
 
 (tm-define (server-add client)
   (ahash-set! server-client-active? client #t)
@@ -33,28 +42,27 @@
     (delayed
       (:while (ahash-ref server-client-active? client))
       (:pause ((lambda () (inexact->exact wait))))
-      (:do (set! wait (min (* 1.001 wait) 2500)))
-      (when (not (ahash-ref server-client-waiting? client))
-	(with cmd (server-read client)
-	  (when (!= cmd "")
-	    (with result (server-eval cmd)
-	      (server-write client result)
-	      (set! wait 1))))))))
+      (:do (set! wait (min (* 1.01 wait) 2500)))
+      (with msg (server-read client)
+        (when (!= msg "")
+          (with (msg-id msg-cmd) (string->object msg)
+            (server-eval client msg-id msg-cmd)
+            (set! wait 1)))))))
 
 (tm-define (server-remove client)
   (ahash-remove! server-client-active? client))
 
-(tm-define (server-remote client cmd cont)
-  (when (not (ahash-ref server-client-waiting? client))
-    (ahash-set! server-client-waiting? client #t)
-    (server-write client (object->string* cmd))
-    (with wait 1
-      (delayed
-	(:while (ahash-ref server-client-waiting? client))
-	(:pause ((lambda () (inexact->exact wait))))
-	(:do (set! wait (min (* 1.001 wait) 2500)))
-	(with result (server-read client)
-	  (when (!= result "")
-	    (ahash-set! server-client-waiting? client #f)
-	    (set! wait 1)
-	    (cont (string->object result))))))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Sending asynchroneous commands to clients
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define server-continuations (make-ahash-table))
+
+(tm-define (server-remote-eval client cmd cont)
+  (ahash-set! server-continuations server-serial cont)
+  (server-send client cmd))
+
+(tm-define (server-remote-result msg-id ret)
+  (and-with cont (ahash-ref server-continuations msg-id)
+    (ahash-remove! server-continuations msg-id)
+    (cont ret)))
