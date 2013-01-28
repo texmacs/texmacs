@@ -128,25 +128,28 @@
   (:synopsis "Opens a help buffer for the scheme symbol @word")
   (doc-check-cache-do
    (lambda ()
-     (load-buffer (string-append "tmfs://apidoc/type=symbol&what=" word)))))
+     (load-buffer (string-append "tmfs://apidoc/type=symbol&what="
+                                 (string-replace word ":" "%3A")))))) ; HACK
+
+(define (url-for-symbol s props)
+  (with (file line column) props
+    (if (and file line column)
+        (let ((lno (number->string line))
+              (cno (number->string column))
+              (ss (string-replace s ":" "%3A"))) ; HACK! see link-navigate.scm
+          (string-append file "?line=" lno "&column=" cno "&select=" ss))
+        (url-none))))
 
 ; TODO: check if a symbol is in the glue
 (tm-define (scheme-go-to-definition tmstr)
   (let* ((str (tmstring->string tmstr))
          (sym (string->symbol str))
-         (defs (symbol-property sym 'defs)))
-    (cond ((or (nlist? defs) (null? defs))
-           (set-message "Symbol properties not found" tmstr))
-          ((> (length defs) 1) (display "*** Need disambiguation!\n"))
-          (else
-            (with (file line column) (car defs)
-              (if (and line file)
-                  (let ((lno (number->string line))
-                        (cno (number->string column)))
-                    (go-to-url (string-append file "?line=" lno "&column=" cno
-                                              "&select=" tmstr)
-                               (cursor-path))
-                    (set-message file (string-append lno ":" cno)))))))))
+         (defs (or (symbol-property sym 'defs) '()))
+         (urls (map (lambda (x) (url-for-symbol tmstr x)) defs)))
+    (if (null? urls)
+        (set-message "Symbol properties not found" tmstr)
+        (go-to-url (list-fold url-or (car urls) (cdr urls))
+                   (cursor-path)))))
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Miscelaneous

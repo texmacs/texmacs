@@ -15,6 +15,20 @@
   (:use (utils library cursor) (link link-edit) (link link-extern)
         (generic generic-edit)))
 
+; FIXME: remove these two and find a better way
+(define (escape-link-args s)
+  "Escape only args of the type #some:label"
+  (let* ((m (string-length s))
+         (h (or (string-index s #\#) m))
+         (a (or (string-index s #\?) m))
+         (i (min m h a))
+         (base (substring s 0 i))
+         (qry (substring s (min m i) m)))
+    (if (< i m) (string-append base (string-replace qry ":" "%3A")) s)))
+
+(define (unescape-link-args s)
+  (string-replace s "%3A" ":"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Navigation mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -334,10 +348,122 @@
   (with doc (navigation-list->document style l)
     (open-auxiliary "Link page" doc)))
 
-(define (build-navigation-page l)
+(tm-define (build-navigation-page l)
   (let* ((style (tree->stree (get-style-tree)))
          (fun (lambda () (build-navigation-page-sub style l))))
     (resolve-navigation-list l fun)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Jumping to different types of URLs is done in two stages. The load handler,
+;; changing with the type of root of the url and the post-load handler, which
+;; will tipically depend on the file format.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (url->item u)
+  (with (base qry) (process-url u)
+    (let* ((file (url->string u))
+           (text (if (url-exists-in-help? file) (help-file-title u)
+                     (basename (url->string base)))))
+      ($link file text))))
+
+(define (url-list->document l)
+  ($tmdoc
+    ($tmdoc-title "Link disambiguation")
+    ($para "The link you followed points to several locations:")
+    ($description-aligned
+      (with c 0
+        ($for (x l)
+          ($describe-item 
+              (number->string (begin (set! c (+ 1 c)) c)) (url->item x)))))))
+
+(tm-define (build-disambiguation-page l)
+  (open-auxiliary "Disambiguation page" (url-list->document l)))
+
+; FIXME: many corner cases will get through 
+;(inexistent relative paths for instance)
+(define (default-filter-url u)
+  (with (base qry) (process-url u)
+    (or (== base "")
+        (or (!= (url-root base) "default")
+            (url-exists? base)))))
+
+(define (default-root-disambiguator u)
+ (with l (list-filter (url->list u) default-filter-url)
+    (cond ((null? l) 
+           (set-message `(verbatim ,(url->string u)) "Not found"))
+          ((== 1 (length l)) (load-browse-buffer (car l)))
+          (else (build-disambiguation-page l)))))
+
+(define (process-url u)
+  "Split a simple (not or'ed!!) url in base and query"
+  (let* ((s (url->string u))
+         (m (string-length s))
+         (h (or (string-index s #\#) m))
+         (a (or (string-index s #\?) m))
+         (i (min m h a))
+         (base (substring s 0 i))
+         (qry (substring s (min m (+ 1 i)) m)))
+    (if (< i m)  ; was there either a '?' or a '#' (with args)?
+        (list (string->url (string-drop-right s (+ 1 (string-length qry))))
+              (unescape-link-args qry))
+        (list u ""))))
+
+(define (texmacs-file-post qry)
+  (if (and (string? qry) (not (string-null? qry)))
+      (with dest (unescape-link-arguments qry)
+        (go-to-label dest)
+        (set-message (replace "At %1." dest) ""))))
+
+(define generic-file-post texmacs-file-post)
+
+(define (source-file-post qry)
+  (let* ((lstr (or (query-ref qry "line") "0"))
+         (cstr (or (query-ref qry "column") "0"))
+         (sstr (or (query-ref qry "select") ""))
+         (line (or (string->number lstr) 0))
+         (column (or (string->number cstr) 0)))
+    (go-to-line line)
+    (go-to-column column)
+    (set! column (or (select-word sstr (cursor-tree) column) 0))
+    (set-message sstr (string-append lstr ":" (number->string column)))))
+
+; FIXME? will this jump to HTML anchors?
+(define html-file-post generic-file-post)
+
+(define (default-post-handler u)
+  (with (base qry) (process-url u)
+    (with fm (file-format base)
+      (cond ((== fm "texmacs-file") (texmacs-file-post qry))
+            ((== fm "generic-file") (generic-file-post qry))
+            ((== fm "scheme-file") (source-file-post qry))
+            ((== fm "cpp-file") (source-file-post qry))
+            ((== fm "html-file") (html-file-post qry))
+            (else 
+              (display* "Unhandled format for default queries: " fm "\n"))))))
+
+(define (default-root-handler u)
+  (if (url-or? (url-expand u))
+      (default-root-disambiguator (url-expand u))
+      (with (base qry) (process-url u)
+        (if (!= "" (url->string base))
+            (load-browse-buffer base)))))
+
+(define (tmfs-root-handler u)
+  (load-browse-buffer u))
+
+(define (http-root-handler u)
+  (load-browse-buffer u))
+
+(define (url-handlers u)
+  (with root (or (and (url-rooted? u) (url-root u)) "default")
+    (cond ((== root "default") 
+           (list default-root-handler default-post-handler))
+          ((== root "tmfs") 
+           (list tmfs-root-handler (lambda (x) (noop))))
+          ((or (== root "http") (== root "https"))
+           (list http-root-handler http-post-handler))
+          (else (display* "Unhandled url root: " root "\n")
+                default-root-handler))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Actual navigation
@@ -355,80 +481,13 @@
         (and (resolve-id id)
              (delayed (:idle 25) (apply go-to-id (cons id opt-from)))))))
 
-(define (generic-query-handler qry)
-  (if (and (string? qry) (not (string-null? qry)))
-      (go-to-label qry)))
-
-(define (source-query-handler qry)
-  (let* ((lstr (or (query-ref qry "line") "0"))
-         (cstr (or (query-ref qry "column") "0"))
-         (sstr (or (query-ref qry "select") ""))
-         (line (or (string->number lstr) 0))
-         (column (or (string->number cstr) 0)))
-    (go-to-line line)
-    (go-to-column column)
-    (if (!= sstr "") (select-word sstr (cursor-tree) column))))
-
-(define (html-query-handler qry)
-  ; FIXME: implement jumping to anchors.
-  (noop))
-
-;; TEMPORARY: we have to decide whether this makes sense as one of the
-;; properties of a format as defined in define-format.
-(define (query-handler fm)
-  "Define an action to be executed after a jump to a file with format @fm"
-  (cond ((== fm "generic-file") generic-query-handler)
-        ((== fm "scheme-file") source-query-handler)
-        ((== fm "html-file") html-query-handler)
-        (else (display* "Unhandled format for queries: " fm "\n")
-              generic-query-handler)))
-
-(define (default-protocol-handler fname qry)
-  (load-browse-buffer fname))
-        
-(define tmfs-protocol-handler default-protocol-handler)
-
-(define (http-protocol-handler fname qry)
-  (default-protocol-handler
-   (if (string-null? qry) fname (string-append fname "?" qry)) 
-   ""))
-
-(define (protocol-handler protocol)
-  "Define actions to be taken to jump to a kind of url"
-  (cond ((== protocol "default") default-protocol-handler)
-        ((== protocol "tmfs") tmfs-protocol-handler)
-        ((== protocol "http") http-protocol-handler)
-        (else (display* "Unhandled protocol: " protocol "\n") 
-              default-protocol-handler)))
-
-(define (process-url u)
-  "Parse a url and return the actions to be take for loading and after it"
-  (let* ((s (url->string u))
-         (protocol (url-root u))
-         (m (string-length s))
-         (h (or (string-index s #\#) m))
-         (a (or (string-index s #\?) m))
-         (i (min m h a))
-         (base (substring s 0 i))
-         (qry (substring s (min m (+ 1 i)) m)))
-    (if (< i m)  ; was there either a '?' or a '#' (with args)?
-        (list (lambda () ((protocol-handler protocol) base qry))
-              (lambda () ((query-handler (file-format base)) qry)))
-        (list (lambda () ((protocol-handler protocol) base ""))
-              noop))))
-
-; FIXME: we expand the url in case it contained some env. variable with multiple
-; paths. In this case we open the first existent file because opening several
-; in succession crashes.
 (tm-define (go-to-url u . opt-from)
   (:synopsis "Jump to the url @u")
   (:argument opt-from "Optional path for the cursor history")
   (if (nnull? opt-from) (cursor-history-add (car opt-from)))
-  (with l (url->list (url-expand u))
-    (if (> (length l) 1)
-        (set! l (list-filter l url-exists?)))
-    (with (action post) (process-url (car l))
-      (action) (post)))
+  (if (string? u) (set! u (string->url u)))
+  (with (action post) (url-handlers u) 
+    (action u) (post u))
   (if (nnull? opt-from) (cursor-history-add (cursor-path))))
 
 (define (execute-at cmd opt-location)
@@ -450,7 +509,7 @@
 
 (define (go-to-vertex v attrs)
   (cond ((func? v 'id 1) (go-to-id (cadr v) (cursor-path)))
-        ((func? v 'url 1) (go-to-url (cadr v) (cursor-path)))
+        ((func? v 'url 1) (go-to-url (escape-link-args (cadr v)) (cursor-path)))
         ((func? v 'script)
          (with ok? (== (assoc-ref attrs "secure") "true")
            (apply execute-script (cons* (cadr v) ok? (cddr v)))))

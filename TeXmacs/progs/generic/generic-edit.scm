@@ -538,13 +538,14 @@
   (:synopsis "Selects word @w in tree @t, more or less around column @col.")
   (let* ((st (tree->string t))
          (pos (- col (string-length w)))
-         (beg (string-contains st w (if (> pos 0) pos 0))))
-    (if beg 
+         (beg (string-contains st w (max 0 pos))))
+    (if beg
         (with p (tree->path t)
           (go-to (rcons p beg))
           (selection-set-start)
           (go-to (rcons p (+ beg (string-length w))))
-          (selection-set-end)))))
+          (selection-set-end)))
+    beg))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting various kinds of content
