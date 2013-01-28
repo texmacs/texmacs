@@ -179,6 +179,12 @@ url_http (string name) {
 }
 
 static url
+url_https (string name) {
+  url u= url_get_name (name);
+  return url_root ("https") * u;
+}
+
+static url
 url_ftp (string name) {
   url u= url_get_name (name);
   return url_root ("ftp") * u;
@@ -252,6 +258,7 @@ url_general (string name, int type= URL_SYSTEM) {
   if (starts (name, "local:")) return url_local (name (6, N (name)));
   if (starts (name, "file://")) return url_file (name (7, N (name)));
   if (starts (name, "http://")) return url_http (name (7, N (name)));
+  if (starts (name, "https://")) return url_https (name (8, N (name)));
   if (starts (name, "ftp://")) return url_ftp (name (6, N (name)));
   if (starts (name, "tmfs://")) return url_tmfs (name (7, N (name)));
   if (starts (name, "//")) return url_blank (name (2, N (name)));

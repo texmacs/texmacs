@@ -95,7 +95,8 @@ inline bool is_root (url u) {
 inline bool is_root (url u, string s) {
   return is_root (u) && (u[1]->t->label == s); }
 inline bool is_root_web (url u) {
-  return is_root (u, "http") || is_root (u, "ftp") || is_root (u, "blank"); }
+  return is_root (u, "http") || is_root (u, "https") || is_root (u, "ftp") ||
+         is_root (u, "blank"); }
 inline bool is_root_tmfs (url u) { return is_root (u, "tmfs"); }
 inline bool is_root_blank (url u) { return is_root (u, "blank"); }
 inline bool is_wildcard (url u) { return is_tuple (u->t, "wildcard"); }
