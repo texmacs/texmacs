@@ -467,7 +467,7 @@
           ((or (== root "http") (== root "https"))
            (list http-root-handler http-post-handler))
           (else (display* "Unhandled url root: " root "\n")
-                default-root-handler))))
+                (list default-root-handler default-post-handler)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Actual navigation
