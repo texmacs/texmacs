@@ -441,7 +441,7 @@
             (else 
               (display* "Unhandled format for default queries: " fm "\n"))))))
 
-(define (http-post-handler)
+(define (http-post-handler u)
   ; TODO: jump to anchors in HTML
   (noop))
 
