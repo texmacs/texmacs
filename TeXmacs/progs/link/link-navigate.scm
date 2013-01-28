@@ -441,6 +441,10 @@
             (else 
               (display* "Unhandled format for default queries: " fm "\n"))))))
 
+(define (http-post-handler)
+  ; TODO: jump to anchors in HTML
+  (noop))
+
 (define (default-root-handler u)
   (if (url-or? (url-expand u))
       (default-root-disambiguator (url-expand u))
