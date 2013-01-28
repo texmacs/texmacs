@@ -410,7 +410,7 @@
 
 (define (texmacs-file-post qry)
   (if (and (string? qry) (not (string-null? qry)))
-      (with dest (unescape-link-arguments qry)
+      (with dest (unescape-link-args qry)
         (go-to-label dest)
         (set-message (replace "At %1." dest) ""))))
 
