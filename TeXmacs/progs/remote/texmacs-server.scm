@@ -66,3 +66,27 @@
   (and-with cont (ahash-ref server-continuations msg-id)
     (ahash-remove! server-continuations msg-id)
     (cont ret)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Users
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define server-users (make-ahash-table))
+
+(define (server-load-users)
+  (when (== (ahash-size server-users) 0)
+    (with f "$TEXMACS_HOME_PATH/system/users.scm"
+      (set! server-users
+            (if (url-exists? f)
+                (list->ahash-table (load-object f))
+                (make-ahash-table))))))
+
+(define (server-save-users)
+  (with f "$TEXMACS_HOME_PATH/system/users.scm"
+    (save-object f (ahash-table->list server-users))))
+
+(tm-define (server-set-user-info id passwd email admin)
+  (server-load-users)
+  (ahash-set! server-users id (list passwd email admin))
+  (server-save-users))
+
