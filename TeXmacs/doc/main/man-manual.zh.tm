@@ -6,7 +6,7 @@
   <tmdoc-title|GNU <TeXmacs> \<#7528\>\<#6237\>\<#624B\>\<#518C\>>
 
   <\traverse>
-    <branch|\<#5F00\>\<#59CB\>|start/man-getting-started.zh.tm>
+    <branch|\<#5F00\>\<#59CB\>\<#4F7F\>\<#7528\>|start/man-getting-started.zh.tm>
 
     <branch|\<#64B0\>\<#5199\>\<#7B80\>\<#5355\>\<#7684\>\<#6587\>\<#6863\>|text/man-text.zh.tm>
 
