@@ -111,11 +111,12 @@
 
 (define winunit '("C:" "D:" "E:"))
 
-
 (define (determine-path-for-mingw x)
+   (if (url-rooted? x)
+   (url->string x)
    (letrec ((get-path (lambda (unit) (if(eq? unit '())
-      (url-none) (url-or (url-complete (url-append (url-append (car unit) (url-wildcard "Program File*")) x)"r") (get-path (cdr unit)))))))
-      (url->string(url-expand(get-path winunit)))))
+      (url-none) (url-or (url-complete (url-append (url-append (car unit) (url-or (url-wildcard "Program File*") ".")) x)"r") (get-path (cdr unit)))))))
+      (url->string (url-expand (get-path winunit))))))
       
 
 (define (plugin-configure-cmd name cmd)
@@ -151,7 +152,6 @@
 	((func? cmd :winpath 1)
 	 (when (os-mingw?)
 	   (with path (determine-path-for-mingw (second cmd))
-		(display* "WINPATH=" path "\n")
 	     (setenv "PATH" (string-append (getenv "PATH") ";" path)))))
 	((func? cmd :session 1)
 	 (supported-sessions-add name (second cmd)))
