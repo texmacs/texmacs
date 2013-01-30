@@ -18,11 +18,11 @@ void   server_stop ();
 string server_read (int fd);
 void   server_write (int fd, string s);
 
-void   client_start (string host);
-void   client_stop ();
-string client_read ();
-void   client_write (string s);
+int    client_start (string host);
+void   client_stop (int fd);
+string client_read (int fd);
+void   client_write (int fd, string s);
 
-void   enter_secure_mode ();
+void   enter_secure_mode (int fd);
 
 #endif // defined CLIENT_SERVER_H

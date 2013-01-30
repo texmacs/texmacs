@@ -51,32 +51,31 @@
 ;; Establishing and finishing connections with servers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define client-active? #f)
+(define client-server-active? (make-ahash-table))
 (define client-serial 0)
 
 (tm-define (active-servers)
-  (list 0))
+  (ahash-set->list client-server-active?))
 
 (tm-define (client-send server cmd)
-  ;; FIXME: server ignored for the moment
-  (client-write (object->string* (list client-serial cmd)))
+  (client-write server (object->string* (list client-serial cmd)))
   (set! client-serial (+ client-serial 1)))
 
-(tm-define (client-add)
-  (set! client-active? #t)
+(tm-define (client-add server)
+  (ahash-set! client-server-active? server #t)
   (with wait 1
     (delayed
-      (:while client-active?)
+      (:while (ahash-ref client-server-active? server))
       (:pause ((lambda () (inexact->exact wait))))
       (:do (set! wait (min (* 1.01 wait) 2500)))
-      (with msg (client-read)
+      (with msg (client-read server)
         (when (!= msg "")
           (with (msg-id msg-cmd) (string->object msg)
-            (client-eval (list 0 msg-id) msg-cmd)
+            (client-eval (list server msg-id) msg-cmd)
             (set! wait 1)))))))
 
-(tm-define (client-remove)
-  (set! client-active? #f))
+(tm-define (client-remove server)
+  (ahash-remove! client-server-active? server))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sending asynchroneous commands to servers

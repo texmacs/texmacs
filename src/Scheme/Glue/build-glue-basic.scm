@@ -440,11 +440,11 @@
   (server-stop server_stop (void))
   (server-read server_read (string int))
   (server-write server_write (void int string))
-  (client-start client_start (void string))
-  (client-stop client_stop (void))
-  (client-read client_read (string))
-  (client-write client_write (void string))
-  (enter-secure-mode enter_secure_mode (void))
+  (client-start client_start (int string))
+  (client-stop client_stop (void int))
+  (client-read client_read (string int))
+  (client-write client_write (void int string))
+  (enter-secure-mode enter_secure_mode (void int))
 
   ;; connections to extern systems
   (connection-start connection_start (string string string))

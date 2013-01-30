@@ -14,49 +14,75 @@
 #include "socket_link.hpp"
 #include "scheme.hpp"
 
-static socket_link_rep* the_client= NULL;
+typedef socket_link_rep* weak_socket_link;
+static array<weak_socket_link> the_clients;
+static bool clients_started= false;
 
 /******************************************************************************
 * Client side
 ******************************************************************************/
 
-void
+int
 client_start (string host) {
-  if (the_client == NULL) {
+  if (!clients_started) {
     (void) eval ("(use-modules (remote texmacs-client))");
-    the_client= tm_new<socket_link_rep> (host, 6561, SOCKET_CLIENT, -1);
+    clients_started= true;
   }
-  if (!the_client->alive)
-    cout << "TeXmacs] Starting client... " << the_client->start () << "\n";
+  weak_socket_link client=
+    tm_new<socket_link_rep> (host, 6561, SOCKET_CLIENT, -1);
+  if (!client->alive)
+    cout << "TeXmacs] Starting client... " << client->start () << "\n";
+  if (client->alive) {
+    call ("client-add", object (client->io));
+    the_clients << client;
+    return client->io;
+  }
+  else return -1;
 }
 
 void
-client_stop () {
-  if (the_client != NULL) {
-    the_client->stop ();
-    tm_delete (the_client);
-    the_client= NULL;
-  }
+client_stop (int fd) {
+  for (int i=0; i<N(the_clients); i++)
+    if (the_clients[i]->io == fd) {
+      weak_socket_link client= the_clients[i];
+      client->stop ();
+      tm_delete (client);
+      client= NULL;
+      the_clients= append (range (the_clients, 0, i),
+                           range (the_clients, i+1, N(the_clients)));
+    }
+}
+
+static weak_socket_link
+find_client (int fd) {
+  for (int i=0; i<N(the_clients); i++)
+    if (the_clients[i]->io == fd)
+      return the_clients[i];
+  return NULL;
 }
 
 string
-client_read () {
-  if (the_client == NULL || !the_client->alive) return "";
-  if (!the_client->complete_packet (LINK_OUT)) return "";
+client_read (int fd) {
+  weak_socket_link client= find_client (fd);
+  if (client == NULL || !client->alive) return "";
+  if (!client->complete_packet (LINK_OUT)) return "";
   bool success;
-  string back= the_client->read_packet (LINK_OUT, 0, success);
+  string back= client->read_packet (LINK_OUT, 0, success);
   //cout << "Server read " << back << "\n";
   return back;
 }
 
 void
-client_write (string s) {
-  if (the_client == NULL || !the_client->alive) return;
+client_write (int fd, string s) {
+  weak_socket_link client= find_client (fd);
+  if (client == NULL || !client->alive) return;
   //cout << "Client write " << s << "\n";
-  the_client->write_packet (s, LINK_IN);
+  client->write_packet (s, LINK_IN);
 }
 
 void
-enter_secure_mode () {
-  the_client->secure_client ();
+enter_secure_mode (int fd) {
+  weak_socket_link client= find_client (fd);
+  if (client == NULL || !client->alive) return;
+  client->secure_client ();
 }

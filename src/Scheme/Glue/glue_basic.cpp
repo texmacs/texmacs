@@ -5163,47 +5163,61 @@ tmg_client_start (tmscm arg1) {
   string in1= tmscm_to_string (arg1);
 
   // TMSCM_DEFER_INTS;
-  client_start (in1);
+  int out= client_start (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_client_stop (tmscm arg1) {
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "client-stop");
+
+  int in1= tmscm_to_int (arg1);
+
+  // TMSCM_DEFER_INTS;
+  client_stop (in1);
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;
 }
 
 tmscm
-tmg_client_stop () {
-  // TMSCM_DEFER_INTS;
-  client_stop ();
-  // TMSCM_ALLOW_INTS;
+tmg_client_read (tmscm arg1) {
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "client-read");
 
-  return TMSCM_UNSPECIFIED;
-}
+  int in1= tmscm_to_int (arg1);
 
-tmscm
-tmg_client_read () {
   // TMSCM_DEFER_INTS;
-  string out= client_read ();
+  string out= client_read (in1);
   // TMSCM_ALLOW_INTS;
 
   return string_to_tmscm (out);
 }
 
 tmscm
-tmg_client_write (tmscm arg1) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "client-write");
+tmg_client_write (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "client-write");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "client-write");
 
-  string in1= tmscm_to_string (arg1);
+  int in1= tmscm_to_int (arg1);
+  string in2= tmscm_to_string (arg2);
 
   // TMSCM_DEFER_INTS;
-  client_write (in1);
+  client_write (in1, in2);
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;
 }
 
 tmscm
-tmg_enter_secure_mode () {
+tmg_enter_secure_mode (tmscm arg1) {
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "enter-secure-mode");
+
+  int in1= tmscm_to_int (arg1);
+
   // TMSCM_DEFER_INTS;
-  enter_secure_mode ();
+  enter_secure_mode (in1);
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;
@@ -7445,10 +7459,10 @@ initialize_glue_basic () {
   tmscm_install_procedure ("server-read",  tmg_server_read, 1, 0, 0);
   tmscm_install_procedure ("server-write",  tmg_server_write, 2, 0, 0);
   tmscm_install_procedure ("client-start",  tmg_client_start, 1, 0, 0);
-  tmscm_install_procedure ("client-stop",  tmg_client_stop, 0, 0, 0);
-  tmscm_install_procedure ("client-read",  tmg_client_read, 0, 0, 0);
-  tmscm_install_procedure ("client-write",  tmg_client_write, 1, 0, 0);
-  tmscm_install_procedure ("enter-secure-mode",  tmg_enter_secure_mode, 0, 0, 0);
+  tmscm_install_procedure ("client-stop",  tmg_client_stop, 1, 0, 0);
+  tmscm_install_procedure ("client-read",  tmg_client_read, 1, 0, 0);
+  tmscm_install_procedure ("client-write",  tmg_client_write, 2, 0, 0);
+  tmscm_install_procedure ("enter-secure-mode",  tmg_enter_secure_mode, 1, 0, 0);
   tmscm_install_procedure ("connection-start",  tmg_connection_start, 2, 0, 0);
   tmscm_install_procedure ("connection-status",  tmg_connection_status, 2, 0, 0);
   tmscm_install_procedure ("connection-write-string",  tmg_connection_write_string, 3, 0, 0);

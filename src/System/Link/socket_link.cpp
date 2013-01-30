@@ -48,8 +48,6 @@ socket_link_rep::socket_link_rep (string host2, int port2, int type2, int fd):
     add_notifier (sn);
     call ("server-add", object (io));
   } 
-  else if (type == SOCKET_CLIENT)
-    call ("client-add");
 }
 
 socket_link_rep::~socket_link_rep () {
@@ -237,7 +235,7 @@ socket_link_rep::stop () {
 #ifndef __MINGW32__
   if (!alive) return;
   if (type == SOCKET_SERVER) call ("server-remove", object (io));
-  else if (type == SOCKET_CLIENT) call ("client-remove");
+  else if (type == SOCKET_CLIENT) call ("client-remove", object (io));
   close (io);
   io= -1;
   alive= false;
