@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : init-pari.scm
+;; MODULE      : init-python.scm
 ;; DESCRIPTION : Initialize python plugin
 ;; COPYRIGHT   : (C) 2004  Ero Carrera,
 ;;               (C) 2012  Adrian Soto
@@ -25,11 +25,13 @@
     (with s (texmacs->verbatim (stree->tree u))
       (string-append  s  "\n<EOF>\n"))))
 
+(define run-python (if (os-mingw?) "tm_python.bat --texmacs" "tm_python --texmacs"))
 
 (plugin-configure python
+  (:winpath ,(url-wildcard "Python2*"))
   (:require (url-exists-in-path? "python"))
   (:require (url-exists-in-path? "tm_python"))
-  (:launch "tm_python --texmacs")
+  (:launch ,run-python)
   (:tab-completion #t)
   (:serializer ,python-serialize)
   (:session "Python"))
