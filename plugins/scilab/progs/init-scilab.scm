@@ -10,8 +10,10 @@
 ;; in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define scilab-launcher (if(os-mingw?) "Scilex -texmacs" "scilab --texmacs"))
 
 (plugin-configure scilab
-  (:require (url-exists-in-path? "scilab"))
-  (:launch "scilab --texmacs")
+  (:winpath ,(url-append (url-wildcard "scilab*") "bin"))
+  (:require (url-exists-in-path? (if(os-mingw?) "Scilex" "scilab")))
+  (:launch ,scilab-launcher)
   (:session "Scilab"))
