@@ -17,20 +17,20 @@
 ;; Declaration of services
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public server-dispatch-table (make-ahash-table))
+(define-public service-dispatch-table (make-ahash-table))
 
 (tm-define-macro (tm-service proto . body)
   (if (npair? proto) '(noop)
       (with (fun . args) proto
         `(begin
            (tm-define (,fun envelope ,@args) ,@body)
-           (ahash-set! server-dispatch-table ',fun ,fun)))))
+           (ahash-set! service-dispatch-table ',fun ,fun)))))
 
 (tm-define (server-eval envelope cmd)
   ;; (display* "server-eval " envelope ", " cmd "\n")
-  (if (and (pair? cmd) (ahash-ref server-dispatch-table (car cmd)))
+  (if (and (pair? cmd) (ahash-ref service-dispatch-table (car cmd)))
       (with (name . args) cmd
-        (with fun (ahash-ref server-dispatch-table name)
+        (with fun (ahash-ref service-dispatch-table name)
           (apply fun (cons envelope args))))
       (server-error envelope "invalid command")))
 
@@ -54,7 +54,7 @@
 (define server-client-active? (make-ahash-table))
 (define server-serial 0)
 
-(tm-define (server-clients)
+(tm-define (active-clients)
   (ahash-set->list server-client-active?))
 
 (tm-define (server-send client cmd)
