@@ -21,22 +21,22 @@
 (define (collect-emails l)
   (let* ((l1 (map cadr (map tree->stree l)))
          (s (string-recompose-comma l1))
-         ;FIXME : USE RENDER-EMAIL !!!
-         (t (stree->tree `(author-email (concat (em (email-text)) " " ,s)))))
+         (t (stree->tree `(authors-email ,s))))
     `((,(tree->stree t) ,t (phantom a) email))))
 
 (define (collect-urls l)
   (let* ((l1 (map cadr (map tree->stree l)))
          (s (string-recompose-comma l1))
-         ;FIXME : USE RENDER-URL !!!
-         (t (stree->tree `(author-homepage (concat (em (homepage-text)) " " ,s)))))
+         (t (stree->tree `(authors-homepage ,s))))
     `((,(tree->stree t) ,t (phantom a) url))))
 
 (define (add-notes t)
   (let* ((title-notes (collect-notes t "" '((doc-note))))
          ; Todo: add corresponding author
-         (emails-notes (collect-emails (select t '(doc-author author-data author-email))))
-         (urls-notes (collect-urls (select t '(doc-author author-data author-homepage))))
+         (emails-notes (collect-emails
+                         (select t '(doc-author author-data author-email))))
+         (urls-notes (collect-urls
+                       (select t '(doc-author author-data author-homepage))))
          (authors-notes (collect-notes t "arabic"
                                        '((doc-author author-data author-misc))))
          (notes (append title-notes emails-notes urls-notes authors-notes)))
@@ -60,7 +60,7 @@
         ((tm-func? c 'author-name 1)
          `(author-name ,(add-annotations (tm-ref c 0) notes)))
         ((tm-func? c 'doc-author 1)
-         (let* ((sels (map 
+         (let* ((sels (map
                         tm->stree
                         (append (select c '(author-data author-misc))
                                 (select c '(author-data author-affiliation)))))
