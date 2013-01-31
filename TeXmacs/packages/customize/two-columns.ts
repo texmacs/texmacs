@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.7>
+<TeXmacs|1.0.7.17>
 
 <style|<tuple|source|std-pattern>>
 
@@ -13,11 +13,10 @@
     <src-copyright|1998--2004|Joris van der Hoeven>
 
     <\src-license>
-      This software falls under the <hlink|GNU general public
-      license, version 3 or later|$TEXMACS_PATH/LICENSE>.
-      It comes WITHOUT ANY WARRANTY WHATSOEVER.
-      You should have received a copy of the license which the software.
-      If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
+      This software falls under the <hlink|GNU general public license,
+      version 3 or later|$TEXMACS_PATH/LICENSE>. It comes WITHOUT ANY
+      WARRANTY WHATSOEVER. You should have received a copy of the license
+      which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
     </src-license>
   </src-title>>
 
@@ -29,17 +28,15 @@
     </src-comment>
   </active*>
 
-  <assign|doc-make-title-2col|<value|doc-make-title>>
+  <assign|doc-make-title|<macro|body|<with|par-columns|1|<surround||<vspace|2fn>|<doc-title-block|<arg|body>>>>>>
 
-  <assign|doc-make-title|<\macro|body>
-    <\with|par-columns|1>
-      <doc-make-title-2col|<arg|body>>
-
-      \;
-    </with>
-  </macro>>
-
-  <assign|doc-footnote|<macro|body|<style-with|src-compact|none|<if|<unequal|<get-arity|<quote-arg|body>>|0>|<quasi|<with|par-columns|1|<style-with|src-compact|none|<render-footnote|<unquote|<doc-author-note-next>>|<arg|body|0><map-args|doc-footnote-sub|concat|body|1>>>>>>>>>
+  <assign|custom-footnote-text|<macro|sym|id|body|<style-with|src-compact|none|<\float|footnote|>
+    <smaller|<\with|par-mode|justify|par-left|0cm|par-right|0cm|par-columns|1>
+      <\custom-note-text|<arg|sym>|<arg|id>>
+        <arg|body>
+      </custom-note-text>
+    </with>>
+  </float>>>>
 
   <\active*>
     <\src-comment>
