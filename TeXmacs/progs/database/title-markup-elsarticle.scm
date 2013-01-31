@@ -101,7 +101,7 @@
 
 (tm-define (doc-data-hidden-elsa t)
   `(concat
-     ,@(select t '(doc-note-text))
+     ,@(select t '(doc-footnote-text))
      ,@(map title->running-title (select t '(doc-title)))
      ,@(select t '(doc-running-title))
      (doc-running-author
