@@ -40,8 +40,8 @@
          (authors-notes (collect-notes t "arabic"
                                        '((doc-author author-data author-misc))))
          (notes (append title-notes emails-notes urls-notes authors-notes)))
-         (display* "title-notes: " title-notes "\n")
-         (display* "emails-notes: " emails-notes "\n")
+         ;(display* "title-notes: " title-notes "\n")
+         ;(display* "emails-notes: " emails-notes "\n")
     (if (null? notes) t
         (let* ((c1 (tm-children t))
                (c2 (map (cut annotate <> notes) c1))
@@ -133,6 +133,5 @@
   ;;(display* "t= " t "\n")
   ;;(display* "r= " (add-notes t) "\n")
   (doc-data-sub-elsa (add-notes (add-affiliations t))))
-  ;(doc-data-sub-elsa (add-notes t)))
 
 

@@ -125,6 +125,8 @@
 
   <assign|doc-note-text|<macro|sym|id|body|<custom-note-text|<arg|sym>|<arg|id>|<arg|body>>>>
 
+  <assign|doc-note-ref|<macro|sym|sep|id|body|<custom-note-ref|<arg|sym>|<arg|sep>|<arg|id>|<arg|body>>>>
+
   <assign|doc-footnote-text|<macro|sym|id|body|<custom-footnote-text|<arg|sym>|<arg|id>|<arg|body>>>>
 
   <assign|doc-data|<xmacro|args|<extern|doc-data|<quote-arg|args>>>>
