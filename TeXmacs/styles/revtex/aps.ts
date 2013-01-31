@@ -353,17 +353,7 @@
     </with>
   </surround>>>
 
-  <assign|doc-data|<\xmacro|data>
-    <\with|par-columns|1>
-      <\surround|<assign|the-doc-data|<quote-arg|data>>|<with|doc-note-nr|0|<quasi|<doc-data-hidden|<unquote*|<quote-arg|data>>>>>>
-        <\doc-make-title>
-          <with|doc-note-nr|0|<\quasi>
-            <compound|<unquote|<if|<lesseq|<length|<select|<quote-arg|data>|doc-author|author-data>>|1>|<value|doc-data-main>|<value|doc-data-main*>>>|<unquote*|<quote-arg|data>>>
-          </quasi>>
-        </doc-make-title>
-      </surround>
-    </with>
-  </xmacro>>
+  <assign|doc-data|<xmacro|args|<with|par-columns|1|<extern|doc-data|<quote-arg|args>>>>>
 
   <active*|<\src-comment>
     Customization of other environments.
