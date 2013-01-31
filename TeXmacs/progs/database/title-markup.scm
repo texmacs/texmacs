@@ -17,11 +17,11 @@
 ;; Collect notes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (insert-note note h)
+(define (insert-note note h style)
   (with n (tm->stree note)
     (when (not (ahash-ref h n))
       (let* ((nr (+ (ahash-size h) 1))
-             (sym `(number ,(number->string nr) "fnsymbol"))
+             (sym `(number ,(number->string nr) ,style))
              (id (string-append "title-note-" (number->string nr))))
         ;; TODO: use hard-id of the doc-data tree as a prefix
         ;; otherwise, links will be ambiguous in case of multiple titles
@@ -34,11 +34,10 @@
           (list (cons n val))
           (list)))))
 
-(tm-define (collect-notes t)
-  (let* ((l (append (select t '(doc-note))
-                    (select t '(doc-author author-data author-misc))))
+(tm-define (collect-notes t style tags)
+  (let* ((l (apply append (map (cut select t <>) tags)))
          (h (make-ahash-table)))
-    (for-each (cut insert-note <> h) l)
+    (for-each (cut insert-note <> h style) l)
     (append-map (cut retrieve-note <> h) l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -95,7 +94,8 @@
     `(doc-footnote-text ,sym ,id ,(tm-ref note 0))))
 
 (tm-define (add-notes t)
-  (with notes (collect-notes t)
+  (let* ((tags '((doc-note) (doc-author author-data author-misc)))
+         (notes (collect-notes t "fnsymbol" tags)))
     (if (null? notes) t
         (let* ((c1 (tm-children t))
                (c2 (map (cut annotate <> notes) c1))
