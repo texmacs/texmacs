@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : title-bis.scm
+;; MODULE      : title-markup.scm
 ;; DESCRIPTION : Translation of metadata markup for typesetting purpose
 ;; COPYRIGHT   : (C) 2012  Joris van der Hoeven
 ;;
@@ -21,7 +21,9 @@
   (with n (tm->stree note)
     (when (not (ahash-ref h n))
       (let* ((nr (+ (ahash-size h) 1))
-             (sym `(number ,(number->string nr) ,style))
+             (sym (if (zero? (string-length style))
+                      '(phantom a)
+                      `(number ,(number->string nr) ,style)))
              (id (string-append "title-note-" (number->string nr))))
         ;; TODO: use hard-id of the doc-data tree as a prefix
         ;; otherwise, links will be ambiguous in case of multiple titles
@@ -44,7 +46,7 @@
 ;; Modifying notes into footnotes and references
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (remove-notes c)
+(tm-define (remove-notes c)
   (cond ((null? c) c)
         ((tm-func? (car c) 'doc-note 1) (remove-notes (cdr c)))
         ((tm-func? (car c) 'author-misc 1) (remove-notes (cdr c)))
@@ -55,25 +57,27 @@
            (cons h t)))
         (else (cons (car c) (remove-notes (cdr c))))))
 
-(define (retain-title-notes notes)
+(tm-define (retain-title-notes notes)
   (cond ((null? notes) notes)
         ((tm-is? (caar notes) 'doc-note)
          (cons (car notes) (retain-title-notes (cdr notes))))
         (else (retain-title-notes (cdr notes)))))
 
-(define (find-note sel notes)
+(tm-define (find-note sel notes)
   (cond ((null? notes) (list))
         ((== (caar notes) sel)
          (list (car notes)))
         (else (find-note sel (cdr notes)))))
 
-(define (add-annotations c notes)
+(tm-define (add-annotations c notes)
   (if (null? notes) c
       (with (n note sym id) (cAr notes)
-        (with c2 (add-annotations c (cDr notes))
-          `(doc-note-ref ,sym ,id ,c2)))))
+        (if (eqv? (car sym) 'phantom) c
+          (with c2 (add-annotations c (cDr notes))
+            (with sep (if (> (length notes) 1) `(noteref-sep) "")
+              `(doc-note-ref ,sym ,sep ,id ,c2)))))))
 
-(define (annotate c notes)
+(tm-define (annotate c notes)
   (cond ((tm-func? c 'doc-title 1)
          (with new-notes (retain-title-notes notes)
            `(doc-title ,(add-annotations (tm-ref c 0) new-notes))))
@@ -89,7 +93,7 @@
            `(author-data ,@(map ann (tm-children c)))))
         (else c)))
 
-(define (make-note l)
+(tm-define (make-note l)
   (with (n note sym id) l
     `(doc-footnote-text ,sym ,id ,(tm-ref note 0))))
 
@@ -107,12 +111,12 @@
 ;; Main document data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (remove-annotations t)
+(tm-define (remove-annotations t)
   (if (tm-func? t 'doc-note-ref 3)
       (remove-annotations (tm-ref t 2))
       t))
 
-(define (title->running-title t)
+(tm-define (title->running-title t)
   `(doc-running-title ,(remove-annotations (tm-ref t 0))))
 
 (tm-define (doc-data-hidden t)

@@ -43,6 +43,8 @@
   <assign|with-TeXmacs-text|<macro|This document has been written using the
   GNU <TeXmacs> text editor (see <hlink|<with|font-family|tt|www.texmacs.org>|http://www.texmacs.org>).>>
 
+  <assign|noteref-sep|<macro|>>
+
   <\active*>
     <\src-comment>
       DRD properties of tags with title and author data.
@@ -120,8 +122,6 @@
   <assign|doc-running-title|<macro|body|<header-title|<arg|body>>>>
 
   <assign|doc-running-author|<macro|body|<header-author|<arg|body>>>>
-
-  <assign|doc-note-ref|<macro|sym|id|body|<custom-note-ref|<arg|sym>|<arg|id>|<arg|body>>>>
 
   <assign|doc-note-text|<macro|sym|id|body|<custom-note-text|<arg|sym>|<arg|id>|<arg|body>>>>
 
