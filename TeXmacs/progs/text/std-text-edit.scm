@@ -35,10 +35,10 @@
 	   (<= (tree-index t) 1)
 	   (tree-is? bt 0 'doc-data)
 	   (or (== (tree-arity bt) 1)
-	       (not (tree-is? bt 1 'abstract)))))))
+	       (not (tree-is? bt 1 'abstract-data)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Inserting document and author data
+;; Inserting document, author and abstract data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (doc-title-context? t)
@@ -80,6 +80,18 @@
 	     (tree-insert! t pos `((,l "")))
 	     (tree-go-to t pos 0 0))))))
 
+(tm-define (abstract-data-context? t)
+  (tree-in? t (abstract-data-tag-list)))
+
+(tm-define (make-abstract-data)
+  (insert-go-to '(abstract-data (abstract "")) '(0 0 0)))
+
+(tm-define (make-abstract-data-element l)
+  (with-innermost t 'abstract-data
+    (with pos (1+ (tree-down-index t))
+      (tree-insert! t pos `((,l "")))
+      (tree-go-to t pos 0 0))))
+
 (tm-define (kbd-enter t shift?)
   (:require (tree-is? t 'title))
   (go-end-line)
@@ -92,6 +104,20 @@
 (tm-define (kbd-enter t shift?)
   (:require (tree-is? t 'author-name))
   (make-author-data-element 'author-affiliation))
+
+(tm-define (kbd-enter t shift?)
+  (:require (tree-is? t 'doc-keywords))
+  (with-innermost t 'doc-keywords
+    (with pos (1+ (tree-down-index t))
+      (tree-insert! t pos `((concat "")))
+      (tree-go-to t pos 0 0))))
+
+(tm-define (kbd-enter t shift?)
+  (:require (tree-is? t 'doc-msc))
+  (with-innermost t 'doc-msc
+    (with pos (1+ (tree-down-index t))
+      (tree-insert! t pos `((concat "")))
+      (tree-go-to t pos 0 0))))
 
 (tm-define (kbd-enter t shift?)
   (:require (tree-is? t 'doc-inactive))

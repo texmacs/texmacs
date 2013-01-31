@@ -24,8 +24,8 @@
 (menu-bind title-menu
   (when (not (inside? 'doc-data))
 	("Insert title" (make-doc-data)))
-  (when (and (not (inside? 'doc-data)) (not (inside? 'abstract)))
-	("Abstract" (make 'abstract))))
+  (when (and (not (inside? 'doc-data)) (not (inside? 'abstract-data)))
+	("Abstract" (make-abstract-data))))
 
 (menu-bind letter-header-menu
   (when (not (inside? 'letter-header))
@@ -370,12 +370,12 @@
 
 (tm-menu (focus-document-extra-menu t)
   (:require (document-propose-abstract?))
-  ("Abstract" (make 'abstract)))
+  ("Abstract" (make-abstract-data)))
 
 (tm-menu (focus-document-extra-icons t)
   (:require (document-propose-abstract?))
   (minibar
-    ((balloon "Abstract" "Insert abstract") (make 'abstract))))
+    ((balloon "Abstract" "Insert abstract") (make-abstract-data))))
 
 (tm-define (focus-can-move? t)
   (:require (doc-title-context? t))
@@ -393,10 +393,7 @@
 
 (tm-menu (focus-title-hidden-menu)
   ("Running title" (make-doc-data-element 'doc-running-title))
-  ("Running author" (make-doc-data-element 'doc-running-author))
-  ("Keywords" (make-doc-data-element 'doc-keywords))
-  ("M.S.C."
-   (make-doc-data-element 'doc-msc)))
+  ("Running author" (make-doc-data-element 'doc-running-author)))
 
 (tm-menu (focus-title-icons)
   (assuming (doc-data-has-hidden?)
@@ -460,6 +457,35 @@
   (minibar (dynamic (focus-title-icons)))
   //
   (minibar (dynamic (focus-author-icons)))
+  //)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Focus menus for abstract data
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (focus-can-move? t)
+  (:require (abstract-data-context? t))
+  #f)
+
+(tm-menu (focus-abstract-menu)
+  ("Keywords" (make-abstract-data-element 'doc-keywords))
+  ("M.S.C." (make-abstract-data-element 'doc-msc)))
+
+(tm-menu (focus-abstract-icons)
+  (mini #t
+    (inert ("Abstract" (noop))))
+  (=> (balloon (icon "tm_add.xpm") "Add abstract information")
+      (link focus-abstract-menu)))
+
+(tm-menu (focus-ancestor-menu t)
+  (:require (abstract-data-context? t))
+  (group "Abstract")
+  (link focus-abstract-menu)
+  ---)
+
+(tm-menu (focus-ancestor-icons t)
+  (:require (abstract-data-context? t))
+  (minibar (dynamic (focus-abstract-icons)))
   //)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

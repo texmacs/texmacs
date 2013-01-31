@@ -80,13 +80,16 @@
   doc-title doc-subtitle doc-author doc-date)
 
 (define-group doc-title-inactive-tag
-  doc-running-title doc-running-author doc-keywords doc-msc)
+  doc-running-title doc-running-author)
 
 (define-group doc-author-tag
   author-data)
 
 (define-group author-data-tag
   author-name author-affiliation author-email author-homepage author-misc)
+
+(define-group abstract-data-tag
+  abstract doc-msc doc-keywords)
 
 ;; Enunciations
 
