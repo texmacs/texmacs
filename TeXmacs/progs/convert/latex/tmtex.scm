@@ -1204,12 +1204,7 @@
 	 (authors (map tmtex-make-author (select tag '(doc-author))))
 	 (date (tmtex-select-data tag 'doc-date))
 	 (note (tmtex-select-data tag 'doc-note))
-	 (keywords (tmtex-select-data tag 'doc-keywords))
-	 (AMS-class (tmtex-select-data tag 'doc-msc))
-	 (keywords* (tmtex-data-apply 'keywords keywords))
-	 (AMS-class* (tmtex-data-apply 'AMSclass AMS-class))
-	 (note* (tmtex-data-assemble "; " (list note keywords* AMS-class*)))
-	 (title* (append title (tmtex-data-apply 'thanks note*)))
+	 (title* (append title (tmtex-data-apply 'thanks note)))
 	 (author* (tmtex-data-assemble " \\and " (map list authors))))
     (tex-concat `((title ,(tex-concat title*)) "\n"
 		  (author ,(tex-concat author*)) "\n"
@@ -1223,6 +1218,15 @@
 
 (define (tmtex-abstract-wrapper s l)
   (tmtex-abstract s l))
+
+(define (tmtex-select-args-by-func n l)
+  (filter (lambda (x) (func? x n)) l))
+
+(define (tmtex-abstract-data s l)
+  (let* ((msc (tmtex-select-args-by-func 'doc-msc l))
+         (keywords (tmtex-select-args-by-func 'doc-keywords l))
+         (abstract (tmtex-select-args-by-func 'abstract l)))
+  (tex-concat `(,@abstract "\n" ,@keywords "\n" ,@msc))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TeXmacs style primitives
@@ -1766,6 +1770,7 @@
   ((:or author-name author-affiliation author-misc
 	author-email author-homepage) (,tmtex-default -1))
   (abstract (,tmtex-abstract-wrapper 1))
+  (abstract-data (,tmtex-abstract-data -1))
   (appendix (,tmtex-appendix 1))
   ((:or theorem proposition lemma corollary proof axiom definition
 	notation conjecture remark note example exercise problem warning
