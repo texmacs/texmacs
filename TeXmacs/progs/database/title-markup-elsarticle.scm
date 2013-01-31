@@ -20,14 +20,16 @@
 
 (define (collect-emails l)
   (let* ((l1 (map cadr (map tree->stree l)))
+         ;;FIXME: define authors-emails as an xmacro to activate links
          (s (string-recompose-comma l1))
-         (t (stree->tree `(authors-email ,s))))
+         (t (stree->tree `(document (authors-email ,s)))))
     `((,(tree->stree t) ,t (phantom a) email))))
 
 (define (collect-urls l)
   (let* ((l1 (map cadr (map tree->stree l)))
          (s (string-recompose-comma l1))
-         (t (stree->tree `(authors-homepage ,s))))
+         ;;FIXME: define authors-homepages as an xmacro to activate links
+         (t (stree->tree `(document (authors-homepage ,s)))))
     `((,(tree->stree t) ,t (phantom a) url))))
 
 (define (add-notes t)
@@ -40,8 +42,6 @@
          (authors-notes (collect-notes t "arabic"
                                        '((doc-author author-data author-misc))))
          (notes (append title-notes emails-notes urls-notes authors-notes)))
-         ;(display* "title-notes: " title-notes "\n")
-         ;(display* "emails-notes: " emails-notes "\n")
     (if (null? notes) t
         (let* ((c1 (tm-children t))
                (c2 (map (cut annotate <> notes) c1))
@@ -56,7 +56,7 @@
 (define (annotate c notes)
   (cond ((tm-func? c 'doc-title 1)
          (with new-notes (retain-title-notes notes)
-           `(doc-title ,(add-annotations (tm-ref c 0) new-notes))))
+              `(doc-title ,(add-annotations (tm-ref c 0) new-notes))))
         ((tm-func? c 'author-name 1)
          `(author-name ,(add-annotations (tm-ref c 0) notes)))
         ((tm-func? c 'doc-author 1)
@@ -93,7 +93,7 @@
 (tm-define (author-data-elsa t)
   (:secure #t)
   `(document
-     ,@(select t '(author-name))))
+     (concat (assign "noteref-sep" (quote "")) ,@(select t '(author-name)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main document data
@@ -112,7 +112,7 @@
 
 (tm-define (doc-data-main-elsa t)
   `(document
-     ,@(select t '(doc-title))
+     (concat (assign "noteref-sep" (quote "")) ,@(select t '(doc-title)))
      ,@(select t '(doc-subtitle))
      ,@(with authors (select t '(doc-author))
          (if (<= (length authors) 1) authors
@@ -130,8 +130,6 @@
 
 (tm-define (doc-data-elsa t)
   (:secure #t)
-  ;;(display* "t= " t "\n")
-  ;;(display* "r= " (add-notes t) "\n")
   (doc-data-sub-elsa (add-notes (add-affiliations t))))
 
 

@@ -74,8 +74,7 @@
       (with (n note sym id) (cAr notes)
         (if (eqv? (car sym) 'phantom) c
           (with c2 (add-annotations c (cDr notes))
-            (with sep (if (> (length notes) 1) `(noteref-sep) "")
-              `(doc-note-ref ,sym ,sep ,id ,c2)))))))
+            `(doc-note-ref ,sym (noteref-sep) ,id ,c2))))))
 
 (define (annotate c notes)
   (cond ((tm-func? c 'doc-title 1)
