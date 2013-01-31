@@ -77,7 +77,7 @@
             (with sep (if (> (length notes) 1) `(noteref-sep) "")
               `(doc-note-ref ,sym ,sep ,id ,c2)))))))
 
-(tm-define (annotate c notes)
+(define (annotate c notes)
   (cond ((tm-func? c 'doc-title 1)
          (with new-notes (retain-title-notes notes)
            `(doc-title ,(add-annotations (tm-ref c 0) new-notes))))

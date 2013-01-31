@@ -32,7 +32,7 @@
          (t (stree->tree `(author-homepage (concat (em (homepage-text)) " " ,s)))))
     `((,(tree->stree t) ,t (phantom a) url))))
 
-(tm-define (add-notes t)
+(define (add-notes t)
   (let* ((title-notes (collect-notes t "" '((doc-note))))
          ; Todo: add corresponding author
          (emails-notes (collect-emails (select t '(doc-author author-data author-email))))
@@ -53,7 +53,7 @@
 ;; Main document data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (annotate c notes)
+(define (annotate c notes)
   (cond ((tm-func? c 'doc-title 1)
          (with new-notes (retain-title-notes notes)
            `(doc-title ,(add-annotations (tm-ref c 0) new-notes))))
@@ -76,11 +76,11 @@
 ;; Author data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (make-affiliation l)
+(define (make-affiliation l)
   (with (n note sym id) l
     `(author-affiliation-text ,sym ,id ,(tm-ref note 0))))
 
-(tm-define (add-affiliations t)
+(define (add-affiliations t)
   (with notes (reverse (collect-notes t "alpha" '((doc-author
                                                    author-data
                                                    author-affiliation))))
@@ -90,7 +90,7 @@
                (c3 (map make-affiliation (reverse notes))))
           `(,(tm-label t) ,@c3 ,@c2)))))
 
-(tm-define (author-data t)
+(tm-define (author-data-elsa t)
   (:secure #t)
   `(document
      ,@(select t '(author-name))))
@@ -99,7 +99,7 @@
 ;; Main document data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (doc-data-hidden t)
+(tm-define (doc-data-hidden-elsa t)
   `(concat
      ,@(select t '(doc-note-text))
      ,@(map title->running-title (select t '(doc-title)))
@@ -110,7 +110,7 @@
                 (select t '(doc-author author-data author-name 0)))))
      ,@(select t '(doc-running-author))))
 
-(tm-define (doc-data-main t)
+(tm-define (doc-data-main-elsa t)
   `(document
      ,@(select t '(doc-title))
      ,@(select t '(doc-subtitle))
@@ -121,18 +121,18 @@
      ,@(select t '(doc-date))
      ,@(select t '(doc-inactive))))
 
-(tm-define (doc-data-sub t)
+(tm-define (doc-data-sub-elsa t)
   `(surround
-     ,(doc-data-hidden t)
+     ,(doc-data-hidden-elsa t)
      (document
        (doc-make-title
-         ,(doc-data-main t)))))
+         ,(doc-data-main-elsa t)))))
 
-(tm-define (doc-data t)
+(tm-define (doc-data-elsa t)
   (:secure #t)
   ;;(display* "t= " t "\n")
   ;;(display* "r= " (add-notes t) "\n")
-  (doc-data-sub (add-notes (add-affiliations t))))
-  ;(doc-data-sub (add-notes t)))
+  (doc-data-sub-elsa (add-notes (add-affiliations t))))
+  ;(doc-data-sub-elsa (add-notes t)))
 
 
