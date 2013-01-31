@@ -468,8 +468,8 @@
   #f)
 
 (tm-menu (focus-abstract-menu)
-  ("Keywords" (make-abstract-data-element 'doc-keywords))
-  ("M.S.C." (make-abstract-data-element 'doc-msc)))
+  ("Keywords" (make-abstract-data-element 'abstract-keywords))
+  ("M.S.C." (make-abstract-data-element 'abstract-msc)))
 
 (tm-menu (focus-abstract-icons)
   (mini #t

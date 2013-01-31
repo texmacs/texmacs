@@ -73,10 +73,6 @@
 
   <drd-props|doc-running-author|arity|1|accessible|all>
 
-  <drd-props|doc-keywords|arity|<tuple|repeat|1|1>|accessible|all>
-
-  <drd-props|doc-msc|arity|<tuple|repeat|1|1>|accessible|all>
-
   <drd-props|author-name|border|no>
 
   <drd-props|author-affiliation|border|no>
@@ -90,6 +86,10 @@
   <drd-props|abstract-data|arity|<tuple|repeat|1|1>|accessible|all>
 
   <drd-props|abstract|arity|1|accessible|all>
+
+  <drd-props|abstract-msc|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <drd-props|abstract-keywords|arity|<tuple|repeat|1|1>|accessible|all>
 
   <\active*>
     <\src-comment>
@@ -221,14 +221,14 @@
     </padded-normal>
   </macro>>
 
-  <assign|doc-keywords|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<keywords-text><localize|:>
+  <assign|abstract-keywords|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<keywords-text><localize|:>
   ><concat-tuple|<quote-arg|args>|, >>>>
 
   <assign|msc-ref|<\macro|msc-id>
     <style-with|src-compact|none|<hlink|<arg|msc-id>|<style-with|src-compact|none|<merge|http://www.ams.org/mathscinet/search/mscbrowse.html?sk=default&sk=|<arg|msc-id>|&submit=Search>>>>
   </macro>>
 
-  <assign|doc-msc|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<AMS-class-text><localize|:>
+  <assign|abstract-msc|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<AMS-class-text><localize|:>
   ><concat-tuple|<map|msc-ref|<quote-arg|args>>|, >>>>
 
   <assign|abstract-data|<xmacro|args|<extern|abstract-data|<quote-arg|args>>>>

@@ -68,7 +68,7 @@
 	 (title (tmtex-select-data tag 'doc-title))
 	 (note (tmtex-select-data tag 'author-misc))
 	 (authors (map elsevier-author (select tag '(author-data))))
-	 (keywords (append-map cdr (select tag '(doc-keywords))))
+	 (keywords (append-map cdr (select tag '(abstract-keywords))))
 	 (abstract (and elsevier-abstract (tmtex elsevier-abstract))))
     (when (nnull? note)
       (let* ((label (elsevier-label))

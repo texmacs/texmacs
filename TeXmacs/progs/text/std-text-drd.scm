@@ -89,7 +89,7 @@
   author-name author-affiliation author-email author-homepage author-misc)
 
 (define-group abstract-data-tag
-  abstract doc-msc doc-keywords)
+  abstract abstract-msc abstract-keywords)
 
 ;; Enunciations
 

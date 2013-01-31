@@ -1223,8 +1223,8 @@
   (filter (lambda (x) (func? x n)) l))
 
 (define (tmtex-abstract-data s l)
-  (let* ((msc (tmtex-select-args-by-func 'doc-msc l))
-         (keywords (tmtex-select-args-by-func 'doc-keywords l))
+  (let* ((msc (tmtex-select-args-by-func 'abstract-msc l))
+         (keywords (tmtex-select-args-by-func 'abstract-keywords l))
          (abstract (tmtex-select-args-by-func 'abstract l)))
   (tex-concat `(,@abstract "\n" ,@keywords "\n" ,@msc))))
 
@@ -1766,7 +1766,7 @@
   (show-part (,tmtex-show-part -1))
   (doc-data (,tmtex-doc-data-wrapper -1))
   ((:or doc-title doc-author author-data doc-date doc-note
-	doc-keywords doc-msc) (,tmtex-default -1))
+	abstract-keywords abstract-msc) (,tmtex-default -1))
   ((:or author-name author-affiliation author-misc
 	author-email author-homepage) (,tmtex-default -1))
   (abstract (,tmtex-abstract-wrapper 1))

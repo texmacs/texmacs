@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.0.7.17>
 
 <style|source>
 
@@ -178,13 +178,13 @@
     <surround|<no-indent>||<arg|body>>
   </macro>>
 
-  <assign|doc-keywords|<\xmacro|args>
+  <assign|abstract-keywords|<\xmacro|args>
     <subsection*|<keywords-text>>
 
     <no-indent><concat-tuple|<copy|<quote-arg|args>>|, >
   </xmacro>>
 
-  <assign|doc-msc|<\xmacro|args>
+  <assign|abstract-msc|<\xmacro|args>
     <subsection*|<AMS-class-text>>
 
     <no-indent><concat-tuple|<copy|<map|msc-ref|<quote-arg|args>>>|, >

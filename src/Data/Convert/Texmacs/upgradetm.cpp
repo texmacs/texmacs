@@ -3526,7 +3526,9 @@ upgrade_metadatas (tree t) {
   if (is_compound (t, "doc-abstract"))   l= "abstract";
   if (is_compound (t, "author-address")) l= "author-affiliation";
   if (is_compound (t, "author-note"))    l= "author-misc";
-  if (is_compound (t, "doc-AMS-class"))  l= "doc-msc";
+  if (is_compound (t, "doc-AMS-class"))  l= "abstract-msc";
+  if (is_compound (t, "doc-msc"))        l= "abstract-msc";
+  if (is_compound (t, "doc-keywords"))   l= "abstract-keywords";
 
   if (is_compound (t, "doc-author-data")) {
     tree r= compound ("author-data");
@@ -3544,13 +3546,13 @@ upgrade_metadatas (tree t) {
 
 static tree
 remove_abstract_data (tree t, array<tree> &abstract_datas) {
-  // Remove all doc-msc and doc-keywords found in a doc-data structure,
-  // and store them in abstract_datas.
+  // Remove all abstract-msc and abstract-keywords found in a doc-data
+  // structure, and store them in abstract_datas.
   tree r(L(t));
   if (is_compound (t, "doc-data")) {
     for (int i=0; i<N(t); i++) {
-      if (is_compound (t[i], "doc-msc") ||
-          is_compound (t[i], "doc-keywords"))
+      if (is_compound (t[i], "abstract-msc") ||
+          is_compound (t[i], "abstract-keywords"))
         abstract_datas << t[i];
       else r << t[i];
     }
@@ -3567,19 +3569,19 @@ remove_abstract_data (tree t, array<tree> &abstract_datas) {
 
 static array<tree>
 sort_abstract_data (array<tree> abstract_datas) {
-  // Sort and merge doc-msc and doc-keywords compounds
+  // Sort and merge abstract-msc and abstract-keywords compounds
   bool has_doc_msc= false, has_doc_keywords= false;
-  tree doc_msc (make_tree_label ("doc-msc"));
-  tree doc_keywords (make_tree_label ("doc-keywords"));
+  tree doc_msc (make_tree_label ("abstract-msc"));
+  tree doc_keywords (make_tree_label ("abstract-keywords"));
   array<tree> r;
 
   for (int i=0; i<N(abstract_datas); i++) {
-    if (is_compound (abstract_datas[i], "doc-msc")) {
+    if (is_compound (abstract_datas[i], "abstract-msc")) {
       has_doc_msc= true;
       for (int j=0; j<N(abstract_datas[i]); j++)
         doc_msc << abstract_datas[i][j];
     }
-    if (is_compound (abstract_datas[i], "doc-keywords")) {
+    if (is_compound (abstract_datas[i], "abstract-keywords")) {
       has_doc_keywords= true;
       for (int j=0; j<N(abstract_datas[i]); j++)
         doc_keywords << abstract_datas[i][j];
@@ -3632,8 +3634,8 @@ add_abstract_data (tree t, array<tree> abstract_datas, bool &stop) {
 
 static tree
 upgrade_abstract_data (tree t) {
-  // Remove all doc-msc and doc-keywords found in a doc-data structure,
-  // and merge them with the first abstract found.
+  // Remove all abstract-msc and abstract-keywords found in a doc-data
+  // structure, and merge them with the first abstract found.
   array<tree> abstract_datas;
   tree r= remove_abstract_data (t, abstract_datas);
   bool stop= false;
@@ -3816,8 +3818,7 @@ upgrade (tree t, string version) {
     t= upgrade_cyrillic (t);
   if (version_inf_eq (version, "1.0.7.18"))
     t= upgrade_metadatas (t);
-  // t= upgrade_abstract_data (t);
-  // cout << LF << t << LF << LF;
+    t= upgrade_abstract_data (t);
 
   if (is_non_style_document (t))
     t= automatic_correct (t, version);

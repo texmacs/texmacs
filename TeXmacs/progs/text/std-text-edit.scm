@@ -106,15 +106,15 @@
   (make-author-data-element 'author-affiliation))
 
 (tm-define (kbd-enter t shift?)
-  (:require (tree-is? t 'doc-keywords))
-  (with-innermost t 'doc-keywords
+  (:require (tree-is? t 'abstract-keywords))
+  (with-innermost t 'abstract-keywords
     (with pos (1+ (tree-down-index t))
       (tree-insert! t pos `((concat "")))
       (tree-go-to t pos 0 0))))
 
 (tm-define (kbd-enter t shift?)
-  (:require (tree-is? t 'doc-msc))
-  (with-innermost t 'doc-msc
+  (:require (tree-is? t 'abstract-msc))
+  (with-innermost t 'abstract-msc
     (with pos (1+ (tree-down-index t))
       (tree-insert! t pos `((concat "")))
       (tree-go-to t pos 0 0))))
