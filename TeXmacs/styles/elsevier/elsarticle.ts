@@ -63,6 +63,14 @@
   <assign|authors-homepage|<macro|body|<with|font-shape|italic|<homepage-text>>
   <arg|body>>>
 
+  <drd-props|authors-emails|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <drd-props|authors-homepages|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <assign|authors-emails|<xmacro|args|<extern|authors-emails|<quote-arg|args>>>>
+
+  <assign|authors-homepages|<xmacro|args|<extern|authors-homepages|<quote-arg|args>>>>
+
   <active*|<src-comment|Footnote hacking.>>
 
   <assign|doc-note-ref|<macro|sym|sep|id|body|<custom-note-ref|<arg|sym>|<arg|sep>|<arg|id>|<arg|body>><assign|noteref-sep|<value|noteref-stored-sep>>>>

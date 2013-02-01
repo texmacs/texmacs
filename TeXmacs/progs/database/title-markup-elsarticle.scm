@@ -18,18 +18,24 @@
 ;; Modifying notes into footnotes and references
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (authors-emails t)
+  (:secure)
+  `(authors-email (comma-separated
+                    ,@(map (lambda (x) `(hlink ,x ,x)) (select t '(:%1))))))
+
+(tm-define (authors-homepages t)
+  (:secure)
+  `(authors-homepage (comma-separated
+                    ,@(map (lambda (x) `(hlink ,x ,x)) (select t '(:%1))))))
+
 (define (collect-emails l)
   (let* ((l1 (map cadr (map tree->stree l)))
-         ;;FIXME: define authors-emails as an xmacro to activate links
-         (s (string-recompose-comma l1))
-         (t (stree->tree `(document (authors-email ,s)))))
+         (t (stree->tree `(document (authors-emails ,@l1)))))
     `((,(tree->stree t) ,t (phantom a) email))))
 
 (define (collect-urls l)
   (let* ((l1 (map cadr (map tree->stree l)))
-         (s (string-recompose-comma l1))
-         ;;FIXME: define authors-homepages as an xmacro to activate links
-         (t (stree->tree `(document (authors-homepage ,s)))))
+         (t (stree->tree `(document (authors-homepages ,@l1)))))
     `((,(tree->stree t) ,t (phantom a) url))))
 
 (define (add-notes t)
