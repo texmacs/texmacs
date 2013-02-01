@@ -85,11 +85,11 @@
 
   <drd-props|abstract-data|arity|<tuple|repeat|1|1>|accessible|all>
 
-  <drd-props|abstract|arity|1|accessible|all>
+  <drd-props|abstract|arity|1|accessible|all|border|no>
 
-  <drd-props|abstract-msc|arity|<tuple|repeat|1|1>|accessible|all>
+  <drd-props|abstract-msc|arity|<tuple|repeat|1|1>|accessible|all|border|no>
 
-  <drd-props|abstract-keywords|arity|<tuple|repeat|1|1>|accessible|all>
+  <drd-props|abstract-keywords|arity|<tuple|repeat|1|1>|accessible|all|border|no>
 
   <\active*>
     <\src-comment>
