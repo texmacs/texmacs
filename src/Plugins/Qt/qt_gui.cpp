@@ -151,8 +151,10 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
 
   s= "";
   t= "none";
-  bool owns= false;
-  if (md->hasFormat ("application/x-texmacs-pid")) {
+  bool owns= !(format == "default" && key == "primary") &&
+             !(key == "mouse" && cb->supportsSelection ());
+
+  if (!owns && md->hasFormat ("application/x-texmacs-pid")) {
     buf= md->data ("application/x-texmacs-pid");
     if (!(buf.isEmpty())) {
       owns= string (buf.constData(), buf.size())
