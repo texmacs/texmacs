@@ -153,11 +153,23 @@
     <surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<arg|address>>>
   </macro>>
 
+  <assign|author-affiliation-note|<\macro|sym|id|address>
+    <author-affiliation|<\doc-note-text|<arg|sym>|<arg|id>>
+      <arg|address>
+    </doc-note-text>>
+  </macro>>
+
   <assign|author-email|<macro|email|<doc-author-block|<style-with|src-compact|none|<with|font-shape|italic|<email-text><localize|:>
   ><with|font-family|tt|<arg|email>>>>>>
 
+  <assign|author-email-note|<macro|sym|id|email|<doc-author-block|<doc-note-text|<arg|sym>|<arg|id>|<style-with|src-compact|none|<with|font-shape|italic|<email-text><localize|:>
+  ><with|font-family|tt|<arg|email>>>>>>>
+
   <assign|author-homepage|<macro|homepage|<doc-author-block|<style-with|src-compact|none|<with|font-shape|italic|<homepage-text><localize|:>
   ><with|font-family|tt|<arg|homepage>>>>>>
+
+  <assign|author-homepage-note|<macro|sym|id|homepage|<doc-author-block|<doc-note-text|<arg|sym>|<arg|id>|<style-with|src-compact|none|<with|font-shape|italic|<homepage-text><localize|:>
+  ><with|font-family|tt|<arg|homepage>>>>>>>
 
   <assign|author-misc|<\macro|note>
     <arg|note>
