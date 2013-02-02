@@ -97,14 +97,18 @@
 ;; Find documentation or source in a given path and matching a given pattern
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define url-collect-cache (make-ahash-table))
+
 (define path-separator (if (or (os-mingw?) (os-win32?)) #\; #\:))
 
 (define (url-collect path pattern)
-  (let* ((u (url-append (unix->url path) (url-any)))
-         (v (url-expand (url-complete u "dr")))
-         (w (url-append v (url-wildcard pattern)))
-         (x (url-expand (url-complete w "fr"))))
-    x))
+  (or (ahash-ref url-collect-cache (string-append path pattern))
+      (ahash-set! url-collect-cache (string-append path pattern)
+                  (let* ((u (url-append (unix->url path) (url-any)))
+                         (v (url-expand (url-complete u "dr")))
+                         (w (url-append v (url-wildcard pattern)))
+                         (x (url-expand (url-complete w "fr"))))
+                    x))))
 
 (define (docgrep what path . patterns)
   (let* ((l1 (map (lambda (pat) (url-collect path pat)) patterns))
