@@ -51,10 +51,11 @@ QTMAction::~QTMAction() {
 void
 QTMAction::set_text (string s) {
   if (N(s)) {
-    if (s == "Help") s = "Help ";
+    if (s == "Help" || s == "Edit")
+      s = s * " ";
     str = s;
     setText (to_qstring (s));
-  }  
+  }
 }
 
 void 
