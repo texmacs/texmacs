@@ -63,7 +63,7 @@
 (define (build-doc-link-page keyword file-list)
   (let* ((keyword-list (string-tokenize-by-char keyword #\space))
          (the-result (get-score-list keyword-list file-list)))
-    (tm->stree (build-search-results keyword the-result))))
+    (tm->stree (build-doc-search-results keyword the-result))))
 
 (define (src-file-short-name s) 
   (let ((p1 (string-append 
