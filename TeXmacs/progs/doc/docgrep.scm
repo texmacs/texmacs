@@ -41,7 +41,7 @@
 ;; occur on top of the list.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (build-search-results keyword the-result)
+(define (build-doc-search-results keyword the-result)
   ($tmdoc
     ($tmdoc-title (replace "Search results for ``%1''" keyword))
     ($when (null? the-result)
@@ -60,13 +60,41 @@
                                  (cAr (string-tokenize-by-char (car x) #\/)))
                                  ")" )))))))))
 
-(define (build-link-page keyword file-list)
+(define (build-doc-link-page keyword file-list)
   (let* ((keyword-list (string-tokenize-by-char keyword #\space))
          (the-result (get-score-list keyword-list file-list)))
     (tm->stree (build-search-results keyword the-result))))
 
+(define (src-file-short-name s) 
+  (let ((p1 (string-append 
+             (url->string (unix->url "$TEXMACS_PATH")) "/"))
+        (p2 (string-append 
+             (url->string (unix->url "$TEXMACS_SOURCE_PATH")) "/")))
+    (cond ((nstring? s) s)  ;; wtf?
+          ((string-starts? s p1) (string-drop s (string-length p1)))
+          ((string-starts? s p2) (string-drop s (string-length p2)))
+          (else s))))
+
+(define (build-src-search-results keyword the-result)
+  ($tmdoc
+    ($tmdoc-title (replace "Search results for ``%1''" keyword))
+    ($when (null? the-result)
+      (replace "No matches found for ``%1''." keyword))
+    ($when (nnull? the-result)
+      ($with highest-score (cdar the-result)
+        ($description-aligned
+          ($for (x the-result)
+            ($describe-item
+                ($inline (quotient (* (cdr x) 100) highest-score) "%")
+              ($link (car x) (src-file-short-name (car x))))))))))
+
+(define (build-src-link-page keyword file-list)
+  (let* ((keyword-list (string-tokenize-by-char keyword #\space))
+         (the-result (get-score-list keyword-list file-list)))
+    (tm->stree (build-src-search-results keyword the-result))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Find documentation in given path and matching a given pattern
+;; Find documentation or source in a given path and matching a given pattern
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define path-separator (if (or (os-mingw?) (os-win32?)) #\; #\:))
@@ -82,7 +110,14 @@
   (let* ((l1 (map (lambda (pat) (url-collect path pat)) patterns))
          (l2 (map url->unix l1))
          (l3 (append-map (cut string-tokenize-by-char <> path-separator) l2)))
-    (build-link-page what l3)))
+    (build-doc-link-page what l3)))
+
+; TODO: include results from the code indexer when available
+(define (srcgrep what path . patterns)
+  (let* ((l1 (map (lambda (pat) (url-collect path pat)) patterns))
+         (l2 (map url->unix l1))
+         (l3 (append-map (cut string-tokenize-by-char <> path-separator) l2)))
+    (build-src-link-page what l3)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Integration in TeXmacs file system
@@ -93,7 +128,7 @@
          (what (query-ref query "what"))
          (lan  (string-take (language-to-locale (get-output-language)) 2)))
     (cond ((== type "src")
-           (docgrep what "$TEXMACS_PATH/progs:$TEXMACS_SOURCE_PATH/src"
+           (srcgrep what "$TEXMACS_PATH/progs:$TEXMACS_SOURCE_PATH/src"
                     "*.scm" "*.hpp" "*.cpp"))
           ((== type "texts")
            (docgrep what "$TEXMACS_FILE_PATH" "*.tm"))
