@@ -18,7 +18,7 @@
 QTMInteractivePrompt::QTMInteractivePrompt(qt_widget int_prompt, 
                                            qt_widget int_input, 
                                            QWidget* parent)
-: active (false), QWidget (parent)
+: QWidget (parent), active (false)
 {
   QLayoutItem*  li = int_prompt->as_qlayoutitem ();
   QLayoutItem* li2 = int_input->as_qlayoutitem ();
