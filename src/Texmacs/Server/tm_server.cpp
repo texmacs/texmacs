@@ -237,7 +237,7 @@ tm_server_rep::typeset_update_all () {
 bool
 tm_server_rep::is_yes (string s) {
   s= locase_all (s);
-  string st= translate ("yes");  
+  string st= locase_all (translate ("yes"));
   return s == st || (N(st)>0 && s == st[0]); //FIXME: fails for multibyte chars?
 }
 
