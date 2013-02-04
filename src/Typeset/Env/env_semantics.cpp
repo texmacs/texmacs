@@ -274,9 +274,19 @@ edit_env_rep::update_font () {
 int
 decode_alpha (string s) {
   if (N(s) == 0) return 255;
-  else if (s[N(s)-1] == '%')
-    return (int) (2.55 * as_double (s (0, N(s)-1)));
-  else return (int) (255.0 * as_double (s));
+  else if (s[N(s)-1] == '%') {
+      // mg: be careful to avoid rounding problems for the conversion from double to int : (int)(2.55*100.0)=254
+      double p = as_double (s (0, N(s)-1));
+      if (p<0.0) p = 0.0;
+      if (p>100.0) p = 100.0;
+      return ((int) (255.0 * p))/100;
+  }
+  else {
+      double p = as_double (s);
+      if (p<0.0) p = 0.0;
+      if (p>1.0) p = 1.0;
+      return ((int) (255.0 * p))/100;
+  }
 }
 
 void
