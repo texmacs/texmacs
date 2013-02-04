@@ -110,7 +110,7 @@ tweak_iconbar_size (QSize& sz) {
 
 qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
  : qt_window_widget_rep (new QTMWindow (0, this), _quit), helper (this), 
-   full_screen(false)
+   prompt (NULL), full_screen (false)
 {
   type = texmacs_widget;
   orig_name = "popup";
@@ -538,15 +538,15 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
 
       if (open_box<bool> (val) == true) {
         prompt = new QTMInteractivePrompt (int_prompt, int_input);
-        mainwindow()->statusBar()->removeWidget(leftLabel);
-        mainwindow()->statusBar()->removeWidget(rightLabel);
-        mainwindow()->statusBar()->addWidget(prompt, 1);
+        mainwindow()->statusBar()->removeWidget (leftLabel);
+        mainwindow()->statusBar()->removeWidget (rightLabel);
+        mainwindow()->statusBar()->addWidget (prompt, 1);
         prompt->start();
       } else {
         if (prompt) prompt->end();
-        mainwindow()->statusBar()->removeWidget(prompt);
-        mainwindow()->statusBar()->addWidget(leftLabel);
-        mainwindow()->statusBar()->addPermanentWidget(rightLabel);
+        mainwindow()->statusBar()->removeWidget (prompt);
+        mainwindow()->statusBar()->addWidget (leftLabel);
+        mainwindow()->statusBar()->addPermanentWidget (rightLabel);
         leftLabel->show();
         rightLabel->show();
         prompt->deleteLater();
@@ -630,11 +630,11 @@ qt_tm_widget_rep::query (slot s, int type_id) {
     {
       check_type_id<string> (type_id, s);
       qt_input_text_widget_rep* w = 
-        static_cast<qt_input_text_widget_rep*>(int_input.rep);
+        static_cast<qt_input_text_widget_rep*> (int_input.rep);
       if (w->ok)
-        return close_box<string>(scm_quote(w->input));
+        return close_box<string> (scm_quote (w->input));
       else
-        return close_box<string>("#f");
+        return close_box<string> ("#f");
     }
 
     case SLOT_POSITION:
@@ -648,8 +648,8 @@ qt_tm_widget_rep::query (slot s, int type_id) {
 
     case SLOT_INTERACTIVE_MODE:
       check_type_id<bool> (type_id, s);
-      return close_box<bool> (false); // FIXME: who needs this info?
-      
+      return close_box<bool> (prompt && prompt->isActive());
+
     default:
       return qt_window_widget_rep::query (s, type_id);
   }

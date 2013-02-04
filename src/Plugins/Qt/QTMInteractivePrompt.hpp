@@ -17,12 +17,16 @@ class qt_widget;
 
 class QTMInteractivePrompt : public QWidget
 {
-	Q_OBJECT
-	
+  Q_OBJECT
+
+  bool active;
+  
 public:
-	QTMInteractivePrompt (qt_widget, qt_widget, QWidget* p=0);
-	void start ();
-	void end ();
+  QTMInteractivePrompt (qt_widget, qt_widget, QWidget* p=0);
+  
+  void start ();
+  void end ();
+  bool isActive () { return active; }
 };
 
 #endif // QTMINTERACTIVEPROMPT_HPP

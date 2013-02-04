@@ -18,14 +18,14 @@
 QTMInteractivePrompt::QTMInteractivePrompt(qt_widget int_prompt, 
                                            qt_widget int_input, 
                                            QWidget* parent)
-: QWidget(parent)
+: active (false), QWidget (parent)
 {
   QLayoutItem*  li = int_prompt->as_qlayoutitem ();
   QLayoutItem* li2 = int_input->as_qlayoutitem ();
   QHBoxLayout* _hl = new QHBoxLayout ();
   
   setStyle (qtmstyle ());
-  setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+  setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
   
   if (QLabel *_la = qobject_cast<QLabel*> (li->widget ()))
     _la->setBuddy (li2->widget ());
@@ -46,11 +46,13 @@ QTMInteractivePrompt::QTMInteractivePrompt(qt_widget int_prompt,
 void QTMInteractivePrompt::start() {
   QWidget *_le = findChild<QLineEdit*>();
   if (_le) {
+    active = true;
     _le->show ();
     _le->setFocus (Qt::OtherFocusReason);  
   }
 }
 
 void QTMInteractivePrompt::end() {
+  active = false;
 }
 
