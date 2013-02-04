@@ -27,8 +27,8 @@
 /*! Queues the object's command into the main queue. */
 void 
 QTMCommand::apply()  {
-  if (DEBUG_QT) 
-    cout << "QTMCommand::apply() (delayed)\n";
+  if (DEBUG_QT)
+    cout << "QTMCommand::apply() (delayed): " << cmd << "\n";
   if (!is_nil(cmd)) { the_gui->process_command(cmd); }
 }
 
@@ -41,7 +41,6 @@ QTMAction::QTMAction(QObject *parent) : QAction(parent) {
   QObject::connect(the_gui->gui_helper, SIGNAL(refresh()), this, SLOT(doRefresh()));
   _timer = new QTimer(this);
   QObject::connect(_timer, SIGNAL(timeout()), this, SLOT(doShowToolTip()));
-  
 }
 
 QTMAction::~QTMAction() { 
@@ -229,6 +228,7 @@ QTMMinibarAction::createWidget(QWidget* parent) {
 
 void
 rerootActions (QWidget* dest, QWidget* src) {
+  if (src == NULL || dest == NULL) return;
   QList<QAction *> list = dest->actions();
   while (!list.isEmpty()) {
     QAction* a= list.takeFirst();
@@ -246,11 +246,11 @@ rerootActions (QWidget* dest, QWidget* src) {
 
 void
 QTMLazyMenu::force () {
-  if (DEBUG_QT)  
-    cout << "Force lazy menu" << LF;
-  widget w= pm ();
-  QMenu *menu2 = concrete(w)->get_qmenu();
+  if (DEBUG_QT) cout << "Force lazy menu" << LF;
+  widget w = pm ();
+  QMenu* menu2 = concrete(w)->get_qmenu();
   rerootActions (this, menu2);
+    //menu2->deleteLater();  // OK? Conflicting policies in qt_menu and qt_ui_element
 }
 
 
@@ -382,6 +382,7 @@ QTMLineEdit::QTMLineEdit (QWidget* parent, string _ww, int style)
       // FIXME: we should remove this and let the scheme code decide.
     QPalette pal (palette());
     pal.setColor (QPalette::Base, QColor (252, 252, 248));
+    pal.setColor (QPalette::WindowText, Qt::black);
     setPalette (pal);
   }
   
