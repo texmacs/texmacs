@@ -941,6 +941,9 @@ qt_ui_element_rep::as_qwidget () {
       QString      style = to_qstylesheet(x.x4);
             
       QTMComboBox* w = new QTMComboBox(NULL);
+      if (values.isEmpty())
+        values << QString("");  // safeguard
+
       w->setEditable(value.isEmpty() || values.last().isEmpty());  // weird convention?!
       if (values.last().isEmpty())
         values.removeLast();
