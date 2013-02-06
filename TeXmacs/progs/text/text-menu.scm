@@ -471,6 +471,10 @@
   ("Keywords" (make-abstract-data-element 'abstract-keywords))
   ("M.S.C." (make-abstract-data-element 'abstract-msc)))
 
+(tm-define (focus-tag-name l)
+  (:require (== l 'abstract))
+  "Abstract text")
+
 (tm-menu (focus-abstract-icons)
   (mini #t
     (inert ("Abstract" (noop))))
