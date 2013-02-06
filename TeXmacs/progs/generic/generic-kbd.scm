@@ -13,16 +13,16 @@
 
 (texmacs-module (generic generic-kbd)
   (:use (texmacs keyboard prefix-kbd)
-	(utils edit variants)
-	(utils edit auto-close)
-	(utils library cursor)
-	(generic generic-edit)
-	(generic format-edit)
-	(generic format-geometry-edit)
-	(source source-edit)
-	(texmacs texmacs tm-files)
-	(texmacs texmacs tm-print)
-	(doc help-funcs)))
+        (utils edit variants)
+        (utils edit auto-close)
+        (utils library cursor)
+        (generic generic-edit)
+        (generic format-edit)
+        (generic format-geometry-edit)
+        (source source-edit)
+        (texmacs texmacs tm-files)
+        (texmacs texmacs tm-print)
+        (doc help-funcs)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General shortcuts for all modes
@@ -30,7 +30,7 @@
 
 (kbd-map
   ("F1" (interactive docgrep-in-doc))
-  ("S-F1" (noop)) ;; FIXME: S-F1 should be 'What is This?'
+  ("S-F1" (interactive docgrep-in-src)) ;; FIXME: S-F1 should be 'What is This?'
   ;("M-F1" (load-help-buffer "about/welcome/welcome")) ; Conflict with devtools
 
   ("<" "<less>")
