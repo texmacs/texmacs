@@ -27,8 +27,8 @@
     (let* ((abbr (buffer-get-title name))
            (abbr* (if (== abbr "") (url->system (url-tail name)) abbr))
            (mod? (buffer-modified? name))
-           (short-name (string-append abbr* (if mod? " *" "")))
-           (long-name (url->system name)))
+           (short-name `(verbatim ,(string-append abbr* (if mod? " *" ""))))
+           (long-name `(verbatim ,(url->system name))))
       ((balloon (eval short-name) (eval long-name))
        (switch-to-buffer name)))))
 
