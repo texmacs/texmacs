@@ -30,6 +30,10 @@
 (tm-define (make-ptree)
   '())
 
+; FIXME: fix this in the (future) c++ impl.
+(tm-define (ptree? pt)
+  (and (list? pt) (pair? (car pt))))
+  
 (tm-define (pt-add pt str)
   (if (== str "")  ; We are done with the input
     (cond ((== pt #f) (pt-marker))  ; The last letter was a new node
