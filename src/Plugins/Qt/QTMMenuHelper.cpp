@@ -822,7 +822,8 @@ QTMListView::QTMListView (const command& cmd,
   setModel (filterModel);
   
   setSelectionMode (multiple ? ExtendedSelection : SingleSelection);
-  
+  setEditTriggers (NoEditTriggers);
+
   for (int i = 0; i < model()->rowCount(); ++i) {
     QModelIndex item = model()->index (i, 0);
     if (selections.contains (model()->data(item, Qt::DisplayRole).toString(), Qt::CaseSensitive))
