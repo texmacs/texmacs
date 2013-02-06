@@ -45,64 +45,64 @@
   (if (string-starts? name "tmfs://") (set! name (string-drop name 7)))
   (with i (string-index name #\/)
     (list (if i (substring name 0 i) "file")
-	  (if i (substring name (+ i 1) (string-length name)) name))))
+          (if i (substring name (+ i 1) (string-length name)) name))))
 
 (define-public (tmfs-load u)
   "Load url @u on TeXmacs file system."
   (with (class name) (tmfs-decompose-name u)
     (lazy-tmfs-force class)
     (cond ((ahash-ref tmfs-handler-table (cons class 'load)) =>
-	   (lambda (handler)
+           (lambda (handler)
              (with r (handler name)
                (if (string? r) r (object->tmstring r)))))
-	  (else ((ahash-ref tmfs-handler-table (cons #t 'load)) u)))))
+          (else ((ahash-ref tmfs-handler-table (cons #t 'load)) u)))))
 
 (define-public (tmfs-save u what)
   "Save string @what to url @u on TeXmacs file system."
   (with (class name) (tmfs-decompose-name u)
     (lazy-tmfs-force class)
     (cond ((ahash-ref tmfs-handler-table (cons class 'save)) =>
-	   (lambda (handler) (handler name (string->object what))))
-	  (else ((ahash-ref tmfs-handler-table (cons #t 'save)) u what)))))
+           (lambda (handler) (handler name (string->object what))))
+          (else ((ahash-ref tmfs-handler-table (cons #t 'save)) u what)))))
 
 (define-public (tmfs-title u doc)
   "Get a nice title for url @u on TeXmacs file system."
   (with (class name) (tmfs-decompose-name u)
     (lazy-tmfs-force class)
     (cond ((ahash-ref tmfs-handler-table (cons class 'title)) =>
-	   (lambda (handler) (handler name doc)))
-	  ((ahash-ref tmfs-handler-table (cons class 'load))
-	   (if (url? u) (url->system u) u))
-	  (else ((ahash-ref tmfs-handler-table (cons #t 'title)) u doc)))))
+           (lambda (handler) (handler name doc)))
+          ((ahash-ref tmfs-handler-table (cons class 'load))
+           (if (url? u) (url->system u) u))
+          (else ((ahash-ref tmfs-handler-table (cons #t 'title)) u doc)))))
 
 (define-public (tmfs-permission? u type)
   "Check whether we have the permission of a given @type for the url @u."
   (with (class name) (tmfs-decompose-name u)
     (lazy-tmfs-force class)
     (cond ((string-ends? (url->unix u) "~") #f)
-	  ((string-ends? (url->unix u) "#") #f)
-	  ((ahash-ref tmfs-handler-table (cons class 'permission?)) =>
-	   (lambda (handler) (handler name type)))
-	  ((ahash-ref tmfs-handler-table (cons class 'load))
-	   (== type "read"))
-	  (else
-	   ((ahash-ref tmfs-handler-table (cons #t 'permission?)) u type)))))
+          ((string-ends? (url->unix u) "#") #f)
+          ((ahash-ref tmfs-handler-table (cons class 'permission?)) =>
+           (lambda (handler) (handler name type)))
+          ((ahash-ref tmfs-handler-table (cons class 'load))
+           (== type "read"))
+          (else
+           ((ahash-ref tmfs-handler-table (cons #t 'permission?)) u type)))))
 
 (define-public (tmfs-master u)
   "Get a master url @u for linking and navigation."
   (with (class name) (tmfs-decompose-name u)
     (lazy-tmfs-force class)
     (cond ((ahash-ref tmfs-handler-table (cons class 'master)) =>
-	   (lambda (handler) (handler name)))
-	  (else u))))
+           (lambda (handler) (handler name)))
+          (else u))))
 
 (define-public (tmfs-format u)
   "Get file format for url @u."
   (with (class name) (tmfs-decompose-name u)
     (lazy-tmfs-force class)
     (cond ((ahash-ref tmfs-handler-table (cons class 'format)) =>
-	   (lambda (handler) (handler name)))
-	  (else "stm"))))
+           (lambda (handler) (handler name)))
+          (else "stm"))))
 
 (define-public (tmfs-remote? u)
   "Check whether the url @u is handled remotedly."
@@ -139,7 +139,7 @@
     (map entry->pair l)))
 
 (define-public (query-ref q var)
-  (or (assoc-ref (query->list q) var) ""))
+  (tmstring->string (or (assoc-ref (query->list q) var) "")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for building and analyzing TMFS URLs
