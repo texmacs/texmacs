@@ -108,7 +108,7 @@
 
 (define ($query-not-implemented query)
  ($tmdoc 
-   ($tmdoc-title (replace "Request unknown or not implemented"))
+   ($tmdoc-title (translate "Request unknown or not implemented"))
    ($para query)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -132,10 +132,10 @@
          (what (query-ref query "what")))
     (cond ((== type "symbol")
            (if (== what "") (replace "Help - Browse all symbols")
-               (replace "Help - Documentation for " what)))
+               (replace "Help - Documentation for %1" what)))
           ((== type "module")
            (if (== what "") (replace "Help - Browse all modules")
-               (replace "Help - Documentation for module " what)))
+               (replace "Help - Documentation for module %1" what)))
           (else (replace "Help - Unknow request")))))
 
 (tmfs-permission-handler (apidoc name type) #t)
