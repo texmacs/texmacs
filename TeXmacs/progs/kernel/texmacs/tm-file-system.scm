@@ -116,10 +116,10 @@
 
 ; FIXME: these two procedures should be more general and in the glue
 (define (escape-entry s)
-  (string-replace s ":" "%3A"))
+  (if (string? s) (string-replace s ":" "%3A") ""))
 
 (define (unescape-entry s)
-  (string-replace s "%3A" ":"))
+  (if (string? s) (string-replace s "%3A" ":") ""))
 
 (define (pair->entry p)
   (string-append (escape-entry (car p)) "=" (escape-entry (cdr p))))
