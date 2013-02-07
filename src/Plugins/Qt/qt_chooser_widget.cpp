@@ -214,7 +214,9 @@ qt_chooser_widget_rep::perform_dialog () {
     file= "#f";
   } else {
     url u = url_system (scm_unquote (from_qstring (_file)));
-    QByteArray arr= to_qstring (as_string (u)).toLocal8Bit ();
+      // FIXME: charset detection in to_qstring() (if that hack is still there)
+      // fails sometimes, so we bypass it force the proper (?) conversions here.
+    QByteArray arr= utf8_to_qstring (cork_to_utf8 (as_string (u))).toLocal8Bit ();
     const char* cstr= arr.constData ();
     string localname = string ((char*) cstr);
     if (type == "image") {

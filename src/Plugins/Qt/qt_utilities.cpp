@@ -30,6 +30,7 @@
 #include "converter.hpp"
 #include "language.hpp"
 #include "scheme.hpp"
+#include "wencoding.hpp"
 
 #include "qt_gui.hpp"    // gui_maximal_extents()
 
@@ -203,7 +204,7 @@ to_qkeysequence (string s) {
       r << conv_sub (s (i, k));
       i= k;
     }
-  return QKeySequence(to_qstring(r));
+  return QKeySequence (to_qstring (r));
 }
 
 
@@ -272,9 +273,31 @@ to_qstringlist(array<string> l) {
   return ql;
 }
 
+/* HACK!!! Something has to be done wrt. to internal encoding: most of the times
+ it's cork, but often it's utf8. For instance when the title is built in a tmfs
+ title handler in scheme, it is sent to us as an utf8 string. Should we convert
+ before? Another example are items in the go-menu: file names are internally
+ stored as utf8, but we assume that strings are sent to us for display in
+ widgets as cork and thus display the wrong encoding.
+ 
+ It gets tricky soon, so for the time being we use this hack.
+ */
 QString
 to_qstring (const string& s) {
-  return utf8_to_qstring (cork_to_utf8 (s));
+  if (looks_ascii (s))
+    return utf8_to_qstring (cork_to_utf8 (s));
+  else if (looks_utf8 (s))
+    return utf8_to_qstring (s);
+  else
+    return latin1_to_qstring (s);
+}
+
+QString
+latin1_to_qstring (const string& s) {
+  char* p= as_charp (s);
+  QString nss= QString::fromLatin1 (p, N(s));
+  tm_delete_array (p);
+  return nss;
 }
 
 QString
@@ -294,7 +317,7 @@ from_qstring_utf8 (const QString &s) {
 
 string
 from_qstring (const QString &s) {
-  return utf8_to_cork (from_qstring_utf8(s));
+  return utf8_to_cork (from_qstring_utf8 (s));
 }
 
 // Although slow to build, this should provide better lookup times than
@@ -518,13 +541,13 @@ qt_get_date (string lan, string fm) {
     }
     else fm = "d MMMM yyyy";
   }
-  QLocale loc = QLocale(to_qstring(language_to_locale(lan)));
+  QLocale loc = QLocale (to_qstring (language_to_locale(lan)));
 #if (QT_VERSION >= 0x040400)
-  QString date = loc.toString(localtime, to_qstring(fm));
+  QString date = loc.toString (localtime, to_qstring (fm));
 #else
-  QString date = localtime.toString(to_qstring(fm));
+  QString date = localtime.toString (to_qstring (fm));
 #endif
-  return from_qstring(date);
+  return from_qstring (date);
 }
 
 #ifndef _MBD_EXPERIMENTAL_PRINTER_WIDGET  // this is in qt_printer_widget
