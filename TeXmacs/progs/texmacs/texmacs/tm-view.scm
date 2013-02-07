@@ -25,20 +25,20 @@
 
 (define (notify-icon-bar var val)
   (cond ((== var "main icon bar")
-	 (show-icon-bar 0 (== val "on")))
-	((== var "mode dependent icons")
-	 (show-icon-bar 1 (== val "on")))
-	((== var "focus dependent icons")
-	 (show-icon-bar 2 (== val "on")))
-	((== var "user provided icons")
-	 (show-icon-bar 3 (== val "on")))))
+         (show-icon-bar 0 (== val "on")))
+        ((== var "mode dependent icons")
+         (show-icon-bar 1 (== val "on")))
+        ((== var "focus dependent icons")
+         (show-icon-bar 2 (== val "on")))
+        ((== var "user provided icons")
+         (show-icon-bar 3 (== val "on")))))
 
 (define (notify-status-bar var val)
   (show-footer (== val "on")))
 
 (define (notify-side-tools var val)
   (cond ((== var "side tools")
-	 (show-side-tools 0 (== val "on")))))
+         (show-side-tools 0 (== val "on")))))
 
 (define (notify-zoom-factor var val)
   (with z (string->number val)
@@ -107,10 +107,19 @@
         (set-boolean-preference var val)
         (show-icon-bar n val))))
 
+(define saved-informative-flags "default")
+
 (tm-define (toggle-full-screen-mode)
   (:synopsis "Toggle full screen mode.")
   (:check-mark "v" full-screen?)
-  (full-screen-mode (not (full-screen?)) #f))
+  (if (full-screen?)
+      (begin
+        (init-env "info-flag" saved-informative-flags)
+        (full-screen-mode #f #f))
+      (begin
+        (set! saved-informative-flags (get-init-env "info-flag"))
+        (init-env "info-flag" "none")
+        (full-screen-mode #t #f))))
 
 (tm-define (toggle-full-screen-edit-mode)
   (:synopsis "Toggle full screen edit mode.")
@@ -151,7 +160,7 @@
 
 (tm-define (zoom-in x)
   (let* ((old (get-window-zoom-factor))
-	 (new (normalize-zoom (* x old))))
+         (new (normalize-zoom (* x old))))
     (change-zoom-factor new)))
 
 (tm-define (zoom-out x)
