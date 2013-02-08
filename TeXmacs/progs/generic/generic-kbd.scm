@@ -461,6 +461,7 @@
   ("altcmd g" (clipboard-clear "primary"))
   ("altcmd q" (make 'symbol))
   ("altcmd x" (interactive footer-eval))
+  ("altcmd X" (interactive exec-interactive-command))
   ("altcmd $" (spell-start))
 
   ("M-A-C-home" (traverse-first))
@@ -522,6 +523,7 @@
   ("altcmd g" (clipboard-clear "primary"))
   ("altcmd q" (make 'symbol))
   ("altcmd x" (interactive footer-eval))
+  ("altcmd X" (interactive exec-interactive-command))
   ("altcmd $" (spell-start))
 
   ("M-A-C-home" (traverse-first))
@@ -598,7 +600,7 @@
   ("macos r" (interactive replace-start-forward))
 
   ("altcmd x" (interactive footer-eval))
-  ("altcmd X" (interactive footer-eval))
+  ("altcmd X" (interactive exec-interactive-command))
 
   ;("C-a" (kbd-start-line)) ; conflict with ("text a" (make 'abbr))
   ;("C-e" (kbd-end-line))   ; conflict with ("text e" (make-tmlist 'enumerate))
@@ -731,6 +733,7 @@
   ("altcmd g" (clipboard-clear "primary"))
   ("altcmd q" (make 'symbol))
   ("altcmd x" (interactive footer-eval))
+  ("altcmd X" (interactive exec-interactive-command))
   ("altcmd $" (spell-start))
 
   ("M-A-C-home" (traverse-first))
