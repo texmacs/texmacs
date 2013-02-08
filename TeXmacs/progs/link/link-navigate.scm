@@ -362,8 +362,9 @@
 (define (url->item u)
   (with (base qry) (process-url u)
     (let* ((file (url->string u))
-           (text (if (url-exists-in-help? file) (help-file-title u)
-                     (basename (url->string base)))))
+           (help? (and (== "texmacs-file" (file-format u)) 
+                       (url-exists-in-help? file)))
+           (text (if help? (help-file-title u) (basename (url->string base)))))
       ($link file text))))
 
 (define (url-list->document l)
