@@ -25,7 +25,8 @@
 
 (define (parse-title u)
   (with t (tree-import u "texmacs")
-    (with tt (select t '(:* tmdoc-title :%1))
+    (with tt (select t '(:* (:or title doc-title tmdoc-title 
+                                 tmdoc-title* tmweb-title) :%1))
       (if (null? tt) '() (car tt)))))
 
 (tm-define (help-file-title u)
