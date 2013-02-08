@@ -5,13 +5,25 @@
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.7 to 1.0.7.17>
+  <section|Changes from version 1.0.7 to 1.0.7.18>
 
   <\itemize>
+    <item>New widget for user preferences (1.0.7.18).
+
+    <item>More implicit user preferences (1.0.7.18).
+
+    <item>Add developer tools, still experimental (1.0.7.18).
+
+    <item>Start implementation of basic infrastructure for support of system
+    fonts (1.0.7.18).
+
+    <item>Started reorganization of titles and other meta-data for documents
+    (1.0.7.18).
+
     <item>Automated generation of documentation about the <name|Scheme> files
     (1.0.7.17).
 
-    <item>Various improvements for <LaTeX> conversion en character encodings
+    <item>Various improvements for <LaTeX> conversion and character encodings
     (1.0.7.17).
 
     <item>Various improvements for <LaTeX> import (1.0.7.16).
