@@ -178,6 +178,13 @@ int DEBUG = TRUE ;
 
 char **prompt_string; int n_prompt_string=0, allocated_prompt_strings =0 ;
 
+int my_strnlen( char *s, int n ) {
+  int i;
+  for (i=0; i<n; i++)
+    if (s[i] == '\0') break;
+  return i;
+}
+
 void add_prompt( char *new_prompt ) {
   int n ;
   DEBUG_LOG("add_prompt\n") ;
@@ -198,7 +205,7 @@ void add_prompt( char *new_prompt ) {
   DEBUG_LOG("add_prompt all alloc\n") ;
 
   // allocate room for string
-  n = strnlen( new_prompt, MAX_PROMPT_LEN ) ;
+  n = my_strnlen( new_prompt, MAX_PROMPT_LEN ) ;
   DEBUG_LOG("strnlen: %d\n\n",n) ;
 
   prompt_string[ n_prompt_string ] = calloc( n, sizeof( char ) ) ;
