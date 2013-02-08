@@ -1,8 +1,7 @@
 Package: TeXmacs
 Title: R interface with TeXmacs
-Version: 0.1
+Version: 0.15
 Author: Michael Lachmann Tamarlin
-Description: This package provides a couple of functions for inserting
-        graphs into TeXmacs.
+Description: This package interfaces with TeXmacs - inserting figures, help files and more.
 Maintainer: Michael Lachmann Tamarlin <mlachmann@gmail.com>
 License: GPL
