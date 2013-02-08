@@ -43,7 +43,7 @@
 
 (define (build-doc-search-results keyword the-result)
   ($tmdoc
-    ($tmdoc-title (replace "Search results for ``%1''" keyword))
+    ($tmdoc-title (replace "Search results for ``%1''" `(verbatim ,keyword)))
     ($when (null? the-result)
       (replace "No matches found for ``%1''." keyword))
     ($when (nnull? the-result)
@@ -77,7 +77,7 @@
 
 (define (build-src-search-results keyword the-result)
   ($tmdoc
-    ($tmdoc-title (replace "Search results for ``%1''" keyword))
+    ($tmdoc-title (replace "Search results for ``%1''" `(verbatim ,keyword)))
     ($when (null? the-result)
       (replace "No matches found for ``%1''." keyword))
     ($when (nnull? the-result)
