@@ -131,9 +131,15 @@
   (let* ((type (query-ref query "type"))
          (what (query-ref query "what"))
          (lan  (string-take (language-to-locale (get-output-language)) 2)))
-    (cond ((== type "src")
-           (srcgrep what "$TEXMACS_PATH/progs:$TEXMACS_SOURCE_PATH/src"
-                    "*.scm" "*.hpp" "*.cpp"))
+    (cond ((== type "Scheme")
+           (srcgrep what "$TEXMACS_PATH/progs" "*.scm"))
+          ((== type "Styles")
+           (srcgrep what "$TEXMACS_PATH/styles:$TEXMACS_PATH/packages" "*.ts"))
+          ((== type "C++")
+           (srcgrep what "$TEXMACS_SOURCE_PATH/src" "*.hpp" "*.cpp"))
+          ((== type "All code")
+           (srcgrep what "$TEXMACS_PATH:$TEXMACS_SOURCE_PATH/src"
+                    "*.scm" "*.hpp" "*.cpp" "*.ts"))
           ((== type "texts")
            (docgrep what "$TEXMACS_FILE_PATH" "*.tm"))
           ((== type "doc")
@@ -150,9 +156,11 @@
   (with query (list->query (list (cons "type" "doc") (cons "what" what)))
     (load-buffer (string-append "tmfs://grep/" query))))
 
-(tm-define (docgrep-in-src what)
-  (:argument what "Search words in the source code")
-  (with query (list->query (list (cons "type" "src") (cons "what" what)))
+(tm-define (docgrep-in-src what where)
+  (:argument what "Search words")
+  (:argument where "In")
+  (:proposals where '("Scheme" "Styles" "C++" "All code"))
+  (with query (list->query (list (cons "type" where) (cons "what" what)))
     (load-buffer (string-append "tmfs://grep/" query))))
 
 (tm-define (docgrep-in-texts what)
