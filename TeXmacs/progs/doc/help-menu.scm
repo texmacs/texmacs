@@ -247,6 +247,8 @@
 ;; 	    ("Tutorial" (load-help-book "tutorial/tut-tutorial")))
 	  (when (url-exists-in-help? "devel/source/source.en.tm")
 	    ("Developers guide" (load-help-book "devel/source/source")))
+	  (when (url-exists-in-help? "devel/scheme/scheme.en.tm")
+	    ("Scheme developers guide" (load-help-book "devel/scheme/scheme")))
 	  ---
 	  (when (style-has? "tmdoc-style")
 	    ("Compile article" (tmdoc-expand-this "article"))
