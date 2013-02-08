@@ -182,6 +182,8 @@ initialize_color_encodings () {
   language_rep::color_encoding ("comment")= 1;
   language_rep::color_encoding ("keyword")= 2;
   language_rep::color_encoding ("error")= 3;
+  language_rep::color_encoding ("preprocessor")= 4;
+  language_rep::color_encoding ("preprocessor_directive")= 5;
   language_rep::color_encoding ("constant")= 10;
   language_rep::color_encoding ("constant_identifier")= 11;
   language_rep::color_encoding ("constant_function")= 12;
@@ -212,6 +214,8 @@ initialize_color_decodings (string lan_name) {
   lan->color_decoding (1) = get_preference (pfx * "comment", "brown");
   lan->color_decoding (2) = get_preference (pfx * "keyword", "#309090");
   lan->color_decoding (3) = get_preference (pfx * "error", "dark red");
+  lan->color_decoding (4) = get_preference (pfx * "preprocessor", "#004000");
+  lan->color_decoding (5) = get_preference (pfx * "preprocessor_directive", "#20a000");
   lan->color_decoding (10)= get_preference (pfx * "constant", "#4040c0");
   lan->color_decoding (11)= get_preference (pfx * "constant_identifier", "#4040c0");
   lan->color_decoding (12)= get_preference (pfx * "constant_function", "#4040c0");
