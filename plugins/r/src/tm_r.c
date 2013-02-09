@@ -396,7 +396,7 @@ void signal_int(int x)
   write(subprocess,"",1) ;
   //write(subprocess,"\t\t",2) ;
   //  kill(childpid,SIGINT) ;
-  N_data_begins = 0 ;
+//  N_data_begins = 0 ;
 
   signal (SIGINT, signal_int);
   signal (SIGCHLD, child_died);
