@@ -123,6 +123,7 @@ cpp_color_setup_keywords (hashmap<string, string> & t)  {
   t ("asm")= c;
   t ("auto")= c;
   t ("break")= c;
+  t ("calloc")= c;
   t ("case")= c;
   t ("catch")= c;
   t ("class")= c;
@@ -134,22 +135,28 @@ cpp_color_setup_keywords (hashmap<string, string> & t)  {
   t ("default")= c;
   t ("delete")= c;
   t ("do")= c;
+  t ("dynamic_cast")= c;
+  t ("free")= c;
   t ("else")= c;
   t ("enum")= c;
   t ("extern")= c;
   t ("explicit")= c;
+  t ("export")= c;
   t ("for")= c;
   t ("friend")= c;
   t ("goto")= c;
   t ("if")= c;
   t ("inline")= c;
+  t ("malloc")= c;
   t ("mutable")= c;
   t ("new")= c;
   t ("operator")= c;
   t ("private")= c;
   t ("protected")= c;
   t ("public")= c;
+  t ("realloc")= c;
   t ("register")= c;
+  t ("reinterpret_cast")= c;
   t ("return")= c ;
   t ("sizeof")= c;
   t ("static")= c;
@@ -162,15 +169,13 @@ cpp_color_setup_keywords (hashmap<string, string> & t)  {
   t ("to")= c;
   t ("try")= c;
   t ("typedef")= c;
+  t ("typeid")= c;
   t ("typename")= c;
   t ("union")= c;
+  t ("using")= c;
   t ("virtual")= c;
   t ("volatile")= c;
   t ("while")= c;
-  t ("malloc")= c;
-  t ("realloc")= c;
-  t ("calloc")= c;
-  t ("free")= c;
 }
 
 static void
@@ -182,10 +187,14 @@ cpp_color_setup_types (hashmap<string, string> & t) {
   t ("float")= c;
   t ("int")= c;
   t ("long")= c;
-  t ("time_t")= c;
+  t ("short")= c;
+  t ("signed")= c;
   t ("unsigned")= c;
   t ("void")= c;
+  t ("wchar_t")= c;
     // Just a few common ones in TeXmacs
+  /* Update: Don't color non-basic types to avoid confusion
+  t ("time_t")= c;
   t ("array")= c;
   t ("blackbox")= c;
   t ("box")= c;
@@ -207,6 +216,7 @@ cpp_color_setup_types (hashmap<string, string> & t) {
   t ("tree")= c;
   t ("url")= c;
   t ("widget")= c;
+   */
 }
 
 static void
