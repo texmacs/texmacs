@@ -173,9 +173,7 @@
 	    (enum ("Format" "texmacs->graphics:format")
 		  ("Svg" "svg")
 		  ("Eps" "eps")
-		  ("Png" "png"))
-            (toggle ("Embed in svg as attr" "texmacs->graphics:attr"))
-            (toggle ("Embed in svg as tmml" "texmacs->graphics:tmml"))))
+		  ("Png" "png"))))
     (-> "Mathematics"
         (-> "Keyboard"
             (item ("Enforce brackets to match" (toggle-matching-brackets)))
@@ -548,16 +546,7 @@
       (enum (set-pretty-preference "texmacs->graphics:format" answer)
             '("Svg" "Eps" "Png")
             (get-pretty-preference "texmacs->graphics:format")
-            "5em")))
-  (when (== (get-preference "texmacs->graphics:format") "svg")
-    ===
-    (aligned
-      (meti (text "Embed TeXmacs data in Svg as string attribute")
-        (toggle (set-boolean-preference "texmacs->graphics:attr" answer)
-                (get-boolean-preference "texmacs->graphics:attr")))
-      (meti (text "Embed TeXmacs data in Svg as tmml")
-        (toggle (set-boolean-preference "texmacs->graphics:tmml" answer)
-                (get-boolean-preference "texmacs->graphics:tmml"))))))
+            "5em"))))
 
 ;; All converters ----------
 
