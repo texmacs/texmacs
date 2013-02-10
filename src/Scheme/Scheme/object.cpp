@@ -424,7 +424,7 @@ get_preference (string var, string def) {
     return get_user_preference (var, def);
   else {
     string pref= as_string (call ("get-preference", var));
-    if (N(pref) == 0) return def; else return pref;    
+    if (pref == "default") return def; else return pref;
   }
 }
 
