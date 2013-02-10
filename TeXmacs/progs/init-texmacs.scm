@@ -74,26 +74,26 @@
     (load "kernel/boot/boot.scm")
     (load (url-concretize "$TEXMACS_PATH/progs/kernel/boot/boot.scm")))
 (inherit-modules (kernel boot compat) (kernel boot abbrevs)
-		 (kernel boot debug) (kernel boot srfi)
-		 (kernel boot ahash-table) (kernel boot prologue))
+                 (kernel boot debug) (kernel boot srfi)
+                 (kernel boot ahash-table) (kernel boot prologue))
 (inherit-modules (kernel library base) (kernel library list)
-		 (kernel library tree) (kernel library content))
+                 (kernel library tree) (kernel library content))
 (inherit-modules (kernel regexp regexp-match) (kernel regexp regexp-select))
 (inherit-modules (kernel logic logic-rules) (kernel logic logic-query)
-		 (kernel logic logic-data))
+                 (kernel logic logic-data))
 (inherit-modules (kernel texmacs tm-define)
-		 (kernel texmacs tm-preferences) (kernel texmacs tm-modes)
-		 (kernel texmacs tm-plugins) (kernel texmacs tm-secure)
-		 (kernel texmacs tm-convert) (kernel texmacs tm-dialogue)
-		 (kernel texmacs tm-language) (kernel texmacs tm-file-system)
+                 (kernel texmacs tm-preferences) (kernel texmacs tm-modes)
+                 (kernel texmacs tm-plugins) (kernel texmacs tm-secure)
+                 (kernel texmacs tm-convert) (kernel texmacs tm-dialogue)
+                 (kernel texmacs tm-language) (kernel texmacs tm-file-system)
                  (kernel texmacs tm-states))
 (inherit-modules (kernel gui gui-markup)
                  (kernel gui menu-define) (kernel gui menu-widget)
-		 (kernel gui kbd-define) (kernel gui kbd-handlers)
+                 (kernel gui kbd-define) (kernel gui kbd-handlers)
                  (kernel gui menu-test)
-		 (kernel old-gui old-gui-widget)
+                 (kernel old-gui old-gui-widget)
                  (kernel old-gui old-gui-factory)
-		 (kernel old-gui old-gui-form)
+                 (kernel old-gui old-gui-form)
                  (kernel old-gui old-gui-test))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
@@ -112,12 +112,12 @@
 
 ;;(display "Booting main TeXmacs functionality\n")
 (use-modules (texmacs texmacs tm-server) (texmacs texmacs tm-view)
-	     (texmacs texmacs tm-files) (texmacs texmacs tm-print))
+             (texmacs texmacs tm-files) (texmacs texmacs tm-print))
 (use-modules (texmacs keyboard config-kbd))
 (lazy-keyboard (texmacs keyboard prefix-kbd) always?)
 (lazy-keyboard (texmacs keyboard latex-kbd) always?)
 (lazy-menu (texmacs menus file-menu) file-menu go-menu
-	   new-file-menu load-menu save-menu print-menu close-menu)
+           new-file-menu load-menu save-menu print-menu close-menu)
 (lazy-menu (texmacs menus edit-menu) edit-menu)
 (lazy-menu (texmacs menus view-menu) view-menu)
 (lazy-menu (texmacs menus tools-menu) tools-menu)
@@ -130,17 +130,17 @@
 (lazy-keyboard (generic generic-kbd) always?)
 (lazy-menu (generic generic-menu) focus-menu texmacs-focus-icons)
 (lazy-menu (generic format-menu) format-menu
-	   font-size-menu color-menu horizontal-space-menu
-	   transform-menu specific-menu
-	   vertical-space-menu indentation-menu line-break-menu
-	   page-header-menu page-footer-menu page-numbering-menu
-	   page-break-menu page-insertion-menu
-	   insert-page-insertion-menu position-float-menu)
+           font-size-menu color-menu horizontal-space-menu
+           transform-menu specific-menu
+           vertical-space-menu indentation-menu line-break-menu
+           page-header-menu page-footer-menu page-numbering-menu
+           page-break-menu page-insertion-menu
+           insert-page-insertion-menu position-float-menu)
 (lazy-menu (generic document-menu) document-menu
-	   project-menu document-style-menu global-language-menu)
+           project-menu document-style-menu global-language-menu)
 (lazy-menu (generic document-part) document-part-menu project-manage-menu)
 (lazy-menu (generic insert-menu) insert-menu texmacs-insert-icons
-	   insert-link-menu insert-image-menu insert-animation-menu)
+           insert-link-menu insert-image-menu insert-animation-menu)
 (lazy-define (generic generic-doc) focus-help)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
@@ -171,7 +171,7 @@
 ;(display "Booting source mode\n")
 (lazy-keyboard (source source-kbd) always?)
 (lazy-menu (source source-menu) source-menu source-icons
-	   source-transformational-menu source-executable-menu)
+           source-transformational-menu source-executable-menu)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting table mode\n")
@@ -185,10 +185,10 @@
 (lazy-menu (graphics graphics-menu) graphics-menu graphics-icons)
 (lazy-define (graphics graphics-edit)
              graphics-busy?
-	     graphics-reset-context graphics-undo-enabled
-	     graphics-release-left graphics-release-middle
-	     graphics-release-right graphics-start-drag-left
-	     graphics-dragging-left graphics-end-drag-left)
+             graphics-reset-context graphics-undo-enabled
+             graphics-release-left graphics-release-middle
+             graphics-release-right graphics-start-drag-left
+             graphics-dragging-left graphics-end-drag-left)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting formal languages\n")
@@ -204,7 +204,7 @@
 (lazy-menu (dynamic fold-menu) insert-fold-menu dynamic-menu dynamic-icons)
 (lazy-menu (dynamic session-menu) insert-session-menu session-help-icons)
 (lazy-menu (dynamic scripts-menu) scripts-eval-menu scripts-plot-menu
-	   plugin-eval-menu plugin-eval-toggle-menu plugin-plot-menu)
+           plugin-eval-menu plugin-eval-toggle-menu plugin-plot-menu)
 (lazy-menu (dynamic calc-menu) calc-table-menu calc-insert-menu)
 (lazy-define (dynamic session-edit) scheme-eval)
 (lazy-define (dynamic calc-edit) calc-ready? calc-table-renumber)
@@ -216,7 +216,7 @@
 (lazy-menu (doc tmdoc-menu) tmdoc-menu tmdoc-icons)
 (lazy-menu (doc help-menu) help-menu)
 (lazy-define (doc tmdoc) tmdoc-expand-help tmdoc-expand-help-manual
-	     tmdoc-expand-this tmdoc-include)
+             tmdoc-expand-this tmdoc-include)
 (lazy-define (doc docgrep) docgrep-in-doc docgrep-in-src docgrep-in-texts)
 (lazy-define (doc tmweb) tmweb-convert-dir tmweb-update-dir
              tmweb-convert-dir-keep-texmacs tmweb-update-dir-keep-texmacs
@@ -231,15 +231,15 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting converters\n")
-(lazy-format (convert rewrite init-rewrite) texmacs scheme verbatim)
+(lazy-format (convert rewrite init-rewrite) texmacs scheme cpp verbatim)
 (lazy-format (convert tmml init-tmml) tmml)
 (lazy-format (convert latex init-latex) latex)
 (lazy-format (convert html init-html) html)
 (lazy-format (convert bibtex init-bibtex) bibtex)
 (lazy-format (convert images init-images)
-	     postscript pdf xfig xmgrace svg xpm jpeg ppm gif png pnm)
+             postscript pdf xfig xmgrace svg xpm jpeg ppm gif png pnm)
 (lazy-define (convert images tmimage)
-	     export-selection-as-graphics clipboard-copy-image)
+             export-selection-as-graphics clipboard-copy-image)
 (lazy-define (convert rewrite init-rewrite) texmacs->code texmacs->verbatim)
 (lazy-define (convert html tmhtml-expand) tmhtml-env-patch)
 (lazy-define (convert latex latex-drd) latex-arity latex-type)
@@ -249,7 +249,7 @@
 
 ;(display "Booting remote facilities\n")
 (lazy-define (remote tmfs-remote) remote-load remote-save
-	     remote-title remote-permission? remote-project-load-by-name)
+             remote-title remote-permission? remote-project-load-by-name)
 (lazy-menu (remote remote-menu) remote-menu)
 (lazy-menu (remote chat-menu) chat-menu)
 (lazy-menu (remote tmfs-menu) remote-file-menu)
@@ -264,9 +264,9 @@
 (lazy-keyboard (link link-kbd) with-linking-tool?)
 (lazy-define (link link-edit) create-unique-id)
 (lazy-define (link link-navigate) link-active-upwards link-active-ids
-	     link-follow-ids)
+             link-follow-ids)
 (lazy-define (link link-extern) get-constellation
-	     get-link-locations register-link-locations)
+             get-link-locations register-link-locations)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting versioning facilities\n")
@@ -286,8 +286,8 @@
 
 ;(display "Booting fonts\n")
 (use-modules (fonts fonts-ec) (fonts fonts-adobe) (fonts fonts-x)
-	     (fonts fonts-math) (fonts fonts-foreign) (fonts fonts-misc)
-	     (fonts fonts-composite) (fonts fonts-truetype))
+             (fonts fonts-math) (fonts fonts-foreign) (fonts fonts-misc)
+             (fonts fonts-composite) (fonts fonts-truetype))
 (lazy-define (fonts font-selector) open-font-selector)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
