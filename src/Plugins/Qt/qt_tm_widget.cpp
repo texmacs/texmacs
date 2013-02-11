@@ -566,8 +566,57 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     }
       break;
 
+      /* SLOT_POSITION and SLOT_SIZE are ugly and wrong:
+       we have identified qt_tm_widget with its window, but read (SLOT_POSITION)
+       on the tm_widget must return position of the canvas relative to window
+       coordinates (for use for instance in right clicks, inside mouse_adjust()),
+       whereas, write (SLOT_POSITION) is (mostly?) used by texmacs thinking that
+       we are a window. This is because in plain_window_widget, we return the
+       qt_tm_widget_rep instead of another widget. As a consequence we have to
+       implement two behaviours: as widget and as window inside the same class
+       qt_tm_widget_rep. Therefore qt_tm_widget must handle SLOT_SIZE and 
+       SLOT_POSITION in two ways and at the same time workaround buggy reporting
+       of sizes by Qt, taking into account whether toolbars are on or not
+
+       The current "solution" is a hack until this mess is cleaned up.
+       */
+    case SLOT_POSITION:
+    {
+      check_type<coord2>(val, s);
+      coord2 p= open_box<coord2> (val);
+      QPoint pt = to_qpoint (p);
+      
+#ifdef OS_MACOS
+      if (!visibility[0]) {
+        pt.ry() -= (mainwindow()->frameGeometry().height() -
+                    mainwindow()->geometry().height());
+      }
+        // to avoid window under menu bar on MAC when moving at (0,0)
+        // FIXME: use the real menu bar height.
+      pt.ry() = (pt.y() <= 40) ? 40 : pt.y();
+
+#endif
+      mainwindow()->move (pt);
+    }
+      break;
+      
+    case SLOT_SIZE:
+    {
+      check_type<coord2>(val, s);
+      coord2 p= open_box<coord2> (val);
+      QSize sz= to_qsize (p);
+      
+#ifdef OS_MACOS
+      sz.rheight() += (mainwindow()->frameGeometry().height() -
+                       mainwindow()->geometry().height());
+      sz.rheight() += focusToolBar->height();
+#endif
+      mainwindow()->resize (sz);
+    }
+      break;
+      
     case SLOT_DESTROY:
-    {  
+    {
       ASSERT (is_nil (val), "type mismatch");
       if (!is_nil (quit))
         quit ();
