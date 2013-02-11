@@ -6971,13 +6971,26 @@ tmg_bib_upcase (tmscm arg1) {
 }
 
 tmscm
-tmg_bib_default (tmscm arg1) {
-  TMSCM_ASSERT_SCHEME_TREE (arg1, TMSCM_ARG1, "bib-default");
+tmg_bib_default_preserve_case (tmscm arg1) {
+  TMSCM_ASSERT_SCHEME_TREE (arg1, TMSCM_ARG1, "bib-default-preserve-case");
 
   scheme_tree in1= tmscm_to_scheme_tree (arg1);
 
   // TMSCM_DEFER_INTS;
-  scheme_tree out= bib_default (in1);
+  scheme_tree out= bib_default_preserve_case (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return scheme_tree_to_tmscm (out);
+}
+
+tmscm
+tmg_bib_default_upcase_first (tmscm arg1) {
+  TMSCM_ASSERT_SCHEME_TREE (arg1, TMSCM_ARG1, "bib-default-upcase-first");
+
+  scheme_tree in1= tmscm_to_scheme_tree (arg1);
+
+  // TMSCM_DEFER_INTS;
+  scheme_tree out= bib_default_upcase_first (in1);
   // TMSCM_ALLOW_INTS;
 
   return scheme_tree_to_tmscm (out);
@@ -7588,7 +7601,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("bib-upcase-first",  tmg_bib_upcase_first, 1, 0, 0);
   tmscm_install_procedure ("bib-locase",  tmg_bib_locase, 1, 0, 0);
   tmscm_install_procedure ("bib-upcase",  tmg_bib_upcase, 1, 0, 0);
-  tmscm_install_procedure ("bib-default",  tmg_bib_default, 1, 0, 0);
+  tmscm_install_procedure ("bib-default-preserve-case",  tmg_bib_default_preserve_case, 1, 0, 0);
+  tmscm_install_procedure ("bib-default-upcase-first",  tmg_bib_default_upcase_first, 1, 0, 0);
   tmscm_install_procedure ("bib-purify",  tmg_bib_purify, 1, 0, 0);
   tmscm_install_procedure ("bib-text-length",  tmg_bib_text_length, 1, 0, 0);
   tmscm_install_procedure ("bib-prefix",  tmg_bib_prefix, 2, 0, 0);

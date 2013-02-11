@@ -98,6 +98,10 @@
   (if (bib-null? x) ""
       `(concat ,(bib-add-period (bib-upcase-first x)) (newblock))))
 
+(tm-define (bib-new-case-preserved-block x)
+  (if (bib-null? x) ""
+      `(concat ,(bib-add-period x) (newblock))))
+
 (define (elim-empty x)
   (if (bib-null? x) `()
       (if (bib-null? (car x)) (elim-empty (cdr x))
@@ -116,16 +120,23 @@
 (tm-define (bib-new-list c x)
   (new-list-rec c (elim-empty x)))
 
+(tm-define (bib-new-case-preserved-sentence x)
+  (bib-add-period (bib-new-list ", " x)))
+
 (tm-define (bib-new-sentence x)
   (bib-add-period (bib-upcase-first (bib-new-list ", " x))))
 
 (tm-define (bib-default-field x s)
   (with e (bib-field x s)
-    (if (bib-null? e) e (bib-default e))))
+    (if (bib-null? e) e (bib-default-upcase-first e))))
 
 (tm-define (bib-format-field x s)
   (with e (bib-field x s)
-    (if (bib-null? e) "" (bib-default e))))
+    (if (bib-null? e) "" (bib-default-upcase-first e))))
+
+(tm-define (bib-format-field-preserve-case x s)
+  (with e (bib-field x s)
+    (if (bib-null? e) "" (bib-default-preserve-case e))))
 
 (tm-define (bib-format-field-Locase x s)
   (with e (bib-field x s)

@@ -147,7 +147,7 @@
 	      (concat "``" ,(bib-format-field-Locase x "title") "''"))))
 	 ,(bib-new-block
 	   (bib-new-sentence
-	    `(,(bib-format-field x "howpublished")
+	    `(,(bib-format-field-preserve-case x "howpublished")
 	      ,(bib-format-field x "address")
 	      ,(bib-format-date x))))
 	 ,(bib-new-block (bib-format-field x "note"))))))
@@ -269,11 +269,11 @@
      ,(bib-format-bibitem n x)
      (label ,(string-append "bib-" (list-ref x 2)))
      ,(bib-new-list-spc
-       `(,(bib-new-block
-	   (bib-new-sentence
+       `(,(bib-new-case-preserved-block
+	   (bib-new-case-preserved-sentence
 	    `(,(bib-format-author x)
 	      (concat "``" ,(bib-format-field-Locase x "title") "''")
-	      ,(bib-format-field x "howpublished")
+	      ,(bib-format-field-preserve-case x "howpublished")
 	      ,(bib-format-date x))))
 	 ,(bib-new-block (bib-format-field x "note"))))))
 

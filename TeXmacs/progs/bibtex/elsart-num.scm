@@ -124,10 +124,10 @@
   `(concat ,(bib-format-bibitem n x)
 	   (label ,(string-append "bib-" (list-ref x 2)))
 	   ,(bib-new-block
-	     (bib-new-sentence
+	     (bib-new-case-preserved-sentence
 	      `(,(bib-format-author x)
 		,(bib-format-field-Locase x "title")
-		,(bib-format-field x "howpublished")
+		,(bib-format-field-preserve-case x "howpublished")
 		,(bib-format-field x "address")
 		(concat ,(if (bib-empty? x "note")
 			     ""
@@ -230,7 +230,7 @@
 	     (bib-new-sentence
 	      `(,(bib-format-author x)
 		,(bib-format-field-Locase x "title")
-		,(bib-format-field x "howpublished")
+		,(bib-format-field-preserve-case x "howpublished")
 		(concat ,(if (bib-empty? x "note")
 			     ""
 			     `(concat ,(bib-format-field x "note") " "))

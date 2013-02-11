@@ -312,7 +312,13 @@ bib_upcase (scheme_tree st) {
 }
 
 scheme_tree
-bib_default (scheme_tree st) {
+bib_default_preserve_case (scheme_tree st) {
+  tree t= simplify_correct (scheme_tree_to_tree (st));
+  return tree_to_scheme_tree (t); 
+}
+
+scheme_tree
+bib_default_upcase_first (scheme_tree st) {
   tree t= simplify_correct (scheme_tree_to_tree (st));
   bib_change_case (t, 0);
   return tree_to_scheme_tree (t); 

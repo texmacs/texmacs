@@ -150,10 +150,11 @@
 	   (bib-new-sentence
 	    `(,(bib-format-author x)
 	      ,(bib-emphasize (bib-format-field-Locase x "title")))))
-	 ,(bib-new-block
-	   (bib-new-sentence `(,(bib-format-field x "howpublished")
-			   ,(bib-format-field x "address")
-			   ,(bib-format-date x))))
+	 ,(bib-new-case-preserved-block
+	   (bib-new-case-preserved-sentence
+             `(,(bib-format-field-preserve-case x "howpublished")
+	       ,(bib-format-field x "address")
+	       ,(bib-format-date x))))
 	 ,(bib-new-block (bib-format-field x "note"))))))
 
 (tm-define (bib-format-inbook n x)
@@ -278,9 +279,9 @@
 	   (bib-new-sentence
 	    `(,(bib-format-author x)
 	      ,(bib-emphasize (bib-format-field-Locase x "title")))))
-	 ,(bib-new-block
-	   (bib-new-sentence
-	    `(,(bib-format-field x "howpublished")
+	 ,(bib-new-case-preserved-block
+	   (bib-new-case-preserved-sentence
+	    `(,(bib-format-field-preserve-case x "howpublished")
 	      ,(bib-format-date x))))
 	 ,(bib-new-block (bib-format-field x "note"))))))
 
