@@ -68,10 +68,8 @@ class QTMWindow: public QMainWindow {
   
 public:
   
-  widget tmwid;    //<! The pointer to the qt_tm_widget_rep owning this window.
-  
-  QTMWindow (QWidget* parent, qt_tm_widget_rep* _tmwid) 
-  : QMainWindow (parent), tmwid(_tmwid) { 
+  QTMWindow (QWidget* parent)
+  : QMainWindow (parent) { 
     if (DEBUG_QT) cout << "Create QTMWindow" << LF;
   }
   virtual ~QTMWindow () {

@@ -109,7 +109,7 @@ tweak_iconbar_size (QSize& sz) {
 }
 
 qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
- : qt_window_widget_rep (new QTMWindow (0, this), _quit), helper (this), 
+ : qt_window_widget_rep (new QTMWindow (0), _quit), helper (this), 
    prompt (NULL), full_screen (false)
 {
   type = texmacs_widget;

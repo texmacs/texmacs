@@ -47,18 +47,10 @@ void QTMPlainWindow::resizeEvent (QResizeEvent* event)
   QWidget::resizeEvent (event);
 }
 
-/* We must basically do the same as QTMPlainWindow::closeEvent, but we
- choose the other way: send a SLOT_DESTROY, which for qt_tm_widgets just
- calls the command. This is not personal whim but a problem with the destruction
- which has to be investigated further.
- 
- Also:
- FIXME! For some reason, not emitting closed(), which actually is supposed to
- execute the very same command, crashes TeXmacs upon exit.
- */
 void QTMWindow::closeEvent (QCloseEvent* event)
 {
-  string name= concrete(tmwid)->get_nickname ();
+  widget tmwid = qt_window_widget_rep::widget_from_qwidget(this);
+  string name= ( !is_nil(tmwid) ? concrete(tmwid)->get_nickname () : "QTMWindow");
   if (DEBUG_QT) cout << "Close QTMWindow " << name << LF;
   event->ignore ();
   notify_window_destroy (name);
@@ -67,7 +59,8 @@ void QTMWindow::closeEvent (QCloseEvent* event)
 
 void QTMWindow::moveEvent (QMoveEvent * event)
 {
-  string name= concrete(tmwid)->get_nickname ();
+  widget tmwid = qt_window_widget_rep::widget_from_qwidget(this);
+  string name= ( !is_nil(tmwid) ? concrete(tmwid)->get_nickname () : "QTMWindow");
   QPoint p = event->pos();
   // FIXME: rather use a slot for this
   if (DEBUG_QT)
@@ -79,7 +72,8 @@ void QTMWindow::moveEvent (QMoveEvent * event)
 
 void QTMWindow::resizeEvent (QResizeEvent * event)
 {
-  string name= concrete(tmwid)->get_nickname ();
+  widget tmwid = qt_window_widget_rep::widget_from_qwidget(this);
+  string name= ( !is_nil(tmwid) ? concrete(tmwid)->get_nickname () : "QTMWindow");
   // FIXME: rather use a slot for this
   QSize s = event->size();
   if (DEBUG_QT)
