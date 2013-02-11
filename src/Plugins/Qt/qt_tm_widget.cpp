@@ -641,8 +641,21 @@ qt_tm_widget_rep::query (slot s, int type_id) {
     {
       check_type_id<coord2> (type_id, s);
         // Skip title and toolbars
-      QPoint pt = QPoint(mainwindow()->geometry().x(), mainwindow()->geometry().y());
-        //cout << "wpos: " << pt.x() << ", " << pt.y() << LF;
+      QPoint pt = QPoint (mainwindow()->geometry().x(),
+                          mainwindow()->geometry().y());
+      //cout << "wpos: " << pt.x() << ", " << pt.y() << LF;
+      
+        // HACK: Qt seems seems not properly report geometry if the toolbars
+        // are hidden
+#if defined (QTTEXMACS) 
+      if (!visibility[0]) {
+        pt.ry() -= (mainwindow()->frameGeometry().height() -
+                    mainwindow()->geometry().height());
+        if (visibility[3]) pt.ry() += focusToolBar->height();
+          //adding the user toolbar shifts the position too much
+          //if (visibility[4]) pt.ry() += userToolBar->height();
+      }
+#endif
       return close_box<coord2> (from_qpoint (pt));
     }
 
