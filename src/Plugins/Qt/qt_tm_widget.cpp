@@ -647,7 +647,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
       
         // HACK: Qt seems seems not properly report geometry if the toolbars
         // are hidden
-#if defined (QTTEXMACS) 
+#ifdef OS_MACOS
       if (!visibility[0]) {
         pt.ry() -= (mainwindow()->frameGeometry().height() -
                     mainwindow()->geometry().height());
