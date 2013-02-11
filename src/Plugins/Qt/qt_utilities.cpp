@@ -420,6 +420,12 @@ qt_convert_image (url image, url dest, int w, int h) {
 
 void
 qt_image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
+  string r= qt_image_to_eps (image, w_pt, h_pt, dpi);
+  save_string (eps, r);
+}
+
+string
+qt_image_to_eps (url image, int w_pt, int h_pt, int dpi) {
   static const char* d= "0123456789ABCDEF";
   QImage im (utf8_to_qstring (concretize (image)));
   string r;
@@ -513,8 +519,8 @@ qt_image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
     }
     r << "\nimage\nshowpage\n%%Trailer\ncleartomark\ncountdictstack\n"
       << "exch sub { end } repeat\nrestore\n%%EOF\n";
-    save_string (eps, r);
   }
+  return r;
 }
 
 string 

@@ -162,7 +162,18 @@ ps_load (url image) {
 
   string s, suf= suffix (name);
   if (suf == "ps" || suf == "eps") load_string (name, s, false);
-  else s= as_string (call ("image->postscript", object (name)));
+  else {
+#ifdef QTTEXMACS
+    int w_pt, h_pt, dpi=72;
+    qt_image_size (name, w_pt, h_pt); // default to 72 dpi
+    s= qt_image_to_eps (name, w_pt, h_pt, dpi);
+    // fallback on external conversion
+    if (s == "")
+      s= as_string (call ("image->postscript", object (name)));
+#else
+    s= as_string (call ("image->postscript", object (name)));
+#endif
+  }
 
 #ifdef OS_WIN32
   if (s == "") {
