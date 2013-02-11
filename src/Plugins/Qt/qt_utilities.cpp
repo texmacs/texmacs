@@ -427,7 +427,7 @@ qt_image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
     cerr << "TeXmacs Cannot read image file '" << image << "'"
 	 << " in qt_image_to_eps" << LF;
   else {
-    bool alpha= false;
+    bool alpha= im.hasAlphaChannel ();
     if (dpi > 0 && w_pt > 0 && h_pt > 0) {
       int ww= w_pt * dpi / 72;
       int hh= h_pt * dpi / 72;
@@ -464,8 +464,6 @@ qt_image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
           r << "\n";
           l= 0;
         }
-        if (!alpha && im.hasAlphaChannel () && qAlpha (p) < 0xFF)
-          alpha= true;
       }
       if (alpha) {
         v= 0;
