@@ -73,7 +73,6 @@ class qt_tm_widget_rep: public qt_window_widget_rep {
   bool visibility[7];
   bool full_screen;
   
-  command quit;
   string orig_name;
   
   widget main_widget;

@@ -43,6 +43,7 @@ class QWidget;
 */
 class qt_window_widget_rep: public qt_widget_rep {
   int win_id;
+  bool fake;
 
 public:
   command quit;

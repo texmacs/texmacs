@@ -624,6 +624,13 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     }
       break;
 
+    case SLOT_FULL_SCREEN:
+    {
+      check_type<bool> (val, s);
+      set_full_screen(open_box<bool> (val));
+    }
+      break;
+      
     default:
       qt_window_widget_rep::send (s, val);
       return;

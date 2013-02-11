@@ -33,8 +33,8 @@
  The parameter "fake" means this qt_window_widget_rep is not part of the window
  list, so the nr_windows global variable must not be updated.
  */
-qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, command _quit, bool fake)
-: qt_widget_rep (window_widget, _wid), quit(_quit)
+qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, command _quit, bool _fake)
+: qt_widget_rep (window_widget, _wid), quit(_quit), fake(_fake)
 {
   qwid->setProperty ("texmacs_window_widget",
                      QVariant::fromValue ((void*) this));
@@ -51,8 +51,7 @@ qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, command _quit, bool f
     qwid->setFixedSize(qwid->sizeHint());
   
     // HACK: don't increment window count for side tools or any other fake windows
-  if (!fake)
-    win_id = ++nr_windows;
+  if (!fake) win_id = ++nr_windows;
 }
 
 /*!
@@ -60,7 +59,7 @@ qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, command _quit, bool f
  */
 qt_window_widget_rep::~qt_window_widget_rep ()
 {
-  nr_windows--;
+  if (!fake) nr_windows--;
 
   qwid->deleteLater();
 }
@@ -181,18 +180,6 @@ qt_window_widget_rep::send (slot s, blackbox val) {
     }
       break;
       
-    case SLOT_FULL_SCREEN:
-    {
-      check_type<bool> (val, s);
-      QTMWindow* qwin = qobject_cast<QTMWindow*>(qwid);
-      if (qwin && qwin->tmwid->ref_count != 0) {
-        qt_tm_widget_rep* wid = static_cast<qt_tm_widget_rep*>(qwin->tmwid.rep);
-        if (wid)
-          wid->set_full_screen(open_box<bool> (val));
-      }
-      else FAILED ("attempt to set full screen on a non qt_tm_widget");
-    }
-      break;
       
     case SLOT_REFRESH:
       the_gui->gui_helper->emitTmSlotRefresh();
