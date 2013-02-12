@@ -138,6 +138,7 @@
          (if (<= (length authors) 1) authors
              (list `(doc-authors ,@authors))))
      ,@(select t '(doc-date))
+     ,@(select t '(doc-misc))
      ,@(select t '(doc-inactive))))
 
 (tm-define (doc-data-sub t)

@@ -63,6 +63,8 @@
 
   <drd-props|author-data|arity|<tuple|repeat|1|1>|border|no|accessible|all>
 
+  <drd-props|doc-misc|border|no>
+
   <drd-props|doc-date|border|no>
 
   <drd-props|doc-note|arity|1|border|no|accessible|all>
@@ -116,6 +118,8 @@
   </surround>>>
 
   <assign|doc-date|<macro|body|<style-with|src-compact|none|<vspace*|0.5fn><doc-title-block|<with|font-shape|italic|<arg|body>>><vspace|0.5fn>>>>
+
+  <assign|doc-misc|<macro|body|<style-with|src-compact|none|<vspace*|0.5fn><doc-title-block|<arg|body>><vspace|0.5fn>>>>
 
   <assign|doc-note|<\macro|note>
     <arg|note>
