@@ -86,7 +86,8 @@
   author-data)
 
 (define-group author-data-tag
-  author-name author-affiliation author-email author-homepage author-note)
+  author-name author-affiliation author-email author-homepage author-misc
+  author-note)
 
 (define-group abstract-data-tag
   abstract abstract-msc abstract-keywords)

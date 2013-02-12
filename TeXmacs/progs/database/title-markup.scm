@@ -171,6 +171,7 @@
      ,@(select t '(author-email))
      ;,@(select t '(author-email-note))
      ,@(select t '(author-homepage))
+     ,@(select t '(author-misc))
      ;,@(select t '(author-homepage-note))
      ))
 

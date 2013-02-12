@@ -81,6 +81,8 @@
 
   <drd-props|author-homepage|border|no>
 
+  <drd-props|author-misc|border|no>
+
   <drd-props|author-note|arity|1|border|no|accessible|all>
 
   <drd-props|abstract-data|arity|<tuple|repeat|1|1>|accessible|all>
@@ -170,6 +172,10 @@
 
   <assign|author-homepage-note|<macro|sym|id|homepage|<doc-author-block|<doc-note-text|<arg|sym>|<arg|id>|<style-with|src-compact|none|<with|font-shape|italic|<homepage-text><localize|:>
   ><with|font-family|tt|<arg|homepage>>>>>>>
+
+  <assign|author-misc|<\macro|body>
+    <surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<arg|body>>>
+  </macro>>
 
   <assign|author-note|<\macro|note>
     <arg|note>
