@@ -3519,13 +3519,27 @@ upgrade_cyrillic (tree t) {
 ******************************************************************************/
 
 static tree
+correct_metadata (tree t) {
+  if (is_atomic (t)) return t;
+  tree r;
+
+  if (is_compound (t, "author-misc"))
+    r= compound ("author-note");
+  else
+    r= compound (as_string (L(t)));
+
+  for (int i=0; i<N(t); i++)
+    r << correct_metadata (t[i]);
+  return r;
+}
+
+static tree
 upgrade_metadata (tree t) {
   if (is_atomic (t)) return t;
   tree r;
   string l;
   if (is_compound (t, "doc-abstract"))   l= "abstract";
   if (is_compound (t, "author-address")) l= "author-affiliation";
-  if (is_compound (t, "author-note"))    l= "author-misc";
   if (is_compound (t, "doc-AMS-class"))  l= "abstract-msc";
   if (is_compound (t, "doc-msc"))        l= "abstract-msc";
   if (is_compound (t, "doc-keywords"))   l= "abstract-keywords";
@@ -3816,6 +3830,8 @@ upgrade (tree t, string version) {
     t= upgrade_cursor (t);
   if (version_inf_eq (version, "1.0.7.15"))
     t= upgrade_cyrillic (t);
+  if (version_inf_eq (version, "1.0.7.17"))
+    t= correct_metadata (t);
   if (version_inf_eq (version, "1.0.7.18"))
     t= upgrade_metadata (t);
     t= upgrade_abstract_data (t);
