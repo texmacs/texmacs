@@ -480,7 +480,7 @@ qt_image_to_eps (url image, int w_pt, int h_pt, int dpi) {
             v= 0;
             k++;
             // Padding of the image data mask
-            if ( i + 1 == im.width () && k % 2 == 1) {
+            if (i + 1 == im.width () && k % 2 == 1) {
               mask << d[0];
               k++;
             }
