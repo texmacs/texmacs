@@ -151,7 +151,8 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
 
   s= "";
   t= "none";
-  bool owns= !(format == "default" && key == "primary") &&
+  // Knowing when we owns (or not) the content is not clear
+  bool owns= (format != "temp" && format != "wrapbuf" && key != "primary") &&
              !(key == "mouse" && cb->supportsSelection ());
 
   if (!owns && md->hasFormat ("application/x-texmacs-pid")) {
