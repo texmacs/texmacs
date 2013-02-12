@@ -1188,7 +1188,7 @@
   (let* ((tag (select data '(:%2)))
          (name (tmtex-select-data tag 'author-name))
 	 (address (tmtex-select-data tag 'author-affiliation))
-	 (misc (tmtex-select-data tag 'author-misc))
+	 (misc (tmtex-select-data tag 'author-note))
 	 (email (tmtex-select-data tag 'author-email))
 	 (homepage (tmtex-select-data tag 'author-homepage))
 	 (email* (tmtex-data-apply 'email email))
@@ -1767,7 +1767,7 @@
   (doc-data (,tmtex-doc-data-wrapper -1))
   ((:or doc-title doc-author author-data doc-date doc-note
 	abstract-keywords abstract-msc) (,tmtex-default -1))
-  ((:or author-name author-affiliation author-misc
+  ((:or author-name author-affiliation author-note
 	author-email author-homepage) (,tmtex-default -1))
   (abstract (,tmtex-abstract-wrapper 1))
   (abstract-data (,tmtex-abstract-data -1))
