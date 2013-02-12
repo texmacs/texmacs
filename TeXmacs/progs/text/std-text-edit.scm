@@ -73,7 +73,7 @@
 (tm-define (make-author-data-element l)
   (with-innermost t 'author-data
     (with pos (1+ (tree-down-index t))
-      (cond ((in? l '(author-affiliation author-misc))
+      (cond ((in? l '(author-affiliation author-note))
 	     (tree-insert! t pos `((,l (document ""))))
 	     (tree-go-to t pos 0 0 0))
 	    (else
