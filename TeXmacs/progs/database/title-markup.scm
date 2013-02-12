@@ -50,7 +50,7 @@
 (tm-define (remove-notes c)
   (cond ((null? c) c)
         ((tm-func? (car c) 'doc-note 1) (remove-notes (cdr c)))
-        ((tm-func? (car c) 'author-misc 1) (remove-notes (cdr c)))
+        ((tm-func? (car c) 'author-note 1) (remove-notes (cdr c)))
         ((tm-in? (car c) '(doc-author author-data))
          (let* ((f (car c))
                 (h `(,(tm-label f) ,@(remove-notes (tm-children f))))
@@ -84,7 +84,7 @@
         ((tm-func? c 'author-name 1)
          `(author-name ,(add-annotations (tm-ref c 0) notes)))
         ((tm-func? c 'doc-author 1)
-         (let* ((sels (map tm->stree (select c '(author-data author-misc))))
+         (let* ((sels (map tm->stree (select c '(author-data author-note))))
                 (new-notes (append-map (cut find-note <> notes) sels)))
            (with ann (cut annotate <> new-notes)
              `(doc-author ,@(map ann (tm-children c))))))
@@ -98,7 +98,7 @@
     `(doc-footnote-text ,sym ,id ,(tm-ref note 0))))
 
 (tm-define (add-notes t)
-  (let* ((tags '((doc-note) (doc-author author-data author-misc)))
+  (let* ((tags '((doc-note) (doc-author author-data author-note)))
          (notes (collect-notes t "fnsymbol" tags)))
     (if (null? notes) t
         (let* ((c1 (tm-children t))

@@ -46,7 +46,7 @@
          (urls-notes (collect-urls
                        (select t '(doc-author author-data author-homepage))))
          (authors-notes (collect-notes t "arabic"
-                                       '((doc-author author-data author-misc))))
+                                       '((doc-author author-data author-note))))
          (notes (append title-notes emails-notes urls-notes authors-notes)))
     (if (null? notes) t
         (let* ((c1 (tm-children t))
@@ -68,7 +68,7 @@
         ((tm-func? c 'doc-author 1)
          (let* ((sels (map
                         tm->stree
-                        (append (select c '(author-data author-misc))
+                        (append (select c '(author-data author-note))
                                 (select c '(author-data author-affiliation)))))
                 (new-notes (append-map (cut find-note <> notes) sels)))
            (with ann (cut annotate <> new-notes)

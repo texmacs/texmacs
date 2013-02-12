@@ -52,7 +52,7 @@
   (set! name (add-author-refs name author data :notes 'author-affiliation))
   (set! name (add-author-refs name author data :notes 'author-email))
   (set! name (add-author-refs name author data :notes 'author-homepage))
-  (set! name (add-author-refs name author data :footnotes 'author-misc))
+  (set! name (add-author-refs name author data :footnotes 'author-note))
   name)
 
 (define (build-authors-refs l data)
