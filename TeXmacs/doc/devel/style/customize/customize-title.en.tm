@@ -23,7 +23,7 @@
   the document. Each child of the <markup|author-data> tag is a tag with
   information about the corresponding author. Currently implemented tags with
   author information are <markup|author-name>, <markup|author-affiliation>,
-  <markup|author-email>, <markup|author-homepage> and <markup|author-misc>.
+  <markup|author-email>, <markup|author-homepage> and <markup|author-note>.
 
   Most of the tags listed above also correspond to macros for rendering the
   corresponding information as part of the main title. For instance, if the
@@ -86,7 +86,7 @@
 
         <unquote*|<select|<quote-arg|data>|author-homepage>>
 
-        <unquote*|<select|<quote-arg|data>|author-misc|document|<pat-any>>>
+        <unquote*|<select|<quote-arg|data>|author-note|document|<pat-any>>>
       </quasi>>>
     </inactive*>
   </tm-fragment>
