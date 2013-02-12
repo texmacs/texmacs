@@ -898,11 +898,9 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
   QWidget *win = mainwindow()->window();  
   if (win) {
     if (flag ) {
-      // remove the borders from some widgets
-      scrollarea()->setFrameShape(QFrame::NoFrame);
 #ifdef UNIFIED_TOOLBAR
       //HACK: we disable unified toolbar since otherwise
-      //  the application will crash when we return in normal mode
+      //  the application will crash when we return to normal mode
       // (bug in Qt? present at least with 4.7.1)
       mainwindow()->setUnifiedTitleAndToolBarOnMac(false);
       mainwindow()->centralWidget()->layout()->setContentsMargins(0,0,0,0);
@@ -919,12 +917,10 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
 
       visibility[0] = cache;
       update_visibility();
-      // reset the borders of some widgets
-      scrollarea()->setFrameShape(QFrame::Box);
 #ifdef UNIFIED_TOOLBAR
-      mainwindow()->centralWidget()->layout()->setContentsMargins(2,2,2,2);
+      mainwindow()->centralWidget()->layout()->setContentsMargins (0,1,0,0);
       //HACK: we reenable unified toolbar (see above HACK) 
-      //  the application will crash return in normal mode
+      //  the application will crash when we return to normal mode
       mainwindow()->setUnifiedTitleAndToolBarOnMac(true);
 #endif
     }
