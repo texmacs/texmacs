@@ -8,6 +8,9 @@
   <section|Changes from version 1.0.7 to 1.0.7.18>
 
   <\itemize>
+    <item>Implementation of arbitrary zoom factors and ``fit to paragraph
+    width'' (1.0.7.18).
+
     <item>New widget for user preferences (1.0.7.18).
 
     <item>More implicit user preferences (1.0.7.18).
