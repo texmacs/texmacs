@@ -3830,11 +3830,11 @@ upgrade (tree t, string version) {
     t= upgrade_cursor (t);
   if (version_inf_eq (version, "1.0.7.15"))
     t= upgrade_cyrillic (t);
-  if (version_inf_eq (version, "1.0.7.17"))
-    t= correct_metadata (t);
-  if (version_inf_eq (version, "1.0.7.18"))
+  if (version_inf_eq (version, "1.0.7.17")) {
     t= upgrade_metadata (t);
     t= upgrade_abstract_data (t);
+    t= correct_metadata (t);
+  }
 
   if (is_non_style_document (t))
     t= automatic_correct (t, version);
