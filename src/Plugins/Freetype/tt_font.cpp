@@ -176,7 +176,7 @@ tt_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
 
 font
 tt_font_rep::magnify (double zoom) {
-  return tt_font (family, size, (int) round (dpi * zoom));
+  return tt_font (family, size, (int) tm_round (dpi * zoom));
 }
 
 glyph

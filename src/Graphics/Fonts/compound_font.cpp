@@ -59,7 +59,7 @@ compound_font_rep::advance (string s, int& pos, string& r, int& ch) {
     tree t= def[ch][1];
     if (is_tuple (t, "virtual", 3))
       fn[ch]= virtual_font (this, as_string (t[1]), as_int (t[2]),
-			    (int) round (as_int (t[3]) * zf));
+			    (int) tm_round (as_int (t[3]) * zf));
     else
       fn[ch]= find_magnified_font (t, zf);
     ASSERT (!is_nil (fn[ch]), "font not found");

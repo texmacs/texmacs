@@ -295,7 +295,7 @@ virtual_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
 font
 virtual_font_rep::magnify (double zoom) {
   return virtual_font (base_fn->magnify (zoom), fn_name,
-		       size, (int) round (dpi * zoom));
+		       size, (int) tm_round (dpi * zoom));
 }
 
 glyph

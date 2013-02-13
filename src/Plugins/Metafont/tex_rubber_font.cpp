@@ -249,7 +249,7 @@ tex_rubber_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
 
 font
 tex_rubber_font_rep::magnify (double zoom) {
-  int ndpi= (int) round (dpi * zoom);
+  int ndpi= (int) tm_round (dpi * zoom);
   return tex_rubber_font (trl, family, size, ndpi, dsize);
 }
 

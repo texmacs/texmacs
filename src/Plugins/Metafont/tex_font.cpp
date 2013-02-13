@@ -657,7 +657,7 @@ tex_font_rep::draw_fixed (renderer ren, string s, SI ox, SI y) {
 
 font
 tex_font_rep::magnify (double zoom) {
-  int ndpi= (int) round (dpi * zoom);
+  int ndpi= (int) tm_round (dpi * zoom);
   switch (status) {
   case TEX_ANY:
     return tex_font (family, size, ndpi, dsize);

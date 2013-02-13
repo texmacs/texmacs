@@ -78,7 +78,7 @@ math_font_rep::init_font (int fn_nr, font& fn) {
   tree t= font_name [fn_nr];
   if (is_tuple (t, "virtual", 3))
     fn= virtual_font (this, as_string (t[1]), as_int (t[2]),
-		      (int) round (as_int (t[3]) * zf));
+		      (int) tm_round (as_int (t[3]) * zf));
   else
     fn= find_magnified_font (t, zf);
   ASSERT (!is_nil (fn), "font not found");

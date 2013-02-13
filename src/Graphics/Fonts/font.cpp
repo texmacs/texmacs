@@ -88,23 +88,23 @@ font_rep::draw (renderer ren, string s, SI x, SI y) {
     SI     old_pixel  = ren->pixel;
     SI     old_thicken= ren->thicken;
 
-    ren->ox     = (SI) ::round (old_ox  * old_zoomf);
-    ren->oy     = (SI) ::round (old_oy  * old_zoomf);
+    ren->ox     = (SI) tm_round (old_ox  * old_zoomf);
+    ren->oy     = (SI) tm_round (old_oy  * old_zoomf);
     //ren->cx1    = (SI) ::floor (old_cx1 * old_zoomf);
     //ren->cx2    = (SI) ::floor (old_cx2 * old_zoomf);
     //ren->cy1    = (SI) ::ceil  (old_cy1 * old_zoomf);
     //ren->cy2    = (SI) ::ceil  (old_cy2 * old_zoomf);
-    ren->cx1    = (SI) ::round (old_cx1 * old_zoomf);
-    ren->cx2    = (SI) ::round (old_cx2 * old_zoomf);
-    ren->cy1    = (SI) ::round (old_cy1 * old_zoomf);
-    ren->cy2    = (SI) ::round (old_cy2 * old_zoomf);
+    ren->cx1    = (SI) tm_round (old_cx1 * old_zoomf);
+    ren->cx2    = (SI) tm_round (old_cx2 * old_zoomf);
+    ren->cy1    = (SI) tm_round (old_cy1 * old_zoomf);
+    ren->cy2    = (SI) tm_round (old_cy2 * old_zoomf);
     ren->zoomf  = 1.0;
     ren->shrinkf= std_shrinkf;
     ren->pixel  = std_shrinkf * PIXEL;
     ren->thicken= (std_shrinkf >> 1) * PIXEL;
 
-    SI xx= (SI) round (x * old_zoomf);
-    SI yy= (SI) round (y * old_zoomf);
+    SI xx= (SI) tm_round (x * old_zoomf);
+    SI yy= (SI) tm_round (y * old_zoomf);
     zoomed_fn->draw_fixed (ren, s, xx, yy);
 
     ren->ox     = old_ox;

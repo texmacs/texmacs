@@ -104,6 +104,7 @@ inline int hash (pointer ptr) {
   return ((int) ((intptr_t) ptr)) + (((int) ((intptr_t) ptr)) % 19); }
 inline int copy (int x) { return x; }
 inline SI as_int (double x) { return (SI) floor (x + 0.5); }
+inline double tm_round (double x) { return floor (x + 0.5); }
 
 enum display_control { INDENT, UNINDENT, HRULE, LF };
 tm_ostream& operator << (tm_ostream& out, display_control ctrl);

@@ -311,7 +311,7 @@ evaluate_pag_length () {
 tree evaluate_tmpt_length () {
   return tree (TMLEN, "1"); }
 tree evaluate_px_length () {
-  int px= (int) round ((std_shrinkf * PIXEL) / std_zoom ());
+  int px= (int) tm_round ((std_shrinkf * PIXEL) / std_zoom ());
   return tree (TMLEN, as_string (px)); }
 
 tree

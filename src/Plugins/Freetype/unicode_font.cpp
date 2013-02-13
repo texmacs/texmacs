@@ -292,7 +292,7 @@ unicode_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
 
 font
 unicode_font_rep::magnify (double zoom) {
-  return unicode_font (family, size, (int) round (dpi * zoom));
+  return unicode_font (family, size, (int) tm_round (dpi * zoom));
 }
 
 glyph
