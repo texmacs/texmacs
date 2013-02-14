@@ -129,15 +129,27 @@
   (with-innermost t 'doc-data
     (if (null? (select t '(doc-title-options)))
         (make-doc-data-element 'doc-title-options))
-    (with o (car (select t '(doc-title-options)))
-      (if (null? (select o `(:%1 (:match ,tag))))
+    (with t-o (car (select t '(doc-title-options)))
+      (if (null? (select t-o `(:%1 (:match ,tag))))
         (begin
-          (tree-insert! o 0 `(,tag))
-          (tree-insert! o 1 `(,opt)))
-        (with child (car (select o `(:%1 (:match ,tag))))
+          (tree-insert! t-o 0 `(,tag))
+          (tree-insert! t-o 1 `(,opt)))
+        (with child (car (select t-o `(:%1 (:match ,tag))))
           (with pos (1+ (tree-index child))
-            (tree-set! o pos opt)))))
-    (tree-go-to t (-1 (tree-down-index t)))))
+            (tree-set! t-o pos opt)))))))
+
+(tm-define (get-doc-title-option tag)
+                  (display* tag "\n")
+  (with-innermost t 'doc-data
+                  (display* t "\n")
+    (cond
+      ((null? (select t '(doc-title-options))) "")
+      ((null? (select t `(doc-title-options :%1 (:match ,tag)))) "")
+      (else
+        (with t-o (car (select t '(doc-title-options)))
+        (with child (car (select t-o `(:%1 (:match ,tag))))
+          (with pos (1+ (tree-index child))
+            (tree-ref t-o pos))))))))
 
 ;(tm-define (test-title-option? tag opt)
 ;  (== (get-init-tree var) (string->tree val)))
