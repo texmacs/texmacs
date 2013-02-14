@@ -411,8 +411,9 @@
   (=> (balloon (icon "tm_add.xpm") "Add title information")
       (link focus-title-menu)
       (-> "Hidden" (link focus-title-hidden-menu)))
-  (=> (balloon (icon "tm_focus_prefs.xpm") "Title presentation options")
-      (link focus-title-option-menu)))
+  ;;(=> (balloon (icon "tm_focus_prefs.xpm") "Title presentation options")
+  ;;    (link focus-title-option-menu))
+  )
 
 (tm-menu (focus-ancestor-menu t)
   (:require (doc-title-context? t))
