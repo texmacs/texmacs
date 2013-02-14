@@ -151,11 +151,11 @@
           (with pos (1+ (tree-index child))
             (tree-ref t-o pos))))))))
 
-;(tm-define (test-title-option? tag opt)
-;  (== (get-init-tree var) (string->tree val)))
+(tm-define (test-doc-title-option? tag opt)
+  (== (get-doc-title-option tag) (string->tree opt)))
 
-;(tm-property (set-doc-title-option tag opt)
-;  (:check-mark "*" test-title-option?))
+(tm-property (set-doc-title-option tag opt)
+  (:check-mark "*" test-doc-title-option?))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Activation and disactivation
