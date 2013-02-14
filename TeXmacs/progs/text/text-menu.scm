@@ -397,10 +397,9 @@
   ("Running author" (make-doc-data-element 'doc-running-author)))
 
 (tm-menu (focus-title-option-menu)
-  (-> "Authors affiliations" (link focus-title-option-authors-affiliations-menu))
-  (-> "Authors names"        (link focus-title-option-authors-names-menu))
-  (-> "Authors homepages"    (link focus-title-option-authors-homepages-menu))
-  (-> "Authors emails"       (link focus-title-option-authors-emails-menu)))
+  ("No clustering" (set-doc-title-clustering #f))
+  ("Maximal clustering" (set-doc-title-clustering "cluster-all"))
+  ("Cluster by affiliation" (set-doc-title-clustering "cluster-by-affiliation")))
 
 (tm-menu (focus-title-icons)
   (assuming (doc-data-has-hidden?)
@@ -423,25 +422,6 @@
   (group "Hidden")
   (link focus-title-hidden-menu)
   ---)
-
-(tm-menu (focus-title-option-authors-affiliations-menu)
-  ("As footnotes" (set-doc-title-option "author-affiliation" "footnoted"))
-  ("Clustered"    (set-doc-title-option "author-affiliation" "clustered"))
-  ("Scattered"    (set-doc-title-option "author-affiliation" "scattered")))
-
-(tm-menu (focus-title-option-authors-names-menu)
-  ("Clustered" (set-doc-title-option "author-name" "clustered"))
-  ("Scattered" (set-doc-title-option "author-name" "scattered")))
-
-(tm-menu (focus-title-option-authors-emails-menu)
-  ("As footnotes" (set-doc-title-option "author-email" "footnoted"))
-  ("Clustered"    (set-doc-title-option "author-email" "clustered"))
-  ("Scattered"    (set-doc-title-option "author-email" "scattered")))
-
-(tm-menu (focus-title-option-authors-homepages-menu)
-  ("As footnotes" (set-doc-title-option "author-homepage" "footnoted"))
-  ("Clustered"    (set-doc-title-option "author-homepage" "clustered"))
-  ("Scattered"    (set-doc-title-option "author-homepage" "scattered")))
 
 (tm-menu (focus-ancestor-icons t)
   (:require (doc-title-context? t))
@@ -484,8 +464,6 @@
 (tm-menu (focus-ancestor-icons t)
   (:require (doc-author-context? t))
   (minibar (dynamic (focus-title-icons)))
-  //
-  (minibar (dynamic (focus-title-option-icons)))
   //
   (minibar (dynamic (focus-author-icons)))
   //)

@@ -125,35 +125,34 @@
   (:require (tree-is? t 'doc-inactive))
   (doc-data-activate-here))
 
-(tm-define (set-doc-title-option tag opt)
+(tm-define (set-doc-title-options opts)
   (with-innermost t 'doc-data
-    (if (null? (select t '(doc-title-options)))
-        (make-doc-data-element 'doc-title-options))
-    (with t-o (car (select t '(doc-title-options)))
-      (if (null? (select t-o `(:%1 (:match ,tag))))
-        (begin
-          (tree-insert! t-o 0 `(,tag))
-          (tree-insert! t-o 1 `(,opt)))
-        (with child (car (select t-o `(:%1 (:match ,tag))))
-          (with pos (1+ (tree-index child))
-            (tree-set! t-o pos opt)))))))
+    (with opts-trees (select t '(doc-title-options))
+      (if (null? opts)
+          (when (nnull? opts-trees)
+            (with old (car opts-trees)
+              (tree-remove (tree-up old) (tree-index old) 1)))
+          (begin
+            (when (null? opts-trees)
+              (make-doc-data-element 'doc-title-options)
+              (set! opts-trees (select t '(doc-title-options))))
+            (tree-set (car opts-trees) `(doc-title-options ,@opts)))))))
 
-(tm-define (get-doc-title-option tag)
+(tm-define (get-doc-title-options)
   (with-innermost t 'doc-data
-    (cond
-      ((null? (select t '(doc-title-options))) "")
-      ((null? (select t `(doc-title-options :%1 (:match ,tag)))) "")
-      (else
-        (with t-o (car (select t '(doc-title-options)))
-        (with child (car (select t-o `(:%1 (:match ,tag))))
-          (with pos (1+ (tree-index child))
-            (tree-ref t-o pos))))))))
+    (with opts-trees (select t '(doc-title-options :%1))
+      (map tree->stree opts-trees))))
 
-(tm-define (test-doc-title-option? tag opt)
-  (== (get-doc-title-option tag) (string->tree opt)))
+(tm-define (test-doc-title-clustering? mode)
+  (with cl (list "cluster-all" "cluster-by-affiliation")
+    (with old (get-doc-title-options)
+      (if mode (in? mode old) (null? (list-intersection cl old))))))
 
-(tm-property (set-doc-title-option tag opt)
-  (:check-mark "*" test-doc-title-option?))
+(tm-define (set-doc-title-clustering mode)
+  (:check-mark "*" test-doc-title-clustering?)
+  (with cl (list "cluster-all" "cluster-by-affiliation")
+    (with old (list-difference (get-doc-title-options) cl)
+      (set-doc-title-options (if mode (cons mode old) old)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Activation and disactivation
