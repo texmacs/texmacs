@@ -74,7 +74,7 @@
 ;; Document titles
 
 (define-group doc-title-tag
-  (doc-title-active-tag) (doc-title-inactive-tag) (set-title-options))
+  (doc-title-active-tag) (doc-title-inactive-tag) doc-title-options)
 
 (define-group doc-title-active-tag
   doc-title doc-subtitle doc-author doc-date doc-misc doc-note)

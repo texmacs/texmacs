@@ -396,6 +396,12 @@
   ("Running title" (make-doc-data-element 'doc-running-title))
   ("Running author" (make-doc-data-element 'doc-running-author)))
 
+(tm-menu (focus-title-option-menu)
+  (-> "Authors affiliations" (link focus-title-option-authors-affiliations-menu))
+  (-> "Authors names"        (link focus-title-option-authors-names-menu))
+  (-> "Authors homepages"    (link focus-title-option-authors-homepages-menu))
+  (-> "Authors emails"       (link focus-title-option-authors-emails-menu)))
+
 (tm-menu (focus-title-icons)
   (assuming (doc-data-has-hidden?)
     ((check (balloon (icon "tm_show_hidden.xpm") "Show hidden") "v"
@@ -405,7 +411,9 @@
     (inert ("Title" (noop))))
   (=> (balloon (icon "tm_add.xpm") "Add title information")
       (link focus-title-menu)
-      (-> "Hidden" (link focus-title-hidden-menu))))
+      (-> "Hidden" (link focus-title-hidden-menu)))
+  (=> (balloon (icon "tm_focus_prefs.xpm") "Title presentation options")
+      (link focus-title-option-menu)))
 
 (tm-menu (focus-ancestor-menu t)
   (:require (doc-title-context? t))
@@ -435,23 +443,9 @@
   ("Clustered"    (set-doc-title-option "author-homepage" "clustered"))
   ("Scattered"    (set-doc-title-option "author-homepage" "scattered")))
 
-(tm-menu (focus-title-option-menu)
-  (-> "Authors affiliations" (link focus-title-option-authors-affiliations-menu))
-  (-> "Authors names"        (link focus-title-option-authors-names-menu))
-  (-> "Authors homepages"    (link focus-title-option-authors-homepages-menu))
-  (-> "Authors emails"       (link focus-title-option-authors-emails-menu)))
-
-(tm-menu (focus-title-option-icons)
-  (mini #t
-    (inert ("Title option" (noop))))
-  (=> (balloon (icon "tm_focus_prefs.xpm") "Title presentation options")
-      (link focus-title-option-menu)))
-
 (tm-menu (focus-ancestor-icons t)
   (:require (doc-title-context? t))
   (minibar (dynamic (focus-title-icons)))
-  //
-  (minibar (dynamic (focus-title-option-icons)))
   //)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
