@@ -139,9 +139,7 @@
             (tree-set! t-o pos opt)))))))
 
 (tm-define (get-doc-title-option tag)
-                  (display* tag "\n")
   (with-innermost t 'doc-data
-                  (display* t "\n")
     (cond
       ((null? (select t '(doc-title-options))) "")
       ((null? (select t `(doc-title-options :%1 (:match ,tag)))) "")
