@@ -63,6 +63,8 @@
 	    ((== l 'doc-note)
 	     (tree-insert! t pos `((,l (document ""))))
 	     (tree-go-to t pos 0 0 0))
+	    ((== l 'doc-title-options)
+	     (tree-insert! t pos `((,l))))
 	    ((in? l doc-data-inactive-tags)
 	     (tree-insert! t pos `((doc-inactive (,l ""))))
 	     (tree-go-to t pos 0 0 0))
@@ -122,6 +124,26 @@
 (tm-define (kbd-enter t shift?)
   (:require (tree-is? t 'doc-inactive))
   (doc-data-activate-here))
+
+(tm-define (set-doc-title-option tag opt)
+  (with-innermost t 'doc-data
+    (if (null? (select t '(doc-title-options)))
+        (make-doc-data-element 'doc-title-options))
+    (with o (car (select t '(doc-title-options)))
+      (if (null? (select o `(:%1 (:match ,tag))))
+        (begin
+          (tree-insert! o 0 `(,tag))
+          (tree-insert! o 1 `(,opt)))
+        (with child (car (select o `(:%1 (:match ,tag))))
+          (with pos (1+ (tree-index child))
+            (tree-set! o pos opt)))))
+    (tree-go-to t (-1 (tree-down-index t)))))
+
+;(tm-define (test-title-option? tag opt)
+;  (== (get-init-tree var) (string->tree val)))
+
+;(tm-property (set-doc-title-option tag opt)
+;  (:check-mark "*" test-title-option?))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Activation and disactivation

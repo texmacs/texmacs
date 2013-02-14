@@ -416,24 +416,24 @@
   (link focus-title-hidden-menu)
   ---)
 
-(tm-menu (focus-title-option-authors-names-menu)
-  ("Clustered" (noop))
-  ("Scattered" (noop)))
-
 (tm-menu (focus-title-option-authors-affiliations-menu)
-  ("As footnotes" (noop))
-  ("Clustered"    (noop))
-  ("Scattered (not with clustered authors name)"    (noop)))
+  ("As footnotes" (set-doc-title-option "author-affiliation" "footnoted"))
+  ("Clustered"    (set-doc-title-option "author-affiliation" "clustered"))
+  ("Scattered"    (set-doc-title-option "author-affiliation" "scattered")))
 
-(tm-menu (focus-title-option-authors-homepages-menu)
-  ("As footnotes" (noop))
-  ("Clustered"    (noop))
-  ("Scattered (not with clustered authors name)"    (noop)))
+(tm-menu (focus-title-option-authors-names-menu)
+  ("Clustered" (set-doc-title-option "author-name" "clustered"))
+  ("Scattered" (set-doc-title-option "author-name" "scattered")))
 
 (tm-menu (focus-title-option-authors-emails-menu)
-  ("As footnotes" (noop))
-  ("Clustered"    (noop))
-  ("Scattered (not with clustered authors name)"    (noop)))
+  ("As footnotes" (set-doc-title-option "author-email" "footnoted"))
+  ("Clustered"    (set-doc-title-option "author-email" "clustered"))
+  ("Scattered"    (set-doc-title-option "author-email" "scattered")))
+
+(tm-menu (focus-title-option-authors-homepages-menu)
+  ("As footnotes" (set-doc-title-option "author-homepage" "footnoted"))
+  ("Clustered"    (set-doc-title-option "author-homepage" "clustered"))
+  ("Scattered"    (set-doc-title-option "author-homepage" "scattered")))
 
 (tm-menu (focus-title-option-menu)
   (-> "Authors affiliations" (link focus-title-option-authors-affiliations-menu))
