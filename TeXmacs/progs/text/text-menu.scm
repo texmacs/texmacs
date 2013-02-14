@@ -416,9 +416,42 @@
   (link focus-title-hidden-menu)
   ---)
 
+(tm-menu (focus-title-option-authors-names-menu)
+  ("Clustered" (noop))
+  ("Scattered" (noop)))
+
+(tm-menu (focus-title-option-authors-affiliations-menu)
+  ("As footnotes" (noop))
+  ("Clustered"    (noop))
+  ("Scattered (not with clustered authors name)"    (noop)))
+
+(tm-menu (focus-title-option-authors-homepages-menu)
+  ("As footnotes" (noop))
+  ("Clustered"    (noop))
+  ("Scattered (not with clustered authors name)"    (noop)))
+
+(tm-menu (focus-title-option-authors-emails-menu)
+  ("As footnotes" (noop))
+  ("Clustered"    (noop))
+  ("Scattered (not with clustered authors name)"    (noop)))
+
+(tm-menu (focus-title-option-menu)
+  (-> "Authors affiliations" (link focus-title-option-authors-affiliations-menu))
+  (-> "Authors names"        (link focus-title-option-authors-names-menu))
+  (-> "Authors homepages"    (link focus-title-option-authors-homepages-menu))
+  (-> "Authors emails"       (link focus-title-option-authors-emails-menu)))
+
+(tm-menu (focus-title-option-icons)
+  (mini #t
+    (inert ("Title option" (noop))))
+  (=> (balloon (icon "tm_focus_prefs.xpm") "Title presentation options")
+      (link focus-title-option-menu)))
+
 (tm-menu (focus-ancestor-icons t)
   (:require (doc-title-context? t))
   (minibar (dynamic (focus-title-icons)))
+  //
+  (minibar (dynamic (focus-title-option-icons)))
   //)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -457,6 +490,8 @@
 (tm-menu (focus-ancestor-icons t)
   (:require (doc-author-context? t))
   (minibar (dynamic (focus-title-icons)))
+  //
+  (minibar (dynamic (focus-title-option-icons)))
   //
   (minibar (dynamic (focus-author-icons)))
   //)
