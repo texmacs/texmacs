@@ -73,7 +73,7 @@ public:
 
   /* interclient communication */
   virtual bool get_selection (string key, tree& t, string& s, string format);
-  virtual bool set_selection (string key, tree t, string s, string format);
+  virtual bool set_selection (string key, tree t, string s, string sv, string sh, string format);
   virtual void clear_selection (string key);
   bool put_graphics_on_clipboard (url file);
 

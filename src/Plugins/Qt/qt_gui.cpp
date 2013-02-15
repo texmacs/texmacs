@@ -204,7 +204,8 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
 }
 
 bool
-qt_gui_rep::set_selection (string key, tree t, string s, string format) {
+qt_gui_rep::set_selection (string key, tree t,
+                           string s, string sv, string sh, string format) {
   selection_t (key)= copy (t);
   selection_s (key)= copy (s);
 
@@ -227,14 +228,10 @@ qt_gui_rep::set_selection (string key, tree t, string s, string format) {
       selection= as_charp (as_string (QCoreApplication::applicationPid ()));
       md->setData ("application/x-texmacs-pid", selection);
 
-      string html_s= as_string (call ("convert", s,
-                                      "texmacs-snippet", "html-snippet"));
-      selection= as_charp (html_s);
+      selection= as_charp (sh);
       md->setHtml (selection);
 
-      s= as_string (call ("convert", s,
-                          "texmacs-snippet", "verbatim-snippet"));
-      selection= as_charp (s);
+      selection= as_charp (sv);
     }
 
     if (get_preference ("texmacs->verbatim:encoding") == "utf-8")
@@ -1075,10 +1072,12 @@ load_system_font (string family, int size, int dpi,
 ******************************************************************************/
 
 bool
-set_selection (string key, tree t, string s, string format) {
+set_selection (string key, tree t, 
+               string s, string sv, string sh, string format) {
   // Copy a selection 't' with string equivalent 's' to the clipboard 'cb'
+  // and possibly the variants 'sv' and 'sh' for verbatim and html
   // Returns true on success
-  return the_gui->set_selection (key, t, s, format);
+  return the_gui->set_selection (key, t, s, sv, sh, format);
 }
 
 bool

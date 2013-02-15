@@ -586,7 +586,7 @@ edit_select_rep::selection_get_env_value (string var) {
 
 void
 edit_select_rep::selection_raw_set (string key, tree t) {
-  (void) ::set_selection (key, t, "", "texmacs");
+  (void) ::set_selection (key, t, "", "", "", "texmacs");
 }
 
 tree
@@ -630,7 +630,7 @@ edit_select_rep::selection_set (string key, tree t, bool persistant) {
   /* TODO: add mode="graphics" somewhere in the context of the <graphics>
      tag. To be done when implementing the different embeddings for
      nicely copying graphics into text, text into graphics, etc. */
-  string s;
+  string s, sh, sv;
   if (key == "primary" || key == "mouse") {
     if (selection_export == "verbatim") t= exec_verbatim (t, tp);
     if (selection_export == "html") t= exec_html (t, tp);
@@ -639,10 +639,19 @@ edit_select_rep::selection_set (string key, tree t, bool persistant) {
       t= compound ("math", t);
     if (selection_export != "default")
       s= tree_to_generic (t, selection_export * "-snippet");
-    else s= tree_to_generic (t, "texmacs-snippet");
+    else {
+      s= tree_to_generic (t, "texmacs-snippet");
+#ifdef QTTEXMACS
+      tree tmp;
+      tmp= exec_verbatim (t, tp);
+      sv= tree_to_generic (tmp, "verbatim-snippet");
+      tmp= exec_html (t, tp);
+      sh= tree_to_generic (tmp, "html-snippet");
+#endif
+    }
     s= selection_encode (lan, s);
   }
-  if (::set_selection (key, sel, s, selection_export) && !persistant)
+  if (::set_selection (key, sel, s, sv, sh, selection_export) && !persistant)
     selection_cancel ();
 }
 

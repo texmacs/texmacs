@@ -292,7 +292,8 @@ x_gui_rep::clear_selection (string key) {
 }
 
 bool
-set_selection (string key, tree t, string s, string format) {
+set_selection (string key, tree t,
+               string s, string sv, string sh, string format) {
   (void) format;
   return the_gui->set_selection (key, t, s);
 }
