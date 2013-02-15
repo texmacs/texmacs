@@ -121,7 +121,56 @@
   (with f "$TEXMACS_HOME_PATH/system/users.scm"
     (save-object f (ahash-table->list server-users))))
 
-(tm-define (server-set-user-info id passwd email admin)
+(tm-define (server-set-user-info uid id passwd email admin)
   (server-load-users)
-  (ahash-set! server-users id (list passwd email admin))
+  (ahash-set! server-users uid (list id passwd email admin))
   (server-save-users))
+
+(tm-define (server-set-user-information id passwd email admin)
+  (:argument id "User ID")
+  (:argument passwd "password" "Password")
+  (:argument email "Email address")
+  (:argument admin "Administrive rights?")
+  (:proposals admin '("no" "yes"))
+  (with uid (server-find-user id)
+    (if (not uid) (set! uid (create-unique-id)))
+    (server-set-user-info uid id passwd email (== admin "yes"))))
+
+(tm-define (server-find-user id)
+  (server-load-users)
+  (with l (ahash-table->list server-users)
+    (with ok? (lambda (x) (== (cadr x) id))
+      (and-with i (list-find-index l ok?)
+	(car (list-ref l i))))))
+
+(tm-define (server-create-user id passwd email admin)
+  (or (server-find-user id)
+      (with uid (create-unique-id)
+	(server-set-user-info uid id passwd email admin))))
+
+(tm-service (server-new-user envelope id passwd email)
+  (if (server-find-user id)
+      (server-error envelope "user already exists")
+      (with ret (server-create-user id passwd email #f)
+	(server-return envelope "done"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Logging in
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define server-logged-table (make-ahash-table))
+
+(tm-service (server-log-in envelope id passwd)
+  (with uid (server-find-user id)
+    (if (not uid) (server-error envelope "user not found")
+	(with (id2 passwd2 email2 admin2) (ahash-ref server-users uid)
+	  (if (!= passwd2 passwd) (server-error envelope "invalid password")
+	      (with client (car envelope)
+		(ahash-set! server-logged-table client uid)
+		(server-return envelope "ready")))))))
+
+(tm-define (server-check-admin? envelope)
+  (with client (car envelope)
+    (and-with uid (ahash-ref server-logged-table client)
+      (with (id passwd email admin) (ahash-ref server-users uid)
+	admin))))
