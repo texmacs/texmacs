@@ -74,7 +74,7 @@
     <smaller|<with|par-mode|justify|par-left|0cm|par-right|0cm|<style-with|src-compact|none|<surround|<locus|<id|<hard-id|<arg|body>>>|<link|hyperlink|<id|<hard-id|<arg|body>>>|<url|<merge|#footnr-|<arg|nr>>>>|<arg|sym>><footnote-sep>|<set-binding|<merge|footnote-|<arg|nr>>|<value|the-label>|body><right-flush>|<style-with|src-compact|none|<arg|body>>>>>>
   </float>>>>
 
-	<assign|render-footnote|<macro|nr|body|<style-with|src-compact|none|<render-footnote*|<arg|nr>|<arg|nr>|<arg|body>>>>>
+  <assign|render-footnote|<macro|nr|body|<render-footnote*|<arg|nr>|<arg|nr>|<arg|body>>>>
 
   <assign|footnote|<macro|body|<style-with|src-compact|none|<next-footnote><render-footnote|<the-footnote>|<arg|body>><space|0spc><label|<merge|footnr-|<the-footnote>>><rsup|<reference|<merge|footnote-|<the-footnote>>>>>>>
 
@@ -86,7 +86,7 @@
 
   <assign|custom-note-text|<\macro|sym|id|body>
     <\style-with|src-compact|none>
-		<style-with|src-compact|none|||<\surround|<locus|<id|<merge|dest-abbr-|<arg|id>>>|<link|footnote-source|<id|<merge|dest-abbr-|<arg|id>>>|<id|<merge|source-|<arg|id>>>>|<arg|sym>><footnote-sep>|<right-flush>>
+      <style-with|src-compact|none|||<\surround|<locus|<id|<merge|dest-abbr-|<arg|id>>>|<link|footnote-source|<id|<merge|dest-abbr-|<arg|id>>>|<id|<merge|source-|<arg|id>>>>|<arg|sym>><footnote-sep>|>
         <\with|locus-color|preserve|visited-color|preserve>
           <\locus|<id|<merge|dest-|<arg|id>>>>
             <style-with|src-compact|none|<arg|body>>
@@ -99,7 +99,7 @@
   <assign|custom-footnote-text|<macro|sym|id|body|<style-with|src-compact|none|<\float|footnote|>
     <smaller|<\with|par-mode|justify|par-left|0cm|par-right|0cm>
       <\custom-note-text|<arg|sym>|<arg|id>>
-        <arg|body>
+        <surround||<right-flush>|<arg|body>>
       </custom-note-text>
     </with>>
   </float>>>>
