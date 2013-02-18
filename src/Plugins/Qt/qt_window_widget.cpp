@@ -34,7 +34,7 @@
  list, so the nr_windows global variable must not be updated.
  */
 qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, command _quit, bool _fake)
-: qt_widget_rep (window_widget, _wid), quit(_quit), fake(_fake)
+: qt_widget_rep (window_widget, _wid), fake(_fake), quit(_quit)
 {
   qwid->setProperty ("texmacs_window_widget",
                      QVariant::fromValue ((void*) this));
