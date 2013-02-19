@@ -56,7 +56,7 @@
   (-> "View" (link view-menu))
   (-> "Go" (link go-menu))
   (if (detailed-menus?) (-> "Tools" (link tools-menu)))
-  (if (with-remote-connections?) (-> "Remote" (link remote-menu)))
+  (if (nnull? remote-list) (-> "Remote" (link remote-menu)))
   (if (with-debugging-tool?) (-> "Debug" (link debug-menu)))
   (if (nnull? (test-menu)) (-> "Test" (link test-menu)))
   (-> "Scheme" (link scheme-menu))

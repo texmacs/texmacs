@@ -189,7 +189,6 @@
   (with-presentation-tool% (== (get-preference "presentation tool") "on"))
   (with-source-tool% (== (get-preference "source tool") "on"))
   (with-versioning-tool% (== (get-preference "versioning tool") "on"))
-  (with-remote-connections% (== (get-preference "remote connections") "on"))
   (in-presentation% (or (style-has? "beamer-style")
                         (== (get-preference "presentation tool") "on")
                         (inside? 'screens)))

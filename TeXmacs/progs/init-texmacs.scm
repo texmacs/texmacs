@@ -12,6 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define boot-start (texmacs-time))
+(define remote-list (list))
+
 (define developer-mode?
   (equal? (cpp-get-preference "developer tool" "off") "on"))
 
@@ -248,16 +250,16 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting remote facilities\n")
-(lazy-define (remote tmfs-remote) remote-load remote-save
-             remote-title remote-permission? remote-project-load-by-name)
-(lazy-menu (remote remote-menu) remote-menu)
-(lazy-menu (remote chat-menu) chat-menu)
-(lazy-menu (remote tmfs-menu) remote-file-menu)
-(tmfs-handler #t 'load remote-load)
-(tmfs-handler #t 'save remote-save)
-(tmfs-handler #t 'title remote-title)
-(tmfs-handler #t 'permission? remote-permission?)
-(lazy-menu (remote texmacs-remote-menu) texmacs-remote-menu)
+;; (lazy-define (remote tmfs-remote) remote-load remote-save
+;;              remote-title remote-permission? remote-project-load-by-name)
+;; (lazy-menu (remote remote-menu) remote-menu)
+;; (lazy-menu (remote chat-menu) chat-menu)
+;; (lazy-menu (remote tmfs-menu) remote-file-menu)
+;; (tmfs-handler #t 'load remote-load)
+;; (tmfs-handler #t 'save remote-save)
+;; (tmfs-handler #t 'title remote-title)
+;; (tmfs-handler #t 'permission? remote-permission?)
+(lazy-menu (remote texmacs-remote-menu) texmacs-remote-menu remote-menu)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting linking facilities\n")

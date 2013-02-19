@@ -89,7 +89,6 @@
   ("presentation tool" "off" notify-tool)
   ("source tool" "off" notify-tool)
   ("versioning tool" "off" notify-tool)
-  ("remote connections" "off" notify-tool)
   ("experimental alpha" "off" notify-tool))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

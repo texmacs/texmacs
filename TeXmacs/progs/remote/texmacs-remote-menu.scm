@@ -28,3 +28,6 @@
   (group "Remote")
   ("New account" (interactive client-new-account))
   ("Login" (interactive client-login)))
+
+(menu-bind remote-menu
+  ("Logout" (noop)))
