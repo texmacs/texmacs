@@ -259,7 +259,8 @@
 ;; (tmfs-handler #t 'save remote-save)
 ;; (tmfs-handler #t 'title remote-title)
 ;; (tmfs-handler #t 'permission? remote-permission?)
-(lazy-menu (remote texmacs-remote-menu) texmacs-remote-menu remote-menu)
+(lazy-menu (client client-menu) client-menu remote-menu)
+(lazy-menu (server server-menu) server-menu)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting linking facilities\n")

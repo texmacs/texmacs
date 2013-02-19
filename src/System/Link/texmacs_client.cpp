@@ -25,7 +25,7 @@ static bool clients_started= false;
 int
 client_start (string host) {
   if (!clients_started) {
-    (void) eval ("(use-modules (remote texmacs-client))");
+    (void) eval ("(use-modules (client client-base))");
     clients_started= true;
   }
   weak_socket_link client=

@@ -23,7 +23,7 @@ static socket_server_rep* the_server= NULL;
 void
 server_start () {
   if (the_server == NULL) {
-    (void) eval ("(use-modules (remote texmacs-server))");
+    (void) eval ("(use-modules (server server-base))");
     the_server= tm_new<socket_server_rep> (6561);
   }
   if (!the_server->alive)

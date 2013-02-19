@@ -58,8 +58,10 @@
           ("Pop server settings" (interactive email-settings))))
   (-> "Project"
       (link project-manage-menu))
-  (-> "Remote"
-      (link texmacs-remote-menu))
+  (-> "Server"
+      (link server-menu))
+  (-> "Client"
+      (link client-menu))
   (-> "Statistics"
       ("Count characters" (show-character-count))
       ("Count words" (show-word-count))

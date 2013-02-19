@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : remote-remote-menu.scm
+;; MODULE      : client-menu.scm
 ;; DESCRIPTION : menus for remote TeXmacs services
 ;; COPYRIGHT   : (C) 2013  Joris van der Hoeven
 ;;
@@ -11,9 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (remote remote-texmacs-menu)
-  (:use (remote texmacs-server)
-	(remote texmacs-client)))
+(texmacs-module (client client-menu)
+  (:use (client client-base)))
 
 ;;(menu-bind account-menu
 ;;  ("Nickname" (remote-interactive-set-user-property "Nickname"))
@@ -21,11 +20,7 @@
 ;;  ("Email address" (remote-interactive-set-user-property "Email"))
 ;;  ("Home page" (remote-interactive-set-user-property "Web")))
 
-(menu-bind texmacs-remote-menu
-  (group "Local")
-  ("Start server" (server-start))
-  ("Set user information" (interactive server-set-user-information))
-  (group "Remote")
+(menu-bind client-menu
   ("New account" (interactive client-new-account))
   ("Login" (interactive client-login)))
 
