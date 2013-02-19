@@ -254,6 +254,11 @@ socket_callback (void *obj, void* info) {
 #ifndef __MINGW32__
   (void) info;
   socket_link_rep* con= (socket_link_rep*) obj;
+  if (!con->alive) {
+    //cout << "con= " << con << ", " << con->alive << ", " << con->io << "\n";
+    system_warning ("invalid callback invocation of deleted socket link");
+    return;
+  }
   bool busy= true;
   bool news= false;
   while (busy) {
