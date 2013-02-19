@@ -397,11 +397,12 @@
   ("Running author" (make-doc-data-element 'doc-running-author)))
 
 (tm-menu (focus-title-option-menu)
-  ("No clustering" (set-doc-title-clustering #f))
-  ("Maximal clustering" (set-doc-title-clustering "cluster-all"))
-  ;;("Cluster by affiliation"
-  ;; (set-doc-title-clustering "cluster-by-affiliation"))
-  )
+  ("No clustering"
+   (set-doc-title-clustering #f))
+  ("Cluster by affiliation"
+   (set-doc-title-clustering "cluster-by-affiliation"))
+  ("Maximal clustering"
+   (set-doc-title-clustering "cluster-all")))
 
 (tm-menu (focus-title-icons)
   (assuming (doc-data-has-hidden?)

@@ -52,6 +52,7 @@
   (set! name (add-author-refs name author data :notes 'author-affiliation))
   (set! name (add-author-refs name author data :notes 'author-email))
   (set! name (add-author-refs name author data :notes 'author-homepage))
+  (set! name (add-author-refs name author data :notes 'author-misc))
   (set! name (add-author-refs name author data :footnotes 'author-note))
   name)
 
@@ -76,3 +77,56 @@
                    (adata `(author-data (author-name ,uname) ,@notes))
                    (uauthor `(doc-author ,adata)))
               `(,(tm-label t) ,@other ,uauthor ,@fnotes)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Factor by affiliation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (assoc-add-to-group t key val)
+  (with old (or (assoc-ref t key) (list))
+    (assoc-set! t key (cons val old))))
+
+(tm-define (list-group l fun)
+  (with t '()
+    (for-each (lambda (x) (set! t (assoc-add-to-group t (fun x) x))) l)
+    (map reverse (map cdr (reverse t)))))
+
+(define (get-affiliations author)
+  (map tm->stree (select author '(author-affiliation))))
+
+(define (remove-affiliations adata)
+  (with fields (select adata '((:exclude author-affiliation)))
+    `(,(tm-label adata) ,@fields)))
+
+(define (rewrite-by-affiliation-bis group data)
+  (ahash-set! data :notes '())
+  (let* ((affs (select (car group) '(author-affiliation)))
+         (clean-authors (map remove-affiliations group))
+         (names (build-authors-refs clean-authors data))
+         (notes (reverse (ahash-ref data :notes)))
+         (uname `(concat ,@(list-intersperse names ", ")))
+         (adata `(author-data (author-name ,uname) ,@affs ,@notes))
+         (uauthor `(doc-author ,adata)))
+    uauthor))
+
+(define ((rewrite-by-affiliation data) group)
+  (if (null? (cdr group))
+      (let* ((f (car group))
+             (l '(author-email author-homepage author-misc))
+             (notes  (select f `((:or ,@l))))
+             (nnotes (select f '((:exclude author-email))))
+             (nf `(,(tm-label f) ,@nnotes))
+             (rewr (rewrite-by-affiliation-bis (list nf) data)))
+        `(doc-author (author-data ,@(cdadr rewr) ,@notes)))
+      (rewrite-by-affiliation-bis group data)))
+
+(tm-define (factor-affiliation t)
+  (with authors (select t '(doc-author author-data))
+    (if (<= (length authors) 1) t
+        (with groups (list-group authors get-affiliations)
+          (with data (make-ahash-table)
+            (ahash-set! data :footnotes '())
+            (let* ((other (select t '((:exclude doc-author))))
+                   (new-authors (map (rewrite-by-affiliation data) groups))
+                   (fnotes (reverse (ahash-ref data :footnotes))))
+              `(,(tm-label t) ,@other ,@new-authors ,@fnotes)))))))
