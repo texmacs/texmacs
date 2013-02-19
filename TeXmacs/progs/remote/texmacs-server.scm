@@ -42,11 +42,6 @@
   (with (client msg-id) envelope
     (server-send client `(client-remote-error ,msg-id ,error-msg))))
 
-(tm-service (remote-eval cmd)
-  (with ret (eval cmd)
-    ;; (display* "remote-eval " cmd " -> " ret "\n")
-    (server-return envelope ret)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Establishing and finishing connections with clients
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -148,7 +143,7 @@
       (with uid (create-unique-id)
 	(server-set-user-info uid id passwd email admin))))
 
-(tm-service (server-new-user envelope id passwd email)
+(tm-service (new-account id passwd email)
   (if (server-find-user id)
       (server-error envelope "user already exists")
       (with ret (server-create-user id passwd email #f)
@@ -160,7 +155,13 @@
 
 (define server-logged-table (make-ahash-table))
 
-(tm-service (server-log-in envelope id passwd)
+(tm-define (server-check-admin? envelope)
+  (with client (car envelope)
+    (and-with uid (ahash-ref server-logged-table client)
+      (with (id passwd email admin) (ahash-ref server-users uid)
+	admin))))
+
+(tm-service (remote-login id passwd)
   (with uid (server-find-user id)
     (if (not uid) (server-error envelope "user not found")
 	(with (id2 passwd2 email2 admin2) (ahash-ref server-users uid)
@@ -169,8 +170,9 @@
 		(ahash-set! server-logged-table client uid)
 		(server-return envelope "ready")))))))
 
-(tm-define (server-check-admin? envelope)
-  (with client (car envelope)
-    (and-with uid (ahash-ref server-logged-table client)
-      (with (id passwd email admin) (ahash-ref server-users uid)
-	admin))))
+(tm-service (remote-eval cmd)
+  (if (server-check-admin? envelope)
+      (with ret (eval cmd)
+        ;; (display* "remote-eval " cmd " -> " ret "\n")
+        (server-return envelope ret))
+      (server-error envelope "execution of commands is not allowed")))

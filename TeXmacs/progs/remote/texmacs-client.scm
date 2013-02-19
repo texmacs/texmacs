@@ -82,23 +82,62 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define client-continuations (make-ahash-table))
+(define client-error-handlers (make-ahash-table))
 
-(tm-define (client-remote-eval server cmd cont)
-  (ahash-set! client-continuations client-serial (list server cont))
-  (client-send server cmd))
+(define (std-client-error msg)
+  (texmacs-error "client-remote-error" "remote error ~S" msg))
+
+(tm-define (client-remote-eval server cmd cont . opt-err-handler)
+  (with err-handler std-client-error
+    (if (nnull? opt-err-handler) (set! err-handler (car opt-err-handler)))
+    (ahash-set! client-continuations client-serial (list server cont))
+    (ahash-set! client-error-handlers client-serial (list server err-handler))
+    (client-send server cmd)))
+
+(tm-define (client-remote-eval* server cmd cont)
+  (client-remote-eval server cmd cont cont))
 
 (tm-call-back (client-remote-result msg-id ret)
   (with server (car envelope)
     (and-with val (ahash-ref client-continuations msg-id)
       (ahash-remove! client-continuations msg-id)
+      (ahash-remove! client-error-handlers msg-id)
       (with (orig-server cont) val
         (when (== server orig-server)
           (cont ret))))))
 
 (tm-call-back (client-remote-error msg-id err-msg)
   (with server (car envelope)
-    (and-with val (ahash-ref client-continuations msg-id)
+    (and-with val (ahash-ref client-error-handlers msg-id)
       (ahash-remove! client-continuations msg-id)
-      (with (orig-server cont) val
+      (ahash-remove! client-error-handlers msg-id)
+      (with (orig-server err-handler) val
         (when (== server orig-server)
-          (texmacs-error "client-remote-error" "remote error ~S" err-msg))))))
+          (err-handler err-msg))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Logging in
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (client-new-account server-name id passwd email)
+  (:argument server-name "Server")
+  (:argument id "User ID")
+  (:argument passwd "password" "Password")
+  (:argument email "Email address")
+  (with server (client-start server-name)
+    (when (!= server -1)
+      (enter-secure-mode server)
+      (client-remote-eval* server `(new-account ,id ,passwd ,email)
+                           (lambda (msg)
+                             (set-message msg "creating new account")
+                             (client-stop server))))))
+
+(tm-define (client-login server-name id passwd)
+  (:argument server-name "Server")
+  (:argument id "User ID")
+  (:argument passwd "password" "Password")
+  (with server (client-start server-name)
+    (when (!= server -1)
+      (enter-secure-mode server)
+      (client-remote-eval* server `(remote-login ,id ,passwd)
+                           (lambda (ret) (set-message ret "logging in"))))))
