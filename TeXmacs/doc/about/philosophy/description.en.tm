@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.9>
+<TeXmacs|1.0.7.18>
 
 <style|tmdoc>
 
@@ -26,10 +26,10 @@
   printed as <name|Postscript> or <name|Pdf> files. Converters exist for
   <TeX>/<LaTeX> and <name|Html>/<name|Mathml>.
 
-  GNU <TeXmacs> is hosted by the <hlink|Centre de Ressources Informatiques de
-  Haute Savoie|http://www.cri74.org>, Archamps, France.
+  GNU <TeXmacs> is by <hlink|INRIA|http://www.inria.fr>, Bâtiment Allan
+  Turing, Palaiseau, France.
 
-  <tmdoc-copyright|1998--2005|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2013|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
