@@ -21,6 +21,7 @@
 #include "file.hpp"
 #include "tmfs.hpp"
 #include "Freetype/tt_tools.hpp"
+#include "Sqlite3/sqlite3.hpp"
 
 tmscm 
 blackboxP (tmscm  t) {

@@ -14,5 +14,6 @@
 #include "url.hpp"
 
 bool sqlite3_present ();
+tree sql_exec (url db_name, string cmd);
 
 #endif // SQLITE3_H

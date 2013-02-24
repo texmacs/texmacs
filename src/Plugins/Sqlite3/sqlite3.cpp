@@ -12,6 +12,7 @@
 #include "Sqlite3/sqlite3.hpp"
 #include "dyn_link.hpp"
 #include "hashmap.hpp"
+#include "analyze.hpp"
 
 #ifdef USE_SQLITE3
 
@@ -82,13 +83,62 @@ tm_sqlite3_initialize () {
 * Functionality provided by the plug-in
 ******************************************************************************/
 
-hashmap<tree,tree> sqlite3_size_cache ("");
-
 bool
 sqlite3_present () {
   if (!sqlite3_initialized)
     tm_sqlite3_initialize ();
   return !sqlite3_error;
+}
+
+hashmap<tree,pointer> sqlite3_connections (NULL);
+
+tree
+sql_exec (url db_name, string cmd) {
+  if (!sqlite3_initialized)
+    tm_sqlite3_initialize ();
+  string name= concretize (db_name);
+  if (!sqlite3_connections->contains (name)) {
+    char* _name= as_charp (name);
+    sqlite3* db= NULL;
+    //cout << "Opening " << _name << "\n";
+    int status= SQLITE3_open (_name, &db);
+    tm_delete_array (_name);
+    if (status == SQLITE_OK)
+      sqlite3_connections (name) = (void*) db;
+  }
+  if (!sqlite3_connections->contains (name)) {
+    cout << "TeXmacs] SQL error: database " << name << " could not be opened\n";
+    return tree (TUPLE);
+  }
+  tree ret (TUPLE);
+  sqlite3* db= (sqlite3*) sqlite3_connections [name];
+  char* _cmd= as_charp (cork_to_utf8 (cmd));
+  char** tab;
+  int rows, cols;
+  char* err;
+  //cout << "Executing " << _cmd << "\n";
+  int status= SQLITE3_get_table (db, _cmd, &tab, &rows, &cols, &err);
+
+  if (status != SQLITE_OK) {
+    // TODO: improve error handling
+    cout << "TeXmacs] SQL error\n";
+    if (err != NULL) cout << "TeXmacs] " << err << "\n";
+  }
+
+  for (int r=0; r<=rows; r++) {
+    tree row (TUPLE);
+    for (int c=0; c<cols; c++) {
+      int i= r*cols + c;
+      if (tab[i] == NULL) row << tree (TUPLE);
+      else row << tree (scm_quote (utf8_to_cork (string (tab[i]))));
+    }
+    ret << row;
+  }
+
+  SQLITE3_free_table (tab);
+  tm_delete_array (_cmd);
+  //cout << "Return " << ret << "\n";
+  return ret;
 }
 
 #else // USE_SQLITE3
@@ -97,6 +147,9 @@ sqlite3_present () {
 * If Sqlite3 is not present...
 ******************************************************************************/
 
-bool sqlite3_present () { return false; }
+bool sqlite3_present () {
+  return false; }
+tree sql_exec (url db_name, string cmd) {
+  (void) db_name; (void) cmd; return tree (TUPLE); }
 
 #endif // USE_SQLITE3

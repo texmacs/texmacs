@@ -435,6 +435,9 @@
   (tmfs-import tmfs_import (void url))
   (tmfs-export tmfs_export (void url))
 
+  ;; SQL interface
+  (sql-exec sql_exec (scheme_tree url string))
+
   ;; TeXmacs servers and clients
   (server-start server_start (void))
   (server-stop server_stop (void))
