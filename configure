@@ -671,6 +671,8 @@ QT_FRAMEWORKS_PATH
 MACOSX_DEPLOYMENT_TARGET
 CONFIG_MACOS
 CONFIG_EXPERIMENTAL
+SQLITE3_LDFLAGS
+SQLITE3_CFLAGS
 GS_DLL
 GS_EXE
 CONFIG_GS
@@ -771,6 +773,7 @@ with_cairo
 with_imlib2
 with_axel
 with_gs
+with_sqlite3
 enable_fastalloc
 enable_experimental
 enable_macosx_extensions
@@ -1442,6 +1445,7 @@ Optional Packages:
   --with-imlib2=ARG       with imlib2 support ARG=no
   --with-axel=ARG         with axel support ARG=no
   --with-gs=ARG           with ghostscript support ARG=yes
+  --with-sqlite3=ARG      with sqlite3 support ARG=no
   --with-qt               Path to Qt [Look in PATH and /usr/local/Trolltech]
 
 Some influential environment variables:
@@ -6131,6 +6135,79 @@ else
 $as_echo "disabling ghostscript support" >&6; }
 fi
 fi
+
+#--------------------------------------------------------------------
+# Checks for sqlite3 library
+#--------------------------------------------------------------------
+
+
+# Check whether --with-sqlite3 was given.
+if test "${with_sqlite3+set}" = set; then :
+  withval=$with_sqlite3;
+fi
+
+
+SAVE_CPPFLAGS="$CPPFLAGS"
+SAVE_LDFLAGS="$LDFLAGS"
+SAVE_LIBS="$LIBS"
+if test "$with_sqlite3" = "no" -o "$with_sqlite3" = "" ; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling sqlite3 support" >&5
+$as_echo "disabling sqlite3 support" >&6; }
+else
+    CPPFLAGS=`pkg-config --cflags sqlite3`
+    LIBS=`pkg-config --libs sqlite3`
+    ac_fn_cxx_check_header_mongrel "$LINENO" "sqlite3.h" "ac_cv_header_sqlite3_h" "$ac_includes_default"
+if test "x$ac_cv_header_sqlite3_h" = xyes; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for sqlite3" >&5
+$as_echo_n "checking for sqlite3... " >&6; }
+    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <sqlite3.h>
+
+int
+main ()
+{
+
+    int res= sqlite3_threadsafe ();
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+$as_echo "#define USE_SQLITE3 1" >>confdefs.h
+
+    SQLITE3_CFLAGS="$CPPFLAGS"
+    if test "$with_sqlite3" = "linked" ; then
+      SQLITE3_LDFLAGS="$LIBS"
+
+$as_echo "#define LINKED_SQLITE3 1" >>confdefs.h
+
+    fi
+
+else
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+fi
+
+
+fi
+
+CPPFLAGS="$SAVE_CPPFLAGS"
+LDFLAGS="$SAVE_LDFLAGS"
+LIBS="$SAVE_LIBS"
+
+
+
 
 #--------------------------------------------------------------------
 # Fixes for erroneous behaviour of gcc/g++ and guile on some systems

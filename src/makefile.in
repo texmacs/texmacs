@@ -36,6 +36,7 @@ CXXGUI = $(CXX@CONFIG_GUI@)
 CXXAXEL = @AXEL_CFLAGS@
 CXXCAIRO = @CAIRO_CFLAGS@
 CXXIMLIB2 = @IMLIB2_CFLAGS@
+CXXSQLITE3 = @SQLITE3_CFLAGS@
 CXXFREETYPE = @FREETYPE_CFLAGS@
 CXXICONV = @ICONV_CFLAGS@
 CXXGUILE = @GUILE_CFLAGS@
@@ -53,6 +54,7 @@ LDGUI = $(LD@CONFIG_GUI@)
 LDAXEL = @AXEL_LDFLAGS@
 LDCAIRO = @CAIRO_LDFLAGS@
 LDIMLIB2 = @IMLIB2_LDFLAGS@
+LDSQLITE3 = @SQLITE3_LDFLAGS@
 LDFREETYPE = @FREETYPE_LDFLAGS@
 LDICONV = @ICONV_LDFLAGS@
 LDGUILE = @GUILE_LDFLAGS@
@@ -97,7 +99,7 @@ kernel_src   := $(call findsrc,Kernel)
 system_src   := $(call findsrc,System)
 data_src     := $(call findsrc,Data)
 graphics_src := $(call findsrc,Graphics)
-plugins_src  := $(call findsrc_in,Plugins,Bibtex Cairo Imlib2 \
+plugins_src  := $(call findsrc_in,Plugins,Bibtex Cairo Imlib2 Sqlite3 \
                                           Ispell Metafont Openssl @CONFIG_PDF@)
 plugins_c_src:= $(call findc_in,Plugins,@CONFIG_PDF@)
 x11_src      := $(call findsrc_in,Plugins,@CONFIG_X11@)
@@ -206,7 +208,7 @@ deps_incl = $(call incl_flags,System System/Boot System/Classes System/Files \
   Graphics/Gui Graphics/Mathematics Graphics/Renderer Graphics/Handwriting)
 
 deps_flags = $(deps_incl) \
- $(CPPFLAGS) $(CXXAXEL) $(CXXCAIRO) $(CXXIMLIB2) $(CXXFREETYPE) \
+ $(CPPFLAGS) $(CXXAXEL) $(CXXCAIRO) $(CXXIMLIB2) $(CXXSQLITE3) $(CXXFREETYPE) \
  $(CXXICONV) $(CXXGUILE) -I$(tmsrc)/include $(CXXGUI)
 # we should use -I- to separate local includes from system includes, but
 # headers of guile 1.6.0 use includes in quotes with names relative to the
@@ -293,7 +295,7 @@ $(scheme_obj): Objects/%.o: %.cpp
 $(graphics_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(graphics_incl))
 $(plugins_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(plugins_incl) $(CXXAXEL) $(CXXCAIRO) $(CXXIMLIB2) $(CXXICONV))
+	$(call cxx_incl,$(plugins_incl) $(CXXAXEL) $(CXXCAIRO) $(CXXIMLIB2) $(CXXSQLITE3) $(CXXICONV))
 $(plugins_c_obj): Objects/%.o: %.c
 	$(call cc_incl,$(plugins_incl))
 $(x11_obj): Objects/%.o: %.cpp
@@ -380,7 +382,7 @@ TEXMACS_objects := $(strip $(call uses,system kernel data graphics\
  plugins x11 os qt gs cocoa style typeset edit scheme texmacs freetype))
 
 link_options:=-L$(tmsrc)/lib $(LDRT) -lm $(LDPATH) $(LDGUI) $(LDGUILE) \
-  $(LDAXEL) $(LDCAIRO) $(LDIMLIB2) $(LDFREETYPE) $(LDICONV) $(LDDL)
+  $(LDAXEL) $(LDCAIRO) $(LDIMLIB2) $(LDSQLITE3) $(LDFREETYPE) $(LDICONV) $(LDDL)
 
 $(tmsrc)/bin/texmacs.bin: Objects/texmacs-$(link).bin
 	$(CP) $^ $@

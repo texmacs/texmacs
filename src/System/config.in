@@ -81,6 +81,9 @@
 /* Link imlib2 library with TeXmacs */
 #undef LINKED_IMLIB2
 
+/* Link sqlite3 library with TeXmacs */
+#undef LINKED_SQLITE3
+
 /* Enabling Mac OSX extensions */
 #undef MACOSX_EXTENSIONS
 
@@ -137,6 +140,9 @@
 
 /* Use imlib2 library */
 #undef USE_IMLIB2
+
+/* Use sqlite3 library */
+#undef USE_SQLITE3
 
 /* Use C++ stack backtraces */
 #undef USE_STACK_TRACE
