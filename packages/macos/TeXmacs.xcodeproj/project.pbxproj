@@ -27,6 +27,9 @@
 		49896901152B981400DB1E9E /* TeXmacs.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9C61B42A141A1B780035D78F /* TeXmacs.icns */; };
 		49D662FC128B331A0006E948 /* QTMFileDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D662FA128B331A0006E948 /* QTMFileDialog.cpp */; };
 		49D662FD128B333F0006E948 /* QTMFileDialog.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D662FB128B331A0006E948 /* QTMFileDialog.hpp */; };
+		49DD8FA916DB75C100647CA2 /* sqlite3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49DD8FA716DB75C100647CA2 /* sqlite3.cpp */; };
+		49DD8FAA16DB75C100647CA2 /* sqlite3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49DD8FA716DB75C100647CA2 /* sqlite3.cpp */; };
+		49DD8FAB16DB75C100647CA2 /* sqlite3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49DD8FA716DB75C100647CA2 /* sqlite3.cpp */; };
 		49EAD66C128AC177009919E5 /* QTMGuiHelper.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EAD66B128AC168009919E5 /* QTMGuiHelper.hpp */; };
 		49F251D4151B70840091FF99 /* persistent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F251D2151B70840091FF99 /* persistent.cpp */; };
 		49F251D5151B70840091FF99 /* persistent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F251D2151B70840091FF99 /* persistent.cpp */; };
@@ -1169,6 +1172,8 @@
 		4995276E161D908900940D97 /* wencoding.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = wencoding.hpp; sourceTree = "<group>"; };
 		49D662FA128B331A0006E948 /* QTMFileDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMFileDialog.cpp; sourceTree = "<group>"; };
 		49D662FB128B331A0006E948 /* QTMFileDialog.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMFileDialog.hpp; sourceTree = "<group>"; };
+		49DD8FA716DB75C100647CA2 /* sqlite3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sqlite3.cpp; sourceTree = "<group>"; };
+		49DD8FA816DB75C100647CA2 /* sqlite3.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = sqlite3.hpp; sourceTree = "<group>"; };
 		49DEECC01289A694002ACC66 /* qt_simple_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_simple_widget.cpp; sourceTree = "<group>"; };
 		49EAD66B128AC168009919E5 /* QTMGuiHelper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMGuiHelper.hpp; sourceTree = "<group>"; };
 		49F251D2151B70840091FF99 /* persistent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = persistent.cpp; sourceTree = "<group>"; };
@@ -2046,6 +2051,15 @@
 			path = ../..;
 			sourceTree = "<group>";
 		};
+		49DD8FA616DB75C100647CA2 /* Sqlite3 */ = {
+			isa = PBXGroup;
+			children = (
+				49DD8FA716DB75C100647CA2 /* sqlite3.cpp */,
+				49DD8FA816DB75C100647CA2 /* sqlite3.hpp */,
+			);
+			path = Sqlite3;
+			sourceTree = "<group>";
+		};
 		9C0B09A514FF0A1C004ABDCE /* Handwriting */ = {
 			isa = PBXGroup;
 			children = (
@@ -2515,8 +2529,6 @@
 		9C0B484710A8CC100097A335 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
-				9C82C0FF11ED2CC200BC4BBE /* Pdf */,
-				9C722C0C10D2F88800C41915 /* Unix */,
 				9C0B484810A8CC100097A335 /* Axel */,
 				9C0B484B10A8CC100097A335 /* Bibtex */,
 				9C0B484E10A8CC100097A335 /* Cairo */,
@@ -2529,7 +2541,10 @@
 				9C0B488B10A8CC100097A335 /* Metafont */,
 				9C0B489710A8CC100097A335 /* Mplayer */,
 				9C0B489A10A8CC100097A335 /* Openssl */,
+				9C82C0FF11ED2CC200BC4BBE /* Pdf */,
 				9C0B489D10A8CC100097A335 /* Qt */,
+				49DD8FA616DB75C100647CA2 /* Sqlite3 */,
+				9C722C0C10D2F88800C41915 /* Unix */,
 				9C0B48BF10A8CC100097A335 /* Widkit */,
 				9C0B48F810A8CC100097A335 /* X11 */,
 			);
@@ -4271,6 +4286,7 @@
 				9C6632E81676B272000D7974 /* preferences.cpp in Sources */,
 				9C6632EF1676B28E000D7974 /* tt_tools.cpp in Sources */,
 				4942BEF71679293B00A6C354 /* font_select.cpp in Sources */,
+				49DD8FA916DB75C100647CA2 /* sqlite3.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4628,6 +4644,7 @@
 				9C6632EA1676B272000D7974 /* preferences.cpp in Sources */,
 				9C6632F11676B28E000D7974 /* tt_tools.cpp in Sources */,
 				4942BEF91679293B00A6C354 /* font_select.cpp in Sources */,
+				49DD8FAB16DB75C100647CA2 /* sqlite3.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5013,6 +5030,7 @@
 				9C6632E91676B272000D7974 /* preferences.cpp in Sources */,
 				9C6632F01676B28E000D7974 /* tt_tools.cpp in Sources */,
 				4942BEF81679293B00A6C354 /* font_select.cpp in Sources */,
+				49DD8FAA16DB75C100647CA2 /* sqlite3.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
