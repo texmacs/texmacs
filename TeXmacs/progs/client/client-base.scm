@@ -119,6 +119,17 @@
 ;; Logging in
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define client-active-connections (make-ahash-table))
+
+(tm-define (client-find-server server-name)
+  (ahash-ref client-active-connections server-name))
+
+(tm-define (client-find-server-name server)
+  (and-with p (ahash-ref client-active-connections server) (car p)))
+
+(tm-define (client-active-servers)
+  (list-filter (active-servers) client-find-server-name))
+
 (tm-define (client-new-account server-name id passwd email)
   (:argument server-name "Server")
   (:argument id "User ID")
@@ -138,6 +149,9 @@
   (:argument passwd "password" "Password")
   (with server (client-start server-name)
     (when (!= server -1)
+      (ahash-set! client-active-connections server (list server-name id))
+      (ahash-set! client-active-connections server-name server)
+      (set! remote-list (client-active-servers))
       (enter-secure-mode server)
       (client-remote-eval* server `(remote-login ,id ,passwd)
                            (lambda (ret) (set-message ret "logging in"))))))

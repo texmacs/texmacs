@@ -260,8 +260,9 @@
 ;; (tmfs-handler #t 'title remote-title)
 ;; (tmfs-handler #t 'permission? remote-permission?)
 (lazy-define (server server-resource) resource-set-user-info)
-(lazy-menu (client client-menu) client-menu remote-menu)
 (lazy-menu (server server-menu) server-menu)
+(lazy-menu (client client-menu) client-menu remote-menu)
+(lazy-tmfs-handler (client client-tmfs) remote-file)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting linking facilities\n")

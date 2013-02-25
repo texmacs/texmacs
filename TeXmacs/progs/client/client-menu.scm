@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (client client-menu)
-  (:use (client client-base)))
+  (:use (client client-base)
+        (client client-tmfs)))
 
 ;;(menu-bind account-menu
 ;;  ("Nickname" (remote-interactive-set-user-property "Nickname"))
@@ -24,5 +25,10 @@
   ("New account" (interactive client-new-account))
   ("Login" (interactive client-login)))
 
+(tm-menu (remote-submenu server)
+  (group (client-find-server-name server))
+  ("New remote file" (remote-create server "tm")))
+
 (menu-bind remote-menu
-  ("Logout" (noop)))
+  (for (server (client-active-servers))
+    (dynamic (remote-submenu server))))

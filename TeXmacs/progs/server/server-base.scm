@@ -17,7 +17,7 @@
 ;; Declaration of services
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public service-dispatch-table (make-ahash-table))
+(tm-define service-dispatch-table (make-ahash-table))
 
 (tm-define-macro (tm-service proto . body)
   (if (npair? proto) '(noop)
@@ -34,11 +34,11 @@
           (apply fun (cons envelope args))))
       (server-error envelope "invalid command")))
 
-(define (server-return envelope ret-val)
+(tm-define (server-return envelope ret-val)
   (with (client msg-id) envelope
     (server-send client `(client-remote-result ,msg-id ,ret-val))))
 
-(define (server-error envelope error-msg)
+(tm-define (server-error envelope error-msg)
   (with (client msg-id) envelope
     (server-send client `(client-remote-error ,msg-id ,error-msg))))
 
@@ -156,11 +156,14 @@
 
 (define server-logged-table (make-ahash-table))
 
-(tm-define (server-check-admin? envelope)
+(tm-define (server-get-user envelope)
   (with client (car envelope)
-    (and-with uid (ahash-ref server-logged-table client)
-      (with (id passwd email admin) (ahash-ref server-users uid)
-	admin))))
+    (and client (ahash-ref server-logged-table client))))
+
+(tm-define (server-check-admin? envelope)
+  (and-with uid (server-get-user envelope)
+    (with (id passwd email admin) (ahash-ref server-users uid)
+      admin)))
 
 (tm-service (remote-login id passwd)
   (with uid (server-find-user id)
