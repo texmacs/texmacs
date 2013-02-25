@@ -53,9 +53,15 @@ static bool sqlite3_error      = false;
 #define sqlite3_bind(orig,tm) \
   tm= orig;
 #else
+#ifdef OS_MACOS
+#define sqlite3_bind(orig,tm) \
+  (void) symbol_install ("/usr/lib/libsqlite3.dylib", #orig, (pointer&) tm); \
+  if (tm == NULL) return;
+#else
 #define sqlite3_bind(orig,tm) \
   (void) symbol_install ("libsqlite3.so", #orig, (pointer&) tm); \
   if (tm == NULL) return;
+#endif
 #endif
 
 void
