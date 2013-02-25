@@ -259,6 +259,7 @@
 ;; (tmfs-handler #t 'save remote-save)
 ;; (tmfs-handler #t 'title remote-title)
 ;; (tmfs-handler #t 'permission? remote-permission?)
+(lazy-define (server server-resource) resource-set-user-info)
 (lazy-menu (client client-menu) client-menu remote-menu)
 (lazy-menu (server server-menu) server-menu)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")

@@ -119,6 +119,7 @@
 (tm-define (server-set-user-info uid id passwd email admin)
   (server-load-users)
   (ahash-set! server-users uid (list id passwd email admin))
+  (resource-set-user-info uid id email)
   (server-save-users))
 
 (tm-define (server-set-user-information id passwd email admin)

@@ -42,7 +42,7 @@
   (server-sql "INSERT INTO props VALUES ('" rid "', '" attr "', '" val "')"))
 
 (tm-define (resource-remove rid attr val)
-  (server-sql "REMOVE FROM props WHERE rid='" rid
+  (server-sql "DELETE FROM props WHERE rid='" rid
               "' AND attr='" attr "', AND val='" val "'"))
 
 (tm-define (resource-set rid attr vals)
@@ -50,7 +50,7 @@
   (for-each (cut resource-insert rid attr <>) vals))
 
 (tm-define (resource-reset rid attr)
-  (server-sql "REMOVE FROM props WHERE rid='" rid "' AND attr='" attr "'"))
+  (server-sql "DELETE FROM props WHERE rid='" rid "' AND attr='" attr "'"))
 
 (tm-define (resource-attributes rid)
   (server-sql* "SELECT DISTINCT attr FROM props WHERE rid='" rid "'"))
@@ -59,14 +59,11 @@
   (server-sql* "SELECT DISTINCT val FROM props WHERE rid='" rid
                "' AND attr='" attr "'"))
 
-(tm-define (resource-initialize rid name type uid)
-  (resource-insert rid "name" name)
-  (resource-insert rid "type" type)
-  (resource-insert rid "owner" uid))
-
 (tm-define (resource-create name type uid)
   (with rid (create-unique-id)
-    (resource-initialize rid name type uid)
+    (resource-insert rid "name" name)
+    (resource-insert rid "type" type)
+    (resource-insert rid "owner" uid)
     rid))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -102,3 +99,39 @@
 
 (tm-define (resource-search-owner owner)
   (resource-search (list (list "owner" owner))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Access rights
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (resource-set-user-info uid id email)
+  (resource-set uid "id" (list id))
+  (resource-set uid "type" (list "user"))
+  (resource-set uid "owner" (list uid))
+  (resource-set uid "email" (list email)))
+
+(define (resource-allow-many? rids rdone uid udone attr)
+  (and (nnull? rids)
+       (or (resource-allow-one? (car rids) rdone uid udone attr)
+           (resource-allow-many? (cdr rids) rdone uid udone attr))))
+
+(define (resource-allow-groups? rid rdone uids udone attr)
+  (and (nnull? uids)
+       (or (resource-allow-one? rid rdone (car uids) udone attr)
+           (resource-allow-groups? rid rdone (cdr uids) udone attr))))
+
+(define (resource-allow-one? rid rdone uid udone attr)
+  (and (not (in? rid rdone))
+       (not (in? uid udone))
+       (or (== rid uid)
+           (== rid "all")
+           (with rids (append (resource-get rid attr)
+                              (resource-get rid "owner"))
+             (set! rids (list-remove-duplicates rids))
+             (set! rids (list-difference rids (cons rid rdone)))
+             (resource-allow-many? rids (cons rid rdone) uid udone attr))
+           (with grs (resource-get uid "member")
+             (resource-allow-groups? rid rdone grs (cons uid udone) attr)))))
+
+(tm-define (resource-allow? rid uid attr)
+  (resource-allow-one? rid (list) uid (list) attr))
