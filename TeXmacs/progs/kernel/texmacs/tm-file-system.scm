@@ -156,6 +156,10 @@
   (with i (string-index s #\/)
     (and i (substring s (+ i 1) (string-length s)))))
 
+(define-public (tmfs->list s)
+  (if (not (tmfs-pair? s)) (list s)
+      (cons (tmfs-car s) (tmfs->list (tmfs-cdr s)))))
+
 (define-public (url->tmfs-string u)
   (if (url-descends? u (get-texmacs-path))
       (with base (url-append (get-texmacs-path) "x")

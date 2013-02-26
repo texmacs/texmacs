@@ -24,8 +24,12 @@
      (style (tuple "generic"))
      (body (document ""))))
 
-(define (remote-set-document name doc)
+(define (remote-file-set name doc)
   (with fname (string-append "tmfs://remote-file/" name)
+    (buffer-set fname doc)))
+
+(define (remote-dir-set name doc)
+  (with fname (string-append "tmfs://remote-dir/" name)
     (buffer-set fname doc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -64,7 +68,7 @@
         (begin
           (client-remote-eval server `(remote-file-load ,name)
             (lambda (doc)
-              (remote-set-document name doc))
+              (remote-file-set name doc))
             (lambda (err)
               (set-message err "load remote file")))
           (set-message "loading..." "load remote file")
@@ -84,3 +88,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote directories
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tmfs-load-handler (remote-dir name)
+  (let* ((sname (car (tmfs->list name)))
+         (server (client-find-server sname)))
+    (if (not server)
+        (texmacs-error "remote-file" "invalid server")
+        (begin
+          (client-remote-eval server `(remote-dir-load ,name)
+            (lambda (doc)
+              (remote-dir-set name doc))
+            (lambda (err)
+              (set-message err "remote directory")))
+          (set-message "loading..." "remote directory")
+          (empty-document)))))

@@ -25,10 +25,11 @@
   ("New account" (interactive client-new-account))
   ("Login" (interactive client-login)))
 
-(tm-menu (remote-submenu server)
-  (group (client-find-server-name server))
-  ("New remote file" (remote-create server "tm")))
+(tm-menu (remote-submenu server sname)
+  (group sname)
+  ("New remote file" (remote-create server "tm"))
+  ("All files" (load-buffer (string-append "tmfs://remote-dir/" sname))))
 
 (menu-bind remote-menu
   (for (server (client-active-servers))
-    (dynamic (remote-submenu server))))
+    (dynamic (remote-submenu server (client-find-server-name server)))))
