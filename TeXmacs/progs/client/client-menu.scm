@@ -28,7 +28,9 @@
 (tm-menu (remote-submenu server sname)
   (group sname)
   ("New remote file" (remote-create server "tm"))
-  ("All files" (load-buffer (string-append "tmfs://remote-dir/" sname))))
+  ("All files" (load-buffer (string-append "tmfs://remote-dir/" sname)))
+  (when (has-client-properties? (current-buffer))
+    ("Properties" (open-client-properties-editor))))
 
 (menu-bind remote-menu
   (for (server (client-active-servers))

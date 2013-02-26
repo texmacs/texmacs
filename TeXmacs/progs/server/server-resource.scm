@@ -63,6 +63,12 @@
   (with l (resource-get rid attr)
     (if (null? l) default (car l))))
 
+(tm-define (resource-get-all rid)
+  (with t (make-ahash-table)
+    (for (attr (resource-attributes rid))
+      (ahash-set! t attr (resource-get rid attr)))
+    (ahash-table->list t)))
+
 (tm-define (resource-create name type uid)
   (with rid (create-unique-id)
     (if (nnull? (resource-get rid "type"))

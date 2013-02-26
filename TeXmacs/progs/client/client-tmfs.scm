@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (client client-tmfs)
-  (:use (client client-base)))
+  (:use (client client-base)
+        (client client-resource)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful subroutines
@@ -62,13 +63,16 @@
 
 (tmfs-load-handler (remote-file name)
   (let* ((sname (tmfs-car name))
-         (server (client-find-server sname)))
+         (server (client-find-server sname))
+         (fname (string-append "tmfs://remote-file/" name)))
     (if (not server)
         (texmacs-error "remote-file" "invalid server")
         (begin
           (client-remote-eval server `(remote-file-load ,name)
-            (lambda (doc)
-              (remote-file-set name doc))
+            (lambda (msg)
+              (with (doc props) msg
+                (resource-cache-set-all fname props)
+                (remote-file-set name doc)))
             (lambda (err)
               (set-message err "load remote file")))
           (set-message "loading..." "load remote file")

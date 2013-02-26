@@ -59,9 +59,10 @@
     (if (not uid) (server-error envelope "Error: not logged in")
         (let* ((rid (resource-create "Nameless remote file" "file" uid))
                (name (repository-add rid suffix)))
-          (display* "create rid= " rid "\n")
-          (display* "create name= " name "\n")
           (server-return envelope name)))))
+
+(define (first-leq? p1 p2)
+  (string<=? (car p1) (car p2)))
 
 (tm-service (remote-file-load rname)
   ;; FIXME: check access rights
@@ -72,8 +73,9 @@
           (if (not (url-exists? fname))
               (server-error envelope "Created new file")
               (let* ((tm (string-load fname))
-                     (doc (convert tm "texmacs-document" "texmacs-stree")))
-                (server-return envelope doc)))))))
+                     (doc (convert tm "texmacs-document" "texmacs-stree"))
+                     (props (sort (resource-get-all rid) first-leq?)))
+                (server-return envelope (list doc props))))))))
 
 (tm-service (remote-file-save rname doc)
   ;; FIXME: check access rights
