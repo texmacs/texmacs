@@ -135,12 +135,14 @@ init_user_dirs () {
   make_dir ("$TEXMACS_HOME_PATH/packages");
   make_dir ("$TEXMACS_HOME_PATH/plugins");
   make_dir ("$TEXMACS_HOME_PATH/progs");
+  make_dir ("$TEXMACS_HOME_PATH/server");
   make_dir ("$TEXMACS_HOME_PATH/styles");
   make_dir ("$TEXMACS_HOME_PATH/system");
   make_dir ("$TEXMACS_HOME_PATH/system/bib");
   make_dir ("$TEXMACS_HOME_PATH/system/cache");
   make_dir ("$TEXMACS_HOME_PATH/system/tmp");
   make_dir ("$TEXMACS_HOME_PATH/texts");
+  change_mode ("$TEXMACS_HOME_PATH/server", 7 << 6);
   change_mode ("$TEXMACS_HOME_PATH/system", 7 << 6);
   remove (url ("$TEXMACS_HOME_PATH/system/tmp") * url_wildcard ("*"));
 }

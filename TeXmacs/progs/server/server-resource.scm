@@ -18,7 +18,7 @@
 ;; Execution of SQL commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define sdb (url-concretize "$TEXMACS_HOME_PATH/system/server.db"))
+(define sdb (url-concretize "$TEXMACS_HOME_PATH/server/server.db"))
 
 (tm-define (server-init-database)
   (when (not (url-exists? sdb))
@@ -59,12 +59,19 @@
   (server-sql* "SELECT DISTINCT val FROM props WHERE rid='" rid
                "' AND attr='" attr "'"))
 
+(tm-define (resource-get-first rid attr default)
+  (with l (resource-get rid attr)
+    (if (null? l) default (car l))))
+
 (tm-define (resource-create name type uid)
   (with rid (create-unique-id)
-    (resource-insert rid "name" name)
-    (resource-insert rid "type" type)
-    (resource-insert rid "owner" uid)
-    rid))
+    (if (nnull? (resource-get rid "type"))
+        (resource-create name type uid)
+        (begin
+          (resource-insert rid "name" name)
+          (resource-insert rid "type" type)
+          (resource-insert rid "owner" uid)
+          rid))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Searching ressources

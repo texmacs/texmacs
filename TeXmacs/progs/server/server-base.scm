@@ -106,14 +106,14 @@
 
 (define (server-load-users)
   (when (== (ahash-size server-users) 0)
-    (with f "$TEXMACS_HOME_PATH/system/users.scm"
+    (with f "$TEXMACS_HOME_PATH/server/users.scm"
       (set! server-users
             (if (url-exists? f)
                 (list->ahash-table (load-object f))
                 (make-ahash-table))))))
 
 (define (server-save-users)
-  (with f "$TEXMACS_HOME_PATH/system/users.scm"
+  (with f "$TEXMACS_HOME_PATH/server/users.scm"
     (save-object f (ahash-table->list server-users))))
 
 (tm-define (server-set-user-info uid id passwd email admin)
@@ -141,7 +141,7 @@
 
 (tm-define (server-create-user id passwd email admin)
   (or (server-find-user id)
-      (with uid (create-unique-id)
+      (with uid (resource-create id "user" id)
 	(server-set-user-info uid id passwd email admin))))
 
 (tm-service (new-account id passwd email)
