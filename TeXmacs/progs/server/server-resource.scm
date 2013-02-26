@@ -63,12 +63,6 @@
   (with l (resource-get rid attr)
     (if (null? l) default (car l))))
 
-(tm-define (resource-get-all rid)
-  (with t (make-ahash-table)
-    (for (attr (resource-attributes rid))
-      (ahash-set! t attr (resource-get rid attr)))
-    (ahash-table->list t)))
-
 (tm-define (resource-create name type uid)
   (with rid (create-unique-id)
     (if (nnull? (resource-get rid "type"))
@@ -148,3 +142,51 @@
 
 (tm-define (resource-allow? rid uid attr)
   (resource-allow-one? rid (list) uid (list) attr))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; User interface for changing properties
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (server-reserved-attributes)
+  (list "type" "location" "date" "id"))
+
+(tm-define (resource-get-all rid)
+  (with t (make-ahash-table)
+    (for (attr (resource-attributes rid))
+      (ahash-set! t attr (resource-get rid attr)))
+    (ahash-table->list t)))
+
+(tm-define (resource-set-all rid props)
+  (let* ((old (resource-attributes rid))
+         (new (map car props))
+         (del (list-difference old (append new (server-reserved-attributes)))))
+    (for (attr del)
+      (resource-reset rid attr)))
+  (for (prop props)
+    (when (and (pair? prop) (list? (cdr prop))
+               (nin? (car prop) (server-reserved-attributes))
+               (or (!= (car prop) "owner") (nnull? (cdr prop))))
+      (resource-set rid (car prop) (cdr prop)))))
+
+(define (user-decode rid)
+  (resource-get-first rid "id" #f))
+
+(define (user-encode user)
+  (with l (resource-search (list (list "type" "user") (list "id" user)))
+    (and (pair? l) (car l))))
+
+(define (prop-decode x)
+  (with (attr . vals) x
+    (if (nin? attr '("owner" "readable" "writable")) x
+        (cons attr (list-difference (map user-decode vals) (list #f))))))
+
+(define (prop-encode x)
+  (with (attr . vals) x
+    (if (nin? attr '("owner" "readable" "writable")) x
+        (cons attr (list-difference (map user-encode vals) (list #f))))))
+
+(tm-define (resource-properties-decode l)
+  (map prop-decode l))
+
+(tm-define (resource-properties-encode l)
+  (map prop-encode l))

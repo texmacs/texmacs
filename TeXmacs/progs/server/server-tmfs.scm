@@ -74,7 +74,8 @@
               (server-error envelope "Created new file")
               (let* ((tm (string-load fname))
                      (doc (convert tm "texmacs-document" "texmacs-stree"))
-                     (props (sort (resource-get-all rid) first-leq?)))
+                     (raw-props (sort (resource-get-all rid) first-leq?))
+                     (props (resource-properties-decode raw-props)))
                 (server-return envelope (list doc props))))))))
 
 (tm-service (remote-file-save rname doc)
@@ -86,6 +87,17 @@
                (tm (convert doc "texmacs-stree" "texmacs-document")))
           (string-save tm fname)
           (server-return envelope rname)))))
+
+(tm-service (remote-set-properties rname props)
+  ;; FIXME: check access rights
+  (with uid (server-get-user envelope)
+    (if (not uid) (server-error envelope "Error: not logged in")
+        (let* ((rid (repository-rid (tmfs-cdr rname)))
+               (enc (resource-properties-encode props)))
+          (resource-set-all rid enc)
+          (let* ((new-props (resource-get-all rid))
+                 (dec (resource-properties-decode new-props)))
+            (server-return envelope dec))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote directories
