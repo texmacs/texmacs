@@ -441,9 +441,9 @@
 ;; LaTeX ----------
 
 (define-preference-names "texmacs->latex:encoding"
-  ("Strict Ascii" "ascii")
-  ("Cork charset with catcode definitions in preamble" "cork")
-  ("Utf-8 with inputenc LaTeX package" "utf-8"))
+  ("ascii" "Strict Ascii")
+  ("cork" "Cork charset with catcode definitions in preamble")
+  ("utf-8" "Utf-8 with inputenc LaTeX package"))
 
 (tm-widget (latex-preferences-widget)
   ===
