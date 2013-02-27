@@ -61,7 +61,7 @@
 
   <drd-props|doc-author|arity|<tuple|repeat|1|1>|border|no|accessible|all>
 
-  <drd-props|author-data|arity|<tuple|repeat|1|1>|border|no|accessible|all>
+  <drd-props|doc-title-options|arity|<tuple|repeat|1|1>|border|no|accessible|no>
 
   <drd-props|doc-misc|border|no>
 
@@ -74,6 +74,8 @@
   <drd-props|doc-running-title|arity|1|accessible|all>
 
   <drd-props|doc-running-author|arity|1|accessible|all>
+
+  <drd-props|author-data|arity|<tuple|repeat|1|1>|border|no|accessible|all>
 
   <drd-props|author-name|border|no>
 
@@ -278,6 +280,8 @@
       Miscellaneous.
     </src-comment>
   </active*>
+
+  <assign|doc-title-options|<macro|body|>>
 
   <assign|doc-inactive|<\macro|body>
     <\quasi>
