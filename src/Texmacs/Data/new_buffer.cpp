@@ -408,11 +408,8 @@ attach_subformat (tree t, url u, string fm) {
 }
 
 tree
-import_tree (url u, string fm) {
-  u= resolve (u, "fr");
+import_loaded_tree (string s, url u, string fm) {
   set_file_focus (u);
-  string s;
-  if (is_none (u) || load_string (u, s, false)) return "error";
   if (fm == "generic") fm= get_format (s, suffix (u));
   if (fm == "texmacs" && starts (s, "(document (TeXmacs")) fm= "stm";
   if (fm == "verbatim" && starts (s, "(document (TeXmacs")) fm= "stm";
@@ -421,6 +418,15 @@ import_tree (url u, string fm) {
   if (N (links) != 0)
     (void) call ("register-link-locations", object (u), object (links));
   return attach_subformat (t, u, fm);
+}
+
+tree
+import_tree (url u, string fm) {
+  u= resolve (u, "fr");
+  set_file_focus (u);
+  string s;
+  if (is_none (u) || load_string (u, s, false)) return "error";
+  return import_loaded_tree (s, u, fm);
 }
 
 bool

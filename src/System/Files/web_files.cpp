@@ -144,7 +144,11 @@ get_from_server (url u) {
   url tmp= url_temp ();
   (void) save_string (tmp, r, true);
 
-  return set_cache (u, tmp);
+  //return set_cache (u, tmp);
+  return tmp;
+  // FIXME: certain files could be cached, but others not
+  // for instance, files which are loaded in a delayed fashion
+  // would always be cached as empty files, which is erroneous.
 }
 
 bool

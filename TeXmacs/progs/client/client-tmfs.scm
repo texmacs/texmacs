@@ -25,13 +25,18 @@
      (style (tuple "generic"))
      (body (document ""))))
 
+(define (buffer-set-stm u doc)
+  (let* ((s (unescape-guile (object->string doc)))
+         (t (tree-import-loaded s u "stm")))
+    (buffer-set u t)))
+
 (define (remote-file-set name doc)
   (with fname (string-append "tmfs://remote-file/" name)
-    (buffer-set fname doc)))
+    (buffer-set-stm fname doc)))
 
 (define (remote-dir-set name doc)
   (with fname (string-append "tmfs://remote-dir/" name)
-    (buffer-set fname doc)))
+    (buffer-set-stm fname doc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote files

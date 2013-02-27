@@ -5875,6 +5875,23 @@ tmg_buffer_save (tmscm arg1) {
 }
 
 tmscm
+tmg_tree_import_loaded (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tree-import-loaded");
+  TMSCM_ASSERT_URL (arg2, TMSCM_ARG2, "tree-import-loaded");
+  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "tree-import-loaded");
+
+  string in1= tmscm_to_string (arg1);
+  url in2= tmscm_to_url (arg2);
+  string in3= tmscm_to_string (arg3);
+
+  // TMSCM_DEFER_INTS;
+  tree out= import_loaded_tree (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
 tmg_tree_import (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "tree-import");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "tree-import");
@@ -7012,6 +7029,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("buffer-load",  tmg_buffer_load, 1, 0, 0);
   tmscm_install_procedure ("buffer-export",  tmg_buffer_export, 3, 0, 0);
   tmscm_install_procedure ("buffer-save",  tmg_buffer_save, 1, 0, 0);
+  tmscm_install_procedure ("tree-import-loaded",  tmg_tree_import_loaded, 3, 0, 0);
   tmscm_install_procedure ("tree-import",  tmg_tree_import, 2, 0, 0);
   tmscm_install_procedure ("tree-export",  tmg_tree_export, 3, 0, 0);
   tmscm_install_procedure ("view-list",  tmg_view_list, 0, 0, 0);
