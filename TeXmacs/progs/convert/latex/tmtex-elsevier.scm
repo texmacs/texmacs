@@ -18,13 +18,15 @@
 ;; Initialization of elsevier style
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define elsevier-counter 0)
+(define note-counter 0)
+(define author-counter 0)
 (define elsevier-thanks '())
 (define elsevier-abstract #f)
 
 (tm-define (init-elsevier body)
   (:synopsis "Initialize Elsevier style")
-  (set! elsevier-counter 0)
+  (set! note-counter 0)
+  (set! author-counter 0)
   (set! elsevier-thanks '())
   (with l (select body '(:* abstract))
     (set! elsevier-abstract (and (nnull? l) (list-2? (car l)) (cadar l)))))
@@ -33,9 +35,19 @@
   (:mode elsevier-style?)
   (init-elsevier body))
 
-(define (elsevier-label)
-  (set! elsevier-counter (+ elsevier-counter 1))
-  (number->string elsevier-counter))
+(define (ref-note)
+  (number->string note-counter))
+
+(define (refstep-note)
+  (set! note-counter (+ note-counter 1))
+  (string-append "note-" (ref-note)))
+
+(define (ref-author)
+  (number->string author-counter))
+
+(define (refstep-author)
+  (set! author-counter (+ author-counter 1))
+  (string-append "author-" (ref-author)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Titles of documents
@@ -52,7 +64,7 @@
 	 (email (tmtex-select-data tag 'author-email))
 	 (homepage (tmtex-select-data tag 'author-homepage)))
     (when (nnull? note)
-      (let* ((label (elsevier-label))
+      (let* ((label (ref-note))
 	     (ref `(thanksref ,label))
 	     (thanks (elsevier-produce `(thanks (!option ,label)) note)))
 	(set! name (rcons name ref))
@@ -62,43 +74,121 @@
       ,@(elsevier-produce '(ead) email)
       ,@(elsevier-produce '(ead (!option "url")) homepage))))
 
+(define (tmtex-elsevier-title t)
+  `(title ,(tmtex `(!concat ,(cadr t) ,(list-notes)))))
+
+(define (list-notes)
+  (if (== note-counter 0) ""
+    (let* ((notes (map number->string (.. 1 (1+ note-counter))))
+           (notes (map (cut string-append "note-" <>) notes))
+           (notes (apply string-append (list-intersperse notes ","))))
+    `(tnoteref ,notes))))
+
+(define (tmtex-elsevier-note t)
+  `(tnotetext (!option ,(refstep-note)) ,(tmtex (cadr t))))
+
+;; TODO : declare a "\tdatetext macro
+(define (tmtex-elsevier-date t)
+  `(tdatetext (!option ,(refstep-note)) ,(tmtex (cadr t))))
+
+;; TODO : declare a "\tsubtitletext macro
+(define (tmtex-elsevier-subtitle t)
+  `(tsubtitletext (!option ,(refstep-note)) ,(tmtex (cadr t))))
+
+;; TODO : declare a "\tmisctext macro
+(define (tmtex-elsevier-misc t)
+  `(tmisctext (!option ,(refstep-note)) ,(tmtex (cadr t))))
+
+(define (tmtex-elsevier-auth-note t)
+  (if (string-starts? (third t) "authref-")
+    `(,(third t) (fntext (!option ,(third t)) ,(tmtex (fourth t)))) '()))
+
+(define (tmtex-elsevier-affiliation t)
+  `(,(third t) (address (!option ,(third t)) ,(tmtex (fourth t)))))
+
+(define (tmtex-elsevier-email t)
+  `(,(third t) (ead ,(tmtex (fourth t)))))
+
+(define (tmtex-elsevier-homepage t)
+  `(,(third t) (ead (!option "url") ,(tmtex (fourth t)))))
+
+(define (tmtex-elsevier-author-name t affref fnref)
+  (if (nnull? fnref)
+    (set! t `(!concat ,t (fnref ,(tex-concat* fnref)))))
+  `(author (!option ,(tex-concat* affref)) ,t))
+
+(define (elsevier-split-authors t)
+  (if (and (pair? t) (pair? (cdr t)) (func? (cadr t) 'concat))
+    (with l (filter (lambda (x) (!= ", " x)) (cdadr t))
+           (if (null? (filter (lambda (x) (not (func? x 'doc-note-ref))) l)) l `(,t))) `(,t)))
+
+(define (elsevier-get-names t)
+  (cond ((func? t 'doc-note-ref) (elsevier-get-names (cAr t)))
+        ((func? t 'author-name) (cadr t))
+        (else t)))
+
+(define (elsevier-get-name-refs t)
+  (cond ((func? t 'doc-note-ref) (append `(,(cADr t)) (elsevier-get-name-refs (cAr t))))
+        ((func? t 'author-name) (elsevier-get-name-refs (cadr t)))
+        (else '())))
+
+(define (tmtex-elsevier-author t auth-notes)
+  (if (or (npair? t) (npair? (cdr t)) (not (func? (cadr t) 'author-data))) '()
+    (let* ((datas        (cdadr t))
+           (author-names (apply append (map elsevier-split-authors (tmtex-select-args-by-func 'author-name datas))))
+           (names        (map tmtex (map elsevier-get-names author-names)))
+           (names-refs   (map elsevier-get-name-refs author-names))
+           (emails       (map tmtex-elsevier-email (tmtex-select-args-by-func 'author-email-note datas)))
+           (urls         (map tmtex-elsevier-homepage (tmtex-select-args-by-func 'author-homepage-note datas)))
+           (affiliations (map tmtex-elsevier-affiliation (tmtex-select-args-by-func 'author-affiliation-note datas)))
+           (author-stuff (map
+          (lambda (auth)
+            (let* ((auref (list-ref names-refs author-counter))
+                   (afref (filter (lambda (x) (in? x auref)) (map car affiliations)))
+                   (afref (list-intersperse afref ","))
+                   (fnref (filter (lambda (x) (in? x auref)) (map car auth-notes)))
+                   (fnref (list-intersperse fnref ","))
+                   (dummy (refstep-author)))
+          `(!paragraph
+            ,(tmtex-elsevier-author-name auth afref fnref)
+            ,@(map cadr (filter (lambda (email) (in? (car email) auref)) emails))
+            ,@(map cadr (filter (lambda (url)   (in? (car url)   auref)) urls))
+           ))) names))
+           (dummy        (begin (display "austuff: ") (write author-stuff) (newline) (newline) ""))
+           (affiliations (map cadr affiliations))
+           (auth-notes   (map cadr auth-notes))
+           )
+        `((!paragraph ,@author-stuff)
+          (!paragraph ,@affiliations)
+          (!paragraph ,@auth-notes)))))
+
 (tm-define (tmtex-doc-data s l)
   (:mode elsevier-style?)
-  (let* ((tag (cons s l))
-	 (title (tmtex-select-data tag 'doc-title))
-	 (note (tmtex-select-data tag 'author-note))
-	 (authors (map elsevier-author (select tag '(author-data))))
-	 (keywords (append-map cdr (select tag '(abstract-keywords))))
-	 (abstract (and elsevier-abstract (tmtex elsevier-abstract))))
-    (when (nnull? note)
-      (let* ((label (elsevier-label))
-	     (ref `(thanksref ,label))
-	     (thanks (elsevier-produce `(thanks (!option ,label)) note)))
-	(set! title (rcons title ref))
-	(set! elsevier-thanks (cons (car thanks) elsevier-thanks))))
-    (when (nnull? keywords)
-      (with l (list-intersperse (map tmtex keywords) '(!group (sep)))
-	(set! keywords `(((!begin "keyword") ,(tex-concat* l))))))
+  (write l) (newline) (newline)
+  (let* ((sal        (add-notes (single-author-list (cons s l))))
+         (dummy      (begin (display "sal: ") (write sal) (newline) (newline) ""))
+         (subtitles  (map tmtex-elsevier-subtitle (tmtex-select-args-by-func 'doc-subtitle l)))
+         (notes      (map tmtex-elsevier-note (tmtex-select-args-by-func 'doc-note l)))
+         (miscs      (map tmtex-elsevier-misc (tmtex-select-args-by-func 'doc-misc l)))
+         (dates      (map tmtex-elsevier-date (tmtex-select-args-by-func 'doc-date l)))
+         (auth-notes (filter nnull? (map tmtex-elsevier-auth-note (tmtex-select-args-by-func 'doc-footnote-text (cdr sal)))))
+         (dummy      (begin (display "notes     : ") (write notes     ) (newline) (newline) ""))
+         (auth-stuff (apply append (map (lambda (x) (tmtex-elsevier-author x auth-notes)) (tmtex-select-args-by-func 'doc-author (cdr sal)))))
+         (dummy      (begin (display "auth-stuff: ") (write auth-stuff) (newline) (newline) ""))
+         ;; titles needed in last position due to side effects
+         (titles     (map tmtex-elsevier-title (tmtex-select-args-by-func 'doc-title l))))
     `((!begin "frontmatter")
-       (!document
-	 ,@(elsevier-produce '(title) title)
-	 ,@(apply append authors)
-	 ,@elsevier-thanks
-	 ,@(if abstract `(((!begin "abstract") ,abstract)) '())
-	 ,@keywords))))
-
-(define (expand-doc-data s l)
-  (if (== s "doc-data") 
-    (doc-data (stree->tree `(doc-data ,@l)))
-    `(,(string->symbol s) ,@l)))
-
-(define (expand-author-data t)
-  (cond
-    ((npair? t) t)
-    ((== (car t) 'author-data) (author-data (stree->tree t)))
-    (else (cons (car t) (map expand-author-data (cdr t))))))
+      (!document
+        ,@titles
+        ,@subtitles
+        ,@notes
+        ,@miscs
+        ,@dates
+        ,@auth-stuff))))
 
 (define (tmtex-select-args-by-func n l)
+ ; (display* "tmtex-select-args-by-func: " n " => ")
+ ; (write (filter (lambda (x) (func? x n)) l)) (newline)
   (filter (lambda (x) (func? x n)) l))
 
 (tm-define (tmtex-abstract-data s l)
