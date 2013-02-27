@@ -237,7 +237,11 @@
 (tm-define (navigation-list-simplify l)
   (with t (make-ahash-table)
     (for (x l)
-      (ahash-set! t (navigation-target x) x))
+      (with key (list (navigation-target x)
+                      (navigation-type x)
+                      (navigation-attributes x)
+                      (navigation-pos x))
+        (ahash-set! t key x)))
     (map cdr (ahash-table->list t))))
 
 (tm-define (link-list->navigation-list l)
