@@ -43,8 +43,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-modes
-  (elsevier-style% (in? tmtex-style '("elsart" "jsc")))
+  (elsevier-style% (in? tmtex-style '("elsart" "jsc" "elsarticle")))
   (jsc-style% (in? tmtex-style '("jsc")) elsevier-style%)
+  (elsarticle-style% (in? tmtex-style '("elsarticle")) elsevier-style%)
+  (elsart-style% (in? tmtex-style '("elsart")) elsevier-style%)
   (natbib-package% (in? "cite-author-year" tmtex-packages)))
 
 (tm-define (tmtex-style-init body)
@@ -383,8 +385,9 @@
 	((in? x '("tmbook" "tmmanual")) "book")
 	;;((in? x '("acmconf" "amsart" "svjour")) x)
 	((in? x '("elsart" "jsc")) "elsart")
+	((in? x '("elsarticle")) "elsarticle")
 	((in? x '("acmconf" "amsart")) x)
-	((in? x '("svjour" "elsart" "jsc")) "article")
+	((in? x '("svjour")) "article")
 	((not tmtex-replace-style?) x)
 	(else #f)))
 
@@ -1769,6 +1772,7 @@
   (show-part (,tmtex-show-part -1))
   (doc-data (,tmtex-doc-data-wrapper -1))
   ((:or doc-title doc-author author-data doc-date doc-note
+        doc-misc doc-subtitle doc-title-options
 	abstract-keywords abstract-msc) (,tmtex-default -1))
   ((:or author-name author-affiliation author-note
 	author-email author-homepage) (,tmtex-default -1))
