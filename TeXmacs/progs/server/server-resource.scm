@@ -128,6 +128,7 @@
            (resource-allow-groups? rid rdone (cdr uids) udone attr))))
 
 (define (resource-allow-one? rid rdone uid udone attr)
+  ;;(display* "Allow one " rid ", " uid ", " attr "\n")
   (and (not (in? rid rdone))
        (not (in? uid udone))
        (or (== rid uid)
@@ -141,6 +142,7 @@
              (resource-allow-groups? rid rdone grs (cons uid udone) attr)))))
 
 (tm-define (resource-allow? rid uid attr)
+  ;;(display* "Allow " rid ", " uid ", " attr "\n")
   (resource-allow-one? rid (list) uid (list) attr))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -169,11 +171,13 @@
       (resource-set rid (car prop) (cdr prop)))))
 
 (define (user-decode rid)
-  (resource-get-first rid "id" #f))
+  (if (== rid "all") rid
+      (resource-get-first rid "id" #f)))
 
 (define (user-encode user)
-  (with l (resource-search (list (list "type" "user") (list "id" user)))
-    (and (pair? l) (car l))))
+  (if (== user "all") user
+      (with l (resource-search (list (list "type" "user") (list "id" user)))
+        (and (pair? l) (car l)))))
 
 (define (prop-decode x)
   (with (attr . vals) x
@@ -186,7 +190,20 @@
         (cons attr (list-difference (map user-encode vals) (list #f))))))
 
 (tm-define (resource-properties-decode l)
+  ;;(display* "decode " l " -> " (map prop-decode l) "\n")
   (map prop-decode l))
 
 (tm-define (resource-properties-encode l)
+  ;;(display* "encode " l " -> " (map prop-encode l) "\n")
   (map prop-encode l))
+
+(define (first-leq? p1 p2)
+  (string<=? (car p1) (car p2)))
+
+(tm-define (resource-get-all-decoded rid)
+  (with raw-props (sort (resource-get-all rid) first-leq?)
+    (resource-properties-decode raw-props)))
+
+(tm-define (resource-set-all-encoded rid props)
+  (with raw-props (resource-properties-encode props)
+    (resource-set-all rid raw-props)))

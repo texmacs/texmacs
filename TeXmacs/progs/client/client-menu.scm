@@ -27,6 +27,7 @@
 
 (tm-menu (remote-submenu server sname)
   (group sname)
+  ("Logout" (client-logout server))
   ("New remote file" (remote-create server "tm"))
   ("All files" (load-buffer (string-append "tmfs://remote-dir/" sname)))
   (when (has-client-properties? (current-buffer))

@@ -65,26 +65,34 @@
          (server (client-find-server sname))
          (fname (string-append "tmfs://remote-file/" name)))
     (if (not server)
+        ;; FIXME: better error handling
         (texmacs-error "remote-file" "invalid server")
         (begin
           (client-remote-eval server `(remote-file-load ,name)
             (lambda (msg)
               (with (doc props) msg
+                ;;(display* "LOAD ") (write doc) (display* "\n")
                 (resource-cache-set-all fname props)
-                (remote-file-set name doc)))
+                (if doc
+                    (remote-file-set name doc)
+                    (set-message "created new file" "load remote file"))))
             (lambda (err)
               (set-message err "load remote file")))
           (set-message "loading..." "load remote file")
           (empty-document)))))
 
 (tmfs-save-handler (remote-file name doc)
+  ;;(display* "SAVE ") (write doc) (display* "\n")
   (let* ((sname (tmfs-car name))
-         (server (client-find-server sname)))
+         (server (client-find-server sname))
+         (fname (string-append "tmfs://remote-file/" name)))
     (if (not server)
         (texmacs-error "remote-file" "invalid server")
         (client-remote-eval server `(remote-file-save ,name ,doc)
           (lambda (msg)
-            (set-message "file saved" "save remote file"))
+            (with (new-doc props) msg
+              (resource-cache-set-all fname props)
+              (set-message "file saved" "save remote file")))
           (lambda (err)
             (set-message err "save remote file"))))))
 
