@@ -60,7 +60,7 @@
 (define (build-authors-refs l data)
   (if (null? l) l
       (with names (select (car l) '(author-name 0))
-        (if (null? l) (build-authors-refs (cdr l) data)
+        (if (or (null? l) (null? names)) (build-authors-refs (cdr l) data)
             (with name (build-author-refs (car names) (car l) data)
               (cons name (build-authors-refs (cdr l) data)))))))
 
