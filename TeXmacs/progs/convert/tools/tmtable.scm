@@ -94,7 +94,7 @@
 (define (tmrow-format-up r)
   "Raise tformat tags in cells and cells of @r to the upmost level"
   (cond ((func? r 'tformat)
-	 (with s (tmrow-raise-format (cAr r))
+	 (with s (tmrow-format-up (cAr r))
 	   (append (cDr r) (cdr s))))
 	((func? r 'row) (tmrow-format-up-sub (cdr r) 1))
 	(else (texmacs-error "tmrow-format-up" "~S is not a row" r))))
