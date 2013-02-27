@@ -431,6 +431,7 @@ latex_parser::parse_backslash (string s, int& i) {
     if (i<n && s[i] == '{') { i++; u= parse (s, i, "}"); i++; }
     return tree (TUPLE, "\\href", ss, u);
   }
+  if (((i+3)<n) && (s(i,i+2)=="\\\n")) {i++; return "";}
 
   /************************ special commands *********************************/
   i++;
