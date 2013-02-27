@@ -21,10 +21,20 @@
 (define resource-cache (make-ahash-table))
 
 (tm-define (resource-cache-set-all u props)
-  (ahash-set! resource-cache u props))
+  (ahash-set! resource-cache u props)
+  (when (buffer-exists? u)
+    (with title (resource-cache-get-first u "name" "Nameless remote file")
+      (buffer-set-title u title))))
 
 (tm-define (resource-cache-get-all u)
   (ahash-ref resource-cache u))
+
+(tm-define (resource-cache-get u attr)
+  (or (assoc-ref (resource-cache-get-all u) attr) '()))
+
+(tm-define (resource-cache-get-first u attr default)
+  (with vals (resource-cache-get u attr)
+    (if (null? vals) default (car vals))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Properties on the server side

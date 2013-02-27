@@ -55,11 +55,10 @@
 ;;          (server (client-find-server sname)))
 ;;     "texmacs"))
 
-;; (tmfs-title-handler (remote-file name doc)
-;;   (let* ((sname (tmfs-car name))
-;;          (rname (tmfs-cdr name))
-;;          (server (client-find-server sname)))
-;;     "Remote file"))
+(tmfs-title-handler (remote-file name doc)
+  (let* ((sname (tmfs-car name))
+         (fname (string-append "tmfs://remote-file/" name)))
+    (resource-cache-get-first fname "name" "Nameless remote file")))
 
 (tmfs-load-handler (remote-file name)
   (let* ((sname (tmfs-car name))
