@@ -94,6 +94,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tmfs-load-handler (remote-dir name)
+  ;;(display* "Loading remote dir " name "\n")
   (let* ((sname (car (tmfs->list name)))
          (server (client-find-server sname)))
     (if (not server)

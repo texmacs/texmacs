@@ -234,6 +234,12 @@
         (if (== source (vertex->id (car l))) tail
             (cons head tail)))))
 
+(tm-define (navigation-list-simplify l)
+  (with t (make-ahash-table)
+    (for (x l)
+      (ahash-set! t (navigation-target x) x))
+    (map cdr (ahash-table->list t))))
+
 (tm-define (link-list->navigation-list l)
   (:synopsis "Transforms the link list @t into a navigation list")
   (if (null? l) l
@@ -243,8 +249,9 @@
              (attrs (link-item-attributes item))
              (vertices (link-item-vertices item))
              (h (navigation-list-sub type attrs 0 source vertices))
-             (r (link-list->navigation-list (cdr l))))
-        (list-remove-duplicates (append h r)))))
+             (r (link-list->navigation-list (cdr l)))
+             (nl (navigation-list-simplify (append h r))))
+        nl)))
 
 (tm-define (upward-navigation-list t)
   (link-list->navigation-list (upward-link-list t #t)))

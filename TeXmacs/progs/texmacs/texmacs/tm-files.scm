@@ -324,16 +324,18 @@
 (define (load-buffer-load name opts)
   ;;(display* "load-buffer-load " name ", " opts "\n")
   (with vname `(verbatim ,(url->system name))
-    (if (url-exists? name)
-        (if (buffer-load name)
-            (set-message `(concat "Could not load " ,vname) "Load file")
-            (load-buffer-open name opts))
-        (begin
-          (buffer-set-body name '(document ""))
-          (load-buffer-open name opts)
-          (set-message `(concat "Could not load " ,vname
-                                ". Created new document")
-                       "Load file")))))
+    (cond ((buffer-exists? name)
+           (load-buffer-open name opts))
+          ((url-exists? name)
+           (if (buffer-load name)
+               (set-message `(concat "Could not load " ,vname) "Load file")
+               (load-buffer-open name opts)))
+          (else
+            (buffer-set-body name '(document ""))
+            (load-buffer-open name opts)
+            (set-message `(concat "Could not load " ,vname
+                                  ". Created new document")
+                         "Load file")))))
 
 (define (load-buffer-check-permissions name opts)
   ;;(display* "load-buffer-check-permissions " name ", " opts "\n")
