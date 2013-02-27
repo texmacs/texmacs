@@ -1222,7 +1222,10 @@
 (define (tmtex-select-args-by-func n l)
   (filter (lambda (x) (func? x n)) l))
 
-(define (tmtex-abstract-data s l)
+(define (tmtex-abstract-data-wrapper s l)
+  (tmtex-abstract-data s l))
+
+(tm-define (tmtex-abstract-data s l)
   (let* ((msc (tmtex-select-args-by-func 'abstract-msc l))
          (keywords (tmtex-select-args-by-func 'abstract-keywords l))
          (abstract (tmtex-select-args-by-func 'abstract l)))
@@ -1770,7 +1773,7 @@
   ((:or author-name author-affiliation author-note
 	author-email author-homepage) (,tmtex-default -1))
   (abstract (,tmtex-abstract-wrapper 1))
-  (abstract-data (,tmtex-abstract-data -1))
+  (abstract-data (,tmtex-abstract-data-wrapper -1))
   (appendix (,tmtex-appendix 1))
   ((:or theorem proposition lemma corollary proof axiom definition
 	notation conjecture remark note example exercise problem warning

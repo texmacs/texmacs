@@ -87,9 +87,35 @@
 	 ,@(if abstract `(((!begin "abstract") ,abstract)) '())
 	 ,@keywords))))
 
-(tm-define (tmtex-abstract s l)
+(define (expand-doc-data s l)
+  (if (== s "doc-data") 
+    (doc-data (stree->tree `(doc-data ,@l)))
+    `(,(string->symbol s) ,@l)))
+
+(define (expand-author-data t)
+  (cond
+    ((npair? t) t)
+    ((== (car t) 'author-data) (author-data (stree->tree t)))
+    (else (cons (car t) (map expand-author-data (cdr t))))))
+
+(define (tmtex-select-args-by-func n l)
+  (filter (lambda (x) (func? x n)) l))
+
+(tm-define (tmtex-abstract-data s l)
   (:mode elsevier-style?)
-  "")
+  (let* ((msc (tmtex-select-args-by-func 'abstract-msc l))
+         (msc (apply append (map cdr (map tmtex msc))))
+         (msc (list-intersperse msc '(sep)))
+         (msc (if (nnull? msc) `((!concat (PACS) " " ,@msc)) '()))
+         (keywords (tmtex-select-args-by-func 'abstract-keywords l))
+         (keywords (apply append (map cdr (map tmtex keywords))))
+         (keywords (list-intersperse keywords '(sep)))
+         (keywords (if (nnull? keywords) `((!concat ,@keywords)) '()))
+         (keywords (if (or (nnull? msc) (nnull? keywords))
+                       `(((!begin "keyword")
+                          (!document ,@keywords ,@msc))) '()))
+         (abstract (map tmtex (tmtex-select-args-by-func 'abstract l))))
+    `(!document ,@abstract ,@keywords)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Elsevier style is quite ugly.
