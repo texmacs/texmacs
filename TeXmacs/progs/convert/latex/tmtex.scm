@@ -1216,6 +1216,9 @@
 (define (tmtex-doc-data-wrapper s l)
   (tmtex-doc-data s l))
 
+(tm-define (tmtex-elsevier-frontmatter s l)
+  (tmtex-std-env "frontmatter" l))
+
 (tm-define (tmtex-abstract s l)
   (tmtex-std-env "abstract" l))
 
@@ -1776,6 +1779,7 @@
 	abstract-keywords abstract-msc) (,tmtex-default -1))
   ((:or author-name author-affiliation author-note
 	author-email author-homepage) (,tmtex-default -1))
+  (elsevier-frontmatter (,tmtex-elsevier-frontmatter 1))
   (abstract (,tmtex-abstract-wrapper 1))
   (abstract-data (,tmtex-abstract-data-wrapper -1))
   (appendix (,tmtex-appendix 1))
@@ -1959,7 +1963,8 @@
 	(set! tmtex-style (car style))
 	(set! tmtex-packages (cdr style))
 	(when (elsevier-style?)
-	  (import-from (convert latex tmtex-elsevier)))
+	  (import-from (convert latex tmtex-elsevier))
+	  (set! doc (elsevier-create-frontmatter doc)))
 	(tmtex-style-init body)
 	(with result (texmacs->latex doc opts)
 	  (set! tmtex-style "generic")
@@ -1970,5 +1975,4 @@
 	(tmtex-initialize opts)
 	(with r (tmtex (tmpre-produce x3))
 	  (if (not tmtex-use-macros?)
-	      (set! r (latex-expand-macros r)))
-	  r))))
+	      (set! r (latex-expand-macros r))) r))))
