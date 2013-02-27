@@ -19,7 +19,7 @@
 #include "analyze.hpp"
 #include "convert.hpp"
 #include "file.hpp"
-#include "tmfs.hpp"
+#include "iterator.hpp"
 #include "Freetype/tt_tools.hpp"
 #include "Sqlite3/sqlite3.hpp"
 
@@ -828,11 +828,6 @@ tmscm_to_array_string (tmscm  p) {
   return a;
 }
 
-#define tmscm_is_property tmscm_is_array_string
-#define TMSCM_ASSERT_PROPERTY(p,arg,rout) TMSCM_ASSERT_ARRAY_STRING (p,arg,rout)
-#define property_to_tmscm array_string_to_tmscm
-#define tmscm_to_property tmscm_to_array_string
-
 static bool
 tmscm_is_array_tree (tmscm  p) {
   if (tmscm_is_null (p)) return true;
@@ -920,64 +915,6 @@ tmscm_to_array_url (tmscm  p) {
   return a;
 }
 
-static bool
-tmscm_is_properties (tmscm  p) {
-  if (tmscm_is_null (p)) return true;
-  else return tmscm_is_pair (p) &&
-    tmscm_is_property (tmscm_car (p)) &&
-    tmscm_is_properties (tmscm_cdr (p));
-}
-
-#define TMSCM_ASSERT_PROPERTIES(p,arg,rout) \
-TMSCM_ASSERT (tmscm_is_properties (p), p, arg, rout)
-
-tmscm 
-properties_to_tmscm (array<property> a) {
-  int i, n= N(a);
-  tmscm  p= tmscm_null ();
-  for (i=n-1; i>=0; i--) p= tmscm_cons (property_to_tmscm (a[i]), p);
-  return p;
-}
-
-array<property>
-tmscm_to_properties (tmscm  p) {
-  array<property> a;
-  while (!tmscm_is_null (p)) {
-    a << tmscm_to_property (tmscm_car (p));
-    p= tmscm_cdr (p);
-  }
-  return a;
-}
-
-static bool
-tmscm_is_solutions (tmscm  p) {
-  if (tmscm_is_null (p)) return true;
-  else return tmscm_is_pair (p) &&
-    tmscm_is_solution (tmscm_car (p)) &&
-    tmscm_is_solutions (tmscm_cdr (p));
-}
-
-#define TMSCM_ASSERT_SOLUTIONS(p,arg,rout) \
-TMSCM_ASSERT (tmscm_is_solutions (p), p, arg, rout)
-
-tmscm 
-solutions_to_tmscm (array<solution> a) {
-  int i, n= N(a);
-  tmscm  p= tmscm_null ();
-  for (i=n-1; i>=0; i--) p= tmscm_cons (solution_to_tmscm (a[i]), p);
-  return p;
-}
-
-array<solution>
-tmscm_to_solutions (tmscm  p) {
-  array<solution> a;
-  while (!tmscm_is_null (p)) {
-    a << tmscm_to_solution (tmscm_car (p));
-    p= tmscm_cdr (p);
-  }
-  return a;
-}
-
 /******************************************************************************
 * List types
 ******************************************************************************/
@@ -1037,23 +974,6 @@ tmscm_to_list_tree (tmscm  p) {
 }
 
 /******************************************************************************
-* Other wrapper types
-******************************************************************************/
-
-#define TMSCM_ASSERT_COLLECTION(p,arg,rout) \
-TMSCM_ASSERT (tmscm_is_array_string (p), p, arg, rout)
-
-tmscm 
-collection_to_tmscm (collection ss) {
-  return array_string_to_tmscm (as_strings (ss));
-}
-
-collection
-tmscm_to_collection (tmscm  p) {
-  return as_collection (tmscm_to_array_string (p));
-}
-
-/******************************************************************************
 * Gluing
 ******************************************************************************/
 
@@ -1066,7 +986,6 @@ tmscm_to_collection (tmscm  p) {
 #include "image_files.hpp"
 #include "web_files.hpp"
 #include "sys_utils.hpp"
-#include "tmfs.hpp"
 #include "client_server.hpp"
 #include "analyze.hpp"
 #include "wencoding.hpp"

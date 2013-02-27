@@ -384,56 +384,12 @@
   (system-1 system (void string url))
   (system-2 system (void string url url))
 
+  ;; Persistent data
   (persistent-set persistent_set (void url string string))
   (persistent-remove persistent_reset (void url string))
   (persistent-has? persistent_contains (bool url string))
   (persistent-get persistent_get (string url string))
   (persistent-file-name persistent_file_name (url url string))
-  
-  ;; TeXmacs file system
-  (tmfs-set tmfs_set (void string collection))
-  (tmfs-reset tmfs_reset (void string collection))
-  (tmfs-get tmfs_get (collection string))
-  (tmfs-new-save tmfs_save (void string string))
-  (tmfs-new-remove tmfs_remove (void string))
-  (tmfs-new-load tmfs_load (string string))
-
-  (tmfs-create-ressource tmfs_create_ressource (string))
-  (tmfs-ressource-head tmfs_get_head (string string))
-  (tmfs-ressource-versions tmfs_get_versions (collection string))
-  (tmfs-save-ressource tmfs_save_ressource (void string string properties))
-  (tmfs-load-ressource-file tmfs_load_ressource_file (string string))
-  (tmfs-load-ressource-properties tmfs_load_ressource_properties
-				  (properties string))
-
-  (tmfs-create-user tmfs_create_user (string string))
-  (tmfs-search-user tmfs_search_user (collection string))
-  (tmfs-set-user tmfs_set_user (void string))
-  (tmfs-get-user tmfs_get_user (string))
-  (tmfs-allows? tmfs_allows (bool string string))
-  (tmfs-set-attributes tmfs_set_attributes (void string properties))
-  (tmfs-get-attributes tmfs_get_attributes (properties string))
-  (tmfs-add-attributes tmfs_add_attributes (void string properties))
-  (tmfs-remove-attributes tmfs_remove_attributes (void string properties))
-  (tmfs-change-attributes tmfs_change_attributes (void string properties))
-  (tmfs-query tmfs_query (solutions properties))
-  (solutions->collection as_collection (collection solutions string))
-
-  (tmfs-create-file tmfs_create_file (string string string))
-  (tmfs-create-file-in tmfs_create_file (string string string string))
-  (tmfs-search-file tmfs_search_file (collection string))
-  (tmfs-save-file tmfs_save_file (void string string))
-  (tmfs-load-file tmfs_load_file (string string))
-  (tmfs-create-project tmfs_create_project (string string))
-  (tmfs-search-project tmfs_search_project (collection string))
-  (tmfs-get-file-projects tmfs_get_file_projects (collection string))
-  (tmfs-get-project-files tmfs_get_project_files (collection string))
-  (tmfs-create-branch tmfs_create_branch (string string string))
-
-  (tmfs-set-root tmfs_set_root (void string url))
-  (tmfs-get-root tmfs_get_root (url string))
-  (tmfs-import tmfs_import (void url))
-  (tmfs-export tmfs_export (void url))
 
   ;; SQL interface
   (sql-exec sql_exec (scheme_tree url string))
