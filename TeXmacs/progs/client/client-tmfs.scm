@@ -50,16 +50,16 @@
          (sid (client-find-server-user-id server)))
     (string-append "tmfs://remote-dir/" sname "/~" sid)))
 
-(define (prepend-dir server name)
+(define (prepend-dir server name type)
   (with dir (url->string (current-buffer))
     (when (not (string-starts? dir "tmfs://remote-dir/"))
-      (set! dir (remote-home-directory)))
-    (string-append "tmfs://remote-file/"
+      (set! dir (remote-home-directory server)))
+    (string-append "tmfs://" type "/"
                    (substring dir 18 (string-length dir))
                    "/" name)))
 
-(tm-define (remote-create server fname doc)
-  ;;(display* "remote-create " server ", " fname ", " doc "\n")
+(tm-define (remote-create-file server fname doc)
+  ;;(display* "remote-create-file " server ", " fname ", " doc "\n")
   (let* ((sname (client-find-server-name server))
          (name (substring fname 19 (string-length fname))))
     (client-remote-eval server `(remote-file-create ,name ,doc)
@@ -68,12 +68,12 @@
       (lambda (err)
         (set-message err "create remote file")))))
 
-(tm-define (remote-create-interactive server)
+(tm-define (remote-create-file-interactive server)
   (:interactive #t)
   (interactive
       (lambda (name)
-        (with fname (prepend-dir server name)
-          (remote-create server fname (empty-document))))
+        (with fname (prepend-dir server name "remote-file")
+          (remote-create-file server fname (empty-document))))
     (list "Name" "string" '())))
 
 (tmfs-permission-handler (remote-file name type)
@@ -129,6 +129,24 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote directories
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (remote-create-dir server fname)
+  (display* "remote-create-dir " server ", " fname "\n")
+  (let* ((sname (client-find-server-name server))
+         (name (substring fname 18 (string-length fname))))
+    (client-remote-eval server `(remote-dir-create ,name)
+      (lambda (msg)
+        (load-buffer fname))
+      (lambda (err)
+        (set-message err "create remote directory")))))
+
+(tm-define (remote-create-dir-interactive server)
+  (:interactive #t)
+  (interactive
+      (lambda (name)
+        (with fname (prepend-dir server name "remote-dir")
+          (remote-create-dir server fname)))
+    (list "Name" "string" '())))
 
 (define (dir-line sname entry)
   (with (short-name full-name dir? props) entry

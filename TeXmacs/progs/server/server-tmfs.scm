@@ -154,6 +154,26 @@
 ;; Remote directories
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-service (remote-dir-create rname)
+  (display* "remote-dir-create " rname "\n")
+  (let* ((uid (server-get-user envelope))
+         (fid (file-name->resource (tmfs-cdr rname)))
+         (l (tmfs->list rname))
+         (did (safe-car (search-file (cDr (cdr l))))))
+    (cond ((not uid)
+           (server-error envelope "Error: not logged in"))
+          (fid
+           (server-error envelope "Error: directory already exists"))
+          ((not did)
+           (server-error envelope "Error: directory does not exist"))
+          ((not (resource-allow? did uid "writable"))
+           (server-error envelope "Error: write access required for directory"))
+          (else
+            (let* ((rid (resource-create (cAr l) "dir" uid)))
+              (resource-set rid "dir" (list did))
+              (with props (resource-get-all-decoded rid)
+                (server-return envelope props)))))))
+
 (define (filter-read-access rids uid)
   (cond ((null? rids) rids)
         ((resource-allow? (car rids) uid "readable")

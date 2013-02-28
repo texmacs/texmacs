@@ -29,7 +29,8 @@
   (group sname)
   ("Logout" (client-logout server))
   ("Home directory" (load-buffer (remote-home-directory server)))
-  ("New remote file" (remote-create-interactive server))
+  ("New remote file" (remote-create-file-interactive server))
+  ("New remote directory" (remote-create-dir-interactive server))
   (when (has-client-properties? (current-buffer))
     ("Properties" (open-client-properties-editor))))
 
