@@ -154,28 +154,18 @@
 ;; Remote directories
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (generic-document doc)
-  `(document
-     (TeXmacs ,(texmacs-version))
-     (style (tuple "generic"))
-     (body ,doc)))
-
-(define (dir-line server rid)
-  (let* ((tail (resource-get-first rid "name" "?"))
-         (name (resource->file-name rid))
-         (full (string-append "tmfs://remote-file/" server "/" name))
-         (hlink `(hlink ,tail ,full)))
-    hlink))
-
-(define (dir-page server rids)
-  (generic-document `(document (subsection* "File list")
-                               ,@(map (cut dir-line server <>) rids))))
-
 (define (filter-read-access rids uid)
   (cond ((null? rids) rids)
         ((resource-allow? (car rids) uid "readable")
          (cons (car rids) (filter-read-access (cdr rids) uid)))
         (else (filter-read-access (cdr rids) uid))))
+
+(define (rewrite-dir-entry rid)
+  (let* ((short-name (resource-get-first rid "name" "?"))
+         (full-name (resource->file-name rid))
+         (dir? (== (resource-get-first rid "type" #f) "dir"))
+         (props (resource-get-all-decoded rid)))
+    (list short-name full-name dir? props)))
 
 (tm-service (remote-dir-load rname)
   ;;(display* "remote-dir-load " rname "\n")
@@ -185,4 +175,4 @@
                (dirs (search-file (cdr (tmfs->list rname))))
                (matches (append-map dir-contents dirs))
                (filtered (filter-read-access matches uid)))
-          (server-return envelope (dir-page server filtered))))))
+          (server-return envelope (map rewrite-dir-entry filtered))))))

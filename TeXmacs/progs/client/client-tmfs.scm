@@ -19,11 +19,14 @@
 ;; Useful subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (empty-document)
+(define (generic-document doc)
   `(document
      (TeXmacs ,(texmacs-version))
      (style (tuple "generic"))
-     (body (document ""))))
+     (body ,doc)))
+
+(define (empty-document)
+  (generic-document '(document "")))
 
 (define (buffer-set-stm u doc)
   (let* ((s (unescape-guile (object->string doc)))
@@ -127,6 +130,17 @@
 ;; Remote directories
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (dir-line sname entry)
+  (with (short-name full-name dir? props) entry
+    (let* ((type (if dir? "remote-dir" "remote-file"))
+           (name (string-append "tmfs://" type "/" sname "/" full-name))
+           (hlink `(hlink ,short-name ,name)))
+      hlink)))
+
+(define (dir-page sname entries)
+  (generic-document `(document (subsection* "File list")
+                               ,@(map (cut dir-line sname <>) entries))))
+
 (tmfs-load-handler (remote-dir name)
   ;;(display* "Loading remote dir " name "\n")
   (let* ((sname (car (tmfs->list name)))
@@ -135,8 +149,8 @@
         (texmacs-error "remote-file" "invalid server")
         (begin
           (client-remote-eval server `(remote-dir-load ,name)
-            (lambda (doc)
-              (remote-dir-set name doc))
+            (lambda (entries)
+              (remote-dir-set name (dir-page sname entries)))
             (lambda (err)
               (set-message err "remote directory")))
           (set-message "loading..." "remote directory")
