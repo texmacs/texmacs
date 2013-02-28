@@ -28,8 +28,8 @@
 (tm-menu (remote-submenu server sname)
   (group sname)
   ("Logout" (client-logout server))
-  ("New remote file" (remote-create server "tm"))
-  ("All files" (load-buffer (string-append "tmfs://remote-dir/" sname)))
+  ("Home directory" (load-buffer (remote-home-directory server)))
+  ("New remote file" (remote-create-interactive server))
   (when (has-client-properties? (current-buffer))
     ("Properties" (open-client-properties-editor))))
 

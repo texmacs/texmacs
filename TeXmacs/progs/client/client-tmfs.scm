@@ -42,14 +42,36 @@
 ;; Remote files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (remote-create server suffix)
-  (with sname (client-find-server-name server)
-    (client-remote-eval server `(remote-file-create ,suffix)
+(tm-define (remote-home-directory server)
+  (let* ((sname (client-find-server-name server))
+         (sid (client-find-server-user-id server)))
+    (string-append "tmfs://remote-dir/" sname "/~" sid)))
+
+(define (prepend-dir server name)
+  (with dir (url->string (current-buffer))
+    (when (not (string-starts? dir "tmfs://remote-dir/"))
+      (set! dir (remote-home-directory)))
+    (string-append "tmfs://remote-file/"
+                   (substring dir 18 (string-length dir))
+                   "/" name)))
+
+(tm-define (remote-create server fname doc)
+  ;;(display* "remote-create " server ", " fname ", " doc "\n")
+  (let* ((sname (client-find-server-name server))
+         (name (substring fname 19 (string-length fname))))
+    (client-remote-eval server `(remote-file-create ,name ,doc)
       (lambda (msg)
-        (with s (string-append "tmfs://remote-file/" sname "/" msg)
-          (load-buffer s)))
+        (load-buffer fname))
       (lambda (err)
         (set-message err "create remote file")))))
+
+(tm-define (remote-create-interactive server)
+  (:interactive #t)
+  (interactive
+      (lambda (name)
+        (with fname (prepend-dir server name)
+          (remote-create server fname (empty-document))))
+    (list "Name" "string" '())))
 
 (tmfs-permission-handler (remote-file name type)
   #t)

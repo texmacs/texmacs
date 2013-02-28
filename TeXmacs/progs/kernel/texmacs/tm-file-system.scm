@@ -33,7 +33,7 @@
 ;; Handler system
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define tmfs-handler-table (make-ahash-table))
+(define-public tmfs-handler-table (make-ahash-table))
 
 (define (object->tmstring s) (unescape-guile (object->string s)))
 (define (tmstring->object s) (string->object s))
@@ -87,7 +87,7 @@
           ((ahash-ref tmfs-handler-table (cons class 'load))
            (== type "read"))
           (else
-           ((ahash-ref tmfs-handler-table (cons #t 'permission?)) u type)))))
+            ((ahash-ref tmfs-handler-table (cons #t 'permission?)) u type)))))
 
 (define-public (tmfs-master u)
   "Get a master url @u for linking and navigation."

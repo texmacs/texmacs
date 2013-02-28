@@ -39,53 +39,95 @@
          (tail (substring full (+ (string-length repo) 1)
                                (string-length full))))
     (resource-set rid "location" (list tail))
-    (resource-set name "rid" (list rid))
     name))
 
 (define (repository-get rid)
-  (with l (resource-get rid "location")
-    (and (pair? l) (string-append repo "/" (car l)))))
+  (and rid
+       (with l (resource-get rid "location")
+         (and (pair? l) (string-append repo "/" (car l))))))
 
-(define (repository-rid name)
-  (with l (resource-get name "rid")
-    (and (pair? l) (car l))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; File hierarchy
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (search-file l . where)
+  (if (null? l) where
+      (let* ((q (if (null? where)
+                    (list "type" "dir")
+                    (list "dir" (car where))))
+             (matches (resource-search (list (list "name" (car l)) q))))
+        (append-map (cut search-file (cdr l) <>) matches))))
+
+(define (dir-contents dir)
+  (resource-search (list (list "dir" dir))))
+
+(define (file-name->resource name)
+  (safe-car (search-file (tmfs->list name))))
+
+(define (resource->file-name rid)
+  (let* ((dir (resource-get-first rid "dir" #f))
+         (name (resource-get-first rid "name" "?")))
+    (if dir (string-append (resource->file-name dir) "/" name) name)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote file manipulations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-service (remote-file-create suffix)
-  (with uid (server-get-user envelope)
-    (if (not uid) (server-error envelope "Error: not logged in")
-        (let* ((rid (resource-create "Nameless remote file" "file" uid))
-               (name (repository-add rid suffix)))
-          (server-return envelope name)))))
+(define (safe-car l) (and (pair? l) (car l)))
+
+(tm-service (remote-file-create rname doc)
+  ;;(display* "remote-file-create " rname ", " doc "\n")
+  (let* ((uid (server-get-user envelope))
+         (fid (file-name->resource (tmfs-cdr rname)))
+         (l (tmfs->list rname))
+         (did (safe-car (search-file (cDr (cdr l))))))
+    (cond ((not uid)
+           (server-error envelope "Error: not logged in"))
+          (fid
+           (server-error envelope "Error: file already exists"))
+          ((not did)
+           (server-error envelope "Error: directory does not exist"))
+          ((not (resource-allow? did uid "writable"))
+           (server-error envelope "Error: write access required for directory"))
+          (else
+            (let* ((rid (resource-create (cAr l) "file" uid))
+                   (name (repository-add rid "tm"))
+                   (fname (repository-get rid))
+                   (tm (convert doc "texmacs-stree" "texmacs-document")))
+              (resource-set rid "dir" (list did))
+              (string-save tm fname)
+              (with props (resource-get-all-decoded rid)
+                (server-return envelope (list doc props))))))))
 
 (tm-service (remote-file-load rname)
+  ;;(display* "remote-file-load " rname "\n")
   (let* ((uid (server-get-user envelope))
-         (rid (repository-rid (tmfs-cdr rname)))
+         (rid (file-name->resource (tmfs-cdr rname)))
          (fname (repository-get rid)))
     (cond ((not uid) ;; FIXME: anonymous access
            (server-error envelope "Error: not logged in"))
+          ((not rid)
+           (server-error envelope "Error: file does not exist"))
           ((not (resource-allow? rid uid "readable"))
            (server-error envelope "Error: read access denied"))
           ((not (url-exists? fname))
-           (server-error envelope "Created new file"))
+           (server-error envelope "Error: file not found"))
           (else
-            (with props (resource-get-all-decoded rid)
-              (if (url-exists? fname)
-                  (let* ((tm (string-load fname))
-                         (doc (convert tm "texmacs-document" "texmacs-stree")))
-                    (server-return envelope (list doc props)))
-                  (server-return envelope (list #f props))))))))
+            (let* ((props (resource-get-all-decoded rid))
+                   (tm (string-load fname))
+                   (doc (convert tm "texmacs-document" "texmacs-stree")))
+              (server-return envelope (list doc props)))))))
 
 (tm-service (remote-file-save rname doc)
+  ;;(display* "remote-file-save " rname ", " doc "\n")
   (let* ((uid (server-get-user envelope))
-         (rid (repository-rid (tmfs-cdr rname)))
+         (rid (file-name->resource (tmfs-cdr rname)))
          (fname (repository-get rid))
          (tm (convert doc "texmacs-stree" "texmacs-document")))
     (cond ((not uid)
            (server-error envelope "Error: not logged in"))
+          ((not rid)
+           (server-error envelope "Error: file does not exist"))
           ((not (resource-allow? rid uid "writable"))
            (server-error envelope "Error: write access denied"))
           (else
@@ -93,11 +135,14 @@
               (string-save tm fname)
               (server-return envelope (list doc props)))))))
 
-(tm-service (remote-set-properties rname props)
+(tm-service (remote-file-set-properties rname props)
+  ;;(display* "remote-file-set-properties " rname ", " props "\n")
   (let* ((uid (server-get-user envelope))
-         (rid (repository-rid (tmfs-cdr rname))))
+         (rid (file-name->resource (tmfs-cdr rname))))
     (cond ((not uid)
            (server-error envelope "Error: not logged in"))
+          ((not rid)
+           (server-error envelope "Error: file does not exist"))
           ((not (resource-allow? rid uid "owner"))
            (server-error envelope "Error: administrative access denied"))
           (else
@@ -115,16 +160,11 @@
      (style (tuple "generic"))
      (body ,doc)))
 
-(define (decode-key-value s)
-  (with i (string-index s #\=)
-    (if (not i) (list "error" "error")
-        (list (substring s 0 i) (substring s (+ i 1) (string-length s))))))
-
 (define (dir-line server rid)
-  (let* ((name (resource-get-first rid "name" "?"))
-         (tail (url->string (url-tail (repository-get rid))))
-         (full (string-append "tmfs://remote-file/" server "/" tail))
-         (hlink `(hlink ,name ,full)))
+  (let* ((tail (resource-get-first rid "name" "?"))
+         (name (resource->file-name rid))
+         (full (string-append "tmfs://remote-file/" server "/" name))
+         (hlink `(hlink ,tail ,full)))
     hlink))
 
 (define (dir-page server rids)
@@ -137,12 +177,12 @@
          (cons (car rids) (filter-read-access (cdr rids) uid)))
         (else (filter-read-access (cdr rids) uid))))
 
-(tm-service (remote-dir-load name)
+(tm-service (remote-dir-load rname)
+  ;;(display* "remote-dir-load " rname "\n")
   (with uid (server-get-user envelope)
     (if (not uid) (server-error envelope "Error: not logged in")
-        (let* ((server (car (tmfs->list name)))
-               (pairs (rcons (cdr (tmfs->list name)) "type=file"))
-               (query (map decode-key-value pairs))
-               (matches (resource-search query))
+        (let* ((server (car (tmfs->list rname)))
+               (dirs (search-file (cdr (tmfs->list rname))))
+               (matches (append-map dir-contents dirs))
                (filtered (filter-read-access matches uid)))
           (server-return envelope (dir-page server filtered))))))

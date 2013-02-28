@@ -40,16 +40,16 @@
 ;; Properties on the server side
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (client-set-properties u props)
+(tm-define (client-set-file-properties u props)
   (with fname (url->string u)
     (when (string-starts? fname "tmfs://remote-file/")
       (let* ((name (substring fname 19 (string-length fname)))
              (sname (tmfs-car name))
              (server (client-find-server sname)))
         (if (not server)
-            (texmacs-error "client-set-properties" "invalid server")
-            (begin
-              (client-remote-eval server `(remote-set-properties ,name ,props)
+            (texmacs-error "client-set-file-properties" "invalid server")
+            (with cmd `(remote-file-set-properties ,name ,props)
+              (client-remote-eval server cmd
                 (lambda (new-props)
                   (resource-cache-set-all fname new-props))
                 (lambda (err)
@@ -86,7 +86,7 @@
   (or (assoc-ref current-properties attr) '()))
 
 (define (client-reserved-attributes)
-  (list "" "name" "type" "location" "date"))
+  (list "" "name" "type" "location" "dir" "date"))
 
 (define (add-attribute attr)
   (when (and attr (not (assoc-ref current-properties attr)))
@@ -158,7 +158,7 @@
                   (quit)))
       >>
       ("Ok" (begin
-              (client-set-properties current-url current-properties)
+              (client-set-file-properties current-url current-properties)
               (set! current-url (url-none))
               (quit))))))
 

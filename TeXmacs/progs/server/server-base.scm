@@ -116,21 +116,22 @@
   (with f "$TEXMACS_HOME_PATH/server/users.scm"
     (save-object f (ahash-table->list server-users))))
 
-(tm-define (server-set-user-info uid id passwd email admin)
+(tm-define (server-set-user-info uid id fullname passwd email admin)
   (server-load-users)
-  (ahash-set! server-users uid (list id passwd email admin))
-  (resource-set-user-info uid id email)
+  (ahash-set! server-users uid (list id fullname passwd email admin))
+  (resource-set-user-info uid id fullname email)
   (server-save-users))
 
-(tm-define (server-set-user-information id passwd email admin)
+(tm-define (server-set-user-information id fullname passwd email admin)
   (:argument id "User ID")
+  (:argument fullname "Full name")
   (:argument passwd "password" "Password")
   (:argument email "Email address")
   (:argument admin "Administrive rights?")
   (:proposals admin '("no" "yes"))
   (with uid (server-find-user id)
     (if (not uid) (set! uid (create-unique-id)))
-    (server-set-user-info uid id passwd email (== admin "yes"))))
+    (server-set-user-info uid id fullname passwd email (== admin "yes"))))
 
 (tm-define (server-find-user id)
   (server-load-users)
@@ -139,15 +140,15 @@
       (and-with i (list-find-index l ok?)
 	(car (list-ref l i))))))
 
-(tm-define (server-create-user id passwd email admin)
+(tm-define (server-create-user id fullname passwd email admin)
   (or (server-find-user id)
       (with uid (resource-create id "user" id)
-	(server-set-user-info uid id passwd email admin))))
+        (server-set-user-info uid id fullname passwd email admin))))
 
-(tm-service (new-account id passwd email)
+(tm-service (new-account id fullname passwd email)
   (if (server-find-user id)
       (server-error envelope "user already exists")
-      (with ret (server-create-user id passwd email #f)
+      (with ret (server-create-user id fullname passwd email #f)
 	(server-return envelope "done"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -162,13 +163,13 @@
 
 (tm-define (server-check-admin? envelope)
   (and-with uid (server-get-user envelope)
-    (with (id passwd email admin) (ahash-ref server-users uid)
+    (with (id fullname passwd email admin) (ahash-ref server-users uid)
       admin)))
 
 (tm-service (remote-login id passwd)
   (with uid (server-find-user id)
     (if (not uid) (server-error envelope "user not found")
-	(with (id2 passwd2 email2 admin2) (ahash-ref server-users uid)
+	(with (id2 fullname2 passwd2 email2 admin2) (ahash-ref server-users uid)
 	  (if (!= passwd2 passwd) (server-error envelope "invalid password")
 	      (with client (car envelope)
 		(ahash-set! server-logged-table client uid)

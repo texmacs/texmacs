@@ -111,11 +111,16 @@
 ;; Access rights
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (resource-set-user-info uid id email)
+(tm-define (resource-set-user-info uid id fullname email)
   (resource-set uid "id" (list id))
+  (resource-set uid "full-name" (list fullname))
   (resource-set uid "type" (list "user"))
   (resource-set uid "owner" (list uid))
-  (resource-set uid "email" (list email)))
+  (resource-set uid "email" (list email))
+  (with home (string-append "~" id)
+    (when (null? (resource-search (list (list "name" home)
+                                        (list "type" "dir"))))
+      (resource-create home "dir" uid))))
 
 (define (resource-allow-many? rids rdone uid udone attr)
   (and (nnull? rids)
@@ -150,7 +155,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (server-reserved-attributes)
-  (list "type" "location" "date" "id"))
+  (list "type" "location" "dir" "date" "id"))
 
 (tm-define (resource-get-all rid)
   (with t (make-ahash-table)
