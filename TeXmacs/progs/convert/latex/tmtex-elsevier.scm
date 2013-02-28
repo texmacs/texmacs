@@ -75,6 +75,12 @@
 (tm-define (tmtex-elsevier-misc t)
   `(tmisctext (!option ,(refstep-note)) ,(tmtex (cadr t))))
 
+(tm-define (tmtex-elsevier-auth-misc t)
+  `(fmtext (!option ,(refstep-author)) ,(tmtex (cadr t))))
+
+(tm-define (tmtex-elsevier-auth-misc* t)
+  `(,(third t) (fmtext (!option ,(third t)) ,(tmtex (fourth t)))))
+
 (tm-define (tmtex-elsevier-auth-note t)
   `(fntext (!option ,(refstep-author)) ,(tmtex (cadr t))))
 
@@ -142,6 +148,14 @@
 (tm-define (tmtex-elsevier-misc t)
   (:mode elsart-style?)
   `(thanksmisc (!option ,(refstep-note)) ,(tmtex (cadr t))))
+
+(tm-define (tmtex-elsevier-auth-misc t)
+  (:mode elsart-style?)
+  `(thanksamisc (!option ,(refstep-author)) ,(tmtex (cadr t))))
+
+(tm-define (tmtex-elsevier-auth-misc* t)
+  (:mode elsart-style?)
+  `(,(third t) (thanksamisc (!option ,(third t)) ,(tmtex (fourth t)))))
 
 (tm-define (tmtex-elsevier-auth-note t)
   (:mode elsart-style?)
@@ -214,12 +228,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmtex-elsevier-author t)
-  (display* "tmtex-doc-author: " t "\n\n")
   (if (or (npair? t) (npair? (cdr t)) (not (func? (cadr t) 'author-data))) '()
     (let* ((datas        (cdadr t))
            ;; notes and miscs needed in first position due to side effects
-;           (miscs        (map tmtex-elsevier-auth-misc
-;                              (tmtex-select-args-by-func 'author-misc datas)))
+           (miscs        (map tmtex-elsevier-auth-misc
+                              (tmtex-select-args-by-func 'author-misc datas)))
            (notes        (map tmtex-elsevier-auth-note
                               (tmtex-select-args-by-func 'author-note datas)))
            (emails       (map tmtex-elsevier-email
@@ -230,19 +243,17 @@
            (affiliations (map tmtex-elsevier-affiliation
                               (tmtex-select-args-by-func
                                 'author-affiliation datas)))
-           (fnbeg        (1+ (- author-counter (length notes))))
+           (fnbeg        (1+ (- author-counter (length notes) (length miscs))))
            (fnend        (1+ author-counter))
            (fnref        (map number->string (.. fnbeg fnend)))
            (fnref        (map (lambda (x) (string-append "author-" x)) fnref))
            (names        (map (lambda (x)
                                 (tmtex-elsevier-name  (cadr x) '() fnref))
                               (tmtex-select-args-by-func 'author-name datas))))
-      (display* names "\n" affiliations "\n" emails "\n" urls "\n" notes "\n" fnref "\n\n")
-      `(!paragraph ,@names ,@affiliations ,@emails ,@urls ,@notes))))
+      `(!paragraph ,@names ,@affiliations ,@emails ,@urls ,@miscs ,@notes))))
 
 (tm-define (tmtex-doc-data s l)
   (:mode elsevier-style?)
-  (display* "tmtex-doc-data: " l "\n\n")
 
   (let* ((subtitles (map tmtex-elsevier-subtitle
                          (tmtex-select-args-by-func 'doc-subtitle l)))
@@ -279,6 +290,9 @@
                                        'author-name datas))))
            (names        (map tmtex (map elsevier-get-names author-names)))
            (names-refs   (map elsevier-get-name-refs author-names))
+           (miscs        (map tmtex-elsevier-auth-misc*
+                              (tmtex-select-args-by-func
+                                'author-misc-note datas)))
            (emails       (map tmtex-elsevier-email*
                               (tmtex-select-args-by-func
                                 'author-email-note datas)))
@@ -294,7 +308,9 @@
                                     (afref (filter (lambda (x) (in? x auref))
                                                    (map car affiliations)))
                                     (fnref (filter (lambda (x) (in? x auref))
-                                                   (map car author-notes)))
+                                                   (map car (append
+                                                              miscs
+                                                              author-notes))))
                                     (dummy (refstep-author)))
                                `(!paragraph
                                   ,(tmtex-elsevier-name auth afref fnref)
@@ -307,9 +323,11 @@
                                                    (in? (car url) auref))
                                                  urls))))) names))
            (affiliations (map cadr affiliations))
+           (miscs (map cadr miscs))
            (author-notes (map cadr author-notes)))
       `((!paragraph ,@author-stuff)
         (!paragraph ,@affiliations)
+        (!paragraph ,@miscs)
         (!paragraph ,@author-notes)))))
 
 (define (get-title-option l)

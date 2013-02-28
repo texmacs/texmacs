@@ -1777,7 +1777,7 @@
   ((:or doc-title doc-author author-data doc-date doc-note
         doc-misc doc-subtitle doc-title-options
 	abstract-keywords abstract-msc) (,tmtex-default -1))
-  ((:or author-name author-affiliation author-note
+  ((:or author-name author-affiliation author-misc author-note
 	author-email author-homepage) (,tmtex-default -1))
   (elsevier-frontmatter (,tmtex-elsevier-frontmatter 1))
   (abstract (,tmtex-abstract-wrapper 1))
