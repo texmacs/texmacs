@@ -214,6 +214,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmtex-elsevier-author t)
+  (display* "tmtex-doc-author: " t "\n\n")
   (if (or (npair? t) (npair? (cdr t)) (not (func? (cadr t) 'author-data))) '()
     (let* ((datas        (cdadr t))
            ;; notes and miscs needed in first position due to side effects
@@ -236,10 +237,12 @@
            (names        (map (lambda (x)
                                 (tmtex-elsevier-name  (cadr x) '() fnref))
                               (tmtex-select-args-by-func 'author-name datas))))
+      (display* names "\n" affiliations "\n" emails "\n" urls "\n" notes "\n" fnref "\n\n")
       `(!paragraph ,@names ,@affiliations ,@emails ,@urls ,@notes))))
 
 (tm-define (tmtex-doc-data s l)
   (:mode elsevier-style?)
+  (display* "tmtex-doc-data: " l "\n\n")
 
   (let* ((subtitles (map tmtex-elsevier-subtitle
                          (tmtex-select-args-by-func 'doc-subtitle l)))
