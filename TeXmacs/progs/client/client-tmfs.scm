@@ -61,8 +61,9 @@
 (tm-define (remote-create-file server fname doc)
   ;;(display* "remote-create-file " server ", " fname ", " doc "\n")
   (let* ((sname (client-find-server-name server))
-         (name (substring fname 19 (string-length fname))))
-    (client-remote-eval server `(remote-file-create ,name ,doc)
+         (name (substring fname 19 (string-length fname)))
+         (tm (convert doc "texmacs-stree" "texmacs-document")))
+    (client-remote-eval server `(remote-file-create ,name ,tm)
       (lambda (msg)
         (load-buffer fname))
       (lambda (err)
@@ -100,12 +101,11 @@
         (begin
           (client-remote-eval server `(remote-file-load ,name)
             (lambda (msg)
-              (with (doc props) msg
-                ;;(display* "LOAD ") (write doc) (display* "\n")
-                (resource-cache-set-all fname props)
-                (if doc
-                    (remote-file-set name doc)
-                    (set-message "created new file" "load remote file"))))
+              (with (tm props) msg
+                (with doc (convert tm "texmacs-document" "texmacs-stree")
+                  ;;(display* "LOAD ") (write doc) (display* "\n")
+                  (resource-cache-set-all fname props)
+                  (remote-file-set name doc))))
             (lambda (err)
               (set-message err "load remote file")))
           (set-message "loading..." "load remote file")
@@ -118,13 +118,14 @@
          (fname (string-append "tmfs://remote-file/" name)))
     (if (not server)
         (texmacs-error "remote-file" "invalid server")
-        (client-remote-eval server `(remote-file-save ,name ,doc)
-          (lambda (msg)
-            (with (new-doc props) msg
-              (resource-cache-set-all fname props)
-              (set-message "file saved" "save remote file")))
-          (lambda (err)
-            (set-message err "save remote file"))))))
+        (with tm (convert doc "texmacs-stree" "texmacs-document")
+          (client-remote-eval server `(remote-file-save ,name ,tm)
+            (lambda (msg)
+              (with (saved props) msg
+                (resource-cache-set-all fname props)
+                (set-message "file saved" "save remote file")))
+            (lambda (err)
+              (set-message err "save remote file")))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote directories

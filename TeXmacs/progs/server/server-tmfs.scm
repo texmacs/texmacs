@@ -91,11 +91,10 @@
            (server-error envelope "Error: write access required for directory"))
           (else
             (let* ((rid (resource-create (cAr l) "file" uid))
-                   (name (repository-add rid "tm"))
-                   (fname (repository-get rid))
-                   (tm (convert doc "texmacs-stree" "texmacs-document")))
+                   (name (repository-add rid (url-suffix rname)))
+                   (fname (repository-get rid)))
               (resource-set rid "dir" (list did))
-              (string-save tm fname)
+              (string-save doc fname)
               (with props (resource-get-all-decoded rid)
                 (server-return envelope (list doc props))))))))
 
@@ -114,16 +113,14 @@
            (server-error envelope "Error: file not found"))
           (else
             (let* ((props (resource-get-all-decoded rid))
-                   (tm (string-load fname))
-                   (doc (convert tm "texmacs-document" "texmacs-stree")))
+                   (doc (string-load fname)))
               (server-return envelope (list doc props)))))))
 
 (tm-service (remote-file-save rname doc)
   ;;(display* "remote-file-save " rname ", " doc "\n")
   (let* ((uid (server-get-user envelope))
          (rid (file-name->resource (tmfs-cdr rname)))
-         (fname (repository-get rid))
-         (tm (convert doc "texmacs-stree" "texmacs-document")))
+         (fname (repository-get rid)))
     (cond ((not uid)
            (server-error envelope "Error: not logged in"))
           ((not rid)
@@ -132,7 +129,7 @@
            (server-error envelope "Error: write access denied"))
           (else
             (with props (resource-get-all-decoded rid)
-              (string-save tm fname)
+              (string-save doc fname)
               (server-return envelope (list doc props)))))))
 
 (tm-service (remote-file-set-properties rname props)
