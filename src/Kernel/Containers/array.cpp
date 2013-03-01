@@ -115,10 +115,19 @@ operator << (array<T>& a, array<T> b) {
   return a;
 }
 
-template<class T> array<T>
-append (T a, array<T> b) {
+template<class t> bool
+contains (t a, array<t> b) {
   register int i, l= N(b);
-  array<T> c (l+1);
+  for (i=0; i<l; i++)
+    if (a == b[i])
+      return true;
+  return false;
+}
+
+template<class t> array<t>
+append (t a, array<t> b) {
+  register int i, l= N(b);
+  array<t> c (l+1);
   c[0]= a;
   for (i=0; i<l; i++) c[i+1]= b[i];
   return c;
