@@ -5,6 +5,30 @@
 <\body>
   <doc-data|<doc-title|Plans and ideas for remote computations>>
 
+  <section|Global design>
+
+  The system for remote computations will be organized around two or three
+  components:
+
+  <\enumerate>
+    <item>The server side. For the moment, this part is part of <TeXmacs>,
+    but we do our best to keep it as independent as possible from <TeXmacs>.
+    In particular, there should be no document generation on the server side,
+    but rather an API for communication with clients.
+
+    In the future, the server will be enriched with several modules: one
+    module for live communications (collaborative editing, voice?, video?,
+    etc.), one module for remote computations (computer algebra sessions,
+    etc.).
+
+    <item>The client side. For the moment, we mainly implement a <TeXmacs>
+    client. A more traditional web client might also be implemented later.
+
+    <item>Middleware. This optional part might factor out the generation of
+    content between several types of clients: <TeXmacs> clients and usual
+    browsers.
+  </enumerate>
+
   <section|Remote file system>
 
   <subsection|Main design>
@@ -84,8 +108,6 @@
   several branches, or the patch corresponding to a past version of a branch
   to a past version of the file system.
 
-  <section|User interface>
-
   <section|Minor points>
 </body>
 
@@ -95,11 +117,11 @@
 <\references>
   <\collection>
     <associate|auto-1|<tuple|1|?>>
-    <associate|auto-2|<tuple|1.1|?>>
-    <associate|auto-3|<tuple|1.2|?>>
-    <associate|auto-4|<tuple|1.3|?>>
-    <associate|auto-5|<tuple|1.4|?>>
-    <associate|auto-6|<tuple|2|?>>
+    <associate|auto-2|<tuple|2|?>>
+    <associate|auto-3|<tuple|2.1|?>>
+    <associate|auto-4|<tuple|2.2|?>>
+    <associate|auto-5|<tuple|2.3|?>>
+    <associate|auto-6|<tuple|2.4|?>>
     <associate|auto-7|<tuple|3|?>>
   </collection>
 </references>
