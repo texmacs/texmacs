@@ -154,7 +154,7 @@
 ;; User interface for changing properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (server-reserved-attributes)
+(tm-define (server-reserved-attributes)
   (list "type" "location" "dir" "date" "id"))
 
 (tm-define (resource-get-all rid)

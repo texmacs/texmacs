@@ -137,7 +137,9 @@
          (name (substring fname 18 (string-length fname))))
     (client-remote-eval server `(remote-dir-create ,name)
       (lambda (msg)
-        (load-buffer fname))
+        (with (entries props) msg
+          (resource-cache-set-all fname props)
+          (load-buffer fname)))
       (lambda (err)
         (set-message err "create remote directory")))))
 
@@ -163,13 +165,16 @@
 (tmfs-load-handler (remote-dir name)
   ;;(display* "Loading remote dir " name "\n")
   (let* ((sname (car (tmfs->list name)))
-         (server (client-find-server sname)))
+         (server (client-find-server sname))
+         (fname (string-append "tmfs://remote-dir/" name)))
     (if (not server)
         (texmacs-error "remote-file" "invalid server")
         (begin
           (client-remote-eval server `(remote-dir-load ,name)
-            (lambda (entries)
-              (remote-dir-set name (dir-page sname entries)))
+            (lambda (msg)
+              (with (entries props) msg
+                  (resource-cache-set-all fname props)
+                (remote-dir-set name (dir-page sname entries))))
             (lambda (err)
               (set-message err "remote directory")))
           (set-message "loading..." "remote directory")

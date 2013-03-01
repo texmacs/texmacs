@@ -153,7 +153,7 @@
     </itemize>
   </itemize>
 
-  <section|Minor points>
+  <section|Other points>
 
   <\itemize>
     <item>Simplified notation for urls, such as
@@ -161,6 +161,9 @@
     <verbatim|/> inside this kind of urls. For instance, inside the above
     url, a link to <verbatim|/other.tm> should really be a link to
     <verbatim|tmfs://localhost/~vdh/other.tm>.
+
+    <item>Some code might be factored out between file and directory handling
+    (<abbr|e.g.> <scm|remote-file-create> and <scm|remote-dir-create>).
   </itemize>
 </body>
 
@@ -211,7 +214,7 @@
       interface> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-7><vspace|0.5fn>
 
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Minor
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Other
       points> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-8><vspace|0.5fn>
     </associate>

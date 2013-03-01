@@ -71,6 +71,19 @@
          (name (resource-get-first rid "name" "?")))
     (if dir (string-append (resource->file-name dir) "/" name) name)))
 
+(define (inheritance-reserved-attributes)
+  (append (server-reserved-attributes)
+          (list "name")))
+
+(define (inherit-property? x)
+  (nin? (car x) (inheritance-reserved-attributes)))
+
+(define (inherit-properties derived-rid base-rid)
+  (let* ((props1 (resource-get-all base-rid))
+         (props2 (list-filter props1 inherit-property?)))
+    (for (prop props2)
+      (resource-set derived-rid (car prop) (cdr prop)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote file manipulations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -93,6 +106,7 @@
             (let* ((rid (resource-create (cAr l) "file" uid))
                    (name (repository-add rid (url-suffix rname)))
                    (fname (repository-get rid)))
+              (inherit-properties rid did)
               (resource-set rid "dir" (list did))
               (string-save doc fname)
               (with props (resource-get-all-decoded rid)
@@ -167,9 +181,10 @@
            (server-error envelope "Error: write access required for directory"))
           (else
             (let* ((rid (resource-create (cAr l) "dir" uid)))
+              (inherit-properties rid did)
               (resource-set rid "dir" (list did))
               (with props (resource-get-all-decoded rid)
-                (server-return envelope props)))))))
+                (server-return envelope (list (list) props))))))))
 
 (define (filter-read-access rids uid)
   (cond ((null? rids) rids)
@@ -190,6 +205,14 @@
     (if (not uid) (server-error envelope "Error: not logged in")
         (let* ((server (car (tmfs->list rname)))
                (dirs (search-file (cdr (tmfs->list rname))))
-               (matches (append-map dir-contents dirs))
-               (filtered (filter-read-access matches uid)))
-          (server-return envelope (map rewrite-dir-entry filtered))))))
+               (rid (safe-car dirs)))
+          (cond ((not rid)
+                 (server-error envelope "Error: directory does not exist"))
+                ((not (resource-allow? rid uid "readable"))
+                 (server-error envelope "Error: read access required"))
+                (else
+                  (let* ((matches (dir-contents rid))
+                         (filtered (filter-read-access matches uid))
+                         (rewr (map rewrite-dir-entry filtered))
+                         (props (resource-get-all-decoded rid)))
+                    (server-return envelope (list rewr props)))))))))

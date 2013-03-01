@@ -41,11 +41,19 @@
 ;; Properties on the server side
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (strip-remote-file fname)
+  (set! fname (url->string fname))
+  (cond ((string-starts? fname "tmfs://remote-file/")
+         (substring fname 19 (string-length fname)))
+        ((string-starts? fname "tmfs://remote-dir/")
+         (substring fname 18 (string-length fname)))
+        (else #f)))
+
 (tm-define (client-set-file-properties u props)
-  (with fname (url->string u)
-    (when (string-starts? fname "tmfs://remote-file/")
-      (let* ((name (substring fname 19 (string-length fname)))
-             (sname (tmfs-car name))
+  (let* ((fname (url->string u))
+         (name (strip-remote-file fname)))
+    (when name
+      (let* ((sname (tmfs-car name))
              (server (client-find-server sname)))
         (if (not server)
             (texmacs-error "client-set-file-properties" "invalid server")
@@ -174,6 +182,7 @@
     (set! current-url u)
     (set! current-properties (resource-cache-get-all u))
     (when (and current-properties (assoc-ref current-properties "type"))
-      (let* ((type (upcase-first (car (assoc-ref current-properties "type"))))
+      (let* ((type* (upcase-first (car (assoc-ref current-properties "type"))))
+             (type (if (== type* "Dir") "Directory" type*))
              (title (string-append type " properties")))
       (dialogue-window client-properties-editor noop title)))))
