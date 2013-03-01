@@ -78,18 +78,18 @@
     (list "Name" "string" '())))
 
 (tmfs-permission-handler (remote-file name type)
+  ;; FIXME: asynchroneous retrieval of file permissions
   #t)
 
-;; (tmfs-format-handler (remote-file name)
-;;   (let* ((sname (tmfs-car name))
-;;          (rname (tmfs-cdr name))
-;;          (server (client-find-server sname)))
-;;     "texmacs"))
+(tmfs-format-handler (remote-file name)
+  ;; FIXME: support for other file formats
+  "texmacs-file")
 
 (tmfs-title-handler (remote-file name doc)
   (let* ((sname (tmfs-car name))
-         (fname (string-append "tmfs://remote-file/" name)))
-    (resource-cache-get-first fname "name" "Nameless remote file")))
+         (fname (string-append "tmfs://remote-file/" name))
+         (dname (url->string (url-tail name))))
+    (resource-cache-get-first fname "title" dname)))
 
 (tmfs-load-handler (remote-file name)
   (let* ((sname (tmfs-car name))
@@ -132,7 +132,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (remote-create-dir server fname)
-  (display* "remote-create-dir " server ", " fname "\n")
+  ;;(display* "remote-create-dir " server ", " fname "\n")
   (let* ((sname (client-find-server-name server))
          (name (substring fname 18 (string-length fname))))
     (client-remote-eval server `(remote-dir-create ,name)

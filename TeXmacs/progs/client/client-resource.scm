@@ -23,7 +23,8 @@
 (tm-define (resource-cache-set-all u props)
   (ahash-set! resource-cache u props)
   (when (buffer-exists? u)
-    (with title (resource-cache-get-first u "name" "Nameless remote file")
+    (let* ((name (url->string (url-tail u)))
+           (title (resource-cache-get-first u "title" name)))
       (buffer-set-title u title))))
 
 (tm-define (resource-cache-get-all u)
