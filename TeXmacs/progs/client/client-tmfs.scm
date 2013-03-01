@@ -81,9 +81,9 @@
   ;; FIXME: asynchroneous retrieval of file permissions
   #t)
 
-(tmfs-format-handler (remote-file name)
-  ;; FIXME: support for other file formats
-  "texmacs-file")
+;;(tmfs-format-handler (remote-file name)
+;;  ;; FIXME: support for other file formats
+;;  "texmacs-file")
 
 (tmfs-title-handler (remote-file name doc)
   (let* ((sname (tmfs-car name))
