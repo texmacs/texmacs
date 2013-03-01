@@ -153,6 +153,25 @@
     </itemize>
   </itemize>
 
+  <section|Remote editing>
+
+  <\itemize>
+    <item>The current remote file system still has to be made more
+    asynchroneous.
+
+    <\itemize>
+      <item>Attributes such as mime type can only be retrieved with a delay.
+
+      <item>Loading HTML files, images and inclusions should be made
+      asynchroneous. We need a clean concept of ``remote resource'' on the
+      client side (inside the C++ code), which can be updated via the remote
+      connection, and triggers the necessary subsequent changes.
+
+      <item>Live editing via remote resources or via loci? To be
+      investigated.
+    </itemize>
+  </itemize>
+
   <section|Other points>
 
   <\itemize>
@@ -180,6 +199,7 @@
     <associate|auto-6|<tuple|2.4|?>>
     <associate|auto-7|<tuple|3|?>>
     <associate|auto-8|<tuple|4|?>>
+    <associate|auto-9|<tuple|5|?>>
   </collection>
 </references>
 
