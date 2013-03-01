@@ -221,7 +221,7 @@ filter_preamble (tree t) {
 	r << u;
 	if (N(preamble) > 0)
 	  r << tuple ("\\begin-hide-preamble") << A(preamble)
-	    << tuple ("\\end-hide-preamble");
+	    << tuple ("\\end-hide-preamble") << "\n";
 	in_preamble= false;
       }
       else if (is_tuple (u, "\\documentclass") ||
@@ -254,14 +254,20 @@ filter_preamble (tree t) {
                is_tuple (u, "\\SetKwFunction", 2))
 	preamble << u << "\n" << "\n";
     }
+    else if (is_metadata_env (t[i])) {
+      string s= as_string (t[i][0]);
+      s= "\\end-" * s(7,N(s));
+      while (i<n && !is_tuple (t[i], s)) i++;
+    }
     else if (!is_metadata (u))
       doc << u;
   }
+  if (in_preamble) return t;
   metadata = collect_metadata (t, latex_classe);
+  // cout << "Parsed metadatas: " << metadata << "\n\n";
   r << A(kill_space_invaders (metadata));
   // cout << "Parsed metadatas: " << kill_space_invaders (metadata) << "\n";
   r << A(kill_space_invaders (doc));
-  if (in_preamble) return t;
   return r;
 }
 
@@ -625,7 +631,7 @@ test_alpha_on_end (tree t) {
 }
 
 string
-string_arg (tree t, bool url= false) {
+string_arg (tree t, bool url) {
   if (is_atomic (t)) return t->label;
   else if (is_concat (t)) {
     string r;
