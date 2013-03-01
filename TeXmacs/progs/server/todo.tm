@@ -1,6 +1,6 @@
 <TeXmacs|1.0.7.18>
 
-<style|generic>
+<style|<tuple|generic|tmdoc-keyboard>>
 
 <\body>
   <doc-data|<doc-title|Plans and ideas for remote computations>>
@@ -108,7 +108,60 @@
   several branches, or the patch corresponding to a past version of a branch
   to a past version of the file system.
 
+  <section|User interface>
+
+  <\itemize>
+    <item>The property editor should contain three tabs ``General'',
+    ``Permissions'' and ``Other''. The ``General'' tab should be read-only.
+    In ``Permissions'', we only allow for addition and removal of users
+    (maybe also search of users). In ``Other'', we also allow for adding new
+    attributes. When pressing <key|return>, we should immediately activate
+    new settings (no <key|Ok> button is necessary).
+
+    <item>We should implement a facility for uploading or downloading a file
+    or a directory tree. Bulk data might be transmitted as a unique
+    compressed tar archive.
+
+    <item>We should implement a remote file browser. This will in particular
+    be used when moving a<nbsp>file or directory to another place.
+
+    <item>We should make it possible to select one or more files in a
+    directory. Selected files might be moved to another place, or we might
+    want to edit their properties jointly.
+
+    <item>We should implement smart directories with results of search
+    queries.
+
+    <item>We should implement various default pages or directories for users,
+    such as public and private profiles, blogs, mailboxes, wikis, documents,
+    projects, etc.
+
+    <item>We should implement simple ways for managing groups. There are
+    different kinds of groups, depending on various aspects:
+
+    <\itemize>
+      <item>Membership. In certain groups, only the owner may add or remove
+      members (and people may explicitly request to become part of the
+      group). In other groups, anyone may become a member (e.g. subscription
+      to a mailing list).
+
+      <item>Publicity. Where can we become aware of the existence of the
+      group? Certain groups are purely private (friends of an anonymous
+      coward). Other groups are listed by default on the public profiles of
+      the owners. Public groups are listed on the public profiles of any of
+      the members.
+    </itemize>
+  </itemize>
+
   <section|Minor points>
+
+  <\itemize>
+    <item>Simplified notation for urls, such as
+    <verbatim|tmfs://localhost/~vdh/foo/bar.tm>. Also change the meaning of
+    <verbatim|/> inside this kind of urls. For instance, inside the above
+    url, a link to <verbatim|/other.tm> should really be a link to
+    <verbatim|tmfs://localhost/~vdh/other.tm>.
+  </itemize>
 </body>
 
 <initial|<\collection>
@@ -123,5 +176,44 @@
     <associate|auto-5|<tuple|2.3|?>>
     <associate|auto-6|<tuple|2.4|?>>
     <associate|auto-7|<tuple|3|?>>
+    <associate|auto-8|<tuple|4|?>>
   </collection>
 </references>
+
+<\auxiliary>
+  <\collection>
+    <\associate|toc>
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Global
+      design> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-1><vspace|0.5fn>
+
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Remote
+      file system> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-2><vspace|0.5fn>
+
+      <with|par-left|<quote|1.5fn>|Main design
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-3>>
+
+      <with|par-left|<quote|1.5fn>|File management
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-4>>
+
+      <with|par-left|<quote|1.5fn>|Access rights
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-5>>
+
+      <with|par-left|<quote|1.5fn>|Plans for versioning
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-6>>
+
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|User
+      interface> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-7><vspace|0.5fn>
+
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Minor
+      points> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-8><vspace|0.5fn>
+    </associate>
+  </collection>
+</auxiliary>
