@@ -50,6 +50,8 @@
 ;; File hierarchy
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (safe-car l) (and (pair? l) (car l)))
+
 (define (search-file l . where)
   (if (null? l) where
       (let* ((q (if (null? where)
@@ -72,8 +74,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote file manipulations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (safe-car l) (and (pair? l) (car l)))
 
 (tm-service (remote-file-create rname doc)
   ;;(display* "remote-file-create " rname ", " doc "\n")
