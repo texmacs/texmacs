@@ -93,6 +93,7 @@ url_get_atom (string s, int type) {
       return unblank (url_system (val));
     }
   }
+  if (occurs ("*", s)) return url_wildcard (s);
   return as_url (tree (s));
 }
 
@@ -350,12 +351,12 @@ operator * (url u1, url u2) {
   if (is_none (u2)) return url_none ();
   if (u2 == url_parent ()) {
     if (is_root (u1)) return u1;
-    if (is_atomic (u1) && (!is_parent (u1))) return url_here ();
+    if (is_pseudo_atomic (u1) && (!is_parent (u1))) return url_here ();
     if (is_semi_root (u1)) return u1;
   }
   if (is_concat (u2) && (u2[1] == url_parent ())) {
     if (is_root (u1)) return u1 * u2[2];
-    if (is_atomic (u1) && (!is_parent (u1))) return u2[2];
+    if (is_pseudo_atomic (u1) && (!is_parent (u1))) return u2[2];
     if (is_semi_root (u1)) return u1 * u2[2];
   }
   if (is_concat (u1)) return u1[1] * (u1[2] * u2);

@@ -102,6 +102,8 @@ inline bool is_root_blank (url u) { return is_root (u, "blank"); }
 inline bool is_wildcard (url u) { return is_tuple (u->t, "wildcard"); }
 inline bool is_wildcard (url u, int n) {
   return is_tuple (u->t, "wildcard", n); }
+inline bool is_pseudo_atomic (url u) {
+  return is_atomic (u->t) || is_tuple (u->t, "wildcard", 1); }
 
 bool is_rooted (url u);
 bool is_rooted (url u, string protocol);
