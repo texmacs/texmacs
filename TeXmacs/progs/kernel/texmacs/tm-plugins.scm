@@ -69,6 +69,10 @@
   (with r (ahash-ref connection-handler name)
     (if r (cons 'tuple r) '(tuple))))
 
+(define-public (sorted-supported-plugins)
+  (lazy-plugin-force)
+  (list-sort (map car (ahash-table->list connection-defined)) string<=?))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Supported sessions and scripting languages
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -240,8 +244,8 @@
   (if (eval (ahash-ref plugin-old-data-table (list name :prioritary)))
       (plugin-initialize name)
       (delayed
-       (:idle 1000)
-       (plugin-initialize name))))
+        (:idle 1000)
+        (plugin-initialize name))))
 
 (define plugin-initialize-done? #f)
 
