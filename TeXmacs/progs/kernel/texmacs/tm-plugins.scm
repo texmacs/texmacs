@@ -157,6 +157,9 @@
 	 (when (os-mingw?)
 	   (with path (determine-path-for-mingw (second cmd))
 	     (setenv "PATH" (string-append (getenv "PATH") ";" path)))))
+	((func? cmd :macpath 1)
+	 (when (os-macos?)
+           (add-macos-program-path (second cmd))))
 	((func? cmd :session 1)
 	 (supported-sessions-add name (second cmd)))
 	((func? cmd :scripts 1)
@@ -256,3 +259,86 @@
 	(for-each plugin-initialize (map car l))
 	(set! plugin-initialize-done? #t)
 	#t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Manage directories where to search for plugins
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define home-dir (string->url "~"))
+(define texmacs-dir (string->url "$TEXMACS_PATH"))
+(define check-dir-table (make-ahash-table))
+
+(define (init-check-dir-table)
+  (set! check-dir-table (make-ahash-table))
+  (add-to-check-dir-table "$PATH"))
+
+(define (add-to-check-dir-table u)
+  (cond ((in? u (list (url-head u) home-dir texmacs-dir))
+         (noop))
+        ((url-or? u)
+         (add-to-check-dir-table (url-ref u 1))
+         (add-to-check-dir-table (url-ref u 2)))
+        ((url-concat? u)
+         (add-to-check-dir-table (url-head u))
+         (for (v (url->list (url-expand (url-complete u "dr"))))
+           (with s (url->system v)
+             (when (not (ahash-ref check-dir-table s))
+               (ahash-set! check-dir-table s (url-last-modified v))))))))
+
+(define (add-to-path u)
+  (add-to-check-dir-table u)
+  (with p (url-expand (url-or "$PATH" (url-complete u "dr")))
+    (setenv "PATH" (url->system p))))
+
+(define (add-windows-program-path u)
+  (add-to-path (url-append (system->url "C:\\Program File*") u)))
+
+(define (add-macos-program-path u)
+  (add-to-path (url-append (system->url "/Applications") u)))
+
+(define (path-up-to-date?)
+  (with ok? #t
+    (for (p (ahash-table->list check-dir-table))
+      (with modified? (!= (url-last-modified (system->url (car p))) (cdr p))
+        (if modified? (set! ok? #f))))
+    ok?))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Initialization of the plugins
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define plugin-cache "$TEXMACS_HOME_PATH/system/plugin_cache.scm")
+
+(define plugin-settings-table (make-ahash-table))
+(define plugin-settings-cached? #f)
+
+(define (plugin-load-settings)
+  (when (url-exists? plugin-cache)
+    (with settings (load-object plugin-cache)
+      (with (l p) settings
+        (set! plugin-settings-table (list->ahash-table l))
+        (set! check-dir-table (list->ahash-table p))))))
+
+(define (plugin-save-settings)
+  (save-object plugin-cache
+               (list (ahash-table->list plugin-settings-table)
+                     (ahash-table->list check-dir-table))))
+
+(define (initialize-all-plugins)
+  (when (url-exists? plugin-cache)
+    (plugin-load-settings)
+    (when (not (path-up-to-date?))
+      (set! check-dir-table (make-ahash-table))
+      (set! plugin-settings-table (make-ahash-table))
+      (system-remove plugin-cache)))
+  (set! plugin-settings-cached? (url-exists? plugin-cache))
+
+  (when (not plugin-settings-cached?)
+    (init-check-dir-table)
+    (for (p (plugin-list))
+      (plugin-initialize p))
+    (plugin-save-settings))
+
+  (when plugin-settings-cached?
+    (for (p (supported-plugin-list))
+      (plugin-initialize (string->symbol p)))))

@@ -16,6 +16,7 @@
   (lazy-input-converter (m2-input) macaulay2))
 
 (plugin-configure macaulay2
+  (:macpath "Macaulay2*/bin")
   (:require (url-exists-in-path? "M2"))
   (:initialize (macaulay2-initialize))
   (:launch "M2 --texmacs")
