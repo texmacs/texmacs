@@ -477,17 +477,23 @@
 		 (cons (tex-concat (list x a)) b) z)))
 	(tex-concat (list x y z)))))
 
-(define (tmtex-script? x)
+(define (tmtex-no-space-before? x)
   (or (func? x '!sub)
       (func? x '!sup)
-      (and (string? x) (!= x "") (in? (string-ref x 0) '(#\' #\, #\) #\])))
-      (and (func? x '!concat) (tmtex-script? (cadr x)))))
+      (and (string? x) (!= x "")
+           (in? (string-ref x 0) '(#\' #\, #\) #\])))
+      (and (func? x '!concat) (tmtex-no-space-before? (cadr x)))))
+
+(define (tmtex-no-space-after? x)
+  (and (string? x) (!= x "")
+       (in? (string-ref x 0) '(#\( #\[))))
 
 (define (tmtex-math-concat-spaces l)
   (if (or (null? l) (null? (cdr l))) l
       (let* ((head (car l))
 	     (tail (tmtex-math-concat-spaces (cdr l))))
-	(if (tmtex-script? (car tail))
+	(if (or (tmtex-no-space-before? (car tail))
+                (tmtex-no-space-after? head))
 	    (cons head tail)
 	    (cons* head " " tail)))))
 
@@ -1957,7 +1963,8 @@
 	     (main-style (or (tmtex-transform-style (car style)) "article"))
 	     (lan (tmfile-init x "language"))
 	     (init (tmfile-extract x 'initial))
-	     (doc (list '!file body style lan init (url->string (get-texmacs-path)))))
+	     (doc (list '!file body style lan init
+                        (url->string (get-texmacs-path)))))
 	(latex-set-style main-style)
 	(latex-set-packages '())
 	(set! tmtex-style (car style))
@@ -1975,4 +1982,5 @@
 	(tmtex-initialize opts)
 	(with r (tmtex (tmpre-produce x3))
 	  (if (not tmtex-use-macros?)
-	      (set! r (latex-expand-macros r))) r))))
+	      (set! r (latex-expand-macros r)))
+          r))))
