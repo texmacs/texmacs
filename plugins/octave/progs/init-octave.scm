@@ -16,8 +16,9 @@
   (plugin-input-converters octave))
 
 (define octave-launcher (if (os-mingw?) "tm_octave.bat" "tm_octave"))
+
 (plugin-configure octave
-  (:winpath ,(url-append (url-wildcard "Octave*") "bin"))
+  (:winpath "Octave*" "bin")
   (:require (url-exists-in-path? "octave"))
   (:initialize (octave-initialize))
   (:launch ,octave-launcher)

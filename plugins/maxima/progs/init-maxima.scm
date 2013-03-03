@@ -62,7 +62,7 @@
             '()))))
 
 (plugin-configure maxima
-  (:winpath ,(url-append (url-wildcard "Maxima*") "bin"))
+  (:winpath "Maxima*" "bin")
   (:require (maxima-detect))
   ,@(maxima-versions)
   (:initialize (maxima-initialize))

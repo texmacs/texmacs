@@ -112,17 +112,6 @@
 (define-public plugin-old-data-table (make-ahash-table))
 (define-public plugin-data-table (make-ahash-table))
 
-
-(define winunit '("C:" "D:" "E:"))
-
-(define (determine-path-for-mingw x)
-   (if (url-rooted? x)
-   (url->string x)
-   (letrec ((get-path (lambda (unit) (if(eq? unit '())
-      (url-none) (url-or (url-complete (url-append (url-append (car unit) (url-or (url-wildcard "Program File*") ".")) x)"r") (get-path (cdr unit)))))))
-      (url->string (url-expand (get-path winunit))))))
-      
-
 (define (plugin-configure-cmd name cmd)
   (cond ((or (func? cmd :require 1) (func? cmd :version 1))
 	 (ahash-set! plugin-data-table name ((second cmd))))
@@ -153,13 +142,12 @@
 	((func? cmd :handler 2)
 	 (connection-insert-handler
 	  name (second cmd) (symbol->string (third cmd))))
-	((func? cmd :winpath 1)
+	((func? cmd :winpath 2)
 	 (when (os-mingw?)
-	   (with path (determine-path-for-mingw (second cmd))
-	     (setenv "PATH" (string-append (getenv "PATH") ";" path)))))
-	((func? cmd :macpath 1)
+           (add-windows-program-path (url-append (second cmd) (third cmd)))))
+	((func? cmd :macpath 2)
 	 (when (os-macos?)
-           (add-macos-program-path (second cmd))))
+           (add-macos-program-path (url-append (second cmd) (third cmd)))))
 	((func? cmd :session 1)
 	 (supported-sessions-add name (second cmd)))
 	((func? cmd :scripts 1)

@@ -38,7 +38,7 @@
 	(string-append (escape-verbatim w) "\n")))))
 
 (plugin-configure caas
-  (:winpath "Caas\\bin")
+  (:winpath "Caas" "bin")
   (:require (url-exists-in-path? "caas"))
   (:serializer ,caas-serialize)
   (:initialize (caas-initialize))

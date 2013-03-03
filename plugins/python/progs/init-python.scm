@@ -28,7 +28,7 @@
 (define run-python (if (os-mingw?) "tm_python.bat --texmacs" "tm_python --texmacs"))
 
 (plugin-configure python
-  (:winpath ,(url-wildcard "Python2*"))
+  (:winpath "Python2*" ".")
   (:require (url-exists-in-path? "python"))
   (:require (url-exists-in-path? "tm_python"))
   (:launch ,run-python)
