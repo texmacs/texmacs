@@ -11,14 +11,12 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (giac-initialize)
-  (import-from (utils plugins plugin-convert))
-  (import-from (giac-menus))
-  (lazy-input-converter (giac-input) giac))
-
 (plugin-configure giac
   (:require (url-exists-in-path? "giac"))
-  (:initialize (giac-initialize))
   (:tab-completion #t)
   (:launch "giac --texmacs")
   (:session "Giac"))
+
+(when (supports-giac?)
+  (import-from (giac-menus))
+  (lazy-input-converter (giac-input) giac))

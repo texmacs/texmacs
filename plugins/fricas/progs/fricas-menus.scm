@@ -14,7 +14,8 @@
 (texmacs-module (fricas-menus)
   (:use (texmacs texmacs tm-files)
 	;(doc help-funcs)
-	(dynamic scripts-edit)))
+	(dynamic scripts-edit)
+        (dynamic session-menu)))
 
 (define fricas-apply script-apply)
 

@@ -15,6 +15,7 @@
   (:use (utils plugins plugin-cmd)
 	(doc help-funcs)
 	(dynamic scripts-edit)
+        (dynamic session-menu)
 	(convert tools tmconcat)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

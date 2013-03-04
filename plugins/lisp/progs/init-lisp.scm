@@ -11,11 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (lisp-initialize)
-	(import-from (utils plugins plugin-convert))
-	(plugin-input-converters lisp))
-
-(define (lisp-versions)
+(define (lisp-launchers)
   (let ((version-list
 	 (append (if (url-exists-in-path? "clisp") '("Clisp") '())
 		 (if (url-exists-in-path? "lisp") '("Cmucl") '())
@@ -38,6 +34,8 @@
   (:require (or (url-exists-in-path? "clisp")
 		(url-exists-in-path? "lisp")
 		(url-exists-in-path? "scl")))
-  (:initialize (lisp-initialize))
-  ,@(lisp-versions)
+  ,@(lisp-launchers)
   (:session "Lisp"))
+
+(when (supports-lisp?)
+  (plugin-input-converters lisp))

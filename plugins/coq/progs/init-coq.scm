@@ -11,10 +11,9 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-modes
-  (in-coq-style% (style-has? "coq-style")))
-
-(lazy-keyboard (coq-kbd) in-coq-style?)
+(plugin-configure coq
+  (:require (url-exists-in-path? "coq_texmacs"))
+  (:launch "coq_texmacs"))
 
 (when (url-exists-in-path? "coq_to_texmacs")
   (define-format coq-vernacular
@@ -24,6 +23,8 @@
   (converter coq-vernacular-file stm-file
     (:shell "coq_to_texmacs" from to)))
 
-(plugin-configure coq
-  (:require (url-exists-in-path? "coq_texmacs"))
-  (:launch "coq_texmacs"))
+(when (supports-coq?)
+  (texmacs-modes
+    (in-coq-style% (style-has? "coq-style")))
+
+  (lazy-keyboard (coq-kbd) in-coq-style?))

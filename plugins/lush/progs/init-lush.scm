@@ -11,12 +11,10 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (lush-initialize)
-  (import-from (utils plugins plugin-convert))
-  (plugin-input-converters lush))
-
 (plugin-configure lush
   (:require (url-exists-in-path? "lush"))
-  (:initialize (lush-initialize))
   (:launch "tm_lush")
   (:session "Lush"))
+
+(when (supports-lush?)
+  (plugin-input-converters lush))

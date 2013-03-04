@@ -50,11 +50,9 @@
 
 (when (supports-mathemagix?)
 
-(import-from (utils plugins plugin-convert))
-(lazy-input-converter (mathemagix-input) mathemagix)
-(import-from (dynamic session-menu))
-(import-from (mathemagix-kbd))
 (import-from (mathemagix-menus))
+(lazy-input-converter (mathemagix-input) mathemagix)
+(lazy-keyboard (mathemagix-kbd) in-mathemagix?)
 (plugin-approx-command-set! "mathemagix" "")
 
 ) ;; end when (supports-mathemagix?)
