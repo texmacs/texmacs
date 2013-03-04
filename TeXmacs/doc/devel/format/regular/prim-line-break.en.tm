@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|1.0.7.18>
 
 <style|tmdoc>
 
@@ -34,8 +34,8 @@
     new logical paragraph unit instead of a new logical paragraph.
 
     Currently, the <markup|next-line> tag can also be used in order to force
-    a line break with the addional property that the line before the break is
-    not justified or filled.
+    a line break with the additional property that the line before the break
+    is not justified or filled.
   </explain>
 
   <\explain>
@@ -71,3 +71,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>
