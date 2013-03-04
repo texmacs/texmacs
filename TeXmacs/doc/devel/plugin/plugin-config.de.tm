@@ -28,7 +28,7 @@
     wird abgebrochen. Die <verbatim|:require> Option ist normalerweise die
     allererste.
 
-    <item*|<verbatim|<with|font-series|medium|(:version
+    <item*|<verbatim|<with|font-series|medium|(:versions
     <em|version-cmd>)>>>Diese Option führt einen <value|scheme>-Ausdruck
     <verbatim|<em|version-cmd>> \ aus, der zu der Version des Plugins
     evaluiert.

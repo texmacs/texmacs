@@ -27,7 +27,7 @@
     is aborted. The <verbatim|:require> option usually occurs first in the
     list of configuration options.
 
-    <item*|<verbatim|<with|font-series|medium|(:version
+    <item*|<verbatim|<with|font-series|medium|(:versions
     <em|version-cmd>)>>>This option specifies a <value|scheme> expression
     <verbatim|<em|version-cmd>> which evaluates to the version of the
     plug-in.

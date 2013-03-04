@@ -46,7 +46,7 @@
       `((:launch
          ,(string-append "maxima.bat -p \"" (getenv "TEXMACS_PATH")
                          "\\plugins\\maxima\\lisp\\texmacs-maxima.lisp\"")))
-      (with version-list (maxima-versions)
+      (with version-list (plugin-versions "maxima")
         (if version-list
             (let* ((default (car version-list))
                    (rest (cdr version-list))
@@ -63,7 +63,8 @@
 
 (plugin-configure maxima
   (:winpath "Maxima*" "bin")
-  (:require (maxima-versions))
+  (:require (url-exists-in-path? "maxima"))
+  (:versions (maxima-versions))
   ,@(maxima-launchers)
   (:initialize (maxima-initialize))
   (:serializer ,maxima-serialize)

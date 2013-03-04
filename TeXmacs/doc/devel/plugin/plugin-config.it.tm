@@ -30,7 +30,7 @@
     l'opzione <verbatim|:require> viene di norma scritta per prima nella
     lista delle opzioni di configurazione;
 
-    <expand|item*|<verbatim|<with|font series|medium|(:version
+    <expand|item*|<verbatim|<with|font series|medium|(:versions
     <em|version-cmd>)>>>questa opzione serve per specificare un'espressione
     <value|scheme> <verbatim|<em|version-cmd>> che valuta la versione del
     plugin;

@@ -275,7 +275,7 @@ TeXmacs_main (int argc, char** argv) {
       else if ((s == "-S") || (s == "-setup") ||
 	       (s == "-delete-cache") || (s == "-delete-font-cache") ||
 	       (s == "-delete-style-cache") || (s == "-delete-file-cache") ||
-	       (s == "-delete-doc-cache"));
+	       (s == "-delete-doc-cache") || (s == "-delete-plugin-cache"));
       else if (starts (s, "-psn"));
       else {
 	cout << "\n";
