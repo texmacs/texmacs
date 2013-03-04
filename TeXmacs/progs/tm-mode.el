@@ -62,7 +62,7 @@
 (setq unary-definitions
   '(define define-public define-macro define-public-macro
     texmacs-module provide-public define-group
-    tm-define tm-define-macro tm-property request-handler
+    tm-define tm-define-macro lazy-body-macro tm-property request-handler
     tm-menu define-menu tm-widget define-widget tm-generate
     tm-build tm-build-macro tm-build-widget
     menu-bind define-table extend-table
@@ -97,7 +97,7 @@
   '(for if inherit former
     define-secure-symbols map-in-order link promise
     plugin-input-converters use-modules export import-from inherit-modules
-    lazy-menu lazy-keyboard lazy-define lazy-initialize
+    lazy-menu lazy-keyboard lazy-define lazy-define-macro lazy-initialize
     lazy-format lazy-language lazy-input-converter lazy-tmfs-handler
     $if))
 
