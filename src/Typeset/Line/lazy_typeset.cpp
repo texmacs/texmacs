@@ -99,6 +99,10 @@ lazy_document_rep::produce (lazy_type request, format fm) {
 lazy_surround_rep::lazy_surround_rep (edit_env env, tree t, path ip):
   lazy_rep (LAZY_SURROUND, ip)
 {
+  if (N(t) < 3) {
+    par= make_lazy (env, t[N(t)-1], descend (ip, N(t)-1));
+    return;
+  }
   a  = typeset_concat (env, t[0], descend (ip, 0));
   b  = typeset_concat (env, t[1], descend (ip, 1));
   par= make_lazy (env, t[2], descend (ip, 2));
