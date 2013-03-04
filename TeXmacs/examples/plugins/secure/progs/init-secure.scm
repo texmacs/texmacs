@@ -11,10 +11,9 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (secure-initialize)
-  (import-from (secure-secure)))
-
 (plugin-configure secure
   (:require (url-exists-in-path? "secure.bin"))
-  (:launch "secure.bin")
-  (:initialize (secure-initialize)))
+  (:launch "secure.bin"))
+
+(when (supports-secure?)
+  (import-from (secure-secure)))

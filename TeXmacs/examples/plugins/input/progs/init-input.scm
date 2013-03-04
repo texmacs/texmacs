@@ -11,12 +11,10 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (input-initialize)
-  (import-from (utils plugins plugin-convert))
-  (lazy-input-converter (input-input) input))
-
 (plugin-configure input
   (:require (url-exists-in-path? "input.bin"))
-  (:initialize (input-initialize))
   (:launch "input.bin")
   (:session "Input"))
+
+(when (supports-input?)
+  (lazy-input-converter (input-input) input))

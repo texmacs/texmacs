@@ -11,18 +11,19 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (substitute-substitute)
-  (import-from (utils plugins plugin-eval))
-  (if (selection-active-any?)
-      (let* ((t (tree->stree (selection-tree)))
-	     (u (plugin-eval "substitute" "default" t)))
-	(clipboard-cut "primary")
-	(insert (stree->tree u)))))
-
-(kbd-map
-  ("C-F12" (substitute-substitute)))
-
 (plugin-configure substitute
   (:require (url-exists-in-path? "substitute.bin"))
   (:launch "substitute.bin")
   (:session "Substitute"))
+
+(when (supports-substitute?)
+  (define (substitute-substitute)
+    (import-from (utils plugins plugin-eval))
+    (if (selection-active-any?)
+        (let* ((t (tree->stree (selection-tree)))
+               (u (plugin-eval "substitute" "default" t)))
+          (clipboard-cut "primary")
+          (insert (stree->tree u)))))
+
+  (kbd-map
+    ("C-F12" (substitute-substitute))))

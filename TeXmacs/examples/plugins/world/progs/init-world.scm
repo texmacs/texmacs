@@ -11,9 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (world-initialize)
-  (display* "Using world plug-in!\n"))
-
 (plugin-configure world
-  (:require #t)
-  (:initialize (world-initialize)))
+  (:require #t))
+
+(when (supports-world?)
+  (display* "Using world plug-in!\n"))

@@ -11,20 +11,21 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define menu-items '("Hi"))
-
-(tm-menu (menus-menu)
-  (for (entry menu-items)
-    ((eval entry) (insert entry))))
-
-(tm-define (menus-add entry)
-  (set! menu-items (cons entry menu-items)))
-
 (plugin-configure menus
   (:require (url-exists-in-path? "menus.bin"))
   (:launch "menus.bin")
   (:session "Menus"))
 
-(menu-bind plugin-menu
-  (:require (in-menus?))
-  (=> "Menus" (link menus-menu)))
+(when (supports-menus?)
+  (define menu-items '("Hi"))
+
+  (tm-menu (menus-menu)
+    (for (entry menu-items)
+      ((eval entry) (insert entry))))
+
+  (tm-define (menus-add entry)
+    (set! menu-items (cons entry menu-items)))
+
+  (menu-bind plugin-menu
+    (:require (in-menus?))
+    (=> "Menus" (link menus-menu))))
