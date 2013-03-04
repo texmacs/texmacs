@@ -35,18 +35,18 @@
 	   (string-append s "\n"))
 	  (else (string-append s ";\n")))))
 
-(define (maxima-detect)
+(define (maxima-versions)
   (if (os-mingw?)
       (url-exists-in-path? "maxima")
       (with version-list (string->object (var-eval-system "maxima_detect"))
         (and (list? version-list) (nnull? version-list) version-list))))
       
-(define (maxima-versions)  ; returns list of versions if any
+(define (maxima-launchers) ;; returns list of launchers for each version
   (if (os-mingw?)
       `((:launch
          ,(string-append "maxima.bat -p \"" (getenv "TEXMACS_PATH")
                          "\\plugins\\maxima\\lisp\\texmacs-maxima.lisp\"")))
-      (with version-list (maxima-detect)
+      (with version-list (maxima-versions)
         (if version-list
             (let* ((default (car version-list))
                    (rest (cdr version-list))
@@ -63,8 +63,8 @@
 
 (plugin-configure maxima
   (:winpath "Maxima*" "bin")
-  (:require (maxima-detect))
-  ,@(maxima-versions)
+  (:require (maxima-versions))
+  ,@(maxima-launchers)
   (:initialize (maxima-initialize))
   (:serializer ,maxima-serialize)
   (:session "Maxima")
