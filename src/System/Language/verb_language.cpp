@@ -79,7 +79,7 @@ prog_language (string s) {
   if (language::instances -> contains (s)) return language (s);
   if (s == "scheme")
     return make (language, s, tm_new<scheme_language_rep> (s));
-  if (s == "mathemagix")
+  if (s == "mathemagix" || s == "mmi" || s == "caas")
     return make (language, s, tm_new<mathemagix_language_rep> (s));
   if (s == "cpp")
     return make (language, s, tm_new<cpp_language_rep> (s));

@@ -1,8 +1,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : mathemagix-edit.scm
-;; DESCRIPTION : editing mathemagix programs
+;; MODULE      : caas-edit.scm
+;; DESCRIPTION : editing caas programs
 ;; COPYRIGHT   : (C) 2008  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
@@ -11,14 +11,14 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (mathemagix-edit)
+(texmacs-module (caas-edit)
   (:use (mmx-indent)))
 
 (tm-define (kbd-variant t forward?)
-  (:require (and (in-prog-mathemagix?) (not (inside? 'session))))
-  (mathemagix-indent))
+  (:require (and (in-prog-caas?) (not (inside? 'session))))
+  (caas-indent))
 
 (tm-define (insert-return)
-  (:mode in-prog-mathemagix?)
+  (:mode in-prog-caas?)
   (insert-raw-return)
-  (mathemagix-indent))
+  (caas-indent))

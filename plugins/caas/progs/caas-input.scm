@@ -1,8 +1,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : mathemagix-input.scm
-;; DESCRIPTION : Initialize mathemagix plugin
+;; MODULE      : caas-input.scm
+;; DESCRIPTION : Initialize caas plugin
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven, 2005  Andrey Grozin
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (mathemagix-input)
+(texmacs-module (caas-input)
   (:use (mmx-input)))
 
-(mmx-converters mathemagix)
+(mmx-converters caas)
