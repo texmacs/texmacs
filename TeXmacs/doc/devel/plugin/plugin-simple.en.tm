@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.0.7.18>
 
 <style|tmdoc>
 
@@ -36,17 +36,15 @@
   The file <verbatim|init-world.scm> essentially contains the following code:
 
   <\scm-code>
-    (define (world-initialize)
+    (plugin-configure world
 
-    \ \ (display* "Using world plug-in!\\n"))
+    \ \ (:require #t))
 
     \;
 
-    (plugin-configure world
+    (when (supports-world?)
 
-    \ \ (:require #t)
-
-    \ \ (:initialize (world-initialize)))
+    \ \ (display* "Using world plug-in!\\n"))
   </scm-code>
 
   The configuration option <scm|:require> specifies a condition which needs
@@ -54,13 +52,14 @@
   will for instance allow us to check whether certain programs exist on the
   system). The configuration is aborted if the requirement is not fulfilled.
 
-  The option <scm|:initialize> specifies an instruction which will be
-  executed during the initialization (modulo the fulfillment of the
-  requirement). In our example, we just send a message to the standard output
-  that we are using our plug-in. In general, the initialization routine
-  should be very short and rather load a module which takes care of the real
-  initialization. Indeed, keeping the <verbatim|init-<em|myplugin>.scm> files
-  simple will reduce the startup time of <TeXmacs>.
+  Assuming that the configuration succeeds, the <verbatim|supports-world?>
+  predicate will evaluate to <verbatim|#t>. In our example, the body of the
+  <scm|when> statement corresponds to some further initialization code, which
+  just sends a message to the standard output that we are using our plug-in.
+  In general, this kind of initialization code should be very short and
+  rather load a module which takes care of the real initialization. Indeed,
+  keeping the <verbatim|init-<em|myplugin>.scm> files simple will reduce the
+  startup time of<nbsp><TeXmacs>.
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 

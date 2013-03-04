@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.0.7.18>
 
 <style|tmdoc>
 
@@ -92,27 +92,23 @@
 
     \ \ (:require (url-exists-in-path? "input.bin"))
 
-    \ \ (:initialize (input-initialize))
-
     \ \ (:launch "input.bin")
 
     \ \ (:session "Input"))
-  </scm-code>
 
-  Here <verbatim|input-initialize> is an initialization routine which adds
-  the new input conversion rules in a lazy way:
+    \;
 
-  <\scm-code>
-    (define (input-initialize)
-
-    \ \ (import-from (texmacs plugin plugin-convert))
+    (when (supports-initialize?)
 
     \ \ (lazy-input-converter (input-input) input))
   </scm-code>
 
-  In other words, the module <verbatim|input-input.scm> will only be loaded
-  when we explicitly request to make a conversion. The conversion rules in
-  <verbatim|input-input.scm> are given by
+  The predicate <verbatim|supports-initialize?> tests whether the plug-in is
+  indeed operational (that is, whether <verbatim|input.bin> exists in the
+  path). The conversion rules in the module <verbatim|(input input)> are
+  added in a lazy manner. In other words, the file <verbatim|input-input.scm>
+  will only be loaded when we explicitly request to make a conversion. The
+  conversion rules in <verbatim|input-input.scm> are given by
 
   <\scm-code>
     (plugin-input-converters input

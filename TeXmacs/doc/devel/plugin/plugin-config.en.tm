@@ -1,23 +1,34 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|1.0.7.18>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|Summary of the configuration options for plug-ins>
 
-  As explained before, the <value|scheme> configuration file
+  As explained before, the <scheme> configuration file
   <verbatim|<em|myplugin>/progs/init-<em|myplugin>.scm> of a plug-in with
   name <verbatim|<em|plugin>> should contain an instruction of the type
 
-  <\scheme-fragment>
+  <\scm-code>
     (plugin-configure <em|myplugin>
 
     \ \ <em|configuration-options>)
-  </scheme-fragment>
+  </scm-code>
 
   Here follows a list of the available <verbatim|<em|configuration-options>>:
 
   <\description-dash>
+    <item*|<verbatim|<with|font-series|medium|(:winpath <em|package-path>
+    <em|inner-bin-path>)>>>Specify where to search for the plug-in under
+    windows. The <verbatim|<em|package-path>> is the usual place where the
+    plug-in is installed. The <verbatim|<em|inner-bin-path>> is the place
+    where to look for the binary executable corresponding to the plug-in,
+    relative to the <verbatim|<em|package-path>>.
+
+    <item*|<verbatim|<with|font-series|medium|(:winpath <em|package-path>
+    <em|inner-bin-path>)>>>Analoguous to <verbatim|:winpath>, but under
+    MacOS.
+
     <item*|<verbatim|<with|font-series|medium|(:require
     <em|condition>)>>>This option specifies a sanity
     <verbatim|<em|condition>> which needs to be satisfied by the plug-in.
@@ -28,7 +39,7 @@
     list of configuration options.
 
     <item*|<verbatim|<with|font-series|medium|(:versions
-    <em|version-cmd>)>>>This option specifies a <value|scheme> expression
+    <em|version-cmd>)>>>This option specifies a <scheme> expression
     <verbatim|<em|version-cmd>> which evaluates to the version of the
     plug-in.
 
@@ -36,17 +47,6 @@
     command is only executed when the version of the plug-in changed from one
     execution of <TeXmacs> to another one. This occurs mainly when installing
     new versions of <TeXmacs> or helper applications.
-
-    <item*|<verbatim|<with|font-series|medium|(:initialize <em|cmd>)>>>This
-    option executes the <value|scheme> expression <verbatim|<em|cmd>>. It
-    usually occurs just after the <verbatim|:require> option, so that the
-    plug-in will only be configured if the plug-in really exists. For large
-    plug-ins, it is important to keep the file
-    <verbatim|<em|myplugin>/progs/init-<em|myplugin>.scm> small, because it
-    will be rerun each time you start <TeXmacs>. In order to reduce the boot
-    time, most <value|scheme> commands of the plug-in therefore occur in
-    separate modules, some of which may be loaded by the initialization
-    command.
 
     <item*|<verbatim|<with|font-series|medium|(:launch <em|shell-cmd>)>>>This
     option specifies that the plug-in is able to evaluate expressions over a
@@ -56,8 +56,8 @@
     <item*|<verbatim|<with|font-series|medium|(:link <em|lib-name>
     <em|export-struct> <em|options>)>>>This option is similar to
     <verbatim|:launch>, except that the extern application is now linked
-    dynamically. For more information, see the section about
-    <hyper-link|dynamic linking|../interface/interface-dynlibs.en.tm>.
+    dynamically. For more information, see the section about <hlink|dynamic
+    linking|../interface/interface-dynlibs.en.tm>.
 
     <item*|<verbatim|<with|font-series|medium|(:session
     <em|menu-name>)>>>This option indicates that the plug-in supports an
@@ -67,8 +67,8 @@
 
     <item*|<verbatim|<with|font-series|medium|(:serializer
     ,<em|fun-name>)>>>If the plug-in can be used as an evaluator, then this
-    option specifies the <value|scheme> function <verbatim|<em|fun-name>>
-    which is used in order to transform <TeXmacs> trees to strings.
+    option specifies the <scheme> function <verbatim|<em|fun-name>> which is
+    used in order to transform <TeXmacs> trees to strings.
 
     <item*|<verbatim|<with|font-series|medium|(:commander
     ,<em|fun-name>)>>>This command is similar to the <verbatim|:serializer>
@@ -82,7 +82,21 @@
     the input is complete.
   </description-dash>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  It should be noticed that the configuration of the plug-in
+  <verbatim|<em|myplugin>> automatically creates a few predicates:
+
+  <\description>
+    <item*|<with|font-series|medium|<verbatim|supports-<em|myplugin>?>>>Test
+    whether the plug-in is fully operational (all requirements are met).
+
+    <item*|<with|font-series|medium|<verbatim|in-<em|myplugin>?>>>Test
+    whether <verbatim|<em|myplugin>> is the current programming language.
+
+    <item*|<with|font-series|medium|<verbatim|<em|myplugin>-scripts?>>>Test
+    whether <verbatim|<em|myplugin>> is the current scripting language.
+  </description>
+
+  <tmdoc-copyright|1998--2013|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -95,17 +109,5 @@
 <\initial>
   <\collection>
     <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
   </collection>
 </initial>
