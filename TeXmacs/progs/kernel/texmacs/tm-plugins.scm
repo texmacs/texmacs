@@ -180,11 +180,13 @@
 (define-public-macro (plugin-configure name2 . options)
   "Declare and configure plug-in with name @name2 according to @options"
   (let* ((name (if (string? name2) name2 (symbol->string name2)))
+         (supports-name? (string->symbol (string-append "supports-" name "?")))
 	 (in-name (string->symbol (string-append "in-" name "%")))
 	 (name-scripts (string->symbol (string-append name "-scripts%"))))
     `(begin
        (texmacs-modes (,in-name (== (get-env "prog-language") ,name)))
        (texmacs-modes (,name-scripts (== (get-env "prog-scripts") ,name)))
+       (define (,supports-name?) (ahash-ref plugin-data-table ,name))
        (ahash-set! plugin-data-table ,name #t)
        (plugin-configure-cmds ,name
 	 ,(list 'quasiquote (map plugin-configure-sub options))))))
