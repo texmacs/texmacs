@@ -250,15 +250,6 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting remote facilities\n")
-;; (lazy-define (remote tmfs-remote) remote-load remote-save
-;;              remote-title remote-permission? remote-project-load-by-name)
-;; (lazy-menu (remote remote-menu) remote-menu)
-;; (lazy-menu (remote chat-menu) chat-menu)
-;; (lazy-menu (remote tmfs-menu) remote-file-menu)
-;; (tmfs-handler #t 'load remote-load)
-;; (tmfs-handler #t 'save remote-save)
-;; (tmfs-handler #t 'title remote-title)
-;; (tmfs-handler #t 'permission? remote-permission?)
 (lazy-define (server server-resource) resource-create resource-set-user-info)
 (lazy-menu (server server-menu) server-menu)
 (lazy-menu (client client-menu) client-menu remote-menu)
