@@ -176,7 +176,7 @@
 
 (define (add-windows-program-path u)
   (add-to-path (url-append (url-or (system->url "C:\\.")
-				   (system->url "C:\\Program File*") u))))
+				   (system->url "C:\\Program File*")) u)))
 
 (define (add-macos-program-path u)
   (add-to-path (url-append (system->url "/Applications") u)))
