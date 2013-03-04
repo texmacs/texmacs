@@ -11,12 +11,10 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (qcl-initialize)
-  (import-from (utils plugins plugin-convert))
-  (lazy-input-converter (qcl-input) qcl))
-
 (plugin-configure qcl
   (:require (url-exists-in-path? "qcl"))
-  (:initialize (qcl-initialize))
   (:launch "qcl --texmacs")
   (:session "Qcl"))
+
+(when (supports-qcl?)
+  (lazy-input-converter (qcl-input) qcl))

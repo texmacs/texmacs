@@ -13,11 +13,6 @@
 
 (define (cas-supports-completions-set! must-be-pari) (noop)) ;; obsolete
 
-(define (pari-initialize)
-  (import-from (utils plugins plugin-convert))
-  (import-from (pari-menus))
-  (plugin-input-converters pari))
-
 (define (pari-commander s)
   (string-append (char->string #\002)
 		 "special:" s
@@ -26,10 +21,12 @@
 (plugin-configure pari
   (:winpath "PARI" ".")
   (:require (url-exists-in-path? "gp"))
-  (:initialize (pari-initialize))
   (:launch "gp --texmacs")
   (:session "Pari")
   (:scripts "Pari")
   (:tab-completion #t)
   (:commander ,pari-commander))
 
+(when (supports-pari?)
+  (import-from (pari-menus))
+  (plugin-input-converters pari))

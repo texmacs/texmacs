@@ -25,13 +25,16 @@
     (with s (texmacs->verbatim (stree->tree u))
       (string-append  s  "\n<EOF>\n"))))
 
-(define run-python (if (os-mingw?) "tm_python.bat --texmacs" "tm_python --texmacs"))
+(define (python-launcher)
+  (if (os-mingw?)
+      "tm_python.bat --texmacs"
+      "tm_python --texmacs"))
 
 (plugin-configure python
   (:winpath "Python2*" ".")
   (:require (url-exists-in-path? "python"))
   (:require (url-exists-in-path? "tm_python"))
-  (:launch ,run-python)
+  (:launch ,(python-launcher))
   (:tab-completion #t)
   (:serializer ,python-serialize)
   (:session "Python"))

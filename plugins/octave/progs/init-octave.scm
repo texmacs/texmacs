@@ -11,15 +11,13 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (octave-initialize)
-  (import-from (utils plugins plugin-convert))
-  (plugin-input-converters octave))
-
 (define octave-launcher (if (os-mingw?) "tm_octave.bat" "tm_octave"))
 
 (plugin-configure octave
   (:winpath "Octave*" "bin")
   (:require (url-exists-in-path? "octave"))
-  (:initialize (octave-initialize))
   (:launch ,octave-launcher)
   (:session "Octave"))
+
+(when (supports-octave?)
+  (plugin-input-converters octave))
