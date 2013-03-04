@@ -11,19 +11,18 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (macaulay2-initialize)
-  (import-from (doc help-funcs) (utils plugins plugin-convert))
-  (lazy-input-converter (m2-input) macaulay2))
-
 (plugin-configure macaulay2
   (:macpath "Macaulay2*" "bin")
   (:require (url-exists-in-path? "M2"))
-  (:initialize (macaulay2-initialize))
   (:launch "M2 --texmacs")
   (:session "Macaulay 2"))
 
-(menu-bind session-help-icons
-  (:require (and (in-macaulay2?) (url-exists? "$M2HOME/html/index.html")))
-  /
-  ((balloon (icon "tm_help.xpm") "Macaulay2 manual")
-   (load-help-buffer "$M2HOME/html/index.html")))
+(when (supports-macaulay2?)
+  (import-from (doc help-funcs))
+  (lazy-input-converter (m2-input) macaulay2)
+
+  (menu-bind session-help-icons
+    (:require (and (in-macaulay2?) (url-exists? "$M2HOME/html/index.html")))
+    /
+    ((balloon (icon "tm_help.xpm") "Macaulay2 manual")
+     (load-help-buffer "$M2HOME/html/index.html"))))

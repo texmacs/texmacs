@@ -32,10 +32,6 @@
   (:session "Mathemagix")
   (:scripts "Mathemagix"))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Editing Mathemagix programs (even if Mathemagix is not installed)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (texmacs-modes
   (in-mathemagix% (== (get-env "prog-language") "mathemagix"))
   (in-prog-mathemagix% #t in-prog% in-mathemagix%)
@@ -44,15 +40,8 @@
 
 (lazy-keyboard (mathemagix-edit) in-prog-mathemagix?)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Initialization if Mathemagix is supported
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (when (supports-mathemagix?)
-
-(import-from (mathemagix-menus))
-(lazy-input-converter (mathemagix-input) mathemagix)
-(lazy-keyboard (mathemagix-kbd) in-mathemagix?)
-(plugin-approx-command-set! "mathemagix" "")
-
-) ;; end when (supports-mathemagix?)
+  (import-from (mathemagix-menus))
+  (lazy-input-converter (mathemagix-input) mathemagix)
+  (lazy-keyboard (mathemagix-kbd) in-mathemagix?)
+  (plugin-approx-command-set! "mathemagix" ""))

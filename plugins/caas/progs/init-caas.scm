@@ -26,10 +26,6 @@
   (:session "Caas")
   (:scripts "Caas"))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Editing Caas programs (even if Caas is not installed)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (texmacs-modes
   (in-caas% (== (get-env "prog-language") "caas"))
   (in-prog-caas% #t in-prog% in-caas%)
@@ -38,15 +34,8 @@
 
 (lazy-keyboard (caas-edit) in-prog-caas?)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Initialization if Caas is supported
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (when (supports-caas?)
-
-(import-from (utils plugins plugin-convert))
-(lazy-input-converter (caas-input) caas)
-(import-from (dynamic session-menu))
-(plugin-approx-command-set! "caas" "")
-
-) ;; end when (supports-caas?)
+  (import-from (utils plugins plugin-convert))
+  (lazy-input-converter (caas-input) caas)
+  (import-from (dynamic session-menu))
+  (plugin-approx-command-set! "caas" ""))
