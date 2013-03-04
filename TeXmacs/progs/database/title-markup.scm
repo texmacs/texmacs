@@ -143,7 +143,7 @@
 
 (tm-define (doc-data-sub t)
   `(surround
-     ,(doc-data-hidden t)
+     ,(doc-data-hidden t) (concat)
      (document
        (doc-make-title
          ,(doc-data-main t)))))
