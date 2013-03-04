@@ -111,7 +111,7 @@
 
 (define-public reconfigure-flag? #t)
 (define plugin-loaded-setup? #f)
-(define plugin-cache "$TEXMACS_HOME_PATH/system/plugin-cache.scm")
+(define plugin-cache "$TEXMACS_HOME_PATH/system/cache/plugin_cache.scm")
 
 (define check-dir-table (make-ahash-table))
 (define-public plugin-data-table (make-ahash-table))
