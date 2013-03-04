@@ -11,12 +11,10 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (maple-initialize)
-  (import-from (utils plugins plugin-convert))
-  (lazy-input-converter (maple-input) maple))
-
 (plugin-configure maple
   (:require (url-exists-in-path? "maple"))
-  (:initialize (maple-initialize))
   (:launch "tm_maple")
   (:session "Maple"))
+
+(when (supports-maple?)
+  (lazy-input-converter (maple-input) maple))

@@ -11,38 +11,36 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (mupad-initialize)
-  (import-from (utils plugins plugin-convert))
-  (import-from (mupad-menus))
-  (lazy-input-converter (mupad-input) mupad))
-
 (define (mupad-serialize lan t)
   (import-from (utils plugins plugin-cmd))
   (string-append (generic-serialize lan t) "\n"))
 
 (plugin-configure mupad
   (:require (url-exists-in-path? "mupad"))
-  (:initialize (mupad-initialize))
   (:launch "tm_mupad --texmacs")
   (:serializer ,mupad-serialize)
   (:session "Mupad")
   (:scripts "Mupad"))
 
-(texmacs-modes
-  (in-mupad-math% #t in-mupad% in-math%)
-  (in-mupad-prog% #t in-mupad% in-prog%))
+(when (supports-mupad?)
+  (import-from (mupad-menus))
+  (lazy-input-converter (mupad-input) mupad)
 
-(kbd-map
-  (:mode in-mupad-prog?)
-  ("$"  (insert "$"))
-  ("\"" (insert "\""))
-  ("."  (insert "."))
-;  ("_"  (insert "_"))
-  ("`"  (insert "`")))
+  (texmacs-modes
+    (in-mupad-math% #t in-mupad% in-math%)
+    (in-mupad-prog% #t in-mupad% in-prog%))
 
-(kbd-map
-  (:mode in-mupad-math?)
-  ("$"  (insert "$"))
-  ("\"" (insert "\""))
-  ("."  (insert "."))
-  ("`"  (insert "`")))
+  (kbd-map
+    (:mode in-mupad-prog?)
+    ("$"  (insert "$"))
+    ("\"" (insert "\""))
+    ("."  (insert "."))
+    ;; ("_"  (insert "_"))
+    ("`"  (insert "`")))
+
+  (kbd-map
+    (:mode in-mupad-math?)
+    ("$"  (insert "$"))
+    ("\"" (insert "\""))
+    ("."  (insert "."))
+    ("`"  (insert "`"))))

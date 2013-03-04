@@ -11,12 +11,10 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (matlab-initialize)
-  (import-from (utils plugins plugin-convert))
-  (plugin-input-converters matlab))
-
 (plugin-configure matlab
   (:require (url-exists-in-path? "matlab"))
-  (:initialize (matlab-initialize))
   (:launch "tm_matlab")
   (:session "Matlab"))
+
+(when (supports-matlab?)
+  (plugin-input-converters matlab))
