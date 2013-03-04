@@ -48,10 +48,5 @@
 (lazy-input-converter (caas-input) caas)
 (import-from (dynamic session-menu))
 (plugin-approx-command-set! "caas" "")
-(if (caas-scripts?) (init-add-package "caas"))
-
-(tm-define (script-numeric-evaluation-command)
-  (:mode in-caas?)
-  "")
 
 ) ;; end when (supports-caas?)

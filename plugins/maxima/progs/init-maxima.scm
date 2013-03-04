@@ -75,7 +75,3 @@
   (:mode in-maxima?)
   (:mode in-math?)
   ("$" "$"))
-
-(tm-define (script-numeric-evaluation-command)
-  (:mode in-maxima?)
-  "float")

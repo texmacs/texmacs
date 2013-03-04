@@ -18,15 +18,32 @@
 	(convert tools tmconcat)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Where to look for help
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (mathemagix-package-config-prefix name)
+  (let ((cmd (string-concatenate (list name "-config")))
+        (cmdp (string-concatenate (list (string-concatenate
+					 (list name "-config"))
+					" --prefix"))))
+        (if (url-exists-in-path? cmd)
+            (let ((x (eval-system cmdp)))
+              (substring x 0 (- (string-length x) 1)))
+            "")))
+
+(tm-define mathemagix-help
+  (let* ((prefix (mathemagix-package-config-prefix "mmdoc"))
+	 (index (string-concatenate (list prefix
+		  "/share/doc/mmdoc/doc/texmacs/main/index.en.tm"))))
+    (if (url-exists-in-path? index) index
+	"http://www.mathemagix.org/www/mmdoc/doc/texmacs/main/index.en.tm")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Several subroutines for the evaluation of Mathemagix expressions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define mathemagix-apply script-apply)
 (define mathemagix-insert insert)
-
-(tm-define (script-numeric-evaluation-command)
-  (:mode in-mathemagix?)
-  "float")
 
 (define (mathemagix-command cmd)
   (script->widget "Mathemagix" cmd))
