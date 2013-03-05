@@ -11,18 +11,6 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define reduce-help #f)
-
-(define (reduce-initialize)
-  (import-from (utils plugins plugin-convert))
-  (import-from (utils plugins plugin-cmd))
-  (import-from (dynamic session-menu))
-  (import-from (reduce-kbd))
-  (import-from (reduce-menus))
-  (lazy-input-converter (reduce-input) reduce)
-  (let ((help (getenv "REDUCE_HELP")))
-    (if (and help (url-exists? help)) (set! reduce-help help))))
-
 (define (reduce-serialize lan t)
   (import-from (utils plugins plugin-cmd))
   (with s (string-drop-right (verbatim-serialize lan t) 1)
@@ -33,8 +21,15 @@
 
 (plugin-configure reduce
   (:require (url-exists-in-path? "redpsl"))
-  (:initialize (reduce-initialize))
   (:launch "tm_reduce")
   (:serializer ,reduce-serialize)
   (:session "Reduce")
   (:scripts "Reduce"))
+
+(when (supports-reduce?)
+  (define reduce-help #f)
+  (import-from (reduce-kbd))
+  (import-from (reduce-menus))
+  (lazy-input-converter (reduce-input) reduce)
+  (let ((help (getenv "REDUCE_HELP")))
+    (if (and help (url-exists? help)) (set! reduce-help help))))

@@ -19,7 +19,6 @@
 
 (plugin-configure asymptote
   (:require (url-exists-in-path? "asy"))
-  (:versions (list "0.3"))
   (:launch "tm_asy2")
   (:serializer ,asy-serialize)
   (:session "Asymptote")

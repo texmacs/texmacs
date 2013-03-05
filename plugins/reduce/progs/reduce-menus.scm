@@ -14,7 +14,8 @@
 (texmacs-module (reduce-menus)
   (:use (texmacs texmacs tm-files)
 	(doc help-funcs)
-	(dynamic scripts-edit)))
+	(dynamic scripts-edit)
+        (dynamic session-menu)))
 
 (define reduce-apply script-apply)
 (define (reduce-package package) (insert (string-append "load_package " package ";")))
