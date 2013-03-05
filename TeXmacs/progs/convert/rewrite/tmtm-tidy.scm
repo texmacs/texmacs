@@ -42,14 +42,19 @@
 (define (tmtm-document? x) (func? x 'document))
 
 (tm-define (tmtm-modernize-newlines l)
+  (modernize-newlines l #t))
+
+(define (modernize-newlines l bs)
+  (if (or (func? l 'doc-data) (func? l 'abstract-data)) (set! bs #f))
   (if (nlist? l) l
-      (with r (cons (car l) (map tmtm-modernize-newlines (cdr l)))
+      (with r (cons (car l) (map (lambda (x)
+                                   (modernize-newlines x bs)) (cdr l)))
 	(cond ((func? r 'concat)
 	       (with ll (list-scatter (cdr r) tmtm-new-line? #f)
 		 (if (< (length ll) 2) r
 		     (tmtm-document (map tmtm-concat ll)))))
 	      ((func? r 'document) (tmtm-document (cdr r)))
-	      ((and (list-find (cdr r) tmtm-document?)
+	      ((and bs (list-find (cdr r) tmtm-document?)
 		    (not (list-find (cdr l) tmtm-document?)))
 	       (list 'document r))
 	      (else r)))))
