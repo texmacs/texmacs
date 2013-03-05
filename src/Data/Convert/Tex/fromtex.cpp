@@ -2703,6 +2703,28 @@ finalize_algorithms (tree t) {
 }
 
 static tree
+finalize_returns_bis (tree t) {
+  if (is_atomic (t)) {
+    tree r (CONCAT);
+    int j= 0;
+    string s= get_label (t);
+    while (j<N(s)) {
+      int start= j;
+      while ((j<N(s)) && (s[j]!='\n')) j++;
+      if (j>start) r << s(start,j);
+      if (j<N(s)) { r << tree (FORMAT, "new line"); j++; }
+    }
+    if (N(r)==0) return "";
+    if (N(r)==1) return r[0];
+    return r;
+  }
+  int i, n= N(t);
+  tree u (L(t));
+  for (i=0; i<n; i++) u << finalize_returns_bis (t[i]);
+  return u;
+}
+
+static tree
 finalize_document (tree t) {
   if (is_atomic (t)) t= tree (CONCAT, t);
   t= finalize_algorithms (t); 
@@ -2721,7 +2743,9 @@ finalize_document (tree t) {
     else r << t(start,i);
     if (i==(N(t)-1)) r << "";
   }
-  return finalize_sections (r);
+  r= finalize_sections (r);
+  r= finalize_returns_bis (r);
+  return r;
 }
 
 bool
