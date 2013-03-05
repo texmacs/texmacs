@@ -81,18 +81,12 @@
         `(,(car t) ,@(map elsevier-create-frontmatter (cdr t)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Elsevier specific dispaching
+;; Elsevier specific customizations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (tmtex-elsevier-frontmatter s l)
-  (tmtex-default s l))
 
 (tm-define (tmtex-elsevier-frontmatter s l)
   (:mode elsevier-style?)
   `((!begin "frontmatter") ,(tmtex (car l))))
-
-(logic-table tmtex-tmstyle%
-  (elsevier-frontmatter (,tmtex-elsevier-frontmatter 1)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Elsarticle title macros

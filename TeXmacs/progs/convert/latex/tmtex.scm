@@ -1782,6 +1782,10 @@
   (shown tmtex-id)
   (!file tmtex-file)
   (!arg tmtex-tex-arg))
+      
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Expansion of all macros which are not recognized by LaTeX
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (logic-table tmtex-tmstyle%
   ((:or hide-preamble show-preamble) (,tmtex-default -1))
@@ -1897,12 +1901,42 @@
   ((:or cite-author* cite-author*-link) (,tmtex-cite-author* 1))
   ((:or cite-year cite-year-link) (,tmtex-cite-year 1)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Tags which are customized in particular style files
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (style-dependent-declare x)
+  (with (tag fun) x
+    (with fun+bis (symbol-append fun '+bis)
+      `(begin
+         (when (not (defined? ',fun))
+           (tm-define (,fun s l) (tmtex-function (string->symbol s) l)))
+         (when (not (defined? ',fun+bis))
+           (tm-define (,fun+bis s l) (,fun s l)))))))
+
+(tm-define (style-dependent-transform x)
+  (with (tag fun) x
+    (with fun+bis (symbol-append fun '+bis)
+      `(,tag (,(list 'unquote fun+bis) -1)))))
+
+(define-macro (tmtex-style-dependent . l)
+  `(begin
+     ,@(map style-dependent-declare l)
+     (logic-table tmtex-tmstyle% ,@(map style-dependent-transform l))))
+
+(tmtex-style-dependent
+  (elsevier-frontmatter tmtex-elsevier-frontmatter))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Protected tags
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (logic-group tmtex-protected%
   a b c d i j k l o r t u v H L O P S
   aa ae bf cr dh dj dp em fi ge gg ht if in it le lg ll lu lq mp mu
   ne ng ni nu oe or pi pm rm rq sb sc sf sl sp ss th to tt wd wp wr xi
   AA AE DH DJ Im NG OE Pi Pr Re SS TH Xi)
-
+      
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Expansion of all macros which are not recognized by LaTeX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
