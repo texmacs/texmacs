@@ -24,9 +24,9 @@
     (let* ((menu-name (ahash-ref supported-sessions-table name))
            (l (ahash-ref connection-varlist name))
            (fun (lambda (v) (supported-sessions-menu-variant name v))))
-      (assuming (not l)
+      (assuming (== l (list "default"))
         ((eval menu-name) (make-session name "default")))
-      (assuming l
+      (assuming (!= l (list "default"))
         (-> (eval menu-name)
             (for (variant l)
               ((eval variant) (make-session name variant))))))))

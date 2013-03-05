@@ -39,12 +39,10 @@
 
 (define (connection-setup name val . opt)
   (ahash-set! connection-defined name #t)
-  (if (null? opt)
-      (ahash-set! connection-default name val)
-      (with l (ahash-ref connection-varlist name)
-	(if (not l) (set! l '("default")))
-	(ahash-set! connection-variant (list name (car opt)) val)
-	(ahash-set! connection-varlist name (rcons l (car opt))))))
+  (if (null? opt) (set! opt (list "default")))
+  (with l (or (ahash-ref connection-varlist name) (list))
+    (ahash-set! connection-variant (list name (car opt)) val)
+    (ahash-set! connection-varlist name (rcons l (car opt)))))
 
 (define-public (connection-defined? name)
   (lazy-plugin-force)
@@ -54,8 +52,8 @@
   (lazy-plugin-force)
   (with pos (string-index session #\:)
     (if pos (connection-info name (substring session 0 pos))
-	(with val (ahash-ref connection-variant (list name session))
-	  (if val val (ahash-ref connection-default name))))))
+	(or (ahash-ref connection-variant (list name session))
+            (ahash-ref connection-variant (list name "default"))))))
 
 (define (connection-insert-handler name channel routine)
   (if (not (ahash-ref connection-handler name))
@@ -72,6 +70,26 @@
 (define-public (sorted-supported-plugins)
   (lazy-plugin-force)
   (list-sort (map car (ahash-table->list connection-defined)) string<=?))
+
+(define (launcher? x)
+  (and (func? (cdr x) 'tuple 2)
+       (== (caddr x) "pipe")))
+
+(define (launcher-entry x)
+  (rcons (car x) (cadddr x)))
+
+(define (launcher<=? l1 l2)
+  (or (string<=? (car l1) (car l2))
+      (and (== (car l1) (car l2))
+           (string<=? (cadr l1) (cadr l2)))))
+
+(define-public (sorted-launchers)
+  (lazy-plugin-force)
+  (let* ((l1 (ahash-table->list connection-variant))
+         (l2 (list-filter l1 launcher?))
+         (l3 (map launcher-entry l2))
+         (l4 (list-sort l3 launcher<=?)))
+    l4))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Supported sessions and scripting languages
