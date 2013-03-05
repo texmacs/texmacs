@@ -40,8 +40,8 @@
 
     <item*|<verbatim|<with|font-series|medium|(:versions
     <em|version-cmd>)>>>This option specifies a <scheme> expression
-    <verbatim|<em|version-cmd>> which evaluates to the version of the
-    plug-in.
+    <verbatim|<em|version-cmd>> which evaluates to a list of available
+    versions of the plug-in.
 
     <item*|<verbatim|<with|font-series|medium|(:setup <em|cmd>)>>>This
     command is only executed when the version of the plug-in changed from one
