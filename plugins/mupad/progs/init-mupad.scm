@@ -12,7 +12,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (mupad-serialize lan t)
-  (import-from (utils plugins plugin-cmd))
   (string-append (generic-serialize lan t) "\n"))
 
 (plugin-configure mupad

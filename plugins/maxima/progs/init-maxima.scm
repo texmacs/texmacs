@@ -12,7 +12,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (maxima-serialize lan t)
-  (import-from (utils plugins plugin-cmd))
   (with s (string-drop-right (verbatim-serialize lan t) 1)
     (cond ((== s "") "0;\n")
 	  ((in? (string-ref s (- (string-length s) 1)) '(#\; #\$))

@@ -20,7 +20,6 @@
 ;;from TeXmacs, but, at the time of this writing, it did not work.--A
 
 (define (python-serialize lan t)
-  (import-from (utils plugins plugin-cmd))
   (with u (pre-serialize lan t)
     (with s (texmacs->verbatim (stree->tree u))
       (string-append  s  "\n<EOF>\n"))))

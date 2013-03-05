@@ -12,7 +12,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (asy-serialize lan t)
-  (import-from (utils plugins plugin-cmd))
   (with u (pre-serialize lan t)
     (with s (texmacs->code u)
       (string-append (escape-verbatim (string-replace s "\n" "~")) "\n"))))

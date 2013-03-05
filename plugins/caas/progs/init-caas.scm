@@ -12,7 +12,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (caas-serialize lan t)
-  (import-from (utils plugins plugin-cmd))
   (with u (pre-serialize lan t)
     (with v (texmacs->code u)
       (with w (string-replace v "\n" "/{CR}/")

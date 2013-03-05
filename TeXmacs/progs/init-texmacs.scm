@@ -101,6 +101,7 @@
 
 ;(display "Booting utilities\n")
 (lazy-define (utils cas cas-out) cas->stree)
+(lazy-define (utils plugins plugin-cmd) pre-serialize verbatim-serialize)
 (lazy-define-macro (utils plugins plugin-convert) lazy-input-converter)
 (use-modules (utils misc markup-funcs))
 (use-modules (utils handwriting handwriting))
