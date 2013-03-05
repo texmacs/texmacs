@@ -681,10 +681,14 @@
     (list (string->symbol (string-append b s)))))
 
 (define (tmtex-mid l)
-  (let ((s (tmtex-large-decode (car l))))
-    (if (== (string-ref s 0) #\\)
-	(list (string->symbol (substring s 1 (string-length s))))
-	s)))
+  (let* ((s (tmtex-large-decode (car l)))
+	 (n (if (> (length l) 1) (string->number (cadr l)) 0))
+	 (b (cond ((= n 1) "bigm")
+		  ((= n 2) "Bigm")
+		  ((= n 3) "biggm")
+		  ((= n 4) "Biggm")
+		  (else "middle"))))
+    (list (string->symbol (string-append b s)))))
 
 (define (tmtex-right l)
   (let* ((s (tmtex-large-decode (car l)))

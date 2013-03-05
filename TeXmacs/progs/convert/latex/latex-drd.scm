@@ -55,7 +55,7 @@
   part part* chapter chapter*
   section section* subsection subsection* subsubsection subsubsection*
   paragraph paragraph* subparagraph subparagraph* nextbib
-  footnote overline underline <sub> <sup> not left right
+  footnote overline underline <sub> <sup> not left middle right
   big Big bigg Bigg bigl Bigl biggl Biggl
   bigm Bigm biggm Biggm bigr Bigr biggr Biggr
   bar hat tilde widehat widetilde vec bm

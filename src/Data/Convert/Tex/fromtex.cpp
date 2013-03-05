@@ -832,7 +832,7 @@ is_large_delimiter (tree t, int& type) {
     type= 1;
     return true;
   }
-  if ((s == "\\bigm") ||
+  if ((s == "\\middle") || (s == "\\bigm") ||
       ((s == "\\big") && is_mid_type (t[1]))) {
     type= 0;
     return true;
