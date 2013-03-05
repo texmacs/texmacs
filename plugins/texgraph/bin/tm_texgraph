@@ -107,6 +107,8 @@ while [ 1 ]; do
 	fi
 
 	if [ "$OSTYPE" = "cygwin" ] ; then EXT='.bat'; else EXT=''; fi
+        shext=`command -v CmdTeXgraph.sh`
+        if [ "$shext" != "" ] ; then EXT='.sh'; fi
 	CmdTeXgraph$EXT $EXPT $TEMP_FILE 2> tmp_log
 
  	if [ -s $TEMP_FILE.pdf ] 

@@ -22,8 +22,10 @@
       (string-append (escape-verbatim (string-replace s "\n" "~")) "\n"))))
 
 (plugin-configure texgraph
+  (:macpath "TeXgraph.app" "Contents/Resources/TeXgraph")
   (:require (and (url-exists-in-path? "latex")
-		 (url-exists-in-path? "CmdTeXgraph")))
+		 (or (url-exists-in-path? "CmdTeXgraph")
+                     (url-exists-in-path? "CmdTeXgraph.sh"))))
   (:launch "tm_texgraph --texmacs")
   (:serializer ,texgraph-serialize)
   (:session "Texgraph")

@@ -12,6 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (plugin-configure giac
+  (:macpath "usr" "bin")
   (:require (url-exists-in-path? "giac"))
   (:tab-completion #t)
   (:launch "giac --texmacs")
