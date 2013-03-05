@@ -52,6 +52,13 @@
 (tm-define (tmtex-style-init body)
   (noop))
 
+(tm-define (tmtex-style-preprocess doc) doc)
+
+(define (import-tmtex-styles)
+  (cond ((elsevier-style?)
+         (import-from (convert latex tmtex-elsevier)))
+         (else (noop))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initialization from options
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1226,9 +1233,6 @@
 (define (tmtex-doc-data-wrapper s l)
   (tmtex-doc-data s l))
 
-(tm-define (tmtex-elsevier-frontmatter s l)
-  (tmtex-std-env "frontmatter" l))
-
 (tm-define (tmtex-abstract s l)
   (tmtex-std-env "abstract" l))
 
@@ -1607,7 +1611,8 @@
 
 (define (tmtex-apply key args)
   (let ((n (length args))
-	(r (logic-ref tmtex-methods% key)))
+	(r (or (logic-ref tmtex-style-methods% key)
+               (logic-ref tmtex-methods% key))))
     (if (in? key '(quote quasiquote unquote)) (set! r tmtex-noop))
     (if r (r args)
 	(let ((p (logic-ref tmtex-tmstyle% key)))
@@ -1789,7 +1794,6 @@
 	abstract-keywords abstract-msc) (,tmtex-default -1))
   ((:or author-name author-affiliation author-misc author-note
 	author-email author-homepage) (,tmtex-default -1))
-  (elsevier-frontmatter (,tmtex-elsevier-frontmatter 1))
   (abstract (,tmtex-abstract-wrapper 1))
   (abstract-data (,tmtex-abstract-data-wrapper -1))
   (appendix (,tmtex-appendix 1))
@@ -1938,13 +1942,15 @@
   `(associate ,name (xmacro "x" (eval-args "x"))))
 
 (tm-define (tmtex-env-patch t)
-  (let* ((l1 (logic-first-list 'tmtex-methods%))
+  (let* ((l0 (logic-first-list 'tmtex-style-methods%))
+         (l1 (logic-first-list 'tmtex-methods%))
 	 (l2 (logic-first-list 'tmtex-tmstyle%))
 	 (l3 (map as-string (logic-apply-list '(latex-tag%))))
 	 (l4 (map as-string (logic-apply-list '(latex-symbol%))))
 	 (l5 (list-difference l3 l4))
 	 (l6 (map as-string (collect-user-defs (tree->stree t))))
-	 (l7 (list-difference (list-union l2 (list-union l5 l6)) l1)))
+	 (l7 (list-difference (list-union l2 (list-union l5 l6))
+                              (list-union l0 l1))))
     `(collection ,@(map tmtex-env-macro l7))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1973,9 +1979,8 @@
 	(latex-set-packages '())
 	(set! tmtex-style (car style))
 	(set! tmtex-packages (cdr style))
-	(when (elsevier-style?)
-	  (import-from (convert latex tmtex-elsevier))
-	  (set! doc (elsevier-create-frontmatter doc)))
+        (import-tmtex-styles)
+        (set! doc (tmtex-style-preprocess doc))
 	(tmtex-style-init body)
 	(with result (texmacs->latex doc opts)
 	  (set! tmtex-style "generic")

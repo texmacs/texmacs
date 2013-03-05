@@ -50,6 +50,47 @@
   (string-append "author-" (ref-author)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Preprocessing datas
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tmtex-style-preprocess doc)
+  (:mode elsevier-style?)
+  (elsevier-create-frontmatter doc))
+
+(define (elsarticle-frontmatter? t)
+  (or (func? t 'abstract-data) (func? t 'doc-data) (func? t 'abstract)))
+
+(define (partition l pred?)
+  (if (npair? l) l
+    (letrec ((npred? (lambda (x) (not (pred? x)))))
+      (if (pred? (car l))
+        (receive (h t) (list-break l npred?)
+          (cons h (partition t pred?)))
+        (receive (h t) (list-break l pred?)
+          (cons h (partition t pred?)))))))
+
+(define (elsevier-create-frontmatter t)
+  (if (or (npair? t) (npair? (cdr t))) t
+    (with l (map elsarticle-frontmatter? (cdr t))
+      (if (in? #t l)
+        (with parts (partition (cdr t) elsarticle-frontmatter?)
+          `(,(car t) ,@(map (lambda (x)
+                              (if (elsarticle-frontmatter? (car x))
+                                `(elsevier-frontmatter (,(car t) ,@x))
+                                `(,(car t) ,@x))) parts)))
+        `(,(car t) ,@(map elsevier-create-frontmatter (cdr t)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Elsevier specific dispaching
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmtex-elsevier-frontmatter l)
+  `((!begin "frontmatter") ,(tmtex (car l))))
+
+(logic-dispatcher tmtex-style-methods%
+  (elsevier-frontmatter tmtex-elsevier-frontmatter))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Elsarticle title macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -199,29 +240,6 @@
                                          (elsevier-get-name-refs (cAr t))))
         ((func? t 'author-name) (elsevier-get-name-refs (cadr t)))
         (else '())))
-
-(define (elsarticle-frontmatter? t)
-  (or (func? t 'abstract-data) (func? t 'doc-data) (func? t 'abstract)))
-
-(define (partition l pred?)
-  (if (npair? l) l
-    (letrec ((npred? (lambda (x) (not (pred? x)))))
-      (if (pred? (car l))
-        (receive (h t) (list-break l npred?)
-          (cons h (partition t pred?)))
-        (receive (h t) (list-break l pred?)
-          (cons h (partition t pred?)))))))
-
-(tm-define (elsevier-create-frontmatter t)
-  (if (or (npair? t) (npair? (cdr t))) t
-    (with l (map elsarticle-frontmatter? (cdr t))
-      (if (in? #t l)
-        (with parts (partition (cdr t) elsarticle-frontmatter?)
-          `(,(car t) ,@(map (lambda (x)
-                              (if (elsarticle-frontmatter? (car x))
-                                `(elsevier-frontmatter (,(car t) ,@x))
-                                `(,(car t) ,@x))) parts)))
-        `(,(car t) ,@(map elsevier-create-frontmatter (cdr t)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Elsevier non clustered title macros
