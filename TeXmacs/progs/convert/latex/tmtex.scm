@@ -1611,8 +1611,7 @@
 
 (define (tmtex-apply key args)
   (let ((n (length args))
-	(r (or (logic-ref tmtex-style-methods% key)
-               (logic-ref tmtex-methods% key))))
+	(r (logic-ref tmtex-methods% key)))
     (if (in? key '(quote quasiquote unquote)) (set! r tmtex-noop))
     (if r (r args)
 	(let ((p (logic-ref tmtex-tmstyle% key)))
@@ -1942,15 +1941,13 @@
   `(associate ,name (xmacro "x" (eval-args "x"))))
 
 (tm-define (tmtex-env-patch t)
-  (let* ((l0 (logic-first-list 'tmtex-style-methods%))
-         (l1 (logic-first-list 'tmtex-methods%))
+  (let* ((l1 (logic-first-list 'tmtex-methods%))
 	 (l2 (logic-first-list 'tmtex-tmstyle%))
 	 (l3 (map as-string (logic-apply-list '(latex-tag%))))
 	 (l4 (map as-string (logic-apply-list '(latex-symbol%))))
 	 (l5 (list-difference l3 l4))
 	 (l6 (map as-string (collect-user-defs (tree->stree t))))
-	 (l7 (list-difference (list-union l2 (list-union l5 l6))
-                              (list-union l0 l1))))
+	 (l7 (list-difference (list-union l2 (list-union l5 l6)) l1)))
     `(collection ,@(map tmtex-env-macro l7))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

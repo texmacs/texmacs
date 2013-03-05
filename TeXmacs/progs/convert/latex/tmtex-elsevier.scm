@@ -84,11 +84,15 @@
 ;; Elsevier specific dispaching
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmtex-elsevier-frontmatter l)
+(tm-define (tmtex-elsevier-frontmatter s l)
+  (tmtex-default s l))
+
+(tm-define (tmtex-elsevier-frontmatter s l)
+  (:mode elsevier-style?)
   `((!begin "frontmatter") ,(tmtex (car l))))
 
-(logic-dispatcher tmtex-style-methods%
-  (elsevier-frontmatter tmtex-elsevier-frontmatter))
+(logic-table tmtex-tmstyle%
+  (elsevier-frontmatter (,tmtex-elsevier-frontmatter 1)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Elsarticle title macros
