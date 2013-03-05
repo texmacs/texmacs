@@ -259,6 +259,8 @@
   (escape-shell escape_sh (string string))
   (escape-to-ascii cork_to_ascii (string string))
   (unescape-guile unescape_guile (string string))
+  (string-quote scm_quote (string string))
+  (string-unquote scm_unquote (string string))
   (string-convert convert (string string string string))
   (utf8->cork utf8_to_cork (string string))
   (cork->utf8 cork_to_utf8 (string string))

@@ -52,7 +52,8 @@
   (lazy-plugin-force)
   (with pos (string-index session #\:)
     (if pos (connection-info name (substring session 0 pos))
-	(or (ahash-ref connection-variant (list name session))
+	(or (remote-connection-info name session)
+            (ahash-ref connection-variant (list name session))
             (ahash-ref connection-variant (list name "default"))))))
 
 (define (connection-insert-handler name channel routine)
@@ -90,6 +91,73 @@
          (l3 (map launcher-entry l2))
          (l4 (list-sort l3 launcher<=?)))
     l4))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Remote plugins
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public (write-local-launchers-info)
+  (write (cons (url->system (string->url "$PATH"))
+               (sorted-launchers)))
+  (display "\n"))
+
+(define-public (get-remote-launchers where)
+  ;; NOTE: prepare environment in ~/.bashrc
+  (let* ((tmp "$TEXMACS_HOME_PATH/system/remote-launchers")
+         (rcmd "texmacs -s -x \"(write-local-launchers-info)\" -q")
+         (qcmd (string-quote rcmd))
+         (lcmd (string-append "ssh " where " " qcmd " > " tmp)))
+    (system lcmd)
+    (with res (string-load tmp)
+      (system-remove tmp)
+      (string->object res))))
+
+(define remote-plugins "$TEXMACS_HOME_PATH/system/remote-plugins.scm")
+(define remote-plugins-initialized? #f)
+(define remote-plugins-table (make-ahash-table))
+
+(define-public (load-remote-plugins)
+  (when (not remote-plugins-initialized?)
+    (set! remote-plugins-initialized? #t)
+    (when (url-exists? remote-plugins)
+      (with l (load-object remote-plugins)
+        (set! remote-plugins-table (list->ahash-table l))))))
+
+(define-public (save-remote-plugins)
+  (with l (ahash-table->list remote-plugins-table)
+    (save-object remote-plugins l)))
+
+(define-public (detect-remote-plugins where)
+  (load-remote-plugins)
+  (ahash-set! remote-plugins-table where (get-remote-launchers where))
+  (save-remote-plugins))
+
+(define-public (remove-remote-plugins where)
+  (load-remote-plugins)
+  (ahash-remove! remote-plugins-table where)
+  (save-remote-plugins))
+
+(define-public (list-remote-plugins where)
+  (load-remote-plugins)
+  (ahash-ref remote-plugins-table where))
+
+(define-public (remote-connection-info name session)
+  (load-remote-plugins)
+  (and-with pos (string-index session #\/)
+    (let* ((where (substring session 0 pos))
+           (rsession (substring session (+ pos 1) (string-length session)))
+           (l (list-remote-plugins where))
+           (path (car l))
+           (bd (map (lambda (x) (cons (list (car x) (cadr x)) (caddr x)))
+                    (cdr l)))
+           (t (list->ahash-table bd))
+           (val (or (ahash-ref t (list name rsession))
+                    (ahash-ref t (list name "default")))))
+      (and val
+           (let* ((env (string-append "export PATH=" path))
+                  (rem (string-quote (string-append env "; " val)))
+                  (cmd (string-append "ssh " where " " rem)))
+             `(tuple "pipe" ,cmd))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Supported sessions and scripting languages
