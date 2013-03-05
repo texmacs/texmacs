@@ -261,6 +261,34 @@ translate_author_metadata_elsevier (tree u) {
   return concat ();
 }
 
+static array<tree>
+translate_abstract_data_elsevier (tree t) {
+  array<tree> r;
+  int i=0, n=N(t);
+  tree kw  (APPLY, "\\abstract-keywords");
+  tree msc (APPLY, "\\abstract-msc");
+  tree tmp (CONCAT);
+  while (i<n && !is_tuple (t[i], "\\PACS")) {
+    while (i<n && !is_tuple (t[i], "\\sep") && !is_tuple (t[i], "\\PACS"))
+      tmp << t[i++];
+    kw << tmp;
+    tmp= concat ();
+    if (!is_tuple (t[i], "\\PACS")) i++;
+  }
+  if (is_tuple (t[i], "\\PACS")) {
+    i++;
+    while (i<n) {
+      while (i<n && !is_tuple (t[i], "\\sep")) tmp << t[i++];
+      msc << tmp;
+      tmp= concat ();
+      i++;
+    }
+  }
+  if (N(kw)>1)  r << kw;
+  if (N(msc)>1) r << msc;
+  return r;
+}
+
 static tree
 translate_metadata_elsevier (tree t) {
   int i, n=N(t);
@@ -304,6 +332,22 @@ translate_metadata_elsevier (tree t) {
         author << tree (APPLY, "\\author-email", cenr (u[1]));
     else if (is_tuple (u, "\\ead*", 2) && string_arg (u[1]) == "url")
         author << tree (APPLY, "\\author-homepage", cenr (u[2]));
+    else if (is_tuple (u, "\\begin-abstract")) {
+      tree abstract_text (CONCAT);
+      i++;
+      while (i<n && !is_tuple (t[i], "\\end-abstract"))
+        abstract_text << t[i++];
+      abstract << tree (APPLY, "\\abstract", abstract_text);
+    }
+    else if (is_tuple (u, "\\begin-keyword")) {
+      tree keywords (CONCAT);
+      i++;
+      while (i<n && !is_tuple (t[i], "\\end-keyword"))
+        keywords << t[i++];
+      array<tree> abstract_data= translate_abstract_data_elsevier (keywords);
+      for (int j=0; j<N(abstract_data); j++)
+        abstract << abstract_data[j];
+    }
   }
   if (N(author) > 1) r << tree (APPLY, "\\doc-author", author);
   if (clustered) r << tree (APPLY, "\\doc-title-options", "cluster-all");
