@@ -92,6 +92,8 @@
 ;; Elsarticle title macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (replace-documents t) t)
+
 (define (list-elsarticle-notes)
   (if (== note-counter 0) ""
     (let* ((notes (map number->string (.. 1 (1+ note-counter))))
@@ -157,6 +159,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Elsart specific title macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (replace-documents t)
+  (:mode elsart-style?)
+  (if (npair? t) t
+    (with (r s) (list (car t) (map replace-documents (cdr t)))
+      (if (!= r 'document) `(,r ,@s)
+        `(concat ,@(list-intersperse s '(next-line)))))))
 
 (define (thanksref t)
   `(thanksref ,t))
@@ -244,6 +253,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmtex-elsevier-author t)
+  (set! t (replace-documents t))
   (if (or (npair? t) (npair? (cdr t)) (not (func? (cadr t) 'author-data))) '()
     (let* ((datas        (cdadr t))
            ;; notes and miscs needed in first position due to side effects
@@ -270,7 +280,7 @@
 
 (tm-define (tmtex-doc-data s l)
   (:mode elsevier-style?)
-
+  (set! t (replace-documents t))
   (let* ((subtitles (map tmtex-elsevier-subtitle
                          (tmtex-select-args-by-func 'doc-subtitle l)))
          (notes     (map tmtex-elsevier-note
@@ -297,6 +307,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmtex-elsevier-clustered-author t author-notes)
+  (set! t (replace-documents t))
   (if (or (npair? t) (npair? (cdr t)) (not (func? (cadr t) 'author-data))) '()
     (let* ((datas        (cdadr t))
            (author-notes (filter nnull? author-notes))
@@ -353,7 +364,7 @@
   (:mode elsevier-style?)
   (:require (or (in? "cluster-all" (get-title-option l))
                 (in? "cluster-by-affiliation" (get-title-option l))))
-
+  (set! l (map replace-documents l))
   (let* ((sal       (add-notes (single-author-list (cons s l))))
          (subtitles  (map tmtex-elsevier-subtitle
                           (tmtex-select-args-by-func 'doc-subtitle l)))
