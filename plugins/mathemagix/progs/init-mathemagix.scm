@@ -17,14 +17,11 @@
       (with w (string-replace v "\n" "/{CR}/")
 	(string-append (escape-verbatim w) "\n")))))
 
-(define mathemagix-launcher
-  "mmx-light --texmacs")
-
 (plugin-configure mathemagix
   (:winpath "Mathemagix" "bin")
   (:require (url-exists-in-path? "mmx-light"))
   (:serializer ,mathemagix-serialize)
-  (:launch ,mathemagix-launcher)
+  (:launch "mmx-light --texmacs")
   (:session "Mathemagix")
   (:scripts "Mathemagix"))
 

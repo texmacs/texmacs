@@ -22,6 +22,7 @@
   (:require (url-exists-in-path? "mmi"))
   (:serializer ,mmi-serialize)
   (:launch "mmi --texmacs")
+  (:launch "optimized" "mmi --optimize --texmacs")
   (:session "Mmi")
   (:scripts "Mmi"))
 
