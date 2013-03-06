@@ -17,4 +17,8 @@
   (:require (url-exists-in-path? "sage"))
   (:launch "sage -python `which tm_sage`")
   (:tab-completion #t)
-  (:session "Sage"))
+  (:session "Sage")
+  (:scripts "Sage"))
+
+(when (supports-sage?)
+  (lazy-input-converter (sage-input) sage))
