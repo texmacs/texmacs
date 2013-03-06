@@ -236,7 +236,7 @@
 
 (define lazy-input-converter-table (make-ahash-table))
 
-(lazy-body-macro (lazy-input-converter module plugin)
+(tm-define-macro (lazy-input-converter module plugin)
   (lazy-input-converter-force plugin)
   (ahash-set! lazy-input-converter-table plugin module)
   '(noop))

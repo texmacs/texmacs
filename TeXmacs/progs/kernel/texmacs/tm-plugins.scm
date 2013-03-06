@@ -61,16 +61,19 @@
   (or (ahash-ref connection-defined name)
       (remote-connection-defined? name)))
 
+(define-public (connection-info-sub name session)
+  (or (remote-connection-info name session)
+      (ahash-ref connection-variant (list name session))
+      (with l (connection-variants name)
+        (and (nnull? l)
+             (!= session (car l))
+             (connection-info-sub name (car l))))))
+
 (define-public (connection-info name session)
   (lazy-plugin-force)
   (with pos (string-index session #\:)
     (if pos (connection-info name (substring session 0 pos))
-	(or (remote-connection-info name session)
-            (ahash-ref connection-variant (list name session))
-            (ahash-ref connection-variant (list name "default"))
-            (with l (connection-variants name)
-              (and (nnull? l)
-                   (ahash-ref connection-variant (list name (car l)))))))))
+        (connection-info-sub name session))))
 
 (define (connection-insert-handler name channel routine)
   (if (not (ahash-ref connection-handler name))
@@ -404,7 +407,9 @@
     `(begin
        (texmacs-modes (,in-name (== (get-env "prog-language") ,name)))
        (texmacs-modes (,name-scripts (== (get-env "prog-scripts") ,name)))
-       (define (,supports-name?) (ahash-ref plugin-data-table ,name))
+       (define (,supports-name?)
+         (or (ahash-ref plugin-data-table ,name)
+             (remote-connection-defined? ,name)))
        (if reconfigure-flag? (ahash-set! plugin-data-table ,name #t))
        (plugin-configure-cmds ,name
 	 ,(list 'quasiquote (map plugin-configure-sub options))))))

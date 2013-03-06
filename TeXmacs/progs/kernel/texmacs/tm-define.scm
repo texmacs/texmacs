@@ -356,21 +356,3 @@
 	 (modules (if im im '())))
     (ahash-remove! lazy-define-table name)
     (for-each module-provide modules)))
-
-(define-public (lazy-define-macro-one module opts name)
-  (with name-body (symbol-append name '-body)
-    `(begin
-       (lazy-define ,module ,name-body)
-       (tm-define-macro (,name . args)
-         ,@opts
-         (apply ,name-body args)))))
-
-(define-public-macro (lazy-define-macro module . names)
-  (receive (opts real-names) (list-break names not-define-option?)
-    `(begin
-       ,@(map (lambda (name) (lazy-define-macro-one module opts name)) names))))
-
-(define-public-macro (lazy-body-macro head . tail)
-  (with (name . args) head
-    (with name-body (symbol-append name '-body)
-      `(tm-define (,name-body ,@args) ,@tail))))
