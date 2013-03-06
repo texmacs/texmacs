@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.16>
+<TeXmacs|1.0.7.18>
 
 <style|source>
 
@@ -27,12 +27,6 @@
       Customize input/output fields
     </src-comment>
   </active*>
-
-  <assign|mmi-prompt|<macro|nr|<with|color|red|<arg|nr>]<specific|html|&nbsp;>
-  >>>
-
-  <assign|mmi-prompt|<macro|nr|<with|mode|math|Mmi\<rangle\><specific|html|&nbsp;>
-  \ >>>
 
   <assign|mmi-prompt|<macro|nr|<with|prog-language|verbatim|Mmi]<specific|html|&nbsp;>
   >>>
