@@ -67,7 +67,10 @@
     (if pos (connection-info name (substring session 0 pos))
 	(or (remote-connection-info name session)
             (ahash-ref connection-variant (list name session))
-            (ahash-ref connection-variant (list name "default"))))))
+            (ahash-ref connection-variant (list name "default"))
+            (with l (connection-variants name)
+              (and (nnull? l)
+                   (ahash-ref connection-variant (list name (car l)))))))))
 
 (define (connection-insert-handler name channel routine)
   (if (not (ahash-ref connection-handler name))
