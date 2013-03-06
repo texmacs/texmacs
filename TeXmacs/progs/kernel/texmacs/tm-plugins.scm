@@ -142,6 +142,7 @@
     l4))
 
 (define-public (write-local-plugin-info)
+  (lazy-plugin-force)
   (write (list (url->system (string->url "$PATH"))
                (launcher-list)
                (ahash-table->list connection-session)
