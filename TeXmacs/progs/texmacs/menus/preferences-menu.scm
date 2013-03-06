@@ -26,9 +26,9 @@
 
 (tm-menu (scripts-preferences-menu)
   (let* ((dummy (lazy-plugin-force))
-         (l (list-sort supported-scripts-list string<=?)))
+         (l (scripts-list)))
     (for (name l)
-      (with menu-name (ahash-ref supported-scripts-table name)
+      (with menu-name (scripts-name name)
         ((eval menu-name) (set-preference "scripting language" name))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -586,11 +586,10 @@
 
 (tm-define (scripts-preferences-list)
   (lazy-plugin-force)
-  (with l (list-sort supported-scripts-list string<=?)
-    (with name (lambda (x) (ahash-ref supported-scripts-table x))
-      (set-preference-name "scripting language" "none" "None")
-      (for (x l) (set-preference-name "scripting language" x (name x)))
-      (cons "None" (map name l)))))
+  (with l (scripts-list)
+    (set-preference-name "scripting language" "none" "None")
+    (for (x l) (set-preference-name "scripting language" x (scripts-name x)))
+    (cons "None" (map scripts-name l))))
 
 (tm-widget (other-preferences-widget)
   (aligned

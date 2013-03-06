@@ -60,8 +60,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (script-feed lan ses in out opts)
-  ;;(with ok? (supports-scripts? lan)
-  (with ok? (or (supports-scripts? lan) (supports-sessions? lan))
+  ;;(with ok? (scripts-defined? lan)
+  (with ok? (or (scripts-defined? lan) (session-defined? lan))
     (when (not ok?)
       (with m `(concat "Error: " (verbatim ,lan)
                        " is not a scripting language")
@@ -228,7 +228,7 @@
 (define (script-background-eval in . opts)
   (let* ((lan (get-env "prog-scripts"))
 	 (ses (get-env "prog-session")))
-    (when (supports-scripts? lan)
+    (when (scripts-defined? lan)
       (silent-feed* lan ses in noop opts))))
 
 (tm-define (widget->script cas-var id)
@@ -240,7 +240,7 @@
   (let* ((lan (get-env "prog-scripts"))
 	 (ses (get-env "prog-session"))
 	 (prefix widget-prefix))
-    (when (supports-scripts? lan)
+    (when (scripts-defined? lan)
       (with return (lambda (r)
 		     (widget-with prefix
 		       (widget-set! id r)))

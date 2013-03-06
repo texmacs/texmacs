@@ -31,11 +31,13 @@
 ;; Connection types for plugins
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define connection-defined (make-ahash-table))
-(define connection-default (make-ahash-table))
-(define connection-variant (make-ahash-table))
+(define-public connection-defined (make-ahash-table))
+(define-public connection-default (make-ahash-table))
+(define-public connection-variant (make-ahash-table))
 (define-public connection-varlist (make-ahash-table))
-(define connection-handler (make-ahash-table))
+(define-public connection-handler (make-ahash-table))
+(define-public connection-session (make-ahash-table))
+(define-public connection-scripts (make-ahash-table))
 
 (define (connection-setup name val . opt)
   (ahash-set! connection-defined name #t)
@@ -43,6 +45,11 @@
   (with l (or (ahash-ref connection-varlist name) (list))
     (ahash-set! connection-variant (list name (car opt)) val)
     (ahash-set! connection-varlist name (rcons l (car opt)))))
+
+(define-public (connection-list)
+  (list-sort (list-union (map car (ahash-table->list connection-defined))
+                         (remote-connection-list))
+             string<=?))
 
 (define-public (connection-variants name)
   (lazy-plugin-force)
@@ -52,7 +59,7 @@
 (define-public (connection-defined? name)
   (lazy-plugin-force)
   (or (ahash-ref connection-defined name)
-      (connection-remote-defined? name)))
+      (remote-connection-defined? name)))
 
 (define-public (connection-info name session)
   (lazy-plugin-force)
@@ -74,9 +81,45 @@
   (with r (ahash-ref connection-handler name)
     (if r (cons 'tuple r) '(tuple))))
 
-(define-public (sorted-supported-plugins)
-  (lazy-plugin-force)
-  (list-sort (map car (ahash-table->list connection-defined)) string<=?))
+(define (session-setup name menu-name)
+  (if (symbol? name) (set! name (symbol->string name)))
+  (ahash-set! connection-session name menu-name))
+
+(define-public (session-assoc-list)
+  (list-union (ahash-table->list connection-session)
+              (remote-session-assoc-list)))
+
+(define-public (session-list)
+  (list-sort (map car (session-assoc-list)) string<=?))
+
+(define-public (session-defined? name)
+  (in? name (session-list)))
+
+(define-public (session-name name)
+  (or (assoc-ref (session-assoc-list) name)
+      (upcase-first name)))
+
+(define (scripts-setup name menu-name)
+  (if (symbol? name) (set! name (symbol->string name)))
+  (ahash-set! connection-scripts name menu-name))
+
+(define-public (scripts-assoc-list)
+  (list-union (ahash-table->list connection-scripts)
+              (remote-scripts-assoc-list)))
+
+(define-public (scripts-list)
+  (list-sort (map car (scripts-assoc-list)) string<=?))
+
+(define-public (scripts-defined? name)
+  (in? name (scripts-list)))
+
+(define-public (scripts-name name)
+  (or (assoc-ref (scripts-assoc-list) name)
+      (upcase-first name)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Remote plugins
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (launcher? x)
   (and (func? (cdr x) 'tuple 2)
@@ -90,17 +133,13 @@
       (and (== (car l1) (car l2))
            (string<=? (cadr l1) (cadr l2)))))
 
-(define-public (sorted-launchers)
+(define (sorted-launchers)
   (lazy-plugin-force)
   (let* ((l1 (ahash-table->list connection-variant))
          (l2 (list-filter l1 launcher?))
          (l3 (map launcher-entry l2))
          (l4 (list-sort l3 launcher<=?)))
     l4))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Remote plugins
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-public (write-local-launchers-info)
   (write (cons (url->system (string->url "$PATH"))
@@ -147,22 +186,13 @@
   (load-remote-plugins)
   (ahash-ref remote-plugins-table where))
 
-(define-public (remote-connection-info name session)
+(define-public (remote-connection-list-sub x)
+  (list-remove-duplicates (map car (cddr x))))
+
+(define-public (remote-connection-list)
   (load-remote-plugins)
-  (and-with pos (string-index session #\/)
-    (let* ((where (substring session 0 pos))
-           (rsession (substring session (+ pos 1) (string-length session)))
-           (l (list-remote-plugins where))
-           (path (car l))
-           (rewr (lambda (x) (cons (list (car x) (cadr x)) (caddr x))))
-           (t (list->ahash-table (map rewr (cdr l))))
-           (val (or (ahash-ref t (list name rsession))
-                    (ahash-ref t (list name "default")))))
-      (and val
-           (let* ((env (string-append "export PATH=" path))
-                  (rem (string-quote (string-append env "; " val)))
-                  (cmd (string-append "ssh " where " " rem)))
-             `(tuple "pipe" ,cmd))))))
+  (append-map remote-connection-list-sub
+              (ahash-table->list remote-plugins-table)))
 
 (define-public (remote-connection-variants-sub name x)
   (let* ((where (car x))
@@ -179,37 +209,27 @@
 (define-public (remote-connection-defined? name)
   (nnull? (remote-connection-variants name)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Supported sessions and scripting languages
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-public (remote-connection-info name session)
+  (and-with pos (string-index session #\/)
+    (let* ((where (substring session 0 pos))
+           (rsession (substring session (+ pos 1) (string-length session)))
+           (l (list-remote-plugins where))
+           (path (car l))
+           (rewr (lambda (x) (cons (list (car x) (cadr x)) (caddr x))))
+           (t (list->ahash-table (map rewr (cdr l))))
+           (val (or (ahash-ref t (list name rsession))
+                    (ahash-ref t (list name "default")))))
+      (and val
+           (let* ((env (string-append "export PATH=" path))
+                  (rem (string-quote (string-append env "; " val)))
+                  (cmd (string-append "ssh " where " " rem)))
+             `(tuple "pipe" ,cmd))))))
 
-(define-public supported-sessions-list '())
-(define-public supported-sessions-table (make-ahash-table))
+(define-public (remote-session-assoc-list)
+  (list))
 
-(define (supported-sessions-add name menu-name)
-  (if (symbol? name) (set! name (symbol->string name)))
-  (set! supported-sessions-list (cons name supported-sessions-list))
-  (ahash-set! supported-sessions-table name menu-name))
-
-(tm-define (supports-sessions? name)
-  (if (symbol? name) (set! name (symbol->string name)))
-  (not (not (ahash-ref supported-sessions-table name))))
-
-(tm-define (sorted-supported-sessions)
-  (lazy-plugin-force)
-  (list-sort supported-sessions-list string<=?))
-
-(define-public supported-scripts-list '())
-(define-public supported-scripts-table (make-ahash-table))
-
-(define (supported-scripts-add name menu-name)
-  (if (symbol? name) (set! name (symbol->string name)))
-  (set! supported-scripts-list (cons name supported-scripts-list))
-  (ahash-set! supported-scripts-table name menu-name))
-
-(tm-define (supports-scripts? name)
-  (if (symbol? name) (set! name (symbol->string name)))
-  (not (not (ahash-ref supported-scripts-table name))))
+(define-public (remote-scripts-assoc-list)
+  (list))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Cache plugin settings
@@ -337,9 +357,9 @@
 	 (when (os-macos?)
            (add-macos-program-path (url-append (second cmd) (third cmd)))))
 	((func? cmd :session 1)
-	 (supported-sessions-add name (second cmd)))
+	 (session-setup name (second cmd)))
 	((func? cmd :scripts 1)
-	 (supported-scripts-add name (second cmd)))
+	 (scripts-setup name (second cmd)))
 	((func? cmd :filter-in 1)
 	 (noop))
 	((func? cmd :serializer 1)

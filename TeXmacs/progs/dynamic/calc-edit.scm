@@ -151,10 +151,10 @@
   (let* ((lan (get-env "prog-scripts"))
 	 (ses (get-env "prog-session")))
     (and (connection-defined? lan)
-         (supports-scripts? lan))))
+         (scripts-defined? lan))))
 
 (tm-define (calc-feed lan ses var in out)
-  (when (supports-scripts? lan)
+  (when (scripts-defined? lan)
     (tree-set! out '(script-busy))
     ;;(display* "Calc " var ", " lan ", " ses "\n")
     ;;(display* "Feed " in "\n")

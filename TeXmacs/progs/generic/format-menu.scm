@@ -91,9 +91,9 @@
 
 (tm-menu (local-supported-scripts-menu)
   (let* ((dummy (lazy-plugin-force))
-         (l (list-sort supported-scripts-list string<=?)))
+         (l (scripts-list)))
     (for (name l)
-      ((eval (ahash-ref supported-scripts-table name))
+      ((eval (scripts-name name))
        (make-with "prog-scripts" name)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -90,7 +90,7 @@
   (if (detailed-menus?)
       ("Thumbnails" (make-thumbnails)))
   (if (or (lazy-plugin-force)
-	  (and (style-has? "scripts-dtd") (supports-scripts? "gnuplot")))
+	  (and (style-has? "scripts-dtd") (scripts-defined? "gnuplot")))
       ---
       (-> "Plot" (link scripts-plot-menu))))
 

@@ -20,10 +20,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-menu (supported-sessions-menu)
-  (for (name (sorted-supported-sessions))
-    (let* ((menu-name (ahash-ref supported-sessions-table name))
-           (l (connection-variants name))
-           (fun (lambda (v) (supported-sessions-menu-variant name v))))
+  (for (name (session-list))
+    (let* ((menu-name (session-name name))
+           (l (connection-variants name)))
       (assuming (== l (list "default"))
         ((eval menu-name) (make-session name "default")))
       (assuming (!= l (list "default"))
@@ -75,7 +74,7 @@
 
 (tm-define (focus-session-language)
   (with lan (get-env "prog-language")
-    (or (ahash-ref supported-sessions-table lan) "Scheme")))
+    (or (session-name lan) "Scheme")))
 
 (tm-menu (focus-tag-menu t)
   (:require (field-context? t))

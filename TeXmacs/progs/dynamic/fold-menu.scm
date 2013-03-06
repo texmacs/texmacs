@@ -49,8 +49,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-menu (supported-executable-menu)
-  (for (name (sorted-supported-sessions))
-    (with menu-name (ahash-ref supported-sessions-table name)
+  (for (name (session-menu))
+    (with menu-name (session-name name)
       ((eval menu-name)
        (insert-go-to `(script-input ,name "default" "" "") '(2 0))))))
 
@@ -96,7 +96,7 @@
       ;;---
       ;;(link switch-menu)
       )
-  (if (!= (sorted-supported-sessions) '())
+  (if (!= (session-list) '())
       (-> "Executable"
           (link supported-executable-menu)))
   (-> "Traversal"
