@@ -1,9 +1,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : caas-input.scm
-;; DESCRIPTION : Initialize caas input conversions
-;; COPYRIGHT   : (C) 2013  Joris van der Hoeven
+;; MODULE      : mmi-edit.scm
+;; DESCRIPTION : editing mmi programs
+;; COPYRIGHT   : (C) 2008  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -11,7 +11,14 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (caas-input)
-  (:use (mmx-input)))
+(texmacs-module (mmi-edit)
+  (:use (mmx-indent)))
 
-(mmx-converters caas)
+(tm-define (kbd-variant t forward?)
+  (:require (and (in-prog-mmi?) (not (inside? 'session))))
+  (mmi-indent))
+
+(tm-define (insert-return)
+  (:mode in-prog-mmi?)
+  (insert-raw-return)
+  (mmi-indent))

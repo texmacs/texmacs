@@ -2,8 +2,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; MODULE      : mmx-input.scm
-;; DESCRIPTION : Initialize mathemagix plugin
-;; COPYRIGHT   : (C) 1999  Joris van der Hoeven, 2005  Andrey Grozin
+;; DESCRIPTION : Initialize input conversions for various Mathemagix dialects
+;; COPYRIGHT   : (C) 2013  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE

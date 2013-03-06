@@ -1,8 +1,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : caas-input.scm
-;; DESCRIPTION : Initialize caas input conversions
+;; MODULE      : mmi-input.scm
+;; DESCRIPTION : Initialize mmi input converters
 ;; COPYRIGHT   : (C) 2013  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (caas-input)
+(texmacs-module (mmi-input)
   (:use (mmx-input)))
 
-(mmx-converters caas)
+(mmx-converters mmi)

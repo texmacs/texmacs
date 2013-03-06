@@ -18,14 +18,11 @@
 	(string-append (escape-verbatim w) "\n")))))
 
 (define mathemagix-launcher
-  (if #f;;(url-exists-in-path? "mmi")
-      "mmi --texmacs"
-      "mmx-light --texmacs"))
+  "mmx-light --texmacs")
 
 (plugin-configure mathemagix
   (:winpath "Mathemagix" "bin")
-  (:require (or (url-exists-in-path? "mmi")
-                (url-exists-in-path? "mmx-light")))
+  (:require (url-exists-in-path? "mmx-light"))
   (:serializer ,mathemagix-serialize)
   (:launch ,mathemagix-launcher)
   (:session "Mathemagix")
