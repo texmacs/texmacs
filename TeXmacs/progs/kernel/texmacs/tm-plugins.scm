@@ -3,7 +3,7 @@
 ;;
 ;; MODULE      : tm-plugins.scm
 ;; DESCRIPTION : Configuration of plugins
-;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
+;; COPYRIGHT   : (C) 1999-2013  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -44,9 +44,15 @@
     (ahash-set! connection-variant (list name (car opt)) val)
     (ahash-set! connection-varlist name (rcons l (car opt)))))
 
+(define-public (connection-variants name)
+  (lazy-plugin-force)
+  (append (or (ahash-ref connection-varlist name) (list))
+          (remote-connection-variants name)))
+
 (define-public (connection-defined? name)
   (lazy-plugin-force)
-  (ahash-ref connection-defined name))
+  (or (ahash-ref connection-defined name)
+      (connection-remote-defined? name)))
 
 (define-public (connection-info name session)
   (lazy-plugin-force)
@@ -148,9 +154,8 @@
            (rsession (substring session (+ pos 1) (string-length session)))
            (l (list-remote-plugins where))
            (path (car l))
-           (bd (map (lambda (x) (cons (list (car x) (cadr x)) (caddr x)))
-                    (cdr l)))
-           (t (list->ahash-table bd))
+           (rewr (lambda (x) (cons (list (car x) (cadr x)) (caddr x))))
+           (t (list->ahash-table (map rewr (cdr l))))
            (val (or (ahash-ref t (list name rsession))
                     (ahash-ref t (list name "default")))))
       (and val
@@ -158,6 +163,21 @@
                   (rem (string-quote (string-append env "; " val)))
                   (cmd (string-append "ssh " where " " rem)))
              `(tuple "pipe" ,cmd))))))
+
+(define-public (remote-connection-variants-sub name x)
+  (let* ((where (car x))
+         (path (cadr x))
+         (l (cddr x))
+         (f (list-filter l (lambda (e) (== (car e) name)))))
+    (map (lambda (e) (string-append where "/" (cadr e))) f)))
+
+(define-public (remote-connection-variants name)
+  (load-remote-plugins)
+  (append-map (cut remote-connection-variants-sub name <>)
+              (ahash-table->list remote-plugins-table)))
+
+(define-public (remote-connection-defined? name)
+  (nnull? (remote-connection-variants name)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Supported sessions and scripting languages

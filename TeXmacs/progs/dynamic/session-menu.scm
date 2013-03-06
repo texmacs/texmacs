@@ -22,7 +22,7 @@
 (tm-menu (supported-sessions-menu)
   (for (name (sorted-supported-sessions))
     (let* ((menu-name (ahash-ref supported-sessions-table name))
-           (l (ahash-ref connection-varlist name))
+           (l (connection-variants name))
            (fun (lambda (v) (supported-sessions-menu-variant name v))))
       (assuming (== l (list "default"))
         ((eval menu-name) (make-session name "default")))
