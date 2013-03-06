@@ -133,7 +133,7 @@
       (and (== (car l1) (car l2))
            (string<=? (cadr l1) (cadr l2)))))
 
-(define (sorted-launchers)
+(define (launcher-list)
   (lazy-plugin-force)
   (let* ((l1 (ahash-table->list connection-variant))
          (l2 (list-filter l1 launcher?))
@@ -141,15 +141,17 @@
          (l4 (list-sort l3 launcher<=?)))
     l4))
 
-(define-public (write-local-launchers-info)
-  (write (cons (url->system (string->url "$PATH"))
-               (sorted-launchers)))
+(define-public (write-local-plugin-info)
+  (write (list (url->system (string->url "$PATH"))
+               (launcher-list)
+               (ahash-table->list connection-session)
+               (ahash-table->list connection-scripts)))
   (display "\n"))
 
-(define-public (get-remote-launchers where)
+(define-public (get-remote-plugin-info where)
   ;; NOTE: prepare environment in ~/.bashrc
-  (let* ((tmp "$TEXMACS_HOME_PATH/system/remote-launchers")
-         (rcmd "texmacs -s -x \"(write-local-launchers-info)\" -q")
+  (let* ((tmp "$TEXMACS_HOME_PATH/system/remote-plugin-info")
+         (rcmd "texmacs -s -x \"(write-local-plugin-info)\" -q")
          (qcmd (string-quote rcmd))
          (lcmd (string-append "ssh " where " " qcmd " > " tmp)))
     (system lcmd)
@@ -174,7 +176,7 @@
 
 (define-public (detect-remote-plugins where)
   (load-remote-plugins)
-  (ahash-set! remote-plugins-table where (get-remote-launchers where))
+  (ahash-set! remote-plugins-table where (get-remote-plugin-info where))
   (save-remote-plugins))
 
 (define-public (remove-remote-plugins where)
@@ -187,7 +189,7 @@
   (ahash-ref remote-plugins-table where))
 
 (define-public (remote-connection-list-sub x)
-  (list-remove-duplicates (map car (cddr x))))
+  (list-remove-duplicates (map car (caddr x))))
 
 (define-public (remote-connection-list)
   (load-remote-plugins)
@@ -195,11 +197,9 @@
               (ahash-table->list remote-plugins-table)))
 
 (define-public (remote-connection-variants-sub name x)
-  (let* ((where (car x))
-         (path (cadr x))
-         (l (cddr x))
-         (f (list-filter l (lambda (e) (== (car e) name)))))
-    (map (lambda (e) (string-append where "/" (cadr e))) f)))
+  (with (where path launchers sessions scripts) x
+    (with f (list-filter launchers (lambda (e) (== (car e) name)))
+      (map (lambda (e) (string-append where "/" (cadr e))) f))))
 
 (define-public (remote-connection-variants name)
   (load-remote-plugins)
@@ -216,7 +216,7 @@
            (l (list-remote-plugins where))
            (path (car l))
            (rewr (lambda (x) (cons (list (car x) (cadr x)) (caddr x))))
-           (t (list->ahash-table (map rewr (cdr l))))
+           (t (list->ahash-table (map rewr (cadr l))))
            (val (or (ahash-ref t (list name rsession))
                     (ahash-ref t (list name "default")))))
       (and val
@@ -225,11 +225,18 @@
                   (cmd (string-append "ssh " where " " rem)))
              `(tuple "pipe" ,cmd))))))
 
+(define (assoc-list-simplify l)
+  (ahash-table->list (list->ahash-table l)))
+
 (define-public (remote-session-assoc-list)
-  (list))
+  (load-remote-plugins)
+  (with a (append-map fourth (ahash-table->list remote-plugins-table))
+    (assoc-list-simplify a)))
 
 (define-public (remote-scripts-assoc-list)
-  (list))
+  (load-remote-plugins)
+  (with a (append-map fifth (ahash-table->list remote-plugins-table))
+    (assoc-list-simplify a)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Cache plugin settings
