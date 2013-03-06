@@ -58,16 +58,21 @@
           ("Pop server settings" (interactive email-settings))))
   (-> "Project"
       (link project-manage-menu))
-  (-> "Server"
-      (link server-menu))
-  (-> "Client"
-      (link client-menu))
   (-> "Statistics"
       ("Count characters" (show-character-count))
       ("Count words" (show-word-count))
       ("Count lines" (show-line-count)))
   (-> "Miscellaneous"
       ("Clear undo history" (clear-undo-history)))
+  ---
+  (-> "Server"
+      (link server-menu))
+  (-> "Client"
+      (link client-menu))
+  (-> "Remote plug-ins"
+      ("Add remote ssh connection" (interactive detect-remote-plugins))
+      ("Update remote ssh connection" (interactive update-remote-plugins))
+      ("Remove remote ssh connection" (interactive remove-remote-plugins)))
   ---
   ("Debugging tool" (toggle-preference "debugging tool"))
   ("Developer tool" (toggle-preference "developer tool"))

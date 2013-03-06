@@ -194,13 +194,21 @@
   (with l (ahash-table->list remote-plugins-table)
     (save-object remote-plugins l)))
 
-(define-public (detect-remote-plugins where)
+(tm-define (detect-remote-plugins where)
+  (:argument where "Remote server")
   (load-remote-plugins)
   (ahash-set! remote-plugins-table where (get-remote-plugin-info where))
   (update-remote-tables)
   (save-remote-plugins))
 
-(define-public (remove-remote-plugins where)
+(tm-define (update-remote-plugins where)
+  (:argument where "Remote server")
+  (:proposals where (remote-connection-servers))
+  (detect-remote-plugins where))
+
+(tm-define (remove-remote-plugins where)
+  (:argument where "Remote server")
+  (:proposals where (remote-connection-servers))
   (load-remote-plugins)
   (ahash-remove! remote-plugins-table where)
   (update-remote-tables)
@@ -222,6 +230,12 @@
 (define remote-scripts-table (make-ahash-table))
 
 (define-public (update-remote-tables)
+  (set! remote-servers-table (make-ahash-table))
+  (set! remote-supported-table (make-ahash-table))
+  (set! remote-variant-table (make-ahash-table))
+  (set! remote-launch-table (make-ahash-table))
+  (set! remote-session-table (make-ahash-table))
+  (set! remote-scripts-table (make-ahash-table))
   (for (entry (ahash-table->list remote-plugins-table))
     (with (where path launch session scripts) entry
       (ahash-set! remote-servers-table where #t)
