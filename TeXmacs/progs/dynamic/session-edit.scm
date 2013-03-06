@@ -275,7 +275,7 @@
 ;; Subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (session-defined? . err-flag?)
+(tm-define (session-ready? . err-flag?)
   (with lan (get-env "prog-language")
     (or (== lan "scheme")
 	(connection-defined? lan)
@@ -393,7 +393,7 @@
 	(session-feed lan ses :start u t '())))))
 
 (define (field-process-input t)
-  (when (session-defined? #t)
+  (when (session-ready? #t)
     (field-insert-output t)
     (cond ((tm-func? t 'folded-io)
 	   (tree-assign-node! t 'unfolded-io))

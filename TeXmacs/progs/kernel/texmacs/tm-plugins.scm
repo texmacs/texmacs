@@ -87,41 +87,53 @@
   (with r (ahash-ref connection-handler name)
     (if r (cons 'tuple r) '(tuple))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Plug-ins for console sessions and scripting languages
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define (session-setup name menu-name)
   (if (symbol? name) (set! name (symbol->string name)))
   (ahash-set! connection-session name menu-name))
+
+(define-public (session-list)
+  (with l (map car (ahash-table->list connection-session))
+    (list-sort (list-union l (remote-session-list)) string<=?)))
+
+(define (session-ref name)
+  (or (ahash-ref connection-session name)
+      (remote-session-ref name)))
+
+(define-public (session-defined? name)
+  (session-ref name))
+
+(define-public (session-name name)
+  (or (session-ref name) (upcase-first name)))
 
 (define-public (session-assoc-list)
   (list-union (ahash-table->list connection-session)
               (remote-session-assoc-list)))
 
-(define-public (session-list)
-  (list-sort (map car (session-assoc-list)) string<=?))
-
-(define-public (session-defined? name)
-  (in? name (session-list)))
-
-(define-public (session-name name)
-  (or (assoc-ref (session-assoc-list) name)
-      (upcase-first name)))
-
 (define (scripts-setup name menu-name)
   (if (symbol? name) (set! name (symbol->string name)))
   (ahash-set! connection-scripts name menu-name))
 
+(define-public (scripts-list)
+  (with l (map car (ahash-table->list connection-scripts))
+    (list-sort (list-union l (remote-scripts-list)) string<=?)))
+
+(define (scripts-ref name)
+  (or (ahash-ref connection-scripts name)
+      (remote-scripts-ref name)))
+
+(define-public (scripts-defined? name)
+  (scripts-ref name))
+
+(define-public (scripts-name name)
+  (or (scripts-ref name) (upcase-first name)))
+
 (define-public (scripts-assoc-list)
   (list-union (ahash-table->list connection-scripts)
               (remote-scripts-assoc-list)))
-
-(define-public (scripts-list)
-  (list-sort (map car (scripts-assoc-list)) string<=?))
-
-(define-public (scripts-defined? name)
-  (in? name (scripts-list)))
-
-(define-public (scripts-name name)
-  (or (assoc-ref (scripts-assoc-list) name)
-      (upcase-first name)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote plugins
@@ -175,7 +187,8 @@
     (set! remote-plugins-initialized? #t)
     (when (url-exists? remote-plugins)
       (with l (load-object remote-plugins)
-        (set! remote-plugins-table (list->ahash-table l))))))
+        (set! remote-plugins-table (list->ahash-table l))
+        (update-remote-tables)))))
 
 (define-public (save-remote-plugins)
   (with l (ahash-table->list remote-plugins-table)
@@ -184,66 +197,91 @@
 (define-public (detect-remote-plugins where)
   (load-remote-plugins)
   (ahash-set! remote-plugins-table where (get-remote-plugin-info where))
+  (update-remote-tables)
   (save-remote-plugins))
 
 (define-public (remove-remote-plugins where)
   (load-remote-plugins)
   (ahash-remove! remote-plugins-table where)
+  (update-remote-tables)
   (save-remote-plugins))
 
 (define-public (list-remote-plugins where)
   (load-remote-plugins)
   (ahash-ref remote-plugins-table where))
 
-(define-public (remote-connection-list-sub x)
-  (list-remove-duplicates (map car (caddr x))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Retrieve data about remote plug-ins
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public (remote-connection-list)
-  (load-remote-plugins)
-  (append-map remote-connection-list-sub
-              (ahash-table->list remote-plugins-table)))
+(define remote-servers-table (make-ahash-table))
+(define remote-supported-table (make-ahash-table))
+(define remote-variant-table (make-ahash-table))
+(define remote-launch-table (make-ahash-table))
+(define remote-session-table (make-ahash-table))
+(define remote-scripts-table (make-ahash-table))
 
-(define-public (remote-connection-variants-sub name x)
-  (with (where path launchers sessions scripts) x
-    (with f (list-filter launchers (lambda (e) (== (car e) name)))
-      (map (lambda (e) (string-append where "/" (cadr e))) f))))
+(define-public (update-remote-tables)
+  (for (entry (ahash-table->list remote-plugins-table))
+    (with (where path launch session scripts) entry
+      (ahash-set! remote-servers-table where #t)
+      (for (x launch)
+        (with (p v c) x
+          (ahash-set! remote-supported-table p #t)
+          (with variant (string-append where "/" v)
+            (with l (or (ahash-ref remote-variant-table p) (list))
+              (ahash-set! remote-variant-table p (rcons l variant)))
+            (let* ((env (string-append "export PATH=" path))
+                   (rem (string-quote (string-append env "; " c)))
+                   (cmd (string-append "ssh " where " " rem))
+                   (val `(tuple "pipe" ,cmd)))
+              (ahash-set! remote-launch-table (cons p variant) val)))))
+      (for (x session)
+        (ahash-set! remote-session-table (car x) (cdr x)))
+      (for (x scripts)
+        (ahash-set! remote-scripts-table (car x) (cdr x))))))
 
-(define-public (remote-connection-variants name)
-  (load-remote-plugins)
-  (append-map (cut remote-connection-variants-sub name <>)
-              (ahash-table->list remote-plugins-table)))
+(define remote-initialized-data? #f)
+(define (remote-initialize-data)
+  (when (not remote-initialized-data?)
+    (load-remote-plugins)
+    (set! remote-initialized-data? #t)))
+
+(define-public (remote-connection-servers)
+  (remote-initialize-data)
+  (sort (map car (ahash-table->list remote-servers-table)) string<=?))
+
+(define (remote-connection-list)
+  (remote-initialize-data)
+  (sort (map car (ahash-table->list remote-supported-table)) string<=?))
+
+(define (remote-connection-variants name)
+  (remote-initialize-data)
+  (or (ahash-ref remote-variant-table name) (list)))
 
 (define-public (remote-connection-defined? name)
-  (nnull? (remote-connection-variants name)))
+  (remote-initialize-data)
+  (nnot (ahash-ref remote-variant-table name)))
 
-(define-public (remote-connection-info name session)
-  (and-with pos (string-index session #\/)
-    (let* ((where (substring session 0 pos))
-           (rsession (substring session (+ pos 1) (string-length session)))
-           (l (list-remote-plugins where))
-           (path (car l))
-           (rewr (lambda (x) (cons (list (car x) (cadr x)) (caddr x))))
-           (t (list->ahash-table (map rewr (cadr l))))
-           (val (or (ahash-ref t (list name rsession))
-                    (ahash-ref t (list name "default")))))
-      (and val
-           (let* ((env (string-append "export PATH=" path))
-                  (rem (string-quote (string-append env "; " val)))
-                  (cmd (string-append "ssh " where " " rem)))
-             `(tuple "pipe" ,cmd))))))
+(define (remote-connection-info name session)
+  (remote-initialize-data)
+  (ahash-ref remote-launch-table (cons name session)))
 
-(define (assoc-list-simplify l)
-  (ahash-table->list (list->ahash-table l)))
+(define (remote-session-list)
+  (remote-initialize-data)
+  (map car (ahash-table->list remote-session-table)))
 
-(define-public (remote-session-assoc-list)
-  (load-remote-plugins)
-  (with a (append-map fourth (ahash-table->list remote-plugins-table))
-    (assoc-list-simplify a)))
+(define (remote-session-ref name)
+  (remote-initialize-data)
+  (ahash-ref remote-session-table name))
 
-(define-public (remote-scripts-assoc-list)
-  (load-remote-plugins)
-  (with a (append-map fifth (ahash-table->list remote-plugins-table))
-    (assoc-list-simplify a)))
+(define (remote-scripts-list)
+  (remote-initialize-data)
+  (map car (ahash-table->list remote-scripts-table)))
+
+(define (remote-scripts-ref name)
+  (remote-initialize-data)
+  (ahash-ref remote-scripts-table name))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Cache plugin settings
