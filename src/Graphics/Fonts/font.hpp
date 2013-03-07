@@ -137,5 +137,7 @@ string get_variant (array<string> v);
 string get_series (array<string> v);
 string get_shape (array<string> v);
 array<string> search_font (array<string> v, bool require_exact);
+array<string> search_font_families (array<string> v);
+array<string> search_font_styles (string s, array<string> v);
 
 #endif // defined FONT_H

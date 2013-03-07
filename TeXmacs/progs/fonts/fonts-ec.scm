@@ -72,6 +72,7 @@
     ((pandora rm medium italic $s $d) (cm pnsl $s $d))
     ((pandora rm bold right $s $d) (cm pnb $s $d))
     ((pandora tt $a right $s $d) (cm pntt $s $d 9))
+    ((pandora tt-ss $a right $s $d) (cm pntt $s $d 9))
     ((pandora ss medium right $s $d) (cm pnss $s $d))
     ((pandora ss medium slanted $s $d) (cm pnssi $s $d))
     ((pandora ss medium italic $s $d) (cm pnssi $s $d))

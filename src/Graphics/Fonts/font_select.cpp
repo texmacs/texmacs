@@ -114,6 +114,15 @@ logical_font (string family, string style) {
   return r;
 }
 
+array<string>
+logical_font_exact (string family, string style) {
+  array<string> r;
+  r << family_to_master (family);
+  r << family_features (family);
+  r << style_features (style);
+  return r;
+}
+
 /******************************************************************************
 * Master font families
 ******************************************************************************/
@@ -262,15 +271,31 @@ is_mono (string s) {
     s == "proportional";
 }
 
+bool
+is_device (string s) {
+  return 
+    s == "printer" ||
+    s == "typewriter" ||
+    s == "script" ||
+    s == "chalk" ||
+    s == "marker";
+}
+
 /******************************************************************************
 * Computing the distance between two fonts
 ******************************************************************************/
 
+#define DISTANCE_FAR       1000000
+#define DISTANCE_INFINITY  100000000
+
 int
 distance (string s1, string s2) {
+  // NOTE: distances can be asymmetric.
+  // For instance, 'bold' matches 'black' with distance 300,
+  // but 'black' does not match 'bold'.
   if (s1 == s2) return 0;
   if (is_stretch (s1) || is_stretch (s2)) {
-    if (!is_stretch (s1) || !is_stretch (s2)) return 1000000;
+    if (!is_stretch (s1) || !is_stretch (s2)) return DISTANCE_FAR;
     if (ends (s1, "condensed") && ends (s2, "condensed")) return 10;
     if (ends (s1, "unextended") && !ends (s2, "unextended")) return 30;
     if (!ends (s1, "unextended") && ends (s2, "unextended")) return 30;
@@ -278,58 +303,87 @@ distance (string s1, string s2) {
     return 30;
   }
   if (is_weight (s1) || is_weight (s2)) {
-    if (!is_weight (s1) || !is_weight (s2)) return 1000000;
+    if (!is_weight (s1) || !is_weight (s2)) return DISTANCE_FAR;
     if (ends (s1, "light") && ends (s2, "light")) return 100;
     if (ends (s1, "bold") && ends (s2, "bold")) return 100;
     if (ends (s1, "black") && ends (s2, "black")) return 100;
     if (ends (s1, "bold") && ends (s2, "black")) return 300;
-    if (ends (s1, "black") && ends (s2, "bold")) return 300;
     return 1000;
   }
   if (is_slant (s1) || is_slant (s2)) {
-    if (!is_slant (s1) || !is_slant (s2)) return 1000000;
+    if (!is_slant (s1) || !is_slant (s2)) return DISTANCE_FAR;
     if (s1 == "italic" && s2 == "oblique") return 100;
     if (s1 == "oblique" && s2 == "italic") return 100;
     return 1000;
   }
   if (is_capitalization (s1) || is_capitalization (s2)) {
-    if (!is_capitalization (s1) || !is_capitalization (s2)) return 1000000;
+    if (!is_capitalization (s1) || !is_capitalization (s2)) return DISTANCE_FAR;
     return 3000;
   }
   if (is_serif (s1) || is_serif (s2)) {
-    if (!is_serif (s1) || !is_serif (s2)) return 1000000;
+    if (!is_serif (s1) || !is_serif (s2)) return DISTANCE_FAR;
     return 10000;
   }
   if (is_mono (s1) || is_mono (s2)) {
-    if (!is_mono (s1) || !is_mono (s2)) return 1000000;
+    if (!is_mono (s1) || !is_mono (s2)) return DISTANCE_FAR;
     if (s1 == "mono" && s2 == "typewriter") return 0;
     if (s1 == "typewriter" && s2 == "mono") return 0;
     return 10000;
   }
-  return 1000000;
+  if (is_device (s1) || is_device (s2)) {
+    if (!is_device (s1) || !is_device (s2)) return DISTANCE_FAR;
+    if (s1 == "script" && s2 == "marker") return 10000;
+    if (s1 == "script" && s2 == "chalk") return 10000;
+    return 30000;
+  }
+  return DISTANCE_FAR;
+}
+
+bool
+contains (array<string> a, bool (*pred) (string)) {
+  for (int i=0; i<N(a); i++)
+    if (pred (a[i])) return true;
+  return false;
 }
 
 int
 distance (string s, array<string> v) {
-  int m= 1000000;
+  if (s == "unextended" && !contains (v, is_stretch)) return 0;
+  if (s == "medium" && !contains (v, is_weight)) return 0;
+  if (s == "normal" && !contains (v, is_slant)) return 0;
+  if (s == "mixed" && !contains (v, is_capitalization)) return 0;
+  if (s == "serif" && !contains (v, is_serif)) return 0;
+  if (s == "proportional" && !contains (v, is_mono)) return 0;
+  if (s == "printed" && !contains (v, is_device)) return 0;
+
+  if (s == "mono" && contains (string ("proportional"), v)) return 10000;
+  if (s == "proportional" && contains (string ("mono"), v)) return 10000;
+
+  int m= DISTANCE_FAR;
   if (is_stretch (s)) m= 30;
   else if (is_weight (s)) m= 1000;
   else if (is_slant (s)) m= 1000;
   else if (is_capitalization (s)) m= 3000;
   else if (is_serif (s)) m= 10000;
   else if (is_mono (s)) m= 10000;
+  else if (is_device (s)) m= 30000;
+
   for (int i=1; i<N(v); i++)
     m= min (distance (s, v[i]), m);
   return m;
 }
 
 int
-distance (array<string> v1, array<string> v2) {
+distance (array<string> v1, array<string> v2, array<string> v3) {
+  // NOTE: v1 typically contains required properties of a font,
+  // v3 the full set of properties of the candidate font and
+  // v2 a subset of v3 of those properties which are not common
+  // between all styles in the same family.
   int d= 0;
-  if (N(v1) == 0 || N(v2) == 0) return 1000000;
+  if (N(v1) == 0 || N(v2) == 0) return DISTANCE_FAR;
   if (v1[0] != v2[0]) d= 100000;
   for (int i=1; i<N(v1); i++)
-    d += distance (v1[i], v2);
+    d += distance (v1[i], v3);
   for (int i=1; i<N(v2); i++)
     d += distance (v2[i], v1);
   return d;
@@ -344,7 +398,7 @@ search_font (array<string> v, bool require_exact) {
   if (N(v) == 0)
     return array<string> (string ("TeXmacs Computer Modern"),
                           string ("Unknown"));
-  int best_distance= 100000000;
+  int best_distance= DISTANCE_INFINITY;
   array<string> best_result (v[0], string ("Unknown"));
   array<string> fams= master_to_families (v[0]);
   //cout << "Searching " << v << "\n";
@@ -352,8 +406,9 @@ search_font (array<string> v, bool require_exact) {
     array<string> stys= font_database_styles (fams[i]);
     for (int j=0; j<N(stys); j++) {
       array<string> w= logical_font (fams[i], stys[j]);
-      int d= distance (v, w);
-      //cout << "  " << w << " -> " << d << "\n";
+      array<string> x= logical_font_exact (fams[i], stys[j]);
+      int d= distance (v, w, x);
+      //cout << "  " << w << ", " << x << " -> " << d << "\n";
       if (d < best_distance) {
         best_distance= d;
         best_result= array<string> (fams[i], stys[j]);
@@ -362,6 +417,7 @@ search_font (array<string> v, bool require_exact) {
   }
   if (best_distance > 0 && require_exact)
     best_result[1]= string ("Unknown");
+  //cout << "Found " << best_result << "\n";
   return best_result;
 }
 
@@ -369,9 +425,49 @@ search_font (array<string> v, bool require_exact) {
 * Searching font families by properties
 ******************************************************************************/
 
+string
+normalize_property (string s) {
+  s= replace (locase_all (s) , " ", "");
+  if (s == "unstretched") s= "unextended";
+  if (s == "smallcapitals") s= "smallcaps";
+  if (s == "monospaced") s= "mono";
+  return s;
+}
+
+array<string>
+search_font_styles (string family, array<string> v) {
+  array<string> styles= font_database_styles (family);
+  if (N(v) == 0) return styles;
+  array<string> empty;
+  v= copy (v);
+  for (int i=0; i<N(v); i++)
+    v[i]= normalize_property (v[i]);
+
+  array<string> r;
+  for (int i=0; i<N(styles); i++) {
+    int j;
+    array<string> w= logical_font_exact (family, styles[i]);
+    for (j=0; j<N(v); j++) {
+      string property= normalize_property (v[j]);
+      int d= distance (v[j], w);
+      //cout << "Test " << v  << ", " << w << " -> "
+      //     << d << ", " << distance (v[j], empty) << "\n";
+      if (d != 0 && d >= distance (v[j], empty)) break;
+    }
+    if (j == N(v)) r << styles[i];
+  }
+  return r;
+}
+
 array<string>
 search_font_families (array<string> v) {
-  return v; // TODO: implement this
+  array<string> families= font_database_families ();
+  if (N(v) == 0) return families;
+  array<string> r;
+  for (int i=0; i<N(families); i++)
+    if (N(search_font_styles (families[i], v)) != 0)
+      r << families[i];
+  return r;
 }
 
 /******************************************************************************

@@ -343,6 +343,8 @@ font_database_search (string family, string style) {
 
 array<string>
 font_database_search (string fam, string var, string series, string shape) {
+  //cout << "Database search: " << fam << ", " << var
+  //     << ", " << series << ", " << shape << "\n";
   array<string> lfn= logical_font (fam, var, series, shape);
   array<string> pfn= search_font (lfn, false);
   //cout << "Physical font: " << pfn << "\n";

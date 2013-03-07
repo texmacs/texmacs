@@ -16,51 +16,6 @@
 (texmacs-module (fonts font-selector)
   (:use (kernel gui menu-widget)))
 
-;; (tm-define selector-font-size "10")
-;; (tm-define selector-font-weight "Medium")
-;; (tm-define selector-font-slant "Normal")
-;; (tm-define selector-font-stretch "Unstretched")
-;; (tm-define selector-font-serif "Serif")
-;; (tm-define selector-font-aspect "Proportional")
-;; (tm-define selector-font-imitate "Printed")
-;; (tm-define selector-font-case "Mixed")
-;; (tm-define selector-font-purpose "Generic")
-
-
-;; (horizontal (glue #f #f 0 0) (bold (text "Shape")))
-;; ===
-;; (aligned
-;;   (item (text "Size:")
-;;     (enum (set! selector-font-size answer)
-;;           '("5" "7" "8" "9" "10" "11" "12" "14" "18" "24"
-;;             "30" "36" "48" "64")
-;;           selector-font-size "120px"))
-;;   (item (text "Weight:")
-;;     (enum (set! selector-font-weight answer)
-;;           '("Light" "Medium" "Bold")
-;;           selector-font-weight "120px"))
-;;   (item (text "Slant:")
-;;     (enum (set! selector-font-slant answer)
-;;           '("Normal" "Italic" "Oblique")
-;;           selector-font-slant "120px")))
-;; === === === ===
-;; (horizontal (glue #f #f 0 0) (bold (text "Features")))
-;; ===
-;; (aligned
-;;   (item (text "Serif:")
-;;     (enum (set! selector-font-serif answer)
-;;           '("Serif" "Sans Serif")
-;;           selector-font-serif "120px"))
-;;   (item (text "Aspect:")
-;;     (enum (set! selector-font-aspect answer)
-;;           '("Proportional" "Monospaced")
-;;           selector-font-aspect "120px"))
-;;   (item (text "Case:")
-;;     (enum (set! selector-font-case answer)
-;;           '("Mixed" "Small Capitals")
-;;           selector-font-case "120px")))
-;; (horizontal (glue #f #t 0 0))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global state of font selector
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -84,7 +39,8 @@
     ;;(display* "fn= " fn "\n")
     (set! selector-font-family (car fn))
     (set! selector-font-style (cadr fn))
-    (set! selector-font-size sz)))
+    (set! selector-font-size sz)
+    (selector-initialize-search)))
 
 (tm-define (make-multi-with . l)
   (with t (if (selection-active-any?) (selection-tree) "")
@@ -125,6 +81,46 @@
          "abcdefghij, ABCDEFGHIJ, 0123456789"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Global state for font searching
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define selector-search-weight "Any")
+(tm-define selector-search-slant "Any")
+(tm-define selector-search-stretch "Any")
+(tm-define selector-search-serif "Any")
+(tm-define selector-search-spacing "Any")
+(tm-define selector-search-case "Any")
+(tm-define selector-search-device "Any")
+(tm-define selector-search-purpose "Any")
+
+(define (selector-initialize-search)
+  (set! selector-search-weight "Any")
+  (set! selector-search-slant "Any")
+  (set! selector-search-stretch "Any")
+  (set! selector-search-serif "Any")
+  (set! selector-search-spacing "Any")
+  (set! selector-search-case "Any")
+  (set! selector-search-device "Any")
+  (set! selector-search-purpose "Any"))
+
+(define (selected-properties)
+  (with l (list selector-search-weight
+                selector-search-slant
+                selector-search-stretch
+                selector-search-serif
+                selector-search-spacing
+                selector-search-case
+                selector-search-device
+                selector-search-purpose)
+    (list-filter l (cut != <> "Any"))))
+
+(tm-define (selected-families)
+  (search-font-families (selected-properties)))
+
+(tm-define (selected-styles family)
+  (search-font-styles family (selected-properties)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Font selector
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -133,15 +129,35 @@
     "24" "28" "32" "36" "40" "48" "64" "72" "96"
     "128" "144" "192"))
 
+(tm-widget (font-family-selector)
+  (vertical
+    (bold (text "Family"))
+    ===
+    (resize ("300px" "300px" "2000px") ("350px" "350px" "2000px")
+      (scrollable
+        (choice (set! selector-font-family answer)
+                (selected-families)
+                selector-font-family)))))
+
 (tm-widget (font-style-selector)
   (vertical
     (bold (text "Style"))
     ===
-    (resize ("200px" "200px" "400px") ("250px" "250px" "2000px")
+    (resize ("200px" "200px" "400px") ("350px" "350px" "2000px")
       (scrollable
         (choice (set! selector-font-style answer)
-                (font-database-styles selector-font-family)
+                (selected-styles selector-font-family)
                 selector-font-style)))))
+
+(tm-widget (font-size-selector)
+  (vertical
+    (bold (text "Size"))
+    ===
+    (resize ("75px" "75px" "75px") ("350px" "350px" "2000px")
+      (scrollable
+        (choice (set! selector-font-size answer)
+                (font-default-sizes)
+                selector-font-size)))))
 
 (tm-widget (font-sample-text)
   (texmacs-output
@@ -149,28 +165,64 @@
        ,(selector-font-demo-text))
     '(style "generic")))
 
+(tm-widget (font-properties-selector)
+  (vertical
+    (horizontal
+      (glue #f #f 0 0)
+      (bold (text "Filter"))
+      (glue #f #f 0 0))
+    ===
+    (aligned
+      ;;(item (text "Base family:")
+      ;;  (enum (set! selector-font-family answer)
+      ;;        (font-database-families)
+      ;;        selector-font-family "120px"))
+      ;;(item (text "Base style:")
+      ;;  (enum (set! selector-font-style answer)
+      ;;        (font-database-styles selector-font-family)
+      ;;        selector-font-style "120px"))
+      ;;(item ====== ======)
+      (item (text "Weight:")
+        (enum (set! selector-search-weight answer)
+              '("Any" "Light" "Medium" "Bold" "Black")
+              selector-search-weight "120px"))
+      (item (text "Slant:")
+        (enum (set! selector-search-slant answer)
+              '("Any" "Normal" "Italic" "Oblique")
+              selector-search-slant "120px"))
+      (item (text "Stretch:")
+        (enum (set! selector-search-weight answer)
+              '("Any" "Condensed" "Unstretched" "Wide")
+              selector-search-weight "120px"))
+      (item ====== ======)
+      (item (text "Serif:")
+        (enum (set! selector-search-serif answer)
+              '("Any" "Serif" "Sans Serif")
+              selector-search-serif "120px"))
+      (item (text "Spacing:")
+        (enum (set! selector-search-spacing answer)
+              '("Any" "Proportional" "Monospaced")
+              selector-search-spacing "120px"))
+      (item (text "Case:")
+        (enum (set! selector-search-case answer)
+              '("Any" "Mixed" "Small Capitals")
+              selector-search-case "120px"))
+      (item (text "Device:")
+        (enum (set! selector-search-case answer)
+              '("Any" "Printed" "Typewriter" "Script" "Chalk" "Marker")
+              selector-search-case "120px")))
+    (horizontal (glue #f #t 0 0))))
+
 (tm-widget (font-selector quit)
   (padded
     (horizontal
-      (vertical
-        (bold (text "Family"))
-         ===
-        (resize ("300px" "300px" "2000px") ("250px" "250px" "2000px")
-          (scrollable
-            (choice (set! selector-font-family answer)
-                    (font-database-families)
-                    selector-font-family))))
+      (refresh font-family-selector)
       ///
       (refresh font-style-selector)
       ///
-      (vertical
-        (bold (text "Size"))
-         ===
-        (resize ("75px" "75px" "75px") ("250px" "250px" "2000px")
-          (scrollable
-            (choice (set! selector-font-size answer)
-                    (font-default-sizes)
-                    selector-font-size)))))
+      (link font-size-selector)
+      ///
+      (link font-properties-selector))
     === === ===
     (bold (text "Sample text"))
     ===
