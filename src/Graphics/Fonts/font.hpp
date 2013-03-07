@@ -129,7 +129,7 @@ array<string> master_to_families (string f);
 array<string> master_features (string m);
 array<string> family_features (string f);
 array<string> family_strict_features (string f);
-array<string> subfamily_features (string s);
+array<string> style_features (string s);
 array<string> logical_font (string family, string shape);
 array<string> logical_font (string f, string v, string ser, string sh);
 string get_family (array<string> v);

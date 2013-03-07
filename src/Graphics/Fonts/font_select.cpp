@@ -54,7 +54,7 @@ family_features (string f) {
 }
 
 array<string>
-subfamily_features (string s) {
+style_features (string s) {
   string r;
   for (int i=0; i<N(s); i++)
     if ((s[i] >= 'A' && s[i] <= 'Z') &&
@@ -105,10 +105,12 @@ logical_font (string family, string style) {
   //cout << family << ", " << style
   //     << " -> " << family_to_master (family)
   //     << ", " << family_features (family)
-  //     << ", " << subfamily_features (style) << "\n";
+  //     << ", " << family_strict_features (family)
+  //     << ", " << style_features (style) << "\n";
   r << family_to_master (family);
   r << family_strict_features (family);
-  r << subfamily_features (style);
+  r << style_features (style);
+  //cout << family << ", " << style << " -> " << r << "\n";
   return r;
 }
 
@@ -361,6 +363,15 @@ search_font (array<string> v, bool require_exact) {
   if (best_distance > 0 && require_exact)
     best_result[1]= string ("Unknown");
   return best_result;
+}
+
+/******************************************************************************
+* Searching font families by properties
+******************************************************************************/
+
+array<string>
+search_font_families (array<string> v) {
+  return v; // TODO: implement this
 }
 
 /******************************************************************************

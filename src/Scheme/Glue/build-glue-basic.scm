@@ -102,7 +102,7 @@
   (font-master-features master_features (array_string string))
   (font-family-features family_features (array_string string))
   (font-family-strict-features family_strict_features (array_string string))
-  (font-subfamily-features subfamily_features (array_string string))
+  (font-style-features style_features (array_string string))
   (logical-font-public logical_font (array_string string string))
   (logical-font-private logical_font (array_string string string string string))
   (logical-font-family get_family (string array_string))
