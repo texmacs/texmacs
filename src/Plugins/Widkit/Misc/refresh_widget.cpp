@@ -21,28 +21,30 @@ widget make_menu_widget (object wid);
 
 class refresh_widget_rep: public basic_widget_rep {
   string tmwid;
+  string kind;
   object curobj;
   widget cur;
   hashmap<object,widget> cache;
 public:
-  refresh_widget_rep (string tmwid);
+  refresh_widget_rep (string tmwid, string kind);
   operator tree ();
-  bool recompute ();
+  bool recompute (string what);
   void handle_refresh (refresh_event ev);
 };
 
-refresh_widget_rep::refresh_widget_rep (string tmwid2):
-  basic_widget_rep (1), tmwid (tmwid2),
+refresh_widget_rep::refresh_widget_rep (string tmwid2, string kind2):
+  basic_widget_rep (1), tmwid (tmwid2), kind (kind2),
   curobj (false), cur (), cache (widget ()) {
-    (void) recompute ();
+    (void) recompute ("init");
     a[0]= concrete (cur); }
 
 refresh_widget_rep::operator tree () {
-  return tree (TUPLE, "refresh", tmwid);
+  return tree (TUPLE, "refresh", tmwid, kind);
 }
 
 bool
-refresh_widget_rep::recompute () {
+refresh_widget_rep::recompute (string what) {
+  if (what != "init" && kind != "any" && kind != what) return false;
   string s= "'(vertical (link " * tmwid * "))";
   eval ("(lazy-initialize-force)");
   //cout << "Recompute " << tmwid << "\n";
@@ -69,8 +71,8 @@ refresh_widget_rep::recompute () {
 }
 
 void
-refresh_widget_rep::handle_refresh (refresh_event ev) { (void) ev;
-  if (recompute ()) {
+refresh_widget_rep::handle_refresh (refresh_event ev) {
+  if (recompute (ev->kind)) {
     SI ww1= a[0]->w, hh1= a[0]->h;
     SI ww2= a[0]->w, hh2= a[0]->h;
     a[0] << get_size (ww1, hh1);
@@ -90,6 +92,6 @@ refresh_widget_rep::handle_refresh (refresh_event ev) { (void) ev;
 ******************************************************************************/
 
 wk_widget
-refresh_wk_widget (string tmwid) {
-  return tm_new<refresh_widget_rep> (tmwid);
+refresh_wk_widget (string tmwid, string kind) {
+  return tm_new<refresh_widget_rep> (tmwid, kind);
 }

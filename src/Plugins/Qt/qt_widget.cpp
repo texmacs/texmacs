@@ -356,8 +356,8 @@ widget hsplit_widget (widget l, widget r) {
   return qt_ui_element_rep::create(qt_widget_rep::hsplit_widget, l, r); }
 widget vsplit_widget (widget t, widget b) { 
   return qt_ui_element_rep::create(qt_widget_rep::vsplit_widget, t, b); }
-widget refresh_widget (string tmwid) {
-  return qt_ui_element_rep::create(qt_widget_rep::refresh_widget, tmwid); }
+widget refresh_widget (string tmwid, string kind) {
+  return qt_ui_element_rep::create(qt_widget_rep::refresh_widget, tmwid, kind); }
 widget glue_widget (bool hx, bool vx, SI w, SI h) {
   return qt_ui_element_rep::create (qt_ui_element_rep::glue_widget,
                                     hx, vx, w/PIXEL, h/PIXEL); }

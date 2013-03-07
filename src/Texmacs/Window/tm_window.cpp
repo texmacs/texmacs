@@ -569,7 +569,7 @@ windows_refresh () {
   iterator<int> it= iterate (window_table);
   while (it->busy ()) {
     int id= it->next ();
-    send_refresh (window_table[id]);
+    send_refresh (window_table[id], "auto");
 #ifndef QTTEXMACS
     refresh_size (window_table[id], false);
 #endif

@@ -209,7 +209,7 @@ basic_widget_rep::handle_update (update_event ev) { (void) ev;
 void
 basic_widget_rep::handle_refresh (refresh_event ev) { (void) ev;
   for (int i=0; i<N(a); i++)
-    a[i] << emit_refresh ();
+    a[i] << emit_refresh (ev->kind);
 }
 
 void

@@ -319,11 +319,11 @@ send_update (widget w) {
 }
 
 inline void
-send_refresh (widget w) {
+send_refresh (widget w, string kind) {
   // this message is issued if the contents of one of the dynamic
   // subwidgets (as constructed using refresh_widget) of w
   // may have changed and needs to be recomputed
-  send (w, SLOT_REFRESH);
+  send<string> (w, SLOT_REFRESH, kind);
 }
 
 inline void

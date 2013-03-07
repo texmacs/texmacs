@@ -141,7 +141,8 @@ struct update_event_rep: public event_rep {
 EVENT(update_event);
 
 struct refresh_event_rep: public event_rep {
-  refresh_event_rep ();
+  string kind;
+  refresh_event_rep (string kind);
   operator tree ();
 };
 EVENT(refresh_event);

@@ -590,8 +590,9 @@ QTMTabWidget::resizeOthers(int current) {
 
 widget make_menu_widget (object wid);
 
-QTMRefreshWidget::QTMRefreshWidget (string _tmwid)
-: QWidget (), tmwid (_tmwid), curobj (false), cur (), qwid(NULL),
+QTMRefreshWidget::QTMRefreshWidget (string _tmwid, string _kind):
+  QWidget (), tmwid (_tmwid), kind (_kind),
+  curobj (false), cur (), qwid(NULL),
   cache (widget ())
 {   
   QObject::connect(the_gui->gui_helper, SIGNAL(tmSlotRefresh()), 

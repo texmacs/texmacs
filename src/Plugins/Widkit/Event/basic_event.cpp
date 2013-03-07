@@ -161,11 +161,12 @@ update_event_rep::operator tree () { return "update_event"; }
 event emit_update () {
   return tm_new<update_event_rep> (); }
 
-refresh_event_rep::refresh_event_rep ():
-  event_rep (REFRESH_EVENT) {}
-refresh_event_rep::operator tree () { return "refresh_event"; }
-event emit_refresh () {
-  return tm_new<refresh_event_rep> (); }
+refresh_event_rep::refresh_event_rep (string kind2):
+  event_rep (REFRESH_EVENT), kind (kind2) {}
+refresh_event_rep::operator tree () {
+  return tree (TUPLE, "refresh_event", kind); }
+event emit_refresh (string kind) {
+  return tm_new<refresh_event_rep> (kind); }
 
 invalidate_event_rep::invalidate_event_rep ():
   event_rep (INVALIDATE_EVENT), all_flag (true),

@@ -291,7 +291,9 @@ qt_ui_element_rep::get_qmenu() {
  */
 qt_ui_element_rep::operator tree () {
   if (type == refresh_widget) {
-    return tree (TUPLE, "refresh", open_box<string> (load));
+    typedef pair<string, string> T;
+    T x= open_box<T> (load);
+    return tree (TUPLE, "refresh", x.x1, x.x2);
   } else {
     return tree();
   }
@@ -1113,8 +1115,9 @@ qt_ui_element_rep::as_qwidget () {
       
     case refresh_widget:
     {
-      string tmwid = open_box<string> (load);
-      qwid = new QTMRefreshWidget (tmwid);
+      typedef pair<string, string> T;
+      T x= open_box<T> (load);
+      qwid = new QTMRefreshWidget (x.x1, x.x2);
     }
       break;
       

@@ -288,13 +288,14 @@ class QTMRefreshWidget : public QWidget {
   Q_OBJECT
   
   string  tmwid;
+  string   kind;
   object curobj;
   widget    cur;
   QWidget* qwid;
   hashmap<object,widget> cache;
   
 public:
-  QTMRefreshWidget (string _tmwid);
+  QTMRefreshWidget (string _tmwid, string _kind);
 
   bool recompute ();
     //static void deleteLayout (QLayout*);

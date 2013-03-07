@@ -328,8 +328,8 @@ ink_widget (command cb) {
 }
 
 widget
-refresh_widget (string tmwid) {
-  return abstract (refresh_wk_widget (tmwid));
+refresh_widget (string tmwid, string kind) {
+  return abstract (refresh_wk_widget (tmwid, kind));
 }
 
 widget
@@ -518,8 +518,8 @@ send_update (wk_widget w, blackbox val) {
 
 void
 send_refresh (wk_widget w, blackbox val) {
-  ASSERT (is_nil (val), "type mismatch");
-  w << emit_refresh ();
+  ASSERT (type_box (val) == type_helper<string>::id, "type mismatch");
+  w << emit_refresh (open_box<string> (val));
 }
 
 void
