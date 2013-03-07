@@ -75,7 +75,7 @@
     (resize :%2 :menu-item-list)
     (hsplit :menu-item :menu-item)
     (vsplit :menu-item :menu-item)
-    (refresh :%1)
+    (refresh :%1 :string?)
     (if :%1 :menu-item-list)
     (when :%1 :menu-item-list)
     (mini :%1 :menu-item-list)
@@ -566,9 +566,9 @@
         (make-menu-error "promise did not yield a menu: " value))))
 
 (define (make-refresh p style bar?)
-  "Make @(refresh s) widget."
-  (with (tag s) p
-    (list (widget-refresh (if (string? s) s (symbol->string s))))))
+  "Make @(refresh :%1 :string?) widget."
+  (with (tag s kind) p
+    (list (widget-refresh (if (string? s) s (symbol->string s)) kind))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main routines for making menu items
@@ -683,7 +683,7 @@
         ,(lambda (p style bar?) (make-menu-mini p style bar?)))
   (promise (:%1)
            ,(lambda (p style bar?) (make-menu-promise p style bar?)))
-  (refresh (:%1)
+  (refresh (:%1 :string?)
            ,(lambda (p style bar?) (make-refresh p style bar?))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

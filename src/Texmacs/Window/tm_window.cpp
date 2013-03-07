@@ -564,15 +564,15 @@ windows_delayed_refresh (int ms) {
 }
 
 void
-windows_refresh () {
-  if (texmacs_time () < refresh_time) return;
+windows_refresh (string kind) {
+  if (kind == "auto" && texmacs_time () < refresh_time) return;
   iterator<int> it= iterate (window_table);
   while (it->busy ()) {
     int id= it->next ();
-    send_refresh (window_table[id], "auto");
+    send_refresh (window_table[id], kind);
 #ifndef QTTEXMACS
-    refresh_size (window_table[id], false);
+    if (kind == "auto") refresh_size (window_table[id], false);
 #endif
   }
-  windows_delayed_refresh (1000000000);
+  if (kind == "auto") windows_delayed_refresh (1000000000);
 }

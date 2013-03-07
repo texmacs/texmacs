@@ -1,3 +1,4 @@
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; MODULE      : apidoc-widgets.scm
@@ -174,7 +175,7 @@
      ;        (vertical size is still set to min!)
      (resize ("200px" "300px" "4000px") ("300px" "500px" "4000px")
        (link module-list-widget))
-       (refresh module-symbols-widget))))
+       (refresh module-symbols-widget auto))))
 
 (tm-define (open-module-browser)
   (set! mw-module "")

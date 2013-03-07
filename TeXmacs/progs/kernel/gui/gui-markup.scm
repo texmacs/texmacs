@@ -120,9 +120,9 @@
   (:synopsis "Make possibly inert (whence greyed) widgets")
   `(cons* 'when (lambda () ,pred?) ($list ,@l)))
 
-(tm-define-macro ($refresh s)
+(tm-define-macro ($refresh s kind)
   (:synopsis "Make a refresh widget")
-  `(list 'refresh ',s))
+  `(list 'refresh ',s ,kind))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General layout widgets

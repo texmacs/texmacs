@@ -59,8 +59,13 @@
     `(cond ,@(map fun (cdr x)))))
 
 (define (gui-make-refresh x)
-  (require-format x '(refresh :%1))
-  `($refresh ,(cadr x)))
+  (require-format x '(refresh :%1 :*))
+  (with opts (cddr x)
+    (when (and (null? opts) (symbol? (cadr x)))
+      (set! opts (list (cadr x))))
+    (when (not (symbol? (car opts)))
+      (texmacs-error "gui-make-refresh" "invalid menu item ~S" x))
+    `($refresh ,(cadr x) ,(symbol->string (car opts)))))
 
 (define (gui-make-group x)
   (require-format x '(group :%1))

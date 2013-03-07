@@ -140,7 +140,7 @@
 
 (tm-widget (client-properties-editor quit)
   (padded
-    (refresh client-properties-list)
+    (refresh client-properties-list auto)
     === --- ===
     (form "modify-props"
       (aligned

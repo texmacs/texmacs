@@ -114,6 +114,12 @@
                 selector-search-purpose)
     (list-filter l (cut != <> "Any"))))
 
+(tm-define-macro (selector-search-set! var val)
+  `(begin
+     (set! ,var ,val)
+     (delayed
+       (refresh-now "font-family-selector"))))
+
 (tm-define (selected-families)
   (search-font-families (selected-properties)))
 
@@ -183,32 +189,32 @@
       ;;        selector-font-style "120px"))
       ;;(item ====== ======)
       (item (text "Weight:")
-        (enum (set! selector-search-weight answer)
+        (enum (selector-search-set! selector-search-weight answer)
               '("Any" "Light" "Medium" "Bold" "Black")
               selector-search-weight "120px"))
       (item (text "Slant:")
-        (enum (set! selector-search-slant answer)
+        (enum (selector-search-set! selector-search-slant answer)
               '("Any" "Normal" "Italic" "Oblique")
               selector-search-slant "120px"))
       (item (text "Stretch:")
-        (enum (set! selector-search-weight answer)
+        (enum (selector-search-set! selector-search-weight answer)
               '("Any" "Condensed" "Unstretched" "Wide")
               selector-search-weight "120px"))
       (item ====== ======)
       (item (text "Serif:")
-        (enum (set! selector-search-serif answer)
+        (enum (selector-search-set! selector-search-serif answer)
               '("Any" "Serif" "Sans Serif")
               selector-search-serif "120px"))
       (item (text "Spacing:")
-        (enum (set! selector-search-spacing answer)
+        (enum (selector-search-set! selector-search-spacing answer)
               '("Any" "Proportional" "Monospaced")
               selector-search-spacing "120px"))
       (item (text "Case:")
-        (enum (set! selector-search-case answer)
+        (enum (selector-search-set! selector-search-case answer)
               '("Any" "Mixed" "Small Capitals")
               selector-search-case "120px"))
       (item (text "Device:")
-        (enum (set! selector-search-case answer)
+        (enum (selector-search-set! selector-search-case answer)
               '("Any" "Printed" "Typewriter" "Script" "Chalk" "Marker")
               selector-search-case "120px")))
     (horizontal (glue #f #t 0 0))))
@@ -218,7 +224,7 @@
     (horizontal
       (refresh font-family-selector)
       ///
-      (refresh font-style-selector)
+      (refresh font-style-selector auto)
       ///
       (link font-size-selector)
       ///
@@ -228,7 +234,7 @@
     ===
     (resize ("300px" "300px" "2000px") ("100px" "100px" "100px")
       (scrollable
-        (refresh font-sample-text)))
+        (refresh font-sample-text auto)))
     === ===
     (explicit-buttons
       (hlist >>> ("Ok" (begin (selector-apply-font) (quit)))))))
