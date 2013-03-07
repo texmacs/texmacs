@@ -1230,20 +1230,11 @@
 		  (author ,(tex-concat author*)) "\n"
 		  (maketitle)))))
 
-(define (tmtex-doc-data-wrapper s l)
-  (tmtex-doc-data s l))
-
 (tm-define (tmtex-abstract s l)
   (tmtex-std-env "abstract" l))
 
-(define (tmtex-abstract-wrapper s l)
-  (tmtex-abstract s l))
-
 (define (tmtex-select-args-by-func n l)
   (filter (lambda (x) (func? x n)) l))
-
-(define (tmtex-abstract-data-wrapper s l)
-  (tmtex-abstract-data s l))
 
 (tm-define (tmtex-abstract-data s l)
   (let* ((msc (tmtex-select-args-by-func 'abstract-msc l))
@@ -1355,9 +1346,6 @@
     (if (== s "equation")
 	(list (list '!begin s) r)
 	(list '!eqn r))))
-
-(define (tmtex-equation-wrapper s l)
-  (tmtex-equation s l))
 
 (define (tmtex-eqnarray s l)
   (tmtex-env-set "mode" "math")
@@ -1791,14 +1779,11 @@
   ((:or hide-preamble show-preamble) (,tmtex-default -1))
   (hide-part (,tmtex-hide-part -1))
   (show-part (,tmtex-show-part -1))
-  (doc-data (,tmtex-doc-data-wrapper -1))
   ((:or doc-title doc-author author-data doc-date doc-note
         doc-misc doc-subtitle doc-title-options
 	abstract-keywords abstract-msc) (,tmtex-default -1))
   ((:or author-name author-affiliation author-misc author-note
 	author-email author-homepage) (,tmtex-default -1))
-  (abstract (,tmtex-abstract-wrapper 1))
-  (abstract-data (,tmtex-abstract-data-wrapper -1))
   (appendix (,tmtex-appendix 1))
   ((:or theorem proposition lemma corollary proof axiom definition
 	notation conjecture remark note example exercise problem warning
@@ -1855,7 +1840,6 @@
   (math-close (,tmtex-mathclose 1))
   (math-ordinary (,tmtex-mathord 1))
   (math-ignore (,tmtex-mathord 1))
-  ((:or equation equation*) (,tmtex-equation-wrapper 1))
   ((:or eqnarray eqnarray* leqnarray*) (,tmtex-eqnarray 1))
   (eq-number (,tmtex-default -1))
 
@@ -1925,7 +1909,11 @@
      (logic-table tmtex-tmstyle% ,@(map style-dependent-transform l))))
 
 (tmtex-style-dependent
-  (elsevier-frontmatter tmtex-elsevier-frontmatter))
+  (doc-data                 tmtex-doc-data)
+  (abstract-data            tmtex-abstract-data)
+  (abstract                 tmtex-abstract)
+  ((:or equation equation*) tmtex-equation)
+  (elsevier-frontmatter     tmtex-elsevier-frontmatter))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Protected tags
