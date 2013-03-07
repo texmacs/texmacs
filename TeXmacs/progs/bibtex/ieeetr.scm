@@ -28,7 +28,7 @@
 (tm-define (bib-format-editor x)
   (:mode bib-ieeetr?)
   (with a (bib-field x "editor")
-    (if (bib-null? a) ""
+    (if (or (bib-null? a) (nlist? a)) ""
 	(if (equal? (length a) 2)
 	    `(concat ,(bib-format-names a) ", ed.")
 	    `(concat ,(bib-format-names a) ", eds.")))))
@@ -86,7 +86,7 @@
   (:mode bib-ieeetr?)
   (with p (bib-field x "pages")
     (cond
-      ((bib-null? p) "")
+      ((or (bib-null? p) (nlist? p)) "")
       ((== (length p) 1) "")
       ((== (length p) 2) `(concat "p. " ,(list-ref p 1)))
       (else `(concat "p. " ,(list-ref p 1) "--" ,(list-ref p 2))))))

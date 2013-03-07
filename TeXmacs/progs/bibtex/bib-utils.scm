@@ -84,6 +84,12 @@
       (set! bib-style tmp-s)
       res)))
 
+(tm-define (bib-car x)
+  (if (pair? x) (car x) ""))
+
+(tm-define (bib-cdr x)
+  (if (pair? x) (cdr x) ""))
+
 (tm-define (bib-null? x)
   (cond
     ((list? x) (equal? x `()))

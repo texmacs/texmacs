@@ -23,7 +23,7 @@
             (if (<= l 2) y (substring y (- l 2) l)))))
 
 (define (bib-format-label-names a)
-  (if (bib-null? a) ""
+  (if (or (bib-null? a) (nlist? a)) ""
     (let* ((n (length a))
   	 (pre (cond
   		((equal? n 2)

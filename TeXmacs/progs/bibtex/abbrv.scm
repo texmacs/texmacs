@@ -31,7 +31,7 @@
   (:mode bib-abbrv?)
   (let* ((p (bib-field x "pages")))
     (cond
-      ((bib-null? p) "")
+      ((or (bib-null? p) (nlist? p)) "")
       ((== (length p) 1) "")
       ((== (length p) 2) `(concat "pp. " ,(list-ref p 1)))
       (else `(concat "pp. " ,(list-ref p 1) "--" ,(list-ref p 2))))))

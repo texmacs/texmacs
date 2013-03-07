@@ -48,7 +48,7 @@
 
 (tm-define (bib-format-names a)
   (:mode bib-plain?)
-  (if (bib-null? a)
+  (if (or (bib-null? a) (nlist? a))
       ""
       (let* ((n (length a)))
 	(if (equal? n 2)
@@ -72,7 +72,7 @@
 (tm-define (bib-format-editor x)
   (:mode bib-plain?)
   (with a (bib-field x "editor")
-    (if (bib-null? a)
+    (if (or (bib-null? a) (nlist? a))
 	""
 	(if (equal? (length a) 2)
 	    `(concat ,(bib-format-names a) ,(bib-translate ", editor"))
@@ -119,7 +119,7 @@
   (:mode bib-plain?)
   (with p (bib-field x "pages")
     (cond
-      ((bib-null? p) "")
+      ((or (bib-null? p) (nlist? p)) "")
       ((== (length p) 1) "")
       ((== (length p) 2)
        `(concat ,(bib-translate "page ") ,(list-ref p 1)))
@@ -146,7 +146,7 @@
 	 (p (bib-field x "pages"))
 	 (vol (if (bib-null? v) "" v))
 	 (num (if (bib-null? n) "" `(concat "(" ,n ")")))
-	 (pag (if (bib-null? p)
+	 (pag (if (or (bib-null? p) (nlist? p))
 		  ""
 		  (cond
 		    ((equal? 1 (length p)) "")
@@ -493,7 +493,7 @@
 	  (else (bib-format-misc n x))))))
 
 (define (author-sort-format a)
-  (if (null? a)
+  (if (or (npair? a) (null? a))
       ""
       (with name
 	  (let* ((x (car a))
@@ -506,20 +506,20 @@
 		 (jj (if (equal? (list-ref x 4) "") ""
 			 (string-append (bib-purify (list-ref x 4)) " "))))
 	    (string-append vv ll ff jj))
-	(string-append name (author-sort-format (cdr a))))))
+	(string-append name (author-sort-format (bib-cdr a))))))
 
 (define (author-editor-sort-key x)
   (if (bib-empty? x "author")
       (if (bib-empty? x "editor")
 	  (list-ref x 2)
-	  (author-sort-format (cdr (bib-field x "editor"))))
-      (author-sort-format (cdr (bib-field x "author")))))
+	  (author-sort-format (bib-cdr (bib-field x "editor"))))
+      (author-sort-format (bib-cdr (bib-field x "author")))))
 
 (define (author-sort-key x ae)
   (if (bib-empty? x ae)
       (list-ref x 2)
-      ;;(author-sort-format (cdr (bib-field x ae)))))
-      (string-upcase (author-sort-format (cdr (bib-field x ae))))))
+      ;;(author-sort-format (bib-cdr (bib-field x ae)))))
+      (string-upcase (author-sort-format (bib-cdr (bib-field x ae))))))
 
 (tm-define (bib-sort-key x)
   (:mode bib-plain?)

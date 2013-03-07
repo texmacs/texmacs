@@ -29,7 +29,7 @@
 (tm-define (bib-format-editor x)
   (:mode bib-siam?)
   (with a (bib-field x "editor")
-    (if (bib-null? a) ""
+    (if (or (bib-null? a) (nlist? a)) ""
 	(if (equal? (length a) 2)
 	    `(concat ,(bib-format-names a) ", ed.")
 	    `(concat ,(bib-format-names a) ", eds.")))))
@@ -80,7 +80,7 @@
 	 (t (bib-field x "type")))
     (if (bib-null? c)
 	(bib-format-pages x)
-	(let ((type (if (bib-null? t) ,(bib-translate "chapter") (bib-locase t)))
+	(let ((type (if (bib-null? t) (bib-translate "chapter") (bib-locase t)))
 	      (pages `(concat ", " ,(bib-format-pages x))))
 	  `(concat ,type " " ,c ,pages)))))
 
@@ -88,7 +88,7 @@
   (:mode bib-siam?)
   (with p (bib-field x "pages")
     (cond
-      ((bib-null? p) "")
+      ((or (bib-null? p) (nlist? p)) "")
       ((== (length p) 1) "")
       ((== (length p) 2) `(concat "p. " ,(list-ref p 1)))
       (else `(concat "p. " ,(list-ref p 1) "--" ,(list-ref p 2))))))

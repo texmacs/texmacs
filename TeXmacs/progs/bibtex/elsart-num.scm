@@ -29,7 +29,7 @@
 (tm-define (bib-format-editor x)
   (:mode bib-elsart-num?)
   (let* ((a (bib-field x "editor")))
-    (if (bib-null? a)
+    (if (or (bib-null? a) (nlist? a))
 	""
 	(if (equal? (length a) 2)
 	    `(concat ,(bib-format-names a) ,(bib-translate " (Ed.)"))
@@ -63,7 +63,7 @@
   (:mode bib-elsart-num?)
   (let* ((p (bib-field x "pages")))
     (cond
-      ((bib-null? p) "")
+      ((or (bib-null? p) (nlist? p)) "")
       ((== (length p) 1) "")
       ((== (length p) 2) `(concat ,(bib-translate "pp. ") ,(list-ref p 1)))
       (else `(concat ,(bib-translate "pp. ")
@@ -77,7 +77,7 @@
 	 (y `(concat "(" ,(bib-field x "year") ")"))
 	 (p (let* ((pp (bib-field x "pages")))
 	      (cond
-               ((bib-null? pp) "")
+               ((or (bib-null? pp) (nlist? pp)) "")
 	       ((equal? 1 (length pp)) "")
 	       ((equal? 2 (length pp)) (list-ref pp 1))
 	       (else `(concat ,(list-ref pp 1) "--" ,(list-ref pp 2)))))))
