@@ -223,7 +223,7 @@ texmacs_input_rep::flush (bool force) {
 void
 texmacs_input_rep::verbatim_flush (bool force) {
   if (force || ends (buf, "\n")) {
-    write (verbatim_to_tree (buf));
+    write (verbatim_to_tree (buf, false, "utf-8"));
     buf= "";
   }
 }
