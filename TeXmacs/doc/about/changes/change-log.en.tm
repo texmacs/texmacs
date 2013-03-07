@@ -1,13 +1,21 @@
-<TeXmacs|1.0.7.17>
+<TeXmacs|1.0.7.18>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.7 to 1.0.7.18>
+  <section|Changes from version 1.0.7 to 1.0.7.19>
 
   <\itemize>
+    <item><LaTeX> import and export of metadata for various standard styles
+    (1.0.7.19).
+
+    <item>Running plug-ins over remote SSH connections; experimental
+    (1.0.7.19).
+
+    <item>Started implementation of remote <TeXmacs> file system (1.0.7.19).
+
     <item>Implementation of arbitrary zoom factors and ``fit to paragraph
     width'' (1.0.7.18).
 
