@@ -170,7 +170,6 @@ correct_buggy_html_paste (string s) {
     begin_html= 0;
     end_html= N(s);
   }
-  cout << s (begin_html, end_html) << LF;
   return s (begin_html, end_html);
 }
 
