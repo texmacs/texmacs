@@ -63,6 +63,22 @@
           (set! l (cons* "font" (logical-font-family fn) l)))
         (apply make-multi-with l)))))
 
+(define (selector-font-simulate-comment)
+  (let* ((fn  (selector-get-font))
+	 (fam (logical-font-family fn))
+         (var (logical-font-variant fn))
+         (ser (logical-font-series fn))
+         (sh  (logical-font-shape fn))
+         (lf  (logical-font-private fam var ser sh))
+         (fn  (logical-font-search lf #f)))
+    (cond ((and (== selector-font-family (car fn))
+		(== selector-font-style (cadr fn))) "")
+	  ((null? (selected-properties))
+	   (string-append "  (" selector-font-family " " selector-font-style
+			  " -> " (car fn) " " (cadr fn) ")"))
+	  (else
+	    (string-append "  (closest match: " (car fn) " " (cadr fn) ")")))))
+
 (define (selector-font-demo-text)
   (with fn (selector-get-font)
     ;;(display* "Font: " fn "\n")
@@ -219,6 +235,16 @@
               selector-search-case "120px")))
     (horizontal (glue #f #t 0 0))))
 
+(tm-widget (font-selector-demo)
+  (hlist
+    (bold (text "Sample text"))
+    (text (selector-font-simulate-comment))
+    >>>)
+  ===
+  (resize ("300px" "300px" "2000px") ("100px" "100px" "100px")
+    (scrollable
+      (link font-sample-text))))
+
 (tm-widget (font-selector quit)
   (padded
     (horizontal
@@ -230,11 +256,7 @@
       ///
       (link font-properties-selector))
     === === ===
-    (bold (text "Sample text"))
-    ===
-    (resize ("300px" "300px" "2000px") ("100px" "100px" "100px")
-      (scrollable
-        (refresh font-sample-text auto)))
+    (refresh font-selector-demo auto)
     === ===
     (explicit-buttons
       (hlist >>> ("Ok" (begin (selector-apply-font) (quit)))))))
