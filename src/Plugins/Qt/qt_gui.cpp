@@ -228,8 +228,8 @@ qt_gui_rep::set_selection (string key, tree t,
       selection= as_charp (as_string (QCoreApplication::applicationPid ()));
       md->setData ("application/x-texmacs-pid", selection);
 
-      selection= as_charp (sh);
-      md->setHtml (selection);
+      //selection= as_charp (sh);
+      //md->setHtml (selection);
 
       selection= as_charp (sv);
     }
