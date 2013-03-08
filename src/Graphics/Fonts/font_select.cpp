@@ -288,7 +288,7 @@ is_serif (string s) {
 }
 
 bool
-is_mono (string s) {
+is_spacing (string s) {
   return 
     s == "typewriter" ||
     s == "mono" ||
@@ -313,7 +313,7 @@ same_kind (string s1, string s2) {
     (is_slant (s1) && is_slant (s2)) ||
     (is_capitalization (s1) && is_capitalization (s2)) ||
     (is_serif (s1) && is_serif (s2)) ||
-    (is_mono (s1) && is_mono (s2)) ||
+    (is_spacing (s1) && is_spacing (s2)) ||
     (is_device (s1) && is_device (s2));
 }
 
@@ -321,58 +321,71 @@ same_kind (string s1, string s2) {
 * Computing the distance between two fonts
 ******************************************************************************/
 
-#define DISTANCE_FAR       10000000
-#define DISTANCE_INFINITY  1000000000
+#define S_STRETCH         10
+#define D_STRETCH         30
+#define S_WEIGHT          100
+#define S_SLANT           100
+#define Q_WEIGHT          300
+#define D_WEIGHT          1000
+#define D_SLANT           1000
+#define D_CAPITALIZATION  3000
+#define D_MASTER          10000
+#define D_SERIF           100000
+#define D_SPACING         100000
+#define Q_DEVICE          300000
+#define D_DEVICE          1000000
+#define D_HUGE            10000000
+#define D_INFINITY        1000000000
 
 int
 distance (string s1, string s2) {
   // NOTE: distances can be asymmetric.
-  // For instance, 'bold' matches 'black' with distance 300,
+  // For instance, 'bold' matches 'black' with distance Q_WEIGHT,
   // but 'black' does not match 'bold'.
   if (s1 == s2) return 0;
   if (is_stretch (s1) || is_stretch (s2)) {
-    if (!is_stretch (s1) || !is_stretch (s2)) return DISTANCE_FAR;
-    if (ends (s1, "condensed") && ends (s2, "condensed")) return 10;
-    if (ends (s1, "unextended") && !ends (s2, "unextended")) return 30;
-    if (!ends (s1, "unextended") && ends (s2, "unextended")) return 30;
-    if (ends (s1, "extended") && ends (s2, "extended")) return 10;
-    return 30;
+    if (!is_stretch (s1) || !is_stretch (s2)) return D_HUGE;
+    if (ends (s1, "condensed") && ends (s2, "condensed")) return S_STRETCH;
+    if (ends (s1, "unextended") && !ends (s2, "unextended")) return D_STRETCH;
+    if (!ends (s1, "unextended") && ends (s2, "unextended")) return D_STRETCH;
+    if (ends (s1, "extended") && ends (s2, "extended")) return S_STRETCH;
+    return D_STRETCH;
   }
   if (is_weight (s1) || is_weight (s2)) {
-    if (!is_weight (s1) || !is_weight (s2)) return DISTANCE_FAR;
-    if (ends (s1, "light") && ends (s2, "light")) return 100;
-    if (ends (s1, "bold") && ends (s2, "bold")) return 100;
-    if (ends (s1, "black") && ends (s2, "black")) return 100;
-    if (ends (s1, "bold") && ends (s2, "black")) return 300;
-    return 1000;
+    if (!is_weight (s1) || !is_weight (s2)) return D_HUGE;
+    if (ends (s1, "light") && ends (s2, "light")) return S_WEIGHT;
+    if (ends (s1, "bold") && ends (s2, "bold")) return S_WEIGHT;
+    if (ends (s1, "black") && ends (s2, "black")) return S_WEIGHT;
+    if (ends (s1, "bold") && ends (s2, "black")) return Q_WEIGHT;
+    return D_WEIGHT;
   }
   if (is_slant (s1) || is_slant (s2)) {
-    if (!is_slant (s1) || !is_slant (s2)) return DISTANCE_FAR;
-    if (s1 == "italic" && s2 == "oblique") return 100;
-    if (s1 == "oblique" && s2 == "italic") return 100;
-    return 1000;
+    if (!is_slant (s1) || !is_slant (s2)) return D_HUGE;
+    if (s1 == "italic" && s2 == "oblique") return S_SLANT;
+    if (s1 == "oblique" && s2 == "italic") return S_SLANT;
+    return D_SLANT;
   }
   if (is_capitalization (s1) || is_capitalization (s2)) {
-    if (!is_capitalization (s1) || !is_capitalization (s2)) return DISTANCE_FAR;
-    return 300000;
+    if (!is_capitalization (s1) || !is_capitalization (s2)) return D_HUGE;
+    return D_CAPITALIZATION;
   }
   if (is_serif (s1) || is_serif (s2)) {
-    if (!is_serif (s1) || !is_serif (s2)) return DISTANCE_FAR;
-    return 300000;
+    if (!is_serif (s1) || !is_serif (s2)) return D_HUGE;
+    return D_SERIF;
   }
-  if (is_mono (s1) || is_mono (s2)) {
-    if (!is_mono (s1) || !is_mono (s2)) return DISTANCE_FAR;
+  if (is_spacing (s1) || is_spacing (s2)) {
+    if (!is_spacing (s1) || !is_spacing (s2)) return D_HUGE;
     if (s1 == "mono" && s2 == "typewriter") return 0;
     if (s1 == "typewriter" && s2 == "mono") return 0;
-    return 300000;
+    return D_SPACING;
   }
   if (is_device (s1) || is_device (s2)) {
-    if (!is_device (s1) || !is_device (s2)) return DISTANCE_FAR;
-    if (s1 == "script" && s2 == "marker") return 1000000;
-    if (s1 == "script" && s2 == "chalk") return 1000000;
-    return 3000000;
+    if (!is_device (s1) || !is_device (s2)) return D_HUGE;
+    if (s1 == "script" && s2 == "marker") return Q_DEVICE;
+    if (s1 == "script" && s2 == "chalk") return Q_DEVICE;
+    return D_DEVICE;
   }
-  return DISTANCE_FAR;
+  return D_HUGE;
 }
 
 bool
@@ -389,20 +402,20 @@ distance (string s, array<string> v) {
   if (s == "normal" && !contains (v, is_slant)) return 0;
   if (s == "mixed" && !contains (v, is_capitalization)) return 0;
   if (s == "serif" && !contains (v, is_serif)) return 0;
-  if (s == "proportional" && !contains (v, is_mono)) return 0;
+  if (s == "proportional" && !contains (v, is_spacing)) return 0;
   if (s == "printed" && !contains (v, is_device)) return 0;
 
-  if (s == "mono" && contains (string ("proportional"), v)) return 300000;
-  if (s == "proportional" && contains (string ("mono"), v)) return 300000;
+  if (s == "mono" && contains (string ("proportional"), v)) return D_SPACING;
+  if (s == "proportional" && contains (string ("mono"), v)) return D_SPACING;
 
-  int m= DISTANCE_FAR;
-  if (is_stretch (s)) m= 30;
-  else if (is_weight (s)) m= 1000;
-  else if (is_slant (s)) m= 1000;
-  else if (is_capitalization (s)) m= 300000;
-  else if (is_serif (s)) m= 300000;
-  else if (is_mono (s)) m= 300000;
-  else if (is_device (s)) m= 3000000;
+  int m= D_HUGE;
+  if (is_stretch (s)) m= D_STRETCH;
+  else if (is_weight (s)) m= D_WEIGHT;
+  else if (is_slant (s)) m= D_SLANT;
+  else if (is_capitalization (s)) m= D_CAPITALIZATION;
+  else if (is_serif (s)) m= D_SERIF;
+  else if (is_spacing (s)) m= D_SPACING;
+  else if (is_device (s)) m= D_DEVICE;
 
   for (int i=1; i<N(v); i++)
     m= min (distance (s, v[i]), m);
@@ -416,8 +429,8 @@ distance (array<string> v1, array<string> v2, array<string> v3) {
   // v2 a subset of v3 of those properties which are not common
   // between all styles in the same family.
   int d= 0;
-  if (N(v1) == 0 || N(v2) == 0) return DISTANCE_FAR;
-  if (v1[0] != v2[0]) d= 10000;
+  if (N(v1) == 0 || N(v2) == 0) return D_HUGE;
+  if (v1[0] != v2[0]) d= D_MASTER;
   for (int i=1; i<N(v1); i++)
     d += distance (v1[i], v3);
   for (int i=1; i<N(v2); i++)
@@ -434,7 +447,7 @@ search_font (array<string> v, bool require_exact) {
   if (N(v) == 0)
     return array<string> (string ("TeXmacs Computer Modern"),
                           string ("Unknown"));
-  int best_distance= DISTANCE_INFINITY;
+  int best_distance= D_INFINITY;
   array<string> best_result (v[0], string ("Unknown"));
   array<string> fams= master_to_families (v[0]);
   if (!require_exact) fams= font_database_families ();
