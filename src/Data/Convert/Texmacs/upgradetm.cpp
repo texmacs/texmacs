@@ -3674,7 +3674,6 @@ upgrade_tex (tree t) {
   t= upgrade_items (t);
   t= upgrade_table (t);
   t= upgrade_split (t, false);
-  t= upgrade_title (t);
   t= simplify_correct (upgrade_mod_symbols (t));
   t= upgrade_menus_in_help (t);
   t= upgrade_capitalize_menus (t);
