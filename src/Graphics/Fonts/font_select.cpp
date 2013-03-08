@@ -305,6 +305,18 @@ is_device (string s) {
     s == "marker";
 }
 
+bool
+same_kind (string s1, string s2) {
+  return
+    (is_stretch (s1) && is_stretch (s2)) ||
+    (is_weight (s1) && is_weight (s2)) ||
+    (is_slant (s1) && is_slant (s2)) ||
+    (is_capitalization (s1) && is_capitalization (s2)) ||
+    (is_serif (s1) && is_serif (s2)) ||
+    (is_mono (s1) && is_mono (s2)) ||
+    (is_device (s1) && is_device (s2));
+}
+
 /******************************************************************************
 * Computing the distance between two fonts
 ******************************************************************************/
@@ -489,6 +501,26 @@ search_font_families (array<string> v) {
   for (int i=0; i<N(families); i++)
     if (N(search_font_styles (families[i], v)) != 0)
       r << families[i];
+  return r;
+}
+
+/******************************************************************************
+* Modifying font properties
+******************************************************************************/
+
+array<string>
+patch_font (array<string> v, array<string> w) {
+  array<string> r= copy (v);
+  for (int i=0; i<N(w); i++) {
+    int j;
+    for (j=1; j<N(r); j++)
+      if (same_kind (r[j], decode_feature (w[i]))) {
+	r[j]= decode_feature (w[i]);
+	break;
+      }
+    if (j == N(r)) r << decode_feature (w[i]);
+  }
+  //cout << v << ", " << w << " -> " << r << "\n";
   return r;
 }
 

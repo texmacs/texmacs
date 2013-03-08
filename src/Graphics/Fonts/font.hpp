@@ -140,5 +140,6 @@ string get_shape (array<string> v);
 array<string> search_font (array<string> v, bool require_exact);
 array<string> search_font_families (array<string> v);
 array<string> search_font_styles (string s, array<string> v);
+array<string> patch_font (array<string> v, array<string> w);
 
 #endif // defined FONT_H

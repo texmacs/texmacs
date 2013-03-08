@@ -25,7 +25,9 @@
 (tm-define selector-font-size "10")
 
 (tm-define (selector-get-font)
-  (logical-font-public selector-font-family selector-font-style))
+  (logical-font-patch
+    (logical-font-public selector-font-family selector-font-style)
+    (selected-properties)))
 
 (define (selector-initialize-font)
   (let* ((fam (get-env "font"))

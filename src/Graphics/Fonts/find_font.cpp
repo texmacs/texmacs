@@ -227,6 +227,7 @@ find_font (string family, string fn_class,
     as_string (sz) * "-" * as_string (dpi);
   if (font::instances->contains (s)) return font (s);
 
+  //if (false)
   if (closest) {
     array<string> lfn= logical_font (family, fn_class, series, shape);
     array<string> pfn= search_font (lfn, false);
