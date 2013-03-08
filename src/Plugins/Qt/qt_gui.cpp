@@ -224,12 +224,15 @@ qt_gui_rep::set_selection (string key, tree t,
   if (format == "verbatim" || format == "default") {
     if (format == "default") {
       md->setData ("application/x-texmacs-clipboard", selection);
+      tm_delete_array(selection);
 
       selection= as_charp (as_string (QCoreApplication::applicationPid ()));
       md->setData ("application/x-texmacs-pid", selection);
+      tm_delete_array(selection);
 
       //selection= as_charp (sh);
       //md->setHtml (selection);
+      //tm_delete_array(selection);
 
       selection= as_charp (sv);
     }
