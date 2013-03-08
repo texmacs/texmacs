@@ -100,6 +100,6 @@ QTMGuiHelper::doPopWaitingWidgets() {
 }
 
 void
-QTMGuiHelper::emitTmSlotRefresh () {
-  emit tmSlotRefresh();
+QTMGuiHelper::emitTmSlotRefresh (string kind) {
+  emit tmSlotRefresh (kind);
 }

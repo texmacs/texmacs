@@ -182,9 +182,12 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       
       
     case SLOT_REFRESH:
-      the_gui->gui_helper->emitTmSlotRefresh();
+    {
+      check_type<string> (val, s);
+      string kind = open_box<string> (val);
+      the_gui->gui_helper->emitTmSlotRefresh (kind);
       break;
-      
+    }
     default:
       qt_widget_rep::send(s, val);
   }

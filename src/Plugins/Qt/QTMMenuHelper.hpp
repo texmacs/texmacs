@@ -297,11 +297,11 @@ class QTMRefreshWidget : public QWidget {
 public:
   QTMRefreshWidget (string _tmwid, string _kind);
 
-  bool recompute ();
+  bool recompute (string what);
     //static void deleteLayout (QLayout*);
 
 public slots:
-  void doRefresh ();  
+  void doRefresh (string kind);
 };
 
 

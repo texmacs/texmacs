@@ -37,11 +37,11 @@ public slots:
   void aboutToHideMainMenu ();
   void doPopWaitingWidgets ();
  
-  void emitTmSlotRefresh ();
+  void emitTmSlotRefresh (string kind);
 
 signals:
   void refresh ();
-  void tmSlotRefresh ();   //!< qt_widgets which need to refresh connect here.
+  void tmSlotRefresh (string); //!< qt_widgets which need to refresh connect here.
 };
 
 #endif // QTMGUIHELPER_HPP
