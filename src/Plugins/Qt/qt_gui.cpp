@@ -137,6 +137,44 @@ qt_gui_rep::~qt_gui_rep()  {
 * interclient communication
 ******************************************************************************/
 
+// hack for handling buggy application pastes
+static bool
+seems_buggy_html_paste (string s) {
+  return occurs ("Version:", s)       &&
+         occurs ("StartHTML:", s)     &&
+         occurs ("EndHTML:", s)       &&
+         occurs ("StartFragment:", s) &&
+         occurs ("EndFragment:", s);
+}
+
+static string
+correct_buggy_html_paste (string s) {
+  int begin_html, end_html, start= 0, stop=0;
+
+  start= search_forwards ("StartHTML:", start, s);
+  start= search_forwards (":", start, s) + 1;
+  stop= start;
+  while (is_digit (s[stop])) stop++;
+  begin_html= as_int (s (start, stop + 1));
+
+  start= 0;
+  start= search_forwards ("EndHTML:", start, s);
+  start= search_forwards (":", start, s) + 1;
+  stop= start;
+  while (is_digit (s[stop])) stop++;
+  end_html= as_int (s (start, stop + 1)) + 1;
+
+  if (begin_html > N(s)) begin_html= 0;
+  if (end_html > N(s)) end_html= N(s);
+  if (end_html <= begin_html) {
+    begin_html= 0;
+    end_html= N(s);
+  }
+  cout << s (begin_html, end_html) << LF;
+  return s (begin_html, end_html);
+}
+
+
 bool
 qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
   QClipboard *cb= QApplication::clipboard ();
@@ -197,6 +235,8 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
     else buf= md->text().toUtf8 ();
   }
   if (!(buf.isEmpty())) s << string (buf.constData(), buf.size());
+  if (input_format == "html-snippet" && seems_buggy_html_paste (s))
+    s= correct_buggy_html_paste (s);
   if (input_format != "")
     s= as_string (call ("convert", s, input_format, "texmacs-snippet"));
   t= tuple ("extern", s);
