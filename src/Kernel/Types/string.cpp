@@ -204,6 +204,7 @@ as_int (string s) {
   int i=0, n=N(s), val=0;
   if (n==0) return 0;
   if (s[0]=='-') i++;
+  while (s[i]=='0') i++;
   while (i<n) {
     if (s[i]<'0') break;
     if (s[i]>'9') break;
