@@ -173,6 +173,15 @@ correct_buggy_html_paste (string s) {
   return s (begin_html, end_html);
 }
 
+static bool
+seems_buggy_paste (string s) {
+  return s[N(s)-1] == '\0';
+}
+
+static string
+correct_buggy_paste (string s) {
+  return s(0, N(s)-1);
+}
 
 bool
 qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
@@ -236,6 +245,8 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
   if (!(buf.isEmpty())) s << string (buf.constData(), buf.size());
   if (input_format == "html-snippet" && seems_buggy_html_paste (s))
     s= correct_buggy_html_paste (s);
+  if (seems_buggy_paste (s))
+    s= correct_buggy_paste (s);
   if (input_format != "")
     s= as_string (call ("convert", s, input_format, "texmacs-snippet"));
   t= tuple ("extern", s);
