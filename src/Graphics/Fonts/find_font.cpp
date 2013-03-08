@@ -219,13 +219,30 @@ find_magnified_font (tree t, double zoom) {
 
 font
 find_font (string family, string fn_class,
-	   string series, string shape, int sz, int dpi)
+	   string series, string shape, int sz, int dpi, bool closest)
 {
   string s=
     family * "-" * fn_class * "-" *
     series * "-" * shape * "-" *
     as_string (sz) * "-" * as_string (dpi);
   if (font::instances->contains (s)) return font (s);
+
+  if (closest) {
+    array<string> lfn= logical_font (family, fn_class, series, shape);
+    array<string> pfn= search_font (lfn, false);
+    array<string> nfn= logical_font (pfn[0], pfn[1]);
+    //cout << "nfn= " << nfn << "\n";
+    family= get_family (nfn);
+    fn_class= get_variant (nfn);
+    series= get_series (nfn);
+    shape= get_shape (nfn);
+    //cout << "f= " << family << ", " << fn_class
+    //     << ", " << series << ", " << shape << "\n";
+    s= family * "-" * fn_class * "-" *
+       series * "-" * shape * "-" *
+       as_string (sz) * "-" * as_string (dpi);
+    if (font::instances->contains (s)) return font (s);
+  }
 
   tree t1 (TUPLE, 6);
   t1[0]= family;

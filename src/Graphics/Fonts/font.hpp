@@ -101,7 +101,8 @@ void font_rule (tree which, tree by);
 font find_font (scheme_tree t);
 font find_magnified_font (scheme_tree t, double zf);
 font find_font (string family, string fn_class,
-		string series, string shape, int sz, int dpi);
+		string series, string shape, int sz, int dpi,
+		bool closest= false);
 
 font math_font (scheme_tree t, font base_fn, font error_fn, double zoom= 1.0);
 font compound_font (scheme_tree def, double zoom= 1.0);

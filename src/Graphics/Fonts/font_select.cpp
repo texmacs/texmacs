@@ -16,6 +16,30 @@ extern hashmap<tree,tree> font_features;
 extern hashmap<tree,tree> font_variants;
 
 /******************************************************************************
+* Decoding and encoding of features
+******************************************************************************/
+
+string
+decode_feature (string s) {
+  s= replace (locase_all (s) , " ", "");
+  if (s == "unstretched") s= "unextended";
+  if (s == "smallcapitals") s= "smallcaps";
+  if (s == "monospaced") s= "mono";
+  return s;
+}
+
+string
+encode_feature (string s) {
+  s= upcase_first (s);
+  if (s == "Smallcaps") s= "SmallCaps";
+  else if (ends (s, "bold"))
+    s= s (0, N(s)-4) * upcase_first (s (N(s)-4, N(s)));
+  else if (ends (s, "condensed"))
+    s= s (0, N(s)-9) * upcase_first (s (N(s)-9, N(s)));
+  return s;
+}
+
+/******************************************************************************
 * Standardization of font features
 ******************************************************************************/
 
@@ -415,8 +439,15 @@ search_font (array<string> v, bool require_exact) {
       }
     }
   }
-  if (best_distance > 0 && require_exact)
-    best_result[1]= string ("Unknown");
+  if (best_distance > 0 && require_exact) {
+    string s;
+    for (int i=1; i<N(v); i++) {
+      if (i>1) s << " ";
+      s << encode_feature (v[i]);
+    }
+    best_result[1]= s;
+    //best_result[1]= string ("Unknown");
+  }
   //cout << "Found " << best_result << "\n";
   return best_result;
 }
@@ -425,15 +456,6 @@ search_font (array<string> v, bool require_exact) {
 * Searching font families by properties
 ******************************************************************************/
 
-string
-normalize_property (string s) {
-  s= replace (locase_all (s) , " ", "");
-  if (s == "unstretched") s= "unextended";
-  if (s == "smallcapitals") s= "smallcaps";
-  if (s == "monospaced") s= "mono";
-  return s;
-}
-
 array<string>
 search_font_styles (string family, array<string> v) {
   array<string> styles= font_database_styles (family);
@@ -441,14 +463,14 @@ search_font_styles (string family, array<string> v) {
   array<string> empty;
   v= copy (v);
   for (int i=0; i<N(v); i++)
-    v[i]= normalize_property (v[i]);
+    v[i]= decode_feature (v[i]);
 
   array<string> r;
   for (int i=0; i<N(styles); i++) {
     int j;
     array<string> w= logical_font_exact (family, styles[i]);
     for (j=0; j<N(v); j++) {
-      string property= normalize_property (v[j]);
+      string property= decode_feature (v[j]);
       int d= distance (v[j], w);
       //cout << "Test " << v  << ", " << w << " -> "
       //     << d << ", " << distance (v[j], empty) << "\n";
