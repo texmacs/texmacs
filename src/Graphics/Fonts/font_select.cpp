@@ -321,8 +321,8 @@ same_kind (string s1, string s2) {
 * Computing the distance between two fonts
 ******************************************************************************/
 
-#define DISTANCE_FAR       1000000
-#define DISTANCE_INFINITY  100000000
+#define DISTANCE_FAR       10000000
+#define DISTANCE_INFINITY  1000000000
 
 int
 distance (string s1, string s2) {
@@ -354,23 +354,23 @@ distance (string s1, string s2) {
   }
   if (is_capitalization (s1) || is_capitalization (s2)) {
     if (!is_capitalization (s1) || !is_capitalization (s2)) return DISTANCE_FAR;
-    return 3000;
+    return 300000;
   }
   if (is_serif (s1) || is_serif (s2)) {
     if (!is_serif (s1) || !is_serif (s2)) return DISTANCE_FAR;
-    return 10000;
+    return 300000;
   }
   if (is_mono (s1) || is_mono (s2)) {
     if (!is_mono (s1) || !is_mono (s2)) return DISTANCE_FAR;
     if (s1 == "mono" && s2 == "typewriter") return 0;
     if (s1 == "typewriter" && s2 == "mono") return 0;
-    return 10000;
+    return 300000;
   }
   if (is_device (s1) || is_device (s2)) {
     if (!is_device (s1) || !is_device (s2)) return DISTANCE_FAR;
-    if (s1 == "script" && s2 == "marker") return 10000;
-    if (s1 == "script" && s2 == "chalk") return 10000;
-    return 30000;
+    if (s1 == "script" && s2 == "marker") return 1000000;
+    if (s1 == "script" && s2 == "chalk") return 1000000;
+    return 3000000;
   }
   return DISTANCE_FAR;
 }
@@ -392,17 +392,17 @@ distance (string s, array<string> v) {
   if (s == "proportional" && !contains (v, is_mono)) return 0;
   if (s == "printed" && !contains (v, is_device)) return 0;
 
-  if (s == "mono" && contains (string ("proportional"), v)) return 10000;
-  if (s == "proportional" && contains (string ("mono"), v)) return 10000;
+  if (s == "mono" && contains (string ("proportional"), v)) return 300000;
+  if (s == "proportional" && contains (string ("mono"), v)) return 300000;
 
   int m= DISTANCE_FAR;
   if (is_stretch (s)) m= 30;
   else if (is_weight (s)) m= 1000;
   else if (is_slant (s)) m= 1000;
-  else if (is_capitalization (s)) m= 3000;
-  else if (is_serif (s)) m= 10000;
-  else if (is_mono (s)) m= 10000;
-  else if (is_device (s)) m= 30000;
+  else if (is_capitalization (s)) m= 300000;
+  else if (is_serif (s)) m= 300000;
+  else if (is_mono (s)) m= 300000;
+  else if (is_device (s)) m= 3000000;
 
   for (int i=1; i<N(v); i++)
     m= min (distance (s, v[i]), m);
@@ -417,7 +417,7 @@ distance (array<string> v1, array<string> v2, array<string> v3) {
   // between all styles in the same family.
   int d= 0;
   if (N(v1) == 0 || N(v2) == 0) return DISTANCE_FAR;
-  if (v1[0] != v2[0]) d= 100000;
+  if (v1[0] != v2[0]) d= 10000;
   for (int i=1; i<N(v1); i++)
     d += distance (v1[i], v3);
   for (int i=1; i<N(v2); i++)
@@ -437,6 +437,7 @@ search_font (array<string> v, bool require_exact) {
   int best_distance= DISTANCE_INFINITY;
   array<string> best_result (v[0], string ("Unknown"));
   array<string> fams= master_to_families (v[0]);
+  if (!require_exact) fams= font_database_families ();
   //cout << "Searching " << v << "\n";
   for (int i=0; i<N(fams); i++) {
     array<string> stys= font_database_styles (fams[i]);
@@ -512,13 +513,16 @@ array<string>
 patch_font (array<string> v, array<string> w) {
   array<string> r= copy (v);
   for (int i=0; i<N(w); i++) {
+    string s= decode_feature (w[i]);
     int j;
     for (j=1; j<N(r); j++)
-      if (same_kind (r[j], decode_feature (w[i]))) {
-	r[j]= decode_feature (w[i]);
+      if (!same_kind (r[j], s));
+      else if (r[j] == "proportional" && s == "typewriter");
+      else {
+        r[j]= s;
 	break;
       }
-    if (j == N(r)) r << decode_feature (w[i]);
+    if (j == N(r)) r << s;
   }
   //cout << v << ", " << w << " -> " << r << "\n";
   return r;
@@ -537,12 +541,14 @@ get_family (array<string> v) {
 string
 get_variant (array<string> v) {
   array<string> r;
-  for (int i=1; i<N(v); i++)
+  for (int i=1; i<N(v); i++) {
     if (v[i] == "mono" || v[i] == "typewriter")
       r << string ("tt");
-  for (int i=1; i<N(v); i++)
-    if (v[i] == "sansserif")
+    else if (v[i] == "sansserif")
       r << string ("ss");
+    else if (v[i] == "script" || v[i] == "chalk" || v[i] == "marker")
+      r << v[i];
+  }
   if (N(r) == 0) return "rm";
   return recompose (r, "-");
 }
@@ -586,6 +592,8 @@ variant_features (string s) {
   for (int i=0; i<N(v); i++)
     if (v[i] == "ss") r << string ("sansserif");
     else if (v[i] == "tt") r << string ("typewriter");
+    else if (v[i] == "script" || v[i] == "chalk" || v[i] == "marker")
+      r << v[i];
   return r;
 }
 
@@ -627,5 +635,7 @@ logical_font (string family, string variant, string series, string shape) {
     if (r[i] != "medium" &&
         r[i] != "upright")
       v << r[i];
+  //cout << family << ", " << variant << ", "
+  //     << series << ", " << shape << " -> " << v << "\n";
   return v;
 }
