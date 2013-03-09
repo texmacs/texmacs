@@ -1,5 +1,5 @@
 (Al\ Bayan Al\ Bayan)
-(American\ Typewriter American Typewriter Proportional)
+(American\ Typewriter American\ Typewriter Typewriter Proportional)
 (Andale\ Mono Andale Mono SansSerif)
 (Apple\ Braille Apple\ Braille)
 (Apple\ Chancery Apple\ Chancery)

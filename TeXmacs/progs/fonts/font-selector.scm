@@ -72,14 +72,17 @@
          (ser (logical-font-series fn))
          (sh  (logical-font-shape fn))
          (lf  (logical-font-private fam var ser sh))
-         (fn  (logical-font-search lf #f)))
-    (cond ((and (== selector-font-family (car fn))
-		(== selector-font-style (cadr fn))) "")
+         (fn2 (logical-font-search lf #f)))
+    ;;(display* "fn = " fn "\n")
+    ;;(display* "lf = " lf "\n")
+    ;;(display* "fn2= " fn2 "\n")
+    (cond ((and (== selector-font-family (car fn2))
+		(== selector-font-style (cadr fn2))) "")
 	  ((null? (selected-properties))
 	   (string-append "  (" selector-font-family " " selector-font-style
-			  " -> " (car fn) " " (cadr fn) ")"))
+			  " -> " (car fn2) " " (cadr fn2) ")"))
 	  (else
-	    (string-append "  (closest match: " (car fn) " " (cadr fn) ")")))))
+	   (string-append "  (closest match: " (car fn2) " " (cadr fn2) ")")))))
 
 (define (selector-font-demo-text)
   (with fn (selector-get-font)

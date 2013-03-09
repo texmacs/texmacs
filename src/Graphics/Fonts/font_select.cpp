@@ -306,6 +306,20 @@ is_device (string s) {
 }
 
 bool
+is_other (string s) {
+  return
+    !is_stretch (s) &&
+    !is_weight (s) &&
+    !is_slant (s) &&
+    !is_capitalization (s) &&
+    !is_serif (s) &&
+    !is_spacing (s) &&
+    !is_device (s) &&
+    s != "long" &&
+    s != "flat";
+}
+
+bool
 same_kind (string s1, string s2) {
   return
     (is_stretch (s1) && is_stretch (s2)) ||
@@ -338,7 +352,7 @@ same_kind (string s1, string s2) {
 #define D_INFINITY        1000000000
 
 int
-distance (string s1, string s2) {
+distance (string s1, string s2, bool asym) {
   // NOTE: distances can be asymmetric.
   // For instance, 'bold' matches 'black' with distance Q_WEIGHT,
   // but 'black' does not match 'bold'.
@@ -357,6 +371,7 @@ distance (string s1, string s2) {
     if (ends (s1, "bold") && ends (s2, "bold")) return S_WEIGHT;
     if (ends (s1, "black") && ends (s2, "black")) return S_WEIGHT;
     if (ends (s1, "bold") && ends (s2, "black")) return Q_WEIGHT;
+    if (ends (s1, "black") && ends (s2, "bold") && !asym) return Q_WEIGHT;
     return D_WEIGHT;
   }
   if (is_slant (s1) || is_slant (s2)) {
@@ -383,6 +398,8 @@ distance (string s1, string s2) {
     if (!is_device (s1) || !is_device (s2)) return D_HUGE;
     if (s1 == "script" && s2 == "marker") return Q_DEVICE;
     if (s1 == "script" && s2 == "chalk") return Q_DEVICE;
+    if (s1 == "marker" && s2 == "script" && !asym) return Q_DEVICE;
+    if (s1 == "chalk" && s2 == "script" && !asym) return Q_DEVICE;
     return D_DEVICE;
   }
   return D_HUGE;
@@ -396,7 +413,7 @@ contains (array<string> a, bool (*pred) (string)) {
 }
 
 int
-distance (string s, array<string> v) {
+distance (string s, array<string> v, bool asym) {
   if (s == "unextended" && !contains (v, is_stretch)) return 0;
   if (s == "medium" && !contains (v, is_weight)) return 0;
   if (s == "normal" && !contains (v, is_slant)) return 0;
@@ -418,7 +435,7 @@ distance (string s, array<string> v) {
   else if (is_device (s)) m= D_DEVICE;
 
   for (int i=1; i<N(v); i++)
-    m= min (distance (s, v[i]), m);
+    m= min (distance (s, v[i], asym), m);
   return m;
 }
 
@@ -432,9 +449,9 @@ distance (array<string> v1, array<string> v2, array<string> v3) {
   if (N(v1) == 0 || N(v2) == 0) return D_HUGE;
   if (v1[0] != v2[0]) d= D_MASTER;
   for (int i=1; i<N(v1); i++)
-    d += distance (v1[i], v3);
+    d += distance (v1[i], v3, false);
   for (int i=1; i<N(v2); i++)
-    d += distance (v2[i], v1);
+    d += distance (v2[i], v1, false);
   return d;
 }
 
@@ -497,10 +514,10 @@ search_font_styles (string family, array<string> v) {
     array<string> w= logical_font_exact (family, styles[i]);
     for (j=0; j<N(v); j++) {
       string property= decode_feature (v[j]);
-      int d= distance (v[j], w);
+      int d= distance (v[j], w, true);
       //cout << "Test " << v  << ", " << w << " -> "
       //     << d << ", " << distance (v[j], empty) << "\n";
-      if (d != 0 && d >= distance (v[j], empty)) break;
+      if (d != 0 && d >= distance (v[j], empty, true)) break;
     }
     if (j == N(v)) r << styles[i];
   }
@@ -531,6 +548,7 @@ patch_font (array<string> v, array<string> w) {
     for (j=1; j<N(r); j++)
       if (!same_kind (r[j], s));
       else if (r[j] == "proportional" && s == "typewriter");
+      else if (r[j] == "mono" && s == "typewriter");
       else {
         r[j]= s;
 	break;
@@ -555,11 +573,14 @@ string
 get_variant (array<string> v) {
   array<string> r;
   for (int i=1; i<N(v); i++) {
-    if (v[i] == "mono" || v[i] == "typewriter")
+    if (v[i] == "mono" && contains (string ("typewriter"), v));
+    else if (v[i] == "mono" || v[i] == "typewriter")
       r << string ("tt");
     else if (v[i] == "sansserif")
       r << string ("ss");
     else if (v[i] == "script" || v[i] == "chalk" || v[i] == "marker")
+      r << v[i];
+    else if (is_other (v[i]))
       r << v[i];
   }
   if (N(r) == 0) return "rm";
@@ -580,7 +601,8 @@ get_shape (array<string> v) {
   for (int i=1; i<N(v); i++)
     if (ends (v[i], "condensed") ||
         ends (v[i], "extended") ||
-        v[i] == "proportional")
+        v[i] == "proportional" ||
+        (v[i] == "mono" && contains (string ("typewriter"), v)))
       r << v[i];
   for (int i=1; i<N(v); i++)
     if (v[i] == "upright") r << string ("right");
@@ -598,6 +620,18 @@ get_shape (array<string> v) {
 * Translation from internal naming scheme
 ******************************************************************************/
 
+bool
+is_other_internal (string s) {
+  return
+    is_other (s) &&
+    s != "rm" &&
+    s != "ss" &&
+    s != "tt" &&
+    s != "small-caps" &&
+    s != "right" &&
+    s != "slanted";
+}
+
 array<string>
 variant_features (string s) {
   array<string> v= tokenize (s, "-");
@@ -607,6 +641,7 @@ variant_features (string s) {
     else if (v[i] == "tt") r << string ("typewriter");
     else if (v[i] == "script" || v[i] == "chalk" || v[i] == "marker")
       r << v[i];
+    else if (is_other_internal (v[i])) r << v[i];
   return r;
 }
 
@@ -625,6 +660,7 @@ shape_features (string s) {
   for (int i=0; i<N(v); i++)
     if (ends (v[i], "condensed") ||
         ends (v[i], "extended") ||
+        v[i] == "mono" ||
         v[i] == "proportional" ||
         v[i] == "italic" ||
         v[i] == "smallcaps" ||
