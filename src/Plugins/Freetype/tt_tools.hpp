@@ -17,4 +17,6 @@ void tt_dump (url u);
 scheme_tree tt_font_name (url u);
 url tt_unpack (string name);
 
+array<string> tt_analyze (string family);
+
 #endif // TT_TOOLS_H

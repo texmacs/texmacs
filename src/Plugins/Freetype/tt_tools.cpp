@@ -318,6 +318,11 @@ tt_font_name (url u) {
     string nt = tt_table (tt, i, "name");
     string fam= name_record_family (nt);
     string sh = name_record_shape (nt);
+    // Some basic normalization of family name
+    while (fam != "" && !is_alpha (fam[0])) fam= fam (1, N(fam));
+    if (upcase_all (fam) == fam) fam= locase_all (fam);
+    fam= upcase_first (fam);
+    // End normalization of family name
     r << tuple (fam, sh);
   }
   return r;

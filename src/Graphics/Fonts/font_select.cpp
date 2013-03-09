@@ -152,6 +152,12 @@ logical_font_exact (string family, string style) {
 ******************************************************************************/
 
 string
+Replace (string s, string w, string b) {
+  if (N(s) == 0) return s;
+  return s (0, 1) * replace (s (1, N(s)), w, b);
+}
+
+string
 family_to_master (string f) {
   font_database_load ();
   if (font_features->contains (tree (f))) {
@@ -160,31 +166,31 @@ family_to_master (string f) {
       return t[0]->label;
   }
   f= replace (f, " Mono", "");
-  f= replace (f, "Mono", "");
+  f= Replace (f, "Mono", "");
   f= replace (f, " Console", "");
-  f= replace (f, "Console", "");
+  f= Replace (f, "Console", "");
   f= replace (f, " Typewriter", "");
-  f= replace (f, "Typewriter", "");
+  f= Replace (f, "Typewriter", "");
   f= replace (f, " Script", "");
-  f= replace (f, "Script", "");
+  f= Replace (f, "Script", "");
   f= replace (f, " Sans", "");
-  f= replace (f, "Sans", "");
+  f= Replace (f, "Sans", "");
   f= replace (f, " Serif", "");
-  f= replace (f, "Serif", "");
+  f= Replace (f, "Serif", "");
   f= replace (f, " Demi", "");
-  f= replace (f, "Demi", "");
+  f= Replace (f, "Demi", "");
   f= replace (f, " Condensed", "");
-  f= replace (f, "Condensed", "");
+  f= Replace (f, "Condensed", "");
   f= replace (f, " Narrow", "");
-  f= replace (f, "Narrow", "");
+  f= Replace (f, "Narrow", "");
   f= replace (f, " Light", "");
-  f= replace (f, "Light", "");
+  f= Replace (f, "Light", "");
   f= replace (f, " Medium", "");
-  f= replace (f, "Medium", "");
+  f= Replace (f, "Medium", "");
   f= replace (f, " Bold", "");
-  f= replace (f, "Bold", "");
+  f= Replace (f, "Bold", "");
   f= replace (f, " Black", "");
-  f= replace (f, "Black", "");
+  f= Replace (f, "Black", "");
   return f;
 }
 

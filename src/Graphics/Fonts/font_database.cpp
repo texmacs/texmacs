@@ -63,8 +63,11 @@ font_database_load_features (url u) {
 
 struct font_less_eq_operator {
   static bool leq (scheme_tree t1, scheme_tree t2) {
-    if (is_atomic (t1) && is_atomic (t2))
-      return t1->label <= t2->label;
+    if (is_atomic (t1) && is_atomic (t2)) {
+      string s1= locase_all (t1->label);
+      string s2= locase_all (t2->label);
+      return s1 <= s2 || (s1 == s2 && t1->label <= t2->label);
+    }
     if (is_atomic (t1)) return true;
     if (is_atomic (t2)) return false;
     if (N(t1) < N(t2)) return true;

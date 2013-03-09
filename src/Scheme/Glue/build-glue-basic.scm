@@ -87,6 +87,7 @@
   ;; routines for the font database
   (tt-dump tt_dump (void url))
   (tt-font-name tt_font_name (scheme_tree url))
+  (tt-analyze tt_analyze (array_string string))
   (font-database-build font_database_build (void url))
   (font-database-build-local font_database_build_local (void))
   (font-database-build-global font_database_build_global (void))
