@@ -99,7 +99,13 @@
          "font-series" ,(logical-font-series fn)
          "font-shape" ,(logical-font-shape fn)
          "font-base-size" ,selector-font-size
-         "abcdefghij, ABCDEFGHIJ, 0123456789"))))
+         (document
+           "abcdefghij, ABCDEFGHIJ, 0123456789"
+           ,(string-append "+-*/=<less><gtr> ([{|}]) :;!? "
+                           "אחימßü <alpha><beta><gamma><delta><epsilon> "
+                           "<leq><geq><leqslant><geqslant><prec><succ> "
+                           "<rightarrow><Rightarrow><mapsto> "
+                           "<times><cdot><oplus><otimes>"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global state for font searching
