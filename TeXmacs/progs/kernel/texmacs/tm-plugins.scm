@@ -96,6 +96,7 @@
   (ahash-set! connection-session name menu-name))
 
 (define-public (session-list)
+  (lazy-plugin-force)
   (with l (map car (ahash-table->list connection-session))
     (list-sort (list-union l (remote-session-list)) string<=?)))
 
@@ -118,6 +119,7 @@
   (ahash-set! connection-scripts name menu-name))
 
 (define-public (scripts-list)
+  (lazy-plugin-force)
   (with l (map car (ahash-table->list connection-scripts))
     (list-sort (list-union l (remote-scripts-list)) string<=?)))
 

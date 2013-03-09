@@ -49,7 +49,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-menu (supported-executable-menu)
-  (for (name (session-menu))
+  (for (name (session-list))
     (with menu-name (session-name name)
       ((eval menu-name)
        (insert-go-to `(script-input ,name "default" "" "") '(2 0))))))
