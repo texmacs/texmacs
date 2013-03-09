@@ -137,52 +137,6 @@ qt_gui_rep::~qt_gui_rep()  {
 * interclient communication
 ******************************************************************************/
 
-// hack for handling buggy application pastes
-static bool
-seems_buggy_html_paste (string s) {
-  return occurs ("Version:", s)       &&
-         occurs ("StartHTML:", s)     &&
-         occurs ("EndHTML:", s)       &&
-         occurs ("StartFragment:", s) &&
-         occurs ("EndFragment:", s);
-}
-
-static string
-correct_buggy_html_paste (string s) {
-  int begin_html, end_html, start= 0, stop=0;
-
-  start= search_forwards ("StartHTML:", start, s);
-  start= search_forwards (":", start, s) + 1;
-  stop= start;
-  while (is_digit (s[stop])) stop++;
-  begin_html= as_int (s (start, stop + 1));
-
-  start= 0;
-  start= search_forwards ("EndHTML:", start, s);
-  start= search_forwards (":", start, s) + 1;
-  stop= start;
-  while (is_digit (s[stop])) stop++;
-  end_html= as_int (s (start, stop + 1)) + 1;
-
-  if (begin_html > N(s)) begin_html= 0;
-  if (end_html > N(s)) end_html= N(s);
-  if (end_html <= begin_html) {
-    begin_html= 0;
-    end_html= N(s);
-  }
-  return s (begin_html, end_html);
-}
-
-static bool
-seems_buggy_paste (string s) {
-  return s[N(s)-1] == '\0';
-}
-
-static string
-correct_buggy_paste (string s) {
-  return s(0, N(s)-1);
-}
-
 bool
 qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
   QClipboard *cb= QApplication::clipboard ();
@@ -249,6 +203,11 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
     s= correct_buggy_paste (s);
   if (input_format != "")
     s= as_string (call ("convert", s, input_format, "texmacs-snippet"));
+  if (input_format == "html-snippet") {
+    tree t= as_tree (call ("convert", s, "texmacs-snippet", "texmacs-tree"));
+    t= default_with_simplify (t);
+    s= as_string (call ("convert", t, "texmacs-tree", "texmacs-snippet"));
+  }
   t= tuple ("extern", s);
   return true;
 }
@@ -280,6 +239,7 @@ qt_gui_rep::set_selection (string key, tree t,
       md->setData ("application/x-texmacs-pid", selection);
       tm_delete_array(selection);
 
+      (void) sh;
       //selection= as_charp (sh);
       //md->setHtml (selection);
       //tm_delete_array(selection);

@@ -80,4 +80,11 @@ tree   upgrade_mathml (tree t);
 /*** BibTeX ***/
 tree   parse_bib (string s);
 
+/*** Post corrections ***/
+bool   seems_buggy_html_paste (string s);
+string correct_buggy_html_paste (string s);
+bool   seems_buggy_paste (string s);
+string correct_buggy_paste (string s);
+tree   default_with_simplify (tree t);
+
 #endif // defined CONVERT_H
