@@ -99,6 +99,22 @@ analyze_special (font fn, font_metric fnm, array<string>& r) {
     }
   }
 
+  if (range_exists (fnm, 0x61, 0x7a)) {
+    bool italic= true;
+    glyph ga= fn->get_glyph ("a");
+    if (is_nil (ga)) italic= false;
+    else {
+      int status= italic_a_status (ga);
+      //r << (string ("italic-a=") * as_string (status));
+      italic= (status == 0);
+    }
+    metric_struct* f= fnm->get (0x66);
+    metric_struct* x= fnm->get (0x78);
+    italic= italic && (f->y3 < -(x->y2/5));
+    if (italic) r << string ("italic=yes");
+    else r << string ("italic=no");    
+  }
+
   if (range_exists (fnm, 0x41, 0x5a) && range_exists (fnm, 0x61, 0x7a)) {
     array<int> upr= build_range (0x41, 0x5a);
     array<int> lor= build_range (0x61, 0x7a);

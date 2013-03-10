@@ -11,19 +11,9 @@
 
 #include "bitmap_font.hpp"
 
-int
-pixel_count (glyph g) {
-  int r= 0;
-  for (int y=0; y<g->height; y++)
-    for (int x=0; x<g->width; x++)
-      r += g->get_1 (x, y);
-  return r;
-}
-
-double
-fill_rate (glyph g) {
-  return ((double) pixel_count (g)) / ((double) (g->width * g->height));
-}
+/******************************************************************************
+* Useful subroutines on rows and columns
+******************************************************************************/
 
 int
 next_column (glyph g, int x, int dx) {
@@ -64,6 +54,62 @@ search_in_column (glyph g, int x, int what, int y, int dy) {
 }
 
 int
+count_row_changes (glyph g, int y) {
+  int cur= 0, count= 0;
+  for (int x=0; x<g->width; x++)
+    if (g->get_1 (x, y) != cur) {
+      cur= g->get_1 (x, y);
+      if (cur == 1) count++;
+    }
+  return count;
+}
+
+int
+count_column_changes (glyph g, int x) {
+  int cur= 0, count= 0;
+  for (int y=0; y<g->height; y++)
+    if (g->get_1 (x, y) != cur) {
+      cur= g->get_1 (x, y);
+      if (cur == 1) count++;
+    }
+  return count;
+}
+
+int
+count_row_pixels (glyph g, int y) {
+  int count= 0;
+  for (int x=0; x<g->width; x++)
+    count += g->get_1 (x, y);
+  return count;
+}
+
+int
+count_column_pixels (glyph g, int x) {
+  int count= 0;
+  for (int y=0; y<g->height; y++)
+    count += g->get_1 (x, y);
+  return count;
+}
+
+/******************************************************************************
+* Public routines
+******************************************************************************/
+
+int
+pixel_count (glyph g) {
+  int r= 0;
+  for (int y=0; y<g->height; y++)
+    for (int x=0; x<g->width; x++)
+      r += g->get_1 (x, y);
+  return r;
+}
+
+double
+fill_rate (glyph g) {
+  return ((double) pixel_count (g)) / ((double) (g->width * g->height));
+}
+
+int
 vertical_stroke_width (glyph g) {
   // Input : glyph of 'o' or 'O' character
   // Output: vertical stroke width
@@ -91,25 +137,6 @@ horizontal_stroke_width (glyph g) {
   if (g->get_1 (x, y) != 1) return 0;
   int ny= search_in_column (g, x, 0, y, -1);
   return y - ny;
-}
-
-int
-count_row_changes (glyph g, int y) {
-  int cur= 0, count= 0;
-  for (int x=0; x<g->width; x++)
-    if (g->get_1 (x, y) != cur) {
-      cur= g->get_1 (x, y);
-      if (cur == 1) count++;
-    }
-  return count;
-}
-
-int
-count_row_pixels (glyph g, int y) {
-  int count= 0;
-  for (int x=0; x<g->width; x++)
-    count += g->get_1 (x, y);
-  return count;
 }
 
 bool
@@ -146,4 +173,27 @@ get_slant (glyph g) {
   if (sl > 0.24 && sl < 0.26) sl= 0.25;
   if (sl > 0.323 && sl < 0.343) sl= 0.33333;
   return sl;
+}
+
+int
+italic_a_status (glyph g) {
+  int x1= next_column (g, 0, 1);
+  int x2= next_column (g, g->width-1, -1);
+  int y1= next_row (g, 0, 1);
+  int y2= next_row (g, g->height-1, -1);
+  int c1= count_row_changes (g, (5*y1 + 3*y2) / 8);
+  int c2= count_column_changes (g, (2*x1 + x2) / 3);
+  if (c1 < 2) return 1;
+  if (c1 > 2) return 2;
+  if (c2 > 2) return 3;
+  int y= (9*y1 + y2) / 10;
+  for (; y<g->height; y++)
+    if (count_row_changes (g, y) >= 2) break;
+  for (; y<g->height; y++)
+    if (count_row_changes (g, y) == 1) {
+      int X1= search_in_row (g, y, 1, 0, 1);
+      if (X1 > ((x1 + 2*x2) / 3)) break;
+    }
+  if (y < ((y1+y2+1) >> 1)) return 4;
+  return 0;
 }

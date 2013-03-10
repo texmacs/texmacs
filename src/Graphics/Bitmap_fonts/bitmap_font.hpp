@@ -91,6 +91,7 @@ int vertical_stroke_width (glyph g);
 int horizontal_stroke_width (glyph g);
 bool is_sans_serif (glyph g);
 double get_slant (glyph g);
+int italic_a_status (glyph g);
 
 /******************************************************************************
 * Abstract bitmap fonts and font metrics

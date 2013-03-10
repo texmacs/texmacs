@@ -304,7 +304,7 @@ is_spacing (string s) {
 bool
 is_device (string s) {
   return 
-    s == "printer" ||
+    s == "print" ||
     s == "typewriter" ||
     s == "script" ||
     s == "chalk" ||
@@ -426,7 +426,7 @@ distance (string s, array<string> v, bool asym) {
   if (s == "mixed" && !contains (v, is_capitalization)) return 0;
   if (s == "serif" && !contains (v, is_serif)) return 0;
   if (s == "proportional" && !contains (v, is_spacing)) return 0;
-  if (s == "printed" && !contains (v, is_device)) return 0;
+  if (s == "print" && !contains (v, is_device)) return 0;
 
   if (s == "mono" && contains (string ("proportional"), v)) return D_SPACING;
   if (s == "proportional" && contains (string ("mono"), v)) return D_SPACING;
