@@ -14,6 +14,10 @@
 
 #ifdef USE_FREETYPE
 
+array<int> build_range (int start, int end);
+string height_trace (font_metric fnm, array<int> cs);
+array<int> decode_trace (string s);
+
 /******************************************************************************
 * Check which character ranges are supported in a font
 ******************************************************************************/
@@ -53,6 +57,14 @@ analyze_range (font_metric fnm, array<string>& r) {
 * Check for special font properties (mono, sans serif)
 ******************************************************************************/
 
+int
+l1_distance (array<int> a1, array<int> a2) {
+  int r= 0;
+  for (int i=0; i<min (N(a1), N(a2)); i++)
+    r += max (a1[i] - a2[i], a2[i] - a1[i]);
+  return r;
+}
+
 void
 analyze_special (font fn, font_metric fnm, array<string>& r) {
   if (range_exists (fnm, 0x41, 0x5a) && range_exists (fnm, 0x61, 0x7a)) {
@@ -85,6 +97,22 @@ analyze_special (font fn, font_metric fnm, array<string>& r) {
       int sl= (int) floor (100.0 * get_slant (gl) + 0.5);
       r << (string ("slant=") * as_string (sl));
     }
+  }
+
+  if (range_exists (fnm, 0x41, 0x5a) && range_exists (fnm, 0x61, 0x7a)) {
+    array<int> upr= build_range (0x41, 0x5a);
+    array<int> lor= build_range (0x61, 0x7a);
+    array<int> uph= decode_trace (height_trace (fnm, upr));
+    array<int> loh= decode_trace (height_trace (fnm, lor));
+    if (l1_distance (loh, uph) <= N(upr)) {
+      metric_struct* A= fnm->get (0x41);
+      metric_struct* a= fnm->get (0x61);
+      int Ah= A->y4 - A->y3;
+      int ah= a->y4 - a->y3;
+      if (ah < ((95 * Ah) / 100)) r << string ("case=smallcaps");
+      else r << string ("case=caps");
+    }
+    else r << string ("case=mixed");
   }
 }
 
@@ -157,6 +185,14 @@ array_trace (array<int> a) {
     s << ((char) (((int) '0') + x));
   }
   return s;
+}
+
+array<int>
+decode_trace (string s) {
+  array<int> r;
+  for (int i=0; i<N(s); i++)
+    r << (((int) s[i]) - ((int) '0'));
+  return r;
 }
 
 /******************************************************************************
