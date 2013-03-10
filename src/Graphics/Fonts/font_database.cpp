@@ -22,6 +22,39 @@ void font_database_filter_features ();
 void font_database_filter_characteristics ();
 
 /******************************************************************************
+* Additional comparison operators
+******************************************************************************/
+
+bool
+locase_less_eq (string s1, string s2) {
+  string l1= locase_all (s1);
+  string l2= locase_all (s2);
+  return l1 <= l2 || (l1 == l2 && s1 <= s2);
+}
+
+struct locase_less_eq_operator {
+  static bool leq (string s1, string s2) {
+    return locase_less_eq (s1, s2);
+  }
+};
+
+struct font_less_eq_operator {
+  static bool leq (scheme_tree t1, scheme_tree t2) {
+    if (is_atomic (t1) && is_atomic (t2))
+      return locase_less_eq (t1->label, t2->label);
+    if (is_atomic (t1)) return true;
+    if (is_atomic (t2)) return false;
+    if (N(t1) < N(t2)) return true;
+    if (N(t2) > N(t1)) return false;
+    for (int i=0; i<N(t1); i++) {
+      if (leq (t1[i], t2[i]) && t1[i] != t2[i]) return true;
+      if (leq (t2[i], t1[i]) && t2[i] != t1[i]) return false;
+    }
+    return true;
+  }
+};
+
+/******************************************************************************
 * Global management of the font database
 ******************************************************************************/
 
@@ -74,25 +107,6 @@ font_database_load_characteristics (url u) {
         font_characteristics (t[i][0])= t[i][1];
   }
 }
-
-struct font_less_eq_operator {
-  static bool leq (scheme_tree t1, scheme_tree t2) {
-    if (is_atomic (t1) && is_atomic (t2)) {
-      string s1= locase_all (t1->label);
-      string s2= locase_all (t2->label);
-      return s1 <= s2 || (s1 == s2 && t1->label <= t2->label);
-    }
-    if (is_atomic (t1)) return true;
-    if (is_atomic (t2)) return false;
-    if (N(t1) < N(t2)) return true;
-    if (N(t2) > N(t1)) return false;
-    for (int i=0; i<N(t1); i++) {
-      if (leq (t1[i], t2[i]) && t1[i] != t2[i]) return true;
-      if (leq (t2[i], t1[i]) && t2[i] != t1[i]) return false;
-    }
-    return true;
-  }
-};
 
 void
 font_database_save (url u) {
@@ -390,7 +404,7 @@ font_database_families () {
   iterator<string> it2= iterate (families);
   while (it2->busy ())
     r << it2->next ();
-  merge_sort (r);
+  merge_sort_leq<string,locase_less_eq_operator> (r);
   return r;
 }
 
@@ -404,7 +418,7 @@ font_database_styles (string family) {
     if (is_func (key, TUPLE, 2) && key[0]->label == family)
       r << key[1]->label;
   }
-  merge_sort (r);
+  merge_sort_leq<string,locase_less_eq_operator> (r);
   return r;
 }
 
