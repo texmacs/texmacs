@@ -19,6 +19,7 @@
 #include "Metafont/tex_files.hpp"
 
 void font_database_filter_features ();
+void font_database_filter_characteristics ();
 
 /******************************************************************************
 * Global management of the font database
@@ -28,6 +29,7 @@ static bool fonts_loaded= false;
 hashmap<tree,tree> font_table (UNINIT);
 hashmap<tree,tree> font_features (UNINIT);
 hashmap<tree,tree> font_variants (UNINIT);
+hashmap<tree,tree> font_characteristics (UNINIT);
 
 void
 font_database_load (url u) {
@@ -58,6 +60,18 @@ font_database_load_features (url u) {
         vars << t[i][0];
         font_variants (t[i][1])= vars;
       }
+  }
+}
+
+void
+font_database_load_characteristics (url u) {
+  if (!exists (u)) return;
+  string s;
+  if (!load_string (u, s, false)) {
+    tree t= block_to_scheme_tree (s);
+    for (int i=0; i<N(t); i++)
+      if (is_func (t[i], TUPLE, 2))
+        font_characteristics (t[i][0])= t[i][1];
   }
 }
 
@@ -109,6 +123,19 @@ font_database_save_features (url u) {
 }
 
 void
+font_database_save_characteristics (url u) {
+  array<scheme_tree> r;
+  iterator<tree> it= iterate (font_characteristics);
+  while (it->busy ()) {
+    tree key= it->next ();
+    r << tuple (key, font_characteristics [key]);
+  }
+  merge_sort_leq<scheme_tree,font_less_eq_operator> (r);
+  string s= scheme_tree_to_block (tree (TUPLE, r));
+  save_string (u, s);
+}
+
+void
 font_database_load () {
   if (fonts_loaded) return;
   font_database_load ("$TEXMACS_HOME_PATH/fonts/font-database.scm");
@@ -122,6 +149,12 @@ font_database_load () {
     font_database_load_features ("$TEXMACS_PATH/fonts/font-features.scm");
     font_database_filter_features ();
     font_database_save_features ("$TEXMACS_HOME_PATH/fonts/font-features.scm");
+  }
+  font_database_load_characteristics ("$TEXMACS_HOME_PATH/fonts/font-characteristics.scm");
+  if (N (font_features) == 0) {
+    font_database_load_characteristics ("$TEXMACS_PATH/fonts/font-characteristics.scm");
+    font_database_filter_characteristics ();
+    font_database_save_characteristics ("$TEXMACS_HOME_PATH/fonts/font-characteristics.scm");
   }
   fonts_loaded= true;
 }
@@ -288,6 +321,55 @@ font_database_filter_features () {
       new_font_features (key)= font_features [key];
   }
   font_features= new_font_features;
+}
+
+void
+font_database_filter_characteristics () {
+  hashmap<tree,tree> new_font_characteristics (UNINIT);
+  iterator<tree> it= iterate (font_table);
+  it= iterate (font_table);
+  while (it->busy ()) {
+    tree key= it->next ();
+    if (font_characteristics->contains (key))
+      new_font_characteristics (key)= font_characteristics [key];
+  }
+  font_characteristics= new_font_characteristics;
+}
+
+/******************************************************************************
+* Additional font characteristics (automatically generated)
+******************************************************************************/
+
+void
+font_database_build_characteristics () {
+  font_database_load ();
+  bool changed= false;
+  iterator<tree> it= iterate (font_table);
+  while (it->busy ()) {
+    tree key= it->next ();
+    tree im = font_table[key];
+    if (!font_characteristics->contains (key))
+      for (int i=0; i<N(im); i++)
+        if (is_func (im[i], TUPLE, 2)) {
+          string name= as_string (im[i][0]);
+          string nr  = as_string (im[i][1]);
+          if (ends (name, ".ttc"))
+            name= (name (0, N(name)-4) * "." * nr * ".ttf");
+          if (ends (name, ".ttf") ||
+              ends (name, ".otf") ||
+              ends (name, ".tfm")) {
+            name= name (0, N(name)-4);
+            if (tt_font_exists (name)) {
+              array<string> a= tt_analyze (name);
+              tree t (TUPLE, N(a));
+              for (int j=0; j<N(a); j++) t[j]= a[j];
+              font_characteristics (key)= t;
+              changed= true;
+            }
+          }
+        }
+  }
+  if (changed) font_database_save_characteristics ("$TEXMACS_HOME_PATH/fonts/font-characteristics.scm");
 }
 
 /******************************************************************************

@@ -91,6 +91,7 @@
   (font-database-build font_database_build (void url))
   (font-database-build-local font_database_build_local (void))
   (font-database-build-global font_database_build_global (void))
+  (font-database-build-characteristics font_database_build_characteristics (void))
   (font-database-insert-global font_database_build_global (void url))
   (font-database-load font_database_load (void))
   (font-database-save font_database_save (void))
