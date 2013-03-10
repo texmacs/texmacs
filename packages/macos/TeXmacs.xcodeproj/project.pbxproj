@@ -33,6 +33,9 @@
 		495712FC16E90E5900934EA3 /* metadata-elsevier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 495712F816E90E5900934EA3 /* metadata-elsevier.cpp */; };
 		495712FD16E90E5900934EA3 /* metadata-elsevier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 495712F816E90E5900934EA3 /* metadata-elsevier.cpp */; };
 		495712FE16E90E5900934EA3 /* metadata-elsevier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 495712F816E90E5900934EA3 /* metadata-elsevier.cpp */; };
+		497822CB16EC86D40054F5BA /* tt_analyze.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 497822CA16EC86D40054F5BA /* tt_analyze.cpp */; };
+		497822CC16EC86D40054F5BA /* tt_analyze.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 497822CA16EC86D40054F5BA /* tt_analyze.cpp */; };
+		497822CD16EC86D40054F5BA /* tt_analyze.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 497822CA16EC86D40054F5BA /* tt_analyze.cpp */; };
 		49896901152B981400DB1E9E /* TeXmacs.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9C61B42A141A1B780035D78F /* TeXmacs.icns */; };
 		49D662FC128B331A0006E948 /* QTMFileDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D662FA128B331A0006E948 /* QTMFileDialog.cpp */; };
 		49D662FD128B333F0006E948 /* QTMFileDialog.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D662FB128B331A0006E948 /* QTMFileDialog.hpp */; };
@@ -1147,6 +1150,7 @@
 		4942BEF61679293B00A6C354 /* font_select.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_select.cpp; sourceTree = "<group>"; };
 		495712F716E90E5900934EA3 /* metadata-acm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "metadata-acm.cpp"; sourceTree = "<group>"; };
 		495712F816E90E5900934EA3 /* metadata-elsevier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "metadata-elsevier.cpp"; sourceTree = "<group>"; };
+		497822CA16EC86D40054F5BA /* tt_analyze.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tt_analyze.cpp; sourceTree = "<group>"; };
 		49D662FA128B331A0006E948 /* QTMFileDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMFileDialog.cpp; sourceTree = "<group>"; };
 		49D662FB128B331A0006E948 /* QTMFileDialog.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMFileDialog.hpp; sourceTree = "<group>"; };
 		49DD8FA716DB75C100647CA2 /* sqlite3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sqlite3.cpp; sourceTree = "<group>"; };
@@ -2563,6 +2567,7 @@
 		9C0B487010A8CC100097A335 /* Freetype */ = {
 			isa = PBXGroup;
 			children = (
+				497822CA16EC86D40054F5BA /* tt_analyze.cpp */,
 				9C6632ED1676B28E000D7974 /* tt_tools.cpp */,
 				9C6632EE1676B28E000D7974 /* tt_tools.hpp */,
 				9CEDAA351264FF88009630CC /* unicode_math_font.cpp */,
@@ -4223,6 +4228,7 @@
 				495712F916E90E5900934EA3 /* metadata-acm.cpp in Sources */,
 				495712FC16E90E5900934EA3 /* metadata-elsevier.cpp in Sources */,
 				4910FA7316EB3E2F0088B175 /* post_convert.cpp in Sources */,
+				497822CB16EC86D40054F5BA /* tt_analyze.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4573,6 +4579,7 @@
 				495712FB16E90E5900934EA3 /* metadata-acm.cpp in Sources */,
 				495712FE16E90E5900934EA3 /* metadata-elsevier.cpp in Sources */,
 				4910FA7516EB3E2F0088B175 /* post_convert.cpp in Sources */,
+				497822CD16EC86D40054F5BA /* tt_analyze.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4951,6 +4958,7 @@
 				495712FA16E90E5900934EA3 /* metadata-acm.cpp in Sources */,
 				495712FD16E90E5900934EA3 /* metadata-elsevier.cpp in Sources */,
 				4910FA7416EB3E2F0088B175 /* post_convert.cpp in Sources */,
+				497822CC16EC86D40054F5BA /* tt_analyze.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
