@@ -85,7 +85,12 @@ glyph pos_rotate (glyph gl);
 glyph hor_extend (glyph gl, int pos, int by);
 glyph ver_extend (glyph gl, int pos, int by);
 
+int pixel_count (glyph g);
 double fill_rate (glyph g);
+int vertical_stroke_width (glyph g);
+int horizontal_stroke_width (glyph g);
+bool is_sans_serif (glyph g);
+double get_slant (glyph g);
 
 /******************************************************************************
 * Abstract bitmap fonts and font metrics

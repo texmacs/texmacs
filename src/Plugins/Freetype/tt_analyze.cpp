@@ -54,7 +54,7 @@ analyze_range (font_metric fnm, array<string>& r) {
 ******************************************************************************/
 
 void
-analyze_special (font_metric fnm, array<string>& r) {
+analyze_special (font fn, font_metric fnm, array<string>& r) {
   if (range_exists (fnm, 0x41, 0x5a) && range_exists (fnm, 0x61, 0x7a)) {
     bool mono= true;
     metric_struct* x= fnm->get (0x41);
@@ -69,6 +69,23 @@ analyze_special (font_metric fnm, array<string>& r) {
     if (mono) r << string ("mono=yes");
     else r << string ("mono=no");
   }
+
+  if (range_exists (fnm, 0x41, 0x5a)) {
+    glyph glL= fn->get_glyph ("L");
+    if (!is_nil (glL)) {
+      bool sans= is_sans_serif (glL);
+      if (sans) r << string ("sans=yes");
+      else r << string ("sans=no");
+    }
+  }
+
+  if (range_exists (fnm, 0x5b, 0x5b)) {
+    glyph gl= fn->get_glyph ("[");
+    if (!is_nil (gl)) {
+      int sl= (int) floor (100.0 * get_slant (gl) + 0.5);
+      r << (string ("slant=") * as_string (sl));
+    }
+  }
 }
 
 /******************************************************************************
@@ -76,7 +93,7 @@ analyze_special (font_metric fnm, array<string>& r) {
 ******************************************************************************/
 
 void
-analyze_major (font_metric fnm, array<string>& r) {
+analyze_major (font fn, font_metric fnm, array<string>& r) {
   if (range_exists (fnm, 0x41, 0x5a) && range_exists (fnm, 0x61, 0x7a)) {
     metric_struct* x= fnm->get (0x78);
     int ex= x->y2 / 256;
@@ -84,6 +101,32 @@ analyze_major (font_metric fnm, array<string>& r) {
     metric_struct* M= fnm->get (0x4d);
     int em_rat= (100 * (M->x2 / 256)) / ex;
     r << (string ("em=") * as_string (em_rat));
+    
+    glyph glo= fn->get_glyph ("o");
+    if (!is_nil (glo)) {
+      int lvw= (100 * vertical_stroke_width (glo)) / ex;
+      int lhw= (100 * horizontal_stroke_width (glo)) / ex;
+      r << (string ("lvw=") * as_string (lvw));
+      r << (string ("lhw=") * as_string (lhw));
+    }
+    
+    glyph glO= fn->get_glyph ("O");
+    if (!is_nil (glO)) {
+      int uvw= (100 * vertical_stroke_width (glO)) / ex;
+      int uhw= (100 * horizontal_stroke_width (glO)) / ex;
+      r << (string ("uvw=") * as_string (uvw));
+      r << (string ("uhw=") * as_string (uhw));
+    }
+
+    double fill= 0.0;
+    for (int i= 0x42; i<=0x7a; i++)
+      if (i <= 0x5a || i >= 0x61) {
+        string s; s << ((char) i);
+        glyph g= fn->get_glyph (s);
+        if (!is_nil (g)) fill += fill_rate (g);
+      }
+    int fillp= (int) (100.0 * (fill / 52.0));
+    r << (string ("fillp=") * as_string (fillp));
   }
 }
 
@@ -140,8 +183,20 @@ height_trace (font_metric fnm, array<int> cs) {
   return array_trace (a);
 }
 
+string
+count_trace (font fn, array<int> cs) {
+  array<int> a;
+  for (int i= 0; i < N(cs); i++) {
+    string s; s << ((char) cs[i]);
+    glyph g= fn->get_glyph (s);
+    if (is_nil (g)) return "";
+    a << pixel_count (g);
+  }
+  return array_trace (a);
+}
+
 void
-analyze_trace (font_metric fnm, array<string>& r) {
+analyze_trace (font fn, font_metric fnm, array<string>& r) {
   if (range_exists (fnm, 0x41, 0x5a)) {
     array<int> wa;
     wa << build_range (0x41, 0x46);
@@ -153,6 +208,11 @@ analyze_trace (font_metric fnm, array<string>& r) {
        << 0x4a << 0x4d << 0x4e << 0x51;
     string ht= height_trace (fnm, ha);
     r << (string ("uph=") * ht);
+    array<int> ca;
+    ca << 0x41 << 0x42 << 0x43 << 0x44 << 0x45 << 0x48
+       << 0x49 << 0x4a << 0x4d << 0x4e << 0x53 << 0x57;
+    string ct= count_trace (fn, ca);
+    if (ct != "") r << (string ("upc=") * ct);
   }
   if (range_exists (fnm, 0x61, 0x7a)) {
     array<int> wa;
@@ -165,6 +225,11 @@ analyze_trace (font_metric fnm, array<string>& r) {
        << 0x69 << 0x6a << 0x70 << 0x71 << 0x74 << 0x7a;
     string ht= height_trace (fnm, ha);
     r << (string ("loh=") * ht);
+    array<int> ca;
+    ca << 0x61 << 0x62 << 0x63 << 0x64 << 0x65 << 0x66
+       << 0x68 << 0x69 << 0x6d << 0x72 << 0x79 << 0x7a;
+    string ct= count_trace (fn, ca);
+    if (ct != "") r << (string ("loc=") * ct);
   }
 }
 
@@ -172,19 +237,24 @@ analyze_trace (font_metric fnm, array<string>& r) {
 * Master routine
 ******************************************************************************/
 
+extern bool get_glyph_fatal;
+
 array<string>
 tt_analyze (string family) {
   array<string> r;
-  font_metric fnm= tt_font_metric (family, 10, 1200);
   font fn= tt_font (family, 10, 1200);
-  cout << "Analyzing " << family << "\n";
+  font_metric fnm= tt_font_metric (family, 10, 1200);
+  //cout << "Analyzing " << family << "\n";
 
-  analyze_range (fnm, r);
-  analyze_special (fnm, r);
-  analyze_major (fnm, r);
-  analyze_trace (fnm, r);
+  get_glyph_fatal= false;
+  //analyze_range (fnm, r);
+  analyze_special (fn, fnm, r);
+  //analyze_major (fn, fnm, r);
+  //analyze_trace (fn, fnm, r);
+  get_glyph_fatal= true;
 
   //cout << "  -> " << r << "\n";
+  cout << r << " " << family << "\n";
   return r;
 }
 

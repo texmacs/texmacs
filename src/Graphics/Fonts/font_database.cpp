@@ -348,8 +348,8 @@ font_database_build_characteristics () {
   while (it->busy ()) {
     tree key= it->next ();
     tree im = font_table[key];
-    if (!font_characteristics->contains (key))
-      for (int i=0; i<N(im); i++)
+    for (int i=0; i<N(im); i++)
+      if (!font_characteristics->contains (key))
         if (is_func (im[i], TUPLE, 2)) {
           string name= as_string (im[i][0]);
           string nr  = as_string (im[i][1]);

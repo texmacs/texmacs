@@ -195,10 +195,15 @@ font_rep::var_draw (renderer ren, string s, SI x, SI y) {
   }
 }
 
+bool get_glyph_fatal= true;
+
 glyph
 font_rep::get_glyph (string s) {
-  cerr << "glyph name: " << s << "\n";
-  FAILED ("no bitmap available");
+  if (get_glyph_fatal) {
+    cerr << "glyph name: " << s << "\n";
+    FAILED ("no bitmap available");
+  }
+  else cout << "  no bitmap available for " << s << "\n";
   return glyph ();
 }
 
