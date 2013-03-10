@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "tt_face.hpp"
+#include "font.hpp"
 
 #ifdef USE_FREETYPE
 

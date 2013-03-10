@@ -85,6 +85,8 @@ glyph pos_rotate (glyph gl);
 glyph hor_extend (glyph gl, int pos, int by);
 glyph ver_extend (glyph gl, int pos, int by);
 
+double fill_rate (glyph g);
+
 /******************************************************************************
 * Abstract bitmap fonts and font metrics
 ******************************************************************************/
