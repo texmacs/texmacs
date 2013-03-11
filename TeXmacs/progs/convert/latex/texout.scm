@@ -169,6 +169,9 @@
 			   (cons " " (cdr l))
 			   (cdr l))))))
 
+(define (texout-linefeed)
+  (output-lf))
+
 (define (texout-newline)
   (output-lf)
   (output-lf))
@@ -291,6 +294,7 @@
 	((== (car x) '!concat) (texout-concat (cdr x)))
 	((== (car x) '!append) (for-each texout (cdr x)))
 	((== (car x) '!symbol) (texout (cadr x)))
+	((== (car x) '!linefeed) (texout-linefeed))
 	((== (car x) '!newline) (texout-newline))
 	((== (car x) '!nextline) (texout-nextline))
 	((== (car x) '!nbsp) (texout-nbsp))
