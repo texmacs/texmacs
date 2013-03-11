@@ -62,8 +62,10 @@ family_features (string f) {
       occurs ("Console", f) ||
       occurs ("Typewriter", f))
     r << string ("Mono");
-  if (occurs ("Script", f))
-    r << string ("Script");    
+  if (occurs ("ArtPen", f) || occurs ("Art Pen", f))
+    r << string ("ArtPen");
+  else if (occurs ("Pen ", f) || ends (f, "Pen"))
+    r << string ("Pen");
   if (occurs ("Sans", f))
     r << string ("SansSerif");
   if (occurs ("DemiCondensed", f) ||
@@ -171,8 +173,12 @@ family_to_master (string f) {
   f= Replace (f, "Console", "");
   f= replace (f, " Typewriter", "");
   f= Replace (f, "Typewriter", "");
-  f= replace (f, " Script", "");
-  f= Replace (f, "Script", "");
+  f= replace (f, " ArtPen", "");
+  f= Replace (f, "ArtPen", "");
+  f= replace (f, " Art", "");
+  f= Replace (f, "Art", "");
+  f= replace (f, " Pen", "");
+  f= Replace (f, "Pen", "");
   f= replace (f, " Sans", "");
   f= Replace (f, "Sans", "");
   f= replace (f, " Serif", "");
@@ -306,7 +312,9 @@ is_device (string s) {
   return 
     s == "print" ||
     s == "typewriter" ||
-    s == "script" ||
+    s == "digital" ||
+    s == "pen" ||
+    s == "artpen" ||
     s == "chalk" ||
     s == "marker";
 }
@@ -402,10 +410,12 @@ distance (string s1, string s2, bool asym) {
   }
   if (is_device (s1) || is_device (s2)) {
     if (!is_device (s1) || !is_device (s2)) return D_HUGE;
-    if (s1 == "script" && s2 == "marker") return Q_DEVICE;
-    if (s1 == "script" && s2 == "chalk") return Q_DEVICE;
-    if (s1 == "marker" && s2 == "script" && !asym) return Q_DEVICE;
-    if (s1 == "chalk" && s2 == "script" && !asym) return Q_DEVICE;
+    if (s1 == "pen" && s2 == "artpen") return Q_DEVICE;
+    if (s1 == "pen" && s2 == "marker") return Q_DEVICE;
+    if (s1 == "pen" && s2 == "chalk") return Q_DEVICE;
+    if (s1 == "artpen" && s2 == "pen" && !asym) return Q_DEVICE;
+    if (s1 == "marker" && s2 == "pen" && !asym) return Q_DEVICE;
+    if (s1 == "chalk" && s2 == "pen" && !asym) return Q_DEVICE;
     return D_DEVICE;
   }
   return D_HUGE;
@@ -584,7 +594,9 @@ get_variant (array<string> v) {
       r << string ("tt");
     else if (v[i] == "sansserif")
       r << string ("ss");
-    else if (v[i] == "script" || v[i] == "chalk" || v[i] == "marker")
+    else if (v[i] == "digital" ||
+	     v[i] == "pen" || v[i] == "artpen" ||
+	     v[i] == "chalk" || v[i] == "marker")
       r << v[i];
     else if (is_other (v[i]))
       r << v[i];
@@ -645,7 +657,9 @@ variant_features (string s) {
   for (int i=0; i<N(v); i++)
     if (v[i] == "ss") r << string ("sansserif");
     else if (v[i] == "tt") r << string ("typewriter");
-    else if (v[i] == "script" || v[i] == "chalk" || v[i] == "marker")
+    else if (v[i] == "digital" ||
+	     v[i] == "pen" || v[i] == "artpen" ||
+	     v[i] == "chalk" || v[i] == "marker")
       r << v[i];
     else if (is_other_internal (v[i])) r << v[i];
   return r;

@@ -44,12 +44,12 @@ struct font_less_eq_operator {
       return locase_less_eq (t1->label, t2->label);
     if (is_atomic (t1)) return true;
     if (is_atomic (t2)) return false;
-    if (N(t1) < N(t2)) return true;
-    if (N(t2) > N(t1)) return false;
-    for (int i=0; i<N(t1); i++) {
+    for (int i=0; i<min(N(t1),N(t2)); i++) {
       if (leq (t1[i], t2[i]) && t1[i] != t2[i]) return true;
       if (leq (t2[i], t1[i]) && t2[i] != t1[i]) return false;
     }
+    if (N(t1) < N(t2)) return true;
+    if (N(t2) > N(t1)) return false;
     return true;
   }
 };

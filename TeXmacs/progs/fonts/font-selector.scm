@@ -302,7 +302,8 @@
               selector-search-spacing "120px"))
       (item (text "Device:")
         (enum (selector-search-set! selector-search-device answer)
-              '("Any" "Print" "Typewriter" "Script" "Chalk" "Marker")
+              '("Any" "Print" "Typewriter" "Digital"
+		"Pen" "Art Pen" "Chalk" "Marker")
               selector-search-device "120px")))
     (horizontal (glue #f #t 0 0))))
 
