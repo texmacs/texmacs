@@ -246,6 +246,7 @@ void
 font_database_build_local () {
   font_database_load ();
   font_database_build (tt_font_path ());
+  font_database_build_characteristics (false);
   font_database_guess_features ();
   font_database_save ();
 }
