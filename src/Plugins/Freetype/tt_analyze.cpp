@@ -29,6 +29,14 @@ range_exists (font_metric fnm, int start, int end) {
   return true;
 }
 
+double
+range_percentage (font_metric fnm, int start, int end) {
+  int count= 0;
+  for (int i= start; i <= end; i++)
+    if (fnm->exists (i)) count++;
+  return ((double) count) / ((double) max (end+1-start, 1));
+}
+
 void
 analyze_range (font_metric fnm, array<string>& r) {
   if (range_exists (fnm, 0x41, 0x5a))
@@ -51,6 +59,33 @@ analyze_range (font_metric fnm, array<string>& r) {
     r << string ("+GreekBasic");
   if (range_exists (fnm, 0x410, 0x44f))
     r << string ("+CyrillicBasic");
+
+  if (range_percentage (fnm, 0x4e00, 0x4eff) > 0.0) {
+    double perc= range_percentage (fnm, 0x4e00, 0x9fcc);
+    //cout << "percentage -> " << perc << "\n";
+    if (perc > 0.2) r << string ("+CJK");
+  }
+  if (range_percentage (fnm, 0xac00, 0xacff) > 0.0) {
+    double perc= range_percentage (fnm, 0xac00, 0xd7af);
+    //cout << "percentage -> " << perc << "\n";
+    if (perc > 0.2) r << string ("+Hangul");
+  }
+
+  if (range_percentage (fnm, 0x2100, 0x21ff) > 0.0) {
+    double perc= range_percentage (fnm, 0x2000, 0x23ff);
+    //cout << "percentage -> " << perc << "\n";
+    if (perc > 0.2) r << string ("+Math");
+  }
+  if (range_percentage (fnm, 0x2900, 0x29ff) > 0.0) {
+    double perc= range_percentage (fnm, 0x2900, 0x2e7f);
+    //cout << "percentage -> " << perc << "\n";
+    if (perc > 0.2) r << string ("+MathExtra");
+  }
+  if (range_percentage (fnm, 0x1d400, 0x1d4ff) > 0.0) {
+    double perc= range_percentage (fnm, 0x1d400, 0x1d7ff);
+    //cout << "percentage -> " << perc << "\n";
+    if (perc > 0.2) r << string ("+MathLetters");
+  }
 }
 
 /******************************************************************************
@@ -338,10 +373,10 @@ tt_analyze (string family) {
   //cout << "Analyzing " << family << "\n";
 
   get_glyph_fatal= false;
-  //analyze_range (fnm, r);
+  analyze_range (fnm, r);
   analyze_special (fn, fnm, r);
-  //analyze_major (fn, fnm, r);
-  //analyze_trace (fn, fnm, r);
+  analyze_major (fn, fnm, r);
+  analyze_trace (fn, fnm, r);
   get_glyph_fatal= true;
 
   //cout << "  -> " << r << "\n";
