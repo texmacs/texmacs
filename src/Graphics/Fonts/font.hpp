@@ -115,7 +115,7 @@ void font_database_build (url u);
 void font_database_build_local ();
 void font_database_build_global ();
 void font_database_build_global (url u);
-void font_database_build_characteristics ();
+void font_database_build_characteristics (bool force);
 void font_database_load ();
 void font_database_save ();
 void font_database_filter ();

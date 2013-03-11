@@ -91,7 +91,8 @@
   (font-database-build font_database_build (void url))
   (font-database-build-local font_database_build_local (void))
   (font-database-build-global font_database_build_global (void))
-  (font-database-build-characteristics font_database_build_characteristics (void))
+  (font-database-build-characteristics
+   font_database_build_characteristics (void bool))
   (font-database-insert-global font_database_build_global (void url))
   (font-database-save-local-delta font_database_save_local_delta (void))
   (font-database-load font_database_load (void))
@@ -107,7 +108,8 @@
   (font-family-strict-features family_strict_features (array_string string))
   (font-style-features style_features (array_string string))
   (logical-font-public logical_font (array_string string string))
-  (logical-font-private logical_font (array_string string string string string))
+  (logical-font-private
+   logical_font (array_string string string string string))
   (logical-font-family get_family (string array_string))
   (logical-font-variant get_variant (string array_string))
   (logical-font-series get_series (string array_string))
