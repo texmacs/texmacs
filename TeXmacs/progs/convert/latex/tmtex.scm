@@ -1173,51 +1173,6 @@
 ;; Titles of documents
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmtex-compressed sep l)
-  (cond ((null? l) l)
-	((null? (cdr l)) (list (tmtex (car l))))
-	(else (cons* (tmtex (car l))
-		     sep
-		     (tmtex-compressed sep (cdr l))))))
-
-(define (tmtex-data-assemble sep l)
-  (cond ((null? l) l)
-	((null? (cdr l)) (car l))
-	(else (with r (tmtex-data-assemble sep (cdr l))
-		(cond ((null? (car l)) r)
-		      ((null? r) (car l))
-		      (else (append (car l) (list sep) r)))))))
-
-(tm-define (tmtex-select-data expr tag)
-  (:synopsis "Get data matching @tag in @expr with nice separators")
-  (let* ((data (select expr (list tag)))
-	 (sep (if (== tag 'author-affiliation) '(!nextline) "; "))
-	 (fun (lambda (x)
-		(cond ((func? x 'document)
-		       (list (tex-concat* (tmtex-compressed sep (cdr x)))))
-		      (else (list (tmtex x)))))))
-    (if (null? data) '()
-	(with l (cdar data)
-	  (tmtex-data-assemble ", " (map fun l))))))
-
-(define (tmtex-data-apply tag l)
-  (if (null? l) l
-      (list (list tag (tex-concat* l)))))
-
-(define (tmtex-make-author data)
-  (let* ((tag (select data '(:%2)))
-         (name (tmtex-select-data tag 'author-name))
-	 (address (tmtex-select-data tag 'author-affiliation))
-	 (misc (tmtex-select-data tag 'author-note))
-	 (email (tmtex-select-data tag 'author-email))
-	 (homepage (tmtex-select-data tag 'author-homepage))
-	 (email* (tmtex-data-apply 'email email))
-	 (homepage* (tmtex-data-apply 'homepage homepage))
-	 (note* (tmtex-data-assemble "; " (list misc email* homepage*)))
-	 (name* (append name (tmtex-data-apply 'thanks note*))))
-    (tex-concat* (tmtex-data-assemble '(!nextline)
-				      (list name* address)))))
-
 (define (tmtex-doc-title t)
   `(title ,(tmtex (cadr t))))
 
