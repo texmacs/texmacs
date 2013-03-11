@@ -1236,6 +1236,12 @@
 (define (tmtex-select-args-by-func n l)
   (filter (lambda (x) (func? x n)) l))
 
+(tm-define (tmtex-replace-documents t)
+  (if (npair? t) t
+    (with (r s) (list (car t) (map tmtex-replace-documents (cdr t)))
+      (if (!= r 'document) `(,r ,@s)
+        `(concat ,@(list-intersperse s '(next-line)))))))
+
 (tm-define (tmtex-abstract-data s l)
   (let* ((msc (tmtex-select-args-by-func 'abstract-msc l))
          (keywords (tmtex-select-args-by-func 'abstract-keywords l))
