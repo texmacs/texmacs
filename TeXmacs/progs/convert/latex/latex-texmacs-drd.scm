@@ -40,7 +40,7 @@
   (Longleftarrowlim "\\mathop{\\longleftarrow}\\limits")
   (Longrightarrowlim "\\mathop{\\longrightarrow}\\limits")
   (Longleftrightarrowlim "\\mathop{\\longleftrightarrow}\\limits")
-   
+
   ;; asymptotic relations by Joris
   (nasymp "\\not\\asymp")
   (asympasymp "{\\asymp\\!\\!\\!\\!\\!\\!-}")
@@ -169,8 +169,6 @@
   (scheme "{\\sc Scheme}")
   (tmsep  ", ")
   (tmSep  "; ")
-  (tmkeywords (!append (textbf (!translate "Keywords:")) " "))
-  (tmmsc (!append (textbf (!translate "A.M.S. subject classification:")) " "))
   (pari "{\\sc Pari}"))
 
 (logic-table latex-texmacs-1%
@@ -364,6 +362,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (logic-table latex-texmacs-preamble%
+  (tmkeywords (!append
+                (newcommand (tmkeywords)
+                            (!append (textbf (!translate "Keywords:")) " "))
+                "\n"))
+  (tmmsc (!append
+           (newcommand (tmmsc)
+                       (!append
+                         (textbf
+                           (!translate "A.M.S. subject classification:")) " "))
+           "\n"))
   (fmtext        (!append "\\newcommand{\\fmtext}[2][]{\\fntext[#1]{"
                           (!translate "Misc:") " #2}}\n"))
   (tdatetext     (!append "\\newcommand{\\tdatetext}[2][]{\\tnotetext[#1]{"
