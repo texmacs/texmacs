@@ -52,6 +52,9 @@
 		49F9FA161573BA86006C7258 /* new_window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F9FA111573BA86006C7258 /* new_window.cpp */; };
 		49F9FA171573BA86006C7258 /* new_window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F9FA111573BA86006C7258 /* new_window.cpp */; };
 		49F9FA181573BA86006C7258 /* new_window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F9FA111573BA86006C7258 /* new_window.cpp */; };
+		49FFB07916EDF83A004A2A32 /* glyph_analyze.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49FFB07816EDF83A004A2A32 /* glyph_analyze.cpp */; };
+		49FFB07A16EDF83A004A2A32 /* glyph_analyze.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49FFB07816EDF83A004A2A32 /* glyph_analyze.cpp */; };
+		49FFB07B16EDF83A004A2A32 /* glyph_analyze.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49FFB07816EDF83A004A2A32 /* glyph_analyze.cpp */; };
 		49FFF7C61635D3690031CFDC /* wencoding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49FFF7C41635D3690031CFDC /* wencoding.cpp */; };
 		49FFF7C71635D3690031CFDC /* wencoding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49FFF7C41635D3690031CFDC /* wencoding.cpp */; };
 		49FFF7C81635D3690031CFDC /* wencoding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49FFF7C41635D3690031CFDC /* wencoding.cpp */; };
@@ -1165,6 +1168,7 @@
 		49F9FA101573BA86006C7258 /* new_view.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = new_view.hpp; sourceTree = "<group>"; };
 		49F9FA111573BA86006C7258 /* new_window.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = new_window.cpp; sourceTree = "<group>"; };
 		49F9FA121573BA86006C7258 /* new_window.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = new_window.hpp; sourceTree = "<group>"; };
+		49FFB07816EDF83A004A2A32 /* glyph_analyze.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = glyph_analyze.cpp; sourceTree = "<group>"; };
 		49FFF7C41635D3690031CFDC /* wencoding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wencoding.cpp; sourceTree = "<group>"; };
 		49FFF7C51635D3690031CFDC /* wencoding.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = wencoding.hpp; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* TeXmacsQt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeXmacsQt.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2327,6 +2331,7 @@
 				9C0B47D410A8CC100097A335 /* bitmap_font.cpp */,
 				9C0B47D510A8CC100097A335 /* bitmap_font.hpp */,
 				9C0B47D610A8CC100097A335 /* glyph.cpp */,
+				49FFB07816EDF83A004A2A32 /* glyph_analyze.cpp */,
 				9C0B47D710A8CC100097A335 /* glyph_ops.cpp */,
 				9C0B47D810A8CC100097A335 /* glyph_shrink.cpp */,
 			);
@@ -4229,6 +4234,7 @@
 				495712FC16E90E5900934EA3 /* metadata-elsevier.cpp in Sources */,
 				4910FA7316EB3E2F0088B175 /* post_convert.cpp in Sources */,
 				497822CB16EC86D40054F5BA /* tt_analyze.cpp in Sources */,
+				49FFB07916EDF83A004A2A32 /* glyph_analyze.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4580,6 +4586,7 @@
 				495712FE16E90E5900934EA3 /* metadata-elsevier.cpp in Sources */,
 				4910FA7516EB3E2F0088B175 /* post_convert.cpp in Sources */,
 				497822CD16EC86D40054F5BA /* tt_analyze.cpp in Sources */,
+				49FFB07B16EDF83A004A2A32 /* glyph_analyze.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4959,6 +4966,7 @@
 				495712FD16E90E5900934EA3 /* metadata-elsevier.cpp in Sources */,
 				4910FA7416EB3E2F0088B175 /* post_convert.cpp in Sources */,
 				497822CC16EC86D40054F5BA /* tt_analyze.cpp in Sources */,
+				49FFB07A16EDF83A004A2A32 /* glyph_analyze.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
