@@ -183,6 +183,14 @@ font_database_save () {
 * Building the database
 ******************************************************************************/
 
+bool
+on_blacklist (string name) {
+  return
+    name == "AppleMyungjo.ttf" ||
+    name == "NISC18030.ttf" ||
+    name == "Gungseouche.ttf";
+}
+
 void
 font_database_build (url u) {
   if (is_or (u)) {
@@ -200,6 +208,7 @@ font_database_build (url u) {
           font_database_build (u * url (a[i]));
   }
   else if (is_regular (u)) {
+    if (on_blacklist (as_string (tail (u)))) return;
     cout << "Process " << u << "\n";
     scheme_tree t= tt_font_name (u);
     for (int i=0; i<N(t); i++)
