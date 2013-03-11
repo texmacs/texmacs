@@ -43,9 +43,10 @@
     (client-send server `(server-remote-error ,msg-id ,error-msg))))
 
 (tm-call-back (local-eval cmd)
-  (with ret (eval cmd)
-    ;; (display* "local-eval " cmd " -> " ret "\n")
-    (client-return envelope ret)))
+  (when #f ;; only set to #t for debugging purposes
+    (with ret (eval cmd)
+      ;; (display* "local-eval " cmd " -> " ret "\n")
+      (client-return envelope ret))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Establishing and finishing connections with servers
