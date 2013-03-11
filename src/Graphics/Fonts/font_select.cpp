@@ -329,7 +329,9 @@ guessed_features (string family) {
     if (i == 0) r= a;
     else r= common (r, a);
   }
-  return r;
+  array<string> v;
+  v << family_to_master (family) << r;
+  return v;
 }
 
 /******************************************************************************
