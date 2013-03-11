@@ -176,6 +176,7 @@ font_database_load () {
 void
 font_database_save () {
   font_database_save ("$TEXMACS_HOME_PATH/fonts/font-database.scm");
+  font_database_save_features ("$TEXMACS_HOME_PATH/fonts/font-features.scm");
 }
 
 /******************************************************************************
@@ -221,9 +222,22 @@ font_database_build (url u) {
 }
 
 void
+font_database_guess_features () {
+  array<string> families= font_database_families ();
+  for (int i=0; i<N(families); i++)
+    if (!font_features->contains (families[i])) {
+      array<string> a= guessed_features (families[i]);
+      tree t (TUPLE);
+      for (int j=0; j<N(a); j++) t << tree (a[j]);
+      font_features (families[i])= t;
+    }
+}
+
+void
 font_database_build_local () {
   font_database_load ();
   font_database_build (tt_font_path ());
+  font_database_guess_features ();
   font_database_save ();
 }
 
@@ -276,8 +290,7 @@ font_database_save_local_delta () {
   font_table= hashmap<tree,tree> (UNINIT);
   font_features= hashmap<tree,tree> (UNINIT);
   font_variants= hashmap<tree,tree> (UNINIT);
-  font_database_load ("$TEXMACS_HOME_PATH/fonts/font-database.scm");
-  font_database_load_features ("$TEXMACS_HOME_PATH/fonts/font-features.scm");
+  font_database_load ();
   keep_delta (font_table, old_font_table, false);
   keep_delta (font_features, old_font_features, true);
   font_database_save ("$TEXMACS_HOME_PATH/fonts/delta-database.scm");
