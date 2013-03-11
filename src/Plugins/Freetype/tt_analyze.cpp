@@ -58,11 +58,31 @@ analyze_range (font_metric fnm, array<string>& r) {
 ******************************************************************************/
 
 int
+int_abs (int i) {
+  return max (i, -i);
+}
+
+int
 l1_distance (array<int> a1, array<int> a2) {
   int r= 0;
   for (int i=0; i<min (N(a1), N(a2)); i++)
-    r += max (a1[i] - a2[i], a2[i] - a1[i]);
+    r += int_abs (a1[i] - a2[i]);
   return r;
+}
+
+int
+irregularity (font_metric fnm) {
+  metric_struct* x= fnm->get (0x78);
+  int ex= x->y2 / 256;
+  array<int> xlike;
+  xlike << 0x61 << 0x63 << 0x65 << 0x6d << 0x6e << 0x6f
+        << 0x75 << 0x76 << 0x77;
+  int totdy= 0;
+  for (int i= 0; i<N(xlike); i++) {
+    metric_struct* y= fnm->get (xlike[i]);
+    totdy += (int_abs (y->y3 - x->y3) + int_abs (y->y4 - x->y4)) / 256;
+  }
+  return (100 * totdy) / (N(xlike) * ex);
 }
 
 void
@@ -130,6 +150,12 @@ analyze_special (font fn, font_metric fnm, array<string>& r) {
     }
     else r << string ("case=mixed");
   }
+
+  if (range_exists (fnm, 0x61, 0x7a)) {
+    bool regular= (irregularity (fnm) <= 6);
+    if (regular) r << string ("regular=yes");
+    else r << string ("regular=no");
+  }
 }
 
 /******************************************************************************
@@ -181,6 +207,9 @@ analyze_major (font fn, font_metric fnm, array<string>& r) {
     r << (string ("fillp=") * as_string (fillp));
     r << (string ("vcnt=") * as_string (vcnt));
     r << (string ("asprat=") * as_string (asprat));
+
+    //int irreg= irregularity (fnm);
+    //r << (string ("irreg=") * as_string (irreg));
   }
 }
 
@@ -310,8 +339,8 @@ tt_analyze (string family) {
 
   get_glyph_fatal= false;
   //analyze_range (fnm, r);
-  //analyze_special (fn, fnm, r);
-  analyze_major (fn, fnm, r);
+  analyze_special (fn, fnm, r);
+  //analyze_major (fn, fnm, r);
   //analyze_trace (fn, fnm, r);
   get_glyph_fatal= true;
 
