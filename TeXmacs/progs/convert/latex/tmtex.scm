@@ -1242,11 +1242,24 @@
       (if (!= r 'document) `(,r ,@s)
         `(concat ,@(list-intersperse s '(next-line)))))))
 
+(tm-define (tmtex-abstract s l)
+  (tmtex-std-env "abstract" l))
+
+(tm-define (tmtex-abstract-keywords s l)
+  (with args (map (lambda (x) `(!group ,x))
+                  (list-intersperse (map tmtex l) '(tmsep)))
+  `(!concat (tmkeywords) (!concat ,@args))))
+
+(tm-define (tmtex-abstract-msc s l)
+  (with args (map (lambda (x) `(!group ,x))
+                  (list-intersperse (map tmtex l) '(tmsep)))
+  `(!concat (tmmsc) (!concat ,@args))))
+
 (tm-define (tmtex-abstract-data s l)
-  (let* ((msc (tmtex-select-args-by-func 'abstract-msc l))
-         (keywords (tmtex-select-args-by-func 'abstract-keywords l))
-         (abstract (tmtex-select-args-by-func 'abstract l)))
-  (tex-concat `(,@abstract "\n" ,@keywords "\n" ,@msc))))
+  (let* ((msc (map tmtex (tmtex-select-args-by-func 'abstract-msc l)))
+         (keywords (map tmtex (tmtex-select-args-by-func 'abstract-keywords l)))
+         (abstract (map tmtex (tmtex-select-args-by-func 'abstract l))))
+  `(!document ,@keywords ,@msc ,@abstract)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TeXmacs style primitives
@@ -1916,8 +1929,10 @@
 
 (tmtex-style-dependent
   (doc-data                 tmtex-doc-data)
-  (abstract-data            tmtex-abstract-data)
   (abstract                 tmtex-abstract)
+  (abstract-data            tmtex-abstract-data)
+  (abstract-keywords        tmtex-abstract-keywords)
+  (abstract-msc             tmtex-abstract-msc)
   ((:or equation equation*) tmtex-equation)
   (elsevier-frontmatter     tmtex-elsevier-frontmatter))
 
