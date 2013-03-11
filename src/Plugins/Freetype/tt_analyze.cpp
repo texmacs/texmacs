@@ -162,15 +162,25 @@ analyze_major (font fn, font_metric fnm, array<string>& r) {
       r << (string ("uhw=") * as_string (uhw));
     }
 
+    int cnt= 0;
+    int totw= 0;
     double fill= 0.0;
     for (int i= 0x42; i<=0x7a; i++)
       if (i <= 0x5a || i >= 0x61) {
         string s; s << ((char) i);
         glyph g= fn->get_glyph (s);
-        if (!is_nil (g)) fill += fill_rate (g);
+        if (!is_nil (g)) {
+          cnt += pixel_count (g);
+          totw += g->lwidth;
+          fill += fill_rate (g);
+        }
       }
     int fillp= (int) (100.0 * (fill / 52.0));
+    int vcnt= cnt / max (totw, 1);
+    int asprat= (100 * totw) / (52 * ex);
     r << (string ("fillp=") * as_string (fillp));
+    r << (string ("vcnt=") * as_string (vcnt));
+    r << (string ("asprat=") * as_string (asprat));
   }
 }
 
@@ -300,8 +310,8 @@ tt_analyze (string family) {
 
   get_glyph_fatal= false;
   //analyze_range (fnm, r);
-  analyze_special (fn, fnm, r);
-  //analyze_major (fn, fnm, r);
+  //analyze_special (fn, fnm, r);
+  analyze_major (fn, fnm, r);
   //analyze_trace (fn, fnm, r);
   get_glyph_fatal= true;
 
