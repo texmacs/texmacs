@@ -949,6 +949,21 @@ tmg_font_database_search (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_font_database_characteristics (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "font-database-characteristics");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "font-database-characteristics");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  array_string out= font_database_characteristics (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
 tmg_font_family_2master (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "font-family->master");
 
@@ -1021,6 +1036,21 @@ tmg_font_style_features (tmscm arg1) {
 
   // TMSCM_DEFER_INTS;
   array_string out= style_features (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
+tmg_font_guessed_features (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "font-guessed-features");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "font-guessed-features");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  array_string out= guessed_features (in1, in2);
   // TMSCM_ALLOW_INTS;
 
   return array_string_to_tmscm (out);
@@ -6798,12 +6828,14 @@ initialize_glue_basic () {
   tmscm_install_procedure ("font-database-families",  tmg_font_database_families, 0, 0, 0);
   tmscm_install_procedure ("font-database-styles",  tmg_font_database_styles, 1, 0, 0);
   tmscm_install_procedure ("font-database-search",  tmg_font_database_search, 2, 0, 0);
+  tmscm_install_procedure ("font-database-characteristics",  tmg_font_database_characteristics, 2, 0, 0);
   tmscm_install_procedure ("font-family->master",  tmg_font_family_2master, 1, 0, 0);
   tmscm_install_procedure ("font-master->families",  tmg_font_master_2families, 1, 0, 0);
   tmscm_install_procedure ("font-master-features",  tmg_font_master_features, 1, 0, 0);
   tmscm_install_procedure ("font-family-features",  tmg_font_family_features, 1, 0, 0);
   tmscm_install_procedure ("font-family-strict-features",  tmg_font_family_strict_features, 1, 0, 0);
   tmscm_install_procedure ("font-style-features",  tmg_font_style_features, 1, 0, 0);
+  tmscm_install_procedure ("font-guessed-features",  tmg_font_guessed_features, 2, 0, 0);
   tmscm_install_procedure ("logical-font-public",  tmg_logical_font_public, 2, 0, 0);
   tmscm_install_procedure ("logical-font-private",  tmg_logical_font_private, 4, 0, 0);
   tmscm_install_procedure ("logical-font-family",  tmg_logical_font_family, 1, 0, 0);

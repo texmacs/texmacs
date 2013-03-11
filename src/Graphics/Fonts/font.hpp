@@ -125,6 +125,7 @@ array<string> font_database_styles (string family);
 array<string> font_database_search (string family, string style);
 array<string> font_database_search (string fam, string var,
                                     string series, string shape);
+array<string> font_database_characteristics (string family, string style);
 
 // Font selection
 string family_to_master (string f);
@@ -135,6 +136,7 @@ array<string> family_strict_features (string f);
 array<string> style_features (string s);
 array<string> logical_font (string family, string shape);
 array<string> logical_font (string f, string v, string ser, string sh);
+array<string> guessed_features (string family, string shape);
 string get_family (array<string> v);
 string get_variant (array<string> v);
 string get_series (array<string> v);

@@ -101,12 +101,15 @@
   (font-database-families font_database_families (array_string))
   (font-database-styles font_database_styles (array_string string))
   (font-database-search font_database_search (array_string string string))
+  (font-database-characteristics
+   font_database_characteristics (array_string string string))
   (font-family->master family_to_master (string string))
   (font-master->families master_to_families (array_string string))
   (font-master-features master_features (array_string string))
   (font-family-features family_features (array_string string))
   (font-family-strict-features family_strict_features (array_string string))
   (font-style-features style_features (array_string string))
+  (font-guessed-features guessed_features (array_string string string))
   (logical-font-public logical_font (array_string string string))
   (logical-font-private
    logical_font (array_string string string string string))

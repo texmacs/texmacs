@@ -490,3 +490,17 @@ font_database_search (string fam, string var, string series, string shape) {
   //cout << "Physical font: " << pfn << "\n";
   return font_database_search (pfn[0], pfn[1]);
 }
+
+array<string>
+font_database_characteristics (string family, string style) {
+  font_database_load ();
+  array<string> r;
+  tree key= tuple (family, style);
+  if (font_characteristics->contains (key)) {
+    tree im= font_characteristics [key];
+    for (int i=0; i<N(im); i++)
+      if (is_atomic (im[i]))
+	r << im[i]->label;
+  }
+  return r;
+}

@@ -224,6 +224,7 @@ analyze_major (font fn, font_metric fnm, array<string>& r) {
     }
 
     int cnt= 0;
+    int totlw= 0;
     int totw= 0;
     double fill= 0.0;
     for (int i= 0x42; i<=0x7a; i++)
@@ -232,12 +233,13 @@ analyze_major (font fn, font_metric fnm, array<string>& r) {
         glyph g= fn->get_glyph (s);
         if (!is_nil (g)) {
           cnt += pixel_count (g);
-          totw += g->lwidth;
+          totlw += g->lwidth;
+          totw += g->width;
           fill += fill_rate (g);
         }
       }
     int fillp= (int) (100.0 * (fill / 52.0));
-    int vcnt= cnt / max (totw, 1);
+    int vcnt= cnt / max (totlw, 1);
     int asprat= (100 * totw) / (52 * ex);
     r << (string ("fillp=") * as_string (fillp));
     r << (string ("vcnt=") * as_string (vcnt));
