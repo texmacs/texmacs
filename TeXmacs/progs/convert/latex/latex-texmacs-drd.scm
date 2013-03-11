@@ -167,6 +167,8 @@
 	    (!recurse (TeXmacs)) " (" (!translate "see") " "
 	    (texttt "http://www.texmacs.org") ")"))
   (scheme "{\\sc Scheme}")
+  (tmsep  ", ")
+  (tmSep  "; ")
   (tmkeywords (!append (textbf (!translate "Keywords:")) " "))
   (tmmsc (!append (textbf (!translate "A.M.S. subject classification:")) " "))
   (pari "{\\sc Pari}"))
@@ -201,8 +203,12 @@
   (tmdef 1)
   (dueto (textup (textbf (!append "(" 1 ") "))))
   (op 1)
-  (email (!group (textit (!translate "Email:")) " " (texttt 1)))
-  (homepage (!group (textit (!translate "Web:")) " "(texttt 1)))
+  (tmaffiliation (thanks (!append (textit (!translate "Affiliation:")) " " 1)))
+  (tmemail (thanks (!append (textit (!translate "Email:")) " " (texttt 1))))
+  (tmhomepage (thanks (!append (textit (!translate "Web:")) " " (texttt 1))))
+  (tmsubtitle (thanks (!append (textit (!translate "Subtitle:")) " " 1)))
+  (tmnote (thanks (!append (textit (!translate "Note:")) " " 1)))
+  (tmmisc (thanks (!append (textit (!translate "Misc:")) " " 1))))
 
 (logic-table latex-texmacs-2%
   (tmhlink (!group "\\color{blue} " 1))
@@ -374,8 +380,6 @@
                           (!translate "Misc:") " #2}}\n"))
   (thankssubtitle (!append "\\newcommand{\\thankssubtitle}[2][]{\\thanks[#1]{"
                            (!translate "Subtitle:") " #2}}\n"))
-  (tmsep         (!append "\\newcommand{\\tmsep}{, }\n"))
-  (tmSep         (!append "\\newcommand{\\tmsep}{; }\n"))
   (mho
    (!append
     "\\renewcommand{\\mho}{\\mbox{\\rotatebox[origin=c]{180}{$\\omega$}}}"))
