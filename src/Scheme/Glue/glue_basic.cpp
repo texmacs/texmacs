@@ -872,6 +872,15 @@ tmg_font_database_insert_global (tmscm arg1) {
 }
 
 tmscm
+tmg_font_database_save_local_delta () {
+  // TMSCM_DEFER_INTS;
+  font_database_save_local_delta ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_font_database_load () {
   // TMSCM_DEFER_INTS;
   font_database_load ();
@@ -6778,6 +6787,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("font-database-build-global",  tmg_font_database_build_global, 0, 0, 0);
   tmscm_install_procedure ("font-database-build-characteristics",  tmg_font_database_build_characteristics, 0, 0, 0);
   tmscm_install_procedure ("font-database-insert-global",  tmg_font_database_insert_global, 1, 0, 0);
+  tmscm_install_procedure ("font-database-save-local-delta",  tmg_font_database_save_local_delta, 0, 0, 0);
   tmscm_install_procedure ("font-database-load",  tmg_font_database_load, 0, 0, 0);
   tmscm_install_procedure ("font-database-save",  tmg_font_database_save, 0, 0, 0);
   tmscm_install_procedure ("font-database-filter",  tmg_font_database_filter, 0, 0, 0);

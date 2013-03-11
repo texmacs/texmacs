@@ -93,6 +93,7 @@
   (font-database-build-global font_database_build_global (void))
   (font-database-build-characteristics font_database_build_characteristics (void))
   (font-database-insert-global font_database_build_global (void url))
+  (font-database-save-local-delta font_database_save_local_delta (void))
   (font-database-load font_database_load (void))
   (font-database-save font_database_save (void))
   (font-database-filter font_database_filter (void))

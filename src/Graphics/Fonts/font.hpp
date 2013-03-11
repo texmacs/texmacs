@@ -119,6 +119,7 @@ void font_database_build_characteristics ();
 void font_database_load ();
 void font_database_save ();
 void font_database_filter ();
+void font_database_save_local_delta ();
 array<string> font_database_families ();
 array<string> font_database_styles (string family);
 array<string> font_database_search (string family, string style);
