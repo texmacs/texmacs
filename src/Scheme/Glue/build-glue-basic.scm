@@ -110,6 +110,7 @@
   (font-family-strict-features family_strict_features (array_string string))
   (font-style-features style_features (array_string string))
   (font-guessed-features guessed_features (array_string string string))
+  (font-family-guessed-features guessed_features (array_string string))
   (logical-font-public logical_font (array_string string string))
   (logical-font-private
    logical_font (array_string string string string string))

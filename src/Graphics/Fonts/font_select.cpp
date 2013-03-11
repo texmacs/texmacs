@@ -40,75 +40,6 @@ encode_feature (string s) {
 }
 
 /******************************************************************************
-* Guessing features
-******************************************************************************/
-
-string
-find_value (array<string> a, string s) {
-  string s2= s * "=";
-  for (int i=0; i<N(a); i++)
-    if (starts (a[i], s2))
-      return a[i] (N(s2), N(a[i]));
-  return "";
-}
-
-array<string>
-guessed_features (string family, string style) {
-  array<string> a= font_database_characteristics (family, style);
-  //cout << "a= " << a << "\n";
-  array<string> r;
-
-  string vcnt= find_value (a, "vcnt");
-  if (vcnt != "") {
-    int vf= as_int (vcnt);
-    if (vf > 60) r << string ("black");
-    else if (vf > 40) r << string ("bold");
-    else if (vf < 20) r << string ("light");
-    else if (vf < 10) r << string ("thin");
-  }
-
-  string em= find_value (a, "em");
-  if (em != "") {
-    int m= as_int (em);
-    //if (vcnt != "") m -= as_int (vcnt);
-    if (m < 150) r << string ("condensed");
-    else if (m > 250) r << string ("extended");
-  }
-
-  /*
-  string asprat= find_value (a, "asprat");
-  if (asprat != "") {
-    int rat= as_int (asprat);
-    //if (vcnt != "") rat -= as_int (vcnt);
-    if (rat < 90) r << string ("condensed");
-    else if (rat > 150) r << string ("extended");
-  }
-  */
-
-  string sl= find_value (a, "slant");
-  bool slanted= (sl != "" && sl != "0");
-  if (contains (string ("italic=yes"), a) && slanted)
-    r << string ("italic");
-  else if (slanted)
-    r << string ("oblique");
-
-  if (contains (string ("case=smallcaps"), a))
-    r << string ("smallcaps");
-  if (contains (string ("mono=yes"), a))
-    r << string ("mono");
-  if (contains (string ("sans=yes"), a))
-    r << string ("sansserif");
-  if (contains (string ("regular=no"), a))
-    r << string ("pen");
-  return r;
-}
-
-void
-add_guessed_features (array<string>& r, string family, string style) {
-  (void) r; (void) family; (void) style;
-}
-
-/******************************************************************************
 * Standardization of font features
 ******************************************************************************/
 
@@ -215,7 +146,6 @@ logical_font_exact (string family, string style) {
   r << family_to_master (family);
   r << family_features (family);
   r << style_features (style);
-  add_guessed_features (r, family, style);
   return r;
 }
 
@@ -324,6 +254,82 @@ family_strict_features (string f) {
   array<string> ff= family_features (f);
   array<string> mf= master_features (m);
   return exclude (ff, mf);
+}
+
+/******************************************************************************
+* Guessing features
+******************************************************************************/
+
+string
+find_value (array<string> a, string s) {
+  string s2= s * "=";
+  for (int i=0; i<N(a); i++)
+    if (starts (a[i], s2))
+      return a[i] (N(s2), N(a[i]));
+  return "";
+}
+
+array<string>
+guessed_features (string family, string style) {
+  array<string> a= font_database_characteristics (family, style);
+  //cout << "a= " << a << "\n";
+  array<string> r;
+
+  string vcnt= find_value (a, "vcnt");
+  if (vcnt != "") {
+    int vf= as_int (vcnt);
+    if (vf > 60) r << string ("black");
+    else if (vf > 40) r << string ("bold");
+    else if (vf < 20) r << string ("light");
+    else if (vf < 10) r << string ("thin");
+  }
+
+  string em= find_value (a, "em");
+  if (em != "") {
+    int m= as_int (em);
+    //if (vcnt != "") m -= as_int (vcnt);
+    if (m < 150) r << string ("condensed");
+    else if (m > 250) r << string ("extended");
+  }
+
+  /*
+  string asprat= find_value (a, "asprat");
+  if (asprat != "") {
+    int rat= as_int (asprat);
+    //if (vcnt != "") rat -= as_int (vcnt);
+    if (rat < 90) r << string ("condensed");
+    else if (rat > 150) r << string ("extended");
+  }
+  */
+
+  string sl= find_value (a, "slant");
+  bool slanted= (sl != "" && sl != "0");
+  if (contains (string ("italic=yes"), a) && slanted)
+    r << string ("italic");
+  else if (slanted)
+    r << string ("oblique");
+
+  if (contains (string ("case=smallcaps"), a))
+    r << string ("smallcaps");
+  if (contains (string ("mono=yes"), a))
+    r << string ("mono");
+  if (contains (string ("sans=yes"), a))
+    r << string ("sansserif");
+  if (contains (string ("regular=no"), a))
+    r << string ("pen");
+  return r;
+}
+
+array<string>
+guessed_features (string family) {
+  array<string> r;
+  array<string> styles= font_database_styles (family);
+  for (int i=0; i<N(styles); i++) {
+    array<string> a= guessed_features (family, styles[i]);
+    if (i == 0) r= a;
+    else r= common (r, a);
+  }
+  return r;
 }
 
 /******************************************************************************

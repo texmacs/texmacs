@@ -128,12 +128,16 @@
 
 (define standard-selector-text
   `(document
-     "abcdefghij, ABCDEFGHIJ, 0123456789"
-     ,(string-append "+-*/=<less><gtr> ([{|}]) :;!? "
-                     "אחימץü <alpha><beta><gamma><delta><epsilon> "
-                     "<leq><geq><leqslant><geqslant><prec><succ> "
-                     "<rightarrow><Rightarrow><mapsto> "
-                     "<times><cdot><oplus><otimes>")))
+     "abcdefghijklmnopqrstuvwxyz"
+     "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+     "0123456789, +-*/^=<less><gtr>"
+     "([{|}]) :;!? !@#$%&"
+     "אחימץü"
+     ,(string-append 
+       "<alpha><beta><gamma><delta><epsilon> "
+       "<leq><geq><leqslant><geqslant><prec><succ> "
+       "<rightarrow><Rightarrow><mapsto> "
+       "<times><cdot><oplus><otimes>")))
 
 (define current-selector-text standard-selector-text)
 
@@ -314,7 +318,7 @@
     >>>)
   ===
   (if (== current-selector-text standard-selector-text)
-      (resize ("300px" "300px" "2000px") ("100px" "100px" "100px")
+      (resize ("300px" "300px" "2000px") ("200px" "200px" "200px")
         (scrollable
           (link font-sample-text))))
   (if (!= current-selector-text standard-selector-text)

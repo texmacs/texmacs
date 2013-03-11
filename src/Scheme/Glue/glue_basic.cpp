@@ -1057,6 +1057,19 @@ tmg_font_guessed_features (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_font_family_guessed_features (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "font-family-guessed-features");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  array_string out= guessed_features (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
 tmg_logical_font_public (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "logical-font-public");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "logical-font-public");
@@ -6836,6 +6849,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("font-family-strict-features",  tmg_font_family_strict_features, 1, 0, 0);
   tmscm_install_procedure ("font-style-features",  tmg_font_style_features, 1, 0, 0);
   tmscm_install_procedure ("font-guessed-features",  tmg_font_guessed_features, 2, 0, 0);
+  tmscm_install_procedure ("font-family-guessed-features",  tmg_font_family_guessed_features, 1, 0, 0);
   tmscm_install_procedure ("logical-font-public",  tmg_logical_font_public, 2, 0, 0);
   tmscm_install_procedure ("logical-font-private",  tmg_logical_font_private, 4, 0, 0);
   tmscm_install_procedure ("logical-font-family",  tmg_logical_font_family, 1, 0, 0);
