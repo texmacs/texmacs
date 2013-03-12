@@ -205,6 +205,8 @@
   (tmemail (thanks (!append (textit (!translate "Email:")) " " (texttt 1))))
   (tmhomepage (thanks (!append (textit (!translate "Web:")) " " (texttt 1))))
   (tmsubtitle (thanks (!append (textit (!translate "Subtitle:")) " " 1)))
+  (tmacmhomepage (titlenote (!append (textit (!translate "Web:")) " " 1)))
+  (tmacmmisc (titlenote (!append (textit (!translate "Misc:")) " " 1)))
   (tmnote (thanks (!append (textit (!translate "Note:")) " " 1)))
   (tmmisc (thanks (!append (textit (!translate "Misc:")) " " 1))))
 

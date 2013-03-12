@@ -47,6 +47,8 @@
   (jsc-style% (in? tmtex-style '("jsc")) elsevier-style%)
   (elsarticle-style% (in? tmtex-style '("elsarticle")) elsevier-style%)
   (elsart-style% (in? tmtex-style '("elsart")) elsevier-style%)
+  (acm-style% (in? tmtex-style '("acmconf" "sig-alternate")))
+  (sig-alternate-style% (in? tmtex-style '("sig-alternate")) acm-style%)
   (natbib-package% (in? "cite-author-year" tmtex-packages)))
 
 (tm-define (tmtex-style-init body)
@@ -57,6 +59,8 @@
 (define (import-tmtex-styles)
   (cond ((elsevier-style?)
          (import-from (convert latex tmtex-elsevier)))
+        ((acm-style?)
+         (import-from (convert latex tmtex-acm)))
          (else (noop))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -393,7 +397,9 @@
 	;;((in? x '("acmconf" "amsart" "svjour")) x)
 	((in? x '("elsart" "jsc")) "elsart")
 	((in? x '("elsarticle")) "elsarticle")
-	((in? x '("acmconf" "amsart")) x)
+	((in? x '("amsart")) x)
+	((in? x '("acmconf")) "acm_proc_article-sp")
+	((in? x '("sig-alternate")) x)
 	((in? x '("svjour")) "article")
 	((not tmtex-replace-style?) x)
 	(else #f)))
