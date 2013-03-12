@@ -316,7 +316,7 @@ guessed_features (string family, string style) {
   bool smallcaps= contains (string ("case=smallcaps"), a);
   bool mono     = contains (string ("mono=yes"), a);
   bool sans     = contains (string ("sans=yes"), a);
-  bool regular  = contains (string ("regular=no"), a);
+  bool irregular= contains (string ("regular=no"), a);
 
   if (vcnt != "" && fillp != "") {
     int vf= as_int (vcnt);
@@ -366,7 +366,9 @@ guessed_features (string family, string style) {
   if (smallcaps) r << string ("smallcaps");
   if (mono) r << string ("mono");
   if (sans) r << string ("sansserif");
-  if (regular) r << string ("pen");
+
+  (void) irregular;
+  //if (irregular) r << string ("pen");
 
   return r;
 }
