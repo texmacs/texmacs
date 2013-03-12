@@ -138,7 +138,7 @@ array<string> logical_font (string family, string shape);
 array<string> logical_font_exact (string family, string style);
 array<string> logical_font (string f, string v, string ser, string sh);
 array<string> guessed_features (string family, string shape);
-array<string> guessed_features (string family);
+array<string> guessed_features (string family, bool pure_guess);
 string get_family (array<string> v);
 string get_variant (array<string> v);
 string get_series (array<string> v);

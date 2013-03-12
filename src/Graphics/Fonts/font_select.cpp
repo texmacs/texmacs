@@ -14,6 +14,42 @@
 
 extern hashmap<tree,tree> font_features;
 extern hashmap<tree,tree> font_variants;
+array<string> remove_other (array<string> a);
+bool same_kind (string s1, string s2);
+
+/******************************************************************************
+* Basic subroutines
+******************************************************************************/
+
+array<string>
+common (array<string> v1, array<string> v2) {
+  array<string> r;
+  for (int i=0; i<N(v1); i++)
+    for (int j=0; j<N(v2); j++)
+      if (v1[i] == v2[j]) {
+        r << v1[i];
+        break;
+      }
+  return r;
+}
+
+array<string>
+exclude (array<string> a, array<string> b) {
+  array<string> r;
+  for (int i=0; i<N(a); i++)
+    if (!contains (a[i], b))
+      r << a[i];
+  return r;
+}
+
+array<string>
+remove_duplicates (array<string> a) {
+  array<string> r;
+  for (int i=0; i<N(a); i++)
+    if (!contains (a[i], r))
+      r << a[i];
+  return r;
+}
 
 /******************************************************************************
 * Decoding and encoding of features
@@ -49,15 +85,6 @@ normalize_feature (string s) {
   if (s == "nonextended") s= "unextended";
   if (s == "extended") s= "wide";
   return s;
-}
-
-array<string>
-remove_duplicates (array<string> a) {
-  array<string> r;
-  for (int i=0; i<N(a); i++)
-    if (!contains (a[i], r))
-      r << a[i];
-  return r;
 }
 
 array<string>
@@ -98,6 +125,7 @@ family_features (string f) {
 
 array<string>
 style_features (string s) {
+  s= replace (s, "-", " ");
   string r;
   for (int i=0; i<N(s); i++)
     if ((s[i] >= 'A' && s[i] <= 'Z') &&
@@ -235,30 +263,6 @@ master_to_families (string m) {
 }
 
 array<string>
-common (array<string> v1, array<string> v2) {
-  array<string> r;
-  for (int i=0; i<N(v1); i++)
-    for (int j=0; j<N(v2); j++)
-      if (v1[i] == v2[j]) {
-        r << v1[i];
-        break;
-      }
-  return r;
-}
-
-array<string>
-exclude (array<string> v1, array<string> v2) {
-  array<string> r;
-  for (int i=0; i<N(v1); i++) {
-    bool ok= true;
-    for (int j=0; j<N(v2); j++)
-      if (v1[i] == v2[j]) ok= false;
-    if (ok) r << v1[i];
-  }
-  return r;
-}
-
-array<string>
 master_features (string m) {
   array<string> fams= master_to_families (m);
   if (N(fams) == 0) return array<string> ();
@@ -368,16 +372,51 @@ guessed_features (string family, string style) {
 }
 
 array<string>
-guessed_features (string family) {
+cautious_patch (array<string> v, array<string> w) {
+  array<string> r= copy (v);
+  for (int i=0; i<N(w); i++) {
+    int j;
+    for (j=1; j<N(r); j++)
+      if (same_kind (r[j], w[i]))
+        break;
+    if (j == N(r)) r << w[i];
+  }
+  return r;
+}
+
+array<string>
+guessed_features (string family, bool pure_guess) {
   array<string> r;
+  array<string> allf;
+  array<string> commonf;
   array<string> styles= font_database_styles (family);
   for (int i=0; i<N(styles); i++) {
     array<string> a= guessed_features (family, styles[i]);
+    if (!pure_guess) {
+      array<string> fn= logical_font_exact (family, styles[i]);
+      fn= remove_other (fn);
+      array<string> tail= range (fn, 1, N(fn));
+      allf= remove_duplicates (append (allf, tail));
+      if (i == 0) commonf= tail;
+      else commonf= common (commonf, tail);
+      //cout << "  Guess " << family << ", " << styles[i] << " -> "
+      //     << fn << " + " << a << " -> ";
+      a= cautious_patch (fn, a);
+      a= range (a, 1, N(a));
+      //cout << a << "\n";
+    }
     if (i == 0) r= a;
     else r= common (r, a);
   }
+  string master= family_to_master (family);
+  //cout << "  Blacklist " << allf << " - " << commonf << " -> ";
+  allf= exclude (allf, commonf);
+  //cout << allf << "\n";
+  //cout << "Retain " << r << " - " << allf << " -> ";
+  r= exclude (r, allf);
+  //cout << r << "\n";
   array<string> v;
-  v << family_to_master (family) << r;
+  v << master << r;
   return v;
 }
 

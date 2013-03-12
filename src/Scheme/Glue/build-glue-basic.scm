@@ -111,7 +111,7 @@
   (font-family-strict-features family_strict_features (array_string string))
   (font-style-features style_features (array_string string))
   (font-guessed-features guessed_features (array_string string string))
-  (font-family-guessed-features guessed_features (array_string string))
+  (font-family-guessed-features guessed_features (array_string string bool))
   (logical-font-public logical_font (array_string string string))
   (logical-font-exact logical_font_exact (array_string string string))
   (logical-font-private
