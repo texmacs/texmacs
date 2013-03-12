@@ -1289,24 +1289,30 @@
                          (tmtex-select-args-by-func 'doc-title l))))
     (tmtex-make-doc-data titles subtitles authors dates miscs notes)))
 
-(tm-define (tmtex-abstract s l)
-  (tmtex-std-env "abstract" l))
+(tm-define (tmtex-abstract t)
+  (tmtex-std-env "abstract" (cdr t)))
 
-(tm-define (tmtex-abstract-keywords s l)
+(tm-define (tmtex-abstract-keywords t)
   (with args (map (lambda (x) `(!group ,x))
-                  (list-intersperse (map tmtex l) '(tmsep)))
-  `(!concat (tmkeywords) (!concat ,@args))))
+                  (list-intersperse (map tmtex (cdr t)) '(tmsep)))
+    `(!concat (tmkeywords) (!concat ,@args))))
 
-(tm-define (tmtex-abstract-msc s l)
+(tm-define (tmtex-abstract-msc t)
   (with args (map (lambda (x) `(!group ,x))
-                  (list-intersperse (map tmtex l) '(tmsep)))
-  `(!concat (tmmsc) (!concat ,@args))))
+                  (list-intersperse (map tmtex (cdr t)) '(tmsep)))
+    `(!concat (tmmsc) (!concat ,@args))))
+
+(tm-define  (tmtex-make-abstract-data keywords msc abstract)
+  `(!document ,@keywords ,@msc ,@abstract))
 
 (tm-define (tmtex-abstract-data s l)
-  (let* ((msc (map tmtex (tmtex-select-args-by-func 'abstract-msc l)))
-         (keywords (map tmtex (tmtex-select-args-by-func 'abstract-keywords l)))
-         (abstract (map tmtex (tmtex-select-args-by-func 'abstract l))))
-  `(!document ,@keywords ,@msc ,@abstract)))
+  (let* ((msc      (map tmtex-abstract-msc
+                        (tmtex-select-args-by-func 'abstract-msc l)))
+         (keywords (map tmtex-abstract-keywords
+                        (tmtex-select-args-by-func 'abstract-keywords l)))
+         (abstract (map tmtex-abstract
+                        (tmtex-select-args-by-func 'abstract l))))
+    (tmtex-make-abstract-data keywords msc abstract)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TeXmacs style primitives
@@ -1858,6 +1864,9 @@
   (author-note (,tmtex-author-note 1))
   (author-email (,tmtex-author-email 1))
   (author-homepage (,tmtex-author-homepage 1))
+  (abstract (,tmtex-abstract 1))
+  (abstract-keywords (,tmtex-abstract-keywords -1))
+  (abstract-msc (,tmtex-abstract-msc -1))
   (appendix (,tmtex-appendix 1))
   ((:or theorem proposition lemma corollary proof axiom definition
 	notation conjecture remark note example exercise problem warning
@@ -1984,10 +1993,7 @@
 
 (tmtex-style-dependent
   (doc-data                 tmtex-doc-data)
-  (abstract                 tmtex-abstract)
   (abstract-data            tmtex-abstract-data)
-  (abstract-keywords        tmtex-abstract-keywords)
-  (abstract-msc             tmtex-abstract-msc)
   ((:or equation equation*) tmtex-equation)
   (elsevier-frontmatter     tmtex-elsevier-frontmatter))
 
