@@ -25,9 +25,11 @@ static void
 get_acm_title_notes (tree t, array<tree> &r) {
   if (is_atomic (t)) return;
   if (is_acm_titlenote (t)) {
-    tree u= copy(t);
-    u[0]= "\\doc-note";
-    r << u;
+    r << tree (APPLY, "\\doc-note", t[1]);
+    return;
+  }
+  if (is_tuple (t, "\\tmacmmisc", 1)) {
+    r << tree (APPLY, "\\doc-misc", t[1]);
     return;
   }
   int i, n=N(t);
@@ -40,7 +42,9 @@ get_acm_title_notes (tree t, array<tree> &r) {
 static tree
 clean_acm_title_markup (tree t) {
   if (is_atomic (t)) return t;
-  if (is_acm_titlenote (t)) return concat();
+  if (is_acm_titlenote (t) ||
+      is_tuple (t, "\\tmacmmisc", 1) || is_tuple (t, "\\tmacmsubtitle", 1))
+    return concat();
   if (is_tuple (t, "\\ttlit")) {
     t[0]= "\\it";
     return t;
@@ -84,10 +88,15 @@ get_acm_author_datas (tree t) {
       author_data << tree (APPLY, "\\author-affiliation", u[1]);
     else if (is_tuple (u, "\\email", 1))
       author_data << tree (APPLY, "\\author-email", u[1]);
+    else if (is_tuple (u, "\\tmacmhomepage", 1))
+      author_data << tree (APPLY, "\\author-homepage", u[1]);
+    else if (is_tuple (u, "\\tmacmmisc", 1))
+      author_data << tree (APPLY, "\\author-misc", u[1]);
     else if (!line_break || !is_line_break (u)) {
-      author_name << u;
+      if (!line_break || (u != " " && u != concat (" ") && u != concat ()))
+        author_name << u;
       if (is_line_break (u)) line_break= true;
-      else if (u != " " && u!= concat (" ") && u!= concat ())
+      else if (u != " " && u != concat (" ") && u != concat ())
         line_break= false;
     }
   }
@@ -156,7 +165,8 @@ collect_metadata_acm (tree t) {
       tree tmp (CONCAT);
       array<tree> kw;
       for (int j=0; j<=N(u[1]); j++) {
-        if (j < N(u[1]) && u[1][j] != ",") tmp << u[1][j];
+        if (j < N(u[1]) && u[1][j] != "," && !is_tuple(u[1][j], "\\tmsep"))
+          tmp << u[1][j];
         else {
           kw << tmp;
           tmp= concat();
