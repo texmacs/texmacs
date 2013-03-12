@@ -65,14 +65,14 @@ hashmap<tree,tree> font_variants (UNINIT);
 hashmap<tree,tree> font_characteristics (UNINIT);
 
 void
-font_database_load (url u) {
+font_database_load (url u, hashmap<tree,tree>& ftab= font_table) {
   if (!exists (u)) return;
   string s;
   if (!load_string (u, s, false)) {
     tree t= block_to_scheme_tree (s);
     for (int i=0; i<N(t); i++)
       if (is_func (t[i], TUPLE, 2))
-        font_table (t[i][0])= t[i][1];
+        ftab (t[i][0])= t[i][1];
   }
 }
 
@@ -183,6 +183,13 @@ font_database_save () {
 * Building the database
 ******************************************************************************/
 
+void
+tuple_insert (tree& t, tree x) {
+  for (int i=0; i<N(t); i++)
+    if (t[i] == x) return;
+  t << x;
+}
+
 bool
 on_blacklist (string name) {
   return
@@ -221,10 +228,7 @@ font_database_build (url u) {
           tree all= tree (TUPLE);
           if (font_table->contains (key))
             all= font_table [key];
-          int j;
-          for (j=0; j<N(all); j++)
-            if (all[j] == im) break;
-          if (j >= N(all)) all << im;
+          tuple_insert (all, im);
           font_table (key)= all;
         }
   }
@@ -330,7 +334,7 @@ build_back_table () {
         tree names (TUPLE);
         if (back_font_table->contains (loc))
           names= back_font_table [loc];
-        names << key;
+        tuple_insert (names, key);
         back_font_table (loc)= names;
       }
     }
@@ -361,7 +365,7 @@ font_database_collect (url u) {
                 tree im (TUPLE);
                 if (new_font_table->contains (key))
                   im= new_font_table [key];
-                im << ff;
+                tuple_insert (im, ff);
                 new_font_table (key)= im;
               }
             }
@@ -455,10 +459,9 @@ font_database_build_characteristics (bool force) {
 ******************************************************************************/
 
 array<string>
-font_database_families () {
-  font_database_load ();
+font_database_families (hashmap<tree,tree> ftab) {
   hashmap<string,bool> families;
-  iterator<tree> it= iterate (font_table);
+  iterator<tree> it= iterate (ftab);
   while (it->busy ()) {
     tree key= it->next ();
     if (is_func (key, TUPLE, 2) && is_atomic (key[0]))
@@ -470,6 +473,21 @@ font_database_families () {
     r << it2->next ();
   merge_sort_leq<string,locase_less_eq_operator> (r);
   return r;
+}
+
+array<string>
+font_database_families () {
+  font_database_load ();
+  return font_database_families (font_table);
+}
+
+array<string>
+font_database_delta_families () {
+  if (!exists ("$TEXMACS_HOME_PATH/fonts/delta-database.scm"))
+    font_database_save_local_delta ();
+  hashmap<tree,tree> t;
+  font_database_load ("$TEXMACS_HOME_PATH/fonts/delta-database.scm", t);
+  return font_database_families (t);
 }
 
 array<string>

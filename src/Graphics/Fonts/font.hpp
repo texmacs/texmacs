@@ -110,7 +110,6 @@ font compound_font (scheme_tree def, double zoom= 1.0);
 int  script (int sz, int level);
 
 // Font database
-extern hashmap<tree,tree> font_table;
 void font_database_build (url u);
 void font_database_build_local ();
 void font_database_build_global ();
@@ -121,6 +120,7 @@ void font_database_save ();
 void font_database_filter ();
 void font_database_save_local_delta ();
 array<string> font_database_families ();
+array<string> font_database_delta_families ();
 array<string> font_database_styles (string family);
 array<string> font_database_search (string family, string style);
 array<string> font_database_search (string fam, string var,
