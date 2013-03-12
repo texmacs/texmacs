@@ -22,7 +22,6 @@ extern hashmap<tree,tree> font_variants;
 string
 decode_feature (string s) {
   s= replace (locase_all (s) , " ", "");
-  if (s == "unstretched") s= "unextended";
   if (s == "smallcapitals") s= "smallcaps";
   if (s == "monospaced") s= "mono";
   return s;
@@ -43,6 +42,24 @@ encode_feature (string s) {
 * Standardization of font features
 ******************************************************************************/
 
+string
+normalize_feature (string s) {
+  s= locase_all (s);
+  if (s == "ultralight") s= "thin";
+  if (s == "nonextended") s= "unextended";
+  if (s == "extended") s= "wide";
+  return s;
+}
+
+array<string>
+remove_duplicates (array<string> a) {
+  array<string> r;
+  for (int i=0; i<N(a); i++)
+    if (!contains (a[i], r))
+      r << a[i];
+  return r;
+}
+
 array<string>
 family_features (string f) { 
   font_database_load ();
@@ -54,7 +71,7 @@ family_features (string f) {
         if (is_atomic (t[i]))
           r << t[i]->label;
       for (int i=0; i<N(r); i++)
-        r[i]= locase_all (r[i]);
+        r[i]= normalize_feature (r[i]);
       return r;
     }
   }
@@ -75,8 +92,8 @@ family_features (string f) {
            occurs ("Narrow", f))
     r << string ("Condensed");
   for (int i=0; i<N(r); i++)
-    r[i]= locase_all (r[i]);
-  return r;
+    r[i]= normalize_feature (r[i]);
+  return remove_duplicates (r);
 }
 
 array<string>
@@ -94,7 +111,8 @@ style_features (string s) {
   for (int i=0; i<N(v); i++) {
     if (i+1 < N(v) &&
         v[i] == "Regular" &&
-        (v[i+1] == "Light" ||
+        (v[i+1] == "Thin" ||
+         v[i+1] == "Light" ||
          v[i+1] == "Black"))
       continue;
     if (N(r) == 0 ||
@@ -108,11 +126,11 @@ style_features (string s) {
     else if (v[i] == "Medium");
     else if (v[i] == "Normal");
     else if (v[i] == "Roman");
-    else if (v[i] == "Thin"); // Marker Felt
     else if (v[i] == "Upright");
     else if (v[i] == "Nonextended");
     else if (v[i] == "Unextended");
-    else if (v[i] == "Wide") r << "Bold"; // Marker Felt
+    else if (v[i] == "Nonstretched");
+    else if (v[i] == "Unstretched");
     else if (v[i] == "Slanted") r << "Oblique";
     else if (v[i] == "Inclined") r << "Italic";
     else r << v[i];
@@ -121,8 +139,8 @@ style_features (string s) {
   array<string> w;
   for (int i=0; i<N(v); i++)
     if (v[i] != "")
-      w << locase_all (v[i]);
-  return w;
+      w << normalize_feature (v[i]);
+  return remove_duplicates (w);
 }
 
 array<string>
@@ -137,7 +155,7 @@ logical_font (string family, string style) {
   r << family_strict_features (family);
   r << style_features (style);
   //cout << family << ", " << style << " -> " << r << "\n";
-  return r;
+  return remove_duplicates (r);
 }
 
 array<string>
@@ -146,7 +164,7 @@ logical_font_exact (string family, string style) {
   r << family_to_master (family);
   r << family_features (family);
   r << style_features (style);
-  return r;
+  return remove_duplicates (r);
 }
 
 /******************************************************************************
@@ -189,6 +207,8 @@ family_to_master (string f) {
   f= Replace (f, "Condensed", "");
   f= replace (f, " Narrow", "");
   f= Replace (f, "Narrow", "");
+  f= replace (f, " Thin", "");
+  f= Replace (f, "Thin", "");
   f= replace (f, " Light", "");
   f= Replace (f, "Light", "");
   f= replace (f, " Medium", "");
@@ -286,19 +306,12 @@ guessed_features (string family, string style) {
   string lasprat= find_value (a, "lasprat");
   string pasprat= find_value (a, "pasprat");
   
-  bool slanted  = (slant != "" && slant != "0");
-  bool italic   = slanted && contains (string ("italic=yes"), a);
+  bool oblique  = (slant != "" && slant != "0");
+  bool italic   = oblique && contains (string ("italic=yes"), a);
   bool smallcaps= contains (string ("case=smallcaps"), a);
   bool mono     = contains (string ("mono=yes"), a);
   bool sans     = contains (string ("sans=yes"), a);
   bool regular  = contains (string ("regular=no"), a);
-
-  if (italic) r << string ("italic");
-  else if (slanted) r << string ("oblique");
-  if (smallcaps) r << string ("smallcaps");
-  if (mono) r << string ("mono");
-  if (sans) r << string ("sansserif");
-  if (regular) r << string ("pen");
 
   if (vcnt != "" && fillp != "") {
     int vf= as_int (vcnt);
@@ -306,7 +319,7 @@ guessed_features (string family, string style) {
 
     // begin adjustments
     int delta= 0;
-    if (slanted) delta += min (abs_int (as_int (slant)), 50) / 4;
+    if (oblique) delta += min (abs_int (as_int (slant)), 50) / 4;
     int asprat= 110;
     if (lasprat != "") asprat= as_int (lasprat);
     if (pasprat != "" && mono) asprat= as_int (pasprat);
@@ -322,8 +335,8 @@ guessed_features (string family, string style) {
     if (vf > 60) r << string ("black");
     else if (vf > 45) r << string ("bold");
     else if (vf > 40 && fp > 40) r << string ("bold");
-    else if (vf < 20 && fp < 30) r << string ("light");
     else if (vf < 10) r << string ("thin");
+    else if (vf < 20 && fp < 30) r << string ("light");
   }
 
   string em= find_value (a, "em");
@@ -331,8 +344,15 @@ guessed_features (string family, string style) {
     int m= as_int (em);
     //if (vcnt != "") m -= as_int (vcnt);
     if (m < 150) r << string ("condensed");
-    else if (m > 250) r << string ("extended");
+    else if (m > 250) r << string ("wide");
   }
+
+  if (italic) r << string ("italic");
+  else if (oblique) r << string ("oblique");
+  if (smallcaps) r << string ("smallcaps");
+  if (mono) r << string ("mono");
+  if (sans) r << string ("sansserif");
+  if (regular) r << string ("pen");
 
   return r;
 }
@@ -359,12 +379,14 @@ bool
 is_stretch (string s) {
   return
     ends (s, "condensed") ||
-    ends (s, "extended");
+    ends (s, "unextended") ||
+    ends (s, "wide");
 }
 
 bool
 is_weight (string s) {
   return 
+    ends (s, "thin") ||
     ends (s, "light") ||
     s == "regular" ||
     s == "medium" ||
@@ -469,9 +491,8 @@ distance (string s1, string s2, bool asym) {
   if (is_stretch (s1) || is_stretch (s2)) {
     if (!is_stretch (s1) || !is_stretch (s2)) return D_HUGE;
     if (ends (s1, "condensed") && ends (s2, "condensed")) return S_STRETCH;
-    if (ends (s1, "unextended") && !ends (s2, "unextended")) return D_STRETCH;
-    if (!ends (s1, "unextended") && ends (s2, "unextended")) return D_STRETCH;
-    if (ends (s1, "extended") && ends (s2, "extended")) return S_STRETCH;
+    if (ends (s1, "unextended") && ends (s2, "unextended")) return S_STRETCH;
+    if (ends (s1, "wide") && ends (s2, "wide")) return S_STRETCH;
     return D_STRETCH;
   }
   if (is_weight (s1) || is_weight (s2)) {
@@ -479,6 +500,8 @@ distance (string s1, string s2, bool asym) {
     if (ends (s1, "light") && ends (s2, "light")) return S_WEIGHT;
     if (ends (s1, "bold") && ends (s2, "bold")) return S_WEIGHT;
     if (ends (s1, "black") && ends (s2, "black")) return S_WEIGHT;
+    if (ends (s1, "light") && ends (s2, "thin")) return Q_WEIGHT;
+    if (ends (s1, "thin") && ends (s2, "light") && !asym) return Q_WEIGHT;
     if (ends (s1, "bold") && ends (s2, "black")) return Q_WEIGHT;
     if (ends (s1, "black") && ends (s2, "bold") && !asym) return Q_WEIGHT;
     return D_WEIGHT;
@@ -584,6 +607,10 @@ void
 search_font_among (array<string> v, array<string> fams,
                    int& best_distance, array<string>& best_result,
                    bool strict) {
+  if (N(fams) < 20)
+    cout << "  Search among " << fams << ", " << strict << "\n";
+  else
+    cout << "  Search among many " << strict << "\n";
   if (!strict) v= remove_other (v);
   best_distance= D_INFINITY;
   best_result= array<string> (v[0], string ("Unknown"));
@@ -595,13 +622,14 @@ search_font_among (array<string> v, array<string> fams,
       if (!strict) w= remove_other (w);
       if (!strict) x= remove_other (x);
       int d= distance (v, w, x);
-      //cout << "  " << w << ", " << x << " -> " << d << "\n";
+      cout << "  " << w << ", " << x << " -> " << d << "\n";
       if (d < best_distance) {
         best_distance= d;
         best_result= array<string> (fams[i], stys[j]);
       }
     }
   }
+  cout << "  Best result: " << best_result << ", " << best_distance << "\n";
 }
 
 array<string>
@@ -609,7 +637,7 @@ search_font (array<string> v, bool require_exact) {
   if (N(v) == 0)
     return array<string> (string ("TeXmacs Computer Modern"),
                           string ("Unknown"));
-  //cout << "Searching " << v << "\n";
+  cout << "Searching " << v << "\n";
   int best_distance;
   array<string> best_result;
   array<string> fams= master_to_families (v[0]);
@@ -636,7 +664,7 @@ search_font (array<string> v, bool require_exact) {
       search_font_among (v, fams, best_distance, best_result, true);
     }
   }
-  //cout << "Found " << best_result << "\n";
+  cout << "Found " << best_result << ", " << best_distance << "\n";
   return best_result;
 }
 
@@ -747,7 +775,8 @@ get_shape (array<string> v) {
   array<string> r;
   for (int i=1; i<N(v); i++)
     if (ends (v[i], "condensed") ||
-        ends (v[i], "extended") ||
+        ends (v[i], "unextended") ||
+        ends (v[i], "wide") ||
         v[i] == "proportional" ||
         (v[i] == "mono" && contains (string ("typewriter"), v)))
       r << v[i];
@@ -808,7 +837,8 @@ shape_features (string s) {
   array<string> r;
   for (int i=0; i<N(v); i++)
     if (ends (v[i], "condensed") ||
-        ends (v[i], "extended") ||
+        ends (v[i], "unextended") ||
+        ends (v[i], "wide") ||
         v[i] == "mono" ||
         v[i] == "proportional" ||
         v[i] == "italic" ||

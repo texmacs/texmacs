@@ -17,6 +17,7 @@
 #include "Freetype/tt_file.hpp"
 #include "Freetype/tt_tools.hpp"
 #include "Metafont/tex_files.hpp"
+#include "data_cache.hpp"
 
 void font_database_filter_features ();
 void font_database_filter_characteristics ();
@@ -119,6 +120,9 @@ font_database_save (url u) {
   merge_sort_leq<scheme_tree,font_less_eq_operator> (r);
   string s= scheme_tree_to_block (tree (TUPLE, r));
   save_string (u, s);
+  // FIXME: this should not be necessary
+  remove ("$TEXMACS_PATH/system/cache/file_cache");
+  cache_refresh ();
 }
 
 void
@@ -134,6 +138,9 @@ font_database_save_features (url u) {
   merge_sort_leq<scheme_tree,font_less_eq_operator> (r);
   string s= scheme_tree_to_block (tree (TUPLE, r));
   save_string (u, s);
+  // FIXME: this should not be necessary
+  remove ("$TEXMACS_PATH/system/cache/file_cache");
+  cache_refresh ();
 }
 
 void
@@ -147,6 +154,9 @@ font_database_save_characteristics (url u) {
   merge_sort_leq<scheme_tree,font_less_eq_operator> (r);
   string s= scheme_tree_to_block (tree (TUPLE, r));
   save_string (u, s);
+  // FIXME: this should not be necessary
+  remove ("$TEXMACS_PATH/system/cache/file_cache");
+  cache_refresh ();
 }
 
 void
@@ -177,8 +187,6 @@ void
 font_database_save () {
   font_database_save ("$TEXMACS_HOME_PATH/fonts/font-database.scm");
   font_database_save_features ("$TEXMACS_HOME_PATH/fonts/font-features.scm");
-  // FIXME: this should not be necessary
-  remove ("$TEXMACS_PATH/system/cache/file_cache");
 }
 
 /******************************************************************************
