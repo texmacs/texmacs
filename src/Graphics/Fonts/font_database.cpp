@@ -177,6 +177,8 @@ void
 font_database_save () {
   font_database_save ("$TEXMACS_HOME_PATH/fonts/font-database.scm");
   font_database_save_features ("$TEXMACS_HOME_PATH/fonts/font-features.scm");
+  // FIXME: this should not be necessary
+  remove ("$TEXMACS_PATH/system/cache/file_cache");
 }
 
 /******************************************************************************
@@ -280,13 +282,12 @@ font_database_build_global (url u) {
 ******************************************************************************/
 
 void
-keep_delta (hashmap<tree,tree>& new_t, hashmap<tree,tree> old_t, bool flag) {
+keep_delta (hashmap<tree,tree>& new_t, hashmap<tree,tree> old_t) {
   iterator<tree> it= iterate (old_t);
   while (it->busy ()) {
     tree key= it->next ();
     if (new_t->contains (key) && old_t->contains (key))
-      if (flag || new_t[key] == old_t[key])
-	new_t->reset (key);
+      new_t->reset (key);
   }
 }
 
@@ -304,9 +305,13 @@ font_database_save_local_delta () {
   font_table= hashmap<tree,tree> (UNINIT);
   font_features= hashmap<tree,tree> (UNINIT);
   font_variants= hashmap<tree,tree> (UNINIT);
-  font_database_load ();
-  keep_delta (font_table, old_font_table, false);
-  keep_delta (font_features, old_font_features, true);
+  font_database_load ("$TEXMACS_PATH/fonts/font-database.scm");
+  font_database_load_features ("$TEXMACS_PATH/fonts/font-features.scm");
+  font_database_load ("$TEXMACS_HOME_PATH/fonts/font-database.scm");
+  font_database_load_features ("$TEXMACS_HOME_PATH/fonts/font-features.scm");
+  font_database_load_characteristics ("$TEXMACS_HOME_PATH/fonts/font-characteristics.scm");
+  keep_delta (font_table, old_font_table);
+  keep_delta (font_features, old_font_features);
   font_database_save ("$TEXMACS_HOME_PATH/fonts/delta-database.scm");
   font_database_save_features ("$TEXMACS_HOME_PATH/fonts/delta-features.scm");
   font_table= hashmap<tree,tree> (UNINIT);
