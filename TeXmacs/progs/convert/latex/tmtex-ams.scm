@@ -15,6 +15,31 @@
   (:use (convert latex tmtex)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; AMS data preprocessing
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (stree-contains? t u)
+  (cond ((== t u) #t)
+        ((nlist? t) #f)
+        ((null? t) #f)
+        (else (or (stree-contains? (car t) u)
+                  (in? #t (map (lambda (x) (stree-contains? x u)) (cdr t)))))))
+
+(define (insert-maketitle-after t u)
+  (cond ((nlist? t) t)
+        ((== (car t) u) `(!document ,t (maketitle)))
+        (else `(,(car t) ,@(map (lambda (x) (insert-maketitle-after x u))
+                                (cdr t))))))
+
+(tm-define (tmtex-style-preprocess doc)
+  (:mode ams-style?)
+  (cond ((stree-contains? doc 'abstract-data)
+         (insert-maketitle-after doc 'abstract-data))
+        ((stree-contains? doc 'doc-data)
+         (insert-maketitle-after doc 'doc-data))
+        (else doc)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; AMS metadata presentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -29,8 +54,12 @@
                      ,@notes
                      ,@miscs)))
 
-(tm-define (tmtex-append-authors l)
-  (:mode ams-style?) l)
+(tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes)
+  (:mode ams-style?)
+  `(!document
+     ,(tmtex-make-title titles subtitles notes miscs)
+     ,@authors
+     ,@dates))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; AMS specific titlemarkup
