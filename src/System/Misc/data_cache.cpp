@@ -67,6 +67,13 @@ is_up_to_date (url dir) {
   //else cout << name_dir << " not up to date " << l << "\n";
   cache_set ("validate_cache.scm", name_dir, as_string (l));
   cache_valid (name_dir)= false;
+  // FIXME: we should explicitly remove all data concerning files in 'dir'
+  // from the various caches.  Indeed, at a next run of TeXmacs, the directory
+  // will be regarded as up to date, but the other caches may still contain
+  // outdated data.  Careful: invalidating the cache lines should not
+  // give rise to a performance penaly (e.g. go through all entries of
+  // 'cache_data', or reloading unchanged files many times).
+  // See also 'declare_out_of_date'.
   return false;
 }
 
@@ -90,6 +97,7 @@ declare_out_of_date (url dir) {
   int l= last_modified (dir, false);
   cache_set ("validate_cache.scm", name_dir, as_string (l));
   cache_valid (name_dir)= false;
+  // FIXME: see 'FIXME' in 'is_up_to_date'.
 }
 
 /******************************************************************************
@@ -248,7 +256,6 @@ cache_initialize () {
   texmacs_home_path_string = concretize (texmacs_home_path);
   texmacs_doc_path_string = concretize (texmacs_doc_path);
   texmacs_font_path_string = concretize (texmacs_home_path * "fonts/");
-  
    
   cache_refresh ();
   if (is_recursively_up_to_date (texmacs_path * "fonts/type1") &&
