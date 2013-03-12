@@ -49,6 +49,7 @@
   (elsart-style% (in? tmtex-style '("elsart")) elsevier-style%)
   (acm-style% (in? tmtex-style '("acmconf" "sig-alternate")))
   (sig-alternate-style% (in? tmtex-style '("sig-alternate")) acm-style%)
+  (ams-style% (in? tmtex-style '("amsart")))
   (natbib-package% (in? "cite-author-year" tmtex-packages)))
 
 (tm-define (tmtex-style-init body)
@@ -61,6 +62,8 @@
          (import-from (convert latex tmtex-elsevier)))
         ((acm-style?)
          (import-from (convert latex tmtex-acm)))
+        ((ams-style?)
+         (import-from (convert latex tmtex-ams)))
          (else (noop))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -394,7 +397,6 @@
 	((== x "seminar") "slides")
 	((in? x '("tmarticle" "tmdoc" "mmxdoc")) "article")
 	((in? x '("tmbook" "tmmanual")) "book")
-	;;((in? x '("acmconf" "amsart" "svjour")) x)
 	((in? x '("elsart" "jsc")) "elsart")
 	((in? x '("elsarticle")) "elsarticle")
 	((in? x '("amsart")) x)
