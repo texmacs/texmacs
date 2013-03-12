@@ -24,10 +24,10 @@
                    (list-intersperse (map cadr names) '(tmSep)))
         `(!paragraph ,@names
                      ,@affiliations
-                     ,@notes
-                     ,@miscs
                      ,@emails
-                     ,@urls)))
+                     ,@urls
+                     ,@notes
+                     ,@miscs)))
 
 (tm-define (tmtex-append-authors l)
   (:mode ams-style?) l)
