@@ -553,9 +553,21 @@ distance (array<string> v1, array<string> v2, array<string> v3) {
 * Compute a best possible approximation for font
 ******************************************************************************/
 
+array<string>
+remove_other (array<string> a) {
+  array<string> r;
+  if (N(a)>0) r << a[0];
+  for (int i=1; i<N(a); i++)
+    if (!is_other (a[i]))
+      r << a[i];
+  return r;
+}
+
 void
 search_font_among (array<string> v, array<string> fams,
-                   int& best_distance, array<string>& best_result) {
+                   int& best_distance, array<string>& best_result,
+                   bool strict) {
+  if (!strict) v= remove_other (v);
   best_distance= D_INFINITY;
   best_result= array<string> (v[0], string ("Unknown"));
   for (int i=0; i<N(fams); i++) {
@@ -563,6 +575,8 @@ search_font_among (array<string> v, array<string> fams,
     for (int j=0; j<N(stys); j++) {
       array<string> w= logical_font (fams[i], stys[j]);
       array<string> x= logical_font_exact (fams[i], stys[j]);
+      if (!strict) w= remove_other (w);
+      if (!strict) x= remove_other (x);
       int d= distance (v, w, x);
       //cout << "  " << w << ", " << x << " -> " << d << "\n";
       if (d < best_distance) {
@@ -582,15 +596,28 @@ search_font (array<string> v, bool require_exact) {
   int best_distance;
   array<string> best_result;
   array<string> fams= master_to_families (v[0]);
-  if (!require_exact && N(v) > 1) fams= font_database_families ();
-  search_font_among (v, fams, best_distance, best_result);
-  if (best_distance > 0 && require_exact) {
-    string s;
-    for (int i=1; i<N(v); i++) {
-      if (i>1) s << " ";
-      s << encode_feature (v[i]);
+  if (require_exact || N(remove_other(v)) <= 1) {
+    search_font_among (v, fams, best_distance, best_result, true);
+    if (best_distance > 0 && require_exact) {
+      string s;
+      for (int i=1; i<N(v); i++) {
+        if (i>1) s << " ";
+        s << encode_feature (v[i]);
+      }
+      best_result[1]= s;
     }
-    best_result[1]= s;
+  }
+  else {
+    search_font_among (v, fams, best_distance, best_result, false);
+    if (best_distance < D_MASTER)
+      search_font_among (v, fams, best_distance, best_result, true);
+    else {
+      fams= font_database_families ();
+      search_font_among (v, fams, best_distance, best_result, false);
+      string master= family_to_master (best_result[0]);
+      fams= master_to_families (master);
+      search_font_among (v, fams, best_distance, best_result, true);
+    }
   }
   //cout << "Found " << best_result << "\n";
   return best_result;

@@ -214,6 +214,41 @@ find_magnified_font (tree t, double zoom) {
 }
 
 /******************************************************************************
+* Find closest existing font
+******************************************************************************/
+
+static bool
+find_closest (string& family, string& fn_class,
+              string& series, string& shape) {
+  static hashmap<tree,tree> closest_cache (UNINIT);
+  tree key= tuple (family, fn_class, series, shape);
+  if (closest_cache->contains (key)) {
+    tree t  = closest_cache[key];
+    family  = t[0]->label;
+    fn_class= t[1]->label;
+    series  = t[2]->label;
+    shape   = t[3]->label;
+    return t != key;
+  }
+  else {
+    //cout << "< " << family << ", " << fn_class
+    //     << ", " << series << ", " << shape << "\n";
+    array<string> lfn= logical_font (family, fn_class, series, shape);
+    array<string> pfn= search_font (lfn, false);
+    array<string> nfn= logical_font (pfn[0], pfn[1]);
+    family= get_family (nfn);
+    fn_class= get_variant (nfn);
+    series= get_series (nfn);
+    shape= get_shape (nfn);
+    //cout << "> " << family << ", " << fn_class
+    //     << ", " << series << ", " << shape << "\n";
+    tree t= tuple (family, fn_class, series, shape);
+    closest_cache (key)= t;
+    return t != key;
+  }
+}
+
+/******************************************************************************
 * User interface
 ******************************************************************************/
 
@@ -227,22 +262,10 @@ find_font (string family, string fn_class,
     as_string (sz) * "-" * as_string (dpi);
   if (font::instances->contains (s)) return font (s);
 
-  //if (false)
-  if (closest) {
-    array<string> lfn= logical_font (family, fn_class, series, shape);
-    array<string> pfn= search_font (lfn, false);
-    array<string> nfn= logical_font (pfn[0], pfn[1]);
-    //cout << "nfn= " << nfn << "\n";
-    family= get_family (nfn);
-    fn_class= get_variant (nfn);
-    series= get_series (nfn);
-    shape= get_shape (nfn);
-    //cout << "f= " << family << ", " << fn_class
-    //     << ", " << series << ", " << shape << "\n";
-    s= family * "-" * fn_class * "-" *
-       series * "-" * shape * "-" *
-       as_string (sz) * "-" * as_string (dpi);
-    if (font::instances->contains (s)) return font (s);
+  if (closest && find_closest (family, fn_class, series, shape)) {
+    font fn= find_font (family, fn_class, series, shape, sz, dpi, false);
+    font::instances (s)= (pointer) fn.rep;
+    return fn;
   }
 
   tree t1 (TUPLE, 6);
