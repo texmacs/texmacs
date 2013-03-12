@@ -305,6 +305,7 @@ guessed_features (string family, string style) {
   string fillp  = find_value (a, "fillp");
   string lasprat= find_value (a, "lasprat");
   string pasprat= find_value (a, "pasprat");
+  string lvw    = find_value (a, "lvw");
   
   bool oblique  = (slant != "" && slant != "0");
   bool italic   = oblique && contains (string ("italic=yes"), a);
@@ -329,7 +330,7 @@ guessed_features (string family, string style) {
     else delta += ecart / 4;
     vf += delta;
     fp += delta;
-    cout << family << ", " << style << " -> " << delta << "\n";
+    // cout << family << ", " << style << " -> " << delta << "\n";
     // end adjustments
 
     if (vf > 60) r << string ("black");
@@ -339,12 +340,21 @@ guessed_features (string family, string style) {
     else if (vf < 20 && fp < 30) r << string ("light");
   }
 
-  string em= find_value (a, "em");
-  if (em != "") {
-    int m= as_int (em);
-    //if (vcnt != "") m -= as_int (vcnt);
-    if (m < 150) r << string ("condensed");
-    else if (m > 250) r << string ("wide");
+  if (lasprat != "" && pasprat != "" && lvw != "") {
+    int lrat= as_int (lasprat);
+    int prat= as_int (pasprat);
+    int rat = (4*lrat + prat + 2) / 5;
+    if (mono) rat= (lrat + prat) / 2;
+
+    // begin adjustments
+    int w= as_int (lvw);
+    w= min (w, 40);
+    rat -= w/2;
+    // cout << family << ", " << style << " -> " << (w/2) << "\n";
+    // end adjustments
+
+    if (rat < 75) r << string ("condensed");
+    else if (rat > 120) r << string ("wide");
   }
 
   if (italic) r << string ("italic");
@@ -607,10 +617,10 @@ void
 search_font_among (array<string> v, array<string> fams,
                    int& best_distance, array<string>& best_result,
                    bool strict) {
-  if (N(fams) < 20)
-    cout << "  Search among " << fams << ", " << strict << "\n";
-  else
-    cout << "  Search among many " << strict << "\n";
+  //if (N(fams) < 20)
+  //  cout << "  Search among " << fams << ", " << strict << "\n";
+  //else
+  //  cout << "  Search among many " << strict << "\n";
   if (!strict) v= remove_other (v);
   best_distance= D_INFINITY;
   best_result= array<string> (v[0], string ("Unknown"));
@@ -622,14 +632,14 @@ search_font_among (array<string> v, array<string> fams,
       if (!strict) w= remove_other (w);
       if (!strict) x= remove_other (x);
       int d= distance (v, w, x);
-      cout << "  " << w << ", " << x << " -> " << d << "\n";
+      //cout << "  " << w << ", " << x << " -> " << d << "\n";
       if (d < best_distance) {
         best_distance= d;
         best_result= array<string> (fams[i], stys[j]);
       }
     }
   }
-  cout << "  Best result: " << best_result << ", " << best_distance << "\n";
+  //cout << "  Best result: " << best_result << ", " << best_distance << "\n";
 }
 
 array<string>
@@ -637,7 +647,7 @@ search_font (array<string> v, bool require_exact) {
   if (N(v) == 0)
     return array<string> (string ("TeXmacs Computer Modern"),
                           string ("Unknown"));
-  cout << "Searching " << v << "\n";
+  //cout << "Searching " << v << "\n";
   int best_distance;
   array<string> best_result;
   array<string> fams= master_to_families (v[0]);
@@ -664,7 +674,7 @@ search_font (array<string> v, bool require_exact) {
       search_font_among (v, fams, best_distance, best_result, true);
     }
   }
-  cout << "Found " << best_result << ", " << best_distance << "\n";
+  //cout << "Found " << best_result << ", " << best_distance << "\n";
   return best_result;
 }
 
