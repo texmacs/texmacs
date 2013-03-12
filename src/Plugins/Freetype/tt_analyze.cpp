@@ -225,25 +225,35 @@ analyze_major (font fn, font_metric fnm, array<string>& r) {
 
     int cnt= 0;
     int totlw= 0;
-    int totw= 0;
     double fill= 0.0;
-    for (int i= 0x42; i<=0x7a; i++)
+    for (int i= 0x41; i<=0x7a; i++)
       if (i <= 0x5a || i >= 0x61) {
         string s; s << ((char) i);
         glyph g= fn->get_glyph (s);
         if (!is_nil (g)) {
           cnt += pixel_count (g);
           totlw += g->lwidth;
-          totw += g->width;
           fill += fill_rate (g);
         }
       }
     int fillp= (int) (100.0 * (fill / 52.0));
     int vcnt= cnt / max (totlw, 1);
-    int asprat= (100 * totw) / (52 * ex);
     r << (string ("fillp=") * as_string (fillp));
     r << (string ("vcnt=") * as_string (vcnt));
-    r << (string ("asprat=") * as_string (asprat));
+
+    int lo_lw= 0;
+    int lo_pw= 0;
+    for (int i= 0x61; i<=0x7a; i++) {
+      metric_struct* c= fnm->get (i);
+      lo_lw += (c->x2 / 256);
+      string s; s << ((char) i);
+      glyph g= fn->get_glyph (s);
+      if (!is_nil (g)) lo_pw += g->width;
+    }
+    int lasprat= (100 * lo_lw) / (26 * ex);
+    int pasprat= (100 * lo_pw) / (26 * ex);
+    r << (string ("lasprat=") * as_string (lasprat));
+    r << (string ("pasprat=") * as_string (pasprat));
 
     //int irreg= irregularity (fnm);
     //r << (string ("irreg=") * as_string (irreg));

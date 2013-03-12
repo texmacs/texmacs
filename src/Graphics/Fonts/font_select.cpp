@@ -269,18 +269,60 @@ find_value (array<string> a, string s) {
   return "";
 }
 
+static int
+abs_int (int i) {
+  return max (i, -i);
+}
+
 array<string>
 guessed_features (string family, string style) {
+  array<string> r;
   array<string> a= font_database_characteristics (family, style);
   //cout << "a= " << a << "\n";
-  array<string> r;
 
-  string vcnt= find_value (a, "vcnt");
-  if (vcnt != "") {
+  string slant  = find_value (a, "slant");
+  string vcnt   = find_value (a, "vcnt");
+  string fillp  = find_value (a, "fillp");
+  string lasprat= find_value (a, "lasprat");
+  string pasprat= find_value (a, "pasprat");
+  
+  bool slanted  = (slant != "" && slant != "0");
+  bool italic   = slanted && contains (string ("italic=yes"), a);
+  bool smallcaps= contains (string ("case=smallcaps"), a);
+  bool mono     = contains (string ("mono=yes"), a);
+  bool sans     = contains (string ("sans=yes"), a);
+  bool regular  = contains (string ("regular=no"), a);
+
+  if (italic) r << string ("italic");
+  else if (slanted) r << string ("oblique");
+  if (smallcaps) r << string ("smallcaps");
+  if (mono) r << string ("mono");
+  if (sans) r << string ("sansserif");
+  if (regular) r << string ("pen");
+
+  if (vcnt != "" && fillp != "") {
     int vf= as_int (vcnt);
+    int fp= as_int (fillp);
+
+    // begin adjustments
+    int delta= 0;
+    if (slanted) delta += min (abs_int (as_int (slant)), 50) / 4;
+    int asprat= 110;
+    if (lasprat != "") asprat= as_int (lasprat);
+    if (pasprat != "" && mono) asprat= as_int (pasprat);
+    int ecart= asprat - 110;
+    ecart= max (min (ecart, 80), -40);
+    if (ecart > 0) delta += ecart / 8;
+    else delta += ecart / 4;
+    vf += delta;
+    fp += delta;
+    cout << family << ", " << style << " -> " << delta << "\n";
+    // end adjustments
+
     if (vf > 60) r << string ("black");
-    else if (vf > 40) r << string ("bold");
-    else if (vf < 20) r << string ("light");
+    else if (vf > 45) r << string ("bold");
+    else if (vf > 40 && fp > 40) r << string ("bold");
+    else if (vf < 20 && fp < 30) r << string ("light");
     else if (vf < 10) r << string ("thin");
   }
 
@@ -292,31 +334,6 @@ guessed_features (string family, string style) {
     else if (m > 250) r << string ("extended");
   }
 
-  /*
-  string asprat= find_value (a, "asprat");
-  if (asprat != "") {
-    int rat= as_int (asprat);
-    //if (vcnt != "") rat -= as_int (vcnt);
-    if (rat < 90) r << string ("condensed");
-    else if (rat > 150) r << string ("extended");
-  }
-  */
-
-  string sl= find_value (a, "slant");
-  bool slanted= (sl != "" && sl != "0");
-  if (contains (string ("italic=yes"), a) && slanted)
-    r << string ("italic");
-  else if (slanted)
-    r << string ("oblique");
-
-  if (contains (string ("case=smallcaps"), a))
-    r << string ("smallcaps");
-  if (contains (string ("mono=yes"), a))
-    r << string ("mono");
-  if (contains (string ("sans=yes"), a))
-    r << string ("sansserif");
-  if (contains (string ("regular=no"), a))
-    r << string ("pen");
   return r;
 }
 
