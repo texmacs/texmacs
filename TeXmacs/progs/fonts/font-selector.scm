@@ -42,8 +42,8 @@
   (:argument hexa-start "First unicode character in hexadecimal")
   (:argument hexa-end "Last unicode character in hexadecimal")
   (set! sample-text
-        (build-font-table (hexadecimal->integer hexa-start)
-                          (hexadecimal->integer hexa-end)))
+        (build-character-table (hexadecimal->integer hexa-start)
+                               (hexadecimal->integer hexa-end)))
   (set! sample-size "500px"))
 
 (define (set-font-sample-kind kind)
@@ -253,7 +253,7 @@
       ;;(item ====== ======)
       (item (text "Weight:")
         (enum (selector-search-set! selector-search-weight answer)
-              '("Any" "Light" "Medium" "Bold" "Black")
+              '("Any" "Thin" "Light" "Medium" "Bold" "Black")
               selector-search-weight "120px"))
       (item (text "Slant:")
         (enum (selector-search-set! selector-search-slant answer)
@@ -261,7 +261,7 @@
               selector-search-slant "120px"))
       (item (text "Stretch:")
         (enum (selector-search-set! selector-search-weight answer)
-              '("Any" "Condensed" "Unstretched" "Wide")
+              '("Any" "Condensed" "Unextended" "Wide")
               selector-search-weight "120px"))
       (item (text "Case:")
         (enum (selector-search-set! selector-search-case answer)
