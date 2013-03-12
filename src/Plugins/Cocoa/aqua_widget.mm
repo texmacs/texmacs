@@ -1021,7 +1021,7 @@ simple_widget_rep::write (slot s, blackbox index, widget w) {
 #pragma mark Widget interface
 
 
-widget plain_window_widget (widget w, string s) 
+widget plain_window_widget (widget w, string s, command c)
 // creates a decorated window with name s and contents w
 {
   return concrete(w)->plain_window_widget(s);
@@ -1108,3 +1108,58 @@ wait_widget (SI width, SI height, string message) {
   (void) width; (void) height; (void) message;
   return widget(); 
 }
+
+
+
+/******************************************************************************
+ * TeXmacs interface for the creation of widgets.
+ * See Graphics/Gui/widget.hpp for comments.
+ ******************************************************************************/
+
+//widget horizontal_menu (array<widget> arr) { return widget(); }
+//widget vertical_menu (array<widget> arr) { return widget(); }
+//widget horizontal_list (array<widget> arr) { return widget(); }
+//widget vertical_list (array<widget> arr)  { return widget(); }
+widget aligned_widget (array<widget> lhs, array<widget> rhs, SI hsep, SI vsep, SI lpad, SI rpad)  { return widget(); }
+widget tabs_widget (array<widget> tabs, array<widget> bodies)  { return widget(); }
+widget icon_tabs_widget (array<url> us, array<widget> ts, array<widget> bs)  { return widget(); }
+widget wrapped_widget (widget w, command cmd) { return widget(); }
+//widget tile_menu (array<widget> a, int cols)  { return widget(); }
+//widget minibar_menu (array<widget> arr)  { return widget(); }
+//widget menu_separator (bool vertical)  { return widget(); }
+//widget menu_group (string name, int style)  { return widget(); }
+//widget pulldown_button (widget w, promise<widget> pw)  { return widget(); }
+//widget pullright_button (widget w, promise<widget> pw)  { return widget(); }
+//widget menu_button (widget w, command cmd, string pre, string ks, int style)  { return widget(); }
+//widget balloon_widget (widget w, widget help)  { return widget(); }
+//widget text_widget (string s, int style, color col, bool tsp)  { return widget(); }
+//widget xpm_widget (url file_name)  { return widget(); }
+widget toggle_widget (command cmd, bool on, int style)  { return widget(); }
+widget enum_widget (command cmd, array<string> vals, string val, int style, string width)  { return widget(); }
+widget choice_widget (command cmd, array<string> vals, array<string> chosen) { return widget(); }
+widget choice_widget (command cmd, array<string> vals, string cur) { return widget(); }
+widget choice_widget (command cmd, array<string> vals, string cur, string filter)  { return widget(); }
+widget user_canvas_widget (widget wid, int style)  { return widget(); }
+widget resize_widget (widget w, int style, string w1, string h1,
+                      string w2, string h2, string w3, string h3)  { return widget(); }
+widget hsplit_widget (widget l, widget r)  { return widget(); }
+widget vsplit_widget (widget t, widget b)  { return widget(); }
+widget refresh_widget (string tmwid, string kind)  { return widget(); }
+//widget glue_widget (bool hx, bool vx, SI w, SI h)  { return widget(); }
+//widget glue_widget (tree col, bool hx, bool vx, SI w, SI h)  { return widget(); }
+//widget inputs_list_widget (command call_back, array<string> prompts)  { return widget(); }
+//widget input_text_widget (command call_back, string type, array<string> def,
+//                          int style, string width)  { return widget(); }
+//widget color_picker_widget (command call_back, bool bg, array<tree> proposals)  { return widget(); }
+//widget file_chooser_widget (command cmd, string type, bool save)  { return widget(); }
+//widget printer_widget (command cmd, url ps_pdf_file)  { return widget(); }
+//widget texmacs_widget (int mask, command quit)  { return widget(); }
+widget ink_widget (command cb)  { return widget(); }
+
+//// Widgets which are not strictly required by TeXmacs have void implementations
+
+//widget empty_widget () { NOT_IMPLEMENTED; return widget(); }
+//widget extend (widget w, array<widget> a) { (void) a; return w; }
+//widget wait_widget (SI width, SI height, string message) {
+//  (void) width; (void) height; (void) message; return widget();
+//}

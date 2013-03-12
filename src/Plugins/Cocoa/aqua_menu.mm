@@ -162,7 +162,7 @@ public:
 
 
 
-@interface TMLazyMenu : NSMenu
+@interface TMLazyMenu : NSMenu <NSMenuDelegate>
 {
 	promise_rep<widget> *pm;
 	BOOL forced;
