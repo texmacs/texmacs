@@ -553,16 +553,11 @@ distance (array<string> v1, array<string> v2, array<string> v3) {
 * Compute a best possible approximation for font
 ******************************************************************************/
 
-array<string>
-search_font (array<string> v, bool require_exact) {
-  if (N(v) == 0)
-    return array<string> (string ("TeXmacs Computer Modern"),
-                          string ("Unknown"));
-  int best_distance= D_INFINITY;
-  array<string> best_result (v[0], string ("Unknown"));
-  array<string> fams= master_to_families (v[0]);
-  if (!require_exact && N(v) > 1) fams= font_database_families ();
-  //cout << "Searching " << v << "\n";
+void
+search_font_among (array<string> v, array<string> fams,
+                   int& best_distance, array<string>& best_result) {
+  best_distance= D_INFINITY;
+  best_result= array<string> (v[0], string ("Unknown"));
   for (int i=0; i<N(fams); i++) {
     array<string> stys= font_database_styles (fams[i]);
     for (int j=0; j<N(stys); j++) {
@@ -576,6 +571,19 @@ search_font (array<string> v, bool require_exact) {
       }
     }
   }
+}
+
+array<string>
+search_font (array<string> v, bool require_exact) {
+  if (N(v) == 0)
+    return array<string> (string ("TeXmacs Computer Modern"),
+                          string ("Unknown"));
+  //cout << "Searching " << v << "\n";
+  int best_distance;
+  array<string> best_result;
+  array<string> fams= master_to_families (v[0]);
+  if (!require_exact && N(v) > 1) fams= font_database_families ();
+  search_font_among (v, fams, best_distance, best_result);
   if (best_distance > 0 && require_exact) {
     string s;
     for (int i=1; i<N(v); i++) {
@@ -583,7 +591,6 @@ search_font (array<string> v, bool require_exact) {
       s << encode_feature (v[i]);
     }
     best_result[1]= s;
-    //best_result[1]= string ("Unknown");
   }
   //cout << "Found " << best_result << "\n";
   return best_result;
