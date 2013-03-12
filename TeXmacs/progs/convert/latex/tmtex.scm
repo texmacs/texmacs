@@ -1176,41 +1176,41 @@
 (define (tmtex-doc-title t)
   `(title ,(tmtex (cadr t))))
 
-(define (tmtex-doc-subtitle t)
+(tm-define (tmtex-doc-subtitle t)
   (set! t (tmtex-remove-line-feeds t))
   `(tmsubtitle ,(tmtex (cadr t))))
 
-(define (tmtex-doc-note t)
+(tm-define (tmtex-doc-note t)
   (set! t (tmtex-remove-line-feeds t))
   `(tmnote ,(tmtex (cadr t))))
 
-(define (tmtex-doc-misc t)
+(tm-define (tmtex-doc-misc t)
   (set! t (tmtex-remove-line-feeds t))
   `(tmmisc ,(tmtex (cadr t))))
 
-(define (tmtex-doc-date t)
+(tm-define (tmtex-doc-date t)
   `(date ,(tmtex (cadr t))))
 
 (define (tmtex-author-name t)
   `(author ,(tmtex (cadr t))))
 
-(define (tmtex-author-affiliation t)
+(tm-define (tmtex-author-affiliation t)
   (set! t (tmtex-remove-line-feeds t))
   `(tmaffiliation ,(tmtex (cadr t))))
 
-(define (tmtex-author-email t)
+(tm-define (tmtex-author-email t)
   (set! t (tmtex-remove-line-feeds t))
   `(tmemail ,(tmtex (cadr t))))
 
-(define (tmtex-author-homepage t)
+(tm-define (tmtex-author-homepage t)
   (set! t (tmtex-remove-line-feeds t))
   `(tmhomepage ,(tmtex (cadr t))))
 
-(define (tmtex-author-note t)
+(tm-define (tmtex-author-note t)
   (set! t (tmtex-remove-line-feeds t))
   `(tmnote ,(tmtex (cadr t))))
 
-(define (tmtex-author-misc t)
+(tm-define (tmtex-author-misc t)
   (set! t (tmtex-remove-line-feeds t))
   `(tmmisc ,(tmtex (cadr t))))
 
@@ -1228,7 +1228,7 @@
       (if (!= r 'document) `(,r ,@s)
         `(concat ,@(list-intersperse s '(next-line)))))))
 
-(define (tmtex-make-author names affiliations emails urls miscs notes)
+(tm-define (tmtex-make-author names affiliations emails urls miscs notes)
   (with names `(!concat ,@(list-intersperse names '(tmSep)))
         `(author (!paragraph ,names
                              ,@affiliations
@@ -1257,14 +1257,21 @@
                                                 'author-name datas)))))
       (tmtex-make-author names affiliations emails urls miscs notes))))
 
-(define (tmtex-append-authors l)
+(tm-define (tmtex-append-authors l)
   (if (< (length l) 2) l
     (with lf '(!concat (!linefeed) (and) (!linefeed))
           `((author (!concat ,@(list-intersperse (map cadr l) lf)))))))
 
 (define (tmtex-make-title titles subtitles notes miscs)
-  (with titles `(!concat ,@(list-intersperse titles '(tmSep)))
+  (with titles `(!concat ,@(list-intersperse (map cadr titles) '(tmSep)))
         `(title (!paragraph ,titles ,@subtitles ,@notes ,@miscs))))
+
+(tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes)
+  `(!document
+     ,(tmtex-make-title titles subtitles notes miscs)
+     ,@(tmtex-append-authors authors)
+     ,@dates
+     (maketitle)))
 
 (tm-define (tmtex-doc-data s l)
   (set! l (map tmtex-replace-documents l))
@@ -1278,13 +1285,9 @@
                          (tmtex-select-args-by-func 'doc-date l)))
          (authors   (map tmtex-doc-author
                          (tmtex-select-args-by-func 'doc-author l)))
-         (titles    (map tmtex
-                         (map cadr (tmtex-select-args-by-func 'doc-title l)))))
-    `(!document
-        ,(tmtex-make-title titles subtitles notes miscs)
-        ,@(tmtex-append-authors authors)
-        ,@dates
-        (maketitle))))
+         (titles    (map tmtex-doc-title
+                         (tmtex-select-args-by-func 'doc-title l))))
+    (tmtex-make-doc-data titles subtitles authors dates miscs notes)))
 
 (tm-define (tmtex-abstract s l)
   (tmtex-std-env "abstract" l))
