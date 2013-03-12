@@ -28,7 +28,7 @@
 
 (tm-define (tmtex-make-author names affiliations emails urls miscs notes)
   (:mode acm-style?)
-  (with names `(!concat ,@(list-intersperse names '(tmSep)))
+  (with names `(!concat ,@(list-intersperse (map cadr names) '(tmSep)))
         `(author (!concat ,names
                           ,@urls
                           ,@notes

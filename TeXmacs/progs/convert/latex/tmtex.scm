@@ -1197,7 +1197,7 @@
 (tm-define (tmtex-doc-date t)
   `(date ,(tmtex (cadr t))))
 
-(define (tmtex-author-name t)
+(tm-define (tmtex-author-name t)
   `(author ,(tmtex (cadr t))))
 
 (tm-define (tmtex-author-affiliation t)
@@ -1235,7 +1235,7 @@
         `(concat ,@(list-intersperse s '(next-line)))))))
 
 (tm-define (tmtex-make-author names affiliations emails urls miscs notes)
-  (with names `(!concat ,@(list-intersperse names '(tmSep)))
+  (with names `(!concat ,@(list-intersperse (map cadr names) '(tmSep)))
         `(author (!paragraph ,names
                              ,@affiliations
                              ,@emails
@@ -1259,8 +1259,9 @@
            (affiliations (map tmtex-author-affiliation
                               (tmtex-select-args-by-func
                                 'author-affiliation datas)))
-           (names        (map tmtex (map cadr (tmtex-select-args-by-func
-                                                'author-name datas)))))
+           (names        (map tmtex-author-name
+                              (tmtex-select-args-by-func
+                                'author-name datas))))
       (tmtex-make-author names affiliations emails urls miscs notes))))
 
 (tm-define (tmtex-append-authors l)
