@@ -1257,6 +1257,11 @@
                                                 'author-name datas)))))
       (tmtex-make-author names affiliations emails urls miscs notes))))
 
+(define (tmtex-append-authors l)
+  (if (< (length l) 2) l
+    (with lf '(!concat (!linefeed) (and) (!linefeed))
+          `((author (!concat ,@(list-intersperse (map cadr l) lf)))))))
+
 (define (tmtex-make-title titles subtitles notes miscs)
   (with titles `(!concat ,@(list-intersperse titles '(tmSep)))
         `(title (!paragraph ,titles ,@subtitles ,@notes ,@miscs))))
@@ -1277,7 +1282,7 @@
                          (map cadr (tmtex-select-args-by-func 'doc-title l)))))
     `(!document
         ,(tmtex-make-title titles subtitles notes miscs)
-        ,@authors
+        ,@(tmtex-append-authors authors)
         ,@dates
         (maketitle))))
 
