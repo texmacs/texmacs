@@ -540,9 +540,8 @@ aqua_renderer_rep::xpm_image(url file_name)
 void aqua_renderer_rep::xpm (url file_name, SI x, SI y) {
   y -= pixel; // counter balance shift in draw_clipped
   
- // char *chstr = as_charp(as_string(file_name));
+ // c_string chstr (as_string (file_name));
 //  NSString *name = [NSString stringWithCString:chstr];
- // delete [] chstr;
 //  name = [[name stringByDeletingPathExtension] stringByAppendingPathExtension:@"png"];
   ///name = [name stringByDeletingPathExtension];
   NSImage *image = xpm_image(file_name);

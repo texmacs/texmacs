@@ -56,7 +56,7 @@ QTMPipeLink::launchCmd () {
 
 int
 QTMPipeLink::writeStdin (string s) {
-  c_string _s= as_charp (s);
+  c_string _s (s);
   if (DEBUG_IO) cout << "[INPUT]" << debug_io_string ((char*)_s);
   int err= QIODevice::write (_s, N(s));
   return err;

@@ -81,9 +81,8 @@ tm_ostream::open () {
 bool
 tm_ostream::open (url u) {
   if (file) fclose (file);
-  char* _u= as_charp (concretize (u));
+  c_string _u (concretize (u));
   file= fopen (_u, "w");
-  tm_delete_array (_u);
   if (file) is_w= true;
   else is_w= false;
   return is_w;

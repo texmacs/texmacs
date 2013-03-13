@@ -59,6 +59,7 @@ int      hash (string s);
 bool   as_bool   (string s);
 int    as_int    (string s);
 double as_double (string s);
+char*  as_charp  (string s);
 string as_string_bool (bool f);
 string as_string (int i);
 string as_string (unsigned int i);
@@ -88,45 +89,33 @@ void  system_error (string message, string argument= "", int level= 0);
 * C-style strings with automatic memory management
 ******************************************************************************/
 
-// c_string provides automatic memory management for C-style strings
-// it is implemented with the standard reference counting mechanism
-
-// we provide automatic casting to char* for convenience
-// this imposes not to provide a public constructor from char*,
-// otherwise bugs can appear since a sequence of conversions like
-// c_string -> char* -> c_string results into two C strings pointing
-// to the same memory area, which will then be deallocated twice.
-// managing an area has to be explicitly required via manage()
-
-// release is the inverse of manage.
-
 class c_string;
 class c_string_rep: concrete_struct {
   char* value;
   
 private:
-  c_string_rep (c_string_rep &): concrete_struct () {}; // disable copy constructor
-  c_string_rep& operator=(c_string_rep&) {}; // disable assignment
+  inline c_string_rep (c_string_rep &): concrete_struct () {};
+    // disable copy constructor
+  inline c_string_rep& operator=(c_string_rep&) {};
+    // disable assignment
   
 public:
-  c_string_rep (char* v = NULL): value (v) {}
-  ~c_string_rep () { if (value) tm_delete_array (value); }
+  inline c_string_rep (char* v = NULL): value (v) {}
+  inline ~c_string_rep () { if (value != NULL) tm_delete_array (value); }
   friend class c_string;
 };
 
 class c_string {
   CONCRETE(c_string);
-protected:
-  c_string (char* v): rep (tm_new<c_string_rep> (v)) {}
 public:
-  c_string (): rep (tm_new<c_string_rep> ()) {}
-  operator char* () const { return rep->value; }
-  char* release() { char *ptr= rep->value; rep->value= NULL; return ptr; }
-  friend c_string manage (char* value);
+  inline c_string ():
+    rep (tm_new<c_string_rep> ()) {}
+  inline c_string (int len):
+    rep (tm_new<c_string_rep> (tm_new_array<char> (len))) {}
+  inline c_string (string s):
+    rep (tm_new<c_string_rep> (as_charp (s))) {}
+  inline operator char* () const { return rep->value; }
 };
 CONCRETE_CODE(c_string);
-
-inline c_string manage (char* value) { return c_string (value); }
-c_string as_charp (string s);
 
 #endif // defined STRING_H

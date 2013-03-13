@@ -65,7 +65,7 @@ load_string (url u, string& s, bool fatal) {
     // End caching
 
     bench_start ("load file");
-    c_string _name= as_charp (name);
+    c_string _name (name);
     // cout << "OPEN :" << _name << LF;
 #if defined (OS_WIN32)
     FILE* fin= _fopen (_name, "rb");
@@ -132,7 +132,7 @@ save_string (url u, string s, bool fatal) {
   if (!err) {
     string name= concretize (r);
     {
-      c_string _name= as_charp (name);
+      c_string _name (name);
 #if defined (OS_WIN32)
       FILE* fout= _fopen (_name, "wb");
 #elif defined (__MINGW__) || defined (__MINGW32__)
@@ -205,14 +205,12 @@ get_attributes (url name, struct stat* buf,
 
   bench_start ("stat");
   bool flag;
-  {
-  c_string temp= as_charp (name_s);
+  c_string temp (name_s);
 #ifdef OS_WIN32
   flag= _stat (temp, buf);
 #else
   flag= stat (temp, buf);
 #endif
-  }
   (void) link_flag;
   // FIXME: configure should test whether lstat works
   // flag= (link_flag? lstat (temp, buf): stat (temp, buf));
@@ -446,10 +444,8 @@ read_directory (url u, bool& error_flag) {
   // End caching
 
   DIR* dp;
-  {
-    c_string temp= as_charp (name);
-    dp= opendir (temp);
-  }
+  c_string temp (name);
+  dp= opendir (temp);
   error_flag= (dp==NULL);
   if (error_flag) return array<string> ();
 
@@ -555,8 +551,8 @@ search_score (url u, array<string> a) {
 
 void
 move (url u1, url u2) {
-  c_string _u1= as_charp (concretize (u1));
-  c_string _u2= as_charp (concretize (u2));
+  c_string _u1 (concretize (u1));
+  c_string _u2 (concretize (u2));
   (void) rename (_u1, _u2);
 }
 
@@ -576,7 +572,7 @@ remove (url u) {
     remove (u[2]);
   }
   else {
-    c_string _u= as_charp (concretize (u));
+    c_string _u (concretize (u));
     (void) ::remove (_u);
   }
 }
@@ -586,7 +582,7 @@ mkdir (url u) {
 #if defined (HAVE_SYS_TYPES_H) && defined (HAVE_SYS_STAT_H)
   if (exists (u)) return;
   {
-    c_string _u= as_charp (concretize (u));
+    c_string _u (concretize (u));
 #if defined(__MINGW__) || defined(__MINGW32__)
     (void) ::mkdir (_u);
 #else
@@ -605,10 +601,8 @@ mkdir (url u) {
 void
 change_mode (url u, int mode) {
 #if defined (HAVE_SYS_TYPES_H) && defined (HAVE_SYS_STAT_H)
-  {
-    c_string _u= as_charp (concretize (u));
-    (void) ::chmod (_u, mode);
-  }
+  c_string _u (concretize (u));
+  (void) ::chmod (_u, mode);
 #else
   string m0= as_string ((mode >> 9) & 7);
   string m1= as_string ((mode >> 6) & 7);
@@ -621,11 +615,9 @@ change_mode (url u, int mode) {
 void
 ps2pdf (url u1, url u2) {
 #ifdef OS_WIN32
-  {
-    c_string _u1= as_charp (concretize (u1));
-    c_string _u2= as_charp (concretize (u2));
-    XPs2Pdf (_u1, _u2);
-  }
+  c_string _u1 (concretize (u1));
+  c_string _u2 (concretize (u2));
+  XPs2Pdf (_u1, _u2);
 #else
 #ifdef MACOSX_EXTENSIONS
   mac_ps_to_pdf (u1, u2);

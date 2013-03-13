@@ -251,7 +251,7 @@ cg_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
     if (suffix (u) == "png") {
       // rendering
       string suu = as_string (u);
-      c_string  buf = as_charp(suu);
+      c_string buf (suu);
       // cout << suu << LF;
       CFURLRef uu =  CFURLCreateFromFileSystemRepresentation(NULL, (UInt8*)buf, N(suu),  false);
       CGImageSourceRef source =  CGImageSourceCreateWithURL ( uu, NULL );
@@ -266,7 +266,7 @@ cg_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
       // system ("convert", u, temp);
       mac_image_to_png (u, temp); 
       string suu = as_string (temp);
-      c_string  buf = as_charp(suu);
+      c_string buf (suu);
       //cout << suu << LF;
       CFURLRef uu =  CFURLCreateFromFileSystemRepresentation(NULL, (UInt8*)buf, N(suu),  false);
       CGImageSourceRef source =  CGImageSourceCreateWithURL ( uu, NULL );
@@ -376,7 +376,7 @@ cg_renderer_rep::native_draw (int ch, font_glyphs fn, SI x, SI y) {
         FSSpec fss;
         ATSFontRef atsFont;
         ATSFontContainerRef container;
-        c_string p = as_charp(vs);
+        c_string p (vs);
         CFStringRef font_filename = CFStringCreateWithCString(NULL,p,kCFStringEncodingASCII);
 					
         if (posixStringToFSSpec(&fss,font_filename,false)) {

@@ -298,7 +298,7 @@ cairo_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
     if (suffix (u) == "png") {
       // rendering
       string suu = as_string (u);
-      c_string  buf = as_charp(suu);
+      c_string buf (suu);
       //cout << suu << LF;
       pm = tm_cairo_image_surface_create_from_png(buf);
     }
@@ -308,7 +308,7 @@ cairo_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
       url temp= url_temp (".png");
       system ("convert", u, temp);
       string suu = as_string (temp);
-      c_string  buf = as_charp(suu);
+      c_string buf (suu);
       //cout << suu << LF;
       pm = tm_cairo_image_surface_create_from_png(buf);
       remove (temp);
@@ -411,7 +411,7 @@ cairo_renderer_rep::native_draw (int ch, font_glyphs fn, SI x, SI y) {
       url u= tt_font_find (root);
       if (suffix (u) == "pfb") {
         //	cout << u << LF;
-        c_string _name= as_charp (concretize (u));
+        c_string _name (concretize (u));
         f = create_font_face_from_file(ft_library,  _name);
         if (tm_cairo_font_face_status(f) == CAIRO_STATUS_SUCCESS) {
           // cout << "Font" << u << " loaded " << LF;
@@ -628,7 +628,7 @@ printer (url ps_file_name, int dpi, int nr_pages,
   int h = (dpi*PIXEL*paper_h)/2.54;
   int w = (dpi*PIXEL*paper_w)/2.54;
   cairo_renderer_rep *ren = tm_new<cairo_renderer_rep> (w,h);
-  c_string buf = as_charp(as_string(ps_file_name));
+  c_string buf (as_string (ps_file_name));
   cairo_surface_t* surface =
     tm_cairo_ps_surface_create(buf, paper_w/2.54*72.0, paper_h/2.54*72.0);
   cairo_t *context = tm_cairo_create (surface);

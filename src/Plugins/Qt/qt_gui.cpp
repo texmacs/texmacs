@@ -226,7 +226,7 @@ qt_gui_rep::set_selection (string key, tree t,
   else return true;
   cb->clear (mode);
 
-  c_string selection= as_charp (s);
+  c_string selection (s);
   cb->setText (QString::fromAscii(selection), mode);
   QMimeData *md= new QMimeData;
 
@@ -239,11 +239,11 @@ qt_gui_rep::set_selection (string key, tree t,
       md->setData ("application/x-texmacs-pid", pid_str.toAscii());
 
       (void) sh;
-      //selection= as_charp (sh);
+      //selection= c_string (sh);
       //md->setHtml (selection);
       //tm_delete_array(selection);
 
-      selection= as_charp (sv);
+      selection= c_string (sv);
     }
 
     if (get_preference ("texmacs->verbatim:encoding") == "utf-8")
@@ -1112,7 +1112,7 @@ qt_gui_rep::put_graphics_on_clipboard (url file) {
   if ((extension == "bmp") || (extension == "png") ||
       (extension == "jpg") || (extension == "jpeg")) {
     QClipboard *clipboard = QApplication::clipboard();
-    c_string tmp = as_charp (concretize (file));
+    c_string tmp (concretize (file));
     clipboard->setImage (QImage (tmp));
   }
   else {
@@ -1127,7 +1127,7 @@ qt_gui_rep::put_graphics_on_clipboard (url file) {
     string filecontent;
     load_string (as_string (file), filecontent, true);
     
-    c_string tmp = as_charp (filecontent);
+    c_string tmp (filecontent);
     QByteArray rawdata (tmp);
 
     QMimeData *mymimeData = new QMimeData;

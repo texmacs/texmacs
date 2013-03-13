@@ -96,8 +96,8 @@ get_from_web (url name) {
     urlString = "http://" * urlString;
   urlString= web_encode (urlString);
 
-  c_string urlPath      = as_charp (urlString);
-  c_string tempFilePath = as_charp (as_string (tmp));
+  c_string urlPath (urlString);
+  c_string tempFilePath (as_string (tmp));
 
   if(!URL_Get(urlPath, tempFilePath))
     return url_none();

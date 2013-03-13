@@ -413,8 +413,8 @@ public:
 iconv_converter::iconv_converter (string from2, string to2, bool errors):
   from (from2), to (to2), show_errors (errors), successful (false)
 {
-  c_string from_cp= as_charp (from);
-  c_string to_cp= as_charp (to);
+  c_string from_cp (from);
+  c_string to_cp   (to);
   cd= iconv_open (to_cp, from_cp);
   if (!is_valid() && show_errors)
     system_error ("Initialization of iconv from " * from *
@@ -442,14 +442,14 @@ string apply (iconv_converter &conv, string input) {
     return "";
   }
   string result;
-  c_string in_cp= as_charp(input);
+  c_string in_cp (input);
   char* in_cursor= in_cp;
   size_t in_left= N(input);
   double expansion= 1.1;
   size_t out_counter= 0;
   while (in_left > 0) {
-    size_t out_left= max(int(in_left * expansion), 1024);
-    c_string out_cp= manage (tm_new_array<char> (out_left));
+    size_t out_left= max (int (in_left * expansion), 1024);
+    c_string out_cp (out_left);
     char* out_cursor= out_cp;
     size_t r = iconv_adaptor(iconv, conv.cd,
 			     &in_cursor, &in_left, &out_cursor, &out_left);
@@ -464,7 +464,7 @@ string apply (iconv_converter &conv, string input) {
     size_t used_out= out_cursor - out_cp;
     result << string(out_cp, used_out);
     out_counter += used_out;
-    expansion= max((double) out_counter / (in_cursor - in_cp), 1.0) + 0.1;
+    expansion= max ((double) out_counter / (in_cursor - in_cp), 1.0) + 0.1;
   }
   conv.successful= true;
   return result;

@@ -303,7 +303,7 @@ x_window_rep::set_size_limits (SI min_w, SI min_h, SI max_w, SI max_h) {
 
 void
 x_window_rep::set_name (string name) {
-  c_string s= as_charp (name);
+  c_string s (name);
   XStoreName (dpy, win, s);
   XSetIconName (dpy, win, s);
   the_name= name;
@@ -350,7 +350,7 @@ x_window_rep::set_full_screen (bool flag) {
     nr_windows--;
     XDestroyWindow (dpy, win);
     //FIXME: is this 'as_charp' a possible memory leak?
-    name= as_charp (old_name).release();
+    name= as_charp (old_name);
     win_x= save_x; win_y= save_y;
     win_w= save_w; win_h= save_h;
     initialize ();
@@ -591,7 +591,7 @@ window
 plain_window (widget w, string name, SI min_w, SI min_h,
 	      SI def_w, SI def_h, SI max_w, SI max_h)
 {
-  c_string _name= as_charp (name);
+  c_string _name (name);
   window win= tm_new<x_window_rep> (w, the_gui, _name,
 				    min_w, min_h, def_w, def_h, max_w, max_h);
   return win;

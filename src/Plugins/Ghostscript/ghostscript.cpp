@@ -111,7 +111,7 @@ ghostscript_run (Display* dpy, Window gs_win, Pixmap pm,
     as_string (dpi_x) * " " * as_string (dpi_y) * " " *
     "0 0 0 0";
   {
-    c_string _data= as_charp (data);
+    c_string _data (data);
     int _n= N(data);
     XChangeProperty (dpy, gs_win, gh, st, 8, PropModeReplace, (unsigned char*)(char*)_data, _n);
   }

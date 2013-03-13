@@ -536,7 +536,7 @@ qt_renderer_rep::xpm_image (url file_name) {
       load_string ("$TEXMACS_PIXMAP_PATH" * file_name, sss, false);
     if (sss == "")
       load_string ("$TEXMACS_PATH/misc/pixmaps/TeXmacs.xpm", sss, true);
-    c_string buf=  as_charp (sss);
+    c_string buf (sss);
     pxm= new QPixmap();
     pxm->loadFromData ((uchar*)(char*)buf, N(sss));
     //out << sss;

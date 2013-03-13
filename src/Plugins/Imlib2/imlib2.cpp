@@ -112,7 +112,7 @@ imlib2_load_image (url u) {
     name= resolve ("$TEXMACS_PIXMAP_PATH/TeXmacs-gnu.xpm");
   Imlib_Image image;
   {
-    c_string _name= as_charp (as_string (name));
+    c_string _name (as_string (name));
     image = IMLIB2_load_image (_name);
   }
   return image;

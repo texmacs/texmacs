@@ -249,7 +249,7 @@ xpm_to_color (string s) {
     return RGBCOLOR(r,g,b);
   }
   {
-    c_string name= as_charp(s);
+    c_string name (s);
     for(int i=0; i<RGBColorsSize; i++) {
       if (strcmp(name,RGBColors[i].name)==0) {
         return RGBCOLOR(RGBColors[i].r,RGBColors[i].g,RGBColors[i].b);

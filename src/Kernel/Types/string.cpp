@@ -229,13 +229,13 @@ as_double (string s) {
   return x;
 }
 
-c_string
+char*
 as_charp (string s) {
   int i, n= N(s);
   char *s2= tm_new_array<char> (n+1);
   for (i=0; i<n; i++) s2[i]=s[i];
   s2[n]= '\0';
-  return manage (s2);
+  return s2;
 }
 
 string

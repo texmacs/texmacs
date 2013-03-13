@@ -97,7 +97,7 @@ socket_link_rep::start () {
   
   // getting host
   
-  c_string _host= as_charp (host);
+  c_string _host (host);
   struct hostent *hp = gethostbyname (_host);
   if (hp == NULL) return "Error: no connection for '" * host * "'";
 

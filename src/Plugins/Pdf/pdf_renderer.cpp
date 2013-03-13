@@ -167,7 +167,7 @@ pdf_renderer_rep::pdf_renderer_rep (
    */
   
   {
-    c_string _pdf_file_name = as_charp (concretize (pdf_file_name));
+    c_string _pdf_file_name (concretize (pdf_file_name));
 
     pdf_open_document(_pdf_file_name, do_encryption,
                     width, height, annot_grow, bookmark_open,
@@ -326,10 +326,10 @@ pdf_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
         url utfm =  resolve_tex(fname * ".tfm") ;
    
         {
-          c_string _rname = as_charp(fname);
-          c_string _u= as_charp (concretize (u));
+          c_string _rname (fname);
+          c_string _u (concretize (u));
           c_string _utfm;
-          if (!is_none(utfm)) _utfm = as_charp (concretize (utfm));
+          if (!is_none (utfm)) _utfm = c_string (concretize (utfm));
           //cout << "DEVFONT " << _rname << " " << fsize << " " << u << " " << utfm << LF;
           int font_id = pdf_dev_physical_font(_rname,fsize*dpi*PIXEL/default_dpi,_u,_utfm);
           if (font_id >= 0) {
@@ -543,7 +543,7 @@ pdf_renderer_rep::image (
     string cmd = "ps2pdf13";
     system(cmd, u, temp);
     cout << temp << LF;
-    c_string _u = as_charp(concretize(temp));
+    c_string _u (concretize (temp));
     
     int form_id = pdf_ximage_findresource(_u, 1, NULL);
     if (form_id < 0) {

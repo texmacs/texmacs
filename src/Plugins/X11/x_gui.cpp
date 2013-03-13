@@ -471,12 +471,10 @@ x_gui_rep::set_mouse_pointer (widget w, string name, string mask_name) {
   array<SI> hotspot= xpm_hotspot (xpm_cache[name]);
   ASSERT (N(hotspot) != 0, "missing hotspot");
   array<string> cnames_mask= xpm_colors (xpm_cache[mask_name]);
-  c_string bgcolor= as_charp (N(cnames_mask)>1 ? cnames_mask[1] :
-					                  string ("white"));
-  c_string fgcolor= as_charp (N(cnames_curs)>1 ? cnames_curs[1] :
-					                  string ("black"));
-  if (!strcmp (bgcolor, "none")) bgcolor= as_charp (string ("white"));
-  if (!strcmp (fgcolor, "none")) fgcolor= as_charp (string ("white"));
+  c_string bgcolor (N(cnames_mask)>1 ? cnames_mask[1]: string ("white"));
+  c_string fgcolor (N(cnames_curs)>1 ? cnames_curs[1]: string ("black"));
+  if (!strcmp (bgcolor, "none")) bgcolor= c_string (string ("white"));
+  if (!strcmp (fgcolor, "none")) fgcolor= c_string (string ("white"));
 
   XColor *bg= NULL, *fg= NULL;
   XColor exact1, closest1;

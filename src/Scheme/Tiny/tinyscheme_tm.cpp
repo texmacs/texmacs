@@ -160,11 +160,10 @@ eval_scheme_file (string file) {
 	//static int cumul= 0;
 	//timer tm;
 	if (DEBUG_STD) cout << "TeXmacs] Evaluating " << file << "...\n";
-	char* _file= as_charp (file);
+	c_string _file (file);
 	FILE *f = fopen(_file, "r");
 	scm result= scm_eval_file (f);
 	fclose(f);
-	tm_delete_array (_file);
 	//int extra= tm->watch (); cumul += extra;
 	//cout << extra << "\t" << cumul << "\t" << file << "\n";
 	return result;
@@ -191,9 +190,8 @@ TeXmacs_eval_string (char *s) {
 scm
 eval_scheme (string s) {
 	// cout << "Eval] " << s << "\n";
-	char* _s= as_charp (s);
+	c_string _s (s);
 	scm result= scm_eval_string (_s);
-	tm_delete_array (_s);
 	return result;
 }
 
@@ -300,9 +298,8 @@ void scm_define_glue(const char *name, scm_foreign_func f)
 
 scm
 string_to_scm (string s) {
-	char* _s= as_charp (s);
+	c_string _s (s);
 	scm r= mk_counted_string (the_scheme,_s, N(s));
-	tm_delete_array (_s);
 	return r;
 }
 
@@ -312,9 +309,8 @@ string_to_scm (string s) {
 
 scm
 symbol_to_scm (string s) {
-	char* _s= as_charp (s);
+	c_string _s (s);
 	scm r= mk_symbol (the_scheme,_s);
-	tm_delete_array (_s);
 	return r;
 }
 

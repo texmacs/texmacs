@@ -274,7 +274,7 @@ x_gui_rep::process_event (x_window win, XEvent* ev) {
 	request_partial_redraw= true;
       //cout << "key   : " << key << "\n";
       //cout << "redraw: " << request_partial_redraw << "\n";
-      if (N(key)>0) win<->key_event (key);
+      if (N(key)>0) win->key_event (key);
       break;
     }
   case SelectionRequest: {
@@ -299,7 +299,7 @@ x_gui_rep::process_event (x_window win, XEvent* ev) {
         sel.property = req.property;
       }
       else if ((req.target==AnyPropertyType) || (req.target==XA_STRING)) {
-        c_string txt= as_charp (selection_s(key));
+        c_string txt (selection_s (key));
         XChangeProperty (dpy, req.requestor, req.property, XA_STRING,
                          8, PropModeReplace,
                          (unsigned char*)(char*) txt,
