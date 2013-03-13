@@ -65,6 +65,7 @@ tree   latex_document_to_tree (string s);
 tree   latex_class_document_to_tree (string s);
 string latex_verbarg_to_string (tree t);
 tree   collect_metadata_acm (tree t);
+tree   collect_metadata_ams (tree t);
 tree   collect_metadata_elsevier (tree t);
 tree   collect_metadata (tree t, tree latex_classe);
 bool   is_metadata (tree u);

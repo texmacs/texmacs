@@ -28,9 +28,13 @@ is_metadata (tree u) {
          is_tuple (u, "\\category*")         ||
          is_tuple (u, "\\classification")    ||
          is_tuple (u, "\\conferenceinfo")    ||
+         is_tuple (u, "\\contrib")           ||
+         is_tuple (u, "\\contrib*")          ||
          is_tuple (u, "\\CopyrightYear")     ||
          is_tuple (u, "\\crdata")            ||
+         is_tuple (u, "\\curaddr")           ||
          is_tuple (u, "\\date")              ||
+         is_tuple (u, "\\dedicatory")        ||
          is_tuple (u, "\\doc-acm")           ||
          is_tuple (u, "\\doc-terms")         ||
          is_tuple (u, "\\email")             ||
@@ -56,6 +60,7 @@ is_metadata (tree u) {
          is_tuple (u, "\\tmsep")             ||
          is_tuple (u, "\\tmSep")             ||
          is_tuple (u, "\\tmsubtitle")        ||
+         is_tuple (u, "\\translator")        ||
          is_tuple (u, "\\urladdr");
 }
 
@@ -248,7 +253,10 @@ collect_metadata (tree t, tree latex_classe) {
     r= collect_metadata_acm (t);
   else if (s == "elsarticle" || s == "elsart")
     r= collect_metadata_elsevier (t);
+  else if (s == "amsart" || s == "amsbook" || s == "amsproc")
+    r= collect_metadata_ams (t);
   else
     r= collect_metadata_latex (t);
-  return filter_spaces (r, spaced);
+  r= filter_spaces (r, spaced);
+  return r;
 }
