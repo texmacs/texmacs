@@ -274,7 +274,7 @@ x_gui_rep::process_event (x_window win, XEvent* ev) {
 	request_partial_redraw= true;
       //cout << "key   : " << key << "\n";
       //cout << "redraw: " << request_partial_redraw << "\n";
-      if (N(key)>0) win->key_event (key);
+      if (N(key)>0) win<->key_event (key);
       break;
     }
   case SelectionRequest: {
@@ -296,16 +296,15 @@ x_gui_rep::process_event (x_window win, XEvent* ev) {
         XChangeProperty (dpy, req.requestor, req.property, XA_ATOM,
                          32, PropModeReplace,
                          (unsigned char*)&targets[0],2);
-        sel.property  = req.property;
+        sel.property = req.property;
       }
       else if ((req.target==AnyPropertyType) || (req.target==XA_STRING)) {
-        char *txt = as_charp (selection_s(key));
+        blob<char> txt= as_charp (selection_s(key));
         XChangeProperty (dpy, req.requestor, req.property, XA_STRING,
                          8, PropModeReplace,
-                         (unsigned char*) txt,
+                         (unsigned char*)(char*) txt,
                          strlen (txt));
-        tm_delete_array (txt);
-        sel.property  = req.property;
+        sel.property = req.property;
       }
       else sel.property = None;
       XSendEvent (dpy, sel.requestor, false, 0, (XEvent*) &sel);
@@ -344,9 +343,9 @@ void gui_interpose (void (*r) (void)) { the_interpose_handler= r; }
 
 void
 x_gui_rep::event_loop () {
-  bool wait  = true;
-  int count  = 0;
-  int delay  = MIN_DELAY;
+  bool wait = true;
+  int  count= 0;
+  int  delay= MIN_DELAY;
 
   while (nr_windows>0 || number_of_servers () != 0) {
     request_partial_redraw= false;

@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "tm_link.hpp"
+#include "qt_utilities.hpp"
 #include "QTMPipeLink.hpp"
 #include <QByteArray>
 
@@ -43,9 +44,8 @@ QTMPipeLink::~QTMPipeLink () {
 bool
 QTMPipeLink::launchCmd () {
   if (state () != QProcess::NotRunning) killProcess ();
-  char* _cmd = as_charp (cmd);
-  QProcess::start (_cmd);
-  tm_delete_array (_cmd);
+  //FIXME: is UTF8 the right encoding here?
+  QProcess::start(utf8_to_qstring(cmd));
   bool r= waitForStarted ();
   if (r) {
     connect (this, SIGNAL(readyReadStandardOutput ()), SLOT(readErrOut ()));
@@ -56,10 +56,9 @@ QTMPipeLink::launchCmd () {
 
 int
 QTMPipeLink::writeStdin (string s) {
-  char* _s= as_charp (s);
-  if (DEBUG_IO) cout << "[INPUT]" << debug_io_string (_s);
+  blob<char> _s= as_charp (s);
+  if (DEBUG_IO) cout << "[INPUT]" << debug_io_string ((char*)_s);
   int err= QIODevice::write (_s, N(s));
-  tm_delete_array (_s);
   return err;
 }
 

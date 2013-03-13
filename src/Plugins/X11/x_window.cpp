@@ -303,10 +303,9 @@ x_window_rep::set_size_limits (SI min_w, SI min_h, SI max_w, SI max_h) {
 
 void
 x_window_rep::set_name (string name) {
-  char* s= as_charp (name);
+  blob<char> s= as_charp (name);
   XStoreName (dpy, win, s);
   XSetIconName (dpy, win, s);
-  tm_delete_array (s);
   the_name= name;
 }
 
@@ -350,7 +349,8 @@ x_window_rep::set_full_screen (bool flag) {
     Window_to_window->reset (win);
     nr_windows--;
     XDestroyWindow (dpy, win);
-    name= as_charp (old_name);
+    //FIXME: is this 'as_charp' a possible memory leak?
+    name= as_charp (old_name).release();
     win_x= save_x; win_y= save_y;
     win_w= save_w; win_h= save_h;
     initialize ();
@@ -591,9 +591,8 @@ window
 plain_window (widget w, string name, SI min_w, SI min_h,
 	      SI def_w, SI def_h, SI max_w, SI max_h)
 {
-  char* _name= as_charp (name);
+  blob<char> _name= as_charp (name);
   window win= tm_new<x_window_rep> (w, the_gui, _name,
 				    min_w, min_h, def_w, def_h, max_w, max_h);
-  tm_delete_array (_name);
   return win;
 }

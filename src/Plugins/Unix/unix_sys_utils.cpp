@@ -15,9 +15,8 @@
 
 int
 unix_system (string s) {
-  char* _s = as_charp (s * " > /dev/null 2>&1");
-  int ret = system (_s);
-  tm_delete_array (_s);  
+  blob<char> _s= as_charp (s * " > /dev/null 2>&1");
+  int ret= system (_s);
   return ret;
 }
 
@@ -25,9 +24,8 @@ int
 unix_system (string cmd, string& result) {
   url temp= url_temp ();
   string temp_s= escape_sh (concretize (temp));
-  char* _cmd = as_charp (cmd * " > " * temp_s * " 2>&1");
-  int ret = system (_cmd);
-  tm_delete_array (_cmd);
+  blob<char> _cmd= as_charp (cmd * " > " * temp_s * " 2>&1");
+  int ret= system (_cmd);
   bool flag= load_string (temp, result, false);
   remove (temp);
   if (flag) result= "";

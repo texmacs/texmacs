@@ -300,7 +300,7 @@ x_drawable_rep::xpm_initialize (url file_name) {
       a call to xpm_colors(), plus the appropriate code to
       fill bmcs() & set first_name. */
 
-    char* _def= as_charp (def);
+    blob<char> _def= as_charp (def);
     XColor exact, closest;
     XLookupColor (gui->dpy, gui->cols, _def, &exact, &closest);
     if (!reverse_colors && XAllocColor (gui->dpy, gui->cols, &exact))
@@ -311,7 +311,6 @@ x_drawable_rep::xpm_initialize (url file_name) {
       color myc= rgb_color (exact.red/256, exact.green/256, exact.blue/256);
       pmcs(name)= CONVERT (myc);
     }
-    tm_delete_array (_def);
   }
 
   // setup bitmap and pixmap

@@ -167,14 +167,12 @@ pdf_renderer_rep::pdf_renderer_rep (
    */
   
   {
-    char* _pdf_file_name;
-    _pdf_file_name= as_charp (concretize (pdf_file_name));
+    blob<char> _pdf_file_name = as_charp (concretize (pdf_file_name));
 
     pdf_open_document(_pdf_file_name, do_encryption,
                     width, height, annot_grow, bookmark_open,
                     !(opt_flags & OPT_PDFDOC_NO_DEST_REMOVE));
   
-    tm_delete_array (_pdf_file_name);
   }
   
   /* Ignore_colors placed here since
@@ -327,19 +325,18 @@ pdf_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
 
         url utfm =  resolve_tex(fname * ".tfm") ;
    
-        char *_rname = as_charp(fname);
-        char* _u= as_charp (concretize (u));
-        char* _utfm= NULL;
-        if (!is_none(utfm)) _utfm = as_charp (concretize (utfm));
-        //cout << "DEVFONT " << _rname << " " << fsize << " " << u << " " << utfm << LF;
-        int font_id = pdf_dev_physical_font(_rname,fsize*dpi*PIXEL/default_dpi,_u,_utfm); 
-        tm_delete_array(_rname);
-        tm_delete_array(_u);
-        if (_utfm) tm_delete_array(_utfm);
-        if (font_id >= 0) {
-          tex_fonts(fn->res_name)= font_id+1;
-        }  else {
-          cout << "(pdf_renderer) Problems with font: " << fname << " file " << u << LF;
+        {
+          blob<char> _rname = as_charp(fname);
+          blob<char> _u= as_charp (concretize (u));
+          blob<char> _utfm;
+          if (!is_none(utfm)) _utfm = as_charp (concretize (utfm));
+          //cout << "DEVFONT " << _rname << " " << fsize << " " << u << " " << utfm << LF;
+          int font_id = pdf_dev_physical_font(_rname,fsize*dpi*PIXEL/default_dpi,_u,_utfm);
+          if (font_id >= 0) {
+            tex_fonts(fn->res_name)= font_id+1;
+          }  else {
+            cout << "(pdf_renderer) Problems with font: " << fname << " file " << u << LF;
+          }
         }
       }
     }
@@ -546,7 +543,7 @@ pdf_renderer_rep::image (
     string cmd = "ps2pdf13";
     system(cmd, u, temp);
     cout << temp << LF;
-    char *_u = as_charp(concretize(temp));
+    blob<char> _u = as_charp(concretize(temp));
     
     int form_id = pdf_ximage_findresource(_u, 1, NULL);
     if (form_id < 0) {
@@ -554,7 +551,6 @@ pdf_renderer_rep::image (
     } else {
       image_resources (filename) = form_id;
     }
-    tm_delete_array(_u);
     remove (temp);    
   }
   

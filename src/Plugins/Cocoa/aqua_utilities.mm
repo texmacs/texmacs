@@ -61,9 +61,8 @@ coord2 from_nssize(NSSize s)
 
 NSString *to_nsstring(string s)
 {
-	char *p = as_charp(s);
+	blob<char> p = as_charp(s);
 	NSString *nss = [NSString stringWithCString:p encoding:NSUTF8StringEncoding];
-	tm_delete_array (p);	
 	return nss;
 }
 
@@ -77,9 +76,8 @@ string from_nsstring(NSString *s)
 NSString *to_nsstring_utf8(string s)
 {
   s = cork_to_utf8 (s);
-  char *p = as_charp(s);
+  blob<char> p = as_charp(s);
   NSString *nss = [NSString stringWithCString:p encoding:NSUTF8StringEncoding];
-  tm_delete_array (p);	
   return nss;
 }
 

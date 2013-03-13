@@ -110,10 +110,11 @@ imlib2_load_image (url u) {
   url name= resolve (u);
   if (is_none (name))
     name= resolve ("$TEXMACS_PIXMAP_PATH/TeXmacs-gnu.xpm");
-  char *_name= as_charp (as_string (name));
   Imlib_Image image;
-  image = IMLIB2_load_image (_name);
-  tm_delete_array (_name);
+  {
+    blob<char> _name= as_charp (as_string (name));
+    image = IMLIB2_load_image (_name);
+  }
   return image;
 }
 

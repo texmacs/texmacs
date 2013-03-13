@@ -226,18 +226,17 @@ qt_gui_rep::set_selection (string key, tree t,
   else return true;
   cb->clear (mode);
 
-  char *selection= as_charp (s);
-  cb->setText (selection, mode);
+  blob<char> selection= as_charp (s);
+  cb->setText (QString::fromAscii(selection), mode);
   QMimeData *md= new QMimeData;
 
   if (format == "verbatim" || format == "default") {
     if (format == "default") {
-      md->setData ("application/x-texmacs-clipboard", selection);
-      tm_delete_array(selection);
+      md->setData ("application/x-texmacs-clipboard", (char*)selection);
 
-      selection= as_charp (as_string (QCoreApplication::applicationPid ()));
-      md->setData ("application/x-texmacs-pid", selection);
-      tm_delete_array(selection);
+      QString pid_str;
+      pid_str.setNum(QCoreApplication::applicationPid ());
+      md->setData ("application/x-texmacs-pid", pid_str.toAscii());
 
       (void) sh;
       //selection= as_charp (sh);
@@ -252,14 +251,13 @@ qt_gui_rep::set_selection (string key, tree t,
     else if (get_preference ("texmacs->verbatim:encoding") == "iso-8859-1")
       md->setText (QString::fromLatin1 (selection));
     else
-      md->setText (selection);
+      md->setText (QString::fromAscii (selection));
   }
   else
-    md->setText (selection);
+    md->setText (QString::fromAscii (selection));
   cb->setMimeData (md, mode);
   // according to the docs, ownership of mimedata is transferred to clipboard
   // so no memory leak here
-  tm_delete_array (selection);
   return true;
 }
 
@@ -1114,9 +1112,8 @@ qt_gui_rep::put_graphics_on_clipboard (url file) {
   if ((extension == "bmp") || (extension == "png") ||
       (extension == "jpg") || (extension == "jpeg")) {
     QClipboard *clipboard = QApplication::clipboard();
-    char* tmp = as_charp (concretize (file));
+    blob<char> tmp = as_charp (concretize (file));
     clipboard->setImage (QImage (tmp));
-    tm_delete_array (tmp);
   }
   else {
     // vector formats
@@ -1130,9 +1127,8 @@ qt_gui_rep::put_graphics_on_clipboard (url file) {
     string filecontent;
     load_string (as_string (file), filecontent, true);
     
-    char* tmp = as_charp (filecontent);
+    blob<char> tmp = as_charp (filecontent);
     QByteArray rawdata (tmp);
-    tm_delete_array(tmp);
 
     QMimeData *mymimeData = new QMimeData;
     mymimeData->setData(mime, rawdata);

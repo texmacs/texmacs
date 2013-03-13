@@ -178,9 +178,10 @@ ps_load (url image) {
 #ifdef OS_WIN32
   if (s == "") {
     char *data;
-    char *path= as_charp (as_string (name));
-    data= XLoadImageAsPS (path);
-    tm_delete_array (path);
+    {
+      blob<char> path= as_charp (as_string (name));
+      data= XLoadImageAsPS (path);
+    }
     if (!data) s= "";
     else {
       s= string (data);

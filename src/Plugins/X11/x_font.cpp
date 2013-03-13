@@ -272,9 +272,11 @@ x_gui_rep::load_system_font (string family, int size, int dpi,
   if (size == 0) name= family;
 
   if (DEBUG_VERBOSE) cout << "TeXmacs] Loading ps font " << name << "\n";
-  char* temp= as_charp (name);
-  XFontStruct *xfs = XLoadQueryFont (dpy, temp);
-  tm_delete_array (temp);
+  XFontStruct *xfs = NULL;
+  {
+    blob<char> temp= as_charp (name);
+    xfs = XLoadQueryFont (dpy, temp);
+  }
   if (xfs == NULL) {
     if (DEBUG_VERBOSE) cout << "TeXmacs] Font " << name << " not found\n";
     if (DEBUG_VERBOSE) cout << "TeXmacs] Using default font instead\n";

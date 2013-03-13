@@ -396,16 +396,6 @@ cork_to_ascii (string input) {
 
 #ifdef USE_ICONV
 
-// auto_array<T> objects ensure that the contained array is deleted when the
-// block where it is defined is exited. No spurious delete[], no memory leak.
-template<class T> class auto_array {
-  T* value;
-public:
-  auto_array (T* x) : value (x) {}
-  ~auto_array () { tm_delete_array (value ); }
-  operator T* () const { return value; }
-};
-
 class iconv_converter {
   string from;
   string to;
@@ -423,9 +413,9 @@ public:
 iconv_converter::iconv_converter (string from2, string to2, bool errors):
   from (from2), to (to2), show_errors (errors), successful (false)
 {
-  auto_array<char> from_cp = as_charp (from);
-  auto_array<char> to_cp = as_charp (to);
-  cd = iconv_open (to_cp, from_cp);
+  blob<char> from_cp= as_charp (from);
+  blob<char> to_cp= as_charp (to);
+  cd= iconv_open (to_cp, from_cp);
   if (!is_valid() && show_errors)
     system_error ("Initialization of iconv from " * from *
 		  " to " * to * " failed!");
@@ -452,14 +442,14 @@ string apply (iconv_converter &conv, string input) {
     return "";
   }
   string result;
-  auto_array<char> in_cp= as_charp(input);
+  blob<char> in_cp= as_charp(input);
   char* in_cursor= in_cp;
   size_t in_left= N(input);
   double expansion= 1.1;
   size_t out_counter= 0;
   while (in_left > 0) {
     size_t out_left= max(int(in_left * expansion), 1024);
-    auto_array<char> out_cp= tm_new_array<char> (out_left);
+    blob<char> out_cp= manage (tm_new_array<char> (out_left));
     char* out_cursor= out_cp;
     size_t r = iconv_adaptor(iconv, conv.cd,
 			     &in_cursor, &in_left, &out_cursor, &out_left);

@@ -134,9 +134,10 @@ bibtex_run (string bib, string style, url bib_file, tree bib_t) {
   save_string ("$TEXMACS_HOME_PATH/system/bib/temp.aux", bib_s);
 
 #ifdef OS_WIN32
-  char *directory = as_charp (dir);
-  RunBibtex(directory, "$TEXMACS_HOME_PATH/system/bib", "temp");
-  tm_delete_array (directory);
+  {
+    blob<char> directory= as_charp (dir);
+    RunBibtex (directory, "$TEXMACS_HOME_PATH/system/bib", "temp");
+  }
 #else
   string cmdln= "cd $TEXMACS_HOME_PATH/system/bib; ";
   cmdln << "BIBINPUTS=" << dir << ":$BIBINPUTS "

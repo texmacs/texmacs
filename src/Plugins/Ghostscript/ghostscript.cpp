@@ -110,10 +110,11 @@ ghostscript_run (Display* dpy, Window gs_win, Pixmap pm,
     as_string (x2) * " " * as_string (y2) * " " *
     as_string (dpi_x) * " " * as_string (dpi_y) * " " *
     "0 0 0 0";
-  unsigned char* _data= (unsigned char*) as_charp (data);
-  int _n= N(data);
-  XChangeProperty (dpy, gs_win, gh, st, 8, PropModeReplace, _data, _n);
-  tm_delete_array (_data);
+  {
+    blob<char> _data= as_charp (data);
+    int _n= N(data);
+    XChangeProperty (dpy, gs_win, gh, st, 8, PropModeReplace, (unsigned char*)(char*)_data, _n);
+  }
   XSync(dpy, false);
 #endif
 

@@ -81,8 +81,6 @@ get_from_web (url name) {
   if (!is_none (res)) return res;
 
 #ifdef OS_WIN32
-  char *urlPath;
-  char *tempFilePath;
   string urlString = as_string (name);
   url tmp = url_temp();
 	
@@ -98,15 +96,11 @@ get_from_web (url name) {
     urlString = "http://" * urlString;
   urlString= web_encode (urlString);
 
-  urlPath = as_charp(urlString);
-  tempFilePath = as_charp(as_string(tmp));
+  blob<char> urlPath      = as_charp (urlString);
+  blob<char> tempFilePath = as_charp (as_string (tmp));
 
-  if(!URL_Get(urlPath, tempFilePath)){
-    tm_delete_array (urlPath);
-    tm_delete_array (tempFilePath);
+  if(!URL_Get(urlPath, tempFilePath))
     return url_none();
-  }
-
   else return set_cache (name, tmp);
 #else
   string test= var_eval_system ("which wget");

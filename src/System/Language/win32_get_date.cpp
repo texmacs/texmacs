@@ -90,7 +90,7 @@ namespace win32 {
   WCHAR*
   string_to_WCHARP (string s) {
     WCHAR* wcs = tm_new_array<WCHAR>(N(s) + 1);
-    char* cs = as_charp(cork_to_utf8(s));
+    blob<char> cs = as_charp(cork_to_utf8(s));
     int t, i = 0, j = 0;
     while (t = mbtowc(&wcs[j], &cs[i], MB_CUR_MAX)) {
       if (t != -1) {
@@ -104,7 +104,6 @@ namespace win32 {
       }
     }
     wcs[j] = 0;
-    tm_delete_array(cs);
     return wcs;
   }
 

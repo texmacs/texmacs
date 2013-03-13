@@ -471,10 +471,10 @@ x_gui_rep::set_mouse_pointer (widget w, string name, string mask_name) {
   array<SI> hotspot= xpm_hotspot (xpm_cache[name]);
   ASSERT (N(hotspot) != 0, "missing hotspot");
   array<string> cnames_mask= xpm_colors (xpm_cache[mask_name]);
-  char* bgcolor= as_charp (N(cnames_mask)>1 ? cnames_mask[1] :
-					      string ("white"));
-  char* fgcolor= as_charp (N(cnames_curs)>1 ? cnames_curs[1] :
-					      string ("black"));
+  blob<char> bgcolor= as_charp (N(cnames_mask)>1 ? cnames_mask[1] :
+					                  string ("white"));
+  blob<char> fgcolor= as_charp (N(cnames_curs)>1 ? cnames_curs[1] :
+					                  string ("black"));
   if (!strcmp (bgcolor, "none")) bgcolor= as_charp (string ("white"));
   if (!strcmp (fgcolor, "none")) fgcolor= as_charp (string ("white"));
 
@@ -491,8 +491,6 @@ x_gui_rep::set_mouse_pointer (widget w, string name, string mask_name) {
   else if (XAllocColor (dpy, cols, &closest2)) bg= &closest2;
   else FAILED ("unable to allocate bgcolor");
 
-  tm_delete_array (bgcolor);
-  tm_delete_array (fgcolor);
 
   SI x= hotspot[0], y= hotspot[1];
   Cursor cursor=XCreatePixmapCursor (dpy, curs, mask, fg, bg, x, y);

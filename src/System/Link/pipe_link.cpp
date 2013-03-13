@@ -132,14 +132,13 @@ process_all_pipes () {
 #ifndef __MINGW32__
 void
 execute_shell (string s) {
-  char *_s= as_charp (s);
+  blob<char> _s= as_charp (s);
   char *argv[4];
   argv[0] = const_cast<char*> ("sh");
   argv[1] = const_cast<char*> ("-c");
   argv[2] = _s;
   argv[3] = NULL;
   execve ("/bin/sh", argv, environ);
-  tm_delete_array (_s);
 }
 #endif
 
@@ -227,10 +226,9 @@ pipe_link_rep::write (string s, int channel) {
 #ifndef __MINGW32__
   if ((!alive) || (channel != LINK_IN)) return;
   if (DEBUG_IO) cout << "[INPUT]" << debug_io_string (s);
-  char* _s= as_charp (s);
+  blob<char> _s= as_charp (s);
   int err= ::write (in, _s, N(s));
   (void) err;
-  tm_delete_array (_s);
 #endif
 }
 

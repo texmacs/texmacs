@@ -73,9 +73,8 @@ var_eval_system (string s) {
 
 string
 get_env (string var) {
-  char* _var= as_charp (var);
+  blob<char> _var= as_charp (var);
   char* _ret= getenv (_var);
-  tm_delete_array (_var);
   if (_ret==NULL) {
     if (var == "PWD") return get_env ("HOME");
     return "";
@@ -88,13 +87,11 @@ get_env (string var) {
 void
 set_env (string var, string with) {
 #if defined(STD_SETENV) && !defined(__MINGW32__)
-  char* _var = as_charp (var);
-  char* _with= as_charp (with);
+  blob<char> _var = as_charp (var);
+  blob<char> _with= as_charp (with);
   setenv (_var, _with, 1);
-  tm_delete_array(_var);
-  tm_delete_array(_with);
 #else
-  char* _varw= as_charp (var * "=" * with);
+  char* _varw= as_charp (var * "=" * with).release();
   (void) putenv (_varw);
   // do not delete _varw !!!
   // -> known memory leak, but solution more complex than it is worth
@@ -104,7 +101,7 @@ set_env (string var, string with) {
 url
 get_texmacs_path () {
   string tmpath= get_env ("TEXMACS_PATH");
-    // FIXME: Why is this?
+    //FIXME: Why is this?
   while ((N(tmpath)>0) && (tmpath [N(tmpath) - 1] == '/'))
     tmpath= tmpath (0, N(tmpath)-1);
   return tmpath;

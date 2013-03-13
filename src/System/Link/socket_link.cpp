@@ -96,9 +96,9 @@ socket_link_rep::start () {
     cout << "TeXmacs] Connecting to '" << host << ":" << port << "'\n";
   
   // getting host
-  char* _host= as_charp (host);
+  
+  blob<char> _host= as_charp (host);
   struct hostent *hp = gethostbyname (_host);
-  tm_delete_array (_host);
   if (hp == NULL) return "Error: no connection for '" * host * "'";
 
   // creating socket

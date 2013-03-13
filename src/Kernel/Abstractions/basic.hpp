@@ -346,4 +346,53 @@ public:                                    \
   template<TT T> inline PTR<T>::operator BASE () { return BASE (this->rep); }
 // end extend_null
 
+
+/******************************************************************************
+* utility classes
+******************************************************************************/
+
+// blob<T> provides automatic memory management for arrays of T
+// it is implemented with the standard reference counting mechanism
+
+// we provide automatic casting to T* for convenience, this imposes to use
+// not to provide constructor from T*, otherwise bugs can appear since
+// a sequence of conversions like
+// blob<T> -> T* -> blob<T>
+// results into two blobs pointing to the same memory area, which will then
+// be deallocated twice.
+// managing an area has to be explicitly required via manage()
+
+// release is the inverse of manage.
+
+template<class T> class blob;
+template<class T>
+class blob_rep: concrete_struct {
+  T* value;
+  
+private:
+  blob_rep (blob_rep &) {}; // disable copy constructor
+  blob_rep& operator=(blob_rep&) {}; // disable assignment
+  
+public:
+  blob_rep (T* v = NULL): value (v) {}
+  ~blob_rep () { if (value) tm_delete_array (value); }
+  friend class blob<T>;
+};
+
+template<class T>
+class blob {
+  CONCRETE_TEMPLATE(blob,T);
+protected:
+  blob (T* v): rep (tm_new<blob_rep<T> >(v)) {}
+public:
+  blob (): rep (tm_new<blob_rep<T> >()) {}
+  operator T* () const { return rep->value; }
+  T *release() { T *ptr = rep->value; rep->value = NULL; return ptr; }
+  template <class TT> friend blob<TT> manage(TT* value);
+};
+CONCRETE_TEMPLATE_CODE(blob,class,T);
+
+template <class T>
+inline blob<T> manage (T* value) { return blob<T> (value); }
+
 #endif // defined BASIC_H

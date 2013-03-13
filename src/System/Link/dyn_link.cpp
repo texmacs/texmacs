@@ -35,26 +35,24 @@ symbol_install (string lib, string symb, pointer& f) {
     if (is_none (name)) out= "Library '" * lib * "' not found";
     else {
       lib= concretize (name);
-      char* _lib = as_charp (lib);
+      blob<char> _lib= as_charp (lib);
       dyn_linked (lib)= dlopen (_lib, RTLD_LAZY);
       if (dyn_linked [lib] == NULL) {
 	const char *err = dlerror();
 	if (err != NULL) out= string ((char *) err);
       }
-      tm_delete_array (_lib);
     }
   }
 
   pointer handle= dyn_linked [lib];
   if (handle) {
-    char* _symb= as_charp (symb);
+    blob<char> _symb= as_charp (symb);
     string tag= lib * ":" * symb;
     if (!dyn_linked->contains (tag))
       dyn_linked (tag)= dlsym (handle, _symb);
     f= dyn_linked [tag];
     if (f != NULL) out= "Dynamically linked symbol '" * symb * "'";
     else out= "Can not find symbol '" * symb * "' in  '" * lib * "'";
-    tm_delete_array (_symb);
   }
   else {
     f= NULL;
@@ -122,7 +120,7 @@ dyn_link_rep::start () {
   if (routs != NULL) {
     dyn_linked (name)= routs;
     package_exports_1* pack= (package_exports_1*) routs;
-    char* _init  = as_charp (init);
+    blob<char> _init= as_charp (init);
     char* _errors= NULL;
     char* _message= pack->install (&TeXmacs, _init, &_errors);
     if (_errors != NULL) {
@@ -133,7 +131,6 @@ dyn_link_rep::start () {
       ret= string (_message == NULL? ((char*) ""): _message);
       alive= true;
     }
-    tm_delete_array (_init);
     return ret;
   }
   else return message;
@@ -152,13 +149,11 @@ dyn_link_rep::write (string s, int channel) {
   }
   package_exports_1* pack= (package_exports_1*) routs;
 
-  char* _session= as_charp (session);
-  char* _s= as_charp (s);
+  blob<char> _session= as_charp (session);
+  blob<char> _s= as_charp (s);
   char* _errors= NULL;
   char* _r= pack->evaluate (_s, _session, &_errors);
   ret= string (_r==NULL? (_errors==NULL? ((char*) "Error"): _errors): _r);
-  tm_delete_array (_s);
-  tm_delete_array (_session);
   if (!is_nil (this->feed_cmd)) this->feed_cmd->apply ();
 #endif
 }

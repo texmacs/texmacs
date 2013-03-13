@@ -251,10 +251,9 @@ cg_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
     if (suffix (u) == "png") {
       // rendering
       string suu = as_string (u);
-      char * buf = as_charp(suu); 
+      blob<char>  buf = as_charp(suu);
       // cout << suu << LF;
       CFURLRef uu =  CFURLCreateFromFileSystemRepresentation(NULL, (UInt8*)buf, N(suu),  false);
-      tm_delete (buf);
       CGImageSourceRef source =  CGImageSourceCreateWithURL ( uu, NULL );
       pm =  CGImageSourceCreateImageAtIndex(source, 0, NULL);
       CFRelease(source);
@@ -267,10 +266,9 @@ cg_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
       // system ("convert", u, temp);
       mac_image_to_png (u, temp); 
       string suu = as_string (temp);
-      char * buf = as_charp(suu); 
+      blob<char>  buf = as_charp(suu);
       //cout << suu << LF;
       CFURLRef uu =  CFURLCreateFromFileSystemRepresentation(NULL, (UInt8*)buf, N(suu),  false);
-      tm_delete (buf);
       CGImageSourceRef source =  CGImageSourceCreateWithURL ( uu, NULL );
       pm =  CGImageSourceCreateImageAtIndex(source, 0, NULL);
       CFRelease(source);
@@ -378,7 +376,7 @@ cg_renderer_rep::native_draw (int ch, font_glyphs fn, SI x, SI y) {
         FSSpec fss;
         ATSFontRef atsFont;
         ATSFontContainerRef container;
-        char *p = as_charp(vs);
+        blob<char> p = as_charp(vs);
         CFStringRef font_filename = CFStringCreateWithCString(NULL,p,kCFStringEncodingASCII);
 					
         if (posixStringToFSSpec(&fss,font_filename,false)) {
@@ -392,7 +390,6 @@ cg_renderer_rep::native_draw (int ch, font_glyphs fn, SI x, SI y) {
           f = CGFontCreateWithPlatformFont((void*)&atsFont);
           native_fonts(name) = f;
         }
-        tm_delete (p);
         CFRelease(font_filename);
         remove (v);
       }

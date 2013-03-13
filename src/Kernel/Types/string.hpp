@@ -56,10 +56,11 @@ string   operator * (string a, const char* b);
 bool     operator <= (string a, string b);
 int      hash (string s);
 
+blob<char> as_charp (string s);
+
 bool   as_bool   (string s);
 int    as_int    (string s);
 double as_double (string s);
-char*  as_charp  (string s);
 string as_string_bool (bool f);
 string as_string (int i);
 string as_string (unsigned int i);

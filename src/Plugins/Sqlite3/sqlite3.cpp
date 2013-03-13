@@ -104,11 +104,10 @@ sql_exec (url db_name, string cmd) {
     tm_sqlite3_initialize ();
   string name= concretize (db_name);
   if (!sqlite3_connections->contains (name)) {
-    char* _name= as_charp (name);
+    blob<char> _name= as_charp (name);
     sqlite3* db= NULL;
     //cout << "Opening " << _name << "\n";
     int status= SQLITE3_open (_name, &db);
-    tm_delete_array (_name);
     if (status == SQLITE_OK)
       sqlite3_connections (name) = (void*) db;
   }
@@ -118,7 +117,7 @@ sql_exec (url db_name, string cmd) {
   }
   tree ret (TUPLE);
   sqlite3* db= (sqlite3*) sqlite3_connections [name];
-  char* _cmd= as_charp (cork_to_utf8 (cmd));
+  blob<char> _cmd= as_charp (cork_to_utf8 (cmd));
   char** tab;
   int rows, cols;
   char* err;
@@ -142,7 +141,6 @@ sql_exec (url db_name, string cmd) {
   }
 
   SQLITE3_free_table (tab);
-  tm_delete_array (_cmd);
   //cout << "Return " << ret << "\n";
   return ret;
 }

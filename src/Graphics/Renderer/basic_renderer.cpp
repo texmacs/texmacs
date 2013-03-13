@@ -248,14 +248,14 @@ xpm_to_color (string s) {
     int b= from_hexadecimal (s (9, 13));
     return RGBCOLOR(r,g,b);
   }
-  char *name = as_charp(s);
-  for(int i = 0; i<RGBColorsSize; i++) {
-    if (strcmp(name,RGBColors[i].name)==0) {
-      tm_delete_array (name);
-      return RGBCOLOR(RGBColors[i].r,RGBColors[i].g,RGBColors[i].b);
+  {
+    blob<char> name= as_charp(s);
+    for(int i=0; i<RGBColorsSize; i++) {
+      if (strcmp(name,RGBColors[i].name)==0) {
+        return RGBCOLOR(RGBColors[i].r,RGBColors[i].g,RGBColors[i].b);
+      }
     }
   }
-  tm_delete_array (name);
   return RGBCOLOR (0, 0, 0);
 }
 
