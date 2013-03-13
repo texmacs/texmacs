@@ -34,7 +34,7 @@ range_percentage (font_metric fnm, int start, int end) {
   int count= 0;
   for (int i= start; i <= end; i++)
     if (fnm->exists (i)) count++;
-  return ((double) count) / ((double) max (end+1-start, 1));
+  return (100.0 * ((double) count)) / ((double) max (end+1-start, 1));
 }
 
 void
@@ -51,40 +51,40 @@ analyze_range (font_metric fnm, array<string>& r) {
     r << string ("+Latin1Basic");
   if (range_exists (fnm, 0xa1, 0xac) && range_exists (fnm, 0xae, 0xbf))
     r << string ("+Latin1Symbols");
-  if (range_exists (fnm, 0x100, 0x17f))
+  if (range_percentage (fnm, 0x100, 0x17f) > 66.6)
     r << string ("+LatinA");
-  if (range_exists (fnm, 0x180, 0x1ff))
+  if (range_percentage (fnm, 0x180, 0x1ff) > 66.6)
     r << string ("+LatinB");
-  if (range_exists (fnm, 0x391, 0x3a1) && range_exists (fnm, 0x3a3, 0x3ce))
+  if (range_percentage (fnm, 0x391, 0x3ce) > 66.6)
     r << string ("+GreekBasic");
-  if (range_exists (fnm, 0x410, 0x44f))
+  if (range_percentage (fnm, 0x410, 0x44f) > 66.6)
     r << string ("+CyrillicBasic");
 
   if (range_percentage (fnm, 0x4e00, 0x4eff) > 0.0) {
     double perc= range_percentage (fnm, 0x4e00, 0x9fcc);
     //cout << "percentage -> " << perc << "\n";
-    if (perc > 0.2) r << string ("+CJK");
+    if (perc > 20.0) r << string ("+CJK");
   }
   if (range_percentage (fnm, 0xac00, 0xacff) > 0.0) {
     double perc= range_percentage (fnm, 0xac00, 0xd7af);
     //cout << "percentage -> " << perc << "\n";
-    if (perc > 0.2) r << string ("+Hangul");
+    if (perc > 20.0) r << string ("+Hangul");
   }
 
   if (range_percentage (fnm, 0x2100, 0x21ff) > 0.0) {
     double perc= range_percentage (fnm, 0x2000, 0x23ff);
     //cout << "percentage -> " << perc << "\n";
-    if (perc > 0.2) r << string ("+Math");
+    if (perc > 20.0) r << string ("+Math");
   }
   if (range_percentage (fnm, 0x2900, 0x29ff) > 0.0) {
     double perc= range_percentage (fnm, 0x2900, 0x2e7f);
     //cout << "percentage -> " << perc << "\n";
-    if (perc > 0.2) r << string ("+MathExtra");
+    if (perc > 20.0) r << string ("+MathExtra");
   }
   if (range_percentage (fnm, 0x1d400, 0x1d4ff) > 0.0) {
     double perc= range_percentage (fnm, 0x1d400, 0x1d7ff);
     //cout << "percentage -> " << perc << "\n";
-    if (perc > 0.2) r << string ("+MathLetters");
+    if (perc > 20.0) r << string ("+MathLetters");
   }
 }
 

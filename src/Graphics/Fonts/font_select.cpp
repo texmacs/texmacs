@@ -14,8 +14,9 @@
 
 extern hashmap<tree,tree> font_features;
 extern hashmap<tree,tree> font_variants;
-array<string> remove_other (array<string> a);
+array<string> remove_other (array<string> a, bool keep_glyphs= true);
 bool same_kind (string s1, string s2);
+bool is_glyphs (string s);
 
 /******************************************************************************
 * Basic subroutines
@@ -187,11 +188,21 @@ logical_font (string family, string style) {
 }
 
 array<string>
+glyph_features (string family, string style) {
+  array<string> r;
+  array<string> a= font_database_characteristics (family, style);
+  for (int i=0; i<N(a); i++)
+    if (is_glyphs (a[i])) r << normalize_feature (a[i]);
+  return r;
+}
+
+array<string>
 logical_font_exact (string family, string style) {
   array<string> r;
   r << family_to_master (family);
   r << family_features (family);
   r << style_features (style);
+  r << glyph_features (family, style);
   return remove_duplicates (r);
 }
 
@@ -396,7 +407,7 @@ guessed_features (string family, bool pure_guess) {
     array<string> a= guessed_features (family, styles[i]);
     if (!pure_guess) {
       array<string> fn= logical_font_exact (family, styles[i]);
-      fn= remove_other (fn);
+      fn= remove_other (fn, false);
       array<string> tail= range (fn, 1, N(fn));
       allf= remove_duplicates (append (allf, tail));
       if (i == 0) commonf= tail;
@@ -488,6 +499,11 @@ is_device (string s) {
 }
 
 bool
+is_glyphs (string s) {
+  return starts (s, "+");
+}
+
+bool
 is_other (string s) {
   return
     !is_stretch (s) &&
@@ -497,6 +513,7 @@ is_other (string s) {
     !is_serif (s) &&
     !is_spacing (s) &&
     !is_device (s) &&
+    !is_glyphs (s) &&
     s != "long" &&
     s != "flat";
 }
@@ -510,7 +527,8 @@ same_kind (string s1, string s2) {
     (is_capitalization (s1) && is_capitalization (s2)) ||
     (is_serif (s1) && is_serif (s2)) ||
     (is_spacing (s1) && is_spacing (s2)) ||
-    (is_device (s1) && is_device (s2));
+    (is_device (s1) && is_device (s2)) ||
+    (is_glyphs (s1) && is_glyphs (s2));
 }
 
 /******************************************************************************
@@ -530,7 +548,8 @@ same_kind (string s1, string s2) {
 #define D_SPACING         100000
 #define Q_DEVICE          300000
 #define D_DEVICE          1000000
-#define D_HUGE            10000000
+#define D_GLYPHS          3000000
+#define D_HUGE            30000000
 #define D_INFINITY        1000000000
 
 int
@@ -587,6 +606,10 @@ distance (string s1, string s2, bool asym) {
     if (s1 == "chalk" && s2 == "pen" && !asym) return Q_DEVICE;
     return D_DEVICE;
   }
+  if (is_glyphs (s1) || is_glyphs (s2)) {
+    if (!is_glyphs (s1) || !is_glyphs (s2)) return D_HUGE;
+    return D_GLYPHS;
+  }
   return D_HUGE;
 }
 
@@ -618,6 +641,7 @@ distance (string s, array<string> v, bool asym) {
   else if (is_serif (s)) m= D_SERIF;
   else if (is_spacing (s)) m= D_SPACING;
   else if (is_device (s)) m= D_DEVICE;
+  else if (is_glyphs (s)) m= D_GLYPHS;
 
   for (int i=1; i<N(v); i++)
     m= min (distance (s, v[i], asym), m);
@@ -645,12 +669,13 @@ distance (array<string> v1, array<string> v2, array<string> v3) {
 ******************************************************************************/
 
 array<string>
-remove_other (array<string> a) {
+remove_other (array<string> a, bool keep_glyphs) {
   array<string> r;
   if (N(a)>0) r << a[0];
   for (int i=1; i<N(a); i++)
     if (!is_other (a[i]))
-      r << a[i];
+      if (keep_glyphs || !is_glyphs (a[i]))
+        r << a[i];
   return r;
 }
 
