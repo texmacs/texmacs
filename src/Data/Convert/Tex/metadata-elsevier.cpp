@@ -1,7 +1,7 @@
 
 /******************************************************************************
 * MODULE     : metadata-elsevier.cpp
-* DESCRIPTION: conversion of (Elsevier) tex metadata into texmacs metadata
+* DESCRIPTION: conversion of (Elsevier) TeX metadata into TeXmacs metadata
 * COPYRIGHT  : (C) 2012 Joris van der Hoeven, Poulain François
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.

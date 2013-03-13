@@ -1,7 +1,7 @@
 
 /******************************************************************************
 * MODULE     : metadata-acm.cpp
-* DESCRIPTION: conversion of (ACM) tex metadata into texmacs metadata
+* DESCRIPTION: conversion of (ACM) TeX metadata into TeXmacs metadata
 * COPYRIGHT  : (C) 2012 Joris van der Hoeven, Poulain François
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
