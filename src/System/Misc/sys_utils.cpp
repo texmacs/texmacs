@@ -73,7 +73,7 @@ var_eval_system (string s) {
 
 string
 get_env (string var) {
-  blob<char> _var= as_charp (var);
+  c_string _var= as_charp (var);
   char* _ret= getenv (_var);
   if (_ret==NULL) {
     if (var == "PWD") return get_env ("HOME");
@@ -87,8 +87,8 @@ get_env (string var) {
 void
 set_env (string var, string with) {
 #if defined(STD_SETENV) && !defined(__MINGW32__)
-  blob<char> _var = as_charp (var);
-  blob<char> _with= as_charp (with);
+  c_string _var = as_charp (var);
+  c_string _with= as_charp (with);
   setenv (_var, _with, 1);
 #else
   char* _varw= as_charp (var * "=" * with).release();

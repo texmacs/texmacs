@@ -166,7 +166,7 @@ qt_chooser_widget_rep::perform_dialog () {
   QString _filter, _suffix, _caption, _directory;
   _caption = to_qstring (win_title);
   {
-    blob<char> tmp = as_charp (directory * "/" * file);
+    c_string tmp = as_charp (directory * "/" * file);
     _directory = QString::fromLocal8Bit (tmp);
   }
 #if (QT_VERSION >= 0x040400)

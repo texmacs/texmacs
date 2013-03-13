@@ -104,7 +104,7 @@ sql_exec (url db_name, string cmd) {
     tm_sqlite3_initialize ();
   string name= concretize (db_name);
   if (!sqlite3_connections->contains (name)) {
-    blob<char> _name= as_charp (name);
+    c_string _name= as_charp (name);
     sqlite3* db= NULL;
     //cout << "Opening " << _name << "\n";
     int status= SQLITE3_open (_name, &db);
@@ -117,7 +117,7 @@ sql_exec (url db_name, string cmd) {
   }
   tree ret (TUPLE);
   sqlite3* db= (sqlite3*) sqlite3_connections [name];
-  blob<char> _cmd= as_charp (cork_to_utf8 (cmd));
+  c_string _cmd= as_charp (cork_to_utf8 (cmd));
   char** tab;
   int rows, cols;
   char* err;

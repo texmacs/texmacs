@@ -35,7 +35,7 @@ symbol_install (string lib, string symb, pointer& f) {
     if (is_none (name)) out= "Library '" * lib * "' not found";
     else {
       lib= concretize (name);
-      blob<char> _lib= as_charp (lib);
+      c_string _lib= as_charp (lib);
       dyn_linked (lib)= dlopen (_lib, RTLD_LAZY);
       if (dyn_linked [lib] == NULL) {
 	const char *err = dlerror();
@@ -46,7 +46,7 @@ symbol_install (string lib, string symb, pointer& f) {
 
   pointer handle= dyn_linked [lib];
   if (handle) {
-    blob<char> _symb= as_charp (symb);
+    c_string _symb= as_charp (symb);
     string tag= lib * ":" * symb;
     if (!dyn_linked->contains (tag))
       dyn_linked (tag)= dlsym (handle, _symb);
@@ -120,7 +120,7 @@ dyn_link_rep::start () {
   if (routs != NULL) {
     dyn_linked (name)= routs;
     package_exports_1* pack= (package_exports_1*) routs;
-    blob<char> _init= as_charp (init);
+    c_string _init= as_charp (init);
     char* _errors= NULL;
     char* _message= pack->install (&TeXmacs, _init, &_errors);
     if (_errors != NULL) {
@@ -149,8 +149,8 @@ dyn_link_rep::write (string s, int channel) {
   }
   package_exports_1* pack= (package_exports_1*) routs;
 
-  blob<char> _session= as_charp (session);
-  blob<char> _s= as_charp (s);
+  c_string _session= as_charp (session);
+  c_string _s= as_charp (s);
   char* _errors= NULL;
   char* _r= pack->evaluate (_s, _session, &_errors);
   ret= string (_r==NULL? (_errors==NULL? ((char*) "Error"): _errors): _r);

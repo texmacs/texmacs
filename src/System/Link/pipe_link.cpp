@@ -132,7 +132,7 @@ process_all_pipes () {
 #ifndef __MINGW32__
 void
 execute_shell (string s) {
-  blob<char> _s= as_charp (s);
+  c_string _s= as_charp (s);
   char *argv[4];
   argv[0] = const_cast<char*> ("sh");
   argv[1] = const_cast<char*> ("-c");
@@ -226,7 +226,7 @@ pipe_link_rep::write (string s, int channel) {
 #ifndef __MINGW32__
   if ((!alive) || (channel != LINK_IN)) return;
   if (DEBUG_IO) cout << "[INPUT]" << debug_io_string (s);
-  blob<char> _s= as_charp (s);
+  c_string _s= as_charp (s);
   int err= ::write (in, _s, N(s));
   (void) err;
 #endif

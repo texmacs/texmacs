@@ -90,7 +90,7 @@ namespace win32 {
   WCHAR*
   string_to_WCHARP (string s) {
     WCHAR* wcs = tm_new_array<WCHAR>(N(s) + 1);
-    blob<char> cs = as_charp(cork_to_utf8(s));
+    c_string cs = as_charp(cork_to_utf8(s));
     int t, i = 0, j = 0;
     while (t = mbtowc(&wcs[j], &cs[i], MB_CUR_MAX)) {
       if (t != -1) {

@@ -135,7 +135,7 @@ bibtex_run (string bib, string style, url bib_file, tree bib_t) {
 
 #ifdef OS_WIN32
   {
-    blob<char> directory= as_charp (dir);
+    c_string directory= as_charp (dir);
     RunBibtex (directory, "$TEXMACS_HOME_PATH/system/bib", "temp");
   }
 #else

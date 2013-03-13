@@ -99,7 +99,7 @@ eval_scheme_file (string file) {
 	//static int cumul= 0;
 	//timer tm;
 	if (DEBUG_STD) cout << "TeXmacs] Evaluating " << file << "...\n";
-  blob<char> _file= as_charp (file);
+  c_string _file= as_charp (file);
   SCM result= TeXmacs_eval_file (_file);
 	//int extra= tm->watch (); cumul += extra;
 	//cout << extra << "\t" << cumul << "\t" << file << "\n";
@@ -127,7 +127,7 @@ TeXmacs_eval_string (char *s) {
 SCM
 eval_scheme (string s) {
 	// cout << "Eval] " << s << "\n";
-	blob<char> _s= as_charp (s);
+	c_string _s= as_charp (s);
 	SCM result= TeXmacs_eval_string (_s);
 	return result;
 }
@@ -313,7 +313,7 @@ scm_to_double (SCM i) {
 
 tmscm
 string_to_tmscm (string s) {
-	blob<char> _s= as_charp (s);
+	c_string _s= as_charp (s);
 	SCM r= scm_str2scm (_s, N(s));
 	return r;
 }
@@ -343,7 +343,7 @@ bool tmscm_is_symbol (tmscm s) {
 
 tmscm
 symbol_to_tmscm (string s) {
-	blob<char> _s= as_charp (s);
+	c_string _s= as_charp (s);
 	SCM r= scm_symbol2scm (_s);
 	return r;
 }

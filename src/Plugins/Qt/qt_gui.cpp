@@ -226,7 +226,7 @@ qt_gui_rep::set_selection (string key, tree t,
   else return true;
   cb->clear (mode);
 
-  blob<char> selection= as_charp (s);
+  c_string selection= as_charp (s);
   cb->setText (QString::fromAscii(selection), mode);
   QMimeData *md= new QMimeData;
 
@@ -1112,7 +1112,7 @@ qt_gui_rep::put_graphics_on_clipboard (url file) {
   if ((extension == "bmp") || (extension == "png") ||
       (extension == "jpg") || (extension == "jpeg")) {
     QClipboard *clipboard = QApplication::clipboard();
-    blob<char> tmp = as_charp (concretize (file));
+    c_string tmp = as_charp (concretize (file));
     clipboard->setImage (QImage (tmp));
   }
   else {
@@ -1127,7 +1127,7 @@ qt_gui_rep::put_graphics_on_clipboard (url file) {
     string filecontent;
     load_string (as_string (file), filecontent, true);
     
-    blob<char> tmp = as_charp (filecontent);
+    c_string tmp = as_charp (filecontent);
     QByteArray rawdata (tmp);
 
     QMimeData *mymimeData = new QMimeData;

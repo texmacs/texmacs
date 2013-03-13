@@ -179,7 +179,7 @@ ps_load (url image) {
   if (s == "") {
     char *data;
     {
-      blob<char> path= as_charp (as_string (name));
+      c_string path= as_charp (as_string (name));
       data= XLoadImageAsPS (path);
     }
     if (!data) s= "";

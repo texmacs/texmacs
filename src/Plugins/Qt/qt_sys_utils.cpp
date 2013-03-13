@@ -27,7 +27,7 @@ qt_system (string cmd, string& result) {
   QProcess proc;
 
   proc.setProcessChannelMode (QProcess::MergedChannels);
-  blob<char> _cmd = as_charp (cmd);
+  c_string _cmd = as_charp (cmd);
 #if defined (__MINGW__) || defined (__MINGW32__)
   QString qcmd = QString::fromLocal8Bit (_cmd);
 #else

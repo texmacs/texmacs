@@ -299,7 +299,7 @@ x_gui_rep::process_event (x_window win, XEvent* ev) {
         sel.property = req.property;
       }
       else if ((req.target==AnyPropertyType) || (req.target==XA_STRING)) {
-        blob<char> txt= as_charp (selection_s(key));
+        c_string txt= as_charp (selection_s(key));
         XChangeProperty (dpy, req.requestor, req.property, XA_STRING,
                          8, PropModeReplace,
                          (unsigned char*)(char*) txt,

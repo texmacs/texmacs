@@ -300,7 +300,7 @@ x_drawable_rep::xpm_initialize (url file_name) {
       a call to xpm_colors(), plus the appropriate code to
       fill bmcs() & set first_name. */
 
-    blob<char> _def= as_charp (def);
+    c_string _def= as_charp (def);
     XColor exact, closest;
     XLookupColor (gui->dpy, gui->cols, _def, &exact, &closest);
     if (!reverse_colors && XAllocColor (gui->dpy, gui->cols, &exact))

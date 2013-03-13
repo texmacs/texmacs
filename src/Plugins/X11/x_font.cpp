@@ -274,7 +274,7 @@ x_gui_rep::load_system_font (string family, int size, int dpi,
   if (DEBUG_VERBOSE) cout << "TeXmacs] Loading ps font " << name << "\n";
   XFontStruct *xfs = NULL;
   {
-    blob<char> temp= as_charp (name);
+    c_string temp= as_charp (name);
     xfs = XLoadQueryFont (dpy, temp);
   }
   if (xfs == NULL) {

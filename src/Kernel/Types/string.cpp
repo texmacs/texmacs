@@ -229,7 +229,7 @@ as_double (string s) {
   return x;
 }
 
-blob<char>
+c_string
 as_charp (string s) {
   int i, n= N(s);
   char *s2= tm_new_array<char> (n+1);

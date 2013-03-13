@@ -18,7 +18,7 @@
 static NSString *
 to_nsstring_utf8 (string s) {
   s= cork_to_utf8 (s);
-  blob<char> p = as_charp(s);
+  c_string p = as_charp(s);
   NSString *nss = [NSString stringWithCString:p encoding:NSUTF8StringEncoding];
   return nss;
 }

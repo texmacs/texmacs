@@ -65,7 +65,7 @@ load_string (url u, string& s, bool fatal) {
     // End caching
 
     bench_start ("load file");
-    blob<char> _name= as_charp (name);
+    c_string _name= as_charp (name);
     // cout << "OPEN :" << _name << LF;
 #if defined (OS_WIN32)
     FILE* fin= _fopen (_name, "rb");
@@ -132,7 +132,7 @@ save_string (url u, string s, bool fatal) {
   if (!err) {
     string name= concretize (r);
     {
-      blob<char> _name= as_charp (name);
+      c_string _name= as_charp (name);
 #if defined (OS_WIN32)
       FILE* fout= _fopen (_name, "wb");
 #elif defined (__MINGW__) || defined (__MINGW32__)
@@ -206,7 +206,7 @@ get_attributes (url name, struct stat* buf,
   bench_start ("stat");
   bool flag;
   {
-  blob <char> temp= as_charp (name_s);
+  c_string temp= as_charp (name_s);
 #ifdef OS_WIN32
   flag= _stat (temp, buf);
 #else
@@ -447,7 +447,7 @@ read_directory (url u, bool& error_flag) {
 
   DIR* dp;
   {
-    blob<char> temp= as_charp (name);
+    c_string temp= as_charp (name);
     dp= opendir (temp);
   }
   error_flag= (dp==NULL);
@@ -555,8 +555,8 @@ search_score (url u, array<string> a) {
 
 void
 move (url u1, url u2) {
-  blob<char> _u1= as_charp (concretize (u1));
-  blob<char> _u2= as_charp (concretize (u2));
+  c_string _u1= as_charp (concretize (u1));
+  c_string _u2= as_charp (concretize (u2));
   (void) rename (_u1, _u2);
 }
 
@@ -576,7 +576,7 @@ remove (url u) {
     remove (u[2]);
   }
   else {
-    blob<char>_u= as_charp (concretize (u));
+    c_string _u= as_charp (concretize (u));
     (void) ::remove (_u);
   }
 }
@@ -586,7 +586,7 @@ mkdir (url u) {
 #if defined (HAVE_SYS_TYPES_H) && defined (HAVE_SYS_STAT_H)
   if (exists (u)) return;
   {
-    blob <char>_u= as_charp (concretize (u));
+    c_string _u= as_charp (concretize (u));
 #if defined(__MINGW__) || defined(__MINGW32__)
     (void) ::mkdir (_u);
 #else
@@ -606,7 +606,7 @@ void
 change_mode (url u, int mode) {
 #if defined (HAVE_SYS_TYPES_H) && defined (HAVE_SYS_STAT_H)
   {
-    blob<char> _u= as_charp (concretize (u));
+    c_string _u= as_charp (concretize (u));
     (void) ::chmod (_u, mode);
   }
 #else
@@ -622,8 +622,8 @@ void
 ps2pdf (url u1, url u2) {
 #ifdef OS_WIN32
   {
-    blob<char> _u1= as_charp (concretize (u1));
-    blob<char> _u2= as_charp (concretize (u2));
+    c_string _u1= as_charp (concretize (u1));
+    c_string _u2= as_charp (concretize (u2));
     XPs2Pdf (_u1, _u2);
   }
 #else
