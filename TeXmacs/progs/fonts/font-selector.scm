@@ -170,7 +170,7 @@
 (tm-define selector-search-spacing "Any")
 (tm-define selector-search-case "Any")
 (tm-define selector-search-device "Any")
-(tm-define selector-search-purpose "Any")
+(tm-define selector-search-category "Any")
 (tm-define selector-search-glyphs "Any")
 
 (define (selector-initialize-search)
@@ -181,7 +181,7 @@
   (set! selector-search-spacing "Any")
   (set! selector-search-case "Any")
   (set! selector-search-device "Any")
-  (set! selector-search-purpose "Any")
+  (set! selector-search-category "Any")
   (set! selector-search-glyphs "Any"))
 
 (define (selector-search-glyphs-decoded)
@@ -205,7 +205,7 @@
                 selector-search-spacing
                 selector-search-case
                 selector-search-device
-                selector-search-purpose
+                selector-search-category
                 (selector-search-glyphs-decoded))
     (list-filter l (cut != <> "Any"))))
 
@@ -313,6 +313,12 @@
               '("Any" "Print" "Typewriter" "Digital"
 		"Pen" "Art Pen" "Chalk" "Marker")
               selector-search-device "120px"))
+      (item (text "Category:")
+        (enum (selector-search-set! selector-search-category answer)
+              '("Any" "Ancient" "Calligraphic" "Comic"
+                "Decorative" "Gothic" "Handwritten"
+                "Medieval" "Retro" "Scifi" "Title")
+              selector-search-category "120px"))
       (item ====== ======)
       (item (text "Glyphs:")
         (enum (selector-search-set! selector-search-glyphs answer)

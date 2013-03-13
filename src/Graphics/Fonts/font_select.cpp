@@ -499,6 +499,22 @@ is_device (string s) {
 }
 
 bool
+is_category (string s) {
+  return 
+    s == "ancient" ||
+    s == "calligraphic" ||
+    s == "comic" ||
+    s == "decorative" ||
+    s == "gothic" ||
+    s == "handwritten" ||
+    s == "medieval" ||
+    s == "gothic" ||
+    s == "retro" ||
+    s == "scifi" ||
+    s == "title";
+}
+
+bool
 is_glyphs (string s) {
   return starts (s, "+");
 }
@@ -513,6 +529,7 @@ is_other (string s) {
     !is_serif (s) &&
     !is_spacing (s) &&
     !is_device (s) &&
+    !is_category (s) &&
     !is_glyphs (s) &&
     s != "long" &&
     s != "flat";
@@ -528,6 +545,7 @@ same_kind (string s1, string s2) {
     (is_serif (s1) && is_serif (s2)) ||
     (is_spacing (s1) && is_spacing (s2)) ||
     (is_device (s1) && is_device (s2)) ||
+    (is_category (s1) && is_category (s2)) ||
     (is_glyphs (s1) && is_glyphs (s2));
 }
 
@@ -548,6 +566,7 @@ same_kind (string s1, string s2) {
 #define D_SPACING         100000
 #define Q_DEVICE          300000
 #define D_DEVICE          1000000
+#define D_CATEGORY        1000000
 #define D_GLYPHS          3000000
 #define D_HUGE            30000000
 #define D_INFINITY        1000000000
@@ -606,6 +625,10 @@ distance (string s1, string s2, bool asym) {
     if (s1 == "chalk" && s2 == "pen" && !asym) return Q_DEVICE;
     return D_DEVICE;
   }
+  if (is_category (s1) || is_category (s2)) {
+    if (!is_category (s1) || !is_category (s2)) return D_HUGE;
+    return D_CATEGORY;
+  }
   if (is_glyphs (s1) || is_glyphs (s2)) {
     if (!is_glyphs (s1) || !is_glyphs (s2)) return D_HUGE;
     return D_GLYPHS;
@@ -641,6 +664,7 @@ distance (string s, array<string> v, bool asym) {
   else if (is_serif (s)) m= D_SERIF;
   else if (is_spacing (s)) m= D_SPACING;
   else if (is_device (s)) m= D_DEVICE;
+  else if (is_category (s)) m= D_CATEGORY;
   else if (is_glyphs (s)) m= D_GLYPHS;
 
   for (int i=1; i<N(v); i++)
