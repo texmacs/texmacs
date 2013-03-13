@@ -1271,7 +1271,7 @@
     (with lf '(!concat (!linefeed) (and) (!linefeed))
           `((author (!concat ,@(list-intersperse (map cadr l) lf)))))))
 
-(tm-define (tmtex-make-title titles subtitles notes miscs)
+(define (tmtex-make-title titles subtitles notes miscs)
   (with titles `(!concat ,@(list-intersperse (map cadr titles) '(tmSep)))
         `(title (!paragraph ,titles ,@subtitles ,@notes ,@miscs))))
 

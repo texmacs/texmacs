@@ -45,7 +45,7 @@
 
 (tm-define (tmtex-make-author names affiliations emails urls miscs notes)
   (:mode ams-style?)
-  (with names (map (lambda (x) `(author (!concat ,x)))
+  (with names (map (lambda (x) `(author ,x))
                    (list-intersperse (map cadr names) '(tmSep)))
         `(!paragraph ,@names
                      ,@affiliations
@@ -57,7 +57,7 @@
 (tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes)
   (:mode ams-style?)
   `(!document
-     ,(tmtex-make-title titles subtitles notes miscs)
+     (!paragraph ,@titles ,@subtitles ,@notes ,@miscs)
      ,@authors
      ,@dates))
 
