@@ -354,7 +354,7 @@
       (hlist
         (enum (set-font-sample-kind answer)
               '("Standard" "Selection"
-                "ASCII" "Greek" "Cyrillic" "CJK" "Hangul"
+                "ASCII" "Latin" "Greek" "Cyrillic" "CJK" "Hangul"
                 "Math" "Math Extra" "Math Letters")
               (get-font-sample-kind) "120px")
         >>>
