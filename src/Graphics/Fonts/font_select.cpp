@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "font.hpp"
+#include "Freetype/tt_tools.hpp"
 #include "analyze.hpp"
 
 extern hashmap<tree,tree> font_features;
@@ -295,15 +296,6 @@ family_strict_features (string f) {
 * Guessing features
 ******************************************************************************/
 
-string
-find_value (array<string> a, string s) {
-  string s2= s * "=";
-  for (int i=0; i<N(a); i++)
-    if (starts (a[i], s2))
-      return a[i] (N(s2), N(a[i]));
-  return "";
-}
-
 static int
 abs_int (int i) {
   return max (i, -i);
@@ -315,12 +307,12 @@ guessed_features (string family, string style) {
   array<string> a= font_database_characteristics (family, style);
   //cout << "a= " << a << "\n";
 
-  string slant  = find_value (a, "slant");
-  string vcnt   = find_value (a, "vcnt");
-  string fillp  = find_value (a, "fillp");
-  string lasprat= find_value (a, "lasprat");
-  string pasprat= find_value (a, "pasprat");
-  string lvw    = find_value (a, "lvw");
+  string slant  = find_attribute_value (a, "slant");
+  string vcnt   = find_attribute_value (a, "vcnt");
+  string fillp  = find_attribute_value (a, "fillp");
+  string lasprat= find_attribute_value (a, "lasprat");
+  string pasprat= find_attribute_value (a, "pasprat");
+  string lvw    = find_attribute_value (a, "lvw");
   
   bool oblique  = (slant != "" && slant != "0");
   bool italic   = oblique && contains (string ("italic=yes"), a);
@@ -432,6 +424,10 @@ guessed_features (string family, bool pure_guess) {
   v << master << r;
   return v;
 }
+
+/******************************************************************************
+* Guessed distances
+******************************************************************************/
 
 /******************************************************************************
 * Predicates for font features

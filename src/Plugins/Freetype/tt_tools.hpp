@@ -17,6 +17,8 @@ void tt_dump (url u);
 scheme_tree tt_font_name (url u);
 url tt_unpack (string name);
 
+string find_attribute_value (array<string> a, string s);
 array<string> tt_analyze (string family);
+double characteristic_distance (array<string> a1, array<string> a2);
 
 #endif // TT_TOOLS_H

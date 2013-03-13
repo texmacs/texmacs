@@ -11,6 +11,7 @@
 
 #include "tt_face.hpp"
 #include "font.hpp"
+#include "analyze.hpp"
 
 #ifdef USE_FREETYPE
 
@@ -369,6 +370,72 @@ analyze_trace (font fn, font_metric fnm, array<string>& r) {
     string ct= count_trace (fn, ca);
     if (ct != "") r << (string ("loc=") * ct);
   }
+}
+
+/******************************************************************************
+* Distance between fonts
+******************************************************************************/
+
+string
+find_attribute_value (array<string> a, string s) {
+  string s2= s * "=";
+  for (int i=0; i<N(a); i++)
+    if (starts (a[i], s2))
+      return a[i] (N(s2), N(a[i]));
+  return "";
+}
+
+double
+boolean_distance (array<string> a1, array<string> a2, string attr) {
+  string v1= find_attribute_value (a1, attr);
+  string v2= find_attribute_value (a2, attr);
+  if (v1 == "" || v2 == "" || v1 != v2) return 1.0;
+  return 0.0;
+}
+
+double
+numeric_distance (array<string> a1, array<string> a2, string attr, double m) {
+  string v1= find_attribute_value (a1, attr);
+  string v2= find_attribute_value (a2, attr);
+  if (v1 == "" || v2 == "") return 1.0;
+  return min (abs (as_double (v1) - as_double (v2)) / m, 1.0);
+}
+
+double
+vector_distance (array<string> a1, array<string> a2, string attr, double m) {
+  string v1= find_attribute_value (a1, attr);
+  string v2= find_attribute_value (a2, attr);
+  if (v1 == "" || v2 == "" || N(v1) != N(v2)) return 1.0;
+  double d= 0.0;
+  for (int i=0; i<N(v1); i++)
+    d += abs (((double) ((int) (v1[i]))) - ((double) ((int) (v2[i])))) / 9.0;
+  //cout << attr << ", " << v1 << ", " << v2 << " -> " << (d / N(v1)) << "\n";
+  return min (d / (m * N(v1)), 1.0);
+}
+
+double
+characteristic_distance (array<string> a1, array<string> a2) {
+  double d_mono   = boolean_distance (a1, a2, "mono");
+  double d_sans   = boolean_distance (a1, a2, "sans");
+  double d_italic = boolean_distance (a1, a2, "italic");
+  double d_case   = boolean_distance (a1, a2, "case");
+  double d_ex     = numeric_distance (a1, a2, "ex", 50.0);
+  double d_em     = numeric_distance (a1, a2, "em", 100.0);
+  double d_lvw    = numeric_distance (a1, a2, "lvw", 30.0);
+  double d_lhw    = numeric_distance (a1, a2, "lhw", 20.0);
+  double d_fillp  = numeric_distance (a1, a2, "fillp", 50.0);
+  double d_vcnt   = numeric_distance (a1, a2, "vcnt", 50.0);
+  double d_asprat = numeric_distance (a1, a2, "lasprat", 50.0);
+  double d_upw    = vector_distance  (a1, a2, "upw", 0.25);
+  double d_uph    = vector_distance  (a1, a2, "uph", 0.25);
+  double d_upc    = vector_distance  (a1, a2, "upc", 0.25);
+  double d_low    = vector_distance  (a1, a2, "low", 0.25);
+  double d_loh    = vector_distance  (a1, a2, "loh", 0.25);
+  double d_loc    = vector_distance  (a1, a2, "loc", 0.25);
+  return
+    d_mono + d_sans + d_italic + d_case +
+    d_ex + d_em + d_lvw + d_lhw + d_fillp + d_vcnt + d_asprat +
+    d_upw + d_uph + d_upc + d_low + d_loh + d_loc;
 }
 
 /******************************************************************************
