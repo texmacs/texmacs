@@ -423,9 +423,10 @@ characteristic_distance (array<string> a1, array<string> a2) {
   double d_em     = numeric_distance (a1, a2, "em", 100.0);
   double d_lvw    = numeric_distance (a1, a2, "lvw", 30.0);
   double d_lhw    = numeric_distance (a1, a2, "lhw", 20.0);
-  double d_fillp  = numeric_distance (a1, a2, "fillp", 50.0);
-  double d_vcnt   = numeric_distance (a1, a2, "vcnt", 50.0);
+  double d_fillp  = numeric_distance (a1, a2, "fillp", 50.0) * 2.0;
+  double d_vcnt   = numeric_distance (a1, a2, "vcnt", 50.0) * 2.0;
   double d_asprat = numeric_distance (a1, a2, "lasprat", 50.0);
+  double d_slant  = numeric_distance (a1, a2, "slant", 33.3) * 2.0;
   double d_upw    = vector_distance  (a1, a2, "upw", 0.25);
   double d_uph    = vector_distance  (a1, a2, "uph", 0.25);
   double d_upc    = vector_distance  (a1, a2, "upc", 0.25);
@@ -434,7 +435,7 @@ characteristic_distance (array<string> a1, array<string> a2) {
   double d_loc    = vector_distance  (a1, a2, "loc", 0.25);
   return
     d_mono + d_sans + d_italic + d_case +
-    d_ex + d_em + d_lvw + d_lhw + d_fillp + d_vcnt + d_asprat +
+    d_ex + d_em + d_lvw + d_lhw + d_fillp + d_vcnt + d_asprat + d_slant +
     d_upw + d_uph + d_upc + d_low + d_loh + d_loc;
 }
 
