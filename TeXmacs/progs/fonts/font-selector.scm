@@ -316,9 +316,9 @@
               selector-search-device "120px"))
       (item (text "Category:")
         (enum (selector-search-set! selector-search-category answer)
-              '("Any" "Ancient" "Calligraphic" "Comic"
-                "Decorative" "Gothic" "Handwritten"
-                "Medieval" "Retro" "Scifi" "Title")
+              '("Any" "Ancient" "Attached" "Calligraphic" "Comic"
+                "Decorative" "Distorted" "Gothic" "Handwritten" "Initials"
+                "Medieval" "Miscellaneous" "Outline" "Retro" "Scifi" "Title")
               selector-search-category "120px"))
       (item ====== ======)
       (item (text "Glyphs:")

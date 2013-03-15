@@ -251,7 +251,7 @@ font_database_guess_features () {
     if (!font_features->contains (families[i])) {
       array<string> a= guessed_features (families[i], false);
       tree t (TUPLE);
-      for (int j=0; j<N(a); j++) t << tree (a[j]);
+      for (int j=0; j<N(a); j++) t << tree (encode_feature (a[j]));
       font_features (families[i])= t;
     }
 }

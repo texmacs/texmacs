@@ -128,6 +128,7 @@ array<string> font_database_search (string fam, string var,
 array<string> font_database_characteristics (string family, string style);
 
 // Font selection
+string encode_feature (string s);
 string family_to_master (string f);
 array<string> master_to_families (string f);
 array<string> master_features (string m);

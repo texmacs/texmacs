@@ -70,6 +70,7 @@ string
 encode_feature (string s) {
   s= upcase_first (s);
   if (s == "Smallcaps") s= "SmallCaps";
+  if (s == "Sansserif") s= "SansSerif";
   else if (ends (s, "bold"))
     s= s (0, N(s)-4) * upcase_first (s (N(s)-4, N(s)));
   else if (ends (s, "condensed"))
@@ -542,13 +543,18 @@ bool
 is_category (string s) {
   return 
     s == "ancient" ||
+    s == "attached" ||
     s == "calligraphic" ||
     s == "comic" ||
     s == "decorative" ||
+    s == "distorted" ||
     s == "gothic" ||
     s == "handwritten" ||
+    s == "initials" ||
     s == "medieval" ||
+    s == "miscellaneous" ||
     s == "gothic" ||
+    s == "outline" ||
     s == "retro" ||
     s == "scifi" ||
     s == "title";

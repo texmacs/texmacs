@@ -322,6 +322,7 @@ tt_font_name (url u) {
     while (fam != "" && !is_alpha (fam[0])) fam= fam (1, N(fam));
     if (upcase_all (fam) == fam) fam= locase_all (fam);
     fam= upcase_first (fam);
+    if (starts (fam, "STIX")) fam= "Stix" * fam (4, N(fam));
     // End normalization of family name
     r << tuple (fam, sh);
   }
