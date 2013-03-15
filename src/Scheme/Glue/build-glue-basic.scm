@@ -112,6 +112,7 @@
   (font-style-features style_features (array_string string))
   (font-guessed-features guessed_features (array_string string string))
   (font-guessed-distance guessed_distance (double string string string string))
+  (font-master-guessed-distance guessed_distance (double string string))
   (font-family-guessed-features guessed_features (array_string string bool))
   (characteristic-distance
    characteristic_distance (double array_string array_string))

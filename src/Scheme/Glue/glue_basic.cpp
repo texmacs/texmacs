@@ -1085,6 +1085,21 @@ tmg_font_guessed_distance (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
 }
 
 tmscm
+tmg_font_master_guessed_distance (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "font-master-guessed-distance");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "font-master-guessed-distance");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  double out= guessed_distance (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return double_to_tmscm (out);
+}
+
+tmscm
 tmg_font_family_guessed_features (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "font-family-guessed-features");
   TMSCM_ASSERT_BOOL (arg2, TMSCM_ARG2, "font-family-guessed-features");
@@ -6928,6 +6943,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("font-style-features",  tmg_font_style_features, 1, 0, 0);
   tmscm_install_procedure ("font-guessed-features",  tmg_font_guessed_features, 2, 0, 0);
   tmscm_install_procedure ("font-guessed-distance",  tmg_font_guessed_distance, 4, 0, 0);
+  tmscm_install_procedure ("font-master-guessed-distance",  tmg_font_master_guessed_distance, 2, 0, 0);
   tmscm_install_procedure ("font-family-guessed-features",  tmg_font_family_guessed_features, 2, 0, 0);
   tmscm_install_procedure ("characteristic-distance",  tmg_characteristic_distance, 2, 0, 0);
   tmscm_install_procedure ("trace-distance",  tmg_trace_distance, 3, 0, 0);

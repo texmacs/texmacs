@@ -459,21 +459,50 @@ category_distance (array<string> f1, array<string> f2) {
 
 double
 guessed_distance (string fam1, string sty1, string fam2, string sty2) {
+  static hashmap<tree,double> memo (1000000.0);
+  tree key= tuple (fam1, sty1, fam2, sty2);
+  if (memo->contains (key)) return memo[key];
   array<string> f1= logical_font_exact (fam1, sty1);
   array<string> f2= logical_font_exact (fam2, sty2);
   array<string> v1= font_database_characteristics (fam1, sty1);
   array<string> v2= font_database_characteristics (fam2, sty2);
   double d1= category_distance (f1, f2);
   double d2= characteristic_distance (v1, v2);
-  return d1 + d2;
+  double d = d1 + d2;
+  memo (key)= d;
+  return d;
 }
 
-/*
+double
+guessed_distance_families (string fam1, string fam2) {
+  static hashmap<tree,double> memo (1000000.0);
+  tree key= tuple (fam1, fam2);
+  if (memo->contains (key)) return memo[key];
+  array<string> stys1= font_database_styles (fam1);
+  array<string> stys2= font_database_styles (fam2);
+  double d= 1000000.0;
+  for (int i1=0; i1<N(stys1); i1++)
+    for (int i2=0; i2<N(stys2); i2++)
+      d= min (d, guessed_distance (fam1, stys1[i1], fam2, stys2[i2]));
+  memo (key)= d;
+  return d;
+}
+
 double
 guessed_distance (string master1, string master2) {
-  
+  static hashmap<tree,double> memo (1000000.0);
+  if (master1 == master2) return 0.0;
+  tree key= tuple (master1, master2);
+  if (memo->contains (key)) return memo[key];
+  array<string> fams1= master_to_families (master1);
+  array<string> fams2= master_to_families (master2);
+  double d= 1000000.0;
+  for (int i1=0; i1<N(fams1); i1++)
+    for (int i2=0; i2<N(fams2); i2++)
+      d= min (d, guessed_distance_families (fams1[i1], fams2[i2]));
+  memo (key)= d;
+  return d;
 }
-*/
 
 /******************************************************************************
 * Predicates for font features

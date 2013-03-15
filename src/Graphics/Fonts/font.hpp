@@ -141,6 +141,7 @@ array<string> logical_font (string f, string v, string ser, string sh);
 array<string> guessed_features (string family, string shape);
 array<string> guessed_features (string family, bool pure_guess);
 double guessed_distance (string fam1, string sty1, string fam2, string sty2);
+double guessed_distance (string master1, string master2);
 string get_family (array<string> v);
 string get_variant (array<string> v);
 string get_series (array<string> v);
