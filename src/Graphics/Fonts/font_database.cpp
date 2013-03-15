@@ -175,7 +175,7 @@ font_database_load () {
     font_database_save_features ("$TEXMACS_HOME_PATH/fonts/font-features.scm");
   }
   font_database_load_characteristics ("$TEXMACS_HOME_PATH/fonts/font-characteristics.scm");
-  if (N (font_features) == 0) {
+  if (N (font_characteristics) == 0) {
     font_database_load_characteristics ("$TEXMACS_PATH/fonts/font-characteristics.scm");
     font_database_filter_characteristics ();
     font_database_save_characteristics ("$TEXMACS_HOME_PATH/fonts/font-characteristics.scm");
