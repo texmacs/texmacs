@@ -85,6 +85,7 @@
   (glyph-recognize recognize_glyph (string array_array_array_double))
 
   ;; routines for the font database
+  (tt-exists? tt_font_exists (bool string))
   (tt-dump tt_dump (void url))
   (tt-font-name tt_font_name (scheme_tree url))
   (tt-analyze tt_analyze (array_string string))

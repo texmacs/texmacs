@@ -454,6 +454,8 @@ font_database_build_characteristics (bool force) {
               ends (name, ".otf") ||
               ends (name, ".tfm")) {
             name= name (0, N(name)-4);
+            if (!tt_font_exists (name) && ends (name, "10"))
+              name= name (0, N(name)-2);
             if (tt_font_exists (name)) {
               array<string> a= tt_analyze (name);
               tree t (TUPLE, N(a));

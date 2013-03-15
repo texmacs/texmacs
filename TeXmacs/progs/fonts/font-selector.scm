@@ -123,6 +123,9 @@
           (set! l (cons* "font" (logical-font-family fn) l)))
         (apply make-multi-with l)))))
 
+(define (remove-plus s)
+  (if (string-starts? s "+") (string-drop s 1) s))
+
 (define (selector-font-simulate-comment)
   (let* ((fn  (selector-get-font))
 	 (fam (logical-font-family fn))
@@ -131,7 +134,8 @@
          (sh  (logical-font-shape fn))
          (lf  (logical-font-private fam var ser sh))
          (fn2 (logical-font-search lf #f))
-         (sel (string-recompose (selected-properties) " ")))
+         (sp  (map remove-plus (selected-properties)))
+         (sel (string-recompose sp " ")))
     ;;(display* "fn = " fn "\n")
     ;;(display* "lf = " lf "\n")
     ;;(display* "fn2= " fn2 "\n")
