@@ -18,6 +18,7 @@ extern hashmap<tree,tree> font_variants;
 array<string> remove_other (array<string> a, bool keep_glyphs= true);
 bool same_kind (string s1, string s2);
 bool is_glyphs (string s);
+bool is_category (string s);
 
 /******************************************************************************
 * Basic subroutines
@@ -428,6 +429,49 @@ guessed_features (string family, bool pure_guess) {
 /******************************************************************************
 * Guessed distances
 ******************************************************************************/
+
+double
+category_asym_distance (array<string> f1, array<string> f2) {
+  int d=0, n=0;
+  for (int i=1; i<N(f1); i++)
+    if (is_category (f1[i])) {
+      int j;
+      for (j=1; j<N(f2); j++)
+        if (f2[j] == f1[i]) break;
+      if (j == N(f2)) d++;
+      n++;
+    }
+  if (n == 0) return -1.0;
+  return ((double) d) / ((double) n);
+}
+
+double
+category_distance (array<string> f1, array<string> f2) {
+  double d1= category_asym_distance (f1, f2);
+  double d2= category_asym_distance (f2, f1);
+  if (d1 < 0 && d2 < 0) return 0.0;
+  if (d1 < 0) d1= 1.0;
+  if (d2 < 0) d2= 1.0;
+  return d1 + d2;
+}
+
+double
+guessed_distance (string fam1, string sty1, string fam2, string sty2) {
+  array<string> f1= logical_font_exact (fam1, sty1);
+  array<string> f2= logical_font_exact (fam2, sty2);
+  array<string> v1= font_database_characteristics (fam1, sty1);
+  array<string> v2= font_database_characteristics (fam2, sty2);
+  double d1= category_distance (f1, f2);
+  double d2= characteristic_distance (v1, v2);
+  return d1 + d2;
+}
+
+/*
+double
+guessed_distance (string master1, string master2) {
+  
+}
+*/
 
 /******************************************************************************
 * Predicates for font features

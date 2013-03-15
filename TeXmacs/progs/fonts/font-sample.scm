@@ -119,9 +119,14 @@
          (r (trace-distance val1 val2 scale)))
     (number->string (inexact->exact (round (* 100 r))))))
 
-(define (charac-distance fn1 kind)
+(define (fn-distance fn1 kind)
   (let* ((fn2 (cadr kind))
-         (r (characteristic-distance (chi fn1) (chi fn2))))
+         (r (font-distance fn1 fn2)))
+    (number->string (inexact->exact (round (* 100 r))))))
+
+(define (fn-distance* fn1 kind)
+  (let* ((fn2 (cadr kind))
+         (r (font-distance* fn1 fn2)))
     (number->string (inexact->exact (round (* 100 r))))))
 
 (define (scaled-string fn1 kind)
@@ -177,6 +182,7 @@
         ((== kind :lodes) "lodes")
         ((== kind :dides) "dides")
         ((unary? kind :dist) "dist")
+        ((unary? kind :dist*) "dist*")
         ((unary? kind :slant) "slant")
         ((unary? kind :ex) "ex")
         ((unary? kind :em) "em")
@@ -243,7 +249,8 @@
         ((== kind :loasc) (get-characteristic fn "loasc"))
         ((== kind :lodes) (get-characteristic fn "lodes"))
         ((== kind :dides) (get-characteristic fn "dides"))
-        ((unary? kind :dist) (charac-distance fn kind))
+        ((unary? kind :dist) (fn-distance fn kind))
+        ((unary? kind :dist*) (fn-distance* fn kind))
         ((unary? kind :slant) (numeric-distance fn kind "slant" 33.3))
         ((unary? kind :ex) (relative-distance fn kind "ex" 1.5))
         ((unary? kind :em) (relative-distance fn kind "em" 1.5))
@@ -307,12 +314,16 @@
                               (font-database-styles f)))))
     (append-map xp fams)))
 
-(define (chi fn)
-  (font-database-characteristics (car fn) (cadr fn)))
+(define (font-distance fn1 fn2)
+  (font-guessed-distance (car fn1) (cadr fn1) (car fn2) (cadr fn2)))
+
+(define (font-distance* fn1 fn2)
+  (let* ((c1 (font-database-characteristics (car fn1) (cadr fn1)))
+         (c2 (font-database-characteristics (car fn2) (cadr fn2))))
+    (characteristic-distance c1 c2)))
 
 (tm-define (closest-fonts fn)
-  (let* ((cfn (chi fn))
-         (dist (lambda (fn2) (characteristic-distance cfn (chi fn2))))
+  (let* ((dist (lambda (fn2) (font-distance fn fn2)))
          (make (lambda (fn2) (list (dist fn2) fn2)))
          (l (map make (get-all-fonts)))
          (sl (sort l (lambda (x y) (<= (car x) (car y))))))
@@ -322,6 +333,7 @@
   (with fns (sublist (map cadr (closest-fonts fn)) 0 25)
     (with kinds (list :name
                       (list :dist fn)
+                      (list :dist* fn)
                       (list :slant fn)
                       (list :ex fn)
                       (list :em fn)
