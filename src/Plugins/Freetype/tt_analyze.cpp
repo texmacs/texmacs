@@ -198,6 +198,26 @@ analyze_special (font fn, font_metric fnm, array<string>& r) {
 * Check for major glyph characteristics
 ******************************************************************************/
 
+static int
+max_ascent (font_metric fnm, int start, int end) {
+  int m= 0;
+  for (int i=start; i<=end; i++) {
+    metric_struct* x= fnm->get (i);
+    m= max (m, x->y2/256);
+  }
+  return m;
+}
+
+static int
+max_descent (font_metric fnm, int start, int end) {
+  int m= 0;
+  for (int i=start; i<=end; i++) {
+    metric_struct* x= fnm->get (i);
+    m= max (m, -x->y1/256);
+  }
+  return m;
+}
+
 void
 analyze_major (font fn, font_metric fnm, array<string>& r) {
   if (range_exists (fnm, 0x41, 0x5a) && range_exists (fnm, 0x61, 0x7a)) {
@@ -258,6 +278,15 @@ analyze_major (font fn, font_metric fnm, array<string>& r) {
 
     //int irreg= irregularity (fnm);
     //r << (string ("irreg=") * as_string (irreg));
+
+    int loasc= (100 * max_ascent (fnm, 0x61, 0x7a)) / ex;
+    int lodes= (100 * (ex + max_descent (fnm, 0x61, 0x7a))) / ex;
+    r << (string ("loasc=") * as_string (loasc));
+    r << (string ("lodes=") * as_string (lodes));
+    if (range_exists (fnm, 0x30, 0x39)) {
+      int dides= (100 * (ex + max_descent (fnm, 0x30, 0x39))) / ex;
+      r << (string ("dides=") * as_string (dides));
+    }
   }
 }
 
@@ -376,6 +405,11 @@ analyze_trace (font fn, font_metric fnm, array<string>& r) {
 * Distance between fonts
 ******************************************************************************/
 
+double
+fabs (double x) {
+  return max (x, -x);
+}
+
 string
 find_attribute_value (array<string> a, string s) {
   string s2= s * "=";
@@ -386,7 +420,7 @@ find_attribute_value (array<string> a, string s) {
 }
 
 double
-boolean_distance (array<string> a1, array<string> a2, string attr) {
+discrete_distance (array<string> a1, array<string> a2, string attr) {
   string v1= find_attribute_value (a1, attr);
   string v2= find_attribute_value (a2, attr);
   if (v1 == "" || v2 == "" || v1 != v2) return 1.0;
@@ -398,45 +432,72 @@ numeric_distance (array<string> a1, array<string> a2, string attr, double m) {
   string v1= find_attribute_value (a1, attr);
   string v2= find_attribute_value (a2, attr);
   if (v1 == "" || v2 == "") return 1.0;
-  return min (abs (as_double (v1) - as_double (v2)) / m, 1.0);
+  return min (fabs (as_double (v1) - as_double (v2)) / m, 1.0);
+}
+
+double
+relative_distance (array<string> a1, array<string> a2, string attr, double m) {
+  string v1= find_attribute_value (a1, attr);
+  string v2= find_attribute_value (a2, attr);
+  if (v1 == "" || v2 == "") return 1.0;
+  double l1= log (1.0 + fabs ((double) as_int (v1)));
+  double l2= log (1.0 + fabs ((double) as_int (v2)));
+  return fabs (l1 - l2) / log (m);
+}
+
+double
+trace_distance (string v1, string v2, double m) {
+  if (v1 == "" || v2 == "" || N(v1) != N(v2)) return 1.0;
+  double d= 0.0;
+  for (int i=0; i<N(v1); i++) {
+    double x= fabs (((double) (int) (v1[i])) - ((double) (int) (v2[i]))) / 9.0;
+    d += x * x;
+  }
+  double r= sqrt (d / N(v1));
+  //cout << attr << ", " << v1 << ", " << v2 << " -> " << r << "\n";
+  return min (r / m, 1.0);
 }
 
 double
 vector_distance (array<string> a1, array<string> a2, string attr, double m) {
   string v1= find_attribute_value (a1, attr);
   string v2= find_attribute_value (a2, attr);
-  if (v1 == "" || v2 == "" || N(v1) != N(v2)) return 1.0;
-  double d= 0.0;
-  for (int i=0; i<N(v1); i++)
-    d += abs (((double) ((int) (v1[i]))) - ((double) ((int) (v2[i])))) / 9.0;
-  //cout << attr << ", " << v1 << ", " << v2 << " -> " << (d / N(v1)) << "\n";
-  return min (d / (m * N(v1)), 1.0);
+  return trace_distance (v1, v2, m);
 }
 
 double
 characteristic_distance (array<string> a1, array<string> a2) {
-  double d_mono   = boolean_distance (a1, a2, "mono");
-  double d_sans   = boolean_distance (a1, a2, "sans");
-  double d_italic = boolean_distance (a1, a2, "italic");
-  double d_case   = boolean_distance (a1, a2, "case");
-  double d_ex     = numeric_distance (a1, a2, "ex", 50.0);
-  double d_em     = numeric_distance (a1, a2, "em", 100.0);
-  double d_lvw    = numeric_distance (a1, a2, "lvw", 30.0);
-  double d_lhw    = numeric_distance (a1, a2, "lhw", 20.0);
-  double d_fillp  = numeric_distance (a1, a2, "fillp", 50.0) * 2.0;
-  double d_vcnt   = numeric_distance (a1, a2, "vcnt", 50.0) * 2.0;
-  double d_asprat = numeric_distance (a1, a2, "lasprat", 50.0);
-  double d_slant  = numeric_distance (a1, a2, "slant", 33.3) * 2.0;
-  double d_upw    = vector_distance  (a1, a2, "upw", 0.25);
-  double d_uph    = vector_distance  (a1, a2, "uph", 0.25);
-  double d_upc    = vector_distance  (a1, a2, "upc", 0.25);
-  double d_low    = vector_distance  (a1, a2, "low", 0.25);
-  double d_loh    = vector_distance  (a1, a2, "loh", 0.25);
-  double d_loc    = vector_distance  (a1, a2, "loc", 0.25);
-  return
+  double d_mono    = discrete_distance (a1, a2, "mono") * 2.0;
+  double d_sans    = discrete_distance (a1, a2, "sans") * 2.0;
+  double d_italic  = discrete_distance (a1, a2, "italic") * 2.0;
+  double d_case    = discrete_distance (a1, a2, "case") * 2.0;
+  double d_ex      = relative_distance (a1, a2, "ex", 1.5);
+  double d_em      = relative_distance (a1, a2, "em", 1.5);
+  double d_lvw     = relative_distance (a1, a2, "lvw", 2.0);
+  double d_lhw     = relative_distance (a1, a2, "lhw", 2.0);
+  double d_fillp   = relative_distance (a1, a2, "fillp", 1.25);
+  double d_vcnt    = relative_distance (a1, a2, "vcnt", 1.25);
+  double d_lasprat = relative_distance (a1, a2, "lasprat", 1.33);
+  double d_pasprat = relative_distance (a1, a2, "pasprat", 1.33);
+  double d_loasc   = relative_distance (a1, a2, "loasc", 1.5);
+  double d_lodes   = relative_distance (a1, a2, "lodes", 1.5);
+  double d_dides   = relative_distance (a1, a2, "dides", 1.5);
+  double d_slant   = numeric_distance  (a1, a2, "slant", 33.3) * 3.0;
+  //double d_upw     = vector_distance   (a1, a2, "upw", 0.33);
+  //double d_uph     = vector_distance   (a1, a2, "uph", 0.33);
+  //double d_upc     = vector_distance   (a1, a2, "upc", 0.33);
+  //double d_low     = vector_distance   (a1, a2, "low", 0.33);
+  //double d_loh     = vector_distance   (a1, a2, "loh", 0.33);
+  //double d_loc     = vector_distance   (a1, a2, "loc", 0.33);
+  double r =
     d_mono + d_sans + d_italic + d_case +
-    d_ex + d_em + d_lvw + d_lhw + d_fillp + d_vcnt + d_asprat + d_slant +
-    d_upw + d_uph + d_upc + d_low + d_loh + d_loc;
+    d_ex + d_em + d_lvw + d_lhw + d_fillp + d_vcnt +
+    d_lasprat + d_pasprat +
+    d_loasc + d_lodes + d_dides + d_slant;
+  //+ d_upw + d_uph + d_upc + d_low + d_loh + d_loc;
+  //cout << a1 << ", " << a2 << "\n";
+  //cout << "  ----> " << d_fillp << ", " << d_vcnt << ", " << r << "\n";
+  return r;
 }
 
 /******************************************************************************
@@ -456,7 +517,7 @@ tt_analyze (string family) {
   analyze_range (fnm, r);
   analyze_special (fn, fnm, r);
   analyze_major (fn, fnm, r);
-  analyze_trace (fn, fnm, r);
+  //analyze_trace (fn, fnm, r);
   get_glyph_fatal= true;
 
   //cout << "  -> " << r << "\n";

@@ -20,5 +20,6 @@ url tt_unpack (string name);
 string find_attribute_value (array<string> a, string s);
 array<string> tt_analyze (string family);
 double characteristic_distance (array<string> a1, array<string> a2);
+double trace_distance (string v1, string v2, double m);
 
 #endif // TT_TOOLS_H

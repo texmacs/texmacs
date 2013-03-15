@@ -114,6 +114,7 @@
   (font-family-guessed-features guessed_features (array_string string bool))
   (characteristic-distance
    characteristic_distance (double array_string array_string))
+  (trace-distance trace_distance (double string string double))
   (logical-font-public logical_font (array_string string string))
   (logical-font-exact logical_font_exact (array_string string string))
   (logical-font-private

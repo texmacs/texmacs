@@ -1096,6 +1096,23 @@ tmg_characteristic_distance (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_trace_distance (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "trace-distance");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "trace-distance");
+  TMSCM_ASSERT_DOUBLE (arg3, TMSCM_ARG3, "trace-distance");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+  double in3= tmscm_to_double (arg3);
+
+  // TMSCM_DEFER_INTS;
+  double out= trace_distance (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return double_to_tmscm (out);
+}
+
+tmscm
 tmg_logical_font_public (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "logical-font-public");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "logical-font-public");
@@ -6893,6 +6910,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("font-guessed-features",  tmg_font_guessed_features, 2, 0, 0);
   tmscm_install_procedure ("font-family-guessed-features",  tmg_font_family_guessed_features, 2, 0, 0);
   tmscm_install_procedure ("characteristic-distance",  tmg_characteristic_distance, 2, 0, 0);
+  tmscm_install_procedure ("trace-distance",  tmg_trace_distance, 3, 0, 0);
   tmscm_install_procedure ("logical-font-public",  tmg_logical_font_public, 2, 0, 0);
   tmscm_install_procedure ("logical-font-exact",  tmg_logical_font_exact, 2, 0, 0);
   tmscm_install_procedure ("logical-font-private",  tmg_logical_font_private, 4, 0, 0);
