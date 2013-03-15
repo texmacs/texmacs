@@ -28,6 +28,7 @@
 
 (tm-define tmtex-style "generic")
 (tm-define tmtex-packages '())
+(tm-define tmtex-replace-style? #t)
 (define tmtex-env (make-ahash-table))
 (define tmtex-serial 0)
 (define tmtex-auto-produce 0)
@@ -35,7 +36,6 @@
 (define tmtex-image-root-url (unix->url "image"))
 (define tmtex-image-root-string "image")
 (define tmtex-appendices? #f)
-(define tmtex-replace-style? #t)
 (define tmtex-indirect-bib? #f)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -391,17 +391,12 @@
 ;; Entire files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmtex-transform-style x)
+(tm-define (tmtex-transform-style x)
   (cond ((in? x '("article" "book" "letter")) x)
 	((in? x '("generic" "exam")) "article")
 	((== x "seminar") "slides")
 	((in? x '("tmarticle" "tmdoc" "mmxdoc")) "article")
 	((in? x '("tmbook" "tmmanual")) "book")
-	((in? x '("elsart" "jsc")) "elsart")
-	((in? x '("elsarticle")) "elsarticle")
-	((in? x '("amsart")) x)
-	((in? x '("acmconf")) "acm_proc_article-sp")
-	((in? x '("sig-alternate")) x)
 	((in? x '("svjour")) "article")
 	((not tmtex-replace-style?) x)
 	(else #f)))

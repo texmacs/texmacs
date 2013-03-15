@@ -14,6 +14,12 @@
 (texmacs-module (convert latex tmtex-acm)
   (:use (convert latex tmtex)))
 
+(tm-define (tmtex-transform-style x)
+  (:mode acm-style?)
+  (cond ((== x "acmconf") "acm_proc_article-sp")
+        ((== x "sig-alternate") x)
+        (else x)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; ACM metadata presentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

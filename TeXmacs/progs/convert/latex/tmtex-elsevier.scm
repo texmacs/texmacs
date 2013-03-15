@@ -14,6 +14,12 @@
 (texmacs-module (convert latex tmtex-elsevier)
   (:use (convert latex tmtex)))
 
+(tm-define (tmtex-transform-style x)
+  (:mode elsevier-style?)
+  (cond ((in? x '("elsart" "jsc")) "elsart")
+	((== x "elsarticle") "elsarticle")
+        (else x)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initialization of elsevier style
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -14,6 +14,9 @@
 (texmacs-module (convert latex tmtex-ams)
   (:use (convert latex tmtex)))
 
+(tm-define (tmtex-transform-style x)
+  (:mode ams-style?) x)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; AMS data preprocessing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
