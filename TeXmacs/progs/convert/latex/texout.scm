@@ -52,7 +52,7 @@
 	  (set! style "jbook"))
       (output-verbatim "\\documentclass")
       (output-verbatim tm-style-options)
-      (output-verbatim "{" style "}\n")
+      (output-verbatim "{" (if (nlist? style) style (cAr style)) "}\n")
       (if (== lan "korean")
 	  (output-verbatim "\\usepackage{dhucs}\n"))
       (if (in? lan '("chinese" "taiwanese"))

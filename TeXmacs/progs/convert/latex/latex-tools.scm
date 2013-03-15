@@ -42,7 +42,9 @@
   (set! latex-language lan))
 
 (tm-define (latex-set-style sty)
-  (set! latex-style sty)
+  (if (list? latex-style)
+    (set! latex-style (append (cDr latex-style) (list sty)))
+    (set! latex-style sty))
   (set! latex-style-hyp (string->symbol (string-append sty "-style%"))))
 
 (tm-define (latex-set-packages ps)
@@ -273,6 +275,9 @@
 ;; Building the preamble
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (latex-make-option l)
+  (string-append "[" (apply string-append (list-intersperse l ",")) "]"))
+
 (tm-define (latex-preamble text style lan init)
   (:synopsis "Compute preamble for @text")
   (let* ((Page         (latex-preamble-page-type init))
@@ -283,7 +288,9 @@
 	 (pre-catcode  (latex-catcode-defs Text))
 	 (pre-uses     (latex-use-package-command Text)))
     (values
-      (if (in? "amsthm" latex-packages) "[amsthm]" "")
+      (cond ((and (in? "amsthm" latex-packages)(== style "amsart")) "[amsthm]")
+            ((list? style) (latex-make-option (cDr style)))
+            (else ""))
       (string-append pre-uses)
       (string-append pre-page)
       (string-append pre-catcode pre-macro))))
