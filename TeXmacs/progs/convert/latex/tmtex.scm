@@ -50,6 +50,9 @@
   (acm-style% (in? tmtex-style '("acmconf" "sig-alternate")))
   (sig-alternate-style% (in? tmtex-style '("sig-alternate")) acm-style%)
   (ams-style% (in? tmtex-style '("amsart")))
+  (revtex-style% (in? tmtex-style '("aip" "aps")))
+  (aip-style% (in? tmtex-style '("aip")) revtex-style%)
+  (aps-style% (in? tmtex-style '("aps")) revtex-style%)
   (natbib-package% (in? "cite-author-year" tmtex-packages)))
 
 (tm-define (tmtex-style-init body)
@@ -64,6 +67,8 @@
          (import-from (convert latex tmtex-acm)))
         ((ams-style?)
          (import-from (convert latex tmtex-ams)))
+        ((revtex-style?)
+         (import-from (convert latex tmtex-revtex)))
          (else (noop))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
