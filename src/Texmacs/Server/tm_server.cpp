@@ -52,6 +52,8 @@ texmacs_wait_handler (string message, string arg, int level) {
   (void) level;
   if (texmacs_started && the_server != NULL)
     (*the_server)->wait_handler (message, arg);
+  else
+    cout << "TeXmacs] Please wait: " << message << " " << arg << "\n";
 }
 
 server
@@ -164,7 +166,10 @@ tm_server_rep::interpose_handler () {
 
 void
 tm_server_rep::wait_handler (string message, string arg) {
-  show_wait_indicator (concrete_window () -> win, translate (message), arg);
+  if (has_current_window ())
+    show_wait_indicator (concrete_window () -> win, translate (message), arg);
+  else
+    cout << "TeXmacs] Please wait: " << message << " " << arg << "\n";
 }
 
 void
