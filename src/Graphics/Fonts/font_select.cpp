@@ -163,6 +163,7 @@ style_features (string s) {
     else if (v[i] == "Unextended");
     else if (v[i] == "Nonstretched");
     else if (v[i] == "Unstretched");
+    else if (v[i] == "Book"); // for DejaVu fonts
     else if (v[i] == "Slanted") r << "Oblique";
     else if (v[i] == "Inclined") r << "Italic";
     else r << v[i];
