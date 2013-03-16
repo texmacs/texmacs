@@ -41,7 +41,8 @@ tt_font_path () {
 #elif defined OS_MACOS
     search_sub_dirs ("$HOME/Library/Fonts") |
     search_sub_dirs ("/Library/Fonts") |
-    search_sub_dirs ("/System/Library/Fonts");
+    search_sub_dirs ("/System/Library/Fonts") |
+    search_sub_dirs ("/opt/local/share/texmf-texlive-dist/fonts/truetype");
 #else
     search_sub_dirs ("$HOME/.fonts") |
     search_sub_dirs ("/usr/share/fonts/truetype") |

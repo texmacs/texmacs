@@ -109,7 +109,7 @@ l1_distance (array<int> a1, array<int> a2) {
 int
 irregularity (font_metric fnm) {
   metric_struct* x= fnm->get (0x78);
-  int ex= x->y2 / 256;
+  int ex= max (x->y2 / 256, 1);
   array<int> xlike;
   xlike << 0x61 << 0x63 << 0x65 << 0x6d << 0x6e << 0x6f
         << 0x75 << 0x76 << 0x77;
@@ -222,7 +222,7 @@ void
 analyze_major (font fn, font_metric fnm, array<string>& r) {
   if (range_exists (fnm, 0x41, 0x5a) && range_exists (fnm, 0x61, 0x7a)) {
     metric_struct* x= fnm->get (0x78);
-    int ex= x->y2 / 256;
+    int ex= max (x->y2 / 256, 1);
     r << (string ("ex=") * as_string (ex));
     metric_struct* M= fnm->get (0x4d);
     int em_rat= (100 * (M->x2 / 256)) / ex;
