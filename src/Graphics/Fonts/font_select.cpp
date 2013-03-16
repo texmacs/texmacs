@@ -210,6 +210,16 @@ logical_font_exact (string family, string style) {
   return remove_duplicates (r);
 }
 
+
+array<string>
+logical_font_enrich (array<string> v) {
+  if (N(v) == 0) return v;
+  string master= v[0];
+  array<string> r;
+  r << master << master_features (master);
+  return patch_font (r, range (v, 1, N(v)), false);
+}
+
 /******************************************************************************
 * Master font families
 ******************************************************************************/
@@ -750,18 +760,20 @@ distance (string s, array<string> v, bool asym) {
 }
 
 int
-distance (array<string> v1, array<string> v2, array<string> v3) {
-  // NOTE: v1 typically contains required properties of a font,
-  // v3 the full set of properties of the candidate font and
-  // v2 a subset of v3 of those properties which are not common
+distance (array<string> v, array<string> vx,
+          array<string> w, array<string> wx) {
+  // NOTE: v typically contains required properties of a font,
+  // vx the implicit superset of properties for v induced by the font,
+  // wx the full set of properties of the candidate font and
+  // w a subset of wx of those properties which are not common
   // between all styles in the same family.
   int d= 0;
-  if (N(v1) == 0 || N(v2) == 0) return D_HUGE;
-  if (v1[0] != v2[0]) d= D_MASTER;
-  for (int i=1; i<N(v1); i++)
-    d += distance (v1[i], v3, false);
-  for (int i=1; i<N(v2); i++)
-    d += distance (v2[i], v1, false);
+  if (N(v) == 0 || N(w) == 0) return D_HUGE;
+  if (v[0] != w[0]) d= D_MASTER;
+  for (int i=1; i<N(v); i++)
+    d += distance (v[i], wx, false);
+  for (int i=1; i<N(w); i++)
+    d += distance (w[i], vx, false);
   return d;
 }
 
@@ -788,19 +800,21 @@ search_font_among (array<string> v, array<string> fams,
   //  cout << "  Search among " << fams << ", " << strict << "\n";
   //else
   //  cout << "  Search among many " << strict << "\n";
-  if (!strict) v= remove_other (v);
+  array<string> vx= logical_font_enrich (v);
+  if (!strict) v = remove_other (v);
+  if (!strict) vx= remove_other (vx);
   best_distance= D_INFINITY;
   best_result= array<string> (v[0], string ("Unknown"));
   double best_d2= 1000000.0;
   for (int i=0; i<N(fams); i++) {
     array<string> stys= font_database_styles (fams[i]);
     for (int j=0; j<N(stys); j++) {
-      array<string> w= logical_font (fams[i], stys[j]);
-      array<string> x= logical_font_exact (fams[i], stys[j]);
-      if (!strict) w= remove_other (w);
-      if (!strict) x= remove_other (x);
-      int d= distance (v, w, x);
-      //cout << "  " << w << ", " << x << " -> " << d << "\n";
+      array<string> w = logical_font (fams[i], stys[j]);
+      array<string> wx= logical_font_exact (fams[i], stys[j]);
+      if (!strict) w = remove_other (w);
+      if (!strict) wx= remove_other (wx);
+      int d= distance (v, vx, w, wx);
+      //cout << "  " << w << ", " << wx << " -> " << d << "\n";
       double d2= 1000000.0;
       if (d == best_distance || d2 == 1000000.0)
         d2= guessed_distance (v[0], w[0]);
@@ -819,7 +833,7 @@ search_font (array<string> v, bool require_exact) {
   if (N(v) == 0)
     return array<string> (string ("TeXmacs Computer Modern"),
                           string ("Unknown"));
-  //cout << "Searching " << v << "\n";
+  //cout << "Searching " << v << ", " << logical_font_enrich (v) << "\n";
   int best_distance;
   array<string> best_result;
   array<string> fams= master_to_families (v[0]);
@@ -895,10 +909,11 @@ search_font_families (array<string> v) {
 ******************************************************************************/
 
 array<string>
-patch_font (array<string> v, array<string> w) {
+patch_font (array<string> v, array<string> w, bool decode) {
   array<string> r= copy (v);
   for (int i=0; i<N(w); i++) {
-    string s= decode_feature (w[i]);
+    string s= w[i];
+    if (decode) s= decode_feature (s);
     int j;
     for (j=1; j<N(r); j++)
       if (!same_kind (r[j], s));
