@@ -937,7 +937,9 @@ get_variant (array<string> v) {
 	     v[i] == "pen" || v[i] == "artpen" ||
 	     v[i] == "chalk" || v[i] == "marker")
       r << v[i];
-    //else if (is_category (v[i]) || is_glyphs (v[i]))
+    else if (is_category (v[i]))
+      r << v[i];
+    //else if (is_glyphs (v[i]))
     //  r << v[i];
     else if (is_other (v[i]))
       r << v[i];
@@ -1003,8 +1005,10 @@ variant_features (string s) {
 	     v[i] == "pen" || v[i] == "artpen" ||
 	     v[i] == "chalk" || v[i] == "marker")
       r << v[i];
-    //else if (is_category (v[i]) || is_glyphs (v[i]))
-    //    r << v[i];
+    else if (is_category (v[i]))
+      r << v[i];
+    //else if (is_glyphs (v[i]))
+    //  r << v[i];
     else if (is_other_internal (v[i]))
       r << v[i];
   return r;
