@@ -501,6 +501,7 @@ guessed_distance (string master1, string master2) {
     for (int i2=0; i2<N(fams2); i2++)
       d= min (d, guessed_distance_families (fams1[i1], fams2[i2]));
   memo (key)= d;
+  //cout << "    " << master1 << ", " << master2 << " -> " << 100.0*d << "\n";
   return d;
 }
 
@@ -790,6 +791,7 @@ search_font_among (array<string> v, array<string> fams,
   if (!strict) v= remove_other (v);
   best_distance= D_INFINITY;
   best_result= array<string> (v[0], string ("Unknown"));
+  double best_d2= 1000000.0;
   for (int i=0; i<N(fams); i++) {
     array<string> stys= font_database_styles (fams[i]);
     for (int j=0; j<N(stys); j++) {
@@ -799,8 +801,12 @@ search_font_among (array<string> v, array<string> fams,
       if (!strict) x= remove_other (x);
       int d= distance (v, w, x);
       //cout << "  " << w << ", " << x << " -> " << d << "\n";
-      if (d < best_distance) {
+      double d2= 1000000.0;
+      if (d == best_distance || d2 == 1000000.0)
+        d2= guessed_distance (v[0], w[0]);
+      if (d < best_distance || (d == best_distance && d2 < best_d2)) {
         best_distance= d;
+        best_d2= d2;
         best_result= array<string> (fams[i], stys[j]);
       }
     }
@@ -931,6 +937,8 @@ get_variant (array<string> v) {
 	     v[i] == "pen" || v[i] == "artpen" ||
 	     v[i] == "chalk" || v[i] == "marker")
       r << v[i];
+    //else if (is_category (v[i]) || is_glyphs (v[i]))
+    //  r << v[i];
     else if (is_other (v[i]))
       r << v[i];
   }
@@ -995,7 +1003,10 @@ variant_features (string s) {
 	     v[i] == "pen" || v[i] == "artpen" ||
 	     v[i] == "chalk" || v[i] == "marker")
       r << v[i];
-    else if (is_other_internal (v[i])) r << v[i];
+    //else if (is_category (v[i]) || is_glyphs (v[i]))
+    //    r << v[i];
+    else if (is_other_internal (v[i]))
+      r << v[i];
   return r;
 }
 
