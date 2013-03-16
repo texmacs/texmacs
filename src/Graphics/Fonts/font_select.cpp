@@ -233,6 +233,8 @@ Replace (string s, string w, string b) {
 string
 family_to_master (string f) {
   font_database_load ();
+  if (!font_features->contains (tree (f)))
+    font_database_global_load ();
   if (font_features->contains (tree (f))) {
     tree t= font_features [tree (f)];
     if (is_func (t, TUPLE) && N(t) >= 1 && is_atomic (t[0]))
@@ -276,6 +278,8 @@ family_to_master (string f) {
 array<string>
 master_to_families (string m) {
   font_database_load ();
+  if (!font_variants->contains (tree (m)))
+    font_database_global_load ();
   array<string> r;
   if (font_variants->contains (tree (m))) {
     tree t= font_variants [tree (m)];
@@ -490,6 +494,10 @@ guessed_distance_families (string fam1, string fam2) {
   if (memo->contains (key)) return memo[key];
   array<string> stys1= font_database_styles (fam1);
   array<string> stys2= font_database_styles (fam2);
+  if (N(stys1) == 0 || N(stys2) == 0) {
+    stys1= font_database_global_styles (fam1);
+    stys2= font_database_global_styles (fam2);
+  }
   double d= 1000000.0;
   for (int i1=0; i1<N(stys1); i1++)
     for (int i2=0; i2<N(stys2); i2++)
@@ -777,6 +785,12 @@ distance (array<string> v, array<string> vx,
   return d;
 }
 
+
+int
+distance (array<string> v, array<string> w) {
+  return distance (v, v, w, w);
+}
+
 /******************************************************************************
 * Compute a best possible approximation for font
 ******************************************************************************/
@@ -794,7 +808,7 @@ remove_other (array<string> a, bool keep_glyphs) {
 
 void
 search_font_among (array<string> v, array<string> fams,
-                   int& best_distance, array<string>& best_result,
+                   int& best_d1, array<string>& best_result,
                    bool strict) {
   //if (N(fams) < 20)
   //  cout << "  Search among " << fams << ", " << strict << "\n";
@@ -803,9 +817,10 @@ search_font_among (array<string> v, array<string> fams,
   array<string> vx= logical_font_enrich (v);
   if (!strict) v = remove_other (v);
   if (!strict) vx= remove_other (vx);
-  best_distance= D_INFINITY;
+  best_d1= D_INFINITY;
+  int best_d2= D_INFINITY + 1;
+  double best_d3= 1000000.0;
   best_result= array<string> (v[0], string ("Unknown"));
-  double best_d2= 1000000.0;
   for (int i=0; i<N(fams); i++) {
     array<string> stys= font_database_styles (fams[i]);
     for (int j=0; j<N(stys); j++) {
@@ -813,19 +828,28 @@ search_font_among (array<string> v, array<string> fams,
       array<string> wx= logical_font_exact (fams[i], stys[j]);
       if (!strict) w = remove_other (w);
       if (!strict) wx= remove_other (wx);
-      int d= distance (v, vx, w, wx);
-      //cout << "  " << w << ", " << wx << " -> " << d << "\n";
-      double d2= 1000000.0;
-      if (d == best_distance || d2 == 1000000.0)
-        d2= guessed_distance (v[0], w[0]);
-      if (d < best_distance || (d == best_distance && d2 < best_d2)) {
-        best_distance= d;
+      int d1= distance (v, vx, w, wx);
+      //cout << "  " << w << ", " << wx << " -> " << d1 << "\n";
+      int d2= D_INFINITY + 1;
+      if (d1 == best_d1 || best_d2 == D_INFINITY + 1)
+        d2= distance (remove_other (vx, false), remove_other (wx, false));
+      double d3= 1000000.0;
+      if ((d1 == best_d1 && d2 <= best_d2) || best_d3 == 1000000.0)
+        d3= guessed_distance (v[0], w[0]);
+      if ((d1 <  best_d1) ||
+          (d1 == best_d1 && d2 <  best_d2) ||
+          (d1 == best_d1 && d2 == best_d2 && d3 < best_d3)) {
+        best_d1= d1;
         best_d2= d2;
+        best_d3= d3;
         best_result= array<string> (fams[i], stys[j]);
+        //cout << "  Better " << w << ", " << wx
+        //     << " -> " << d1 << ", " << d2 << ", " << d3 << "\n";
       }
     }
   }
-  //cout << "  Best result: " << best_result << ", " << best_distance << "\n";
+  //cout << "  Best result: " << best_result
+  //     << ", " << best_d1 << ", " << best_d2 << ", " << best_d3 << "\n";
 }
 
 array<string>
@@ -833,10 +857,12 @@ search_font (array<string> v, bool require_exact) {
   if (N(v) == 0)
     return array<string> (string ("TeXmacs Computer Modern"),
                           string ("Unknown"));
-  //cout << "Searching " << v << ", " << logical_font_enrich (v) << "\n";
+  //cout << "Searching " << v << ", " << logical_font_enrich (v)
+  //     << (require_exact? string (" (exact)"): string ("")) << "\n";
   int best_distance;
   array<string> best_result;
   array<string> fams= master_to_families (v[0]);
+  bool found= false;
   if (require_exact || N(remove_other(v)) <= 1) {
     search_font_among (v, fams, best_distance, best_result, true);
     if (best_distance > 0 && require_exact) {
@@ -846,9 +872,10 @@ search_font (array<string> v, bool require_exact) {
         s << encode_feature (v[i]);
       }
       best_result[1]= s;
+      found= true;
     }
   }
-  else {
+  if (!found && !require_exact) {
     search_font_among (v, fams, best_distance, best_result, false);
     if (best_distance < D_MASTER)
       search_font_among (v, fams, best_distance, best_result, true);
@@ -954,8 +981,8 @@ get_variant (array<string> v) {
       r << v[i];
     else if (is_category (v[i]))
       r << v[i];
-    //else if (is_glyphs (v[i]))
-    //  r << v[i];
+    else if (is_glyphs (v[i]))
+      r << v[i];
     else if (is_other (v[i]))
       r << v[i];
   }
@@ -1022,8 +1049,8 @@ variant_features (string s) {
       r << v[i];
     else if (is_category (v[i]))
       r << v[i];
-    //else if (is_glyphs (v[i]))
-    //  r << v[i];
+    else if (is_glyphs (v[i]))
+      r << v[i];
     else if (is_other_internal (v[i]))
       r << v[i];
   return r;

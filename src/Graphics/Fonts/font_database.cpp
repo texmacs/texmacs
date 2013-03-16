@@ -21,7 +21,7 @@
 
 void font_database_filter_features ();
 void font_database_filter_characteristics ();
-array<string> font_database_families (hashmap<tree,tree> ftab);
+static array<string> font_database_families (hashmap<tree,tree> ftab);
 
 #define GLOBAL_DATABASE "$TEXMACS_PATH/fonts/font-database.scm"
 #define GLOBAL_FEATURES "$TEXMACS_PATH/fonts/font-features.scm"
@@ -74,10 +74,19 @@ struct font_less_eq_operator {
 ******************************************************************************/
 
 static bool fonts_loaded= false;
+static bool fonts_global_loaded= false;
 hashmap<tree,tree> font_table (UNINIT);
+hashmap<tree,tree> font_global_table (UNINIT);
 hashmap<tree,tree> font_features (UNINIT);
 hashmap<tree,tree> font_variants (UNINIT);
 hashmap<tree,tree> font_characteristics (UNINIT);
+
+void
+tuple_insert (tree& t, tree x) {
+  for (int i=0; i<N(t); i++)
+    if (t[i] == x) return;
+  t << x;
+}
 
 void
 font_database_load_database (url u, hashmap<tree,tree>& ftab= font_table) {
@@ -105,7 +114,7 @@ font_database_load_features (url u) {
         tree vars (TUPLE);
         if (font_variants->contains (t[i][1]))
           vars= font_variants [t[i][1]];
-        vars << t[i][0];
+        tuple_insert (vars, t[i][0]);
         font_variants (t[i][1])= vars;
       }
   }
@@ -198,6 +207,16 @@ font_database_load () {
 }
 
 void
+font_database_global_load () {
+  if (fonts_global_loaded) return;
+  cout << "TeXmacs] warning, missing font, loading global substitution list\n";
+  font_database_load_database (GLOBAL_DATABASE, font_global_table);
+  font_database_load_features (GLOBAL_FEATURES);
+  font_database_load_characteristics (GLOBAL_CHARACTERISTICS);
+  fonts_global_loaded= true;
+}
+
+void
 font_database_save () {
   font_database_save_database (LOCAL_DATABASE);
   font_database_save_features (LOCAL_FEATURES);
@@ -207,13 +226,6 @@ font_database_save () {
 /******************************************************************************
 * Building the database
 ******************************************************************************/
-
-void
-tuple_insert (tree& t, tree x) {
-  for (int i=0; i<N(t); i++)
-    if (t[i] == x) return;
-  t << x;
-}
 
 bool
 on_blacklist (string name) {
@@ -286,7 +298,7 @@ font_database_build_local () {
 
 void
 font_database_build_global (url u) {
-  fonts_loaded= false;
+  fonts_loaded= fonts_global_loaded= false;
   font_table= hashmap<tree,tree> (UNINIT);
   font_database_load_database (GLOBAL_DATABASE);
   font_database_load_features (GLOBAL_FEATURES);
@@ -297,7 +309,7 @@ font_database_build_global (url u) {
   font_database_save_database (GLOBAL_DATABASE);
   font_database_save_features (GLOBAL_FEATURES_BIS);
   font_database_save_characteristics (GLOBAL_CHARACTERISTICS);
-  fonts_loaded= false;
+  fonts_loaded= fonts_global_loaded= false;
 }
 
 void
@@ -321,7 +333,7 @@ keep_delta (hashmap<tree,tree>& new_t, hashmap<tree,tree> old_t) {
 
 void
 font_database_save_local_delta () {
-  fonts_loaded= false;
+  fonts_loaded= fonts_global_loaded= false;
   font_table= hashmap<tree,tree> (UNINIT);
   font_features= hashmap<tree,tree> (UNINIT);
   font_variants= hashmap<tree,tree> (UNINIT);
@@ -332,7 +344,7 @@ font_database_save_local_delta () {
   hashmap<tree,tree> old_font_table= font_table;
   hashmap<tree,tree> old_font_features= font_features;
   hashmap<tree,tree> old_font_characteristics= font_characteristics;
-  fonts_loaded= false;
+  fonts_loaded= fonts_global_loaded= false;
   font_table= hashmap<tree,tree> (UNINIT);
   font_features= hashmap<tree,tree> (UNINIT);
   font_variants= hashmap<tree,tree> (UNINIT);
@@ -353,7 +365,7 @@ font_database_save_local_delta () {
   font_features= hashmap<tree,tree> (UNINIT);
   font_variants= hashmap<tree,tree> (UNINIT);
   font_characteristics= hashmap<tree,tree> (UNINIT);
-  fonts_loaded= false;
+  fonts_loaded= fonts_global_loaded= false;
 }
 
 /******************************************************************************
@@ -500,7 +512,7 @@ font_database_build_characteristics (bool force) {
 * Querying the database
 ******************************************************************************/
 
-array<string>
+static array<string>
 font_database_families (hashmap<tree,tree> ftab) {
   hashmap<string,bool> families;
   iterator<tree> it= iterate (ftab);
@@ -530,11 +542,10 @@ font_database_delta_families () {
   return font_database_families (t);
 }
 
-array<string>
-font_database_styles (string family) {
-  font_database_load ();
+static array<string>
+font_database_styles (string family, hashmap<tree,tree> ftab) {
   array<string> r;
-  iterator<tree> it= iterate (font_table);
+  iterator<tree> it= iterate (ftab);
   while (it->busy ()) {
     tree key= it->next ();
     if (is_func (key, TUPLE, 2) && key[0]->label == family)
@@ -542,6 +553,18 @@ font_database_styles (string family) {
   }
   merge_sort_leq<string,locase_less_eq_operator> (r);
   return r;
+}
+
+array<string>
+font_database_styles (string family) {
+  font_database_load ();
+  return font_database_styles (family, font_table);
+}
+
+array<string>
+font_database_global_styles (string family) {
+  font_database_global_load ();
+  return font_database_styles (family, font_global_table);
 }
 
 array<string>
