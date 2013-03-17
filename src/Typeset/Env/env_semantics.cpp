@@ -254,9 +254,9 @@ edit_env_rep::update_font () {
   switch (mode) {
   case 0:
   case 1:
-    fn= find_font (get_string (FONT), get_string (FONT_FAMILY),
-		   get_string (FONT_SERIES), get_string (FONT_SHAPE),
-		   script (fn_size, index_level), (int) (magn*dpi), true);
+    fn= smart_font (get_string (FONT), get_string (FONT_FAMILY),
+                    get_string (FONT_SERIES), get_string (FONT_SHAPE),
+                    script (fn_size, index_level), (int) (magn*dpi));
     break;
   case 2:
     fn= find_font (get_string (MATH_FONT), get_string (MATH_FONT_FAMILY),

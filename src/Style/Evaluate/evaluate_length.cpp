@@ -146,13 +146,12 @@ std_fn () {
   switch (std_mode ()) {
   case 0:
   case 1:
-    return find_font (as_string (std_env [FONT]),
-		      as_string (std_env [FONT_FAMILY]),
-		      as_string (std_env [FONT_SERIES]),
-		      as_string (std_env [FONT_SHAPE]),
-		      script (fs, std_math_level ()),
-		      (int) (std_magnification () * std_dpi ()),
-		      true);
+    return smart_font (as_string (std_env [FONT]),
+                       as_string (std_env [FONT_FAMILY]),
+                       as_string (std_env [FONT_SERIES]),
+                       as_string (std_env [FONT_SHAPE]),
+                       script (fs, std_math_level ()),
+                       (int) (std_magnification () * std_dpi ()));
   case 2:
     return find_font (as_string (std_env [MATH_FONT]),
 		      as_string (std_env [MATH_FONT_FAMILY]),
