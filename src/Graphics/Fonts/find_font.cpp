@@ -275,7 +275,6 @@ find_font (string family, string variant,
     series * "-" * shape * "-" *
     as_string (sz) * "-" * as_string (dpi);
   if (font::instances->contains (s)) return font (s);
-  cout << "Finding " << s << "\n";
 
   tree t1 (TUPLE, 6);
   t1[0]= family;

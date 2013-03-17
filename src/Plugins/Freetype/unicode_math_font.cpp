@@ -32,7 +32,7 @@ struct unicode_math_font_rep: font_rep {
 			 font bold_upright, font bold_italic,
 			 font fall_back);
   int search_font_sub (string s);
-  font search_font (string s);
+  font search_font (string& s);
 
   bool supports (string c);
   void get_extents (string s, metric& ex);
@@ -150,7 +150,7 @@ unicode_math_font_rep::search_font_sub (string s) {
 }
 
 font
-unicode_math_font_rep::search_font (string s) {
+unicode_math_font_rep::search_font (string& s) {
   if (N(s) >= 2 && s[0] != '<') return upright;
   else switch (mapper[s]) {
     case 0:
