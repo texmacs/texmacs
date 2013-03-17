@@ -358,6 +358,16 @@ x_font_rep::x_font_rep (string name, string family2, int size2, int dpi2):
   if (slope<0.15) slope= 0.0;
 }
 
+
+bool
+x_font_rep::supports (string c) {
+  glyph gl;
+  if (c == "<less>") gl= fng->get ('<');
+  else if (c == "<gtr>") gl= fng->get ('>');
+  else if (N(c) == 1) gl= fng->get (c[0]);
+  return !is_nil (gl);
+}
+
 void
 x_font_rep::get_extents (string s, metric& ex) {
   if (N(s)==0) {

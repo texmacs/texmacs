@@ -28,6 +28,7 @@ struct qt_font_rep: font_rep {
   QFontMetricsF qfm;
   
   qt_font_rep (string name, string family, int size, int dpi);
+  bool supports (string c);
   void get_extents (string s, metric& ex);
   void draw_fixed (renderer ren, string s, SI x, SI y);
   font magnify (double zoom);

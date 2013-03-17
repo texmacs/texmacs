@@ -40,6 +40,8 @@ struct tex_font_rep: font_rep {
   tex_font_rep (string name, int status,
 		string family, int size, int dpi, int dsize);
 
+  bool raw_supports (unsigned char c);
+  bool supports (string c);
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
   void draw_fixed (renderer ren, string s, SI x, SI y);
@@ -465,6 +467,32 @@ tex_font_rep::accented_get_right_correction (string s) {
 /******************************************************************************
 * The general case
 ******************************************************************************/
+
+bool
+tex_font_rep::raw_supports (unsigned char c) {
+  glyph gl= pk->get ((int) c);
+  return is_nil (gl);
+}
+
+bool
+tex_font_rep::supports (string s) {
+  switch (status) {
+    case TEX_ANY:
+      if (s == "<less>") return raw_supports ('<');
+      else if (s == "<gtr>") return raw_supports ('>');
+      else if (N(s) == 1) return raw_supports (s[0]);
+      else return false;
+    case TEX_EC:
+    case TEX_LA:
+      return N(s) == 1 || s == "<less>" || s == "<gtr>";
+    case TEX_CM:
+    case TEX_ADOBE:
+      if (N(s) > 1) return s == "<less>" || s == "<gtr>";
+      else if (((unsigned int) s[0]) < ((unsigned int) 128)) return true;
+      else return get_accents (s) != " ";
+  }
+  return false;
+}
 
 void
 tex_font_rep::get_extents (string s, metric& ex) {

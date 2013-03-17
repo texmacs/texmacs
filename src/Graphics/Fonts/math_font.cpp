@@ -39,7 +39,8 @@ struct math_font_rep: font_rep {
 
   math_font_rep (string name, scheme_tree t, font base, font error, double zf);
   void init_font (int fn_nr, font& fn);
-  void search_font (string& s, font& fn);
+  void search_font (string s, font& fn);
+  bool supports (string c);
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
   void draw_fixed (renderer ren, string s, SI x, SI y);
@@ -87,7 +88,7 @@ math_font_rep::init_font (int fn_nr, font& fn) {
 }
 
 void
-math_font_rep::search_font (string& s, font& fn) {
+math_font_rep::search_font (string s, font& fn) {
   // FIXME: the commented code is not efficient enough
   //if (s == "<noplus>" || s == "<nocomma>" || s == "<nospace>" ||
   //    s == "<nobracket>" || s == "<nosymbol>")
@@ -147,6 +148,13 @@ math_font_rep::search_font (string& s, font& fn) {
 /******************************************************************************
 * Getting extents and drawing strings
 ******************************************************************************/
+
+bool
+math_font_rep::supports (string c) {
+  font fn;
+  search_font (c, fn);
+  return fn.operator -> () != error_fn.operator -> ();
+}
 
 void
 math_font_rep::get_extents (string s, metric& ex) {

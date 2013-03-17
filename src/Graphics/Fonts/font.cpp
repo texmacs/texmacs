@@ -214,6 +214,7 @@ font_rep::get_glyph (string s) {
 struct error_font_rep: font_rep {
   font fn;
   error_font_rep (string name, font fn);
+  bool supports (string c);
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
   void draw_fixed (renderer ren, string s, SI x, SI y);
@@ -222,6 +223,11 @@ struct error_font_rep: font_rep {
 
 error_font_rep::error_font_rep (string name, font fnb):
   font_rep (name, fnb), fn (fnb) {}
+
+bool
+error_font_rep::supports (string c) {
+  return true;
+}
 
 void
 error_font_rep::get_extents (string s, metric& ex) {

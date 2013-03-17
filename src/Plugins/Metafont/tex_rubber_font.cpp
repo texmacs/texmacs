@@ -29,6 +29,7 @@ struct tex_rubber_font_rep: font_rep {
 
   tex_rubber_font_rep (string name, string trl_name,
 		       string family, int size, int dpi, int dsize);
+  bool supports (string c);
   void get_extents (int c, metric& ex);
   void get_partial_extents (int c, metric& ex);
   void get_extents (string s, metric& ex);
@@ -44,6 +45,7 @@ struct tex_rubber_font_rep: font_rep {
 struct tex_dummy_rubber_font_rep: font_rep {
   font base_fn;
   tex_dummy_rubber_font_rep (string name, font base_fn);
+  bool supports (string c);
   void get_extents (string s, metric& ex);
   void draw_fixed (renderer ren, string s, SI x, SI y);
   font magnify (double zoom);
@@ -105,6 +107,17 @@ tex_rubber_font (string trl_name,
 /******************************************************************************
 * Drawing rubber boxes and computing extents
 ******************************************************************************/
+
+bool
+tex_rubber_font_rep::supports (string c) {
+  if (!ends (c, ">")) return false;
+  return
+    starts (c, "<large-") ||
+    starts (c, "<left-") ||
+    starts (c, "<mid-") ||
+    starts (c, "<right-") ||
+    starts (c, "<big-");
+}
 
 void
 tex_rubber_font_rep::get_extents (int c, metric& ex) {
@@ -293,6 +306,17 @@ tex_rubber_font_rep::get_right_correction (string s) {
 
 tex_dummy_rubber_font_rep::tex_dummy_rubber_font_rep (string name, font fn):
   font_rep (name), base_fn (fn) {}
+
+bool
+tex_dummy_rubber_font_rep::supports (string c) {
+  if (!ends (c, ">")) return false;
+  return
+    starts (c, "<large-") ||
+    starts (c, "<left-") ||
+    starts (c, "<mid-") ||
+    starts (c, "<right-") ||
+    starts (c, "<big-");
+}
 
 void
 tex_dummy_rubber_font_rep::get_extents (string s, metric& ex) {

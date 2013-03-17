@@ -46,6 +46,7 @@ struct unicode_font_rep: font_rep {
   unicode_font_rep (string name, string family, int size, int dpi);
 
   unsigned int ligature_replace (unsigned int c, string s, int& i);
+  bool supports (string c);
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
   void draw_fixed (renderer ren, string s, SI x, SI y);
@@ -203,6 +204,14 @@ unicode_font_rep::ligature_replace (unsigned int uc, string s, int& i) {
     else return uc;
   }
   else return uc;
+}
+
+bool
+unicode_font_rep::supports (string c) {
+  if (N(c) == 0) return false;
+  int i= 0;
+  unsigned int uc= read_unicode_char (c, i);
+  return fnm->exists (uc);
 }
 
 void

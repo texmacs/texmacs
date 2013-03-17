@@ -32,8 +32,9 @@ struct unicode_math_font_rep: font_rep {
 			 font bold_upright, font bold_italic,
 			 font fall_back);
   int search_font_sub (string s);
-  font search_font (string& s);
+  font search_font (string s);
 
+  bool supports (string c);
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
   void draw_fixed (renderer ren, string s, SI x, SI y);
@@ -149,7 +150,7 @@ unicode_math_font_rep::search_font_sub (string s) {
 }
 
 font
-unicode_math_font_rep::search_font (string& s) {
+unicode_math_font_rep::search_font (string s) {
   if (N(s) >= 2 && s[0] != '<') return upright;
   else switch (mapper[s]) {
     case 0:
@@ -178,6 +179,12 @@ unicode_math_font_rep::search_font (string& s) {
 /******************************************************************************
 * Getting extents and drawing strings
 ******************************************************************************/
+
+bool
+unicode_math_font_rep::supports (string c) {
+  font fn= search_font (c);
+  return fn->supports (c);
+}
 
 void
 unicode_math_font_rep::get_extents (string s, metric& ex) {

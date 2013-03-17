@@ -33,6 +33,7 @@ struct compound_font_rep: font_rep {
   double       zf;
 
   compound_font_rep (string name, scheme_tree def, array<font> fn, double zf);
+  bool   supports (string c);
   void   advance (string s, int& pos, string& r, int& ch);
   void   get_extents (string s, metric& ex);
   void   draw_fixed (renderer ren, string s, SI x, SI y);
@@ -50,6 +51,14 @@ compound_font_rep::compound_font_rep (
     def (def2), fn (fn2), cm (load_charmap (map_car (def))),
     zf (zf2)
 {}
+
+bool
+compound_font_rep::supports (string c) {
+  int pos= 0, ch;
+  string r;
+  advance (c, pos, r, ch);
+  return pos > 0;
+}
 
 void
 compound_font_rep::advance (string s, int& pos, string& r, int& ch) {

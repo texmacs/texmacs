@@ -34,6 +34,7 @@ struct tt_font_rep: font_rep {
 
   tt_font_rep (string name, string family, int size, int dpi);
 
+  bool supports (string c);
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
   void draw_fixed (renderer ren, string s, SI x, SI y);
@@ -108,6 +109,14 @@ tt_font_rep::tt_font_rep (string name, string family2, int size2, int dpi2):
 /******************************************************************************
 * Routines for font
 ******************************************************************************/
+
+bool
+tt_font_rep::supports (string c) {
+  if (N(c) == 1) return fnm->exists ((unsigned int) c[0]);
+  if (c == "<less>") return fnm->exists ((unsigned int) '<');
+  if (c == "<gtr>") return fnm->exists ((unsigned int) '>');
+  return false;
+}
 
 void
 tt_font_rep::get_extents (string s, metric& ex) {

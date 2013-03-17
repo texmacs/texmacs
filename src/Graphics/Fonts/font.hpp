@@ -60,6 +60,7 @@ struct font_rep: rep<font> {
   font_rep (string name, font fn);
   void copy_math_pars (font fn);
 
+  virtual bool   supports (string c) = 0;
   virtual void   get_extents (string s, metric& ex) = 0;
   virtual void   get_xpositions (string s, SI* xpos);
   virtual void   draw_fixed (renderer ren, string s, SI x, SI y) = 0;

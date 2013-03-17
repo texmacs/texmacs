@@ -76,6 +76,12 @@ qt_font_rep::qt_font_rep (string name, string family2, int size2, int dpi2):
   if (slope<0.15) slope= 0.0;
 }
 
+bool
+qt_font_rep::supports (string c) {
+  QString qs= utf8_to_qstring (cork_to_utf8 (c));
+  return qs.length () == 1 && qfm.inFont (qs[0]);
+}
+
 void
 qt_font_rep::get_extents (string s, metric& ex) {
   QString qs  = utf8_to_qstring (cork_to_utf8 (s));
