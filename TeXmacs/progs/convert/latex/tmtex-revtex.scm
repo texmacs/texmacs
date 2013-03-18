@@ -19,6 +19,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define revtex-style '("revtex4-1"))
+(define revtex-clustered? #f)
+
+(tm-define (tmtex-style-init body)
+  (:mode revtex-style?)
+  (set! revtex-style '("revtex4-1"))
+  (set! revtex-clustered? #f))
 
 (define (revtex-set-style-option s)
     (set! revtex-style (append (list s) revtex-style)))
@@ -34,23 +40,24 @@
   (cond ((== t u) #t)
         ((nlist? t) #f)
         ((null? t) #f)
-        (else (or (stree-contains? (car t) u)
-                  (in? #t (map (lambda (x) (stree-contains? x u)) (cdr t)))))))
+        (else (in? #t (map (lambda (x) (stree-contains? x u)) t)))))
 
 (define (insert-maketitle-after t u)
   (cond ((nlist? t) t)
         ((== (car t) u) `(!document ,t (maketitle)))
         (else `(,(car t) ,@(map (lambda (x) (insert-maketitle-after x u))
                                 (cdr t))))))
-
-(tm-define (tmtex-style-preprocess doc)
-  (:mode aip-style?)
-  (revtex-set-style-option "aip")
+(define (revtex-style-preprocess doc)
   (cond ((stree-contains? doc 'abstract-data)
          (insert-maketitle-after doc 'abstract-data))
         ((stree-contains? doc 'doc-data)
          (insert-maketitle-after doc 'doc-data))
         (else doc)))
+
+(tm-define (tmtex-style-preprocess doc)
+  (:mode aip-style?)
+  (revtex-set-style-option "aip")
+  (revtex-style-preprocess doc))
 
 (tm-define (tmtex-style-preprocess doc)
   (:mode aps-style?)
@@ -59,11 +66,7 @@
   (if (stree-contains? doc 'abstract-msc)
     (revtex-set-style-option "showpacs"))
   (revtex-set-style-option "aps")
-  (cond ((stree-contains? doc 'abstract-data)
-         (insert-maketitle-after doc 'abstract-data))
-        ((stree-contains? doc 'doc-data)
-         (insert-maketitle-after doc 'doc-data))
-        (else doc)))
+  (revtex-style-preprocess doc))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; RevTeX metadata presentation
@@ -71,7 +74,8 @@
 
 (tm-define (tmtex-make-author names affiliations emails urls miscs notes)
   (:mode revtex-style?)
-  (if (null? affiliations) (set! affiliations `((noaffiliation))))
+  (if (and (not revtex-clustered?) (null? affiliations))
+    (set! affiliations `((noaffiliation))))
   (with names (map (lambda (x) `(author ,x))
                    (list-intersperse (map cadr names) '(tmSep)))
         `(!paragraph ,@names
@@ -87,6 +91,62 @@
      (!paragraph ,@titles ,@subtitles ,@notes ,@miscs)
      ,@authors
      ,@dates))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; RevTeX clustered authors presentation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (merge-with tags l)
+  (if (null? l) '()
+    (letrec ((remove-tag
+               (lambda (x)
+                 (let* ((root  (car x))
+                        (args  (cdr x))
+                        (args* (filter (lambda (y) (nin? y tags)) args)))
+                   `(,root ,@args*)))))
+      (let* ((last    (cAr l))
+             (others  (cDr l))
+             (others* (map remove-tag others)))
+        (if (null? tags)
+          (set! last `(,(car last)
+                       ,@(cdr last) (author-affiliation (noaffiliation)))))
+        (map (lambda (x) `(doc-author ,x)) (append others* (list last)))))))
+
+(define (cluster-by tag l)
+  (if (null? l) '()
+    (letrec ((get-affiliations (lambda (x) (tmtex-select-args-by-func tag x))))
+      (let* ((author (car l))
+             (aff    (get-affiliations author))
+             (same   (filter (lambda (x) (== aff (get-affiliations x))) l))
+             (others (filter (lambda (x) (!= aff (get-affiliations x))) l)))
+            (append (merge-with aff same) (cluster-by tag others))))))
+
+(tm-define (tmtex-doc-data s l)
+  (:mode revtex-style?)
+  (:require (or revtex-clustered?
+                (stree-contains?  l '(doc-title-options "cluster-all"))
+                (stree-contains?  l '(doc-title-options
+                                       "cluster-by-affiliation"))))
+  (if (not revtex-clustered?) (set! revtex-clustered? #t))
+  (set! l (map tmtex-replace-documents l))
+  (let* ((subtitles (map tmtex-doc-subtitle
+                         (tmtex-select-args-by-func 'doc-subtitle l)))
+         (notes     (map tmtex-doc-note
+                         (tmtex-select-args-by-func 'doc-note l)))
+         (miscs     (map tmtex-doc-misc
+                         (tmtex-select-args-by-func 'doc-misc l)))
+         (dates     (map tmtex-doc-date
+                         (tmtex-select-args-by-func 'doc-date l)))
+         (titles    (map tmtex-doc-title
+                         (tmtex-select-args-by-func 'doc-title l)))
+         (authors   (map cadr
+                         (tmtex-select-args-by-func 'doc-author l)))
+         (authors   `((!document ,@(map tmtex-doc-author
+                                        (cluster-by
+                                          'author-affiliation authors))))))
+    (with r (tmtex-make-doc-data titles subtitles authors dates miscs notes)
+    (set! revtex-clustered? #f)
+    r)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; RevTeX specific titlemarkup
@@ -112,7 +172,9 @@
 
 (tm-define (tmtex-author-affiliation t)
   (:mode revtex-style?)
-  `(affiliation ,(tmtex (cadr t))))
+  (if (== t '(author-affiliation (noaffiliation)))
+    '(noaffiliation)
+    `(affiliation ,(tmtex (cadr t)))))
 
 (tm-define (tmtex-author-email t)
   (:mode revtex-style?)
