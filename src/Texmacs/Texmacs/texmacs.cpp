@@ -376,7 +376,7 @@ TeXmacs_main (int argc, char** argv) {
 
   if (DEBUG_STD) cout << "TeXmacs] Starting event loop...\n";
   texmacs_started= true;
-  signal (SIGSEGV, clean_exit_on_segfault);
+  //signal (SIGSEGV, clean_exit_on_segfault);
   gui_start_loop ();
 
   if (DEBUG_STD) cout << "TeXmacs] Stopping server...\n";

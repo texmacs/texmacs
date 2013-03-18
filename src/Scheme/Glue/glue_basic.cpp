@@ -1261,15 +1261,26 @@ tmg_logical_font_shape (tmscm arg1) {
 }
 
 tmscm
-tmg_logical_font_search (tmscm arg1, tmscm arg2) {
+tmg_logical_font_search (tmscm arg1) {
   TMSCM_ASSERT_ARRAY_STRING (arg1, TMSCM_ARG1, "logical-font-search");
-  TMSCM_ASSERT_BOOL (arg2, TMSCM_ARG2, "logical-font-search");
 
   array_string in1= tmscm_to_array_string (arg1);
-  bool in2= tmscm_to_bool (arg2);
 
   // TMSCM_DEFER_INTS;
-  array_string out= search_font (in1, in2);
+  array_string out= search_font (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
+tmg_logical_font_search_exact (tmscm arg1) {
+  TMSCM_ASSERT_ARRAY_STRING (arg1, TMSCM_ARG1, "logical-font-search-exact");
+
+  array_string in1= tmscm_to_array_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  array_string out= search_font_exact (in1);
   // TMSCM_ALLOW_INTS;
 
   return array_string_to_tmscm (out);
@@ -6968,7 +6979,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("logical-font-variant",  tmg_logical_font_variant, 1, 0, 0);
   tmscm_install_procedure ("logical-font-series",  tmg_logical_font_series, 1, 0, 0);
   tmscm_install_procedure ("logical-font-shape",  tmg_logical_font_shape, 1, 0, 0);
-  tmscm_install_procedure ("logical-font-search",  tmg_logical_font_search, 2, 0, 0);
+  tmscm_install_procedure ("logical-font-search",  tmg_logical_font_search, 1, 0, 0);
+  tmscm_install_procedure ("logical-font-search-exact",  tmg_logical_font_search_exact, 1, 0, 0);
   tmscm_install_procedure ("search-font-families",  tmg_search_font_families, 1, 0, 0);
   tmscm_install_procedure ("search-font-styles",  tmg_search_font_styles, 2, 0, 0);
   tmscm_install_procedure ("logical-font-patch",  tmg_logical_font_patch, 2, 0, 0);

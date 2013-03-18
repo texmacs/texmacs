@@ -61,18 +61,18 @@
                               (font-database-styles f)))))
     (append-map xp fams)))
 
-(define (closest-font in flag?)
+(define (closest-font in)
   (let* ((fn  (logical-font-public (car in) (cadr in)))
          (fam (logical-font-family fn))
          (var (logical-font-variant fn))
          (ser (logical-font-series fn))
          (sh  (logical-font-shape fn))
          (lf  (logical-font-private fam var ser sh))
-         (sfn (logical-font-search lf flag?)))
+         (sfn (logical-font-search lf)))
     sfn))
 
 (define (check-feature? fn feature)
-  (set! fn (closest-font fn #f))
+  (set! fn (closest-font fn))
   (with lfn (logical-font-exact (car fn) (cadr fn))
     (in? feature lfn)))
 
@@ -88,7 +88,7 @@
         (else (search-characteristic prefix (cdr l)))))
 
 (define (get-characteristic fn which)
-  (set! fn (closest-font fn #f))
+  (set! fn (closest-font fn))
   (with fl (font-database-characteristics (car fn) (cadr fn))
     (search-characteristic (string-append which "=") fl)))
 
@@ -211,7 +211,7 @@
     `(row ,@(map build-cell kinds))))
 
 (define (build-with-font fn body)
-  (let* ((cfn (closest-font fn #f))
+  (let* ((cfn (closest-font fn))
          (lfn (logical-font-public (car cfn) (cadr cfn))))
     `(with "font" ,(logical-font-family lfn)
            "font-family" ,(logical-font-variant lfn)

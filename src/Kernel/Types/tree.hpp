@@ -304,6 +304,8 @@ inline tree tuple (tree t1, tree t2, tree t3) {
   return tree (TUPLE, t1, t2, t3); }
 inline tree tuple (tree t1, tree t2, tree t3, tree t4) {
   return tree (TUPLE, t1, t2, t3, t4); }
+inline tree tuple (tree t1, tree t2, tree t3, tree t4, tree t5) {
+  return tree (TUPLE, t1, t2, t3, t4, t5); }
 
 inline bool is_tuple (tree t) {
   return (L(t) == TUPLE); }

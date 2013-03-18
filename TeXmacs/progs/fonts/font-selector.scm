@@ -66,6 +66,8 @@
          (set-font-sample-range "2900" "2e7f"))
         ((== kind "Math Letters")
          (set-font-sample-range "1d400" "1d7ff"))
+        ((== kind "Unicode 0000-1fff")
+         (set-font-sample-range "0000" "1fff"))
         ((and (== kind "Selection") (selection-active-any?))
          (set! sample-text (tree->stree (selection-tree))))
         (else
@@ -94,7 +96,7 @@
          (sh  (get-env "font-shape"))
          (sz  (get-env "font-base-size"))
          (lf  (logical-font-private fam var ser sh))
-         (fn  (logical-font-search lf #t)))
+         (fn  (logical-font-search-exact lf)))
     ;;(display* "lf= " lf "\n")
     ;;(display* "fn= " fn "\n")
     (set! selector-font-family (car fn))
@@ -133,7 +135,7 @@
          (ser (logical-font-series fn))
          (sh  (logical-font-shape fn))
          (lf  (logical-font-private fam var ser sh))
-         (fn2 (logical-font-search lf #f))
+         (fn2 (logical-font-search lf))
          (sp  (map remove-plus (selected-properties)))
          (sel (string-recompose sp " ")))
     ;;(display* "fn = " fn "\n")
@@ -360,7 +362,7 @@
         (enum (set-font-sample-kind answer)
               '("Standard" "Selection"
                 "ASCII" "Latin" "Greek" "Cyrillic" "CJK" "Hangul"
-                "Math" "Math Extra" "Math Letters")
+                "Math" "Math Extra" "Math Letters" "Unicode 0000-1fff")
               (get-font-sample-kind) "120px")
         >>>
         ("Ok" (begin (selector-apply-font) (quit)))))))

@@ -13,26 +13,65 @@
 #include "convert.hpp"
 #include "converter.hpp"
 
-typedef int int_vector[256];
-typedef hashmap<string,int> int_table;
+/******************************************************************************
+* Efficient computation of the appropriate subfont
+******************************************************************************/
 
-#define SUBFONT_MAIN           0
-#define SUBFONT_ERROR          1
-#define SUBFONT_ASCII          2
-#define SUBFONT_LATIN          3
-#define SUBFONT_LATINA         4
-#define SUBFONT_GREEK          5
-#define SUBFONT_CYRILLIC       6
-#define SUBFONT_CJK            7
-#define SUBFONT_HANGUL         8
-#define SUBFONT_MATH           9
-#define SUBFONT_MATH_EXTRA    10
-#define SUBFONT_MATH_LETTERS  11
-#define SUBFONT_TOTAL         12
+RESOURCE(smart_map);
+
+#define SUBFONT_MAIN  0
+#define SUBFONT_ERROR 1
+
+struct smart_map_rep: rep<smart_map> {
+  int chv[256];
+  hashmap<string,int> cht;
+  hashmap<tree,int> fn_nr;
+  array<tree> fn_spec;
+
+public:
+  smart_map_rep (string name, tree fn):
+    rep<smart_map> (name), cht (-1), fn_nr (-1), fn_spec (2)
+  {
+    for (int i=0; i<256; i++) chv[i]= -1;
+    fn_nr (tree ("main" ))= SUBFONT_MAIN;
+    fn_nr (tree ("error"))= SUBFONT_ERROR;
+    fn_spec[SUBFONT_MAIN ]= fn;
+    fn_spec[SUBFONT_ERROR]= tree ("error");
+  }
+
+  int
+  add_char (tree fn, string c) {
+    //cout << "Add " << c << " to " << fn << "\n";
+    if (!fn_nr->contains (fn)) {
+      int sz= N (fn_spec);
+      fn_nr (fn)= sz;
+      fn_spec << fn;
+      //cout << "Create " << sz << " -> " << fn << "\n";
+    }
+    int nr= fn_nr [fn];
+    if (starts (c, "<")) cht (c)= nr;
+    else chv [(int) (unsigned char) c[0]]= nr;
+    return nr;
+  }
+};
+
+
+RESOURCE_CODE(smart_map);
+
+smart_map
+get_smart_map (tree fn) {
+  string name= recompose (tuple_as_array (fn), "-");
+  if (smart_map::instances -> contains (name))
+    return smart_map (name);
+  return make (smart_map, name, tm_new<smart_map_rep> (name, fn));
+}
 
 /******************************************************************************
 * The smart font class
 ******************************************************************************/
+
+typedef int int_vector[256];
+typedef hashmap<string,int> int_table;
 
 struct smart_font_rep: font_rep {
   string family;
@@ -43,14 +82,13 @@ struct smart_font_rep: font_rep {
   int    dpi;
 
   array<font> fn;
-  int_vector  chv;
-  int_table   cht;
+  smart_map   sm;
 
   smart_font_rep (string name, font base_fn, font err_fn,
                   string family, string variant,
                   string series, string shape, int sz, int dpi);
 
-  void   advance (string s, int& pos, string& r, int& ch);
+  void   advance (string s, int& pos, string& r, int& nr);
   int    search_subfont (string c);
   int    resolve (string c);
 
@@ -68,13 +106,12 @@ struct smart_font_rep: font_rep {
 smart_font_rep::smart_font_rep (
   string name, font base_fn, font err_fn, string family2, string variant2,
   string series2, string shape2, int sz2, int dpi2):
-  font_rep (name, base_fn), family (family2), variant (variant2),
+    font_rep (name, base_fn), family (family2), variant (variant2),
     series (series2), shape (shape2), sz (sz2), dpi (dpi2),
-    fn (SUBFONT_TOTAL), cht (-1)
+    fn (2), sm (get_smart_map (tuple (family2, variant2, series2, shape2)))
 {
-  fn[0]= base_fn;
-  fn[1]= err_fn;
-  for (int i=0; i<256; i++) chv[i]= -1;
+  fn[SUBFONT_MAIN ]= base_fn;
+  fn[SUBFONT_ERROR]= err_fn;
 }
 
 /******************************************************************************
@@ -82,16 +119,18 @@ smart_font_rep::smart_font_rep (
 ******************************************************************************/
 
 void
-smart_font_rep::advance (string s, int& pos, string& r, int& ch) {
+smart_font_rep::advance (string s, int& pos, string& r, int& nr) {
+  int* chv= sm->chv;
+  hashmap<string,int>& cht (sm->cht);
   int start= pos;
-  ch= -1;
+  nr= -1;
   while (pos < N(s)) {
     if (s[pos] != '<') {
       int c= (int) (unsigned char) s[pos];
       int next= chv[c];
       if (chv[c] == -1) next= resolve (s (pos, pos+1));
-      if (next == ch) pos++;
-      else if (ch == -1) { pos++; ch= next; }
+      if (next == nr) pos++;
+      else if (nr == -1) { pos++; nr= next; }
       else break;
     }
     else {
@@ -99,62 +138,63 @@ smart_font_rep::advance (string s, int& pos, string& r, int& ch) {
       tm_char_forwards (s, end);
       int next= cht[s (pos, end)];
       if (next == -1) next= resolve (s (pos, end));
-      if (next == ch) pos= end;
-      else if (ch == -1) { pos= end; ch= next; }
+      if (next == nr) pos= end;
+      else if (nr == -1) { pos= end; nr= next; }
       else break;
     }
   }
   r= s (start, pos);
+  if (nr < 0) return;
+  if (N(fn) <= nr) fn->resize (nr+1);
+  if (is_nil (fn[nr])) {
+    array<string> a= tuple_as_array (sm->fn_spec[nr]);
+    fn[nr]= closest_font (a[0], a[1], a[2], a[3], sz, dpi, as_int (a[4]));
+    //cout << "Font " << nr << " -> " << fn[nr]->res_name << "\n";
+  }
 }
 
 int
 smart_font_rep::search_subfont (string c) {
-  if (fn[SUBFONT_MAIN]->supports (c)) return SUBFONT_MAIN;
+  if (fn[SUBFONT_MAIN]->supports (c))
+    return sm->add_char (tree ("main"), c);
   string uc= cork_to_utf8 (c);
   int pos= 0;
   int code= decode_from_utf8 (uc, pos);
-  if (pos != N(uc)) return SUBFONT_ERROR; // fall back to virtual fonts
-  int nr= 1;
-  if (code <= 0x7f) nr= SUBFONT_ASCII;
-  else if (code >= 0x80 && code <= 0xff) nr= SUBFONT_LATIN;
-  else if (code >= 0x100 && code <= 0x17f) nr= SUBFONT_LATINA;
-  else if (code >= 0x380 && code <= 0x3ff) nr= SUBFONT_GREEK;
-  else if (code >= 0x400 && code <= 0x4ff) nr= SUBFONT_CYRILLIC;
-  else if (code >= 0x4e00 && code <= 0x9fcc) nr= SUBFONT_CJK;
-  else if (code >= 0xac00 && code <= 0xd7af) nr= SUBFONT_HANGUL;
-  else if (code >= 0x2000 && code <= 0x23ff) nr= SUBFONT_MATH;
-  else if (code >= 0x2900 && code <= 0x2e7f) nr= SUBFONT_MATH_EXTRA;
-  else if (code >= 0x1d400 && code <= 0x1d7ff) nr= SUBFONT_MATH_LETTERS;
-  if (is_nil (fn[nr])) {
-    string range= "";
-    switch (nr) {
-    case SUBFONT_ASCII: range= "+ascii"; break;
-    case SUBFONT_LATIN: range= "+latin1basic"; break;
-    case SUBFONT_LATINA: range= "+latina"; break;
-    case SUBFONT_GREEK: range= "+greekbasic"; break;
-    case SUBFONT_CYRILLIC: range= "+cyrillicbasic"; break;
-    case SUBFONT_CJK: range= "+cjk"; break;
-    case SUBFONT_HANGUL: range= "+hangul"; break;
-    case SUBFONT_MATH: range= "+math"; break;
-    case SUBFONT_MATH_EXTRA: range= "+mathextra"; break;
-    case SUBFONT_MATH_LETTERS: range= "+mathletters"; break;
-    default: nr= 1;
-    }
+
+  string range= "";
+  if (code <= 0x7f) range= "+ascii";
+  else if (code >= 0x80 && code <= 0xff) range= "+latin1basic";
+  else if (code >= 0x100 && code <= 0x17f) range= "+latina";
+  else if (code >= 0x380 && code <= 0x3ff) range= "+greekbasic";
+  else if (code >= 0x400 && code <= 0x4ff) range= "+cyrillicbasic";
+  else if (code >= 0x4e00 && code <= 0x9fcc) range= "+cjk";
+  else if (code >= 0xac00 && code <= 0xd7af) range= "+hangul";
+  else if (code >= 0x2000 && code <= 0x23ff) range= "+math";
+  else if (code >= 0x2900 && code <= 0x2e7f) range= "+mathextra";
+  else if (code >= 0x1d400 && code <= 0x1d7ff) range= "+mathletters";
+
+  if (pos == N(uc)) {
     string v= variant;
-    if (v == "rm") v= range;
+    int start= 1;
+    if (range == "") start= 2;
+    else if (v == "rm") v= range;
     else v= v * "-" * range;
-    fn[nr]= closest_font (family, v, series, shape, sz, dpi);
+    for (int attempt= start; attempt <= 20; attempt++) {
+      font cfn= closest_font (family, v, series, shape, sz, dpi, attempt);
+      //cout << "Trying " << c << " in " << cfn->res_name << "\n";
+      if (cfn->supports (c)) {
+	tree key= tuple (family, v, series, shape, as_string (attempt));
+	return sm->add_char (key, c);
+      }
+    }
   }
-  if (nr != SUBFONT_ERROR && !fn[nr]->supports (c)) nr= SUBFONT_ERROR;
-  return nr;
+
+  return sm->add_char (tree ("error"), c);
 }
 
 int
 smart_font_rep::resolve (string c) {
-  int nr= search_subfont (c);
-  if (starts (c, "<")) cht (c)= nr;
-  else chv [(int) (unsigned char) c[0]]= nr;
-  return nr;
+  return search_subfont (c);
 }
 
 /******************************************************************************
@@ -276,6 +316,10 @@ smart_font_rep::get_right_correction (string s) {
 font
 smart_font (string family, string variant, string series, string shape,
             int sz, int dpi) {
+  if (starts (family, "tc"))
+    // FIXME: temporary hack for symbols from std-symbol.ts
+    return find_font (family, variant, series, shape, sz, dpi);
+
   string name=
     family * "-" * variant * "-" *
     series * "-" * shape * "-" *

@@ -103,8 +103,8 @@ font find_font (scheme_tree t);
 font find_magnified_font (scheme_tree t, double zf);
 font find_font (string family, string fn_class,
 		string series, string shape, int sz, int dpi);
-font closest_font (string family, string fn_class,
-                   string series, string shape, int sz, int dpi);
+font closest_font (string family, string variant, string series, string shape,
+		   int sz, int dpi, int attempt= 1);
 
 font math_font (scheme_tree t, font base_fn, font error_fn, double zoom= 1.0);
 font compound_font (scheme_tree def, double zoom= 1.0);
@@ -154,7 +154,8 @@ string get_family (array<string> v);
 string get_variant (array<string> v);
 string get_series (array<string> v);
 string get_shape (array<string> v);
-array<string> search_font (array<string> v, bool require_exact);
+array<string> search_font (array<string> v, int attempt= 1);
+array<string> search_font_exact (array<string> v);
 array<string> search_font_families (array<string> v);
 array<string> search_font_styles (string s, array<string> v);
 array<string> patch_font (array<string> v, array<string> w, bool decode= true);

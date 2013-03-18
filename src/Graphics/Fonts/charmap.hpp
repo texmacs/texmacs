@@ -1,7 +1,7 @@
 
 /******************************************************************************
-* MODULE     : compound_font.cpp
-* DESCRIPTION: fonts which are agglomerated from several other fonts.
+* MODULE     : charmap.hpp
+* DESCRIPTION: character maps for compound fonts
 * COPYRIGHT  : (C) 2005  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.

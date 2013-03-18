@@ -56,10 +56,7 @@ remove_duplicates (array<string> a) {
 
 tree
 array_as_tuple (array<string> a) {
-  tree r (TUPLE);
-  for (int i=0; i<N(a); i++)
-    r << tree (a);
-  return r;
+  return tree (a);
 }
 
 array<string>
@@ -581,7 +578,8 @@ distance (array<string> v, array<string> vx,
   // w a subset of wx of those properties which are not common
   // between all styles in the same family.
   int d= 0;
-  if (N(v) == 0 || N(w) == 0) return D_HUGE;
+  if (N(v) == 0 || N(w) == 0) return D_INFINITY;
+  if (w[0] == "LastResort") return 3 * D_HUGE; // FIXME: might be avoided
   if (v[0] != w[0]) d= D_MASTER;
   for (int i=1; i<N(v); i++)
     d += distance (v[i], wx, false);
@@ -612,9 +610,8 @@ remove_other (array<string> a, bool keep_glyphs) {
 }
 
 void
-search_font_among (array<string> v, array<string> fams,
-                   int& best_d1, array<string>& best_result,
-                   bool strict) {
+search_font_among (array<string> v, array<string> fams, array<string> avoid,
+                   int& best_d1, array<string>& best_result, bool strict) {
   //if (N(fams) < 20)
   //  cout << "  Search among " << fams << ", " << strict << "\n";
   //else
@@ -626,39 +623,40 @@ search_font_among (array<string> v, array<string> fams,
   int best_d2= D_INFINITY + 1;
   double best_d3= 1000000.0;
   best_result= array<string> (v[0], string ("Unknown"));
-  for (int i=0; i<N(fams); i++) {
-    array<string> stys= font_database_styles (fams[i]);
-    for (int j=0; j<N(stys); j++) {
-      array<string> w = logical_font (fams[i], stys[j]);
-      array<string> wx= logical_font_exact (fams[i], stys[j]);
-      if (!strict) w = remove_other (w);
-      if (!strict) wx= remove_other (wx);
-      int d1= distance (v, vx, w, wx);
-      //cout << "  " << w << ", " << wx << " -> " << d1 << "\n";
-      int d2= D_INFINITY + 1;
-      if (d1 == best_d1 || best_d2 == D_INFINITY + 1)
-        d2= distance (remove_other (vx, false), remove_other (wx, false));
-      double d3= 1000000.0;
-      if ((d1 == best_d1 && d2 <= best_d2) || best_d3 == 1000000.0)
-        d3= guessed_distance (v[0], w[0]);
-      if ((d1 <  best_d1) ||
-          (d1 == best_d1 && d2 <  best_d2) ||
-          (d1 == best_d1 && d2 == best_d2 && d3 < best_d3)) {
-        best_d1= d1;
-        best_d2= d2;
-        best_d3= d3;
-        best_result= array<string> (fams[i], stys[j]);
-        //cout << "  Better " << w << ", " << wx
-        //     << " -> " << d1 << ", " << d2 << ", " << d3 << "\n";
+  for (int i=0; i<N(fams); i++)
+    if (N (avoid) == 0 || !contains (family_to_master (fams[i]), avoid)) {
+      array<string> stys= font_database_styles (fams[i]);
+      for (int j=0; j<N(stys); j++) {
+	array<string> w = logical_font (fams[i], stys[j]);
+	array<string> wx= logical_font_exact (fams[i], stys[j]);
+	if (!strict) w = remove_other (w);
+	if (!strict) wx= remove_other (wx);
+	int d1= distance (v, vx, w, wx);
+	//cout << "  " << w << ", " << wx << " -> " << d1 << "\n";
+	int d2= D_INFINITY + 1;
+	if (d1 == best_d1 || best_d2 == D_INFINITY + 1)
+	  d2= distance (remove_other (vx, false), remove_other (wx, false));
+	double d3= 1000000.0;
+	if ((d1 == best_d1 && d2 <= best_d2) || best_d3 == 1000000.0)
+	  d3= guessed_distance (v[0], w[0]);
+	if ((d1 <  best_d1) ||
+	    (d1 == best_d1 && d2 <  best_d2) ||
+	    (d1 == best_d1 && d2 == best_d2 && d3 < best_d3)) {
+	  best_d1= d1;
+	  best_d2= d2;
+	  best_d3= d3;
+	  best_result= array<string> (fams[i], stys[j]);
+	  //cout << "  Better " << w << ", " << wx
+	  //     << " -> " << d1 << ", " << d2 << ", " << d3 << "\n";
+	}
       }
     }
-  }
   //cout << "  Best result: " << best_result
   //     << ", " << best_d1 << ", " << best_d2 << ", " << best_d3 << "\n";
 }
 
 array<string>
-search_font (array<string> v, bool require_exact) {
+search_font (array<string> v, bool require_exact, array<string> avoid) {
   if (N(v) == 0)
     return array<string> (string ("TeXmacs Computer Modern"),
                           string ("Unknown"));
@@ -669,7 +667,8 @@ search_font (array<string> v, bool require_exact) {
   array<string> fams= master_to_families (v[0]);
   bool found= false;
   if (require_exact || N(remove_other(v)) <= 1) {
-    search_font_among (v, fams, best_distance, best_result, true);
+    search_font_among (v, fams, avoid, best_distance, best_result, true);
+    if (best_distance == 0 || require_exact) found= true;
     if (best_distance > 0 && require_exact) {
       string s;
       for (int i=1; i<N(v); i++) {
@@ -677,23 +676,45 @@ search_font (array<string> v, bool require_exact) {
         s << encode_feature (v[i]);
       }
       best_result[1]= s;
-      found= true;
     }
   }
-  if (!found && !require_exact) {
-    search_font_among (v, fams, best_distance, best_result, false);
+  if (!found) {
+    search_font_among (v, fams, avoid, best_distance, best_result, false);
     if (best_distance < D_MASTER)
-      search_font_among (v, fams, best_distance, best_result, true);
+      search_font_among (v, fams, avoid, best_distance, best_result, true);
     else {
       fams= font_database_families ();
-      search_font_among (v, fams, best_distance, best_result, false);
+      search_font_among (v, fams, avoid, best_distance, best_result, false);
       string master= family_to_master (best_result[0]);
       fams= master_to_families (master);
-      search_font_among (v, fams, best_distance, best_result, true);
+      search_font_among (v, fams, avoid, best_distance, best_result, true);
     }
   }
   //cout << "Found " << best_result << ", " << best_distance << "\n";
   return best_result;
+}
+
+array<string>
+search_font (array<string> v, int attempt) {
+  static hashmap<tree,tree> cache (UNINIT);
+  tree key= array_as_tuple (v);
+  key << as_string (attempt);
+  if (cache->contains (key))
+    return tuple_as_array (cache[key]);
+  array<string> black_list;
+  for (int i=1; i<attempt; i++) {
+    array<string> a= search_font (v, i);
+    black_list << family_to_master (a[0]);
+  }
+  array<string> r= search_font (v, false, black_list);
+  cache (key)= array_as_tuple (r);
+  return r;
+}
+
+array<string>
+search_font_exact (array<string> v) {
+  array<string> black_list;
+  return search_font (v, true, black_list);
 }
 
 /******************************************************************************

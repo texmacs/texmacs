@@ -218,10 +218,10 @@ find_magnified_font (tree t, double zoom) {
 ******************************************************************************/
 
 static bool
-find_closest (string& family, string& variant,
-              string& series, string& shape) {
+find_closest (string& family, string& variant, string& series, string& shape,
+	      int attempt) {
   static hashmap<tree,tree> closest_cache (UNINIT);
-  tree key= tuple (family, variant, series, shape);
+  tree key= tuple (family, variant, series, shape, as_string (attempt));
   if (closest_cache->contains (key)) {
     tree t = closest_cache[key];
     family = t[0]->label;
@@ -234,7 +234,7 @@ find_closest (string& family, string& variant,
     //cout << "< " << family << ", " << variant
     //     << ", " << series << ", " << shape << "\n";
     array<string> lfn= logical_font (family, variant, series, shape);
-    array<string> pfn= search_font (lfn, false);
+    array<string> pfn= search_font (lfn, attempt);
     array<string> nfn= logical_font (pfn[0], pfn[1]);
     family= get_family (nfn);
     variant= get_variant (nfn);
@@ -249,14 +249,14 @@ find_closest (string& family, string& variant,
 }
 
 font
-closest_font (string family, string variant,
-              string series, string shape, int sz, int dpi) {
+closest_font (string family, string variant, string series, string shape,
+	      int sz, int dpi, int attempt) {
   string s=
     family * "-" * variant * "-" *
     series * "-" * shape * "-" *
-    as_string (sz) * "-" * as_string (dpi) * "-closest";
+    as_string (sz) * "-" * as_string (dpi) * "-" * as_string (attempt);
   if (font::instances->contains (s)) return font (s);
-  find_closest (family, variant, series, shape);
+  find_closest (family, variant, series, shape, attempt);
   font fn= find_font (family, variant, series, shape, sz, dpi);
   font::instances (s)= (pointer) fn.rep;
   return fn;
