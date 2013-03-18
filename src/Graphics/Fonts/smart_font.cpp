@@ -124,7 +124,6 @@ get_ex (string family, string variant, string series, string shape,
 	int attempt) {
   array<string> lfn= logical_font (family, variant, series, shape);
   array<string> pfn= search_font (lfn, attempt);
-  //array<string> nfn= logical_font (pfn[0], pfn[1]);
   array<string> chs= font_database_characteristics (pfn[0], pfn[1]);
   string ex= find_attribute_value (chs, "ex");
   if (ex == "") return 0;
