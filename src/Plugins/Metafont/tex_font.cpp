@@ -472,7 +472,7 @@ tex_font_rep::accented_get_right_correction (string s) {
 bool
 tex_font_rep::raw_supports (unsigned char c) {
   glyph gl= pk->get ((int) c);
-  return is_nil (gl);
+  return !is_nil (gl);
 }
 
 bool
