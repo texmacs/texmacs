@@ -33,6 +33,12 @@
 		495712FC16E90E5900934EA3 /* metadata-elsevier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 495712F816E90E5900934EA3 /* metadata-elsevier.cpp */; };
 		495712FD16E90E5900934EA3 /* metadata-elsevier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 495712F816E90E5900934EA3 /* metadata-elsevier.cpp */; };
 		495712FE16E90E5900934EA3 /* metadata-elsevier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 495712F816E90E5900934EA3 /* metadata-elsevier.cpp */; };
+		4964704816F729C700D95FC4 /* font_guess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4964704616F729C700D95FC4 /* font_guess.cpp */; };
+		4964704916F729C700D95FC4 /* font_guess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4964704616F729C700D95FC4 /* font_guess.cpp */; };
+		4964704A16F729C700D95FC4 /* font_guess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4964704616F729C700D95FC4 /* font_guess.cpp */; };
+		4964704B16F729C700D95FC4 /* smart_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4964704716F729C700D95FC4 /* smart_font.cpp */; };
+		4964704C16F729C700D95FC4 /* smart_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4964704716F729C700D95FC4 /* smart_font.cpp */; };
+		4964704D16F729C700D95FC4 /* smart_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4964704716F729C700D95FC4 /* smart_font.cpp */; };
 		497822CB16EC86D40054F5BA /* tt_analyze.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 497822CA16EC86D40054F5BA /* tt_analyze.cpp */; };
 		497822CC16EC86D40054F5BA /* tt_analyze.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 497822CA16EC86D40054F5BA /* tt_analyze.cpp */; };
 		497822CD16EC86D40054F5BA /* tt_analyze.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 497822CA16EC86D40054F5BA /* tt_analyze.cpp */; };
@@ -1156,6 +1162,8 @@
 		4942BEF61679293B00A6C354 /* font_select.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_select.cpp; sourceTree = "<group>"; };
 		495712F716E90E5900934EA3 /* metadata-acm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "metadata-acm.cpp"; sourceTree = "<group>"; };
 		495712F816E90E5900934EA3 /* metadata-elsevier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "metadata-elsevier.cpp"; sourceTree = "<group>"; };
+		4964704616F729C700D95FC4 /* font_guess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_guess.cpp; sourceTree = "<group>"; };
+		4964704716F729C700D95FC4 /* smart_font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smart_font.cpp; sourceTree = "<group>"; };
 		497822CA16EC86D40054F5BA /* tt_analyze.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tt_analyze.cpp; sourceTree = "<group>"; };
 		49D662FA128B331A0006E948 /* QTMFileDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMFileDialog.cpp; sourceTree = "<group>"; };
 		49D662FB128B331A0006E948 /* QTMFileDialog.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMFileDialog.hpp; sourceTree = "<group>"; };
@@ -2346,15 +2354,17 @@
 		9C0B47D910A8CC100097A335 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
-				4942BEF61679293B00A6C354 /* font_select.cpp */,
-				9C6632E11676B229000D7974 /* font_database.cpp */,
 				9C0B47DA10A8CC100097A335 /* charmap.cpp */,
 				9C0B47DB10A8CC100097A335 /* charmap.hpp */,
 				9C0B47DC10A8CC100097A335 /* compound_font.cpp */,
 				9C0B47DD10A8CC100097A335 /* find_font.cpp */,
 				9C0B47DE10A8CC100097A335 /* font.cpp */,
 				9C0B47DF10A8CC100097A335 /* font.hpp */,
+				9C6632E11676B229000D7974 /* font_database.cpp */,
+				4964704616F729C700D95FC4 /* font_guess.cpp */,
+				4942BEF61679293B00A6C354 /* font_select.cpp */,
 				9C0B47E010A8CC100097A335 /* math_font.cpp */,
+				4964704716F729C700D95FC4 /* smart_font.cpp */,
 				9C0B47E110A8CC100097A335 /* translator.cpp */,
 				9C0B47E210A8CC100097A335 /* translator.hpp */,
 				9C0B47E310A8CC100097A335 /* virtual_font.cpp */,
@@ -4241,6 +4251,8 @@
 				497822CB16EC86D40054F5BA /* tt_analyze.cpp in Sources */,
 				49FFB07916EDF83A004A2A32 /* glyph_analyze.cpp in Sources */,
 				49FDFA6516F0C677002B830A /* metadata-ams.cpp in Sources */,
+				4964704816F729C700D95FC4 /* font_guess.cpp in Sources */,
+				4964704B16F729C700D95FC4 /* smart_font.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4594,6 +4606,8 @@
 				497822CD16EC86D40054F5BA /* tt_analyze.cpp in Sources */,
 				49FFB07B16EDF83A004A2A32 /* glyph_analyze.cpp in Sources */,
 				49FDFA6716F0C677002B830A /* metadata-ams.cpp in Sources */,
+				4964704A16F729C700D95FC4 /* font_guess.cpp in Sources */,
+				4964704D16F729C700D95FC4 /* smart_font.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4975,6 +4989,8 @@
 				497822CC16EC86D40054F5BA /* tt_analyze.cpp in Sources */,
 				49FFB07A16EDF83A004A2A32 /* glyph_analyze.cpp in Sources */,
 				49FDFA6616F0C677002B830A /* metadata-ams.cpp in Sources */,
+				4964704916F729C700D95FC4 /* font_guess.cpp in Sources */,
+				4964704C16F729C700D95FC4 /* smart_font.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5049,7 +5065,8 @@
 			baseConfigurationReference = 4937B89A1521C59E00D87F22 /* MOCs.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -5064,7 +5081,8 @@
 			baseConfigurationReference = 4937B89A1521C59E00D87F22 /* MOCs.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_VERSION = "";
@@ -5078,6 +5096,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C61B42E141A1B780035D78F /* TeXmacsCocoa.xcconfig */;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
@@ -5092,6 +5112,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C61B42E141A1B780035D78F /* TeXmacsCocoa.xcconfig */;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -5103,7 +5125,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C61B430141A1B780035D78F /* TeXmacsX11.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
@@ -5118,7 +5141,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C61B430141A1B780035D78F /* TeXmacsX11.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -5130,7 +5154,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C61B42F141A1B780035D78F /* TeXmacsQt.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
@@ -5146,7 +5171,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C61B42F141A1B780035D78F /* TeXmacsQt.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
 				GCC_VERSION = "";
@@ -5159,8 +5185,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C61B41E141A1B780035D78F /* Base.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
 				CLANG_LINK_OBJC_RUNTIME = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_VERSION = "";
@@ -5169,7 +5195,7 @@
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.7;
 			};
 			name = Debug;
 		};
@@ -5177,14 +5203,16 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C61B41E141A1B780035D78F /* Base.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
 				CLANG_LINK_OBJC_RUNTIME = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LLVM_LTO = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.7;
 			};
 			name = Release;
 		};
