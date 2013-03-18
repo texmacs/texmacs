@@ -12,6 +12,7 @@
 #include "font.hpp"
 #include "convert.hpp"
 #include "converter.hpp"
+#include "Freetype/tt_tools.hpp"
 
 /******************************************************************************
 * Efficient computation of the appropriate subfont
@@ -118,6 +119,18 @@ smart_font_rep::smart_font_rep (
 * Smart font resolution
 ******************************************************************************/
 
+static int
+get_ex (string family, string variant, string series, string shape,
+	int attempt) {
+  array<string> lfn= logical_font (family, variant, series, shape);
+  array<string> pfn= search_font (lfn, attempt);
+  //array<string> nfn= logical_font (pfn[0], pfn[1]);
+  array<string> chs= font_database_characteristics (pfn[0], pfn[1]);
+  string ex= find_attribute_value (chs, "ex");
+  if (ex == "") return 0;
+  else return as_int (ex);
+}
+
 void
 smart_font_rep::advance (string s, int& pos, string& r, int& nr) {
   int* chv= sm->chv;
@@ -148,7 +161,14 @@ smart_font_rep::advance (string s, int& pos, string& r, int& nr) {
   if (N(fn) <= nr) fn->resize (nr+1);
   if (is_nil (fn[nr])) {
     array<string> a= tuple_as_array (sm->fn_spec[nr]);
-    fn[nr]= closest_font (a[0], a[1], a[2], a[3], sz, dpi, as_int (a[4]));
+    int att= as_int (a[4]);
+    int ex1= get_ex (family, variant, series, shape, 1);
+    int ex2= get_ex (a[0], a[1], a[2], a[3], att);
+    double zoom= 1.0;
+    if (ex1 != 0 && ex2 != 0) zoom= ((double) ex1) / ((double) ex2);
+    if (zoom > 0.975 && zoom < 1.025) zoom= 1;
+    int ndpi= (int) tm_round (dpi * zoom);
+    fn[nr]= closest_font (a[0], a[1], a[2], a[3], sz, ndpi, att);
     //cout << "Font " << nr << " -> " << fn[nr]->res_name << "\n";
   }
 }
