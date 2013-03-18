@@ -117,24 +117,28 @@ get_hyphens (string s,
 
 void
 goto_next_char (string s, int &i, bool utf8) {
-  if (i<N(s) && !utf8) {
-    i++;
-    return;
+  if (utf8) decode_from_utf8 (s, i);
+  else if (i < N(s)) {
+    if (s[i] == '<') {
+      i++;
+      while (i < N(s) && s[i] != '>') i++;
+      if (i < N(s)) i++;
+    }
+    else i++;
   }
-  if (utf8)
-    decode_from_utf8 (s, i);
-  return;
 }
 
 int
 str_length (string s, bool utf8) {
-  if (!utf8) return N(s);
-  int i=0, r=0;
-  while (i<N(s)) {
-    decode_from_utf8 (s, i);
-    r++;
+  if (utf8) {
+    int i=0, r=0;
+    while (i < N(s)) {
+      decode_from_utf8 (s, i);
+      r++;
+    }
+    return r;
   }
-  return r;
+  else return N(s);
 }
 
 array<int>
@@ -200,19 +204,23 @@ void
 std_hyphenate (string s, int after, string& left, string& right, int penalty) {
   std_hyphenate (s, after, left, right, penalty, false);
 }
+
 void
 std_hyphenate (string s, int after, string& left, string& right, int penalty,
                bool utf8) {
+  //cout << "Hyphen " << s << ", " << after << "\n";
   if (!utf8) {
     left = s (0, after+1);
     right= s (after+1, N(s));
   }
   else {
     int i= 0, l= 0;
-    while (i < N(s) && l < after+1) {
-      if (s[i] == '<')
+    while (i < N(s) && l <= after) {
+      if (s[i] == '<') {
         while (i < N(s) && s[i] != '>') i++;
-      i++;
+        if (i < N(s)) i++;
+      }
+      else i++;
       l++;
     }
     left = s (0, i);
@@ -221,4 +229,5 @@ std_hyphenate (string s, int after, string& left, string& right, int penalty,
   }
   if (penalty >= HYPH_INVALID) left << string ("\\");
   else left << string ("-");
+  //cout << "Yields " << left << ", " << right << "\n";
 }
