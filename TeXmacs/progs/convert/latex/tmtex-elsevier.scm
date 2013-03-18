@@ -26,16 +26,11 @@
 
 (define note-counter 0)
 (define author-counter 0)
-(define elsevier-thanks '())
-(define elsevier-abstract #f)
 
 (tm-define (init-elsevier body)
   (:synopsis "Initialize Elsevier style")
   (set! note-counter 0)
-  (set! author-counter 0)
-  (set! elsevier-thanks '())
-  (with l (select body '(:* abstract))
-    (set! elsevier-abstract (and (nnull? l) (list-2? (car l)) (cadar l)))))
+  (set! author-counter 0))
 
 (tm-define (tmtex-style-init body)
   (:mode elsevier-style?)
@@ -98,9 +93,8 @@
 ;; Elsarticle title macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (tmtex-tmtex-replace-documents t)
-  (:mode elsevier-style?)
-  t)
+(tm-define (tmtex-replace-documents t)
+  (:mode elsevier-style?) t)
 
 (define (list-elsarticle-notes)
   (if (== note-counter 0) ""
