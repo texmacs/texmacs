@@ -365,13 +365,10 @@
         (!paragraph ,@miscs)
         (!paragraph ,@author-notes)))))
 
-(define (get-title-option l)
-  (apply append (map cdr (tmtex-select-args-by-func 'doc-title-options l))))
-
 (tm-define (tmtex-doc-data s l)
   (:mode elsevier-style?)
-  (:require (or (in? "cluster-all" (get-title-option l))
-                (in? "cluster-by-affiliation" (get-title-option l))))
+  (:require (or (in? "cluster-all" (tmtex-get-title-option l))
+                (in? "cluster-by-affiliation" (tmtex-get-title-option l))))
   (set! l (map tmtex-replace-documents l))
   (let* ((sal       (add-notes (single-author-list (cons s l))))
          (subtitles  (map tmtex-elsevier-subtitle

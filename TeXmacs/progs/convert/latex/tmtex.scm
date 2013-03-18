@@ -1282,6 +1282,9 @@
      ,@dates
      (maketitle)))
 
+(tm-define (tmtex-get-title-option l)
+  (apply append (map cdr (tmtex-select-args-by-func 'doc-title-options l))))
+
 (tm-define (tmtex-doc-data s l)
   (set! l (map tmtex-replace-documents l))
   (let* ((subtitles (map tmtex-doc-subtitle
