@@ -134,6 +134,8 @@ array<string> font_database_search (string fam, string var,
 array<string> font_database_characteristics (string family, string style);
 
 // Font selection
+tree array_as_tuple (array<string> a);
+array<string> tuple_as_array (tree t);
 string encode_feature (string s);
 string family_to_master (string f);
 array<string> master_to_families (string f);
