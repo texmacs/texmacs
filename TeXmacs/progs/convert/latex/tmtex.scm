@@ -1222,7 +1222,7 @@
   (set! t (tmtex-remove-line-feeds t))
   `(tmmisc ,(tmtex (cadr t))))
 
-(define (tmtex-select-args-by-func n l)
+(tm-define (tmtex-select-args-by-func n l)
   (filter (lambda (x) (func? x n)) l))
 
 (tm-define (tmtex-remove-line-feeds t)

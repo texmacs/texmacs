@@ -236,9 +236,6 @@
 ;; Elsevier miscellanous macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmtex-select-args-by-func n l)
-  (filter (lambda (x) (func? x n)) l))
-
 (define (elsevier-split-authors t)
   (if (and (pair? t) (pair? (cdr t)) (func? (cadr t) 'concat))
     (with l (filter (lambda (x) (!= ", " x)) (cdadr t))
