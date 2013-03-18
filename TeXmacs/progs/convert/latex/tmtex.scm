@@ -1181,7 +1181,7 @@
 ;; Titles of documents
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmtex-doc-title t)
+(tm-define (tmtex-doc-title t)
   `(title ,(tmtex (cadr t))))
 
 (tm-define (tmtex-doc-subtitle t)
@@ -1245,7 +1245,7 @@
                              ,@notes
                              ,@miscs))))
 
-(define (tmtex-doc-author t)
+(tm-define (tmtex-doc-author t)
   (set! t (tmtex-replace-documents t))
   (if (or (npair? t) (npair? (cdr t)) (not (func? (cadr t) 'author-data))) '()
     (let* ((datas        (cdadr t))
