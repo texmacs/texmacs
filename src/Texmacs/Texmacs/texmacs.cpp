@@ -53,6 +53,8 @@ extern int geometry_x, geometry_y;
 extern tree the_et;
 extern bool texmacs_started;
 
+bool disable_error_recovery= false;
+
 tm_ostream& cout= tm_ostream::cout;
 tm_ostream& cerr= tm_ostream::cerr;
 
@@ -198,6 +200,7 @@ TeXmacs_main (int argc, char** argv) {
 	debug (DEBUG_FLAG_BENCH, true);
 	debug (DEBUG_FLAG_QT, true);
       }
+      else if (s == "-disable-error-recovery") disable_error_recovery= true;
       else if ((s == "-fn") || (s == "-font")) {
 	i++;
 	if (i<argc) the_default_font= argv[i];
@@ -376,7 +379,7 @@ TeXmacs_main (int argc, char** argv) {
 
   if (DEBUG_STD) cout << "TeXmacs] Starting event loop...\n";
   texmacs_started= true;
-  //signal (SIGSEGV, clean_exit_on_segfault);
+  if (!disable_error_recovery) signal (SIGSEGV, clean_exit_on_segfault);
   gui_start_loop ();
 
   if (DEBUG_STD) cout << "TeXmacs] Stopping server...\n";

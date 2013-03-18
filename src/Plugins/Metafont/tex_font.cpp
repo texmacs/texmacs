@@ -363,11 +363,12 @@ get_unaccented (string s) {
 
 static string
 get_accents (string s) {
-  int i;
-  string r(N(s));
-  for (i=0; i<N(s); i++)
+  int i, n= N(s);
+  string r (n);
+  for (i=0; i<n; i++) {
     if ((s[i] & 128) == 0) r[i]= ' ';
     else r[i]= (char) the_accents [s[i] & 127];
+  }
   return r;
 }
 
@@ -487,9 +488,12 @@ tex_font_rep::supports (string s) {
       return N(s) == 1 || s == "<less>" || s == "<gtr>";
     case TEX_CM:
     case TEX_ADOBE:
-      if (N(s) > 1) return s == "<less>" || s == "<gtr>";
+      if (N(s) != 1) return s == "<less>" || s == "<gtr>";
       else if (((unsigned int) s[0]) < ((unsigned int) 128)) return true;
-      else return get_accents (s) != " ";
+      else {
+        ACCENTS_PREPARE;
+        return get_accents (s) != " ";
+      }
   }
   return false;
 }
