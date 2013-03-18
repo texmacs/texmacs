@@ -211,7 +211,9 @@ unicode_font_rep::supports (string c) {
   if (N(c) == 0) return false;
   int i= 0;
   unsigned int uc= read_unicode_char (c, i);
-  return fnm->exists (uc);
+  if (!fnm->exists (uc)) return false;
+  metric& m (fnm->get (uc));
+  return m->x1 < m->x2 && m->y1 < m->y2;
 }
 
 void

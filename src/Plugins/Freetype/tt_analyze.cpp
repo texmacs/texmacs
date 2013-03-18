@@ -38,15 +38,45 @@ range_percentage (font_metric fnm, int start, int end) {
   return (100.0 * ((double) count)) / ((double) max (end+1-start, 1));
 }
 
+bool
+really_exists (font_metric fnm, int i) {
+  if (!fnm->exists (i)) return false;
+  metric& m (fnm->get (i));
+  return m->x1 < m->x2 && m->y1 < m->y2;
+}
+
+bool
+sane_greek (array<string> r, font_metric fnm, string family) {
+  if (!contains (string ("+GreekBasic"), r)) return true;
+  if (!really_exists (fnm, 0x391)) return false;
+  // Many Apple fonts provide incorrect support of Greek characters
+  if (starts (locase_all (family), "pilgi")) return false;
+  if (contains (string ("+CJK"), r)) {
+    metric& alpha (fnm->get (0x391));
+    int pw= alpha->x4 - alpha->x3;
+    int lw= alpha->x2 - alpha->x1;
+    if (7 * pw < 6 * lw) return false;
+  }
+  return true;
+}
+
+array<string>
+exclude (array<string> a, string s) {
+  array<string> r;
+  for (int i=0; i<N(a); i++)
+    if (a[i] != s) r << a[i];
+  return r;
+}
+
 void
-analyze_range (font_metric fnm, array<string>& r) {
+analyze_range (font fn, font_metric fnm, array<string>& r, string family) {
   if (range_exists (fnm, 0x41, 0x5a))
     r << string ("+Upper");
   if (range_exists (fnm, 0x61, 0x7a))
     r << string ("+Lower");
   if (range_exists (fnm, 0x30, 0x39))
     r << string ("+Digits");
-  if (range_exists (fnm, 0x20, 0x7e))
+  if (range_exists (fnm, 0x21, 0x7e))
     r << string ("+Ascii");
   if (range_exists (fnm, 0xc0, 0xff))
     r << string ("+Latin1Basic");
@@ -87,6 +117,9 @@ analyze_range (font_metric fnm, array<string>& r) {
     //cout << "percentage -> " << perc << "\n";
     if (perc > 20.0) r << string ("+MathLetters");
   }
+
+  if (!sane_greek (r, fnm, family))
+    r= exclude (r, "+GreekBasic");
 }
 
 /******************************************************************************
@@ -514,7 +547,7 @@ tt_analyze (string family) {
   //cout << "Analyzing " << family << "\n";
 
   get_glyph_fatal= false;
-  analyze_range (fnm, r);
+  analyze_range (fn, fnm, r, family);
   analyze_special (fn, fnm, r);
   analyze_major (fn, fnm, r);
   //analyze_trace (fn, fnm, r);
