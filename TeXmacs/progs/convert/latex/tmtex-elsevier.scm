@@ -36,6 +36,12 @@
   (:mode elsevier-style?)
   (init-elsevier body))
 
+(tm-define (tmtex-style-init body)
+  (:mode jsc-style?)
+  (init-elsevier body)
+  (set! tmtex-packages (cons "natbib" tmtex-packages))
+  (latex-set-packages '("amsthm" "yjsco" "natbib")))
+
 (define (ref-note)
   (number->string note-counter))
 
@@ -423,13 +429,3 @@
 	(list (list '!begin "eqnarray") r)  ;; FIXME: why do elsequation
 	(list (list '!begin "eqnarray*") r) ;; and elsequation* not work?
 	)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Customizations for JSC
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (tmtex-style-init body)
-  (:mode jsc-style?)
-  (init-elsevier body)
-  (set! tmtex-packages (cons "natbib" tmtex-packages))
-  (latex-set-packages '("amsthm" "yjsco" "natbib")))
