@@ -292,7 +292,7 @@ collect_metadata (tree t, tree latex_classe) {
 
 string
 get_latex_style (tree t) {
-  if (N(t) == 3 && string_arg (t[N(t)-1]) == "revtex4-1") {
+  if (N(t) == 3 && occurs ("revtex", string_arg (t[N(t)-1]))) {
     array<string> opts= trim_spaces (tokenize (string_arg (t[1]), ","));
     if (contains (string ("aip"), opts)) return "aip";
     if (contains (string ("aps"), opts)) return "aps";
