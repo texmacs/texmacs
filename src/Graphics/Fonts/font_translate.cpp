@@ -90,8 +90,8 @@ static string
 upgrade_family_name (string f) {
   static hashmap<string,string> t ("");
   if (N(t) == 0) {
-    //t ("luxi")= "";
-    //t ("ms-andalemo")= "";
+    t ("luxi")= "Luxi";
+    t ("ms-andalemo")= "Andale Mono";
     t ("ms-arial")= "Arial";
     t ("ms-comic")= "Comic Sans MS";
     t ("ms-courier")= "Courier New";
@@ -119,18 +119,18 @@ upgrade_family_name (string f) {
     t ("ms-gothic")= "MS Gothic";
     t ("ms-mincho")= "MS Mincho";
     //t ("sazanami")= "";
-    //t ("simfang")= "";
-    //t ("simhei")= "";
-    //t ("simkai")= "";
-    //t ("simli")= "";
+    t ("simfang")= "FangSong_GB2312";
+    t ("simhei")= "SimHei";
+    t ("simkai")= "KaiTi_GB2312";
+    t ("simli")= "LiSu";
     //t ("simsun")= "";
-    //t ("simyou")= "";
+    t ("simyou")= "YouYuan";
     t ("ttf-japanese")= "TakaoPMincho";
-    //t ("ukai")= "";
-    //t ("uming")= "";
+    t ("ukai")= "AR PL ZenKai Uni";
+    t ("uming")= "AR PL UMing CN";
     t ("unbatang")= "UnBatang";
     t ("wqy-microhei")= "WenQuanYi Micro Hei";
-    //t ("wqy-zenhei")= "";
+    t ("wqy-zenhei")= "WenQuanYi Zen Hei";
     t ("stix")= "Stix";
     t ("dejavu")= "DejaVu";
     t ("sys-chinese")= "roman";
