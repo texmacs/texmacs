@@ -10,36 +10,6 @@
 ******************************************************************************/
 #include "convert.hpp"
 
-static array<tree>
-get_ams_subjclass (tree t) {
-  tree tmp (CONCAT);
-  array<tree> r;
-  for (int i=0; i<=N(t); i++) {
-    if (i < N(t) && t[i] != "," && !is_tuple (t[i], "\\tmSep"))
-      tmp << t[i];
-    else {
-      r << tmp;
-      tmp= concat();
-    }
-  }
-  return r;
-}
-
-static array<tree>
-get_ams_keywords (tree t) {
-  tree tmp (CONCAT);
-  array<tree> r;
-  for (int i=0; i<=N(t); i++) {
-    if (i < N(t) && t[i] != "," && !is_tuple (t[i], "\\tmsep"))
-      tmp << t[i];
-    else {
-      r << tmp;
-      tmp= concat();
-    }
-  }
-  return r;
-}
-
 tree
 collect_metadata_ams (tree t) {
   int i, n=N(t);
@@ -94,19 +64,21 @@ collect_metadata_ams (tree t) {
     }
     // abstract datas
     else if (is_tuple (u, "\\keywords", 1)) {
-      array<tree> tmp= get_ams_keywords (u[1]);
+      array<tree> tmp= tokenize_concat (u[N(u)-1], A(concat (",", ";",
+              tree (TUPLE, "\\tmsep"), tree (TUPLE, "\\tmSep"))));
       if (N(tmp) > 0) {
         tree kw= tree (APPLY, "\\abstract-keywords");
-        for (int j=0; j<N(tmp); j++) kw << tmp[j];
+        kw << tmp;
         abstract_data << kw;
       }
     }
     else if (is_tuple (u, "\\subjclass", 1)   ||
              is_tuple (u, "\\subjclass*", 2)) {
-      array<tree> tmp= get_ams_subjclass (u[N(u)-1]);
+      array<tree> tmp= tokenize_concat (u[N(u)-1], A(concat (",", ";",
+              tree (TUPLE, "\\tmsep"), tree (TUPLE, "\\tmSep"))));
       if (N(tmp) > 0) {
         tree msc= tree (APPLY, "\\abstract-msc");
-        for (int j=0; j<N(tmp); j++) msc << tmp[j];
+        msc << tmp;
         abstract_data << msc;
       }
     }

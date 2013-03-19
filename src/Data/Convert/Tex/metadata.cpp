@@ -11,6 +11,22 @@
 
 #include "Tex/convert_tex.hpp"
 
+array<tree>
+tokenize_concat (tree t, array<tree> a) {
+  tree tmp (CONCAT);
+  array<tree> r;
+  for (int i=0; i<N(t); i++) {
+    if (!contains (t[i], a))
+      tmp << t[i];
+    else {
+      r << tmp;
+      tmp= concat();
+    }
+  }
+  if (tmp != concat()) r << tmp;
+  return r;
+}
+
 bool
 is_metadata_env (tree u) {
   return is_tuple (u, "\\begin-frontmatter") ||
@@ -19,9 +35,11 @@ is_metadata_env (tree u) {
 
 bool
 is_metadata (tree u) {
-  return is_tuple (u, "\\address")           ||
+  return is_tuple (u, "\\accepted")          ||
+         is_tuple (u, "\\address")           ||
          is_tuple (u, "\\additionalauthors") ||
          is_tuple (u, "\\affiliation")       ||
+         is_tuple (u, "\\altaffiliation")    ||
          is_tuple (u, "\\author")            ||
          is_tuple (u, "\\author*")           ||
          is_tuple (u, "\\category")          ||
@@ -30,6 +48,8 @@ is_metadata (tree u) {
          is_tuple (u, "\\conferenceinfo")    ||
          is_tuple (u, "\\contrib")           ||
          is_tuple (u, "\\contrib*")          ||
+         is_tuple (u, "\\copyrightholder")   ||
+         is_tuple (u, "\\copyrightyear")     ||
          is_tuple (u, "\\CopyrightYear")     ||
          is_tuple (u, "\\crdata")            ||
          is_tuple (u, "\\curaddr")           ||
@@ -38,12 +58,19 @@ is_metadata (tree u) {
          is_tuple (u, "\\doc-acm")           ||
          is_tuple (u, "\\doc-terms")         ||
          is_tuple (u, "\\email")             ||
+         is_tuple (u, "\\email*")            ||
+         is_tuple (u, "\\homepage")          ||
+         is_tuple (u, "\\homepage*")         ||
          is_tuple (u, "\\footnotetext")      ||
          is_tuple (u, "\\footnotetext*")     ||
          is_tuple (u, "\\keywords")          ||
          is_tuple (u, "\\maketitle")         ||
+         is_tuple (u, "\\noaffiliation")     ||
          is_tuple (u, "\\numberofauthors")   ||
+         is_tuple (u, "\\pacs")              ||
          is_tuple (u, "\\pagenumbering")     ||
+         is_tuple (u, "\\received")          ||
+         is_tuple (u, "\\revised")           ||
          is_tuple (u, "\\subjclass")         ||
          is_tuple (u, "\\subjclass*")        ||
          is_tuple (u, "\\subtitle")          ||

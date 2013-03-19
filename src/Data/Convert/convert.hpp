@@ -67,11 +67,13 @@ string latex_verbarg_to_string (tree t);
 tree   collect_metadata_acm (tree t);
 tree   collect_metadata_ams (tree t);
 tree   collect_metadata_elsevier (tree t);
+tree   collect_metadata_revtex (tree t);
 tree   collect_metadata (tree t, tree latex_classe);
 bool   is_metadata (tree u);
 bool   is_metadata_env (tree u);
 string get_latex_style (tree t);
 string string_arg (tree t, bool url= false);
+array<tree> tokenize_concat (tree t, array<tree> a);
 
 /*** Xml / Html / Mathml ***/
 tree   parse_xml (string s);

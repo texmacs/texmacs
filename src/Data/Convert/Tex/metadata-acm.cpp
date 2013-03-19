@@ -162,19 +162,13 @@ collect_metadata_acm (tree t) {
       abstract_data << tree (APPLY, "\\abstract", abstract_text);
     }
     else if (is_tuple (u, "\\keywords", 1) || is_tuple (u, "\\terms", 1)) {
-      tree tmp (CONCAT);
-      array<tree> kw;
-      for (int j=0; j<=N(u[1]); j++) {
-        if (j < N(u[1]) && u[1][j] != "," && !is_tuple(u[1][j], "\\tmsep"))
-          tmp << u[1][j];
-        else {
-          kw << tmp;
-          tmp= concat();
-        }
+      array<tree> tmp= tokenize_concat (u[N(u)-1], A(concat (",", ";",
+              tree (TUPLE, "\\tmsep"), tree (TUPLE, "\\tmSep"))));
+      if (N(tmp) > 0) {
+        tree kw= tree (APPLY, "\\abstract-keywords");
+        kw << tmp;
+        abstract_data << kw;
       }
-      tmp= tree (APPLY, "\\abstract-keywords");
-      for (int j=0; j<N(kw); j++) tmp << kw[j];
-      abstract_data << tmp;
     }
     else if (is_tuple (u, "\\category") || is_tuple (u, "\\category*")) {
       tree tmp (APPLY, "\\abstract-msc");
