@@ -24,9 +24,17 @@ array<int> decode_trace (string s);
 ******************************************************************************/
 
 bool
+really_exists (font_metric fnm, int i) {
+  if (!fnm->exists (i)) return false;
+  metric& m (fnm->get (i));
+  return m->x1 < m->x2 && m->y1 < m->y2;
+}
+
+bool
 range_exists (font_metric fnm, int start, int end) {
   for (int i= start; i <= end; i++)
-    if (!fnm->exists (i)) return false;
+    //if (!fnm->exists (i)) return false;
+    if (!really_exists (fnm, i)) return false;
   return true;
 }
 
@@ -35,26 +43,22 @@ range_percentage (font_metric fnm, int start, int end) {
   int count= 0;
   for (int i= start; i <= end; i++)
     if (fnm->exists (i)) count++;
+    //if (really_exists (fnm, i)) count++;
   return (100.0 * ((double) count)) / ((double) max (end+1-start, 1));
 }
 
 bool
-really_exists (font_metric fnm, int i) {
-  if (!fnm->exists (i)) return false;
-  metric& m (fnm->get (i));
-  return m->x1 < m->x2 && m->y1 < m->y2;
-}
-
-bool
-sane_greek (array<string> r, font_metric fnm, string family) {
-  if (!contains (string ("+GreekBasic"), r)) return true;
-  if (!really_exists (fnm, 0x391)) return false;
-  // Many Apple fonts provide incorrect support of Greek characters
+sane_font (array<string> r, font_metric fnm, string family,
+           string range, int test) {
+  if (!contains (range, r)) return true;
+  if (!really_exists (fnm, test)) return false;
+  // Many Apple fonts (especially the CJK ones) provide ugly support
+  // for Greek and/or Cyrillic characters
   if (starts (locase_all (family), "pilgi")) return false;
   if (contains (string ("+CJK"), r)) {
-    metric& alpha (fnm->get (0x391));
-    int pw= alpha->x4 - alpha->x3;
-    int lw= alpha->x2 - alpha->x1;
+    metric& m (fnm->get (test));
+    int pw= m->x4 - m->x3;
+    int lw= m->x2 - m->x1;
     if (7 * pw < 6 * lw) return false;
   }
   return true;
@@ -70,6 +74,7 @@ exclude (array<string> a, string s) {
 
 void
 analyze_range (font fn, font_metric fnm, array<string>& r, string family) {
+  if (starts (locase_all (family), "lastresort")) return;
   if (range_exists (fnm, 0x41, 0x5a))
     r << string ("+Upper");
   if (range_exists (fnm, 0x61, 0x7a))
@@ -118,8 +123,10 @@ analyze_range (font fn, font_metric fnm, array<string>& r, string family) {
     if (perc > 20.0) r << string ("+MathLetters");
   }
 
-  if (!sane_greek (r, fnm, family))
+  if (!sane_font (r, fnm, family, "+GreekBasic", 0x391))
     r= exclude (r, "+GreekBasic");
+  if (!sane_font (r, fnm, family, "+CyrillicBasic", 0x430))
+    r= exclude (r, "+CyrillicBasic");
 }
 
 /******************************************************************************

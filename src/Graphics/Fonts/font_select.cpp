@@ -579,7 +579,6 @@ distance (array<string> v, array<string> vx,
   // between all styles in the same family.
   int d= 0;
   if (N(v) == 0 || N(w) == 0) return D_INFINITY;
-  if (w[0] == "LastResort") return 3 * D_HUGE; // FIXME: might be avoided
   if (v[0] != w[0]) d= D_MASTER;
   for (int i=1; i<N(v); i++)
     d += distance (v[i], wx, false);
