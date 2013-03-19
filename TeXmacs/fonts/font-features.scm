@@ -309,7 +309,7 @@
 (Skia Skia SansSerif)
 (STFangsong STFangsong)
 (STHeiti STHeiti SansSerif)
-(Stix stix)
+(Stix Stix)
 (Stix\ Math Stix\ Math)
 (STKaiti STKaiti)
 (STSong STSong)

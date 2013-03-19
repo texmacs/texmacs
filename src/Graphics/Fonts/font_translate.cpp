@@ -1,0 +1,223 @@
+
+/******************************************************************************
+* MODULE     : font_translate.cpp
+* DESCRIPTION: Compatibility between old and new font schemes
+* COPYRIGHT  : (C) 2013  Joris van der Hoeven
+*******************************************************************************
+* This software falls under the GNU general public license version 3 or later.
+* It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+* in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+******************************************************************************/
+
+#include "font.hpp"
+#include "Freetype/tt_tools.hpp"
+#include "analyze.hpp"
+
+bool is_weight (string s);
+bool is_category (string s);
+bool is_glyphs (string s);
+bool is_other (string s);
+
+/******************************************************************************
+* Translation into internal naming scheme
+******************************************************************************/
+
+string
+get_family (array<string> v) {
+  if (N(v) == 0) return "roman";
+  return v[0];
+}
+
+string
+get_variant (array<string> v) {
+  array<string> r;
+  for (int i=1; i<N(v); i++) {
+    if (v[i] == "mono" && contains (string ("typewriter"), v));
+    else if (v[i] == "mono" || v[i] == "typewriter")
+      r << string ("tt");
+    else if (v[i] == "sansserif")
+      r << string ("ss");
+    else if (v[i] == "digital" ||
+	     v[i] == "pen" || v[i] == "artpen" ||
+	     v[i] == "chalk" || v[i] == "marker")
+      r << v[i];
+    else if (is_category (v[i]))
+      r << v[i];
+    else if (is_glyphs (v[i]))
+      r << v[i];
+    else if (is_other (v[i]))
+      r << v[i];
+  }
+  if (N(r) == 0) return "rm";
+  return recompose (r, "-");
+}
+
+string
+get_series (array<string> v) {
+  for (int i=1; i<N(v); i++)
+    if (is_weight (v[i]))
+      return v[i];
+  return "medium";
+}
+
+string
+get_shape (array<string> v) {
+  array<string> r;
+  for (int i=1; i<N(v); i++)
+    if (ends (v[i], "condensed") ||
+        ends (v[i], "unextended") ||
+        ends (v[i], "wide") ||
+        v[i] == "proportional" ||
+        (v[i] == "mono" && contains (string ("typewriter"), v)))
+      r << v[i];
+  for (int i=1; i<N(v); i++)
+    if (v[i] == "upright") r << string ("right");
+    else if (v[i] == "italic") r << string ("italic");
+    else if (v[i] == "oblique") r << string ("slanted");
+  for (int i=1; i<N(v); i++)
+    if (v[i] == "smallcaps") r << string ("small-caps");
+    else if (v[i] == "long") r << string ("long");
+    else if (v[i] == "flat") r << string ("flat");
+  if (N(r) == 0) return "right";
+  return recompose (r, "-");
+}
+
+/******************************************************************************
+* Upgrade old family names
+******************************************************************************/
+
+static string
+upgrade_family_name (string f) {
+  static hashmap<string,string> t ("");
+  if (N(t) == 0) {
+    //t ("luxi")= "";
+    //t ("ms-andalemo")= "";
+    t ("ms-arial")= "Arial";
+    t ("ms-comic")= "Comic Sans MS";
+    t ("ms-courier")= "Courier New";
+    t ("ms-georgia")= "Georgia";
+    t ("ms-impact")= "Impact";
+    t ("ms-lucida")= "Lucida Console";
+    t ("ms-tahoma")= "Tahoma";
+    t ("ms-times")= "Times New Roman";
+    t ("ms-trebuchet")= "Trebuchet MS";
+    t ("ms-verdana")= "Verdana";
+    t ("apple-gothic")= "AppleGothic";
+    t ("apple-lucida")= "Lucida Grande";
+    //t ("apple-mingliu")= "";
+    t ("apple-symbols")= "Apple Symbols";
+    //t ("apple-simsun")= "";
+    //t ("batang")= "";
+    t ("fireflysung")= "AR PL New Sung";
+    //t ("gulim")= "";
+    t ("ipa")= "IPAMincho";
+    t ("heiti")= "STHeiti";
+    t ("kaku")= "Hiragino Kaku Gothic ProN";
+    //t ("kochi")= "";
+    t ("lihei")= "LiHei Pro";
+    //t ("mingliu")= "";
+    //t ("ms-gothic")= "";
+    //t ("ms-mincho")= "";
+    //t ("sazanami")= "";
+    //t ("simfang")= "";
+    //t ("simhei")= "";
+    //t ("simkai")= "";
+    //t ("simli")= "";
+    //t ("simsun")= "";
+    //t ("simyou")= "";
+    t ("ttf-japanese")= "TakaoPMincho";
+    //t ("ukai")= "";
+    //t ("uming")= "";
+    t ("unbatang")= "UnBatang";
+    t ("wqy-microhei")= "WenQuanYi Micro Hei";
+    //t ("wqy-zenhei")= "";
+    t ("stix")= "Stix";
+    t ("dejavu")= "DejaVu";
+    t ("sys-chinese")= "roman";
+    t ("sys-japanese")= "roman";
+    t ("sys-korean")= "roman";
+  }
+  if (t->contains (f)) return t[f];
+  else return f;
+}
+
+/******************************************************************************
+* Translation from internal naming scheme
+******************************************************************************/
+
+bool
+is_other_internal (string s) {
+  return
+    is_other (s) &&
+    s != "rm" &&
+    s != "ss" &&
+    s != "tt" &&
+    s != "small-caps" &&
+    s != "right" &&
+    s != "slanted";
+}
+
+array<string>
+variant_features (string s) {
+  array<string> v= tokenize (s, "-");
+  array<string> r;
+  for (int i=0; i<N(v); i++)
+    if (v[i] == "ss") r << string ("sansserif");
+    else if (v[i] == "tt") r << string ("typewriter");
+    else if (v[i] == "digital" ||
+	     v[i] == "pen" || v[i] == "artpen" ||
+	     v[i] == "chalk" || v[i] == "marker")
+      r << v[i];
+    else if (is_category (v[i]))
+      r << v[i];
+    else if (is_glyphs (v[i]))
+      r << v[i];
+    else if (is_other_internal (v[i]))
+      r << v[i];
+  return r;
+}
+
+array<string>
+series_features (string s) {
+  array<string> r;
+  r << s;
+  return r;
+}
+
+array<string>
+shape_features (string s) {
+  s= replace (s, "small-caps", "smallcaps");
+  array<string> v= tokenize (s, "-");
+  array<string> r;
+  for (int i=0; i<N(v); i++)
+    if (ends (v[i], "condensed") ||
+        ends (v[i], "unextended") ||
+        ends (v[i], "wide") ||
+        v[i] == "mono" ||
+        v[i] == "proportional" ||
+        v[i] == "italic" ||
+        v[i] == "smallcaps" ||
+        v[i] == "long" ||
+        v[i] == "flat")
+      r << v[i];
+    else if (v[i] == "right") r << string ("upright");
+    else if (v[i] == "slanted") r << string ("oblique");
+  return r;
+}
+
+array<string>
+logical_font (string family, string variant, string series, string shape) {
+  array<string> r;
+  r << upgrade_family_name (family);
+  r << variant_features (variant);
+  r << series_features (series);
+  r << shape_features (shape);
+  array<string> v;
+  for (int i=0; i<N(r); i++)
+    if (r[i] != "medium" &&
+        r[i] != "upright")
+      v << r[i];
+  //cout << family << ", " << variant << ", "
+  //     << series << ", " << shape << " -> " << v << "\n";
+  return v;
+}
