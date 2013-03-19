@@ -303,6 +303,7 @@ font_database_build_global (url u) {
   font_database_load_database (GLOBAL_DATABASE);
   font_database_load_features (GLOBAL_FEATURES);
   font_database_load_characteristics (GLOBAL_CHARACTERISTICS);
+  fonts_loaded= fonts_global_loaded= true;
   font_database_build (u);
   font_database_build_characteristics (false);
   font_database_guess_features ();

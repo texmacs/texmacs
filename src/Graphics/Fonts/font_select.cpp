@@ -250,8 +250,10 @@ Replace (string s, string w, string b) {
 string
 family_to_master (string f) {
   font_database_load ();
-  if (!font_features->contains (tree (f)))
+  if (!font_features->contains (tree (f))) {
+    cout << "TeXmacs] missing '" << f << "' family\n";
     font_database_global_load ();
+  }
   if (font_features->contains (tree (f))) {
     tree t= font_features [tree (f)];
     if (is_func (t, TUPLE) && N(t) >= 1 && is_atomic (t[0]))
@@ -295,8 +297,10 @@ family_to_master (string f) {
 array<string>
 master_to_families (string m) {
   font_database_load ();
-  if (!font_variants->contains (tree (m)))
+  if (!font_variants->contains (tree (m))) {
+    cout << "TeXmacs] missing '" << m << "' master\n";
     font_database_global_load ();
+  }
   array<string> r;
   if (font_variants->contains (tree (m))) {
     tree t= font_variants [tree (m)];
