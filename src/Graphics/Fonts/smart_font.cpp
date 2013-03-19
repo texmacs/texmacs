@@ -13,6 +13,7 @@
 #include "convert.hpp"
 #include "converter.hpp"
 #include "Freetype/tt_tools.hpp"
+#include "translator.hpp"
 
 /******************************************************************************
 * Efficient computation of the appropriate subfont
@@ -68,6 +69,32 @@ get_smart_map (tree fn) {
 }
 
 /******************************************************************************
+* Virtual font handling
+******************************************************************************/
+
+static bool virt_initialized= false;
+static array<string> std_virt;
+static array<translator> std_trl;
+
+static void
+initialize_virtual () {
+  if (virt_initialized) return;
+  std_virt << string ("long") << string ("negate") << string ("misc");
+  for (int i=0; i<N(std_virt); i++)
+    std_trl << load_translator (std_virt[i]);
+  virt_initialized= true;
+}
+
+static string
+find_in_virtual (string c) {
+  initialize_virtual ();
+  for (int i=0; i<N(std_virt); i++)
+    if (std_trl[i]->dict->contains (c))
+      return std_virt[i];
+  return "";
+}
+
+/******************************************************************************
 * The smart font class
 ******************************************************************************/
 
@@ -90,8 +117,8 @@ struct smart_font_rep: font_rep {
                   string series, string shape, int sz, int dpi);
 
   void   advance (string s, int& pos, string& r, int& nr);
-  int    search_subfont (string c);
   int    resolve (string c);
+  void   initialize_font (int nr);
 
   bool   supports (string c);
   void   get_extents (string s, metric& ex);
@@ -158,22 +185,11 @@ smart_font_rep::advance (string s, int& pos, string& r, int& nr) {
   r= s (start, pos);
   if (nr < 0) return;
   if (N(fn) <= nr) fn->resize (nr+1);
-  if (is_nil (fn[nr])) {
-    array<string> a= tuple_as_array (sm->fn_spec[nr]);
-    int att= as_int (a[4]);
-    int ex1= get_ex (family, variant, series, shape, 1);
-    int ex2= get_ex (a[0], a[1], a[2], a[3], att);
-    double zoom= 1.0;
-    if (ex1 != 0 && ex2 != 0) zoom= ((double) ex1) / ((double) ex2);
-    if (zoom > 0.975 && zoom < 1.025) zoom= 1;
-    int ndpi= (int) tm_round (dpi * zoom);
-    fn[nr]= closest_font (a[0], a[1], a[2], a[3], sz, ndpi, att);
-    //cout << "Font " << nr << " -> " << fn[nr]->res_name << "\n";
-  }
+  if (is_nil (fn[nr])) initialize_font (nr);
 }
 
 int
-smart_font_rep::search_subfont (string c) {
+smart_font_rep::resolve (string c) {
   if (fn[SUBFONT_MAIN]->supports (c))
     return sm->add_char (tree ("main"), c);
   string uc= cork_to_utf8 (c);
@@ -207,12 +223,31 @@ smart_font_rep::search_subfont (string c) {
     }
   }
 
+  string virt= find_in_virtual (c);
+  if (virt != "") {
+    //cout << "Found " << c << " in " << virt << "\n";
+    return sm->add_char (tuple ("virtual", virt), c);
+  }
+
   return sm->add_char (tree ("error"), c);
 }
 
-int
-smart_font_rep::resolve (string c) {
-  return search_subfont (c);
+void
+smart_font_rep::initialize_font (int nr) {
+  array<string> a= tuple_as_array (sm->fn_spec[nr]);
+  if (a[0] == "virtual")
+    fn[nr]= virtual_font (this, a[1], sz, dpi);
+  else {
+    int att= as_int (a[4]);
+    int ex1= get_ex (family, variant, series, shape, 1);
+    int ex2= get_ex (a[0], a[1], a[2], a[3], att);
+    double zoom= 1.0;
+    if (ex1 != 0 && ex2 != 0) zoom= ((double) ex1) / ((double) ex2);
+    if (zoom > 0.975 && zoom < 1.025) zoom= 1;
+    int ndpi= (int) tm_round (dpi * zoom);
+    fn[nr]= closest_font (a[0], a[1], a[2], a[3], sz, ndpi, att);
+  }
+  //cout << "Font " << nr << " -> " << fn[nr]->res_name << "\n";
 }
 
 /******************************************************************************
