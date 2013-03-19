@@ -22,20 +22,28 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (standard-selector-text)
-  `(document
-     "abcdefghijklmnopqrstuvwxyz"
-     "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-     "0123456789, +-*/^=<less><gtr>"
-     "([{|}]) :;!? !@#$%&"
-     "אחימץü"
-     ,(string-append 
-       "<alpha><beta><gamma><delta><epsilon> "
-       "<leq><geq><leqslant><geqslant><prec><succ> "
-       "<rightarrow><Rightarrow><mapsto> "
-       "<times><cdot><oplus><otimes>")))
+  `(with "par-par-sep" "0.2em"
+     (document
+       "Lowercase: abcdefghijklmnopqrstuvwxyz"
+       "Uppercase: ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+       "Numbers: 0123456789 +-*/^=<less><gtr>"
+       "Special: ([{|}]) \"`,.:;!?'\" @#$%&"
+       "Accented: אבהגדטיכךלםןמעףצפץשתüû"
+       ,(string-append
+         "Greek: <alpha><beta><gamma><delta><epsilon><zeta><eta><theta>"
+         "<iota><kappa><lambda><mu><nu><xi><omicron><pi>"
+         "<rho><sigma><tau><upsilon><phi><psi><chi><omega>")
+       ,(string-append
+         "Cyrillic: <#430><#431><#432><#433><#434><#435><#436><#437>"
+         "<#438><#439><#43a><#43b><#43c><#43d><#43e><#43f>"
+         "<#440><#441><#442><#443><#444><#445><#446><#447>"
+         "<#448><#449><#44a><#44b><#44c><#44d><#44e><#44f>")
+       ,(string-append
+         "Mathematics: <leq><geq><leqslant><geqslant><prec><succ> "
+         "<leftarrow><rightarrow><Leftarrow><Rightarrow><mapsto> "
+         "<times><cdot><oplus><otimes>"))))
 
 (define-public sample-text (standard-selector-text))
-(define-public sample-size "200px")
 (define-public sample-kind "Standard")
 
 (tm-define (set-font-sample-range hexa-start hexa-end)
@@ -43,8 +51,7 @@
   (:argument hexa-end "Last unicode character in hexadecimal")
   (set! sample-text
         (build-character-table (hexadecimal->integer hexa-start)
-                               (hexadecimal->integer hexa-end)))
-  (set! sample-size "500px"))
+                               (hexadecimal->integer hexa-end))))
 
 (define (set-font-sample-kind kind)
   (set! sample-kind kind)
@@ -340,7 +347,7 @@
     (text (selector-font-simulate-comment))
     >>>)
   ===
-  (resize ("300px" "300px" "2000px") ("200px" "200px" "200px")
+  (resize ("300px" "300px" "2000px") ("250px" "250px" "250px")
     (scrollable
       (link font-sample-text))))
 
