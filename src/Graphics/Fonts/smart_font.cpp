@@ -181,16 +181,15 @@ smart_font_rep::search_subfont (string c) {
   int code= decode_from_utf8 (uc, pos);
 
   string range= "";
-  if (code <= 0x7f) range= "+ascii";
-  else if (code >= 0x80 && code <= 0xff) range= "+latin1basic";
-  else if (code >= 0x100 && code <= 0x17f) range= "+latina";
-  else if (code >= 0x380 && code <= 0x3ff) range= "+greekbasic";
-  else if (code >= 0x400 && code <= 0x4ff) range= "+cyrillicbasic";
-  else if (code >= 0x4e00 && code <= 0x9fcc) range= "+cjk";
-  else if (code >= 0xac00 && code <= 0xd7af) range= "+hangul";
-  else if (code >= 0x2000 && code <= 0x23ff) range= "+math";
-  else if (code >= 0x2900 && code <= 0x2e7f) range= "+mathextra";
-  else if (code >= 0x1d400 && code <= 0x1d7ff) range= "+mathletters";
+  if (code <= 0x7f) range= "ascii";
+  else if (code >= 0x80 && code <= 0x37f) range= "latin";
+  else if (code >= 0x380 && code <= 0x3ff) range= "greek";
+  else if (code >= 0x400 && code <= 0x4ff) range= "cyrillic";
+  else if (code >= 0x4e00 && code <= 0x9fcc) range= "cjk";
+  else if (code >= 0xac00 && code <= 0xd7af) range= "hangul";
+  else if (code >= 0x2000 && code <= 0x23ff) range= "mathsymbols";
+  else if (code >= 0x2900 && code <= 0x2e7f) range= "mathextra";
+  else if (code >= 0x1d400 && code <= 0x1d7ff) range= "mathletters";
 
   if (pos == N(uc)) {
     string v= variant;

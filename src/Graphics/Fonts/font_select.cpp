@@ -212,7 +212,8 @@ glyph_features (string family, string style) {
   array<string> r;
   array<string> a= font_database_characteristics (family, style);
   for (int i=0; i<N(a); i++)
-    if (is_glyphs (a[i])) r << normalize_feature (a[i]);
+    if (is_glyphs (locase_all (a[i])))
+      r << normalize_feature (a[i]);
   return r;
 }
 
@@ -413,7 +414,16 @@ is_category (string s) {
 
 bool
 is_glyphs (string s) {
-  return starts (s, "+");
+  return 
+    s == "ascii" ||
+    s == "latin" ||
+    s == "greek" ||
+    s == "cyrillic" ||
+    s == "cjk" ||
+    s == "hangul" ||
+    s == "mathsymbols" ||
+    s == "mathextra" ||
+    s == "mathletters";
 }
 
 bool

@@ -67,14 +67,22 @@
          (set-font-sample-range "4e00" "9fcc"))
         ((== kind "Hangul")
          (set-font-sample-range "ac00" "d7af"))
-        ((== kind "Math")
+        ((== kind "Math Symbols")
          (set-font-sample-range "2000" "23ff"))
         ((== kind "Math Extra")
          (set-font-sample-range "2900" "2e7f"))
         ((== kind "Math Letters")
          (set-font-sample-range "1d400" "1d7ff"))
-        ((== kind "Unicode 0000-1fff")
-         (set-font-sample-range "0000" "1fff"))
+        ((== kind "Unicode 0000-0fff")
+         (set-font-sample-range "0000" "0fff"))
+        ((== kind "Unicode 1000-1fff")
+         (set-font-sample-range "1000" "1fff"))
+        ((== kind "Unicode 2000-2fff")
+         (set-font-sample-range "2000" "2fff"))
+        ((== kind "Unicode 3000-3fff")
+         (set-font-sample-range "3000" "3fff"))
+        ((== kind "Unicode 4000-4fff")
+         (set-font-sample-range "4000" "4fff"))
         ((and (== kind "Selection") (selection-active-any?))
          (set! sample-text (tree->stree (selection-tree))))
         (else
@@ -132,9 +140,6 @@
           (set! l (cons* "font" (logical-font-family fn) l)))
         (apply make-multi-with l)))))
 
-(define (remove-plus s)
-  (if (string-starts? s "+") (string-drop s 1) s))
-
 (define (selector-font-simulate-comment)
   (let* ((fn  (selector-get-font))
 	 (fam (logical-font-family fn))
@@ -143,8 +148,7 @@
          (sh  (logical-font-shape fn))
          (lf  (logical-font-private fam var ser sh))
          (fn2 (logical-font-search lf))
-         (sp  (map remove-plus (selected-properties)))
-         (sel (string-recompose sp " ")))
+         (sel (string-recompose (selected-properties) " ")))
     ;;(display* "fn = " fn "\n")
     ;;(display* "lf = " lf "\n")
     ;;(display* "fn2= " fn2 "\n")
@@ -200,15 +204,10 @@
 
 (define (selector-search-glyphs-decoded)
   (with s selector-search-glyphs
-    (cond ((== s "ASCII") "+Ascii")
-          ((== s "Latin") "+Latin1Basic")
-          ((== s "Greek") "+GreekBasic")
-          ((== s "Cyrillic") "+CyrillicBasic")
-          ((== s "CJK") "+CJK")
-          ((== s "Hangul") "+Hangul")
-          ((== s "Math") "+Math")
-          ((== s "Math Extra") "+MathExtra")
-          ((== s "Math Letters") "+MathLetters")
+    (cond ((== s "ASCII") "Ascii")
+          ((== s "Math Symbols") "MathSymbols")
+          ((== s "Math Extra") "MathExtra")
+          ((== s "Math Letters") "MathLetters")
           (else s))))
 
 (define (selected-properties)
@@ -337,7 +336,7 @@
       (item (text "Glyphs:")
         (enum (selector-search-set! selector-search-glyphs answer)
               '("Any" "ASCII" "Latin" "Greek" "Cyrillic"
-                "CJK" "Hangul" "Math" "Math Extra" "Math Letters")
+                "CJK" "Hangul" "Math Symbols" "Math Extra" "Math Letters")
               selector-search-glyphs "120px")))
     (horizontal (glue #f #t 0 0))))
 
@@ -369,7 +368,10 @@
         (enum (set-font-sample-kind answer)
               '("Standard" "Selection"
                 "ASCII" "Latin" "Greek" "Cyrillic" "CJK" "Hangul"
-                "Math" "Math Extra" "Math Letters" "Unicode 0000-1fff")
+                "Math Symbols" "Math Extra" "Math Letters"
+                "Unicode 0000-0fff" "Unicode 1000-1fff"
+                "Unicode 2000-2fff" "Unicode 3000-3fff"
+                "Unicode 4000-4fff")
               (get-font-sample-kind) "120px")
         >>>
         ("Ok" (begin (selector-apply-font) (quit)))))))

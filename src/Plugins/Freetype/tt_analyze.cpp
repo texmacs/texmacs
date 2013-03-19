@@ -55,7 +55,7 @@ sane_font (array<string> r, font_metric fnm, string family,
   // Many Apple fonts (especially the CJK ones) provide ugly support
   // for Greek and/or Cyrillic characters
   if (starts (locase_all (family), "pilgi")) return false;
-  if (contains (string ("+CJK"), r)) {
+  if (contains (string ("CJK"), r)) {
     metric& m (fnm->get (test));
     int pw= m->x4 - m->x3;
     int lw= m->x2 - m->x1;
@@ -75,58 +75,46 @@ exclude (array<string> a, string s) {
 void
 analyze_range (font fn, font_metric fnm, array<string>& r, string family) {
   if (starts (locase_all (family), "lastresort")) return;
-  if (range_exists (fnm, 0x41, 0x5a))
-    r << string ("+Upper");
-  if (range_exists (fnm, 0x61, 0x7a))
-    r << string ("+Lower");
-  if (range_exists (fnm, 0x30, 0x39))
-    r << string ("+Digits");
   if (range_exists (fnm, 0x21, 0x7e))
-    r << string ("+Ascii");
+    r << string ("Ascii");
   if (range_exists (fnm, 0xc0, 0xff))
-    r << string ("+Latin1Basic");
-  if (range_exists (fnm, 0xa1, 0xac) && range_exists (fnm, 0xae, 0xbf))
-    r << string ("+Latin1Symbols");
-  if (range_percentage (fnm, 0x100, 0x17f) > 66.6)
-    r << string ("+LatinA");
-  if (range_percentage (fnm, 0x180, 0x1ff) > 66.6)
-    r << string ("+LatinB");
+    r << string ("Latin");
   if (range_percentage (fnm, 0x391, 0x3ce) > 66.6)
-    r << string ("+GreekBasic");
+    r << string ("Greek");
   if (range_percentage (fnm, 0x410, 0x44f) > 66.6)
-    r << string ("+CyrillicBasic");
+    r << string ("Cyrillic");
 
   if (range_percentage (fnm, 0x4e00, 0x4eff) > 0.0) {
     double perc= range_percentage (fnm, 0x4e00, 0x9fcc);
     //cout << "percentage -> " << perc << "\n";
-    if (perc > 20.0) r << string ("+CJK");
+    if (perc > 20.0) r << string ("CJK");
   }
   if (range_percentage (fnm, 0xac00, 0xacff) > 0.0) {
     double perc= range_percentage (fnm, 0xac00, 0xd7af);
     //cout << "percentage -> " << perc << "\n";
-    if (perc > 20.0) r << string ("+Hangul");
+    if (perc > 20.0) r << string ("Hangul");
   }
 
   if (range_percentage (fnm, 0x2100, 0x21ff) > 0.0) {
     double perc= range_percentage (fnm, 0x2000, 0x23ff);
     //cout << "percentage -> " << perc << "\n";
-    if (perc > 20.0) r << string ("+Math");
+    if (perc > 20.0) r << string ("MathSymbols");
   }
   if (range_percentage (fnm, 0x2900, 0x29ff) > 0.0) {
     double perc= range_percentage (fnm, 0x2900, 0x2e7f);
     //cout << "percentage -> " << perc << "\n";
-    if (perc > 20.0) r << string ("+MathExtra");
+    if (perc > 20.0) r << string ("MathExtra");
   }
   if (range_percentage (fnm, 0x1d400, 0x1d4ff) > 0.0) {
     double perc= range_percentage (fnm, 0x1d400, 0x1d7ff);
     //cout << "percentage -> " << perc << "\n";
-    if (perc > 20.0) r << string ("+MathLetters");
+    if (perc > 20.0) r << string ("MathLetters");
   }
 
-  if (!sane_font (r, fnm, family, "+GreekBasic", 0x391))
-    r= exclude (r, "+GreekBasic");
-  if (!sane_font (r, fnm, family, "+CyrillicBasic", 0x430))
-    r= exclude (r, "+CyrillicBasic");
+  if (!sane_font (r, fnm, family, "Greek", 0x391))
+    r= exclude (r, "Greek");
+  if (!sane_font (r, fnm, family, "Cyrillic", 0x430))
+    r= exclude (r, "Cyrillic");
 }
 
 /******************************************************************************
