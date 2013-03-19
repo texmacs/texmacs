@@ -109,8 +109,6 @@ collect_metadata_revtex (tree t) {
   array<tree> authors;
   for (i=0; i<n; i++) {
     u= t[i];
-    if (is_tuple(u))  cout << u[0] << LF;
-    if (is_tuple(u,"\\keywords"))  cout << u << LF;
     if (is_tuple (u, "\\title", 1) || is_tuple (u, "\\title*", 2)) {
       doc_data << tree (APPLY, "\\doc-title", u[N(u)-1]);
       author= false;
