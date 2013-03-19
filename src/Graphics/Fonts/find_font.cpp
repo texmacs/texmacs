@@ -217,7 +217,7 @@ find_magnified_font (tree t, double zoom) {
 * Find closest existing font
 ******************************************************************************/
 
-static bool
+bool
 find_closest (string& family, string& variant, string& series, string& shape,
 	      int attempt) {
   static hashmap<tree,tree> closest_cache (UNINIT);

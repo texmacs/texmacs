@@ -23,6 +23,7 @@ RESOURCE(smart_map);
 
 #define SUBFONT_MAIN  0
 #define SUBFONT_ERROR 1
+#define SUBFONT_MATH  2
 
 struct smart_map_rep: rep<smart_map> {
   int chv[256];
@@ -35,21 +36,27 @@ public:
     rep<smart_map> (name), cht (-1), fn_nr (-1), fn_spec (2)
   {
     for (int i=0; i<256; i++) chv[i]= -1;
-    fn_nr (tree ("main" ))= SUBFONT_MAIN;
-    fn_nr (tree ("error"))= SUBFONT_ERROR;
-    fn_spec[SUBFONT_MAIN ]= fn;
-    fn_spec[SUBFONT_ERROR]= tree ("error");
+    fn_nr (tuple ("main" ))= SUBFONT_MAIN;
+    fn_nr (tuple ("error"))= SUBFONT_ERROR;
+    fn_spec[SUBFONT_MAIN ]= tuple ("main");
+    fn_spec[SUBFONT_ERROR]= tuple ("error");
   }
 
   int
-  add_char (tree fn, string c) {
-    //cout << "Add " << c << " to " << fn << "\n";
+  add_font (tree fn) {
     if (!fn_nr->contains (fn)) {
       int sz= N (fn_spec);
       fn_nr (fn)= sz;
       fn_spec << fn;
       //cout << "Create " << sz << " -> " << fn << "\n";
     }
+    return fn_nr[fn];
+  }
+
+  int
+  add_char (tree fn, string c) {
+    //cout << "Add " << c << " to " << fn << "\n";
+    add_font (fn);
     int nr= fn_nr [fn];
     if (starts (c, "<")) cht (c)= nr;
     else chv [(int) (unsigned char) c[0]]= nr;
@@ -108,6 +115,7 @@ struct smart_font_rep: font_rep {
   string shape;
   int    sz;
   int    dpi;
+  int    math_nr;
 
   array<font> fn;
   smart_map   sm;
@@ -115,6 +123,7 @@ struct smart_font_rep: font_rep {
   smart_font_rep (string name, font base_fn, font err_fn,
                   string family, string variant,
                   string series, string shape, int sz, int dpi);
+  font   get_math_font ();
 
   void   advance (string s, int& pos, string& r, int& nr);
   int    resolve (string c);
@@ -135,11 +144,30 @@ smart_font_rep::smart_font_rep (
   string name, font base_fn, font err_fn, string family2, string variant2,
   string series2, string shape2, int sz2, int dpi2):
     font_rep (name, base_fn), family (family2), variant (variant2),
-    series (series2), shape (shape2), sz (sz2), dpi (dpi2),
+    series (series2), shape (shape2), sz (sz2), dpi (dpi2), math_nr (-1),
     fn (2), sm (get_smart_map (tuple (family2, variant2, series2, shape2)))
 {
   fn[SUBFONT_MAIN ]= base_fn;
   fn[SUBFONT_ERROR]= err_fn;
+  if (family == "roman")
+    math_nr= sm->add_font (tuple ("math"));
+}
+
+/******************************************************************************
+* Fonts for backward compatibility
+******************************************************************************/
+
+font
+smart_font_rep::get_math_font () {
+  string fam= family;
+  string var= variant;
+  string ser= series;
+  string sh = shape;
+  find_closest (fam, var, ser, sh);
+  string mvar= "mr";
+  if (var == "ss") mvar= "ms";
+  if (var == "tt") mvar= "mt";
+  return find_font (fam, mvar, ser, sh, sz, dpi);
 }
 
 /******************************************************************************
@@ -184,14 +212,19 @@ smart_font_rep::advance (string s, int& pos, string& r, int& nr) {
   }
   r= s (start, pos);
   if (nr < 0) return;
-  if (N(fn) <= nr) fn->resize (nr+1);
-  if (is_nil (fn[nr])) initialize_font (nr);
+  if (N(fn) <= nr || is_nil (fn[nr])) initialize_font (nr);
 }
 
 int
 smart_font_rep::resolve (string c) {
   if (fn[SUBFONT_MAIN]->supports (c))
-    return sm->add_char (tree ("main"), c);
+    return sm->add_char (tuple ("main"), c);
+  if (math_nr >= 0) {
+    initialize_font (math_nr);
+    if (fn[math_nr]->supports (c))
+      return sm->add_char (tuple ("math"), c);
+  }
+
   string uc= cork_to_utf8 (c);
   int pos= 0;
   int code= decode_from_utf8 (uc, pos);
@@ -229,13 +262,17 @@ smart_font_rep::resolve (string c) {
     return sm->add_char (tuple ("virtual", virt), c);
   }
 
-  return sm->add_char (tree ("error"), c);
+  return sm->add_char (tuple ("error"), c);
 }
 
 void
 smart_font_rep::initialize_font (int nr) {
+  if (N(fn) <= nr) fn->resize (nr+1);
+  if (!is_nil (fn[nr])) return;
   array<string> a= tuple_as_array (sm->fn_spec[nr]);
-  if (a[0] == "virtual")
+  if (a[0] == "math")
+    fn[nr]= get_math_font ();
+  else if (a[0] == "virtual")
     fn[nr]= virtual_font (this, a[1], sz, dpi);
   else {
     int att= as_int (a[4]);
