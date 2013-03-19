@@ -18,7 +18,6 @@ collect_metadata_ams (tree t) {
   tree doc_data (APPLY, "\\doc-data");
   tree abstract_data (APPLY, "\\abstract-data");
   tree author_data (APPLY, "\\author-data");
-  array<string> authors_stuff;
   for (i=0; i<n; i++) {
     u= t[i];
     if (is_tuple (u, "\\title", 1) || is_tuple (u, "\\title*", 2)) {
