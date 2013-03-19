@@ -69,13 +69,16 @@ outer_fit (metric& ex, metric& ey, SI x, SI y) {
 
 glyph
 virtual_font_rep::compile (scheme_tree t, metric& ex) {
-  // cout << "Compile " << t << "\n";
+  //cout << "Compile " << t << "\n";
 
   if (is_atomic (t)) {
     string r= t->label;
     if (N(r)>1) r= "<" * r * ">";
     base_fn->get_extents (r, ex);
-    return base_fn->get_glyph (r);
+    glyph gl= base_fn->get_glyph (r);
+    if (gl->width == 0 && gl->height == 0)
+      ex->x1= ex->y1= ex->x2= ex->y2= ex->x3= ex->y3= ex->x4= ex->y4= 0;
+    return gl;
   }
 
   if (is_func (t, TUPLE, 3) &&
@@ -257,6 +260,15 @@ virtual_font_rep::get_char (string s, font_metric& cfnm, font_glyphs& cfng) {
     if (is_nil (fng->get(c)))
       fng->get(c)= compile (virt->virt_def[c], fnm->get(c));
     return c;
+  }
+  else if (s[0] == '<' && s[N(s)-1] == '>') {
+    if (!virt->dict->contains (s)) return -1;
+    int c2= virt->dict [s];
+    cfnm= fnm;
+    cfng= fng;
+    if (is_nil (fng->get(c2)))
+      fng->get(c2)= compile (virt->virt_def[c2], fnm->get(c2));
+    return c2;
   }
   else {
     make_char_font (res_name * s, cfnm, cfng);
