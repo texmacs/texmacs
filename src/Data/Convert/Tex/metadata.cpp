@@ -40,6 +40,7 @@ is_metadata (tree u) {
          is_tuple (u, "\\additionalauthors") ||
          is_tuple (u, "\\affiliation")       ||
          is_tuple (u, "\\altaffiliation")    ||
+         is_tuple (u, "\\altaffiliation*")   ||
          is_tuple (u, "\\author")            ||
          is_tuple (u, "\\author*")           ||
          is_tuple (u, "\\category")          ||
@@ -68,6 +69,7 @@ is_metadata (tree u) {
          is_tuple (u, "\\noaffiliation")     ||
          is_tuple (u, "\\numberofauthors")   ||
          is_tuple (u, "\\pacs")              ||
+         is_tuple (u, "\\preprint")          ||
          is_tuple (u, "\\pagenumbering")     ||
          is_tuple (u, "\\received")          ||
          is_tuple (u, "\\revised")           ||
@@ -77,6 +79,8 @@ is_metadata (tree u) {
          is_tuple (u, "\\terms")             ||
          is_tuple (u, "\\title")             ||
          is_tuple (u, "\\title*")            ||
+         is_tuple (u, "\\thanks")            ||
+         is_tuple (u, "\\thanks*")           ||
          is_tuple (u, "\\tmaffiliation")     ||
          is_tuple (u, "\\tmemail")           ||
          is_tuple (u, "\\tmhomepage")        ||

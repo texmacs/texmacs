@@ -127,6 +127,8 @@ collect_metadata_revtex (tree t) {
     else if ((is_tuple (u, "\\thanks", 1) ||
               is_tuple (u, "\\tmnote", 1)) && !author)
       doc_data << tree (APPLY, "\\doc-note", u[1]);
+    else if (is_tuple (u, "\\preprint", 1))
+      doc_data << tree (APPLY, "\\doc-note", concat ("Preprint: ", u[1]));
     else if (is_tuple (u, "\\copyrightholder", 1))
       doc_data << tree (APPLY, "\\doc-note",
                                concat ("Copyright holder: ", u[1]));
