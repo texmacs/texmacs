@@ -116,8 +116,8 @@ upgrade_family_name (string f) {
     //t ("kochi")= "";
     t ("lihei")= "LiHei Pro";
     //t ("mingliu")= "";
-    //t ("ms-gothic")= "";
-    //t ("ms-mincho")= "";
+    t ("ms-gothic")= "MS Gothic";
+    t ("ms-mincho")= "MS Mincho";
     //t ("sazanami")= "";
     //t ("simfang")= "";
     //t ("simhei")= "";

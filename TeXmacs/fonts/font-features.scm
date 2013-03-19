@@ -243,6 +243,8 @@
 (MikodacsPCS MikodacsPCS Black SmallCaps SansSerif)
 (Monteiro\ Lobato Monteiro\ Lobato Retro)
 (MPH\ 2B\ Damase MPH\ 2B\ Damase)
+(MS\ Gothic MS\ Gothic SansSerif)
+(MS\ Mincho MS\ Mincho)
 (Mshtakan Mshtakan)
 (Mukti\ Narrow Mukti Condensed SansSerif)
 (MV\ Boli MV\ Boli)

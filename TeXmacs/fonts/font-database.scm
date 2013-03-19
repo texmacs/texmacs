@@ -473,6 +473,8 @@
 ((MikodacsPCS Regular) ((MikodacsPCS.otf 0)))
 ((Monteiro\ Lobato Regular) ((lobato.ttf 0)))
 ((MPH\ 2B\ Damase Regular) ((damase_v.2.ttf 0)))
+((MS\ Gothic Regular) ((MS\ Gothic.ttf 0)))
+((MS\ Mincho Regular) ((MS\ Mincho.ttf 0)))
 ((Mshtakan Bold) ((MshtakanBold.ttf 0)))
 ((Mshtakan BoldOblique) ((MshtakanBoldOblique.ttf 0)))
 ((Mshtakan Oblique) ((MshtakanOblique.ttf 0)))
