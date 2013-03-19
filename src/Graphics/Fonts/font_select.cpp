@@ -46,6 +46,14 @@ exclude (array<string> a, array<string> b) {
 }
 
 array<string>
+exclude (array<string> a, string s) {
+  array<string> r;
+  for (int i=0; i<N(a); i++)
+    if (a[i] != s) r << a[i];
+  return r;
+}
+
+array<string>
 remove_duplicates (array<string> a) {
   array<string> r;
   for (int i=0; i<N(a); i++)
@@ -224,6 +232,11 @@ logical_font_exact (string family, string style) {
   r << family_features (family);
   r << style_features (style);
   r << glyph_features (family, style);
+  if (contains (string ("gothic"), r))
+    if (contains (string ("cjk"), r) || contains (string ("hangul"), r)) {
+      r << string ("sansserif");
+      r= exclude (r, "gothic");
+    }
   return remove_duplicates (r);
 }
 

@@ -18,6 +18,7 @@
 array<int> build_range (int start, int end);
 string height_trace (font_metric fnm, array<int> cs);
 array<int> decode_trace (string s);
+array<string> exclude (array<string> a, string s);
 
 /******************************************************************************
 * Check which character ranges are supported in a font
@@ -63,14 +64,6 @@ sane_font (array<string> r, font_metric fnm, string family,
     if (7 * pw < 6 * lw) return false;
   }
   return true;
-}
-
-array<string>
-exclude (array<string> a, string s) {
-  array<string> r;
-  for (int i=0; i<N(a); i++)
-    if (a[i] != s) r << a[i];
-  return r;
 }
 
 void
