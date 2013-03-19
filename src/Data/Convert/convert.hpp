@@ -70,6 +70,7 @@ tree   collect_metadata_elsevier (tree t);
 tree   collect_metadata (tree t, tree latex_classe);
 bool   is_metadata (tree u);
 bool   is_metadata_env (tree u);
+string get_latex_style (tree t);
 string string_arg (tree t, bool url= false);
 
 /*** Xml / Html / Mathml ***/

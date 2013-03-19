@@ -2755,7 +2755,7 @@ is_preamble_command (tree t, tree& doc, string& style) {
     if (t[0] == "usepackage") return true;
     if ((t[0] == "documentstyle") ||
 	(t[0] == "documentclass")) {
-      style= string_arg (t[1]);
+      style= get_latex_style (t);
       return true;
     }
   }
@@ -2763,7 +2763,7 @@ is_preamble_command (tree t, tree& doc, string& style) {
     if (t[0] == "usepackage*") return true;
     if ((t[0] == "documentstyle*") ||
 	(t[0] == "documentclass*")) {
-      style= string_arg (t[2]);
+      style= get_latex_style (t);
       return true;
     }
   }
