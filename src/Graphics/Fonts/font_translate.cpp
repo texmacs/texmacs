@@ -107,7 +107,7 @@ upgrade_family_name (string f) {
     //t ("apple-mingliu")= "";
     t ("apple-symbols")= "Apple Symbols";
     //t ("apple-simsun")= "";
-    //t ("batang")= "";
+    t ("batang")= "Batang";
     t ("fireflysung")= "AR PL New Sung";
     //t ("gulim")= "";
     t ("ipa")= "IPAMincho";
@@ -115,15 +115,15 @@ upgrade_family_name (string f) {
     t ("kaku")= "Hiragino Kaku Gothic ProN";
     //t ("kochi")= "";
     t ("lihei")= "LiHei Pro";
-    //t ("mingliu")= "";
+    t ("mingliu")= "MingLiU";
     t ("ms-gothic")= "MS Gothic";
     t ("ms-mincho")= "MS Mincho";
-    //t ("sazanami")= "";
+    t ("sazanami")= "Sazanami Mincho";
     t ("simfang")= "FangSong_GB2312";
     t ("simhei")= "SimHei";
     t ("simkai")= "KaiTi_GB2312";
     t ("simli")= "LiSu";
-    //t ("simsun")= "";
+    t ("simsun")= "SimSun";
     t ("simyou")= "YouYuan";
     t ("ttf-japanese")= "TakaoPMincho";
     t ("ukai")= "AR PL ZenKai Uni";
