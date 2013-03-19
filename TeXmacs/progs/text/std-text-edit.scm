@@ -42,11 +42,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (doc-title-context? t)
-  (or (tree-in? t (doc-title-tag-list))
-      (and (tree-is? t 'date) (tree-is? t :up 'doc-date))))
+  (and (not (unspecified? (with-innermost t 'doc-data t)))
+       (or (tree-in? t (doc-title-tag-list))
+           (and (tree-is? t 'date) (tree-is? t :up 'doc-date)))))
 
 (tm-define (doc-author-context? t)
-  (tree-in? t (author-data-tag-list)))
+  (and (not (unspecified? (with-innermost t 'doc-data t)))
+       (tree-in? t (author-data-tag-list))))
 
 (define doc-data-inactive-tags
   (doc-title-inactive-tag-list))
