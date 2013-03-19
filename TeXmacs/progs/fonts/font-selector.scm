@@ -27,12 +27,12 @@
        "Lowercase: abcdefghijklmnopqrstuvwxyz"
        "Uppercase: ABCDEFGHIJKLMNOPQRSTUVWXYZ"
        "Numbers: 0123456789 +-*/^=<less><gtr>"
-       "Special: ([{|}]) \"`,.:;!?'\" @#$%&"
+       "Special: ([{|}]) \"`,.:;!?'\" @#$%&_\\~"
        "Accented: אבהגדטיכךלםןמעףצפץשתüû"
        ,(string-append
-         "Greek: <alpha><beta><gamma><delta><epsilon><zeta><eta><theta>"
+         "Greek: <alpha><beta><gamma><delta><varepsilon><zeta><eta><theta>"
          "<iota><kappa><lambda><mu><nu><xi><omicron><pi>"
-         "<rho><sigma><tau><upsilon><phi><psi><chi><omega>")
+         "<rho><sigma><tau><upsilon><varphi><psi><chi><omega>")
        ,(string-append
          "Cyrillic: <#430><#431><#432><#433><#434><#435><#436><#437>"
          "<#438><#439><#43a><#43b><#43c><#43d><#43e><#43f>"
