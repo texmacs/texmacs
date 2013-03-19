@@ -140,28 +140,35 @@
     ((cyrillic rm medium right $s $d) (la larm $s $d))
     ((cyrillic rm medium slanted $s $d) (la lasl $s $d))
     ((cyrillic rm medium italic $s $d) (la lati $s $d))
-    ((cyrillic rm medium left-slanted $s $d) (la laff $s $d))
+    ((cyrillic rm medium left-slanted $s $d) (la laff $s $d)) ;; tex only
     ((cyrillic rm medium small-caps $s $d) (la lacc $s $d))
     ((cyrillic rm medium long $s $d) (la ladh $s $d))
-    ((cyrillic rm medium italic-right $s $d) (la laui $s $d))
+    ((cyrillic rm medium italic-right $s $d) (la laui $s $d)) ;; tex only
+    ((cyrillic rm medium $a $s $d) (la larm $s $d))
     ((cyrillic rm bold right $s $d) (la labx $s $d))
     ((cyrillic rm bold slanted $s $d) (la labl $s $d))
     ((cyrillic rm bold italic $s $d) (la labi $s $d))
-    ((cyrillic rm bold condensed $s $d) (la larb $s $d))
+    ((cyrillic rm bold condensed $s $d) (la larb $s $d)) ;; tex only
     ((cyrillic rm bold small-caps $s $d) (la laxc $s $d))
-    ((cyrillic rm bold slanted-small-caps $s $d) (la laoc $s $d))
+    ((cyrillic rm bold slanted-small-caps $s $d) (la laoc $s $d)) ;; tex only
+    ((cyrillic rm bold $a $s $d) (la labx $s $d))
+    ((cyrillic rm $a $b $s $d) (la larm $s $d))
     ((cyrillic tt medium right $s $d) (la latt $s $d))
     ((cyrillic tt medium slanted $s $d) (la last $s $d))
     ((cyrillic tt medium italic $s $d) (la last $s $d))
-    ((cyrillic tt medium small-caps $s $d) (la latc $s $d))
-    ((cyrillic tt medium proportional $s $d) (la lavt $s $d))
-    ((cyrillic tt medium italic-proportional $s $d) (la lavi $s $d))
+    ((cyrillic tt medium small-caps $s $d) (la latc $s $d)) ;; tex only
+    ((cyrillic tt medium proportional $s $d) (la lavt $s $d)) ;; tex only
+    ((cyrillic tt medium italic-proportional $s $d) (la lavi $s $d)) ;; tex only
     ((cyrillic tt bold right $s $d) (la latt $s $d))
+    ((cyrillic tt $a $b $s $d) (la latt $s $d))
     ((cyrillic ss medium right $s $d) (la lass $s $d))
     ((cyrillic ss medium slanted $s $d) (la lasi $s $d))
     ((cyrillic ss medium italic $s $d) (la lasi $s $d))
+    ((cyrillic ss medium $a $s $d) (la lass $s $d))
     ((cyrillic ss bold right $s $d) (la lasx $s $d))
     ((cyrillic ss bold italic $s $d) (la laso $s $d))
+    ((cyrillic ss bold $a $s $d) (la lasx $s $d))
+    ((cyrillic ss $a $b $s $d) (la lass $s $d))
 
     ((old-slavonic $a $b $c $s $d) (tex izhitsa $s $d 0))
 
