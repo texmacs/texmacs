@@ -182,11 +182,12 @@ collect_metadata_latex (tree t) {
   tree doc_data (APPLY, "\\doc-data");
   tree abstract_data (APPLY, "\\abstract-data");
   array<tree> doc_notes;
-  bool dated= false;
+  bool dated= false, maketitle= false;
   int i, n=N(t);
   for (i=0; i<n; i++) {
     tree u= t[i];
-    if (is_tuple (u, "\\title", 1)  || is_tuple (u, "\\title*", 2)) {
+    if (is_tuple (u, "\\maketitle")) maketitle= true;
+    else if (is_tuple (u, "\\title", 1)  || is_tuple (u, "\\title*", 2)) {
       get_latex_title_notes (u[N(u)-1], doc_notes);
       doc_data << tuple ("\\doc-title", cltm (u[N(u)-1]));
     }
@@ -222,8 +223,8 @@ collect_metadata_latex (tree t) {
       abstract_data << tmp;
     }
   }
-  if (!dated)
-    doc_data << tuple ("\\doc-date", tree (APPLY, "\\date", ""));
+  if (!dated && maketitle)
+    doc_data << tuple ("\\doc-date", tree (APPLY, "date", ""));
   if (N(doc_notes) > 0)
     for (int j=0; j<N(doc_notes); j++)
       doc_data << doc_notes[j];

@@ -3688,7 +3688,6 @@ upgrade_tex (tree t) {
   t= upgrade_style_rename (t);
   t= upgrade_item_punct (t);
   t= substitute (t, tree (VALUE, "hrule"), compound ("hrule"));
-  t= upgrade_doc_info (t);
   t= upgrade_bibliography (t);
   t= upgrade_math (t);
   t= upgrade_resize_clipped (t);
