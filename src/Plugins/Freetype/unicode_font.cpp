@@ -159,11 +159,7 @@ read_unicode_char (string s, int& i) {
     else {
       string ss= s (start-1, ++i);
       string uu= cork_to_utf8 (ss);
-      if (uu == ss) {
-	cout << "TeXmacs] warning: invalid symbol " << ss
-	     << " in unicode string\n";
-	return '?';
-      }
+      if (uu == ss) return 0;
       int j= 0;
       return decode_from_utf8 (uu, j);
     }
@@ -211,7 +207,7 @@ unicode_font_rep::supports (string c) {
   if (N(c) == 0) return false;
   int i= 0;
   unsigned int uc= read_unicode_char (c, i);
-  if (!fnm->exists (uc)) return false;
+  if (uc == 0 || !fnm->exists (uc)) return false;
   metric& m (fnm->get (uc));
   return m->x1 < m->x2 && m->y1 < m->y2;
 }

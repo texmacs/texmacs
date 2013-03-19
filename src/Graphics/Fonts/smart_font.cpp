@@ -380,7 +380,8 @@ smart_font (string family, string variant, string series, string shape,
   if (font::instances->contains (name)) return font (name);
   font base_fn= closest_font (family, variant, series, shape, sz, dpi);
   if (is_nil (base_fn)) return font ();
-  font err_fn= error_font (base_fn);
+  font sec_fn= closest_font ("modern", "ss", "medium", "upright", sz, dpi);
+  font err_fn= error_font (sec_fn);
   return make (font, name,
                tm_new<smart_font_rep> (name, base_fn, err_fn, family, variant,
                                        series, shape, sz, dpi));

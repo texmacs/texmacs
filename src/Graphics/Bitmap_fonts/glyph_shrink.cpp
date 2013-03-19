@@ -214,8 +214,11 @@ shrink (glyph gl, int xfactor, int yfactor,
 
 glyph
 shrink (glyph gl, int xfactor, int yfactor, SI& xo, SI& yo) {
-  if ((gl->width==0) || (gl->height==0))
-    FAILED ("zero size character");
+  if ((gl->width==0) || (gl->height==0)) {
+    int nr= xfactor*yfactor;
+    int new_depth= gl->depth+ log2i (nr);
+    return glyph (0, 0, 0, 0, new_depth);
+  }
 
   int tx= xfactor/3;
   int ty= yfactor/3;
