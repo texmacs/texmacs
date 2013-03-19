@@ -206,7 +206,7 @@
 
 (tm-define (tmtex-abstract-keywords t)
   (:mode revtex-style?)
-  (with args (list-intersperse (map tmtex (cdr t)) '(!group (tmSep)))
+  (with args (list-intersperse (map tmtex (cdr t)) '(!group (tmsep)))
     `(keywords (!concat ,@args))))
 
 (tm-define (tmtex-abstract-msc t)
