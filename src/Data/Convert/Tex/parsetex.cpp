@@ -922,9 +922,18 @@ latex_parser::parse_unknown (string s, int& i, string cmd) {
   tree t (TUPLE, copy (cmd));
   while (i<n) {
     int j=i;
-    while ((j<n) && is_space (s[j])) j++;
+    skip_spaces (s, j);
     if (j==n) break;
-    if (option && (s[j]=='[')) {
+    if (s[j]=='\n') {
+      int k=j+1;
+      skip_spaces (s, k);
+      if (k<n && ((option && (s[k]=='[')) || s[k]=='{')) {
+        while ((j<n) && is_space (s[j])) j++;
+        i=j;
+      }
+      else break;
+    }
+    else if (option && (s[j]=='[')) {
       j++;
       i=j;
       t << parse (s, i, "]");
