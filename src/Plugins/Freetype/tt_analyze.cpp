@@ -55,6 +55,7 @@ sane_font (array<string> r, font_metric fnm, string family,
   // Many Apple fonts (especially the CJK ones) provide ugly support
   // for Greek and/or Cyrillic characters
   if (starts (locase_all (family), "pilgi")) return false;
+  if (starts (locase_all (family), "unpilgi")) return false;
   if (contains (string ("CJK"), r)) {
     metric& m (fnm->get (test));
     int pw= m->x4 - m->x3;
