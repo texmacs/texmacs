@@ -237,6 +237,7 @@ logical_font_exact (string family, string style) {
       r << string ("sansserif");
       r= exclude (r, "gothic");
     }
+  //cout << family << ", " << style << " -> " << r << "\n";
   return remove_duplicates (r);
 }
 
@@ -614,7 +615,6 @@ distance (array<string> v, array<string> vx,
   return d;
 }
 
-
 int
 distance (array<string> v, array<string> w) {
   return distance (v, v, w, w);
@@ -658,7 +658,7 @@ search_font_among (array<string> v, array<string> fams, array<string> avoid,
 	if (!strict) w = remove_other (w);
 	if (!strict) wx= remove_other (wx);
 	int d1= distance (v, vx, w, wx);
-	//cout << "  " << w << ", " << wx << " -> " << d1 << "\n";
+        //cout << "  " << w << ", " << wx << " -> " << d1 << "\n";
 	int d2= D_INFINITY + 1;
 	if (d1 == best_d1 || best_d2 == D_INFINITY + 1)
 	  d2= distance (remove_other (vx, false), remove_other (wx, false));
@@ -798,6 +798,8 @@ patch_font (array<string> v, array<string> w, bool decode) {
       if (!same_kind (r[j], s));
       else if (r[j] == "proportional" && s == "typewriter");
       else if (r[j] == "mono" && s == "typewriter");
+      else if (r[j] == "typewriter" && s == "proportional" && j >= N(v));
+      else if (r[j] == "typewriter" && s == "mono" && j >= N(v));
       else {
         r[j]= s;
 	break;
