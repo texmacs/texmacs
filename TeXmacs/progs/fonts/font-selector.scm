@@ -120,9 +120,10 @@
     (selector-initialize-search)))
 
 (tm-define (make-multi-with . l)
-  (with t (if (selection-active-any?) (selection-tree) "")
-    (if (selection-active-any?) (clipboard-cut "null"))
-    (insert-go-to `(with ,@l ,t) (cons (length l) (path-end t '())))))
+  (when (nnull? l)
+    (with t (if (selection-active-any?) (selection-tree) "")
+      (if (selection-active-any?) (clipboard-cut "null"))
+      (insert-go-to `(with ,@l ,t) (cons (length l) (path-end t '()))))))
 
 (tm-define (selector-apply-font)
   (when (!= selector-font-style "Unknown")
