@@ -35,9 +35,9 @@
          "<rho><sigma><tau><upsilon><varphi><psi><chi><omega>")
        ,(string-append
          "Cyrillic: <#430><#431><#432><#433><#434><#435><#436><#437>"
-         "<#438><#439><#43a><#43b><#43c><#43d><#43e><#43f>"
+         "<#438><#439><#43A><#43B><#43C><#43D><#43E><#43F>"
          "<#440><#441><#442><#443><#444><#445><#446><#447>"
-         "<#448><#449><#44a><#44b><#44c><#44d><#44e><#44f>")
+         "<#448><#449><#44A><#44B><#44C><#44D><#44E><#44F>")
        ,(string-append
          "Mathematics: <leq><geq><leqslant><geqslant><prec><succ> "
          "<leftarrow><rightarrow><Leftarrow><Rightarrow><mapsto> "

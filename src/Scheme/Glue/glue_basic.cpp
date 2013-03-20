@@ -3247,6 +3247,32 @@ tmg_cork_2utf8 (tmscm arg1) {
 }
 
 tmscm
+tmg_utf8_2t2a (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "utf8->t2a");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= utf8_to_t2a (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
+tmg_t2a_2utf8 (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "t2a->utf8");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= t2a_to_utf8 (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_utf8_2html (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "utf8->html");
 
@@ -7121,6 +7147,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("string-convert",  tmg_string_convert, 3, 0, 0);
   tmscm_install_procedure ("utf8->cork",  tmg_utf8_2cork, 1, 0, 0);
   tmscm_install_procedure ("cork->utf8",  tmg_cork_2utf8, 1, 0, 0);
+  tmscm_install_procedure ("utf8->t2a",  tmg_utf8_2t2a, 1, 0, 0);
+  tmscm_install_procedure ("t2a->utf8",  tmg_t2a_2utf8, 1, 0, 0);
   tmscm_install_procedure ("utf8->html",  tmg_utf8_2html, 1, 0, 0);
   tmscm_install_procedure ("guess-wencoding",  tmg_guess_wencoding, 1, 0, 0);
   tmscm_install_procedure ("tm->xml-name",  tmg_tm_2xml_name, 1, 0, 0);

@@ -162,6 +162,8 @@ smart_font_rep::smart_font_rep (
 * Fonts for backward compatibility
 ******************************************************************************/
 
+#define as_t2a code_point_to_cyrillic_subset_in_t2a
+
 font
 smart_font_rep::get_math_font () {
   string fam= family;
@@ -228,6 +230,7 @@ smart_font_rep::advance (string s, int& pos, string& r, int& nr) {
   r= s (start, pos);
   if (nr < 0) return;
   if (N(fn) <= nr || is_nil (fn[nr])) initialize_font (nr);
+  if (nr == cyrillic_nr) r= as_t2a (r);
 }
 
 int
@@ -242,7 +245,7 @@ smart_font_rep::resolve (string c) {
   }
   if (cyrillic_nr >= 0) {
     initialize_font (cyrillic_nr);
-    if (fn[cyrillic_nr]->supports (c))
+    if (fn[cyrillic_nr]->supports (as_t2a (c)))
       return sm->add_char (tuple ("cyrillic"), c);
   }
 
