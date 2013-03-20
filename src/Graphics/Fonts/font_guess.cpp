@@ -166,6 +166,8 @@ category_asym_distance (array<string> f1, array<string> f2) {
       int j;
       for (j=1; j<N(f2); j++)
         if (f2[j] == f1[i]) break;
+        else if (f2[j] == "retro" && f1[i] == "medieval") break;
+        else if (f2[j] == "medieval" && f1[i] == "retro") break;
       if (j == N(f2)) d++;
       n++;
     }

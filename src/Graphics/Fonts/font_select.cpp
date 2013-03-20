@@ -372,7 +372,9 @@ is_slant (string s) {
   return 
     s == "upright" ||
     s == "italic" ||
-    s == "oblique";
+    s == "oblique" ||
+    s == "mathitalic" ||
+    s == "mathshape";
 }
 
 bool
@@ -491,6 +493,7 @@ same_kind (string s1, string s2) {
 #define D_SPACING         100000
 #define Q_DEVICE          300000
 #define D_DEVICE          1000000
+#define Q_CATEGORY        300000
 #define D_CATEGORY        1000000
 #define D_GLYPHS          3000000
 #define D_HUGE            30000000
@@ -552,6 +555,8 @@ distance (string s1, string s2, bool asym) {
   }
   if (is_category (s1) || is_category (s2)) {
     if (!is_category (s1) || !is_category (s2)) return D_HUGE;
+    if (s1 == "retro" && s2 == "medieval") return Q_CATEGORY;
+    if (s1 == "medieval" && s2 == "retro") return Q_CATEGORY;
     return D_CATEGORY;
   }
   if (is_glyphs (s1) || is_glyphs (s2)) {
@@ -795,7 +800,7 @@ patch_font (array<string> v, array<string> w, bool decode) {
     if (decode) s= decode_feature (s);
     int j;
     for (j=1; j<N(r); j++)
-      if (!same_kind (r[j], s));
+      if (!same_kind (r[j], s) || (is_category (s) && r[j] != s));
       else if (r[j] == "proportional" && s == "typewriter");
       else if (r[j] == "mono" && s == "typewriter");
       else if (r[j] == "typewriter" && s == "proportional" && j >= N(v));

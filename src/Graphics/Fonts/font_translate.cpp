@@ -74,6 +74,8 @@ get_shape (array<string> v) {
     if (v[i] == "upright") r << string ("right");
     else if (v[i] == "italic") r << string ("italic");
     else if (v[i] == "oblique") r << string ("slanted");
+    else if (v[i] == "mathitalic") r << string ("mathitalic");
+    else if (v[i] == "mathshape") r << string ("mathshape");
   for (int i=1; i<N(v); i++)
     if (v[i] == "smallcaps") r << string ("small-caps");
     else if (v[i] == "long") r << string ("long");
@@ -196,6 +198,8 @@ shape_features (string s) {
         v[i] == "mono" ||
         v[i] == "proportional" ||
         v[i] == "italic" ||
+        v[i] == "mathitalic" ||
+        v[i] == "mathshape" ||
         v[i] == "smallcaps" ||
         v[i] == "long" ||
         v[i] == "flat")

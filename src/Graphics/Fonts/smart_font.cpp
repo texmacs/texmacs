@@ -25,9 +25,10 @@ RESOURCE(smart_map);
 #define SUBFONT_ERROR 1
 #define SUBFONT_MATH  2
 
-#define REWRITE_DISABLED  0
-#define REWRITE_MATH      1
-#define REWRITE_CYRILLIC  2
+#define REWRITE_DISABLED   0
+#define REWRITE_MATH       1
+#define REWRITE_CYRILLIC   2
+#define REWRITE_LETTERS    3
 
 struct smart_map_rep: rep<smart_map> {
   int chv[256];
@@ -110,6 +111,83 @@ find_in_virtual (string c) {
 }
 
 /******************************************************************************
+* Mathematical letters in Unicode
+******************************************************************************/
+
+static string rewrite_math (string s);
+
+static hashmap<string,string> substitution_char ("");
+static hashmap<string,string> substitution_font ("");
+
+static void
+unicode_subst (int src, int dest, int nr, string fn) {
+  for (int i=0; i<nr; i++) {
+    string csrc = upcase_all ("<#" * as_hexadecimal (src  + i) * ">");
+    string cdest= upcase_all ("<#" * as_hexadecimal (dest + i) * ">");
+    if (dest + i < 128) cdest= string ((char) (dest + i));
+    substitution_char (csrc)= cdest;
+    substitution_font (csrc)= fn;
+    csrc= locase_all (csrc);
+    substitution_char (csrc)= cdest;
+    substitution_font (csrc)= fn;
+    csrc= rewrite_math (csrc);
+    substitution_char (csrc)= cdest;
+    substitution_font (csrc)= fn;
+  }
+}
+
+static void
+unicode_letters (int start, string fn) {
+  unicode_subst (start, 0x41, 26, fn);
+  unicode_subst (start + 26, 0x61, 26, fn);
+}
+
+static void
+unicode_greek (int start, string fn) {
+  unicode_subst (start, 0x391, 25, fn); // FIXME: attention to 0x3a2
+  unicode_subst (start + 25, 0x2207, 1, fn);
+  unicode_subst (start + 26, 0x3b1, 25, fn);
+  unicode_subst (start + 51, 0x2202, 1, fn);
+  unicode_subst (start + 52, 0x3f5, 1, fn);
+  unicode_subst (start + 53, 0x3d1, 1, fn);
+  unicode_subst (start + 54, 0x3f0, 1, fn);
+  unicode_subst (start + 55, 0x3d5, 1, fn);
+}
+
+static void
+unicode_digits (int start, string fn) {
+  unicode_subst (start, 0x30, 10, fn);
+}
+
+static void
+init_unicode_substitution () {
+  if (N (substitution_char) != 0) return;
+  unicode_letters (0x1d400, "bold");
+  unicode_letters (0x1d434, "italic");
+  unicode_letters (0x1d468, "bold-italic");
+  unicode_letters (0x1d49c, "cal");
+  unicode_letters (0x1d4d0, "bold-cal");
+  unicode_letters (0x1d504, "frak");
+  unicode_letters (0x1d56c, "bold-frak");
+  unicode_letters (0x1d538, "bbb");
+  unicode_letters (0x1d5a0, "ss");
+  unicode_letters (0x1d5d4, "bold-ss");
+  unicode_letters (0x1d608, "italic-ss");
+  unicode_letters (0x1d63c, "bold-italic-ss");
+  unicode_letters (0x1d670, "tt");
+  unicode_greek (0x1d6a8, "bold");
+  unicode_greek (0x1d6e2, "italic");
+  unicode_greek (0x1d71c, "bold-italic");
+  unicode_greek (0x1d756, "bold-ss");
+  unicode_greek (0x1d790, "bold-italic-ss");
+  unicode_digits (0x1d7ce, "bold");
+  unicode_digits (0x1d7d8, "bbb");
+  unicode_digits (0x1d7e2, "ss");
+  unicode_digits (0x1d7ec, "bold-ss");
+  unicode_digits (0x1d7f6, "tt");
+}
+
+/******************************************************************************
 * The smart font class
 ******************************************************************************/
 
@@ -160,8 +238,7 @@ smart_font_rep::smart_font_rep (
     font_rep (name, base_fn), family (family2), variant (variant2),
     series (series2), shape (shape2), real_shape (shape2),
     sz (sz2), dpi (dpi2),
-    math_nr (-1), cyrillic_nr (-1),
-    math_kind (0), italic_nr (-1),
+    math_nr (-1), cyrillic_nr (-1), math_kind (0), italic_nr (-1),
     fn (2), sm (get_smart_map (tuple (family2, variant2, series2, shape2)))
 {
   fn[SUBFONT_MAIN ]= base_fn;
@@ -170,18 +247,32 @@ smart_font_rep::smart_font_rep (
     math_nr= sm->add_font (tuple ("math"), REWRITE_MATH);
   if (family == "roman")
     cyrillic_nr= sm->add_font (tuple ("cyrillic"), REWRITE_CYRILLIC);
-  if (shape == "mathitalic") {
+  if (shape == "mathitalic" || shape == "mathshape") {
     if (family == "roman" || family == "concrete") {
       initialize_font (math_nr);
       this->copy_math_pars (fn[italic_nr]);
       fn[SUBFONT_MAIN]= fn[math_nr];
     } 
     else {
-      math_kind= 1;
+      math_kind= (shape == "mathitalic"? 1: 2);
       real_shape= "upright";
-      italic_nr= sm->add_font (tuple ("italic"), REWRITE_DISABLED);
+      italic_nr= sm->add_font (tuple ("fast-italic"), REWRITE_DISABLED);
       initialize_font (italic_nr);
       this->copy_math_pars (fn[italic_nr]);
+      (void) sm->add_font (tuple ("regular"), REWRITE_LETTERS);
+      (void) sm->add_font (tuple ("bold"), REWRITE_LETTERS);
+      (void) sm->add_font (tuple ("italic"), REWRITE_LETTERS);
+      (void) sm->add_font (tuple ("bold-italic"), REWRITE_LETTERS);
+      (void) sm->add_font (tuple ("cal"), REWRITE_LETTERS);
+      (void) sm->add_font (tuple ("bold-cal"), REWRITE_LETTERS);
+      (void) sm->add_font (tuple ("frak"), REWRITE_LETTERS);
+      (void) sm->add_font (tuple ("bold-frak"), REWRITE_LETTERS);
+      (void) sm->add_font (tuple ("bbb"), REWRITE_LETTERS);
+      (void) sm->add_font (tuple ("tt"), REWRITE_LETTERS);
+      (void) sm->add_font (tuple ("ss"), REWRITE_LETTERS);
+      (void) sm->add_font (tuple ("bold-ss"), REWRITE_LETTERS);
+      (void) sm->add_font (tuple ("italic-ss"), REWRITE_LETTERS);
+      (void) sm->add_font (tuple ("bold-italic-ss"), REWRITE_LETTERS);
     }
   }
 }
@@ -213,6 +304,8 @@ smart_font_rep::get_cyrillic_font () {
   return find_font ("cyrillic", var, ser, sh, sz, dpi);
 }
 
+static void init_rewrite_letters (hashmap<string,string>& t);
+
 static string
 rewrite_math (string s) {
   string r;
@@ -228,6 +321,21 @@ rewrite_math (string s) {
 }
 
 static string
+rewrite_letters (string s) {
+  init_unicode_substitution ();
+  string r;
+  int i= 0, n= N(s);
+  while (i < n) {
+    int start= i;
+    tm_char_forwards (s, i);
+    string ss= s (start, i);
+    if (substitution_char->contains (ss)) r << substitution_char[ss];
+    else r << ss;
+  }
+  return r;
+}
+
+static string
 rewrite (string s, int kind) {
   switch (kind) {
   case REWRITE_DISABLED:
@@ -236,6 +344,10 @@ rewrite (string s, int kind) {
     return rewrite_math (s);
   case REWRITE_CYRILLIC:
     return code_point_to_cyrillic_subset_in_t2a (s);
+  case REWRITE_LETTERS:
+    return rewrite_letters (s);
+  default:
+    return s;
   }
 }
 
@@ -321,6 +433,18 @@ smart_font_rep::resolve (string c) {
   else if (code >= 0x2900 && code <= 0x2e7f) range= "mathextra";
   else if (code >= 0x1d400 && code <= 0x1d7ff) range= "mathletters";
 
+  if (math_kind != 0 && range == "mathletters") {
+    init_unicode_substitution ();
+    string nc= "<#" * as_hexadecimal (code) * ">";
+    string sc= substitution_char [nc];
+    string sf= substitution_font [nc];
+    //cout << c << " (" << nc << ") -> " << sc << ", " << sf << "\n";
+    if (sc != "" && sc != c) {
+      bool flag= ends (sf, "cal") || ends (sf, "frak") || ends (sf, "bbb");
+      if (!flag || math_kind == 2) return sm->add_char (tuple (sf), c);
+    }
+  }
+
   if (pos == N(uc)) {
     string v= variant;
     int start= 1;
@@ -355,8 +479,34 @@ smart_font_rep::initialize_font (int nr) {
     fn[nr]= get_math_font ();
   else if (a[0] == "cyrillic")
     fn[nr]= get_cyrillic_font ();
+  else if (a[0] == "bold")
+    fn[nr]= smart_font (family, variant, "bold", "upright", sz, dpi);
+  else if (a[0] == "fast-italic")
+    fn[nr]= smart_font (family, variant, series, "italic", sz, dpi);
   else if (a[0] == "italic")
     fn[nr]= smart_font (family, variant, series, "italic", sz, dpi);
+  else if (a[0] == "bold-italic")
+    fn[nr]= smart_font (family, variant, "bold", "italic", sz, dpi);
+  else if (a[0] == "tt")
+    fn[nr]= smart_font (family, "tt", series, "upright", sz, dpi);
+  else if (a[0] == "ss")
+    fn[nr]= smart_font (family, "tt", series, "upright", sz, dpi);
+  else if (a[0] == "bold-ss")
+    fn[nr]= smart_font (family, "tt", "bold", "upright", sz, dpi);
+  else if (a[0] == "italic-ss")
+    fn[nr]= smart_font (family, "tt", series, "italic", sz, dpi);
+  else if (a[0] == "bold-italic-ss")
+    fn[nr]= smart_font (family, "tt", "bold", "italic", sz, dpi);
+  else if (a[0] == "cal")
+    fn[nr]= smart_font (family, "calligraphic", series, "italic", sz, dpi);
+  else if (a[0] == "bold-cal")
+    fn[nr]= smart_font (family, "calligraphic", "bold", "italic", sz, dpi);
+  else if (a[0] == "frak")
+    fn[nr]= smart_font (family, "gothic", series, "upright", sz, dpi);
+  else if (a[0] == "bold-frak")
+    fn[nr]= smart_font (family, "gothic", "bold", "upright", sz, dpi);
+  else if (a[0] == "bbb")
+    fn[nr]= smart_font (family, "outline", series, "upright", sz, dpi);
   else if (a[0] == "virtual")
     fn[nr]= virtual_font (this, a[1], sz, dpi);
   else {
@@ -450,6 +600,7 @@ smart_font_rep::supports (string c) {
 
 void
 smart_font_rep::get_extents (string s, metric& ex) {
+  //cout << "Extents of " << s << " for " << res_name << "\n";
   int i=0, n= N(s);
   fn[0]->get_extents (empty_string, ex);
   while (i < n) {
@@ -565,7 +716,7 @@ smart_font (string family, string variant, string series, string shape,
     as_string (sz) * "-" * as_string (dpi) * "-smart";
   if (font::instances->contains (name)) return font (name);
   string sh= shape;
-  if (shape == "mathitalic") sh= "upright";
+  if (shape == "mathitalic" || shape == "mathshape") sh= "upright";
   font base_fn= closest_font (family, variant, series, sh, sz, dpi);
   if (is_nil (base_fn)) return font ();
   font sec_fn= closest_font ("modern", "ss", "medium", "upright", sz, dpi);
