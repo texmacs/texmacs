@@ -25,29 +25,37 @@ RESOURCE(smart_map);
 #define SUBFONT_ERROR 1
 #define SUBFONT_MATH  2
 
+#define REWRITE_DISABLED  0
+#define REWRITE_MATH      1
+#define REWRITE_CYRILLIC  2
+
 struct smart_map_rep: rep<smart_map> {
   int chv[256];
   hashmap<string,int> cht;
   hashmap<tree,int> fn_nr;
   array<tree> fn_spec;
+  array<int> fn_rewr;
 
 public:
   smart_map_rep (string name, tree fn):
-    rep<smart_map> (name), cht (-1), fn_nr (-1), fn_spec (2)
+    rep<smart_map> (name), cht (-1), fn_nr (-1), fn_spec (2), fn_rewr (2)
   {
     for (int i=0; i<256; i++) chv[i]= -1;
     fn_nr (tuple ("main" ))= SUBFONT_MAIN;
     fn_nr (tuple ("error"))= SUBFONT_ERROR;
     fn_spec[SUBFONT_MAIN ]= tuple ("main");
     fn_spec[SUBFONT_ERROR]= tuple ("error");
+    fn_rewr[SUBFONT_MAIN ]= REWRITE_DISABLED;
+    fn_rewr[SUBFONT_ERROR]= REWRITE_DISABLED;
   }
 
   int
-  add_font (tree fn) {
+  add_font (tree fn, int rewr) {
     if (!fn_nr->contains (fn)) {
       int sz= N (fn_spec);
       fn_nr (fn)= sz;
       fn_spec << fn;
+      fn_rewr << rewr;
       //cout << "Create " << sz << " -> " << fn << "\n";
     }
     return fn_nr[fn];
@@ -56,7 +64,7 @@ public:
   int
   add_char (tree fn, string c) {
     //cout << "Add " << c << " to " << fn << "\n";
-    add_font (fn);
+    add_font (fn, REWRITE_DISABLED);
     int nr= fn_nr [fn];
     if (starts (c, "<")) cht (c)= nr;
     else chv [(int) (unsigned char) c[0]]= nr;
@@ -153,16 +161,14 @@ smart_font_rep::smart_font_rep (
   fn[SUBFONT_MAIN ]= base_fn;
   fn[SUBFONT_ERROR]= err_fn;
   if (family == "roman" || family == "concrete")
-    math_nr= sm->add_font (tuple ("math"));
+    math_nr= sm->add_font (tuple ("math"), REWRITE_MATH);
   if (family == "roman")
-    cyrillic_nr= sm->add_font (tuple ("cyrillic"));
+    cyrillic_nr= sm->add_font (tuple ("cyrillic"), REWRITE_CYRILLIC);
 }
 
 /******************************************************************************
 * Fonts for backward compatibility
 ******************************************************************************/
-
-#define as_t2a code_point_to_cyrillic_subset_in_t2a
 
 font
 smart_font_rep::get_math_font () {
@@ -185,6 +191,32 @@ smart_font_rep::get_cyrillic_font () {
   string sh = shape;
   find_closest (fam, var, ser, sh);
   return find_font ("cyrillic", var, ser, sh, sz, dpi);
+}
+
+static string
+rewrite_math (string s) {
+  string r;
+  int i= 0, n= N(s);
+  while (i < n) {
+    int start= i;
+    tm_char_forwards (s, i);
+    if (s[start] == '<' && start+1 < n && s[start+1] == '#' && s[i-1] == '>')
+      r << utf8_to_cork (cork_to_utf8 (s (start, i)));
+    else r << s (start, i);
+  }
+  return r;
+}
+
+static string
+rewrite (string s, int kind) {
+  switch (kind) {
+  case REWRITE_DISABLED:
+    return s;
+  case REWRITE_MATH:
+    return rewrite_math (s);
+  case REWRITE_CYRILLIC:
+    return code_point_to_cyrillic_subset_in_t2a (s);
+  }
 }
 
 /******************************************************************************
@@ -230,7 +262,8 @@ smart_font_rep::advance (string s, int& pos, string& r, int& nr) {
   r= s (start, pos);
   if (nr < 0) return;
   if (N(fn) <= nr || is_nil (fn[nr])) initialize_font (nr);
-  if (nr == cyrillic_nr) r= as_t2a (r);
+  if (sm->fn_rewr[nr] != REWRITE_DISABLED)
+    r= rewrite (r, sm->fn_rewr[nr]);
 }
 
 int
@@ -240,12 +273,12 @@ smart_font_rep::resolve (string c) {
 
   if (math_nr >= 0) {
     initialize_font (math_nr);
-    if (fn[math_nr]->supports (c))
+    if (fn[math_nr]->supports (rewrite (c, REWRITE_MATH)))
       return sm->add_char (tuple ("math"), c);
   }
   if (cyrillic_nr >= 0) {
     initialize_font (cyrillic_nr);
-    if (fn[cyrillic_nr]->supports (as_t2a (c)))
+    if (fn[cyrillic_nr]->supports (rewrite (c, REWRITE_CYRILLIC)))
       return sm->add_char (tuple ("cyrillic"), c);
   }
 
