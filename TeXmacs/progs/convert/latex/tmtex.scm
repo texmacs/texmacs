@@ -53,7 +53,10 @@
   (revtex-style%        (in? tmtex-style '("aip" "aps")))
   (aip-style%           (in? tmtex-style '("aip")) revtex-style%)
   (aps-style%           (in? tmtex-style '("aps")) revtex-style%)
-  (springer-style%      (in? tmtex-style '("svjour" "svmono" "llncs")))
+  (springer-style%      (in? tmtex-style '("svjour" "llncs" "svmono")))
+  (svmono-style%        (in? tmtex-style '("svmono")) springer-style%)
+  (svjour-style%        (in? tmtex-style '("svjour")) springer-style%)
+  (llncs-style%         (in? tmtex-style '("llncs"))  springer-style%)
   (natbib-package%      (in? "cite-author-year" tmtex-packages)))
 
 (tm-define (tmtex-style-init body)

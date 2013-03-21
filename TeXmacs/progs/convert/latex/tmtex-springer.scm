@@ -20,16 +20,14 @@
 
 (tm-define (tmtex-transform-style x)
   (:mode springer-style?)
-  (cond ((== x "svmono") x)
-        ((== x "llncs")  x)
-        (else "svjour3")))
+  (if (== x "llncs") x "svjour3"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Springer metadata presentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmtex-make-author names affiliations emails urls miscs notes)
-  (:mode springer-style?)
+  (:mode svjour-style?)
   (with names (tmtex-concat-Sep (map cadr names))
         `(author (!paragraph ,names
                              ,@urls
@@ -41,14 +39,13 @@
     (with lf `(!concat (!linefeed) ,w (!linefeed))
           `((,in (!indent (!concat ,@(list-intersperse (map cadr l) lf))))))))
 
-(define (tmtex-make-title titles notes miscs)
+(define (svjour-make-title titles notes miscs)
   (with titles (tmtex-concat-Sep (map cadr titles))
         `(title (!concat ,titles ,@notes ,@miscs))))
 
-(tm-define (tmtex-make-doc-data titles subtits authors affs dates miscs notes)
-  (:mode springer-style?)
+(define (svjour-make-doc-data titles subtits authors affs dates miscs notes)
   `(!document
-     ,(tmtex-make-title titles notes miscs)
+     ,(svjour-make-title titles notes miscs)
      ,@subtits
      ,@(springer-append 'author '(and) authors)
      ,@(springer-append 'institute '(and) affs)
@@ -56,6 +53,7 @@
      (maketitle)))
 
 (tm-define (tmtex-doc-data s l)
+  (:mode svjour-style?)
   (set! l (map tmtex-replace-documents l))
   (let* ((subtitles (map tmtex-doc-subtitle
                          (tmtex-select-args-by-func 'doc-subtitle l)))
@@ -72,7 +70,7 @@
          (affs      (map tmtex
                          (cluster-by-affiliations
                            (tmtex-select-args-by-func 'doc-author l)))))
-    (tmtex-make-doc-data titles subtitles authors affs dates miscs notes)))
+    (svjour-make-doc-data titles subtitles authors affs dates miscs notes)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Springer affiliation clustering
@@ -111,7 +109,7 @@
       (if aff (append `(,aff*) (cluster-by-affiliations l*)) `(,aff*)))))
 
 (tm-define (tmtex-affiliation-group s l)
-  (:mode springer-style?)
+  (:mode svjour-style?)
   (let* ((affs     (car l))
          (affs     (if (null? affs) '()
                      `((!concat (!linefeed) (at) (!linefeed) ,(tmtex affs)))))
@@ -137,39 +135,39 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmtex-doc-subtitle t)
-  (:mode springer-style?)
+  (:mode svjour-style?)
   `(subtitle ,(tmtex (cadr t))))
 
 (tm-define (tmtex-doc-note t)
-  (:mode springer-style?)
+  (:mode svjour-style?)
   `(tmnote ,(tmtex (cadr t))))
 
 (tm-define (tmtex-doc-misc t)
-  (:mode springer-style?)
+  (:mode svjour-style?)
   `(tmmisc ,(tmtex (cadr t))))
 
 (tm-define (tmtex-doc-date t)
-  (:mode springer-style?)
+  (:mode svjour-style?)
   `(date ,(tmtex (cadr t))))
 
 (tm-define (tmtex-author-affiliation t)
-  (:mode springer-style?)
+  (:mode svjour-style?)
   `(institute ,(tmtex (cadr t))))
 
 (tm-define (tmtex-author-email t)
-  (:mode springer-style?)
+  (:mode svjour-style?)
   `(email ,(tmtex (cadr t))))
 
 (tm-define (tmtex-author-homepage t)
-  (:mode springer-style?)
+  (:mode svjour-style?)
   `(tmhomepage ,(tmtex (cadr t))))
 
 (tm-define (tmtex-author-note t)
-  (:mode springer-style?)
+  (:mode svjour-style?)
   `(tmnote ,(tmtex (cadr t))))
 
 (tm-define (tmtex-author-misc t)
-  (:mode springer-style?)
+  (:mode svjour-style?)
   `(tmmisc ,(tmtex (cadr t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -177,15 +175,39 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define  (tmtex-make-abstract-data keywords msc abstract)
-  (:mode springer-style?)
+  (:mode svjour-style?)
   `(!document ,@abstract ,@msc ,@keywords))
 
 (tm-define (tmtex-abstract-keywords t)
-  (:mode springer-style?)
+  (:mode svjour-style?)
   (with args (list-intersperse (map tmtex (cdr t)) '(!group (and)))
     `(keywords (!concat ,@args))))
 
 (tm-define (tmtex-abstract-msc t)
-  (:mode springer-style?)
+  (:mode svjour-style?)
   (with args (list-intersperse (map tmtex (cdr t)) '(!group (and)))
     `(subclass (!concat ,@args))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Springer svmono style (basically like default LaTeX classe with subtitle)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tmtex-transform-style x)
+  (:mode svmono-style?) x)
+
+(tm-define (tmtex-doc-subtitle t)
+  (:mode svmono-style?)
+  `(subtitle ,(tmtex (cadr t))))
+
+(define (svmono-make-title titles notes miscs)
+  (with titles (tmtex-concat-Sep (map cadr titles))
+        `(title (!indent (!paragraph ,titles ,@notes ,@miscs)))))
+
+(tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes)
+  (:mode svmono-style?)
+  `(!document
+     ,(svmono-make-title titles notes miscs)
+     ,@subtitles
+     ,@(tmtex-append-authors authors)
+     ,@dates
+     (maketitle)))
