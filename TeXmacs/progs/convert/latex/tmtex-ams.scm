@@ -120,10 +120,10 @@
 
 (tm-define (tmtex-abstract-keywords t)
   (:mode ams-style?)
-  (with args (list-intersperse (map tmtex (cdr t)) '(!group (tmsep)))
-    `(keywords (!concat ,@args))))
+  (with args (tmtex-concat-sep (map tmtex (cdr t)))
+    `(keywords ,args)))
 
 (tm-define (tmtex-abstract-msc t)
   (:mode ams-style?)
-  (with args (list-intersperse (map tmtex (cdr t)) '(!group (tmSep)))
-    `(subjclass (!concat ,@args))))
+  (with args (tmtex-concat-Sep (map tmtex (cdr t)))
+    `(subjclass ,args)))

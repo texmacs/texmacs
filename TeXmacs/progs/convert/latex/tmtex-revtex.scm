@@ -206,10 +206,10 @@
 
 (tm-define (tmtex-abstract-keywords t)
   (:mode revtex-style?)
-  (with args (list-intersperse (map tmtex (cdr t)) '(!group (tmsep)))
-    `(keywords (!concat ,@args))))
+  (with args (tmtex-concat-sep (map tmtex (cdr t)))
+    `(keywords ,args)))
 
 (tm-define (tmtex-abstract-msc t)
   (:mode revtex-style?)
-  (with args (list-intersperse (map tmtex (cdr t)) '(!group (tmsep)))
-    `(pacs (!concat ,@args))))
+  (with args (tmtex-concat-sep (map tmtex (cdr t)))
+    `(pacs ,args)))

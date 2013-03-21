@@ -199,6 +199,14 @@
 ;; Frequently used TeX construction subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (tmtex-concat-sep l)
+  (set! l (list-intersperse l '(!concat (tmsep) " ")))
+  (if (null? l) '() `(!concat ,@l)))
+
+(tm-define (tmtex-concat-Sep l)
+  (set! l (list-intersperse l '(!concat (tmSep) " ")))
+  (if (null? l) '() `(!concat ,@l)))
+
 (define (tex-concat-similar l)
   (if (or (null? l) (null? (cdr l))) l
       (let ((r (tex-concat-similar (cdr l))))
@@ -1237,7 +1245,7 @@
         `(concat ,@(list-intersperse s '(next-line)))))))
 
 (tm-define (tmtex-make-author names affiliations emails urls miscs notes)
-  (with names `(!concat ,@(list-intersperse (map cadr names) '(tmSep)))
+  (with names (tmtex-concat-Sep (map cadr names))
         `(author (!paragraph ,names
                              ,@affiliations
                              ,@emails
@@ -1272,7 +1280,7 @@
           `((author (!concat ,@(list-intersperse (map cadr l) lf)))))))
 
 (define (tmtex-make-title titles subtitles notes miscs)
-  (with titles `(!concat ,@(list-intersperse (map cadr titles) '(tmSep)))
+  (with titles (tmtex-concat-Sep (map cadr titles))
         `(title (!paragraph ,titles ,@subtitles ,@notes ,@miscs))))
 
 (tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes)
