@@ -19,6 +19,8 @@
 
     <item>Started implementation of remote <TeXmacs> file system (1.0.7.19).
 
+    <item>Improved portability of plug-in detection (1.0.7.19).
+
     <item>Implementation of arbitrary zoom factors and ``fit to paragraph
     width'' (1.0.7.18).
 
