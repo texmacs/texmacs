@@ -120,6 +120,7 @@ int  script (int sz, int level);
 // Font database
 extern bool new_fonts;
 void set_new_fonts (bool new_val);
+bool get_new_fonts ();
 void font_database_build (url u);
 void font_database_build_local ();
 void font_database_build_global ();

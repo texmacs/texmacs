@@ -44,8 +44,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind prog-format-menu
-  (group "Font")
-  (link prog-font-menu)
+  (if (new-fonts?)
+      ("Font" (interactive open-font-selector)))
+  (if (not (new-fonts?))
+      (group "Font")
+      (link prog-font-menu))
   (if (simple-menus?)
       (-> "Color" (link color-menu)))
   (if (detailed-menus?)
