@@ -43,17 +43,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-modes
-  (elsevier-style% (in? tmtex-style '("elsart" "jsc" "elsarticle")))
-  (jsc-style% (in? tmtex-style '("jsc")) elsevier-style%)
-  (elsarticle-style% (in? tmtex-style '("elsarticle")) elsevier-style%)
-  (elsart-style% (in? tmtex-style '("elsart")) elsevier-style%)
-  (acm-style% (in? tmtex-style '("acmconf" "sig-alternate")))
+  (elsevier-style%      (in? tmtex-style '("elsart" "jsc" "elsarticle")))
+  (jsc-style%           (in? tmtex-style '("jsc"))        elsevier-style%)
+  (elsarticle-style%    (in? tmtex-style '("elsarticle")) elsevier-style%)
+  (elsart-style%        (in? tmtex-style '("elsart"))     elsevier-style%)
+  (acm-style%           (in? tmtex-style '("acmconf" "sig-alternate")))
   (sig-alternate-style% (in? tmtex-style '("sig-alternate")) acm-style%)
-  (ams-style% (in? tmtex-style '("amsart")))
-  (revtex-style% (in? tmtex-style '("aip" "aps")))
-  (aip-style% (in? tmtex-style '("aip")) revtex-style%)
-  (aps-style% (in? tmtex-style '("aps")) revtex-style%)
-  (natbib-package% (in? "cite-author-year" tmtex-packages)))
+  (ams-style%           (in? tmtex-style '("amsart")))
+  (revtex-style%        (in? tmtex-style '("aip" "aps")))
+  (aip-style%           (in? tmtex-style '("aip")) revtex-style%)
+  (aps-style%           (in? tmtex-style '("aps")) revtex-style%)
+  (natbib-package%      (in? "cite-author-year" tmtex-packages)))
 
 (tm-define (tmtex-style-init body)
   (noop))
