@@ -419,6 +419,29 @@ load_tfm (url file_name, string family, int size) {
 
   tfm->size= (tfm->header[1] + (1<<19)) >> 20;
 
+  // Fixes for fonts by Dobkin which should be replaced by TeX Gyre fonts
+  if (starts (family, "avant-garde-ti") || starts (family, "avant-garde-bi"))
+    tfm->param[0]= (int) (0.185339 * ((double) (1<<20)));
+  if (starts (family, "bookman-ti") || starts (family, "bookman-bi"))
+    tfm->param[0]= (int) (0.176327 * ((double) (1<<20)));
+  if (starts (family, "courier-ti") || starts (family, "courier-bi"))
+    tfm->param[0]= (int) (0.212557 * ((double) (1<<20)));
+  if (starts (family, "helvetica-ti") || starts (family, "helvetica-bi"))
+    tfm->param[0]= (int) (0.212557 * ((double) (1<<20)));
+  if (starts (family, "nc-schoolbook-ti") || starts (family, "nc-schoolbook-bi"))
+    tfm->param[0]= (int) (0.286745 * ((double) (1<<20)));
+  if (starts (family, "palatino-ti") || starts (family, "palatino-bi"))
+    tfm->param[0]= (int) (0.176327 * ((double) (1<<20)));
+  if (starts (family, "palatino-sl") || starts (family, "palatino-bl"))
+    tfm->param[0]= (int) (0.167 * ((double) (1<<20)));
+  if (starts (family, "times-ti"))
+    tfm->param[0]= (int) (0.277325 * ((double) (1<<20)));
+  if (starts (family, "times-bi"))
+    tfm->param[0]= (int) (0.267949 * ((double) (1<<20)));    
+  if (starts (family, "times-sl") || starts (family, "times-bl"))
+    tfm->param[0]= (int) (0.167 * ((double) (1<<20)));
+  // End fixes
+
   bench_cumul ("decode tfm");
   return tfm;
 }
