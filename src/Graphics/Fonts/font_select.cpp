@@ -374,6 +374,7 @@ is_slant (string s) {
     s == "italic" ||
     s == "oblique" ||
     s == "mathitalic" ||
+    s == "mathupright" ||
     s == "mathshape";
 }
 

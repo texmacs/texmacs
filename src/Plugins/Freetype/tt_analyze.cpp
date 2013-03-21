@@ -68,7 +68,15 @@ sane_font (array<string> r, font_metric fnm, string family,
 
 void
 analyze_range (font fn, font_metric fnm, array<string>& r, string family) {
-  if (starts (locase_all (family), "lastresort")) return;
+  string lfn= locase_all (family);
+  if (starts (lfn, "lastresort") ||
+      starts (lfn, "tex ams blackboard bold") ||
+      (starts (lfn, "tex blackboard bold") &&
+       !starts (lfn, "tex blackboard bold variant")) ||
+      starts (lfn, "tex calligraphic capitals") ||
+      starts (lfn, "tex double stroke") ||
+      starts (lfn, "tex ralph smith"))
+    return;
   if (range_exists (fnm, 0x21, 0x7e))
     r << string ("Ascii");
   if (range_exists (fnm, 0xc0, 0xff))

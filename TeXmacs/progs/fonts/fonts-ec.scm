@@ -102,7 +102,7 @@
     ((Bbb* ss medium $a $s $d) (tex bbmss $s $d))
     ((Bbb* ss bold $a $s $d) (tex bbmssbx $s $d))
     ((Bbb* tt medium $a $s $d) (tex bbmsltt $s $d))
-    ((Bbb** rm medium $a $s $d) (cm bbold $s $d))
+    ((Bbb** rm medium $a $s $d) (tex bbold $s $d))
     ((Bbb**** rm medium $a $s $d) (tex dsrom $s $d))
     ((Bbb**** ss medium $a $s $d) (tex dsss $s $d))
 

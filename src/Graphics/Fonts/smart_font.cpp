@@ -117,6 +117,15 @@ find_in_virtual (string c) {
 
 static string rewrite_math (string s);
 
+static bool
+is_math_family (string f) {
+  return
+    f == "roman" ||
+    f == "concrete" ||
+    f == "Euler" ||
+    f == "ENR";
+}
+
 inline bool
 is_letter (char c) {
   return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
@@ -310,23 +319,33 @@ smart_font_rep::smart_font_rep (
 {
   fn[SUBFONT_MAIN ]= base_fn;
   fn[SUBFONT_ERROR]= err_fn;
-  if (family == "roman" || family == "concrete")
+  if (is_math_family (family))
     math_nr= sm->add_font (tuple ("math"), REWRITE_MATH);
   if (family == "roman")
     cyrillic_nr= sm->add_font (tuple ("cyrillic"), REWRITE_CYRILLIC);
-  if (shape == "mathitalic" || shape == "mathshape") {
-    if (family == "roman" || family == "concrete") {
+  if (shape == "mathitalic" || shape == "mathupright" || shape == "mathshape") {
+    if (is_math_family (family)) {
       real_shape= "right";
-      initialize_font (math_nr);
-      this->copy_math_pars (fn[math_nr]);
-      fn[SUBFONT_MAIN]= fn[math_nr];
+      if (shape == "mathupright")
+        this->copy_math_pars (base_fn);
+      else {
+        initialize_font (math_nr);
+        this->copy_math_pars (fn[math_nr]);
+        fn[SUBFONT_MAIN]= fn[math_nr];
+      }
     } 
     else {
-      math_kind= (shape == "mathitalic"? 1: 2);
+      math_kind= 1;
+      if (shape == "mathupright") math_kind= 2;
+      if (shape == "mathshape") math_kind= 3;
       real_shape= "right";
-      italic_nr= sm->add_font (tuple ("fast-italic"), REWRITE_NONE);
-      initialize_font (italic_nr);
-      this->copy_math_pars (fn[italic_nr]);
+      if (math_kind == 2)
+        this->copy_math_pars (base_fn);
+      else {
+        italic_nr= sm->add_font (tuple ("fast-italic"), REWRITE_NONE);
+        initialize_font (italic_nr);
+        this->copy_math_pars (fn[italic_nr]);
+      }
       (void) sm->add_font (tuple ("special"), REWRITE_SPECIAL);
       (void) sm->add_font (tuple ("other"), REWRITE_NONE);
       (void) sm->add_font (tuple ("regular"), REWRITE_LETTERS);
@@ -357,7 +376,7 @@ smart_font_rep::get_math_font () {
   string var= variant;
   string ser= series;
   string sh = real_shape;
-  if (fam != "roman" && fam != "concrete") fam= "roman";
+  if (!is_math_family (fam)) fam= "roman";
   find_closest (fam, var, ser, sh);
   string mvar= "mr";
   if (var == "ss") mvar= "ms";
@@ -447,7 +466,7 @@ smart_font_rep::advance (string s, int& pos, string& r, int& nr) {
     if (s[pos] != '<') {
       int c= (int) (unsigned char) s[pos];
       int next= chv[c];
-      if (math_kind != 0 && is_letter (c) &&
+      if (math_kind != 0 && math_kind != 2 && is_letter (c) &&
           (pos == 0 || !is_letter (s[pos-1])) &&
           (pos+1 == N(s) || !is_letter (s[pos+1])))
         next= italic_nr;
@@ -483,7 +502,14 @@ smart_font_rep::resolve (string c) {
       return sm->add_char (tuple ("special"), c);
   }
 
-  if (fn[SUBFONT_MAIN]->supports (c))
+  bool ok= true;
+  if (family == "cal" || family == "cal*" ||
+      family == "Bbb" || family == "Bbb****")
+    ok= ok && is_alpha (c) && upcase_all (c) == c;
+  if (family == "cal**" || family == "Bbb*")
+    ok= ok && is_alpha (c);
+  
+  if (ok && fn[SUBFONT_MAIN]->supports (c))
     return sm->add_char (tuple ("main"), c);
 
   if (math_nr >= 0) {
@@ -582,7 +608,7 @@ smart_font_rep::initialize_font (int nr) {
     fn[nr]= smart_font (family, "tt", series, "italic", sz, dpi);
   else if (a[0] == "bold-italic-ss")
     fn[nr]= smart_font (family, "tt", "bold", "italic", sz, dpi);
-  else if (a[0] == "cal")
+  else if (a[0] == "cal" && N(a) == 1)
     fn[nr]= smart_font (family, "calligraphic", series, "italic", sz, dpi);
   else if (a[0] == "bold-cal")
     fn[nr]= smart_font (family, "calligraphic", "bold", "italic", sz, dpi);
@@ -590,7 +616,7 @@ smart_font_rep::initialize_font (int nr) {
     fn[nr]= smart_font (family, "gothic", series, "right", sz, dpi);
   else if (a[0] == "bold-frak")
     fn[nr]= smart_font (family, "gothic", "bold", "right", sz, dpi);
-  else if (a[0] == "bbb")
+  else if (a[0] == "bbb" && N(a) == 1)
     fn[nr]= smart_font (family, "outline", series, "right", sz, dpi);
   else if (a[0] == "virtual")
     fn[nr]= virtual_font (this, a[1], sz, dpi);
@@ -605,6 +631,10 @@ smart_font_rep::initialize_font (int nr) {
     fn[nr]= closest_font (a[0], a[1], a[2], a[3], sz, ndpi, att);
   }
   //cout << "Font " << nr << ", " << a << " -> " << fn[nr]->res_name << "\n";
+  if (fn[nr]->res_name == res_name) {
+    cout << "Font " << nr << ", " << a << " -> " << fn[nr]->res_name << "\n";
+    ASSERT (false, "substitution font loop detected");
+  }
 }
 
 /******************************************************************************
@@ -630,6 +660,7 @@ smart_font_rep::get_extents (string s, metric& ex) {
     metric ey;
     advance (s, i, r, nr);
     if (nr >= 0) {
+      //cout << "From " << nr << " -> " << sm->fn_spec[nr] << "\n";
       fn[nr]->get_extents (r, ey);
       ex->y1= min (ex->y1, ey->y1);
       ex->y2= max (ex->y2, ey->y2);
@@ -753,5 +784,11 @@ smart_font (string family, string variant, string series, string shape,
             string tfam, string tvar, string tser, string tsh,
             int sz, int dpi) {
   if (!new_fonts) return find_font (family, variant, series, shape, sz, dpi);
+  if (tfam == "roman") tfam= family;
+  if (variant != "mr") {
+    if (variant == "ms") tvar= "ss";
+    if (variant == "mt") tvar= "tt";
+  }
+  if (shape == "right") tsh= "mathupright";
   return smart_font (tfam, tvar, tser, tsh, sz, dpi);
 }
