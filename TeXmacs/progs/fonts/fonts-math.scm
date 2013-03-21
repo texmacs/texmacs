@@ -188,11 +188,11 @@
      (capital-math $name ecbx cmbx cmmib cmbsy msam msbm stmaryb wasyb linew
 		   cmbsy eufb bbmbx grxn cmbx cmmib cmbsy cmex $s $d))
 
-    ((cal mr medium normal $s $d) (math-capital cmsy $s $d))
-    ((cal mr bold normal $s $d) (bold-math-capital cmbsy $s $d))
-    ((cal* mr medium normal $s $d) (math-capital rsfs $s $d))
-    ((cal** mr medium normal $s $d) (math-capital euxm $s $d))
-    ((Bbb mr medium normal $s $d) (math-capital msbm $s $d))))
+    ((cal mr medium $a $s $d) (math-capital cmsy $s $d))
+    ((cal mr bold $a $s $d) (bold-math-capital cmbsy $s $d))
+    ((cal* mr medium $a $s $d) (math-capital rsfs $s $d))
+    ((cal** mr medium $a $s $d) (math-capital euxm $s $d))
+    ((Bbb mr medium $a $s $d) (math-capital msbm $s $d))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Mathematical fonts with special alpha-numerical letters
@@ -237,26 +237,26 @@
      (alphanum-math $name ecbx cmbx cmmib cmbsy msam msbm stmaryb wasyb linew
 		    cmbsy eufb bbmbx grxn cmbx cmmib cmbsy cmex $s $d))
 
-    ((Duerer mr medium normal $s $d) (math-alphanum cdr $s $d))
     ((Duerer mr medium slanted $s $d) (math-alphanum cdsl $s $d))
     ((Duerer mr medium italic $s $d) (math-alphanum cdi $s $d))
-    ((Duerer mr bold normal $s $d) (math-alphanum cdb $s $d))
-    ((Duerer ms medium normal $s $d) (math-alphanum cdss $s $d))
-    ((Duerer mt medium normal $s $d) (math-alphanum cdtt $s $d))
-    ((Euler mr medium normal $s $d) (math-alphanum eufm $s $d))
-    ((Euler mr bold normal $s $d) (math-alphanum eufb $s $d))
-    ((Bbb* mr medium normal $s $d) (math-alphanum bbm $s $d))
+    ((Duerer mr medium $a $s $d) (math-alphanum cdr $s $d))
+    ((Duerer mr bold $a $s $d) (math-alphanum cdb $s $d))
+    ((Duerer ms medium $a $s $d) (math-alphanum cdss $s $d))
+    ((Duerer mt medium $a $s $d) (math-alphanum cdtt $s $d))
+    ((Euler mr medium $a $s $d) (math-alphanum eufm $s $d))
+    ((Euler mr bold $a $s $d) (math-alphanum eufb $s $d))
     ((Bbb* mr medium slanted $s $d) (math-alphanum bbmsl $s $d))
-    ((Bbb* mr bold normal $s $d) (math-alphanum bbmbx $s $d))
+    ((Bbb* mr medium $a $s $d) (math-alphanum bbm $s $d))
     ((Bbb* mr bold slanted $s $d) (math-alphanum bbmbxsl $s $d))
-    ((Bbb* ms medium normal $s $d) (math-alphanum bbmss $s $d))
+    ((Bbb* mr bold $a $s $d) (math-alphanum bbmbx $s $d))
     ((Bbb* ms medium italic $s $d) (math-alphanum bbmssi $s $d))
-    ((Bbb* ms bold normal $s $d) (math-alphanum bbmssbx $s $d))
-    ((Bbb* mt medium normal $s $d) (math-alphanum bbmsltt $s $d))
-    ((Bbb** mr medium normal $s $d) (math-alphanum bbold $s $d))
-    ((Bbb*** mr medium normal $s $d) (math-alphanum ocmr $s $d))
-    ((Bbb**** mr medium normal $s $d) (math-alphanum dsrom $s $d))
-    ((Bbb**** ms medium normal $s $d) (math-alphanum dsss $s $d))))
+    ((Bbb* ms medium $a $s $d) (math-alphanum bbmss $s $d))
+    ((Bbb* ms bold $a $s $d) (math-alphanum bbmssbx $s $d))
+    ((Bbb* mt medium $a $s $d) (math-alphanum bbmsltt $s $d))
+    ((Bbb** mr medium $a $s $d) (math-alphanum bbold $s $d))
+    ((Bbb*** mr medium $a $s $d) (math-alphanum ocmr $s $d))
+    ((Bbb**** mr medium $a $s $d) (math-alphanum dsrom $s $d))
+    ((Bbb**** ms medium $a $s $d) (math-alphanum dsss $s $d))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Support for the Euler New Roman fonts
@@ -300,8 +300,8 @@
      (enr-math $name ecbx cmbx cmmib cmbsy msam msbm stmaryb wasyb linew
 	       cmbsy eufb bbmbx grxn eurb eurb cmbsy cmex $s $d))
 
-    ((ENR mr medium normal $s $d) (math-enr eurm $s $d))
-    ((ENR mr bold normal $s $d) (math-enr eurb $s $d))))
+    ((ENR mr medium $a $s $d) (math-enr eurm $s $d))
+    ((ENR mr bold $a $s $d) (math-enr eurb $s $d))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Stix fonts

@@ -30,6 +30,7 @@
           (let* ((i (+ (* 16 r) c))
                  (hex (integer->hexadecimal i))
                  (s (string-append "<#" hex ">")))
+            (when (< i 128) (set! s (utf8->cork (cork->utf8 s))))
             (cons `(cell ,s) (build-character-cells r c1 c2 (+ c 1)))))))
 
 (define (build-character-row r c1 c2)
