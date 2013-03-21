@@ -296,6 +296,7 @@ struct smart_font_rep: font_rep {
   void   advance (string s, int& pos, string& r, int& nr);
   int    resolve (string c);
   void   initialize_font (int nr);
+  int    adjusted_dpi (string fam, string var, string ser, string sh, int att);
 
   bool   supports (string c);
   void   get_extents (string s, metric& ex);
@@ -445,17 +446,6 @@ rewrite (string s, int kind) {
 * Smart font resolution
 ******************************************************************************/
 
-static int
-get_ex (string family, string variant, string series, string shape,
-	int attempt) {
-  array<string> lfn= logical_font (family, variant, series, shape);
-  array<string> pfn= search_font (lfn, attempt);
-  array<string> chs= font_database_characteristics (pfn[0], pfn[1]);
-  string ex= find_attribute_value (chs, "ex");
-  if (ex == "") return 0;
-  else return as_int (ex);
-}
-
 void
 smart_font_rep::advance (string s, int& pos, string& r, int& nr) {
   int* chv= sm->chv;
@@ -588,8 +578,10 @@ smart_font_rep::initialize_font (int nr) {
     fn[nr]= get_cyrillic_font ();
   else if (a[0] == "special")
     fn[nr]= smart_font (family, variant, series, "right", sz, dpi);
-  else if (a[0] == "other")
-    fn[nr]= smart_font ("roman", variant, series, "mathitalic", sz, dpi);
+  else if (a[0] == "other") {
+    int ndpi= adjusted_dpi ("roman", variant, series, "mathitalic", 1);
+    fn[nr]= smart_font ("roman", variant, series, "mathitalic", sz, ndpi);
+  }
   else if (a[0] == "bold")
     fn[nr]= smart_font (family, variant, "bold", "right", sz, dpi);
   else if (a[0] == "fast-italic")
@@ -621,20 +613,36 @@ smart_font_rep::initialize_font (int nr) {
   else if (a[0] == "virtual")
     fn[nr]= virtual_font (this, a[1], sz, dpi);
   else {
-    int att= as_int (a[4]);
-    int ex1= get_ex (family, variant, series, real_shape, 1);
-    int ex2= get_ex (a[0], a[1], a[2], a[3], att);
-    double zoom= 1.0;
-    if (ex1 != 0 && ex2 != 0) zoom= ((double) ex1) / ((double) ex2);
-    if (zoom > 0.975 && zoom < 1.025) zoom= 1;
-    int ndpi= (int) tm_round (dpi * zoom);
-    fn[nr]= closest_font (a[0], a[1], a[2], a[3], sz, ndpi, att);
+    int ndpi= adjusted_dpi (a[0], a[1], a[2], a[3], as_int (a[4]));
+    fn[nr]= closest_font (a[0], a[1], a[2], a[3], sz, ndpi, as_int (a[4]));
   }
   //cout << "Font " << nr << ", " << a << " -> " << fn[nr]->res_name << "\n";
   if (fn[nr]->res_name == res_name) {
     cout << "Font " << nr << ", " << a << " -> " << fn[nr]->res_name << "\n";
     ASSERT (false, "substitution font loop detected");
   }
+}
+
+static int
+get_ex (string family, string variant, string series, string shape,
+	int attempt) {
+  array<string> lfn= logical_font (family, variant, series, shape);
+  array<string> pfn= search_font (lfn, attempt);
+  array<string> chs= font_database_characteristics (pfn[0], pfn[1]);
+  string ex= find_attribute_value (chs, "ex");
+  if (ex == "") return 0;
+  else return as_int (ex);
+}
+
+int
+smart_font_rep::adjusted_dpi (string fam, string var, string ser, string sh,
+                              int attempt) {
+  int ex1= get_ex (family, variant, series, real_shape, 1);
+  int ex2= get_ex (fam, var, ser, sh, attempt);
+  double zoom= 1.0;
+  if (ex1 != 0 && ex2 != 0) zoom= ((double) ex1) / ((double) ex2);
+  if (zoom > 0.975 && zoom < 1.025) zoom= 1;
+  return (int) tm_round (dpi * zoom);
 }
 
 /******************************************************************************
