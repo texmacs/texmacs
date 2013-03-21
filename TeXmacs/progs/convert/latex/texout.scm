@@ -169,6 +169,12 @@
 			   (cons " " (cdr l))
 			   (cdr l))))))
 
+(define (texout-indent x)
+  (output-indent 2)
+  (texout x)
+  (output-indent -2)
+  (output-lf))
+
 (define (texout-linefeed)
   (output-lf))
 
@@ -295,6 +301,7 @@
 	((== (car x) '!append) (for-each texout (cdr x)))
 	((== (car x) '!symbol) (texout (cadr x)))
 	((== (car x) '!linefeed) (texout-linefeed))
+	((== (car x) '!indent) (texout-indent (cadr x)))
 	((== (car x) '!newline) (texout-newline))
 	((== (car x) '!nextline) (texout-nextline))
 	((== (car x) '!nbsp) (texout-nbsp))
