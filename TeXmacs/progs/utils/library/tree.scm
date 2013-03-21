@@ -218,28 +218,23 @@
 ;; Upward searching
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (tree-search-upwards t pred?)
-  (:synopsis "Find ancestor of @t which matches @pred?")
-  (cond ((pred? t) t)
+(tm-define (tree-search-upwards t what)
+  (:synopsis "Find ancestor of @t which matches @what")
+  (cond ((list? what)
+         (tree-search-upwards t (lambda (x) (in? (tree-label x) what))))
+        ((symbol? what)
+         (tree-search-upwards t (lambda (x) (== (tree-label x) what))))
+        ((and (procedure? what) (what t)) t)         
         ((or (tree-is-buffer? t) (not (tree-up t))) #f)
-        (else (tree-search-upwards (tree-up t) pred?))))
-
-(define (tree-innermost-sub p pred?)
-  (with t (path->tree p)
-    (cond ((pred? t) t)
-	  ((or (null? p) (== p (buffer-path))) #f)
-	  (else (tree-innermost-sub (cDr p) pred?)))))
+        (else (tree-search-upwards (tree-up t) what))))
 
 (tm-define (tree-innermost x . opt-flag)
   (:type (-> symbol tree)
 	 (-> (list symbol) tree)
 	 (-> (-> bool) tree))
   (:synopsis "Search upwards from the cursor position.")
-  (let* ((p ((if (null? opt-flag) cDDr cDr) (cursor-path)))
-	 (pred? (cond ((procedure? x) x)
-		      ((list? x) (lambda (t) (in? (tree-label t) x)))
-		      (else (lambda (t) (== (tree-label t) x))))))
-    (tree-search-upwards (path->tree p) pred?)))
+  (with p ((if (null? opt-flag) cDDr cDr) (cursor-path))
+    (tree-search-upwards (path->tree p) x)))
 
 (tm-define (inside-which l)
   (:type (-> (list symbol) symbol))
