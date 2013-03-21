@@ -73,6 +73,7 @@ struct font_less_eq_operator {
 * Global management of the font database
 ******************************************************************************/
 
+bool new_fonts= false;
 static bool fonts_loaded= false;
 static bool fonts_global_loaded= false;
 hashmap<tree,tree> font_table (UNINIT);
@@ -80,6 +81,11 @@ hashmap<tree,tree> font_global_table (UNINIT);
 hashmap<tree,tree> font_features (UNINIT);
 hashmap<tree,tree> font_variants (UNINIT);
 hashmap<tree,tree> font_characteristics (UNINIT);
+
+void
+set_new_fonts (bool new_val) {
+  new_fonts= new_val;
+}
 
 void
 tuple_insert (tree& t, tree x) {

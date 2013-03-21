@@ -56,6 +56,10 @@
   ;; but the fix below does not work
   (if (current-view) (notify-change 1)))
 
+(define (notify-new-fonts var val)
+  (set-new-fonts (== val "on"))
+  (if (current-view) (notify-change 1)))
+
 (define (notify-fast-environments var val)
   (set-fast-environments (== val "on")))
 
@@ -89,7 +93,8 @@
   ("presentation tool" "off" notify-tool)
   ("source tool" "off" notify-tool)
   ("versioning tool" "off" notify-tool)
-  ("experimental alpha" "off" notify-tool))
+  ("experimental alpha" "off" notify-tool)
+  ("new style fonts" "off" notify-new-fonts))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Properties of some built-in routines

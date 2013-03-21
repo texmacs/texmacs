@@ -617,6 +617,7 @@ distance (array<string> v, array<string> vx,
     d += distance (v[i], wx, false);
   for (int i=1; i<N(w); i++)
     d += distance (w[i], vx, false);
+  if (v[0] != w[0] && !contains (string ("ascii"), wx)) d += D_GLYPHS;
   return d;
 }
 

@@ -780,6 +780,19 @@ tmg_glyph_recognize (tmscm arg1) {
 }
 
 tmscm
+tmg_set_new_fonts (tmscm arg1) {
+  TMSCM_ASSERT_BOOL (arg1, TMSCM_ARG1, "set-new-fonts");
+
+  bool in1= tmscm_to_bool (arg1);
+
+  // TMSCM_DEFER_INTS;
+  set_new_fonts (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_tt_existsP (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tt-exists?");
 
@@ -6968,6 +6981,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("mark-new",  tmg_mark_new, 0, 0, 0);
   tmscm_install_procedure ("glyph-register",  tmg_glyph_register, 2, 0, 0);
   tmscm_install_procedure ("glyph-recognize",  tmg_glyph_recognize, 1, 0, 0);
+  tmscm_install_procedure ("set-new-fonts",  tmg_set_new_fonts, 1, 0, 0);
   tmscm_install_procedure ("tt-exists?",  tmg_tt_existsP, 1, 0, 0);
   tmscm_install_procedure ("tt-dump",  tmg_tt_dump, 1, 0, 0);
   tmscm_install_procedure ("tt-font-name",  tmg_tt_font_name, 1, 0, 0);

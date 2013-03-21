@@ -64,6 +64,10 @@
       ("Count lines" (show-line-count)))
   (-> "Miscellaneous"
       ("Clear undo history" (clear-undo-history)))
+  (-> "Experimental"
+      ("Fast environments" (toggle-preference "fast environments"))
+      ("Alpha transparency" (toggle-preference "experimental alpha"))
+      ("New style fonts" (toggle-preference "new style fonts")))
   ---
   (-> "Server"
       (link server-menu))

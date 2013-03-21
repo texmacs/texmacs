@@ -110,12 +110,16 @@ font closest_font (string family, string variant, string series, string shape,
 
 font math_font (scheme_tree t, font base_fn, font error_fn, double zoom= 1.0);
 font compound_font (scheme_tree def, double zoom= 1.0);
-font smart_font (string family, string fn_class,
-                 string series, string shape, int sz, int dpi);
+font smart_font (string family, string variant, string series, string shape,
+                 int sz, int dpi);
+font smart_font (string family, string variant, string series, string shape,
+                 string tf, string tv, string tw, string ts, int sz, int dpi);
 
 int  script (int sz, int level);
 
 // Font database
+extern bool new_fonts;
+void set_new_fonts (bool new_val);
 void font_database_build (url u);
 void font_database_build_local ();
 void font_database_build_global ();

@@ -375,8 +375,6 @@ smart_font_rep::get_cyrillic_font () {
   return find_font ("cyrillic", var, ser, sh, sz, dpi);
 }
 
-static void init_rewrite_letters (hashmap<string,string>& t);
-
 static string
 rewrite_math (string s) {
   string r;
@@ -473,6 +471,7 @@ smart_font_rep::advance (string s, int& pos, string& r, int& nr) {
   if (N(fn) <= nr || is_nil (fn[nr])) initialize_font (nr);
   if (sm->fn_rewr[nr] != REWRITE_NONE)
     r= rewrite (r, sm->fn_rewr[nr]);
+  //cout << "Got " << r << " in " << fn[nr]->res_name << "\n";
 }
 
 int
@@ -728,6 +727,7 @@ smart_font_rep::get_right_correction (string s) {
 font
 smart_font (string family, string variant, string series, string shape,
             int sz, int dpi) {
+  if (!new_fonts) return find_font (family, variant, series, shape, sz, dpi);
   if (starts (family, "tc"))
     // FIXME: temporary hack for symbols from std-symbol.ts
     return find_font (family, variant, series, shape, sz, dpi);
@@ -746,4 +746,12 @@ smart_font (string family, string variant, string series, string shape,
   return make (font, name,
                tm_new<smart_font_rep> (name, base_fn, err_fn, family, variant,
                                        series, shape, sz, dpi));
+}
+
+font
+smart_font (string family, string variant, string series, string shape,
+            string tfam, string tvar, string tser, string tsh,
+            int sz, int dpi) {
+  if (!new_fonts) return find_font (family, variant, series, shape, sz, dpi);
+  return smart_font (tfam, tvar, tser, tsh, sz, dpi);
 }

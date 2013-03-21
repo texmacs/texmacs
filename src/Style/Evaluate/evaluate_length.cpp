@@ -153,19 +153,27 @@ std_fn () {
                        script (fs, std_math_level ()),
                        (int) (std_magnification () * std_dpi ()));
   case 2:
-    return find_font (as_string (std_env [MATH_FONT]),
-		      as_string (std_env [MATH_FONT_FAMILY]),
-		      as_string (std_env [MATH_FONT_SERIES]),
-		      as_string (std_env [MATH_FONT_SHAPE]),
-		      script (fs, std_math_level ()),
-		      (int) (std_magnification () * std_dpi ()));
+    return smart_font (as_string (std_env [MATH_FONT]),
+                       as_string (std_env [MATH_FONT_FAMILY]),
+                       as_string (std_env [MATH_FONT_SERIES]),
+                       as_string (std_env [MATH_FONT_SHAPE]),
+                       as_string (std_env [FONT]),
+                       as_string (std_env [FONT_FAMILY]),
+                       as_string (std_env [FONT_SERIES]),
+                       "mathitalic",
+                       script (fs, std_math_level ()),
+                       (int) (std_magnification () * std_dpi ()));
   case 3:
-    return find_font (as_string (std_env [PROG_FONT]),
-		      as_string (std_env [PROG_FONT_FAMILY]),
-		      as_string (std_env [PROG_FONT_SERIES]),
-		      as_string (std_env [PROG_FONT_SHAPE]),
-		      script (fs, std_math_level ()),
-		      (int) (std_magnification () * std_dpi ()));
+    return smart_font (as_string (std_env [PROG_FONT]),
+                       as_string (std_env [PROG_FONT_FAMILY]),
+                       as_string (std_env [PROG_FONT_SERIES]),
+                       as_string (std_env [PROG_FONT_SHAPE]),
+                       as_string (std_env [FONT]),
+                       as_string (std_env [FONT_FAMILY]) * "-tt",
+                       as_string (std_env [FONT_SERIES]),
+                       as_string (std_env [FONT_SHAPE]),
+                       script (fs, std_math_level ()),
+                       (int) (std_magnification () * std_dpi ()));
   default:
     return get_default_font ();
   }
