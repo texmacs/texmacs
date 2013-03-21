@@ -436,7 +436,7 @@ analyze_trace (font fn, font_metric fnm, array<string>& r) {
 ******************************************************************************/
 
 double
-fabs (double x) {
+db_abs (double x) {
   return max (x, -x);
 }
 
@@ -462,7 +462,7 @@ numeric_distance (array<string> a1, array<string> a2, string attr, double m) {
   string v1= find_attribute_value (a1, attr);
   string v2= find_attribute_value (a2, attr);
   if (v1 == "" || v2 == "") return 1.0;
-  return min (fabs (as_double (v1) - as_double (v2)) / m, 1.0);
+  return min (db_abs (as_double (v1) - as_double (v2)) / m, 1.0);
 }
 
 double
@@ -470,9 +470,9 @@ relative_distance (array<string> a1, array<string> a2, string attr, double m) {
   string v1= find_attribute_value (a1, attr);
   string v2= find_attribute_value (a2, attr);
   if (v1 == "" || v2 == "") return 1.0;
-  double l1= log (1.0 + fabs ((double) as_int (v1)));
-  double l2= log (1.0 + fabs ((double) as_int (v2)));
-  return fabs (l1 - l2) / log (m);
+  double l1= log (1.0 + db_abs ((double) as_int (v1)));
+  double l2= log (1.0 + db_abs ((double) as_int (v2)));
+  return db_abs (l1 - l2) / log (m);
 }
 
 double
@@ -480,7 +480,7 @@ trace_distance (string v1, string v2, double m) {
   if (v1 == "" || v2 == "" || N(v1) != N(v2)) return 1.0;
   double d= 0.0;
   for (int i=0; i<N(v1); i++) {
-    double x= fabs (((double) (int) (v1[i])) - ((double) (int) (v2[i]))) / 9.0;
+    double x= db_abs (((double) (int) (v1[i])) - ((double) (int) (v2[i]))) / 9.0;
     d += x * x;
   }
   double r= sqrt (d / N(v1));
