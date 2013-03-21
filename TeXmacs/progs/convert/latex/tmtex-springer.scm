@@ -18,6 +18,16 @@
 ;;; Springer style options
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define llncs? #f)
+
+(tm-define (tmtex-style-init body)
+  (:mode springer-style?)
+  (set! llncs? #f))
+
+(tm-define (tmtex-style-init body)
+  (:mode llncs-style?)
+  (set! llncs? #t))
+
 (tm-define (tmtex-transform-style x)
   (:mode springer-style?)
   (if (== x "llncs") x "svjour3"))
@@ -27,7 +37,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmtex-make-author names affiliations emails urls miscs notes)
-  (:mode svjour-style?)
+  (:mode springer-style?)
   (with names (tmtex-concat-Sep (map cadr names))
         `(author (!paragraph ,names
                              ,@urls
@@ -53,7 +63,7 @@
      (maketitle)))
 
 (tm-define (tmtex-doc-data s l)
-  (:mode svjour-style?)
+  (:mode springer-style?)
   (set! l (map tmtex-replace-documents l))
   (let* ((subtitles (map tmtex-doc-subtitle
                          (tmtex-select-args-by-func 'doc-subtitle l)))
@@ -67,7 +77,7 @@
                          (tmtex-select-args-by-func 'doc-author l)))
          (titles    (map tmtex-doc-title
                          (tmtex-select-args-by-func 'doc-title l)))
-         (affs      (map tmtex
+         (affs      (map tmtex-affiliation-group
                          (cluster-by-affiliations
                            (tmtex-select-args-by-func 'doc-author l)))))
     (svjour-make-doc-data titles subtitles authors affs dates miscs notes)))
@@ -94,7 +104,7 @@
         (else #f)))
 
 (define (cluster-by-affiliations l)
-  (if (or (nlist? l) (unspecified? (car l))) l
+  (if (nlist? l) l
     (let* ((aff     (next-affiliation l))
            (hasaff  (filter (lambda (x)
                               (or (not aff)
@@ -108,9 +118,9 @@
                        ,(if aff (cadr aff) '()) ,@hasaff*)))
       (if aff (append `(,aff*) (cluster-by-affiliations l*)) `(,aff*)))))
 
-(tm-define (tmtex-affiliation-group s l)
-  (:mode svjour-style?)
-  (let* ((affs     (car l))
+(tm-define (tmtex-affiliation-group t)
+  (let* ((l        (cdr t))
+         (affs     (car l))
          (affs     (if (null? affs) '()
                      `((!concat (!linefeed) (at) (!linefeed) ,(tmtex affs)))))
          (authors  (map cdadr (cdr l)))
@@ -135,39 +145,39 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmtex-doc-subtitle t)
-  (:mode svjour-style?)
+  (:mode springer-style?)
   `(subtitle ,(tmtex (cadr t))))
 
 (tm-define (tmtex-doc-note t)
-  (:mode svjour-style?)
+  (:mode springer-style?)
   `(tmnote ,(tmtex (cadr t))))
 
 (tm-define (tmtex-doc-misc t)
-  (:mode svjour-style?)
+  (:mode springer-style?)
   `(tmmisc ,(tmtex (cadr t))))
 
 (tm-define (tmtex-doc-date t)
-  (:mode svjour-style?)
+  (:mode springer-style?)
   `(date ,(tmtex (cadr t))))
 
 (tm-define (tmtex-author-affiliation t)
-  (:mode svjour-style?)
+  (:mode springer-style?)
   `(institute ,(tmtex (cadr t))))
 
 (tm-define (tmtex-author-email t)
-  (:mode svjour-style?)
+  (:mode springer-style?)
   `(email ,(tmtex (cadr t))))
 
 (tm-define (tmtex-author-homepage t)
-  (:mode svjour-style?)
+  (:mode springer-style?)
   `(tmhomepage ,(tmtex (cadr t))))
 
 (tm-define (tmtex-author-note t)
-  (:mode svjour-style?)
+  (:mode springer-style?)
   `(tmnote ,(tmtex (cadr t))))
 
 (tm-define (tmtex-author-misc t)
-  (:mode svjour-style?)
+  (:mode springer-style?)
   `(tmmisc ,(tmtex (cadr t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -175,21 +185,24 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define  (tmtex-make-abstract-data keywords msc abstract)
-  (:mode svjour-style?)
+  (:mode springer-style?)
+  (:require (not llncs?))
   `(!document ,@abstract ,@msc ,@keywords))
 
 (tm-define (tmtex-abstract-keywords t)
-  (:mode svjour-style?)
+  (:mode springer-style?)
+  (:require (not llncs?))
   (with args (list-intersperse (map tmtex (cdr t)) '(!group (and)))
     `(keywords (!concat ,@args))))
 
 (tm-define (tmtex-abstract-msc t)
-  (:mode svjour-style?)
+  (:mode springer-style?)
+  (:require (not llncs?))
   (with args (list-intersperse (map tmtex (cdr t)) '(!group (and)))
     `(subclass (!concat ,@args))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Springer svmono style (basically like default LaTeX classe with subtitle)
+;;; Springer SVMono style (basically like default LaTeX classe with subtitle)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmtex-transform-style x)
@@ -211,3 +224,101 @@
      ,@(tmtex-append-authors authors)
      ,@dates
      (maketitle)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Springer LLNCS metadata presentation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (springer-append in w l)
+  (if (< (length l) 2) l
+    (with lf `(!concat (!linefeed) ,w (!linefeed))
+          `((,in (!indent (!concat ,@(list-intersperse (map cadr l) lf))))))))
+
+(define (svjour-make-title titles notes miscs)
+  (with titles (tmtex-concat-Sep (map cadr titles))
+        `(title (!concat ,titles ,@notes ,@miscs))))
+
+(define (svjour-make-doc-data titles subtits authors affs dates miscs notes)
+  `(!document
+     ,(svjour-make-title titles notes miscs)
+     ,@subtits
+     ,@(springer-append 'author '(and) authors)
+     ,@(springer-append 'institute '(and) affs)
+     ,@dates
+     (maketitle)))
+
+(tm-define (tmtex-doc-data s l)
+  (:mode llncs-style?)
+  (set! l (map tmtex-replace-documents l))
+  (let* ((subtitles (map tmtex-doc-subtitle
+                         (tmtex-select-args-by-func 'doc-subtitle l)))
+         (notes     (map tmtex-doc-note
+                         (tmtex-select-args-by-func 'doc-note l)))
+         (miscs     (map tmtex-doc-misc
+                         (tmtex-select-args-by-func 'doc-misc l)))
+         (dates     (map tmtex-doc-date
+                         (tmtex-select-args-by-func 'doc-date l)))
+         (titles    (map tmtex-doc-title
+                         (tmtex-select-args-by-func 'doc-title l)))
+         (authors   (tmtex-select-args-by-func 'doc-author l))
+         (affs      (map tmtex-author-affiliation
+                         (collect-affiliations authors)))
+         (authors   (map tmtex-doc-author
+                         (replace-affiliations authors 0))))
+    (svjour-make-doc-data titles subtitles authors affs dates miscs notes)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Springer LLNCS affiliation clustering
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (collect-affiliations l)
+  (if (nlist? l) l
+    (let* ((aff     (next-affiliation l))
+           (l*      (map (lambda (x) (springer-clear-aff aff x #t)) l))
+           (l*      (filter nnull? l*))
+           (aff*    (if aff `(affiliation-group ,(cadr aff)))))
+      (if aff (append `(,aff*) (collect-affiliations l*)) '()))))
+
+(define (springer-replace-aff aff a n)
+  (let* ((ref   `(author-affiliation-ref ,(number->string n)))
+         (datas (cdadr a)))
+    `(doc-author (author-data ,@(map (lambda (x)
+                                       (if (!= aff x) x ref)) datas)))))
+(define (replace-affiliations l n)
+  (with aff (next-affiliation l)
+    (if (or (nlist? l) (not aff)) l
+      (let* ((n     (1+ n))
+             (l*    (map (lambda (x) (springer-replace-aff aff x n)) l)))
+        (replace-affiliations l* n)))))
+
+(define (tmtex-author-affiliation-ref t)
+  `(inst ,(tmtex (cadr t))))
+
+(tm-define (tmtex-doc-author t)
+  (:mode llncs-style?)
+  (set! t (tmtex-replace-documents t))
+  (if (or (npair? t) (npair? (cdr t)) (not (func? (cadr t) 'author-data))) '()
+    (let* ((datas  (cdadr t))
+           (miscs  (map tmtex-author-misc
+                        (tmtex-select-args-by-func 'author-misc datas)))
+           (notes  (map tmtex-author-note
+                        (tmtex-select-args-by-func 'author-note datas)))
+           (emails (map tmtex-author-email
+                        (tmtex-select-args-by-func 'author-email datas)))
+           (urls   (map tmtex-author-homepage
+                        (tmtex-select-args-by-func 'author-homepage datas)))
+           (names  (map tmtex-author-name
+                        (tmtex-select-args-by-func 'author-name datas)))
+           (affs   (map tmtex-author-affiliation-ref
+                        (tmtex-select-args-by-func
+                          'author-affiliation-ref datas))))
+      (tmtex-make-author names affs emails urls miscs notes))))
+
+(tm-define (tmtex-make-author names affiliations emails urls miscs notes)
+  (:mode llncs-style?)
+  (with names (tmtex-concat-Sep (map cadr names))
+    (set! names `(,(car names) (!concat ,@(cdr names) ,@affiliations)))
+      `(author (!paragraph ,names
+                           ,@urls
+                           ,@notes
+                           ,@miscs))))
