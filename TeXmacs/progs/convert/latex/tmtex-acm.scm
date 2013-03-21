@@ -31,7 +31,7 @@
       (set! l (list-intersperse
                 (map cadr l) '(!concat (!linefeed) (alignauthor) (!linefeed))))
       `((!document (numberofauthors ,n)
-                   (author (!indent (!concat (alignauthor) ,@l))))))))
+                   (author (!indent (!concat (alignauthor) " " ,@l))))))))
 
 (tm-define (tmtex-make-author names affiliations emails urls miscs notes)
   (:mode acm-style?)
