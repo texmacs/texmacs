@@ -53,6 +53,7 @@
   (revtex-style%        (in? tmtex-style '("aip" "aps")))
   (aip-style%           (in? tmtex-style '("aip")) revtex-style%)
   (aps-style%           (in? tmtex-style '("aps")) revtex-style%)
+  (springer-style%      (in? tmtex-style '("svjour" "svmono" "llncs")))
   (natbib-package%      (in? "cite-author-year" tmtex-packages)))
 
 (tm-define (tmtex-style-init body)
@@ -69,6 +70,8 @@
          (import-from (convert latex tmtex-ams)))
         ((revtex-style?)
          (import-from (convert latex tmtex-revtex)))
+        ((springer-style?)
+         (import-from (convert latex tmtex-springer)))
          (else (noop))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2017,6 +2020,7 @@
   (doc-data                 tmtex-doc-data)
   (abstract-data            tmtex-abstract-data)
   ((:or equation equation*) tmtex-equation)
+  (affiliation-group        tmtex-affiliation-group)
   (elsevier-frontmatter     tmtex-elsevier-frontmatter))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
