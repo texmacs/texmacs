@@ -34,7 +34,7 @@
                              ,@notes
                              ,@miscs))))
 
-(define (springer-append in w l) 
+(define (springer-append in w l)
   (if (< (length l) 2) l
     (with lf `(!concat (!linefeed) ,w (!linefeed))
           `((,in (!indent (!concat ,@(list-intersperse (map cadr l) lf))))))))
@@ -78,8 +78,8 @@
 
 (define (springer-clear-aff aff a filter?)
   (with datas (cdadr a)
-    (if (and filter? 
-             (== `(,aff) 
+    (if (and filter?
+             (== `(,aff)
                  (filter (lambda (x) (== 'author-affiliation (car x))) datas)))
       '()
       `(doc-author (author-data ,@(filter (lambda (x) (!= aff x)) datas))))))
@@ -97,7 +97,7 @@
   (if (or (nlist? l) (unspecified? (car l))) l
     (let* ((aff     (next-affiliation l))
            (hasaff  (filter (lambda (x)
-                              (or (not aff) 
+                              (or (not aff)
                                   (and (list? x) (list? (cdr x))
                                        (list? (cadr x))
                                        (in? aff (cdadr x))))) l))
@@ -114,7 +114,7 @@
          (affs     (if (null? affs) '()
                      `((!concat (!linefeed) (at) (!linefeed) ,(tmtex affs)))))
          (authors  (map cdadr (cdr l)))
-         (names    (map (lambda (a) 
+         (names    (map (lambda (a)
                           (tmtex-concat-Sep
                             (map tmtex
                                  (map cadr (tmtex-select-args-by-func
