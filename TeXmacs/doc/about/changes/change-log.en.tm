@@ -8,6 +8,9 @@
   <section|Changes from version 1.0.7 to 1.0.7.19>
 
   <\itemize>
+    <item>Profound reorganization of the font system with experimental option
+    for testing (1.0.7.19).
+
     <item><LaTeX> import and export of metadata for various standard styles
     (1.0.7.19).
 
