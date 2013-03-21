@@ -229,24 +229,6 @@
 ;;; Springer LLNCS metadata presentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (springer-append in w l)
-  (if (< (length l) 2) l
-    (with lf `(!concat (!linefeed) ,w (!linefeed))
-          `((,in (!indent (!concat ,@(list-intersperse (map cadr l) lf))))))))
-
-(define (svjour-make-title titles notes miscs)
-  (with titles (tmtex-concat-Sep (map cadr titles))
-        `(title (!concat ,titles ,@notes ,@miscs))))
-
-(define (svjour-make-doc-data titles subtits authors affs dates miscs notes)
-  `(!document
-     ,(svjour-make-title titles notes miscs)
-     ,@subtits
-     ,@(springer-append 'author '(and) authors)
-     ,@(springer-append 'institute '(and) affs)
-     ,@dates
-     (maketitle)))
-
 (tm-define (tmtex-doc-data s l)
   (:mode llncs-style?)
   (set! l (map tmtex-replace-documents l))
