@@ -210,7 +210,7 @@ unicode_font_rep::supports (string c) {
   if (uc == 0 || !fnm->exists (uc)) return false;
   if (uc >= 0x42 && uc <= 0x5a && !fnm->exists (0x41)) return false;
   if (uc >= 0x62 && uc <= 0x7a && !fnm->exists (0x61)) return false;
-  metric& m (fnm->get (uc));
+  metric_struct* m= fnm->get (uc);
   return m->x1 < m->x2 && m->y1 < m->y2;
 }
 
