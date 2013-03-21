@@ -164,7 +164,7 @@
   (madebyTeXmacs (footnote (!recurse (withTeXmacstext))))
   (withTeXmacstext
    (!append (!translate "This document has been produced using") " "
-	    (!recurse (TeXmacs)) " (" (!translate "see") " "
+	    (!group (!recurse (TeXmacs))) " (" (!translate "see") " "
 	    (texttt "http://www.texmacs.org") ")"))
   (scheme "{\\sc Scheme}")
   (tmsep  ", ")
