@@ -169,11 +169,23 @@
 			   (cons " " (cdr l))
 			   (cdr l))))))
 
+(define (texout-multiline? x)
+  (cond ((nlist? x) #f)
+        ((in? (car x) '(!begin !nextline !newline !linefeed !eqn !table)) #t)
+        ((and (in? (car x) '(!document !paragraph)) (> (length (cdr x)) 1)) #t)
+        ((npair? (cdr x)) #f)
+        (else (or (texout-multiline? (cadr x))
+                  (texout-multiline? `(!concat ,@(cddr x)))))))
+
 (define (texout-indent x)
-  (output-indent 2)
-  (texout x)
-  (output-indent -2)
-  (output-lf))
+  (if (texout-multiline? x)
+    (begin
+      (output-indent 2)
+      (output-lf)
+      (texout x)
+      (output-indent -2)
+      (output-lf))
+    (texout x)))
 
 (define (texout-linefeed)
   (output-lf))

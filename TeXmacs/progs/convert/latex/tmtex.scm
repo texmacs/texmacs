@@ -1278,13 +1278,16 @@
       (tmtex-make-author names affiliations emails urls miscs notes))))
 
 (tm-define (tmtex-append-authors l)
-  (if (< (length l) 2) l
-    (with lf '(!concat (!linefeed) (and) (!linefeed))
-          `((author (!concat ,@(list-intersperse (map cadr l) lf)))))))
+  (cond ((null? l) '())
+        ((== (length l) 2) `(,(car l) (!indent (,(cdr l)))))
+        (else
+          (with lf '(!concat (!linefeed) (and) (!linefeed))
+            `((author
+                (!indent (!concat ,@(list-intersperse (map cadr l) lf)))))))))
 
 (define (tmtex-make-title titles subtitles notes miscs)
   (with titles (tmtex-concat-Sep (map cadr titles))
-        `(title (!paragraph ,titles ,@subtitles ,@notes ,@miscs))))
+        `(title (!indent (!paragraph ,titles ,@subtitles ,@notes ,@miscs)))))
 
 (tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes)
   `(!document

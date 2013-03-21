@@ -27,10 +27,11 @@
 (tm-define (tmtex-append-authors l)
   (:mode acm-style?)
   (if (null? l) l
-    (letrec ((sep (lambda (x)
-                    `(!concat (!linefeed) (alignauthor) (!linefeed) ,x))))
-      `((!document (numberofauthors ,(number->string (length l)))
-                   (author (!concat ,@(map sep (map cadr l)))))))))
+    (with n (number->string (length l))
+      (set! l (list-intersperse
+                (map cadr l) '(!concat (!linefeed) (alignauthor) (!linefeed))))
+      `((!document (numberofauthors ,n)
+                   (author (!indent (!concat (alignauthor) ,@l))))))))
 
 (tm-define (tmtex-make-author names affiliations emails urls miscs notes)
   (:mode acm-style?)
