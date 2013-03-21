@@ -347,6 +347,10 @@ delimiter_box (path ip, string s, font fn, color col, SI bot, SI top) {
   fn->get_extents (r, ex);
   SI x= -ex->x1;
   SI y= (top+ bot- ex->y1- ex->y2) >> 1;
+  //cout << s << ", " << bot/PIXEL << " -- " << top/PIXEL
+  //     << " -> " << r << "; " << x/PIXEL << ", " << y/PIXEL << "\n";
+  //cout << "  extents: " << ex->x1/PIXEL << ", " << ex->y1/PIXEL
+  //     << "; " << ex->x2/PIXEL << ", " << ex->y2/PIXEL << "\n";
   box mvb= move_box (ip, text_box (ip, 0, r, fn, col), x, y, false, true);
   return macro_box (ip, mvb, fn);
 }

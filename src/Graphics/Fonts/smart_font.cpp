@@ -661,22 +661,32 @@ void
 smart_font_rep::get_extents (string s, metric& ex) {
   //cout << "Extents of " << s << " for " << res_name << "\n";
   int i=0, n= N(s);
-  fn[0]->get_extents (empty_string, ex);
-  while (i < n) {
+  if (n == 0) fn[0]->get_extents (empty_string, ex);
+  else {
     int nr;
     string r= s;
     metric ey;
-    advance (s, i, r, nr);
-    if (nr >= 0) {
-      //cout << "From " << nr << " -> " << sm->fn_spec[nr] << "\n";
-      fn[nr]->get_extents (r, ey);
-      ex->y1= min (ex->y1, ey->y1);
-      ex->y2= max (ex->y2, ey->y2);
-      ex->x3= min (ex->x3, ex->x2 + ey->x3);
-      ex->y3= min (ex->y3, ey->y3);
-      ex->x4= max (ex->x4, ex->x2 + ey->x4);
-      ex->y4= max (ex->y4, ey->y4);
-      ex->x2 += ey->x2;
+    while (i < n) {
+      advance (s, i, r, nr);
+      if (nr >= 0) {
+        //cout << "From " << nr << " -> " << sm->fn_spec[nr] << "\n";
+        fn[nr]->get_extents (r, ex);
+        break;
+      }
+    }
+    while (i < n) {
+      advance (s, i, r, nr);
+      if (nr >= 0) {
+        //cout << "From " << nr << " -> " << sm->fn_spec[nr] << "\n";
+        fn[nr]->get_extents (r, ey);
+        ex->y1= min (ex->y1, ey->y1);
+        ex->y2= max (ex->y2, ey->y2);
+        ex->x3= min (ex->x3, ex->x2 + ey->x3);
+        ex->y3= min (ex->y3, ey->y3);
+        ex->x4= max (ex->x4, ex->x2 + ey->x4);
+        ex->y4= max (ex->y4, ey->y4);
+        ex->x2 += ey->x2;
+      }
     }
   }
 }
