@@ -27,7 +27,7 @@ array<string> exclude (array<string> a, string s);
 bool
 really_exists (font_metric fnm, int i) {
   if (!fnm->exists (i)) return false;
-  metric& m (fnm->get (i));
+  metric& m= fnm->get (i);
   return m->x1 < m->x2 && m->y1 < m->y2;
 }
 
@@ -58,7 +58,7 @@ sane_font (array<string> r, font_metric fnm, string family,
   if (starts (locase_all (family), "pilgi")) return false;
   if (starts (locase_all (family), "unpilgi")) return false;
   if (contains (string ("CJK"), r)) {
-    metric& m (fnm->get (test));
+    metric& m= fnm->get (test);
     int pw= m->x4 - m->x3;
     int lw= m->x2 - m->x1;
     if (7 * pw < 6 * lw) return false;
