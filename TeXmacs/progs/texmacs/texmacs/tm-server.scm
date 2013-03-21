@@ -57,8 +57,7 @@
   (if (current-view) (notify-change 1)))
 
 (define (notify-new-fonts var val)
-  (set-new-fonts (== val "on"))
-  (if (current-view) (notify-change 1)))
+  (set-new-fonts (== val "on")))
 
 (define (notify-fast-environments var val)
   (set-fast-environments (== val "on")))
