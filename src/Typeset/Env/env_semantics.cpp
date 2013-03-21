@@ -266,8 +266,8 @@ edit_env_rep::update_font () {
                     script (fn_size, index_level), (int) (magn*dpi));
     break;
   case 3:
-    fn= smart_font (get_string (MATH_FONT), get_string (MATH_FONT_FAMILY),
-                    get_string (MATH_FONT_SERIES), get_string (MATH_FONT_SHAPE),
+    fn= smart_font (get_string (PROG_FONT), get_string (PROG_FONT_FAMILY),
+                    get_string (PROG_FONT_SERIES), get_string (PROG_FONT_SHAPE),
                     get_string (FONT), get_string (FONT_FAMILY) * "-tt",
                     get_string (FONT_SERIES), get_string (FONT_SHAPE),
                     script (fn_size, index_level), (int) (magn*dpi));
