@@ -181,9 +181,9 @@ get_latex_author_datas (tree t) {
   return r;
 }
 
-static tree
+array<tree>
 collect_metadata_latex (tree t) {
-  tree r (CONCAT);
+  array<tree> r;
   tree doc_data (APPLY, "\\doc-data");
   tree abstract_data (APPLY, "\\abstract-data");
   array<tree> doc_notes;
@@ -233,8 +233,14 @@ collect_metadata_latex (tree t) {
   if (N(doc_notes) > 0)
     for (int j=0; j<N(doc_notes); j++)
       doc_data << doc_notes[j];
-  if (N(doc_data) > 1) r << doc_data << "\n";
-  if (N(abstract_data) > 1) r << abstract_data << "\n";
+  if (N(doc_data) > 1) {
+    r << doc_data;
+    r << concat ("\n");
+  }
+  if (N(abstract_data) > 1) {
+    r << abstract_data;
+    r << concat ("\n");
+  }
   return r;
 }
 
@@ -271,7 +277,7 @@ filter_spaces (tree t, bool &spaced) {
 
 tree
 collect_metadata (tree t, tree latex_classe) {
-  tree r;
+  tree r(CONCAT);
   bool spaced;
   string s = "article";
   if (is_tuple (latex_classe, "\\documentclass", 1) ||
@@ -291,7 +297,7 @@ collect_metadata (tree t, tree latex_classe) {
   else if (s == "revtex4-1")
     r= collect_metadata_revtex (t);
   else
-    r= collect_metadata_latex (t);
+    r << collect_metadata_latex (t);
   r= filter_spaces (r, spaced);
   return r;
 }
