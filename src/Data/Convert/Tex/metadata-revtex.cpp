@@ -8,7 +8,9 @@
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
+
 #include "convert.hpp"
+#include "metadata.hpp"
 
 static inline bool
 is_apply (tree t, string s) {

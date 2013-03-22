@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "Tex/convert_tex.hpp"
+#include "metadata.hpp"
 
 array<tree>
 tokenize_concat (tree t, array<tree> a) {

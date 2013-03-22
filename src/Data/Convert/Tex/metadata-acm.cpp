@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "Tex/convert_tex.hpp"
+#include "metadata.hpp"
 
 static bool
 is_acm_titlenote (tree t) {

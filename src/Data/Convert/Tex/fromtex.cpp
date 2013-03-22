@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "Tex/convert_tex.hpp"
+#include "metadata.hpp"
 #include "scheme.hpp"
 #include "vars.hpp"
 #include "tree_correct.hpp"
