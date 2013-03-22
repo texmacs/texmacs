@@ -319,6 +319,21 @@ inline bool is_tuple (tree t, const char* s, int n) {
   return (L(t) == TUPLE) && (N(t) == (n+1)) && (t[0] == s); }
 
 /******************************************************************************
+* APPLY
+******************************************************************************/
+
+inline bool is_apply (tree t) {
+  return (L(t) == APPLY); }
+inline bool is_apply (tree t, string s) {
+  return (L(t) == APPLY) && (N(t) >= 1) && (t[0] == s); }
+inline bool is_apply (tree t, const char* s) {
+  return (L(t) == APPLY) && (N(t) >= 1) && (t[0] == s); }
+inline bool is_apply (tree t, string s, int n) {
+  return (L(t) == APPLY) && (N(t) == (n+1)) && (t[0] == s); }
+inline bool is_apply (tree t, const char* s, int n) {
+  return (L(t) == APPLY) && (N(t) == (n+1)) && (t[0] == s); }
+
+/******************************************************************************
 * Other frequent markup
 ******************************************************************************/
 

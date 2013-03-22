@@ -12,16 +12,6 @@
 #include "convert.hpp"
 #include "metadata.hpp"
 
-static inline bool
-is_apply (tree t, string s) {
-  return (L(t) == APPLY) && (N(t) >= 1) && (t[0] == s);
-}
-
-static inline bool
-is_apply (tree t, string s, int n) {
-  return (L(t) == APPLY) && (N(t) == n+1) && (t[0] == s);
-}
-
 static bool
 revtex_contains_noaffiliation (tree t) {
   for (int i=0; i<N(t); i++)

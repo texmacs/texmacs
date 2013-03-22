@@ -60,16 +60,6 @@ is_var_compound (tree t, string s, int n) {
     (is_func (t, EXPAND, n+1) && t[0] == s);
 }
 
-static bool
-is_apply (tree t, string s) {
-  return (L(t) == APPLY) && (N(t) > 0) && (t[0] == s);
-}
-
-static bool
-is_apply (tree t, string s, int n) {
-  return (L(t) == APPLY) && (N(t) == n+1) && (t[0] == s);
-}
-
 /******************************************************************************
 * Clean extra spaces and linefeed (inspired from TeX tokenizing rules)
 ******************************************************************************/
