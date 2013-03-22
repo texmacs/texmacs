@@ -273,6 +273,31 @@ filter_spaces (tree t, bool &spaced) {
   return r;
 }
 
+static bool
+need_tokenize (tree t, array<tree> sep) {
+  if (!(is_apply (t) && N(t) == 2 && is_concat (t[1]))) return false;
+  for (int i=0; i<N(t[1]); i++)
+    if (contains (t[1][i], sep)) return true;
+  return false;
+}
+
+static array<tree>
+unconcat_tmseps (tree t) {
+  if (is_atomic (t)) return A(concat (t));
+  array<tree> sep= A(concat (tuple ("\\tmsep"), tuple ("\\tmSep")));
+  if (need_tokenize (t, sep)) {
+    array<tree> tmp= tokenize_concat (t[1], sep);
+    for (int i=0; i<N(tmp); i++)
+      tmp[i]= tree (L(t), t[0], tmp[i]);
+    return tmp;
+  }
+  tree r(L(t));
+  for (int i=0; i<N(t); i++) {
+    r << unconcat_tmseps (t[i]);
+  }
+  return A(concat (r));
+}
+
 tree
 collect_metadata (tree t, tree latex_classe) {
   tree r(CONCAT);
@@ -298,6 +323,7 @@ collect_metadata (tree t, tree latex_classe) {
     r= collect_metadata_svmono (t);
   else
     r << collect_metadata_latex (t);
+  r=  unconcat_tmseps (r);
   r= filter_spaces (r, spaced);
   return r;
 }
