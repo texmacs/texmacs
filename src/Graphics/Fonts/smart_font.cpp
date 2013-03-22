@@ -824,7 +824,7 @@ smart_font (string family, string variant, string series, string shape,
   string mfam= main_family (family);
   font base_fn= closest_font (mfam, variant, series, sh, sz, dpi);
   if (is_nil (base_fn)) return font ();
-  font sec_fn= closest_font ("modern", "ss", "medium", "right", sz, dpi);
+  font sec_fn= closest_font ("roman", "ss", "medium", "right", sz, dpi);
   font err_fn= error_font (sec_fn);
   return make (font, name,
                tm_new<smart_font_rep> (name, base_fn, err_fn, family, variant,

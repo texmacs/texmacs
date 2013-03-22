@@ -68,6 +68,7 @@ sane_font (array<string> r, font_metric fnm, string family,
 
 void
 analyze_range (font fn, font_metric fnm, array<string>& r, string family) {
+  bool ec= starts (family, "ec") && ends (family, "10");
   string lfn= locase_all (family);
   if (starts (lfn, "lastresort") ||
       starts (lfn, "tex ams blackboard bold") ||
@@ -77,13 +78,13 @@ analyze_range (font fn, font_metric fnm, array<string>& r, string family) {
       starts (lfn, "tex double stroke") ||
       starts (lfn, "tex ralph smith"))
     return;
-  if (range_exists (fnm, 0x21, 0x7e))
+  if (range_exists (fnm, 0x21, 0x7e) || ec)
     r << string ("Ascii");
-  if (range_exists (fnm, 0xc0, 0xff))
+  if (range_exists (fnm, 0xc0, 0xff) || ec)
     r << string ("Latin");
-  if (range_percentage (fnm, 0x391, 0x3ce) > 66.6)
+  if (range_percentage (fnm, 0x391, 0x3ce) > 66.6 || ec)
     r << string ("Greek");
-  if (range_percentage (fnm, 0x410, 0x44f) > 66.6)
+  if (range_percentage (fnm, 0x410, 0x44f) > 66.6 || ec)
     r << string ("Cyrillic");
 
   if (range_percentage (fnm, 0x4e00, 0x4eff) > 0.0) {
@@ -113,9 +114,9 @@ analyze_range (font fn, font_metric fnm, array<string>& r, string family) {
     if (perc > 20.0) r << string ("MathLetters");
   }
 
-  if (!sane_font (r, fnm, family, "Greek", 0x391))
+  if (!sane_font (r, fnm, family, "Greek", 0x391) && !ec)
     r= exclude (r, "Greek");
-  if (!sane_font (r, fnm, family, "Cyrillic", 0x430))
+  if (!sane_font (r, fnm, family, "Cyrillic", 0x430) && !ec)
     r= exclude (r, "Cyrillic");
 }
 

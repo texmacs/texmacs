@@ -136,9 +136,6 @@ upgrade_family_name (string f) {
     t ("wqy-zenhei")= "WenQuanYi Zen Hei";
     t ("stix")= "Stix";
     t ("dejavu")= "DejaVu";
-    t ("sys-chinese")= "roman";
-    t ("sys-japanese")= "roman";
-    t ("sys-korean")= "roman";
 
     t ("adobe")= "Stix";
     t ("Duerer")= "duerer";
@@ -149,6 +146,12 @@ upgrade_family_name (string f) {
     t ("math-pagella")= "TeX Gyre Pagella";
     t ("math-stix")= "Stix";
     t ("math-termes")= "TeX Gyre Termes";
+
+    t ("modern")= "roman";
+    t ("cyrillic")= "roman";
+    t ("sys-chinese")= "roman";
+    t ("sys-japanese")= "roman";
+    t ("sys-korean")= "roman";
   }
   if (t->contains (f)) return t[f];
   else return f;
