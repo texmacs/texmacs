@@ -23,6 +23,7 @@
 #ifdef EXPERIMENTAL
 #include "../../Style/Evaluate/evaluate_main.hpp"
 #endif
+#include "gui.hpp" // for gui_interrupted
 
 extern void (*env_next_prog)(void);
 
@@ -63,11 +64,10 @@ edit_interface_rep::edit_interface_rep ():
 }
 
 edit_interface_rep::~edit_interface_rep () {
-  if (is_attached (this)) {
-    renderer ren= get_renderer (this);
-    ren->delete_shadow (shadow);
-    ren->delete_shadow (stored);
-  }
+  if (shadow != NULL) tm_delete (shadow);
+  if (stored != NULL) tm_delete (stored);
+  shadow = NULL;
+  stored = NULL;
 }
 
 edit_interface_rep::operator tree () {
@@ -82,11 +82,10 @@ edit_interface_rep::suspend () {
   }
   got_focus= false;
   notify_change (THE_FOCUS);
-  if (is_attached (this)) {
-    renderer ren= get_renderer (this);
-    ren->delete_shadow (shadow);
-    ren->delete_shadow (stored);
-  }
+  if (shadow != NULL) tm_delete (shadow);
+  if (stored != NULL) tm_delete (stored);
+  shadow = NULL;
+  stored = NULL;
 }
 
 void
@@ -407,7 +406,7 @@ edit_interface_rep::has_changed (int question) {
 int
 edit_interface_rep::idle_time (int event_type) {
   if (env_change == 0 &&
-      get_renderer (this) -> repainted () &&
+      (!query_invalid (this))  &&
       (!check_event (event_type)) &&
       got_focus)
     return texmacs_time () - last_change;
@@ -443,7 +442,7 @@ edit_interface_rep::apply_changes () {
         else
           concrete_window () -> set_window_name (buf->buf->title);
       }
-      if (!get_renderer (this) -> interrupted ()) drd_update ();
+      if (!gui_interrupted ()) drd_update ();
       cache_memorize ();
       last_update= last_change;
       save_user_preferences ();

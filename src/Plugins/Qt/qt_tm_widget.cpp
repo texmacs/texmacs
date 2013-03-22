@@ -643,7 +643,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
 
 blackbox
 qt_tm_widget_rep::query (slot s, int type_id) {
-  if ((DEBUG_QT) && (s != SLOT_RENDERER))
+  if ((DEBUG_QT))
     cout << "qt_tm_widget_rep: queried " << slot_name(s)
          << "\t\tto widget\t" << type_as_string() << LF;
   

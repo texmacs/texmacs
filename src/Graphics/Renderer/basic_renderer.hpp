@@ -83,7 +83,6 @@ public:
   virtual ~basic_renderer_rep () {};
   
   virtual void get_extents (int& w, int& h);
-  virtual bool interrupted (bool check= false);
   
   /***** routines from renderer.hpp ******************************************/
 
@@ -122,5 +121,8 @@ typedef basic_renderer_rep* basic_renderer;
 //extern int CSCALES, CFACTOR, GREYS, CTOTAL;
 
 color xpm_to_color (string s);
+
+bool gui_interrupted (bool check);
+
 
 #endif // defined BASIC_RENDERER_HPP

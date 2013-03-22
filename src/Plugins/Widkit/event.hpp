@@ -12,6 +12,7 @@
 #ifndef EVENT_H
 #define EVENT_H
 #include "widget.hpp"
+#include "renderer.hpp"
 
 class wk_widget;
 class rectangle;
@@ -64,8 +65,8 @@ event emit_keypress (string key, time_t t);
 event emit_keyboard_focus (bool in_out_flag, time_t t=0);
 event emit_mouse (string type, SI x, SI y, int mods, time_t t);
 event emit_alarm (string message, time_t t);
-event emit_clear (SI x1, SI y1, SI x2, SI y2);
-event emit_repaint (SI x1, SI y1, SI x2, SI y2, bool& stop);
+event emit_clear (renderer win, SI x1, SI y1, SI x2, SI y2);
+event emit_repaint (renderer win, SI x1, SI y1, SI x2, SI y2, bool& stop);
 event emit_update ();
 event emit_refresh (string kind= "all");
 event emit_invalidate_all ();

@@ -209,7 +209,7 @@ file_list_widget_rep::handle_get_size (get_size_event ev) {
 
 void
 file_list_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
-  renderer ren= win->get_renderer ();
+  renderer ren= ev->win;
   int i; 
   metric ex;
   ren->set_background (white);
@@ -320,7 +320,7 @@ image_widget_rep::handle_get_size (get_size_event ev) {
 
 void
 image_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
-  renderer ren= win->get_renderer ();
+  renderer ren= ev->win;
   ren->set_background (white);
   ren->clear (0, 0, w, h);
   layout_dark_outline (ren, 0, 0, w, h);

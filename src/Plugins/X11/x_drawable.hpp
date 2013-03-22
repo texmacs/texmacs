@@ -40,7 +40,6 @@ public:
   bool is_x_drawable ();
   x_drawable_rep* as_x_drawable ();
   void get_extents (int& w, int& h);
-  bool interrupted (bool check= false);
 
   void encode (SI& x, SI& y);  // X coordinates -> mathematical coordinates
   void decode (SI& x, SI& y);  // mathematical coordinates -> X coordinates

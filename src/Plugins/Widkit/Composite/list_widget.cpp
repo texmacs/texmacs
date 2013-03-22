@@ -227,7 +227,7 @@ vertical_list_rep::handle_find_child (find_child_event ev) {
 
 void
 vertical_list_rep::handle_repaint (repaint_event ev) {
-  renderer ren= win->get_renderer ();
+  renderer ren= ev->win;
   int i= N(a)-1;
   SI bot= a[i]->y1()-oy;
   if (bot > -h) layout_default (ren, 0, -h, w, bot);

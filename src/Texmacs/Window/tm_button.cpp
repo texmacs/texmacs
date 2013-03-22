@@ -103,7 +103,7 @@ public:
   operator tree ();
 
   void handle_get_size_hint (SI& w, SI& h);
-  void handle_repaint (SI x1, SI y1, SI x2, SI y2);
+  void handle_repaint (renderer ren, SI x1, SI y1, SI x2, SI y2);
 };
 
 box_widget_rep::box_widget_rep
@@ -127,10 +127,9 @@ box_widget_rep::handle_get_size_hint (SI& w, SI& h) {
 }
 
 void
-box_widget_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2) {
+box_widget_rep::handle_repaint (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   SI w, h;
   handle_get_size_hint (w, h);
-  renderer ren= get_renderer (this);
   if (!transparent) {
     ren->set_background (bg);
     ren->set_color (bg);

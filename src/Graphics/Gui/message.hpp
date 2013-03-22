@@ -24,7 +24,6 @@
 enum slot_id {
   SLOT_IDENTIFIER,
   SLOT_WINDOW,
-  SLOT_RENDERER,
   SLOT_VISIBILITY,
   SLOT_FULL_SCREEN,
   SLOT_NAME,
@@ -39,6 +38,7 @@ enum slot_id {
   SLOT_MOUSE_POINTER,
   SLOT_INVALIDATE,
   SLOT_INVALIDATE_ALL,
+  SLOT_INVALID,
   SLOT_REPAINT,
   SLOT_DELAYED_MESSAGE,
   SLOT_DESTROY,
@@ -248,12 +248,6 @@ get_window (widget w) {
   return read (w, SLOT_WINDOW);
 }
 
-inline renderer
-get_renderer (widget w) {
-  // get renderer associated to widget (or NULL if the widget is not attached)
-  return query<renderer> (w, SLOT_RENDERER);
-}
-
 inline void
 set_visibility (widget w, bool flag) {
   // map or unmap a window widget
@@ -395,11 +389,18 @@ send_invalidate (widget w, SI x1, SI y1, SI x2, SI y2) {
   send<SI,SI,SI,SI> (w, SLOT_INVALIDATE, x1, y1, x2, y2);
 }
 
+inline bool
+query_invalid (widget w) {
+  // does this widget has invalid regions
+  return query<bool> (w, SLOT_INVALID);
+}
+
+
 inline void
-send_repaint (widget w, SI x1, SI y1, SI x2, SI y2) {
+send_repaint (widget w, renderer ren, SI x1, SI y1, SI x2, SI y2) {
   // request widget to repaint a region;
   // the region is specified w.r.t. the top left corner of w
-  send<SI,SI,SI,SI> (w, SLOT_REPAINT, x1, y1, x2, y2);
+  send<renderer,SI,SI,SI,SI> (w, SLOT_REPAINT, ren, x1, y1, x2, y2);
 }
 
 inline void

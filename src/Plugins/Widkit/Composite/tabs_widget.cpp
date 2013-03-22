@@ -113,7 +113,7 @@ tabs_widget_rep::handle_position (position_event ev) {
 
 void
 tabs_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
-  renderer ren= win->get_renderer ();
+  renderer ren= ev->win;
   layout_default (ren, 0, 0, w, h);
   if (h1 == 0 || h2 == 0 || N(xs) == 0) return;
 

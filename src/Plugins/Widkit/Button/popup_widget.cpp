@@ -70,7 +70,7 @@ popup_widget_rep::handle_position (position_event ev) {
 
 void
 popup_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
-  renderer ren= win->get_renderer ();
+  renderer ren= ev->win;
   layout_higher (ren, 0, -h, w, 0);
   layout_default (ren, PIXEL, PIXEL-h,
 		  w-PIXEL, -PIXEL);

@@ -71,11 +71,6 @@ x_drawable_rep::get_extents (int& w2, int& h2) {
   }
 }
 
-bool
-x_drawable_rep::interrupted (bool check) {
-  return gui->check_event (check? INTERRUPT_EVENT: INTERRUPTED_EVENT);
-}
-
 /******************************************************************************
 * Conversion between window and postscript coordinates
 ******************************************************************************/

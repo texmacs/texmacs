@@ -222,6 +222,10 @@ QTMWidget::invalidate_all () {
   invalidate_rect (0, 0, sz.width(), sz.height());
 }
 
+bool
+QTMWidget::is_invalid () {
+  return !is_nil(invalid_regions);
+}
 
 basic_renderer_rep* 
 QTMWidget::getRenderer() {
@@ -357,7 +361,6 @@ QTMWidget::repaint_invalid_regions () {
         invalid_regions= rectangles (lub);
       
       basic_renderer_rep* ren = getRenderer();
-      tm_widget()->set_current_renderer(ren);
       
       SI ox = -backing_pos.x()*PIXEL;  // Warning: this is NOT from_qpoint()
       SI oy = backing_pos.y()*PIXEL;
@@ -374,8 +377,8 @@ QTMWidget::repaint_invalid_regions () {
         ren->encode (r->x1, r->y1);
         ren->encode (r->x2, r->y2);
         ren->set_clipping (r->x1, r->y2, r->x2, r->y1);
-        tm_widget()->handle_repaint (r->x1, r->y2, r->x2, r->y1);
-        if (ren->interrupted ()) {
+        tm_widget()->handle_repaint (ren, r->x1, r->y2, r->x2, r->y1);
+        if (gui_interrupted ()) {
           //cout << "interrupted repainting of  " << r0 << "\n";
           //ren->set_color(green);
           //ren->line(r->x1, r->y1, r->x2, r->y2);
@@ -386,7 +389,6 @@ QTMWidget::repaint_invalid_regions () {
         rects = rects->next;
       }
       
-      tm_widget()->set_current_renderer(NULL);
       ren->end();
     } // !is_nil(invalid_regions)
     

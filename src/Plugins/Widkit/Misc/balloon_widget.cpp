@@ -120,7 +120,7 @@ balloon_decoration_widget_rep::handle_position (position_event ev) {
 void
 balloon_decoration_widget_rep::handle_repaint (repaint_event ev) {
   (void) ev;
-  renderer ren= win->get_renderer ();
+  renderer ren= ev->win;
   ren->set_background (rgb_color (255, 255, 160));
   ren->clear (0, 0, w, h);
   ren->set_color (black);

@@ -65,7 +65,7 @@ glue_widget_rep::handle_get_size (get_size_event ev) {
 
 void
 glue_widget_rep::handle_repaint (repaint_event ev) {
-  renderer ren= win->get_renderer ();
+  renderer ren= ev->win;
   if (col == "")
     layout_default (ren, ev->x1, ev->y1, ev->x2, ev->y2);
   else {

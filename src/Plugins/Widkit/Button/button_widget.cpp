@@ -116,7 +116,7 @@ button_widget_rep::handle_position (position_event ev) {
 
 void
 button_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
-  renderer ren= win->get_renderer ();
+  renderer ren= ev->win;
   layout_default (ren, 0, 0, w, h);
   if ((style & WIDGET_STYLE_PRESSED) != 0) {
     if (status) layout_higher (ren, 0, 0, w, h);

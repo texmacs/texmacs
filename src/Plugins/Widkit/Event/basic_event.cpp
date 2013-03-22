@@ -133,23 +133,23 @@ event emit_alarm (string message, time_t t) {
 * Output events
 ******************************************************************************/
 
-clear_event_rep::clear_event_rep (SI x1b, SI y1b, SI x2b, SI y2b):
-  event_rep (CLEAR_EVENT), x1 (x1b), y1 (y1b), x2 (x2b), y2 (y2b) {}
+clear_event_rep::clear_event_rep (renderer winb, SI x1b, SI y1b, SI x2b, SI y2b):
+  event_rep (CLEAR_EVENT), win(winb), x1 (x1b), y1 (y1b), x2 (x2b), y2 (y2b) {}
 clear_event_rep::operator tree () {
   return tree (TUPLE, "clear event",
 	       tree (TUPLE, as_string (x1/PIXEL), as_string (y1/PIXEL)),
 	       tree (TUPLE, as_string (x2/PIXEL), as_string (y2/PIXEL))); }
-event emit_clear (SI x1, SI y1, SI x2, SI y2) {
-  return tm_new<clear_event_rep> (x1, y1, x2, y2); }
+event emit_clear (renderer win, SI x1, SI y1, SI x2, SI y2) {
+  return tm_new<clear_event_rep> (win, x1, y1, x2, y2); }
 
-repaint_event_rep::repaint_event_rep (SI x1b, SI y1b, SI x2b, SI y2b, bool& b):
-  event_rep (REPAINT_EVENT), x1 (x1b), y1 (y1b), x2 (x2b), y2 (y2b), stop(b) {}
+repaint_event_rep::repaint_event_rep (renderer winb, SI x1b, SI y1b, SI x2b, SI y2b, bool& b):
+  event_rep (REPAINT_EVENT), win(winb), x1 (x1b), y1 (y1b), x2 (x2b), y2 (y2b), stop(b) {}
 repaint_event_rep::operator tree () {
   return tree (TUPLE, "repaint event",
 	       tree (TUPLE, as_string (x1/PIXEL), as_string (y1/PIXEL)),
 	       tree (TUPLE, as_string (x2/PIXEL), as_string (y2/PIXEL))); }
-event emit_repaint (SI x1, SI y1, SI x2, SI y2, bool& stop) {
-  return tm_new<repaint_event_rep> (x1, y1, x2, y2, stop); }
+event emit_repaint (renderer win, SI x1, SI y1, SI x2, SI y2, bool& stop) {
+  return tm_new<repaint_event_rep> (win, x1, y1, x2, y2, stop); }
 
 /******************************************************************************
 * Request some action

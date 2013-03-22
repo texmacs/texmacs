@@ -56,9 +56,6 @@ public:
   virtual blackbox query (slot s, int type_id);
   virtual widget    read (slot s, blackbox index);
 
-  void set_current_renderer (basic_renderer _r) { current_renderer = _r;  }
-  basic_renderer get_current_renderer () {  return current_renderer; }
-
   QTMWidget*         canvas () { return qobject_cast<QTMWidget*> (qwid); }
   QTMScrollView* scrollarea () { return qobject_cast<QTMScrollView*> (qwid); }
 };

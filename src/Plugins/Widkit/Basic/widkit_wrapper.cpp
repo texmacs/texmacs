@@ -576,12 +576,12 @@ send_invalidate_all (wk_widget w, blackbox val) {
 
 void
 send_repaint (wk_widget w, blackbox val) {
-  typedef quartet<SI,SI,SI,SI> repaint;
+  typedef quintuple<renderer,SI,SI,SI,SI> repaint;
   ASSERT (type_box (val) == type_helper<repaint>::id, "type mismatch");
   repaint r= open_box<repaint> (val);
   bool stop_flag= false;
   // FIXME: we should assume local coordinates for repainting
-  w << emit_repaint (r.x1, r.x2, r.x3, r.x4, stop_flag);
+  w << emit_repaint (r.x1, r.x2, r.x3, r.x4, r.x5, stop_flag);
 }
 
 void
@@ -812,10 +812,10 @@ wk_widget_rep::query (slot s, int type_id) {
     ASSERT (type_id == type_helper<int>::id,
 	    "int expected (SLOT_IDENTIFIER)");
     return close_box<int> (get_identifier (win));
-  case SLOT_RENDERER:
-    ASSERT (type_id == type_helper<renderer>::id,
-	    "renderer expected (SLOT_RENDERER)");
-    return close_box<renderer> (win->get_renderer ());
+  case SLOT_INVALID:
+      ASSERT (type_id == type_helper<bool>::id,
+              "bool expected (SLOT_INVALID_STATE)");
+      return close_box<bool> (win->is_invalid());
   case SLOT_SIZE:
     return query_size (THIS, type_id);
   case SLOT_POSITION:

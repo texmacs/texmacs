@@ -11,6 +11,7 @@
 
 #include "Interface/edit_interface.hpp"
 #include "message.hpp"
+#include "gui.hpp" // for gui_interrupted
 
 extern int nr_painted;
 extern void clear_pattern_rectangles (renderer ren, rectangles l);
@@ -169,7 +170,7 @@ edit_interface_rep::draw_graphics (renderer ren) {
 }
 
 void
-edit_interface_rep::draw_pre (renderer ren, rectangle r) {
+edit_interface_rep::draw_pre (renderer win, renderer ren, rectangle r) {
   // draw surroundings
   tree bg= get_init_value (BG_COLOR);
   ren->set_background_pattern (bg);
@@ -177,7 +178,6 @@ edit_interface_rep::draw_pre (renderer ren, rectangle r) {
   draw_surround (ren, r);
 
   // predraw cursor
-  renderer win= get_renderer (this);
   draw_cursor (ren);
   rectangles l= copy_always;
   while (!is_nil (l)) {
@@ -188,8 +188,7 @@ edit_interface_rep::draw_pre (renderer ren, rectangle r) {
 }
 
 void
-edit_interface_rep::draw_post (renderer ren, rectangle r) {
-  renderer win= get_renderer (this);
+edit_interface_rep::draw_post (renderer win, renderer ren, rectangle r) {
   win->set_zoom_factor (zoomf);
   ren->set_zoom_factor (zoomf);
   draw_context (ren, r);
@@ -202,8 +201,7 @@ edit_interface_rep::draw_post (renderer ren, rectangle r) {
 }
 
 void
-edit_interface_rep::draw_with_shadow (rectangle r) {
-  renderer win= get_renderer (this);
+edit_interface_rep::draw_with_shadow (renderer win, rectangle r) {
   rectangle sr= r * magf;
   win->new_shadow (shadow);
   win->get_shadow (shadow, sr->x1, sr->y1, sr->x2, sr->y2);
@@ -212,12 +210,12 @@ edit_interface_rep::draw_with_shadow (rectangle r) {
   rectangles l;
   win->set_zoom_factor (zoomf);
   ren->set_zoom_factor (zoomf);
-  draw_pre (ren, r);
+  draw_pre (win, ren, r);
   draw_text (ren, l);
   ren->reset_zoom_factor ();
   win->reset_zoom_factor ();
 
-  if (ren->interrupted ()) {
+  if (gui_interrupted ()) {
     ren->set_zoom_factor (zoomf);
     l= l & rectangles (translate (r, ren->ox, ren->oy));
     simplify (l);
@@ -228,7 +226,7 @@ edit_interface_rep::draw_with_shadow (rectangle r) {
     }
     ren->reset_zoom_factor ();
 
-    draw_post (ren, r);
+    draw_post (win, ren, r);
     while (!is_nil(l)) {
       SI x1= ((SI) (l->item->x1 * magf)) - ren->ox - PIXEL;
       SI y1= ((SI) (l->item->y1 * magf)) - ren->oy - PIXEL;
@@ -242,8 +240,7 @@ edit_interface_rep::draw_with_shadow (rectangle r) {
 }
 
 void
-edit_interface_rep::draw_with_stored (rectangle r) {
-  renderer win= get_renderer (this);
+edit_interface_rep::draw_with_stored (renderer win, rectangle r) {
   //cout << "Redraw " << (r*magf/PIXEL) << "\n";
 
   /* Verify whether the backing store is still valid */
@@ -265,13 +262,13 @@ edit_interface_rep::draw_with_stored (rectangle r) {
     win->new_shadow (shadow);
     win->get_shadow (shadow, sr->x1, sr->y1, sr->x2, sr->y2);
     shadow->put_shadow (stored, sr->x1, sr->y1, sr->x2, sr->y2);
-    draw_post (shadow, r);
+    draw_post (win, shadow, r);
     win->put_shadow (shadow, sr->x1, sr->y1, sr->x2, sr->y2);
   }
   else {
     // cout << "."; cout.flush ();
-    draw_with_shadow (r);
-    if (!win->interrupted ()) {
+    draw_with_shadow (win, r);
+    if (!gui_interrupted ()) {
       if (inside_active_graphics ()) {
 	shadow->new_shadow (stored);
 	shadow->get_shadow (stored, sr->x1, sr->y1, sr->x2, sr->y2);
@@ -280,10 +277,10 @@ edit_interface_rep::draw_with_stored (rectangle r) {
 	//cout << "Stored: " << stored_rects << "\n";
 	//cout << "M"; cout.flush ();
       }
-      draw_post (shadow, r);
+      draw_post (win, shadow, r);
       win->put_shadow (shadow, sr->x1, sr->y1, sr->x2, sr->y2);
     }
-    else draw_post (win, r);
+    else draw_post (win, win, r);
   }
 }
 
@@ -292,8 +289,7 @@ edit_interface_rep::draw_with_stored (rectangle r) {
 ******************************************************************************/
 
 void
-edit_interface_rep::handle_clear (SI x1, SI y1, SI x2, SI y2) {
-  renderer win= get_renderer (this);
+edit_interface_rep::handle_clear (renderer win, SI x1, SI y1, SI x2, SI y2) {
   x1= (SI) (x1 / magf); y1= (SI) (y1 / magf);
   x2= (SI) (x2 / magf); y2= (SI) (y2 / magf);
   win->set_zoom_factor (zoomf);
@@ -306,7 +302,7 @@ edit_interface_rep::handle_clear (SI x1, SI y1, SI x2, SI y2) {
 }
 
 void
-edit_interface_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2) {
+edit_interface_rep::handle_repaint (renderer win, SI x1, SI y1, SI x2, SI y2) {
   if (is_nil (eb)) apply_changes ();
   if (env_change != 0) {
     system_warning ("Invalid situation (" * as_string (env_change) * ")",
@@ -327,7 +323,7 @@ edit_interface_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2) {
   */
 
   // cout << "Repainting\n";
-  draw_with_stored (rectangle (x1, y1, x2, y2) / magf);
+  draw_with_stored (win, rectangle (x1, y1, x2, y2) /magf);
   if (last_change-last_update > 0)
     last_change = texmacs_time ();
   // cout << "Repainted\n";

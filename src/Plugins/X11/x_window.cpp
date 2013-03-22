@@ -193,11 +193,6 @@ x_window_rep::get_widget () {
   return w;
 }
 
-renderer
-x_window_rep::get_renderer () {
-  return (renderer) ren;
-}
-
 void
 x_window_rep::get_extents (int& w, int& h) {
   w= win_w;
@@ -461,8 +456,8 @@ x_window_rep::repaint_invalid_regions () {
     ren->encode (r->x1, r->y1);
     ren->encode (r->x2, r->y2);
     ren->set_clipping (r->x1, r->y2, r->x2, r->y1);
-    send_repaint (w, r->x1, r->y2, r->x2, r->y1);
-    if (ren->interrupted ())
+    send_repaint (w, ren, r->x1, r->y2, r->x2, r->y1);
+    if (gui_interrupted ())
       new_regions= rectangles (invalid_regions->item, new_regions);
     invalid_regions= invalid_regions->next;
   }
@@ -536,6 +531,10 @@ x_window_rep::delayed_message (widget wid, string s, time_t delay) {
 
 void
 x_window_rep::translate (SI x1, SI y1, SI x2, SI y2, SI dx, SI dy) {
+  ren->set_origin(0,0);
+  begin_draw ();
+  ren->clip (x1, y1, x2, y2);
+
   SI X1= x1+ dx;
   SI Y2= y2+ dy;
   ren->decode (x1, y1);
@@ -559,6 +558,10 @@ x_window_rep::translate (SI x1, SI y1, SI x2, SI y2, SI dx, SI dy) {
 
   if (x1<x2 && y2<y1)
     XCopyArea (dpy, win, win, gc, x1, y2, x2-x1, y1-y2, X1, Y2);
+  
+  
+  ren->unclip ();
+  end_draw ();
 }
 
 void
@@ -570,8 +573,8 @@ x_window_rep::invalidate (SI x1, SI y1, SI x2, SI y2) {
 }
 
 bool
-x_window_rep::repainted () {
-  return is_nil (invalid_regions);
+x_window_rep::is_invalid () {
+  return ! is_nil (invalid_regions);
 }
 
 /******************************************************************************

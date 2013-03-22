@@ -38,7 +38,7 @@ public:
   virtual void handle_mouse (string kind, SI x, SI y, int mods, time_t t);
   virtual void handle_set_zoom_factor (double zoom);
   virtual void handle_clear (SI x1, SI y1, SI x2, SI y2);
-  virtual void handle_repaint (SI x1, SI y1, SI x2, SI y2);
+  virtual void handle_repaint (renderer win, SI x1, SI y1, SI x2, SI y2);
   
   virtual void      send (slot s, blackbox val);
   

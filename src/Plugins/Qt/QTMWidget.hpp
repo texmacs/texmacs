@@ -48,6 +48,7 @@ public:
   
   void invalidate_rect (int x1, int y1, int x2, int y2);
   void invalidate_all ();
+  bool is_invalid ();
   void repaint_invalid_regions ();
 
   void scrollContentsBy (int dx, int dy);

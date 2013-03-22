@@ -298,7 +298,7 @@ void initkeymap()
     r -> set_clipping (x1,y1,x2,y2);
     wid->handle_repaint (x1,y1,x2,y2);
 		r->end();
-    if (r->interrupted())
+    if (gui_interrupted())
       aqua_update_flag= true;
 	}
 //	cout << "END DRAWING" << "\n";

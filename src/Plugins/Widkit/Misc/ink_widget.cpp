@@ -57,7 +57,7 @@ ink_widget_rep::handle_get_size (get_size_event ev) {
 
 void
 ink_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
-  renderer ren= win->get_renderer ();
+  renderer ren= ev->win;
   layout_pastel (ren, ev->x1, ev->y1, ev->x2, ev->y2);
   ren->set_color (black);
   ren->set_line_style (2 * PIXEL);

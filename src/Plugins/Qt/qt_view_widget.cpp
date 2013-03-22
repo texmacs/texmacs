@@ -51,8 +51,16 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     {
       check_type<coord4>(val, s);
       coord4 p= open_box<coord4> (val);
-      qt_renderer_rep* ren = static_cast<qt_renderer_rep*>(get_renderer(this));
-      if (ren && canvas()) {
+      
+      if (canvas()) {
+        qt_renderer_rep* ren = the_qt_renderer();
+         {
+          coord2 pt_or = from_qpoint(canvas()->backing_pos);
+          SI ox = -pt_or.x1;
+          SI oy = -pt_or.x2;
+          ren->set_origin(ox,oy);
+        }
+
         SI x1 = p.x1, y1 = p.x2, x2 = p.x3, y2 = p.x4;    
         ren->outer_round (x1, y1, x2, y2);
         ren->decode (x1, y1);
@@ -144,7 +152,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
 blackbox
 qt_view_widget_rep::query (slot s, int type_id) {
     // Some slots are too noisy
-  if ((DEBUG_QT) && (s != SLOT_RENDERER) && (s != SLOT_IDENTIFIER))
+  if ((DEBUG_QT) && (s != SLOT_IDENTIFIER))
     cout << "qt_view_widget_rep: queried " << slot_name(s)
          << "\t\tto widget\t" << type_as_string() << LF;
   
@@ -155,24 +163,11 @@ qt_view_widget_rep::query (slot s, int type_id) {
       else
         return close_box<int>(0);
 
-    case SLOT_RENDERER:
+    case SLOT_INVALID:
     {
-      check_type_id<renderer> (type_id, s);
-      renderer r = get_current_renderer();
+      return close_box<bool>(canvas() ? canvas()->is_invalid() : false);
+    }
 
-      if (!r) 
-        r = the_qt_renderer();
-
-      if (canvas()) {
-        coord2 pt_or = from_qpoint(canvas()->backing_pos);
-        SI ox = -pt_or.x1;
-        SI oy = -pt_or.x2;
-        r->set_origin(ox,oy);
-      }
-
-      return close_box<renderer> (r);
-    }      
-      
     case SLOT_POSITION:
     {
       check_type_id<coord2> (type_id, s);

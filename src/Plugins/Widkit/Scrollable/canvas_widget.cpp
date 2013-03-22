@@ -184,7 +184,7 @@ extern void indent ();
 
 void
 canvas_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
-  renderer ren= win->get_renderer ();
+  renderer ren= ev->win;
   if (!show_scroll_bars);
   else if (hor_active && ver_active) {
     layout_default (ren, w- 16*PIXEL, -h, w, -h+ 16*PIXEL);
@@ -316,7 +316,7 @@ resize_widget_rep::handle_get_size (get_size_event ev) {
 
 void
 resize_widget_rep::handle_repaint (repaint_event ev) {
-  renderer ren= win->get_renderer ();
+  renderer ren= ev->win;
   rectangles r1= rectangle (ev->x1, ev->y1, ev->x2, ev->y2);
   rectangles r2= rectangle (0, -h, w, 0);
   rectangles rs= r1 - r2;
@@ -355,7 +355,7 @@ wrap_scroll_widget_rep::operator tree () {
 
 void
 wrap_scroll_widget_rep::handle_repaint (repaint_event ev) {
-  renderer ren= win->get_renderer ();
+  renderer ren= ev->win;
   layout_default (ren, ev->x1, ev->y1, ev->x2, ev->y2);
   a[0] << emit_position (0, 0, w, h);
   basic_widget_rep::handle_repaint (ev);

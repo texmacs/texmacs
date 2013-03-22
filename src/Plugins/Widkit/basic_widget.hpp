@@ -29,8 +29,8 @@ public:
   event emit_mouse      (mouse_event ev);
   event emit_mouse      (mouse_event ev, string type);
   event emit_mouse      (mouse_event ev, string type, SI x, SI y);
-  event emit_clear      (SI x1, SI y1, SI x2, SI y2);
-  event emit_repaint    (SI x1, SI y1, SI x2, SI y2, bool& stop);
+  event emit_clear      (renderer win, SI x1, SI y1, SI x2, SI y2);
+  event emit_repaint    (renderer win, SI x1, SI y1, SI x2, SI y2, bool& stop);
   event emit_find_child (SI x, SI y, int& which);
 
   virtual void handle_get_size       (get_size_event ev);

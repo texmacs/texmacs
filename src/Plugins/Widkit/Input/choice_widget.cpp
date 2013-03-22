@@ -92,8 +92,8 @@ choice_widget_rep::handle_get_size (get_size_event ev) {
 
 void
 choice_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
-  renderer ren= win->get_renderer ();
-  int i; 
+  renderer ren= ev->win;
+  int i;
   metric ex;
   ren->set_background (white);
   ren->clear (0, -h, w, 0);

@@ -141,8 +141,8 @@ input_widget_rep::handle_get_size (get_size_event ev) {
 
 void
 input_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
-  renderer ren= win->get_renderer ();
-  update_draw_s (); 
+  renderer ren= ev->win;
+  update_draw_s ();
   SI ecart= max (0, (h - (2*dh / SHRINK) - text_h) >> 1);
 
   metric ex;

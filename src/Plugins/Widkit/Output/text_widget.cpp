@@ -65,7 +65,7 @@ text_widget_rep::handle_get_size (get_size_event ev) {
 
 void
 text_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
-  renderer ren= win->get_renderer ();
+  renderer ren= ev->win;
   if (!transparent) layout_default (ren, 0, 0, w, h);
   ren->set_color (col);
   font fn= get_default_styled_font (style);

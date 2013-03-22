@@ -112,7 +112,7 @@ hsplit_widget_rep::handle_find_child (find_child_event ev) {
 
 void
 hsplit_widget_rep::handle_repaint (repaint_event ev) {
-  renderer ren= win->get_renderer ();
+  renderer ren= ev->win;
   rectangles r1= rectangle (ev->x1, ev->y1, ev->x2, ev->y2);
   rectangles r2= rectangle (0, -h, w, 0);
   rectangles rs= r1 - r2;

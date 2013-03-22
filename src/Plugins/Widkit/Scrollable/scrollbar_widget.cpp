@@ -122,7 +122,7 @@ hor_scrollbar_widget_rep::encode_position (SI x) {
 
 void
 hor_scrollbar_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
-  renderer ren= win->get_renderer ();
+  renderer ren= ev->win;
   SI X1, X2;
   decode_position (X1, X2);
   layout_dark (ren, 0, 0, w, h);
@@ -269,7 +269,7 @@ ver_scrollbar_widget_rep::encode_position (SI y) {
 
 void
 ver_scrollbar_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
-  renderer ren= win->get_renderer ();
+  renderer ren= ev->win;
   SI Y1, Y2;
   decode_position (Y1, Y2);
   layout_dark (ren, 0, 0, w, h);

@@ -104,10 +104,10 @@ public:
   void draw_cursor (renderer ren);
   void draw_selection (renderer ren);
   void draw_graphics (renderer ren);
-  void draw_pre (renderer ren, rectangle r);
-  void draw_post (renderer ren, rectangle r);
-  void draw_with_shadow (rectangle r);
-  void draw_with_stored (rectangle r);
+  void draw_pre (renderer win, renderer ren, rectangle r);
+  void draw_post (renderer win, renderer ren, rectangle r);
+  void draw_with_shadow (renderer win, rectangle r);
+  void draw_with_stored (renderer win, rectangle r);
 
   /* handle changes */
   void notify_change (int changed);
@@ -187,8 +187,8 @@ public:
   void handle_keyboard_focus (bool has_focus, time_t t);
   void handle_mouse (string kind, SI x, SI y, int mods, time_t t);
   void handle_set_zoom_factor (double zoomf);
-  void handle_clear (SI x1, SI y1, SI x2, SI y2);
-  void handle_repaint (SI x1, SI y1, SI x2, SI y2);
+  void handle_clear (renderer win, SI x1, SI y1, SI x2, SI y2);
+  void handle_repaint (renderer win, SI x1, SI y1, SI x2, SI y2);
 
   friend class interactive_command_rep;
   friend class tm_window_rep;
