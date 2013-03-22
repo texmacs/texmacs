@@ -99,7 +99,6 @@ namespace win32 {
       } else {
         wcs[j] = L'?';
         wcs[j + 1] = 0;
-        tm_delete_array(cs);
         return wcs;
       }
     }
