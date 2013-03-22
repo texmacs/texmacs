@@ -60,7 +60,7 @@ clean_acm_title_markup (tree t) {
 static array<tree>
 get_acm_author_datas (tree t) {
   int i, n=N(t);
-  bool line_break= false;
+  bool line_break= true;
   array<tree> r;
   tree u;
   tree author_data (APPLY, "\\author-data");
@@ -82,6 +82,7 @@ get_acm_author_datas (tree t) {
         r << author_data;
         author_data= tree (APPLY, "\\author-data");
       }
+      line_break= true;
     }
     else if (is_acm_titlenote (u))
       author_data << tree (APPLY, "\\author-note", u[1]);
