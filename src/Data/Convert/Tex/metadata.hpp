@@ -24,5 +24,7 @@ tree        collect_metadata_springer (tree t);
 tree        collect_metadata (tree t, tree latex_classe);
 bool        is_metadata (tree u);
 bool        is_metadata_env (tree u);
+tree        filter_spaces (tree t, bool &spaced);
+array<tree> filter_spaces (array<tree> a, bool &spaced);
 
 #endif // defined METADATA_H

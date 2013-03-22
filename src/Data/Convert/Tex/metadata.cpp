@@ -63,6 +63,7 @@ is_metadata (tree u) {
          is_tuple (u, "\\email*")            ||
          is_tuple (u, "\\homepage")          ||
          is_tuple (u, "\\homepage*")         ||
+         is_tuple (u, "\\institute")         ||
          is_tuple (u, "\\footnotetext")      ||
          is_tuple (u, "\\footnotetext*")     ||
          is_tuple (u, "\\keywords")          ||
@@ -74,6 +75,7 @@ is_metadata (tree u) {
          is_tuple (u, "\\pagenumbering")     ||
          is_tuple (u, "\\received")          ||
          is_tuple (u, "\\revised")           ||
+         is_tuple (u, "\\subclass")          ||
          is_tuple (u, "\\subjclass")         ||
          is_tuple (u, "\\subjclass*")        ||
          is_tuple (u, "\\subtitle")          ||
@@ -249,7 +251,7 @@ is_space (tree t) {
   return t == " " || t == concat (" ");
 }
 
-static tree
+tree
 filter_spaces (tree t, bool &spaced) {
   if (is_space (t) && spaced)  return concat();
   if (is_space (t) && !spaced) {
@@ -271,6 +273,13 @@ filter_spaces (tree t, bool &spaced) {
   n= N(r);
   if (n>0 && is_space (r[n-1])) r[n-1]= concat();
   return r;
+}
+
+array<tree>
+filter_spaces (array<tree> a, bool &spaced) {
+  for (int i=0; i<N(a); i++)
+    a[i]= filter_spaces (a[i], spaced);
+  return a;
 }
 
 static bool
@@ -321,6 +330,8 @@ collect_metadata (tree t, tree latex_classe) {
     r= collect_metadata_revtex (t);
   else if (s == "svmono")
     r= collect_metadata_svmono (t);
+  else if (s == "svjour3"  || s == "llncs")
+    r= collect_metadata_springer (t);
   else
     r << collect_metadata_latex (t);
   r=  unconcat_tmseps (r);
@@ -330,10 +341,14 @@ collect_metadata (tree t, tree latex_classe) {
 
 string
 get_latex_style (tree t) {
-  if (N(t) == 3 && occurs ("revtex", string_arg (t[N(t)-1]))) {
+  if (N(t) != 3 || N(t) != 2)  return "";
+  string s= trim_spaces (string_arg (t[N(t)-1]));
+  if (N(t) == 3 && occurs ("revtex", s)) {
     array<string> opts= trim_spaces (tokenize (string_arg (t[1]), ","));
     if (contains (string ("aip"), opts)) return "aip";
     if (contains (string ("aps"), opts)) return "aps";
   }
-  return string_arg (t[N(t)-1]);
+  if (N(t) == 3 && occurs ("svjour", s))
+    return "svjour";
+  return s;
 }
