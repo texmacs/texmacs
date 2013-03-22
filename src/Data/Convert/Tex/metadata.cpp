@@ -294,6 +294,8 @@ collect_metadata (tree t, tree latex_classe) {
     r= collect_metadata_ams (t);
   else if (s == "revtex4-1")
     r= collect_metadata_revtex (t);
+  else if (s == "svmono")
+    r= collect_metadata_svmono (t);
   else
     r << collect_metadata_latex (t);
   r= filter_spaces (r, spaced);
