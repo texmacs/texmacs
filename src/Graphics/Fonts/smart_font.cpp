@@ -292,6 +292,7 @@ typedef int int_vector[256];
 typedef hashmap<string,int> int_table;
 
 struct smart_font_rep: font_rep {
+  string mfam;
   string family;
   string variant;
   string series;
@@ -333,7 +334,8 @@ struct smart_font_rep: font_rep {
 smart_font_rep::smart_font_rep (
   string name, font base_fn, font err_fn, string family2, string variant2,
   string series2, string shape2, int sz2, int dpi2):
-    font_rep (name, base_fn), family (family2), variant (variant2),
+    font_rep (name, base_fn), mfam (main_family (family2)),
+    family (family2), variant (variant2),
     series (series2), shape (shape2), real_shape (shape2),
     sz (sz2), dpi (dpi2),
     math_nr (-1), cyrillic_nr (-1), math_kind (0), italic_nr (-1),
@@ -505,69 +507,66 @@ smart_font_rep::advance (string s, int& pos, string& r, int& nr) {
 }
 
 int
-smart_font_rep::resolve (string c, string fam, int attempt) {
-  bool ok= true;
-  if (fam == "cal" || fam == "cal*" ||
-      fam == "Bbb" || fam == "Bbb****")
-    ok= ok && is_alpha (c) && upcase_all (c) == c;
-  if (fam == "cal**" || fam == "Bbb*")
-    ok= ok && is_alpha (c);
-  
-  if (attempt == 1 && fam == main_family (family)) {
-    if (ok && fn[SUBFONT_MAIN]->supports (c))
-      return sm->add_char (tuple ("main"), c);
-    return -1;
-  }
+smart_font_rep::resolve (string c, string fam, int attempt) {  
+  if (attempt == 1) {
+    bool ok= true;
+    if (fam == "cal" || fam == "cal*" ||
+        fam == "Bbb" || fam == "Bbb****")
+      ok= ok && is_alpha (c) && upcase_all (c) == c;
+    if (fam == "cal**" || fam == "Bbb*")
+      ok= ok && is_alpha (c);
+    if (!ok) return -1;
 
-  string uc= cork_to_utf8 (c);
-  int pos= 0;
-  int code= decode_from_utf8 (uc, pos);
-  string range= "";
-  if (code <= 0x7f) range= "ascii";
-  else if (code >= 0x80 && code <= 0x37f) range= "latin";
-  else if (code >= 0x380 && code <= 0x3ff) range= "greek";
-  else if (code >= 0x400 && code <= 0x4ff) range= "cyrillic";
-  else if (code >= 0x4e00 && code <= 0x9fcc) range= "cjk";
-  else if (code >= 0xac00 && code <= 0xd7af) range= "hangul";
-  else if (code >= 0x2000 && code <= 0x23ff) range= "mathsymbols";
-  else if (code >= 0x2900 && code <= 0x2e7f) range= "mathextra";
-  else if (code >= 0x1d400 && code <= 0x1d7ff) range= "mathletters";
+    if (fam == mfam) {
+      if (fn[SUBFONT_MAIN]->supports (c))
+        return sm->add_char (tuple ("main"), c);
+    }
+    else {
+      font cfn= closest_font (fam, variant, series, real_shape, sz, dpi, 1);
+      if (cfn->supports (c)) {
+        tree key= tuple (fam, variant, series, real_shape, "1");
+        return sm->add_char (key, c);
+      }
+    }
 
-  if ((attempt == 1 && ok) || (attempt > 1 && pos == N(uc))) {
-    int a= attempt - 1;
-    string v= variant;
-    if (attempt == 1) a= 1;
-    else if (v == "rm") v= range;
-    else v= v * "-" * range;
-    font cfn= closest_font (fam, v, series, real_shape, sz, dpi, a);
-    //cout << "Trying " << c << " in " << cfn->res_name << "\n";
-    if (cfn->supports (c)) {
-      tree key= tuple (fam, v, series, real_shape, as_string (a));
-      return sm->add_char (key, c);
+    if (math_nr >= 0) {
+      initialize_font (math_nr);
+      if (fn[math_nr]->supports (rewrite (c, REWRITE_MATH)))
+        return sm->add_char (tuple ("math"), c);
+    }
+    if (cyrillic_nr >= 0) {
+      initialize_font (cyrillic_nr);
+      if (fn[cyrillic_nr]->supports (rewrite (c, REWRITE_CYRILLIC)))
+        return sm->add_char (tuple ("cyrillic"), c);
     }
   }
-  if (attempt == 1) return -1;
 
-  if (math_nr >= 0) {
-    initialize_font (math_nr);
-    if (fn[math_nr]->supports (rewrite (c, REWRITE_MATH)))
-      return sm->add_char (tuple ("math"), c);
-  }
-  if (cyrillic_nr >= 0) {
-    initialize_font (cyrillic_nr);
-    if (fn[cyrillic_nr]->supports (rewrite (c, REWRITE_CYRILLIC)))
-      return sm->add_char (tuple ("cyrillic"), c);
-  }
+  if (attempt > 1) {
+    string uc= cork_to_utf8 (c);
+    int pos= 0;
+    int code= decode_from_utf8 (uc, pos);
+    string range= "";
+    if (code <= 0x7f) range= "ascii";
+    else if (code >= 0x80 && code <= 0x37f) range= "latin";
+    else if (code >= 0x380 && code <= 0x3ff) range= "greek";
+    else if (code >= 0x400 && code <= 0x4ff) range= "cyrillic";
+    else if (code >= 0x4e00 && code <= 0x9fcc) range= "cjk";
+    else if (code >= 0xac00 && code <= 0xd7af) range= "hangul";
+    else if (code >= 0x2000 && code <= 0x23ff) range= "mathsymbols";
+    else if (code >= 0x2900 && code <= 0x2e7f) range= "mathextra";
+    else if (code >= 0x1d400 && code <= 0x1d7ff) range= "mathletters";
 
-  if (math_kind != 0 && range == "mathletters") {
-    init_unicode_substitution ();
-    string nc= "<#" * as_hexadecimal (code) * ">";
-    string sc= substitution_char [nc];
-    string sf= substitution_font [nc];
-    //cout << c << " (" << nc << ") -> " << sc << ", " << sf << "\n";
-    if (sc != "" && sc != c) {
-      bool flag= ends (sf, "cal") || ends (sf, "frak") || ends (sf, "bbb");
-      if (!flag || math_kind == 2) return sm->add_char (tuple (sf), c);
+    if (pos == N(uc)) {
+      int a= attempt - 1;
+      string v= variant;
+      if (v == "rm") v= range;
+      else v= v * "-" * range;
+      font cfn= closest_font (fam, v, series, real_shape, sz, dpi, a);
+      //cout << "Trying " << c << " in " << cfn->res_name << "\n";
+      if (cfn->supports (c)) {
+        tree key= tuple (fam, v, series, real_shape, as_string (a));
+        return sm->add_char (key, c);
+      }
     }
   }
 
@@ -583,19 +582,35 @@ smart_font_rep::resolve (string c) {
       return sm->add_char (tuple ("special"), c);
   }
 
-  for (int attempt= 1; attempt <= 20; attempt++) {
-    int nr= resolve (c, family, attempt);
-    if (nr >= 0) return nr;
+  array<string> a= trimmed_tokenize (family, ",");
+  for (int attempt= 1; attempt <= 20; attempt++)
+    for (int i= 0; i < N(a); i++) {
+      int nr= resolve (c, a[i], attempt);
+      if (nr >= 0) return nr;
+    }
+
+  int pos= 0;
+  int code= decode_from_utf8 (cork_to_utf8 (c), pos);
+  if (math_kind != 0 && code >= 0x1d400 && code <= 0x1d7ff) {
+    init_unicode_substitution ();
+    string nc= "<#" * as_hexadecimal (code) * ">";
+    string sc= substitution_char [nc];
+    string sf= substitution_font [nc];
+    //cout << c << " (" << nc << ") -> " << sc << ", " << sf << "\n";
+    if (sc != "" && sc != c) {
+      bool flag= ends (sf, "cal") || ends (sf, "frak") || ends (sf, "bbb");
+      if (!flag || math_kind == 2) return sm->add_char (tuple (sf), c);
+    }
   }
 
   string virt= find_in_virtual (c);
+  if (math_kind != 0 && !unicode_provides (c) && virt == "")
+    return sm->add_char (tuple ("other"), c);
+
   if (virt != "") {
     //cout << "Found " << c << " in " << virt << "\n";
     return sm->add_char (tuple ("virtual", virt), c);
   }
-
-  if (math_kind != 0 && !unicode_provides (c))
-    return sm->add_char (tuple ("other"), c);
 
   return sm->add_char (tuple ("error"), c);
 }
@@ -670,7 +685,7 @@ get_ex (string family, string variant, string series, string shape,
 int
 smart_font_rep::adjusted_dpi (string fam, string var, string ser, string sh,
                               int attempt) {
-  int ex1= get_ex (family, variant, series, real_shape, 1);
+  int ex1= get_ex (mfam, variant, series, real_shape, 1);
   int ex2= get_ex (fam, var, ser, sh, attempt);
   double zoom= 1.0;
   if (ex1 != 0 && ex2 != 0) zoom= ((double) ex1) / ((double) ex2);
