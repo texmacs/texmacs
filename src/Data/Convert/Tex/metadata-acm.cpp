@@ -177,9 +177,7 @@ collect_metadata_acm (tree t) {
       abstract_data << tmp;
     }
   }
-  if (N(doc_notes) > 0)
-    for (int j=0; j<N(doc_notes); j++)
-      doc_data << doc_notes[j];
+  if (N(doc_notes) > 0) doc_data << doc_notes;
   if (N(doc_data) > 1) r << doc_data << "\n";
   if (N(abstract_data) > 1) r << abstract_data << "\n";
   return r;

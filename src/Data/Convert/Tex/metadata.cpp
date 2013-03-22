@@ -230,9 +230,7 @@ collect_metadata_latex (tree t) {
   }
   if (!dated && maketitle)
     doc_data << tuple ("\\doc-date", tree (APPLY, "date", ""));
-  if (N(doc_notes) > 0)
-    for (int j=0; j<N(doc_notes); j++)
-      doc_data << doc_notes[j];
+  if (N(doc_notes) > 0) doc_data << doc_notes;
   if (N(doc_data) > 1) {
     r << doc_data;
     r << concat ("\n");
