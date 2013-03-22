@@ -82,8 +82,11 @@ choice_widget_rep::handle_get_size (get_size_event ev) {
     ev->w  = max (ev->w, ((ex->x2- ex->x1+ 2)/3) + (6*PIXEL));
     ev->h += ((fn->y2- fn->y1+ 2)/3) + (4*PIXEL);
   }
-  if (ev->mode == 1)
+  if (ev->mode == 1) {
+    SI h= ev->h;
     gui_maximal_extents (ev->w, ev->h);
+    ev->h= max (ev->h, h);
+  }
   abs_round (ev->w, ev->h);
 }
 
@@ -108,7 +111,7 @@ choice_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
     if (i == over) layout_dark_outline (ren, 0, y + dy, 3*w, y);
     ren->set_color (black);
     fn->var_get_extents (names[i], ex);
-    fn ->draw (ren, names[i], 9*PIXEL, y-fn->y2-6*PIXEL);
+    fn->var_draw (ren, names[i], 9*PIXEL, y-fn->y2-6*PIXEL);
     y += dy;
   }
   ren->set_shrinking_factor (1);
