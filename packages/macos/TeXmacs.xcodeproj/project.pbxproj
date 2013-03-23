@@ -49,6 +49,9 @@
 		497822CC16EC86D40054F5BA /* tt_analyze.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 497822CA16EC86D40054F5BA /* tt_analyze.cpp */; };
 		497822CD16EC86D40054F5BA /* tt_analyze.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 497822CA16EC86D40054F5BA /* tt_analyze.cpp */; };
 		49896901152B981400DB1E9E /* TeXmacs.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9C61B42A141A1B780035D78F /* TeXmacs.icns */; };
+		49BEF71816FDD566004BAE73 /* metadata-springer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BEF71616FDD566004BAE73 /* metadata-springer.cpp */; };
+		49BEF71916FDD566004BAE73 /* metadata-springer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BEF71616FDD566004BAE73 /* metadata-springer.cpp */; };
+		49BEF71A16FDD566004BAE73 /* metadata-springer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BEF71616FDD566004BAE73 /* metadata-springer.cpp */; };
 		49D662FC128B331A0006E948 /* QTMFileDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D662FA128B331A0006E948 /* QTMFileDialog.cpp */; };
 		49D662FD128B333F0006E948 /* QTMFileDialog.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D662FB128B331A0006E948 /* QTMFileDialog.hpp */; };
 		49DD8FA916DB75C100647CA2 /* sqlite3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49DD8FA716DB75C100647CA2 /* sqlite3.cpp */; };
@@ -1173,6 +1176,8 @@
 		4964704F16F72CB500D95FC4 /* font_guess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_guess.cpp; sourceTree = "<group>"; };
 		4964705016F72CB500D95FC4 /* smart_font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smart_font.cpp; sourceTree = "<group>"; };
 		497822CA16EC86D40054F5BA /* tt_analyze.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tt_analyze.cpp; sourceTree = "<group>"; };
+		49BEF71616FDD566004BAE73 /* metadata-springer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "metadata-springer.cpp"; sourceTree = "<group>"; };
+		49BEF71716FDD566004BAE73 /* metadata.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = metadata.hpp; sourceTree = "<group>"; };
 		49D662FA128B331A0006E948 /* QTMFileDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMFileDialog.cpp; sourceTree = "<group>"; };
 		49D662FB128B331A0006E948 /* QTMFileDialog.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMFileDialog.hpp; sourceTree = "<group>"; };
 		49DD8FA716DB75C100647CA2 /* sqlite3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sqlite3.cpp; sourceTree = "<group>"; };
@@ -2131,6 +2136,8 @@
 		9C0B476710A8CC0F0097A335 /* Tex */ = {
 			isa = PBXGroup;
 			children = (
+				49BEF71616FDD566004BAE73 /* metadata-springer.cpp */,
+				49BEF71716FDD566004BAE73 /* metadata.hpp */,
 				490A9D2516F8A5EC00EC29D5 /* metadata-revtex.cpp */,
 				49FDFA6416F0C677002B830A /* metadata-ams.cpp */,
 				495712F716E90E5900934EA3 /* metadata-acm.cpp */,
@@ -4265,6 +4272,7 @@
 				4964705416F72CB500D95FC4 /* smart_font.cpp in Sources */,
 				490A9D2616F8A5EC00EC29D5 /* metadata-revtex.cpp in Sources */,
 				491FC57C16F900140038929C /* font_translate.cpp in Sources */,
+				49BEF71816FDD566004BAE73 /* metadata-springer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4622,6 +4630,7 @@
 				4964705616F72CB500D95FC4 /* smart_font.cpp in Sources */,
 				490A9D2816F8A5EC00EC29D5 /* metadata-revtex.cpp in Sources */,
 				491FC57E16F900140038929C /* font_translate.cpp in Sources */,
+				49BEF71A16FDD566004BAE73 /* metadata-springer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5007,6 +5016,7 @@
 				4964705516F72CB500D95FC4 /* smart_font.cpp in Sources */,
 				490A9D2716F8A5EC00EC29D5 /* metadata-revtex.cpp in Sources */,
 				491FC57D16F900140038929C /* font_translate.cpp in Sources */,
+				49BEF71916FDD566004BAE73 /* metadata-springer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
