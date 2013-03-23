@@ -52,6 +52,8 @@ struct unicode_font_rep: font_rep {
   void draw_fixed (renderer ren, string s, SI x, SI y);
   font magnify (double zoom);
   glyph get_glyph (string s);
+  double get_left_slope  (string s);
+  double get_right_slope (string s);
   SI get_left_correction  (string s);
   SI get_right_correction  (string s);
 };
@@ -312,6 +314,34 @@ unicode_font_rep::get_glyph (string s) {
   glyph gl= fng->get (uc);
   if (is_nil (gl)) return font_rep::get_glyph (s);
   return gl;
+}
+
+double
+unicode_font_rep::get_left_slope (string s) {
+  if (N(s) == 0) return slope;
+  int pos= 0;
+  tm_char_forwards (s, pos);
+  if (pos == 1) return slope;
+  metric ex;
+  get_extents (s (0, pos), ex);
+  if (ex->y3 >= 0) return slope;
+  double sl= ((double) (ex->x3 - ex->x1)) / ((double) ex->y3);
+  if (sl > slope + 0.05) return sl;
+  else return slope;
+}
+
+double
+unicode_font_rep::get_right_slope (string s) {
+  if (N(s) == 0) return slope;
+  int pos= N(s);
+  tm_char_backwards (s, pos);
+  if (pos == N(s) - 1) return slope;
+  metric ex;
+  get_extents (s (pos, N(s)), ex);
+  if (ex->y4 <= 0) return slope;
+  double sl= ((double) (ex->x4 - ex->x2)) / ((double) ex->y4);
+  if (sl > slope + 0.05) return sl;
+  else return slope;
 }
 
 SI
