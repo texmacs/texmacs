@@ -133,6 +133,7 @@
   (search-font-families search_font_families (array_string array_string))
   (search-font-styles search_font_styles (array_string string array_string))
   (logical-font-patch patch_font (array_string array_string array_string))
+  (font-family-main main_family (string string))
 
   ;; routines for images
   (image->psdoc image_to_psdoc (string url))

@@ -1352,6 +1352,19 @@ tmg_logical_font_patch (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_font_family_main (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "font-family-main");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= main_family (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_image_2psdoc (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "image->psdoc");
 
@@ -7034,6 +7047,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("search-font-families",  tmg_search_font_families, 1, 0, 0);
   tmscm_install_procedure ("search-font-styles",  tmg_search_font_styles, 2, 0, 0);
   tmscm_install_procedure ("logical-font-patch",  tmg_logical_font_patch, 2, 0, 0);
+  tmscm_install_procedure ("font-family-main",  tmg_font_family_main, 1, 0, 0);
   tmscm_install_procedure ("image->psdoc",  tmg_image_2psdoc, 1, 0, 0);
   tmscm_install_procedure ("tree->stree",  tmg_tree_2stree, 1, 0, 0);
   tmscm_install_procedure ("stree->tree",  tmg_stree_2tree, 1, 0, 0);

@@ -105,7 +105,7 @@
     (selected-properties)))
 
 (define (selector-initialize-font)
-  (let* ((fam (get-env "font"))
+  (let* ((fam (font-family-main (get-env "font")))
          (var (get-env "font-family"))
          (ser (get-env "font-series"))
          (sh  (get-env "font-shape"))

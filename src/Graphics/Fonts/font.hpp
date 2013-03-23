@@ -166,5 +166,6 @@ array<string> search_font_exact (array<string> v);
 array<string> search_font_families (array<string> v);
 array<string> search_font_styles (string s, array<string> v);
 array<string> patch_font (array<string> v, array<string> w, bool decode= true);
+string main_family (string f);
 
 #endif // defined FONT_H
