@@ -23,7 +23,6 @@ RESOURCE(smart_map);
 
 #define SUBFONT_MAIN  0
 #define SUBFONT_ERROR 1
-#define SUBFONT_MATH  2
 
 #define REWRITE_NONE       0
 #define REWRITE_MATH       1
@@ -264,6 +263,25 @@ init_unicode_substitution () {
   unicode_digits (0x1d7f6, "tt");
 }
 
+string
+substitute_math_letter (string c, int math_kind) {
+  string uc= cork_to_utf8 (c);
+  int pos= 0;
+  int code= decode_from_utf8 (uc, pos);
+  if (math_kind != 0 && pos == N(uc) && code >= 0x1d400 && code <= 0x1d7ff) {
+    init_unicode_substitution ();
+    string nc= "<#" * as_hexadecimal (code) * ">";
+    string sc= substitution_char [nc];
+    string sf= substitution_font [nc];
+    //cout << c << " (" << nc << ") -> " << sc << ", " << sf << "\n";
+    if (sc != "" && sc != c) {
+      bool flag= ends (sf, "cal") || ends (sf, "frak") || ends (sf, "bbb");
+      if (!flag || math_kind == 2) return sf;
+    }
+  }
+  return "";
+}
+
 /******************************************************************************
 * Font sequences
 ******************************************************************************/
@@ -297,11 +315,9 @@ struct smart_font_rep: font_rep {
   string variant;
   string series;
   string shape;
-  string real_shape;
+  string rshape;
   int    sz;
   int    dpi;
-  int    math_nr;
-  int    cyrillic_nr;
   int    math_kind;
   int    italic_nr;
 
@@ -311,8 +327,8 @@ struct smart_font_rep: font_rep {
   smart_font_rep (string name, font base_fn, font err_fn,
                   string family, string variant,
                   string series, string shape, int sz, int dpi);
-  font   get_math_font ();
-  font   get_cyrillic_font ();
+  font   get_math_font (string fam, string var, string ser, string sh);
+  font   get_cyrillic_font (string fam, string var, string ser, string sh);
 
   void   advance (string s, int& pos, string& r, int& nr);
   int    resolve (string c, string fam, int attempt);
@@ -336,33 +352,31 @@ smart_font_rep::smart_font_rep (
   string series2, string shape2, int sz2, int dpi2):
     font_rep (name, base_fn), mfam (main_family (family2)),
     family (family2), variant (variant2),
-    series (series2), shape (shape2), real_shape (shape2),
+    series (series2), shape (shape2), rshape (shape2),
     sz (sz2), dpi (dpi2),
-    math_nr (-1), cyrillic_nr (-1), math_kind (0), italic_nr (-1),
+    math_kind (0), italic_nr (-1),
     fn (2), sm (get_smart_map (tuple (family2, variant2, series2, shape2)))
 {
   fn[SUBFONT_MAIN ]= base_fn;
   fn[SUBFONT_ERROR]= err_fn;
-  if (is_math_family (family))
-    math_nr= sm->add_font (tuple ("math"), REWRITE_MATH);
-  if (family == "roman")
-    cyrillic_nr= sm->add_font (tuple ("cyrillic"), REWRITE_CYRILLIC);
   if (shape == "mathitalic" || shape == "mathupright" || shape == "mathshape") {
-    if (is_math_family (family)) {
-      real_shape= "right";
+    if (is_math_family (mfam)) {
+      rshape= "right";
       if (shape == "mathupright")
         this->copy_math_pars (base_fn);
       else {
-        initialize_font (math_nr);
-        this->copy_math_pars (fn[math_nr]);
-        fn[SUBFONT_MAIN]= fn[math_nr];
+        tree key= tuple ("math", mfam, variant, series, rshape);
+        int nr= sm->add_font (key, REWRITE_MATH);
+        initialize_font (nr);
+        this->copy_math_pars (fn[nr]);
+        fn[SUBFONT_MAIN]= fn[nr];
       }
     } 
     else {
       math_kind= 1;
       if (shape == "mathupright") math_kind= 2;
       if (shape == "mathshape") math_kind= 3;
-      real_shape= "right";
+      rshape= "right";
       if (math_kind == 2)
         this->copy_math_pars (base_fn);
       else {
@@ -395,12 +409,7 @@ smart_font_rep::smart_font_rep (
 ******************************************************************************/
 
 font
-smart_font_rep::get_math_font () {
-  string fam= family;
-  string var= variant;
-  string ser= series;
-  string sh = real_shape;
-  if (!is_math_family (fam)) fam= "roman";
+smart_font_rep::get_math_font (string fam, string var, string ser, string sh) {
   find_closest (fam, var, ser, sh);
   string mvar= "mr";
   if (var == "ss") mvar= "ms";
@@ -409,11 +418,7 @@ smart_font_rep::get_math_font () {
 }
 
 font
-smart_font_rep::get_cyrillic_font () {
-  string fam= family;
-  string var= variant;
-  string ser= series;
-  string sh = real_shape;
+smart_font_rep::get_cyrillic_font (string fam, string var, string ser, string sh) {
   find_closest (fam, var, ser, sh);
   return find_font ("cyrillic", var, ser, sh, sz, dpi);
 }
@@ -507,7 +512,8 @@ smart_font_rep::advance (string s, int& pos, string& r, int& nr) {
 }
 
 int
-smart_font_rep::resolve (string c, string fam, int attempt) {  
+smart_font_rep::resolve (string c, string fam, int attempt) { 
+  //cout << "Resolve " << c << " in " << fam << ", attempt " << attempt << "\n";
   if (attempt == 1) {
     bool ok= true;
     if (fam == "cal" || fam == "cal*" ||
@@ -522,22 +528,26 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
         return sm->add_char (tuple ("main"), c);
     }
     else {
-      font cfn= closest_font (fam, variant, series, real_shape, sz, dpi, 1);
+      font cfn= closest_font (fam, variant, series, rshape, sz, dpi, 1);
       if (cfn->supports (c)) {
-        tree key= tuple (fam, variant, series, real_shape, "1");
+        tree key= tuple (fam, variant, series, rshape, "1");
         return sm->add_char (key, c);
       }
     }
 
-    if (math_nr >= 0) {
-      initialize_font (math_nr);
-      if (fn[math_nr]->supports (rewrite (c, REWRITE_MATH)))
-        return sm->add_char (tuple ("math"), c);
+    if (is_math_family (fam)) {
+      tree key= tuple ("math", fam, variant, series, rshape);
+      int nr= sm->add_font (key, REWRITE_MATH);
+      initialize_font (nr);
+      if (fn[nr]->supports (rewrite (c, REWRITE_MATH)))
+        return sm->add_char (key, c);
     }
-    if (cyrillic_nr >= 0) {
-      initialize_font (cyrillic_nr);
-      if (fn[cyrillic_nr]->supports (rewrite (c, REWRITE_CYRILLIC)))
-        return sm->add_char (tuple ("cyrillic"), c);
+    if (fam == "roman") {
+      tree key= tuple ("cyrillic", fam, variant, series, rshape);
+      int nr= sm->add_font (key, REWRITE_CYRILLIC);
+      initialize_font (nr);
+      if (fn[nr]->supports (rewrite (c, REWRITE_CYRILLIC)))
+        return sm->add_char (key, c);
     }
   }
 
@@ -561,10 +571,10 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
       string v= variant;
       if (v == "rm") v= range;
       else v= v * "-" * range;
-      font cfn= closest_font (fam, v, series, real_shape, sz, dpi, a);
+      font cfn= closest_font (fam, v, series, rshape, sz, dpi, a);
       //cout << "Trying " << c << " in " << cfn->res_name << "\n";
       if (cfn->supports (c)) {
-        tree key= tuple (fam, v, series, real_shape, as_string (a));
+        tree key= tuple (fam, v, series, rshape, as_string (a));
         return sm->add_char (key, c);
       }
     }
@@ -583,25 +593,16 @@ smart_font_rep::resolve (string c) {
   }
 
   array<string> a= trimmed_tokenize (family, ",");
-  for (int attempt= 1; attempt <= 20; attempt++)
+  for (int attempt= 1; attempt <= 20; attempt++) {
+    if (attempt > 1 && substitute_math_letter (c, math_kind) != "") break;
     for (int i= 0; i < N(a); i++) {
       int nr= resolve (c, a[i], attempt);
       if (nr >= 0) return nr;
     }
-
-  int pos= 0;
-  int code= decode_from_utf8 (cork_to_utf8 (c), pos);
-  if (math_kind != 0 && code >= 0x1d400 && code <= 0x1d7ff) {
-    init_unicode_substitution ();
-    string nc= "<#" * as_hexadecimal (code) * ">";
-    string sc= substitution_char [nc];
-    string sf= substitution_font [nc];
-    //cout << c << " (" << nc << ") -> " << sc << ", " << sf << "\n";
-    if (sc != "" && sc != c) {
-      bool flag= ends (sf, "cal") || ends (sf, "frak") || ends (sf, "bbb");
-      if (!flag || math_kind == 2) return sm->add_char (tuple (sf), c);
-    }
   }
+
+  string sf= substitute_math_letter (c, math_kind);
+  if (sf != "") return sm->add_char (tuple (sf), c);
 
   string virt= find_in_virtual (c);
   if (math_kind != 0 && !unicode_provides (c) && virt == "")
@@ -621,9 +622,9 @@ smart_font_rep::initialize_font (int nr) {
   if (!is_nil (fn[nr])) return;
   array<string> a= tuple_as_array (sm->fn_spec[nr]);
   if (a[0] == "math")
-    fn[nr]= get_math_font ();
+    fn[nr]= get_math_font (a[1], a[2], a[3], a[4]);
   else if (a[0] == "cyrillic")
-    fn[nr]= get_cyrillic_font ();
+    fn[nr]= get_cyrillic_font (a[1], a[2], a[3], a[4]);
   else if (a[0] == "special")
     fn[nr]= smart_font (family, variant, series, "right", sz, dpi);
   else if (a[0] == "other") {
@@ -685,7 +686,7 @@ get_ex (string family, string variant, string series, string shape,
 int
 smart_font_rep::adjusted_dpi (string fam, string var, string ser, string sh,
                               int attempt) {
-  int ex1= get_ex (mfam, variant, series, real_shape, 1);
+  int ex1= get_ex (mfam, variant, series, rshape, 1);
   int ex2= get_ex (fam, var, ser, sh, attempt);
   double zoom= 1.0;
   if (ex1 != 0 && ex2 != 0) zoom= ((double) ex1) / ((double) ex2);
