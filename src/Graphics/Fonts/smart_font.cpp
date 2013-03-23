@@ -302,6 +302,25 @@ main_family (string f) {
   return a[1];
 }
 
+string
+get_unicode_range (string c) {
+  string uc= cork_to_utf8 (c);
+  int pos= 0;
+  int code= decode_from_utf8 (uc, pos);
+  string range= "";
+  if (code <= 0x7f) range= "ascii";
+  else if (code >= 0x80 && code <= 0x37f) range= "latin";
+  else if (code >= 0x380 && code <= 0x3ff) range= "greek";
+  else if (code >= 0x400 && code <= 0x4ff) range= "cyrillic";
+  else if (code >= 0x4e00 && code <= 0x9fcc) range= "cjk";
+  else if (code >= 0xac00 && code <= 0xd7af) range= "hangul";
+  else if (code >= 0x2000 && code <= 0x23ff) range= "mathsymbols";
+  else if (code >= 0x2900 && code <= 0x2e7f) range= "mathextra";
+  else if (code >= 0x1d400 && code <= 0x1d7ff) range= "mathletters";
+  if (pos == N(uc)) return range;
+  return "";
+}
+
 /******************************************************************************
 * The smart font class
 ******************************************************************************/
@@ -514,6 +533,20 @@ smart_font_rep::advance (string s, int& pos, string& r, int& nr) {
 int
 smart_font_rep::resolve (string c, string fam, int attempt) { 
   //cout << "Resolve " << c << " in " << fam << ", attempt " << attempt << "\n";
+  array<string> a= trimmed_tokenize (fam, "=");
+  if (N(a) >= 2) {
+    array<string> given= logical_font (family, variant, series, rshape);
+    fam= a[1];
+    array<string> b= tokenize (a[0], " ");
+    for (int i=0; i<N(b); i++) {
+      string wanted= locase_all (b[i]);
+      if (wanted == "") continue;
+      if (contains (wanted, given)) continue;
+      if (wanted == get_unicode_range (c)) continue;
+      return -1;
+    }
+  }
+
   if (attempt == 1) {
     bool ok= true;
     if (fam == "cal" || fam == "cal*" ||
@@ -552,21 +585,8 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
   }
 
   if (attempt > 1) {
-    string uc= cork_to_utf8 (c);
-    int pos= 0;
-    int code= decode_from_utf8 (uc, pos);
-    string range= "";
-    if (code <= 0x7f) range= "ascii";
-    else if (code >= 0x80 && code <= 0x37f) range= "latin";
-    else if (code >= 0x380 && code <= 0x3ff) range= "greek";
-    else if (code >= 0x400 && code <= 0x4ff) range= "cyrillic";
-    else if (code >= 0x4e00 && code <= 0x9fcc) range= "cjk";
-    else if (code >= 0xac00 && code <= 0xd7af) range= "hangul";
-    else if (code >= 0x2000 && code <= 0x23ff) range= "mathsymbols";
-    else if (code >= 0x2900 && code <= 0x2e7f) range= "mathextra";
-    else if (code >= 0x1d400 && code <= 0x1d7ff) range= "mathletters";
-
-    if (pos == N(uc)) {
+    string range= get_unicode_range (c);
+    if (range != "") {
       int a= attempt - 1;
       string v= variant;
       if (v == "rm") v= range;
@@ -691,6 +711,8 @@ smart_font_rep::adjusted_dpi (string fam, string var, string ser, string sh,
   double zoom= 1.0;
   if (ex1 != 0 && ex2 != 0) zoom= ((double) ex1) / ((double) ex2);
   if (zoom > 0.975 && zoom < 1.025) zoom= 1;
+  //cout << mfam << ", " << fam << " -> "
+  //     << ex1 << ", " << ex2 << ", " << zoom << "\n";
   return (int) tm_round (dpi * zoom);
 }
 
