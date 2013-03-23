@@ -238,9 +238,9 @@ unicode_digits (int start, string fn) {
 static void
 init_unicode_substitution () {
   if (N (substitution_char) != 0) return;
-  unicode_letters (0x1d400, "bold");
-  unicode_letters (0x1d434, "italic");
-  unicode_letters (0x1d468, "bold-italic");
+  unicode_letters (0x1d400, "bold-math");
+  unicode_letters (0x1d434, "italic-math");
+  unicode_letters (0x1d468, "bold-italic-math");
   unicode_letters (0x1d49c, "cal");
   unicode_letters (0x1d4d0, "bold-cal");
   unicode_letters (0x1d504, "frak");
@@ -251,24 +251,56 @@ init_unicode_substitution () {
   unicode_letters (0x1d608, "italic-ss");
   unicode_letters (0x1d63c, "bold-italic-ss");
   unicode_letters (0x1d670, "tt");
-  unicode_greek (0x1d6a8, "bold");
-  unicode_greek (0x1d6e2, "italic");
-  unicode_greek (0x1d71c, "bold-italic");
+  unicode_greek (0x1d6a8, "bold-math");
+  unicode_greek (0x1d6e2, "italic-math");
+  unicode_greek (0x1d71c, "bold-italic-math");
   unicode_greek (0x1d756, "bold-ss");
   unicode_greek (0x1d790, "bold-italic-ss");
-  unicode_digits (0x1d7ce, "bold");
+  unicode_digits (0x1d7ce, "bold-math");
   unicode_digits (0x1d7d8, "bbb");
   unicode_digits (0x1d7e2, "ss");
   unicode_digits (0x1d7ec, "bold-ss");
   unicode_digits (0x1d7f6, "tt");
+  unicode_subst (0x212c, 0x42, 1, "cal");
+  unicode_subst (0x2130, 0x45, 1, "cal");
+  unicode_subst (0x2131, 0x46, 1, "cal");
+  unicode_subst (0x210b, 0x48, 1, "cal");
+  unicode_subst (0x2110, 0x49, 1, "cal");
+  unicode_subst (0x2112, 0x4c, 1, "cal");
+  unicode_subst (0x2133, 0x4d, 1, "cal");
+  unicode_subst (0x211b, 0x52, 1, "cal");
+  unicode_subst (0x212f, 0x65, 1, "cal");
+  unicode_subst (0x210a, 0x67, 1, "cal");
+  unicode_subst (0x2134, 0x6f, 1, "cal");
+  unicode_subst (0x212d, 0x43, 1, "frak");
+  unicode_subst (0x210c, 0x49, 1, "frak");
+  unicode_subst (0x2111, 0x4a, 1, "frak");
+  unicode_subst (0x211c, 0x52, 1, "frak");
+  unicode_subst (0x2128, 0x5a, 1, "frak");
+  unicode_subst (0x2102, 0x43, 1, "bbb");
+  unicode_subst (0x210d, 0x48, 1, "bbb");
+  unicode_subst (0x2115, 0x4e, 1, "bbb");
+  unicode_subst (0x2119, 0x50, 1, "bbb");
+  unicode_subst (0x211a, 0x51, 1, "bbb");
+  unicode_subst (0x211d, 0x52, 1, "bbb");
+  unicode_subst (0x2124, 0x5a, 1, "bbb");
+}
+
+int
+get_utf8_code (string c) {
+  string uc= cork_to_utf8 (c);
+  int pos= 0;
+  int code= decode_from_utf8 (uc, pos);
+  if (pos == N(uc)) return code;
+  else return -1;
 }
 
 string
 substitute_math_letter (string c, int math_kind) {
-  string uc= cork_to_utf8 (c);
-  int pos= 0;
-  int code= decode_from_utf8 (uc, pos);
-  if (math_kind != 0 && pos == N(uc) && code >= 0x1d400 && code <= 0x1d7ff) {
+  if (math_kind == 0) return "";
+  int code= get_utf8_code (c);
+  if ((code >= 0x1d400 && code <= 0x1d7ff) ||
+      (code >= 0x2100 && code <= 0x213f)) {
     init_unicode_substitution ();
     string nc= "<#" * as_hexadecimal (code) * ">";
     string sc= substitution_char [nc];
@@ -406,9 +438,9 @@ smart_font_rep::smart_font_rep (
       (void) sm->add_font (tuple ("special"), REWRITE_SPECIAL);
       (void) sm->add_font (tuple ("other"), REWRITE_NONE);
       (void) sm->add_font (tuple ("regular"), REWRITE_LETTERS);
-      (void) sm->add_font (tuple ("bold"), REWRITE_LETTERS);
-      (void) sm->add_font (tuple ("italic"), REWRITE_LETTERS);
-      (void) sm->add_font (tuple ("bold-italic"), REWRITE_LETTERS);
+      (void) sm->add_font (tuple ("bold-math"), REWRITE_LETTERS);
+      (void) sm->add_font (tuple ("italic-math"), REWRITE_LETTERS);
+      (void) sm->add_font (tuple ("bold-italic-math"), REWRITE_LETTERS);
       (void) sm->add_font (tuple ("cal"), REWRITE_LETTERS);
       (void) sm->add_font (tuple ("bold-cal"), REWRITE_LETTERS);
       (void) sm->add_font (tuple ("frak"), REWRITE_LETTERS);
@@ -539,11 +571,28 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
     fam= a[1];
     array<string> b= tokenize (a[0], " ");
     for (int i=0; i<N(b); i++) {
-      string wanted= locase_all (b[i]);
-      if (wanted == "") continue;
-      if (contains (wanted, given)) continue;
-      if (wanted == get_unicode_range (c)) continue;
-      return -1;
+      if (b[i] == "") continue;
+      bool ok= false;
+      array<string> v= tokenize (b[i], "|");
+      for (int j=0; j<N(v); j++) {
+        string wanted= locase_all (v[j]);
+        if (wanted == "") ok= true;
+        else if (contains (wanted, given)) ok= true;
+        else if (wanted == get_unicode_range (c)) ok= true;
+        else if (wanted == substitute_math_letter (c, 2)) ok= true;
+        else if (wanted == c) ok= true;
+        else {
+          array<string> w= tokenize (v[j], ":");
+          if (N(w) == 1) w << w[0];
+          if (N(w) == 2) {
+            int code = get_utf8_code (c);
+            int start= get_utf8_code (w[0]);
+            int end  = get_utf8_code (w[1]);
+            if (code != -1 && code >= start && code <= end) ok= true;
+          }
+        }
+      }
+      if (!ok) return -1;
     }
   }
 
@@ -607,7 +656,7 @@ int
 smart_font_rep::resolve (string c) {
   if (math_kind != 0) {
     if (is_greek (c))
-      return sm->add_char (tuple ("italic"), c);
+      return sm->add_char (tuple ("italic-math"), c);
     if (is_special (c))
       return sm->add_char (tuple ("special"), c);
   }
@@ -651,13 +700,13 @@ smart_font_rep::initialize_font (int nr) {
     int ndpi= adjusted_dpi ("roman", variant, series, "mathitalic", 1);
     fn[nr]= smart_font ("roman", variant, series, "mathitalic", sz, ndpi);
   }
-  else if (a[0] == "bold")
+  else if (a[0] == "bold-math")
     fn[nr]= smart_font (family, variant, "bold", "right", sz, dpi);
   else if (a[0] == "fast-italic")
     fn[nr]= smart_font (family, variant, series, "italic", sz, dpi);
-  else if (a[0] == "italic")
+  else if (a[0] == "italic-math")
     fn[nr]= smart_font (family, variant, series, "italic", sz, dpi);
-  else if (a[0] == "bold-italic")
+  else if (a[0] == "bold-italic-math")
     fn[nr]= smart_font (family, variant, "bold", "italic", sz, dpi);
   else if (a[0] == "tt")
     fn[nr]= smart_font (family, "tt", series, "right", sz, dpi);
