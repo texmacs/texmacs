@@ -39,10 +39,13 @@ is_metadata (tree u) {
   return is_tuple (u, "\\accepted")          ||
          is_tuple (u, "\\address")           ||
          is_tuple (u, "\\additionalauthors") ||
+         is_tuple (u, "\\addtocmark")        ||
+         is_tuple (u, "\\addtocmark*")       ||
          is_tuple (u, "\\affiliation")       ||
          is_tuple (u, "\\altaffiliation")    ||
          is_tuple (u, "\\altaffiliation*")   ||
          is_tuple (u, "\\author")            ||
+         is_tuple (u, "\\authorrunning")     ||
          is_tuple (u, "\\author*")           ||
          is_tuple (u, "\\category")          ||
          is_tuple (u, "\\category*")         ||
@@ -81,6 +84,7 @@ is_metadata (tree u) {
          is_tuple (u, "\\subtitle")          ||
          is_tuple (u, "\\terms")             ||
          is_tuple (u, "\\title")             ||
+         is_tuple (u, "\\titlerunning")      ||
          is_tuple (u, "\\title*")            ||
          is_tuple (u, "\\thanks")            ||
          is_tuple (u, "\\thanks*")           ||
@@ -94,6 +98,8 @@ is_metadata (tree u) {
          is_tuple (u, "\\tmsep")             ||
          is_tuple (u, "\\tmSep")             ||
          is_tuple (u, "\\tmsubtitle")        ||
+         is_tuple (u, "\\toctitle")          ||
+         is_tuple (u, "\\tocauthor")         ||
          is_tuple (u, "\\translator")        ||
          is_tuple (u, "\\urladdr");
 }
@@ -330,8 +336,10 @@ collect_metadata (tree t, tree latex_classe) {
     r= collect_metadata_revtex (t);
   else if (s == "svmono")
     r= collect_metadata_svmono (t);
-  else if (s == "svjour3"  || s == "llncs")
-    r= collect_metadata_springer (t);
+  else if (s == "svjour3")
+    r= collect_metadata_springer (t, false);
+  else if (s == "llncs")
+    r= collect_metadata_springer (t, true);
   else
     r << collect_metadata_latex (t);
   r=  unconcat_tmseps (r);

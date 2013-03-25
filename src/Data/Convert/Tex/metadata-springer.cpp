@@ -67,6 +67,33 @@ get_authors_by_name (array<tree> a, tree t) {
   return r;
 }
 
+static tree
+add_llncs_author_datas (tree author, array<tree> author_affs) {
+  if (!is_apply (author) || N(author) < 2) return concat ();
+  for (int i=0; i<N(author_affs); i++) {
+    for (int j=1; j<N(author_affs[i]); j++)
+      author << author_affs[i][j];
+  }
+  return author;
+}
+
+static array<tree>
+merge_llncs_author_datas (array<tree> authors, array<tree> affs) {
+  array<tree> r, author_affs;
+  for (int i=0; i<N(authors); i++) {
+    author_affs= array<tree>();
+    for (int j=1; j<N(authors[i]); j++) {
+      if (is_apply (authors[i][j], "\\author-inst", 1)) {
+        int n= as_int (as_string (authors[i][j][1]));
+        if (n>0 && n<N(affs))
+          author_affs << affs[n];
+      }
+    }
+    r << add_llncs_author_datas (authors[i], author_affs);
+  }
+  return r;
+}
+
 static array<tree>
 merge_springer_author_datas (array<tree> a) {
   if (N(a) < 2) return a;
@@ -105,7 +132,7 @@ clean_springer_title_markup (tree t) {
 }
 
 static array<tree>
-get_springer_author_datas (tree t, string s) {
+get_springer_author_datas (tree t, string s, bool llncs=false) {
   s= "\\author-" * s;
   int i, n=N(t);
   bool line_break= true;
@@ -134,6 +161,8 @@ get_springer_author_datas (tree t, string s) {
     }
     else if (is_springer_titlenote (u))
       author_data << tree (APPLY, "\\author-note", u[1]);
+    else if (llncs && is_tuple (u, "\\inst", 1))
+      author_data << tree (APPLY, "\\author-inst", string_arg (u[1]));
     else if (is_tuple (u, "\\email", 1))
       author_data << tree (APPLY, "\\author-email", u[1]);
     else if (is_tuple (u, "\\tmhomepage", 1))
@@ -166,7 +195,12 @@ get_springer_author_datas (tree t, string s) {
 }
 
 static array<tree>
-get_springer_affiliation_datas (tree t) {
+get_llncs_affiliation_datas (tree t, bool llncs=false) {
+  return get_springer_author_datas (t, "affiliation");
+}
+
+static array<tree>
+get_springer_affiliation_datas (tree t, bool llncs=false) {
   int i, n=N(t);
   array<tree> r, author_datas, author_affiliation;
   tree tmp (CONCAT);
@@ -205,12 +239,12 @@ translate_abstract_data (tree u, string s, tree &abstract_data) {
 }
 
 tree
-collect_metadata_springer (tree t) {
+collect_metadata_springer (tree t, bool llncs) {
   int i, n=N(t);
   tree u, r (CONCAT);
   tree doc_data (APPLY, "\\doc-data");
   tree abstract_data (APPLY, "\\abstract-data");
-  array<tree> doc_notes, author_datas;
+  array<tree> doc_notes, author_datas, author_affs;
   for (i=0; i<n; i++) {
     u= t[i];
     if (is_tuple (u, "\\dedication", 1))
@@ -226,9 +260,11 @@ collect_metadata_springer (tree t) {
       doc_data << tree (APPLY, "\\doc-subtitle", cstm (u[1]));
     }
     else if (is_tuple (u, "\\author", 1))
-      author_datas << get_springer_author_datas (u[1], "name");
-    else if (is_tuple (u, "\\institute", 1))
-      author_datas << get_springer_affiliation_datas (u[1]);
+      author_datas << get_springer_author_datas (u[1], "name", llncs);
+    else if (!llncs && is_tuple (u, "\\institute", 1))
+      author_affs << get_springer_affiliation_datas (u[1]);
+    else if (llncs && is_tuple (u, "\\institute", 1))
+      author_affs << get_llncs_affiliation_datas (u[1]);
     else if (is_tuple (u, "\\begin-abstract")) {
       tree abstract_text (CONCAT);
       i++;
@@ -252,8 +288,14 @@ collect_metadata_springer (tree t) {
       translate_abstract_data (u, "msc", abstract_data);
   }
   bool spaced= false;
-  author_datas= filter_spaces (author_datas, spaced);
-  author_datas= merge_springer_author_datas (author_datas);
+  if (llncs) {
+    author_datas= merge_llncs_author_datas (author_datas, author_affs);
+  }
+  else {
+    author_datas << author_affs;
+    author_datas= filter_spaces (author_datas, spaced);
+    author_datas= merge_springer_author_datas (author_datas);
+  }
   for (int j=0; j<N(author_datas); j++)
     author_datas[j]= tree (APPLY, "\\doc-author", author_datas[j]);
   if (N(author_datas) > 0) doc_data << author_datas;

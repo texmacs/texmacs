@@ -20,7 +20,7 @@ tree        collect_metadata_ams (tree t);
 tree        collect_metadata_elsevier (tree t);
 tree        collect_metadata_revtex (tree t);
 tree        collect_metadata_svmono (tree t);
-tree        collect_metadata_springer (tree t);
+tree        collect_metadata_springer (tree t, bool llncs= false);
 tree        collect_metadata (tree t, tree latex_classe);
 bool        is_metadata (tree u);
 bool        is_metadata_env (tree u);
