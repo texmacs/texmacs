@@ -176,6 +176,7 @@ public:
   operator tree () { return tree (TUPLE, "transform", (tree) bs[0]); }
   void pre_display (renderer &ren);
   void post_display (renderer &ren);
+  //cursor find_cursor (path bp);
   //selection find_selection (path lbp, path rbp);
 };
 
@@ -212,15 +213,6 @@ void
 transformed_box_rep::post_display (renderer &ren) {
   ren->reset_transformation ();
 }
-
-/*
-selection
-transformed_box_rep::find_selection (path lbp, path rbp) {
-  selection sel= change_box_rep::find_selection (lbp, rbp);
-  return selection (sel->rs & rectangle (x1, y1, x2, y2),
-		    sel->start, sel->end, sel->valid);
-}
-*/
 
 /******************************************************************************
 * Clipped boxes
