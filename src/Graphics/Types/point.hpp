@@ -28,7 +28,8 @@ inline point as_point(double x) {
 point as_point (tree t);
 tree  as_tree (point p);
 
-double operator * (point p1, point p2);
+double inner (point p1, point p2);
+point  vec_mul (point p1, point p2);
 point  rotate_2D (point p, point o, double angle);
 
 double norm (point p);

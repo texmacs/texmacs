@@ -606,7 +606,7 @@ spline_rep::curvature (int i, double t1, double t2) {
   double t,R;
   point pp,ps;
   if (norm(a)==0) return tm_infinity;
-  t=-(a*b)/(2*a*a);
+  t=-inner (a, b) / (2 * inner (a, a));
   if (t1>t) t=t1;
   else if (t2<t) t=t2;
   pp=spline(i,t,1);
@@ -725,10 +725,10 @@ arc_rep::arc_rep (array<point> a2, array<path> cip2, bool close):
     orthogonalize (i, j, center, o1, o3);
   e1= 0;
   point o2b (2), o3b (2);
-  o2b[0]= (o2-center) * i;
-  o2b[1]= (o2-center) * j;
-  o3b[0]= (o3-center) * i;
-  o3b[1]= (o3-center) * j;
+  o2b[0]= inner (o2-center, i);
+  o2b[1]= inner (o2-center, j);
+  o3b[0]= inner (o3-center, i);
+  o3b[1]= inner (o3-center, j);
   e2= arg (o3b) / (2*tm_PI);
   double e3= arg (o2b) / (2*tm_PI);
   if (e2<e3) {

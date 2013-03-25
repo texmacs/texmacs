@@ -44,15 +44,6 @@ l2_norm (point p) {
 }
 
 double
-inner (point p, point q) {
-  ASSERT (N(p) == N(q), "unequal lengths");
-  double s= 0.0;
-  for (int i=0; i<N(p); i++)
-    s += p[i] * q[i];
-  return s;
-}
-
-double
 distance (point p, point q) {
   ASSERT (N(p) == N(q), "unequal lengths");
   double s= 0.0;

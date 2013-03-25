@@ -49,6 +49,15 @@ operator * (double x, point p) {
 }
 
 point
+vec_mul (point p1, point p2) {
+  int i, n= min (N(p1), N(p2));
+  point r (n);
+  for (i=0; i<n; i++)
+    r[i]= p1[i] * p2[i];
+  return r;
+}
+
+point
 operator / (point p, double x) {
   int i, n= N(p);
   point r (n);
@@ -93,11 +102,11 @@ as_tree (point p) {
 }
 
 double
-operator * (point p1, point p2) {
+inner (point p1, point p2) {
   int i, n= min (N(p1), N(p2));
   double r= 0;
   for (i=0; i<n; i++)
-    r+= p1[i] * p2[i];
+    r += p1[i] * p2[i];
   return r;
 }
 
@@ -116,7 +125,7 @@ rotate_2D (point p, point o, double angle) {
 
 double
 norm (point p) {
-  return sqrt (p*p);
+  return sqrt (inner (p, p));
 }
 
 double
@@ -138,7 +147,7 @@ proj (axis ax, point p) {
   if (norm (a) < 1.0e-6)
     return ax.p0;
   else
-    return b + ((a*p - a*b) / (a*a)) * a;
+    return b + ((inner (a, p) - inner (a, b)) / inner (a, a)) * a;
 }
 
 double
@@ -152,7 +161,7 @@ seg_dist (axis ax, point p) {
   point ba= ax.p0 - ax.p1;
   point ap= p - ax.p0;
   point bp= p - ax.p1;
-  if (ab * ap > 0 && ba * bp > 0)
+  if (inner (ab, ap) > 0 && inner (ba, bp) > 0)
     return dist (ax, p);
   else
     return min (norm (ap), norm (bp));
@@ -160,7 +169,7 @@ seg_dist (axis ax, point p) {
 
 bool
 collinear (point p1, point p2) {
-  return fnull (fabs (p1*p2) - norm(p1)*norm(p2), 1.0e-6);
+  return fnull (fabs (inner (p1, p2)) - norm(p1)*norm(p2), 1.0e-6);
 }
 
 bool
@@ -174,7 +183,7 @@ linearly_dependent (point p1, point p2, point p3) {
 bool orthogonalize (point &i, point &j, point p1, point p2, point p3) {
   if (linearly_dependent (p1, p2, p3)) return false;
   i= (p2-p1) / norm (p2-p1);
-  j= (p3-p1) - ((p3-p1) * i) * i;
+  j= (p3-p1) - inner (p3-p1, i) * i;
   j= j / norm (j);
   return true;
 }
@@ -204,12 +213,12 @@ intersection (axis A, axis B) {
   }
   point a(2), b(2), u(2), v(2), p(2);
   a[0]= a[1]= 0;
-  u[0]= (A.p1 - A.p0) * i;
-  u[1]= (A.p1 - A.p0) * j;
-  b[0]= (B.p0 - A.p0) * i;
-  b[1]= (B.p0 - A.p0) * j;
-  v[0]= (B.p1 - B.p0) * i;
-  v[1]= (B.p1 - B.p0) * j;
+  u[0]= inner (A.p1 - A.p0, i);
+  u[1]= inner (A.p1 - A.p0, j);
+  b[0]= inner (B.p0 - A.p0, i);
+  b[1]= inner (B.p0 - A.p0, j);
+  v[0]= inner (B.p1 - B.p0, i);
+  v[1]= inner (B.p1 - B.p0, j);
   if (fnull (norm (u), 1e-6) ||
       fnull (norm (v), 1e-6) ||
       collinear (u, v))

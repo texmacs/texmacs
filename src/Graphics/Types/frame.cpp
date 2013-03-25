@@ -34,8 +34,13 @@ struct scaling_rep: public frame_rep {
 
 frame
 scaling (double magnify, point shift) {
-  return tm_new<scaling_rep> (magnify, shift);
+  return tm_new<scaling_rep> (magnify, magnify);
 }
+
+//frame
+//scaling (double magx, double magy, point shift) {
+//  return tm_new<scaling_rep> (magx, magy, shift);
+//}
 
 /******************************************************************************
 * Rotations
