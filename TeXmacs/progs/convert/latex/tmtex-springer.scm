@@ -195,7 +195,7 @@
     `(subclass (!concat ,@args))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Springer SVMono style (basically like default LaTeX classe with subtitle)
+;;; Springer SVMono style (basically like default LaTeX class with subtitle)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmtex-transform-style x)

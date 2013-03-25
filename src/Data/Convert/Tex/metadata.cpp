@@ -314,16 +314,16 @@ unconcat_tmseps (tree t) {
 }
 
 tree
-collect_metadata (tree t, tree latex_classe) {
+collect_metadata (tree t, tree latex_class) {
   tree r(CONCAT);
   bool spaced;
   string s = "article";
-  if (is_tuple (latex_classe, "\\documentclass", 1) ||
-      is_tuple (latex_classe, "\\documentstyle", 1))
-    s = latex_verbarg_to_string (latex_classe[1]);
-  else if (is_tuple (latex_classe, "\\documentclass*", 2) ||
-           is_tuple (latex_classe, "\\documentstyle*", 2))
-    s = latex_verbarg_to_string (latex_classe[2]);
+  if (is_tuple (latex_class, "\\documentclass", 1) ||
+      is_tuple (latex_class, "\\documentstyle", 1))
+    s = latex_verbarg_to_string (latex_class[1]);
+  else if (is_tuple (latex_class, "\\documentclass*", 2) ||
+           is_tuple (latex_class, "\\documentstyle*", 2))
+    s = latex_verbarg_to_string (latex_class[2]);
 
   if (s == "acm_proc_article-sp" ||
       s == "sig-alternate" || s == "sig-alt-full")

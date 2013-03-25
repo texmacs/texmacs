@@ -203,7 +203,7 @@ filter_preamble (tree t) {
   tree doc (CONCAT);
   tree preamble (CONCAT);
   tree metadata (CONCAT);
-  tree latex_classe;
+  tree latex_class;
 
   for (i=0; i<n; i++) {
     tree u= t[i];
@@ -221,7 +221,7 @@ filter_preamble (tree t) {
 	       is_tuple (u, "\\documentstyle*"))
       {
 	      doc << u;
-        latex_classe = u;
+        latex_class = u;
       }
       else if (is_tuple (u, "\\def") ||
 	       is_tuple (u, "\\def*") || is_tuple (u, "\\def**"))
@@ -254,7 +254,7 @@ filter_preamble (tree t) {
       doc << u;
   }
   if (in_preamble) return t;
-  metadata = collect_metadata (t, latex_classe);
+  metadata = collect_metadata (t, latex_class);
   // cout << "Parsed metadatas: " << metadata << "\n\n";
   r << A(kill_space_invaders (metadata));
   // cout << "Parsed metadatas: " << kill_space_invaders (metadata) << "\n";

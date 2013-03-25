@@ -21,7 +21,7 @@ tree        collect_metadata_elsevier (tree t);
 tree        collect_metadata_revtex (tree t);
 tree        collect_metadata_svmono (tree t);
 tree        collect_metadata_springer (tree t, bool llncs= false);
-tree        collect_metadata (tree t, tree latex_classe);
+tree        collect_metadata (tree t, tree latex_class);
 bool        is_metadata (tree u);
 bool        is_metadata_env (tree u);
 tree        filter_spaces (tree t, bool &spaced);
