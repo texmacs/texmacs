@@ -137,7 +137,7 @@ class concater_rep {
   void typeset_graphics (tree t, path ip);
   void typeset_superpose (tree t, path ip);
   void typeset_gr_group (tree t, path ip);
-  void typeset_gr_linear_transform (tree t, path ip);
+  void typeset_gr_transform (tree t, path ip);
   void typeset_text_at (tree t, path ip);
   void typeset_math_at (tree t, path ip);
   void typeset_point (tree t, path ip);

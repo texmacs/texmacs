@@ -548,9 +548,9 @@ init_std_drd () {
 	repeat (1, 1) -> accessible (0));
   init (GR_GROUP, "gr-group",
 	repeat (1, 1) -> returns_graphical () -> graphical (0));
-  init (GR_LINEAR_TRANSFORM, "gr-linear-transform",
+  init (GR_TRANSFORM, "gr-transform",
 	fixed (1, 1, BIFORM) -> returns_graphical () ->
-	graphical (0));
+	accessible (0) -> graphical (0));
   /*
   init (TEXT_AT, "text-at",
 	fixed (1, 1, BIFORM) -> returns_graphical () ->

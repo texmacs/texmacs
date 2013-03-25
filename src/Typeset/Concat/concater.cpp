@@ -677,8 +677,8 @@ concater_rep::typeset (tree t, path ip) {
   case GR_GROUP:
     typeset_gr_group (t, ip);
     break;
-  case GR_LINEAR_TRANSFORM:
-    typeset_gr_linear_transform (t, ip);
+  case GR_TRANSFORM:
+    typeset_gr_transform (t, ip);
     break;
   case TEXT_AT:
     typeset_text_at (t, ip);
