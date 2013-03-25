@@ -5,10 +5,10 @@
 <\body>
   <\active*>
     <\src-title>
-      <src-style-file|ieeeconf|0.1>
+      <src-style-file|ieeetran|0.1>
 
       <\src-purpose>
-        The IEEEconf style.
+        The IEEEtran style.
       </src-purpose>
 
       <\src-copyright|2013>
@@ -24,7 +24,7 @@
     </src-title>
   </active*>
 
-  <active*|<src-comment|IEEEconf is temporarily a version of article.>>
+  <active*|<src-comment|IEEEtran is temporarily a version of article.>>
 
   <use-package|article>
 </body>

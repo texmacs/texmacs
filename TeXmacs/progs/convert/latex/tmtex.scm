@@ -78,7 +78,7 @@
          (import-from (convert latex tmtex-revtex)))
         ((or (springer-style?) (svmono-style?))
          (import-from (convert latex tmtex-springer)))
-        ((or (ieee-conf-style?) (ieee-tran-style?))
+        ((ieee-style?)
          (import-from (convert latex tmtex-ieee)))
          (else (noop))))
 
