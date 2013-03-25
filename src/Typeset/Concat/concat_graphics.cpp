@@ -15,6 +15,7 @@
 #include "hashset.hpp"
 #include "analyze.hpp"
 #include "scheme.hpp"
+#include "matrix.hpp"
 
 #define BEGIN_MAGNIFY                                           \
   tree new_mag= as_string (env->magn * env->mgfy);              \
@@ -128,15 +129,40 @@ concater_rep::typeset_superpose (tree t, path ip) {
   print (superpose_box (ip, bs));
 }
 
+bool
+is_transformation (tree t) {
+  if (is_compound (t, "rotation", 1) &&
+      is_double (t[0]))
+    return true;
+  if (is_compound (t, "rotation", 2) &&
+      is_func (t[0], _POINT, 2) &&
+      is_double (t[0][0]) &&
+      is_double (t[0][1]) &&
+      is_double (t[1]))
+    return true;
+  return false;
+}
+
+frame
+get_transformation (tree t) {
+  if (is_compound (t, "rotation", 1))
+    return rotation_2D (point (0, 0), as_double (t[0]));
+  if (is_compound (t, "rotation", 2))
+    return rotation_2D (as_point (t[0]), as_double (t[1]));
+  FAILED ("transformation expected");
+  return frame ();
+}
+
 void
-concater_rep::typeset_gr_linear_transform (tree t, path ip) {
-  if (N(t) != 2 || !is_tuple (t[1])) { typeset_error (t, ip); }
-  frame f= affine_2D (as_matrix<double> (t[1]));
-  box   b= typeset_as_concat (env, t[0], descend (ip, 0));
-        /* The call should be performed with 'typeset_as_atomic()',
-	   but we should re-test transform() under these circumstances.
-         */
-  print (b->transform (env->fr * (f * invert (env->fr))));
+concater_rep::typeset_gr_transform (tree t, path ip) {
+  tree tr= t[1]; // env->exec (t[1]);
+  if (N(t) != 2 || !is_transformation (tr)) typeset_error (t, ip);
+  else {
+    frame f= get_transformation (tr);
+    box   b= typeset_as_atomic (env, t[0], descend (ip, 0));
+    print (transformed_box (ip, b, f));
+    //print (b->transform (env->fr * (f * invert (env->fr))));
+  }
 }
 
 void

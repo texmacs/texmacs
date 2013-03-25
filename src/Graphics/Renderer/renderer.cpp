@@ -13,6 +13,7 @@
 #include "gui.hpp"
 #include "rectangles.hpp"
 #include "image_files.hpp"
+#include "frame.hpp"
 
 int std_shrinkf= 5;
 
@@ -134,6 +135,16 @@ renderer_rep::reset_zoom_factor () {
 void
 renderer_rep::set_shrinking_factor (int sf) {
   set_zoom_factor (((double) std_shrinkf) / ((double) sf));
+}
+
+void
+renderer_rep::set_transformation (frame fr) {
+  (void) fr;
+  // FIXME: might replace the renderer by a transformed renderer
+}
+
+void
+renderer_rep::reset_transformation () {
 }
 
 /******************************************************************************

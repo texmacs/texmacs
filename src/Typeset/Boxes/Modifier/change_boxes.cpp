@@ -166,6 +166,49 @@ vcorrect_box_rep::vcorrect_box_rep (path ip, box b, SI top_cor, SI bot_cor):
 }
 
 /******************************************************************************
+* Transformed boxes
+******************************************************************************/
+
+struct transformed_box_rep: public change_box_rep {
+  frame fr;
+public:
+  transformed_box_rep (path ip, box b, frame fr);
+  operator tree () { return tree (TUPLE, "transform", (tree) bs[0]); }
+  void pre_display (renderer &ren);
+  void post_display (renderer &ren);
+  //selection find_selection (path lbp, path rbp);
+};
+
+transformed_box_rep::transformed_box_rep (path ip, box b, frame fr2):
+  change_box_rep (ip, true), fr (fr2)
+{
+  insert (b, 0, 0);
+  position ();
+  //x1= X1; y1= Y1;
+  //x2= X2; y2= Y2;
+  finalize ();
+}
+
+void
+transformed_box_rep::pre_display (renderer &ren) {
+  ren->set_transformation (fr);
+}
+
+void
+transformed_box_rep::post_display (renderer &ren) {
+  ren->reset_transformation ();
+}
+
+/*
+selection
+transformed_box_rep::find_selection (path lbp, path rbp) {
+  selection sel= change_box_rep::find_selection (lbp, rbp);
+  return selection (sel->rs & rectangle (x1, y1, x2, y2),
+		    sel->start, sel->end, sel->valid);
+}
+*/
+
+/******************************************************************************
 * Clipped boxes
 ******************************************************************************/
 
@@ -673,6 +716,11 @@ box
 resize_box (path ip, box b, SI x1, SI y1, SI x2, SI y2,
 	    bool child_flag, bool adjust) {
   return tm_new<resize_box_rep> (ip, b, x1, y1, x2, y2, child_flag, adjust);
+}
+
+box
+transformed_box (path ip, box b, frame fr) {
+  return tm_new<transformed_box_rep> (ip, b, fr);
 }
 
 box

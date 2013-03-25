@@ -50,6 +50,9 @@ public:
   //void set_extent (int _w, int _h) { w = _w; h = _h; }
   void get_extents (int& w, int& h);
 
+  void set_transformation (frame fr);
+  void reset_transformation ();
+
   void set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore = false);
 
   void  draw (int char_code, font_glyphs fn, SI x, SI y);
@@ -70,7 +73,6 @@ public:
 
   void draw_clipped (QImage * im, int w, int h, SI x, SI y);
   void draw_clipped (QPixmap * im, int w, int h, SI x, SI y);
-  
   
   void new_shadow (renderer& ren);
   void delete_shadow (renderer& ren);
