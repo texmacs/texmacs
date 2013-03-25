@@ -119,26 +119,19 @@
       (if aff (append `(,aff*) (cluster-by-affiliations l*)) `(,aff*)))))
 
 (tm-define (tmtex-affiliation-group t)
-  (let* ((l        (cdr t))
-         (affs     (car l))
-         (affs     (if (null? affs) '()
-                     `((!concat (!linefeed) (at) (!linefeed) ,(tmtex affs)))))
-         (authors  (map cdadr (cdr l)))
-         (names    (map (lambda (a)
-                          (tmtex-concat-Sep
-                            (map tmtex
-                                 (map cadr (tmtex-select-args-by-func
-                                             'author-name a))))) authors))
-         (auth-sep '(!concat " " (and) " "))
-         (names    (list-intersperse names auth-sep))
-         (emails   (filter nnull?
-                           (map (lambda (e)
-                                  (tmtex-concat-sep
-                                    (map tmtex-author-email
-                                         (tmtex-select-args-by-func
-                                           'author-email e)))) authors)))
-         (emails   (map (lambda (e) `(!concat (!nextline) ,e)) emails)))
-         `(institution (!concat ,@names ,@affs ,@emails))))
+  (with old-tmtex-make-author (eval tmtex-make-author)
+    (set! tmtex-make-author
+      (lambda (names affiliations emails urls miscs notes)
+        (with names (tmtex-concat-Sep (map cadr names))
+          `(!concat ,names " " ,@emails))))
+    (let* ((affs     (cadr t))
+           (affs     (if (null? affs) '()
+                       `((!concat (!linefeed) (at) (!linefeed) ,(tmtex affs)))))
+           (auth-sep '(!concat " " (and) " "))
+           (authors  (map tmtex-doc-author (cddr t)))
+           (authors  (list-intersperse authors auth-sep)))
+      (set! tmtex-make-author (eval old-tmtex-make-author))
+      `(institution (!concat ,@authors ,@affs)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Springer specific titlemarkup
