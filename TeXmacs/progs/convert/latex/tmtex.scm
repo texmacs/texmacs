@@ -1282,7 +1282,7 @@
 
 (tm-define (tmtex-append-authors l)
   (cond ((null? l) '())
-        ((== (length l) 2) `(,(car l) (!indent (,(cdr l)))))
+        ((== (length l) 1) `(,(car l) (!indent (!concat ,@(cdr l)))))
         (else
           (with lf '(!concat (!linefeed) (and) (!linefeed))
             `((author
