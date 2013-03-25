@@ -104,7 +104,7 @@ get_texmacs_path () {
     //FIXME: Why is this?
   while ((N(tmpath)>0) && (tmpath [N(tmpath) - 1] == '/'))
     tmpath= tmpath (0, N(tmpath)-1);
-  return tmpath;
+  return url_system (tmpath);
 }
 
 url
