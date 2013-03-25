@@ -57,6 +57,9 @@
   (svjour-style%        (in? tmtex-style '("svjour")) springer-style%)
   (llncs-style%         (in? tmtex-style '("llncs"))  springer-style%)
   (svmono-style%        (in? tmtex-style '("svmono")))
+  (ieee-style%          (in? tmtex-style '("ieeeconf" "ieeetran")))
+  (ieee-conf-style%     (in? tmtex-style '("ieeeconf")) ieee-style%)
+  (ieee-tran-style%     (in? tmtex-style '("ieeetran")) ieee-style%)
   (natbib-package%      (in? "cite-author-year" tmtex-packages)))
 
 (tm-define (tmtex-style-init body)
@@ -75,6 +78,8 @@
          (import-from (convert latex tmtex-revtex)))
         ((or (springer-style?) (svmono-style?))
          (import-from (convert latex tmtex-springer)))
+        ((or (ieee-conf-style?) (ieee-tran-style?))
+         (import-from (convert latex tmtex-ieee)))
          (else (noop))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
