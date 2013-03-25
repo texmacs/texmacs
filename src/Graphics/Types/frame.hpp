@@ -12,7 +12,6 @@
 #ifndef FRAME_H
 #define FRAME_H
 #include "point.hpp"
-#include "matrix.hpp"
 
 class frame_rep: public abstract_struct {
 public:
@@ -57,6 +56,7 @@ class frame {
 ABSTRACT_NULL_CODE(frame);
 
 // Transformations
+template<typename T> class matrix;
 frame scaling (double magnify, point shift);
 frame rotation_2D (point center, double angle);
 frame affine_2D (matrix<double> m);
