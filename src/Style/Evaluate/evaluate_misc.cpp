@@ -14,7 +14,7 @@
 #include "vars.hpp"
 #include "analyze.hpp"
 #include "url.hpp"
-#include "../../Typeset/Graphics/frame.hpp"
+#include "../../Typeset/frame.hpp"
 #include "image_files.hpp"
 #include "renderer.hpp"
 

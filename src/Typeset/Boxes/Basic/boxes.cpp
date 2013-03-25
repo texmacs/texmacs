@@ -11,7 +11,7 @@
 
 #include "boxes.hpp"
 #include "formatter.hpp"
-#include "Graphics/point.hpp"
+#include "point.hpp"
 #include "printer.hpp"
 #include "file.hpp"
 #include "merge_sort.hpp"

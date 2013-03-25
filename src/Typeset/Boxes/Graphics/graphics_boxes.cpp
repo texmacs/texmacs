@@ -13,7 +13,7 @@
 #include "Boxes/graphics.hpp"
 #include "Boxes/composite.hpp"
 #include "Boxes/construct.hpp"
-#include "Graphics/math_util.hpp"
+#include "math_util.hpp"
 
 /******************************************************************************
 * Graphics boxes

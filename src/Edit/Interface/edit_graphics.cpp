@@ -12,7 +12,7 @@
 #include "Interface/edit_graphics.hpp"
 #include "server.hpp"
 #include "scheme.hpp"
-#include "Graphics/curve.hpp"
+#include "curve.hpp"
 #include "Boxes/graphics.hpp"
 #include "Bridge/impl_typesetter.hpp"
 #include "drd_std.hpp"

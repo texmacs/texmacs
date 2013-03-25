@@ -10,12 +10,12 @@
 ******************************************************************************/
 
 #include "env.hpp"
-#include "Graphics/grid.hpp"
-#include "Graphics/point.hpp"
-#include "Graphics/frame.hpp"
+#include "grid.hpp"
+#include "point.hpp"
+#include "frame.hpp"
 #include "Boxes/graphics.hpp"
 #include "Boxes/composite.hpp"
-#include "Graphics/math_util.hpp"
+#include "math_util.hpp"
 
 /******************************************************************************
 * Grid boxes

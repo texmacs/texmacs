@@ -20,7 +20,7 @@
 #include "hashmap.hpp"
 #include "boxes.hpp"
 #include "url.hpp"
-#include "Graphics/frame.hpp"
+#include "frame.hpp"
 #include "link.hpp"
 
 #define DECORATION (-1)

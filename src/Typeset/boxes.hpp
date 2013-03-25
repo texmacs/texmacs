@@ -20,8 +20,8 @@
 #include "font.hpp"
 #include "language.hpp"
 #include "hashmap.hpp"
-#include "Graphics/frame.hpp"
-#include "Graphics/grid.hpp"
+#include "frame.hpp"
+#include "grid.hpp"
 
 #define MAX_SI 0x7fffffff
 #define MIN_SI 0x80000000

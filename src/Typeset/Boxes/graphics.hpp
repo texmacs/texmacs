@@ -12,9 +12,9 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 #include "boxes.hpp"
-#include "Graphics/frame.hpp"
-#include "Graphics/curve.hpp"
-#include "Graphics/grid.hpp"
+#include "frame.hpp"
+#include "curve.hpp"
+#include "grid.hpp"
 #include "gui.hpp"
 
 box graphics_box (
