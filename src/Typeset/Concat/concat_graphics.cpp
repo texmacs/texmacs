@@ -155,8 +155,9 @@ get_transformation (tree t) {
 
 void
 concater_rep::typeset_gr_transform (tree t, path ip) {
-  tree tr= t[1]; // env->exec (t[1]);
-  if (N(t) != 2 || !is_transformation (tr)) typeset_error (t, ip);
+  if (N(t) != 2) typeset_error (t, ip);
+  tree tr= t[1]; //env->exec (t[1]);
+  if (!is_transformation (tr)) typeset_error (t, ip);
   else {
     frame f= get_transformation (tr);
     box   b= typeset_as_atomic (env, t[0], descend (ip, 0));

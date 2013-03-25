@@ -122,13 +122,15 @@ qt_renderer_rep::get_extents (int& w2, int& h2) {
 void
 qt_renderer_rep::set_transformation (frame fr) {
   ASSERT (fr->linear, "only linear transformations have been implemented");
-  point o = fr (point (0.0, 0.0));
-  point ux= fr (point (1.0, 0.0)) - o;
-  point uy= fr (point (0.0, 1.0)) - o;
+  frame cv= scaling (point (pixel, -pixel), point (-ox, -oy));
+  frame tr= invert (cv) * fr * cv;
+  point o = tr (point (0.0, 0.0));
+  point ux= tr (point (1.0, 0.0)) - o;
+  point uy= tr (point (0.0, 1.0)) - o;
   //cout << "Set transformation " << o << ", " << ux << ", " << uy << "\n";
-  QTransform tr (ux[0], ux[1], uy[0], uy[1], o[0], o[1]);
+  QTransform qtr (ux[0], ux[1], uy[0], uy[1], o[0], o[1]);
   painter->save ();
-  painter->setTransform (tr, true);
+  painter->setTransform (qtr, true);
 }
 
 void

@@ -184,9 +184,23 @@ transformed_box_rep::transformed_box_rep (path ip, box b, frame fr2):
 {
   insert (b, 0, 0);
   position ();
-  //x1= X1; y1= Y1;
-  //x2= X2; y2= Y2;
   finalize ();
+  point t1a= fr (point (x1, y1));
+  point t2a= fr (point (x2, y2));
+  point t1b= fr (point (x1, y2));
+  point t2b= fr (point (x2, y1));
+  point t3a= fr (point (x3, y3));
+  point t4a= fr (point (x4, y4));
+  point t3b= fr (point (x3, y4));
+  point t4b= fr (point (x4, y3));
+  x1= (SI) (min (min (t1a[0], t2a[0]), min (t1b[0], t2b[0])) + 0.5);
+  y1= (SI) (min (min (t1a[1], t2a[1]), min (t1b[1], t2b[1])) + 0.5);
+  x2= (SI) (max (max (t1a[0], t2a[0]), max (t1b[0], t2b[0])) + 0.5);
+  y2= (SI) (max (max (t1a[1], t2a[1]), max (t1b[1], t2b[1])) + 0.5);
+  x3= (SI) (min (min (t3a[0], t4a[0]), min (t3b[0], t4b[0])) + 0.5);
+  y3= (SI) (min (min (t3a[1], t4a[1]), min (t3b[1], t4b[1])) + 0.5);
+  x4= (SI) (max (max (t3a[0], t4a[0]), max (t3b[0], t4b[0])) + 0.5);
+  y4= (SI) (max (max (t3a[1], t4a[1]), max (t3b[1], t4b[1])) + 0.5);
 }
 
 void
