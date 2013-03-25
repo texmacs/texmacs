@@ -1322,14 +1322,12 @@
   (tmtex-std-env "abstract" (cdr t)))
 
 (tm-define (tmtex-abstract-keywords t)
-  (with args (map (lambda (x) `(!group ,x))
-                  (list-intersperse (map tmtex (cdr t)) '(tmsep)))
-    `(!concat (tmkeywords) (!concat ,@args))))
+  (with args (tmtex-concat-sep (map tmtex (cdr t)))
+    `(!concat (tmkeywords) (!group ,args))))
 
 (tm-define (tmtex-abstract-msc t)
-  (with args (map (lambda (x) `(!group ,x))
-                  (list-intersperse (map tmtex (cdr t)) '(tmsep)))
-    `(!concat (tmmsc) (!concat ,@args))))
+  (with args (tmtex-concat-sep (map tmtex (cdr t)))
+    `(!concat (tmmsc) (!group ,args))))
 
 (tm-define  (tmtex-make-abstract-data keywords msc abstract)
   `(!document ,@keywords ,@msc ,@abstract))
