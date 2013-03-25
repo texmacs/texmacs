@@ -31,6 +31,7 @@ point project (point p, point q1, point q2);
 double distance (point p, point q1, point q2);
 point inf (point p, point q);
 point sup (point p, point q);
+point abs (point p);
 
 double distance (point p, poly_line pl);
 bool nearby (point p, poly_line pl);

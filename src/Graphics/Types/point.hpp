@@ -19,8 +19,14 @@ point operator -  (point p);
 point operator +  (point p1, point p2);
 point operator -  (point p1, point p2);
 point operator *  (double x, point p );
+point operator *  (point p1, point p2);
 point operator /  (point  p, double x);
+point operator /  (point p1, point p2);
 bool  operator == (point p1, point p2);
+
+point abs (point p);
+double min (point p);
+double max (point p);
 
 bool is_point (tree t);
 inline point as_point(double x) {
@@ -29,7 +35,6 @@ point as_point (tree t);
 tree  as_tree (point p);
 
 double inner (point p1, point p2);
-point  vec_mul (point p1, point p2);
 point  rotate_2D (point p, point o, double angle);
 
 double norm (point p);

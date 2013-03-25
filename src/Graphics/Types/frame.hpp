@@ -58,7 +58,7 @@ ABSTRACT_NULL_CODE(frame);
 // Transformations
 template<typename T> class matrix;
 frame scaling (double magnify, point shift);
-frame scaling (double magx, double magy, point shift);
+frame scaling (point magnify, point shift);
 frame rotation_2D (point center, double angle);
 frame affine_2D (matrix<double> m);
 

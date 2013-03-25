@@ -49,7 +49,7 @@ operator * (double x, point p) {
 }
 
 point
-vec_mul (point p1, point p2) {
+operator * (point p1, point p2) {
   int i, n= min (N(p1), N(p2));
   point r (n);
   for (i=0; i<n; i++)
@@ -66,6 +66,15 @@ operator / (point p, double x) {
   return r;
 }
 
+point
+operator / (point p1, point p2) {
+  int i, n= min (N(p1), N(p2));
+  point r (n);
+  for (i=0; i<n; i++)
+    r[i]= p1[i] / p2[i];
+  return r;
+}
+
 bool
 operator == (point p1, point p2) {
   if (N(p1) != N(p2)) return false;
@@ -73,6 +82,35 @@ operator == (point p1, point p2) {
   for (i=0; i<n; i++)
     if (!fnull (p1[i]-p2[i], 1e-6)) return false;
   return true;
+}
+
+point
+abs (point p) {
+  int i, n= N(p);
+  point r (n);
+  for (i=0; i<n; i++)
+    r[i]= fabs (p[i]);
+  return r;
+}
+
+double
+min (point p) {
+  int i, n= N(p);
+  ASSERT (N(p)>0, "non empty point expected");
+  double r= p[0];
+  for (i=1; i<n; i++)
+    r= min (r, p[i]);
+  return r;
+}
+
+double
+max (point p) {
+  int i, n= N(p);
+  ASSERT (N(p)>0, "non empty point expected");
+  double r= p[0];
+  for (i=1; i<n; i++)
+    r= max (r, p[i]);
+  return r;
 }
 
 bool

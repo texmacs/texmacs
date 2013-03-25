@@ -34,13 +34,31 @@ struct scaling_rep: public frame_rep {
 
 frame
 scaling (double magnify, point shift) {
-  return tm_new<scaling_rep> (magnify, magnify);
+  return tm_new<scaling_rep> (magnify, shift);
 }
 
-//frame
-//scaling (double magx, double magy, point shift) {
-//  return tm_new<scaling_rep> (magx, magy, shift);
-//}
+struct an_scaling_rep: public frame_rep {
+  point magnify;
+  point shift;
+  an_scaling_rep (point m, point s): magnify (m), shift (s) { linear= true; }
+  operator tree () {
+    return tuple ("scale", as_string (magnify), as_tree (shift)); }
+  point direct_transform (point p) { return shift + magnify * p; }
+  point inverse_transform (point p) { return (p - shift) / magnify; }
+  point jacobian (point p, point v, bool &error) {
+    (void) p; error= false; return magnify * v; }
+  point jacobian_of_inverse (point p, point v, bool &error) {
+    (void) p; error= false; return v / magnify; }
+  double direct_bound (point p, double eps) {
+    (void) p; return eps / min (abs (magnify)); }
+  double inverse_bound (point p, double eps) {
+    (void) p; return eps * max (abs (magnify)); }
+};
+
+frame
+scaling (point magnify, point shift) {
+  return tm_new<an_scaling_rep> (magnify, shift);
+}
 
 /******************************************************************************
 * Rotations
