@@ -37,7 +37,7 @@
                               affs-l emails-l urls-l miscs-l notes-l)
   (:mode acm-style?)
   (with names (tmtex-concat-Sep (map cadr names))
-        `(author (!concat ,names
+        `(author (!concat ,@names
                           ,@urls
                           ,@notes
                           ,@miscs
@@ -46,7 +46,7 @@
 
 (define (tmtex-make-title titles notes miscs)
   (with titles (tmtex-concat-Sep (map cadr titles))
-        `(title (!concat ,titles ,@notes ,@miscs))))
+        `(title (!concat ,@titles ,@notes ,@miscs))))
 
 (tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes
                                 miscs-l notes-l)
@@ -118,7 +118,7 @@
 (tm-define (tmtex-abstract-keywords t)
   (:mode acm-style?)
   (with args (tmtex-concat-sep (map tmtex (cdr t)))
-    `(keywords ,args)))
+    `(keywords ,@args)))
 
 (tm-define (tmtex-abstract-msc t)
   (:mode acm-style?)

@@ -210,9 +210,9 @@
 (tm-define (tmtex-abstract-keywords t)
   (:mode revtex-style?)
   (with args (tmtex-concat-sep (map tmtex (cdr t)))
-    `(keywords ,args)))
+    `(keywords ,@args)))
 
 (tm-define (tmtex-abstract-msc t)
   (:mode revtex-style?)
   (with args (tmtex-concat-sep (map tmtex (cdr t)))
-    `(pacs ,args)))
+    `(pacs ,@args)))

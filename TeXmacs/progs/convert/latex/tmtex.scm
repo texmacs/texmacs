@@ -212,11 +212,11 @@
 
 (tm-define (tmtex-concat-sep l)
   (set! l (list-intersperse l '(!concat (tmsep) " ")))
-  (if (null? l) '() `(!concat ,@l)))
+  (if (null? l) '() `((!concat ,@l))))
 
 (tm-define (tmtex-concat-Sep l)
   (set! l (list-intersperse l '(!concat (tmSep) " ")))
-  (if (null? l) '() `(!concat ,@l)))
+  (if (null? l) '() `((!concat ,@l))))
 
 (define (tex-concat-similar l)
   (if (or (null? l) (null? (cdr l))) l
@@ -1314,7 +1314,7 @@
 (tm-define (tmtex-make-author names affiliations emails urls miscs notes
                               affs-l emails-l urls-l miscs-l notes-l)
   (with names (tmtex-concat-Sep (map cadr names))
-        `(author (!paragraph ,names
+        `(author (!paragraph ,@names
                              ,@affiliations
                              ,@emails
                              ,@urls
@@ -1392,11 +1392,11 @@
 
 (tm-define (tmtex-abstract-keywords t)
   (with args (tmtex-concat-sep (map tmtex (cdr t)))
-    `(!concat (tmkeywords) (!group ,args))))
+    `(!concat (tmkeywords) (!group ,@args))))
 
 (tm-define (tmtex-abstract-msc t)
   (with args (tmtex-concat-sep (map tmtex (cdr t)))
-    `(!concat (tmmsc) (!group ,args))))
+    `(!concat (tmmsc) (!group ,@args))))
 
 (tm-define  (tmtex-make-abstract-data keywords msc abstract)
   `(!document ,@keywords ,@msc ,@abstract))

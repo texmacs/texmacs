@@ -40,7 +40,7 @@
                               affs-l emails-l urls-l miscs-l notes-l)
   (:mode springer-style?)
   (with names (tmtex-concat-Sep (map cadr names))
-        `(author (!paragraph ,names
+        `(author (!paragraph ,@names
                              ,@urls
                              ,@notes
                              ,@miscs))))
@@ -52,7 +52,7 @@
 
 (define (svjour-make-title titles notes miscs)
   (with titles (tmtex-concat-Sep (map cadr titles))
-        `(title (!concat ,titles ,@notes ,@miscs))))
+        `(title (!concat ,@titles ,@notes ,@miscs))))
 
 (define (svjour-make-doc-data titles subtits authors affs dates miscs notes)
   `(!document
@@ -125,7 +125,7 @@
       (lambda (names affiliations emails urls miscs notes
                      affs-l emails-l urls-l miscs-l notes-l)
         (with names (tmtex-concat-Sep (map cadr names))
-          `(!concat ,names " " ,@emails))))
+          `(!concat ,@names " " ,@emails))))
     (let* ((affs     (cadr t))
            (affs     (if (null? affs) '()
                        `((!concat (!linefeed) (at) (!linefeed) ,(tmtex affs)))))
@@ -209,7 +209,7 @@
 
 (define (svmono-make-title titles notes miscs)
   (with titles (tmtex-concat-Sep (map cadr titles))
-        `(title (!indent (!paragraph ,titles ,@notes ,@miscs)))))
+        `(title (!indent (!paragraph ,@titles ,@notes ,@miscs)))))
 
 (tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes
                                 miscs-l notes-l)
@@ -297,8 +297,7 @@
                               affs-l emails-l urls-l miscs-l notes-l)
   (:mode llncs-style?)
   (with names (tmtex-concat-Sep (map cadr names))
-    (set! names `(,(car names) (!concat ,@(cdr names) ,@affiliations)))
-      `(author (!paragraph ,names
-                           ,@urls
-                           ,@notes
-                           ,@miscs))))
+    `(author (!paragraph (!concat ,@names ,@affiliations)
+                         ,@urls
+                         ,@notes
+                         ,@miscs))))

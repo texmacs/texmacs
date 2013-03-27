@@ -123,9 +123,9 @@
 (tm-define (tmtex-abstract-keywords t)
   (:mode ams-style?)
   (with args (tmtex-concat-sep (map tmtex (cdr t)))
-    `(keywords ,args)))
+    `(keywords ,@args)))
 
 (tm-define (tmtex-abstract-msc t)
   (:mode ams-style?)
   (with args (tmtex-concat-Sep (map tmtex (cdr t)))
-    `(subjclass ,args)))
+    `(subjclass ,@args)))
