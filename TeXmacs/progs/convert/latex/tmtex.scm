@@ -1197,7 +1197,7 @@
 	  (else (list 'scalebox (number->string mhor) fig)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Titles of documents
+;; Matadatas of documents
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmtex-doc-title t)
@@ -1241,8 +1241,17 @@
   (set! t (tmtex-remove-line-feeds t))
   `(tmmisc ,(tmtex (cadr t))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;  Usefull macros for metadata presentation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (tm-define (tmtex-select-args-by-func n l)
   (filter (lambda (x) (func? x n)) l))
+
+(define (tmtex-get-transform l tag)
+  (let ((transform (symbol-append 'tmtex- tag))
+        (l*        (tmtex-select-args-by-func tag l)))
+    (if (defined? transform) (map (eval transform) l*) (map tmtex l*))))
 
 (tm-define (tmtex-remove-line-feeds t)
   (if (npair? t) t
@@ -1255,7 +1264,55 @@
       (if (!= r 'document) `(,r ,@s)
         `(concat ,@(list-intersperse s '(next-line)))))))
 
-(tm-define (tmtex-make-author names affiliations emails urls miscs notes)
+;;  Metadata clustering
+
+;TODO: document and move to latex-tools.scm
+(define (stree-replace l what by)
+  (cond ((or (null? l) (nlist? l)) l)
+        ((== l what) by)
+        (else
+          (map (lambda (x) (stree-replace x what by)) l))))
+
+;TODO: document and move to latex-tools.scm
+(define (next-stree-occurence l tag)
+  (cond ((or (null? l) (nlist? l)) #f)
+        ((== (car l) tag) l)
+        (else
+          (with found? #f
+            (map-in-order
+              (lambda (x)
+                (if (not found?)
+                  (set! found? (next-stree-occurence x tag)))) l)
+            found?))))
+
+(define (add-refs l n tag tr tl)
+  (with streetag (next-stree-occurence (car l) tag)
+    (if (not streetag) l
+      (let* ((tagref  (list tr n))
+             (authors (stree-replace (car l) streetag tagref))
+             (taglist (if (null? (cdr l)) '() (cadr l)))
+             (taglist `(,@taglist (,tl ,n ,(cadr streetag))))
+             (l*      (list authors taglist)))
+        (add-refs l* (1+ n) tag tr tl)))))
+
+(tm-define (make-references l tag author?)
+  (let* ((tag-ref      (symbol-append tag '- 'ref))
+         (tag-label    (symbol-append tag '- 'label))
+         (tmp          (add-refs `(,l) 1 tag tag-ref tag-label))
+         (data-refs    (car tmp))
+         (data-labels  (if (null? (cdr tmp)) '() (cadr tmp))))
+    (if make-label
+      (set! data-labels `((doc-author (author-data ,@data-labels)))))
+    `(,@data-refs ,@data-labels)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;  Authors metadata presentation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tmtex-prepare-author-data l) l)
+
+(tm-define (tmtex-make-author names affiliations emails urls miscs notes
+                              affs-l emails-l urls-l miscs-l notes-l)
   (with names (tmtex-concat-Sep (map cadr names))
         `(author (!paragraph ,names
                              ,@affiliations
@@ -1265,25 +1322,34 @@
                              ,@miscs))))
 
 (tm-define (tmtex-doc-author t)
-  (set! t (tmtex-replace-documents t))
   (if (or (npair? t) (npair? (cdr t)) (not (func? (cadr t) 'author-data))) '()
-    (let* ((datas        (cdadr t))
-           (miscs        (map tmtex-author-misc
-                              (tmtex-select-args-by-func 'author-misc datas)))
-           (notes        (map tmtex-author-note
-                              (tmtex-select-args-by-func 'author-note datas)))
-           (emails       (map tmtex-author-email
-                              (tmtex-select-args-by-func 'author-email datas)))
-           (urls         (map tmtex-author-homepage
-                              (tmtex-select-args-by-func
-                                'author-homepage datas)))
-           (affiliations (map tmtex-author-affiliation
-                              (tmtex-select-args-by-func
-                                'author-affiliation datas)))
-           (names        (map tmtex-author-name
-                              (tmtex-select-args-by-func
-                                'author-name datas))))
-      (tmtex-make-author names affiliations emails urls miscs notes))))
+    (let* ((l        (tmtex-prepare-author-data (cdadr t)))
+           (names    (tmtex-get-transform l 'author-name))
+           (emails   (tmtex-get-transform l 'author-email))
+           (urls     (tmtex-get-transform l 'author-homepage))
+           (affs     (tmtex-get-transform l 'author-affiliation))
+           (miscs    (tmtex-get-transform l 'author-misc))
+           (notes    (tmtex-get-transform l 'author-note))
+           (names    (tmtex-get-transform l 'author-name))
+           (emails-l (tmtex-get-transform l 'author-email-label))
+           (urls-l   (tmtex-get-transform l 'author-homepage-label))
+           (affs-l   (tmtex-get-transform l 'author-affiliation-label))
+           (miscs-l  (tmtex-get-transform l 'author-misc-label))
+           (notes-l  (tmtex-get-transform l 'author-note-label)))
+      (tmtex-make-author names affs emails urls miscs notes
+                         affs-l emails-l urls-l miscs-l notes-l))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;  Document metadata presentation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tmtex-prepare-doc-data l)
+  (set! l (map tmtex-replace-documents l))
+  l)
+
+(define (tmtex-make-title titles subtitles notes miscs)
+  (with titles (tmtex-concat-Sep (map cadr titles))
+        `(title (!indent (!paragraph ,@titles ,@subtitles ,@notes ,@miscs)))))
 
 (tm-define (tmtex-append-authors l)
   (cond ((null? l) '())
@@ -1293,11 +1359,8 @@
             `((author
                 (!indent (!concat ,@(list-intersperse (map cadr l) lf)))))))))
 
-(define (tmtex-make-title titles subtitles notes miscs)
-  (with titles (tmtex-concat-Sep (map cadr titles))
-        `(title (!indent (!paragraph ,titles ,@subtitles ,@notes ,@miscs)))))
-
-(tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes)
+(tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes
+                                miscs-l notes-l)
   `(!document
      ,(tmtex-make-title titles subtitles notes miscs)
      ,@(tmtex-append-authors authors)
@@ -1308,20 +1371,21 @@
   (apply append (map cdr (tmtex-select-args-by-func 'doc-title-options l))))
 
 (tm-define (tmtex-doc-data s l)
-  (set! l (map tmtex-replace-documents l))
-  (let* ((subtitles (map tmtex-doc-subtitle
-                         (tmtex-select-args-by-func 'doc-subtitle l)))
-         (notes     (map tmtex-doc-note
-                         (tmtex-select-args-by-func 'doc-note l)))
-         (miscs     (map tmtex-doc-misc
-                         (tmtex-select-args-by-func 'doc-misc l)))
-         (dates     (map tmtex-doc-date
-                         (tmtex-select-args-by-func 'doc-date l)))
-         (authors   (map tmtex-doc-author
-                         (tmtex-select-args-by-func 'doc-author l)))
-         (titles    (map tmtex-doc-title
-                         (tmtex-select-args-by-func 'doc-title l))))
-    (tmtex-make-doc-data titles subtitles authors dates miscs notes)))
+  (set! l (tmtex-prepare-doc-data l))
+  (let* ((titles    (tmtex-get-transform l 'doc-title))
+         (subtits   (tmtex-get-transform l 'doc-subtitle))
+         (authors   (tmtex-get-transform l 'doc-author))
+         (dates     (tmtex-get-transform l 'doc-date))
+         (miscs     (tmtex-get-transform l 'doc-misc))
+         (notes     (tmtex-get-transform l 'doc-note))
+         (miscs-l   (tmtex-get-transform l 'doc-misc-label))
+         (notes-l   (tmtex-get-transform l 'doc-note-label)))
+    (tmtex-make-doc-data titles subtits authors dates miscs notes
+                         miscs-l notes-l)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;  Abstract metadata presentation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmtex-abstract t)
   (tmtex-std-env "abstract" (cdr t)))

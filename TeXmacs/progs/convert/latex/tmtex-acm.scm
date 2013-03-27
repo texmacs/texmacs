@@ -33,7 +33,8 @@
       `((!document (numberofauthors ,n)
                    (author (!indent (!concat (alignauthor) " " ,@l))))))))
 
-(tm-define (tmtex-make-author names affiliations emails urls miscs notes)
+(tm-define (tmtex-make-author names affiliations emails urls miscs notes
+                              affs-l emails-l urls-l miscs-l notes-l)
   (:mode acm-style?)
   (with names (tmtex-concat-Sep (map cadr names))
         `(author (!concat ,names
@@ -47,7 +48,8 @@
   (with titles (tmtex-concat-Sep (map cadr titles))
         `(title (!concat ,titles ,@notes ,@miscs))))
 
-(tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes)
+(tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes
+                                miscs-l notes-l)
   (:mode acm-style?)
   `(!document
      ,(tmtex-make-title titles notes miscs)

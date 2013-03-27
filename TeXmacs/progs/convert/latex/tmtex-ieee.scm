@@ -52,7 +52,7 @@
                               affs-l emails-l urls-l miscs-l notes-l)
   (:mode ieee-conf-style?)
   (with names (tmtex-concat-Sep (map cadr names))
-        `(author (!paragraph (!concat ,names ,@urls ,@notes ,@miscs)
+        `(author (!paragraph (!concat ,@names ,@urls ,@notes ,@miscs)
                              ,@affiliations
                              ,@emails))))
 
@@ -86,7 +86,8 @@
     (with sep '(!concat (!linefeed) (and) (!linefeed))
       `((author (!indent (!concat ,@(list-intersperse (map cadr l) sep))))))))
 
-(tm-define (tmtex-make-author names affiliations emails urls miscs notes)
+(tm-define (tmtex-make-author names affiliations emails urls miscs notes
+                              affs-l emails-l urls-l miscs-l notes-l)
   (:mode ieee-tran-style?)
   (:require conference?)
   (let* ((names (tmtex-concat-Sep (map cadr names)))

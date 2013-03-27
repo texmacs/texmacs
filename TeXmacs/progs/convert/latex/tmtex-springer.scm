@@ -36,7 +36,8 @@
 ;;; Springer metadata presentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (tmtex-make-author names affiliations emails urls miscs notes)
+(tm-define (tmtex-make-author names affiliations emails urls miscs notes
+                              affs-l emails-l urls-l miscs-l notes-l)
   (:mode springer-style?)
   (with names (tmtex-concat-Sep (map cadr names))
         `(author (!paragraph ,names
@@ -121,7 +122,8 @@
 (tm-define (tmtex-affiliation-group t)
   (with old-tmtex-make-author (eval tmtex-make-author)
     (set! tmtex-make-author
-      (lambda (names affiliations emails urls miscs notes)
+      (lambda (names affiliations emails urls miscs notes
+                     affs-l emails-l urls-l miscs-l notes-l)
         (with names (tmtex-concat-Sep (map cadr names))
           `(!concat ,names " " ,@emails))))
     (let* ((affs     (cadr t))
@@ -209,7 +211,8 @@
   (with titles (tmtex-concat-Sep (map cadr titles))
         `(title (!indent (!paragraph ,titles ,@notes ,@miscs)))))
 
-(tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes)
+(tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes
+                                miscs-l notes-l)
   (:mode svmono-style?)
   `(!document
      ,(svmono-make-title titles notes miscs)
@@ -287,9 +290,11 @@
            (affs   (map tmtex-author-affiliation-ref
                         (tmtex-select-args-by-func
                           'author-affiliation-ref datas))))
-      (tmtex-make-author names affs emails urls miscs notes))))
+      (tmtex-make-author names affs emails urls miscs notes
+                         '() '() '() '() '()))))
 
-(tm-define (tmtex-make-author names affiliations emails urls miscs notes)
+(tm-define (tmtex-make-author names affiliations emails urls miscs notes
+                              affs-l emails-l urls-l miscs-l notes-l)
   (:mode llncs-style?)
   (with names (tmtex-concat-Sep (map cadr names))
     (set! names `(,(car names) (!concat ,@(cdr names) ,@affiliations)))
