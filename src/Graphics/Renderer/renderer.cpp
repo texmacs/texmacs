@@ -368,3 +368,25 @@ renderer_rep::draw_selection (rectangles rs) {
   set_color (fg);
   draw_rectangles (out);
 }
+
+/******************************************************************************
+* Pixmaps
+******************************************************************************/
+
+void*
+renderer_rep::get_data (string what) {
+  (void) what;
+  return NULL;
+}
+
+renderer
+renderer_rep::create_pixmap (SI x0, SI y0, SI x1, SI y1, SI x2, SI y2) {
+  (void) x0; (void) y0; (void) x1; (void) y1; (void) x2; (void) y2;
+  FAILED ("create_pixmap not yet implemented");
+}
+
+void
+renderer_rep::draw_pixmap (SI x, SI y, renderer pm) {
+  (void) x; (void) y; (void) pm;
+  FAILED ("draw_pixmap not yet implemented");
+}

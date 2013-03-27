@@ -215,6 +215,44 @@ transformed_box_rep::post_display (renderer &ren) {
 }
 
 /******************************************************************************
+* Effects applied on boxes
+******************************************************************************/
+
+struct effect_box_rep: public change_box_rep {
+  tree eff;
+public:
+  effect_box_rep (path ip, box b, tree eff);
+  operator tree () { return tree (TUPLE, "effect", (tree) bs[0], eff); }
+  void redraw (renderer ren, path p, rectangles& l);
+};
+
+effect_box_rep::effect_box_rep (path ip, box b, tree eff2):
+  change_box_rep (ip, true), eff (eff2)
+{
+  insert (b, 0, 0);
+  position ();
+  finalize ();
+}
+
+extern int nr_painted;
+
+void
+effect_box_rep::redraw (renderer ren, path p, rectangles& l) {
+  if (((nr_painted&15) == 15) && gui_interrupted (true)) return;
+  ren->move_origin (x0, y0);
+  renderer pm= ren->create_pixmap (0, 0, x3, y3, x4, y4);
+  rectangles rs;
+  subbox (0)->redraw (pm, path (), rs);
+  if (((nr_painted&15) == 15) && gui_interrupted (true));
+  else {
+    ren->draw_pixmap (0, 0, pm, x3, y3, x4, y4);
+    ren->draw_pixmap (20*PIXEL, 20*PIXEL, pm, x3, y3, x4, y4);
+  }
+  tm_delete (pm);
+  ren->move_origin (-x0, -y0);
+}
+
+/******************************************************************************
 * Clipped boxes
 ******************************************************************************/
 
@@ -727,6 +765,11 @@ resize_box (path ip, box b, SI x1, SI y1, SI x2, SI y2,
 box
 transformed_box (path ip, box b, frame fr) {
   return tm_new<transformed_box_rep> (ip, b, fr);
+}
+
+box
+effect_box (path ip, box b, tree eff) {
+  return tm_new<effect_box_rep> (ip, b, eff);
 }
 
 box

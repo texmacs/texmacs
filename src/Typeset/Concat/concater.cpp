@@ -680,6 +680,9 @@ concater_rep::typeset (tree t, path ip) {
   case GR_TRANSFORM:
     typeset_gr_transform (t, ip);
     break;
+  case GR_EFFECT:
+    typeset_gr_effect (t, ip);
+    break;
   case TEXT_AT:
     typeset_text_at (t, ip);
     break;

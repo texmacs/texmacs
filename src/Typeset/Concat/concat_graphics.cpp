@@ -167,6 +167,14 @@ concater_rep::typeset_gr_transform (tree t, path ip) {
 }
 
 void
+concater_rep::typeset_gr_effect (tree t, path ip) {
+  if (N(t) != 2) typeset_error (t, ip);
+  tree eff= env->exec (t[1]);
+  box b= typeset_as_atomic (env, t[0], descend (ip, 0));
+  print (effect_box (ip, b, eff));
+}
+
+void
 concater_rep::typeset_text_at (tree t, path ip) {
 BEGIN_MAGNIFY
   if (N(t) != 2) typeset_error (t, ip);

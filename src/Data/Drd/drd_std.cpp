@@ -551,6 +551,9 @@ init_std_drd () {
   init (GR_TRANSFORM, "gr-transform",
 	fixed (1, 1, BIFORM) -> returns_graphical () ->
 	accessible (0) -> graphical (0));
+  init (GR_EFFECT, "gr-effect",
+	fixed (1, 1, BIFORM) -> returns_graphical () ->
+	accessible (0) -> graphical (0));
   /*
   init (TEXT_AT, "text-at",
 	fixed (1, 1, BIFORM) -> returns_graphical () ->

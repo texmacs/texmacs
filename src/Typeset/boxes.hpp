@@ -147,7 +147,7 @@ public:
   virtual path      find_tag (string name);
 
   virtual int  reindex (int i, int item, int n);
-  void redraw (renderer ren, path p, rectangles& l);
+  virtual void redraw (renderer ren, path p, rectangles& l);
   void redraw (renderer ren, path p, rectangles& l, SI x, SI y);
 
   /*************************** positioning routines **************************/
@@ -250,6 +250,7 @@ public:
   friend struct lazy_paragraph_rep;
   friend class  phrase_box_rep;
   friend class  remember_box_rep;
+  friend class  effect_box_rep;
   friend void make_eps (url dest, box b, int dpi= 600);
 };
 ABSTRACT_NULL_CODE(box);

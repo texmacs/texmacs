@@ -78,8 +78,11 @@ public:
   void delete_shadow (renderer& ren);
   void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
   void put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
-  
+
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
+
+  renderer create_pixmap (SI x0, SI y0, SI x1, SI y1, SI x2, SI y2);
+  void draw_pixmap (SI x, SI y, renderer pm);
 
   /***** private section *****************************************************/
 
@@ -87,7 +90,7 @@ public:
 };
 
 
-class qt_shadow_renderer_rep:  public qt_renderer_rep {
+class qt_shadow_renderer_rep: public qt_renderer_rep {
 public:
   QPixmap px;   
   qt_renderer_rep *master;
@@ -100,7 +103,7 @@ public:
 };
 
 
-class qt_proxy_renderer_rep:  public qt_renderer_rep {
+class qt_proxy_renderer_rep: public qt_renderer_rep {
 public:
   qt_renderer_rep *base;
   
@@ -111,6 +114,19 @@ public:
   
   void new_shadow (renderer& ren);
   void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
+};
+
+class qt_pixmap_renderer_rep: public qt_renderer_rep {
+public:
+  QPixmap px;
+  int hotx, hoty;
+  int x1, y1, x2, y2;
+  
+public:
+  qt_pixmap_renderer_rep (int x0, int y0, int x1, int y1, int x2, int y2,
+                          renderer master);
+  ~qt_pixmap_renderer_rep ();
+  void* get_data (string what);
 };
 
 qt_renderer_rep* the_qt_renderer();
