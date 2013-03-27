@@ -17,7 +17,7 @@
       (string-append (escape-verbatim (string-replace s "\n" "~")) "\n"))))
 
 (plugin-configure asymptote
-  (:require (url-exists-in-path? "asy"))
+  (:require (and (not os-mingw?) url-exists-in-path? "asy"))
   (:launch "tm_asy2")
   (:serializer ,asy-serialize)
   (:session "Asymptote")
