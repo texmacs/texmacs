@@ -16,15 +16,20 @@
 
 (define conference? #f)
 
-(define (ieee-contains t l)
+(define (contains-tags? t l)
   (cond ((or (nlist? t) (null? t)) #f)
         ((in? (car t) l) #t)
-        (else (or (ieee-contains (car t) l) (ieee-contains (cdr t) l)))))
+        (else
+          (with found? #f
+            (for-each (lambda (x)
+                        (set! found? (or found? (contains-tags? x l))))
+                      t)
+            found?))))
 
 (tm-define (tmtex-style-init doc)
   (:mode ieee-tran-style?)
   ;; ieeetran require to be in conference mode to print affiliations and emails
-  (set! conference? (ieee-contains doc '(author-email author-affiliation))))
+  (set! conference? (contains-tags? doc '(author-email author-affiliation))))
 
 (tm-define (tmtex-transform-style x)
   (:mode ieee-style?)
@@ -43,7 +48,8 @@
     (with sep '(!concat (!linefeed) (and) (!linefeed))
       `((author (!indent (!concat ,@(list-intersperse (map cadr l) sep))))))))
 
-(tm-define (tmtex-make-author names affiliations emails urls miscs notes)
+(tm-define (tmtex-make-author names affiliations emails urls miscs notes
+                              affs-l emails-l urls-l miscs-l notes-l)
   (:mode ieee-conf-style?)
   (with names (tmtex-concat-Sep (map cadr names))
         `(author (!paragraph (!concat ,names ,@urls ,@notes ,@miscs)
