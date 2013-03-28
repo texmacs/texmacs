@@ -245,8 +245,8 @@ effect_box_rep::redraw (renderer ren, path p, rectangles& l) {
   subbox (0)->redraw (pm, path (), rs);
   if (((nr_painted&15) == 15) && gui_interrupted (true));
   else {
-    ren->draw_pixmap (0, 0, pm, x3, y3, x4, y4);
-    ren->draw_pixmap (20*PIXEL, 20*PIXEL, pm, x3, y3, x4, y4);
+    ren->draw_pixmap (0, 0, pm);
+    ren->draw_pixmap (20*PIXEL, 20*PIXEL, pm);
   }
   tm_delete (pm);
   ren->move_origin (-x0, -y0);
