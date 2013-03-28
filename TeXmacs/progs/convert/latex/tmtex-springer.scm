@@ -132,7 +132,7 @@
                 (else `(!concat ,@names " " ,@emails))))))
     (let* ((affs     (cadr t))
            (affs     (if (null? affs) '()
-                       `((!concat (!linefeed) (at) (!linefeed) ,(tmtex affs)))))
+                       `((!concat (!linefeed)(at)(!linefeed) ,(tmtex affs)))))
            (auth-sep '(!concat " " (and) " "))
            (authors  (map tmtex-doc-author (cddr t)))
            (authors  (list-intersperse authors auth-sep)))

@@ -1268,14 +1268,12 @@
 
 ;;  Metadata clustering
 
-;TODO: document and move to latex-tools.scm
 (define (stree-replace l what by)
   (cond ((or (null? l) (nlist? l)) l)
         ((== l what) by)
         (else
           (map (lambda (x) (stree-replace x what by)) l))))
 
-;TODO: document and move to latex-tools.scm
 (define (next-stree-occurence l tag)
   (cond ((or (null? l) (nlist? l)) #f)
         ((== (car l) tag) l)

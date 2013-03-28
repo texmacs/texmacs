@@ -17,7 +17,6 @@
 (define conference? #f)
 (define clustered? #f)
 
-;TODO: document and move to latex-tools.scm
 (define (contains-tags? t l)
   (cond ((or (nlist? t) (null? t)) #f)
         ((in? (car t) l) #t)
@@ -28,7 +27,6 @@
                       t)
             found?))))
 
-;TODO: document and move to latex-tools.scm
 (define (contains-stree? t u)
   (cond ((== t u) #t)
         ((or (null? t) (nlist? t)) #f)
