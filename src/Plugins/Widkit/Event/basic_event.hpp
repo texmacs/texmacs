@@ -118,16 +118,16 @@ EVENT(alarm_event);
 ******************************************************************************/
 
 struct clear_event_rep: public event_rep {
-  SI x1, y1, x2, y2;
   renderer win;
+  SI x1, y1, x2, y2;
   clear_event_rep (renderer win, SI x1, SI y1, SI x2, SI y2);
   operator tree ();
 };
 EVENT(clear_event);
 
 struct repaint_event_rep: public event_rep {
-  SI x1, y1, x2, y2; bool& stop;
   renderer win;
+  SI x1, y1, x2, y2; bool& stop;
   repaint_event_rep (renderer win, SI x1, SI y1, SI x2, SI y2, bool& stop);
   operator tree ();
 };
