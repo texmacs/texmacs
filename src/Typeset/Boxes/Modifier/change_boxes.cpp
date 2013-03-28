@@ -169,6 +169,17 @@ vcorrect_box_rep::vcorrect_box_rep (path ip, box b, SI top_cor, SI bot_cor):
 * Transformed boxes
 ******************************************************************************/
 
+// FIXME: several things are not yet OK
+// 1) The clip region is not tight anymore under transformations,
+// so it should only be considered as a hint for rejecting redraw operations
+// for which we know for sure that no work has to be done.
+// The actual clipping for the painting itself should be ensured
+// using a different mechanism.
+// 2) Cursor movement and selections inside transformed text are
+// not implemented.  We might determine the "underlying transformation"
+// of a cursor position or selection and draw the cursor/selection
+// using that transformation.
+
 struct transformed_box_rep: public change_box_rep {
   frame fr;
 public:

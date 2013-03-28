@@ -122,6 +122,11 @@ qt_renderer_rep::get_extents (int& w2, int& h2) {
 void
 qt_renderer_rep::set_transformation (frame fr) {
   ASSERT (fr->linear, "only linear transformations have been implemented");
+
+  SI cx1, cy1, cx2, cy2;
+  get_clipping (cx1, cy1, cx2, cy2);
+  rectangle oclip (cx1, cy1, cx2, cy2);
+
   frame cv= scaling (point (pixel, -pixel), point (-ox, -oy));
   frame tr= invert (cv) * fr * cv;
   point o = tr (point (0.0, 0.0));
@@ -131,10 +136,14 @@ qt_renderer_rep::set_transformation (frame fr) {
   QTransform qtr (ux[0], ux[1], uy[0], uy[1], o[0], o[1]);
   painter->save ();
   painter->setTransform (qtr, true);
+
+  rectangle nclip= fr [oclip];
+  clip (nclip->x1, nclip->y1, nclip->x2, nclip->y2);
 }
 
 void
 qt_renderer_rep::reset_transformation () {
+  unclip ();
   painter->restore ();
 }
 
