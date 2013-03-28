@@ -42,6 +42,9 @@
 		492ED6D0150FD27D00DB0FB5 /* new_data.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 492ED6C8150FD27D00DB0FB5 /* new_data.cpp */; };
 		492ED6D1150FD27D00DB0FB5 /* new_style.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 492ED6CA150FD27D00DB0FB5 /* new_style.cpp */; };
 		4931F7B5127EDC4C007C92CC /* QTMInteractivePrompt.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 4931F77E127ED51C007C92CC /* QTMInteractivePrompt.hpp */; };
+		4932C1A41704F54200E87D8C /* brush.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4932C1A11704F54200E87D8C /* brush.cpp */; };
+		4932C1A51704F54200E87D8C /* brush.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4932C1A11704F54200E87D8C /* brush.cpp */; };
+		4932C1A61704F54200E87D8C /* brush.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4932C1A11704F54200E87D8C /* brush.cpp */; };
 		493D309A15190AEA00A19C3D /* new_buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493D309915190AEA00A19C3D /* new_buffer.cpp */; };
 		493D309B15190AEA00A19C3D /* new_buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493D309915190AEA00A19C3D /* new_buffer.cpp */; };
 		493D309C15190AEA00A19C3D /* new_buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493D309915190AEA00A19C3D /* new_buffer.cpp */; };
@@ -1179,6 +1182,9 @@
 		492ED6CB150FD27D00DB0FB5 /* new_style.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = new_style.hpp; sourceTree = "<group>"; };
 		4931F77E127ED51C007C92CC /* QTMInteractivePrompt.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMInteractivePrompt.hpp; sourceTree = "<group>"; };
 		4931F77F127ED5B3007C92CC /* QTMInteractivePrompt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMInteractivePrompt.cpp; sourceTree = "<group>"; };
+		4932C1A11704F54200E87D8C /* brush.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = brush.cpp; sourceTree = "<group>"; };
+		4932C1A21704F54200E87D8C /* brush.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = brush.hpp; sourceTree = "<group>"; };
+		4932C1A31704F54200E87D8C /* pencil.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = pencil.hpp; sourceTree = "<group>"; };
 		4937B89A1521C59E00D87F22 /* MOCs.xcconfig */ = {isa = PBXFileReference; comments = "This addtional .xcconfig is needed to have an empty OTHER_LDFLAGS for the target MOCs. Newer versions of the linker complain and fail when they find dylibs in the link line."; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = MOCs.xcconfig; sourceTree = "<group>"; };
 		493D309915190AEA00A19C3D /* new_buffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = new_buffer.cpp; sourceTree = "<group>"; };
 		4942BEF61679293B00A6C354 /* font_select.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_select.cpp; sourceTree = "<group>"; };
@@ -2443,8 +2449,11 @@
 			children = (
 				9C0B47F710A8CC100097A335 /* basic_renderer.cpp */,
 				9C0B47F810A8CC100097A335 /* basic_renderer.hpp */,
+				4932C1A11704F54200E87D8C /* brush.cpp */,
+				4932C1A21704F54200E87D8C /* brush.hpp */,
 				9C0B47F910A8CC100097A335 /* page_type.cpp */,
 				9C0B47FA10A8CC100097A335 /* page_type.hpp */,
+				4932C1A31704F54200E87D8C /* pencil.hpp */,
 				9C0B47FB10A8CC100097A335 /* printer.cpp */,
 				9C0B47FC10A8CC100097A335 /* printer.hpp */,
 				9C0B47FD10A8CC100097A335 /* renderer.cpp */,
@@ -4273,6 +4282,7 @@
 				4929A890170207440028991F /* frame.cpp in Sources */,
 				4929A893170207440028991F /* grid.cpp in Sources */,
 				4929A896170207440028991F /* point.cpp in Sources */,
+				4932C1A41704F54200E87D8C /* brush.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4631,6 +4641,7 @@
 				4929A892170207440028991F /* frame.cpp in Sources */,
 				4929A895170207440028991F /* grid.cpp in Sources */,
 				4929A898170207440028991F /* point.cpp in Sources */,
+				4932C1A61704F54200E87D8C /* brush.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5017,6 +5028,7 @@
 				4929A891170207440028991F /* frame.cpp in Sources */,
 				4929A894170207440028991F /* grid.cpp in Sources */,
 				4929A897170207440028991F /* point.cpp in Sources */,
+				4932C1A51704F54200E87D8C /* brush.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
