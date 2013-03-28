@@ -25,7 +25,7 @@ renderer_rep::renderer_rep (bool screen_flag):
   ox (0), oy (0), cx1 (0), cy1 (0), cx2 (0), cy2 (0),
   is_screen (screen_flag),
   zoomf (std_shrinkf), shrinkf (1), pixel (PIXEL), thicken (0),
-  master (NULL), pattern (UNINIT), pattern_alpha (255) {}
+  master (NULL) {}
 
 renderer_rep::~renderer_rep () {}
 
@@ -263,39 +263,18 @@ renderer_rep::triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3) {
   polygon (x, y);
 }
 
-void
-renderer_rep::set_background_pattern (tree pat, int alpha) {
-  pattern= pat;
-  pattern_alpha= alpha;
-  if (pattern == "");
-  else if (is_atomic (pattern))
-    set_background (named_color (pat->label, alpha));
-  else if (is_func (pattern, PATTERN, 4))
-    set_background (named_color (as_string (pattern[3]), alpha));
-}
-
-tree
-renderer_rep::get_background_pattern (int& alpha) {
-  alpha= pattern_alpha;
-  if (is_atomic (pattern) || is_func (pattern, PATTERN, 4))
-    return pattern;
-  else {
-    tree s= get_named_color (get_background ());
-    if (is_func (pattern, PATTERN, 3))
-      return pattern * tree (PATTERN, s);
-    else return s;
-  }
-}
-
 bool is_percentage (tree t, string s= "%");
 double as_percentage (tree t);
 
 void
 renderer_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
-  if (pattern == "");
-  else if (is_atomic (pattern))
+  brush b= get_background ();
+  if (b->kind == brush_none);
+  else if (b->kind == brush_color)
     clear (x1, y1, x2, y2);
-  else if (is_func (pattern, PATTERN)) {
+  else if (b->kind == brush_pattern && is_func (b->pattern, PATTERN)) {
+    tree pattern= b->pattern;
+    int pattern_alpha= b->alpha;
     outer_round (x1, y1, x2, y2);
     //cout << "A: " << x1 << ", " << y1 << ", " << x2 << ", " << y2 << "\n";
     //cout << "A: " << x/pixel1 << ", " << y1 << ", " << x2 << ", " << y2 << "\n";

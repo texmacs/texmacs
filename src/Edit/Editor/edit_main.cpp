@@ -229,7 +229,7 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
   
   for (i=start; i<end; i++) {
     tree bg= env->read (BG_COLOR);
-    ren->set_background_pattern (bg);
+    ren->set_background (bg);
     if (bg != "white")
       ren->clear_pattern (0, (SI) -h, (SI) w, 0);
 

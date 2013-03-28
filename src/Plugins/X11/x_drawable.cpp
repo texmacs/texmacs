@@ -119,9 +119,9 @@ x_drawable_rep::get_color () {
   return cur_fg;
 }
 
-color
+brush
 x_drawable_rep::get_background () {
-  return cur_bg;
+  return bg_brush;
 }
 
 void
@@ -131,8 +131,9 @@ x_drawable_rep::set_color (color c) {
 }
 
 void
-x_drawable_rep::set_background (color c) {
-  cur_bg= c;
+x_drawable_rep::set_background (brush b) {
+  bg_brush= b;
+  cur_bg= b->c;
   XSetBackground (dpy, gc, CONVERT (cur_bg));
 }
 

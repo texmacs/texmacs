@@ -25,7 +25,7 @@ edit_interface_rep::draw_text (renderer ren, rectangles& l) {
   nr_painted=0;
   bool tp_found= false;
   tree bg= get_init_value (BG_COLOR);
-  ren->set_background_pattern (bg);
+  ren->set_background (bg);
   refresh_needed= do_animate;
   refresh_next  = next_animate;
   eb->redraw (ren, eb->find_box_path (tp, tp_found), l);
@@ -173,7 +173,7 @@ void
 edit_interface_rep::draw_pre (renderer win, renderer ren, rectangle r) {
   // draw surroundings
   tree bg= get_init_value (BG_COLOR);
-  ren->set_background_pattern (bg);
+  ren->set_background (bg);
   clear_pattern_rectangles (ren, rectangles (translate (r, ren->ox, ren->oy)));
   draw_surround (ren, r);
 
@@ -294,7 +294,7 @@ edit_interface_rep::handle_clear (renderer win, SI x1, SI y1, SI x2, SI y2) {
   x2= (SI) (x2 / magf); y2= (SI) (y2 / magf);
   win->set_zoom_factor (zoomf);
   tree bg= get_init_value (BG_COLOR);
-  win->set_background_pattern (bg);
+  win->set_background (bg);
   win->clear_pattern (max (eb->x1, x1), max (eb->y1, y1),
 		      min (eb->x2, x2), min (eb->y2, y2));
   draw_surround (win, rectangle (x1, y1, x2, y2));

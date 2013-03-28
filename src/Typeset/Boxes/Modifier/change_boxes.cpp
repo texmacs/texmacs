@@ -348,8 +348,7 @@ struct cell_box_rep: public change_box_rep {
   color fg;
   tree  bg;
   int   alpha;
-  tree  old_bg;
-  int   old_a;
+  brush old_bg;
   cell_box_rep (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
 		SI bl, SI br, SI bb, SI bt, color fg, tree bg, int alpha);
   operator tree () { return tree (TUPLE, "cell", (tree) bs[0]); }
@@ -397,8 +396,8 @@ cell_box_rep::pre_display (renderer& ren) {
   ty2= y2 + (t>>1); ty1= ty2 - t;
 
   if (bg != "") {
-    old_bg= ren->get_background_pattern (old_a);
-    ren->set_background_pattern (bg, alpha);
+    old_bg= ren->get_background ();
+    ren->set_background (brush (bg, alpha));
     ren->clear_pattern (lx2, by2, rx1, ty1);
   }
 
@@ -414,7 +413,7 @@ cell_box_rep::pre_display (renderer& ren) {
 void
 cell_box_rep::post_display (renderer& ren) {
   if (bg != "")
-    ren->set_background_pattern (old_bg, old_a);
+    ren->set_background (old_bg);
 }
 
 /******************************************************************************
@@ -463,8 +462,7 @@ struct highlight_box_rep: public change_box_rep {
   tree bg;
   int alpha;
   color sunc, shad;  // Warning: Solaris has "sun" #defined. Don't rename this
-  tree old_bg;
-  int old_a;
+  brush old_bg;
   highlight_box_rep (path ip, box b, SI w, SI xpad, SI ypad,
 		     tree bg, int alpha, color sunc, color shad);
   operator tree () { return tree (TUPLE, "highlight", (tree) bs[0]); }
@@ -494,8 +492,8 @@ highlight_box_rep::highlight_box_rep (
 
 void
 highlight_box_rep::pre_display (renderer& ren) {
-  old_bg= ren->get_background_pattern (old_a);
-  ren->set_background_pattern (bg, alpha);
+  old_bg= ren->get_background ();
+  ren->set_background (brush (bg, alpha));
   SI W= w;
   if (!ren->is_printer ()) {
     SI pixel= ren->pixel;
@@ -506,7 +504,7 @@ highlight_box_rep::pre_display (renderer& ren) {
 
 void
 highlight_box_rep::post_display (renderer &ren) {
-  ren->set_background_pattern (old_bg, old_a);
+  ren->set_background (old_bg);
 }
 
 void

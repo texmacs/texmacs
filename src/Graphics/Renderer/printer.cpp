@@ -576,9 +576,9 @@ printer_rep::get_color () {
   return fg;
 }
 
-color
+brush
 printer_rep::get_background () {
-  return bg;
+  return bgb;
 }
 
 void
@@ -589,9 +589,10 @@ printer_rep::set_color (color c) {
 }
 
 void
-printer_rep::set_background (color c) {
-  if (bg==c) return;
-  bg= c;
+printer_rep::set_background (brush b) {
+  //if (bgb==b) return;
+  bgb= b;
+  bg= b->c;
 }
 
 void

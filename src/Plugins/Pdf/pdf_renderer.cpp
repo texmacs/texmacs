@@ -265,10 +265,10 @@ pdf_renderer_rep::get_color () {
   return fg;
 }
 
-color
+brush
 pdf_renderer_rep::get_background () {
 //  cerr << "get_background\n";
-  return bg;
+  return bgb;
 }
 
 void
@@ -280,10 +280,11 @@ pdf_renderer_rep::set_color (color c) {
 }
 
 void
-pdf_renderer_rep::set_background (color c) {
+pdf_renderer_rep::set_background (brush b) {
 //  cerr << "set_background\n";
-  if (bg==c) return;
-  bg= c;
+  if (bgb==b) return;
+  bgb= b;
+  bg= b->c;
 }
 
 static double font_size (string name) {

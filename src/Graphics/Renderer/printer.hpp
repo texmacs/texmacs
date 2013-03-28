@@ -31,6 +31,7 @@ class printer_rep: public renderer_rep {
   int      linelen;
 
   color    fg, bg;
+  brush    bgb;
   int      ncols;
   SI       lw;
   int      nwidths;
@@ -78,9 +79,9 @@ public:
 
   void  set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
   color get_color ();
-  color get_background ();
+  brush get_background ();
   void  set_color (color c);
-  void  set_background (color c);
+  void  set_background (brush b);
   void  draw (int char_code, font_glyphs fn, SI x, SI y);
   void  set_line_style (SI w, int type=0, bool round=true);
   void  line (SI x1, SI y1, SI x2, SI y2);

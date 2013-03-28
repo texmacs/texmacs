@@ -13,15 +13,15 @@
 #include "gui.hpp"
 
 brush_rep::brush_rep (tree p, int a):
-  kind (brush_none), c (0), pattern (p), alpha (a)
+  kind (brush_none), c (0xffffffff), pattern (p), alpha (a)
 {
   if (p == "");
   else if (is_atomic (p)) {
     kind= brush_color;
     c= named_color (p->label, a);
   }
-  else if (is_func (p, PATTERN, 4)) {
+  else if (is_func (p, PATTERN)) {
     kind= brush_pattern;
-    c= named_color (as_string (p[3]), a);
+    if (N(p) == 4) c= named_color (as_string (p[3]), a);
   }
 }

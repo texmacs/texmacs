@@ -45,8 +45,6 @@ public:
   int pixel;                // size of a pixel on the screen
   int thicken;              // extra thinkening when anti-aliasing characters
   renderer master;          // master renderer in case of shadow renderers
-  tree pattern;             // current background pattern
-  int pattern_alpha;        // current background pattern transparency
   rectangles clip_stack;    // stack with clipping regions
 
 public:
@@ -80,13 +78,11 @@ public:
 
   /* color */
   virtual color get_color () = 0;
-  virtual color get_background () = 0;
-  virtual tree  get_background_pattern (int& alpha);
+  virtual brush get_background () = 0;
 
   /* main graphical routines */
   virtual void set_color (color c) = 0;
-  virtual void set_background (color c) = 0;
-  virtual void set_background_pattern (tree t, int alpha= 255);
+  virtual void set_background (brush b) = 0;
   virtual void draw (int char_code, font_glyphs fn, SI x, SI y) = 0;
   virtual void set_line_style (SI w, int type=0, bool round=true) = 0;
   virtual void line (SI x1, SI y1, SI x2, SI y2) = 0;

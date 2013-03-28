@@ -30,6 +30,7 @@ class x_drawable_rep: public renderer_rep {
   int            w, h;
   GC             gc;
   color          cur_fg, cur_bg;
+  brush          bg_brush;
 
 public:
 
@@ -54,9 +55,9 @@ public:
 
   void  set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
   color get_color ();
-  color get_background ();
+  brush get_background ();
   void  set_color (color c);
-  void  set_background (color c);
+  void  set_background (brush b);
   void  set_line_style (SI w, int type=0, bool round=true);
   void  line (SI x1, SI y1, SI x2, SI y2);
   void  lines (array<SI> x, array<SI> y);

@@ -71,10 +71,11 @@ ABSTRACT_NULL_CODE(cache_image_element);
 ******************************************************************************/
 
 
-class basic_renderer_rep:   public renderer_rep {
+class basic_renderer_rep: public renderer_rep {
 public:
   int   w, h;
   color cur_fg, cur_bg;
+  brush bg_brush;
 
 public:
   basic_renderer_rep (bool screen_flag, int w2 = 0, int h2 = 0):
@@ -90,11 +91,11 @@ public:
   void  get_rgb (color col, int& r, int& g, int& b, int& a);
   color get_color ();
   // color get_color (string s);
-  color get_background ();
+  brush get_background ();
 
   void  set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
   void  set_color (color c);
-  void  set_background (color c);
+  void  set_background (brush b);
 
   virtual void begin (void* handle);
   virtual void end ();

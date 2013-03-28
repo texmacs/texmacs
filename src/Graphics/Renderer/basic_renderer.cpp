@@ -319,9 +319,9 @@ basic_renderer_rep::get_color (string s) {
 }
 #endif
 
-color
+brush
 basic_renderer_rep::get_background () {
-  return cur_bg;
+  return bg_brush;
 }
 
 void
@@ -330,8 +330,9 @@ basic_renderer_rep::set_color (color c) {
 }
 
 void
-basic_renderer_rep::set_background (color c) {
-  cur_bg= c;
+basic_renderer_rep::set_background (brush b) {
+  bg_brush= b;
+  cur_bg= b->c;
 }
 
 

@@ -45,7 +45,8 @@ struct specific_box_rep: public box_rep {
 ******************************************************************************/
 
 struct flag_box_rep: public composite_box_rep {
-  color light, old_bg;
+  color light;
+  brush old_bg;
   flag_box_rep (path ip, box b, SI h, SI lw, color dark, color light);
   operator tree () { return tree (TUPLE, "flag"); }
   void pre_display (renderer &ren);
