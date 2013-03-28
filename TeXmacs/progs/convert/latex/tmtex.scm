@@ -31,6 +31,7 @@
 (tm-define tmtex-replace-style? #t)
 (define tmtex-env (make-ahash-table))
 (define tmtex-serial 0)
+(define tmtex-ref-cnt 1)
 (define tmtex-auto-produce 0)
 (define tmtex-auto-consume 0)
 (define tmtex-image-root-url (unix->url "image"))
@@ -87,6 +88,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmtex-initialize opts)
+  (set! tmtex-ref-cnt 1)
   (set! tmtex-env (make-ahash-table))
   (set! tmtex-serial 0)
   (set! tmtex-auto-produce 0)
@@ -1287,7 +1289,9 @@
 
 (define (add-refs l n tag tr tl)
   (with streetag (next-stree-occurence (car l) tag)
-    (if (not streetag) l
+    (if (not streetag) 
+      (begin
+        (set! tmtex-ref-cnt n) l)
       (let* ((tagref  (list tr n))
              (authors (stree-replace (car l) streetag tagref))
              (taglist (if (null? (cdr l)) '() (cadr l)))
@@ -1298,10 +1302,10 @@
 (tm-define (make-references l tag author?)
   (let* ((tag-ref      (symbol-append tag '- 'ref))
          (tag-label    (symbol-append tag '- 'label))
-         (tmp          (add-refs `(,l) 1 tag tag-ref tag-label))
+         (tmp          (add-refs `(,l) tmtex-ref-cnt tag tag-ref tag-label))
          (data-refs    (car tmp))
          (data-labels  (if (null? (cdr tmp)) '() (cadr tmp))))
-    (if make-label
+    (if author?
       (set! data-labels `((doc-author (author-data ,@data-labels)))))
     `(,@data-refs ,@data-labels)))
 
@@ -1332,7 +1336,12 @@
            (urls-l   (tmtex-get-transform l 'author-homepage-label))
            (affs-l   (tmtex-get-transform l 'author-affiliation-label))
            (miscs-l  (tmtex-get-transform l 'author-misc-label))
-           (notes-l  (tmtex-get-transform l 'author-note-label)))
+           (notes-l  (tmtex-get-transform l 'author-note-label))
+           (affs (append affs (tmtex-get-transform l 'author-affiliation-ref)))
+           (urls  (append urls  (tmtex-get-transform l 'author-homepage-ref)))
+           (miscs (append miscs (tmtex-get-transform l 'author-misc-ref)))
+           (notes (append notes (tmtex-get-transform l 'author-note-ref)))
+           (emails (append emails (tmtex-get-transform l 'author-email-ref))))
       (tmtex-make-author names affs emails urls miscs notes
                          affs-l emails-l urls-l miscs-l notes-l))))
 
@@ -1372,14 +1381,16 @@
 
 (tm-define (tmtex-doc-data s l)
   (set! l (tmtex-prepare-doc-data l))
-  (let* ((titles    (tmtex-get-transform l 'doc-title))
-         (subtits   (tmtex-get-transform l 'doc-subtitle))
-         (authors   (tmtex-get-transform l 'doc-author))
-         (dates     (tmtex-get-transform l 'doc-date))
-         (miscs     (tmtex-get-transform l 'doc-misc))
-         (notes     (tmtex-get-transform l 'doc-note))
-         (miscs-l   (tmtex-get-transform l 'doc-misc-label))
-         (notes-l   (tmtex-get-transform l 'doc-note-label)))
+  (let* ((titles  (tmtex-get-transform l 'doc-title))
+         (subtits (tmtex-get-transform l 'doc-subtitle))
+         (authors (tmtex-get-transform l 'doc-author))
+         (dates   (tmtex-get-transform l 'doc-date))
+         (miscs   (tmtex-get-transform l 'doc-misc))
+         (notes   (tmtex-get-transform l 'doc-note))
+         (miscs-l (tmtex-get-transform l 'doc-misc-label))
+         (notes-l (tmtex-get-transform l 'doc-note-label))
+         (miscs   (append miscs (tmtex-get-transform l 'doc-misc-ref)))
+         (notes   (append notes (tmtex-get-transform l 'doc-note-ref))))
     (tmtex-make-doc-data titles subtits authors dates miscs notes
                          miscs-l notes-l)))
 
