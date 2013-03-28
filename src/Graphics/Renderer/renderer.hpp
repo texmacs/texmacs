@@ -13,6 +13,7 @@
 #define RENDERER_H
 #include "bitmap_font.hpp"
 #include "url.hpp"
+#include "brush.hpp"
 
 typedef int SI;
 typedef unsigned int color;
