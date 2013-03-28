@@ -39,27 +39,28 @@
 (tm-define (tmtex-make-author names affiliations emails urls miscs notes
                               affs-l emails-l urls-l miscs-l notes-l)
   (:mode springer-style?)
-  (with names (tmtex-concat-Sep (map cadr names))
-        `(author (!paragraph ,@names
-                             ,@urls
-                             ,@notes
-                             ,@miscs))))
+  (let* ((names (tmtex-concat-Sep (map cadr names)))
+         (result `(,@names ,@urls ,@notes ,@miscs)))
+    (if (null? result) '() `(author (!paragraph ,@result)))))
 
-(define (springer-append in w l)
+(define (springer-append in l)
   (if (< (length l) 2) l
-    (with lf `(!concat (!linefeed) ,w (!linefeed))
-          `((,in (!indent (!concat ,@(list-intersperse (map cadr l) lf))))))))
+    (with lf `(!concat (!linefeed) (and) (!linefeed))
+          `((,in
+              (!indent (!concat ,@(list-intersperse (map cadr l) lf))))))))
 
 (define (svjour-make-title titles notes miscs)
-  (with titles (tmtex-concat-Sep (map cadr titles))
-        `(title (!concat ,@titles ,@notes ,@miscs))))
+  (let* ((titles (tmtex-concat-Sep (map cadr titles)))
+         (result `(,@titles ,@notes ,@miscs)))
+    (if (null? result) '()
+      `((title (!concat ,@result))))))
 
 (define (svjour-make-doc-data titles subtits authors affs dates miscs notes)
   `(!document
-     ,(svjour-make-title titles notes miscs)
+     ,@(svjour-make-title titles notes miscs)
      ,@subtits
-     ,@(springer-append 'author '(and) authors)
-     ,@(springer-append 'institute '(and) affs)
+     ,@(springer-append 'author authors)
+     ,@(springer-append 'institute affs)
      ,@dates
      (maketitle)))
 
@@ -125,7 +126,10 @@
       (lambda (names affiliations emails urls miscs notes
                      affs-l emails-l urls-l miscs-l notes-l)
         (with names (tmtex-concat-Sep (map cadr names))
-          `(!concat ,@names " " ,@emails))))
+          (cond ((and (null? names) (null? emails)) '())
+                ((or (null? names) (null? emails))
+                 `(!concat ,@names ,@emails))
+                (else `(!concat ,@names " " ,@emails))))))
     (let* ((affs     (cadr t))
            (affs     (if (null? affs) '()
                        `((!concat (!linefeed) (at) (!linefeed) ,(tmtex affs)))))
@@ -208,14 +212,16 @@
   `(subtitle ,(tmtex (cadr t))))
 
 (define (svmono-make-title titles notes miscs)
-  (with titles (tmtex-concat-Sep (map cadr titles))
-        `(title (!indent (!paragraph ,@titles ,@notes ,@miscs)))))
+  (let* ((titles (tmtex-concat-Sep (map cadr titles)))
+         (result `(,@titles ,@notes ,@miscs)))
+    (if (null? result) '()
+      `((title (!indent (!paragraph ,@result)))))))
 
 (tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes
                                 miscs-l notes-l)
   (:mode svmono-style?)
   `(!document
-     ,(svmono-make-title titles notes miscs)
+     ,@(svmono-make-title titles notes miscs)
      ,@subtitles
      ,@(tmtex-append-authors authors)
      ,@dates
@@ -296,8 +302,8 @@
 (tm-define (tmtex-make-author names affiliations emails urls miscs notes
                               affs-l emails-l urls-l miscs-l notes-l)
   (:mode llncs-style?)
-  (with names (tmtex-concat-Sep (map cadr names))
-    `(author (!paragraph (!concat ,@names ,@affiliations)
-                         ,@urls
-                         ,@notes
-                         ,@miscs))))
+  (let* ((names (tmtex-concat-Sep (map cadr names)))
+         (result `(,@names ,@affiliations))
+         (result (if (null? result) '() `((!concat ,@result))))
+         (result `(,@result ,@urls ,@notes ,@miscs)))
+    (if (null? result) '() `(author (!paragraph ,@result)))))

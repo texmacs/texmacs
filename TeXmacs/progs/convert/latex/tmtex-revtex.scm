@@ -77,22 +77,18 @@
   (:mode revtex-style?)
   (if (and (not revtex-clustered?) (null? affiliations))
     (set! affiliations `((noaffiliation))))
-  (with names (map (lambda (x) `(author ,x))
-                   (list-intersperse (map cadr names) '(tmSep)))
-        `(!paragraph ,@names
-                     ,@emails
-                     ,@urls
-                     ,@notes
-                     ,@miscs
-                     ,@affiliations)))
+  (let* ((names (map (lambda (x) `(author ,x))
+                   (list-intersperse (map cadr names) '(tmSep))))
+         (result `(,@names ,@emails ,@urls ,@notes ,@miscs ,@affiliations)))
+    (if (null? result) '() `(!paragraph ,@result))))
 
 (tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes
                                 miscs-l notes-l)
   (:mode revtex-style?)
-  `(!document
-     (!paragraph ,@titles ,@subtitles ,@notes ,@miscs)
-     ,@authors
-     ,@dates))
+  (let* ((title-data `(,@titles ,@subtitles ,@notes ,@miscs))
+         (title-data (if (null? title-data) '() `((!paragraph ,@title-data)))))
+    (if (and (null? title-data) (null? authors) (null? dates)) '()
+      `(!document ,@title-data ,@authors ,@dates))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; RevTeX clustered authors presentation

@@ -26,33 +26,33 @@
 
 (tm-define (tmtex-append-authors l)
   (:mode acm-style?)
+  (set! l (filter nnull? l))
   (if (null? l) l
-    (with n (number->string (length l))
-      (set! l (list-intersperse
-                (map cadr l) '(!concat (!linefeed) (alignauthor) (!linefeed))))
+    (let* ((n (number->string (length l)))
+           (sep '(!concat (!linefeed) (alignauthor) (!linefeed))))
+      (set! l (list-intersperse (map cadr l) sep))
       `((!document (numberofauthors ,n)
                    (author (!indent (!concat (alignauthor) " " ,@l))))))))
 
 (tm-define (tmtex-make-author names affiliations emails urls miscs notes
                               affs-l emails-l urls-l miscs-l notes-l)
   (:mode acm-style?)
-  (with names (tmtex-concat-Sep (map cadr names))
-        `(author (!concat ,@names
-                          ,@urls
-                          ,@notes
-                          ,@miscs
-                          ,@affiliations
-                          ,@emails))))
+  (let* ((names (tmtex-concat-Sep (map cadr names)))
+         (result `(,@names ,@urls ,@notes ,@miscs ,@affiliations ,@emails)))
+    (if (null? result) '()
+      `(author (!concat ,@result)))))
 
 (define (tmtex-make-title titles notes miscs)
-  (with titles (tmtex-concat-Sep (map cadr titles))
-        `(title (!concat ,@titles ,@notes ,@miscs))))
+  (let* ((titles (tmtex-concat-Sep (map cadr titles)))
+         (result `(,@titles ,@notes ,@miscs)))
+    (if (null? result) '()
+      `((title (!concat ,@result))))))
 
 (tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes
                                 miscs-l notes-l)
   (:mode acm-style?)
   `(!document
-     ,(tmtex-make-title titles notes miscs)
+     ,@(tmtex-make-title titles notes miscs)
      ,@subtitles 
      ,@(tmtex-append-authors authors)
      ,@dates

@@ -49,22 +49,18 @@
 (tm-define (tmtex-make-author names affiliations emails urls miscs notes
                               affs-l emails-l urls-l miscs-l notes-l)
   (:mode ams-style?)
-  (with names (map (lambda (x) `(author ,x))
-                   (list-intersperse (map cadr names) '(tmSep)))
-        `(!paragraph ,@names
-                     ,@affiliations
-                     ,@emails
-                     ,@urls
-                     ,@notes
-                     ,@miscs)))
+  (let* ((names (map (lambda (x) `(author ,x))
+                     (list-intersperse (map cadr names) '(tmSep))))
+         (result `(,@names ,@affiliations ,@emails ,@urls ,@notes ,@miscs)))
+    (if (null? result) '() `(!paragraph ,@result))))
 
 (tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes
                                 miscs-l notes-l)
   (:mode ams-style?)
-  `(!document
-     (!paragraph ,@titles ,@subtitles ,@notes ,@miscs)
-     ,@authors
-     ,@dates))
+  (let* ((title-data `(,@titles ,@subtitles ,@notes ,@miscs))
+         (title-data (if (null? title-data) '() `((!paragraph ,@title-data)))))
+    (if (and (null? title-data) (null? authors) (null? dates)) '()
+      `(!document ,@title-data ,@authors ,@dates))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; AMS specific titlemarkup

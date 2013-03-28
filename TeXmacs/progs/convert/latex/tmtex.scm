@@ -1313,13 +1313,10 @@
 
 (tm-define (tmtex-make-author names affiliations emails urls miscs notes
                               affs-l emails-l urls-l miscs-l notes-l)
-  (with names (tmtex-concat-Sep (map cadr names))
-        `(author (!paragraph ,@names
-                             ,@affiliations
-                             ,@emails
-                             ,@urls
-                             ,@notes
-                             ,@miscs))))
+  (let* ((names  (tmtex-concat-Sep (map cadr names)))
+         (result `(,@names ,@affiliations ,@emails ,@urls ,@notes ,@miscs)))
+    (if (null? result) '()
+      `(author (!paragraph ,@result)))))
 
 (tm-define (tmtex-doc-author t)
   (if (or (npair? t) (npair? (cdr t)) (not (func? (cadr t) 'author-data))) '()
@@ -1348,10 +1345,13 @@
   l)
 
 (define (tmtex-make-title titles subtitles notes miscs)
-  (with titles (tmtex-concat-Sep (map cadr titles))
-        `(title (!indent (!paragraph ,@titles ,@subtitles ,@notes ,@miscs)))))
+  (let* ((titles (tmtex-concat-Sep (map cadr titles)))
+         (content `(,@titles ,@subtitles ,@notes ,@miscs)))
+    (if (null? content) '()
+      `((title (!indent (!paragraph ,@content)))))))
 
 (tm-define (tmtex-append-authors l)
+  (set! l (filter nnull? l))
   (cond ((null? l) '())
         ((== (length l) 1) `(,(car l) (!indent (!concat ,@(cdr l)))))
         (else
@@ -1362,7 +1362,7 @@
 (tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes
                                 miscs-l notes-l)
   `(!document
-     ,(tmtex-make-title titles subtitles notes miscs)
+     ,@(tmtex-make-title titles subtitles notes miscs)
      ,@(tmtex-append-authors authors)
      ,@dates
      (maketitle)))
