@@ -13,6 +13,36 @@
 #include "matrix.hpp"
 
 /******************************************************************************
+* Bounding boxes for transformed rectangles
+******************************************************************************/
+
+rectangle
+frame::operator () (rectangle r) {
+  point t1a= operator () (point (r->x1, r->y1));
+  point t2a= operator () (point (r->x2, r->y2));
+  point t1b= operator () (point (r->x1, r->y2));
+  point t2b= operator () (point (r->x2, r->y1));
+  SI x1= (SI) (min (min (t1a[0], t2a[0]), min (t1b[0], t2b[0])) + 0.5);
+  SI y1= (SI) (min (min (t1a[1], t2a[1]), min (t1b[1], t2b[1])) + 0.5);
+  SI x2= (SI) (max (max (t1a[0], t2a[0]), max (t1b[0], t2b[0])) + 0.5);
+  SI y2= (SI) (max (max (t1a[1], t2a[1]), max (t1b[1], t2b[1])) + 0.5);
+  return rectangle (x1, y1, x2, y2);
+}
+
+rectangle
+frame::operator [] (rectangle r) {
+  point t1a= operator [] (point (r->x1, r->y1));
+  point t2a= operator [] (point (r->x2, r->y2));
+  point t1b= operator [] (point (r->x1, r->y2));
+  point t2b= operator [] (point (r->x2, r->y1));
+  SI x1= (SI) (min (min (t1a[0], t2a[0]), min (t1b[0], t2b[0])) + 0.5);
+  SI y1= (SI) (min (min (t1a[1], t2a[1]), min (t1b[1], t2b[1])) + 0.5);
+  SI x2= (SI) (max (max (t1a[0], t2a[0]), max (t1b[0], t2b[0])) + 0.5);
+  SI y2= (SI) (max (max (t1a[1], t2a[1]), max (t1b[1], t2b[1])) + 0.5);
+  return rectangle (x1, y1, x2, y2);
+}
+
+/******************************************************************************
 * Scalings
 ******************************************************************************/
 

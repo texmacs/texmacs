@@ -12,6 +12,7 @@
 #ifndef FRAME_H
 #define FRAME_H
 #include "point.hpp"
+#include "rectangles.hpp"
 
 class frame_rep: public abstract_struct {
 public:
@@ -48,6 +49,8 @@ class frame {
   operator tree () { return (tree) *rep; }
   inline point operator () (point p) { return rep->direct_transform (p); }
   inline point operator [] (point p) { return rep->inverse_transform (p); }
+  rectangle operator () (rectangle r);
+  rectangle operator [] (rectangle r);
   inline bool operator == (frame f) { return rep == f.rep; }
   inline bool operator != (frame f) { return rep != f.rep; }
   curve operator () (curve c);

@@ -131,24 +131,24 @@ concater_rep::typeset_superpose (tree t, path ip) {
 
 bool
 is_transformation (tree t) {
-  if (is_compound (t, "rotation", 1) &&
-      is_double (t[0]))
-    return true;
-  if (is_compound (t, "rotation", 2) &&
-      is_func (t[0], _POINT, 2) &&
-      is_double (t[0][0]) &&
-      is_double (t[0][1]) &&
+  if (is_tuple (t, "rotation", 1) &&
       is_double (t[1]))
+    return true;
+  if (is_tuple (t, "rotation", 2) &&
+      is_func (t[1], _POINT, 2) &&
+      is_double (t[1][0]) &&
+      is_double (t[1][1]) &&
+      is_double (t[2]))
     return true;
   return false;
 }
 
 frame
 get_transformation (tree t) {
-  if (is_compound (t, "rotation", 1))
-    return rotation_2D (point (0, 0), as_double (t[0]));
-  if (is_compound (t, "rotation", 2))
-    return rotation_2D (as_point (t[0]), as_double (t[1]));
+  if (is_tuple (t, "rotation", 1))
+    return rotation_2D (point (0.0, 0.0), as_double (t[1]));
+  if (is_tuple (t, "rotation", 2))
+    return rotation_2D (as_point (t[1]), as_double (t[2]));
   FAILED ("transformation expected");
   return frame ();
 }
@@ -156,13 +156,12 @@ get_transformation (tree t) {
 void
 concater_rep::typeset_gr_transform (tree t, path ip) {
   if (N(t) != 2) typeset_error (t, ip);
-  tree tr= t[1]; //env->exec (t[1]);
+  tree tr= env->exec (t[1]);
   if (!is_transformation (tr)) typeset_error (t, ip);
   else {
     frame f= get_transformation (tr);
     box   b= typeset_as_atomic (env, t[0], descend (ip, 0));
     print (transformed_box (ip, b, f));
-    //print (b->transform (env->fr * (f * invert (env->fr))));
   }
 }
 
