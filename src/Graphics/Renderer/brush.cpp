@@ -15,10 +15,12 @@
 brush_rep::brush_rep (tree p, int a):
   kind (brush_none), c (0xffffffff), pattern (p), alpha (a)
 {
-  if (p == "");
-  else if (is_atomic (p)) {
-    kind= brush_color;
-    c= named_color (p->label, a);
+  if (is_atomic (p)) {
+    string s= p->label;
+    if (s != "" && s != "none") {
+      kind= brush_color;
+      c= named_color (p->label, a);
+    }
   }
   else if (is_func (p, PATTERN)) {
     kind= brush_pattern;

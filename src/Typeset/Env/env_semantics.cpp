@@ -297,7 +297,7 @@ void
 edit_env_rep::update_color () {
   alpha= decode_alpha (get_string (OPACITY));
   string c = get_string (COLOR);
-  string fc= get_string (FILL_COLOR);
+  tree   fc= env [FILL_COLOR];
   if (c == "none") {
     if (fc == "none") fill_mode= FILL_MODE_NOTHING;
     else fill_mode= FILL_MODE_INSIDE;
@@ -307,7 +307,7 @@ edit_env_rep::update_color () {
     else fill_mode= FILL_MODE_BOTH;
   }
   col= named_color (c, alpha);
-  fill_color= named_color (fc, alpha);
+  fill_brush= brush (fc, alpha);
 }
 
 void

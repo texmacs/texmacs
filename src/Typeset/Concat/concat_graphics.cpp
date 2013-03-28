@@ -246,7 +246,7 @@ BEGIN_MAGNIFY
       u[i]= env->exec (t[i]);
     point p= env->fr (env->as_point (u));
     print (point_box (ip, p, 20*PIXEL, env->col,
-                      env->fill_mode, env->fill_color,
+                      env->fill_mode, env->fill_brush,
                       env->point_style));
   }
 END_MAGNIFY
@@ -295,7 +295,7 @@ BEGIN_MAGNIFY
     curve c= env->fr (poly_segment (a, cip));
     print (curve_box (ip, c, env->lw, env->col,
                       env->dash_style, env->dash_style_unit,
-                      env->fill_mode, env->fill_color,
+                      env->fill_mode, env->fill_brush,
                       typeset_line_arrows (ip)));
   }
 END_MAGNIFY
@@ -321,7 +321,7 @@ BEGIN_MAGNIFY
       curve c= env->fr (arc (a, cip, close));
       print (curve_box (ip, c, env->lw, env->col,
                         env->dash_style, env->dash_style_unit,
-                        env->fill_mode, env->fill_color,
+                        env->fill_mode, env->fill_brush,
                         typeset_line_arrows (ip)));
     }
   }
@@ -347,7 +347,7 @@ BEGIN_MAGNIFY
     curve c= env->fr (N(a)>=3 ? spline (a, cip, close): poly_segment (a, cip));
     print (curve_box (ip, c, env->lw, env->col,
                       env->dash_style, env->dash_style_unit,
-                      env->fill_mode, env->fill_color,
+                      env->fill_mode, env->fill_brush,
                       typeset_line_arrows (ip)));
   }
 END_MAGNIFY

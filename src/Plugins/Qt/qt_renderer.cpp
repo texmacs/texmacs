@@ -164,13 +164,56 @@ qt_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore)
 
 void
 qt_renderer_rep::set_color (color c) {
-  basic_renderer_rep::set_color(c);
+  basic_renderer_rep::set_color (c);
   QPen p (painter->pen ());
   QBrush b (painter->brush ());
-  p.setColor (to_qcolor(cur_fg));
-  b.setColor (to_qcolor(cur_fg));
+  p.setColor (to_qcolor (cur_fg));
+  b.setColor (to_qcolor (cur_fg));
   painter->setPen (p);
   painter->setBrush (b);
+}
+
+bool is_percentage (tree t, string s= "%");
+double as_percentage (tree t);
+
+void
+qt_renderer_rep::set_brush (brush br) {
+  basic_renderer_rep::set_brush (br);
+  QPen p (painter->pen ());
+  QBrush b (painter->brush ());
+  p.setColor (to_qcolor (cur_fg));
+  b.setColor (to_qcolor (cur_fg));
+  painter->setPen (p);
+  painter->setBrush (b);
+  if (br->kind == brush_pattern) {
+    tree pattern= br->pattern;
+    int pattern_alpha= br->alpha;
+
+    url u= as_string (pattern[0]);
+    int imw_pt, imh_pt;
+    image_size (u, imw_pt, imh_pt);
+    double pt= ((double) 600*PIXEL) / 72.0;
+    SI imw= (SI) (((double) imw_pt) * pt);
+    SI imh= (SI) (((double) imh_pt) * pt);
+
+    SI w= imw, h= imh;
+    if (is_int (pattern[1])) w= as_int (pattern[1]);
+    else if (is_percentage (pattern[1]))
+      w= (SI) (as_percentage (pattern[1]) * ((double) w));
+    else if (is_percentage (pattern[1], "@"))
+      w= (SI) (as_percentage (pattern[1]) * ((double) h));
+    if (is_int (pattern[2])) h= as_int (pattern[2]);
+    else if (is_percentage (pattern[2]))
+      h= (SI) (as_percentage (pattern[2]) * ((double) h));
+    else if (is_percentage (pattern[2], "@"))
+      h= (SI) (as_percentage (pattern[2]) * ((double) w));
+    w= ((w + pixel - 1) / pixel);
+    h= ((h + pixel - 1) / pixel);
+    QImage* pm= get_image (u, w, h, 0.0, 0.0, 1.0, 1.0);
+
+    painter->setOpacity (qreal (pattern_alpha) / qreal (255));
+    if (pm != NULL) painter->setBrush (QBrush (*pm));
+  }
 }
 
 void
@@ -220,9 +263,9 @@ qt_renderer_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   decode (x1, y1);
   decode (x2, y2);
   if ((x1>=x2) || (y1<=y2)) return;
-  QBrush brush (to_qcolor(cur_bg));
+  QBrush br (to_qcolor(cur_bg));
   painter->setRenderHints (0);
-  painter->fillRect (x1, y2, x2-x1, y1-y2, brush);       
+  painter->fillRect (x1, y2, x2-x1, y1-y2, br);       
 }
 
 void
@@ -246,9 +289,9 @@ qt_renderer_rep::fill (SI x1, SI y1, SI x2, SI y2) {
   decode (x1, y1);
   decode (x2, y2);
 
-  QBrush brush (to_qcolor(cur_fg));
+  QBrush br (to_qcolor(cur_fg));
   painter->setRenderHints (0);
-  painter->fillRect (x1, y2, x2-x1, y1-y2, brush);       
+  painter->fillRect (x1, y2, x2-x1, y1-y2, br);       
 }
 
 void
@@ -265,14 +308,14 @@ qt_renderer_rep::fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
   if ((x1>=x2) || (y1>=y2)) return;
   decode (x1, y1);
   decode (x2, y2);
-  QBrush brush(to_qcolor(cur_fg));
+  QBrush br(to_qcolor(cur_fg));
   QPainterPath pp;
   pp.arcMoveTo (x1, y2, x2-x1, y1-y2, alpha / 64);
   pp.arcTo (x1, y2, x2-x1, y1-y2, alpha / 64, delta / 64);
   pp.closeSubpath ();
   pp.setFillRule (Qt::WindingFill);
   painter->setRenderHints (QPainter::Antialiasing);
-  painter->fillPath (pp, brush);
+  painter->fillPath (pp, br);
 }
 
 void
@@ -285,13 +328,17 @@ qt_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
     decode (xx, yy);
     poly[i] = QPointF (xx, yy);
   }
-  QBrush brush(to_qcolor(cur_fg));
+  QBrush br= painter->brush ();
+  if (fg_brush->kind != brush_pattern)
+    // FIXME: is this really necessary?
+    // The brush should have been set at the moment of set_color or set_brush
+    br= QBrush (to_qcolor (cur_fg));
   QPainterPath pp;
   pp.addPolygon (poly);
   pp.closeSubpath ();
   pp.setFillRule (convex? Qt::OddEvenFill: Qt::WindingFill);
   painter->setRenderHints (QPainter::Antialiasing);
-  painter->fillPath (pp, brush);
+  painter->fillPath (pp, br);
 }
 
 
@@ -306,23 +353,10 @@ struct qt_cache_image_rep: cache_image_element_rep {
     delete static_cast<QImage*> (ptr); }
 };
 
-void
-qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
-                        double cx1, double cy1, double cx2, double cy2,
-                        int alpha)
+QImage*
+qt_renderer_rep::get_image (url u, int w, int h,
+                            double cx1, double cy1, double cx2, double cy2)
 {
-  // Given an image of original size (W, H),
-  // we display the part (cx1 * W, xy1 * H, cx2 * W, cy2 * H)
-  // at position (x, y) in a rectangle of size (w, h)
-  if(cx2<=cx1 || cy2<=cy1) return;
-
-  w= w/pixel; h= h/pixel;
-  decode (x, y);
-
-  // safety check
-  url ru = resolve(u);
-  u = is_none (ru) ? "$TEXMACS_PATH/misc/pixmaps/unknown.ps" : ru;
-  
   QImage *pm = NULL;
   tree lookup= tuple (u->t);
   lookup << as_string (w ) << as_string (h )
@@ -409,7 +443,7 @@ qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
       if (pm == NULL || pm->isNull ()) {
         if (pm != NULL) delete pm;
         cout << "TeXmacs] warning: cannot render " << concretize (u) << "\n";
-        return;
+        return NULL;
       }
     }
 
@@ -431,6 +465,28 @@ qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
     set_image_cache(lookup, ci);
     (ci->nr)++;
   }
+  return pm;
+}
+
+void
+qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
+                        double cx1, double cy1, double cx2, double cy2,
+                        int alpha)
+{
+  // Given an image of original size (W, H),
+  // we display the part (cx1 * W, xy1 * H, cx2 * W, cy2 * H)
+  // at position (x, y) in a rectangle of size (w, h)
+  if(cx2<=cx1 || cy2<=cy1) return;
+
+  w= w/pixel; h= h/pixel;
+  decode (x, y);
+
+  // safety check
+  url ru = resolve(u);
+  u = is_none (ru) ? "$TEXMACS_PATH/misc/pixmaps/unknown.ps" : ru;
+  
+  QImage* pm= get_image (u, w, h, cx1, cy1, cx2, cy2);
+  if (pm == NULL) return;
 
   qreal old_opacity= painter->opacity ();
   painter->setOpacity (qreal (alpha) / qreal (255));
@@ -482,13 +538,13 @@ qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
       im->fill (Qt::transparent);
       QPainter pp(im);
       QPen pen(painter->pen());
-      QBrush brush(pen.color());
+      QBrush br(pen.color());
       pp.setPen(Qt::NoPen);
       for (j=0; j<h; j++)
         for (i=0; i<w; i++) {
           int col = gl->get_x (i, j);
-          brush.setColor (QColor (r, g, b, (a*col)/nr_cols));
-          pp.fillRect (i, j, 1, 1, brush);
+          br.setColor (QColor (r, g, b, (a*col)/nr_cols));
+          pp.fillRect (i, j, 1, 1, br);
         }
       pp.end();
     }

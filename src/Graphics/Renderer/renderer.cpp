@@ -263,6 +263,16 @@ renderer_rep::triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3) {
   polygon (x, y);
 }
 
+void
+renderer_rep::set_brush (brush b) {
+  set_color (b->c);
+}
+
+brush
+renderer_rep::get_brush () {
+  return get_color ();
+}
+
 bool is_percentage (tree t, string s= "%");
 double as_percentage (tree t);
 

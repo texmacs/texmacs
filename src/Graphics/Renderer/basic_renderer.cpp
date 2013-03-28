@@ -320,6 +320,11 @@ basic_renderer_rep::get_color (string s) {
 #endif
 
 brush
+basic_renderer_rep::get_brush () {
+  return fg_brush;
+}
+
+brush
 basic_renderer_rep::get_background () {
   return bg_brush;
 }
@@ -327,6 +332,12 @@ basic_renderer_rep::get_background () {
 void
 basic_renderer_rep::set_color (color c) {
   cur_fg= c;
+}
+
+void
+basic_renderer_rep::set_brush (brush b) {
+  fg_brush= b;
+  cur_fg= b->c;
 }
 
 void

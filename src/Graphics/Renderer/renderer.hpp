@@ -78,10 +78,12 @@ public:
 
   /* color */
   virtual color get_color () = 0;
+  virtual brush get_brush ();
   virtual brush get_background () = 0;
 
   /* main graphical routines */
   virtual void set_color (color c) = 0;
+  virtual void set_brush (brush b);
   virtual void set_background (brush b) = 0;
   virtual void draw (int char_code, font_glyphs fn, SI x, SI y) = 0;
   virtual void set_line_style (SI w, int type=0, bool round=true) = 0;

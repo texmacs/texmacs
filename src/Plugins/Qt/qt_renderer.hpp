@@ -58,6 +58,7 @@ public:
   void  draw (int char_code, font_glyphs fn, SI x, SI y);
   void  draw (const QFont& qfn, const QString& s, SI x, SI y, double zoom);
   void  set_color (color c);
+  void  set_brush (brush b);
   void  set_line_style (SI w, int type=0, bool round=true);
   void  line (SI x1, SI y1, SI x2, SI y2);
   void  lines (array<SI> x, array<SI> y);
@@ -67,6 +68,8 @@ public:
   void  fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
   void  polygon (array<SI> x, array<SI> y, bool convex=true);
   void  xpm (url file_name, SI x, SI y);
+  QImage* get_image (url u, int w, int h,
+                     double cx1, double cy1, double cx2, double cy2);
   void  image (url u, SI w, SI h, SI x, SI y,
                double cx1, double cy1, double cx2, double cy2,
                int alpha);

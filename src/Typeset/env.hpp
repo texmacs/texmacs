@@ -177,7 +177,7 @@ public:
   array<bool>  dash_style;
   SI           dash_style_unit;
   int          fill_mode;
-  color        fill_color;
+  brush        fill_brush;
   array<tree>  line_arrows;
   string       text_at_halign;
   string       text_at_valign;

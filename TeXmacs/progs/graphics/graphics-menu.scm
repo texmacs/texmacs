@@ -403,8 +403,8 @@
   ;;("None" (graphics-set-fill-color "none"))
   ("None" (graphics-set-fill-color "default"))
   ---
-  (pick-color (graphics-set-fill-color answer))
-  ;;(pick-background (graphics-set-fill-color answer))
+  ;;(pick-color (graphics-set-fill-color answer))
+  (pick-background (graphics-set-fill-color answer))
   ---
   ("Palette" (interactive-color (lambda (c) (graphics-set-fill-color c)) '()))
   ("Other" (interactive graphics-set-fill-color)))
@@ -551,7 +551,7 @@
           (=> "none"
               (link graphics-fill-color-menu)))
         (assuming (and (!= col "default") (!= col "none"))
-          (=> (color (eval col) #f #f 25 17)
+          (=> (color col #f #f 25 17)
               (link graphics-fill-color-menu))))))
   (assuming (== (get-preference "experimental alpha") "on")
     (assuming (graphics-mode-attribute? (graphics-mode) "opacity")

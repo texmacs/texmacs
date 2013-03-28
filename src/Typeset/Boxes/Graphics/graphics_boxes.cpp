@@ -192,11 +192,11 @@ struct point_box_rep: public box_rep {
   SI r;
   color col;
   int fill;
-  color fill_col;
+  brush fill_br;
   string style;
   point_box_rep (
     path ip, point p, SI radius, color col,
-    int fill, color fill_col, string style);
+    int fill, brush fill_br, string style);
   SI graphical_distance (SI x, SI y) { return (SI)norm (p - point (x, y)); }
   gr_selections graphical_select (SI x, SI y, SI dist);
   void display (renderer ren);
@@ -205,9 +205,9 @@ struct point_box_rep: public box_rep {
 
 point_box_rep::point_box_rep (
   path ip2, point p2, SI r2, color col2,
-  int fill2, color fill_col2, string style2):
+  int fill2, brush fill_br2, string style2):
     box_rep (ip2), p (p2), r (r2), col (col2),
-    fill (fill2), fill_col (fill_col2), style (style2)
+    fill (fill2), fill_br (fill_br2), style (style2)
 {
   x1= x3= ((SI) p[0]) - r;
   y1= y3= ((SI) p[1]) - r;
@@ -246,7 +246,7 @@ point_box_rep::display (renderer ren) {
   if (style == "none");
   else if (style == "square") {
     if (fill == FILL_MODE_INSIDE || fill == FILL_MODE_BOTH) {
-      ren->set_color (fill_col);
+      ren->set_brush (fill_br);
       ren->line (x[0], y[0], x[1], y[1]);
       ren->line (x[1], y[1], x[2], y[2]);
       ren->line (x[2], y[2], x[3], y[3]);
@@ -264,7 +264,7 @@ point_box_rep::display (renderer ren) {
   else {
     if (style == "disk" ||
         fill == FILL_MODE_INSIDE || fill == FILL_MODE_BOTH) {
-      ren->set_color (style == "disk" ? col : fill_col);
+      ren->set_brush (style == "disk" ? col : fill_br);
       ren->arc (x[0], y[0]+ren->pixel, x[2], y[2]+ren->pixel, 0, 64*360);
       ren->fill_arc (x[0], y[0]+ren->pixel, x[2], y[2]+ren->pixel, 0, 64*360);
     }
@@ -288,11 +288,11 @@ struct curve_box_rep: public box_rep {
   SI style_unit;
   array<SI> styled_n;
   int fill;
-  color fill_col;
+  brush fill_br;
   array<box> arrows;
   curve_box_rep (path ip, curve c, SI width, color col,
 		 array<bool> style, SI style_unit,
-		 int fill, color fill_col,
+		 int fill, brush fill_br,
 		 array<box> arrows);
   box transform (frame fr);
   SI graphical_distance (SI x, SI y);
@@ -305,12 +305,12 @@ struct curve_box_rep: public box_rep {
 };
 
 curve_box_rep::curve_box_rep (path ip2, curve c2, SI W, color C,
-  array<bool> style2, SI style_unit2, int fill2, color fill_col2,
+  array<bool> style2, SI style_unit2, int fill2, brush fill_br2,
   array<box> arrows2)
   :
   box_rep (ip2), width (W), col (C), c (c2),
   style (style2), style_unit (style_unit2),
-  fill (fill2), fill_col (fill_col2)
+  fill (fill2), fill_br (fill_br2)
 {
   a= c->rectify (PIXEL);
   int i, n= N(a);
@@ -361,7 +361,7 @@ curve_box_rep::curve_box_rep (path ip2, curve c2, SI W, color C,
 box
 curve_box_rep::transform (frame fr) {
   return curve_box (ip, fr (c), width, col,
-    style, style_unit, fill, fill_col, arrows);
+    style, style_unit, fill, fill_br, arrows);
 }
 
 SI
@@ -448,7 +448,7 @@ void
 curve_box_rep::display (renderer ren) {
   int i, n;
   if (fill == FILL_MODE_INSIDE || fill == FILL_MODE_BOTH) {
-    ren->set_color (fill_col);
+    ren->set_brush (fill_br);
     n= N(a);
     array<SI> x (n), y (n);
     for (i=0; i<n; i++) {
@@ -627,16 +627,16 @@ graphics_group_box (path ip, array<box> bs) {
 
 box
 point_box (
-  path ip, point p, SI r, color col, int fill, color fill_col, string style) {
-  return tm_new<point_box_rep> (ip, p, r, col, fill, fill_col, style);
+  path ip, point p, SI r, color col, int fill, brush fill_br, string style) {
+  return tm_new<point_box_rep> (ip, p, r, col, fill, fill_br, style);
 }
 
 box
 curve_box (path ip, curve c, SI width, color col,
   array<bool> style, SI style_unit,
-  int fill, color fill_col,
+  int fill, brush fill_br,
   array<box> arrows)
 {
   return tm_new<curve_box_rep> (ip, c, width, col,
-                                style, style_unit, fill, fill_col, arrows);
+                                style, style_unit, fill, fill_br, arrows);
 }
