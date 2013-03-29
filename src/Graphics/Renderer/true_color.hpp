@@ -26,15 +26,15 @@ public:
   inline true_color (float r2, float g2, float b2, float a2):
     r (r2), g (g2), b (b2), a (a2) {}
   inline true_color (color c):
-    r (((float) (c & 0xff)) / 255.0),
+    b (((float) (c & 0xff)) / 255.0),
     g (((float) ((c >> 8) & 0xff)) / 255.0),
-    b (((float) ((c >> 16) & 0xff)) / 255.0),
+    r (((float) ((c >> 16) & 0xff)) / 255.0),
     a (((float) ((c >> 24) & 0xff)) / 255.0) {}
   inline operator color () {
     return
-      ((int) (r * 255 + 0.5)) +
+      ((int) (b * 255 + 0.5)) +
       (((int) (g * 255 + 0.5)) << 8) +
-      (((int) (b * 255 + 0.5)) << 16) +
+      (((int) (r * 255 + 0.5)) << 16) +
       (((int) (a * 255 + 0.5)) << 24); }
 };
 

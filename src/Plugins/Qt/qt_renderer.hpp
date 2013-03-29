@@ -13,6 +13,7 @@
 #define QT_RENDERER_HPP
 
 #include "basic_renderer.hpp"
+#include "picture.hpp"
 #include <QPainter>
 #include <QPixmap>
 #include <QImage>
@@ -118,6 +119,26 @@ public:
   void new_shadow (renderer& ren);
   void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
 };
+
+class qt_picture_rep: public picture_rep {
+public:
+  QImage pict;
+  int w, h;
+  int ox, oy;
+
+public:
+  qt_picture_rep (const QImage& im, int ox2, int oy2);
+  picture_kind get_type ();
+  void* get_handle ();
+  int get_width ();
+  int get_height ();
+  int get_origin_x ();
+  int get_origin_y ();
+  color get_pixel (int x, int y);
+  void set_pixel (int x, int y, color c);
+};
+
+picture qt_picture (const QImage& im, int ox, int oy);
 
 class qt_image_renderer_rep: public qt_renderer_rep {
 public:

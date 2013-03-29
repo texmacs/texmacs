@@ -364,6 +364,12 @@ to_qcolor(color c) {
   return QColor (r, g, b, a);
 }
 
+color
+to_color (const QColor& c) {
+  int r, g, b, a;
+  c.getRgb (&r, &g, &b, &a);
+  return rgb_color (r, g, b, a);
+}
 
 QString
 qt_translate (const string& s) {

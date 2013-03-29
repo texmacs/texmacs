@@ -29,7 +29,7 @@ public:
       if (w * h != 0) a= tm_new_array<C> (w * h); }
   ~raster_rep () { if (w * h != 0) tm_delete_array (a); }
 
-  picture_kind get_type () { return picture_raster; }
+  picture_kind get_type () { return kind; }
   void* get_handle () { return (void*) this; }
 
   int get_width () { return w; }
@@ -48,8 +48,6 @@ public:
     if (0 > x || 0 > y || x >= w || y >= h);
     else a [y*w + x]= C (c);
   }
-
-  friend class raster<C>;
 };
 
 #endif // defined RASTER_H

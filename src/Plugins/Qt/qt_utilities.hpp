@@ -33,6 +33,7 @@ typedef pair<SI,SI> coord2;
 QColor   to_qcolor (const string& );
 QColor   to_qcolor (color c);
 string from_qcolor (const QColor& );
+color    to_color  (const QColor& );
 
 QRect    to_qrect (const coord4 & p);
 coord4 from_qrect (const QRect & rect);

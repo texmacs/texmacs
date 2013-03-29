@@ -918,6 +918,36 @@ qt_shadow_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
 }
 
 /******************************************************************************
+* Abstract Qt pictures
+******************************************************************************/
+
+qt_picture_rep::qt_picture_rep (const QImage& im, int ox2, int oy2):
+  pict (im), w (im.width ()), h (im.height ()), ox (ox2), oy (oy2) {}
+
+picture_kind qt_picture_rep::get_type () { return picture_native; }
+void* qt_picture_rep::get_handle () { return (void*) this; }
+
+int qt_picture_rep::get_width () { return w; }
+int qt_picture_rep::get_height () { return h; }
+int qt_picture_rep::get_origin_x () { return ox; }
+int qt_picture_rep::get_origin_y () { return oy; }
+
+color
+qt_picture_rep::get_pixel (int x, int y) {
+  return (color) pict.pixel (x + ox, h - 1 - (y + oy));
+}
+
+void
+qt_picture_rep::set_pixel (int x, int y, color c) {
+  pict.setPixel (x + ox, h - 1 - (y + oy), c);
+}
+
+picture
+qt_picture (const QImage& im, int ox, int oy) {
+  return (picture) tm_new<qt_picture_rep> (im, ox, oy);
+}
+
+/******************************************************************************
 * Rendering on images
 ******************************************************************************/
 

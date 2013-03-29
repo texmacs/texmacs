@@ -19,7 +19,7 @@ typedef unsigned int color;
 * The abstract picture class
 ******************************************************************************/
 
-enum picture_kind { picture_naive, picture_raster };
+enum picture_kind { picture_native, picture_raster };
 
 class picture;
 class picture_rep: public abstract_struct {
