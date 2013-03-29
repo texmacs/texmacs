@@ -38,10 +38,12 @@ public:
   virtual color get_pixel (int x, int y) = 0;
   virtual void set_pixel (int x, int y, color c) = 0;
 
-  void copy_from (int x, int y, picture p,
-                  int x1, int y1, int x2, int y2);
-  void copy_to   (int x, int y, picture p,
-                  int x1, int y1, int x2, int y2);
+  void copy_from (picture src);
+  void copy_to   (picture dest);
+  virtual void copy_from (int x, int y, picture src,
+                          int x1, int y1, int x2, int y2);
+  virtual void copy_to   (int x, int y, picture dest,
+                          int x1, int y1, int x2, int y2);
 
   friend class picture;
 };
@@ -52,5 +54,7 @@ class picture {
   picture (int w, int h, int ox= 0, int oy= 0);
 };
 ABSTRACT_NULL_CODE(picture);
+
+picture test_effect (picture pic);
 
 #endif // defined PICTURE_H

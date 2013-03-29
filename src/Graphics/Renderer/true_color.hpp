@@ -17,14 +17,14 @@ typedef unsigned int color;
 
 class true_color {
 public:
-  float r;
-  float g;
   float b;
+  float g;
+  float r;
   float a;
 
   inline true_color () {}
   inline true_color (float r2, float g2, float b2, float a2):
-    r (r2), g (g2), b (b2), a (a2) {}
+    b (b2), g (g2), r (r2), a (a2) {}
   inline true_color (color c):
     b (((float) (c & 0xff)) / 255.0),
     g (((float) ((c >> 8) & 0xff)) / 255.0),

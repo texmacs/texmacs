@@ -38,16 +38,16 @@ public:
   int get_origin_y () { return oy; }
 
   color get_pixel (int x, int y) {
-    x -= ox; y -= oy;
     if (0 > x || 0 > y || x >= w || y >= h) return 0;
     else return (color) (a [y*w + x]);
   }
 
   void set_pixel (int x, int y, color c) {
-    x -= ox; y -= oy;
     if (0 > x || 0 > y || x >= w || y >= h);
     else a [y*w + x]= C (c);
   }
 };
+
+picture as_raster_picture (picture pict);
 
 #endif // defined RASTER_H

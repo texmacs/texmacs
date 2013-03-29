@@ -246,8 +246,11 @@ effect_box_rep::redraw (renderer ren, path p, rectangles& l) {
   subbox (0)->redraw (pm, path (), rs);
   if (((nr_painted&15) == 15) && gui_interrupted (true));
   else {
+    picture old_pic= pm->get_picture ();
+    picture new_pic= test_effect (old_pic);
+    pm->set_picture (new_pic);
     ren->draw_image (0, 0, pm);
-    ren->draw_image (20*PIXEL, 20*PIXEL, pm);
+    pm->set_picture (old_pic);
   }
   tm_delete (pm);
   ren->move_origin (-x0, -y0);

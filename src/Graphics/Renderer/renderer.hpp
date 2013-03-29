@@ -15,6 +15,7 @@
 #include "url.hpp"
 #include "pencil.hpp"
 #include "brush.hpp"
+#include "picture.hpp"
 
 typedef int SI;
 typedef unsigned int color;
@@ -119,6 +120,8 @@ public:
   virtual void* get_data (string what);
   virtual renderer create_image (SI x0, SI y0, SI x1, SI y1, SI x2, SI y2);
   virtual void draw_image (SI x, SI y, renderer pm);
+  virtual picture get_picture ();
+  virtual void set_picture (picture p);
 
   /* href and stuff */
   virtual void anchor(string label, SI x, SI y);

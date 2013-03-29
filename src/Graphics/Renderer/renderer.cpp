@@ -372,10 +372,23 @@ renderer
 renderer_rep::create_image (SI x0, SI y0, SI x1, SI y1, SI x2, SI y2) {
   (void) x0; (void) y0; (void) x1; (void) y1; (void) x2; (void) y2;
   FAILED ("create_image not yet implemented");
+  return NULL;
 }
 
 void
 renderer_rep::draw_image (SI x, SI y, renderer pm) {
   (void) x; (void) y; (void) pm;
   FAILED ("draw_image not yet implemented");
+}
+
+picture
+renderer_rep::get_picture () {
+  FAILED ("not a picture");
+  return picture ();
+}
+
+void
+renderer_rep::set_picture (picture p) {
+  (void) p;
+  FAILED ("not a picture");
 }

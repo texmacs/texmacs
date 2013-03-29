@@ -934,17 +934,27 @@ int qt_picture_rep::get_origin_y () { return oy; }
 
 color
 qt_picture_rep::get_pixel (int x, int y) {
-  return (color) pict.pixel (x + ox, h - 1 - (y + oy));
+  return (color) pict.pixel (x, h - 1 - y);
 }
 
 void
 qt_picture_rep::set_pixel (int x, int y, color c) {
-  pict.setPixel (x + ox, h - 1 - (y + oy), c);
+  pict.setPixel (x, h - 1 - y, c);
 }
 
 picture
 qt_picture (const QImage& im, int ox, int oy) {
   return (picture) tm_new<qt_picture_rep> (im, ox, oy);
+}
+
+picture
+as_qt_picture (picture pic) {
+  if (pic->get_type () == picture_native) return pic;
+  picture ret= qt_picture (QImage (pic->get_width (), pic->get_height (),
+                                   QImage::Format_ARGB32),
+                           pic->get_origin_x (), pic->get_origin_y ());
+  ret->copy_from (pic);
+  return ret;
 }
 
 /******************************************************************************
@@ -997,6 +1007,16 @@ void*
 qt_image_renderer_rep::get_data (string what) {
   (void) what;
   return (void*) this;
+}
+
+picture
+qt_image_renderer_rep::get_picture () {
+  return pict;
+}
+
+void
+qt_image_renderer_rep::set_picture (picture p) {
+  pict= as_qt_picture (p);
 }
 
 renderer

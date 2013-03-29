@@ -13,7 +13,6 @@
 #define QT_RENDERER_HPP
 
 #include "basic_renderer.hpp"
-#include "picture.hpp"
 #include <QPainter>
 #include <QPixmap>
 #include <QImage>
@@ -150,6 +149,8 @@ public:
                          renderer master);
   ~qt_image_renderer_rep ();
   void* get_data (string what);
+  picture get_picture ();
+  void set_picture (picture p);
 };
 
 qt_renderer_rep* the_qt_renderer();
