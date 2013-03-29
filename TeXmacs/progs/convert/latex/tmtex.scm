@@ -1416,8 +1416,6 @@
          (dates     (append dates  (tmtex-get-transform l 'doc-date-ref)))
          (miscs     (append miscs  (tmtex-get-transform l 'doc-misc-ref)))
          (notes     (append notes  (tmtex-get-transform l 'doc-note-ref))))
-    (display* (tmtex-make-doc-data titles subtits authors dates miscs notes
-                         subtits-l dates-l miscs-l notes-l) "\n\n")
     (tmtex-make-doc-data titles subtits authors dates miscs notes
                          subtits-l dates-l miscs-l notes-l)))
 
