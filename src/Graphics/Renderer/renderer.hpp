@@ -115,10 +115,10 @@ public:
   virtual void put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) = 0;
   virtual void apply_shadow (SI x1, SI y1, SI x2, SI y2) = 0;
 
-  /* pixmaps as renderers */
+  /* images as renderers */
   virtual void* get_data (string what);
-  virtual renderer create_pixmap (SI x0, SI y0, SI x1, SI y1, SI x2, SI y2);
-  virtual void draw_pixmap (SI x, SI y, renderer pm);
+  virtual renderer create_image (SI x0, SI y0, SI x1, SI y1, SI x2, SI y2);
+  virtual void draw_image (SI x, SI y, renderer pm);
 
   /* href and stuff */
   virtual void anchor(string label, SI x, SI y);

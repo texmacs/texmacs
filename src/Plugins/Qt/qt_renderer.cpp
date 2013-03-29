@@ -918,12 +918,13 @@ qt_shadow_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
 }
 
 /******************************************************************************
-* Rendering on pixmaps
+* Rendering on images
 ******************************************************************************/
 
-qt_pixmap_renderer_rep::qt_pixmap_renderer_rep (
+qt_image_renderer_rep::qt_image_renderer_rep (
   int x0b, int y0b, int x1b, int y1b, int x2b, int y2b, renderer m):
-    qt_renderer_rep (new QPainter ()), px (x2b - x1b, y1b - y2b),
+    qt_renderer_rep (new QPainter ()),
+    px (x2b - x1b, y1b - y2b, QImage::Format_ARGB32),
     hotx (x0b - x1b), hoty (y0b - y2b), x1 (x1b), y1 (y1b), x2 (x2b), y2 (y2b)
 {
   ox = m->ox;
@@ -945,24 +946,28 @@ qt_pixmap_renderer_rep::qt_pixmap_renderer_rep (
   cx2 -= x1b * pixel;
   cy2 += y2b * pixel;
 
+#if (QT_VERSION >= 0x040800)
   px.fill (QColor (0, 0, 0, 0));
+#else
+  px.fill ((uint) 0);
+#endif
   painter->begin (&px);
 }
 
-qt_pixmap_renderer_rep::~qt_pixmap_renderer_rep () {
+qt_image_renderer_rep::~qt_image_renderer_rep () {
   painter->end();
   delete painter;
   painter = NULL;
 }
 
 void*
-qt_pixmap_renderer_rep::get_data (string what) {
+qt_image_renderer_rep::get_data (string what) {
   (void) what;
   return (void*) this;
 }
 
 renderer
-qt_renderer_rep::create_pixmap (SI x0, SI y0, SI x1, SI y1, SI x2, SI y2) {
+qt_renderer_rep::create_image (SI x0, SI y0, SI x1, SI y1, SI x2, SI y2) {
   decode (x0, y0);
   outer_round (x1, y1, x2, y2);
   decode (x1, y1);
@@ -970,15 +975,13 @@ qt_renderer_rep::create_pixmap (SI x0, SI y0, SI x1, SI y1, SI x2, SI y2) {
   x2= max (x1, x2);
   y2= min (y1, y2);
   return (renderer)
-    tm_new<qt_pixmap_renderer_rep> (x0, y0, x1, y1, x2, y2, (renderer) this);
+    tm_new<qt_image_renderer_rep> (x0, y0, x1, y1, x2, y2, (renderer) this);
 }
 
 void
-qt_renderer_rep::draw_pixmap (SI x, SI y, renderer pm) {
-  qt_pixmap_renderer_rep* qpm= (qt_pixmap_renderer_rep*) pm->get_data ("pixmap");
+qt_renderer_rep::draw_image (SI x, SI y, renderer pm) {
+  qt_image_renderer_rep* qpm= (qt_image_renderer_rep*) pm->get_data ("image");
   int hx= qpm->hotx, hy= qpm->hoty;
   decode (x, y);
-  int w= qpm->x2 - qpm->x1;
-  int h= qpm->y1 - qpm->y2;
-  painter->drawPixmap (x - hx, y - hy, w, h, qpm->px, 0, 0, w, h);
+  painter->drawImage (x - hx, y - hy, qpm->px);
 }
