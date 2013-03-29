@@ -153,18 +153,18 @@
 ;;; IEEEtran specific titlemarkup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (tmtex-author-affiliation-ref t)
-  `(IEEEauthorrefmark ,(number->string (cadr t))))
+(tm-define (tmtex-author-affiliation-ref s l)
+  `(IEEEauthorrefmark ,(car l)))
 
-(tm-define (tmtex-author-affiliation-label t)
-  `(!concat (IEEEauthorrefmark ,(number->string (cadr t)))
-                               ,(tmtex (caddr t))))
-(tm-define (tmtex-author-email-ref t)
-  `(IEEEauthorrefmark ,(number->string (cadr t))))
+(tm-define (tmtex-author-affiliation-label s l)
+  `(!concat (IEEEauthorrefmark ,(car l))
+                               ,(tmtex (cadr l))))
+(tm-define (tmtex-author-email-ref s l)
+  `(IEEEauthorrefmark ,(car l)))
 
-(tm-define (tmtex-author-email-label t)
-  `(!concat (IEEEauthorrefmark ,(number->string (cadr t)))
-                               ,(tmtex-author-email (cdr t))))
+(tm-define (tmtex-author-email-label s l)
+  `(!concat (IEEEauthorrefmark ,(car l))
+                               ,(tmtex-author-email l)))
 
 (tm-define (tmtex-author-affiliation t)
   (:mode ieee-tran-style?)
