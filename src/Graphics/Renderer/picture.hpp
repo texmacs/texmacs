@@ -53,11 +53,23 @@ ABSTRACT_NULL(picture);
 };
 ABSTRACT_NULL_CODE(picture);
 
+/******************************************************************************
+* Operations on pictures
+******************************************************************************/
+
+enum composition_mode {
+  compose_destination,
+  compose_source,
+  compose_source_over,
+  compose_towards_source
+};
+
 picture raster_picture (int w, int h, int ox= 0, int oy= 0);
 picture alpha_picture (int w, int h, int ox= 0, int oy= 0);
 picture as_raster_picture (picture pict);
 
 picture test_effect (picture pic);
 picture blur (picture pic, float r);
+picture compose (picture pic, color c, composition_mode mode);
 
 #endif // defined PICTURE_H

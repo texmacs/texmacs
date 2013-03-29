@@ -53,6 +53,18 @@ get_raster (picture pic) {
 }
 
 picture
+copy_raster_picture (picture pic) {
+  if (pic->get_type () != picture_raster) return as_raster_picture (pic);
+  int w= pic->get_width (), h= pic->get_height ();
+  int ox= pic->get_origin_x (), oy= pic->get_origin_y ();
+  picture ret= raster_picture (w, h, ox, oy);
+  true_color* d= get_raster (ret);
+  true_color* s= get_raster (pic);
+  for (int i=0; i<w*h; i++) d[i]= s[i];
+  return ret;
+}
+
+picture
 blur (picture orig, float r) {
   picture pic= as_raster_picture (orig);
   int R= ((int) (3.0 * r));
@@ -61,4 +73,28 @@ blur (picture orig, float r) {
   picture ret= raster_picture (w + 2*R, h + 2*R, ox + R, oy + R);
   blur<true_color, alpha_color> (get_raster (ret), get_raster (pic), w, h, R, r);
   return ret;
+}
+
+template<composition_mode M> picture
+compose (picture pic, color c) {
+  picture ret= copy_raster_picture (pic);
+  int w= pic->get_width (), h= pic->get_height ();
+  compose<M,true_color,true_color> (get_raster (ret), true_color (c), w, h, w);
+  return ret;
+}
+
+picture
+compose (picture orig, color c, composition_mode mode) {
+  switch (mode) {
+  case compose_destination:
+    return compose<compose_destination> (orig, c);
+  case compose_source:
+    return compose<compose_source> (orig, c);
+  case compose_source_over:
+    return compose<compose_source_over> (orig, c);
+  case compose_towards_source:
+    return compose<compose_towards_source> (orig, c);
+  default:
+    return orig;
+  }
 }

@@ -112,4 +112,42 @@ blur (C* d, const C* s, int w, int h, int R, float r) {
   tm_delete_array (temp);  
 }
 
+/******************************************************************************
+* Low level composition
+******************************************************************************/
+
+template<composition_mode M, class D, class S>
+struct composer {
+  static inline void op (D& dest, const S& src) { (void) dest; (void) src; }
+};
+
+template<class D, class S>
+struct composer<compose_source,D,S> {
+  static inline void op (D& dest, const S& src) { dest= src; }
+};
+
+template<class D, class S>
+struct composer<compose_source_over,D,S> {
+  static inline void op (D& dest, const S& src) { source_over (dest, src); }
+};
+
+template<class D, class S>
+struct composer<compose_towards_source,D,S> {
+  static inline void op (D& dest, const S& src) { towards_source (dest, src); }
+};
+
+template<composition_mode M, class D, class S> void
+compose (D* d, const S& s, int w, int h, int wd) {
+  for (int y=0; y<h; y++, d += wd)
+    for (int x=0; x<w; x++)
+      composer<M,D,S>::op (d[x], s);
+}
+
+template<composition_mode M, class D, class S> void
+compose (D* d, const S* s, int w, int h, int wd, int ws) {
+  for (int y=0; y<h; y++, d += wd, s +=ws)
+    for (int x=0; x<w; x++)
+      composer<M,D,S>::op (d[x], s[x]);
+}
+
 #endif // defined RASTER_H

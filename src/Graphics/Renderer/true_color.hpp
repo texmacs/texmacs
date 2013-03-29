@@ -94,4 +94,21 @@ show_alpha (const true_color& c) {
   else return true_color (c.r / c.a, c.g / c.a, c.b / c.a, c.a);
 }
 
+inline void
+source_over (true_color& c1, const true_color& c2) {
+  float a2= c2.a, a1= 1.0 - a2;
+  c1.r= c1.r * a1 + c2.r * a2;
+  c1.g= c1.g * a1 + c2.g * a2;
+  c1.b= c1.b * a1 + c2.b * a2;
+  c1.a= c1.a * a1 + a2;
+}
+
+inline void
+towards_source (true_color& c1, const true_color& c2) {
+  float a2= c2.a, a1= 1.0 - a2;
+  c1.r= c1.r * a1 + c2.r * a2;
+  c1.g= c1.g * a1 + c2.g * a2;
+  c1.b= c1.b * a1 + c2.b * a2;
+}
+
 #endif // defined TRUE_COLOR_H
