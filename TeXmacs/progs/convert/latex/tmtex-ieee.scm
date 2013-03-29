@@ -132,8 +132,8 @@
   (:mode ieee-tran-style?)
   (:require clustered?)
   (set! l (map tmtex-replace-documents l))
-  (set! l (make-references l 'author-affiliation #t))
-  (set! l (make-references l 'author-email #t))
+  (set! l (make-references l 'author-affiliation #t #t))
+  (set! l (make-references l 'author-email #t #t))
   l)
 
 (tm-define (tmtex-append-authors l)
