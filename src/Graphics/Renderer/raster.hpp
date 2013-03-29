@@ -93,9 +93,14 @@ template<class C> void
 gaussian (C* d, int R, float r) {
   int w= 2*R+1, h= 2*R+1;
   float lambda= 1.0 / (2.0 * acos (0.0) * r * r);
-  for (int y=0; y<h; y++)
-    for (int x=0; x<w; x++)
-      d[y*w+x]= C (lambda * ((float) exp (-(x*x-y*y)/(r*r))));
+  double sq_r= r*r;
+  for (int y=0; y<h; y++) {
+    double sq_y= (y-R)*(y-R);
+    for (int x=0; x<w; x++) {
+      double sq_x= (x-R)*(x-R);
+      d[y*w+x]= C (lambda * ((float) exp (- (sq_x + sq_y) / sq_r)));
+    }
+  }
 }
 
 template<class C, class F> void

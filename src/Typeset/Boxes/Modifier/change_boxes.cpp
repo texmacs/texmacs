@@ -247,8 +247,8 @@ effect_box_rep::redraw (renderer ren, path p, rectangles& l) {
   if (((nr_painted&15) == 15) && gui_interrupted (true));
   else {
     picture old_pic= pm->get_picture ();
-    picture new_pic= test_effect (old_pic);
-    //picture new_pic= blur (old_pic, 3.0);
+    //picture new_pic= test_effect (old_pic);
+    picture new_pic= blur (old_pic, 2.0);
     pm->set_picture (new_pic);
     ren->draw_image (0, 0, pm);
     pm->set_picture (old_pic);
