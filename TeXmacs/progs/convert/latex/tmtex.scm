@@ -1266,6 +1266,26 @@
       (if (!= r 'document) `(,r ,@s)
         `(concat ,@(list-intersperse s '(next-line)))))))
 
+(tm-define (contains-tags? t l)
+  (cond ((or (nlist? t) (null? t)) #f)
+        ((in? (car t) l) #t)
+        (else
+          (with found? #f
+            (for-each (lambda (x)
+                        (set! found? (or found? (contains-tags? x l))))
+                      t)
+            found?))))
+
+(tm-define (contains-stree? t u)
+  (cond ((== t u) #t)
+        ((or (null? t) (nlist? t)) #f)
+        (else
+          (with found? #f
+            (for-each (lambda (x)
+                        (set! found? (or found? (contains-stree? x u))))
+                      t)
+            found?))))
+
 ;;  Metadata clustering
 
 (define (stree-replace l what by)
