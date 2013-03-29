@@ -248,6 +248,7 @@ effect_box_rep::redraw (renderer ren, path p, rectangles& l) {
   else {
     picture old_pic= pm->get_picture ();
     picture new_pic= test_effect (old_pic);
+    //picture new_pic= blur (old_pic, 3.0);
     pm->set_picture (new_pic);
     ren->draw_image (0, 0, pm);
     pm->set_picture (old_pic);

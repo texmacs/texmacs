@@ -56,6 +56,18 @@ operator - (const true_color& c1, const true_color& c2) {
   return true_color (c1.r - c2.r, c1.g - c2.g, c1.b - c2.b, c1.a - c2.a);
 }
 
+inline true_color&
+operator += (true_color& c1, const true_color& c2) {
+  c1.r += c2.r; c1.g += c2.g; c1.b += c2.b; c1.a += c2.a;
+  return c1;
+}
+
+inline true_color&
+operator -= (true_color& c1, const true_color& c2) {
+  c1.r -= c2.r; c1.g -= c2.g; c1.b -= c2.b; c1.a -= c2.a;
+  return c1;
+}
+
 inline true_color
 operator * (float x, const true_color& c) {
   return true_color (c.r * x, c.g * x, c.b * x, c.a * x);
@@ -69,6 +81,17 @@ operator * (const true_color& c, float x) {
 inline true_color
 operator / (const true_color& c, float x) {
   return true_color (c.r / x, c.g / x, c.b / x, c.a / x);
+}
+
+inline true_color
+hide_alpha (const true_color& c) {
+  return true_color (c.r * c.a, c.g * c.a, c.b * c.a, c.a);
+}
+
+inline true_color
+show_alpha (const true_color& c) {
+  if (c.a < 0.00390625 && c.a > -0.00390625) return c;
+  else return true_color (c.r / c.a, c.g / c.a, c.b / c.a, c.a);
 }
 
 #endif // defined TRUE_COLOR_H

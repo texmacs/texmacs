@@ -48,6 +48,63 @@ public:
   }
 };
 
-picture as_raster_picture (picture pict);
+/******************************************************************************
+* Low level routines for raster manipulation
+******************************************************************************/
+
+template<class C> void
+hide_alpha (C* d, const C* s, int w, int h) {
+  for (int y=0; y<h; y++) {
+    int o= y * w;
+    for (int x=0; x<w; x++)
+      d[o+x]= hide_alpha (s[o+x]);
+  }
+}
+
+template<class C> void
+show_alpha (C* d, const C* s, int w, int h) {
+  for (int y=0; y<h; y++) {
+    int o= y * w;
+    for (int x=0; x<w; x++)
+      d[o+x]= show_alpha (s[o+x]);
+  }
+}
+
+template<class D, class S1, class S2> void
+convolute (D* d, const S1* s1, const S2* s2,
+           int s1w, int s1h, int s2w, int s2h) {
+  if (s1w * s1h == 0) return;
+  int dw= s1w + s2w - 1, dh= s1h + s2h - 1;
+  for (int i=0; i<dw*dh; i++) d[i]= D ((color) 0);
+  S1* temp= tm_new_array<S1> (s1w * s1h);
+  hide_alpha (temp, s1, s1w, s1h);
+  for (int y1=0; y1<s1h; y1++)
+    for (int y2=0; y2<s2h; y2++) {
+      int o1= y1 * s1w, o2= y2 * s2w, o= (y1 + y2) * dw;
+      for (int x1=0; x1<s1w; x1++)
+        for (int x2=0; x2<s2w; x2++)
+          d[o+x1+x2] += s1[o1+x1] * s2[o2+x2];
+    }
+  show_alpha (d, d, dw, dh);
+  tm_delete_array (temp);
+}
+
+template<class C> void
+gaussian (C* d, int R, float r) {
+  int w= 2*R+1, h= 2*R+1;
+  float lambda= 1.0 / (2.0 * acos (0.0) * r * r);
+  for (int y=0; y<h; y++)
+    for (int x=0; x<w; x++)
+      d[y*w+x]= C (lambda * ((float) exp (-(x*x-y*y)/(r*r))));
+}
+
+template<class C, class F> void
+blur (C* d, const C* s, int w, int h, int R, float r) {
+  int tw= 2*R+1, th= 2*R+1;
+  F* temp= tm_new_array<F> (tw * th);
+  gaussian (temp, R, r);
+  convolute (d, s, temp, w, h, tw, th);
+  tm_delete_array (temp);  
+}
 
 #endif // defined RASTER_H

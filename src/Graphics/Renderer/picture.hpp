@@ -19,7 +19,7 @@ typedef unsigned int color;
 * The abstract picture class
 ******************************************************************************/
 
-enum picture_kind { picture_native, picture_raster };
+enum picture_kind { picture_native, picture_raster, picture_alpha };
 
 class picture;
 class picture_rep: public abstract_struct {
@@ -49,12 +49,15 @@ public:
 };
 
 class picture {
-  ABSTRACT_NULL(picture);
-  picture (url u);
-  picture (int w, int h, int ox= 0, int oy= 0);
+ABSTRACT_NULL(picture);
 };
 ABSTRACT_NULL_CODE(picture);
 
+picture raster_picture (int w, int h, int ox= 0, int oy= 0);
+picture alpha_picture (int w, int h, int ox= 0, int oy= 0);
+picture as_raster_picture (picture pict);
+
 picture test_effect (picture pic);
+picture blur (picture pic, float r);
 
 #endif // defined PICTURE_H
