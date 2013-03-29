@@ -218,7 +218,7 @@
       `((title (!indent (!paragraph ,@result)))))))
 
 (tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes
-                                miscs-l notes-l)
+                                subtits-l dates-l miscs-l notes-l)
   (:mode svmono-style?)
   `(!document
      ,@(svmono-make-title titles notes miscs)

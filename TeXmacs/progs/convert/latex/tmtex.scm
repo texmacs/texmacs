@@ -1322,7 +1322,7 @@
 (tm-define (make-references l tag author? global-counter?)
   (let* ((tag-ref      (symbol-append tag '- 'ref))
          (tag-label    (symbol-append tag '- 'label))
-         (cnt          (if global-counter? 'tmtex-ref-cnt 1))
+         (cnt          (if global-counter? tmtex-ref-cnt 1))
          (tmp          (add-refs `(,l) cnt tag tag-ref tag-label
                                  global-counter?))
          (data-refs    (car tmp))
@@ -1390,7 +1390,7 @@
                 (!indent (!concat ,@(list-intersperse (map cadr l) lf)))))))))
 
 (tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes
-                                miscs-l notes-l)
+                                subtits-l dates-l miscs-l notes-l)
   `(!document
      ,@(tmtex-make-title titles subtitles notes miscs)
      ,@(tmtex-append-authors authors)
@@ -1419,7 +1419,7 @@
     (display* (tmtex-make-doc-data titles subtits authors dates miscs notes
                          subtits-l dates-l miscs-l notes-l) "\n\n")
     (tmtex-make-doc-data titles subtits authors dates miscs notes
-                         miscs-l notes-l)))
+                         subtits-l dates-l miscs-l notes-l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  Abstract metadata presentation

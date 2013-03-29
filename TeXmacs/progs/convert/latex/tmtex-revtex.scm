@@ -83,7 +83,7 @@
     (if (null? result) '() `(!paragraph ,@result))))
 
 (tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes
-                                miscs-l notes-l)
+                                subtits-l dates-l miscs-l notes-l)
   (:mode revtex-style?)
   (let* ((title-data `(,@titles ,@subtitles ,@notes ,@miscs))
          (title-data (if (null? title-data) '() `((!paragraph ,@title-data)))))
@@ -143,7 +143,7 @@
                                         (cluster-by
                                           'author-affiliation authors))))))
     (with r (tmtex-make-doc-data titles subtitles authors dates miscs notes
-                                 '() '())
+                                 '() '() '() '())
     (set! revtex-clustered? #f)
     r)))
 
