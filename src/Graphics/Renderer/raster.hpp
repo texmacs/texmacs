@@ -70,12 +70,18 @@ show_alpha (C* d, const C* s, int w, int h) {
   }
 }
 
+template<class D> void
+clear (D* d, int w, int h) {
+  for (int i=0; i<w*h; i++)
+    d[i]= D ((color) 0);
+}
+
 template<class D, class S1, class S2> void
 convolute (D* d, const S1* s1, const S2* s2,
            int s1w, int s1h, int s2w, int s2h) {
   if (s1w * s1h == 0) return;
   int dw= s1w + s2w - 1, dh= s1h + s2h - 1;
-  for (int i=0; i<dw*dh; i++) d[i]= D ((color) 0);
+  clear (d, dw, dh);
   S1* temp= tm_new_array<S1> (s1w * s1h);
   hide_alpha (temp, s1, s1w, s1h);
   for (int y1=0; y1<s1h; y1++)

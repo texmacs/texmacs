@@ -98,3 +98,56 @@ compose (picture orig, color c, composition_mode mode) {
     return orig;
   }
 }
+
+template<composition_mode M> void
+compose (picture& dest, picture src, int x, int y) {
+  dest= as_raster_picture (dest);
+  src = as_raster_picture (src );
+  int dw= dest->get_width (), dh= dest->get_height ();
+  int sw= src ->get_width (), sh= src ->get_height ();
+  true_color* d= get_raster (dest);
+  true_color* s= get_raster (src );
+  int sw2= sw;
+  int sh2= sh;
+  if (x < 0) { s -= x; sw2 += x; x= 0; }
+  if (y < 0) { s -= y * sw; sh2 += y; y= 0; }
+  int w = min (sw2, dw - x);
+  int h = min (sh2, dh - y);
+  if (w <= 0 || h <= 0) return;
+  d += y * dw + x;
+  compose<M,true_color,true_color> (d, s, w, h, dw, sw);
+}
+
+void
+compose (picture& dest, picture src, int x, int y, composition_mode mode) {
+  switch (mode) {
+  case compose_destination:
+    compose<compose_destination> (dest, src, x, y);
+    break;
+  case compose_source:
+    compose<compose_source> (dest, src, x, y);
+    break;
+  case compose_source_over:
+    compose<compose_source_over> (dest, src, x, y);
+    break;
+  case compose_towards_source:
+    compose<compose_towards_source> (dest, src, x, y);
+    break;
+  }
+}
+
+picture
+engrave (picture pic) {
+  int w= pic->get_width (), h= pic->get_height ();
+  int ox= pic->get_origin_x (), oy= pic->get_origin_y ();
+  picture ret= raster_picture (w + 4, h + 4, ox + 2, oy + 2);
+  clear (get_raster (ret), w+4, h+4);
+  picture lpic= compose (pic, 0x60ffffff, compose_towards_source);
+  picture dpic= compose (pic, 0x60000000, compose_towards_source);
+  compose (ret, dpic, 0, 4, compose_source_over);
+  compose (ret, dpic, 1, 3, compose_source_over);
+  compose (ret, lpic, 3, 1, compose_source_over);
+  compose (ret, lpic, 4, 0, compose_source_over);
+  compose (ret, pic , 2, 2, compose_source_over);
+  return ret;
+}

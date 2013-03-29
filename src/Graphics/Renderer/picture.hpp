@@ -71,5 +71,6 @@ picture as_raster_picture (picture pict);
 picture test_effect (picture pic);
 picture blur (picture pic, float r);
 picture compose (picture pic, color c, composition_mode mode);
+picture engrave (picture src);
 
 #endif // defined PICTURE_H
