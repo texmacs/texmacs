@@ -954,8 +954,9 @@ qt_picture (const QImage& im, int ox, int oy) {
 qt_image_renderer_rep::qt_image_renderer_rep (
   int x0b, int y0b, int x1b, int y1b, int x2b, int y2b, renderer m):
     qt_renderer_rep (new QPainter ()),
-    px (x2b - x1b, y1b - y2b, QImage::Format_ARGB32),
-    hotx (x0b - x1b), hoty (y0b - y2b), x1 (x1b), y1 (y1b), x2 (x2b), y2 (y2b)
+    pict (qt_picture (QImage (x2b - x1b, y1b - y2b, QImage::Format_ARGB32),
+                      x0b - x1b, y0b - y2b)),
+    x1 (x1b), y1 (y1b), x2 (x2b), y2 (y2b)
 {
   ox = m->ox;
   oy = m->oy;
@@ -976,12 +977,14 @@ qt_image_renderer_rep::qt_image_renderer_rep (
   cx2 -= x1b * pixel;
   cy2 += y2b * pixel;
 
+  qt_picture_rep* handle= (qt_picture_rep*) pict->get_handle ();
+  QImage& im (handle->pict);
 #if (QT_VERSION >= 0x040800)
-  px.fill (QColor (0, 0, 0, 0));
+  im.fill (QColor (0, 0, 0, 0));
 #else
-  px.fill ((uint) 0);
+  im.fill ((uint) 0);
 #endif
-  painter->begin (&px);
+  painter->begin (&im);
 }
 
 qt_image_renderer_rep::~qt_image_renderer_rep () {
@@ -1011,7 +1014,8 @@ qt_renderer_rep::create_image (SI x0, SI y0, SI x1, SI y1, SI x2, SI y2) {
 void
 qt_renderer_rep::draw_image (SI x, SI y, renderer pm) {
   qt_image_renderer_rep* qpm= (qt_image_renderer_rep*) pm->get_data ("image");
-  int hx= qpm->hotx, hy= qpm->hoty;
+  qt_picture_rep* pict= (qt_picture_rep*) qpm->pict->get_handle ();
+  int x0= pict->ox, y0= pict->oy;
   decode (x, y);
-  painter->drawImage (x - hx, y - hy, qpm->px);
+  painter->drawImage (x - x0, y - y0, pict->pict);
 }

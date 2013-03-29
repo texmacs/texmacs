@@ -142,13 +142,12 @@ picture qt_picture (const QImage& im, int ox, int oy);
 
 class qt_image_renderer_rep: public qt_renderer_rep {
 public:
-  QImage px;
-  int hotx, hoty;
+  picture pict;
   int x1, y1, x2, y2;
   
 public:
   qt_image_renderer_rep (int x0, int y0, int x1, int y1, int x2, int y2,
-                          renderer master);
+                         renderer master);
   ~qt_image_renderer_rep ();
   void* get_data (string what);
 };
