@@ -46,6 +46,11 @@ operator << (tm_ostream& out, const true_color& c) {
              << "; " << c.a << "]";
 }
 
+inline float
+get_alpha (const true_color& c) {
+  return c.a;
+}
+
 inline true_color
 normalize (const true_color& c) {
   return true_color (max (min (c.r, 1.0), 0.0),
@@ -104,11 +109,13 @@ show_alpha (const true_color& c) {
 
 inline void
 source_over (true_color& c1, const true_color& c2) {
-  float a2= c2.a, a1= 1.0 - a2;
-  c1.r= c1.r * a1 + c2.r * a2;
-  c1.g= c1.g * a1 + c2.g * a2;
-  c1.b= c1.b * a1 + c2.b * a2;
-  c1.a= c1.a * a1 + a2;
+  float a1= c1.a, a2= c2.a, a= a2 + a1 * (1 - a2);
+  float u= 1.0 / (a + 1.0e-6);
+  float f1= a1 * (1 - a2) * u, f2= a2 * u;
+  c1.r= c1.r * f1 + c2.r * f2;
+  c1.g= c1.g * f1 + c2.g * f2;
+  c1.b= c1.b * f1 + c2.b * f2;
+  c1.a= a;
 }
 
 inline void

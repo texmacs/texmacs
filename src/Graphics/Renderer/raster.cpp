@@ -150,17 +150,26 @@ shadow (picture pic, int x, int y, color c, float r) {
 }
 
 picture
-engrave (picture pic) {
+engrave (picture pic, color col) {
+  pic= as_raster_picture (pic);
   int w= pic->get_width (), h= pic->get_height ();
   int ox= pic->get_origin_x (), oy= pic->get_origin_y ();
-  picture ret= raster_picture (w + 4, h + 4, ox + 2, oy + 2);
-  clear (get_raster (ret), w+4, h+4);
-  picture lpic= compose (pic, 0x60ffffff, compose_towards_source);
-  picture dpic= compose (pic, 0x60000000, compose_towards_source);
-  //compose (ret, dpic, 0, 4, compose_source_over);
-  compose (ret, dpic, 1, 3, compose_source_over);
-  compose (ret, lpic, 3, 1, compose_source_over);
-  //compose (ret, lpic, 4, 0, compose_source_over);
-  compose (ret, pic , 2, 2, compose_source_over);
+  float* ds= tm_new_array<float> (2 * w * h);
+  true_color* r= get_raster (pic);
+  inner_distances<true_color> (ds, r, w, h);
+  picture ret= raster_picture (w, h, ox, oy);
+  true_color* dest= get_raster (ret);
+  for (int y=0; y<h; y++)
+    for (int x=0; x<w; x++) {
+      float* d= ds + 2 * (y*w+x);
+      float d1= d[0];
+      float d2= d[1];
+      true_color c= r[y*w+x];
+      dest[y*w+x]= true_color (c.r, c.g, c.b, c.a / (1.0 + 2*d2*d2));
+      true_color sc (col);
+      true_color nc (sc.r, sc.g, sc.b, sc.a * c.a / (1.0 + d1*d1));
+      source_over (dest[y*w+x], nc);
+    }
+  tm_delete_array (ds);
   return ret;
 }

@@ -164,4 +164,28 @@ compose (D* d, const S* s, int w, int h, int wd, int ws) {
       composer<M,D,S>::op (d[x], s[x]);
 }
 
+/******************************************************************************
+* Low level edge distances
+******************************************************************************/
+
+template<class C> void
+inner_distances (float* d, const C* s, int w, int h) {
+  for (int y=h-1; y>=0; y--)
+    for (int x=0; x<w; x++) {
+      float a = get_alpha (s[y*w+x]);
+      float px= (x>0? d[2*(y*w+x-1) + 0]: 0.0);
+      float py= (y+1<h? d[2*((y+1)*w+x) + 0]: 0.0);
+      if (a == 0.0) d[2*(y*w+x) + 0]= 0.0;
+      else d[2*(y*w+x) + 0]= min (px, py) + a;
+    }
+  for (int y=0; y<h; y++)
+    for (int x=w-1; x>=0; x--) {
+      float a= get_alpha (s[y*w+x]);
+      float px= (x+1<w? d[2*(y*w+x+1) + 1]: 0.0);
+      float py= (y>0? d[2*((y-1)*w+x) + 1]: 0.0);
+      if (a == 0.0) d[2*(y*w+x) + 1]= 0.0;
+      else d[2*(y*w+x) + 1]= min (px, py) + a;
+    }
+}
+
 #endif // defined RASTER_H

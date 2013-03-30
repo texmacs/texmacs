@@ -75,6 +75,6 @@ picture blur (picture pic, float r);
 picture compose (picture pic, color c, composition_mode mode);
 picture combine (picture p1, picture p2, composition_mode mode);
 picture shadow (picture pic, int x, int y, color c, float r);
-picture engrave (picture src);
+picture engrave (picture src, color c);
 
 #endif // defined PICTURE_H
