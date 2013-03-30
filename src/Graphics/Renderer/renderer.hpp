@@ -64,6 +64,13 @@ public:
   virtual void set_transformation (frame fr);
   virtual void reset_transformation ();
 
+  /* clipping */
+  virtual void get_clipping (SI &x1, SI &y1, SI &x2, SI &y2);
+  virtual void set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
+  void extra_clipping (SI x1, SI y1, SI x2, SI y2);
+  void clip (SI x1, SI y1, SI x2, SI y2);
+  void unclip ();
+
   /* rounding */
   void round (SI& x, SI& y);
   void inner_round (SI& x1, SI& y1, SI& x2, SI& y2);
@@ -81,11 +88,6 @@ public:
   virtual void set_color (color c) = 0;
   virtual void set_brush (brush b);
   virtual void set_background (brush b) = 0;
-  virtual void get_clipping (SI &x1, SI &y1, SI &x2, SI &y2);
-  virtual void set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
-  void extra_clipping (SI x1, SI y1, SI x2, SI y2);
-  void clip (SI x1, SI y1, SI x2, SI y2);
-  void unclip ();
 
   /* drawing */
   virtual void draw (int char_code, font_glyphs fn, SI x, SI y) = 0;
@@ -119,6 +121,9 @@ public:
   virtual void draw_image (SI x, SI y, renderer pm);
   virtual picture get_picture ();
   virtual void set_picture (picture p);
+  virtual void draw_picture (picture p, SI x, SI y);
+  virtual void get_picture_extents (SI x1, SI y1, SI x2, SI y2,
+                                    int& w, int& h, int& ox, int& oy);
 
   /* special routines for printers */
   virtual bool is_printer (); // FIXME: redundant wrt is_screen?
@@ -127,6 +132,12 @@ public:
   virtual void anchor (string label, SI x, SI y);
   virtual void href (string label, SI x1, SI y1, SI x2, SI y2);
 };
+
+/* native pictures and rendering on pictures */
+picture pixmap_picture (int w, int h, int ox, int oy);
+picture scalable_picture (int w, int h, int ox, int oy);
+renderer picture_renderer (picture p, double zoomf);
+void delete_renderer (renderer ren);
 
 double normal_zoom (double zoom);
 void abs_round (SI& l);

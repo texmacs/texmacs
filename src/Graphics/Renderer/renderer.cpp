@@ -381,3 +381,48 @@ renderer_rep::set_picture (picture p) {
   (void) p;
   FAILED ("not a picture");
 }
+
+void
+renderer_rep::draw_picture (picture p, SI x, SI y) {
+  (void) p; (void) x; (void) y;
+  FAILED ("rendering pictures is not supported");
+}
+
+void
+renderer_rep::get_picture_extents (SI x1, SI y1, SI x2, SI y2,
+                                   int& w, int& h, int& ox, int& oy) {
+  (void) x1; (void) y1; (void) x2; (void) y2;
+  (void) w; (void) h; (void) ox; (void) oy;
+  FAILED ("get_picture_extents not yet implemented");  
+}
+
+#ifndef QTTEXMACS
+
+picture
+pixmap_picture (int w, int h, int ox, int oy) {
+  (void) w; (void) h; (void) ox; (void) oy;
+  FAILED ("not yet implemented");
+  return picture ();
+}
+
+picture
+scalable_picture (int w, int h, int ox, int oy) {
+  (void) w; (void) h; (void) ox; (void) oy;
+  FAILED ("not yet implemented");
+  return picture ();
+}
+
+renderer
+picture_renderer (picture p, double zoomf) {
+  (void) p; (void) zoomf;
+  FAILED ("not yet implemented");
+  return NULL;
+}
+
+void
+delete_renderer (renderer ren) {
+  (void) ren;
+  FAILED ("not yet implemented");
+}
+
+#endif

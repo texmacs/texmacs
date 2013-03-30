@@ -1039,3 +1039,58 @@ qt_renderer_rep::draw_image (SI x, SI y, renderer pm) {
   decode (x, y);
   painter->drawImage (x - x0, y - y0, pict->pict);
 }
+
+/******************************************************************************
+* New style
+******************************************************************************/
+
+picture
+pixmap_picture (int w, int h, int ox, int oy) {
+  return qt_picture (QImage (w, h, QImage::Format_ARGB32), ox, oy);
+}
+
+picture
+scalable_picture (int w, int h, int ox, int oy) {
+  (void) w; (void) h; (void) ox; (void) oy;
+  FAILED ("not yet implemented");
+}
+
+qt_image_renderer_rep::qt_image_renderer_rep (picture p, double zoom):
+  qt_renderer_rep (new QPainter ()), pict (p)
+{
+  zoomf  = zoom;
+  shrinkf= (int) tm_round (std_shrinkf / zoomf);
+  pixel  = (SI)  tm_round ((std_shrinkf * PIXEL) / zoomf);
+  thicken= (shrinkf >> 1) * PIXEL;
+
+  int pw = p->get_width ();
+  int ph = p->get_height ();
+  int pox= p->get_origin_x ();
+  int poy= p->get_origin_y ();
+
+  ox = pox * pixel;
+  oy = poy * pixel;
+  cx1= 0;
+  cy1= 0;
+  cx2= pw * pixel;
+  cy2= ph * pixel;
+
+  qt_picture_rep* handle= (qt_picture_rep*) pict->get_handle ();
+  QImage& im (handle->pict);
+#if (QT_VERSION >= 0x040800)
+  im.fill (QColor (0, 0, 0, 0));
+#else
+  im.fill ((uint) 0);
+#endif
+  painter->begin (&im);
+}
+
+renderer
+picture_renderer (picture p, double zoomf) {
+  return (renderer) tm_new<qt_image_renderer_rep> (p, zoomf);
+}
+
+void
+delete_renderer (renderer ren) {
+  tm_delete (ren);
+}

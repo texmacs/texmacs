@@ -148,6 +148,7 @@ public:
 public:
   qt_image_renderer_rep (int x0, int y0, int x1, int y1, int x2, int y2,
                          renderer master);
+  qt_image_renderer_rep (picture pict, double zoom);
   ~qt_image_renderer_rep ();
   void* get_data_handle ();
   picture get_picture ();
