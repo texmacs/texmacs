@@ -84,8 +84,10 @@ public:
 
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
 
+  picture create_picture (SI x1, SI y1, SI x2, SI y2);
   renderer create_image (SI x1, SI y1, SI x2, SI y2);
   void draw_image (SI x, SI y, renderer pm);
+  void draw_picture (picture pict, SI x, SI y);
 
   /***** private section *****************************************************/
 
@@ -149,6 +151,7 @@ public:
   qt_image_renderer_rep (int x0, int y0, int x1, int y1, int x2, int y2,
                          renderer master);
   qt_image_renderer_rep (picture pict, double zoom);
+  qt_image_renderer_rep (picture pict, renderer master);
   ~qt_image_renderer_rep ();
   void* get_data_handle ();
   picture get_picture ();

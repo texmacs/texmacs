@@ -1091,7 +1091,70 @@ picture_renderer (picture p, double zoomf) {
   return (renderer) tm_new<qt_image_renderer_rep> (p, zoomf);
 }
 
+qt_image_renderer_rep::qt_image_renderer_rep (picture p, renderer m):
+  qt_renderer_rep (new QPainter ()), pict (p)
+{
+  ox = m->ox;
+  oy = m->oy;
+  cx1= m->cx1;
+  cy1= m->cy1;
+  cx2= m->cx2;
+  cy2= m->cy2;
+  is_screen= m->is_screen;
+  zoomf= m->zoomf;
+  shrinkf= m->shrinkf;
+  pixel= m->pixel;
+  thicken= m->thicken;
+
+  int pox= p->get_origin_x ();
+  int poy= p->get_origin_y ();
+  ox  += pox * pixel;
+  oy  += poy * pixel;
+  cx1 += pox * pixel;
+  cy1 += poy * pixel;
+  cx2 += pox * pixel;
+  cy2 += poy * pixel;
+
+  cout << "Picture renderer " << ox << ", " << oy << "\n";
+  cout << cx1 << ", " << cy1 << "; " << cx2 << ", " << cy2 << "\n";
+
+  qt_picture_rep* handle= (qt_picture_rep*) pict->get_handle ();
+  QImage& im (handle->pict);
+#if (QT_VERSION >= 0x040800)
+  im.fill (QColor (0, 0, 0, 0));
+#else
+  im.fill ((uint) 0);
+#endif
+  painter->begin (&im);
+}
+
+renderer
+picture_renderer (picture p, renderer m) {
+  return (renderer) tm_new<qt_image_renderer_rep> (p, m);
+}
+
 void
 delete_renderer (renderer ren) {
   tm_delete (ren);
+}
+
+picture
+qt_renderer_rep::create_picture (SI x1, SI y1, SI x2, SI y2) {
+  outer_round (x1, y1, x2, y2);
+  decode (x1, y1);
+  decode (x2, y2);
+  x2= max (x1, x2);
+  y2= min (y1, y2);
+  h= y1-y2;
+  y1= h-1-y1;
+  y2= h-1-y2;
+  return pixmap_picture (x2-x1, y2-y1, -x1, -y1);
+}
+
+void
+qt_renderer_rep::draw_picture (picture p, SI x, SI y) {
+  qt_picture_rep* pict= (qt_picture_rep*) p->get_handle ();
+  int x0= pict->ox, y0= pict->h - 1 - pict->oy;
+  decode (x, y);
+  painter->drawImage (x - x0, y - y0, pict->pict);
 }

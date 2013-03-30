@@ -357,6 +357,13 @@ renderer_rep::draw_selection (rectangles rs) {
 * Images
 ******************************************************************************/
 
+picture
+renderer_rep::create_picture (SI x1, SI y1, SI x2, SI y2) {
+  (void) x1; (void) y1; (void) x2; (void) y2;
+  FAILED ("create_image not yet implemented");
+  return picture ();
+}
+
 renderer
 renderer_rep::create_image (SI x1, SI y1, SI x2, SI y2) {
   (void) x1; (void) y1; (void) x2; (void) y2;
@@ -415,6 +422,13 @@ scalable_picture (int w, int h, int ox, int oy) {
 renderer
 picture_renderer (picture p, double zoomf) {
   (void) p; (void) zoomf;
+  FAILED ("not yet implemented");
+  return NULL;
+}
+
+renderer
+picture_renderer (picture p, renderer ref) {
+  (void) p; (void) ref;
   FAILED ("not yet implemented");
   return NULL;
 }

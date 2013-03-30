@@ -117,6 +117,7 @@ public:
   virtual void apply_shadow (SI x1, SI y1, SI x2, SI y2) = 0;
 
   /* images as renderers */
+  virtual picture create_picture (SI x1, SI y1, SI x2, SI y2);
   virtual renderer create_image (SI x1, SI y1, SI x2, SI y2);
   virtual void draw_image (SI x, SI y, renderer pm);
   virtual picture get_picture ();
@@ -136,7 +137,8 @@ public:
 /* native pictures and rendering on pictures */
 picture pixmap_picture (int w, int h, int ox, int oy);
 picture scalable_picture (int w, int h, int ox, int oy);
-renderer picture_renderer (picture p, double zoomf);
+renderer picture_renderer (picture p, double zoom);
+renderer picture_renderer (picture p, renderer ref);
 void delete_renderer (renderer ren);
 
 double normal_zoom (double zoom);
