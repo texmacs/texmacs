@@ -55,12 +55,7 @@ public:
   virtual void* get_handle ();
   virtual void* get_data_handle ();
 
-  /* routines for specific renderers */
-  virtual bool is_printer ();
-  virtual void get_extents (int& w, int& h);
-  virtual void next_page ();
-
-  /* basic routines */
+  /* coordinate system */
   void set_origin (SI x, SI y);
   void move_origin (SI dx, SI dy);
   void set_zoom_factor (double zoom);
@@ -68,6 +63,8 @@ public:
   void set_shrinking_factor (int sf);
   virtual void set_transformation (frame fr);
   virtual void reset_transformation ();
+
+  /* rounding */
   void round (SI& x, SI& y);
   void inner_round (SI& x1, SI& y1, SI& x2, SI& y2);
   void outer_round (SI& x1, SI& y1, SI& x2, SI& y2);
@@ -77,15 +74,20 @@ public:
   friend void abs_outer_round (SI& x1, SI& y1, SI& x2, SI& y2);
   bool is_visible (SI x1, SI y1, SI x2, SI y2);
 
-  /* color */
+  /* graphical state */
   virtual color get_color () = 0;
   virtual brush get_brush ();
   virtual brush get_background () = 0;
-
-  /* main graphical routines */
   virtual void set_color (color c) = 0;
   virtual void set_brush (brush b);
   virtual void set_background (brush b) = 0;
+  virtual void get_clipping (SI &x1, SI &y1, SI &x2, SI &y2);
+  virtual void set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
+  void extra_clipping (SI x1, SI y1, SI x2, SI y2);
+  void clip (SI x1, SI y1, SI x2, SI y2);
+  void unclip ();
+
+  /* drawing */
   virtual void draw (int char_code, font_glyphs fn, SI x, SI y) = 0;
   virtual void set_line_style (SI w, int type=0, bool round=true) = 0;
   virtual void line (SI x1, SI y1, SI x2, SI y2) = 0;
@@ -101,11 +103,8 @@ public:
   virtual void image (url u, SI w, SI h, SI x, SI y,
 		      double cx1, double cy1, double cx2, double cy2,
                       int alpha= 255) = 0;
-  virtual void get_clipping (SI &x1, SI &y1, SI &x2, SI &y2);
-  virtual void set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
-  void extra_clipping (SI x1, SI y1, SI x2, SI y2);
-  void clip (SI x1, SI y1, SI x2, SI y2);
-  void unclip ();
+  virtual void draw_rectangles (rectangles rs);
+  virtual void draw_selection (rectangles rs);
 
   /* shadowing and copying rectangular regions across renderers */
   virtual void fetch (SI x1, SI y1, SI x2, SI y2, renderer ren, SI x, SI y)=0;
@@ -121,13 +120,12 @@ public:
   virtual picture get_picture ();
   virtual void set_picture (picture p);
 
-  /* href and stuff */
-  virtual void anchor(string label, SI x, SI y);
-  virtual void href(string label, SI x1, SI y1, SI x2, SI y2);
-
-  /* miscellaneous */
-  virtual void draw_rectangles (rectangles rs);
-  virtual void draw_selection (rectangles rs);
+  /* special routines for printers */
+  virtual bool is_printer (); // FIXME: redundant wrt is_screen?
+  virtual void get_extents (int& w, int& h);
+  virtual void next_page ();
+  virtual void anchor (string label, SI x, SI y);
+  virtual void href (string label, SI x1, SI y1, SI x2, SI y2);
 };
 
 double normal_zoom (double zoom);
