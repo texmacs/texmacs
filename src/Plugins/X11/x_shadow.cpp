@@ -19,7 +19,7 @@ void
 x_drawable_rep::fetch (SI x1, SI y1, SI x2, SI y2, renderer ren, SI x, SI y) {
   ASSERT (ren != NULL, "invalid situation");
   if (ren->is_printer ()) return;
-  x_drawable_rep* src= ren->as_x_drawable ();
+  x_drawable_rep* src= (x_drawable_rep*) ren->get_handle ();
   if (src->win == win && x1 == x && y1 == y) return;
   outer_round (x1, y1, x2, y2);
   SI X1= x1, Y1= y1;
@@ -58,7 +58,7 @@ x_drawable_rep::new_shadow (renderer& ren) {
 void
 x_drawable_rep::delete_shadow (renderer& ren) {
   if (ren != NULL) {
-    tm_delete (ren->as_x_drawable ());
+    tm_delete ((x_drawable_rep*) ren->get_handle ());
     ren= NULL;
   }
 }
@@ -68,7 +68,7 @@ x_drawable_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   // FIXME: we should use the routine fetch later
   ASSERT (ren != NULL, "invalid renderer");
   if (ren->is_printer ()) return;
-  x_drawable_rep* shadow= ren->as_x_drawable ();
+  x_drawable_rep* shadow= (x_drawable_rep*) ren->get_handle ();
   outer_round (x1, y1, x2, y2);
   x1= max (x1, cx1- ox);
   y1= max (y1, cy1- oy);
@@ -92,7 +92,7 @@ x_drawable_rep::put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   // FIXME: we should use the routine fetch later
   ASSERT (ren != NULL, "invalid renderer");
   if (ren->is_printer ()) return;
-  x_drawable_rep* shadow= ren->as_x_drawable ();
+  x_drawable_rep* shadow= (x_drawable_rep*) ren->get_handle ();
   outer_round (x1, y1, x2, y2);
   x1= max (x1, cx1- ox);
   y1= max (y1, cy1- oy);
@@ -110,7 +110,8 @@ x_drawable_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
   outer_round (x1, y1, x2, y2);
   decode (x1, y1);
   decode (x2, y2);
-  master->as_x_drawable()->encode (x1, y1);
-  master->as_x_drawable()->encode (x2, y2);
+  x_drawable_rep* xren= (x_drawable_rep*) master->get_handle ();
+  xren->encode (x1, y1);
+  xren->encode (x2, y2);
   master->put_shadow (this, x1, y1, x2, y2);
 }

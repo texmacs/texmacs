@@ -37,9 +37,8 @@ public:
   x_drawable_rep (x_gui gui, x_window_rep* x_win);
   x_drawable_rep (x_gui gui, int w, int h);
   ~x_drawable_rep ();
+  void* get_handle ();
 
-  bool is_x_drawable ();
-  x_drawable_rep* as_x_drawable ();
   void get_extents (int& w, int& h);
 
   void encode (SI& x, SI& y);  // X coordinates -> mathematical coordinates

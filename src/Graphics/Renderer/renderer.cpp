@@ -18,7 +18,7 @@
 int std_shrinkf= 5;
 
 /******************************************************************************
-* Constructors
+* Constructors and handles
 ******************************************************************************/
 
 renderer_rep::renderer_rep (bool screen_flag):
@@ -29,6 +29,16 @@ renderer_rep::renderer_rep (bool screen_flag):
 
 renderer_rep::~renderer_rep () {}
 
+void*
+renderer_rep::get_handle () {
+  return NULL;
+}
+
+void*
+renderer_rep::get_data_handle () {
+  return NULL;
+}
+
 /******************************************************************************
 * Device specific
 ******************************************************************************/
@@ -38,24 +48,9 @@ renderer_rep::is_printer () {
   return false;
 }
 
-bool
-renderer_rep::is_x_drawable () {
-  return false;
-}
-
 void
 renderer_rep::get_extents (int& w, int& h) {
   w= h= 0;
-}
-
-x_drawable_rep*
-renderer_rep::as_x_drawable () {
-  return NULL;
-}
-
-qt_renderer_rep*
-renderer_rep::as_qt_renderer () {
-  return NULL;
 }
 
 void
@@ -361,12 +356,6 @@ renderer_rep::draw_selection (rectangles rs) {
 /******************************************************************************
 * Images
 ******************************************************************************/
-
-void*
-renderer_rep::get_data (string what) {
-  (void) what;
-  return NULL;
-}
 
 renderer
 renderer_rep::create_image (SI x0, SI y0, SI x1, SI y1, SI x2, SI y2) {

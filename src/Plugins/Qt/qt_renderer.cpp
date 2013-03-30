@@ -87,9 +87,9 @@ qt_renderer_rep::qt_renderer_rep (QPainter *_painter, int w2, int h2):
 
 qt_renderer_rep::~qt_renderer_rep () {}
 
-qt_renderer_rep*
-qt_renderer_rep::as_qt_renderer () {
-  return this;
+void*
+qt_renderer_rep::get_handle () {
+  return (void*) this;
 }
 
 void
@@ -1005,8 +1005,7 @@ qt_image_renderer_rep::~qt_image_renderer_rep () {
 }
 
 void*
-qt_image_renderer_rep::get_data (string what) {
-  (void) what;
+qt_image_renderer_rep::get_data_handle () {
   return (void*) this;
 }
 
@@ -1034,7 +1033,7 @@ qt_renderer_rep::create_image (SI x0, SI y0, SI x1, SI y1, SI x2, SI y2) {
 
 void
 qt_renderer_rep::draw_image (SI x, SI y, renderer pm) {
-  qt_image_renderer_rep* qpm= (qt_image_renderer_rep*) pm->get_data ("image");
+  qt_image_renderer_rep* qpm= (qt_image_renderer_rep*) pm->get_data_handle ();
   qt_picture_rep* pict= (qt_picture_rep*) qpm->pict->get_handle ();
   int x0= pict->ox, y0= pict->h - 1 - pict->oy;
   decode (x, y);

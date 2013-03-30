@@ -52,12 +52,11 @@ public:
 public:
   renderer_rep (bool screen_flag);
   virtual ~renderer_rep ();
+  virtual void* get_handle ();
+  virtual void* get_data_handle ();
 
   /* routines for specific renderers */
   virtual bool is_printer ();
-  virtual bool is_x_drawable ();
-  virtual x_drawable_rep* as_x_drawable ();
-  virtual qt_renderer_rep* as_qt_renderer ();
   virtual void get_extents (int& w, int& h);
   virtual void next_page ();
 
@@ -117,7 +116,6 @@ public:
   virtual void apply_shadow (SI x1, SI y1, SI x2, SI y2) = 0;
 
   /* images as renderers */
-  virtual void* get_data (string what);
   virtual renderer create_image (SI x0, SI y0, SI x1, SI y1, SI x2, SI y2);
   virtual void draw_image (SI x, SI y, renderer pm);
   virtual picture get_picture ();

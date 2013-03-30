@@ -102,7 +102,8 @@ qt_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   if (N(s)!=0) {
     QString qs= utf8_to_qstring (cork_to_utf8 (s));
     double zoom= dpi / (std_shrinkf * 72.0);
-    ren -> as_qt_renderer () -> draw (qfn, qs, x, y, zoom);
+    qt_renderer_rep* qren= (qt_renderer_rep*) ren->get_handle ();
+    qren -> draw (qfn, qs, x, y, zoom);
   }
 }
 

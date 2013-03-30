@@ -42,7 +42,7 @@ public:
 public:
   qt_renderer_rep (QPainter *_painter, int w = 0, int h = 0);
   ~qt_renderer_rep ();
-  qt_renderer_rep* as_qt_renderer ();
+  void* get_handle ();
 
   void begin (void* handle);
   void end ();
@@ -149,7 +149,7 @@ public:
   qt_image_renderer_rep (int x0, int y0, int x1, int y1, int x2, int y2,
                          renderer master);
   ~qt_image_renderer_rep ();
-  void* get_data (string what);
+  void* get_data_handle ();
   picture get_picture ();
   void set_picture (picture p);
 };

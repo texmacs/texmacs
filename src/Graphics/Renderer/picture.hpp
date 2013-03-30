@@ -74,7 +74,7 @@ picture test_effect (picture pic);
 picture blur (picture pic, float r);
 picture compose (picture pic, color c, composition_mode mode);
 picture combine (picture p1, picture p2, composition_mode mode);
-picture shadow (picture pic, int x, int y, color c, float r);
+picture add_shadow (picture pic, int x, int y, color c, float r);
 picture engrave (picture src, float alpha, color tlc, color brc,
                  float tlw=1.0, float brw= 1.0);
 

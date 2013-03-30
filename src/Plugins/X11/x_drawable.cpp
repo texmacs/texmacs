@@ -52,14 +52,9 @@ x_drawable_rep::~x_drawable_rep () {
     XFreePixmap (gui->dpy, (Pixmap) win);
 }
 
-bool
-x_drawable_rep::is_x_drawable () {
-  return true;
-}
-
-x_drawable_rep*
-x_drawable_rep::as_x_drawable () {
-  return this;
+void*
+x_drawable_rep::get_handle () {
+  return (void*) this;
 }
 
 void
