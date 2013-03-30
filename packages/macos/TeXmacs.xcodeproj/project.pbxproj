@@ -70,6 +70,12 @@
 		49BEF71816FDD566004BAE73 /* metadata-springer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BEF71616FDD566004BAE73 /* metadata-springer.cpp */; };
 		49BEF71916FDD566004BAE73 /* metadata-springer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BEF71616FDD566004BAE73 /* metadata-springer.cpp */; };
 		49BEF71A16FDD566004BAE73 /* metadata-springer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BEF71616FDD566004BAE73 /* metadata-springer.cpp */; };
+		49CD6A5B1706F1B800C70744 /* picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49CD6A561706F1B800C70744 /* picture.cpp */; };
+		49CD6A5C1706F1B800C70744 /* picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49CD6A561706F1B800C70744 /* picture.cpp */; };
+		49CD6A5D1706F1B800C70744 /* picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49CD6A561706F1B800C70744 /* picture.cpp */; };
+		49CD6A5E1706F1B800C70744 /* raster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49CD6A581706F1B800C70744 /* raster.cpp */; };
+		49CD6A5F1706F1B800C70744 /* raster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49CD6A581706F1B800C70744 /* raster.cpp */; };
+		49CD6A601706F1B800C70744 /* raster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49CD6A581706F1B800C70744 /* raster.cpp */; };
 		49D662FC128B331A0006E948 /* QTMFileDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D662FA128B331A0006E948 /* QTMFileDialog.cpp */; };
 		49D662FD128B333F0006E948 /* QTMFileDialog.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D662FB128B331A0006E948 /* QTMFileDialog.hpp */; };
 		49DD8FA916DB75C100647CA2 /* sqlite3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49DD8FA716DB75C100647CA2 /* sqlite3.cpp */; };
@@ -1195,6 +1201,12 @@
 		497822CA16EC86D40054F5BA /* tt_analyze.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tt_analyze.cpp; sourceTree = "<group>"; };
 		49BEF71616FDD566004BAE73 /* metadata-springer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "metadata-springer.cpp"; sourceTree = "<group>"; };
 		49BEF71716FDD566004BAE73 /* metadata.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = metadata.hpp; sourceTree = "<group>"; };
+		49CD6A551706F1B800C70744 /* alpha_color.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = alpha_color.hpp; sourceTree = "<group>"; };
+		49CD6A561706F1B800C70744 /* picture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = picture.cpp; sourceTree = "<group>"; };
+		49CD6A571706F1B800C70744 /* picture.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = picture.hpp; sourceTree = "<group>"; };
+		49CD6A581706F1B800C70744 /* raster.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = raster.cpp; sourceTree = "<group>"; };
+		49CD6A591706F1B800C70744 /* raster.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = raster.hpp; sourceTree = "<group>"; };
+		49CD6A5A1706F1B800C70744 /* true_color.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = true_color.hpp; sourceTree = "<group>"; };
 		49D662FA128B331A0006E948 /* QTMFileDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMFileDialog.cpp; sourceTree = "<group>"; };
 		49D662FB128B331A0006E948 /* QTMFileDialog.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMFileDialog.hpp; sourceTree = "<group>"; };
 		49DD8FA716DB75C100647CA2 /* sqlite3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sqlite3.cpp; sourceTree = "<group>"; };
@@ -2447,6 +2459,7 @@
 		9C0B47F610A8CC100097A335 /* Renderer */ = {
 			isa = PBXGroup;
 			children = (
+				49CD6A551706F1B800C70744 /* alpha_color.hpp */,
 				9C0B47F710A8CC100097A335 /* basic_renderer.cpp */,
 				9C0B47F810A8CC100097A335 /* basic_renderer.hpp */,
 				4932C1A11704F54200E87D8C /* brush.cpp */,
@@ -2454,11 +2467,16 @@
 				9C0B47F910A8CC100097A335 /* page_type.cpp */,
 				9C0B47FA10A8CC100097A335 /* page_type.hpp */,
 				4932C1A31704F54200E87D8C /* pencil.hpp */,
+				49CD6A561706F1B800C70744 /* picture.cpp */,
+				49CD6A571706F1B800C70744 /* picture.hpp */,
 				9C0B47FB10A8CC100097A335 /* printer.cpp */,
 				9C0B47FC10A8CC100097A335 /* printer.hpp */,
+				49CD6A581706F1B800C70744 /* raster.cpp */,
+				49CD6A591706F1B800C70744 /* raster.hpp */,
 				9C0B47FD10A8CC100097A335 /* renderer.cpp */,
 				9C0B47FE10A8CC100097A335 /* renderer.hpp */,
 				9C0B47FF10A8CC100097A335 /* rgb_colors.hpp */,
+				49CD6A5A1706F1B800C70744 /* true_color.hpp */,
 			);
 			path = Renderer;
 			sourceTree = "<group>";
@@ -4283,6 +4301,8 @@
 				4929A893170207440028991F /* grid.cpp in Sources */,
 				4929A896170207440028991F /* point.cpp in Sources */,
 				4932C1A41704F54200E87D8C /* brush.cpp in Sources */,
+				49CD6A5B1706F1B800C70744 /* picture.cpp in Sources */,
+				49CD6A5E1706F1B800C70744 /* raster.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4642,6 +4662,8 @@
 				4929A895170207440028991F /* grid.cpp in Sources */,
 				4929A898170207440028991F /* point.cpp in Sources */,
 				4932C1A61704F54200E87D8C /* brush.cpp in Sources */,
+				49CD6A5D1706F1B800C70744 /* picture.cpp in Sources */,
+				49CD6A601706F1B800C70744 /* raster.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5029,6 +5051,8 @@
 				4929A894170207440028991F /* grid.cpp in Sources */,
 				4929A897170207440028991F /* point.cpp in Sources */,
 				4932C1A51704F54200E87D8C /* brush.cpp in Sources */,
+				49CD6A5C1706F1B800C70744 /* picture.cpp in Sources */,
+				49CD6A5F1706F1B800C70744 /* raster.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
