@@ -958,93 +958,6 @@ as_qt_picture (picture pic) {
   return ret;
 }
 
-/******************************************************************************
-* Rendering on images
-******************************************************************************/
-
-qt_image_renderer_rep::qt_image_renderer_rep (
-  int x0b, int y0b, int x1b, int y1b, int x2b, int y2b, renderer m):
-    qt_renderer_rep (new QPainter ()),
-    pict (qt_picture (QImage (x2b - x1b, y1b - y2b, QImage::Format_ARGB32),
-                      x0b - x1b, (y1b - y2b - 1) - (y0b - y2b))),
-    x1 (x1b), y1 (y1b), x2 (x2b), y2 (y2b)
-{
-  ox = m->ox;
-  oy = m->oy;
-  cx1= m->cx1;
-  cy1= m->cy1;
-  cx2= m->cx2;
-  cy2= m->cy2;
-  is_screen= m->is_screen;
-  zoomf= m->zoomf;
-  shrinkf= m->shrinkf;
-  pixel= m->pixel;
-  thicken= m->thicken;
-
-  ox  -= x1b * pixel;
-  oy  += y2b * pixel;
-  cx1 -= x1b * pixel;
-  cy1 += y2b * pixel;
-  cx2 -= x1b * pixel;
-  cy2 += y2b * pixel;
-
-  qt_picture_rep* handle= (qt_picture_rep*) pict->get_handle ();
-  QImage& im (handle->pict);
-#if (QT_VERSION >= 0x040800)
-  im.fill (QColor (0, 0, 0, 0));
-#else
-  im.fill ((uint) 0);
-#endif
-  painter->begin (&im);
-}
-
-qt_image_renderer_rep::~qt_image_renderer_rep () {
-  painter->end();
-  delete painter;
-  painter = NULL;
-}
-
-void*
-qt_image_renderer_rep::get_data_handle () {
-  return (void*) this;
-}
-
-picture
-qt_image_renderer_rep::get_picture () {
-  return pict;
-}
-
-void
-qt_image_renderer_rep::set_picture (picture p) {
-  pict= as_qt_picture (p);
-}
-
-renderer
-qt_renderer_rep::create_image (SI x1, SI y1, SI x2, SI y2) {
-  SI x0= 0, y0= 0;
-  decode (x0, y0);
-  outer_round (x1, y1, x2, y2);
-  decode (x1, y1);
-  decode (x2, y2);
-  x2= max (x1, x2);
-  y2= min (y1, y2);
-  return (renderer)
-    tm_new<qt_image_renderer_rep> (x0, y0, x1, y1, x2, y2, (renderer) this);
-}
-
-void
-qt_renderer_rep::draw_image (SI x, SI y, renderer pm) {
-  qt_image_renderer_rep* qpm= (qt_image_renderer_rep*) pm->get_data_handle ();
-  qt_picture_rep* pict= (qt_picture_rep*) qpm->pict->get_handle ();
-  int x0= pict->ox, y0= pict->h - 1 - pict->oy;
-  decode (x, y);
-  painter->drawImage (x - x0, y - y0, pict->pict);
-}
-
-/******************************************************************************
-* New style
-******************************************************************************/
-
 picture
 pixmap_picture (int w, int h, int ox, int oy) {
   return qt_picture (QImage (w, h, QImage::Format_ARGB32), ox, oy);
@@ -1055,6 +968,31 @@ scalable_picture (int w, int h, int ox, int oy) {
   (void) w; (void) h; (void) ox; (void) oy;
   FAILED ("not yet implemented");
 }
+
+picture
+qt_renderer_rep::create_picture (SI x1, SI y1, SI x2, SI y2) {
+  SI x0= 0, y0= 0;
+  decode (x0, y0);
+  outer_round (x1, y1, x2, y2);
+  decode (x1, y1);
+  decode (x2, y2);
+  x2= max (x1, x2);
+  y2= min (y1, y2);
+  return pixmap_picture (x2-x1, y1-y2, x0 - x1, (y1 - y2 - 1) - (y0 - y2));
+}
+
+void
+qt_renderer_rep::draw_picture (picture p, SI x, SI y) {
+  p= as_qt_picture (p);
+  qt_picture_rep* pict= (qt_picture_rep*) p->get_handle ();
+  int x0= pict->ox, y0= pict->h - 1 - pict->oy;
+  decode (x, y);
+  painter->drawImage (x - x0, y - y0, pict->pict);
+}
+
+/******************************************************************************
+* Rendering on images
+******************************************************************************/
 
 qt_image_renderer_rep::qt_image_renderer_rep (picture p, double zoom):
   qt_renderer_rep (new QPainter ()), pict (p)
@@ -1084,11 +1022,6 @@ qt_image_renderer_rep::qt_image_renderer_rep (picture p, double zoom):
   im.fill ((uint) 0);
 #endif
   painter->begin (&im);
-}
-
-renderer
-picture_renderer (picture p, double zoomf) {
-  return (renderer) tm_new<qt_image_renderer_rep> (p, zoomf);
 }
 
 qt_image_renderer_rep::qt_image_renderer_rep (picture p, renderer m):
@@ -1139,6 +1072,22 @@ qt_image_renderer_rep::qt_image_renderer_rep (picture p, renderer m):
   painter->begin (&im);
 }
 
+qt_image_renderer_rep::~qt_image_renderer_rep () {
+  painter->end();
+  delete painter;
+  painter = NULL;
+}
+
+void*
+qt_image_renderer_rep::get_data_handle () {
+  return (void*) this;
+}
+
+renderer
+picture_renderer (picture p, double zoomf) {
+  return (renderer) tm_new<qt_image_renderer_rep> (p, zoomf);
+}
+
 renderer
 picture_renderer (picture p, renderer m) {
   return (renderer) tm_new<qt_image_renderer_rep> (p, m);
@@ -1147,25 +1096,4 @@ picture_renderer (picture p, renderer m) {
 void
 delete_renderer (renderer ren) {
   tm_delete (ren);
-}
-
-picture
-qt_renderer_rep::create_picture (SI x1, SI y1, SI x2, SI y2) {
-  SI x0= 0, y0= 0;
-  decode (x0, y0);
-  outer_round (x1, y1, x2, y2);
-  decode (x1, y1);
-  decode (x2, y2);
-  x2= max (x1, x2);
-  y2= min (y1, y2);
-  return pixmap_picture (x2-x1, y1-y2, x0 - x1, (y1 - y2 - 1) - (y0 - y2));
-}
-
-void
-qt_renderer_rep::draw_picture (picture p, SI x, SI y) {
-  p= as_qt_picture (p);
-  qt_picture_rep* pict= (qt_picture_rep*) p->get_handle ();
-  int x0= pict->ox, y0= pict->h - 1 - pict->oy;
-  decode (x, y);
-  painter->drawImage (x - x0, y - y0, pict->pict);
 }

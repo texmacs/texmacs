@@ -364,43 +364,10 @@ renderer_rep::create_picture (SI x1, SI y1, SI x2, SI y2) {
   return picture ();
 }
 
-renderer
-renderer_rep::create_image (SI x1, SI y1, SI x2, SI y2) {
-  (void) x1; (void) y1; (void) x2; (void) y2;
-  FAILED ("create_image not yet implemented");
-  return NULL;
-}
-
-void
-renderer_rep::draw_image (SI x, SI y, renderer pm) {
-  (void) x; (void) y; (void) pm;
-  FAILED ("draw_image not yet implemented");
-}
-
-picture
-renderer_rep::get_picture () {
-  FAILED ("not a picture");
-  return picture ();
-}
-
-void
-renderer_rep::set_picture (picture p) {
-  (void) p;
-  FAILED ("not a picture");
-}
-
 void
 renderer_rep::draw_picture (picture p, SI x, SI y) {
   (void) p; (void) x; (void) y;
   FAILED ("rendering pictures is not supported");
-}
-
-void
-renderer_rep::get_picture_extents (SI x1, SI y1, SI x2, SI y2,
-                                   int& w, int& h, int& ox, int& oy) {
-  (void) x1; (void) y1; (void) x2; (void) y2;
-  (void) w; (void) h; (void) ox; (void) oy;
-  FAILED ("get_picture_extents not yet implemented");  
 }
 
 #ifndef QTTEXMACS
