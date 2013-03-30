@@ -1106,17 +1106,28 @@ qt_image_renderer_rep::qt_image_renderer_rep (picture p, renderer m):
   pixel= m->pixel;
   thicken= m->thicken;
 
+  /*
   int pox= p->get_origin_x ();
-  int poy= p->get_origin_y ();
+  int poy= p->get_origin_y () - 1;
   ox  += pox * pixel;
   oy  += poy * pixel;
   cx1 += pox * pixel;
   cy1 += poy * pixel;
   cx2 += pox * pixel;
   cy2 += poy * pixel;
+  */
 
-  cout << "Picture renderer " << ox << ", " << oy << "\n";
-  cout << cx1 << ", " << cy1 << "; " << cx2 << ", " << cy2 << "\n";
+  qt_renderer_rep* mren= (qt_renderer_rep*) m->get_handle ();
+  SI x0= 0, y0= 0;
+  mren->decode (x0, y0);
+  int x1b= x0 - p->get_origin_x ();
+  int y2b= y0 + p->get_origin_y () - (p->get_height () - 1);
+  ox  -= x1b * pixel;
+  oy  += y2b * pixel;
+  cx1 -= x1b * pixel;
+  cy1 += y2b * pixel;
+  cx2 -= x1b * pixel;
+  cy2 += y2b * pixel;
 
   qt_picture_rep* handle= (qt_picture_rep*) pict->get_handle ();
   QImage& im (handle->pict);
@@ -1140,19 +1151,19 @@ delete_renderer (renderer ren) {
 
 picture
 qt_renderer_rep::create_picture (SI x1, SI y1, SI x2, SI y2) {
+  SI x0= 0, y0= 0;
+  decode (x0, y0);
   outer_round (x1, y1, x2, y2);
   decode (x1, y1);
   decode (x2, y2);
   x2= max (x1, x2);
   y2= min (y1, y2);
-  h= y1-y2;
-  y1= h-1-y1;
-  y2= h-1-y2;
-  return pixmap_picture (x2-x1, y2-y1, -x1, -y1);
+  return pixmap_picture (x2-x1, y1-y2, x0 - x1, (y1 - y2 - 1) - (y0 - y2));
 }
 
 void
 qt_renderer_rep::draw_picture (picture p, SI x, SI y) {
+  p= as_qt_picture (p);
   qt_picture_rep* pict= (qt_picture_rep*) p->get_handle ();
   int x0= pict->ox, y0= pict->h - 1 - pict->oy;
   decode (x, y);
