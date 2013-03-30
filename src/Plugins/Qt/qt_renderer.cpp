@@ -1020,7 +1020,8 @@ qt_image_renderer_rep::set_picture (picture p) {
 }
 
 renderer
-qt_renderer_rep::create_image (SI x0, SI y0, SI x1, SI y1, SI x2, SI y2) {
+qt_renderer_rep::create_image (SI x1, SI y1, SI x2, SI y2) {
+  SI x0= 0, y0= 0;
   decode (x0, y0);
   outer_round (x1, y1, x2, y2);
   decode (x1, y1);

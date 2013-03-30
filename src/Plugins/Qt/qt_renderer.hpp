@@ -84,7 +84,7 @@ public:
 
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
 
-  renderer create_image (SI x0, SI y0, SI x1, SI y1, SI x2, SI y2);
+  renderer create_image (SI x1, SI y1, SI x2, SI y2);
   void draw_image (SI x, SI y, renderer pm);
 
   /***** private section *****************************************************/

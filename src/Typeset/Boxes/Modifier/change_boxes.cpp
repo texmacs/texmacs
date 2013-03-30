@@ -241,7 +241,7 @@ void
 effect_box_rep::redraw (renderer ren, path p, rectangles& l) {
   if (((nr_painted&15) == 15) && gui_interrupted (true)) return;
   ren->move_origin (x0, y0);
-  renderer pm= ren->create_image (0, 0, x3, y3, x4, y4);
+  renderer pm= ren->create_image (x3, y3, x4, y4);
   rectangles rs;
   subbox (0)->redraw (pm, path (), rs);
   if (((nr_painted&15) == 15) && gui_interrupted (true));

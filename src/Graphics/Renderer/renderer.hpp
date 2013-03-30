@@ -117,7 +117,7 @@ public:
   virtual void apply_shadow (SI x1, SI y1, SI x2, SI y2) = 0;
 
   /* images as renderers */
-  virtual renderer create_image (SI x0, SI y0, SI x1, SI y1, SI x2, SI y2);
+  virtual renderer create_image (SI x1, SI y1, SI x2, SI y2);
   virtual void draw_image (SI x, SI y, renderer pm);
   virtual picture get_picture ();
   virtual void set_picture (picture p);

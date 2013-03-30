@@ -358,8 +358,8 @@ renderer_rep::draw_selection (rectangles rs) {
 ******************************************************************************/
 
 renderer
-renderer_rep::create_image (SI x0, SI y0, SI x1, SI y1, SI x2, SI y2) {
-  (void) x0; (void) y0; (void) x1; (void) y1; (void) x2; (void) y2;
+renderer_rep::create_image (SI x1, SI y1, SI x2, SI y2) {
+  (void) x1; (void) y1; (void) x2; (void) y2;
   FAILED ("create_image not yet implemented");
   return NULL;
 }
