@@ -31,20 +31,6 @@ as_raster_picture (picture pic) {
   return ret;
 }
 
-picture
-test_effect (picture pic) {
-  int w= pic->get_width (), h= pic->get_height ();
-  int ox= pic->get_origin_x (), oy= pic->get_origin_y ();
-  picture ret= raster_picture (w, h, ox, oy);
-  for (int y=0; y<h; y++)
-    for (int x=0; x<w; x++) {
-      true_color c= pic->get_pixel (x, y);
-      true_color n (c.r, c.g, c.g, (c.a * x) / (w - 1));
-      ret->set_pixel (x, y, n);
-    }
-  return ret;
-}
-
 true_color*
 get_raster (picture pic) {
   typedef raster_rep<true_color> R;
@@ -66,6 +52,7 @@ copy_raster_picture (picture pic) {
 
 picture
 blur (picture orig, float r) {
+  if (r <= 0.001) return orig;
   picture pic= as_raster_picture (orig);
   int R= ((int) (3.0 * r));
   int w= pic->get_width (), h= pic->get_height ();
@@ -137,6 +124,32 @@ compose (picture& dest, picture src, int x, int y, composition_mode mode) {
 }
 
 picture
+combine (picture p1, picture p2, composition_mode mode) {
+  int w1 = p1->get_width ()   , h1 = p1->get_height ();
+  int ox1= p1->get_origin_x (), oy1= p1->get_origin_y ();
+  int w2 = p2->get_width ()   , h2 = p2->get_height ();
+  int ox2= p2->get_origin_x (), oy2= p2->get_origin_y ();
+  int x1 = min (-ox1, -ox2);
+  int y1 = min (-oy1, -oy2);
+  int x2 = max (w1-ox1, w2-ox2);
+  int y2 = max (h1-oy1, h2-oy2);
+  int w  = x2 - x1;
+  int h  = y2 - y1;
+  picture ret= raster_picture (w, h, -x1, -y1);
+  clear (get_raster (ret), w, h);
+  compose (ret, p1, -ox1-x1, -oy1-y1, compose_source);
+  compose (ret, p2, -ox2-x1, -oy2-y1, mode);
+  return ret;
+}
+
+picture
+shadow (picture pic, int x, int y, color c, float r) {
+  picture shad= blur (compose (pic, c, compose_towards_source), r);
+  shad->translate_origin (-x, -y);
+  return combine (shad, pic, compose_source_over);
+}
+
+picture
 engrave (picture pic) {
   int w= pic->get_width (), h= pic->get_height ();
   int ox= pic->get_origin_x (), oy= pic->get_origin_y ();
@@ -144,10 +157,10 @@ engrave (picture pic) {
   clear (get_raster (ret), w+4, h+4);
   picture lpic= compose (pic, 0x60ffffff, compose_towards_source);
   picture dpic= compose (pic, 0x60000000, compose_towards_source);
-  compose (ret, dpic, 0, 4, compose_source_over);
+  //compose (ret, dpic, 0, 4, compose_source_over);
   compose (ret, dpic, 1, 3, compose_source_over);
   compose (ret, lpic, 3, 1, compose_source_over);
-  compose (ret, lpic, 4, 0, compose_source_over);
+  //compose (ret, lpic, 4, 0, compose_source_over);
   compose (ret, pic , 2, 2, compose_source_over);
   return ret;
 }

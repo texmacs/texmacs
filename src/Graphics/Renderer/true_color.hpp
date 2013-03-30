@@ -23,6 +23,8 @@ public:
   float a;
 
   inline true_color () {}
+  inline true_color (const true_color& c):
+    b (c.b), g (c.g), r (c.r), a (c.a) {}
   inline true_color (float r2, float g2, float b2, float a2):
     b (b2), g (g2), r (r2), a (a2) {}
   inline true_color (color c):
@@ -37,6 +39,12 @@ public:
       (((int) (r * 255 + 0.5)) << 16) +
       (((int) (a * 255 + 0.5)) << 24); }
 };
+
+inline tm_ostream&
+operator << (tm_ostream& out, const true_color& c) {
+  return out << "[ " << c.r << ", " << c.g << ", " << c.b
+             << "; " << c.a << "]";
+}
 
 inline true_color
 normalize (const true_color& c) {

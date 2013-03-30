@@ -12,6 +12,11 @@
 #include "picture.hpp"
 
 void
+picture_rep::translate_origin (int dx, int dy) {
+  set_origin (get_origin_x () + dx, get_origin_y () + dy);
+}
+
+void
 picture_rep::copy_from (picture src) {
   copy_from (0, 0, src, 0, 0, src->get_width (), src->get_height ());
 }

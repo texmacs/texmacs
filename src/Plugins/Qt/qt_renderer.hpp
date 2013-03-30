@@ -133,6 +133,7 @@ public:
   int get_height ();
   int get_origin_x ();
   int get_origin_y ();
+  void set_origin (int ox2, int oy2);
   color get_pixel (int x, int y);
   void set_pixel (int x, int y, color c);
 };

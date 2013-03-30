@@ -36,6 +36,7 @@ public:
   int get_height () { return h; }
   int get_origin_x () { return ox; }
   int get_origin_y () { return oy; }
+  void set_origin (int ox2, int oy2) { ox= ox2; oy= oy2; }
 
   color get_pixel (int x, int y) {
     if (0 > x || 0 > y || x >= w || y >= h) return 0;
@@ -47,6 +48,13 @@ public:
     else a [y*w + x]= C (c);
   }
 };
+
+template<class C> void
+print (const C* s, int w, int h) {
+  for (int y=0; y<h; y++)
+    for (int x=0; x<w; x++)
+      cout << x << ", " << y << " -> " << s[y*w+x] << "\n";
+}
 
 /******************************************************************************
 * Low level routines for raster manipulation
@@ -89,7 +97,7 @@ convolute (D* d, const S1* s1, const S2* s2,
       int o1= y1 * s1w, o2= y2 * s2w, o= (y1 + y2) * dw;
       for (int x1=0; x1<s1w; x1++)
         for (int x2=0; x2<s2w; x2++)
-          d[o+x1+x2] += s1[o1+x1] * s2[o2+x2];
+          d[o+x1+x2] += temp[o1+x1] * s2[o2+x2];
     }
   show_alpha (d, d, dw, dh);
   tm_delete_array (temp);

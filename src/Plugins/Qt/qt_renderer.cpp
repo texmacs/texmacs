@@ -931,6 +931,7 @@ int qt_picture_rep::get_width () { return w; }
 int qt_picture_rep::get_height () { return h; }
 int qt_picture_rep::get_origin_x () { return ox; }
 int qt_picture_rep::get_origin_y () { return oy; }
+void qt_picture_rep::set_origin (int ox2, int oy2) { ox= ox2; oy= oy2; }
 
 color
 qt_picture_rep::get_pixel (int x, int y) {
@@ -965,7 +966,7 @@ qt_image_renderer_rep::qt_image_renderer_rep (
   int x0b, int y0b, int x1b, int y1b, int x2b, int y2b, renderer m):
     qt_renderer_rep (new QPainter ()),
     pict (qt_picture (QImage (x2b - x1b, y1b - y2b, QImage::Format_ARGB32),
-                      x0b - x1b, y0b - y2b)),
+                      x0b - x1b, (y1b - y2b - 1) - (y0b - y2b))),
     x1 (x1b), y1 (y1b), x2 (x2b), y2 (y2b)
 {
   ox = m->ox;
@@ -1035,7 +1036,7 @@ void
 qt_renderer_rep::draw_image (SI x, SI y, renderer pm) {
   qt_image_renderer_rep* qpm= (qt_image_renderer_rep*) pm->get_data ("image");
   qt_picture_rep* pict= (qt_picture_rep*) qpm->pict->get_handle ();
-  int x0= pict->ox, y0= pict->oy;
+  int x0= pict->ox, y0= pict->h - 1 - pict->oy;
   decode (x, y);
   painter->drawImage (x - x0, y - y0, pict->pict);
 }

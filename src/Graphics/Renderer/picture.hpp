@@ -34,6 +34,8 @@ public:
   virtual int get_height () = 0;
   virtual int get_origin_x () = 0;
   virtual int get_origin_y () = 0;
+  virtual void set_origin (int ox, int oy) = 0;
+  virtual void translate_origin (int dx, int dy);
 
   virtual color get_pixel (int x, int y) = 0;
   virtual void set_pixel (int x, int y, color c) = 0;
@@ -71,6 +73,8 @@ picture as_raster_picture (picture pict);
 picture test_effect (picture pic);
 picture blur (picture pic, float r);
 picture compose (picture pic, color c, composition_mode mode);
+picture combine (picture p1, picture p2, composition_mode mode);
+picture shadow (picture pic, int x, int y, color c, float r);
 picture engrave (picture src);
 
 #endif // defined PICTURE_H

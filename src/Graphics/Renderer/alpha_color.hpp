@@ -24,6 +24,11 @@ public:
   inline operator color () { return (((int) (a * 255 + 0.5)) << 24); }
 };
 
+inline tm_ostream&
+operator << (tm_ostream& out, const alpha_color& c) {
+  return out << c.a;
+}
+
 inline alpha_color
 normalize (const alpha_color& c) {
   return alpha_color ((float) max (min (c.a, 1.0), 0.0));
