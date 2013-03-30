@@ -252,7 +252,7 @@ effect_box_rep::redraw (renderer ren, path p, rectangles& l) {
     //picture new_pic= compose (old_pic, 0x40ff0000, compose_towards_source);
     //picture new_pic= shadow (old_pic, 1, -2, 0xff808080, 2.0);
     //picture new_pic= shadow (old_pic, 1, -1, 0xcfc0c0c0, 0.0);
-    picture new_pic= engrave (old_pic, 0xff000000);
+    picture new_pic= engrave (old_pic, 0.5, 0xff000000, 0xffffffff, 1.0, 1.0);
     pm->set_picture (new_pic);
     ren->draw_image (0, 0, pm);
     pm->set_picture (old_pic);
