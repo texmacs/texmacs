@@ -484,6 +484,9 @@ init_std_drd () {
   init (REFERENCE, "reference",
 	fixed (1) ->
         identifier (0) -> name (0, "id") -> long_name (0, "identifier"));
+  init (EQREF, "eqref",
+	fixed (1) -> name ("equation reference") ->
+        identifier (0) -> name (0, "id") -> long_name (0, "identifier"));
   init (PAGEREF, "pageref",
 	fixed (1) -> name ("page reference") ->
         identifier (0) -> name (0, "id") -> long_name (0, "identifier"));

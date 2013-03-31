@@ -383,7 +383,7 @@ simplify_execed (tree t) {
 static tree
 expand_references (tree t, hashmap<string,tree> h) {
   if (is_atomic (t)) return t;
-  if (is_func (t, REFERENCE, 1) || is_func (t, PAGEREF)) {
+  if (is_func (t, REFERENCE, 1) || is_func (t, PAGEREF) || is_func (t, EQREF)) {
     string ref= as_string (simplify_execed (t[0]));
     if (h->contains (ref)) {
       int which= is_func (t, REFERENCE, 1)? 0: 1;

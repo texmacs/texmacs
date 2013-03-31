@@ -224,6 +224,8 @@ edit_interface_rep::compute_operation_footer (tree st) {
       r= concat ("label: ", as_string (st[0])); break;
     case REFERENCE:
       r= concat ("reference: ", as_string (st[0])); break;
+    case EQREF:
+        r= concat ("equation reference: ", as_string (st[0])); break;
     case PAGEREF:
       r= concat ("page reference: ", as_string (st[0])); break;
     case WRITE:
