@@ -71,12 +71,12 @@ picture alpha_picture (int w, int h, int ox= 0, int oy= 0);
 picture as_raster_picture (picture pict);
 
 picture test_effect (picture pic);
-picture blur (picture pic, float r);
-picture gravitational_outline (picture pic, int R, float expon= 2.0);
+picture blur (picture pic, double r);
+picture gravitational_outline (picture pic, int R, double expon= 2.0);
 picture compose (picture pic, color c, composition_mode mode);
 picture combine (picture p1, picture p2, composition_mode mode);
-picture add_shadow (picture pic, int x, int y, color c, float r);
-picture engrave (picture src, float alpha, color tlc, color brc,
-                 float tlw=1.0, float brw= 1.0);
+picture add_shadow (picture pic, int x, int y, color c, double r);
+picture engrave (picture src, double alpha, color tlc, color brc,
+                 double tlw=1.0, double brw= 1.0);
 
 #endif // defined PICTURE_H

@@ -17,21 +17,21 @@ typedef unsigned int color;
 
 class true_color {
 public:
-  float b;
-  float g;
-  float r;
-  float a;
+  double b;
+  double g;
+  double r;
+  double a;
 
   inline true_color () {}
   inline true_color (const true_color& c):
     b (c.b), g (c.g), r (c.r), a (c.a) {}
-  inline true_color (float r2, float g2, float b2, float a2):
+  inline true_color (double r2, double g2, double b2, double a2):
     b (b2), g (g2), r (r2), a (a2) {}
   inline true_color (color c):
-    b (((float) (c & 0xff)) / 255.0),
-    g (((float) ((c >> 8) & 0xff)) / 255.0),
-    r (((float) ((c >> 16) & 0xff)) / 255.0),
-    a (((float) ((c >> 24) & 0xff)) / 255.0) {}
+    b (((double) (c & 0xff)) / 255.0),
+    g (((double) ((c >> 8) & 0xff)) / 255.0),
+    r (((double) ((c >> 16) & 0xff)) / 255.0),
+    a (((double) ((c >> 24) & 0xff)) / 255.0) {}
   inline operator color () {
     return
       ((int) (b * 255 + 0.5)) +
@@ -46,7 +46,7 @@ operator << (tm_ostream& out, const true_color& c) {
              << "; " << c.a << "]";
 }
 
-inline float
+inline double
 get_alpha (const true_color& c) {
   return c.a;
 }
@@ -82,17 +82,17 @@ operator -= (true_color& c1, const true_color& c2) {
 }
 
 inline true_color
-operator * (float x, const true_color& c) {
+operator * (double x, const true_color& c) {
   return true_color (c.r * x, c.g * x, c.b * x, c.a * x);
 }
 
 inline true_color
-operator * (const true_color& c, float x) {
+operator * (const true_color& c, double x) {
   return true_color (c.r * x, c.g * x, c.b * x, c.a * x);
 }
 
 inline true_color
-operator / (const true_color& c, float x) {
+operator / (const true_color& c, double x) {
   return true_color (c.r / x, c.g / x, c.b / x, c.a / x);
 }
 
@@ -114,12 +114,12 @@ norm (const true_color& c1, const true_color& c2) {
                      sqrt (c1.a * c1.a + c2.a * c2.a));
 }
 
-inline float
+inline double
 max (const true_color& c) {
   return max (c.r, max (c.g, max (c.b, c.a)));
 }
 
-inline float
+inline double
 inner_max (const true_color& c1, const true_color& c2) {
   return max (max (c1.r * c2.r, c1.g * c2.g),
               max (c1.b * c2.b, c1.a * c2.a));
@@ -138,9 +138,9 @@ show_alpha (const true_color& c) {
 
 inline void
 source_over (true_color& c1, const true_color& c2) {
-  float a1= c1.a, a2= c2.a, a= a2 + a1 * (1 - a2);
-  float u= 1.0 / (a + 1.0e-6);
-  float f1= a1 * (1 - a2) * u, f2= a2 * u;
+  double a1= c1.a, a2= c2.a, a= a2 + a1 * (1 - a2);
+  double u= 1.0 / (a + 1.0e-6);
+  double f1= a1 * (1 - a2) * u, f2= a2 * u;
   c1.r= c1.r * f1 + c2.r * f2;
   c1.g= c1.g * f1 + c2.g * f2;
   c1.b= c1.b * f1 + c2.b * f2;
@@ -149,7 +149,7 @@ source_over (true_color& c1, const true_color& c2) {
 
 inline void
 towards_source (true_color& c1, const true_color& c2) {
-  float a2= c2.a, a1= 1.0 - a2;
+  double a2= c2.a, a1= 1.0 - a2;
   c1.r= c1.r * a1 + c2.r * a2;
   c1.g= c1.g * a1 + c2.g * a2;
   c1.b= c1.b * a1 + c2.b * a2;

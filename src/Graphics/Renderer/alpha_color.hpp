@@ -17,10 +17,10 @@ typedef unsigned int color;
 
 class alpha_color {
 public:
-  float a;
+  double a;
   inline alpha_color () {}
-  inline alpha_color (float a2): a (a2) {}
-  inline alpha_color (color c): a (((float) ((c >> 24) & 0xff)) / 255.0) {}
+  inline alpha_color (double a2): a (a2) {}
+  inline alpha_color (color c): a (((double) ((c >> 24) & 0xff)) / 255.0) {}
   inline operator color () { return (((int) (a * 255 + 0.5)) << 24); }
 };
 
@@ -31,7 +31,7 @@ operator << (tm_ostream& out, const alpha_color& c) {
 
 inline alpha_color
 normalize (const alpha_color& c) {
-  return alpha_color ((float) max (min (c.a, 1.0), 0.0));
+  return alpha_color ((double) max (min (c.a, 1.0), 0.0));
 }
 
 inline alpha_color
@@ -45,17 +45,17 @@ operator - (const alpha_color& c1, const alpha_color& c2) {
 }
 
 inline alpha_color
-operator * (float x, const alpha_color& c) {
+operator * (double x, const alpha_color& c) {
   return alpha_color (c.a * x);
 }
 
 inline alpha_color
-operator * (const alpha_color& c, float x) {
+operator * (const alpha_color& c, double x) {
   return alpha_color (c.a * x);
 }
 
 inline alpha_color
-operator / (const alpha_color& c, float x) {
+operator / (const alpha_color& c, double x) {
   return alpha_color (c.a / x);
 }
 

@@ -104,21 +104,21 @@ convolute (D* d, const S1* s1, const S2* s2,
 }
 
 template<class C> void
-gaussian (C* d, int R, float r) {
+gaussian (C* d, int R, double r) {
   int w= 2*R+1, h= 2*R+1;
-  float lambda= 1.0 / (2.0 * acos (0.0) * r * r);
+  double lambda= 1.0 / (2.0 * acos (0.0) * r * r);
   double sq_r= r*r;
   for (int y=0; y<h; y++) {
     double sq_y= (y-R)*(y-R);
     for (int x=0; x<w; x++) {
       double sq_x= (x-R)*(x-R);
-      d[y*w+x]= C (lambda * ((float) exp (- (sq_x + sq_y) / sq_r)));
+      d[y*w+x]= C (lambda * (exp (- (sq_x + sq_y) / sq_r)));
     }
   }
 }
 
 template<class C, class F> void
-blur (C* d, const C* s, int w, int h, int R, float r) {
+blur (C* d, const C* s, int w, int h, int R, double r) {
   int tw= 2*R+1, th= 2*R+1;
   F* temp= tm_new_array<F> (tw * th);
   gaussian (temp, R, r);
@@ -131,7 +131,7 @@ blur (C* d, const C* s, int w, int h, int R, float r) {
 ******************************************************************************/
 
 template<class C> void
-gravitation (C* d, int R, float expon, bool y_flag) {
+gravitation (C* d, int R, double expon, bool y_flag) {
   int w= 2*R+1, h= 2*R+1;
   for (int y=0; y<h; y++) {
     double sq_y= (y-R)*(y-R);
@@ -178,7 +178,7 @@ normalize (C* d, int w, int h) {
 }
 
 template<class C, class F> void
-gravitational_outline (C* d, const C* s, int w, int h, int R, float expon) {
+gravitational_outline (C* d, const C* s, int w, int h, int R, double expon) {
   int tw= 2*R+1, th= 2*R+1;
   int ww= w + tw - 1, hh= h + th - 1;
   F* gravx= tm_new_array<F> (2 * tw * th);
@@ -242,20 +242,20 @@ compose (D* d, const S* s, int w, int h, int wd, int ws) {
 ******************************************************************************/
 
 template<class C> void
-inner_distances (float* d, const C* s, int w, int h) {
+inner_distances (double* d, const C* s, int w, int h) {
   for (int y=h-1; y>=0; y--)
     for (int x=0; x<w; x++) {
-      float a = get_alpha (s[y*w+x]);
-      float px= (x>0? d[2*(y*w+x-1) + 0]: 0.0);
-      float py= (y+1<h? d[2*((y+1)*w+x) + 0]: 0.0);
+      double a = get_alpha (s[y*w+x]);
+      double px= (x>0? d[2*(y*w+x-1) + 0]: 0.0);
+      double py= (y+1<h? d[2*((y+1)*w+x) + 0]: 0.0);
       if (a == 0.0) d[2*(y*w+x) + 0]= 0.0;
       else d[2*(y*w+x) + 0]= min (px, py) + a;
     }
   for (int y=0; y<h; y++)
     for (int x=w-1; x>=0; x--) {
-      float a= get_alpha (s[y*w+x]);
-      float px= (x+1<w? d[2*(y*w+x+1) + 1]: 0.0);
-      float py= (y>0? d[2*((y-1)*w+x) + 1]: 0.0);
+      double a= get_alpha (s[y*w+x]);
+      double px= (x+1<w? d[2*(y*w+x+1) + 1]: 0.0);
+      double py= (y>0? d[2*((y-1)*w+x) + 1]: 0.0);
       if (a == 0.0) d[2*(y*w+x) + 1]= 0.0;
       else d[2*(y*w+x) + 1]= min (px, py) + a;
     }

@@ -51,7 +51,7 @@ copy_raster_picture (picture pic) {
 }
 
 picture
-blur (picture orig, float r) {
+blur (picture orig, double r) {
   if (r <= 0.001) return orig;
   picture pic= as_raster_picture (orig);
   int R= ((int) (3.0 * r));
@@ -63,12 +63,12 @@ blur (picture orig, float r) {
 }
 
 picture
-gravitational_outline (picture pic, int R, float expon) {
+gravitational_outline (picture pic, int R, double expon) {
   pic= as_raster_picture (pic);
   int w= pic->get_width (), h= pic->get_height ();
   int ox= pic->get_origin_x (), oy= pic->get_origin_y ();
   picture ret= raster_picture (w + 2*R, h + 2*R, ox + R, oy + R);
-  gravitational_outline<true_color, float>
+  gravitational_outline<true_color, double>
     (get_raster (ret), get_raster (pic), w, h, R, expon);
   return ret;
 }
@@ -154,18 +154,18 @@ combine (picture p1, picture p2, composition_mode mode) {
 }
 
 picture
-shadow (picture pic, int x, int y, color c, float r) {
+shadow (picture pic, int x, int y, color c, double r) {
   picture shad= blur (compose (pic, c, compose_towards_source), r);
   shad->translate_origin (-x, -y);
   return combine (shad, pic, compose_source_over);
 }
 
 picture
-engrave (picture pic, float a0, color tlc, color brc, float tlw, float brw) {
+engrave (picture pic, double a0, color tlc, color brc, double tlw, double brw) {
   pic= as_raster_picture (pic);
   int w= pic->get_width (), h= pic->get_height ();
   int ox= pic->get_origin_x (), oy= pic->get_origin_y ();
-  float* ds= tm_new_array<float> (2 * w * h);
+  double* ds= tm_new_array<double> (2 * w * h);
   true_color* r= get_raster (pic);
   inner_distances<true_color> (ds, r, w, h);
   picture ret= raster_picture (w, h, ox, oy);
@@ -174,11 +174,11 @@ engrave (picture pic, float a0, color tlc, color brc, float tlw, float brw) {
   true_color c2 (brc);
   for (int y=0; y<h; y++)
     for (int x=0; x<w; x++) {
-      float* d= ds + 2 * (y*w+x);
-      float d1= d[0];
-      float d2= d[1];
-      float a1= 1.0 / (1.0 + d1*d1/(tlw*tlw));
-      float a2= 1.0 / (1.0 + d2*d2/(brw*brw));
+      double* d= ds + 2 * (y*w+x);
+      double d1= d[0];
+      double d2= d[1];
+      double a1= 1.0 / (1.0 + d1*d1/(tlw*tlw));
+      double a2= 1.0 / (1.0 + d2*d2/(brw*brw));
       true_color c0= r[y*w+x];
       true_color cc (c0.r, c0.g, c0.b, a0);
       true_color mc= (a0 * cc + a1 * c1 + a2 * c2) / (a0 + a1 + a2);
