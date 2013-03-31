@@ -10,7 +10,7 @@
 ******************************************************************************/
 
 #include "alpha_color.hpp"
-#include "raster.hpp"
+#include "raster_picture.hpp"
 
 picture
 raster_picture (int w, int h, int ox, int oy) {
