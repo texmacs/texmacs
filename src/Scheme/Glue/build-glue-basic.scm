@@ -349,6 +349,7 @@
   (root->url url_root (url string))
   (string->url url (url string))
   (url->string as_string (string url))
+  (url->stree as_tree (scheme_tree url))
   (system->url url_system (url string))
   (url->system as_system_string (string url))
   (unix->url url_unix (url string))

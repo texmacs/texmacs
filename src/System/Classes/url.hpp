@@ -43,8 +43,9 @@ public:
 CONCRETE_CODE(url);
 
 tm_ostream& operator << (tm_ostream& out, url u);
-inline url as_url(tree t) { return url(t); }
+inline url as_url (tree t) { return url(t); }
 string as_string (url u, int type= URL_SYSTEM);
+inline tree as_tree (url u) { return tree (u->t); }
 inline string as_system_string (url u) { return as_string (u, URL_SYSTEM); }
 inline string as_unix_string (url u) { return as_string (u, URL_UNIX); }
 inline string as_standard_string (url u) { return as_string (u,URL_STANDARD); }
