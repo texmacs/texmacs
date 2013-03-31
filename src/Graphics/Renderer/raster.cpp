@@ -44,9 +44,8 @@ copy_raster_picture (picture pic) {
 }
 
 picture
-blur (picture orig, double r) {
-  if (r <= 0.001) return orig;
-  picture pic= as_raster_picture (orig);
+blur (picture pic, double r) {
+  if (r <= 0.001) return pic;
   int R= max (3, ((int) (3.0 * r)));
   raster<true_color> ras= as_raster<true_color> (pic);
   return raster_picture (blur (ras, R, r));

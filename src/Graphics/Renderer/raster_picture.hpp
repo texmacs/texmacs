@@ -66,8 +66,14 @@ raster_picture (raster<C> r) {
 }
 
 template<class C> raster<C>
-as_raster (picture pict) {
-  raster_picture_rep<C>* rep= (raster_picture_rep<C>*) pict->get_handle ();
+as_raster (picture pic) {
+  if (pic->get_type () != picture_kind_helper<C>::kind) {
+    picture rew= raster_picture (pic->get_width (), pic->get_height (),
+                                 pic->get_origin_x (), pic->get_origin_y ());
+    pic->copy_to (rew);
+    pic= rew;
+  }
+  raster_picture_rep<C>* rep= (raster_picture_rep<C>*) pic->get_handle ();
   return rep->r;
 }
 
