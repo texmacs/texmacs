@@ -114,27 +114,20 @@ convolute (D* d, const S1* s1, const S2* s2,
   tm_delete_array (temp);
 }
 
-template<class C> void
-gaussian (C* d, int R, double r) {
+template<class C> raster<C>
+gaussian (int R, double r) {
   int w= 2*R+1, h= 2*R+1;
+  raster<C> ret (w, h, R, R);
   double lambda= 1.0 / (2.0 * acos (0.0) * r * r);
   double sq_r= r*r;
   for (int y=0; y<h; y++) {
     double sq_y= (y-R)*(y-R);
     for (int x=0; x<w; x++) {
       double sq_x= (x-R)*(x-R);
-      d[y*w+x]= C (lambda * (exp (- (sq_x + sq_y) / sq_r)));
+      ret->a[y*w+x]= C (lambda * (exp (- (sq_x + sq_y) / sq_r)));
     }
   }
-}
-
-template<class C, class F> void
-blur (C* d, const C* s, int w, int h, int R, double r) {
-  int tw= 2*R+1, th= 2*R+1;
-  F* temp= tm_new_array<F> (tw * th);
-  gaussian (temp, R, r);
-  convolute (d, s, temp, w, h, tw, th);
-  tm_delete_array (temp);  
+  return ret;
 }
 
 template<class C> raster<C>
@@ -142,10 +135,8 @@ blur (raster<C> ras, int R, double r) {
   int w= ras->w, h= ras->h;
   raster<C> ret (w + 2*R, h + 2*R, ras->ox + R, ras->oy + R);
   int tw= 2*R+1, th= 2*R+1;
-  double* temp= tm_new_array<double> (tw * th);
-  gaussian (temp, R, r);
-  convolute (ret->a, ras->a, temp, w, h, tw, th);
-  tm_delete_array (temp);
+  raster<double> g= gaussian<double> (R, r);
+  convolute (ret->a, ras->a, g->a, w, h, tw, th);
   return ret;
 }
 
