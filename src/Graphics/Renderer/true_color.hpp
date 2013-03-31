@@ -32,7 +32,7 @@ public:
     g (((double) ((c >> 8) & 0xff)) / 255.0),
     r (((double) ((c >> 16) & 0xff)) / 255.0),
     a (((double) ((c >> 24) & 0xff)) / 255.0) {}
-  inline operator color () {
+  inline operator color () const {
     return
       ((int) (b * 255 + 0.5)) +
       (((int) (g * 255 + 0.5)) << 8) +

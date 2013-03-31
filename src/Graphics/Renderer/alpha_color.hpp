@@ -21,7 +21,7 @@ public:
   inline alpha_color () {}
   inline alpha_color (double a2): a (a2) {}
   inline alpha_color (color c): a (((double) ((c >> 24) & 0xff)) / 255.0) {}
-  inline operator color () { return (((int) (a * 255 + 0.5)) << 24); }
+  inline operator color () const { return (((int) (a * 255 + 0.5)) << 24); }
 };
 
 inline tm_ostream&

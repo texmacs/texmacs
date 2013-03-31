@@ -13,6 +13,28 @@
 #define RASTER_H
 #include "picture.hpp"
 
+/******************************************************************************
+* Helpers for converters from and to colors
+******************************************************************************/
+
+template<class C>
+struct color_helper {
+  static inline color tc (const C& c) { return (color) c; }
+  static inline C fc (const color& c) { return C (c); }
+};
+
+template<>
+struct color_helper<double> {
+  static inline color tc (const double& c) {
+    return (((int) (c * 255 + 0.5)) << 24); }
+  static inline double fc (const color& c) {
+    return ((double) ((c >> 24) & 0xff)) / 255.0; }
+};
+
+/******************************************************************************
+* Raster class
+******************************************************************************/
+
 template<class C> class raster;
 
 template<class C>
@@ -40,12 +62,12 @@ public:
 
   color get_pixel (int x, int y) {
     if (0 > x || 0 > y || x >= w || y >= h) return 0;
-    else return (color) (a [y*w + x]);
+    else return color_helper<C>::tc (a [y*w + x]);
   }
 
   void set_pixel (int x, int y, color c) {
     if (0 > x || 0 > y || x >= w || y >= h);
-    else a [y*w + x]= C (c);
+    else a [y*w + x]= color_helper<C>::fc (c);
   }
 };
 
