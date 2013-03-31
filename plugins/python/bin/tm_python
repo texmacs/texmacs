@@ -14,6 +14,9 @@ import traceback
 import keyword
 import re
 import string
+import sys
+py_ver = sys.version_info[0];
+
 DATA_BEGIN = chr(2)
 DATA_END = chr(5)
 DATA_ESCAPE = chr(27)
@@ -92,8 +95,13 @@ def ps_out(ps_file):
 	ext_list = ['', '.eps', '.ps']
 	if isinstance(ps_file, str):
 		for ext in ext_list:
-			if os.path.exists(ps_file+ext):
-				ps_fd = file(ps_file+ext, 'r')
+			if os.path.exists(ps_file+ext): 
+			        #ps_fd = open(ps_file+ext, 'r')
+				if py_ver ==3:
+				   ps_fd = open(ps_file+ext, 'r')
+				else:
+				   ps_fd = file(ps_file+ext, 'r')
+				ps_fd = open(ps_file+ext, 'r')
 				data = ps_fd.read()
 				ps_fd.close()
 				break
@@ -110,38 +118,53 @@ def compose_output(data):
 	if isinstance(data, float):
 		return 'verbatim: %f' % data
 	
-	if isinstance(data, unicode):
-		data2=r''
-		for c in data:
-			if c not in string.printable:
-				data2+='\\x%x' % ord(c)
-			else:
-				data2+=c
-		data=data2
+	if py_ver == 3:
+                if isinstance(data, str):
+                        data2=r''
+                        for c in data:
+                                if c not in string.printable:
+                                        data2+='\\x%x' % ord(c)
+                                else:
+                                        data2+=c
+                        data=data2
+	else:
+                if isinstance(data, unicode):
+                        data2=r''
+                        for c in data:
+                                if c not in string.printable:
+                                        data2+='\\x%x' % ord(c)
+                                else:
+                                        data2+=c
+                        data=data2
 
 	return 'verbatim: %s' % str(data)
 
 def do_module_hierarchy(mod, attr):
-	"""Explore an object's hierarchy.
+    """Explore an object's hierarchy.
 	
 	Go through the objects hierarchy looking for
 	attributes/methods to provide as autocompletion
 	options.
-	"""
-	dot = attr.find('.')
- 	if dot>0:
-		if hasattr(mod, attr[:dot]):
-			next = getattr(mod, attr[:dot])
-			return do_module_hierarchy(next, attr[dot+1:])
-	if isinstance(mod, dict):
-		return dir(mod)
-	else:
-		return dir(mod)
+    """
+    dot = attr.find('.')
+    if dot>0:
+       if hasattr(mod, attr[:dot]):
+          next = getattr(mod, attr[:dot])
+          return do_module_hierarchy(next, attr[dot+1:])
+    if isinstance(mod, dict):
+       return dir(mod)
+    else:
+       return dir(mod)
+ 
 
 def find_completion_candidates(cmpl_str, my_globals):
 	"""Harvest candidates to provide as autocompletion options."""
 	
-	haystack = my_globals.keys()+dir(my_globals['__builtins__'])+keyword.kwlist
+	if py_ver ==3:
+	    haystack = list(my_globals.keys())+dir(my_globals['__builtins__'])+keyword.kwlist
+	else:
+	    haystack = my_globals.keys()+dir(my_globals['__builtins__'])+keyword.kwlist
+	#haystack = list(my_globals.keys())+dir(my_globals['__builtins__'])+keyword.kwlist
 	dot = cmpl_str.rfind('.')
 	offset = None
 	if dot>0:
@@ -155,14 +178,25 @@ def find_completion_candidates(cmpl_str, my_globals):
 			r_str = cmpl_str[first_dot+1:]
 		if mod_name in keyword.kwlist:
 			return None, []
-		if os.sys.modules.has_key(mod_name):
-			haystack = do_module_hierarchy(os.sys.modules[mod_name], r_str)
-		elif mod_name in my_globals.keys():
-			haystack = do_module_hierarchy(my_globals[mod_name], r_str)
+		if py_ver ==3:	
+		  if mod_name in os.sys.modules:
+			  haystack = do_module_hierarchy(os.sys.modules[mod_name], r_str)
+		  elif mod_name in list(my_globals.keys()):
+			  haystack = do_module_hierarchy(my_globals[mod_name], r_str)
+		  else:
+			  haystack = do_module_hierarchy(type(mod_name), r_str)
 		else:
-			haystack = do_module_hierarchy(type(mod_name), r_str)
+		  if os.sys.modules.has_key(mod_name):
+			  haystack = do_module_hierarchy(os.sys.modules[mod_name], r_str)
+		  elif mod_name in my_globals.keys():
+			  haystack = do_module_hierarchy(my_globals[mod_name], r_str)
+		  else:
+			  haystack = do_module_hierarchy(type(mod_name), r_str)
 			
-	return offset, filter(lambda x:x.find(cmpl_str[dot+1:])  ==  0, haystack)
+	if py_ver ==3:
+	   return offset, [x for x in haystack if x.find(cmpl_str[dot+1:])  ==  0]
+	else:
+	   return offset, filter(lambda x:x.find(cmpl_str[dot+1:])  ==  0, haystack)
 
 def name_char(c):
 	"""Check whether a character is a valid symbol."""
@@ -221,9 +255,9 @@ def complete(cmd, my_globals):
 		res += '"%s" ' % c[pos:]
 	return 'scheme:(tuple "'+cmpl_str+'" '+res+')'
 
-##FIXME:  It should display the Python version, just as when one starts python.
-texmacs_out("""verbatim:Python plugin for TeXmacs.
-Please see the documentation in Help -> plugins -> Python
+texmacs_out("verbatim:Python " + sys.version + """
+Python plugin for TeXmacs.
+Please see the documentation in Help -> Plugins -> Python
 """)
 
 my_globals = {}
@@ -236,23 +270,37 @@ my_globals['__doc__'] = """Python plugin for TeXmacs.  It provides autocompletio
 
 capt = Capture()
 stdout_saved, os.sys.stdout  =  os.sys.stdout, capt
-co = compile('import __builtin__ as __builtins__', 'tm_python', 'exec')
+if py_ver == 3:
+    co = compile('import builtins as __builtins__', 'tm_python', 'exec')
+else:
+    co = compile('import __builtin__ as __builtins__', 'tm_python', 'exec')
+
 eval(co, my_globals)
 os.sys.stdout = stdout_saved
 
 # Main session loop.
 while 1:
-	line=raw_input();
+	if py_ver ==3:
+	   line=input();
+	else:
+	   line=raw_input();
 	if line[0]  ==  DATA_COMMAND:
 		if line[1:].find('(complete ')  ==  0:
 			#The replace is due to texmacs sending " as two characters
 			texmacs_out(complete(line[11:].replace("\\\"","\""), my_globals))
 		continue
 	lines=[line]
-	while line<>"<EOF>":
-		line=raw_input()
-		if line == '': continue
-		lines.append(line)
+	if py_ver ==3:
+	   while line!="<EOF>":
+	         line=input()
+	         if line == '': continue
+	         lines.append(line)
+	else:
+	     while line!="<EOF>":
+	       line=raw_input()
+	       if line == '': continue
+	       lines.append(line)
+		 
 	text='\n'.join(lines[:-1])
 	capt=Capture()
 	try:

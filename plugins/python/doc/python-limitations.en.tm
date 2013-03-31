@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.0.7.19>
 
 <style|tmdoc>
 
@@ -12,8 +12,6 @@
 
     <item>The figures produced by the plugin are small. This can be fixed by
     manually resizing the image.
-
-    <item>TODO: We should display the <name|Python> version in the terminal.
 
     <item>TODO: Need to test the <verbatim|ps_out> function for things other
     than outputing files.
