@@ -37,7 +37,7 @@
     <item*|Memory leaks>
 
     Perform extensive (automated) checks for memory leaks using
-    <name|Valgrind> and implement a<nbsp>marking algorithm.
+    <name|Valgrind> and implement a marking algorithm.
   </description>
 
   <subsection|Improving the speed>
@@ -89,7 +89,7 @@
   <\description>
     <item*|Unicode>
 
-    Systematically use Unicode.
+    Systematically use <name|Unicode>.
 
     <item*|Agglomerated fonts>
 
@@ -109,8 +109,8 @@
 
     <item*|Rubber characters>
 
-    <label|rubber-chars>Implement large brackets and wide delimiters for STIX
-    fonts.
+    <label|rubber-chars>Implement large brackets and wide delimiters for
+    <name|STIX> fonts.
 
     Provide standard implementations using vector graphics, which do not
     depend on fonts, with many parameters for customizing width, shape, etc.
@@ -135,6 +135,11 @@
     <item*|Documentation>
 
     Better documentation on how to use the <scheme> extensions.
+
+    <item*|Programming aids>
+
+    Implement a proper parser and autocompletion mechanism. Add standard
+    <abbr|IDE> code browsing tools and visual aids.
   </description>
 
   <subsection|Coding style>
@@ -195,12 +200,12 @@
     Boxes should not have origins; its children should have positions
     instead.
 
-    <item*|Temporarily inccorect markup>
+    <item*|Temporarily incorrect markup>
 
     Example: when pressing <shortcut|(remove-structure-upwards)> inside a
     <markup|surround> tag, we first remove the two first children of the
     surround tag (so that it obtains arity 1) and next remove the tag itself.
-    The temporarily inccorect <markup|surround> tag of arity 1 may cause
+    The temporarily incorrect <markup|surround> tag of arity 1 may cause
     <verbatim|bridge_surround> to crash. Temporary fix: add extra nodes in
     the bridge. Better fix: implement an elementary modification
     <verbatim|assign_label>, which allows to change the surround tag into
@@ -824,7 +829,7 @@
 
     <\itemize>
       <\with|par-par-sep|0fn>
-        <item>Different purposes of TeXmacs.
+        <item>Different purposes of <TeXmacs>.
 
         <item>Writing a simple text.
 
@@ -842,7 +847,7 @@
       <\with|par-par-sep|0fn>
         <item>Why are structured documents useful?
 
-        <item>How to enter structure into TeXmacs, redundancy of the
+        <item>How to enter structure into <TeXmacs>, redundancy of the
         interface.
 
         <item>Understanding the visual indications, cursor movement.
