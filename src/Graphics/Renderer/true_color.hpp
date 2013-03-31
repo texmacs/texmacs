@@ -97,6 +97,35 @@ operator / (const true_color& c, float x) {
 }
 
 inline true_color
+operator * (const true_color& c1, const true_color& c2) {
+  return true_color (c1.r * c2.r, c1.g * c2.g, c1.b * c2.b, c1.a * c2.a);
+}
+
+inline true_color
+operator / (const true_color& c1, const true_color& c2) {
+  return true_color (c1.r / c2.r, c1.g / c2.g, c1.b / c2.b, c1.a / c2.a);
+}
+
+inline true_color
+norm (const true_color& c1, const true_color& c2) {
+  return true_color (sqrt (c1.r * c1.r + c2.r * c2.r),
+                     sqrt (c1.g * c1.g + c2.g * c2.g),
+                     sqrt (c1.b * c1.b + c2.b * c2.b),
+                     sqrt (c1.a * c1.a + c2.a * c2.a));
+}
+
+inline float
+max (const true_color& c) {
+  return max (c.r, max (c.g, max (c.b, c.a)));
+}
+
+inline float
+inner_max (const true_color& c1, const true_color& c2) {
+  return max (max (c1.r * c2.r, c1.g * c2.g),
+              max (c1.b * c2.b, c1.a * c2.a));
+}
+
+inline true_color
 hide_alpha (const true_color& c) {
   return true_color (c.r * c.a, c.g * c.a, c.b * c.a, c.a);
 }

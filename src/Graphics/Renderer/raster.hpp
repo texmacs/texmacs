@@ -127,6 +127,79 @@ blur (C* d, const C* s, int w, int h, int R, float r) {
 }
 
 /******************************************************************************
+* Gravitational effects
+******************************************************************************/
+
+template<class C> void
+gravitation (C* d, int R, float expon, bool y_flag) {
+  int w= 2*R+1, h= 2*R+1;
+  for (int y=0; y<h; y++) {
+    double sq_y= (y-R)*(y-R);
+    for (int x=0; x<w; x++)
+      if (x == R && y == R) d[y*w+x]= 0.0;
+      else {
+        double sq_x= (x-R)*(x-R);
+        double sq_r= sq_x + sq_y;
+        double r   = sqrt (sq_r);
+        double u   = (y_flag? (y-R): (x-R)) / r;
+        d[y*w+x]= u / pow (r, expon);
+      }
+  }
+}
+
+template<class C> void
+norm (C* d, const C* s1, const C* s2, int w, int h) {
+  for (int y=0; y<h; y++)
+    for (int x=0; x<w; x++)
+      d[y*w+x]= norm (s1[y*w+x], s2[y*w+x]);
+}
+
+template<class C, class F> F
+max (const C* d, int w, int h, const C& s) {
+  F r= 0.001;
+  for (int y=0; y<h; y++)
+    for (int x=0; x<w; x++)
+      r= max (r, inner_max (d[y*w+x], s));
+  return r;
+}
+
+template<class C, class S> void
+divide (C* d, int w, int h, const S& s) {
+  for (int y=0; y<h; y++)
+    for (int x=0; x<w; x++)
+      d[y*w+x]= d[y*w+x] / s;
+}
+
+template<class C> void
+normalize (C* d, int w, int h) {
+  for (int y=0; y<h; y++)
+    for (int x=0; x<w; x++)
+      d[y*w+x]= normalize (d[y*w+x]);
+}
+
+template<class C, class F> void
+gravitational_outline (C* d, const C* s, int w, int h, int R, float expon) {
+  int tw= 2*R+1, th= 2*R+1;
+  int ww= w + tw - 1, hh= h + th - 1;
+  F* gravx= tm_new_array<F> (2 * tw * th);
+  F* gravy= gravx + tw * th;
+  C* convx= tm_new_array<C> (2 * ww * hh);
+  C* convy= convx + ww * hh;
+  gravitation (gravx, R, expon, false);
+  gravitation (gravy, R, expon, true );
+  convolute (convx, s, gravx, w, h, tw, th);
+  convolute (convy, s, gravy, w, h, tw, th);
+  norm (d, convx, convy, ww, hh);
+  F mc= max<C,F> (d, ww, hh, C (1.0, 1.0, 1.0, 0.0));
+  F ma= max<C,F> (d, ww, hh, C (0.0, 0.0, 0.0, 1.0));
+  C sc (mc, mc, mc, ma);
+  divide (d, ww, hh, sc);
+  normalize (d, ww, hh);
+  tm_delete_array (convx);
+  tm_delete_array (gravx);
+}
+
+/******************************************************************************
 * Low level composition
 ******************************************************************************/
 
