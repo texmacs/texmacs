@@ -16,7 +16,7 @@
   <\traverse>
     <branch|<tt|tmfs>: the <TeXmacs> file system.|tmfs/tmfs.en.tm>
 
-    <branch|The linking system.|link.en.tm>
+    <branch|The URL system.|url.en.tm>
   </traverse>
 
   <tmdoc-copyright|2012|the <TeXmacs> team>
