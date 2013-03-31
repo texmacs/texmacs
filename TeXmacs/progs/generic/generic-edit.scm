@@ -592,8 +592,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (thumbnail-suffixes)
-  (list->url (map url-wildcard
-                  '("*.gif" "*.jpg" "*.jpeg" "*.JPG" "*.JPEG"))))
+  (list->url
+    (map url-wildcard
+         '("*.gif" "*.jpg" "*.jpeg" "*.JPG" "*.JPEG" "*.png" "*.PNG"))))
 
 (define (fill-row l nr)
   (cond ((= nr 0) '())
