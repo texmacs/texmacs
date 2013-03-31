@@ -13,6 +13,19 @@
 #define RASTER_PICTURE_H
 #include "raster.hpp"
 #include "picture.hpp"
+#include "true_color.hpp"
+
+/******************************************************************************
+* Picture kind associated to color type
+******************************************************************************/
+
+template<typename C>
+struct picture_kind_helper {
+  static picture_kind kind;
+};
+
+template<typename C> picture_kind
+picture_kind_helper<C>::kind= picture_raster;
 
 /******************************************************************************
 * Raster picture class
@@ -21,14 +34,13 @@
 template<class C>
 class raster_picture_rep: public picture_rep {
 public:
-  picture_kind kind;
   raster<C> r;
 
 public:
-  raster_picture_rep (picture_kind k2, raster<C> r2): kind (k2), r (r2) {}
+  raster_picture_rep (raster<C> r2): r (r2) {}
   ~raster_picture_rep () {}
 
-  picture_kind get_type () { return kind; }
+  picture_kind get_type () { return picture_kind_helper<C>::kind; }
   void* get_handle () { return (void*) this; }
 
   int get_width () { return r->w; }
@@ -49,8 +61,8 @@ public:
 };
 
 template<class C> picture
-raster_picture (picture_kind k, raster<C> r) {
-  return tm_new<raster_picture_rep<C> > (k, r);
+raster_picture (raster<C> r) {
+  return tm_new<raster_picture_rep<C> > (r);
 }
 
 template<class C> raster<C>

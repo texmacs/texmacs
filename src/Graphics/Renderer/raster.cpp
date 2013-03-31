@@ -14,7 +14,7 @@
 
 picture
 raster_picture (int w, int h, int ox, int oy) {
-  return raster_picture (picture_raster, raster<true_color> (w, h, ox, oy));
+  return raster_picture (raster<true_color> (w, h, ox, oy));
 }
 
 picture
@@ -47,12 +47,9 @@ picture
 blur (picture orig, double r) {
   if (r <= 0.001) return orig;
   picture pic= as_raster_picture (orig);
-  int R= ((int) (3.0 * r));
-  int w= pic->get_width (), h= pic->get_height ();
-  int ox= pic->get_origin_x (), oy= pic->get_origin_y ();
-  picture ret= raster_picture (w + 2*R, h + 2*R, ox + R, oy + R);
-  blur<true_color, alpha_color> (get_raster (ret), get_raster (pic), w, h, R, r);
-  return ret;
+  int R= max (3, ((int) (3.0 * r)));
+  raster<true_color> ras= as_raster<true_color> (pic);
+  return raster_picture (blur (ras, R, r));
 }
 
 picture

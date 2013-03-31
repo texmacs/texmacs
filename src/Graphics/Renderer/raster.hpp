@@ -60,6 +60,13 @@ print (const C* s, int w, int h) {
       cout << x << ", " << y << " -> " << s[y*w+x] << "\n";
 }
 
+template<class C> void
+print (raster<C> r) {
+  for (int y=0; y<r->h; y++)
+    for (int x=0; x<r->w; x++)
+      cout << x << ", " << y << " -> " << r->a[y*r->w+x] << "\n";
+}
+
 /******************************************************************************
 * Low level routines for raster manipulation
 ******************************************************************************/
@@ -128,6 +135,18 @@ blur (C* d, const C* s, int w, int h, int R, double r) {
   gaussian (temp, R, r);
   convolute (d, s, temp, w, h, tw, th);
   tm_delete_array (temp);  
+}
+
+template<class C> raster<C>
+blur (raster<C> ras, int R, double r) {
+  int w= ras->w, h= ras->h;
+  raster<C> ret (w + 2*R, h + 2*R, ras->ox + R, ras->oy + R);
+  int tw= 2*R+1, th= 2*R+1;
+  double* temp= tm_new_array<double> (tw * th);
+  gaussian (temp, R, r);
+  convolute (ret->a, ras->a, temp, w, h, tw, th);
+  tm_delete_array (temp);
+  return ret;
 }
 
 /******************************************************************************
