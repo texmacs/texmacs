@@ -18,32 +18,24 @@
 ******************************************************************************/
 
 template<class C> class raster;
+template<class C> bool is_nil (raster<C> r);
 
 template<class C>
-class raster_rep: public picture_rep {
+class raster_rep: public abstract_struct {
 public:
-  picture_kind kind;
   int w, h;
   int ox, oy;
   C* a;
 
 public:
-  raster_rep (picture_kind kind2, int w2, int h2, int ox2, int oy2):
-    kind (kind2), w (w2), h (h2), ox (ox2), oy (oy2), a (NULL) {
+  raster_rep (int w2, int h2, int ox2, int oy2):
+    w (w2), h (h2), ox (ox2), oy (oy2), a (NULL) {
       if (w * h != 0) a= tm_new_array<C> (w * h); }
   ~raster_rep () { if (w * h != 0) tm_delete_array (a); }
 
-  picture_kind get_type () { return kind; }
-  void* get_handle () { return (void*) this; }
-
-  int get_width () { return w; }
-  int get_height () { return h; }
-  int get_origin_x () { return ox; }
-  int get_origin_y () { return oy; }
-  void set_origin (int ox2, int oy2) { ox= ox2; oy= oy2; }
-
-  color get_pixel (int x, int y) {
-    if (0 > x || 0 > y || x >= w || y >= h) return 0;
+  /*
+  C get_pixel (int x, int y) {
+    if (0 > x || 0 > y || x >= w || y >= h) return transparent<C> ();
     else return (color) a [y*w + x];
   }
 
@@ -51,14 +43,15 @@ public:
     if (0 > x || 0 > y || x >= w || y >= h);
     else a [y*w + x]= C (c);
   }
+  */
 };
 
 template<class C> class raster {
-  ABSTRACT_TEMPLATE(raster,C);
+  ABSTRACT_NULL_TEMPLATE(raster,C);
   inline raster (int w, int h, int ox, int oy):
-    rep (tm_new<raster_rep<C> > (picture_raster, w, h, ox, oy)) {}
+    rep (tm_new<raster_rep<C> > (w, h, ox, oy)) { INC_COUNT(rep); }
 };
-ABSTRACT_TEMPLATE_CODE(raster,class,C);
+ABSTRACT_NULL_TEMPLATE_CODE(raster,class,C);
 
 template<class C> void
 print (const C* s, int w, int h) {

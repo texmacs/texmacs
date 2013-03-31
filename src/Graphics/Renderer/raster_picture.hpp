@@ -36,15 +36,27 @@ public:
   int get_origin_x () { return r->ox; }
   int get_origin_y () { return r->oy; }
   void set_origin (int ox2, int oy2) { r->ox= ox2; r->oy= oy2; }
-  color get_pixel (int x, int y) { return r->get_pixel (x, y); }
-  void set_pixel (int x, int y, color c) { r->set_pixel (x, y, c); }
-  //color get_pixel (int x, int y) { return (color) r->get_pixel (x, y); }
-  //void set_pixel (int x, int y, color c) { r->set_pixel (x, y, C (c)); }
+  color get_pixel (int x, int y) {
+    //return (color) r->get_pixel (x, y);
+    if (0 > x || 0 > y || x >= r->w || y >= r->h) return 0;
+    else return (color) r->a [y*r->w + x];
+  }
+  void set_pixel (int x, int y, color c) {
+    //r->set_pixel (x, y, C (c));
+    if (0 > x || 0 > y || x >= r->w || y >= r->h);
+    else r->a [y*r->w + x]= C (c);
+  }
 };
+
+template<class C> picture
+raster_picture (picture_kind k, raster<C> r) {
+  return tm_new<raster_picture_rep<C> > (k, r);
+}
 
 template<class C> raster<C>
 as_raster (picture pict) {
-  return raster<C> ((raster_rep<C>*) pict->get_handle ());
+  raster_picture_rep<C>* rep= (raster_picture_rep<C>*) pict->get_handle ();
+  return rep->r;
 }
 
 #endif // defined RASTER_PICTURE_H

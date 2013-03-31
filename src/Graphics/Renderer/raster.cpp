@@ -14,12 +14,7 @@
 
 picture
 raster_picture (int w, int h, int ox, int oy) {
-  return tm_new<raster_rep<true_color> > (picture_raster, w, h, ox, oy);
-}
-
-picture
-alpha_picture (int w, int h, int ox, int oy) {
-  return tm_new<raster_rep<alpha_color> > (picture_alpha, w, h, ox, oy);
+  return raster_picture (picture_raster, raster<true_color> (w, h, ox, oy));
 }
 
 picture
@@ -33,9 +28,7 @@ as_raster_picture (picture pic) {
 
 true_color*
 get_raster (picture pic) {
-  typedef raster_rep<true_color> R;
-  R* handle= (R*) pic->get_handle ();
-  return handle->a;
+  return as_raster<true_color> (pic) -> a;
 }
 
 picture

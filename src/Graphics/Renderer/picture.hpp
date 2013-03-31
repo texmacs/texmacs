@@ -67,10 +67,8 @@ enum composition_mode {
 };
 
 picture raster_picture (int w, int h, int ox= 0, int oy= 0);
-picture alpha_picture (int w, int h, int ox= 0, int oy= 0);
 picture as_raster_picture (picture pict);
 
-picture test_effect (picture pic);
 picture blur (picture pic, double r);
 picture gravitational_outline (picture pic, int R, double expon= 2.0);
 picture compose (picture pic, color c, composition_mode mode);

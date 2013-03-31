@@ -248,7 +248,6 @@ effect_box_rep::redraw (renderer ren, path p, rectangles& l) {
   delete_renderer (pic_ren);
   if (((nr_painted&15) == 15) && gui_interrupted (true));
   else {
-    //picture new_pic= test_effect (old_pic);
     //picture new_pic= blur (old_pic, 2.0);
     //picture new_pic= compose (old_pic, 0x40ff0000, compose_towards_source);
     //picture new_pic= add_shadow (old_pic, 1, -2, 0xff808080, 2.0);
