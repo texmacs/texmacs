@@ -598,6 +598,8 @@
 
   ;; further shortcuts for MacOS look and feel
   ("macos r" (interactive replace-start-forward))
+  ("macos F" (toggle-full-screen-mode))
+  ("macos C-f" (toggle-full-screen-edit-mode))
 
   ("altcmd x" (interactive footer-eval))
   ("altcmd X" (interactive exec-interactive-command))
