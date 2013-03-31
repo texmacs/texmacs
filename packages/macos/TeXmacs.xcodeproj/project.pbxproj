@@ -1199,6 +1199,7 @@
 		4964704F16F72CB500D95FC4 /* font_guess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_guess.cpp; sourceTree = "<group>"; };
 		4964705016F72CB500D95FC4 /* smart_font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smart_font.cpp; sourceTree = "<group>"; };
 		497822CA16EC86D40054F5BA /* tt_analyze.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tt_analyze.cpp; sourceTree = "<group>"; };
+		49A3439F1708FC58003F8866 /* raster_picture.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = raster_picture.hpp; sourceTree = "<group>"; };
 		49BEF71616FDD566004BAE73 /* metadata-springer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "metadata-springer.cpp"; sourceTree = "<group>"; };
 		49BEF71716FDD566004BAE73 /* metadata.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = metadata.hpp; sourceTree = "<group>"; };
 		49CD6A551706F1B800C70744 /* alpha_color.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = alpha_color.hpp; sourceTree = "<group>"; };
@@ -2473,6 +2474,7 @@
 				9C0B47FC10A8CC100097A335 /* printer.hpp */,
 				49CD6A581706F1B800C70744 /* raster.cpp */,
 				49CD6A591706F1B800C70744 /* raster.hpp */,
+				49A3439F1708FC58003F8866 /* raster_picture.hpp */,
 				9C0B47FD10A8CC100097A335 /* renderer.cpp */,
 				9C0B47FE10A8CC100097A335 /* renderer.hpp */,
 				9C0B47FF10A8CC100097A335 /* rgb_colors.hpp */,
