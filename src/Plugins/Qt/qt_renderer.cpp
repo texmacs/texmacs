@@ -934,12 +934,12 @@ int qt_picture_rep::get_origin_y () { return oy; }
 void qt_picture_rep::set_origin (int ox2, int oy2) { ox= ox2; oy= oy2; }
 
 color
-qt_picture_rep::get_pixel (int x, int y) {
+qt_picture_rep::internal_get_pixel (int x, int y) {
   return (color) pict.pixel (x, h - 1 - y);
 }
 
 void
-qt_picture_rep::set_pixel (int x, int y, color c) {
+qt_picture_rep::internal_set_pixel (int x, int y, color c) {
   pict.setPixel (x, h - 1 - y, c);
 }
 

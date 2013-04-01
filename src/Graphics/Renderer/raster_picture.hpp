@@ -36,6 +36,17 @@ class raster_picture_rep: public picture_rep {
 public:
   raster<C> r;
 
+protected:
+  color internal_get_pixel (int x, int y) {
+    if (0 > x || 0 > y || x >= r->w || y >= r->h) return 0;
+    else return (color) r->a [y*r->w + x];
+  }
+
+  void internal_set_pixel (int x, int y, color c) {
+    if (0 > x || 0 > y || x >= r->w || y >= r->h);
+    else r->a [y*r->w + x]= C (c);
+  }
+
 public:
   raster_picture_rep (raster<C> r2): r (r2) {}
   ~raster_picture_rep () {}
@@ -48,16 +59,6 @@ public:
   int get_origin_x () { return r->ox; }
   int get_origin_y () { return r->oy; }
   void set_origin (int ox2, int oy2) { r->ox= ox2; r->oy= oy2; }
-
-  color get_pixel (int x, int y) {
-    if (0 > x || 0 > y || x >= r->w || y >= r->h) return 0;
-    else return (color) r->a [y*r->w + x];
-  }
-
-  void set_pixel (int x, int y, color c) {
-    if (0 > x || 0 > y || x >= r->w || y >= r->h);
-    else r->a [y*r->w + x]= C (c);
-  }
 };
 
 template<class C> picture

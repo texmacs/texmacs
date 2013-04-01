@@ -125,6 +125,10 @@ public:
   int w, h;
   int ox, oy;
 
+protected:
+  color internal_get_pixel (int x, int y);
+  void internal_set_pixel (int x, int y, color c);
+
 public:
   qt_picture_rep (const QImage& im, int ox2, int oy2);
   picture_kind get_type ();
@@ -134,8 +138,6 @@ public:
   int get_origin_x ();
   int get_origin_y ();
   void set_origin (int ox2, int oy2);
-  color get_pixel (int x, int y);
-  void set_pixel (int x, int y, color c);
 };
 
 picture qt_picture (const QImage& im, int ox, int oy);

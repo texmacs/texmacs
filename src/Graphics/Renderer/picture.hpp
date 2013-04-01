@@ -21,8 +21,20 @@ typedef unsigned int color;
 
 enum picture_kind { picture_native, picture_raster, picture_alpha };
 
-class picture;
+class picture_rep;
+class picture {
+ABSTRACT_NULL(picture);
+};
+
 class picture_rep: public abstract_struct {
+protected:
+  virtual color internal_get_pixel (int x, int y) = 0;
+  virtual void internal_set_pixel (int x, int y, color c) = 0;
+  virtual void internal_copy_from (int x, int y, picture src,
+                                   int x1, int y1, int x2, int y2);
+  virtual void internal_copy_to   (int x, int y, picture dest,
+                                   int x1, int y1, int x2, int y2);
+
 public:
   inline picture_rep () {}
   inline virtual ~picture_rep () {}
@@ -37,22 +49,18 @@ public:
   virtual void set_origin (int ox, int oy) = 0;
   virtual void translate_origin (int dx, int dy);
 
-  virtual color get_pixel (int x, int y) = 0;
-  virtual void set_pixel (int x, int y, color c) = 0;
-
-  void copy_from (picture src);
-  void copy_to   (picture dest);
-  virtual void copy_from (int x, int y, picture src,
-                          int x1, int y1, int x2, int y2);
-  virtual void copy_to   (int x, int y, picture dest,
-                          int x1, int y1, int x2, int y2);
+  inline color get_pixel (int x, int y) {
+    return internal_get_pixel (x + get_origin_x (), y + get_origin_y ()); }
+  inline void  set_pixel (int x, int y, color c) {
+    internal_set_pixel (x + get_origin_x (), y + get_origin_y (), c); }
+  inline void copy_from (picture s) {
+    internal_copy_from (0, 0, s, 0, 0, s->get_width (), s->get_height ()); }
+  inline void copy_to (picture d) {
+    internal_copy_to (0, 0, d, 0, 0, get_width (), get_height ()); }
 
   friend class picture;
 };
 
-class picture {
-ABSTRACT_NULL(picture);
-};
 ABSTRACT_NULL_CODE(picture);
 
 /******************************************************************************
