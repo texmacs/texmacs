@@ -144,53 +144,68 @@ blur (raster<C> ras, int R, double r) {
 * Gravitational effects
 ******************************************************************************/
 
-template<class C> void
-gravitation (C* d, int R, double expon, bool y_flag) {
+template<class C> raster<C>
+gravitation (int R, double expon, bool y_flag) {
   int w= 2*R+1, h= 2*R+1;
+  raster<C> ret (w, h, R, R);
   for (int y=0; y<h; y++) {
     double sq_y= (y-R)*(y-R);
     for (int x=0; x<w; x++)
-      if (x == R && y == R) d[y*w+x]= 0.0;
+      if (x == R && y == R) ret->a[y*w+x]= 0.0;
       else {
         double sq_x= (x-R)*(x-R);
         double sq_r= sq_x + sq_y;
         double r   = sqrt (sq_r);
         double u   = (y_flag? (y-R): (x-R)) / r;
-        d[y*w+x]= u / pow (r, expon);
+        ret->a[y*w+x]= u / pow (r, expon);
       }
   }
+  return ret;
 }
 
-template<class C> void
-norm (C* d, const C* s1, const C* s2, int w, int h) {
+template<class C> raster<C>
+norm (raster<C> s1, raster<C> s2) {
+  int w= s1->w, h= s1->h;
+  ASSERT (s2->w == w && s2->h == h, "sizes don't match");
+  raster<C> ret (w, h, s1->ox, s1->oy);
   for (int y=0; y<h; y++)
     for (int x=0; x<w; x++)
-      d[y*w+x]= norm (s1[y*w+x], s2[y*w+x]);
+      ret->a[y*w+x]= norm (s1->a[y*w+x], s2->a[y*w+x]);
+  return ret;
 }
 
-template<class C, class F> F
-max (const C* d, int w, int h, const C& s) {
-  F r= 0.001;
+template<class C> typename C::scalar_type
+inner_max (raster<C> r, C s) {
+  typedef typename C::scalar_type F;
+  int w= r->w, h= r->h;
+  F ret= 0.001;
   for (int y=0; y<h; y++)
     for (int x=0; x<w; x++)
-      r= max (r, inner_max (d[y*w+x], s));
-  return r;
+      ret= max (ret, inner_max (r->a[y*w+x], s));
+  return ret;
 }
 
-template<class C, class S> void
-divide (C* d, int w, int h, const S& s) {
+template<class C, class S> raster<C>
+divide (raster<C> r, S s) {
+  int w= r->w, h= r->h;
+  raster<C> ret (w, h, r->ox, r->oy);
   for (int y=0; y<h; y++)
     for (int x=0; x<w; x++)
-      d[y*w+x]= d[y*w+x] / s;
+      ret->a[y*w+x]= r->a[y*w+x] / s;
+  return ret;
 }
 
-template<class C> void
-normalize (C* d, int w, int h) {
+template<class C> raster<C>
+normalize (raster<C> r) {
+  int w= r->w, h= r->h;
+  raster<C> ret (w, h, r->ox, r->oy);
   for (int y=0; y<h; y++)
     for (int x=0; x<w; x++)
-      d[y*w+x]= normalize (d[y*w+x]);
+      ret->a[y*w+x]= normalize (r->a[y*w+x]);
+  return ret;
 }
 
+/*
 template<class C, class F> void
 gravitational_outline (C* d, const C* s, int w, int h, int R, double expon) {
   int tw= 2*R+1, th= 2*R+1;
@@ -204,13 +219,33 @@ gravitational_outline (C* d, const C* s, int w, int h, int R, double expon) {
   convolute (convx, s, gravx, w, h, tw, th);
   convolute (convy, s, gravy, w, h, tw, th);
   norm (d, convx, convy, ww, hh);
-  F mc= max<C,F> (d, ww, hh, C (1.0, 1.0, 1.0, 0.0));
-  F ma= max<C,F> (d, ww, hh, C (0.0, 0.0, 0.0, 1.0));
+  F mc= inner_max<C,F> (d, ww, hh, C (1.0, 1.0, 1.0, 0.0));
+  F ma= inner_max<C,F> (d, ww, hh, C (0.0, 0.0, 0.0, 1.0));
   C sc (mc, mc, mc, ma);
   divide (d, ww, hh, sc);
   normalize (d, ww, hh);
   tm_delete_array (convx);
   tm_delete_array (gravx);
+}
+*/
+
+template<class C> raster<C>
+gravitational_outline (raster<C> s, int R, double expon) {
+  typedef typename C::scalar_type F;
+  int w= s->w, h= s->h;
+  int tw= 2*R+1, th= 2*R+1;
+  raster<F> gravx= gravitation<F> (R, expon, false);
+  raster<F> gravy= gravitation<F> (R, expon, true );
+  raster<C> convx (w + 2*R, h + 2*R, s->ox + R, s->oy + R);
+  raster<C> convy (w + 2*R, h + 2*R, s->ox + R, s->oy + R);
+  convolute (convx->a, s->a, gravx->a, w, h, tw, th);
+  convolute (convy->a, s->a, gravy->a, w, h, tw, th);
+  raster<C> d= norm (convx, convy);
+  F mc= inner_max (d, C (1.0, 1.0, 1.0, 0.0));
+  F ma= inner_max (d, C (0.0, 0.0, 0.0, 1.0));
+  C sc (mc, mc, mc, ma);
+  d= divide (d, sc);
+  return normalize (d);
 }
 
 /******************************************************************************

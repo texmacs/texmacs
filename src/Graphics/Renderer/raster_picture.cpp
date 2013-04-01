@@ -53,13 +53,8 @@ blur (picture pic, double r) {
 
 picture
 gravitational_outline (picture pic, int R, double expon) {
-  pic= as_raster_picture (pic);
-  int w= pic->get_width (), h= pic->get_height ();
-  int ox= pic->get_origin_x (), oy= pic->get_origin_y ();
-  picture ret= raster_picture (w + 2*R, h + 2*R, ox + R, oy + R);
-  gravitational_outline<true_color, double>
-    (get_raster (ret), get_raster (pic), w, h, R, expon);
-  return ret;
+  raster<true_color> ras= as_raster<true_color> (pic);
+  return raster_picture (gravitational_outline (ras, R, expon));
 }
 
 template<composition_mode M> picture

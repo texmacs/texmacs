@@ -17,11 +17,15 @@ typedef unsigned int color;
 
 class true_color {
 public:
+  typedef double scalar_type;
+
+public:
   double b;
   double g;
   double r;
   double a;
 
+public:
   inline true_color () {}
   inline true_color (const true_color& c):
     b (c.b), g (c.g), r (c.r), a (c.a) {}
