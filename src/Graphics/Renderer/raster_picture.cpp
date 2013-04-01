@@ -150,25 +150,22 @@ engrave (picture pic, double a0, color tlc, color brc, double tlw, double brw) {
   pic= as_raster_picture (pic);
   int w= pic->get_width (), h= pic->get_height ();
   int ox= pic->get_origin_x (), oy= pic->get_origin_y ();
-  double* ds= tm_new_array<double> (2 * w * h);
-  true_color* r= get_raster (pic);
-  inner_distances<true_color> (ds, r, w, h);
-  picture ret= raster_picture (w, h, ox, oy);
-  true_color* dest= get_raster (ret);
+  raster<true_color> ras= as_raster<true_color> (pic);
+  raster<double> tl= tl_distances (ras);
+  raster<double> br= br_distances (ras);
+  raster<true_color> ret (w, h, ox, oy);
   true_color c1 (tlc);
   true_color c2 (brc);
   for (int y=0; y<h; y++)
     for (int x=0; x<w; x++) {
-      double* d= ds + 2 * (y*w+x);
-      double d1= d[0];
-      double d2= d[1];
+      double d1= tl->a[y*w+x];
+      double d2= br->a[y*w+x];
       double a1= 1.0 / (1.0 + d1*d1/(tlw*tlw));
       double a2= 1.0 / (1.0 + d2*d2/(brw*brw));
-      true_color c0= r[y*w+x];
+      true_color c0= ras->a[y*w+x];
       true_color cc (c0.r, c0.g, c0.b, a0);
       true_color mc= (a0 * cc + a1 * c1 + a2 * c2) / (a0 + a1 + a2);
-      dest[y*w+x]= true_color (mc.r, mc.g, mc.b, c0.a * mc.a);
+      ret->a[y*w+x]= true_color (mc.r, mc.g, mc.b, c0.a * mc.a);
     }
-  tm_delete_array (ds);
-  return ret;
+  return raster_picture (ret);
 }

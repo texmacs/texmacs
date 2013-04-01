@@ -242,24 +242,34 @@ compose (D* d, const S* s, int w, int h, int wd, int ws) {
 * Low level edge distances
 ******************************************************************************/
 
-template<typename C> void
-inner_distances (double* d, const C* s, int w, int h) {
+template<typename C> raster<double>
+tl_distances (raster<C> r) {
+  int w= r->w, h= r->h;
+  raster<double> ret (w, h, r->ox, r->oy);
   for (int y=h-1; y>=0; y--)
     for (int x=0; x<w; x++) {
-      double a = get_alpha (s[y*w+x]);
-      double px= (x>0? d[2*(y*w+x-1) + 0]: 0.0);
-      double py= (y+1<h? d[2*((y+1)*w+x) + 0]: 0.0);
-      if (a == 0.0) d[2*(y*w+x) + 0]= 0.0;
-      else d[2*(y*w+x) + 0]= min (px, py) + a;
+      double a = get_alpha (r->a[y*w+x]);
+      double px= (x>0? ret->a[y*w+x-1]: 0.0);
+      double py= (y+1<h? ret->a[(y+1)*w+x]: 0.0);
+      if (a == 0.0) ret->a[y*w+x]= 0.0;
+      else ret->a[y*w+x]= min (px, py) + a;
     }
+  return ret;
+}
+
+template<typename C> raster<double>
+br_distances (raster<C> r) {
+  int w= r->w, h= r->h;
+  raster<double> ret (w, h, r->ox, r->oy);
   for (int y=0; y<h; y++)
     for (int x=w-1; x>=0; x--) {
-      double a= get_alpha (s[y*w+x]);
-      double px= (x+1<w? d[2*(y*w+x+1) + 1]: 0.0);
-      double py= (y>0? d[2*((y-1)*w+x) + 1]: 0.0);
-      if (a == 0.0) d[2*(y*w+x) + 1]= 0.0;
-      else d[2*(y*w+x) + 1]= min (px, py) + a;
+      double a= get_alpha (r->a[y*w+x]);
+      double px= (x+1<w? ret->a[y*w+x+1]: 0.0);
+      double py= (y>0? ret->a[(y-1)*w+x]: 0.0);
+      if (a == 0.0) ret->a[y*w+x]= 0.0;
+      else ret->a[y*w+x]= min (px, py) + a;
     }
+  return ret;
 }
 
 #endif // defined RASTER_H
