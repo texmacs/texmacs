@@ -63,7 +63,7 @@ struct composition_op<compose_source> {
 };
 
 template<>
-struct compositon_op<compose_source_over> {
+struct composition_op<compose_source_over> {
   template<typename C, typename S> static inline C
   op (const C& x, const S& y) { return source_over (x, y); }
   template<typename C, typename S> static inline void
@@ -78,6 +78,7 @@ struct composition_op<compose_towards_source> {
   set_op (C& x, const S& y) { x= towards_source (x, y); }
 };
 
+typedef composition_op<compose_source> source_op;
 typedef composition_op<compose_source_over> source_over_op;
 typedef composition_op<compose_towards_source> towards_source_op;
 

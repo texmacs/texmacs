@@ -12,6 +12,10 @@
 #include "alpha_color.hpp"
 #include "raster_picture.hpp"
 
+/******************************************************************************
+* Constructors and conversions
+******************************************************************************/
+
 picture
 raster_picture (int w, int h, int ox, int oy) {
   return raster_picture (raster<true_color> (w, h, ox, oy));
@@ -31,54 +35,20 @@ get_raster (picture pic) {
   return as_raster<true_color> (pic) -> a;
 }
 
-picture
-copy_raster_picture (picture pic) {
-  if (pic->get_type () != picture_raster) return as_raster_picture (pic);
-  int w= pic->get_width (), h= pic->get_height ();
-  int ox= pic->get_origin_x (), oy= pic->get_origin_y ();
-  picture ret= raster_picture (w, h, ox, oy);
-  true_color* d= get_raster (ret);
-  true_color* s= get_raster (pic);
-  for (int i=0; i<w*h; i++) d[i]= s[i];
-  return ret;
-}
+/******************************************************************************
+* General composition
+******************************************************************************/
 
-picture
-blur (picture pic, double r) {
-  if (r <= 0.001) return pic;
-  int R= max (3, ((int) (3.0 * r)));
+void
+set_compose (picture pic, color c, composition_mode mode) {
   raster<true_color> ras= as_raster<true_color> (pic);
-  return raster_picture (blur (ras, R, r));
+  set_compose (ras, c, mode);
 }
 
 picture
-gravitational_outline (picture pic, int R, double expon) {
-  raster<true_color> ras= as_raster<true_color> (pic);
-  return raster_picture (gravitational_outline (ras, R, expon));
-}
-
-template<composition_mode M> picture
-compose (picture pic, color c) {
-  picture ret= copy_raster_picture (pic);
-  int w= pic->get_width (), h= pic->get_height ();
-  compose<M,true_color,true_color> (get_raster (ret), true_color (c), w, h, w);
-  return ret;
-}
-
-picture
-compose (picture orig, color c, composition_mode mode) {
-  switch (mode) {
-  case compose_destination:
-    return compose<compose_destination> (orig, c);
-  case compose_source:
-    return compose<compose_source> (orig, c);
-  case compose_source_over:
-    return compose<compose_source_over> (orig, c);
-  case compose_towards_source:
-    return compose<compose_towards_source> (orig, c);
-  default:
-    return orig;
-  }
+compose (picture pic, color c, composition_mode mode) {
+  raster<true_color> ras= compose (as_raster<true_color> (pic), c, mode);
+  return raster_picture (ras);
 }
 
 template<composition_mode M> void
@@ -136,6 +106,36 @@ combine (picture p1, picture p2, composition_mode mode) {
   compose (ret, p1, -ox1-x1, -oy1-y1, compose_source);
   compose (ret, p2, -ox2-x1, -oy2-y1, mode);
   return ret;
+}
+
+/******************************************************************************
+* Special effects
+******************************************************************************/
+
+picture
+copy_raster_picture (picture pic) {
+  if (pic->get_type () != picture_raster) return as_raster_picture (pic);
+  int w= pic->get_width (), h= pic->get_height ();
+  int ox= pic->get_origin_x (), oy= pic->get_origin_y ();
+  picture ret= raster_picture (w, h, ox, oy);
+  true_color* d= get_raster (ret);
+  true_color* s= get_raster (pic);
+  for (int i=0; i<w*h; i++) d[i]= s[i];
+  return ret;
+}
+
+picture
+blur (picture pic, double r) {
+  if (r <= 0.001) return pic;
+  int R= max (3, ((int) (3.0 * r)));
+  raster<true_color> ras= as_raster<true_color> (pic);
+  return raster_picture (blur (ras, R, r));
+}
+
+picture
+gravitational_outline (picture pic, int R, double expon) {
+  raster<true_color> ras= as_raster<true_color> (pic);
+  return raster_picture (gravitational_outline (ras, R, expon));
 }
 
 picture

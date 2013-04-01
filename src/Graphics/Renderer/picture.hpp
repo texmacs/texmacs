@@ -71,6 +71,7 @@ picture as_raster_picture (picture pict);
 
 picture blur (picture pic, double r);
 picture gravitational_outline (picture pic, int R, double expon= 2.0);
+void set_compose (picture& pic, color c, composition_mode mode);
 picture compose (picture pic, color c, composition_mode mode);
 picture combine (picture p1, picture p2, composition_mode mode);
 picture add_shadow (picture pic, int x, int y, color c, double r);

@@ -197,11 +197,47 @@ gravitational_outline (raster<C> s, int R, double expon) {
 * Low level composition
 ******************************************************************************/
 
-template<composition_mode M, typename D, typename S> void
-compose (D* d, const S& s, int w, int h, int wd) {
-  for (int y=0; y<h; y++, d += wd)
-    for (int x=0; x<w; x++)
-      composition_op<M>::set_op (d[x], s);
+template<composition_mode M, typename C, typename S> void
+set_compose (raster<C>& r, S s) {
+  int w= r->w, h= r->h, n=w*h;
+  for (int i=0; i<n; i++)
+    composition_op<M>::set_op (r->a[i], s);
+}
+
+template<composition_mode M, typename C, typename S> raster<C>
+compose (raster<C> r, S s) {
+  int w= r->w, h= r->h, n=w*h;
+  raster<C> ret (w, h, r->ox, r->oy);
+  for (int i=0; i<n; i++)
+    ret->a[i]= composition_op<M>::op (r->a[i], s);
+  return ret;
+}
+
+template<typename C, typename S> void
+set_compose (raster<C>& r, S s, composition_mode mode) {
+  switch (mode) {
+  case compose_destination:
+    set_compose<compose_destination> (r, s);
+    break;
+  case compose_source:
+    set_compose<compose_source> (r, s);
+    break;
+  case compose_source_over:
+    set_compose<compose_source_over> (r, s);
+    break;
+  case compose_towards_source:
+    set_compose<compose_towards_source> (r, s);
+    break;
+  default:
+    break;
+  }
+}
+
+template<typename C, typename S> raster<C>
+compose (raster<C> r, S s, composition_mode mode) {
+  raster<C> ret= map<copy_op> (r);
+  set_compose (ret, s, mode);
+  return ret;
 }
 
 template<composition_mode M, typename D, typename S> void
