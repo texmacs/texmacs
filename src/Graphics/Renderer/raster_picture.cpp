@@ -1,6 +1,6 @@
 
 /******************************************************************************
-* MODULE     : raster.cpp
+* MODULE     : raster_picture.cpp
 * DESCRIPTION: Raster pictures
 * COPYRIGHT  : (C) 2013  Joris van der Hoeven
 *******************************************************************************
