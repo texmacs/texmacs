@@ -110,10 +110,10 @@ class unary_function_rep: public function_rep<F,T> {
   function<F,T> f;
 public:
   inline unary_function_rep (function<F,T> f2): f (f2) {}
-  inline T apply (F x) { return Op::eval (f (x)); }
-  inline ball<T> apply (ball<F> x) { return Op::eval (f (x)); }
+  inline T apply (F x) { return Op::op (f (x)); }
+  inline ball<T> apply (ball<F> x) { return Op::op (f (x)); }
   inline function<F,T> derive (V var) { return Op::diff (f, var); }
-  inline tree expression () { return Op::eval (as_tree (f)); }
+  inline tree expression () { return Op::op (as_tree (f)); }
 };
 
 template<typename F, typename T, typename Op> inline function<F,T>
@@ -126,10 +126,10 @@ class binary_function_rep: public function_rep<F,T> {
 public:
   inline binary_function_rep (function<F,T> f2, function<F,T> g2):
     f (f2), g (g2) {}
-  inline T apply (F x) { return Op::eval (f (x), g (x)); }
-  inline ball<T> apply (ball<F> x) { return Op::eval (f (x), g (x)); }
+  inline T apply (F x) { return Op::op (f (x), g (x)); }
+  inline ball<T> apply (ball<F> x) { return Op::op (f (x), g (x)); }
   inline function<F,T> derive (V var) { return Op::diff (f, g, var); }
-  inline tree expression () { return Op::eval (as_tree (f), as_tree (g)); }
+  inline tree expression () { return Op::op (as_tree (f), as_tree (g)); }
 };
 
 template<typename F, typename T, typename Op> inline function<F,T>

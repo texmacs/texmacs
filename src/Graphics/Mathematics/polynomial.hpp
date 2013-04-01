@@ -153,7 +153,7 @@ unary (polynomial<T> p) {
   T* a= A(p);
   T* r= tm_new_array<T> (n);
   for (i=0; i<n; i++)
-    r[i]= Op::eval (a[i]);
+    r[i]= Op::op (a[i]);
   return polynomial<T> (r, n);
 }
 
@@ -172,13 +172,13 @@ binary (polynomial<T> p1, polynomial<T> p2) {
   T* b= A(p2);
   T* r= tm_new_array<T> (n);
   for (i=0; i<m; i++)
-    r[i]= Op::eval (a[i], b[i]);
+    r[i]= Op::op (a[i], b[i]);
   if (n1 < n2)
     for (; i<n; i++)
-      r[i]= Op::eval (T(0), b[i]);
+      r[i]= Op::op (T(0), b[i]);
   else
     for (; i<n; i++)
-      r[i]= Op::eval (a[i], T(0));
+      r[i]= Op::op (a[i], T(0));
   return polynomial<T> (r, n);
 }
 

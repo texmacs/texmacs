@@ -18,22 +18,22 @@
 ******************************************************************************/
 
 template<typename C> inline C
-invert (C x) {
+invert (const C& x) {
   return 1/x;
 }
 
 template<typename C> inline C
-square (C x) {
+square (const C& x) {
   return x*x;
 }
 
 template<typename C> inline C
-norm (C x) {
+norm (const C& x) {
   return x >= 0? x: -x;
 }
 
 template<typename C> inline C
-square_norm (C x) {
+square_norm (const C& x) {
   return x*x;
 }
 
@@ -43,60 +43,63 @@ square_norm (C x) {
 
 struct copy_op {
   template<typename C> static inline C
-  eval (C x) { return x; }
+  op (const C& x) { return x; }
   static inline tree
-  eval (tree x) { return x; }
+  op (const tree& x) { return x; }
   template<typename C, typename V> static inline C
-  diff (C x, V v) { return derive (x, v); }
+  diff (const C& x, const V& v) { return derive (x, v); }
 };
 
 struct neg_op {
   template<typename C> static inline C
-  eval (C x) { return -x; }
+  op (const C& x) { return -x; }
   static inline tree
-  eval (tree x) { return neg (x); }
+  op (tree x) { return neg (x); }
   template<typename C, typename V> static inline C
-  diff (C x, V v) { return -derive (x, v); }
+  diff (const C& x, const V& v) { return -derive (x, v); }
 };
 
 struct add_op {
   template<typename C> static inline C
   neutral () { return 0; }
   template<typename C> static inline C
-  eval (C x, C y) { return x + y; }
+  op (const C& x, const C& y) { return x + y; }
   static inline tree
-  eval (tree x, tree y) { return add (x, y); }
+  op (tree x, tree y) { return add (x, y); }
   template<typename C, typename V> static inline C
-  diff (C x, C y, V v) { return derive (x, v) + derive (y, v); }
+  diff (const C& x, const C& y, const V& v) {
+    return derive (x, v) + derive (y, v); }
 };
 
 struct sub_op {
   template<typename C> static inline C
-  eval (C x, C y) { return x - y; }
+  op (const C& x, const C& y) { return x - y; }
   static inline tree
-  eval (tree x, tree y) { return sub (x, y); }
+  op (tree x, tree y) { return sub (x, y); }
   template<typename C, typename V> static inline C
-  diff (C x, C y, V v) { return derive (x, v) - derive (y, v); }
+  diff (const C& x, const C& y, const V& v) {
+    return derive (x, v) - derive (y, v); }
 };
 
 struct mul_op {
   template<typename C> static inline C
   neutral () { return 1; }
   template<typename C> static inline C
-  eval (C x, C y) { return x * y; }
+  op (const C& x, const C& y) { return x * y; }
   static inline tree
-  eval (tree x, tree y) { return mul (x, y); }
+  op (tree x, tree y) { return mul (x, y); }
   template<typename C, typename V> static inline C
-  diff (C x, C y, V v) { return derive (x, v) * y + x * derive (y, v); }
+  diff (const C& x, const C& y, const V& v) {
+    return derive (x, v) * y + x * derive (y, v); }
 };
 
 struct div_op {
   template<typename C> static inline C
-  eval (C x, C y) { return x / y; }
+  op (const C& x, const C& y) { return x / y; }
   static inline tree
-  eval (tree x, tree y) { return div (x, y); }
+  op (tree x, tree y) { return div (x, y); }
   template<typename C, typename V> static inline C
-  diff (C x, C y, V v) {
+  diff (const C& x, const C& y, const V& v) {
     return (derive (x, v) * y - x * derive (y, v)) / square (y); }
 };
 
@@ -106,59 +109,59 @@ struct div_op {
 
 struct sqrt_op {
   template<typename C> static inline C
-  eval (C x) { return sqrt (x); }
+  op (const C& x) { return sqrt (x); }
   template<typename C, typename V> static inline C
-  diff (C x, V v) { return derive (x, v) / (2 * sqrt (x)); }
+  diff (const C& x, const V& v) { return derive (x, v) / (2 * sqrt (x)); }
 };
 
 struct exp_op {
   template<typename C> static inline C
-  eval (C x) { return exp (x); }
+  op (const C& x) { return exp (x); }
   template<typename C, typename V> static inline C
-  diff (C x, V v) { return derive (x, v) * exp (x); }
+  diff (const C& x, const V& v) { return derive (x, v) * exp (x); }
 };
 
 struct log_op {
   template<typename C> static inline C
-  eval (C x) { return log (x); }
+  op (const C& x) { return log (x); }
   template<typename C, typename V> static inline C
-  diff (C x, V v) { return derive (x, v) / x; }
+  diff (const C& x, const V& v) { return derive (x, v) / x; }
 };
 
 struct pow_op {
   template<typename C> static inline C
-  eval (C x, C y) { return pow (x, y); }
+  op (const C& x, const C& y) { return pow (x, y); }
   template<typename C, typename V> static inline C
-  diff (C x, C y, V v) {
+  diff (const C& x, const C& y, const V& v) {
     return (derive (x, v) * y / x + log (x) * derive (y, v)) * pow (x, y); }
 };
 
 struct cst_pow_op {
   template<typename C, typename T> static inline C
-  eval (C x, T c) { return pow (x, c); }
+  op (C x, T c) { return pow (x, c); }
   template<typename C, typename T, typename V> static inline C
   diff (C x, T c, V v) { return derive (x, v) * pow (x, c - 1); }
 };
 
 struct cos_op {
   template<typename C> static inline C
-  eval (C x) { return cos (x); }
+  op (const C& x) { return cos (x); }
   template<typename C, typename V> static inline C
-  diff (C x, V v) { return -derive (x, v) * sin (x); }
+  diff (const C& x, const V& v) { return -derive (x, v) * sin (x); }
 };
 
 struct sin_op {
   template<typename C> static inline C
-  eval (C x) { return sin (x); }
+  op (const C& x) { return sin (x); }
   template<typename C, typename V> static inline C
-  diff (C x, V v) { return derive (x, v) * cos (x); }
+  diff (const C& x, const V& v) { return derive (x, v) * cos (x); }
 };
 
 struct tan_op {
   template<typename C> static inline C
-  eval (C x) { return tan (x); }
+  op (const C& x) { return tan (x); }
   template<typename C, typename V> static inline C
-  diff (C x, V v) { return derive (x, v) / square (cos (x)); }
+  diff (const C& x, const V& v) { return derive (x, v) / square (cos (x)); }
 };
 
 /******************************************************************************
@@ -167,7 +170,7 @@ struct tan_op {
 
 struct derive_op {
   template<typename C> static inline C
-  eval (C x) { return derive (x); }
+  op (const C& x) { return derive (x); }
 };
 
 #endif // OPERATORS_H

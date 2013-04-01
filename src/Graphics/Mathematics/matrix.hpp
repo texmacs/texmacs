@@ -144,7 +144,7 @@ unary (matrix<T> m) {
   T* a= A(m);
   T* r= tm_new_array<T> (n);
   for (i=0; i<n; i++)
-    r[i]= Op::eval (a[i]);
+    r[i]= Op::op (a[i]);
   return matrix<T> (r, NR(m), NC(m));
 }
 
@@ -164,7 +164,7 @@ binary (matrix<T> m1, matrix<T> m2) {
   T* b= A(m2);
   T* r= tm_new_array<T> (n);
   for (i=0; i<n; i++)
-    r[i]= Op::eval (a[i], b[i]);
+    r[i]= Op::op (a[i], b[i]);
   return matrix<T> (r, NR(m1), NC(m1));
 }
 
