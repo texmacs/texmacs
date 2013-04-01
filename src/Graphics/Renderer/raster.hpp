@@ -83,7 +83,128 @@ template<typename C> inline raster<C>
 hypot (raster<C> r1, raster<C> r2) { return map<hypot_op> (r1, r2); }
 
 /******************************************************************************
-* Low level routines for raster manipulation
+* Composition
+******************************************************************************/
+
+template<composition_mode M, typename C, typename S> void
+draw_on (raster<C>& r, S s) {
+  int w= r->w, h= r->h, n=w*h;
+  for (int i=0; i<n; i++)
+    composition_op<M>::set_op (r->a[i], s);
+}
+
+template<composition_mode M, typename C, typename S> raster<C>
+compose (raster<C> r, S s) {
+  int w= r->w, h= r->h, n=w*h;
+  raster<C> ret (w, h, r->ox, r->oy);
+  for (int i=0; i<n; i++)
+    ret->a[i]= composition_op<M>::op (r->a[i], s);
+  return ret;
+}
+
+template<typename C, typename S> void
+draw_on (raster<C>& r, S s, composition_mode mode) {
+  switch (mode) {
+  case compose_destination:
+    draw_on<compose_destination> (r, s);
+    break;
+  case compose_source:
+    draw_on<compose_source> (r, s);
+    break;
+  case compose_source_over:
+    draw_on<compose_source_over> (r, s);
+    break;
+  case compose_towards_source:
+    draw_on<compose_towards_source> (r, s);
+    break;
+  default:
+    break;
+  }
+}
+
+template<typename C, typename S> raster<C>
+compose (raster<C> r, S s, composition_mode mode) {
+  raster<C> ret= map<copy_op> (r);
+  draw_on (ret, s, mode);
+  return ret;
+}
+
+template<composition_mode M, typename C, typename S> void
+draw_on (raster<C>& dest, raster<S> src, int x, int y) {
+  x -= src->ox - dest->ox;
+  y -= src->oy - dest->oy;
+  int dw= dest->w, dh= dest->h;
+  int sw= src ->w, sh= src ->h;
+  C* d= dest->a;
+  S* s= src ->a;
+  int sw2= sw;
+  int sh2= sh;
+  if (x < 0) { s -= x; sw2 += x; x= 0; }
+  if (y < 0) { s -= y * sw; sh2 += y; y= 0; }
+  int w = min (sw2, dw - x);
+  int h = min (sh2, dh - y);
+  if (w <= 0 || h <= 0) return;
+  d += y * dw + x;
+  for (int y=0; y<h; y++, d += dw, s +=sw)
+    for (int x=0; x<w; x++)
+      composition_op<M>::set_op (d[x], s[x]);
+}
+
+template<typename C, typename S> void
+draw_on (raster<C>& r, raster<S> s, int x, int y, composition_mode mode) {
+  switch (mode) {
+  case compose_destination:
+    draw_on<compose_destination> (r, s, x, y);
+    break;
+  case compose_source:
+    draw_on<compose_source> (r, s, x, y);
+    break;
+  case compose_source_over:
+    draw_on<compose_source_over> (r, s, x, y);
+    break;
+  case compose_towards_source:
+    draw_on<compose_towards_source> (r, s, x, y);
+    break;
+  default:
+    break;
+  }
+}
+
+template<typename C, typename S> raster<C>
+empty_join (raster<C> r1, raster<S> r2) {
+  int w1 = r1->w , h1 = r1->h;
+  int ox1= r1->ox, oy1= r1->oy;
+  int w2 = r2->w , h2 = r2->h;
+  int ox2= r2->ox, oy2= r2->oy;
+  int x1 = min (-ox1, -ox2);
+  int y1 = min (-oy1, -oy2);
+  int x2 = max (w1-ox1, w2-ox2);
+  int y2 = max (h1-oy1, h2-oy2);
+  int w  = x2 - x1;
+  int h  = y2 - y1;
+  raster<C> ret (w, h, -x1, -y1);
+  clear (ret);
+  return ret;
+}
+
+template<composition_mode M, typename C, typename S> raster<C>
+compose (raster<C> r1, raster<S> r2) {
+  raster<C> ret= empty_join (r1, r2);
+  draw_on<compose_source> (ret, r1, 0, 0);
+  draw_on<M> (ret, r2, 0, 0);
+  return ret;
+}
+
+template<typename C, typename S> raster<C>
+compose (raster<C> r1, raster<S> r2, composition_mode mode) {
+  raster<C> ret= empty_join (r1, r2);
+  draw_on (ret, r1, 0, 0, compose_source);
+  draw_on (ret, r2, 0, 0, mode);
+  return ret;
+}
+
+/******************************************************************************
+* Convolution and blur
 ******************************************************************************/
 
 template<typename C> void
@@ -194,123 +315,7 @@ gravitational_outline (raster<C> s, int R, double expon) {
 }
 
 /******************************************************************************
-* Low level composition
-******************************************************************************/
-
-template<composition_mode M, typename C, typename S> void
-set_compose (raster<C>& r, S s) {
-  int w= r->w, h= r->h, n=w*h;
-  for (int i=0; i<n; i++)
-    composition_op<M>::set_op (r->a[i], s);
-}
-
-template<composition_mode M, typename C, typename S> raster<C>
-compose (raster<C> r, S s) {
-  int w= r->w, h= r->h, n=w*h;
-  raster<C> ret (w, h, r->ox, r->oy);
-  for (int i=0; i<n; i++)
-    ret->a[i]= composition_op<M>::op (r->a[i], s);
-  return ret;
-}
-
-template<typename C, typename S> void
-set_compose (raster<C>& r, S s, composition_mode mode) {
-  switch (mode) {
-  case compose_destination:
-    set_compose<compose_destination> (r, s);
-    break;
-  case compose_source:
-    set_compose<compose_source> (r, s);
-    break;
-  case compose_source_over:
-    set_compose<compose_source_over> (r, s);
-    break;
-  case compose_towards_source:
-    set_compose<compose_towards_source> (r, s);
-    break;
-  default:
-    break;
-  }
-}
-
-template<typename C, typename S> raster<C>
-compose (raster<C> r, S s, composition_mode mode) {
-  raster<C> ret= map<copy_op> (r);
-  set_compose (ret, s, mode);
-  return ret;
-}
-
-/*
-template<composition_mode M, typename D, typename S> void
-compose (D* d, const S* s, int w, int h, int wd, int ws) {
-  for (int y=0; y<h; y++, d += wd, s +=ws)
-    for (int x=0; x<w; x++)
-      composition_op<M>::set_op (d[x], s[x]);
-}
-
-template<composition_mode M> void
-compose (picture& dest, picture src, int x, int y) {
-  dest= as_raster_picture (dest);
-  src = as_raster_picture (src );
-  int dw= dest->get_width (), dh= dest->get_height ();
-  int sw= src ->get_width (), sh= src ->get_height ();
-  true_color* d= get_raster (dest);
-  true_color* s= get_raster (src );
-  int sw2= sw;
-  int sh2= sh;
-  if (x < 0) { s -= x; sw2 += x; x= 0; }
-  if (y < 0) { s -= y * sw; sh2 += y; y= 0; }
-  int w = min (sw2, dw - x);
-  int h = min (sh2, dh - y);
-  if (w <= 0 || h <= 0) return;
-  d += y * dw + x;
-  compose<M,true_color,true_color> (d, s, w, h, dw, sw);
-}
-*/
-
-template<composition_mode M, typename C, typename S> void
-set_compose (raster<C>& dest, raster<S> src, int x, int y) {
-  x += src->ox - dest->ox;
-  y += src->oy - dest->oy;
-  int dw= dest->w, dh= dest->h;
-  int sw= src ->w, sh= src ->h;
-  C* d= dest->a;
-  S* s= src ->a;
-  int sw2= sw;
-  int sh2= sh;
-  if (x < 0) { s -= x; sw2 += x; x= 0; }
-  if (y < 0) { s -= y * sw; sh2 += y; y= 0; }
-  int w = min (sw2, dw - x);
-  int h = min (sh2, dh - y);
-  if (w <= 0 || h <= 0) return;
-  d += y * dw + x;
-  for (int y=0; y<h; y++, d += dw, s +=sw)
-    for (int x=0; x<w; x++)
-      composition_op<M>::set_op (d[x], s[x]);
-}
-
-template<typename C, typename S> void
-set_compose (raster<C>& r, raster<S> s, int x, int y, composition_mode mode) {
-  switch (mode) {
-  case compose_destination:
-    set_compose<compose_destination> (r, s, x, y);
-    break;
-  case compose_source:
-    set_compose<compose_source> (r, s, x, y);
-    break;
-  case compose_source_over:
-    set_compose<compose_source_over> (r, s, x, y);
-    break;
-  case compose_towards_source:
-    set_compose<compose_towards_source> (r, s, x, y);
-    break;
-  default:
-    break;
-  }
-}
-
-/******************************************************************************
-* Low level edge distances
+* Edge distances
 ******************************************************************************/
 
 template<typename C> raster<double>

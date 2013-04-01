@@ -40,9 +40,9 @@ get_raster (picture pic) {
 ******************************************************************************/
 
 void
-set_compose (picture pic, color c, composition_mode mode) {
+draw_on (picture pic, color c, composition_mode mode) {
   raster<true_color> ras= as_raster<true_color> (pic);
-  set_compose (ras, c, mode);
+  draw_on (ras, c, mode);
 }
 
 picture
@@ -52,32 +52,18 @@ compose (picture pic, color c, composition_mode mode) {
 }
 
 void
-compose (picture& dest, picture src, int x, int y, composition_mode mode) {
+draw_on (picture& dest, picture src, int x, int y, composition_mode mode) {
   raster<true_color> dest_ras= as_raster<true_color> (dest);
   raster<true_color> src_ras = as_raster<true_color> (src);
-  x -= src_ras->ox - dest_ras->ox;
-  y -= src_ras->oy - dest_ras->oy;
-  set_compose (dest_ras, src_ras, x, y, mode);
+  draw_on (dest_ras, src_ras, x, y, mode);
 }
 
 picture
-combine (picture p1, picture p2, composition_mode mode) {
-  int w1 = p1->get_width ()   , h1 = p1->get_height ();
-  int ox1= p1->get_origin_x (), oy1= p1->get_origin_y ();
-  int w2 = p2->get_width ()   , h2 = p2->get_height ();
-  int ox2= p2->get_origin_x (), oy2= p2->get_origin_y ();
-  int x1 = min (-ox1, -ox2);
-  int y1 = min (-oy1, -oy2);
-  int x2 = max (w1-ox1, w2-ox2);
-  int y2 = max (h1-oy1, h2-oy2);
-  int w  = x2 - x1;
-  int h  = y2 - y1;
-  picture ret= raster_picture (w, h, -x1, -y1);
-  raster<true_color> ras= as_raster<true_color> (ret);
-  clear (ras);
-  compose (ret, p1, -ox1-x1, -oy1-y1, compose_source);
-  compose (ret, p2, -ox2-x1, -oy2-y1, mode);
-  return ret;
+compose (picture p1, picture p2, composition_mode mode) {
+  raster<true_color> r1= as_raster<true_color> (p1);
+  raster<true_color> r2= as_raster<true_color> (p2);
+  raster<true_color> r = compose (r1, r2, mode);
+  return raster_picture (r);
 }
 
 /******************************************************************************
@@ -114,7 +100,7 @@ picture
 add_shadow (picture pic, int x, int y, color c, double r) {
   picture shad= blur (compose (pic, c, compose_towards_source), r);
   shad->translate_origin (-x, -y);
-  return combine (shad, pic, compose_source_over);
+  return compose (shad, pic, compose_source_over);
 }
 
 picture
