@@ -135,12 +135,12 @@ inner_max (const true_color& c1, const true_color& c2) {
 }
 
 inline true_color
-hide_alpha (const true_color& c) {
+mul_alpha (const true_color& c) {
   return true_color (c.r * c.a, c.g * c.a, c.b * c.a, c.a);
 }
 
 inline true_color
-show_alpha (const true_color& c) {
+div_alpha (const true_color& c) {
   if (c.a < 0.00390625 && c.a > -0.00390625) return c;
   else return true_color (c.r / c.a, c.g / c.a, c.b / c.a, c.a);
 }

@@ -53,22 +53,22 @@ print (raster<C> r) {
 ******************************************************************************/
 
 template<typename C> raster<C>
-hide_alpha (raster<C> r) {
+mul_alpha (raster<C> r) {
   int w= r->w, h= r->h;
   raster<C> ret (w, h, r->ox, r->oy);
   for (int y=0; y<h; y++)
     for (int x=0; x<w; x++)
-      ret->a[y*w+x]= hide_alpha (r->a[y*w+x]);
+      ret->a[y*w+x]= mul_alpha (r->a[y*w+x]);
   return ret;
 }
 
 template<typename C> raster<C>
-show_alpha (raster<C> r) {
+div_alpha (raster<C> r) {
   int w= r->w, h= r->h;
   raster<C> ret (w, h, r->ox, r->oy);
   for (int y=0; y<h; y++)
     for (int x=0; x<w; x++)
-      ret->a[y*w+x]= show_alpha (r->a[y*w+x]);
+      ret->a[y*w+x]= div_alpha (r->a[y*w+x]);
   return ret;
 }
 
@@ -87,7 +87,7 @@ convolute (raster<C> s1, raster<S> s2) {
   int dw= s1w + s2w - 1, dh= s1h + s2h - 1;
   raster<C> d (dw, dh, s1->ox + s2->ox, s1->oy + s2->oy);
   clear (d);
-  raster<C> temp= hide_alpha (s1);
+  raster<C> temp= mul_alpha (s1);
   for (int y1=0; y1<s1h; y1++)
     for (int y2=0; y2<s2h; y2++) {
       int o1= y1 * s1w, o2= y2 * s2w, o= (y1 + y2) * dw;
@@ -95,7 +95,7 @@ convolute (raster<C> s1, raster<S> s2) {
         for (int x2=0; x2<s2w; x2++)
           d->a[o+x1+x2] += temp->a[o1+x1] * s2->a[o2+x2];
     }
-  return show_alpha (d);
+  return div_alpha (d);
 }
 
 template<typename C> raster<C>
