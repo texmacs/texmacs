@@ -12,6 +12,7 @@
 #ifndef RASTER_H
 #define RASTER_H
 #include "picture.hpp"
+#include "raster_operators.hpp"
 
 /******************************************************************************
 * Raster class
@@ -49,28 +50,37 @@ print (raster<C> r) {
 }
 
 /******************************************************************************
-* Low level routines for raster manipulation
+* Mappers
 ******************************************************************************/
 
-template<typename C> raster<C>
-mul_alpha (raster<C> r) {
-  int w= r->w, h= r->h;
+template<typename Op, typename C> raster<C>
+map (raster<C> r) {
+  int w= r->w, h= r->h, n= w*h;
   raster<C> ret (w, h, r->ox, r->oy);
-  for (int y=0; y<h; y++)
-    for (int x=0; x<w; x++)
-      ret->a[y*w+x]= mul_alpha (r->a[y*w+x]);
+  for (int i=0; i<n; i++)
+    ret->a[i]= Op::op (r->a[i]);
   return ret;
 }
 
-template<typename C> raster<C>
-div_alpha (raster<C> r) {
-  int w= r->w, h= r->h;
-  raster<C> ret (w, h, r->ox, r->oy);
-  for (int y=0; y<h; y++)
-    for (int x=0; x<w; x++)
-      ret->a[y*w+x]= div_alpha (r->a[y*w+x]);
+template<typename Op, typename C, typename S> raster<C>
+map (raster<C> r1, raster<S> r2) {
+  int w= r1->w, h= r1->h, n= w*h;
+  ASSERT (r2->w == w && r2->h == h, "sizes don't match");
+  ASSERT (r2->ox == r1->ox && r2->oy == r1->oy, "offsets don't match");
+  raster<C> ret (w, h, r1->ox, r1->oy);
+  for (int i=0; i<n; i++)
+    ret->a[i]= Op::op (r1->a[i], r2->a[i]);
   return ret;
 }
+
+template<typename C> inline raster<C>
+mul_alpha (raster<C> r) { return map<mul_alpha_op> (r); }
+template<typename C> inline raster<C>
+div_alpha (raster<C> r) { return map<div_alpha_op> (r); }
+
+/******************************************************************************
+* Low level routines for raster manipulation
+******************************************************************************/
 
 template<typename C> void
 clear (raster<C>& r) {
