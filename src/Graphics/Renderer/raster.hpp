@@ -32,18 +32,6 @@ public:
     w (w2), h (h2), ox (ox2), oy (oy2), a (NULL) {
       if (w * h != 0) a= tm_new_array<C> (w * h); }
   ~raster_rep () { if (w * h != 0) tm_delete_array (a); }
-
-  /*
-  C get_pixel (int x, int y) {
-    if (0 > x || 0 > y || x >= w || y >= h) return transparent<C> ();
-    else return (color) a [y*w + x];
-  }
-
-  void set_pixel (int x, int y, color c) {
-    if (0 > x || 0 > y || x >= w || y >= h);
-    else a [y*w + x]= C (c);
-  }
-  */
 };
 
 template<typename C> class raster {
@@ -52,13 +40,6 @@ template<typename C> class raster {
     rep (tm_new<raster_rep<C> > (w, h, ox, oy)) { INC_COUNT(rep); }
 };
 ABSTRACT_NULL_TEMPLATE_CODE(raster,class,C);
-
-template<typename C> void
-print (const C* s, int w, int h) {
-  for (int y=0; y<h; y++)
-    for (int x=0; x<w; x++)
-      cout << x << ", " << y << " -> " << s[y*w+x] << "\n";
-}
 
 template<typename C> void
 print (raster<C> r) {
@@ -116,27 +97,6 @@ convolute (raster<C> s1, raster<S> s2) {
     }
   return show_alpha (d);
 }
-
-/*
-template<typename D, typename S1, typename S2> void
-convolute (D* d, const S1* s1, const S2* s2,
-           int s1w, int s1h, int s2w, int s2h) {
-  if (s1w * s1h == 0) return;
-  int dw= s1w + s2w - 1, dh= s1h + s2h - 1;
-  clear (d, dw, dh);
-  S1* temp= tm_new_array<S1> (s1w * s1h);
-  hide_alpha (temp, s1, s1w, s1h);
-  for (int y1=0; y1<s1h; y1++)
-    for (int y2=0; y2<s2h; y2++) {
-      int o1= y1 * s1w, o2= y2 * s2w, o= (y1 + y2) * dw;
-      for (int x1=0; x1<s1w; x1++)
-        for (int x2=0; x2<s2w; x2++)
-          d[o+x1+x2] += temp[o1+x1] * s2[o2+x2];
-    }
-  show_alpha (d, d, dw, dh);
-  tm_delete_array (temp);
-}
-*/
 
 template<typename C> raster<C>
 gaussian (int R, double r) {
@@ -230,12 +190,6 @@ gravitational_outline (raster<C> s, int R, double expon) {
   typedef typename C::scalar_type F;
   raster<F> gravx= gravitation<F> (R, expon, false);
   raster<F> gravy= gravitation<F> (R, expon, true );
-  //int w= s->w, h= s->h;
-  //int tw= 2*R+1, th= 2*R+1;
-  //raster<C> convx (w + 2*R, h + 2*R, s->ox + R, s->oy + R);
-  //raster<C> convy (w + 2*R, h + 2*R, s->ox + R, s->oy + R);
-  //convolute (convx->a, s->a, gravx->a, w, h, tw, th);
-  //convolute (convy->a, s->a, gravy->a, w, h, tw, th);
   raster<C> convx= convolute (s, gravx);
   raster<C> convy= convolute (s, gravy);
   raster<C> d= norm (convx, convy);
