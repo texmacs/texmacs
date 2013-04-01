@@ -15,6 +15,10 @@
 
 typedef unsigned int color;
 
+/******************************************************************************
+* Main true_color class
+******************************************************************************/
+
 class true_color {
 public:
   typedef double scalar_type;
@@ -50,23 +54,9 @@ operator << (tm_ostream& out, const true_color& c) {
              << "; " << c.a << "]";
 }
 
-inline double
-get_alpha (const true_color& c) {
-  return c.a;
-}
-
-inline void
-clear (true_color& c) {
-  c.r= c.g= c.b= c.a= 0.0;
-}
-
-inline true_color
-normalize (const true_color& c) {
-  return true_color (max (min (c.r, 1.0), 0.0),
-                     max (min (c.g, 1.0), 0.0),
-                     max (min (c.b, 1.0), 0.0),
-                     max (min (c.a, 1.0), 0.0));
-}
+/******************************************************************************
+* Basic arithmetic
+******************************************************************************/
 
 inline true_color
 operator + (const true_color& c1, const true_color& c2) {
@@ -115,35 +105,9 @@ operator / (const true_color& c1, const true_color& c2) {
   return true_color (c1.r / c2.r, c1.g / c2.g, c1.b / c2.b, c1.a / c2.a);
 }
 
-inline true_color
-norm (const true_color& c1, const true_color& c2) {
-  return true_color (sqrt (c1.r * c1.r + c2.r * c2.r),
-                     sqrt (c1.g * c1.g + c2.g * c2.g),
-                     sqrt (c1.b * c1.b + c2.b * c2.b),
-                     sqrt (c1.a * c1.a + c2.a * c2.a));
-}
-
-inline double
-max (const true_color& c) {
-  return max (c.r, max (c.g, max (c.b, c.a)));
-}
-
-inline double
-inner_max (const true_color& c1, const true_color& c2) {
-  return max (max (c1.r * c2.r, c1.g * c2.g),
-              max (c1.b * c2.b, c1.a * c2.a));
-}
-
-inline true_color
-mul_alpha (const true_color& c) {
-  return true_color (c.r * c.a, c.g * c.a, c.b * c.a, c.a);
-}
-
-inline true_color
-div_alpha (const true_color& c) {
-  if (c.a < 0.00390625 && c.a > -0.00390625) return c;
-  else return true_color (c.r / c.a, c.g / c.a, c.b / c.a, c.a);
-}
+/******************************************************************************
+* Composition operators
+******************************************************************************/
 
 inline void
 source_over (true_color& c1, const true_color& c2) {
@@ -162,6 +126,62 @@ towards_source (true_color& c1, const true_color& c2) {
   c1.r= c1.r * a1 + c2.r * a2;
   c1.g= c1.g * a1 + c2.g * a2;
   c1.b= c1.b * a1 + c2.b * a2;
+}
+
+/******************************************************************************
+* Transparency
+******************************************************************************/
+
+inline void
+clear (true_color& c) {
+  c.r= c.g= c.b= c.a= 0.0;
+}
+
+inline double
+get_alpha (const true_color& c) {
+  return c.a;
+}
+
+inline true_color
+mul_alpha (const true_color& c) {
+  return true_color (c.r * c.a, c.g * c.a, c.b * c.a, c.a);
+}
+
+inline true_color
+div_alpha (const true_color& c) {
+  if (c.a < 0.00390625 && c.a > -0.00390625) return c;
+  else return true_color (c.r / c.a, c.g / c.a, c.b / c.a, c.a);
+}
+
+/******************************************************************************
+* Other operators
+******************************************************************************/
+
+inline true_color
+normalize (const true_color& c) {
+  return true_color (max (min (c.r, 1.0), 0.0),
+                     max (min (c.g, 1.0), 0.0),
+                     max (min (c.b, 1.0), 0.0),
+                     max (min (c.a, 1.0), 0.0));
+}
+
+inline true_color
+hypot (const true_color& c1, const true_color& c2) {
+  return true_color (sqrt (c1.r * c1.r + c2.r * c2.r),
+                     sqrt (c1.g * c1.g + c2.g * c2.g),
+                     sqrt (c1.b * c1.b + c2.b * c2.b),
+                     sqrt (c1.a * c1.a + c2.a * c2.a));
+}
+
+inline double
+max (const true_color& c) {
+  return max (c.r, max (c.g, max (c.b, c.a)));
+}
+
+inline double
+inner_max (const true_color& c1, const true_color& c2) {
+  return max (max (c1.r * c2.r, c1.g * c2.g),
+              max (c1.b * c2.b, c1.a * c2.a));
 }
 
 #endif // defined TRUE_COLOR_H

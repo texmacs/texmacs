@@ -78,6 +78,9 @@ mul_alpha (raster<C> r) { return map<mul_alpha_op> (r); }
 template<typename C> inline raster<C>
 div_alpha (raster<C> r) { return map<div_alpha_op> (r); }
 
+template<typename C> inline raster<C>
+hypot (raster<C> r1, raster<C> r2) { return map<hypot_op> (r1, r2); }
+
 /******************************************************************************
 * Low level routines for raster manipulation
 ******************************************************************************/
@@ -153,17 +156,6 @@ gravitation (int R, double expon, bool y_flag) {
   return ret;
 }
 
-template<typename C> raster<C>
-norm (raster<C> s1, raster<C> s2) {
-  int w= s1->w, h= s1->h;
-  ASSERT (s2->w == w && s2->h == h, "sizes don't match");
-  raster<C> ret (w, h, s1->ox, s1->oy);
-  for (int y=0; y<h; y++)
-    for (int x=0; x<w; x++)
-      ret->a[y*w+x]= norm (s1->a[y*w+x], s2->a[y*w+x]);
-  return ret;
-}
-
 template<typename C> typename C::scalar_type
 inner_max (raster<C> r, C s) {
   typedef typename C::scalar_type F;
@@ -202,7 +194,7 @@ gravitational_outline (raster<C> s, int R, double expon) {
   raster<F> gravy= gravitation<F> (R, expon, true );
   raster<C> convx= convolute (s, gravx);
   raster<C> convy= convolute (s, gravy);
-  raster<C> d= norm (convx, convy);
+  raster<C> d= hypot (convx, convy);
   F mc= inner_max (d, C (1.0, 1.0, 1.0, 0.0));
   F ma= inner_max (d, C (0.0, 0.0, 0.0, 1.0));
   C sc (mc, mc, mc, ma);
