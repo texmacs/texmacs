@@ -131,14 +131,15 @@ combine (picture p1, picture p2, composition_mode mode) {
   int w  = x2 - x1;
   int h  = y2 - y1;
   picture ret= raster_picture (w, h, -x1, -y1);
-  clear (get_raster (ret), w, h);
+  raster<true_color> ras= as_raster<true_color> (ret);
+  clear (ras);
   compose (ret, p1, -ox1-x1, -oy1-y1, compose_source);
   compose (ret, p2, -ox2-x1, -oy2-y1, mode);
   return ret;
 }
 
 picture
-shadow (picture pic, int x, int y, color c, double r) {
+add_shadow (picture pic, int x, int y, color c, double r) {
   picture shad= blur (compose (pic, c, compose_towards_source), r);
   shad->translate_origin (-x, -y);
   return combine (shad, pic, compose_source_over);

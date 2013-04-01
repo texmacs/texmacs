@@ -17,10 +17,10 @@
 * Raster class
 ******************************************************************************/
 
-template<class C> class raster;
-template<class C> bool is_nil (raster<C> r);
+template<typename C> class raster;
+template<typename C> bool is_nil (raster<C> r);
 
-template<class C>
+template<typename C>
 class raster_rep: public abstract_struct {
 public:
   int w, h;
@@ -46,21 +46,21 @@ public:
   */
 };
 
-template<class C> class raster {
+template<typename C> class raster {
   ABSTRACT_NULL_TEMPLATE(raster,C);
   inline raster (int w, int h, int ox, int oy):
     rep (tm_new<raster_rep<C> > (w, h, ox, oy)) { INC_COUNT(rep); }
 };
 ABSTRACT_NULL_TEMPLATE_CODE(raster,class,C);
 
-template<class C> void
+template<typename C> void
 print (const C* s, int w, int h) {
   for (int y=0; y<h; y++)
     for (int x=0; x<w; x++)
       cout << x << ", " << y << " -> " << s[y*w+x] << "\n";
 }
 
-template<class C> void
+template<typename C> void
 print (raster<C> r) {
   for (int y=0; y<r->h; y++)
     for (int x=0; x<r->w; x++)
@@ -71,31 +71,54 @@ print (raster<C> r) {
 * Low level routines for raster manipulation
 ******************************************************************************/
 
-template<class C> void
-hide_alpha (C* d, const C* s, int w, int h) {
-  for (int y=0; y<h; y++) {
-    int o= y * w;
+template<typename C> raster<C>
+hide_alpha (raster<C> r) {
+  int w= r->w, h= r->h;
+  raster<C> ret (w, h, r->ox, r->oy);
+  for (int y=0; y<h; y++)
     for (int x=0; x<w; x++)
-      d[o+x]= hide_alpha (s[o+x]);
-  }
+      ret->a[y*w+x]= hide_alpha (r->a[y*w+x]);
+  return ret;
 }
 
-template<class C> void
-show_alpha (C* d, const C* s, int w, int h) {
-  for (int y=0; y<h; y++) {
-    int o= y * w;
+template<typename C> raster<C>
+show_alpha (raster<C> r) {
+  int w= r->w, h= r->h;
+  raster<C> ret (w, h, r->ox, r->oy);
+  for (int y=0; y<h; y++)
     for (int x=0; x<w; x++)
-      d[o+x]= show_alpha (s[o+x]);
-  }
+      ret->a[y*w+x]= show_alpha (r->a[y*w+x]);
+  return ret;
 }
 
-template<class D> void
-clear (D* d, int w, int h) {
+template<typename C> void
+clear (raster<C>& r) {
+  int w= r->w, h= r->h;
   for (int i=0; i<w*h; i++)
-    d[i]= D ((color) 0);
+    r->a[i]= C ((color) 0);
 }
 
-template<class D, class S1, class S2> void
+template<typename C, typename S> raster<C>
+convolute (raster<C> s1, raster<S> s2) {
+  if (s1->w * s1->h == 0) return s1;
+  ASSERT (s2->w * s2->h != 0, "empty convolution argument");
+  int s1w= s1->w, s1h= s1->h, s2w= s2->w, s2h= s2->h;
+  int dw= s1w + s2w - 1, dh= s1h + s2h - 1;
+  raster<C> d (dw, dh, s1->ox + s2->ox, s1->oy + s2->oy);
+  clear (d);
+  raster<C> temp= hide_alpha (s1);
+  for (int y1=0; y1<s1h; y1++)
+    for (int y2=0; y2<s2h; y2++) {
+      int o1= y1 * s1w, o2= y2 * s2w, o= (y1 + y2) * dw;
+      for (int x1=0; x1<s1w; x1++)
+        for (int x2=0; x2<s2w; x2++)
+          d->a[o+x1+x2] += temp->a[o1+x1] * s2->a[o2+x2];
+    }
+  return show_alpha (d);
+}
+
+/*
+template<typename D, typename S1, typename S2> void
 convolute (D* d, const S1* s1, const S2* s2,
            int s1w, int s1h, int s2w, int s2h) {
   if (s1w * s1h == 0) return;
@@ -113,8 +136,9 @@ convolute (D* d, const S1* s1, const S2* s2,
   show_alpha (d, d, dw, dh);
   tm_delete_array (temp);
 }
+*/
 
-template<class C> raster<C>
+template<typename C> raster<C>
 gaussian (int R, double r) {
   int w= 2*R+1, h= 2*R+1;
   raster<C> ret (w, h, R, R);
@@ -130,21 +154,17 @@ gaussian (int R, double r) {
   return ret;
 }
 
-template<class C> raster<C>
+template<typename C> raster<C>
 blur (raster<C> ras, int R, double r) {
-  int w= ras->w, h= ras->h;
-  raster<C> ret (w + 2*R, h + 2*R, ras->ox + R, ras->oy + R);
-  int tw= 2*R+1, th= 2*R+1;
   raster<double> g= gaussian<double> (R, r);
-  convolute (ret->a, ras->a, g->a, w, h, tw, th);
-  return ret;
+  return convolute (ras, g);
 }
 
 /******************************************************************************
 * Gravitational effects
 ******************************************************************************/
 
-template<class C> raster<C>
+template<typename C> raster<C>
 gravitation (int R, double expon, bool y_flag) {
   int w= 2*R+1, h= 2*R+1;
   raster<C> ret (w, h, R, R);
@@ -163,7 +183,7 @@ gravitation (int R, double expon, bool y_flag) {
   return ret;
 }
 
-template<class C> raster<C>
+template<typename C> raster<C>
 norm (raster<C> s1, raster<C> s2) {
   int w= s1->w, h= s1->h;
   ASSERT (s2->w == w && s2->h == h, "sizes don't match");
@@ -174,7 +194,7 @@ norm (raster<C> s1, raster<C> s2) {
   return ret;
 }
 
-template<class C> typename C::scalar_type
+template<typename C> typename C::scalar_type
 inner_max (raster<C> r, C s) {
   typedef typename C::scalar_type F;
   int w= r->w, h= r->h;
@@ -185,7 +205,7 @@ inner_max (raster<C> r, C s) {
   return ret;
 }
 
-template<class C, class S> raster<C>
+template<typename C, typename S> raster<C>
 divide (raster<C> r, S s) {
   int w= r->w, h= r->h;
   raster<C> ret (w, h, r->ox, r->oy);
@@ -195,7 +215,7 @@ divide (raster<C> r, S s) {
   return ret;
 }
 
-template<class C> raster<C>
+template<typename C> raster<C>
 normalize (raster<C> r) {
   int w= r->w, h= r->h;
   raster<C> ret (w, h, r->ox, r->oy);
@@ -205,41 +225,19 @@ normalize (raster<C> r) {
   return ret;
 }
 
-/*
-template<class C, class F> void
-gravitational_outline (C* d, const C* s, int w, int h, int R, double expon) {
-  int tw= 2*R+1, th= 2*R+1;
-  int ww= w + tw - 1, hh= h + th - 1;
-  F* gravx= tm_new_array<F> (2 * tw * th);
-  F* gravy= gravx + tw * th;
-  C* convx= tm_new_array<C> (2 * ww * hh);
-  C* convy= convx + ww * hh;
-  gravitation (gravx, R, expon, false);
-  gravitation (gravy, R, expon, true );
-  convolute (convx, s, gravx, w, h, tw, th);
-  convolute (convy, s, gravy, w, h, tw, th);
-  norm (d, convx, convy, ww, hh);
-  F mc= inner_max<C,F> (d, ww, hh, C (1.0, 1.0, 1.0, 0.0));
-  F ma= inner_max<C,F> (d, ww, hh, C (0.0, 0.0, 0.0, 1.0));
-  C sc (mc, mc, mc, ma);
-  divide (d, ww, hh, sc);
-  normalize (d, ww, hh);
-  tm_delete_array (convx);
-  tm_delete_array (gravx);
-}
-*/
-
-template<class C> raster<C>
+template<typename C> raster<C>
 gravitational_outline (raster<C> s, int R, double expon) {
   typedef typename C::scalar_type F;
-  int w= s->w, h= s->h;
-  int tw= 2*R+1, th= 2*R+1;
   raster<F> gravx= gravitation<F> (R, expon, false);
   raster<F> gravy= gravitation<F> (R, expon, true );
-  raster<C> convx (w + 2*R, h + 2*R, s->ox + R, s->oy + R);
-  raster<C> convy (w + 2*R, h + 2*R, s->ox + R, s->oy + R);
-  convolute (convx->a, s->a, gravx->a, w, h, tw, th);
-  convolute (convy->a, s->a, gravy->a, w, h, tw, th);
+  //int w= s->w, h= s->h;
+  //int tw= 2*R+1, th= 2*R+1;
+  //raster<C> convx (w + 2*R, h + 2*R, s->ox + R, s->oy + R);
+  //raster<C> convy (w + 2*R, h + 2*R, s->ox + R, s->oy + R);
+  //convolute (convx->a, s->a, gravx->a, w, h, tw, th);
+  //convolute (convy->a, s->a, gravy->a, w, h, tw, th);
+  raster<C> convx= convolute (s, gravx);
+  raster<C> convy= convolute (s, gravy);
   raster<C> d= norm (convx, convy);
   F mc= inner_max (d, C (1.0, 1.0, 1.0, 0.0));
   F ma= inner_max (d, C (0.0, 0.0, 0.0, 1.0));
@@ -252,34 +250,34 @@ gravitational_outline (raster<C> s, int R, double expon) {
 * Low level composition
 ******************************************************************************/
 
-template<composition_mode M, class D, class S>
+template<composition_mode M, typename D, typename S>
 struct composer {
   static inline void op (D& dest, const S& src) { (void) dest; (void) src; }
 };
 
-template<class D, class S>
+template<typename D, typename S>
 struct composer<compose_source,D,S> {
   static inline void op (D& dest, const S& src) { dest= src; }
 };
 
-template<class D, class S>
+template<typename D, typename S>
 struct composer<compose_source_over,D,S> {
   static inline void op (D& dest, const S& src) { source_over (dest, src); }
 };
 
-template<class D, class S>
+template<typename D, typename S>
 struct composer<compose_towards_source,D,S> {
   static inline void op (D& dest, const S& src) { towards_source (dest, src); }
 };
 
-template<composition_mode M, class D, class S> void
+template<composition_mode M, typename D, typename S> void
 compose (D* d, const S& s, int w, int h, int wd) {
   for (int y=0; y<h; y++, d += wd)
     for (int x=0; x<w; x++)
       composer<M,D,S>::op (d[x], s);
 }
 
-template<composition_mode M, class D, class S> void
+template<composition_mode M, typename D, typename S> void
 compose (D* d, const S* s, int w, int h, int wd, int ws) {
   for (int y=0; y<h; y++, d += wd, s +=ws)
     for (int x=0; x<w; x++)
@@ -290,7 +288,7 @@ compose (D* d, const S* s, int w, int h, int wd, int ws) {
 * Low level edge distances
 ******************************************************************************/
 
-template<class C> void
+template<typename C> void
 inner_distances (double* d, const C* s, int w, int h) {
   for (int y=h-1; y>=0; y--)
     for (int x=0; x<w; x++) {
