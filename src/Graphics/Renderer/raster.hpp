@@ -269,7 +269,7 @@ compose (picture& dest, picture src, int x, int y) {
 */
 
 template<composition_mode M, typename C, typename S> void
-compose (raster<C>& dest, raster<S> src, int x, int y) {
+set_compose (raster<C>& dest, raster<S> src, int x, int y) {
   x += src->ox - dest->ox;
   y += src->oy - dest->oy;
   int dw= dest->w, dh= dest->h;
@@ -287,6 +287,26 @@ compose (raster<C>& dest, raster<S> src, int x, int y) {
   for (int y=0; y<h; y++, d += dw, s +=sw)
     for (int x=0; x<w; x++)
       composition_op<M>::set_op (d[x], s[x]);
+}
+
+template<typename C, typename S> void
+set_compose (raster<C>& r, raster<S> s, int x, int y, composition_mode mode) {
+  switch (mode) {
+  case compose_destination:
+    set_compose<compose_destination> (r, s, x, y);
+    break;
+  case compose_source:
+    set_compose<compose_source> (r, s, x, y);
+    break;
+  case compose_source_over:
+    set_compose<compose_source_over> (r, s, x, y);
+    break;
+  case compose_towards_source:
+    set_compose<compose_towards_source> (r, s, x, y);
+    break;
+  default:
+    break;
+  }
 }
 
 /******************************************************************************

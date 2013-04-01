@@ -51,31 +51,13 @@ compose (picture pic, color c, composition_mode mode) {
   return raster_picture (ras);
 }
 
-template<composition_mode M> void
-compose (picture& dest, picture src, int x, int y) {
+void
+compose (picture& dest, picture src, int x, int y, composition_mode mode) {
   raster<true_color> dest_ras= as_raster<true_color> (dest);
   raster<true_color> src_ras = as_raster<true_color> (src);
   x -= src_ras->ox - dest_ras->ox;
   y -= src_ras->oy - dest_ras->oy;
-  compose<M> (dest_ras, src_ras, x, y);
-}
-
-void
-compose (picture& dest, picture src, int x, int y, composition_mode mode) {
-  switch (mode) {
-  case compose_destination:
-    compose<compose_destination> (dest, src, x, y);
-    break;
-  case compose_source:
-    compose<compose_source> (dest, src, x, y);
-    break;
-  case compose_source_over:
-    compose<compose_source_over> (dest, src, x, y);
-    break;
-  case compose_towards_source:
-    compose<compose_towards_source> (dest, src, x, y);
-    break;
-  }
+  set_compose (dest_ras, src_ras, x, y, mode);
 }
 
 picture
