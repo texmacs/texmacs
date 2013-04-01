@@ -73,14 +73,14 @@
 		49CD6A5B1706F1B800C70744 /* picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49CD6A561706F1B800C70744 /* picture.cpp */; };
 		49CD6A5C1706F1B800C70744 /* picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49CD6A561706F1B800C70744 /* picture.cpp */; };
 		49CD6A5D1706F1B800C70744 /* picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49CD6A561706F1B800C70744 /* picture.cpp */; };
-		49CD6A5E1706F1B800C70744 /* raster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49CD6A581706F1B800C70744 /* raster.cpp */; };
-		49CD6A5F1706F1B800C70744 /* raster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49CD6A581706F1B800C70744 /* raster.cpp */; };
-		49CD6A601706F1B800C70744 /* raster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49CD6A581706F1B800C70744 /* raster.cpp */; };
 		49D662FC128B331A0006E948 /* QTMFileDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D662FA128B331A0006E948 /* QTMFileDialog.cpp */; };
 		49D662FD128B333F0006E948 /* QTMFileDialog.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D662FB128B331A0006E948 /* QTMFileDialog.hpp */; };
 		49DD8FA916DB75C100647CA2 /* sqlite3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49DD8FA716DB75C100647CA2 /* sqlite3.cpp */; };
 		49DD8FAA16DB75C100647CA2 /* sqlite3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49DD8FA716DB75C100647CA2 /* sqlite3.cpp */; };
 		49DD8FAB16DB75C100647CA2 /* sqlite3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49DD8FA716DB75C100647CA2 /* sqlite3.cpp */; };
+		49DEED151709891300332D9F /* raster_picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49DEED141709891300332D9F /* raster_picture.cpp */; };
+		49DEED161709891300332D9F /* raster_picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49DEED141709891300332D9F /* raster_picture.cpp */; };
+		49DEED171709891300332D9F /* raster_picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49DEED141709891300332D9F /* raster_picture.cpp */; };
 		49EAD66C128AC177009919E5 /* QTMGuiHelper.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EAD66B128AC168009919E5 /* QTMGuiHelper.hpp */; };
 		49F251D4151B70840091FF99 /* persistent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F251D2151B70840091FF99 /* persistent.cpp */; };
 		49F251D5151B70840091FF99 /* persistent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F251D2151B70840091FF99 /* persistent.cpp */; };
@@ -1205,7 +1205,6 @@
 		49CD6A551706F1B800C70744 /* alpha_color.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = alpha_color.hpp; sourceTree = "<group>"; };
 		49CD6A561706F1B800C70744 /* picture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = picture.cpp; sourceTree = "<group>"; };
 		49CD6A571706F1B800C70744 /* picture.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = picture.hpp; sourceTree = "<group>"; };
-		49CD6A581706F1B800C70744 /* raster.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = raster.cpp; sourceTree = "<group>"; };
 		49CD6A591706F1B800C70744 /* raster.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = raster.hpp; sourceTree = "<group>"; };
 		49CD6A5A1706F1B800C70744 /* true_color.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = true_color.hpp; sourceTree = "<group>"; };
 		49D662FA128B331A0006E948 /* QTMFileDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMFileDialog.cpp; sourceTree = "<group>"; };
@@ -1213,6 +1212,8 @@
 		49DD8FA716DB75C100647CA2 /* sqlite3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sqlite3.cpp; sourceTree = "<group>"; };
 		49DD8FA816DB75C100647CA2 /* sqlite3.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = sqlite3.hpp; sourceTree = "<group>"; };
 		49DEECC01289A694002ACC66 /* qt_simple_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_simple_widget.cpp; sourceTree = "<group>"; };
+		49DEED131709891300332D9F /* raster_operators.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = raster_operators.hpp; sourceTree = "<group>"; };
+		49DEED141709891300332D9F /* raster_picture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = raster_picture.cpp; sourceTree = "<group>"; };
 		49EAD66B128AC168009919E5 /* QTMGuiHelper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMGuiHelper.hpp; sourceTree = "<group>"; };
 		49F251D2151B70840091FF99 /* persistent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = persistent.cpp; sourceTree = "<group>"; };
 		49F251D3151B70840091FF99 /* persistent.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = persistent.hpp; sourceTree = "<group>"; };
@@ -2472,8 +2473,9 @@
 				49CD6A571706F1B800C70744 /* picture.hpp */,
 				9C0B47FB10A8CC100097A335 /* printer.cpp */,
 				9C0B47FC10A8CC100097A335 /* printer.hpp */,
-				49CD6A581706F1B800C70744 /* raster.cpp */,
 				49CD6A591706F1B800C70744 /* raster.hpp */,
+				49DEED131709891300332D9F /* raster_operators.hpp */,
+				49DEED141709891300332D9F /* raster_picture.cpp */,
 				49A3439F1708FC58003F8866 /* raster_picture.hpp */,
 				9C0B47FD10A8CC100097A335 /* renderer.cpp */,
 				9C0B47FE10A8CC100097A335 /* renderer.hpp */,
@@ -4304,7 +4306,7 @@
 				4929A896170207440028991F /* point.cpp in Sources */,
 				4932C1A41704F54200E87D8C /* brush.cpp in Sources */,
 				49CD6A5B1706F1B800C70744 /* picture.cpp in Sources */,
-				49CD6A5E1706F1B800C70744 /* raster.cpp in Sources */,
+				49DEED151709891300332D9F /* raster_picture.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4665,7 +4667,7 @@
 				4929A898170207440028991F /* point.cpp in Sources */,
 				4932C1A61704F54200E87D8C /* brush.cpp in Sources */,
 				49CD6A5D1706F1B800C70744 /* picture.cpp in Sources */,
-				49CD6A601706F1B800C70744 /* raster.cpp in Sources */,
+				49DEED171709891300332D9F /* raster_picture.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5054,7 +5056,7 @@
 				4929A897170207440028991F /* point.cpp in Sources */,
 				4932C1A51704F54200E87D8C /* brush.cpp in Sources */,
 				49CD6A5C1706F1B800C70744 /* picture.cpp in Sources */,
-				49CD6A5F1706F1B800C70744 /* raster.cpp in Sources */,
+				49DEED161709891300332D9F /* raster_picture.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
