@@ -76,7 +76,7 @@ template<typename C> void
 clear (raster<C>& r) {
   int w= r->w, h= r->h;
   for (int i=0; i<w*h; i++)
-    r->a[i]= C ((color) 0);
+    clear (r->a[i]);
 }
 
 template<typename C, typename S> raster<C>

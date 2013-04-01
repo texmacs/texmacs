@@ -55,6 +55,11 @@ get_alpha (const true_color& c) {
   return c.a;
 }
 
+inline void
+clear (true_color& c) {
+  c.r= c.g= c.b= c.a= 0.0;
+}
+
 inline true_color
 normalize (const true_color& c) {
   return true_color (max (min (c.r, 1.0), 0.0),
