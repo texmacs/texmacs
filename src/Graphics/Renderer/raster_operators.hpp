@@ -11,6 +11,7 @@
 
 #ifndef RASTER_OPERATORS_HPP
 #define RASTER_OPERATORS_HPP
+#include "picture.hpp"
 #include "operators.hpp"
 
 /******************************************************************************
@@ -27,6 +28,11 @@ struct div_alpha_op {
   op (const C& x) { return div_alpha (x); }
 };
 
+struct normalize_op {
+  template<typename C> static inline C
+  op (const C& x) { return normalize (x); }
+};
+
 /******************************************************************************
 * Binary operators
 ******************************************************************************/
@@ -40,14 +46,39 @@ struct hypot_op {
 * Composition operators
 ******************************************************************************/
 
-struct source_over_op {
-  template<typename C> static inline C
-  op (const C& x, const C& y) { return source_over (x, y); }
+template<composition_mode M>
+struct composition_op {
+  template<typename C, typename S> static inline C
+  op (const C& x, const S& y) { (void) y; return x; }
+  template<typename C, typename S> static inline void
+  set_op (C& x, const S& y) { (void) x; (void) y; }
 };
 
-struct towards_source_op {
-  template<typename C> static inline C
-  op (const C& x, const C& y) { return towards_source (x, y); }
+template<>
+struct composition_op<compose_source> {
+  template<typename C, typename S> static inline C
+  op (const C& x, const S& y) { (void) x; return y; }
+  template<typename C, typename S> static inline void
+  set_op (C& x, const S& y) { x= y; }
 };
+
+template<>
+struct compositon_op<compose_source_over> {
+  template<typename C, typename S> static inline C
+  op (const C& x, const S& y) { return source_over (x, y); }
+  template<typename C, typename S> static inline void
+  set_op (C& x, const S& y) { x= source_over (x, y); }
+};
+
+template<>
+struct composition_op<compose_towards_source> {
+  template<typename C, typename S> static inline C
+  op (const C& x, const S& y) { return towards_source (x, y); }
+  template<typename C, typename S> static inline void
+  set_op (C& x, const S& y) { x= towards_source (x, y); }
+};
+
+typedef composition_op<compose_source_over> source_over_op;
+typedef composition_op<compose_towards_source> towards_source_op;
 
 #endif // RASTER_OPERATORS_H

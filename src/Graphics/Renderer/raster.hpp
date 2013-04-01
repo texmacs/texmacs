@@ -11,7 +11,6 @@
 
 #ifndef RASTER_H
 #define RASTER_H
-#include "picture.hpp"
 #include "raster_operators.hpp"
 
 /******************************************************************************
@@ -77,6 +76,8 @@ template<typename C> inline raster<C>
 mul_alpha (raster<C> r) { return map<mul_alpha_op> (r); }
 template<typename C> inline raster<C>
 div_alpha (raster<C> r) { return map<div_alpha_op> (r); }
+template<typename C> inline raster<C>
+normalize (raster<C> r) { return map<normalize_op> (r); }
 
 template<typename C> inline raster<C>
 hypot (raster<C> r1, raster<C> r2) { return map<hypot_op> (r1, r2); }
@@ -178,16 +179,6 @@ divide (raster<C> r, S s) {
 }
 
 template<typename C> raster<C>
-normalize (raster<C> r) {
-  int w= r->w, h= r->h;
-  raster<C> ret (w, h, r->ox, r->oy);
-  for (int y=0; y<h; y++)
-    for (int x=0; x<w; x++)
-      ret->a[y*w+x]= normalize (r->a[y*w+x]);
-  return ret;
-}
-
-template<typename C> raster<C>
 gravitational_outline (raster<C> s, int R, double expon) {
   typedef typename C::scalar_type F;
   raster<F> gravx= gravitation<F> (R, expon, false);
@@ -206,38 +197,18 @@ gravitational_outline (raster<C> s, int R, double expon) {
 * Low level composition
 ******************************************************************************/
 
-template<composition_mode M, typename D, typename S>
-struct composer {
-  static inline void op (D& dest, const S& src) { (void) dest; (void) src; }
-};
-
-template<typename D, typename S>
-struct composer<compose_source,D,S> {
-  static inline void op (D& dest, const S& src) { dest= src; }
-};
-
-template<typename D, typename S>
-struct composer<compose_source_over,D,S> {
-  static inline void op (D& dest, const S& src) { source_over (dest, src); }
-};
-
-template<typename D, typename S>
-struct composer<compose_towards_source,D,S> {
-  static inline void op (D& dest, const S& src) { towards_source (dest, src); }
-};
-
 template<composition_mode M, typename D, typename S> void
 compose (D* d, const S& s, int w, int h, int wd) {
   for (int y=0; y<h; y++, d += wd)
     for (int x=0; x<w; x++)
-      composer<M,D,S>::op (d[x], s);
+      composition_op<M>::set_op (d[x], s);
 }
 
 template<composition_mode M, typename D, typename S> void
 compose (D* d, const S* s, int w, int h, int wd, int ws) {
   for (int y=0; y<h; y++, d += wd, s +=ws)
     for (int x=0; x<w; x++)
-      composer<M,D,S>::op (d[x], s[x]);
+      composition_op<M>::set_op (d[x], s[x]);
 }
 
 /******************************************************************************

@@ -109,23 +109,24 @@ operator / (const true_color& c1, const true_color& c2) {
 * Composition operators
 ******************************************************************************/
 
-inline void
-source_over (true_color& c1, const true_color& c2) {
+inline true_color
+source_over (const true_color& c1, const true_color& c2) {
   double a1= c1.a, a2= c2.a, a= a2 + a1 * (1 - a2);
   double u= 1.0 / (a + 1.0e-6);
   double f1= a1 * (1 - a2) * u, f2= a2 * u;
-  c1.r= c1.r * f1 + c2.r * f2;
-  c1.g= c1.g * f1 + c2.g * f2;
-  c1.b= c1.b * f1 + c2.b * f2;
-  c1.a= a;
+  return true_color (c1.r * f1 + c2.r * f2,
+                     c1.g * f1 + c2.g * f2,
+                     c1.b * f1 + c2.b * f2,
+                     a);
 }
 
-inline void
-towards_source (true_color& c1, const true_color& c2) {
+inline true_color
+towards_source (const true_color& c1, const true_color& c2) {
   double a2= c2.a, a1= 1.0 - a2;
-  c1.r= c1.r * a1 + c2.r * a2;
-  c1.g= c1.g * a1 + c2.g * a2;
-  c1.b= c1.b * a1 + c2.b * a2;
+  return true_color (c1.r * a1 + c2.r * a2,
+                     c1.g * a1 + c2.g * a2,
+                     c1.b * a1 + c2.b * a2,
+                     c1.a);
 }
 
 /******************************************************************************
