@@ -13,26 +13,12 @@
 #include "raster_picture.hpp"
 
 /******************************************************************************
-* Constructors and conversions
+* Constructor
 ******************************************************************************/
 
 picture
 raster_picture (int w, int h, int ox, int oy) {
   return raster_picture (raster<true_color> (w, h, ox, oy));
-}
-
-picture
-as_raster_picture (picture pic) {
-  if (pic->get_type () == picture_raster) return pic;
-  picture ret= raster_picture (pic->get_width (), pic->get_height (),
-                               pic->get_origin_x (), pic->get_origin_y ());
-  pic->copy_to (ret);
-  return ret;
-}
-
-true_color*
-get_raster (picture pic) {
-  return as_raster<true_color> (pic) -> a;
 }
 
 /******************************************************************************
@@ -71,18 +57,6 @@ compose (picture p1, picture p2, composition_mode mode) {
 ******************************************************************************/
 
 picture
-copy_raster_picture (picture pic) {
-  if (pic->get_type () != picture_raster) return as_raster_picture (pic);
-  int w= pic->get_width (), h= pic->get_height ();
-  int ox= pic->get_origin_x (), oy= pic->get_origin_y ();
-  picture ret= raster_picture (w, h, ox, oy);
-  true_color* d= get_raster (ret);
-  true_color* s= get_raster (pic);
-  for (int i=0; i<w*h; i++) d[i]= s[i];
-  return ret;
-}
-
-picture
 blur (picture pic, double r) {
   if (r <= 0.001) return pic;
   int R= max (3, ((int) (3.0 * r)));
@@ -105,10 +79,8 @@ add_shadow (picture pic, int x, int y, color c, double r) {
 
 picture
 engrave (picture pic, double a0, color tlc, color brc, double tlw, double brw) {
-  pic= as_raster_picture (pic);
-  int w= pic->get_width (), h= pic->get_height ();
-  int ox= pic->get_origin_x (), oy= pic->get_origin_y ();
   raster<true_color> ras= as_raster<true_color> (pic);
+  int w= ras->w, h= ras->h, ox= ras->ox, oy= ras->oy;
   raster<double> tl= tl_distances (ras);
   raster<double> br= br_distances (ras);
   raster<true_color> ret (w, h, ox, oy);
