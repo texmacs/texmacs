@@ -53,21 +53,11 @@ compose (picture pic, color c, composition_mode mode) {
 
 template<composition_mode M> void
 compose (picture& dest, picture src, int x, int y) {
-  dest= as_raster_picture (dest);
-  src = as_raster_picture (src );
-  int dw= dest->get_width (), dh= dest->get_height ();
-  int sw= src ->get_width (), sh= src ->get_height ();
-  true_color* d= get_raster (dest);
-  true_color* s= get_raster (src );
-  int sw2= sw;
-  int sh2= sh;
-  if (x < 0) { s -= x; sw2 += x; x= 0; }
-  if (y < 0) { s -= y * sw; sh2 += y; y= 0; }
-  int w = min (sw2, dw - x);
-  int h = min (sh2, dh - y);
-  if (w <= 0 || h <= 0) return;
-  d += y * dw + x;
-  compose<M,true_color,true_color> (d, s, w, h, dw, sw);
+  raster<true_color> dest_ras= as_raster<true_color> (dest);
+  raster<true_color> src_ras = as_raster<true_color> (src);
+  x -= src_ras->ox - dest_ras->ox;
+  y -= src_ras->oy - dest_ras->oy;
+  compose<M> (dest_ras, src_ras, x, y);
 }
 
 void
