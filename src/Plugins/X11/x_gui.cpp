@@ -632,10 +632,3 @@ bool
 check_event (int type) {
   return the_gui->check_event (type);
 }
-
-bool
-gui_interrupted (bool check) {
-  return check_event (check? INTERRUPT_EVENT: INTERRUPTED_EVENT);
-}
-
-
