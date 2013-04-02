@@ -23,10 +23,13 @@
 
 class x_window_rep;
 class x_drawable_rep: public renderer_rep {
+protected:
+
   x_gui          gui;
   Display*       dpy;
   Drawable       win;
   x_window_rep*  x_win;
+  int            drawable_type;
   int            w, h;
   GC             gc;
   color          cur_fg, cur_bg;
@@ -36,6 +39,7 @@ public:
 
   x_drawable_rep (x_gui gui, x_window_rep* x_win);
   x_drawable_rep (x_gui gui, int w, int h);
+  x_drawable_rep (x_gui gui, Pixmap pm, int w, int h);
   ~x_drawable_rep ();
   void* get_handle ();
 
@@ -76,6 +80,9 @@ public:
   void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
   void put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
+
+  picture create_picture (SI x1, SI y1, SI x2, SI y2);
+  void draw_picture (picture pict, SI x, SI y);
 
   /****************************** friends ************************************/
 

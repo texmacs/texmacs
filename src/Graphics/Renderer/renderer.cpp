@@ -371,6 +371,7 @@ renderer_rep::draw_picture (picture p, SI x, SI y) {
 }
 
 #ifndef QTTEXMACS
+#ifndef X11TEXMACS
 
 picture
 pixmap_picture (int w, int h, int ox, int oy) {
@@ -406,4 +407,5 @@ delete_renderer (renderer ren) {
   FAILED ("not yet implemented");
 }
 
+#endif
 #endif

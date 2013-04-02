@@ -29,7 +29,8 @@ extern hashmap<tree,string> ps_bbox;
 ******************************************************************************/
 
 x_drawable_rep::x_drawable_rep (x_gui gui2, x_window_rep* x_win2):
-  renderer_rep (true), gui (gui2), x_win (x_win2), w (0), h (0)
+  renderer_rep (true), gui (gui2), x_win (x_win2),
+  drawable_type (0), w (0), h (0)
 {
   dpy         = gui->dpy;
   gc          = gui->gc;
@@ -38,7 +39,8 @@ x_drawable_rep::x_drawable_rep (x_gui gui2, x_window_rep* x_win2):
 }
 
 x_drawable_rep::x_drawable_rep (x_gui gui2, int w2, int h2):
-  renderer_rep (true), gui (gui2), x_win (NULL), w (w2), h (h2)
+  renderer_rep (true), gui (gui2), x_win (NULL),
+  drawable_type (1), w (w2), h (h2)
 {
   dpy         = gui->dpy;
   gc          = gui->gc;
@@ -47,8 +49,18 @@ x_drawable_rep::x_drawable_rep (x_gui gui2, int w2, int h2):
   win= (Drawable) XCreatePixmap (gui->dpy, gui->root, w, h, gui->depth);
 }
 
+x_drawable_rep::x_drawable_rep (x_gui gui2, Pixmap pm, int w2, int h2):
+  renderer_rep (true), gui (gui2), win ((Drawable) pm), x_win (NULL),
+  drawable_type (2), w (w2), h (h2)
+{
+  dpy         = gui->dpy;
+  gc          = gui->gc;
+  cur_fg      = black;
+  cur_bg      = white;
+}
+
 x_drawable_rep::~x_drawable_rep () {
-  if (x_win == NULL)
+  if (drawable_type == 1)
     XFreePixmap (gui->dpy, (Pixmap) win);
 }
 
