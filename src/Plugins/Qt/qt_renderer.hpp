@@ -92,6 +92,7 @@ public:
   QPixmap *xpm_image(url file_name);
 };
 
+qt_renderer_rep* the_qt_renderer();
 
 class qt_shadow_renderer_rep: public qt_renderer_rep {
 public:
