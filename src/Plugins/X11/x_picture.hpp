@@ -17,6 +17,7 @@
 class x_picture_rep: public picture_rep {
 public:
   Pixmap pm;
+  XImage *im;
   int w, h;
   int ox, oy;
 

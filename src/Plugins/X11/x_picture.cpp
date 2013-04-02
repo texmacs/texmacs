@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "x_picture.hpp"
+#include "analyze.hpp"
 
 #define VCONVERT(c) (true_color? (c & 0xffffff): the_gui->cmap [c & 0xffffff])
 
@@ -18,8 +19,9 @@
 ******************************************************************************/
 
 x_picture_rep::x_picture_rep (Pixmap pm2, int w2, int h2, int ox2, int oy2):
-  pm (pm2), w (w2), h (h2), ox (ox2), oy (oy2) {}
+  pm (pm2), im (NULL), w (w2), h (h2), ox (ox2), oy (oy2) {}
 x_picture_rep::~x_picture_rep () {
+  if (im != NULL) XDestroyImage (im);
   XFreePixmap (the_gui->dpy, pm); }
 
 picture_kind x_picture_rep::get_type () { return picture_native; }
@@ -33,15 +35,30 @@ void x_picture_rep::set_origin (int ox2, int oy2) { ox= ox2; oy= oy2; }
 
 color
 x_picture_rep::internal_get_pixel (int x, int y) {
-  (void) x; (void) y;
-  // NOTE: structure is write only
+  if (im == NULL)
+    im= XGetImage (the_gui->dpy, pm, 0, 0, w, h, AllPlanes, XYPixmap);
+  if (im != NULL) {
+    unsigned long c= XGetPixel (im, x, h-1-y);
+    int r= (c >> 16) & 0xff;
+    int g= (c >> 8 ) & 0xff;
+    int b= (c      ) & 0xff;
+    return rgb_color (r, g, b, 255);
+  }
+  return 0;
 }
 
 void
 x_picture_rep::internal_set_pixel (int x, int y, color col) {
   if (0 > x || 0 > y || x >= w || y >= h) return;
+  int r, g, b, a;
+  get_rgb_color (col, r, g, b, a);
+  r= (r * a + 255 * (255 - a)) / 255;
+  g= (g * a + 255 * (255 - a)) / 255;
+  b= (b * a + 255 * (255 - a)) / 255;
+  col= rgb_color (r, g, b, 255);
   XSetForeground (the_gui->dpy, the_gui->pixmap_gc, VCONVERT (col));
   XDrawPoint (the_gui->dpy, (Drawable) pm, the_gui->pixmap_gc, x, h - 1 - y);
+  if (im != NULL) XPutPixel (im, x, h-1-y, (r << 16) + (g << 8) + b);
 }
 
 picture
