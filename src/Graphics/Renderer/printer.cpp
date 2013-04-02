@@ -219,7 +219,7 @@ void
 printer_rep::print (SI x, SI y) {
   decode (x, y);
   print (as_string (x-dpi));
-  print (as_string (-y-dpi));
+  print (as_string (y-dpi));
 }
 
 void
@@ -842,13 +842,11 @@ printer_rep::draw_picture (picture p, SI x, SI y) {
   int w= p->get_width (), h= p->get_height ();
   int ox= p->get_origin_x (), oy= p->get_origin_y ();
   string ws= as_string (w), hs= as_string (h);
-  decode (x, y);
-  x += ox; y -= oy;
   cr ();
-  print (x, y);
+  print (x - ox*5*PIXEL, y + (h-1-oy)*5*PIXEL);
   print ("translate");
-  print (ws);
-  print (hs);
+  print (as_string (5*w));
+  print (as_string (5*h));
   print ("scale");
   print (ws);
   print (hs);

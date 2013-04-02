@@ -155,6 +155,8 @@ qt_image_renderer_rep::qt_image_renderer_rep (picture p, renderer m):
   cx2 -= x1b * pixel;
   cy2 += y2b * pixel;
 
+  if (m->is_printer ()) set_zoom_factor (1.0);
+
   qt_picture_rep* handle= (qt_picture_rep*) pict->get_handle ();
   QImage& im (handle->pict);
 #if (QT_VERSION >= 0x040800)
