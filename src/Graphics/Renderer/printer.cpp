@@ -839,7 +839,41 @@ printer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
 
 void
 printer_rep::draw_picture (picture p, SI x, SI y) {
-  (void) p; (void) x; (void) y;
+  int w= p->get_width (), h= p->get_height ();
+  int ox= p->get_origin_x (), oy= p->get_origin_y ();
+  string ws= as_string (w), hs= as_string (h);
+  decode (x, y);
+  x += ox; y -= oy;
+  cr ();
+  print (x, y);
+  print ("translate");
+  print (ws);
+  print (hs);
+  print ("scale");
+  print (ws);
+  print (hs);
+  print ("8");
+  print ("[" * ws * " 0 0 " * as_string (-h) * " 0 " * hs * "]");
+  cr ();
+  print ("{<");
+  //cr ();
+  for (int j=0; j<h; j++)
+    for (int i=0; i<w; i++) {
+      color c= p->get_pixel (i - ox, j - oy);
+      int r, g, b, a;
+      get_rgb_color (c, r, g, b, a);
+      r= (r * a + 255 * (255 - a)) / 255;
+      g= (g * a + 255 * (255 - a)) / 255;
+      b= (b * a + 255 * (255 - a)) / 255;
+      if ((j*w+i) % 12 == 0) body << "\n";
+      body << as_hexadecimal (r);
+      body << as_hexadecimal (g);
+      body << as_hexadecimal (b);
+    }
+  cr ();
+  print (">}");
+  cr ();
+  print ("false 3 colorimage");
 }
 
 void

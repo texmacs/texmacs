@@ -144,9 +144,8 @@ qt_image_renderer_rep::qt_image_renderer_rep (picture p, renderer m):
   cy2 += poy * pixel;
   */
 
-  qt_renderer_rep* mren= (qt_renderer_rep*) m->get_handle ();
   SI x0= 0, y0= 0;
-  mren->decode (x0, y0);
+  m->decode (x0, y0);
   int x1b= x0 - p->get_origin_x ();
   int y2b= y0 + p->get_origin_y () - (p->get_height () - 1);
   ox  -= x1b * pixel;
