@@ -28,8 +28,7 @@
 (define author-counter 0)
 (define clustered? #f)
 
-(tm-define (init-elsevier body)
-  (:synopsis "Initialize Elsevier style")
+(define (init-elsevier body)
   (set! clustered? #f)
   (set! note-counter 0)
   (set! author-counter 0))
@@ -43,20 +42,6 @@
   (init-elsevier body)
   (set! tmtex-packages (cons "natbib" tmtex-packages))
   (latex-set-packages '("amsthm" "yjsco" "natbib")))
-
-(define (ref-note)
-  (number->string note-counter))
-
-(define (refstep-note)
-  (set! note-counter (+ note-counter 1))
-  (string-append "note-" (ref-note)))
-
-(define (ref-author)
-  (number->string author-counter))
-
-(define (refstep-author)
-  (set! author-counter (+ author-counter 1))
-  (string-append "author-" (ref-author)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preprocessing datas
