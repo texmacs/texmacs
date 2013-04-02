@@ -217,9 +217,7 @@ printer_rep::print (string s) {
 
 void
 printer_rep::print (SI x, SI y) {
-  x += ox; y += oy;
-  if (x>=0) x= x/PIXEL; else x= (x-PIXEL+1)/PIXEL;
-  if (y>=0) y= y/PIXEL; else y= (y-PIXEL+1)/PIXEL;
+  decode (x, y);
   print (as_string (x-dpi));
   print (as_string (-y-dpi));
 }
@@ -837,6 +835,11 @@ printer_rep::put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
 void
 printer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
   (void) x1; (void) y1; (void) x2; (void) y2;
+}
+
+void
+printer_rep::draw_picture (picture p, SI x, SI y) {
+  (void) p; (void) x; (void) y;
 }
 
 void

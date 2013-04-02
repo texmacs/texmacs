@@ -71,7 +71,9 @@ public:
   void clip (SI x1, SI y1, SI x2, SI y2);
   void unclip ();
 
-  /* rounding */
+  /* reencoding and rounding */
+  virtual void decode (SI& x, SI& y);
+  virtual void encode (int& x, int& y);
   void round (SI& x, SI& y);
   void inner_round (SI& x1, SI& y1, SI& x2, SI& y2);
   void outer_round (SI& x1, SI& y1, SI& x2, SI& y2);

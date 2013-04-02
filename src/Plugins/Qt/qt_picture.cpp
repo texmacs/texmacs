@@ -75,18 +75,6 @@ scalable_picture (int w, int h, int ox, int oy) {
   FAILED ("not yet implemented");
 }
 
-picture
-qt_renderer_rep::create_picture (SI x1, SI y1, SI x2, SI y2) {
-  SI x0= 0, y0= 0;
-  decode (x0, y0);
-  outer_round (x1, y1, x2, y2);
-  decode (x1, y1);
-  decode (x2, y2);
-  x2= max (x1, x2);
-  y2= min (y1, y2);
-  return pixmap_picture (x2-x1, y1-y2, x0 - x1, (y1 - y2 - 1) - (y0 - y2));
-}
-
 void
 qt_renderer_rep::draw_picture (picture p, SI x, SI y) {
   p= as_qt_picture (p);

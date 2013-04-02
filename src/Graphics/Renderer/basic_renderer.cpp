@@ -268,23 +268,8 @@ xpm_to_color (string s) {
 ******************************************************************************/
 
 void
-basic_renderer_rep::encode (SI& x, SI& y) {
-	x= (x*pixel) - ox;
-	y= ((-y)*pixel) - oy;
-}
-
-void
-basic_renderer_rep::decode (SI& x, SI& y) {
-	x += ox; y += oy;
-	if (x>=0) x= x/pixel; else x= (x-pixel+1)/pixel;
-	if (y>=0) y= -(y/pixel); else y= -((y-pixel+1)/pixel);
-}
-
-/*****************************************************************************/
-
-void
 basic_renderer_rep::get_extents (int& w2, int& h2) {
-	w2 = w; h2 = h;
+  w2 = w; h2 = h;
 }
 
 void basic_renderer_rep::begin (void* handle) { 

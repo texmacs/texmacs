@@ -102,9 +102,6 @@ public:
 
   virtual void begin (void* handle);
   virtual void end ();
-
-  void encode (SI& x, SI& y);
-  void decode (SI& x, SI& y);
   
   void fetch (SI x1, SI y1, SI x2, SI y2, renderer ren, SI x, SI y);
   void new_shadow (renderer& ren);

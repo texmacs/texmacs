@@ -89,18 +89,6 @@ scalable_picture (int w, int h, int ox, int oy) {
   FAILED ("not yet implemented");
 }
 
-picture
-x_drawable_rep::create_picture (SI x1, SI y1, SI x2, SI y2) {
-  SI x0= 0, y0= 0;
-  decode (x0, y0);
-  outer_round (x1, y1, x2, y2);
-  decode (x1, y1);
-  decode (x2, y2);
-  x2= max (x1, x2);
-  y2= min (y1, y2);
-  return pixmap_picture (x2-x1, y1-y2, x0 - x1, (y1 - y2 - 1) - (y0 - y2));
-}
-
 void
 x_drawable_rep::draw_picture (picture p, SI x, SI y) {
   p= as_x_picture (p);
@@ -113,7 +101,6 @@ x_drawable_rep::draw_picture (picture p, SI x, SI y) {
   outer_round (x1, y1, x2, y2);
   decode (x1, y1);
   decode (x2, y2);
-  //y--; // top-left origin to bottom-left origin conversion
   int X1= max (x1- x, 0); if (X1>=w) return;
   int Y1= max (y1- y, 0); if (Y1>=h) return;
   int X2= min (x2- x, w); if (X2<0) return;

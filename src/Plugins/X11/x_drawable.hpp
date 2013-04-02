@@ -45,9 +45,6 @@ public:
 
   void get_extents (int& w, int& h);
 
-  void encode (SI& x, SI& y);  // X coordinates -> mathematical coordinates
-  void decode (SI& x, SI& y);  // mathematical coordinates -> X coordinates
-
   /**************** subroutines for drawing text and xpms ********************/
 
   void draw_clipped (Pixmap pm, Pixmap bm, int w, int h, SI x, SI y);
@@ -81,7 +78,6 @@ public:
   void put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
 
-  picture create_picture (SI x1, SI y1, SI x2, SI y2);
   void draw_picture (picture pict, SI x, SI y);
 
   /****************************** friends ************************************/

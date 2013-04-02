@@ -190,6 +190,23 @@ renderer_rep::is_visible (SI x1, SI y1, SI x2, SI y2) {
     (x1 <  (cx2- ox)) && (y1 <  (cy2- oy));
 }
 
+/******************************************************************************
+* Reencoding and rounding
+******************************************************************************/
+
+void
+renderer_rep::encode (SI& x, SI& y) {
+  x= (x*pixel) - ox;
+  y= ((-y)*pixel) - oy;
+}
+
+void
+renderer_rep::decode (SI& x, SI& y) {
+  x += ox; y += oy;
+  if (x>=0) x= x/pixel; else x= (x-pixel+1)/pixel;
+  if (y>=0) y= -(y/pixel); else y= -((y-pixel+1)/pixel);
+}
+
 #define RND(x) (((x)>=0)?(((x)/pixel)*pixel):((((x)-pixel+1)/pixel)*pixel))
 
 void
@@ -359,9 +376,14 @@ renderer_rep::draw_selection (rectangles rs) {
 
 picture
 renderer_rep::create_picture (SI x1, SI y1, SI x2, SI y2) {
-  (void) x1; (void) y1; (void) x2; (void) y2;
-  FAILED ("create_image not yet implemented");
-  return picture ();
+  SI x0= 0, y0= 0;
+  decode (x0, y0);
+  outer_round (x1, y1, x2, y2);
+  decode (x1, y1);
+  decode (x2, y2);
+  x2= max (x1, x2);
+  y2= min (y1, y2);
+  return pixmap_picture (x2-x1, y1-y2, x0 - x1, (y1 - y2 - 1) - (y0 - y2));
 }
 
 void
