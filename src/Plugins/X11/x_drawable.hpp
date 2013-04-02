@@ -11,7 +11,7 @@
 
 #ifndef X_DRAWABLE_H
 #define X_DRAWABLE_H
-#include "basic_renderer.hpp"
+#include "renderer.hpp"
 #include "X11/x_gui.hpp"
 #include "X11/x_font.hpp"
 #include "rectangles.hpp"
@@ -22,7 +22,7 @@
 ******************************************************************************/
 
 class x_window_rep;
-class x_drawable_rep: public basic_renderer_rep {
+class x_drawable_rep: public renderer_rep {
   x_gui          gui;
   Display*       dpy;
   Drawable       win;
@@ -40,6 +40,9 @@ public:
   void* get_handle ();
 
   void get_extents (int& w, int& h);
+
+  void encode (SI& x, SI& y);  // X coordinates -> mathematical coordinates
+  void decode (SI& x, SI& y);  // mathematical coordinates -> X coordinates
 
   /**************** subroutines for drawing text and xpms ********************/
 

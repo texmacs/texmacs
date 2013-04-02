@@ -2,12 +2,14 @@
 /******************************************************************************
 * MODULE     : basic_renderer.cpp
 * DESCRIPTION: common drawing interface class
-* COPYRIGHT  : (C) 1999-2013  Joris van der Hoeven, Massimiliano Gubinelli
+* COPYRIGHT  : (C) 2008 Massimiliano Gubinelli
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
+
+#if (defined(QTTEXMACS) || defined(AQUATEXMACS))
 
 #include "basic_renderer.hpp"
 #include "analyze.hpp"
@@ -22,7 +24,7 @@
 ******************************************************************************/
 
 basic_character::operator tree () {
-  tree t (TUPLE, as_string (rep->c), rep->fng->res_name);
+  tree t (TUPLE,  as_string (rep->c), rep->fng->res_name);
   t << as_string (rep->sf) << as_string (rep->fg) << as_string (rep->bg);
   return t;
 }
@@ -47,226 +49,8 @@ hash (basic_character xc) {
 }
 
 /******************************************************************************
-* Conversion between window and postscript coordinates
-******************************************************************************/
-
-void
-basic_renderer_rep::encode (SI& x, SI& y) {
-  x= (x*pixel) - ox;
-  y= ((-y)*pixel) - oy;
-}
-
-void
-basic_renderer_rep::decode (SI& x, SI& y) {
-  x += ox; y += oy;
-  if (x>=0) x= x/pixel; else x= (x-pixel+1)/pixel;
-  if (y>=0) y= -(y/pixel); else y= -((y-pixel+1)/pixel);
-}
-
-/*****************************************************************************/
-
-void
-basic_renderer_rep::get_extents (int& w2, int& h2) {
-  w2 = w; h2 = h;
-}
-
-void basic_renderer_rep::begin (void* handle) { 
-  (void) handle; 
-}
-
-void basic_renderer_rep::end () {}
-
-/******************************************************************************
-* Drawing into drawables
-******************************************************************************/
-
-color
-basic_renderer_rep::rgb (int r, int g, int b, int a) {
-  return rgb_color (r, g, b, a);
-}
-
-void
-basic_renderer_rep::get_rgb (color col, int& r, int& g, int& b, int& a) {
-  get_rgb_color (col, r, g, b, a);
-}
-
-color
-basic_renderer_rep::get_color () {
-  return cur_fg;
-}
-
-#if 0
-color
-basic_renderer_rep::get_color (string s) {
-  return named_color (s);
-}
-#endif
-
-brush
-basic_renderer_rep::get_brush () {
-  return fg_brush;
-}
-
-brush
-basic_renderer_rep::get_background () {
-  return bg_brush;
-}
-
-void
-basic_renderer_rep::set_color (color c) {
-  cur_fg= c;
-}
-
-void
-basic_renderer_rep::set_brush (brush b) {
-  fg_brush= b;
-  cur_fg= b->c;
-}
-
-void
-basic_renderer_rep::set_background (brush b) {
-  bg_brush= b;
-  cur_bg= b->c;
-}
-
-
-void
-basic_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
-  (void) restore;
-//  outer_round (x1, y1, x2, y2);
-  renderer_rep::set_clipping (x1, y1, x2, y2);
-}
-
-/* shadowing and copying rectangular regions across devices defaults to nothing */
-
-void
-basic_renderer_rep::fetch (SI x1, SI y1, SI x2, SI y2,
-			   renderer dev, SI x, SI y)
-{
-  (void) x1; (void) y1; (void) x2; (void) y2; (void) dev; (void) x; (void) y; 
-  if (DEBUG_EVENTS)
-    cout << "REN fetch (" << x1 << "," << x2 << "," << y1 << "," << y2
-	 << ", dev ," << x << "," << y << ")\n";
-}
-
-void
-basic_renderer_rep::new_shadow (renderer& dev) {
-  dev = this; 
-  if (DEBUG_EVENTS) cout << "REN new_shadow\n";
-}
-
-void
-basic_renderer_rep::delete_shadow (renderer& dev) { dev= NULL; 
-  if (DEBUG_EVENTS) cout << "REN delete_shadow\n";
-}
-
-void
-basic_renderer_rep::get_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2) {
-  (void) x1; (void) y1; (void) x2; (void) y2; (void) dev; 
-  if (DEBUG_EVENTS)
-    cout << "REN get_shadow (" << x1 << "," << x2
-	 << "," << y1 << "," << y2 << ", dev )\n";
-}
-
-void
-basic_renderer_rep::put_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2) {
-  (void) x1; (void) y1; (void) x2; (void) y2; (void) dev; 
-  if (DEBUG_EVENTS)
-    cout << "REN put_shadow (dev, " << x1 << "," << x2
-	 << "," << y1 << "," << y2 << ")\n";
-}
-
-void
-basic_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
-  (void) x1; (void) y1; (void) x2; (void) y2; 
-  if (DEBUG_EVENTS)
-    cout << "REN apply_shadow (" << x1 << "," << x2
-	 << "," << y1 << "," << y2 << ")\n";
-}
-
-/******************************************************************************
-* Image cache
-******************************************************************************/
-
-static time_t cache_image_last_gc = 0;
-static int    cache_image_tot_size= 0;
-static int    cache_image_max_size= 10000;
-static hashmap<tree,cache_image_element> cache_image;
-
-// to inform texmacs about image sizes we need to fill this structure
-// see System/Files/image_files.cpp
-
-extern hashmap<tree,string> ps_bbox; 
-
-void basic_renderer_rep::image_auto_gc () {
-  time_t time= texmacs_time ();
-  if (time-cache_image_last_gc <= 300000) return;
-  cache_image_last_gc= time;
-  if (DEBUG_AUTO)
-    cout << "TeXmacs] Launching garbage collection for unused pictures\n";
-  
-  iterator<tree> it= iterate (cache_image);
-  while (it->busy()) {
-    tree lookup= it->next();
-    cache_image_element ci = cache_image [lookup];
-    time_t diff= time- ci->time;
-    int fact= ci->nr;
-    fact= fact * fact * fact;
-    if ((ci->w * ci->h) < 400) fact= fact * 5;
-    if ((ci->w * ci->h)  < 6400) fact= fact * 5;
-    if (diff > 60000*fact) {
-      cache_image->reset (lookup);
-      ps_bbox->reset (lookup[0]);
-    }
-  }
-}
-
-void basic_renderer_rep::image_gc (string name) {
-  (void) name;
-  cache_image_last_gc= texmacs_time ();
-  iterator<tree> it= iterate (cache_image);
-  while (it->busy()) {
-    tree lookup= it->next();
-    if (!is_ramdisc (as_url (lookup[0]))) {
-      cache_image_element ci = cache_image [lookup];
-      cache_image->reset (lookup);
-      ps_bbox->reset (lookup[0]);
-    }
-  }
-}
-
-cache_image_element 
-basic_renderer_rep::get_image_cache (tree lookup) {
-  if (cache_image->contains (lookup)) return cache_image [lookup];
-  return cache_image_element();
-}
-
-void 
-basic_renderer_rep::set_image_cache (tree lookup, cache_image_element ci)  {
-  if (N(cache_image) == 0) cache_image_last_gc= texmacs_time ();
-
-  cache_image (lookup)= ci;
-  cache_image_tot_size += (ci->w)*(ci->h);
-  if (cache_image_tot_size > cache_image_max_size) {
-    image_auto_gc ();
-    if (cache_image_tot_size > cache_image_max_size)
-      cache_image_max_size= cache_image_tot_size << 1;
-  }
-}
-
-bool
-gui_interrupted (bool check) {
-  return check_event (check? INTERRUPT_EVENT: INTERRUPTED_EVENT);
-}
-
-/******************************************************************************
 * Set up colors
 ******************************************************************************/
-
-int dummy_RGBColorsSize = RGBColorsSize; // NOTE: avoids warning under X11
-rgb_record* dummy_RGBColors = RGBColors; // NOTE: avoids warning under X11
-
-#if (defined(QTTEXMACS) || defined(AQUATEXMACS))
 
 bool reverse_colors= false;
 
@@ -476,5 +260,221 @@ xpm_to_color (string s) {
 }
 
 #undef RGBCOLOR
+
+
+
+/******************************************************************************
+* Conversion between window and postscript coordinates
+******************************************************************************/
+
+void
+basic_renderer_rep::encode (SI& x, SI& y) {
+	x= (x*pixel) - ox;
+	y= ((-y)*pixel) - oy;
+}
+
+void
+basic_renderer_rep::decode (SI& x, SI& y) {
+	x += ox; y += oy;
+	if (x>=0) x= x/pixel; else x= (x-pixel+1)/pixel;
+	if (y>=0) y= -(y/pixel); else y= -((y-pixel+1)/pixel);
+}
+
+/*****************************************************************************/
+
+void
+basic_renderer_rep::get_extents (int& w2, int& h2) {
+	w2 = w; h2 = h;
+}
+
+void basic_renderer_rep::begin (void* handle) { 
+  (void) handle; 
+}
+
+void basic_renderer_rep::end () {  }
+
+/******************************************************************************
+* Drawing into drawables
+******************************************************************************/
+
+color
+basic_renderer_rep::rgb (int r, int g, int b, int a) {
+  return rgb_color (r, g, b, a);
+}
+
+void
+basic_renderer_rep::get_rgb (color col, int& r, int& g, int& b, int& a) {
+  get_rgb_color (col, r, g, b, a);
+}
+
+color
+basic_renderer_rep::get_color () {
+  return cur_fg;
+}
+
+#if 0
+color
+basic_renderer_rep::get_color (string s) {
+  return named_color (s);
+}
+#endif
+
+brush
+basic_renderer_rep::get_brush () {
+  return fg_brush;
+}
+
+brush
+basic_renderer_rep::get_background () {
+  return bg_brush;
+}
+
+void
+basic_renderer_rep::set_color (color c) {
+  cur_fg= c;
+}
+
+void
+basic_renderer_rep::set_brush (brush b) {
+  fg_brush= b;
+  cur_fg= b->c;
+}
+
+void
+basic_renderer_rep::set_background (brush b) {
+  bg_brush= b;
+  cur_bg= b->c;
+}
+
+
+void
+basic_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
+  (void) restore;
+//  outer_round (x1, y1, x2, y2);
+  renderer_rep::set_clipping (x1, y1, x2, y2);
+}
+
+/* shadowing and copying rectangular regions across devices defaults to nothing */
+
+void
+basic_renderer_rep::fetch (SI x1, SI y1, SI x2, SI y2,
+			   renderer dev, SI x, SI y)
+{
+  (void) x1; (void) y1; (void) x2; (void) y2; (void) dev; (void) x; (void) y; 
+  if (DEBUG_EVENTS)
+    cout << "REN fetch (" << x1 << "," << x2 << "," << y1 << "," << y2
+	 << ", dev ," << x << "," << y << ")\n";
+}
+
+void
+basic_renderer_rep::new_shadow (renderer& dev) {
+  dev = this; 
+  if (DEBUG_EVENTS) cout << "REN new_shadow\n";
+}
+
+void
+basic_renderer_rep::delete_shadow (renderer& dev) { dev= NULL; 
+  if (DEBUG_EVENTS) cout << "REN delete_shadow\n";
+}
+
+void
+basic_renderer_rep::get_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2) {
+  (void) x1; (void) y1; (void) x2; (void) y2; (void) dev; 
+  if (DEBUG_EVENTS)
+    cout << "REN get_shadow (" << x1 << "," << x2
+	 << "," << y1 << "," << y2 << ", dev )\n";
+}
+
+void
+basic_renderer_rep::put_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2) {
+  (void) x1; (void) y1; (void) x2; (void) y2; (void) dev; 
+  if (DEBUG_EVENTS)
+    cout << "REN put_shadow (dev, " << x1 << "," << x2
+	 << "," << y1 << "," << y2 << ")\n";
+}
+
+void
+basic_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
+  (void) x1; (void) y1; (void) x2; (void) y2; 
+  if (DEBUG_EVENTS)
+    cout << "REN apply_shadow (" << x1 << "," << x2
+	 << "," << y1 << "," << y2 << ")\n";
+}
+
+/******************************************************************************
+* Image cache
+******************************************************************************/
+
+static time_t cache_image_last_gc = 0;
+static int    cache_image_tot_size= 0;
+static int    cache_image_max_size= 10000;
+static hashmap<tree,cache_image_element> cache_image;
+
+// to inform texmacs about image sizes we need to fill this structure
+// see System/Files/image_files.cpp
+
+extern hashmap<tree,string> ps_bbox; 
+
+void basic_renderer_rep::image_auto_gc () {
+  time_t time= texmacs_time ();
+  if (time-cache_image_last_gc <= 300000) return;
+  cache_image_last_gc= time;
+  if (DEBUG_AUTO)
+    cout << "TeXmacs] Launching garbage collection for unused pictures\n";
+  
+  iterator<tree> it= iterate (cache_image);
+  while (it->busy()) {
+    tree lookup= it->next();
+    cache_image_element ci = cache_image [lookup];
+    time_t diff= time- ci->time;
+    int fact= ci->nr;
+    fact= fact * fact * fact;
+    if ((ci->w * ci->h) < 400) fact= fact * 5;
+    if ((ci->w * ci->h)  < 6400) fact= fact * 5;
+    if (diff > 60000*fact) {
+      cache_image->reset (lookup);
+      ps_bbox->reset (lookup[0]);
+    }
+  }
+}
+
+void basic_renderer_rep::image_gc (string name) {
+  (void) name;
+  cache_image_last_gc= texmacs_time ();
+  iterator<tree> it= iterate (cache_image);
+  while (it->busy()) {
+    tree lookup= it->next();
+    if (!is_ramdisc (as_url (lookup[0]))) {
+      cache_image_element ci = cache_image [lookup];
+      cache_image->reset (lookup);
+      ps_bbox->reset (lookup[0]);
+    }
+  }
+}
+
+cache_image_element 
+basic_renderer_rep::get_image_cache (tree lookup) {
+  if (cache_image->contains (lookup)) return cache_image [lookup];
+  return cache_image_element();
+}
+
+void 
+basic_renderer_rep::set_image_cache (tree lookup, cache_image_element ci)  {
+  if (N(cache_image) == 0) cache_image_last_gc= texmacs_time ();
+
+  cache_image      (lookup)= ci;
+  cache_image_tot_size += (ci->w)*(ci->h);
+  if (cache_image_tot_size > cache_image_max_size) {
+    image_auto_gc ();
+    if (cache_image_tot_size > cache_image_max_size)
+      cache_image_max_size= cache_image_tot_size << 1;
+  }
+}
+
+
+bool
+gui_interrupted (bool check) {
+	return check_event (check? INTERRUPT_EVENT: INTERRUPTED_EVENT);
+}
 
 #endif

@@ -29,7 +29,7 @@ extern hashmap<tree,string> ps_bbox;
 ******************************************************************************/
 
 x_drawable_rep::x_drawable_rep (x_gui gui2, x_window_rep* x_win2):
-  basic_renderer_rep (true), gui (gui2), x_win (x_win2), w (0), h (0)
+  renderer_rep (true), gui (gui2), x_win (x_win2), w (0), h (0)
 {
   dpy         = gui->dpy;
   gc          = gui->gc;
@@ -38,7 +38,7 @@ x_drawable_rep::x_drawable_rep (x_gui gui2, x_window_rep* x_win2):
 }
 
 x_drawable_rep::x_drawable_rep (x_gui gui2, int w2, int h2):
-  basic_renderer_rep (true), gui (gui2), x_win (NULL), w (w2), h (h2)
+  renderer_rep (true), gui (gui2), x_win (NULL), w (w2), h (h2)
 {
   dpy         = gui->dpy;
   gc          = gui->gc;
@@ -64,6 +64,23 @@ x_drawable_rep::get_extents (int& w2, int& h2) {
     w2= w;
     h2= h;
   }
+}
+
+/******************************************************************************
+* Conversion between window and postscript coordinates
+******************************************************************************/
+
+void
+x_drawable_rep::encode (SI& x, SI& y) {
+  x= (x*pixel) - ox;
+  y= ((-y)*pixel) - oy;
+}
+
+void
+x_drawable_rep::decode (SI& x, SI& y) {
+  x += ox; y += oy;
+  if (x>=0) x= x/pixel; else x= (x-pixel+1)/pixel;
+  if (y>=0) y= -(y/pixel); else y= -((y-pixel+1)/pixel);
 }
 
 /******************************************************************************
