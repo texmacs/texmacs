@@ -118,7 +118,7 @@
                      "tab"))))
 
 (tm-define (kbd-variant t forwards?)
-  (:require (and (tree-in? t '(label reference eqref pageref))
+  (:require (and (tree-in? t '(label reference pageref))
                  (cursor-inside? t)))
   (if (complete-try?) (noop)))
 

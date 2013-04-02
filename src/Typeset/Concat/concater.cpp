@@ -618,7 +618,6 @@ concater_rep::typeset (tree t, path ip) {
     break;
   case LABEL:
   case REFERENCE:
-  case EQREF:
   case PAGEREF:
     typeset_compound (t, ip);
     break;

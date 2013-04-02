@@ -184,7 +184,6 @@ packrat_parser_rep::serialize (tree t, path p) {
     case GET_BINDING:
     case LABEL:
     case REFERENCE:
-    case EQREF:
     case PAGEREF:
     case WRITE:
       break;
