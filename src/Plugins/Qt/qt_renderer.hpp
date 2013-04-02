@@ -119,43 +119,4 @@ public:
   void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
 };
 
-class qt_picture_rep: public picture_rep {
-public:
-  QImage pict;
-  int w, h;
-  int ox, oy;
-
-protected:
-  color internal_get_pixel (int x, int y);
-  void internal_set_pixel (int x, int y, color c);
-
-public:
-  qt_picture_rep (const QImage& im, int ox2, int oy2);
-  picture_kind get_type ();
-  void* get_handle ();
-  int get_width ();
-  int get_height ();
-  int get_origin_x ();
-  int get_origin_y ();
-  void set_origin (int ox2, int oy2);
-};
-
-picture qt_picture (const QImage& im, int ox, int oy);
-
-class qt_image_renderer_rep: public qt_renderer_rep {
-public:
-  picture pict;
-  int x1, y1, x2, y2;
-  
-public:
-  qt_image_renderer_rep (picture pict, double zoom);
-  qt_image_renderer_rep (picture pict, renderer master);
-  ~qt_image_renderer_rep ();
-  void* get_data_handle ();
-  picture get_picture ();
-  void set_picture (picture p);
-};
-
-qt_renderer_rep* the_qt_renderer();
-
 #endif // defined QT_RENDERER_HPP
