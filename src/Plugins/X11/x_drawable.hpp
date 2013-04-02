@@ -89,6 +89,7 @@ public:
   friend class x_gui_rep;
   friend class x_window_rep;
   friend Bool my_selnotify_predicate (Display* dpy, XEvent* ev, XPointer arg);
+  friend x_gui get_gui (renderer ren);
 };
 
 #endif // defined X_DRAWABLE_H

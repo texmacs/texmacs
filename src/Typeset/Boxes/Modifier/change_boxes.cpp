@@ -248,11 +248,12 @@ effect_box_rep::redraw (renderer ren, path p, rectangles& l) {
   delete_renderer (pic_ren);
   if (((nr_painted&15) == 15) && gui_interrupted (true));
   else {
+    picture new_pic= old_pic;
     //picture new_pic= blur (old_pic, 2.0);
     //picture new_pic= compose (old_pic, 0x40ff0000, compose_towards_source);
     //picture new_pic= add_shadow (old_pic, 1, -2, 0xff808080, 2.0);
     //picture new_pic= add_shadow (old_pic, 1, -1, 0xcfc0c0c0, 0.0);
-    picture new_pic= engrave (old_pic, 0.5, 0xff000000, 0xffffffff, 1.0, 1.0);
+    //picture new_pic= engrave (old_pic, 0.5, 0xff000000, 0xffffffff, 1.0, 1.0);
     //picture new_pic= gravitational_outline (old_pic, 15, 2.5);
     ren->draw_picture (new_pic, 0, 0);
   }

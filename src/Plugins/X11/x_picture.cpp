@@ -135,12 +135,22 @@ x_image_renderer_rep::x_image_renderer_rep (picture p, double zoom):
   cx2= pw * pixel;
   cy2= ph * pixel;
 
+  Region region= XCreateRegion ();
+  XRectangle r;
+  r.x     = 0;
+  r.y     = 0;
+  r.width = w;
+  r.height= h;
+  XUnionRectWithRegion (&r, region, region);
+  XSetRegion (dpy, gc, region);
+  XDestroyRegion (region);
   XSetForeground (dpy, gc, VCONVERT (white));
   XFillRectangle (dpy, win, gc, 0, 0, w, h);
 }
 
 x_image_renderer_rep::x_image_renderer_rep (picture p, renderer m):
-  x_drawable_rep (the_gui, get_Pixmap (p), p->get_width (), p->get_height ()),
+  x_drawable_rep (the_gui, get_Pixmap (p),
+                  p->get_width (), p->get_height ()),
   pict (p)
 {
   ox = m->ox;
@@ -167,6 +177,15 @@ x_image_renderer_rep::x_image_renderer_rep (picture p, renderer m):
   cx2 -= x1b * pixel;
   cy2 += y2b * pixel;
 
+  Region region= XCreateRegion ();
+  XRectangle r;
+  r.x     = 0;
+  r.y     = 0;
+  r.width = w;
+  r.height= h;
+  XUnionRectWithRegion (&r, region, region);
+  XSetRegion (dpy, gc, region);
+  XDestroyRegion (region);
   XSetForeground (dpy, gc, VCONVERT (white));
   XFillRectangle (dpy, win, gc, 0, 0, w, h);
 }

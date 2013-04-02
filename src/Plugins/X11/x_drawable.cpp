@@ -32,20 +32,20 @@ x_drawable_rep::x_drawable_rep (x_gui gui2, x_window_rep* x_win2):
   renderer_rep (true), gui (gui2), x_win (x_win2),
   drawable_type (0), w (0), h (0)
 {
-  dpy         = gui->dpy;
-  gc          = gui->gc;
-  cur_fg      = black;
-  cur_bg      = white;
+  dpy    = gui->dpy;
+  gc     = gui->gc;
+  cur_fg = black;
+  cur_bg = white;
 }
 
 x_drawable_rep::x_drawable_rep (x_gui gui2, int w2, int h2):
   renderer_rep (true), gui (gui2), x_win (NULL),
   drawable_type (1), w (w2), h (h2)
 {
-  dpy         = gui->dpy;
-  gc          = gui->gc;
-  cur_fg      = black;
-  cur_bg      = white;
+  dpy    = gui->dpy;
+  gc     = gui->gc;
+  cur_fg = black;
+  cur_bg = white;
   win= (Drawable) XCreatePixmap (gui->dpy, gui->root, w, h, gui->depth);
 }
 
@@ -53,15 +53,20 @@ x_drawable_rep::x_drawable_rep (x_gui gui2, Pixmap pm, int w2, int h2):
   renderer_rep (true), gui (gui2), win ((Drawable) pm), x_win (NULL),
   drawable_type (2), w (w2), h (h2)
 {
-  dpy         = gui->dpy;
-  gc          = gui->gc;
-  cur_fg      = black;
-  cur_bg      = white;
+  XGCValues values;
+  int    scr  = DefaultScreen (gui->dpy);
+  Window root = RootWindow (gui->dpy, scr);
+  dpy    = gui->dpy;
+  gc     = XCreateGC (dpy, root, 0, &values);
+  cur_fg = black;
+  cur_bg = white;
 }
 
 x_drawable_rep::~x_drawable_rep () {
   if (drawable_type == 1)
-    XFreePixmap (gui->dpy, (Pixmap) win);
+    XFreePixmap (dpy, (Pixmap) win);
+  if (drawable_type == 2)
+    XFreeGC (dpy, gc);
 }
 
 void*
