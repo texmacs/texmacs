@@ -1,19 +1,20 @@
 
 TODO
 
+* Avoid flicker in QTMRefreshWidget
 * Several problems in graphics mode.
 * Check for memory leaks and non properly destroyed Qt objects.
 * Implement qt_gui_rep::set_mouse_pointer, qt_gui_rep::show_wait_indicator
-* Implement glue_widget
 * Help -> (Apple) Search. How to customize this?
 * Clean menu cache on language changes.
 * qt_chooser_widget_rep is only partially implemented (e.g. crop images, filters, ... does not work)
-* Russian menus.
 * Paint interrupts on slow machines.
 * Implement image_gc
 
 DONE
 
+* Implement glue_widget
+* Russian menus.
 * Handle correctly mask and quit command in texmacs_widget
 * Handle correctly destroy_window_widget
 * Implement "minibuffer" interactions (in the status bar)

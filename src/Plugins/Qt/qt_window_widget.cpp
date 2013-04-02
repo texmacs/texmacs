@@ -210,8 +210,8 @@ qt_window_widget_rep::query (slot s, int type_id) {
       QRect g;
         // FIXME: dock widgets are embedded into qt_window_widget_reps as a temporary hack
         // because of this the underlying widget is not always a top level window
-      if (qwid->isWindow()) g = qwid->geometry();
-      else                  g = qwid->window()->geometry();
+      if (qwid->isWindow()) g = qwid->frameGeometry();
+      else                  g = qwid->window()->frameGeometry();
         //cout << "wpos: " << pt.x() << ", " << pt.y() << LF;
       return close_box<coord2> (from_qpoint (QPoint (g.x(), g.y())));
     }
@@ -219,7 +219,7 @@ qt_window_widget_rep::query (slot s, int type_id) {
     case SLOT_SIZE:
     {
       check_type_id<coord2> (type_id, s);
-      QSize sz = qwid->size();
+      QSize sz = qwid->frameSize();
       return close_box<coord2> (from_qsize (sz));
     }
 

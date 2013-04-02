@@ -171,11 +171,13 @@ qt_view_widget_rep::query (slot s, int type_id) {
     case SLOT_POSITION:
     {
       check_type_id<coord2> (type_id, s);
-        // NOTE: mapTo() does not take into account the height of unified toolbars 
-        // on the Mac. We work around this in qt_tm_widget_rep::query(SLOT_POSITION)
-      QPoint pt = scrollarea()->surface()->mapTo(scrollarea()->window(), QPoint(0,0));
-        //cout << "pos: " << pt.x() << ", " << pt.y() << LF;
-      return close_box<coord2> (from_qpoint (pt));
+        // HACK: mapTo() does not work as we expect on the Mac, so we manually
+        // calculate the global screen cordinates and substract
+      QPoint sg = scrollarea()->surface()->mapToGlobal (QPoint (0,0));
+      QRect  wg = scrollarea()->window()->frameGeometry();
+      sg.ry() -= wg.y();
+      sg.rx() -= wg.x();
+      return close_box<coord2> (from_qpoint (sg));
     }
 
     case SLOT_SIZE:

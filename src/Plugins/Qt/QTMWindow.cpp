@@ -27,11 +27,8 @@ void QTMPlainWindow::moveEvent (QMoveEvent* event)
 {
   string name= from_qstring (windowTitle ());
     // FIXME: rather use a slot for this
-  int x= event->pos().x();
-  int y= event->pos().y();
-  if (DEBUG_QT)
-    cout << "Move QTMPlainWindow " << name << ": " << x << ", " << y << LF;
-  notify_window_move (name, x*PIXEL, -y*PIXEL);
+  coord2 pos= from_qpoint (frameGeometry().topLeft());
+  notify_window_move (name, pos.x1, pos.x2);
   QWidget::moveEvent (event);
 }
 
@@ -39,11 +36,8 @@ void QTMPlainWindow::resizeEvent (QResizeEvent* event)
 {
   string name= from_qstring (windowTitle ());
     // FIXME: rather use a slot for this
-  int w= event->size().width();
-  int h= event->size().height();
-  if (DEBUG_QT)
-    cout << "Resize QTMPlainWindow " << name << ": " << w << ", " << h << LF;
-  notify_window_resize (name, w*PIXEL, h*PIXEL);
+  coord2 sz= from_qsize (frameSize());
+  notify_window_resize (name, sz.x1, sz.x2);
   QWidget::resizeEvent (event);
 }
 
@@ -61,11 +55,8 @@ void QTMWindow::moveEvent (QMoveEvent * event)
 {
   widget tmwid = qt_window_widget_rep::widget_from_qwidget(this);
   string name= ( !is_nil(tmwid) ? concrete(tmwid)->get_nickname () : "QTMWindow");
-  QPoint p = event->pos();
   // FIXME: rather use a slot for this
-  if (DEBUG_QT)
-    cout << "Move QTMWindow " << name << ": " << p.x() << ", " << p.y() << LF;
-  coord2 pt = from_qpoint(p);
+  coord2 pt = from_qpoint (frameGeometry().topLeft());
   notify_window_move (name, pt.x1, pt.x2);
   QMainWindow::moveEvent (event);
 }
@@ -75,10 +66,7 @@ void QTMWindow::resizeEvent (QResizeEvent * event)
   widget tmwid = qt_window_widget_rep::widget_from_qwidget(this);
   string name= ( !is_nil(tmwid) ? concrete(tmwid)->get_nickname () : "QTMWindow");
   // FIXME: rather use a slot for this
-  QSize s = event->size();
-  if (DEBUG_QT)
-      cout << "Resize QTMWindow " << name << ": " << s.width() << ", " << s.height() << LF;
-  coord2 sz = from_qsize(s);
+  coord2 sz = from_qsize (frameSize());
   notify_window_resize (name, sz.x1, sz.x2);
   QMainWindow::resizeEvent (event);
 }
@@ -109,7 +97,7 @@ QTMPopupWidget::QTMPopupWidget(QWidget* contents) {
 
 /*
  If our contents QWidget is of type QTMWidget it will capture mouse events
- and we won't get called until the cursor exits the contents, so the check 
+ and we won't get called until the pointer exits the contents, so the check 
  inside is unnecessary unless the contents are of another kind.
  
  NOTE that this is intended for popups which appear under the cursor!

@@ -25,11 +25,7 @@ class QWidget;
  
  This qt_widget takes ownership of the enclosed QWidget and marks it as a 
  "texmacs_window_widget" using QObject::property(). The value of the property is
- set to this qt_window_widget_rep. This property must be set in this way, 
- because any underlying QWidget belonging to any instance of a subclass of 
- qt_widget_rep may be encapsulated into a qt_window_widget_rep. This is for 
- instance the case in qt_view_widget_rep::plain_window_widget(), where we 
- construct a new qt_window_widget_rep around an already existing QWidget.
+ set to this qt_window_widget_rep.
 
  Later, the handling of some texmacs messages (SLOT_WINDOW in qt_view_widget_rep 
  for instance) will require access to an instance of qt_window_widget which they
