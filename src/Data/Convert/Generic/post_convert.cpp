@@ -53,12 +53,12 @@ correct_buggy_html_paste (string s) {
 
 bool
 seems_buggy_paste (string s) {
-  return s[N(s)-1] == '\0';
+  return N(s) > 0 && s[N(s)-1] == '\0';
 }
 
 string
 correct_buggy_paste (string s) {
-  while (s[N(s)-1] == '\0') s= s(0, N(s)-1);
+  while (N(s) > 0 && s[N(s)-1] == '\0') s= s(0, N(s)-1);
   return s;
 }
 
