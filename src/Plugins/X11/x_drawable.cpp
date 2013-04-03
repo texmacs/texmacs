@@ -382,14 +382,9 @@ static hashmap<tree,int> cache_image_time (0);
 static hashmap<tree,int> cache_image_nr (0);
 
 void
-x_drawable_rep::image (
-  url u, SI w, SI h, SI x, SI y,
-  double cx1, double cy1, double cx2, double cy2,
-  int alpha)
-{
+x_drawable_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
   // Given an image of original size (W, H),
-  // we display the part (cx1 * W, xy1 * H, cx2 * W, cy2 * H)
-  // at position (x, y) in a rectangle of size (w, h)
+  // we display it at position (x, y) in a rectangle of size (w, h)
   (void) alpha; // FIXME
 
   w= w/pixel; h= h/pixel;
@@ -415,9 +410,7 @@ x_drawable_rep::image (
 
   Pixmap pm;
   tree lookup= tuple (u->t);
-  lookup << as_string (w ) << as_string (h )
-	 << as_string (cx1) << as_string (cy1)
-	 << as_string (cx2) << as_string (cy2);
+  lookup << as_string (w) << as_string (h);
   if (cache_image->contains (lookup)) pm= (Pixmap) cache_image [lookup];
   else {
     // rendering
@@ -430,11 +423,11 @@ x_drawable_rep::image (
 
     pm= XCreatePixmap (gui->dpy, gs_win, w, h, gui->depth);
     if (imlib2_supports (u))
-      imlib2_display (dpy, pm, u, w, h, cx1, cy1, cx2, cy2);
+      imlib2_display (dpy, pm, u, w, h);
     else {
       //XSetForeground (dpy, gc, white);
       //XFillRectangle (dpy, pm, gc, 0, 0, w, h);
-      ghostscript_run (dpy, gs_win, pm, u, w, h, cx1, cy1, cx2, cy2);
+      ghostscript_run (dpy, gs_win, pm, u, w, h);
     }
 
     // caching

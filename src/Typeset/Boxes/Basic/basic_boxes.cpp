@@ -196,7 +196,7 @@ image_box_rep::image_box_rep (path ip, url u2, SI w, SI h, int a):
 
 void
 image_box_rep::display (renderer ren) {
-  ren->image (u, x2, y2, 0, 0, 0.0, 0.0, 1.0, 1.0, alpha);
+  ren->image (u, x2, y2, 0, 0, alpha);
 }
 
 /******************************************************************************

@@ -335,8 +335,7 @@ image_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
       else ww= (hh * iw) / ih;
     }
 
-    ren->image (url_system (file_name),
-		ww, hh, PIXEL, PIXEL, 0.0, 0.0, 1.0, 1.0);
+    ren->image (url_system (file_name), ww, hh, PIXEL, PIXEL);
   }
 }
 

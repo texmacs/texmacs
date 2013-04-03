@@ -508,20 +508,12 @@ make_transmatrix (pdf_tmatrix *M,
 }
 
 void
-pdf_renderer_rep::image (
-  url u, SI w, SI h, SI x, SI y,
-  double cx1, double cy1, double cx2, double cy2,
-  int alpha)
-{
+pdf_renderer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
   //cerr << "image " << u << LF;
   (void) alpha; // FIXME
   
-  int bx1, by1, bx2, by2;
-  ps_bounding_box (u, bx1, by1, bx2, by2);
-  int x1= bx1 + (int) (cx1 * (bx2 - bx1) + 0.5);
-  int y1= by1 + (int) (cy1 * (by2 - by1) + 0.5);
-  int x2= bx1 + (int) (cx2 * (bx2 - bx1) + 0.5);
-  int y2= by1 + (int) (cy2 * (by2 - by1) + 0.5);
+  int x1, y1, x2, y2;
+  ps_bounding_box (u, x1, y1, x2, y2);
   
   double sc_x= (72.0/dpi) * ((double) (w/PIXEL)) / ((double) (x2-x1));
   double sc_y= (72.0/dpi) * ((double) (h/PIXEL)) / ((double) (y2-y1));

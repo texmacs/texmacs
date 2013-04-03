@@ -218,7 +218,7 @@ qt_renderer_rep::set_brush (brush br) {
       h= (SI) (as_percentage (pattern[2]) * ((double) w));
     w= ((w + pixel - 1) / pixel);
     h= ((h + pixel - 1) / pixel);
-    QImage* pm= get_image (u, w, h, 0.0, 0.0, 1.0, 1.0);
+    QImage* pm= get_image (u, w, h);
 
     painter->setOpacity (qreal (pattern_alpha) / qreal (255));
     if (pm != NULL) painter->setBrush (QBrush (*pm));
@@ -363,30 +363,22 @@ struct qt_cache_image_rep: cache_image_element_rep {
 };
 
 QImage*
-qt_renderer_rep::get_image (url u, int w, int h,
-                            double cx1, double cy1, double cx2, double cy2)
-{
+qt_renderer_rep::get_image (url u, int w, int h) {
   QImage *pm = NULL;
   tree lookup= tuple (u->t);
-  lookup << as_string (w ) << as_string (h )
-         << as_string (cx1) << as_string (cy1)
-         << as_string (cx2) << as_string (cy2) << "qt-image" ;
+  lookup << as_string (w) << as_string (h) << "qt-image" ;
   cache_image_element ci = get_image_cache(lookup);
   if (!is_nil(ci))
     pm= static_cast<QImage*> (ci->ptr);
   else {
     // rendering
-    bool needs_crop= false;
-    if (qt_supports (u)) {
+    if (qt_supports (u))
       pm= new QImage (utf8_to_qstring (concretize (u)));
-      needs_crop= true;
-    }
     else if (suffix (u) == "ps" ||
              suffix (u) == "eps" ||
              suffix (u) == "pdf") {
       url temp= url_temp (".png");
       image_to_png (u, temp, w, h);
-      needs_crop= true;
 /*
       string idstr= eval_system ("identify",u);
       int i=0;
@@ -445,7 +437,6 @@ qt_renderer_rep::get_image (url u, int w, int h,
       if (as_bool (call ("file-converter-exists?", u, "x.png"))) {
         url temp= url_temp (".png");
         call ("file-convert", object (u), object (temp));
-        needs_crop= true;
         pm= new QImage (to_qstring (as_string (temp)));
         remove (temp);
       }
@@ -456,20 +447,6 @@ qt_renderer_rep::get_image (url u, int w, int h,
       }
     }
 
-    if(needs_crop) {
-      int iw= pm->width ();
-      int ih= pm->height ();
-      int x1= as_int (cx1 * iw);
-      int y1= as_int (cy1 * ih);
-      int x2= as_int (cx2 * iw);
-      int y2= as_int (cy2 * ih);
-      int ww= x2 - x1;
-      int hh= y2 - y1;
-
-      (*pm)= pm->copy(QRect (x1, hh-y2, ww, hh));
-      (*pm)= pm->scaled(w,h);
-    }
-
     ci = tm_new<qt_cache_image_rep> (w,h, texmacs_time(), pm);
     set_image_cache(lookup, ci);
     (ci->nr)++;
@@ -478,15 +455,9 @@ qt_renderer_rep::get_image (url u, int w, int h,
 }
 
 void
-qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
-                        double cx1, double cy1, double cx2, double cy2,
-                        int alpha)
-{
+qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
   // Given an image of original size (W, H),
-  // we display the part (cx1 * W, xy1 * H, cx2 * W, cy2 * H)
-  // at position (x, y) in a rectangle of size (w, h)
-  if(cx2<=cx1 || cy2<=cy1) return;
-
+  // we display it at position (x, y) in a rectangle of size (w, h)
   w= w/pixel; h= h/pixel;
   decode (x, y);
 
@@ -494,7 +465,7 @@ qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
   url ru = resolve(u);
   u = is_none (ru) ? "$TEXMACS_PATH/misc/pixmaps/unknown.ps" : ru;
   
-  QImage* pm= get_image (u, w, h, cx1, cy1, cx2, cy2);
+  QImage* pm= get_image (u, w, h);
   if (pm == NULL) return;
 
   qreal old_opacity= painter->opacity ();

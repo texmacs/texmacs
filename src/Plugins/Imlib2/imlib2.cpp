@@ -137,9 +137,7 @@ imlib2_image_size (url u, int& w, int& h) {
 }
 
 void
-imlib2_display (Display* dpy, Pixmap pm, url u, SI w, SI h,
-		double cx1, double cy1, double cx2, double cy2)
-{
+imlib2_display (Display* dpy, Pixmap pm, url u, SI w, SI h) {
   Imlib_Image image= imlib2_load_image (u);
   if (image) {
     Visual *vis= DefaultVisual (dpy, DefaultScreen (dpy));
@@ -152,14 +150,7 @@ imlib2_display (Display* dpy, Pixmap pm, url u, SI w, SI h,
     IMLIB2_context_set_image (image);
     int iw= IMLIB2_image_get_width ();
     int ih= IMLIB2_image_get_height ();
-    int x1= as_int (cx1 * iw);
-    int y1= as_int (cy1 * ih);
-    int x2= as_int (cx2 * iw);
-    int y2= as_int (cy2 * ih);
-    int ww= x2 - x1;
-    int hh= y2 - y1;
-    IMLIB2_render_image_part_on_drawable_at_size
-      (x1, hh-y2, ww, hh, 0, 0, w, h);
+    IMLIB2_render_image_part_on_drawable_at_size (0, 0, iw, ih, 0, 0, w, h);
     IMLIB2_free_image ();
   }
 }
@@ -181,12 +172,9 @@ imlib2_image_size (url u, int& w, int& h) {
 
 #ifdef X11TEXMACS
 void
-imlib2_display (Display* dpy, Pixmap pm, url u, SI w, SI h,
-		double cx1, double cy1, double cx2, double cy2)
-{
+imlib2_display (Display* dpy, Pixmap pm, url u, SI w, SI h) {
   (void) dpy; (void) pm;
   (void) u; (void) w; (void) h;
-  (void) cx1; (void) cy1; (void) cx2; (void) cy2;
   FAILED ("imlib2 is not present");
 }
 #endif

@@ -334,7 +334,7 @@ renderer_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
 	SI X1= i*w     - sx, Y1= j*h     - sy;
 	SI X2= (i+1)*w - sx, Y2= (j+1)*h - sy;
 	if (X1 < x2 && X2 > x1 && Y1 < y2 && Y2 > y1)
-	  image (u, w, h, X1, Y1, 0.0, 0.0, 1.0, 1.0, pattern_alpha);
+	  image (u, w, h, X1, Y1, pattern_alpha);
       }
     set_clipping (cx1, cy1, cx2, cy2, true);
   }

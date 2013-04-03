@@ -77,8 +77,7 @@ public:
   void  fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
   void  polygon (array<SI> x, array<SI> y, bool convex=true);
   void  xpm (url file_name, SI x, SI y);
-  void  image (url u, SI w, SI h, SI x, SI y,
-               double cx1, double cy1, double cx2, double cy2, int alpha);
+  void  image (url u, SI w, SI h, SI x, SI y, int alpha);
   
   void next_page ();
   bool is_printer();
@@ -266,13 +265,9 @@ struct cairo_cache_image_rep: cache_image_element_rep {
 };
 
 void
-cairo_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
-			   double cx1, double cy1, double cx2, double cy2,
-                           int alpha)
-{
+cairo_renderer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
   // Given an image of original size (W, H),
-  // we display the part (cx1 * W, xy1 * H, cx2 * W, cy2 * H)
-  // at position (x, y) in a rectangle of size (w, h)
+  // we display it at position (x, y) in a rectangle of size (w, h)
 
   // if (DEBUG_EVENTS) cout << "cairo_renderer_rep::image " << as_string(u) << LF;
   (void) alpha; // FIXME
@@ -285,9 +280,7 @@ cairo_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
   
   cairo_surface_t* pm = NULL;
   tree lookup= tuple (u->t);
-  lookup << as_string (w ) << as_string (h )
-	 << as_string (cx1) << as_string (cy1)
-	 << as_string (cx2) << as_string (cy2) << "cairo-image" ;
+  lookup << as_string (w) << as_string (h) << "cairo-image" ;
   
   cache_image_element ci = get_image_cache(lookup);
   if (!is_nil(ci)) {

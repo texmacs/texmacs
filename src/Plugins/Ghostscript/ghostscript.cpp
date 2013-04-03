@@ -65,19 +65,12 @@ encapsulate_postscript (string s) {
 }
 
 void
-ghostscript_run (Display* dpy, Window gs_win, Pixmap pm,
-		 url image, SI w, SI h,
-		 double cx1, double cy1, double cx2, double cy2)
-{
+ghostscript_run (Display* dpy, Window gs_win, Pixmap pm, url im, SI w, SI h) {
   if (DEBUG_VERBOSE)
-    cout << "TeXmacs] Running ghostscript " << image << "\n";
+    cout << "TeXmacs] Running ghostscript " << im << "\n";
 
-  int bx1, by1, bx2, by2;
-  ps_bounding_box (image, bx1, by1, bx2, by2);
-  int x1= bx1 + as_int (cx1 * (bx2 - bx1));
-  int y1= by1 + as_int (cy1 * (by2 - by1));
-  int x2= bx1 + as_int (cx2 * (bx2 - bx1));
-  int y2= by1 + as_int (cy2 * (by2 - by1));
+  int x1, y1, x2, y2;
+  ps_bounding_box (im, x1, y1, x2, y2);
   // FIXME: this dirty hack is needed as a correction for the rendering
   // of patterns with a non-entire width or height. Without the hack,
   // white lines may appear at the borders of the patterns.
@@ -119,7 +112,7 @@ ghostscript_run (Display* dpy, Window gs_win, Pixmap pm,
 #endif
 
   string raw_ps, nice_ps;
-  raw_ps= ps_load (image);
+  raw_ps= ps_load (im);
   nice_ps= encapsulate_postscript (raw_ps);
   url temp_name= url_temp ();
   save_string (temp_name, nice_ps, true);

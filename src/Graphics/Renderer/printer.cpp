@@ -799,20 +799,11 @@ printer_rep::image (
 }
 
 void
-printer_rep::image (
-  url u, SI w, SI h, SI x, SI y,
-  double cx1, double cy1, double cx2, double cy2, int alpha)
-{
+printer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
   string ps_image= ps_load (u);
   string imtext= is_ramdisc (u)? "inline image": as_string (u);
-
-  int bx1, by1, bx2, by2;
-  ps_bounding_box (u, bx1, by1, bx2, by2);
-  int x1= bx1 + (int) (cx1 * (bx2 - bx1) + 0.5);
-  int y1= by1 + (int) (cy1 * (by2 - by1) + 0.5);
-  int x2= bx1 + (int) (cx2 * (bx2 - bx1) + 0.5);
-  int y2= by1 + (int) (cy2 * (by2 - by1) + 0.5);
-
+  int x1, y1, x2, y2;
+  ps_bounding_box (u, x1, y1, x2, y2);
   image (imtext, ps_image, x1, y1, x2, y2, w, h, x, y, alpha);
 }
 

@@ -104,9 +104,7 @@ public:
   virtual void polygon (array<SI> x, array<SI> y, bool convex=true) = 0;
   virtual void triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3);
   virtual void xpm (url file_name, SI x, SI y) = 0;
-  virtual void image (url u, SI w, SI h, SI x, SI y,
-		      double cx1, double cy1, double cx2, double cy2,
-                      int alpha= 255) = 0;
+  virtual void image (url u, SI w, SI h, SI x, SI y, int alpha= 255) = 0;
   virtual void draw_rectangles (rectangles rs);
   virtual void draw_selection (rectangles rs);
 
