@@ -30,10 +30,13 @@ extern int nr_windows;
 ******************************************************************************/
 
 x_picture_rep::x_picture_rep (Pixmap pm2, int w2, int h2, int ox2, int oy2):
-  pm (pm2), im (NULL), w (w2), h (h2), ox (ox2), oy (oy2) {}
+  pm (pm2), im (NULL), bm (0), data (NULL),
+  w (w2), h (h2), ox (ox2), oy (oy2), ok (true) {}
 x_picture_rep::~x_picture_rep () {
+  XFreePixmap (the_gui->dpy, pm);
   if (im != NULL) XDestroyImage (im);
-  XFreePixmap (the_gui->dpy, pm); }
+  if (bm != 0) XFreePixmap (the_gui->dpy, bm);
+  if (data != NULL) tm_delete_array (data); }
 
 picture_kind x_picture_rep::get_type () { return picture_native; }
 void* x_picture_rep::get_handle () { return (void*) this; }
@@ -53,6 +56,7 @@ x_picture_rep::internal_get_pixel (int x, int y) {
     int r= (c >> 16) & 0xff;
     int g= (c >> 8 ) & 0xff;
     int b= (c      ) & 0xff;
+    if (r == 0x64 && g == 0x65 && b == 0x66) return 0x00ffffff;
     return rgb_color (r, g, b, 255);
   }
   return 0;
@@ -61,6 +65,7 @@ x_picture_rep::internal_get_pixel (int x, int y) {
 void
 x_picture_rep::internal_set_pixel (int x, int y, color col) {
   if (0 > x || 0 > y || x >= w || y >= h) return;
+  ok= false;
   int r, g, b, a;
   get_rgb_color (col, r, g, b, a);
   r= (r * a + 255 * (255 - a)) / 255;
@@ -69,7 +74,21 @@ x_picture_rep::internal_set_pixel (int x, int y, color col) {
   col= rgb_color (r, g, b, 255);
   XSetForeground (the_gui->dpy, the_gui->pixmap_gc, VCONVERT (col));
   XDrawPoint (the_gui->dpy, (Drawable) pm, the_gui->pixmap_gc, x, h - 1 - y);
-  if (im != NULL) XPutPixel (im, x, h-1-y, (r << 16) + (g << 8) + b);
+  if (im != NULL)
+    XPutPixel (im, x, h-1-y, (r << 16) + (g << 8) + b);
+  if (data == NULL && a < 64) {
+    int byte_width= ((w-1)>>3)+1;
+    data= tm_new_array<char> (byte_width * h);
+    for (int i=0; i<byte_width * h; i++) data[i]= 0xff;
+  }
+  if (data != NULL) {
+    int byte_width= ((w-1)>>3)+1;
+    int idx= (h-1-y) * byte_width + (x>>3);
+    if (a < 64)
+      data[idx]= data[idx] & (~(1<<(x&7)));
+    else
+      data[idx]= data[idx] | (1<<(x&7));
+  }
 }
 
 picture
@@ -116,7 +135,19 @@ x_drawable_rep::draw_picture (picture p, SI x, SI y) {
   int Y1= max (y1- y, 0); if (Y1>=h) return;
   int X2= min (x2- x, w); if (X2<0) return;
   int Y2= min (y2- y, h); if (Y2<0) return;
-  XCopyArea (dpy, pict->pm, win, gc, X1, Y1, X2-X1, Y2-Y1, x+X1, y+Y1);
+  if (pict->data != NULL) {
+    if (!pict->ok) {
+      if (pict->bm != 0) XFreePixmap (gui->dpy, pict->bm);
+      pict->bm= XCreateBitmapFromData (gui->dpy, gui->root, pict->data, w, h);
+      pict->ok= true;
+    }
+    XSetClipMask (dpy, gc, pict->bm);
+    XSetClipOrigin (dpy, gc, x, y);
+    XCopyArea (dpy, pict->pm, win, gc, X1, Y1, X2-X1, Y2-Y1, x+X1, y+Y1);
+    set_clipping (cx1- ox, cy1- oy, cx2- ox, cy2- oy);
+  }
+  else
+    XCopyArea (dpy, pict->pm, win, gc, X1, Y1, X2-X1, Y2-Y1, x+X1, y+Y1);
 }
 
 /******************************************************************************
@@ -203,7 +234,7 @@ x_image_renderer_rep::x_image_renderer_rep (picture p, renderer m):
   XUnionRectWithRegion (&r, region, region);
   XSetRegion (dpy, gc, region);
   XDestroyRegion (region);
-  XSetForeground (dpy, gc, VCONVERT (white));
+  XSetForeground (dpy, gc, 0x00646566);
   XFillRectangle (dpy, win, gc, 0, 0, w, h);
 }
 
