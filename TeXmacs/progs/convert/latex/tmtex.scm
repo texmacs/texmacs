@@ -44,10 +44,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-modes
-  (elsevier-style%      (in? tmtex-style '("elsart" "jsc" "elsarticle")))
+  (elsevier-style%      (in? tmtex-style '("elsart" "jsc" "elsarticle"
+                                           "ifac")))
   (jsc-style%           (in? tmtex-style '("jsc"))        elsevier-style%)
   (elsarticle-style%    (in? tmtex-style '("elsarticle")) elsevier-style%)
   (elsart-style%        (in? tmtex-style '("elsart"))     elsevier-style%)
+  (ifac-style%          (in? tmtex-style '("ifac"))       elsevier-style%)
   (acm-style%           (in? tmtex-style '("acmconf" "sig-alternate")))
   (sig-alternate-style% (in? tmtex-style '("sig-alternate")) acm-style%)
   (ams-style%           (in? tmtex-style '("amsart")))

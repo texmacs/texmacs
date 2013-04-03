@@ -18,6 +18,7 @@
   (:mode elsevier-style?)
   (cond ((in? x '("elsart" "jsc")) "elsart")
 	((== x "elsarticle") "elsarticle")
+	((== x "ifac") "ifacconf")
         (else x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -36,6 +37,12 @@
 (tm-define (tmtex-style-init body)
   (:mode elsevier-style?)
   (init-elsevier body))
+
+(tm-define (tmtex-style-init body)
+  (:mode ifac-style?)
+  (init-elsevier body)
+  (set! tmtex-packages (cons "natbib" tmtex-packages))
+  (latex-set-packages '("natbib")))
 
 (tm-define (tmtex-style-init body)
   (:mode jsc-style?)
@@ -180,48 +187,70 @@
   (:mode elsevier-style?)
   `(ead ,(tmtex (cadr t))))
 
+(tm-define (tmtex-author-email-ref s l)
+  (:mode elsevier-style?)
+  (springer-note-ref "author-email-" (car l)))
+
+(tm-define (tmtex-author-email-label s l)
+  (:mode elsevier-style?)
+  `(ead ,(tmtex (cadr l))))
+
 (tm-define (tmtex-author-homepage t)
   (:mode elsevier-style?)
   `(ead (!option "url") ,(tmtex (cadr t))))
+
+(tm-define (tmtex-author-homepage-ref s l)
+  (:mode elsevier-style?)
+  (springer-note-ref "author-url-" (car l)))
+
+(tm-define (tmtex-author-homepage-label s l)
+  (:mode elsevier-style?)
+  `(ead (!option "url") ,(tmtex (cadr l))))
 
 (tm-define (tmtex-author-name t)
   (:mode elsevier-style?)
   `(author ,(tmtex (cadr t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Elsart specific title macros
+;; Elsart and IFAC specific title macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmtex-replace-documents t)
-  (:mode elsart-style?)
+  (:mode elsevier-style?)
+  (:require (or (elsart-style?) (ifac-style?)))
   (if (npair? t) t
     (with (r s) (list (car t) (map tmtex-replace-documents (cdr t)))
       (if (!= r 'document) `(,r ,@s)
         `(concat ,@(list-intersperse s '(next-line)))))))
 
 (tm-define (springer-note-ref l r)
-  (:mode elsart-style?)
+  (:mode elsevier-style?)
+  (:require (or (elsart-style?) (ifac-style?)))
   (if (list? r)
     `(!concat ,@(map (lambda (x) `(thanksref ,x)) r))
     `(thanksref ,(string-append l r))))
 
 (tm-define (tmtex-doc-subtitle-label s l)
-  (:mode elsart-style?)
+  (:mode elsevier-style?)
+  (:require (or (elsart-style?) (ifac-style?)))
   (with label (string-append "sub-" (car l))
     `(thankssubtitle (!option ,label) ,(tmtex (cadr l)))))
 
 (tm-define (tmtex-doc-note-label s l)
-  (:mode elsart-style?)
+  (:mode elsevier-style?)
+  (:require (or (elsart-style?) (ifac-style?)))
   (with label (string-append "note-" (car l))
     `(thanks (!option ,label) ,(tmtex (cadr l)))))
 
 (tm-define (tmtex-doc-date-label s l)
-  (:mode elsart-style?)
+  (:mode elsevier-style?)
+  (:require (or (elsart-style?) (ifac-style?)))
   (with label (string-append "date-" (car l))
     `(thanksdate (!option ,label) ,(tmtex (cadr l)))))
 
 (tm-define (tmtex-doc-misc-label s l)
-  (:mode elsart-style?)
+  (:mode elsevier-style?)
+  (:require (or (elsart-style?) (ifac-style?)))
   (with label (string-append "misc-" (car l))
     `(thanksmisc (!option ,label) ,(tmtex (cadr l)))))
 
@@ -230,18 +259,35 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (springer-author-note-ref l r)
-  (:mode elsart-style?)
+  (:mode elsevier-style?)
+  (:require (or (elsart-style?) (ifac-style?)))
   (springer-note-ref l r))
 
 (tm-define (tmtex-author-note-label s l)
-  (:mode elsart-style?)
+  (:mode elsevier-style?)
+  (:require (or (elsart-style?) (ifac-style?)))
   (with label (string-append "author-note-" (car l))
     `(thanks (!option ,label) ,(tmtex (cadr l)))))
 
 (tm-define (tmtex-author-misc-label s l)
-  (:mode elsart-style?)
+  (:mode elsevier-style?)
+  (:require (or (elsart-style?) (ifac-style?)))
   (with label (string-append "author-misc-" (car l))
     `(thanksamisc (!option ,label) ,(tmtex (cadr l)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; IFAC specific authors macros
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tmtex-author-email-label s l)
+  (:mode ifac-style?)
+  (with label (string-append "author-email-" (car l))
+    `(thanksemail (!option ,label) ,(tmtex (cadr l)))))
+
+(tm-define (tmtex-author-homepage-label s l)
+  (:mode ifac-style?)
+  (with label (string-append "author-url-" (car l))
+    `(thankshomepage (!option ,label) ,(tmtex (cadr l)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Elsevier title and author preprocessing
@@ -260,12 +306,16 @@
   (set! l (make-references l 'doc-date #f #f))
   (set! l (make-references l 'author-note #t #f))
   (set! l (make-references l 'author-misc #t #f))
+  (if ifac-style?
+    (begin
+      (set! l (make-references l 'author-email #t #f))
+      (set! l (make-references l 'author-homepage #t #f))))
   (if clustered?
     (set! l (make-references l 'author-affiliation #t #f)))
   l)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Elsevier non clustered title and author presentation
+;; Elsevier title and author presentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes
@@ -288,7 +338,9 @@
                               affs* emails* urls* miscs* notes*)
   (:mode elsevier-style?)
   (let* ((names  (tmtex-concat-Sep (map cadr names)))
-         (notes* `(,@miscs* ,@notes*))
+         (notes* (if (ifac-style?)
+                   `(,@emails* ,@urls* ,@miscs* ,@notes*)
+                   `(,@miscs* ,@notes*)))
          (notes* (if (null? notes*) '()
                    `(,(springer-author-note-ref "" (map cadr notes*)))))
          (affs*  (if (null? affs*) '()
@@ -319,6 +371,7 @@
                        `(((!begin "keyword")
                           (!document ,@keywords ,@msc))) '()))
          (abstract (map tmtex (tmtex-select-args-by-func 'abstract l))))
+    (display* msc "\n\n")
     `(!document ,@abstract ,@keywords)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -383,12 +383,16 @@
                           (!translate "Misc:") " #2}}\n"))
   (tsubtitletext (!append "\\newcommand{\\tsubtitletext}[2][]{\\tnotetext[#1]{"
                           (!translate "Subtitle:") " #2}}\n"))
-  (thanksdate    (!append "\\newcommand{\\thanksdate}[2][]{\\thanks[#1]{"
-                          (!translate "Date:") " #2}}\n"))
-  (thanksamisc   (!append "\\newcommand{\\thanksamisc}[2][]{\\thanks[#1]{"
-                          (!translate "Misc:") " #2}}\n"))
-  (thanksmisc    (!append "\\newcommand{\\thanksmisc}[2][]{\\thanks[#1]{"
-                          (!translate "Misc:") " #2}}\n"))
+  (thankshomepage (!append "\\newcommand{\\thankshomepage}[2][]{\\thanks[#1]{"
+                          (!translate "URL:") " #2}}\n"))
+  (thanksemail    (!append "\\newcommand{\\thanksemail}[2][]{\\thanks[#1]{"
+                          (!translate "Email:") " #2}}\n"))
+  (thanksdate     (!append "\\newcommand{\\thanksdate}[2][]{\\thanks[#1]{"
+                           (!translate "Date:") " #2}}\n"))
+  (thanksamisc    (!append "\\newcommand{\\thanksamisc}[2][]{\\thanks[#1]{"
+                           (!translate "Misc:") " #2}}\n"))
+  (thanksmisc     (!append "\\newcommand{\\thanksmisc}[2][]{\\thanks[#1]{"
+                           (!translate "Misc:") " #2}}\n"))
   (thankssubtitle (!append "\\newcommand{\\thankssubtitle}[2][]{\\thanks[#1]{"
                            (!translate "Subtitle:") " #2}}\n"))
   (mho
