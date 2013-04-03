@@ -190,7 +190,7 @@ get_latex_author_datas (tree t) {
 }
 
 array<tree>
-collect_metadata_latex (tree t) {
+collect_metadata_latex (tree t, array<tree>(*get_author_datas)(tree)) {
   array<tree> r;
   tree doc_data (APPLY, "\\doc-data");
   tree abstract_data (APPLY, "\\abstract-data");
@@ -205,7 +205,7 @@ collect_metadata_latex (tree t) {
       doc_data << tuple ("\\doc-title", cltm (u[N(u)-1]));
     }
     else if (is_tuple (u, "\\author", 1)  || is_tuple (u, "\\author*", 2)) {
-      array<tree> author_datas= get_latex_author_datas (u[1]);
+      array<tree> author_datas= (*get_author_datas) (u[1]);
       for (int j=0; j<N(author_datas); j++)
         doc_data << tree (APPLY, "\\doc-author", author_datas[j]);
     }
@@ -248,6 +248,11 @@ collect_metadata_latex (tree t) {
     r << concat ("\n");
   }
   return r;
+}
+
+array<tree>
+collect_metadata_latex (tree t) {
+  return collect_metadata_latex (t, &get_latex_author_datas);
 }
 
 #undef cltm
