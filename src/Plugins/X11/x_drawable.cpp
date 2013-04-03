@@ -243,20 +243,20 @@ xpm_to_color (string s) {
   return rgb_color (exact.red/256, exact.green/256, exact.blue/256);
 }
 
-void
-x_drawable_rep::xpm_initialize (url file_name) {
+picture
+x_gui_rep::get_xpm (url file_name) {
+  static hashmap<string,picture> cache;
+  string name= as_string (file_name);
+  if (cache->contains (name)) return cache[name];
   picture pict= as_x_picture (load_xpm (file_name));
-  gui->xpm_pics (as_string (file_name))= pict;
+  cache (name)= pict;
+  return pict;
 }
-
-extern bool char_clip;
 
 void
 x_drawable_rep::xpm (url file_name, SI x, SI y) {
-  string name= as_string (file_name);
-  if (!gui->xpm_pics->contains (name)) xpm_initialize (file_name);
   ASSERT (pixel == PIXEL, "pixel and PIXEL should coincide");
-  picture p= gui->xpm_pics[name];
+  picture p= gui->get_xpm (file_name);
   draw_picture (p, x, y - (p->get_height () - 1) * PIXEL);
 }
 

@@ -120,7 +120,6 @@ public:
   hashmap<x_character,pointer> color_scale;       // for anti-aliasing
   hashmap<x_character,pointer> character_bitmap;  // bitmaps of all characters
   hashmap<x_character,pointer> character_pixmap;  // pixmaps of all characters
-  hashmap<string,picture>      xpm_pics;          // pixmaps of all xpms
   hashmap<int,string>          lower_key;
   hashmap<int,string>          upper_key;
 
@@ -138,6 +137,9 @@ public:
 
   /******************************* Colors ************************************/
   void prepare_color (int sfactor, color fg, color bg);
+
+  /******************************* Images ************************************/
+  picture get_xpm (url name);
 
   /****************************** Keyboard ***********************************/
   void initialize_input_method ();

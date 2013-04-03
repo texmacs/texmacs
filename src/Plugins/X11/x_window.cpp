@@ -39,9 +39,7 @@ x_window_rep::set_hints (int min_w, int min_h, int max_w, int max_h) {
 	  "out of memory (X server)");
 
   // time_t start_1= texmacs_time ();
-  if (!gui->xpm_pics->contains ("TeXmacs.xpm"))
-    ren->xpm_initialize ("TeXmacs.xpm");
-  Pixmap pm= retrieve_pixmap (gui->xpm_pics ["TeXmacs.xpm"]);
+  Pixmap pm= retrieve_pixmap (gui->get_xpm ("TeXmacs.xpm"));
   // cout << "Getting pixmap required " << (texmacs_time ()-start_1) << " ms\n";
 
   // time_t start_2= texmacs_time ();

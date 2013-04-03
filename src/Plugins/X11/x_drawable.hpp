@@ -49,7 +49,6 @@ public:
 
   void draw_clipped (Pixmap pm, Pixmap bm, int w, int h, SI x, SI y);
   void draw (int char_code, font_glyphs fn, SI x, SI y);
-  void xpm_initialize (url file_name);
 
   /********************** routines from renderer.hpp *************************/
 
