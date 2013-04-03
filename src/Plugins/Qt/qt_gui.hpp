@@ -78,7 +78,6 @@ public:
   bool put_graphics_on_clipboard (url file);
 
   /* miscellaneous */
-  void image_gc (string name= "*");
   void set_mouse_pointer (string name);
   void set_mouse_pointer (string curs_name, string mask_name);
   void show_wait_indicator (widget w, string message, string arg);

@@ -138,8 +138,6 @@ aqua_gui_rep::clear_selection (string key) {
  * Miscellaneous
  ******************************************************************************/
 
-void aqua_gui_rep::image_gc (string name) { (void) name; }
-// FIXME: remove this unused function
 void aqua_gui_rep::set_mouse_pointer (string name) { (void) name; }
 // FIXME: implement this function
 void aqua_gui_rep::set_mouse_pointer (string curs_name, string mask_name)  { (void) curs_name; (void) mask_name; } ;
@@ -498,12 +496,6 @@ bool check_event (int type)
   // Check whether an event of one of the above types has occurred;
   // we check for keyboard events while repainting windows
 { return the_gui->check_event(type); }
-
-void image_gc (string name) {
-  // Garbage collect images of a given name (may use wildcards)
-  // This routine only needs to be implemented if you use your own image cache
-  the_aqua_renderer()->image_gc(name); 
-}
 
 void
 show_help_balloon (widget balloon, SI x, SI y) { 

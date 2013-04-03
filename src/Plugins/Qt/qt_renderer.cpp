@@ -363,7 +363,7 @@ struct qt_cache_image_rep: cache_image_element_rep {
 };
 
 QImage*
-qt_renderer_rep::get_image (url u, int w, int h) {
+get_image (url u, int w, int h) {
   QImage *pm = NULL;
   tree lookup= tuple (u->t);
   lookup << as_string (w) << as_string (h) << "qt-image" ;

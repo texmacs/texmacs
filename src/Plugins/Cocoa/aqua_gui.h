@@ -54,7 +54,6 @@ public:
   virtual void clear_selection (string key);
   
   /* miscellaneous */
-  void image_gc (string name= "*");
   void set_mouse_pointer (string name);
   void set_mouse_pointer (string curs_name, string mask_name);
   void show_wait_indicator (widget w, string message, string arg);

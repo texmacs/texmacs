@@ -400,7 +400,8 @@ static hashmap<tree,cache_image_element> cache_image;
 
 extern hashmap<tree,string> ps_bbox; 
 
-void basic_renderer_rep::image_auto_gc () {
+void
+image_auto_gc () {
   time_t time= texmacs_time ();
   if (time-cache_image_last_gc <= 300000) return;
   cache_image_last_gc= time;
@@ -423,7 +424,8 @@ void basic_renderer_rep::image_auto_gc () {
   }
 }
 
-void basic_renderer_rep::image_gc (string name) {
+void
+image_gc (string name) {
   (void) name;
   cache_image_last_gc= texmacs_time ();
   iterator<tree> it= iterate (cache_image);
@@ -438,16 +440,16 @@ void basic_renderer_rep::image_gc (string name) {
 }
 
 cache_image_element 
-basic_renderer_rep::get_image_cache (tree lookup) {
+get_image_cache (tree lookup) {
   if (cache_image->contains (lookup)) return cache_image [lookup];
   return cache_image_element();
 }
 
-void 
-basic_renderer_rep::set_image_cache (tree lookup, cache_image_element ci)  {
+void
+set_image_cache (tree lookup, cache_image_element ci)  {
   if (N(cache_image) == 0) cache_image_last_gc= texmacs_time ();
 
-  cache_image      (lookup)= ci;
+  cache_image (lookup)= ci;
   cache_image_tot_size += (ci->w)*(ci->h);
   if (cache_image_tot_size > cache_image_max_size) {
     image_auto_gc ();
@@ -456,10 +458,9 @@ basic_renderer_rep::set_image_cache (tree lookup, cache_image_element ci)  {
   }
 }
 
-
 bool
 gui_interrupted (bool check) {
-	return check_event (check? INTERRUPT_EVENT: INTERRUPTED_EVENT);
+  return check_event (check? INTERRUPT_EVENT: INTERRUPTED_EVENT);
 }
 
 #endif

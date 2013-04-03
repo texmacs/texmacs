@@ -109,11 +109,6 @@ public:
   void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
   void put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
-
-  cache_image_element  get_image_cache (tree lookup);
-  void set_image_cache (tree lookup, cache_image_element ci);
-  void image_auto_gc ();
-  void image_gc (string name);
 };
 
 typedef basic_renderer_rep* basic_renderer;
@@ -123,7 +118,11 @@ typedef basic_renderer_rep* basic_renderer;
 
 color xpm_to_color (string s);
 
-bool gui_interrupted (bool check);
+cache_image_element get_image_cache (tree lookup);
+void set_image_cache (tree lookup, cache_image_element ci);
+void image_auto_gc ();
+void image_gc (string name);
 
+bool gui_interrupted (bool check);
 
 #endif // defined BASIC_RENDERER_HPP
