@@ -25,7 +25,7 @@ raster_picture (int w, int h, int ox, int oy) {
 ******************************************************************************/
 
 void
-draw_on (picture pic, color c, composition_mode mode) {
+draw_on (picture& pic, color c, composition_mode mode) {
   raster<true_color> ras= as_raster<true_color> (pic);
   draw_on (ras, c, mode);
 }
