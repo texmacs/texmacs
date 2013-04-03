@@ -65,6 +65,11 @@ as_qt_picture (picture pic) {
 }
 
 picture
+as_native_picture (picture pict) {
+  return as_qt_picture (pict);
+}
+
+picture
 pixmap_picture (int w, int h, int ox, int oy) {
   return qt_picture (QImage (w, h, QImage::Format_ARGB32), ox, oy);
 }

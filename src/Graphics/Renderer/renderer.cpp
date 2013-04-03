@@ -436,5 +436,11 @@ load_picture (url u, int w, int h) {
   return picture ();
 }
 
+picture
+as_native_picture (picture pict) {
+  FAILED ("not yet implemented");
+  return pict;
+}
+
 #endif
 #endif

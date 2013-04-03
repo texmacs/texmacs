@@ -455,8 +455,8 @@ void
 x_gui_rep::set_mouse_pointer (widget w, string name, string mask_name) {
   static hashmap<string,tree> xpm_cache ("");
   if (mask_name=="") mask_name= name;
-  Pixmap curs= retrieve_bitmap (get_xpm (name));
-  Pixmap mask= retrieve_bitmap (get_xpm (mask_name));
+  Pixmap curs= retrieve_bitmap (load_xpm (name));
+  Pixmap mask= retrieve_bitmap (load_xpm (mask_name));
 
   if (!xpm_cache->contains (name))
     xpm_cache (name)= xpm_load (name);

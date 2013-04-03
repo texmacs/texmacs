@@ -55,6 +55,10 @@ color xpm_to_color (string s);
 
 picture
 load_xpm (url file_name) {
+  static hashmap<string,picture> cache;
+  string name= as_string (file_name);
+  if (cache->contains (name)) return cache[name];
+
   tree t= xpm_load (file_name);
 
   // get main info
@@ -117,6 +121,8 @@ load_xpm (url file_name) {
     }
   }
 
+  pict= as_native_picture (pict);
+  cache (name)= pict;
   return pict;
 }
 

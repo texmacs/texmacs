@@ -119,6 +119,11 @@ as_x_picture (picture pic) {
   return ret;
 }
 
+picture
+as_native_picture (picture pict) {
+  return as_x_picture (pict);
+}
+
 Pixmap
 retrieve_bitmap (picture pic) {
   x_picture_rep* rep= (x_picture_rep*) pic->get_handle ();

@@ -138,9 +138,6 @@ public:
   /******************************* Colors ************************************/
   void prepare_color (int sfactor, color fg, color bg);
 
-  /******************************* Images ************************************/
-  picture get_xpm (url name);
-
   /****************************** Keyboard ***********************************/
   void initialize_input_method ();
   void insert_keysym (array<int>& a, int i, int j);
