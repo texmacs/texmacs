@@ -192,3 +192,113 @@ void
 delete_renderer (renderer ren) {
   tm_delete (ren);
 }
+
+/******************************************************************************
+* Loading pictures
+******************************************************************************/
+
+struct qt_cache_image_rep: cache_image_element_rep {
+  qt_cache_image_rep (int w2, int h2, time_t time2, QImage *ptr2):
+    cache_image_element_rep (w2, h2, time2, ptr2) {}
+  virtual ~qt_cache_image_rep () {
+    delete static_cast<QImage*> (ptr); }
+};
+
+QImage*
+get_image (url u, int w, int h) {
+  QImage *pm = NULL;
+  tree lookup= tuple (u->t);
+  lookup << as_string (w) << as_string (h) << "qt-image" ;
+  cache_image_element ci = get_image_cache(lookup);
+  if (!is_nil(ci))
+    pm= static_cast<QImage*> (ci->ptr);
+  else {
+    // rendering
+    if (qt_supports (u))
+      pm= new QImage (utf8_to_qstring (concretize (u)));
+    else if (suffix (u) == "ps" ||
+             suffix (u) == "eps" ||
+             suffix (u) == "pdf") {
+      url temp= url_temp (".png");
+      image_to_png (u, temp, w, h);
+/*
+      string idstr= eval_system ("identify",u);
+      int i=0;
+      int a=0,b=0;
+      while(i<N(idstr)) {
+        b=0;
+        if(idstr[i]==' ') {
+          i++;
+          a=i;
+          while(i<N(idstr) && idstr[i]>'0' && idstr[i]<'9')
+            i++;
+          if(i>=N(idstr))
+            break;
+          if(idstr[i] != 'x')
+            continue;
+          i++;
+          b=i;
+          while(i<N(idstr) && idstr[i]>'0' && idstr[i]<'9')
+            i++;
+          if(i<N(idstr) && idstr[i]==' ')
+            break;
+        }
+        i++;
+      }
+      int iw,ih;
+      if(b>0) {
+        iw=as_int(idstr(a,b-1));
+        ih=as_int(idstr(b,i));
+      } else {
+        int bbx1,bby1,bbx2,bby2;
+        ps_bounding_box(u,bbx1,bby1,bbx2,bby2);
+        iw=bbx2-bbx1;
+        ih=bby2-bby1;
+      }
+
+//      float resx = 72*w/((bbx2-bbx1)*(cx2-cx1));
+//      float resy = 72*h/((bby2-bby1)*(cy2-cy1));
+      float resx = 144*w/(iw*(cx2-cx1));
+      float resy = 144*h/(ih*(cy2-cy1));
+
+      url temp= url_temp (".png");
+      system ("convert -density " * as_string(resx) * "x" * as_string(resy)
+             * " -scale 50% -crop " * as_string(w) * "x" * as_string(h)
+             * "+" * as_string (cx1*w/(cx2-cx1))
+             * "+" * as_string ((1-cy2)*h/(cy2-cy1))
+             * "! -background white -flatten", u, temp);
+*/
+      pm= new QImage (to_qstring (as_string (temp)));
+      remove (temp);
+    }
+    if (pm == NULL || pm->isNull ()) {
+      if (pm != NULL) {
+        delete pm;
+        pm= NULL;
+      }
+      if (as_bool (call ("file-converter-exists?", u, "x.png"))) {
+        url temp= url_temp (".png");
+        call ("file-convert", object (u), object (temp));
+        pm= new QImage (to_qstring (as_string (temp)));
+        remove (temp);
+      }
+      if (pm == NULL || pm->isNull ()) {
+        if (pm != NULL) delete pm;
+        cout << "TeXmacs] warning: cannot render " << concretize (u) << "\n";
+        return NULL;
+      }
+    }
+
+    ci = tm_new<qt_cache_image_rep> (w,h, texmacs_time(), pm);
+    set_image_cache(lookup, ci);
+    (ci->nr)++;
+  }
+  return pm;
+}
+
+picture
+load_picture (url u, int w, int h) {
+  QImage* im= get_image (u, w, h);
+  if (im == NULL) return error_picture (w, h);
+  return qt_picture (*im, 0, 0);
+}

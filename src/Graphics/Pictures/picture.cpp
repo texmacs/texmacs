@@ -40,6 +40,12 @@ picture_rep::internal_copy_to (int x, int y, picture dest,
       dest->internal_set_pixel (x + xx, y + yy, internal_get_pixel (xx, yy));
 }
 
+picture
+error_picture (int w, int h) {
+  picture pic= raster_picture (w, h);
+  draw_on (pic, 0x20ff0000, compose_source);
+}
+
 /******************************************************************************
 * Generation of encapsulated postscript
 ******************************************************************************/
