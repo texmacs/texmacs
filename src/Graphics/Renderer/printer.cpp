@@ -695,12 +695,6 @@ printer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
   print (PS_POL_END);
 }
 
-void
-printer_rep::xpm (url file_name, SI x, SI y) {
-  (void) file_name; (void) x; (void) y;
-  FAILED ("not yet implemented");
-}
-
 /*
 string
 incorporate_postscript (string s) {

@@ -36,6 +36,7 @@ public:
 };
 
 picture qt_picture (const QImage& im, int ox, int oy);
+QImage* xpm_image (url file_name);
 
 class qt_image_renderer_rep: public qt_renderer_rep {
 public:

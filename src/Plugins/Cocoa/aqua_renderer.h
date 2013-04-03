@@ -32,7 +32,6 @@ public:
   void  arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
   void  fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
   void  polygon (array<SI> x, array<SI> y, bool convex=true);
-  void  xpm (url file_name, SI x, SI y);
   void  image (url u, SI w, SI h, SI x, SI y, int alpha);
 
   /***** private section *****************************************************/

@@ -473,57 +473,6 @@ qt_renderer_rep::draw (const QFont& qfn, const QString& qs,
 }
 
 /******************************************************************************
-* Setting up and displaying xpm pixmaps
-******************************************************************************/
-
-extern int char_clip;
-/*! Loads and caches pixmaps.
- 
- Returns a newly allocated QPixmap object or one from the cache.
- */
-QPixmap*
-qt_renderer_rep::xpm_image (url file_name) {
-  QPixmap *pxm= NULL;
-  qt_pixmap mi= images [as_string (file_name)];
-  if (is_nil (mi)) {
-    string sss;
-    if (suffix (file_name) == "xpm") {
-      url png_equiv= glue (unglue (file_name, 3), "png");
-      load_string ("$TEXMACS_PIXMAP_PATH" * png_equiv, sss, false);
-    }
-    if (sss == "")
-      load_string ("$TEXMACS_PIXMAP_PATH" * file_name, sss, false);
-    if (sss == "")
-      load_string ("$TEXMACS_PATH/misc/pixmaps/TeXmacs.xpm", sss, true);
-    c_string buf (sss);
-    pxm= new QPixmap();
-    pxm->loadFromData ((uchar*)(char*)buf, N(sss));
-    //out << sss;
-    //cout << "pxm: " << file_name << "(" << pxm->size().width()
-    //     << "," <<  pxm->size().height() << ")\n";
-    qt_pixmap mi2 (pxm, 0, 0, pxm->width(), pxm->height());
-    mi= mi2;
-    images (as_string (file_name))= mi2;
-  }
-  else pxm=  mi->img ;
-  return pxm;
-}
-
-void
-qt_renderer_rep::xpm (url file_name, SI x, SI y) {
-  y -= pixel; // counter balance shift in draw_clipped
-  QPixmap* image = xpm_image (file_name);
-  ASSERT (pixel == PIXEL, "pixel and PIXEL should coincide");
-  int w, h;
-  w = image->width ();
-  h = image->height ();
-  int old_clip= char_clip;
-  char_clip= true;
-  draw_clipped (image, w, h, x, y);
-  char_clip=old_clip;
-}
-
-/******************************************************************************
  * main qt renderer
  ******************************************************************************/
 

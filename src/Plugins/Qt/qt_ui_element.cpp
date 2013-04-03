@@ -16,6 +16,7 @@
 #include "qt_window_widget.hpp"
 #include "qt_menu.hpp"
 #include "qt_gui.hpp"
+#include "qt_picture.hpp"
 
 #include "analyze.hpp"
 #include "widget.hpp"
@@ -537,8 +538,8 @@ qt_ui_element_rep::as_qaction () {
       // return widget ();
       // a widget with an X pixmap icon
       QAction* a= new QTMAction (NULL);
-      QPixmap* img= the_qt_renderer () -> xpm_image (image);
-      QIcon icon (*img);
+      QImage* img= xpm_image (image);
+      QIcon icon (as_pixmap (*img));
       a->setIcon (icon);
       return a;
     }
@@ -905,9 +906,10 @@ qt_ui_element_rep::as_qwidget () {
     {
       url image = open_box<url>(load);
       QLabel* l= new QLabel (NULL);
-      QPixmap* img= the_qt_renderer () -> xpm_image (image);
-      QIcon icon (*img);
-      l->setPixmap (*img);
+      QImage* img= xpm_image (image);
+      QPixmap pm= as_pixmap (*img);
+      QIcon icon (pm);
+      l->setPixmap (pm);
       qwid = l;
     }
       break;
@@ -1083,11 +1085,11 @@ qt_ui_element_rep::as_qwidget () {
       int i;
       for (i = 0; i < N(tabs); i++) {
         if (is_nil (tabs[i])) break;
-        QPixmap*      img = the_qt_renderer()->xpm_image (icons[i]);
+        QImage*       img = xpm_image (icons[i]);
         QWidget* prelabel = concrete (tabs[i])->as_qwidget();
         QLabel*     label = qobject_cast<QLabel*> (prelabel);
         QWidget*     body = concrete (bodies[i])->as_qwidget();
-        tw->addTab(body, QIcon (*img), label ? label->text() : "");
+        tw->addTab(body, QIcon (as_pixmap (*img)), label ? label->text() : "");
         delete prelabel;
       }
 

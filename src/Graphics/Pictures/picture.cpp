@@ -52,12 +52,19 @@ error_picture (int w, int h) {
 ******************************************************************************/
 
 color xpm_to_color (string s);
+picture qt_load_xpm (url file_name);
 
 picture
 load_xpm (url file_name) {
   static hashmap<string,picture> cache;
   string name= as_string (file_name);
   if (cache->contains (name)) return cache[name];
+
+#ifdef QTTEXMACS
+
+  picture pict= qt_load_xpm (file_name);
+
+#else
 
   tree t= xpm_load (file_name);
 
@@ -120,8 +127,10 @@ load_xpm (url file_name) {
       pict->set_pixel (x, h-1-y, pmc);
     }
   }
-
   pict= as_native_picture (pict);
+
+#endif
+
   cache (name)= pict;
   return pict;
 }

@@ -67,7 +67,6 @@ public:
   void  arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
   void  fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
   void  polygon (array<SI> x, array<SI> y, bool convex=true);
-  void  xpm (url file_name, SI x, SI y);
   void  image (url u, SI w, SI h, SI x, SI y, int alpha);
 
   void draw_clipped (QImage * im, int w, int h, SI x, SI y);
@@ -81,10 +80,6 @@ public:
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
 
   void draw_picture (picture pict, SI x, SI y);
-
-  /***** private section *****************************************************/
-
-  QPixmap *xpm_image(url file_name);
 };
 
 qt_renderer_rep* the_qt_renderer();

@@ -69,6 +69,13 @@ as_native_picture (picture pict) {
   return as_qt_picture (pict);
 }
 
+QImage*
+xpm_image (url file_name) {
+  picture p= load_xpm (file_name);
+  qt_picture_rep* rep= (qt_picture_rep*) p->get_handle ();
+  return &(rep->pict);
+}
+
 picture
 pixmap_picture (int w, int h, int ox, int oy) {
   return qt_picture (QImage (w, h, QImage::Format_ARGB32), ox, oy);
@@ -306,4 +313,21 @@ load_picture (url u, int w, int h) {
   QImage* im= get_image (u, w, h);
   if (im == NULL) return error_picture (w, h);
   return qt_picture (*im, 0, 0);
+}
+
+picture
+qt_load_xpm (url file_name) {
+  string sss;
+  if (suffix (file_name) == "xpm") {
+    url png_equiv= glue (unglue (file_name, 3), "png");
+    load_string ("$TEXMACS_PIXMAP_PATH" * png_equiv, sss, false);
+  }
+  if (sss == "")
+    load_string ("$TEXMACS_PIXMAP_PATH" * file_name, sss, false);
+  if (sss == "")
+    load_string ("$TEXMACS_PATH/misc/pixmaps/TeXmacs.xpm", sss, true);
+  c_string buf (sss);
+  QImage pm;
+  pm.loadFromData ((uchar*) (char*) buf, N(sss));
+  return qt_picture (pm, 0, 0);
 }

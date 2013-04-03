@@ -509,9 +509,6 @@ NSImage* xpm_init(url file_name)
   return im;
 }
 
-
-extern int char_clip;
-
 NSImage *
 aqua_renderer_rep::xpm_image(url file_name)
 { 
@@ -530,29 +527,6 @@ aqua_renderer_rep::xpm_image(url file_name)
   else image = mi->img;
 	return image;
 }
-
-void aqua_renderer_rep::xpm (url file_name, SI x, SI y) {
-  y -= pixel; // counter balance shift in draw_clipped
-  
- // c_string chstr (as_string (file_name));
-//  NSString *name = [NSString stringWithCString:chstr];
-//  name = [[name stringByDeletingPathExtension] stringByAppendingPathExtension:@"png"];
-  ///name = [name stringByDeletingPathExtension];
-  NSImage *image = xpm_image(file_name);
-  
-  ASSERT (pixel == PIXEL, "pixel and PIXEL should coincide");
-  int w, h;
-  NSSize imgSize = [image size];
-  w = imgSize.width; h = imgSize.height;
-
-//  [(NSImageRep*)[[image representations] objectAtIndex:0]  drawAtPoint:NSMakePoint(x,y)];
-  
-  int old_clip= char_clip;
-  char_clip= true;
-  draw_clipped (image, w, h, x, y);
-  char_clip=old_clip;
-}
-
 
 /******************************************************************************
  * main cocoa renderer

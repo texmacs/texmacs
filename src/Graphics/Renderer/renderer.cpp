@@ -343,6 +343,13 @@ renderer_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
 
 #undef RND
 
+void
+renderer_rep::xpm (url file_name, SI x, SI y) {
+  ASSERT (pixel == PIXEL, "pixel and PIXEL should coincide");
+  picture p= load_xpm (file_name);
+  draw_picture (p, x, y - (p->get_height () - 1) * PIXEL);
+}
+
 /******************************************************************************
 * Drawing selections using alpha transparency
 ******************************************************************************/

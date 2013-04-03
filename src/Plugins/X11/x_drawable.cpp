@@ -243,13 +243,6 @@ xpm_to_color (string s) {
   return rgb_color (exact.red/256, exact.green/256, exact.blue/256);
 }
 
-void
-x_drawable_rep::xpm (url file_name, SI x, SI y) {
-  ASSERT (pixel == PIXEL, "pixel and PIXEL should coincide");
-  picture p= load_xpm (file_name);
-  draw_picture (p, x, y - (p->get_height () - 1) * PIXEL);
-}
-
 /******************************************************************************
 * General pictures
 ******************************************************************************/

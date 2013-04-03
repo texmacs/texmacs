@@ -17,6 +17,7 @@
 #include "qt_utilities.hpp"
 #include "qt_renderer.hpp"
 #include "qt_gui.hpp"
+#include "qt_picture.hpp"
 
 #include "qt_dialogues.hpp"
 #include "qt_simple_widget.hpp"
@@ -195,15 +196,15 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   
   {
     // set proper sizes for icons
-    QPixmap *pxm = the_qt_renderer()->xpm_image ("tm_new.xpm");
+    QImage *pxm = xpm_image ("tm_new.xpm");
     QSize sz = (pxm ? pxm->size() : QSize(24,24));
     tweak_iconbar_size (sz);
     mainToolBar->setIconSize (sz);
-    pxm = the_qt_renderer()->xpm_image ("tm_section.xpm");
+    pxm = xpm_image ("tm_section.xpm");
     sz = (pxm ? pxm->size() : QSize(20,20));
     tweak_iconbar_size (sz);
     modeToolBar->setIconSize(sz);
-    pxm = the_qt_renderer()->xpm_image ("tm_add.xpm");
+    pxm = xpm_image ("tm_add.xpm");
     sz = (pxm ? pxm->size() : QSize(16,16));
     tweak_iconbar_size (sz);
     focusToolBar->setIconSize(sz);

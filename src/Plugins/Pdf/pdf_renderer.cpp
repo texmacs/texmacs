@@ -478,14 +478,6 @@ pdf_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
   pdf_dev_fill (); //  HPDF_Page_Eofill (page);
 }
 
-void
-pdf_renderer_rep::xpm (url file_name, SI x, SI y) {
-//  cerr << "xpm\n";
-/*  (void) file_name; (void) x; (void) y;
-  FAILED ("not yet implemented");*/
-}
-
-
 /*
  * Compute a transformation matrix
  * transformations are applied in the following

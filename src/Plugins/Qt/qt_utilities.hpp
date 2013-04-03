@@ -93,6 +93,8 @@ string qt_get_date (string lan, string fm);
 
 bool qt_print (bool&, bool&, string&, url&, string&, string&, string&);
 
+QPixmap as_pixmap (const QImage& im);
+
 /******************************************************************************
  * Type checking
  ******************************************************************************/

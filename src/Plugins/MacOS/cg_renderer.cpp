@@ -555,8 +555,6 @@ xpm_init (url file_name) {
   return im;
 }
 
-extern int char_clip;
-
 CGImageRef 
 cg_renderer_rep::xpm_image (url file_name) { 
   CGImageRef pxm= NULL;
@@ -570,19 +568,6 @@ cg_renderer_rep::xpm_image (url file_name) {
   }
   else pxm= mi->img;
   return pxm;
-}
-
-void
-cg_renderer_rep::xpm (url file_name, SI x, SI y) {
-  y -= pixel; // counter balance shift in draw_clipped
-  CGImageRef image = xpm_image (file_name);
-  ASSERT (pixel == PIXEL, "pixel and PIXEL should coincide");
-  int w = CGImageGetWidth(image);
-  int h = CGImageGetHeight(image);
-  int old_clip= char_clip;
-  char_clip = true;
-  draw_clipped (image, w, h, x, y);
-  char_clip = old_clip;
 }
 
 /******************************************************************************

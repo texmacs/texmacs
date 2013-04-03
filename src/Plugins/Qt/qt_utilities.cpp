@@ -527,6 +527,13 @@ qt_image_to_eps (url image, int w_pt, int h_pt, int dpi) {
   return r;
 }
 
+QPixmap
+as_pixmap (const QImage& im) {
+  QPixmap pm (im.size ());
+  pm.convertFromImage (im);
+  return pm;
+}
+
 string 
 qt_application_directory () {
   return  string (QCoreApplication::applicationDirPath () .toAscii() .constData());
