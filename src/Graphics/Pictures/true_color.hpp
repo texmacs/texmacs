@@ -33,6 +33,8 @@ public:
   inline true_color () {}
   inline true_color (const true_color& c):
     b (c.b), g (c.g), r (c.r), a (c.a) {}
+  inline true_color& operator = (const true_color& c) {
+    b= c.b; g= c.g; r= c.r; a= c.a; return *this; }
   inline true_color (double r2, double g2, double b2, double a2):
     b (b2), g (g2), r (r2), a (a2) {}
   inline true_color (color c):

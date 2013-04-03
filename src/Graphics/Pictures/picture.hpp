@@ -84,6 +84,7 @@ picture as_native_picture (picture pict);
 
 picture blur (picture pic, double r);
 picture gravitational_outline (picture pic, int R, double expon= 2.0);
+picture gravitational_shadow (picture pic, color col, double alpha);
 void    draw_on (picture& pic, color c, composition_mode mode);
 picture compose (picture pic, color c, composition_mode mode);
 void    draw_on (picture& d, picture s, int x, int y, composition_mode m);

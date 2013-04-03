@@ -49,13 +49,45 @@ print (raster<C> r) {
 }
 
 /******************************************************************************
+* Simple operations
+******************************************************************************/
+
+template<typename C> raster<C>
+subraster (raster<C> r, int x1, int y1, int x2, int y2) {
+  x1 += r->ox; y1 += r->oy; x2 += r->ox; y2 += r->oy;
+  int w= r->w, h= r->h;
+  x1= max (0, x1); y1= max (0, y1);
+  x2= min (w, x2); y2= min (h, y2);
+  int ww= x2 - x1, hh= y2 - y1;
+  raster<C> ret (ww, hh, r->ox - x1, r->oy - y1);
+  for (int y=y1; y<y2; y++)
+    for (int x=x1; x<x2; x++)
+      ret->a[ww*(y-y1) + (x-x1)]= r->a[w*y+x];
+  return ret;
+}
+
+template<typename C> raster<C>
+trim_border (raster<C> r, int lb, int bb, int rb, int tb) {
+  int x1= lb - r->ox, y1= lb - r->oy;
+  int x2= r->w - rb - r->ox, y2= r->h - tb - r->oy;
+  return subraster (r, x1, y1, x2, y2);
+}
+
+template<typename C> raster<C>
+trim_border (raster<C> r, int b) {
+  return trim_border (r, b, b, b, b);
+}
+
+/******************************************************************************
 * Mappers
 ******************************************************************************/
 
-template<typename Op, typename C> raster<C>
+template<typename Op, typename C>
+raster<Unary_return_type(Op,C) >
 map (raster<C> r) {
+  typedef Unary_return_type(Op,C) Ret;
   int w= r->w, h= r->h, n= w*h;
-  raster<C> ret (w, h, r->ox, r->oy);
+  raster<Ret> ret (w, h, r->ox, r->oy);
   for (int i=0; i<n; i++)
     ret->a[i]= Op::op (r->a[i]);
   return ret;
@@ -73,12 +105,20 @@ map (raster<C> r1, raster<S> r2) {
 }
 
 template<typename C> inline raster<C>
+copy (raster<C> r) { return map<copy_op> (r); }
+template<typename C> inline raster<C>
 mul_alpha (raster<C> r) { return map<mul_alpha_op> (r); }
 template<typename C> inline raster<C>
 div_alpha (raster<C> r) { return map<div_alpha_op> (r); }
 template<typename C> inline raster<C>
 normalize (raster<C> r) { return map<normalize_op> (r); }
+template<typename C> inline raster<typename C::scalar_type>
+get_alpha (raster<C> r) { return map<get_alpha_op> (r); }
 
+template<typename C> inline raster<C>
+operator + (raster<C> r1, raster<C> r2) { return map<add_op> (r1, r2); }
+template<typename C> inline raster<C>
+operator * (raster<C> r1, raster<C> r2) { return map<mul_op> (r1, r2); }
 template<typename C> inline raster<C>
 hypot (raster<C> r1, raster<C> r2) { return map<hypot_op> (r1, r2); }
 
@@ -312,6 +352,50 @@ gravitational_outline (raster<C> s, int R, double expon) {
   C sc (mc, mc, mc, ma);
   d= divide (d, sc);
   return normalize (d);
+}
+
+/******************************************************************************
+* Gravitational engrave
+******************************************************************************/
+
+template<typename C> raster<C>
+incidence (raster<C> gx, raster<C> gy, double alpha) {
+  int w= gx->w, h= gx->h;
+  raster<C> res (w, h, gx->ox, gx->oy);
+  double ca= cos (alpha), sa= sin (alpha);
+  for (int i=0; i<w*h; i++) {
+    C xa= gx->a[i];
+    C ya= gy->a[i];
+    C r = 1.0e-100 + sqrt (xa*xa + ya*ya);
+    C pr= (xa * ca + ya * sa) / r;
+    res->a[i]= sqrt (max (pr, 0.0));
+  }
+  return res;
+}
+
+template<typename C, typename F> raster<C>
+mul_alpha (C c, raster<F> alpha) {
+  int w= alpha->w, h= alpha->h, n= w*h;
+  raster<C> ret (w, h, alpha->ox, alpha->oy);
+  for (int i=0; i<n; i++)
+    ret->a[i]= C (c.r, c.g, c.b, c.a * alpha->a[i]);
+  return ret;
+}
+
+template<typename C> raster<C>
+gravitational_shadow (raster<C> s, int R, double expon,
+                      color col, double alpha) {
+  typedef typename C::scalar_type F;
+  raster<F> als  = get_alpha (s);
+  raster<F> gravx= gravitation<F> (R, expon, false);
+  raster<F> gravy= gravitation<F> (R, expon, true );
+  raster<F> convx= trim_border (convolute (als, gravx), R);
+  raster<F> convy= trim_border (convolute (als, gravy), R);
+  raster<F> incid= incidence (convx, convy, alpha);
+  raster<C> ret  = copy (s);
+  raster<C> shad = mul_alpha (C (col), incid * als);
+  draw_on<compose_source_over,C,C> (ret, shad, 0, 0);
+  return ret;
 }
 
 /******************************************************************************

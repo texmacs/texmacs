@@ -15,8 +15,24 @@
 #include "operators.hpp"
 
 /******************************************************************************
+* Default implementations
+******************************************************************************/
+
+template<typename C> void clear (C& x) { x= 0.0; }
+template<typename C> C mul_alpha (C& x) { return x; }
+template<typename C> C div_alpha (C& x) { return x; }
+
+/******************************************************************************
 * Unary operators
 ******************************************************************************/
+
+template<typename Op, typename C>
+struct unary_return_type_helper {
+  typedef C RET;
+};
+
+#define Unary_return_type(Op,C) \
+  typename unary_return_type_helper<Op,C>::RET
 
 struct mul_alpha_op {
   template<typename C> static inline C
@@ -31,6 +47,16 @@ struct div_alpha_op {
 struct normalize_op {
   template<typename C> static inline C
   op (const C& x) { return normalize (x); }
+};
+
+struct get_alpha_op {
+  template<typename C> static inline typename C::scalar_type
+  op (const C& x) { return get_alpha (x); }
+};
+
+template<typename C>
+struct unary_return_type_helper<get_alpha_op,C> {
+  typedef typename C::scalar_type RET;
 };
 
 /******************************************************************************

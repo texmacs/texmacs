@@ -64,16 +64,22 @@ blur (picture pic, double r) {
 }
 
 picture
+add_shadow (picture pic, int x, int y, color c, double r) {
+  picture shad= blur (compose (pic, c, compose_towards_source), r);
+  shad->translate_origin (-x, -y);
+  return compose (shad, pic, compose_source_over);
+}
+
+picture
 gravitational_outline (picture pic, int R, double expon) {
   raster<true_color> ras= as_raster<true_color> (pic);
   return raster_picture (gravitational_outline (ras, R, expon));
 }
 
 picture
-add_shadow (picture pic, int x, int y, color c, double r) {
-  picture shad= blur (compose (pic, c, compose_towards_source), r);
-  shad->translate_origin (-x, -y);
-  return compose (shad, pic, compose_source_over);
+gravitational_shadow (picture pic, color col, double alpha) {
+  raster<true_color> ras= as_raster<true_color> (pic);
+  return raster_picture (gravitational_shadow (ras, 30, 10.0, col, alpha));
 }
 
 picture
