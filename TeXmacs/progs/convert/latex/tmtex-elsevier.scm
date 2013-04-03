@@ -16,9 +16,10 @@
 
 (tm-define (tmtex-transform-style x)
   (:mode elsevier-style?)
-  (cond ((in? x '("elsart" "jsc")) "elsart")
+  (cond ((== x "elsart") "elsart")
 	((== x "elsarticle") "elsarticle")
 	((== x "ifac") "ifacconf")
+	((== x "jsc") `("amsthm" "elsart"))
         (else x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -217,7 +218,7 @@
 
 (tm-define (tmtex-replace-documents t)
   (:mode elsevier-style?)
-  (:require (or (elsart-style?) (ifac-style?)))
+  (:require (or (elsart-style?) (jsc-style?) (ifac-style?)))
   (if (npair? t) t
     (with (r s) (list (car t) (map tmtex-replace-documents (cdr t)))
       (if (!= r 'document) `(,r ,@s)
@@ -225,32 +226,32 @@
 
 (tm-define (springer-note-ref l r)
   (:mode elsevier-style?)
-  (:require (or (elsart-style?) (ifac-style?)))
+  (:require (or (elsart-style?) (jsc-style?) (ifac-style?)))
   (if (list? r)
     `(!concat ,@(map (lambda (x) `(thanksref ,x)) r))
     `(thanksref ,(string-append l r))))
 
 (tm-define (tmtex-doc-subtitle-label s l)
   (:mode elsevier-style?)
-  (:require (or (elsart-style?) (ifac-style?)))
+  (:require (or (elsart-style?) (jsc-style?) (ifac-style?)))
   (with label (string-append "sub-" (car l))
     `(thankssubtitle (!option ,label) ,(tmtex (cadr l)))))
 
 (tm-define (tmtex-doc-note-label s l)
   (:mode elsevier-style?)
-  (:require (or (elsart-style?) (ifac-style?)))
+  (:require (or (elsart-style?) (jsc-style?) (ifac-style?)))
   (with label (string-append "note-" (car l))
     `(thanks (!option ,label) ,(tmtex (cadr l)))))
 
 (tm-define (tmtex-doc-date-label s l)
   (:mode elsevier-style?)
-  (:require (or (elsart-style?) (ifac-style?)))
+  (:require (or (elsart-style?) (jsc-style?) (ifac-style?)))
   (with label (string-append "date-" (car l))
     `(thanksdate (!option ,label) ,(tmtex (cadr l)))))
 
 (tm-define (tmtex-doc-misc-label s l)
   (:mode elsevier-style?)
-  (:require (or (elsart-style?) (ifac-style?)))
+  (:require (or (elsart-style?) (jsc-style?) (ifac-style?)))
   (with label (string-append "misc-" (car l))
     `(thanksmisc (!option ,label) ,(tmtex (cadr l)))))
 
@@ -260,18 +261,18 @@
 
 (tm-define (springer-author-note-ref l r)
   (:mode elsevier-style?)
-  (:require (or (elsart-style?) (ifac-style?)))
+  (:require (or (elsart-style?) (jsc-style?) (ifac-style?)))
   (springer-note-ref l r))
 
 (tm-define (tmtex-author-note-label s l)
   (:mode elsevier-style?)
-  (:require (or (elsart-style?) (ifac-style?)))
+  (:require (or (elsart-style?) (jsc-style?) (ifac-style?)))
   (with label (string-append "author-note-" (car l))
     `(thanks (!option ,label) ,(tmtex (cadr l)))))
 
 (tm-define (tmtex-author-misc-label s l)
   (:mode elsevier-style?)
-  (:require (or (elsart-style?) (ifac-style?)))
+  (:require (or (elsart-style?) (jsc-style?) (ifac-style?)))
   (with label (string-append "author-misc-" (car l))
     `(thanksamisc (!option ,label) ,(tmtex (cadr l)))))
 
