@@ -307,7 +307,7 @@
   (set! l (make-references l 'doc-date #f #f))
   (set! l (make-references l 'author-note #t #f))
   (set! l (make-references l 'author-misc #t #f))
-  (if ifac-style?
+  (if (ifac-style?)
     (begin
       (set! l (make-references l 'author-email #t #f))
       (set! l (make-references l 'author-homepage #t #f))))
