@@ -96,7 +96,12 @@ translate_abstract_data_elsevier (tree t) {
   tree tmp (CONCAT);
   while (i<n && !is_tuple (t[i], "\\PACS")) {
     while (i<n && !is_tuple (t[i], "\\sep") && !is_tuple (t[i], "\\PACS"))
-      tmp << t[i++];
+      if (is_tuple (t[i], "\\tmmsc", 1)) {
+        msc << tokenize_concat (t[i][1], A(concat (tuple ("\\tmsep"))));
+        i++;
+      }
+      else
+        tmp << t[i++];
     kw << tmp;
     tmp= concat ();
     if (!is_tuple (t[i], "\\PACS")) i++;
