@@ -229,7 +229,7 @@ get_named_color (color c) {
 
 color
 xpm_to_color (string s) {
-  if (s == "none") return RGBCOLOR(100,100,100,0);
+  if (s == "none") return 0x00646464;
   if ((N(s) == 4) && (s[0]=='#')) {
     int r= 17 * from_hexadecimal (s (1, 2));
     int g= 17 * from_hexadecimal (s (2, 3));
