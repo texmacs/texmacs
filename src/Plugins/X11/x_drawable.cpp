@@ -412,18 +412,11 @@ image_gc (string name) {
   }
 }
 
-void
-x_drawable_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
-  // Given an image of original size (W, H),
-  // we display it at position (x, y) in a rectangle of size (w, h)
-  (void) alpha; // FIXME
-
-  w= w/pixel; h= h/pixel;
-  decode (x, y);
-
-  if (gui->gswindow == NULL) {
-    SI max_w= gui->screen_width  * PIXEL;
-    SI max_h= gui->screen_height * PIXEL;
+Pixmap
+load_Pixmap (url u, int w, int h) {
+  if (the_gui->gswindow == NULL) {
+    SI max_w= the_gui->screen_width  * PIXEL;
+    SI max_h= the_gui->screen_height * PIXEL;
     //widget dummy= text_widget (0, "ghostscript window");
     if (ghostscript_bugged ()) {
       max_w *= 2;
@@ -432,9 +425,10 @@ x_drawable_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
     }
     widget dummy = glue_widget (false, false, max_w, max_h);
     widget win   = plain_window_widget (dummy, "Ghostscript");
-    gui->gswindow= get_x_window (win);
-    //gui->gswindow= tm_new<x_window_rep> (dummy, gui, "ghostscript", 0, 0);
-    //gui->gswindow= tm_new<x_window_rep> (dummy, gui, "ghostscript",
+    the_gui->gswindow= get_x_window (win);
+    //the_gui->gswindow= tm_new<x_window_rep> (dummy, the_gui, "ghostscript",
+    //0, 0);
+    //the_gui->gswindow= tm_new<x_window_rep> (dummy, the_gui, "ghostscript",
     //max_w, max_h, max_w, max_h, max_w, max_h);
     nr_windows--; // the dummy window should not be counted
   }
@@ -445,20 +439,20 @@ x_drawable_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
   if (cache_image->contains (lookup)) pm= (Pixmap) cache_image [lookup];
   else {
     // rendering
-    Window gs_win= gui->gswindow->win;
+    Window gs_win= the_gui->gswindow->win;
 
     // XCreatePixmap does not allow for zero sized images.
     // This fixes bug #10425.
     w = (w==0 ? 1 : w);
     h = (h==0 ? 1 : h);
 
-    pm= XCreatePixmap (gui->dpy, gs_win, w, h, gui->depth);
+    pm= XCreatePixmap (the_gui->dpy, gs_win, w, h, the_gui->depth);
     if (imlib2_supports (u))
-      imlib2_display (dpy, pm, u, w, h);
+      imlib2_display (the_gui->dpy, pm, u, w, h);
     else {
-      //XSetForeground (dpy, gc, white);
-      //XFillRectangle (dpy, pm, gc, 0, 0, w, h);
-      ghostscript_run (dpy, gs_win, pm, u, w, h);
+      //XSetForeground (the_gui->dpy, gc, white);
+      //XFillRectangle (the_gui->dpy, pm, gc, 0, 0, w, h);
+      ghostscript_run (the_gui->dpy, gs_win, pm, u, w, h);
     }
 
     // caching
@@ -475,6 +469,20 @@ x_drawable_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
 	cache_image_max_size= cache_image_tot_size << 1;
     }
   }
+
+  return pm;
+}
+
+void
+x_drawable_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
+  // Given an image of original size (W, H),
+  // we display it at position (x, y) in a rectangle of size (w, h)
+  (void) alpha; // FIXME
+
+  w= w/pixel; h= h/pixel;
+  decode (x, y);
+
+  Pixmap pm= load_Pixmap (u, w, h);
 
   XCopyArea (dpy, (Drawable) pm, win, gc, 0, 0, w, h, x, y-h);
 }
