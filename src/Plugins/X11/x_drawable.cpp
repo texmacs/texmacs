@@ -229,6 +229,19 @@ x_drawable_rep::polygon (array<SI> x, array<SI> y, bool convex) {
 * Setting up and displaying xpm pixmaps
 ******************************************************************************/
 
+color
+xpm_to_color (string s) {
+  if (s == "none") return 0x00646464;
+  c_string _def (s);
+  XColor exact, closest;
+  XLookupColor (the_gui->dpy, the_gui->cols, _def, &exact, &closest);
+  if (!reverse_colors && XAllocColor (the_gui->dpy, the_gui->cols, &exact))
+    return rgb_color (exact.red/256, exact.green/256, exact.blue/256);
+  if (!reverse_colors && XAllocColor (the_gui->dpy, the_gui->cols, &closest))
+    return rgb_color (closest.red/256, closest.green/256, closest.blue/256);
+  return rgb_color (exact.red/256, exact.green/256, exact.blue/256);
+}
+
 void
 x_drawable_rep::xpm_initialize (url file_name) {
   tree t= xpm_load (file_name);

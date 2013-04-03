@@ -12,6 +12,7 @@
 #include "picture.hpp"
 #include "analyze.hpp"
 #include "gui.hpp"
+#include "image_files.hpp"
 
 /******************************************************************************
 * Default implementations of some virtual routines
@@ -44,6 +45,79 @@ picture
 error_picture (int w, int h) {
   picture pic= raster_picture (w, h);
   draw_on (pic, 0x20ff0000, compose_source);
+}
+
+/******************************************************************************
+* xpm pictures
+******************************************************************************/
+
+color xpm_to_color (string s);
+
+picture
+load_xpm (url file_name) {
+  tree t= xpm_load (file_name);
+
+  // get main info
+  int ok, i=0, j, k, w, h, c, b, x, y;
+  string s= as_string (t[0]);
+  skip_spaces (s, i);
+  ok= read_int (s, i, w);
+  skip_spaces (s, i);
+  ok= read_int (s, i, h) && ok;
+  skip_spaces (s, i);
+  ok= read_int (s, i, c) && ok;
+  skip_spaces (s, i);
+  ok= read_int (s, i, b) && ok;
+  if ((!ok) || (N(t)<(c+1)) || (c<=0)) {
+    cerr << "file_name= " << file_name << "\n";
+    FAILED ("invalid xpm");
+  }
+
+  // setup colors
+  string first_name;
+  hashmap<string,color> pmcs(0);
+  for (k=0; k<c; k++) {
+    string s   = as_string (t[k+1]);
+    string name= "";
+    string def = "none";
+    if (N(s)<b) i=N(s);
+    else { name= s(0,b); i=b; }
+    if (k==0) first_name= name;
+
+    skip_spaces (s, i);
+    if ((i<N(s)) && (s[i]=='s')) {
+      i++;
+      skip_spaces (s, i);
+      while ((i<N(s)) && (s[i]!=' ') && (s[i]!='\t')) i++;
+      skip_spaces (s, i);
+    }
+    if ((i<N(s)) && (s[i]=='c')) {
+      i++;
+      skip_spaces (s, i);
+      j=i;
+      while ((i<N(s)) && (s[i]!=' ') && (s[i]!='\t')) i++;
+      def= locase_all (s (j, i));
+    }
+    pmcs(name)= xpm_to_color (def);
+  }
+
+  // setup pixmap
+  picture pict= raster_picture (w, h);
+  draw_on (pict, 0x00646464, compose_source);
+  for (y=0; y<h; y++) {
+    if (N(t) < (y+c+1)) s= "";
+    else s= as_string (t[y+c+1]);
+    for (x=0; x<w; x++) {
+      string name;
+      if (N(s)<(b*(x+1))) name= first_name;
+      else name= s (b*x, b*(x+1));
+      color pmc= pmcs[name];
+      if (!pmcs->contains (name)) pmc= pmcs[first_name];
+      pict->set_pixel (x, h-1-y, pmc);
+    }
+  }
+
+  return pict;
 }
 
 /******************************************************************************
