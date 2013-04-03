@@ -345,6 +345,8 @@ collect_metadata (tree t, tree latex_class) {
     r= collect_metadata_springer (t, false);
   else if (s == "llncs")
     r= collect_metadata_springer (t, true);
+  else if (s == "IEEEconf")
+    r= collect_metadata_ieee_conf (t);
   else
     r << collect_metadata_latex (t);
   r=  unconcat_tmseps (r);
@@ -365,5 +367,7 @@ get_latex_style (tree t) {
     return "svjour";
   if (N(t) == 3 && occurs ("ifacconf", s))
     return "ifac";
+  if (N(t) == 3 && occurs ("IEEEconf", s))
+    return "ieeeconf";
   return s;
 }
