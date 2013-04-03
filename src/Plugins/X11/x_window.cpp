@@ -12,6 +12,7 @@
 #include "X11/x_window.hpp"
 #include "message.hpp"
 #include "boot.hpp"
+#include "x_picture.hpp"
 
 extern int nr_windows;
 
@@ -38,9 +39,9 @@ x_window_rep::set_hints (int min_w, int min_h, int max_w, int max_h) {
 	  "out of memory (X server)");
 
   // time_t start_1= texmacs_time ();
-  if (!gui->xpm_pixmap->contains ("TeXmacs.xpm"))
+  if (!gui->xpm_pics->contains ("TeXmacs.xpm"))
     ren->xpm_initialize ("TeXmacs.xpm");
-  Pixmap pm= (Pixmap) gui->xpm_pixmap ["TeXmacs.xpm"];
+  Pixmap pm= retrieve_pixmap (gui->xpm_pics ["TeXmacs.xpm"]);
   // cout << "Getting pixmap required " << (texmacs_time ()-start_1) << " ms\n";
 
   // time_t start_2= texmacs_time ();

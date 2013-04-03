@@ -38,6 +38,18 @@ x_picture_rep::~x_picture_rep () {
   if (bm != 0) XFreePixmap (the_gui->dpy, bm);
   if (data != NULL) tm_delete_array (data); }
 
+void
+x_picture_rep::force_mask () {
+  int byte_width= ((w-1)>>3)+1;
+  if (data == NULL) {
+    data= tm_new_array<char> (byte_width * h);
+    for (int i=0; i<byte_width * h; i++) data[i]= 0x00;
+  }
+  if (bm == 0)
+    bm= XCreateBitmapFromData (the_gui->dpy, the_gui->root, data, w, h);
+  ok= true;
+}
+
 picture_kind x_picture_rep::get_type () { return picture_native; }
 void* x_picture_rep::get_handle () { return (void*) this; }
 
@@ -105,6 +117,19 @@ as_x_picture (picture pic) {
   picture ret= x_picture (pm, w, h, ox, oy);
   ret->copy_from (pic);
   return ret;
+}
+
+Pixmap
+retrieve_bitmap (picture pic) {
+  x_picture_rep* rep= (x_picture_rep*) pic->get_handle ();
+  rep->force_mask ();
+  return rep->bm;
+}
+
+Pixmap
+retrieve_pixmap (picture pic) {
+  x_picture_rep* rep= (x_picture_rep*) pic->get_handle ();
+  return rep->pm;
 }
 
 picture

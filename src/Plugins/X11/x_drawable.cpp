@@ -14,6 +14,7 @@
 #include "image_files.hpp"
 #include "sys_utils.hpp"
 #include "analyze.hpp"
+#include "x_picture.hpp"
 
 extern bool reverse_colors;
 
@@ -244,117 +245,19 @@ xpm_to_color (string s) {
 
 void
 x_drawable_rep::xpm_initialize (url file_name) {
-  tree t= xpm_load (file_name);
-
-  // get main info
-  int ok, i=0, j, k, w, h, c, b, x, y;
-  string s= as_string (t[0]);
-  skip_spaces (s, i);
-  ok= read_int (s, i, w);
-  skip_spaces (s, i);
-  ok= read_int (s, i, h) && ok;
-  skip_spaces (s, i);
-  ok= read_int (s, i, c) && ok;
-  skip_spaces (s, i);
-  ok= read_int (s, i, b) && ok;
-  if ((!ok) || (N(t)<(c+1)) || (c<=0)) {
-    cerr << "file_name= " << file_name << "\n";
-    FAILED ("invalid xpm");
-  }
-
-  // setup colors
-  string first_name;
-  hashmap<string,int> pmcs(0);
-  hashmap<string,int> bmcs(1);
-  for (k=0; k<c; k++) {
-    string s   = as_string (t[k+1]);
-    string name= "";
-    string def = "none";
-    if (N(s)<b) i=N(s);
-    else { name= s(0,b); i=b; }
-    if (k==0) first_name= name;
-
-    skip_spaces (s, i);
-    if ((i<N(s)) && (s[i]=='s')) {
-      i++;
-      skip_spaces (s, i);
-      while ((i<N(s)) && (s[i]!=' ') && (s[i]!='\t')) i++;
-      skip_spaces (s, i);
-    }
-    if ((i<N(s)) && (s[i]=='c')) {
-      i++;
-      skip_spaces (s, i);
-      j=i;
-      while ((i<N(s)) && (s[i]!=' ') && (s[i]!='\t')) i++;
-      def= locase_all (s (j, i));
-    }
-    if (def == "none") {
-      bmcs(name)= 0;
-      def= "lightgrey";
-    }
-    else bmcs(name)= 1;
- /* FIXME: to avoid code duplication, replace this code by
-      a call to xpm_colors(), plus the appropriate code to
-      fill bmcs() & set first_name. */
-
-    c_string _def (def);
-    XColor exact, closest;
-    XLookupColor (gui->dpy, gui->cols, _def, &exact, &closest);
-    if (!reverse_colors && XAllocColor (gui->dpy, gui->cols, &exact))
-      pmcs(name)= exact.pixel;
-    else if (!reverse_colors && XAllocColor (gui->dpy, gui->cols, &closest))
-      pmcs(name)= closest.pixel;
-    else {
-      color myc= rgb_color (exact.red/256, exact.green/256, exact.blue/256);
-      pmcs(name)= CONVERT (myc);
-    }
-  }
-
-  // setup bitmap and pixmap
-  Pixmap pm= XCreatePixmap (gui->dpy, gui->root, w, h, gui->depth);
-  int byte_width= ((w-1)>>3)+1;
-  char* data= tm_new_array<char> (byte_width * h);
-  for (i=0; i<(byte_width * h); i++) data[i]=0;
-  for (y=0; y<h; y++) {
-    if (N(t)< (y+c+1)) s= "";
-    else s= as_string (t[y+c+1]);
-    for (x=0; x<w; x++) {
-      string name;
-      int bit;
-      if (N(s)<(b*(x+1))) name= first_name;
-      else name= s (b*x, b*(x+1));
-      int bmc= bmcs[name];
-      int pmc= pmcs[name];
-      if (!bmcs->contains (name)) bmc= bmcs[first_name];
-      if (!pmcs->contains (name)) pmc= pmcs[first_name];
-      XSetForeground (gui->dpy, gui->pixmap_gc, pmc);
-      XDrawPoint (gui->dpy, (Drawable) pm, gui->pixmap_gc, x, y);
-      bit= y*byte_width + (x>>3);
-      if (bmc!=0) data[bit]= data[bit] | (1<<(x&7));      
-    }
-  }
-  Pixmap bm= XCreateBitmapFromData (gui->dpy, gui->root, data, w, h);
-  gui->xpm_pixmap (as_string (file_name))= (int) pm;
-  gui->xpm_bitmap (as_string (file_name))= (int) bm;
-  tm_delete_array (data);
+  picture pict= as_x_picture (load_xpm (file_name));
+  gui->xpm_pics (as_string (file_name))= pict;
 }
 
 extern bool char_clip;
 
 void
 x_drawable_rep::xpm (url file_name, SI x, SI y) {
-  y -= pixel; // counter balance shift in draw_clipped
-  if (!gui->xpm_pixmap->contains (as_string (file_name)))
-    xpm_initialize (file_name);
+  string name= as_string (file_name);
+  if (!gui->xpm_pics->contains (name)) xpm_initialize (file_name);
   ASSERT (pixel == PIXEL, "pixel and PIXEL should coincide");
-  int w, h;
-  xpm_size (file_name, w, h);
-  Pixmap bm= (Pixmap) gui->xpm_bitmap [as_string (file_name)];
-  Pixmap pm= (Pixmap) gui->xpm_pixmap [as_string (file_name)];
-  int old_clip= char_clip;
-  char_clip= true;
-  draw_clipped (pm, bm, w, h, x, y);
-  char_clip=old_clip;
+  picture p= gui->xpm_pics[name];
+  draw_picture (p, x, y - (p->get_height () - 1) * PIXEL);
 }
 
 /******************************************************************************

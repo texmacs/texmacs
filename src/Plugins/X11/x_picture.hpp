@@ -31,6 +31,7 @@ protected:
 public:
   x_picture_rep (Pixmap pm2, int w2, int h2, int ox2, int oy2);
   ~x_picture_rep ();
+  void force_mask ();
   picture_kind get_type ();
   void* get_handle ();
   int get_width ();
@@ -41,6 +42,9 @@ public:
 };
 
 picture x_picture (Pixmap pm, int w, int h, int ox, int oy);
+picture as_x_picture (picture pic);
+Pixmap retrieve_pixmap (picture pic);
+Pixmap retrieve_bitmap (picture pic);
 
 class x_image_renderer_rep: public x_drawable_rep {
 public:

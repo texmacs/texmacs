@@ -17,6 +17,7 @@
 #include "image_files.hpp"
 #include <X11/cursorfont.h>
 #include "message.hpp"
+#include "x_picture.hpp"
 
 extern hashmap<Window,pointer> Window_to_window;
 
@@ -458,8 +459,8 @@ x_gui_rep::set_mouse_pointer (widget w, string name, string mask_name) {
   dra->xpm_initialize (name);
   if (mask_name!=name) dra->xpm_initialize (mask_name);
   tm_delete (dra);
-  Pixmap curs= (Pixmap) xpm_bitmap [name];
-  Pixmap mask= (Pixmap) xpm_bitmap [mask_name];
+  Pixmap curs= retrieve_bitmap (xpm_pics [name]);
+  Pixmap mask= retrieve_bitmap (xpm_pics [mask_name]);
 
   if (!xpm_cache->contains (name))
     xpm_cache (name)= xpm_load (name);
@@ -488,7 +489,6 @@ x_gui_rep::set_mouse_pointer (widget w, string name, string mask_name) {
   if (XAllocColor (dpy, cols, &exact2)) bg= &exact2;
   else if (XAllocColor (dpy, cols, &closest2)) bg= &closest2;
   else FAILED ("unable to allocate bgcolor");
-
 
   SI x= hotspot[0], y= hotspot[1];
   Cursor cursor=XCreatePixmapCursor (dpy, curs, mask, fg, bg, x, y);

@@ -120,8 +120,7 @@ public:
   hashmap<x_character,pointer> color_scale;       // for anti-aliasing
   hashmap<x_character,pointer> character_bitmap;  // bitmaps of all characters
   hashmap<x_character,pointer> character_pixmap;  // pixmaps of all characters
-  hashmap<string,int>          xpm_bitmap;        // bitmaps of all xpms
-  hashmap<string,int>          xpm_pixmap;        // pixmaps of all xpms
+  hashmap<string,picture>      xpm_pics;          // pixmaps of all xpms
   hashmap<int,string>          lower_key;
   hashmap<int,string>          upper_key;
 

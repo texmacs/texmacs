@@ -63,6 +63,7 @@ public:
 
 ABSTRACT_NULL_CODE(picture);
 
+picture load_xpm (url file_name);
 string picture_as_eps (picture pic, int dpi);
 
 /******************************************************************************

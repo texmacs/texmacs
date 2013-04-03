@@ -832,7 +832,7 @@ x_gui_rep::get_max_size (SI& width, SI& height) {
 x_gui_rep::x_gui_rep (int& argc2, char** argv2):
   color_scale ((void*) NULL),
   character_bitmap (NULL), character_pixmap ((pointer) 0),
-  xpm_bitmap (0), xpm_pixmap (0),
+  xpm_pics (picture ()),
   lower_key (""), upper_key (""),
   selection_t ("none"), selection_s (""), selection_w ((Window) 0)
 {
