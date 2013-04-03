@@ -13,6 +13,10 @@
 #include "analyze.hpp"
 #include "gui.hpp"
 
+/******************************************************************************
+* Default implementations of some virtual routines
+******************************************************************************/
+
 void
 picture_rep::translate_origin (int dx, int dy) {
   set_origin (get_origin_x () + dx, get_origin_y () + dy);
@@ -35,6 +39,10 @@ picture_rep::internal_copy_to (int x, int y, picture dest,
     for (int xx= x1; xx < x2; xx++)
       dest->internal_set_pixel (x + xx, y + yy, internal_get_pixel (xx, yy));
 }
+
+/******************************************************************************
+* Generation of encapsulated postscript
+******************************************************************************/
 
 string
 picture_as_eps (picture pic, int dpi) {
@@ -60,7 +68,7 @@ picture_as_eps (picture pic, int dpi) {
   bool alpha= false;
   for (j=0; j < h_pt; j++)
     for (i=0; i < w_pt; i++) {
-      color col= pic->get_pixel (i - ox, j - oy);
+      color col= pic->get_pixel (i - ox, h_pt - 1 - j - oy);
       int rr, gg, bb, aa;
       get_rgb_color (col, rr, gg, bb, aa);
       if (aa != 255) alpha= true;
@@ -70,9 +78,12 @@ picture_as_eps (picture pic, int dpi) {
   for (j= 0; j < h_pt; j++) {
     for (i=0; i < w_pt; i++) {
       l++;
-      color col= pic->get_pixel (i - ox, j - oy);
+      color col= pic->get_pixel (i - ox, h_pt - 1 - j - oy);
       int rr, gg, bb, aa;
       get_rgb_color (col, rr, gg, bb, aa);
+      rr= (rr * aa + 255 * (255 - aa)) / 255;
+      gg= (gg * aa + 255 * (255 - aa)) / 255;
+      bb= (bb * aa + 255 * (255 - aa)) / 255;
       r << as_hexadecimal (rr, 2);
       r << as_hexadecimal (gg, 2);
       r << as_hexadecimal (bb, 2);
@@ -84,10 +95,10 @@ picture_as_eps (picture pic, int dpi) {
     if (alpha) {
       v = 0;
       for (i=0; i < w_pt; i++) {
-        color col= pic->get_pixel (i - ox, j - oy);
+        color col= pic->get_pixel (i - ox, h_pt - 1 - j - oy);
         int rr, gg, bb, aa;
         get_rgb_color (col, rr, gg, bb, aa);
-        v += (aa == 0) << (3 - i % 4);
+        v += (aa <= 32) << (3 - i % 4);
         if (i % 4 == 3 || i + 1 == w_pt) {
           mask << d[v];
           v= 0;

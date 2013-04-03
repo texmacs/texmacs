@@ -721,16 +721,10 @@ incorporate_postscript (string s) {
 
 void
 printer_rep::image (
-  url u, SI w, SI h, SI x, SI y,
-  double cx1, double cy1, double cx2, double cy2, int alpha)
+  string name, string eps, SI x1, SI y1, SI x2, SI y2,
+  SI w, SI h, SI x, SI y, int alpha)
 {
   (void) alpha; // FIXME
-  int bx1, by1, bx2, by2;
-  ps_bounding_box (u, bx1, by1, bx2, by2);
-  int x1= bx1 + (int) (cx1 * (bx2 - bx1) + 0.5);
-  int y1= by1 + (int) (cy1 * (by2 - by1) + 0.5);
-  int x2= bx1 + (int) (cx2 * (bx2 - bx1) + 0.5);
-  int y2= by1 + (int) (cy2 * (by2 - by1) + 0.5);
 
   double sc_x= (72.0/dpi) * ((double) (w/PIXEL)) / ((double) (x2-x1));
   double sc_y= (72.0/dpi) * ((double) (h/PIXEL)) / ((double) (y2-y1));
@@ -773,10 +767,8 @@ printer_rep::image (
   /* @beginspecial 0 @llx 0 @lly 613.291260 @urx 613.291260 @ury 6110 @rwi
      @clip @setspecial */
   
-  string ps_image= ps_load (u);
-  string imtext= is_ramdisc (u)? "inline image": as_string (u);
-  body << "%%BeginDocument: " << imtext  << "\n";
-  body << ps_image; // incorporate_postscript (ps_image);
+  body << "%%BeginDocument: " << name  << "\n";
+  body << eps; // incorporate_postscript (eps);
   body << "%%EndDocument";
   cr ();
 
@@ -804,6 +796,24 @@ printer_rep::image (
      248 3155 a 660 3073 a ... */
 
   (void) w; (void) h;
+}
+
+void
+printer_rep::image (
+  url u, SI w, SI h, SI x, SI y,
+  double cx1, double cy1, double cx2, double cy2, int alpha)
+{
+  string ps_image= ps_load (u);
+  string imtext= is_ramdisc (u)? "inline image": as_string (u);
+
+  int bx1, by1, bx2, by2;
+  ps_bounding_box (u, bx1, by1, bx2, by2);
+  int x1= bx1 + (int) (cx1 * (bx2 - bx1) + 0.5);
+  int y1= by1 + (int) (cy1 * (by2 - by1) + 0.5);
+  int x2= bx1 + (int) (cx2 * (bx2 - bx1) + 0.5);
+  int y2= by1 + (int) (cy2 * (by2 - by1) + 0.5);
+
+  image (imtext, ps_image, x1, y1, x2, y2, w, h, x, y, alpha);
 }
 
 void
@@ -841,37 +851,19 @@ void
 printer_rep::draw_picture (picture p, SI x, SI y) {
   int w= p->get_width (), h= p->get_height ();
   int ox= p->get_origin_x (), oy= p->get_origin_y ();
-  string ws= as_string (w), hs= as_string (h);
-  cr ();
-  print (x - ox*5*PIXEL, y + (h-1-oy)*5*PIXEL);
-  print ("translate");
-  print (as_string (5*w));
-  print (as_string (5*h));
-  print ("scale");
-  print (ws);
-  print (hs);
-  print ("8");
-  print ("[" * ws * " 0 0 " * as_string (-h) * " 0 " * hs * "]");
-  cr ();
-  print ("{<");
-  //cr ();
-  for (int j=0; j<h; j++)
-    for (int i=0; i<w; i++) {
-      color c= p->get_pixel (i - ox, j - oy);
-      int r, g, b, a;
-      get_rgb_color (c, r, g, b, a);
-      r= (r * a + 255 * (255 - a)) / 255;
-      g= (g * a + 255 * (255 - a)) / 255;
-      b= (b * a + 255 * (255 - a)) / 255;
-      if ((j*w+i) % 12 == 0) body << "\n";
-      body << as_hexadecimal (r);
-      body << as_hexadecimal (g);
-      body << as_hexadecimal (b);
-    }
-  cr ();
-  print (">}");
-  cr ();
-  print ("false 3 colorimage");
+  int pixel= 5*PIXEL;
+
+  string name= "picture";
+  string eps= picture_as_eps (p, 600);
+
+  int x1= -ox;
+  int y1= -oy;
+  int x2= w - ox;
+  int y2= h - oy;
+  x -= 2.06 * ox * pixel; // FIXME: where does the magic 2.06 come from?
+  y -= 2.06 * oy * pixel;
+
+  image (name, eps, x1, y1, x2, y2, w * pixel, h * pixel, x, y, 255);
 }
 
 void

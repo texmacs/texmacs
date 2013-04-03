@@ -63,6 +63,8 @@ public:
 
 ABSTRACT_NULL_CODE(picture);
 
+string picture_as_eps (picture pic, int dpi);
+
 /******************************************************************************
 * Operations on pictures
 ******************************************************************************/
