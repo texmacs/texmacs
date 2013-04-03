@@ -345,10 +345,8 @@ collect_metadata (tree t, tree latex_class) {
     r= collect_metadata_springer (t, false);
   else if (s == "llncs")
     r= collect_metadata_springer (t, true);
-  else if (s == "IEEEconf")
-    r= collect_metadata_ieee_conf (t);
-  else if (s == "IEEEtran")
-    r= collect_metadata_ieee_tran (t);
+  else if (s == "IEEEconf" || s == "IEEEtran")
+    r= collect_metadata_ieee (t);
   else
     r << collect_metadata_latex (t);
   r=  unconcat_tmseps (r);

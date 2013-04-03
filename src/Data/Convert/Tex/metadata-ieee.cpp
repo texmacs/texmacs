@@ -53,7 +53,7 @@ merge_author_datas (array<tree> authors, array<tree> affs) {
 }
 
 static array<tree>
-get_ieee_tran_author_datas (tree t, string s) {
+get_ieee_author_datas (tree t, string s) {
   bool root= false;
   if (s == "") {
     root= true;
@@ -84,12 +84,12 @@ get_ieee_tran_author_datas (tree t, string s) {
       author_data << tree (APPLY, "\\author-misc", u[1]);
     }
     else if (is_tuple (u, "\\IEEEauthorblockN", 1)) {
-      tmp_n= get_ieee_tran_author_datas (u[1], "\\author-name");
+      tmp_n= get_ieee_author_datas (u[1], "\\author-name");
       if (N(tmp_n) == 1) author_data= tmp_n[0];
       author_name= tree (CONCAT);
     }
     else if (is_tuple (u, "\\IEEEauthorblockA", 1)) {
-      tmp_a= get_ieee_tran_author_datas (u[1], "\\author-affiliation");
+      tmp_a= get_ieee_author_datas (u[1], "\\author-affiliation");
       if (N(tmp_n) == 1) {
        for (int j=0; j<N(tmp_a); j++)
          for (int k=0; k<N(tmp_a[j]); k++)
@@ -116,6 +116,15 @@ get_ieee_tran_author_datas (tree t, string s) {
     else if (is_tuple (u, "\\tmieeeemail", 1)) {
       author_data << tree (APPLY, "\\author-email", u[1]);
     }
+    else if (is_tuple (u, "\\begin-affiliation")) {
+      tree tmp(CONCAT);
+      i++;
+      while (i<n && !is_tuple (t[i], "\\end-affiliation")) tmp << t[i++];
+      author_data << tree (APPLY, "\\author-affiliation", tmp);
+    }
+    else if (is_tuple (u, "\\email", 1)) {
+      author_data << tree (APPLY, "\\author-email", u[1]);
+    }
     else
       author_name << u;
   }
@@ -124,83 +133,18 @@ get_ieee_tran_author_datas (tree t, string s) {
 }
 
 static array<tree>
-get_ieee_tran_author_datas (tree t) {
-  return get_ieee_tran_author_datas (t, "");
+get_ieee_author_datas (tree t) {
+  return get_ieee_author_datas (t, "");
 }
 
 tree
-collect_metadata_ieee_tran (tree t) {
+collect_metadata_ieee (tree t) {
   int i;
   tree u, r (CONCAT);
   tree doc_data (APPLY, "\\doc-data");
   tree abstract_data (APPLY, "\\abstract-data");
   array<tree> doc_notes;
-  array<tree> tmp= collect_metadata_latex (t, &get_ieee_tran_author_datas);
-  for (i=0; i<N(tmp); i++) {
-    if (is_apply (tmp[i], "\\doc-data")) doc_data= tmp[i];
-    if (is_apply (tmp[i], "\\abstract-data")) abstract_data= tmp[i];
-  }
-  if (N(doc_notes) > 0) doc_data << doc_notes;
-  if (N(doc_data) > 1) r << doc_data << "\n";
-  if (N(abstract_data) > 1) r << abstract_data << "\n";
-  return r;
-}
-
-array<tree>
-get_ieee_conf_author_datas (tree t) {
-  int i, n=N(t);
-  array<tree> r;
-  tree u;
-  tree author_data (APPLY, "\\author-data");
-  tree author_name (CONCAT);
-  for (i=0; i<=n; i++) {
-    if (i<n) u= t[i];
-    else u= concat();
-    if (i==n || is_tuple (u, "\\and")) {
-      if (N(author_name) > 1) {
-        author_data << tree (APPLY, "\\author-name", author_name);
-        author_name= tree (CONCAT);
-      }
-      if (N(author_data) > 1) {
-        r << author_data;
-        author_data= tree (APPLY, "\\author-data");
-      }
-    }
-    else if (is_tuple (u, "\\thanks", 1)) {
-      author_data << tree (APPLY, "\\author-misc", u[1]);
-    }
-    else if (is_tuple (u, "\\begin-affiliation")) {
-      tree tmp(CONCAT);
-      i++;
-      while (i<n && !is_tuple (t[i], "\\end-affiliation")) tmp << t[i++];
-      author_data << tree (APPLY, "\\author-affiliation", tmp);
-    }
-    else if (is_tuple (u, "\\tmmisc", 1)) {
-      author_data << tree (APPLY, "\\author-misc", u[1]);
-    }
-    else if (is_tuple (u, "\\tmnote", 1)) {
-      author_data << tree (APPLY, "\\author-note", u[1]);
-    }
-    else if (is_tuple (u, "\\email", 1)) {
-      author_data << tree (APPLY, "\\author-email", u[1]);
-    }
-    else if (is_tuple (u, "\\tmhomepage", 1)) {
-      author_data << tree (APPLY, "\\author-homepage", u[1]);
-    }
-    else
-      author_name << u;
-  }
-  return r;
-}
-
-tree
-collect_metadata_ieee_conf (tree t) {
-  int i;
-  tree u, r (CONCAT);
-  tree doc_data (APPLY, "\\doc-data");
-  tree abstract_data (APPLY, "\\abstract-data");
-  array<tree> doc_notes;
-  array<tree> tmp= collect_metadata_latex (t, &get_ieee_conf_author_datas);
+  array<tree> tmp= collect_metadata_latex (t, &get_ieee_author_datas);
   for (i=0; i<N(tmp); i++) {
     if (is_apply (tmp[i], "\\doc-data")) doc_data= tmp[i];
     if (is_apply (tmp[i], "\\abstract-data")) abstract_data= tmp[i];
