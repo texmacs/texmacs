@@ -349,8 +349,7 @@
                        (!concat ,@(list-intersperse (map cadr affs*) ","))))))
          (result `(,@names ,@notes*))
          (result (if (null? result) '()
-                   (if (null? affs*) `((author (!concat ,@result)))
-                     `((author ,@affs* (!concat ,@result))))))
+                   `((author ,@affs* (!concat ,@result)))))
          (result `(,@result ,@affs ,@emails ,@urls ,@miscs ,@notes)))
     (if (null? result) '() `(!paragraph ,@result))))
 
