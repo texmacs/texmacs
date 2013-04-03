@@ -80,6 +80,10 @@ translate_author_metadata_elsevier (tree u) {
     return tree (APPLY, "\\author-note", cenr (u[2]));
   if (is_tuple (u, "\\thanksamisc*", 2) || is_tuple (u, "\\fmtext*", 2))
     return tree (APPLY, "\\author-misc", cenr (u[2]));
+  if (is_tuple (u, "\\thanksemail*", 2))
+    return tree (APPLY, "\\author-email", cenr (u[2]));
+  if (is_tuple (u, "\\thankshomepage*", 2))
+    return tree (APPLY, "\\author-homepage", cenr (u[2]));
   return concat ();
 }
 

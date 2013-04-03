@@ -328,7 +328,7 @@ collect_metadata (tree t, tree latex_class) {
   if (s == "acm_proc_article-sp" ||
       s == "sig-alternate" || s == "sig-alt-full")
     r= collect_metadata_acm (t);
-  else if (s == "elsarticle" || s == "elsart")
+  else if (s == "elsarticle" || s == "elsart" || s == "ifacconf")
     r= collect_metadata_elsevier (t);
   else if (s == "amsart" || s == "amsbook" || s == "amsproc")
     r= collect_metadata_ams (t);
@@ -358,5 +358,7 @@ get_latex_style (tree t) {
   }
   if (N(t) == 3 && occurs ("svjour", s))
     return "svjour";
+  if (N(t) == 3 && occurs ("ifacconf", s))
+    return "ifac";
   return s;
 }
