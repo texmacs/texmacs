@@ -371,7 +371,6 @@
                        `(((!begin "keyword")
                           (!document ,@keywords ,@msc))) '()))
          (abstract (map tmtex (tmtex-select-args-by-func 'abstract l))))
-    (display* msc "\n\n")
     `(!document ,@abstract ,@keywords)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
