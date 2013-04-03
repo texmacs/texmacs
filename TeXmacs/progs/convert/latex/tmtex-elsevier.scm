@@ -285,37 +285,20 @@
     (if (null? result) "" `(!document ,@result))))
 
 (tm-define (tmtex-make-author names affs emails urls miscs notes
-                              affs-l emails-l urls-l miscs-l notes-l)
+                              affs* emails* urls* miscs* notes*)
   (:mode elsevier-style?)
   (let* ((names  (tmtex-concat-Sep (map cadr names)))
-         (notes  `(,@miscs ,@notes))
-         (notes  (if (null? notes) '()
-                   `(,(springer-author-note-ref "" (map cadr notes)))))
-         (result `(,@names ,@notes))
-         (result (if (null? result) '() `((author (!concat ,@result)))))
-         (result `(,@result ,@affs ,@emails ,@urls ,@miscs-l ,@notes-l)))
-    (if (null? result) '() `(!paragraph ,@result ""))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Elsevier affiliation clustered author presentation
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (tmtex-make-author names affs emails urls miscs notes
-                              affs-l emails-l urls-l miscs-l notes-l)
-  (:mode elsevier-style?)
-  (:require clustered?)
-  (let* ((names  (tmtex-concat-Sep (map cadr names)))
-         (notes  `(,@miscs ,@notes))
-         (notes  (if (null? notes) '()
-                   `(,(springer-author-note-ref "" (map cadr notes)))))
-         (affs   (if (null? affs) '()
+         (notes* `(,@miscs* ,@notes*))
+         (notes* (if (null? notes*) '()
+                   `(,(springer-author-note-ref "" (map cadr notes*)))))
+         (affs*  (if (null? affs*) '()
                    `((!option
-                       (!concat ,@(list-intersperse (map cadr affs) ","))))))
-         (result `(,@names ,@notes))
-         (result (if (null? result) '() `((author ,@affs (!concat ,@result)))))
-         (labels `(,@affs-l ,@miscs-l ,@notes-l))
-         (labels (if (null? labels) '() `((!document ,@labels))))
-         (result `(,@result ,@emails ,@urls ,@labels)))
+                       (!concat ,@(list-intersperse (map cadr affs*) ","))))))
+         (result `(,@names ,@notes*))
+         (result (if (null? result) '()
+                   (if (null? affs*) `((author (!concat ,@result)))
+                     `((author ,@affs* (!concat ,@result))))))
+         (result `(,@result ,@affs ,@emails ,@urls ,@miscs ,@notes)))
     (if (null? result) '() `(!paragraph ,@result))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

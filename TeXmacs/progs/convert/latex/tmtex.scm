@@ -1338,7 +1338,7 @@
 (tm-define (tmtex-prepare-author-data l) l)
 
 (tm-define (tmtex-make-author names affiliations emails urls miscs notes
-                              affs-l emails-l urls-l miscs-l notes-l)
+                              affs* emails* urls* miscs* notes*)
   (let* ((names  (tmtex-concat-Sep (map cadr names)))
          (result `(,@names ,@affiliations ,@emails ,@urls ,@notes ,@miscs)))
     (if (null? result) '()
@@ -1353,18 +1353,23 @@
            (affs     (tmtex-get-transform l 'author-affiliation))
            (miscs    (tmtex-get-transform l 'author-misc))
            (notes    (tmtex-get-transform l 'author-note))
-           (emails-l (tmtex-get-transform l 'author-email-label))
-           (urls-l   (tmtex-get-transform l 'author-homepage-label))
-           (affs-l   (tmtex-get-transform l 'author-affiliation-label))
-           (miscs-l  (tmtex-get-transform l 'author-misc-label))
-           (notes-l  (tmtex-get-transform l 'author-note-label))
-           (affs (append affs (tmtex-get-transform l 'author-affiliation-ref)))
-           (urls  (append urls  (tmtex-get-transform l 'author-homepage-ref)))
-           (miscs (append miscs (tmtex-get-transform l 'author-misc-ref)))
-           (notes (append notes (tmtex-get-transform l 'author-note-ref)))
-           (emails (append emails (tmtex-get-transform l 'author-email-ref))))
+           (emails*  (tmtex-get-transform l 'author-email-ref))
+           (urls*    (tmtex-get-transform l 'author-homepage-ref))
+           (affs*    (tmtex-get-transform l 'author-affiliation-ref))
+           (miscs*   (tmtex-get-transform l 'author-misc-ref))
+           (notes*   (tmtex-get-transform l 'author-note-ref))
+           (affs     (append affs   (tmtex-get-transform
+                                      l 'author-affiliation-label)))
+           (urls     (append urls   (tmtex-get-transform
+                                      l 'author-homepage-label)))
+           (miscs    (append miscs  (tmtex-get-transform
+                                      l 'author-misc-label)))
+           (notes    (append notes  (tmtex-get-transform
+                                      l 'author-note-label)))
+           (emails   (append emails (tmtex-get-transform
+                                      l 'author-email-label))))
       (tmtex-make-author names affs emails urls miscs notes
-                         affs-l emails-l urls-l miscs-l notes-l))))
+                         affs* emails* urls* miscs* notes*))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  Document metadata presentation
