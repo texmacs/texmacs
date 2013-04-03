@@ -84,23 +84,6 @@ x_drawable_rep::get_extents (int& w2, int& h2) {
 }
 
 /******************************************************************************
-* Conversion between window and postscript coordinates
-******************************************************************************/
-
-void
-x_drawable_rep::encode (SI& x, SI& y) {
-  x= (x*pixel) - ox;
-  y= ((-y)*pixel) - oy;
-}
-
-void
-x_drawable_rep::decode (SI& x, SI& y) {
-  x += ox; y += oy;
-  if (x>=0) x= x/pixel; else x= (x-pixel+1)/pixel;
-  if (y>=0) y= -(y/pixel); else y= -((y-pixel+1)/pixel);
-}
-
-/******************************************************************************
 * Clipping
 ******************************************************************************/
 
@@ -369,7 +352,7 @@ x_drawable_rep::xpm (url file_name, SI x, SI y) {
 }
 
 /******************************************************************************
-* Invocation of ghostscript
+* Loading pictures
 ******************************************************************************/
 
 static time_t cache_image_last_gc = 0;
@@ -380,6 +363,54 @@ static hashmap<tree,int> cache_image_w (0);
 static hashmap<tree,int> cache_image_h (0);
 static hashmap<tree,int> cache_image_time (0);
 static hashmap<tree,int> cache_image_nr (0);
+
+void
+image_auto_gc () {
+  time_t time= texmacs_time ();
+  if (time-cache_image_last_gc <= 300000) return;
+  cache_image_last_gc= time;
+  if (DEBUG_AUTO)
+    cout << "TeXmacs] Launching garbage collection for unused pictures\n";
+
+  iterator<tree> it= iterate (cache_image);
+  while (it->busy()) {
+    tree lookup= it->next();
+    int diff= time- cache_image_time [lookup];
+    int fact= cache_image_nr [lookup];
+    fact= fact * fact * fact;
+    if (cache_image_w [lookup] * cache_image_h [lookup] < 400) fact= fact * 5;
+    if (cache_image_w [lookup] * cache_image_h [lookup] < 6400) fact= fact * 5;
+    if (diff/fact > 60000) {
+      Pixmap pm= (Pixmap) cache_image [lookup];
+      XFreePixmap (the_gui->dpy, pm);
+      cache_image->reset (lookup);
+      cache_image_w->reset (lookup);
+      cache_image_h->reset (lookup);
+      cache_image_time->reset (lookup);
+      ps_bbox->reset (lookup[0]);
+    }
+  }
+}
+
+void
+image_gc (string name) {
+  (void) name;
+  cache_image_last_gc= texmacs_time ();
+  iterator<tree> it= iterate (cache_image);
+  while (it->busy()) {
+    tree lookup= it->next();
+    if (!is_ramdisc (as_url (lookup[0]))) {
+      Pixmap pm= (Pixmap) cache_image [lookup];
+      XFreePixmap (the_gui->dpy, pm);
+      cache_image->reset (lookup);
+      cache_image_w->reset (lookup);
+      cache_image_h->reset (lookup);
+      cache_image_time->reset (lookup);
+      cache_image_nr->reset (lookup);
+      ps_bbox->reset (lookup[0]);
+    }
+  }
+}
 
 void
 x_drawable_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
@@ -439,64 +470,11 @@ x_drawable_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
     cache_image_nr   (lookup)= cache_image_nr [lookup] + 1;
     cache_image_tot_size += w*h;
     if (cache_image_tot_size > cache_image_max_size) {
-      gui->image_auto_gc ();
+      image_auto_gc ();
       if (cache_image_tot_size > cache_image_max_size)
 	cache_image_max_size= cache_image_tot_size << 1;
     }
   }
 
   XCopyArea (dpy, (Drawable) pm, win, gc, 0, 0, w, h, x, y-h);
-}
-
-void
-x_gui_rep::image_auto_gc () {
-  time_t time= texmacs_time ();
-  if (time-cache_image_last_gc <= 300000) return;
-  cache_image_last_gc= time;
-  if (DEBUG_AUTO)
-    cout << "TeXmacs] Launching garbage collection for unused pictures\n";
-
-  iterator<tree> it= iterate (cache_image);
-  while (it->busy()) {
-    tree lookup= it->next();
-    int diff= time- cache_image_time [lookup];
-    int fact= cache_image_nr [lookup];
-    fact= fact * fact * fact;
-    if (cache_image_w [lookup] * cache_image_h [lookup] < 400) fact= fact * 5;
-    if (cache_image_w [lookup] * cache_image_h [lookup] < 6400) fact= fact * 5;
-    if (diff/fact > 60000) {
-      Pixmap pm= (Pixmap) cache_image [lookup];
-      XFreePixmap (dpy, pm);
-      cache_image->reset (lookup);
-      cache_image_w->reset (lookup);
-      cache_image_h->reset (lookup);
-      cache_image_time->reset (lookup);
-      ps_bbox->reset (lookup[0]);
-    }
-  }
-}
-
-void
-x_gui_rep::image_gc (string name) {
-  (void) name;
-  cache_image_last_gc= texmacs_time ();
-  iterator<tree> it= iterate (cache_image);
-  while (it->busy()) {
-    tree lookup= it->next();
-    if (!is_ramdisc (as_url (lookup[0]))) {
-      Pixmap pm= (Pixmap) cache_image [lookup];
-      XFreePixmap (dpy, pm);
-      cache_image->reset (lookup);
-      cache_image_w->reset (lookup);
-      cache_image_h->reset (lookup);
-      cache_image_time->reset (lookup);
-      cache_image_nr->reset (lookup);
-      ps_bbox->reset (lookup[0]);
-    }
-  }
-}
-
-void
-image_gc (string name) {
-  the_gui->image_gc (name);
 }
