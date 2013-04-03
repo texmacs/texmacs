@@ -14,15 +14,8 @@
 #include "image_files.hpp"
 #include "sys_utils.hpp"
 #include "analyze.hpp"
-#include "iterator.hpp"
-#include "Ghostscript/ghostscript.hpp"
 
-#define IMLIB2_X11TEXMACS // for imlib2_display
-#include "Imlib2/imlib2.hpp"
-
-extern int  nr_windows;
 extern bool reverse_colors;
-extern hashmap<tree,string> ps_bbox;
 
 /******************************************************************************
 * Constructors and destructors
@@ -352,126 +345,10 @@ x_drawable_rep::xpm (url file_name, SI x, SI y) {
 }
 
 /******************************************************************************
-* Loading pictures
+* General pictures
 ******************************************************************************/
 
-static time_t cache_image_last_gc = 0;
-static int    cache_image_tot_size= 0;
-static int    cache_image_max_size= 10000;
-static hashmap<tree,Pixmap> cache_image (0);
-static hashmap<tree,int> cache_image_w (0);
-static hashmap<tree,int> cache_image_h (0);
-static hashmap<tree,int> cache_image_time (0);
-static hashmap<tree,int> cache_image_nr (0);
-
-void
-image_auto_gc () {
-  time_t time= texmacs_time ();
-  if (time-cache_image_last_gc <= 300000) return;
-  cache_image_last_gc= time;
-  if (DEBUG_AUTO)
-    cout << "TeXmacs] Launching garbage collection for unused pictures\n";
-
-  iterator<tree> it= iterate (cache_image);
-  while (it->busy()) {
-    tree lookup= it->next();
-    int diff= time- cache_image_time [lookup];
-    int fact= cache_image_nr [lookup];
-    fact= fact * fact * fact;
-    if (cache_image_w [lookup] * cache_image_h [lookup] < 400) fact= fact * 5;
-    if (cache_image_w [lookup] * cache_image_h [lookup] < 6400) fact= fact * 5;
-    if (diff/fact > 60000) {
-      Pixmap pm= (Pixmap) cache_image [lookup];
-      XFreePixmap (the_gui->dpy, pm);
-      cache_image->reset (lookup);
-      cache_image_w->reset (lookup);
-      cache_image_h->reset (lookup);
-      cache_image_time->reset (lookup);
-      ps_bbox->reset (lookup[0]);
-    }
-  }
-}
-
-void
-image_gc (string name) {
-  (void) name;
-  cache_image_last_gc= texmacs_time ();
-  iterator<tree> it= iterate (cache_image);
-  while (it->busy()) {
-    tree lookup= it->next();
-    if (!is_ramdisc (as_url (lookup[0]))) {
-      Pixmap pm= (Pixmap) cache_image [lookup];
-      XFreePixmap (the_gui->dpy, pm);
-      cache_image->reset (lookup);
-      cache_image_w->reset (lookup);
-      cache_image_h->reset (lookup);
-      cache_image_time->reset (lookup);
-      cache_image_nr->reset (lookup);
-      ps_bbox->reset (lookup[0]);
-    }
-  }
-}
-
-Pixmap
-load_Pixmap (url u, int w, int h) {
-  if (the_gui->gswindow == NULL) {
-    SI max_w= the_gui->screen_width  * PIXEL;
-    SI max_h= the_gui->screen_height * PIXEL;
-    //widget dummy= text_widget (0, "ghostscript window");
-    if (ghostscript_bugged ()) {
-      max_w *= 2;
-      max_h *= 2;
-      //dummy= glue_widget (false, false, max_w, max_h);
-    }
-    widget dummy = glue_widget (false, false, max_w, max_h);
-    widget win   = plain_window_widget (dummy, "Ghostscript");
-    the_gui->gswindow= get_x_window (win);
-    //the_gui->gswindow= tm_new<x_window_rep> (dummy, the_gui, "ghostscript",
-    //0, 0);
-    //the_gui->gswindow= tm_new<x_window_rep> (dummy, the_gui, "ghostscript",
-    //max_w, max_h, max_w, max_h, max_w, max_h);
-    nr_windows--; // the dummy window should not be counted
-  }
-
-  Pixmap pm;
-  tree lookup= tuple (u->t);
-  lookup << as_string (w) << as_string (h);
-  if (cache_image->contains (lookup)) pm= (Pixmap) cache_image [lookup];
-  else {
-    // rendering
-    Window gs_win= the_gui->gswindow->win;
-
-    // XCreatePixmap does not allow for zero sized images.
-    // This fixes bug #10425.
-    w = (w==0 ? 1 : w);
-    h = (h==0 ? 1 : h);
-
-    pm= XCreatePixmap (the_gui->dpy, gs_win, w, h, the_gui->depth);
-    if (imlib2_supports (u))
-      imlib2_display (the_gui->dpy, pm, u, w, h);
-    else {
-      //XSetForeground (the_gui->dpy, gc, white);
-      //XFillRectangle (the_gui->dpy, pm, gc, 0, 0, w, h);
-      ghostscript_run (the_gui->dpy, gs_win, pm, u, w, h);
-    }
-
-    // caching
-    if (N(cache_image_nr) == 0) cache_image_last_gc= texmacs_time ();
-    cache_image      (lookup)= (int) pm;
-    cache_image_w    (lookup)= w;
-    cache_image_h    (lookup)= h;
-    cache_image_time (lookup)= texmacs_time ();
-    cache_image_nr   (lookup)= cache_image_nr [lookup] + 1;
-    cache_image_tot_size += w*h;
-    if (cache_image_tot_size > cache_image_max_size) {
-      image_auto_gc ();
-      if (cache_image_tot_size > cache_image_max_size)
-	cache_image_max_size= cache_image_tot_size << 1;
-    }
-  }
-
-  return pm;
-}
+Pixmap load_Pixmap (url u, int w, int h);
 
 void
 x_drawable_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {

@@ -429,5 +429,12 @@ delete_renderer (renderer ren) {
   FAILED ("not yet implemented");
 }
 
+picture
+load_picture (url u, int w, int h) {
+  (void) u; (void) w; (void) h;
+  FAILED ("not yet implemented");
+  return picture ();
+}
+
 #endif
 #endif
