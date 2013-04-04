@@ -54,7 +54,6 @@
   (set-printer-dpi set_printer_dpi (void string))
   (set-default-zoom-factor set_default_zoom_factor (void double))
   (get-default-zoom-factor get_default_zoom_factor (double))
-  (image-gc image_gc (void))
   (inclusions-gc inclusions_gc (void))
   (update-all-path typeset_update (void path))
   (update-all-buffers typeset_update_all (void))

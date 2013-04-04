@@ -260,14 +260,6 @@ cairo_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
 * Image rendering
 ******************************************************************************/
 
-struct cairo_cache_image_rep: cache_image_element_rep {
-  cairo_cache_image_rep (int w2, int h2, time_t time2, cairo_surface_t *ptr2) :
-    cache_image_element_rep(w2,h2,time2,ptr2) {
-      tm_cairo_surface_reference ((cairo_surface_t *) ptr); }
-  virtual ~cairo_cache_image_rep() {
-    tm_cairo_surface_destroy ((cairo_surface_t *) ptr); }
-};
-
 void
 cairo_renderer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
   // Given an image of original size (W, H),
@@ -282,42 +274,29 @@ cairo_renderer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
   //painter.setRenderHints (0);
   //painter.drawRect (QRect (x, y-h, w, h));
   
-  cairo_surface_t* pm = NULL;
-  tree lookup= tuple (u->t);
-  lookup << as_string (w) << as_string (h) << "cairo-image" ;
-  
-  cache_image_element ci = get_image_cache(lookup);
-  if (!is_nil(ci)) {
-    pm = static_cast<cairo_surface_t*> (ci->ptr);
+  cairo_surface_t* pm = NULL;  
+  if (suffix (u) == "png") {
+    // rendering
+    string suu = as_string (u);
+    c_string buf (suu);
+    //cout << suu << LF;
+    pm = tm_cairo_image_surface_create_from_png(buf);
   }
-  else {
-    if (suffix (u) == "png") {
-      // rendering
-      string suu = as_string (u);
-      c_string buf (suu);
-      //cout << suu << LF;
-      pm = tm_cairo_image_surface_create_from_png(buf);
-    }
-    else if (suffix (u) == "ps" ||
-	     suffix (u) == "eps" ||
-	     suffix (u) == "pdf") {
-      url temp= url_temp (".png");
-      system ("convert", u, temp);
-      string suu = as_string (temp);
-      c_string buf (suu);
-      //cout << suu << LF;
-      pm = tm_cairo_image_surface_create_from_png(buf);
-      remove (temp);
-    }
-
-    if (pm == NULL ) {
-      cout << "TeXmacs] warning: cannot render " << as_string (u) << "\n";
-      return;
-    }
-    // caching
-    ci = tm_new<cairo_cache_image_rep> (w,h, texmacs_time(), pm);
-    set_image_cache(lookup, ci);
-    (ci->nr)++;
+  else if (suffix (u) == "ps" ||
+           suffix (u) == "eps" ||
+           suffix (u) == "pdf") {
+    url temp= url_temp (".png");
+    system ("convert", u, temp);
+    string suu = as_string (temp);
+    c_string buf (suu);
+    //cout << suu << LF;
+    pm = tm_cairo_image_surface_create_from_png(buf);
+    remove (temp);
+  }
+  
+  if (pm == NULL ) {
+    cout << "TeXmacs] warning: cannot render " << as_string (u) << "\n";
+    return;
   }
   
   int iw= tm_cairo_image_surface_get_width(pm);
@@ -330,7 +309,7 @@ cairo_renderer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
   tm_cairo_set_source_surface (context, pm, 0, 0);
   tm_cairo_paint (context);
   tm_cairo_restore(context);
-};
+}
 
 void
 cairo_renderer_rep::draw_clipped (cairo_surface_t* im, int w, int h, SI x, SI y) {

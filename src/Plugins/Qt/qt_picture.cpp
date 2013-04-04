@@ -213,30 +213,17 @@ delete_renderer (renderer ren) {
 * Loading pictures
 ******************************************************************************/
 
-struct qt_cache_image_rep: cache_image_element_rep {
-  qt_cache_image_rep (int w2, int h2, time_t time2, QImage *ptr2):
-    cache_image_element_rep (w2, h2, time2, ptr2) {}
-  virtual ~qt_cache_image_rep () {
-    delete static_cast<QImage*> (ptr); }
-};
-
 QImage*
 get_image (url u, int w, int h) {
   QImage *pm = NULL;
-  tree lookup= tuple (u->t);
-  lookup << as_string (w) << as_string (h) << "qt-image";
-  cache_image_element ci = get_image_cache(lookup);
-  if (!is_nil(ci))
-    pm= static_cast<QImage*> (ci->ptr);
-  else {
-    // rendering
-    if (qt_supports (u))
-      pm= new QImage (utf8_to_qstring (concretize (u)));
-    else if (suffix (u) == "ps" ||
-             suffix (u) == "eps" ||
-             suffix (u) == "pdf") {
-      url temp= url_temp (".png");
-      image_to_png (u, temp, w, h);
+
+  if (qt_supports (u))
+    pm= new QImage (utf8_to_qstring (concretize (u)));
+  else if (suffix (u) == "ps" ||
+           suffix (u) == "eps" ||
+           suffix (u) == "pdf") {
+    url temp= url_temp (".png");
+    image_to_png (u, temp, w, h);
 /*
       string idstr= eval_system ("identify",u);
       int i=0;
@@ -284,33 +271,29 @@ get_image (url u, int w, int h) {
              * "+" * as_string ((1-cy2)*h/(cy2-cy1))
              * "! -background white -flatten", u, temp);
 */
+    pm= new QImage (to_qstring (as_string (temp)));
+    remove (temp);
+  }
+  if (pm == NULL || pm->isNull ()) {
+    if (pm != NULL) {
+      delete pm;
+      pm= NULL;
+    }
+    if (as_bool (call ("file-converter-exists?", u, "x.png"))) {
+      url temp= url_temp (".png");
+      call ("file-convert", object (u), object (temp));
       pm= new QImage (to_qstring (as_string (temp)));
       remove (temp);
     }
     if (pm == NULL || pm->isNull ()) {
-      if (pm != NULL) {
-        delete pm;
-        pm= NULL;
-      }
-      if (as_bool (call ("file-converter-exists?", u, "x.png"))) {
-        url temp= url_temp (".png");
-        call ("file-convert", object (u), object (temp));
-        pm= new QImage (to_qstring (as_string (temp)));
-        remove (temp);
-      }
-      if (pm == NULL || pm->isNull ()) {
-        if (pm != NULL) delete pm;
-        cout << "TeXmacs] warning: cannot render " << concretize (u) << "\n";
-        return NULL;
-      }
+      if (pm != NULL) delete pm;
+      cout << "TeXmacs] warning: cannot render " << concretize (u) << "\n";
+      return NULL;
     }
-
-    if (pm->width () != w || pm->height () != h)
-      (*pm)= pm->scaled (w, h);
-    ci = tm_new<qt_cache_image_rep> (w,h, texmacs_time(), pm);
-    set_image_cache(lookup, ci);
-    (ci->nr)++;
   }
+
+  if (pm->width () != w || pm->height () != h)
+    (*pm)= pm->scaled (w, h);
   return pm;
 }
 

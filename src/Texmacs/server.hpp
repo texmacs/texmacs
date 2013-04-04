@@ -98,7 +98,6 @@ public:
   virtual void   set_printer_dpi (string dpi) = 0;
   virtual void   set_default_zoom_factor (double zoom) = 0;
   virtual double get_default_zoom_factor () = 0;
-  virtual void   image_gc (string which= "*") = 0;
   virtual void   inclusions_gc (string which= "*") = 0;
   virtual void   typeset_update (path p) = 0;
   virtual void   typeset_update_all () = 0;

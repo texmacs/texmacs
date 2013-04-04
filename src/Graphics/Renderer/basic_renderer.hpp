@@ -45,31 +45,8 @@ bool operator != (basic_character xc1, basic_character xc2);
 int hash (basic_character xc);
 
 /******************************************************************************
-* structure for caching images
-******************************************************************************/
-
-struct cache_image_element_rep: concrete_struct {
-  int w,h,nr;
-  time_t time;
-  void *ptr;
-  cache_image_element_rep (int w2, int h2,  time_t time2, void *ptr2) :
-    w(w2), h(h2), nr(0), time(time2), ptr(ptr2) {};
-  virtual ~cache_image_element_rep() {};
-  friend class cache_image_element;
-};
-
-class cache_image_element {
-ABSTRACT_NULL(cache_image_element);
-  //basic_image (basic_surface_t* img2, SI xo2, SI yo2, int w2, int h2);
-  //cache_image () 
-};
-
-ABSTRACT_NULL_CODE(cache_image_element);
-
-/******************************************************************************
 * basic_renderer_rep
 ******************************************************************************/
-
 
 class basic_renderer_rep: public renderer_rep {
 public:
@@ -117,11 +94,6 @@ typedef basic_renderer_rep* basic_renderer;
 //extern int CSCALES, CFACTOR, GREYS, CTOTAL;
 
 color xpm_to_color (string s);
-
-cache_image_element get_image_cache (tree lookup);
-void set_image_cache (tree lookup, cache_image_element ci);
-void image_auto_gc ();
-void image_gc (string name);
 
 bool gui_interrupted (bool check);
 

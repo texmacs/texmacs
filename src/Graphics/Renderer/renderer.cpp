@@ -90,7 +90,7 @@ renderer_rep::move_origin (SI dx, SI dy) {
 
 double
 normal_zoom (double zoom) {
-  return 320.0 / ceil (320.0 / zoom - 0.0001);
+  return 320.0 / ceil (320.0 / zoom - 0.01);
 }
 
 void
@@ -369,6 +369,10 @@ picture_cache_release (url file_name, int w, int h) {
 
 void
 picture_cache_clean () {
+  static time_t last_gc= 0;
+  if (texmacs_time () - last_gc <= 60000) return;
+  last_gc= texmacs_time ();
+
   iterator<tree> it= iterate (picture_blacklist);
   while (it->busy ()) {
     tree key= it->next ();
@@ -385,6 +389,7 @@ picture
 cached_load_picture (url file_name, int w, int h, bool permanent) {
   tree key= tuple (file_name->t, as_string (w), as_string (h));
   if (picture_cache->contains (key)) return picture_cache [key];
+  //cout << "Loading " << key << "\n";
   picture pic= load_picture (file_name, w, h);
   if (permanent || picture_count[key] > 0) picture_cache (key)= pic;
   return pic;

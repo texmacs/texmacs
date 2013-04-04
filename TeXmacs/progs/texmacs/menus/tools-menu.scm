@@ -45,8 +45,7 @@
       (link tools-selections-menu))
   (-> "Update"
       ("Styles" (style-clear-cache))
-      ("Inclusions" (inclusions-gc))
-      ("Linked images" (image-gc)))
+      ("Inclusions" (inclusions-gc)))
   (-> "Web"
       ("Create web site" (tmweb-interactive-build))
       ("Update web site" (tmweb-interactive-update)))

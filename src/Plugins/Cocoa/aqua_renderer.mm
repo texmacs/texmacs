@@ -231,12 +231,6 @@ aqua_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
 /******************************************************************************
  * Image rendering
  ******************************************************************************/
-struct aqua_cache_image_rep: cache_image_element_rep {
-	aqua_cache_image_rep (int w2, int h2, time_t time2, NSImage *ptr2) :
-  cache_image_element_rep(w2,h2,time2,ptr2) {  [(NSImage*)ptr retain]; };
-	virtual ~aqua_cache_image_rep() {   [(NSImage*)ptr release]; };
-};
-
 
 void
 aqua_renderer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
@@ -253,44 +247,33 @@ aqua_renderer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
   //painter.drawRect (QRect (x, y-h, w, h));
   
   NSImage *pm = NULL;
-  tree lookup= tuple (u->t);
-  lookup << as_string (w) << as_string (h) << "cg-image";
-  cache_image_element ci = get_image_cache(lookup);
-  if (!is_nil(ci)) {
-    pm = static_cast<NSImage*> (ci->ptr);
-  } else {
-	  if (suffix (u) == "png") {
-      // rendering
-      string suu = as_string (u);
-      // cout << suu << LF;
-      pm = [[NSImage alloc] initWithContentsOfFile:to_nsstring(suu)];
-	  } else if (suffix (u) == "ps" ||
-               suffix (u) == "eps" ||
-               suffix (u) == "pdf") {
-      url temp= url_temp (".png");
-      mac_image_to_png (u, temp, w, h);
-//      system ("convert", u, temp);
-      string suu = as_string (temp);
-      pm = [[NSImage alloc] initWithContentsOfFile:to_nsstring(suu)];
-      remove (temp);
-    }
-    
-    if (pm == NULL ) {
-      cout << "TeXmacs] warning: cannot render " << as_string (u) << "\n";
-      return;
-    }
-    // caching
-    ci = tm_new <aqua_cache_image_rep> (w,h, texmacs_time(), pm);
-    set_image_cache(lookup, ci);
-    (ci->nr)++;
+  if (suffix (u) == "png") {
+    // rendering
+    string suu = as_string (u);
+    // cout << suu << LF;
+    pm = [[NSImage alloc] initWithContentsOfFile:to_nsstring(suu)];
   }
-  
+  else if (suffix (u) == "ps" ||
+           suffix (u) == "eps" ||
+           suffix (u) == "pdf") {
+    url temp= url_temp (".png");
+    mac_image_to_png (u, temp, w, h);
+//  system ("convert", u, temp);
+    string suu = as_string (temp);
+    pm = [[NSImage alloc] initWithContentsOfFile:to_nsstring(suu)];
+    remove (temp);
+  }
+    
+  if (pm == NULL ) {
+    cout << "TeXmacs] warning: cannot render " << as_string (u) << "\n";
+    return;
+  }
+ 
   NSSize isz = [pm size];
   [pm setFlipped:YES];
 //  [pm drawAtPoint:NSMakePoint(x,y) fromRect:NSMakeRect(0,0,w,h) operation:NSCompositeSourceAtop fraction:1.0];
   [pm drawInRect:NSMakeRect(x,y-h,w,h) fromRect:NSMakeRect(0,0,isz.width,isz.height) operation:NSCompositeSourceAtop fraction:1.0];
 }
-
 
 void
 aqua_renderer_rep::draw_clipped (NSImage *im, int w, int h, SI x, SI y) {
@@ -298,8 +281,6 @@ aqua_renderer_rep::draw_clipped (NSImage *im, int w, int h, SI x, SI y) {
   y--; // top-left origin to bottom-left origin conversion
   [im drawAtPoint:NSMakePoint(x,y) fromRect:NSMakeRect(0,0,w,h) operation:NSCompositeSourceAtop fraction:1.0];
 }  
-
-
 
 static CGContextRef 
 MyCreateBitmapContext (int pixelsWide, int pixelsHigh) {

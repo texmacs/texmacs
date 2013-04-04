@@ -214,13 +214,6 @@ cg_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
 * Image rendering
 ******************************************************************************/
 
-struct cg_cache_image_rep: cache_image_element_rep {
-  cg_cache_image_rep (int w2, int h2, time_t time2, CGImageRef ptr2) :
-    cache_image_element_rep(w2,h2,time2,ptr2) {
-      CGImageRetain((CGImageRef)ptr); }
-  virtual ~cg_cache_image_rep() { CGImageRelease((CGImageRef)ptr); }
-};
-
 void
 cg_renderer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
   // Given an image of original size (W, H),
@@ -236,48 +229,37 @@ cg_renderer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
   //painter.drawRect (QRect (x, y-h, w, h));
   
   CGImageRef pm = NULL;
-  tree lookup= tuple (u->t);
-  lookup << as_string (w) << as_string (h) << "cg-image";
-  cache_image_element ci = get_image_cache(lookup);
-  if (!is_nil(ci))
-    pm = static_cast<CGImageRef> (ci->ptr);
-  else {
-    if (suffix (u) == "png") {
-      // rendering
-      string suu = as_string (u);
-      c_string buf (suu);
-      // cout << suu << LF;
-      CFURLRef uu =  CFURLCreateFromFileSystemRepresentation(NULL, (UInt8*)buf, N(suu),  false);
-      CGImageSourceRef source =  CGImageSourceCreateWithURL ( uu, NULL );
-      pm =  CGImageSourceCreateImageAtIndex(source, 0, NULL);
-      CFRelease(source);
-      CFRelease(uu);
-    }
-    else if (suffix (u) == "ps" ||
-             suffix (u) == "eps" ||
-             suffix (u) == "pdf") {
-      url temp= url_temp (".png");
-      // system ("convert", u, temp);
-      mac_image_to_png (u, temp); 
-      string suu = as_string (temp);
-      c_string buf (suu);
-      //cout << suu << LF;
-      CFURLRef uu =  CFURLCreateFromFileSystemRepresentation(NULL, (UInt8*)buf, N(suu),  false);
-      CGImageSourceRef source =  CGImageSourceCreateWithURL ( uu, NULL );
-      pm =  CGImageSourceCreateImageAtIndex(source, 0, NULL);
-      CFRelease(source);
-      CFRelease(uu);
-      remove (temp);
-    }
+  if (suffix (u) == "png") {
+    // rendering
+    string suu = as_string (u);
+    c_string buf (suu);
+    // cout << suu << LF;
+    CFURLRef uu =  CFURLCreateFromFileSystemRepresentation(NULL, (UInt8*)buf, N(suu),  false);
+    CGImageSourceRef source =  CGImageSourceCreateWithURL ( uu, NULL );
+    pm =  CGImageSourceCreateImageAtIndex(source, 0, NULL);
+    CFRelease(source);
+    CFRelease(uu);
+  }
+  else if (suffix (u) == "ps" ||
+           suffix (u) == "eps" ||
+           suffix (u) == "pdf") {
+    url temp= url_temp (".png");
+    // system ("convert", u, temp);
+    mac_image_to_png (u, temp); 
+    string suu = as_string (temp);
+    c_string buf (suu);
+    //cout << suu << LF;
+    CFURLRef uu =  CFURLCreateFromFileSystemRepresentation(NULL, (UInt8*)buf, N(suu),  false);
+    CGImageSourceRef source =  CGImageSourceCreateWithURL ( uu, NULL );
+    pm =  CGImageSourceCreateImageAtIndex(source, 0, NULL);
+    CFRelease(source);
+    CFRelease(uu);
+    remove (temp);
+  }
 
-    if (pm == NULL ) {
-      cout << "TeXmacs] warning: cannot render " << as_string (u) << "\n";
-      return;
-    }
-    // caching
-    ci = tm_new <cg_cache_image_rep> (w,h, texmacs_time(), pm);
-    set_image_cache(lookup, ci);
-    (ci->nr)++;
+  if (pm == NULL ) {
+    cout << "TeXmacs] warning: cannot render " << as_string (u) << "\n";
+    return;
   }
   
   CGContextSetShouldAntialias(context, false);

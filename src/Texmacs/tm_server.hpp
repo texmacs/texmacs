@@ -41,7 +41,6 @@ public:
   void   set_printer_dpi (string dpi);
   void   set_default_zoom_factor (double zoom);
   double get_default_zoom_factor ();
-  void   image_gc (string which);
   void   inclusions_gc (string which);
   void   typeset_update (path p);
   void   typeset_update_all ();

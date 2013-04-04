@@ -211,12 +211,6 @@ tm_server_rep::get_default_zoom_factor () {
 }
 
 void
-tm_server_rep::image_gc (string which) {
-  ::image_gc (which);
-  typeset_update_all ();
-}
-
-void
 tm_server_rep::inclusions_gc (string which) {
   (void) which;
   reset_inclusions ();

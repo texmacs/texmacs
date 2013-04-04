@@ -440,15 +440,6 @@ tmg_get_default_zoom_factor () {
 }
 
 tmscm
-tmg_image_gc () {
-  // TMSCM_DEFER_INTS;
-  get_server()->image_gc ();
-  // TMSCM_ALLOW_INTS;
-
-  return TMSCM_UNSPECIFIED;
-}
-
-tmscm
 tmg_inclusions_gc () {
   // TMSCM_DEFER_INTS;
   get_server()->inclusions_gc ();
@@ -578,7 +569,6 @@ initialize_glue_server () {
   tmscm_install_procedure ("set-printer-dpi",  tmg_set_printer_dpi, 1, 0, 0);
   tmscm_install_procedure ("set-default-zoom-factor",  tmg_set_default_zoom_factor, 1, 0, 0);
   tmscm_install_procedure ("get-default-zoom-factor",  tmg_get_default_zoom_factor, 0, 0, 0);
-  tmscm_install_procedure ("image-gc",  tmg_image_gc, 0, 0, 0);
   tmscm_install_procedure ("inclusions-gc",  tmg_inclusions_gc, 0, 0, 0);
   tmscm_install_procedure ("update-all-path",  tmg_update_all_path, 1, 0, 0);
   tmscm_install_procedure ("update-all-buffers",  tmg_update_all_buffers, 0, 0, 0);
