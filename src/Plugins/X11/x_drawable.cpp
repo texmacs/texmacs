@@ -232,7 +232,7 @@ x_drawable_rep::polygon (array<SI> x, array<SI> y, bool convex) {
 
 color
 xpm_to_color (string s) {
-  if (s == "none") return 0x00646464;
+  if (s == "none") return rgb_color (100, 100, 100, 0);
   c_string _def (s);
   XColor exact, closest;
   XLookupColor (the_gui->dpy, the_gui->cols, _def, &exact, &closest);
