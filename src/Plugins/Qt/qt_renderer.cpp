@@ -357,8 +357,6 @@ qt_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
 
 void
 qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
-  url ru= resolve (u);
-  u= is_none (ru)? "$TEXMACS_PATH/misc/pixmaps/unknown.ps": ru;
   picture pict= load_picture (u, w/pixel, h/pixel);
   draw_picture (pict, x, y, alpha);
 };

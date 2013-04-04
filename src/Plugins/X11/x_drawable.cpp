@@ -251,14 +251,6 @@ Pixmap load_Pixmap (url u, int w, int h);
 
 void
 x_drawable_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
-  // Given an image of original size (W, H),
-  // we display it at position (x, y) in a rectangle of size (w, h)
-  (void) alpha; // FIXME
-
-  w= w/pixel; h= h/pixel;
-  decode (x, y);
-
-  Pixmap pm= load_Pixmap (u, w, h);
-
-  XCopyArea (dpy, (Drawable) pm, win, gc, 0, 0, w, h, x, y-h);
+  picture pict= load_picture (u, w/pixel, h/pixel);
+  draw_picture (pict, x, y, alpha);
 }
