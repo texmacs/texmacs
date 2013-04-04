@@ -18,6 +18,16 @@
 * Default implementations of some virtual routines
 ******************************************************************************/
 
+url
+picture_rep::get_name () {
+  return url_none ();
+}
+
+picture
+picture_rep::non_lazy () {
+  return this;
+}
+
 void
 picture_rep::translate_origin (int dx, int dy) {
   set_origin (get_origin_x () + dx, get_origin_y () + dy);

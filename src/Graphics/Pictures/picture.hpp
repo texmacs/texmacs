@@ -19,7 +19,10 @@ typedef unsigned int color;
 * The abstract picture class
 ******************************************************************************/
 
-enum picture_kind { picture_native, picture_raster, picture_alpha };
+enum picture_kind {
+  picture_native,
+  picture_raster,
+  picture_lazy };
 
 class picture_rep;
 class picture {
@@ -41,6 +44,8 @@ public:
 
   virtual picture_kind get_type () = 0;
   virtual void* get_handle () = 0;
+  virtual url get_name ();
+  virtual picture non_lazy ();
 
   virtual int get_width () = 0;
   virtual int get_height () = 0;
@@ -59,6 +64,7 @@ public:
     internal_copy_to (0, 0, d, 0, 0, get_width (), get_height ()); }
 
   friend class picture;
+  friend class lazy_picture_rep;
 };
 
 ABSTRACT_NULL_CODE(picture);

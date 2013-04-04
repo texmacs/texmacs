@@ -247,10 +247,8 @@ xpm_to_color (string s) {
 * General pictures
 ******************************************************************************/
 
-Pixmap load_Pixmap (url u, int w, int h);
-
 void
 x_drawable_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
-  picture pict= load_picture (u, w/pixel, h/pixel);
+  picture pict= lazy_picture (u, w/pixel, h/pixel);
   draw_picture (pict, x, y, alpha);
 }

@@ -130,6 +130,7 @@ public:
 
 /* native pictures and rendering on pictures */
 picture load_picture (url u, int w, int h);
+picture lazy_picture (url u, int w, int h);
 picture pixmap_picture (int w, int h, int ox, int oy);
 picture scalable_picture (int w, int h, int ox, int oy);
 renderer picture_renderer (picture p, double zoom);
