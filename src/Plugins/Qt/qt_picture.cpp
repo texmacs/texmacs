@@ -301,6 +301,8 @@ get_image (url u, int w, int h) {
       }
     }
 
+    if (pm->width () != w || pm->height () != h)
+      (*pm)= pm->scaled (w, h);
     ci = tm_new<qt_cache_image_rep> (w,h, texmacs_time(), pm);
     set_image_cache(lookup, ci);
     (ci->nr)++;

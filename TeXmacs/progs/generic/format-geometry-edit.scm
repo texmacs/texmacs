@@ -44,7 +44,8 @@
 (define (get-step unit)
   (when (not (ahash-ref step-table unit))
     (with pref (get-preference (string-append unit " increase"))
-      (with step (if pref (string->number pref) 0.1)
+      (if pref (set! pref (string->number pref)))
+      (with step (or pref 0.1)
 	(ahash-set! step-table unit step))))
   (ahash-ref step-table unit))
 
