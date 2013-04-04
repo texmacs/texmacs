@@ -833,7 +833,9 @@ printer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
 }
 
 void
-printer_rep::draw_picture (picture p, SI x, SI y) {
+printer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
+  (void) alpha; // FIXME
+
   int w= p->get_width (), h= p->get_height ();
   int ox= p->get_origin_x (), oy= p->get_origin_y ();
   int pixel= 5*PIXEL;

@@ -118,7 +118,7 @@ public:
 
   /* images as renderers */
   virtual picture create_picture (SI x1, SI y1, SI x2, SI y2);
-  virtual void draw_picture (picture p, SI x, SI y);
+  virtual void draw_picture (picture p, SI x, SI y, int alpha= 255);
 
   /* special routines for printers */
   virtual bool is_printer (); // FIXME: redundant wrt is_screen?

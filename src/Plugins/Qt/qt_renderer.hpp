@@ -79,7 +79,7 @@ public:
 
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
 
-  void draw_picture (picture pict, SI x, SI y);
+  void draw_picture (picture pict, SI x, SI y, int alpha);
 };
 
 qt_renderer_rep* the_qt_renderer();

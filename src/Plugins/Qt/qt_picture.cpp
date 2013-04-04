@@ -88,12 +88,15 @@ scalable_picture (int w, int h, int ox, int oy) {
 }
 
 void
-qt_renderer_rep::draw_picture (picture p, SI x, SI y) {
+qt_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
   p= as_qt_picture (p);
   qt_picture_rep* pict= (qt_picture_rep*) p->get_handle ();
   int x0= pict->ox, y0= pict->h - 1 - pict->oy;
   decode (x, y);
+  qreal old_opacity= painter->opacity ();
+  painter->setOpacity (qreal (alpha) / qreal (255));
   painter->drawImage (x - x0, y - y0, pict->pict);
+  painter->setOpacity (old_opacity);
 }
 
 /******************************************************************************

@@ -150,7 +150,8 @@ scalable_picture (int w, int h, int ox, int oy) {
 }
 
 void
-x_drawable_rep::draw_picture (picture p, SI x, SI y) {
+x_drawable_rep::draw_picture (picture p, SI x, SI y, int alpha) {
+  (void) alpha; // FIMXE: might be improved
   p= as_x_picture (p);
   x_picture_rep* pict= (x_picture_rep*) p->get_handle ();
   int w= pict->w, h= pict->h;

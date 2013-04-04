@@ -394,8 +394,8 @@ renderer_rep::create_picture (SI x1, SI y1, SI x2, SI y2) {
 }
 
 void
-renderer_rep::draw_picture (picture p, SI x, SI y) {
-  (void) p; (void) x; (void) y;
+renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
+  (void) p; (void) x; (void) y; (void) alpha;
   FAILED ("rendering pictures is not supported");
 }
 

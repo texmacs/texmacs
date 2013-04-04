@@ -101,7 +101,7 @@ public:
   void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
   void put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
-  void draw_picture (picture p, SI x, SI y);
+  void draw_picture (picture p, SI x, SI y, int alpha);
 };
 
 renderer printer (url ps_file_name, int dpi, int nr_pages= 1,
