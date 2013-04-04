@@ -91,9 +91,6 @@ public:
   void  arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
   void  fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
   void  polygon (array<SI> x, array<SI> y, bool convex=true);
-  void  image (string name, string eps, SI x1, SI y1, SI x2, SI y2,
-               SI w, SI h, SI x, SI y, int alpha);
-  void  image (url u, SI w, SI h, SI x, SI y, int alpha);
 
   void fetch (SI x1, SI y1, SI x2, SI y2, renderer ren, SI x, SI y);
   void new_shadow (renderer& ren);
@@ -102,6 +99,8 @@ public:
   void put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
   void draw_picture (picture p, SI x, SI y, int alpha);
+  void image (string name, string eps, SI x1, SI y1, SI x2, SI y2,
+              SI w, SI h, SI x, SI y, int alpha);
 };
 
 renderer printer (url ps_file_name, int dpi, int nr_pages= 1,

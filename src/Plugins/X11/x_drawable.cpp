@@ -242,13 +242,3 @@ xpm_to_color (string s) {
     return rgb_color (closest.red/256, closest.green/256, closest.blue/256);
   return rgb_color (exact.red/256, exact.green/256, exact.blue/256);
 }
-
-/******************************************************************************
-* General pictures
-******************************************************************************/
-
-void
-x_drawable_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
-  picture pict= lazy_picture (u, w/pixel, h/pixel);
-  draw_picture (pict, x, y, alpha);
-}

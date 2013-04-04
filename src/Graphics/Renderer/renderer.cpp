@@ -344,6 +344,12 @@ renderer_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
 #undef RND
 
 void
+renderer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
+  picture pict= lazy_picture (u, w/pixel, h/pixel);
+  draw_picture (pict, x, y, alpha);
+}
+
+void
 renderer_rep::xpm (url file_name, SI x, SI y) {
   ASSERT (pixel == PIXEL, "pixel and PIXEL should coincide");
   picture p= load_xpm (file_name);

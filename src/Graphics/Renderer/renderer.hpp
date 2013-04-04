@@ -103,8 +103,6 @@ public:
   virtual void fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) = 0;
   virtual void polygon (array<SI> x, array<SI> y, bool convex=true) = 0;
   virtual void triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3);
-  virtual void image (url u, SI w, SI h, SI x, SI y, int alpha= 255) = 0;
-  virtual void xpm (url file_name, SI x, SI y);
   virtual void draw_rectangles (rectangles rs);
   virtual void draw_selection (rectangles rs);
 
@@ -116,9 +114,11 @@ public:
   virtual void put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) = 0;
   virtual void apply_shadow (SI x1, SI y1, SI x2, SI y2) = 0;
 
-  /* images as renderers */
+  /* images */
   virtual picture create_picture (SI x1, SI y1, SI x2, SI y2);
   virtual void draw_picture (picture p, SI x, SI y, int alpha= 255);
+  virtual void image (url u, SI w, SI h, SI x, SI y, int alpha= 255);
+  virtual void xpm (url file_name, SI x, SI y);
 
   /* special routines for printers */
   virtual bool is_printer (); // FIXME: redundant wrt is_screen?

@@ -356,12 +356,6 @@ qt_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
 ******************************************************************************/
 
 void
-qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
-  picture pict= lazy_picture (u, w/pixel, h/pixel);
-  draw_picture (pict, x, y, alpha);
-};
-
-void
 qt_renderer_rep::draw_clipped (QImage *im, int w, int h, SI x, SI y) {
   (void) w; (void) h;
   int x1=cx1-ox, y1=cy2-oy, x2= cx2-ox, y2= cy1-oy;

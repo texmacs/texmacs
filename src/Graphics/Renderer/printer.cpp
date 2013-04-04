@@ -824,12 +824,6 @@ printer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
 }
 
 void
-printer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
-  picture pict= lazy_picture (u, w/pixel, h/pixel);
-  draw_picture (pict, x, y, alpha);
-}
-
-void
 printer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
   (void) alpha; // FIXME
 
