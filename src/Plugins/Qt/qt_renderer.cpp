@@ -357,24 +357,11 @@ qt_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
 
 void
 qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
-  // Given an image of original size (W, H),
-  // we display it at position (x, y) in a rectangle of size (w, h)
-  w= w/pixel; h= h/pixel;
-  decode (x, y);
-
-  // safety check
-  url ru = resolve(u);
-  u = is_none (ru) ? "$TEXMACS_PATH/misc/pixmaps/unknown.ps" : ru;
-  
-  QImage* pm= get_image (u, w, h);
-  if (pm == NULL) return;
-
-  qreal old_opacity= painter->opacity ();
-  painter->setOpacity (qreal (alpha) / qreal (255));
-  painter->drawImage (x, y-h, *pm);
-  painter->setOpacity (old_opacity);
+  url ru= resolve (u);
+  u= is_none (ru)? "$TEXMACS_PATH/misc/pixmaps/unknown.ps": ru;
+  picture pict= load_picture (u, w/pixel, h/pixel);
+  draw_picture (pict, x, y, alpha);
 };
-
 
 void
 qt_renderer_rep::draw_clipped (QImage *im, int w, int h, SI x, SI y) {

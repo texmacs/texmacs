@@ -223,7 +223,7 @@ QImage*
 get_image (url u, int w, int h) {
   QImage *pm = NULL;
   tree lookup= tuple (u->t);
-  lookup << as_string (w) << as_string (h) << "qt-image" ;
+  lookup << as_string (w) << as_string (h) << "qt-image";
   cache_image_element ci = get_image_cache(lookup);
   if (!is_nil(ci))
     pm= static_cast<QImage*> (ci->ptr);
