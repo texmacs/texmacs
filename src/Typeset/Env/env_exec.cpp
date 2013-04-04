@@ -1690,15 +1690,20 @@ edit_env_rep::exec_point (tree t) {
 tree
 edit_env_rep::exec_effect_blur (tree t) {
   if (N(t) < 1) return tree (ERROR, "bad effect-blur");
-  double r = as_length (exec (t[0]));
   double px= as_length ("1px");
-  return tree (EFFECT_BLUR, as_tree (r / px));
+  double r = as_length (exec (t[0])) / px;
+  return tree (EFFECT_BLUR, as_tree (r));
 }
 
 tree
 edit_env_rep::exec_effect_shadow (tree t) {
   if (N(t) < 4) return tree (ERROR, "bad effect-shadow");
-  return t;
+  double px= as_length ("1px");
+  double x = as_length (exec (t[0])) / px;
+  double y = as_length (exec (t[1])) / px;
+  string c = as_string (exec (t[2]));
+  double r = as_length (exec (t[3])) / px;
+  return tree (EFFECT_SHADOW, as_tree (x), as_tree (y), c, as_tree (r));
 }
 
 tree
