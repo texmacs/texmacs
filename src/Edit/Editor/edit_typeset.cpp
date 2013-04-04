@@ -589,6 +589,7 @@ edit_typeset_rep::typeset (SI& x1, SI& y1, SI& x2, SI& y2) {
   bench_end ("typeset");
   //time_t t2= texmacs_time ();
   //if (t2 - t1 >= 10) cout << "typeset took " << t2-t1 << "ms\n";
+  picture_cache_clean ();
 }
 
 void

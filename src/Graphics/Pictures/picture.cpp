@@ -9,7 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "picture.hpp"
+#include "renderer.hpp"
 #include "analyze.hpp"
 #include "gui.hpp"
 #include "image_files.hpp"

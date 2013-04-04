@@ -64,7 +64,6 @@ public:
     internal_copy_to (0, 0, d, 0, 0, get_width (), get_height ()); }
 
   friend class picture;
-  friend class lazy_picture_rep;
 };
 
 ABSTRACT_NULL_CODE(picture);

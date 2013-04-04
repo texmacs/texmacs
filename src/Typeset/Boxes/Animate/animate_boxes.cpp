@@ -542,14 +542,15 @@ decompose_gif (url u) {
 }
 
 static void
-add_frames (array<box>& v, path ip, url u, int w, int h, int a, int msecs) {
+add_frames (array<box>& v, path ip, url u, int w, int h, int a,
+            int msecs, int px) {
   if (is_none (u)) return;
   else if (is_or (u)) {
-    add_frames (v, ip, u[1], w, h, a, msecs);
-    add_frames (v, ip, u[2], w, h, a, msecs);
+    add_frames (v, ip, u[1], w, h, a, msecs, px);
+    add_frames (v, ip, u[2], w, h, a, msecs, px);
   }
   else {
-    box imb= image_box (ip, u, w, h, a);
+    box imb= image_box (ip, u, w, h, a, px);
     v << anim_constant_box (ip, imb, msecs);
   }
 }
@@ -589,12 +590,12 @@ sound_box (path ip, url u, SI h) {
 }
 
 box
-video_box (path ip, url u, SI w, SI h, int alpha, int msecs, bool repeated) {
+video_box (path ip, url u, SI w, SI h, int alpha, int ms, bool rep, int px) {
   url frames= decompose_gif (u);
   if (is_none (frames)) return empty_box (ip, 0, 0, w, h);
   array<box> bs;
-  add_frames (bs, decorate (ip), frames, w, h, alpha, msecs);
-  box b= anim_compose_box (repeated? decorate (ip): ip, bs);
-  if (repeated) return anim_repeat_box (ip, b);
+  add_frames (bs, decorate (ip), frames, w, h, alpha, ms, px);
+  box b= anim_compose_box (rep? decorate (ip): ip, bs);
+  if (rep) return anim_repeat_box (ip, b);
   else return b;
 }

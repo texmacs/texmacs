@@ -14,6 +14,7 @@
 #include "rectangles.hpp"
 #include "image_files.hpp"
 #include "frame.hpp"
+#include "iterator.hpp"
 
 int std_shrinkf= 5;
 
@@ -343,9 +344,55 @@ renderer_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
 
 #undef RND
 
+/******************************************************************************
+* Cached pictured loading
+******************************************************************************/
+
+static hashmap<tree,int> picture_count (0);
+static hashmap<tree,int> picture_blacklist (0);
+static hashmap<tree,picture> picture_cache;
+
+void
+picture_cache_reserve (url file_name, int w, int h) {
+  tree key= tuple (file_name->t, as_string (w), as_string (h));
+  picture_count (key) ++;
+  //cout << key << " -> " << picture_count[key] << "\n";
+}
+
+void
+picture_cache_release (url file_name, int w, int h) {
+  tree key= tuple (file_name->t, as_string (w), as_string (h));
+  picture_count (key) --;
+  //cout << key << " -> " << picture_count[key] << "\n";
+  if (picture_count [key] <= 0) picture_blacklist (key) ++;
+}
+
+void
+picture_cache_clean () {
+  iterator<tree> it= iterate (picture_blacklist);
+  while (it->busy ()) {
+    tree key= it->next ();
+    if (picture_count [key] <= 0) {
+      picture_count -> reset (key);
+      picture_cache -> reset (key);
+      //cout << "Removed " << key << "\n";
+    }
+  }
+  picture_blacklist= hashmap<tree,int> ();
+}
+
+picture
+cached_load_picture (url file_name, int w, int h, bool permanent) {
+  tree key= tuple (file_name->t, as_string (w), as_string (h));
+  if (picture_cache->contains (key)) return picture_cache [key];
+  picture pic= load_picture (file_name, w, h);
+  if (permanent || picture_count[key] > 0) picture_cache (key)= pic;
+  return pic;
+}
+
 void
 renderer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
-  picture pict= lazy_picture (u, w/pixel, h/pixel);
+  picture pict= cached_load_picture (u, w/pixel, h/pixel, false);
   draw_picture (pict, x, y, alpha);
 }
 
