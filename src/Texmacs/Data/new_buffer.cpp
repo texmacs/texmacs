@@ -145,6 +145,9 @@ rename_buffer (url name, url new_name) {
   notify_rename_before (name);
   buf->buf->name= new_name;
   buf->buf->master= new_name;
+  array<url> vs= buffer_to_views (new_name);
+  for (int i=0; i<N(vs); i++)
+    view_to_editor (vs[i]) -> notify_change (THE_ENVIRONMENT);
   notify_rename_after (new_name);
   tree doc= subtree (the_et, buf->rp);
   string title= propose_title (buf->buf->title, new_name, doc);
@@ -312,7 +315,7 @@ set_master_buffer (url name, url master) {
   buf->buf->master= master;
   array<url> vs= buffer_to_views (name);
   for (int i=0; i<N(vs); i++)
-    view_to_editor (vs[i]) -> set_master (master);
+    view_to_editor (vs[i]) -> notify_change (THE_ENVIRONMENT);
 }
 
 void

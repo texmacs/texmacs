@@ -77,11 +77,6 @@ edit_typeset_rep::add_init (hashmap<string,tree> H) {
 }
 
 void
-edit_typeset_rep::set_master (url name) {
-  env->base_file_name= name;
-}
-
-void
 edit_typeset_rep::clear_local_info () {
   buf->data->ref= hashmap<string,tree> ();
   buf->data->aux= hashmap<string,tree> ();
@@ -162,6 +157,7 @@ edit_typeset_rep::typeset_preamble () {
 
 void
 edit_typeset_rep::typeset_prepare () {
+  env->base_file_name= buf->buf->master;
   env->read_only= buf->buf->read_only;
   env->write_default_env ();
   env->patch_env (pre);

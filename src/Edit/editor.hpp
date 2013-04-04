@@ -80,7 +80,6 @@ protected:
   virtual void                 set_init (hashmap<string,tree> H= tree ("?"))=0;
   virtual void                 add_init (hashmap<string,tree> H) = 0;
   virtual void                 set_fin (hashmap<string,tree> H) = 0;
-  virtual void                 set_master (url name) = 0;
 
   /* exchanging property information */
   virtual void   set_bool_property (string what, bool val) = 0;
@@ -546,7 +545,6 @@ public:
   friend string get_editor_status_report ();
   friend void   tm_failure (const char* msg);
   friend void   set_buffer_tree (url name, tree doc);
-  friend void   set_master_buffer (url name, url master);
   friend void   set_current_view (url u);
   friend void   focus_on_editor (editor ed);
 };
