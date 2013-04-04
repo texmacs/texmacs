@@ -793,15 +793,6 @@ printer_rep::image (
 }
 
 void
-printer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
-  string ps_image= ps_load (u);
-  string imtext= is_ramdisc (u)? "inline image": as_string (u);
-  int x1, y1, x2, y2;
-  ps_bounding_box (u, x1, y1, x2, y2);
-  image (imtext, ps_image, x1, y1, x2, y2, w, h, x, y, alpha);
-}
-
-void
 printer_rep::fetch (SI x1, SI y1, SI x2, SI y2, renderer ren, SI x, SI y) {
   (void) x1; (void) y1; (void) x2; (void) y2;
   (void) ren; (void) x; (void) y;
@@ -833,24 +824,38 @@ printer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
 }
 
 void
+printer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
+  picture pict= lazy_picture (u, w/pixel, h/pixel);
+  draw_picture (pict, x, y, alpha);
+}
+
+void
 printer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
   (void) alpha; // FIXME
 
   int w= p->get_width (), h= p->get_height ();
   int ox= p->get_origin_x (), oy= p->get_origin_y ();
-  int pixel= 5*PIXEL;
-
-  string name= "picture";
-  string eps= picture_as_eps (p, 600);
-
-  int x1= -ox;
-  int y1= -oy;
-  int x2= w - ox;
-  int y2= h - oy;
-  x -= 2.06 * ox * pixel; // FIXME: where does the magic 2.06 come from?
-  y -= 2.06 * oy * pixel;
-
-  image (name, eps, x1, y1, x2, y2, w * pixel, h * pixel, x, y, 255);
+  url u= p->get_name ();
+  if (is_none (u)) {
+    int pixel= 5*PIXEL;
+    string name= "picture";
+    string eps= picture_as_eps (p, 600);
+    int x1= -ox;
+    int y1= -oy;
+    int x2= w - ox;
+    int y2= h - oy;
+    x -= 2.06 * ox * pixel; // FIXME: where does the magic 2.06 come from?
+    y -= 2.06 * oy * pixel;
+    image (name, eps, x1, y1, x2, y2, w * pixel, h * pixel, x, y, 255);
+  }
+  else {
+    string ps_image= ps_load (u);
+    string imtext= is_ramdisc (u)? "inline image": as_string (u);
+    w *= pixel; h *= pixel;
+    int x1, y1, x2, y2;
+    ps_bounding_box (u, x1, y1, x2, y2);
+    image (imtext, ps_image, x1, y1, x2, y2, w, h, x, y, alpha);
+  }
 }
 
 void
