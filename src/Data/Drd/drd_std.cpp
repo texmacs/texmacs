@@ -36,6 +36,7 @@ hashmap<string,int> STD_CODE (UNKNOWN);
 #define constraint(i) type (i, TYPE_CONSTRAINT)
 #define graphical_id(i) type (i, TYPE_GRAPHICAL_ID)
 #define point_type(i) type (i, TYPE_POINT)
+#define effect_type(i) type (i, TYPE_EFFECT)
 #define animation(i) type (i, TYPE_ANIMATION)
 #define duration(i) type (i, TYPE_DURATION)
 
@@ -50,6 +51,7 @@ hashmap<string,int> STD_CODE (UNKNOWN);
 #define returns_animation() type (TYPE_ANIMATION)
 #define returns_graphical() type (TYPE_GRAPHICAL)
 #define returns_constraint() type (TYPE_CONSTRAINT)
+#define returns_effect() type (TYPE_EFFECT)
 
 static tag_info
 fixed (int arity, int extra=0, int child_mode= CHILD_UNIFORM) {
@@ -595,6 +597,32 @@ init_std_drd () {
 	length (2) -> name (2, "height") ->
         length (3) -> name (3, "x") -> long_name (3, "x-offset") ->
         length (4) -> name (4, "y") -> long_name (4, "y-offset"));
+  init (EFFECT_BLUR, "effect-blur",
+        fixed (1) -> returns_effect () ->
+        length (0) -> name (0, "r") -> long_name (0, "blur radius"));
+  init (EFFECT_SHADOW, "effect-shadow",
+        fixed (4, 0, DETAILED) -> returns_effect () ->
+        length (0) -> name (0, "x") -> long_name (0, "x-offset") ->
+        length (1) -> name (1, "y") -> long_name (1, "t-offset") ->
+        string_type (2) -> name (2, "color") ->
+        length (3) -> name (3, "r") -> long_name (3, "blur radius"));
+  init (EFFECT_OUTLINE, "effect-outline",
+        fixed (1) -> returns_effect () ->
+        length (0) -> name (0, "r") -> long_name (0, "outline radius"));
+  init (EFFECT_ENGRAVE, "effect-engrave",
+        fixed (3, 0, DETAILED) -> returns_effect () ->
+        string_type (0) -> name (0, "dark") ->
+        string_type (1) -> name (1, "light") ->
+        length (2) -> name (2, "r") -> long_name (2, "engrave radius"));
+  init (EFFECT_EMBOSS, "effect-emboss",
+        fixed (3, 0, DETAILED) -> returns_effect () ->
+        string_type (0) -> name (0, "dark") ->
+        string_type (1) -> name (1, "light") ->
+        length (2) -> name (2, "r") -> long_name (2, "emboss radius"));
+  init (EFFECT_RECOLOR, "effect-recolor",
+        fixed (2, 0, DETAILED) -> returns_effect () ->
+        string_type (0) -> name (0, "old") ->
+        string_type (1) -> name (1, "new"));
 
   init (BOX_INFO, "box-info",
 	fixed (1, 1, BIFORM) ->

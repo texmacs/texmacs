@@ -429,6 +429,20 @@ edit_env_rep::exec (tree t) {
 
   case _POINT:
     return exec_point (t);
+
+  case EFFECT_BLUR:
+    return exec_effect_blur (t);
+  case EFFECT_SHADOW:
+    return exec_effect_shadow (t);
+  case EFFECT_OUTLINE:
+    return exec_effect_outline (t);
+  case EFFECT_ENGRAVE:
+    return exec_effect_engrave (t);
+  case EFFECT_EMBOSS:
+    return exec_effect_emboss (t);
+  case EFFECT_RECOLOR:
+    return exec_effect_recolor (t);
+
   case BOX_INFO:
     return exec_box_info (t);
   case FRAME_DIRECT:
@@ -1671,6 +1685,44 @@ edit_env_rep::exec_point (tree t) {
     u[i]= exec (t[i]);
   if (n==0 || is_double (u[0])) return u;
   return as_tree (as_point (u));
+}
+
+tree
+edit_env_rep::exec_effect_blur (tree t) {
+  if (N(t) < 1) return tree (ERROR, "bad effect-blur");
+  double r = as_length (exec (t[0]));
+  double px= as_length ("1px");
+  return tree (EFFECT_BLUR, as_tree (r / px));
+}
+
+tree
+edit_env_rep::exec_effect_shadow (tree t) {
+  if (N(t) < 4) return tree (ERROR, "bad effect-shadow");
+  return t;
+}
+
+tree
+edit_env_rep::exec_effect_outline (tree t) {
+  if (N(t) < 1) return tree (ERROR, "bad effect-outline");
+  return t;
+}
+
+tree
+edit_env_rep::exec_effect_engrave (tree t) {
+  if (N(t) < 3) return tree (ERROR, "bad effect-engrave");
+  return t;
+}
+
+tree
+edit_env_rep::exec_effect_emboss (tree t) {
+  if (N(t) < 3) return tree (ERROR, "bad effect-emboss");
+  return t;
+}
+
+tree
+edit_env_rep::exec_effect_recolor (tree t) {
+  if (N(t) < 2) return tree (ERROR, "bad effect-recolor");
+  return t;
 }
 
 tree

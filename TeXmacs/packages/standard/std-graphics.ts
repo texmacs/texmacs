@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.0.7.19>
 
 <style|<tuple|source|std>>
 
@@ -53,6 +53,16 @@
       </with>
     </with>
   </macro>>
+
+  <\active*>
+    <\src-comment>
+      Effects
+    </src-comment>
+  </active*>
+
+  <assign|blur|<macro|body|r|<gr-effect|<arg|body>|<effect-blur|<arg|r>>>>>
+
+  \;
 </body>
 
 <\initial>

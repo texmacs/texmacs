@@ -87,6 +87,7 @@ picture as_raster_picture (picture pict);
 picture error_picture (int w, int h);
 picture as_native_picture (picture pict);
 
+picture apply_effect (picture pic, tree eff);
 picture blur (picture pic, double r);
 picture gravitational_outline (picture pic, int R, double expon= 2.0);
 picture gravitational_shadow (picture pic, color col, double alpha);
