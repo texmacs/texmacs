@@ -357,21 +357,24 @@
 ;; Elsevier abstract macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (tmtex-abstract-data s l)
+(tm-define (tmtex-abstract-keywords t)
   (:mode elsevier-style?)
-  (let* ((msc (tmtex-select-args-by-func 'abstract-msc l))
-         (msc (map tmtex (apply append (map cdr msc))))
-         (msc (list-intersperse msc '(!concat " " (tmsep) " ")))
-         (msc (if (nnull? msc) `((!concat (tmmsc) (!group ,@msc))) '()))
-         (keywords (tmtex-select-args-by-func 'abstract-keywords l))
-         (keywords (map tmtex (apply append (map cdr keywords))))
-         (keywords (list-intersperse keywords '(!concat " " (sep) " ")))
-         (keywords (if (nnull? keywords) `((!concat ,@keywords)) '()))
-         (keywords (if (or (nnull? msc) (nnull? keywords))
-                       `(((!begin "keyword")
-                          (!document ,@keywords ,@msc))) '()))
-         (abstract (map tmtex (tmtex-select-args-by-func 'abstract l))))
-    `(!document ,@abstract ,@keywords)))
+  (with args (list-intersperse (map tmtex (cdr t)) '(!concat (sep) " "))
+    `((!begin "keyword") (!concat ,@args))))
+
+(tm-define (tmtex-abstract-msc t)
+  (:mode elsevier-style?)
+  (with args (list-intersperse (map tmtex (cdr t)) '(!concat (sep) " "))
+    `(!concat (PACS) " " (!concat ,@args))))
+
+(tm-define  (tmtex-make-abstract-data keywords msc abstract)
+  (:mode elsevier-style?)
+  (display* keywords "\n")
+  (if (nnull? msc)
+    (set! keywords
+      `(((!begin "keyword") (!document ,@(map cadr keywords) ,@msc)))))
+  (display* keywords "\n\n")
+  `(!document ,@keywords ,@abstract))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Elsevier style is quite ugly.

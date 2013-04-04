@@ -1434,12 +1434,12 @@
   (tmtex-std-env "abstract" (cdr t)))
 
 (tm-define (tmtex-abstract-keywords t)
-  (with args (tmtex-concat-sep (map tmtex (cdr t)))
-    `(!concat (tmkeywords) (!group ,@args))))
+  (with args (list-intersperse (map tmtex (cdr t)) '(tmsep))
+    `(!concat (tmkeywords) ,@(map (lambda (x) `(!group ,x)) args))))
 
 (tm-define (tmtex-abstract-msc t)
-  (with args (tmtex-concat-sep (map tmtex (cdr t)))
-    `(!concat (tmmsc) (!group ,@args))))
+  (with args (list-intersperse (map tmtex (cdr t)) '(tmsep))
+    `(!concat (tmmsc) ,@(map (lambda (x) `(!group ,x)) args))))
 
 (tm-define  (tmtex-make-abstract-data keywords msc abstract)
   `(!document ,@keywords ,@msc ,@abstract))
@@ -1993,9 +1993,6 @@
   (hide-part (,tmtex-hide-part -1))
   (show-part (,tmtex-show-part -1))
   ((:or doc-title-options author-data) (,tmtex-default -1))
-  (abstract (,tmtex-abstract -2))
-  (abstract-keywords (,tmtex-abstract-keywords -2))
-  (abstract-msc (,tmtex-abstract-msc -2))
   (appendix (,tmtex-appendix 1))
   ((:or theorem proposition lemma corollary proof axiom definition
 	notation conjecture remark note example exercise problem warning
@@ -2132,6 +2129,10 @@
   ;; to be removed
   (doc-data                 tmtex-doc-data 2)
   (abstract-data            tmtex-abstract-data 2)
+  ;; abstract markup
+  (abstract                 tmtex-abstract 1)
+  (abstract-msc             tmtex-abstract-msc 1)
+  (abstract-keywords        tmtex-abstract-keywords 1)
   ;; metadata markup
   (doc-title                tmtex-doc-title 1)
   (doc-subtitle             tmtex-doc-subtitle 1)
