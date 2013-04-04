@@ -30,7 +30,7 @@ box arc_box (path ip, SI x1, SI y1, SI x2, SI y2,
 	     int a1, int a2, SI w, color c);
 box polygon_box (path ip, array<SI> x, array<SI> y, color c);
 box polygon_box (path ip, array<SI> x, array<SI> y, SI w, color cf, color cl);
-box image_box (path ip, picture p, SI w, SI h, int alpha);
+box image_box (path ip, url u, SI w, SI h, int alpha);
 
 box text_box (path ip, int pos, string s, font fn, color col);
 box delimiter_box (path ip, string s, font fn, color col, SI y1, SI y2);
@@ -108,6 +108,6 @@ box anim_constant_box (path ip, box b, int l);
 box anim_translate_box (path ip, box b, int len, SI sx, SI sy, SI ex, SI ey);
 box anim_progressive_box (path ip, box b, int len, rectangle r1, rectangle r2);
 box sound_box (path ip, url u, SI h);
-box video_box (path ip, url u, SI w, SI h, SI px, int a, int msecs, bool rep);
+box video_box (path ip, url u, SI w, SI h, int a, int msecs, bool repeated);
 
 #endif // defined CONSTRUCT_H
