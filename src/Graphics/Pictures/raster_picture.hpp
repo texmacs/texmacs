@@ -39,13 +39,12 @@ public:
 protected:
   color internal_get_pixel (int x, int y) {
     if (0 > x || 0 > y || x >= r->w || y >= r->h) return 0;
-    else return (color) r->a [y*r->w + x];
-  }
-
+    else return (color) r->a [y*r->w + x]; }
   void internal_set_pixel (int x, int y, color c) {
     if (0 > x || 0 > y || x >= r->w || y >= r->h);
-    else r->a [y*r->w + x]= C (c);
-  }
+    else r->a [y*r->w + x]= C (c); }
+  color internal_smooth_pixel (double x, double y) {
+    return (color) r->internal_smooth_pixel (x, y); }
 
 public:
   raster_picture_rep (raster<C> r2): r (r2) {}

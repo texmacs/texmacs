@@ -53,6 +53,28 @@ compose (picture p1, picture p2, composition_mode mode) {
 }
 
 /******************************************************************************
+* Coordinate transformations
+******************************************************************************/
+
+picture
+shift (picture pic, double dx, double dy) {
+  raster<true_color> ras= as_raster<true_color> (pic);
+  return raster_picture (shift (ras, dx, dy));
+}
+
+picture
+magnify (picture pic, double sx, double sy) {
+  raster<true_color> ras= as_raster<true_color> (pic);
+  return raster_picture (magnify (ras, sx, sy));
+}
+
+picture
+bubble (picture pic, double r, double a) {
+  raster<true_color> ras= as_raster<true_color> (pic);
+  return raster_picture (bubble (ras, r, a));
+}
+
+/******************************************************************************
 * Special effects
 ******************************************************************************/
 
@@ -135,6 +157,8 @@ apply_effect (picture pic, tree eff) {
     //return add_shadow (pic, 1, -1, 0xcfc0c0c0, 0.0);
     //return engrave (pic, 0.5, 0xff000000, 0xffffffff, 1.0, 1.0);
     //return gravitational_outline (pic, 15, 2.5);
-    return gravitational_shadow (pic, 0x80000000, 2.2);
+    //return gravitational_shadow (pic, 0x80000000, 2.2);
+    //return magnify (pic, 20.0, 20.0);
+    return bubble (pic, 50.0, 0.5);
   }
 }

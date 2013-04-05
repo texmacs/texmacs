@@ -32,6 +32,34 @@ public:
     w (w2), h (h2), ox (ox2), oy (oy2), a (NULL) {
       if (w * h != 0) a= tm_new_array<C> (w * h); }
   ~raster_rep () { if (w * h != 0) tm_delete_array (a); }
+
+  C internal_get_pixel (int x, int y) {
+    //cout << "Normal " << x << ", " << y << "\n";
+    if (x >= 0 && w > x && y >= 0 && h > y) return a[y*w+x];
+    else { C r; clear (r); return r; } }
+  C internal_smooth_pixel (double x, double y) {
+    //cout << "Smooth " << x << ", " << y << "\n";
+    x -= 0.5; y -= 0.5;
+    int x1= (int) floor (x);
+    int y1= (int) floor (y);
+    int x2= x1 + 1;
+    int y2= y1 + 1;
+    double ix1= x2 - x;
+    double ix2= x - x1;
+    double iy1= y2 - y;
+    double iy2= y - y1;
+    C cx1y1= internal_get_pixel (x1, y1);
+    C cx1y2= internal_get_pixel (x1, y2);
+    C cx2y1= internal_get_pixel (x2, y1);
+    C cx2y2= internal_get_pixel (x2, y2);
+    //return mix (mix (cx1y1, ix1, cx2y1, ix2), iy1,
+    //mix (cx1y2, ix1, cx2y2, ix2), iy2);
+    return mix (cx1y1, ix1*iy1, cx1y2, ix1*iy2,
+		cx2y1, ix2*iy1, cx2y2, ix2*iy2); }
+  inline C get_pixel (int x, int y) {
+    return internal_get_pixel (x + ox, y + oy); }
+  inline C smooth_pixel (double x, double y) {
+    return internal_smooth_pixel (x + ox, y + oy); }
 };
 
 template<typename C> class raster {
@@ -241,6 +269,75 @@ compose (raster<C> r1, raster<S> r2, composition_mode mode) {
   draw_on (ret, r1, 0, 0, compose_source);
   draw_on (ret, r2, 0, 0, mode);
   return ret;
+}
+
+/******************************************************************************
+* Transformations
+******************************************************************************/
+
+template<typename C, typename F> raster<C>
+inverse_transform (raster<C> r, F fun, int w, int h, int ox, int oy) {
+  raster<C> ret (w, h, ox, oy);
+  for (int y=0; y<h; y++)
+    for (int x=0; x<w; x++) {
+      double xx= x - ox + 0.5;
+      double yy= y - oy + 0.5;
+      fun.transform (xx, yy);
+      ret->a[w*y+x]= r->smooth_pixel (xx, yy);
+    }
+  return ret;
+}
+
+struct shifter {
+  double dx, dy;
+  inline shifter (double dx2, double dy2): dx (dx2), dy (dy2) {}
+  inline void transform (double& x, double& y) { x += dx; y += dy; }
+};
+
+template<typename C> raster<C>
+shift (raster<C> r, double dx, double dy) {
+  shifter sh (-dx, -dy);
+  int idx= (int) floor (dx);
+  int idy= (int) floor (dy);
+  int w  = (idx == dx? r->w: r->w + 1);
+  int h  = (idy == dy? r->h: r->h + 1);
+  return inverse_transform (r, sh, w, h, r->ox - idx, r->oy - idy);
+}
+
+struct magnifier {
+  double sx, sy;
+  inline magnifier (double sx2, double sy2): sx (sx2), sy (sy2) {}
+  inline void transform (double& x, double& y) { x *= sx; y *= sy; }
+};
+
+template<typename C> raster<C>
+magnify (raster<C> r, double sx, double sy) {
+  magnifier mf (1.0/sx, 1.0/sy);
+  int x1 = floor (sx * (-r->ox));
+  int x2 = ceil  (sx * (r->w - r->ox));
+  int y1 = floor (sy * (-r->oy));
+  int y2 = ceil  (sy * (r->h - r->oy));
+  if (x1 > x2) { int temp= x1; x1= x2; x2= temp; }
+  if (y1 > y2) { int temp= y1; y1= y2; y2= temp; }
+  return inverse_transform (r, mf, x2-x1, y2-y1, -x1, -y1);
+}
+
+struct bubbler {
+  double r, a;
+  inline bubbler (double r2, double a2): r (r2 / 3.142), a (a2) {}
+  inline void transform (double& x, double& y) {
+    x += a * r * sin (x / r); y += a * r * sin (y / r); }
+};
+
+template<typename C> raster<C>
+bubble (raster<C> r, double rr, double a) {
+  bubbler bu (rr, a);
+  double R= a * rr / 3.142;
+  int x1 = floor ((-r->ox) - R);
+  int x2 = ceil  ((r->w - r->ox) + R);
+  int y1 = floor ((-r->oy) - R);
+  int y2 = ceil  ((r->h - r->oy) + R);
+  return inverse_transform (r, bu, x2-x1, y2-y1, -x1, -y1);
 }
 
 /******************************************************************************

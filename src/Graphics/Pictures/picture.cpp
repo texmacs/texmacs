@@ -13,6 +13,21 @@
 #include "analyze.hpp"
 #include "gui.hpp"
 #include "image_files.hpp"
+#include "true_color.hpp"
+
+/******************************************************************************
+* Useful subroutines
+******************************************************************************/
+
+color mix (color c1, double a1, color c2, double a2) {
+  return (color) mix (true_color (c1), a1, true_color (c2), a2);
+}
+
+color mix (color c1, double a1, color c2, double a2,
+	   color c3, double a3, color c4, double a4) {
+  return (color) mix (true_color (c1), a1, true_color (c2), a2,
+		      true_color (c3), a3, true_color (c4), a4);
+}
 
 /******************************************************************************
 * Default implementations of some virtual routines
@@ -35,6 +50,7 @@ picture_rep::translate_origin (int dx, int dy) {
 
 color
 picture_rep::internal_smooth_pixel (double x, double y) {
+  x -= 0.5; y -= 0.5;
   int x1= (int) floor (x);
   int y1= (int) floor (y);
   int x2= x1 + 1;
@@ -43,32 +59,12 @@ picture_rep::internal_smooth_pixel (double x, double y) {
   double ix2= x - x1;
   double iy1= y2 - y;
   double iy2= y - y1;
-  double ix1y1= ix1 * iy1;
-  double ix1y2= ix1 * iy2;
-  double ix2y1= ix2 * iy1;
-  double ix2y2= ix2 * iy2;
-  int rx1y1, gx1y1, bx1y1, ax1y1;
-  int rx1y2, gx1y2, bx1y2, ax1y2;
-  int rx2y1, gx2y1, bx2y1, ax2y1;
-  int rx2y2, gx2y2, bx2y2, ax2y2;
-  get_rgb_color (internal_get_pixel (x1, y1), rx1y1, gx1y1, bx1y1, ax1y1);
-  get_rgb_color (internal_get_pixel (x1, y2), rx1y2, gx1y2, bx1y2, ax1y2);
-  get_rgb_color (internal_get_pixel (x2, y1), rx2y1, gx2y1, bx2y1, ax2y1);
-  get_rgb_color (internal_get_pixel (x2, y2), rx2y2, gx2y2, bx2y2, ax2y2);
-  int Rx1y1= ax1y1 * rx1y1, Gx1y1= ax1y1 * gx1y1, Bx1y1= ax1y1 * bx1y1;
-  int Rx1y2= ax1y2 * rx1y2, Gx1y2= ax1y2 * gx1y2, Bx1y2= ax1y2 * bx1y2;
-  int Rx2y1= ax2y1 * rx2y1, Gx2y1= ax2y1 * gx2y1, Bx2y1= ax2y1 * bx2y1;
-  int Rx2y2= ax2y2 * rx2y2, Gx2y2= ax2y2 * gx2y2, Bx2y2= ax2y2 * bx2y2;
-  double tR= ix1y1 * Rx1y1 + ix2y1 * Rx2y1 + ix1y2 * Rx1y2 + ix2y2 * Rx2y2;
-  double tG= ix1y1 * Gx1y1 + ix2y1 * Gx2y1 + ix1y2 * Gx1y2 + ix2y2 * Gx2y2;
-  double tB= ix1y1 * Bx1y1 + ix2y1 * Bx2y1 + ix1y2 * Bx1y2 + ix2y2 * Bx2y2;
-  double ta= ix1y1 * ax1y1 + ix2y1 * ax2y1 + ix1y2 * ax1y2 + ix2y2 * ax2y2;
-  if (ta <= 1.0e-10) return rgb_color (0, 0, 0, 0);
-  int r= as_int (tR / ta);
-  int g= as_int (tG / ta);
-  int b= as_int (tB / ta);
-  int a= as_int (ta);
-  return rgb_color (min (r, 255), min (g, 255), min (b, 255), a);
+  color cx1y1= internal_get_pixel (x1, y1);
+  color cx1y2= internal_get_pixel (x1, y2);
+  color cx2y1= internal_get_pixel (x2, y1);
+  color cx2y2= internal_get_pixel (x2, y2);
+  return mix (cx1y1, ix1*iy1, cx1y2, ix1*iy2,
+	      cx2y1, ix2*iy1, cx2y2, ix2*iy2);
 }
 
 void

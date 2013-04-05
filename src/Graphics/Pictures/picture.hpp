@@ -90,14 +90,17 @@ picture as_raster_picture (picture pict);
 picture error_picture (int w, int h);
 picture as_native_picture (picture pict);
 
-picture apply_effect (picture pic, tree eff);
-picture blur (picture pic, double r);
-picture gravitational_outline (picture pic, int R, double expon= 2.0);
-picture gravitational_shadow (picture pic, color col, double alpha);
 void    draw_on (picture& pic, color c, composition_mode mode);
 picture compose (picture pic, color c, composition_mode mode);
 void    draw_on (picture& d, picture s, int x, int y, composition_mode m);
 picture combine (picture p1, picture p2, composition_mode mode);
+picture shift (picture pic, double dx, double dy);
+picture magnify (picture pic, double dx, double dy);
+
+picture apply_effect (picture pic, tree eff);
+picture blur (picture pic, double r);
+picture gravitational_outline (picture pic, int R, double expon= 2.0);
+picture gravitational_shadow (picture pic, color col, double alpha);
 picture add_shadow (picture pic, int x, int y, color c, double r);
 picture engrave (picture src, double alpha, color tlc, color brc,
                  double tlw=1.0, double brw= 1.0);
