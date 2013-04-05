@@ -369,11 +369,9 @@
 
 (tm-define  (tmtex-make-abstract-data keywords msc abstract)
   (:mode elsevier-style?)
-  (display* keywords "\n")
   (if (nnull? msc)
     (set! keywords
       `(((!begin "keyword") (!document ,@(map cadr keywords) ,@msc)))))
-  (display* keywords "\n\n")
   `(!document ,@keywords ,@abstract))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
