@@ -307,3 +307,22 @@
          (result (if (null? result) '() `((!concat ,@result))))
          (result `(,@result ,@urls ,@notes ,@miscs)))
     (if (null? result) '() `(author (!paragraph ,@result)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; LLNCS specific abstract markup
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tmtex-abstract-keywords t)
+  (:mode springer-style?)
+  (:require llncs?)
+  (with args (list-intersperse (map tmtex (cdr t)) '(!group (tmsep)))
+    `(keywords (!concat ,@args))))
+
+(tm-define  (tmtex-make-abstract-data keywords msc abstract)
+  (:mode springer-style?)
+  (:require llncs?)
+  (if (or (nnull? msc) (nnull? keywords))
+    (set! abstract
+      `(((!begin "abstract")
+         (!document ,@(map cadr abstract) ,@keywords ,@msc)))))
+  `(!document ,@abstract))
