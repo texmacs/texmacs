@@ -111,15 +111,15 @@
   (make-author-data-element 'author-affiliation))
 
 (tm-define (kbd-enter t shift?)
-  (:require (tree-is? t 'abstract-keywords))
-  (with-innermost t 'abstract-keywords
-    (with pos (1+ (tree-down-index t))
-      (tree-insert! t pos `((concat "")))
-      (tree-go-to t pos 0 0))))
-
-(tm-define (kbd-enter t shift?)
-  (:require (tree-is? t 'abstract-msc))
-  (with-innermost t 'abstract-msc
+  (:require (or
+              (tree-is? t 'abstract-arxiv)
+              (tree-is? t 'abstract-pacs)
+              (tree-is? t 'abstract-acm)
+              (tree-is? t 'abstract-msc)
+              (tree-is? t 'abstract-keywords)))
+  (with t (tree-search-upwards
+            t '(abstract-msc abstract-acm abstract-pacs
+                             abstract-arxiv abstract-keywords))
     (with pos (1+ (tree-down-index t))
       (tree-insert! t pos `((concat "")))
       (tree-go-to t pos 0 0))))

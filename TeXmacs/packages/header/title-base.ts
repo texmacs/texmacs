@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.17>
+<TeXmacs|1.0.7.19>
 
 <style|<tuple|source|std-pattern>>
 
@@ -39,6 +39,12 @@
   <assign|keywords-text|<macro|<localize|Keywords>>>
 
   <assign|AMS-class-text|<macro|<localize|A.M.S. subject classification>>>
+
+  <assign|PACS-class-text|<macro|<localize|P.A.C.S. subject classification>>>
+
+  <assign|ACM-class-text|<macro|<localize|A.C.M. subject classification>>>
+
+  <assign|arXiv-class-text|<macro|<localize|arXiv subject classification>>>
 
   <assign|with-TeXmacs-text|<macro|This document has been written using the
   GNU <TeXmacs> text editor (see <hlink|<with|font-family|tt|www.texmacs.org>|http://www.texmacs.org>).>>
@@ -249,6 +255,23 @@
 
   <assign|abstract-keywords|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<keywords-text><localize|:>
   ><concat-tuple|<quote-arg|args>|, >>>>
+
+  <assign|acm-ref|<value|identity>>
+
+  <assign|abstract-acm|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<compound|ACM-class-text><localize|:>
+  ><concat-tuple|<map|acm-ref|<quote-arg|args>>|, >>>>
+
+  <assign|arxiv-ref|<\macro|cat-id>
+    <style-with|src-compact|none|<hlink|<arg|cat-id>|<style-with|src-compact|none|<merge|http://arxiv.org/find/all/1/cat:+|<arg|cat-id>|/0/1/0/all/0/1>>>>
+  </macro>>
+
+  <assign|abstract-arxiv|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<compound|arXiv-class-text><localize|:>
+  ><concat-tuple|<map|arxiv-ref|<quote-arg|args>>|, >>>>
+
+  <assign|pacs-ref|<value|identity>>
+
+  <assign|abstract-pacs|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<compound|PACS-class-text><localize|:>
+  ><concat-tuple|<map|pacs-ref|<quote-arg|args>>|, >>>>
 
   <assign|msc-ref|<\macro|msc-id>
     <style-with|src-compact|none|<hlink|<arg|msc-id>|<style-with|src-compact|none|<merge|http://www.ams.org/mathscinet/search/mscbrowse.html?sk=default&sk=|<arg|msc-id>|&submit=Search>>>>

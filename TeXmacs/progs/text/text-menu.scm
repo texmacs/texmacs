@@ -480,8 +480,11 @@
   #f)
 
 (tm-menu (focus-abstract-menu)
-  ("Keywords" (make-abstract-data-element 'abstract-keywords))
-  ("M.S.C." (make-abstract-data-element 'abstract-msc)))
+  ("Arxiv Category"               (make-abstract-data-element 'abstract-arxiv))
+  ("A.C.M. Computing Class."      (make-abstract-data-element 'abstract-acm))
+  ("A.M.S. Subject Class."        (make-abstract-data-element 'abstract-msc))
+  ("Physics and Astronomy Class." (make-abstract-data-element 'abstract-pacs))
+  ("Keywords"                 (make-abstract-data-element 'abstract-keywords)))
 
 (tm-define (focus-tag-name l)
   (:require (== l 'abstract))

@@ -90,7 +90,8 @@
   author-note)
 
 (define-group abstract-data-tag
-  abstract abstract-msc abstract-keywords)
+  abstract abstract-acm abstract-arxiv abstract-pacs abstract-msc
+  abstract-keywords)
 
 ;; Enunciations
 
