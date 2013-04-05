@@ -33,6 +33,44 @@ picture_rep::translate_origin (int dx, int dy) {
   set_origin (get_origin_x () + dx, get_origin_y () + dy);
 }
 
+color
+picture_rep::internal_smooth_pixel (double x, double y) {
+  int x1= (int) floor (x);
+  int y1= (int) floor (y);
+  int x2= x1 + 1;
+  int y2= y1 + 1;
+  double ix1= x2 - x;
+  double ix2= x - x1;
+  double iy1= y2 - y;
+  double iy2= y - y1;
+  double ix1y1= ix1 * iy1;
+  double ix1y2= ix1 * iy2;
+  double ix2y1= ix2 * iy1;
+  double ix2y2= ix2 * iy2;
+  int rx1y1, gx1y1, bx1y1, ax1y1;
+  int rx1y2, gx1y2, bx1y2, ax1y2;
+  int rx2y1, gx2y1, bx2y1, ax2y1;
+  int rx2y2, gx2y2, bx2y2, ax2y2;
+  get_rgb_color (internal_get_pixel (x1, y1), rx1y1, gx1y1, bx1y1, ax1y1);
+  get_rgb_color (internal_get_pixel (x1, y2), rx1y2, gx1y2, bx1y2, ax1y2);
+  get_rgb_color (internal_get_pixel (x2, y1), rx2y1, gx2y1, bx2y1, ax2y1);
+  get_rgb_color (internal_get_pixel (x2, y2), rx2y2, gx2y2, bx2y2, ax2y2);
+  int Rx1y1= ax1y1 * rx1y1, Gx1y1= ax1y1 * gx1y1, Bx1y1= ax1y1 * bx1y1;
+  int Rx1y2= ax1y2 * rx1y2, Gx1y2= ax1y2 * gx1y2, Bx1y2= ax1y2 * bx1y2;
+  int Rx2y1= ax2y1 * rx2y1, Gx2y1= ax2y1 * gx2y1, Bx2y1= ax2y1 * bx2y1;
+  int Rx2y2= ax2y2 * rx2y2, Gx2y2= ax2y2 * gx2y2, Bx2y2= ax2y2 * bx2y2;
+  double tR= ix1y1 * Rx1y1 + ix2y1 * Rx2y1 + ix1y2 * Rx1y2 + ix2y2 * Rx2y2;
+  double tG= ix1y1 * Gx1y1 + ix2y1 * Gx2y1 + ix1y2 * Gx1y2 + ix2y2 * Gx2y2;
+  double tB= ix1y1 * Bx1y1 + ix2y1 * Bx2y1 + ix1y2 * Bx1y2 + ix2y2 * Bx2y2;
+  double ta= ix1y1 * ax1y1 + ix2y1 * ax2y1 + ix1y2 * ax1y2 + ix2y2 * ax2y2;
+  if (ta <= 1.0e-10) return rgb_color (0, 0, 0, 0);
+  int r= as_int (tR / ta);
+  int g= as_int (tG / ta);
+  int b= as_int (tB / ta);
+  int a= as_int (ta);
+  return rgb_color (min (r, 255), min (g, 255), min (b, 255), a);
+}
+
 void
 picture_rep::internal_copy_from (int x, int y, picture src,
                                  int x1, int y1, int x2, int y2)

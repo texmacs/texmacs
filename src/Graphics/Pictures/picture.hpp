@@ -31,6 +31,7 @@ ABSTRACT_NULL(picture);
 
 class picture_rep: public abstract_struct {
 protected:
+  virtual color internal_smooth_pixel (double x, double y);
   virtual color internal_get_pixel (int x, int y) = 0;
   virtual void internal_set_pixel (int x, int y, color c) = 0;
   virtual void internal_copy_from (int x, int y, picture src,
@@ -54,6 +55,8 @@ public:
   virtual void set_origin (int ox, int oy) = 0;
   virtual void translate_origin (int dx, int dy);
 
+  inline color smooth_pixel (double x, double y) {
+    return internal_smooth_pixel (x + get_origin_x (), y + get_origin_y ()); }
   inline color get_pixel (int x, int y) {
     return internal_get_pixel (x + get_origin_x (), y + get_origin_y ()); }
   inline void  set_pixel (int x, int y, color c) {

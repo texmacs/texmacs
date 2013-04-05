@@ -187,4 +187,11 @@ inner_max (const true_color& c1, const true_color& c2) {
               max (c1.b * c2.b, c1.a * c2.a));
 }
 
+true_color mix (const true_color& c1, double a1,
+		const true_color& c2, double a2);
+true_color mix (const true_color& c1, double a1,
+		const true_color& c2, double a2,
+		const true_color& c3, double a3,
+		const true_color& c4, double a4);
+
 #endif // defined TRUE_COLOR_H
