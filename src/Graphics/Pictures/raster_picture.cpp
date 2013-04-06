@@ -79,31 +79,51 @@ bubble (picture pic, double r, double a) {
 ******************************************************************************/
 
 picture
-blur (picture pic, double r) {
+gaussian_blur (picture pic, double r) {
   raster<true_color> ras= as_raster<true_color> (pic);
-  return raster_picture (blur (ras, r));
+  return raster_picture (gaussian_blur (ras, r));
 }
 
 picture
-blur (picture pic, double rx, double ry, double alpha) {
+gaussian_blur (picture pic, double rx, double ry, double phi) {
   raster<true_color> ras= as_raster<true_color> (pic);
-  return raster_picture (blur (ras, rx, ry, alpha));
+  return raster_picture (gaussian_blur (ras, rx, ry, phi));
+}
+
+picture
+rectangular_thicken (picture pic, double rx, double ry, double phi) {
+  raster<true_color> ras= as_raster<true_color> (pic);
+  return raster_picture (rectangular_thicken (ras, rx, ry, phi));
+}
+
+picture
+oval_thicken (picture pic, double rx, double ry, double phi) {
+  raster<true_color> ras= as_raster<true_color> (pic);
+  return raster_picture (oval_thicken (ras, rx, ry, phi));
+}
+
+picture
+rectangular_variation (picture pic, double rx, double ry, double phi) {
+  raster<true_color> ras= as_raster<true_color> (pic);
+  return raster_picture (rectangular_variation (ras, rx, ry, phi));
+}
+
+picture
+oval_variation (picture pic, double rx, double ry, double phi) {
+  raster<true_color> ras= as_raster<true_color> (pic);
+  return raster_picture (oval_variation (ras, rx, ry, phi));
 }
 
 picture
 shadow (picture pic, color c, double x, double y, double r) {
-  picture shad= blur (compose (pic, c, compose_towards_source), r);
+  picture shad= gaussian_blur (compose (pic, c, compose_towards_source), r);
   shad= shift (shad, x, y);
   return compose (shad, pic, compose_source_over);
 }
 
 picture
 outline (picture pic, double r) {
-  raster<true_color> ras= as_raster<true_color> (pic);
-  raster<true_color> blurred= blur (ras, r / 2.0);
-  raster<true_color> diff= compose (ras, blurred, compose_alpha_distance);
-  raster<true_color> reblur= blur (diff, r / 2.0);
-  return raster_picture (normalize (reblur * true_color (1.0, 1.0, 1.0, 3.0)));
+  return oval_variation (pic, r, r, 0);
 }
 
 picture
@@ -113,9 +133,9 @@ gravitational_outline (picture pic, int R, double expon) {
 }
 
 picture
-gravitational_shadow (picture pic, color col, double alpha) {
+gravitational_shadow (picture pic, color col, double phi) {
   raster<true_color> ras= as_raster<true_color> (pic);
-  return raster_picture (gravitational_shadow (ras, 30, 10.0, col, alpha));
+  return raster_picture (gravitational_shadow (ras, 30, 10.0, col, phi));
 }
 
 picture
@@ -149,13 +169,13 @@ picture
 apply_effect (picture pic, tree eff) {
   if (is_func (eff, EFFECT_BLUR, 1)) {
     double r= as_double (eff[0]);
-    return blur (pic, r);
+    return gaussian_blur (pic, r);
   }
   else if (is_func (eff, EFFECT_BLUR, 3)) {
     double rx= as_double (eff[0]);
     double ry= as_double (eff[1]);
     double a = as_double (eff[2]);
-    return blur (pic, rx, ry, a);
+    return gaussian_blur (pic, rx, ry, a);
   }
   else if (is_func (eff, EFFECT_SHADOW, 4)) {
     color  c= named_color (as_string (eff[0]));
@@ -173,8 +193,8 @@ apply_effect (picture pic, tree eff) {
   }
   else {
     //return pic;
-    //return blur (pic, 1.0);
-    //return blur (pic, 2.0);
+    //return gaussian_blur (pic, 1.0);
+    //return gaussian_blur (pic, 2.0);
     //return compose (pic, 0x40ff0000, compose_towards_source);
     //return add_shadow (pic, 1, -2, 0xff808080, 2.0);
     //return add_shadow (pic, 1, -1, 0xcfc0c0c0, 0.0);
@@ -182,6 +202,8 @@ apply_effect (picture pic, tree eff) {
     //return gravitational_outline (pic, 15, 2.5);
     //return gravitational_shadow (pic, 0x80000000, 2.2);
     //return magnify (pic, 20.0, 20.0);
+    //return rectangular_variation (pic, 4, 4, 0);
+    //return oval_variation (pic, 2, 2, 0);
     return bubble (pic, 50.0, 0.5);
   }
 }

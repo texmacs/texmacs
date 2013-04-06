@@ -66,6 +66,8 @@
 
   <assign|shadow|<macro|body|col|x|y|r|<gr-effect|<arg|body>|<effect-shadow|<arg|col>|<arg|x>|<arg|y>|<arg|r>>>>>
 
+  <assign|outline|<macro|body|r|<gr-effect|<arg|body>|<effect-outline|<arg|r>>>>>
+
   \;
 </body>
 

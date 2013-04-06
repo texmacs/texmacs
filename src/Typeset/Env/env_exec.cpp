@@ -1712,7 +1712,12 @@ edit_env_rep::exec_effect_shadow (tree t) {
 tree
 edit_env_rep::exec_effect_outline (tree t) {
   if (N(t) < 1) return tree (ERROR, "bad effect-outline");
-  return t;
+  double px= as_length ("1px");
+  double rx= as_length (exec (t[0])) / px;
+  if (N(t) == 1) return tree (EFFECT_OUTLINE, as_tree (rx));
+  if (N(t) < 3) return tree (ERROR, "bad effect-outline");
+  double ry= as_length (exec (t[1])) / px;
+  return tree (EFFECT_OUTLINE, as_tree (rx), as_tree (ry), exec (t[2]));
 }
 
 tree

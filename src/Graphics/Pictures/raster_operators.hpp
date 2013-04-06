@@ -19,10 +19,26 @@
 ******************************************************************************/
 
 template<typename C> void clear (C& x) { x= 0.0; }
+template<typename C> void clear_alpha (C& x) { x= 0.0; }
+
 template<typename C> C mul_alpha (const C& x) { return x; }
 template<typename C> C div_alpha (const C& x) { return x; }
 template<typename C> C alpha_distance (const C& x, const C& y) {
   return 2.0 * fabs (y - x); }
+
+/******************************************************************************
+* Nullary operators
+******************************************************************************/
+
+struct clear_op {
+  template<typename C> static inline void
+  set_op (C& x) { clear (x); }
+};
+
+struct clear_alpha_op {
+  template<typename C> static inline void
+  set_op (C& x) { clear_alpha (x); }
+};
 
 /******************************************************************************
 * Unary operators

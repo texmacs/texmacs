@@ -103,7 +103,8 @@ picture shift (picture pic, double dx, double dy);
 picture magnify (picture pic, double dx, double dy);
 
 picture apply_effect (picture pic, tree eff);
-picture blur (picture pic, double r);
+picture gaussian_blur (picture pic, double r);
+picture gaussian_blur (picture pic, double rx, double ry, double phi);
 picture shadow (picture pic, color c, double x, double y, double r);
 picture outline (picture pic, double r);
 picture gravitational_outline (picture pic, int R, double expon= 2.0);

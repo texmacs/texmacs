@@ -601,7 +601,7 @@ init_std_drd () {
         options (1, 2, DETAILED) -> returns_effect () ->
         length (0) -> name (0, "rx") -> long_name (0, "blur x-radius") ->
         length (1) -> name (1, "ry") -> long_name (1, "blur y-radius") ->
-        length (2) -> name (2, "alpha") -> long_name (2, "blur angle"));
+        length (2) -> name (2, "phi") -> long_name (2, "blur angle"));
   init (EFFECT_SHADOW, "effect-shadow",
         fixed (4, 0, DETAILED) -> returns_effect () ->
         string_type (0) -> name (0, "color") ->

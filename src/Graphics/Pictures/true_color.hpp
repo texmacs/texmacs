@@ -175,8 +175,18 @@ clear (true_color& c) {
   c.r= c.g= c.b= c.a= 0.0;
 }
 
+inline void
+clear_alpha (true_color& c) {
+  c.a= 0.0;
+}
+
 inline double
 get_alpha (const true_color& c) {
+  return c.a;
+}
+
+inline double&
+get_alpha (true_color& c) {
   return c.a;
 }
 

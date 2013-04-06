@@ -110,6 +110,13 @@ trim_border (raster<C> r, int b) {
 * Mappers
 ******************************************************************************/
 
+template<typename Op, typename C> void
+foreach (raster<C>& r) {
+  int w= r->w, h= r->h, n= w*h;
+  for (int i=0; i<n; i++)
+    Op::set_op (r->a[i]);
+}
+
 template<typename Op, typename C>
 raster<Unary_return_type(Op,C) >
 map (raster<C> r) {
@@ -140,6 +147,12 @@ map_scalar (raster<C> r, S sc) {
     ret->a[i]= Op::op (r->a[i], sc);
   return ret;
 }
+
+
+template<typename C> inline void
+clear (raster<C>& r) { foreach<clear_op> (r); }
+template<typename C> inline void
+clear_alpha (raster<C>& r) { foreach<clear_alpha_op> (r); }
 
 template<typename C> inline raster<C>
 copy (raster<C> r) { return map<copy_op> (r); }
@@ -415,7 +428,7 @@ pixelize (F fun, int w, int h, int ox, int oy, int shrink= 5) {
             r += fun.eval (cx + dx, cy + dy);
           }
         }
-        ret->a[y*w+x]= r;
+        ret->a[y*w+x]= r / (shrink * shrink);
       }
     }
   return ret;
@@ -442,11 +455,31 @@ rectangular_brush (double rx, double ry) {
   return ret;
 }
 
+struct chi_rectangular {
+  double xx, xy, yx, yy;
+  inline chi_rectangular (double rx, double ry, double phi):
+    xx ( cos (phi) / rx), xy (sin (phi) / rx),
+    yx (-sin (phi) / ry), yy (cos (phi) / ry) {}
+  inline double eval (double x, double y) {
+    double tx= xx * x + xy * y, ty= yx * x + yy * y;
+    if (fabs (tx) < 1 && fabs (ty) < 1) return 1.0;
+    else return 0.0; }
+};
+
+template<typename C> raster<C>
+rectangular_brush (double rx, double ry, double phi) {
+  if (fabs (phi) <= 1.0e-6) return rectangular_brush<C> (rx, ry);
+  chi_rectangular fun (rx, ry, phi);
+  int R= ceil (sqrt (rx * rx + ry * ry) - 0.5);
+  int w= 2*R + 1;
+  return pixelize<C> (fun, w, w, R, R);  
+}
+
 struct chi_oval {
   double xx, xy, yx, yy;
-  inline chi_oval (double rx, double ry, double alpha):
-    xx ( cos (alpha) / rx), xy (sin (alpha) / rx),
-    yx (-sin (alpha) / ry), yy (cos (alpha) / ry) {}
+  inline chi_oval (double rx, double ry, double phi):
+    xx ( cos (phi) / rx), xy (sin (phi) / rx),
+    yx (-sin (phi) / ry), yy (cos (phi) / ry) {}
   inline double eval (double x, double y) {
     double tx= xx * x + xy * y, ty= yx * x + yy * y;
     if (tx * tx + ty * ty < 1) return 1.0;
@@ -454,8 +487,8 @@ struct chi_oval {
 };
 
 template<typename C> raster<C>
-oval_brush (double rx, double ry, double alpha) {
-  chi_oval fun (rx, ry, alpha);
+oval_brush (double rx, double ry, double phi) {
+  chi_oval fun (rx, ry, phi);
   int R= ceil (max (rx, ry) - 0.5);
   int w= 2*R + 1;
   return pixelize<C> (fun, w, w, R, R);
@@ -477,17 +510,17 @@ sum (raster<C> ras) {
 
 struct gaussian_distribution {
   double xx, xy, yx, yy;
-  inline gaussian_distribution (double rx, double ry, double alpha):
-    xx ( cos (alpha) / rx), xy (sin (alpha) / rx),
-    yx (-sin (alpha) / ry), yy (cos (alpha) / ry) {}
+  inline gaussian_distribution (double rx, double ry, double phi):
+    xx ( cos (phi) / rx), xy (sin (phi) / rx),
+    yx (-sin (phi) / ry), yy (cos (phi) / ry) {}
   inline double eval (double x, double y) {
     double tx= xx * x + xy * y, ty= yx * x + yy * y;
     return exp (- (tx*tx + ty*ty)); }
 };
 
 template<typename C> raster<C>
-gaussian_kernel (double rx, double ry, double alpha, double order= 2.5) {
-  gaussian_distribution fun (rx, ry, alpha);
+gaussian_kernel (double rx, double ry, double phi, double order= 2.5) {
+  gaussian_distribution fun (rx, ry, phi);
   double Rx= rx * order, Ry= ry * order;
   int R= ceil (max (Rx, Ry) - 0.5);
   int w= 2*R + 1;
@@ -498,13 +531,6 @@ gaussian_kernel (double rx, double ry, double alpha, double order= 2.5) {
 /******************************************************************************
 * Convolution and blur
 ******************************************************************************/
-
-template<typename C> void
-clear (raster<C>& r) {
-  int w= r->w, h= r->h;
-  for (int i=0; i<w*h; i++)
-    clear (r->a[i]);
-}
 
 template<typename C, typename S> raster<C>
 convolute (raster<C> s1, raster<S> s2) {
@@ -526,15 +552,102 @@ convolute (raster<C> s1, raster<S> s2) {
 }
 
 template<typename C> raster<C>
-blur (raster<C> ras, double rx, double ry, double alpha, double order= 2.5) {
-  raster<double> g= gaussian_kernel<double> (rx, ry, alpha, order);
+gaussian_blur (raster<C> ras, double rx, double ry, double phi,
+               double order= 2.5) {
+  raster<double> g= gaussian_kernel<double> (rx, ry, phi, order);
   return convolute (ras, g);
 }
 
 template<typename C> raster<C>
-blur (raster<C> ras, double r) {
+gaussian_blur (raster<C> ras, double r) {
   if (r <= 0.001) return ras;
-  return blur (ras, r, r, 0.0);
+  return gaussian_blur (ras, r, r, 0.0);
+}
+
+/******************************************************************************
+* Inking using a brush
+******************************************************************************/
+
+template<typename C> inline void
+src_over (C& a1, const C& a2) {
+  a1= a2 + a1 * (1 - a2);
+  //a1= max (a1, a2);
+}
+
+template<typename C, typename S> raster<C>
+thicken (raster<C> s1, raster<S> s2) {
+  typedef typename C::scalar_type F;
+  if (s1->w * s1->h == 0) return s1;
+  ASSERT (s2->w * s2->h != 0, "empty brush");
+  raster<C> d= convolute (s1, s2);
+  int s1w= s1->w, s1h= s1->h, s2w= s2->w, s2h= s2->h, dw= d->w;
+  raster<F> temp= get_alpha (s1);
+  clear_alpha (d);
+  for (int y1=0; y1<s1h; y1++)
+    for (int y2=0; y2<s2h; y2++) {
+      int o1= y1 * s1w, o2= y2 * s2w, o= (y1 + y2) * dw;
+      for (int x1=0; x1<s1w; x1++)
+        for (int x2=0; x2<s2w; x2++)
+          src_over (get_alpha (d->a[o+x1+x2]),
+                    temp->a[o1+x1] * s2->a[o2+x2]);
+    }
+  return d;
+}
+
+template<typename C> raster<C>
+rectangular_thicken (raster<C> ras, double dx, double dy, double phi) {
+  raster<double> brush=
+    rectangular_brush<double> (dx / 2 + 0.5, dy / 2 + 0.5, phi);
+  return thicken (ras, brush);
+}
+
+template<typename C> raster<C>
+oval_thicken (raster<C> ras, double dx, double dy, double phi) {
+  raster<double> brush= oval_brush<double> (dx / 2 + 0.5, dy / 2 + 0.5, phi);
+  return thicken (ras, brush);
+}
+
+/******************************************************************************
+* Inner variation
+******************************************************************************/
+
+template<typename C, typename S> raster<C>
+variation (raster<C> s1, raster<S> s2) {
+  typedef typename C::scalar_type F;
+  if (s1->w * s1->h == 0) return s1;
+  ASSERT (s2->w * s2->h != 0, "empty brush");
+  raster<C> d= convolute (s1, s2);
+  int s2w= s2->w, s2h= s2->h, dw= d->w, dh= d->h;
+  int s2ox= s2->ox, s2oy= s2->oy;
+  raster<F> temp= get_alpha (s1);
+  for (int y0=0; y0<dh; y0++)
+    for (int x0=0; x0<dw; x0++) {
+      int x1= x0 - s2ox, y1= y0 - s2oy;
+      F ref= temp->internal_get_pixel (x1, y1);
+      F min_v= 0, max_v= 0;
+      for (int y2=0; y2<s2h; y2++)
+        for (int x2=0; x2<s2w; x2++) {
+          F cur= temp->internal_get_pixel (x1 - (x2 - s2ox), y1 - (y2 - s2oy));
+          F v= (cur - ref) * s2->a[y2*s2w + x2];
+          max_v= max (max_v, v);
+          min_v= min (min_v, v);
+        }
+      get_alpha (d->a[y0*dw + x0]) = max_v - min_v;
+    }
+  return d;
+}
+
+template<typename C> raster<C>
+rectangular_variation (raster<C> ras, double dx, double dy, double phi) {
+  raster<double> brush=
+    rectangular_brush<double> (dx / 2 + 0.5, dy / 2 + 0.5, phi);
+  return variation (ras, brush);
+}
+
+template<typename C> raster<C>
+oval_variation (raster<C> ras, double dx, double dy, double phi) {
+  raster<double> brush= oval_brush<double> (dx / 2 + 0.5, dy / 2 + 0.5, phi);
+  return variation (ras, brush);
 }
 
 /******************************************************************************
@@ -601,10 +714,10 @@ gravitational_outline (raster<C> s, int R, double expon) {
 ******************************************************************************/
 
 template<typename C> raster<C>
-incidence (raster<C> gx, raster<C> gy, double alpha) {
+incidence (raster<C> gx, raster<C> gy, double phi) {
   int w= gx->w, h= gx->h;
   raster<C> res (w, h, gx->ox, gx->oy);
-  double ca= cos (alpha), sa= sin (alpha);
+  double ca= cos (phi), sa= sin (phi);
   for (int i=0; i<w*h; i++) {
     C xa= gx->a[i];
     C ya= gy->a[i];
@@ -626,14 +739,14 @@ mul_alpha (C c, raster<F> alpha) {
 
 template<typename C> raster<C>
 gravitational_shadow (raster<C> s, int R, double expon,
-                      color col, double alpha) {
+                      color col, double phi) {
   typedef typename C::scalar_type F;
   raster<F> als  = get_alpha (s);
   raster<F> gravx= gravitation<F> (R, expon, false);
   raster<F> gravy= gravitation<F> (R, expon, true );
   raster<F> convx= trim_border (convolute (als, gravx), R);
   raster<F> convy= trim_border (convolute (als, gravy), R);
-  raster<F> incid= incidence (convx, convy, alpha);
+  raster<F> incid= incidence (convx, convy, phi);
   raster<C> ret  = copy (s);
   raster<C> shad = mul_alpha (C (col), incid * als);
   draw_on<compose_source_over,C,C> (ret, shad, 0, 0);
