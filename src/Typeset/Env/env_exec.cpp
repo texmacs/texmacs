@@ -1699,11 +1699,11 @@ tree
 edit_env_rep::exec_effect_shadow (tree t) {
   if (N(t) < 4) return tree (ERROR, "bad effect-shadow");
   double px= as_length ("1px");
-  double x = as_length (exec (t[0])) / px;
-  double y = as_length (exec (t[1])) / px;
-  string c = as_string (exec (t[2]));
+  string c = as_string (exec (t[0]));
+  double x = as_length (exec (t[1])) / px;
+  double y = as_length (exec (t[2])) / px;
   double r = as_length (exec (t[3])) / px;
-  return tree (EFFECT_SHADOW, as_tree (x), as_tree (y), c, as_tree (r));
+  return tree (EFFECT_SHADOW, c, as_tree (x), as_tree (y), as_tree (r));
 }
 
 tree

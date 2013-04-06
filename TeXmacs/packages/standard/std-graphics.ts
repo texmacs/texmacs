@@ -62,7 +62,7 @@
 
   <assign|blur|<macro|body|r|<gr-effect|<arg|body>|<effect-blur|<arg|r>>>>>
 
-  <assign|shadow|<macro|body|x|y|col|r|<gr-effect|<arg|body>|<effect-shadow|<arg|x>|<arg|y>|<arg|col>|<arg|r>>>>>
+  <assign|shadow|<macro|body|col|x|y|r|<gr-effect|<arg|body>|<effect-shadow|<arg|col>|<arg|x>|<arg|y>|<arg|r>>>>>
 
   \;
 </body>

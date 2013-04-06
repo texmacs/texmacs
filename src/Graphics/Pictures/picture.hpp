@@ -82,7 +82,12 @@ enum composition_mode {
   compose_destination,
   compose_source,
   compose_source_over,
-  compose_towards_source
+  compose_towards_source,
+  compose_alpha_distance,
+  compose_add,
+  compose_mul,
+  compose_min,
+  compose_max
 };
 
 picture raster_picture (int w, int h, int ox= 0, int oy= 0);
@@ -99,9 +104,10 @@ picture magnify (picture pic, double dx, double dy);
 
 picture apply_effect (picture pic, tree eff);
 picture blur (picture pic, double r);
+picture shadow (picture pic, color c, double x, double y, double r);
+picture outline (picture pic, double r);
 picture gravitational_outline (picture pic, int R, double expon= 2.0);
 picture gravitational_shadow (picture pic, color col, double alpha);
-picture add_shadow (picture pic, int x, int y, color c, double r);
 picture engrave (picture src, double alpha, color tlc, color brc,
                  double tlw=1.0, double brw= 1.0);
 

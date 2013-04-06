@@ -28,13 +28,13 @@ raster_picture (int w, int h, int ox, int oy) {
 void
 draw_on (picture& pic, color c, composition_mode mode) {
   raster<true_color> ras= as_raster<true_color> (pic);
-  draw_on (ras, c, mode);
+  draw_on (ras, true_color (c), mode);
 }
 
 picture
 compose (picture pic, color c, composition_mode mode) {
-  raster<true_color> ras= compose (as_raster<true_color> (pic), c, mode);
-  return raster_picture (ras);
+  raster<true_color> ras= as_raster<true_color> (pic);
+  return raster_picture (compose (ras, true_color (c), mode));
 }
 
 void
@@ -80,17 +80,24 @@ bubble (picture pic, double r, double a) {
 
 picture
 blur (picture pic, double r) {
-  if (r <= 0.001) return pic;
-  int R= max (3, ((int) (3.0 * r)));
   raster<true_color> ras= as_raster<true_color> (pic);
-  return raster_picture (blur (ras, R, r));
+  return raster_picture (blur (ras, r));
 }
 
 picture
-add_shadow (picture pic, int x, int y, color c, double r) {
+shadow (picture pic, color c, double x, double y, double r) {
   picture shad= blur (compose (pic, c, compose_towards_source), r);
-  shad->translate_origin (-x, -y);
+  shad= shift (shad, x, y);
   return compose (shad, pic, compose_source_over);
+}
+
+picture
+outline (picture pic, double r) {
+  raster<true_color> ras= as_raster<true_color> (pic);
+  raster<true_color> blurred= blur (ras, r / 2.0);
+  raster<true_color> diff= compose (ras, blurred, compose_alpha_distance);
+  raster<true_color> reblur= blur (diff, r / 2.0);
+  return raster_picture (normalize (reblur * true_color (1.0, 1.0, 1.0, 3.0)));
 }
 
 picture
@@ -139,11 +146,15 @@ apply_effect (picture pic, tree eff) {
     return blur (pic, r);
   }
   else if (is_func (eff, EFFECT_SHADOW, 4)) {
-    double x= as_double (eff[0]);
-    double y= as_double (eff[1]);
-    color  c= named_color (as_string (eff[2]));
+    color  c= named_color (as_string (eff[0]));
+    double x= as_double (eff[1]);
+    double y= as_double (eff[2]);
     double r= as_double (eff[3]);
-    return add_shadow (pic, x, y, c, r);
+    return shadow (pic, c, x, y, r);
+  }
+  else if (is_func (eff, EFFECT_OUTLINE, 1)) {
+    double r= as_double (eff[0]);
+    return outline (pic, r);
   }
   else if (eff != "") {
     return pic;

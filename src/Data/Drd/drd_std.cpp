@@ -602,9 +602,9 @@ init_std_drd () {
         length (0) -> name (0, "r") -> long_name (0, "blur radius"));
   init (EFFECT_SHADOW, "effect-shadow",
         fixed (4, 0, DETAILED) -> returns_effect () ->
-        length (0) -> name (0, "x") -> long_name (0, "x-offset") ->
-        length (1) -> name (1, "y") -> long_name (1, "t-offset") ->
-        string_type (2) -> name (2, "color") ->
+        string_type (0) -> name (0, "color") ->
+        length (1) -> name (1, "x") -> long_name (1, "x-offset") ->
+        length (2) -> name (2, "y") -> long_name (2, "t-offset") ->
         length (3) -> name (3, "r") -> long_name (3, "blur radius"));
   init (EFFECT_OUTLINE, "effect-outline",
         fixed (1) -> returns_effect () ->

@@ -19,8 +19,10 @@
 ******************************************************************************/
 
 template<typename C> void clear (C& x) { x= 0.0; }
-template<typename C> C mul_alpha (C& x) { return x; }
-template<typename C> C div_alpha (C& x) { return x; }
+template<typename C> C mul_alpha (const C& x) { return x; }
+template<typename C> C div_alpha (const C& x) { return x; }
+template<typename C> C alpha_distance (const C& x, const C& y) {
+  return 2.0 * fabs (y - x); }
 
 /******************************************************************************
 * Unary operators
@@ -68,6 +70,16 @@ struct hypot_op {
   op (const C& x, const C& y) { return hypot (x, y); }
 };
 
+struct min_op {
+  template<typename C> static inline C
+  op (const C& x, const C& y) { return min (x, y); }
+};
+
+struct max_op {
+  template<typename C> static inline C
+  op (const C& x, const C& y) { return max (x, y); }
+};
+
 /******************************************************************************
 * Composition operators
 ******************************************************************************/
@@ -104,8 +116,49 @@ struct composition_op<compose_towards_source> {
   set_op (C& x, const S& y) { x= towards_source (x, y); }
 };
 
+template<>
+struct composition_op<compose_alpha_distance> {
+  template<typename C, typename S> static inline C
+  op (const C& x, const S& y) { return alpha_distance (x, y); }
+  template<typename C, typename S> static inline void
+  set_op (C& x, const S& y) { x= alpha_distance (x, y); }
+};
+
+template<>
+struct composition_op<compose_add> {
+  template<typename C, typename S> static inline C
+  op (const C& x, const S& y) { return x + y; }
+  template<typename C, typename S> static inline void
+  set_op (C& x, const S& y) { x += y; }
+};
+
+template<>
+struct composition_op<compose_mul> {
+  template<typename C, typename S> static inline C
+  op (const C& x, const S& y) { return x * y; }
+  template<typename C, typename S> static inline void
+  set_op (C& x, const S& y) { x *= y; }
+};
+
+template<>
+struct composition_op<compose_min> {
+  template<typename C, typename S> static inline C
+  op (const C& x, const S& y) { return min (x, y); }
+  template<typename C, typename S> static inline void
+  set_op (C& x, const S& y) { x= min (x, y); }
+};
+
+template<>
+struct composition_op<compose_max> {
+  template<typename C, typename S> static inline C
+  op (const C& x, const S& y) { return max (x, y); }
+  template<typename C, typename S> static inline void
+  set_op (C& x, const S& y) { x= max (x, y); }
+};
+
 typedef composition_op<compose_source> source_op;
 typedef composition_op<compose_source_over> source_over_op;
 typedef composition_op<compose_towards_source> towards_source_op;
+typedef composition_op<compose_alpha_distance> alpha_distance_op;
 
 #endif // RASTER_OPERATORS_H

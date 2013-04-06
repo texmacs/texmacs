@@ -132,6 +132,15 @@ map (raster<C> r1, raster<S> r2) {
   return ret;
 }
 
+template<typename Op, typename C, typename S> raster<C>
+map_scalar (raster<C> r, S sc) {
+  int w= r->w, h= r->h, n= w*h;
+  raster<C> ret (w, h, r->ox, r->oy);
+  for (int i=0; i<n; i++)
+    ret->a[i]= Op::op (r->a[i], sc);
+  return ret;
+}
+
 template<typename C> inline raster<C>
 copy (raster<C> r) { return map<copy_op> (r); }
 template<typename C> inline raster<C>
@@ -147,6 +156,10 @@ template<typename C> inline raster<C>
 operator + (raster<C> r1, raster<C> r2) { return map<add_op> (r1, r2); }
 template<typename C> inline raster<C>
 operator * (raster<C> r1, raster<C> r2) { return map<mul_op> (r1, r2); }
+template<typename C> inline raster<C>
+operator + (raster<C> r1, C r2) { return map_scalar<add_op> (r1, r2); }
+template<typename C> inline raster<C>
+operator * (raster<C> r1, C r2) { return map_scalar<mul_op> (r1, r2); }
 template<typename C> inline raster<C>
 hypot (raster<C> r1, raster<C> r2) { return map<hypot_op> (r1, r2); }
 
@@ -184,6 +197,21 @@ draw_on (raster<C>& r, S s, composition_mode mode) {
     break;
   case compose_towards_source:
     draw_on<compose_towards_source> (r, s);
+    break;
+  case compose_alpha_distance:
+    draw_on<compose_alpha_distance> (r, s);
+    break;
+  case compose_add:
+    draw_on<compose_add> (r, s);
+    break;
+  case compose_mul:
+    draw_on<compose_mul> (r, s);
+    break;
+  case compose_min:
+    draw_on<compose_min> (r, s);
+    break;
+  case compose_max:
+    draw_on<compose_max> (r, s);
     break;
   default:
     break;
@@ -232,6 +260,21 @@ draw_on (raster<C>& r, raster<S> s, int x, int y, composition_mode mode) {
     break;
   case compose_towards_source:
     draw_on<compose_towards_source> (r, s, x, y);
+    break;
+  case compose_alpha_distance:
+    draw_on<compose_alpha_distance> (r, s, x, y);
+    break;
+  case compose_add:
+    draw_on<compose_add> (r, s, x, y);
+    break;
+  case compose_mul:
+    draw_on<compose_mul> (r, s, x, y);
+    break;
+  case compose_min:
+    draw_on<compose_min> (r, s, x, y);
+    break;
+  case compose_max:
+    draw_on<compose_max> (r, s, x, y);
     break;
   default:
     break;
@@ -390,6 +433,13 @@ template<typename C> raster<C>
 blur (raster<C> ras, int R, double r) {
   raster<double> g= gaussian<double> (R, r);
   return convolute (ras, g);
+}
+
+template<typename C> raster<C>
+blur (raster<C> ras, double r) {
+  if (r <= 0.001) return ras;
+  int R= max (3, ((int) (2.5 * r)));
+  return blur (ras, R, r);
 }
 
 /******************************************************************************

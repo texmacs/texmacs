@@ -70,6 +70,16 @@ operator - (const true_color& c1, const true_color& c2) {
   return true_color (c1.r - c2.r, c1.g - c2.g, c1.b - c2.b, c1.a - c2.a);
 }
 
+inline true_color
+operator * (const true_color& c1, const true_color& c2) {
+  return true_color (c1.r * c2.r, c1.g * c2.g, c1.b * c2.b, c1.a * c2.a);
+}
+
+inline true_color
+operator / (const true_color& c1, const true_color& c2) {
+  return true_color (c1.r / c2.r, c1.g / c2.g, c1.b / c2.b, c1.a / c2.a);
+}
+
 inline true_color&
 operator += (true_color& c1, const true_color& c2) {
   c1.r += c2.r; c1.g += c2.g; c1.b += c2.b; c1.a += c2.a;
@@ -79,6 +89,19 @@ operator += (true_color& c1, const true_color& c2) {
 inline true_color&
 operator -= (true_color& c1, const true_color& c2) {
   c1.r -= c2.r; c1.g -= c2.g; c1.b -= c2.b; c1.a -= c2.a;
+  return c1;
+}
+
+inline true_color&
+operator *= (true_color& c1, const true_color& c2) {
+  cout << c1 << ", " << c2 << "\n";
+  c1.r *= c2.r; c1.g *= c2.g; c1.b *= c2.b; c1.a *= c2.a;
+  return c1;
+}
+
+inline true_color&
+operator /= (true_color& c1, const true_color& c2) {
+  c1.r /= c2.r; c1.g /= c2.g; c1.b /= c2.b; c1.a /= c2.a;
   return c1;
 }
 
@@ -98,13 +121,15 @@ operator / (const true_color& c, double x) {
 }
 
 inline true_color
-operator * (const true_color& c1, const true_color& c2) {
-  return true_color (c1.r * c2.r, c1.g * c2.g, c1.b * c2.b, c1.a * c2.a);
+min (const true_color& c1, const true_color& c2) {
+  return true_color (min (c1.r, c2.r), min (c1.g, c2.g),
+                     min (c1.b, c2.b), min (c1.a, c2.a));
 }
 
 inline true_color
-operator / (const true_color& c1, const true_color& c2) {
-  return true_color (c1.r / c2.r, c1.g / c2.g, c1.b / c2.b, c1.a / c2.a);
+max (const true_color& c1, const true_color& c2) {
+  return true_color (max (c1.r, c2.r), min (c1.g, c2.g),
+                     max (c1.b, c2.b), min (c1.a, c2.a));
 }
 
 /******************************************************************************
@@ -129,6 +154,16 @@ towards_source (const true_color& c1, const true_color& c2) {
                      c1.g * a1 + c2.g * a2,
                      c1.b * a1 + c2.b * a2,
                      c1.a);
+}
+
+inline true_color
+alpha_distance (const true_color& c1, const true_color& c2) {
+  double a1= c1.a, a2= c2.a, s= a1 + a2 + 1.0e-6, a= fabs (a1 - a2);
+  double f1= a1 / s, f2= a2 / s;
+  return true_color (c1.r * f1 + c2.r * f2,
+                     c1.g * f1 + c2.g * f2,
+                     c1.b * f1 + c2.b * f2,
+                     a);
 }
 
 /******************************************************************************
