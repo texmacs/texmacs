@@ -598,8 +598,10 @@ init_std_drd () {
         length (3) -> name (3, "x") -> long_name (3, "x-offset") ->
         length (4) -> name (4, "y") -> long_name (4, "y-offset"));
   init (EFFECT_BLUR, "effect-blur",
-        fixed (1) -> returns_effect () ->
-        length (0) -> name (0, "r") -> long_name (0, "blur radius"));
+        options (1, 2, DETAILED) -> returns_effect () ->
+        length (0) -> name (0, "rx") -> long_name (0, "blur x-radius") ->
+        length (1) -> name (1, "ry") -> long_name (1, "blur y-radius") ->
+        length (2) -> name (2, "alpha") -> long_name (2, "blur angle"));
   init (EFFECT_SHADOW, "effect-shadow",
         fixed (4, 0, DETAILED) -> returns_effect () ->
         string_type (0) -> name (0, "color") ->

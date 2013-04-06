@@ -85,6 +85,12 @@ blur (picture pic, double r) {
 }
 
 picture
+blur (picture pic, double rx, double ry, double alpha) {
+  raster<true_color> ras= as_raster<true_color> (pic);
+  return raster_picture (blur (ras, rx, ry, alpha));
+}
+
+picture
 shadow (picture pic, color c, double x, double y, double r) {
   picture shad= blur (compose (pic, c, compose_towards_source), r);
   shad= shift (shad, x, y);
@@ -144,6 +150,12 @@ apply_effect (picture pic, tree eff) {
   if (is_func (eff, EFFECT_BLUR, 1)) {
     double r= as_double (eff[0]);
     return blur (pic, r);
+  }
+  else if (is_func (eff, EFFECT_BLUR, 3)) {
+    double rx= as_double (eff[0]);
+    double ry= as_double (eff[1]);
+    double a = as_double (eff[2]);
+    return blur (pic, rx, ry, a);
   }
   else if (is_func (eff, EFFECT_SHADOW, 4)) {
     color  c= named_color (as_string (eff[0]));

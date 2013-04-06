@@ -1691,8 +1691,11 @@ tree
 edit_env_rep::exec_effect_blur (tree t) {
   if (N(t) < 1) return tree (ERROR, "bad effect-blur");
   double px= as_length ("1px");
-  double r = as_length (exec (t[0])) / px;
-  return tree (EFFECT_BLUR, as_tree (r));
+  double rx= as_length (exec (t[0])) / px;
+  if (N(t) == 1) return tree (EFFECT_BLUR, as_tree (rx));
+  if (N(t) < 3) return tree (ERROR, "bad effect-blur");
+  double ry= as_length (exec (t[1])) / px;
+  return tree (EFFECT_BLUR, as_tree (rx), as_tree (ry), exec (t[2]));
 }
 
 tree

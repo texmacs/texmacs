@@ -152,14 +152,22 @@ normalize (raster<C> r) { return map<normalize_op> (r); }
 template<typename C> inline raster<typename C::scalar_type>
 get_alpha (raster<C> r) { return map<get_alpha_op> (r); }
 
-template<typename C> inline raster<C>
-operator + (raster<C> r1, raster<C> r2) { return map<add_op> (r1, r2); }
-template<typename C> inline raster<C>
-operator * (raster<C> r1, raster<C> r2) { return map<mul_op> (r1, r2); }
-template<typename C> inline raster<C>
-operator + (raster<C> r1, C r2) { return map_scalar<add_op> (r1, r2); }
-template<typename C> inline raster<C>
-operator * (raster<C> r1, C r2) { return map_scalar<mul_op> (r1, r2); }
+template<typename C, typename S> inline raster<C>
+operator + (raster<C> r1, raster<S> r2) { return map<add_op> (r1, r2); }
+template<typename C, typename S> inline raster<C>
+operator - (raster<C> r1, raster<S> r2) { return map<sub_op> (r1, r2); }
+template<typename C, typename S> inline raster<C>
+operator * (raster<C> r1, raster<S> r2) { return map<mul_op> (r1, r2); }
+template<typename C, typename S> inline raster<C>
+operator / (raster<C> r1, raster<S> r2) { return map<div_op> (r1, r2); }
+template<typename C, typename S> inline raster<C>
+operator + (raster<C> r1, S r2) { return map_scalar<add_op> (r1, r2); }
+template<typename C, typename S> inline raster<C>
+operator - (raster<C> r1, S r2) { return map_scalar<sub_op> (r1, r2); }
+template<typename C, typename S> inline raster<C>
+operator * (raster<C> r1, S r2) { return map_scalar<mul_op> (r1, r2); }
+template<typename C, typename S> inline raster<C>
+operator / (raster<C> r1, S r2) { return map_scalar<div_op> (r1, r2); }
 template<typename C> inline raster<C>
 hypot (raster<C> r1, raster<C> r2) { return map<hypot_op> (r1, r2); }
 
@@ -384,6 +392,110 @@ bubble (raster<C> r, double rr, double a) {
 }
 
 /******************************************************************************
+* Special brushes
+******************************************************************************/
+
+template<typename C, typename F> raster<C>
+pixelize (F fun, int w, int h, int ox, int oy, int shrink= 5) {
+  raster<C> ret (w, h, ox, oy);
+  double delta = 1 / ((double) shrink);
+  for (int y=0; y<h; y++)
+    for (int x=0; x<w; x++) {
+      double cx= x - ox;
+      double cy= y - oy;
+      if (shrink == 1)
+        ret->a[y*w+x]= fun.eval (cx, cy);
+      else {
+        C r;
+        clear (r);
+        for (int j=0; j<shrink; j++) {
+          double dx= (((double) j) + 0.5) * delta - 0.5;
+          for (int i=0; i<shrink; i++) {
+            double dy= (((double) i) + 0.5) * delta - 0.5;
+            r += fun.eval (cx + dx, cy + dy);
+          }
+        }
+        ret->a[y*w+x]= r;
+      }
+    }
+  return ret;
+}
+
+template<typename C> raster<C>
+rectangular_brush (double rx, double ry) {
+  int w= 2 * ceil (rx + 0.5) - 1;
+  int h= 2 * ceil (ry + 0.5) - 1;
+  double rem_x= ((double) w) / 2 - rx;
+  double rem_y= ((double) h) / 2 - ry;
+  raster<C> ret (w, h, w/2, h/2);
+  for (int y=0; y<h; y++) {
+    double fy= 1.0;
+    if (ry <= 0.5) fy= 2 * ry;
+    else if (y == 0 || y == h-1) fy= 1 - rem_y;
+    for (int x=0; x<w; x++) {
+      double fx= 1.0;
+      if (rx <= 0.5) fx= 2 * rx;
+      else if (x == 0 || x == w-1) fx= 1 - rem_x;
+      ret->a[y*w+x]= C (fx * fy);
+    }
+  }
+  return ret;
+}
+
+struct chi_oval {
+  double xx, xy, yx, yy;
+  inline chi_oval (double rx, double ry, double alpha):
+    xx ( cos (alpha) / rx), xy (sin (alpha) / rx),
+    yx (-sin (alpha) / ry), yy (cos (alpha) / ry) {}
+  inline double eval (double x, double y) {
+    double tx= xx * x + xy * y, ty= yx * x + yy * y;
+    if (tx * tx + ty * ty < 1) return 1.0;
+    else return 0.0; }
+};
+
+template<typename C> raster<C>
+oval_brush (double rx, double ry, double alpha) {
+  chi_oval fun (rx, ry, alpha);
+  int R= ceil (max (rx, ry) - 0.5);
+  int w= 2*R + 1;
+  return pixelize<C> (fun, w, w, R, R);
+}
+
+/******************************************************************************
+* Special convolution kernels
+******************************************************************************/
+
+template<typename C> C
+sum (raster<C> ras) {
+  C ret;
+  clear (ret);
+  int n= ras->w * ras->h;
+  for (int i=0; i<n; i++)
+    ret += ras->a[i];
+  return ret;
+}
+
+struct gaussian_distribution {
+  double xx, xy, yx, yy;
+  inline gaussian_distribution (double rx, double ry, double alpha):
+    xx ( cos (alpha) / rx), xy (sin (alpha) / rx),
+    yx (-sin (alpha) / ry), yy (cos (alpha) / ry) {}
+  inline double eval (double x, double y) {
+    double tx= xx * x + xy * y, ty= yx * x + yy * y;
+    return exp (- (tx*tx + ty*ty)); }
+};
+
+template<typename C> raster<C>
+gaussian_kernel (double rx, double ry, double alpha, double order= 2.5) {
+  gaussian_distribution fun (rx, ry, alpha);
+  double Rx= rx * order, Ry= ry * order;
+  int R= ceil (max (Rx, Ry) - 0.5);
+  int w= 2*R + 1;
+  raster<C> ras= pixelize<C> (fun, w, w, R, R, 1);
+  return ras / sum (ras);
+}
+
+/******************************************************************************
 * Convolution and blur
 ******************************************************************************/
 
@@ -414,32 +526,15 @@ convolute (raster<C> s1, raster<S> s2) {
 }
 
 template<typename C> raster<C>
-gaussian (int R, double r) {
-  int w= 2*R+1, h= 2*R+1;
-  raster<C> ret (w, h, R, R);
-  double lambda= 1.0 / (2.0 * acos (0.0) * r * r);
-  double sq_r= r*r;
-  for (int y=0; y<h; y++) {
-    double sq_y= (y-R)*(y-R);
-    for (int x=0; x<w; x++) {
-      double sq_x= (x-R)*(x-R);
-      ret->a[y*w+x]= C (lambda * (exp (- (sq_x + sq_y) / sq_r)));
-    }
-  }
-  return ret;
-}
-
-template<typename C> raster<C>
-blur (raster<C> ras, int R, double r) {
-  raster<double> g= gaussian<double> (R, r);
+blur (raster<C> ras, double rx, double ry, double alpha, double order= 2.5) {
+  raster<double> g= gaussian_kernel<double> (rx, ry, alpha, order);
   return convolute (ras, g);
 }
 
 template<typename C> raster<C>
 blur (raster<C> ras, double r) {
   if (r <= 0.001) return ras;
-  int R= max (3, ((int) (2.5 * r)));
-  return blur (ras, R, r);
+  return blur (ras, r, r, 0.0);
 }
 
 /******************************************************************************

@@ -62,6 +62,8 @@
 
   <assign|blur|<macro|body|r|<gr-effect|<arg|body>|<effect-blur|<arg|r>>>>>
 
+  <assign|directional-blur|<macro|body|rx|ry|alpha|<gr-effect|<arg|body>|<effect-blur|<arg|rx>|<arg|ry>|<arg|alpha>>>>>
+
   <assign|shadow|<macro|body|col|x|y|r|<gr-effect|<arg|body>|<effect-shadow|<arg|col>|<arg|x>|<arg|y>|<arg|r>>>>>
 
   \;

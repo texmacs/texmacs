@@ -62,8 +62,8 @@ struct neg_op {
 struct add_op {
   template<typename C> static inline C
   neutral () { return 0; }
-  template<typename C> static inline C
-  op (const C& x, const C& y) { return x + y; }
+  template<typename C, typename S> static inline C
+  op (const C& x, const S& y) { return x + y; }
   static inline tree
   op (tree x, tree y) { return add (x, y); }
   template<typename C, typename V> static inline C
@@ -72,8 +72,8 @@ struct add_op {
 };
 
 struct sub_op {
-  template<typename C> static inline C
-  op (const C& x, const C& y) { return x - y; }
+  template<typename C, typename S> static inline C
+  op (const C& x, const S& y) { return x - y; }
   static inline tree
   op (tree x, tree y) { return sub (x, y); }
   template<typename C, typename V> static inline C
@@ -84,8 +84,8 @@ struct sub_op {
 struct mul_op {
   template<typename C> static inline C
   neutral () { return 1; }
-  template<typename C> static inline C
-  op (const C& x, const C& y) { return x * y; }
+  template<typename C, typename S> static inline C
+  op (const C& x, const S& y) { return x * y; }
   static inline tree
   op (tree x, tree y) { return mul (x, y); }
   template<typename C, typename V> static inline C
@@ -94,8 +94,8 @@ struct mul_op {
 };
 
 struct div_op {
-  template<typename C> static inline C
-  op (const C& x, const C& y) { return x / y; }
+  template<typename C, typename S> static inline C
+  op (const C& x, const S& y) { return x / y; }
   static inline tree
   op (tree x, tree y) { return div (x, y); }
   template<typename C, typename V> static inline C
