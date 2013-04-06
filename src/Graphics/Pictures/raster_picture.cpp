@@ -127,6 +127,25 @@ outline (picture pic, double r) {
 }
 
 picture
+inner_shadow (picture pic, color c, double dx, double dy) {
+  true_color col (c);
+  raster<true_color> r= as_raster<true_color> (pic);
+  raster<double> alpha = get_alpha (r);
+  raster<double> ashift= shift (alpha, dx, dy);
+  raster<double> compat= change_extents (ashift, r->w, r->h, r->ox, r->oy);
+  raster<double> cshift= ((double) 1) - compat;
+  raster<double> shad  = min (alpha, cshift);
+  raster<true_color> appl= apply_alpha (col, shad);
+  return raster_picture (appl);
+}
+
+picture
+engrave (picture pic, color c, double dx, double dy) {
+  picture shad= inner_shadow (pic, c, dx, dy);
+  return compose (pic, shad, compose_source_over);
+}
+
+picture
 gravitational_outline (picture pic, int R, double expon) {
   raster<true_color> ras= as_raster<true_color> (pic);
   return raster_picture (gravitational_outline (ras, R, expon));
@@ -204,6 +223,7 @@ apply_effect (picture pic, tree eff) {
     //return magnify (pic, 20.0, 20.0);
     //return rectangular_variation (pic, 4, 4, 0);
     //return oval_variation (pic, 2, 2, 0);
-    return bubble (pic, 50.0, 0.5);
+    //return bubble (pic, 50.0, 0.5);
+    return engrave (pic, 0x80000000, 2, -2);
   }
 }

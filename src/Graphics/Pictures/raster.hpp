@@ -95,6 +95,15 @@ subraster (raster<C> r, int x1, int y1, int x2, int y2) {
 }
 
 template<typename C> raster<C>
+change_extents (raster<C> r, int w, int h, int ox, int oy) {
+  raster<C> ret (w, h, ox, oy);
+  for (int y=0; y<h; y++)
+    for (int x=0; x<w; x++)
+      ret->a[w*y+x]= r->get_pixel (x - ox, y - oy);
+  return ret;
+}
+
+template<typename C> raster<C>
 trim_border (raster<C> r, int lb, int bb, int rb, int tb) {
   int x1= lb - r->ox, y1= lb - r->oy;
   int x2= r->w - rb - r->ox, y2= r->h - tb - r->oy;
@@ -148,7 +157,6 @@ map_scalar (raster<C> r, S sc) {
   return ret;
 }
 
-
 template<typename C> inline void
 clear (raster<C>& r) { foreach<clear_op> (r); }
 template<typename C> inline void
@@ -174,15 +182,33 @@ operator * (raster<C> r1, raster<S> r2) { return map<mul_op> (r1, r2); }
 template<typename C, typename S> inline raster<C>
 operator / (raster<C> r1, raster<S> r2) { return map<div_op> (r1, r2); }
 template<typename C, typename S> inline raster<C>
-operator + (raster<C> r1, S r2) { return map_scalar<add_op> (r1, r2); }
+operator + (raster<C> r, S sc) { return map_scalar<add_op> (r, sc); }
 template<typename C, typename S> inline raster<C>
-operator - (raster<C> r1, S r2) { return map_scalar<sub_op> (r1, r2); }
+operator - (raster<C> r, S sc) { return map_scalar<sub_op> (r, sc); }
 template<typename C, typename S> inline raster<C>
-operator * (raster<C> r1, S r2) { return map_scalar<mul_op> (r1, r2); }
+operator - (S sc, raster<C> r) { return map_scalar<neg_sub_op> (r, sc); }
 template<typename C, typename S> inline raster<C>
-operator / (raster<C> r1, S r2) { return map_scalar<div_op> (r1, r2); }
+operator * (raster<C> r, S sc) { return map_scalar<mul_op> (r, sc); }
+template<typename C, typename S> inline raster<S>
+operator * (S sc, raster<C> r) { return map_scalar<mul_op> (r, sc); }
+template<typename C, typename S> inline raster<C>
+operator / (raster<C> r, S sc) { return map_scalar<div_op> (r, sc); }
+
 template<typename C> inline raster<C>
 hypot (raster<C> r1, raster<C> r2) { return map<hypot_op> (r1, r2); }
+template<typename C> inline raster<C>
+min (raster<C> r1, raster<C> r2) { return map<min_op> (r1, r2); }
+template<typename C> inline raster<C>
+max (raster<C> r1, raster<C> r2) { return map<max_op> (r1, r2); }
+
+template<typename C, typename S> raster<C>
+apply_alpha (C col, raster<S> r) {
+  int w= r->w, h= r->h, n= w*h;
+  raster<C> ret (w, h, r->ox, r->oy);
+  for (int i=0; i<n; i++)
+    ret->a[i]= apply_alpha (col, r->a[i]);
+  return ret;
+}
 
 /******************************************************************************
 * Composition
@@ -565,7 +591,7 @@ gaussian_blur (raster<C> ras, double r) {
 }
 
 /******************************************************************************
-* Inking using a brush
+* Thickening using a brush
 ******************************************************************************/
 
 template<typename C> inline void

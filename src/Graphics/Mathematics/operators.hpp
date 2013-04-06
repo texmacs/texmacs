@@ -81,6 +81,16 @@ struct sub_op {
     return derive (x, v) - derive (y, v); }
 };
 
+struct neg_sub_op {
+  template<typename C, typename S> static inline C
+  op (const C& x, const S& y) { return y - x; }
+  static inline tree
+  op (tree x, tree y) { return sub (y, x); }
+  template<typename C, typename V> static inline C
+  diff (const C& x, const C& y, const V& v) {
+    return derive (y, v) - derive (x, v); }
+};
+
 struct mul_op {
   template<typename C> static inline C
   neutral () { return 1; }

@@ -18,13 +18,22 @@
 * Default implementations
 ******************************************************************************/
 
-template<typename C> void clear (C& x) { x= 0.0; }
-template<typename C> void clear_alpha (C& x) { x= 0.0; }
+template<typename C> inline void clear (C& x) { x= 0.0; }
+template<typename C> inline void clear_alpha (C& x) { x= 0.0; }
 
-template<typename C> C mul_alpha (const C& x) { return x; }
-template<typename C> C div_alpha (const C& x) { return x; }
-template<typename C> C alpha_distance (const C& x, const C& y) {
+template<typename C> inline C mul_alpha (const C& x) { return x; }
+template<typename C> inline C div_alpha (const C& x) { return x; }
+template<typename C> inline C alpha_distance (const C& x, const C& y) {
   return 2.0 * fabs (y - x); }
+
+template<typename C> inline C
+mix (const C& c1, double a1, const C& c2, double a2) {
+  return a1 * c1 + a2 * c2; }
+
+template<typename C> inline C
+mix (const C& c1, double a1, const C& c2, double a2,
+     const C& c3, double a3, const C& c4, double a4) {
+  return a1 * c1 + a2 * c2 + a3 * c3 + a4 * c4; }
 
 /******************************************************************************
 * Nullary operators

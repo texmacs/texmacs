@@ -201,6 +201,11 @@ div_alpha (const true_color& c) {
   else return true_color (c.r / c.a, c.g / c.a, c.b / c.a, c.a);
 }
 
+inline true_color
+apply_alpha (const true_color& c, double a) {
+  return true_color (c.r, c.g, c.b, c.a * a);
+}
+
 /******************************************************************************
 * Other operators
 ******************************************************************************/
