@@ -554,8 +554,9 @@ init_std_drd () {
 	fixed (1, 1, BIFORM) -> returns_graphical () ->
 	accessible (0) -> graphical (0));
   init (GR_EFFECT, "gr-effect",
-	fixed (1, 1, BIFORM) -> returns_graphical () ->
-	accessible (0) -> graphical (0));
+	var_repeat (1, 1, BIFORM) -> returns_graphical () ->
+	accessible (0) -> graphical (0) ->
+        effect (1));
   /*
   init (TEXT_AT, "text-at",
 	fixed (1, 1, BIFORM) -> returns_graphical () ->
@@ -639,6 +640,16 @@ init_std_drd () {
         fixed (2, 0, DETAILED) -> returns_effect () ->
         effect (0) -> name (0, "body") ->
         effect (1) -> name (1, "brush"));
+  init (EFF_SUPERPOSE, "eff-superpose",
+	repeat (1, 1) -> returns_effect () -> effect (0));
+  init (EFF_MUL, "eff-mul",
+	repeat (1, 1) -> returns_effect () -> effect (0));
+  init (EFF_MIN, "eff-min",
+	repeat (1, 1) -> returns_effect () -> effect (0));
+  init (EFF_MAX, "eff-max",
+	repeat (1, 1) -> returns_effect () -> effect (0));
+  init (EFF_MAX, "eff-mix",
+	repeat (2, 2) -> returns_effect ()); // FIXME: types of args
 
   init (BOX_INFO, "box-info",
 	fixed (1, 1, BIFORM) ->

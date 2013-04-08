@@ -95,10 +95,12 @@ picture as_raster_picture (picture pict);
 picture error_picture (int w, int h);
 picture as_native_picture (picture pict);
 
+int     composition_type (composition_mode mode);
 void    draw_on (picture& pic, color c, composition_mode mode);
 picture compose (picture pic, color c, composition_mode mode);
 void    draw_on (picture& d, picture s, int x, int y, composition_mode m);
-picture combine (picture p1, picture p2, composition_mode mode);
+picture compose (picture p1, picture p2, composition_mode mode);
+picture compose (array<picture> ps, composition_mode mode);
 
 /******************************************************************************
 * Operations on pictures

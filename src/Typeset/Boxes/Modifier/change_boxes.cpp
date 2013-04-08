@@ -224,16 +224,32 @@ struct effect_box_rep: public change_box_rep {
   tree   eff_t;
   effect eff;
 public:
-  effect_box_rep (path ip, box b, tree eff);
-  operator tree () { return tree (TUPLE, "effect", (tree) bs[0], eff_t); }
+  effect_box_rep (path ip, array<box> bs, tree eff);
+  operator tree () { return tree (TUPLE, "effect", eff_t); }
   void redraw (renderer ren, path p, rectangles& l);
 };
 
-effect_box_rep::effect_box_rep (path ip, box b, tree eff2):
+effect_box_rep::effect_box_rep (path ip, array<box> bs, tree eff2):
   change_box_rep (ip, true), eff_t (eff2), eff (build_effect (eff2))
 {
-  insert (b, 0, 0);
-  position ();
+  for (int i=0; i<N(bs); i++)
+    insert (bs[i], 0, 0);
+  array<rectangle> rs (N(bs));
+  for (int i=0; i<N(bs); i++)
+    rs[i]= rectangle (bs[i]->x1, bs[i]->y1, bs[i]->x2, bs[i]->y2);
+  rectangle r= eff->get_logical_extents (rs);
+  x1= r->x1;
+  y1= r->y1;
+  x2= r->x2;
+  y2= r->y2;
+  rs= array<rectangle> (N(bs));
+  for (int i=0; i<N(bs); i++)
+    rs[i]= rectangle (bs[i]->x3, bs[i]->y3, bs[i]->x4, bs[i]->y4);
+  r = eff->get_extents (rs);
+  x3= r->x1;
+  y3= r->y1;
+  x4= r->x2;
+  y4= r->y2;
   finalize ();
 }
 
@@ -243,17 +259,18 @@ void
 effect_box_rep::redraw (renderer ren, path p, rectangles& l) {
   if (((nr_painted&15) == 15) && gui_interrupted (true)) return;
   ren->move_origin (x0, y0);
-  picture old_pic= ren->create_picture (x3, y3, x4, y4);
-  renderer pic_ren= picture_renderer (old_pic, ren);
-  rectangles rs;
-  subbox (0)->redraw (pic_ren, path (), rs);
-  delete_renderer (pic_ren);
+  array<picture> pics (subnr ());
+  for (int i=0; i<subnr(); i++) {
+    pics[i]= ren->create_picture (sx3(i), sy3(i), sx4(i), sy4(i));
+    renderer pic_ren= picture_renderer (pics[i], ren);
+    rectangles rs;
+    subbox (i)->redraw (pic_ren, path (), rs);
+    delete_renderer (pic_ren);
+  }
   if (((nr_painted&15) == 15) && gui_interrupted (true));
   else {
-    array<picture> pics;
-    pics << old_pic;
-    picture new_pic= eff->apply (pics, ren->pixel);
-    ren->draw_picture (new_pic, 0, 0);
+    picture result_pic= eff->apply (pics, ren->pixel);
+    ren->draw_picture (result_pic, 0, 0);
   }
   ren->move_origin (-x0, -y0);
 }
@@ -772,8 +789,8 @@ transformed_box (path ip, box b, frame fr) {
 }
 
 box
-effect_box (path ip, box b, tree eff) {
-  return tm_new<effect_box_rep> (ip, b, eff);
+effect_box (path ip, array<box> bs, tree eff) {
+  return tm_new<effect_box_rep> (ip, bs, eff);
 }
 
 box

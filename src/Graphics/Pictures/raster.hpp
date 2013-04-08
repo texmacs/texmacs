@@ -329,15 +329,40 @@ draw_on (raster<C>& r, raster<S> s, int x, int y, composition_mode mode) {
 }
 
 template<typename C, typename S> raster<C>
-empty_join (raster<C> r1, raster<S> r2) {
+empty_join (raster<C> r1, raster<S> r2, composition_mode mode) {
   int w1 = r1->w , h1 = r1->h;
   int ox1= r1->ox, oy1= r1->oy;
   int w2 = r2->w , h2 = r2->h;
   int ox2= r2->ox, oy2= r2->oy;
-  int x1 = min (-ox1, -ox2);
-  int y1 = min (-oy1, -oy2);
-  int x2 = max (w1-ox1, w2-ox2);
-  int y2 = max (h1-oy1, h2-oy2);
+  int x1=0, y1=0, x2=0, y2=0;
+  switch (composition_type (mode)) {
+  case 0:
+    x1= max (-ox1, -ox2);
+    y1= max (-oy1, -oy2);
+    x2= min (w1-ox1, w2-ox2);
+    y2= min (h1-oy1, h2-oy2);
+    x1= min (x1, x2);
+    y1= min (y1, y2);
+    break;
+  case 1:
+    x1= -ox2;
+    y1= -oy2;
+    x2= w2-ox2;
+    y2= h2-oy2;
+    break;
+  case 2:
+    x1= -ox1;
+    y1= -oy1;
+    x2= w1-ox1;
+    y2= h1-oy1;
+    break;
+  case 3:
+    x1= min (-ox1, -ox2);
+    y1= min (-oy1, -oy2);
+    x2= max (w1-ox1, w2-ox2);
+    y2= max (h1-oy1, h2-oy2);
+    break;
+  }
   int w  = x2 - x1;
   int h  = y2 - y1;
   raster<C> ret (w, h, -x1, -y1);
@@ -347,7 +372,7 @@ empty_join (raster<C> r1, raster<S> r2) {
 
 template<composition_mode M, typename C, typename S> raster<C>
 compose (raster<C> r1, raster<S> r2) {
-  raster<C> ret= empty_join (r1, r2);
+  raster<C> ret= empty_join (r1, r2, M);
   draw_on<compose_source> (ret, r1, 0, 0);
   draw_on<M> (ret, r2, 0, 0);
   return ret;
@@ -355,9 +380,30 @@ compose (raster<C> r1, raster<S> r2) {
 
 template<typename C, typename S> raster<C>
 compose (raster<C> r1, raster<S> r2, composition_mode mode) {
-  raster<C> ret= empty_join (r1, r2);
+  raster<C> ret= empty_join (r1, r2, mode);
   draw_on (ret, r1, 0, 0, compose_source);
   draw_on (ret, r2, 0, 0, mode);
+  return ret;
+}
+
+template<typename C> raster<C>
+empty_join (array<raster<C> > rs, composition_mode mode) {
+  ASSERT (0 < N(rs), "at least one raster expected");
+  if (N(rs) == 1) return rs[0];
+  if (N(rs) == 2) return empty_join (rs[0], rs[1], mode);
+  int m= N(rs) / 2;
+  return empty_join (empty_join (range (rs, 0, m), mode),
+                     empty_join (range (rs, m, N(rs)), mode), mode);
+}
+
+template<typename C> raster<C>
+compose (array<raster<C> > rs, composition_mode mode) {
+  ASSERT (0 < N(rs), "at least one raster expected");
+  if (N(rs) == 1) return rs[0];
+  raster<C> ret= empty_join (rs, mode);
+  draw_on (ret, rs[0], 0, 0, compose_source);
+  for (int i=1; i<N(rs); i++)
+    draw_on (ret, rs[i], 0, 0, mode);
   return ret;
 }
 

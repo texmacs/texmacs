@@ -28,6 +28,7 @@ public:
   inline effect_rep () {}
   inline virtual ~effect_rep () {}
 
+  virtual rectangle get_logical_extents (array<rectangle> rs);
   virtual rectangle get_extents (array<rectangle> rs) = 0;
   virtual picture apply (array<picture> pics, SI pixel) = 0;
 
@@ -63,10 +64,11 @@ effect blur (effect eff, effect brush);
 effect outline (effect eff, effect brush);
 effect thicken (effect eff, effect brush);
 
+effect compose (array<effect> effs, composition_mode mode);
 effect superpose (array<effect> effs);
-effect mix (array<effect> effs, array<double> alphas);
 effect mul (array<effect> effs);
 effect min (array<effect> effs);
 effect max (array<effect> effs);
+effect mix (array<effect> effs, array<double> alphas);
 
 #endif // defined EFFECT_H

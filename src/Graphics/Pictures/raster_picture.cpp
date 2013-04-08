@@ -52,6 +52,15 @@ compose (picture p1, picture p2, composition_mode mode) {
   return raster_picture (r);
 }
 
+picture
+compose (array<picture> ps, composition_mode mode) {
+  array<raster<true_color> > rs (N(ps));
+  for (int i=0; i<N(ps); i++)
+    rs[i]= as_raster<true_color> (ps[i]);
+  raster<true_color> r= compose (rs, mode);
+  return raster_picture (r);
+}
+
 /******************************************************************************
 * Coordinate transformations
 ******************************************************************************/
@@ -141,54 +150,6 @@ thicken (picture pic, picture brush) {
 ******************************************************************************/
 
 picture
-gaussian_blur (picture pic, double r) {
-  raster<true_color> ras= as_raster<true_color> (pic);
-  return raster_picture (gaussian_blur (ras, r));
-}
-
-picture
-gaussian_blur (picture pic, double rx, double ry, double phi) {
-  raster<true_color> ras= as_raster<true_color> (pic);
-  return raster_picture (gaussian_blur (ras, rx, ry, phi));
-}
-
-picture
-rectangular_thicken (picture pic, double rx, double ry, double phi) {
-  raster<true_color> ras= as_raster<true_color> (pic);
-  return raster_picture (rectangular_thicken (ras, rx, ry, phi));
-}
-
-picture
-oval_thicken (picture pic, double rx, double ry, double phi) {
-  raster<true_color> ras= as_raster<true_color> (pic);
-  return raster_picture (oval_thicken (ras, rx, ry, phi));
-}
-
-picture
-rectangular_variation (picture pic, double rx, double ry, double phi) {
-  raster<true_color> ras= as_raster<true_color> (pic);
-  return raster_picture (rectangular_variation (ras, rx, ry, phi));
-}
-
-picture
-oval_variation (picture pic, double rx, double ry, double phi) {
-  raster<true_color> ras= as_raster<true_color> (pic);
-  return raster_picture (oval_variation (ras, rx, ry, phi));
-}
-
-picture
-shadow (picture pic, color c, double x, double y, double r) {
-  picture shad= gaussian_blur (compose (pic, c, compose_towards_source), r);
-  shad= shift (shad, x, y);
-  return compose (shad, pic, compose_source_over);
-}
-
-picture
-outline (picture pic, double r) {
-  return oval_variation (pic, r, r, 0);
-}
-
-picture
 inner_shadow (picture pic, color c, double dx, double dy) {
   true_color col (c);
   raster<true_color> r= as_raster<true_color> (pic);
@@ -240,26 +201,4 @@ engrave (picture pic, double a0, color tlc, color brc, double tlw, double brw) {
       ret->a[y*w+x]= true_color (mc.r, mc.g, mc.b, c0.a * mc.a);
     }
   return raster_picture (ret);
-}
-
-/******************************************************************************
-* Effect dispatcher
-******************************************************************************/
-
-picture
-apply_effect (picture pic, tree eff) {
-  //return pic;
-  //return gaussian_blur (pic, 1.0);
-  //return gaussian_blur (pic, 2.0);
-  //return compose (pic, 0x40ff0000, compose_towards_source);
-  //return add_shadow (pic, 1, -2, 0xff808080, 2.0);
-  //return add_shadow (pic, 1, -1, 0xcfc0c0c0, 0.0);
-  //return engrave (pic, 0.5, 0xff000000, 0xffffffff, 1.0, 1.0);
-  //return gravitational_outline (pic, 15, 2.5);
-  //return gravitational_shadow (pic, 0x80000000, 2.2);
-  //return magnify (pic, 20.0, 20.0);
-  //return rectangular_variation (pic, 4, 4, 0);
-  //return oval_variation (pic, 2, 2, 0);
-  //return bubble (pic, 50.0, 0.5);
-  return engrave (pic, 0x80000000, 2, -2);
 }

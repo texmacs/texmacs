@@ -167,10 +167,12 @@ concater_rep::typeset_gr_transform (tree t, path ip) {
 
 void
 concater_rep::typeset_gr_effect (tree t, path ip) {
-  if (N(t) != 2) typeset_error (t, ip);
-  tree eff= env->exec (t[1]);
-  box b= typeset_as_atomic (env, t[0], descend (ip, 0));
-  print (effect_box (ip, b, eff));
+  if (N(t) < 2) typeset_error (t, ip);
+  array<box> bs (N(t)-1);
+  for (int i=0; i<N(t)-1; i++)
+    bs[i]= typeset_as_atomic (env, t[i], descend (ip, i));
+  tree eff= env->exec (t[N(t)-1]);
+  print (effect_box (ip, bs, eff));
 }
 
 void

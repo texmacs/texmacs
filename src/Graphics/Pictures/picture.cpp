@@ -29,6 +29,32 @@ color mix (color c1, double a1, color c2, double a2,
 		      true_color (c3), a3, true_color (c4), a4);
 }
 
+int
+composition_type (composition_mode mode) {
+  switch (mode) {
+  case compose_destination:
+    return 2;
+  case compose_source:
+    return 1;
+  case compose_source_over:
+    return 3;
+  case compose_towards_source:
+    return 3;
+  case compose_alpha_distance:
+    return 3;
+  case compose_add:
+    return 3;
+  case compose_mul:
+    return 0;
+  case compose_min:
+    return 0;
+  case compose_max:
+    return 3;
+  default:
+    return 0;
+  }
+}
+
 /******************************************************************************
 * Default implementations of some virtual routines
 ******************************************************************************/

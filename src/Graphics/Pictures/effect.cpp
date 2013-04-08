@@ -13,6 +13,40 @@
 #include "true_color.hpp"
 
 /******************************************************************************
+* Default implementations of virtual routines
+******************************************************************************/
+
+static rectangle
+join (array<rectangle> rs, composition_mode mode) {
+  if (N(rs) == 0) return rectangle (0, 0, 0, 0);
+  rectangle ret= rs[0];
+  for (int i=1; i<N(rs); i++) {
+    rectangle aux= rs[i];
+    switch (composition_type (mode)) {
+    case 0:
+      ret= rectangle (max (ret->x1, aux->x1), max (ret->y1, aux->y1),
+                      min (ret->x2, aux->x2), min (ret->y2, aux->y2));
+      break;
+    case 1:
+      ret= aux;
+      break;
+    case 3:
+      ret= rectangle (min (ret->x1, aux->x1), min (ret->y1, aux->y1),
+                      max (ret->x2, aux->x2), max (ret->y2, aux->y2));
+      break;
+    }
+  }
+  ret->x1= min (ret->x1, ret->x2);
+  ret->y1= min (ret->y1, ret->y2);
+  return ret;
+}
+
+rectangle
+effect_rep::get_logical_extents (array<rectangle> rs) {
+  return join (rs, compose_source_over);
+}
+
+/******************************************************************************
 * Unmodified argument
 ******************************************************************************/
 
@@ -20,6 +54,7 @@ class argument_effect_rep: public effect_rep {
   int nr;
 public:
   argument_effect_rep (int nr2): nr (nr2) {}
+  rectangle get_logical_extents (array<rectangle> rs) { return rs[nr]; }
   rectangle get_extents (array<rectangle> rs) { return rs[nr]; }
   picture apply (array<picture> pics, SI pixel) { return pics[nr]; }
 };
@@ -204,8 +239,55 @@ effect thicken (effect eff, effect brush) {
   return tm_new<thicken_effect_rep> (eff, brush); }
 
 /******************************************************************************
+* Composing various effects
+******************************************************************************/
+
+class compose_effect_rep: public effect_rep {
+  array<effect> effs;
+  composition_mode mode;
+public:
+  compose_effect_rep (array<effect> e, composition_mode m):
+    effs (e), mode (m) {
+      ASSERT (N (effs) > 0, "at least one effect expected"); }
+  rectangle get_logical_extents (array<rectangle> rs) {
+    array<rectangle> xrs (N(effs));
+    for (int i=0; i<N(effs); i++)
+      xrs[i]= effs[i]->get_logical_extents (rs);
+    return join (xrs, mode); }
+  rectangle get_extents (array<rectangle> rs) {
+    array<rectangle> xrs (N(effs));
+    for (int i=0; i<N(effs); i++)
+      xrs[i]= effs[i]->get_extents (rs);
+    return join (xrs, mode); }
+  picture apply (array<picture> pics, SI pixel) {
+    array<picture> args (N(effs));
+    for (int i=0; i<N(effs); i++)
+      args[i]= effs[i]->apply (pics, pixel);
+    return compose (args, mode); }
+};
+
+effect compose (array<effect> effs, composition_mode mode) {
+  return tm_new<compose_effect_rep> (effs, mode); }
+effect superpose (array<effect> effs) {
+  return compose (effs, compose_source_over); }
+effect mul (array<effect> effs) {
+  return compose (effs, compose_mul); }
+effect min (array<effect> effs) {
+  return compose (effs, compose_min); }
+effect max (array<effect> effs) {
+  return compose (effs, compose_max); }
+
+/******************************************************************************
 * Building effects from tree description
 ******************************************************************************/
+
+array<effect>
+build_effects (array<tree> a) {
+  array<effect> effs (N(a));
+  for (int i=0; i<N(a); i++)
+    effs[i]= build_effect (a[i]);
+  return effs;
+}
 
 effect
 build_effect (tree t) {
@@ -274,6 +356,22 @@ build_effect (tree t) {
     effect eff  = build_effect (t[0]);
     effect brush= build_effect (t[1]);
     return thicken (eff, brush);
+  }
+  else if (is_func (t, EFF_SUPERPOSE)) {
+    array<effect> effs= build_effects (A(t));
+    return superpose (effs);
+  }
+  else if (is_func (t, EFF_MUL)) {
+    array<effect> effs= build_effects (A(t));
+    return mul (effs);
+  }
+  else if (is_func (t, EFF_MIN)) {
+    array<effect> effs= build_effects (A(t));
+    return min (effs);
+  }
+  else if (is_func (t, EFF_MAX)) {
+    array<effect> effs= build_effects (A(t));
+    return max (effs);
   }
   else {
     return argument_effect (0);
