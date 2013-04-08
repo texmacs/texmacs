@@ -430,18 +430,12 @@ edit_env_rep::exec (tree t) {
   case _POINT:
     return exec_point (t);
 
-  case EFFECT_BLUR:
-    return exec_effect_blur (t);
-  case EFFECT_SHADOW:
-    return exec_effect_shadow (t);
-  case EFFECT_OUTLINE:
-    return exec_effect_outline (t);
-  case EFFECT_ENGRAVE:
-    return exec_effect_engrave (t);
-  case EFFECT_EMBOSS:
-    return exec_effect_emboss (t);
-  case EFFECT_RECOLOR:
-    return exec_effect_recolor (t);
+  case EFF_GAUSSIAN:
+    return exec_eff_gaussian (t);
+  case EFF_OVAL:
+    return exec_eff_oval (t);
+  case EFF_RECTANGULAR:
+    return exec_eff_rectangular (t);
 
   case BOX_INFO:
     return exec_box_info (t);
@@ -1688,54 +1682,33 @@ edit_env_rep::exec_point (tree t) {
 }
 
 tree
-edit_env_rep::exec_effect_blur (tree t) {
-  if (N(t) < 1) return tree (ERROR, "bad effect-blur");
-  double px= as_length ("1px");
-  double rx= as_length (exec (t[0])) / px;
-  if (N(t) == 1) return tree (EFFECT_BLUR, as_tree (rx));
-  if (N(t) < 3) return tree (ERROR, "bad effect-blur");
-  double ry= as_length (exec (t[1])) / px;
-  return tree (EFFECT_BLUR, as_tree (rx), as_tree (ry), exec (t[2]));
+edit_env_rep::exec_eff_gaussian (tree t) {
+  if (N(t) < 1) return tree (ERROR, "bad eff-gaussian");
+  tree rx= as_tree (as_length (exec (t[0])));
+  if (N(t) == 1) return tree (EFF_GAUSSIAN, as_tree (rx));
+  if (N(t) < 3) return tree (ERROR, "bad eff-gaussian");
+  tree ry= as_tree (as_length (exec (t[1])));
+  return tree (EFF_GAUSSIAN, rx, ry, exec (t[2]));
 }
 
 tree
-edit_env_rep::exec_effect_shadow (tree t) {
-  if (N(t) < 4) return tree (ERROR, "bad effect-shadow");
-  double px= as_length ("1px");
-  string c = as_string (exec (t[0]));
-  double x = as_length (exec (t[1])) / px;
-  double y = as_length (exec (t[2])) / px;
-  double r = as_length (exec (t[3])) / px;
-  return tree (EFFECT_SHADOW, c, as_tree (x), as_tree (y), as_tree (r));
+edit_env_rep::exec_eff_oval (tree t) {
+  if (N(t) < 1) return tree (ERROR, "bad eff-oval");
+  tree rx= as_tree (as_length (exec (t[0])));
+  if (N(t) == 1) return tree (EFF_OVAL, as_tree (rx));
+  if (N(t) < 3) return tree (ERROR, "bad eff-oval");
+  tree ry= as_tree (as_length (exec (t[1])));
+  return tree (EFF_OVAL, rx, ry, exec (t[2]));
 }
 
 tree
-edit_env_rep::exec_effect_outline (tree t) {
-  if (N(t) < 1) return tree (ERROR, "bad effect-outline");
-  double px= as_length ("1px");
-  double rx= as_length (exec (t[0])) / px;
-  if (N(t) == 1) return tree (EFFECT_OUTLINE, as_tree (rx));
-  if (N(t) < 3) return tree (ERROR, "bad effect-outline");
-  double ry= as_length (exec (t[1])) / px;
-  return tree (EFFECT_OUTLINE, as_tree (rx), as_tree (ry), exec (t[2]));
-}
-
-tree
-edit_env_rep::exec_effect_engrave (tree t) {
-  if (N(t) < 3) return tree (ERROR, "bad effect-engrave");
-  return t;
-}
-
-tree
-edit_env_rep::exec_effect_emboss (tree t) {
-  if (N(t) < 3) return tree (ERROR, "bad effect-emboss");
-  return t;
-}
-
-tree
-edit_env_rep::exec_effect_recolor (tree t) {
-  if (N(t) < 2) return tree (ERROR, "bad effect-recolor");
-  return t;
+edit_env_rep::exec_eff_rectangular (tree t) {
+  if (N(t) < 1) return tree (ERROR, "bad eff-rectangular");
+  tree rx= as_tree (as_length (exec (t[0])));
+  if (N(t) == 1) return tree (EFF_RECTANGULAR, as_tree (rx));
+  if (N(t) < 3) return tree (ERROR, "bad eff-rectangular");
+  tree ry= as_tree (as_length (exec (t[1])));
+  return tree (EFF_RECTANGULAR, rx, ry, exec (t[2]));
 }
 
 tree

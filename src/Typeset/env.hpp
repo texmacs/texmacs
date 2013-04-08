@@ -313,12 +313,9 @@ private:
 
   tree exec_point (tree t);
 
-  tree exec_effect_blur (tree t);
-  tree exec_effect_shadow (tree t);
-  tree exec_effect_outline (tree t);
-  tree exec_effect_engrave (tree t);
-  tree exec_effect_emboss (tree t);
-  tree exec_effect_recolor (tree t);
+  tree exec_eff_gaussian (tree t);
+  tree exec_eff_oval (tree t);
+  tree exec_eff_rectangular (tree t);
 
   tree exec_box_info (tree t);
   tree exec_frame_direct (tree t);

@@ -202,3 +202,80 @@ effect outline (effect eff, effect brush) {
   return tm_new<outline_effect_rep> (eff, brush); }
 effect thicken (effect eff, effect brush) {
   return tm_new<thicken_effect_rep> (eff, brush); }
+
+/******************************************************************************
+* Building effects from tree description
+******************************************************************************/
+
+effect
+build_effect (tree t) {
+  if (is_int (t)) {
+    return argument_effect (as_int (t));
+  }
+  else if (is_func (t, EFF_MOVE, 3)) {
+    effect eff= build_effect (t[0]);
+    double dx = as_double (t[1]);
+    double dy = as_double (t[2]);
+    return move (eff, dx, dy);
+  }
+  else if (is_func (t, EFF_MAGNIFY, 3)) {
+    effect eff= build_effect (t[0]);
+    double sx = as_double (t[1]);
+    double sy = as_double (t[2]);
+    return magnify (eff, sx, sy);
+  }
+  else if (is_func (t, EFF_BUBBLE, 3)) {
+    effect eff= build_effect (t[0]);
+    double r  = as_double (t[1]);
+    double a  = as_double (t[2]);
+    return bubble (eff, r, a);
+  }
+  else if (is_func (t, EFF_GAUSSIAN, 1)) {
+    double r= as_double (t[0]);
+    return gaussian_brush_effect (r);
+  }
+  else if (is_func (t, EFF_GAUSSIAN, 3)) {
+    double rx= as_double (t[0]);
+    double ry= as_double (t[1]);
+    double a = as_double (t[2]);
+    return gaussian_brush_effect (rx, ry, a);
+  }
+  else if (is_func (t, EFF_OVAL, 1)) {
+    double r= as_double (t[0]);
+    return oval_brush_effect (r);
+  }
+  else if (is_func (t, EFF_OVAL, 3)) {
+    double rx= as_double (t[0]);
+    double ry= as_double (t[1]);
+    double a = as_double (t[2]);
+    return oval_brush_effect (rx, ry, a);
+  }
+  else if (is_func (t, EFF_RECTANGULAR, 1)) {
+    double r= as_double (t[0]);
+    return rectangular_brush_effect (r);
+  }
+  else if (is_func (t, EFF_RECTANGULAR, 3)) {
+    double rx= as_double (t[0]);
+    double ry= as_double (t[1]);
+    double a = as_double (t[2]);
+    return rectangular_brush_effect (rx, ry, a);
+  }
+  else if (is_func (t, EFF_BLUR, 2)) {
+    effect eff  = build_effect (t[0]);
+    effect brush= build_effect (t[1]);
+    return blur (eff, brush);
+  }
+  else if (is_func (t, EFF_OUTLINE, 2)) {
+    effect eff  = build_effect (t[0]);
+    effect brush= build_effect (t[1]);
+    return outline (eff, brush);
+  }
+  else if (is_func (t, EFF_THICKEN, 2)) {
+    effect eff  = build_effect (t[0]);
+    effect brush= build_effect (t[1]);
+    return thicken (eff, brush);
+  }
+  else {
+    return argument_effect (0);
+  }
+}

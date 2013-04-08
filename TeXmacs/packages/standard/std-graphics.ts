@@ -60,13 +60,29 @@
     </src-comment>
   </active*>
 
-  <assign|blur|<macro|body|r|<gr-effect|<arg|body>|<effect-blur|<arg|r>>>>>
+  <assign|blur|<macro|body|r|<gr-effect|<arg|body>|<eff-blur|0|<eff-gaussian|<arg|r>>>>>>
 
-  <assign|directional-blur|<macro|body|rx|ry|alpha|<gr-effect|<arg|body>|<effect-blur|<arg|rx>|<arg|ry>|<arg|alpha>>>>>
+  <assign|gaussian-blur|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-blur|0|<eff-gaussian|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
 
-  <assign|shadow|<macro|body|col|x|y|r|<gr-effect|<arg|body>|<effect-shadow|<arg|col>|<arg|x>|<arg|y>|<arg|r>>>>>
+  <assign|oval-blur|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-blur|0|<eff-oval|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
 
-  <assign|outline|<macro|body|r|<gr-effect|<arg|body>|<effect-outline|<arg|r>>>>>
+  <assign|rectangular-blur|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-blur|0|<eff-rectangular|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
+
+  <assign|thicken|<macro|body|rx|ry|<gr-effect|<arg|body>|<eff-thicken|0|<eff-rectangular|<arg|rx>|<arg|ry>|0>>>>>
+
+  <assign|gaussian-thicken|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-thicken|0|<eff-gaussian|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
+
+  <assign|oval-thicken|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-thicken|0|<eff-oval|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
+
+  <assign|rectangular-thicken|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-thicken|0|<eff-rectangular|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
+
+  <assign|outline|<macro|body|r|<gr-effect|<arg|body>|<eff-outline|0|<eff-oval|<arg|r>>>>>>
+
+  <assign|gaussian-outline|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-outline|0|<eff-gaussian|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
+
+  <assign|oval-outline|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-outline|0|<eff-oval|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
+
+  <assign|rectangular-outline|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-outline|0|<eff-rectangular|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
 
   \;
 </body>

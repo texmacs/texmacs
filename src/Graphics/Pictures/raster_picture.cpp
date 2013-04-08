@@ -248,44 +248,18 @@ engrave (picture pic, double a0, color tlc, color brc, double tlw, double brw) {
 
 picture
 apply_effect (picture pic, tree eff) {
-  if (is_func (eff, EFFECT_BLUR, 1)) {
-    double r= as_double (eff[0]);
-    return gaussian_blur (pic, r);
-  }
-  else if (is_func (eff, EFFECT_BLUR, 3)) {
-    double rx= as_double (eff[0]);
-    double ry= as_double (eff[1]);
-    double a = as_double (eff[2]);
-    return gaussian_blur (pic, rx, ry, a);
-  }
-  else if (is_func (eff, EFFECT_SHADOW, 4)) {
-    color  c= named_color (as_string (eff[0]));
-    double x= as_double (eff[1]);
-    double y= as_double (eff[2]);
-    double r= as_double (eff[3]);
-    return shadow (pic, c, x, y, r);
-  }
-  else if (is_func (eff, EFFECT_OUTLINE, 1)) {
-    double r= as_double (eff[0]);
-    return outline (pic, r);
-  }
-  else if (eff != "") {
-    return pic;
-  }
-  else {
-    //return pic;
-    //return gaussian_blur (pic, 1.0);
-    //return gaussian_blur (pic, 2.0);
-    //return compose (pic, 0x40ff0000, compose_towards_source);
-    //return add_shadow (pic, 1, -2, 0xff808080, 2.0);
-    //return add_shadow (pic, 1, -1, 0xcfc0c0c0, 0.0);
-    //return engrave (pic, 0.5, 0xff000000, 0xffffffff, 1.0, 1.0);
-    //return gravitational_outline (pic, 15, 2.5);
-    //return gravitational_shadow (pic, 0x80000000, 2.2);
-    //return magnify (pic, 20.0, 20.0);
-    //return rectangular_variation (pic, 4, 4, 0);
-    //return oval_variation (pic, 2, 2, 0);
-    //return bubble (pic, 50.0, 0.5);
-    return engrave (pic, 0x80000000, 2, -2);
-  }
+  //return pic;
+  //return gaussian_blur (pic, 1.0);
+  //return gaussian_blur (pic, 2.0);
+  //return compose (pic, 0x40ff0000, compose_towards_source);
+  //return add_shadow (pic, 1, -2, 0xff808080, 2.0);
+  //return add_shadow (pic, 1, -1, 0xcfc0c0c0, 0.0);
+  //return engrave (pic, 0.5, 0xff000000, 0xffffffff, 1.0, 1.0);
+  //return gravitational_outline (pic, 15, 2.5);
+  //return gravitational_shadow (pic, 0x80000000, 2.2);
+  //return magnify (pic, 20.0, 20.0);
+  //return rectangular_variation (pic, 4, 4, 0);
+  //return oval_variation (pic, 2, 2, 0);
+  //return bubble (pic, 50.0, 0.5);
+  return engrave (pic, 0x80000000, 2, -2);
 }

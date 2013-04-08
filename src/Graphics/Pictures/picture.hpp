@@ -75,7 +75,7 @@ picture load_xpm (url file_name);
 string picture_as_eps (picture pic, int dpi);
 
 /******************************************************************************
-* Operations on pictures
+* Drawing on pictures and combining pictures
 ******************************************************************************/
 
 enum composition_mode {
@@ -100,6 +100,10 @@ picture compose (picture pic, color c, composition_mode mode);
 void    draw_on (picture& d, picture s, int x, int y, composition_mode m);
 picture combine (picture p1, picture p2, composition_mode mode);
 
+/******************************************************************************
+* Operations on pictures
+******************************************************************************/
+
 picture shift (picture pic, double dx, double dy);
 picture magnify (picture pic, double sx, double sy);
 picture bubble (picture pic, double r, double a);
@@ -114,15 +118,5 @@ picture rectangular_brush_picture (double rx, double ry, double phi= 0.0);
 picture blur (picture pic, picture brush);
 picture outline (picture pic, picture brush);
 picture thicken (picture pic, picture brush);
-
-picture apply_effect (picture pic, tree eff);
-picture gaussian_blur (picture pic, double r);
-picture gaussian_blur (picture pic, double rx, double ry, double phi);
-picture shadow (picture pic, color c, double x, double y, double r);
-picture outline (picture pic, double r);
-picture gravitational_outline (picture pic, int R, double expon= 2.0);
-picture gravitational_shadow (picture pic, color col, double alpha);
-picture engrave (picture src, double alpha, color tlc, color brc,
-                 double tlw=1.0, double brw= 1.0);
 
 #endif // defined PICTURE_H

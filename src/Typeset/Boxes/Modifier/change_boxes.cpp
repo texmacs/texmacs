@@ -13,6 +13,7 @@
 #include "Boxes/construct.hpp"
 #include "scheme.hpp"
 #include "gui.hpp"
+#include "effect.hpp"
 
 /******************************************************************************
 * changing the behaviour of a box
@@ -220,15 +221,16 @@ transformed_box_rep::post_display (renderer &ren) {
 ******************************************************************************/
 
 struct effect_box_rep: public change_box_rep {
-  tree eff;
+  tree   eff_t;
+  effect eff;
 public:
   effect_box_rep (path ip, box b, tree eff);
-  operator tree () { return tree (TUPLE, "effect", (tree) bs[0], eff); }
+  operator tree () { return tree (TUPLE, "effect", (tree) bs[0], eff_t); }
   void redraw (renderer ren, path p, rectangles& l);
 };
 
 effect_box_rep::effect_box_rep (path ip, box b, tree eff2):
-  change_box_rep (ip, true), eff (eff2)
+  change_box_rep (ip, true), eff_t (eff2), eff (build_effect (eff2))
 {
   insert (b, 0, 0);
   position ();
@@ -248,7 +250,9 @@ effect_box_rep::redraw (renderer ren, path p, rectangles& l) {
   delete_renderer (pic_ren);
   if (((nr_painted&15) == 15) && gui_interrupted (true));
   else {
-    picture new_pic= apply_effect (old_pic, eff);
+    array<picture> pics;
+    pics << old_pic;
+    picture new_pic= eff->apply (pics, ren->pixel);
     ren->draw_picture (new_pic, 0, 0);
   }
   ren->move_origin (-x0, -y0);
