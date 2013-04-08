@@ -650,6 +650,19 @@ init_std_drd () {
 	repeat (1, 1) -> returns_effect () -> effect (0));
   init (EFF_MAX, "eff-mix",
 	repeat (2, 2) -> returns_effect ()); // FIXME: types of args
+  init (EFF_SET_COLOR, "eff-set-color",
+        fixed (3, 0, DETAILED) -> returns_effect () ->
+        effect (0) -> name (0, "body") ->
+	string_type (1) -> name (1, "color") ->
+	string_type (2) -> name (2, "mask"));
+  init (EFF_MAKE_TRANSPARENT, "eff-make-transparent",
+        fixed (2, 0, DETAILED) -> returns_effect () ->
+        effect (0) -> name (0, "body") ->
+	string_type (1) -> name (1, "bg") -> name (1, "background color"));
+  init (EFF_MAKE_OPAQUE, "eff-make-opaque",
+        fixed (2, 0, DETAILED) -> returns_effect () ->
+        effect (0) -> name (0, "body") ->
+	string_type (1) -> name (1, "bg") -> name (1, "background color"));
 
   init (BOX_INFO, "box-info",
 	fixed (1, 1, BIFORM) ->

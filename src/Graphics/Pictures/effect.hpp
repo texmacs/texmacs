@@ -48,11 +48,6 @@ effect move (effect eff, double dx, double dy);
 effect magnify (effect eff, double sx, double sy);
 effect bubble (effect eff, double r, double a);
 
-effect set_color (effect eff, color c, color mask);
-effect make_transparent (effect eff, color bgc);
-effect make_opaque (effect eff, color bgc);
-effect change_color (effect eff, color what, color by);
-
 effect gaussian_brush (double r);
 effect oval_brush (double r);
 effect rectangular_brush (double r);
@@ -70,5 +65,9 @@ effect mul (array<effect> effs);
 effect min (array<effect> effs);
 effect max (array<effect> effs);
 effect mix (array<effect> effs, array<double> alphas);
+
+effect set_color (effect eff, color c, color mask);
+effect make_transparent (effect eff, color bgc);
+effect make_opaque (effect eff, color bgc);
 
 #endif // defined EFFECT_H

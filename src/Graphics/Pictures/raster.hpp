@@ -12,6 +12,7 @@
 #ifndef RASTER_H
 #define RASTER_H
 #include "raster_operators.hpp"
+#include "unary_function.hpp"
 
 /******************************************************************************
 * Raster class
@@ -134,6 +135,15 @@ map (raster<C> r) {
   raster<Ret> ret (w, h, r->ox, r->oy);
   for (int i=0; i<n; i++)
     ret->a[i]= Op::op (r->a[i]);
+  return ret;
+}
+
+template<typename C, typename S> raster<C>
+map (unary_function<C,S> fun, raster<S> r) {
+  int w= r->w, h= r->h, n= w*h;
+  raster<C> ret (w, h, r->ox, r->oy);
+  for (int i=0; i<n; i++)
+    ret->a[i]= fun->eval (r->a[i]);
   return ret;
 }
 

@@ -11,6 +11,7 @@
 
 #include "effect.hpp"
 #include "true_color.hpp"
+#include "gui.hpp"
 
 /******************************************************************************
 * Default implementations of virtual routines
@@ -278,6 +279,53 @@ effect max (array<effect> effs) {
   return compose (effs, compose_max); }
 
 /******************************************************************************
+* Color effects
+******************************************************************************/
+
+class set_color_effect_rep: public effect_rep {
+  effect eff;
+  color c, mask;
+public:
+  set_color_effect_rep (effect eff2, color c2, color mask2):
+    eff (eff2), c (c2), mask (mask2) {}
+  rectangle get_extents (array<rectangle> rs) {
+    return eff->get_extents (rs); }
+  picture apply (array<picture> pics, SI pixel) {
+    return set_color (eff->apply (pics, pixel), c, mask); }
+};
+
+class make_transparent_effect_rep: public effect_rep {
+  effect eff;
+  color bgc;
+public:
+  make_transparent_effect_rep (effect eff2, color bgc2):
+    eff (eff2), bgc (bgc2) {}
+  rectangle get_extents (array<rectangle> rs) {
+    return eff->get_extents (rs); }
+  picture apply (array<picture> pics, SI pixel) {
+    return make_transparent (eff->apply (pics, pixel), bgc); }
+};
+
+class make_opaque_effect_rep: public effect_rep {
+  effect eff;
+  color bgc;
+public:
+  make_opaque_effect_rep (effect eff2, color bgc2):
+    eff (eff2), bgc (bgc2) {}
+  rectangle get_extents (array<rectangle> rs) {
+    return eff->get_extents (rs); }
+  picture apply (array<picture> pics, SI pixel) {
+    return make_opaque (eff->apply (pics, pixel), bgc); }
+};
+
+effect set_color (effect eff, color c, color mask) {
+  return tm_new<set_color_effect_rep> (eff, c, mask); }
+effect make_transparent (effect eff, color bgc) {
+  return tm_new<make_transparent_effect_rep> (eff, bgc); }
+effect make_opaque (effect eff, color bgc) {
+  return tm_new<make_opaque_effect_rep> (eff, bgc); }
+
+/******************************************************************************
 * Building effects from tree description
 ******************************************************************************/
 
@@ -372,6 +420,22 @@ build_effect (tree t) {
   else if (is_func (t, EFF_MAX)) {
     array<effect> effs= build_effects (A(t));
     return max (effs);
+  }
+  else if (is_func (t, EFF_SET_COLOR)) {
+    effect eff = build_effect (t[0]);
+    color  c   = named_color (as_string (t[1]));
+    color  mask= named_color (as_string (t[2]));
+    return set_color (eff, c, mask);
+  }
+  else if (is_func (t, EFF_MAKE_TRANSPARENT)) {
+    effect eff= build_effect (t[0]);
+    color  bgc= named_color (as_string (t[1]));
+    return make_transparent (eff, bgc);
+  }
+  else if (is_func (t, EFF_MAKE_OPAQUE)) {
+    effect eff= build_effect (t[0]);
+    color  bgc= named_color (as_string (t[1]));
+    return make_opaque (eff, bgc);
   }
   else {
     return argument_effect (0);

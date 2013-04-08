@@ -121,4 +121,8 @@ picture blur (picture pic, picture brush);
 picture outline (picture pic, picture brush);
 picture thicken (picture pic, picture brush);
 
+picture set_color (picture eff, color c, color mask);
+picture make_transparent (picture eff, color bgc);
+picture make_opaque (picture eff, color bgc);
+
 #endif // defined PICTURE_H

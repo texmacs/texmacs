@@ -12,6 +12,7 @@
 #ifndef TRUE_COLOR_H
 #define TRUE_COLOR_H
 #include "tree.hpp"
+#include "unary_function.hpp"
 
 typedef unsigned int color;
 
@@ -243,5 +244,16 @@ true_color mix (const true_color& c1, double a1,
 		const true_color& c2, double a2,
 		const true_color& c3, double a3,
 		const true_color& c4, double a4);
+
+/******************************************************************************
+* Color transformations
+******************************************************************************/
+
+unary_function<true_color,true_color>
+set_color_function (const true_color& c, const true_color& mask);
+unary_function<true_color,true_color>
+make_transparent_function (const true_color& bgc);
+unary_function<true_color,true_color>
+make_opaque_function (const true_color& bgc);
 
 #endif // defined TRUE_COLOR_H

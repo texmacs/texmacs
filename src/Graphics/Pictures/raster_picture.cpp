@@ -146,6 +146,31 @@ thicken (picture pic, picture brush) {
 }
 
 /******************************************************************************
+* Color effects
+******************************************************************************/
+
+picture
+set_color (picture pic, color c, color mask) {
+  raster<true_color> ras= as_raster<true_color> (pic);
+  true_color tc (c), tmask (mask);
+  return raster_picture (map (set_color_function (tc, tmask), ras));
+}
+
+picture
+make_transparent (picture pic, color bgc) {
+  raster<true_color> ras= as_raster<true_color> (pic);
+  true_color tbgc (bgc);
+  return raster_picture (map (make_transparent_function (tbgc), ras));
+}
+
+picture
+make_opaque (picture pic, color bgc) {
+  raster<true_color> ras= as_raster<true_color> (pic);
+  true_color tbgc (bgc);
+  return raster_picture (map (make_opaque_function (tbgc), ras));
+}
+
+/******************************************************************************
 * Special effects
 ******************************************************************************/
 

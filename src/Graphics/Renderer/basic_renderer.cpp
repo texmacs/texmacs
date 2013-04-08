@@ -142,17 +142,33 @@ color	dark_grey  = rgb_color (112, 112, 112);
 
 static color
 named_color_bis (string s) {
-  if ((N(s) == 4) && (s[0]=='#')) {
-    int r= 17 * from_hexadecimal (s (1, 2));
-    int g= 17 * from_hexadecimal (s (2, 3));
-    int b= 17 * from_hexadecimal (s (3, 4));
-    return rgb_color (r, g, b);
-  }
-  if ((N(s) == 7) && (s[0]=='#')) {
-    int r= from_hexadecimal (s (1, 3));
-    int g= from_hexadecimal (s (3, 5));
-    int b= from_hexadecimal (s (5, 7));
-    return rgb_color (r, g, b);
+  if (N(s) > 0 && s[0] == '#') {
+    if (N(s) == 4) {
+      int r= 17 * from_hexadecimal (s (1, 2));
+      int g= 17 * from_hexadecimal (s (2, 3));
+      int b= 17 * from_hexadecimal (s (3, 4));
+      return rgb_color (r, g, b);
+    }
+    else if (N(s) == 5) {
+      int r= 17 * from_hexadecimal (s (1, 2));
+      int g= 17 * from_hexadecimal (s (2, 3));
+      int b= 17 * from_hexadecimal (s (3, 4));
+      int a= 17 * from_hexadecimal (s (4, 5));
+      return rgb_color (r, g, b, a);
+    }
+    else if (N(s) == 7) {
+      int r= from_hexadecimal (s (1, 3));
+      int g= from_hexadecimal (s (3, 5));
+      int b= from_hexadecimal (s (5, 7));
+      return rgb_color (r, g, b);
+    }
+    else if (N(s) == 9) {
+      int r= from_hexadecimal (s (1, 3));
+      int g= from_hexadecimal (s (3, 5));
+      int b= from_hexadecimal (s (5, 7));
+      int a= from_hexadecimal (s (7, 9));
+      return rgb_color (r, g, b, a);
+    }
   }
 #ifdef REDUCED_COLORMAP
   unsigned int depth= 8;
@@ -211,7 +227,9 @@ named_color_bis (string s) {
 
 color
 named_color (string s, int a) {
+  //cout << "Get " << s << ", " << a << "\n";
   color c= named_color_bis (s);
+  a= (a * (c >> 24)) / 255;
   return (a << 24) + (c & 0xffffff);
 }
 
@@ -219,10 +237,17 @@ string
 get_named_color (color c) {
   int r, g, b, a;
   get_rgb_color (c, r, g, b, a);
-  return "#" *
-    as_hexadecimal (r, 2) *
-    as_hexadecimal (g, 2) *
-    as_hexadecimal (b, 2);
+  if (a == 255)
+    return "#" *
+      as_hexadecimal (r, 2) *
+      as_hexadecimal (g, 2) *
+      as_hexadecimal (b, 2);
+  else
+    return "#" *
+      as_hexadecimal (r, 2) *
+      as_hexadecimal (g, 2) *
+      as_hexadecimal (b, 2) *
+      as_hexadecimal (a, 2);
 }
 
 #define RGBCOLOR(r,g,b) rgb_color(r,g,b)
