@@ -79,6 +79,68 @@ bubble (picture pic, double r, double a) {
 ******************************************************************************/
 
 picture
+gaussian_brush_picture (double rx, double ry, double phi) {
+  raster<double> ras= gaussian_brush<double> (rx, ry, phi);
+  return raster_picture (apply_alpha (true_color (0, 0, 0, 1), ras));
+}
+
+picture
+gaussian_brush_picture (double r) {
+  return gaussian_brush_picture (r, r, 0.0);
+}
+
+picture
+oval_brush_picture (double rx, double ry, double phi) {
+  raster<double> ras= oval_brush<double> (rx, ry, phi);
+  return raster_picture (apply_alpha (true_color (0, 0, 0, 1), ras));
+}
+
+picture
+oval_brush_picture (double r) {
+  return oval_brush_picture (r, r, 0.0);
+}
+
+picture
+rectangular_brush_picture (double rx, double ry, double phi) {
+  raster<double> ras= rectangular_brush<double> (rx, ry, phi);
+  return raster_picture (apply_alpha (true_color (0, 0, 0, 1), ras));
+}
+
+picture
+rectangular_brush_picture (double r) {
+  return rectangular_brush_picture (r, r, 0.0);
+}
+
+/******************************************************************************
+* Special effects, with brush as a parameter
+******************************************************************************/
+
+picture
+blur (picture pic, picture brush) {
+  raster<true_color> ras= as_raster<true_color> (pic);
+  raster<double> alpha= get_alpha (as_raster<true_color> (brush));
+  return raster_picture (blur (ras, alpha));
+}
+
+picture
+outline (picture pic, picture brush) {
+  raster<true_color> ras= as_raster<true_color> (pic);
+  raster<double> alpha= get_alpha (as_raster<true_color> (brush));
+  return raster_picture (variation (ras, alpha));
+}
+
+picture
+thicken (picture pic, picture brush) {
+  raster<true_color> ras= as_raster<true_color> (pic);
+  raster<double> alpha= get_alpha (as_raster<true_color> (brush));
+  return raster_picture (thicken (ras, alpha));
+}
+
+/******************************************************************************
+* Special effects
+******************************************************************************/
+
+picture
 gaussian_blur (picture pic, double r) {
   raster<true_color> ras= as_raster<true_color> (pic);
   return raster_picture (gaussian_blur (ras, r));

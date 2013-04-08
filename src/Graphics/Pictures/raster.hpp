@@ -545,13 +545,12 @@ struct gaussian_distribution {
 };
 
 template<typename C> raster<C>
-gaussian_kernel (double rx, double ry, double phi, double order= 2.5) {
+gaussian_brush (double rx, double ry, double phi, double order= 2.5) {
   gaussian_distribution fun (rx, ry, phi);
   double Rx= rx * order, Ry= ry * order;
   int R= ceil (max (Rx, Ry) - 0.5);
   int w= 2*R + 1;
-  raster<C> ras= pixelize<C> (fun, w, w, R, R, 1);
-  return ras / sum (ras);
+  return pixelize<C> (fun, w, w, R, R, 1);
 }
 
 /******************************************************************************
@@ -578,10 +577,14 @@ convolute (raster<C> s1, raster<S> s2) {
 }
 
 template<typename C> raster<C>
+blur (raster<C> ras, raster<double> brush) {
+  return convolute (ras, brush / sum (brush));
+}
+
+template<typename C> raster<C>
 gaussian_blur (raster<C> ras, double rx, double ry, double phi,
                double order= 2.5) {
-  raster<double> g= gaussian_kernel<double> (rx, ry, phi, order);
-  return convolute (ras, g);
+  return blur (ras, gaussian_brush<double> (rx, ry, phi, order));
 }
 
 template<typename C> raster<C>
