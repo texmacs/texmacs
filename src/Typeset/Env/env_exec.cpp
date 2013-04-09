@@ -430,6 +430,10 @@ edit_env_rep::exec (tree t) {
   case _POINT:
     return exec_point (t);
 
+  case EFF_MOVE:
+    return exec_eff_move (t);
+  case EFF_BUBBLE:
+    return exec_eff_bubble (t);
   case EFF_GAUSSIAN:
     return exec_eff_gaussian (t);
   case EFF_OVAL:
@@ -1681,6 +1685,24 @@ edit_env_rep::exec_point (tree t) {
     u[i]= exec (t[i]);
   if (n==0 || is_double (u[0])) return u;
   return as_tree (as_point (u));
+}
+
+tree
+edit_env_rep::exec_eff_move (tree t) {
+  if (N(t) < 3) return tree (ERROR, "bad eff-move");
+  tree body= exec (t[0]);
+  tree dx  = as_tree (as_length (exec (t[1])));
+  tree dy  = as_tree (as_length (exec (t[2])));
+  return tree (EFF_MOVE, body, dx, dy);
+}
+
+tree
+edit_env_rep::exec_eff_bubble (tree t) {
+  if (N(t) < 3) return tree (ERROR, "bad eff-bubble");
+  tree body= exec (t[0]);
+  tree r   = as_tree (as_length (exec (t[1])));
+  tree a   = exec (t[2]);
+  return tree (EFF_BUBBLE, body, r, a);
 }
 
 tree

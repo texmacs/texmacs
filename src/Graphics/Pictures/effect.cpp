@@ -520,6 +520,18 @@ build_effect (tree t) {
     effect eff= build_effect (t[0]);
     return normalize (eff);
   }
+  else if (is_func (t, EFF_MONOCHROME, 3)) {
+    effect eff= build_effect (t[0]);
+    color  col= named_color (as_string (t[1]));
+    double a  = as_double (t[2]);
+    true_color c (col);
+    array<double> m (20);
+    for (int i=0; i<20; i++) m[i]= 0.0;
+    m[0]= m[6]= m[12]= 1-a;
+    m[4]= c.r; m[9]= c.g; m[14]= c.b;
+    m[18]= 1-a + c.a * a;
+    return color_matrix (eff, m);
+  }
   else if (is_func (t, EFF_COLOR_MATRIX, 21)) {
     effect eff = build_effect (t[0]);
     array<double> m (20);

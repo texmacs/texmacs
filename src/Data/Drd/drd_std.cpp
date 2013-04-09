@@ -669,6 +669,11 @@ init_std_drd () {
   init (EFF_NORMALIZE, "eff-normalize",
         fixed (1) -> returns_effect () ->
         effect (0) -> name (0, "body"));
+  init (EFF_MONOCHROME, "eff-monochrome",
+        fixed (3, 0, DETAILED) -> returns_effect () ->
+        effect (0) -> name (0, "body") ->
+        string_type (1) -> name (1, "color") ->
+        numeric (2) -> name (2, "opacity"));
   init (EFF_COLOR_MATRIX, "eff-color-matrix",
         repeat (1, 1, BIFORM) -> returns_effect () ->
         effect (0) -> name (0, "body") ->

@@ -534,6 +534,7 @@ pixelize (F fun, int w, int h, int ox, int oy, int shrink= 5) {
 
 template<typename C> raster<C>
 rectangular_pen (double rx, double ry) {
+  rx += 0.5; ry += 0.5;
   int w= 2 * ceil (rx + 0.5) - 1;
   int h= 2 * ceil (ry + 0.5) - 1;
   double rem_x= ((double) w) / 2 - rx;
@@ -567,6 +568,7 @@ struct chi_rectangular {
 template<typename C> raster<C>
 rectangular_pen (double rx, double ry, double phi) {
   if (fabs (phi) <= 1.0e-6) return rectangular_pen<C> (rx, ry);
+  rx += 0.5; ry += 0.5;
   chi_rectangular fun (rx, ry, phi);
   int R= ceil (sqrt (rx * rx + ry * ry) - 0.5);
   int w= 2*R + 1;
@@ -586,6 +588,7 @@ struct chi_oval {
 
 template<typename C> raster<C>
 oval_pen (double rx, double ry, double phi) {
+  rx += 0.5; ry += 0.5;
   chi_oval fun (rx, ry, phi);
   int R= ceil (max (rx, ry) - 0.5);
   int w= 2*R + 1;
@@ -599,7 +602,7 @@ struct chi_motion {
     yx (-sin (phi)), yy (cos (phi)), r (r2) {}
   inline double eval (double x, double y) {
     double tx= xx * x + xy * y, ty= yx * x + yy * y;
-    if (tx > 0.5 && tx < r+0.5 && fabs (ty) < 0.5) return 1.0;
+    if (tx > 0.71 && tx < r+0.71 && fabs (ty) < 0.71) return 1.0;
     else return 0.0; }
 };
 
@@ -748,10 +751,10 @@ erode (raster<C> s1, raster<S> s2) {
   if (s1->w * s1->h == 0) return s1;
   ASSERT (s2->w * s2->h != 0, "empty pen");
   raster<C> d= copy (s1);
-  int s1w= s1->w, s1h= s1->h, s2w= s2->w, s2h= s2->h, dw= d->w, dh= d->h;
+  int s1w= s1->w, s1h= s1->h, s2w= s2->w, s2h= s2->h, dw= d->w;//, dh= d->h;
   raster<F> temp= get_alpha (s1);
-  for (int i=0; i<dw*dh; i++)
-    get_alpha (d->a[i])= F (1.0);
+  //for (int i=0; i<dw*dh; i++)
+  //  get_alpha (d->a[i])= F (1.0);
   for (int y1=0; y1<s1h; y1++)
     for (int y2=0; y2<s2h; y2++) {
       int yd= y1 + y2 - s2->oy;

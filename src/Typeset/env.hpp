@@ -313,6 +313,8 @@ private:
 
   tree exec_point (tree t);
 
+  tree exec_eff_move (tree t);
+  tree exec_eff_bubble (tree t);
   tree exec_eff_gaussian (tree t);
   tree exec_eff_oval (tree t);
   tree exec_eff_rectangular (tree t);

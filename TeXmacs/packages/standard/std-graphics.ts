@@ -107,6 +107,18 @@
   <assign|motion-erode|<macro|body|dx|dy|<gr-effect|<arg|body>|<eff-erode|0|<eff-motion|<arg|dx>|<arg|dy>>>>>>
 
   \;
+
+  <assign|engrave|<macro|body|dx|dy|col|<gr-effect|<arg|body>|<eff-superpose|0|<eff-monochrome|<eff-sub|0|<eff-erode|0|<eff-motion|<arg|dx>|<arg|dy>>>>|<arg|col>|1>>>>>
+
+  <assign|emboss|<macro|body|dx|dy|col|<gr-effect|<arg|body>|<eff-superpose|<eff-monochrome|<eff-thicken|0|<eff-motion|<arg|dx>|<arg|dy>>>|<arg|col>|1>|0>>>>
+
+  <assign|eff-shadow|<macro|eff|dx|dy|col|r|<eff-blur|<eff-monochrome|<eff-move|0|<arg|dx>|<arg|dy>>|<arg|col>|1>|<eff-gaussian|<arg|r>>>>>
+
+  <assign|shadow|<macro|body|dx|dy|col|r|<gr-effect|<arg|body>|<eff-superpose|<eff-shadow|0|<arg|dx>|<arg|dy>|<arg|col>|<arg|r>>|0>>>>
+
+  <assign|burning|<macro|body|<gr-effect|<arg|body>|<eff-superpose|<eff-shadow|0|0.1ex|0.9ex|#f20|0.9ex>|<eff-shadow|0|-0.1ex|0.75ex|#f80|0.55ex>|<eff-shadow|0|0.2ex|0.5ex|#fd3|0.3ex>|<eff-shadow|0|0ex|0.25ex|#ff3|0.2ex>|<eff-shadow|0|0ex|0ex|#ccc|0.2ex>|0>>>>
+
+  \;
 </body>
 
 <\initial>
