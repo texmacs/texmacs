@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.1>
+<TeXmacs|1.0.7.19>
 
 <style|tmdoc>
 
@@ -17,13 +17,12 @@
     mathematical formula inside text:
 
     <\tm-fragment>
-      The formula <with|mode|math|a<rsup|2>+b<rsup|2>=c<rsup|2>> is well
-      known.
+      The formula <math|a<rsup|2>+b<rsup|2>=c<rsup|2>> is well known.
     </tm-fragment>
 
     <\tm-fragment>
-      <inactive*|The formula <with|mode|math|a<rsup|2>+b<rsup|2>=c<rsup|2>>
-      is well known.>
+      <inactive*|The formula <math|a<rsup|2>+b<rsup|2>=c<rsup|2>> is well
+      known.>
     </tm-fragment>
 
     Some other environment variables (mainly the language and the font) also
@@ -133,7 +132,11 @@
     <var-val|color|black><explain-synopsis|foreground color>
   <|explain>
     The current foreground color of text and graphics, as specified in
-    <menu|Document|Color|Foreground> or <menu|Format|Color>.
+    <menu|Document|Color|Foreground> or <menu|Format|Color>. Named colors,
+    like ``<verbatim|Salmon>'', are supported for different color charts:
+    <hlink|<verbatim|dvips>|https://en.wikibooks.org/wiki/LaTeX/Colors#The_68_standard_colors_known_to_dvips>,
+    <hlink|<verbatim|x11>|https://en.wikipedia.org/wiki/X11_color_names#Color_name_charts>
+    and <hlink|<verbatim|html>|http://www.w3schools.com/html/html_colornames.asp>.
   </explain>
 
   <\explain>

@@ -1,0 +1,50 @@
+;; Conversions between colors names and color values
+;;
+;; (C) 2013 Francois Poulain
+;;
+;; This software falls under the GNU general public license version 3 or later.
+;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+;; in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+;;
+;; RGB
+("black"           (0    0    0  ))
+("blue"            (0    0    255))
+("broken white"    (255  255  233))
+("brown"           (191  127  63 ))
+("cyan"            (0    255  255))
+("darker grey"     (64   64   64 ))
+("darkgray"        (63   63   63 ))
+("gray"            (127  127  127))
+("green"           (0    255  0  ))
+("grey"            (184  184  184))
+("light grey"      (208  208  208))
+("lightgray"       (191  191  191))
+("lime"            (191  255  0  ))
+("magenta"         (255  0    255))
+("olive"           (127  127  0  ))
+("orange"          (255  127  0  ))
+("pink"            (255  191  191))
+("purple"          (191  0    63 ))
+("red"             (255  0    0  ))
+("teal"            (0    127  127))
+("violet"          (127  0    127))
+("white"           (255  255  255))
+("yellow"          (255  255  0  ))
+("pastel blue"     (233  233  255))
+("pastel brown"    (233  191  191))
+("pastel cyan"     (233  255  255))
+("pastel green"    (233  255  233))
+("pastel grey"     (233  233  233))
+("pastel magenta"  (255  233  255))
+("pastel orange"   (255  233  191))
+("pastel red"      (255  233  233))
+("pastel yellow"   (255  255  233))
+("dark blue"       (0    0    128))
+("dark brown"      (64   16   0  ))
+("dark cyan"       (0    128  128))
+("dark green"      (0    128  0  ))
+("dark grey"       (112  112  112))
+("dark magenta"    (128  0    128))
+("dark orange"     (128  64   0  ))
+("dark red"        (128  0    0  ))
+("dark yellow"     (128  128  0  ))

@@ -1,0 +1,83 @@
+;; Conversions between colors names and color values
+;;
+;; (C) 2013 Francois Poulain
+;;
+;; This software falls under the GNU general public license version 3 or later.
+;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+;; in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+;;
+;; Inspired from Dr. Uwe Kern <xcolor at ukern dot de> xcolor LaTeX package
+;; http://www.ctan.org/tex-archive/macros/latex/contrib/xcolor/
+;;
+;; See also:
+;; https://en.wikibooks.org/wiki/LaTeX/Colors#The_68_standard_colors_known_to_dvips
+;;
+;; CMYK
+("Apricot"         (0    81   132  0  ))
+("Aquamarine"      (209  0    76   0  ))
+("Bittersweet"     (0    191  255  61 ))
+("Black"           (0    0    0    255))
+("Blue"            (255  255  0    0  ))
+("BlueGreen"       (216  0    84   0  ))
+("BlueViolet"      (219  232  0    10 ))
+("BrickRed"        (0    226  239  71 ))
+("Brown"           (0    206  255  153))
+("BurntOrange"     (0    130  255  0  ))
+("CadetBlue"       (158  145  58   0  ))
+("CarnationPink"   (0    160  0    0  ))
+("Cerulean"        (239  28   0    0  ))
+("CornflowerBlue"  (165  33   0    0  ))
+("Cyan"            (255  0    0    0  ))
+("Dandelion"       (0    73   214  0  ))
+("DarkOrchid"      (102  204  51   0  ))
+("Emerald"         (255  0    127  0  ))
+("ForestGreen"     (232  0    224  30 ))
+("Fuchsia"         (119  232  0    20 ))
+("Goldenrod"       (0    25   214  0  ))
+("Gray"            (0    0    0    127))
+("Green"           (255  0    255  0  ))
+("GreenYellow"     (38   0    175  0  ))
+("JungleGreen"     (252  0    132  0  ))
+("Lavender"        (0    122  0    0  ))
+("LimeGreen"       (127  0    255  0  ))
+("Magenta"         (0    255  0    0  ))
+("Mahogany"        (0    216  221  89 ))
+("Maroon"          (0    221  173  81 ))
+("Melon"           (0    117  127  0  ))
+("MidnightBlue"    (249  33   0    109))
+("Mulberry"        (86   229  0    5  ))
+("NavyBlue"        (239  137  0    0  ))
+("OliveGreen"      (163  0    242  102))
+("Orange"          (0    155  221  0  ))
+("OrangeRed"       (0    255  127  0  ))
+("Orchid"          (81   163  0    0  ))
+("Peach"           (0    127  178  0  ))
+("Periwinkle"      (145  140  0    0  ))
+("PineGreen"       (234  0    150  63 ))
+("Plum"            (127  255  0    0  ))
+("ProcessBlue"     (244  0    0    0  ))
+("Purple"          (114  219  0    0  ))
+("RawSienna"       (0    183  255  114))
+("Red"             (0    255  255  0  ))
+("RedOrange"       (0    196  221  0  ))
+("RedViolet"       (17   229  0    86 ))
+("Rhodamine"       (0    209  0    0  ))
+("RoyalBlue"       (255  127  0    0  ))
+("RoyalPurple"     (191  229  0    0  ))
+("RubineRed"       (0    255  33   0  ))
+("Salmon"          (0    135  96   0  ))
+("SeaGreen"        (175  0    127  0  ))
+("Sepia"           (0    211  255  178))
+("SkyBlue"         (158  0    30   0  ))
+("SpringGreen"     (66   0    193  0  ))
+("Tan"             (35   107  142  0  ))
+("TealBlue"        (219  0    86   5  ))
+("Thistle"         (30   150  0    0  ))
+("Turquoise"       (216  0    51   0  ))
+("Violet"          (201  224  0    0  ))
+("VioletRed"       (0    206  0    0  ))
+("White"           (0    0    0    0  ))
+("WildStrawberry"  (0    244  99   0  ))
+("Yellow"          (0    0    255  0  ))
+("YellowGreen"     (112  0    188  0  ))
+("YellowOrange"    (0    107  255  0  ))

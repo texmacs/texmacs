@@ -17,6 +17,8 @@
 #include "font.hpp" // for the definition of font
 #include "rgb_colors.hpp"
 #include "iterator.hpp"
+#include "convert.hpp"
+#include "file.hpp"
 #include <string.h>
 
 /******************************************************************************
@@ -140,6 +142,85 @@ color	light_grey = rgb_color (208, 208, 208);
 color	grey       = rgb_color (184, 184, 184);
 color	dark_grey  = rgb_color (112, 112, 112);
 
+/******************************************************************************
+* Named colors
+******************************************************************************/
+
+color
+cmyk_color (unsigned int c, unsigned int m, unsigned int y, unsigned int k) {
+  double c_= c, m_= m, y_= y, k_= k;
+  unsigned int r, g, b;
+  c_= k_ + c_*(1 - k_/255);
+  m_= k_ + m_*(1 - k_/255);
+  y_= k_ + y_*(1 - k_/255);
+
+  r= round (255 - c_);
+  g= round (255 - m_);
+  b= round (255 - y_);
+  return rgb_color (r, g, b);
+}
+
+static hashmap<string,color> colorhash (black);
+
+static void
+populates_colorhash_from_dictionary (string file_name) {
+  if (DEBUG_STD) system_info ("Loading colors: ",file_name);
+  string file;
+  file_name = file_name * ".scm";
+  if (load_string (url ("$TEXMACS_PATH/langs/colors", file_name),
+        file, false)) {
+    system_error ("Couldn't open encoding dictionary", file_name);
+    return;
+  }
+  tree t = block_to_scheme_tree (file);
+  if (!is_tuple (t)) {
+    system_error ("Malformed encoding dictionary", file_name);
+    return;
+  }
+  for (int i=0; i<N(t); i++) {
+    if (is_func (t[i], TUPLE, 2) && is_atomic (t[i][0])
+        && is_func (t[i][1], TUPLE, 3)
+        && is_atomic (t[i][1][0])
+        && is_atomic (t[i][1][1])
+        && is_atomic (t[i][1][2])) {
+      string name= as_string (t[i][0]);
+      if (name[0] == '"')         name= name (1, N(name));
+      if (name[N(name)-1] == '"') name= name (0, N(name)-1);
+      color col= rgb_color (as_int (t[i][1][0]),
+                            as_int (t[i][1][1]),
+                            as_int (t[i][1][2]));
+      if (DEBUG_STD && colorhash->contains (name) && colorhash [name] != col) {
+        if (DEBUG_STD); system_error ("Redefined color: ", name);
+        cout << "         " << get_named_color (colorhash [name])
+             << " replaced by " << get_named_color (col) << LF;
+      }
+      colorhash (name)= col;
+    }
+  }
+  for (int i=0; i<N(t); i++) {
+    if (is_func (t[i], TUPLE, 2) && is_atomic (t[i][0])
+        && is_func (t[i][1], TUPLE, 4)
+        && is_atomic (t[i][1][0])
+        && is_atomic (t[i][1][1])
+        && is_atomic (t[i][1][2])
+        && is_atomic (t[i][1][3])) {
+      string name= as_string (t[i][0]);
+      if (name[0] == '"')         name= name (1, N(name));
+      if (name[N(name)-1] == '"') name= name (0, N(name)-1);
+      color col= cmyk_color (as_int (t[i][1][0]),
+                             as_int (t[i][1][1]),
+                             as_int (t[i][1][2]),
+                             as_int (t[i][1][3]));
+      if (DEBUG_STD && colorhash->contains (name) && colorhash [name] != col) {
+        system_error ("Redefined color: ", name);
+        cout << "         " << get_named_color (colorhash [name])
+             << " replaced by " << get_named_color (col) << LF;
+      }
+      colorhash (name)= col;
+    }
+  }
+}
+
 static color
 named_color_bis (string s) {
   if (N(s) > 0 && s[0] == '#') {
@@ -170,16 +251,6 @@ named_color_bis (string s) {
       return rgb_color (r, g, b, a);
     }
   }
-#ifdef REDUCED_COLORMAP
-  unsigned int depth= 8;
-#else
-#ifdef MEDIUM_COLORMAP
-  unsigned int depth= 16;
-#else
-  unsigned int depth= 24;
-#endif
-#endif
-  int pastel= (depth>=16? 223: 191);
   
   if ((N(s) > 4) && (s (1,4) == "gray") && (is_numeric (s (5, N(s))))) {
     int level, i=5;
@@ -189,40 +260,13 @@ named_color_bis (string s) {
     }
   }
 	
-  if (s == "black")          return black;
-  if (s == "white")          return white;
-  if (s == "grey")           return grey;
-  if (s == "red")            return red;
-  if (s == "blue")           return blue;
-  if (s == "yellow")         return yellow;
-  if (s == "green")          return green;
-  if (s == "magenta")        return magenta;
-  if (s == "cyan")           return rgb_color (0, 255, 255);
-  if (s == "orange")         return orange;
-  if (s == "brown")          return brown;
-  if (s == "pink")           return pink;
-  if (s == "broken white")   return rgb_color (255, 255, pastel);
-  if (s == "light grey")     return light_grey;
-  if (s == "darker grey")    return rgb_color (64, 64, 64);
-  if (s == "dark grey")      return dark_grey;
-  if (s == "dark red")       return rgb_color (128, 0, 0);
-  if (s == "dark blue")      return rgb_color (0, 0, 128);
-  if (s == "dark yellow")    return rgb_color (128, 128, 0);
-  if (s == "dark green")     return rgb_color (0, 128, 0);
-  if (s == "dark magenta")   return rgb_color (128, 0, 128);
-  if (s == "dark cyan")      return rgb_color (0, 128, 128);
-  if (s == "dark orange")    return rgb_color (128, 64, 0);
-  if (s == "dark brown")     return rgb_color (64, 16, 0);
-  if (s == "pastel grey")    return rgb_color (pastel, pastel, pastel);
-  if (s == "pastel red")     return rgb_color (255, pastel, pastel);
-  if (s == "pastel blue")    return rgb_color (pastel, pastel, 255);
-  if (s == "pastel yellow")  return rgb_color (255, 255, pastel);
-  if (s == "pastel green")   return rgb_color (pastel, 255, pastel);
-  if (s == "pastel magenta") return rgb_color (255, pastel, 255);
-  if (s == "pastel cyan")    return rgb_color (pastel, 255, 255);
-  if (s == "pastel orange")  return rgb_color (255, pastel, 2*pastel-255);
-  if (s == "pastel brown")   return rgb_color (pastel, 2*pastel-255, 2*pastel-255);
-  return black;
+  if (N(colorhash) == 0) {
+    populates_colorhash_from_dictionary ("base");
+    populates_colorhash_from_dictionary ("dvips-named");
+    populates_colorhash_from_dictionary ("x11-named");
+    populates_colorhash_from_dictionary ("html-named");
+  }
+  return colorhash [s];
 }
 
 color
