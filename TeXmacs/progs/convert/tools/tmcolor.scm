@@ -71,6 +71,7 @@
 (define texmacs-colors
   (map
    (cut apply named-rgb255->tmcolor <>)
+   ;; TODO: loading TeXmacs/langs/colors/base.scm
    `(("black" (0 0 0)) ("white" (255 255 255)) ("grey" (184 184 184))
      ("red" (255 0 0)) ("blue" (0 0 255)) ("yellow" (255 255 0))
      ("green" (0 255 0)) ("magenta" (255 0 255)) ("cyan" (0 255 255))
@@ -111,3 +112,36 @@
 			    x1s x2s))))
 (define (tmcolor->list c)
   (list (tmcolor-red c) (tmcolor-green c) (tmcolor-blue c)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Color convertions
+
+(define (rgb255->cmy255 col)
+  (map (lambda (x) (round (- 255 x))) col))
+
+(define (cmy255->rgb255 col)
+  (map (lambda (x) (round (- 255 x))) col))
+
+(define (cmy255->cmyk255 col)
+  (let ((c (car col))
+        (m (cadr col))
+        (y (caddr col))
+        (k  255))
+    (if (< c k) (set! k c))
+    (if (< m k) (set! k m))
+    (if (< y k) (set! k y))
+    (if (== k 255) '(0 0 0 255)
+      (let* ((k*   (- 1 (/ k 255)))
+             (col* (map (lambda (x) (round (/ (- x k) k*))) col)))
+        `(,@col* ,k)))))
+
+(define (cmyk255->cmy255 col)
+  (let ((col* (cDr col))
+        (k    (cAr col)))
+    (map (lambda (x) (round (+ k (* x (- 1 (/ k 255)))))) col*)))
+
+(define (cmyk255->rgb255 col)
+  (cmy255->rgb255 (cmyk255->cmy255 col)))
+
+(define (rgb255->cmyk255 col)
+  (cmy255->cmyk255 (rgb255->cmy255 col)))
