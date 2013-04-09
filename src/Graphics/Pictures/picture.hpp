@@ -85,6 +85,7 @@ enum composition_mode {
   compose_towards_source,
   compose_alpha_distance,
   compose_add,
+  compose_sub,
   compose_mul,
   compose_min,
   compose_max
@@ -101,6 +102,7 @@ picture compose (picture pic, color c, composition_mode mode);
 void    draw_on (picture& d, picture s, int x, int y, composition_mode m);
 picture compose (picture p1, picture p2, composition_mode mode);
 picture compose (array<picture> ps, composition_mode mode);
+picture mix (picture pic1, double a1, picture pic2, double a2);
 
 /******************************************************************************
 * Operations on pictures
@@ -110,18 +112,21 @@ picture shift (picture pic, double dx, double dy);
 picture magnify (picture pic, double sx, double sy);
 picture bubble (picture pic, double r, double a);
 
-picture gaussian_brush_picture (double r);
-picture oval_brush_picture (double r);
-picture rectangular_brush_picture (double r);
-picture gaussian_brush_picture (double rx, double ry, double phi= 0.0);
-picture oval_brush_picture (double rx, double ry, double phi= 0.0);
-picture rectangular_brush_picture (double rx, double ry, double phi= 0.0);
+picture gaussian_pen_picture (double r);
+picture oval_pen_picture (double r);
+picture rectangular_pen_picture (double r);
+picture gaussian_pen_picture (double rx, double ry, double phi= 0.0);
+picture oval_pen_picture (double rx, double ry, double phi= 0.0);
+picture rectangular_pen_picture (double rx, double ry, double phi= 0.0);
+picture motion_pen_picture (double dx, double dy);
 
-picture blur (picture pic, picture brush);
-picture outline (picture pic, picture brush);
-picture thicken (picture pic, picture brush);
+picture blur (picture pic, picture pen);
+picture outline (picture pic, picture pen);
+picture thicken (picture pic, picture pen);
+picture erode (picture pic, picture pen);
 
-picture set_color (picture eff, color c, color mask);
+picture normalize (picture eff);
+picture color_matrix (picture eff, array<double> m);
 picture make_transparent (picture eff, color bgc);
 picture make_opaque (picture eff, color bgc);
 

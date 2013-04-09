@@ -436,6 +436,8 @@ edit_env_rep::exec (tree t) {
     return exec_eff_oval (t);
   case EFF_RECTANGULAR:
     return exec_eff_rectangular (t);
+  case EFF_MOTION:
+    return exec_eff_motion (t);
 
   case BOX_INFO:
     return exec_box_info (t);
@@ -1709,6 +1711,14 @@ edit_env_rep::exec_eff_rectangular (tree t) {
   if (N(t) < 3) return tree (ERROR, "bad eff-rectangular");
   tree ry= as_tree (as_length (exec (t[1])));
   return tree (EFF_RECTANGULAR, rx, ry, exec (t[2]));
+}
+
+tree
+edit_env_rep::exec_eff_motion (tree t) {
+  if (N(t) < 2) return tree (ERROR, "bad eff-motion");
+  tree dx= as_tree (as_length (exec (t[0])));
+  tree dy= as_tree (as_length (exec (t[1])));
+  return tree (EFF_MOTION, dx, dy);
 }
 
 tree

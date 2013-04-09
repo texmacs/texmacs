@@ -628,19 +628,31 @@ init_std_drd () {
         length (0) -> name (0, "rx") -> long_name (0, "x-radius") ->
         length (1) -> name (1, "ry") -> long_name (1, "y-radius") ->
         numeric (2) -> name (2, "phi") -> long_name (2, "angle"));
+  init (EFF_MOTION, "eff-motion",
+        options (2, 0, DETAILED) -> returns_effect () ->
+        length (0) -> name (0, "dx") -> long_name (0, "x-shift") ->
+        length (1) -> name (1, "dy") -> long_name (1, "y-shift"));
   init (EFF_BLUR, "eff-blur",
         fixed (2, 0, DETAILED) -> returns_effect () ->
         effect (0) -> name (0, "body") ->
-        effect (1) -> name (1, "brush"));
+        effect (1) -> name (1, "pen"));
   init (EFF_OUTLINE, "eff-outline",
         fixed (2, 0, DETAILED) -> returns_effect () ->
         effect (0) -> name (0, "body") ->
-        effect (1) -> name (1, "brush"));
+        effect (1) -> name (1, "pen"));
   init (EFF_THICKEN, "eff-thicken",
         fixed (2, 0, DETAILED) -> returns_effect () ->
         effect (0) -> name (0, "body") ->
-        effect (1) -> name (1, "brush"));
+        effect (1) -> name (1, "pen"));
+  init (EFF_ERODE, "eff-erode",
+        fixed (2, 0, DETAILED) -> returns_effect () ->
+        effect (0) -> name (0, "body") ->
+        effect (1) -> name (1, "pen"));
   init (EFF_SUPERPOSE, "eff-superpose",
+	repeat (1, 1) -> returns_effect () -> effect (0));
+  init (EFF_ADD, "eff-add",
+	repeat (1, 1) -> returns_effect () -> effect (0));
+  init (EFF_SUB, "eff-sub",
 	repeat (1, 1) -> returns_effect () -> effect (0));
   init (EFF_MUL, "eff-mul",
 	repeat (1, 1) -> returns_effect () -> effect (0));
@@ -648,13 +660,19 @@ init_std_drd () {
 	repeat (1, 1) -> returns_effect () -> effect (0));
   init (EFF_MAX, "eff-max",
 	repeat (1, 1) -> returns_effect () -> effect (0));
-  init (EFF_MAX, "eff-mix",
-	repeat (2, 2) -> returns_effect ()); // FIXME: types of args
-  init (EFF_SET_COLOR, "eff-set-color",
-        fixed (3, 0, DETAILED) -> returns_effect () ->
+  init (EFF_MIX, "eff-mix",
+	fixed (4, 0, DETAILED) -> returns_effect () ->
+        effect (0) -> name (0, "eff1") ->
+        numeric (1) -> name (1, "alpha1") ->
+        effect (2) -> name (2, "eff2") ->
+        numeric (3) -> name (3, "alpha2"));
+  init (EFF_NORMALIZE, "eff-normalize",
+        fixed (1) -> returns_effect () ->
+        effect (0) -> name (0, "body"));
+  init (EFF_COLOR_MATRIX, "eff-color-matrix",
+        repeat (1, 1, BIFORM) -> returns_effect () ->
         effect (0) -> name (0, "body") ->
-	string_type (1) -> name (1, "color") ->
-	string_type (2) -> name (2, "mask"));
+	numeric (1));
   init (EFF_MAKE_TRANSPARENT, "eff-make-transparent",
         fixed (2, 0, DETAILED) -> returns_effect () ->
         effect (0) -> name (0, "body") ->

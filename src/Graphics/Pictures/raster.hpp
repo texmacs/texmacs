@@ -261,6 +261,9 @@ draw_on (raster<C>& r, S s, composition_mode mode) {
   case compose_add:
     draw_on<compose_add> (r, s);
     break;
+  case compose_sub:
+    draw_on<compose_sub> (r, s);
+    break;
   case compose_mul:
     draw_on<compose_mul> (r, s);
     break;
@@ -323,6 +326,9 @@ draw_on (raster<C>& r, raster<S> s, int x, int y, composition_mode mode) {
     break;
   case compose_add:
     draw_on<compose_add> (r, s, x, y);
+    break;
+  case compose_sub:
+    draw_on<compose_sub> (r, s, x, y);
     break;
   case compose_mul:
     draw_on<compose_mul> (r, s, x, y);
@@ -417,6 +423,16 @@ compose (array<raster<C> > rs, composition_mode mode) {
   return ret;
 }
 
+template<typename C, typename F> raster<C>
+mix (raster<C> r1, F a1, raster<C> r2, F a2) {
+  raster<C> j= empty_join (r1, r2, compose_add);
+  r1= change_extents (r1, j->w, j->h, j->ox, j->oy);
+  r2= change_extents (r2, j->w, j->h, j->ox, j->oy);
+  for (int i=0; i<j->w*j->h; i++)
+    j->a[i]= mix (r1->a[i], a1, r2->a[i], a2);
+  return j;
+}
+
 /******************************************************************************
 * Transformations
 ******************************************************************************/
@@ -487,7 +503,7 @@ bubble (raster<C> r, double rr, double a) {
 }
 
 /******************************************************************************
-* Special brushes
+* Special pens
 ******************************************************************************/
 
 template<typename C, typename F> raster<C>
@@ -517,7 +533,7 @@ pixelize (F fun, int w, int h, int ox, int oy, int shrink= 5) {
 }
 
 template<typename C> raster<C>
-rectangular_brush (double rx, double ry) {
+rectangular_pen (double rx, double ry) {
   int w= 2 * ceil (rx + 0.5) - 1;
   int h= 2 * ceil (ry + 0.5) - 1;
   double rem_x= ((double) w) / 2 - rx;
@@ -549,8 +565,8 @@ struct chi_rectangular {
 };
 
 template<typename C> raster<C>
-rectangular_brush (double rx, double ry, double phi) {
-  if (fabs (phi) <= 1.0e-6) return rectangular_brush<C> (rx, ry);
+rectangular_pen (double rx, double ry, double phi) {
+  if (fabs (phi) <= 1.0e-6) return rectangular_pen<C> (rx, ry);
   chi_rectangular fun (rx, ry, phi);
   int R= ceil (sqrt (rx * rx + ry * ry) - 0.5);
   int w= 2*R + 1;
@@ -569,11 +585,35 @@ struct chi_oval {
 };
 
 template<typename C> raster<C>
-oval_brush (double rx, double ry, double phi) {
+oval_pen (double rx, double ry, double phi) {
   chi_oval fun (rx, ry, phi);
   int R= ceil (max (rx, ry) - 0.5);
   int w= 2*R + 1;
   return pixelize<C> (fun, w, w, R, R);
+}
+
+struct chi_motion {
+  double xx, xy, yx, yy, r;
+  inline chi_motion (double r2, double phi):
+    xx ( cos (phi)), xy (sin (phi)),
+    yx (-sin (phi)), yy (cos (phi)), r (r2) {}
+  inline double eval (double x, double y) {
+    double tx= xx * x + xy * y, ty= yx * x + yy * y;
+    if (tx > 0.5 && tx < r+0.5 && fabs (ty) < 0.5) return 1.0;
+    else return 0.0; }
+};
+
+template<typename C> raster<C>
+motion_pen (double dx, double dy) {
+  double phi= atan2 (dy, dx);
+  double r  = hypot (dx, dy);
+  if (r <= 1.0e-6) return rectangular_pen<C> (0.0, 0.0, 0.0);
+  chi_motion fun (r, phi);
+  int x1= floor (min (dx, 0.0) - 0.5);
+  int y1= floor (min (dy, 0.0) - 0.5);
+  int x2= ceil  (max (dx, 0.0) + 0.5);
+  int y2= ceil  (max (dy, 0.0) + 0.5);
+  return pixelize<C> (fun, x2 - x1, y2 - y1, -x1, -y1);
 }
 
 /******************************************************************************
@@ -601,7 +641,7 @@ struct gaussian_distribution {
 };
 
 template<typename C> raster<C>
-gaussian_brush (double rx, double ry, double phi, double order= 2.5) {
+gaussian_pen (double rx, double ry, double phi, double order= 2.5) {
   gaussian_distribution fun (rx, ry, phi);
   double Rx= rx * order, Ry= ry * order;
   int R= ceil (max (Rx, Ry) - 0.5);
@@ -633,14 +673,14 @@ convolute (raster<C> s1, raster<S> s2) {
 }
 
 template<typename C> raster<C>
-blur (raster<C> ras, raster<double> brush) {
-  return convolute (ras, brush / sum (brush));
+blur (raster<C> ras, raster<double> pen) {
+  return convolute (ras, pen / sum (pen));
 }
 
 template<typename C> raster<C>
 gaussian_blur (raster<C> ras, double rx, double ry, double phi,
                double order= 2.5) {
-  return blur (ras, gaussian_brush<double> (rx, ry, phi, order));
+  return blur (ras, gaussian_pen<double> (rx, ry, phi, order));
 }
 
 template<typename C> raster<C>
@@ -650,7 +690,7 @@ gaussian_blur (raster<C> ras, double r) {
 }
 
 /******************************************************************************
-* Thickening using a brush
+* Thickening using a pen
 ******************************************************************************/
 
 template<typename C> inline void
@@ -663,7 +703,7 @@ template<typename C, typename S> raster<C>
 thicken (raster<C> s1, raster<S> s2) {
   typedef typename C::scalar_type F;
   if (s1->w * s1->h == 0) return s1;
-  ASSERT (s2->w * s2->h != 0, "empty brush");
+  ASSERT (s2->w * s2->h != 0, "empty pen");
   raster<C> d= convolute (s1, s2);
   int s1w= s1->w, s1h= s1->h, s2w= s2->w, s2h= s2->h, dw= d->w;
   raster<F> temp= get_alpha (s1);
@@ -681,15 +721,50 @@ thicken (raster<C> s1, raster<S> s2) {
 
 template<typename C> raster<C>
 rectangular_thicken (raster<C> ras, double dx, double dy, double phi) {
-  raster<double> brush=
-    rectangular_brush<double> (dx / 2 + 0.5, dy / 2 + 0.5, phi);
-  return thicken (ras, brush);
+  raster<double> pen=
+    rectangular_pen<double> (dx / 2 + 0.5, dy / 2 + 0.5, phi);
+  return thicken (ras, pen);
 }
 
 template<typename C> raster<C>
 oval_thicken (raster<C> ras, double dx, double dy, double phi) {
-  raster<double> brush= oval_brush<double> (dx / 2 + 0.5, dy / 2 + 0.5, phi);
-  return thicken (ras, brush);
+  raster<double> pen= oval_pen<double> (dx / 2 + 0.5, dy / 2 + 0.5, phi);
+  return thicken (ras, pen);
+}
+
+/******************************************************************************
+* Eroding using a pen
+******************************************************************************/
+
+template<typename C> inline void
+erode (C& dest_a, const C& src_a, const C& pen_a) {
+  C a= src_a * pen_a + (1 - pen_a);
+  dest_a= min (dest_a, a);
+}
+
+template<typename C, typename S> raster<C>
+erode (raster<C> s1, raster<S> s2) {
+  typedef typename C::scalar_type F;
+  if (s1->w * s1->h == 0) return s1;
+  ASSERT (s2->w * s2->h != 0, "empty pen");
+  raster<C> d= copy (s1);
+  int s1w= s1->w, s1h= s1->h, s2w= s2->w, s2h= s2->h, dw= d->w, dh= d->h;
+  raster<F> temp= get_alpha (s1);
+  for (int i=0; i<dw*dh; i++)
+    get_alpha (d->a[i])= F (1.0);
+  for (int y1=0; y1<s1h; y1++)
+    for (int y2=0; y2<s2h; y2++) {
+      int yd= y1 + y2 - s2->oy;
+      if (yd < 0 || yd >= s1h) continue;
+      int o1= y1 * s1w, o2= y2 * s2w, o= yd * dw;
+      for (int x1=0; x1<s1w; x1++)
+        for (int x2=0; x2<s2w; x2++) {
+          int xd= x1 + x2 - s2->ox;
+          if (xd < 0 || xd >= s1w) continue;
+          erode (get_alpha (d->a[o+xd]), temp->a[o1+x1], s2->a[o2+x2]);
+        } 
+    }
+  return d;
 }
 
 /******************************************************************************
@@ -700,7 +775,7 @@ template<typename C, typename S> raster<C>
 variation (raster<C> s1, raster<S> s2) {
   typedef typename C::scalar_type F;
   if (s1->w * s1->h == 0) return s1;
-  ASSERT (s2->w * s2->h != 0, "empty brush");
+  ASSERT (s2->w * s2->h != 0, "empty pen");
   raster<C> d= convolute (s1, s2);
   int s2w= s2->w, s2h= s2->h, dw= d->w, dh= d->h;
   int s2ox= s2->ox, s2oy= s2->oy;
@@ -724,15 +799,15 @@ variation (raster<C> s1, raster<S> s2) {
 
 template<typename C> raster<C>
 rectangular_variation (raster<C> ras, double dx, double dy, double phi) {
-  raster<double> brush=
-    rectangular_brush<double> (dx / 2 + 0.5, dy / 2 + 0.5, phi);
-  return variation (ras, brush);
+  raster<double> pen=
+    rectangular_pen<double> (dx / 2 + 0.5, dy / 2 + 0.5, phi);
+  return variation (ras, pen);
 }
 
 template<typename C> raster<C>
 oval_variation (raster<C> ras, double dx, double dy, double phi) {
-  raster<double> brush= oval_brush<double> (dx / 2 + 0.5, dy / 2 + 0.5, phi);
-  return variation (ras, brush);
+  raster<double> pen= oval_pen<double> (dx / 2 + 0.5, dy / 2 + 0.5, phi);
+  return variation (ras, pen);
 }
 
 /******************************************************************************

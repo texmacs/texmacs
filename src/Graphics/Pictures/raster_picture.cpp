@@ -61,6 +61,13 @@ compose (array<picture> ps, composition_mode mode) {
   return raster_picture (r);
 }
 
+picture
+mix (picture pic1, double a1, picture pic2, double a2) {
+  raster<true_color> r1= as_raster<true_color> (pic1);
+  raster<true_color> r2= as_raster<true_color> (pic2);
+  return raster_picture (mix<true_color,double> (r1, a1, r2, a2));
+}
+
 /******************************************************************************
 * Coordinate transformations
 ******************************************************************************/
@@ -88,61 +95,74 @@ bubble (picture pic, double r, double a) {
 ******************************************************************************/
 
 picture
-gaussian_brush_picture (double rx, double ry, double phi) {
-  raster<double> ras= gaussian_brush<double> (rx, ry, phi);
+gaussian_pen_picture (double rx, double ry, double phi) {
+  raster<double> ras= gaussian_pen<double> (rx, ry, phi);
   return raster_picture (apply_alpha (true_color (0, 0, 0, 1), ras));
 }
 
 picture
-gaussian_brush_picture (double r) {
-  return gaussian_brush_picture (r, r, 0.0);
+gaussian_pen_picture (double r) {
+  return gaussian_pen_picture (r, r, 0.0);
 }
 
 picture
-oval_brush_picture (double rx, double ry, double phi) {
-  raster<double> ras= oval_brush<double> (rx, ry, phi);
+oval_pen_picture (double rx, double ry, double phi) {
+  raster<double> ras= oval_pen<double> (rx, ry, phi);
   return raster_picture (apply_alpha (true_color (0, 0, 0, 1), ras));
 }
 
 picture
-oval_brush_picture (double r) {
-  return oval_brush_picture (r, r, 0.0);
+oval_pen_picture (double r) {
+  return oval_pen_picture (r, r, 0.0);
 }
 
 picture
-rectangular_brush_picture (double rx, double ry, double phi) {
-  raster<double> ras= rectangular_brush<double> (rx, ry, phi);
+rectangular_pen_picture (double rx, double ry, double phi) {
+  raster<double> ras= rectangular_pen<double> (rx, ry, phi);
   return raster_picture (apply_alpha (true_color (0, 0, 0, 1), ras));
 }
 
 picture
-rectangular_brush_picture (double r) {
-  return rectangular_brush_picture (r, r, 0.0);
+rectangular_pen_picture (double r) {
+  return rectangular_pen_picture (r, r, 0.0);
+}
+
+picture
+motion_pen_picture (double dx, double dy) {
+  raster<double> ras= motion_pen<double> (dx, dy);
+  return raster_picture (apply_alpha (true_color (0, 0, 0, 1), ras));
 }
 
 /******************************************************************************
-* Special effects, with brush as a parameter
+* Special effects, with pen as a parameter
 ******************************************************************************/
 
 picture
-blur (picture pic, picture brush) {
+blur (picture pic, picture pen) {
   raster<true_color> ras= as_raster<true_color> (pic);
-  raster<double> alpha= get_alpha (as_raster<true_color> (brush));
+  raster<double> alpha= get_alpha (as_raster<true_color> (pen));
   return raster_picture (blur (ras, alpha));
 }
 
 picture
-outline (picture pic, picture brush) {
+outline (picture pic, picture pen) {
   raster<true_color> ras= as_raster<true_color> (pic);
-  raster<double> alpha= get_alpha (as_raster<true_color> (brush));
+  raster<double> alpha= get_alpha (as_raster<true_color> (pen));
   return raster_picture (variation (ras, alpha));
 }
 
 picture
-thicken (picture pic, picture brush) {
+thicken (picture pic, picture pen) {
   raster<true_color> ras= as_raster<true_color> (pic);
-  raster<double> alpha= get_alpha (as_raster<true_color> (brush));
+  raster<double> alpha= get_alpha (as_raster<true_color> (pen));
   return raster_picture (thicken (ras, alpha));
+}
+
+picture
+erode (picture pic, picture pen) {
+  raster<true_color> ras= as_raster<true_color> (pic);
+  raster<double> alpha= get_alpha (as_raster<true_color> (pen));
+  return raster_picture (erode (ras, alpha));
 }
 
 /******************************************************************************
@@ -150,10 +170,15 @@ thicken (picture pic, picture brush) {
 ******************************************************************************/
 
 picture
-set_color (picture pic, color c, color mask) {
+normalize (picture pic) {
   raster<true_color> ras= as_raster<true_color> (pic);
-  true_color tc (c), tmask (mask);
-  return raster_picture (map (set_color_function (tc, tmask), ras));
+  return raster_picture (normalize (ras));
+}
+
+picture
+color_matrix (picture pic, array<double> m) {
+  raster<true_color> ras= as_raster<true_color> (pic);
+  return raster_picture (map (color_matrix_function (m), ras));
 }
 
 picture

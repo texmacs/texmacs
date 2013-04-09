@@ -48,25 +48,30 @@ effect move (effect eff, double dx, double dy);
 effect magnify (effect eff, double sx, double sy);
 effect bubble (effect eff, double r, double a);
 
-effect gaussian_brush (double r);
-effect oval_brush (double r);
-effect rectangular_brush (double r);
-effect gaussian_brush (double rx, double ry, double phi= 0);
-effect oval_brush (double rx, double ry, double phi= 0);
-effect rectangular_brush (double rx, double ry, double phi= 0);
+effect gaussian_pen (double r);
+effect oval_pen (double r);
+effect rectangular_pen (double r);
+effect gaussian_pen (double rx, double ry, double phi= 0);
+effect oval_pen (double rx, double ry, double phi= 0);
+effect rectangular_pen (double rx, double ry, double phi= 0);
+effect motion_pen (double dx, double dy);
 
-effect blur (effect eff, effect brush);
-effect outline (effect eff, effect brush);
-effect thicken (effect eff, effect brush);
+effect blur (effect eff, effect pen);
+effect outline (effect eff, effect pen);
+effect thicken (effect eff, effect pen);
+effect erode (effect eff, effect pen);
 
 effect compose (array<effect> effs, composition_mode mode);
 effect superpose (array<effect> effs);
+effect add (array<effect> effs);
+effect sub (array<effect> effs);
 effect mul (array<effect> effs);
 effect min (array<effect> effs);
 effect max (array<effect> effs);
-effect mix (array<effect> effs, array<double> alphas);
+effect mix (effect eff1, double a1, effect eff2, double a2);
 
-effect set_color (effect eff, color c, color mask);
+effect normalize (effect eff);
+effect color_matrix (effect eff, array<double> m);
 effect make_transparent (effect eff, color bgc);
 effect make_opaque (effect eff, color bgc);
 

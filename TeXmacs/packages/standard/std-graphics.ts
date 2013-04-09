@@ -68,13 +68,9 @@
 
   <assign|rectangular-blur|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-blur|0|<eff-rectangular|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
 
-  <assign|thicken|<macro|body|rx|ry|<gr-effect|<arg|body>|<eff-thicken|0|<eff-rectangular|<arg|rx>|<arg|ry>|0>>>>>
+  <assign|motion-blur|<macro|body|dx|dy|<gr-effect|<arg|body>|<eff-blur|0|<eff-motion|<arg|dx>|<arg|dy>>>>>>
 
-  <assign|gaussian-thicken|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-thicken|0|<eff-gaussian|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
-
-  <assign|oval-thicken|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-thicken|0|<eff-oval|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
-
-  <assign|rectangular-thicken|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-thicken|0|<eff-rectangular|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
+  \;
 
   <assign|outline|<macro|body|r|<gr-effect|<arg|body>|<eff-outline|0|<eff-oval|<arg|r>>>>>>
 
@@ -83,6 +79,32 @@
   <assign|oval-outline|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-outline|0|<eff-oval|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
 
   <assign|rectangular-outline|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-outline|0|<eff-rectangular|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
+
+  <assign|motion-outline|<macro|body|dx|dy|<gr-effect|<arg|body>|<eff-outline|0|<eff-motion|<arg|dx>|<arg|dy>>>>>>
+
+  \;
+
+  <assign|thicken|<macro|body|rx|ry|<gr-effect|<arg|body>|<eff-thicken|0|<eff-rectangular|<arg|rx>|<arg|ry>|0>>>>>
+
+  <assign|gaussian-thicken|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-thicken|0|<eff-gaussian|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
+
+  <assign|oval-thicken|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-thicken|0|<eff-oval|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
+
+  <assign|rectangular-thicken|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-thicken|0|<eff-rectangular|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
+
+  <assign|motion-thicken|<macro|body|dx|dy|<gr-effect|<arg|body>|<eff-thicken|0|<eff-motion|<arg|dx>|<arg|dy>>>>>>
+
+  \;
+
+  <assign|erode|<macro|body|rx|ry|<gr-effect|<arg|body>|<eff-erode|0|<eff-rectangular|<arg|rx>|<arg|ry>|0>>>>>
+
+  <assign|gaussian-erode|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-erode|0|<eff-gaussian|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
+
+  <assign|oval-erode|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-erode|0|<eff-oval|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
+
+  <assign|rectangular-erode|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-erode|0|<eff-rectangular|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
+
+  <assign|motion-erode|<macro|body|dx|dy|<gr-effect|<arg|body>|<eff-erode|0|<eff-motion|<arg|dx>|<arg|dy>>>>>>
 
   \;
 </body>

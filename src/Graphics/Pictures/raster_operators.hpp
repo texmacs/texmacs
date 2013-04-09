@@ -158,6 +158,14 @@ struct composition_op<compose_add> {
 };
 
 template<>
+struct composition_op<compose_sub> {
+  template<typename C, typename S> static inline C
+  op (const C& x, const S& y) { return x - y; }
+  template<typename C, typename S> static inline void
+  set_op (C& x, const S& y) { x -= y; }
+};
+
+template<>
 struct composition_op<compose_mul> {
   template<typename C, typename S> static inline C
   op (const C& x, const S& y) { return x * y; }

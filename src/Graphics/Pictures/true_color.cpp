@@ -47,24 +47,30 @@ mix (const true_color& c1, double a1, const true_color& c2, double a2,
 * Color transformations
 ******************************************************************************/
 
-class set_color_function_rep:
+class color_matrix_function_rep:
   public unary_function_rep<true_color,true_color>
 {
-  true_color c, mask;
+  double rr, rg, rb, ra, r;
+  double gr, gg, gb, ga, g;
+  double br, bg, bb, ba, b;
+  double ar, ag, ab, aa, a;
 public:
-  set_color_function_rep (const true_color& c2, const true_color& mask2):
-    c (c2), mask (mask2) {}
-  true_color eval (const true_color& a) {
-    return true_color (a.r * (1 - mask.r) + c.r * mask.r,
-                       a.g * (1 - mask.g) + c.g * mask.g,
-                       a.b * (1 - mask.b) + c.b * mask.b,
-                       a.a * (1 - mask.a) + c.a * mask.a);
-  }
+  color_matrix_function_rep (array<double> m):
+    rr (m[ 0]), rg(m[ 1]), rb (m[ 2]), ra(m[ 3]), r (m[ 4]),
+    gr (m[ 5]), gg(m[ 6]), gb (m[ 7]), ga(m[ 8]), g (m[ 9]),
+    br (m[10]), bg(m[11]), bb (m[12]), ba(m[13]), b (m[14]),
+    ar (m[15]), ag(m[16]), ab (m[17]), aa(m[18]), a (m[19]) {}
+  true_color eval (const true_color& c) {
+    return true_color (rr * c.r + rg * c.g + rb * c.b + ra * c.a + r,
+                       gr * c.r + gg * c.g + gb * c.b + ga * c.a + g,
+                       br * c.r + bg * c.g + bb * c.b + ba * c.a + b,
+                       ar * c.r + ag * c.g + ab * c.b + aa * c.a + a); }
 };
 
 unary_function<true_color,true_color>
-set_color_function (const true_color& c, const true_color& mask) {
-  return tm_new<set_color_function_rep> (c, mask); }
+color_matrix_function (const array<double>& m) {
+  ASSERT (N(m) == 20, "5 x 4 matrix expected");
+  return tm_new<color_matrix_function_rep> (m); }
 
 class make_transparent_function_rep:
   public unary_function_rep<true_color,true_color>

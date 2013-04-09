@@ -44,6 +44,8 @@ composition_type (composition_mode mode) {
     return 3;
   case compose_add:
     return 3;
+  case compose_sub:
+    return 3;
   case compose_mul:
     return 0;
   case compose_min:

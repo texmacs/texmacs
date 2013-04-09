@@ -316,6 +316,7 @@ private:
   tree exec_eff_gaussian (tree t);
   tree exec_eff_oval (tree t);
   tree exec_eff_rectangular (tree t);
+  tree exec_eff_motion (tree t);
 
   tree exec_box_info (tree t);
   tree exec_frame_direct (tree t);
