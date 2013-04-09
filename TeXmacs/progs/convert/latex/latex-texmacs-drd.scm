@@ -163,9 +163,10 @@
   (TeXmacs "T\\kern-.1667em\\lower.5ex\\hbox{E}\\kern-.125emX\\kern-.1em\\lower.5ex\\hbox{\\textsc{m\\kern-.05ema\\kern-.125emc\\kern-.05ems}}")
   (madebyTeXmacs (footnote (!recurse (withTeXmacstext))))
   (withTeXmacstext
-   (!append (!translate "This document has been produced using") " "
-	    (!group (!recurse (TeXmacs))) " (" (!translate "see") " "
-	    (texttt "http://www.texmacs.org") ")"))
+    (!append (!translate "This document has been produced using the GNU") " "
+             (!group (!recurse (TeXmacs))) " " (!translate "text editor") " ("
+             (!translate "see") " "
+             (url "http://www.texmacs.org") ")"))
   (scheme "{\\sc Scheme}")
   (tmsep  ", ")
   (tmSep  "; ")
