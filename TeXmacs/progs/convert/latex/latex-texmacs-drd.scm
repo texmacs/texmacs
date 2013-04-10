@@ -202,6 +202,8 @@
   (tmdef 1)
   (dueto (textup (textbf (!append "(" 1 ") "))))
   (op 1)
+  (tmrunningtitle (!append (!translate "Running title:") " " 1))
+  (tmrunningauthor (!append (!translate "Running author:") " " 1))
   (tmaffiliation (thanks (!append (textit (!translate "Affiliation:")) " " 1)))
   (tmemail (thanks (!append (textit (!translate "Email:")) " " (texttt 1))))
   (tmhomepage (thanks (!append (textit (!translate "Web:")) " " (texttt 1))))
@@ -370,6 +372,24 @@
                 (newcommand (tmkeywords)
                             (!append (textbf (!translate "Keywords:")) " "))
                 "\n"))
+  (tmacm (!append
+           (newcommand (tmacm)
+                       (!append
+                         (textbf
+                           (!translate "A.C.M. subject classification:")) " "))
+           "\n"))
+  (tmarxiv (!append
+             (newcommand (tmarxiv)
+                         (!append
+                           (textbf
+                             (!translate "arXiv subject classification:")) " "))
+           "\n"))
+  (tmpacs (!append
+            (newcommand (tmpacs)
+                        (!append
+                          (textbf
+                            (!translate "P.A.C.S. subject classification:"))
+                          " ")) "\n"))
   (tmmsc (!append
            (newcommand (tmmsc)
                        (!append

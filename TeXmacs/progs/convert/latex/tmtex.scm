@@ -1208,6 +1208,9 @@
 (tm-define (tmtex-doc-title t)
   `(title ,(tmtex (cadr t))))
 
+(tm-define (tmtex-doc-running-title t)
+  `(tmrunningtitle ,(tmtex (cadr t))))
+
 (tm-define (tmtex-doc-subtitle t)
   (set! t (tmtex-remove-line-feeds t))
   `(tmsubtitle ,(tmtex (cadr t))))
@@ -1222,6 +1225,9 @@
 
 (tm-define (tmtex-doc-date t)
   `(date ,(tmtex (cadr t))))
+
+(tm-define (tmtex-doc-running-author t)
+  `(tmrunningauthor ,(tmtex (cadr t))))
 
 (tm-define (tmtex-author-name t)
   `(author ,(tmtex (cadr t))))
@@ -1382,7 +1388,7 @@
   (set! l (map tmtex-replace-documents l))
   l)
 
-(define (tmtex-make-title titles subtitles notes miscs)
+(define (tmtex-make-title titles subtitles notes miscs tr)
   (let* ((titles (tmtex-concat-Sep (map cadr titles)))
          (content `(,@titles ,@subtitles ,@notes ,@miscs)))
     (if (null? content) '()
@@ -1391,16 +1397,16 @@
 (tm-define (tmtex-append-authors l)
   (set! l (filter nnull? l))
   (cond ((null? l) '())
-        ((== (length l) 1) `(,(car l) (!indent (!concat ,@(cdr l)))))
+        ((== (length l) 1) `((author (!indent (!concat ,@(cdr l))))))
         (else
           (with lf '(!concat (!linefeed) (and) (!linefeed))
             `((author
                 (!indent (!concat ,@(list-intersperse (map cadr l) lf)))))))))
 
 (tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes
-                                subtits-l dates-l miscs-l notes-l)
+                                subtits-l dates-l miscs-l notes-l tr ar)
   `(!document
-     ,@(tmtex-make-title titles subtitles notes miscs)
+     ,@(tmtex-make-title titles subtitles notes miscs tr)
      ,@(tmtex-append-authors authors)
      ,@dates
      (maketitle)))
@@ -1411,8 +1417,10 @@
 (tm-define (tmtex-doc-data s l)
   (set! l (tmtex-prepare-doc-data l))
   (let* ((titles    (tmtex-get-transform l 'doc-title))
+         (tr        (tmtex-get-transform l 'doc-running-title))
          (subtits   (tmtex-get-transform l 'doc-subtitle))
          (authors   (tmtex-get-transform l 'doc-author))
+         (ar        (tmtex-get-transform l 'doc-running-author))
          (dates     (tmtex-get-transform l 'doc-date))
          (miscs     (tmtex-get-transform l 'doc-misc))
          (notes     (tmtex-get-transform l 'doc-note))
@@ -1425,7 +1433,7 @@
          (miscs     (append miscs  (tmtex-get-transform l 'doc-misc-ref)))
          (notes     (append notes  (tmtex-get-transform l 'doc-note-ref))))
     (tmtex-make-doc-data titles subtits authors dates miscs notes
-                         subtits-l dates-l miscs-l notes-l)))
+                         subtits-l dates-l miscs-l notes-l tr ar)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  Abstract metadata presentation
@@ -1438,21 +1446,40 @@
   (with args (list-intersperse (map tmtex (cdr t)) '(tmsep))
     `(!concat (tmkeywords) ,@(map (lambda (x) `(!group ,x)) args))))
 
+(tm-define (tmtex-abstract-acm t)
+  (with args (list-intersperse (map tmtex (cdr t)) '(tmsep))
+    `(!concat (tmacm) ,@(map (lambda (x) `(!group ,x)) args))))
+
+(tm-define (tmtex-abstract-arxiv t)
+  (with args (list-intersperse (map tmtex (cdr t)) '(tmsep))
+    `(!concat (tmarxiv) ,@(map (lambda (x) `(!group ,x)) args))))
+
 (tm-define (tmtex-abstract-msc t)
   (with args (list-intersperse (map tmtex (cdr t)) '(tmsep))
     `(!concat (tmmsc) ,@(map (lambda (x) `(!group ,x)) args))))
 
-(tm-define  (tmtex-make-abstract-data keywords msc abstract)
-  `(!document ,@keywords ,@msc ,@abstract))
+(tm-define (tmtex-abstract-pacs t)
+  (with args (list-intersperse (map tmtex (cdr t)) '(tmsep))
+    `(!concat (tmpacs) ,@(map (lambda (x) `(!group ,x)) args))))
+
+(tm-define  (tmtex-make-abstract-data keywords acm arxiv msc pacs abstract)
+  (with result `(,@keywords ,@acm ,@arxiv ,@msc ,@pacs ,@abstract)
+    (if (null? result) "" `(!document ,@result))))
 
 (tm-define (tmtex-abstract-data s l)
-  (let* ((msc      (map tmtex-abstract-msc
+  (let* ((acm      (map tmtex-abstract-acm
+                        (tmtex-select-args-by-func 'abstract-acm l)))
+         (arxiv    (map tmtex-abstract-arxiv
+                        (tmtex-select-args-by-func 'abstract-arxiv l)))
+         (msc      (map tmtex-abstract-msc
                         (tmtex-select-args-by-func 'abstract-msc l)))
+         (pacs     (map tmtex-abstract-pacs
+                        (tmtex-select-args-by-func 'abstract-pacs l)))
          (keywords (map tmtex-abstract-keywords
                         (tmtex-select-args-by-func 'abstract-keywords l)))
          (abstract (map tmtex-abstract
                         (tmtex-select-args-by-func 'abstract l))))
-    (tmtex-make-abstract-data keywords msc abstract)))
+    (tmtex-make-abstract-data keywords acm arxiv msc pacs abstract)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TeXmacs style primitives
@@ -2132,14 +2159,19 @@
   (abstract-data            tmtex-abstract-data 2)
   ;; abstract markup
   (abstract                 tmtex-abstract 1)
+  (abstract-acm             tmtex-abstract-acm 1)
+  (abstract-arxiv           tmtex-abstract-arxiv 1)
   (abstract-msc             tmtex-abstract-msc 1)
+  (abstract-pacs            tmtex-abstract-pacs 1)
   (abstract-keywords        tmtex-abstract-keywords 1)
   ;; metadata markup
   (doc-title                tmtex-doc-title 1)
+  (doc-running-title        tmtex-doc-running-title 1)
   (doc-subtitle             tmtex-doc-subtitle 1)
   (doc-note                 tmtex-doc-note 1)
   (doc-misc                 tmtex-doc-misc 1)
   (doc-date                 tmtex-doc-date 1)
+  (doc-running-author       tmtex-doc-running-author 1)
   (doc-author               tmtex-doc-author 1)
   (author-name              tmtex-author-name 1)
   (author-affiliation       tmtex-author-affiliation 1)
