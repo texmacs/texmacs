@@ -493,9 +493,9 @@
   (tmfloat "capt-of")
   (tmfloat "calc")
   
-  (color "color")
-  (tmhlink "color")
-  (tmaction "color")
+  (color "xcolor")
+  (tmhlink "xcolor")
+  (tmaction "xcolor")
 
   (omicron "pslatex")
   (multicols "multicol")

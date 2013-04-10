@@ -399,12 +399,6 @@
   (mho
    (!append
     "\\renewcommand{\\mho}{\\mbox{\\rotatebox[origin=c]{180}{$\\omega$}}}"))
-  (color
-   (!append
-    "\\definecolor{grey}{rgb}{0.75,0.75,0.75}\n"
-    "\\definecolor{orange}{rgb}{1.0,0.5,0.5}\n"
-    "\\definecolor{brown}{rgb}{0.5,0.25,0.0}\n"
-    "\\definecolor{pink}{rgb}{1.0,0.5,0.5}\n"))
   (tmfloat
    (!append
     "\\newcommand{\\tmfloatcontents}{}\n"
