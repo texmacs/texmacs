@@ -44,10 +44,11 @@
     (if (null? result) '() `(author (!paragraph ,@result)))))
 
 (define (springer-append in l)
-  (if (< (length l) 2) l
+  (set! l (filter nnull? l))
+  (if (< (length l) 1) l
     (with lf `(!concat (!linefeed) (and) (!linefeed))
-          `((,in
-              (!indent (!concat ,@(list-intersperse (map cadr l) lf))))))))
+      `((,in
+          (!indent (!concat ,@(list-intersperse (map cadr l) lf))))))))
 
 (define (svjour-make-title titles notes miscs)
   (let* ((titles (tmtex-concat-Sep (map cadr titles)))
