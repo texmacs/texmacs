@@ -320,7 +320,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes
-                                subtitles-l dates-l miscs-l notes-l)
+                                subtitles-l dates-l miscs-l notes-l tr ar)
   (:mode elsevier-style?)
   (let* ((authors (filter nnull? authors))
          (authors (if (null? authors) '()
@@ -365,13 +365,19 @@
 (tm-define (tmtex-abstract-msc t)
   (:mode elsevier-style?)
   (with args (list-intersperse (map tmtex (cdr t)) '(!concat (sep) " "))
+    `(!concat (MSC) " " (!concat ,@args))))
+
+(tm-define (tmtex-abstract-pacs t)
+  (:mode elsevier-style?)
+  (with args (list-intersperse (map tmtex (cdr t)) '(!concat (sep) " "))
     `(!concat (PACS) " " (!concat ,@args))))
 
-(tm-define  (tmtex-make-abstract-data keywords msc abstract)
+(tm-define  (tmtex-make-abstract-data keywords acm arxiv msc pacs abstract)
   (:mode elsevier-style?)
-  (if (nnull? msc)
+  (if (or (nnull? msc) (nnull? pacs) (nnull? acm) (nnull? arxiv))
     (set! keywords
-      `(((!begin "keyword") (!document ,@(map cadr keywords) ,@msc)))))
+      `(((!begin "keyword") (!document ,@(map cadr keywords)
+                                       ,@pacs ,@msc ,@acm ,@arxiv)))))
   `(!document ,@keywords ,@abstract))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
