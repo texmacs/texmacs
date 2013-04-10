@@ -373,7 +373,11 @@
 		    (nnull? (cdr l))
 		    (char-alphabetic? (cadr l)))
 	       (tmtex-math-operator l))
-	      (else (cons c (tmtex-math-list (cdr l))))))))
+	      (else
+                (with c
+                  (if (or tmtex-use-unicode? tmtex-use-ascii?)
+                    (list (string-convert (char->string c) "Cork" "UTF-8")) c)
+                  (cons c (tmtex-math-list (cdr l)))))))))
 
 (define (tmtex-verb-list l)
   (if (null? l) l
