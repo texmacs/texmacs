@@ -56,10 +56,12 @@
     (if (null? result) '()
       `((title (!concat ,@result))))))
 
-(define (svjour-make-doc-data titles subtits authors affs dates miscs notes)
+(define (svjour-make-doc-data titles subtits authors affs dates miscs notes tr ar)
   `(!document
      ,@(svjour-make-title titles notes miscs)
      ,@subtits
+     ,@tr
+     ,@ar
      ,@(springer-append 'author authors)
      ,@(springer-append 'institute affs)
      ,@dates
@@ -78,12 +80,16 @@
                          (tmtex-select-args-by-func 'doc-date l)))
          (authors   (map tmtex-doc-author
                          (tmtex-select-args-by-func 'doc-author l)))
+         (ar        (map tmtex-doc-running-author
+                         (tmtex-select-args-by-func 'doc-running-author l)))
          (titles    (map tmtex-doc-title
                          (tmtex-select-args-by-func 'doc-title l)))
+         (tr        (map tmtex-doc-running-title
+                         (tmtex-select-args-by-func 'doc-running-title l)))
          (affs      (map tmtex-affiliation-group
                          (cluster-by-affiliations
                            (tmtex-select-args-by-func 'doc-author l)))))
-    (svjour-make-doc-data titles subtitles authors affs dates miscs notes)))
+    (svjour-make-doc-data titles subtitles authors affs dates miscs notes tr ar)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Springer affiliation clustering
@@ -138,11 +144,16 @@
            (authors  (map tmtex-doc-author (cddr t)))
            (authors  (list-intersperse authors auth-sep)))
       (set! tmtex-make-author (eval old-tmtex-make-author))
-      `(institution (!concat ,@authors ,@affs)))))
+      (if (and (null? authors) (null? affs)) '()
+        `(institute (!concat ,@authors ,@affs))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Springer specific titlemarkup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tmtex-doc-running-title t)
+  (:mode springer-style?)
+  `(titlerunning ,(tmtex (cadr t))))
 
 (tm-define (tmtex-doc-subtitle t)
   (:mode springer-style?)
@@ -159,6 +170,10 @@
 (tm-define (tmtex-doc-date t)
   (:mode springer-style?)
   `(date ,(tmtex (cadr t))))
+
+(tm-define (tmtex-doc-running-author t)
+  (:mode springer-style?)
+  `(authorrunning ,(tmtex (cadr t))))
 
 (tm-define (tmtex-author-affiliation t)
   (:mode springer-style?)
@@ -184,10 +199,11 @@
 ;;; Springer specific abstract markup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define  (tmtex-make-abstract-data keywords msc abstract)
+(tm-define  (tmtex-make-abstract-data keywords acm arxiv msc pacs abstract)
   (:mode springer-style?)
   (:require (not llncs?))
-  `(!document ,@abstract ,@msc ,@keywords))
+  (with result `(,@abstract ,@arxiv ,@acm ,@msc ,@pacs ,@keywords)
+    (if (null? result) "" `(!document ,@result))))
 
 (tm-define (tmtex-abstract-keywords t)
   (:mode springer-style?)
@@ -200,6 +216,18 @@
   (:require (not llncs?))
   (with args (list-intersperse (map tmtex (cdr t)) '(!group (and)))
     `(subclass (!concat ,@args))))
+
+(tm-define (tmtex-abstract-acm t)
+  (:mode springer-style?)
+  (:require (not llncs?))
+  (with args (list-intersperse (map tmtex (cdr t)) '(!group (and)))
+    `(CRclass (!concat ,@args))))
+
+(tm-define (tmtex-abstract-pacs t)
+  (:mode springer-style?)
+  (:require (not llncs?))
+  (with args (list-intersperse (map tmtex (cdr t)) '(!group (and)))
+    `(PACS (!concat ,@args))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Springer SVMono style (basically like default LaTeX class with subtitle)
@@ -219,7 +247,7 @@
       `((title (!indent (!paragraph ,@result)))))))
 
 (tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes
-                                subtits-l dates-l miscs-l notes-l)
+                                subtits-l dates-l miscs-l notes-l tr ar)
   (:mode svmono-style?)
   `(!document
      ,@(svmono-make-title titles notes miscs)
@@ -243,14 +271,18 @@
                          (tmtex-select-args-by-func 'doc-misc l)))
          (dates     (map tmtex-doc-date
                          (tmtex-select-args-by-func 'doc-date l)))
+         (ar        (map tmtex-doc-running-author
+                         (tmtex-select-args-by-func 'doc-running-author l)))
          (titles    (map tmtex-doc-title
                          (tmtex-select-args-by-func 'doc-title l)))
+         (tr        (map tmtex-doc-running-title
+                         (tmtex-select-args-by-func 'doc-running-title l)))
          (authors   (tmtex-select-args-by-func 'doc-author l))
          (affs      (map tmtex-author-affiliation
                          (collect-affiliations authors)))
          (authors   (map tmtex-doc-author
                          (replace-affiliations authors 0))))
-    (svjour-make-doc-data titles subtitles authors affs dates miscs notes)))
+    (svjour-make-doc-data titles subtitles authors affs dates miscs notes tr ar)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Springer LLNCS affiliation clustering
@@ -319,11 +351,12 @@
   (with args (list-intersperse (map tmtex (cdr t)) '(!group (tmsep)))
     `(keywords (!concat ,@args))))
 
-(tm-define  (tmtex-make-abstract-data keywords msc abstract)
+(tm-define  (tmtex-make-abstract-data keywords acm arxiv msc pacs abstract)
   (:mode springer-style?)
   (:require llncs?)
-  (if (or (nnull? msc) (nnull? keywords))
-    (set! abstract
-      `(((!begin "abstract")
-         (!document ,@(map cadr abstract) ,@keywords ,@msc)))))
-  `(!document ,@abstract))
+  (with class `(,@keywords ,@acm ,@arxiv ,@msc ,@pacs)
+    (if (nnull? class)
+      (set! abstract
+        `(((!begin "abstract")
+          (!document ,@(map cadr abstract) ,@class)))))
+    `(!document ,@abstract)))
