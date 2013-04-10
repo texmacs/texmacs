@@ -55,9 +55,12 @@
     (if (null? result) '() `(!paragraph ,@result))))
 
 (tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes
-                                subtits-l dates-l miscs-l notes-l)
+                                subtits-l dates-l miscs-l notes-l tr ar)
   (:mode ams-style?)
-  (let* ((title-data `(,@titles ,@subtitles ,@notes ,@miscs))
+  (let* ((title-opt (if (null? tr) '() `((!option ,@(tmtex-concat-Sep tr)))))
+         (titles    (tmtex-concat-Sep (map cadr titles)))
+         (titles    (if (null? titles) '() `((title ,@title-opt ,@titles))))
+         (title-data `(,@titles ,@subtitles ,@notes ,@miscs))
          (title-data (if (null? title-data) '() `((!paragraph ,@title-data)))))
     (if (and (null? title-data) (null? authors) (null? dates)) '()
       `(!document ,@title-data ,@authors ,@dates))))
@@ -65,6 +68,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; AMS specific titlemarkup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tmtex-doc-running-title t)
+  (:mode ams-style?)
+  (tmtex (cadr t)))
 
 (tm-define (tmtex-doc-subtitle t)
   (:mode ams-style?)
@@ -112,9 +119,17 @@
 ;;; AMS specific abstract markup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define  (tmtex-make-abstract-data keywords msc abstract)
+(define (move-in-abstract what in)
+  (if (null? in)
+    (if (null? what) '() `(((!begin "abstract") (document ,@what))))
+    `(((!begin "abstract") (!document ,@(map cadr in) ,@what)))))
+
+(tm-define  (tmtex-make-abstract-data keywords acm arxiv msc pacs abstract)
   (:mode ams-style?)
-  `(!document ,@abstract ,@msc ,@keywords))
+  (with class `(,@acm ,@arxiv ,@pacs)
+    (set! abstract (move-in-abstract class abstract)))
+  (with result `(,@abstract ,@msc ,@keywords)
+    (if (null? result) "" `(!document ,@result))))
 
 (tm-define (tmtex-abstract-keywords t)
   (:mode ams-style?)
