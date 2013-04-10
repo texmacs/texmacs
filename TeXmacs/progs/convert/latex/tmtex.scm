@@ -1144,7 +1144,11 @@
 (define (tmtex-specific l)
   (cond ((== (car l) "latex") (tmtex-tt (cadr l)))
 	((== (car l) "image") (tmtex-eps (cadr l)))
-	(else "")))
+	(else
+          (begin
+	    (display* "TeXmacs] non converted specific content: \n"
+                      (list s l) "\n")
+            ""))))
 
 (define (tmtex-eps-names)
   (set! tmtex-serial (+ tmtex-serial 1))
@@ -1513,7 +1517,10 @@
 	((func? x 'para) (tmtex-tt-document (cdr x)))
 	((func? x 'concat)
 	 (apply string-append (map-in-order tmtex-tt (cdr x))))
-	(else "")))
+	(else
+          (begin
+	    (display* "TeXmacs] non converted verbatim content: \n" x "\n")
+            ""))))
 
 (define (tmtex-verbatim s l)
   (if (func? (car l) 'document)
@@ -1685,7 +1692,11 @@
 	 `(bibitem ,(car l)))
 	((= (length l) 2)
 	 `(bibitem (!option ,(tmtex (car l))) ,(cadr l)))
-	(else "")))
+	(else
+          (begin
+	    (display* "TeXmacs] non converted bibitem content: \n"
+                      (list s l) "\n")
+            ""))))
 
 (define (tmtex-figure s l)
   (tmtex-float-sub "h" (cons (string->symbol s) l)))
