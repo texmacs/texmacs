@@ -93,6 +93,16 @@ typedef basic_renderer_rep* basic_renderer;
 //extern bool reverse_colors;
 //extern int CSCALES, CFACTOR, GREYS, CTOTAL;
 
+/******************************************************************************
+* Color dictionnaries
+******************************************************************************/
+typedef hashmap<string,color> colorhash;
+static colorhash base_ch, dvips_ch, html_ch, x11_ch;
+inline color html_color  (string s) {return html_ch[s];};
+inline color dvips_color (string s) {return dvips_ch[s];};
+inline color x11_color   (string s) {return x11_ch[s];};
+inline color base_color  (string s) {return base_ch[s];};
+
 color xpm_to_color (string s);
 
 bool gui_interrupted (bool check);

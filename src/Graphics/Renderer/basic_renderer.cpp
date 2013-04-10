@@ -160,12 +160,11 @@ cmyk_color (unsigned int c, unsigned int m, unsigned int y, unsigned int k) {
   return rgb_color (r, g, b);
 }
 
-static hashmap<string,color> colorhash (black);
-
 static void
-populates_colorhash_from_dictionary (string file_name) {
+populates_colorhash_from_dictionary (string file_name, colorhash ch) {
   if (DEBUG_STD) system_info ("Loading colors: ",file_name);
-  string file;
+  string file, name;
+  color col;
   file_name = file_name * ".scm";
   if (load_string (url ("$TEXMACS_PATH/langs/colors", file_name),
         file, false)) {
@@ -183,41 +182,31 @@ populates_colorhash_from_dictionary (string file_name) {
         && is_atomic (t[i][1][0])
         && is_atomic (t[i][1][1])
         && is_atomic (t[i][1][2])) {
-      string name= as_string (t[i][0]);
-      if (name[0] == '"')         name= name (1, N(name));
-      if (name[N(name)-1] == '"') name= name (0, N(name)-1);
-      color col= rgb_color (as_int (t[i][1][0]),
-                            as_int (t[i][1][1]),
-                            as_int (t[i][1][2]));
-      if (DEBUG_STD && colorhash->contains (name) && colorhash [name] != col) {
-        if (DEBUG_STD); system_error ("Redefined color: ", name);
-        cout << "         " << get_named_color (colorhash [name])
-             << " replaced by " << get_named_color (col) << LF;
-      }
-      colorhash (name)= col;
+      col= rgb_color (as_int (t[i][1][0]),
+                      as_int (t[i][1][1]),
+                      as_int (t[i][1][2]));
     }
-  }
-  for (int i=0; i<N(t); i++) {
-    if (is_func (t[i], TUPLE, 2) && is_atomic (t[i][0])
+    else if (is_func (t[i], TUPLE, 2) && is_atomic (t[i][0])
         && is_func (t[i][1], TUPLE, 4)
         && is_atomic (t[i][1][0])
         && is_atomic (t[i][1][1])
         && is_atomic (t[i][1][2])
         && is_atomic (t[i][1][3])) {
-      string name= as_string (t[i][0]);
-      if (name[0] == '"')         name= name (1, N(name));
-      if (name[N(name)-1] == '"') name= name (0, N(name)-1);
-      color col= cmyk_color (as_int (t[i][1][0]),
-                             as_int (t[i][1][1]),
-                             as_int (t[i][1][2]),
-                             as_int (t[i][1][3]));
-      if (DEBUG_STD && colorhash->contains (name) && colorhash [name] != col) {
-        system_error ("Redefined color: ", name);
-        cout << "         " << get_named_color (colorhash [name])
-             << " replaced by " << get_named_color (col) << LF;
-      }
-      colorhash (name)= col;
+      col= cmyk_color (as_int (t[i][1][0]),
+                       as_int (t[i][1][1]),
+                       as_int (t[i][1][2]),
+                       as_int (t[i][1][3]));
     }
+    else continue;
+    name= as_string (t[i][0]);
+    if (name[0] == '"')         name= name (1, N(name));
+    if (name[N(name)-1] == '"') name= name (0, N(name)-1);
+    if (DEBUG_STD && ch->contains (name) && ch [name] != col) {
+      if (DEBUG_STD); system_error ("Redefined color: ", name);
+      cout << "         " << get_named_color (ch [name])
+        << " replaced by " << get_named_color (col) << LF;
+    }
+    ch (name)= col;
   }
 }
 
@@ -260,13 +249,21 @@ named_color_bis (string s) {
     }
   }
 	
-  if (N(colorhash) == 0) {
-    populates_colorhash_from_dictionary ("base");
-    populates_colorhash_from_dictionary ("dvips-named");
-    populates_colorhash_from_dictionary ("x11-named");
-    populates_colorhash_from_dictionary ("html-named");
-  }
-  return colorhash [s];
+  if (N(base_ch) == 0)
+    populates_colorhash_from_dictionary ("base", base_ch);
+  if (N(dvips_ch) == 0)
+    populates_colorhash_from_dictionary ("dvips-named", dvips_ch);
+  if (N(x11_ch) == 0)
+    populates_colorhash_from_dictionary ("x11-named", x11_ch);
+  if (N(html_ch) == 0)
+    populates_colorhash_from_dictionary ("html-named", html_ch);
+
+  if (base_ch ->contains (s)) return base_color  (s);
+  if (html_ch ->contains (s)) return html_color  (s);
+  if (x11_ch  ->contains (s)) return x11_color   (s);
+  if (dvips_ch->contains (s)) return dvips_color (s);
+
+  return black;
 }
 
 color
