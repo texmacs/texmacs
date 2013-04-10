@@ -169,3 +169,8 @@
   (:require conference?)
   (set! t (tmtex-remove-line-feeds t))
   `(tmieeeemail ,(tmtex (cadr t))))
+
+(tm-define (tmtex-abstract-keywords t)
+  (:mode ieee-tran-style?)
+  (with args (list-intersperse (map tmtex (cdr t)) '(!concat (tmsep) " "))
+    `((!begin "IEEEkeywords") (!concat ,@args))))
