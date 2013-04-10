@@ -49,7 +49,7 @@
       `((title (!concat ,@result))))))
 
 (tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes
-                                subtits-l dates-l miscs-l notes-l)
+                                subtits-l dates-l miscs-l notes-l tr ar)
   (:mode acm-style?)
   `(!document
      ,@(tmtex-make-title titles notes miscs)
@@ -111,15 +111,20 @@
 ;;; ACM specific abstract markup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define  (tmtex-make-abstract-data keywords msc abstract)
+(tm-define  (tmtex-make-abstract-data keywords acm arxiv msc pacs abstract)
   (:mode acm-style?)
-  `(!document ,@abstract ,@msc ,@keywords))
+  (with result `(,@abstract ,@acm ,@arxiv ,@msc ,@pacs ,@keywords)
+    (if (null? result) "" `(!document ,@result))))
 
 (tm-define (tmtex-abstract-keywords t)
   (:mode acm-style?)
   (with args (tmtex-concat-sep (map tmtex (cdr t)))
     `(keywords ,@args)))
 
-(tm-define (tmtex-abstract-msc t)
+(tm-define (tmtex-abstract-acm t)
   (:mode acm-style?)
-  `(category ,@(cdr t)))
+  (with l (cond ((== (length (cdr t)) 0) '("" "" ""))
+                ((== (length (cdr t)) 1) (append (cdr t) '("")))
+                ((== (length (cdr t)) 2) (append (cdr t) '("" "")))
+                (else (cdr t)))
+    `(category ,@l)))
