@@ -83,7 +83,7 @@
     (if (null? result) '() `(!paragraph ,@result))))
 
 (tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes
-                                subtits-l dates-l miscs-l notes-l)
+                                subtits-l dates-l miscs-l notes-l tr ar)
   (:mode revtex-style?)
   (let* ((title-data `(,@titles ,@subtitles ,@notes ,@miscs))
          (title-data (if (null? title-data) '() `((!paragraph ,@title-data)))))
@@ -143,7 +143,7 @@
                                         (cluster-by
                                           'author-affiliation authors))))))
     (with r (tmtex-make-doc-data titles subtitles authors dates miscs notes
-                                 '() '() '() '())
+                                 '() '() '() '() '() '())
     (set! revtex-clustered? #f)
     r)))
 
@@ -199,16 +199,24 @@
 ;;; RevTeX specific abstract markup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define  (tmtex-make-abstract-data keywords msc abstract)
+(define (move-in-abstract what in)
+  (if (null? in)
+    (if (null? what) '() `(((!begin "abstract") (document ,@what))))
+    `(((!begin "abstract") (!document ,@(map cadr in) ,@what)))))
+
+(tm-define  (tmtex-make-abstract-data keywords acm arxiv msc pacs abstract)
   (:mode revtex-style?)
-  `(!document ,@abstract ,@msc ,@keywords))
+  (with class `(,@acm ,@arxiv ,@msc)
+    (set! abstract (move-in-abstract class abstract)))
+  (with result `(,@abstract ,@pacs ,@keywords)
+    (if (null? result) "" `(!document ,@result))))
 
 (tm-define (tmtex-abstract-keywords t)
   (:mode revtex-style?)
   (with args (tmtex-concat-sep (map tmtex (cdr t)))
     `(keywords ,@args)))
 
-(tm-define (tmtex-abstract-msc t)
+(tm-define (tmtex-abstract-pacs t)
   (:mode revtex-style?)
   (with args (tmtex-concat-sep (map tmtex (cdr t)))
     `(pacs ,@args)))
