@@ -173,6 +173,7 @@
   (pari "{\\sc Pari}"))
 
 (logic-table latex-texmacs-1%
+  (tmcodeinline (!group (ttfamily) (!group 1)))
   (tmrsub (ensuremath (!append "_{" (textrm 1) "}")))
   (tmrsup (textsuperscript 1))
   (tmtextrm (!group (rmfamily) (!group 1)))
@@ -263,6 +264,10 @@
    (!append (!begin "flushleft")
 	    ---
             (!end "flushleft")))
+  ("tmcode"
+   (!append (begin "alltt")
+	    ---
+            (end "alltt")))
   ("right-aligned"
    (!append (!begin "flushright")
 	    ---
@@ -292,6 +297,7 @@
 
 (logic-table latex-texmacs-env-arity%
   ("proof" 0)
+  ("tmcode" 0)
   ("proof*" 1)
   ("tmparmod" 3)
   ("tmparsep" 1)

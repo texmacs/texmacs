@@ -1523,6 +1523,7 @@
             ""))))
 
 (define (tmtex-verbatim s l)
+  ;; TODO: correctly make needed string substitutions (charset, escaping)
   (if (func? (car l) 'document)
       (list '!verbatim (tmtex-tt (car l)))
       (list 'tmtexttt (tmtex (car l)))))
@@ -1532,6 +1533,25 @@
   (if (func? (car l) 'document)
       (list '!verbatim* (tmtex-tt (car l)))
       (list 'tmtexttt (tmtex (car l)))))
+
+(define (tmtex-code-inline s l)
+  `(tmcodeinline ,(tmtex (car l))))
+
+(define (escape-braces l)
+  (cond ((string? l) (string-replace (string-replace l "{" "\\{") "}" "\\}"))
+        ((symbol? l) l)
+        (else (map escape-braces l))))
+
+(define (stree-convert l from what)
+  (cond ((string? l) (string-convert l "Cork" "UTF-8"))
+        ((symbol? l) l)
+        (else (map (lambda (x) (stree-convert x "Cork" "UTF-8")) l))))
+
+(define (tmtex-code-block s l)
+  (set! l (escape-braces l))
+  (if (or tmtex-use-unicode? tmtex-use-ascii?)
+    (set! l (stree-convert l "Cork" "UTF-8")))
+  `((!begin "tmcode") ,(tmtex-verbatim* "" l)))
 
 (define (tmtex-number-renderer l)
   (let ((r (cond ((string? l) l)
@@ -2099,6 +2119,9 @@
   (math-ignore (,tmtex-mathord 1))
   ((:or eqnarray eqnarray* leqnarray*) (,tmtex-eqnarray 1))
   (eq-number (,tmtex-default -1))
+
+  ((:or cpp-code mmx-code) (,tmtex-code-block 1))
+  ((:or mmx cpp)           (,tmtex-code-inline 1))
 
   (the-index (,tmtex-theindex -1))
   (glossary (,tmtex-glossary 1))
