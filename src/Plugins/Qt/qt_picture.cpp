@@ -56,7 +56,6 @@ qt_picture (const QImage& im, int ox, int oy) {
 
 picture
 as_qt_picture (picture pic) {
-  pic= pic->non_lazy ();
   if (pic->get_type () == picture_native) return pic;
   picture ret= qt_picture (QImage (pic->get_width (), pic->get_height (),
                                    QImage::Format_ARGB32),

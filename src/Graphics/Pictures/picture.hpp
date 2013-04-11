@@ -46,7 +46,6 @@ public:
   virtual picture_kind get_type () = 0;
   virtual void* get_handle () = 0;
   virtual url get_name ();
-  virtual picture non_lazy ();
 
   virtual int get_width () = 0;
   virtual int get_height () = 0;

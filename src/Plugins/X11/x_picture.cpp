@@ -110,7 +110,6 @@ x_picture (Pixmap pm, int w, int h, int ox, int oy) {
 
 picture
 as_x_picture (picture pic) {
-  pic= pic->non_lazy ();
   if (pic->get_type () == picture_native) return pic;
   int w= pic->get_width (), h= pic->get_height ();
   int ox= pic->get_origin_x (), oy= pic->get_origin_y ();

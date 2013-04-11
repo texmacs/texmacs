@@ -335,7 +335,9 @@ image_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
       else ww= (hh * iw) / ih;
     }
 
-    ren->image (url_system (file_name), ww, hh, PIXEL, PIXEL);
+    SI px= ren->pixel;
+    scalable im= load_scalable_image (url_system (file_name), ww, hh, px);
+    ren->draw_scalable (im, PIXEL, PIXEL);
   }
 }
 

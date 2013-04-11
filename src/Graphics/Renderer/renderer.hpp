@@ -16,6 +16,7 @@
 #include "pencil.hpp"
 #include "brush.hpp"
 #include "picture.hpp"
+#include "scalable.hpp"
 
 typedef int SI;
 typedef unsigned int color;
@@ -117,8 +118,7 @@ public:
   /* images */
   virtual picture create_picture (SI x1, SI y1, SI x2, SI y2);
   virtual void draw_picture (picture p, SI x, SI y, int alpha= 255);
-  virtual void image (url u, SI w, SI h, SI x, SI y, int alpha= 255);
-  virtual void xpm (url file_name, SI x, SI y);
+  virtual void draw_scalable (scalable p, SI x, SI y, int alpha= 255);
 
   /* special routines for printers */
   virtual bool is_printer (); // FIXME: redundant wrt is_screen?

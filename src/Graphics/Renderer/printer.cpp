@@ -824,15 +824,6 @@ printer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
 }
 
 void
-printer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
-  string ps_image= ps_load (u);
-  string imtext= is_ramdisc (u)? "inline image": as_string (u);
-  int x1, y1, x2, y2;
-  ps_bounding_box (u, x1, y1, x2, y2);
-  image (imtext, ps_image, x1, y1, x2, y2, w, h, x, y, alpha);
-}
-
-void
 printer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
   (void) alpha; // FIXME
   int w= p->get_width (), h= p->get_height ();
@@ -847,6 +838,22 @@ printer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
   x -= 2.06 * ox * pixel; // FIXME: where does the magic 2.06 come from?
   y -= 2.06 * oy * pixel;
   image (name, eps, x1, y1, x2, y2, w * pixel, h * pixel, x, y, 255);
+}
+
+void
+printer_rep::draw_scalable (scalable im, SI x, SI y, int alpha) {
+  if (im->get_type () != scalable_image)
+    renderer_rep::draw_scalable (im, x, y, alpha);
+  else {
+    url u= im->get_name ();
+    rectangle r= im->get_logical_extents ();
+    SI w= r->x2, h= r->y2;
+    string ps_image= ps_load (u);
+    string imtext= is_ramdisc (u)? "inline image": as_string (u);
+    int x1, y1, x2, y2;
+    ps_bounding_box (u, x1, y1, x2, y2);
+    image (imtext, ps_image, x1, y1, x2, y2, w, h, x, y, alpha);
+  }
 }
 
 void

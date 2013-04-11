@@ -180,30 +180,27 @@ arc_box_rep::display (renderer ren) {
 ******************************************************************************/
 
 struct image_box_rep: public box_rep {
-  url u;
+  scalable im;
   int alpha;
-  int px;
-  image_box_rep (path ip, url u2, SI w, SI h, int alpha, int px);
-  ~image_box_rep ();
+  image_box_rep (path ip, scalable im, int alpha);
   operator tree () { return "image"; }
   void display (renderer ren);
 };
 
-image_box_rep::image_box_rep (path ip, url u2, SI w, SI h, int a, int px2):
-  box_rep (ip), u (u2), alpha (a), px (px2)
+image_box_rep::image_box_rep (path ip, scalable im2, int alpha2):
+  box_rep (ip), im (im2), alpha (alpha2)
 {
-  x1= x3= 0; y1= y3= 0;
-  x2= x4= w; y2= y4= h;
-  picture_cache_reserve (u, x2/px, y2/px);
-}
-
-image_box_rep::~image_box_rep () {
-  picture_cache_release (u, x2/px, y2/px);
+  rectangle rl= im->get_logical_extents ();
+  rectangle rp= im->get_physical_extents ();
+  x1= rl->x1; y1= rl->y1;
+  x2= rl->x2; y2= rl->y2;
+  x3= rp->x1; y3= rp->y1;
+  x4= rp->x2; y4= rp->y2;
 }
 
 void
 image_box_rep::display (renderer ren) {
-  ren->image (u, x2, y2, 0, 0, alpha);
+  ren->draw_scalable (im, 0, 0, alpha);
 }
 
 /******************************************************************************
@@ -259,7 +256,8 @@ polygon_box (path ip, array<SI> x, array<SI> y, color c) {
 
 box
 image_box (path ip, url u, SI w, SI h, int alpha, int px) {
-  return tm_new<image_box_rep> (ip, u, w, h, alpha, px);
+  scalable im= load_scalable_image (u, w, h, px);
+  return tm_new<image_box_rep> (ip, im, alpha);
 }
 
 box

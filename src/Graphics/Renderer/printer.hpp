@@ -98,8 +98,8 @@ public:
   void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
   void put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
-  void image (url u, SI w, SI h, SI x, SI y, int alpha);
   void draw_picture (picture p, SI x, SI y, int alpha);
+  void draw_scalable (scalable im, SI x, SI y, int alpha);
   void image (string name, string eps, SI x1, SI y1, SI x2, SI y2,
               SI w, SI h, SI x, SI y, int alpha);
 };

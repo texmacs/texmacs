@@ -330,12 +330,13 @@ renderer_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
 
     SI sx= 0; //is_percentage (pattern[1])? 0: ox;
     SI sy= 0; //is_percentage (pattern[2])? 0: oy;
+    scalable im= load_scalable_image (u, w, h, pixel);
     for (int i= ((x1+sx)/w) - 1; i <= ((x2+sx)/w) + 1; i++)
       for (int j= ((y1+sy)/h) - 1; j <= ((y2+sy)/h) + 1; j++) {
 	SI X1= i*w     - sx, Y1= j*h     - sy;
 	SI X2= (i+1)*w - sx, Y2= (j+1)*h - sy;
 	if (X1 < x2 && X2 > x1 && Y1 < y2 && Y2 > y1)
-	  image (u, w, h, X1, Y1, pattern_alpha);
+          draw_scalable (im, X1, Y1, pattern_alpha);
       }
     set_clipping (cx1, cy1, cx2, cy2, true);
   }
@@ -396,6 +397,12 @@ cached_load_picture (url file_name, int w, int h, bool permanent) {
 }
 
 void
+renderer_rep::draw_scalable (scalable im, SI x, SI y, int alpha) {
+  im->draw (this, x, y, alpha);
+}
+
+/*
+void
 renderer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
   picture pict= cached_load_picture (u, w/pixel, h/pixel, false);
   draw_picture (pict, x, y, alpha);
@@ -407,6 +414,7 @@ renderer_rep::xpm (url file_name, SI x, SI y) {
   picture p= load_xpm (file_name);
   draw_picture (p, x, y - (p->get_height () - 1) * PIXEL);
 }
+*/
 
 /******************************************************************************
 * Drawing selections using alpha transparency
