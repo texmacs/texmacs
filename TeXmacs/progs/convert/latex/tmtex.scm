@@ -1526,7 +1526,12 @@
   (if (func? (car l) 'document)
       (list '!verbatim (tmtex-tt (car l)))
       (list 'tmtexttt (tmtex (car l)))))
-;;(list '!verb (tmtex-tt (car l)))))
+
+(define (tmtex-verbatim* s l)
+  ;; TODO: correctly make needed string substitutions (charset, escaping)
+  (if (func? (car l) 'document)
+      (list '!verbatim* (tmtex-tt (car l)))
+      (list 'tmtexttt (tmtex (car l)))))
 
 (define (tmtex-number-renderer l)
   (let ((r (cond ((string? l) l)

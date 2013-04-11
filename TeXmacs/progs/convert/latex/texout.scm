@@ -216,6 +216,9 @@
 (define (texout-verbatim x)
   (output-lf-verbatim "\\begin{alltt}\n" x "\n\\end{alltt}"))
 
+(define (texout-verbatim* x)
+  (output-lf-verbatim x))
+
 (define (texout-group x)
   (output-tex "{")
   (texout x)
@@ -321,6 +324,7 @@
 	((== (car x) '!nbhyph) (texout-nbhyph))
 	((== (car x) '!verb) (texout-verb (cadr x)))
 	((== (car x) '!verbatim) (texout-verbatim (cadr x)))
+	((== (car x) '!verbatim*) (texout-verbatim* (cadr x)))
 	((== (car x) '!arg) (texout-arg (cadr x)))
 	((== (car x) '!group) (texout-group (cons '!append (cdr x))))
 	((== (car x) '!math) (texout-math (cadr x)))
