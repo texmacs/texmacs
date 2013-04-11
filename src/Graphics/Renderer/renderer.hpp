@@ -129,13 +129,6 @@ public:
 };
 
 /* native pictures and rendering on pictures */
-picture load_picture (url u, int w, int h);
-void picture_cache_reserve (url u, int w, int h);
-void picture_cache_release (url u, int w, int h);
-void picture_cache_clean ();
-picture cached_load_picture (url u, int w, int h, bool permanent= true);
-picture pixmap_picture (int w, int h, int ox, int oy);
-picture scalable_picture (int w, int h, int ox, int oy);
 renderer picture_renderer (picture p, double zoom);
 renderer picture_renderer (picture p, renderer ref);
 void delete_renderer (renderer ren);

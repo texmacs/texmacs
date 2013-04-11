@@ -14,7 +14,6 @@
 #include "rectangles.hpp"
 #include "image_files.hpp"
 #include "frame.hpp"
-#include "iterator.hpp"
 
 int std_shrinkf= 5;
 
@@ -345,76 +344,10 @@ renderer_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
 
 #undef RND
 
-/******************************************************************************
-* Cached pictured loading
-******************************************************************************/
-
-static hashmap<tree,int> picture_count (0);
-static hashmap<tree,int> picture_blacklist (0);
-static hashmap<tree,picture> picture_cache;
-
-void
-picture_cache_reserve (url file_name, int w, int h) {
-  tree key= tuple (file_name->t, as_string (w), as_string (h));
-  picture_count (key) ++;
-  //cout << key << " -> " << picture_count[key] << "\n";
-}
-
-void
-picture_cache_release (url file_name, int w, int h) {
-  tree key= tuple (file_name->t, as_string (w), as_string (h));
-  picture_count (key) --;
-  //cout << key << " -> " << picture_count[key] << "\n";
-  if (picture_count [key] <= 0) picture_blacklist (key) ++;
-}
-
-void
-picture_cache_clean () {
-  static time_t last_gc= 0;
-  if (texmacs_time () - last_gc <= 60000) return;
-  last_gc= texmacs_time ();
-
-  iterator<tree> it= iterate (picture_blacklist);
-  while (it->busy ()) {
-    tree key= it->next ();
-    if (picture_count [key] <= 0) {
-      picture_count -> reset (key);
-      picture_cache -> reset (key);
-      //cout << "Removed " << key << "\n";
-    }
-  }
-  picture_blacklist= hashmap<tree,int> ();
-}
-
-picture
-cached_load_picture (url file_name, int w, int h, bool permanent) {
-  tree key= tuple (file_name->t, as_string (w), as_string (h));
-  if (picture_cache->contains (key)) return picture_cache [key];
-  //cout << "Loading " << key << "\n";
-  picture pic= load_picture (file_name, w, h);
-  if (permanent || picture_count[key] > 0) picture_cache (key)= pic;
-  return pic;
-}
-
 void
 renderer_rep::draw_scalable (scalable im, SI x, SI y, int alpha) {
   im->draw (this, x, y, alpha);
 }
-
-/*
-void
-renderer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
-  picture pict= cached_load_picture (u, w/pixel, h/pixel, false);
-  draw_picture (pict, x, y, alpha);
-}
-
-void
-renderer_rep::xpm (url file_name, SI x, SI y) {
-  ASSERT (pixel == PIXEL, "pixel and PIXEL should coincide");
-  picture p= load_xpm (file_name);
-  draw_picture (p, x, y - (p->get_height () - 1) * PIXEL);
-}
-*/
 
 /******************************************************************************
 * Drawing selections using alpha transparency
@@ -456,7 +389,7 @@ renderer_rep::create_picture (SI x1, SI y1, SI x2, SI y2) {
   decode (x2, y2);
   x2= max (x1, x2);
   y2= min (y1, y2);
-  return pixmap_picture (x2-x1, y1-y2, x0 - x1, (y1 - y2 - 1) - (y0 - y2));
+  return native_picture (x2-x1, y1-y2, x0 - x1, (y1 - y2 - 1) - (y0 - y2));
 }
 
 void
@@ -469,14 +402,7 @@ renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
 #ifndef X11TEXMACS
 
 picture
-pixmap_picture (int w, int h, int ox, int oy) {
-  (void) w; (void) h; (void) ox; (void) oy;
-  FAILED ("not yet implemented");
-  return picture ();
-}
-
-picture
-scalable_picture (int w, int h, int ox, int oy) {
+native_picture (int w, int h, int ox, int oy) {
   (void) w; (void) h; (void) ox; (void) oy;
   FAILED ("not yet implemented");
   return picture ();

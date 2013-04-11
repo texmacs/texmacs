@@ -138,15 +138,9 @@ retrieve_pixmap (picture pic) {
 }
 
 picture
-pixmap_picture (int w, int h, int ox, int oy) {
+native_picture (int w, int h, int ox, int oy) {
   Pixmap pm= XCreatePixmap (the_gui->dpy, the_gui->root, w, h, the_gui->depth);
   return x_picture (pm, w, h, ox, oy);
-}
-
-picture
-scalable_picture (int w, int h, int ox, int oy) {
-  (void) w; (void) h; (void) ox; (void) oy;
-  FAILED ("not yet implemented");
 }
 
 void

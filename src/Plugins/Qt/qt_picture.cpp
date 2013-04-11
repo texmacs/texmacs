@@ -77,14 +77,8 @@ xpm_image (url file_name) {
 }
 
 picture
-pixmap_picture (int w, int h, int ox, int oy) {
+native_picture (int w, int h, int ox, int oy) {
   return qt_picture (QImage (w, h, QImage::Format_ARGB32), ox, oy);
-}
-
-picture
-scalable_picture (int w, int h, int ox, int oy) {
-  (void) w; (void) h; (void) ox; (void) oy;
-  FAILED ("not yet implemented");
 }
 
 void

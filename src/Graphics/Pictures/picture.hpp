@@ -70,7 +70,16 @@ public:
 
 ABSTRACT_NULL_CODE(picture);
 
+/******************************************************************************
+* Pictures on disk
+******************************************************************************/
+
+picture load_picture (url u, int w, int h);
 picture load_xpm (url file_name);
+void picture_cache_reserve (url u, int w, int h);
+void picture_cache_release (url u, int w, int h);
+void picture_cache_clean ();
+picture cached_load_picture (url u, int w, int h, bool permanent= true);
 string picture_as_eps (picture pic, int dpi);
 
 /******************************************************************************
@@ -90,6 +99,7 @@ enum composition_mode {
   compose_max
 };
 
+picture native_picture (int w, int h, int ox, int oy);
 picture raster_picture (int w, int h, int ox= 0, int oy= 0);
 picture as_raster_picture (picture pict);
 picture error_picture (int w, int h);
