@@ -413,10 +413,17 @@
 	 (r (tmtex-string-produce t)))
     (tex-concat r)))
 
+(define (string-convert* what from to)
+  (with c (string->list what)
+    (apply string-append
+           (map (lambda (x) (string-convert (char->string x) from to)) c))))
+
 (define (tmtex-verb-string s)
   (let* ((l (string->list s))
-	 (t (tmtex-verb-list l))
-	 (r (tmtex-string-produce t)))
+         (t (tmtex-verb-list l))
+         (r (tmtex-string-produce t)))
+    (if (or tmtex-use-unicode? tmtex-use-ascii?)
+      (set! r (map (lambda (x) (string-convert* x "Cork" "UTF-8")) r)))
     (tex-concat r)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1522,14 +1529,17 @@
 	    (display* "TeXmacs] non converted verbatim content: \n" x "\n")
             ""))))
 
+(define (escape-braces l)
+  (cond ((string? l) (string-replace (string-replace l "{" "\\{") "}" "\\}"))
+        ((symbol? l) l)
+        (else (map escape-braces l))))
+
 (define (tmtex-verbatim s l)
-  ;; TODO: correctly make needed string substitutions (charset, escaping)
   (if (func? (car l) 'document)
-      (list '!verbatim (tmtex-tt (car l)))
+      (list '!verbatim (tmtex-tt (escape-braces (car l))))
       (list 'tmtexttt (tmtex (car l)))))
 
 (define (tmtex-verbatim* s l)
-  ;; TODO: correctly make needed string substitutions (charset, escaping)
   (if (func? (car l) 'document)
       (list '!verbatim* (tmtex-tt (car l)))
       (list 'tmtexttt (tmtex (car l)))))
@@ -1537,20 +1547,8 @@
 (define (tmtex-code-inline s l)
   `(tmcodeinline ,(tmtex (car l))))
 
-(define (escape-braces l)
-  (cond ((string? l) (string-replace (string-replace l "{" "\\{") "}" "\\}"))
-        ((symbol? l) l)
-        (else (map escape-braces l))))
-
-(define (stree-convert l from what)
-  (cond ((string? l) (string-convert l "Cork" "UTF-8"))
-        ((symbol? l) l)
-        (else (map (lambda (x) (stree-convert x "Cork" "UTF-8")) l))))
-
 (define (tmtex-code-block s l)
   (set! l (escape-braces l))
-  (if (or tmtex-use-unicode? tmtex-use-ascii?)
-    (set! l (stree-convert l "Cork" "UTF-8")))
   `((!begin "tmcode") ,(tmtex-verbatim* "" l)))
 
 (define (tmtex-number-renderer l)
