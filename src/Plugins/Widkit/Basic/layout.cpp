@@ -95,7 +95,7 @@ void
 layout_submenu_triangle (renderer ren, SI x, SI y) {
   ren->set_line_style (PIXEL);
   ren->set_color (layout_normal (ren));
-  ren->triangle (x, y-3*PIXEL, x, y+3*PIXEL, x+7*PIXEL, y);
+  ren->draw_triangle (x, y-3*PIXEL, x, y+3*PIXEL, x+7*PIXEL, y);
   ren->set_color (layout_dark (ren));
   ren->line (x, y-3*PIXEL, x, y+3*PIXEL);
   ren->line (x, y+3*PIXEL, x+7*PIXEL, y);
@@ -107,7 +107,7 @@ void
 layout_pulldown_triangle (renderer ren, SI x, SI y) {
   ren->set_line_style (PIXEL);
   ren->set_color (layout_normal (ren));
-  ren->triangle (x-4*PIXEL, y, x+4*PIXEL, y, x, y-4*PIXEL);
+  ren->draw_triangle (x-4*PIXEL, y, x+4*PIXEL, y, x, y-4*PIXEL);
   ren->set_color (layout_dark (ren));
   ren->line (x+4*PIXEL, y, x, y-4*PIXEL);
   ren->set_color (white);
@@ -147,7 +147,7 @@ layout_up_arrow (renderer ren, SI x, SI y, SI w, SI h) {
   w -= PIXEL; h -= PIXEL; SI hw= ((w/PIXEL)>>1)*PIXEL;
   ren->set_line_style (PIXEL);
   ren->set_color (layout_normal (ren));
-  ren->triangle (x, y, x+w, y, x+hw, y+h);
+  ren->draw_triangle (x, y, x+w, y, x+hw, y+h);
   ren->set_color (layout_dark (ren));
   ren->line (x, y, x+w, y);
   ren->line (x+w, y, x+hw, y+h);
@@ -160,7 +160,7 @@ layout_down_arrow (renderer ren, SI x, SI y, SI w, SI h) {
   w -= PIXEL; h -= PIXEL; SI hw= ((w/PIXEL)>>1)*PIXEL;
   ren->set_line_style (PIXEL);
   ren->set_color (layout_normal (ren));
-  ren->triangle (x, y+h, x+w, y+h, x+hw, y);
+  ren->draw_triangle (x, y+h, x+w, y+h, x+hw, y);
   ren->set_color (layout_dark (ren));
   ren->line (x+w, y+h, x+hw, y);
   ren->set_color (white);
@@ -173,7 +173,7 @@ layout_left_arrow (renderer ren, SI x, SI y, SI w, SI h) {
   w -= PIXEL; h -= PIXEL; SI hh= ((h/PIXEL)>>1)*PIXEL;
   ren->set_line_style (PIXEL);
   ren->set_color (layout_normal (ren));
-  ren->triangle (x+w, y+w, x+w, y+h, x, y+hh);
+  ren->draw_triangle (x+w, y+w, x+w, y+h, x, y+hh);
   ren->set_color (layout_dark (ren));
   ren->line (x+w, y, x+w, y+h);
   ren->line (x+w, y, x, y+hh);
@@ -186,7 +186,7 @@ layout_right_arrow (renderer ren, SI x, SI y, SI w, SI h) {
   w -= PIXEL; h -= PIXEL; SI hh= ((h/PIXEL)>>1)*PIXEL;
   ren->set_line_style (PIXEL);
   ren->set_color (layout_normal (ren));
-  ren->triangle (x, y, x, y+h, x+w, y+hh);
+  ren->draw_triangle (x, y, x, y+h, x+w, y+hh);
   ren->set_color (layout_dark (ren));
   ren->line (x, y, x+w, y+hh);
   ren->set_color (white);

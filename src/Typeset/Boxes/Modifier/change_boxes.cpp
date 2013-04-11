@@ -544,8 +544,8 @@ highlight_box_rep::display (renderer ren) {
   ren->set_color (shad);
   ren->fill (x1+W, y1  , x2  , y1+W);
   ren->fill (x2-W, y1  , x2  , y2-W);
-  ren->triangle (x1, y1, x1+W, y1, x1+W, y1+W);
-  ren->triangle (x2, y2, x2, y2-W, x2-W, y2-W);
+  ren->draw_triangle (x1, y1, x1+W, y1, x1+W, y1+W);
+  ren->draw_triangle (x2, y2, x2, y2-W, x2-W, y2-W);
 }
 
 /******************************************************************************
