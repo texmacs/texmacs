@@ -116,9 +116,10 @@ public:
   virtual void apply_shadow (SI x1, SI y1, SI x2, SI y2) = 0;
 
   /* images */
-  virtual picture create_picture (SI x1, SI y1, SI x2, SI y2);
-  virtual void draw_picture (picture p, SI x, SI y, int alpha= 255);
-  virtual void draw_scalable (scalable p, SI x, SI y, int alpha= 255);
+  virtual renderer shadow (picture & pic, SI x1, SI y1, SI x2, SI y2);
+  virtual renderer shadow (scalable& im , SI x1, SI y1, SI x2, SI y2);
+  virtual void draw_picture  (picture  pic, SI x, SI y, int alpha= 255);
+  virtual void draw_scalable (scalable im , SI x, SI y, int alpha= 255);
 
   /* special routines for printers */
   virtual bool is_printer (); // FIXME: redundant wrt is_screen?
@@ -130,7 +131,7 @@ public:
 
 /* native pictures and rendering on pictures */
 renderer picture_renderer (picture p, double zoom);
-renderer picture_renderer (picture p, renderer ref);
+renderer scalable_renderer (scalable im);
 void delete_renderer (renderer ren);
 
 double normal_zoom (double zoom);

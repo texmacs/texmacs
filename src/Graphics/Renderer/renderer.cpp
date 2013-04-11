@@ -380,8 +380,8 @@ renderer_rep::draw_selection (rectangles rs) {
 * Images
 ******************************************************************************/
 
-picture
-renderer_rep::create_picture (SI x1, SI y1, SI x2, SI y2) {
+renderer
+renderer_rep::shadow (picture& pic, SI x1, SI y1, SI x2, SI y2) {
   SI x0= 0, y0= 0;
   decode (x0, y0);
   outer_round (x1, y1, x2, y2);
@@ -389,13 +389,54 @@ renderer_rep::create_picture (SI x1, SI y1, SI x2, SI y2) {
   decode (x2, y2);
   x2= max (x1, x2);
   y2= min (y1, y2);
-  return native_picture (x2-x1, y1-y2, x0 - x1, (y1 - y2 - 1) - (y0 - y2));
+  pic= native_picture (x2-x1, y1-y2, x0 - x1, (y1 - y2 - 1) - (y0 - y2));
+  renderer ren= picture_renderer (pic, zoomf);
+
+  ren->ox = ox;
+  ren->oy = oy;
+  ren->cx1= cx1;
+  ren->cy1= cy1;
+  ren->cx2= cx2;
+  ren->cy2= cy2;
+  ren->is_screen= is_screen;
+  ren->zoomf= zoomf;
+  ren->shrinkf= shrinkf;
+  ren->pixel= pixel;
+  ren->thicken= thicken;
+  
+  int x1b= x0 - pic->get_origin_x ();
+  int y2b= y0 + pic->get_origin_y () - (pic->get_height () - 1);
+  ren->ox  -= x1b * pixel;
+  ren->oy  += y2b * pixel;
+  ren->cx1 -= x1b * pixel;
+  ren->cy1 += y2b * pixel;
+  ren->cx2 -= x1b * pixel;
+  ren->cy2 += y2b * pixel;
+  return ren;
+}
+
+renderer
+renderer_rep::shadow (scalable& im , SI x1, SI y1, SI x2, SI y2) {
+  (void) im; (void) x1; (void) y1; (void) x2; (void) y2;
+  FAILED ("shadowing is not supported");
 }
 
 void
 renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
   (void) p; (void) x; (void) y; (void) alpha;
   FAILED ("rendering pictures is not supported");
+}
+
+renderer
+scalable_renderer (scalable im) {
+  (void) im;
+  FAILED ("not yet implemented");
+  return NULL;
+}
+
+void
+delete_renderer (renderer ren) {
+  tm_delete (ren);
 }
 
 #ifndef QTTEXMACS
@@ -413,19 +454,6 @@ picture_renderer (picture p, double zoomf) {
   (void) p; (void) zoomf;
   FAILED ("not yet implemented");
   return NULL;
-}
-
-renderer
-picture_renderer (picture p, renderer ref) {
-  (void) p; (void) ref;
-  FAILED ("not yet implemented");
-  return NULL;
-}
-
-void
-delete_renderer (renderer ren) {
-  (void) ren;
-  FAILED ("not yet implemented");
 }
 
 picture

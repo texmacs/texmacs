@@ -96,7 +96,6 @@ public:
   void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
 };
 
-
 class qt_proxy_renderer_rep: public qt_renderer_rep {
 public:
   qt_renderer_rep *base;

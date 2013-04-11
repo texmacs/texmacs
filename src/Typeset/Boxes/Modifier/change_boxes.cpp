@@ -260,16 +260,17 @@ effect_box_rep::redraw (renderer ren, path p, rectangles& l) {
   if (((nr_painted&15) == 15) && gui_interrupted (true)) return;
   ren->move_origin (x0, y0);
   array<picture> pics (subnr ());
+  SI shad_pixel= ren->pixel;
   for (int i=0; i<subnr(); i++) {
-    pics[i]= ren->create_picture (sx3(i), sy3(i), sx4(i), sy4(i));
-    renderer pic_ren= picture_renderer (pics[i], ren);
+    renderer shad= ren->shadow (pics[i], sx3(i), sy3(i), sx4(i), sy4(i));
+    shad_pixel= shad->pixel;
     rectangles rs;
-    subbox (i)->redraw (pic_ren, path (), rs);
-    delete_renderer (pic_ren);
+    subbox (i)->redraw (shad, path (), rs);
+    delete_renderer (shad);
   }
   if (((nr_painted&15) == 15) && gui_interrupted (true));
   else {
-    picture result_pic= eff->apply (pics, ren->pixel);
+    picture result_pic= eff->apply (pics, shad_pixel);
     ren->draw_picture (result_pic, 0, 0);
   }
   ren->move_origin (-x0, -y0);

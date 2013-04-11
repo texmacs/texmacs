@@ -219,50 +219,6 @@ x_image_renderer_rep::x_image_renderer_rep (picture p, double zoom):
   XFillRectangle (dpy, win, gc, 0, 0, w, h);
 }
 
-x_image_renderer_rep::x_image_renderer_rep (picture p, renderer m):
-  x_drawable_rep (the_gui, get_Pixmap (p),
-                  p->get_width (), p->get_height ()),
-  pict (p)
-{
-  ox = m->ox;
-  oy = m->oy;
-  cx1= m->cx1;
-  cy1= m->cy1;
-  cx2= m->cx2;
-  cy2= m->cy2;
-  is_screen= m->is_screen;
-  zoomf= m->zoomf;
-  shrinkf= m->shrinkf;
-  pixel= m->pixel;
-  thicken= m->thicken;
-
-  x_drawable_rep* mren= (x_drawable_rep*) m->get_handle ();
-  SI x0= 0, y0= 0;
-  mren->decode (x0, y0);
-  int x1b= x0 - p->get_origin_x ();
-  int y2b= y0 + p->get_origin_y () - (p->get_height () - 1);
-  ox  -= x1b * pixel;
-  oy  += y2b * pixel;
-  cx1 -= x1b * pixel;
-  cy1 += y2b * pixel;
-  cx2 -= x1b * pixel;
-  cy2 += y2b * pixel;
-
-  if (m->is_printer ()) set_zoom_factor (1.0);
-
-  Region region= XCreateRegion ();
-  XRectangle r;
-  r.x     = 0;
-  r.y     = 0;
-  r.width = w;
-  r.height= h;
-  XUnionRectWithRegion (&r, region, region);
-  XSetRegion (dpy, gc, region);
-  XDestroyRegion (region);
-  XSetForeground (dpy, gc, 0x00646566);
-  XFillRectangle (dpy, win, gc, 0, 0, w, h);
-}
-
 x_image_renderer_rep::~x_image_renderer_rep () {}
 
 void*
@@ -273,16 +229,6 @@ x_image_renderer_rep::get_data_handle () {
 renderer
 picture_renderer (picture p, double zoomf) {
   return (renderer) tm_new<x_image_renderer_rep> (p, zoomf);
-}
-
-renderer
-picture_renderer (picture p, renderer m) {
-  return (renderer) tm_new<x_image_renderer_rep> (p, m);
-}
-
-void
-delete_renderer (renderer ren) {
-  tm_delete (ren);
 }
 
 /******************************************************************************

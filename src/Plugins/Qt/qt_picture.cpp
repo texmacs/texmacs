@@ -127,55 +127,6 @@ qt_image_renderer_rep::qt_image_renderer_rep (picture p, double zoom):
   painter->begin (&im);
 }
 
-qt_image_renderer_rep::qt_image_renderer_rep (picture p, renderer m):
-  qt_renderer_rep (new QPainter ()), pict (p)
-{
-  ox = m->ox;
-  oy = m->oy;
-  cx1= m->cx1;
-  cy1= m->cy1;
-  cx2= m->cx2;
-  cy2= m->cy2;
-  is_screen= m->is_screen;
-  zoomf= m->zoomf;
-  shrinkf= m->shrinkf;
-  pixel= m->pixel;
-  thicken= m->thicken;
-
-  /*
-  int pox= p->get_origin_x ();
-  int poy= p->get_origin_y () - 1;
-  ox  += pox * pixel;
-  oy  += poy * pixel;
-  cx1 += pox * pixel;
-  cy1 += poy * pixel;
-  cx2 += pox * pixel;
-  cy2 += poy * pixel;
-  */
-
-  SI x0= 0, y0= 0;
-  m->decode (x0, y0);
-  int x1b= x0 - p->get_origin_x ();
-  int y2b= y0 + p->get_origin_y () - (p->get_height () - 1);
-  ox  -= x1b * pixel;
-  oy  += y2b * pixel;
-  cx1 -= x1b * pixel;
-  cy1 += y2b * pixel;
-  cx2 -= x1b * pixel;
-  cy2 += y2b * pixel;
-
-  if (m->is_printer ()) set_zoom_factor (1.0);
-
-  qt_picture_rep* handle= (qt_picture_rep*) pict->get_handle ();
-  QImage& im (handle->pict);
-#if (QT_VERSION >= 0x040800)
-  im.fill (QColor (0, 0, 0, 0));
-#else
-  im.fill ((uint) 0);
-#endif
-  painter->begin (&im);
-}
-
 qt_image_renderer_rep::~qt_image_renderer_rep () {
   painter->end();
   delete painter;
@@ -190,16 +141,6 @@ qt_image_renderer_rep::get_data_handle () {
 renderer
 picture_renderer (picture p, double zoomf) {
   return (renderer) tm_new<qt_image_renderer_rep> (p, zoomf);
-}
-
-renderer
-picture_renderer (picture p, renderer m) {
-  return (renderer) tm_new<qt_image_renderer_rep> (p, m);
-}
-
-void
-delete_renderer (renderer ren) {
-  tm_delete (ren);
 }
 
 /******************************************************************************

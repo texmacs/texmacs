@@ -53,7 +53,6 @@ public:
   
 public:
   x_image_renderer_rep (picture pict, double zoom);
-  x_image_renderer_rep (picture pict, renderer master);
   ~x_image_renderer_rep ();
   void* get_data_handle ();
 };

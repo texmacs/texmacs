@@ -45,7 +45,6 @@ public:
   
 public:
   qt_image_renderer_rep (picture pict, double zoom);
-  qt_image_renderer_rep (picture pict, renderer master);
   ~qt_image_renderer_rep ();
   void* get_data_handle ();
 };

@@ -823,6 +823,13 @@ printer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
   (void) x1; (void) y1; (void) x2; (void) y2;
 }
 
+renderer
+printer_rep::shadow (picture& pic, SI x1, SI y1, SI x2, SI y2) {
+  renderer ren= renderer_rep::shadow (pic, x1, y1, x2, y2);
+  ren->set_zoom_factor (1.0);
+  return ren;
+}
+
 void
 printer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
   (void) alpha; // FIXME
