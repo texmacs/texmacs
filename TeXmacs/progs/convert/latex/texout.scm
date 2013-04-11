@@ -58,7 +58,6 @@
       (if (in? lan '("chinese" "taiwanese"))
 	  (output-verbatim "\\usepackage{CJK}\n"))
       (output-verbatim tm-uses)
-      (for-each texout-usepackage (cdr styles))
       (if (string-occurs? "makeidx" (latex-use-package-command doc-body))
         (output-verbatim "\\makeindex"))
       (if tmtex-use-unicode?
