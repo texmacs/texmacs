@@ -63,7 +63,9 @@ struct latex_parser {
   tree parse_length      (string s, int& i);
   tree parse_length      (string s, int& i, int e);
   tree parse_length_name (string s, int& i);
-  tree parse_verbatim    (string s, int& i, string end);
+  tree parse_verbatim    (string s, int& i, string end, string env);
+  tree parse_alltt       (string s, int& i, string end, string env,
+                          tree opt= tree (CONCAT));
 
   tree parse             (string s, bool change);
 };
@@ -282,7 +284,7 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
       break;
     case '\244':
       i++;
-      t << parse_verbatim (s, i, "\244");
+      t << parse_verbatim (s, i, "\244", "verbatim");
       break;
     case '{': {
       i++;
@@ -397,11 +399,24 @@ latex_parser::parse_backslash (string s, int& i) {
   int n= N(s);
   if (((i+7)<n) && (s(i,i+5)=="\\verb")) {
     i+=6;
-    return parse_verbatim (s, i, s(i-1,i));
+    return parse_verbatim (s, i, s(i-1,i), "verbatim");
   }
   if (((i+29)<n) && (s(i,i+16)=="\\begin{verbatim}")) {
     i+=16;
-    return parse_verbatim (s, i, "\\end{verbatim}");
+    return parse_verbatim (s, i, "\\end{verbatim}", "verbatim");
+  }
+  if (((i+27)<n) && (s(i,i+14)=="\\begin{tmcode}")) {
+    i+=14;
+    if (i<n && s[i] == '[') {
+      i++; tree opt= parse (s, i, ']'); i++;
+      return parse_alltt (s, i, "\\end{tmcode}", "tmcode*", opt);
+    }
+    else
+      return parse_alltt (s, i, "\\end{tmcode}", "tmcode");
+  }
+  if (((i+26)<n) && (s(i,i+13)=="\\begin{alltt}")) {
+    i+=13;
+    return parse_alltt (s, i, "\\end{alltt}", "verbatim-code");
   }
   if (((i+5)<n) && (s(i,i+4)=="\\url") && !is_tex_alpha (s[i+5])) {
     i+=4;
@@ -1075,14 +1090,45 @@ latex_parser::parse_length_name (string s, int& i) {
 ******************************************************************************/
 
 tree
-latex_parser::parse_verbatim (string s, int& i, string end) {
+latex_parser::parse_verbatim (string s, int& i, string end, string env) {
   int start=i, n= N(s), e= N(end);
+  string begin= "\\begin-" * env, endenv= "\\end-" * env;
   while ((i<(n-e)) && (s(i,i+e)!=end)) i++;
   i+=e;
   return tree (CONCAT,
-	       tree (TUPLE, "\\begin-verbatim"),
+	       tree (TUPLE, begin),
 	       s(start,i-e),
-	       tree (TUPLE, "\\end-verbatim"));
+	       tree (TUPLE, endenv));
+}
+
+tree
+latex_parser::parse_alltt (string s, int& i, string end, string env, tree opt)
+{
+  int start=i, n= N(s), e= N(end);
+  string begin= "\\begin-" * env;
+  if (env[N(env)-1] == '*') env= env(0,N(env)-1);
+  string endenv= "\\end-" * env;
+  tree b= tree (TUPLE, begin);
+  if (opt != tree (CONCAT)) b << opt;
+  tree r= tree (CONCAT, b);
+  while ((i<(n-e)) && (s(i,i+e)!=end)) {
+    if (s[i] == '\\') {
+      r << s(start, i);
+      r << parse_backslash (s, i);
+      start= i;
+    }
+    if (s[i] == '<' || s[i] == '>') {
+      r << s(start, i);
+      if (s[i] == '<') r << "<less>";
+      if (s[i] == '>') r << "<gtr>";
+      start= i+1;
+    }
+    i++;
+  }
+  r << s(start, i);
+  r << tree (TUPLE, endenv);
+  i+=e;
+  return r;
 }
 
 /******************************************************************************
