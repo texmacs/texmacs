@@ -1542,12 +1542,12 @@
 (define (tmtex-verbatim s l)
   (if (func? (car l) 'document)
       (list '!verbatim (tmtex-tt (escape-braces (escape-backslashes (car l)))))
-      (list 'tmtexttt (tmtex (car l)))))
+      (list 'tmverbatim (tmtex (car l)))))
 
 (define (tmtex-verbatim* s l)
   (if (func? (car l) 'document)
       (list '!verbatim* (tmtex-tt (car l)))
-      (list 'tmtexttt (tmtex (car l)))))
+      (list 'tmverbatim (tmtex (car l)))))
 
 (define (tmtex-code-inline s l)
   (with lang `((!option ,s))
