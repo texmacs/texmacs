@@ -608,6 +608,32 @@ curve_box_rep::apply_style () {
 }
 
 /******************************************************************************
+* 3D graphics
+******************************************************************************/
+
+struct spacial_box_rep: public box_rep {
+  spacial obj;
+  spacial_box_rep (path ip, spacial obj2);
+  void display (renderer ren);
+  operator tree () { return "spacial"; }
+};
+
+spacial_box_rep::spacial_box_rep (path ip, spacial obj2):
+  box_rep (ip), obj (obj2)
+{
+  rectangle r= obj->get_extents ();
+  x1= x3= r->x1;
+  y1= y3= r->y1;
+  x2= x4= r->x2;
+  y2= y4= r->y2;
+}
+
+void
+spacial_box_rep::display (renderer ren) {
+  ren->draw_spacial (obj);
+}
+
+/******************************************************************************
 * User interface
 ******************************************************************************/
 
@@ -626,17 +652,22 @@ graphics_group_box (path ip, array<box> bs) {
 }
 
 box
-point_box (
-  path ip, point p, SI r, color col, int fill, brush fill_br, string style) {
+point_box (path ip, point p, SI r,
+           color col, int fill, brush fill_br, string style) {
   return tm_new<point_box_rep> (ip, p, r, col, fill, fill_br, style);
 }
 
 box
 curve_box (path ip, curve c, SI width, color col,
-  array<bool> style, SI style_unit,
-  int fill, brush fill_br,
-  array<box> arrows)
+           array<bool> style, SI style_unit,
+           int fill, brush fill_br,
+           array<box> arrows)
 {
   return tm_new<curve_box_rep> (ip, c, width, col,
                                 style, style_unit, fill, fill_br, arrows);
+}
+
+box
+spacial_box (path ip, spacial obj) {
+  return tm_new<spacial_box_rep> (ip, obj);
 }

@@ -598,6 +598,38 @@ init_std_drd () {
 	length (2) -> name (2, "height") ->
         length (3) -> name (3, "x") -> long_name (3, "x-offset") ->
         length (4) -> name (4, "y") -> long_name (4, "y-offset"));
+
+  init (BOX_INFO, "box-info",
+	fixed (1, 1, BIFORM) ->
+	regular (0) ->                        // content leading to box
+	string_type (1));                     // query
+  init (FRAME_DIRECT, "frame-direct",
+	fixed (1) -> point_type (0));
+  init (FRAME_INVERSE, "frame-inverse",
+	fixed (1) -> point_type (0));
+
+  init (IS_EQUAL, "is-equal",
+        fixed (2) -> returns_constraint () -> graphical_id (0));
+  init (IS_INTERSECTION, "is-intersection",
+        fixed (3) -> returns_constraint () -> graphical_id (0));
+  init (ON_CURVE, "on-curve",
+        options (2, 1, BIFORM) -> returns_constraint () ->
+        graphical_id (0) -> numeric (1));
+  init (ON_TEXT_BORDER, "on-text-border",
+        fixed (2) -> returns_constraint () -> graphical_id (0));
+  init (ON_GRID, "on-grid",
+        fixed (2) -> returns_constraint () -> graphical_id (0));
+
+  init (TRANSFORM_3D, "transform-3d",
+        repeat (1, 1, BIFORM) -> returns_graphical () ->
+        graphical (0) -> numeric (1));
+  init (OBJECT_3D, "object-3d",
+        repeat (1, 1) -> returns_graphical () ->
+        graphical (0));
+  init (TRIANGLE_3D, "triangle-3d",
+        fixed (3, 1, BIFORM) -> returns_graphical () ->
+        graphical (0) -> string_type (1));
+
   init (EFF_MOVE, "eff-move",
         fixed (3, 0, DETAILED) -> returns_effect () ->
         effect (0) -> name (0, "body") ->
@@ -686,27 +718,6 @@ init_std_drd () {
         fixed (2, 0, DETAILED) -> returns_effect () ->
         effect (0) -> name (0, "body") ->
 	string_type (1) -> name (1, "bg") -> name (1, "background color"));
-
-  init (BOX_INFO, "box-info",
-	fixed (1, 1, BIFORM) ->
-	regular (0) ->                        // content leading to box
-	string_type (1));                     // query
-  init (FRAME_DIRECT, "frame-direct",
-	fixed (1) -> point_type (0));
-  init (FRAME_INVERSE, "frame-inverse",
-	fixed (1) -> point_type (0));
-
-  init (IS_EQUAL, "is-equal",
-        fixed (2) -> returns_constraint () -> graphical_id (0));
-  init (IS_INTERSECTION, "is-intersection",
-        fixed (3) -> returns_constraint () -> graphical_id (0));
-  init (ON_CURVE, "on-curve",
-        options (2, 1, BIFORM) -> returns_constraint () ->
-        graphical_id (0) -> numeric (1));
-  init (ON_TEXT_BORDER, "on-text-border",
-        fixed (2) -> returns_constraint () -> graphical_id (0));
-  init (ON_GRID, "on-grid",
-        fixed (2) -> returns_constraint () -> graphical_id (0));
 
   init (CANVAS, "canvas", fixed (6, 1, BIFORM) -> accessible (1));
   init (ORNAMENT, "ornament", fixed (1) -> accessible (0));

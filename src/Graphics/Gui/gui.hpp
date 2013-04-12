@@ -24,7 +24,6 @@
 
 struct font;
 class widget;
-typedef unsigned int color;
 
 /******************************************************************************
 * Main routines

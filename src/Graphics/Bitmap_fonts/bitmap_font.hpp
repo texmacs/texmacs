@@ -16,7 +16,6 @@
 RESOURCE(font_metric);
 RESOURCE(font_glyphs);
 
-typedef int SI;
 typedef unsigned char QN;
 
 struct metric_struct {

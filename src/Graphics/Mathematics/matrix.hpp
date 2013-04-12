@@ -214,6 +214,27 @@ operator * (matrix<T> m, array<T> v) {
   return prod;
 }
 
+TMPL array<T>
+projective_apply (matrix<T> m, array<T> v) {
+  int n= NR (m);
+  ASSERT (NC (m) == n && N(v) + 1 == n, "dimensions don't match");
+  array<T> pv= copy (v);
+  pv << T (1);
+  array<T> pr= m * pv;
+  array<T> r (n);
+  for (int i=0; i<n; i++)
+    r[i]= pr[i] / pr[n];
+  return r;
+}
+
+TMPL array<array<T> >
+projective_apply (matrix<T> m, array<array<T> > v) {
+  array<array<T> > r (N(v));
+  for (int i=0; i<N(v); i++)
+    r[i]= projective_apply (m, v[i]);
+  return r;
+}
+
 #undef TMPL
 #undef BINARY_TMPL
 #undef R

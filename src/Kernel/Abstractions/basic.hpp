@@ -43,6 +43,9 @@ typedef __int64 DI;
 typedef long long int DI;
 #endif
 typedef void* pointer;
+typedef unsigned int color;
+#define MAX_SI 0x7fffffff
+#define MIN_SI 0x80000000
 
 /******************************************************************************
 * debugging

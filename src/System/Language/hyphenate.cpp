@@ -18,7 +18,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef int SI;
 #define MAX_SEARCH 10
 #define MAX_BUFFER_SIZE 256
 

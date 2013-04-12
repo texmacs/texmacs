@@ -14,8 +14,6 @@
 #include "url.hpp"
 #include "rectangles.hpp"
 
-typedef int SI;
-typedef unsigned int color;
 class renderer_rep;
 typedef renderer_rep* renderer;
 

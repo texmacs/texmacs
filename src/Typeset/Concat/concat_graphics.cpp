@@ -467,3 +467,74 @@ concater_rep::typeset_graphical (array<box>& bs, tree t, path ip) {
     if (the_drd->get_type (t[i]) != TYPE_CONSTRAINT && !is_atomic (t[i]))
       bs << typeset_as_atomic (env, t[i], descend (ip, i));
 }
+
+/******************************************************************************
+* 3D graphics
+******************************************************************************/
+
+static point
+as_point_3d (tree t) {
+  if (is_func (t, _POINT, 3) && is_point (t)) return as_point (t);
+  else return point ();
+}
+
+static triangle
+as_triangle_3d (tree t, color& col) {
+  if (is_func (t, TRIANGLE_3D, 4)) {
+    point p1= as_point_3d (t[0]);
+    point p2= as_point_3d (t[1]);
+    point p3= as_point_3d (t[2]);
+    if (N(p1) == 0 || N(p2) == 0 || N(p3) == 0) return triangle ();
+    col= named_color (as_string (t[3]));
+    return triangle (p1, p2, p3);
+  }
+  else return triangle ();
+}
+
+static spacial
+as_spacial (tree t) {
+  if (is_func (t, TRANSFORM_3D, 2)) {
+    spacial obj= as_spacial (t[0]);
+    if (is_nil (obj) || N(t) != 17) return spacial ();
+    matrix<double> m (0.0, 4, 4);
+    for (int i=0; i<4; i++)
+      for (int j=0; j<4; j++)
+        m (i, j)= as_double (t[4*i+j+1]);
+    return transformed (obj, m);
+  }
+  else if (is_func (t, OBJECT_3D)) {
+    array<triangle> ts;
+    array<color> cs;
+    for (int i=0; i<N(t); i++) {
+      color col;
+      triangle tri= as_triangle_3d (t[i], col);
+      if (N(tri) == 0) return spacial ();
+      ts << tri;
+      cs << col;
+    }
+    return triangulated (ts, cs);
+  }
+  else if (is_func (t, TRIANGLE_3D, 4)) {
+    color col;
+    triangle tri= as_triangle_3d (t, col);
+    if (N(tri) == 0) return spacial ();
+    array<triangle> ts;
+    array<color> cs;
+    ts << tri;
+    cs << col;
+    return triangulated (ts, cs);
+  }
+  else return spacial ();
+}
+
+void
+concater_rep::typeset_graphics_3d (tree t, path ip) {
+BEGIN_MAGNIFY
+  tree u= env->exec (t);
+  spacial obj= as_spacial (u);
+  if (is_nil (obj))
+    typeset_dynamic (tree (ERROR, "bad spacial object"), ip);
+  else
+    print (spacial_box (ip, obj));
+END_MAGNIFY
+}

@@ -276,6 +276,11 @@ renderer_rep::draw_triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3) {
 }
 
 void
+renderer_rep::draw_spacial (spacial obj) {
+  obj->draw (this);
+}
+
+void
 renderer_rep::set_brush (brush b) {
   set_color (b->c);
 }

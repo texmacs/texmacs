@@ -13,7 +13,6 @@
 #define PENCIL_H
 #include "tree.hpp"
 
-typedef unsigned int color;
 extern int std_shrinkf;
 #define PIXEL 256
 

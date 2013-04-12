@@ -719,6 +719,11 @@ concater_rep::typeset (tree t, path ip) {
   case IMAGE:
     typeset_image (t, ip);
     break;
+  case TRANSFORM_3D:
+  case OBJECT_3D:
+  case TRIANGLE_3D:
+    typeset_graphics_3d (t, ip);
+    break;
 
   case CANVAS:
     typeset_canvas (t, ip);

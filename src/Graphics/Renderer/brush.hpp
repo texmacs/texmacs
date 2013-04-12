@@ -13,7 +13,6 @@
 #define BRUSH_H
 #include "tree.hpp"
 
-typedef unsigned int color;
 enum brush_kind { brush_none, brush_color, brush_pattern };
 
 class brush_rep: concrete_struct {

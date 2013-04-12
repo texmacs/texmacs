@@ -23,9 +23,6 @@
 #include "frame.hpp"
 #include "grid.hpp"
 
-#define MAX_SI 0x7fffffff
-#define MIN_SI 0x80000000
-
 #define STD_BOX       0
 #define STACK_BOX     1
 #define CONTROL_BOX   2

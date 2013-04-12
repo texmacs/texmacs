@@ -40,6 +40,7 @@ template<class T> class array {
   inline array (int n=0): rep (tm_new<array_rep<T> > (n)) {}
   array (T *a, int n);
   array (T x1, T x2);
+  array (T x1, T x2, T x3);
   inline T& operator [] (int i) { return rep->a[i]; }
   operator tree (); // defined in tree.hpp
 };

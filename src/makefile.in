@@ -151,7 +151,7 @@ system_incl   := $(call incl_flags,System System/Boot System/Classes \
   Scheme \
   Graphics/Bitmap_fonts Graphics/Fonts Graphics/Gui Graphics/Mathematics \
   Graphics/Renderer Graphics/Handwriting Graphics/Types Graphics/Pictures \
-  Plugins)
+  Graphics/Spacial Plugins)
 kernel_incl   := $(system_incl)
 data_incl     := $(system_incl)
 graphics_incl := $(system_incl)
@@ -206,7 +206,7 @@ deps_incl = $(call incl_flags,System System/Boot System/Classes System/Files \
   Plugins Style/Environment Style/Evaluate Style/Memorizer \
   Typeset Edit Texmacs Scheme Graphics/Bitmap_fonts Graphics/Fonts \
   Graphics/Gui Graphics/Mathematics Graphics/Renderer Graphics/Pictures \
-  Graphics/Handwriting Graphics/Types)
+  Graphics/Handwriting Graphics/Types Graphics/Spacial)
 
 deps_flags = $(deps_incl) \
  $(CPPFLAGS) $(CXXAXEL) $(CXXCAIRO) $(CXXIMLIB2) $(CXXSQLITE3) $(CXXFREETYPE) \
