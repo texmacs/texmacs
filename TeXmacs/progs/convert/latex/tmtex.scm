@@ -1534,9 +1534,14 @@
         ((symbol? l) l)
         (else (map escape-braces l))))
 
+(define (escape-backslashes l)
+  (cond ((string? l) (string-replace l "\\" "{\\textbackslash}"))
+        ((symbol? l) l)
+        (else (map escape-backslashes l))))
+
 (define (tmtex-verbatim s l)
   (if (func? (car l) 'document)
-      (list '!verbatim (tmtex-tt (escape-braces (car l))))
+      (list '!verbatim (tmtex-tt (escape-backslashes (escape-braces (car l)))))
       (list 'tmtexttt (tmtex (car l)))))
 
 (define (tmtex-verbatim* s l)
@@ -1549,6 +1554,7 @@
 
 (define (tmtex-code-block s l)
   (set! l (escape-braces l))
+  (set! l (escape-backslashes l))
   `((!begin "tmcode") ,(tmtex-verbatim* "" l)))
 
 (define (tmtex-number-renderer l)
