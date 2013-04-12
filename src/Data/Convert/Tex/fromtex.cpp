@@ -1367,6 +1367,10 @@ latex_command_to_tree (tree t) {
       return tree (VSPACE, l2e (t[1]));
     return tree (VSPACE, t2e (t[1]));
   }
+  if (is_tuple (t, "\\tmcodeinline", 1) || is_tuple (t, "\\tmverbatim", 1))
+    return compound ("verbatim", v2e (t[1]));
+  if (is_tuple (t, "\\tmcodeinline*", 2))
+    return compound (string_arg (t[1]), v2e (t[2]));
   if (is_tuple (t, "\\label", 1)) return tree (LABEL, t2e (t[1]));
   if (is_tuple (t, "\\ref", 1)) return tree (REFERENCE, t2e (t[1]));
   if (is_tuple (t, "\\newcounter", 1))
