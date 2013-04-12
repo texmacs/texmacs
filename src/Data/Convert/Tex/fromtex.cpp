@@ -2175,6 +2175,7 @@ finalize_layout (tree t) {
   tree u (t, n);
   for (i=0; i<n; i++) u[i]= finalize_layout (t[i]);
   if (is_func (u, CONCAT)) {
+    string lang= "verbatim";
     bool spc_flag =false;
     bool item_flag=false;
     tree r (CONCAT);
@@ -2212,6 +2213,18 @@ finalize_layout (tree t) {
           (v[0] == "algorithm"   || v[0] == "algorithm*" ||
            v[0] == "algorithm2e" || v[0] == "algorithm2e*" )) {
 	r << tree (END, "algorithm") << tree (NEW_LINE);
+	continue;
+      }
+
+      if (is_func (v, BEGIN) && (v[0] == "tmcode" || v[0] == "tmcode*")) {
+        if (is_func (v, BEGIN, 2)) lang= string_arg (v[1]);
+        else lang= "verbatim";
+	r << tree (BEGIN, lang*"-code");
+	continue;
+      }
+
+      if (is_func (v, END) && v[0] == "tmcode") {
+	r << tree (END, lang*"-code");
 	continue;
       }
 
