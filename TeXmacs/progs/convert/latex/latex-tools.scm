@@ -146,8 +146,13 @@
     (let* ((body  (and (func? (car t) '!begin)
 		       (logic-ref latex-texmacs-environment% (cadar t))))
 	   (arity (and (func? (car t) '!begin)
-		       (logic-ref latex-texmacs-env-arity% (cadar t)))))
-      (when (and body (== (length (cddar t)) arity))
+		       (logic-ref latex-texmacs-env-arity% (cadar t))))
+           (option (and
+                     (list>0? (car t)) (== (caar t) '!begin)
+                     (logic-ref latex-texmacs-option% (cadar t))
+                     (not (and (list>0? (cdar t)) (list>0? (cddar t))
+                               (func? (caddar t) '!option))))))
+      (when (and body (== (length (cddar t)) (- arity (if option 1 0))))
 	(ahash-set! latex-env-table (cadar t)
 		    (list arity (latex-expand-def body)))
 	(latex-macro-defs-sub body)))
@@ -204,18 +209,24 @@
                    arity option "{" body "}\n")))
 
 (define (latex-env-def name arity body)
-  (set! body (serialize-latex (latex-expand-def body)))
-  (set! body (string-replace body "\n\n" "*/!!/*"))
-  (set! body (string-replace body "\n  " " "))
-  (set! body (string-replace body "\n" " "))
-  (set! body (string-replace body "   #-#-# " "}{"))
-  (set! body (string-replace body "#-#-# " "}{"))
-  (set! body (string-replace body "#-#-#" "}{"))
-  (set! body (string-replace body "*/!!/*" "\n\n"))
-  (string-append "\\newenvironment{" name "}"
-		 (if (= arity 0) ""
-		     (string-append "[" (number->string arity) "]"))
-		 "{" body "}\n"))
+  (with option ""
+    (if (and (list>1? body) (list? (car body)) (== (caar body) '!option))
+      (begin
+        (set! option (serialize-latex (latex-expand-def (cadar body))))
+        (set! option (string-append "[" option "]"))
+        (set! body (cadr body))))
+    (set! body (serialize-latex (latex-expand-def body)))
+    (set! body (string-replace body "\n\n" "*/!!/*"))
+    (set! body (string-replace body "\n  " " "))
+    (set! body (string-replace body "\n" " "))
+    (set! body (string-replace body "   #-#-# " "}{"))
+    (set! body (string-replace body "#-#-# " "}{"))
+    (set! body (string-replace body "#-#-#" "}{"))
+    (set! body (string-replace body "*/!!/*" "\n\n"))
+    (set! arity (if (= arity 0) ""
+                  (string-append "[" (number->string arity) "]")))
+    (string-append "\\newenvironment{" name "}"
+		   arity option "{" body "}\n")))
 
 (tm-define (latex-serialize-preamble t)
   (:synopsis "Serialize a LaTeX preamble @t")
