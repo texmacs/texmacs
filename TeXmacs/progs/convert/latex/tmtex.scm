@@ -1535,7 +1535,7 @@
         (else (map escape-braces l))))
 
 (define (escape-backslashes l)
-  (cond ((string? l) (string-replace l "\\" "{\\textbackslash}"))
+  (cond ((string? l) (string-replace l "\\" "\\textbackslash "))
         ((symbol? l) l)
         (else (map escape-backslashes l))))
 
