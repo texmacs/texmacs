@@ -1550,7 +1550,8 @@
       (list 'tmtexttt (tmtex (car l)))))
 
 (define (tmtex-code-inline s l)
-  `(tmcodeinline ,(tmtex (car l))))
+  (with lang (if (== s "verbatim") '() `((!option ,s)))
+    `(tmcodeinline ,@lang ,(tmtex (car l)))))
 
 (define (tmtex-code-block s l)
   (set! l (escape-braces l))
@@ -2071,7 +2072,7 @@
 	convention quote-env quotation verse solution question answer
 	acknowledgments)
    (,tmtex-std-env 1))
-  ((:or verbatim code) (,tmtex-verbatim 1))
+  (code (,tmtex-verbatim 1))
   (center (,tmtex-std-env 1))
   (indent (,tmtex-indent 1))
   ((:or description description-compact description-aligned
@@ -2125,7 +2126,7 @@
   (eq-number (,tmtex-default -1))
 
   ((:or cpp-code mmx-code) (,tmtex-code-block 1))
-  ((:or mmx cpp)           (,tmtex-code-inline 1))
+  ((:or mmx cpp scm verbatim shell) (,tmtex-code-inline 1))
 
   (the-index (,tmtex-theindex -1))
   (glossary (,tmtex-glossary 1))

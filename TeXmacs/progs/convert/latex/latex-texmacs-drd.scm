@@ -173,7 +173,6 @@
   (pari "{\\sc Pari}"))
 
 (logic-table latex-texmacs-1%
-  (tmcodeinline (!group (ttfamily) (!group 1)))
   (tmrsub (ensuremath (!append "_{" (textrm 1) "}")))
   (tmrsup (textsuperscript 1))
   (tmtextrm (!group (rmfamily) (!group 1)))
@@ -216,7 +215,7 @@
   (tmmisc (thanks (!append (textit (!translate "Misc:")) " " 1))))
 
 (logic-table latex-texmacs-1*%
-  )
+  (tmcodeinline ((!option "") (!group (ttfamily) (!group 2)))))
 
 (logic-table latex-texmacs-2%
   (tmhlink (!group "\\color{blue} " 1))
