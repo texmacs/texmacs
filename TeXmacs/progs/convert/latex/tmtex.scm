@@ -1556,7 +1556,9 @@
 (define (tmtex-code-block s l)
   (set! l (escape-braces l))
   (set! l (escape-backslashes l))
-  `((!begin "tmcode") ,(tmtex-verbatim* "" l)))
+  (set! s (car (string-decompose s "-")))
+  (with lang (if (== s "verbatim") '() `((!option ,s)))
+    `((!begin "tmcode" ,@lang) ,(tmtex-verbatim* "" l))))
 
 (define (tmtex-number-renderer l)
   (let ((r (cond ((string? l) l)
@@ -2125,7 +2127,8 @@
   ((:or eqnarray eqnarray* leqnarray*) (,tmtex-eqnarray 1))
   (eq-number (,tmtex-default -1))
 
-  ((:or cpp-code mmx-code) (,tmtex-code-block 1))
+  ((:or cpp-code mmx-code scm-code shell-code verbatim-code)
+   (,tmtex-code-block 1))
   ((:or mmx cpp scm verbatim shell) (,tmtex-code-inline 1))
 
   (the-index (,tmtex-theindex -1))

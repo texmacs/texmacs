@@ -429,6 +429,7 @@
 (logic-table latex-needs%
   (!verbatim "alltt")
   (!verbatim* "alltt")
+  (tmcode "alltt")
 
   (geometry "geometry")
   (epsfig "epsfig")

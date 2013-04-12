@@ -272,9 +272,10 @@
 	    ---
             (!end "flushleft")))
   ("tmcode"
-   (!append (begin "alltt")
+   ((!option "")
+    (!append (begin "alltt")
 	    ---
-            (end "alltt")))
+             (end "alltt"))))
   ("right-aligned"
    (!append (!begin "flushright")
 	    ---
@@ -304,8 +305,8 @@
 
 (logic-table latex-texmacs-env-arity%
   ("proof" 0)
-  ("tmcode" 0)
   ("proof*" 1)
+  ("tmcode" 1)
   ("tmparmod" 3)
   ("tmparsep" 1)
   ("tmindent" 0)
@@ -313,6 +314,9 @@
   ("elsequation" 0)
   ("elsequation*" 0)
   ("theglossary" 1))
+
+(logic-table latex-texmacs-option%
+  ("tmcode" #t))
 
 (logic-group latex-texmacs-tag%
   begin-proof begin-proof* begin-tmparmod begin-tmparsep begin-tmindent
