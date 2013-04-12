@@ -134,8 +134,12 @@
     (let* ((body  (logic-ref latex-texmacs-macro% (car t)
 			   latex-style-hyp latex-amsthm-hyp))
 	   (arity (logic-ref latex-texmacs-arity% (car t)
-			   latex-style-hyp latex-amsthm-hyp)))
-      (when (and body (== (length t) (+ arity 1)))
+			   latex-style-hyp latex-amsthm-hyp))
+           (option (and
+                     (logic-ref latex-texmacs-option% (car t))
+                     (and (list>0? (cdr t)) (list? (cadr t))
+                          (!= (caadr t) '!option)))))
+      (when (and body (== (length t) (+ arity (if option 0 1))))
 	(ahash-set! latex-macro-table (car t)
 		    (list arity (latex-expand-def body)))
 	(latex-macro-defs-sub body)))
@@ -184,14 +188,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (latex-macro-def name arity body)
-  (set! body (serialize-latex (latex-expand-def body)))
-  (set! body (string-replace body "\n\n" "*/!!/*"))
-  (set! body (string-replace body "\n" " "))
-  (set! body (string-replace body "*/!!/*" "\n\n"))
-  (string-append "\\newcommand{\\" (symbol->string name) "}"
-		 (if (= arity 0) ""
-		     (string-append "[" (number->string arity) "]"))
-		 "{" body "}\n"))
+  (with option ""
+    (if (and (list>1? body) (list? (car body)) (== (caar body) '!option))
+      (begin
+        (set! option (serialize-latex (latex-expand-def (cadar body))))
+        (set! option (string-append "[" option "]"))
+        (set! body (cadr body))))
+    (set! body (serialize-latex (latex-expand-def body)))
+    (set! body (string-replace body "\n\n" "*/!!/*"))
+    (set! body (string-replace body "\n" " "))
+    (set! body (string-replace body "*/!!/*" "\n\n"))
+    (set! arity (if (= arity 0) ""
+                  (string-append "[" (number->string arity) "]")))
+    (string-append "\\newcommand{\\" (symbol->string name) "}"
+                   arity option "{" body "}\n")))
 
 (define (latex-env-def name arity body)
   (set! body (serialize-latex (latex-expand-def body)))

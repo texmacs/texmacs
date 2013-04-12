@@ -215,6 +215,9 @@
   (tmnote (thanks (!append (textit (!translate "Note:")) " " 1)))
   (tmmisc (thanks (!append (textit (!translate "Misc:")) " " 1))))
 
+(logic-table latex-texmacs-1*%
+  )
+
 (logic-table latex-texmacs-2%
   (tmhlink (!group "\\color{blue} " 1))
   (tmaction (!group "\\color{blue} " 1))
@@ -234,6 +237,8 @@
   ((latex-texmacs-arity% 'x 0) (latex-texmacs-0% 'x 'body))
   ((latex-texmacs-macro% 'x 'body) (latex-texmacs-1% 'x 'body))
   ((latex-texmacs-arity% 'x 1) (latex-texmacs-1% 'x 'body))
+  ((latex-texmacs-macro% 'x 'body) (latex-texmacs-1*% 'x 'body))
+  ((latex-texmacs-arity% 'x 2) (latex-texmacs-1*% 'x 'body))
   ((latex-texmacs-macro% 'x 'body) (latex-texmacs-2% 'x 'body))
   ((latex-texmacs-arity% 'x 2) (latex-texmacs-2% 'x 'body))
   ((latex-texmacs-macro% 'x 'body) (latex-texmacs-3% 'x 'body))
@@ -243,9 +248,12 @@
   ;;;
   ((latex-texmacs% 'x) (latex-texmacs-0% 'x 'body))
   ((latex-texmacs% 'x) (latex-texmacs-1% 'x 'body))
+  ((latex-texmacs% 'x) (latex-texmacs-1*% 'x 'body))
   ((latex-texmacs% 'x) (latex-texmacs-2% 'x 'body))
   ((latex-texmacs% 'x) (latex-texmacs-3% 'x 'body))
-  ((latex-texmacs% 'x) (latex-texmacs-4% 'x 'body)))
+  ((latex-texmacs% 'x) (latex-texmacs-4% 'x 'body))
+
+  ((latex-texmacs-option% 'x #t) (latex-texmacs-1*% 'x 'body)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra TeXmacs environments
