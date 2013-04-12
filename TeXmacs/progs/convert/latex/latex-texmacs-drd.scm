@@ -237,7 +237,7 @@
   ((latex-texmacs-macro% 'x 'body) (latex-texmacs-1% 'x 'body))
   ((latex-texmacs-arity% 'x 1) (latex-texmacs-1% 'x 'body))
   ((latex-texmacs-macro% 'x 'body) (latex-texmacs-1*% 'x 'body))
-  ((latex-texmacs-arity% 'x 2) (latex-texmacs-1*% 'x 'body))
+  ((latex-texmacs-arity% 'x 1) (latex-texmacs-1*% 'x 'body))
   ((latex-texmacs-macro% 'x 'body) (latex-texmacs-2% 'x 'body))
   ((latex-texmacs-arity% 'x 2) (latex-texmacs-2% 'x 'body))
   ((latex-texmacs-macro% 'x 'body) (latex-texmacs-3% 'x 'body))
@@ -252,7 +252,8 @@
   ((latex-texmacs% 'x) (latex-texmacs-3% 'x 'body))
   ((latex-texmacs% 'x) (latex-texmacs-4% 'x 'body))
 
-  ((latex-texmacs-option% 'x #t) (latex-texmacs-1*% 'x 'body)))
+  ((latex-texmacs-option% 'x #t) (latex-texmacs-1*% 'x 'body))
+  ((latex-optional-arg% 'x) (latex-texmacs-option% 'x 'body)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra TeXmacs environments
@@ -306,7 +307,7 @@
 (logic-table latex-texmacs-env-arity%
   ("proof" 0)
   ("proof*" 1)
-  ("tmcode" 1)
+  ("tmcode" 0)
   ("tmparmod" 3)
   ("tmparsep" 1)
   ("tmindent" 0)
