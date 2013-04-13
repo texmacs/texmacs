@@ -203,6 +203,73 @@
                (else "default"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 3D transformations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (stree->number x)
+  (string->number x))
+
+(define (stree->vector v)
+  (map stree->number (cdr v)))
+
+(define (stree->matrix m)
+  (map stree->vector (cdr m)))
+
+(define (number->stree x)
+  (number->string x))
+
+(define (vector->stree v)
+  (cons 'tuple (map number->stree v)))
+
+(define (matrix->stree m)
+  (cons 'tuple (map vector->stree m)))
+
+(tm-define (graphics-transformation)
+  (stree->matrix (tree->stree (get-env-tree "gr-transformation"))))
+
+(tm-define (graphics-set-transformation m)
+  (graphics-set-property "gr-transformation" (matrix->stree m)))
+
+(tm-define (xz-rotation a)
+  (list (list (cos a) 0.0 (sin a) 0.0)
+        (list 0.0 1.0 0.0 0.0)
+        (list (- (sin a)) 0.0 (cos a) 0.0)
+        (list 0.0 0.0 0.0 1.0)))
+
+(define (yz-rotation a)
+  (list (list 1.0 0.0 0.0 0.0)
+        (list 0.0 (cos a) (sin a) 0.0)
+        (list 0.0 (- (sin a)) (cos a) 0.0)
+        (list 0.0 0.0 0.0 1.0)))
+
+(define (matrix-columns m)
+  (if (null? m) 0 (length (car m))))
+
+(define (matrix-column m i)
+  (map (cut list-ref <> i) m))
+
+(define (matrix-transpose m)
+  (map (cut matrix-column m <>) (.. 0 (matrix-columns m))))
+
+(define (vector-vector-inner v w)
+  (if (or (null? v) (null? w)) 0.0
+      (+ (* (car v) (car w)) (vector-vector-inner (cdr v) (cdr w)))))
+
+(define (vector-matrix-inner v m)
+  (map (cut vector-vector-inner v <>) m))
+
+(tm-define (matrix-multiply m1 m2)
+  (map (cut vector-matrix-inner <> (matrix-transpose m2)) m1))
+
+(tm-define (graphics-rotate-xz a)
+  (with m (graphics-transformation)
+    (graphics-set-transformation (matrix-multiply (xz-rotation a) m))))
+
+(tm-define (graphics-rotate-yz a)
+  (with m (graphics-transformation)
+    (graphics-set-transformation (matrix-multiply (yz-rotation a) m))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Grids
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

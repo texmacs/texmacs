@@ -122,7 +122,11 @@
   ("backspace" (graphics-kbd-remove #f))
   ("delete" (graphics-kbd-remove #t))
   ("C-g" (graphics-toggle-grid #f))
-  ("C-G" (graphics-toggle-grid #t)))
+  ("C-G" (graphics-toggle-grid #t))
+  ("C-left" (graphics-rotate-xz -0.1))
+  ("C-right" (graphics-rotate-xz 0.1))
+  ("C-up" (graphics-rotate-yz 0.1))
+  ("C-down" (graphics-rotate-yz -0.1)))
 
 (define graphics-keys
   '("+" "-" "1" "2" "3" "4" "5" "6" "7" "8" "9"
