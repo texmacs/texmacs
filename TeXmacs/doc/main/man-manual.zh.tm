@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.17>
+<TeXmacs|1.0.7.19>
 
 <style|tmdoc>
 
@@ -16,21 +16,21 @@
 
     <branch|\<#94FE\>\<#63A5\>\<#548C\>\<#5185\>\<#5BB9\>\<#81EA\>\<#52A8\>\<#751F\>\<#6210\>|links/man-links.zh.tm>
 
-    <branch|\<#5185\>\<#7F6E\>\<#4F5C\>\<#56FE\>\<#5DE5\>\<#5177\>|graphics/man-graphics.zh.tm>
+    <branch|\<#5185\>\<#7F6E\>\<#4F5C\>\<#56FE\>\<#5DE5\>\<#5177\>|graphics/man-graphics.en.tm>
 
-    <branch|\<#9AD8\>\<#7EA7\>\<#5E03\>\<#5C40\>\<#7279\>\<#6027\>|layout/man-layout.zh.tm>
+    <branch|\<#9AD8\>\<#7EA7\>\<#5E03\>\<#5C40\>\<#7279\>\<#6027\>|layout/man-layout.en.tm>
 
     <branch|\<#7F16\>\<#8F91\>\<#5DE5\>\<#5177\>|editing/man-editing-tools.zh.tm>
 
-    <branch|\<#5E7B\>\<#706F\>\<#7247\>|beamer/man-beamer.zh.tm>
+    <branch|\<#5E7B\>\<#706F\>\<#7247\>|beamer/man-beamer.en.tm>
 
-    <branch|<TeXmacs> \<#4EA4\>\<#4E92\>\<#5F0F\>\<#754C\>\<#9762\>|interface/man-itf.zh.tm>
+    <branch|<TeXmacs> \<#4EA4\>\<#4E92\>\<#5F0F\>\<#754C\>\<#9762\>|interface/man-itf.en.tm>
 
     <branch|\<#64B0\>\<#5199\>\<#6837\>\<#5F0F\>|../devel/style/style.zh.tm>
 
     <branch|\<#5B9A\>\<#5236\> <TeXmacs>|scheme/man-scheme.zh.tm>
 
-    <branch|<TeXmacs> \<#63D2\>\<#4EF6\>\<#7CFB\>\<#7EDF\>|../devel/plugin/plugins.zh.tm>
+    <branch|<TeXmacs> \<#63D2\>\<#4EF6\>\<#7CFB\>\<#7EDF\>|../devel/plugin/plugins.en.tm>
   </traverse>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
