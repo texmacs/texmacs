@@ -190,6 +190,7 @@ extern string GR_GRID;
 extern string GR_GRID_ASPECT;
 extern string GR_EDIT_GRID;
 extern string GR_EDIT_GRID_ASPECT;
+extern string GR_TRANSFORMATION;
 
 extern string GR_MAGNIFY;
 extern string GR_OPACITY;

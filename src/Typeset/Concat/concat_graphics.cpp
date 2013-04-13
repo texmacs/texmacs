@@ -542,6 +542,7 @@ BEGIN_MAGNIFY
   vt (3, 3)= 1.0;
   vt (0, 3)= o[0];
   vt (1, 3)= o[1];
+  vt= vt * as_matrix<double> (env->read (GR_TRANSFORMATION));
   tree u= env->exec (t);
   spacial obj= as_spacial (u);
   if (is_nil (obj))

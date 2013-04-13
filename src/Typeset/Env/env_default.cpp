@@ -32,6 +32,12 @@ initialize_default_env () {
 		       tuple ("1", "#c0c0c0"),
 		       tuple ("10", "#e0e0ff"));
 
+  tree gr_transf (TUPLE,
+                  tuple ("1.0", "0.0", "0.0", "0.0"),
+                  tuple ("0.0", "1.0", "0.0", "0.0"),
+                  tuple ("0.0", "0.0", "1.0", "0.0"),
+                  tuple ("0.0", "0.0", "0.0", "1.0"));         
+
   env (DPI)              = "600";       // resolution in dots per inch
   env (ZOOM_FACTOR)      = "1";         // zoom factor on screen
   env (PREAMBLE)         = "false";     // preamble mode ?
@@ -203,6 +209,7 @@ initialize_default_env () {
   env (GR_GRID_ASPECT)      = gr_grid_aspect; // grid aspect
   env (GR_EDIT_GRID)        = gr_edit_grid;   // edit grid
   env (GR_EDIT_GRID_ASPECT) = gr_grid_aspect; // edit grid (subdivisions)
+  env (GR_TRANSFORMATION)   = gr_transf;      // 3D transformation
 
   env (GR_MAGNIFY)       = "default";   // magnify of new objects
   env (GR_OPACITY)       = "default";   // opacity of new objects
