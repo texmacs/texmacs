@@ -530,11 +530,23 @@ as_spacial (tree t) {
 void
 concater_rep::typeset_graphics_3d (tree t, path ip) {
 BEGIN_MAGNIFY
+  point o = env->fr (point (0.0, 0.0));
+  point ux= env->fr (point (1.0, 0.0));
+  point uy= env->fr (point (0.0, 1.0));
+  matrix<double> vt (0.0, 4, 4);
+  vt (0, 0)= ux[0] - o[0];
+  vt (0, 1)= ux[1] - o[1];
+  vt (1, 0)= uy[0] - o[0];
+  vt (1, 1)= uy[1] - o[1];
+  vt (2, 2)= 1.0;
+  vt (3, 3)= 1.0;
+  vt (0, 3)= o[0];
+  vt (1, 3)= o[1];
   tree u= env->exec (t);
   spacial obj= as_spacial (u);
   if (is_nil (obj))
     typeset_dynamic (tree (ERROR, "bad spacial object"), ip);
   else
-    print (spacial_box (ip, obj));
+    print (spacial_box (ip, transformed (obj, vt)));
 END_MAGNIFY
 }

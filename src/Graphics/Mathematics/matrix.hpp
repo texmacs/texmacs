@@ -196,7 +196,9 @@ TMPL inline vector<T>
 operator * (matrix<T> m, vector<T> v) {
   int i, j, rows= NR (m), cols= NC (m);
   ASSERT (N (v) == cols, "dimensions don't match");
-  vector<T> prod (T(0), rows);
+  vector<T> prod (rows);
+  for (j=0; j<cols; j++)
+    prod[j]= T(0);
   for (i=0; i<rows; i++)
     for (j=0; j<cols; j++)
       prod [i] += m (i, j) * v[j];
@@ -207,7 +209,9 @@ TMPL inline array<T>
 operator * (matrix<T> m, array<T> v) {
   int i, j, rows= NR (m), cols= NC (m);
   ASSERT (N (v) == cols, "dimensions don't match");
-  array<T> prod (T(0), rows);
+  array<T> prod (rows);
+  for (j=0; j<cols; j++)
+    prod[j]= T(0);
   for (i=0; i<rows; i++)
     for (j=0; j<cols; j++)
       prod [i] += m (i, j) * v[j];
@@ -219,11 +223,11 @@ projective_apply (matrix<T> m, array<T> v) {
   int n= NR (m);
   ASSERT (NC (m) == n && N(v) + 1 == n, "dimensions don't match");
   array<T> pv= copy (v);
-  pv << T (1);
+  pv << T (1.0);
   array<T> pr= m * pv;
-  array<T> r (n);
-  for (int i=0; i<n; i++)
-    r[i]= pr[i] / pr[n];
+  array<T> r (n-1);
+  for (int i=0; i<n-1; i++)
+    r[i]= pr[i] / pr[n-1];
   return r;
 }
 
