@@ -18,7 +18,7 @@
 
     <branch|\<#5185\>\<#7F6E\>\<#4F5C\>\<#56FE\>\<#5DE5\>\<#5177\>|graphics/man-graphics.en.tm>
 
-    <branch|\<#9AD8\>\<#7EA7\>\<#5E03\>\<#5C40\>\<#7279\>\<#6027\>|layout/man-layout.en.tm>
+    <branch|\<#8FDB\>\<#9636\>\<#5E03\>\<#5C40\>\<#7279\>\<#6027\>|layout/man-layout.zh.tm>
 
     <branch|\<#7F16\>\<#8F91\>\<#5DE5\>\<#5177\>|editing/man-editing-tools.zh.tm>
 
