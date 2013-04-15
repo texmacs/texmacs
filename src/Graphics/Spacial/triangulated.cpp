@@ -165,7 +165,7 @@ specular_light (array<triangle> ts, array<color> cs,
     if (inner (nv, nv) > 0) lv2= reflect (lv2, nv);
     double npr= norm (lv1) * norm (lv2);
     double a  = (npr == 0? 0.0: max (0.0, inner (lv1, lv2) / npr));
-    a= a * a * a * a * a;
+    a= a * a; a= a * a; a= a * a;
     true_color acol (col.r, col.g, col.b, col.a * a);
     true_color ocol (cs[i]);
     true_color ncol= source_over (ocol, acol);

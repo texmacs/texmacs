@@ -350,6 +350,33 @@ qt_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
   painter->fillPath (pp, br);
 }
 
+void
+qt_renderer_rep::draw_triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3) {
+  array<SI> x (3), y (3);
+  x[0]= x1; y[0]= y1;
+  x[1]= x2; y[1]= y2;
+  x[2]= x3; y[2]= y3;
+
+  int i, n= N(x);
+  if ((N(y) != n) || (n<1)) return;
+  QPolygonF poly(n);
+  for (i=0; i<n; i++) {
+    SI xx= x[i], yy= y[i];
+    decode (xx, yy);
+    poly[i] = QPointF (xx, yy);
+  }
+  QBrush br= painter->brush ();
+  if (fg_brush->kind != brush_pattern)
+    // FIXME: is this really necessary?
+    // The brush should have been set at the moment of set_color or set_brush
+    br= QBrush (to_qcolor (cur_fg));
+  QPainterPath pp;
+  pp.addPolygon (poly);
+  pp.closeSubpath ();
+  pp.setFillRule (Qt::OddEvenFill);
+  painter->setRenderHints (QPainter::Antialiasing, false);
+  painter->fillPath (pp, br);
+}
 
 /******************************************************************************
 * Image rendering
