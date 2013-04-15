@@ -19,8 +19,8 @@ true_color
 mix (const true_color& c1, double a1, const true_color& c2, double a2) {
   double ta= a1 * c1.a + a2 * c2.a;
   if (ta <= 1.0e-10) return true_color (0.0, 0.0, 0.0, 0.0);
-  double R1= c1.r * c1.a, G1= c1.g * c1.a, B1= c1.b * c1.b;
-  double R2= c2.r * c2.a, G2= c2.g * c2.a, B2= c2.b * c2.b;
+  double R1= c1.r * c1.a, G1= c1.g * c1.a, B1= c1.b * c1.a;
+  double R2= c2.r * c2.a, G2= c2.g * c2.a, B2= c2.b * c2.a;
   double tR= a1 * R1 + a2 * R2;
   double tG= a1 * G1 + a2 * G2;
   double tB= a1 * B1 + a2 * B2;

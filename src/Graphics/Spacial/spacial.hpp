@@ -26,8 +26,8 @@ typedef array<point> triangle;
 
 enum spacial_kind {
   spacial_triangulated,
-  spacial_diffuse_light,
-  spacial_transformed
+  spacial_transformed,
+  spacial_enlightened
 };
 
 class spacial_rep;
@@ -45,12 +45,14 @@ public:
 
   virtual rectangle get_extents () = 0;
   virtual void draw (renderer ren) = 0;
-  virtual spacial transform (matrix<double> m) = 0;
+  virtual spacial transform (matrix<double> m);
+  virtual spacial enlighten (tree light);
 };
 
 ABSTRACT_NULL_CODE(spacial);
 
 spacial triangulated (array<triangle> ts, array<color> cs);
 spacial transformed (spacial obj, matrix<double> m);
+spacial enlightened (spacial obj, tree light);
 
 #endif // defined SPACIAL_H

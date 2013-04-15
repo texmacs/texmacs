@@ -495,12 +495,12 @@ static spacial
 as_spacial (tree t) {
   if (is_func (t, TRANSFORM_3D, 2)) {
     spacial obj= as_spacial (t[0]);
-    if (is_nil (obj) || N(t) != 17) return spacial ();
-    matrix<double> m (0.0, 4, 4);
-    for (int i=0; i<4; i++)
-      for (int j=0; j<4; j++)
-        m (i, j)= as_double (t[4*i+j+1]);
+    matrix<double> m= as_matrix<double> (t[1]);
     return transformed (obj, m);
+  }
+  else if (is_func (t, LIGHT_3D, 2)) {
+    spacial obj= as_spacial (t[0]);
+    return enlightened (obj, t[1]);
   }
   else if (is_func (t, OBJECT_3D)) {
     array<triangle> ts;

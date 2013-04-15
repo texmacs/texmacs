@@ -12,6 +12,7 @@
 #include "effect.hpp"
 #include "true_color.hpp"
 #include "gui.hpp"
+#include "matrix.hpp"
 
 /******************************************************************************
 * Default implementations of virtual routines
@@ -532,12 +533,15 @@ build_effect (tree t) {
     m[18]= 1-a + c.a * a;
     return color_matrix (eff, m);
   }
-  else if (is_func (t, EFF_COLOR_MATRIX, 21)) {
+  else if (is_func (t, EFF_COLOR_MATRIX, 2)) {
     effect eff = build_effect (t[0]);
-    array<double> m (20);
-    for (int i=0; i<20; i++)
-      m[i]= as_double (t[i+1]);
-    return color_matrix (eff, m);
+    matrix<double> m= as_matrix<double> (t[1]);
+    if (NR (m) != 4 && NC (m) != 5) return argument_effect (0);
+    array<double> v;
+    for (int i=0; i<4; i++)
+      for (int j=0; j<5; j++)
+        v << m (i, j);
+    return color_matrix (eff, v);
   }
   else if (is_func (t, EFF_MAKE_TRANSPARENT)) {
     effect eff= build_effect (t[0]);

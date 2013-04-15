@@ -621,14 +621,23 @@ init_std_drd () {
         fixed (2) -> returns_constraint () -> graphical_id (0));
 
   init (TRANSFORM_3D, "transform-3d",
-        repeat (1, 1, BIFORM) -> returns_graphical () ->
-        graphical (0) -> numeric (1));
+        fixed (1, 1, BIFORM) -> returns_graphical () ->
+        graphical (0));
   init (OBJECT_3D, "object-3d",
         repeat (1, 1) -> returns_graphical () ->
         graphical (0));
   init (TRIANGLE_3D, "triangle-3d",
         fixed (3, 1, BIFORM) -> returns_graphical () ->
         graphical (0) -> string_type (1));
+  init (LIGHT_3D, "light-3d",
+        fixed (1, 1, BIFORM) -> returns_graphical () ->
+        graphical (0));
+  init (LIGHT_DIFFUSE, "light-diffuse",
+        repeat (1, 1, BIFORM) ->
+        point_type (0));
+  init (LIGHT_SPECULAR, "light-specular",
+        repeat (2, 1, BIFORM) ->
+        point_type (0));
 
   init (EFF_MOVE, "eff-move",
         fixed (3, 0, DETAILED) -> returns_effect () ->
@@ -707,7 +716,7 @@ init_std_drd () {
         string_type (1) -> name (1, "color") ->
         numeric (2) -> name (2, "opacity"));
   init (EFF_COLOR_MATRIX, "eff-color-matrix",
-        repeat (1, 1, BIFORM) -> returns_effect () ->
+        fixed (1, 1, BIFORM) -> returns_effect () ->
         effect (0) -> name (0, "body") ->
 	numeric (1));
   init (EFF_MAKE_TRANSPARENT, "eff-make-transparent",

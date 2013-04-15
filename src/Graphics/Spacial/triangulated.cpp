@@ -12,6 +12,8 @@
 #include "spacial.hpp"
 #include "renderer.hpp"
 #include "merge_sort.hpp"
+#include "gui.hpp"
+#include "true_color.hpp"
 
 /******************************************************************************
 * The abstract spacial class
@@ -33,6 +35,7 @@ public:
   rectangle get_extents ();
   void draw (renderer ren);
   spacial transform (matrix<double> m);
+  spacial enlighten (tree light);
 };
 
 spacial
@@ -96,4 +99,65 @@ triangulated_rep::transform (matrix<double> m) {
   for (int i=0; i<N(ts); i++)
     ts2[i]= projective_apply (m, ts[i]);
   return triangulated (ts2, cs);  
+}
+
+/******************************************************************************
+* Light
+******************************************************************************/
+
+point
+cross (point p, point q) {
+  point r (3);
+  r[0]= p[1] * q[2] - p[2] * q[1];
+  r[1]= p[2] * q[0] - p[0] * q[2];
+  r[2]= p[0] * q[1] - p[1] * q[0];
+  return r;
+}
+
+point
+normal_vector (triangle t) {
+  return cross (t[1] - t[0], t[2] - t[1]);
+}
+
+point
+barycenter (triangle t) {
+  return (t[0] + t[1] + t[2]) / 3.0;
+}
+
+array<color>
+diffuse_light (array<triangle> ts, array<color> cs, point p,
+               color shad, color sun)
+{
+  true_color col1 (shad);
+  true_color col2 (sun);
+  array<color> cs2 (N(cs));
+  for (int i=0; i<N(cs); i++) {
+    point  nv = normal_vector (ts[i]);
+    point  bar= barycenter (ts[i]);
+    point  lv = (N(p) == 4? p[3] * bar - range (p, 0, 3): bar - p);
+    double npr= norm (nv) * norm (lv);
+    double val= (npr == 0? 0.0: max (0.0, inner (nv, lv) / npr));
+    true_color acol= mix (col1, 1.0 - val, col2, val);
+    true_color ocol (cs[i]);
+    true_color ncol= source_over (ocol, acol);
+    cs2[i]= (color) ncol;
+  }
+  return cs2;
+}
+
+spacial
+triangulated_rep::enlighten (tree light) {
+  array<color> cs2;
+  (void) light;
+  if (is_func (light, LIGHT_DIFFUSE, 3) &&
+      is_func (light[0], _POINT) &&
+      is_atomic (light[1]) &&
+      is_atomic (light[2])) {
+    point p = as_point (light[0]);
+    color c1= named_color (as_string (light[1]));
+    color c2= named_color (as_string (light[2]));
+    cs2= diffuse_light (ts, cs, p, c1, c2);
+  }
+  else cs2= copy (cs);
+  return triangulated (ts, cs2);
 }

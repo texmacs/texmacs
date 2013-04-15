@@ -722,7 +722,38 @@ concater_rep::typeset (tree t, path ip) {
   case TRANSFORM_3D:
   case OBJECT_3D:
   case TRIANGLE_3D:
+  case LIGHT_3D:
     typeset_graphics_3d (t, ip);
+    break;
+  case LIGHT_DIFFUSE:
+  case LIGHT_SPECULAR:
+    typeset_inactive (t, ip);
+    break;
+
+  case EFF_MOVE:
+  case EFF_MAGNIFY:
+  case EFF_BUBBLE:
+  case EFF_GAUSSIAN:
+  case EFF_OVAL:
+  case EFF_RECTANGULAR:
+  case EFF_MOTION:
+  case EFF_BLUR:
+  case EFF_OUTLINE:
+  case EFF_THICKEN:
+  case EFF_ERODE:
+  case EFF_SUPERPOSE:
+  case EFF_ADD:
+  case EFF_SUB:
+  case EFF_MUL:
+  case EFF_MIN:
+  case EFF_MAX:
+  case EFF_MIX:
+  case EFF_NORMALIZE:
+  case EFF_MONOCHROME:
+  case EFF_COLOR_MATRIX:
+  case EFF_MAKE_TRANSPARENT:
+  case EFF_MAKE_OPAQUE:
+    typeset_inactive (t, ip);
     break;
 
   case CANVAS:
