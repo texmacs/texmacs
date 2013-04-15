@@ -145,6 +145,12 @@ diffuse_light (array<triangle> ts, array<color> cs,
   return cs2;
 }
 
+point
+reflect (point p, point v) {
+  double x= inner (p, v) / inner (v, v);
+  return p - (2 * x) * v;
+}
+
 array<color>
 specular_light (array<triangle> ts, array<color> cs,
                 point p1, point p2, color c)
@@ -155,13 +161,12 @@ specular_light (array<triangle> ts, array<color> cs,
     point  nv = normal_vector (ts[i]);
     point  bar= barycenter (ts[i]);
     point  lv1= (N(p1) == 4? p1[3] * bar - range (p1, 0, 3): bar - p1);
-    double np1= norm (nv) * norm (lv1);
-    double v1 = (np1 == 0? 0.0: max (0.0, inner (nv, lv1) / np1));
     point  lv2= (N(p2) == 4? p2[3] * bar - range (p2, 0, 3): bar - p2);
-    double np2= norm (nv) * norm (lv2);
-    double v2 = (np2 == 0? 0.0: max (0.0, inner (nv, lv2) / np2));
-    double a  = max (1.0 - fabs (v1 + v2), 0.0);
-    true_color acol (col.r, col.g, col.b, col.a * a * a * a * a * a * a);
+    if (inner (nv, nv) > 0) lv2= reflect (lv2, nv);
+    double npr= norm (lv1) * norm (lv2);
+    double a  = (npr == 0? 0.0: max (0.0, inner (lv1, lv2) / npr));
+    a= a * a * a * a * a;
+    true_color acol (col.r, col.g, col.b, col.a * a);
     true_color ocol (cs[i]);
     true_color ncol= source_over (ocol, acol);
     cs2[i]= (color) ncol;
