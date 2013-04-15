@@ -161,7 +161,7 @@ specular_light (array<triangle> ts, array<color> cs,
     double np2= norm (nv) * norm (lv2);
     double v2 = (np2 == 0? 0.0: max (0.0, inner (nv, lv2) / np2));
     double a  = max (1.0 - fabs (v1 + v2), 0.0);
-    true_color acol (col.r, col.g, col.b, col.a * a * a * a * a);
+    true_color acol (col.r, col.g, col.b, col.a * a * a * a * a * a * a);
     true_color ocol (cs[i]);
     true_color ncol= source_over (ocol, acol);
     cs2[i]= (color) ncol;
@@ -182,10 +182,10 @@ triangulated_rep::enlighten (tree light) {
     color c2= named_color (as_string (light[2]));
     cs2= diffuse_light (ts, cs, p, c1, c2);
   }
-  if (is_func (light, LIGHT_SPECULAR, 3) &&
-      is_func (light[0], _POINT) &&
-      is_func (light[1], _POINT) &&
-      is_atomic (light[2])) {
+  else if (is_func (light, LIGHT_SPECULAR, 3) &&
+           is_func (light[0], _POINT) &&
+           is_func (light[1], _POINT) &&
+           is_atomic (light[2])) {
     point p1= as_point (light[0]);
     point p2= as_point (light[1]);
     color c = named_color (as_string (light[2]));
