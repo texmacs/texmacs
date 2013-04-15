@@ -65,8 +65,3 @@ transformed_rep::enlighten (tree light) {
   if (is_nil (tobj)) tobj= obj->transform (m);
   return tobj->enlighten (light);
 }
-
-spacial
-spacial_rep::transform (matrix<double> m) {
-  return transformed (spacial (this), m);
-}

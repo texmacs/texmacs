@@ -125,8 +125,8 @@ barycenter (triangle t) {
 }
 
 array<color>
-diffuse_light (array<triangle> ts, array<color> cs, point p,
-               color shad, color sun)
+diffuse_light (array<triangle> ts, array<color> cs,
+               point p, color shad, color sun)
 {
   true_color col1 (shad);
   true_color col2 (sun);
@@ -138,6 +138,30 @@ diffuse_light (array<triangle> ts, array<color> cs, point p,
     double npr= norm (nv) * norm (lv);
     double val= (npr == 0? 0.0: max (0.0, inner (nv, lv) / npr));
     true_color acol= mix (col1, 1.0 - val, col2, val);
+    true_color ocol (cs[i]);
+    true_color ncol= source_over (ocol, acol);
+    cs2[i]= (color) ncol;
+  }
+  return cs2;
+}
+
+array<color>
+specular_light (array<triangle> ts, array<color> cs,
+                point p1, point p2, color c)
+{
+  true_color col (c);
+  array<color> cs2 (N(cs));
+  for (int i=0; i<N(cs); i++) {
+    point  nv = normal_vector (ts[i]);
+    point  bar= barycenter (ts[i]);
+    point  lv1= (N(p1) == 4? p1[3] * bar - range (p1, 0, 3): bar - p1);
+    double np1= norm (nv) * norm (lv1);
+    double v1 = (np1 == 0? 0.0: max (0.0, inner (nv, lv1) / np1));
+    point  lv2= (N(p2) == 4? p2[3] * bar - range (p2, 0, 3): bar - p2);
+    double np2= norm (nv) * norm (lv2);
+    double v2 = (np2 == 0? 0.0: max (0.0, inner (nv, lv2) / np2));
+    double a  = max (1.0 - fabs (v1 + v2), 0.0);
+    true_color acol (col.r, col.g, col.b, col.a * a * a * a * a);
     true_color ocol (cs[i]);
     true_color ncol= source_over (ocol, acol);
     cs2[i]= (color) ncol;
@@ -157,6 +181,15 @@ triangulated_rep::enlighten (tree light) {
     color c1= named_color (as_string (light[1]));
     color c2= named_color (as_string (light[2]));
     cs2= diffuse_light (ts, cs, p, c1, c2);
+  }
+  if (is_func (light, LIGHT_SPECULAR, 3) &&
+      is_func (light[0], _POINT) &&
+      is_func (light[1], _POINT) &&
+      is_atomic (light[2])) {
+    point p1= as_point (light[0]);
+    point p2= as_point (light[1]);
+    color c = named_color (as_string (light[2]));
+    cs2= specular_light (ts, cs, p1, p2, c);
   }
   else cs2= copy (cs);
   return triangulated (ts, cs2);

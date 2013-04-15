@@ -45,8 +45,8 @@ public:
 
   virtual rectangle get_extents () = 0;
   virtual void draw (renderer ren) = 0;
-  virtual spacial transform (matrix<double> m);
-  virtual spacial enlighten (tree light);
+  virtual spacial transform (matrix<double> m) = 0;
+  virtual spacial enlighten (tree light) = 0;
 };
 
 ABSTRACT_NULL_CODE(spacial);

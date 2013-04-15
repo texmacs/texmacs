@@ -65,8 +65,3 @@ enlightened_rep::enlighten (tree light2) {
   if (is_nil (tobj)) tobj= obj->enlighten (light);
   return tobj->enlighten (light2);
 }
-
-spacial
-spacial_rep::enlighten (tree light) {
-  return enlightened (spacial (this), light);
-}
