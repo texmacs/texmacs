@@ -215,9 +215,9 @@ filter_preamble (tree t) {
 	    << tuple ("\\end-hide-preamble") << "\n";
 	in_preamble= false;
       }
-      else if (is_tuple (u, "\\documentclass") ||
+      else if (is_tuple (u, "\\documentclass")  ||
 	       is_tuple (u, "\\documentclass*") ||
-	       is_tuple (u, "\\documentstyle") ||
+	       is_tuple (u, "\\documentstyle")  ||
 	       is_tuple (u, "\\documentstyle*"))
       {
 	      doc << u;
@@ -234,8 +234,8 @@ filter_preamble (tree t) {
       else if (is_tuple (u, "\\newtheorem") ||
 	       is_tuple (u, "\\newtheorem*"))
 	preamble << u << "\n" << "\n";
-      else if (is_tuple (u, "\\newenvironment") ||
-	       is_tuple (u, "\\newenvironment*")      ||
+      else if (is_tuple (u, "\\newenvironment")    ||
+	       is_tuple (u, "\\newenvironment*")   ||
 	       is_tuple (u, "\\newenvironment**"))
 	preamble << u << "\n" << "\n";
       else if (is_tuple (u, "\\SetKw", 2)          || 
