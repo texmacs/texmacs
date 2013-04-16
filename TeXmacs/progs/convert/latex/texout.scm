@@ -283,6 +283,14 @@
     (if (string? what) what (string-append "\\" (symbol->string what))))
   (texout-args args))
 
+(define (texout-begin* what args inside)
+  (output-tex (string-append "\\begin{" what "}"))
+  (texout-args args)
+  (output-lf)
+  (texout inside)
+  (output-lf)
+  (output-tex (string-append "\\end{" what "}")))
+
 (define (texout-begin what args inside)
   (output-tex (string-append "\\begin{" what "}"))
   (texout-args args)
@@ -332,6 +340,8 @@
 	((== (car x) '!sup) (texout-script "^" (cdr x)))
 	((and (list? (car x)) (== (caar x) '!begin))
 	 (texout-begin (cadar x) (cddar x) (cadr x)))
+	((and (list? (car x)) (== (caar x) '!begin*))
+	 (texout-begin* (cadar x) (cddar x) (cadr x)))
 	(else (texout-apply (car x) (cdr x)))))
 
 (tm-define (serialize-latex x)

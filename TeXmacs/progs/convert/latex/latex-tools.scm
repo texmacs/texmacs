@@ -84,6 +84,9 @@
 ;; Macro and environment expansion
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (env-begin? x)
+  (or (func? x '!begin) (func? x '!begin*)))
+
 (define (latex-substitute t args)
   (cond ((number? t) (list-ref args t))
 	((== t '---) (car args))
@@ -103,10 +106,10 @@
 			     latex-style-hyp latex-amsthm-hyp))
 	     (arity (logic-ref latex-texmacs-arity% head
 			     latex-style-hyp latex-amsthm-hyp))
-	     (env   (and (func? head '!begin)
+	     (env   (and (env-begin? head)
 			 (logic-ref latex-texmacs-environment% (cadr head)
 				  latex-style-hyp latex-amsthm-hyp)))
-	     (envar (and (func? head '!begin)
+	     (envar (and (env-begin? head)
 			 (logic-ref latex-texmacs-env-arity% (cadr head)
 				  latex-style-hyp latex-amsthm-hyp))))
 	(cond ((and body (== (length tail) arity))
@@ -146,13 +149,13 @@
 	(ahash-set! latex-macro-table (car t)
 		    (list arity (latex-expand-def body)))
 	(latex-macro-defs-sub body)))
-    (let* ((body  (and (func? (car t) '!begin)
+    (let* ((body  (and (env-begin? (car t))
 		       (logic-ref latex-texmacs-environment% (cadar t))))
-	   (arity (and (func? (car t) '!begin)
+	   (arity (and (env-begin? (car t))
 		       (logic-ref latex-texmacs-env-arity% (cadar t))))
-           (option (and (func? (car t) '!begin)
+           (option (and (env-begin? (car t))
                         (logic-ref latex-texmacs-option% (cadar t))))
-           (args   (and (func? (car t) '!begin)
+           (args   (and (env-begin? (car t))
                         (if option (filter (lambda (x)
                                              (not (and (list? x)
                                                        (== (car x) '!option))))
@@ -165,7 +168,7 @@
 	(latex-macro-defs-sub body)))
     (with body (or (logic-ref latex-texmacs-preamble% (car t)
 			    latex-style-hyp latex-amsthm-hyp)
-		   (and (func? (car t) '!begin)
+		   (and (env-begin? (car t))
 			(logic-ref latex-texmacs-env-preamble% (cadar t)
 				 latex-style-hyp latex-amsthm-hyp)))
       (when body
@@ -174,8 +177,8 @@
 (define (latex<=? x y)
   (if (symbol? x) (set! x (symbol->string x)))
   (if (symbol? y) (set! y (symbol->string y)))
-  (if (func? x '!begin) (set! x (cadr x)))
-  (if (func? y '!begin) (set! y (cadr y)))
+  (if (env-begin? x) (set! x (cadr x)))
+  (if (env-begin? y) (set! y (cadr y)))
   (string<=? x y))
 
 (tm-define (latex-macro-defs t)
