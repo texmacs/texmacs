@@ -11,6 +11,7 @@
 
 #include "Tex/convert_tex.hpp"
 #include "converter.hpp"
+#include "wencoding.hpp"
 
 extern bool textm_class_flag;
 hashmap<string,int> textm_recursion_level (0);
@@ -1516,7 +1517,9 @@ parse_latex (string s, bool change, bool using_cork) {
     if (encoding != "UTF-8" && encoding != "Cork" && encoding != "")
       s= convert (s, encoding, "UTF-8");
     else if (encoding == "")
-      s= convert (s, "ISO-8859-1", "UTF-8");
+      // migth be pure ascii TeX or TeX snippet:
+      // we then make heuristic charset detection
+      s= western_to_utf8 (s);
   }
 
   latex_parser ltx (encoding != "Cork");
