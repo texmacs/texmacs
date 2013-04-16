@@ -183,7 +183,7 @@ set_locus_rendering (string var, string val) {
 string
 get_locus_rendering (string var) {
   if (var == "locus-on-paper")
-    return get_user_preference (var, "preserve");
+    return get_user_preference (var, "change");
   if (var == LOCUS_COLOR)
     return get_user_preference (var, "#404080");
   if (var == VISITED_COLOR)
