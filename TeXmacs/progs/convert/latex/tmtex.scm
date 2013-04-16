@@ -1558,7 +1558,7 @@
   (set! l (escape-braces l))
   (set! s (car (string-decompose s "-")))
   (with lang (if (== s "verbatim") '() `((!option ,s)))
-    `((!begin "tmcode" ,@lang) ,(tmtex-verbatim* "" l))))
+    `((!begin* "tmcode" ,@lang) ,(tmtex-verbatim* "" l))))
 
 (define (tmtex-number-renderer l)
   (let ((r (cond ((string? l) l)
