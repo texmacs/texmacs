@@ -20,5 +20,6 @@ bool looks_iso_8859 (string s);
 
 string guess_wencoding (string s);
 string western_to_cork (string s);
+string western_to_utf8 (string s);
 
 #endif // CONVERTER_H

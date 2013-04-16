@@ -107,3 +107,15 @@ western_to_cork (string s) {
   }
   return s;
 }
+string
+western_to_utf8 (string s) {
+  string charset= guess_wencoding (s);
+  if (charset == "UTF-8-BOM") return s(3, N(s));
+  if (charset == "UTF-8")     return s;
+  if (charset == "ISO-8859") {
+    charset= language_to_local_ISO_charset (get_locale_language ());
+    if (charset != "")
+      return convert (s, charset, "UTF-8");
+  }
+  return s;
+}
