@@ -1,4 +1,3 @@
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; MODULE      : tmtex-acm.scm
@@ -136,3 +135,19 @@
                 ((== (length (cdr t)) 2) (append (cdr t) '("" "")))
                 (else (cdr t)))
     `(category ,@l)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; ACM specific misc markup
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tmtex-acm-conferenceinfo s l)
+  (:mode acm-style?)
+  `(conferenceinfo ,@(map tmtex l)))
+
+(tm-define (tmtex-acm-copyright-year s l)
+  (:mode acm-style?)
+  `(CopyrightYear ,@(map tmtex l)))
+
+(tm-define (tmtex-acm-crdata s l)
+  (:mode acm-style?)
+  `(crdata ,@(map tmtex l)))
