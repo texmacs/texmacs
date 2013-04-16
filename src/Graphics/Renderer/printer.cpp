@@ -19,6 +19,7 @@
 #include "merge_sort.hpp"
 #include "scheme.hpp"
 #include "image_files.hpp"
+#include "link.hpp"
 
 string PS_CLIP_PUSH ("gsave");
 string PS_CLIP_POP ("grestore");
@@ -878,6 +879,7 @@ printer_rep::anchor (string label, SI x, SI y) {
 
 void
 printer_rep::href (string label, SI x1, SI y1, SI x2, SI y2) {
+  bool preserve= (get_locus_rendering ("locus-on-paper") == "preserve");
   if (linelen>0) cr ();
   print ("[");
   if (starts (label, "#")) {
@@ -892,7 +894,10 @@ printer_rep::href (string label, SI x1, SI y1, SI x2, SI y2) {
   print (x1 - 5*PIXEL, y1 - 10*PIXEL);
   print (x2 + 5*PIXEL, y2 + 10*PIXEL);
   print ("]");
-  print ("/Border [16 16 1 [3 10]] /Color [0.75 0.5 1.0]");
+  if (preserve)
+    print ("/Border [16 16 1 [3 10]] /Color [0.75 0.5 1.0]");
+  else
+    print ("/Border [16 16 0 [3 10]] /Color [0.75 0.5 1.0]");
   print ("/Subtype /Link");
   print ("/ANN pdfmark");
   cr ();

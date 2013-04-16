@@ -13,15 +13,12 @@
 #include "link.hpp"
 #include "iterator.hpp"
 #include "vars.hpp"
+#include "boot.hpp"
 
 hashmap<string,list<observer> > id_resolve;
 hashmap<observer,list<string> > pointer_resolve;
 hashmap<tree,list<soft_link> > vertex_occurrences;
 hashmap<string,int> type_count (0);
-
-static string current_locus_on_paper= "preserve";
-static string current_locus_color= "#404080";
-static string current_visited_color= "#702070";
 
 static hashset<string> visited_table;
 
@@ -180,16 +177,17 @@ all_link_types () {
 
 void
 set_locus_rendering (string var, string val) {
-  if (var == "locus-on-paper") current_locus_on_paper= val;
-  if (var == LOCUS_COLOR) current_locus_color= val;
-  if (var == VISITED_COLOR) current_visited_color= val;
+  set_user_preference (var, val);
 }
 
 string
 get_locus_rendering (string var) {
-  if (var == "locus-on-paper") return current_locus_on_paper;
-  if (var == LOCUS_COLOR) return current_locus_color;
-  if (var == VISITED_COLOR) return current_visited_color;
+  if (var == "locus-on-paper")
+    return get_user_preference (var, "preserve");
+  if (var == LOCUS_COLOR)
+    return get_user_preference (var, "#404080");
+  if (var == VISITED_COLOR)
+    return get_user_preference (var, "#702070");
   return "";
 }
 

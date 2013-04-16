@@ -131,6 +131,7 @@ build_locus (edit_env env, tree t, list<string>& ids, string& col, string &ref, 
   string var= (visited? VISITED_COLOR: LOCUS_COLOR);
   string current_col= env->get_string (COLOR);
   string locus_col= env->get_string (var);
+  if (on_paper) visited= false;
   if (locus_col == "preserve") col= current_col;
   else if (on_paper && preserve) col= current_col;
   else if (locus_col == "global") col= get_locus_rendering (var);
