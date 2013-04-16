@@ -244,6 +244,11 @@ filter_preamble (tree t) {
                is_tuple (u, "\\SetKwInput", 2)     || 
                is_tuple (u, "\\SetKwFunction", 2))
 	preamble << u << "\n" << "\n";
+      else if (is_tuple (u, "\\conferenceinfo")    ||
+               is_tuple (u, "\\CopyrightYear")     ||
+               is_tuple (u, "\\crdata")) {
+        preamble << u << "\n" << "\n";
+      }
     }
     else if (is_metadata_env (t[i])) {
       string s= as_string (t[i][0]);

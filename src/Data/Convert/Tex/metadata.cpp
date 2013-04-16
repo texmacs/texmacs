@@ -50,13 +50,10 @@ is_metadata (tree u) {
          is_tuple (u, "\\category")          ||
          is_tuple (u, "\\category*")         ||
          is_tuple (u, "\\classification")    ||
-         is_tuple (u, "\\conferenceinfo")    ||
          is_tuple (u, "\\contrib")           ||
          is_tuple (u, "\\contrib*")          ||
          is_tuple (u, "\\copyrightholder")   ||
          is_tuple (u, "\\copyrightyear")     ||
-         is_tuple (u, "\\CopyrightYear")     ||
-         is_tuple (u, "\\crdata")            ||
          is_tuple (u, "\\curaddr")           ||
          is_tuple (u, "\\date")              ||
          is_tuple (u, "\\dedicatory")        ||

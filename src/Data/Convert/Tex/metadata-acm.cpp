@@ -128,16 +128,8 @@ collect_metadata_acm (tree t) {
   array<tree> doc_notes;
   for (i=0; i<n; i++) {
     u= t[i];
-    if (is_tuple (u, "\\conferenceinfo", 2))
-      doc_notes << tree (APPLY, "\\doc-note",
-                                concat ("Conference: ", u[1], "; ", u[2]));
-    else if (is_tuple (u, "\\CopyrightYear", 1))
-      doc_data << tree (APPLY, "\\doc-date", concat ("Copyright: ", u[1]));
-    else if (is_tuple (u, "\\date", 1))
+    if (is_tuple (u, "\\date", 1))
       doc_data << tree (APPLY, "\\doc-date", u[1]);
-    else if (is_tuple (u, "\\crdata", 1))
-      doc_notes << tree (APPLY, "\\doc-note",
-                                 concat ("Copyright datas: ", u[1]));
     else if (is_tuple (u, "\\title", 1)) {
       get_acm_title_notes (u[1], doc_notes);
       doc_data << tree (APPLY, "\\doc-title", catm (u[1]));
