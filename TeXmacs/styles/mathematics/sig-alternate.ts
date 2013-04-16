@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.17>
+<TeXmacs|1.0.7.19>
 
-<style|source>
+<style|<tuple|source|tmdoc-markup>>
 
 <\body>
   <\active*>
@@ -25,6 +25,42 @@
   </active*>
 
   <use-package|std|env|title-generic|header-article|section-article|std-latex|two-columns>
+
+  <active*|<\src-comment>
+    Conference information and copyrights
+  </src-comment>>
+
+  <assign|conference-boilerplate|Permission to make digital or hard copies of
+  all or part of this work for personal or classroom use is granted without
+  fee provided that copies are not made or distributed for profit or
+  commercial advantage and that copies bear this notice and the full citation
+  on the first page. \ To copy otherwise, to republish, to post on servers or
+  to redistribute to lists, requires prior specific permission and/or a fee.>
+
+  <assign|conference-name|(Please declare
+  <with|font-shape|right|<src-macro|conferenceinfo>>,
+  <with|font-shape|right|<src-macro|CopyrightYear>>, and
+  <with|font-shape|right|<src-macro|crdata>> in your preamble, following ACM
+  guidelines:<next-line><hlink|http://www.acm.org/sigs/publications/proceedings-templates|http://www.acm.org/sigs/publications/proceedings-templates>)>
+
+  <assign|conference-info|>
+
+  <assign|conference-copyright-year|20XX>
+
+  <assign|conference-cr-data|X-XXXXX-XX-X/XX/XX>
+
+  <assign|conference-price|$15.00>
+
+  <assign|conferenceinfo|<macro|name|infos|<assign|conference-name|<arg|name>><assign|conference-info|<arg|infos>>>>
+
+  <assign|CopyrightYear|<macro|year|<assign|conference-copyright-year|<arg|year>>>>
+
+  <assign|crdata|<macro|data|<assign|conference-cr-data|<arg|data>>>>
+
+  <assign|make-conference-permissions|<macro|<with|font|times|par-par-sep|0pt|par-line-sep|0pt|par-sep|1pt|font-base-size|8pt|<no-indent><value|conference-boilerplate><new-line><no-indent><with|font-shape|italic|<value|conference-name>>,
+  <value|conference-info><new-line><no-indent>Copyright
+  <value|conference-copyright-year> ACM <value|conference-cr-data>
+  ...<value|conference-price>.>>>
 
   <active*|<\src-comment>
     TeX-like style parameters.
@@ -58,9 +94,9 @@
 
   \;
 
-  <assign|tex-footnote-sep|<macro|5.6pt>>
+  <assign|tex-footnote-sep|<macro|2.5pc>>
 
-  <assign|tex-footnote-tm-barlen|<macro|0.25par>>
+  <assign|tex-footnote-tm-barlen|<macro|0par>>
 
   <assign|tex-column-sep|<macro|2pc>>
 
@@ -75,6 +111,8 @@
   </src-comment>>
 
   <assign|font-base-size|9>
+
+  <assign|par-line-sep|0pt>
 
   <assign|par-first|9pt>
 
@@ -152,42 +190,72 @@
     </src-comment>
   </active*>
 
-  <assign|title-bold-ss|<macro|x|<with|font-family|ss|font-series|bold|math-font-series|bold|<arg|x>>>>
+  <assign|title-bold-hv|<macro|x|<with|font|helvetica|font-base-size|18|font-series|bold|math-font-series|bold|<arg|x>>>>
 
-  <assign|title-ss|<macro|x|<with|font-family|ss|font-base-size|12|<arg|x>>>>
+  <assign|title-hv|<macro|x|<with|font|helvetica|font-base-size|12|<arg|x>>>>
 
-  <assign|doc-render-title|<\macro|x>
-    <\surround|<vspace*|0.5fn>|<vspace|0.5fn>>
-      <doc-title-block|<font-magnify|2|<title-bold-ss|<arg|x>>>>
+  <assign|doc-title|<\macro|x>
+    <\surround|<vspace*|2em>|<vspace|1.5em>>
+      <doc-title-block|<title-bold-hv|<arg|x>>>
     </surround>
   </macro>>
 
-  <assign|author-render-name|<macro|author|<surround|<vspace*|0.25fn>|<vspace|0.25fn>|<doc-author-block|<title-ss|<arg|author>>>>>>
+  <assign|doc-authors|<\xmacro|data>
+    <\style-with|src-compact|none>
+      <\quasi>
+        <\doc-author>
+          <\with|doc-author|<value|doc-author*>>
+            <space|0spc><unquote*|<map|padded-author|<quote-arg|data>>>
+          </with>
+        </doc-author>
+      </quasi>
+    </style-with>
+  </xmacro>>
 
-  <assign|author-affiliation|<\macro|address>
-    <surround|<vspace*|0.25fn>|<vspace|0.25fn>|<doc-author-block|<title-ss|<with|font-base-size|10|<arg|address>>>>>
+  <assign|doc-author-block|<\macro|body>
+    <style-with|src-compact|none|<space|0pt><tabular*|<tformat|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-tsep|0spc>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-hmode|min>|<cwith|1|1|1|1|cell-width|1par>|<cwith|1|-1|1|-1|cell-bsep|-3pt>|<table|<row|<\cell>
+      <\with|par-mode|center>
+        <arg|body>
+      </with>
+    </cell>>>>>>
   </macro>>
 
-  <assign|author-email|<macro|email|<doc-author-block|<title-ss|<arg|email>>>>>
+  <assign|author-name|<macro|author|<surround|<vspace*|0.25fn>|<vspace|0.25fn>|<doc-author-block|<compound|title-hv|<arg|author>>>>>>
 
-  <assign|author-homepage|<macro|homepage|<doc-author-block|<title-ss|<arg|homepage>>>>>
+  <assign|author-affiliation|<\macro|address>
+    <surround|<vspace*|0.25fn>|<vspace|0.25fn>|<doc-author-block|<title-hv|<with|font-base-size|10|<arg|address>>>>>
+  </macro>>
+
+  <assign|author-email|<macro|email|<doc-author-block|<title-hv|<arg|email>>>>>
+
+  <assign|author-homepage|<macro|homepage|<doc-author-block|<title-hv|<arg|homepage>>>>>
 
   <assign|render-abstract|<\macro|body>
     <section*|<abstract-text>>
 
-    <surround|<no-indent>||<arg|body>>
+    <surround|<no-indent>|<float|footnote||<smaller|<make-conference-permissions>>>|<arg|body>>
   </macro>>
 
-  <assign|abstract-keywords|<\xmacro|args>
-    <subsection*|<keywords-text>>
+  <assign|abstract-category-item|<macro|ind|cat|sub|det|<arg|ind>
+  [<with|font-series|bold|<change-case|<arg|cat>|UPCASE>>]:
+  <arg|sub>--<with|font-shape|italic|<arg|det>>>>
+
+  <assign|abstract-category|<\xmacro|args>
+    <subsection*|Categories and Subject Descriptors>
+
+    <no-indent><concat-tuple|<copy|<quote-arg|args>>|; >
+  </xmacro>>
+
+  <assign|abstract-terms|<\xmacro|args>
+    <subsection*|General Terms>
 
     <no-indent><concat-tuple|<copy|<quote-arg|args>>|, >
   </xmacro>>
 
-  <assign|abstract-msc|<\xmacro|args>
-    <subsection*|<AMS-class-text>>
+  <assign|abstract-keywords|<\xmacro|args>
+    <subsection*|<keywords-text>>
 
-    <no-indent><concat-tuple|<copy|<map|msc-ref|<quote-arg|args>>>|, >
+    <no-indent><concat-tuple|<copy|<quote-arg|args>>|; >
   </xmacro>>
 
   <\active*>
@@ -200,9 +268,9 @@
 
   <assign|page-even-header|>
 
-  <assign|page-odd-footer|<htab|5mm><quote|<page-the-page>><htab|5mm>>
+  <assign|page-odd-footer|>
 
-  <assign|page-even-footer|<htab|5mm><quote|<page-the-page>><htab|5mm>>
+  <assign|page-even-footer|>
 
   \;
 
@@ -258,6 +326,12 @@
   <assign|proof|<\macro|body>
     <render-proof|<proof-text>|<arg|body>>
   </macro>>
+
+  <assign|aligned-item-bis|<macro|name|<style-with|src-compact|none|<vspace*|<item-vsep>><with|par-first|<minus|<item-hsep>>|<yes-indent>><resize|<arg|name>|<minus|1r|<minus|<item-hsep>|0fn>>||<plus|1r|0fn>|>>>>
+
+  <assign|render-bibitem|<macro|text|<with|item-hsep|<macro|1fn>|<aligned-item-bis|<arg|text>>>>>
+
+  \;
 </body>
 
 <\initial>
