@@ -85,7 +85,15 @@
 
 (tm-define (tmtex-author-affiliation t)
   (:mode acm-style?)
-  (acm-line-break `(affaddr ,(tmtex (cadr t)))))
+    (with aff-lines
+      (if (list>0? (cadr t))
+        (map (lambda (x)
+                (if (== x '(next-line))
+                  '(!nextline)
+                  `(affaddr ,(tmtex x))))
+             (cdadr t))
+        '())
+    (acm-line-break `(!concat ,@aff-lines))))
 
 (tm-define (tmtex-author-email t)
   (:mode acm-style?)
