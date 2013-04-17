@@ -85,8 +85,8 @@ merge_llncs_author_datas (array<tree> authors, array<tree> affs) {
     for (int j=1; j<N(authors[i]); j++) {
       if (is_apply (authors[i][j], "\\author-inst", 1)) {
         int n= as_int (as_string (authors[i][j][1]));
-        if (n>0 && n<N(affs))
-          author_affs << affs[n];
+        if (n>0 && n<=N(affs))
+          author_affs << affs[n-1];
       }
     }
     r << add_llncs_author_datas (authors[i], author_affs);
