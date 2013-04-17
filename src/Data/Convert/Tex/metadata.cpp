@@ -30,7 +30,8 @@ tokenize_concat (tree t, array<tree> a) {
 
 bool
 is_metadata_env (tree u) {
-  return is_tuple (u, "\\begin-frontmatter") ||
+  return is_tuple (u, "\\begin-frontmatter")  ||
+         is_tuple (u, "\\begin-IEEEkeywords") ||
          is_tuple (u, "\\begin-abstract");
 }
 

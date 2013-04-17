@@ -149,6 +149,23 @@ collect_metadata_ieee (tree t) {
     if (is_apply (tmp[i], "\\doc-data")) doc_data= tmp[i];
     if (is_apply (tmp[i], "\\abstract-data")) abstract_data= tmp[i];
   }
+  for (i=0; i<N(t); i++) {
+    u= t[i];
+    if (is_tuple (u, "\\begin-IEEEkeywords")) {
+      i++;
+      tree kw (CONCAT);
+      while (i<N(t) && !is_tuple (t[i], "\\end-IEEEkeywords"))
+        kw << t[i++];
+      array<tree> sep= A(concat (",", ";",
+                                 tuple ("\\tmsep"), tuple ("\\tmSep")));
+      array<tree> tmp= tokenize_concat (kw, sep);
+      if (N(tmp) > 0) {
+        kw= tree (APPLY, "\\abstract-keywords");
+        kw << tmp;
+        abstract_data << kw;
+      }
+    }
+  }
   if (N(doc_notes) > 0) doc_data << doc_notes;
   if (N(doc_data) > 1) r << doc_data << "\n";
   if (N(abstract_data) > 1) r << abstract_data << "\n";
