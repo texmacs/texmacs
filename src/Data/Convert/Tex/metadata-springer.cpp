@@ -226,7 +226,7 @@ get_springer_affiliation_datas (tree t, bool llncs=false) {
 }
 
 static void
-translate_abstract_data (tree u, string s, tree &abstract_data) {
+translate_springer_abstract_data (tree u, string s, tree &abstract_data) {
   if (N(u) < 2) return;
   s= "\\abstract-" * s;
   array<tree> tmp= tokenize_concat (u[N(u)-1], 
@@ -271,28 +271,26 @@ collect_metadata_springer (tree t, bool llncs) {
       while (i<n && !is_tuple (t[i], "\\end-abstract")) {
         u= t[i];
         if (is_tuple (u, "\\keywords", 1))
-          translate_abstract_data (u, "keywords", abstract_data);
-        else if (is_tuple (u, "\\subclass", 1) || is_tuple (u, "\\PACS", 1) ||
-            is_tuple (u, "\\CRclass", 1))
-          translate_abstract_data (u, "msc", abstract_data);
-        else if (is_tuple (u, "\\tmmsc")) {
-          tree msc= tuple ("\\abstract-msc");
-          for (int j=1; j<N(u); j++)
-            if (u[j] != tuple ("\\tmsep"))
-              msc << u[j];
-          abstract_data << msc;
-        }
+          translate_springer_abstract_data (u, "keywords", abstract_data);
+        else if (is_tuple (u, "\\tmmsc") || is_tuple (u, "\\tmarxiv") ||
+                 is_tuple (u, "\\tmacm") || is_tuple (u, "\\tmpacs"))
+          abstract_data << collect_abstract_data (u);
         else
-          abstract_text << t[i];
+          abstract_text << u;
         i++;
       }
       abstract_data << tree (APPLY, "\\abstract", abstract_text);
     }
     else if (is_tuple (u, "\\keywords", 1))
-      translate_abstract_data (u, "keywords", abstract_data);
-    else if (is_tuple (u, "\\subclass", 1) || is_tuple (u, "\\PACS", 1) ||
-             is_tuple (u, "\\CRclass", 1))
-      translate_abstract_data (u, "msc", abstract_data);
+      translate_springer_abstract_data (u, "keywords", abstract_data);
+    else if (is_tuple (u, "\\subclass", 1))
+      translate_springer_abstract_data (u, "msc", abstract_data);
+    else if (is_tuple (u, "\\PACS", 1))
+      translate_springer_abstract_data (u, "pacs", abstract_data);
+    else if (is_tuple (u, "\\CRclass", 1))
+      translate_springer_abstract_data (u, "acm", abstract_data);
+    else if (is_tuple (u, "\\tmarxiv"))
+      abstract_data << collect_abstract_data (u);
   }
   bool spaced= false;
   if (llncs) {

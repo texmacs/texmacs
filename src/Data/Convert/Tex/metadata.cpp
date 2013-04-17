@@ -372,6 +372,8 @@ get_latex_style (tree t) {
     if (contains (string ("aip"), opts)) return "aip";
     if (contains (string ("aps"), opts)) return "aps";
   }
+  if (occurs ("llncs", s))
+    return "llncs";
   if (occurs ("svjour", s))
     return "svjour";
   if (occurs ("ifacconf", s))
