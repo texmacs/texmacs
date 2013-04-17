@@ -372,13 +372,13 @@ get_latex_style (tree t) {
     if (contains (string ("aip"), opts)) return "aip";
     if (contains (string ("aps"), opts)) return "aps";
   }
-  if (N(t) == 3 && occurs ("svjour", s))
+  if (occurs ("svjour", s))
     return "svjour";
-  if (N(t) == 3 && occurs ("ifacconf", s))
+  if (occurs ("ifacconf", s))
     return "ifac";
-  if (N(t) == 3 && occurs ("IEEEconf", s))
+  if (occurs ("IEEEconf", s))
     return "ieeeconf";
-  if (N(t) == 3 && occurs ("IEEEtran", s))
+  if (occurs ("IEEEtran", s))
     return "ieeetran";
   return s;
 }
