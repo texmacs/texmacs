@@ -91,7 +91,7 @@
                   '(!nextline)
                   `(affaddr ,(tmtex x))))
              (cdadr t))
-        '())
+        (if (null? (cdr t)) '() `((affaddr ,(tmtex (cadr t))))))
     (acm-line-break `(!concat ,@aff-lines))))
 
 (tm-define (tmtex-author-email t)
