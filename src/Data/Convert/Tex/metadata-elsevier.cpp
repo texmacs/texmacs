@@ -91,32 +91,32 @@ static array<tree>
 translate_abstract_data_elsevier (tree t) {
   array<tree> r;
   int i=0, n=N(t);
-  tree kw  (APPLY, "\\abstract-keywords");
-  tree msc (APPLY, "\\abstract-msc");
-  tree tmp (CONCAT);
-  while (i<n && !is_tuple (t[i], "\\PACS")) {
-    while (i<n && !is_tuple (t[i], "\\sep") && !is_tuple (t[i], "\\PACS"))
-      if (is_tuple (t[i], "\\tmmsc", 1)) {
-        msc << tokenize_concat (t[i][1], A(concat (tuple ("\\tmsep"))));
-        i++;
-      }
-      else
-        tmp << t[i++];
-    kw << tmp;
-    tmp= concat ();
-    if (!is_tuple (t[i], "\\PACS")) i++;
-  }
-  if (is_tuple (t[i], "\\PACS")) {
-    i++;
-    while (i<n) {
-      while (i<n && !is_tuple (t[i], "\\sep")) tmp << t[i++];
-      msc << tmp;
-      tmp= concat ();
-      i++;
+  tree comp (APPLY, "\\abstract-keywords");
+  tree word (CONCAT);
+  for (i=0; i<n; i++) {
+    if (is_tuple (t[i], "\\PACS")) {
+      comp << word;
+      if (N(comp) > 1) r << comp;
+      word= concat ();
+      comp= tree (APPLY, "\\abstract-pacs");
     }
+    else if (is_tuple (t[i], "\\MSC")) {
+      comp << word;
+      if (N(comp) > 1) r << comp;
+      word= concat ();
+      comp= tree (APPLY, "\\abstract-msc");
+    }
+    else if (is_tuple (t[i], "\\tmacm") || is_tuple (t[i], "\\tmarxiv"))
+          r << collect_abstract_data (t[i]);
+    else if (is_tuple (t[i], "\\sep")) {
+      comp << word;
+      word= concat ();
+    }
+    else
+      word << t[i];
   }
-  if (N(kw)>1)  r << kw;
-  if (N(msc)>1) r << msc;
+  if (N(word) > 1) comp << word;
+  if (N(comp) > 1) r << comp;
   return r;
 }
 
