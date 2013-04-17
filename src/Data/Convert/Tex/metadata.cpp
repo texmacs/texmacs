@@ -270,6 +270,12 @@ filter_spaces (tree t, bool &spaced) {
   if (is_atomic (t)) return t;
   tree r (L(t));
   int i, n=N(t);
+  if (is_apply (t) || is_tuple (t)) {
+    // then arity shouldn't vary
+    for (i=0; i<n; i++)
+      r << filter_spaces (t[i], spaced);
+    return r;
+  }
   for (i=0; i<n; i++) {
     if (t[i] == concat() || t[i] == "") continue;
     if (!is_space (t[i]) || !spaced) {
