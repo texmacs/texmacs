@@ -167,7 +167,7 @@ collect_metadata_revtex (tree t) {
       array<tree> tmp= tokenize_concat (u[N(u)-1], A(concat (",", ";",
               tree (TUPLE, "\\tmsep"), tree (TUPLE, "\\tmSep"))));
       if (N(tmp) > 0) {
-        tree msc= tree (APPLY, "\\abstract-msc");
+        tree msc= tree (APPLY, "\\abstract-pacs");
         msc << tmp;
         abstract_data << msc;
       }
@@ -175,8 +175,14 @@ collect_metadata_revtex (tree t) {
     else if (is_tuple (u, "\\begin-abstract")) {
       tree abstract_text (CONCAT);
       i++;
-      while (i<n && !is_tuple (t[i], "\\end-abstract"))
-        abstract_text << t[i++];
+      while (i<n && !is_tuple (t[i], "\\end-abstract")) {
+        if (is_tuple (t[i], "\\tmmsc") || is_tuple (t[i], "\\tmacm") ||
+            is_tuple (t[i], "\\tmarxiv"))
+          abstract_data << collect_abstract_data (t[i]);
+        else
+          abstract_text << t[i];
+        i++;
+      }
       abstract_data << tree (APPLY, "\\abstract", abstract_text);
     }
   }
