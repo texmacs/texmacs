@@ -353,7 +353,7 @@ collect_metadata (tree t, tree latex_class) {
 
 string
 get_latex_style (tree t) {
-  if (N(t) != 3 || N(t) != 2)  return "";
+  if (N(t) != 3 && N(t) != 2)  return "";
   string s= trim_spaces (string_arg (t[N(t)-1]));
   if (N(t) == 3 && occurs ("revtex", s)) {
     array<string> opts= trim_spaces (tokenize (string_arg (t[1]), ","));
