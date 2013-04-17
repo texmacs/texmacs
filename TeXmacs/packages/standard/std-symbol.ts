@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.9>
+<TeXmacs|1.0.7.19>
 
 <style|<tuple|source|std>>
 
@@ -21,41 +21,41 @@
     </src-license>
   </src-title>>
 
-  <assign|cent|<macro|<active*|<with|mode|text|font|tc|¢>>>>
+  <assign|cent|<macro|<active*|<if|<equal|<value|mode>|math>|<with|mode|text|mode|text|font|tc|¢>|<with|mode|text|font|tc|¢>>>>>
 
-  <assign|currency|<macro|<active*|<with|mode|text|font|tc|¤>>>>
+  <assign|currency|<macro|<active*|<if|<equal|<value|mode>|math>|<with|mode|text|mode|text|font|tc|¤>|<with|mode|text|font|tc|¤>>>>>
 
-  <assign|yen|<macro|<active*|<with|mode|text|font|tc|¥>>>>
+  <assign|yen|<macro|<active*|<if|<equal|<value|mode>|math>|<with|mode|text|mode|text|font|tc|¥>|<with|mode|text|font|tc|¥>>>>>
 
-  <assign|copyright|<macro|<active*|<with|mode|text|font|tcx|©>>>>
+  <assign|copyright|<macro|<active*|<if|<equal|<value|mode>|math>|<with|mode|text|mode|text|font|tcx|©>|<with|mode|text|font|tcx|©>>>>>
 
-  <assign|copyleft|<macro|<active*|<with|mode|text|font|tcx|«>>>>
+  <assign|copyleft|<macro|<active*|<if|<equal|<value|mode>|math>|<with|mode|text|mode|text|font|tcx|«>|<with|mode|text|font|tcx|«>>>>>
 
-  <assign|registered|<macro|<active*|<with|mode|text|font|tcx|®>>>>
+  <assign|registered|<macro|<active*|<if|<equal|<value|mode>|math>|<with|mode|text|mode|text|font|tcx|®>|<with|mode|text|font|tcx|®>>>>>
 
-  <assign|degreesign|<macro|<active*|<with|mode|text|font|tc|°>>>>
+  <assign|degreesign|<macro|<active*|<if|<equal|<value|mode>|math>|<with|mode|text|mode|text|font|tc|°>|<with|mode|text|font|tc|°>>>>>
 
-  <assign|twosuperior|<macro|<active*|<with|mode|text|font|tc|²>>>>
+  <assign|twosuperior|<macro|<active*|<if|<equal|<value|mode>|math>|<with|mode|text|mode|text|font|tc|²>|<with|mode|text|font|tc|²>>>>>
 
-  <assign|threesuperior|<macro|<active*|<with|mode|text|font|tc|³>>>>
+  <assign|threesuperior|<macro|<active*|<if|<equal|<value|mode>|math>|<with|mode|text|mode|text|font|tc|³>|<with|mode|text|font|tc|³>>>>>
 
-  <assign|onesuperior|<macro|<active*|<with|mode|text|font|tc|¹>>>>
+  <assign|onesuperior|<macro|<active*|<if|<equal|<value|mode>|math>|<with|mode|text|mode|text|font|tc|¹>|<with|mode|text|font|tc|¹>>>>>
 
-  <assign|mu|<macro|<active*|<with|mode|text|font|tcx|µ>>>>
+  <assign|mu|<macro|<active*|<if|<equal|<value|mode>|math>|<with|mode|text|mode|text|font|tcx|µ>|<with|mode|text|font|tcx|µ>>>>>
 
-  <assign|paragraphsign|<active*|<macro|<with|mode|text|font|tc|¶>>>>
+  <assign|paragraphsign|<active*|<macro|<if|<equal|<value|mode>|math>|<with|mode|text|mode|text|font|tc|¶>|<with|mode|text|font|tc|¶>>>>>
 
-  <assign|onequarter|<macro|<active*|<with|mode|text|font|tc|¼>>>>
+  <assign|onequarter|<macro|<active*|<if|<equal|<value|mode>|math>|<with|mode|text|mode|text|font|tc|¼>|<with|mode|text|font|tc|¼>>>>>
 
-  <assign|onehalf|<macro|<active*|<with|mode|text|font|tc|½>>>>
+  <assign|onehalf|<macro|<active*|<if|<equal|<value|mode>|math>|<with|mode|text|mode|text|font|tc|½>|<with|mode|text|font|tc|½>>>>>
 
-  <assign|threequarters|<macro|<active*|<with|mode|text|font|tc|¾>>>>
+  <assign|threequarters|<macro|<active*|<if|<equal|<value|mode>|math>|<with|mode|text|mode|text|font|tc|¾>|<with|mode|text|font|tc|¾>>>>>
 
-  <assign|euro|<macro|<active*|<with|mode|text|font|tcx|¿>>>>
+  <assign|euro|<macro|<active*|<if|<equal|<value|mode>|math>|<with|mode|text|mode|text|font|tcx|¿>|<with|mode|text|font|tcx|¿>>>>>
 
-  <assign|trademark|<macro|<active*|<with|mode|text|font|tcx|—>>>>
+  <assign|trademark|<macro|<active*|<if|<equal|<value|mode>|math>|<with|mode|text|mode|text|font|tcx|—>|<with|mode|text|font|tcx|—>>>>>
 
-  <assign|emdash|<macro|<active*|<with|mode|text|font|roman|\V>>>>
+  <assign|emdash|<macro|<active*|<if|<equal|<value|mode>|math>|<with|mode|text|font|roman|\V>|<with|font|roman|\V>>>>>
 
   <assign|masculine|<active*|<rsup|<wide*|o|\<wide-bar\>>>>>
 
