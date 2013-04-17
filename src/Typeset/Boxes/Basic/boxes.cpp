@@ -833,8 +833,8 @@ make_eps (url name, box b, int dpi) {
   b->x0= -b->x3;
   b->y0= -b->y4;
   renderer ren= printer (name, dpi, 1, "user", false, w/cm, h/cm);
-  ren->set_color (black);
   ren->set_background (white);
+  ren->set_pencil (black);
   rectangles rs;
   b->redraw (ren, path (0), rs);
   tm_delete (ren);

@@ -103,9 +103,9 @@ x_drawable_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
 * Drawing into drawables
 ******************************************************************************/
 
-color
-x_drawable_rep::get_color () {
-  return cur_fg;
+pencil
+x_drawable_rep::get_pencil () {
+  return pen;
 }
 
 brush
@@ -114,9 +114,16 @@ x_drawable_rep::get_background () {
 }
 
 void
-x_drawable_rep::set_color (color c) {
-  cur_fg= c;
+x_drawable_rep::set_pencil (pencil p) {
+  pen= p;
+  cur_fg= pen->c;
   XSetForeground (dpy, gc, CONVERT (blend (cur_fg, cur_bg)));
+  if (pen->w <= pixel)
+    XSetLineAttributes (dpy, (GC) gc, 1, LineSolid,
+                        pen->cap == cap_round? CapRound: CapButt, JoinRound);
+  else
+    XSetLineAttributes (dpy, (GC) gc, (pen->w+thicken) / pixel, LineSolid,
+                        pen->cap == cap_round? CapRound: CapButt, JoinRound);
 }
 
 void
@@ -124,16 +131,6 @@ x_drawable_rep::set_background (brush b) {
   bg_brush= b;
   cur_bg= b->c;
   XSetBackground (dpy, gc, CONVERT (cur_bg));
-}
-
-void
-x_drawable_rep::set_line_style (SI lw, int type, bool round) { (void) type;
-  if (lw <= pixel)
-    XSetLineAttributes (dpy, (GC) gc, 1,
-			LineSolid, round?CapRound:CapButt, JoinRound);
-  else
-    XSetLineAttributes (dpy, (GC) gc, (lw+thicken) / pixel,
-			LineSolid, round?CapRound:CapButt, JoinRound);
 }
 
 void

@@ -132,7 +132,7 @@ box_widget_rep::handle_repaint (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   handle_get_size_hint (w, h);
   if (!transparent) {
     ren->set_background (bg);
-    ren->set_color (bg);
+    ren->set_pencil (bg);
     ren->fill (x1, y1, x2, y2);
   }
   ren->set_zoom_factor (zoomf);

@@ -59,8 +59,7 @@ void
 ink_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   renderer ren= ev->win;
   layout_pastel (ren, ev->x1, ev->y1, ev->x2, ev->y2);
-  ren->set_color (black);
-  ren->set_line_style (2 * PIXEL);
+  ren->set_pencil (pencil (black, 2*PIXEL));
   for (int i=0; i<N(shs); i++) {
     poly_line sh= shs[i];
     int n= N(sh);
@@ -87,7 +86,7 @@ ink_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
     array<double> ts= vertices (pl);
     double len= length (pl);
     for (int j=0; j<N(ts); j++) {
-      ren->set_color (red);
+      ren->set_pencil (pencil (red, 2*PIXEL));
       point p= access (pl, ts[j] * len);
       SI x= p[0] * PIXEL;
       SI y= p[1] * PIXEL;

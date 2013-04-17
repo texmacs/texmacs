@@ -67,7 +67,7 @@ void
 text_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   renderer ren= ev->win;
   if (!transparent) layout_default (ren, 0, 0, w, h);
-  ren->set_color (col);
+  ren->set_pencil (col);
   font fn= get_default_styled_font (style);
   ren->set_shrinking_factor (3);
   fn ->var_draw (ren, s, 3*dw- ex->x1, 3*dh- fn->y1);

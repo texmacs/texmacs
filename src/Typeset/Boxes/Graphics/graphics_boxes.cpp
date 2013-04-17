@@ -242,10 +242,10 @@ point_box_rep::display (renderer ren) {
   y[2]= ((SI) p[1]) + r;
   x[3]= ((SI) p[0]) + r;
   y[3]= ((SI) p[1]) - r;
-  ren->set_line_style (PIXEL);
   if (style == "none");
   else if (style == "square") {
     if (fill == FILL_MODE_INSIDE || fill == FILL_MODE_BOTH) {
+      ren->set_pencil (pencil (col, ren->pixel));
       ren->set_brush (fill_br);
       ren->line (x[0], y[0], x[1], y[1]);
       ren->line (x[1], y[1], x[2], y[2]);
@@ -254,7 +254,7 @@ point_box_rep::display (renderer ren) {
       ren->polygon (x, y, false);
     }
     if (fill == FILL_MODE_NONE || fill == FILL_MODE_BOTH) {
-      ren->set_color (col);
+      ren->set_pencil (pencil (col, ren->pixel));
       ren->line (x[0], y[0], x[1], y[1]);
       ren->line (x[1], y[1], x[2], y[2]);
       ren->line (x[2], y[2], x[3], y[3]);
@@ -269,7 +269,7 @@ point_box_rep::display (renderer ren) {
       ren->fill_arc (x[0], y[0]+ren->pixel, x[2], y[2]+ren->pixel, 0, 64*360);
     }
     if (fill == FILL_MODE_NONE || fill == FILL_MODE_BOTH) {
-      ren->set_color (col);
+      ren->set_pencil (pencil (col, ren->pixel));
       ren->arc (x[0], y[0]+ren->pixel, x[2], y[2]+ren->pixel, 0, 64*360);
     }
   }
@@ -458,8 +458,7 @@ curve_box_rep::display (renderer ren) {
     ren->polygon (x, y, false);
   }
   if (fill == FILL_MODE_NONE || fill == FILL_MODE_BOTH) {
-    ren->set_color (col);
-    ren->set_line_style (width, 0, false);
+    ren->set_pencil (pencil (col, width, cap_flat));
  // TODO: Add options for handling round/nonround joins & line ends
     if (N (style) == 0) {
       n= N(a);

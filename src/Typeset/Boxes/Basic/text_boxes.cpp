@@ -76,7 +76,7 @@ text_box_rep::text_box_rep (path ip, int pos2, string s, font fn2, color col2):
 
 void
 text_box_rep::display (renderer ren) {
-  ren->set_color (col);
+  ren->set_pencil (col);
   fn->draw (ren, str, 0, 0);
 }
 

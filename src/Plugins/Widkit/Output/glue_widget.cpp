@@ -72,7 +72,7 @@ glue_widget_rep::handle_repaint (repaint_event ev) {
     if (is_atomic (col)) {
       color c= named_color (col->label);
       ren->set_background (c);
-      ren->set_color (c);
+      ren->set_pencil (c);
       ren->fill (ev->x1, ev->y1, ev->x2, ev->y2);
     }
     else {

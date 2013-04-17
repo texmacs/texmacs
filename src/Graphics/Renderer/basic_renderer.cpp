@@ -356,17 +356,10 @@ basic_renderer_rep::get_rgb (color col, int& r, int& g, int& b, int& a) {
   get_rgb_color (col, r, g, b, a);
 }
 
-color
-basic_renderer_rep::get_color () {
-  return cur_fg;
+pencil
+basic_renderer_rep::get_pencil () {
+  return pen;
 }
-
-#if 0
-color
-basic_renderer_rep::get_color (string s) {
-  return named_color (s);
-}
-#endif
 
 brush
 basic_renderer_rep::get_brush () {
@@ -379,8 +372,9 @@ basic_renderer_rep::get_background () {
 }
 
 void
-basic_renderer_rep::set_color (color c) {
-  cur_fg= c;
+basic_renderer_rep::set_pencil (pencil p) {
+  pen= p;
+  cur_fg= pen->c;
 }
 
 void

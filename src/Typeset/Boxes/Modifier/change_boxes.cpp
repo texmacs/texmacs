@@ -426,7 +426,7 @@ cell_box_rep::pre_display (renderer& ren) {
   }
 
   if ((l>0) || (r>0) || (b>0) || (t>0)) {
-    ren->set_color (fg);
+    ren->set_pencil (fg);
     ren->fill (lx1, by1, lx2, ty2);
     ren->fill (rx1, by1, rx2, ty2);
     ren->fill (lx1, by1, rx2, by2);
@@ -538,10 +538,10 @@ highlight_box_rep::display (renderer ren) {
     SI pixel= ren->pixel;
     W= ((w + pixel - 1) / pixel) * pixel;
   }
-  ren->set_color (sunc);
+  ren->set_pencil (pencil (sunc, 0));
   ren->fill (x1  , y2-W, x2  , y2  );
   ren->fill (x1  , y1  , x1+W, y2  );
-  ren->set_color (shad);
+  ren->set_pencil (pencil (shad, 0));
   ren->fill (x1+W, y1  , x2  , y1+W);
   ren->fill (x2-W, y1  , x2  , y2-W);
   ren->draw_triangle (x1, y1, x1+W, y1, x1+W, y1+W);
@@ -687,7 +687,7 @@ struct text_at_box_rep: public move_box_rep {
     array<SI> xs, ys;
     xs << x1 - pad << x2 + pad << x2 + pad << x1 - pad << x1 - pad;
     ys << y1 - pad << y1 - pad << y2 + pad << y2 + pad << y1 - pad;
-    ren->set_color (rgb_color (255, 255, 224));
+    ren->set_pencil (pencil (rgb_color (255, 255, 224), ren->pixel));
     ren->polygon (xs, ys);
   }
   */

@@ -172,12 +172,16 @@ qt_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore)
 ******************************************************************************/
 
 void
-qt_renderer_rep::set_color (color c) {
-  basic_renderer_rep::set_color (c);
+qt_renderer_rep::set_pencil (pencil np) {
+  basic_renderer_rep::set_pencil (np);
   QPen p (painter->pen ());
   QBrush b (painter->brush ());
-  p.setColor (to_qcolor (cur_fg));
-  b.setColor (to_qcolor (cur_fg));
+  p.setColor (to_qcolor (pen->c));
+  b.setColor (to_qcolor (pen->c));
+  if (pen->w <= pixel) p.setWidth (0);
+  else p.setWidth ((pen->w+thicken) / (1.0*pixel));
+  p.setCapStyle (pen->cap == cap_round? Qt::RoundCap: Qt::SquareCap);
+  p.setJoinStyle (Qt::RoundJoin);
   painter->setPen (p);
   painter->setBrush (b);
 }
@@ -223,17 +227,6 @@ qt_renderer_rep::set_brush (brush br) {
     painter->setOpacity (qreal (pattern_alpha) / qreal (255));
     if (pm != NULL) painter->setBrush (QBrush (*pm));
   }
-}
-
-void
-qt_renderer_rep::set_line_style (SI lw, int type, bool round) {
-  (void) type;
-  QPen p (painter->pen ());
-  if (lw <= pixel) p.setWidth (0);
-  else p.setWidth ((lw+thicken) / (1.0*pixel));
-  p.setCapStyle (round? Qt::RoundCap: Qt::SquareCap);
-  p.setJoinStyle (Qt::RoundJoin);
-  painter->setPen (p);
 }
 
 void
@@ -340,7 +333,7 @@ qt_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
   QBrush br= painter->brush ();
   if (fg_brush->kind != brush_pattern)
     // FIXME: is this really necessary?
-    // The brush should have been set at the moment of set_color or set_brush
+    // The brush should have been set at the moment of set_pencil or set_brush
     br= QBrush (to_qcolor (cur_fg));
   QPainterPath pp;
   pp.addPolygon (poly);
@@ -368,7 +361,7 @@ qt_renderer_rep::draw_triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3) {
   QBrush br= painter->brush ();
   if (fg_brush->kind != brush_pattern)
     // FIXME: is this really necessary?
-    // The brush should have been set at the moment of set_color or set_brush
+    // The brush should have been set at the moment of set_pencil or set_brush
     br= QBrush (to_qcolor (cur_fg));
   QPainterPath pp;
   pp.addPolygon (poly);

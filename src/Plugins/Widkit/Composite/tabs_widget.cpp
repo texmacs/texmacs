@@ -126,21 +126,20 @@ tabs_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   SI top= h1 + h2 + 2*PIXEL;
   SI lim= xs[N(xs)-1];
 
-  ren->set_line_style (PIXEL);
-  ren->set_color (pastel);
+  ren->set_pencil (pencil (pastel, PIXEL));
   if (focus > 0)
     ren->line (0, h1, fx1, h1);
   ren->line (fx2, h1, w, h1);
-  ren->set_color (dark);
+  ren->set_pencil (pencil (dark, PIXEL));
   if (focus > 0)
     ren->line (0, h1 + PIXEL, fx1, h1 + PIXEL);
   ren->line (fx2, h1 + PIXEL, w, h1 + PIXEL);
-  ren->set_color (dark);
+  ren->set_pencil (pencil (dark, PIXEL));
   ren->line (0, top, lim - PIXEL, top);
   for (int i=0; i<l; i++) {
-    ren->set_color (pastel);
+    ren->set_pencil (pencil (pastel, PIXEL));
     ren->line (xs[i], h1+2*PIXEL, xs[i], top - PIXEL);
-    ren->set_color (dark);
+    ren->set_pencil (pencil (dark, PIXEL));
     ren->line (xs[i+1]-PIXEL, h1+2*PIXEL, xs[i+1]-PIXEL, top - PIXEL);
   }
 }

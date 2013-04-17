@@ -50,10 +50,11 @@ int hash (basic_character xc);
 
 class basic_renderer_rep: public renderer_rep {
 public:
-  int   w, h;
-  color cur_fg, cur_bg;
-  brush fg_brush;
-  brush bg_brush;
+  int    w, h;
+  color  cur_fg, cur_bg;
+  pencil pen;
+  brush  fg_brush;
+  brush  bg_brush;
 
 public:
   basic_renderer_rep (bool screen_flag, int w2 = 0, int h2 = 0):
@@ -65,15 +66,14 @@ public:
   
   /***** routines from renderer.hpp ******************************************/
 
-  color rgb (int r, int g, int b, int a= 255);
-  void  get_rgb (color col, int& r, int& g, int& b, int& a);
-  color get_color ();
-  // color get_color (string s);
-  brush get_brush ();
-  brush get_background ();
+  color  rgb (int r, int g, int b, int a= 255);
+  void   get_rgb (color col, int& r, int& g, int& b, int& a);
+  pencil get_pencil ();
+  brush  get_brush ();
+  brush  get_background ();
 
   void  set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
-  void  set_color (color c);
+  void  set_pencil (pencil p);
   void  set_brush (brush b);
   void  set_background (brush b);
 

@@ -109,7 +109,7 @@ choice_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
       ren->set_background (white);
     }
     if (i == over) layout_dark_outline (ren, 0, y + dy, 3*w, y);
-    ren->set_color (black);
+    ren->set_pencil (pencil (black, PIXEL));
     fn->var_get_extents (names[i], ex);
     fn->var_draw (ren, names[i], 9*PIXEL, y-fn->y2-6*PIXEL);
     y += dy;

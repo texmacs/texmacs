@@ -67,8 +67,7 @@ public:
   virtual ~cairo_renderer_rep ();
   
   void  draw (int char_code, font_glyphs fn, SI x, SI y);
-  void  set_color (color c);
-  void  set_line_style (SI w, int type=0, bool round=true);
+  void  set_pencil (pencil p);
   void  line (SI x1, SI y1, SI x2, SI y2);
   void  lines (array<SI> x, array<SI> y);
   void  clear (SI x1, SI y1, SI x2, SI y2);
@@ -130,27 +129,23 @@ cairo_renderer_rep::next_page () {
 }
 
 void
-tm_cairo_set_source_color(cairo_t *context, color c) {
+tm_cairo_set_source_color (cairo_t* context, color c) {
   int r, g, b, a;
   get_rgb_color(c, r, g, b, a);
   tm_cairo_set_source_rgba(context, r/255.0, g/255.0, b/255.0, a/255.0);
 }
 
 void
-cairo_renderer_rep::set_color (color c) {
-  //cout << "set_color" << LF;
-  basic_renderer_rep::set_color(c);
-  tm_cairo_set_source_color(context, cur_fg);
-}
-
-void
-cairo_renderer_rep::set_line_style (SI lw, int type, bool round) {
-  (void) type;
+cairo_renderer_rep::set_pencil (pencil p) {
+  //cout << "set_pencil" << LF;
+  basic_renderer_rep::set_pencil (p);
+  tm_cairo_set_source_color (context, p->c);
   tm_cairo_set_line_cap (context,
-		      round? CAIRO_LINE_CAP_ROUND : CAIRO_LINE_CAP_SQUARE);
+                         pen->cap == cap_round?
+                         CAIRO_LINE_CAP_ROUND : CAIRO_LINE_CAP_SQUARE);
   tm_cairo_set_line_join (context, CAIRO_LINE_JOIN_ROUND);
   tm_cairo_set_line_width (context,
-			lw <= pixel ? 1 : ((lw+thicken) / (1.0*pixel)));
+                           pen->w <= pixel? 1: ((lw+thicken) / (1.0*pixel)));
 }
 
 void
@@ -500,7 +495,7 @@ printer (url ps_file_name, int dpi, int nr_pages,
   tm_cairo_destroy (context);
   tm_cairo_surface_destroy (surface);
   renderer r = ren;
-  r->set_color(black);
+  r->set_pencil (black);
   r->fill(0,-10000,10000,0);
   r->next_page();
   return r;

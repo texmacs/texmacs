@@ -29,6 +29,7 @@ class pdf_renderer_rep: public renderer_rep {
   double    paper_h;
 
   color     fg, bg;
+  pencil    pen;
   brush     bgb;
   SI        lw;
   string    cfn;
@@ -55,21 +56,20 @@ public:
   bool is_printer ();
   void next_page ();
 
-  void  set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
-  color get_color ();
-  brush get_background ();
-  void  set_color (color c);
-  void  set_background (brush b);
-  void  draw (int char_code, font_glyphs fn, SI x, SI y);
-  void  set_line_style (SI w, int type=0, bool round=true);
-  void  line (SI x1, SI y1, SI x2, SI y2);
-  void  lines (array<SI> x, array<SI> y);
-  void  clear (SI x1, SI y1, SI x2, SI y2);
-  void  fill (SI x1, SI y1, SI x2, SI y2);
-  void  arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
-  void  fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
-  void  polygon (array<SI> x, array<SI> y, bool convex=true);
-  void  image (url u, SI w, SI h, SI x, SI y, int alpha);
+  void   set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
+  pencil get_pencil ();
+  brush  get_background ();
+  void   set_pencil (pencil p);
+  void   set_background (brush b);
+  void   draw (int char_code, font_glyphs fn, SI x, SI y);
+  void   line (SI x1, SI y1, SI x2, SI y2);
+  void   lines (array<SI> x, array<SI> y);
+  void   clear (SI x1, SI y1, SI x2, SI y2);
+  void   fill (SI x1, SI y1, SI x2, SI y2);
+  void   arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
+  void   fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
+  void   polygon (array<SI> x, array<SI> y, bool convex=true);
+  void   image (url u, SI w, SI h, SI x, SI y, int alpha);
 
   void fetch (SI x1, SI y1, SI x2, SI y2, renderer ren, SI x, SI y);
   void new_shadow (renderer& ren);

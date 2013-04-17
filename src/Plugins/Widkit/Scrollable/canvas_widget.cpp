@@ -195,15 +195,13 @@ canvas_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   else if (hor_active && (!ver_active)) {
     layout_default (ren, 0, -h+ 16*PIXEL, w, -h+ 18*PIXEL);
     layout_dark_outline (ren, 0, -h+ 15*PIXEL, w, 0);
-    ren->set_line_style (PIXEL);
-    ren->set_color (layout_light (ren));
+    ren->set_pencil (pencil (layout_light (ren), PIXEL));
     ren->line (PIXEL, -h+ 18*PIXEL, w-2*PIXEL, -h+ 18*PIXEL);
   }
   else if ((!hor_active) && ver_active) {
     layout_default (ren, w- 18*PIXEL, -h, w- 16*PIXEL, 0);
     layout_dark_outline (ren, 0, -h, w- 15*PIXEL, 0);
-    ren->set_line_style (PIXEL);
-    ren->set_color (layout_light (ren));
+    ren->set_pencil (pencil (layout_light (ren), PIXEL));
     ren->line (w- 19*PIXEL, -h+PIXEL, w- 19*PIXEL, -2*PIXEL);
   }
   else layout_dark_outline (ren, 0, -h, w, 0);

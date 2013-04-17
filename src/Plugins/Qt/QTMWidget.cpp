@@ -380,7 +380,7 @@ QTMWidget::repaint_invalid_regions () {
         tm_widget()->handle_repaint (ren, r->x1, r->y2, r->x2, r->y1);
         if (gui_interrupted ()) {
           //cout << "interrupted repainting of  " << r0 << "\n";
-          //ren->set_color(green);
+          //ren->set_pencil (green);
           //ren->line(r->x1, r->y1, r->x2, r->y2);
           //ren->line(r->x1, r->y2, r->x2, r->y1);
           invalidate_rect (r0->x1, r0->y1, r0->x2, r0->y2);

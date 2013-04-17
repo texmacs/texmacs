@@ -21,7 +21,6 @@
 #include "sys_utils.hpp"
 #include "convert.hpp"
 
-
 extern "C" {
   
 #include "dvipdfmx/pdfdoc.h"
@@ -32,13 +31,8 @@ extern "C" {
 #include "dvipdfmx/tfm.h"
   
 void error_cleanup (void) ;
-  
+
 };
-
-
-
-
-
   
 void error_cleanup (void) 
   {
@@ -259,10 +253,10 @@ pdf_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
 * graphical routines
 ******************************************************************************/
 
-color
-pdf_renderer_rep::get_color () {
-//  cerr << "get_color\n";
-  return fg;
+pencil
+pdf_renderer_rep::get_pencil () {
+//  cerr << "get_pencil\n";
+  return pen;
 }
 
 brush
@@ -272,11 +266,17 @@ pdf_renderer_rep::get_background () {
 }
 
 void
-pdf_renderer_rep::set_color (color c) {
-//  cerr << "set_color\n";
-  if (fg==c) return;
-  fg= c;
-  select_color (c);
+pdf_renderer_rep::set_pencil (pencil p) {
+  // cerr << "set_pencil\n";
+  pen= pen2;
+  if (pen->c != fg) {
+    fg= pen->c;
+    select_color (fg);
+  }
+  if (pen->w != lw) {
+    lw= pen->w;
+    select_line_width (lw);
+  }
 }
 
 void
@@ -357,14 +357,6 @@ pdf_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
 #endif
 //  cerr << "char " << ch << " " << x << " " << y << " font " << cfid << " width " << w << LF;
   
-}
-
-void
-pdf_renderer_rep::set_line_style (SI w, int type, bool round) {
-//  cerr << "set_line_style\n";
-  if (lw == w) return;
-  lw= w;
-  select_line_width (w);
 }
 
 void

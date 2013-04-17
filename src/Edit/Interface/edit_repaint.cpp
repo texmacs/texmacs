@@ -37,16 +37,18 @@ void
 edit_interface_rep::draw_env (renderer ren) {
   if (!full_screen) {
     if (!is_nil (env_rects)) {
-      ren->set_color (rgb_color (0, 85, 85, 24));
+      ren->set_pencil (pencil (rgb_color (0, 85, 85, 24), ren->pixel));
       ren->draw_rectangles (env_rects);
     }
     if (!is_nil (foc_rects)) {
-      ren->set_color (rgb_color (0, 255, 255));
+      ren->set_pencil (pencil (rgb_color (0, 255, 255), ren->pixel));
       ren->draw_rectangles (foc_rects);
     }
     if (!is_nil (sem_rects)) {
-      if (sem_correct) ren->set_color (rgb_color (112, 208, 112));
-      else ren->set_color (rgb_color (208, 144, 80));
+      if (sem_correct)
+        ren->set_pencil (pencil (rgb_color (112, 208, 112), ren->pixel));
+      else
+        ren->set_pencil (pencil (rgb_color (208, 144, 80), ren->pixel));
       ren->draw_rectangles (sem_rects);
     }
   }
@@ -60,9 +62,12 @@ edit_interface_rep::draw_cursor (renderer ren) {
       cu->y1 -= 2*pixel; cu->y2 += 2*pixel;
       SI x1= cu->ox + ((SI) (cu->y1 * cu->slope)), y1= cu->oy + cu->y1;
       SI x2= cu->ox + ((SI) (cu->y2 * cu->slope)), y2= cu->oy + cu->y2;
-      ren->set_line_style (pixel);
       string mode= get_env_string (MODE);
       string family, series;
+      color cuc= red;
+      if (!cu->valid) cuc= green;
+      else if (mode == "math") cuc= rgb_color (192, 0, 255);
+      ren->set_pencil (pencil (cuc, pixel));
       if ((mode == "text") || (mode == "src")) {
 	family= get_env_string (FONT_FAMILY);
 	series= get_env_string (FONT_SERIES);
@@ -75,12 +80,6 @@ edit_interface_rep::draw_cursor (renderer ren) {
 	family= get_env_string (PROG_FONT_FAMILY);
 	series= get_env_string (PROG_FONT_SERIES);
       }
-      if (cu->valid) {
-	if (mode == "math")
-	  ren->set_color (rgb_color (192, 0, 255));
-	else ren->set_color (red);
-      }
-      else ren->set_color (green);
       SI lserif= (series=="bold"? 2*pixel: pixel), rserif= pixel;
       if (family == "ss") lserif= rserif= 0;
       ren->line (x1-lserif, y1, x1+rserif, y1);
@@ -107,8 +106,7 @@ edit_interface_rep::draw_surround (renderer ren, rectangle r) {
 void
 edit_interface_rep::draw_context (renderer ren, rectangle r) {
   int i;
-  ren->set_color (light_grey);
-  ren->set_line_style (pixel);
+  ren->set_pencil (pencil (light_grey, pixel));
   for (i=1; i<N(eb[0]); i++) {
     SI y= eb->sy(0)+ eb[0]->sy2(i);
     if ((y >= r->y1) && (y < r->y2))
@@ -120,11 +118,12 @@ edit_interface_rep::draw_context (renderer ren, rectangle r) {
 void
 edit_interface_rep::draw_selection (renderer ren) {
   if (!is_nil (locus_rects)) {
-    ren->set_color (rgb_color (32, 160, 96));
+    ren->set_pencil (pencil (rgb_color (32, 160, 96), ren->pixel));
     ren->draw_rectangles (locus_rects);
   }
   if (made_selection && !is_nil (selection_rects)) {
-    ren->set_color (table_selection? rgb_color (192, 0, 255): red);
+    ren->set_pencil (pencil (table_selection? rgb_color (192, 0, 255): red,
+                             ren->pixel));
 #ifdef QTTEXMACS
     ren->draw_selection (selection_rects);
 #else
@@ -143,15 +142,13 @@ edit_interface_rep::draw_graphics (renderer ren) {
       string tm_curs= as_string (eval ("graphics-texmacs-pointer"));
       if (tm_curs != "none") {
 	if (tm_curs == "graphics-cross") {
-	  ren->set_line_style (pixel);
-	  ren->set_color (red);
+	  ren->set_pencil (pencil (red, pixel));
 	  ren->line (cu->ox, cu->oy-5*pixel, cu->ox, cu->oy+5*pixel);
 	  ren->line (cu->ox-5*pixel, cu->oy, cu->ox+5*pixel, cu->oy);
         }
 	else if (tm_curs == "graphics-cross-arrows") {
 	  static int s= 6*pixel, a= 2*pixel;
-	  ren->set_line_style (pixel);
-	  ren->set_color (red);
+	  ren->set_pencil (pencil (red, pixel));
 	  ren->line (cu->ox, cu->oy-s, cu->ox, cu->oy+s);
 	  ren->line (cu->ox-s, cu->oy, cu->ox+s, cu->oy);
 	  ren->line (cu->ox, cu->oy-s,cu->ox-a, cu->oy-s+a);

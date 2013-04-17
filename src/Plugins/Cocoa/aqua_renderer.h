@@ -17,14 +17,12 @@
 class aqua_renderer_rep:  public basic_renderer_rep {
 public:
   NSGraphicsContext *context;
-  
-  
+    
   aqua_renderer_rep (int w = 0, int h = 0);
   virtual ~aqua_renderer_rep ();
 
-  void draw (int char_code, font_glyphs fn, SI x, SI y);
-  void  set_color (color c);
-  void  set_line_style (SI w, int type=0, bool round=true);
+  void  draw (int char_code, font_glyphs fn, SI x, SI y);
+  void  set_pencil (pencil p);
   void  line (SI x1, SI y1, SI x2, SI y2);
   void  lines (array<SI> x, array<SI> y);
   void  clear (SI x1, SI y1, SI x2, SI y2);

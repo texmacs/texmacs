@@ -92,18 +92,14 @@ cg_renderer_rep::next_page () {
 }
 
 void
-cg_renderer_rep::set_color (color c) {
-  basic_renderer_rep::set_color(c);
-  cg_set_color(context,cur_fg);
-}
-
-void
-cg_renderer_rep::set_line_style (SI lw, int type, bool round) {
-  (void) type;
-	
-  CGContextSetLineCap(context, round? kCGLineCapRound : kCGLineCapSquare);
+cg_renderer_rep::set_pencil (pencil p) {
+  basic_renderer_rep::set_pencil (p);
+  cg_set_color (context, pen->c);
+  CGContextSetLineCap(context, pen->cap == cap_round?
+                               kCGLineCapRound : kCGLineCapSquare);
   CGContextSetLineJoin(context, kCGLineJoinRound);
-  CGContextSetLineWidth(context, lw <= pixel ? 1 : ((lw+thicken) / (1.0*pixel)));
+  CGContextSetLineWidth(context, pen->w <= pixel ?
+                                 1 : ((lw+thicken) / (1.0*pixel)));
 }
 
 void

@@ -224,11 +224,11 @@ tex_font_rep::special_draw (renderer ren, string s, SI x, SI y) {
   status= TEX_ANY;
   string r= s (i, j);
   string rr= special_translate[r];
-  color c= ren->get_color ();
+  pencil pen= ren->get_pencil ();
   if (N(rr) != 0) r= rr;
-  else ren->set_color (red);
+  else ren->set_pencil (red);
   draw_fixed (ren, r, x, y);
-  ren->set_color (c);
+  ren->set_pencil (pen);
   get_extents (r, ex);
   x += ex->x2;
   status= temp;

@@ -64,7 +64,7 @@ wait_widget_rep::handle_repaint (repaint_event ev) {
   renderer ren= ev->win;
   ren->set_background (rgb_color (255, 255, 160));
   ren->clear (0, 0, w, h);
-  ren->set_color (black);
+  ren->set_pencil (pencil (black, PIXEL));
   ren->line (0, 0, w-PIXEL, 0);
   ren->line (0, h-PIXEL, w-PIXEL, h-PIXEL);
   ren->line (0, 0, 0, h);
@@ -76,12 +76,12 @@ wait_widget_rep::handle_repaint (repaint_event ev) {
   fn->var_get_extents (wait_s, ex);
   SI x= (3*w - (ex->x1+ex->x2)) >> 1;
   SI y= 2*h - ((ex->y1+ex->y2) >> 1);
-  ren->set_color (red);
+  ren->set_pencil (red);
   fn->var_draw (ren, wait_s, x, y);
   fn->var_get_extents (message, ex);
   x= (3*w - (ex->x1+ex->x2)) >> 1;
   y= h - ((ex->y1+ex->y2) >> 1);
-  ren->set_color (black);
+  ren->set_pencil (black);
   fn->var_draw (ren, message, x, y);
   ren->set_shrinking_factor (1);
 }

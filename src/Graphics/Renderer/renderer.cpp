@@ -282,12 +282,12 @@ renderer_rep::draw_spacial (spacial obj) {
 
 void
 renderer_rep::set_brush (brush b) {
-  set_color (b->c);
+  set_pencil (b->c);
 }
 
 brush
 renderer_rep::get_brush () {
-  return get_color ();
+  return brush (get_pencil () -> c);
 }
 
 bool is_percentage (tree t, string s= "%");
@@ -369,15 +369,15 @@ renderer_rep::draw_rectangles (rectangles rs) {
 
 void
 renderer_rep::draw_selection (rectangles rs) {
-  color fg= get_color ();
+  color fg= get_pencil () -> c;
   int r, g, b, a;
   get_rgb_color (fg, r, g, b, a);
   color pfg= rgb_color (r, g, b, (a + 1) / 16);
   rectangles inn= ::thicken (rs, -pixel, -pixel);
   rectangles out= ::simplify (::correct (rs - inn));
-  set_color (pfg);
+  set_pencil (pfg);
   draw_rectangles (::simplify (inn));
-  set_color (fg);
+  set_pencil (fg);
   draw_rectangles (out);
 }
 

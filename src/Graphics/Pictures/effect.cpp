@@ -119,15 +119,6 @@ effect bubble (effect eff, double r, double a) {
   return tm_new<bubble_effect_rep> (eff, r, a); }
 
 /******************************************************************************
-* Color transformations
-******************************************************************************/
-
-effect set_color (effect eff, color c, color mask);
-effect make_transparent (effect eff, color bgc);
-effect make_opaque (effect eff, color bgc);
-effect change_color (effect eff, color what, color by);
-
-/******************************************************************************
 * Pens
 ******************************************************************************/
 

@@ -219,8 +219,8 @@ file_list_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   SI y= 0;
   for (i=0; i<N(names); i++)
     if (lids[i]) {
-      ren->set_color (black);
-      if (hilight == i) ren->set_color (red);
+      ren->set_pencil (black);
+      if (hilight == i) ren->set_pencil (red);
       fn->var_get_extents (names[i], ex);
       fn ->draw (ren, names[i], 9*PIXEL, y-fn->y2-6*PIXEL);
       y += fn->y1- fn->y2- 12*PIXEL;

@@ -242,7 +242,7 @@ error_font_rep::get_xpositions (string s, SI* xpos) {
 
 void
 error_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
-  ren->set_color (red);
+  ren->set_pencil (red);
   fn->draw_fixed (ren, s, x, y);
 }
 

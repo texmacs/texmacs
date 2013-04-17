@@ -54,7 +54,7 @@ toggle_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   layout_pastel_lower (ren, 0, dy, sz, dy + sz);
   if (on) {
     color dark= layout_dark (ren);
-    ren->set_color (dark);
+    ren->set_pencil (pencil (dark, PIXEL));
     ren->line (3*PIXEL, dy + 3*PIXEL, sz - 4*PIXEL, dy + sz - 4*PIXEL);
     ren->line (3*PIXEL, dy + sz - 4*PIXEL, sz - 4*PIXEL, dy + 3*PIXEL);
   }

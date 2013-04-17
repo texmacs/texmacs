@@ -127,9 +127,11 @@ bracket_box_rep::bracket_box_rep (path ip, int br_type2, SI penw2, color c,
 }
 
 void
-draw_bracket (renderer ren, int br_type, SI x, SI y, SI w, SI h, SI lw) {
+draw_bracket (renderer ren, int br_type, SI x, SI y, SI w, SI h,
+              color col, SI lw) {
   x+=lw; w-=2*lw;
   y+=lw; h-=2*lw;
+  ren->set_pencil (pencil (col, lw));
   switch (br_type) {
   case Lbracket:
     {
@@ -138,8 +140,8 @@ draw_bracket (renderer ren, int br_type, SI x, SI y, SI w, SI h, SI lw) {
       SI hh= (SI) (((double) h) / sqrt (2.0));
       SI ox= x+ ww;
       SI oy= y+ (h>>1);
-      ren->set_line_style (PIXEL);
-      for (i=0; i<lw; i+=PIXEL)
+      ren->set_pencil (pencil (col, ren->pixel));
+      for (i=0; i<lw; i+=ren->pixel)
 	ren->arc (ox-ww+i, oy-hh, ox+ww-i, oy+hh, 135<<6, 90<<6);
     }
     break;
@@ -150,8 +152,8 @@ draw_bracket (renderer ren, int br_type, SI x, SI y, SI w, SI h, SI lw) {
       SI hh= (SI) (((double) h) / sqrt (2.0));
       SI ox= x+ w- ww;
       SI oy= y+ (h>>1);
-      ren->set_line_style (PIXEL);
-      for (i=0; i<lw; i+=PIXEL)
+      ren->set_pencil (pencil (col, ren->pixel));
+      for (i=0; i<lw; i+=ren->pixel)
 	ren->arc (ox-ww+i, oy-hh, ox+ww-i, oy+hh, -(45<<6), 90<<6);
     }
     break;
@@ -205,9 +207,7 @@ draw_bracket (renderer ren, int br_type, SI x, SI y, SI w, SI h, SI lw) {
 
 void
 bracket_box_rep::display (renderer ren) {
-  ren->set_line_style (penw);
-  ren->set_color (col);
-  draw_bracket (ren, br_type, 0, y1, x2, y2-y1, penw);
+  draw_bracket (ren, br_type, 0, y1, x2, y2-y1, col, penw);
 }
 
 /*****************************************************************************/

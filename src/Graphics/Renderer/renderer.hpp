@@ -83,16 +83,15 @@ public:
   bool is_visible (SI x1, SI y1, SI x2, SI y2);
 
   /* graphical state */
-  virtual color get_color () = 0;
+  virtual pencil get_pencil () = 0;
   virtual brush get_brush ();
   virtual brush get_background () = 0;
-  virtual void set_color (color c) = 0;
+  virtual void set_pencil (pencil p) = 0;
   virtual void set_brush (brush b);
   virtual void set_background (brush b) = 0;
 
   /* drawing */
   virtual void draw (int char_code, font_glyphs fn, SI x, SI y) = 0;
-  virtual void set_line_style (SI w, int type=0, bool round=true) = 0;
   virtual void line (SI x1, SI y1, SI x2, SI y2) = 0;
   virtual void lines (array<SI> x, array<SI> y) = 0;
   virtual void clear (SI x1, SI y1, SI x2, SI y2) = 0;

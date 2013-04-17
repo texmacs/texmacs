@@ -111,23 +111,16 @@ aqua_renderer_rep::end () {
 }
 
 void
-aqua_renderer_rep::set_color (color c) {
-  basic_renderer_rep::set_color(c);
-  aqua_set_color(cur_fg);
-}
-
-
-void
-aqua_renderer_rep::set_line_style (SI lw, int type, bool round) { (void) type;
-  if (lw <= pixel)
-  {
+aqua_renderer_rep::set_pencil (pencil p) {
+  basic_renderer_rep::set_pencil (p);
+  aqua_set_color (pen->c);
+  if (pen->w <= pixel) {
     [NSBezierPath setDefaultLineWidth:1.0];
   }
-  else
-  {
-    [NSBezierPath setDefaultLineWidth:(lw+thicken)/(1.0*pixel)];
+  else {
+    [NSBezierPath setDefaultLineWidth: (pen->w+thicken)/(1.0*pixel)];
   }
-  [NSBezierPath setDefaultLineCapStyle:(round ? NSRoundLineCapStyle : NSButtLineCapStyle)];
+  [NSBezierPath setDefaultLineCapStyle: (pen_cap == cap_round ? NSRoundLineCapStyle : NSButtLineCapStyle)];
   [NSBezierPath setDefaultLineJoinStyle: NSRoundLineJoinStyle];
 }
 

@@ -28,8 +28,7 @@ struct test_box_rep: public box_rep {
 
 void
 test_box_rep::display (renderer ren) {
-  ren->set_color (green);
-  ren->set_line_style (PIXEL);
+  ren->set_pencil (pencil (green, PIXEL));
   ren->line (x1, y1, x2, y2);
   ren->line (x1, y2, x2, y1);
   // ren->arc (x1, y1, x2, y2, 45*64, 90*64);
@@ -67,8 +66,7 @@ line_box_rep::line_box_rep (
 
 void
 line_box_rep::display (renderer ren) {
-  ren->set_line_style (width);
-  ren->set_color (col);
+  ren->set_pencil (pencil (col, width));
   ren->line (X1, Y1, X2, Y2);
 }
 
@@ -102,12 +100,11 @@ polygon_box_rep::polygon_box_rep (
 
 void
 polygon_box_rep::display (renderer ren) {
-  ren->set_color (fill);
+  ren->set_pencil (fill);
   ren->polygon (x, y);
   if (w>0) {
     int i, n= N(x);
-    ren->set_line_style (w);
-    ren->set_color (outline);
+    ren->set_pencil (pencil (outline, w));
     for (i=0; i<n; i++)
       ren->line (x[i], y[i], x[(i+1)%n], y[(i+1)%n]);
   }
@@ -169,8 +166,7 @@ arc_box_rep::arc_box_rep (path ip, SI X1b, SI Y1b, SI X2b, SI Y2b,
 
 void
 arc_box_rep::display (renderer ren) {
-  ren->set_line_style (width);
-  ren->set_color (col);
+  ren->set_pencil (pencil (col, width));
   ren->arc (X1, Y1, X2, Y2, a1, a2-a1);
   // ren->line (x1, y1, x2, y2);
 }

@@ -75,7 +75,7 @@ qt_simple_widget_rep::handle_clear (SI x1, SI y1, SI x2, SI y2) {
 
 void
 qt_simple_widget_rep::handle_repaint (renderer win, SI x1, SI y1, SI x2, SI y2) {
-  (void) x1; (void) y1; (void) x2; (void) y2;
+  (void) win; (void) x1; (void) y1; (void) x2; (void) y2;
 }
 
 

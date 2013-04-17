@@ -33,6 +33,7 @@ protected:
   int            w, h;
   GC             gc;
   color          cur_fg, cur_bg;
+  pencil         pen;
   brush          bg_brush;
 
 public:
@@ -52,19 +53,18 @@ public:
 
   /********************** routines from renderer.hpp *************************/
 
-  void  set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
-  color get_color ();
-  brush get_background ();
-  void  set_color (color c);
-  void  set_background (brush b);
-  void  set_line_style (SI w, int type=0, bool round=true);
-  void  line (SI x1, SI y1, SI x2, SI y2);
-  void  lines (array<SI> x, array<SI> y);
-  void  clear (SI x1, SI y1, SI x2, SI y2);
-  void  fill (SI x1, SI y1, SI x2, SI y2);
-  void  arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
-  void  fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
-  void  polygon (array<SI> x, array<SI> y, bool convex=true);
+  void   set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
+  pencil get_pencil ();
+  brush  get_background ();
+  void   set_pencil (pencil p);
+  void   set_background (brush b);
+  void   line (SI x1, SI y1, SI x2, SI y2);
+  void   lines (array<SI> x, array<SI> y);
+  void   clear (SI x1, SI y1, SI x2, SI y2);
+  void   fill (SI x1, SI y1, SI x2, SI y2);
+  void   arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
+  void   fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
+  void   polygon (array<SI> x, array<SI> y, bool convex=true);
 
   void fetch (SI x1, SI y1, SI x2, SI y2, renderer ren, SI x, SI y);
   void new_shadow (renderer& ren);

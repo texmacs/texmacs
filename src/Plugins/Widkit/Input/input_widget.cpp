@@ -177,14 +177,14 @@ input_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
     layout_lower (ren, 0, 0, w, h);
   }
 
-  ren->set_color (black);
-  if (greyed) ren->set_color (dark_grey);
   ren->set_shrinking_factor (SHRINK);
+  SI pixel= SHRINK*PIXEL;
+  ren->set_pencil (pencil (black, pixel));
+  if (greyed) ren->set_pencil (pencil (dark_grey, pixel));
   ecart *= SHRINK;
   fn->var_draw (ren, draw_s, dw - left, dh - bottom + ecart);
   if (got_focus) {
-    SI pixel= SHRINK*PIXEL;
-    ren->set_color (red);
+    ren->set_pencil (pencil (red, pixel));
     ren->line (current + dw, dh + ecart,
 	       current + dw, height - pixel - dh - ecart);
     ren->line (current + dw - pixel, dh + ecart,

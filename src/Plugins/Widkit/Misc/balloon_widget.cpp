@@ -123,7 +123,7 @@ balloon_decoration_widget_rep::handle_repaint (repaint_event ev) {
   renderer ren= ev->win;
   ren->set_background (rgb_color (255, 255, 160));
   ren->clear (0, 0, w, h);
-  ren->set_color (black);
+  ren->set_pencil (pencil (black, PIXEL));
   ren->line (0, 0, w-PIXEL, 0);
   ren->line (0, h-PIXEL, w-PIXEL, h-PIXEL);
   ren->line (0, 0, 0, h);

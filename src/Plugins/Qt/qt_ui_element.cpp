@@ -205,7 +205,7 @@ qt_glue_widget_rep::render () {
       if (is_atomic (col)) {
         color c= named_color (col->label);
         ren->set_background (c);
-        ren->set_color (c);
+        ren->set_pencil (c);
         ren->fill (r->x1, r->y2, r->x2, r->y1);
       } else {
         ren->set_shrinking_factor (std_shrinkf);

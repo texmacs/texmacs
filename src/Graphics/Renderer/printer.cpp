@@ -570,9 +570,9 @@ printer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
 * graphical routines
 ******************************************************************************/
 
-color
-printer_rep::get_color () {
-  return fg;
+pencil
+printer_rep::get_pencil () {
+  return pen;
 }
 
 brush
@@ -581,10 +581,19 @@ printer_rep::get_background () {
 }
 
 void
-printer_rep::set_color (color c) {
-  if (fg==c) return;
-  fg= c;
-  select_color (c);
+printer_rep::set_pencil (pencil pen2) {
+  pen= pen2;
+  if (pen->c != fg) {
+    fg= pen->c;
+    select_color (fg);
+  }
+  //if (pen->w != lw) {
+  // FIXME: apparently, the line width can be overidden by some of
+  // the graphical constructs (example file: newimpl.tm, in which
+  // the second dag was not printed using the right width)
+  lw= pen->w;
+  select_line_width (lw);
+  //}
 }
 
 void
@@ -610,18 +619,6 @@ printer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
   print ("(" * prepare_text (string ((char) c)) * ")p");
   tex_flag= true;
   xpos += gl->lwidth;
-}
-
-void
-printer_rep::set_line_style (SI w, int type, bool round) {
-  (void) type;
-  (void) round;
-  // if (lw == w) return;
-  // FIXME: apparently, the line width can be overidden by some of
-  // the graphical constructs (example file: newimpl.tm, in which
-  // the second dag was not printed using the right width)
-  lw= w;
-  select_line_width (w);
 }
 
 void
