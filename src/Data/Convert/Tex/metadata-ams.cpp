@@ -86,8 +86,14 @@ collect_metadata_ams (tree t) {
     else if (is_tuple (u, "\\begin-abstract")) {
       tree abstract_text (CONCAT);
       i++;
-      while (i<n && !is_tuple (t[i], "\\end-abstract"))
-        abstract_text << t[i++];
+      while (i<n && !is_tuple (t[i], "\\end-abstract")) {
+        if (is_tuple (t[i], "\\tmacm") || is_tuple (t[i], "\\tmpacs") ||
+            is_tuple (t[i], "\\tmarxiv"))
+          abstract_data << collect_abstract_data (t[i]);
+        else
+          abstract_text << t[i];
+        i++;
+      }
       abstract_data << tree (APPLY, "\\abstract", abstract_text);
     }
   }
