@@ -155,6 +155,9 @@ collect_metadata_acm (tree t) {
         abstract_text << t[i++];
       abstract_data << tree (APPLY, "\\abstract", abstract_text);
     }
+    else if (is_tuple (u, "\\tmmsc")  || is_tuple (u, "\\tmarxiv") ||
+             is_tuple (u, "\\tmpacs"))
+      abstract_data << collect_abstract_data (u);
     else if (is_tuple (u, "\\keywords", 1) || is_tuple (u, "\\terms", 1)) {
       array<tree> tmp= tokenize_concat (u[N(u)-1], A(concat (",", ";",
               tree (TUPLE, "\\tmsep"), tree (TUPLE, "\\tmSep"))));
@@ -165,7 +168,7 @@ collect_metadata_acm (tree t) {
       }
     }
     else if (is_tuple (u, "\\category") || is_tuple (u, "\\category*")) {
-      tree tmp (APPLY, "\\abstract-msc");
+      tree tmp (APPLY, "\\abstract-acm");
       for (int j=1; j<N(u); j++) tmp << u[j];
       abstract_data << tmp;
     }
