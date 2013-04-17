@@ -85,13 +85,16 @@ is_metadata (tree u) {
          is_tuple (u, "\\title*")            ||
          is_tuple (u, "\\thanks")            ||
          is_tuple (u, "\\thanks*")           ||
+         is_tuple (u, "\\tmacm")             ||
          is_tuple (u, "\\tmaffiliation")     ||
+         is_tuple (u, "\\tmarxiv")           ||
          is_tuple (u, "\\tmemail")           ||
          is_tuple (u, "\\tmhomepage")        ||
          is_tuple (u, "\\tmkeywords")        ||
          is_tuple (u, "\\tmmisc")            ||
          is_tuple (u, "\\tmmsc")             ||
          is_tuple (u, "\\tmnote")            ||
+         is_tuple (u, "\\tmpacs")            ||
          is_tuple (u, "\\tmsep")             ||
          is_tuple (u, "\\tmSep")             ||
          is_tuple (u, "\\tmsubtitle")        ||
@@ -140,6 +143,18 @@ get_latex_title_notes (tree t, array<tree> &r) {
   int i, n=N(t);
   for (i=0; i<n; i++)
     get_latex_title_notes (t[i], r);
+}
+
+tree
+collect_abstract_data (tree u) {
+  if (!is_tuple (u) || N(u) < 1) return u;
+  string s= as_string (u[0]);
+  s= "\\abstract-" * s(3, N(s));
+  tree r (APPLY, s);
+  for (int i=1; i<N(u); i++)
+    if (!is_tuple (u[i], "\\tmsep"))
+      r << u[i];
+  return r;
 }
 
 static array<tree>
@@ -218,20 +233,10 @@ collect_metadata_latex (tree t, array<tree>(*get_author_datas)(tree)) {
         abstract_text << t[i++];
       abstract_data << tree (APPLY, "\\abstract", abstract_text);
     }
-    else if (is_tuple (u, "\\tmkeywords")) {
-      tree tmp (APPLY, "\\abstract-keywords");
-      for (int j=1; j<N(u); j++)
-        if (!is_tuple (u[j], "\\tmsep"))
-          tmp << u[j];
-      abstract_data << tmp;
-    }
-    else if (is_tuple (u, "\\tmmsc")) {
-      tree tmp (APPLY, "\\abstract-msc");
-      for (int j=1; j<N(u); j++)
-        if (!is_tuple (u[j], "\\tmsep"))
-          tmp << u[j];
-      abstract_data << tmp;
-    }
+    else if (is_tuple (u, "\\tmkeywords") || is_tuple (u, "\\tmmsc")  ||
+             is_tuple (u, "\\tmacm")      || is_tuple (u, "\\tmpacs") ||
+             is_tuple (u, "\\tmarxiv"))
+      abstract_data << collect_abstract_data (u);
   }
   if (!dated && maketitle)
     doc_data << tuple ("\\doc-date", tree (APPLY, "date", ""));

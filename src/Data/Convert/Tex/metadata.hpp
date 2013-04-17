@@ -14,6 +14,7 @@
 #ifndef METADATA_H
 #define METADATA_H
 
+tree        collect_abstract_data (tree u);
 array<tree> collect_metadata_latex (tree t, array<tree>(*get_author_datas)(tree));
 array<tree> collect_metadata_latex (tree t);
 tree        collect_metadata_acm (tree t);
