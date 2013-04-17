@@ -131,9 +131,12 @@
 (tm-define (tmtex-abstract-acm t)
   (:mode acm-style?)
   (with l (cond ((== (length (cdr t)) 0) '("" "" ""))
-                ((== (length (cdr t)) 1) (append (cdr t) '("")))
-                ((== (length (cdr t)) 2) (append (cdr t) '("" "")))
-                (else (cdr t)))
+                ((== (length (cdr t)) 1) (append (cdr t) '("" "")))
+                ((== (length (cdr t)) 2) (append (cdr t) '("")))
+                ((== (length (cdr t)) 3) (cdr t))
+                (else (append (sublist (cdr t) 0 3)
+                              `((!option ,(fourth (cdr t))))
+                              (sublist (cdr t) 4 (length (cdr t))))))
     `(category ,@l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
