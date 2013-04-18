@@ -1539,6 +1539,9 @@
         ((symbol? l) l)
         (else (map escape-backslashes l))))
 
+(define (tmtex-new-theorem s l)
+  `(newtheorem ,@l))
+
 (define (tmtex-verbatim s l)
   (if (func? (car l) 'document)
       (list '!verbatim (tmtex-tt (escape-braces (escape-backslashes (car l)))))
@@ -2074,6 +2077,7 @@
 	convention quote-env quotation verse solution question answer
 	acknowledgments)
    (,tmtex-std-env 1))
+  (new-theorem (,tmtex-new-theorem 2))
   ((:or code verbatim) (,tmtex-verbatim 1))
   (center (,tmtex-std-env 1))
   (indent (,tmtex-indent 1))
