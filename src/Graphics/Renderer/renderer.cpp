@@ -282,7 +282,7 @@ renderer_rep::draw_spacial (spacial obj) {
 
 void
 renderer_rep::set_brush (brush b) {
-  set_pencil (b->c);
+  set_pencil (b->get_color ());
 }
 
 brush
@@ -296,12 +296,13 @@ double as_percentage (tree t);
 void
 renderer_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
   brush b= get_background ();
-  if (b->kind == brush_none);
-  else if (b->kind == brush_color)
+  brush_kind kind= b->get_type ();
+  if (kind == brush_none);
+  else if (kind == brush_color)
     clear (x1, y1, x2, y2);
-  else if (b->kind == brush_pattern && is_func (b->pattern, PATTERN)) {
-    tree pattern= b->pattern;
-    int pattern_alpha= b->alpha;
+  else if (kind == brush_pattern && is_func (b->get_pattern (), PATTERN)) {
+    tree pattern= b->get_pattern ();
+    int pattern_alpha= b->get_alpha ();
     outer_round (x1, y1, x2, y2);
     //cout << "A: " << x1 << ", " << y1 << ", " << x2 << ", " << y2 << "\n";
     //cout << "A: " << x/pixel1 << ", " << y1 << ", " << x2 << ", " << y2 << "\n";

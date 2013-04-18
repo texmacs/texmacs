@@ -13,39 +13,37 @@
 #define BRUSH_H
 #include "tree.hpp"
 
-enum brush_kind { brush_none, brush_color, brush_pattern };
+enum brush_kind {
+  brush_none,
+  brush_color,
+  brush_pattern
+};
 
-class brush_rep: concrete_struct {
+class brush_rep: abstract_struct {
 public:
-  brush_kind kind;
-  color c;
-  tree pattern;
-  int alpha;
+  inline brush_rep () {}
+  inline virtual ~brush_rep () {}
 
-  inline brush_rep ():
-    kind (brush_color), c (0xffffffff), alpha (255) {}
-  inline brush_rep (bool b):
-    kind (b? brush_color: brush_none), c (0xffffffff), alpha (255) {}
-  inline brush_rep (color c2):
-    kind (brush_color), c (c2), alpha (255) {}
-  brush_rep (tree p, int a);
+  virtual brush_kind get_type () = 0;
+  virtual void* get_handle () = 0;
+
+  virtual color get_color () = 0;
+  virtual tree get_pattern () = 0;
+  virtual int get_alpha () = 0;
 
   friend class brush;
 };
 
 class brush {
-  CONCRETE(brush);
-  inline brush (): rep (tm_new<brush_rep> ()) {}
-  inline brush (bool b): rep (tm_new<brush_rep> (b)) {}
-  inline brush (color c): rep (tm_new<brush_rep> (c)) {}
-  inline brush (tree p, int a= 255): rep (tm_new<brush_rep> (p, a)) {}
-
+ABSTRACT_NULL(brush);
+  brush (bool b);
+  brush (color c);
+  brush (tree p, int a= 255);
   friend inline bool operator == (const brush& a, const brush& b);
 };
-CONCRETE_CODE(brush);
+ABSTRACT_NULL_CODE(brush);
 
 inline bool operator == (const brush& a, const brush& b) {
-  return (a.rep->kind == b.rep->kind) && (a.rep->c == b.rep->c) &&
-         (a.rep->alpha == b.rep->alpha) && (a.rep->pattern == b.rep->pattern); }
+  return a.rep == b.rep; }
 
 #endif // defined BRUSH_H

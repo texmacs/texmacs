@@ -133,7 +133,7 @@ x_drawable_rep::set_pencil (pencil p) {
 void
 x_drawable_rep::set_background (brush b) {
   bg_brush= b;
-  cur_bg= b->c;
+  cur_bg= b->get_color ();
   XSetBackground (dpy, gc, CONVERT (cur_bg));
 }
 

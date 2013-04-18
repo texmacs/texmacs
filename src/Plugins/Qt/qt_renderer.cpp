@@ -192,15 +192,21 @@ double as_percentage (tree t);
 void
 qt_renderer_rep::set_brush (brush br) {
   basic_renderer_rep::set_brush (br);
-  QPen p (painter->pen ());
-  QBrush b (painter->brush ());
-  p.setColor (to_qcolor (cur_fg));
-  b.setColor (to_qcolor (cur_fg));
-  painter->setPen (p);
-  painter->setBrush (b);
-  if (br->kind == brush_pattern) {
-    tree pattern= br->pattern;
-    int pattern_alpha= br->alpha;
+  if (br->get_type () == brush_none) {
+    painter->setPen (QPen (Qt::NoPen));
+    painter->setBrush (QBrush (Qt::NoBrush));
+  }
+  else {
+    QPen p (painter->pen ());
+    QBrush b (painter->brush ());
+    p.setColor (to_qcolor (cur_fg));
+    b.setColor (to_qcolor (cur_fg));
+    painter->setPen (p);
+    painter->setBrush (b);
+  }
+  if (br->get_type () == brush_pattern) {
+    tree pattern= br->get_pattern ();
+    int pattern_alpha= br->get_alpha ();
 
     url u= as_string (pattern[0]);
     int imw_pt, imh_pt;
@@ -331,7 +337,7 @@ qt_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
     poly[i] = QPointF (xx, yy);
   }
   QBrush br= painter->brush ();
-  if (fg_brush->kind != brush_pattern)
+  if (fg_brush->get_type () != brush_pattern)
     // FIXME: is this really necessary?
     // The brush should have been set at the moment of set_pencil or set_brush
     br= QBrush (to_qcolor (cur_fg));
@@ -359,7 +365,7 @@ qt_renderer_rep::draw_triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3) {
     poly[i] = QPointF (xx, yy);
   }
   QBrush br= painter->brush ();
-  if (fg_brush->kind != brush_pattern)
+  if (fg_brush->get_type () != brush_pattern)
     // FIXME: is this really necessary?
     // The brush should have been set at the moment of set_pencil or set_brush
     br= QBrush (to_qcolor (cur_fg));

@@ -60,7 +60,11 @@ ABSTRACT_NULL(pencil);
           pencil_join j= join_round, double l= 2.0);
   pencil (brush br, SI w, pencil_cap c,
           pencil_join j= join_round, double l= 2.0);
+  friend inline bool operator == (const pencil& a, const pencil& b);
 };
 ABSTRACT_NULL_CODE(pencil);
+
+inline bool operator == (const pencil& a, const pencil& b) {
+  return a.rep == b.rep; }
 
 #endif // defined PENCIL_H

@@ -601,7 +601,7 @@ void
 printer_rep::set_background (brush b) {
   //if (bgb==b) return;
   bgb= b;
-  bg= b->c;
+  bg= b->get_color ();
 }
 
 void

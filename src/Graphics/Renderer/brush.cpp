@@ -12,18 +12,96 @@
 #include "brush.hpp"
 #include "gui.hpp"
 
-brush_rep::brush_rep (tree p, int a):
-  kind (brush_none), c (0xffffffff), pattern (p), alpha (a)
-{
+/******************************************************************************
+* No brush
+******************************************************************************/
+
+class no_brush_rep: public brush_rep {
+public:
+  no_brush_rep () {}
+
+  brush_kind get_type () { return brush_none; }
+  void* get_handle () { return (void*) this; }
+
+  color get_color () { return rgb_color (0, 0, 0, 0); }
+  tree get_pattern () { return ""; }
+  int get_alpha () { return 0; }
+};
+
+/******************************************************************************
+* Monochrome brushes
+******************************************************************************/
+
+class color_brush_rep: public brush_rep {
+  color c;
+
+public:
+  color_brush_rep (color c2): c (c2) {}
+
+  brush_kind get_type () { return brush_color; }
+  void* get_handle () { return (void*) this; }
+
+  color get_color () { return c; }
+  tree get_pattern () { return ""; }
+  int get_alpha () { return 255; }
+};
+
+/******************************************************************************
+* Patterns
+******************************************************************************/
+
+class pattern_brush_rep: public brush_rep {
+  color c;
+  tree pattern;
+  int alpha;
+
+public:
+  pattern_brush_rep (color c2, tree p, int a):
+    c (c2), pattern (p), alpha (a) {}
+
+  brush_kind get_type () { return brush_pattern; }
+  void* get_handle () { return (void*) this; }
+
+  color get_color () { return c; }
+  tree get_pattern () { return pattern; }
+  int get_alpha () { return alpha; }
+};
+
+/******************************************************************************
+* Constructors
+******************************************************************************/
+
+static brush_rep*
+make_brush (bool b) {
+  if (b) return tm_new<color_brush_rep> (white);
+  else return tm_new<no_brush_rep> ();
+}
+
+static brush_rep*
+make_brush (color c) {
+  int r, g, b, a;
+  get_rgb_color (c, r, g, b, a);
+  if (a == 0) return tm_new<no_brush_rep> ();
+  else return tm_new<color_brush_rep> (c);
+}
+
+static brush_rep*
+make_brush (tree p, int a) {
   if (is_atomic (p)) {
     string s= p->label;
-    if (s != "" && s != "none") {
-      kind= brush_color;
-      c= named_color (p->label, a);
-    }
+    if (s == "" || s == "none")
+      return tm_new<no_brush_rep> ();
+    else
+      return make_brush (named_color (s, a));
   }
-  else if (is_func (p, PATTERN)) {
-    kind= brush_pattern;
+  else {
+    color c= white;
     if (N(p) == 4) c= named_color (as_string (p[3]), a);
+    return tm_new<pattern_brush_rep> (c, p, a);
   }
 }
+
+//brush::brush (): rep (make_brush (white)) { INC_COUNT (rep); }
+brush::brush (color c): rep (make_brush (c)) { INC_COUNT (rep); }
+brush::brush (bool b): rep (make_brush (b)) { INC_COUNT (rep); }
+brush::brush (tree p, int a): rep (make_brush (p, a)) { INC_COUNT (rep); }

@@ -56,7 +56,7 @@ public:
   pencil_kind get_type () { return k; }
   void* get_handle () { return (void*) this; }
 
-  color get_color () { return br->c; }
+  color get_color () { return br->get_color (); }
   brush get_brush () { return br; }
   SI get_width () { return w; }
   pencil_cap get_cap () { return cap; }
