@@ -440,6 +440,9 @@
   ("C-insert" (clipboard-copy "primary"))
   ("S-insert" (clipboard-paste "primary"))
   ("S-delete" (clipboard-cut "primary"))
+  ("gnome c" (clipboard-copy "primary"))
+  ("gnome v" (clipboard-paste "primary"))
+  ("gnome x" (clipboard-cut "primary"))
   ("A-left" (cursor-history-backward))
   ("A-right" (cursor-history-forward))
 
