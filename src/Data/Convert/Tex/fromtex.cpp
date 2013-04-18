@@ -369,12 +369,12 @@ latex_symbol_to_tree (string s) {
       if (s == "cleardoublepage") return tree (FORMAT, "new double page");
       if (s == "strut") return tree (APPLY, "resize", "",
           "0pt", "-0.3bls", "0pt", "0.7bls");
-      if (s == "!")          return tree (SPACE, "-0.25spc");
-      if (s == ",")          return tree (SPACE, "0.25spc");
-      if (s == "thinspace")  return tree (SPACE, "0.25spc");
-      if (s == ":")          return tree (SPACE, "0.5spc");
-      if (s == "enspace")    return tree (SPACE, "0.5spc");
-      if (s == ";")          return tree (SPACE, "0.75spc");
+      if (s == "!")          return tree (SPACE, "-0.17em");
+      if (s == ",")          return tree (SPACE, "0.17em");
+      if (s == "thinspace")  return tree (SPACE, "0.17em");
+      if (s == ":")          return tree (SPACE, "0.22em");
+      if (s == "enspace")    return tree (SPACE, "0.5em");
+      if (s == ";")          return tree (SPACE, "0.27em");
       if (s == "quad")       return tree (SPACE, "1em");
       if (s == "qquad")      return tree (SPACE, "2em");
       if (s == "par")        return tree (VSPACE, "1fn");
