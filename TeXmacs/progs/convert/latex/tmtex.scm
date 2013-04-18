@@ -28,6 +28,7 @@
 
 (tm-define tmtex-style "generic")
 (tm-define tmtex-packages '())
+(tm-define tmtex-provided-packages '())
 (tm-define tmtex-replace-style? #t)
 (define tmtex-env (make-ahash-table))
 (define tmtex-serial 0)

@@ -131,11 +131,14 @@
 	((list? t) (map latex-expand-def t))
 	(else t)))
 
+;; TODO: to be rewrited with better factorisation
 (define (latex-macro-defs-sub t)
   (when (pair? t)
     (for-each latex-macro-defs-sub (cdr t))
-    (let* ((body  (logic-ref latex-texmacs-macro% (car t)
-			   latex-style-hyp latex-amsthm-hyp))
+    (let* ((body  (and
+                    (not (logic-ref latex-needs% (car t)))
+                    (logic-ref latex-texmacs-macro% (car t)
+                               latex-style-hyp latex-amsthm-hyp)))
 	   (arity (logic-ref latex-texmacs-arity% (car t)
 			   latex-style-hyp latex-amsthm-hyp))
            (option (logic-ref latex-texmacs-option% (car t)))
@@ -150,7 +153,8 @@
 		    (list arity (latex-expand-def body)))
 	(latex-macro-defs-sub body)))
     (let* ((body  (and (env-begin? (car t))
-		       (logic-ref latex-texmacs-environment% (cadar t))))
+                       (not (logic-ref latex-needs% (string->symbol (cadar t))))
+                       (logic-ref latex-texmacs-environment% (cadar t))))
 	   (arity (and (env-begin? (car t))
 		       (logic-ref latex-texmacs-env-arity% (cadar t))))
            (option (and (env-begin? (car t))
@@ -166,11 +170,14 @@
 	(ahash-set! latex-env-table (cadar t)
 		    (list arity (latex-expand-def body)))
 	(latex-macro-defs-sub body)))
-    (with body (or (logic-ref latex-texmacs-preamble% (car t)
-			    latex-style-hyp latex-amsthm-hyp)
+    (with body (or (and
+                     (not (logic-ref latex-needs% (car t)))
+                     (logic-ref latex-texmacs-preamble% (car t)
+                                latex-style-hyp latex-amsthm-hyp))
 		   (and (env-begin? (car t))
-			(logic-ref latex-texmacs-env-preamble% (cadar t)
-				 latex-style-hyp latex-amsthm-hyp)))
+                        (not (logic-ref latex-needs% (string->symbol (cadar t))))
+                        (logic-ref latex-texmacs-env-preamble% (cadar t)
+                                   latex-style-hyp latex-amsthm-hyp)))
       (when body
 	(ahash-set! latex-preamble-table (car t) body)))))
 
@@ -254,6 +261,7 @@
 (define (latex-command-uses s)
   (with packlist (logic-ref-list latex-needs% s)
     (when packlist
+      (if (string? packlist) (set! packlist (list packlist)))
       (for-each (cut ahash-set! latex-uses-table <> #t) packlist))))
 
 (define (latex-use-which-package l)
@@ -273,11 +281,15 @@
 	 (vr (if tr tr 999999)))
     (< vl vr)))
 
+(define (filter-packages l)
+  (filter (lambda (x) (in? x tmtex-provided-packages)) l))
+
 (define (latex-as-use-package l1)
   (let* ((l2 (sort l1 latex-use-package-compare))
 	 (l3 (map force-string l2))
-	 (l4 (list-intersperse l3 ","))
-	 (s  (apply string-append l4)))
+         (l4 (filter-packages l3))
+	 (l5 (list-intersperse l4 ","))
+	 (s  (apply string-append l5)))
     (if (== s "") "" (string-append "\\usepackage{" s "}\n"))))
 
 (tm-define (latex-use-package-command doc)
