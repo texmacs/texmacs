@@ -483,10 +483,10 @@
     (if (== (get-preference "texmacs->latex:expand-user-macros") "on")
 	(set! doc-preamble '()))
     (if (null? styles) (tmtex doc)
-	(let* ((body* (tmtex doc-body))
-	       (styles* (tmtex-filter-styles styles))
+	(let* ((styles* (tmtex-filter-styles styles))
 	       (preamble* (ahash-with tmtex-env :preamble #t
-			    (map-in-order tmtex doc-preamble))))
+			    (map-in-order tmtex doc-preamble)))
+               (body* (tmtex doc-body)))
 	  (list '!file body* styles* lang init preamble*)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
