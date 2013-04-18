@@ -11,36 +11,56 @@
 
 #ifndef PENCIL_H
 #define PENCIL_H
-#include "tree.hpp"
+#include "brush.hpp"
 
 extern int std_shrinkf;
 #define PIXEL 256
 
-enum pencil_cap { cap_square, cap_flat, cap_round };
-enum pencil_join { join_bevel, join_miter, join_round };
+enum pencil_kind {
+  pencil_simple,
+  pencil_standard,
+  pencil_brush
+};
 
-class pencil_rep: concrete_struct {
+enum pencil_cap {
+  cap_square,
+  cap_flat,
+  cap_round
+};
+
+enum pencil_join {
+  join_bevel,
+  join_miter,
+  join_round
+};
+
+class pencil_rep: abstract_struct {
 public:
-  color c;
-  SI w;
-  pencil_cap cap;
-  pencil_join join;
-  double miter_lim;
+  inline pencil_rep () {}
+  inline virtual ~pencil_rep () {}
 
-  inline pencil_rep (color c2, SI w2, pencil_cap cap2,
-                     pencil_join join2, double l):
-    c (c2), w (w2), cap (cap2), join (join2), miter_lim (l) {}
+  virtual pencil_kind get_type () = 0;
+  virtual void* get_handle () = 0;
+
+  virtual color get_color () = 0;
+  virtual brush get_brush () = 0;
+  virtual SI get_width () = 0;
+  virtual pencil_cap get_cap () = 0;
+  virtual pencil_join get_join () = 0;
+  virtual double get_miter_lim () = 0;
 
   friend class pencil;
 };
 
 class pencil {
-  CONCRETE(pencil);
-  inline pencil (color c= 0xff000000, SI w= std_shrinkf * PIXEL,
-                 pencil_cap cap= cap_round,
-                 pencil_join join= join_round, double l= 2.0):
-    rep (tm_new<pencil_rep> (c, w, cap, join, l)) {}
+ABSTRACT_NULL(pencil);
+  pencil (color c, SI w= std_shrinkf * PIXEL);
+  pencil (brush br, SI w= std_shrinkf * PIXEL);
+  pencil (color col, SI w, pencil_cap c,
+          pencil_join j= join_round, double l= 2.0);
+  pencil (brush br, SI w, pencil_cap c,
+          pencil_join j= join_round, double l= 2.0);
 };
-CONCRETE_CODE(pencil);
+ABSTRACT_NULL_CODE(pencil);
 
 #endif // defined PENCIL_H

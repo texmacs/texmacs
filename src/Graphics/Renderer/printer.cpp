@@ -583,15 +583,16 @@ printer_rep::get_background () {
 void
 printer_rep::set_pencil (pencil pen2) {
   pen= pen2;
-  if (pen->c != fg) {
-    fg= pen->c;
+  color c= pen->get_color ();
+  if (c != fg) {
+    fg= c;
     select_color (fg);
   }
   //if (pen->w != lw) {
   // FIXME: apparently, the line width can be overidden by some of
   // the graphical constructs (example file: newimpl.tm, in which
   // the second dag was not printed using the right width)
-  lw= pen->w;
+  lw= pen->get_width ();
   select_line_width (lw);
   //}
 }

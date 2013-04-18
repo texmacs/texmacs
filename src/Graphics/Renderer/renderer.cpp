@@ -287,7 +287,7 @@ renderer_rep::set_brush (brush b) {
 
 brush
 renderer_rep::get_brush () {
-  return brush (get_pencil () -> c);
+  return brush (get_pencil () -> get_brush ());
 }
 
 bool is_percentage (tree t, string s= "%");
@@ -369,7 +369,7 @@ renderer_rep::draw_rectangles (rectangles rs) {
 
 void
 renderer_rep::draw_selection (rectangles rs) {
-  color fg= get_pencil () -> c;
+  color fg= get_pencil () -> get_color ();
   int r, g, b, a;
   get_rgb_color (fg, r, g, b, a);
   color pfg= rgb_color (r, g, b, (a + 1) / 16);

@@ -176,11 +176,11 @@ qt_renderer_rep::set_pencil (pencil np) {
   basic_renderer_rep::set_pencil (np);
   QPen p (painter->pen ());
   QBrush b (painter->brush ());
-  p.setColor (to_qcolor (pen->c));
-  b.setColor (to_qcolor (pen->c));
-  if (pen->w <= pixel) p.setWidth (0);
-  else p.setWidth ((pen->w+thicken) / (1.0*pixel));
-  p.setCapStyle (pen->cap == cap_round? Qt::RoundCap: Qt::SquareCap);
+  p.setColor (to_qcolor (pen->get_color ()));
+  b.setColor (to_qcolor (pen->get_color ()));
+  if (pen->get_width () <= pixel) p.setWidth (0);
+  else p.setWidth ((pen->get_width () + thicken) / (1.0*pixel));
+  p.setCapStyle (pen->get_cap () == cap_round? Qt::RoundCap: Qt::SquareCap);
   p.setJoinStyle (Qt::RoundJoin);
   painter->setPen (p);
   painter->setBrush (b);

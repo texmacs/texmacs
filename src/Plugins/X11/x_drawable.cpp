@@ -116,14 +116,18 @@ x_drawable_rep::get_background () {
 void
 x_drawable_rep::set_pencil (pencil p) {
   pen= p;
-  cur_fg= pen->c;
+  cur_fg= pen->get_color ();
   XSetForeground (dpy, gc, CONVERT (blend (cur_fg, cur_bg)));
-  if (pen->w <= pixel)
-    XSetLineAttributes (dpy, (GC) gc, 1, LineSolid,
-                        pen->cap == cap_round? CapRound: CapButt, JoinRound);
+  if (pen->get_width () <= pixel)
+    XSetLineAttributes (dpy, (GC) gc,
+                        1, LineSolid,
+                        pen->get_cap () == cap_round? CapRound: CapButt,
+                        JoinRound);
   else
-    XSetLineAttributes (dpy, (GC) gc, (pen->w+thicken) / pixel, LineSolid,
-                        pen->cap == cap_round? CapRound: CapButt, JoinRound);
+    XSetLineAttributes (dpy, (GC) gc,
+                        (pen->get_width () + thicken) / pixel, LineSolid,
+                        pen->get_cap () == cap_round? CapRound: CapButt,
+                        JoinRound);
 }
 
 void

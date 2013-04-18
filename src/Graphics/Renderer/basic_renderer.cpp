@@ -374,7 +374,7 @@ basic_renderer_rep::get_background () {
 void
 basic_renderer_rep::set_pencil (pencil p) {
   pen= p;
-  cur_fg= pen->c;
+  cur_fg= pen->get_color ();
 }
 
 void
