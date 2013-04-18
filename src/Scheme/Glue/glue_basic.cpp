@@ -666,71 +666,6 @@ tmg_color (tmscm arg1) {
 }
 
 tmscm
-tmg_base_color (tmscm arg1) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "base-color");
-
-  string in1= tmscm_to_string (arg1);
-
-  // TMSCM_DEFER_INTS;
-  int out= base_color (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return int_to_tmscm (out);
-}
-
-tmscm
-tmg_x11_color (tmscm arg1) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "x11-color");
-
-  string in1= tmscm_to_string (arg1);
-
-  // TMSCM_DEFER_INTS;
-  int out= x11_color (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return int_to_tmscm (out);
-}
-
-tmscm
-tmg_dvips_color (tmscm arg1) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "dvips-color");
-
-  string in1= tmscm_to_string (arg1);
-
-  // TMSCM_DEFER_INTS;
-  int out= dvips_color (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return int_to_tmscm (out);
-}
-
-tmscm
-tmg_html_color (tmscm arg1) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "html-color");
-
-  string in1= tmscm_to_string (arg1);
-
-  // TMSCM_DEFER_INTS;
-  int out= html_color (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return int_to_tmscm (out);
-}
-
-tmscm
-tmg_get_named_color (tmscm arg1) {
-  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "get-named-color");
-
-  int in1= tmscm_to_int (arg1);
-
-  // TMSCM_DEFER_INTS;
-  string out= get_named_color (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return string_to_tmscm (out);
-}
-
-tmscm
 tmg_new_author () {
   // TMSCM_DEFER_INTS;
   double out= new_author ();
@@ -7071,11 +7006,6 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tree-translate-from-to",  tmg_tree_translate_from_to, 3, 0, 0);
   tmscm_install_procedure ("force-load-translations",  tmg_force_load_translations, 2, 0, 0);
   tmscm_install_procedure ("color",  tmg_color, 1, 0, 0);
-  tmscm_install_procedure ("base-color",  tmg_base_color, 1, 0, 0);
-  tmscm_install_procedure ("x11-color",  tmg_x11_color, 1, 0, 0);
-  tmscm_install_procedure ("dvips-color",  tmg_dvips_color, 1, 0, 0);
-  tmscm_install_procedure ("html-color",  tmg_html_color, 1, 0, 0);
-  tmscm_install_procedure ("get-named-color",  tmg_get_named_color, 1, 0, 0);
   tmscm_install_procedure ("new-author",  tmg_new_author, 0, 0, 0);
   tmscm_install_procedure ("set-author",  tmg_set_author, 1, 0, 0);
   tmscm_install_procedure ("get-author",  tmg_get_author, 0, 0, 0);
