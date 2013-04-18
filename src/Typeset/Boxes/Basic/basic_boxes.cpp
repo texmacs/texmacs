@@ -39,34 +39,32 @@ test_box_rep::display (renderer ren) {
 ******************************************************************************/
 
 struct line_box_rep: public box_rep {
-  SI    X1, Y1, X2, Y2;
-  SI    width;
-  color col;
+  SI X1, Y1, X2, Y2;
+  pencil pen;
 
-  line_box_rep (path ip, SI X1b, SI Y1b, SI X2b, SI Y2b, SI w, color c);
+  line_box_rep (path ip, SI X1b, SI Y1b, SI X2b, SI Y2b, pencil pen);
   operator tree () { return "line"; }
   void display (renderer ren);
 };
 
-line_box_rep::line_box_rep (
-  path ip, SI X1b, SI Y1b, SI X2b, SI Y2b, SI w, color c):
-    box_rep (ip)
+line_box_rep::line_box_rep (path ip, SI X1b, SI Y1b, SI X2b, SI Y2b, pencil p):
+  box_rep (ip)
 {
-  X1     = X1b;
-  Y1     = Y1b;
-  X2     = X2b;
-  Y2     = Y2b;
-  width  = w;
-  col    = c;
-  x1= min (X1, X2); y1= min (Y1, Y2);
-  x2= max (X1, X2); y2= max (Y1, Y2);
-  x3= x1-(w>>1);    y3= y1-(w>>1); 
-  x4= x2+(w>>1);    y4= y2+(w>>1);
+  SI w = p->get_width ();
+  X1 = X1b;
+  Y1 = Y1b;
+  X2 = X2b;
+  Y2 = Y2b;
+  pen= p;
+  x1 = min (X1, X2); y1 = min (Y1, Y2);
+  x2 = max (X1, X2); y2 = max (Y1, Y2);
+  x3 = x1-(w>>1);    y3 = y1-(w>>1); 
+  x4 = x2+(w>>1);    y4 = y2+(w>>1);
 }
 
 void
 line_box_rep::display (renderer ren) {
-  ren->set_pencil (pencil (col, width));
+  ren->set_pencil (pen);
   ren->line (X1, Y1, X2, Y2);
 }
 
@@ -76,18 +74,18 @@ line_box_rep::display (renderer ren) {
 
 struct polygon_box_rep: public box_rep {
   array<SI> x, y;
-  color fill, outline;
-  SI w;
+  pencil fill, outline;
 
-  polygon_box_rep (path ip, array<SI> x, array<SI> y, SI w, color f, color o);
+  polygon_box_rep (path ip, array<SI> x, array<SI> y, pencil f, pencil o);
   operator tree () { return "polygon"; }
   void display (renderer ren);
 };
 
 polygon_box_rep::polygon_box_rep (
-  path ip, array<SI> X, array<SI> Y, SI W, color f, color o):
-    box_rep (ip), x (X), y (Y), fill (f), outline (o), w (W)
+  path ip, array<SI> X, array<SI> Y, pencil f, pencil o):
+    box_rep (ip), x (X), y (Y), fill (f), outline (o)
 {
+  SI w= outline->get_width ();
   int i, n= N(x);
   x1= x2= x[0]; y1= y2= y[0];
   for (i=1; i<n; i++) {
@@ -102,9 +100,9 @@ void
 polygon_box_rep::display (renderer ren) {
   ren->set_pencil (fill);
   ren->polygon (x, y);
-  if (w>0) {
+  if (outline->get_width () > 0) {
     int i, n= N(x);
-    ren->set_pencil (pencil (outline, w));
+    ren->set_pencil (outline);
     for (i=0; i<n; i++)
       ren->line (x[i], y[i], x[(i+1)%n], y[(i+1)%n]);
   }
@@ -115,28 +113,26 @@ polygon_box_rep::display (renderer ren) {
 ******************************************************************************/
 
 struct arc_box_rep: public box_rep {
-  SI    X1, Y1, X2, Y2;
-  int   a1, a2;
-  SI    width;
-  color col;
+  SI  X1, Y1, X2, Y2;
+  int a1, a2;
+  pencil pen;
 
   arc_box_rep (path ip, SI X1b, SI Y1b, SI X2b, SI Y2b,
-	       int A1, int A2, SI w, color c);
+	       int A1, int A2, pencil pen);
   operator tree () { return "arc"; }
   void display (renderer ren);
 };
 
 arc_box_rep::arc_box_rep (path ip, SI X1b, SI Y1b, SI X2b, SI Y2b,
-			  int a1b, int a2b, SI w, color c): box_rep (ip)
+			  int a1b, int a2b, pencil p): box_rep (ip)
 {
-  X1     = X1b;
-  Y1     = Y1b;
-  X2     = X2b;
-  Y2     = Y2b;
-  a1     = a1b;
-  a2     = a2b;
-  width  = w;
-  col    = c;
+  X1 = X1b;
+  Y1 = Y1b;
+  X2 = X2b;
+  Y2 = Y2b;
+  a1 = a1b;
+  a2 = a2b;
+  pen= p;
 
   double scale= 3.1415927 / (180<<6);
   SI P1= ((X1+X2)/2) + (SI) (((X2-X1)/2) * cos (((double) a1) * scale));
@@ -158,6 +154,7 @@ arc_box_rep::arc_box_rep (path ip, SI X1b, SI Y1b, SI X2b, SI Y2b,
   if ((s<540) && ((s+d)>540)) p1= X1;
   if ((s<630) && ((s+d)>630)) q1= Y1;
 
+  SI w = pen->get_width ();
   x1= min (p1, p2); y1= min (q1, q2);
   x2= max (p1, p2); y2= max (q1, q2);
   x3= x1-(w>>1);    y3= y1-(w>>1); 
@@ -166,7 +163,7 @@ arc_box_rep::arc_box_rep (path ip, SI X1b, SI Y1b, SI X2b, SI Y2b,
 
 void
 arc_box_rep::display (renderer ren) {
-  ren->set_pencil (pencil (col, width));
+  ren->set_pencil (pen);
   ren->arc (X1, Y1, X2, Y2, a1, a2-a1);
   // ren->line (x1, y1, x2, y2);
 }
@@ -231,23 +228,24 @@ test_box (path ip) {
 }
 
 box
-line_box (path ip, SI x1, SI y1, SI x2, SI y2, SI w, color c) {
-  return tm_new<line_box_rep> (ip, x1, y1, x2, y2, w, c);
+line_box (path ip, SI x1, SI y1, SI x2, SI y2, pencil pen) {
+  return tm_new<line_box_rep> (ip, x1, y1, x2, y2, pen);
 }
 
 box
-arc_box (path ip, SI x1, SI y1, SI x2, SI y2, int a1, int a2, SI w, color c) {
-  return tm_new<arc_box_rep> (ip, x1, y1, x2, y2, a1, a2, w, c);
+arc_box (path ip, SI x1, SI y1, SI x2, SI y2, int a1, int a2, pencil pen) {
+  return tm_new<arc_box_rep> (ip, x1, y1, x2, y2, a1, a2, pen);
 }
 
 box
-polygon_box (path ip, array<SI> x, array<SI> y, SI w, color cf, color cl) {
-  return tm_new<polygon_box_rep> (ip, x, y, w, cf, cl);
+polygon_box (path ip, array<SI> x, array<SI> y, pencil fill, pencil outline) {
+  return tm_new<polygon_box_rep> (ip, x, y, fill, outline);
 }
 
 box
-polygon_box (path ip, array<SI> x, array<SI> y, color c) {
-  return tm_new<polygon_box_rep> (ip, x, y, 0, c, c);
+polygon_box (path ip, array<SI> x, array<SI> y, pencil pen) {
+  color c= pen->get_color ();
+  return tm_new<polygon_box_rep> (ip, x, y, pen, pencil (c, 0));
 }
 
 box

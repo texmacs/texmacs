@@ -76,8 +76,8 @@ flag_box_rep::flag_box_rep (
   x[2]= w+W; y[2]= H/2;
   x[3]= w; y[3]= H;
   x[4]= 0; y[4]= H;
-  insert (line_box (dip, 0, 0, 0, h, lw, dark), 0, 0);
-  insert (polygon_box (dip, x, y, lw, light, dark), 0, h);
+  insert (line_box (dip, 0, 0, 0, h, pencil (dark, lw)), 0, 0);
+  insert (polygon_box (dip, x, y, light, pencil (dark, lw)), 0, h);
   insert (b, sep - b->x1, h + sep - b->y1);
   position ();
   finalize ();
@@ -103,8 +103,8 @@ info_box_rep::info_box_rep (
   x[1]= d; y[1]= 0;
   x[2]= 0; y[2]= d;
   x[3]= -d; y[3]= 0;
-  insert (line_box (dip, 0, 0, 0, h-d, lw, dark), 0, 0);
-  insert (polygon_box (dip, x, y, lw, light, dark), 0, h);
+  insert (line_box (dip, 0, 0, 0, h-d, pencil (dark, lw)), 0, 0);
+  insert (polygon_box (dip, x, y, light, pencil (dark, lw)), 0, h);
   position ();
   finalize ();
 }

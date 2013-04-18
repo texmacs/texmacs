@@ -337,7 +337,7 @@ qt_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
     poly[i] = QPointF (xx, yy);
   }
   QBrush br= painter->brush ();
-  if (fg_brush->get_type () != brush_pattern)
+  if (is_nil (fg_brush) || fg_brush->get_type () != brush_pattern)
     // FIXME: is this really necessary?
     // The brush should have been set at the moment of set_pencil or set_brush
     br= QBrush (to_qcolor (cur_fg));
@@ -365,7 +365,7 @@ qt_renderer_rep::draw_triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3) {
     poly[i] = QPointF (xx, yy);
   }
   QBrush br= painter->brush ();
-  if (fg_brush->get_type () != brush_pattern)
+  if (is_nil (fg_brush) || fg_brush->get_type () != brush_pattern)
     // FIXME: is this really necessary?
     // The brush should have been set at the moment of set_pencil or set_brush
     br= QBrush (to_qcolor (cur_fg));

@@ -278,26 +278,27 @@ concater_rep::typeset_wide (tree t, path ip, bool above) {
       wide= false;
   }
   if (wide) {
-    SI w = env->fn->wline;
+    SI w= env->fn->wline;
+    pencil pen (env->col, w);
     box wideb;
     if ((s == "^") || (s == "<hat>"))
-      wideb= wide_hat_box   (decorate_middle (ip), b->x1, b->x2, w, env->col);
+      wideb= wide_hat_box   (decorate_middle (ip), b->x1, b->x2, pen);
     else if ((s == "~") || (s == "<tilde>"))
-      wideb= wide_tilda_box (decorate_middle (ip), b->x1, b->x2, w, env->col);
+      wideb= wide_tilda_box (decorate_middle (ip), b->x1, b->x2, pen);
     else if (s == "<bar>")
-      wideb= wide_bar_box   (decorate_middle (ip), b->x1, b->x2, w, env->col);
+      wideb= wide_bar_box   (decorate_middle (ip), b->x1, b->x2, pen);
     else if (s == "<vect>")
-      wideb= wide_vect_box  (decorate_middle (ip), b->x1, b->x2, w, env->col);
+      wideb= wide_vect_box  (decorate_middle (ip), b->x1, b->x2, pen);
     else if (s == "<check>")
-      wideb= wide_check_box (decorate_middle (ip), b->x1, b->x2, w, env->col);
+      wideb= wide_check_box (decorate_middle (ip), b->x1, b->x2, pen);
     else if (s == "<breve>")
-      wideb= wide_breve_box (decorate_middle (ip), b->x1, b->x2, w, env->col);
+      wideb= wide_breve_box (decorate_middle (ip), b->x1, b->x2, pen);
     else if (s == "<invbreve>")
-      wideb= wide_invbreve_box(decorate_middle (ip), b->x1, b->x2, w, env->col);
+      wideb= wide_invbreve_box(decorate_middle (ip), b->x1, b->x2, pen);
     else if (s == "<squnderbrace>" || s == "<squnderbrace*>")
-      wideb= wide_squbr_box (decorate_middle (ip), b->x1, b->x2, w, env->col);
+      wideb= wide_squbr_box (decorate_middle (ip), b->x1, b->x2, pen);
     else if (s == "<sqoverbrace>" || s == "<sqoverbrace*>")
-      wideb= wide_sqobr_box (decorate_middle (ip), b->x1, b->x2, w, env->col);
+      wideb= wide_sqobr_box (decorate_middle (ip), b->x1, b->x2, pen);
     else wideb= wide_box (decorate_middle (ip),
                           "<rubber-" * s (1, N(s)-1) * ">",
                           env->fn, env->col, b->x2- b->x1);

@@ -141,7 +141,8 @@ pager_rep::pages_format (pagelet pg) {
       }
     }
     if (fnote_y != MAX_SI) {
-      bs << line_box (decorate(), 0, 0, fnote_bl, 0, env->fn->wline, env->col);
+      pencil pen (env->col, env->fn->wline);
+      bs << line_box (decorate(), 0, 0, fnote_bl, 0, pen);
       bx << 0;
       by << (fnote_y + env->fn->sep);
     }

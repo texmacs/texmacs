@@ -62,9 +62,10 @@ frac_box_rep::frac_box_rep (
   SI w     = max (b1->w (), b2->w()) + 2*sep;
   SI d     = sep >> 1;
 
+  pencil pen (c, bar_w);
   insert (b1, (w>>1) - (b1->x2>>1), bar_y+ sep+ (bar_w>>1)- b1_y);
   insert (b2, (w>>1) - (b2->x2>>1), bar_y- sep- (bar_w>>1)- b2_y);
-  insert (line_box (decorate_middle (ip), d, 0, w-d, 0, bar_w, c), 0, bar_y);
+  insert (line_box (decorate_middle (ip), d, 0, w-d, 0, pen), 0, bar_y);
 
   italic_correct (b1);
   italic_correct (b2);
@@ -109,6 +110,7 @@ sqrt_box_rep::sqrt_box_rep (
   SI dx   = -fn->wfn/36, dy= -fn->wfn/36; // correction
   SI by   = sqrtb->y2+ dy;
 
+  pencil pen (c, wline);
   insert (b1, 0, 0);
   if (!is_nil (b2)) {
     SI X = - sqrtb->w();
@@ -121,7 +123,7 @@ sqrt_box_rep::sqrt_box_rep (
     insert (b2, min (X, M- b2->x2), Y- b2->y1+ sep);
   }
   insert (sqrtb, -sqrtb->x2, 0);
-  insert (line_box (decorate_middle (ip), dx, by, b1->x2, by, wline, c), 0, 0);
+  insert (line_box (decorate_middle (ip), dx, by, b1->x2, by, pen), 0, 0);
   
   position ();
   left_justify ();
@@ -164,6 +166,7 @@ neg_box_rep::neg_box_rep (path ip, box b, font fn, color c):
   SI Y    = (b->y1 + b->y2) >> 1;
   SI DX, DY;
 
+  pencil pen (c, wline);
   insert (b, 0, 0);
   if ((3*(b->x2-b->x1)) > (2*(b->y2-b->y1))) {
     DY= delta + ((b->y2 - b->y1)>>1);
@@ -173,8 +176,7 @@ neg_box_rep::neg_box_rep (path ip, box b, font fn, color c):
     DX= delta + ((b->x2 - b->x1)>>1);
     DY= DX;
   }
-  insert (line_box (decorate_middle (ip),
-		    X+DX, Y+DY, X-DX, Y-DY, wline, c), 0, 0);
+  insert (line_box (decorate_middle (ip), X+DX, Y+DY, X-DX, Y-DY, pen), 0, 0);
   
   italic_correct (b);
   position ();
@@ -225,6 +227,7 @@ tree_box_rep::tree_box_rep (path ip, array<box> bs, font fn, color line_c):
     x += bs[i]->w()+ hsep;
   }
 
+  pencil pen (line_c, line_w);
   for (x=x_0, i=1; i<n; i++) {
     SI x_i= x + (bs[i]->w()>>1);
     SI y_i= up + max (bs[i]->y2, fn->y2) + sep - h;
@@ -232,8 +235,7 @@ tree_box_rep::tree_box_rep (path ip, array<box> bs, font fn, color line_c):
     SI bw = min (bs[0]->w(), cw>>1);
     SI bx = bm + ((2*i-n) * bw) / (2*n-2);
     SI by = min (bs[0]->y1, fn->y1) - sep;
-    insert (line_box (decorate_middle (ip),
-		      bx, by, x_i, y_i, line_w, line_c), 0, 0);
+    insert (line_box (decorate_middle (ip), bx, by, x_i, y_i, pen), 0, 0);
     x += bs[i]->w()+ hsep;
   }
 
