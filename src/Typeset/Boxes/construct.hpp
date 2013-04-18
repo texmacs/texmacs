@@ -27,8 +27,8 @@ box marker_box (path ip, int x1, int y1, int x2, int y2, box ref);
 box test_box (path ip);
 box line_box (path ip, SI x1, SI y1, SI x2, SI y2, pencil pen);
 box arc_box (path ip, SI x1, SI y1, SI x2, SI y2, int a1, int a2, pencil p);
-box polygon_box (path ip, array<SI> x, array<SI> y, pencil fill);
-box polygon_box (path ip, array<SI> x, array<SI> y, pencil fill, pencil pen);
+box polygon_box (path ip, array<SI> x, array<SI> y, color fill);
+box polygon_box (path ip, array<SI> x, array<SI> y, color fill, pencil pen);
 box image_box (path ip, url u, SI w, SI h, int alpha, int px);
 
 box text_box (path ip, int pos, string s, font fn, color col);
@@ -74,8 +74,8 @@ box left_script_box (path ip, box ref, box b1, box b2, font fn, int level);
 box right_script_box (path ip, box ref, box b1, box b2, font fn, int level);
 box side_box (path ip, box ref, box l1, box l2, box r1, box r2, font f, int l);
 box specific_box (path ip, box b, bool printer_flag, font fn);
-box flag_box (path ip, box b, SI h, SI lw, color dark, color light);
-box info_box (path ip, SI h, SI lw, color dark, color light);
+box flag_box (path ip, box b, SI h, pencil dark, color light);
+box info_box (path ip, SI h, pencil dark, color light);
 box scrollbar_box (path ip, box b, bool vertical, SI span, tree t);
 
 box symbol_box (path ip, box b, int n);

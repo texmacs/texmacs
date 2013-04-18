@@ -90,7 +90,7 @@ concater_rep::flag_ok (string s, path ip, color col) {
   color light= rgb_color (r, g, b, a);
   int info= env->info_level;
   if (info == INFO_MINIMAL || info == INFO_SHORT) {
-    box infob= info_box (dip, h, env->fn->wline, col, light);
+    box infob= info_box (dip, h, pencil (col, env->fn->wline), light);
     box specb= specific_box (ip, infob, false, env->fn);
     print (specb);
   }
@@ -98,7 +98,7 @@ concater_rep::flag_ok (string s, path ip, color col) {
     int sz= script (env->fn_size, env->index_level+2);
     font gfn (tex_font ("ecrm", sz, (int) (env->magn*env->dpi)));
     box textb= text_box (decorate (ip), 0, s, gfn, col);
-    box flagb= flag_box (dip, textb, h, env->fn->wline, col, light);
+    box flagb= flag_box (dip, textb, h, pencil (col, env->fn->wline), light);
     if (info == INFO_DETAILED) {
       box specb= specific_box (ip, flagb, false, env->fn);
       print (specb);
