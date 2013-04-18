@@ -1549,6 +1549,7 @@
         (else (map escape-backslashes l))))
 
 (define (tmtex-new-theorem s l)
+  (ahash-set! tmtex-dynamic (string->symbol (car l)) 'environment)
   `(newtheorem ,@l))
 
 (define (tmtex-verbatim s l)
@@ -2290,8 +2291,9 @@
 (define tmtex-user-defs-table (make-ahash-table))
 
 (define (user-definition? x)
-  (and (func? x 'assign 2)
-       (string? (cadr x))))
+  (or
+    (and (func? x 'new-theorem 2) (string? (cadr x)))
+    (and (func? x 'assign 2) (string? (cadr x)))))
 
 (define (collect-user-defs-sub t)
   (cond ((npair? t) (noop))
