@@ -500,6 +500,12 @@
 (define (tmtex-hide-part s l) "")
 (define (tmtex-show-part s l) (tmtex (cadr l)))
 
+(define (tmtex-noop l) "")
+
+(define (tmtex-error l)
+  (display* "TeXmacs] error in conversion: " l "\n")
+  "")
+
 (define (tmtex-document l)
   (cons '!document (tmtex-list l)))
 
@@ -1929,7 +1935,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (logic-dispatcher tmtex-methods%
-  ((:or unknown uninit error raw-data) tmtex-noop)
+  ((:or unknown uninit error raw-data) tmtex-error)
   (document tmtex-document)
   (para tmtex-para)
   (surround tmtex-surround)
