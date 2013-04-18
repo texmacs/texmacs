@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "string.hpp"
+#include "analyze.hpp"
 #include "scheme.hpp"
 #include "Freetype/tt_file.hpp"
 #include "dictionary.hpp"
@@ -187,13 +188,16 @@ use_macos_fonts () {
 static const char*
 default_look_and_feel_impl () {
   if (os_mingw () || os_win32 ()) return "windows";
-  else if (os_macos ()) return "macos";
-  else if (get_env ("KDE_FULL_SESSION") != "") return "kde";
-  else if (get_env ("GNOME_DESKTOP_SESSION_ID") != "") return "gnome";
-  else if (eval_system ("pidof ksmserver") != "") return "kde";
-  else if (eval_system ("pidof gnome-session") != "") return "gnome";
-  //else if (eval_system ("pidof xfce-mcs-manage") != "") return "xfce";
-  else return "emacs";
+  if (os_macos ()) return "macos";
+  string session= get_env ("DESKTOP_SESSION");
+  if (occurs ("gnome", session))    return "gnome";
+  if (occurs ("cinnamon", session)) return "gnome";
+  if (occurs ("mate", session))     return "gnome";
+  if (occurs ("ubuntu", session))   return "unity";
+  if (occurs ("kde", session))      return "kde";
+  if (occurs ("xfce", session))     return "xfce";
+  if (occurs ("lxde", session))     return "lxde";
+  return "emacs";
 }
 
 const char*
