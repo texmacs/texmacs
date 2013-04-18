@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|1.0.7.19>
 
 <style|tmdoc>
 
@@ -26,7 +26,7 @@
     Similar as <markup|new-theorem>, but for exercises.
   </explain>
 
-  <\explain|<explain-macro|new-exercise|env-name|display-name>>
+  <\explain|<explain-macro|new-figure|env-name|display-name>>
     Similar as <markup|new-theorem>, but for figures. When defining a new
     type of figure, like ``picture'', the <markup|new-figure> macro defines
     both the inline environment <markup|small-picture> and the
@@ -46,7 +46,7 @@
   chapter). Figure <reference|std-env-fig> shows how the hierarchical
   organization of this counter group.
 
-  <\big-figure|<tree|<verbatim|std-env>|<tree|<verbatim|theorem-env>|<tabular*|<tformat|<table|<row|<cell|<verbatim|theorem>>>|<row|<cell|<verbatim|proposition>>>|<row|<cell|<verbatim|remark>>>|<row|<cell|<with|mode|math|\<vdots\>>>>>>>>|<tree|<verbatim|exercise-env>|<tabular*|<tformat|<table|<row|<cell|<verbatim|exercise>>>|<row|<cell|<verbatim|problem>>>>>>>|<tree|<verbatim|figure-env>|<tabular*|<tformat|<table|<row|<cell|<verbatim|figure>>>|<row|<cell|<verbatim|table>>>>>>>|<verbatim|equation>|<verbatim|footnote>>>
+  <\big-figure|<tree|<verbatim|std-env>|<tree|<verbatim|theorem-env>|<tabular*|<tformat|<table|<row|<cell|<verbatim|theorem>>>|<row|<cell|<verbatim|proposition>>>|<row|<cell|<verbatim|remark>>>|<row|<cell|<math|\<vdots\>>>>>>>>|<tree|<verbatim|exercise-env>|<tabular*|<tformat|<table|<row|<cell|<verbatim|exercise>>>|<row|<cell|<verbatim|problem>>>>>>>|<tree|<verbatim|figure-env>|<tabular*|<tformat|<table|<row|<cell|<verbatim|figure>>>|<row|<cell|<verbatim|table>>>>>>>|<verbatim|equation>|<verbatim|footnote>>>
     <label|std-env-fig>Organization of the counters for the standard
     <TeXmacs> environments.
   </big-figure>
@@ -90,17 +90,5 @@
 <\initial>
   <\collection>
     <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
   </collection>
 </initial>
