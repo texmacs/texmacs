@@ -477,6 +477,8 @@
   (xRightarrow "amsmath")
   (xLeftrightarrow "amsmath")
 
+  (proof "amsmath")
+
   (bigbox "stmaryrd")
   (bigcurlyvee "stmaryrd")
   (bigcurlywedge "stmaryrd")

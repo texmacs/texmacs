@@ -17,6 +17,10 @@
 (tm-define (tmtex-transform-style x)
   (:mode ams-style?) x)
 
+(tm-define tmtex-provided-packages
+  (:mode ams-style?)
+  '("amsmath"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; AMS data preprocessing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
