@@ -282,7 +282,7 @@
     (< vl vr)))
 
 (define (filter-packages l)
-  (filter (lambda (x) (in? x tmtex-provided-packages)) l))
+  (filter (lambda (x) (nin? x tmtex-provided-packages)) l))
 
 (define (latex-as-use-package l1)
   (let* ((l2 (sort l1 latex-use-package-compare))
