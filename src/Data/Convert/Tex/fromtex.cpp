@@ -727,8 +727,12 @@ latex_concat_to_tree (tree t, bool& new_flag) {
       if (!cc_flag) new_flag= ((N(s)==1) && is_alpha(s));
       if ((command_type ["!mode"] == "math") &&
 	  (!cc_flag) && old_flag && (new_flag || operator_flag)) s= "*" * s;
-      if ((N(r)>0) && is_atomic (r[N(r)-1])) r[N(r)-1]->label << s;
-      else r << s;
+      if ((N(r)>0) && is_atomic (r[N(r)-1])) {
+        if (s != " " || r[N(r)-1]->label != " ")
+          r[N(r)-1]->label << s;
+      }
+      else
+        r << s;
     }
     else {
       if (is_func (u, SET, 2)) {
