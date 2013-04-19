@@ -571,7 +571,6 @@ edit_env_rep::update () {
   update_geometry ();
   update_frame ();
   point_style= get_string (POINT_STYLE);
-  lw= get_length (LINE_WIDTH);
   update_color ();
   update_dash_style ();
   dash_style_unit= get_length (DASH_STYLE_UNIT);
@@ -603,7 +602,6 @@ edit_env_rep::update (string s) {
   case Env_Magnification:
     magn= get_double (MAGNIFICATION);
     update_font ();
-    lw= get_length (LINE_WIDTH);
     update_color ();
     break;
   case Env_Magnify:
@@ -659,7 +657,6 @@ edit_env_rep::update (string s) {
     point_style= get_string (POINT_STYLE);
     break;
   case Env_Line_Width:
-    lw= get_length (LINE_WIDTH);
     update_color ();
     break;
   case Env_Dash_Style:

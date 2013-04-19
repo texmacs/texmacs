@@ -156,7 +156,6 @@ public:
   int          alpha;
   color        col;
   pencil       pen;
-  SI           lw;
   string       point_style;
   bool         preamble;
   int          info_level;
