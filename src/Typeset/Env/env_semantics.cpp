@@ -298,15 +298,8 @@ edit_env_rep::update_color () {
   alpha= decode_alpha (get_string (OPACITY));
   string c = get_string (COLOR);
   tree   fc= env [FILL_COLOR];
-  if (c == "none") {
-    //col= rgb_color (0, 0, 0, 0);
-    pen= pencil (false);
-  }
-  else {
-    //col= named_color (c, alpha);
-    //pen= pencil (col, get_length (LINE_WIDTH));
-    pen= pencil (named_color (c, alpha), get_length (LINE_WIDTH));
-  }
+  if (c == "none") pen= pencil (false);
+  else pen= pencil (named_color (c, alpha), get_length (LINE_WIDTH));
   if (fc == "none") fill_brush= brush (false);
   else fill_brush= brush (fc, alpha);
 }
