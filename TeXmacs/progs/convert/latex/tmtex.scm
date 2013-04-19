@@ -1421,7 +1421,7 @@
 (tm-define (tmtex-append-authors l)
   (set! l (filter nnull? l))
   (cond ((null? l) '())
-        ((== (length l) 1) `((author (!indent (!concat ,@(cdr l))))))
+        ((== (length l) 1) `((author (!indent (!concat ,@(cdar l))))))
         (else
           (with lf '(!concat (!linefeed) (and) (!linefeed))
             `((author
