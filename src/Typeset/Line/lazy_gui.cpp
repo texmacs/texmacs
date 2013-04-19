@@ -191,7 +191,8 @@ lazy_ornament_rep::produce (lazy_type request, format fm) {
       bfm= make_format_width (fvs->width - 2 * (w + xpad));
     }
     box b = (box) par->produce (LAZY_BOX, bfm);
-    box hb= highlight_box (ip, b, w, xpad, ypad, bg, alpha, sunny, shadow);
+    box hb= highlight_box (ip, b, w, xpad, ypad,
+                           brush (bg, alpha), sunny, shadow);
     // FIXME: this dirty hack ensures that shoving is correct
     hb= move_box (decorate (ip), hb, 1, 0);
     hb= move_box (decorate (ip), hb, -1, 0);

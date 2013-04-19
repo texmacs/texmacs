@@ -483,12 +483,9 @@ public:
 
 struct highlight_box_rep: public change_box_rep {
   SI w, xpad, ypad;
-  tree bg;
-  int alpha;
-  color sunc, shad;  // Warning: Solaris has "sun" #defined. Don't rename this
-  brush old_bg;
+  brush bg, sunc, shad, old_bg;
   highlight_box_rep (path ip, box b, SI w, SI xpad, SI ypad,
-		     tree bg, int alpha, color sunc, color shad);
+		     brush bg, brush sunc, brush shad);
   operator tree () { return tree (TUPLE, "highlight", (tree) bs[0]); }
   void pre_display (renderer &ren);
   void post_display (renderer &ren);
@@ -497,9 +494,9 @@ struct highlight_box_rep: public change_box_rep {
 
 highlight_box_rep::highlight_box_rep (
   path ip, box b, SI w2, SI xp2, SI yp2,
-  tree bg2, int alpha2, color sunc2, color shad2):
+  brush bg2, brush sunc2, brush shad2):
     change_box_rep (ip, true), w (w2), xpad (xp2), ypad (yp2),
-    bg (bg2), alpha (alpha2), sunc (sunc2), shad (shad2)
+    bg (bg2), sunc (sunc2), shad (shad2)
 {
   insert (b, w + xpad, 0);
   position ();
@@ -517,7 +514,7 @@ highlight_box_rep::highlight_box_rep (
 void
 highlight_box_rep::pre_display (renderer& ren) {
   old_bg= ren->get_background ();
-  ren->set_background (brush (bg, alpha));
+  ren->set_background (bg);
   SI W= w;
   if (!ren->is_printer ()) {
     SI pixel= ren->pixel;
@@ -831,8 +828,8 @@ remember_box (path ip, box b) {
 
 box
 highlight_box (path ip, box b, SI w, SI xpad, SI ypad,
-	       tree bg, int a, color sunc, color shad) {
-  return tm_new<highlight_box_rep> (ip, b, w, xpad, ypad, bg, a, sunc, shad);
+	       brush bg, brush sunc, brush shad) {
+  return tm_new<highlight_box_rep> (ip, b, w, xpad, ypad, bg, sunc, shad);
 }
 
 box
