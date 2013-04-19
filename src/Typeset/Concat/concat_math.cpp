@@ -20,14 +20,14 @@ void
 concater_rep::typeset_large (tree t, path ip, int tp, int otp, string prefix) {
   if ((N(t) == 1) && is_atomic (t[0])) {
     string s= prefix * t[0]->label * ">";
-    box b= text_box (ip, 0, s, env->fn, env->col);
+    box b= text_box (ip, 0, s, env->fn, env->pen);
     print (tp, otp, b);
     // temporarary: use parameters from group-open class in std-math.syx
     // bug: allow hyphenation after ) and before *
   }
   else if ((N(t) == 2) && is_atomic (t[0]) && is_int (t[1])) {
     string s= prefix * t[0]->label * "-" * t[1]->label * ">";
-    box b= text_box (ip, 0, s, env->fn, env->col);
+    box b= text_box (ip, 0, s, env->fn, env->pen);
     SI dy= env->fn->yfrac - ((b->y1 + b->y2) >> 1);
     box mvb= move_box (ip, b, 0, dy, false, true);
     print (STD_ITEM, otp, macro_box (ip, mvb, env->fn));
@@ -44,7 +44,7 @@ concater_rep::typeset_large (tree t, path ip, int tp, int otp, string prefix) {
       y2= env->as_length (t[2]);
     }
     string s= prefix * t[0]->label * ">";
-    box b= delimiter_box (ip, s, env->fn, env->col, y1, y2);
+    box b= delimiter_box (ip, s, env->fn, env->pen, y1, y2);
     print (STD_ITEM, otp, b);
   }
   else typeset_error (t, ip);
@@ -57,7 +57,7 @@ concater_rep::typeset_bigop (tree t, path ip) {
     string l= t[0]->label;
     string s= "<big-" * l * ">";
     bool flag= (!env->math_condensed) && (l != ".");
-    box b= big_operator_box (ip, s, env->fn, env->col,
+    box b= big_operator_box (ip, s, env->fn, env->pen,
 			     env->display_style? 2: 1);
     print (STD_ITEM, OP_BIG, b);
     penalty_min (HYPH_PANIC);
@@ -146,7 +146,7 @@ concater_rep::typeset_long_arrow (tree t, path ip) {
   SI w= sup_b->w();
   if (N(t) == 3) w= max (w, sub_b->w());
   w += env->fn->wquad;
-  box arrow= wide_box (decorate (descend (ip, 0)), s, env->fn, env->col, w);
+  box arrow= wide_box (decorate (descend (ip, 0)), s, env->fn, env->pen, w);
 
   space spc= env->fn->spc;
   if (env->math_condensed) spc= space (spc->min>>3, spc->def>>3, spc->max>>2);
@@ -233,7 +233,7 @@ concater_rep::typeset_frac (tree t, path ip) {
   font sfn= env->fn;
   if (disp) env->local_end (MATH_DISPLAY, old);
   else env->local_end_script (old);
-  print (frac_box (ip, nom, den, env->fn, sfn, env->col));
+  print (frac_box (ip, nom, den, env->fn, sfn, env->pen));
 }
 
 void
@@ -252,8 +252,8 @@ concater_rep::typeset_sqrt (tree t, path ip) {
   }
   SI sep= env->fn->sep;
   box sqrtb= delimiter_box (decorate_left (ip), "<large-sqrt>",
-                            env->fn, env->col, b->y1, b->y2+ sep);
-  print (sqrt_box (ip, b, ind, sqrtb, env->fn, env->col));
+                            env->fn, env->pen, b->y1, b->y2+ sep);
+  print (sqrt_box (ip, b, ind, sqrtb, env->fn, env->pen));
 }
 
 void
@@ -279,29 +279,29 @@ concater_rep::typeset_wide (tree t, path ip, bool above) {
   }
   if (wide) {
     SI w= env->fn->wline;
-    pencil pen (env->col, w);
+    pencil wpen= env->pen->set_width (w);
     box wideb;
     if ((s == "^") || (s == "<hat>"))
-      wideb= wide_hat_box   (decorate_middle (ip), b->x1, b->x2, pen);
+      wideb= wide_hat_box   (decorate_middle (ip), b->x1, b->x2, wpen);
     else if ((s == "~") || (s == "<tilde>"))
-      wideb= wide_tilda_box (decorate_middle (ip), b->x1, b->x2, pen);
+      wideb= wide_tilda_box (decorate_middle (ip), b->x1, b->x2, wpen);
     else if (s == "<bar>")
-      wideb= wide_bar_box   (decorate_middle (ip), b->x1, b->x2, pen);
+      wideb= wide_bar_box   (decorate_middle (ip), b->x1, b->x2, wpen);
     else if (s == "<vect>")
-      wideb= wide_vect_box  (decorate_middle (ip), b->x1, b->x2, pen);
+      wideb= wide_vect_box  (decorate_middle (ip), b->x1, b->x2, wpen);
     else if (s == "<check>")
-      wideb= wide_check_box (decorate_middle (ip), b->x1, b->x2, pen);
+      wideb= wide_check_box (decorate_middle (ip), b->x1, b->x2, wpen);
     else if (s == "<breve>")
-      wideb= wide_breve_box (decorate_middle (ip), b->x1, b->x2, pen);
+      wideb= wide_breve_box (decorate_middle (ip), b->x1, b->x2, wpen);
     else if (s == "<invbreve>")
-      wideb= wide_invbreve_box(decorate_middle (ip), b->x1, b->x2, pen);
+      wideb= wide_invbreve_box(decorate_middle (ip), b->x1, b->x2, wpen);
     else if (s == "<squnderbrace>" || s == "<squnderbrace*>")
-      wideb= wide_squbr_box (decorate_middle (ip), b->x1, b->x2, pen);
+      wideb= wide_squbr_box (decorate_middle (ip), b->x1, b->x2, wpen);
     else if (s == "<sqoverbrace>" || s == "<sqoverbrace*>")
-      wideb= wide_sqobr_box (decorate_middle (ip), b->x1, b->x2, pen);
+      wideb= wide_sqobr_box (decorate_middle (ip), b->x1, b->x2, wpen);
     else wideb= wide_box (decorate_middle (ip),
                           "<rubber-" * s (1, N(s)-1) * ">",
-                          env->fn, env->col, b->x2- b->x1);
+                          env->fn, env->pen, b->x2- b->x1);
     print (wide_box (ip, b, wideb, env->fn, env->fn->sep, above));
     if ((s == "<underbrace>") || (s == "<overbrace>") ||
         (s == "<squnderbrace>") || (s == "<sqoverbrace>"))
@@ -309,7 +309,7 @@ concater_rep::typeset_wide (tree t, path ip, bool above) {
   }
   else {
     SI sep= above? -env->fn->yx: env->fn->sep;
-    box wideb= text_box (decorate_middle (ip), 0, s, env->fn, env->col);
+    box wideb= text_box (decorate_middle (ip), 0, s, env->fn, env->pen);
     if (env->fn->type == FONT_TYPE_UNICODE && b->right_slope () != 0)
       wideb= shift_box (decorate_middle (ip), wideb,
                         (SI) (-0.5 * b->right_slope () * env->fn->yx), 0);
@@ -321,7 +321,7 @@ void
 concater_rep::typeset_neg (tree t, path ip) {
   if (N(t) != 1) { typeset_error (t, ip); return; }
   box b= typeset_as_concat (env, t[0], descend (ip, 0));
-  print (neg_box (ip, b, env->fn, env->col));
+  print (neg_box (ip, b, env->fn, env->pen));
 }
 
 /******************************************************************************
@@ -401,7 +401,7 @@ concater_rep::typeset_tree (tree t, path ip) {
   int i, n= N(t);
   array<box> bs(n);
   for (i=0; i<n; i++) bs[i]= typeset_as_concat (env, t[i], descend (ip, i));
-  print (tree_box (ip, bs, env->fn, env->col));
+  print (tree_box (ip, bs, env->fn, env->pen));
 }
 
 void

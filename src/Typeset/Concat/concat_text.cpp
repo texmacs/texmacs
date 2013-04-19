@@ -21,13 +21,13 @@ lazy make_lazy_vstream (edit_env env, tree t, path ip, tree channel);
 
 void
 concater_rep::typeset_substring (string s, path ip, int pos) {
-  box b= text_box (ip, pos, s, env->fn, env->col);
+  box b= text_box (ip, pos, s, env->fn, env->pen);
   a << line_item (STRING_ITEM, OP_TEXT, b, HYPH_INVALID, env->lan);
 }
 
 void
 concater_rep::typeset_math_substring (string s, path ip, int pos, int otype) {
-  box b= text_box (ip, pos, s, env->fn, env->col);
+  box b= text_box (ip, pos, s, env->fn, env->pen);
   a << line_item (STRING_ITEM, otype, b, HYPH_INVALID, env->lan);
 }
 
@@ -35,7 +35,7 @@ void
 concater_rep::typeset_colored_substring
   (string s, path ip, int pos, string col)
 {
-  color c= (col == ""? env->col: named_color (col));
+  color c= (col == ""? env->pen->get_color (): named_color (col));
   if (env->alpha != 255) {
     int r, g, b, a;
     get_rgb_color (c, r, g, b, a);

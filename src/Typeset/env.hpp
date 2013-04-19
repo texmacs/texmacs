@@ -154,7 +154,6 @@ public:
   bool         math_condensed;
   int          vert_pos;
   int          alpha;
-  color        col;
   pencil       pen;
   string       point_style;
   bool         preamble;

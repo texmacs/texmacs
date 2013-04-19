@@ -358,9 +358,7 @@ cell_rep::finish () {
     b= T->b;
   }
 
-  color fc= env->col;
-
   b= cell_box (ip, b, xoff, yoff, 0, 0, x2-x1, y2-y1,
 	       lborder, rborder, bborder, tborder,
-               fc, brush (bg, env->alpha));
+               env->pen->get_brush (), brush (bg, env->alpha));
 }
