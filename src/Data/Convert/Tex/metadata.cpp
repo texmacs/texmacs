@@ -382,5 +382,9 @@ get_latex_style (tree t) {
     return "ieeeconf";
   if (occurs ("IEEEtran", s))
     return "ieeetran";
+  if (occurs ("acm_proc", s))
+    return "acmconf";
+  if (occurs ("sig-alt", s))
+    return "sig-alternate";
   return s;
 }
