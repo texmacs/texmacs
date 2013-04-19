@@ -57,12 +57,6 @@ public:
   double get_miter_lim () { return 2.0; }
 };
 
-pencil::pencil (bool b):
-  rep (b? (pencil_rep*) tm_new<simple_pencil_rep> (black, std_shrinkf * PIXEL):
-       (pencil_rep*) tm_new<no_pencil_rep> ()) { INC_COUNT(rep); }
-pencil::pencil (color c, SI w):
-  rep (tm_new<simple_pencil_rep> (c, w)) { INC_COUNT(rep); }
-
 /******************************************************************************
 * Standard and brushed pencils
 ******************************************************************************/
@@ -97,6 +91,21 @@ public:
   double get_miter_lim () { return miter_lim; }
 };
 
+/******************************************************************************
+* Constructors
+******************************************************************************/
+
+static pencil_rep*
+make_pencil (brush br, SI w) {
+  if (br->get_type () == brush_none)
+    return tm_new<no_pencil_rep> ();
+  else if (br->get_type () == brush_color)
+    return tm_new<simple_pencil_rep> (br->get_color (), w);
+  else
+    return tm_new<complex_pencil_rep> (pencil_brush, br, w,
+				       cap_round, join_round, 2.0);
+}
+
 static pencil_rep*
 make_pencil (tree t, int alpha, SI w) {
   if (is_atomic (t))
@@ -104,6 +113,17 @@ make_pencil (tree t, int alpha, SI w) {
   else
     return tm_new<complex_pencil_rep> (pencil_brush, brush (t, alpha), w,
 				       cap_round, join_round, 2.0);
+}
+
+static pencil_rep*
+make_pencil (brush br, SI w, pencil_cap c, pencil_join j, double l) {
+  if (br->get_type () == brush_none)
+    return tm_new<no_pencil_rep> ();
+  else if (br->get_type () == brush_color)
+    return tm_new<complex_pencil_rep> (pencil_standard,
+                                       br->get_color (), w, c, j, l);
+  else
+    return tm_new<complex_pencil_rep> (pencil_brush, br, w, c, j, l);
 }
 
 static pencil_rep*
@@ -116,16 +136,21 @@ make_pencil (tree t, int a, SI w, pencil_cap c, pencil_join j, double l) {
 				       brush (t, a), w, c, j, l);
 }
 
+pencil::pencil (bool b):
+  rep (b? (pencil_rep*) tm_new<simple_pencil_rep> (black, std_shrinkf * PIXEL):
+       (pencil_rep*) tm_new<no_pencil_rep> ()) { INC_COUNT(rep); }
+
+pencil::pencil (color c, SI w):
+  rep (tm_new<simple_pencil_rep> (c, w)) { INC_COUNT(rep); }
 pencil::pencil (brush br, SI w):
-  rep (tm_new<complex_pencil_rep>
-       (pencil_brush, br, w, cap_round, join_round, 2.0)) { INC_COUNT(rep); }
+  rep (make_pencil (br, w)) { INC_COUNT(rep); }
 pencil::pencil (tree t, int alpha, SI w):
   rep (make_pencil (t, alpha, w)) { INC_COUNT(rep); }
+
 pencil::pencil (color col, SI w, pencil_cap c, pencil_join j, double l):
   rep (tm_new<complex_pencil_rep>
        (pencil_standard, col, w, c, j, l)) { INC_COUNT(rep); }
 pencil::pencil (brush br, SI w, pencil_cap c, pencil_join j, double l):
-  rep (tm_new<complex_pencil_rep>
-       (pencil_brush, br, w, c, j, l)) { INC_COUNT(rep); }
+  rep (make_pencil (br, w, c, j, l)) { INC_COUNT(rep); }
 pencil::pencil (tree t, int a, SI w, pencil_cap c, pencil_join j, double l):
   rep (make_pencil (t, a, w, c, j, l)) { INC_COUNT(rep); }
