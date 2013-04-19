@@ -45,9 +45,9 @@ struct specific_box_rep: public box_rep {
 ******************************************************************************/
 
 struct flag_box_rep: public composite_box_rep {
-  color light;
+  brush light;
   brush old_bg;
-  flag_box_rep (path ip, box b, SI h, pencil dark, color light);
+  flag_box_rep (path ip, box b, SI h, pencil dark, brush light);
   operator tree () { return tree (TUPLE, "flag"); }
   void pre_display (renderer &ren);
   void post_display (renderer &ren);
@@ -65,7 +65,7 @@ flag_box_rep::post_display (renderer &ren) {
 }
 
 flag_box_rep::flag_box_rep (
-  path ip, box b, SI h, pencil dark, color light2):
+  path ip, box b, SI h, pencil dark, brush light2):
   composite_box_rep (ip), light (light2)
 {
   SI sep= h/5, H= b->h() + 2*sep, w= b->w() + 2*sep, W= H/4;
@@ -88,11 +88,11 @@ flag_box_rep::flag_box_rep (
 ******************************************************************************/
 
 struct info_box_rep: public composite_box_rep {
-  info_box_rep (path ip, SI h, pencil dark, color light);
+  info_box_rep (path ip, SI h, pencil dark, brush light);
   operator tree () { return tree (TUPLE, "info"); }
 };
 
-info_box_rep::info_box_rep (path ip, SI h, pencil dark, color light):
+info_box_rep::info_box_rep (path ip, SI h, pencil dark, brush light):
   composite_box_rep (ip)
 {
   SI d= h/5;
@@ -162,18 +162,12 @@ specific_box (path ip, box b, bool printer_flag, font fn) {
 }
 
 box
-flag_box (path ip, box b, SI h, pencil dark, color light) {
+flag_box (path ip, box b, SI h, pencil dark, brush light) {
   return tm_new<flag_box_rep> (ip, b, h, dark, light);
 }
 
 box
-flag_box (path ip, string s, font fn, color dark, color light) {
-  box b= text_box (decorate_right (ip), 0, s, fn, dark);
-  return flag_box (ip, b, fn->wfn, pencil (dark, fn->wline), light);
-}
-
-box
-info_box (path ip, SI h, pencil dark, color light) {
+info_box (path ip, SI h, pencil dark, brush light) {
   return tm_new<info_box_rep> (ip, h, dark, light);
 }
 
