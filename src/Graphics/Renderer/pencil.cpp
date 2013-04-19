@@ -25,6 +25,7 @@ public:
   pencil_kind get_type () { return pencil_simple; }
   void* get_handle () { return (void*) this; }
 
+  pencil set_width (SI nw) { return pencil (c, nw); }
   color get_color () { return c; }
   brush get_brush () { return brush (c); }
   SI get_width () { return w; }
@@ -56,6 +57,9 @@ public:
   pencil_kind get_type () { return k; }
   void* get_handle () { return (void*) this; }
 
+  pencil set_width (SI nw) {
+    if (k == pencil_brush) return pencil (br, nw, cap, join, miter_lim);
+    else return pencil (br->get_color (), nw, cap, join, miter_lim); }
   color get_color () { return br->get_color (); }
   brush get_brush () { return br; }
   SI get_width () { return w; }

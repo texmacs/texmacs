@@ -42,13 +42,13 @@ italic_correction (box L, box R) {
 ******************************************************************************/
 
 struct frac_box_rep: public composite_box_rep {
-  frac_box_rep (path ip, box b1, box b2, font fn, font sfn, color c);
+  frac_box_rep (path ip, box b1, box b2, font fn, font sfn, pencil pen);
   operator tree () { return tree (TUPLE, "frac", bs[0], bs[1]); }
   int find_child (SI x, SI y, SI delta, bool force);
 };
 
 frac_box_rep::frac_box_rep (
-  path ip, box b1, box b2, font fn, font sfn, color c):
+  path ip, box b1, box b2, font fn, font sfn, pencil pen):
     composite_box_rep (ip)
 {
   // Italic correction does not lead to nicer results,
@@ -62,10 +62,10 @@ frac_box_rep::frac_box_rep (
   SI w     = max (b1->w (), b2->w()) + 2*sep;
   SI d     = sep >> 1;
 
-  pencil pen (c, bar_w);
+  pencil bar_pen= pen->set_width (bar_w);
   insert (b1, (w>>1) - (b1->x2>>1), bar_y+ sep+ (bar_w>>1)- b1_y);
   insert (b2, (w>>1) - (b2->x2>>1), bar_y- sep- (bar_w>>1)- b2_y);
-  insert (line_box (decorate_middle (ip), d, 0, w-d, 0, pen), 0, bar_y);
+  insert (line_box (decorate_middle (ip), d, 0, w-d, 0, bar_pen), 0, bar_y);
 
   italic_correct (b1);
   italic_correct (b2);
@@ -94,13 +94,13 @@ frac_box_rep::find_child (SI x, SI y, SI delta, bool force) {
 ******************************************************************************/
 
 struct sqrt_box_rep: public composite_box_rep {
-  sqrt_box_rep (path ip, box b1, box b2, box sqrtb, font fn, color c);
+  sqrt_box_rep (path ip, box b1, box b2, box sqrtb, font fn, pencil pen);
   operator tree () { return tree (TUPLE, "sqrt", bs[0]); }
   int find_child (SI x, SI y, SI delta, bool force);
 };
 
 sqrt_box_rep::sqrt_box_rep (
-  path ip, box b1, box b2, box sqrtb, font fn, color c):
+  path ip, box b1, box b2, box sqrtb, font fn, pencil pen):
     composite_box_rep (ip)
 {
   right_italic_correct (b1);
@@ -110,7 +110,7 @@ sqrt_box_rep::sqrt_box_rep (
   SI dx   = -fn->wfn/36, dy= -fn->wfn/36; // correction
   SI by   = sqrtb->y2+ dy;
 
-  pencil pen (c, wline);
+  pencil rpen= pen->set_width (wline);
   insert (b1, 0, 0);
   if (!is_nil (b2)) {
     SI X = - sqrtb->w();
@@ -123,7 +123,7 @@ sqrt_box_rep::sqrt_box_rep (
     insert (b2, min (X, M- b2->x2), Y- b2->y1+ sep);
   }
   insert (sqrtb, -sqrtb->x2, 0);
-  insert (line_box (decorate_middle (ip), dx, by, b1->x2, by, pen), 0, 0);
+  insert (line_box (decorate_middle (ip), dx, by, b1->x2, by, rpen), 0, 0);
   
   position ();
   left_justify ();
@@ -152,12 +152,12 @@ sqrt_box_rep::find_child (SI x, SI y, SI delta, bool force) {
 ******************************************************************************/
 
 struct neg_box_rep: public composite_box_rep {
-  neg_box_rep (path ip, box b1, font fn, color c);
+  neg_box_rep (path ip, box b1, font fn, pencil pen);
   operator tree () { return tree (TUPLE, "neg", bs[0]); }
   int find_child (SI x, SI y, SI delta, bool force);
 };
 
-neg_box_rep::neg_box_rep (path ip, box b, font fn, color c):
+neg_box_rep::neg_box_rep (path ip, box b, font fn, pencil pen):
   composite_box_rep (ip)
 {
   SI wline= fn->wline;
@@ -166,7 +166,7 @@ neg_box_rep::neg_box_rep (path ip, box b, font fn, color c):
   SI Y    = (b->y1 + b->y2) >> 1;
   SI DX, DY;
 
-  pencil pen (c, wline);
+  pencil npen= pen->set_width (wline);
   insert (b, 0, 0);
   if ((3*(b->x2-b->x1)) > (2*(b->y2-b->y1))) {
     DY= delta + ((b->y2 - b->y1)>>1);
@@ -176,7 +176,7 @@ neg_box_rep::neg_box_rep (path ip, box b, font fn, color c):
     DX= delta + ((b->x2 - b->x1)>>1);
     DY= DX;
   }
-  insert (line_box (decorate_middle (ip), X+DX, Y+DY, X-DX, Y-DY, pen), 0, 0);
+  insert (line_box (decorate_middle (ip), X+DX, Y+DY, X-DX, Y-DY, npen), 0, 0);
   
   italic_correct (b);
   position ();
@@ -198,12 +198,12 @@ neg_box_rep::find_child (SI x, SI y, SI delta, bool force) {
 
 struct tree_box_rep: public composite_box_rep {
   SI  border;
-  tree_box_rep (path ip, array<box> bs, font fn, color line_c);
+  tree_box_rep (path ip, array<box> bs, font fn, pencil pen);
   operator tree () { return "tree box"; }
   int find_child (SI x, SI y, SI delta, bool force);
 };
 
-tree_box_rep::tree_box_rep (path ip, array<box> bs, font fn, color line_c):
+tree_box_rep::tree_box_rep (path ip, array<box> bs, font fn, pencil pen):
   composite_box_rep (ip)
 {
   SI sep   = fn->sep;
@@ -227,7 +227,7 @@ tree_box_rep::tree_box_rep (path ip, array<box> bs, font fn, color line_c):
     x += bs[i]->w()+ hsep;
   }
 
-  pencil pen (line_c, line_w);
+  pencil tpen= pen->set_width (line_w);
   for (x=x_0, i=1; i<n; i++) {
     SI x_i= x + (bs[i]->w()>>1);
     SI y_i= up + max (bs[i]->y2, fn->y2) + sep - h;
@@ -235,7 +235,7 @@ tree_box_rep::tree_box_rep (path ip, array<box> bs, font fn, color line_c):
     SI bw = min (bs[0]->w(), cw>>1);
     SI bx = bm + ((2*i-n) * bw) / (2*n-2);
     SI by = min (bs[0]->y1, fn->y1) - sep;
-    insert (line_box (decorate_middle (ip), bx, by, x_i, y_i, pen), 0, 0);
+    insert (line_box (decorate_middle (ip), bx, by, x_i, y_i, tpen), 0, 0);
     x += bs[i]->w()+ hsep;
   }
 
@@ -367,23 +367,23 @@ wide_box_rep::right_slope () {
 ******************************************************************************/
 
 box
-frac_box (path ip, box b1, box b2, font fn, font sfn, color c) {
-  return tm_new<frac_box_rep> (ip, b1, b2, fn, sfn, c);
+frac_box (path ip, box b1, box b2, font fn, font sfn, pencil pen) {
+  return tm_new<frac_box_rep> (ip, b1, b2, fn, sfn, pen);
 }
 
 box
-sqrt_box (path ip, box b1, box b2, box sqrtb, font fn, color c) {
-  return tm_new<sqrt_box_rep> (ip, b1, b2, sqrtb, fn, c);
+sqrt_box (path ip, box b1, box b2, box sqrtb, font fn, pencil pen) {
+  return tm_new<sqrt_box_rep> (ip, b1, b2, sqrtb, fn, pen);
 }
 
 box
-neg_box (path ip, box b, font fn, color c) {
-  return tm_new<neg_box_rep> (ip, b, fn, c);
+neg_box (path ip, box b, font fn, pencil pen) {
+  return tm_new<neg_box_rep> (ip, b, fn, pen);
 }
 
 box
-tree_box (path ip, array<box> bs, font fn, color line_c) {
-  return tm_new<tree_box_rep> (ip, bs, fn, line_c);
+tree_box (path ip, array<box> bs, font fn, pencil pen) {
+  return tm_new<tree_box_rep> (ip, bs, fn, pen);
 }
 
 box

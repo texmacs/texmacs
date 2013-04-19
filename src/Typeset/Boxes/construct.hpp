@@ -31,11 +31,11 @@ box polygon_box (path ip, array<SI> x, array<SI> y, brush fill);
 box polygon_box (path ip, array<SI> x, array<SI> y, brush fill, pencil pen);
 box image_box (path ip, url u, SI w, SI h, int alpha, int px);
 
-box text_box (path ip, int pos, string s, font fn, color col);
-box delimiter_box (path ip, string s, font fn, color col, SI y1, SI y2);
-box big_operator_box (path ip, string s, font fn, color col, int n);
-box wide_box (path ip, string s, font fn, color col, SI width);
-box bracket_box (path ip, int br_type, SI penw, color col, SI y1, SI y2);
+box text_box (path ip, int pos, string s, font fn, pencil pen);
+box delimiter_box (path ip, string s, font fn, pencil pen, SI y1, SI y2);
+box big_operator_box (path ip, string s, font fn, pencil pen, int n);
+box wide_box (path ip, string s, font fn, pencil pen, SI width);
+box bracket_box (path ip, int br_type, pencil pen, SI y1, SI y2);
 box wide_hat_box (path ip, SI x1, SI x2, pencil pen);
 box wide_tilda_box (path ip, SI x1, SI x2, pencil pen);
 box wide_bar_box (path ip, SI x1, SI x2, pencil pen);
@@ -62,10 +62,10 @@ box remember_box (path ip, box b);
 box highlight_box (path ip, box b, SI w, SI xpad, SI ypad,
 		   tree bg, int alpha, color sunny, color shadow);
 
-box frac_box (path ip, box b1, box b2, font fn, font sfn, color c);
-box sqrt_box (path ip, box b1, box b2, box sqrtb, font fn, color c);
-box neg_box (path ip, box b, font fn, color c);
-box tree_box (path ip, array<box> bs, font fn, color line_c);
+box frac_box (path ip, box b1, box b2, font fn, font sfn, pencil pen);
+box sqrt_box (path ip, box b1, box b2, box sqrtb, font fn, pencil pen);
+box neg_box (path ip, box b, font fn, pencil pen);
+box tree_box (path ip, array<box> bs, font fn, pencil pen);
 box wide_box (path ip, box ref, box hi, font fn, SI sep, bool above);
 box repeat_box (path ip, box ref, box repeat, SI xoff=0);
 box limit_box (path ip, box ref, box lo, box hi, font fn, bool glued);

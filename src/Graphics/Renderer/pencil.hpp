@@ -34,6 +34,7 @@ enum pencil_join {
   join_round
 };
 
+class pencil;
 class pencil_rep: abstract_struct {
 public:
   inline pencil_rep () {}
@@ -42,6 +43,7 @@ public:
   virtual pencil_kind get_type () = 0;
   virtual void* get_handle () = 0;
 
+  virtual pencil set_width (SI w) = 0;
   virtual color get_color () = 0;
   virtual brush get_brush () = 0;
   virtual SI get_width () = 0;

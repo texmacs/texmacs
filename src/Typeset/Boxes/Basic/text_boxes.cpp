@@ -22,9 +22,9 @@ struct text_box_rep: public box_rep {
   int       pos;
   string    str;
   font      fn;
-  color     col;
+  pencil    pen;
 
-  text_box_rep (path ip, int pos, string s, font fn, color col);
+  text_box_rep (path ip, int pos, string s, font fn, pencil pen);
   operator tree () { return str; }
 
   void      display (renderer ren);
@@ -63,8 +63,8 @@ struct text_box_rep: public box_rep {
 * Routines for text boxes
 ******************************************************************************/
 
-text_box_rep::text_box_rep (path ip, int pos2, string s, font fn2, color col2):
-  box_rep (ip), pos (pos2), str (s), fn (fn2), col (col2)
+text_box_rep::text_box_rep (path ip, int pos2, string s, font fn2, pencil p2):
+  box_rep (ip), pos (pos2), str (s), fn (fn2), pen (p2)
 {
   metric ex;
   fn->get_extents (str, ex);
@@ -76,7 +76,7 @@ text_box_rep::text_box_rep (path ip, int pos2, string s, font fn2, color col2):
 
 void
 text_box_rep::display (renderer ren) {
-  ren->set_pencil (col);
+  ren->set_pencil (pen);
   fn->draw (ren, str, 0, 0);
 }
 
@@ -258,7 +258,7 @@ text_box_rep::get_leaf_font () {
 
 color
 text_box_rep::get_leaf_color () {
-  return col;
+  return pen->get_color ();
 }
 
 SI
@@ -340,7 +340,7 @@ get_wide (string s, font fn, SI width) {
 ******************************************************************************/
 
 box
-delimiter_box (path ip, string s, font fn, color col, SI bot, SI top) {
+delimiter_box (path ip, string s, font fn, pencil pen, SI bot, SI top) {
   SI h= top - bot;
   string r= get_delimiter (s, fn, h);
   metric ex;
@@ -351,32 +351,32 @@ delimiter_box (path ip, string s, font fn, color col, SI bot, SI top) {
   //     << " -> " << r << "; " << x/PIXEL << ", " << y/PIXEL << "\n";
   //cout << "  extents: " << ex->x1/PIXEL << ", " << ex->y1/PIXEL
   //     << "; " << ex->x2/PIXEL << ", " << ex->y2/PIXEL << "\n";
-  box mvb= move_box (ip, text_box (ip, 0, r, fn, col), x, y, false, true);
+  box mvb= move_box (ip, text_box (ip, 0, r, fn, pen), x, y, false, true);
   return macro_box (ip, mvb, fn);
 }
 
 box
-big_operator_box (path ip, string s, font fn, color col, int n) {
+big_operator_box (path ip, string s, font fn, pencil pen, int n) {
   ASSERT (N(s) >= 2 && s[0] == '<' && s[N(s)-1] == '>',
 	  "invalid rubber character");
   string r= s (0, N(s)-1) * "-" * as_string (n) * ">";
   metric ex;
   fn->get_extents (r, ex);
   SI y= fn->yfrac - ((ex->y1 + ex->y2) >> 1);
-  box mvb= move_box (ip, text_box (ip, 0, r, fn, col), 0, y, false, true);
+  box mvb= move_box (ip, text_box (ip, 0, r, fn, pen), 0, y, false, true);
   return macro_box (ip, mvb, fn);
 }
 
 box
-wide_box (path ip, string s, font fn, color col, SI width) {
+wide_box (path ip, string s, font fn, pencil pen, SI width) {
   string r= get_wide (s, fn, width);
   metric ex;
   fn->get_extents (r, ex);
-  box b= text_box (ip, 0, r, fn, col);
+  box b= text_box (ip, 0, r, fn, pen);
   return macro_box (ip, b, fn);
 }
 
 box
-text_box (path ip, int pos, string s, font fn, color col) {
-  return tm_new<text_box_rep> (ip, pos, s, fn, col);
+text_box (path ip, int pos, string s, font fn, pencil pen) {
+  return tm_new<text_box_rep> (ip, pos, s, fn, pen);
 }
