@@ -369,12 +369,9 @@ repeat_box_rep::repeat_box_rep (path ip, box b, box repeat, SI xoff):
 
 struct cell_box_rep: public change_box_rep {
   SI    bl, br, bb, bt;
-  color fg;
-  tree  bg;
-  int   alpha;
-  brush old_bg;
+  brush fg, bg, old_bg;
   cell_box_rep (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
-		SI bl, SI br, SI bb, SI bt, color fg, tree bg, int alpha);
+		SI bl, SI br, SI bb, SI bt, brush fg, brush bg);
   operator tree () { return tree (TUPLE, "cell", (tree) bs[0]); }
   void pre_display (renderer &ren);
   void post_display (renderer &ren);
@@ -382,16 +379,16 @@ struct cell_box_rep: public change_box_rep {
 
 cell_box_rep::cell_box_rep (
   path ip, box b, SI X0, SI Y0, SI X1, SI Y1, SI X2, SI Y2,
-  SI Bl, SI Br, SI Bb, SI Bt, color Fg, tree Bg, int Alpha):
+  SI Bl, SI Br, SI Bb, SI Bt, brush Fg, brush Bg):
   change_box_rep (ip, false),
   bl (Bl<<1), br (Br<<1), bb (Bb<<1), bt (Bt<<1),
-  fg (Fg), bg (Bg), alpha (Alpha)
+  fg (Fg), bg (Bg)
 {
   insert (b, X0, Y0);
   position ();
   x1= X1; y1= Y1;
   x2= X2; y2= Y2;
-  if ((bg != "") || (bl>0) || (br>0) || (bb>0) || (bt>0)) {
+  if (bg->get_type () != brush_none || (bl>0) || (br>0) || (bb>0) || (bt>0)) {
     // the 4*PIXEL extra space is sufficient for (shrinking factor) <= 8
     x3= min (x3, x1 - (bl>>1) - (bl>0? PIXEL<<2: 0));
     y3= min (y3, y1 - (bb>>1) - (bb>0? PIXEL<<2: 0));
@@ -419,9 +416,9 @@ cell_box_rep::pre_display (renderer& ren) {
   rx2= x2 + (r>>1); rx1= rx2 - r;
   ty2= y2 + (t>>1); ty1= ty2 - t;
 
-  if (bg != "") {
+  if (bg->get_type () != brush_none) {
     old_bg= ren->get_background ();
-    ren->set_background (brush (bg, alpha));
+    ren->set_background (bg);
     ren->clear_pattern (lx2, by2, rx1, ty1);
   }
 
@@ -436,7 +433,7 @@ cell_box_rep::pre_display (renderer& ren) {
 
 void
 cell_box_rep::post_display (renderer& ren) {
-  if (bg != "")
+  if (bg->get_type () != brush_none)
     ren->set_background (old_bg);
 }
 
@@ -814,10 +811,10 @@ repeat_box (path ip, box ref, box repeat, SI xoff) {
 
 box
 cell_box (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
-	  SI bl, SI br, SI bb, SI bt, color fg, tree bg, int a)
+	  SI bl, SI br, SI bb, SI bt, brush fg, brush bg)
 {
   box cb= tm_new<cell_box_rep> (ip, b, x0, y0, x1, y1, x2, y2,
-                                bl, br, bb, bt, fg, bg, a);
+                                bl, br, bb, bt, fg, bg);
   return cb;
 }
 

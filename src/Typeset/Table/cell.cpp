@@ -362,5 +362,5 @@ cell_rep::finish () {
 
   b= cell_box (ip, b, xoff, yoff, 0, 0, x2-x1, y2-y1,
 	       lborder, rborder, bborder, tborder,
-               fc, bg, env->alpha);
+               fc, brush (bg, env->alpha));
 }
