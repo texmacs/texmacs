@@ -55,7 +55,7 @@ struct text_box_rep: public box_rep {
   int       get_leaf_right_pos ();
   string    get_leaf_string ();
   font      get_leaf_font ();
-  color     get_leaf_color ();
+  pencil    get_leaf_pencil ();
   SI        get_leaf_offset (string search);
 };
 
@@ -256,9 +256,9 @@ text_box_rep::get_leaf_font () {
   return fn;
 }
 
-color
-text_box_rep::get_leaf_color () {
-  return pen->get_color ();
+pencil
+text_box_rep::get_leaf_pencil () {
+  return pen;
 }
 
 SI

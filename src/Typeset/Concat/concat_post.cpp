@@ -223,10 +223,10 @@ concater_rep::handle_matching (int start, int end) {
 
         // replace item by large or small delimiter
         string ls= a[i]->b->get_leaf_string ();
-        color lc= a[i]->b->get_leaf_color ();
+        pencil lp= a[i]->b->get_leaf_pencil ();
         font lf= a[i]->b->get_leaf_font ();
         if (Y1 < fn->y1 || Y2 > fn->y2)
-          a[i]->b= delimiter_box (a[i]->b->ip, ls, fn, lc, Y1, Y2);
+          a[i]->b= delimiter_box (a[i]->b->ip, ls, fn, lp, Y1, Y2);
         else {
           string s= "<nobracket>";
           int j;
@@ -235,7 +235,7 @@ concater_rep::handle_matching (int start, int end) {
           if (j<N(ls) && ls[N(ls)-1] == '>') s= ls (j+1, N(ls)-1);
           if (N(s) > 1 && s[0] != '<') s= "<" * s * ">";
           else if (N(s) == 0 || s == ".") s= "<nobracket>";
-          a[i]->b= text_box (a[i]->b->ip, 0, s, lf, lc);
+          a[i]->b= text_box (a[i]->b->ip, 0, s, lf, lp);
           tp= STD_ITEM;
         }
         a[i]->type= STD_ITEM;

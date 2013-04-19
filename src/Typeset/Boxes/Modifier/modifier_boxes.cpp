@@ -211,7 +211,7 @@ public:
   int    get_leaf_right_pos ();
   string get_leaf_string ();
   font   get_leaf_font ();
-  color  get_leaf_color ();
+  pencil get_leaf_pencil ();
   SI     get_leaf_offset (string search);
 };
 
@@ -261,9 +261,9 @@ shorter_box_rep::get_leaf_font () {
   return b->get_leaf_font ();
 }
 
-color
-shorter_box_rep::get_leaf_color () {
-  return b->get_leaf_color ();
+pencil
+shorter_box_rep::get_leaf_pencil () {
+  return b->get_leaf_pencil ();
 }
 
 SI
@@ -315,7 +315,7 @@ struct macro_box_rep: public composite_box_rep {
   selection find_selection (path lbp, path rbp);
   string    get_leaf_string ();
   font      get_leaf_font ();
-  color     get_leaf_color ();
+  pencil    get_leaf_pencil ();
   SI        get_leaf_offset (string search);
 
   double left_slope () { return bs[0]->left_slope(); }
@@ -366,8 +366,8 @@ string macro_box_rep::get_leaf_string () {
   return bs[0]->get_leaf_string (); }
 font macro_box_rep::get_leaf_font () {
   return bs[0]->get_leaf_font (); }
-color macro_box_rep::get_leaf_color () {
-  return bs[0]->get_leaf_color (); }
+pencil macro_box_rep::get_leaf_pencil () {
+  return bs[0]->get_leaf_pencil (); }
 SI macro_box_rep::get_leaf_offset (string search) {
   return bs[0]->get_leaf_offset (search); }
 

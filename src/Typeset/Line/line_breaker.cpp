@@ -117,16 +117,16 @@ hyphenate (line_item item, int pos, line_item& item1, line_item& item2) {
   box b= item->b;
   string s  = b->get_leaf_string ();
   font   fn = b->get_leaf_font ();
-  color  col= b->get_leaf_color ();
+  pencil pen= b->get_leaf_pencil ();
 
   string s1, s2;
   array<int> hp= item->lan->get_hyphens (s);
   item->lan->hyphenate (s, pos, s1, s2);
   item1= line_item (STRING_ITEM, OP_SKIP,
-		    shorter_box (ip, text_box (ip, x1, s1, fn, col), pos+ 1),
+		    shorter_box (ip, text_box (ip, x1, s1, fn, pen), pos+ 1),
 		    hp[pos], item->lan);
   item2= line_item (STRING_ITEM, item->op_type,
-                    text_box (ip, x2, s2, fn, col),
+                    text_box (ip, x2, s2, fn, pen),
 		    item->penalty, item->lan);
   item2->spc= item->spc;
   // cout << s << " ---> " << s1 << " " << s2 << "\n";

@@ -224,7 +224,7 @@ public:
   virtual int       get_leaf_right_pos ();
   virtual string    get_leaf_string ();
   virtual font      get_leaf_font ();
-  virtual color     get_leaf_color ();
+  virtual pencil    get_leaf_pencil ();
   virtual language  get_leaf_language ();
   virtual tree      get_leaf_tree ();
   virtual lazy      get_leaf_lazy ();

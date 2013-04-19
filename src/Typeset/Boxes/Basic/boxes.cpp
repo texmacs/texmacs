@@ -421,11 +421,11 @@ box_rep::get_leaf_font () {
   return font ();
 }
 
-color
-box_rep::get_leaf_color () {
+pencil
+box_rep::get_leaf_pencil () {
   cerr << "\nTeXmacs] the box is " << box (this) << "\n";
   FAILED ("this box is not textual");
-  return 0;
+  return pencil (false);
 }
 
 language
