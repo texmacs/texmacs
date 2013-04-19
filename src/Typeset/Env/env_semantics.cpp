@@ -296,10 +296,10 @@ decode_alpha (string s) {
 void
 edit_env_rep::update_color () {
   alpha= decode_alpha (get_string (OPACITY));
-  string c = get_string (COLOR);
-  tree   fc= env [FILL_COLOR];
-  if (c == "none") pen= pencil (false);
-  else pen= pencil (named_color (c, alpha), get_length (LINE_WIDTH));
+  tree pc= env [COLOR];
+  tree fc= env [FILL_COLOR];
+  if (pc == "none") pen= pencil (false);
+  else pen= pencil (pc, alpha, get_length (LINE_WIDTH));
   if (fc == "none") fill_brush= brush (false);
   else fill_brush= brush (fc, alpha);
 }

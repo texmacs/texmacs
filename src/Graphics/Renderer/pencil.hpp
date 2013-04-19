@@ -61,10 +61,13 @@ ABSTRACT_NULL(pencil);
   pencil (bool b);
   pencil (color c, SI w= std_shrinkf * PIXEL);
   pencil (brush br, SI w= std_shrinkf * PIXEL);
-  pencil (color col, SI w, pencil_cap c,
-          pencil_join j= join_round, double l= 2.0);
-  pencil (brush br, SI w, pencil_cap c,
-          pencil_join j= join_round, double l= 2.0);
+  pencil (tree t, int alpha, SI w= std_shrinkf * PIXEL);
+  pencil (color col, SI w,
+	  pencil_cap c, pencil_join j= join_round, double l= 2.0);
+  pencil (brush br, SI w,
+	  pencil_cap c, pencil_join j= join_round, double l= 2.0);
+  pencil (tree t, int alpha,
+	  SI w, pencil_cap c, pencil_join j= join_round, double l= 2.0);
   friend inline bool operator == (const pencil& a, const pencil& b);
 };
 ABSTRACT_NULL_CODE(pencil);

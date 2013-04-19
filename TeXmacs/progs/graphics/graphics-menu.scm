@@ -298,10 +298,10 @@
   ;;("Default" (graphics-set-color "default"))
   ("None" (graphics-set-color "none"))
   ---
-  (pick-color
-   (let* ((a answer)
-	  (s (if (or (== a "black") (== a "#000000")) "default" a)))
-     (graphics-set-color a)))
+  (if (qt-gui?)
+      (pick-background (graphics-set-color answer)))
+  (if (not (qt-gui?))
+      (pick-color (graphics-set-color answer)))
   ---
   ("Palette" (interactive-color (lambda (c) (graphics-set-color c)) '()))
   ("Other" (interactive graphics-set-color)))
@@ -403,8 +403,10 @@
   ;;("None" (graphics-set-fill-color "none"))
   ("None" (graphics-set-fill-color "default"))
   ---
-  ;;(pick-color (graphics-set-fill-color answer))
-  (pick-background (graphics-set-fill-color answer))
+  (if (qt-gui?)
+      (pick-background (graphics-set-fill-color answer)))
+  (if (not (qt-gui?))
+      (pick-color (graphics-set-fill-color answer)))
   ---
   ("Palette" (interactive-color (lambda (c) (graphics-set-fill-color c)) '()))
   ("Other" (interactive graphics-set-fill-color)))
@@ -537,7 +539,7 @@
           (=> "none"
               (link graphics-color-menu)))
         (assuming (and (!= col "default") (!= col "none"))
-          (=> (color (eval col) #f #f 25 17)
+          (=> (color col #f #f 25 17)
               (link graphics-color-menu))))))
   (assuming (graphics-mode-attribute? (graphics-mode) "fill-color")
     /

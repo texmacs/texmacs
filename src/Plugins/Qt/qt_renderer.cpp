@@ -171,23 +171,63 @@ qt_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore)
 * Drawing 
 ******************************************************************************/
 
+bool is_percentage (tree t, string s= "%");
+double as_percentage (tree t);
+
+static QImage*
+get_pattern_image (brush br, SI pixel) {
+  tree pattern= br->get_pattern ();
+  url u= as_string (pattern[0]);
+  int imw_pt, imh_pt;
+  image_size (u, imw_pt, imh_pt);
+  double pt= ((double) 600*PIXEL) / 72.0;
+  SI imw= (SI) (((double) imw_pt) * pt);
+  SI imh= (SI) (((double) imh_pt) * pt);
+
+  SI w= imw, h= imh;
+  if (is_int (pattern[1])) w= as_int (pattern[1]);
+  else if (is_percentage (pattern[1]))
+    w= (SI) (as_percentage (pattern[1]) * ((double) w));
+  else if (is_percentage (pattern[1], "@"))
+    w= (SI) (as_percentage (pattern[1]) * ((double) h));
+  if (is_int (pattern[2])) h= as_int (pattern[2]);
+  else if (is_percentage (pattern[2]))
+    h= (SI) (as_percentage (pattern[2]) * ((double) h));
+  else if (is_percentage (pattern[2], "@"))
+    h= (SI) (as_percentage (pattern[2]) * ((double) w));
+  w= ((w + pixel - 1) / pixel);
+  h= ((h + pixel - 1) / pixel);
+  QImage* pm= get_image (u, w, h);
+  return pm;
+}
+
 void
 qt_renderer_rep::set_pencil (pencil np) {
   basic_renderer_rep::set_pencil (np);
   QPen p (painter->pen ());
   QBrush b (painter->brush ());
-  p.setColor (to_qcolor (pen->get_color ()));
-  b.setColor (to_qcolor (pen->get_color ()));
-  if (pen->get_width () <= pixel) p.setWidth (0);
-  else p.setWidth ((pen->get_width () + thicken) / (1.0*pixel));
+  QColor qc= to_qcolor (pen->get_color ());
+  SI pw= 0;
+  if (pen->get_width () > pixel)
+    pw= (pen->get_width () + thicken) / (1.0*pixel);
+  p.setColor (qc);
+  b.setColor (qc);
+  p.setWidth (pw);
+  if (np->get_type () == pencil_brush) {
+    brush br= np->get_brush ();
+    QImage* pm= get_pattern_image (br, pixel);
+    int pattern_alpha= br->get_alpha ();
+    painter->setOpacity (qreal (pattern_alpha) / qreal (255));
+    if (pm != NULL) {
+      b= QBrush (*pm);
+      p= QPen (b, pw);
+    }
+  }
   p.setCapStyle (pen->get_cap () == cap_round? Qt::RoundCap: Qt::SquareCap);
   p.setJoinStyle (Qt::RoundJoin);
   painter->setPen (p);
   painter->setBrush (b);
 }
-
-bool is_percentage (tree t, string s= "%");
-double as_percentage (tree t);
 
 void
 qt_renderer_rep::set_brush (brush br) {
@@ -205,31 +245,8 @@ qt_renderer_rep::set_brush (brush br) {
     painter->setBrush (b);
   }
   if (br->get_type () == brush_pattern) {
-    tree pattern= br->get_pattern ();
+    QImage* pm= get_pattern_image (br, pixel);
     int pattern_alpha= br->get_alpha ();
-
-    url u= as_string (pattern[0]);
-    int imw_pt, imh_pt;
-    image_size (u, imw_pt, imh_pt);
-    double pt= ((double) 600*PIXEL) / 72.0;
-    SI imw= (SI) (((double) imw_pt) * pt);
-    SI imh= (SI) (((double) imh_pt) * pt);
-
-    SI w= imw, h= imh;
-    if (is_int (pattern[1])) w= as_int (pattern[1]);
-    else if (is_percentage (pattern[1]))
-      w= (SI) (as_percentage (pattern[1]) * ((double) w));
-    else if (is_percentage (pattern[1], "@"))
-      w= (SI) (as_percentage (pattern[1]) * ((double) h));
-    if (is_int (pattern[2])) h= as_int (pattern[2]);
-    else if (is_percentage (pattern[2]))
-      h= (SI) (as_percentage (pattern[2]) * ((double) h));
-    else if (is_percentage (pattern[2], "@"))
-      h= (SI) (as_percentage (pattern[2]) * ((double) w));
-    w= ((w + pixel - 1) / pixel);
-    h= ((h + pixel - 1) / pixel);
-    QImage* pm= get_image (u, w, h);
-
     painter->setOpacity (qreal (pattern_alpha) / qreal (255));
     if (pm != NULL) painter->setBrush (QBrush (*pm));
   }
