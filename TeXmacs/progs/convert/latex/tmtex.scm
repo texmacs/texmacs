@@ -1784,8 +1784,16 @@
 	 (list '!group (list 'ttfamily (tmtex (car l))))
 	 '(medskip))))
 
+(define (escape-backslashes-in-url l)
+  (cond ((string? l) (string-replace l "\\" "\\\\"))
+        ((symbol? l) l)
+        (else (map escape-backslashes-in-url l))))
+
+(define (tmtex-hyperref u)
+  (tmtex-tt (escape-backslashes-in-url u)))
+
 (define (tmtex-hlink s l)
-  (list 'href (tmtex (cadr l)) (tmtex (car l))))
+  (list 'href (tmtex-hyperref (cadr l)) (tmtex (car l))))
 
 (define (tmtex-href s l)
   (tmtex-function 'url l))
