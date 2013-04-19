@@ -190,24 +190,21 @@ graphics_group_box_rep::reindex (int i, int item, int n) {
 struct point_box_rep: public box_rep {
   point p;
   SI r;
-  color col;
-  int fill;
-  brush fill_br;
+  pencil pen;
+  brush br;
   string style;
-  point_box_rep (
-    path ip, point p, SI radius, color col,
-    int fill, brush fill_br, string style);
-  SI graphical_distance (SI x, SI y) { return (SI)norm (p - point (x, y)); }
+  point_box_rep (path ip, point p, SI radius, pencil pen,
+		 brush br, string style);
+  SI graphical_distance (SI x, SI y) { return (SI) norm (p - point (x, y)); }
   gr_selections graphical_select (SI x, SI y, SI dist);
   void display (renderer ren);
   operator tree () { return "point"; }
 };
 
-point_box_rep::point_box_rep (
-  path ip2, point p2, SI r2, color col2,
-  int fill2, brush fill_br2, string style2):
-    box_rep (ip2), p (p2), r (r2), col (col2),
-    fill (fill2), fill_br (fill_br2), style (style2)
+point_box_rep::point_box_rep (path ip2, point p2, SI r2, pencil pen2,
+			      brush br2, string style2):
+    box_rep (ip2), p (p2), r (r2), pen (pen2),
+    br (br2), style (style2)
 {
   x1= x3= ((SI) p[0]) - r;
   y1= y3= ((SI) p[1]) - r;
@@ -244,17 +241,18 @@ point_box_rep::display (renderer ren) {
   y[3]= ((SI) p[1]) - r;
   if (style == "none");
   else if (style == "square") {
-    if (fill == FILL_MODE_INSIDE || fill == FILL_MODE_BOTH) {
-      ren->set_pencil (pencil (col, ren->pixel));
-      ren->set_brush (fill_br);
+    if (pen->get_type () != pencil_none &&
+	br->get_type () != brush_none) {
+      ren->set_pencil (pen->set_width (ren->pixel));
+      ren->set_brush (br);
       ren->line (x[0], y[0], x[1], y[1]);
       ren->line (x[1], y[1], x[2], y[2]);
       ren->line (x[2], y[2], x[3], y[3]);
       ren->line (x[3], y[3], x[0], y[0]);
       ren->polygon (x, y, false);
     }
-    if (fill == FILL_MODE_NONE || fill == FILL_MODE_BOTH) {
-      ren->set_pencil (pencil (col, ren->pixel));
+    if (pen->get_type () != pencil_none) {
+      ren->set_pencil (pen->set_width (ren->pixel));
       ren->line (x[0], y[0], x[1], y[1]);
       ren->line (x[1], y[1], x[2], y[2]);
       ren->line (x[2], y[2], x[3], y[3]);
@@ -262,14 +260,13 @@ point_box_rep::display (renderer ren) {
     }
   }
   else {
-    if (style == "disk" ||
-        fill == FILL_MODE_INSIDE || fill == FILL_MODE_BOTH) {
-      ren->set_brush (style == "disk" ? col : fill_br);
+    if (style == "disk" || br->get_type () != brush_none) {
+      ren->set_brush (style == "disk" ? pen->get_brush () : br);
       ren->arc (x[0], y[0]+ren->pixel, x[2], y[2]+ren->pixel, 0, 64*360);
       ren->fill_arc (x[0], y[0]+ren->pixel, x[2], y[2]+ren->pixel, 0, 64*360);
     }
-    if (fill == FILL_MODE_NONE || fill == FILL_MODE_BOTH) {
-      ren->set_pencil (pencil (col, ren->pixel));
+    if (pen->get_type () != pencil_none) {
+      ren->set_pencil (pen->set_width (ren->pixel));
       ren->arc (x[0], y[0]+ren->pixel, x[2], y[2]+ren->pixel, 0, 64*360);
     }
   }
@@ -281,18 +278,16 @@ point_box_rep::display (renderer ren) {
 
 struct curve_box_rep: public box_rep {
   array<point> a;
-  SI width;
-  color col;
+  pencil pen;
   curve c;
   array<bool> style;
   SI style_unit;
   array<SI> styled_n;
-  int fill;
   brush fill_br;
   array<box> arrows;
-  curve_box_rep (path ip, curve c, SI width, color col,
+  curve_box_rep (path ip, curve c, pencil pen,
 		 array<bool> style, SI style_unit,
-		 int fill, brush fill_br,
+		 brush fill_br,
 		 array<box> arrows);
   box transform (frame fr);
   SI graphical_distance (SI x, SI y);
@@ -304,13 +299,13 @@ struct curve_box_rep: public box_rep {
   void apply_style ();
 };
 
-curve_box_rep::curve_box_rep (path ip2, curve c2, SI W, color C,
-  array<bool> style2, SI style_unit2, int fill2, brush fill_br2,
+curve_box_rep::curve_box_rep (path ip2, curve c2, pencil pen2,
+  array<bool> style2, SI style_unit2, brush fill_br2,
   array<box> arrows2)
   :
-  box_rep (ip2), width (W), col (C), c (c2),
+  box_rep (ip2), pen (pen2), c (c2),
   style (style2), style_unit (style_unit2),
-  fill (fill2), fill_br (fill_br2)
+  fill_br (fill_br2)
 {
   a= c->rectify (PIXEL);
   int i, n= N(a);
@@ -354,14 +349,14 @@ curve_box_rep::curve_box_rep (path ip2, curve c2, SI W, color C,
       }
     }
   }
+  SI width= pen->get_width ();
   x3= x1 - (width>>1); y3= y1 - (width>>1); 
   x4= x2 + (width>>1); y4= y2 + (width>>1);
 }
 
 box
 curve_box_rep::transform (frame fr) {
-  return curve_box (ip, fr (c), width, col,
-    style, style_unit, fill, fill_br, arrows);
+  return curve_box (ip, fr (c), pen, style, style_unit, fill_br, arrows);
 }
 
 SI
@@ -447,7 +442,7 @@ curve_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
 void
 curve_box_rep::display (renderer ren) {
   int i, n;
-  if (fill == FILL_MODE_INSIDE || fill == FILL_MODE_BOTH) {
+  if (fill_br->get_type () != brush_none) {
     ren->set_brush (fill_br);
     n= N(a);
     array<SI> x (n), y (n);
@@ -457,8 +452,8 @@ curve_box_rep::display (renderer ren) {
     }
     ren->polygon (x, y, false);
   }
-  if (fill == FILL_MODE_NONE || fill == FILL_MODE_BOTH) {
-    ren->set_pencil (pencil (col, width, cap_flat));
+  if (pen->get_type () != pencil_none) {
+    ren->set_pencil (pen->set_cap (cap_flat));
  // TODO: Add options for handling round/nonround joins & line ends
     if (N (style) == 0) {
       n= N(a);
@@ -651,19 +646,16 @@ graphics_group_box (path ip, array<box> bs) {
 }
 
 box
-point_box (path ip, point p, SI r,
-           color col, int fill, brush fill_br, string style) {
-  return tm_new<point_box_rep> (ip, p, r, col, fill, fill_br, style);
+point_box (path ip, point p, SI r, pencil pen, brush br, string style) {
+  return tm_new<point_box_rep> (ip, p, r, pen, br, style);
 }
 
 box
-curve_box (path ip, curve c, SI width, color col,
+curve_box (path ip, curve c, pencil pen,
            array<bool> style, SI style_unit,
-           int fill, brush fill_br,
-           array<box> arrows)
+           brush fill_br, array<box> arrows)
 {
-  return tm_new<curve_box_rep> (ip, c, width, col,
-                                style, style_unit, fill, fill_br, arrows);
+  return tm_new<curve_box_rep> (ip, c, pen, style, style_unit, fill_br, arrows);
 }
 
 box

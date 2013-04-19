@@ -17,6 +17,7 @@ extern int std_shrinkf;
 #define PIXEL 256
 
 enum pencil_kind {
+  pencil_none,
   pencil_simple,
   pencil_standard,
   pencil_brush
@@ -44,6 +45,7 @@ public:
   virtual void* get_handle () = 0;
 
   virtual pencil set_width (SI w) = 0;
+  virtual pencil set_cap (pencil_cap cap) = 0;
   virtual color get_color () = 0;
   virtual brush get_brush () = 0;
   virtual SI get_width () = 0;
@@ -56,6 +58,7 @@ public:
 
 class pencil {
 ABSTRACT_NULL(pencil);
+  pencil (bool b);
   pencil (color c, SI w= std_shrinkf * PIXEL);
   pencil (brush br, SI w= std_shrinkf * PIXEL);
   pencil (color col, SI w, pencil_cap c,

@@ -107,11 +107,6 @@
 #define INFO_DETAILED      3
 #define INFO_PAPER         4
 
-#define FILL_MODE_NOTHING  0
-#define FILL_MODE_NONE     1
-#define FILL_MODE_INSIDE   2
-#define FILL_MODE_BOTH     3
-
 /******************************************************************************
 * The edit environment
 ******************************************************************************/
@@ -160,6 +155,7 @@ public:
   int          vert_pos;
   int          alpha;
   color        col;
+  pencil       pen;
   SI           lw;
   string       point_style;
   bool         preamble;
@@ -176,7 +172,6 @@ public:
   int          src_close;
   array<bool>  dash_style;
   SI           dash_style_unit;
-  int          fill_mode;
   brush        fill_brush;
   array<tree>  line_arrows;
   string       text_at_halign;

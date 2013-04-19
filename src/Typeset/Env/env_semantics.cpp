@@ -299,15 +299,15 @@ edit_env_rep::update_color () {
   string c = get_string (COLOR);
   tree   fc= env [FILL_COLOR];
   if (c == "none") {
-    if (fc == "none") fill_mode= FILL_MODE_NOTHING;
-    else fill_mode= FILL_MODE_INSIDE;
+    col= rgb_color (0, 0, 0, 0);
+    pen= pencil (false);
   }
   else {
-    if (fc == "none") fill_mode= FILL_MODE_NONE;
-    else fill_mode= FILL_MODE_BOTH;
+    col= named_color (c, alpha);
+    pen= pencil (col, get_length (LINE_WIDTH));
   }
-  col= named_color (c, alpha);
-  fill_brush= brush (fc, alpha);
+  if (fc == "none") fill_brush= brush (false);
+  else fill_brush= brush (fc, alpha);
 }
 
 void
@@ -563,7 +563,6 @@ edit_env_rep::update () {
   vert_pos       = get_int (MATH_VPOS);
   preamble       = get_bool (PREAMBLE);
 
-  update_color ();
   update_mode ();
   update_info_level ();
   update_language ();
@@ -573,6 +572,7 @@ edit_env_rep::update () {
   update_frame ();
   point_style= get_string (POINT_STYLE);
   lw= get_length (LINE_WIDTH);
+  update_color ();
   update_dash_style ();
   dash_style_unit= get_length (DASH_STYLE_UNIT);
   update_line_arrows ();
@@ -604,6 +604,7 @@ edit_env_rep::update (string s) {
     magn= get_double (MAGNIFICATION);
     update_font ();
     lw= get_length (LINE_WIDTH);
+    update_color ();
     break;
   case Env_Magnify:
     mgfy= get_double (MAGNIFY);
@@ -659,6 +660,7 @@ edit_env_rep::update (string s) {
     break;
   case Env_Line_Width:
     lw= get_length (LINE_WIDTH);
+    update_color ();
     break;
   case Env_Dash_Style:
     update_dash_style();

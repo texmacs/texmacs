@@ -10,6 +10,28 @@
 ******************************************************************************/
 
 #include "pencil.hpp"
+#include "gui.hpp"
+
+/******************************************************************************
+* Invisible pencils
+******************************************************************************/
+
+class no_pencil_rep: public pencil_rep {
+public:
+  no_pencil_rep () {}
+
+  pencil_kind get_type () { return pencil_none; }
+  void* get_handle () { return (void*) this; }
+
+  pencil set_width (SI nw) { (void) nw; return pencil (false); }
+  pencil set_cap (pencil_cap cap) { (void) cap; return pencil (false); }
+  color get_color () { return rgb_color (0, 0, 0, 0); }
+  brush get_brush () { return brush (false); }
+  SI get_width () { return 0; }
+  pencil_cap get_cap () { return cap_round; }
+  pencil_join get_join () { return join_round; }
+  double get_miter_lim () { return 2.0; }
+};
 
 /******************************************************************************
 * Simple pencils
@@ -26,6 +48,7 @@ public:
   void* get_handle () { return (void*) this; }
 
   pencil set_width (SI nw) { return pencil (c, nw); }
+  pencil set_cap (pencil_cap cap) { return pencil (c, w, cap); }
   color get_color () { return c; }
   brush get_brush () { return brush (c); }
   SI get_width () { return w; }
@@ -34,6 +57,9 @@ public:
   double get_miter_lim () { return 2.0; }
 };
 
+pencil::pencil (bool b):
+  rep (b? (pencil_rep*) tm_new<simple_pencil_rep> (black, std_shrinkf * PIXEL):
+       (pencil_rep*) tm_new<no_pencil_rep> ()) { INC_COUNT(rep); }
 pencil::pencil (color c, SI w):
   rep (tm_new<simple_pencil_rep> (c, w)) { INC_COUNT(rep); }
 
@@ -60,6 +86,9 @@ public:
   pencil set_width (SI nw) {
     if (k == pencil_brush) return pencil (br, nw, cap, join, miter_lim);
     else return pencil (br->get_color (), nw, cap, join, miter_lim); }
+  pencil set_cap (pencil_cap ncap) {
+    if (k == pencil_brush) return pencil (br, w, ncap, join, miter_lim);
+    else return pencil (br->get_color (), w, ncap, join, miter_lim); }
   color get_color () { return br->get_color (); }
   brush get_brush () { return br; }
   SI get_width () { return w; }
