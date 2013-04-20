@@ -69,11 +69,13 @@ x_drawable_rep::draw_clipped (Pixmap pm, Pixmap bm, int w, int h, SI x, SI y) {
 void
 x_drawable_rep::draw (int c, font_glyphs fng, SI x, SI y) {
   // get the pixmap
-  x_character xc (c, fng, std_shrinkf, cur_fg, cur_bg);
+  color fgc= pen->get_color ();
+  color bgc= bg_brush->get_color ();
+  x_character xc (c, fng, std_shrinkf, fgc, bgc);
   Pixmap pm= (Pixmap) gui->character_pixmap [xc];
   if (pm == 0) {
-    gui->prepare_color (std_shrinkf, cur_fg, cur_bg);
-    x_character col_entry (0, font_glyphs (), std_shrinkf, cur_fg, cur_bg);
+    gui->prepare_color (std_shrinkf, fgc, bgc);
+    x_character col_entry (0, font_glyphs (), std_shrinkf, fgc, bgc);
     color* cols= (color*) gui->color_scale [col_entry];
     SI xo, yo;
     glyph pre_gl= fng->get (c); if (is_nil (pre_gl)) return;

@@ -239,8 +239,9 @@ qt_renderer_rep::set_brush (brush br) {
   else {
     QPen p (painter->pen ());
     QBrush b (painter->brush ());
-    p.setColor (to_qcolor (cur_fg));
-    b.setColor (to_qcolor (cur_fg));
+    QColor col= to_qcolor (pen->get_color ());
+    p.setColor (col);
+    b.setColor (col);
     painter->setPen (p);
     painter->setBrush (b);
   }
@@ -288,7 +289,7 @@ qt_renderer_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   decode (x1, y1);
   decode (x2, y2);
   if ((x1>=x2) || (y1<=y2)) return;
-  QBrush br (to_qcolor(cur_bg));
+  QBrush br (to_qcolor (bg_brush->get_color ()));
   painter->setRenderHints (0);
   painter->fillRect (x1, y2, x2-x1, y1-y2, br);       
 }
@@ -314,7 +315,7 @@ qt_renderer_rep::fill (SI x1, SI y1, SI x2, SI y2) {
   decode (x1, y1);
   decode (x2, y2);
 
-  QBrush br (to_qcolor(cur_fg));
+  QBrush br (to_qcolor (pen->get_color ()));
   painter->setRenderHints (0);
   painter->fillRect (x1, y2, x2-x1, y1-y2, br);       
 }
@@ -333,7 +334,7 @@ qt_renderer_rep::fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
   if ((x1>=x2) || (y1>=y2)) return;
   decode (x1, y1);
   decode (x2, y2);
-  QBrush br(to_qcolor(cur_fg));
+  QBrush br(to_qcolor (pen->get_color ()));
   QPainterPath pp;
   pp.arcMoveTo (x1, y2, x2-x1, y1-y2, alpha / 64);
   pp.arcTo (x1, y2, x2-x1, y1-y2, alpha / 64, delta / 64);
@@ -357,7 +358,7 @@ qt_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
   if (is_nil (fg_brush) || fg_brush->get_type () != brush_pattern)
     // FIXME: is this really necessary?
     // The brush should have been set at the moment of set_pencil or set_brush
-    br= QBrush (to_qcolor (cur_fg));
+    br= QBrush (to_qcolor (pen->get_color ()));
   QPainterPath pp;
   pp.addPolygon (poly);
   pp.closeSubpath ();
@@ -385,7 +386,7 @@ qt_renderer_rep::draw_triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3) {
   if (is_nil (fg_brush) || fg_brush->get_type () != brush_pattern)
     // FIXME: is this really necessary?
     // The brush should have been set at the moment of set_pencil or set_brush
-    br= QBrush (to_qcolor (cur_fg));
+    br= QBrush (to_qcolor (pen->get_color ()));
   QPainterPath pp;
   pp.addPolygon (poly);
   pp.closeSubpath ();
@@ -471,11 +472,12 @@ qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
   }
 
   // get the pixmap
-  basic_character xc (c, fng, std_shrinkf, cur_fg, 0);
+  color fgc= pen->get_color ();
+  basic_character xc (c, fng, std_shrinkf, fgc, 0);
   qt_image mi = character_image [xc];
   if (is_nil(mi)) {
     int r, g, b, a;
-    get_rgb (cur_fg, r, g, b, a);
+    get_rgb (fgc, r, g, b, a);
     SI xo, yo;
     glyph pre_gl= fng->get (c); if (is_nil (pre_gl)) return;
     glyph gl= shrink (pre_gl, std_shrinkf, std_shrinkf, xo, yo);

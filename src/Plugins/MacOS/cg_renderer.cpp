@@ -137,10 +137,10 @@ cg_renderer_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   decode (x1, y1);
   decode (x2, y2);
   if ((x1>=x2) || (y1<=y2)) return;
-  cg_set_color (context, cur_bg);
+  cg_set_color (context, bg_brush->get_color ());
   CGContextSetShouldAntialias(context, false);
   CGContextFillRect(context, CGRectMake(x1, y2, x2-x1, y1-y2) );
-  cg_set_color (context, cur_fg);
+  cg_set_color (context, pen->get_color ());
 }
 
 void
@@ -164,7 +164,7 @@ cg_renderer_rep::fill (SI x1, SI y1, SI x2, SI y2) {
   decode (x1, y1);
   decode (x2, y2);
 
-  // cg_set_color (context, cur_fg);
+  // cg_set_color (context, pen->get_color ());
   CGContextSetShouldAntialias (context, false);
   CGContextFillRect (context, CGRectMake(x1, y2, x2-x1, y1-y2) );
 }
@@ -200,7 +200,7 @@ cg_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
     else  CGContextAddLineToPoint(context, xx ,yy);
   }
   CGContextClosePath (context);
-  // cg_set_color (context, cur_fg);
+  // cg_set_color (context, pen->get_color ());
   CGContextSetShouldAntialias (context, true);
   if (convex)    CGContextEOFillPath (context);	
   else CGContextFillPath (context);	
@@ -380,7 +380,7 @@ cg_renderer_rep::native_draw (int ch, font_glyphs fn, SI x, SI y) {
     CGContextSetShouldAntialias(cgc,true);
     CGContextSetShouldSmoothFonts(cgc,true);
     // CGContextSetBlendMode(context,kCGBlendModeSourceAtop);
-    // cg_set_color (context, cur_fg);
+    // cg_set_color (context, pen->get_color ());
     CGGlyph buf[1] = {c};
     CGContextShowGlyphsAtPoint(cgc,x,y,(CGGlyph*)buf,1);
   } 
@@ -454,7 +454,7 @@ cg_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
     CGRect r = CGRectMake(x1,y1,mi->w,mi->h);
     CGContextSetShouldAntialias (context, true);
     CGContextSaveGState (context);
-    //  cg_set_color (context, cur_fg);
+    //  cg_set_color (context, pen->get_color ());
     CGContextClipToMask (context, r, mi->img); 
     CGContextFillRect (context, r);
     CGContextRestoreGState (context);

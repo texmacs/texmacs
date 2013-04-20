@@ -180,11 +180,11 @@ cairo_renderer_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   decode (x1, y1);
   decode (x2, y2);
   if ((x1>=x2) || (y1<=y2)) return;
-  tm_cairo_set_antialias(context, CAIRO_ANTIALIAS_NONE);
-  tm_cairo_set_source_color(context, cur_bg);
-  tm_cairo_rectangle(context, x1, y2, x2-x1, y1-y2);
-  tm_cairo_fill(context);
-  tm_cairo_set_source_color(context, cur_fg);
+  tm_cairo_set_antialias (context, CAIRO_ANTIALIAS_NONE);
+  tm_cairo_set_source_color (context, bg_brush->get_color ());
+  tm_cairo_rectangle (context, x1, y2, x2-x1, y1-y2);
+  tm_cairo_fill (context);
+  tm_cairo_set_source_color (context, pen->get_color ());
 }
 
 void
@@ -208,9 +208,9 @@ cairo_renderer_rep::fill (SI x1, SI y1, SI x2, SI y2) {
   decode (x1, y1);
   decode (x2, y2);
 
-  tm_cairo_set_antialias(context, CAIRO_ANTIALIAS_NONE);
-  // tm_cairo_set_source_color(context, cur_fg);
-  tm_cairo_rectangle(context, x1, y2, x2-x1, y1-y2);
+  tm_cairo_set_antialias (context, CAIRO_ANTIALIAS_NONE);
+  // tm_cairo_set_source_color (context, pen->get_color ());
+  tm_cairo_rectangle (context, x1, y2, x2-x1, y1-y2);
  // cout << "fill " << x1 << "," << y2 << "," << x2-x1 << "," << y1-y2 << LF;
   tm_cairo_fill(context);
 }
@@ -246,7 +246,7 @@ cairo_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
   }
   tm_cairo_close_path(context);
   tm_cairo_set_antialias(context, CAIRO_ANTIALIAS_DEFAULT);
-  // tm_cairo_set_source_color(context, cur_fg);
+  // tm_cairo_set_source_color(context, pen->get_color ());
   tm_cairo_set_fill_rule(context, convex ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
   tm_cairo_fill(context);
 }
@@ -403,7 +403,7 @@ cairo_renderer_rep::native_draw (int ch, font_glyphs fn, SI x, SI y) {
     tm_cairo_set_font_size(context, size*(PIXEL*600.0/(pixel*72.0)));
     //			CGAffineTransform	kHorizontalMatrix = { PIXEL*600.0/(pixel*72.0),  0.0,  0.0,  -PIXEL*600.0/(pixel*72.0),  0.0,  0.0 };
     tm_cairo_set_antialias(context, CAIRO_ANTIALIAS_DEFAULT);
-    // tm_cairo_set_source_color(context, cur_fg);
+    // tm_cairo_set_source_color(context, pen->get_color ());
     cairo_glyph_t gl = { c, x, y };
     tm_cairo_show_glyphs(context, &gl, 1 );
   }
@@ -419,7 +419,7 @@ cairo_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
   cairo_image mi = character_image [xc];
   if (is_nil(mi)) {
     int r, g, b, a;
-    get_rgb (cur_fg, r, g, b, a);
+    get_rgb (pen->get_color (), r, g, b, a);
     SI xo, yo;
     glyph pre_gl= fng->get (c); if (is_nil (pre_gl)) return;
     glyph gl= shrink (pre_gl, std_shrinkf, std_shrinkf, xo, yo);
@@ -454,7 +454,7 @@ cairo_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
     y1--; // top-left origin to bottom-left origin conversion
     tm_cairo_set_antialias(context, CAIRO_ANTIALIAS_DEFAULT);
     tm_cairo_set_operator(context, CAIRO_OPERATOR_SOURCE);
-    // tm_cairo_set_source_color (context, cur_fg);
+    // tm_cairo_set_source_color (context, pen->get_color ());
     tm_cairo_mask_surface(context, mi->img, x1, y1);
   }  
 }

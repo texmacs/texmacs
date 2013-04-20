@@ -159,9 +159,9 @@ aqua_renderer_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   decode (x2, y2);
 	  if ((x1>=x2) || (y1<=y2)) return;
 	NSRect rect = NSMakeRect(x1,y2,x2-x1,y1-y2);
-  aqua_set_color (cur_bg);
+  aqua_set_color (bg_brush->get_color ());
   [NSBezierPath fillRect:rect];
-  aqua_set_color (cur_fg);
+  aqua_set_color (pen->get_color ());
 }
 
 void
@@ -344,7 +344,7 @@ aqua_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
 		CGRect r = CGRectMake(x1,y1,mi->w,mi->h);
 		CGContextSetShouldAntialias (cgc, true);
 		CGContextSaveGState (cgc);
-		//  cg_set_color (context, cur_fg);
+		//  cg_set_color (context, pen->get_color ());
 		CGContextClipToMask (cgc, r, mi->img); 
 		CGContextFillRect (cgc, r);
 		CGContextRestoreGState (cgc);
@@ -392,7 +392,7 @@ void aqua_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
     CGRect r = CGRectMake(x1,y1,mi->w,mi->h);
     CGContextSetShouldAntialias (cgc, true);
     CGContextSaveGState (cgc);
-    //  aqua_set_color (context, cur_fg);
+    //  aqua_set_color (context, pen->get_color ());
     CGContextClipToMask (cgc, r, (CGImage*)(mi->img)); 
     CGContextFillRect (cgc, r);
     CGContextRestoreGState (cgc);

@@ -375,21 +375,19 @@ void
 basic_renderer_rep::set_pencil (pencil p) {
   ASSERT (!is_nil (p), "concrete pencil expected");
   pen= p;
-  cur_fg= pen->get_color ();
 }
 
 void
 basic_renderer_rep::set_brush (brush b) {
   ASSERT (!is_nil (b), "concrete brush expected");
   fg_brush= b;
-  cur_fg= b->get_color ();
+  pen= pencil (b);
 }
 
 void
 basic_renderer_rep::set_background (brush b) {
   ASSERT (!is_nil (b), "concrete brush expected");
   bg_brush= b;
-  cur_bg= b->get_color ();
 }
 
 

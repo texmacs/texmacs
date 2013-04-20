@@ -32,7 +32,6 @@ protected:
   int            drawable_type;
   int            w, h;
   GC             gc;
-  color          cur_fg, cur_bg;
   pencil         pen;
   brush          bg_brush;
 

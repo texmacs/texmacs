@@ -28,8 +28,6 @@ x_drawable_rep::x_drawable_rep (x_gui gui2, x_window_rep* x_win2):
 {
   dpy     = gui->dpy;
   gc      = gui->gc;
-  cur_fg  = black;
-  cur_bg  = white;
   pen     = pencil (black);
   bg_brush= brush (white);
 }
@@ -40,8 +38,6 @@ x_drawable_rep::x_drawable_rep (x_gui gui2, int w2, int h2):
 {
   dpy     = gui->dpy;
   gc      = gui->gc;
-  cur_fg  = black;
-  cur_bg  = white;
   pen     = pencil (black);
   bg_brush= brush (white);
   win= (Drawable) XCreatePixmap (gui->dpy, gui->root, w, h, gui->depth);
@@ -56,8 +52,6 @@ x_drawable_rep::x_drawable_rep (x_gui gui2, Pixmap pm, int w2, int h2):
   Window root = RootWindow (gui->dpy, scr);
   dpy     = gui->dpy;
   gc      = XCreateGC (dpy, root, 0, &values);
-  cur_fg  = black;
-  cur_bg  = white;
   pen     = pencil (black);
   bg_brush= brush (white);
 }
@@ -122,8 +116,8 @@ x_drawable_rep::get_background () {
 void
 x_drawable_rep::set_pencil (pencil p) {
   pen= p;
-  cur_fg= pen->get_color ();
-  XSetForeground (dpy, gc, CONVERT (blend (cur_fg, cur_bg)));
+  color col= blend (pen->get_color (), bg_brush->get_color ());
+  XSetForeground (dpy, gc, CONVERT (col));
   if (pen->get_width () <= pixel)
     XSetLineAttributes (dpy, (GC) gc,
                         1, LineSolid,
@@ -139,8 +133,7 @@ x_drawable_rep::set_pencil (pencil p) {
 void
 x_drawable_rep::set_background (brush b) {
   bg_brush= b;
-  cur_bg= b->get_color ();
-  XSetBackground (dpy, gc, CONVERT (cur_bg));
+  XSetBackground (dpy, gc, CONVERT (b->get_color ()));
 }
 
 void
@@ -174,9 +167,10 @@ x_drawable_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   decode (x1, y1);
   decode (x2, y2);
   if ((x1>=x2) || (y1<=y2)) return;
-  XSetForeground (dpy, gc, CONVERT (cur_bg));
+  XSetForeground (dpy, gc, CONVERT (bg_brush->get_color ()));
   XFillRectangle (dpy, win, gc, x1, y2, x2-x1, y1-y2);
-  XSetForeground (dpy, gc, CONVERT (blend (cur_fg, cur_bg)));
+  color col= blend (pen->get_color (), bg_brush->get_color ());
+  XSetForeground (dpy, gc, CONVERT (col));
 }
 
 void
