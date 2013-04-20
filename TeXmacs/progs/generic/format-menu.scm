@@ -55,7 +55,10 @@
   ("Other" (make-interactive-with "opacity")))
 
 (menu-bind color-menu
-  (pick-color (make-with "color" answer))
+  (if (allow-pattern-colors?)
+      (pick-background "" (insert-go-to `(with "color" ,answer "") '(2 0))))
+  (if (not (allow-pattern-colors?))
+      (pick-color (make-with "color" answer)))
   ---
   ("Palette" (interactive-color (lambda (col) (make-with "color" col)) '()))
   ("Other" (make-interactive-with "color")))

@@ -499,6 +499,9 @@
 (extend-table gui-make-table
   (pick-background ,gui-make-pick-background))
 
+(tm-define (allow-pattern-colors?)
+  (qt-gui?))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra RGB color picker
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -298,9 +298,9 @@
   ;;("Default" (graphics-set-color "default"))
   ("None" (graphics-set-color "none"))
   ---
-  (if (qt-gui?)
+  (if (allow-pattern-colors?)
       (pick-background "1gu" (graphics-set-color answer)))
-  (if (not (qt-gui?))
+  (if (not (allow-pattern-colors?))
       (pick-color (graphics-set-color answer)))
   ---
   ("Palette" (interactive-color (lambda (c) (graphics-set-color c)) '()))
@@ -403,9 +403,9 @@
   ;;("None" (graphics-set-fill-color "none"))
   ("None" (graphics-set-fill-color "default"))
   ---
-  (if (qt-gui?)
+  (if (allow-pattern-colors?)
       (pick-background "1gu" (graphics-set-fill-color answer)))
-  (if (not (qt-gui?))
+  (if (not (allow-pattern-colors?))
       (pick-color (graphics-set-fill-color answer)))
   ---
   ("Palette" (interactive-color (lambda (c) (graphics-set-fill-color c)) '()))
