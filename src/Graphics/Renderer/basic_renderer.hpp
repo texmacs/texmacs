@@ -58,9 +58,10 @@ public:
 
 public:
   basic_renderer_rep (bool screen_flag, int w2 = 0, int h2 = 0):
-    renderer_rep (screen_flag),
-    w (w2), h (h2), cur_fg(black), cur_bg(white) {};
-  virtual ~basic_renderer_rep () {};
+    renderer_rep (screen_flag), w (w2), h (h2),
+    cur_fg (black), cur_bg (white),
+    pen (black), fg_brush (black), bg_brush (white) {}
+  virtual ~basic_renderer_rep () {}
   
   virtual void get_extents (int& w, int& h);
   

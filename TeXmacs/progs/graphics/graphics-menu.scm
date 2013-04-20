@@ -299,7 +299,7 @@
   ("None" (graphics-set-color "none"))
   ---
   (if (qt-gui?)
-      (pick-background (graphics-set-color answer)))
+      (pick-background "1gu" (graphics-set-color answer)))
   (if (not (qt-gui?))
       (pick-color (graphics-set-color answer)))
   ---
@@ -404,7 +404,7 @@
   ("None" (graphics-set-fill-color "default"))
   ---
   (if (qt-gui?)
-      (pick-background (graphics-set-fill-color answer)))
+      (pick-background "1gu" (graphics-set-fill-color answer)))
   (if (not (qt-gui?))
       (pick-color (graphics-set-fill-color answer)))
   ---

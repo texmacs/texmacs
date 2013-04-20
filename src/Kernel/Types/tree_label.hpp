@@ -73,7 +73,7 @@ enum tree_label {
   FNBOT_LENGTH, FNTOP_LENGTH,
   SPC_LENGTH, XSPC_LENGTH,                        // font specific & stretchy
   PAR_LENGTH, PAG_LENGTH,                         // other
-  GW_LENGTH, GH_LENGTH,                           // width & height of graphics
+  GW_LENGTH, GH_LENGTH, GU_LENGTH,                // extents & unit of graphics
   TMPT_LENGTH, PX_LENGTH,                         // miscellaneous
   MSEC_LENGTH, SEC_LENGTH, MIN_LENGTH, HR_LENGTH,  // durations
 

@@ -435,6 +435,10 @@ tree edit_env_rep::exec_gw_length () {
   return tree (TMLEN, as_string (gw)); }
 tree edit_env_rep::exec_gh_length () {
   return tree (TMLEN, as_string (gh)); }
+tree edit_env_rep::exec_gu_length () {
+  point p0= fr (point (0.0, 0.0));
+  point p1= fr (point (1.0, 0.0));
+  return tree (TMLEN, as_string (norm (p1 - p0))); }
 
 tree edit_env_rep::exec_msec_length () { return tree (TMLEN, "1"); }
 tree edit_env_rep::exec_sec_length () { return tree (TMLEN, "1000"); }

@@ -55,6 +55,7 @@ public:
 
   void set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore = false);
 
+  void  draw_bis (int char_code, font_glyphs fn, SI x, SI y);
   void  draw (int char_code, font_glyphs fn, SI x, SI y);
   void  draw (const QFont& qfn, const QString& s, SI x, SI y, double zoom);
   void  set_pencil (pencil p);

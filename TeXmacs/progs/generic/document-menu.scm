@@ -466,7 +466,7 @@
       (-> "Background"
 	  ("Default" (init-default "bg-color"))
 	  ---
-	  (pick-background (init-env-tree "bg-color" answer))
+	  (pick-background "" (init-env-tree "bg-color" answer))
 	  ---
           ("Palette" (interactive-background
                       (lambda (col) (init-env "bg-color" col)) '()))

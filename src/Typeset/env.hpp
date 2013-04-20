@@ -292,6 +292,7 @@ private:
   tree exec_px_length ();
   tree exec_gw_length ();
   tree exec_gh_length ();
+  tree exec_gu_length ();
   tree exec_msec_length ();
   tree exec_sec_length ();
   tree exec_min_length ();

@@ -479,22 +479,22 @@
 ;; Basic pattern picker
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (standard-pattern-list)
+(define (standard-pattern-list scale)
   (with d (url-read-directory "$TEXMACS_PATH/misc/patterns" "*.png")
-    (map (lambda (x) `(pattern ,(url->unix x) "" "")) d)))
+    (map (lambda (x) `(pattern ,(url->unix x) ,scale "")) d)))
 
-(tm-menu (standard-pattern-menu cmd)
+(tm-menu (standard-pattern-menu cmd scale)
   (tile 8
-    (for (col (standard-pattern-list))
+    (for (col (standard-pattern-list scale))
       (explicit-buttons
         ((color col #f #f 32 24)
          (cmd col))))))
 
 (define (gui-make-pick-background x)
   `(menu-dynamic
-     (dynamic (standard-color-menu (lambda (answer) ,@(cdr x))))
+     (dynamic (standard-color-menu (lambda (answer) ,@(cddr x))))
      (glue #f #f 0 5)
-     (dynamic (standard-pattern-menu (lambda (answer) ,@(cdr x))))))
+     (dynamic (standard-pattern-menu (lambda (answer) ,@(cddr x)) ,(cadr x)))))
 
 (extend-table gui-make-table
   (pick-background ,gui-make-pick-background))

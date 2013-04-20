@@ -296,6 +296,8 @@ evaluate_impl (tree t) {
     return evaluate_gw_length ();
   case GH_LENGTH:
     return evaluate_gh_length ();
+  case GU_LENGTH:
+    return evaluate_gu_length ();
   case TMPT_LENGTH:
     return evaluate_tmpt_length ();
   case PX_LENGTH:

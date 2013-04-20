@@ -398,6 +398,7 @@ init_std_drd () {
   init (PAG_LENGTH, "pag-length", fixed (0) -> returns_length ());
   init (GW_LENGTH, "gw-length", fixed (0) -> returns_length ());
   init (GH_LENGTH, "gh-length", fixed (0) -> returns_length ());
+  init (GU_LENGTH, "gu-length", fixed (0) -> returns_length ());
   init (TMPT_LENGTH, "tmpt-length", fixed (0) -> returns_length ());
   init (PX_LENGTH, "px-length", fixed (0) -> returns_length ());
   init (MSEC_LENGTH, "msec-length", fixed (0) -> returns_length ());

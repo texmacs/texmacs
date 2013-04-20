@@ -166,7 +166,7 @@
   ("None" (cell-set-background ""))
   ("Foreground" (cell-set-background "foreground"))
   ---
-  (pick-background (cell-set-background answer))
+  (pick-background "" (cell-set-background answer))
   ---
   ("Palette" (interactive-background
               (lambda (col) (cell-set-background col)) '()))

@@ -564,6 +564,7 @@ concater_rep::typeset (tree t, path ip) {
   case PAG_LENGTH:
   case GW_LENGTH:
   case GH_LENGTH:
+  case GU_LENGTH:
   case TMPT_LENGTH:
   case PX_LENGTH:
     typeset_executable (t, ip);

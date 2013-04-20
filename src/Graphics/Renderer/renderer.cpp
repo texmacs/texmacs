@@ -24,7 +24,7 @@ int std_shrinkf= 5;
 renderer_rep::renderer_rep (bool screen_flag):
   ox (0), oy (0), cx1 (0), cy1 (0), cx2 (0), cy2 (0),
   is_screen (screen_flag),
-  zoomf (std_shrinkf), shrinkf (1), pixel (PIXEL), thicken (0),
+  zoomf (std_shrinkf), shrinkf (1), pixel (PIXEL), brushpx (-1), thicken (0),
   master (NULL) {}
 
 renderer_rep::~renderer_rep () {}
@@ -408,6 +408,7 @@ renderer_rep::shadow (picture& pic, SI x1, SI y1, SI x2, SI y2) {
   ren->zoomf= zoomf;
   ren->shrinkf= shrinkf;
   ren->pixel= pixel;
+  ren->brushpx= brushpx;
   ren->thicken= thicken;
   
   int x1b= x0 - pic->get_origin_x ();

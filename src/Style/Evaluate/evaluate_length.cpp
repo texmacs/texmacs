@@ -334,6 +334,15 @@ evaluate_gh_length () {
   return tree (TMLEN, as_string (6 * std_inch() / 2.54)); // 6cm
 }
 
+tree
+evaluate_gu_length () {
+  // FIXME: not yet implemented
+  return evaluate_cm_length ();
+  //point p0= fr (point (0.0, 0.0));
+  //point p1= fr (point (1.0, 0.0));
+  //return tree (TMLEN, as_string (norm (p1 - p0)));
+}
+
 tree evaluate_msec_length () { return tree (TMLEN, "1"); }
 tree evaluate_sec_length () { return tree (TMLEN, "1000"); }
 tree evaluate_min_length () { return tree (TMLEN, "60000"); }

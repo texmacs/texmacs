@@ -100,6 +100,7 @@ font_rep::draw (renderer ren, string s, SI x, SI y) {
     ren->cy2    = (SI) tm_round (old_cy2 * old_zoomf);
     ren->zoomf  = 1.0;
     ren->shrinkf= std_shrinkf;
+    ren->brushpx= ren->pixel;
     ren->pixel  = std_shrinkf * PIXEL;
     ren->thicken= (std_shrinkf >> 1) * PIXEL;
 
@@ -115,6 +116,7 @@ font_rep::draw (renderer ren, string s, SI x, SI y) {
     ren->cy2    = old_cy2;
     ren->zoomf  = old_zoomf;
     ren->shrinkf= old_shrinkf;
+    ren->brushpx= -1;
     ren->pixel  = old_pixel;
     ren->thicken= old_thicken;
   }

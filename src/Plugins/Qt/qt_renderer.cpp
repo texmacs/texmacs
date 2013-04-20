@@ -421,7 +421,55 @@ qt_renderer_rep::draw_clipped (QPixmap *im, int w, int h, SI x, SI y) {
 }
 
 void
+qt_renderer_rep::draw_bis (int c, font_glyphs fng, SI x, SI y) {
+  // draw with background pattern
+  SI xo, yo;
+  glyph pre_gl= fng->get (c); if (is_nil (pre_gl)) return;
+  glyph gl= shrink (pre_gl, std_shrinkf, std_shrinkf, xo, yo);
+  int w= gl->width, h= gl->height;
+  QImage *im= new QImage (w, h, QImage::Format_ARGB32);
+  im->fill (Qt::transparent);
+
+  {
+    brush br= pen->get_brush ();
+    QImage* pm= get_pattern_image (br, brushpx==-1? pixel: brushpx);
+    int pattern_alpha= br->get_alpha ();
+    QPainter glim (im);
+    glim.setOpacity (qreal (pattern_alpha) / qreal (255));
+    if (pm != NULL) {
+      SI tx= x- xo*std_shrinkf, ty= y+ yo*std_shrinkf;
+      decode (tx, ty); ty--;
+      QBrush qbr (*pm);
+      QTransform qtf= painter->transform ();
+      qbr.setTransform (qtf.translate (-tx, -ty));
+      glim.setBrush (qbr);
+    }
+    glim.setPen (Qt::NoPen);
+    glim.drawRect (0, 0, w, h);
+
+    int nr_cols= std_shrinkf*std_shrinkf;
+    if (nr_cols >= 64) nr_cols= 64;
+    for (int j=0; j<h; j++)
+      for (int i=0; i<w; i++) {
+        color patcol= im->pixel (i, j);
+        int r, g, b, a;
+        get_rgb (patcol, r, g, b, a);
+        int col = gl->get_x (i, j);
+        im->setPixel (i, j, qRgba (r, g, b, (a*col)/nr_cols));
+      }
+  }
+
+  draw_clipped (im, w, h, x- xo*std_shrinkf, y+ yo*std_shrinkf);
+  delete im;
+}
+
+void
 qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
+  if (pen->get_type () == pencil_brush) {
+    draw_bis (c, fng, x, y);
+    return;
+  }
+
   // get the pixmap
   basic_character xc (c, fng, std_shrinkf, cur_fg, 0);
   qt_image mi = character_image [xc];

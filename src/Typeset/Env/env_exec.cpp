@@ -384,6 +384,8 @@ edit_env_rep::exec (tree t) {
     return exec_gw_length ();
   case GH_LENGTH:
     return exec_gh_length ();
+  case GU_LENGTH:
+    return exec_gu_length ();
   case TMPT_LENGTH:
     return exec_tmpt_length ();
   case PX_LENGTH:
