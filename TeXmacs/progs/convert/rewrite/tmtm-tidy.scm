@@ -35,31 +35,6 @@
     (if (null? r) "" (cons 'document r))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Transform formatting newlines into documents
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (tmtm-new-line? x) (== x '(new-line)))
-(define (tmtm-document? x) (func? x 'document))
-
-(tm-define (tmtm-modernize-newlines l)
-  (modernize-newlines l #t))
-
-(define (modernize-newlines l bs)
-  (if (or (func? l 'doc-data) (func? l 'abstract-data)) (set! bs #f))
-  (if (nlist? l) l
-      (with r (cons (car l) (map (lambda (x)
-                                   (modernize-newlines x bs)) (cdr l)))
-	(cond ((func? r 'concat)
-	       (with ll (list-scatter (cdr r) tmtm-new-line? #f)
-		 (if (< (length ll) 2) r
-		     (tmtm-document (map tmtm-concat ll)))))
-	      ((func? r 'document) (tmtm-document (cdr r)))
-	      ((and bs (list-find (cdr r) tmtm-document?)
-		    (not (list-find (cdr l) tmtm-document?)))
-	       (list 'document r))
-	      (else r)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remove spaces before (and possibly after) control markup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -131,6 +106,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Glue concats with document items in it to yield a document
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmtm-document? x) (func? x 'document))
 
 (define (tmtm-concat-document-sub l)
   (if (null? (cdr l))

@@ -3074,13 +3074,71 @@ finalize_misc (tree t) {
 }
 
 /******************************************************************************
-* Final changes programmed in Guile
+* Final changes
 ******************************************************************************/
+
+/************* modernize newlines **************/
+
+static inline bool
+is_new_line (tree t) {
+  return is_compound (t, "new-line", 0);
+}
+
+static array<tree>
+flatten_documents (array<tree> a) {
+  array<tree> r;
+  for (int i=0; i<N(a); i++) {
+    if (is_document (a[i])) {
+      r << flatten_documents (A(a[i]));
+    }
+    else r << a[i];
+  }
+  return r;
+}
+
+static tree
+make_document (array<tree> a) {
+  a= flatten_documents (a);
+  if (N(a) == 0) return "";
+  else return tree (DOCUMENT, a);
+}
+
+static tree
+modernize_newlines (tree t, bool &skip) {
+  if (is_atomic (t)) return t;
+  if (is_compound (t, "doc-data") || is_compound (t, "abstract-data"))
+    skip= true;
+  tree r= tree (L(t));
+  bool changed= false;
+  for (int i=0; i<N(t); i++) {
+    r << modernize_newlines (t[i], skip);
+    if (t[i] != r[i]) changed= true;
+  }
+  if (is_concat (r)) {
+    array<tree> tmp= tokenize_concat (r, A(concat (compound ("new-line"))));
+    if (N(tmp) > 0)
+      r= make_document (tmp);
+  }
+  else if (is_document (r))
+    r= make_document (A(r));
+  else if (!skip && changed)
+    r= tree (DOCUMENT, r);
+  return r;
+}
+
+static tree
+modernize_newlines (tree t) {
+  bool skip= false;
+  return modernize_newlines (t, skip);
+}
+
+/************* finalize textm **************/
 
 tree
 finalize_textm (tree t) {
-  tree u= stree_to_tree (call ("textm-finalize", tree_to_stree (t)));
-  return simplify_correct (u);
+  t= modernize_newlines (t);
+  t= stree_to_tree (call ("textm-finalize", tree_to_stree (t)));
+  return simplify_correct (t);
 }
 
 /******************************************************************************

@@ -15,8 +15,7 @@
   (:use (convert rewrite tmtm-eqns) (convert rewrite tmtm-tidy)))
 
 (tm-define (textm-finalize l1)
-  (let* ((l2 (tmtm-modernize-newlines l1))
-	 (l3 (tmtm-nonumber->eqnumber l2))
+  (let* ((l3 (tmtm-nonumber->eqnumber l1))
 	 (l4 (tmtm-eat-space-around-control l3))
 	 (l5 (tmtm-remove-superfluous-newlines l4))
 	 (l6 (tmtm-concat-document-correct l5)))
