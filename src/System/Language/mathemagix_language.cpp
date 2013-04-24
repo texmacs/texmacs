@@ -197,7 +197,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("to")= c;
   t ("try")= c;
   t ("type")= c;
-  t ("union")= c;
+  t ("union")= e;
   t ("unpacked")= c;
   t ("until")= c;
   t ("upgrade")= c;
