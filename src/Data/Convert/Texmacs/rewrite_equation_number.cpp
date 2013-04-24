@@ -36,16 +36,13 @@ contains_subtree (tree t, tree st) {
   return false;
 }
 
-static tree
-find_equation_label (tree t) {
-  if (is_cmp (t, "label")) return t;
-  if (is_atomic (t)) return concat();
-  tree r;
-  for (int i=N(t)-1; i>=0; i--) {
-    r= find_equation_label (t[i]);
-    if (!is_concat (r))
-      break;
-  }
+static array<tree>
+find_labels (tree t) {
+  if (is_cmp (t, "label")) return A(concat (t));
+  if (is_atomic (t)) return A(concat ());
+  array<tree> r;
+  for (int i=0; i<N(t); i++)
+    r << find_labels (t[i]);
   return r;
 }
 
@@ -53,10 +50,13 @@ static tree
 add_eqnonumber (tree t, tree add) {
   if (is_cmp (t, "row")) {
     if (N(t) == 0) return tree (CELL, add);
-    tree lab= find_equation_label (t);
-    if (is_cmp (lab, "label") && add == cmp ("eq-number")) {
-      t= replace_subtree (t, lab, "");
-      add= concat (add, lab);
+    array<tree> labels= find_labels (t);
+    if (N(labels)>0 && add == cmp ("eq-number")) {
+      for (int i=0; i<N(labels); i++)
+        t= replace_subtree (t, labels[i], "");
+      add= concat (add);
+      for (int i=0; i<N(labels); i++)
+        add << labels[i];
     }
     t[N(t)-1]= add_eqnonumber (t[N(t)-1], add);
     return t;
