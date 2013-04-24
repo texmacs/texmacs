@@ -12,11 +12,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert latex textm)
-  (:use (convert rewrite tmtm-eqns) (convert rewrite tmtm-tidy)))
+  (:use (convert rewrite tmtm-tidy)))
 
 (tm-define (textm-finalize l1)
-  (let* ((l3 (tmtm-nonumber->eqnumber l1))
-	 (l4 (tmtm-eat-space-around-control l3))
+  (let* ((l4 (tmtm-eat-space-around-control l1))
 	 (l5 (tmtm-remove-superfluous-newlines l4))
 	 (l6 (tmtm-concat-document-correct l5)))
     l6))

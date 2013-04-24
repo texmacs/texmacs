@@ -85,6 +85,7 @@
   (glyph-recognize recognize_glyph (string array_array_array_double))
   (set-new-fonts set_new_fonts (void bool))
   (new-fonts? get_new_fonts (bool))
+  (tmtm-eqnumber->nonumber eqnumber_to_nonumber (tree tree))
 
   ;; routines for the font database
   (tt-exists? tt_font_exists (bool string))

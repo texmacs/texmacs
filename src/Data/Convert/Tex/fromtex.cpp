@@ -3157,6 +3157,7 @@ modernize_newlines (tree t) {
 tree
 finalize_textm (tree t) {
   t= modernize_newlines (t);
+  t= nonumber_to_eqnumber (t);
   t= stree_to_tree (call ("textm-finalize", tree_to_stree (t)));
   return simplify_correct (t);
 }

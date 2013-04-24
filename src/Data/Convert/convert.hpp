@@ -39,6 +39,8 @@ hashmap<string,int> get_codes (string version);
 tree   string_to_tree (string s, string version);
 tree   upgrade (tree t, string version);
 tree   substitute (tree t, tree which, tree by);
+tree   nonumber_to_eqnumber (tree t);
+tree   eqnumber_to_nonumber (tree t);
 
 /*** Scheme ***/
 string scheme_tree_to_string (scheme_tree t);
