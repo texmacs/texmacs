@@ -3084,13 +3084,21 @@ is_new_line (tree t) {
   return is_compound (t, "new-line", 0);
 }
 
+static tree
+clean_concat (tree t) {
+  if (!is_concat (t)) return concat (t);
+  if (N(t) == 0) return "";
+  if (N(t) == 1 && is_atomic (t[0])) return get_label (t[0]);
+  if (N(t) == 1 && !is_atomic (t[0])) return t[0];
+  return t;
+}
+
 static array<tree>
 flatten_documents (array<tree> a) {
   array<tree> r;
   for (int i=0; i<N(a); i++) {
-    if (is_document (a[i])) {
+    if (is_document (a[i]))
       r << flatten_documents (A(a[i]));
-    }
     else r << a[i];
   }
   return r;
@@ -3103,33 +3111,45 @@ make_document (array<tree> a) {
   else return tree (DOCUMENT, a);
 }
 
+static inline bool
+contains_document (tree t) {
+  for (int i=0; i<N(t); i++)
+    if (is_document (t[i])) return true;
+  return false;
+}
+
+static inline bool
+contains_newline (tree t) {
+  return contains (compound ("new-line"), A(t));
+}
+
 static tree
-modernize_newlines (tree t, bool &skip) {
+modernize_newlines (tree t, bool skip) {
   if (is_atomic (t)) return t;
   if (is_compound (t, "doc-data") || is_compound (t, "abstract-data"))
     skip= true;
   tree r= tree (L(t));
-  bool changed= false;
-  for (int i=0; i<N(t); i++) {
+  for (int i=0; i<N(t); i++)
     r << modernize_newlines (t[i], skip);
-    if (t[i] != r[i]) changed= true;
-  }
   if (is_concat (r)) {
-    array<tree> tmp= tokenize_concat (r, A(concat (compound ("new-line"))));
-    if (N(tmp) > 0)
+    if (contains_newline (r)) {
+      array<tree> tmp=
+        tokenize_concat (r, A(concat (compound ("new-line"))), true);
+      for (int j=0; j<N(tmp); j++)
+        tmp[j]= clean_concat (tmp[j]);
       r= make_document (tmp);
+    }
   }
   else if (is_document (r))
     r= make_document (A(r));
-  else if (!skip && changed)
+  else if (!skip && contains_document (r) && !contains_document (t))
     r= tree (DOCUMENT, r);
   return r;
 }
 
 static tree
 modernize_newlines (tree t) {
-  bool skip= false;
-  return modernize_newlines (t, skip);
+  return modernize_newlines (t, false);
 }
 
 /************* finalize textm **************/

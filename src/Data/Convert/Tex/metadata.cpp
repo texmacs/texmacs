@@ -13,18 +13,18 @@
 #include "metadata.hpp"
 
 array<tree>
-tokenize_concat (tree t, array<tree> a) {
+tokenize_concat (tree t, array<tree> a, bool keep) {
   tree tmp (CONCAT);
   array<tree> r;
   for (int i=0; i<N(t); i++) {
     if (!contains (t[i], a))
       tmp << t[i];
     else {
-      r << tmp;
+      if (keep || tmp != concat()) r << tmp;
       tmp= concat();
     }
   }
-  if (tmp != concat()) r << tmp;
+  if (keep || tmp != concat()) r << tmp;
   return r;
 }
 

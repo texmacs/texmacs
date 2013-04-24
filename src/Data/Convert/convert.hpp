@@ -66,7 +66,7 @@ tree   latex_class_document_to_tree (string s);
 string latex_verbarg_to_string (tree t);
 string get_latex_style (tree t);
 string string_arg (tree t, bool url= false);
-array<tree> tokenize_concat (tree t, array<tree> a);
+array<tree> tokenize_concat (tree t, array<tree> a, bool keep= false);
 
 /*** Xml / Html / Mathml ***/
 tree   parse_xml (string s);
