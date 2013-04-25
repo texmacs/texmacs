@@ -84,6 +84,7 @@ might_not_be_typesetted (tree t) {
          (is_func (t, TUPLE) && t[0] == "\\def*")            || 
          (is_func (t, TUPLE) && t[0] == "\\def**")           || 
          (is_func (t, TUPLE) && t[0] == "\\hspace")          || 
+         (is_func (t, TUPLE) && t[0] == "\\index")           || 
          (is_func (t, TUPLE) && t[0] == "\\label")           || 
          (is_func (t, TUPLE) && t[0] == "\\newdef")          || 
          (is_func (t, TUPLE) && t[0] == "\\newenvironment")  || 
@@ -115,7 +116,7 @@ is_sectionnal (tree t) {
          (is_func (t, TUPLE, 2) && t[0] == "\\part*")              || 
          (is_func (t, TUPLE, 2) && t[0] == "\\chapter")            || 
          (is_func (t, TUPLE, 2) && t[0] == "\\chapter*")           || 
-         (is_func (t, TUPLE) && t[0] == "\\end-thebibliography") || 
+         (is_func (t, TUPLE) && t[0] == "\\end-thebibliography")   || 
          (is_func (t, TUPLE) && t[0] == "\\bibliography");
 }
 
