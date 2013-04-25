@@ -15,6 +15,5 @@
   (:use (convert rewrite tmtm-tidy)))
 
 (tm-define (textm-finalize l1)
-  (let* ((l5 (tmtm-remove-superfluous-newlines l1))
-	 (l6 (tmtm-concat-document-correct l5)))
+  (let* ((l6 (tmtm-concat-document-correct l1)))
     l6))
