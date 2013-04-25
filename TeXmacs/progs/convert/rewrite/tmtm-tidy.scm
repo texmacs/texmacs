@@ -35,58 +35,6 @@
     (if (null? r) "" (cons 'document r))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Remove spaces before (and possibly after) control markup
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (tmtm-control? l)
-  (and (list? l) (in? (car l) '(label index))))
-
-(define (tmtm-really-eat? l)
-  (or (null? l)
-      (and (string? (car l)) (string-starts? (car l) " "))
-      (and (tmtm-control? (car l)) (tmtm-really-eat? (cdr l)))))
-
-(define (tmtm-eat-before? l first?)
-  ;; eat space before if possible and return #f otherwise
-  (cond ((< (length l) 2) #f)
-	((not (and (string? (car l)) (string-ends? (car l) " "))) #f)
-	((not (tmtm-control? (cadr l))) #f)
-	((and (== (car l) " ") first?) (cdr l))
-	((tmtm-really-eat? (cdr l))
-	 (if (== (car l) " ")
-	     (cdr l)
-	     (cons (string-drop-right (car l) 1) (cdr l))))
-	(else #f)))
-
-(define (tmtm-eat-after? l first?)
-  ;; eat space after if possible and return #f otherwise
-  (cond ((or (null? l) (== l '(" "))) '())
-	((tmtm-control? (car l))
-	 (with r (tmtm-eat-after? (cdr l) first?)
-	   (if r (cons (car l) r) #f)))
-	((and (string? (car l)) (string-starts? (car l) " ") first?)
-	 (if (== (car l) " ")
-	     (cdr l)
-	     (cons (string-drop (car l) 1) (cdr l))))
-	(else #f)))
-
-(define (tmtm-eat-around l first?)
-  (with r (tmtm-eat-before? l first?)
-    (cond (r (tmtm-eat-around r #f))
-	  ((null? l) l)
-	  ((tmtm-control? (car l))
-	   (with r (tmtm-eat-after? (cdr l) first?)
-	     (cons (car l) (tmtm-eat-around (if r r (cdr l)) #f))))
-	  (else (cons (car l) (tmtm-eat-around (cdr l) #f))))))
-
-(tm-define (tmtm-eat-space-around-control l)
-  (if (nlist? l) l
-      (with r (map tmtm-eat-space-around-control (cdr l))
-	(if (func? l 'concat)
-	    (tmtm-concat (tmtm-eat-around r #t))
-	    (cons (car l) r)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remove superfluous newlines (i.e. remove empty paragraphs)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

@@ -3148,17 +3148,114 @@ modernize_newlines (tree t, bool skip) {
   return r;
 }
 
+/************* eat space around control **************/
+
+static bool
+is_ending_by_space (string s, bool rev) {
+  if (N(s) == 0) return false;
+  int n= rev? 0 : N(s) - 1;
+  return s[n] == ' ';
+}
+
+static bool
+is_beginning_by_space (string s, bool rev) {
+  return is_ending_by_space (s, !rev);
+}
+
+static string
+remove_next_spaces (string s, bool rev) {
+  if (rev) {
+    int start= N(s) - 1;
+    while (start >= 0 && s[start] == ' ') start--;
+    return s(0, start + 1);
+  }
+  else {
+    int start= 0;
+    while (start < N(s) && s[start] == ' ') start++;
+    return s(start, N(s));
+  }
+}
+
 static tree
-modernize_newlines (tree t) {
-  return modernize_newlines (t, false);
+add_to_cmp (tree to, tree what, bool at_begin) {
+  if (!at_begin) {
+    to << what;
+    return to;
+  }
+  tree r(L(to));
+  r << what;
+  for (int i=0; i<N(to); i++)
+    r << to[i];
+  return r;
+}
+
+static inline bool
+is_control (tree t) {
+  return is_compound (t, "label") || is_compound (t, "index");
+}
+
+static inline bool
+is_multiline (tree t) {
+  return is_document (t) || is_func (t, ROW) || is_func (t, CELL);
+}
+
+static tree
+eat_space_around_control (tree t, char &state, bool &ctrl, bool rev) {
+  if (is_control (t)) {
+    ctrl= true;
+    return t;
+  }
+  if (is_atomic (t)) {
+    string s= as_string (t);
+    if (rev) {
+      if (state == 'n' || state == 's' || ctrl) {
+        if (is_beginning_by_space (s, rev))
+          s= remove_next_spaces (s, rev);
+      }
+    }
+    else {
+      if (state == 's')
+        if (is_beginning_by_space (s, rev))
+          s= remove_next_spaces (s, rev);
+    }
+    if (N(s) > 0) {
+      state= is_ending_by_space (s, rev)? 's' : '*';
+      ctrl= false;
+    }
+    if (s == as_string (t)) return t;
+    else return tree (s);
+  }
+  ctrl= false;
+  int start= rev? N(t) - 1 : 0;
+  int inc= rev? -1 : 1;
+  tree r(L(t));
+  if (is_multiline (t)) state= 'n';
+  else if (!is_concat (t)) state= '*';
+  for (int i=start; i>= 0 && i<N(t); i+=inc) {
+    r= add_to_cmp (r, eat_space_around_control (t[i], state, ctrl, rev), rev);
+    if (is_multiline (t)) state= 'n';
+    else if (!is_concat (t)) state= '*';
+  }
+  return r;
+}
+
+static tree
+eat_space_around_control (tree t) {
+  bool rev= true, ctrl= false;
+  char state= '*';
+  t= eat_space_around_control (t, state, ctrl, rev);
+  state= '*', rev= false, ctrl= false;
+  t= eat_space_around_control (t, state, ctrl, rev);
+  return t;
 }
 
 /************* finalize textm **************/
 
 tree
 finalize_textm (tree t) {
-  t= modernize_newlines (t);
+  t= modernize_newlines (t, false);
   t= nonumber_to_eqnumber (t);
+  t= eat_space_around_control (t);
   t= stree_to_tree (call ("textm-finalize", tree_to_stree (t)));
   return simplify_correct (t);
 }
