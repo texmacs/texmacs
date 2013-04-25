@@ -35,23 +35,6 @@
     (if (null? r) "" (cons 'document r))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Remove superfluous newlines (i.e. remove empty paragraphs)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (tmtm-preserve-space? l)
-  (and (list? l) (in? (car l) '(verbatim code))))
-
-(tm-define (tmtm-remove-superfluous-newlines l)
-  (cond ((tmtm-preserve-space? l) l)
-	((func? l 'document)
-	 (with r (map tmtm-remove-superfluous-newlines (cdr l))
-	   (with f (list-filter r (lambda (x) (!= x "")))
-	     (if (null? f) '(document "") (cons 'document f)))))
-        ((pair? l)
-	 (cons (car l) (map tmtm-remove-superfluous-newlines (cdr l))))
-	(else l)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Glue concats with document items in it to yield a document
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

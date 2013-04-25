@@ -3249,6 +3249,20 @@ eat_space_around_control (tree t) {
   return t;
 }
 
+/************************ remove superfluous newlines ************************/
+
+static tree
+remove_superfluous_newlines (tree t) {
+  if (is_atomic (t)) return t;
+  tree r (L(t));
+  for (int i=0; i<N(t); i++) {
+    if (!is_document (t) || t[i] != "")
+      r << remove_superfluous_newlines (t[i]);
+    }
+  if (is_document (r) && N(r) == 0) r << "";
+  return r;
+}
+
 /************* finalize textm **************/
 
 tree
@@ -3256,6 +3270,7 @@ finalize_textm (tree t) {
   t= modernize_newlines (t, false);
   t= nonumber_to_eqnumber (t);
   t= eat_space_around_control (t);
+  t= remove_superfluous_newlines (t);
   t= stree_to_tree (call ("textm-finalize", tree_to_stree (t)));
   return simplify_correct (t);
 }
