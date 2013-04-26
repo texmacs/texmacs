@@ -3078,7 +3078,7 @@ finalize_misc (tree t) {
 * Final changes
 ******************************************************************************/
 
-/************* modernize newlines **************/
+/**************************** Modernize newlines *****************************/
 
 static inline bool
 is_new_line (tree t) {
@@ -3148,7 +3148,7 @@ modernize_newlines (tree t, bool skip) {
   return r;
 }
 
-/************* eat space around control **************/
+/************************* Eat space around control **************************/
 
 static bool
 is_ending_by_space (string s, bool rev) {
@@ -3249,7 +3249,7 @@ eat_space_around_control (tree t) {
   return t;
 }
 
-/************************ remove superfluous newlines ************************/
+/************************ Remove superfluous newlines ************************/
 
 static bool
 is_verbatim (tree t) {
@@ -3270,7 +3270,7 @@ remove_superfluous_newlines (tree t) {
   return r;
 }
 
-/************************** concat document correct **************************/
+/************************** Concat document correct **************************/
 
 static tree
 concat_document_correct (tree t) {
@@ -3302,7 +3302,7 @@ concat_document_correct (tree t) {
   return r;
 }
 
-/************* finalize textm **************/
+/****************************** Finalize textm *******************************/
 
 tree
 finalize_textm (tree t) {
