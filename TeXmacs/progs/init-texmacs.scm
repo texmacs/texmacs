@@ -247,7 +247,6 @@
 (lazy-define (convert rewrite init-rewrite) texmacs->code texmacs->verbatim)
 (lazy-define (convert html tmhtml-expand) tmhtml-env-patch)
 (lazy-define (convert latex latex-drd) latex-arity latex-type)
-(lazy-define (convert latex textm) textm-finalize)
 (lazy-define (convert latex tmtex) tmtex-env-patch)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
