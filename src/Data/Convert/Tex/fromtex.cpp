@@ -3251,9 +3251,16 @@ eat_space_around_control (tree t) {
 
 /************************ remove superfluous newlines ************************/
 
+static bool
+is_verbatim (tree t) {
+  return is_compound (t, "cpp-code") || is_compound (t, "mmx-code")   ||
+         is_compound (t, "scm-code") || is_compound (t, "shell-code") ||
+         is_compound (t, "code")     || is_compound (t, "verbatim");
+}
+
 static tree
 remove_superfluous_newlines (tree t) {
-  if (is_atomic (t)) return t;
+  if (is_verbatim (t) || is_atomic (t)) return t;
   tree r (L(t));
   for (int i=0; i<N(t); i++) {
     if (!is_document (t) || t[i] != "")
