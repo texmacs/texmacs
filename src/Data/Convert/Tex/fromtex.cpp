@@ -3263,6 +3263,38 @@ remove_superfluous_newlines (tree t) {
   return r;
 }
 
+/************************** concat document correct **************************/
+
+static tree
+concat_document_correct (tree t) {
+  if (is_atomic (t)) return t;
+  tree r (L(t));
+  for (int i=0; i<N(t); i++)
+    r << concat_document_correct (t[i]);
+  if (is_concat (r) && contains_document (r)) {
+    t= r;
+    tree tmp (CONCAT);
+    r= tree (DOCUMENT);
+    for (int i=0; i<N(t); i++) {
+      if (is_document (t[i])) {
+        if (tmp != concat ()) {
+          r << tmp;
+          tmp= concat ();
+        }
+        r << t[i];
+      }
+      else
+        tmp << t[i];
+    }
+    if (tmp != concat ()) {
+      r << tmp;
+      tmp= concat ();
+    }
+    r= make_document (A(r));
+  }
+  return r;
+}
+
 /************* finalize textm **************/
 
 tree
@@ -3271,7 +3303,7 @@ finalize_textm (tree t) {
   t= nonumber_to_eqnumber (t);
   t= eat_space_around_control (t);
   t= remove_superfluous_newlines (t);
-  t= stree_to_tree (call ("textm-finalize", tree_to_stree (t)));
+  t= concat_document_correct (t);
   return simplify_correct (t);
 }
 

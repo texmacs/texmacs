@@ -16,4 +16,4 @@
 
 (tm-define (textm-finalize l1)
   (let* ((l6 (tmtm-concat-document-correct l1)))
-    l6))
+    l1))
