@@ -429,7 +429,7 @@
 (logic-table latex-needs%
   (!verbatim "alltt")
   (!verbatim* "alltt")
-  (tmcode "alltt")
+  ("alltt" "alltt")
 
   (geometry "geometry")
   (epsfig "epsfig")
@@ -458,8 +458,8 @@
   (pod "amsmath")
   (overset "amsmath")
   (underset "amsmath")
-  (tmop "amsmath")
-  (tmmathbf "amsmath")
+  (operatorname "amsmath")
+  (boldsymbol "amsmath")
   (lleq "amsmath")
   (llleq "amsmath")
   (ggeq "amsmath")
@@ -493,13 +493,11 @@
   (mho "graphicx")
   (upequal "graphicx")
 
-  (tmfloat "ifthen")
-  (tmfloat "capt-of")
-  (tmfloat "calc")
+  (ifthenelse "ifthen")
+  (captionof "capt-of")
+  (widthof "calc")
   
   (color "xcolor")
-  (tmhlink "xcolor")
-  (tmaction "xcolor")
 
   (omicron "pslatex")
   (multicols "multicol")
