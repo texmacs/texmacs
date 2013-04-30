@@ -2190,7 +2190,7 @@ finalize_layout (tree t) {
   tree u (t, n);
   for (i=0; i<n; i++) u[i]= finalize_layout (t[i]);
   if (is_func (u, CONCAT)) {
-    string lang= "verbatim";
+    string lang= "code";
     bool spc_flag =false;
     bool item_flag=false;
     tree r (CONCAT);
@@ -2232,14 +2232,14 @@ finalize_layout (tree t) {
       }
 
       if (is_func (v, BEGIN) && (v[0] == "tmcode" || v[0] == "tmcode*")) {
-        if (is_func (v, BEGIN, 2)) lang= string_arg (v[1]);
-        else lang= "verbatim";
-	r << tree (BEGIN, lang*"-code");
+        if (is_func (v, BEGIN, 2)) lang= string_arg (v[1]) * "-code";
+        else lang= "code";
+	r << tree (BEGIN, lang);
 	continue;
       }
 
       if (is_func (v, END) && v[0] == "tmcode") {
-	r << tree (END, lang*"-code");
+	r << tree (END, lang);
 	continue;
       }
 

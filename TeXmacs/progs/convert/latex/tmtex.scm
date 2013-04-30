@@ -1571,7 +1571,7 @@
   (set! l (escape-backslashes l))
   (set! l (escape-braces l))
   (set! s (car (string-decompose s "-")))
-  (with lang (if (== s "verbatim") '() `((!option ,s)))
+  (with lang (if (or (== s "verbatim") (== s "code")) '() `((!option ,s)))
     `((!begin* "tmcode" ,@lang) ,(tmtex-verbatim* "" l))))
 
 (define (tmtex-number-renderer l)
@@ -2100,7 +2100,7 @@
 	acknowledgments)
    (,tmtex-std-env 1))
   (new-theorem (,tmtex-new-theorem 2))
-  ((:or code verbatim) (,tmtex-verbatim 1))
+  (verbatim (,tmtex-verbatim 1))
   (center (,tmtex-std-env 1))
   (indent (,tmtex-indent 1))
   ((:or description description-compact description-aligned
@@ -2153,7 +2153,7 @@
   ((:or eqnarray eqnarray* leqnarray*) (,tmtex-eqnarray 1))
   (eq-number (,tmtex-default -1))
 
-  ((:or cpp-code mmx-code scm-code shell-code verbatim-code)
+  ((:or code cpp-code mmx-code scm-code shell-code verbatim-code)
    (,tmtex-code-block 1))
   ((:or mmx cpp scm shell) (,tmtex-code-inline 1))
 
