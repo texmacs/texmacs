@@ -6904,7 +6904,6 @@ if test -z $TMBUILDENV; then #QT has he install dir hard coded in library so we 
 
 
 
-  test x"$TROLL" != x && echo 'ViM rox emacs.'
 
 
 # Check whether --with-qt was given.
@@ -7524,7 +7523,6 @@ else
 
 
 
-  test x"$TROLL" != x && echo 'ViM rox emacs.'
 
 
 # Check whether --with-qt was given.
