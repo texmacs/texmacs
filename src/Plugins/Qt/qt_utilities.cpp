@@ -530,7 +530,11 @@ qt_image_to_eps (url image, int w_pt, int h_pt, int dpi) {
 QPixmap
 as_pixmap (const QImage& im) {
   QPixmap pm (im.size ());
+#if (QT_VERSION >= 0x040800)
   pm.convertFromImage (im);
+#else
+  pm.fromImage (im);
+#endif
   return pm;
 }
 
