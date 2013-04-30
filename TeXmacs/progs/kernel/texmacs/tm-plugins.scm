@@ -369,8 +369,8 @@
     (setenv "PATH" (url->system p))))
 
 (define (add-windows-program-path u)
-  (add-to-path (url-append (url-or (system->url "C:\\.")
-				   (system->url "C:\\Program File*")) u)))
+  (add-to-path (url-expand (url-append (url-or (system->url "C:\\.")
+				   (system->url "C:\\Program File*")) u))))
 
 (define (add-macos-program-path u)
   (add-to-path (url-append (system->url "/Applications") u)))
