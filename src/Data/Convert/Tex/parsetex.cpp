@@ -1128,6 +1128,7 @@ latex_parser::parse_alltt (string s, int& i, string end, string env, tree opt)
   }
   r << s(start, i);
   r << tree (TUPLE, endenv);
+  r << "\n";
   i+=e;
   return r;
 }

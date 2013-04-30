@@ -787,7 +787,8 @@ upgrade_set_begin_document_once (tree doc_t) {
       {
 	tree ins= document_replace (doc_t, doc_1, con_1, doc_2, con_2);
 	if (is_func (ins, EXPAND, 2)) {
-	  if ((ins[0] == "verbatim") || (ins[0] == "code"))
+          if ((ins[0] == "verbatim") || (ins[0] == "code") ||
+              (upgrade_tex_flag && is_verbatim (compound (as_string(ins[0])))))
 	    upgrade_verbatim_expand (doc, con, ins);
 	  else if (ins[0] == "abstract")
 	    upgrade_abstract_expand (doc, con, ins);

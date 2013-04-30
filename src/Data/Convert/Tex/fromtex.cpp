@@ -3251,7 +3251,7 @@ eat_space_around_control (tree t) {
 
 /************************ Remove superfluous newlines ************************/
 
-static bool
+bool
 is_verbatim (tree t) {
   return is_compound (t, "cpp-code") || is_compound (t, "mmx-code")   ||
          is_compound (t, "scm-code") || is_compound (t, "shell-code") ||

@@ -69,6 +69,8 @@ string latex_verbarg_to_string (tree t);
 string get_latex_style (tree t);
 string string_arg (tree t, bool url= false);
 array<tree> tokenize_concat (tree t, array<tree> a, bool keep= false);
+bool   is_verbatim (tree t);
+
 
 /*** Xml / Html / Mathml ***/
 tree   parse_xml (string s);
