@@ -646,6 +646,8 @@ string_arg (tree t, bool url) {
     return " ";
   else if (is_func (t, APPLY, 1) && t[0] == "nbsp" && url)
     return "~";
+  else if (is_func (t, APPLY, 1) && t[0] == "emdash")
+    return "---";
   else {
     //cout << "t= " << t << "\n";
     return "";
