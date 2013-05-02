@@ -266,15 +266,15 @@ pdf_renderer_rep::get_background () {
 }
 
 void
-pdf_renderer_rep::set_pencil (pencil p) {
+pdf_renderer_rep::set_pencil (pencil pen2) {
   // cerr << "set_pencil\n";
   pen= pen2;
-  if (pen->c != fg) {
-    fg= pen->c;
+  if (pen->get_color() != fg) {
+    fg= pen->get_color();
     select_color (fg);
   }
-  if (pen->w != lw) {
-    lw= pen->w;
+  if (pen->get_width() != lw) {
+    lw= pen->get_width();
     select_line_width (lw);
   }
 }
@@ -284,7 +284,7 @@ pdf_renderer_rep::set_background (brush b) {
 //  cerr << "set_background\n";
   if (bgb==b) return;
   bgb= b;
-  bg= b->c;
+  bg= b->get_color();
 }
 
 static double font_size (string name) {
