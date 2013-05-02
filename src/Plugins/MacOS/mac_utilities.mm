@@ -13,11 +13,13 @@
 #include "timer.hpp"
 #include "gui.hpp"
 
+#pragma push_macro("FAILED")  // CoreFoundation will rewrite our macro FAILED
 #define extend CARBON_extends // avoid name collision
 #include "Cocoa/mac_cocoa.h"
 #include <Carbon/Carbon.h>
 #include "HIDRemote.h"
 #undef extend
+#pragma pop_macro("FAILED")   // Restore our definition
 
 #ifdef QTTEXMACS
 #include <QtGui>
