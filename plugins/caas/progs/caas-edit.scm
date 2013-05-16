@@ -16,9 +16,9 @@
 
 (tm-define (kbd-variant t forward?)
   (:require (and (in-prog-caas?) (not (inside? 'session))))
-  (caas-indent))
+  (mmx-indent))
 
 (tm-define (insert-return)
   (:mode in-prog-caas?)
   (insert-raw-return)
-  (caas-indent))
+  (mmx-indent))

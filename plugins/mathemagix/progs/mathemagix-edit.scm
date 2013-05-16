@@ -16,9 +16,9 @@
 
 (tm-define (kbd-variant t forward?)
   (:require (and (in-prog-mathemagix?) (not (inside? 'session))))
-  (mathemagix-indent))
+  (mmx-indent))
 
 (tm-define (insert-return)
   (:mode in-prog-mathemagix?)
   (insert-raw-return)
-  (mathemagix-indent))
+  (mmx-indent))

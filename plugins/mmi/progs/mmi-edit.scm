@@ -16,9 +16,9 @@
 
 (tm-define (kbd-variant t forward?)
   (:require (and (in-prog-mmi?) (not (inside? 'session))))
-  (mmi-indent))
+  (mmx-indent))
 
 (tm-define (insert-return)
   (:mode in-prog-mmi?)
   (insert-raw-return)
-  (mmi-indent))
+  (mmx-indent))
