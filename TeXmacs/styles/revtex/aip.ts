@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.17>
+<TeXmacs|1.0.7.19>
 
 <style|source>
 
@@ -278,19 +278,27 @@
   <assign|list-of-figures-text|<macro|<localize|List of Figures>>>
 
   <assign|big-figure|<\macro|body|caption>
-    <surround|<compound|next-figure>||<render-big-figure|figure|<compound|figure-text>
-    <compound|the-figure>|<arg|body>|<arg|caption>>>
-  </macro>>
-
-  <assign|render-big-figure|<\macro|type|name|fig|cap>
-    <padded-normal|1fn|1fn|<tabular*|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|2|2|1|1|cell-height|0.5fn>|<cwith|1|1|1|1|cell-lsep|1.5fn>|<cwith|1|1|1|1|cell-rsep|1.5fn>|<table|<row|<\cell>
-      <arg|fig>
-    </cell>>|<row|<cell|>>|<row|<cell|<small|<\surround|<figure-name|<arg|name><figure-sep>><list-caption|<arg|type>|<arg|cap>>|>
-      <arg|cap>
-    </surround>>>>>>>>
+    <\surround|<next-figure>|>
+      <render-big-figure|figure|<figure-text>
+      <the-figure>|<arg|body>|<arg|caption>>
+    </surround>
   </macro>>
 
   <assign|figure-name|<macro|name|<arg|name>>>
+
+  <assign|caption-left-padding|0fn>
+
+  <assign|caption-right-padding|0fn>
+
+  <assign|figure-width|1par>
+
+  <assign|render-big-figure|<\macro|type|name|fig|cap>
+    <padded-normal|1fn|1fn|<tabular*|<tformat|<twith|table-width|<value|figure-width>>|<cwith|3|3|1|1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-lsep|<value|figure-left-padding>>|<cwith|1|-1|1|-1|cell-rsep|<value|figure-right-padding>>|<cwith|2|2|1|1|cell-height|<value|figure-caption-sep>>|<cwith|3|3|1|1|cell-lsep|<value|caption-left-padding>>|<cwith|3|3|1|1|cell-rsep|<value|caption-right-padding>>|<table|<row|<cell|<arg|fig>>>|<row|<cell|>>|<row|<\cell>
+      <small|<\surround|<figure-name|<arg|name><figure-sep>><list-caption|<arg|type>|<arg|cap>>|>
+        <arg|cap>
+      </surround>>
+    </cell>>>>>>
+  </macro>>
 
   <\active*>
     <\src-comment>

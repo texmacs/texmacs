@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.17>
+<TeXmacs|1.0.7.19>
 
 <style|source>
 
@@ -40,6 +40,18 @@
     <arg|short>
   </macro>>
 
+  <assign|figure-left-padding|0spc>
+
+  <assign|figure-right-padding|0spc>
+
+  <assign|caption-left-padding|1.5fn>
+
+  <assign|caption-right-padding|1.5fn>
+
+  <assign|figure-caption-sep|0.5fn>
+
+  <assign|figure-width|1par>
+
   <drd-props|caption-detailed|arity|2|accessible|0|border|no>
 
   <drd-props|caption-summarized|arity|2|accessible|1|border|no>
@@ -53,7 +65,7 @@
   </cell>>>>>>>
 
   <assign|render-big-figure|<\macro|type|name|fig|cap>
-    <padded-normal|1fn|1fn|<tabular*|<tformat|<twith|table-width|1par>|<cwith|3|3|1|1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|2|2|1|1|cell-height|0.5fn>|<cwith|3|3|1|1|cell-lsep|1.5fn>|<cwith|3|3|1|1|cell-rsep|1.5fn>|<table|<row|<cell|<arg|fig>>>|<row|<cell|>>|<row|<\cell>
+    <padded-normal|1fn|1fn|<tabular*|<tformat|<twith|table-width|<value|figure-width>>|<cwith|3|3|1|1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-lsep|<value|figure-left-padding>>|<cwith|1|-1|1|-1|cell-rsep|<value|figure-right-padding>>|<cwith|2|2|1|1|cell-height|<value|figure-caption-sep>>|<cwith|3|3|1|1|cell-lsep|<value|caption-left-padding>>|<cwith|3|3|1|1|cell-rsep|<value|caption-right-padding>>|<table|<row|<cell|<arg|fig>>>|<row|<cell|>>|<row|<\cell>
       <small|<\surround|<figure-name|<arg|name><figure-sep>><list-caption|<arg|type>|<arg|cap>>|>
         <arg|cap>
       </surround>>
