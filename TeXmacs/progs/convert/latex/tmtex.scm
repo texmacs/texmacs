@@ -1160,8 +1160,7 @@
 	((== (car l) "image") (tmtex-eps (cadr l)))
 	(else
           (begin
-	    (display* "TeXmacs] non converted specific content: \n"
-                      (list s l) "\n")
+            (display* "TeXmacs] non converted specific content: \n" l "\n")
             ""))))
 
 (define (tmtex-eps-names)
