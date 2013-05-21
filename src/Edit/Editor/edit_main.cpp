@@ -244,7 +244,7 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
 #ifndef PDF_RENDERER
 #ifdef USE_GS
   if (pdf) {
-    gs_to_pdf (name, orig);
+    gs_to_pdf (name, orig, landsc, h/cm, w/cm);
     ::remove (name);
   }
 #endif

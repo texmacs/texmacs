@@ -145,10 +145,17 @@ gs_to_eps (url image, url eps) {
 }
 
 void
-gs_to_pdf (url doc, url pdf) {
+gs_to_pdf (url doc, url pdf, bool landscape, double paper_h, double paper_w) {
   string cmd= gs_prefix ();
   cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pdfwrite ";
-  cmd << "-sOutputFile=" << sys_concretize (pdf) << " ";
+  if (landscape)
+    cmd << "-dDEVICEWIDTHPOINTS=" << as_string ((int) (28.36*paper_h+ 0.5))
+      << " -dDEVICEHEIGHTPOINTS=" << as_string ((int) (28.36*paper_w+ 0.5));
+  else
+    cmd << "-dDEVICEWIDTHPOINTS=" << as_string ((int) (28.36*paper_w+ 0.5))
+      << " -dDEVICEHEIGHTPOINTS=" << as_string ((int) (28.36*paper_h+ 0.5));
+
+  cmd << " -sOutputFile=" << sys_concretize (pdf) << " ";
   cmd << sys_concretize (doc);
   cmd << " -c \"[ /Title (" << as_string (tail(pdf)) << ") /DOCINFO pdfmark\" ";
 
