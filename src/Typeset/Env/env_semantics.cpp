@@ -249,8 +249,8 @@ edit_env_rep::get_page_pars (SI& w, SI& h, SI& width, SI& height,
 
 void
 edit_env_rep::update_font () {
-  fn_size= (int) ((((double) get_int (FONT_BASE_SIZE))+0.5)*
-		  get_double (FONT_SIZE));
+  fn_size= (int) (((double) get_int (FONT_BASE_SIZE)) *
+		  get_double (FONT_SIZE) + 0.5);
   switch (mode) {
   case 0:
   case 1:
