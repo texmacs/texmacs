@@ -12,9 +12,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (scilab-launcher)
-  (if (os-mingw?)
+  (string-append
+    (if (os-mingw?)
       "Scilex --texmacs -texmacs"
-      "scilab --texmacs"))
+      "scilab --texmacs")
+    " -f $TEXMACS_PATH/plugins/scilab/bin/init-texmacs-atoms.sce"))
 
 (plugin-configure scilab
   (:macpath "scilab*" "Contents/MacOS/bin")
