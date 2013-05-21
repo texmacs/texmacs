@@ -72,18 +72,13 @@
 (tm-define (tmtex-style-preprocess doc) doc)
 
 (define (import-tmtex-styles)
-  (cond ((elsevier-style?)
-         (import-from (convert latex tmtex-elsevier)))
-        ((acm-style?)
-         (import-from (convert latex tmtex-acm)))
-        ((ams-style?)
-         (import-from (convert latex tmtex-ams)))
-        ((revtex-style?)
-         (import-from (convert latex tmtex-revtex)))
+  (cond ((elsevier-style?) (import-from (convert latex tmtex-elsevier)))
+        ((acm-style?)      (import-from (convert latex tmtex-acm)))
+        ((ams-style?)      (import-from (convert latex tmtex-ams)))
+        ((revtex-style?)   (import-from (convert latex tmtex-revtex)))
+        ((ieee-style?)     (import-from (convert latex tmtex-ieee)))
         ((or (springer-style?) (svmono-style?))
          (import-from (convert latex tmtex-springer)))
-        ((ieee-style?)
-         (import-from (convert latex tmtex-ieee)))
          (else (noop))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
