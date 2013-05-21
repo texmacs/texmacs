@@ -64,6 +64,7 @@
   (ieee-style%          (in? tmtex-style '("ieeeconf" "ieeetran")))
   (ieee-conf-style%     (in? tmtex-style '("ieeeconf")) ieee-style%)
   (ieee-tran-style%     (in? tmtex-style '("ieeetran")) ieee-style%)
+  (beamer-style%        (in? tmtex-style '("beamer")))
   (natbib-package%      (in? "cite-author-year" tmtex-packages)))
 
 (tm-define (tmtex-style-init body)
@@ -77,6 +78,7 @@
         ((ams-style?)      (import-from (convert latex tmtex-ams)))
         ((revtex-style?)   (import-from (convert latex tmtex-revtex)))
         ((ieee-style?)     (import-from (convert latex tmtex-ieee)))
+        ((beamer-style?)   (import-from (convert latex tmtex-beamer)))
         ((or (springer-style?) (svmono-style?))
          (import-from (convert latex tmtex-springer)))
          (else (noop))))
@@ -2276,6 +2278,8 @@
   (elsevier-frontmatter     tmtex-elsevier-frontmatter 2)
   (conferenceinfo           tmtex-acm-conferenceinfo 2)
   (CopyrightYear            tmtex-acm-copyright-year 2)
+  (slide                    tmtex-beamer-slide 2)
+  (tit                      tmtex-beamer-tit 2)
   (crdata                   tmtex-acm-crdata 2))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
