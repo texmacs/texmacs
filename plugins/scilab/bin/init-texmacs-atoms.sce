@@ -3,8 +3,7 @@ texmacslib = ""
 function texout(v)
   DATA_BEGIN=ascii(2);
   DATA_END=ascii(5)
-  //mprintf(strsubst(DATA_BEGIN+"latex:$"+prettyprint(v)+'$'+DATA_END,'\','\\'))
-  mprintf(strsubst(DATA_BEGIN+"verbatim:"+string(v)+DATA_END,'\','\\'))
+  mprintf(strsubst(DATA_BEGIN+"latex:$"+prettyprint(v)+'$'+DATA_END,'\','\\'))
 endfunction
 
 funcprot(0)
