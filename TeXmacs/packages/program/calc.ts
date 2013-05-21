@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.0.7.19>
 
 <style|source>
 
@@ -40,7 +40,7 @@
 
   <assign|calc-table|<macro|ref|body|<arg|body>>>
 
-  <assign|calc-inert|<macro|ref|in|<arg|in>>>
+  <assign|calc-inert|<macro|ref|in|<flag|<arg|ref>|dark magenta><arg|in>>>
 
   <assign|calc-input|<macro|ref|in|out|<arg|in>>>
 
@@ -50,7 +50,7 @@
 
   \;
 
-  <assign|cell-inert|<macro|ref|body|<calc-inert|<arg|ref>|<arg|body>>>>
+  <assign|cell-inert|<macro|ref|body|<with|calc-inert|<macro|ref|in|<arg|in>>|<calc-inert|<arg|ref>|<arg|body>>>>>
 
   <assign|cell-input|<macro|ref|in|out|<calc-input|<arg|ref>|<arg|in>|<arg|out>>>>
 
