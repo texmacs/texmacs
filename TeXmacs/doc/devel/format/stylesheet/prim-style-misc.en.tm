@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.7.19>
 
 <style|tmdoc>
 
@@ -6,15 +6,14 @@
   <tmdoc-title|Miscellaneous style-sheet primitives>
 
   <\explain>
-    <explain-macro|extern|scheme-foo|arg-1|<with|mode|math|\<cdots\>>|arg-n><explain-synopsis|apply
+    <explain-macro|extern|scheme-foo|arg-1|<math|\<cdots\>>|arg-n><explain-synopsis|apply
     extern typesetting macro>
   <|explain>
-    This primitive allows the user to implement macros in <value|scheme>. The
-    primitive applies the <value|scheme> function or macro
-    <src-arg|scheme-foo> to the arguments <src-arg|arg-1> until
-    <src-arg|arg-n>. For instance, the code <inactive*|<extern|(lambda (name)
-    `(concat "hi " ,name))|dude>> yields ``<extern|(lambda (name) `(concat
-    "hi " ,name))|dude>''.
+    This primitive allows the user to implement macros in <scheme>. The
+    primitive applies the <scheme> function or macro <src-arg|scheme-foo> to
+    the arguments <src-arg|arg-1> until <src-arg|arg-n>. For instance, the
+    code <inactive*|<extern|(lambda (name) `(concat "hi " ,name))|dude>>
+    yields ``<extern|(lambda (name) `(concat "hi " ,name))|dude>''.
 
     The arguments <src-arg|arg-1> until <src-arg|arg-n> are evaluated and
     then passed as trees to <src-arg|scheme-foo>. When defining a macro which
@@ -28,17 +27,17 @@
 
     It has been foreseen that the accessability of the macro arguments
     <src-arg|x> and <src-arg|y> is preserved for this kind of definitions.
-    However, since <TeXmacs> does not heuristically analyze your
-    <value|scheme> code, you will have to manually set the <abbr|D.R.D.>
-    properties using <markup|drd-props>.
+    However, since <TeXmacs> does not heuristically analyze your <scheme>
+    code, you will have to manually set the <abbr|D.R.D.> properties using
+    <markup|drd-props>.
 
-    Notice also that the <value|scheme> function <src-arg|scheme-foo> should
-    only rely on secure scheme functions (and not on functions like
+    Notice also that the <scheme> function <src-arg|scheme-foo> should only
+    rely on secure scheme functions (and not on functions like
     <verbatim|system> which may erase your hard disk). User implemented
-    <value|scheme> functions in plug-ins may be defined to be secure using
-    the <verbatim|:secure> option. Alternatively, the user may define all
-    <value|scheme> routines to be secure in
-    <menu|Edit|Preferences|Security|Accept all scripts>.
+    <scheme> functions in plug-ins may be defined to be secure using the
+    <verbatim|:secure> option. Alternatively, the user may define all
+    <scheme> routines to be secure in <menu|Edit|Preferences|Security|Accept
+    all scripts>.
   </explain>
 
   <\explain>
@@ -67,7 +66,7 @@
     <flag|warning|red>. The optional <src-arg|var> argument may be used in
     order to specify that the flag should only be visible if the macro
     argument <src-arg|var> corresponds to an accessible part of the document.
-    For instance, <TeXmacs> automatically generated labels for section titles
+    For instance, <TeXmacs> automatically generates labels for section titles
     (so as to include them in the table of contents), but it is undesirable
     to display informative flags for such labels.
   </explain>
