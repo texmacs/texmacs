@@ -16,7 +16,9 @@
     (if (os-mingw?)
       "Scilex --texmacs -texmacs"
       "scilab --texmacs")
-    " -f $TEXMACS_PATH/plugins/scilab/bin/init-texmacs-atoms.sce"))
+    " -f "
+    (url-concretize
+      (unix->url "$TEXMACS_PATH/plugins/scilab/bin/init-scilab.sce"))))
 
 (plugin-configure scilab
   (:macpath "scilab*" "Contents/MacOS/bin")
