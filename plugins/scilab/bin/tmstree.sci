@@ -308,13 +308,14 @@ function str= tmstree(a)
     str= string (a);
     num= ascii (str);
     if max (num) > 126 | min (num) < 32 then
-      // TODO: replace by a scheme-snippet to be converted by the scheme sidfe
+      // TODO: replace by a scheme-snippet to be converted by the scheme side
       // of the plugin
       str= strsubst (str, '""', "''''");
       str= strsubst (str, "\", "\\");
       str= '""' + str + '""';
-      conv= 'scheme: (extern ""(lambda (x) (convert (tree-<gtr>stree x) \\\""verbatim-snippet\\\"" \\\""texmacs-snippet\\\""))"" ';
-      str= conv + str + ")";
+      con= 'scheme: (extern ""(lambda (x) (convert (tree-<gtr>stree x) ' + ..
+           '\\\""verbatim-snippet\\\"" \\\""texmacs-snippet\\\""))"" ';
+      str= con + str + ")";
     else
       // Hack
       str= strsubst (str, "<", "<less@")
