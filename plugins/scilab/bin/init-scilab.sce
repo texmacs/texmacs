@@ -12,31 +12,6 @@
 texmacs_path= getenv("TEXMACS_PATH");
 exec (fullfile (getenv("TEXMACS_PATH"), 'plugins/scilab/bin/tmstree.sci'), -1);
 
-function s= makeStreeNode (l, x)
-  scm= "scheme: ";
-  if type (l) <> 10 then
-    error (msprintf (gettext ("%s: Wrong type of input argument(s): " + ..
-                              "%s expected."), "make", "string"));
-  end
-  if argn (2) == 1 | x == [] then
-    s= scm + "(" + l + ")";
-  return
-  end
-  if type (l) <> 10 | type (x) <> 10 then
-    error (msprintf (gettext ("%s: Wrong type of input argument(s): " + ..
-                              "%s expected."), "make", "string"));
-  end
-  for i= 1:size (x,'*') do
-    is_scheme= strindex (x(i), scm);
-    if is_scheme (1) == 1 then
-      x(i)= part (x(i), length (scm):length (x(i)));
-    else
-      x(i)= "'"" + x(i) + "'"";
-    end
-  end
-  s= scm + "(" + l + " " + strcat (x, " ") + ")";
-endfunction
-
 funcprot(0)
 
 function tmout(v)
