@@ -157,8 +157,8 @@ function str= tmstree(a)
       str= make ("around", ["(" "" ")"]);
     return;
     end
-    mat= emptystr (a);
-    [l, c]= size(a);
+    [l, c]= size (a);
+    mat= emptystr (l, c);
     for i= 1:l do
       for j= 1:c do
         mat(i,j)= tmstree (a(i,j));
