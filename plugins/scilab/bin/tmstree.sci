@@ -365,7 +365,25 @@ function str= tmstree(a)
   endfunction
 
   // handle structs
-  function str= st2tmstree (a);
+  function str= st2tmstree (a, with_title);
+  if argn (2) == 1 then
+    with_title= %t;
+  end
+  if len (a) <> 1 then
+    [k, l]= size (a);
+    mat= emptystr (k, l);
+    for i= 1:k do
+      for j= 1:l do
+        mat(i,j)= st2tmstree (a(i,j), %f);
+      end
+    end
+    str= make ("matrix", make ("tformat", table (mat)));
+    [k,l]= size (a);
+    tit= make ("text", " struct matrix:");
+    tit= concat ([tmstree(k) "<times>" tmstree(l) tit]);
+    str= make ("document", [tit str]);
+  return;
+  end
     st= fieldnames (a);
     st(:,2)= st;
     for i=1:len (st(:,1)) do
@@ -374,8 +392,10 @@ function str= tmstree(a)
       st(i,2)= tmstree (a(st(i,2)));
     end
     str= make ("block", make ("tformat", table (st)));
-    tit= tmstree ("struct list:");
-    str= make ("document", [tit str]);
+    if with_title then
+      tit= make ("text", "struct with fields:");
+      str= make ("document", [tit str]);
+    end
   endfunction
 
   // handle hypermatrices (inspired from %hm_p from Scilab)
@@ -416,9 +436,9 @@ function str= tmstree(a)
 
   // handle cells
   function str= ce2tmstree (a);
+    tit= make ("text", "cell array:");
     if (len (a) == 0) then
       str= tmstree ([]);
-      tit= tmstree ("cell array list:");
       str= make ("document", [tit str]);
       return;
     end
@@ -465,7 +485,6 @@ function str= tmstree(a)
       k= k + sz;
     end
     str= make ("block", make ("tformat", table (hm)));
-    tit= tmstree ("cell array list:");
     str= make ("document", [tit str]);
    endfunction
   
@@ -560,9 +579,15 @@ function str= tmstree(a)
       str= string2tmstree (a);
     case 15 then
       str= list2tmstree (a);
-      tit= tmstree (typeof (a) + ":");
+      tit= make ("text", "list with entries:");
       str= make ("document", [tit str]);
     case 16 then
+      if type (a) == 16 then
+        mt= "t";
+      else
+        mt= "m"
+      end
+      tit= make ("text", mt + "list of type " + typeof (a) + " with fields:");
       mtyp= strsubst (typeof (a), '-', '');
       mfunc= mtyp + '2tmstree';
       if exists (mfunc) then
@@ -572,7 +597,6 @@ function str= tmstree(a)
           return;
         end
         str= tlist2tmstree (a);
-        tit= tmstree (typeof (a) + " list:");
         str= make ("document", [tit str]);
         return
       else
@@ -583,7 +607,6 @@ function str= tmstree(a)
         end
       end
       str= tlist2tmstree (a);
-      tit= tmstree (typeof (a) + " list:");
       str= make ("document", [tit str]);
     else
       str= verbatim2tmstree (a);
