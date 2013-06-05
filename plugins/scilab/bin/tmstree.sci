@@ -228,7 +228,7 @@ function str= tmstree(a)
           z= append (z, "+");
         end
         if c(i) <> 1 | expo == 0 then
-          if c(i) == -1 then
+          if c(i) == -1 & expo <> 0 then
             z= append (z, "-");
           else
             z= append (z, tmstree (c(i)));
@@ -253,10 +253,28 @@ function str= tmstree(a)
   endfunction
 
   // handle rational
-  function srt= rational2tmstree (a)
+  function str= rational2tmstree (a)
+    [k,l]= size (a.num);
+    if k*l > 1 then
+      mat= emptystr (a.num);
+      for i= 1:k do
+        for j= 1:l do
+          mat(i,j)= tmstree (a.num(i,j) / a.den(i,j));
+        end
+      end
+      str= make ("matrix", make ("tformat", table (mat)));
+      return;
+    end
+    if a.num == 0 then
+      str= "0";
+      return;
+    elseif a.num == a.den then
+      str= "1";
+      return;
+    end
     num= tmstree (a.num);
     den= tmstree (a.den);
-    srt= make ("frac", [num den]);
+    str= make ("frac", [num den]);
   endfunction
 
   // handle boolean
