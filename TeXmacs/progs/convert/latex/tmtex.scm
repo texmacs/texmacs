@@ -2149,9 +2149,9 @@
   ((:or eqnarray eqnarray* leqnarray*) (,tmtex-eqnarray 1))
   (eq-number (,tmtex-default -1))
 
-  ((:or code cpp-code mmx-code scm-code shell-code verbatim-code)
+  ((:or code cpp-code mmx-code scm-code shell-code scilab-code verbatim-code)
    (,tmtex-code-block 1))
-  ((:or mmx cpp scm shell) (,tmtex-code-inline 1))
+  ((:or mmx cpp scm shell scilab) (,tmtex-code-inline 1))
 
   (the-index (,tmtex-theindex -1))
   (glossary (,tmtex-glossary 1))

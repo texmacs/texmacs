@@ -135,12 +135,14 @@
       ("Mathemagix" (make 'mmx))
       ("Scheme" (make 'scm))
       ("Shell" (make 'shell))
+      ("Scilab" (make 'scilab))
       ("Verbatim" (make 'verbatim)))
   (-> "Block of code"
       ("C++" (make 'cpp-code))
       ("Mathemagix" (make 'mmx-code))
       ("Scheme" (make 'scm-code))
       ("Shell" (make 'shell-code))
+      ("Scilab" (make 'scilab-code))
       ("Verbatim" (make 'verbatim-code))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
