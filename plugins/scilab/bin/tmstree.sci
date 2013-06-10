@@ -224,18 +224,28 @@ function str= tmstree(a)
     for i= 1:len (c) do
       if c(i) <> 0 then
         expo= i-1;
-        if len (z) <> 0 & c(i) > 0 then
+        if len (z) <> 0 & real (c(i)) > 0 then
           z= append (z, "+");
         end
         if c(i) <> 1 | expo == 0 then
           if c(i) == -1 & expo <> 0 then
             z= append (z, "-");
           else
-            z= append (z, tmstree (c(i)));
+            is_pure= (norm (imag (c(i))) > %eps * norm (real (c(i)))) <> ..
+                     (norm (real (c(i))) > %eps * norm (imag (c(i))));
+            coef= tmstree (c(i));
+            if is_pure then
+              z= append (z, coef);
+            else
+              if real (c(i)) < 0 then
+                z= append (z, "+");
+              end
+              z= append (z, make ("around*", ["(" coef ")"]));
+            end
           end
         end
         if expo <> 0 then
-          if abs (c(i)) <> 1 then
+          if c(i) <> 1 & c(i) <> -1 then
             z= append (z, '*');
           end
           z= append (z, x);
