@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.10>
+<TeXmacs|1.0.7.19>
 
 <style|source>
 
@@ -61,6 +61,9 @@
   </macro>>
 
   <assign|scheme-input|<macro|prompt|body|<style-with|src-compact|none|<generic-input|<with|color|dark
+  green|<arg|prompt>>|<with|color|black|<arg|body>>>>>>
+
+  <assign|scilab-input|<macro|prompt|body|<style-with|src-compact|none|<generic-input|<with|color|dark
   green|<arg|prompt>>|<with|color|black|<arg|body>>>>>>
 
   <\active*>

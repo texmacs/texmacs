@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.0.7.19>
 
 <style|<tuple|source|std>>
 
@@ -134,11 +134,15 @@
 
   <assign|mathemagix|<macro|<name|Mathemagix>>>
 
+  <assign|scilab|<macro|<name|Scilab>>>
+
   <assign|shell|<macro|body|<with|mode|prog|prog-language|shell|<arg|body>>>>
 
   <assign|scm|<macro|body|<with|mode|prog|prog-language|scheme|<arg|body>>>>
 
   <assign|cpp|<macro|body|<with|mode|prog|prog-language|cpp|<arg|body>>>>
+
+  <assign|scilab|<macro|body|<with|mode|prog|prog-language|scilab|<arg|body>>>>
 
   <assign|mmx|<macro|body|<with|mode|prog|prog-language|mathemagix|<arg|body>>>>
 
@@ -175,6 +179,12 @@
   <assign|cpp-code|<\macro|body>
     <\pseudo-code>
       <cpp|<arg|body>>
+    </pseudo-code>
+  </macro>>
+
+  <assign|scilab-code|<\macro|body>
+    <\pseudo-code>
+      <scilab|<arg|body>>
     </pseudo-code>
   </macro>>
 
