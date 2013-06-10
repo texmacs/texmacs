@@ -180,7 +180,6 @@ language_rep::color_encoding(type_helper<int>::init, 32);
 void
 initialize_color_encodings () {
   language_rep::color_encoding ("comment")= 1;
-  language_rep::color_encoding ("keyword")= 2;
   language_rep::color_encoding ("error")= 3;
   language_rep::color_encoding ("preprocessor")= 4;
   language_rep::color_encoding ("preprocessor_directive")= 5;
@@ -198,12 +197,20 @@ initialize_color_encodings () {
   language_rep::color_encoding ("variable_type")= 23;
   language_rep::color_encoding ("variable_category")= 24;
   language_rep::color_encoding ("variable_module")= 25;
+  language_rep::color_encoding ("variable_ioarg")= 26;
   language_rep::color_encoding ("declare")= 30;
   language_rep::color_encoding ("declare_identifier")= 31;
   language_rep::color_encoding ("declare_function")= 32;
   language_rep::color_encoding ("declare_type")= 33;
   language_rep::color_encoding ("declare_category")= 34;
   language_rep::color_encoding ("declare_module")= 35;
+  language_rep::color_encoding ("operator")= 40;
+  language_rep::color_encoding ("operator_openclose")= 41;
+  language_rep::color_encoding ("operator_field")= 42;
+  language_rep::color_encoding ("operator_special")= 43;
+  language_rep::color_encoding ("keyword")= 50;
+  language_rep::color_encoding ("keyword_conditionnal")= 51;
+  language_rep::color_encoding ("keyword_control")= 52;
 }
 
 void
@@ -212,7 +219,6 @@ initialize_color_decodings (string lan_name) {
   string pfx= "syntax:" * lan->lan_name * ":";
   lan->color_decoding (-1)= get_preference (pfx * "none", "red");
   lan->color_decoding (1) = get_preference (pfx * "comment", "brown");
-  lan->color_decoding (2) = get_preference (pfx * "keyword", "#309090");
   lan->color_decoding (3) = get_preference (pfx * "error", "dark red");
   lan->color_decoding (4) = get_preference (pfx * "preprocessor", "#004000");
   lan->color_decoding (5) = get_preference (pfx * "preprocessor_directive", "#20a000");
@@ -230,12 +236,20 @@ initialize_color_decodings (string lan_name) {
   lan->color_decoding (23)= get_preference (pfx * "variable_type", "#00c000");
   lan->color_decoding (24)= get_preference (pfx * "variable_category", "#00c000");
   lan->color_decoding (25)= get_preference (pfx * "variable_module", "#00c000");
+  lan->color_decoding (26)= get_preference (pfx * "variable_ioarg", "#00b000");
   lan->color_decoding (30)= get_preference (pfx * "declare", "#0000c0");
   lan->color_decoding (31)= get_preference (pfx * "declare_identifier", "#0000c0");
   lan->color_decoding (32)= get_preference (pfx * "declare_function", "#0000c0");
   lan->color_decoding (33)= get_preference (pfx * "declare_type", "#0000c0");
   lan->color_decoding (34)= get_preference (pfx * "declare_category", "magenta");
   lan->color_decoding (35)= get_preference (pfx * "declare_module", "#0000c0");
+  lan->color_decoding (40)= get_preference (pfx * "operator", "#8b008b");
+  lan->color_decoding (41)= get_preference (pfx * "operator_openclose", "#B02020");
+  lan->color_decoding (42)= get_preference (pfx * "operator_field", "#888888");
+  lan->color_decoding (43)= get_preference (pfx * "operator_special", "orange");
+  lan->color_decoding (50)= get_preference (pfx * "keyword", "#309090");
+  lan->color_decoding (51)= get_preference (pfx * "keyword_conditionnal", "#309090");
+  lan->color_decoding (52)= get_preference (pfx * "keyword_control", "#000080");
 }
 
 int
