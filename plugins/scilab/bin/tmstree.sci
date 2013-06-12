@@ -275,16 +275,17 @@ function str= tmstree(a)
       str= make ("matrix", make ("tformat", table (mat)));
       return;
     end
-    if a.num == 0 then
-      str= "0";
-      return;
-    elseif a.num == a.den then
-      str= "1";
-      return;
-    end
     num= tmstree (a.num);
     den= tmstree (a.den);
-    str= make ("frac", [num den]);
+    if num == "0" then
+      str= "0";
+    elseif den == "1" then
+      str= num;
+    elseif num == den then
+      str= "1";
+    else
+      str= make ("frac", [num den]);
+    end
   endfunction
 
   // handle boolean
