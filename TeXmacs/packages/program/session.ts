@@ -63,9 +63,6 @@
   <assign|scheme-input|<macro|prompt|body|<style-with|src-compact|none|<generic-input|<with|color|dark
   green|<arg|prompt>>|<with|color|black|<arg|body>>>>>>
 
-  <assign|scilab-input|<macro|prompt|body|<style-with|src-compact|none|<generic-input|<with|color|dark
-  green|<arg|prompt>>|<with|color|black|<arg|body>>>>>>
-
   <\active*>
     <\src-comment>
       Output fields and error reporting in output.
