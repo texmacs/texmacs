@@ -26,3 +26,8 @@
   (:require (url-exists-in-path? (if(os-mingw?) "Scilex" "scilab")))
   (:launch ,(scilab-launcher))
   (:session "Scilab"))
+
+(when (supports-scilab?)
+  (kbd-map
+    (:mode in-scilab?)
+    ("$" "$")))
