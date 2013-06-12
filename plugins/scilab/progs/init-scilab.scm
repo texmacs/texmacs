@@ -27,6 +27,17 @@
   (:launch ,(scilab-launcher))
   (:session "Scilab"))
 
+(tm-define (scilab-verbatim->tree t)
+  (:secure #t)
+  (let* ((t (tree->stree t))
+         (s (if (string? t) t ""))
+         (s (string-replace s "\\\\\\\\" "\\"))
+         (s (string-replace s "<gtr>" ">"))
+         (s (string-replace s "<less" "<"))
+         (s (convert s "verbatim-snippet" "stm-snippet"))
+         (s (string-replace s "\\\\" "\\")))
+    (stree->tree (string->object s))))
+
 (when (supports-scilab?)
   (kbd-map
     (:mode in-scilab?)

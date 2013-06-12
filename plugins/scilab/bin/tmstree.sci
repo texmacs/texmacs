@@ -336,22 +336,14 @@ function str= tmstree(a)
   function str= string2tmstree (a)
     str= string (a);
     num= ascii (str);
+    // Hack
+    str= strsubst (str, "<", "<less@")
+    str= strsubst (str, ">", "<gtr>")
+    str= strsubst (str, "<less@", "<less>")
+    str= strsubst (str, "\", "\\\\\\\\");
+    str= strsubst (str, '""', "''''");
     if max (num) > 126 | min (num) < 32 then
-      // TODO: replace by a scheme-snippet to be converted by the scheme side
-      // of the plugin
-      str= strsubst (str, '""', "''''");
-      str= strsubst (str, "\", "\\");
-      str= '""' + str + '""';
-      con= 'scheme: (extern ""(lambda (x) (convert (tree-<gtr>stree x) ' + ..
-           '\\\""verbatim-snippet\\\"" \\\""texmacs-snippet\\\""))"" ';
-      str= con + str + ")";
-    else
-      // Hack
-      str= strsubst (str, "<", "<less@")
-      str= strsubst (str, ">", "<gtr>")
-      str= strsubst (str, "<less@", "<less>")
-      str= strsubst (str, "\", "\\\\\\\\");
-      str= strsubst (str, '""', "''''");
+      str= make ("extern", ["scilab-verbatim-<gtr>tree", str]);
     end
     str= make ("text", str);
   endfunction
