@@ -235,12 +235,25 @@ function str= tmstree(a)
                      (norm (real (c(i))) > %eps * norm (imag (c(i))));
             coef= tmstree (c(i));
             if is_pure then
-              z= append (z, coef);
-            else
-              if real (c(i)) < 0 then
+              if imag (c(i)) > 0 then
                 z= append (z, "+");
               end
-              z= append (z, make ("around*", ["(" coef ")"]));
+              z= append (z, coef);
+            else
+              if len (z) <> 0 & (real (c(i)) < 0 | imag (c(i)) < 0) then
+                z= append (z, "-");
+                if expo <> 0 then
+                  z= append (z, make ("around*", ["(" (tmstree (-c(i))) ")"]));
+                else
+                  z= append (z, coef);
+                end
+              else
+                if expo <> 0 then
+                  z= append (z, make ("around*", ["(" coef ")"]));
+                else
+                  z= append (z, coef);
+                end
+              end
             end
           end
         end
