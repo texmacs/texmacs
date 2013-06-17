@@ -14,6 +14,9 @@
 		490A9D2616F8A5EC00EC29D5 /* metadata-revtex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 490A9D2516F8A5EC00EC29D5 /* metadata-revtex.cpp */; };
 		490A9D2716F8A5EC00EC29D5 /* metadata-revtex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 490A9D2516F8A5EC00EC29D5 /* metadata-revtex.cpp */; };
 		490A9D2816F8A5EC00EC29D5 /* metadata-revtex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 490A9D2516F8A5EC00EC29D5 /* metadata-revtex.cpp */; };
+		490DBDA9176EEEBD001F362A /* scilab_language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 490DBDA8176EEEBD001F362A /* scilab_language.cpp */; };
+		490DBDAA176EEEBD001F362A /* scilab_language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 490DBDA8176EEEBD001F362A /* scilab_language.cpp */; };
+		490DBDAB176EEEBD001F362A /* scilab_language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 490DBDA8176EEEBD001F362A /* scilab_language.cpp */; };
 		4910FA7316EB3E2F0088B175 /* post_convert.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4910FA7216EB3E2F0088B175 /* post_convert.cpp */; };
 		4910FA7416EB3E2F0088B175 /* post_convert.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4910FA7216EB3E2F0088B175 /* post_convert.cpp */; };
 		4910FA7516EB3E2F0088B175 /* post_convert.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4910FA7216EB3E2F0088B175 /* post_convert.cpp */; };
@@ -1198,6 +1201,7 @@
 		490A039C1671601100611E4C /* qt_font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_font.cpp; sourceTree = "<group>"; };
 		490A039D1671601100611E4C /* qt_font.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_font.hpp; sourceTree = "<group>"; };
 		490A9D2516F8A5EC00EC29D5 /* metadata-revtex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "metadata-revtex.cpp"; sourceTree = "<group>"; };
+		490DBDA8176EEEBD001F362A /* scilab_language.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scilab_language.cpp; sourceTree = "<group>"; };
 		4910FA7216EB3E2F0088B175 /* post_convert.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = post_convert.cpp; sourceTree = "<group>"; };
 		491132F216767D3E009F1A5C /* tt_tools.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tt_tools.cpp; sourceTree = "<group>"; };
 		491132F316767D3E009F1A5C /* tt_tools.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tt_tools.hpp; sourceTree = "<group>"; };
@@ -3174,13 +3178,6 @@
 		9C0B493510A8CC110097A335 /* Language */ = {
 			isa = PBXGroup;
 			children = (
-				9C4B87A512AE5BD100F8571A /* packrat_serializer.cpp */,
-				9C74D95A123BF892008959D1 /* packrat_grammar.cpp */,
-				9C74D95B123BF892008959D1 /* packrat_grammar.hpp */,
-				9C74D95C123BF892008959D1 /* packrat_parser.cpp */,
-				9C74D95D123BF892008959D1 /* packrat_parser.hpp */,
-				9C74D95E123BF892008959D1 /* win32_get_date.cpp */,
-				9CE4F0041238FAF800993AF7 /* packrat.hpp */,
 				9C0B493610A8CC110097A335 /* cpp_language.cpp */,
 				9C0B493710A8CC110097A335 /* dictionary.cpp */,
 				9C0B493810A8CC110097A335 /* dictionary.hpp */,
@@ -3191,9 +3188,17 @@
 				9C0B493F10A8CC110097A335 /* language.hpp */,
 				9C0B494010A8CC110097A335 /* math_language.cpp */,
 				9C0B494110A8CC110097A335 /* mathemagix_language.cpp */,
+				9CE4F0041238FAF800993AF7 /* packrat.hpp */,
+				9C74D95A123BF892008959D1 /* packrat_grammar.cpp */,
+				9C74D95B123BF892008959D1 /* packrat_grammar.hpp */,
+				9C74D95C123BF892008959D1 /* packrat_parser.cpp */,
+				9C74D95D123BF892008959D1 /* packrat_parser.hpp */,
+				9C4B87A512AE5BD100F8571A /* packrat_serializer.cpp */,
 				9C0B494210A8CC110097A335 /* scheme_language.cpp */,
+				490DBDA8176EEEBD001F362A /* scilab_language.cpp */,
 				9C0B494310A8CC110097A335 /* text_language.cpp */,
 				9C0B494410A8CC110097A335 /* verb_language.cpp */,
+				9C74D95E123BF892008959D1 /* win32_get_date.cpp */,
 			);
 			path = Language;
 			sourceTree = "<group>";
@@ -4396,6 +4401,7 @@
 				491BB5AD1731186A00A755DF /* true_color.cpp in Sources */,
 				491BB5B2173118C700A755DF /* metadata-ieee.cpp in Sources */,
 				491BB5B6173118F700A755DF /* rewrite_equation_number.cpp in Sources */,
+				490DBDA9176EEEBD001F362A /* scilab_language.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4767,6 +4773,7 @@
 				491BB5AF1731186A00A755DF /* true_color.cpp in Sources */,
 				491BB5B4173118C700A755DF /* metadata-ieee.cpp in Sources */,
 				491BB5B8173118F700A755DF /* rewrite_equation_number.cpp in Sources */,
+				490DBDAB176EEEBD001F362A /* scilab_language.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5167,6 +5174,7 @@
 				491BB5AE1731186A00A755DF /* true_color.cpp in Sources */,
 				491BB5B3173118C700A755DF /* metadata-ieee.cpp in Sources */,
 				491BB5B7173118F700A755DF /* rewrite_equation_number.cpp in Sources */,
+				490DBDAA176EEEBD001F362A /* scilab_language.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
