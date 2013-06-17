@@ -99,8 +99,8 @@ edit_interface_rep::draw_surround (renderer ren, rectangle r) {
   if ((medium == "papyrus") || (medium == "paper"))
     ren->clear (max (eb->x2, r->x1), r->y1,
                 r->x2, min (eb->y2+ 2*pixel, r->y2));
-  else if (medium == "paper")
-    ren->clear (r->x1, r->y1, r->x2, min (eb->y1, r->y2));
+  //if (medium == "paper")
+  //  ren->clear (r->x1, r->y1, r->x2, min (eb->y1, r->y2));
 }
 
 void
