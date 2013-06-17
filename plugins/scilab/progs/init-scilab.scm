@@ -11,6 +11,12 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (scilab-commander s)
+  (let* ((t (string->object s))
+         (s (cadr t))
+         (n (cAr t)))
+    (string-append "scilab_complete (\"" s "\", " (number->string n) ")\n")))
+
 (define (scilab-launcher)
   (string-append
     (if (os-mingw?)
@@ -25,7 +31,9 @@
   (:winpath "scilab*" "bin")
   (:require (url-exists-in-path? (if(os-mingw?) "Scilex" "scilab")))
   (:launch ,(scilab-launcher))
-  (:session "Scilab"))
+  (:session "Scilab")
+  (:commander ,scilab-commander)
+  (:tab-completion #t))
 
 (tm-define (scilab-verbatim->tree t)
   (:secure #t)

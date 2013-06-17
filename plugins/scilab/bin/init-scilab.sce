@@ -33,4 +33,41 @@ end
 
 funcprot(1)
 
+function lst= scilab_lst_libraries ()
+  s= getvariablesonstack ();
+  lst= [];
+  for i= 1:size(s, '*') do
+    if exists (s(i)) & type (eval (s(i))) == 14 then
+      lst= [lst;s(i)];
+    end
+  end
+endfunction
+
+function lst= scilab_lst_all (libr)
+  lst= [];
+  if argn (2) == 0 then
+    libr= getvariablesonstack ();
+  elseif size (libr, '*') == 1 & exists (libr) & type (eval (libr)) == 14 then
+    lst= libraryinfo (libr);
+    return;
+  end
+  for i= 1:size(libr, '*') do
+    if exists (libr(i)) & type (eval (libr(i))) == 14 then
+      lst= [lst;(scilab_lst_all (libr(i)))];
+    else
+      lst= [lst;libr(i)];
+    end
+  end
+endfunction
+
+function scilab_complete (str, pos)
+  lst= scilab_lst_all ();
+  lst= lst (grep (lst, '/^'+str+'/', 'r'));
+  for i= 1:size(lst, '*') do
+    lst(i)= part (lst(i), (pos+1):length(lst(i)));
+  end
+  lst= strsubst (lst, '%', '%%');
+  tmsend (make ("tuple", [str;lst]'));
+endfunction
+
 banner
