@@ -278,6 +278,10 @@
       ("Quarto" (init-page-type "quarto"))
       ("Statement" (init-page-type "statement"))
       ("Tabloid" (init-page-type "tabloid")))
+  (-> "Beamer"
+      ("3:2" (init-page-type "3:2"))
+      ("4:3" (init-page-type "4:3"))
+      ("5:4" (init-page-type "5:4")))
   ---
   ("Other" (interactive init-page-size)))
 
