@@ -9,10 +9,11 @@
 // in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 //*****************************************************************************
 
+funcprot(0)
 texmacs_path= getenv("TEXMACS_PATH");
 exec (fullfile (getenv("TEXMACS_PATH"), 'plugins/scilab/bin/tmstree.sci'), -1);
+exec (fullfile (getenv("TEXMACS_PATH"), 'plugins/scilab/bin/plotout.sci'), -1);
 
-funcprot(0)
 function tmsend (msg)
   DATA_BEGIN= ascii (2);
   DATA_END= ascii (5);
