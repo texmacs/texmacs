@@ -13,14 +13,18 @@ texmacs_path= getenv("TEXMACS_PATH");
 exec (fullfile (getenv("TEXMACS_PATH"), 'plugins/scilab/bin/tmstree.sci'), -1);
 
 funcprot(0)
+function tmsend (msg)
+  DATA_BEGIN= ascii (2);
+  DATA_END= ascii (5);
+  msg= strsubst (msg, '%', '%%');
+  mprintf (DATA_BEGIN + msg + DATA_END);
+endfunction
 
 function tmout(v)
-  DATA_BEGIN=ascii(2);
-  DATA_END=ascii(5);
   out= tmstree(v);
   out= makeStreeNode ("with", ["mode" "math" out]);
   out= makeStreeNode ("document", [out ""])
-  mprintf(DATA_BEGIN + out + DATA_END);
+  tmsend (out);
 endfunction
 
 
