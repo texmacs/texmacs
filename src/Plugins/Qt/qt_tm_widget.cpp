@@ -757,8 +757,8 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
         canvas()->show();
         canvas()->setFocusPolicy(Qt::StrongFocus);
         canvas()->setFocus();
-          // Fix horizontal size to draw vertical margins around.
-        scrollarea()->surface()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+        // Fix size to draw margins around.
+        scrollarea()->surface()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
       }
     }
       break;

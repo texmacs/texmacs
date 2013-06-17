@@ -10,6 +10,7 @@
  ******************************************************************************/
 
 #include "QTMScrollView.hpp"
+#include "tm_ostream.hpp"
 
 #include <QScrollBar>
 #include <QPainter>
@@ -36,7 +37,7 @@ QTMScrollView::QTMScrollView (QWidget *_parent)
   _viewport->setBackgroundRole(QPalette::Mid);
   _viewport->setAutoFillBackground(true);
   setFrameShape(QFrame::NoFrame);
-  
+
   p_surface = new QTMSurface (_viewport, this);
   p_surface->setAttribute(Qt::WA_NoSystemBackground);
   p_surface->setAttribute(Qt::WA_StaticContents); 
@@ -47,7 +48,7 @@ QTMScrollView::QTMScrollView (QWidget *_parent)
   p_surface->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   
   QHBoxLayout *layout = new QHBoxLayout();
-  layout->addWidget(p_surface); //, 0, Qt::AlignHCenter);
+  layout->addWidget(p_surface, 0, Qt::AlignHCenter | Qt::AlignVCenter);
   layout->setContentsMargins(0,0,0,0);
   _viewport->setLayout(layout);
 }
@@ -62,8 +63,11 @@ QTMScrollView::setOrigin ( QPoint newOrigin ) {
 
 void 
 QTMScrollView::setExtents ( QRect newExtents ) {
+  QWidget *_viewport = QAbstractScrollArea::viewport();
+  if (_viewport->height() > newExtents.height())
+    newExtents.setHeight (_viewport->height());
   if (p_extents != newExtents) {
-    p_extents = newExtents;
+    p_extents = newExtents;  
     if (p_extents.width() < 0) p_extents.setWidth(0);
     if (p_extents.height() < 0) p_extents.setHeight(0);
     updateScrollBars();
@@ -119,11 +123,6 @@ QTMScrollView::updateScrollBars (void) {
   _hScrollBar->setSingleStep((w >> 4) + 1);
   _hScrollBar->setPageStep(w);
   
-  QRect r = (p_extents.width() > w) ? QRect(0,0,w,h) 
-  : QRect ((w-p_extents.width())/2,0,p_extents.width(),h);
-    //  surface()->setGeometry(r);
-  surface()->setMinimumWidth(r.width());
-  
   QScrollBar *_vScrollBar = QAbstractScrollArea::verticalScrollBar();
   int ch = (p_extents.height() > h ? p_extents.height() - h : 0);
   if (_vScrollBar->sliderPosition() > ch)
@@ -132,8 +131,10 @@ QTMScrollView::updateScrollBars (void) {
   _vScrollBar->setSingleStep((h >> 4) + 1);
   _vScrollBar->setPageStep(h);
   
+  surface()->setMinimumWidth(w < p_extents.width()? w: p_extents.width());
+  surface()->setMinimumHeight(h < p_extents.height()? h: p_extents.height());
   
-    // we may need a relayout if the surface width is changed
+  // we may need a relayout if the surface width is changed
   updateGeometry();
 }
 
