@@ -165,7 +165,6 @@ make_footer (int mask) {
 
 static wk_widget
 middle_widget () {
-  //wk_widget w1= canvas_widget (glue_wk_widget (), north_west, true);
   wk_widget w1= canvas_widget (glue_wk_widget (), north, true);
   wk_widget w2= glue_wk_widget (true, true, 200*PIXEL, 0);
   wk_widget w3= resize_widget (w2, 0, "200px", "", "200px", "", "200px", "");

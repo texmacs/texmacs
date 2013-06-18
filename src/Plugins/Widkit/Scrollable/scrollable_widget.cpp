@@ -32,7 +32,6 @@ scrollable_widget_rep::scrollable_widget_rep (
   scx= 0; scy= 0;
   ex1= 0; ey1= 0;
   ex2= 0; ey2= 0;
-  backup= grav;
 }
 
 scrollable_widget_rep::operator tree () {
@@ -95,17 +94,6 @@ scrollable_widget_rep::set_extents (SI ex1b, SI ey1b, SI ex2b, SI ey2b) {
   if (is_nil (ver)) scy = ey1- (y1()- oy);
   a[0]->ox = ox -scx; a[0]->oy = oy -scy ;
   a[0]->w  = ex2-ex1; a[0]->h  = ey2-ey1;
-  /*
-  if ((backup == north_west) && ((a[0]->ox>0) || (a[0]->oy<0))) {
-    // dirty bug fix: the fact that a[0]->x1(), a[0]->y1(), etc.
-    // are not computed correctly, implies that only part of the window
-    // is repainted. We therefore pretend that the child is twice
-    // as large as it really is
-    a[0]->grav= center;
-    a[0]->w <<= 1; a[0]->h <<= 1;
-  }
-  else a[0]->grav= backup;
-  */
   if (attached ()) this << emit_invalidate_all ();
   if (!is_nil (hor)) hor << emit_bar_set_extents (ex1, ex2);
   if (!is_nil (ver)) ver << emit_bar_set_extents (ey1, ey2);

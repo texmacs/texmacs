@@ -36,7 +36,6 @@ class scrollable_widget_rep: public scroll_widget_rep {
   SI             ex2, ey2;    // extents of scrolled window hi-right
   wk_widget_rep* hor;         // the horizontal scroll bar
   wk_widget_rep* ver;         // the vertical scroll bar
-  gravity        backup;      // for a dirty bugfix
 
   void scroll_to (SI scx, SI scy);
   void set_extents (SI ex1, SI ey1, SI ex2, SI ey2);
