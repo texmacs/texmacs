@@ -106,8 +106,10 @@ const char * slot_name (const slot s);
 * Further constants
 ******************************************************************************/
 
-#define CANVAS_PAPYRUS  0
-#define CANVAS_BEAMER   1
+#define CANVAS_DEFAULT  0
+#define CANVAS_PAPYRUS  1
+#define CANVAS_PAPER    2
+#define CANVAS_BEAMER   3
 
 /******************************************************************************
 * Helper templates for sending messages

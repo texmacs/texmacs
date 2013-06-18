@@ -552,7 +552,8 @@ edit_interface_rep::apply_changes () {
   if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_EXTENTS)) {
     string val= get_init_string (PAGE_MEDIUM);
     int kind= CANVAS_PAPYRUS;
-    if (val != "papyrus") kind= CANVAS_BEAMER;
+    if (val == "paper") kind= CANVAS_PAPER;
+    else if (val == "beamer") kind= CANVAS_BEAMER;
     SERVER (set_canvas_type (kind));
     set_extents (eb->x1, eb->y1, eb->x2, eb->y2);
   }
