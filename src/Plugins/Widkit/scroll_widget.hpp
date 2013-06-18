@@ -30,6 +30,7 @@ public:
 ******************************************************************************/
 
 class scrollable_widget_rep: public scroll_widget_rep {
+  int            kind;        // kind of padding around scrollable area
   SI             scx, scy;    // scroll x,y position
   SI             ex1, ey1;    // extents of scrolled window lo-left
   SI             ex2, ey2;    // extents of scrolled window hi-right
@@ -46,15 +47,17 @@ public:
   scrollable_widget_rep (wk_widget child, gravity grav);
   operator tree ();
 
-  void handle_get_size   (get_size_event ev);
-  void handle_position   (position_event ev);
-  void handle_set_widget (set_widget_event ev);
-  void handle_get_coord1 (get_coord1_event ev);
-  void handle_get_coord2 (get_coord2_event ev);
-  void handle_get_coord4 (get_coord4_event ev);
-  void handle_set_coord2 (set_coord2_event ev);
-  void handle_set_coord4 (set_coord4_event ev);
-  void handle_scroll     (scroll_event ev);
+  void handle_get_size    (get_size_event ev);
+  void handle_position    (position_event ev);
+  void handle_set_widget  (set_widget_event ev);
+  void handle_set_integer (set_integer_event ev);
+  void handle_get_coord1  (get_coord1_event ev);
+  void handle_get_coord2  (get_coord2_event ev);
+  void handle_get_coord4  (get_coord4_event ev);
+  void handle_set_coord2  (set_coord2_event ev);
+  void handle_set_coord4  (set_coord4_event ev);
+  void handle_scroll      (scroll_event ev);
+  void handle_repaint     (repaint_event ev);
 };
 
 /******************************************************************************

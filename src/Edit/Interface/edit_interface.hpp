@@ -98,7 +98,6 @@ public:
 
   /* repainting the window */
   void draw_text (renderer ren, rectangles& l);
-  void draw_surround (renderer ren, rectangle r);
   void draw_context (renderer ren, rectangle r);
   void draw_env (renderer ren);
   void draw_cursor (renderer ren);

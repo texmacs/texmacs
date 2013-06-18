@@ -166,6 +166,7 @@ make_footer (int mask) {
 static wk_widget
 middle_widget () {
   wk_widget w1= canvas_widget (glue_wk_widget (), north_west, true);
+  //wk_widget w1= canvas_widget (glue_wk_widget (), north, true);
   wk_widget w2= glue_wk_widget (true, true, 200*PIXEL, 0);
   wk_widget w3= resize_widget (w2, 0, "200px", "", "200px", "", "200px", "");
   if (!use_side_tools) return w1;
@@ -365,6 +366,8 @@ void
 texmacs_widget_rep::handle_set_integer (set_integer_event ev) {
   if (ev->which == "scrollbars")
     THIS ["canvas"] << set_integer ("scrollbars", ev->i);
+  else if (ev->which == "canvas type")
+    THIS ["canvas"] << set_integer ("canvas type", ev->i);
   else WK_FAILED ("could not set integer attribute " * ev->which);
 }
 

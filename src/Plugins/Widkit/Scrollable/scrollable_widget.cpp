@@ -10,7 +10,9 @@
 ******************************************************************************/
 
 #include "window.hpp"
+#include "message.hpp"
 #include "Widkit/scroll_widget.hpp"
+#include "Widkit/layout.hpp"
 
 SI get_dx (gravity grav, int w);
 SI get_dy (gravity grav, int h);
@@ -26,6 +28,7 @@ scrollable_widget_rep::scrollable_widget_rep (
     scroll_widget_rep (1, grav)
 {
   a[0]= child;
+  kind= CANVAS_DEFAULT;
   scx= 0; scy= 0;
   ex1= 0; ey1= 0;
   ex2= 0; ey2= 0;
@@ -66,7 +69,7 @@ scrollable_widget_rep::scroll_event_ver (SI& y, SI& bef, SI& af) {
   if (attached ()) {
     int dy= max (-h, min (h, y- scy));
     if ((dy>-h) && (dy<h) && (dy!=0)) {
-      win->translate (ox, oy-h, ox+w, oy+0, 0, -dy);
+      win->translate (ox, oy-h, ox+w, oy, 0, -dy);
     }
     if (dy>0) this << emit_invalidate (0, -dy, w, 0);
     if (dy<0) this << emit_invalidate (0, -h, w, -h-dy);
@@ -92,6 +95,7 @@ scrollable_widget_rep::set_extents (SI ex1b, SI ey1b, SI ex2b, SI ey2b) {
   if (is_nil (ver)) scy = ey1- (y1()- oy);
   a[0]->ox = ox -scx; a[0]->oy = oy -scy ;
   a[0]->w  = ex2-ex1; a[0]->h  = ey2-ey1;
+  /*
   if ((backup == north_west) && ((a[0]->ox>0) || (a[0]->oy<0))) {
     // dirty bug fix: the fact that a[0]->x1(), a[0]->y1(), etc.
     // are not computed correctly, implies that only part of the window
@@ -101,6 +105,7 @@ scrollable_widget_rep::set_extents (SI ex1b, SI ey1b, SI ex2b, SI ey2b) {
     a[0]->w <<= 1; a[0]->h <<= 1;
   }
   else a[0]->grav= backup;
+  */
   if (attached ()) this << emit_invalidate_all ();
   if (!is_nil (hor)) hor << emit_bar_set_extents (ex1, ex2);
   if (!is_nil (ver)) ver << emit_bar_set_extents (ey1, ey2);
@@ -183,4 +188,32 @@ scrollable_widget_rep::handle_scroll (scroll_event ev) {
   else if (ev->which == "ver-bar")
     scroll_event_ver (ev->c1, ev->c2, ev->c3);
   else { WK_FAILED ("invalid scroll"); }
+}
+
+void
+scrollable_widget_rep::handle_set_integer (set_integer_event ev) {
+  if (ev->which == "canvas type") kind= ev->i;
+  else attribute_widget_rep::handle_set_integer (ev);
+}
+
+void
+scrollable_widget_rep::handle_repaint (repaint_event ev) {
+  renderer ren= ev->win;
+  SI mx1= x1() - ox;
+  SI my1= y1() - oy;
+  SI mx2= x2() - ox;
+  SI my2= y2() - oy;
+  SI sx1= a[0]->x1() - ox;
+  SI sy1= a[0]->y1() - oy;
+  SI sx2= a[0]->x2() - ox;
+  SI sy2= a[0]->y2() - oy;
+  color bg= layout_light (ren);
+  if (kind == CANVAS_DEFAULT) bg= white;
+  ren->set_background (bg);
+  ren->set_pencil (bg);
+  if (ev->x1 < sx1) ren->fill (ev->x1, my1, sx1, my2);
+  if (ev->x2 > sx2) ren->fill (sx2, my1, ev->x2, my2);
+  if (ev->y1 < sy1) ren->fill (mx1, ev->y1, mx2, sy1);
+  if (ev->y2 > sy2) ren->fill (mx1, sy2, mx2, ev->y2);
+  basic_widget_rep::handle_repaint (ev);
 }
