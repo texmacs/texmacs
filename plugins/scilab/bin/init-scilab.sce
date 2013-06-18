@@ -22,8 +22,8 @@ function tmsend (msg)
   mprintf (DATA_BEGIN + msg + DATA_END);
 endfunction
 
-function tmout(v)
-  out= tmstree(v);
+function tmout (v)
+  out= tmstree (v);
   out= makeStreeNode ("with", ["mode" "math" out]);
   out= makeStreeNode ("document", [out ""])
   tmsend (out);
