@@ -277,23 +277,6 @@ popup_button_rep::handle (event ev) {
   }
 }
 
-gravity
-opposite (gravity grav) {
-  switch (grav) {
-  case north_west: return south_east;
-  case north     : return south;
-  case north_east: return south_west;
-  case west      : return east;
-  case center    : return center;
-  case east      : return west;
-  case south_west: return north_east;
-  case south     : return north;
-  case south_east: return north_west;
-  }
-  FAILED ("unknown gravity");
-  return center; // Because of bug in certain versions of g++
-}
-
 /******************************************************************************
 * Interface
 ******************************************************************************/

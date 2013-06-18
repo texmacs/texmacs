@@ -59,6 +59,23 @@ get_dy (gravity grav, SI h) {
   return 0;
 }
 
+gravity
+opposite (gravity grav) {
+  switch (grav) {
+  case north_west: return south_east;
+  case north     : return south;
+  case north_east: return south_west;
+  case west      : return east;
+  case center    : return center;
+  case east      : return west;
+  case south_west: return north_east;
+  case south     : return north;
+  case south_east: return north_west;
+  }
+  FAILED ("unknown gravity");
+  return center;
+}
+
 SI
 wk_widget_rep::x1 () {
   return ox- get_dx (grav, w);
