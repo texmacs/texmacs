@@ -47,6 +47,8 @@ public:
   QRect   extents () { return p_extents; }
   void setExtents (QRect newExtents);
 
+  void setCanvasType (int kind);
+
   QWidget* surface () { return p_surface; }
   
   void ensureVisible (int cx, int cy, int mx = 50, int my = 50);

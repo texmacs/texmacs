@@ -669,6 +669,9 @@ wk_widget_rep::send (slot s, blackbox val) {
   case SLOT_EXTENTS:
     send_coord4 (THIS, "extents", val);
     break;
+  case SLOT_CANVAS_TYPE:
+    //send_int (THIS, "canvas type", val);
+    break;
   case SLOT_SCROLLBARS_VISIBILITY:
     send_int (THIS, "scrollbars", val);
     break;

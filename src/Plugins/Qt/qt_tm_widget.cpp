@@ -448,6 +448,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     case SLOT_INVALIDATE:
     case SLOT_INVALIDATE_ALL:
     case SLOT_EXTENTS:
+    case SLOT_CANVAS_TYPE:
     case SLOT_SCROLL_POSITION:
     case SLOT_ZOOM_FACTOR:
     case SLOT_MOUSE_GRAB:
@@ -908,6 +909,7 @@ qt_tm_embedded_widget_rep::send (slot s, blackbox val) {
     case SLOT_INVALIDATE:
     case SLOT_INVALIDATE_ALL:
     case SLOT_EXTENTS:
+    case SLOT_CANVAS_TYPE:
     case SLOT_SCROLL_POSITION:
     case SLOT_ZOOM_FACTOR:
     case SLOT_MOUSE_GRAB:

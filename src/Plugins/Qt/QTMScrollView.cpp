@@ -74,6 +74,11 @@ QTMScrollView::setExtents ( QRect newExtents ) {
   }
 }
 
+void 
+QTMScrollView::setCanvasType (int kind) {
+  (void) kind;
+}
+
 /*! Scrolls contents so that the given point is visible. */
 void 
 QTMScrollView::ensureVisible ( int cx, int cy, int mx, int my ) {

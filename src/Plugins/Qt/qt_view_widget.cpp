@@ -76,12 +76,20 @@ qt_view_widget_rep::send (slot s, blackbox val) {
       canvas()->invalidate_all ();
     }
       break;
-
+    
     case SLOT_EXTENTS:
     {
       check_type<coord4>(val, s);
       coord4 p = open_box<coord4> (val);
       scrollarea()->setExtents (to_qrect (p));
+    }
+      break;
+
+    case SLOT_CANVAS_TYPE:
+    {
+      check_type<int>(val, s);
+      int p = open_box<int> (val);
+      scrollarea()->setCanvasType (p);
     }
       break;
     

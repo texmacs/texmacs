@@ -45,6 +45,7 @@ enum slot_id {
 
   SLOT_ZOOM_FACTOR,
   SLOT_EXTENTS,
+  SLOT_CANVAS_TYPE,
   SLOT_VISIBLE_PART,
   SLOT_SCROLLBARS_VISIBILITY,
   SLOT_SCROLL_POSITION,
@@ -435,6 +436,12 @@ inline void
 get_extents (widget w, SI& x1, SI& y1, SI& x2, SI& y2) {
   // get extents of a canvas
   query<SI,SI,SI,SI> (w, SLOT_EXTENTS, x1, y1, x2, y2);
+}
+
+inline void
+set_canvas_type (widget w, int kind) {
+  // set the kind of padding around the scrollable area of the canvas
+  send<int> (w, SLOT_CANVAS_TYPE, kind);
 }
 
 inline void
