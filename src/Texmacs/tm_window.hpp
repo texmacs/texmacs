@@ -62,6 +62,7 @@ public:
   void get_visible (SI& x1, SI& y1, SI& x2, SI& y2);
   void get_extents (SI& x1, SI& y1, SI& x2, SI& y2);
   void set_extents (SI x1, SI y1, SI x2, SI y2);
+  void set_canvas_type (int kind);
   void set_scrollbars (int i);
   void get_scroll_pos (SI& x, SI& y);
   void set_scroll_pos (SI x, SI y);

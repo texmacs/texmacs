@@ -217,6 +217,11 @@ tm_frame_rep::set_extents (SI x1, SI y1, SI x2, SI y2) {
 }
 
 void
+tm_frame_rep::set_canvas_type (int kind) {
+  concrete_window () -> set_canvas_type (kind);
+}
+
+void
 tm_frame_rep::set_left_footer (string s) {
   if (!has_current_window ()) return;
   concrete_window () -> set_left_footer (s);

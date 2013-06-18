@@ -56,6 +56,7 @@ public:
   void scroll_to (SI x, SI y);
   void set_extents (SI x1, SI y1, SI x2, SI y2);
   void get_extents (SI& x1, SI& y1, SI& x2, SI& y2);
+  void set_canvas_type (int kind);
   void full_screen_mode (bool on, bool edit);
   bool in_full_screen_mode ();
   bool in_full_screen_edit_mode ();

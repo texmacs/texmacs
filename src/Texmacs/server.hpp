@@ -70,6 +70,7 @@ public:
   virtual void scroll_to (SI x, SI y) = 0;
   virtual void set_extents (SI x1, SI y1, SI x2, SI y2) = 0;
   virtual void get_extents (SI& x1, SI& y1, SI& x2, SI& y2) = 0;
+  virtual void set_canvas_type (int kind) = 0;
   virtual void full_screen_mode (bool on, bool edit) = 0;
   virtual bool in_full_screen_mode () = 0;
   virtual bool in_full_screen_edit_mode () = 0;

@@ -11,6 +11,7 @@
 
 #include "QTMScrollView.hpp"
 #include "tm_ostream.hpp"
+#include "message.hpp"
 
 #include <QScrollBar>
 #include <QPainter>
@@ -30,9 +31,11 @@
  Don't try to disable double buffering even if we do our own: the flag 
  Qt::WA_PaintOnScreen is only supported on X11 and anyway makes things slower
  */
-QTMScrollView::QTMScrollView (QWidget *_parent)
-: QAbstractScrollArea (_parent), p_extents(QRect(0,0,0,0))  {
-  
+QTMScrollView::QTMScrollView (QWidget *_parent):
+  QAbstractScrollArea (_parent),
+  p_kind (CANVAS_PAPYRUS),
+  p_extents(QRect(0,0,0,0))
+{  
   QWidget *_viewport = QAbstractScrollArea::viewport();
   _viewport->setBackgroundRole(QPalette::Mid);
   _viewport->setAutoFillBackground(true);
@@ -64,7 +67,8 @@ QTMScrollView::setOrigin ( QPoint newOrigin ) {
 void 
 QTMScrollView::setExtents ( QRect newExtents ) {
   QWidget *_viewport = QAbstractScrollArea::viewport();
-  if (_viewport->height() > newExtents.height())
+  if (p_kind == CANVAS_PAPYRUS &&
+      _viewport->height() > newExtents.height())
     newExtents.setHeight (_viewport->height());
   if (p_extents != newExtents) {
     p_extents = newExtents;  
@@ -74,9 +78,12 @@ QTMScrollView::setExtents ( QRect newExtents ) {
   }
 }
 
-void 
+void
 QTMScrollView::setCanvasType (int kind) {
-  (void) kind;
+  if (kind != p_kind) {
+    p_kind= kind;
+    setExtents (p_extents);
+  }
 }
 
 /*! Scrolls contents so that the given point is visible. */

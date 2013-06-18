@@ -549,8 +549,13 @@ edit_interface_rep::apply_changes () {
 #endif
   
   // cout << "Handling extents\n";
-  if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_EXTENTS))
+  if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_EXTENTS)) {
+    string val= get_init_string (PAGE_MEDIUM);
+    int kind= CANVAS_PAPYRUS;
+    if (val != "papyrus") kind= CANVAS_BEAMER;
+    SERVER (set_canvas_type (kind));
     set_extents (eb->x1, eb->y1, eb->x2, eb->y2);
+  }
   
   // cout << "Cursor\n";
   temp_invalid_cursor= false;

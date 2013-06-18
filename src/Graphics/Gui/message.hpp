@@ -103,6 +103,13 @@ const char * slot_name (const slot s);
 //inline bool is_state_slot (slot s) { return slots_state_table[s]; }
 
 /******************************************************************************
+* Further constants
+******************************************************************************/
+
+#define CANVAS_PAPYRUS  0
+#define CANVAS_BEAMER   1
+
+/******************************************************************************
 * Helper templates for sending messages
 ******************************************************************************/
 

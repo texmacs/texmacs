@@ -391,6 +391,11 @@ tm_window_rep::set_extents (SI x1, SI y1, SI x2, SI y2) {
 }
 
 void
+tm_window_rep::set_canvas_type (int kind) {
+  ::set_canvas_type (wid, kind);
+}
+
+void
 tm_window_rep::set_scrollbars (int i) {
   ::set_scrollbars_visibility (wid, i);
 }
