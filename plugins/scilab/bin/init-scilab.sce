@@ -70,7 +70,7 @@ function scilab_complete (str, pos)
     lst(i)= part (lst(i), (pos+1):length(lst(i)));
   end
   lst= strsubst (lst, '%', '%%');
-  tmsend (make ("tuple", [str;lst]'));
+  tmsend (makeStreeNode ("tuple", [str;lst]'));
 endfunction
 
 banner
