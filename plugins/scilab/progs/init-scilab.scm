@@ -47,6 +47,7 @@
     (stree->tree (string->object s))))
 
 (when (supports-scilab?)
+  (import-from (scilab-menus))
   (kbd-map
     (:mode in-scilab?)
     ("$" "$")))

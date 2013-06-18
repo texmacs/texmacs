@@ -13,6 +13,7 @@ funcprot(0)
 texmacs_path= getenv("TEXMACS_PATH");
 exec (fullfile (getenv("TEXMACS_PATH"), 'plugins/scilab/bin/tmstree.sci'), -1);
 exec (fullfile (getenv("TEXMACS_PATH"), 'plugins/scilab/bin/plotout.sci'), -1);
+exec (fullfile (getenv("TEXMACS_PATH"), 'plugins/scilab/bin/add_to_insert_menu.sci'), -1);
 
 function tmsend (msg)
   DATA_BEGIN= ascii (2);
@@ -28,6 +29,13 @@ function tmout(v)
   tmsend (out);
 endfunction
 
+function tmcmd (msg)
+  if part (msg, 1:8) == "scheme: " then
+    msg= (part (msg, 9:length(msg)));
+  end
+  msg= "command: " + msg;
+  tmsend (msg);
+endfunction
 
 char_codes= ["s" "p" "b" "sp" "spb" "msp" "i" "c" "h" "fptr" "mc" "l" "hm" ..
              "ptr" "ce" "st" "r" "lss" "ip"]
@@ -37,16 +45,6 @@ for i= 1:size (char_codes, '*') do
 end
 
 funcprot(1)
-
-function lst= scilab_lst_libraries ()
-  s= getvariablesonstack ();
-  lst= [];
-  for i= 1:size(s, '*') do
-    if exists (s(i)) & type (eval (s(i))) == 14 then
-      lst= [lst;s(i)];
-    end
-  end
-endfunction
 
 function lst= scilab_lst_all (libr)
   lst= [];
