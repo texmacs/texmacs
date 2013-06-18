@@ -19,6 +19,7 @@
 
 SI get_dx (gravity grav, SI w);
 SI get_dy (gravity grav, SI h);
+gravity opposite (gravity grav);
 
 /******************************************************************************
 * Canvas widgets
@@ -100,6 +101,33 @@ canvas_widget_rep::set_extents (SI Ex1, SI Ey1, SI Ex2, SI Ey2) {
     Ey1= cyc- cyr- chh;
     Ey2= cyc- cyr;
   }
+
+  /*
+  gravity grav= a[0]->grav;
+  cout << "Set extents " << Ex1/256 << ", " << Ey1/256 << "; " << Ex2/256 << ", " << Ey2/256 << "\n";
+  cout << "grav= " << grav << "\n";
+  SI ww= w - (show_scroll_bars? (ver_active? 20*PIXEL: 2*PIXEL): 0);
+  SI wh= h - (show_scroll_bars? (hor_active? 20*PIXEL: 2*PIXEL): 0);
+  if (ew < ww) {
+    SI chw= ew;
+    if (kind == CANVAS_DEFAULT) chw= ww;
+    SI cxr= get_dx (grav, chw) + get_dx (opposite (grav), ww - chw);
+    cout << "cxr= " << cxr/256 << "\n";
+    SI cxc= Ex1 + get_dx (grav, Ex2- Ex1);
+    Ex1= cxc - cxr;
+    Ex2= cxc - cxr + chw;
+  }
+  if (eh < wh) {
+    SI chh= eh;
+    if (kind == CANVAS_DEFAULT) chh= wh;
+    if (kind == CANVAS_PAPYRUS) chh= wh;
+    SI cyr= get_dy (grav, chh) - get_dy (opposite (grav), wh - chh);
+    cout << "cyr= " << cyr/256 << "\n";
+    SI cyc= Ey1 + get_dy (grav, Ey2- Ey1);
+    Ey1= cyc - cyr;
+    Ey2= cyc - cyr + chh;
+  }
+  */
 
   bool bars_changed=
     (old_hor_active != hor_active) || (old_ver_active != ver_active);
