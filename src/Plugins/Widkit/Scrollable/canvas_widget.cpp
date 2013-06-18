@@ -74,32 +74,32 @@ canvas_widget_rep::operator tree () {
 void
 canvas_widget_rep::set_extents (SI Ex1, SI Ey1, SI Ex2, SI Ey2) {
   abs_outer_round (Ex1, Ey1, Ex2, Ey2);
-  SI ew= Ex2- Ex1, eh= Ey2- Ey1;
+  SI ew= Ex2 - Ex1, eh= Ey2 - Ey1;
   bool old_hor_active= hor_active, old_ver_active= ver_active;
   if ((ew<=(w-2*PIXEL)) && (eh<=(h-2*PIXEL))) {
     hor_active= false; ver_active= false; }
   else { hor_active= ew > (w-20*PIXEL); ver_active= eh > (h-20*PIXEL); }
 
   gravity grav= a[0]->grav;
-  SI ww= w- (show_scroll_bars? (ver_active? 20*PIXEL: 2*PIXEL): 0);
-  SI wh= h- (show_scroll_bars? (hor_active? 20*PIXEL: 2*PIXEL): 0);
-  if (Ex2- Ex1 < ww) {
-    SI cxr= get_dx (grav, ww);
-    SI cxc= Ex1+ get_dx (grav, Ex2- Ex1);
+  SI ww= w - (show_scroll_bars? (ver_active? 20*PIXEL: 2*PIXEL): 0);
+  SI wh= h - (show_scroll_bars? (hor_active? 20*PIXEL: 2*PIXEL): 0);
+  if (ew < ww) {
     SI chw= ew;
     if (kind == CANVAS_DEFAULT) chw= ww;
-    Ex1= cxc- cxr;
-    Ex2= cxc- cxr+ chw;
+    SI cxr= get_dx (grav, ww);
+    SI cxc= Ex1 + get_dx (grav, ew);
+    Ex1= cxc - cxr;
+    Ex2= cxc - cxr + chw;
   }
-  if (Ey2- Ey1 < wh) {
-    SI cyr= get_dy (grav, wh);
-    SI cyc= Ey2+ get_dy (grav, Ey2- Ey1);
+  if (eh < wh) {
     SI chh= eh;
     if (kind == CANVAS_DEFAULT) chh= wh;
     if (kind == CANVAS_PAPYRUS) chh= wh;
     chh= wh;
-    Ey1= cyc- cyr- chh;
-    Ey2= cyc- cyr;
+    SI cyr= get_dy (grav, wh);
+    SI cyc= Ey2 + get_dy (grav, eh);
+    Ey1= cyc - cyr - chh;
+    Ey2= cyc - cyr;
   }
 
   /*
@@ -113,7 +113,7 @@ canvas_widget_rep::set_extents (SI Ex1, SI Ey1, SI Ex2, SI Ey2) {
     if (kind == CANVAS_DEFAULT) chw= ww;
     SI cxr= get_dx (grav, chw) + get_dx (opposite (grav), ww - chw);
     cout << "cxr= " << cxr/256 << "\n";
-    SI cxc= Ex1 + get_dx (grav, Ex2- Ex1);
+    SI cxc= Ex1 + get_dx (grav, ew);
     Ex1= cxc - cxr;
     Ex2= cxc - cxr + chw;
   }
@@ -123,7 +123,7 @@ canvas_widget_rep::set_extents (SI Ex1, SI Ey1, SI Ex2, SI Ey2) {
     if (kind == CANVAS_PAPYRUS) chh= wh;
     SI cyr= get_dy (grav, chh) - get_dy (opposite (grav), wh - chh);
     cout << "cyr= " << cyr/256 << "\n";
-    SI cyc= Ey1 + get_dy (grav, Ey2- Ey1);
+    SI cyc= Ey1 + get_dy (grav, eh);
     Ey1= cyc - cyr;
     Ey2= cyc - cyr + chh;
   }
