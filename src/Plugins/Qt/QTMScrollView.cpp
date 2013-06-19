@@ -82,6 +82,11 @@ void
 QTMScrollView::setCanvasType (int kind) {
   if (kind != p_kind) {
     p_kind= kind;
+    QWidget *_viewport = QAbstractScrollArea::viewport();
+    if (kind == CANVAS_BEAMER)
+      _viewport->setBackgroundRole(QPalette::Dark);
+    else
+      _viewport->setBackgroundRole(QPalette::Mid);
     setExtents (p_extents);
   }
 }
