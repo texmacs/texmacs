@@ -197,6 +197,7 @@ scrollable_widget_rep::handle_repaint (repaint_event ev) {
   SI sy2= a[0]->y2() - oy;
   color bg= layout_light (ren);
   if (kind == CANVAS_DEFAULT) bg= white;
+  if (kind == CANVAS_BEAMER) bg= black;
   ren->set_background (bg);
   ren->set_pencil (bg);
   if (ev->x1 < sx1) ren->fill (ev->x1, my1, sx1, my2);

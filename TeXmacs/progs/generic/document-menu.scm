@@ -546,7 +546,8 @@
 	  ---
 	  ("Paper" (init-page-medium "paper"))
 	  ("Papyrus" (init-page-medium "papyrus"))
-	  ("Automatic" (init-page-medium "automatic")))
+	  ("Automatic" (init-page-medium "automatic"))
+	  ("Beamer" (init-page-medium "beamer")))
       (-> "Size"
 	  (link document-page-size-menu))
       (-> "Orientation"
