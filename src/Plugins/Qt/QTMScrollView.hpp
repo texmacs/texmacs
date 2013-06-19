@@ -34,6 +34,7 @@ class QTMScrollView : public QAbstractScrollArea {
   Q_OBJECT
 
   int         p_kind;   // The kind of padding around the scrollable area
+  QRect   p_oextents;   // The original unajusted extents
   QRect    p_extents;   // The size of the virtual area where things are drawn.
   QPoint    p_origin;   // The offset into that area
   QWidget* p_surface;   // Actual drawing area, centered (or not) in the scrollarea

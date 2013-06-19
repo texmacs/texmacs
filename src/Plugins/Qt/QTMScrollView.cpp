@@ -34,6 +34,7 @@
 QTMScrollView::QTMScrollView (QWidget *_parent):
   QAbstractScrollArea (_parent),
   p_kind (CANVAS_PAPYRUS),
+  p_oextents(QRect(0,0,0,0)),
   p_extents(QRect(0,0,0,0))
 {  
   QWidget *_viewport = QAbstractScrollArea::viewport();
@@ -67,13 +68,14 @@ QTMScrollView::setOrigin ( QPoint newOrigin ) {
 void 
 QTMScrollView::setExtents ( QRect newExtents ) {
   QWidget *_viewport = QAbstractScrollArea::viewport();
+  if (newExtents.width() < 0) newExtents.setWidth(0);
+  if (newExtents.height() < 0) newExtents.setHeight(0);
+  p_oextents= newExtents;
   if (p_kind == CANVAS_PAPYRUS &&
       _viewport->height() > newExtents.height())
     newExtents.setHeight (_viewport->height());
   if (p_extents != newExtents) {
-    p_extents = newExtents;  
-    if (p_extents.width() < 0) p_extents.setWidth(0);
-    if (p_extents.height() < 0) p_extents.setHeight(0);
+    p_extents = newExtents;
     updateScrollBars();
   }
 }
@@ -87,7 +89,7 @@ QTMScrollView::setCanvasType (int kind) {
       _viewport->setBackgroundRole(QPalette::Dark);
     else
       _viewport->setBackgroundRole(QPalette::Mid);
-    setExtents (p_extents);
+    setExtents (p_oextents);
   }
 }
 
@@ -241,6 +243,12 @@ QTMScrollView::event (QEvent *event) {
     case QEvent::Resize:
     {
       bool res = QAbstractScrollArea::event(event);
+      QResizeEvent *re = static_cast<QResizeEvent*> (event);
+      int h= re->size().height();
+      p_extents= p_oextents;
+      if (p_kind == CANVAS_PAPYRUS &&
+	  h > p_extents.height())
+	p_extents.setHeight (h);
       updateScrollBars();
       return res;
     }
