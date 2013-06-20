@@ -46,7 +46,7 @@
     </src-comment>
   </active*>
 
-  <assign|input|<macro|prompt|body|<with|mode|prog|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<provides|<merge|<value|prog-language>|-input>>|<merge|<value|prog-language>|-input>|generic-input>>|<arg|prompt>|<arg|body>>>>>>
+  <assign|input|<macro|prompt|body|<with|mode|prog|font-family|rm|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<provides|<merge|<value|prog-language>|-input>>|<merge|<value|prog-language>|-input>|generic-input>>|<arg|prompt>|<arg|body>>>>>>
 
   <assign|input-math|<\macro|prompt|in>
     <input|<arg|prompt>|<math|<arg|in>>>
