@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.8>
+<TeXmacs|1.0.7.19>
 
 <style|source>
 
@@ -28,7 +28,9 @@
     </src-comment>
   </active*>
 
-  <assign|page-medium|automatic>
+  <assign|page-type|4:3>
+
+  <assign|page-medium|beamer>
 
   <assign|page-screen-left|5mm>
 
@@ -38,7 +40,7 @@
 
   <assign|page-screen-bottom|5mm>
 
-  <assign|magnification|1.5>
+  <assign|magnification|1.7>
 
   <assign|font-family|ss>
 
