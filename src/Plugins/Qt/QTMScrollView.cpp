@@ -33,8 +33,6 @@
  */
 QTMScrollView::QTMScrollView (QWidget *_parent):
   QAbstractScrollArea (_parent),
-  p_kind (CANVAS_PAPYRUS),
-  p_oextents(QRect(0,0,0,0)),
   p_extents(QRect(0,0,0,0))
 {
   QWidget *_viewport = QAbstractScrollArea::viewport();
@@ -70,28 +68,11 @@ QTMScrollView::setExtents ( QRect newExtents ) {
   QWidget *_viewport = QAbstractScrollArea::viewport();
   //cout << "Inside  " << _viewport->width() << ", " << _viewport->height() << "\n";
   //cout << "Extents " << newExtents.width() << ", " << newExtents.height() << "\n";
-  if (newExtents.width() < 0) newExtents.setWidth(0);
+  if (newExtents.width()  < 0) newExtents.setWidth (0);
   if (newExtents.height() < 0) newExtents.setHeight(0);
-  p_oextents= newExtents;
-  if (p_kind == CANVAS_PAPYRUS &&
-      _viewport->height() > newExtents.height())
-    newExtents.setHeight (_viewport->height());
   if (p_extents != newExtents) {
     p_extents = newExtents;
     updateScrollBars();
-  }
-}
-
-void
-QTMScrollView::setCanvasType (int kind) {
-  if (kind != p_kind) {
-    p_kind= kind;
-    QWidget *_viewport = QAbstractScrollArea::viewport();
-    if (kind == CANVAS_BEAMER)
-      _viewport->setBackgroundRole(QPalette::Dark);
-    else
-      _viewport->setBackgroundRole(QPalette::Mid);
-    setExtents (p_oextents);
   }
 }
 
@@ -262,10 +243,6 @@ QTMScrollView::event (QEvent *event) {
       bool res = QAbstractScrollArea::event(event);
       QResizeEvent *re = static_cast<QResizeEvent*> (event);
       int h= re->size().height();
-      p_extents= p_oextents;
-      if (p_kind == CANVAS_PAPYRUS &&
-          h > p_extents.height())
-        p_extents.setHeight (h);
       updateScrollBars();
       return res;
     }

@@ -89,7 +89,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     {
       check_type<int>(val, s);
       int p = open_box<int> (val);
-      scrollarea()->setCanvasType (p);
+      (void) p;
     }
       break;
     
