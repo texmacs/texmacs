@@ -185,14 +185,14 @@ INIT_ALL () {
         "200mm",  "45mm",  "45mm",
         "315mm",  "45mm",  "45mm");
   INIT ("3:2", "240mm", "160mm", "no",
-        "270mm",  "5mm",  "5mm",
-        "270mm",  "5mm",  "5mm");
+        "230mm",  "5mm",  "5mm",
+        "230mm",  "5mm",  "5mm");
   INIT ("4:3", "240mm", "180mm", "no",
-        "280mm",  "5mm",  "5mm",
-        "280mm",  "5mm",  "5mm");
+        "230mm",  "5mm",  "5mm",
+        "230mm",  "5mm",  "5mm");
   INIT ("5:4", "225mm", "180mm", "no",
-        "250mm",  "5mm",  "5mm",
-        "250mm",  "5mm",  "5mm");
+        "215mm",  "5mm",  "5mm",
+        "215mm",  "5mm",  "5mm");
   page_data_base_initizalized= true;
 }
 
