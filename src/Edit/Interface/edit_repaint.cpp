@@ -94,16 +94,15 @@ edit_interface_rep::draw_cursor (renderer ren) {
 
 void
 edit_interface_rep::draw_surround (renderer ren, rectangle r) { 	 
-#ifdef X11TEXMACS
-  ren->set_background (light_grey); 	 
+  ren->set_background (light_grey);
   string medium= get_init_string (PAGE_MEDIUM);
   if (medium == "automatic") return;
+  if (medium == "beamer" && full_screen) return;
   ren->clear (r->x1, r->y1, max (r->x1, eb->x1), r->y2);
   ren->clear (min (r->x2, eb->x2), r->y1, r->x2, r->y2);
   if (medium == "papyrus") return;
   ren->clear (r->x1, r->y1, r->x2, max (r->y1, eb->y1));
   ren->clear (r->x1, min (r->y2, eb->y2), r->x2, r->y2);
-#endif
 }
 
 void

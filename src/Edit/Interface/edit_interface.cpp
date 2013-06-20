@@ -172,7 +172,8 @@ edit_interface_rep::get_window_width () {
   widget me= ::get_canvas (widget (cvw));
   ::get_size (me, w, h);
   bool sb= (get_init_string (SCROLL_BARS) != "false");
-  if (sb) w -= scrollbar_width ();
+  string medium= get_init_string (PAGE_MEDIUM);
+  if (medium != "beamer" && sb) w -= scrollbar_width ();
   return w;
 }
 
