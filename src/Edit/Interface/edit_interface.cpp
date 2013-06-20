@@ -562,7 +562,6 @@ edit_interface_rep::apply_changes () {
     else if (medium == "beamer")
       kind= full_screen? CANVAS_BEAMER: CANVAS_PAPER;
     SERVER (set_canvas_type (kind));
-#ifdef X11TEXMACS
     SI ex1= eb->x1*magf, ey1= eb->y1*magf, ex2= eb->x2*magf, ey2= eb->y2*magf;
     abs_round (ex1, ey1);
     abs_round (ex2, ey2);
@@ -580,24 +579,26 @@ edit_interface_rep::apply_changes () {
       if (medium == "automatic")
         ex2= ex1 + w;
       else {
+#ifdef X11TEXMACS
         ex1= (ex1 + ex2 - w) / 2;
         abs_round (ex1);
         ex2= ex1 + w;
+#endif
       }
     }
     if (ey2 - ey1 < h) {
       if (medium == "papyrus" || medium == "automatic")
         ey1= ey2 - h;
       else {
+#ifdef X11TEXMACS
         ey1= (ey1 + ey2 - h) / 2;
         abs_round (ey1);
         ey2= ey1 + h;
+#endif
       }
     }
     SERVER (set_extents (ex1, ey1, ex2, ey2));
-#else
-    set_extents (eb->x1, eb->y1, eb->x2, eb->y2);
-#endif
+    //set_extents (eb->x1, eb->y1, eb->x2, eb->y2);
   }
   
   // cout << "Cursor\n";
