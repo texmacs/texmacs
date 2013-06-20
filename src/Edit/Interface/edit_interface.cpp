@@ -153,7 +153,7 @@ edit_interface_rep::get_visible_height () {
   return vy2 - vy1;
 }
 
-SI
+static SI
 scrollbar_width () {
 #ifdef QTTEXMACS
 #  ifdef OS_MACOS

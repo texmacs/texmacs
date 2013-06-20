@@ -129,6 +129,15 @@ QTMScrollView::ensureVisible ( int cx, int cy, int mx, int my ) {
   setOrigin (QPoint(-dx, -dy));
 }
 
+static SI
+scrollbar_width () {
+#ifdef OS_MACOS
+  return 15;
+#else
+  return 22;
+#endif
+}
+
 /*! Scrollbar stabilization */
 void 
 QTMScrollView::updateScrollBars (void) {
@@ -136,12 +145,13 @@ QTMScrollView::updateScrollBars (void) {
   QScrollBar *_hScrollBar = QAbstractScrollArea::horizontalScrollBar();
   QScrollBar *_vScrollBar = QAbstractScrollArea::verticalScrollBar();
 
-  int w = _viewport->width() ; // -2
-  int h = _viewport->height(); // -2
-  //if (_hScrollBar->maximum() > _hScrollBar->minimum()) h += 15;
-  //if (_vScrollBar->maximum() > _vScrollBar->minimum()) w += 15;
-  //if (p_extents.width()  > w) h -= 15;
-  //if (p_extents.height() > h) w -= 15;
+  int w  = _viewport->width() ; // -2
+  int h  = _viewport->height(); // -2
+  int sbw= scrollbar_width ();
+  if (_hScrollBar->maximum() > _hScrollBar->minimum()) h += sbw;
+  if (_vScrollBar->maximum() > _vScrollBar->minimum()) w += sbw;
+  if (p_extents.width()  > w) h -= sbw;
+  if (p_extents.height() > h) w -= sbw;
 
   int cw = (p_extents.width() > w ? p_extents.width() - w : 0);
   if (_hScrollBar->sliderPosition() > cw)
