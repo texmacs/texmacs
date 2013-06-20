@@ -105,7 +105,11 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     {
       check_type<coord2>(val, s);
       coord2 p = open_box<coord2> (val);
-      scrollarea()->setOrigin(to_qpoint (p));
+      QPoint qp= to_qpoint (p);
+      QSize  sz = canvas()->surface()->size();
+      qp -= QPoint (sz.width() / 2, sz.height() / 2);
+      // NOTE: adjust because child is centered
+      scrollarea()->setOrigin (qp);
     }
       break;
       

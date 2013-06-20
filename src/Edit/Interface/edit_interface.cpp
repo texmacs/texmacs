@@ -215,7 +215,6 @@ edit_interface_rep::cursor_visible () {
 	(cu->oy+ cu->y1 <  vy1) ||
 	(cu->oy+ cu->y2 >= vy2))
       {
-	//scroll_to (cu->ox- ((vx2-vx1)>>1), cu->oy+ ((vy2-vy1)>>1));
 	scroll_to (cu->ox, cu->oy);
 	send_invalidate_all (this);
       }
