@@ -279,10 +279,11 @@
       ("Statement" (init-page-type "statement"))
       ("Tabloid" (init-page-type "tabloid")))
   (-> "Beamer"
-      ("8:5" (init-page-type "8:5"))
-      ;;("3:2" (init-page-type "3:2"))
-      ("4:3" (init-page-type "4:3"))
-      ("5:4" (init-page-type "5:4")))
+      ("Widescreen 16:9" (init-page-type "8:5"))
+      ("Widescreen 8:5" (init-page-type "8:5"))
+      ;;("Widescreen 3:2" (init-page-type "3:2"))
+      ("Standard 4:3" (init-page-type "4:3"))
+      ("Standard 5:4" (init-page-type "5:4")))
   ---
   ("Other" (interactive init-page-size)))
 

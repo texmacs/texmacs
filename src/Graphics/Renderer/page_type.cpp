@@ -184,6 +184,9 @@ INIT_ALL () {
   INIT ("tabloid", "279mm", "432mm", "yes",
         "200mm",  "45mm",  "45mm",
         "315mm",  "45mm",  "45mm");
+  INIT ("16:9", "240mm", "135mm", "no",
+        "230mm",  "5mm",  "5mm",
+        "230mm",  "5mm",  "5mm");
   INIT ("8:5", "240mm", "150mm", "no",
         "230mm",  "5mm",  "5mm",
         "230mm",  "5mm",  "5mm");
