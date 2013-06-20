@@ -576,7 +576,8 @@ edit_interface_rep::apply_changes () {
     if (sb && ey2 - ey1 > h) w -= scrollbar_width ();
     if (sb && ex2 - ex1 > w) h -= scrollbar_width ();
     if (ex2 - ex1 < w) {
-      if (medium == "automatic")
+      if (medium == "automatic" ||
+          (medium == "beamer" && full_screen))
         ex2= ex1 + w;
       else {
 #ifdef X11TEXMACS
@@ -587,7 +588,8 @@ edit_interface_rep::apply_changes () {
       }
     }
     if (ey2 - ey1 < h) {
-      if (medium == "papyrus" || medium == "automatic")
+      if (medium == "papyrus" || medium == "automatic" ||
+          (medium == "beamer" && full_screen))
         ey1= ey2 - h;
       else {
 #ifdef X11TEXMACS
