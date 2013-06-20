@@ -49,8 +49,8 @@ scrollable_widget_rep::scroll_event_hor (SI& x, SI& bef, SI& af) {
     if ((dx>-w) && (dx<w) && (dx!=0)) {
       win->translate (x1(), y1(), x2(), y2(), -dx, 0);
     }
-    if (dx>0) this << emit_invalidate (x2()-dx, y1(), x2()   , y2());
-    if (dx<0) this << emit_invalidate (x1()   , y1(), x1()-dx, y2());
+    if (dx>0) this << emit_invalidate (x2()-ox-dx, y1()-oy, x2()-ox, y2()-oy);
+    if (dx<0) this << emit_invalidate (x1()-ox, y1()-oy, x1()-ox-dx, y2()-oy);
   }
 
   scx      = x;
@@ -70,8 +70,8 @@ scrollable_widget_rep::scroll_event_ver (SI& y, SI& bef, SI& af) {
     if ((dy>-h) && (dy<h) && (dy!=0)) {
       win->translate (x1(), y1(), x2(), y2(), 0, -dy);
     }
-    if (dy>0) this << emit_invalidate (x1(), y2()-dy, x2(), y2()   );
-    if (dy<0) this << emit_invalidate (x1(), y1()   , x2(), y1()-dy);
+    if (dy>0) this << emit_invalidate (x1()-ox, y2()-oy-dy, x2()-ox, y2()-oy);
+    if (dy<0) this << emit_invalidate (x1()-ox, y1()-oy, x2()-ox, y1()-oy-dy);
   }
 
   scy      = y;
