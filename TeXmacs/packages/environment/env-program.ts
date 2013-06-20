@@ -136,15 +136,15 @@
 
   <assign|scilab|<macro|<name|Scilab>>>
 
-  <assign|shell|<macro|body|<with|mode|prog|prog-language|shell|<arg|body>>>>
+  <assign|shell|<macro|body|<with|mode|prog|prog-language|shell|font-family|rm|<arg|body>>>>
 
-  <assign|scm|<macro|body|<with|mode|prog|prog-language|scheme|<arg|body>>>>
+  <assign|scm|<macro|body|<with|mode|prog|prog-language|scheme|font-family|rm|<arg|body>>>>
 
-  <assign|cpp|<macro|body|<with|mode|prog|prog-language|cpp|<arg|body>>>>
+  <assign|cpp|<macro|body|<with|mode|prog|prog-language|cpp|font-family|rm|<arg|body>>>>
 
-  <assign|scilab|<macro|body|<with|mode|prog|prog-language|scilab|<arg|body>>>>
+  <assign|scilab|<macro|body|<with|mode|prog|prog-language|scilab|font-family|rm|<arg|body>>>>
 
-  <assign|mmx|<macro|body|<with|mode|prog|prog-language|mathemagix|<arg|body>>>>
+  <assign|mmx|<macro|body|<with|mode|prog|prog-language|mathemagix|font-family|rm|<arg|body>>>>
 
   <\active*>
     <\src-comment>
