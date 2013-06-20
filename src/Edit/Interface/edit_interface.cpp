@@ -154,20 +154,25 @@ edit_interface_rep::get_visible_height () {
 }
 
 SI
+scrollbar_width () {
+#ifdef QTTEXMACS
+#  ifdef OS_MACOS
+  return 17 * PIXEL;
+#  else
+  return 24 * PIXEL;
+#  endif
+#else
+  return 20 * PIXEL;
+#endif
+}
+
+SI
 edit_interface_rep::get_window_width () {
   SI w, h;
   widget me= ::get_canvas (widget (cvw));
   ::get_size (me, w, h);
   bool sb= (get_init_string (SCROLL_BARS) != "false");
-#ifdef QTTEXMACS
-#  ifdef OS_MACOS
-  if (sb) w -= 17 * PIXEL;
-#  else
-  if (sb) w -= 24 * PIXEL;
-#  endif
-#else
-  if (sb) w -= 20 * PIXEL;
-#endif
+  if (sb) w -= scrollbar_width ();
   return w;
 }
 
@@ -550,12 +555,49 @@ edit_interface_rep::apply_changes () {
   
   // cout << "Handling extents\n";
   if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_EXTENTS)) {
-    string val= get_init_string (PAGE_MEDIUM);
+    string medium= get_init_string (PAGE_MEDIUM);
     int kind= CANVAS_PAPYRUS;
-    if (val == "paper") kind= CANVAS_PAPER;
-    else if (val == "beamer") kind= full_screen? CANVAS_BEAMER: CANVAS_PAPER;
+    if (medium == "paper")
+      kind= CANVAS_PAPER;
+    else if (medium == "beamer")
+      kind= full_screen? CANVAS_BEAMER: CANVAS_PAPER;
     SERVER (set_canvas_type (kind));
+#ifdef X11TEXMACS
+    SI ex1= eb->x1*magf, ey1= eb->y1*magf, ex2= eb->x2*magf, ey2= eb->y2*magf;
+    abs_round (ex1, ey1);
+    abs_round (ex2, ey2);
+    SI w, h;
+    widget me= ::get_canvas (widget (cvw));
+    ::get_size (me, w, h);
+#ifdef X11TEXMACS
+    w -= 2*PIXEL;
+    h -= 2*PIXEL;
+#endif
+    bool sb= (get_init_string (SCROLL_BARS) != "false");
+    if (sb && ey2 - ey1 > h) w -= scrollbar_width ();
+    if (sb && ex2 - ex1 > w) h -= scrollbar_width ();
+    if (ex2 - ex1 < w) {
+      if (medium == "automatic")
+        ex2= ex1 + w;
+      else {
+        ex1= (ex1 + ex2 - w) / 2;
+        abs_round (ex1);
+        ex2= ex1 + w;
+      }
+    }
+    if (ey2 - ey1 < h) {
+      if (medium == "papyrus" || medium == "automatic")
+        ey1= ey2 - h;
+      else {
+        ey1= (ey1 + ey2 - h) / 2;
+        abs_round (ey1);
+        ey2= ey1 + h;
+      }
+    }
+    SERVER (set_extents (ex1, ey1, ex2, ey2));
+#else
     set_extents (eb->x1, eb->y1, eb->x2, eb->y2);
+#endif
   }
   
   // cout << "Cursor\n";

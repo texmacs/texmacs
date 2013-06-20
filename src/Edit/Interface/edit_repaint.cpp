@@ -93,6 +93,20 @@ edit_interface_rep::draw_cursor (renderer ren) {
 }
 
 void
+edit_interface_rep::draw_surround (renderer ren, rectangle r) { 	 
+#ifdef X11TEXMACS
+  ren->set_background (light_grey); 	 
+  string medium= get_init_string (PAGE_MEDIUM);
+  if (medium == "automatic") return;
+  ren->clear (r->x1, r->y1, max (r->x1, eb->x1), r->y2);
+  ren->clear (min (r->x2, eb->x2), r->y1, r->x2, r->y2);
+  if (medium == "papyrus") return;
+  ren->clear (r->x1, r->y1, r->x2, max (r->y1, eb->y1));
+  ren->clear (r->x1, min (r->y2, eb->y2), r->x2, r->y2);
+#endif
+}
+
+void
 edit_interface_rep::draw_context (renderer ren, rectangle r) {
   int i;
   ren->set_pencil (pencil (light_grey, pixel));
@@ -101,6 +115,7 @@ edit_interface_rep::draw_context (renderer ren, rectangle r) {
     if ((y >= r->y1) && (y < r->y2))
       ren->line (r->x1, y, r->x2, y);
   }
+  draw_surround (ren, r);
 }
 
 void
@@ -160,6 +175,7 @@ edit_interface_rep::draw_pre (renderer win, renderer ren, rectangle r) {
   tree bg= get_init_value (BG_COLOR);
   ren->set_background (bg);
   clear_pattern_rectangles (ren, rectangles (translate (r, ren->ox, ren->oy)));
+  draw_surround (ren, r);
 
   // predraw cursor
   draw_cursor (ren);
@@ -281,6 +297,7 @@ edit_interface_rep::handle_clear (renderer win, SI x1, SI y1, SI x2, SI y2) {
   win->set_background (bg);
   win->clear_pattern (max (eb->x1, x1), max (eb->y1, y1),
 		      min (eb->x2, x2), min (eb->y2, y2));
+  draw_surround (win, rectangle (x1, y1, x2, y2));
   win->reset_zoom_factor ();
 }
 
