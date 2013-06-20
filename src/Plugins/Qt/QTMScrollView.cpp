@@ -36,7 +36,7 @@ QTMScrollView::QTMScrollView (QWidget *_parent):
   p_kind (CANVAS_PAPYRUS),
   p_oextents(QRect(0,0,0,0)),
   p_extents(QRect(0,0,0,0))
-{  
+{
   QWidget *_viewport = QAbstractScrollArea::viewport();
   _viewport->setBackgroundRole(QPalette::Mid);
   _viewport->setAutoFillBackground(true);
@@ -68,6 +68,8 @@ QTMScrollView::setOrigin ( QPoint newOrigin ) {
 void 
 QTMScrollView::setExtents ( QRect newExtents ) {
   QWidget *_viewport = QAbstractScrollArea::viewport();
+  //cout << "Inside  " << _viewport->width() << ", " << _viewport->height() << "\n";
+  //cout << "Extents " << newExtents.width() << ", " << newExtents.height() << "\n";
   if (newExtents.width() < 0) newExtents.setWidth(0);
   if (newExtents.height() < 0) newExtents.setHeight(0);
   p_oextents= newExtents;
@@ -131,10 +133,16 @@ QTMScrollView::ensureVisible ( int cx, int cy, int mx, int my ) {
 void 
 QTMScrollView::updateScrollBars (void) {
   QWidget *_viewport = QAbstractScrollArea::viewport();
-  int w = _viewport->width()  ; // -2
-  int h = _viewport->height() ; // -2
-  
   QScrollBar *_hScrollBar = QAbstractScrollArea::horizontalScrollBar();
+  QScrollBar *_vScrollBar = QAbstractScrollArea::verticalScrollBar();
+
+  int w = _viewport->width() ; // -2
+  int h = _viewport->height(); // -2
+  //if (_hScrollBar->maximum() > _hScrollBar->minimum()) h += 15;
+  //if (_vScrollBar->maximum() > _vScrollBar->minimum()) w += 15;
+  //if (p_extents.width()  > w) h -= 15;
+  //if (p_extents.height() > h) w -= 15;
+
   int cw = (p_extents.width() > w ? p_extents.width() - w : 0);
   if (_hScrollBar->sliderPosition() > cw)
     _hScrollBar->setSliderPosition(cw);
@@ -142,7 +150,6 @@ QTMScrollView::updateScrollBars (void) {
   _hScrollBar->setSingleStep((w >> 4) + 1);
   _hScrollBar->setPageStep(w);
   
-  QScrollBar *_vScrollBar = QAbstractScrollArea::verticalScrollBar();
   int ch = (p_extents.height() > h ? p_extents.height() - h : 0);
   if (_vScrollBar->sliderPosition() > ch)
     _vScrollBar->setSliderPosition(ch);
@@ -247,8 +254,8 @@ QTMScrollView::event (QEvent *event) {
       int h= re->size().height();
       p_extents= p_oextents;
       if (p_kind == CANVAS_PAPYRUS &&
-	  h > p_extents.height())
-	p_extents.setHeight (h);
+          h > p_extents.height())
+        p_extents.setHeight (h);
       updateScrollBars();
       return res;
     }
