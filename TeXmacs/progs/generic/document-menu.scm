@@ -279,7 +279,8 @@
       ("Statement" (init-page-type "statement"))
       ("Tabloid" (init-page-type "tabloid")))
   (-> "Beamer"
-      ("3:2" (init-page-type "3:2"))
+      ("8:5" (init-page-type "8:5"))
+      ;;("3:2" (init-page-type "3:2"))
       ("4:3" (init-page-type "4:3"))
       ("5:4" (init-page-type "5:4")))
   ---
