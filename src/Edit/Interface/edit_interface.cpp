@@ -172,8 +172,11 @@ edit_interface_rep::get_window_width () {
   widget me= ::get_canvas (widget (cvw));
   ::get_size (me, w, h);
   bool sb= (get_init_string (SCROLL_BARS) != "false");
-  string medium= get_init_string (PAGE_MEDIUM);
-  if (medium != "beamer" && sb) w -= scrollbar_width ();
+  if (full_screen) {
+    string medium= get_init_string (PAGE_MEDIUM);
+    if (medium == "automatic" || medium == "beamer") sb= false;
+  }
+  if (sb) w -= scrollbar_width ();
   return w;
 }
 
@@ -493,6 +496,7 @@ edit_interface_rep::apply_changes () {
 	notify_change (THE_ENVIRONMENT);
       }
     }
+  if (get_init_string (PAGE_MEDIUM) == "beamer" && full_screen) sb= 0;
   if (sb != cur_sb) {
     cur_sb= sb;
     if (has_current_window ())
@@ -573,10 +577,9 @@ edit_interface_rep::apply_changes () {
     w -= 2*PIXEL;
     h -= 2*PIXEL;
 #endif
-    bool sb= (get_init_string (SCROLL_BARS) != "false");
-    if (sb && ey2 - ey1 > h) w -= scrollbar_width ();
-    if (sb && ex2 - ex1 > w) h -= scrollbar_width ();
-    if (ex2 - ex1 < w) {
+    if (cur_sb && ey2 - ey1 > h) w -= scrollbar_width ();
+    if (cur_sb && ex2 - ex1 > w) h -= scrollbar_width ();
+    if (ex2 - ex1 <= w + PIXEL) {
       if (medium == "automatic" ||
           (medium == "beamer" && full_screen))
         ex2= ex1 + w;
@@ -588,7 +591,7 @@ edit_interface_rep::apply_changes () {
 #endif
       }
     }
-    if (ey2 - ey1 < h) {
+    if (ey2 - ey1 <= h + PIXEL) {
       if (medium == "papyrus" || medium == "automatic" ||
           (medium == "beamer" && full_screen))
         ey1= ey2 - h;
