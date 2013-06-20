@@ -144,8 +144,10 @@ scrollable_widget_rep::handle_get_coord2 (get_coord2_event ev) {
 void
 scrollable_widget_rep::handle_get_coord4 (get_coord4_event ev) {
   if      (ev->which == "visible") {
-    ev->c1= scx   ; ev->c2= scy -h;
-    ev->c3= scx+ w; ev->c4= scy;
+    ev->c1= scx - get_dx (grav, w);
+    ev->c2= scy - get_dy (grav, h) - h;
+    ev->c3= scx - get_dx (grav, w) + w;
+    ev->c4= scy - get_dy (grav, h);
   }
   else if (ev->which == "extents") {
     ev->c1= ex1; ev->c2= ey1;
