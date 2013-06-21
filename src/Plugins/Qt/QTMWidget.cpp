@@ -410,9 +410,10 @@ QTMWidget::scrollContentsBy ( int dx, int dy ) {
 
 void 
 QTMWidget::resizeEvent( QResizeEvent* event ) {
-    // Is this ok?
-  coord2 s = from_qsize(event->size());
-  the_gui -> process_resize(tm_widget(), s.x1, s.x2);
+  (void) event;
+  // Is this ok?
+  //coord2 s = from_qsize(event->size());
+  //the_gui -> process_resize(tm_widget(), s.x1, s.x2);
 
   // force_update();
 
@@ -423,6 +424,12 @@ QTMWidget::resizeEvent( QResizeEvent* event ) {
   //
   //Not having a force_update results in some lack of sync of the surface
   //while the user is actively resizing with the mouse.
+}
+
+void
+QTMWidget::resizeEventBis (QResizeEvent *event) {
+  coord2 s = from_qsize(event->size());
+  the_gui -> process_resize(tm_widget(), s.x1, s.x2);
 }
 
 

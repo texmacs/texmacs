@@ -60,6 +60,7 @@ protected:
   void updateScrollBars();
   void scrollContentsBy (int dx, int dy);
   
+  virtual void resizeEventBis (QResizeEvent *e);
   virtual bool viewportEvent (QEvent *e);
   virtual bool surfaceEvent (QEvent *e);
   virtual bool event (QEvent *e);

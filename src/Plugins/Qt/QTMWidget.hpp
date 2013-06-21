@@ -70,6 +70,7 @@ protected:
   virtual void mouseMoveEvent (QMouseEvent* event);
   virtual bool event (QEvent *event);
   virtual void resizeEvent (QResizeEvent *event);
+  virtual void resizeEventBis (QResizeEvent *e);
 
   virtual QVariant inputMethodQuery (Qt::InputMethodQuery query) const;
 

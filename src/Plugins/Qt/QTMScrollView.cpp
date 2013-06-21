@@ -244,12 +244,18 @@ QTMScrollView::event (QEvent *event) {
       QResizeEvent *re = static_cast<QResizeEvent*> (event);
       int h= re->size().height();
       updateScrollBars();
+      resizeEventBis (re);
       return res;
     }
     default:
       break;
   }
   return QAbstractScrollArea::event(event);
+}
+
+void
+QTMScrollView::resizeEventBis (QResizeEvent *event) {
+  (void) event;
 }
 
 /*
