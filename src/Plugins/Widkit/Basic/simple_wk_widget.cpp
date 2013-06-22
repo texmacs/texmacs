@@ -23,6 +23,11 @@ simple_widget_rep::simple_widget_rep ():
 * Empty handlers for redefinition later on
 ******************************************************************************/
 
+bool
+simple_widget_rep::is_editor_widget () {
+  return false;
+}
+
 void
 simple_widget_rep::handle_get_size_hint (SI& w, SI& h) {
   gui_root_extents (w, h);  

@@ -33,7 +33,8 @@
  */
 QTMScrollView::QTMScrollView (QWidget *_parent):
   QAbstractScrollArea (_parent),
-  p_extents(QRect(0,0,0,0))
+  editor_flag (false),
+  p_extents (QRect(0,0,0,0))
 {
   QWidget *_viewport = QAbstractScrollArea::viewport();
   _viewport->setBackgroundRole(QPalette::Mid);
@@ -65,7 +66,7 @@ QTMScrollView::setOrigin ( QPoint newOrigin ) {
 
 void 
 QTMScrollView::setExtents ( QRect newExtents ) {
-  QWidget *_viewport = QAbstractScrollArea::viewport();
+  //QWidget *_viewport = QAbstractScrollArea::viewport();
   //cout << "Inside  " << _viewport->width() << ", " << _viewport->height() << "\n";
   //cout << "Extents " << newExtents.width() << ", " << newExtents.height() << "\n";
   if (newExtents.width()  < 0) newExtents.setWidth (0);
@@ -135,6 +136,10 @@ QTMScrollView::updateScrollBars (void) {
   if (_vScrollBar->maximum() > _vScrollBar->minimum()) w += sbw;
   if (xw > w) h -= sbw;
   if (xh > h) w -= sbw;
+  if (!editor_flag) {
+    if (xw < w) xw= w;
+    if (xh < h) xh= h;
+  }
 
   int cw = (xw > w ? xw - w : 0);
   if (_hScrollBar->sliderPosition() > cw)
@@ -244,7 +249,6 @@ QTMScrollView::event (QEvent *event) {
     {
       bool res = QAbstractScrollArea::event(event);
       QResizeEvent *re = static_cast<QResizeEvent*> (event);
-      int h= re->size().height();
       updateScrollBars();
       resizeEventBis (re);
       return res;

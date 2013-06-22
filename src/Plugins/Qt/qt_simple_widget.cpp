@@ -27,6 +27,7 @@ qt_simple_widget_rep::as_qwidget () {
   SI width, height;
   handle_get_size_hint (width, height);
   QSize sz = to_qsize(width, height);
+  scrollarea()->editor_flag= is_editor_widget ();
   scrollarea()->setExtents (QRect (QPoint(0,0), sz));
   canvas()->resize(sz);
   return qwid;
@@ -37,6 +38,11 @@ qt_simple_widget_rep::as_qwidget () {
  * Empty handlers for redefinition by our subclasses editor_rep, 
  * box_widget_rep...
  ******************************************************************************/
+
+bool
+qt_simple_widget_rep::is_editor_widget () {
+  return false;
+}
 
 void
 qt_simple_widget_rep::handle_get_size_hint (SI& w, SI& h) {

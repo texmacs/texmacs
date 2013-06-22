@@ -246,6 +246,8 @@ widget refresh_widget (string tmwid, string kind= "any");
 * a simple_widget_rep class with the following virtual methods:
 ******************************************************************************/
 
+// bool simple_widget_rep::is_editor_widget ();
+//   should return true for editor widgets only
 // void simple_widget_rep::handle_get_size_hint (SI& w, SI& h);
 //   propose a size for the widget
 // void simple_widget_rep::handle_notify_resize (SI w, SI h);

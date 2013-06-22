@@ -33,6 +33,7 @@ class QPaintEvent;
 class QTMScrollView : public QAbstractScrollArea {
   Q_OBJECT
 
+  bool   editor_flag;   // Set to true for editor widgets
   QRect    p_extents;   // The size of the virtual area where things are drawn.
   QPoint    p_origin;   // The offset into that area
   QWidget* p_surface;   // Actual drawing area, centered (or not) in the scrollarea
@@ -66,6 +67,7 @@ protected:
   virtual bool event (QEvent *e);
 
   friend class QTMSurface;
+  friend class qt_simple_widget_rep;
 };
 
 

@@ -815,6 +815,11 @@ edit_interface_rep::search_selection (path start, path end) {
 * event handlers
 ******************************************************************************/
 
+bool
+edit_interface_rep::is_editor_widget () {
+  return true;
+}
+
 void
 edit_interface_rep::handle_get_size_hint (SI& w, SI& h) {
   gui_root_extents (w, h);
