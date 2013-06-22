@@ -85,14 +85,6 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     }
       break;
 
-    case SLOT_CANVAS_TYPE:
-    {
-      check_type<int>(val, s);
-      int p = open_box<int> (val);
-      (void) p;
-    }
-      break;
-    
     case SLOT_SIZE:
     {
       check_type<coord2>(val, s);

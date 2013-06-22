@@ -30,7 +30,6 @@ public:
 ******************************************************************************/
 
 class scrollable_widget_rep: public scroll_widget_rep {
-  int            kind;        // kind of padding around scrollable area
   SI             scx, scy;    // scroll x,y position
   SI             ex1, ey1;    // extents of scrolled window lo-left
   SI             ex2, ey2;    // extents of scrolled window hi-right

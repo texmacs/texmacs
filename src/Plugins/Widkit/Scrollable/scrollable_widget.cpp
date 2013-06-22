@@ -28,7 +28,6 @@ scrollable_widget_rep::scrollable_widget_rep (
     scroll_widget_rep (1, grav)
 {
   a[0]= child;
-  kind= CANVAS_DEFAULT;
   scx= 0; scy= 0;
   ex1= 0; ey1= 0;
   ex2= 0; ey2= 0;
@@ -182,8 +181,7 @@ scrollable_widget_rep::handle_scroll (scroll_event ev) {
 
 void
 scrollable_widget_rep::handle_set_integer (set_integer_event ev) {
-  if (ev->which == "canvas type") kind= ev->i;
-  else attribute_widget_rep::handle_set_integer (ev);
+  attribute_widget_rep::handle_set_integer (ev);
 }
 
 void
@@ -198,8 +196,6 @@ scrollable_widget_rep::handle_repaint (repaint_event ev) {
   SI sx2= a[0]->x2() - ox;
   SI sy2= a[0]->y2() - oy;
   color bg= layout_light (ren);
-  if (kind == CANVAS_DEFAULT) bg= white;
-  if (kind == CANVAS_BEAMER) bg= black;
   ren->set_background (bg);
   ren->set_pencil (bg);
   if (ev->x1 < sx1) ren->fill (ev->x1, my1, sx1, my2);

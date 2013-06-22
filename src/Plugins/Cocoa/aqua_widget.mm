@@ -417,9 +417,7 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
       [[sv documentView] setFrameSize: sz];
     }
     break;
-  case SLOT_CANVAS_TYPE:
-    break;
-  case SLOT_HEADER_VISIBILITY:
+ case SLOT_HEADER_VISIBILITY:
     {
       TYPE_CHECK (type_box (val) == type_helper<bool>::id);
       bool f= open_box<bool> (val);

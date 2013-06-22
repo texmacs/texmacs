@@ -26,8 +26,8 @@ gravity opposite (gravity grav);
 ******************************************************************************/
 
 class canvas_widget_rep: public basic_widget_rep {
+  //bool padding_flag; // should small canvasses be padded?
   bool request_focus; // request focus upon clicking in canvas
-  int kind;
   SI ex1, ey1, ex2, ey2;
   SI last_w, last_h;
   bool show_scroll_bars;
@@ -56,10 +56,11 @@ public:
 ******************************************************************************/
 
 canvas_widget_rep::canvas_widget_rep (wk_widget child, gravity grav, bool rf):
-  basic_widget_rep (1), request_focus (rf), show_scroll_bars (true)
+  basic_widget_rep (1),
+  //padding_flag (false),
+  request_focus (rf), show_scroll_bars (true)
 {
   a[0] = tm_new<scrollable_widget_rep> (child, grav);
-  kind = CANVAS_DEFAULT;
   hor  = tm_new<hor_scrollbar_widget_rep> (a[0]);
   ver  = tm_new<ver_scrollbar_widget_rep> (a[0]);
   a[0] << set_hor_bar (NULL); hor_active= false;
@@ -84,17 +85,16 @@ canvas_widget_rep::set_extents (SI Ex1, SI Ey1, SI Ex2, SI Ey2) {
   SI ww= w - (show_scroll_bars? (ver_active? 20*PIXEL: 2*PIXEL): 0);
   SI wh= h - (show_scroll_bars? (hor_active? 20*PIXEL: 2*PIXEL): 0);
   if (ew < ww) {
-    SI chw= ew;
-    if (kind == CANVAS_DEFAULT) chw= ww;
+    SI chw= ww;
+    //if (padding_flag) chw= ew;
     SI cxr= get_dx (grav, ww);
     SI cxc= Ex1 + get_dx (grav, chw);
     Ex1= cxc - cxr;
     Ex2= cxc - cxr + chw;
   }
   if (eh < wh) {
-    SI chh= eh;
-    if (kind == CANVAS_DEFAULT) chh= wh;
-    if (kind == CANVAS_PAPYRUS) chh= wh;
+    SI chh= wh;
+    //if (padding_flag) chh= eh;
     SI cyr= get_dy (grav, wh) + (wh - chh);
     SI cyc= Ey2 + get_dy (grav, chh);
     Ey1= cyc - cyr - chh;
@@ -222,13 +222,6 @@ canvas_widget_rep::handle_set_integer (set_integer_event ev) {
     if (((bool) ev->i) != show_scroll_bars) {
       show_scroll_bars= (bool) ev->i;
       set_extents (ex1, ey1, ex2, ey2);
-      if (attached ()) this << emit_invalidate_all ();
-    }
-  }
-  else if (ev->which == "canvas type") {
-    if (ev->i != kind) {
-      kind= ev->i;
-      a[0] << set_integer ("canvas type", kind);
       if (attached ()) this << emit_invalidate_all ();
     }
   }

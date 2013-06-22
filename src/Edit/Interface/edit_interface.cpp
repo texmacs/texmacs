@@ -561,12 +561,6 @@ edit_interface_rep::apply_changes () {
   // cout << "Handling extents\n";
   if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_EXTENTS)) {
     string medium= get_init_string (PAGE_MEDIUM);
-    int kind= CANVAS_PAPYRUS;
-    if (medium == "paper")
-      kind= CANVAS_PAPER;
-    else if (medium == "beamer")
-      kind= full_screen? CANVAS_BEAMER: CANVAS_PAPER;
-    SERVER (set_canvas_type (kind));
     SI ex1= eb->x1*magf, ey1= eb->y1*magf, ex2= eb->x2*magf, ey2= eb->y2*magf;
     abs_round (ex1, ey1);
     abs_round (ex2, ey2);

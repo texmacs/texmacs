@@ -365,8 +365,6 @@ void
 texmacs_widget_rep::handle_set_integer (set_integer_event ev) {
   if (ev->which == "scrollbars")
     THIS ["canvas"] << set_integer ("scrollbars", ev->i);
-  else if (ev->which == "canvas type")
-    THIS ["canvas"] << set_integer ("canvas type", ev->i);
   else WK_FAILED ("could not set integer attribute " * ev->which);
 }
 

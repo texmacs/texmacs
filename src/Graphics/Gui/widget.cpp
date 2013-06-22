@@ -44,7 +44,6 @@ slot_name (const slot s) {
     
     "SLOT_SHRINKING_FACTOR",
     "SLOT_EXTENTS",
-    "SLOT_CANVAS_TYPE",
     "SLOT_VISIBLE_PART",
     "SLOT_SCROLLBARS_VISIBILITY",
     "SLOT_SCROLL_POSITION",
