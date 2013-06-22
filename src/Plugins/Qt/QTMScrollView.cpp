@@ -126,30 +126,32 @@ QTMScrollView::updateScrollBars (void) {
   QScrollBar *_hScrollBar = QAbstractScrollArea::horizontalScrollBar();
   QScrollBar *_vScrollBar = QAbstractScrollArea::verticalScrollBar();
 
+  int xw = p_extents.width();
+  int xh = p_extents.height();
   int w  = _viewport->width() ; // -2
   int h  = _viewport->height(); // -2
   int sbw= scrollbar_width ();
   if (_hScrollBar->maximum() > _hScrollBar->minimum()) h += sbw;
   if (_vScrollBar->maximum() > _vScrollBar->minimum()) w += sbw;
-  if (p_extents.width()  > w) h -= sbw;
-  if (p_extents.height() > h) w -= sbw;
+  if (xw > w) h -= sbw;
+  if (xh > h) w -= sbw;
 
-  int cw = (p_extents.width() > w ? p_extents.width() - w : 0);
+  int cw = (xw > w ? xw - w : 0);
   if (_hScrollBar->sliderPosition() > cw)
     _hScrollBar->setSliderPosition(cw);
   _hScrollBar->setRange(0, cw);
   _hScrollBar->setSingleStep((w >> 4) + 1);
   _hScrollBar->setPageStep(w);
   
-  int ch = (p_extents.height() > h ? p_extents.height() - h : 0);
+  int ch = (xh > h ? xh - h : 0);
   if (_vScrollBar->sliderPosition() > ch)
     _vScrollBar->setSliderPosition(ch);
   _vScrollBar->setRange(0, ch);
   _vScrollBar->setSingleStep((h >> 4) + 1);
   _vScrollBar->setPageStep(h);
   
-  surface()->setMinimumWidth(w < p_extents.width()? w: p_extents.width());
-  surface()->setMinimumHeight(h < p_extents.height()? h: p_extents.height());
+  surface()->setMinimumWidth (w < xw? w: xw);
+  surface()->setMinimumHeight(h < xh? h: xh);
   
   // we may need a relayout if the surface width is changed
   updateGeometry();
