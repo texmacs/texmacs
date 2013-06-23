@@ -18,6 +18,8 @@
 #include <QBoxLayout>
 
 #include <QPaintEvent>
+#include <QStyle>
+#include <QApplication>
 
 /*! Constructor.
  
@@ -111,15 +113,6 @@ QTMScrollView::ensureVisible ( int cx, int cy, int mx, int my ) {
   setOrigin (QPoint(-dx, -dy));
 }
 
-static SI
-scrollbar_width () {
-#ifdef OS_MACOS
-  return 15;
-#else
-  return 22;
-#endif
-}
-
 /*! Scrollbar stabilization */
 void 
 QTMScrollView::updateScrollBars (void) {
@@ -131,7 +124,7 @@ QTMScrollView::updateScrollBars (void) {
   int xh = p_extents.height();
   int w  = _viewport->width() ; // -2
   int h  = _viewport->height(); // -2
-  int sbw= scrollbar_width ();
+  int sbw= qApp->style()->pixelMetric (QStyle::PM_ScrollBarExtent);
   if (_hScrollBar->maximum() > _hScrollBar->minimum()) h += sbw;
   if (_vScrollBar->maximum() > _vScrollBar->minimum()) w += sbw;
   if (xw > w) h -= sbw;

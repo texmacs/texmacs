@@ -153,18 +153,19 @@ edit_interface_rep::get_visible_height () {
   return vy2 - vy1;
 }
 
+#ifdef QTTEXMACS
+#include <QApplication>
+#include <QStyle>
 static SI
 scrollbar_width () {
-#ifdef QTTEXMACS
-#  ifdef OS_MACOS
-  return 17 * PIXEL;
-#  else
-  return 24 * PIXEL;
-#  endif
-#else
-  return 20 * PIXEL;
-#endif
+  return (qApp->style()->pixelMetric (QStyle::PM_ScrollBarExtent) + 2) * PIXEL;
 }
+#else
+static SI
+scrollbar_width () {
+  return 20 * PIXEL;
+}
+#endif
 
 SI
 edit_interface_rep::get_window_width () {
@@ -484,11 +485,7 @@ edit_interface_rep::apply_changes () {
       else ::get_size (widget (cvw), wx, wy);
       if (get_init_string (SCROLL_BARS) == "false") sb= 0;
       if (get_server () -> in_full_screen_mode ()) sb= 0;
-#ifdef QTTEXMACS
-      if (sb) wx -= 24 * PIXEL;
-#else
-      if (sb) wx -= 20 * PIXEL;
-#endif
+      if (sb) wx -= scrollbar_width();
       if (wx != cur_wx || wy != cur_wy) {
 	cur_wx= wx; cur_wy= wy;
 	init_env (PAGE_SCREEN_WIDTH, as_string ((SI) (wx/magf)) * "tmpt");
