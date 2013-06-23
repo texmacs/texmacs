@@ -112,7 +112,6 @@
 		49DEED27170ACFB800332D9F /* raster_picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49DEED20170ACFB800332D9F /* raster_picture.cpp */; };
 		49DEED28170ACFB800332D9F /* raster_picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49DEED20170ACFB800332D9F /* raster_picture.cpp */; };
 		49DEED2B170ACFDB00332D9F /* qt_picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49DEED29170ACFDB00332D9F /* qt_picture.cpp */; };
-		49DEED2C170ACFDB00332D9F /* qt_picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49DEED29170ACFDB00332D9F /* qt_picture.cpp */; };
 		49DEED2D170ACFDB00332D9F /* qt_picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49DEED29170ACFDB00332D9F /* qt_picture.cpp */; };
 		49DEED34170B110900332D9F /* x_picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49DEED32170B110900332D9F /* x_picture.cpp */; };
 		49EAD66C128AC177009919E5 /* QTMGuiHelper.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EAD66B128AC168009919E5 /* QTMGuiHelper.hpp */; };
@@ -5163,7 +5162,6 @@
 				4932C1A51704F54200E87D8C /* brush.cpp in Sources */,
 				49DEED24170ACFB800332D9F /* picture.cpp in Sources */,
 				49DEED27170ACFB800332D9F /* raster_picture.cpp in Sources */,
-				49DEED2C170ACFDB00332D9F /* qt_picture.cpp in Sources */,
 				49DEED34170B110900332D9F /* x_picture.cpp in Sources */,
 				491BB5961731182600A755DF /* enlightened.cpp in Sources */,
 				491BB5991731182600A755DF /* transformed.cpp in Sources */,
