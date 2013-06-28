@@ -1163,6 +1163,12 @@ latex_command_to_tree (tree t) {
     return tree (CHANGE_CASE, l2e (t[1]), "locase");
   if (is_tuple (t, "\\uppercase", 1) || is_tuple (t, "\\MakeUppercase", 1))
     return tree (CHANGE_CASE, l2e (t[1]), "UPCASE");
+  if (is_tuple (t, "\\selectlanguage", 1)) {
+    tree lang= l2e (t[1]);
+    if (lang == "ngermanb") lang= "german";
+    if (lang == "magyar") lang= "hungarian";
+    return tree (SET, "language", lang);
+  }
   if (is_tuple (t, "\\tmtextrm", 1)) return m2e (t, FONT_FAMILY, "rm");
   if (is_tuple (t, "\\tmtexttt", 1)) return m2e (t, FONT_FAMILY, "tt");
   if (is_tuple (t, "\\tmtextsf", 1)) return m2e (t, FONT_FAMILY, "ss");
