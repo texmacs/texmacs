@@ -240,7 +240,7 @@ collect_metadata_latex (tree t, array<tree>(*get_author_datas)(tree)) {
       abstract_data << collect_abstract_data (u);
   }
   if (!dated && maketitle)
-    doc_data << tuple ("\\doc-date", tree (APPLY, "date", ""));
+    doc_data << tuple ("\\doc-date", tree (APPLY, "\\date", ""));
   if (N(doc_notes) > 0) doc_data << doc_notes;
   if (N(doc_data) > 1) {
     r << doc_data;
