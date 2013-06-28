@@ -1054,6 +1054,8 @@
 	      ((== "par-right" var) (tmtex-make-parmod "0pt" val "0pt" arg))
 	      ((== "par-first" var) (tmtex-make-parmod "0pt" "0pt" val arg))
 	      ((== "par-par-sep" var) (tmtex-make-parsep val arg))
+              ((== var "language")
+               `(!group (!concat (selectlanguage ,val) " " ,arg)))
 	      ((== var "color")
                ;; TODO: define color when necessary
 	        (if (and (= (string-length val) 7) (char=? (string-ref val 0) #\#))
