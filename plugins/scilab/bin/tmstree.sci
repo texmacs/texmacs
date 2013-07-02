@@ -654,7 +654,4 @@ function s= makeStreeNode (l, x)
     end
   end
   s= scm + "(" + l + " " + strcat (x, " ") + ")";
-  disp("return:")
-  disp(s)
-  disp(length(s))
 endfunction

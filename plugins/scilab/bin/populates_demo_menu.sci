@@ -31,10 +31,7 @@ function populates_demo_menu ()
                               'expected.\n'), 'populates_demo_menu', 0));
   end
 
-  // Scilab demos are stored in the demolist variable
-  global ('demolist');
-
-function str= expand_paths (path)
+  function str= expand_paths (path)
     exec(path, -1);
     str= demolist2stree (subdemolist);
   endfunction
@@ -56,6 +53,9 @@ function str= expand_paths (path)
         disp(str(i))
     end
   endfunction
+
+  // Scilab demos are stored in the demolist variable
+  global ('demolist');
 
   for i= 1:size(demolist, 'r') do
     disp ("list:")
