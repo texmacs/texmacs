@@ -14,6 +14,7 @@ texmacs_path= getenv("TEXMACS_PATH");
 exec (fullfile (getenv("TEXMACS_PATH"), 'plugins/scilab/bin/tmstree.sci'), -1);
 exec (fullfile (getenv("TEXMACS_PATH"), 'plugins/scilab/bin/plotout.sci'), -1);
 exec (fullfile (getenv("TEXMACS_PATH"), 'plugins/scilab/bin/add_to_insert_menu.sci'), -1);
+exec (fullfile (getenv("TEXMACS_PATH"), 'plugins/scilab/bin/populates_demo_menu.sci'), -1);
 
 function tmsend (msg)
   DATA_BEGIN= ascii (2);
@@ -44,8 +45,6 @@ for i= 1:size (char_codes, '*') do
   deff('[]=%' + char_codes (i) + '_p(a)', "tmout (a)");
 end
 
-funcprot(1)
-
 function lst= scilab_lst_all (libr)
   lst= [];
   if argn (2) == 0 then
@@ -72,5 +71,8 @@ function scilab_complete (str, pos)
   lst= strsubst (lst, '%', '%%');
   tmsend (makeStreeNode ("tuple", [str;lst]'));
 endfunction
+
+//populates_demo_menu ();
+funcprot(1)
 
 banner

@@ -111,8 +111,8 @@ function str= tmstree(a)
     z= [];
     tmp= "";
     for i= 1:len (x) do
-      is_scheme= strindex (x(i), scm);
-      if is_scheme (1) == 1 then
+      is_scheme= (scm == part (x(i), 1:length(scm)));
+      if is_scheme then
         if tmp <> "" then
           z= append (z, tmp);
           tmp= "";
@@ -646,12 +646,15 @@ function s= makeStreeNode (l, x)
                               "%s expected."), "make", "string"));
   end
   for i= 1:size (x,'*') do
-    is_scheme= strindex (x(i), scm);
-    if is_scheme (1) == 1 then
+    is_scheme= (scm == part (x(i), 1:length(scm)));
+    if is_scheme then
       x(i)= part (x(i), length (scm):length (x(i)));
     else
-      x(i)= "'"" + x(i) + "'"";
+      x(i)= '""' + x(i) + '""';
     end
   end
   s= scm + "(" + l + " " + strcat (x, " ") + ")";
+  disp("return:")
+  disp(s)
+  disp(length(s))
 endfunction
