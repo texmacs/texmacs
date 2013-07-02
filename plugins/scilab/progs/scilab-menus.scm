@@ -34,30 +34,6 @@
     (with menu (filter (lambda (x) (!= (second x) libname)) oldmenu)
       (tm-define (scilab-insert-menu) `((-> "Insert" ,menu))))))
 
-(tm-define (stree->menu st func)
-  (cond
-    ((string? st) (lambda () (eval (func st))))
-    ((list-2? st) `(,(car st)
-                    ,@(map (lambda (x) (stree->menu x func)) (cdr st))))
-    ((list>1? st) `(-> ,(car st)
-                       ,@(map (lambda (x) (stree->menu x func)) (cdr st))))))
-
-(tm-define (scilab-add-to-demo-menu st)
-  (:secure #t)
-  (with menu `(,@(if (defined-menu? 'scilab-demo-menu)
-                     (caddar (scilab-demo-menu)) '())
-                ,(stree->menu
-                   st (lambda (x)
-                        `(insert ,(string-append "demo_run ('" x "')")))))
-    (tm-define (scilab-demo-menu) `((-> "Launch demo" ,menu)))))
-
-(tm-define (scilab-rm-from-demo-menu name)
-  (:secure #t)
-  (with oldmenu (if (defined-menu? 'scilab-demo-menu)
-                    (caddar (scilab-demo-menu)) '())
-    (with menu (filter (lambda (x) (!= (second x) name)) oldmenu)
-      (tm-define (scilab-demo-menu) `((-> "Launch demo" ,menu))))))
-
 (define (defined-menu? s)
   (and (defined? s) (list>1? (cdar ((eval s))))))
 
@@ -65,9 +41,9 @@
 ;; The Scilab menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind scilab-insert-menu (-> "Insert"))
-
-(menu-bind scilab-demo-menu (-> "Launch demo"))
+(menu-bind scilab-insert-menu
+  (-> "Insert"
+     ))
 
 (menu-bind scilab-menu
       (if (defined? 'scilab-demo-menu)

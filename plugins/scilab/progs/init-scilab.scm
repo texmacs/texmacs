@@ -11,11 +11,6 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (scilab-serializer lan t)
-  (with u (pre-serialize lan t)
-    (with s (texmacs->verbatim (stree->tree u))
-      (string-append  s  "\n"))))
-
 (define (scilab-commander s)
   (let* ((t (string->object s))
          (s (cadr t))
@@ -38,7 +33,6 @@
   (:launch ,(scilab-launcher))
   (:session "Scilab")
   (:commander ,scilab-commander)
-  (:serializer ,scilab-serializer)
   (:tab-completion #t))
 
 (tm-define (scilab-verbatim->tree t)
