@@ -1,4 +1,3 @@
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; MODULE      : latex-drd.scm
@@ -58,9 +57,9 @@
   footnote overline underline <sub> <sup> not left middle right
   big Big bigg Bigg bigl Bigl biggl Biggl
   bigm Bigm biggm Biggm bigr Bigr biggr Biggr
-  bar hat tilde widehat widetilde vec bm
-  grave acute check breve invbreve abovering mathring
-  dot ddot dddot ddddot mod pod pmod
+  bar Bar hat Hat tilde Tilde widehat widetilde vec Vec bm
+  grave Grave acute Acute check Check breve Breve invbreve abovering mathring
+  dot Dot ddot Ddot dddot ddddot mod pod pmod
   label ref pageref index hspace hspace* vspace vspace*
   mbox hbox textnormal text not substack
   ,(string->symbol "'") ,(string->symbol "`") ,(string->symbol "\"")

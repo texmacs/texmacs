@@ -1348,24 +1348,34 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\sqrt*", 2)) return tree (SQRT, l2e (t[2]), l2e (t[1]));
   if (is_tuple (t, "\\<sub>", 1)) return tree (RSUB, l2e (t[1]));
   if (is_tuple (t, "\\not", 1)) return tree (NEG, l2e (t[1]));
-  if (is_tuple (t, "\\bar", 1)) return tree (WIDE, l2e (t[1]), "<bar>");
+  if (is_tuple (t, "\\bar", 1) || is_tuple (t, "\\Bar", 1))
+    return tree (WIDE, l2e (t[1]), "<bar>");
   if (is_tuple (t, "\\overline", 1))
     return tree (WIDE, l2e (t[1]), "<bar>");
   if (is_tuple (t, "\\underline", 1))
     return tree (VAR_WIDE, l2e (t[1]), "<bar>");
-  if (is_tuple (t, "\\hat", 1)) return tree (WIDE, l2e (t[1]), "^");
-  if (is_tuple (t, "\\tilde", 1)) return tree (WIDE, l2e (t[1]), "~");
+  if (is_tuple (t, "\\hat", 1) || is_tuple (t, "\\Hat", 1))
+    return tree (WIDE, l2e (t[1]), "^");
+  if (is_tuple (t, "\\tilde", 1) || is_tuple (t, "\\Tilde", 1))
+    return tree (WIDE, l2e (t[1]), "~");
   if (is_tuple (t, "\\widehat", 1)) return tree (WIDE, l2e (t[1]), "^");
   if (is_tuple (t, "\\widetilde", 1)) return tree (WIDE, l2e (t[1]), "~");
-  if (is_tuple (t, "\\dot", 1)) return tree (WIDE, l2e (t[1]), "<dot>");
-  if (is_tuple (t, "\\ddot", 1)) return tree (WIDE, l2e (t[1]), "<ddot>");
+  if (is_tuple (t, "\\dot", 1) || is_tuple (t, "\\Dot", 1))
+    return tree (WIDE, l2e (t[1]), "<dot>");
+  if (is_tuple (t, "\\ddot", 1) || is_tuple (t, "\\Ddot", 1))
+    return tree (WIDE, l2e (t[1]), "<ddot>");
   if (is_tuple (t, "\\dddot", 1)) return tree (WIDE, l2e (t[1]), "<dddot>");
   if (is_tuple (t, "\\ddddot", 1)) return tree (WIDE, l2e (t[1]), "<ddddot>");
-  if (is_tuple (t, "\\check", 1)) return tree (WIDE, l2e (t[1]), "<check>");
-  if (is_tuple (t, "\\grave", 1)) return tree (WIDE, l2e (t[1]), "<grave>");
-  if (is_tuple (t, "\\acute", 1)) return tree (WIDE, l2e (t[1]), "<acute>");
-  if (is_tuple (t, "\\vec", 1)) return tree (WIDE, l2e (t[1]), "<vect>");
-  if (is_tuple (t, "\\breve", 1)) return tree (WIDE, l2e (t[1]), "<breve>");
+  if (is_tuple (t, "\\check", 1) || is_tuple (t, "\\Check", 1))
+    return tree (WIDE, l2e (t[1]), "<check>");
+  if (is_tuple (t, "\\grave", 1) || is_tuple (t, "\\Grave", 1))
+    return tree (WIDE, l2e (t[1]), "<grave>");
+  if (is_tuple (t, "\\acute", 1) || is_tuple (t, "\\Acute", 1))
+    return tree (WIDE, l2e (t[1]), "<acute>");
+  if (is_tuple (t, "\\vec", 1) || is_tuple (t, "\\Vec", 1))
+    return tree (WIDE, l2e (t[1]), "<vect>");
+  if (is_tuple (t, "\\breve", 1) || is_tuple (t, "\\Breve", 1))
+    return tree (WIDE, l2e (t[1]), "<breve>");
   if (is_tuple (t, "\\textroundcap", 1))
     return tree (WIDE, l2e (t[1]), "<invbreve>");
   if (is_tuple (t, "\\abovering", 1) || is_tuple (t, "\\mathring", 1))
