@@ -315,6 +315,7 @@ latex_symbol_to_tree (string s) {
       if (s == "th")     return "\xFE";
       if (s == "pounds") return "\xBF";
       if (s == "BlankLine")    return "\n";
+      if (s == "par")          return "\n";
       if (s == "AND")          return concat (tree (APPLY, "algo-and"), " ");
       if (s == "NOT")          return concat (tree (APPLY, "algo-not"), " ");
       if (s == "OR")           return concat (tree (APPLY, "algo-or"), " ");
@@ -378,7 +379,6 @@ latex_symbol_to_tree (string s) {
       if (s == ";")          return tree (SPACE, "0.27em");
       if (s == "quad")       return tree (SPACE, "1em");
       if (s == "qquad")      return tree (SPACE, "2em");
-      if (s == "par")        return tree (VSPACE, "1fn");
       if (s == "smallskip")  return tree (VSPACE, "0.5fn");
       if (s == "medskip")    return tree (VSPACE, "1fn");
       if (s == "bigskip")    return tree (VSPACE, "2fn");
