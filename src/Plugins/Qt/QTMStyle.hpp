@@ -14,6 +14,9 @@
 
 #include <QStyle>
 
+#define QTM_MINI_FONTSIZE 12 // also see uses of preference "gui:mini-fontsize"
+                             // toolbar creation and config should be in scheme
+
 #ifdef Q_WS_MAC
 #define UNIFIED_TOOLBAR
   // enable the unified toolbar style on the mac. To work properly this requires

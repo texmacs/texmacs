@@ -518,15 +518,15 @@ qt_ui_element_rep::as_qaction () {
       typedef quartet<string, int, color, bool> T;
       T x = open_box<T>(load);
       string str = x.x1;
-      int style = x.x2;
-      //color col = x.x3;
-      //bool tsp = x.x4;
+      int style  = x.x2;
+      //color col  = x.x3;
+      //bool tsp   = x.x4;
       
       // a text widget with a given color and transparency
 
-      QTMAction* a= new QTMAction (NULL);
+      QTMAction* a = new QTMAction (NULL);
       a->set_text (str);
-      a->setFont(to_qfont(style, a->font()));
+      a->setFont (to_qfont (style, a->font()));
       return a;
     }
       break;
@@ -773,8 +773,8 @@ qt_ui_element_rep::as_qwidget () {
 
       qt_widget wid = concrete(x.x1);
       QString sheet = to_qstylesheet(x.x2);
-      T1         widths = x.x3;
-      T1         heights = x.x4;
+      T1     widths = x.x3;
+      T1    heights = x.x4;
       
       qwid = wid->as_qwidget();
       qwid->setStyleSheet(sheet);
@@ -839,15 +839,15 @@ qt_ui_element_rep::as_qwidget () {
       if (concrete(w)->type == xpm_widget) {  // Toolbar button
         QAction*     a = as_qaction();        // Create key shortcuts and actions
         QTMUIButton* b = new QTMUIButton();
-        b->setDefaultAction(a);
-        a->setParent(b);
+        b->setDefaultAction (a);
+        a->setParent (b);
         qwid = b;
       } else { // text_widget
         QPushButton*     b = new QPushButton();
         QTMCommand* qtmcmd = new QTMCommand(b, cmd);
         QObject::connect (b, SIGNAL (clicked ()), qtmcmd, SLOT (apply ()));
         if (qw && concrete(w)->type == text_widget)
-          b->setText(static_cast<QLabel*>(qw)->text());
+          b->setText (static_cast<QLabel*> (qw)->text());
         b->setEnabled (! (style & WIDGET_STYLE_INERT));
         b->setFlat (! (style & WIDGET_STYLE_BUTTON));
         qwid = b;
@@ -923,8 +923,8 @@ qt_ui_element_rep::as_qwidget () {
       QString style = to_qstylesheet(x.x3);
       
       QCheckBox* w  = new QCheckBox (NULL);  
-      w->setCheckState(check ? Qt::Checked : Qt::Unchecked);
-      w->setStyleSheet(style);
+      w->setCheckState (check ? Qt::Checked : Qt::Unchecked);
+      w->setStyleSheet (style);
       
       command tcmd = tm_new<qt_toggle_command_rep> (w, cmd);
       QTMCommand* c = new QTMCommand (w, tcmd);

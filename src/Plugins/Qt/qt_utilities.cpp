@@ -9,6 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include "QTMStyle.hpp"
 #include "qt_utilities.hpp"
 
 #include <QImage>
@@ -49,10 +50,12 @@ operator << (tm_ostream& out, QRect rect) {
 
 QFont
 to_qfont (int style, QFont font) {
-  if (style & WIDGET_STYLE_MINI)  // use smaller text font inside widget
-    font.setPointSize(10);
+  if (style & WIDGET_STYLE_MINI) {  // use smaller text font inside widget
+    int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
+    font.setPointSize (fs > 0 ? fs : QTM_MINI_FONTSIZE);
+  }
   if (style & WIDGET_STYLE_MONOSPACED)  // use monospaced font inside widget
-    font.setFixedPitch(true);     //FIXME?
+    font.setFixedPitch (true);     //FIXME?
 //if (style & WIDGET_STYLE_GREY)  // use grey text font
 //    font.set += "color: #414141";
   if (style & WIDGET_STYLE_PRESSED)   // indicate that a button is currently pressed
@@ -70,8 +73,10 @@ to_qfont (int style, QFont font) {
 QString
 parse_tm_style (int style) {
   QString sheet;
-  if (style & WIDGET_STYLE_MINI)  // use smaller text font inside widget
-    sheet += "font-size: 10pt;";
+  if (style & WIDGET_STYLE_MINI) {  // use smaller text font inside widget
+    int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
+    sheet += QString("font-size: %1pt;").arg (fs > 0 ? fs : QTM_MINI_FONTSIZE);
+  }
   if (style & WIDGET_STYLE_MONOSPACED)  // use monospaced font inside widget
     sheet += "font-family: \"monospace\";";
   if (style & WIDGET_STYLE_GREY)  // use grey text font

@@ -12,6 +12,7 @@
 #include <QtGui>
 
 #include "analyze.hpp"
+#include "scheme.hpp"
 
 #include "qt_tm_widget.hpp"
 #include "qt_utilities.hpp"
@@ -151,12 +152,6 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   rightLabel= new QLabel (qt_translate ("Booting"), mw);
   leftLabel->setFrameStyle (QFrame::NoFrame);
   rightLabel->setFrameStyle (QFrame::NoFrame);
-  {
-    QFont f = leftLabel->font();
-    f.setPixelSize(12);
-    leftLabel->setFont(f);
-    rightLabel->setFont(f);
-  }
   bar->addWidget (leftLabel, 1);
   bar->addPermanentWidget (rightLabel);
   bar->setStyle (qtmstyle ());
@@ -173,7 +168,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   //    also at minimumSize, didn't notice it first time and spend lot of time
   //    trying to figure this out :)
   
-  bar->setMinimumWidth(2);
+  bar->setMinimumWidth (2);
   mw->setStatusBar (bar);
  
   // toolbars
@@ -419,6 +414,13 @@ qt_tm_widget_rep::update_visibility () {
   }
 #endif // UNIFIED_TOOLBAR
 #undef XOR
+  {
+    QFont f = leftLabel->font();
+    int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
+    f.setPixelSize (fs > 0 ? fs : QTM_MINI_FONTSIZE);
+    leftLabel->setFont(f);
+    rightLabel->setFont(f);
+  }
 }
 
 widget

@@ -185,20 +185,20 @@ QTMMinibarAction::QTMMinibarAction (QWidget* parent, array<widget>& arr)
  does not ever use the widget so it results in a waste of time.
  */
 QWidget*
-QTMMinibarAction::createWidget(QWidget* parent) {
+QTMMinibarAction::createWidget (QWidget* parent) {
   if (DEBUG_QT) cout << "QTMMinibarAction::createWidget\n";
   QWidget* wid= new QWidget (parent);
   QBoxLayout* l= new QBoxLayout (QBoxLayout::LeftToRight, wid);
   wid->setLayout (l);
     //  l->setSizeConstraint (QLayout::SetFixedSize);
   l->setContentsMargins (0, 0, 0, 0);
-  l->setSpacing(0);
+  l->setSpacing (0);
   for (int i=0; i < actions.count(); i++) {
     QAction* sa= actions[i];
-    if (QWidgetAction * wa = qobject_cast<QWidgetAction*>(sa)) {
+    if (QWidgetAction * wa = qobject_cast<QWidgetAction*> (sa)) {
       QWidget *w = wa->requestWidget(wid);
       l->addWidget(w);
-    } else if ((sa->text().isNull())&&(sa->icon().isNull())) {
+    } else if (sa->text().isNull() && sa->icon().isNull()) {
       l->addSpacing(8);
     } else {
       QToolButton *tb = new QToolButton(wid);
@@ -207,13 +207,14 @@ QTMMinibarAction::createWidget(QWidget* parent) {
         // if the action is checkable then it means that it should be checked
       sa->setChecked(sa->isCheckable());
       
-      tb->setDefaultAction(sa);
-      tb->setAutoRaise(true);
+      tb->setDefaultAction (sa);
+      tb->setAutoRaise (true);
       tb->setPopupMode (QToolButton::InstantPopup);
-      tb->setStyle(qtmstyle());
+      tb->setStyle (qtmstyle());
         //  tb->setIconSize(QSize(12,12));
       QFont f = tb->font();
-      f.setPixelSize(10);
+      int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
+      f.setPixelSize (fs > 0 ? fs : QTM_MINI_FONTSIZE);
       tb->setFont(f);
       l->addWidget(tb);
     }

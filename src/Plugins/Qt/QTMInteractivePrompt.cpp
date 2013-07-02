@@ -8,6 +8,8 @@
  * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
  ******************************************************************************/
 
+#include "scheme.hpp"
+
 #include "QTMInteractivePrompt.hpp"
 #include "QTMStyle.hpp"
 #include "qt_widget.hpp"
@@ -38,7 +40,8 @@ QTMInteractivePrompt::QTMInteractivePrompt(qt_widget int_prompt,
   setLayout (_hl);
   
   QFont f = font ();
-  f.setPointSize (11);
+  int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
+  f.setPointSize (fs > 0 ? fs : QTM_MINI_FONTSIZE);
   setFont (f);
 }
 
