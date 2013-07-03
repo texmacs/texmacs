@@ -41,6 +41,20 @@ remove_start_space (tree t) {
   else return t;
 }
 
+array<tree>
+search_defs (tree t) {
+  array<tree> r;
+  if (is_atomic (t));
+  else if (is_compound (t, "assign", 2))
+    r << t[0] << t[1];
+  else {
+    int i, n= N(t);
+    for (i=0; i<n; i++)
+      r << search_defs (t[i]);
+  }
+  return r;
+}
+
 tree
 search_bib (tree t) {
   if (is_atomic (t)) return "";
@@ -76,6 +90,8 @@ bibtex_load_bbl (string bib, url bbl_file) {
   result= bibtex_update_encoding (result);
   int count=1;
   tree t= generic_to_tree (result, "latex-snippet");
+  tree with= tree (WITH);
+  with << search_defs (t);
   t= search_bib (t);
   if (t == "") return "";
   tree largest= t[0];
@@ -104,6 +120,10 @@ bibtex_load_bbl (string bib, url bbl_file) {
   }
 
   if (N(u) == 0) u= tree (DOCUMENT, "");
+  if (N(with) > 0) {
+    with << compound ("bib-list", largest, u);
+    return with;
+  }
   return compound ("bib-list", largest, u);
 }
 
