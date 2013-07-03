@@ -47,6 +47,7 @@ void
 edit_process_rep::generate_bibliography (
   string bib, string style, string fname)
 {
+  system_wait ("Generating bibliography, ", "please wait");
   if (DEBUG_AUTO)
     cout << "TeXmacs] Generating bibliography"
 	 << " [" << bib << ", " << style << ", " << fname << "]\n";
@@ -246,6 +247,7 @@ make_entry (tree& D, tree t) {
 
 void
 edit_process_rep::generate_index (string idx) {
+  system_wait ("Generating index, ", "please wait");
   if (DEBUG_AUTO)
     cout << "TeXmacs] Generating index [" << idx << "]\n";
   tree I= copy (buf->data->aux[idx]);
@@ -287,6 +289,7 @@ edit_process_rep::generate_index (string idx) {
 
 void
 edit_process_rep::generate_glossary (string gly) {
+  system_wait ("Generating glossary, ", "please wait");
   if (DEBUG_AUTO)
     cout << "TeXmacs] Generating glossary [" << gly << "]\n";
   tree G= copy (buf->data->aux[gly]);

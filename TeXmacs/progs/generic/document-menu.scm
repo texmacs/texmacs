@@ -303,6 +303,10 @@
 ;; The Document menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (wait-update-current-buffer)
+  (system-wait "Updating current buffer, " "please wait")
+  (update-current-buffer))
+
 (menu-bind document-menu
   (-> "Style" (link document-style-menu))
   (if (detailed-menus?)
@@ -601,10 +605,10 @@
 	      ("Other" (init-interactive-env "page-flexibility")))))
   ---
   (-> "Update"
-      ("All" (generate-all-aux) (inclusions-gc) (update-current-buffer))
+      ("All" (generate-all-aux) (inclusions-gc) (wait-update-current-buffer))
       ---
-      ("Buffer" (update-current-buffer))
-      ("Bibliography" (generate-all-aux) (update-current-buffer))
+      ("Buffer" (wait-update-current-buffer))
+      ("Bibliography" (generate-all-aux) (wait-update-current-buffer))
 ;;    ("Bibliography" (generate-aux "bibliography"))
       ("Table of contents" (generate-aux "table-of-contents"))
       ("Index" (generate-aux "index"))
