@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "Tex/convert_tex.hpp"
+#include "Bibtex/bibtex.hpp"
 #include "metadata.hpp"
 #include "scheme.hpp"
 #include "vars.hpp"
@@ -2820,6 +2821,10 @@ is_bibliography_command (tree t, tree& doc, string& bib_style) {
       tree begin (BEGIN, "bibliography");
       tree end (END, "bibliography");
       begin << "bib" << bib_style << t[1]->label;
+      url bbl= get_file_focus ();
+      bbl= glue (head (bbl) * basename (bbl, "tex"), "bbl");
+      if (exists (bbl))
+        begin << bibtex_load_bbl ("bib", bbl);
       doc << begin << end;
       return true;
     }
