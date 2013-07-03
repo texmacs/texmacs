@@ -566,6 +566,14 @@ tail (url u) {
 }
 
 string
+basename (url u, string suf) {
+  string s= as_string (tail (u));
+  if (suf != "" && N(s) > N(suf) && suf == s(N(s)-N(suf),N(s)))
+    return s(0, N(s)-N(suf));
+  return s;
+}
+
+string
 suffix (url u) {
   u= tail (u);
   if (!is_atomic (u)) return "";
