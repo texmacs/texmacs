@@ -121,23 +121,23 @@ bool is_ramdisc (url u);
 * operations on urls
 ******************************************************************************/
 
-url    head (url u);               // keep only the directory of the file
-url    tail (url u);               // keep only the file name without path
-string suffix (url u);             // get suffix of file
+url    head (url u);                 // keep only the directory of the file
+url    tail (url u);                 // keep only the file name without path
+string suffix (url u);               // get suffix of file
 string basename (url u, string suf); // get basename of file
-url    glue (url u, string s);     // glue suffix to url tail
-url    unglue (url u, int nr);     // remove nr chars from suffix
-url    unblank (url u);            // a/b/ -> a/b
-url    relative (url base, url u); // a/b, c -> a/c
-url    delta (url base, url u);    // relative (a, delta (a, b)) == b
-string get_root (url u);           // get root
-url    unroot (url u);             // remove root
-url    reroot (url u, string s);   // reroot using new protocol
-url    expand (url u);             // rewrite a/{b:c} -> a/b:a/c
-url    sort (url u);               // order items in ors
-url    factor (url u);             // inverse of expand; also sorts
-bool   descends (url u, url base); // does u descend from base?
-bool   is_secure (url u);          // is u secure?
+url    glue (url u, string s);       // glue suffix to url tail
+url    unglue (url u, int nr);       // remove nr chars from suffix
+url    unblank (url u);              // a/b/ -> a/b
+url    relative (url base, url u);   // a/b, c -> a/c
+url    delta (url base, url u);      // relative (a, delta (a, b)) == b
+string get_root (url u);             // get root
+url    unroot (url u);               // remove root
+url    reroot (url u, string s);     // reroot using new protocol
+url    expand (url u);               // rewrite a/{b:c} -> a/b:a/c
+url    sort (url u);                 // order items in ors
+url    factor (url u);               // inverse of expand; also sorts
+bool   descends (url u, url base);   // does u descend from base?
+bool   is_secure (url u);            // is u secure?
 
 /******************************************************************************
 * url resolution
