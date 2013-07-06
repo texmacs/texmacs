@@ -10,7 +10,7 @@ if [ x${QT_FRAMEWORKS_PATH}x == xx ]; then
 fi
 
 if [ x${QT_PLUGINS_PATH}x == xx ]; then
- if [exists $QT_FRAMEWORKS_PATH/plugins]; then 
+ if [ -e $QT_FRAMEWORKS_PATH/plugins ]; then 
   QT_PLUGINS_PATH=$QT_FRAMEWORKS_PATH/plugins;
  else 
   QT_PLUGINS_PATH=/Developer/Applications/Qt/plugins
@@ -36,8 +36,6 @@ function bundle_all_libs {
   done
 }
 
-
-
 function bundle_install_plugin {
   RELPATH=@executable_path/../Plugins/${2#${BUNDLE_PLUGINS}}
   echo Bundling plugin [$2] for [$1] relpath [${RELPATH}]
@@ -49,13 +47,13 @@ function bundle_install_plugin {
 
 function bundle_qt_plugins {
   echo Bundling Qt plugins for ${1}
-  cp -R ${QT_PLUGINS_PATH} ${BUNDLE_PLUGINS}
-  for lib in $( find ${BUNDLE_PLUGINS} -name \*.dylib -print ) ; do 
-	  bundle_install_plugin ${1} ${lib} $(basename ${lib})  
-  done
+  if [ -e ${QT_PLUGINS_PATH} ]; then
+    cp -R ${QT_PLUGINS_PATH} ${BUNDLE_PLUGINS}
+    for lib in $( find ${BUNDLE_PLUGINS} -name \*.dylib -print ) ; do 
+      bundle_install_plugin ${1} ${lib} $(basename ${lib})  
+    done
+  fi
 }
-
-
 
 function bundle_framework {
  if [ ! ${4##*/} == ${1##*/} ]; then
