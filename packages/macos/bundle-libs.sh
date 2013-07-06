@@ -32,8 +32,13 @@ function bundle_install_lib {
 function bundle_all_libs {
   echo Bundling all for ${1}
   for lib in $( otool -L ${1}  | grep -o '/\(opt\|sw\|Users\|usr/local\)/.*/lib[^/]*dylib' ) ; do 
-	bundle_install_lib ${1} ${lib} $(basename ${lib})  
+    bundle_install_lib ${1} ${lib} $(basename ${lib})  
   done
+    # Force bundling of (system) libltdl (changed in OSX 10.8)
+  for lib in $( otool -L ${1}  | grep -o '/\(opt\|sw\|usr\)/.*/libltdl[^/]*dylib' ) ; do 
+    bundle_install_lib ${1} ${lib} $(basename ${lib})  
+  done
+
 }
 
 function bundle_install_plugin {
