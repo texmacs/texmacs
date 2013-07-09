@@ -40,6 +40,32 @@ tmg_version_beforeP (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_check_updates_background (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "check-updates-background");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= check_updates_background (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_check_updates_foreground (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "check-updates-foreground");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= check_updates_foreground (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_os_win32P () {
   // TMSCM_DEFER_INTS;
   bool out= os_win32 ();
@@ -6965,6 +6991,8 @@ void
 initialize_glue_basic () {
   tmscm_install_procedure ("texmacs-version-release",  tmg_texmacs_version_release, 1, 0, 0);
   tmscm_install_procedure ("version-before?",  tmg_version_beforeP, 2, 0, 0);
+  tmscm_install_procedure ("check-updates-background",  tmg_check_updates_background, 1, 0, 0);
+  tmscm_install_procedure ("check-updates-foreground",  tmg_check_updates_foreground, 1, 0, 0);
   tmscm_install_procedure ("os-win32?",  tmg_os_win32P, 0, 0, 0);
   tmscm_install_procedure ("os-mingw?",  tmg_os_mingwP, 0, 0, 0);
   tmscm_install_procedure ("os-macos?",  tmg_os_macosP, 0, 0, 0);

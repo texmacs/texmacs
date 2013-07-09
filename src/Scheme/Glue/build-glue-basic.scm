@@ -19,6 +19,8 @@
 
   (texmacs-version-release texmacs_version (string string))
   (version-before? version_inf (bool string string))
+  (check-updates-background check_updates_background (bool url))
+  (check-updates-foreground check_updates_foreground (bool url))	
   (os-win32? os_win32 (bool))
   (os-mingw? os_mingw (bool))
   (os-macos? os_macos (bool))

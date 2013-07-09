@@ -40,6 +40,8 @@ CXXSQLITE3 = @SQLITE3_CFLAGS@
 CXXFREETYPE = @FREETYPE_CFLAGS@
 CXXICONV = @ICONV_CFLAGS@
 CXXGUILE = @GUILE_CFLAGS@
+CXXSPARKLE = @SPARKLE_CFLAGS@
+
 LD = @CXX@
 LDFLAGS = @LDFLAGS@ @CONFIG_BFLAGS@ @QT_LDFLAGS@
 LDRT = @CONFIG_LDRT@
@@ -58,6 +60,8 @@ LDSQLITE3 = @SQLITE3_LDFLAGS@
 LDFREETYPE = @FREETYPE_LDFLAGS@
 LDICONV = @ICONV_LDFLAGS@
 LDGUILE = @GUILE_LDFLAGS@
+LDSPARKLE = @SPARKLE_LDFLAGS@
+
 AR = ar
 ARFLAGS = -r
 RM = rm -f
@@ -100,11 +104,11 @@ system_src   := $(call findsrc,System)
 data_src     := $(call findsrc,Data)
 graphics_src := $(call findsrc,Graphics)
 plugins_src  := $(call findsrc_in,Plugins,Bibtex Cairo Imlib2 Sqlite3 \
-                                          Ispell Metafont Openssl @CONFIG_PDF@)
+                                          Ispell Metafont Openssl Updater @CONFIG_PDF@)
 plugins_c_src:= $(call findc_in,Plugins,@CONFIG_PDF@)
 x11_src      := $(call findsrc_in,Plugins,@CONFIG_X11@)
 cocoa_m_src  := $(call findm_in,Plugins,@CONFIG_COCOA@ @CONFIG_MACOS@)
-cocoa_mm_src := $(call findmm_in,Plugins,@CONFIG_COCOA@ @CONFIG_MACOS@)
+cocoa_mm_src := $(call findmm_in,Plugins,@CONFIG_COCOA@ @CONFIG_MACOS@ Updater)
 os_src       := $(call findsrc_in,Plugins,@CONFIG_OS_COMPAT@)
 qt_src       := $(call findsrc_in,Plugins,@CONFIG_QT@)
 gs_src       := $(call findsrc_in,Plugins,@CONFIG_GS@)
@@ -112,7 +116,7 @@ style_src    := $(call findsrc_in,Style,@CONFIG_EXPERIMENTAL@)
 typeset_src  := $(call findsrc,Typeset)
 edit_src     := $(call findsrc,Edit)
 texmacs_src  := $(call findsrc,Texmacs)
-scheme_src    := $(call findsrc_in,Scheme,Scheme Guile)
+scheme_src   := $(call findsrc_in,Scheme,Scheme Guile)
 freetype_src := $(call findsrc_in,Plugins,Freetype)
 
 # Each makefile will have its own Deps directory. Okay that is a bit
@@ -296,7 +300,8 @@ $(scheme_obj): Objects/%.o: %.cpp
 $(graphics_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(graphics_incl))
 $(plugins_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(plugins_incl) $(CXXAXEL) $(CXXCAIRO) $(CXXIMLIB2) $(CXXSQLITE3) $(CXXICONV)  $(CXXX11))
+	$(call cxx_incl,$(plugins_incl) $(CXXAXEL) $(CXXCAIRO) $(CXXIMLIB2) $(CXXSQLITE3) $(CXXICONV) \
+                  $(CXXSPARKLE) $(CXXX11) )
 $(plugins_c_obj): Objects/%.o: %.c
 	$(call cc_incl,$(plugins_incl))
 $(x11_obj): Objects/%.o: %.cpp
@@ -312,7 +317,7 @@ $(gs_obj): Objects/%.o: %.cpp
 $(cocoa_m_obj): Objects/%.o: %.m
 	$(call cxx_incl,$(cocoa_incl) $(CXXCOCOA))
 $(cocoa_mm_obj): Objects/%.o: %.mm
-	$(call cxx_incl,$(cocoa_incl) $(CXXCOCOA))
+	$(call cxx_incl,$(cocoa_incl) $(CXXCOCOA) $(CXXSPARKLE))
 $(texmacs_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(texmacs_incl))
 $(typeset_obj): Objects/%.o: %.cpp
@@ -383,7 +388,7 @@ TEXMACS_objects := $(strip $(call uses,system kernel data graphics\
  plugins x11 os qt gs cocoa style typeset edit scheme texmacs freetype))
 
 link_options:=-L$(tmsrc)/lib $(LDRT) -lm $(LDPATH) $(LDGUI) $(LDGUILE) \
-  $(LDAXEL) $(LDCAIRO) $(LDIMLIB2) $(LDSQLITE3) $(LDFREETYPE) $(LDICONV) $(LDDL)
+  $(LDAXEL) $(LDCAIRO) $(LDIMLIB2) $(LDSQLITE3) $(LDFREETYPE) $(LDICONV) $(LDDL) $(LDSPARKLE)
 
 $(tmsrc)/bin/texmacs.bin: Objects/texmacs-$(link).bin
 	$(CP) $^ $@
