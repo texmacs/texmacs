@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3>
+<TeXmacs|1.0.7.19>
 
 <style|tmdoc>
 
@@ -91,7 +91,7 @@
   Breton Saunders, Claire Sausset, David Sauzin, Gilles Schaeffer, Guido
   Schimmels, Rainer Schöpf, David Schweikert, Stefan Schwertheim, Rui Miguel
   Seabra, Chung-Tsun Shieh, Sami Sieranoja, Vasco Alexandre da Silva Costa,
-  Marciano Siniscalchi, Daniel Skarda, Murray Smigel, Vaclav Smilauer, Dale
+  Marciano Siniscalchi, Daniel Skarda, Murray Smigel, Václav ’milauer, Dale
   P. Smith, Luke Snow, René Snyders, Pekka Sorjonen, Kasper Souren, Rodney
   Sparapani, Bas Spitters, Bas Spitters, Ivan Stanisavljevic, Starseeker,
   Harvey J. Stein, Peter Sties, Bernard Stloup, Peter Stoehr, Thierry Stoehr,
@@ -120,27 +120,6 @@
 
 <\initial>
   <\collection>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|sfactor|4>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
     <associate|language|english>
-    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|idx-1|<tuple|<uninit>|?>>
-    <associate|toc-1|<tuple|<uninit>|?>>
-    <associate|toc-2|<tuple|<uninit>|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
-  </collection>
-</references>

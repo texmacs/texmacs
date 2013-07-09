@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.17>
+<TeXmacs|1.0.7.19>
 
 <style|tmdoc>
 
@@ -20,8 +20,9 @@
     <item>François Poulain works on the <LaTeX> converters and character
     transcodings.
 
-    <item>Miguel Benito Delgado works on the <name|Qt> port and automatic
-    documentation of the <name|Scheme> files.
+    <item>Miguel de Benito Delgado works on the <name|Qt> port, the usage of
+    <TeXmacs> to develop and browse its <name|Scheme> code and general minor
+    improvements to the user experience.
 
     <item>Henri Lesourd developed a native mode for drawing technical
     pictures inside <TeXmacs>. He also fixed a bug in the presentation mode.
