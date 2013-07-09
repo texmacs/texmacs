@@ -1,105 +1,146 @@
 #!/bin/bash 
 
-EXECUTABLE=${1}
-BUNDLE_RESOURCES=${1%/*}/../Resources
-BUNDLE_FRAMEWORKS=${1%/*}/../Frameworks
-BUNDLE_PLUGINS=${1%/*}/../Plugins
+BASEDIR=$(dirname $1)
+EXECUTABLE=$(basename $1)
+BUNDLE_RESOURCES=../Resources
+BUNDLE_FRAMEWORKS=../Frameworks
+BUNDLE_PLUGINS=../Plugins
 
-if [ x${QT_FRAMEWORKS_PATH}x == xx ]; then
+if [ ! "$QT_FRAMEWORKS_PATH" ]; then
   QT_FRAMEWORKS_PATH=/Library/Frameworks
 fi
 
-if [ x${QT_PLUGINS_PATH}x == xx ]; then
- if [ -e $QT_FRAMEWORKS_PATH/plugins ]; then 
-  QT_PLUGINS_PATH=$QT_FRAMEWORKS_PATH/plugins;
- else 
-  QT_PLUGINS_PATH=/Developer/Applications/Qt/plugins
- fi
+if [ ! "$QT_PLUGINS_PATH" ]; then
+  if [ -e "$QT_FRAMEWORKS_PATH/plugins" ]; then 
+    QT_PLUGINS_PATH=$QT_FRAMEWORKS_PATH/plugins
+  else 
+    QT_PLUGINS_PATH=/Developer/Applications/Qt/plugins
+  fi
 fi
 
-echo Qt Frameworks path [$QT_FRAMEWORKS_PATH]
+echo Qt Frameworks path: [$QT_FRAMEWORKS_PATH]
 
 function bundle_install_lib {
-  echo Bundling [$2] in [${BUNDLE_RESOURCES}/lib/$3] for [$1]
-  if [ ! -f ${BUNDLE_RESOURCES}/lib/${3} ]; then
+  target=$1
+  libpath=$2
+  libdest=${BUNDLE_RESOURCES}/lib/$(basename $2)
+  newidname="@executable_path/../Resources/lib/$3"
+
+  echo Bundling [$libpath] in [$libdest] for [$target]
+  
+  if [ ! -f $libdest ]; then
     cp ${2} ${BUNDLE_RESOURCES}/lib
   fi
-  install_name_tool -id @executable_path/../Resources/lib/${3} ${BUNDLE_RESOURCES}/lib/${3}
-  bundle_all_libs ${BUNDLE_RESOURCES}/lib/${3}
-  install_name_tool -change ${2} @executable_path/../Resources/lib/${3} ${1}
+
+  install_name_tool -id $newidname $libdest
+  bundle_all_libs $libdest
+  install_name_tool -change $libpath $newidname $target
 }
 
 function bundle_all_libs {
-  echo Bundling all for ${1}
-  for lib in $( otool -L ${1}  | grep -o '/\(opt\|sw\|Users\|usr/local\)/.*/lib[^/]*dylib' ) ; do 
-    bundle_install_lib ${1} ${lib} $(basename ${lib})  
-  done
-    # Force bundling of (system) libltdl (changed in OSX 10.8)
-  for lib in $( otool -L ${1}  | grep -o '/\(opt\|sw\|usr\)/.*/libltdl[^/]*dylib' ) ; do 
-    bundle_install_lib ${1} ${lib} $(basename ${lib})  
+  target=$1
+  echo Bundling all libraries for $target
+  for lib in $( otool -L $target  | grep -o '/\(opt\|sw\|Users\|usr/local\)/.*/lib[^/]*dylib' ) ; do 
+    bundle_install_lib "$target" "$lib"
   done
 
+  # Force bundling of (system) libltdl (changed in OSX 10.8)
+  for lib in $( otool -L $target | grep -o '/usr/lib/libltdl[^/]*dylib' ) ; do 
+    bundle_install_lib "$target" "$lib"
+  done
 }
 
 function bundle_install_plugin {
-  RELPATH=@executable_path/../Plugins/${2#${BUNDLE_PLUGINS}}
-  echo Bundling plugin [$2] for [$1] relpath [${RELPATH}]
-  install_name_tool -id ${RELPATH} ${2}
-  install_name_tool -change ${3} ${RELPATH} ${1}
-  bundle_all_libs ${2}
-  bundle_qt_frameworks ${2}
+  target=$1
+  pluginpath=$2
+  pluginname=$(basename $2)
+  newidname=@executable_path/../Plugins/${pluginpath#${BUNDLE_PLUGINS}}
+
+  echo Bundling plugin [$pluginpath] for [$target] with relative path [$relpath]
+
+  install_name_tool -id $relpath $pluginpath
+  install_name_tool -change $pluginname $relpath $target
+  bundle_all_libs $pluginpath
+  bundle_qt_frameworks $pluginpath
 }
 
 function bundle_qt_plugins {
-  echo Bundling Qt plugins for ${1}
-  if [ -e ${QT_PLUGINS_PATH} ]; then
-    cp -R ${QT_PLUGINS_PATH} ${BUNDLE_PLUGINS}
-    for lib in $( find ${BUNDLE_PLUGINS} -name \*.dylib -print ) ; do 
-      bundle_install_plugin ${1} ${lib} $(basename ${lib})  
+  target=$1
+  echo Bundling Qt plugins for $target
+  if [ -e "$QT_PLUGINS_PATH" ]; then
+    cp -R "$QT_PLUGINS_PATH" "$BUNDLE_PLUGINS"
+    for lib in $( find "$BUNDLE_PLUGINS" -name \*.dylib -print ) ; do 
+      bundle_install_plugin "$1" "$lib"
     done
   fi
 }
 
 function bundle_framework {
- if [ ! ${4##*/} == ${1##*/} ]; then
-  echo Bundling Framework [${2}] to [${3}/Versions/${4}] for [${1}]
-  if [ ! -e ${BUNDLE_FRAMEWORKS}/${3} ]; then
-    mkdir ${BUNDLE_FRAMEWORKS}/${3}
-    mkdir ${BUNDLE_FRAMEWORKS}/${3}/Versions
-    mkdir ${BUNDLE_FRAMEWORKS}/${3}/Versions/4
-    ln -s 4 ${BUNDLE_FRAMEWORKS}/${3}/Versions/Current
-    ln -s 4 ${BUNDLE_FRAMEWORKS}/${3}/Versions/4.0
-#    lipo -thin $ARCH ${2}/Versions/${4} -output ${BUNDLE_FRAMEWORKS}/${3}/Versions/${4}
-    cp ${2}/Versions/${4} ${BUNDLE_FRAMEWORKS}/${3}/Versions/${4}
-    if [ -e  ${2}/Versions/4/Resources ]; then
-      cp -R ${2}/Versions/4/Resources ${BUNDLE_FRAMEWORKS}/${3}/Versions/4
-      ln -s Versions/4/Resources ${BUNDLE_FRAMEWORKS}/${3}/Resources
+  target=$1
+  fpath=$2
+  flinked=$3
+
+  ffullname=${fpath##*/}
+  fbasename=${ffullname%.framework}
+  tmp=${flinked#*Versions/}
+  fversion=${tmp%/*}
+
+  if [ ! "$fbasename" == "${target##*/}" ]; then
+    echo Bundling Framework [$fpath] to [$BUNDLE_FRAMEWORKS/$ffullname] for [$target]
+    if [ ! -e "$BUNDLE_FRAMEWORKS/$ffullname/Versions/$fversion$" ]; then
+      mkdir -p "$BUNDLE_FRAMEWORKS/$ffullname/Versions/$fversion"
+      ln -s "$fversion" "$BUNDLE_FRAMEWORKS/$ffullname/Versions/Current"
+      #lipo -thin $ARCH $fpath/Versions/$fversion/$fbasename 
+      #     -output $BUNDLE_FRAMEWORKS/$fname/Versions/$fversion/$fbasename
+      cp "$fpath/Versions/$fversion/$fbasename" \
+         "$BUNDLE_FRAMEWORKS/$ffullname/Versions/$fversion/$fbasename"
+      if [ -e "$fpath/Versions/$fversion/Resources" ]; then
+        cp -R "$fpath/Versions/$fversion/Resources" \
+              "$BUNDLE_FRAMEWORKS/$ffullname/Versions/$fversion/Resources"
+        ln -s "Versions/$fversion/Resources" "$BUNDLE_FRAMEWORKS/$ffullname/Resources"
+      fi
+      bundle_qt_frameworks "$BUNDLE_FRAMEWORKS/$ffullname/Versions/$fversion/$fbasename"
     fi
-    bundle_qt_frameworks ${BUNDLE_FRAMEWORKS}/${3}/Versions/${4}
+    newid=@executable_path/../Frameworks/$ffullname/Versions/$fversion/$fbasename
+    install_name_tool -id "$newid" "$BUNDLE_FRAMEWORKS/$ffullname/Versions/$fversion/$fbasename"
+    install_name_tool -change "$flinked" "$newid" "$target"
   fi
-  install_name_tool -id @executable_path/../Frameworks/${3}/Versions/${4} ${BUNDLE_FRAMEWORKS}/${3}/Versions/${4}
-  install_name_tool -change ${5} @executable_path/../Frameworks/${3}/Versions/${4} ${1} 
- fi
 }
 
 function bundle_qt_frameworks {
-  if [ ! -e ${BUNDLE_FRAMEWORKS} ]; then
-    mkdir ${BUNDLE_FRAMEWORKS}
-  fi
-  for f in $( otool -L ${1}  | grep -o '\(.*Qt.*\.framework/Versions/[^: ]*\) ' ) ; do 
-    fname=${f%%/Versions/*}
-    if [ ! -e ${fname} ]; then
-      if [ -e ${QT_FRAMEWORKS_PATH}/${fname} ]; then
-        fname=${QT_FRAMEWORKS_PATH}/${fname}
+  target=$1
+  mkdir -p "$BUNDLE_FRAMEWORKS"
+  for f in $( otool -L ${1}  | grep -o '\(.*Qt.*\.framework/Versions/[^: ]*\) ' ) ; do
+    fpath=${f%%/Versions/*}
+    if [ ! -e "$fpath" ]; then
+      if [ -e ${QT_FRAMEWORKS_PATH}/${fpath} ]; then
+        fpath=${QT_FRAMEWORKS_PATH}/${fpath}
       fi
     fi 
-    if [ -e ${fname} ]; then
-  	  bundle_framework  ${1} ${fname} ${fname##*/} ${f#*Versions/} ${f}
+    if [ -e "$fpath" ]; then
+      bundle_framework $target $fpath $f
     fi
   done
 }
 
+function bundle_other_frameworks {
+  target=$1
+  fbasename=$2
 
+  mkdir -p ${BUNDLE_FRAMEWORKS}
+  for f in $( otool -L $target  | grep -o ".*${fbasename}.framework/Versions/[^: ]* " ) ; do 
+    fpath=${f%%/Versions/*}
+    replace=@loader_path/../Frameworks
+    fpath=${fpath/$replace/$SPARKLE_FRAMEWORK_PATH}
+    if [ -e "$fpath" ]; then
+      bundle_framework $target $fpath $f
+    fi
+  done
+}
+
+cd "$BASEDIR"
 bundle_all_libs ${EXECUTABLE}
 bundle_qt_frameworks ${EXECUTABLE}
 bundle_qt_plugins ${EXECUTABLE}
+bundle_other_frameworks ${EXECUTABLE} "Sparkle"
+
