@@ -538,8 +538,10 @@ case "${host}" in
     SPARKLE_CFLAGS="$OBJCFLAGS"
     SPARKLE_LDFLAGS="$LDFLAGS"
     SPARKLE_FRAMEWORK_PATH="$with_sparkle"
+	CONFIG_SPARKLE="Updater"
 ],[
-    AC_MSG_RESULT(no)])
+    AC_MSG_RESULT(no)]
+	CONFIG_SPARKLE="")
     AC_LANG_POP([Objective C])
     ;;
 esac
@@ -551,7 +553,7 @@ LDFLAGS="$SAVE_LDFLAGS"
 AC_SUBST(SPARKLE_CFLAGS)
 AC_SUBST(SPARKLE_LDFLAGS)
 AC_SUBST(SPARKLE_FRAMEWORK_PATH)
-
+AC_SUBST(CONFIG_SPARKLE)
 
 #--------------------------------------------------------------------
 # Fixes for erroneous behaviour of gcc/g++ and guile on some systems
