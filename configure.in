@@ -520,6 +520,7 @@ changequote([, ])dnl
 
 SAVE_OBJCFLAGS="$OBJCFLAGS"
 SAVE_LDFLAGS="$LDFLAGS"
+SAVE_LIBS="$LIBS"
 if test "$with_sparkle" = "no" -o "$with_sparkle" = "" ; then
     AC_MSG_RESULT([disabling Sparkle usage])
 else
@@ -528,7 +529,8 @@ else
     AC_MSG_CHECKING([whether we can use the WinSparkle library])
     AC_LANG_PUSH([C])
     CFLAGS="-I $with_sparkle"
-    LDFLAGS="-L $with_sparkle -lwinsparkle"
+    LDFLAGS="-L $with_sparkle"
+    LIBS="-lwinsparkle"
     AC_TRY_LINK(
 [
 #include <winsparkle.h>
@@ -537,8 +539,8 @@ win_sparkle_init();
 ],[
     AC_MSG_RESULT(yes)
     AC_DEFINE(USE_SPARKLE, 1, [Use WinSparkle library])
-    SPARKLE_CFLAGS="$OBJCFLAGS"
-    SPARKLE_LDFLAGS="$LDFLAGS"
+    SPARKLE_CFLAGS="$CFLAGS"
+    SPARKLE_LDFLAGS="$LDFLAGS $LIBS"
     WINSPARKLE_DLL="WinSparkle*.dll"
 ],[
     AC_MSG_RESULT(no) ])
@@ -572,6 +574,7 @@ fi
 
 OBJFLAGS="$SAVE_CPPFLAGS"
 LDFLAGS="$SAVE_LDFLAGS"
+LIBS="$SAVE_LIBS"
 
 AC_SUBST(SPARKLE_CFLAGS)
 AC_SUBST(SPARKLE_LDFLAGS)
