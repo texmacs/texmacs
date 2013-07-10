@@ -38,7 +38,6 @@ tm_updater* tm_updater::instance (url _appcast_url)
         _instance->setAppcast (_appcast_url);
       } else {
         cout << "Updater] ERROR: unable to set appcast url of busy updater.\n";
-        return NULL;
       }
     }
   }
@@ -52,11 +51,11 @@ tm_updater* tm_updater::instance (url _appcast_url)
 bool check_updates_background (url appcast)
 {
   tm_updater* updater = tm_updater::instance (appcast);
-  return !updater->isRunning() && updater->checkInBackground();
+  return updater != NULL && !updater->isRunning() && updater->checkInBackground();
 }
 
 bool check_updates_foreground (url appcast)
 {
   tm_updater* updater = tm_updater::instance (appcast);
-  return !updater->isRunning() && updater->checkInForeground();
+  return updater != NULL && !updater->isRunning() && updater->checkInForeground();
 }

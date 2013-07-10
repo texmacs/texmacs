@@ -40,6 +40,11 @@ DEVEL_RELEASE="1"         # I think we should use SVNREV here
 STABLE_VERSION="1.0.7.19"
 STABLE_RELEASE="1"
 
+DEVEL_VERSION_MAJOR="1"   #testing
+DEVEL_VERSION_MINOR="8"
+AC_SUBST(DEVEL_VERSION_MINOR)
+AC_SUBST(DEVEL_VERSION_MAJOR)
+
 AC_SUBST(PACKAGE)
 AC_SUBST(DEVEL_VERSION)
 AC_SUBST(DEVEL_RELEASE)
@@ -518,9 +523,27 @@ SAVE_LDFLAGS="$LDFLAGS"
 if test "$with_sparkle" = "no" -o "$with_sparkle" = "" ; then
     AC_MSG_RESULT([disabling Sparkle usage])
 else
-case "${host}" in
-  *mingw*)  # TO DO
-  ;;
+  case "${host}" in
+  *mingw*)  
+    AC_MSG_CHECKING([whether we can use the WinSparkle framework])
+    AC_LANG_PUSH([C])
+    CFLAGS="-I $with_sparkle"
+    LDFLAGS="-L $with_sparkle -lwinsparkle"
+    AC_TRY_LINK(
+[
+#include <winsparkle.h>
+],[
+win_sparkle_init();
+],[
+    AC_MSG_RESULT(yes)
+    AC_DEFINE(USE_SPARKLE, 1, [Use WinSparkle framework])
+    SPARKLE_CFLAGS="$OBJCFLAGS"
+    SPARKLE_LDFLAGS="$LDFLAGS"
+    WINSPARKLE_DLL="WinSparkle*.dll"
+],[
+    AC_MSG_RESULT(no) ])
+    AC_LANG_POP([C])
+    ;;
   *apple*darwin*)
     AC_MSG_CHECKING([whether we can use the Sparkle framework])
     AC_LANG_PUSH([Objective C])
@@ -531,20 +554,20 @@ case "${host}" in
 #include <Cocoa/Cocoa.h>
 #include <Sparkle/Sparkle.h>
 ],[
-    SUUpdater* updater;
+SUUpdater* updater;
 ],[
     AC_MSG_RESULT(yes)
     AC_DEFINE(USE_SPARKLE, 1, [Use Sparkle framework])
     SPARKLE_CFLAGS="$OBJCFLAGS"
     SPARKLE_LDFLAGS="$LDFLAGS"
     SPARKLE_FRAMEWORK_PATH="$with_sparkle"
-	CONFIG_SPARKLE="Updater"
+    CONFIG_SPARKLE="Updater"
 ],[
     AC_MSG_RESULT(no)]
-	CONFIG_SPARKLE="")
+    CONFIG_SPARKLE="")
     AC_LANG_POP([Objective C])
     ;;
-esac
+  esac
 fi
 
 OBJFLAGS="$SAVE_CPPFLAGS"
@@ -1373,4 +1396,4 @@ AC_SUBST(tm_underscore_stable)
 #--------------------------------------------------------------------
 # Done
 #--------------------------------------------------------------------
-AC_OUTPUT(Makefile:Makefile.in src/makefile:src/makefile.in src/System/tm_configure.hpp:src/System/tm_configure.in misc/admin/admin.makefile:misc/admin/admin.makefile.in misc/doxygen/Doxyfile:misc/doxygen/Doxyfile.in misc/man/texmacs.1:misc/man/texmacs.1.in packages/redhat/TeXmacs.spec:packages/redhat/TeXmacs.spec.in misc/scripts/fig2ps:misc/scripts/fig2ps.in misc/scripts/texmacs:misc/scripts/texmacs.in TeXmacs/examples/plugins/dynlink/Makefile:TeXmacs/examples/plugins/dynlink/Makefile.in packages/macos/Base.xcconfig:packages/macos/Base.xcconfig.in packages/macos/Info-Xcode.plist:packages/macos/Info-Xcode.plist.in packages/macos/Info.plist:packages/macos/Info.plist.in packages/fedora/TeXmacs.spec:packages/fedora/TeXmacs.spec.in packages/mandriva/TeXmacs.spec:packages/mandriva/TeXmacs.spec.in packages/centos/TeXmacs.spec:packages/centos/TeXmacs.spec.in packages/windows/TeXmacs.iss:packages/windows/TeXmacs.iss.in packages/debian/changelog:packages/debian/changelog.in packages/debian/control:packages/debian/control.in)
+AC_OUTPUT(Makefile:Makefile.in src/makefile:src/makefile.in src/System/tm_configure.hpp:src/System/tm_configure.in misc/admin/admin.makefile:misc/admin/admin.makefile.in misc/doxygen/Doxyfile:misc/doxygen/Doxyfile.in misc/man/texmacs.1:misc/man/texmacs.1.in packages/redhat/TeXmacs.spec:packages/redhat/TeXmacs.spec.in misc/scripts/fig2ps:misc/scripts/fig2ps.in misc/scripts/texmacs:misc/scripts/texmacs.in TeXmacs/examples/plugins/dynlink/Makefile:TeXmacs/examples/plugins/dynlink/Makefile.in packages/macos/Base.xcconfig:packages/macos/Base.xcconfig.in packages/macos/Info-Xcode.plist:packages/macos/Info-Xcode.plist.in packages/macos/Info.plist:packages/macos/Info.plist.in packages/fedora/TeXmacs.spec:packages/fedora/TeXmacs.spec.in packages/mandriva/TeXmacs.spec:packages/mandriva/TeXmacs.spec.in packages/centos/TeXmacs.spec:packages/centos/TeXmacs.spec.in packages/windows/TeXmacs.iss:packages/windows/TeXmacs.iss.in packages/windows/resource.rc:packages/windows/resource.rc packages/debian/changelog:packages/debian/changelog.in packages/debian/control:packages/debian/control.in)

@@ -1,0 +1,39 @@
+appicon ICON "TeXmacs.ico"
+
+#include <winver.h>
+
+// Get updates from this appcast feed:
+FeedURL   APPCAST   {"http://www.texmacs.org/Download/ftp/tmftp/appcast.xml"}
+
+// Version information; this, too, is used by WinSparkle
+1 VERSIONINFO
+ FILEVERSION     @SVNREV@,0,0,0
+ PRODUCTVERSION  @DEVEL_VERSION_MAJOR@,@DEVEL_VERSION_MINOR@,0,0
+ FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
+ FILEFLAGS       0
+ FILEOS          VOS_NT_WINDOWS32
+ FILETYPE        VFT_APP
+ FILESUBTYPE     VFT2_UNKNOWN
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904B0" // US English, Unicode
+    BEGIN
+      VALUE "Comments", "TeXmacs, a scientific edition platform."
+      VALUE "CompanyName", "texmacs.org\0"
+      VALUE "FileDescription", "TeXmacsQt Windows\0"
+      VALUE "FileVersion", "@SVNREV@\0"
+      VALUE "InternalName", "texmacs\0"
+      VALUE "OriginalFilename", "texmacs.exe\0"
+      VALUE "LegalCopyright", "Licensed under GPLv3\0"
+      VALUE "ProductName", "TeXmacs\0"
+      VALUE "ProductVersion", "@DEVEL_VERSION@\0"
+    END
+  END
+
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x0409, 0x04B0
+  END
+END
+
