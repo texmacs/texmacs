@@ -525,7 +525,7 @@ if test "$with_sparkle" = "no" -o "$with_sparkle" = "" ; then
 else
   case "${host}" in
   *mingw*)  
-    AC_MSG_CHECKING([whether we can use the WinSparkle framework])
+    AC_MSG_CHECKING([whether we can use the WinSparkle library])
     AC_LANG_PUSH([C])
     CFLAGS="-I $with_sparkle"
     LDFLAGS="-L $with_sparkle -lwinsparkle"
@@ -536,7 +536,7 @@ else
 win_sparkle_init();
 ],[
     AC_MSG_RESULT(yes)
-    AC_DEFINE(USE_SPARKLE, 1, [Use WinSparkle framework])
+    AC_DEFINE(USE_SPARKLE, 1, [Use WinSparkle library])
     SPARKLE_CFLAGS="$OBJCFLAGS"
     SPARKLE_LDFLAGS="$LDFLAGS"
     WINSPARKLE_DLL="WinSparkle*.dll"
@@ -577,6 +577,7 @@ AC_SUBST(SPARKLE_CFLAGS)
 AC_SUBST(SPARKLE_LDFLAGS)
 AC_SUBST(SPARKLE_FRAMEWORK_PATH)
 AC_SUBST(CONFIG_SPARKLE)
+AC_SUBST(WINSPARKLE_DLL)
 
 #--------------------------------------------------------------------
 # Fixes for erroneous behaviour of gcc/g++ and guile on some systems
