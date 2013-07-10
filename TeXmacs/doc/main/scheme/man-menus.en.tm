@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.0.7.19>
 
 <style|tmdoc>
 
@@ -72,8 +72,8 @@
   <scm|texmacs-main-icons>, <scm|texmacs-mode-icons>,
   <scm|texmacs-focus-icons> and <scm|texmacs-extra-icons>. Other standard
   indirect menus are <scm|file-menu>, <scm|edit-menu>, <scm|insert-menu>,
-  <scm|text-menu>, <scm|paragraph-menu>, <scm|document-menu>,
-  <scm|options-menu> and <scm|help-menu>.
+  <scm|text-menu>, <scm|paragraph-menu>, <scm|document-menu> and
+  <scm|help-menu>.
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 

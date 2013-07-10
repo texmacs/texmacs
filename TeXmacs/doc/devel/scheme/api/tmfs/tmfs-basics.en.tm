@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.0.7.19>
 
 <style|tmdoc>
 
@@ -45,7 +45,7 @@
   procedures, one to handle the requests, another to create the document.
 
   <\session|scheme|default>
-    <\unfolded-io|Scheme] >
+    <\folded-io|Scheme] >
       (tm-define (simple-load header body)
 
       \ \ `(document
@@ -55,13 +55,9 @@
       \ \ \ \ \ (style (tuple "generic"))
 
       \ \ \ \ \ (body (document (section ,header) ,body))))
-    <|unfolded-io>
-      ((guile-user))
-    </unfolded-io>
-
-    <\input|Scheme] >
+    <|folded-io>
       \;
-    </input>
+    </folded-io>
   </session>
 
   As you can see, we don't do much other than creating a <TeXmacs> document.
@@ -70,7 +66,7 @@
   possible buffers.
 
   <\session|scheme|default>
-    <\unfolded-io|Scheme] >
+    <\folded-io|Scheme] >
       (tmfs-load-handler (simple qry)
 
       \ \ (let ((type (query-ref qry "type"))
@@ -88,9 +84,9 @@
 
       \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (string-append "Query
       unknown: " what)))))))
-    <|unfolded-io>
-      #\<less\>procedure #f (qry)\<gtr\>
-    </unfolded-io>
+    <|folded-io>
+      \;
+    </folded-io>
   </session>
 
   We can test this right away with:
@@ -111,22 +107,22 @@
   and the window's title using a <em|title handler>:
 
   <\session|scheme|default>
-    <\unfolded-io|Scheme] >
+    <\folded-io|Scheme] >
       (tmfs-permission-handler (simple name type)\ 
 
       \ \ (display* "Name= " name "\\nType= " type "\\n")
 
       \ \ #t)
-    <|unfolded-io>
-      #\<less\>procedure #f (name type)\<gtr\>
-    </unfolded-io>
+    <|folded-io>
+      \;
+    </folded-io>
 
-    <\unfolded-io|Scheme] >
+    <\folded-io|Scheme] >
       (tmfs-title-handler (simple qry doc) "Simple handler - Some title
       here")
-    <|unfolded-io>
-      #\<less\>procedure #f (qry doc)\<gtr\>
-    </unfolded-io>
+    <|folded-io>
+      \;
+    </folded-io>
   </session>
 
   <\explain>
@@ -220,3 +216,6 @@
 
   <tmdoc-copyright|2012|the <TeXmacs> team.>
 </body>
+
+<initial|<\collection>
+</collection>>

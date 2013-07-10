@@ -1,18 +1,18 @@
-<TeXmacs|1.0.1.11>
+<TeXmacs|1.0.7.19>
 
 <style|tmdoc>
 
 <\body>
-  <expand|tmdoc-title|The boxes produced by the typesetter>
+  <tmdoc-title|The boxes produced by the typesetter>
 
   <section|Introduction>
 
-  The <apply|TeXmacs> typesetter essentially translates a document
-  represented by a tree into a graphical box, which can either be displayed
-  on the screen or on a printer. Contrary to a system like <apply|LaTeX>, the
-  graphical box actually contains much more information than is necessary for
-  a graphical rendering. Roughly speaking, this information can be subdivided
-  into the following categories:
+  The <TeXmacs> typesetter essentially translates a document represented by a
+  tree into a graphical box, which can either be displayed on the screen or
+  on a printer. Contrary to a system like <LaTeX>, the graphical box actually
+  contains much more information than is necessary for a graphical rendering.
+  Roughly speaking, this information can be subdivided into the following
+  categories:
 
   <\itemize>
     <item>Logical and physical bounding boxes.
@@ -21,7 +21,7 @@
 
     <item>Miscellaneous typesetting information.
 
-    <item>Keeping track of the source subtree which led to box.
+    <item>Keeping track of the source subtree which led to the box.
 
     <item>Computing the positions of cursors and selections.
 
@@ -81,28 +81,27 @@
   More precisely, we have to deal with three kinds of paths:
 
   <\description>
-    <expand|item*|Tree paths.>These paths correspond to paths in the source
-    tree. Actually, the path minus its last item points to a subtree of the
-    source tree. The last item gives a position in this subtree: if the
-    subtree is a leaf, i.e. a string, it is a position in this string.
-    Otherwise a zero indicates a position before the subtree and a one a
-    position after the subtree.
+    <item*|Tree paths>These paths correspond to paths in the source tree.
+    Actually, the path minus its last item points to a subtree of the source
+    tree. The last item gives a position in this subtree: if the subtree is a
+    leaf, i.e. a string, it is a position in this string. Otherwise a zero
+    indicates a position before the subtree and a one a position after the
+    subtree.
 
-    <expand|item*|Inverse paths.>These are just reverted tree paths (with
-    shared tails), with an optional negative head. A negative head indicates
-    that the tree path is not accessible, i.e. the corresponding subtree does
-    not correspond to editable content. If the negative value is
-    <with|mode|math|-2>, <with|mode|math|-3> or <with|mode|math|-4>, then a
-    zero or one has to be put behind the tree path, depending on the value
-    and the cursor position.
+    <item*|Inverse paths>These are just reverted tree paths (with shared
+    tails), with an optional negative head. A negative head indicates that
+    the tree path is not accessible, i.e. the corresponding subtree does not
+    correspond to editable content. If the negative value is <math|-2>,
+    <math|-3> or <math|-4>, then a zero or one has to be put behind the tree
+    path, depending on the value and the cursor position.
 
-    <expand|item*|Box paths.>These paths correspond to logical paths in the
-    box tree. Again, the path minus its last item points to a subbox of the
-    main box, and the last item gives a position in this subtree: if the
-    subbox corresponds to a text box it is a position in this text. Otherwise
-    a zero indicates a position before the subbox and a one a position after
-    it. In the case of side boxes, a two and a three may also indicate the
-    position after the left script resp. before the right script.
+    <item*|Box paths>These paths correspond to logical paths in the box tree.
+    Again, the path minus its last item points to a subbox of the main box,
+    and the last item gives a position in this subtree: if the subbox
+    corresponds to a text box it is a position in this text. Otherwise a zero
+    indicates a position before the subbox and a one a position after it. In
+    the case of side boxes, a two and a three may also indicate the position
+    after the left script resp. before the right script.
   </description>
 
   <subsection|The conversion routines>
@@ -138,21 +137,19 @@
   <section|The cursor and selections>
 
   In order to fulfill the requirement of being a ``structured editor'',
-  <apply|TeXmacs> needs to provide a (reasonably) complete correspondence
-  between logical tree paths and physical cursor positions. This yields an
-  additional difficulty in the case of ``environment changes'', such as a
-  change in font or color. Indeed, when you are on the border of such a
-  change, it is not clear <with|font shape|italic|a priori> which environment
-  you are in.
+  <TeXmacs> needs to provide a (reasonably) complete correspondence between
+  logical tree paths and physical cursor positions. This yields an additional
+  difficulty in the case of ``environment changes'', such as a change in font
+  or color. Indeed, when you are on the border of such a change, it is not
+  clear <with|font-shape|italic|a priori> which environment you are in.
 
-  In <apply|TeXmacs>, the cursor position therefore contains an
-  <with|mode|math|x> and a <with|mode|math|y> coordinate, as well as an
-  additional infinitesimal <with|mode|math|x>-coordinate, called
-  <with|mode|math|\<delta\>>. A change in environment is then represented by
-  a box with an infinitesimal width. Although the
-  <with|mode|math|\<delta\>>-position of the cursor is always zero when you
-  select using the mouse, it may be non zero when moving around using the
-  cursor keys. The linear time routine:\ 
+  In <TeXmacs>, the cursor position therefore contains an <math|x> and a
+  <math|y> coordinate, as well as an additional infinitesimal
+  <math|x>-coordinate, called <math|\<delta\>>. A change in environment is
+  then represented by a box with an infinitesimal width. Although the
+  <math|\<delta\>>-position of the cursor is always zero when you select
+  using the mouse, it may be non zero when moving around using the cursor
+  keys. The linear time routine:\ 
 
   <\verbatim>
     \ \ \ \ virtual path box_rep::find_box_path (SI x, SI y, SI delta)
@@ -166,10 +163,10 @@
   </verbatim>
 
   yields a graphical representation for the cursor at a certain box path. The
-  cursor is given by its <with|mode|math|x>, <with|mode|math|y> and
-  <with|mode|math|\<delta\>> coordinates and a line segment relative to this
-  origin, given by its extremities <with|mode|math|(x<rsub|1>,y<rsub|1>)> and
-  <with|mode|math|(x<rsub|2>,y<rsub|2>)>.
+  cursor is given by its <math|x>, <math|y> and <math|\<delta\>> coordinates
+  and a line segment relative to this origin, given by its extremities
+  <math|<around|(|x<rsub|1>,y<rsub|1>|)>> and
+  <math|<around|(|x<rsub|2>,y<rsub|2>|)>>.
 
   In a similar way, the routine:\ 
 
@@ -181,68 +178,18 @@
   comprises two delimiting tree paths and a graphical representation in the
   form of a list of rectangles.
 
-  <apply|tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
-  <expand|tmdoc-license|Permission is granted to copy, distribute and/or
-  modify this document under the terms of the GNU Free Documentation License,
-  Version 1.1 or any later version published by the Free Software Foundation;
-  with no Invariant Sections, with no Front-Cover Texts, and with no
-  Back-Cover Texts. A copy of the license is included in the section entitled
-  "GNU Free Documentation License".>
+  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
+  document under the terms of the GNU Free Documentation License, Version 1.1
+  or any later version published by the Free Software Foundation; with no
+  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+  Texts. A copy of the license is included in the section entitled "GNU Free
+  Documentation License".>
 </body>
 
 <\initial>
   <\collection>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
     <associate|language|english>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|idx-1|<tuple|<uninit>|?>>
-    <associate|toc-1|<tuple|1|?>>
-    <associate|toc-2|<tuple|2|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
-    <associate|toc-3|<tuple|2.1|?>>
-    <associate|toc-4|<tuple|2.2|?>>
-    <associate|toc-5|<tuple|2.3|?>>
-    <associate|toc-6|<tuple|3|?>>
-    <associate|toc-7|<tuple|4.|?>>
-  </collection>
-</references>
-
-<\auxiliary>
-  <\collection>
-    <\associate|toc>
-      <vspace*|1fn><with|font series|<quote|bold>|math font
-      series|<quote|bold>|1<space|2spc>Introduction><value|toc-dots><pageref|toc-1><vspace|0.5fn>
-
-      <vspace*|1fn><with|font series|<quote|bold>|math font
-      series|<quote|bold>|2<space|2spc>The correspondence between a box and
-      its source><value|toc-dots><pageref|toc-2><vspace|0.5fn>
-
-      2.1<space|2spc>Discussion of the problems being
-      encountered<value|toc-dots><pageref|toc-3>
-
-      2.2<space|2spc>The three kinds of paths<value|toc-dots><pageref|toc-4>
-
-      2.3<space|2spc>The conversion routines<value|toc-dots><pageref|toc-5>
-
-      <vspace*|1fn><with|font series|<quote|bold>|math font
-      series|<quote|bold>|3<space|2spc>The cursor and
-      selections><value|toc-dots><pageref|toc-6><vspace|0.5fn>
-    </associate>
-  </collection>
-</auxiliary>
