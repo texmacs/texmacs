@@ -8,6 +8,9 @@
  * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
  ******************************************************************************/
 
+  // HACK, should be fixed with autotools
+#if defined (OS_MACOS) && defined (USE_SPARKLE)
+
 #include "tm_sparkle.hpp"
 #include "string.hpp"
 #include "Cocoa/mac_cocoa.h"
@@ -56,3 +59,5 @@ bool tm_sparkle::checkInForeground ()
   [updater->p checkForUpdates:nil];
   return true;
 }
+
+#endif // defined (OS_MACOS) && defined (USE_SPARKLE)
