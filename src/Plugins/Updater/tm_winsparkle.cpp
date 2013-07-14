@@ -8,6 +8,8 @@
  * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
  ******************************************************************************/
 
+#include "tm_configure.hpp"
+
   // HACK, should be fixed with autotools
 #if defined (OS_WIN32) && defined (USE_SPARKLE) 
 
