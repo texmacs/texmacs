@@ -21,17 +21,16 @@ class tm_sparkle::tm_suupdater
 {
 public:
   SUUpdater* p;
-//  NSAutoreleasePool* pool;
+  NSAutoreleasePool* pool;
 };
 
 tm_sparkle::tm_sparkle (url _appcast_url) : tm_updater (_appcast_url)
 {
   c_string s (as_string (_appcast_url));  // FIXME! This has to be UTF8!
   
-    // FIXME: needed? if configured without MACOS_EXTENSIONS, might be...
     // Enable Cocoa’s memory management instantiating an Autorelease Pool
-//  updater->pool = [[NSAutoreleasePool alloc] init];  // CRASH!
-  
+  updater->pool = [[NSAutoreleasePool alloc] init];
+
   updater->p = [[SUUpdater sharedUpdater] retain];
   NSURL* url = [NSURL URLWithString: [NSString stringWithUTF8String: s]];
   [updater->p setFeedURL: url];
@@ -40,7 +39,7 @@ tm_sparkle::tm_sparkle (url _appcast_url) : tm_updater (_appcast_url)
 tm_sparkle::~tm_sparkle ()
 {
   [updater->p release];
-//  [updater->pool release];
+  [updater->pool release];
 }
 
 bool tm_sparkle::isRunning() const
