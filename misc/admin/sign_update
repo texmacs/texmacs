@@ -1,0 +1,46 @@
+#!/bin/bash
+##############################################################################
+# Tool to sign releases and ease the preparation of <items> for the appcast.
+#
+
+if (( $# != 3 )); then
+  echo "Usage: $0 filename version pretty-version"
+  exit 1
+fi
+fpath=$1
+fname=${fpath##*/}
+version=$2
+prettyversion=$3
+
+cmd=$(which openssl)
+if (( $? != 0 )); then
+  echo "$0: openssl not found. Exiting."
+  exit 2
+fi
+
+if [ ! -e "$TEXMACS_PRIVATE_DSA" ]; then
+  echo "$0: private DSA key not found or not set: \"$TEXMACS_PRIVATE_DSA\""
+  echo "       Please set the environment variable TEXMACS_PRIVATE_DSA to its location."
+  exit 3
+fi
+
+if [ ! -f "$fpath" ]; then
+  echo "$0: file not found or not a regular file: \"$1\""
+  exit 4
+fi
+
+sha1=$($cmd dgst -sha1 -binary < "$fpath" | $cmd dgst -dss1 -sign "$TEXMACS_PRIVATE_DSA" | $cmd enc -base64)
+fsize=$(stat -f "%z" "$fpath")
+tstamp=$(date)
+
+cat << _EOMSG
+  <item>
+    <title>TeXmacs version $prettyversion released</title>
+    <sparkle:releaseNotesLink>
+      http://www.texmacs.org/tmweb/download/release_notes_$prettyversion.en.html
+    </sparkle:releaseNotesLink>
+    <pubDate>$tstamp</pubDate>
+    <enclosure url="http://www.texmacs.org/Download/ftp/tmftp/macos/$fname" sparkle:version="$version" sparkle:shortVersionString="$prettyversion" length="$fsize" type="application/octet-stream" sparkle:dsaSignature="$sha1" />
+  </item>
+_EOMSG
+
