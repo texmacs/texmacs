@@ -19,6 +19,8 @@ mandir = @mandir@
 tmdir = @tmdir@
 tmbin = @tmbin@
 tmdata = @tmdata@
+svnrev = @SVNREV@
+tm_devel_version = @DEVEL_VERSION@
 tm_devel = @tm_devel@
 tm_devel_release = @tm_devel_release@
 tm_underscore_devel = @tm_underscore_devel@
@@ -449,6 +451,8 @@ MACOS_PACKAGE_DIR = ../distr/macos
 
 MACOS_PACKAGE_APP = ../distr/$(tm_devel).app
 MACOS_PACKAGE_DMG = ../distr/$(tm_devel).dmg
+MACOS_PACKAGE_ZIP = ../distr/$(tm_devel).zip
+
 MACOS_PACKAGE_CONTENTS = $(MACOS_PACKAGE_APP)/Contents
 MACOS_PACKAGE_RESOURCES = $(MACOS_PACKAGE_CONTENTS)/Resources
 MACOS_PACKAGE_TEXMACS = $(MACOS_PACKAGE_RESOURCES)/share/TeXmacs
@@ -496,9 +500,14 @@ MACOS_PACKAGE: MACOS_BUNDLE
 	$(MV) $(MACOS_PACKAGE_DMG) $(MACOS_PACKAGE_DIR)
 	$(RM) -r $(MACOS_PACKAGE_APP)
 
+MACOS_RELEASE: MACOS_BUNDLE
+	$(RM) $(MACOS_PACKAGE_ZIP)
+	zip -r9Tq $(MACOS_PACKAGE_ZIP) $(MACOS_PACKAGE_APP)
+	misc/admin/sign_update $(MACOS_PACKAGE_ZIP) $(svnrev) $(tm_devel_version)
+	
 BUNDLE: MACOS_BUNDLE
 
-.PHONY: BUNDLE MACOS_BUNDLE MACOS_PACKAGE
+.PHONY: BUNDLE MACOS_BUNDLE MACOS_PACKAGE MACOS_RELEASE
 
 ###############################################################################
 # Make a Windows installer
