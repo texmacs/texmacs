@@ -19,6 +19,7 @@ if [ ! "$QT_PLUGINS_PATH" ]; then
 fi
 
 echo "Qt Frameworks path: [$QT_FRAMEWORKS_PATH]"
+echo "Qt Plugins path: [$QT_PLUGINS_PATH]"
 
 function bundle_install_lib {
   local target=$1

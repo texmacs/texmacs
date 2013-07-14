@@ -1,4 +1,5 @@
 #!/bin/bash
+
 ##############################################################################
 # Tool to sign releases and ease the preparation of <items> for the appcast.
 #
