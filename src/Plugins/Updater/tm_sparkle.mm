@@ -18,30 +18,41 @@
 #include "Cocoa/mac_cocoa.h"
 #include <Sparkle/Sparkle.h>
 
-/*! A class to hide the type SUUpdater from the c++ header. */
+/*! A class to hide the Cocoa types from the c++ header. */
 class tm_sparkle::tm_suupdater
 {
 public:
+  tm_suupdater () {
+      // Enable Cocoa’s memory management instantiating an Autorelease Pool
+    pool = [[NSAutoreleasePool alloc] init];
+    p = [[SUUpdater sharedUpdater] retain];
+  }
+  ~tm_suupdater () {
+    [pool release];
+  }
   SUUpdater* p;
   NSAutoreleasePool* pool;
 };
 
+
 tm_sparkle::tm_sparkle (url _appcast_url) : tm_updater (_appcast_url)
 {
   c_string s (as_string (_appcast_url));  // FIXME! This has to be UTF8!
-  
-    // Enable Cocoa’s memory management instantiating an Autorelease Pool
-  updater->pool = [[NSAutoreleasePool alloc] init];
 
-  updater->p = [[SUUpdater sharedUpdater] retain];
+  cout << "Updater] Instantiating Sparkle object for "
+       << as_string (appcast) << LF;
+  
+  updater = new tm_suupdater;
+  
   NSURL* url = [NSURL URLWithString: [NSString stringWithUTF8String: s]];
   [updater->p setFeedURL: url];
 }
 
 tm_sparkle::~tm_sparkle ()
 {
-  [updater->p release];
-  [updater->pool release];
+  cout << "Updater] Deleting Sparkle object for "
+       << as_string (appcast) << LF;
+  delete updater;
 }
 
 bool tm_sparkle::isRunning() const
@@ -51,6 +62,8 @@ bool tm_sparkle::isRunning() const
 
 bool tm_sparkle::checkInBackground ()
 {
+  cout << "Updater] Starting background check for updates at "
+       << as_string (appcast) << LF;
   [updater->p checkForUpdatesInBackground];
   return true;
 }

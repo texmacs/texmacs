@@ -13,10 +13,12 @@
 class tm_winsparkle : public tm_updater
 {
   bool running;
-public:
+  
   tm_winsparkle (url _appcast_url);
   ~tm_winsparkle ();
-  
+  friend class tm_updater;
+
+public:
   bool isRunning () const { return running; }
   bool checkInBackground ();
   bool checkInForeground ();

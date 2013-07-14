@@ -17,12 +17,14 @@ class tm_updater
 {
 protected:
   url appcast;
-  
-public:
-  tm_updater (url _appcast_url) : appcast(_appcast_url) { }
+
+  tm_updater (url _appcast_url) : appcast (_appcast_url) { }
+  tm_updater (const tm_updater&);
+  void operator= (const tm_updater&);
   virtual ~tm_updater () { };
   
-  static tm_updater* instance (url _appcast_url);
+public:
+  static tm_updater& instance (url _appcast_url);
   
   virtual bool checkInBackground () { return false; }  // non-blocking
   virtual bool checkInForeground () { return false; }  // blocking

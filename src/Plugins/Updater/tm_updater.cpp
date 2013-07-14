@@ -17,17 +17,17 @@
 #endif
 
 
-tm_updater* tm_updater::instance (url _appcast_url)
+tm_updater& tm_updater::instance (url _appcast_url)
 {
   static tm_updater* _instance = NULL;
   
   if (! _instance) {
 #if defined (OS_MACOS) && defined (USE_SPARKLE)
-    _instance = new tm_sparkle (_appcast_url);
+    _instance = new(std::nothrow) tm_sparkle (_appcast_url);
 #elif defined (OS_WIN32) && defined (USE_SPARKLE)
-    _instance = new tm_winsparkle (_appcast_url);
+    _instance = new(std::nothrow) tm_winsparkle (_appcast_url);
 #else
-    _instance = new tm_updater (_appcast_url);
+    _instance = new(std::nothrow) tm_updater (_appcast_url);
 #endif
   } else {
     if (_instance->getAppcast() != _appcast_url) {
@@ -41,7 +41,8 @@ tm_updater* tm_updater::instance (url _appcast_url)
       }
     }
   }
-  return _instance;
+  ASSERT (instance != NULL, "Unable to instantiate updater.");
+  return *_instance;
 }
 
 /******************************************************************************
@@ -50,12 +51,12 @@ tm_updater* tm_updater::instance (url _appcast_url)
 
 bool check_updates_background (url appcast)
 {
-  tm_updater* updater = tm_updater::instance (appcast);
-  return updater != NULL && !updater->isRunning() && updater->checkInBackground();
+  tm_updater& updater = tm_updater::instance (appcast);
+  return !updater.isRunning() && updater.checkInBackground();
 }
 
 bool check_updates_foreground (url appcast)
 {
-  tm_updater* updater = tm_updater::instance (appcast);
-  return updater != NULL && !updater->isRunning() && updater->checkInForeground();
+  tm_updater& updater = tm_updater::instance (appcast);
+  return !updater.isRunning() && updater.checkInForeground();
 }
