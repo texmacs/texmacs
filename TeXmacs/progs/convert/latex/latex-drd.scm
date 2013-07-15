@@ -388,6 +388,7 @@
 
 (logic-group latex-ignore-0%
   allowbreak notag xspace break sloppy makeatother makeatletter relax
+  qedhere
   ignorespacesafterend ignorespaces balancecolumns)
 
 (logic-group latex-ignore-0*%
