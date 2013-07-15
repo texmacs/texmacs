@@ -2820,12 +2820,15 @@ is_bibliography_command (tree t, tree& doc, string& bib_style) {
     if (t[0] == "bibliography") {
       tree begin (BEGIN, "bibliography");
       tree end (END, "bibliography");
+      tree bib;
       begin << "bib" << bib_style << t[1]->label;
       url bbl= get_file_focus ();
       bbl= glue (head (bbl) * basename (bbl, "tex"), "bbl");
       if (exists (bbl))
-        begin << bibtex_load_bbl ("bib", bbl);
-      doc << begin << end;
+        bib= bibtex_load_bbl ("bib", bbl);
+      else
+        bib= tree (DOCUMENT, compound ("bib-list", "[99]", ""));
+      doc << begin << bib << end;
       return true;
     }
   }
