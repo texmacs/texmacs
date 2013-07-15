@@ -84,7 +84,7 @@
   binom tbinom dbinom cfrac tfrac equal href
   sideset stackrel citeauthoryear
   setcounter addtocounter setlength addtolength
-  scalebox
+  scalebox texorpdfstring
   Call Function Procedure SetKw SetKwData SetKwFunction SetKwInOut)
 
 (logic-group latex-command-3%

@@ -1171,6 +1171,7 @@ latex_command_to_tree (tree t) {
     if (lang == "magyar") lang= "hungarian";
     return tree (SET, "language", lang);
   }
+  if (is_tuple (t, "\\texorpdfstring", 2)) return l2e (t[1]);
   if (is_tuple (t, "\\tmtextrm", 1)) return m2e (t, FONT_FAMILY, "rm");
   if (is_tuple (t, "\\tmtexttt", 1)) return m2e (t, FONT_FAMILY, "tt");
   if (is_tuple (t, "\\tmtextsf", 1)) return m2e (t, FONT_FAMILY, "ss");
