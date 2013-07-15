@@ -286,6 +286,8 @@ latex_symbol_to_tree (string s) {
   if (s == "") return "";
   if (s[0] == '\\') {
     s= s(1,N(s));
+    if ((s == "ldots" || s == "dots" || s == "dotso")
+        && (command_type ("!mode") != "math")) return "...";
     if (latex_type ('\\' * s) == "command") {
       if (s == " ")      return " ";
       if (s == "-")      return "";
@@ -584,7 +586,6 @@ latex_symbol_to_tree (string s) {
     if (latex_type (s) == "ignore") return "";
 
     if (latex_type (s) == "operator" || latex_type (s) == "control") return s;
-    if ((s == "ldots") && (command_type ("!mode") != "math")) return "...";
     if (s == "bignone") return tree (BIG, ".");
     if (s == "Return")  return tree (APPLY, "algo-return");
     if (s == "tmhrule")  return tree (APPLY, "hrule");
