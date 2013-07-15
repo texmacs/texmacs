@@ -41,7 +41,7 @@ tm_updater& tm_updater::instance (url _appcast_url)
       }
     }
   }
-  ASSERT (instance != NULL, "Unable to instantiate updater.");
+  ASSERT (_instance != NULL, "Unable to instantiate updater.");
   return *_instance;
 }
 
