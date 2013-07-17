@@ -10,6 +10,8 @@ import traceback
 import keyword
 import re
 import string
+import warnings
+warnings.simplefilter("ignore") # don't print warnings to stdout
 from sage.all import *
 
 __version__='0.8.1'
@@ -107,7 +109,11 @@ def compose_output(data):
 	if isinstance(data, Graphics):
 		try:
 			#Save it to a file
-			filename = sage.misc.misc.graphics_filename(ext='ps')
+			try:
+				filename = sage.misc.misc.graphics_filename(ext='ps')
+			except AttributeError:
+				filename = sage.misc.temporary_file.graphics_filename(ext='ps')
+
 			data.save(filename)
 
 			#Read the file
