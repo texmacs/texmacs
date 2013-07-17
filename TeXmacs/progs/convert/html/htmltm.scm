@@ -580,6 +580,14 @@
       st))) ; unexpected entry
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Post processing
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (html-postproc st)
+  (let* ((st (replace-in-stree st "<varspace>" '(nbsp))))
+    st))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -594,7 +602,7 @@
   (:synopsis "Convert a parsed HTML stree @t into a TeXmacs stree.")
   (let* ((snippet? (not (func? html '!file 1)))
 	 (body (if snippet? html (cadr html)))
-	 (tm (htmltm-as-serial (sxhtml-correct-table body))))
+	 (tm (html-postproc (htmltm-as-serial (sxhtml-correct-table body)))))
     (if snippet? tm
 	(let* ((aux (stm-unary-document tm))
 	       (doc (tree->stree (tree-simplify (stree->tree aux))))
