@@ -143,7 +143,8 @@
 ("<varspace>"        "#A0") ; no break space
 ;("<flip-!>"          "#A1") ; see symbol-unicode-math.scm
 ("<cent>"            "#A2")
-("<sterling>"        "#A3") ; pound sign
+("<sterling>"        "#A3") ; pound sign (for retrocompatibility)
+("#BF"               "#A3") ; pound sign (TODO: move this to upgradetm.cpp)
 ("<currency>"        "#A4")
 ("<yen>"             "#A5")
 ("<brokenvert>"      "#A6")
@@ -151,7 +152,9 @@
 ;("<ddot>"            "#A8") ; see symbol-unicode-math.scm
 ("<copyright>"       "#A9")
 ("<ordfeminine>"     "#AA")
-("<guillemotleft>"   "#AB") ; left pointing double angle quotation mark
+("<guillemotleft>"   "#AB") ; (for retrocompatibility)
+("#13"               "#AB") ; left pointing double angle quotation mark
+                            ; (TODO: move this to upgradetm.cpp)
 ("<neg>"             "#AC")
 ("<hyphen>"          "#AD")
 ("<circledR>"        "#AE") ; for MathML compatility. Maybe U+24C7 more correct.
@@ -167,8 +170,10 @@
 ;("<cedille>"         "#B8") ; see symbol-unicode-math.scm
 ("<onesuperior>"     "#B9") ; superscript one
 ("<masculine>"       "#BA") ; masculine ordinal indicator
-("<guillemotright>"  "#BB") ; right pointing double angle quotation mark
 ("<onequarter>"      "#BC") ; vulgar fraction one quarter
+("<guillemotright>"  "#BB") ; (for retrocompatibility)
+("#14"               "#BB") ; right pointing double angle quotation mark
+                            ; (TODO: move this to upgradetm.cpp)
 ("<onehalf>"         "#BD") ; vulgar fraction one half
 ("<threequarters>"   "#BE") ; vulgar fraction three quarters
 ;("<flip-?>"          "#BF") ; see symbol-unicode-math.scm
