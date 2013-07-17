@@ -542,6 +542,44 @@
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Routines for replacement in stree
+;; NOTA: made to be generic. To be moved and reused elsewhere.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (replace-symbol-in-stree st from to)
+  (cond ((== st from) to)
+        ((list? st) (map (lambda (x) (replace-symbol-in-stree x from to)) st))
+        (else st)))
+
+(define (replace-stree-in-stree st from to)
+  (cond ((== st from) to)
+        ((list? st) (map (lambda (x) (replace-stree-in-stree x from to)) st))
+        (else st)))
+
+(define (replace-string-in-stree st from to)
+  (cond ((string? st) (string-replace st from to))
+        ((list? st) (map (lambda (x) (replace-string-in-stree x from to)) st))
+        (else st)))
+
+(define (replace-str-by-st-in-stree st from to)
+  (cond ((and (string? st) (string-contains? st from))
+         (let* ((st (string-decompose st from))
+                (st (list-intersperse st to)))
+           `(concat ,@st)))
+        ((list? st) (map (lambda (x)
+                           (replace-str-by-st-in-stree x from to)) st))
+        (else st)))
+
+(define (replace-in-stree st from to)
+  (cond
+    ((and (symbol? from) (symbol? to)) (replace-symbol-in-stree st from to))
+    ((and (string? from) (string? to)) (replace-string-in-stree st from to))
+    ((and (string? from) (list? to)) (replace-str-by-st-in-stree st from to))
+    ((list? from) (replace-stree-in-stree st from to))
+    (else
+      st))) ; unexpected entry
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
