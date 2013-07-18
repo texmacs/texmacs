@@ -225,6 +225,8 @@ filter_preamble (tree t) {
 	      doc << u;
         latex_class = u;
       }
+      else if (is_tuple (u, "\\textm.include"))
+        preamble << u << "\n" << "\n";
       else if (is_tuple (u, "\\def") ||
 	       is_tuple (u, "\\def*") || is_tuple (u, "\\def**"))
 	preamble << u << "\n" << "\n";

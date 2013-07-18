@@ -1261,7 +1261,8 @@ latex_parser::parse (string s, bool change) {
   // We first cut the string into pieces at strategic places
   // This reduces the risk that the parser gets confused
   array<string> a;
-  int i, start=0, n= N(s);
+  array<string> incls;
+  int i, start=0, cut=0, n= N(s);
   for (i=0; i<n; i++)
     if (s[i]=='\n' || (s[i] == '\\' && test (s, i, "\\nextbib"))) {
       while ((i<n) && is_space (s[i])) i++;
@@ -1271,67 +1272,66 @@ latex_parser::parse (string s, bool change) {
 	  i++;
 	i += 30;
 	start= i;
-	continue;
       }
       // FIXME that'a not a good way to test token's name since "\\input {" or
       // "\\usepackage [" or "\\definition" may be used.
       // Seek for \\\\[a-z]\+[{\[] to replace theses kind of patterns by
-      // a true test.
-      if (test (s, i, "\\begin{document}") ||
-	  test (s, i, "\\begin{abstract}") ||
-	  test (s, i, "\\chapter") ||
-	  test (s, i, "\\section") ||
-	  test (s, i, "\\subsection") ||
-	  test (s, i, "\\subsubsection") ||
-	  test (s, i, "\\paragraph") ||
-	  test (s, i, "\\subparagraph") ||
-	  test (s, i, "\\nextbib") ||
-	  test (s, i, "\\newcommand") ||
-	  test (s, i, "\\def") ||
-	  test (s, i, "\\usepackage{") ||
-	  test (s, i, "\\input{") ||
-	  test (s, i, "\\include{") ||
-	  test (s, i, "\\includeonly{"))
-	{
-	  a << s (start, i);
-	  start= i;
-          if (test (s, i, "\\input{")       || test (s, i, "\\include{") ||
-              test (s, i, "\\includeonly{") || test (s, i, "\\usepackage{")) {
-            string suffix= ".tex";
-            if (test (s, i, "\\usepackage{")) suffix= ".sty";
-	    while (i<N(s) && s[i] != '{') i++;
-	    int start_name= i+1;
-            while (i<N(s) && s[i] != '}') i++;
-            array<string> names=
-              trim_spaces (tokenize (s (start_name, i), ","));
-            for (int j= 0; j < N(names); j++) {
-              string name= names[j];
-              if (!ends (name, suffix)) name= name * suffix;
-              url incl= relative (get_file_focus (), name);
-              string body;
-              if (!exists (incl) || load_string (incl, body, false)) i++;
-              else {
-                //cout << "Include " << name << " -> " << incl << "\n";
-                s= s (0, start) * "\n" * body * "\n" * s (i+1, N(s));
-                n= N(s);
-                i= start + 1;
-              }
-            start= i;
-            }
-
+      // a true test. }
+      else if (test (s, i, "\\begin{document}") ||
+               test (s, i, "\\begin{abstract}") ||
+               test (s, i, "\\chapter") ||
+               test (s, i, "\\section") ||
+               test (s, i, "\\subsection") ||
+               test (s, i, "\\subsubsection") ||
+               test (s, i, "\\paragraph") ||
+               test (s, i, "\\subparagraph") ||
+               test (s, i, "\\nextbib") ||
+               test (s, i, "\\newcommand") ||
+               test (s, i, "\\def")) {
+        a << s (start, i);
+        start= i;
+        while (i < n && test (s, i, "\\nextbib{}")) {
+          i += 10;
+          a << s (start, i);
+          start= i;
+        }
+      }
+      else if (test (s, i, "\\input{")       || test (s, i, "\\include{") ||
+               test (s, i, "\\includeonly{") || test (s, i, "\\usepackage{")) {
+        cut= i;
+        string suffix= ".tex";
+        if (test (s, i, "\\usepackage{")) suffix= ".sty";
+        while (i<N(s) && s[i] != '{') i++;
+        int start_name= i+1;
+        while (i<N(s) && s[i] != '}') i++;
+        array<string> names=
+          trim_spaces (tokenize (s (start_name, i), ","));
+        for (int j= 0; j < N(names); j++) {
+          string name= names[j];
+          if (!ends (name, suffix)) name= name * suffix;
+          url incl= relative (get_file_focus (), name);
+          string body;
+          if (!exists (incl) || load_string (incl, body, false));
+          else {
+            //cout << "Include " << name << " -> " << incl << "\n";
+            incls << materialize (incl, 'r');
+            s= s (0, cut) * "\n" * body * "\n" * s (i+1, N(s));
+            n= N(s);
           }
-          while (i < n && test (s, i, "\\nextbib{}")) {
-            i += 10;
-            a << s (start, i);
-            start= i;
-          }
-	}
-      if (i == n) break;
+          i= cut + 1;
+        }
+      }
     }
   a << s (start, i);
 
   // We now parse each of the pieces
   tree t (CONCAT);
+  if (N(incls) > 0) {
+    tree r= tree (TUPLE, "\\textm.include");
+    for (i=0; i<N(incls); i++) r << incls[i];
+    cout << r << LF;
+    t << r;
+  }
   for (i=0; i<N(a); i++) {
     int j=0;
     while (j<N(a[i])) {
