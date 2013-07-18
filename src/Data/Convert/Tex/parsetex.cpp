@@ -17,6 +17,7 @@ extern bool textm_class_flag;
 hashmap<string,int> textm_recursion_level (0);
 
 tree latex_symbol_to_tree (string s);
+string verbatim_escape (string s);
 
 /******************************************************************************
 * The latex_parser structure
@@ -49,9 +50,11 @@ struct latex_parser {
   bool unicode;
   char lf;
   hashmap<string,bool> loaded_package;
-  latex_parser (bool unicode2): level (0), unicode (unicode2) {}
+  latex_parser (bool unicode2): level (0), unicode (unicode2),
+                                count_previews (0) {}
   void latex_error (string s, int i, string message);
 
+  unsigned int count_previews;
   bool is_opening_option (char c);
   tree parse             (string s, int& i, string stop= "", bool ch= false);
   tree parse_backslash   (string s, int& i);
@@ -573,6 +576,7 @@ latex_parser::is_opening_option (char c) {
 tree
 latex_parser::parse_command (string s, int& i, string cmd) {
   bool delimdef = false;
+  int begin_parse= i;
   // cout << cmd << " [" << latex_type (cmd) << ", "
   // << command_type ["!mode"] << ", " << latex_arity (cmd) << "]" << LF;
   if (cmd == "\\gdef" || cmd == "\\xdef" || cmd == "\\edef") cmd= "\\def";
@@ -916,6 +920,17 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     // the user defined shorthands for \\begin{env} and \\end{env}
   }
 
+  if (latex_type (cmd(1, N(cmd))) == "as-picture") {
+    count_previews++;
+    cout << "count_previews: " << count_previews << LF;
+    string code= cmd * verbatim_escape (s(begin_parse, i));
+    tree ret= tree (TUPLE, "\\latex_preview", as_string (count_previews),
+                    concat ("\\begin-verbatim", code, "\\end-verbatim"));
+    if (command_type ("!mode") == "math")
+      return tree (TUPLE, "\\text", ret);
+    return ret;
+  }
+
   if (mbox_flag) command_type ("!mode") = "math";
   return t;
 }
@@ -1089,6 +1104,23 @@ latex_parser::parse_length_name (string s, int& i) {
 /******************************************************************************
 * Parsing verbatim text
 ******************************************************************************/
+
+string
+verbatim_escape (string s) {
+  string r;
+  int start= 0, i= 0;
+  while (i < N(s)) {
+    if (s[i] == '<' || s[i] == '>') {
+      r << s(start, i);
+      if (s[i] == '<')  r << "<less>";
+      if (s[i] == '>')  r << "<gtr>";
+      start= i+1;
+    }
+    i++;
+  }
+  r << s(start, i);
+  return r;
+}
 
 tree
 latex_parser::parse_verbatim (string s, int& i, string end, string env) {
