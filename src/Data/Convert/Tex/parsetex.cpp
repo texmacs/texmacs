@@ -1256,27 +1256,37 @@ latex_parser::parse (string s, bool change) {
 	  test (s, i, "\\nextbib") ||
 	  test (s, i, "\\newcommand") ||
 	  test (s, i, "\\def") ||
+	  test (s, i, "\\usepackage{") ||
 	  test (s, i, "\\input{") ||
-	  test (s, i, "\\include{"))
+	  test (s, i, "\\include{") ||
+	  test (s, i, "\\includeonly{"))
 	{
 	  a << s (start, i);
 	  start= i;
-          if (test (s, i, "\\input{") || test (s, i, "\\include{")) {
+          if (test (s, i, "\\input{")       || test (s, i, "\\include{") ||
+              test (s, i, "\\includeonly{") || test (s, i, "\\usepackage{")) {
+            string suffix= ".tex";
+            if (test (s, i, "\\usepackage{")) suffix= ".sty";
 	    while (i<N(s) && s[i] != '{') i++;
 	    int start_name= i+1;
             while (i<N(s) && s[i] != '}') i++;
-            string name= s (start_name, i);
-            if (!ends (name, ".tex")) name= name * ".tex";
-            url incl= relative (get_file_focus (), name);
-            string body;
-            if (!exists (incl) || load_string (incl, body, false)) i++;
-            else {
-              //cout << "Include " << name << " -> " << incl << "\n";
-              s= s (0, start) * "\n" * body * "\n" * s (i+1, N(s));
-              n= N(s);
-              i= start + 1;
-            }
+            array<string> names=
+              trim_spaces (tokenize (s (start_name, i), ","));
+            for (int j= 0; j < N(names); j++) {
+              string name= names[j];
+              if (!ends (name, suffix)) name= name * suffix;
+              url incl= relative (get_file_focus (), name);
+              string body;
+              if (!exists (incl) || load_string (incl, body, false)) i++;
+              else {
+                //cout << "Include " << name << " -> " << incl << "\n";
+                s= s (0, start) * "\n" * body * "\n" * s (i+1, N(s));
+                n= N(s);
+                i= start + 1;
+              }
             start= i;
+            }
+
           }
           while (i < n && test (s, i, "\\nextbib{}")) {
             i += 10;
