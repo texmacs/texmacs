@@ -52,8 +52,14 @@
 (converter latex-document latex-tree
   (:function parse-latex-document))
 
+(tm-define (latex-document->texmacs x . opts)
+  (if (list-1? opts) (set! opts (car opts)))
+  (with as-pic (== (assoc-ref opts "latex->texmacs:fallback-on-pictures") "on")
+    (cpp-latex-document->texmacs x as-pic)))
+
 (converter latex-document texmacs-tree
-  (:function latex-document->texmacs))
+  (:function-with-options latex-document->texmacs)
+  (:option "latex->texmacs:fallback-on-pictures" "on"))
 
 (converter latex-class-document texmacs-tree
   (:function latex-class-document->texmacs))

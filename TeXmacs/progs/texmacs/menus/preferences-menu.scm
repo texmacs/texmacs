@@ -139,6 +139,9 @@
 ;	    (toggle ("Use CSS" "texmacs->html:css"))
 	    (toggle ("Use MathML" "texmacs->html:mathml"))
 	    (toggle ("Export formulas as images" "texmacs->html:images")))
+	(-> "LaTeX -> TeXmacs"
+            (toggle ("Import sophisticated objects as pictures"
+		     "latex->texmacs:fallback-on-pictures")))
 	(-> "TeXmacs -> LaTeX"
 	    (toggle ("Replace unrecognized styles"
 		     "texmacs->latex:replace-style"))
@@ -447,6 +450,13 @@
 
 (tm-widget (latex-preferences-widget)
   ===
+  (bold (text "LaTeX -> TeXmacs"))
+  ===
+  (aligned
+    (meti (text "Import sophisticated objects as pictures")
+      (toggle (set-boolean-preference "latex->texmacs:fallback-on-pictures" answer)
+              (get-boolean-preference "latex->texmacs:fallback-on-pictures"))))
+  ======
   (bold (text "TeXmacs -> LaTeX"))
   ===
   (aligned

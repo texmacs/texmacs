@@ -272,6 +272,15 @@ filter_preamble (tree t) {
 }
 
 /******************************************************************************
+* Import macro as pictures
+******************************************************************************/
+
+tree
+latex_fallback_on_pictures (tree t, bool as_pic) {
+  return t;
+}
+
+/******************************************************************************
 * Transform parsed tex/latex trees into texmacs trees
 ******************************************************************************/
 
@@ -3426,12 +3435,13 @@ latex_to_tree (tree t1) {
 }
 
 tree
-latex_document_to_tree (string s) {
+latex_document_to_tree (string s, bool as_pic) {
   command_type ->extend ();
   command_arity->extend ();
   command_def  ->extend ();
   tree t= parse_latex_document (s, true);
-  tree r= latex_to_tree (t);
+  tree u= latex_fallback_on_pictures (t, as_pic);
+  tree r= latex_to_tree (u);
   command_type ->shorten ();
   command_arity->shorten ();
   command_def  ->shorten ();
