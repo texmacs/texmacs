@@ -1241,6 +1241,10 @@ latex_parser::parse (string s, bool change) {
 	start= i;
 	continue;
       }
+      // FIXME that'a not a good way to test token's name since "\\input {" or
+      // "\\usepackage [" or "\\definition" may be used.
+      // Seek for \\\\[a-z]\+[{\[] to replace theses kind of patterns by
+      // a true test.
       if (test (s, i, "\\begin{document}") ||
 	  test (s, i, "\\begin{abstract}") ||
 	  test (s, i, "\\chapter") ||
