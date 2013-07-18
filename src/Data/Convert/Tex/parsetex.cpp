@@ -1514,6 +1514,7 @@ latex_encoding_to_iconv (string s) {
 
 tree
 parse_latex (string s, bool change, bool using_cork) {
+  tree r;
   s= dos_to_better (s);
   string encoding= "Cork";
   string lan= get_latex_language (s);
@@ -1529,8 +1530,8 @@ parse_latex (string s, bool change, bool using_cork) {
 
   latex_parser ltx (encoding != "Cork");
   ltx.lf= 'M';
-  tree r= ltx.parse (s, change);
-  r= accented_to_Cork (ltx.parse (s, change));
+  r= ltx.parse (s, change);
+  r= accented_to_Cork (r);
   if (lan == "") return r;
   return compound ("!language", r, lan);
 }
