@@ -383,6 +383,17 @@
   ((latex-arity% 'x 0) (latex-length% 'x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; To be imported as pictures
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(logic-group latex-as-pic-1%
+  xymatrix)
+
+(logic-rules
+  ((latex-as-pic% 'x)       (latex-as-pic-1% 'x))
+  ((latex-arity% 'x 1)   (latex-as-pic-1% 'x)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; To be ignored
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -555,6 +566,7 @@
           ((logic-in? s latex-command%) "command")
           ((logic-in? s latex-length%) "length")
           ((logic-in? s latex-ignore%) "ignore")
+          ((logic-in? s latex-as-pic%) "as-picture")
           ((logic-in? s latex-name%) "name")
           ((logic-in? s latex-counter%) "counter")
 	  ((logic-in? s latex-modifier%) "modifier")
