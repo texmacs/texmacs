@@ -104,7 +104,8 @@ system_src   := $(call findsrc,System)
 data_src     := $(call findsrc,Data)
 graphics_src := $(call findsrc,Graphics)
 plugins_src  := $(call findsrc_in,Plugins,Bibtex Cairo Imlib2 Sqlite3 \
-                                          Ispell Metafont Openssl Updater @CONFIG_PDF@)
+                                          Ispell Metafont Openssl Updater \
+                                          LaTeX_Preview @CONFIG_PDF@)
 plugins_c_src:= $(call findc_in,Plugins,@CONFIG_PDF@)
 x11_src      := $(call findsrc_in,Plugins,@CONFIG_X11@)
 cocoa_m_src  := $(call findm_in,Plugins,@CONFIG_COCOA@ @CONFIG_MACOS@)

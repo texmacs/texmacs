@@ -60,8 +60,8 @@ tree   verbatim_to_tree (string s, bool wrap= false, string enc= "default");
 tree   verbatim_document_to_tree (string s, bool w= false, string e= "default");
 
 /*** Latex ***/
-tree   parse_latex (string s, bool change= false, bool using_cork= false);
-tree   parse_latex_document (string s, bool change= false);
+tree   parse_latex (string s, bool change= false, bool using_cork= false, bool as_pic= false);
+tree   parse_latex_document (string s, bool change= false, bool as_pic= false);
 tree   latex_to_tree (tree t);
 tree   latex_document_to_tree (string s, bool as_pic= false);
 tree   latex_class_document_to_tree (string s);
@@ -70,7 +70,6 @@ string get_latex_style (tree t);
 string string_arg (tree t, bool url= false);
 array<tree> tokenize_concat (tree t, array<tree> a, bool keep= false);
 bool   is_verbatim (tree t);
-
 
 /*** Xml / Html / Mathml ***/
 tree   parse_xml (string s);

@@ -49,12 +49,11 @@ struct latex_parser {
   int level;
   bool unicode;
   char lf;
+  bool pic;
   hashmap<string,bool> loaded_package;
-  latex_parser (bool unicode2): level (0), unicode (unicode2),
-                                count_previews (0) {}
+  latex_parser (bool unicode2): level (0), unicode (unicode2) {}
   void latex_error (string s, int i, string message);
 
-  unsigned int count_previews;
   bool is_opening_option (char c);
   tree parse             (string s, int& i, string stop= "", bool ch= false);
   tree parse_backslash   (string s, int& i);
@@ -920,12 +919,13 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     // the user defined shorthands for \\begin{env} and \\end{env}
   }
 
-  if (latex_type (cmd(1, N(cmd))) == "as-picture") {
-    count_previews++;
-    cout << "count_previews: " << count_previews << LF;
+  if (pic && latex_type (cmd(1, N(cmd))) == "as-picture") {
     string code= cmd * verbatim_escape (s(begin_parse, i));
-    tree ret= tree (TUPLE, "\\latex_preview", as_string (count_previews),
-                    concat ("\\begin-verbatim", code, "\\end-verbatim"));
+    tree ret= tuple ("\\latex_preview",
+                     cmd(1, N(cmd)),
+                     concat (tuple ("\\begin-verbatim"),
+                             code,
+                             tuple ("\\end-verbatim")));
     if (command_type ("!mode") == "math")
       return tree (TUPLE, "\\text", ret);
     return ret;
@@ -1326,10 +1326,9 @@ latex_parser::parse (string s, bool change) {
 
   // We now parse each of the pieces
   tree t (CONCAT);
-  if (N(incls) > 0) {
+  if (pic && N(incls) > 0) {
     tree r= tree (TUPLE, "\\textm.include");
     for (i=0; i<N(incls); i++) r << incls[i];
-    cout << r << LF;
     t << r;
   }
   for (i=0; i<N(a); i++) {
@@ -1555,7 +1554,7 @@ latex_encoding_to_iconv (string s) {
 }
 
 tree
-parse_latex (string s, bool change, bool using_cork) {
+parse_latex (string s, bool change, bool using_cork, bool as_pic) {
   tree r;
   s= dos_to_better (s);
   string encoding= "Cork";
@@ -1572,6 +1571,7 @@ parse_latex (string s, bool change, bool using_cork) {
 
   latex_parser ltx (encoding != "Cork");
   ltx.lf= 'M';
+  ltx.pic= as_pic;
   r= ltx.parse (s, change);
   r= accented_to_Cork (r);
   if (lan == "") return r;
@@ -1579,6 +1579,6 @@ parse_latex (string s, bool change, bool using_cork) {
 }
 
 tree
-parse_latex_document (string s, bool change) {
-  return compound ("!file", parse_latex (s, change));
+parse_latex_document (string s, bool change, bool as_pic) {
+  return compound ("!file", parse_latex (s, change, false, as_pic));
 }

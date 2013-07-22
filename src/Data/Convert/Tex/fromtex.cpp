@@ -9,6 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include "LaTeX_Preview/latex_preview.hpp"
 #include "Tex/convert_tex.hpp"
 #include "Bibtex/bibtex.hpp"
 #include "metadata.hpp"
@@ -276,8 +277,26 @@ filter_preamble (tree t) {
 ******************************************************************************/
 
 tree
-latex_fallback_on_pictures (tree t, bool as_pic) {
+substitute_latex_previews (tree t, array<tree> a, int &i) {
+  if (N(a) <= i);
+  else if (is_atomic (t));
+  else if (is_tuple (t, "\\latex_preview", 2)) {
+    t[0]= "\\folded-mixed";
+    t[1]= a[i++];
+  }
+  else {
+    int j, n= N(t);
+    for (j=0; j<n; j++)
+      t[j]= substitute_latex_previews (t[j], a, i);
+  }
   return t;
+}
+
+tree
+latex_fallback_on_pictures (string s, tree t) {
+  int i= 0;
+  array<tree> a= latex_preview (s, t);
+  return substitute_latex_previews (t, a, i);
 }
 
 /******************************************************************************
@@ -1736,6 +1755,7 @@ latex_command_to_tree (tree t) {
     return compound ("fold-exercise", l2e (t[1]), l2e (t[2]));
   // End TeXmacs specific markup
 
+  if (L(t) == IMAGE) return t;
   int i;
   string s= t[0]->label;
   tree r (APPLY, s(1,N(s)));
@@ -2755,6 +2775,7 @@ finalize_algorithms (tree t) {
 
 static tree
 finalize_returns_bis (tree t) {
+  if (L(t) == RAW_DATA) return t;
   if (is_atomic (t)) {
     tree r (CONCAT);
     int j= 0;
@@ -3439,8 +3460,8 @@ latex_document_to_tree (string s, bool as_pic) {
   command_type ->extend ();
   command_arity->extend ();
   command_def  ->extend ();
-  tree t= parse_latex_document (s, true);
-  tree u= latex_fallback_on_pictures (t, as_pic);
+  tree t= parse_latex_document (s, true, as_pic);
+  tree u= latex_fallback_on_pictures (s, t);
   tree r= latex_to_tree (u);
   command_type ->shorten ();
   command_arity->shorten ();
