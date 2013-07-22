@@ -381,6 +381,20 @@ tmg_system_wait (tmscm arg1, tmscm arg2) {
   return TMSCM_UNSPECIFIED;
 }
 
+void set_latex_command (string in1);
+tmscm
+tmg_set_latex_command (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "set-latex-command");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  set_latex_command (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
 tmscm
 tmg_set_bibtex_command (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "set-bibtex-command");
@@ -7025,6 +7039,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("bench-print",  tmg_bench_print, 1, 0, 0);
   tmscm_install_procedure ("bench-print-all",  tmg_bench_print_all, 0, 0, 0);
   tmscm_install_procedure ("system-wait",  tmg_system_wait, 2, 0, 0);
+  tmscm_install_procedure ("set-latex-command",  tmg_set_latex_command, 1, 0, 0);
   tmscm_install_procedure ("set-bibtex-command",  tmg_set_bibtex_command, 1, 0, 0);
   tmscm_install_procedure ("math-symbol-group",  tmg_math_symbol_group, 1, 0, 0);
   tmscm_install_procedure ("math-group-members",  tmg_math_group_members, 1, 0, 0);

@@ -51,6 +51,7 @@
   (bench-print bench_print (void string))
   (bench-print-all bench_print (void))
   (system-wait system_wait (void string string))
+  (set-latex-command set_latex_command (void string))
   (set-bibtex-command set_bibtex_command (void string))
   (math-symbol-group math_symbol_group (string string))
   (math-group-members math_group_members (array_string string))
