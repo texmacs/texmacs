@@ -121,6 +121,9 @@ void
 tm_failure (const char* msg) {
   if (rescue_mode) {
     fprintf (stderr, "\nTeXmacs] Fatal unrecoverable error, %s\n", msg);
+#ifdef DEBUG_ASSERT
+    return;
+#endif
     exit (1);
   }
   rescue_mode= true;
