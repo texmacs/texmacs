@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.0.7.19>
 
 <style|<tuple|source|std>>
 
@@ -159,6 +159,16 @@
     </render-unfolded-documentation>
   </macro>>
 
+  <assign|folded-mixed|<\macro|x|y>
+    <action|<arg|x>|(mouse-unfold)|<arg|x>><hidden|<arg|y>>
+  </macro>>
+
+  <assign|unfolded-mixed|<\macro|x|y>
+    <\render-folded-std|<action|<resize|<active*|<with|mode|math|||||\<blacktriangleleft\>>>|||<maximum|1r|1.5fn>|>|(mouse-fold)|<arg|y>>>
+      <arg|y><hidden|<arg|x>>
+    </render-folded-std>
+  </macro>>
+
   <assign|folded-grouped|<\macro|x|y>
     <\render-folded-grouped|<action| |(mouse-unfold)|<arg|x>>>
       <arg|x>
@@ -190,6 +200,8 @@
   <drd-props|folded-explain|arity|2|accessible|0|hidden|1>
 
   <drd-props|folded-documentation|arity|2|accessible|0|hidden|1>
+
+  <drd-props|folded-mixed|arity|2|accessible|0|hidden|1>
 
   <drd-props|folded-grouped|arity|2|accessible|0|hidden|1>
 
