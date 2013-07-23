@@ -1537,6 +1537,12 @@
 	    (display* "TeXmacs] non converted verbatim content: \n" x "\n")
             ""))))
 
+(define (escape-angles l)
+  (cond ((string? l)
+         (string-replace (string-replace l "<less>" "<") "<gtr>" ">"))
+        ((symbol? l) l)
+        (else (map escape-angles l))))
+
 (define (escape-braces l)
   (cond ((string? l) (string-replace (string-replace l "{" "\\{") "}" "\\}"))
         ((symbol? l) l)
@@ -1568,9 +1574,15 @@
 (define (tmtex-code-block s l)
   (set! l (escape-backslashes l))
   (set! l (escape-braces l))
-  (set! s (car (string-decompose s "-")))
+  (set!   (car (string-decompose s "-")))
   (with lang (if (or (== s "verbatim") (== s "code")) '() `((!option ,s)))
     `((!begin* "tmcode" ,@lang) ,(tmtex-verbatim* "" l))))
+
+(define (tmtex-mixed s l)
+  (set! l (escape-angles l))
+  (with bloc (apply string-append
+                    (list-intersperse (cdr (cadr (cadr (cadr l)))) "\n"))
+    `(!verbatim* ,bloc)))
 
 (define (tmtex-number-renderer l)
   (let ((r (cond ((string? l) l)
@@ -2155,6 +2167,8 @@
    (,tmtex-code-block 1))
   ((:or mmx cpp scm shell scilab) (,tmtex-code-inline 1))
 
+  (picture-mixed (,tmtex-mixed 2))
+  (source-mixed (,tmtex-mixed 2))
   (the-index (,tmtex-theindex -1))
   (glossary (,tmtex-glossary 1))
   (glossary-explain (,tmtex-glossary 2))
