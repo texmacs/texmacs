@@ -565,7 +565,8 @@ copy (url u1, url u2) {
 
 void
 remove (url u) {
-  u= expand (complete (u));
+  if (is_none (concretize (u)))
+    u= expand (complete (u));
   if (is_none (u));
   else if (is_or (u)) {
     remove (u[1]);
