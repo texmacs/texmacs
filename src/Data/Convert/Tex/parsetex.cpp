@@ -1002,7 +1002,7 @@ latex_parser::parse_command (string s, int& i, string cmd) {
       read_throught_env (s, i, cmd);
       orig_cmd= "\\begin{" * cmd(7, N(cmd)) * "}";
     }
-    string code= orig_cmd * verbatim_escape (s(begin_parse, i));
+    string code= orig_cmd * s(begin_parse, i);
     tree ret= tuple ("\\latex_preview",
                      cmd(1, N(cmd)),
                      concat (tuple ("\\begin-verbatim"),
