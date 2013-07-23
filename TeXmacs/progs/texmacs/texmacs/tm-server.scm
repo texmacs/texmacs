@@ -87,7 +87,7 @@
   ("manual zealous invisible correct" "off" (lambda args (noop)))
   ("manual homoglyph correct" "on" (lambda args (noop)))
   ("security" "prompt on scripts" notify-security)
-  ("latex command" "latex" notify-latex-command)
+  ("latex command" "pdflatex" notify-latex-command)
   ("bibtex command" "bibtex" notify-bibtex-command)
   ("scripting language" "none" notify-scripting-language)
   ("debugging tool" "off" notify-tool)

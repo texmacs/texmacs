@@ -15,5 +15,6 @@
 #include "array.hpp"
 
 array<tree> latex_preview (string s, tree t);
+void set_latex_command (string cmd);
 
 #endif // LATEX_PREVIEW_H

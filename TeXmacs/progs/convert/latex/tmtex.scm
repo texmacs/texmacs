@@ -2167,6 +2167,7 @@
    (,tmtex-code-block 1))
   ((:or mmx cpp scm shell scilab) (,tmtex-code-inline 1))
 
+  (latex_preview (,tmtex-mixed 2))
   (picture-mixed (,tmtex-mixed 2))
   (source-mixed (,tmtex-mixed 2))
   (the-index (,tmtex-theindex -1))

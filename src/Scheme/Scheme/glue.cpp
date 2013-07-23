@@ -1000,6 +1000,7 @@ tmscm_to_list_tree (tmscm  p) {
 #include "timer.hpp"
 #include "Metafont/tex_files.hpp"
 #include "Freetype/tt_file.hpp"
+#include "LaTeX_Preview/latex_preview.hpp"
 #include "Bibtex/bibtex.hpp"
 #include "Bibtex/bibtex_functions.hpp"
 #include "link.hpp"

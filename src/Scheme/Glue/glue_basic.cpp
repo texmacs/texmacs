@@ -381,7 +381,6 @@ tmg_system_wait (tmscm arg1, tmscm arg2) {
   return TMSCM_UNSPECIFIED;
 }
 
-void set_latex_command (string in1);
 tmscm
 tmg_set_latex_command (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "set-latex-command");

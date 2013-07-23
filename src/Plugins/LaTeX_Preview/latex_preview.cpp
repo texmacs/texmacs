@@ -153,7 +153,7 @@ latex_preview (string s, tree t) {
   latex_install_preview (s, t, wdir);
   string document_root= as_string (head (get_file_focus ()));
   string cmdln= "cd " * document_root;
-  cmdln << "; " << "pdflatex"
+  cmdln << "; " << latex_command
         << " -interaction nonstopmode -halt-on-error -file-line-error "
         << " -output-directory " << as_string (wdir)
         << " " << as_string (wdir) << "/temp.tex";
