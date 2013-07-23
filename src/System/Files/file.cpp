@@ -574,7 +574,8 @@ remove (url u) {
   }
   else {
     c_string _u (concretize (u));
-    (void) ::remove (_u);
+    if (::remove (_u) && DEBUG_AUTO)
+     cerr << "TeXmacs] warning, remove failed: " << strerror (errno) << LF;
   }
 }
 
