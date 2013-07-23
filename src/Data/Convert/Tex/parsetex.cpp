@@ -92,6 +92,26 @@ latex_parser::latex_error (string s, int i, string message) {
 * Misc testing
 ******************************************************************************/
 
+int
+latex_search_forwards (string s, int pos, string in) {
+  int k= N(s), n= N(in);
+  if (k == 0) return pos;
+  char c= s[0];
+  while (pos+k <= n) {
+    if (in[pos] == c && test (in, pos, s)) return pos;
+    if (in[pos] == '%' && (pos > 0 && in[pos-1] != '\\'))
+      while (pos < n && in[pos] != '\n') pos++;
+    else
+      pos++;
+  }
+  return -1;
+}
+
+int
+latex_search_forwards (string s, string in) {
+  return search_forwards (s, 0, in);
+}
+
 static bool
 is_regular (tree t) {
   if (!is_tuple (t)) return true;
@@ -1452,9 +1472,9 @@ clean_latex_comments (string s) {
 int
 get_latex_package_idx (string s, string which) {
   int i = 0;
-  while (search_forwards ("\\usepackage", i, s) != -1) {
+  while (latex_search_forwards ("\\usepackage", i, s) != -1) {
     int state = 0;
-    i = search_forwards ("\\usepackage", i, s) + 1;
+    i = latex_search_forwards ("\\usepackage", i, s) + 1;
     for (int j = i ; j < N(s) ; j++) {
       if      (test (s, j, "\n")  || test (s, j, "\\")) break;
       else if (test (s, j, "{")   && state == 0) state = 1;
@@ -1472,7 +1492,7 @@ get_latex_language (string s) {
   int start, stop;
   stop = get_latex_package_idx (s, "babel");
   if (stop == -1) return "";
-  stop = search_forwards  ("babel", stop, s);
+  stop = latex_search_forwards  ("babel", stop, s);
   stop = search_backwards ("]", stop, s) - 1;
   while (!is_alpha(s[stop])) stop--;
   for (start = stop ; stop > 0 ; start--)
@@ -1503,7 +1523,7 @@ get_latex_encoding (string s) {
   // Try if inputenc is called
   stop = get_latex_package_idx (s, "inputenc");
   if (stop != -1) {
-    stop = search_forwards  ("inputenc", stop, s);
+    stop = latex_search_forwards  ("inputenc", stop, s);
     stop = search_backwards ("]", stop, s);
     start = search_backwards ("[", stop, s) + 1;
     s = s(start, stop);

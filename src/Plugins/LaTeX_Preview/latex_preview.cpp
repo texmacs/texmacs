@@ -92,10 +92,10 @@ latex_install_preview (string s, tree t, url wdir) {
   preview << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n";
 
   int i= 0;
-  i= search_forwards ("\\documentclass", i, s);
-  i= search_forwards ("{", i, s);
-  i= search_forwards ("}", i, s);
-  i= search_forwards ("\n", i, s);
+  i= latex_search_forwards ("\n\\documentclass", i, s);
+  i= latex_search_forwards ("{", i, s);
+  i= latex_search_forwards ("}", i, s);
+  i= latex_search_forwards ("\n", i, s);
   i++;
   s= s(0, i) * preview * s(i, N(s));
   save_string (glue (wdir, "/temp.tex"), s);
@@ -159,7 +159,7 @@ latex_preview (string s, tree t) {
   if (DEBUG_AUTO) cout << "TeXmacs] LaTeX command: " << cmdln << "\n";
   if (system (cmdln)) {
     if (DEBUG_AUTO) cout << "Could not compile LaTeX document\n";
-    // latex_clean_tmp_directory (wdir);
+    latex_clean_tmp_directory (wdir);
     return array<tree> ();
   }
   array<tree> r= latex_load_preview (wdir);
