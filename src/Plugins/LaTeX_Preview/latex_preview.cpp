@@ -34,21 +34,6 @@ latex_present () {
 }
 
 array<string>
-search_inclusions (tree t) {
-  array<string> r;
-  int i, n= N(t);
-  if (is_atomic (t));
-  else if (is_tuple (t, "\\textm.include"))
-    for (i=1; i<n; i++)
-      r << as_string (t[i]);
-  else {
-    for (i=0; i<n; i++)
-      r << search_inclusions (t[i]);
-  }
-  return r;
-}
-
-array<string>
 search_latex_previews (tree t) {
   array<string> r;
   if (is_atomic (t));
@@ -75,7 +60,6 @@ latex_clean_tmp_directory (url u) {
 void
 latex_install_preview (string s, tree t, url wdir) {
   array<string> macros= search_latex_previews (t);
-  array<string> incls= search_inclusions (t);
   string preview= "%%%%%%%%%%%%%% ADDED BY TEXMACS %%%%%%%%%%%%%%%%%%\n";
   preview  << "\\usepackage[active,tightpage,delayed]{preview}\n";
   for (int i=0; i<N(macros); i++) {

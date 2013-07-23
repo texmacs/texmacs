@@ -1344,7 +1344,6 @@ latex_parser::parse (string s, bool change) {
   // We first cut the string into pieces at strategic places
   // This reduces the risk that the parser gets confused
   array<string> a;
-  array<string> incls;
   int i, start=0, cut=0, n= N(s);
   for (i=0; i<n; i++)
     if (s[i]=='\n' || (s[i] == '\\' && test (s, i, "\\nextbib"))) {
@@ -1395,7 +1394,6 @@ latex_parser::parse (string s, bool change) {
           if (!exists (incl) || load_string (incl, body, false));
           else {
             //cout << "Include " << name << " -> " << incl << "\n";
-            incls << materialize (incl, 'r');
             s= s (0, cut) * "\n" * body * "\n" * s (i+1, N(s));
             n= N(s);
           }
@@ -1407,11 +1405,6 @@ latex_parser::parse (string s, bool change) {
 
   // We now parse each of the pieces
   tree t (CONCAT);
-  if (pic && N(incls) > 0) {
-    tree r= tree (TUPLE, "\\textm.include");
-    for (i=0; i<N(incls); i++) r << incls[i];
-    t << r;
-  }
   for (i=0; i<N(a); i++) {
     int j=0;
     while (j<N(a[i])) {
