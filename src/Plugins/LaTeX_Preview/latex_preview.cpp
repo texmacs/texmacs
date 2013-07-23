@@ -123,11 +123,15 @@ latex_load_preview (url wdir) {
   array<tree> r;
   while (!stop) {
     url u= wdir * ("temp" * as_string (cnt) * ".eps");
-    if (exists (u))
-      r << latex_load_image (u);
+    if (exists (u)) {
+      // gs can produce empty pictures, to be ignored
+      tree tmp= latex_load_image (u);
+      if (N(tmp) == 5 && (tmp[1] != "0pt" || tmp[2] != "0pt"))
+        r << tmp;
+      cnt++;
+    }
     else
       stop= true;
-    cnt++;
   }
   return r;
 }
