@@ -139,7 +139,6 @@ init_user_dirs () {
   make_dir ("$TEXMACS_HOME_PATH/styles");
   make_dir ("$TEXMACS_HOME_PATH/system");
   make_dir ("$TEXMACS_HOME_PATH/system/bib");
-  make_dir ("$TEXMACS_HOME_PATH/system/pic");
   make_dir ("$TEXMACS_HOME_PATH/system/cache");
   make_dir ("$TEXMACS_HOME_PATH/system/tmp");
   make_dir ("$TEXMACS_HOME_PATH/texts");

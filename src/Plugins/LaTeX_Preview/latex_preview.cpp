@@ -58,14 +58,16 @@ search_latex_previews (tree t) {
 }
 
 void
-latex_clean_tmp_directory () {
-  string cmdln= "cd $TEXMACS_HOME_PATH/system/pic; rm -rf *";
-  if (DEBUG_AUTO) cout << "TeXmacs] LaTeX cleaning: " << cmdln << "\n";
-  system (cmdln);
+latex_clean_tmp_directory (url u) {
+  bool flag= false;
+  array<string> content= read_directory (u, flag);
+  for (int i=0; i<N(content); i++)
+    remove (content[i]);
+  remove (u);
 }
 
 void
-latex_install_preview (string s, tree t) {
+latex_install_preview (string s, tree t, url wdir) {
   array<string> macros= search_latex_previews (t);
   array<string> incls= search_inclusions (t);
   string preview= "%%%%%%%%%%%%%% ADDED BY TEXMACS %%%%%%%%%%%%%%%%%%\n";
@@ -96,8 +98,7 @@ latex_install_preview (string s, tree t) {
   i= search_forwards ("\n", i, s);
   i++;
   s= s(0, i) * preview * s(i, N(s));
-  latex_clean_tmp_directory ();
-  save_string ("$TEXMACS_HOME_PATH/system/pic/temp.tex", s);
+  save_string (glue (wdir, "/temp.tex"), s);
 }
 
 tree
@@ -118,8 +119,8 @@ latex_load_image (url image) {
 }
 
 array<tree>
-latex_load_preview () {
-  string cmdln= "cd  $TEXMACS_HOME_PATH/system/pic/ ;";
+latex_load_preview (url wdir) {
+  string cmdln= "cd " * as_string (wdir) * "; ";
   cmdln << "gs -sDEVICE=epswrite -dSAFER -q -dNOPAUSE -dBATCH "
     << "-dLanguageLevel=3 -sOutputFile=temp%d.eps temp.pdf";
   if (DEBUG_AUTO) cout << "TeXmacs] LaTeX command: " << cmdln << "\n";
@@ -131,7 +132,7 @@ latex_load_preview () {
   bool stop= false;
   array<tree> r;
   while (!stop) {
-    url u= url ("$TEXMACS_HOME_PATH/system/pic/temp" *as_string (cnt)* ".eps");
+    url u= glue (wdir, "/temp" * as_string (cnt) * ".eps");
     if (exists (u))
       r << latex_load_image (u);
     else
@@ -146,21 +147,25 @@ latex_preview (string s, tree t) {
   if (!latex_present ()) return array<tree>();
   // FIXME: ./Texmacs/Window/tm_frame.cpp:191 seems to crash here if we launch
   // system_wait ("LaTeX: compiling document, ", "please wait");
-  latex_install_preview (s, t);
+  url wdir= url_temp ("_latex_preview");
+  mkdir (wdir);
+  latex_install_preview (s, t, wdir);
   string document_root= as_string (head (get_file_focus ()));
   string cmdln= "cd " * document_root;
   cmdln << "; " << "pdflatex"
         << " -interaction nonstopmode -halt-on-error -file-line-error "
-        << " -output-directory $TEXMACS_HOME_PATH/system/pic/ "
-        << " $TEXMACS_HOME_PATH/system/pic/temp.tex ";
+        << " -output-directory " << as_string (wdir)
+        << " " << as_string (wdir) << "/temp.tex";
   if (DEBUG_AUTO) cout << "TeXmacs] LaTeX command: " << cmdln << "\n";
   if (system (cmdln)) {
     if (DEBUG_AUTO) cout << "Could not compile LaTeX document\n";
+    // latex_clean_tmp_directory (wdir);
     return array<tree> ();
   }
-  array<tree> r= latex_load_preview ();
+  array<tree> r= latex_load_preview (wdir);
   if (N(r) != N(search_latex_previews (t))) {
     if (DEBUG_AUTO) cout << "Warning: LaTeX importation could have failed\n";
   }
+  latex_clean_tmp_directory (wdir);
   return r;
 } 
