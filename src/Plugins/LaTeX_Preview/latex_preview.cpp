@@ -113,7 +113,7 @@ latex_load_preview (url wdir) {
   string cmdln= "cd " * as_string (wdir) * "; ";
   cmdln << "gs -sDEVICE=epswrite -dSAFER -q -dNOPAUSE -dBATCH "
     << "-dLanguageLevel=3 -sOutputFile=temp%d.eps temp.pdf";
-  dbg ("TeXmacs] LaTeX command: " * cmdln);
+  dbg ("LaTeX command: " * cmdln);
   if (system (cmdln)) {
     dbg ("Could not extract pictures from LaTeX document");
     return array<tree> ();
@@ -161,7 +161,8 @@ latex_preview (string s, tree t) {
   }
   array<tree> r= latex_load_preview (wdir);
   if (N(r) != N(search_latex_previews (t))) {
-    dbg ("Warning: LaTeX importation could have failed");
+    dbg ("Warning: did not found the expected number of pictures.");
+    dbg ("         LaTeX compilation or picture importation might have failed");
   }
   latex_clean_tmp_directory (wdir);
   return r;
