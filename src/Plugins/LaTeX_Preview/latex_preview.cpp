@@ -16,6 +16,11 @@
 #include "file.hpp"
 #include "sys_utils.hpp"
 
+static inline void
+dbg (string s) {
+  if (DEBUG_AUTO) cout << "TeXmacs] " << s << LF;
+}
+
 static string latex_command= "pdflatex";
 
 void
@@ -108,7 +113,7 @@ latex_load_image (url image) {
   tree t (IMAGE, 5);
   load_string (image, s, false);
   if (s == "") {
-    if (DEBUG_AUTO) cout << "Could not load " * as_string (image) * "\n";
+    dbg ("Could not load " * as_string (image));
     return array<tree> ();
   }
   int width, height;
@@ -124,9 +129,9 @@ latex_load_preview (url wdir) {
   string cmdln= "cd " * as_string (wdir) * "; ";
   cmdln << "gs -sDEVICE=epswrite -dSAFER -q -dNOPAUSE -dBATCH "
     << "-dLanguageLevel=3 -sOutputFile=temp%d.eps temp.pdf";
-  if (DEBUG_AUTO) cout << "TeXmacs] LaTeX command: " << cmdln << "\n";
+  dbg ("TeXmacs] LaTeX command: " * cmdln);
   if (system (cmdln)) {
-    if (DEBUG_AUTO) cout << "Could not extract pictures from LaTeX document\n";
+    dbg ("Could not extract pictures from LaTeX document");
     return array<tree> ();
   }
   unsigned int cnt= 1;
@@ -145,7 +150,14 @@ latex_load_preview (url wdir) {
 
 array<tree>
 latex_preview (string s, tree t) {
-  if (!latex_present ()) return array<tree>();
+  if (!latex_present ()) {
+    dbg ("LaTeX preview: " * latex_command * " not found");
+    return array<tree>();
+  }
+  if (!exists_in_path ("gs")) {
+    dbg ("LaTeX preview: ghostscript not found");
+    return array<tree>();
+  }
   // FIXME: ./Texmacs/Window/tm_frame.cpp:191 seems to crash here if we launch
   // system_wait ("LaTeX: compiling document, ", "please wait");
   url wdir= url_temp ("_latex_preview");
@@ -157,15 +169,15 @@ latex_preview (string s, tree t) {
         << " -interaction nonstopmode -halt-on-error -file-line-error "
         << " -output-directory " << as_string (wdir)
         << " " << as_string (wdir) << "/temp.tex";
-  if (DEBUG_AUTO) cout << "TeXmacs] LaTeX command: " << cmdln << "\n";
+  dbg ("LaTeX command: " * cmdln);
   if (system (cmdln)) {
-    if (DEBUG_AUTO) cout << "Could not compile LaTeX document\n";
+    dbg ("Could not compile LaTeX document");
     latex_clean_tmp_directory (wdir);
     return array<tree> ();
   }
   array<tree> r= latex_load_preview (wdir);
   if (N(r) != N(search_latex_previews (t))) {
-    if (DEBUG_AUTO) cout << "Warning: LaTeX importation could have failed\n";
+    dbg ("Warning: LaTeX importation could have failed");
   }
   latex_clean_tmp_directory (wdir);
   return r;
