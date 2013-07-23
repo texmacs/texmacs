@@ -79,7 +79,13 @@ latex_install_preview (string s, tree t) {
       arity= -arity;
     }
     while (arity-- > 0) arity_code << "{}";
-    preview << "\\PreviewMacro[{" * arity_code * "}]{\\" * macros[i] * "}\n";
+    string name= "\\" * macros[i];
+    string cmd= "\\PreviewMacro";
+    if (test (name, 0, "\\begin-")) {
+      name= name(7, N(name));
+      cmd= "\\PreviewEnvironment";
+    }
+    preview << cmd << "[{" * arity_code * "}]{" * name * "}\n";
   }
   preview << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n";
 
@@ -138,7 +144,7 @@ latex_load_preview () {
 array<tree>
 latex_preview (string s, tree t) {
   if (!latex_present ()) return array<tree>();
-  // FIXME: ./Texmacs/Window/tm_frame.cpp:191 seems to crash here
+  // FIXME: ./Texmacs/Window/tm_frame.cpp:191 seems to crash here if we launch
   // system_wait ("LaTeX: compiling document, ", "please wait");
   latex_install_preview (s, t);
   string document_root= as_string (head (get_file_focus ()));

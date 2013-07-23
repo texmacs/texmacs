@@ -603,6 +603,29 @@ latex_parser::is_opening_option (char c) {
   return false;
 }
 
+static void
+read_throught_env (string s, int &i, string cmd) {
+  string env= cmd (7, N(cmd));
+  int count= 1;
+  while (i < N(s) && count > 0) {
+    if (s[i] == '\\' && test_env (s, i, env, false)) count++;
+    if (s[i] == '\\' && test_env (s, i, env, true))  count--;
+    if (s[i] == '%' && (i == 0 || s[i-1] != '\\')) {while (s[i] != '\n') i++;}
+    if (count > 0) i++;
+  }
+  if (test_env (s, i, env, true) && count == 0) {
+    i+= 4; // \end
+    while (i < N(s) && s[i] == ' ') i++;
+    i++; // "{"
+    int count= 1;
+    while (i < N(s) && count > 0) {
+      if (s[i] == '{') count++;
+      if (s[i] == '}') count--;
+      i++;
+    }
+  }
+}
+
 tree
 latex_parser::parse_command (string s, int& i, string cmd) {
   bool delimdef = false;
@@ -950,8 +973,13 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     // the user defined shorthands for \\begin{env} and \\end{env}
   }
 
+  string orig_cmd= cmd;
   if (pic && latex_type (cmd(1, N(cmd))) == "as-picture") {
-    string code= cmd * verbatim_escape (s(begin_parse, i));
+    if (cmd(0, 7) == "\\begin-") {
+      read_throught_env (s, i, cmd);
+      orig_cmd= "\\begin{" * cmd(7, N(cmd)) * "}";
+    }
+    string code= orig_cmd * verbatim_escape (s(begin_parse, i));
     tree ret= tuple ("\\latex_preview",
                      cmd(1, N(cmd)),
                      concat (tuple ("\\begin-verbatim"),

@@ -386,12 +386,17 @@
 ;; To be imported as pictures
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(logic-group latex-as-pic-0%
+  begin-tikzpicture)
+
 (logic-group latex-as-pic-1%
   xymatrix)
 
 (logic-rules
+  ((latex-as-pic% 'x)       (latex-as-pic-0% 'x))
   ((latex-as-pic% 'x)       (latex-as-pic-1% 'x))
-  ((latex-arity% 'x 1)   (latex-as-pic-1% 'x)))
+  ((latex-arity%  'x 0)     (latex-as-pic-0% 'x))
+  ((latex-arity%  'x 1)     (latex-as-pic-1% 'x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; To be ignored
