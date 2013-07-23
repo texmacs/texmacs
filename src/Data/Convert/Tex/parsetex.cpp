@@ -119,7 +119,7 @@ test_macro (string s, int i, string name) {
 }
 
 static bool
-test_env (string s, int i, string name, bool end) {
+test_env (string s, int i, string name, bool end=false) {
   string tok= end? "\\end":"\\begin";
   int step= end? 4:6;
   if (!test_macro (s, i, tok)) return false;
@@ -1332,34 +1332,32 @@ latex_parser::parse (string s, bool change) {
 	i += 30;
 	start= i;
       }
-      // FIXME that'a not a good way to test token's name since "\\input {" or
-      // "\\usepackage [" or "\\definition" may be used.
-      // Seek for \\\\[a-z]\+[{\[] to replace theses kind of patterns by
-      // a true test. }
-      else if (test (s, i, "\\begin{document}") ||
-               test (s, i, "\\begin{abstract}") ||
-               test (s, i, "\\chapter") ||
-               test (s, i, "\\section") ||
-               test (s, i, "\\subsection") ||
-               test (s, i, "\\subsubsection") ||
-               test (s, i, "\\paragraph") ||
-               test (s, i, "\\subparagraph") ||
-               test (s, i, "\\nextbib") ||
-               test (s, i, "\\newcommand") ||
-               test (s, i, "\\def")) {
+      else if (test_env   (s, i, "document")        ||
+               test_env   (s, i, "abstract")        ||
+               test_macro (s, i, "\\chapter")       ||
+               test_macro (s, i, "\\section")       ||
+               test_macro (s, i, "\\subsection")    ||
+               test_macro (s, i, "\\subsubsection") ||
+               test_macro (s, i, "\\paragraph")     ||
+               test_macro (s, i, "\\subparagraph")  ||
+               test_macro (s, i, "\\nextbib")       ||
+               test_macro (s, i, "\\newcommand")    ||
+               test_macro (s, i, "\\def")) {
         a << s (start, i);
         start= i;
-        while (i < n && test (s, i, "\\nextbib{}")) {
+        while (i < n && test_macro (s, i, "\\nextbib")) {
           i += 10;
           a << s (start, i);
           start= i;
         }
       }
-      else if (test (s, i, "\\input{")       || test (s, i, "\\include{") ||
-               test (s, i, "\\includeonly{") || test (s, i, "\\usepackage{")) {
+      else if (test_macro (s, i, "\\input")       ||
+               test_macro (s, i, "\\include")     ||
+               test_macro (s, i, "\\includeonly") ||
+               test_macro (s, i, "\\usepackage")) {
         cut= i;
         string suffix= ".tex";
-        if (test (s, i, "\\usepackage{")) suffix= ".sty";
+        if (test_macro (s, i, "\\usepackage")) suffix= ".sty";
         while (i<N(s) && s[i] != '{') i++;
         int start_name= i+1;
         while (i<N(s) && s[i] != '}') i++;
