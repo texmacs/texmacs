@@ -93,6 +93,9 @@
 		493D309A15190AEA00A19C3D /* new_buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493D309915190AEA00A19C3D /* new_buffer.cpp */; };
 		493D309B15190AEA00A19C3D /* new_buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493D309915190AEA00A19C3D /* new_buffer.cpp */; };
 		493D309C15190AEA00A19C3D /* new_buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493D309915190AEA00A19C3D /* new_buffer.cpp */; };
+		493F45F9179EC49F00E2972D /* latex_preview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493F45F7179EC49F00E2972D /* latex_preview.cpp */; };
+		493F45FA179EC49F00E2972D /* latex_preview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493F45F7179EC49F00E2972D /* latex_preview.cpp */; };
+		493F45FB179EC49F00E2972D /* latex_preview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493F45F7179EC49F00E2972D /* latex_preview.cpp */; };
 		4942BEF71679293B00A6C354 /* font_select.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4942BEF61679293B00A6C354 /* font_select.cpp */; };
 		4942BEF81679293B00A6C354 /* font_select.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4942BEF61679293B00A6C354 /* font_select.cpp */; };
 		4942BEF91679293B00A6C354 /* font_select.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4942BEF61679293B00A6C354 /* font_select.cpp */; };
@@ -1292,6 +1295,8 @@
 		4932C1A31704F54200E87D8C /* pencil.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = pencil.hpp; sourceTree = "<group>"; };
 		4937B89A1521C59E00D87F22 /* MOCs.xcconfig */ = {isa = PBXFileReference; comments = "This addtional .xcconfig is needed to have an empty OTHER_LDFLAGS for the target MOCs. Newer versions of the linker complain and fail when they find dylibs in the link line."; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = MOCs.xcconfig; sourceTree = "<group>"; };
 		493D309915190AEA00A19C3D /* new_buffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = new_buffer.cpp; sourceTree = "<group>"; };
+		493F45F7179EC49F00E2972D /* latex_preview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = latex_preview.cpp; sourceTree = "<group>"; };
+		493F45F8179EC49F00E2972D /* latex_preview.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = latex_preview.hpp; sourceTree = "<group>"; };
 		4942BEF61679293B00A6C354 /* font_select.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_select.cpp; sourceTree = "<group>"; };
 		495712F716E90E5900934EA3 /* metadata-acm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "metadata-acm.cpp"; sourceTree = "<group>"; };
 		495712F816E90E5900934EA3 /* metadata-elsevier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "metadata-elsevier.cpp"; sourceTree = "<group>"; };
@@ -2212,6 +2217,15 @@
 			path = Types;
 			sourceTree = "<group>";
 		};
+		493F45F6179EC49F00E2972D /* LaTeX_Preview */ = {
+			isa = PBXGroup;
+			children = (
+				493F45F7179EC49F00E2972D /* latex_preview.cpp */,
+				493F45F8179EC49F00E2972D /* latex_preview.hpp */,
+			);
+			path = LaTeX_Preview;
+			sourceTree = "<group>";
+		};
 		49DD8FA616DB75C100647CA2 /* Sqlite3 */ = {
 			isa = PBXGroup;
 			children = (
@@ -2718,6 +2732,7 @@
 				9C0B487910A8CC100097A335 /* Ghostscript */,
 				9C0B487C10A8CC100097A335 /* Imlib2 */,
 				9C0B487F10A8CC100097A335 /* Ispell */,
+				493F45F6179EC49F00E2972D /* LaTeX_Preview */,
 				9C0B488210A8CC100097A335 /* MacOS */,
 				9C0B488B10A8CC100097A335 /* Metafont */,
 				9C0B489710A8CC100097A335 /* Mplayer */,
@@ -4477,6 +4492,7 @@
 				491BF36E178BFF4C00C69EEF /* tm_sparkle.mm in Sources */,
 				491BF371178BFF4C00C69EEF /* tm_updater.cpp in Sources */,
 				491BF374178BFF4C00C69EEF /* tm_winsparkle.cpp in Sources */,
+				493F45F9179EC49F00E2972D /* latex_preview.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4852,6 +4868,7 @@
 				491BF370178BFF4C00C69EEF /* tm_sparkle.mm in Sources */,
 				491BF373178BFF4C00C69EEF /* tm_updater.cpp in Sources */,
 				491BF376178BFF4C00C69EEF /* tm_winsparkle.cpp in Sources */,
+				493F45FB179EC49F00E2972D /* latex_preview.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5255,6 +5272,7 @@
 				491BF36F178BFF4C00C69EEF /* tm_sparkle.mm in Sources */,
 				491BF372178BFF4C00C69EEF /* tm_updater.cpp in Sources */,
 				491BF375178BFF4C00C69EEF /* tm_winsparkle.cpp in Sources */,
+				493F45FA179EC49F00E2972D /* latex_preview.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
