@@ -50,6 +50,7 @@ struct latex_parser {
   bool unicode;
   char lf;
   bool pic;
+  bool in_def;
   hashmap<string,bool> loaded_package;
   latex_parser (bool unicode2): level (0), unicode (unicode2) {}
   void latex_error (string s, int i, string message);
@@ -648,6 +649,8 @@ latex_parser::parse_command (string s, int& i, string cmd) {
   if (cmd == "\\begin-tabular*") cmd= "\\begin-tabularx";
   if (cmd == "\\end-tabular*") cmd= "\\end-tabularx";
 
+  if (cmd == "\\def" || cmd == "\\newenvironment") in_def= true;
+
   if (latex_type (cmd) == "undefined")
     return parse_unknown (s, i, cmd);
 
@@ -974,7 +977,7 @@ latex_parser::parse_command (string s, int& i, string cmd) {
   }
 
   string orig_cmd= cmd;
-  if (pic && latex_type (cmd(1, N(cmd))) == "as-picture") {
+  if (pic && !in_def && latex_type (cmd(1, N(cmd))) == "as-picture") {
     if (cmd(0, 7) == "\\begin-") {
       read_throught_env (s, i, cmd);
       orig_cmd= "\\begin{" * cmd(7, N(cmd)) * "}";
@@ -990,6 +993,7 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     return ret;
   }
 
+  if (cmd == "\\def" || cmd == "\\newenvironment") in_def= false;
   if (mbox_flag) command_type ("!mode") = "math";
   return t;
 }
@@ -1628,6 +1632,7 @@ parse_latex (string s, bool change, bool using_cork, bool as_pic) {
 
   latex_parser ltx (encoding != "Cork");
   ltx.lf= 'M';
+  ltx.in_def= false;
   ltx.pic= as_pic;
   r= ltx.parse (s, change);
   r= accented_to_Cork (r);
