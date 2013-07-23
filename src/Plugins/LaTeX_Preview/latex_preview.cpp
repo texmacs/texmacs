@@ -62,8 +62,9 @@ latex_clean_tmp_directory (url u) {
   bool flag= false;
   array<string> content= read_directory (u, flag);
   for (int i=0; i<N(content); i++)
-    remove (content[i]);
-  remove (u);
+    if (content[i] != "." && content[i] != "..")
+      remove (u * content[i]);
+  remove (u * ".");
 }
 
 void
@@ -98,7 +99,7 @@ latex_install_preview (string s, tree t, url wdir) {
   i= latex_search_forwards ("\n", i, s);
   i++;
   s= s(0, i) * preview * s(i, N(s));
-  save_string (glue (wdir, "/temp.tex"), s);
+  save_string (wdir * "temp.tex", s);
 }
 
 tree
@@ -132,7 +133,7 @@ latex_load_preview (url wdir) {
   bool stop= false;
   array<tree> r;
   while (!stop) {
-    url u= glue (wdir, "/temp" * as_string (cnt) * ".eps");
+    url u= wdir * ("temp" * as_string (cnt) * ".eps");
     if (exists (u))
       r << latex_load_image (u);
     else
