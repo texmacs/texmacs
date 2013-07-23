@@ -281,7 +281,7 @@ substitute_latex_previews (tree t, array<tree> a, int &i) {
   if (N(a) <= i);
   else if (is_atomic (t));
   else if (is_tuple (t, "\\latex_preview", 2)) {
-    t[0]= "\\folded-mixed";
+    t[0]= "\\picture-mixed";
     t[1]= a[i++];
   }
   else {

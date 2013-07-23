@@ -41,7 +41,7 @@
 (define-fold folded-env unfolded-env)
 (define-fold folded-documentation unfolded-documentation)
 (define-fold folded-grouped unfolded-grouped)
-(define-fold folded-mixed unfolded-mixed)
+(define-fold picture-mixed source-mixed)
 
 ;; summarized <-> detailed toggles
 

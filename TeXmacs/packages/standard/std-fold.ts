@@ -159,11 +159,11 @@
     </render-unfolded-documentation>
   </macro>>
 
-  <assign|folded-mixed|<\macro|x|y>
+  <assign|picture-mixed|<\macro|x|y>
     <action|<arg|x>|(mouse-unfold)|<arg|x>><hidden|<arg|y>>
   </macro>>
 
-  <assign|unfolded-mixed|<\macro|x|y>
+  <assign|source-mixed|<\macro|x|y>
     <\render-folded-std|<action|<resize|<active*|<with|mode|math|||||\<blacktriangleleft\>>>|||<maximum|1r|1.5fn>|>|(mouse-fold)|<arg|y>>>
       <arg|y><hidden|<arg|x>>
     </render-folded-std>
@@ -201,7 +201,7 @@
 
   <drd-props|folded-documentation|arity|2|accessible|0|hidden|1>
 
-  <drd-props|folded-mixed|arity|2|accessible|0|hidden|1>
+  <drd-props|picture-mixed|arity|2|accessible|0|hidden|1>
 
   <drd-props|folded-grouped|arity|2|accessible|0|hidden|1>
 
