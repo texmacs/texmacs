@@ -88,7 +88,7 @@ latex_parser::latex_error (string s, int i, string message) {
 }
 
 /******************************************************************************
-* Main parsing routine
+* Misc testing
 ******************************************************************************/
 
 static bool
@@ -110,6 +110,37 @@ is_tex_alpha (string s) {
     if (!is_alpha (s[i]) && s[i] != '@') return false;
   return true;
 }
+
+static bool
+test_macro (string s, int i, string name) {
+  while (i < N(s) && s[i] == ' ') i++;
+  return test (s, i, name) &&
+    (N(s) == i + N(name) || !is_tex_alpha (s[i+N(name)]));
+}
+
+static bool
+test_env (string s, int i, string name, bool end) {
+  string tok= end? "\\end":"\\begin";
+  int step= end? 4:6;
+  if (!test_macro (s, i, tok)) return false;
+  while (i < N(s) && s[i] == ' ') i++;
+  i+= step;
+  while (i < N(s) && s[i] == ' ') i++;
+  if (i < N(s) && s[i] != '{') return false;
+  i++; // "{"
+  int count= 1, start= i;
+  while (i < N(s) && count > 0) {
+    if (s[i] == '{') count++;
+    if (s[i] == '}') count--;
+    i++;
+  }
+  if (trim_spaces (s (start, i-1)) == name) return true;
+  return false;
+}
+
+/******************************************************************************
+* Main parsing routine
+******************************************************************************/
 
 tree
 latex_parser::parse_linefeed (string s, int& i) {
