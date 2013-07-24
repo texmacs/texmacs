@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.16>
+<TeXmacs|1.0.7.19>
 
 <style|<tuple|source|std>>
 
@@ -153,6 +153,12 @@
   <assign|itemize-reduce|<macro|nr|<minimum|<arg|nr>|4>>>
 
   <assign|enumerate-reduce|<macro|nr|<minimum|<arg|nr>|4>>>
+
+  <active*|<\src-comment>
+    <LaTeX> preview
+  </src-comment>>
+
+  <assign|latex_preview|<macro|pic|src|<arg|src>>>
 </body>
 
 <\initial>
