@@ -29,6 +29,7 @@
 (tm-define tmtex-packages '())
 (tm-define tmtex-provided-packages '())
 (tm-define tmtex-replace-style? #t)
+(define tmtex-src (make-ahash-table))
 (define tmtex-env (make-ahash-table))
 (define tmtex-dynamic (make-ahash-table))
 (define tmtex-serial 0)
@@ -469,6 +470,17 @@
 	   (tmtex-apply-init `(verbatim ,body) init*)))
 	(else body)))
 
+(define (make-tree-src-hash t)
+  (let* ((col (filter (lambda (x)
+                        (and (func? x 'associate)
+                             (func? (cAr x) 'latex-tree-src))) (cdr t)))
+         (l   (map (lambda (x)
+                     (let ((key  (second (cAr x)))
+                           (val (third  (cAr x))))
+                       (list key val))) col)))
+    (for-each (lambda (x) (ahash-set! tmtex-src (car x) (cdr x))) l)
+    tmtex-src))
+
 (define (tmtex-file l)
   (let* ((doc (car l))
 	 (styles (cadr l))
@@ -477,11 +489,20 @@
 	 (init-bis (if (list>1? init)
                      (map (lambda (x) (cons (cadr x) (caddr x))) (cdr init))
                      '()))
+         (aux (or (cadddr (cdr l)) '()))
 	 (doc-preamble (tmtex-filter-preamble doc))
 	 (doc-body-pre (tmtex-filter-body doc))
 	 (doc-body (tmtex-apply-init doc-body-pre init-bis)))
     (if (== (get-preference "texmacs->latex:expand-user-macros") "on")
 	(set! doc-preamble '()))
+    (set! tmtex-src (make-ahash-table))
+    (if (and
+          (== (get-preference "latex->texmacs:preserve-source") "on")
+          (nnull? aux))
+      (begin
+        (make-tree-src-hash aux)
+        ;... TODO : the preamble and end of the document are critical !
+        ))
     (if (null? styles) (tmtex doc)
 	(let* ((styles* (tmtex-filter-styles styles))
 	       (preamble* (ahash-with tmtex-env :preamble #t
@@ -1952,8 +1973,10 @@
   (map-in-order tmtex l))
 
 (tm-define (tmtex x)
-  (if (string? x) (tmtex-string x)
-      (tmtex-apply (car x) (cdr x))))
+  (with src (ahash-ref tmtex-src x)
+    (cond ((not (not src)) (list '!verbatim* (tmtex-tt (car src))))
+          ((string? x) (tmtex-string x))
+          (else (tmtex-apply (car x) (cdr x))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dispatching
@@ -2376,7 +2399,8 @@
 	     (main-style (or (tmtex-transform-style (car style)) "article"))
 	     (lan (tmfile-init x "language"))
 	     (init (tmfile-extract x 'initial))
-	     (doc (list '!file body style lan init
+	     (aux (tmfile-extract x 'auxiliary))
+	     (doc (list '!file body style lan init aux
                         (url->string (get-texmacs-path)))))
 	(latex-set-style main-style)
 	(latex-set-packages '())
