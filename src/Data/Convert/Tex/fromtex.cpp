@@ -118,6 +118,7 @@ is_sectionnal (tree t) {
          (is_func (t, TUPLE, 2) && t[0] == "\\part*")              || 
          (is_func (t, TUPLE, 2) && t[0] == "\\chapter")            || 
          (is_func (t, TUPLE, 2) && t[0] == "\\chapter*")           || 
+         (is_func (t, TUPLE, 1) && t[0] == "\\textm@break")        ||
          (is_func (t, TUPLE) && t[0] == "\\end-thebibliography")   || 
          (is_func (t, TUPLE) && t[0] == "\\bibliography");
 }
@@ -226,7 +227,7 @@ filter_preamble (tree t) {
 	      doc << u;
         latex_class = u;
       }
-      else if (is_tuple (u, "\\textm.include"))
+      else if (is_tuple (u, "\\textm@break", 1))
         preamble << u << "\n" << "\n";
       else if (is_tuple (u, "\\def") ||
 	       is_tuple (u, "\\def*") || is_tuple (u, "\\def**"))
@@ -999,6 +1000,7 @@ latex_eps_get (tree t, string var) {
 tree
 latex_command_to_tree (tree t) {
   if (is_tuple (t) && N(t)>1) {
+    if (t[0] == "\\textm@break") return compound ("textm@break", t[1]);
     string s= as_string (t[0]);
     s= s(1,N(s));
     if (latex_type (s) == "ignore")
@@ -3331,7 +3333,8 @@ is_verbatim (tree t) {
   return is_compound (t, "cpp-code") || is_compound (t, "mmx-code")   ||
          is_compound (t, "scm-code") || is_compound (t, "shell-code") ||
          is_compound (t, "code")     || is_compound (t, "verbatim")   ||
-         is_compound (t, "scilab-code");
+         is_compound (t, "scilab-code") ||
+         is_compound (t, "textm@break");
 }
 
 static tree
@@ -3388,6 +3391,134 @@ finalize_textm (tree t) {
   t= remove_superfluous_newlines (t);
   t= concat_document_correct (t);
   return simplify_correct (t);
+}
+
+/******************************************************************************
+* Paragraph breaking managment
+******************************************************************************/
+
+static tree
+search_and_remove_breaks (tree t, tree &src) {
+  if (is_atomic (t)) return t;
+  int i, n= N(t);
+  tree r(L(t));
+  for (i=0; i<n; i++) {
+    if (is_compound (t[i], "textm@break", 1))
+      src << A(t[i][0]);
+    else
+      r << search_and_remove_breaks (t[i], src);
+  }
+  return r;
+}
+
+static tree
+merge_non_root_break_trees (tree t) {
+  if (is_atomic (t)) return t;
+  int i, n= N(t);
+  tree src (DOCUMENT), r (L(t));
+  for (i=0; i<n; i++) {
+    if (is_compound (t[i], "textm@break", 1)) {
+      src << A(t[i][0]);
+      t[i][0]= src;
+      r << t[i];
+      src= tree (DOCUMENT);
+    }
+    else
+      r << search_and_remove_breaks (t[i], src);
+  }
+  return r;
+}
+
+static tree
+merge_empty_break_trees (tree t) {
+  int i, n=N(t);
+  bool merge= false;
+  tree src, r (L(t));
+  for (i=0; i<n; i++) {
+    if (is_compound (t[i], "textm@break", 1)) {
+      if (merge) {
+        src= tree (DOCUMENT);
+        src << A(r[N(r)-1][0]);
+        src << A(t[i][0]);
+        r[N(r)-1][0]= src;
+      }
+      else {
+        r << t[i];
+        merge= true;
+      }
+    }
+    else {
+      r << t[i];
+      merge= false;
+    }
+  }
+  return r;
+}
+
+static bool
+contains_title_or_abstract (tree t) {
+  if (is_atomic (t)) return false;
+  if (is_compound (t, "doc-data") || is_compound (t, "abstract-data"))
+    return true;
+  int i, n=N(t);
+  for (i=0; i<n; i++)
+    if (contains_title_or_abstract (t[i]))
+      return true;
+  return false;
+}
+
+static tree
+merge_non_ordered_break_trees (tree t) {
+  if (!contains_title_or_abstract (t)) return t;
+  int i, n=N(t);
+  bool merge= false;
+  tree src (DOCUMENT), r (L(t));
+  for (i=n-1; i>=0; i--) {
+    if (is_compound (t[i], "textm@break", 1)) {
+      if (merge)
+        src= (t[i][0] << A(src));
+      else
+        r << t[i];
+    }
+    else {
+      r << t[i];
+      if (contains_title_or_abstract (t[i]))
+        merge= true;
+    }
+  }
+  n=N(r);
+  for (i=0; i<n; i++) {
+    if (is_compound (r[i], "textm@break", 1)) {
+      src << A(r[i][0]);
+      r[i][0]= src;
+      break;
+    }
+  }
+  return tree (DOCUMENT, reverse (A(r)));
+}
+
+static tree
+pick_paragraph_breaks (tree t, array<tree> &b) {
+  if (is_atomic (t)) return t;
+  t= merge_non_root_break_trees (t);
+  t= merge_empty_break_trees (t);
+  t= merge_non_ordered_break_trees (t);
+  int i, n= N(t);
+  tree r (L(t));
+  tree u (DOCUMENT);
+  unsigned int id_cnt= 0;
+  for (i=0; i<n; i++) {
+    if (is_compound (t[i], "textm@break", 1)) {
+      string uid= as_string (id_cnt++);
+      b << compound ("associate", "latex-tree-src" * uid,
+                     compound ("latex-tree-src", u, t[i][0]));
+      r << u;
+      u= tree (DOCUMENT);
+    }
+    else
+      u << t[i];
+  }
+  return r;
 }
 
 /******************************************************************************
@@ -3459,13 +3590,19 @@ latex_to_tree (tree t1) {
   // cout << "\n\nt13= " << t13 << "\n\n";
 
   if (is_document) {
-    tree the_body   = compound ("body", t13);
+    array<tree> breaks;
+    tree t14= pick_paragraph_breaks (t13, breaks);
+    // cout << "\n\nt14= " << t14 << "\n\n";
+    tree auxiliary  = compound ("collection", breaks);
+    tree the_body   = compound ("body", t14);
     tree the_style  = compound ("style", style);
-    tree the_initial= compound ("initial", initial);
     if (textm_natbib)
       the_style= compound ("style", tuple (style, "cite-author-year"));
-    if (N (initial) == 0) return tree (DOCUMENT, the_style, the_body);
-    else return tree (DOCUMENT, the_style, the_body, the_initial);
+
+    tree r= tree (DOCUMENT, the_style, the_body);
+    if (N (initial) > 0)      r << compound ("initial", initial);
+    if (N (auxiliary[0]) > 0) r << compound ("auxiliary", auxiliary);
+    return r;
   }
   else return t13;
 }
