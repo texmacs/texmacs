@@ -276,6 +276,20 @@ filter_preamble (tree t) {
 * Import macro as pictures
 ******************************************************************************/
 
+bool
+find_latex_previews (tree t) {
+  if (is_atomic (t)) return false;
+  else if (is_tuple (t, "\\latex_preview", 2))
+    return true;
+  else {
+    int i, n= N(t);
+    for (i=0; i<n; i++)
+      if (find_latex_previews (t[i]))
+        return true;
+  }
+  return false;
+}
+
 tree
 substitute_latex_previews (tree t, array<tree> a, int &i) {
   if (N(a) <= i);
@@ -294,6 +308,7 @@ substitute_latex_previews (tree t, array<tree> a, int &i) {
 
 tree
 latex_fallback_on_pictures (string s, tree t) {
+  if (!find_latex_previews (t)) return t;
   int i= 0;
   array<tree> a= latex_preview (s, t);
   return substitute_latex_previews (t, a, i);
@@ -3456,13 +3471,13 @@ latex_to_tree (tree t1) {
 }
 
 tree
-latex_document_to_tree (string s, bool as_pic) {
+latex_document_to_tree (string s, bool as_pic, bool keep_src) {
   command_type ->extend ();
   command_arity->extend ();
   command_def  ->extend ();
-  tree t= parse_latex_document (s, true, as_pic);
-  tree u= latex_fallback_on_pictures (s, t);
-  tree r= latex_to_tree (u);
+  tree t= parse_latex_document (s, true, as_pic, keep_src);
+  if (as_pic) t= latex_fallback_on_pictures (s, t);
+  tree r= latex_to_tree (t);
   command_type ->shorten ();
   command_arity->shorten ();
   command_def  ->shorten ();

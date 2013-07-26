@@ -50,6 +50,7 @@ struct latex_parser {
   bool unicode;
   char lf;
   bool pic;
+  bool keep_src;
   bool in_def;
   hashmap<string,bool> loaded_package;
   latex_parser (bool unicode2): level (0), unicode (unicode2) {}
@@ -1628,7 +1629,7 @@ latex_encoding_to_iconv (string s) {
 }
 
 tree
-parse_latex (string s, bool change, bool using_cork, bool as_pic) {
+parse_latex (string s, bool change, bool using_cork, bool as_pic, bool keep_src) {
   tree r;
   s= dos_to_better (s);
   string encoding= "Cork";
@@ -1647,6 +1648,7 @@ parse_latex (string s, bool change, bool using_cork, bool as_pic) {
   ltx.lf= 'M';
   ltx.in_def= false;
   ltx.pic= as_pic;
+  ltx.keep_src= keep_src;
   r= ltx.parse (s, change);
   r= accented_to_Cork (r);
   if (lan == "") return r;
@@ -1654,6 +1656,6 @@ parse_latex (string s, bool change, bool using_cork, bool as_pic) {
 }
 
 tree
-parse_latex_document (string s, bool change, bool as_pic) {
-  return compound ("!file", parse_latex (s, change, false, as_pic));
+parse_latex_document (string s, bool change, bool as_pic, bool keep_src) {
+  return compound ("!file", parse_latex (s, change, false, as_pic, keep_src));
 }

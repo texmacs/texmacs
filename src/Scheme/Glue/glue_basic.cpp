@@ -3932,15 +3932,17 @@ tmg_latex_2texmacs (tmscm arg1) {
 }
 
 tmscm
-tmg_cpp_latex_document_2texmacs (tmscm arg1, tmscm arg2) {
+tmg_cpp_latex_document_2texmacs (tmscm arg1, tmscm arg2, tmscm arg3) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cpp-latex-document->texmacs");
   TMSCM_ASSERT_BOOL (arg2, TMSCM_ARG2, "cpp-latex-document->texmacs");
+  TMSCM_ASSERT_BOOL (arg3, TMSCM_ARG3, "cpp-latex-document->texmacs");
 
   string in1= tmscm_to_string (arg1);
   bool in2= tmscm_to_bool (arg2);
+  bool in3= tmscm_to_bool (arg3);
 
   // TMSCM_DEFER_INTS;
-  tree out= latex_document_to_tree (in1, in2);
+  tree out= latex_document_to_tree (in1, in2, in3);
   // TMSCM_ALLOW_INTS;
 
   return tree_to_tmscm (out);
@@ -7298,7 +7300,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("parse-latex",  tmg_parse_latex, 1, 0, 0);
   tmscm_install_procedure ("parse-latex-document",  tmg_parse_latex_document, 1, 0, 0);
   tmscm_install_procedure ("latex->texmacs",  tmg_latex_2texmacs, 1, 0, 0);
-  tmscm_install_procedure ("cpp-latex-document->texmacs",  tmg_cpp_latex_document_2texmacs, 2, 0, 0);
+  tmscm_install_procedure ("cpp-latex-document->texmacs",  tmg_cpp_latex_document_2texmacs, 3, 0, 0);
   tmscm_install_procedure ("latex-class-document->texmacs",  tmg_latex_class_document_2texmacs, 1, 0, 0);
   tmscm_install_procedure ("parse-xml",  tmg_parse_xml, 1, 0, 0);
   tmscm_install_procedure ("parse-html",  tmg_parse_html, 1, 0, 0);

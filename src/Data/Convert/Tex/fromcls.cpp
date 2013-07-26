@@ -352,7 +352,7 @@ tree
 latex_class_document_to_tree (string s) {
   bool old= textm_class_flag;
   textm_class_flag= true;  
-  tree t= latex_document_to_tree (s, false);
+  tree t= latex_document_to_tree (s, false, false);
   tree r= latex_class_filter (t);
   textm_class_flag= old;
   return r;

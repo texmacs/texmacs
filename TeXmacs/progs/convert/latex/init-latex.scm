@@ -54,12 +54,13 @@
 
 (tm-define (latex-document->texmacs x . opts)
   (if (list-1? opts) (set! opts (car opts)))
-  (with as-pic (== (assoc-ref opts "latex->texmacs:fallback-on-pictures") "on")
-    (cpp-latex-document->texmacs x as-pic)))
+  (let*
+    ((as-pic   (== (get-preference "latex->texmacs:fallback-on-pictures") "on"))
+     (keep-src (== (get-preference "latex->texmacs:preserve-source") "on")))
+    (cpp-latex-document->texmacs x as-pic keep-src)))
 
 (converter latex-document texmacs-tree
-  (:function-with-options latex-document->texmacs)
-  (:option "latex->texmacs:fallback-on-pictures" "on"))
+  (:function latex-document->texmacs))
 
 (converter latex-class-document texmacs-tree
   (:function latex-class-document->texmacs))
