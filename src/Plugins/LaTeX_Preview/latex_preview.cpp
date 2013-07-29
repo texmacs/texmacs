@@ -58,10 +58,14 @@ latex_clean_tmp_directory (url u) {
 }
 
 void
-latex_install_preview (string s, tree t, url wdir) {
+latex_install_preview (string s, tree t, url wdir, bool dvips) {
   array<string> macros= search_latex_previews (t);
   string preview= "%%%%%%%%%%%%%% ADDED BY TEXMACS %%%%%%%%%%%%%%%%%%\n";
-  preview  << "\\usepackage[active,tightpage,delayed]{preview}\n";
+  if (dvips)
+    preview  << "\\usepackage[active,tightpage,delayed]{preview}\n";
+  else
+    preview  << "\\usepackage[active,tightpage,delayed,psfixbb,dvips]{preview}\n";
+
   for (int i=0; i<N(macros); i++) {
     int arity= latex_arity (macros[i]);
     bool option= (arity<0);
@@ -109,11 +113,18 @@ latex_load_image (url image) {
 }
 
 array<tree>
-latex_load_preview (url wdir) {
+latex_load_preview (url wdir, bool dvips= false) {
   string cmdln= "cd " * as_string (wdir) * "; ";
-  cmdln << "gs -sDEVICE=epswrite -dSAFER -q -dNOPAUSE -dBATCH "
-    << "-dLanguageLevel=3 -sOutputFile=temp%d.eps temp.pdf";
-  dbg ("LaTeX command: " * cmdln);
+  if (dvips) {
+    cmdln << "dvips temp.dvi && "
+      << "gs -sDEVICE=epswrite -dSAFER -q -dNOPAUSE -dBATCH "
+      << "-dLanguageLevel=3 -sOutputFile=temp%d.eps temp.ps";
+  }
+  else {
+    cmdln << "gs -sDEVICE=epswrite -dSAFER -q -dNOPAUSE -dBATCH "
+      << "-dLanguageLevel=3 -sOutputFile=temp%d.eps temp.pdf";
+  }
+  dbg ("GS command: " * cmdln);
   if (system (cmdln)) {
     dbg ("Could not extract pictures from LaTeX document");
     return array<tree> ();
@@ -138,7 +149,7 @@ latex_load_preview (url wdir) {
 
 array<tree>
 latex_preview (string s, tree t) {
-  if (!latex_present ()) {
+  if (!latex_present () && !exists_in_path ("latex")) {
     dbg ("LaTeX preview: " * latex_command * " not found");
     return array<tree>();
   }
@@ -150,7 +161,8 @@ latex_preview (string s, tree t) {
   // system_wait ("LaTeX: compiling document, ", "please wait");
   url wdir= url_temp ("_latex_preview");
   mkdir (wdir);
-  latex_install_preview (s, t, wdir);
+  bool dvips= false;
+  latex_install_preview (s, t, wdir, dvips);
   string document_root= as_string (head (get_file_focus ()));
   string cmdln= "cd " * document_root;
   cmdln << "; " << latex_command
@@ -159,11 +171,23 @@ latex_preview (string s, tree t) {
         << " " << as_string (wdir) << "/temp.tex";
   dbg ("LaTeX command: " * cmdln);
   if (system (cmdln)) {
-    dbg ("Could not compile LaTeX document");
-    latex_clean_tmp_directory (wdir);
-    return array<tree> ();
+    dbg ("Could not compile LaTeX document using " * latex_command);
+    dbg ("Try to fallback on LaTeX");
+    cmdln= "cd " * document_root;
+    cmdln << "; latex"
+          << " -interaction nonstopmode -halt-on-error -file-line-error "
+          << " -output-directory " << as_string (wdir)
+          << " " << as_string (wdir) << "/temp.tex";
+    dbg ("LaTeX command: " * cmdln);
+    dvips= true;
+    latex_install_preview (s, t, wdir, dvips);
+    if (system (cmdln)) {
+      dbg ("Could not compile LaTeX document");
+      latex_clean_tmp_directory (wdir);
+      return array<tree> ();
+    }
   }
-  array<tree> r= latex_load_preview (wdir);
+  array<tree> r= latex_load_preview (wdir, dvips);
   if (N(r) != N(search_latex_previews (t))) {
     dbg ("Warning: did not found the expected number of pictures.");
     dbg ("         LaTeX compilation or picture importation might have failed");
