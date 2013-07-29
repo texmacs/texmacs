@@ -1658,7 +1658,6 @@ static string
 add_paragraph_markup (string s) {
   string r;
   int i= 0, start= 0, n= N(s);
-  int cnt= 1;
   while (i < n) {
     int j= i+1;
     if ((s[i] == '\n' && paragraph_break_here (s, i)) ||
@@ -1681,11 +1680,9 @@ add_paragraph_markup (string s) {
          test_macro (s, j, "\\title")))) {
       r << s(start, i+1)
         << "\n\n\\textm@break{" << as_string (i) << "}\n";
-      cnt++;
       start= i+1;
-      if (test_env (s, i+1, "document")) {
-        i++;
-        step_env_begin (s, i);
+      if (!(s[i] == '\n' && paragraph_break_here (s, i))) {
+        i+= 4;
       }
       else {
         while (i < n) {
