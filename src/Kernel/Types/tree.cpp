@@ -445,6 +445,10 @@ is_compound (tree t, string s, int n) {
 
 static void
 simplify_concat (tree& r, tree t) {
+  if (is_atomic (t)) {
+   r= concat (t);
+   return;
+  }
   int i, n= N(t);
   for (i=0; i<n; i++)
     if (is_concat (t[i])) simplify_concat (r, t[i]);
@@ -456,6 +460,7 @@ simplify_concat (tree& r, tree t) {
 
 tree
 simplify_concat (tree t) {
+  if (is_atomic (t)) return t;
   tree r (CONCAT);
   simplify_concat (r, t);
   if (N(r) == 0) return "";
