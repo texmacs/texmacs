@@ -164,8 +164,8 @@
   </macro>>
 
   <assign|source-mixed|<\macro|x|y>
-    <\render-folded-std|<action|<resize|<active*|<with|mode|math|||||\<blacktriangleleft\>>>|||<maximum|1r|1.5fn>|>|(mouse-fold)|<arg|y>>>
-      <arg|y><hidden|<arg|x>>
+    <\render-folded-std|<action|<resize|<active*|<with|mode|math|||||\<blacktriangleleft\>>>|||<maximum|1r|1.5fn>|>|(mouse-fold)|<verbatim|<arg|y>>>>
+      <verbatim|<arg|y>><hidden|<arg|x>>
     </render-folded-std>
   </macro>>
 

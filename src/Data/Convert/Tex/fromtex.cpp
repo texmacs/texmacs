@@ -1000,7 +1000,6 @@ latex_eps_get (tree t, string var) {
 tree
 latex_command_to_tree (tree t) {
   if (is_tuple (t) && N(t)>1) {
-    if (t[0] == "\\textm@break") return compound ("textm@break", t[1]);
     string s= as_string (t[0]);
     s= s(1,N(s));
     if (latex_type (s) == "ignore")
@@ -1138,6 +1137,16 @@ latex_command_to_tree (tree t) {
     e3 << tree (ARG, "body");
     e2 << "body" << e3;
     return concat (tree (ASSIGN, var*"*", e1), tree (ASSIGN, var, e2));
+  }
+
+  if (is_tuple (t, "\\textm@break", 1))
+    return tree (APPLY, "textm@break", t[1]);
+
+  if (is_tuple (t, "\\latex_preview", 2))
+      return tree (APPLY, "latex_preview", l2e (t[1]), t[2]);
+
+  if (is_tuple (t, "\\picture-mixed", 2)) {
+      return tree (APPLY, "picture-mixed", l2e (t[1]), t[2]);
   }
 
   if (is_tuple (t, "\\Roman", 1)) {
@@ -3348,6 +3357,8 @@ is_verbatim (tree t) {
          is_compound (t, "scm-code") || is_compound (t, "shell-code") ||
          is_compound (t, "code")     || is_compound (t, "verbatim")   ||
          is_compound (t, "scilab-code") ||
+         is_compound (t, "latex_preview") ||
+         is_compound (t, "picture-mixed") ||
          is_compound (t, "textm@break");
 }
 

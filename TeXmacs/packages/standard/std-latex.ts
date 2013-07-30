@@ -164,7 +164,7 @@
     <LaTeX> preview
   </src-comment>>
 
-  <assign|latex_preview|<macro|pic|src|<arg|src>>>
+  <assign|latex_preview|<macro|pic|src|<verbatim|<arg|src>>>>
 </body>
 
 <\initial>

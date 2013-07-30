@@ -1559,11 +1559,11 @@
 	    (display* "TeXmacs] non converted verbatim content: \n" x "\n")
             ""))))
 
-(define (escape-angles l)
+(define (unescape-angles l)
   (cond ((string? l)
          (string-replace (string-replace l "<less>" "<") "<gtr>" ">"))
         ((symbol? l) l)
-        (else (map escape-angles l))))
+        (else (map unescape-angles l))))
 
 (define (escape-braces l)
   (cond ((string? l) (string-replace (string-replace l "{" "\\{") "}" "\\}"))
@@ -1601,10 +1601,8 @@
     `((!begin* "tmcode" ,@lang) ,(tmtex-verbatim* "" l))))
 
 (define (tmtex-mixed s l)
-  (set! l (escape-angles l))
-  (with bloc (apply string-append
-                    (list-intersperse (cdr (cadr (cadr (cadr l)))) "\n"))
-    `(!verbatim* ,bloc)))
+  (set! l (unescape-angles l))
+    (list '!unindent (list '!verbatim* (tmtex-tt (cadr l)))))
 
 (define (tmtex-minipage s l)
   (let*

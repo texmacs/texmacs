@@ -1004,11 +1004,7 @@ latex_parser::parse_command (string s, int& i, string cmd) {
       orig_cmd= "\\begin{" * cmd(7, N(cmd)) * "}";
     }
     string code= orig_cmd * s(begin_parse, i);
-    tree ret= tuple ("\\latex_preview",
-                     cmd(1, N(cmd)),
-                     concat (tuple ("\\begin-verbatim"),
-                             code,
-                             tuple ("\\end-verbatim")));
+    tree ret= tuple ("\\latex_preview", cmd(1, N(cmd)), code);
     if (command_type ("!mode") == "math")
       return tree (TUPLE, "\\text", ret);
     return ret;
