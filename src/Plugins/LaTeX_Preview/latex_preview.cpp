@@ -57,15 +57,33 @@ latex_clean_tmp_directory (url u) {
   remove (u * ".");
 }
 
+string
+latex_remove_fmt (string s) {
+  int i= 0, start= 0, n= N(s);
+  while (i<n) {
+    if (test (s, 0, "%&") || (i > 0 && test (s, i, "\n%&"))) {
+      start= i++;
+      bool cut= false;
+      while (i<n && s[i] != '\n') {
+        if (test (s, i, "tex")) cut= true;
+        i++;
+      }
+      if (cut) {
+        s= s(0, start) * '\n' * s(i+1, n);
+        n= N(s);
+      }
+    }
+    else if (test (s, i, "\\usepackage") || test (s, i, "\\begin"))
+      break;
+    i++;
+  }
+  return s;
+}
+
 void
 latex_install_preview (string s, tree t, url wdir, bool dvips) {
-  int i= 0, n= N(s);
-  while (i<n && s[i] == ' ') i++;
-  if (test (s, i, "%&")) {
-    while (i<n && s[i] != '\n') i++;
-    s= s(i+1, n);
-  }
-
+  s= latex_remove_fmt (s);
+  int i= 0;
   array<string> macros= search_latex_previews (t);
   string preview= "%%%%%%%%%%%%%% ADDED BY TEXMACS %%%%%%%%%%%%%%%%%%\n";
   if (dvips)
