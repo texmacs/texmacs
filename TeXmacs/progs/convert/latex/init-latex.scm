@@ -80,7 +80,7 @@
 (converter texmacs-stree latex-stree
   (:function-with-options texmacs->latex)
   (:option "texmacs->latex:replace-style" "on")
-  (:option "texmacs->latex:expand-macros" "on")
+  (:option "texmacs->latex:expand-macros" "off")
   (:option "texmacs->latex:expand-user-macros" "off")
   (:option "texmacs->latex:indirect-bib" "off")
   (:option "texmacs->latex:use-macros" "on")
