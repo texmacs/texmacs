@@ -140,21 +140,6 @@ test_macro (string s, int i, string name) {
     (N(s) == i + N(name) || !is_tex_alpha (s[i+N(name)]));
 }
 
-static void
-step_env_begin (string s, int &i) {
-  while (i < N(s) && s[i] == ' ') i++;
-  if (!test (s, i, "\\begin")) return;
-  i+= 6;
-  while (i < N(s) && s[i] == ' ') i++;
-  i++;
-  int count= 1;
-  while (i < N(s) && count > 0) {
-    if (s[i] == '{') count++;
-    if (s[i] == '}') count--;
-    i++;
-  }
-}
-
 static bool
 test_env (string s, int i, string name, bool end=false) {
   string tok= end? "\\end":"\\begin";
