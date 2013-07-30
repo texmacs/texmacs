@@ -48,6 +48,12 @@
 ;;    (display* "OUTPUT\n" r "\n")
     r))
 
+(tm-define (get-output-indent)
+  output-indentation)
+
+(tm-define (set-output-indent indent)
+  (set! output-indentation indent))
+
 (tm-define (output-indent plus)
   (output-flush)
   (set! output-indentation (+ output-indentation plus)))

@@ -186,6 +186,12 @@
       (output-lf))
     (texout x)))
 
+(define (texout-unindent x)
+  (with old-indent (get-output-indent)
+    (set-output-indent 0)
+    (texout x)
+    (set-output-indent old-indent)))
+
 (define (texout-linefeed)
   (output-lf))
 
@@ -325,6 +331,7 @@
 	((== (car x) '!symbol) (texout (cadr x)))
 	((== (car x) '!linefeed) (texout-linefeed))
 	((== (car x) '!indent) (texout-indent (cadr x)))
+	((== (car x) '!unindent) (texout-unindent (cadr x)))
 	((== (car x) '!newline) (texout-newline))
 	((== (car x) '!nextline) (texout-nextline))
 	((== (car x) '!nbsp) (texout-nbsp))
