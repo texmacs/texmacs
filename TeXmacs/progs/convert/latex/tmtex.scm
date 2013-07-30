@@ -471,9 +471,10 @@
 	(else body)))
 
 (define (make-tree-src-hash t)
-  (let* ((col (filter (lambda (x)
+  (let* ((col (if (and (list>0? t) (list? (cdr t))) (cdr t) '()))
+         (col (filter (lambda (x)
                         (and (func? x 'associate)
-                             (func? (cAr x) 'latex-tree-src))) (cdr t)))
+                             (func? (cAr x) 'latex-tree-src))) col))
          (l   (map (lambda (x)
                      (let ((key  (second (cAr x)))
                            (val (third  (cAr x))))
