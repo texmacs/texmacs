@@ -59,6 +59,13 @@ latex_clean_tmp_directory (url u) {
 
 void
 latex_install_preview (string s, tree t, url wdir, bool dvips) {
+  int i= 0, n= N(s);
+  while (i<n && s[i] == ' ') i++;
+  if (test (s, i, "%&")) {
+    while (i<n && s[i] != '\n') i++;
+    s= s(i+1, n);
+  }
+
   array<string> macros= search_latex_previews (t);
   string preview= "%%%%%%%%%%%%%% ADDED BY TEXMACS %%%%%%%%%%%%%%%%%%\n";
   if (dvips)
@@ -66,7 +73,7 @@ latex_install_preview (string s, tree t, url wdir, bool dvips) {
   else
     preview  << "\\usepackage[active,tightpage,delayed,psfixbb,dvips]{preview}\n";
 
-  for (int i=0; i<N(macros); i++) {
+  for (i=0; i<N(macros); i++) {
     int arity= latex_arity (macros[i]);
     bool option= (arity<0);
     string arity_code;
@@ -85,7 +92,6 @@ latex_install_preview (string s, tree t, url wdir, bool dvips) {
   }
   preview << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n";
 
-  int i= 0;
   i= latex_search_forwards ("\n\\documentclass", i, s);
   i= latex_search_forwards ("{", i, s);
   i= latex_search_forwards ("}", i, s);
