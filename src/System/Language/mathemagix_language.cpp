@@ -206,6 +206,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("virtual")= c;
   t ("while")= c;
   t ("with")= c;
+  t ("writable")= c;
   t ("xor")= c;
 }
 
