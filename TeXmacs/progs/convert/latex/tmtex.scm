@@ -1606,6 +1606,14 @@
                     (list-intersperse (cdr (cadr (cadr (cadr l)))) "\n"))
     `(!verbatim* ,bloc)))
 
+(define (tmtex-minipage s l)
+  (let*
+    ((pos  (car l))
+     (opt  (if (== pos "f") '() `((!option ,pos))))
+     (size (cadr l))
+     (body (caddr l)))
+     `((!begin "minipage" ,@opt ,(tmtex-decode-length size)) ,(tmtex body))))
+
 (define (tmtex-number-renderer l)
   (let ((r (cond ((string? l) l)
                  ((list? l) (tmtex-number-renderer (car l)))
@@ -2191,6 +2199,7 @@
    (,tmtex-code-block 1))
   ((:or mmx cpp scm shell scilab) (,tmtex-code-inline 1))
 
+  (minipage (,tmtex-minipage 3))
   (latex_preview (,tmtex-mixed 2))
   (picture-mixed (,tmtex-mixed 2))
   (source-mixed (,tmtex-mixed 2))

@@ -155,6 +155,12 @@
   <assign|enumerate-reduce|<macro|nr|<minimum|<arg|nr>|4>>>
 
   <active*|<\src-comment>
+    LaTeX boxes.
+  </src-comment>>
+
+  <assign|minipage|<macro|pos|width|body|<tabular|<tformat|<cwith|1|1|1|1|cell-width|<arg|width>>|<cwith|1|1|1|1|cell-hmode|exact>|<cwith|1|1|1|1|cell-hyphen|t>|<twith|table-valign|<arg|pos>>|<table|<row|<cell|<arg|body>>>>>>>>
+
+  <active*|<\src-comment>
     <LaTeX> preview
   </src-comment>>
 

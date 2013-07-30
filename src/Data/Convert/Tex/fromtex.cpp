@@ -2340,6 +2340,15 @@ finalize_layout (tree t) {
 	continue;
       }
 
+      if (is_func (v, BEGIN, 2) && ((v[0] == "minipage"))) {
+	r << tree (BEGIN, "minipage", "f", v[1]);
+	continue;
+      }
+      if (is_func (v, BEGIN, 3) && ((v[0] == "minipage*"))) {
+	r << tree (BEGIN, "minipage", v[1], v[2]);
+	continue;
+      }
+
       if (is_func (v, BEGIN) && ((v[0] == "multicols"))) {
 	r << tree (SET, "par-columns", v[1]);
 	continue;
@@ -3130,6 +3139,11 @@ finalize_misc (tree t) {
   else if (is_var_compound (t, "algo-for", 4)) {
     return compound ("algo-for-all",
         finalize_misc (t[N(t)-2]), finalize_misc (t[N(t)-1]));
+  }
+  else if (is_compound (t, "minipage", 3)) {
+    if (is_document (t[2]) && N(t[2]) == 1)
+      t[2]= t[2][0];
+    return t;
   }
   else {
     int i, n= N(t);
