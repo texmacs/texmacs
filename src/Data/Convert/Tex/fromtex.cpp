@@ -67,42 +67,42 @@ is_var_compound (tree t, string s, int n) {
 ******************************************************************************/
 bool
 is_vertical_space (tree t) {
-  return (is_func (t, TUPLE, 2) && t[0] == "\\vspace")     || 
-         (is_func (t, TUPLE, 2) && t[0] == "\\vspace*")    || 
-         (is_func (t, TUPLE, 1) && t[0] == "\\bigskip")    || 
-         (is_func (t, TUPLE, 1) && t[0] == "\\medskip")    || 
+  return (is_func (t, TUPLE, 2) && t[0] == "\\vspace")     ||
+         (is_func (t, TUPLE, 2) && t[0] == "\\vspace*")    ||
+         (is_func (t, TUPLE, 1) && t[0] == "\\bigskip")    ||
+         (is_func (t, TUPLE, 1) && t[0] == "\\medskip")    ||
          (is_func (t, TUPLE, 1) && t[0] == "\\smallskip");
 }
 
 bool
 might_not_be_typesetted (tree t) {
-  return (is_func (t, TUPLE) && t[0] == "\\\\")              || 
-         (is_func (t, TUPLE) && t[0] == "\\author")          || 
-         (is_func (t, TUPLE) && t[0] == "\\begin-document")  || 
-         (is_func (t, TUPLE) && t[0] == "\\date")            || 
-         (is_func (t, TUPLE) && t[0] == "\\declaretheorem")  || 
-         (is_func (t, TUPLE) && t[0] == "\\declaretheorem*") || 
-         (is_func (t, TUPLE) && t[0] == "\\def")             || 
-         (is_func (t, TUPLE) && t[0] == "\\def*")            || 
-         (is_func (t, TUPLE) && t[0] == "\\def**")           || 
-         (is_func (t, TUPLE) && t[0] == "\\hspace")          || 
-         (is_func (t, TUPLE) && t[0] == "\\index")           || 
-         (is_func (t, TUPLE) && t[0] == "\\label")           || 
-         (is_func (t, TUPLE) && t[0] == "\\newdef")          || 
-         (is_func (t, TUPLE) && t[0] == "\\newenvironment")  || 
-         (is_func (t, TUPLE) && t[0] == "\\newenvironment*") || 
-         (is_func (t, TUPLE) && t[0] == "\\newenvironment**")|| 
-         (is_func (t, TUPLE) && t[0] == "\\newtheorem")      || 
-         (is_func (t, TUPLE) && t[0] == "\\newtheorem*")     || 
-         (is_func (t, TUPLE) && t[0] == "\\noindent*")       || 
-         (is_func (t, TUPLE) && t[0] == "\\setcounter")      || 
-         (is_func (t, TUPLE) && t[0] == "\\setlength")       || 
-         (is_func (t, TUPLE) && t[0] == "\\maketitle")       || 
-         (is_func (t, TUPLE) && t[0] == "\\SetKw")           || 
-         (is_func (t, TUPLE) && t[0] == "\\SetKwData")       || 
-         (is_func (t, TUPLE) && t[0] == "\\SetKwInOut")      || 
-         (is_func (t, TUPLE) && t[0] == "\\SetKwInput")      || 
-         (is_func (t, TUPLE) && t[0] == "\\SetKwFunction")   || 
+  return (is_func (t, TUPLE) && t[0] == "\\\\")              ||
+         (is_func (t, TUPLE) && t[0] == "\\author")          ||
+         (is_func (t, TUPLE) && t[0] == "\\begin-document")  ||
+         (is_func (t, TUPLE) && t[0] == "\\date")            ||
+         (is_func (t, TUPLE) && t[0] == "\\declaretheorem")  ||
+         (is_func (t, TUPLE) && t[0] == "\\declaretheorem*") ||
+         (is_func (t, TUPLE) && t[0] == "\\def")             ||
+         (is_func (t, TUPLE) && t[0] == "\\def*")            ||
+         (is_func (t, TUPLE) && t[0] == "\\def**")           ||
+         (is_func (t, TUPLE) && t[0] == "\\hspace")          ||
+         (is_func (t, TUPLE) && t[0] == "\\index")           ||
+         (is_func (t, TUPLE) && t[0] == "\\label")           ||
+         (is_func (t, TUPLE) && t[0] == "\\newdef")          ||
+         (is_func (t, TUPLE) && t[0] == "\\newenvironment")  ||
+         (is_func (t, TUPLE) && t[0] == "\\newenvironment*") ||
+         (is_func (t, TUPLE) && t[0] == "\\newenvironment**")||
+         (is_func (t, TUPLE) && t[0] == "\\newtheorem")      ||
+         (is_func (t, TUPLE) && t[0] == "\\newtheorem*")     ||
+         (is_func (t, TUPLE) && t[0] == "\\noindent*")       ||
+         (is_func (t, TUPLE) && t[0] == "\\setcounter")      ||
+         (is_func (t, TUPLE) && t[0] == "\\setlength")       ||
+         (is_func (t, TUPLE) && t[0] == "\\maketitle")       ||
+         (is_func (t, TUPLE) && t[0] == "\\SetKw")           ||
+         (is_func (t, TUPLE) && t[0] == "\\SetKwData")       ||
+         (is_func (t, TUPLE) && t[0] == "\\SetKwInOut")      ||
+         (is_func (t, TUPLE) && t[0] == "\\SetKwInput")      ||
+         (is_func (t, TUPLE) && t[0] == "\\SetKwFunction")   ||
           is_vertical_space (t);
 }
 
@@ -124,7 +124,7 @@ is_sectionnal (tree t) {
          (is_func (t, TUPLE, 2) && t[0] == "\\chapter*")           ||
          (is_func (t, TUPLE, 3) && t[0] == "\\chapter*")           ||
          (is_func (t, TUPLE, 1) && t[0] == "\\textm@break")        ||
-         (is_func (t, TUPLE) && t[0] == "\\end-thebibliography")   || 
+         (is_func (t, TUPLE) && t[0] == "\\end-thebibliography")   ||
          (is_func (t, TUPLE) && t[0] == "\\bibliography");
 }
 
@@ -249,10 +249,10 @@ filter_preamble (tree t) {
 	       is_tuple (u, "\\newenvironment*")   ||
 	       is_tuple (u, "\\newenvironment**"))
 	preamble << u << "\n" << "\n";
-      else if (is_tuple (u, "\\SetKw", 2)          || 
-               is_tuple (u, "\\SetKwData", 2)      || 
-               is_tuple (u, "\\SetKwInOut", 2)     || 
-               is_tuple (u, "\\SetKwInput", 2)     || 
+      else if (is_tuple (u, "\\SetKw", 2)          ||
+               is_tuple (u, "\\SetKwData", 2)      ||
+               is_tuple (u, "\\SetKwInOut", 2)     ||
+               is_tuple (u, "\\SetKwInput", 2)     ||
                is_tuple (u, "\\SetKwFunction", 2))
 	preamble << u << "\n" << "\n";
       else if (is_tuple (u, "\\conferenceinfo")    ||
@@ -557,7 +557,7 @@ latex_symbol_to_tree (string s) {
       if (s == "LARGE")        return tree (SET, FONT_SIZE, "1.41");
       if (s == "huge")         return tree (SET, FONT_SIZE, "1.68");
       if (s == "Huge")         return tree (SET, FONT_SIZE, "2");
-      
+
       if (s == "black")        return tree (SET, COLOR, "black");
       if (s == "white")        return tree (SET, COLOR, "white");
       if (s == "grey")         return tree (SET, COLOR, "grey");
@@ -575,7 +575,7 @@ latex_symbol_to_tree (string s) {
       cerr << "The symbol was " << "\\"*s << "\n";
       FAILED ("unexpected situation");
     }
-    
+
     if (latex_type (s) == "length") {
       if (s == "@vpt")      return  "5"   ;
       if (s == "@vipt")     return  "6"   ;
@@ -618,7 +618,7 @@ latex_symbol_to_tree (string s) {
       if (s == "smallskipamount")       return "0.5fn";
       if (s == "medskipamount")         return "1fn";
       if (s == "bigskipamount")         return "2fn";
-    }   
+    }
 
     // FIXME: avoid redefinition of command_type in parsetex.cpp
     if (latex_type (s) == "name" || latex_type (s) == "user") {
@@ -799,7 +799,7 @@ latex_concat_to_tree (tree t, bool& new_flag) {
       if (!cc_flag) new_flag= false;
     }
   }
-  
+
   for (i=N(env)-1; i>=0; i--)
     r << tree (RESET, copy (env[i][0]));
 
@@ -863,12 +863,12 @@ is_mid_type (tree t) {
   if (is_compound (t)) return false;
   string s= t->label;
   return
-    (s == "|")             || (s == "||")            || (s == "\\|")         || 
-    (s == "\\vert")        || (s == "\\Vert")        || (s == "\\lvert")     || 
-    (s == "\\rvert")       || (s == "\\lVert")       || (s == "\\rVert")     || 
-    (s == "/")             || (s == "\\arrowvert")   || (s == "\\backslash") || 
-    (s == "\\Arrowvert")   || (s == "\\bracevert")   || (s == "\\Uparrow")   || 
-    (s == "\\downarrow")   || (s == "\\uparrow")     || (s == "\\Downarrow") || 
+    (s == "|")             || (s == "||")            || (s == "\\|")         ||
+    (s == "\\vert")        || (s == "\\Vert")        || (s == "\\lvert")     ||
+    (s == "\\rvert")       || (s == "\\lVert")       || (s == "\\rVert")     ||
+    (s == "/")             || (s == "\\arrowvert")   || (s == "\\backslash") ||
+    (s == "\\Arrowvert")   || (s == "\\bracevert")   || (s == "\\Uparrow")   ||
+    (s == "\\downarrow")   || (s == "\\uparrow")     || (s == "\\Downarrow") ||
     (s == "\\updownarrow") || (s == "\\Updownarrow");
 }
 
@@ -958,8 +958,8 @@ find_next_length(tree t) {
   if (is_atomic(t))
     return t;
   else
-    if(is_func(t, APPLY)) 
-      if (t[0] == "tex-len") 
+    if(is_func(t, APPLY))
+      if (t[0] == "tex-len")
         return find_next_length (t[1]);
   return tree();
 }
@@ -971,7 +971,7 @@ is_negative_length(tree t) {
     for (int i=0 ; i < N(s) ; i++){
       if (s[i] == '-') return true;
       else if (is_space(s[i]));
-      else if (is_numeric(s[i]) || is_alpha(s[i]) || 
+      else if (is_numeric(s[i]) || is_alpha(s[i]) ||
           s[i] == '+' || s[i] == '.' || s[i] == ',') return false;
     }
   return false;
@@ -1013,8 +1013,8 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\def", 2)) {
     string var= string_arg (t[1]);
     if ((N(var)>0) && (var[0]=='\\')) var= var (1, N(var));
-    if (is_func (t, TUPLE, 3) && is_func (t[2], TUPLE, 1) && 
-        latex_type (as_string (t[2][0])) != "undefined"   && 
+    if (is_func (t, TUPLE, 3) && is_func (t[2], TUPLE, 1) &&
+        latex_type (as_string (t[2][0])) != "undefined"   &&
         latex_arity (as_string (t[2][0])) != 0) {
       string s = as_string (t[2][0]);
       tree f (FUNC), def = tuple (s), l2edef;
@@ -1029,7 +1029,7 @@ latex_command_to_tree (tree t) {
         tree adef (APPLY);
         if (N(def) > 0 && N(def[0])>0) {
           string cmd = def[0]->label;
-          if ((N(cmd)>0) && (cmd[0]=='\\')) cmd= cmd (1, N(cmd));  
+          if ((N(cmd)>0) && (cmd[0]=='\\')) cmd= cmd (1, N(cmd));
           adef << cmd;
         }
         for (int a=1; a < N(def); a++) adef << def[a];
@@ -1056,7 +1056,7 @@ latex_command_to_tree (tree t) {
           tree adef (APPLY);
           if (N(def) > 0 && N(def[0])>0) {
             string cmd = def[0]->label;
-            if ((N(cmd)>0) && (cmd[0]=='\\')) cmd= cmd (1, N(cmd));  
+            if ((N(cmd)>0) && (cmd[0]=='\\')) cmd= cmd (1, N(cmd));
             adef << cmd;
           }
           for (int a=1; a < N(def); a++) adef << def[a];
@@ -1177,7 +1177,7 @@ latex_command_to_tree (tree t) {
     if (is_compound (u)) return "";
     return tree (NUMBER, tree(APPLY, u->label*"-nr"), "roman");
   }
-  
+
   if (is_tuple (t, "\\Alph", 1)) {
     tree u= l2e (t[1]);
     if (is_compound (u)) return "";
@@ -1189,19 +1189,19 @@ latex_command_to_tree (tree t) {
     if (is_compound (u)) return "";
     return tree (NUMBER, tree(APPLY, u->label*"-nr"), "alpha");
   }
-  
+
   if (is_tuple (t, "\\fnsymbol", 1)) {
     tree u= l2e (t[1]);
     if (is_compound (u)) return "";
     return tree (NUMBER, tree(APPLY, u->label*"-nr"), "fnsymbol");
   }
-  
+
   if (is_tuple (t, "\\arabic", 1)) {
     tree u= l2e (t[1]);
     if (is_compound (u)) return "";
     return tree (NUMBER, tree(APPLY, u->label*"-nr"), "arabic");
   }
-  
+
   if (is_tuple (t, "\\equal", 2))
     return tree (EQUAL, l2e (t[1]), l2e (t[2]));
   if (is_tuple (t, "\\ifthenelse", 3))
@@ -1380,7 +1380,7 @@ latex_command_to_tree (tree t) {
     return concat (tree (BEGIN, "algo-loop"),
         tree (APPLY, "algo-comment", l2e (t[1])), "\n");
   if (is_tuple (t, "\\KwIn", 1))
-    return tree (APPLY, "algo-inputs", l2e (t[1])); 
+    return tree (APPLY, "algo-inputs", l2e (t[1]));
   if (is_tuple (t, "\\INPUTS*", 1))
     return concat (tree (BEGIN, "algo-inputs"),
         tree (APPLY, "algo-comment", l2e (t[1])), "\n");
@@ -1535,10 +1535,10 @@ latex_command_to_tree (tree t) {
     for (int i = 0 ; i < N(style) ; i++) {
       if (is_func(style[i], RESET) && !inserted) {
         if (center)
-          r << spb << compound("center", tree(ARG, "name")) 
+          r << spb << compound("center", tree(ARG, "name"))
             << spa << indentafter;
         else
-          r << spb << tree(HSPACE, indent) << tree(ARG, "name") 
+          r << spb << tree(HSPACE, indent) << tree(ARG, "name")
             << spa << indentafter;
         inserted = true;
       }
@@ -1552,7 +1552,7 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\@setfontsize", 3)) {
     tree fontsize = l2e(t[2]);
     tree baselineskip = l2e(t[3]);
-    return tree(WITH, "font-size-base", fontsize, "par-sep", 
+    return tree(WITH, "font-size-base", fontsize, "par-sep",
       (tree(MINUS, concat(baselineskip, "pt"), concat(fontsize, "pt"))));
   }
   if (is_tuple (t, "\\addtolength")) return "";
@@ -1568,7 +1568,7 @@ latex_command_to_tree (tree t) {
       is_tuple (t, "\\mbox", 1) || is_tuple (t, "\\hbox", 1))
     return var_m2e (t, MODE, "text");
   if (is_tuple (t, "\\mathchoice", 4))
-    return compound ("math-choice", 
+    return compound ("math-choice",
         l2e (t[1]), l2e (t[2]), l2e (t[3]), l2e (t[4]));
   if (is_tuple (t, "\\ensuremath", 1))
     return var_m2e (t, MODE, "math");
@@ -1891,7 +1891,7 @@ parse_matrix_params (tree t, string tr, string br, string hoff) {
 	string col_s = as_string (col);
 	string halign= copy (CELL_HYPHEN);
 	char how_c   = s[i];
-  string how = (how_c == 'm')? 'c' : 
+  string how = (how_c == 'm')? 'c' :
               ((how_c == 'b')? 'b' : 't');
 	tformat << tree (CWITH, tr, br, col_s, col_s, halign, how);
   if (how_c != 'X') {
@@ -2139,7 +2139,7 @@ parse_pmatrix (tree& r, tree t, int& i, string lb, string rb, string fm) {
       string row_s= row==0? as_string (row+1): as_string (row);
       tformat << tree (CWITH, row_s, row_s, "1", "-1", "cell-valign", "top");
       tformat << tree (CWITH, row_s, row_s, "1", "-1", "cell-vmode", "exact");
-      tformat << tree (CWITH, row_s, row_s, "1", "-1", "cell-height", 
+      tformat << tree (CWITH, row_s, row_s, "1", "-1", "cell-height",
           tree (PLUS, "1fn", v[0]));
     }
     else E << v;
@@ -2466,7 +2466,7 @@ finalize_layout (tree t) {
 	  item_flag= false;
 	  continue;
 	}
-	
+
 	if (v == tree (BEGIN, "displaymath"))
 	  v= tree (BEGIN, "equation*");
 	if (v == tree (BEGIN, "math")) {
@@ -2474,7 +2474,7 @@ finalize_layout (tree t) {
 	  spc_flag = item_flag= false;
 	  continue;
 	}
-	
+
 	insert_return (r);
 	r << tree (BEGIN, translate_list (v[0]->label));
 	spc_flag = true;
@@ -2490,7 +2490,7 @@ finalize_layout (tree t) {
 	  spc_flag = item_flag= false;
 	  continue;
 	}
-	
+
 	remove_space (r);
 	r << tree (END, translate_list (v[0]->label));
 	if (((i+1) == N(t)) || (t[i+1] != tree (FORMAT, "new line")))
@@ -2499,7 +2499,7 @@ finalize_layout (tree t) {
 	item_flag= false;
 	continue;
       }
-      
+
       // Needed for matching beginning/ending for unknown or user envs.
       // It will be restored in finalize_misc.
       if (is_func (v, BEGIN)) {
@@ -2630,19 +2630,19 @@ textm_algorithm_break_after (tree t) {
     var = "\\"*as_string (t[0]);
     var = (var[N(var)-1] == '*')? var(0, N(var)-1) : var;
   }
-  return ((is_func (t, END) && 
-            (t[0] == "algo-inputs"     || t[0] == "algo-outputs"   || 
-             t[0] == "algo-for"        || t[0] == "algo-while"     || 
-             t[0] == "algo-function"   || t[0] == "algo-procedure" || 
-             t[0] == "algo-if-else-if" || t[0] == "algo-loop"      || 
-             t[0] == "algo-repeat"     || t[0] == "algo-body"))    || 
+  return ((is_func (t, END) &&
+            (t[0] == "algo-inputs"     || t[0] == "algo-outputs"   ||
+             t[0] == "algo-for"        || t[0] == "algo-while"     ||
+             t[0] == "algo-function"   || t[0] == "algo-procedure" ||
+             t[0] == "algo-if-else-if" || t[0] == "algo-loop"      ||
+             t[0] == "algo-repeat"     || t[0] == "algo-body"))    ||
          (is_apply (t, "algo-data") || is_apply (t, "algo-result")) ||
          (latex_type (var) == "algorithm2e"));
 }
 
 bool
 textm_algorithm_space_after (tree t) {
-  return is_apply (t, "algo-to") || is_apply (t, "algo-true") || 
+  return is_apply (t, "algo-to") || is_apply (t, "algo-true") ||
          is_apply (t, "algo-false");
 }
 
@@ -2657,7 +2657,7 @@ bool
 textm_algorithm_begin_algo (tree t) {
   return (is_func (t, BEGIN) &&
            (t[0] == "algorithm"   || t[0] == "algorithm*"    ||
-            t[0] == "algorithmic" || t[0] == "algorithmic*"  || 
+            t[0] == "algorithmic" || t[0] == "algorithmic*"  ||
             t[0] == "algorithm2e" || t[0] == "algorithm2e*"));
 }
 
@@ -2671,11 +2671,11 @@ bool
 textm_algorithm_end_arg (tree t) {
   return textm_algorithm_need_arg (t) || textm_algorithm_end_algo (t) ||
          is_apply (t, "algo-else")    || is_apply (t, "algo-else-if") ||
-         (is_func (t, BEGIN) && 
-            (t[0] == "algo-inputs"    || t[0] == "algo-outputs"   || 
-             t[0] == "algo-for"       || t[0] == "algo-while"     || 
-             t[0] == "algo-function"  || t[0] == "algo-procedure" || 
-             t[0] == "algo-if-else-if"|| t[0] == "algo-loop"      || 
+         (is_func (t, BEGIN) &&
+            (t[0] == "algo-inputs"    || t[0] == "algo-outputs"   ||
+             t[0] == "algo-for"       || t[0] == "algo-while"     ||
+             t[0] == "algo-function"  || t[0] == "algo-procedure" ||
+             t[0] == "algo-if-else-if"|| t[0] == "algo-loop"      ||
              t[0] == "algo-repeat"    || t[0] == "algo-body"))    ||
          textm_algorithm_break_after (t);
 }
@@ -2715,7 +2715,7 @@ complete_algorithm_args (tree t, bool &in) {
       r << t[i] << "\n";
     else if (in && is_func (t[i], SPACE, 1) && t[i][0] == "0.75spc")
       r << "\n";
-    else if (!(in && after_linefeed (r) 
+    else if (!(in && after_linefeed (r)
           && (t[i] == " " || t[i] == "\t" || t[i] == "\n")))
       r << complete_algorithm_args (t[i], in);
     }
@@ -2809,7 +2809,7 @@ concatenate_algorithm_if_else_if (tree t, bool &in) {
       while (i+1<N(t) && (t[i+1] == " " || t[i+1] == "\n")) i++;
       r << ifelse << "\n";
     }
-    else if (!(in && after_linefeed (r) 
+    else if (!(in && after_linefeed (r)
           && (t[i] == " " || t[i] == "\t" || t[i] == "\n")))
       r << concatenate_algorithm_if_else_if (t[i], in);
     }
@@ -2856,10 +2856,10 @@ finalize_returns_bis (tree t) {
 static tree
 finalize_document (tree t) {
   if (is_atomic (t)) t= tree (CONCAT, t);
-  t= finalize_algorithms (t); 
-  t= finalize_returns  (t); 
-  t= finalize_pmatrix  (t); 
-  t= finalize_layout   (t); 
+  t= finalize_algorithms (t);
+  t= finalize_returns  (t);
+  t= finalize_pmatrix  (t);
+  t= finalize_layout   (t);
   if (!is_func (t, CONCAT)) return tree (DOCUMENT, t);
 
   int i;
