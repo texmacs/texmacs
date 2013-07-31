@@ -51,9 +51,8 @@
   Loop)
 
 (logic-group latex-command-1%
-  part part* chapter chapter*
-  section section* subsection subsection* subsubsection subsubsection*
-  paragraph paragraph* subparagraph subparagraph* nextbib
+  part* chapter* section* subsection* subsubsection* paragraph* subparagraph*
+  nextbib
   footnote overline underline <sub> <sup> not left middle right
   big Big bigg Bigg bigl Bigl biggl Biggl
   bigm Bigm biggm Biggm bigr Bigr biggr Biggr
@@ -121,6 +120,7 @@
 (logic-group latex-command-1*%
   usepackage documentclass documentstyle sqrt bibitem cite caption  
   title author thanks
+  part chapter section subsection subsubsection paragraph subparagraph
   includegraphics includegraphics*
   subjclass declaretheorem footnotetext
   xleftarrow xrightarrow xleftrightarrow xminus

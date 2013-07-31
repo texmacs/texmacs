@@ -108,16 +108,21 @@ might_not_be_typesetted (tree t) {
 
 bool
 is_sectionnal (tree t) {
-  return (is_func (t, TUPLE, 2) && t[0] == "\\section")            || 
-         (is_func (t, TUPLE, 2) && t[0] == "\\section*")           || 
-         (is_func (t, TUPLE, 2) && t[0] == "\\subsection")         || 
-         (is_func (t, TUPLE, 2) && t[0] == "\\subsection*")        || 
-         (is_func (t, TUPLE, 2) && t[0] == "\\subsubsection")      || 
-         (is_func (t, TUPLE, 2) && t[0] == "\\subsubsection*")     || 
-         (is_func (t, TUPLE, 2) && t[0] == "\\part")               || 
-         (is_func (t, TUPLE, 2) && t[0] == "\\part*")              || 
-         (is_func (t, TUPLE, 2) && t[0] == "\\chapter")            || 
-         (is_func (t, TUPLE, 2) && t[0] == "\\chapter*")           || 
+  return (is_func (t, TUPLE, 2) && t[0] == "\\section")            ||
+         (is_func (t, TUPLE, 2) && t[0] == "\\section*")           ||
+         (is_func (t, TUPLE, 3) && t[0] == "\\section*")           ||
+         (is_func (t, TUPLE, 2) && t[0] == "\\subsection")         ||
+         (is_func (t, TUPLE, 2) && t[0] == "\\subsection*")        ||
+         (is_func (t, TUPLE, 3) && t[0] == "\\subsection*")        ||
+         (is_func (t, TUPLE, 2) && t[0] == "\\subsubsection")      ||
+         (is_func (t, TUPLE, 2) && t[0] == "\\subsubsection*")     ||
+         (is_func (t, TUPLE, 3) && t[0] == "\\subsubsection*")     ||
+         (is_func (t, TUPLE, 2) && t[0] == "\\part")               ||
+         (is_func (t, TUPLE, 2) && t[0] == "\\part*")              ||
+         (is_func (t, TUPLE, 3) && t[0] == "\\part*")              ||
+         (is_func (t, TUPLE, 2) && t[0] == "\\chapter")            ||
+         (is_func (t, TUPLE, 2) && t[0] == "\\chapter*")           ||
+         (is_func (t, TUPLE, 3) && t[0] == "\\chapter*")           ||
          (is_func (t, TUPLE, 1) && t[0] == "\\textm@break")        ||
          (is_func (t, TUPLE) && t[0] == "\\end-thebibliography")   || 
          (is_func (t, TUPLE) && t[0] == "\\bibliography");
@@ -1149,6 +1154,18 @@ latex_command_to_tree (tree t) {
       return tree (APPLY, "picture-mixed", l2e (t[1]), t[2]);
   }
 
+  if (is_tuple (t, "\\part*", 2)          ||
+      is_tuple (t, "\\chapter*", 2)       ||
+      is_tuple (t, "\\section*", 2)       ||
+      is_tuple (t, "\\subsection*", 2)    ||
+      is_tuple (t, "\\subsubsection*", 2) ||
+      is_tuple (t, "\\paragraph*", 2)     ||
+      is_tuple (t, "\\paragraph*", 2)     ||
+      is_tuple (t, "\\subsubparagraph*", 2)) {
+    string s= as_string (t[0]);
+    s= s(1, N(s)-1);
+    return tree (APPLY, s, l2e (t[2]));
+  }
   if (is_tuple (t, "\\Roman", 1)) {
     tree u= l2e (t[1]);
     if (is_compound (u)) return "";
@@ -2542,16 +2559,21 @@ finalize_sections (tree t) {
   for (int i=0; i<N(t); i++) {
     tree u= t[i];
     if (is_concat (u) && N(u) >= 2 &&
-	(is_var_compound (u[0], "part", 1) ||
-	 is_var_compound (u[0], "part*", 1) ||
-	 is_var_compound (u[0], "chapter", 1) ||
-	 is_var_compound (u[0], "chapter*", 1) ||
-	 is_var_compound (u[0], "section", 1) ||
-	 is_var_compound (u[0], "section*", 1) ||
-	 is_var_compound (u[0], "subsection", 1) ||
-	 is_var_compound (u[0], "subsection*", 1) ||
-	 is_var_compound (u[0], "subsubsection", 1) ||
-	 is_var_compound (u[0], "subsubsection*", 1)))
+	(is_var_compound (u[0], "part", 1)             ||
+	 is_var_compound (u[0], "part*", 1)            ||
+	 is_var_compound (u[0], "part*", 2)            ||
+	 is_var_compound (u[0], "chapter", 1)          ||
+	 is_var_compound (u[0], "chapter*", 1)         ||
+	 is_var_compound (u[0], "chapter*", 2)         ||
+	 is_var_compound (u[0], "section", 1)          ||
+	 is_var_compound (u[0], "section*", 1)         ||
+	 is_var_compound (u[0], "section*", 2)         ||
+	 is_var_compound (u[0], "subsection", 1)       ||
+	 is_var_compound (u[0], "subsection*", 1)      ||
+	 is_var_compound (u[0], "subsection*", 2)      ||
+	 is_var_compound (u[0], "subsubsection", 1)    ||
+	 is_var_compound (u[0], "subsubsection*", 1)   ||
+	 is_var_compound (u[0], "subsubsection*", 2)))
       {
 	if (N(u) > 2 && u[1] == " ")
 	  u= u (0, 1) * u (2, N(u));
