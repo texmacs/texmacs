@@ -35,13 +35,11 @@
 	    `(concat ,(bib-format-names a) ,(bib-translate " (Ed.)"))
 	    `(concat ,(bib-format-names a) ,(bib-translate " (Eds.)"))))))
 
-(tm-define (bib-format-edition x)
-  (:mode bib-elsart-num?)
+(define (bib-format-edition x)
   (let* ((e (bib-field x "edition")))
     (if (bib-null? e) "" `(concat ,e " Edition"))))
 
-(tm-define (bib-format-volume-or-number x)
-  (:mode bib-elsart-num?)
+(define (bib-format-volume-or-number x)
   (let* ((v (bib-field x "volume"))
 	 (n (bib-field x "number"))
 	 (s (bib-field x "series")))

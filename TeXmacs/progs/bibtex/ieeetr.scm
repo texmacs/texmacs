@@ -58,8 +58,7 @@
 	      `(concat "no." ,sep ,n ,series)))
 	"")))
 
-(tm-define (bib-format-edition x)
-  (:mode bib-ieeetr?)
+(define (bib-format-edition x)
   (with e (bib-field x "edition")
     (if (bib-null? e) ""
 	`(concat ,e " ed."))))
@@ -74,8 +73,7 @@
 	    `(concat ,(bib-translate "in ") (with "font-shape" "italic" ,b)
 		     " (" ,(bib-format-editor x) ")")))))
 
-(tm-define (bib-format-address-publisher x)
-  (:mode bib-ieeetr?)
+(define (bib-format-address-publisher x)
   (let* ((a (bib-field x "address"))
 	 (p (bib-field x "publisher")))
     (if (bib-null? a) p

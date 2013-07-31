@@ -58,8 +58,7 @@
 	      `(concat "no." ,sep ,n ,series)))
 	"")))
 
-(tm-define (bib-format-edition x)
-  (:mode bib-siam?)
+(define (bib-format-edition x)
   (with e (bib-field x "edition")
     (if (bib-null? e)
 	""

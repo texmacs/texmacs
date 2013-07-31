@@ -54,8 +54,7 @@
 	  ,(bib-translate "in ")
 	  (with "font-shape" "italic" ,b) ,cl))))
 
-(tm-define (bib-format-volume-or-number x)
-  (:mode bib-acm?)
+(define (bib-format-volume-or-number x)
   (let* ((v (bib-field x "volume"))
 	 (n (bib-field x "number"))
 	 (s (bib-field x "series")))
@@ -106,8 +105,7 @@
     (if (bib-null? n) type
         `(concat ,type ,sep ,number))))
 
-(tm-define (bib-format-edition x)
-  (:mode bib-acm?)
+(define (bib-format-edition x)
   (let* ((e (bib-field x "edition")))
     (if (bib-null? e) "" `(concat ,e " ed."))))
 
