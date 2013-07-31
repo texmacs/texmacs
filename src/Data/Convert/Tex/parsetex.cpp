@@ -560,6 +560,9 @@ latex_parser::parse_symbol (string s, int& i) {
     i++; return tree (TUPLE, "\\ast"); }
   if (s[i] == '<') { i++; return tree (TUPLE, "\\<less>"); }
   if (s[i] == '>') { i++; return tree (TUPLE, "\\<gtr>"); }
+  if (s[i] == '#' && i+1 < N(s) && is_digit (s[i+1])) {
+    i+=2; return s(start, i);
+  }
   if (s[i] != '\\') { i++; return s(start, i); }
   i++;
   if (i == N(s)) return tree (TUPLE, "\\backslash");
