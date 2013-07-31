@@ -93,7 +93,7 @@
   mathchoice)
 
 (logic-group latex-command-6%
-  @startsection)
+  genfrac @startsection)
 
 (logic-rules
   ((latex-command% 'x) (latex-command-0% 'x))
