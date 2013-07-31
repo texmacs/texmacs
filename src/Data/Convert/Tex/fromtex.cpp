@@ -3276,19 +3276,6 @@ remove_next_spaces (string s, bool rev) {
   }
 }
 
-static tree
-add_to_cmp (tree to, tree what, bool at_begin) {
-  if (!at_begin) {
-    to << what;
-    return to;
-  }
-  tree r(L(to));
-  r << what;
-  for (int i=0; i<N(to); i++)
-    r << to[i];
-  return r;
-}
-
 static inline bool
 is_control (tree t) {
   return is_compound (t, "label") || is_compound (t, "index");
@@ -3326,16 +3313,20 @@ eat_space_around_control (tree t, char &state, bool &ctrl, bool rev) {
     else return tree (s);
   }
   ctrl= false;
-  int start= rev? N(t) - 1 : 0;
+  int n= N(t);
+  int start= rev? n - 1 : 0;
   int inc= rev? -1 : 1;
-  tree r(L(t));
+  array<tree> a;
   if (is_multiline (t)) state= 'n';
   else if (!is_concat (t)) state= '*';
-  for (int i=start; i>= 0 && i<N(t); i+=inc) {
-    r= add_to_cmp (r, eat_space_around_control (t[i], state, ctrl, rev), rev);
+  for (int i=start; i>= 0 && i<n; i+=inc) {
+    a << eat_space_around_control (t[i], state, ctrl, rev);
     if (is_multiline (t)) state= 'n';
     else if (!is_concat (t)) state= '*';
   }
+  tree r;
+  if (rev) r= tree (L(t), reverse (a));
+  else r= tree (L(t), a);
   return r;
 }
 
