@@ -3534,6 +3534,10 @@ pick_paragraph_breaks (tree t, array<tree> &b) {
     else
       u << t[i];
   }
+  if (N(u) > 0 && r == document ())
+    return t;
+  if (N(u) > 0)
+    r << u;
   return r;
 }
 
@@ -3616,8 +3620,9 @@ latex_to_tree (tree t1) {
       the_style= compound ("style", tuple (style, "cite-author-year"));
 
     tree r= tree (DOCUMENT, the_style, the_body);
-    if (N (initial) > 0)      r << compound ("initial", initial);
-    if (N (auxiliary[0]) > 0) r << compound ("auxiliary", auxiliary);
+    if (N (initial) > 0) r << compound ("initial", initial);
+    if (N (breaks) > 0)  r << compound ("auxiliary", auxiliary);
+    // cout << "\n\nr= " << r << "\n\n";
     return r;
   }
   else return t13;
