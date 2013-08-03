@@ -39,7 +39,7 @@ mathemagix_language_rep::advance (tree t, int& pos) {
   if (c >= '0' && c <= '9') {
     parse_number (s, pos); return &tp_normal_rep; }
   if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') ||
-      (c == '_') || (c == '$')) {
+      (c == '_') || (c == '$') || (c == '%')) {
     parse_alpha (s, pos); return &tp_normal_rep; }
   tm_char_forwards (s, pos);
   return &tp_normal_rep;
@@ -242,7 +242,7 @@ belongs_to_identifier (char c) {
   return ((c<='9' && c>='0') ||
          (c<='Z' && c>='A') ||
 	 (c<='z' && c>='a') ||
-          c=='_' || c=='$'  || c=='?');
+          c=='_' || c=='$' || c=='%' || c=='?');
 }
 
 static inline bool
