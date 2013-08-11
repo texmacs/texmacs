@@ -516,6 +516,7 @@ BUNDLE: MACOS_BUNDLE
 GS_EXE = @GS_EXE@
 GS_DLL = @GS_DLL@
 WINSPARKLE_DLL = @WINSPARKLE_DLL@
+WINSPARKLE_PATH = @WINSPARKLE_PATH@
 
 WINDOWS_PACKAGE_SRC = packages/windows
 WINDOWS_PACKAGE_DIR = ../distr/windows
@@ -524,9 +525,11 @@ WINDOWS_BUILD_DIR = ../distr/TeXmacs-Windows
 WINDOWS_BUILD_BIN_DIR = $(WINDOWS_BUILD_DIR)/bin
 
 ## WARNING: the following path list needs to be adapted manually 
-DLLPATH = $(PATH)
+DLLPATH = $(PATH) $(WINSPARKLE_PATH)
 DLLS_IN_PATH = $(wildcard $(addsuffix /$(1),$(subst :, ,$(DLLPATH))))
-DLL_LIST = pthreadGC2.dll libgcc_s_dw2-1.dll QtCore4.dll QtGui4.dll QtSvg4.dll mingwm10.dll libgmp*.dll libguile*.dll libfreetype*.dll libltdl*.dll libiconv*.dll libintl-8.dll libstdc++*.dll $(GS_EXE) $(GS_DLL) wget.exe $(WINSPARKLE_DLL)
+DLL_LIST = pthreadGC2.dll libgcc_s_dw2-1.dll QtCore4.dll QtGui4.dll QtSvg4.dll \
+           mingwm10.dll libgmp*.dll libguile*.dll libfreetype*.dll libltdl*.dll libiconv*.dll \
+           libintl-8.dll libstdc++*.dll $(GS_EXE) $(GS_DLL) wget.exe $(WINSPARKLE_DLL)
 DLLS = $(foreach DLL,$(DLL_LIST),$(call DLLS_IN_PATH,$(DLL)))
 
 WINDOWS_BUNDLE: TEXMACS

@@ -535,6 +535,7 @@ else
     AC_TRY_LINK(
 [
 #include <winsparkle.h>
+#include <winsparkle.h>
 ],[
 win_sparkle_init();
 ],[
@@ -542,6 +543,7 @@ win_sparkle_init();
     AC_DEFINE(USE_SPARKLE, 1, [Use WinSparkle library])
     SPARKLE_CFLAGS="$CFLAGS"
     SPARKLE_LDFLAGS="$LDFLAGS $LIBS"
+    WINSPARKLE_PATH="$with_sparkle"
     WINSPARKLE_DLL="WinSparkle*.dll"
 ],[
     AC_MSG_RESULT(no) ])
@@ -582,6 +584,8 @@ AC_SUBST(SPARKLE_LDFLAGS)
 AC_SUBST(SPARKLE_FRAMEWORK_PATH)
 AC_SUBST(CONFIG_SPARKLE)
 AC_SUBST(WINSPARKLE_DLL)
+AC_SUBST(WINSPARKLE_PATH)
+
 
 #--------------------------------------------------------------------
 # Fixes for erroneous behaviour of gcc/g++ and guile on some systems

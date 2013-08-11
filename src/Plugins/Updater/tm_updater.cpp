@@ -12,7 +12,7 @@
 
 #if defined (OS_MACOS) && defined (USE_SPARKLE)
 #include "tm_sparkle.hpp"
-#elif defined (OS_WIN32) && defined (USE_SPARKLE)
+#elif (defined (OS_MINGW) || defined (OS_WIN32)) && defined (USE_SPARKLE)
 #include "tm_winsparkle.hpp"
 #endif
 
@@ -24,10 +24,10 @@ tm_updater& tm_updater::instance (url _appcast_url)
   if (! _instance) {
 #if defined (OS_MACOS) && defined (USE_SPARKLE)
     _instance = new(std::nothrow) tm_sparkle (_appcast_url);
-#elif defined (OS_WIN32) && defined (USE_SPARKLE)
+#elif (defined (OS_MINGW) || defined (OS_WIN32)) && defined (USE_SPARKLE)
     _instance = new(std::nothrow) tm_winsparkle (_appcast_url);
 #else
-    _instance = new(std::nothrow) tm_updater (_appcast_url);
+   _instance = new(std::nothrow) tm_updater (_appcast_url);
 #endif
   } else {
     if (_instance->getAppcast() != _appcast_url) {

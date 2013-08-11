@@ -11,14 +11,14 @@
 #include "tm_configure.hpp"
 
   // HACK, should be fixed with autotools
-#if defined (OS_WIN32) && defined (USE_SPARKLE) 
+#if (defined (OS_MINGW) || defined (OS_WIN32))  && defined (USE_SPARKLE) 
 
 #include "tm_winsparkle.hpp"
 #include "string.hpp"
 #include <winsparkle.h>
 
 tm_winsparkle::tm_winsparkle (url _appcast_url)
-: tm_updater (_appcast_url), running (false);
+: tm_updater (_appcast_url), running (false)
 {
   c_string s (as_string (_appcast_url));  // FIXME! This has to be UTF8!
   
@@ -43,9 +43,8 @@ bool tm_winsparkle::checkInBackground ()
 bool tm_winsparkle::checkInForeground ()
 {
   win_sparkle_check_update_with_ui();
-  running = true;
   return true;
 }
 
-#endif  // defined (OS_WIN32) && defined (USE_SPARKLE)
+#endif  // (defined (OS_MINGW) || defined (OS_WIN32)) && defined (USE_SPARKLE)
 
