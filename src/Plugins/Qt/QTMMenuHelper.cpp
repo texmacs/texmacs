@@ -18,7 +18,9 @@
 #include "qt_ui_element.hpp"  // qt_choice_command_rep
 #include "analyze.hpp"
 
-#include <QtGui>
+#include <QToolTip>
+#include <QCompleter>
+#include <QKeyEvent>
 
 /******************************************************************************
  * QTMCommand

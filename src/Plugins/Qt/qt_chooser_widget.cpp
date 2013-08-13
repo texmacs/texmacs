@@ -17,7 +17,10 @@
 #include "converter.hpp"
 #include "QTMFileDialog.hpp"
 
-#include <QtGui>
+#include <QString>
+#include <QStringList>
+#include <QFileDialog>
+#include <QByteArray>
 
 /*!
  * @param _cmd  Scheme closure to execute after the dialog is closed.

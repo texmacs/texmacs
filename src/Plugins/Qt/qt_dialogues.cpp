@@ -23,7 +23,18 @@
 #include "QTMMenuHelper.hpp"
 #include "QTMGuiHelper.hpp"
 
-#include <QtGui>
+#include <QMessageBox>
+#include <QLabel>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QLineEdit>
+#include <QCompleter>
+#include <QFileSystemModel>
+#include <QDir>
+#include <QVector>
+#include <QPushButton>
+#include <QDialogButtonBox>
+
 #include "string.hpp"
 #include "scheme.hpp"
 

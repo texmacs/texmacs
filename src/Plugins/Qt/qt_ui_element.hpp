@@ -21,7 +21,17 @@
 #include "qt_widget.hpp"
 #include "QTMMenuHelper.hpp"
 
-#include <QtGui>
+#include <QMenu>
+#include <QAction>
+#include <QWidgetAction>
+#include <QLineEdit>
+#include <QComboBox>
+#include <QListView>
+#include <QLayout>
+#include <QLayoutItem>
+#include <QToolButton>
+#include <QPointer>
+#include <QPixmap>
 
 
 /*! Construction of UI elements / widgets.

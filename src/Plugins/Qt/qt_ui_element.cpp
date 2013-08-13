@@ -29,6 +29,9 @@
 #include "QTMMenuHelper.hpp"
 #include "QTMStyle.hpp"
 
+#include <QCheckBox>
+#include <QPushButton>
+#include <QSplitter>
 
 /******************************************************************************
  * Auxiliary classes

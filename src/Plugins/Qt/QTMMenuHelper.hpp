@@ -19,8 +19,18 @@
 #include "qt_gui.hpp"
 #include "qt_dialogues.hpp"
 
-#include <QtGui>
-
+#include <QTimer>
+#include <QPoint>
+#include <QStringListModel>
+#include <QSortFilterProxyModel>
+#include <QMenu>
+#include <QAction>
+#include <QWidgetAction>
+#include <QLineEdit>
+#include <QComboBox>
+#include <QListView>
+#include <QScrollArea>
+#include <QTabWidget>
 
 /*! Handles TeXmacs commands in the QT way.
 

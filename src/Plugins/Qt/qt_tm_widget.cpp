@@ -9,7 +9,15 @@
  * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
  ******************************************************************************/
 
-#include <QtGui>
+#include <QToolBar>
+#include <QToolButton>
+#include <QDialog>
+#include <QComboBox>
+#include <QStatusBar>
+#include <QDockWidget>
+#include <QMainWindow>
+#include <QMenuBar>
+#include <QLayoutItem>
 
 #include "analyze.hpp"
 #include "scheme.hpp"

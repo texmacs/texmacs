@@ -12,7 +12,8 @@
 #ifndef QT_FONT_H
 #define QT_FONT_H
 
-#include <QtGui>
+#include <QFont>
+#include <QFontMetrics>
 
 #include "font.hpp"
 

@@ -405,7 +405,7 @@ qt_gui_rep::add_notifier (socket_notifier sn)
   qsn = new QSocketNotifier(sn->fd, QSocketNotifier::Write, gui_helper);
   write_notifiers (sn) = (pointer) (qsn);
   QObject::connect( qsn, SIGNAL(activated(int)), 
-                    gui_helper, SLOT(doWriteSocketNotification(int)) );  
+                    gui_helper, SLOT(doWriteSocketNotification(int)) );
 }
 
 void 
