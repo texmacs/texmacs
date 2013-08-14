@@ -51,6 +51,8 @@
 //
 //  ************************************************************************************
 
+#ifndef HIDREMOTE_H
+#define HIDREMOTE_H
 
 #import <Cocoa/Cocoa.h>
 
@@ -354,3 +356,5 @@ typedef enum
 {
 	kHIDRemoteCompatibilityFlagsStandardHIDRemoteDevice = 1L,
 } HIDRemoteCompatibilityFlags;
+
+#endif   // HIDREMOTE_H
