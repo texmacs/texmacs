@@ -112,7 +112,7 @@ gs_to_png (url image, url png, int w, int h) {
   else {
     string cmd= gs_prefix ();
     cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER ";
-    cmd << "-sDEVICE=png16m -dGraphicsAlphaBits=4 -dEPSCrop ";
+    cmd << "-sDEVICE=png16m -dGraphicsAlphaBits=4 -dTextAlphaBits=4 -dEPSCrop ";
     cmd << "-g" << as_string (w) << "x" << as_string (h) << " ";
     int bbw, bbh;
     int rw, rh;
