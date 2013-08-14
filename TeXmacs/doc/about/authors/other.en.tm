@@ -69,7 +69,7 @@
   Sébastien de Menten, Jean-Michel Mermet, Jon Merriman, Herve le Meur,
   Ingolf Meyer, Amir Michail, Franck Michel, Jan David Mol, Klaus-Dieter
   Möller, Juan Fresneda Montano, André Moreau, Vijayendra Munikoti, Arkadiusz
-  Miskiewicz, Sasha Mitelman, Dirk Moebius, Jack Moffitt, Harvey Monder,
+  Mi±kiewicz, Sasha Mitelman, Dirk Moebius, Jack Moffitt, Harvey Monder,
   Guillaume Morin, Julian Morrison, Bernard Mourrain, Stephan Mucha, Toby
   Muhlhofer, Nathan Myers, Norbert Nemec, Thomas Neumann, Thien-Thi Nguyen,
   Han-Wen Nienhuys, Nix N. Nix, Eduardo Nogueira, Immanuel Normann,
