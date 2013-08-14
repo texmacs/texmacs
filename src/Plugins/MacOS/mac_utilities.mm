@@ -22,7 +22,9 @@
 #pragma pop_macro("FAILED")   // Restore our definition
 
 #ifdef QTTEXMACS
-#include <QtGui>
+#include <QApplication>
+#include <QKeyEvent>
+#include <QString>
 #include "Qt/QTMWidget.hpp"
 #include "Qt/qt_gui.hpp"
 #endif
