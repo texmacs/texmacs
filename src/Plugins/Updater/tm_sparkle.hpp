@@ -16,12 +16,17 @@ class tm_sparkle : public tm_updater
   class tm_suupdater;
   tm_suupdater* updater;
 
-  tm_sparkle (url _appcast_url);
+  tm_sparkle ();
   ~tm_sparkle ();
   friend class tm_updater;
   
 public:
-  bool isRunning () const;
   bool checkInBackground ();
   bool checkInForeground ();
+  
+  bool isRunning () const;
+  time_t lastCheck () const;
+  bool setAutomaticChecks (bool enable);
+  bool setCheckInterval (int hours);
+  bool setAppcast (url _appcast);
 };

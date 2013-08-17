@@ -102,6 +102,8 @@
 ;(display "Booting utilities\n")
 (lazy-define (utils cas cas-out) cas->stree)
 (lazy-define (utils plugins plugin-cmd) pre-serialize verbatim-serialize)
+(define supports-updater? (or (os-mingw?) (os-win32?) (os-macos?)))
+(if supports-updater? (use-modules (utils misc updater)))
 (use-modules (utils plugins plugin-convert))
 (use-modules (utils misc markup-funcs))
 (use-modules (utils handwriting handwriting))
@@ -195,7 +197,7 @@
              graphics-dragging-left graphics-end-drag-left)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
-;(display "Booting formal languages\n")
+;(display "Booting formal and natural languages\n")
 (lazy-language (language minimal) minimal)
 (lazy-language (language std-math) std-math)
 (lazy-define (language natural) replace)

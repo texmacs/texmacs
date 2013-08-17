@@ -17,17 +17,45 @@
 #include "string.hpp"
 #include <winsparkle.h>
 
-tm_winsparkle::tm_winsparkle (url _appcast_url)
-: tm_updater (_appcast_url), running (false)
-{
-  c_string s (as_string (_appcast_url));  // FIXME! This has to be UTF8!
-  
-  win_sparkle_set_appcast_url (s);
-}
-
 tm_winsparkle::~tm_winsparkle ()
 {
   win_sparkle_cleanup();
+}
+
+bool tm_winsparkle::setAppcast (url _appcast_url)
+{
+  if (running) {
+    if (DEBUG_STD)
+      cout << "Updater] WARNING: unable to change appcast for running instance.\n";
+    return false;
+  }
+
+  c_string s (as_string (_appcast_url));  // FIXME! This has to be UTF8!
+  win_sparkle_set_appcast_url (s);
+  return true;
+}
+
+bool tm_winsparkle::setAutomaticChecks (bool enable)
+{
+  if (running)
+    return false;
+
+    // TODO...
+  return true;
+}
+
+bool tm_winsparkle::setCheckInterval (int hours)
+{
+  if (running)
+    return false;
+  
+    // TODO...
+  return true;
+}
+
+time_t tm_winsparkle::lastCheck() const
+{
+  return 0;
 }
 
 bool tm_winsparkle::checkInBackground ()

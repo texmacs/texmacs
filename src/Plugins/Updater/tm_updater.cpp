@@ -9,6 +9,7 @@
  ******************************************************************************/
 
 #include "tm_updater.hpp"
+#include "scheme.hpp"
 
 #if defined (OS_MACOS) && defined (USE_SPARKLE)
 #include "tm_sparkle.hpp"
@@ -17,46 +18,70 @@
 #endif
 
 
-tm_updater& tm_updater::instance (url _appcast_url)
+tm_updater* tm_updater::instance ()
 {
   static tm_updater* _instance = NULL;
   
-  if (! _instance) {
-#if defined (OS_MACOS) && defined (USE_SPARKLE)
-    _instance = new(std::nothrow) tm_sparkle (_appcast_url);
-#elif (defined (OS_MINGW) || defined (OS_WIN32)) && defined (USE_SPARKLE)
-    _instance = new(std::nothrow) tm_winsparkle (_appcast_url);
-#else
-   _instance = new(std::nothrow) tm_updater (_appcast_url);
-#endif
-  } else {
-    if (_instance->getAppcast() != _appcast_url) {
-      if (! _instance->isRunning()) {
-        cout << "Updater] WARNING: changing appcast url from "
-             << as_string (_instance->getAppcast()) << " to "
-             << as_string (_appcast_url) << ".\n";
-        _instance->setAppcast (_appcast_url);
-      } else {
-        cout << "Updater] ERROR: unable to set appcast url of busy updater.\n";
-      }
-    }
+  url appcast = get_preference ("updater:appcast");
+  if (appcast == "default") {
+    if (DEBUG_STD)
+      cout << "Updater] ERROR: no appcast URL was set in the preferences.\n";
+    return 0;
   }
+
+  if (! _instance) {
+    #if defined (OS_MACOS) && defined (USE_SPARKLE)
+      _instance = new(std::nothrow) tm_sparkle ();
+    #elif (defined (OS_MINGW) || defined (OS_WIN32)) && defined (USE_SPARKLE)
+      _instance = new(std::nothrow) tm_winsparkle ();
+    #else
+      _instance = new(std::nothrow) tm_updater ();
+    #endif
+    
+    int interval = as_int (get_preference ("updater:interval", "1"));
+    interval = (interval < 1 || interval > 24*31) ? 1 : interval;
+    _instance->setCheckInterval (interval);
+
+    bool auto_checks = as_bool (get_preference ("updater:automatic-checks", "#t"));
+    _instance->setAutomaticChecks (auto_checks);
+  }
+
+  _instance->setAppcast (appcast);
+
   ASSERT (_instance != NULL, "Unable to instantiate updater.");
-  return *_instance;
+  return _instance;
 }
 
 /******************************************************************************
  * Scheme interface
  ******************************************************************************/
 
-bool check_updates_background (url appcast)
+bool updater_check_background ()
 {
-  tm_updater& updater = tm_updater::instance (appcast);
-  return !updater.isRunning() && updater.checkInBackground();
+  tm_updater* updater = tm_updater::instance ();
+  return updater && updater->checkInBackground();
 }
 
-bool check_updates_foreground (url appcast)
+bool updater_check_foreground ()
 {
-  tm_updater& updater = tm_updater::instance (appcast);
-  return !updater.isRunning() && updater.checkInForeground();
+  tm_updater* updater = tm_updater::instance ();
+  return updater && updater->checkInForeground();
+}
+
+bool updater_set_interval (int hours)
+{
+  tm_updater* updater = tm_updater::instance ();
+  return updater && updater->setCheckInterval (hours);
+}
+
+bool updater_set_automatic (bool enable)
+{
+  tm_updater* updater = tm_updater::instance ();
+  return updater && updater->setAutomaticChecks (enable);
+}
+
+time_t updater_last_check ()
+{
+  tm_updater* updater = tm_updater::instance ();
+  return updater ? updater->lastCheck () : 0;
 }

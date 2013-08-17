@@ -14,12 +14,17 @@ class tm_winsparkle : public tm_updater
 {
   bool running;
   
-  tm_winsparkle (url _appcast_url);
+  tm_winsparkle () : tm_updater (), running (false) { }
   ~tm_winsparkle ();
   friend class tm_updater;
 
 public:
-  bool isRunning () const { return running; }
   bool checkInBackground ();
   bool checkInForeground ();
+  
+  bool isRunning () const { return running; }
+  time_t lastCheck () const;
+  bool setAutomaticChecks ();
+  bool setCheckInterval (int hours);
+  bool setAppcast (url _appcast_url);
 };

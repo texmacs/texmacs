@@ -35,23 +35,18 @@ public:
 };
 
 
-tm_sparkle::tm_sparkle (url _appcast_url) : tm_updater (_appcast_url)
+tm_sparkle::tm_sparkle () : tm_updater ()
 {
-  c_string s (as_string (_appcast_url));  // FIXME! This has to be UTF8!
+  if (DEBUG_STD)
+    cout << "Updater] Instantiating Sparkle object.\n";
 
-  cout << "Updater] Instantiating Sparkle object for "
-       << as_string (appcast) << LF;
-  
   updater = new tm_suupdater;
-  
-  NSURL* url = [NSURL URLWithString: [NSString stringWithUTF8String: s]];
-  [updater->p setFeedURL: url];
 }
 
 tm_sparkle::~tm_sparkle ()
 {
-  cout << "Updater] Deleting Sparkle object for "
-       << as_string (appcast) << LF;
+  if (DEBUG_STD)
+    cout << "Updater] Deleting Sparkle object for " << as_string (appcast) << LF;
   delete updater;
 }
 
@@ -60,16 +55,89 @@ bool tm_sparkle::isRunning() const
   return [updater->p updateInProgress];
 }
 
+time_t tm_sparkle::lastCheck() const
+{
+  NSDate* last = [updater->p lastUpdateCheckDate];
+  if (! last) return 0;
+  return [last timeIntervalSince1970];
+  /*
+  NSString* ns = [NSDateFormatter localizedStringFromDate: last
+                                  dateStyle:NSDateFormatterShortStyle
+                                  timeStyle:NSDateFormatterShortStyle];
+  string s = [ns cStringUsingEncoding:NSUTF8StringEncoding];
+  return s;
+   */
+}
+
+bool tm_sparkle::setAutomaticChecks (bool enable)
+{
+  [updater->p setAutomaticallyChecksForUpdates: enable];
+  [updater->p resetUpdateCycle];
+  return true;
+}
+
+bool tm_sparkle::setCheckInterval (int hours)
+{
+  if (interval == hours)
+    return true;
+
+  interval = (hours < 1 || hours > 24*31) ? 1 : hours;
+
+  if (DEBUG_STD)
+    cout << "Updater] Changing interval from "
+         << interval << " to " << hours << " hour(s).\n";
+
+  [updater->p setUpdateCheckInterval: interval*3600];
+  [updater->p resetUpdateCycle];
+  return true;
+}
+
+bool tm_sparkle::setAppcast (url _appcast)
+{
+  if (_appcast == appcast)
+    return true;
+
+  if (DEBUG_STD)
+    cout << "Updater] Changing appcast url from "
+         << as_string (appcast) << " to "
+         << as_string (_appcast) << ".\n";
+  
+  c_string s (as_string (_appcast));  // FIXME! This has to be UTF8!
+  NSURL* nsurl = [NSURL URLWithString: [NSString stringWithUTF8String: s]];
+  [updater->p setFeedURL: nsurl];
+
+  appcast = _appcast;
+  return true;
+}
+
 bool tm_sparkle::checkInBackground ()
 {
-  cout << "Updater] Starting background check for updates at "
-       << as_string (appcast) << LF;
+  if (isRunning()) {
+    if (DEBUG_STD)
+      cout << "Updater] ERROR: an update is already in progress.\n";
+      return false;
+  }
+
+  if (DEBUG_STD)
+    cout << "Updater] Scheduling background check at "
+         << as_string (appcast) << LF;
+  
   [updater->p checkForUpdatesInBackground];
   return true;
 }
 
 bool tm_sparkle::checkInForeground ()
 {
+  if (isRunning()) {
+    if (DEBUG_STD)
+      cout << "Updater] ERROR: an update is already in progress.\n";
+    return false;
+  }
+
+  if (DEBUG_STD)
+    cout << "Updater] Starting foreground check at "
+         << as_string (appcast) << LF;
+
   [updater->p checkForUpdates:nil];
   return true;
 }

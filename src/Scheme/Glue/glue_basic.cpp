@@ -40,26 +40,53 @@ tmg_version_beforeP (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
-tmg_check_updates_background (tmscm arg1) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "check-updates-background");
-
-  url in1= tmscm_to_url (arg1);
-
+tmg_updater_check_background () {
   // TMSCM_DEFER_INTS;
-  bool out= check_updates_background (in1);
+  bool out= updater_check_background ();
   // TMSCM_ALLOW_INTS;
 
   return bool_to_tmscm (out);
 }
 
 tmscm
-tmg_check_updates_foreground (tmscm arg1) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "check-updates-foreground");
+tmg_updater_check_foreground () {
+  // TMSCM_DEFER_INTS;
+  bool out= updater_check_foreground ();
+  // TMSCM_ALLOW_INTS;
 
-  url in1= tmscm_to_url (arg1);
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_updater_last_check () {
+  // TMSCM_DEFER_INTS;
+  long out= updater_last_check ();
+  // TMSCM_ALLOW_INTS;
+
+  return long_to_tmscm (out);
+}
+
+tmscm
+tmg_updater_set_interval (tmscm arg1) {
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "updater-set-interval");
+
+  int in1= tmscm_to_int (arg1);
 
   // TMSCM_DEFER_INTS;
-  bool out= check_updates_foreground (in1);
+  bool out= updater_set_interval (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_updater_set_automatic (tmscm arg1) {
+  TMSCM_ASSERT_BOOL (arg1, TMSCM_ARG1, "updater-set-automatic");
+
+  bool in1= tmscm_to_bool (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= updater_set_automatic (in1);
   // TMSCM_ALLOW_INTS;
 
   return bool_to_tmscm (out);
@@ -7008,8 +7035,11 @@ void
 initialize_glue_basic () {
   tmscm_install_procedure ("texmacs-version-release",  tmg_texmacs_version_release, 1, 0, 0);
   tmscm_install_procedure ("version-before?",  tmg_version_beforeP, 2, 0, 0);
-  tmscm_install_procedure ("check-updates-background",  tmg_check_updates_background, 1, 0, 0);
-  tmscm_install_procedure ("check-updates-foreground",  tmg_check_updates_foreground, 1, 0, 0);
+  tmscm_install_procedure ("updater-check-background",  tmg_updater_check_background, 0, 0, 0);
+  tmscm_install_procedure ("updater-check-foreground",  tmg_updater_check_foreground, 0, 0, 0);
+  tmscm_install_procedure ("updater-last-check",  tmg_updater_last_check, 0, 0, 0);
+  tmscm_install_procedure ("updater-set-interval",  tmg_updater_set_interval, 1, 0, 0);
+  tmscm_install_procedure ("updater-set-automatic",  tmg_updater_set_automatic, 1, 0, 0);
   tmscm_install_procedure ("os-win32?",  tmg_os_win32P, 0, 0, 0);
   tmscm_install_procedure ("os-mingw?",  tmg_os_mingwP, 0, 0, 0);
   tmscm_install_procedure ("os-macos?",  tmg_os_macosP, 0, 0, 0);

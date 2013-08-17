@@ -14,6 +14,7 @@
 (texmacs-module (texmacs menus preferences-menu)
   (:use
     (utils edit auto-close)
+    (utils misc updater)
     (texmacs texmacs tm-server)
     (texmacs texmacs tm-view)
     (texmacs texmacs tm-print)
@@ -37,148 +38,148 @@
 
 (tm-define page-setup-tree
   '((enum ("Preview command" "preview command")
-	  "default" "ggv" "ghostview" "gv" "kghostview" "open"
-	  *)
+          "default" "ggv" "ghostview" "gv" "kghostview" "open"
+          *)
     (enum ("Printing command" "printing command")
-	  "lpr" "lp" "pdq"
-	  *)
+          "lpr" "lp" "pdq"
+          *)
     (enum ("Paper type" "paper type")
-	  "A3" "A4" "A5" "B4" "B5" "B6"
-	  "Letter" "Legal" "Executive"
-	  *)
+          "A3" "A4" "A5" "B4" "B5" "B6"
+          "Letter" "Legal" "Executive"
+          *)
     (enum ("Printer dpi" "printer dpi")
-	  "150" "200" "300" "400" "600" "800" "1200"
-	  *)
+          "150" "200" "300" "400" "600" "800" "1200"
+          *)
     (enum ("Font type" "font type")
-	  ("Metafont bitmaps only" "Metafont only")
-	  ("Metafont and available type 1" "Metafont + Type 1")
-	  ("Type 1 with metafont fallback" "Type 1 + Metafont")
-	  ("Type 1 only" "Type 1 only"))))
+          ("Metafont bitmaps only" "Metafont only")
+          ("Metafont and available type 1" "Metafont + Type 1")
+          ("Type 1 with metafont fallback" "Type 1 + Metafont")
+          ("Type 1 only" "Type 1 only"))))
 
 (tm-define preferences-tree
   `((enum ("Look and feel" "look and feel")
-	  ("Default" "default")
-	  ---
-	  ("Emacs" "emacs")
-	  ("Gnome" "gnome")
-	  ("KDE" "kde")
-	  ("Mac OS" "macos")
-	  ("Windows" "windows"))
+          ("Default" "default")
+          ---
+          ("Emacs" "emacs")
+          ("Gnome" "gnome")
+          ("KDE" "kde")
+          ("Mac OS" "macos")
+          ("Windows" "windows"))
 ;   (enum ("Profile" "profile")
-;	  ("Beginner" "beginner")
-;	  ("Normal" "normal")
-;	  ("Advanced" "advanced"))
+;         ("Beginner" "beginner")
+;         ("Normal" "normal")
+;         ("Advanced" "advanced"))
     (enum ("Interactive questions" "interactive questions")
-	  ("On the footer" "footer")
-	  ("In popup windows" "popup"))
+          ("On the footer" "footer")
+          ("In popup windows" "popup"))
     (enum ("Details in menus" "detailed menus")
-	  ("Simplified menus" "simple")
-	  ("Detailed menus" "detailed"))
+          ("Simplified menus" "simple")
+          ("Detailed menus" "detailed"))
     ---
     (enum ("Language" "language")
-	  ("British" "british")
-	  ("Bulgarian" "bulgarian")
-	  ("Chinese" "chinese")
-	  ("Czech" "czech")
-	  ("Dutch" "dutch")
-	  ("Danish" "danish")
-	  ("English" "english")
-	  ("Finnish" "finnish")
-	  ("French" "french")
-	  ("German" "german")
-	  ("Hungarian" "hungarian")
-	  ("Italian" "italian")
-	  ("Japanese" "japanese")
-	  ("Korean" "korean")
-	  ("Polish" "polish")
-	  ("Portuguese" "portuguese")
-	  ("Romanian" "romanian")
-	  ("Russian" "russian")
-	  ("Slovene" "slovene")
-	  ("Spanish" "spanish")
-	  ("Swedish" "swedish")
-	  ("Taiwanese" "taiwanese")
-	  ("Ukrainian" "ukrainian"))
+          ("British" "british")
+          ("Bulgarian" "bulgarian")
+          ("Chinese" "chinese")
+          ("Czech" "czech")
+          ("Dutch" "dutch")
+          ("Danish" "danish")
+          ("English" "english")
+          ("Finnish" "finnish")
+          ("French" "french")
+          ("German" "german")
+          ("Hungarian" "hungarian")
+          ("Italian" "italian")
+          ("Japanese" "japanese")
+          ("Korean" "korean")
+          ("Polish" "polish")
+          ("Portuguese" "portuguese")
+          ("Romanian" "romanian")
+          ("Russian" "russian")
+          ("Slovene" "slovene")
+          ("Spanish" "spanish")
+          ("Swedish" "swedish")
+          ("Taiwanese" "taiwanese")
+          ("Ukrainian" "ukrainian"))
     (-> "Keyboard"
-	(-> "Remote control"
-	    (enum ("Left" "ir-left") "pageup" *)
-	    (enum ("Right" "ir-right") "pagedown" *)
-	    (enum ("Up" "ir-up") "home" *)
-	    (enum ("Down" "ir-down") "end" *)
-	    (enum ("Center" "ir-center") "return" "S-return" *)
-	    (enum ("Play" "ir-play") "F5" *)
-	    (enum ("Pause" "ir-pause") "escape" *)
-	    (enum ("Menu" "ir-menu") "." *))
-	(enum ("Cyrillic input method" "cyrillic input method")
-	      ("Translit" "translit")
-	      ("Jcuken" "jcuken")
-	      ("Yawerty" "yawerty")
-	      ("Koi8-r" "koi8-r")
-	      ("Cp1251" "cp1251"))
-	(enum ("Automatic quotes" "automatic quotes")
-	      ("Default" "default")
-	      ---
-	      ("None" "none")
-	      ("Dutch" "dutch")
-	      ("English" "english")
-	      ("French" "french")
-	      ("German" "german")
-	      ("Spanish" "spanish")
-	      ("Swiss" "swiss"))
-	(enum ("Automatic brackets" "automatic brackets")
-	      ("Disable" "off")
-	      ("Inside mathematics" "mathematics")
-	      ("Enable" "on")))
+        (-> "Remote control"
+            (enum ("Left" "ir-left") "pageup" *)
+            (enum ("Right" "ir-right") "pagedown" *)
+            (enum ("Up" "ir-up") "home" *)
+            (enum ("Down" "ir-down") "end" *)
+            (enum ("Center" "ir-center") "return" "S-return" *)
+            (enum ("Play" "ir-play") "F5" *)
+            (enum ("Pause" "ir-pause") "escape" *)
+            (enum ("Menu" "ir-menu") "." *))
+        (enum ("Cyrillic input method" "cyrillic input method")
+              ("Translit" "translit")
+              ("Jcuken" "jcuken")
+              ("Yawerty" "yawerty")
+              ("Koi8-r" "koi8-r")
+              ("Cp1251" "cp1251"))
+        (enum ("Automatic quotes" "automatic quotes")
+              ("Default" "default")
+              ---
+              ("None" "none")
+              ("Dutch" "dutch")
+              ("English" "english")
+              ("French" "french")
+              ("German" "german")
+              ("Spanish" "spanish")
+              ("Swiss" "swiss"))
+        (enum ("Automatic brackets" "automatic brackets")
+              ("Disable" "off")
+              ("Inside mathematics" "mathematics")
+              ("Enable" "on")))
     (-> "Printer" . ,page-setup-tree)
     (enum ("Security" "security")
-	  ("Accept no scripts" "accept no scripts")
-	  ("Prompt on scripts" "prompt on scripts")
-	  ("Accept all scripts" "accept all scripts"))
+          ("Accept no scripts" "accept no scripts")
+          ("Prompt on scripts" "prompt on scripts")
+          ("Accept all scripts" "accept all scripts"))
     (-> "Converters"
-	(-> "TeXmacs -> Html"
-;	    (toggle ("Use CSS" "texmacs->html:css"))
-	    (toggle ("Use MathML" "texmacs->html:mathml"))
-	    (toggle ("Export formulas as images" "texmacs->html:images")))
-	(-> "LaTeX -> TeXmacs"
+        (-> "TeXmacs -> Html"
+;           (toggle ("Use CSS" "texmacs->html:css"))
+            (toggle ("Use MathML" "texmacs->html:mathml"))
+            (toggle ("Export formulas as images" "texmacs->html:images")))
+        (-> "LaTeX -> TeXmacs"
             (toggle ("Import sophisticated objects as pictures"
-		     "latex->texmacs:fallback-on-pictures"))
+                     "latex->texmacs:fallback-on-pictures"))
             (toggle ("Keep track of the LaTeX source code"
-		     "latex->texmacs:preserve-source")))
-	(-> "TeXmacs -> LaTeX"
-	    (toggle ("Replace unrecognized styles"
-		     "texmacs->latex:replace-style"))
-	    (toggle ("Expand unrecognized macros"
-		     "texmacs->latex:expand-macros"))
-	    (toggle ("Expand user-defined macros"
-		     "texmacs->latex:expand-user-macros"))
-	    (toggle ("Export bibliographies as links"
-		     "texmacs->latex:indirect-bib"))
-	    (toggle ("Allow for macro definitions in preamble"
-		     "texmacs->latex:use-macros"))
-	    (enum ("Encoding" "texmacs->latex:encoding")
+                     "latex->texmacs:preserve-source")))
+        (-> "TeXmacs -> LaTeX"
+            (toggle ("Replace unrecognized styles"
+                     "texmacs->latex:replace-style"))
+            (toggle ("Expand unrecognized macros"
+                     "texmacs->latex:expand-macros"))
+            (toggle ("Expand user-defined macros"
+                     "texmacs->latex:expand-user-macros"))
+            (toggle ("Export bibliographies as links"
+                     "texmacs->latex:indirect-bib"))
+            (toggle ("Allow for macro definitions in preamble"
+                     "texmacs->latex:use-macros"))
+            (enum ("Encoding" "texmacs->latex:encoding")
                   ("Strict Ascii" "ascii")
                   ("Cork charset with TeX catcode definition in preamble" "cork")
                   ("Utf-8 with inputenc LaTeX package" "utf-8")))
-	(-> "TeXmacs -> Verbatim"
-	    (toggle ("Wrap lines"
-		     "texmacs->verbatim:wrap"))
-	    (enum ("Encoding" "texmacs->verbatim:encoding")
-		  ("Cork" "cork")
-		  ("Iso-8859-1" "iso-8859-1")
-		  ("Utf-8" "utf-8")))
-	(-> "Verbatim -> TeXmacs"
-	    (toggle ("Wrap lines"
-		     "verbatim->texmacs:wrap"))
-	    (enum ("Encoding" "verbatim->texmacs:encoding")
-		  ("Automated detection" "auto")
-		  ("Cork" "cork")
-		  ("Iso-8859-1" "iso-8859-1")
-		  ("Utf-8" "utf-8")))
-	(-> "TeXmacs -> Image"
-	    (enum ("Format" "texmacs->graphics:format")
-		  ("Svg" "svg")
-		  ("Eps" "eps")
-		  ("Png" "png"))))
+        (-> "TeXmacs -> Verbatim"
+            (toggle ("Wrap lines"
+                     "texmacs->verbatim:wrap"))
+            (enum ("Encoding" "texmacs->verbatim:encoding")
+                  ("Cork" "cork")
+                  ("Iso-8859-1" "iso-8859-1")
+                  ("Utf-8" "utf-8")))
+        (-> "Verbatim -> TeXmacs"
+            (toggle ("Wrap lines"
+                     "verbatim->texmacs:wrap"))
+            (enum ("Encoding" "verbatim->texmacs:encoding")
+                  ("Automated detection" "auto")
+                  ("Cork" "cork")
+                  ("Iso-8859-1" "iso-8859-1")
+                  ("Utf-8" "utf-8")))
+        (-> "TeXmacs -> Image"
+            (enum ("Format" "texmacs->graphics:format")
+                  ("Svg" "svg")
+                  ("Eps" "eps")
+                  ("Png" "png"))))
     (-> "Mathematics"
         (-> "Keyboard"
             (item ("Enforce brackets to match" (toggle-matching-brackets)))
@@ -202,24 +203,24 @@
             (toggle ("Homoglyph substitutions"
                      "manual homoglyph correct"))))
     (-> "Scripts"
-	("None" (set-preference "scripting language" "none"))
-	---
-	(link scripts-preferences-menu))
+        ("None" (set-preference "scripting language" "none"))
+        ---
+        (link scripts-preferences-menu))
     (-> "Tools"
-	(toggle ("Debugging tool" "debugging tool"))
-	(toggle ("Linking tool" "linking tool"))
-	(toggle ("Source macros tool" "source tool"))
-	(toggle ("Versioning tool" "versioning tool")))
+        (toggle ("Debugging tool" "debugging tool"))
+        (toggle ("Linking tool" "linking tool"))
+        (toggle ("Source macros tool" "source tool"))
+        (toggle ("Versioning tool" "versioning tool")))
     ---
     (enum ("Autosave" "autosave")
-	  ("5 s" "5")
-	  ("30 s" "30")
-	  ("120 s" "120")
-	  ("300 s" "300")
-	  ---
-	  ("Disable" "0"))
+          ("5 s" "5")
+          ("30 s" "30")
+          ("120 s" "120")
+          ("300 s" "300")
+          ---
+          ("Disable" "0"))
     (enum ("Bibtex command" "bibtex command")
-	  "bibtex" "rubibtex" *)))
+          "bibtex" "rubibtex" *)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Computation of the preference menu
@@ -237,33 +238,33 @@
 
 (define (compute-preferences-enum s l)
   (cond ((null? l) l)
-	((== (car l) '*)
-	 (list '--- (list "Other" (compute-preferences-entry s))))
-	((== (car l) '---)
-	 (cons '--- (compute-preferences-enum s (cdr l))))
-	(else (cons (list (id-or-car (car l))
-			  `(set-preference ,s ,(id-or-cadr (car l))))
-		    (compute-preferences-enum s (cdr l))))))
+        ((== (car l) '*)
+         (list '--- (list "Other" (compute-preferences-entry s))))
+        ((== (car l) '---)
+         (cons '--- (compute-preferences-enum s (cdr l))))
+        (else (cons (list (id-or-car (car l))
+                          `(set-preference ,s ,(id-or-cadr (car l))))
+                    (compute-preferences-enum s (cdr l))))))
 
 (tm-define (compute-preferences-menu-sub l)
   (cond ((or (nlist? l) (null? l)) l)
-	((== (car l) 'string)
-	 (let* ((x (cadr l))
-		(s (id-or-car x))
-		(v (id-or-cadr x)))
-	   (list s (compute-preferences-entry v))))
-	((== (car l) 'enum)
-	 (let* ((x (cadr l))
-		(s (id-or-car x))
-		(v (id-or-cadr x)))
-	   (cons* '-> s (compute-preferences-enum v (cddr l)))))
-	((== (car l) 'toggle)
-	 (let* ((x (cadr l))
-		(s (id-or-car x))
-		(v (id-or-cadr x)))
-	   (list s (list 'toggle-preference v))))
-	((== (car l) 'item) (cadr l))
-	(else (map-in-order compute-preferences-menu-sub l))))
+        ((== (car l) 'string)
+         (let* ((x (cadr l))
+                (s (id-or-car x))
+                (v (id-or-cadr x)))
+           (list s (compute-preferences-entry v))))
+        ((== (car l) 'enum)
+         (let* ((x (cadr l))
+                (s (id-or-car x))
+                (v (id-or-cadr x)))
+           (cons* '-> s (compute-preferences-enum v (cddr l)))))
+        ((== (car l) 'toggle)
+         (let* ((x (cadr l))
+                (s (id-or-car x))
+                (v (id-or-cadr x)))
+           (list s (list 'toggle-preference v))))
+        ((== (car l) 'item) (cadr l))
+        (else (map-in-order compute-preferences-menu-sub l))))
 
 (tm-menu (compute-preferences-menu l)
   (with r (eval (cons* 'menu-dynamic (compute-preferences-menu-sub l)))
@@ -599,6 +600,22 @@
   ("prompt on scripts" "Prompt on scripts")
   ("accept all scripts" "Accept all scripts"))
 
+(define-preference-names "updater:interval"
+  ("0" "Never")
+  ("1" "Every hour")
+  ("24" "Once a day")
+  ("720" "Once a month"))
+
+(define (updater-last-check-formatted)
+  "Time since last update check formatted for use in the preferences dialog"
+  (with c (updater-last-check)
+    (if (== c 0) 
+        "Never"
+        (with h (ceiling (/ (- (current-time) c) 3600))
+          (cond ((< h 24) (replace "Around %1 hour(s) ago" h))
+                ((< h 720) (replace "%1 days ago" (ceiling (/ h 24))))
+                (else (translate "More than 1 month ago")))))))
+
 (tm-define (scripts-preferences-list)
   (lazy-plugin-force)
   (with l (scripts-list)
@@ -622,7 +639,13 @@
       (enum (set-pretty-preference "scripting language" answer)
             (scripts-preferences-list)
             (get-pretty-preference "scripting language")
-            "15em"))))
+            "15em"))
+    (item (text "Check for automatic updates:")
+      (enum (set-pretty-preference "updater:interval" answer)
+            '("Never" "Every hour" "Once a day" "Once a month")
+            (get-pretty-preference "updater:interval")
+            "15em"))
+    (item (text "Last update:") (text (updater-last-check-formatted)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences widget
