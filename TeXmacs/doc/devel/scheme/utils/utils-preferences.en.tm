@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.17>
+<TeXmacs|1.0.7.19>
 
 <style|tmdoc>
 
@@ -38,7 +38,7 @@
         <\input|Scheme] >
           (define (notify-test pref value)
 
-          \ \ (display* "Hey! " pref " changed to " value)(newline))
+          \ \ (display* "Hey! " pref " changed to " value) (newline))
         </input>
 
         <\input|Scheme] >
