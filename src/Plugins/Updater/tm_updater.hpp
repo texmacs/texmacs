@@ -44,6 +44,7 @@ public:
  * Scheme interface
  ******************************************************************************/
 
+bool updater_supported ();
 bool updater_check_background ();
 bool updater_check_foreground ();
 bool updater_set_interval (int hours);

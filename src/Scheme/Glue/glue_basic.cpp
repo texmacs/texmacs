@@ -40,6 +40,15 @@ tmg_version_beforeP (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_updater_supportedP () {
+  // TMSCM_DEFER_INTS;
+  bool out= updater_supported ();
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_updater_check_background () {
   // TMSCM_DEFER_INTS;
   bool out= updater_check_background ();
@@ -7035,6 +7044,7 @@ void
 initialize_glue_basic () {
   tmscm_install_procedure ("texmacs-version-release",  tmg_texmacs_version_release, 1, 0, 0);
   tmscm_install_procedure ("version-before?",  tmg_version_beforeP, 2, 0, 0);
+  tmscm_install_procedure ("updater-supported?",  tmg_updater_supportedP, 0, 0, 0);
   tmscm_install_procedure ("updater-check-background",  tmg_updater_check_background, 0, 0, 0);
   tmscm_install_procedure ("updater-check-foreground",  tmg_updater_check_foreground, 0, 0, 0);
   tmscm_install_procedure ("updater-last-check",  tmg_updater_last_check, 0, 0, 0);

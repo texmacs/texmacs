@@ -102,8 +102,6 @@
 ;(display "Booting utilities\n")
 (lazy-define (utils cas cas-out) cas->stree)
 (lazy-define (utils plugins plugin-cmd) pre-serialize verbatim-serialize)
-(define supports-updater? (or (os-mingw?) (os-win32?) (os-macos?)))
-(if supports-updater? (use-modules (utils misc updater)))
 (use-modules (utils plugins plugin-convert))
 (use-modules (utils misc markup-funcs))
 (use-modules (utils handwriting handwriting))
@@ -257,6 +255,7 @@
 (lazy-menu (server server-menu) server-menu)
 (lazy-menu (client client-menu) client-menu remote-menu)
 (lazy-tmfs-handler (client client-tmfs) remote-file)
+(if (updater-supported?) (use-modules (utils misc updater)))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting linking facilities\n")

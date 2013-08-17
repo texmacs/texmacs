@@ -14,12 +14,12 @@
 (texmacs-module (texmacs menus preferences-menu)
   (:use
     (utils edit auto-close)
-    (utils misc updater)
     (texmacs texmacs tm-server)
     (texmacs texmacs tm-view)
     (texmacs texmacs tm-print)
     (texmacs keyboard config-kbd)
-    (convert latex init-latex)))
+    (convert latex init-latex)
+    (language natural)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferred scripting language
@@ -604,6 +604,7 @@
   ("0" "Never")
   ("1" "Every hour")
   ("24" "Once a day")
+  ("168" "Once a week")
   ("720" "Once a month"))
 
 (define (updater-last-check-formatted)
@@ -640,12 +641,14 @@
             (scripts-preferences-list)
             (get-pretty-preference "scripting language")
             "15em"))
-    (item (text "Check for automatic updates:")
-      (enum (set-pretty-preference "updater:interval" answer)
-            '("Never" "Every hour" "Once a day" "Once a month")
-            (get-pretty-preference "updater:interval")
-            "15em"))
-    (item (text "Last update:") (text (updater-last-check-formatted)))))
+    ;(if (updater-supported?) ; FIXME: (if...) doesn't work here?
+        (item (text "Check for automatic updates:")
+          (enum (set-pretty-preference "updater:interval" answer)
+               '("Never" "Every hour" "Once a day" "Once a week" "Once a month")
+                (get-pretty-preference "updater:interval")
+                "15em"));)
+    ;(if (updater-supported?) ; FIXME: (if...) doesn't work here?
+      (item (text "Last update:") (text (updater-last-check-formatted)))));)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences widget

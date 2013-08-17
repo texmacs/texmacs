@@ -56,6 +56,16 @@ tm_updater* tm_updater::instance ()
  * Scheme interface
  ******************************************************************************/
 
+bool updater_supported ()
+{
+  #if defined (OS_MACOS) && defined (USE_SPARKLE)
+    return true;
+  #elif (defined (OS_MINGW) || defined (OS_WIN32)) && defined (USE_SPARKLE)
+    return true;
+  #endif
+    return false;
+}
+
 bool updater_check_background ()
 {
   tm_updater* updater = tm_updater::instance ();
