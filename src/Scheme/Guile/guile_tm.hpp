@@ -192,7 +192,8 @@ typedef SCM (*FN)();
 #if defined(GUILE_A) || defined(GUILE_B)
 int scm_to_bool (SCM obj);
 int scm_to_int (SCM obj);
-double scm_to_double (SCM i);
+long scm_to_long (SCM obj);
+double scm_to_double (SCM obj);
 #endif
 
 
@@ -236,12 +237,14 @@ inline tmscm tmscm_cadddr (tmscm obj) { return SCM_CADDDR (obj); }
 
 SCM bool_to_scm (bool b);
 SCM int_to_scm (int i);
+SCM long_to_scm (long l);
 SCM double_to_scm (double i);
 
 
 
 inline tmscm bool_to_tmscm (bool b) { return bool_to_scm (b); }
-inline tmscm int_to_tmscm (int i) {   return int_to_scm (i); }
+inline tmscm int_to_tmscm (int i) { return int_to_scm (i); }
+inline tmscm long_to_tmscm (long l) { return long_to_scm (l); }
 inline tmscm double_to_tmscm (double i) { return double_to_scm (i); }
 tmscm string_to_tmscm (string s);
 tmscm symbol_to_tmscm (string s);

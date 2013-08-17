@@ -196,7 +196,7 @@ hash (string s) {
 
 bool
 as_bool (string s) {
-  return (s == "true");
+  return (s == "true" || s == "#t");
 }
 
 int
