@@ -509,7 +509,7 @@ MACOS_PACKAGE: MACOS_BUNDLE
 
 MACOS_RELEASE: MACOS_BUNDLE
 	$(RM) $(MACOS_PACKAGE_ZIP)
-	zip -r9Tq $(MACOS_PACKAGE_ZIP) $(MACOS_PACKAGE_APP)
+	(cd ../distr; zip -r9Tq $(tm_devel).zip $(tm_devel).app)
 	$(SIGN) $(MACOS_PACKAGE_ZIP) $(svnrev) $(tm_devel_version)
 	
 BUNDLE: MACOS_BUNDLE
