@@ -614,7 +614,7 @@
     (if (== c 0) 
         "Never"
         (with h (ceiling (/ (- (current-time) c) 3600))
-          (cond ((< h 24) (replace "Around %1 hour(s) ago" h))
+          (cond ((< h 24) (replace "Less than %1 hour(s) ago" h))
                 ((< h 720) (replace "%1 days ago" (ceiling (/ h 24))))
                 (else (translate "More than 1 month ago")))))))
 
