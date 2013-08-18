@@ -957,8 +957,6 @@ fi
 
 AC_SUBST(MACOSX_DEPLOYMENT_TARGET)
 
-AC_SUBST(QT_FRAMEWORKS_PATH)
-AC_SUBST(QT_PLUGINS_PATH)
 
 #--------------------------------------------------------------------
 # Experimental PDF renderer
@@ -1112,6 +1110,9 @@ AC_SUBST(CONFIG_COCOA)
 AC_SUBST(CONFIG_QT)
 AC_SUBST(CONFIG_GUI)
 AC_SUBST(CONFIG_GUI_DEFINE)
+
+AC_SUBST(QT_FRAMEWORKS_PATH)  
+AC_SUBST(QT_PLUGINS_PATH)
 
 #--------------------------------------------------------------------
 # Debugging options

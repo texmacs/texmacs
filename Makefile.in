@@ -42,6 +42,7 @@ CHMOD = @CONFIG_CHMOD@
 GZIP = gzip -f
 STRIP = @CONFIG_STRIP@
 TOUCH = touch
+SIGN = misc/admin/sign_update
 
 ###############################################################################
 # Main makes
@@ -468,7 +469,8 @@ MACOS_BUNDLE: TEXMACS
 	$(CP) TeXmacs/bin/texmacs.bin $(MACOS_PACKAGE_CONTENTS)/MacOS/TeXmacs
 	$(MKDIR) $(MACOS_PACKAGE_RESOURCES)
 	$(CP) $(MACOS_PACKAGE_SRC)/TeXmacs.icns $(MACOS_PACKAGE_RESOURCES)
-	$(CP) $(MACOS_PACKAGE_SRC)/TeXmacs-document.icns $(MACOS_PACKAGE_RESOURCES)
+	$(CP) $(MACOS_PACKAGE_SRC)/TeXmacs-document.icns \
+	      $(MACOS_PACKAGE_RESOURCES)
 	$(CP) src/Plugins/Cocoa/English.lproj $(MACOS_PACKAGE_RESOURCES)
 	$(CP) misc/admin/texmacs_updates_dsa_pub.pem $(MACOS_PACKAGE_RESOURCES)
 	$(MKDIR) $(MACOS_PACKAGE_RESOURCES)/bin
@@ -477,7 +479,8 @@ MACOS_BUNDLE: TEXMACS
 	$(CP) TeXmacs $(MACOS_PACKAGE_RESOURCES)/share
 	$(RM) $(MACOS_PACKAGE_TEXMACS)/bin/texmacs.bin
 	GUILE_DATA_PATH=@GUILE_DATA_PATH@; \
-  	  $(CP) `find $$GUILE_DATA_PATH -type d | grep ice-9` $(MACOS_PACKAGE_TEXMACS)/progs/
+  	  $(CP) `find $$GUILE_DATA_PATH -type d | grep ice-9` \
+	  $(MACOS_PACKAGE_TEXMACS)/progs/
 	$(CHMOD) -R go=rX $(MACOS_PACKAGE_TEXMACS)/progs/ice-9
 	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/.svn
 	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/.svn
@@ -487,11 +490,15 @@ MACOS_BUNDLE: TEXMACS
 	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/*/*/*/*/.svn
 	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/*/*/*/*/*/.svn
 	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/*/*/*/*/*/*/.svn
-	# deploy libraries
-	QT_FRAMEWORKS_PATH=$(QT_FRAMEWORKS_PATH) QT_PLUGINS_PATH=$(QT_PLUGINS_PATH) \
-	  SPARKLE_FRAMEWORK_PATH=$(SPARKLE_FRAMEWORK_PATH) \
+	@echo Deploying libraries into application bundle.
+	QT_FRAMEWORKS_PATH="$(QT_FRAMEWORKS_PATH)" \
+	  QT_PLUGINS_PATH="$(QT_PLUGINS_PATH)" \
+	  SPARKLE_FRAMEWORK_PATH="$(SPARKLE_FRAMEWORK_PATH)" \
 	  $(MACOS_PACKAGE_SRC)/bundle-libs.sh \
 	  $(MACOS_PACKAGE_CONTENTS)/MacOS/TeXmacs
+	@echo ----------------------------------------------------
+	@echo TeXmacs has been bundled in $(MACOS_PACKAGE_APP)
+
 
 MACOS_PACKAGE: MACOS_BUNDLE
 	$(RM) $(MACOS_PACKAGE_DMG)
@@ -503,7 +510,7 @@ MACOS_PACKAGE: MACOS_BUNDLE
 MACOS_RELEASE: MACOS_BUNDLE
 	$(RM) $(MACOS_PACKAGE_ZIP)
 	zip -r9Tq $(MACOS_PACKAGE_ZIP) $(MACOS_PACKAGE_APP)
-	misc/admin/sign_update $(MACOS_PACKAGE_ZIP) $(svnrev) $(tm_devel_version)
+	$(SIGN) $(MACOS_PACKAGE_ZIP) $(svnrev) $(tm_devel_version)
 	
 BUNDLE: MACOS_BUNDLE
 
