@@ -779,7 +779,7 @@ qt_ui_element_rep::as_qwidget () {
       T1    heights = x.x4;
       
       qwid = wid->as_qwidget();
-      qt_apply_tm_style (qwid, x.x2);
+      qt_apply_tm_style (qwid, style);
       
       QSize minSize = qt_decode_length(widths.x1, heights.x1, qwid->minimumSizeHint(), qwid->fontMetrics());
       QSize defSize = qt_decode_length(widths.x2, heights.x2, qwid->minimumSizeHint(), qwid->fontMetrics());
