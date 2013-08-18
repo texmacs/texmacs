@@ -84,7 +84,7 @@ parse_tm_style (int style) {
   if (style & WIDGET_STYLE_PRESSED)   // indicate that a button is currently pressed
     sheet += "";
   if (style & WIDGET_STYLE_INERT)  // only render but don't associate any action to widget
-    sheet += "";
+    sheet += "color: #414141;";
   if (style & WIDGET_STYLE_BUTTON)  // indicate that a button should explicitly rendered as a button
     sheet += "";
   if (style & WIDGET_STYLE_CENTERED)  // use centered text
@@ -96,26 +96,24 @@ parse_tm_style (int style) {
   return sheet;
 }
 
-/*! */
-QString
-to_qstylesheet (int style) {
-  if (DEBUG_QT) {
-    return "* {" + parse_tm_style(style) + "}" + 
-           "*:hover { background-color: rgb(255,220,220); }";
-  }
-  return "* {" + parse_tm_style(style) + "}";
+void
+qt_apply_tm_style (QWidget* qwid, int style) {
+  QString sheet = "* {" + parse_tm_style (style) + "}";
+  qwid->setStyleSheet (sheet);
+  qwid->setEnabled (! (style & WIDGET_STYLE_INERT));
 }
 
-QString
-to_qstylesheet (int style, color c) {
+void
+qt_apply_tm_style (QWidget* qwid, int style, color c) {
   int r,g,b,a;
   get_rgb_color(c, r, g, b, a);
   a = a*100/255;
-  return "* {" + parse_tm_style(style)
+  QString sheet = "* {" + parse_tm_style (style)
     + QString("color: rgba(%1, %2, %3, %4%);").arg(r).arg(g).arg(b).arg(a)
     + "}";
+  qwid->setEnabled (! (style & WIDGET_STYLE_INERT));
+  qwid->setStyleSheet (sheet);
 }
-
 
 /*! Try to convert a TeXmacs lenght (em, px, w, h) into a QSize.
  

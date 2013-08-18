@@ -409,12 +409,11 @@ qt_ui_element_rep::as_qaction () {
       typedef pair<string, int> T;
       T x = open_box<T>(load);
       string name = x.x1;
-      int   style = x.x2; 
-        // FIXME? use to_qstylesheet(style) together with QWidgetAction?
+      int   style = x.x2;  //FIXME: ignored. Use a QWidgeAction to use it?
       
       // a menu group; the name should be greyed and centered
       QAction* a= new QTMAction (NULL);
-      a->setText(to_qstring (name));
+      a->setText (to_qstring (name));
       a->setEnabled (false);
       a->setFont(to_qfont(style, a->font())); 
       return a;
@@ -775,12 +774,12 @@ qt_ui_element_rep::as_qwidget () {
       T x = open_box<T>(load);
 
       qt_widget wid = concrete(x.x1);
-      QString sheet = to_qstylesheet(x.x2);
+      int     style = x.x2;
       T1     widths = x.x3;
       T1    heights = x.x4;
       
       qwid = wid->as_qwidget();
-      qwid->setStyleSheet(sheet);
+      qt_apply_tm_style (qwid, x.x2);
       
       QSize minSize = qt_decode_length(widths.x1, heights.x1, qwid->minimumSizeHint(), qwid->fontMetrics());
       QSize defSize = qt_decode_length(widths.x2, heights.x2, qwid->minimumSizeHint(), qwid->fontMetrics());
@@ -851,11 +850,10 @@ qt_ui_element_rep::as_qwidget () {
         QObject::connect (b, SIGNAL (clicked ()), qtmcmd, SLOT (apply ()));
         if (qw && concrete(w)->type == text_widget)
           b->setText (static_cast<QLabel*> (qw)->text());
-        b->setEnabled (! (style & WIDGET_STYLE_INERT));
         b->setFlat (! (style & WIDGET_STYLE_BUTTON));
         qwid = b;
       }
-
+      qwid->setEnabled (! (style & WIDGET_STYLE_INERT));
       delete qw;
     }
       break;
@@ -884,9 +882,10 @@ qt_ui_element_rep::as_qwidget () {
     case text_widget:
     {
       typedef quartet<string, int, color, bool> T;
-      T           x = open_box<T>(load);
-      string    str = x.x1;
-      QString style = to_qstylesheet(x.x2, x.x3);
+      T        x = open_box<T>(load);
+      string str = x.x1;
+      int  style = x.x2;
+      color    c = x.x3;
         //bool      tsp = x.x4;  // FIXME: add transparency support
       
       QLabel* w = new QLabel();
@@ -896,10 +895,11 @@ qt_ui_element_rep::as_qwidget () {
       a->set_text (str);
        */
       w->setText (to_qstring (str));
-      w->setStyleSheet (style);
       w->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
       // Workaround too small sizeHint() when the text has letters with descent:
       w->setMinimumHeight (w->fontMetrics().height());
+      
+      qt_apply_tm_style (w, style, c);
       qwid = w;
     }
       break;
@@ -918,16 +918,16 @@ qt_ui_element_rep::as_qwidget () {
       break;
       
     case toggle_widget:
-    { 
+    {
       typedef triple<command, bool, int > T;
-      T           x = open_box<T>(load);
-      command   cmd = x.x1;
-      bool    check = x.x2;
-      QString style = to_qstylesheet(x.x3);
+      T         x = open_box<T>(load);
+      command cmd = x.x1;
+      bool  check = x.x2;
+      int   style = x.x3;
       
       QCheckBox* w  = new QCheckBox (NULL);  
       w->setCheckState (check ? Qt::Checked : Qt::Unchecked);
-      w->setStyleSheet (style);
+      qt_apply_tm_style(w, style);
       
       command tcmd = tm_new<qt_toggle_command_rep> (w, cmd);
       QTMCommand* c = new QTMCommand (w, tcmd);
@@ -942,24 +942,24 @@ qt_ui_element_rep::as_qwidget () {
       typedef quintuple<command, array<string>, string, int, string> T;
       T                x = open_box<T>(load);
       command        cmd = x.x1;
-      QStringList values = to_qstringlist(x.x2);
-      QString      value = to_qstring(x.x3);
-      QString      style = to_qstylesheet(x.x4);
+      QStringList values = to_qstringlist (x.x2);
+      QString      value = to_qstring (x.x3);
+      int          style = x.x4;
             
-      QTMComboBox* w = new QTMComboBox(NULL);
+      QTMComboBox* w = new QTMComboBox (NULL);
       if (values.isEmpty())
         values << QString("");  // safeguard
 
-      w->setEditable(value.isEmpty() || values.last().isEmpty());  // weird convention?!
+      w->setEditable (value.isEmpty() || values.last().isEmpty());  // weird convention?!
       if (values.last().isEmpty())
         values.removeLast();
       
-      w->addItemsAndResize(values, x.x5, "");
-      int index = w->findText(value, Qt::MatchFixedString | Qt::MatchCaseSensitive);
+      w->addItemsAndResize (values, x.x5, "");
+      int index = w->findText (value, Qt::MatchFixedString | Qt::MatchCaseSensitive);
       if (index != -1)
-        w->setCurrentIndex(index);
+        w->setCurrentIndex (index);
    
-      w->setStyleSheet(style);
+      qt_apply_tm_style (w, style);
       
       command ecmd = tm_new<qt_enum_command_rep> (w, cmd);
       QTMCommand* c = new QTMCommand (w, ecmd);
@@ -974,7 +974,7 @@ qt_ui_element_rep::as_qwidget () {
     case choice_widget:
     {
       typedef quartet<command, array<string>, array<string>, bool> T;
-      T         x = open_box<T>(load);
+      T  x = open_box<T>(load);
       qwid = new QTMListView (x.x1, to_qstringlist(x.x2), to_qstringlist(x.x3),
                               x.x4);
     }
@@ -1011,19 +1011,19 @@ qt_ui_element_rep::as_qwidget () {
       typedef pair<widget, int> T;
       T           x = open_box<T> (load);
       qt_widget wid = concrete (x.x1);
-      QString style = to_qstylesheet (x.x2);
+      int     style = x.x2;
       
-      QTMScrollArea* scroll = new QTMScrollArea();
-      scroll->setStyleSheet (style);
-      scroll->setWidgetAndConnect (wid->as_qwidget());
-      scroll->setWidgetResizable (true);
+      QTMScrollArea* w = new QTMScrollArea();
+      w->setWidgetAndConnect (wid->as_qwidget());
+      w->setWidgetResizable (true);
 
+      qt_apply_tm_style (w, style);
         // FIXME????
         // "Note that You must add the layout of widget before you call this function;
         //  if you add it later, the widget will not be visible - regardless of when
         //  you show() the scroll area. In this case, you can also not show() the widget
         //  later."
-      qwid = scroll;
+      qwid = w;
 
     }
       break;

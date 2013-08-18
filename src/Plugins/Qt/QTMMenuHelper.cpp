@@ -392,7 +392,7 @@ QTMLineEdit::QTMLineEdit (QWidget* parent, string _ww, int style)
     // just to be sure we don't capture the wrong keys in keyPressEvent
   setCompleter(0);
 
-  setStyleSheet (to_qstylesheet (style)); 
+  qt_apply_tm_style (this, style);
 }
 
 /*
