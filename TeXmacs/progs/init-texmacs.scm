@@ -255,7 +255,6 @@
 (lazy-menu (server server-menu) server-menu)
 (lazy-menu (client client-menu) client-menu remote-menu)
 (lazy-tmfs-handler (client client-tmfs) remote-file)
-(if (updater-supported?) (use-modules (utils misc updater)))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting linking facilities\n")
@@ -295,3 +294,9 @@
 (delayed (:idle 10000) (autosave-delayed))
 (texmacs-banner)
 ;(display "Initialization done\n")
+
+;(display "Booting autoupdater\n")
+(if (updater-supported?) 
+  (begin 
+    (use-modules (utils misc updater))
+    (delayed (:idle 2000) (updater-check-background))))
