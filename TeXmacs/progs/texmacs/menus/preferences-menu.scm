@@ -602,6 +602,7 @@
 
 (define-preference-names "updater:interval"
   ("0" "Never")
+  ("0" "Unsupported")
   ("1" "Every hour")
   ("24" "Once a day")
   ("168" "Once a week")
@@ -616,6 +617,16 @@
           (cond ((< h 24) (replace "Around %1 hour(s) ago" h))
                 ((< h 720) (replace "%1 days ago" (ceiling (/ h 24))))
                 (else (translate "More than 1 month ago")))))))
+
+(define (last-check-string)
+  (if (updater-supported?)
+      (updater-last-check-formatted)
+      "Never (unsupported)"))
+
+(define (automatic-checks-choices)
+  (if (updater-supported?)
+      '("Never" "Every hour" "Once a day" "Once a week" "Once a month")
+      '("Unsupported")))
 
 (tm-define (scripts-preferences-list)
   (lazy-plugin-force)
@@ -644,11 +655,11 @@
     ;(if (updater-supported?) ; FIXME: (if...) doesn't work here?
         (item (text "Check for automatic updates:")
           (enum (set-pretty-preference "updater:interval" answer)
-               '("Never" "Every hour" "Once a day" "Once a week" "Once a month")
+                (automatic-checks-choices)
                 (get-pretty-preference "updater:interval")
                 "15em"));)
     ;(if (updater-supported?) ; FIXME: (if...) doesn't work here?
-      (item (text "Last update:") (text (updater-last-check-formatted)))));)
+      (item (text "Last check:") (text (last-check-string)))));)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences widget
