@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.0.7.19>
 
 <style|tmdoc>
 
@@ -120,6 +120,35 @@
   The special symbol <scm|\<gtr\>\<gtr\>\<gtr\>> is just one of the
   predefined glue widgets described in "<hlink|Containers, glue, refresh and
   co.|scheme-gui-advanced.en.tm>".
+
+  Text attributes may be changed for <scm|text> widgets and many others by
+  enclosing them inside what we'll name <with|font-shape|italic|style
+  widgets>. These attributes are <scm|mini>, <scm|monospaced>, <scm|grey>,
+  <scm|inert>, <scm|centered> and <scm|bold>, and respectively: reduce the
+  size of the widget, choose a <tt|monospaced font>, set the color to
+  <with|color|grey|grey>, deactivate the widget (meaning it is rendered, but
+  greyed out and inactive), center it and choose a bold face. Here is an
+  example:
+
+  <\session|scheme|default>
+    <\unfolded-io|Scheme] >
+      (tm-widget (example3)
+
+      \ \ (hlist\ 
+
+      \ \ \ \ (bold (text "Hello"))
+
+      \ \ \ \ \<gtr\>\<gtr\>\<gtr\>
+
+      \ \ \ \ (inert (explicit-buttons ("world" (display "!\\n"))))))
+    <|unfolded-io>
+      \;
+    </unfolded-io>
+
+    <\input|Scheme] >
+      (top-window example3 "Some text")
+    </input>
+  </session>
 
   <tmdoc-copyright|2012|the <TeXmacs> team.>
 
