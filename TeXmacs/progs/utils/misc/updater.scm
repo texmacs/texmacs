@@ -27,7 +27,9 @@
          (with n (string->number val)
            (if (< n 1)
                (set-preference "updater:automatic-checks" #f)
-               (updater-set-interval n))))
+               (begin 
+                 (updater-set-interval n)
+                 (set-preference "updater:automatic-checks" #t)))))
         ((== pref "updater:automatic-checks") 
          (updater-set-automatic (string->bool val)))
         (else (noop))))
