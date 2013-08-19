@@ -8343,8 +8343,9 @@ $as_echo "$QT_LIBS" >&6; }
   cd "$my_configure_pwd" || echo 'WTF!'
   rm -rf "$my_tmpdir"
 
-      QT_FRAMEWORKS_PATH=$QT_PATH/..         # MacOS specific
-      QT_PLUGINS_PATH=$QT_PATH/../plugins    # MacOS specific
+      # MacOS specific: (FIXME! shouldn't we be using qmake -query everywhere?)
+      QT_FRAMEWORKS_PATH=`qmake -query | grep QT_INSTALL_LIBS | cut -f 2 -d:`
+      QT_PLUGINS_PATH=`qmake -query | grep QT_INSTALL_PLUGINS | cut -f 2 -d:`
     fi
   fi
 else

@@ -133,8 +133,9 @@ if test -z $TMBUILDENV; then #QT has the install dir hard coded in library so we
       fi
     else
       AT_WITH_QT
-      QT_FRAMEWORKS_PATH=$QT_PATH/..         # MacOS specific
-      QT_PLUGINS_PATH=$QT_PATH/../plugins    # MacOS specific
+      # MacOS specific: (FIXME! shouldn't we be using qmake -query everywhere?)
+      QT_FRAMEWORKS_PATH=`qmake -query | grep QT_INSTALL_LIBS | cut -f 2 -d:`
+      QT_PLUGINS_PATH=`qmake -query | grep QT_INSTALL_PLUGINS | cut -f 2 -d:`
     fi
   fi
 else
