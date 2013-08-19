@@ -44,9 +44,9 @@ tm_updater* tm_updater::instance ()
 
     bool auto_checks = as_bool (get_preference ("updater:automatic-checks", "#t"));
     _instance->setAutomaticChecks (auto_checks);
-  }
-
-  _instance->setAppcast (appcast);
+ 
+    _instance->setAppcast (appcast);
+    }
 
   ASSERT (_instance != NULL, "Unable to instantiate updater.");
   return _instance;
