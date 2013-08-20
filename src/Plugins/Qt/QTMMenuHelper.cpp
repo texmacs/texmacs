@@ -52,7 +52,7 @@ QTMAction::~QTMAction() {
 void
 QTMAction::set_text (string s) {
   if (N(s)) {
-    if (s == "Help" || s == "Edit")
+    if (s == "Help" || s == "Edit" || s == "Preferences...")
       s = s * " ";
     str = s;
     setText (to_qstring (s));
