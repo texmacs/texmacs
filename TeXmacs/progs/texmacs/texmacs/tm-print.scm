@@ -97,14 +97,15 @@
   (:argument last "Last page"))
 
 (tm-define (preview-buffer)
-  (print-to-file "$TEXMACS_HOME_PATH/system/tmp/preview.ps")
+  (if (os-mingw?) (print-to-file "$TEXMACS_HOME_PATH/system/tmp/preview.pdf")
+               (print-to-file "$TEXMACS_HOME_PATH/system/tmp/preview.ps"))
   (cond ((!= preview-command "default")
 	 (shell (string-append preview-command
 			       " $TEXMACS_HOME_PATH/system/tmp/preview.ps &")))
 	((or (os-mingw?) (os-win32?))
-	 (shell (string-append "gsview32 \""
-			       (getenv "TEXMACS_HOME_PATH")
-			       "\\system\\tmp\\preview.ps\"")))
+	 (shell (string-append "cmd /c start "
+			       (string-append (getenv "TEXMACS_HOME_PATH")
+			             "\\system\\tmp\\preview.pdf"))))
 	((os-macos?)
          (shell "open $TEXMACS_HOME_PATH/system/tmp/preview.ps"))
         ((url-exists-in-path? "xdg-open")

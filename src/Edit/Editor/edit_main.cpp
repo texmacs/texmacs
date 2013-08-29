@@ -38,6 +38,11 @@
 #include "Qt/qt_utilities.hpp"
 #endif
 
+#if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
+#include <QtCore/Qstring>
+#include <QtGui>
+#include "poppler/qt4/poppler-qt4.h"
+#endif
 /******************************************************************************
 * Constructors and destructor
 ******************************************************************************/
@@ -259,9 +264,46 @@ edit_main_rep::print_to_file (url name, string first, string last) {
 
 void
 edit_main_rep::print_buffer (string first, string last) {
-  url target= url_temp (".ps"); 
+   url target;
+#if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
+/*  printing for windows using poppler and Qt - Denis Raux 2013
+*/
+  QPrintDialog Pdlg;
+  if (Pdlg.exec() == QDialog::Accepted) {
+     QPrinter  *Prt=Pdlg.printer();
+     double rres=Prt->resolution();
+     int rw=Prt->paperRect(QPrinter::DevicePixel).width();
+     int rh=Prt->paperRect(QPrinter::DevicePixel).height();
+
+     target= url_temp (".pdf"); 
+     int fp=Prt->fromPage(), lp=Prt->toPage();
+     if(fp+lp==0) {fp=1;lp=1000000;}
+     print (target, false,fp,lp);
+
+     QString file(as_charp(as_string(target)));
+     Poppler::Document* document = Poppler::Document::load(file); 
+     document->setRenderHint(Poppler::Document::Antialiasing);
+     document->setRenderHint(Poppler::Document::TextAntialiasing);
+
+     int nbpages=document->numPages(), nextpage=nbpages-1;
+     QPainter Paint;
+     if(Paint.begin(Prt)) {
+         QImage image;
+         Paint.setRenderHint(QPainter::Antialiasing);
+         for(int pg=0;pg < nbpages;pg++) {
+            Poppler::Page* pdfPage = document->page(pg);  
+            if(pdfPage) {image=pdfPage->renderToImage(rres,rres,0,0,rw,rh); delete pdfPage;}
+            if(!image.isNull()) {Paint.drawImage(0,0,image);if(pg!=nextpage) Prt->newPage();}
+         }
+         Paint.end();
+      }
+   }
+
+#else
+  target= url_temp (".ps"); 
   print (target, false, as_int (first), as_int (last));
   system (printing_cmd, target);  // Send the document to the printer
+ #endif
   ::remove (target);
 }
 
