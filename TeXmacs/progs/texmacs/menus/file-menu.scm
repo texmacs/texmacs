@@ -144,8 +144,10 @@
 (menu-bind print-menu
   ("Preview" (preview-buffer))
   ---
-  (if (os-mingw?) ("Print" (print-buffer)) ("Print all" (print-buffer)))
-  (if (not (os-mingw?)) ("Print page selection" (interactive print-pages)))
+  (if (os-mingw?) ("Print" (print-buffer)))
+  (if (not (os-mingw?)) 
+     ("Print all" (print-buffer))
+     ("Print page selection" (interactive print-pages)))
   ("Print all to file"
    (choose-file print-to-file "Print all to file" "postscript"))
   ("Print page selection to file"
