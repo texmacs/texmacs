@@ -12,12 +12,12 @@ VersionInfoProductTextVersion=@DEVEL_VERSION@
 VersionInfoVersion=@DEVEL_VERSION@
 AppPublisher=MAGIX
 AppPublisherURL=http://www.texmacs.org/
-AppVersion=@DEVEL_VERSION@
+AppVersion=@DEVEL_VERSION@-@SVNREV@
 ;denis end
 
 UninstallDisplayIcon={app}\TeXmacs.ico
 OutputDir=..\..\..\distr
-OutputBaseFilename=@tm_devel@-installer
+OutputBaseFilename=@tm_devel@.@SVNREV@-installer
 ; SourceDir=../..
 ChangesAssociations=yes
 
