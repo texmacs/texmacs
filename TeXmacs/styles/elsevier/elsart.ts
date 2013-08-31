@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.17>
+<TeXmacs|1.0.7.19>
 
 <style|source>
 
@@ -231,7 +231,7 @@
   </macro>>
 
   <assign|bib-list|<\macro|largest|body>
-    <\with|par-left|1em|par-first|-1em|font-size|1|bibitem*|>
+    <\with|par-left|1em|par-first|-1em|font-size|1|bibitem-nr|0>
       <arg|body>
     </with>
   </macro>>

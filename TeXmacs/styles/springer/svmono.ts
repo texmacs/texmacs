@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.0.7.19>
 
 <style|source>
 
@@ -476,7 +476,7 @@
   <assign|render-bibitem|<macro|text|<style-with|src-compact|none|<with|par-first|<minus|1tmpt|<value|bibitem-width>>|<yes-indent>><resize|<arg|text>|||<maximum|1r|<value|bibitem-width>>|>>>>
 
   <assign|bib-list|<\macro|largest|body>
-    <\with|bibitem-width|<box-info|<transform-bibitem|<arg|largest>>|w.>|render-list|<value|render-bib-list>>
+    <\with|bibitem-width|<box-info|<transform-bibitem|<arg|largest>>|w.>|render-list|<value|render-bib-list>|bibitem-nr|0>
       <\description>
         <arg|body>
       </description>

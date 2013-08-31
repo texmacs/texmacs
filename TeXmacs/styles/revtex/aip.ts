@@ -307,7 +307,7 @@
   </active*>
 
   <assign|bib-list|<\macro|largest|body>
-    <\with|par-left|1em|par-first|-1em|font-size|1>
+    <\with|par-left|1em|par-first|-1em|font-size|1|bibitem-nr|0>
       <arg|body>
     </with>
   </macro>>
@@ -426,3 +426,6 @@
 
   <use-package|<merge|revtex-|<value|font-base-size>|pt>>
 </body>
+
+<initial|<\collection>
+</collection>>
