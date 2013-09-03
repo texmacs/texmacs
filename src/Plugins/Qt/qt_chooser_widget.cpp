@@ -1,7 +1,7 @@
 
 /******************************************************************************
  * MODULE     : qt_chooser_widget.cpp
- * DESCRIPTION: File chooser widget, QT version
+ * DESCRIPTION: File chooser widget, native and otherwise
  * COPYRIGHT  : (C) 2008  Massimiliano Gubinelli
  *******************************************************************************
  * This software falls under the GNU general public license version 3 or later.
@@ -15,6 +15,10 @@
 #include "message.hpp"
 #include "analyze.hpp"
 #include "converter.hpp"
+#include "scheme.hpp"
+#include "dictionary.hpp"
+#include "editor.hpp"
+#include "new_view.hpp"      // get_current_editor()
 #include "QTMFileDialog.hpp"
 
 #include <QString>
@@ -29,12 +33,14 @@
                 "postscript", etc. See perform_dialog()
  */
 qt_chooser_widget_rep::qt_chooser_widget_rep (command _cmd, string _type, bool _save)
- : qt_widget_rep (file_chooser), cmd (_cmd), type (_type), save (_save), 
+ : qt_widget_rep (file_chooser), cmd (_cmd), save (_save),
    position (coord2 (0, 0)), size (coord2 (100, 100)), file ("")
 {
   if (DEBUG_QT)
     cout << "qt_chooser_widget_rep::qt_chooser_widget_rep type=\""
          << type << "\" save=\"" << save << "\"" << LF;
+  if (! set_type (_type))
+    set_type ("generic");
 }
 
 qt_chooser_widget_rep::~qt_chooser_widget_rep() {}
@@ -71,7 +77,7 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
       break;
     case SLOT_INPUT_TYPE:
       check_type<string>(val, s);
-      type = open_box<string> (val);
+      set_type (open_box<string> (val));
       break;
 #if 0
     case SLOT_INPUT_PROPOSAL:
@@ -151,199 +157,133 @@ widget
 qt_chooser_widget_rep::plain_window_widget (string s, command q)
 {
   win_title = s;
-  quit = q;       // (NOT USED)
+  quit      = q;
   return this;
 }
 
-#if (defined(Q_WS_MAC) || defined(Q_WS_WIN))
 
-/*!
- * Actually displays the dialog with all the options set.
- * @todo The file filters for the dialog should not be hardcoded!
- * @todo Retrieve image sizes when opening images.
- */ 
-void
-qt_chooser_widget_rep::perform_dialog () {
-  QString _file;
-  QStringList _files;
-  QString _filter, _suffix, _caption, _directory;
-  _caption = to_qstring (win_title);
-  c_string tmp (directory * "/" * file);
-  _directory = QString::fromLocal8Bit (tmp);
-#if (QT_VERSION >= 0x040400)
-  if (type == "directory") {
-  } else if (type == "texmacs") {
-    _filter= "TeXmacs file (*.tm *.ts *.tp)";
-    _suffix= "tm";
-  } else if (type == "image") {
-    _filter= "Image file (*.gif *.jpg *.jpeg *.pdf *.png *.pnm *.ps *.eps *.ppm *.svg *.tif *.fig *.xpm)";
-  } else if (type == "bibtex") {
-    _filter= "BibTeX file (*.bib)";
-    _suffix= "bib";
-  } else if (type == "html") {
-    _filter= "Html file (*.html *.xhtml *.htm)";
-    _suffix= "html";
-  } else if (type == "latex") {
-    _filter= "LaTeX file (*.tex *.ltx *.sty *.cls)";
-    _suffix= "tex";
-  } else if (type == "stm") {
-    _filter= "Scheme file (*.stm *.scm)";
-    _suffix= "stm";
-  } else if (type == "verbatim") {
-    _filter= "Verbatim file (*.txt)";
-    _suffix= "txt";
-  } else if (type == "tmml") {
-    _filter= "XML file (*.tmml)";
-    _suffix= "tmml";  
-  } else if (type == "pdf") {
-    _filter= "Pdf file (*.pdf)";
-    _suffix= "pdf";
-  } else if (type == "postscript") {
-    _filter= "PostScript file (*.ps *.eps)";
-    _suffix= "ps";  
+bool
+qt_chooser_widget_rep::set_type (const string& _type)
+{
+  if (_type == "directory") {
+    type = _type;
+    return true;
+  } else if (_type == "generic") {
+    nameFilter = to_qstring (translate ("Generic file"));
+    type = _type;
+    return true;
   }
-#endif
-  
-  if (type == "directory")
-    _file = QFileDialog::getExistingDirectory (0, _caption, _directory);
-  else if (save)
-    _file = QFileDialog::getSaveFileName(0, _caption, _directory, _filter);
-  else
-    _file = QFileDialog::getOpenFileName (0, _caption, _directory, _filter);
-  
-  if (_file.isEmpty()) {
-    file= "#f";
+
+  if (as_bool (call ("format?", _type))) {
+    nameFilter = to_qstring (translate
+                             (as_string (call ("format-get-name", _type))
+                              * " file"));
+  } else if (_type == "image") {
+    nameFilter = to_qstring (translate ("Image file"));
   } else {
-    url u = url_system (scm_unquote (from_qstring (_file)));
-      // FIXME: charset detection in to_qstring() (if that hack is still there)
-      // fails sometimes, so we bypass it force the proper (?) conversions here.
-    QByteArray arr= utf8_to_qstring (cork_to_utf8 (as_string (u))).toLocal8Bit ();
-    const char* cstr= arr.constData ();
-    string localname = string ((char*) cstr);
-    if (type == "image") {
-      /*
-       QPixmap _pic(_file);
-       string params;
-       // TEMPORARY HACK: wouldn't it be nicer to scale the image to, say, 
-       // 90% of the current column width?
-       params << "\"" << from_qstring(QString("%1px").arg(_pic.width())) << "\" ";
-       params << "\"" << from_qstring(QString("%1px").arg(_pic.height())) << "\" ";
-       params << "\"" << "" << "\" ";  // xps ??
-       params << "\"" << "" << "\"";   // yps ??
-       file = "(list (system->url " * scm_quote (as_string (u)) * ") " * params * ")";
-       */
-      file = "(list (system->url " * scm_quote (localname) * ") \"\" \"\" \"\" \"\")";
-    } else {
-      file = "(system->url " * scm_quote (localname) * ")";
-    }
+    if (DEBUG_STD)
+      cout << "qt_chooser_widget: IGNORING unknown format " << _type << LF;
+    return false;
   }
-  cmd ();
-  if (!is_nil(quit)) quit ();
+
+  nameFilter += " (";
+  object ret = call ("format-get-suffixes*", _type);
+  array<object> suffixes = as_array_object (ret);
+  if (N(suffixes) > 0)
+    defaultSuffix = to_qstring (as_string (suffixes[0]));
+  for (int i = 0; i < N(suffixes); ++i)
+    nameFilter += " *." + to_qstring (as_string (suffixes[i]));
+  nameFilter += " )";
+  
+  type = _type;
+  return true;
 }
-#else
-/**
- * A file chooser dialog with image preview for platforms other than Mac/Win
- * FIXME: this is incomplete.
+
+
+
+/*! Actually displays the dialog with all the options set.
+ * Uses a native dialog on Mac/Win and opens a custom dialog with image preview
+ * for other platforms.
  */
 void
 qt_chooser_widget_rep::perform_dialog () {
-    // int result;
+  QString caption = to_qstring (win_title);
+  c_string tmp (directory * "/" * file);
+  QString directory = QString::fromLocal8Bit (tmp);
   
-  QTMFileDialog *dialog;
-  QTMImageDialog *imgdialog= 0; // to avoid a dynamic_cast
+#if (defined(Q_WS_MAC) || defined(Q_WS_WIN))
+  QFileDialog* dialog = new QFileDialog (NULL, caption, directory, nameFilter);
+#else
+  QTMFileDialog*  dialog;
+  QTMImageDialog* imgdialog= 0; // to avoid a dynamic_cast
   
-  if (type  == "image")
-    dialog= imgdialog= new QTMImageDialog (NULL, to_qstring (win_title),
-                                           to_qstring(directory * "/" * file));
+  if (type == "image")
+    dialog= imgdialog= new QTMImageDialog (NULL, caption, directory);
   else
-    dialog= new QTMFileDialog (NULL, to_qstring (win_title), 
-                               to_qstring (directory * "/" * file));
-  
-#if (defined(Q_WS_MAC) && (QT_VERSION >= 0x040500))
-  dialog->setOptions(QFileDialog::DontUseNativeDialog);
+    dialog= new QTMFileDialog (NULL, caption, directory);
 #endif
-  
-  QPoint pos = to_qpoint(position);
-    //cout << "Size :" << size.x1 << "," << size.x2 << LF;
-  if (DEBUG_QT) {
-    cout << "Position :" << pos.x() << "," << pos.y() << LF;
-    cout << "Dir: " << directory * "/" * file << LF;
-  }
-  
-  dialog->updateGeometry();
-  QSize sz = dialog->sizeHint();
-  QRect r; r.setSize(sz);
-  r.moveCenter(pos);
-  dialog->setGeometry(r);
   
   dialog->setViewMode (QFileDialog::Detail);
-  if (type == "directory") {
-    dialog->setFileMode(QFileDialog::Directory);
-  } else if (type == "image") {
-    dialog->setFileMode(QFileDialog::ExistingFile);
-  } else {
-    dialog->setFileMode(QFileDialog::AnyFile);
-  }
-  
+  if (type == "directory")
+    dialog->setFileMode (QFileDialog::Directory);
+  else if (type == "image" && !save)  // check !save just in case we support it
+    dialog->setFileMode (QFileDialog::ExistingFile);
+  else
+    dialog->setFileMode (QFileDialog::AnyFile);
+
 #if (QT_VERSION >= 0x040400)
-  if (type == "directory") {  
-  } else if (type == "texmacs") {
-    dialog->setNameFilter ("TeXmacs file (*.tm *.ts *.tp)");
-    dialog->setDefaultSuffix ("tm");
-  } else if (type == "image") {
-    dialog->setNameFilter ("Image file (*.gif *.jpg *.jpeg *.pdf *.png *.pnm *.ps *.eps *.ppm *.svg *.tif *.tiff *.fig *.xpm)");
-  } else if (type == "bibtex") {
-    dialog->setNameFilter ("BibTeX file (*.bib)");
-    dialog->setDefaultSuffix ("bib");
-  } else if (type == "html") {
-    dialog->setNameFilter ("Html file (*.htm *.html *.xhtml)");
-    dialog->setDefaultSuffix ("html");
-  } else if (type == "latex") {
-    dialog->setNameFilter ("LaTeX file (*.tex *.ltx *.sty *.cls)");
-    dialog->setDefaultSuffix ("tex");
-  } else if (type == "stm") {
-    dialog->setNameFilter ("Scheme file (*.stm *.scm)");
-    dialog->setDefaultSuffix ("stm");
-  } else if (type == "verbatim") {
-    dialog->setNameFilter ("Verbatim file (*.txt)");
-    dialog->setDefaultSuffix ("txt");
-  } else if (type == "tmml") {
-    dialog->setNameFilter ("XML file (*.tmml)");
-    dialog->setDefaultSuffix ("tmml");  
-  } else if (type == "pdf") {
-    dialog->setNameFilter ("Pdf file (*.pdf)");
-    dialog->setDefaultSuffix ("pdf");
-  } else if (type == "postscript") {
-    dialog->setNameFilter ("PostScript file (*.ps *.eps)");
-    dialog->setDefaultSuffix ("ps");  
+  if (type != "directory") {
+    dialog->setNameFilter (nameFilter);
+    dialog->setDefaultSuffix (defaultSuffix);
   }
 #endif
-  
-  dialog->setLabelText(QFileDialog::Accept, "Ok");
+
+  dialog->updateGeometry();
+  QSize   sz = dialog->sizeHint();
+  QPoint pos = to_qpoint (position);
+  QRect r;
+  r.setSize (sz);
+  r.moveCenter (pos);
+  dialog->setGeometry (r);
+  //dialog->setLabelText (QFileDialog::Accept, "Ok");  // why?
   
   QStringList fileNames;
+  file = "#f";
   if (dialog->exec ()) {
     fileNames = dialog->selectedFiles();
     if (fileNames.count() > 0) {
-      file = from_qstring (fileNames[0]);
-      url u = url_system (scm_unquote (file));
-      QByteArray arr= to_qstring (as_string (u)).toLocal8Bit ();
-      const char* cstr= arr.constData ();
+      url u = url_system (scm_unquote (from_qstring (fileNames[0])));
+        // FIXME: charset detection in to_qstring() (if that hack is still there)
+        // fails sometimes, so we bypass it to force the proper (?) conversions here.
+      //QByteArray arr   = to_qstring (as_string (u)).toLocal8Bit ();
+      QByteArray arr   = utf8_to_qstring (cork_to_utf8 (as_string (u))).toLocal8Bit ();
+      const char* cstr = arr.constData ();
       string localname = string ((char*) cstr);
-      if (type == "image")
-        file = "(list (system->url " *
-        scm_quote (as_string (u)) *
-        ") " * imgdialog->getParamsAsString () * ")";
-      else
-        file = "(system->url " * scm_quote (localname) * ")";
+      file = "(system->url " * scm_quote (localname) * ")";
+      if (type == "image") {
+#if !defined(Q_WS_MAC) && !defined(Q_WS_WIN)
+        file = "(list " * file * imgdialog->getParamsAsString () * ")";
+#else
+        QPixmap pic (fileNames[0]);
+        string params;
+          // HACK: which value should we choose here?
+        int ww = (get_current_editor()->get_page_width () / PIXEL) / 3;
+        int  w = min (ww, pic.width());
+        int  h = ((double) pic.height() / (double) pic.width()) * (double) w;
+        params << "\"" << from_qstring (QString ("%1px").arg (w)) << "\" "
+               << "\"" << from_qstring (QString ("%1px").arg (h)) << "\" "
+               << "\"" << "" << "\" "  // xps ??
+               << "\"" << "" << "\"";   // yps ??
+        file = "(list " * file * params * ")";
+#endif
+      } else {
+      }
     }
-  } else {
-    file = "#f";
   }
   
   delete dialog;
   
   cmd ();
-  if (!is_nil(quit)) quit ();
+  if (!is_nil (quit)) quit ();
+
 }
-#endif
