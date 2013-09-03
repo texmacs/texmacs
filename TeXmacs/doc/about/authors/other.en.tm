@@ -17,7 +17,7 @@
   Luc Béhar, Roman Belenov, Odile Bénassy, Paul Benham, Roy C. Bentley,
   Attila Bergou, Christophe Bernard, Konrad Bernloehr, Karl Berry, Matthias
   Berth, Matteo Bertini, Cédric Bertolini, Matthew Bettencourt, Raktim
-  Bhattacharya, Anne-Laure Biolley, Benedikt Birkenbach, Giovanni Biczó, Jim
+  Bhattacharya, Giovanni Biczó, Anne-Laure Biolley, Benedikt Birkenbach, Jim
   Blandy, Sören Blom, Christof Boeckler, François Bochatay, Christof
   Boeckler, Anton Bolfing, Robert Borys, Didier Le Botlan, Mohsen Bouaissa,
   Thierry Bouche, Adrien Bourdet, Michel Brabants, Didier Bretin, Jean-Yves
@@ -36,7 +36,7 @@
   Guillaume Duval, Tim Ebringer, Dirk Eddelbuettel, Magnus Ekdahl, Ulf
   Ekström, Sreedhar Ellisetty, Luis A. Escobar, Thomas Esser, Stephan Fabel,
   Robin Fairbairns, Tony Falcone, Vladimir Fedonov, Hilaire Fernandes, Ken
-  Feyl, Juan Flynn, Jens Finke, Thomas Fischbacher, Cedric Foellmi, Enrico
+  Feyl, Jens Finke, Thomas Fischbacher, Juan Flynn, Cedric Foellmi, Enrico
   Forestieri, Ted Forringer, Christian Forster, Charlie Fortner, Stefan
   Freinatis, Michael P Friedlander, Nils Frohberg, Rudi Gaelzer, Maciej
   Gajewski, Lionel Garnier, Philippe Gogol, Björn Gohla, Patrick Gonzalez,
@@ -65,48 +65,48 @@
   Sourav K. Mandal, Andy P. Manners, Yun Mao, Chris Marcellin, Sylvain
   Marchand, Bernd Markgraf, Eric Marsden, Chris Marston, Evan Martin, Carlos
   Dehesa Martínez, Paulo Jorge de Oliveira Cantante de Matos, Tom McArdell,
-  Bob McElrath, Alisdair McDiarmid, Robert Medeiros, Phil Mendelsohn,
+  Alisdair McDiarmid, Bob McElrath, Robert Medeiros, Phil Mendelsohn,
   Sébastien de Menten, Jean-Michel Mermet, Jon Merriman, Herve le Meur,
-  Ingolf Meyer, Amir Michail, Franck Michel, Jan David Mol, Klaus-Dieter
-  Möller, Juan Fresneda Montano, André Moreau, Vijayendra Munikoti, Arkadiusz
-  Mi±kiewicz, Sasha Mitelman, Dirk Moebius, Jack Moffitt, Harvey Monder,
-  Guillaume Morin, Julian Morrison, Bernard Mourrain, Stephan Mucha, Toby
-  Muhlhofer, Nathan Myers, Norbert Nemec, Thomas Neumann, Thien-Thi Nguyen,
+  Ingolf Meyer, Amir Michail, Franck Michel, Arkadiusz Mi±kiewicz, Sasha
+  Mitelman, Dirk Moebius, Jack Moffitt, Jan David Mol, Klaus-Dieter Möller,
+  Harvey Monder, Juan Fresneda Montano, André Moreau, Guillaume Morin, Julian
+  Morrison, Bernard Mourrain, Stephan Mucha, Toby Muhlhofer, Vijayendra
+  Munikoti, Nathan Myers, Norbert Nemec, Thomas Neumann, Thien-Thi Nguyen,
   Han-Wen Nienhuys, Nix N. Nix, Eduardo Nogueira, Immanuel Normann,
   Jean-Baptiste Note, Ralf Nuetzel, Kostas Oikonomou, Ondrej Pacovsky, Bill
   Page, Santtu Pajukanta, Pierre Pansu, Ilya Papiashvili, Bernard Parisse,
-  Frédéric Parrenin, André Pascual, Fernández Pascual, Frédéric Parrenin,
-  Yannick Patois, Alen L. Peacock, François Pellegrini, Antonio Costa
-  Pereira, Enrique Perez-Terron, Jacob Perkins, Bernard Perrot, Jan Peters,
-  Jean Peyratout, Jacques Peyriere, Valery Pipin, Dimitri Pissarenko, Yves
-  Pocchiola, Martin Pollet, Benjamin Poussin, Benjamin Podszun, Isaías V.
-  Prestes, Rui Prior, Julien Puydt, Nguyen-Dai Quy, Manoj Rajagopalan,
-  Ramakrishnan, Adrien Ramparison, Nicolas Ratier, Olivier Ravard, Leo
-  Razoumov, Kenneth Reinhardt, Cesar A. Rendon, Diego Restrepo, Christian
-  Requena, Chris Retford, Robert Ribnitz, Thomas CLive Richards, Staffan
-  Ringbom, Eric Ringeisen, Christian Ritter, William G. Ritter, Will
-  Robinson, Pascal Romon, Juan Pablo Romero, Juergen Rose, Mike Rosellini,
-  Mike Rosing, Bernard Rousseau, Eyal Rozenberg, Olivier Ruatta, Filippo
-  Rusconi, Gaetan Ryckeboer, Philippe Sam-Long, John Sandeman, Duncan Sands,
-  Breton Saunders, Claire Sausset, David Sauzin, Gilles Schaeffer, Guido
-  Schimmels, Rainer Schöpf, David Schweikert, Stefan Schwertheim, Rui Miguel
-  Seabra, Chung-Tsun Shieh, Sami Sieranoja, Vasco Alexandre da Silva Costa,
-  Marciano Siniscalchi, Daniel Skarda, Murray Smigel, Václav ’milauer, Dale
-  P. Smith, Luke Snow, René Snyders, Pekka Sorjonen, Kasper Souren, Rodney
-  Sparapani, Bas Spitters, Bas Spitters, Ivan Stanisavljevic, Starseeker,
-  Harvey J. Stein, Peter Sties, Bernard Stloup, Peter Stoehr, Thierry Stoehr,
-  James Su, Przemyslaw Sulek, Ben Sussman, Roman Svetlov, Milan Svoboda, Dan
-  Synek, Pan Tadeusz, Luca Tagliacozzo, Sam Tannous, John Tapsell, Dung
-  TaQuang, Gerald Teschl, Laurent Thery, Eric Thiébaut, Nicolas Thiery,
-  Helfer Thomas, Reuben Thomas, Dylan Thurston, Kurt Ting, Janus N.
-  Tøndering, Philippe Trébuchet, Marco Trevisani, Boris Tschirschwitz, Elias
-  Tsigaridas, Michael M. Tung, Andreas Umbach, Miguel A. Valle, Rémi Vanicat,
-  Harro Verkouter, Jacques Vernin, Sawan Vithlani, Philip A. Viton, Marius
-  Vollmer, Guy Wallet, Adam Warner, Thomas Wawrzinek, Maarten Wegewijs, Duke
-  Whang, Lars Willert, Grayson Williams, Barton Willis, Claus-Peter Wirth,
-  Ben Wise, Wiebe van der Worp, Pengcheng Wu, Damien Wyart, Wang Yin, Lukas
-  Zapletal, Volker Zell, Oleg Zhirov, Vadim V. Zhytnikov, Richard Zidlicky,
-  Sascha Ziemann, Reinhard Zierke, Paul Zimmermann.
+  Frédéric Parrenin, André Pascual, Fernández Pascual, Yannick Patois, Alen
+  L. Peacock, François Pellegrini, Antonio Costa Pereira, Enrique
+  Perez-Terron, Jacob Perkins, Bernard Perrot, Jan Peters, Jean Peyratout,
+  Jacques Peyriere, Valery Pipin, Dimitri Pissarenko, Yves Pocchiola,
+  Benjamin Podszun, Martin Pollet, Benjamin Poussin, Isaías V. Prestes, Rui
+  Prior, Julien Puydt, Nguyen-Dai Quy, Manoj Rajagopalan, Ramakrishnan,
+  Adrien Ramparison, Nicolas Ratier, Olivier Ravard, Leo Razoumov, Kenneth
+  Reinhardt, Cesar A. Rendon, Diego Restrepo, Christian Requena, Chris
+  Retford, Robert Ribnitz, Thomas CLive Richards, Staffan Ringbom, Eric
+  Ringeisen, Christian Ritter, William G. Ritter, Will Robinson, Juan Pablo
+  Romero, Pascal Romon, Juergen Rose, Mike Rosellini, Mike Rosing, Bernard
+  Rousseau, Eyal Rozenberg, Olivier Ruatta, Filippo Rusconi, Gaetan
+  Ryckeboer, Philippe Sam-Long, John Sandeman, Duncan Sands, Breton Saunders,
+  Claire Sausset, David Sauzin, Gilles Schaeffer, Guido Schimmels, Rainer
+  Schöpf, David Schweikert, Stefan Schwertheim, Rui Miguel Seabra, Chung-Tsun
+  Shieh, Sami Sieranoja, Vasco Alexandre da Silva Costa, Marciano
+  Siniscalchi, Daniel Skarda, Murray Smigel, Václav ’milauer, Dale P. Smith,
+  Luke Snow, René Snyders, Pekka Sorjonen, Kasper Souren, Rodney Sparapani,
+  Bas Spitters, Bas Spitters, Ivan Stanisavljevic, Starseeker, Harvey J.
+  Stein, Peter Sties, Bernard Stloup, Peter Stoehr, Thierry Stoehr, James Su,
+  Przemyslaw Sulek, Ben Sussman, Roman Svetlov, Milan Svoboda, Dan Synek, Pan
+  Tadeusz, Luca Tagliacozzo, Sam Tannous, John Tapsell, Dung TaQuang, Gerald
+  Teschl, Laurent Thery, Eric Thiébaut, Nicolas Thiery, Helfer Thomas, Reuben
+  Thomas, Dylan Thurston, Kurt Ting, Janus N. Tøndering, Philippe Trébuchet,
+  Marco Trevisani, Boris Tschirschwitz, Elias Tsigaridas, Michael M. Tung,
+  Andreas Umbach, Miguel A. Valle, Rémi Vanicat, Harro Verkouter, Jacques
+  Vernin, Sawan Vithlani, Philip A. Viton, Marius Vollmer, Guy Wallet, Adam
+  Warner, Thomas Wawrzinek, Maarten Wegewijs, Duke Whang, Lars Willert,
+  Grayson Williams, Barton Willis, Claus-Peter Wirth, Ben Wise, Wiebe van der
+  Worp, Pengcheng Wu, Damien Wyart, Wang Yin, Lukas Zapletal, Volker Zell,
+  Oleg Zhirov, Vadim V. Zhytnikov, Richard Zidlicky, Sascha Ziemann, Reinhard
+  Zierke, Paul Zimmermann.
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
