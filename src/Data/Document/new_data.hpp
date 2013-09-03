@@ -24,10 +24,11 @@ public:
   hashmap<string,tree> fin;   // final values of environment variables
   hashmap<string,tree> ref;   // all labels with references
   hashmap<string,tree> aux;   // auxiliary output: toc, bib, etc.
+  hashmap<string,tree> att;   // attachments: LaTeX source, etc.
 
   inline new_data_rep ():
     project (""), style (tuple ("generic")),
-    init ("?"), fin ("?"), ref ("?"), aux ("?") {}
+    init ("?"), fin ("?"), ref ("?"), aux ("?"), att ("?") {}
 };
 
 class new_data {

@@ -33,9 +33,11 @@ protected:
   void                 set_style (tree t);
   hashmap<string,tree> get_init ();
   hashmap<string,tree> get_fin ();
+  hashmap<string,tree> get_att ();
   void                 set_init (hashmap<string,tree> init= tree ("?"));
   void                 add_init (hashmap<string,tree> init);
   void                 set_fin (hashmap<string,tree> fin);
+  void                 set_att (hashmap<string,tree> att);
 
 public:
   edit_typeset_rep ();

@@ -77,9 +77,11 @@ protected:
   virtual typesetter           get_typesetter () = 0;
   virtual hashmap<string,tree> get_init () = 0;
   virtual hashmap<string,tree> get_fin () = 0;
+  virtual hashmap<string,tree> get_att () = 0;
   virtual void                 set_init (hashmap<string,tree> H= tree ("?"))=0;
   virtual void                 add_init (hashmap<string,tree> H) = 0;
   virtual void                 set_fin (hashmap<string,tree> H) = 0;
+  virtual void                 set_att (hashmap<string,tree> H) = 0;
 
   /* exchanging property information */
   virtual void   set_bool_property (string what, bool val) = 0;

@@ -43,6 +43,7 @@ edit_typeset_rep::set_data (new_data data) {
   set_style (data->style);
   set_init  (data->init);
   set_fin   (data->fin);
+  set_att   (data->att);
   notify_page_change ();
   add_init (data->init);
   notify_change (THE_DECORATIONS);
@@ -54,6 +55,7 @@ edit_typeset_rep::get_data (new_data& data) {
   data->style= get_style ();
   data->init = get_init ();
   data->fin  = get_fin ();
+  data->att  = get_att ();
 }
 
 typesetter edit_typeset_rep::get_typesetter () { return ttt; }
@@ -61,7 +63,9 @@ tree edit_typeset_rep::get_style () { return the_style; }
 void edit_typeset_rep::set_style (tree t) { the_style= copy (t); }
 hashmap<string,tree> edit_typeset_rep::get_init () { return init; }
 hashmap<string,tree> edit_typeset_rep::get_fin () { return fin; }
+hashmap<string,tree> edit_typeset_rep::get_att () { return buf->data->att; }
 void edit_typeset_rep::set_fin (hashmap<string,tree> H) { fin= H; }
+void edit_typeset_rep::set_att (hashmap<string,tree> H) { buf->data->att= H; }
 
 void
 edit_typeset_rep::set_init (hashmap<string,tree> H) {
@@ -80,6 +84,7 @@ void
 edit_typeset_rep::clear_local_info () {
   buf->data->ref= hashmap<string,tree> ();
   buf->data->aux= hashmap<string,tree> ();
+  buf->data->att= hashmap<string,tree> ();
 }
 
 /******************************************************************************
