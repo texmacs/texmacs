@@ -8,7 +8,7 @@
   Tout comme <name|Emacs>, <apply|TeXmacs> est livré avec un langage
   d'extension similaire à <name|Lisp> : le dialecte <with|font
   shape|small-caps|Guile Scheme> du projet <with|font
-  shape|small-caps|Gnome>. La documentation <with|font shape|small-caps|Guile
+  shape|small-caps|GNU>. La documentation <with|font shape|small-caps|Guile
   Scheme> est accessible sur :\ 
 
   <\verbatim>

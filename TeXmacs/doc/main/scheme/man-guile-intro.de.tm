@@ -7,7 +7,7 @@
 
   Ebenso wie <name|Emacs> besitzt auch <TeXmacs> eine <name|Lisp>-artige
   Erweiterungs-Sprache, den <with|font-shape|small-caps|Guile Scheme> Dialekt
-  des <with|font-shape|small-caps|Gnome> Projektes. Bezüglich einer
+  des <with|font-shape|small-caps|GNU> Projektes. Bezüglich einer
   Dokumentation für <with|font-shape|small-caps|Guile Scheme> verweisen wir
   auf
 

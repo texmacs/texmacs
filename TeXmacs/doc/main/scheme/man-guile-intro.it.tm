@@ -7,7 +7,7 @@
 
   Come <name|Emacs>, <apply|TeXmacs> supporta un linguaggio di estensione di
   tipo <name|Lisp>, ovvero il dialetto <with|font shape|small-caps|Guile
-  Scheme> del progetto <with|font shape|small-caps|Gnome>. Per la
+  Scheme> del progetto <with|font shape|small-caps|GNU>. Per la
   documentazione su <with|font shape|small-caps|Guile Scheme>, facciamo
   riferimento a\ 
 
