@@ -276,11 +276,10 @@ qt_chooser_widget_rep::perform_dialog () {
                << "\"" << "" << "\"";   // yps ??
         file = "(list " * file * params * ")";
 #endif
-      } else {
       }
     }
   }
-  
+
   delete dialog;
   
   cmd ();
