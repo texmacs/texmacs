@@ -480,6 +480,7 @@
                            (val (third  (cAr x))))
                        (list key val))) col)))
     (for-each (lambda (x) (ahash-set! tmtex-src (car x) (cdr x))) l)
+    ;; (display* (ahash-table->list tmtex-src) "\n\n")
     tmtex-src))
 
 (define (tmtex-file l)
@@ -490,7 +491,7 @@
 	 (init-bis (if (list>1? init)
                      (map (lambda (x) (cons (cadr x) (caddr x))) (cdr init))
                      '()))
-         (aux (or (cadddr (cdr l)) '()))
+         (att (or (cadddr (cdr l)) '()))
 	 (doc-preamble (tmtex-filter-preamble doc))
 	 (doc-body-pre (tmtex-filter-body doc))
 	 (doc-body (tmtex-apply-init doc-body-pre init-bis)))
@@ -499,9 +500,9 @@
     (set! tmtex-src (make-ahash-table))
     (if (and
           (== (get-preference "latex->texmacs:preserve-source") "on")
-          (nnull? aux))
+          (nnull? att))
       (begin
-        (make-tree-src-hash aux)
+        (make-tree-src-hash att)
         ;... TODO : the preamble and end of the document are critical !
         ))
     (if (null? styles) (tmtex doc)
@@ -1981,6 +1982,7 @@
 
 (tm-define (tmtex x)
   (with src (ahash-ref tmtex-src x)
+    ;; (display* x "\n ---> " src "\n\n")
     (cond ((not (not src)) (list '!verbatim* (tmtex-tt (car src))))
           ((string? x) (tmtex-string x))
           (else (tmtex-apply (car x) (cdr x))))))
@@ -2407,8 +2409,8 @@
 	     (main-style (or (tmtex-transform-style (car style)) "article"))
 	     (lan (tmfile-init x "language"))
 	     (init (tmfile-extract x 'initial))
-	     (aux (tmfile-extract x 'auxiliary))
-	     (doc (list '!file body style lan init aux
+	     (att (tmfile-extract x 'attachments))
+	     (doc (list '!file body style lan init att
                         (url->string (get-texmacs-path)))))
 	(latex-set-style main-style)
 	(latex-set-packages '())

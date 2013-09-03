@@ -3643,7 +3643,7 @@ latex_to_tree (tree t1) {
 
     tree r= tree (DOCUMENT, the_style, the_body);
     if (N (initial) > 0) r << compound ("initial", initial);
-    if (N (breaks) > 0)  r << compound ("auxiliary", auxiliary);
+    if (N (breaks) > 0)  r << compound ("attachments", auxiliary);
     // cout << "\n\nr= " << r << "\n\n";
     return r;
   }
