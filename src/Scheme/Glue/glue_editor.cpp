@@ -12,6 +12,15 @@
 ******************************************************************************/
 
 tmscm
+tmg_disp_att () {
+  // TMSCM_DEFER_INTS;
+  get_current_editor()->disp_att ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_root_tree () {
   // TMSCM_DEFER_INTS;
   tree out= get_current_editor()->the_root ();
@@ -2878,6 +2887,7 @@ tmg_edit_test () {
 
 void
 initialize_glue_editor () {
+  tmscm_install_procedure ("disp-att",  tmg_disp_att, 0, 0, 0);
   tmscm_install_procedure ("root-tree",  tmg_root_tree, 0, 0, 0);
   tmscm_install_procedure ("buffer-path",  tmg_buffer_path, 0, 0, 0);
   tmscm_install_procedure ("buffer-tree",  tmg_buffer_tree, 0, 0, 0);

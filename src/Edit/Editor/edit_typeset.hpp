@@ -45,6 +45,7 @@ public:
   void clear_local_info ();
   void set_data (new_data data);
   void get_data (new_data& data);
+  void disp_att ();
 
   SI       as_length (string l);
   string   add_lengths (string l1, string l2);
