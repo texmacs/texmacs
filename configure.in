@@ -96,17 +96,17 @@ if test -z "$GUILE_CFLAGS" -a -z "$GUILE_LDFLAGS"; then
   GUILE_FLAGS
 fi
 AC_MSG_CHECKING(version of guile)
-if test -z "$GUILE_VERSION" ; then
-  GUILE_VERSION=`guile --version | grep 'Guile \([[0-9]]\)' | sed 's/Guile \([[0-9]]*\)/\1/'`
+if test -z "$GUILE_EFFECTIVE_VERSION" ; then
+  GUILE_EFFECTIVE_VERSION=`guile -c '(display (version))'`
 fi
-AC_MSG_RESULT($GUILE_VERSION)
+AC_MSG_RESULT($GUILE_EFFECTIVE_VERSION)
 AC_MSG_CHECKING(guile data path)
 if test -z "$GUILE_DATA_PATH" ; then
   GUILE_DATA_PATH=`guile-config info pkgdatadir`
 fi
 AC_MSG_RESULT($GUILE_DATA_PATH)
 
-case "$GUILE_VERSION" in
+case "$GUILE_EFFECTIVE_VERSION" in
   1.0* | 1.1* | 1.2* | 1.3* | 1.4* | 1.5*)
     CONFIG_GUILE_SERIAL="A"
   ;;

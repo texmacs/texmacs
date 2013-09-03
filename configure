@@ -4638,11 +4638,11 @@ $as_echo "yes" >&6; }
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking version of guile" >&5
 $as_echo_n "checking version of guile... " >&6; }
-if test -z "$GUILE_VERSION" ; then
-  GUILE_VERSION=`guile --version | grep 'Guile \([0-9]\)' | sed 's/Guile \([0-9]*\)/\1/'`
+if test -z "$GUILE_EFFECTIVE_VERSION" ; then
+  GUILE_EFFECTIVE_VERSION=`guile -c '(display (version))'`
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $GUILE_VERSION" >&5
-$as_echo "$GUILE_VERSION" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $GUILE_EFFECTIVE_VERSION" >&5
+$as_echo "$GUILE_EFFECTIVE_VERSION" >&6; }
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking guile data path" >&5
 $as_echo_n "checking guile data path... " >&6; }
 if test -z "$GUILE_DATA_PATH" ; then
@@ -4651,7 +4651,7 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GUILE_DATA_PATH" >&5
 $as_echo "$GUILE_DATA_PATH" >&6; }
 
-case "$GUILE_VERSION" in
+case "$GUILE_EFFECTIVE_VERSION" in
   1.0* | 1.1* | 1.2* | 1.3* | 1.4* | 1.5*)
     CONFIG_GUILE_SERIAL="A"
   ;;
