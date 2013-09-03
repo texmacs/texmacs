@@ -231,7 +231,7 @@
   </macro>>
 
   <assign|bib-list|<\macro|largest|body>
-    <\with|par-left|1em|par-first|-1em|font-size|1|bibitem-nr|0>
+    <\with|par-left|1em|par-first|-1em|font-size|1|bibitem-nr|0|bibitem*|<macro|text|<assign|bibitem-nr|<plus|<value|bibitem-nr>|1>><set-binding|<arg|text>>>>
       <arg|body>
     </with>
   </macro>>
