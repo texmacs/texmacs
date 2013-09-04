@@ -17,42 +17,47 @@
 (define developer-mode?
   (equal? (cpp-get-preference "developer tool" "off") "on"))
 
+(define (%new-read-hook sym) (noop)) ; for autocompletion
+
+;; FIXME: how do we update this list dynamically?
+(define keywords-which-define
+  '(define define-macro define define-macro provide-public
+     tm-define tm-define-macro tm-menu menu-bind tm-widget))
+
+(define old-read read)
+(define (new-read port)
+  "A redefined reader which stores line number and file name in symbols."
+  ;; FIXME: handle overloaded redefinitions
+  (let ((form (old-read port)))
+    (if (and (pair? form) (member (car form) keywords-which-define))
+      (let* ((l (source-property form 'line))
+             (c (source-property form 'column))
+             (f (source-property form 'filename))
+             (sym  (if (pair? (cadr form)) (caadr form) (cadr form))))
+        (if (symbol? sym) ; Just in case
+          (let ((old (or (symbol-property sym 'defs) '()))
+                (new `(,f ,l ,c)))
+            (%new-read-hook sym)
+            (if (not (member new old))
+              (set-symbol-property! sym 'defs (cons new old)))))))
+    form))
+
+
+(define old-primitive-load primitive-load)
+(define (new-primitive-load filename)
+  ;; We explicitly circumvent guile's decision to set the current-reader
+  ;; to #f inside ice-9/boot-9.scm, try-module-autoload
+  (with-fluids ((current-reader read))
+               (old-primitive-load filename)))
+
 (if developer-mode?
     (begin
-      (define-public (%new-read-hook sym) (noop)) ; for autocompletion
-      
-      ;; FIXME: how do we update this list dynamically? 
-      (define-public keywords-which-define 
-        '(define define-macro define-public define-public-macro provide-public
-                 tm-define tm-define-macro tm-menu menu-bind tm-widget))
-
-      (define-public old-read read)
-      (define-public (new-read port)
-        "A redefined reader which stores line number and file name in symbols."
-        ;; FIXME: handle overloaded redefinitions
-        (let ((form (old-read port)))
-          (if (and (pair? form) (member (car form) keywords-which-define))
-              (let* ((l (source-property form 'line))
-                     (c (source-property form 'column))
-                     (f (source-property form 'filename))
-                     (sym  (if (pair? (cadr form)) (caadr form) (cadr form))))
-                (if (symbol? sym) ; Just in case
-                    (let ((old (or (symbol-property sym 'defs) '()))
-                          (new `(,f ,l ,c)))
-                      (%new-read-hook sym)
-                      (if (not (member new old))
-                          (set-symbol-property! sym 'defs (cons new old)))))))
-          form))
-
+      (module-export! (current-module)
+                      '(%new-read-hook old-read
+                        new-read keywords-which-define))
       (set! read new-read)
-
-      (define-public old-primitive-load primitive-load)
-      (define-public (new-primitive-load filename)
-        ;; We explicitly circumvent guile's decision to set the current-reader
-        ;; to #f inside ice-9/boot-9.scm, try-module-autoload
-        (with-fluids ((current-reader read))
-                     (old-primitive-load filename)))
-
+      (module-export! (current-module)
+                      '(old-primitive-load new-primitive-load))
       (set! primitive-load new-primitive-load)))
 
 ;; TODO: scheme file caching using (set! primitive-load ...) and
