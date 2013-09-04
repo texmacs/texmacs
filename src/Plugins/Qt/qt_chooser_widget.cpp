@@ -170,7 +170,7 @@ qt_chooser_widget_rep::set_type (const string& _type)
     type = _type;
     return true;
   } else if (_type == "generic") {
-    nameFilter = to_qstring (translate ("Generic file"));
+    nameFilter = "";
     type = _type;
     return true;
   }
@@ -190,9 +190,9 @@ qt_chooser_widget_rep::set_type (const string& _type)
   nameFilter += " (";
   object ret = call ("format-get-suffixes*", _type);
   array<object> suffixes = as_array_object (ret);
-  if (N(suffixes) > 0)
-    defaultSuffix = to_qstring (as_string (suffixes[0]));
-  for (int i = 0; i < N(suffixes); ++i)
+  if (N(suffixes) > 1)
+    defaultSuffix = to_qstring (as_string (suffixes[1]));
+  for (int i = 1; i < N(suffixes); ++i)
     nameFilter += " *." + to_qstring (as_string (suffixes[i]));
   nameFilter += " )";
   
@@ -213,7 +213,7 @@ qt_chooser_widget_rep::perform_dialog () {
   QString directory = QString::fromLocal8Bit (tmp);
   
 #if (defined(Q_WS_MAC) || defined(Q_WS_WIN))
-  QFileDialog* dialog = new QFileDialog (NULL, caption, directory, nameFilter);
+  QFileDialog* dialog = new QFileDialog (NULL, caption, directory);
 #else
   QTMFileDialog*  dialog;
   QTMImageDialog* imgdialog= 0; // to avoid a dynamic_cast
@@ -234,7 +234,11 @@ qt_chooser_widget_rep::perform_dialog () {
 
 #if (QT_VERSION >= 0x040400)
   if (type != "directory") {
-    dialog->setNameFilter (nameFilter);
+    QStringList filters;
+    if (nameFilter != "")
+      filters << nameFilter;
+    filters << to_qstring (translate ("All files (*.*)"));
+    dialog->setNameFilters (filters);
     dialog->setDefaultSuffix (defaultSuffix);
   }
 #endif
