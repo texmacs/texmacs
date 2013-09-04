@@ -304,7 +304,7 @@ qt_ui_element_rep::operator tree () {
 
 QAction* 
 qt_ui_element_rep::as_qaction () {
-  //if (DEBUG_QT)
+  //if (DEBUG_QT_WIDGETS)
   //cout << "as_qaction: " << type_as_string() << LF;
   
   switch (type) {
@@ -435,7 +435,7 @@ qt_ui_element_rep::as_qaction () {
       a->setMenu (lm);
       a->setEnabled(true);
       if (old_menu) {
-        if (DEBUG_QT) 
+        if (DEBUG_QT_WIDGETS)
           cout << "qt_ui_element_rep::as_qaction(), this should not happen\n";
         delete old_menu;
       }
@@ -557,7 +557,7 @@ qt_ui_element_rep::as_qaction () {
 
 QLayoutItem *
 qt_ui_element_rep::as_qlayoutitem () {
-  if (DEBUG_QT)
+  if (DEBUG_QT_WIDGETS)
     cout << "as_qlayoutitem: " << type_as_string() << LF;
 
   switch (type) {
@@ -742,7 +742,7 @@ qt_ui_element_rep::as_qlayoutitem () {
 */
 QWidget *
 qt_ui_element_rep::as_qwidget () {
-  if (DEBUG_QT)
+  if (DEBUG_QT_WIDGETS)
     cout << "as_qwidget: " << type_as_string() << LF;
 
   switch (type) {
@@ -760,7 +760,7 @@ qt_ui_element_rep::as_qwidget () {
       QWidget *w = new QWidget();
       if (l)
         w->setLayout(l);
-      else if (DEBUG_QT)
+      else if (DEBUG_QT_WIDGETS)
           // should we create a default layout?
         cout << "qt_ui_element_rep::as_qwidget() : invalid situation" << LF;
       qwid = w;

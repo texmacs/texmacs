@@ -36,7 +36,7 @@ qt_chooser_widget_rep::qt_chooser_widget_rep (command _cmd, string _type, bool _
  : qt_widget_rep (file_chooser), cmd (_cmd), save (_save),
    position (coord2 (0, 0)), size (coord2 (100, 100)), file ("")
 {
-  if (DEBUG_QT)
+  if (DEBUG_QT_WIDGETS)
     cout << "qt_chooser_widget_rep::qt_chooser_widget_rep type=\""
          << type << "\" save=\"" << save << "\"" << LF;
   if (! set_type (_type))
@@ -72,7 +72,8 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
       break;              
     case SLOT_STRING_INPUT:
       check_type<string>(val, s);
-      if (DEBUG_QT) cout << "string input: " << open_box<string> (val) << LF;
+      if (DEBUG_QT_WIDGETS)
+        cout << "\tString input: " << open_box<string> (val) << LF;
       NOT_IMPLEMENTED
       break;
     case SLOT_INPUT_TYPE:
@@ -88,7 +89,7 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
     case SLOT_FILE:
         //send_string (THIS, "file", val);
       check_type<string>(val, s);
-      if (DEBUG_QT) cout << "file: " << open_box<string> (val) << LF;
+      if (DEBUG_QT_WIDGETS) cout << "\tFile: " << open_box<string> (val) << LF;
       file = open_box<string> (val);
       break;
     case SLOT_DIRECTORY:
@@ -100,14 +101,14 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
     default:
       qt_widget_rep::send (s, val);
   }
-  if (DEBUG_QT)
+  if (DEBUG_QT_WIDGETS)
     cout << "qt_chooser_widget_rep: sent " << slot_name (s) 
          << "\t\tto widget\t"      << type_as_string() << LF;
 }
 
 blackbox
 qt_chooser_widget_rep::query (slot s, int type_id) {
-  if (DEBUG_QT)
+  if (DEBUG_QT_WIDGETS)
     cout << "qt_chooser_widget_rep::query " << slot_name(s) << LF;
   switch (s) {
     case SLOT_POSITION:
@@ -123,7 +124,7 @@ qt_chooser_widget_rep::query (slot s, int type_id) {
     case SLOT_STRING_INPUT:
     {
       check_type_id<string> (type_id, s);
-      if (DEBUG_QT) cout << "String: " << file << LF;
+      if (DEBUG_QT_WIDGETS) cout << "\tString: " << file << LF;
       return close_box<string> (file);
     }
     default:
@@ -133,7 +134,7 @@ qt_chooser_widget_rep::query (slot s, int type_id) {
 
 widget
 qt_chooser_widget_rep::read (slot s, blackbox index) {
-  if (DEBUG_QT)
+  if (DEBUG_QT_WIDGETS)
     cout << "qt_chooser_widget_rep::read " << slot_name(s) << LF;
   switch (s) {
     case SLOT_WINDOW:

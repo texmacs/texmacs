@@ -130,7 +130,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
       check_type<bool>(val, s);
       if (open_box<bool> (val)) 
         the_keyboard_focus = this;
-      if (DEBUG_QT)
+      if (DEBUG_QT_WIDGETS)
         cout << "   Ignored!\n";
     }
       break;
@@ -148,7 +148,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
       return;
   }
 
-  if (DEBUG_QT && s != SLOT_INVALIDATE)
+  if (DEBUG_QT_WIDGETS && s != SLOT_INVALIDATE)
     cout << "qt_view_widget_rep: sent " << slot_name (s) 
          << "\t\tto widget\t" << type_as_string() << LF;  
 }
@@ -156,7 +156,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
 blackbox
 qt_view_widget_rep::query (slot s, int type_id) {
     // Some slots are too noisy
-  if ((DEBUG_QT) && (s != SLOT_IDENTIFIER))
+  if (DEBUG_QT_WIDGETS && (s != SLOT_IDENTIFIER))
     cout << "qt_view_widget_rep: queried " << slot_name(s)
          << "\t\tto widget\t" << type_as_string() << LF;
   
@@ -221,7 +221,7 @@ qt_view_widget_rep::query (slot s, int type_id) {
 
 widget
 qt_view_widget_rep::read (slot s, blackbox index) {
-  if (DEBUG_QT)
+  if (DEBUG_QT_WIDGETS)
     cout << "qt_view_widget_rep::read " << slot_name(s) << "\tWidget id: " << id << LF;
   
   switch (s) {

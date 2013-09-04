@@ -12,6 +12,8 @@
 #ifndef QT_WIDGET_HPP
 #define QT_WIDGET_HPP
 
+#define DEBUG_QT_WIDGETS 0
+
 #include "widget.hpp"
 #include "message.hpp"
 

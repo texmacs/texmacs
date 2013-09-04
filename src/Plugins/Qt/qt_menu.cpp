@@ -82,7 +82,7 @@ qt_menu_rep::send (slot s, blackbox val) {
       qt_widget_rep::send(s, val);
       return;
   }
-  if (DEBUG_QT)
+  if (DEBUG_QT_WIDGETS)
     cout << "qt_menu_rep: sent " << slot_name (s) 
          << "\t\tto widget\t" << type_as_string() << LF;
 }

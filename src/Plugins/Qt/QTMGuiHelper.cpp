@@ -43,7 +43,7 @@ QTMGuiHelper::eventFilter (QObject *obj, QEvent *event) {
 
 void
 QTMGuiHelper::doWriteSocketNotification (int socket) {
-  if (DEBUG_QT) 
+  if (DEBUG_QT)
     cout << "WRITE SOCKET NOTIFICATION " << socket << " "
     << texmacs_time () << LF;
   iterator<socket_notifier> it = iterate (gui->write_notifiers);
@@ -59,7 +59,7 @@ QTMGuiHelper::doWriteSocketNotification (int socket) {
 
 void
 QTMGuiHelper::doReadSocketNotification (int socket) {
-  if (DEBUG_QT) 
+  if (DEBUG_QT)
     cout << "READ SOCKET NOTIFICATION " << socket << " "
     << texmacs_time () << LF;
   iterator<socket_notifier> it = iterate (gui->read_notifiers);
@@ -91,7 +91,7 @@ QTMGuiHelper::aboutToHideMainMenu() {
 
 void 
 QTMGuiHelper::doPopWaitingWidgets() {
-  if (!is_nil(waiting_widgets)) {
+  if (!is_nil (waiting_widgets)) {
     if (DEBUG_QT)
       cout << "Installing postponed menu" << LF;
     waiting_widgets->item->install_main_menu();

@@ -17,7 +17,7 @@
 
 void QTMPlainWindow::closeEvent (QCloseEvent* event)
 {
-  if (DEBUG_QT) cout << "Close QTMPlainWindow" << LF;
+  if (DEBUG_QT_WIDGETS) cout << "Close QTMPlainWindow" << LF;
   // Tell QT not to close the window, qt_window_widget_rep will if need be.
   event->ignore ();
   emit closed();
@@ -45,7 +45,7 @@ void QTMWindow::closeEvent (QCloseEvent* event)
 {
   widget tmwid = qt_window_widget_rep::widget_from_qwidget(this);
   string name= ( !is_nil(tmwid) ? concrete(tmwid)->get_nickname () : "QTMWindow");
-  if (DEBUG_QT) cout << "Close QTMWindow " << name << LF;
+  if (DEBUG_QT_WIDGETS) cout << "Close QTMWindow " << name << LF;
   event->ignore ();
   notify_window_destroy (name);
   emit closed();

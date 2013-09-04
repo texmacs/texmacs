@@ -113,7 +113,7 @@ qt_window_widget_rep::has_resizable_children(QWidget* w, bool ret) {
 
 void
 qt_window_widget_rep::send (slot s, blackbox val) {
-  if (DEBUG_QT)
+  if (DEBUG_QT_WIDGETS)
     cout << "qt_window_widget_rep::send " << slot_name (s) << LF;
   
   switch (s) {
@@ -195,7 +195,7 @@ qt_window_widget_rep::send (slot s, blackbox val) {
 
 blackbox
 qt_window_widget_rep::query (slot s, int type_id) {
-  if (DEBUG_QT)
+  if (DEBUG_QT_WIDGETS)
     cout << "qt_window_widget_rep::query " << slot_name(s) << LF;
   switch (s) {
     case SLOT_IDENTIFIER:
@@ -230,7 +230,7 @@ qt_window_widget_rep::query (slot s, int type_id) {
 
 widget
 qt_window_widget_rep::read (slot s, blackbox index) {
-  if (DEBUG_QT)
+  if (DEBUG_QT_WIDGETS)
     cout << "qt_window_widget_rep::read " << slot_name(s) << "\tWidget id: " << id << LF;
   
   switch (s) {
@@ -245,7 +245,7 @@ qt_window_widget_rep::read (slot s, blackbox index) {
 
 void
 qt_window_widget_rep::notify (slot s, blackbox new_val) {
-  if (DEBUG_QT)
+  if (DEBUG_QT_WIDGETS)
     cout << "qt_window_widget_rep::notify " << slot_name(s) << LF;
   widget_rep::notify (s, new_val);
 }
@@ -324,14 +324,14 @@ qt_popup_widget_rep::send (slot s, blackbox val) {
       qt_widget_rep::send(s, val);
   }
   
-  if (DEBUG_QT)
+  if (DEBUG_QT_WIDGETS)
     cout << "qt_popup_widget_rep: sent " << slot_name (s) 
          << "\t\tto widget\t"         << type_as_string() << LF;
 }
 
 blackbox
 qt_popup_widget_rep::query (slot s, int type_id) {
-  if (DEBUG_QT)
+  if (DEBUG_QT_WIDGETS)
     cout << "qt_popup_widget_rep::query " << slot_name(s) << LF;
   switch (s) {
     case SLOT_POSITION:

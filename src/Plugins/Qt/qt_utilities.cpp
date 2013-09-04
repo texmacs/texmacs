@@ -91,7 +91,7 @@ parse_tm_style (int style) {
     sheet += "text-align: center;";
   if (style & WIDGET_STYLE_BOLD)
     sheet += "font-weight: bold;";
-  if (DEBUG_QT)
+  if (DEBUG_QT_WIDGETS)
     sheet += "border:1px solid rgb(255, 0, 0);";
   return sheet;
 }
@@ -348,7 +348,7 @@ to_qcolor (const string& col) {
     initNamedColors();
   if(_NamedColors.contains(_col))
     return _NamedColors[_col];
-  if(DEBUG_QT)
+  if(DEBUG_QT_WIDGETS)
     cout << "to_qcolor(" << col << "): name is not defined in RGBColors.\n";
   return QColor(100,100,100);  // FIXME? 
 }

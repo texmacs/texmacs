@@ -52,6 +52,7 @@ QTMAction::~QTMAction() {
 void
 QTMAction::set_text (string s) {
   if (N(s)) {
+      // FIXME: this will only work if the system language is English!
     if (s == "Help" || s == "Edit" || s == "Preferences...")
       s = s * " ";
     str = s;
@@ -138,7 +139,7 @@ QTMTileAction::QTMTileAction (QWidget* parent, array<widget>& arr, int _cols)
 QWidget*
 QTMTileAction::createWidget(QWidget* parent)
 {
-  if (DEBUG_QT)
+  if (DEBUG_QT_WIDGETS)
     cout << "QTMTileAction::createWidget\n";
   QWidget* wid= new QTMMenuWidget (parent);
   QGridLayout* l= new QGridLayout (wid);
@@ -188,7 +189,7 @@ QTMMinibarAction::QTMMinibarAction (QWidget* parent, array<widget>& arr)
  */
 QWidget*
 QTMMinibarAction::createWidget (QWidget* parent) {
-  if (DEBUG_QT) cout << "QTMMinibarAction::createWidget\n";
+  if (DEBUG_QT_WIDGETS) cout << "QTMMinibarAction::createWidget\n";
   QWidget* wid= new QWidget (parent);
   QBoxLayout* l= new QBoxLayout (QBoxLayout::LeftToRight, wid);
   wid->setLayout (l);
@@ -249,7 +250,7 @@ rerootActions (QWidget* dest, QWidget* src) {
 
 void
 QTMLazyMenu::force () {
-  if (DEBUG_QT) cout << "Force lazy menu" << LF;
+  if (DEBUG_QT_WIDGETS) cout << "Force lazy menu" << LF;
   widget w = pm ();
   QMenu* menu2 = concrete(w)->get_qmenu();
   rerootActions (this, menu2);

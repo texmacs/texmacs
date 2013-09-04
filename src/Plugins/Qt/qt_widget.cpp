@@ -40,13 +40,13 @@ static long widget_counter = 0;
 qt_widget_rep::qt_widget_rep(types _type, QWidget* _qwid)
   : widget_rep (), id (widget_counter++), qwid (_qwid), type (_type), sequencer(0)
 {
-  if (DEBUG_QT)
+  if (DEBUG_QT_WIDGETS)
     cout << "qt_widget_rep: created a " << type_as_string() << LF;
 }
 
 
 qt_widget_rep::~qt_widget_rep() { 
-  if (DEBUG_QT)
+  if (DEBUG_QT_WIDGETS)
     cout << "~qt_widget_rep: deleted a " << type_as_string() << LF;
   
   // DON'T DO THIS! (several qt_widget_rep may have the same underlying QWidget)
@@ -65,7 +65,7 @@ qt_widget_rep::~qt_widget_rep() {
  */
 inline QWidget*
 qt_widget_rep::as_qwidget () {
-  if (DEBUG_QT)
+  if (DEBUG_QT_WIDGETS)
     cout << "qt_widget_rep::as_qwidget() for " << type_as_string() << LF;
   return qwid;
 }
@@ -125,7 +125,7 @@ qt_widget_rep::get_qmenu () {
 */
 widget
 qt_widget_rep::plain_window_widget (string title, command quit) {
-  if (DEBUG_QT)
+  if (DEBUG_QT_WIDGETS)
     cout << "qt_widget_rep::plain_window_widget() around a " << type_as_string() << LF;
 
   QTMPlainWindow* win = new QTMPlainWindow(0);
@@ -202,7 +202,7 @@ qt_widget_rep::save_send_slot (slot s, blackbox val) {
 
 void
 qt_widget_rep::reapply_sent_slots () {
-  if (DEBUG_QT)
+  if (DEBUG_QT_WIDGETS)
     cout << ">>>>>>>> reapply_sent_slots() for widget: " << type_as_string() << LF;
   
   t_slot_entry sorted_slots[slot_id__LAST];
@@ -214,7 +214,7 @@ qt_widget_rep::reapply_sent_slots () {
     if (sorted_slots[i].seq >= 0)
       this->send(sorted_slots[i].id, sorted_slots[i].val);
   
-  if (DEBUG_QT)
+  if (DEBUG_QT_WIDGETS)
     cout << "<<<<<<<< reapply_sent_slots() for widget: " << type_as_string() << LF;
   
 }
@@ -283,7 +283,7 @@ popup_widget (widget w) {
  */
 void
 destroy_window_widget (widget w) {
-  if (DEBUG_QT)
+  if (DEBUG_QT_WIDGETS)
     cout << "destroy_window_widget() on "
          << static_cast<qt_widget_rep*>(w.rep)->type_as_string() << LF;
 }
@@ -378,7 +378,7 @@ widget texmacs_widget (int mask, command quit) {
   if (mask) return tm_new<qt_tm_widget_rep> (mask, quit);
   else      return tm_new<qt_tm_embedded_widget_rep> (quit); }
 widget ink_widget (command cb) {
-  if (DEBUG_QT) cout << "Ink widget not yet implemented.\n";
+  if (DEBUG_QT_WIDGETS) cout << "Ink widget not yet implemented.\n";
   (void) cb; return widget(); }
 
   //// Widgets which are not strictly required by TeXmacs have void implementations

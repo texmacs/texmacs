@@ -294,7 +294,8 @@ void qt_gui_rep::set_mouse_pointer (string curs_name, string mask_name)
 
 void
 qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
-  if (DEBUG_QT)  cout << "show_wait_indicator \"" << message << "\"\"" << arg << "\"" << LF;
+  if (DEBUG_QT)
+    cout << "show_wait_indicator \"" << message << "\"\"" << arg << "\"" << LF;
 
   qt_window_widget_rep *wid = static_cast<qt_window_widget_rep*> (w.rep);
 
