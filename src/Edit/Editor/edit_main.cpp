@@ -266,38 +266,42 @@ void
 edit_main_rep::print_buffer (string first, string last) {
    url target;
 #if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
-/*  printing for windows using poppler and Qt - Denis Raux 2013
-*/
-  QPrintDialog Pdlg;
+/*  printing for windows using poppler and Qt - Denis Raux 2013 */
+  static QPrinter Prt(QPrinter::HighResolution);  // static to keep user choice along texmacs session
+  QPrintDialog Pdlg(&Prt);
   if (Pdlg.exec() == QDialog::Accepted) {
-     QPrinter  *Prt=Pdlg.printer();
-     double rres=Prt->resolution();
-     int rw=Prt->paperRect(QPrinter::DevicePixel).width();
-     int rh=Prt->paperRect(QPrinter::DevicePixel).height();
+     double rres=Prt.resolution();
+     int rw=Prt.paperRect(QPrinter::DevicePixel).width();
+     int rh=Prt.paperRect(QPrinter::DevicePixel).height();
 
      target= url_temp (".pdf"); 
-     int fp=Prt->fromPage(), lp=Prt->toPage();
+     int fp=Prt.fromPage(), lp=Prt.toPage();
      if(fp+lp==0) {fp=1;lp=1000000;}
      print (target, false,fp,lp);
 
      QString file(as_charp(as_string(target)));
-     Poppler::Document* document = Poppler::Document::load(file); 
-     document->setRenderHint(Poppler::Document::Antialiasing);
-     document->setRenderHint(Poppler::Document::TextAntialiasing);
+     Poppler::Document* document = Poppler::Document::load(file);
+     if(document) {
+        document->setRenderHint(Poppler::Document::Antialiasing);
+        document->setRenderHint(Poppler::Document::TextAntialiasing);
 
-     int nbpages=document->numPages(), nextpage=nbpages-1;
-     QPainter Paint;
-     if(Paint.begin(Prt)) {
-         QImage image;
-         Paint.setRenderHint(QPainter::Antialiasing);
-         for(int pg=0;pg < nbpages;pg++) {
-            Poppler::Page* pdfPage = document->page(pg);  
-            if(pdfPage) {image=pdfPage->renderToImage(rres,rres,0,0,rw,rh); delete pdfPage;}
-            if(!image.isNull()) {Paint.drawImage(0,0,image);if(pg!=nextpage) Prt->newPage();}
-         }
-         Paint.end();
-      }
-   }
+        int nbpages=document->numPages(), nextpage=nbpages-1;
+        QPainter Paint;
+        if(Paint.begin(&Prt)) {
+           QImage image;
+           QRect rect(0,0,rw,rh);
+           Paint.setRenderHint(QPainter::Antialiasing);
+           for(int pg=0;pg < nbpages;pg++) {
+              Poppler::Page* pdfPage = document->page(pg);  
+              if(pdfPage) {image=pdfPage->renderToImage(rres,rres); delete pdfPage;}
+              if(!image.isNull()) {Paint.drawImage(rect,image);if(pg!=nextpage) Prt.newPage();}
+              else cerr<<"Fail to create image for "<<rres<<" dpi resolution\n";
+              }
+           Paint.end();
+           }
+        delete(document);
+        }
+     }
 
 #else
   target= url_temp (".ps"); 

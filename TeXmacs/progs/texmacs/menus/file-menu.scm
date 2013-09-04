@@ -180,7 +180,7 @@
        ("Print" (interactive-print-buffer)))
   (if (not (experimental-qt-gui?))
       (-> "Print" (link print-menu)))
-  (-> "Page setup" (link page-setup-menu))
+  (if (not (os-mingw?)) (-> "Page setup" (link page-setup-menu)))
   (-> "Import"
       (link import-import-menu))
   (-> "Export"
