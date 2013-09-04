@@ -20,7 +20,7 @@ class QTMPrinterSettings;
  * This implements a printer widget, using QTMPrinterDialog.
  *
  * The "factory" function for this widget is called printer_widget(), 
- * in qt_dialogues.cpp
+ * in qt_widget.cpp
  *
  * All printing options set by the user at this stage are applied as a
  * postprocessing of an already typeset postscript document.

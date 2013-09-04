@@ -15,7 +15,6 @@
 #include "qt_utilities.hpp"
 #include "qt_tm_widget.hpp"
 #include "qt_chooser_widget.hpp"
-#include "qt_printer_widget.hpp"
 #include "qt_color_picker_widget.hpp"
 #include "url.hpp"
 #include "analyze.hpp"
