@@ -279,7 +279,7 @@ edit_main_rep::print_buffer (string first, string last) {
      if(fp+lp==0) {fp=1;lp=1000000;}
      print (target, false,fp,lp);
 
-     QString file(as_charp(as_string(target)));
+     QString file (to_qstring (as_string (target)));
      Poppler::Document* document = Poppler::Document::load(file);
      if(document) {
         document->setRenderHint(Poppler::Document::Antialiasing);
