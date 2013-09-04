@@ -61,8 +61,9 @@ typedef unsigned int color;
 
 enum { DEBUG_FLAG_AUTO, DEBUG_FLAG_VERBOSE, DEBUG_FLAG_EVENTS,
        DEBUG_FLAG_STD, DEBUG_FLAG_IO, DEBUG_FLAG_BENCH,
-       DEBUG_FLAG_HISTORY, DEBUG_FLAG_QT, DEBUG_FLAG_KEYBOARD,
-       DEBUG_FLAG_PACKRAT, DEBUG_FLAG_FLATTEN, DEBUG_FLAG_CORRECT };
+       DEBUG_FLAG_HISTORY, DEBUG_FLAG_QT, DEBUG_FLAG_QT_WIDGETS,
+       DEBUG_FLAG_KEYBOARD, DEBUG_FLAG_PACKRAT, DEBUG_FLAG_FLATTEN,
+       DEBUG_FLAG_CORRECT };
 bool debug (int which, bool write_flag= false);
 int  debug_off ();
 void debug_on (int status);
@@ -77,6 +78,7 @@ bool debug_get (string s);
 #define DEBUG_BENCH (debug (DEBUG_FLAG_BENCH))
 #define DEBUG_HISTORY (debug (DEBUG_FLAG_HISTORY))
 #define DEBUG_QT (debug (DEBUG_FLAG_QT))
+#define DEBUG_QT_WIDGETS (debug (DEBUG_FLAG_QT_WIDGETS))
 #define DEBUG_KEYBOARD (debug (DEBUG_FLAG_KEYBOARD))
 #define DEBUG_PACKRAT (debug (DEBUG_FLAG_PACKRAT))
 #define DEBUG_FLATTEN (debug (DEBUG_FLAG_FLATTEN))

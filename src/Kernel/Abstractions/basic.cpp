@@ -59,6 +59,7 @@ debug_set (string s, bool on) {
   else if (s == "bench") debug_set (DEBUG_FLAG_BENCH, on);
   else if (s == "history") debug_set (DEBUG_FLAG_HISTORY, on);
   else if (s == "qt") debug_set (DEBUG_FLAG_QT, on);
+  else if (s == "qt-widgets") debug_set (DEBUG_FLAG_QT_WIDGETS, on);
   else if (s == "keyboard") debug_set (DEBUG_FLAG_KEYBOARD, on);
   else if (s == "packrat") debug_set (DEBUG_FLAG_PACKRAT, on);
   else if (s == "flatten") debug_set (DEBUG_FLAG_FLATTEN, on);
@@ -80,6 +81,7 @@ debug_get (string s) {
   else if (s == "bench") return debug_get (DEBUG_FLAG_BENCH);
   else if (s == "history") return debug_get (DEBUG_FLAG_HISTORY);
   else if (s == "qt") return debug_get (DEBUG_FLAG_QT);
+  else if (s == "qt-widgets") return debug_get (DEBUG_FLAG_QT_WIDGETS);
   else if (s == "keyboard") return debug_get (DEBUG_FLAG_KEYBOARD);
   else if (s == "packrat") return debug_get (DEBUG_FLAG_PACKRAT);
   else if (s == "flatten") return debug_get (DEBUG_FLAG_FLATTEN);

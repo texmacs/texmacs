@@ -82,6 +82,7 @@
   ("bench" (debug-toggle "bench"))
   ("history" (debug-toggle "history"))
   ("qt" (debug-toggle "qt"))
+  ("qt-widgets" (debug-toggle "qt-widgets"))
   ("keyboard" (debug-toggle "keyboard"))
   ("packrat" (debug-toggle "packrat"))
   ("flatten" (debug-toggle "flatten"))
