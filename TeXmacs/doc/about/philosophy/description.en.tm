@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.18>
+<TeXmacs|1.0.7.19>
 
 <style|tmdoc>
 
@@ -26,8 +26,8 @@
   printed as <name|Postscript> or <name|Pdf> files. Converters exist for
   <TeX>/<LaTeX> and <name|Html>/<name|Mathml>.
 
-  GNU <TeXmacs> is by <hlink|INRIA|http://www.inria.fr>, Bâtiment Allan
-  Turing, Palaiseau, France.
+  GNU <TeXmacs> is hosted by <hlink|INRIA|http://www.inria.fr>, Bâtiment
+  Allan Turing, Palaiseau, France.
 
   <tmdoc-copyright|1998--2013|Joris van der Hoeven>
 
