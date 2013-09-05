@@ -22,9 +22,11 @@ class QMyFileDialog : public QFileDialog
 {
   Q_OBJECT
 public:
-  QMyFileDialog (QWidget* parent= 0, const QString & caption = QString(),
-                 const QString & directory = QString(), const QString & filter = QString()) 
-  : QFileDialog(parent, caption, directory, filter) {}
+  QMyFileDialog (QWidget* parent= 0,
+                 const QString & caption = QString(),
+                 const QString & directory = QString(),
+                 const QString & filter = QString())
+  : QFileDialog(parent, caption, directory, filter) { }
 };
 
 class QTMFileDialog : public QDialog
@@ -33,26 +35,29 @@ class QTMFileDialog : public QDialog
 
 protected:
   QHBoxLayout* hbox;
-  QFileDialog *file;
-  void dragEnterEvent(QDragEnterEvent *event);
-  void dragMoveEvent(QDragMoveEvent *event);
-  void dragLeaveEvent(QDragLeaveEvent *event);
-  void dropEvent(QDropEvent *event);	
+  QFileDialog* file;
+  void dragEnterEvent(QDragEnterEvent* event);
+  void dragMoveEvent(QDragMoveEvent* event);
+  void dragLeaveEvent(QDragLeaveEvent* event);
+  void dropEvent(QDropEvent* event);
 
 public:
-  QTMFileDialog (QWidget* parent= 0, const QString & caption = QString(),
-      const QString & directory = QString(), const QString & filter = QString());
+  QTMFileDialog (QWidget* parent= 0,
+                 const QString& caption = QString(),
+                 const QString& directory = QString(),
+                 const QString & filter = QString());
   QStringList selectedFiles () { return file->selectedFiles (); };
 #if (defined(Q_WS_MAC) && (QT_VERSION >= 0x040500))
-  void setOptions (QFileDialog::Options opts) { return file->setOptions (opts); };
+  void setOptions (QFileDialog::Options opts) { file->setOptions (opts); };
 #endif
-  void setViewMode (QFileDialog::ViewMode mode) { return file->setViewMode (mode); };
-  void setFileMode (QFileDialog::FileMode mode) { return file->setFileMode (mode); };
+  void setViewMode (QFileDialog::ViewMode mode) { file->setViewMode (mode); };
+  void setFileMode (QFileDialog::FileMode mode) { file->setFileMode (mode); };
 #if (QT_VERSION >= 0x040400)
-  void setNameFilter (const QString & filter) { return file->setNameFilter (filter);}
+  void setNameFilter (const QString& filter) { file->setNameFilter (filter); }
+  void setNameFilters (const QStringList& filters) { file->setNameFilters (filters); }
 #endif
-  void setDefaultSuffix (const QString & suffix) { return file->setDefaultSuffix (suffix);}
-  void setLabelText (QFileDialog::DialogLabel label, const QString& text) { return file->setLabelText (label, text); };
+  void setDefaultSuffix (const QString& suffix) { file->setDefaultSuffix (suffix); }
+  void setLabelText (QFileDialog::DialogLabel label, const QString& text) { file->setLabelText (label, text); };
 };
 
 class QTMImagePreview : public QWidget
@@ -81,8 +86,10 @@ class QTMImageDialog : public QTMFileDialog
   QTMImagePreview* preview;
 
 public:
-  QTMImageDialog (QWidget* parent= 0, const QString& caption= QString (),
-      const QString& directory= QString (), const QString& filter= QString ());
+  QTMImageDialog (QWidget* parent= 0,
+                  const QString& caption = QString (),
+                  const QString& directory = QString (),
+                  const QString& filter = QString ());
   string getParamsAsString ();
 };
 
