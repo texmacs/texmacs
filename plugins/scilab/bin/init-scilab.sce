@@ -44,6 +44,17 @@ for i= 1:size (char_codes, '*') do
   deff('[]=%' + char_codes (i) + '_p(a)', "tmout (a)");
 end
 
+function demo_run (fil)
+  old_mode= mode ();
+  funcprot(0)
+  function k= mode (l)
+    k= old_mode;
+    return;
+  endfunction
+  exec(fil, 3);
+  funcprot(1)
+endfunction
+
 funcprot(1)
 
 function lst= scilab_lst_all (libr)
