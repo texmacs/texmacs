@@ -3,7 +3,7 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|The <name|Scilab> system>
+  <tmdoc-title|The <name|Scilab> plugin>
 
   <subsection|Introduction to <name|Scilab> software>
 
@@ -39,9 +39,7 @@
     and frequency domains.
   </itemize>
 
-  <subsection|The <person|Scilab> plugin>
-
-  <subsubsection|Features>
+  <subsection|Features of the <person|Scilab> plugin>
 
   <\itemize>
     <item>Mathematical presentation of <name|Scilab> data types.

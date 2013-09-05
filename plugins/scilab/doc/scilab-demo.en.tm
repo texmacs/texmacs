@@ -7,10 +7,13 @@
     Example <name|Scilab> session
   </tmdoc-title>
 
+  <subsection|Mathematical presentation of <name|Scilab> data types>
+
   Here follows some sample sessions, which was started using
   <menu|Insert|Session|Scilab>.
 
-  <subsection|Mathematical presentation of <name|Scilab> data types>
+  <strong|<with|color|red|ToDo.>> Put the big session in a demo file. Leave
+  only a minimalistic example out the demo.
 
   <\session|scilab|default>
     <\output>
@@ -34,6 +37,72 @@
 
       \;
     </output>
+
+    <\unfolded-io>
+      --\<gtr\>
+    <|unfolded-io>
+      (1 - 2*%i)^4
+    <|unfolded-io>
+      \ ans \ =
+
+      \ 
+
+      <with|mode|math|-7+24*i>
+
+      \ 
+    </unfolded-io>
+
+    <\unfolded-io>
+      --\<gtr\>
+    <|unfolded-io>
+      rand(3,3) \<gtr\> 0.5
+    <|unfolded-io>
+      \ ans \ =
+
+      \ 
+
+      <with|mode|math|<matrix|<tformat|<table|<row|<cell|F>|<cell|F>|<cell|T>>|<row|<cell|T>|<cell|T>|<cell|T>>|<row|<cell|F>|<cell|T>|<cell|T>>>>>>
+
+      \ 
+    </unfolded-io>
+
+    <\unfolded-io>
+      --\<gtr\>
+    <|unfolded-io>
+      sparse (rand(3,3) \<gtr\> 0.5)
+    <|unfolded-io>
+      \ ans \ =
+
+      \ 
+
+      ( \ \ \ 3, \ \ \ 3) sparse matrix
+
+      \ 
+
+      ( \ \ \ 1, \ \ \ 2) \ \ \ T\ 
+
+      ( \ \ \ 2, \ \ \ 1) \ \ \ T\ 
+
+      ( \ \ \ 3, \ \ \ 1) \ \ \ T\ 
+
+      ( \ \ \ 3, \ \ \ 2) \ \ \ T\ 
+
+      \ 
+    </unfolded-io>
+
+    <\unfolded-io>
+      --\<gtr\>
+    <|unfolded-io>
+      tmout (sparse (rand(3,3) \<gtr\> 0.5))
+    <|unfolded-io>
+      <\with|mode|math>
+        <text|sparse >3\<times\>3<text| matrix: >
+
+        <tabular|<tformat|<table|<row|<cell|<varname><rsub|1,1>>|<cell|=>|<cell|T>>|<row|<cell|<varname><rsub|1,2>>|<cell|=>|<cell|T>>|<row|<cell|<varname><rsub|2,1>>|<cell|=>|<cell|T>>|<row|<cell|<varname><rsub|3,3>>|<cell|=>|<cell|T>>>>>
+      </with>
+
+      \ 
+    </unfolded-io>
 
     <\unfolded-io>
       --\<gtr\>
@@ -96,6 +165,49 @@
     <\unfolded-io>
       --\<gtr\>
     <|unfolded-io>
+      "degré" //string
+    <|unfolded-io>
+      \ ans \ =
+
+      \ 
+
+      <with|mode|math|<text|<extern|scilab-verbatim-\<gtr\>tree|degrÃ©>>>
+
+      \ 
+    </unfolded-io>
+
+    <\unfolded-io>
+      --\<gtr\>
+    <|unfolded-io>
+      M= ["une" "matrice"; "de" "caractère"]'
+    <|unfolded-io>
+      \ M \ =
+
+      \ 
+
+      <with|mode|math|<matrix|<tformat|<table|<row|<cell|<text|une>>|<cell|<text|de>>>|<row|<cell|<text|matrice>>|<cell|<text|<extern|scilab-verbatim-\<gtr\>tree|caractÃ¨re>>>>>>>>
+
+      \ 
+    </unfolded-io>
+
+    <\unfolded-io>
+      --\<gtr\>
+    <|unfolded-io>
+      strcat(M, " ")
+    <|unfolded-io>
+      \ ans \ =
+
+      \ 
+
+      <with|mode|math|<text|<extern|scilab-verbatim-\<gtr\>tree|une matrice
+      de caractÃ¨re>>>
+
+      \ 
+    </unfolded-io>
+
+    <\unfolded-io>
+      --\<gtr\>
+    <|unfolded-io>
       h= s1/poly(1:4,'s','c')
     <|unfolded-io>
       \ h \ =
@@ -124,12 +236,89 @@
 
       \ 
     </unfolded-io>
+
+    <\unfolded-io>
+      --\<gtr\>
+    <|unfolded-io>
+      M=mlist(['V','name','value'],['a','b','c'],[1 2 3])
+    <|unfolded-io>
+      \ M \ =
+
+      \ 
+
+      \ 
+
+      <with|mode|math|<text|NOTE: you can customize the display of ''V'' type
+      by defining a function str=V2tmstree(arg)>>
+
+      <\with|mode|math>
+        <text|mlist of type V with fields:>
+
+        <block|<tformat|<table|<row|<cell|<varname><rsub|1>>|<cell|<matrix|<tformat|<table|<row|<cell|<text|V>>|<cell|<text|name>>|<cell|<text|value>>>>>>>>|<row|<cell|<varname><rsub|<text|name>>>|<cell|<matrix|<tformat|<table|<row|<cell|<text|a>>|<cell|<text|b>>|<cell|<text|c>>>>>>>>|<row|<cell|<varname><rsub|<text|value>>>|<cell|<matrix|<tformat|<table|<row|<cell|1>|<cell|2>|<cell|3>>>>>>>>>>
+      </with>
+
+      \ 
+    </unfolded-io>
+
+    <\input>
+      --\<gtr\>
+    <|input>
+      function s= V2tmstree (arg)
+    </input>
+
+    <\input>
+      --\<gtr\>
+    <|input>
+      s= tmstree (arg.value) // generate stree
+    </input>
+
+    <\unfolded-io>
+      --\<gtr\>
+    <|unfolded-io>
+      endfunction
+    <|unfolded-io>
+      \ 
+    </unfolded-io>
+
+    <\unfolded-io>
+      --\<gtr\>
+    <|unfolded-io>
+      M
+    <|unfolded-io>
+      \ M \ =
+
+      \ 
+
+      <with|mode|math|<matrix|<tformat|<table|<row|<cell|1>|<cell|2>|<cell|3>>>>>>
+
+      \ 
+    </unfolded-io>
+
+    <\input>
+      --\<gtr\>
+    <|input>
+      \;
+    </input>
   </session>
 
-  <section|Syntax highlighting>
+  <strong|<with|color|red|Note.>> Most of the Scilab data types are handled.
+  Anyway, printing some ot them raise an issue due to the simplisticity of
+  <name|Scilab> read-eval-print loop (see, e.g. the <scilab|mlist> case: the
+  variable name is currently impossible to know).
+
+  <strong|<with|color|red|Note.>> Due to the simplisticity of <name|Scilab>
+  read-eval-print loop, multiline command may fail (at least,
+  <scilab|function> declaration and entries with comments or continuation
+  mark (<scilab|..>)).
+
+  <strong|<with|color|red|ToDo.>> See why sparse matrix are not properly
+  printed.
+
+  <subsection|Syntax highlighting>
 
   Here follows a sample block of code, which was started using
-  <menu|Insert|Program|Block of code|Scilab>.
+  <menu|Insert|Program|Block of code|Scilab>. Inserting <em|inline code> is
+  also possible, e.g. to speak about ``<scilab|f(x,y+1)>''.
 
   <\scilab-code>
     g= 9.81 // the gravity
@@ -149,15 +338,16 @@
 
   <subsection|Plot inserting>
 
+  The function <scilab|plotout()> allows you to insert the current figure
+  inside the <TeXmacs> session.
+
   <\session|scilab|default>
     <\unfolded-io>
       --\<gtr\>
     <|unfolded-io>
-      x= -6.28:0.1:6.28; y= sin(x);
+      x= -6.28:0.1:6.28; y= sin(x); plot (x, y);
 
-      plot (x, y);
-
-      // let open the plot window
+      // Note: let open the plot window
     <|unfolded-io>
       \ 
     </unfolded-io>
@@ -173,23 +363,639 @@
 
   <subsection|Menu populating features>
 
-  To be finished.
+  <strong|<with|color|red|To be finished.>>
 
   <subsection|Completion>
 
-  To be finished.
+  <strong|<with|color|red|To be finished.>> The ``completion listing'' works
+  but is not catched by <TeXmacs> when it is sent, because the
+  read-eval-print loop of Scilab has not been designed for this purpose and
+  breaks the protocol. Current situation:
+
+  <\session|scilab|default>
+    <\unfolded-io>
+      --\<gtr\>
+    <|unfolded-io>
+      scilab_complete ('get_', 0)
+    <|unfolded-io>
+      <tuple|get_|get_file_path|get_function_path|get_profile|get_figure_handle|get_param|get_scicos_version>
+    </unfolded-io>
+  </session>
+
+  We need a hack to fix this issue.
 
   <subsection|Verbatim import>
 
-  See e.g. <hlink|<verbatim|scilab-code-demo.sce>|scilab-code-demo.sce>.
+  <TeXmacs> allows you to edit a <name|Scilab> source in verbatim mode. See
+  e.g. <hlink|<verbatim|scilab-code-demo.sce>|scilab-code-demo.sce>.
 
   <subsection|Demo launching>
 
-  To be finished.
+  A <name|Scilab> demo can be launched via <scilab|demo_run ()>. The
+  <scilab|mode ()> function is thus redefined in order to run the demo in one
+  single step.
+
+  <\session|scilab|default>
+    <\folded-io>
+      --\<gtr\>
+    <|folded-io>
+      demo_run (SCI+'modules/polynomials/demos/intro/poly.intro.dem.sce')
+    <|folded-io>
+      \ 
+
+      --\<gtr\>// Scilab ( http://www.scilab.org/ ) - This file is part of
+      Scilab
+
+      \ 
+
+      --\<gtr\>// Copyright (C) 2008 - INRIA - Michael Baudin
+
+      \ 
+
+      --\<gtr\>// Copyright (C) 2010 - DIGITEO - Allan CORNET
+
+      \ 
+
+      --\<gtr\>//
+
+      \ 
+
+      --\<gtr\>// This file is released under the 3-clause BSD license. See
+      COPYING-BSD.
+
+      \ 
+
+      \ 
+
+      --\<gtr\>m = mode();
+
+      \ 
+
+      --\<gtr\>mode(7);
+
+      \ 
+
+      \ 
+
+      --\<gtr\>// This is a small introduction to the polynomials objects in\ 
+
+      \ 
+
+      --\<gtr\>// Scilab.
+
+      \ 
+
+      --\<gtr\>// 1. Define the polynomial
+
+      \ 
+
+      --\<gtr\>// There are several ways to define a polynomial in Scilab.
+
+      \ 
+
+      --\<gtr\>// The first way is to define a variable and then define the\ 
+
+      \ 
+
+      --\<gtr\>// "natural" mathematical definition.
+
+      \ 
+
+      --\<gtr\>// Define x as a variable, that is, a polynomial of degree 0
+
+      \ 
+
+      --\<gtr\>x=poly(0,'x')
+
+      \ x \ =
+
+      \ 
+
+      <with|mode|math|x>
+
+      \ 
+
+      --\<gtr\>// Define p as a polynomial of variable x
+
+      \ 
+
+      --\<gtr\>p1=-6+11*x-6*x^2+x^3
+
+      \ p1 \ =
+
+      \ 
+
+      <with|mode|math|-6+11*x-6*x<rsup|2>+x<rsup|3>>
+
+      \ 
+
+      --\<gtr\>// The second way is to define the coefficients of the
+      polynomial
+
+      \ 
+
+      --\<gtr\>// as a vector.
+
+      \ 
+
+      --\<gtr\>mycoeff=[-6 11 -6 1]
+
+      \ mycoeff \ =
+
+      \ 
+
+      <with|mode|math|<matrix|<tformat|<table|<row|<cell|-6>|<cell|11>|<cell|-6>|<cell|1>>>>>>
+
+      \ 
+
+      --\<gtr\>p2=poly(mycoeff,"x","coeff")
+
+      \ p2 \ =
+
+      \ 
+
+      <with|mode|math|-6+11*x-6*x<rsup|2>+x<rsup|3>>
+
+      \ 
+
+      --\<gtr\>// The third way is to define the polynomials by its roots.
+
+      \ 
+
+      --\<gtr\>myroots=[1 2 3]
+
+      \ myroots \ =
+
+      \ 
+
+      <with|mode|math|<matrix|<tformat|<table|<row|<cell|1>|<cell|2>|<cell|3>>>>>>
+
+      \ 
+
+      --\<gtr\>p3=poly(myroots,"x","roots")
+
+      \ p3 \ =
+
+      \ 
+
+      <with|mode|math|-6+11*x-6*x<rsup|2>+x<rsup|3>>
+
+      \ 
+
+      --\<gtr\>// The 4th way is to define the polynomial as the
+      characteristic\ 
+
+      \ 
+
+      --\<gtr\>// polynomial of a given matrix.
+
+      \ 
+
+      --\<gtr\>// In the following case, we are giving the companion matrix
+      of our\ 
+
+      \ 
+
+      --\<gtr\>// favorite polynomial.
+
+      \ 
+
+      --\<gtr\>mymatrix=[6 -11 6;1 0 0;0 1 0]
+
+      \ mymatrix \ =
+
+      \ 
+
+      <with|mode|math|<matrix|<tformat|<table|<row|<cell|6>|<cell|-11>|<cell|6>>|<row|<cell|1>|<cell|0>|<cell|0>>|<row|<cell|0>|<cell|1>|<cell|0>>>>>>
+
+      \ 
+
+      --\<gtr\>p4=poly(mymatrix,"x")
+
+      \ p4 \ =
+
+      \ 
+
+      <with|mode|math|-6+11*x-6*x<rsup|2>+x<rsup|3>>
+
+      \ 
+
+      --\<gtr\>// 2. Algebraic manipulations
+
+      \ 
+
+      --\<gtr\>// We can can process simple algebraic computations\ 
+
+      \ 
+
+      --\<gtr\>// with the polynomials, considered as basic objects.
+
+      \ 
+
+      --\<gtr\>p5 = p1+p2
+
+      \ p5 \ =
+
+      \ 
+
+      <with|mode|math|-12+22*x-12*x<rsup|2>+2*x<rsup|3>>
+
+      \ 
+
+      --\<gtr\>p6 = p1-p2
+
+      \ p6 \ =
+
+      \ 
+
+      <with|mode|math|0>
+
+      \ 
+
+      --\<gtr\>p7 = p1*p2
+
+      \ p7 \ =
+
+      \ 
+
+      <with|mode|math|36-132*x+193*x<rsup|2>-144*x<rsup|3>+58*x<rsup|4>-12*x<rsup|5>+x<rsup|6>>
+
+      \ 
+
+      --\<gtr\>p8 = p3-p1*p4
+
+      \ p8 \ =
+
+      \ 
+
+      <with|mode|math|-42+143*x-199*x<rsup|2>+145*x<rsup|3>-58*x<rsup|4>+12*x<rsup|5>-x<rsup|6>>
+
+      \ 
+
+      --\<gtr\>// We can test the equality of two polynomials
+
+      \ 
+
+      --\<gtr\>are12equal = (p1==p2)
+
+      \ are12equal \ =
+
+      \ 
+
+      <with|mode|math|T>
+
+      \ 
+
+      --\<gtr\>are12diff = (p1\<less\>\<gtr\>p2)
+
+      \ are12diff \ =
+
+      \ 
+
+      <with|mode|math|F>
+
+      \ 
+
+      \ 
+
+      --\<gtr\>// 3. Polynomial analysis
+
+      \ 
+
+      --\<gtr\>// Scilab provides several functions to inquire a specific\ 
+
+      \ 
+
+      --\<gtr\>// polynomial.
+
+      \ 
+
+      --\<gtr\>// The "coeff" function returns a vector containing the\ 
+
+      \ 
+
+      --\<gtr\>// coefficients of a given polynomial.
+
+      \ 
+
+      --\<gtr\>coeff1=coeff(p1)
+
+      \ coeff1 \ =
+
+      \ 
+
+      <with|mode|math|<matrix|<tformat|<table|<row|<cell|-6>|<cell|11>|<cell|-6>|<cell|1>>>>>>
+
+      \ 
+
+      --\<gtr\>// One can compute the derivative of the polynomial with\ 
+
+      \ 
+
+      --\<gtr\>// the "derivat" function, which returns the derivative\ 
+
+      \ 
+
+      --\<gtr\>// of the given polynomial or rational polynomial.
+
+      \ 
+
+      --\<gtr\>p10=derivat(p1)
+
+      \ p10 \ =
+
+      \ 
+
+      <with|mode|math|11-12*x+3*x<rsup|2>>
+
+      \ 
+
+      --\<gtr\>// One can compute numerically the roots of one given
+      polynomial with the\ 
+
+      \ 
+
+      --\<gtr\>// "roots" function, which returns the vectors of roots.
+
+      \ 
+
+      --\<gtr\>theroots=roots(p1)
+
+      \ theroots \ =
+
+      \ 
+
+      <with|mode|math|<matrix|<tformat|<table|<row|<cell|3>>|<row|<cell|2>>|<row|<cell|1>>>>>>
+
+      \ 
+
+      --\<gtr\>// The companion matrix is so that its characteristic
+      polynomial
+
+      \ 
+
+      --\<gtr\>// is p.
+
+      \ 
+
+      --\<gtr\>comp1=companion(p1)
+
+      \ comp1 \ =
+
+      \ 
+
+      <with|mode|math|<matrix|<tformat|<table|<row|<cell|6>|<cell|-11>|<cell|6>>|<row|<cell|1>|<cell|0>|<cell|0>>|<row|<cell|0>|<cell|1>|<cell|0>>>>>>
+
+      \ 
+
+      --\<gtr\>// One can check that the eigenvalues of the companion matrix
+      of p1
+
+      \ 
+
+      --\<gtr\>// are the roots of p1.
+
+      \ 
+
+      --\<gtr\>roots1=spec(comp1)
+
+      \ roots1 \ =
+
+      \ 
+
+      <with|mode|math|<matrix|<tformat|<table|<row|<cell|3>>|<row|<cell|2>>|<row|<cell|1>>>>>>
+
+      \ 
+
+      --\<gtr\>// One can factor a given polynomial with the "factor"
+      function.
+
+      \ 
+
+      --\<gtr\>// Here the p1 polynomial can be written
+      p1=g*(x-1)*(x-2)*(x-3)
+
+      \ 
+
+      --\<gtr\>// with "g" the gain.
+
+      \ 
+
+      --\<gtr\>[lnum,g]=factors(p1)
+
+      \ g \ =
+
+      \ 
+
+      <with|mode|math|1>
+
+      \ lnum \ =
+
+      \ 
+
+      <\with|mode|math>
+        <text|list with entries:>
+
+        <block|<tformat|<table|<row|<cell|<varname><rsub|1>>|<cell|-3+x>>|<row|<cell|<varname><rsub|2>>|<cell|-2+x>>|<row|<cell|<varname><rsub|3>>|<cell|-1+x>>>>>
+      </with>
+
+      \ 
+
+      \ 
+
+      --\<gtr\>// 4. Rational polynomial
+
+      \ 
+
+      --\<gtr\>// Rational polynomials can be defined as well.
+
+      \ 
+
+      --\<gtr\>p9=(1+2*x+3*x^2)/(4+5*x+6*x^2)
+
+      \ p9 \ =
+
+      \ 
+
+      <with|mode|math|<frac|1+2*x+3*x<rsup|2>|4+5*x+6*x<rsup|2>>>
+
+      \ 
+
+      --\<gtr\>// The derivative can be computed with "derivat", as\ 
+
+      \ 
+
+      --\<gtr\>// as regular polynomial.
+
+      \ 
+
+      --\<gtr\>p11=derivat(p9)
+
+      \ p11 \ =
+
+      \ 
+
+      <with|mode|math|<frac|3+12*x+3*x<rsup|2>|16+40*x+73*x<rsup|2>+60*x<rsup|3>+36*x<rsup|4>>>
+
+      \ 
+
+      --\<gtr\>// Notice that polynomials and rational polynomials do\ 
+
+      \ 
+
+      --\<gtr\>// not have the same type.
+
+      \ 
+
+      --\<gtr\>typeof(p1)
+
+      \ ans \ =
+
+      \ 
+
+      <with|mode|math|<text|polynomial>>
+
+      \ 
+
+      --\<gtr\>typeof(p9)
+
+      \ ans \ =
+
+      \ 
+
+      <with|mode|math|<text|rational>>
+
+      \ 
+
+      --\<gtr\>// The numerator and denominator polynomials of the rational
+      polynomial
+
+      \ 
+
+      --\<gtr\>// can be extracted with the "numer" and "denom" functions.
+
+      \ 
+
+      --\<gtr\>numer(p9)
+
+      \ ans \ =
+
+      \ 
+
+      <with|mode|math|1+2*x+3*x<rsup|2>>
+
+      \ 
+
+      --\<gtr\>denom(p9)
+
+      \ ans \ =
+
+      \ 
+
+      <with|mode|math|4+5*x+6*x<rsup|2>>
+
+      \ 
+
+      --\<gtr\>// Rational polynomials can be simplified with the "simp"
+      function,
+
+      \ 
+
+      --\<gtr\>// which returns the numerator and denominator of the given
+      couple
+
+      \ 
+
+      --\<gtr\>// of polynomials.
+
+      \ 
+
+      --\<gtr\>[n,d]=simp((x+1)*(x+2),(x+1)*(x-2))
+
+      \ d \ =
+
+      \ 
+
+      <with|mode|math|-2+x>
+
+      \ n \ =
+
+      \ 
+
+      <with|mode|math|2+x>
+
+      \ 
+
+      \ 
+
+      \ 
+
+      --\<gtr\>mode(m);
+
+      \ 
+
+      \ 
+
+      --\<gtr\>// clear variables
+
+      \ 
+
+      \ 
+
+      --\<gtr\>clear \ \ \ \ \ \ n; clear \ \ \ \ \ \ \ \ d; clear
+      \ \ \ \ denom; clear numer;
+
+      \ 
+
+      --\<gtr\>clear \ typeof; clear \ \ \ \ \ \ p11; clear \ \ \ \ \ \ \ p9;
+      clear %p_r_p;\ 
+
+      \ 
+
+      --\<gtr\>clear \ \ \ lnum; clear \ \ \ \ \ \ \ \ g; clear \ \ factors;
+      clear roots1;
+
+      \ 
+
+      --\<gtr\>clear \ \ comp1; clear companion; clear \ theroots; clear p10;
+
+      \ 
+
+      --\<gtr\>clear derivat; clear \ \ \ coeff1; clear are12diff; clear
+      are12equal;
+
+      \ 
+
+      --\<gtr\>clear \ \ \ \ \ p8; clear \ \ \ \ \ \ \ p7; clear
+      \ \ \ \ \ \ \ p6; clear p5;
+
+      \ 
+
+      --\<gtr\>clear \ \ \ \ \ p4; clear \ mymatrix; clear \ \ \ \ \ \ \ p3;
+      clear myroots;
+
+      \ 
+
+      --\<gtr\>clear \ \ \ \ \ p2; clear \ \ mycoeff; clear \ \ \ \ \ \ \ p1;
+      clear x;
+
+      \ 
+
+      --\<gtr\>clear \ \ \ \ \ \ m;
+
+      \ 
+
+      \ 
+    </folded-io>
+  </session>
+
+  <strong|<with|color|red|To be finished.> (listing available demos works,
+  but menu population has to be rewrote)> The <name|Scilab> menu lists the
+  available <name|Scilab> demo. See <menu|Scilab|Launch demo>.
 
   <subsection|Help browsing>
 
-  To be finished.
+  To be done.
 
   <tmdoc-copyright|2013|François Poulain, Joris van der Hoeven. Examples
   inspired from Scilab documentation.>
