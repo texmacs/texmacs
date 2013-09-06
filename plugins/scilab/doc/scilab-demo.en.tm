@@ -12,9 +12,6 @@
   Here follows some sample sessions, which was started using
   <menu|Insert|Session|Scilab>.
 
-  <strong|<with|color|red|ToDo.>> Put the big session in a demo file. Leave
-  only a minimalistic example out the demo.
-
   <\session|scilab|default>
     <\output>
       \ \ \ \ \ \ \ \ ___________________________________________
@@ -41,74 +38,8 @@
     <\unfolded-io>
       --\<gtr\>
     <|unfolded-io>
-      (1 - 2*%i)^4
-    <|unfolded-io>
-      \ ans \ =
-
-      \ 
-
-      <with|mode|math|-7+24*i>
-
-      \ 
-    </unfolded-io>
-
-    <\unfolded-io>
-      --\<gtr\>
-    <|unfolded-io>
-      rand(3,3) \<gtr\> 0.5
-    <|unfolded-io>
-      \ ans \ =
-
-      \ 
-
-      <with|mode|math|<matrix|<tformat|<table|<row|<cell|F>|<cell|F>|<cell|T>>|<row|<cell|T>|<cell|T>|<cell|T>>|<row|<cell|F>|<cell|T>|<cell|T>>>>>>
-
-      \ 
-    </unfolded-io>
-
-    <\unfolded-io>
-      --\<gtr\>
-    <|unfolded-io>
-      sparse (rand(3,3) \<gtr\> 0.5)
-    <|unfolded-io>
-      \ ans \ =
-
-      \ 
-
-      ( \ \ \ 3, \ \ \ 3) sparse matrix
-
-      \ 
-
-      ( \ \ \ 1, \ \ \ 2) \ \ \ T\ 
-
-      ( \ \ \ 2, \ \ \ 1) \ \ \ T\ 
-
-      ( \ \ \ 3, \ \ \ 1) \ \ \ T\ 
-
-      ( \ \ \ 3, \ \ \ 2) \ \ \ T\ 
-
-      \ 
-    </unfolded-io>
-
-    <\unfolded-io>
-      --\<gtr\>
-    <|unfolded-io>
-      tmout (sparse (rand(3,3) \<gtr\> 0.5))
-    <|unfolded-io>
-      <\with|mode|math>
-        <text|sparse >3\<times\>3<text| matrix: >
-
-        <tabular|<tformat|<table|<row|<cell|<varname><rsub|1,1>>|<cell|=>|<cell|T>>|<row|<cell|<varname><rsub|1,2>>|<cell|=>|<cell|T>>|<row|<cell|<varname><rsub|2,1>>|<cell|=>|<cell|T>>|<row|<cell|<varname><rsub|3,3>>|<cell|=>|<cell|T>>>>>
-      </with>
-
-      \ 
-    </unfolded-io>
-
-    <\unfolded-io>
-      --\<gtr\>
-    <|unfolded-io>
       <\code>
-        A= [0,1;0,0]
+        A= [0,1;0,0], B= [1;1]; C= [1,1];
       </code>
     <|unfolded-io>
       \ A \ =
@@ -117,14 +48,6 @@
 
       <with|mode|math|<matrix|<tformat|<table|<row|<cell|0>|<cell|1>>|<row|<cell|0>|<cell|0>>>>>>
 
-      \ 
-    </unfolded-io>
-
-    <\unfolded-io>
-      --\<gtr\>
-    <|unfolded-io>
-      B= [1;1]; C= [1,1];
-    <|unfolded-io>
       \ 
     </unfolded-io>
 
@@ -148,11 +71,159 @@
       \ 
     </unfolded-io>
 
-    <\unfolded-io>
+    <\folded-io>
       --\<gtr\>
-    <|unfolded-io>
-      s1= ss2tf (S1)
-    <|unfolded-io>
+    <|folded-io>
+      demo_run (texmacs_path + 'plugins/scilab/bin/scilab-demo.sce')
+    <|folded-io>
+      \ 
+
+      --\<gtr\>//*****************************************************************************
+
+      \ 
+
+      --\<gtr\>// MODULE \ \ \ \ : scilab-demo.sce
+
+      \ 
+
+      --\<gtr\>// DESCRIPTION: Show a demo of some Scilab plugin features.
+
+      \ 
+
+      --\<gtr\>// COPYRIGHT \ : (C) 2013 François Poulain, Joris van der
+      Hoeven
+
+      \ 
+
+      --\<gtr\>//*****************************************************************************
+
+      \ 
+
+      --\<gtr\>// This software falls under the GNU general public license
+      version 3 or later.
+
+      \ 
+
+      --\<gtr\>// It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see
+      the file LICENSE
+
+      \ 
+
+      --\<gtr\>// in the root directory or
+      \<less\>http://www.gnu.org/licenses/gpl-3.0.html\<gtr\>.
+
+      \ 
+
+      --\<gtr\>//*****************************************************************************
+
+      \ 
+
+      \ 
+
+      --\<gtr\>// print complex
+
+      \ 
+
+      --\<gtr\>(1 - 2*%i)^4
+
+      \ ans \ =
+
+      \ 
+
+      <with|mode|math|-7+24*i>
+
+      \ 
+
+      \ 
+
+      --\<gtr\>// print boolean matrix
+
+      \ 
+
+      --\<gtr\>rand(3,3) \<gtr\> 0.5
+
+      \ ans \ =
+
+      \ 
+
+      <with|mode|math|<matrix|<tformat|<table|<row|<cell|T>|<cell|T>|<cell|T>>|<row|<cell|T>|<cell|F>|<cell|F>>|<row|<cell|F>|<cell|T>|<cell|T>>>>>>
+
+      \ 
+
+      \ 
+
+      --\<gtr\>// print sparse matrix
+
+      \ 
+
+      --\<gtr\>sparse (rand(3,3) \<gtr\> 0.5)
+
+      \ ans \ =
+
+      \ 
+
+      ( \ \ \ 3, \ \ \ 3) sparse matrix
+
+      \ 
+
+      ( \ \ \ 1, \ \ \ 1) \ \ \ T\ 
+
+      ( \ \ \ 1, \ \ \ 2) \ \ \ T\ 
+
+      ( \ \ \ 2, \ \ \ 1) \ \ \ T\ 
+
+      ( \ \ \ 2, \ \ \ 3) \ \ \ T\ 
+
+      ( \ \ \ 3, \ \ \ 1) \ \ \ T\ 
+
+      ( \ \ \ 3, \ \ \ 2) \ \ \ T\ 
+
+      \ 
+
+      \ 
+
+      --\<gtr\>// print matrix
+
+      \ 
+
+      --\<gtr\>A= [0,1;0,0], B= [1;1]; C= [1,1];
+
+      \ A \ =
+
+      \ 
+
+      <with|mode|math|<matrix|<tformat|<table|<row|<cell|0>|<cell|1>>|<row|<cell|0>|<cell|0>>>>>>
+
+      \ 
+
+      \ 
+
+      --\<gtr\>// print linear system
+
+      \ 
+
+      --\<gtr\>S1= syslin('c',A,B,C) \ 
+
+      \ S1 \ =
+
+      \ 
+
+      <with|mode|math|<choice|<tformat|<cwith|1|-1|1|1|cell-halign|r>|<table|<row|<cell|<wide|X|\<dot\>>
+      <around*|(|t|)>>|<cell|=>|<cell|<matrix|<tformat|<table|<row|<cell|0>|<cell|1>>|<row|<cell|0>|<cell|0>>>>>*X
+      <around*|(|t|)>+<matrix|<tformat|<table|<row|<cell|1>>|<row|<cell|1>>>>>*U
+      <around*|(|t|)>>>|<row|<cell|Y <around*|(|t|)>>|<cell|=>|<cell|<matrix|<tformat|<table|<row|<cell|1>|<cell|1>>>>>*X
+      <around*|(|t|)>>>>>>>
+
+      \ 
+
+      \ 
+
+      --\<gtr\>// print rational
+
+      \ 
+
+      --\<gtr\>s1= ss2tf (S1)
+
       \ s1 \ =
 
       \ 
@@ -160,13 +231,35 @@
       <with|mode|math|<frac|1+2*s|s<rsup|2>>>
 
       \ 
-    </unfolded-io>
 
-    <\unfolded-io>
-      --\<gtr\>
-    <|unfolded-io>
-      "degré" //string
-    <|unfolded-io>
+      --\<gtr\>h= s1/poly(1:4,'s','c')
+
+      \ h \ =
+
+      \ 
+
+      <with|mode|math|<frac|1+2*s|s<rsup|2>+2*s<rsup|3>+3*s<rsup|4>+4*s<rsup|5>>>
+
+      \ 
+
+      --\<gtr\>f = (1 + %s) / (1 - %s)
+
+      \ f \ =
+
+      \ 
+
+      <with|mode|math|<frac|1+s|1-s>>
+
+      \ 
+
+      \ 
+
+      --\<gtr\>// print (non Ascii) string
+
+      \ 
+
+      --\<gtr\>"degré"
+
       \ ans \ =
 
       \ 
@@ -174,13 +267,9 @@
       <with|mode|math|<text|<extern|scilab-verbatim-\<gtr\>tree|degrÃ©>>>
 
       \ 
-    </unfolded-io>
 
-    <\unfolded-io>
-      --\<gtr\>
-    <|unfolded-io>
-      M= ["une" "matrice"; "de" "caractère"]'
-    <|unfolded-io>
+      --\<gtr\>M= ["une" "matrice"; "de" "caractère"]'
+
       \ M \ =
 
       \ 
@@ -188,13 +277,9 @@
       <with|mode|math|<matrix|<tformat|<table|<row|<cell|<text|une>>|<cell|<text|de>>>|<row|<cell|<text|matrice>>|<cell|<text|<extern|scilab-verbatim-\<gtr\>tree|caractÃ¨re>>>>>>>>
 
       \ 
-    </unfolded-io>
 
-    <\unfolded-io>
-      --\<gtr\>
-    <|unfolded-io>
-      strcat(M, " ")
-    <|unfolded-io>
+      --\<gtr\>strcat(M, " ")
+
       \ ans \ =
 
       \ 
@@ -203,53 +288,18 @@
       de caractÃ¨re>>>
 
       \ 
-    </unfolded-io>
-
-    <\unfolded-io>
-      --\<gtr\>
-    <|unfolded-io>
-      h= s1/poly(1:4,'s','c')
-    <|unfolded-io>
-      \ h \ =
 
       \ 
 
-      <with|mode|math|<frac|1+2*s|s<rsup|2>+2*s<rsup|3>+3*s<rsup|4>+4*s<rsup|5>>>
-
-      \ 
-    </unfolded-io>
-
-    <\unfolded-io>
-      --\<gtr\>
-    <|unfolded-io>
-      date_st= struct('day', 05, 'month' ,'SEP', 'year', 2013)
-    <|unfolded-io>
-      \ date_st \ =
+      --\<gtr\>// print mlist
 
       \ 
 
-      <\with|mode|math>
-        <text|struct with fields:>
+      --\<gtr\>M=mlist(['V','name','value'],['a','b','c'],[1 2 3])
 
-        <block|<tformat|<table|<row|<cell|<text|day>:>|<cell|5>>|<row|<cell|<text|month>:>|<cell|<text|SEP>>>|<row|<cell|<text|year>:>|<cell|2013>>>>>
-      </with>
-
-      \ 
-    </unfolded-io>
-
-    <\unfolded-io>
-      --\<gtr\>
-    <|unfolded-io>
-      M=mlist(['V','name','value'],['a','b','c'],[1 2 3])
-    <|unfolded-io>
       \ M \ =
 
       \ 
-
-      \ 
-
-      <with|mode|math|<text|NOTE: you can customize the display of ''V'' type
-      by defining a function str=V2tmstree(arg)>>
 
       <\with|mode|math>
         <text|mlist of type V with fields:>
@@ -258,33 +308,27 @@
       </with>
 
       \ 
-    </unfolded-io>
 
-    <\input>
-      --\<gtr\>
-    <|input>
-      function s= V2tmstree (arg)
-    </input>
-
-    <\input>
-      --\<gtr\>
-    <|input>
-      s= tmstree (arg.value) // generate stree
-    </input>
-
-    <\unfolded-io>
-      --\<gtr\>
-    <|unfolded-io>
-      endfunction
-    <|unfolded-io>
       \ 
-    </unfolded-io>
 
-    <\unfolded-io>
-      --\<gtr\>
-    <|unfolded-io>
-      M
-    <|unfolded-io>
+      --\<gtr\>// overload V-list printing
+
+      \ 
+
+      --\<gtr\>function s= V2tmstree (arg)
+
+      --\<gtr\> \ s= tmstree (arg.value) // generate stree
+
+      --\<gtr\>endfunction
+
+      \ 
+
+      --\<gtr\>// now, printing M print M.value
+
+      \ 
+
+      --\<gtr\>M
+
       \ M \ =
 
       \ 
@@ -292,27 +336,235 @@
       <with|mode|math|<matrix|<tformat|<table|<row|<cell|1>|<cell|2>|<cell|3>>>>>>
 
       \ 
-    </unfolded-io>
 
-    <\input>
-      --\<gtr\>
-    <|input>
-      \;
-    </input>
+      \ 
+
+      --\<gtr\>// print struct
+
+      \ 
+
+      --\<gtr\>s= struct ('month', 05, 'day', 31, 'year', 2013)
+
+      \ s \ =
+
+      \ 
+
+      <\with|mode|math>
+        <text|struct with fields:>
+
+        <block|<tformat|<table|<row|<cell|<text|month>:>|<cell|5>>|<row|<cell|<text|day>:>|<cell|31>>|<row|<cell|<text|year>:>|<cell|2013>>>>>
+      </with>
+
+      \ 
+
+      --\<gtr\>s.misc=s
+
+      \ s \ =
+
+      \ 
+
+      <\with|mode|math>
+        <text|struct with fields:>
+
+        <block|<tformat|<table|<row|<cell|<text|month>:>|<cell|5>>|<row|<cell|<text|day>:>|<cell|31>>|<row|<cell|<text|year>:>|<cell|2013>>|<row|<cell|<text|misc>:>|<\cell>
+          <text|struct with fields:>
+
+          <block|<tformat|<table|<row|<cell|<text|month>:>|<cell|5>>|<row|<cell|<text|day>:>|<cell|31>>|<row|<cell|<text|year>:>|<cell|2013>>>>>
+        </cell>>>>>
+      </with>
+
+      \ 
+
+      --\<gtr\>s.misc=s
+
+      \ s \ =
+
+      \ 
+
+      <\with|mode|math>
+        <text|struct with fields:>
+
+        <block|<tformat|<table|<row|<cell|<text|month>:>|<cell|5>>|<row|<cell|<text|day>:>|<cell|31>>|<row|<cell|<text|year>:>|<cell|2013>>|<row|<cell|<text|misc>:>|<\cell>
+          <text|struct with fields:>
+
+          <block|<tformat|<table|<row|<cell|<text|month>:>|<cell|5>>|<row|<cell|<text|day>:>|<cell|31>>|<row|<cell|<text|year>:>|<cell|2013>>|<row|<cell|<text|misc>:>|<\cell>
+            <text|struct with fields:>
+
+            <block|<tformat|<table|<row|<cell|<text|month>:>|<cell|5>>|<row|<cell|<text|day>:>|<cell|31>>|<row|<cell|<text|year>:>|<cell|2013>>>>>
+          </cell>>>>>
+        </cell>>>>>
+      </with>
+
+      \ 
+
+      \ 
+
+      --\<gtr\>// print struct matrix
+
+      \ 
+
+      --\<gtr\>S= struct ('month', 05, 'day', 31, 'year', 2013)
+
+      \ S \ =
+
+      \ 
+
+      <\with|mode|math>
+        <text|struct with fields:>
+
+        <block|<tformat|<table|<row|<cell|<text|month>:>|<cell|5>>|<row|<cell|<text|day>:>|<cell|31>>|<row|<cell|<text|year>:>|<cell|2013>>>>>
+      </with>
+
+      \ 
+
+      --\<gtr\>S(2)= S
+
+      \ S \ =
+
+      \ 
+
+      <\with|mode|math>
+        2\<times\>1<text| struct matrix:>
+
+        <matrix|<tformat|<table|<row|<cell|<block|<tformat|<table|<row|<cell|<text|month>:>|<cell|5>>|<row|<cell|<text|day>:>|<cell|31>>|<row|<cell|<text|year>:>|<cell|2013>>>>>>>|<row|<cell|<block|<tformat|<table|<row|<cell|<text|month>:>|<cell|5>>|<row|<cell|<text|day>:>|<cell|31>>|<row|<cell|<text|year>:>|<cell|2013>>>>>>>>>>
+      </with>
+
+      \ 
+
+      --\<gtr\>S(:,2)= S
+
+      \ S \ =
+
+      \ 
+
+      <\with|mode|math>
+        2\<times\>2<text| struct matrix:>
+
+        <matrix|<tformat|<table|<row|<cell|<block|<tformat|<table|<row|<cell|<text|month>:>|<cell|5>>|<row|<cell|<text|day>:>|<cell|31>>|<row|<cell|<text|year>:>|<cell|2013>>>>>>|<cell|<block|<tformat|<table|<row|<cell|<text|month>:>|<cell|5>>|<row|<cell|<text|day>:>|<cell|31>>|<row|<cell|<text|year>:>|<cell|2013>>>>>>>|<row|<cell|<block|<tformat|<table|<row|<cell|<text|month>:>|<cell|5>>|<row|<cell|<text|day>:>|<cell|31>>|<row|<cell|<text|year>:>|<cell|2013>>>>>>|<cell|<block|<tformat|<table|<row|<cell|<text|month>:>|<cell|5>>|<row|<cell|<text|day>:>|<cell|31>>|<row|<cell|<text|year>:>|<cell|2013>>>>>>>>>>
+      </with>
+
+      \ 
+
+      \ 
+
+      --\<gtr\>S.month
+
+      \ ans \ =
+
+      \ 
+
+      <\with|mode|math>
+        <text|list with entries:>
+
+        <block|<tformat|<table|<row|<cell|<varname><rsub|1>>|<cell|5>>|<row|<cell|<varname><rsub|2>>|<cell|5>>|<row|<cell|<varname><rsub|3>>|<cell|5>>|<row|<cell|<varname><rsub|4>>|<cell|5>>>>>
+      </with>
+
+      \ 
+
+      \ 
+
+      --\<gtr\>// print cell
+
+      \ 
+
+      --\<gtr\>ce= cell ([2 2 2])
+
+      \ ce \ =
+
+      \ 
+
+      <\with|mode|math>
+        <text|cell array:>
+
+        <block|<tformat|<table|<row|<cell|<varname><rsub|:,:,1>>|<cell|=>|<cell|<matrix|<tformat|<table|<row|<cell|{}>|<cell|{}>>|<row|<cell|{}>|<cell|{}>>>>>>>|<row|<cell|<varname><rsub|:,:,2>>|<cell|=>|<cell|<matrix|<tformat|<table|<row|<cell|{}>|<cell|{}>>|<row|<cell|{}>|<cell|{}>>>>>>>>>>
+      </with>
+
+      \ 
+
+      --\<gtr\>ce(2,1).entries= 0
+
+      \ ce \ =
+
+      \ 
+
+      <\with|mode|math>
+        <text|cell array:>
+
+        <block|<tformat|<table|<row|<cell|<varname><rsub|:,:,1>>|<cell|=>|<cell|<matrix|<tformat|<table|<row|<cell|{}>|<cell|{}>>|<row|<cell|0>|<cell|{}>>>>>>>|<row|<cell|<varname><rsub|:,:,2>>|<cell|=>|<cell|<matrix|<tformat|<table|<row|<cell|{}>|<cell|{}>>|<row|<cell|{}>|<cell|{}>>>>>>>>>>
+      </with>
+
+      \ 
+
+      --\<gtr\>ce(1,2).entries= S1
+
+      \ ce \ =
+
+      \ 
+
+      <\with|mode|math>
+        <text|cell array:>
+
+        <block|<tformat|<table|<row|<cell|<varname><rsub|:,:,1>>|<cell|=>|<cell|<matrix|<tformat|<table|<row|<cell|{}>|<cell|<choice|<tformat|<cwith|1|-1|1|1|cell-halign|r>|<table|<row|<cell|<wide|X|\<dot\>>
+        <around*|(|t|)>>|<cell|=>|<cell|<matrix|<tformat|<table|<row|<cell|0>|<cell|1>>|<row|<cell|0>|<cell|0>>>>>*X
+        <around*|(|t|)>+<matrix|<tformat|<table|<row|<cell|1>>|<row|<cell|1>>>>>*U
+        <around*|(|t|)>>>|<row|<cell|Y <around*|(|t|)>>|<cell|=>|<cell|<matrix|<tformat|<table|<row|<cell|1>|<cell|1>>>>>*X
+        <around*|(|t|)>>>>>>>>|<row|<cell|0>|<cell|{}>>>>>>>|<row|<cell|<varname><rsub|:,:,2>>|<cell|=>|<cell|<matrix|<tformat|<table|<row|<cell|{}>|<cell|{}>>|<row|<cell|{}>|<cell|{}>>>>>>>>>>
+      </with>
+
+      \ 
+
+      --\<gtr\>ce(2,2,2).entries= s
+
+      \ ce \ =
+
+      \ 
+
+      <\with|mode|math>
+        <text|cell array:>
+
+        <block|<tformat|<table|<row|<cell|<varname><rsub|:,:,1>>|<cell|=>|<cell|<matrix|<tformat|<table|<row|<cell|{}>|<cell|<choice|<tformat|<cwith|1|-1|1|1|cell-halign|r>|<table|<row|<cell|<wide|X|\<dot\>>
+        <around*|(|t|)>>|<cell|=>|<cell|<matrix|<tformat|<table|<row|<cell|0>|<cell|1>>|<row|<cell|0>|<cell|0>>>>>*X
+        <around*|(|t|)>+<matrix|<tformat|<table|<row|<cell|1>>|<row|<cell|1>>>>>*U
+        <around*|(|t|)>>>|<row|<cell|Y <around*|(|t|)>>|<cell|=>|<cell|<matrix|<tformat|<table|<row|<cell|1>|<cell|1>>>>>*X
+        <around*|(|t|)>>>>>>>>|<row|<cell|0>|<cell|{}>>>>>>>|<row|<cell|<varname><rsub|:,:,2>>|<cell|=>|<cell|<matrix|<tformat|<table|<row|<cell|{}>|<cell|{}>>|<row|<cell|{}>|<\cell>
+          <text|struct with fields:>
+
+          <block|<tformat|<table|<row|<cell|<text|month>:>|<cell|5>>|<row|<cell|<text|day>:>|<cell|31>>|<row|<cell|<text|year>:>|<cell|2013>>|<row|<cell|<text|misc>:>|<\cell>
+            <text|struct with fields:>
+
+            <block|<tformat|<table|<row|<cell|<text|month>:>|<cell|5>>|<row|<cell|<text|day>:>|<cell|31>>|<row|<cell|<text|year>:>|<cell|2013>>|<row|<cell|<text|misc>:>|<\cell>
+              <text|struct with fields:>
+
+              <block|<tformat|<table|<row|<cell|<text|month>:>|<cell|5>>|<row|<cell|<text|day>:>|<cell|31>>|<row|<cell|<text|year>:>|<cell|2013>>>>>
+            </cell>>>>>
+          </cell>>>>>
+        </cell>>>>>>>>>>
+      </with>
+
+      \ 
+
+      \ 
+    </folded-io>
   </session>
 
   <strong|<with|color|red|Note.>> Most of the Scilab data types are handled.
   Anyway, printing some ot them raise an issue due to the simplisticity of
   <name|Scilab> read-eval-print loop (see, e.g. the <scilab|mlist> case: the
-  variable name is currently impossible to know).
+  variable name is currently impossible to know). Also, some types cannot be
+  printed since the printing method cannot be overloaded in scilab for this
+  type (see e.g. the <scilab|sparse matrix> case; Sparse matrixes can
+  nevertheless be printed, using <scilab|tmout>).
 
   <strong|<with|color|red|Note.>> Due to the simplisticity of <name|Scilab>
   read-eval-print loop, multiline command may fail (at least,
   <scilab|function> declaration and entries with comments or continuation
   mark (<scilab|..>)).
 
-  <strong|<with|color|red|ToDo.>> See why sparse matrix are not properly
-  printed.
+  <strong|<with|color|red|Note.>> There is some performances issues on big
+  datas. The <scilab|tmstree()> function could be improved i) by removing
+  local function definitions; ii) by limit repeted call of small functions
+  (avoiding code factorisation); and iii) via a different handling for
+  matrices.
 
   <subsection|Syntax highlighting>
 
@@ -387,7 +639,7 @@
   <subsection|Verbatim import>
 
   <TeXmacs> allows you to edit a <name|Scilab> source in verbatim mode. See
-  e.g. <hlink|<verbatim|scilab-code-demo.sce>|scilab-code-demo.sce>.
+  e.g. <hlink|<verbatim|scilab-demo.sce>|../bin/scilab-demo.sce>.
 
   <subsection|Demo launching>
 
