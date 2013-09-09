@@ -14,6 +14,7 @@ texmacs_path= getenv("TEXMACS_PATH");
 exec (fullfile (getenv("TEXMACS_PATH"), 'plugins/scilab/bin/tmstree.sci'), -1);
 exec (fullfile (getenv("TEXMACS_PATH"), 'plugins/scilab/bin/plotout.sci'), -1);
 exec (fullfile (getenv("TEXMACS_PATH"), 'plugins/scilab/bin/add_to_insert_menu.sci'), -1);
+exec (fullfile (getenv("TEXMACS_PATH"), 'plugins/scilab/bin/rm_from_insert_menu.sci'), -1);
 
 function tmsend (msg)
   DATA_BEGIN= ascii (2);
@@ -84,4 +85,21 @@ function scilab_complete (str, pos)
   tmsend (makeStreeNode ("tuple", [str;lst]'));
 endfunction
 
+// Populating insert Menu
+cmd= makeStreeNode ("scilab-clean-insert-menu");
+tmcmd (cmd);
+libs= [
+  "Scilab core", "corelib";..
+  "Elementary functions", "elementary_functionslib";..
+  "File I/O", "fileiolib";..
+  "Integers", "integerlib";..
+  "I/O", "iolib";..
+  "Linear Algebra", "linear_algebralib";..
+  "Polynomials", "polynomialslib";..
+  "Sparse", "sparselib";..
+  "String", "stringlib";..
+ ];
+for i= 1:size(libs,1) do
+  add_to_insert_menu (libs(i,1), libraryinfo (libs(i,2)));
+end
 banner

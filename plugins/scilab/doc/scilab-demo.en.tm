@@ -615,7 +615,40 @@
 
   <subsection|Menu populating features>
 
-  <strong|<with|color|red|To be finished.>>
+  The <name|Scilab> menu has an ``<menu|Insert>'' entry which can be
+  personalized. As an example, the session
+
+  <\session|scilab|default>
+    <\unfolded-io>
+      --\<gtr\>
+    <|unfolded-io>
+      cf= ["abort", "break", "case", "continue", "do", "for", "if", "pause",
+      "resume", "return", "select", "then", "while"];
+    <|unfolded-io>
+      \ 
+    </unfolded-io>
+
+    <\folded-io>
+      --\<gtr\>
+    <|folded-io>
+      add_to_insert_menu ("Control flow", cf);
+    <|folded-io>
+      \ 
+    </folded-io>
+  </session>
+
+  add to the <name|Scilab> menu the entry <menu|Insert|Control flow>. It can
+  be removed using
+
+  <\session|scilab|default>
+    <\folded-io>
+      --\<gtr\>
+    <|folded-io>
+      rm_from_insert_menu ("Control flow");
+    <|folded-io>
+      \ 
+    </folded-io>
+  </session>
 
   <subsection|Completion>
 

@@ -19,6 +19,9 @@
 ;; Several subroutines for the evaluation of Scilab expressions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (scilab-clean-insert-menu)
+  (tm-define (scilab-insert-menu) `((-> "Insert"))))
+
 (tm-define (scilab-add-to-insert-menu libname funcs)
   (:secure #t)
   (with menu `(,@(if (defined-menu? 'scilab-insert-menu)
@@ -42,8 +45,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind scilab-insert-menu
-  (-> "Insert"
-     ))
+  (-> "Insert"))
+
+(menu-bind scilab-demo-menu
+  (-> "Demo"))
+
+(menu-bind scilab-help-menu
+  (-> "Help"))
 
 (menu-bind scilab-menu
       (if (defined? 'scilab-demo-menu)
