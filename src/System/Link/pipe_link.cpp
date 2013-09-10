@@ -213,6 +213,7 @@ debug_io_string (string s) {
     unsigned char c= (unsigned char) s[i];
     if (c == DATA_BEGIN) r << "[BEGIN]";
     else if (c == DATA_END) r << "[END]";
+    else if (c == DATA_ABORT) r << "[ABORT]";
     else if (c == DATA_COMMAND) r << "[COMMAND]";
     else if (c == DATA_ESCAPE) r << "[ESCAPE]";
     else r << s[i];

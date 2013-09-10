@@ -43,6 +43,7 @@ texmacs_input_rep::texmacs_input_rep (string type2):
   mode (get_mode (format)),
   channel (type),
   stack (""),
+  ignore_verb (false),
   docs (tree (DOCUMENT, "")) { bof (); }
 
 texmacs_input::texmacs_input (string type):
@@ -112,10 +113,15 @@ texmacs_input_rep::put (char c) { // returns true when expecting input
       flush (true);
       status= STATUS_BEGIN;
     }
+    else if (c == DATA_ABORT) {
+      buf   = "";
+      ignore_verb= true;
+    }
     else if (c == DATA_END) {
       flush (true);
       end ();
       block_done= (stack == "");
+      ignore_verb= (ignore_verb && stack != "");
     }
     else buf << c;
     break;
@@ -223,7 +229,10 @@ texmacs_input_rep::flush (bool force) {
 void
 texmacs_input_rep::verbatim_flush (bool force) {
   if (force || ends (buf, "\n")) {
-    write (verbatim_to_tree (buf, false, "utf-8"));
+    if (!ignore_verb)
+      write (verbatim_to_tree (buf, false, "utf-8"));
+    else if (DEBUG_IO)
+      cout << "\nTeXmacs] ignore verb. (aborted input): "  << buf << LF;
     buf= "";
   }
 }
