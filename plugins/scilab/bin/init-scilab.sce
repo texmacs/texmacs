@@ -9,6 +9,8 @@
 // in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 //*****************************************************************************
 
+banner ()
+
 funcprot(0)
 texmacs_path= getenv("TEXMACS_PATH");
 exec (fullfile (getenv("TEXMACS_PATH"), 'plugins/scilab/bin/tmstree.sci'), -1);
@@ -102,4 +104,3 @@ libs= [
 for i= 1:size(libs,1) do
   add_to_insert_menu (libs(i,1), libraryinfo (libs(i,2)));
 end
-banner
