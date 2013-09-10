@@ -18,6 +18,12 @@ exec (fullfile (getenv("TEXMACS_PATH"), 'plugins/scilab/bin/plotout.sci'), -1);
 exec (fullfile (getenv("TEXMACS_PATH"), 'plugins/scilab/bin/add_to_insert_menu.sci'), -1);
 exec (fullfile (getenv("TEXMACS_PATH"), 'plugins/scilab/bin/rm_from_insert_menu.sci'), -1);
 
+// hack to make completion works
+function tmabort ()
+  DATA_ABORT= ascii (1);
+  mprintf (DATA_ABORT);
+endfunction
+
 function tmsend (msg)
   DATA_BEGIN= ascii (2);
   DATA_END= ascii (5);
@@ -84,6 +90,7 @@ function scilab_complete (str, pos)
     lst(i)= part (lst(i), (pos+1):length(lst(i)));
   end
   lst= strsubst (lst, '%', '%%');
+  tmabort ();
   tmsend (makeStreeNode ("tuple", [str;lst]'));
 endfunction
 

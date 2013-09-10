@@ -652,22 +652,7 @@
 
   <subsection|Completion>
 
-  <strong|<with|color|red|To be finished.>> The ``completion listing'' works
-  but is not catched by <TeXmacs> when it is sent, because the
-  read-eval-print loop of Scilab has not been designed for this purpose and
-  breaks the protocol. Current situation:
-
-  <\session|scilab|default>
-    <\unfolded-io>
-      --\<gtr\>
-    <|unfolded-io>
-      scilab_complete ('get_', 0)
-    <|unfolded-io>
-      <tuple|get_|get_file_path|get_function_path|get_profile|get_figure_handle|get_param|get_scicos_version>
-    </unfolded-io>
-  </session>
-
-  We need a hack to fix this issue.
+  <name|Scilab> object's names can be completed via <key|tab>.
 
   <subsection|Verbatim import>
 
