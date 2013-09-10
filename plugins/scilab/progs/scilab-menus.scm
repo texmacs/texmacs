@@ -72,8 +72,8 @@
 (menu-bind scilab-demo-menu
   (-> "Demo"))
 
-(menu-bind scilab-help-menu
-  (-> "Help"))
+;(menu-bind scilab-help-menu
+;  (-> "Help"))
 
 (menu-bind scilab-menu
       (if (defined? 'scilab-demo-menu)
