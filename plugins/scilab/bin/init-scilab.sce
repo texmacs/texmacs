@@ -17,6 +17,8 @@ exec (fullfile (getenv("TEXMACS_PATH"), 'plugins/scilab/bin/tmstree.sci'), -1);
 exec (fullfile (getenv("TEXMACS_PATH"), 'plugins/scilab/bin/plotout.sci'), -1);
 exec (fullfile (getenv("TEXMACS_PATH"), 'plugins/scilab/bin/add_to_insert_menu.sci'), -1);
 exec (fullfile (getenv("TEXMACS_PATH"), 'plugins/scilab/bin/rm_from_insert_menu.sci'), -1);
+exec (fullfile (getenv("TEXMACS_PATH"), 'plugins/scilab/bin/populates_demo_menu.sci'), -1);
+
 
 // hack to make completion works
 function tmabort ()
@@ -111,3 +113,6 @@ libs= [
 for i= 1:size(libs,1) do
   add_to_insert_menu (libs(i,1), libraryinfo (libs(i,2)));
 end
+
+// Populating demo Menu
+populates_demo_menu ()

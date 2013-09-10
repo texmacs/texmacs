@@ -40,6 +40,28 @@
 (define (defined-menu? s)
   (and (defined? s) (list>1? (cdar ((eval s))))))
 
+(tm-define (scilab-clean-demo-menu)
+  (tm-define (scilab-demo-menu) `((-> "Demo"))))
+
+(define (lists->menu t)
+  (let ((name (car t))
+        (tail (cdr t)))
+    (if (and (list-1? tail) (string? (car tail))) (set! tail (car tail)))
+    (cond
+      ((nstring? name) "")
+      ((string? tail) `(,name ,(lambda ()
+                                 (insert
+                                   (string-append "demo_run ('" tail "')")))))
+      ((list?   tail) `((-> ,name ,@(map lists->menu tail))))
+      (else ""))))
+
+(tm-define (scilab-add-to-demo-menu t)
+  (:secure #t)
+  (with t (lists->menu t)
+    (with menu `(,@(if (defined-menu? 'scilab-demo-menu)
+                       (caddar (scilab-demo-menu)) '()) ,t)
+    (tm-define (scilab-demo-menu) `((-> "Demo" ,menu))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Scilab menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -58,8 +80,6 @@
         (link scilab-demo-menu))
       (if (defined-menu? 'scilab-insert-menu)
         (link scilab-insert-menu))
-      (if (defined? 'scilab-variables-menu)
-        (link scilab-variables-menu))
       (if (defined? 'scilab-help-menu)
         (link scilab-help-menu)))
 
