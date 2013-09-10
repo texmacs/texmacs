@@ -637,8 +637,8 @@
     </folded-io>
   </session>
 
-  add to the <name|Scilab> menu the entry <menu|Insert|Control flow>. It can
-  be removed using
+  add to the <name|Scilab> menu the entry <menu|Scilab|Insert|Control flow>.
+  It can be removed using
 
   <\session|scilab|default>
     <\folded-io>
