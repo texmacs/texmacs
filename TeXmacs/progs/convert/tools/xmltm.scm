@@ -236,6 +236,16 @@
 	((char-whitespace? (first kdr)) kdr)
 	(else (cons #\space kdr))))
 
+(tm-define (htmltm-space-collapse env l)
+  ;; Collapses whitespaces in sxml node list @l. Correctly merges consecutive
+  ;; string nodes in @l.
+  (cond ((null? l) '())
+	((htmltm-preserve-space? env) (htmltm-space-preserve l))
+	(else (let ((l2 (list-fold-right htmltm-space-collapse/kons #f l)))
+		(if (string? (first l2))
+                    (cons (htmltm-collapse-spaces (car l2)) (cdr l2))
+		    l2)))))
+
 (tm-define (htmltm-space-mixed env l)
   ;; remove heading and trailing spaces, and collapses whitespaces in sxml node
   ;; list @l. Correctly merges consecutive string nodes in @l.
@@ -246,6 +256,18 @@
 		    (cons (htmltm-collapse-spaces (string-trim (car l2)))
 			  (cdr l2))
 		    l2)))))
+
+(define (htmltm-space-collapse/kons kar kdr)
+  (cond ((not kdr)			; kar is last node
+	 (list kar))
+	((string? kar)
+	 (if (string? (first kdr))
+	     (cons (string-append kar (car kdr)) (cdr kdr))
+	     (cons kar kdr)))
+	((string? (first kdr))
+	 (cons kar (cons (htmltm-collapse-spaces (car kdr)) (cdr kdr))))
+	(else
+	 (cons kar kdr))))
 
 (define (htmltm-space-mixed/kons kar kdr)
   (cond ((not kdr)			; kar is last node
@@ -314,6 +336,8 @@
   ;;           TODO: might fallback to 'mixed' if some text is present
   ;;         :mixed -- drop heading and trailing whitespaces, normalize and
   ;;           collapse internal whitespaces.
+  ;;         :collapse -- normalize and collapse whitespaces. Preserve heading
+  ;;           and trailing whitespaces.
   ;;         :pre -- drop newlines at ends and switch to preserved spaces
   ;;           mode.
   ;;   kind: either :block or :inline, how is the element rendered
@@ -351,6 +375,7 @@
   ;; descendence of various ancestors might not be consistent.
   (let ((clean (cond ((eq? model :empty) (lambda (env c) c))
 		     ((eq? model :element) htmltm-space-element)
+		     ((eq? model :collapse) htmltm-space-collapse)
 		     ((eq? model :mixed) htmltm-space-mixed)
 		     ((eq? model :pre) htmltm-space-preformatted)
 		     (else (error "Bad model: " model))))

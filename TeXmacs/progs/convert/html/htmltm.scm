@@ -433,7 +433,7 @@
   ;; Grouping
   (div  (handler :mixed :block  htmltm-pass))
   ;; TODO: convert 'align' attributes in div, p and headings
-  (span (handler :mixed :inline htmltm-wikipedia-span))
+  (span (handler :collapse :inline htmltm-wikipedia-span))
 
   ;; Headings
   (h1 (handler :mixed :block "chapter"))
@@ -445,24 +445,24 @@
 
   ;; Address and text direction
   (address (handler :mixed :block htmltm-pass))
-  (bdo (handler :mixed :inline htmltm-pass))
+  (bdo (handler :collapse :inline htmltm-pass))
 
   ;;; Structured text
   ;; Phrase elements
-  (em      (handler :mixed :inline "em"))
-  (strong  (handler :mixed :inline "strong"))
-  (cite    (handler :mixed :inline "cite*"))
-  (dfn     (handler :mixed :inline "dfn"))
-  (code    (handler :mixed :inline "code*"))
-  (samp    (handler :mixed :inline "samp"))
-  (kbd     (handler :mixed :inline "kbd"))
-  (var     (handler :mixed :inline "var"))
-  (abbr    (handler :mixed :inline "abbr"))
-  (acronym (handler :mixed :inline "acronym"))
+  (em      (handler :collapse :inline "em"))
+  (strong  (handler :collapse :inline "strong"))
+  (cite    (handler :collapse :inline "cite*"))
+  (dfn     (handler :collapse :inline "dfn"))
+  (code    (handler :collapse :inline "code*"))
+  (samp    (handler :collapse :inline "samp"))
+  (kbd     (handler :collapse :inline "kbd"))
+  (var     (handler :collapse :inline "var"))
+  (abbr    (handler :collapse :inline "abbr"))
+  (acronym (handler :collapse :inline "acronym"))
 
   ;; Quotations
   ;; NOTE: there should be a texmacs macro for Q
-  (q (handler :mixed :inline htmltm-quote))
+  (q (handler :collapse :inline htmltm-quote))
   (blockquote (handler :mixed :block "quotation"))
 
   ;; Subscripts and superscripts
@@ -475,7 +475,7 @@
   (pre (handler :pre :block htmltm-scilab-pre))
 
   ;; Document changes
-  ((:or ins del) (handler :mixed :inline htmltm-pass))
+  ((:or ins del) (handler :collapse :inline htmltm-pass))
 
   ;;; Lists
   (dl (handler :element :block "description"))
@@ -512,17 +512,17 @@
   (center (handler :mixed :block '(with "par-mode" "center")))
 
   ;; Font style
-  (tt  (handler :mixed :inline '(with "font-family" "tt")))
+  (tt  (handler :collapse :inline '(with "font-family" "tt")))
   ; NOTE: the tt macro is now deprecated
-  (i   (handler :mixed :inline '(with "font-shape" "italic")))
-  (b   (handler :mixed :inline '(with "font-series" "bold")))
-  (big (handler :mixed :inline '(with "font-size" "1.2")))
-  (small (handler :mixed :inline '(with "font-size" "0.83")))
-  ((:or s strike) (handler :mixed :inline htmltm-pass))
-  (u (handler :mixed :inline "underline"))
+  (i   (handler :collapse :inline '(with "font-shape" "italic")))
+  (b   (handler :collapse :inline '(with "font-series" "bold")))
+  (big (handler :collapse :inline '(with "font-size" "1.2")))
+  (small (handler :collapse :inline '(with "font-size" "0.83")))
+  ((:or s strike) (handler :collapse :inline htmltm-pass))
+  (u (handler :collapse :inline "underline"))
 
   ;; Font modifiers (deprecated)
-  (font (handler :mixed :inline htmltm-font))
+  (font (handler :collapse :inline htmltm-font))
   (basefont htmltm-drop)
 
   ;; Rules
