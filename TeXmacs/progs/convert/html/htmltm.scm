@@ -374,6 +374,15 @@
       (htmltm-pass env a c)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Special rules for improving Scilab documentation rendering
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (htmltm-scilab-pre env a c)
+  (if (== (shtml-attr-non-null a 'class) "scilabcode")
+      (list `(scilab-code ,(htmltm-args-serial env c)))
+      (list `(code ,(htmltm-args-serial env c)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main translation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -463,7 +472,7 @@
   ;; Lines and paragraphs
   (p (handler :mixed :block htmltm-pass))
   (br (handler :empty :inline htmltm-br))
-  (pre (handler :pre :block "code"))
+  (pre (handler :pre :block htmltm-scilab-pre))
 
   ;; Document changes
   ((:or ins del) (handler :mixed :inline htmltm-pass))
