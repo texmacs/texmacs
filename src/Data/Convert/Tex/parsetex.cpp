@@ -340,7 +340,7 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
       break;
     case '\244':
       i++;
-      t << parse_verbatim (s, i, "\244", "verbatim");
+      t << parse_verbatim (s, i, "\244", "\\verbatim");
       break;
     case '{': {
       i++;
@@ -455,7 +455,7 @@ latex_parser::parse_backslash (string s, int& i) {
   int n= N(s);
   if (((i+7)<n) && (s(i,i+5)=="\\verb")) {
     i+=6;
-    return parse_verbatim (s, i, s(i-1,i), "verbatim");
+    return parse_verbatim (s, i, s(i-1,i), "\\verbatim");
   }
   if (((i+29)<n) && (s(i,i+16)=="\\begin{verbatim}")) {
     i+=16;
@@ -1208,13 +1208,19 @@ verbatim_escape (string s) {
 tree
 latex_parser::parse_verbatim (string s, int& i, string end, string env) {
   int start=i, n= N(s), e= N(end);
-  string begin= "\\begin-" * env, endenv= "\\end-" * env;
   while ((i<(n-e)) && (s(i,i+e)!=end)) i++;
   i+=e;
-  return tree (CONCAT,
-	       tree (TUPLE, begin),
-	       s(start,i-e),
-	       tree (TUPLE, endenv));
+  if (N(env) > 0 && env[0] == '\\') {
+    return tree (TUPLE, env, s(start,i-e));
+  }
+  else if (N(env) > 0) {
+    string begin= "\\begin-" * env, endenv= "\\end-" * env;
+    return tree (CONCAT,
+        tree (TUPLE, begin),
+        s(start,i-e),
+        tree (TUPLE, endenv));
+  }
+  else return "";
 }
 
 tree
