@@ -1597,7 +1597,7 @@
 (define (tmtex-code-block s l)
   (set! l (escape-backslashes l))
   (set! l (escape-braces l))
-  (set!   (car (string-decompose s "-")))
+  (set! s (car (string-decompose s "-")))
   (with lang (if (or (== s "verbatim") (== s "code")) '() `((!option ,s)))
     `((!begin* "tmcode" ,@lang) ,(tmtex-verbatim* "" l))))
 
