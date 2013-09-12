@@ -138,7 +138,7 @@ latex_load_image (url image) {
 
 array<tree>
 latex_load_preview (url wdir, bool dvips= false) {
-  string cmdln= "cd " * as_string (wdir) * "; ";
+  string cmdln= "cd \"" * as_string (wdir) * "\"; ";
   if (dvips) {
     cmdln << "dvips temp.dvi && "
       << "gs -sDEVICE=epswrite -dSAFER -q -dNOPAUSE -dBATCH "
@@ -191,20 +191,20 @@ latex_preview (string s, tree t) {
   string cmdln= "cd " * document_root;
   cmdln << "; " << latex_command
         << " -interaction nonstopmode -halt-on-error -file-line-error "
-        << " -output-directory " << as_string (wdir)
-        << " " << as_string (wdir) << "/temp.tex";
+        << " -output-directory \"" << as_string (wdir)
+        << "\" \"" << as_string (wdir) << "/temp.tex\"";
   dbg ("LaTeX command: " * cmdln);
   if (system (cmdln)) {
     dbg ("Could not compile LaTeX document using " * latex_command);
     dbg ("Try to fallback on LaTeX");
+    dvips= true;
+    latex_install_preview (s, t, wdir, dvips);
     cmdln= "cd " * document_root;
     cmdln << "; latex"
           << " -interaction nonstopmode -halt-on-error -file-line-error "
-          << " -output-directory " << as_string (wdir)
-          << " " << as_string (wdir) << "/temp.tex";
+          << " -output-directory \"" << as_string (wdir)
+          << "\" \"" << as_string (wdir) << "/temp.tex\"";
     dbg ("LaTeX command: " * cmdln);
-    dvips= true;
-    latex_install_preview (s, t, wdir, dvips);
     if (system (cmdln)) {
       dbg ("Could not compile LaTeX document");
       latex_clean_tmp_directory (wdir);
