@@ -387,7 +387,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (logic-group latex-as-pic-0%
-  begin-tikzpicture)
+  begin-pspicture begin-pspicture* begin-tikzpicture)
 
 (logic-group latex-as-pic-1%
   xymatrix)
