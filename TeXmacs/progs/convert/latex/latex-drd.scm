@@ -68,7 +68,7 @@
   arabic alph Alph roman Roman fnsymbol displaylines cases underbrace overbrace
   phantom hphantom vphantom smash date terms
   newcounter stepcounter refstepcounter value
-  citet citep citet* citep* citealt citealp citealt* citealp*
+  citealt citealt* citealp*
   citetext citeauthor citeauthor* citeyear onlinecite
   epsfig url penalty centerline fbox framebox cline cmidrule
   enlargethispage
@@ -125,7 +125,7 @@
   subjclass declaretheorem footnotetext
   xleftarrow xrightarrow xleftrightarrow xminus
   xLeftarrow xRightarrow xLeftrightarrow xequal
-  xmapsto xmapsfrom
+  xmapsto xmapsfrom citealp citet citep citet* citep*
   Begin ELSIF FORALL FOR IF WHILE tcp tcp* tcc tcc*)
 
 (logic-group latex-command-2*%

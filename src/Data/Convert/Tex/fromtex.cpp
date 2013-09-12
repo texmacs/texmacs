@@ -1638,6 +1638,22 @@ latex_command_to_tree (tree t) {
       string s= v2e (t[1]);
       return latex_cite_to_tree (cite_type, s);
     }
+  if (is_tuple (t, "\\citet*", 2) || is_tuple (t, "\\citep*", 2) ||
+      is_tuple (t, "\\citet**", 2) || is_tuple (t, "\\citep**", 2) ||
+      is_tuple (t, "\\citealp*", 2))
+    {
+      textm_natbib= true;
+      string star= "";
+      string cite_type= t[0]->label (1, N(t[0]->label)-1);
+      if (ends (cite_type, "*")) {
+	star= "*"; cite_type= cite_type (0, N (cite_type) - 1); }
+      if (cite_type == "citet") cite_type= "cite-textual" * star;
+      if (cite_type == "citep") cite_type= "cite-parenthesized" * star;
+      if (cite_type == "citealt") cite_type= "cite-raw" * star;
+      if (cite_type == "citealp") cite_type= "cite-raw" * star;
+      string s= v2e (t[2]);
+      return latex_cite_to_tree (cite_type, s);
+    }
   if (is_tuple (t, "\\citetext", 1))
     return compound ("render-cite", l2e (t[1]));
   if (is_tuple (t, "\\onlinecite", 1))
