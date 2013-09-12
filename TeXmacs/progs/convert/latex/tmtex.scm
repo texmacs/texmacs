@@ -1555,6 +1555,10 @@
 	((func? x 'para) (tmtex-tt-document (cdr x)))
 	((func? x 'concat)
 	 (apply string-append (map-in-order tmtex-tt (cdr x))))
+        ((func? x 'with)
+         (begin
+           (display* "TeXmacs] lost <with> in verbatim content: " (cDr x) "\n")
+           (tmtex-tt (cAr x))))
 	(else
           (begin
 	    (display* "TeXmacs] non converted verbatim content: \n" x "\n")
