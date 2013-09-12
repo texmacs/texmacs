@@ -1509,7 +1509,7 @@
     `(!concat (tmpacs) ,@(map (lambda (x) `(!group ,x)) args))))
 
 (tm-define  (tmtex-make-abstract-data keywords acm arxiv msc pacs abstract)
-  (with result `(,@keywords ,@acm ,@arxiv ,@msc ,@pacs ,@abstract)
+  (with result `(,@abstract ,@acm ,@arxiv ,@msc ,@pacs ,@keywords)
     (if (null? result) "" `(!document ,@result))))
 
 (tm-define (tmtex-abstract-data s l)

@@ -378,7 +378,7 @@
     (set! keywords
       `(((!begin "keyword") (!document ,@(map cadr keywords)
                                        ,@pacs ,@msc ,@acm ,@arxiv)))))
-  `(!document ,@keywords ,@abstract))
+  `(!document ,@abstract ,@keywords))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Elsevier style is quite ugly.
