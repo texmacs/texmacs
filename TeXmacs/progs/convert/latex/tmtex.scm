@@ -1840,7 +1840,7 @@
   (list 'href (tmtex-hyperref (cadr l)) (tmtex (car l))))
 
 (define (tmtex-href s l)
-  (tmtex-function 'url l))
+  (list 'url (tmtex-verb-string (car l))))
 
 (define (tmtex-action s l)
   (list 'tmaction (tmtex (car l)) (tmtex (cadr l))))
