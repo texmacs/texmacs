@@ -140,7 +140,7 @@ bibtex_run (string bib, string style, url bib_file, tree bib_t) {
   if (contain_space (style))
     return "Error: bibtex disallows spaces in style name";
   string bib_name= as_string (tail (bib_file));
-  if (contain_space (as_string (bib_file)))
+  if (contain_space (bib_name))
     return "Error: bibtex disallows spaces in bibliography name";
   int i;
   string bib_s= "\\bibstyle{" * style * "}\n";
@@ -158,8 +158,8 @@ bibtex_run (string bib, string style, url bib_file, tree bib_t) {
   RunBibtex (directory, "$TEXMACS_HOME_PATH/system/bib", "temp");
 #else
   string cmdln= "cd $TEXMACS_HOME_PATH/system/bib; ";
-  cmdln << "BIBINPUTS=" << dir << ":$BIBINPUTS "
-	<< "BSTINPUTS=" << dir << ":$BSTINPUTS "
+  cmdln << "BIBINPUTS=\"" << dir << "\":$BIBINPUTS "
+	<< "BSTINPUTS=\"" << dir << "\":$BSTINPUTS "
 	<< bibtex_command << " temp";
   if (DEBUG_AUTO) cout << "TeXmacs] BibTeX command: " << cmdln << "\n";
   system (cmdln);
