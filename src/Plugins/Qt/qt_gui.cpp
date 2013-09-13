@@ -189,8 +189,8 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
     }
   }
   else if (format == "verbatim" && (
-        get_preference ("texmacs->verbatim:encoding") == "utf-8" ||
-        get_preference ("texmacs->verbatim:encoding") == "auto"  ))
+        get_preference ("verbatim->texmacs:encoding") == "utf-8" ||
+        get_preference ("verbatim->texmacs:encoding") == "auto"  ))
     buf= md->text().toUtf8 ();
   else {
     if (md->hasFormat ("plain/text")) buf= md->data ("plain/text").data();
