@@ -21,7 +21,7 @@
 
 (define (python-serialize lan t)
   (with u (pre-serialize lan t)
-    (with s (texmacs->verbatim (stree->tree u))
+    (with s (texmacs->code (stree->tree u))
       (string-append  s  "\n<EOF>\n"))))
 
 (define (python-launcher)
