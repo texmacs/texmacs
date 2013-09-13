@@ -41,7 +41,7 @@
          (s (if (string? t) t ""))
          (s (string-replace s "\\\\\\\\" "\\"))
          (s (string-replace s "<gtr>" ">"))
-         (s (string-replace s "<less" "<"))
+         (s (string-replace s "<less>" "<"))
          (s (convert s "verbatim-snippet" "stm-snippet"))
          (s (string-replace s "\\\\" "\\")))
     (stree->tree (string->object s))))
