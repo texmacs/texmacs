@@ -132,6 +132,7 @@ string locale_to_language (string s);
 string language_to_locale (string s);
 string language_to_local_ISO_charset (string s);
 string get_locale_language ();
+string get_locale_charset ();
 #if defined(__MINGW__) || defined(__MINGW32__) || defined(OS_WIN32)
 namespace win32 {
   string get_date (string lan, string fm);

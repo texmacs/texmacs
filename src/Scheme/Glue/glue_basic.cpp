@@ -337,6 +337,15 @@ tmg_get_locale_language () {
 }
 
 tmscm
+tmg_get_locale_charset () {
+  // TMSCM_DEFER_INTS;
+  string out= get_locale_charset ();
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_locale_to_language (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "locale-to-language");
 
@@ -7073,6 +7082,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("eval-system",  tmg_eval_system, 1, 0, 0);
   tmscm_install_procedure ("var-eval-system",  tmg_var_eval_system, 1, 0, 0);
   tmscm_install_procedure ("get-locale-language",  tmg_get_locale_language, 0, 0, 0);
+  tmscm_install_procedure ("get-locale-charset",  tmg_get_locale_charset, 0, 0, 0);
   tmscm_install_procedure ("locale-to-language",  tmg_locale_to_language, 1, 0, 0);
   tmscm_install_procedure ("language-to-locale",  tmg_language_to_locale, 1, 0, 0);
   tmscm_install_procedure ("texmacs-time",  tmg_texmacs_time, 0, 0, 0);

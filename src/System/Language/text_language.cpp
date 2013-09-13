@@ -13,6 +13,7 @@
 #include <locale.h>
 #endif
 
+#include <langinfo.h>
 #include "analyze.hpp"
 #include "hyphenate.hpp"
 #include "impl_language.hpp"
@@ -380,6 +381,11 @@ get_locale_language () {
   if (env_lan != "") return locale_to_language (env_lan);
   return "english";
 #endif
+}
+
+string
+get_locale_charset () {
+  return nl_langinfo (CODESET);
 }
 
 /******************************************************************************
