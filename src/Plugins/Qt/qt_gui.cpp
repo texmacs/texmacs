@@ -246,9 +246,13 @@ qt_gui_rep::set_selection (string key, tree t,
       selection= c_string (sv);
     }
 
-    if (get_preference ("texmacs->verbatim:encoding") == "utf-8")
+    string enc= get_preference ("texmacs->verbatim:encoding");
+    if (enc == "auto")
+      enc= get_locale_charset ();
+
+    if (enc == "utf-8" || enc == "UTF-8")
       md->setText (QString::fromUtf8 (selection));
-    else if (get_preference ("texmacs->verbatim:encoding") == "iso-8859-1")
+    else if (enc == "iso-8859-1" || enc == "ISO-8859-1")
       md->setText (QString::fromLatin1 (selection));
     else
       md->setText (QString::fromAscii (selection));

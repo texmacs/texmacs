@@ -11,6 +11,7 @@
 
 #include "convert.hpp"
 #include "converter.hpp"
+#include "language.hpp"
 #include "wencoding.hpp"
 #include "vars.hpp"
 #include "drd_std.hpp"
@@ -238,10 +239,12 @@ var_cork_to_sourcecode (string s) {
 
 string
 tree_to_verbatim (tree t, bool wrap, string enc) {
-  if (enc == "default") enc= "utf-8";
+  if (enc == "default") enc= "auto";
   string buf= as_verbatim (t, wrap);
-  if (enc == "utf-8") buf= var_cork_to_utf8 (buf);
-  else if (enc == "iso-8859-1") buf= tm_decode (buf);
+  if (enc == "auto")
+    enc= get_locale_charset ();
+  if (enc == "utf-8" || enc == "UTF-8") buf= var_cork_to_utf8 (buf);
+  else if (enc == "iso-8859-1" || enc == "ISO-8859-1") buf= tm_decode (buf);
   else if (enc == "SourceCode") buf= var_cork_to_sourcecode (buf);
 #ifdef OS_WIN32
   return unix_to_dos (buf);
