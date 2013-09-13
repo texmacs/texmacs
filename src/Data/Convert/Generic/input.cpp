@@ -230,7 +230,7 @@ void
 texmacs_input_rep::verbatim_flush (bool force) {
   if (force || ends (buf, "\n")) {
     if (!ignore_verb)
-      write (verbatim_to_tree (buf, false, "utf-8"));
+      write (verbatim_to_tree (buf, false, "auto"));
     else if (DEBUG_IO)
       cout << "\nTeXmacs] ignore verb. (aborted input): "  << buf << LF;
     buf= "";
