@@ -475,7 +475,8 @@ iconv_adaptor(size_t(*iconv_func)(iconv_t, T, size_t *, char**, size_t*),
 string apply (iconv_converter &conv, string input) {
   if (! conv.is_valid()) {
     conv.successful= false;
-    return "";
+    system_error ("Conversion concelled.");
+    return input;
   }
   string result;
   c_string in_cp (input);
@@ -495,7 +496,7 @@ string apply (iconv_converter &conv, string input) {
 	system_error ("String conversion using iconv failed!");
       }
       conv.successful= false;
-      return "";
+      return input;
     }
     size_t used_out= out_cursor - out_cp;
     result << string(out_cp, used_out);
@@ -532,7 +533,7 @@ convert_using_iconv (string input, string from, string to) {
   (void) from;
   (void) to;
   FAILED ("iconv not enabled");
-  return "";
+  return input;
 #endif
 }
 
