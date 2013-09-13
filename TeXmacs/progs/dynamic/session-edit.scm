@@ -101,7 +101,7 @@
   (and (tree? t) (tree-is? t 'errput)))
 
 (tm-define (scheme-eval t)
-  (let* ((s (texmacs->code t))
+  (let* ((s (texmacs->code t "iso-8859-1"))
 	 (r (eval-string-with-catch s)))
     (cond ((and (tree? r) (error-tree? r) (session-scheme-trees?))
            (tree-copy r))

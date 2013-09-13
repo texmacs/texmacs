@@ -136,7 +136,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (texmacs->code t . enc)
-  (if (null? enc) (set! enc (list "iso-8859-1")))
+  (if (null? enc) (set! enc (list (get-locale-charset))))
   (if (tree? t)
       (cpp-texmacs->verbatim t #f (car enc))
       (texmacs->code (tm->tree t) (car enc))))

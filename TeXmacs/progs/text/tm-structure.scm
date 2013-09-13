@@ -39,7 +39,7 @@
 	    (tm/section-get-title-string-sub (cdr l))))))
 
 (tm-define (texmacs->string x)
-  (texmacs->code (verbatim-expand x)))
+  (texmacs->code (verbatim-expand x) "iso-8859-1"))
 
 (tm-define (tm/section-get-title-string t)
   (cond ((tm-atomic? t) "no title")
