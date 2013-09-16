@@ -9,7 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "Boxes/composite.hpp"
+#include "Boxes/change.hpp"
 #include "Boxes/construct.hpp"
 #include "scheme.hpp"
 #include "gui.hpp"
@@ -19,62 +19,61 @@
 * changing the behaviour of a box
 ******************************************************************************/
 
-struct change_box_rep: public composite_box_rep {
-  bool child_flag, big_flag;
-  change_box_rep (path ip, bool child_flag, bool big_flag= false);
-  operator tree () { return tree (TUPLE, "change", (tree) bs[0]); }
-  int find_child (SI x, SI y, SI delta, bool force);
-  path find_left_box_path () {
-    return child_flag?
-      composite_box_rep::find_left_box_path ():
-      path (0, bs[0]->find_left_box_path ()); }
-  path find_right_box_path () {
-    return child_flag?
-      composite_box_rep::find_right_box_path ():
-      path (0, bs[0]->find_right_box_path ()); }
-
-  double left_slope () {
-    return big_flag? bs[0]->left_slope(): box_rep::left_slope(); }
-  double right_slope () { 
-    return big_flag? bs[0]->right_slope(): box_rep::right_slope(); }
-  SI left_correction () {
-    return big_flag? bs[0]->left_correction():box_rep::left_correction(); }
-  SI right_correction () {
-    return big_flag? bs[0]->right_correction():box_rep::right_correction(); }
-  SI lsub_correction () {
-    return big_flag? bs[0]->lsub_correction(): box_rep::lsub_correction(); }
-  SI lsup_correction () {
-    return big_flag? bs[0]->lsup_correction(): box_rep::lsup_correction(); }
-  SI rsub_correction () {
-    return big_flag? bs[0]->rsub_correction(): box_rep::rsub_correction(); }
-  SI rsup_correction () {
-    return big_flag? bs[0]->rsup_correction(): box_rep::rsup_correction(); }
-  SI sub_lo_base (int l) {
-    return big_flag? bs[0]->sub_lo_base (l): box_rep::sub_lo_base (l); }
-  SI sub_hi_lim  (int l) {
-    return big_flag? bs[0]->sub_hi_lim (l): box_rep::sub_hi_lim (l); }
-  SI sup_lo_lim  (int l) {
-    return big_flag? bs[0]->sup_lo_lim (l): box_rep::sup_lo_lim (l); }
-  SI sup_lo_base (int l) {
-    return big_flag? bs[0]->sup_lo_base (l): box_rep::sup_lo_base (l); }
-  SI sup_hi_lim  (int l) {
-    return big_flag? bs[0]->sup_hi_lim (l): box_rep::sup_hi_lim (l); }
-
-  SI get_leaf_offset (string search) {
-    return sx1(0) + bs[0]->get_leaf_offset (search); }
-
-  gr_selections graphical_select (SI x, SI y, SI dist);
-  gr_selections graphical_select (SI x1, SI y1, SI x2, SI y2);
-};
-
 change_box_rep::change_box_rep (path ip, bool fl1, bool fl2):
   composite_box_rep (ip), child_flag (fl1), big_flag (fl2) {}
+
+change_box_rep::operator tree () {
+  return tree (TUPLE, "change", (tree) bs[0]); }
 
 int
 change_box_rep::find_child (SI x, SI y, SI delta, bool force) {
   if (child_flag) return composite_box_rep::find_child (x, y, delta, force);
   return 0;
 }
+
+path
+change_box_rep::find_left_box_path () {
+  return child_flag?
+    composite_box_rep::find_left_box_path ():
+    path (0, bs[0]->find_left_box_path ());
+}
+
+path
+change_box_rep::find_right_box_path () {
+  return child_flag?
+    composite_box_rep::find_right_box_path ():
+    path (0, bs[0]->find_right_box_path ());
+}
+
+double change_box_rep::left_slope () {
+  return big_flag? bs[0]->left_slope(): box_rep::left_slope(); }
+double change_box_rep::right_slope () { 
+  return big_flag? bs[0]->right_slope(): box_rep::right_slope(); }
+SI change_box_rep::left_correction () {
+  return big_flag? bs[0]->left_correction():box_rep::left_correction(); }
+SI change_box_rep::right_correction () {
+  return big_flag? bs[0]->right_correction():box_rep::right_correction(); }
+SI change_box_rep::lsub_correction () {
+  return big_flag? bs[0]->lsub_correction(): box_rep::lsub_correction(); }
+SI change_box_rep::lsup_correction () {
+  return big_flag? bs[0]->lsup_correction(): box_rep::lsup_correction(); }
+SI change_box_rep::rsub_correction () {
+  return big_flag? bs[0]->rsub_correction(): box_rep::rsub_correction(); }
+SI change_box_rep::rsup_correction () {
+  return big_flag? bs[0]->rsup_correction(): box_rep::rsup_correction(); }
+SI change_box_rep::sub_lo_base (int l) {
+  return big_flag? bs[0]->sub_lo_base (l): box_rep::sub_lo_base (l); }
+SI change_box_rep::sub_hi_lim  (int l) {
+  return big_flag? bs[0]->sub_hi_lim (l): box_rep::sub_hi_lim (l); }
+SI change_box_rep::sup_lo_lim  (int l) {
+  return big_flag? bs[0]->sup_lo_lim (l): box_rep::sup_lo_lim (l); }
+SI change_box_rep::sup_lo_base (int l) {
+  return big_flag? bs[0]->sup_lo_base (l): box_rep::sup_lo_base (l); }
+SI change_box_rep::sup_hi_lim  (int l) {
+  return big_flag? bs[0]->sup_hi_lim (l): box_rep::sup_hi_lim (l); }
+
+SI change_box_rep::get_leaf_offset (string search) {
+  return sx1(0) + bs[0]->get_leaf_offset (search); }
 
 gr_selections
 change_box_rep::graphical_select (SI x, SI y, SI dist) { 
@@ -475,74 +474,6 @@ public:
 };
 
 /******************************************************************************
-* Highlight boxes
-******************************************************************************/
-
-struct highlight_box_rep: public change_box_rep {
-  SI w, xpad, ypad;
-  brush bg, sunc, shad, old_bg;
-  highlight_box_rep (path ip, box b, SI w, SI xpad, SI ypad,
-		     brush bg, brush sunc, brush shad);
-  operator tree () { return tree (TUPLE, "highlight", (tree) bs[0]); }
-  void pre_display (renderer &ren);
-  void post_display (renderer &ren);
-  void display (renderer ren);
-};
-
-highlight_box_rep::highlight_box_rep (
-  path ip, box b, SI w2, SI xp2, SI yp2,
-  brush bg2, brush sunc2, brush shad2):
-    change_box_rep (ip, true), w (w2), xpad (xp2), ypad (yp2),
-    bg (bg2), sunc (sunc2), shad (shad2)
-{
-  insert (b, w + xpad, 0);
-  position ();
-  x1= b->x1;
-  y1= b->y1 - w - ypad;
-  x2= b->x2 + 2 * (w + xpad);
-  y2= b->y2 + w + ypad;
-  x3= min (x1, b->x3 + w + xpad);
-  y3= min (y1, b->y3);
-  x4= max (x2, b->x4 + w + xpad);
-  y4= max (y2, b->y4);
-  finalize ();
-}
-
-void
-highlight_box_rep::pre_display (renderer& ren) {
-  old_bg= ren->get_background ();
-  ren->set_background (bg);
-  SI W= w;
-  if (!ren->is_printer ()) {
-    SI pixel= ren->pixel;
-    W= ((w + pixel - 1) / pixel) * pixel;
-  }
-  ren->clear_pattern (x1+W, y1+W, x2-W, y2-W);
-}
-
-void
-highlight_box_rep::post_display (renderer &ren) {
-  ren->set_background (old_bg);
-}
-
-void
-highlight_box_rep::display (renderer ren) {
-  SI W= w;
-  if (!ren->is_printer ()) {
-    SI pixel= ren->pixel;
-    W= ((w + pixel - 1) / pixel) * pixel;
-  }
-  ren->set_pencil (pencil (sunc, 0));
-  ren->fill (x1  , y2-W, x2  , y2  );
-  ren->fill (x1  , y1  , x1+W, y2  );
-  ren->set_pencil (pencil (shad, 0));
-  ren->fill (x1+W, y1  , x2  , y1+W);
-  ren->fill (x2-W, y1  , x2  , y2-W);
-  ren->draw_triangle (x1, y1, x1+W, y1, x1+W, y1+W);
-  ren->draw_triangle (x2, y2, x2, y2-W, x2-W, y2-W);
-}
-
-/******************************************************************************
 * action boxes
 ******************************************************************************/
 
@@ -821,12 +752,6 @@ cell_box (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
 box
 remember_box (path ip, box b) {
   return tm_new<remember_box_rep> (ip, b);
-}
-
-box
-highlight_box (path ip, box b, SI w, SI xpad, SI ypad,
-	       brush bg, brush sunc, brush shad) {
-  return tm_new<highlight_box_rep> (ip, b, w, xpad, ypad, bg, sunc, shad);
 }
 
 box
