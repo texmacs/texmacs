@@ -262,7 +262,7 @@ initialize_default_env () {
   env (CANVAS_BAR_WIDTH)      = "1em";          // width of scroll bars
   env (CANVAS_BAR_PADDING)    = "0.25em";       // distance of scrollbars
   env (CANVAS_BAR_COLOR)      = "grey";         // color of bar
-  env (ORNAMENT_SHAPE)        = "rectangular";  // shape of the ornament
+  env (ORNAMENT_SHAPE)        = "classic";      // shape of the ornament
   env (ORNAMENT_BORDER)       = "1ln";          // border width
   env (ORNAMENT_HPADDING)     = "0px";          // horizontal padding of body
   env (ORNAMENT_VPADDING)     = "0px";          // vertical padding of body

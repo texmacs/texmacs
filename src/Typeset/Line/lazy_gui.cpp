@@ -144,15 +144,16 @@ make_lazy_canvas (edit_env env, tree t, path ip) {
 struct lazy_ornament_rep: public lazy_rep {
   edit_env env;             // "current" environment
   lazy par;                 // the ornamented body
+  tree shape;               // the shape
   SI w, xpad, ypad;         // spacing parameters
   tree bg;                  // background color or pattern
   int alpha;                // alpha transparency of background
   color sunny, shadow;      // border colors
   lazy_ornament_rep (edit_env env2, lazy par2, path ip,
-		     SI w2, SI xpad2, SI ypad2,
+		     tree shape2, SI w2, SI xpad2, SI ypad2,
 		     tree bg2, int alpha2, color sunny2, color shadow2):
     lazy_rep (LAZY_ORNAMENT, ip), env (env2), par (par2),
-    w (w2), xpad (xpad2), ypad (ypad2),
+    shape (shape2), w (w2), xpad (xpad2), ypad (ypad2),
     bg (bg2), alpha (alpha2), sunny (sunny2), shadow (shadow2) {}
   
   inline operator tree () { return "Ornament"; }
@@ -163,9 +164,9 @@ struct lazy_ornament_rep: public lazy_rep {
 struct lazy_ornament {
 EXTEND_NULL(lazy,lazy_ornament);
   lazy_ornament (edit_env env, lazy par, path ip,
-		 SI w, SI xpad, SI ypad,
+		 tree shape, SI w, SI xpad, SI ypad,
 		 tree bg, int alpha, color sunny, color shadow):
-    rep (tm_new<lazy_ornament_rep> (env, par, ip, w, xpad, ypad,
+    rep (tm_new<lazy_ornament_rep> (env, par, ip, shape, w, xpad, ypad,
                                     bg, alpha, sunny, shadow)) {
     rep->ref_count= 1; }
 };
@@ -191,7 +192,7 @@ lazy_ornament_rep::produce (lazy_type request, format fm) {
       bfm= make_format_width (fvs->width - 2 * (w + xpad));
     }
     box b = (box) par->produce (LAZY_BOX, bfm);
-    box hb= highlight_box (ip, b, w, xpad, ypad,
+    box hb= highlight_box (ip, b, shape, w, xpad, ypad,
                            brush (bg, alpha), sunny, shadow);
     // FIXME: this dirty hack ensures that shoving is correct
     hb= move_box (decorate (ip), hb, 1, 0);
@@ -209,6 +210,7 @@ lazy_ornament_rep::produce (lazy_type request, format fm) {
 
 lazy
 make_lazy_ornament (edit_env env, tree t, path ip) {
+  tree  shape = env->read       (ORNAMENT_SHAPE);
   SI    w     = env->get_length (ORNAMENT_BORDER);
   SI    xpad  = env->get_length (ORNAMENT_HPADDING);
   SI    ypad  = env->get_length (ORNAMENT_VPADDING);
@@ -217,5 +219,6 @@ make_lazy_ornament (edit_env env, tree t, path ip) {
   color sunny = env->get_color  (ORNAMENT_SUNNY_COLOR);
   color shadow= env->get_color  (ORNAMENT_SHADOW_COLOR);
   lazy  par   = make_lazy (env, t[0], descend (ip, 0));
-  return lazy_ornament (env, par, ip, w, xpad, ypad, bg, a, sunny, shadow);
+  return lazy_ornament (env, par, ip,
+                        shape, w, xpad, ypad, bg, a, sunny, shadow);
 }
