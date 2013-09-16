@@ -164,7 +164,7 @@
             (toggle ("Wrap lines"
                      "texmacs->verbatim:wrap"))
             (enum ("Encoding" "texmacs->verbatim:encoding")
-                  ("Defined by locale" "auto")
+                  ("Automatic" "auto")
                   ("Cork" "cork")
                   ("Iso-8859-1" "iso-8859-1")
                   ("Utf-8" "utf-8")))
@@ -506,7 +506,7 @@
 ;; Verbatim ----------
 
 (define-preference-names "texmacs->verbatim:encoding"
-  ("auto" "Defined by locale")
+  ("auto" "Automatic")
   ("cork" "Cork")
   ("iso-8859-1" "Iso-8859-1")
   ("utf-8" "Utf-8"))
@@ -529,7 +529,7 @@
   (aligned
     (item (text "Character encoding:")
       (enum (set-pretty-preference "texmacs->verbatim:encoding" answer)
-            '("Defined by locale" "Cork" "Iso-8859-1" "Utf-8")
+            '("Automatic" "Cork" "Iso-8859-1" "Utf-8")
             (get-pretty-preference "texmacs->verbatim:encoding")
             "5em")))
   ======
