@@ -267,6 +267,7 @@ initialize_default_env () {
   env (ORNAMENT_HPADDING)     = "0px";          // horizontal padding of body
   env (ORNAMENT_VPADDING)     = "0px";          // vertical padding of body
   env (ORNAMENT_COLOR)        = "light grey";   // background color
+  env (ORNAMENT_EXTRA_COLOR)  = "light grey";   // background color for titles
   env (ORNAMENT_SUNNY_COLOR)  = "white";        // sunny color
   env (ORNAMENT_SHADOW_COLOR) = "dark grey";    // shadow color
 

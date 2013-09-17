@@ -278,5 +278,6 @@ string ORNAMENT_BORDER ("ornament-border");
 string ORNAMENT_HPADDING ("ornament-hpadding");
 string ORNAMENT_VPADDING ("ornament-vpadding");
 string ORNAMENT_COLOR ("ornament-color");
+string ORNAMENT_EXTRA_COLOR ("ornament-extra-color");
 string ORNAMENT_SUNNY_COLOR ("ornament-sunny-color");
 string ORNAMENT_SHADOW_COLOR ("ornament-shadow-color");

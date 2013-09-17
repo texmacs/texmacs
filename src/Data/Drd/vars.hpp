@@ -248,6 +248,7 @@ extern string ORNAMENT_BORDER;
 extern string ORNAMENT_HPADDING;
 extern string ORNAMENT_VPADDING;
 extern string ORNAMENT_COLOR;
+extern string ORNAMENT_EXTRA_COLOR;
 extern string ORNAMENT_SUNNY_COLOR;
 extern string ORNAMENT_SHADOW_COLOR;
 

@@ -22,11 +22,11 @@
 struct highlight_box_rep: public change_box_rep {
   tree shape;
   SI w, xpad, ypad;
-  brush bg, sunc, shad, old_bg;
+  brush bg, xc, sunc, shad, old_bg;
   pencil old_pen;
   highlight_box_rep (path ip, box b, box xb, tree shape,
 		     SI w, SI xpad, SI ypad,
-		     brush bg, brush sunc, brush shad);
+		     brush bg, brush xc, brush sunc, brush shad);
   operator tree () { return tree (TUPLE, "highlight", (tree) bs[0]); }
   void pre_display (renderer &ren);
   void post_display (renderer &ren);
@@ -36,10 +36,10 @@ struct highlight_box_rep: public change_box_rep {
 
 highlight_box_rep::highlight_box_rep (
   path ip, box b, box xb, tree shape2, SI w2, SI xp2, SI yp2,
-  brush bg2, brush sunc2, brush shad2):
+  brush bg2, brush xc2, brush sunc2, brush shad2):
     change_box_rep (ip, true), shape (shape2),
     w (w2), xpad (xp2), ypad (yp2),
-    bg (bg2), sunc (sunc2), shad (shad2)
+    bg (bg2), xc (xc2), sunc (sunc2), shad (shad2)
 {
   SI offx= 0, offy= 0;
   insert (b, w + xpad, 0);
@@ -100,7 +100,7 @@ highlight_box_rep::display_classic (renderer& ren) {
   ren->clear_pattern (x1+W, y1+W, x2-W, y2-W);
   if (N(bs)>1) {
     SI m= (sy2(0) + sy1(1)) >> 1;
-    ren->set_background (shad);
+    ren->set_background (xc);
     ren->clear_pattern (x1+W, m, x2-W, y2-W);    
   }
   ren->set_brush (sunc);
@@ -164,14 +164,14 @@ highlight_box_rep::display_rounded (renderer& ren) {
     ren->set_brush (bg);
     ren->polygon (xs, ys);
   }
-  if (N(bs)>1) {
+  if (N(bs)>1 && xc->get_type() != brush_none) {
     SI m= (sy2(0) + sy1(1)) >> 1;
     array<SI> Xs, Ys;
     Xs << l1; Ys << m;
     Xs << r1; Ys << m;
     rounded (Xs, Ys, r2, t2, r1, t2, r2, t1, true, true);
     rounded (Xs, Ys, l2, t2, l2, t1, l1, t2, true, true);
-    ren->set_brush (shad);
+    ren->set_brush (xc);
     ren->polygon (Xs, Ys);
   }
   if (W > 0) {
@@ -188,7 +188,8 @@ highlight_box_rep::display_rounded (renderer& ren) {
 
 box
 highlight_box (path ip, box b, box xb, tree shape,
-               SI w, SI xpad, SI ypad, brush bg, brush sunc, brush shad) {
+               SI w, SI xpad, SI ypad,
+	       brush bg, brush xc, brush sunc, brush shad) {
   return tm_new<highlight_box_rep> (ip, b, xb, shape,
-                                    w, xpad, ypad, bg, sunc, shad);
+                                    w, xpad, ypad, bg, xc, sunc, shad);
 }

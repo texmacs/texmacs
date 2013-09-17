@@ -147,15 +147,16 @@ struct lazy_ornament_rep: public lazy_rep {
   box xb;                   // extra box
   tree shape;               // the shape
   SI w, xpad, ypad;         // spacing parameters
-  tree bg;                  // background color or pattern
+  tree bg, xc;              // background colors or patterns
   int alpha;                // alpha transparency of background
   color sunny, shadow;      // border colors
   lazy_ornament_rep (edit_env env2, lazy par2, box xb2, path ip,
 		     tree shape2, SI w2, SI xpad2, SI ypad2,
-		     tree bg2, int alpha2, color sunny2, color shadow2):
+		     tree bg2, tree xc2, int alpha2,
+		     color sunny2, color shadow2):
     lazy_rep (LAZY_ORNAMENT, ip), env (env2), par (par2), xb (xb2),
     shape (shape2), w (w2), xpad (xpad2), ypad (ypad2),
-    bg (bg2), alpha (alpha2), sunny (sunny2), shadow (shadow2) {}
+    bg (bg2), xc (xc2), alpha (alpha2), sunny (sunny2), shadow (shadow2) {}
   
   inline operator tree () { return "Ornament"; }
   lazy produce (lazy_type request, format fm);
@@ -166,9 +167,9 @@ struct lazy_ornament {
 EXTEND_NULL(lazy,lazy_ornament);
   lazy_ornament (edit_env env, lazy par, box xb, path ip,
 		 tree shape, SI w, SI xpad, SI ypad,
-		 tree bg, int alpha, color sunny, color shadow):
+		 tree bg, tree xc, int alpha, color sunny, color shadow):
     rep (tm_new<lazy_ornament_rep> (env, par, xb, ip, shape, w, xpad, ypad,
-                                    bg, alpha, sunny, shadow)) {
+                                    bg, xc, alpha, sunny, shadow)) {
     rep->ref_count= 1; }
 };
 EXTEND_NULL_CODE(lazy,lazy_ornament);
@@ -194,7 +195,8 @@ lazy_ornament_rep::produce (lazy_type request, format fm) {
     }
     box b = (box) par->produce (LAZY_BOX, bfm);
     box hb= highlight_box (ip, b, xb, shape, w, xpad, ypad,
-                           brush (bg, alpha), sunny, shadow);
+                           brush (bg, alpha), brush (xc, alpha),
+			   sunny, shadow);
     // FIXME: this dirty hack ensures that shoving is correct
     hb= move_box (decorate (ip), hb, 1, 0);
     hb= move_box (decorate (ip), hb, -1, 0);
@@ -216,6 +218,7 @@ make_lazy_ornament (edit_env env, tree t, path ip) {
   SI    xpad  = env->get_length (ORNAMENT_HPADDING);
   SI    ypad  = env->get_length (ORNAMENT_VPADDING);
   tree  bg    = env->read       (ORNAMENT_COLOR);
+  tree  xc    = env->read       (ORNAMENT_EXTRA_COLOR);
   int   a     = env->alpha;
   color sunny = env->get_color  (ORNAMENT_SUNNY_COLOR);
   color shadow= env->get_color  (ORNAMENT_SHADOW_COLOR);
@@ -223,5 +226,5 @@ make_lazy_ornament (edit_env env, tree t, path ip) {
   box   xb;
   if (N(t) == 2) xb= typeset_as_concat (env, t[1], descend (ip, 1));
   return lazy_ornament (env, par, xb, ip,
-                        shape, w, xpad, ypad, bg, a, sunny, shadow);
+                        shape, w, xpad, ypad, bg, xc, a, sunny, shadow);
 }
