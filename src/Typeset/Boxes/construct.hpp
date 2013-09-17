@@ -59,7 +59,7 @@ box scatter_box (path ip, array<box> bs, array<SI> x, array<SI> y);
 box cell_box (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
 	      SI bl, SI br, SI bb, SI bt, brush fg, brush bg);
 box remember_box (path ip, box b);
-box highlight_box (path ip, box b, tree shape, SI w, SI xpad, SI ypad,
+box highlight_box (path ip, box b, box xb, tree shape, SI w, SI xpad, SI ypad,
 		   brush bg, brush sunny, brush shadow);
 
 box frac_box (path ip, box b1, box b2, font fn, font sfn, pencil pen);

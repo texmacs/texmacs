@@ -24,7 +24,8 @@ struct highlight_box_rep: public change_box_rep {
   SI w, xpad, ypad;
   brush bg, sunc, shad, old_bg;
   pencil old_pen;
-  highlight_box_rep (path ip, box b, tree shape, SI w, SI xpad, SI ypad,
+  highlight_box_rep (path ip, box b, box xb, tree shape,
+		     SI w, SI xpad, SI ypad,
 		     brush bg, brush sunc, brush shad);
   operator tree () { return tree (TUPLE, "highlight", (tree) bs[0]); }
   void pre_display (renderer &ren);
@@ -34,13 +35,19 @@ struct highlight_box_rep: public change_box_rep {
 };
 
 highlight_box_rep::highlight_box_rep (
-  path ip, box b, tree shape2, SI w2, SI xp2, SI yp2,
+  path ip, box b, box xb, tree shape2, SI w2, SI xp2, SI yp2,
   brush bg2, brush sunc2, brush shad2):
     change_box_rep (ip, true), shape (shape2),
     w (w2), xpad (xp2), ypad (yp2),
     bg (bg2), sunc (sunc2), shad (shad2)
 {
+  SI offx= 0, offy= 0;
   insert (b, w + xpad, 0);
+  if (!is_nil (xb)) {
+    offx= b->x1 - xb->x1;
+    offy= b->y2 - xb->y1 + w + 2*ypad;
+    insert (xb, offx + w + xpad, offy);
+  }
   position ();
   x1= b->x1;
   y1= b->y1 - w - ypad;
@@ -50,6 +57,16 @@ highlight_box_rep::highlight_box_rep (
   y3= min (y1, b->y3);
   x4= max (x2, b->x4 + w + xpad);
   y4= max (y2, b->y4);
+  if (!is_nil (xb)) {
+    x1= min (x1, offx + xb->x1);
+    y1= min (y1, offy + xb->y1 - w - ypad);
+    x2= max (x2, offx + xb->x2 + 2 * (w + xpad));
+    y2= max (y2, offy + xb->y2 + w + ypad);
+    x3= min (x3, min (x1, offx + xb->x3 + w + xpad));
+    y3= min (y3, min (y1, offy + xb->y3));
+    x4= max (x4, max (x2, offx + xb->x4 + w + xpad));
+    y4= max (y4, max (y2, offy + xb->y4));
+  }
   finalize ();
 }
 
@@ -81,6 +98,11 @@ highlight_box_rep::display_classic (renderer& ren) {
   }
   ren->set_background (bg);
   ren->clear_pattern (x1+W, y1+W, x2-W, y2-W);
+  if (N(bs)>1) {
+    SI m= (sy2(0) + sy1(1)) >> 1;
+    ren->set_background (shad);
+    ren->clear_pattern (x1+W, m, x2-W, y2-W);    
+  }
   ren->set_brush (sunc);
   ren->fill (x1  , y2-W, x2  , y2  );
   ren->fill (x1  , y1  , x1+W, y2  );
@@ -138,11 +160,26 @@ highlight_box_rep::display_rounded (renderer& ren) {
   rounded (xs, ys, r2, b2, r2, b1, r1, b2, true, true);
   rounded (xs, ys, r2, t2, r1, t2, r2, t1, true, true);
   rounded (xs, ys, l2, t2, l2, t1, l1, t2, true, true);
-  ren->set_brush (bg);
-  ren->polygon (xs, ys);
-  ren->set_pencil (pencil (sunc, W));
-  xs << l1; ys << b2;
-  ren->lines (xs, ys);
+  if (bg->get_type() != brush_none) {
+    ren->set_brush (bg);
+    ren->polygon (xs, ys);
+  }
+  if (N(bs)>1) {
+    SI m= (sy2(0) + sy1(1)) >> 1;
+    array<SI> Xs, Ys;
+    Xs << l1; Ys << m;
+    Xs << r1; Ys << m;
+    rounded (Xs, Ys, r2, t2, r1, t2, r2, t1, true, true);
+    rounded (Xs, Ys, l2, t2, l2, t1, l1, t2, true, true);
+    ren->set_brush (shad);
+    ren->polygon (Xs, Ys);
+  }
+  if (W > 0) {
+    ren->set_brush (sunc);
+    ren->set_pencil (pencil (sunc, W));
+    xs << l1; ys << b2;
+    ren->lines (xs, ys);
+  }
 }
 
 /******************************************************************************
@@ -150,8 +187,8 @@ highlight_box_rep::display_rounded (renderer& ren) {
 ******************************************************************************/
 
 box
-highlight_box (path ip, box b, tree shape,
+highlight_box (path ip, box b, box xb, tree shape,
                SI w, SI xpad, SI ypad, brush bg, brush sunc, brush shad) {
-  return tm_new<highlight_box_rep> (ip, b, shape,
+  return tm_new<highlight_box_rep> (ip, b, xb, shape,
                                     w, xpad, ypad, bg, sunc, shad);
 }

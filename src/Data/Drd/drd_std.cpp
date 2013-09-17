@@ -730,7 +730,7 @@ init_std_drd () {
 	string_type (1) -> name (1, "bg") -> name (1, "background color"));
 
   init (CANVAS, "canvas", fixed (6, 1, BIFORM) -> accessible (1));
-  init (ORNAMENT, "ornament", fixed (1) -> accessible (0));
+  init (ORNAMENT, "ornament", options (1, 1) -> accessible (0));
 
   init (FORMAT, "format",
 	repeat (1, 1));
