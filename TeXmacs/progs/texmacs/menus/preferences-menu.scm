@@ -143,8 +143,9 @@
         (-> "LaTeX -> TeXmacs"
             (toggle ("Import sophisticated objects as pictures"
                      "latex->texmacs:fallback-on-pictures"))
-            (toggle ("Keep track of the LaTeX source code"
-                     "latex->texmacs:preserve-source")))
+          )
+          ;;(toggle ("Keep track of the LaTeX source code"
+          ;;         "latex->texmacs:preserve-source")))
         (-> "TeXmacs -> LaTeX"
             (toggle ("Replace unrecognized styles"
                      "texmacs->latex:replace-style"))
@@ -460,9 +461,10 @@
     (meti (text "Import sophisticated objects as pictures")
       (toggle (set-boolean-preference "latex->texmacs:fallback-on-pictures" answer)
               (get-boolean-preference "latex->texmacs:fallback-on-pictures")))
-    (meti (text "Keep track of the LaTeX source code")
-      (toggle (set-boolean-preference "latex->texmacs:preserve-source" answer)
-              (get-boolean-preference "latex->texmacs:preserve-source"))))
+  )
+  ;;(meti (text "Keep track of the LaTeX source code")
+  ;;  (toggle (set-boolean-preference "latex->texmacs:preserve-source" answer)
+  ;;          (get-boolean-preference "latex->texmacs:preserve-source"))))
   ======
   (bold (text "TeXmacs -> LaTeX"))
   ===
