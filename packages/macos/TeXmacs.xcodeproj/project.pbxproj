@@ -99,6 +99,9 @@
 		4942BEF71679293B00A6C354 /* font_select.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4942BEF61679293B00A6C354 /* font_select.cpp */; };
 		4942BEF81679293B00A6C354 /* font_select.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4942BEF61679293B00A6C354 /* font_select.cpp */; };
 		4942BEF91679293B00A6C354 /* font_select.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4942BEF61679293B00A6C354 /* font_select.cpp */; };
+		4950FA5317E8349800425005 /* highlight_boxes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4950FA5217E8349800425005 /* highlight_boxes.cpp */; };
+		4950FA5417E8349800425005 /* highlight_boxes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4950FA5217E8349800425005 /* highlight_boxes.cpp */; };
+		4950FA5517E8349800425005 /* highlight_boxes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4950FA5217E8349800425005 /* highlight_boxes.cpp */; };
 		495712F916E90E5900934EA3 /* metadata-acm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 495712F716E90E5900934EA3 /* metadata-acm.cpp */; };
 		495712FA16E90E5900934EA3 /* metadata-acm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 495712F716E90E5900934EA3 /* metadata-acm.cpp */; };
 		495712FB16E90E5900934EA3 /* metadata-acm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 495712F716E90E5900934EA3 /* metadata-acm.cpp */; };
@@ -1298,6 +1301,8 @@
 		493F45F7179EC49F00E2972D /* latex_preview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = latex_preview.cpp; sourceTree = "<group>"; };
 		493F45F8179EC49F00E2972D /* latex_preview.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = latex_preview.hpp; sourceTree = "<group>"; };
 		4942BEF61679293B00A6C354 /* font_select.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_select.cpp; sourceTree = "<group>"; };
+		4950FA5117E8347600425005 /* change.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = change.hpp; sourceTree = "<group>"; };
+		4950FA5217E8349800425005 /* highlight_boxes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = highlight_boxes.cpp; sourceTree = "<group>"; };
 		495712F716E90E5900934EA3 /* metadata-acm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "metadata-acm.cpp"; sourceTree = "<group>"; };
 		495712F816E90E5900934EA3 /* metadata-elsevier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "metadata-elsevier.cpp"; sourceTree = "<group>"; };
 		4964704F16F72CB500D95FC4 /* font_guess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_guess.cpp; sourceTree = "<group>"; };
@@ -3413,6 +3418,7 @@
 				9C0B497910A8CC110097A335 /* Animate */,
 				9C0B497B10A8CC110097A335 /* Basic */,
 				9C0B498110A8CC110097A335 /* Composite */,
+				4950FA5117E8347600425005 /* change.hpp */,
 				9C0B498B10A8CC110097A335 /* composite.hpp */,
 				9C0B498C10A8CC110097A335 /* construct.hpp */,
 				9C0B498D10A8CC110097A335 /* Graphics */,
@@ -3471,6 +3477,7 @@
 		9C0B499110A8CC110097A335 /* Modifier */ = {
 			isa = PBXGroup;
 			children = (
+				4950FA5217E8349800425005 /* highlight_boxes.cpp */,
 				9C0B499210A8CC110097A335 /* change_boxes.cpp */,
 				9C0B499310A8CC110097A335 /* modifier_boxes.cpp */,
 			);
@@ -4493,6 +4500,7 @@
 				491BF371178BFF4C00C69EEF /* tm_updater.cpp in Sources */,
 				491BF374178BFF4C00C69EEF /* tm_winsparkle.cpp in Sources */,
 				493F45F9179EC49F00E2972D /* latex_preview.cpp in Sources */,
+				4950FA5317E8349800425005 /* highlight_boxes.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4869,6 +4877,7 @@
 				491BF373178BFF4C00C69EEF /* tm_updater.cpp in Sources */,
 				491BF376178BFF4C00C69EEF /* tm_winsparkle.cpp in Sources */,
 				493F45FB179EC49F00E2972D /* latex_preview.cpp in Sources */,
+				4950FA5517E8349800425005 /* highlight_boxes.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5273,6 +5282,7 @@
 				491BF372178BFF4C00C69EEF /* tm_updater.cpp in Sources */,
 				491BF375178BFF4C00C69EEF /* tm_winsparkle.cpp in Sources */,
 				493F45FA179EC49F00E2972D /* latex_preview.cpp in Sources */,
+				4950FA5417E8349800425005 /* highlight_boxes.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
