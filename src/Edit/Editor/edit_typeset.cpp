@@ -58,11 +58,6 @@ edit_typeset_rep::get_data (new_data& data) {
   data->att  = get_att ();
 }
 
-void
-edit_typeset_rep::disp_att () {
-  cout << get_att () << LF << LF;
-}
-
 typesetter edit_typeset_rep::get_typesetter () { return ttt; }
 tree edit_typeset_rep::get_style () { return the_style; }
 void edit_typeset_rep::set_style (tree t) { the_style= copy (t); }

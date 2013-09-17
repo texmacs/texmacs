@@ -240,7 +240,6 @@ public:
   virtual void     clear_local_info () = 0;
   virtual void     set_data (new_data data) = 0;
   virtual void     get_data (new_data& data) = 0;
-  virtual void     disp_att () = 0;
   virtual SI       as_length (string l) = 0;
   virtual string   add_lengths (string l1, string l2) = 0;
   virtual string   multiply_length (double x, string l) = 0;

@@ -18,7 +18,6 @@
   "initialize_glue_editor"
 
   ;; important paths and trees
-  (disp-att disp_att (void))
   (root-tree the_root (tree))
   (buffer-path the_buffer_path (path))
   (buffer-tree the_buffer (tree))
