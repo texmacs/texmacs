@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|bluish|1.0|bluish|1.0>
+    <src-package-dtd|reddish|1.0|reddish|1.0>
 
     <\src-purpose>
-      Bluish motif for presentation style.
+      Reddish motif for presentation style.
     </src-purpose>
 
     <src-copyright|2013|Joris van der Hoeven>
@@ -38,13 +38,13 @@
 
   <assign|ornament-border|2ln>
 
-  <assign|ornament-color|pastel blue>
+  <assign|ornament-color|#fff0e8>
 
-  <assign|ornament-extra-color|dark blue>
+  <assign|ornament-extra-color|#903000>
 
-  <assign|ornament-sunny-color|#f4f4ff>
+  <assign|ornament-sunny-color|#fff8f4>
 
-  <assign|ornament-shadow-color|#d8d8ff>
+  <assign|ornament-shadow-color|#ffe0d0>
 
   <assign|ornament-hpadding|1spc>
 
@@ -56,8 +56,7 @@
     </src-comment>
   </active*>
 
-  <assign|tit|<macro|body|<with|ornament-color|dark
-  blue|<ornament|<htab|5mm><move|<with|font-series|bold|math-font-series|bold|<large|<with|color|<value|bg-color>|<arg|body>>>>|0fn|0.333fn><htab|5mm>>>>>
+  <assign|tit|<macro|body|<with|ornament-color|#903000|<ornament|<htab|5mm><move|<with|font-series|bold|math-font-series|bold|<large|<with|color|<value|bg-color>|<arg|body>>>>|0fn|0.333fn><htab|5mm>>>>>
 
   <\active*>
     <\src-comment>
