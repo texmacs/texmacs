@@ -210,18 +210,18 @@ void
 qt_chooser_widget_rep::perform_dialog () {
   QString caption = to_qstring (win_title);
   c_string tmp (directory * "/" * file);
-  QString directory = QString::fromLocal8Bit (tmp);
+  QString path = QString::fromLocal8Bit (tmp);
   
 #if (defined(Q_WS_MAC) || defined(Q_WS_WIN))
-  QFileDialog* dialog = new QFileDialog (NULL, caption, directory);
+  QFileDialog* dialog = new QFileDialog (NULL, caption, path);
 #else
   QTMFileDialog*  dialog;
-  QTMImageDialog* imgdialog= 0; // to avoid a dynamic_cast
+  QTMImageDialog* imgdialog = 0; // to avoid a dynamic_cast
   
   if (type == "image")
-    dialog= imgdialog= new QTMImageDialog (NULL, caption, directory);
+    dialog = imgdialog = new QTMImageDialog (NULL, caption, path);
   else
-    dialog= new QTMFileDialog (NULL, caption, directory);
+    dialog = new QTMFileDialog (NULL, caption, path);
 #endif
   
   dialog->setViewMode (QFileDialog::Detail);
@@ -232,6 +232,12 @@ qt_chooser_widget_rep::perform_dialog () {
   else
     dialog->setFileMode (QFileDialog::AnyFile);
 
+  if (save) {
+    dialog->setDefaultSuffix (defaultSuffix);
+    dialog->setAcceptMode (QFileDialog::AcceptSave);
+    dialog->setLabelText (QFileDialog::Accept, to_qstring (translate ("Save")));
+  }
+
 #if (QT_VERSION >= 0x040400)
   if (type != "directory") {
     QStringList filters;
@@ -239,7 +245,6 @@ qt_chooser_widget_rep::perform_dialog () {
       filters << nameFilter;
     filters << to_qstring (translate ("All files (*.*)"));
     dialog->setNameFilters (filters);
-    dialog->setDefaultSuffix (defaultSuffix);
   }
 #endif
 
@@ -250,14 +255,13 @@ qt_chooser_widget_rep::perform_dialog () {
   r.setSize (sz);
   r.moveCenter (pos);
   dialog->setGeometry (r);
-  //dialog->setLabelText (QFileDialog::Accept, "Ok");  // why?
   
   QStringList fileNames;
   file = "#f";
   if (dialog->exec ()) {
     fileNames = dialog->selectedFiles();
     if (fileNames.count() > 0) {
-      url u = url_system (scm_unquote (from_qstring (fileNames[0])));
+      url u = url_system (scm_unquote (from_qstring (fileNames.first())));
         // FIXME: charset detection in to_qstring() (if that hack is still there)
         // fails sometimes, so we bypass it to force the proper (?) conversions here.
       //QByteArray arr   = to_qstring (as_string (u)).toLocal8Bit ();
@@ -289,5 +293,4 @@ qt_chooser_widget_rep::perform_dialog () {
   
   cmd ();
   if (!is_nil (quit)) quit ();
-
 }
