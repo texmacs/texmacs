@@ -244,7 +244,7 @@ bridge_canvas_rep::my_typeset (int desired_status) {
 }
 
 /******************************************************************************
-* Hightlighting
+* Highlighting
 ******************************************************************************/
 
 class bridge_ornament_rep: public bridge_ornamented_rep {
