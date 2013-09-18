@@ -74,11 +74,11 @@
     </src-comment>
   </active*>
 
-  <assign|input-color|pastel blue>
+  <assign|input-color|#fff0e8>
 
-  <assign|fold-bar-color|#c0c0e0>
+  <assign|fold-bar-color|#dcccc4>
 
-  <assign|fold-title-color|#a0a0d0>
+  <assign|fold-title-color|#c8b0a4>
 </body>
 
 <\initial>
