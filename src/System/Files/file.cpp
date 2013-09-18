@@ -564,19 +564,24 @@ copy (url u1, url u2) {
 }
 
 void
-remove (url u) {
-  if (is_none (concretize (u)))
-    u= expand (complete (u));
+remove_sub (url u) {
   if (is_none (u));
   else if (is_or (u)) {
-    remove (u[1]);
-    remove (u[2]);
+    remove_sub (u[1]);
+    remove_sub (u[2]);
   }
   else {
     c_string _u (concretize (u));
-    if (::remove (_u) && DEBUG_AUTO)
-     cerr << "TeXmacs] warning, remove failed: " << strerror (errno) << LF;
+    if (::remove (_u) && DEBUG_AUTO) {
+      cerr << "TeXmacs] warning, remove failed: " << strerror (errno) << LF;
+      cerr << "       ] file was: " << u << LF;
+    }
   }
+}
+
+void
+remove (url u) {
+  remove_sub (expand (complete (u)));
 }
 
 void

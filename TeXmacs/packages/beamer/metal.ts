@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.10>
+<TeXmacs|1.0.7.19>
 
 <style|source>
 
@@ -38,7 +38,9 @@
 
   <assign|ornament-border|2ln>
 
-  <assign|ornament-color|<pattern|metal-rough-medium.png|*3/5|*3/5|#d0d0d0>>
+  <assign|ornament-color|<pattern|metal-brushed-medium.png|*3/5|*3/5|#d0d0d0>>
+
+  <assign|ornament-extra-color|<pattern|metal-brushed-dark.png|*3/5|*3/5|#a0a0a0>>
 
   <assign|ornament-sunny-color|#e0e0e0>
 

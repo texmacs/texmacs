@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.10>
+<TeXmacs|1.0.7.19>
 
 <style|source>
 
@@ -39,6 +39,8 @@
   <assign|ornament-border|2ln>
 
   <assign|ornament-color|<pattern|pine.png|*3/5|*3/5|#e0b050>>
+
+  <assign|ornament-extra-color|<pattern|wood-light.png|*3/5|*3/5|#c06028>>
 
   <assign|ornament-sunny-color|#f0e0c0>
 
