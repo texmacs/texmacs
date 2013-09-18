@@ -4,13 +4,13 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|ridged-paper|1.0|ridged-paper|1.0>
+    <src-package-dtd|bluish|1.0|blish|1.0>
 
     <\src-purpose>
-      Ridged paper motif for presentation style.
+      Bluish motif for presentation style.
     </src-purpose>
 
-    <src-copyright|2007--2010|Joris van der Hoeven>
+    <src-copyright|2013|Joris van der Hoeven>
 
     <\src-license>
       This software falls under the <hlink|GNU general public license,
@@ -26,9 +26,9 @@
     </src-comment>
   </active*>
 
-  <assign|bg-color|<pattern|paper-ridged-light.png|*3/5|*3/5|#f4eee8>>
+  <assign|bg-color|#ffffff>
 
-  <assign|monochrome-bg-color|#f4eee8>
+  <assign|monochrome-bg-color|#ffffff>
 
   <\active*>
     <\src-comment>
@@ -38,13 +38,13 @@
 
   <assign|ornament-border|2ln>
 
-  <assign|ornament-color|<pattern|pine.png|*3/5|*3/5|#e0b050>>
+  <assign|ornament-color|pastel blue>
 
-  <assign|ornament-extra-color|<pattern|wood-medium.png|*3/5|*3/5|#c06028>>
+  <assign|ornament-extra-color|dark blue>
 
-  <assign|ornament-sunny-color|#f0e0c0>
+  <assign|ornament-sunny-color|#f4f4ff>
 
-  <assign|ornament-shadow-color|#c07055>
+  <assign|ornament-shadow-color|#d8d8ff>
 
   <assign|ornament-hpadding|1spc>
 
@@ -56,9 +56,8 @@
     </src-comment>
   </active*>
 
-  <assign|tit|<macro|body|<with|ornament-color|<pattern|paper-manila-medium.png|*3/5|*3/5|#e0e0e0>|<ornament|<with|font-series|bold|color|dark
-  brown|<image|$TEXMACS_PATH/misc/images/right-head.png|0.222222w|0.222222h||>><htab|5mm><move|<with|font-series|bold|math-font-series|bold|<large|<with|color|dark
-  brown|<arg|body>>>>|0fn|0.333fn><htab|5mm><image|$TEXMACS_PATH/misc/images/left-head.png|0.222222w|0.222222h||>>>>>
+  <assign|tit|<macro|body|<with|ornament-color|dark
+  blue|<ornament|<htab|5mm><move|<with|font-series|bold|math-font-series|bold|<large|<with|color|#fff0e0|<arg|body>>>>|0fn|0.333fn><htab|5mm>>>>>
 
   <\active*>
     <\src-comment>
@@ -66,7 +65,9 @@
     </src-comment>
   </active*>
 
-  <assign|strong-color|#504000>
+  <assign|strong-color|#402060>
+
+  <assign|math-color|#503820>
 
   <\active*>
     <\src-comment>
@@ -74,11 +75,11 @@
     </src-comment>
   </active*>
 
-  <assign|input-color|<pattern|paper-ridged-medium.png|*3/5|*3/5|#e8dcd0>>
+  <assign|input-color|pastel blue>
 
-  <assign|fold-bar-color|<pattern|wood-light.png|*3/5|*3/5|#e0b050>>
+  <assign|fold-bar-color|#c0c0e0>
 
-  <assign|fold-title-color|<pattern|pine.png|*3/5|*3/5|#e0b050>>
+  <assign|fold-title-color|#a0a0d0>
 </body>
 
 <\initial>
