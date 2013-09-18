@@ -56,7 +56,7 @@
     </src-comment>
   </active*>
 
-  <assign|tit|<macro|body|<with|ornament-color|<pattern|granite-medium.png|*3/5|*3/5|#404040>|<ornament|<htab|5mm><move|<with|font-series|bold|math-font-series|bold|<large|<with|color|#909080|<arg|body>>>>|0fn|0.333fn><htab|5mm>>>>>
+  <assign|tit|<macro|body|<with|ornament-color|<pattern|granite-light.png|*3/5|*3/5|#808080>|<ornament|<htab|5mm><move|<with|font-series|bold|math-font-series|bold|<large|<with|color|<value|bg-color>|<arg|body>>>>|0fn|0.333fn><htab|5mm>>>>>
 
   <\active*>
     <\src-comment>

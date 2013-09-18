@@ -20,13 +20,15 @@
     </src-license>
   </src-title>>
 
+  <assign|hang-length|0.15em>
+
   <\active*>
     <\src-comment>
       Framed theorems
     </src-comment>
   </active*>
 
-  <assign|enunciation-sep| >
+  <assign|enunciation-sep|>
 
   <assign|enunciation-name|<macro|which|<with|color|<value|bg-color>|font-series|bold|<arg|which>>>>
 
@@ -34,10 +36,9 @@
 
   <assign|render-enunciation|<\macro|which|body>
     <\ornament>
-      <\surround||<right-flush>>
-        <arg|body>
-      </surround>
-    </ornament|<arg|which>>
+      <surround|<resize|<with|ornament-color|<value|ornament-extra-color>|<ornament|<resize|<arg|which>||<minus|1b|1hang>||<plus|1t|1hang>>>>|<plus|1hang|<value|ornament-hpadding>|<value|ornament-border>>|<plus|1b|1hang>||<minus|<minus|1t|1hang>|<plus|<value|ornament-vpadding>|<value|ornament-border>>>>
+      |<right-flush>|<arg|body>>
+    </ornament>
   </macro>>
 </body>
 

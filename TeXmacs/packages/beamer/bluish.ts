@@ -57,7 +57,7 @@
   </active*>
 
   <assign|tit|<macro|body|<with|ornament-color|dark
-  blue|<ornament|<htab|5mm><move|<with|font-series|bold|math-font-series|bold|<large|<with|color|#fff0e0|<arg|body>>>>|0fn|0.333fn><htab|5mm>>>>>
+  blue|<ornament|<htab|5mm><move|<with|font-series|bold|math-font-series|bold|<large|<with|color|#fff0ff|<arg|body>>>>|0fn|0.333fn><htab|5mm>>>>>
 
   <\active*>
     <\src-comment>
@@ -65,9 +65,9 @@
     </src-comment>
   </active*>
 
-  <assign|strong-color|#402060>
+  <assign|strong-color|#602060>
 
-  <assign|math-color|#503820>
+  <assign|math-color|#503050>
 
   <\active*>
     <\src-comment>

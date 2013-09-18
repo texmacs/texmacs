@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package|framed-theorems|1.0>
+    <src-package|rounded-frames|1.0>
 
     <\src-purpose>
-      A style package for ornamented theorems.
+      A style package for rounded frames
     </src-purpose>
 
     <src-copyright|2013|Joris van der Hoeven>
@@ -20,25 +20,9 @@
     </src-license>
   </src-title>>
 
-  <\active*>
-    <\src-comment>
-      Framed theorems
-    </src-comment>
-  </active*>
+  <assign|ornament-shape|rounded>
 
-  <assign|enunciation-sep| >
-
-  <assign|enunciation-name|<macro|which|<with|color|<value|bg-color>|font-series|bold|<arg|which>>>>
-
-  <assign|unframed-render-enunciation|<value|render-enunciation>>
-
-  <assign|render-enunciation|<\macro|which|body>
-    <\ornament>
-      <\surround||<right-flush>>
-        <arg|body>
-      </surround>
-    </ornament|<arg|which>>
-  </macro>>
+  <assign|ornament-border|0ln>
 </body>
 
 <\initial>
