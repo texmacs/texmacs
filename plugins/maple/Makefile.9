@@ -13,8 +13,8 @@ CC = gcc
 #TEXMACS_HOME_PATH = $(HOME)/.TeXmacs
 #TEXMACS_MAPLE_DIR = $(shell realpath `which maple` | sed -e 's%/bin/maple$$%%')
 
-MAPLECPPFLAGS = -I$(TEXMACS_MAPLE_DIR)/extern/include
-MAPLELDFLAGS = -L$(TEXMACS_MAPLE_DIR)/bin.IBM_INTEL_LINUX -Wl,-rpath,$(TEXMACS_MAPLE_DIR)/bin.IBM_INTEL_LINUX -lmaplec
+#MAPLE_CPPFLAGS = -I$(TEXMACS_MAPLE_DIR)/extern/include
+#MAPLE_LDFLAGS = -L$(TEXMACS_MAPLE_DIR)/bin.IBM_INTEL_LINUX -Wl,-rpath,$(TEXMACS_MAPLE_DIR)/bin.IBM_INTEL_LINUX -lmaplec
 
 all: $(TEXMACS_HOME_PATH)/bin/tm_maple_9.sh $(TEXMACS_HOME_PATH)/bin/tm_maple_9
 
@@ -23,4 +23,4 @@ $(TEXMACS_HOME_PATH)/bin/tm_maple_9.sh: $(TEXMACS_MAPLE_DIR)/bin/maple
 	chmod a+x $(TEXMACS_HOME_PATH)/bin/tm_maple_9.sh
 
 $(TEXMACS_HOME_PATH)/bin/tm_maple_9: src.9/tm_maple_9.c
-	$(CC) $(MAPLELDFLAGS) $(MAPLECPPFLAGS) src.9/tm_maple_9.c -o $(TEXMACS_HOME_PATH)/bin/tm_maple_9
+	$(CC) $(MAPLE_LDFLAGS) $(MAPLE_CPPFLAGS) src.9/tm_maple_9.c -o $(TEXMACS_HOME_PATH)/bin/tm_maple_9

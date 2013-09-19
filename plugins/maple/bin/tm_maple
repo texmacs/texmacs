@@ -11,9 +11,22 @@ if [ $? -ne 0 ]
 then
     TEXMACS_MAPLE_BIN=`which maple`
 fi
-TEXMACS_MAPLE_DIR=`echo -n "$TEXMACS_MAPLE_BIN" | sed -e 's%/bin/maple$%%'`
+#TEXMACS_MAPLE_DIR=`echo -n "$TEXMACS_MAPLE_BIN" | sed -e 's%/bin/maple$%%'`
+TEXMACS_MAPLE_DIR=`echo "$TEXMACS_MAPLE_BIN" | sed -e 's%/bin/maple$%%'`
 export TEXMACS_MAPLE_BIN
 export TEXMACS_MAPLE_DIR
+
+MAPLE_CPPFLAGS="-I$TEXMACS_MAPLE_DIR/extern/include"
+MAPLE_SYS_BIN=""
+if test -e "$TEXMACS_MAPLE_DIR/bin/maple.system.type"; then
+  MAPLE_SYS_BIN=$("$TEXMACS_MAPLE_DIR/bin/maple.system.type")
+fi
+MAPLE_LDFLAGS="-L$TEXMACS_MAPLE_DIR/$MAPLE_SYS_BIN -lmaplec"
+if [ "$MAPLE_SYS_BIN" -eq "bin.IBM_INTEL_LINUX" ]; then
+  MAPLE_LDFLAGS="-L$TEXMACS_MAPLE_DIR/$MAPLE_SYS_BIN -Wl,-rpath,$(TEXMACS_MAPLE_DIR)/$MAPLE_SYS_BIN -lmaplec"
+fi
+export MAPLE_CPPFLAGS
+export MAPLE_LDFLAGS
 
 if [ -d "$TEXMACS_MAPLE_DIR/extern" ]
 then

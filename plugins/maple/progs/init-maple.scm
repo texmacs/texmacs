@@ -12,6 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (plugin-configure maple
+  (:macpath "/Library/Frameworks/Maple.framework/Versions/1*" "bin")
   (:require (url-exists-in-path? "maple"))
   (:launch "tm_maple")
   (:session "Maple"))
