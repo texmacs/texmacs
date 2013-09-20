@@ -31,11 +31,11 @@ tm_updater* tm_updater::instance ()
 
   if (! _instance) {
     #if defined (OS_MACOS) && defined (USE_SPARKLE)
-      _instance = new(std::nothrow) tm_sparkle ();
+      _instance = new tm_sparkle ();
     #elif (defined (OS_MINGW) || defined (OS_WIN32)) && defined (USE_SPARKLE)
-      _instance = new(std::nothrow) tm_winsparkle ();
+      _instance = new tm_winsparkle ();
     #else
-      _instance = new(std::nothrow) tm_updater ();
+      _instance = new tm_updater ();
     #endif
     
     int interval = as_int (get_preference ("updater:interval", "1"));
