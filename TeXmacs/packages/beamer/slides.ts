@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.13>
+<TeXmacs|1.0.7.20>
 
 <style|source>
 
@@ -39,6 +39,8 @@
   <assign|ornament-border|2ln>
 
   <assign|ornament-color|#e0b050>
+
+  <assign|ornament-extra-color|#804018>
 
   <assign|ornament-sunny-color|#f0e0c0>
 
