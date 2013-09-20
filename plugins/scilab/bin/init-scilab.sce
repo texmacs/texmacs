@@ -103,7 +103,6 @@ libs= [
   "Scilab core", "corelib";..
   "Elementary functions", "elementary_functionslib";..
   "File I/O", "fileiolib";..
-  "Integers", "integerlib";..
   "I/O", "iolib";..
   "Linear Algebra", "linear_algebralib";..
   "Polynomials", "polynomialslib";..
