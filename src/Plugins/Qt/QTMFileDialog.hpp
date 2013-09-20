@@ -50,14 +50,15 @@ public:
 #if (defined(Q_WS_MAC) && (QT_VERSION >= 0x040500))
   void setOptions (QFileDialog::Options opts) { file->setOptions (opts); };
 #endif
-  void setViewMode (QFileDialog::ViewMode mode) { file->setViewMode (mode); };
-  void setFileMode (QFileDialog::FileMode mode) { file->setFileMode (mode); };
+  void setAcceptMode (QFileDialog::AcceptMode mode) { file->setAcceptMode(mode); }
+  void setViewMode (QFileDialog::ViewMode mode) { file->setViewMode (mode); }
+  void setFileMode (QFileDialog::FileMode mode) { file->setFileMode (mode); }
 #if (QT_VERSION >= 0x040400)
   void setNameFilter (const QString& filter) { file->setNameFilter (filter); }
   void setNameFilters (const QStringList& filters) { file->setNameFilters (filters); }
 #endif
   void setDefaultSuffix (const QString& suffix) { file->setDefaultSuffix (suffix); }
-  void setLabelText (QFileDialog::DialogLabel label, const QString& text) { file->setLabelText (label, text); };
+  void setLabelText (QFileDialog::DialogLabel label, const QString& text) { file->setLabelText (label, text); }
 };
 
 class QTMImagePreview : public QWidget
