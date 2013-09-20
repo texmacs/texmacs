@@ -141,11 +141,11 @@
 /* Use imlib2 library */
 #undef USE_IMLIB2
 
+/* Use Sparkle framework */
+#undef USE_SPARKLE
+
 /* Use sqlite3 library */
 #undef USE_SQLITE3
-
-/* Use the Sparkle framework (MacOS) or DLL (Windows) */
-#undef USE_SPARKLE
 
 /* Use C++ stack backtraces */
 #undef USE_STACK_TRACE
