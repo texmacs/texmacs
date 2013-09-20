@@ -851,8 +851,8 @@ printer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
   int y1= -oy;
   int x2= w - ox;
   int y2= h - oy;
-  x -= 2.06 * ox * pixel; // FIXME: where does the magic 2.06 come from?
-  y -= 2.06 * oy * pixel;
+  x -= (int) 2.06 * ox * pixel; // FIXME: where does the magic 2.06 come from?
+  y -= (int) 2.06 * oy * pixel;
   image (name, eps, x1, y1, x2, y2, w * pixel, h * pixel, x, y, 255);
 }
 

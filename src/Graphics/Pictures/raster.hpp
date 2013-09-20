@@ -173,43 +173,56 @@ template<typename C> inline void
 clear_alpha (raster<C>& r) { foreach<clear_alpha_op> (r); }
 
 template<typename C> inline raster<C>
-copy (raster<C> r) { return map<copy_op> (r); }
+copy (const raster<C>& r) { return map<copy_op> (r); }
 template<typename C> inline raster<C>
-mul_alpha (raster<C> r) { return map<mul_alpha_op> (r); }
+mul_alpha (const raster<C>& r) { return map<mul_alpha_op> (r); }
 template<typename C> inline raster<C>
-div_alpha (raster<C> r) { return map<div_alpha_op> (r); }
+div_alpha (const raster<C>& r) { return map<div_alpha_op> (r); }
 template<typename C> inline raster<C>
-normalize (raster<C> r) { return map<normalize_op> (r); }
+normalize (const raster<C>& r) { return map<normalize_op> (r); }
 template<typename C> inline raster<typename C::scalar_type>
-get_alpha (raster<C> r) { return map<get_alpha_op> (r); }
+get_alpha (const raster<C>& r) { return map<get_alpha_op> (r); }
 
 template<typename C, typename S> inline raster<C>
-operator + (raster<C> r1, raster<S> r2) { return map<add_op> (r1, r2); }
+operator + (const raster<C>& r1, const raster<S>& r2) {
+  return map<add_op> (r1, r2); }
 template<typename C, typename S> inline raster<C>
-operator - (raster<C> r1, raster<S> r2) { return map<sub_op> (r1, r2); }
+operator - (const raster<C>& r1, const raster<S>& r2) {
+ return map<sub_op> (r1, r2); }
 template<typename C, typename S> inline raster<C>
-operator * (raster<C> r1, raster<S> r2) { return map<mul_op> (r1, r2); }
+operator * (const raster<C>& r1, const raster<S>& r2) {
+  return map<mul_op> (r1, r2); }
 template<typename C, typename S> inline raster<C>
-operator / (raster<C> r1, raster<S> r2) { return map<div_op> (r1, r2); }
+operator / (const raster<C>& r1, const raster<S>& r2) {
+  return map<div_op> (r1, r2); }
 template<typename C, typename S> inline raster<C>
-operator + (raster<C> r, S sc) { return map_scalar<add_op> (r, sc); }
+operator + (const raster<C>& r, const S& sc) {
+  return map_scalar<add_op> (r, sc); }
 template<typename C, typename S> inline raster<C>
-operator - (raster<C> r, S sc) { return map_scalar<sub_op> (r, sc); }
+operator - (const raster<C>& r, const S& sc) {
+  return map_scalar<sub_op> (r, sc); }
 template<typename C, typename S> inline raster<C>
-operator - (S sc, raster<C> r) { return map_scalar<neg_sub_op> (r, sc); }
+operator - (const S& sc, const raster<C>& r) {
+  return map_scalar<neg_sub_op> (r, sc); }
 template<typename C, typename S> inline raster<C>
-operator * (raster<C> r, S sc) { return map_scalar<mul_op> (r, sc); }
+operator * (const raster<C>& r, const S& sc) {
+  return map_scalar<mul_op> (r, sc); }
 template<typename C, typename S> inline raster<S>
-operator * (S sc, raster<C> r) { return map_scalar<mul_op> (r, sc); }
+operator * (const S& sc, const raster<C>& r) {
+  return map_scalar<mul_op> (r, sc); }
 template<typename C, typename S> inline raster<C>
-operator / (raster<C> r, S sc) { return map_scalar<div_op> (r, sc); }
+operator / (const raster<C>& r, const S& sc) {
+  return map_scalar<div_op> (r, sc); }
 
 template<typename C> inline raster<C>
-hypot (raster<C> r1, raster<C> r2) { return map<hypot_op> (r1, r2); }
+hypot (const raster<C>& r1, const raster<C>& r2) {
+  return map<hypot_op> (r1, r2); }
 template<typename C> inline raster<C>
-min (raster<C> r1, raster<C> r2) { return map<min_op> (r1, r2); }
+min (const raster<C>& r1, const raster<C>& r2) {
+  return map<min_op> (r1, r2); }
 template<typename C> inline raster<C>
-max (raster<C> r1, raster<C> r2) { return map<max_op> (r1, r2); }
+max (const raster<C>& r1, const raster<C>& r2) {
+  return map<max_op> (r1, r2); }
 
 template<typename C, typename S> raster<C>
 apply_alpha (C col, raster<S> r) {
@@ -301,9 +314,9 @@ draw_on (raster<C>& dest, raster<S> src, int x, int y) {
   int h = min (sh2, dh - y);
   if (w <= 0 || h <= 0) return;
   d += y * dw + x;
-  for (int y=0; y<h; y++, d += dw, s +=sw)
-    for (int x=0; x<w; x++)
-      composition_op<M>::set_op (d[x], s[x]);
+  for (int yy=0; yy<h; yy++, d += dw, s +=sw)
+    for (int xx=0; xx<w; xx++)
+      composition_op<M>::set_op (d[xx], s[xx]);
 }
 
 template<typename C, typename S> void
@@ -475,10 +488,10 @@ struct magnifier {
 template<typename C> raster<C>
 magnify (raster<C> r, double sx, double sy) {
   magnifier mf (1.0/sx, 1.0/sy);
-  int x1 = floor (sx * (-r->ox));
-  int x2 = ceil  (sx * (r->w - r->ox));
-  int y1 = floor (sy * (-r->oy));
-  int y2 = ceil  (sy * (r->h - r->oy));
+  int x1 = (int) floor (sx * (-r->ox));
+  int x2 = (int) ceil  (sx * (r->w - r->ox));
+  int y1 = (int) floor (sy * (-r->oy));
+  int y2 = (int) ceil  (sy * (r->h - r->oy));
   if (x1 > x2) { int temp= x1; x1= x2; x2= temp; }
   if (y1 > y2) { int temp= y1; y1= y2; y2= temp; }
   return inverse_transform (r, mf, x2-x1, y2-y1, -x1, -y1);
@@ -495,10 +508,10 @@ template<typename C> raster<C>
 bubble (raster<C> r, double rr, double a) {
   bubbler bu (rr, a);
   double R= a * rr / 3.142;
-  int x1 = floor ((-r->ox) - R);
-  int x2 = ceil  ((r->w - r->ox) + R);
-  int y1 = floor ((-r->oy) - R);
-  int y2 = ceil  ((r->h - r->oy) + R);
+  int x1 = (int) floor ((-r->ox) - R);
+  int x2 = (int) ceil  ((r->w - r->ox) + R);
+  int y1 = (int) floor ((-r->oy) - R);
+  int y2 = (int) ceil  ((r->h - r->oy) + R);
   return inverse_transform (r, bu, x2-x1, y2-y1, -x1, -y1);
 }
 
@@ -535,8 +548,8 @@ pixelize (F fun, int w, int h, int ox, int oy, int shrink= 5) {
 template<typename C> raster<C>
 rectangular_pen (double rx, double ry) {
   rx += 0.5; ry += 0.5;
-  int w= 2 * ceil (rx + 0.5) - 1;
-  int h= 2 * ceil (ry + 0.5) - 1;
+  int w= (int) (2 * ceil (rx + 0.5) - 1);
+  int h= (int) (2 * ceil (ry + 0.5) - 1);
   double rem_x= ((double) w) / 2 - rx;
   double rem_y= ((double) h) / 2 - ry;
   raster<C> ret (w, h, w/2, h/2);
@@ -570,8 +583,8 @@ rectangular_pen (double rx, double ry, double phi) {
   if (fabs (phi) <= 1.0e-6) return rectangular_pen<C> (rx, ry);
   rx += 0.5; ry += 0.5;
   chi_rectangular fun (rx, ry, phi);
-  int R= ceil (sqrt (rx * rx + ry * ry) - 0.5);
-  int w= 2*R + 1;
+  int R= (int) ceil (sqrt (rx * rx + ry * ry) - 0.5);
+  int w= (int) (2*R + 1);
   return pixelize<C> (fun, w, w, R, R);  
 }
 
@@ -590,8 +603,8 @@ template<typename C> raster<C>
 oval_pen (double rx, double ry, double phi) {
   rx += 0.5; ry += 0.5;
   chi_oval fun (rx, ry, phi);
-  int R= ceil (max (rx, ry) - 0.5);
-  int w= 2*R + 1;
+  int R= (int) ceil (max (rx, ry) - 0.5);
+  int w= (int) (2*R + 1);
   return pixelize<C> (fun, w, w, R, R);
 }
 
@@ -612,10 +625,10 @@ motion_pen (double dx, double dy) {
   double r  = hypot (dx, dy);
   if (r <= 1.0e-6) return rectangular_pen<C> (0.0, 0.0, 0.0);
   chi_motion fun (r, phi);
-  int x1= floor (min (dx, 0.0) - 0.5);
-  int y1= floor (min (dy, 0.0) - 0.5);
-  int x2= ceil  (max (dx, 0.0) + 0.5);
-  int y2= ceil  (max (dy, 0.0) + 0.5);
+  int x1= (int) floor (min (dx, 0.0) - 0.5);
+  int y1= (int) floor (min (dy, 0.0) - 0.5);
+  int x2= (int) ceil  (max (dx, 0.0) + 0.5);
+  int y2= (int) ceil  (max (dy, 0.0) + 0.5);
   return pixelize<C> (fun, x2 - x1, y2 - y1, -x1, -y1);
 }
 
@@ -647,8 +660,8 @@ template<typename C> raster<C>
 gaussian_pen (double rx, double ry, double phi, double order= 2.5) {
   gaussian_distribution fun (rx, ry, phi);
   double Rx= rx * order, Ry= ry * order;
-  int R= ceil (max (Rx, Ry) - 0.5);
-  int w= 2*R + 1;
+  int R= (int) ceil (max (Rx, Ry) - 0.5);
+  int w= (int) (2*R + 1);
   return pixelize<C> (fun, w, w, R, R, 1);
 }
 

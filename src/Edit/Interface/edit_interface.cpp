@@ -558,7 +558,10 @@ edit_interface_rep::apply_changes () {
   // cout << "Handling extents\n";
   if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_EXTENTS)) {
     string medium= get_init_string (PAGE_MEDIUM);
-    SI ex1= eb->x1*magf, ey1= eb->y1*magf, ex2= eb->x2*magf, ey2= eb->y2*magf;
+    SI ex1= (SI) eb->x1*magf;
+    SI ey1= (SI) eb->y1*magf;
+    SI ex2= (SI) eb->x2*magf;
+    SI ey2= (SI) eb->y2*magf;
     abs_round (ex1, ey1);
     abs_round (ex2, ey2);
     SI w, h;

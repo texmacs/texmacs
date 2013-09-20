@@ -128,7 +128,7 @@ public:
   gaussian_pen_effect_rep (double rx2, double ry2, double phi2):
     rx (rx2), ry (ry2), phi (phi2) {}
   rectangle get_extents (array<rectangle> rs) { (void) rs;
-    SI R= ceil (2.5 * max (rx, ry));
+    SI R= (SI) ceil (2.5 * max (rx, ry));
     return rectangle (-R, -R, R, R); }
   picture apply (array<picture> pics, SI pixel) { (void) pics;
     return gaussian_pen_picture (rx / pixel, ry / pixel, phi); }
@@ -140,7 +140,7 @@ public:
   oval_pen_effect_rep (double rx2, double ry2, double phi2):
     rx (rx2), ry (ry2), phi (phi2) {}
   rectangle get_extents (array<rectangle> rs) { (void) rs;
-    SI R= max (rx, ry);
+    SI R= (SI) max (rx, ry);
     return rectangle (-R, -R, R, R); }
   picture apply (array<picture> pics, SI pixel) { (void) pics;
     return oval_pen_picture (rx / pixel, ry / pixel, phi); }
@@ -152,7 +152,7 @@ public:
   rectangular_pen_effect_rep (double rx2, double ry2, double p2):
     rx (rx2), ry (ry2), phi (p2) {}
   rectangle get_extents (array<rectangle> rs) { (void) rs;
-    SI R= sqrt (rx * rx + ry * ry);
+    SI R= (SI) sqrt (rx * rx + ry * ry);
     return rectangle (-R, -R, R, R); }
   picture apply (array<picture> pics, SI pixel) { (void) pics;
     return rectangular_pen_picture (rx / pixel, ry / pixel, phi); }
