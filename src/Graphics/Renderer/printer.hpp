@@ -24,6 +24,8 @@ class printer_rep: public renderer_rep {
   bool     landscape;
   double   paper_w;
   double   paper_h;
+  int      psw;
+  int      psh;
   bool     use_alpha;
   string   prologue;
   string   body;

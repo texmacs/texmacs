@@ -69,15 +69,19 @@ printer_rep::printer_rep (
 	     << "%%PageOrder: Ascend\n";
   if (page_type != "user")
     prologue << "%%DocumentPaperSizes: " << page_type << "\n";
+  if (landscape) {
+    psw= (int) (28.36*paper_h+ 0.5);
+    psh= (int) (28.36*paper_w+ 0.5);
+  }
+  else {
+    psw= (int) (28.36*paper_w+ 0.5);
+    psh= (int) (28.36*paper_h+ 0.5);
+  }
+  prologue << "%%BoundingBox: 0 0 "
+           << as_string (psw) << " "
+           << as_string (psh) << "\n";
   if (landscape)
-    prologue << "%%BoundingBox: 0 0 "
-	     << as_string ((int) (28.36*paper_h+ 0.5)) << " "
-	     << as_string ((int) (28.36*paper_w+ 0.5)) << "\n"
-	     << "%%Orientation: Landscape\n";
-  else
-    prologue << "%%BoundingBox: 0 0 "
-	     << as_string ((int) (28.36*paper_w+ 0.5)) << " "
-	     << as_string ((int) (28.36*paper_h+ 0.5)) << "\n";
+    prologue << "%%Orientation: Landscape\n";
   prologue   << "%%EndComments\n\n"
 	     << tex_pro << "\n"
 	     << special_pro << "\n"
@@ -129,11 +133,17 @@ printer_rep::~printer_rep () {
 	   << "%%BeginSetup\n"
 	   << "%%Feature: *Resolution " << as_string (dpi) << "dpi\n"
 	   << "TeXDict begin\n";
-  if (page_type != "user") {
-    prologue << "%%BeginPaperSize: " << page_type << "\n";
+  prologue << "%%BeginPaperSize: " << page_type << "\n";
+  if (page_type != "user")
     prologue << page_type << "\n";
-    prologue << "%%EndPaperSize\n";
+  else {
+    prologue << "/setpagedevice where\n";
+    prologue << "{ pop << /PageSize ["
+             << as_string (psw) << " " << as_string (psh)
+             << "] >> setpagedevice }\n";
+    prologue << "if\n";
   }
+  prologue << "%%EndPaperSize\n";
   if (landscape)
     prologue << "@landscape\n";
   prologue << "%%EndSetup\n";
@@ -909,7 +919,7 @@ renderer
 printer (url ps_file_name, int dpi, int nr_pages,
 	 string page_type, bool landscape, double paper_w, double paper_h)
 {
-  page_type= as_string (call ("correct-paper-size", object (page_type)));
+  page_type= as_string (call ("standard-paper-size", object (page_type)));
   return tm_new<printer_rep> (ps_file_name, dpi, nr_pages,
                               page_type, landscape, paper_w, paper_h);
 }

@@ -30,7 +30,13 @@
     "halfexecutive" "ledger" "legal" "letter" "Monarch"
     "csheet" "dsheet" "flsa" "flse" "folio"
     "lecture note" "note" "quarto" "statement" "tabloid"
+    "16:9" "8:5" "3:2" "4:3" "5:4"
     "user"))
+
+(define standard-sizes
+  '("a0" "a1" "a2" "a3" "a4" "a5" "a6"
+    "b3" "b4" "b5" "b6"
+    "ledger" "legal" "letter" "folio"))
 
 (define (get-default-paper-size-bis)
   (with psize (getenv "PAPERSIZE")
@@ -44,6 +50,9 @@
 
 (tm-define (correct-paper-size s)
   (if (and (string? s) (in? s supported-sizes)) s "a4"))
+
+(tm-define (standard-paper-size s)
+  (if (and (string? s) (in? s standard-sizes)) s "user"))
 
 (tm-define (get-default-paper-size)
   (correct-paper-size (get-default-paper-size-bis)))
