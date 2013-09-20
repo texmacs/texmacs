@@ -1,13 +1,24 @@
-<TeXmacs|1.0.7.18>
+<TeXmacs|1.0.7.20>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.7 to 1.0.7.19>
+  <section|Changes from version 1.0.7 to 1.0.7.20>
 
   <\itemize>
+    <item>Improved presentation mode (1.0.7.20).
+
+    <item>Various improvements for <LaTeX> import and export (1.0.7.20).
+
+    <item>Rewritten <name|Scilab> plug-in (1.0.7.20).
+
+    <item>Better portability of various plug-ins (1.0.7.20).
+
+    <item>Various graphical font effects; experimental, not yet in interface
+    (1.0.7.20).
+
     <item>Profound reorganization of the font system with experimental option
     for testing (1.0.7.19).
 
