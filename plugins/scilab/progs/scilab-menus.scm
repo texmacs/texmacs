@@ -69,8 +69,8 @@
 (menu-bind scilab-insert-menu
   (-> "Insert"))
 
-(menu-bind scilab-demo-menu
-  (-> "Demo"))
+;(menu-bind scilab-demo-menu
+;  (-> "Demo"))
 
 ;(menu-bind scilab-help-menu
 ;  (-> "Help"))
