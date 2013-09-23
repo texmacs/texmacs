@@ -39,9 +39,7 @@
 #endif
 
 #if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
-#include <QtCore/Qstring>
-#include <QtGui>
-#include "poppler/qt4/poppler-qt4.h"
+#include "Qt/WINPrint.hpp"
 #endif
 /******************************************************************************
 * Constructors and destructor
@@ -266,43 +264,11 @@ void
 edit_main_rep::print_buffer (string first, string last) {
    url target;
 #if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
-/*  printing for windows using poppler and Qt - Denis Raux 2013 */
-  static QPrinter Prt(QPrinter::HighResolution);  // static to keep user choice along texmacs session
-  QPrintDialog Pdlg(&Prt);
-  if (Pdlg.exec() == QDialog::Accepted) {
-     double rres=Prt.resolution();
-     int rw=Prt.paperRect(QPrinter::DevicePixel).width();
-     int rh=Prt.paperRect(QPrinter::DevicePixel).height();
-
-     target= url_temp (".pdf"); 
-     int fp=Prt.fromPage(), lp=Prt.toPage();
-     if(fp+lp==0) {fp=1;lp=1000000;}
-     print (target, false,fp,lp);
-
-     QString file (to_qstring (as_string (target)));
-     Poppler::Document* document = Poppler::Document::load(file);
-     if(document) {
-        document->setRenderHint(Poppler::Document::Antialiasing);
-        document->setRenderHint(Poppler::Document::TextAntialiasing);
-
-        int nbpages=document->numPages(), nextpage=nbpages-1;
-        QPainter Paint;
-        if(Paint.begin(&Prt)) {
-           QImage image;
-           QRect rect(0,0,rw,rh);
-           Paint.setRenderHint(QPainter::Antialiasing);
-           for(int pg=0;pg < nbpages;pg++) {
-              Poppler::Page* pdfPage = document->page(pg);  
-              if(pdfPage) {image=pdfPage->renderToImage(rres,rres); delete pdfPage;}
-              if(!image.isNull()) {Paint.drawImage(rect,image);if(pg!=nextpage) Prt.newPage();}
-              else cerr<<"Fail to create image for "<<rres<<" dpi resolution\n";
-              }
-           Paint.end();
-           }
-        delete(document);
-        }
-     }
-
+   {
+      target= url_temp (".pdf"); 
+      WINPrint wprt(to_qstring(as_string(target)),env->page_landscape);
+      if(wprt.doit) print (target, false,wprt.first_page,wprt.last_page);
+   }
 #else
   target= url_temp (".ps"); 
   print (target, false, as_int (first), as_int (last));
