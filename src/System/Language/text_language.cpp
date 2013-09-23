@@ -13,7 +13,10 @@
 #include <locale.h>
 #endif
 
+#if not defined(__MINGW__) && not defined(__MINGW32__)
 #include <langinfo.h>
+#endif
+
 #include "analyze.hpp"
 #include "hyphenate.hpp"
 #include "impl_language.hpp"
@@ -385,7 +388,11 @@ get_locale_language () {
 
 string
 get_locale_charset () {
+#if defined(__MINGW__) || defined(__MINGW32__)
+  return ("UTF-8");
+#else
   return nl_langinfo (CODESET);
+#endif
 }
 
 /******************************************************************************
