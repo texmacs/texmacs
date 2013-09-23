@@ -425,10 +425,36 @@
 ;; Transform presentation into slides
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (dynamic-first-alternative-list l)
+  (if (null? l) #f
+      (with r (dynamic-first-alternative (car l))
+	(or r (dynamic-first-alternative-list (cdr l))))))
+
+(define (dynamic-first-alternative t)
+  (cond ((and (alternative-context? t) (> (tm-arity t) 1)) t)
+	((not (tm-compound? t)) #f)
+	(else (dynamic-first-alternative-list (tm-children t)))))
+
+(define (dynamic-alternative-keep-first t)
+  (and-with ta (dynamic-first-alternative t)
+    (tree-remove ta 1 (- (tree-arity ta) 1))
+    (dynamic-alternative-keep-first t)))
+
 (define (dynamic-make-slide t)
   (when (or (tm-func? t 'shown 1) (tm-func? t 'hidden 1))
     (tree-assign-node! t 'slide))
-  (dynamic-operate (tree-ref t 0) :var-expand))
+  (if (and (tm-func? t 'slide 1) (dynamic-first-alternative t))
+      (let* ((p (tree-up t))
+	     (i (tree-index t)))
+	(tree-insert p (+ i 1) (list (tree-copy t)))
+	(let* ((v  (tree-ref p i))
+	       (w  (tree-ref p (+ i 1)))
+	       (wa (dynamic-first-alternative w)))
+	  (dynamic-alternative-keep-first v)
+	  (tree-remove wa 0 1)
+	  (dynamic-make-slide v)
+	  (dynamic-make-slide w)))
+      (dynamic-operate (tree-ref t 0) :var-expand)))
 
 (tm-define (dynamic-make-slides)
   (init-add-package "slides")
