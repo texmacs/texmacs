@@ -20,6 +20,7 @@
 #include "scheme.hpp"
 #include "image_files.hpp"
 #include "link.hpp"
+#include "frame.hpp"
 
 string PS_CLIP_PUSH ("gsave");
 string PS_CLIP_POP ("grestore");
@@ -554,6 +555,48 @@ printer_rep::generate_tex_fonts () {
       }
     }
   }
+}
+
+/******************************************************************************
+* Transformed rendering
+******************************************************************************/
+
+void
+printer_rep::set_transformation (frame fr) {
+  ASSERT (fr->linear, "only linear transformations have been implemented");
+
+  SI cx1, cy1, cx2, cy2;
+  get_clipping (cx1, cy1, cx2, cy2);
+  rectangle oclip (cx1, cy1, cx2, cy2);
+
+  frame cv= scaling (point (pixel, -pixel),
+                     point (-ox+dpi*pixel, -oy-dpi*pixel));
+  frame tr= invert (cv) * fr * cv;
+  point o = tr (point (0.0, 0.0));
+  point ux= tr (point (1.0, 0.0)) - o;
+  point uy= tr (point (0.0, 1.0)) - o;
+  //cout << "Set transformation " << o << ", " << ux << ", " << uy << "\n";
+  double tx= o[0];
+  double ty= o[1];
+  print ("gsave");
+  print ("[");
+  print (as_string (ux[0]));
+  print (as_string (ux[1]));
+  print (as_string (uy[0]));
+  print (as_string (uy[1]));
+  print (as_string (tx));
+  print (as_string (ty));
+  print ("]");
+  print ("concat");
+
+  rectangle nclip= fr [oclip];
+  renderer_rep::clip (nclip->x1, nclip->y1, nclip->x2, nclip->y2);
+}
+
+void
+printer_rep::reset_transformation () {
+  renderer_rep::unclip ();
+  print ("grestore");
 }
 
 /******************************************************************************

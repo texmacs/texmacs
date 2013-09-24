@@ -80,6 +80,9 @@ public:
 
   /********************** routines from renderer.hpp *************************/
 
+  void set_transformation (frame fr);
+  void reset_transformation ();
+
   void   set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
   pencil get_pencil ();
   brush  get_background ();
