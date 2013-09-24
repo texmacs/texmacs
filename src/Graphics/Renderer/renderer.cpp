@@ -179,7 +179,7 @@ renderer_rep::clip (SI x1, SI y1, SI x2, SI y2) {
 void
 renderer_rep::unclip () {
   rectangle r (clip_stack->item);
-  set_clipping (r->x1- ox, r->y1- oy, r->x2- ox, r->y2- oy);
+  set_clipping (r->x1- ox, r->y1- oy, r->x2- ox, r->y2- oy, true);
   clip_stack= clip_stack->next;
 }
 
