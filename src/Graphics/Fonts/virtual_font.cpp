@@ -13,6 +13,7 @@
 #include "font.hpp"
 #include "translator.hpp"
 #include "analyze.hpp"
+#include "frame.hpp"
 
 /******************************************************************************
 * The virtual font class
@@ -37,6 +38,7 @@ struct virtual_font_rep: font_rep {
   void  draw (renderer ren, scheme_tree t, SI x, SI y);
   void  draw_clipped (renderer ren, scheme_tree t, SI x, SI y,
                       SI x1, SI y1, SI x2, SI y2);
+  void  draw_transformed (renderer ren, scheme_tree t, SI x, SI y, frame f);
   int   get_char (string s, font_metric& fnm, font_glyphs& fng);
   glyph get_glyph (string s);
 
@@ -312,41 +314,49 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     return;
   }
 
-  /*
-  if (is_tuple (t, "hor-flip", 1))
-    return hor_flip (compile (t[1], ex));
+  if (is_tuple (t, "hor-flip", 1)) {
+    metric ex;
+    get_metric (t[1], ex);
+    SI ox= x + ((ex->x1 + ex->x2) >> 1);
+    frame f= scaling (point (-1.0, 1.0), point ((double) ox, 0.0));
+    draw_transformed (ren, t[1], (ex->x1 - ex->x2) >> 1, y, f);
+    return;
+  }
 
-  if (is_tuple (t, "ver-flip", 1))
-    return ver_flip (compile (t[1], ex));
+  if (is_tuple (t, "ver-flip", 1)) {
+    metric ex;
+    get_metric (t[1], ex);
+    SI oy= y + ((ex->y1 + ex->y2) >> 1);
+    frame f= scaling (point (1.0, -1.0), point (0.0, (double) oy));
+    draw_transformed (ren, t[1], x, (ex->y1 - ex->y2) >> 1, f);
+    return;
+  }
 
   if (is_tuple (t, "rot-left", 1)) {
-    metric ey;
-    glyph gl= pos_rotate (compile (t[1], ey));
-    ex->x1= 0;
-    ex->y1= 0;
-    ex->x2= ey->y2- ey->y1;
-    ex->y2= ey->x2- ey->x1;
-    ex->x3= ey->y2- ey->y4;
-    ex->y3= ey->x3- ey->x1;
-    ex->x4= ey->y2- ey->y3;
-    ex->y4= ey->x4- ey->x1;
-    return move (gl, ey->y2, -ey->x1);
+    metric ex;
+    get_metric (t[1], ex);
+    //cout << "left " << (x/PIXEL) << ", " << (y/PIXEL) << "; "
+    //     << (ex->x1/PIXEL) << ", " << (ex->y1/PIXEL) << "; "
+    //     << (ex->x2/PIXEL) << ", " << (ex->y2/PIXEL) << "\n";
+    SI ox= x + ex->x1;
+    SI oy= y + ex->y2;
+    frame f= rotation_2D (point (ox, oy), 1.57079632679);
+    draw_transformed (ren, t[1], x - ex->y2, y + ex->x1, f);
+    return;
   }
 
   if (is_tuple (t, "rot-right", 1)) {
-    metric ey;
-    glyph gl= pos_rotate (pos_rotate (pos_rotate (compile (t[1], ey))));
-    ex->x1= 0;
-    ex->y1= 0;
-    ex->x2= ey->y2- ey->y1;
-    ex->y2= ey->x2- ex->x1;
-    ex->x3= ey->y3- ey->y1;
-    ex->y3= ey->x2- ey->x4;
-    ex->x4= ey->y4- ey->y1;
-    ex->y4= ey->x2- ey->x3;
-    return move (gl, -ey->y1, ey->x2);
+    metric ex;
+    get_metric (t[1], ex);
+    //cout << "right " << (x/PIXEL) << ", " << (y/PIXEL) << "; "
+    //     << (ex->x1/PIXEL) << ", " << (ex->y1/PIXEL) << "; "
+    //     << (ex->x2/PIXEL) << ", " << (ex->y2/PIXEL) << "\n";
+    SI ox= x + ex->x2;
+    SI oy= y + ex->y1;
+    frame f= rotation_2D (point (ox, oy), -1.57079632679);
+    draw_transformed (ren, t[1], x + ex->y1, y - ex->x2, f);
+    return;
   }
-  */
 
   if (is_tuple (t, "hor-extend", 3) || is_tuple (t, "hor-extend", 4)) {
     metric ex;
@@ -397,6 +407,14 @@ virtual_font_rep::draw_clipped (renderer ren, scheme_tree t, SI x, SI y,
   ren->clip (x + x1, y + y1, x + x2, y + y2);
   draw (ren, t, x, y);
   ren->unclip ();  
+}
+
+void
+virtual_font_rep::draw_transformed (renderer ren, scheme_tree t, SI x, SI y,
+                                    frame f) {
+  ren->set_transformation (f);
+  draw (ren, t, x, y);
+  ren->reset_transformation ();  
 }
 
 /******************************************************************************
@@ -501,12 +519,16 @@ virtual_font_rep::get_extents (string s, metric& ex) {
 
 void
 virtual_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
-  //tree t= get_tree (s);
-  //if (t != "") draw (ren, t, x, y);
-  font_metric cfnm;
-  font_glyphs cfng;
-  int c= get_char (s, cfnm, cfng);
-  if (c != -1) ren->draw (c, cfng, x, y);
+  if (ren->is_screen) {
+    font_metric cfnm;
+    font_glyphs cfng;
+    int c= get_char (s, cfnm, cfng);
+    if (c != -1) ren->draw (c, cfng, x, y);
+  }
+  else {
+    tree t= get_tree (s);
+    if (t != "") draw (ren, t, x, y);
+  }
 }
 
 font
