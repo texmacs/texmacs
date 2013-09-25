@@ -41,6 +41,7 @@ initialize_default_var_type () {
   var_type (MAGNIFY)           = Env_Magnify;
   var_type (COLOR)             = Env_Color;
   var_type (OPACITY)           = Env_Color;
+  var_type (NO_PATTERNS)       = Env_Pattern_Mode;
   var_type (LANGUAGE)          = Env_Language;
 
   var_type (MATH_LANGUAGE)     = Env_Language;
@@ -305,6 +306,24 @@ edit_env_rep::update_color () {
 }
 
 void
+edit_env_rep::update_pattern_mode () {
+  no_patterns= (get_string (NO_PATTERNS) == "true");
+  if (no_patterns) {
+    tree c= env[COLOR];
+    if (is_func (c, PATTERN, 4)) env (COLOR)= exec (c);
+    c= env[BG_COLOR];
+    if (is_func (c, PATTERN, 4)) env (BG_COLOR)= exec (c);
+    c= env[FILL_COLOR];
+    if (is_func (c, PATTERN, 4)) env (FILL_COLOR)= exec (c);
+    c= env[ORNAMENT_COLOR];
+    if (is_func (c, PATTERN, 4)) env (ORNAMENT_COLOR)= exec (c);
+    c= env[ORNAMENT_EXTRA_COLOR];
+    if (is_func (c, PATTERN, 4)) env (ORNAMENT_EXTRA_COLOR)= exec (c);
+    update_color ();
+  }
+}
+
+void
 edit_env_rep::update_mode () {
   string s= get_string (MODE);
   if (s == "text") mode=1;
@@ -566,6 +585,7 @@ edit_env_rep::update () {
   update_frame ();
   point_style= get_string (POINT_STYLE);
   update_color ();
+  update_pattern_mode ();
   update_dash_style ();
   dash_style_unit= get_length (DASH_STYLE_UNIT);
   update_line_arrows ();
@@ -630,6 +650,9 @@ edit_env_rep::update (string s) {
     break;
   case Env_Color:
     update_color ();
+    break;
+  case Env_Pattern_Mode:
+    update_pattern_mode ();
     break;
   case Env_Paragraph:
     break;

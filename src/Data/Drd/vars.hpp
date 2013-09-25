@@ -43,6 +43,7 @@ extern string OPACITY;
 extern string BG_COLOR;
 extern string LOCUS_COLOR;
 extern string VISITED_COLOR;
+extern string NO_PATTERNS;
 extern string LANGUAGE;
 extern string ATOM_DECORATIONS;
 extern string LINE_DECORATIONS;

@@ -166,7 +166,7 @@ string printing_cmd ("lpr");
 string printing_on ("a4");
 
 void
-edit_main_rep::print (url name, bool conform, int first, int last) {
+edit_main_rep::print_bis (url name, bool conform, int first, int last) {
   bool pdf= (suffix (name) == "pdf");
   url orig= resolve (name, "");
 
@@ -255,10 +255,26 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
 }
 
 void
+edit_main_rep::print (url name, bool conform, int first, int last) {
+  if (inside ("screens")) {
+    tree style= copy (get_style ());
+    tree init = copy (get_init ());
+    tree t    = copy (subtree (et, rp));
+    call ("dynamic-make-slides");
+    apply_changes ();
+    print_bis (name, conform, first, last);
+    set_style (style);
+    set_init (init);
+    assign (rp, t);
+    apply_changes ();
+  }
+  else print_bis (name, conform, first, last);
+}
+
+void
 edit_main_rep::print_to_file (url name, string first, string last) {
   print (name, false, as_int (first), as_int (last));
 }
-
 
 void
 edit_main_rep::print_buffer (string first, string last) {

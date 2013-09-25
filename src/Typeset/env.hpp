@@ -44,26 +44,27 @@
 #define Env_Math_Condensed    12
 #define Env_Vertical_Pos      13
 #define Env_Color             14
-#define Env_Paragraph         15
-#define Env_Page              16
-#define Env_Page_Extents      17
-#define Env_Preamble          18
-#define Env_Geometry          19
-#define Env_Frame             20
-#define Env_Line_Width        21
-#define Env_Grid              22
-#define Env_Grid_Aspect       23
-#define Env_Src_Style         24
-#define Env_Src_Special       25
-#define Env_Src_Compact       26
-#define Env_Src_Close         27
-#define Env_Point_Style       28
-#define Env_Dash_Style        29
-#define Env_Dash_Style_Unit   30
-#define Env_Fill_Color        31
-#define Env_Line_Arrows       32
-#define Env_Text_At_Halign    33
-#define Env_Text_At_Valign    34
+#define Env_Pattern_Mode      15
+#define Env_Paragraph         16
+#define Env_Page              17
+#define Env_Page_Extents      18
+#define Env_Preamble          19
+#define Env_Geometry          20
+#define Env_Frame             21
+#define Env_Line_Width        22
+#define Env_Grid              23
+#define Env_Grid_Aspect       24
+#define Env_Src_Style         25
+#define Env_Src_Special       26
+#define Env_Src_Compact       27
+#define Env_Src_Close         28
+#define Env_Point_Style       29
+#define Env_Dash_Style        30
+#define Env_Dash_Style_Unit   31
+#define Env_Fill_Color        32
+#define Env_Line_Arrows       33
+#define Env_Text_At_Halign    34
+#define Env_Text_At_Valign    35
 
 /******************************************************************************
 * For style file editing
@@ -155,6 +156,7 @@ public:
   int          vert_pos;
   int          alpha;
   pencil       pen;
+  bool         no_patterns;
   string       point_style;
   bool         preamble;
   int          info_level;
@@ -174,7 +176,7 @@ public:
   array<tree>  line_arrows;
   string       text_at_halign;
   string       text_at_valign;
- 
+
   int          inactive_mode;
   tree         recover_env;
 
@@ -392,6 +394,7 @@ public:
   tree   decode_arrow (tree t, string l, string h);
   void   update_font ();
   void   update_color ();
+  void   update_pattern_mode ();
   void   update_mode ();
   void   update_info_level ();
   void   update_language ();
