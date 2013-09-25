@@ -90,8 +90,11 @@ table_rep::typeset_table (tree fm, tree t, path ip) {
   T= tm_new_array<cell*> (nr_rows);
   STACK_NEW_ARRAY (subformat, tree, nr_rows);
   extract_format (fm, subformat, nr_rows);
-  for (i=0; i<nr_rows; i++)
+  for (i=0; i<nr_rows; i++) {
+    tree old= env->local_begin (CELL_ROW_NR, as_string (i));
     typeset_row (i, subformat[i], t[i], descend (ip, i));
+    env->local_end (CELL_ROW_NR, old);
+  }
   STACK_DELETE_ARRAY (subformat);
   mw= tm_new_array<SI> (nr_cols);
   lw= tm_new_array<SI> (nr_cols);
@@ -108,7 +111,9 @@ table_rep::typeset_row (int i, tree fm, tree t, path ip) {
   for (j=0; j<nr_cols; j++) {
     cell& C= T[i][j];
     C= cell (env);
+    tree old= env->local_begin (CELL_COL_NR, as_string (j));
     C->typeset (subformat[j], t[j], descend (ip, j));
+    env->local_end (CELL_COL_NR, old);
     C->row_span= min (C->row_span, nr_rows- i);
     C->col_span= min (C->col_span, nr_cols- j);
     if (hyphen == "y") C->row_span= 1;
