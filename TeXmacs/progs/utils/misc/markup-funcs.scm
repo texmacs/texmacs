@@ -72,7 +72,7 @@
 (define (ext-listing-row body row)
   `(row (cell (with "color" "dark grey" "prog-language" "verbatim"
                     ,(number->string (+ row 1))))
-        (cell (document ,(tm-ref body row)))))
+        (cell (document (arg "body" ,(number->string row))))))
 
 (tm-define (ext-listing body)
   (:secure #t)
