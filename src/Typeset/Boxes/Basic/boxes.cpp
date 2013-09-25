@@ -442,6 +442,13 @@ box_rep::get_leaf_tree () {
   return "";
 }
 
+box
+box_rep::get_leaf_box () {
+  cerr << "\nTeXmacs] the box is " << box (this) << "\n";
+  FAILED ("no box attached to this box");
+  return box ();
+}
+
 lazy
 box_rep::get_leaf_lazy () {
   cerr << "\nTeXmacs] the box is " << box (this) << "\n";

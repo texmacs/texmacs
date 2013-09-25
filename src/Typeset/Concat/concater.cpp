@@ -267,6 +267,12 @@ concater_rep::typeset (tree t, path ip) {
   case DBOX:
     typeset_decorated_box (t, ip);
     break;
+  case LINE_NOTE:
+    typeset_line_note (t, ip);
+    break;
+  case PAGE_NOTE:
+    typeset_page_note (t, ip);
+    break;
 
   case WITH_LIMITS:
     with_limits (LIMITS_DISPLAY);

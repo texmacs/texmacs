@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.0.7.20>
 
 <style|<tuple|source|std>>
 
@@ -344,6 +344,40 @@
     <surround||<vspace|1fn>|<block*|<tformat|<cwith|1|1|1|1|cell-background|pastel
     blue>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-lsep|2spc>|<cwith|1|1|1|1|cell-rsep|2spc>|<cwith|1|1|1|1|cell-bsep|2spc>|<cwith|1|1|1|1|cell-tsep|2spc>|<table|<row|<cell|<large|<strong|<arg|name>>>>>>>>>
   </macro>>
+
+  <\active*>
+    <\src-comment>
+      Marginal notes.
+    </src-comment>
+  </active*>
+
+  <assign|marginal-note-width|2cm>
+
+  <assign|marginal-note-sep|5mm>
+
+  <assign|marginal-note-table|<macro|body|vpos|hyph|<tabular|<tformat|<twith|table-width|<value|marginal-note-width>>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-hyphen|<arg|hyph>>|<twith|table-valign|<arg|vpos>>|<cwith|1|1|1|1|cell-lsep|0em>|<cwith|1|1|1|1|cell-rsep|0em>|<table|<row|<\cell>
+    <\with|par-par-sep|0em|par-line-sep|0em>
+      <arg|body>
+    </with>
+  </cell>>>>>>>
+
+  <assign|left-marginal-note|<macro|body|<line-note|<marginal-note-table|<arg|body>|T|t>|<minus|0cm|<plus|<value|marginal-note-width>|<value|marginal-note-sep>>>|0cm><flag|marginal
+  note|dark brown>>>
+
+  <assign|right-marginal-note|<macro|body|<line-note|<marginal-note-table|<arg|body>|T|t>|<plus|1par|<value|marginal-note-sep>|<value|par-left>|<value|par-right>>|0cm><flag|marginal
+  note|dark brown>>>
+
+  <assign|left-marginal-note*|<macro|body|<line-note|<marginal-note-table|<arg|body>|B|b>|<minus|0cm|<plus|<value|marginal-note-width>|<value|marginal-note-sep>>>|0cm><flag|marginal
+  note|dark brown>>>
+
+  <assign|right-marginal-note*|<macro|body|<line-note|<marginal-note-table|<arg|body>|B|b>|<plus|1par|<value|marginal-note-sep>|<value|par-left>|<value|par-right>>|0cm><flag|marginal
+  note|dark brown>>>
+
+  <assign|left-marginal-note**|<macro|body|<line-note|<marginal-note-table|<arg|body>|C|c>|<minus|0cm|<plus|<value|marginal-note-width>|<value|marginal-note-sep>>>|0cm><flag|marginal
+  note|dark brown>>>
+
+  <assign|right-marginal-note**|<macro|body|<line-note|<marginal-note-table|<arg|body>|C|c>|<plus|1par|<value|marginal-note-sep>|<value|par-left>|<value|par-right>>|0cm><flag|marginal
+  note|dark brown>>>
 
   <\active*>
     <\src-comment>

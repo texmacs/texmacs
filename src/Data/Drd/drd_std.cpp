@@ -157,6 +157,12 @@ init_std_drd () {
 	var_repeat (1, 1, BIFORM) -> accessible (1) ->
 	name ("decorate pages"));
   init (DBOX, "dbox", fixed (0) -> name ("decorated box"));
+  init (LINE_NOTE, "line-note",
+        fixed (1, 2, BIFORM) -> length (1) ->
+	name ("line note"));
+  init (PAGE_NOTE, "page-note",
+        fixed (1, 2, BIFORM) -> length (1) ->
+	name ("page note"));
 
   init (WITH_LIMITS, "with-limits", fixed (0) -> name ("with limits"));
   init (LINE_BREAK, "line-break", fixed (0) -> name ("line break"));

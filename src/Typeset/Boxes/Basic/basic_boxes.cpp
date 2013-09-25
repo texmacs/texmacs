@@ -210,6 +210,15 @@ struct control_tree_box_rep: public box_rep {
   tree get_leaf_tree () { return t; }
 };
 
+struct control_box_box_rep: public box_rep {
+  box b;
+  control_box_box_rep (path ip, box b2, font fn): box_rep (ip), b (b2) {
+    x1=x2=x3=x4=y1=y3=y4=0; y2=fn->yx; }
+  operator tree () { return tuple ("control box", (tree) b); }
+  void display (renderer ren) { (void) ren; }
+  box get_leaf_box () { return b; }
+};
+
 struct control_lazy_box_rep: public box_rep {
   lazy lz;
   control_lazy_box_rep (path ip, lazy lz2, font fn): box_rep (ip), lz (lz2) {
@@ -257,6 +266,11 @@ image_box (path ip, url u, SI w, SI h, int alpha, int px) {
 box
 control_box (path ip, tree t, font fn) {
   return tm_new<control_tree_box_rep> (ip, t, fn);
+}
+
+box
+control_box (path ip, box b, font fn) {
+  return tm_new<control_box_box_rep> (ip, b, fn);
 }
 
 box

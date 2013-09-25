@@ -55,6 +55,12 @@ operator << (tm_ostream& out, line_item item) {
   case CONTROL_ITEM: return out << "control (" << item->t << ")";
   case FLOAT_ITEM:
     return out << "float (" << item->b->get_leaf_lazy () << ")";
+  case NOTE_LINE_ITEM:
+    return out << "line_note (" << item->b->get_leaf_box ()
+               << ", " << item->t << ")";
+  case NOTE_PAGE_ITEM:
+    return out << "page_note (" << item->b->get_leaf_box ()
+               << ", " << item->t << ")";
   case LSUB_ITEM: return out << "lsub";
   case LSUP_ITEM: return out << "lsup";
   case RSUB_ITEM: return out << "rsub";

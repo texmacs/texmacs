@@ -33,6 +33,7 @@ protected:
   array<SI>     items_sp;    // the final spaces between boxes in lines
   array<space>  spcs;        // the spacing between the boxes of items
   array<lazy>   fl;          // floating insertions
+  array<line_item> notes;    // line notes
   array<tab>    tabs;        // tabulations
   array<tree>   decs;        // decorations of the boxes on lines
   SI            cur_r;       // the current right offset of the last line unit

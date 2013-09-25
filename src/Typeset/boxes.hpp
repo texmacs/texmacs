@@ -227,6 +227,7 @@ public:
   virtual pencil    get_leaf_pencil ();
   virtual language  get_leaf_language ();
   virtual tree      get_leaf_tree ();
+  virtual box       get_leaf_box ();
   virtual lazy      get_leaf_lazy ();
   virtual SI        get_leaf_offset (string search);
 

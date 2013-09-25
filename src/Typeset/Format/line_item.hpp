@@ -26,16 +26,18 @@
 #define RIGHT_BRACKET_ITEM     6
 #define CONTROL_ITEM           7
 #define FLOAT_ITEM             8
+#define NOTE_LINE_ITEM         9
+#define NOTE_PAGE_ITEM        10
 
-#define LSUB_ITEM              9
-#define LSUP_ITEM             11
-#define RSUB_ITEM             12
-#define RSUP_ITEM             13
-#define GLUE_LSUBS_ITEM       14
-#define GLUE_RSUBS_ITEM       15
-#define GLUE_LEFT_ITEM        16
-#define GLUE_RIGHT_ITEM       17
-#define GLUE_BOTH_ITEM        18
+#define LSUB_ITEM             11
+#define LSUP_ITEM             12
+#define RSUB_ITEM             13
+#define RSUP_ITEM             14
+#define GLUE_LSUBS_ITEM       15
+#define GLUE_RSUBS_ITEM       16
+#define GLUE_LEFT_ITEM        17
+#define GLUE_RIGHT_ITEM       18
+#define GLUE_BOTH_ITEM        19
 
 extern int line_item_count;
 class line_item;

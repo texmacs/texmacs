@@ -105,6 +105,10 @@ lazy_paragraph_rep::line_print (line_item item) {
     fl << item->b->get_leaf_lazy ();
     // REPLACE item by item without lazy attachment !
   }
+  else if (item->type == NOTE_LINE_ITEM) {
+    notes << item;
+    // REPLACE item by item without lazy attachment !
+  }
 
   if (N(spcs)>0) cur_w = cur_w + spcs[N(spcs)-1];
   items << item->b;
@@ -318,6 +322,7 @@ lazy_paragraph_rep::line_start () {
   items_sp= array<SI> ();
   spcs    = array<space> ();
   fl      = array<lazy> ();
+  notes   = array<line_item> ();
 
   cur_r    = 0;
   cur_start= 0;
@@ -349,6 +354,17 @@ lazy_paragraph_rep::line_end (space spc, int penalty) {
   if (N(items) == 0) return;
   if (N(decs) != 0) handle_decorations ();
   // cout << items << ", " << spc << ", " << penalty << LF;
+  if (N(notes) != 0) {
+    for (int i=0; i<N(notes); i++) {
+      box note= notes[i]->b->get_leaf_box ();
+      SI  x   = as_int (notes[i]->t[0]);
+      SI  y   = as_int (notes[i]->t[1]);
+      box sb  = move_box (note->ip, note, x, y);
+      box nb  = resize_box (note->ip, sb, 0, 0, 0, 0);
+      items= ::append (nb, items);
+      items_sp= ::append (0, items_sp);
+    }
+  }
   box b= phrase_box (sss->ip, items, items_sp);
   sss->print (b, fl, nr_cols);
   sss->print (spc);

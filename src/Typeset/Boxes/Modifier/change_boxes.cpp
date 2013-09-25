@@ -598,6 +598,28 @@ tag_box_rep::find_tag (string search) {
 }
 
 /******************************************************************************
+* note boxes
+******************************************************************************/
+
+struct note_box_rep: public change_box_rep {
+  note_box_rep (path ip, box b, box note, SI nx, SI ny);
+  operator tree () { return tree (TUPLE, "note", bs[0], bs[1]); }
+};
+
+note_box_rep::note_box_rep (path ip, box b, box note, SI nx, SI ny):
+  change_box_rep (ip, false)
+{
+  insert (b, 0, 0);
+  insert (note, nx, ny);
+  position ();
+  finalize ();
+  x1= b->x1;
+  y1= b->y1;
+  x2= b->x2;
+  y2= b->y2;
+}
+
+/******************************************************************************
 * text_at boxes
 ******************************************************************************/
 
@@ -777,6 +799,11 @@ locus_box (path ip, box b, list<string> ids, SI pixel, string ref, string anchor
 box
 tag_box (path ip, box b, tree keys) {
   return tm_new<tag_box_rep> (ip, b, keys);
+}
+
+box
+note_box (path ip, box b, box note, SI nx, SI ny) {
+  return tm_new<note_box_rep> (ip, b, note, nx, ny);
 }
 
 box

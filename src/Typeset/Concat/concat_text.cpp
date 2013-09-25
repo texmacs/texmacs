@@ -445,3 +445,33 @@ concater_rep::typeset_decorated_box (tree t, path ip) {
     env->decorated_boxes [n-1]= box ();
   }
 }
+
+/******************************************************************************
+* Marginal notes and page notes
+******************************************************************************/
+
+void
+concater_rep::typeset_line_note (tree t, path ip) {
+  box  b= typeset_as_concat (env, t[0], decorate (ip));
+  box  c= control_box (decorate_middle (ip), b, env->fn);
+  SI   x= env->as_length (env->exec (t[1]));
+  SI   y= env->as_length (env->exec (t[2]));
+  tree p= tuple (as_string (x), as_string (y));
+  marker (descend (ip, 0));
+  a << line_item (NOTE_LINE_ITEM, OP_SKIP, c, HYPH_INVALID, p);
+  flag ("line note", ip, brown);
+  marker (descend (ip, 1));
+}
+
+void
+concater_rep::typeset_page_note (tree t, path ip) {
+  box  b= typeset_as_concat (env, t[0], decorate (ip));
+  box  c= control_box (decorate_middle (ip), b, env->fn);
+  SI   x= env->as_length (env->exec (t[1]));
+  SI   y= env->as_length (env->exec (t[2]));
+  tree p= tuple (as_string (x), as_string (y));
+  marker (descend (ip, 0));
+  a << line_item (NOTE_PAGE_ITEM, OP_SKIP, c, HYPH_INVALID, p);
+  flag ("page note", ip, brown);
+  marker (descend (ip, 1));
+}
