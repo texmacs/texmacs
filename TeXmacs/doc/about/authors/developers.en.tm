@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.0.7.20>
 
 <style|tmdoc>
 
@@ -56,6 +56,9 @@
 
     <item>Josef Weidendorfer made several patches for improving the
     performance of <TeXmacs>.
+
+    <item>Sam Liddicott for several patches, including hyperlink support for
+    Pdf files.
 
     <item>Zou Hu for his help on CJK support and the Windows port.
 
