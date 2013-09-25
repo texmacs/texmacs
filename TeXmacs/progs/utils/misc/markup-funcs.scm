@@ -87,6 +87,8 @@
          (cwith "1" "-1" "2" "2" "cell-rsep" "0em")
          (cwith "1" "-1" "2" "2" "cell-hpart" "1")
          (cwith "1" "-1" "2" "2" "cell-hyphen" "t")
+         (cwith "1" "-1" "1" "-1" "cell-background"
+                (if (equal (mod (value "cell-row-nr") "2") "0") "#f4f4ff" ""))
          (table ,@(map (lambda (row) (ext-listing-row body row))
                        (.. 0 (tm-arity body)))))
       body))
