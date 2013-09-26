@@ -297,3 +297,26 @@
     (while (and t (!= t (cursor-tree)))
       (tree-show-hidden t)
       (set! t (tree-ref t :down)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Standard groups
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-group variant-tag
+  (argument-tag) (value-tag) (quote-tag)
+  (binary-operation-tag) (binary-compare-tag))
+
+(define-group argument-tag
+  arg quote-arg)
+
+(define-group value-tag
+  value quote-value)
+
+(define-group quote-tag
+  quote quasi quasiquote)
+
+(define-group binary-operation-tag
+  plus minus times over minimum maximum or and)
+
+(define-group binary-compare-tag
+  equal unequal less lesseq greater greatereq)

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.17>
+<TeXmacs|1.0.7.20>
 
 <style|source>
 
@@ -139,7 +139,7 @@
   </macro>>
 
   <assign|tmdoc-include|<\macro|inclusion>
-    <extern|tmdoc-include|<find-file|.|$TEXMACS_DOC_PATH|http://www.gnu.org/software/texmacs-doc|<arg|inclusion>>>
+    <extern|tmdoc-include|<find-file|.|$TEXMACS_DOC_PATH|http://www.gnu.org/software/texmacs-doc|<quote-arg|inclusion>>>
   </macro>>
 
   \;

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.16>
+<TeXmacs|1.0.7.20>
 
 <style|<tuple|source|std>>
 
@@ -48,7 +48,7 @@
     </src-comment>
   </active*>
 
-  <assign|triangle-with-text|<macro|p1|p2|p3|t|<extern|triangle-with-text|<quote-arg|p1>|<quote-arg|p2>|<quote-arg|p3>|<quote-arg|t>>>>
+  <assign|triangle-with-text|<macro|p1|p2|p3|t|<extern|triangle-with-text|<arg|p1>|<arg|p2>|<arg|p3>|<quote-arg|t>>>>
 
   <drd-props|triangle-with-text|arity|4|accessible|3>
 

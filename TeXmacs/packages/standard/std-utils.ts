@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.17>
+<TeXmacs|1.0.7.20>
 
 <style|<tuple|source|std>>
 
@@ -178,6 +178,5 @@
 <\initial>
   <\collection>
     <associate|preamble|true>
-    <associate|zoom-factor|1.35021>
   </collection>
 </initial>
