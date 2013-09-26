@@ -34,6 +34,9 @@
 ;;          Any HTML or HTML-like data.
 ;;   m  --  MathML - http://www.w3.org/1998/Math/MathML
 ;;
+;;Non-Normalized namespace prefixes are:
+;;   v  --  Vernacular CoqML.
+;;
 ;; Since the parser is designed to be used for conversion to STM data format,
 ;; no provisions are made to preserve the namespace prefixes used in the
 ;; orginial sxml tree. Namespace normalization is not reversible.
@@ -41,6 +44,7 @@
 (define xmlns-uri-xml "http://www.w3.org/XML/1998/namespace")
 (define xmlns-uri-xhtml "http://www.w3.org/1999/xhtml")
 (define xmlns-uri-mathml "http://www.w3.org/1998/Math/MathML")
+(define xmlns-uri-coqml "CoqML")
 
 ;;; Building the namespace bindings environment
 
@@ -69,6 +73,9 @@
 	  (cute proc <> attrs)))))
 
 ;;; Converting nodes
+
+(tm-define (coqmltm-parse s)
+  (xmltm-parse xmlns-uri-coqml s))
 
 (tm-define (htmltm-parse s)
   (xmltm-parse xmlns-uri-xhtml s))
@@ -111,6 +118,7 @@
        ;; FIXME: user namespace prefix list should be extensible
        (cond ((== ns-uri xmlns-uri-xhtml) "h:")
 	     ((== ns-uri xmlns-uri-mathml) "m:")
+	     ((== ns-uri xmlns-uri-xml) "v:")
 	     ((== ns-uri xmlns-uri-xml) "x:")
 	     ((string-null? ns-uri) "")
 	     (else (string-append ns-uri ":")))
@@ -471,7 +479,7 @@
 	(else (cons line stack))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Producing handlers for dispatch table
+;; Producing mathml handlers for dispatch table
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (mathtm-handler model method)
@@ -498,12 +506,52 @@
   (proc env a c))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Producing coqml handlers for dispatch table
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define coqmltm-raw    htmltm-space-preformatted)
+(define coqmltm-tactic htmltm-space-element)
+(define coqmltm-vernac htmltm-space-element)
+
+(define (coqtm-handler/inline env a c proc)
+  (proc env a c))
+
+(define (coqtm-handler/bloc env a c proc)
+  `((document ,@(proc env a c))))
+
+(tm-define (coqtm-handler model method)
+  ;;  model:  content model category
+  ;;          :tactic -- text node are ignored
+  ;;          :vernac -- text node are ignored
+  ;;          :raw -- drop heading and trailing whitespaces, normalize and
+  ;;            collapse internal whitespaces.
+  ;;  method: <procedure> to convert the element content to a node-list.
+  (if (not (in? model '(:raw :tactic :vernac)))
+      (error "Bad model: " model))
+  (if (not (procedure? method))
+      (error "Bad method: " method))
+  (let ((clean (cond ((eq? model :raw)    coqmltm-raw)
+                     ((eq? model :tactic) coqmltm-tactic)
+                     ((eq? model :vernac) coqmltm-vernac)))
+        (para  (cond ((eq? model :raw)    coqtm-handler/inline)
+                     ((eq? model :tactic) coqtm-handler/inline)
+                     ((eq? model :vernac) coqtm-handler/bloc))))
+    (let ((proc method))
+      (lambda (env a c)
+        (para env a (clean env c) proc)))))
+
+(tm-define (coqtm-serial p? l)
+  (if p? (stm-serial l stm-document?)
+      (stm-serial l stm-document? htmltm-make-line htmltm-make-concat)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Generic XML dispatcher
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (sxml-meta-logic-ref ns-id ncname)
   (cond ((== ns-id "h") (logic-ref htmltm-methods% ncname))
 	((== ns-id "m") (logic-ref mathtm-methods% ncname))
+	((== ns-id "CoqML") (logic-ref coqtm-methods% ncname))
 	(else #f)))
 
 (tm-define (sxml-dispatch x-string x-pass env t)
