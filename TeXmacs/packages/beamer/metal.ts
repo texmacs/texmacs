@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.0.7.20>
 
 <style|source>
 
@@ -56,7 +56,9 @@
     </src-comment>
   </active*>
 
-  <assign|tit|<macro|body|<with|ornament-color|<pattern|granite-light.png|*3/5|*3/5|#808080>|<ornament|<htab|5mm><move|<with|font-series|bold|math-font-series|bold|<large|<with|color|<value|bg-color>|math-color|<value|bg-color>|<arg|body>>>>|0fn|0.333fn><htab|5mm>>>>>
+  <assign|title-bar-color|<pattern|granite-light.png|*3/5|*3/5|#808080>>
+
+  <assign|title-color|<pattern|metal-brushed-light.png|*3/5|*3/5|#f0f0f0>>
 
   <\active*>
     <\src-comment>

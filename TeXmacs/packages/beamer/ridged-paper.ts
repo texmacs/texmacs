@@ -56,9 +56,11 @@
     </src-comment>
   </active*>
 
-  <assign|tit|<macro|body|<with|ornament-color|<pattern|paper-manila-medium.png|*3/5|*3/5|#f4f0d8>|ornament-border|2ln|<ornament|<with|font-series|bold|color|dark
-  brown|<image|$TEXMACS_PATH/misc/images/right-head.png|0.222222w|0.222222h||>><htab|5mm><move|<with|font-series|bold|math-font-series|bold|<large|<with|color|dark
-  brown|<arg|body>>>>|0fn|0.333fn><htab|5mm><image|$TEXMACS_PATH/misc/images/left-head.png|0.222222w|0.222222h||>>>>>
+  <assign|title-bar-color|<pattern|paper-manila-medium.png|*3/5|*3/5|#f4f0d8>>
+
+  <assign|title-color|dark brown>
+
+  <assign|tit|<macro|body|<with|ornament-color|<value|title-bar-color>|ornament-border|2ln|<ornament|<image|$TEXMACS_PATH/misc/images/right-head.png|0.222222w|0.222222h||><htab|5mm><move|<with|font-series|bold|math-font-series|bold|<large|<with|color|<value|title-color>|math-color|<value|title-color>|<arg|body>>>>|0fn|0.333fn><htab|5mm><image|$TEXMACS_PATH/misc/images/left-head.png|0.222222w|0.222222h||>>>>>
 
   <\active*>
     <\src-comment>

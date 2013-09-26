@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.0.7.20>
 
 <style|source>
 
@@ -38,7 +38,7 @@
 
   <assign|page-screen-top|5mm>
 
-  <assign|page-screen-bottom|5mm>
+  <assign|page-screen-bot|5mm>
 
   <assign|magnification|1.7>
 
@@ -47,6 +47,18 @@
   <assign|name|<macro|body|<with|font-family|rm|font-shape|small-caps|<arg|body>>>>
 
   <assign|item-vsep|<macro|0fn>>
+
+  <\active*>
+    <\src-comment>
+      Titles
+    </src-comment>
+  </active*>
+
+  <assign|title-bar-color|dark blue>
+
+  <assign|title-color|white>
+
+  <assign|tit|<macro|body|<with|ornament-color|<value|title-bar-color>|<ornament|<htab|5mm><move|<with|font-series|bold|math-font-series|bold|<large|<with|color|<value|title-color>|math-color|<value|title-color>|<arg|body>>>>|0fn|0.333fn><htab|5mm>>>>>
 
   <\active*>
     <\src-comment>
