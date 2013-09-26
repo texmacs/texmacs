@@ -29,12 +29,6 @@
   (with t (tree-search-upwards body screens-parent?)
     (if t (number->string (tree-arity (tree-up t))) "-1")))
 
-(tm-define (screens-switch-to nr)
-  (:secure #t)
-  (with-innermost t 'screens
-    (when t
-      (switch-to t nr))))
-
 (define (screen-link i)
   (let* ((nr (number->string (+ i 1)))
 	 (s (number->string i))

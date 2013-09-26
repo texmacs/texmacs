@@ -60,6 +60,10 @@
 
   <assign|title-color|white>
 
+  <assign|title-left|<macro|>>
+
+  <assign|title-right|<macro|>>
+
   <\active*>
     <\src-comment>
       Colors of standard tags (strong, math, etc.)

@@ -61,6 +61,10 @@
 
   <assign|title-color|<pattern|ice-light.png|*3/5|*3/5|#f0f0f0>>
 
+  <assign|title-left|<macro|>>
+
+  <assign|title-right|<macro|>>
+
   <\active*>
     <\src-comment>
       Colors of standard tags (strong, math, etc.)

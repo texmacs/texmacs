@@ -87,6 +87,9 @@
       )
   (-> "Unroll"
       ("Standard" (make-switch 'unroll))
+      ("Itemize" (make-switch-list 'unroll 'itemize))
+      ("Enumerate" (make-switch-list 'unroll 'enumerate))
+      ("Description" (make-switch-list 'unroll 'description))
       ;;---
       ;;(link switch-menu)
       )

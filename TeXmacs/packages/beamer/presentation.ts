@@ -58,7 +58,11 @@
 
   <assign|title-color|white>
 
-  <assign|tit|<macro|body|<with|ornament-color|<value|title-bar-color>|<ornament|<htab|5mm><move|<with|font-series|bold|math-font-series|bold|<large|<with|color|<value|title-color>|math-color|<value|title-color>|<arg|body>>>>|0fn|0.333fn><htab|5mm>>>>>
+  <assign|title-left|<macro|>>
+
+  <assign|title-right|<macro|>>
+
+  <assign|tit|<macro|body|<with|ornament-color|<value|title-bar-color>|<ornament|<title-left><htab|5mm><move|<with|font-series|bold|math-font-series|bold|<large|<with|color|<value|title-color>|math-color|<value|title-color>|<arg|body>>>>|0fn|0.333fn><htab|5mm><title-right>>>>>
 
   <\active*>
     <\src-comment>

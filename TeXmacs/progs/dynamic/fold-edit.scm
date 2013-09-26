@@ -15,7 +15,8 @@
   (:use (utils library tree)
         (utils library cursor)
         (dynamic dynamic-drd)
-        (generic generic-edit)))
+        (generic generic-edit)
+        (text std-text-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dynamic movements for fold tags and switches
@@ -611,8 +612,31 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (screens-switch-to which)
+  (:secure #t)
   (and-with t (tree-innermost 'screens)
     (switch-to t which :start)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Specific behaviour for switches inside list environments
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (switch-list-context? t)
+  (and (switch-context? t)
+       (tree-ref t :up :up)
+       (tree-is? (tree-ref t :up) 'document)
+       (list-context? (tree-ref t :up :up))))
+
+(tm-define (make-switch-list switch-tag list-tag)
+  (make list-tag)
+  (make-switch switch-tag)
+  (make-item))
+
+(tm-define (kbd-enter t shift?)
+  (:require (switch-list-context? t))
+  (if shift? (make-return-after)
+      (begin
+        (switch-insert-at t :var-next)
+        (make-item))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Balloons
