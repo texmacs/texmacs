@@ -20,6 +20,7 @@
 (define-public == equal?)
 (define-public (!= x y) (not (equal? x y)))
 
+(define-public (nsymbol? x) (not (symbol? x)))
 (define-public (nstring? x) (not (string? x)))
 (define-public (nnull? x) (not (null? x)))
 (define-public (npair? x) (not (pair? x)))
