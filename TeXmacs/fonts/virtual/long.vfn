@@ -87,34 +87,34 @@
   (rubber-overbrace-#
     (0 0.2
       (enlarge
-        (glue* (hor-extend braceld 1 # 0.1)
+        (glue* (hor-extend braceld 0.9 # 0.1)
           (glue* braceru
             (glue* bracelu
-              (hor-extend bracerd 0 # 0.1))))
+              (hor-extend bracerd 0.1 # 0.1))))
         0 0 0.2 0)))
   (rubber-overbrace*-#
     (0 0
       (enlarge
-        (glue* (hor-extend braceld 1 # 0.1)
+        (glue* (hor-extend braceld 0.9 # 0.1)
           (glue* braceru
             (glue* bracelu
-              (hor-extend bracerd 0 # 0.1))))
+              (hor-extend bracerd 0.1 # 0.1))))
         0 0 0 0.2)))
   (rubber-underbrace-#
     (0 0
       (enlarge
-        (glue* (hor-extend bracelu 1 # 0.1)
+        (glue* (hor-extend bracelu 0.9 # 0.1)
           (glue* bracerd
             (glue* braceld
-              (hor-extend braceru 0 # 0.1))))
+              (hor-extend braceru 0.1 # 0.1))))
         0 0 0 0.2)))
   (rubber-underbrace*-#
     (0 0.2
       (enlarge
-        (glue* (hor-extend bracelu 1 # 0.1)
+        (glue* (hor-extend bracelu 0.9 # 0.1)
           (glue* bracerd
             (glue* braceld
-              (hor-extend braceru 0 # 0.1))))
+              (hor-extend braceru 0.1 # 0.1))))
         0 0 0.2 0)))
 
   (rubber-varleftarrow-# (hor-extend shortleftarrow 0.9 # 0.1))
