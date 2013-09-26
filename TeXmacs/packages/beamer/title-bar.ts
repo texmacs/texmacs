@@ -20,11 +20,19 @@
     </src-license>
   </src-title>>
 
-  <assign|page-screen-top|2.5mm>
+  <use-module|(dynamic fold-markup)>
+
+  <assign|xpage-screen-top|2.5mm>
+
+  <assign|screens-index|<macro|body|<extern|screens-index|<quote-arg|body>>>>
+
+  <assign|screens-arity|<macro|body|<extern|screens-arity|<quote-arg|body>>>>
+
+  <assign|screens-summary|<macro|body|<if|<greater|<screens-arity|<quote-arg|body>>|0>|<move|<tiny|<plus|<screens-index|<quote-arg|body>>|1>/<screens-arity|<quote-arg|body>>>|0em|0.25ex>>>>
 
   <assign|tit|<\macro|body>
     <\with|par-left|<minus|<value|page-screen-left>>|par-right|<minus|<value|page-screen-right>>>
-      <shift|<tabular*|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-background|<value|title-bar-color>>|<table|<row|<cell|<with|color|<value|title-color>|math-color|<value|title-color>|<arg|body>>>>>>>|0mm|<value|page-screen-top>>
+      <shift|<with|color|<value|title-color>|math-color|<value|title-color>|<tabular*|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|-1|1|-1|cell-background|<value|title-bar-color>>|<cwith|1|1|3|3|cell-halign|r>|<cwith|1|1|1|1|cell-halign|l>|<cwith|1|1|2|2|cell-halign|c>|<table|<row|<cell|<phantom|<screens-summary|<quote-arg|body>>>>|<cell|<arg|body>>|<cell|<screens-summary|<quote-arg|body>>>>>>>>|0mm|<value|page-screen-top>>
     </with>
   </macro>>
 </body>
