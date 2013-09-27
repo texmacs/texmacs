@@ -33,6 +33,7 @@ class printer_rep: public renderer_rep {
   int      linelen;
 
   color    fg, bg;
+  int      opacity;
   pencil   pen;
   brush    bgb;
   int      ncols;

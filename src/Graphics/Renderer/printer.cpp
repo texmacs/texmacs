@@ -48,8 +48,8 @@ printer_rep::printer_rep (
     nr_pages (nr_pages2), page_type (page_type2),
     landscape (landscape2), paper_w (paper_w2), paper_h (paper_h2),
     use_alpha (get_preference ("experimental alpha") == "on"),
-    linelen (0), fg ((color) (-1)), bg ((color) (-1)), ncols (0),
-    lw (-1), nwidths (0), cfn (""), nfonts (0),
+    linelen (0), fg ((color) (-1)), bg ((color) (-1)), opacity (255),
+    ncols (0), lw (-1), nwidths (0), cfn (""), nfonts (0),
     xpos (0), ypos (0), tex_flag (false),
     defs ("?"), tex_chars ("?"), tex_width ("?"),
     tex_fonts ("?"), tex_font_chars (array<int>(0))    
@@ -637,6 +637,17 @@ void
 printer_rep::set_pencil (pencil pen2) {
   pen= pen2;
   color c= pen->get_color ();
+  int r, g, b, a;
+  get_rgb_color (c, r, g, b, a);
+  opacity= a;
+  if (a != 255) {
+    int r2, g2, b2, a2;
+    get_rgb_color (bg, r2, g2, b2, a2);
+    r= (r * a + r2 * (255 - a)) / 255;
+    g= (g * a + g2 * (255 - a)) / 255;
+    b= (b * a + b2 * (255 - a)) / 255;
+    c= rgb_color (r, g, b, 255);
+  }
   if (c != fg) {
     fg= c;
     select_color (fg);
@@ -659,6 +670,7 @@ printer_rep::set_background (brush b) {
 
 void
 printer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
+  if (opacity == 0) return;
   glyph gl= fn->get(ch);
   if (is_nil (gl)) return;
   string name= fn->res_name;
@@ -677,6 +689,7 @@ printer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
 
 void
 printer_rep::line (SI x1, SI y1, SI x2, SI y2) {
+  if (opacity == 0) return;
   print (x1, y1);
   print (x2, y2);
   print (PS_LINE);
@@ -684,6 +697,7 @@ printer_rep::line (SI x1, SI y1, SI x2, SI y2) {
 
 void
 printer_rep::lines (array<SI> x, array<SI> y) {
+  if (opacity == 0) return;
   int i, n= N(x);
   if ((N(y) != n) || (n<1)) return;
   print (x[0], y[0]);
@@ -706,6 +720,7 @@ printer_rep::clear (SI x1, SI y1, SI x2, SI y2) {
 
 void
 printer_rep::fill (SI x1, SI y1, SI x2, SI y2) {
+  if (opacity == 0) return;
   if ((x1<x2) && (y1<y2)) {
     print (x1, y1);
     print (x2, y2);
@@ -715,6 +730,7 @@ printer_rep::fill (SI x1, SI y1, SI x2, SI y2) {
 
 void
 printer_rep::arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
+  if (opacity == 0) return;
   print ((x1+x2)/2, (y1+y2)/2);
   print (as_string ((x2-x1)/(2*PIXEL)));
   print (as_string ((y1-y2)/(2*PIXEL)));
@@ -725,6 +741,7 @@ printer_rep::arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
 
 void
 printer_rep::fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
+  if (opacity == 0) return;
   print ((x1+x2)/2, (y1+y2)/2);
   print (as_string ((x2-x1)/(2*PIXEL)));
   print (as_string ((y1-y2)/(2*PIXEL)));
@@ -735,6 +752,7 @@ printer_rep::fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
 
 void
 printer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
+  if (opacity == 0) return;
   (void) convex;
   int i, n= N(x);
   if ((N(y) != n) || (n<1)) return;
@@ -770,7 +788,7 @@ printer_rep::image (
   string name, string eps, SI x1, SI y1, SI x2, SI y2,
   SI w, SI h, SI x, SI y, int alpha)
 {
-  (void) alpha; // FIXME
+  if (opacity == 0 || alpha == 0) return;
 
   double sc_x= (72.0/dpi) * ((double) (w/PIXEL)) / ((double) (x2-x1));
   double sc_y= (72.0/dpi) * ((double) (h/PIXEL)) / ((double) (y2-y1));
