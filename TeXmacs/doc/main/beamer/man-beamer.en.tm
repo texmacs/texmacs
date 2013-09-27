@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.9>
+<TeXmacs|1.0.7.20>
 
 <style|tmdoc>
 
@@ -25,6 +25,8 @@
     <branch|Beamer styles|man-beamer-style.en.tm>
 
     <branch|Traversal of a presentation|man-beamer-traversal.en.tm>
+
+    <branch|Overlays|man-beamer-overlays.en.tm>
 
     <branch|Decorations|man-decorations.en.tm>
 
