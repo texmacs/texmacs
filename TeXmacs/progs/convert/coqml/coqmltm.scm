@@ -175,5 +175,5 @@
 	(let* ((aux (stm-unary-document tm))
 	       (doc (tree->stree (tree-simplify (stree->tree aux))))
 	       (body `(body ,doc))
-	       (style `(style "browser")))
+	       (style `(style (tuple "generic" "docoq"))))
 	  `(document ,body ,style)))))
