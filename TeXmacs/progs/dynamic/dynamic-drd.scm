@@ -96,7 +96,7 @@
 (define-group overlays-tag
   overlays overlays-tiny)
 
-(define-group overlay-unary-tag
+(define-group overlay-tag
   overlay-from overlay-until overlay-this overlay-other)
 
 ;; ornaments

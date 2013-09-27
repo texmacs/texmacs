@@ -389,6 +389,8 @@
 
   <assign|overlays-tiny|<macro|current|total|body|<with|overlay-nr|<arg|current>|<arg|body>>>>
 
+  \;
+
   <assign|overlay-cond|<macro|cond|body|<with|opacity|<if|<arg|cond>|1|0>|<arg|body>>>>
 
   <assign|overlay-from|<macro|start|body|<overlay-cond|<greatereq|<value|overlay-nr>|<arg|start>>|<arg|body>>>>
@@ -398,8 +400,6 @@
   <assign|overlay-this|<macro|end|body|<overlay-cond|<equal|<value|overlay-nr>|<arg|end>>|<arg|body>>>>
 
   <assign|overlay-other|<macro|end|body|<overlay-cond|<unequal|<value|overlay-nr>|<arg|end>>|<arg|body>>>>
-
-  <assign|overlay-range|<macro|start|end|body|<overlay-cond|<and|<greatereq|<value|overlay-nr>|<arg|start>>|<lesseq|<value|overlay-nr>|<arg|end>>>|<arg|body>>>>
 
   <\active*>
     <\src-comment>

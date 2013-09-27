@@ -288,6 +288,9 @@
   (and (overlays-tag? (tree-label t))
        (== (tree-arity t) 3)))
 
+(tm-define (overlay-context? t)
+  (overlay-tag? (tree-label t)))
+
 (define (tree->number t)
   (if (tree-atomic? t) (string->number (tree->string t)) 0))
 
@@ -305,6 +308,22 @@
   (with-innermost t overlays-context?
     (insert-go-to `(,l ,(tree-copy (tree-ref t 0)) "") '(1 0))))
 
+(tm-define (overlays-current t)
+  (and (overlays-context? t)
+       (tree-atomic? (tree-ref t 0))
+       (tree->number (tree-ref t 0))))
+
+(tm-define (overlays-arity t)
+  (and (overlays-context? t)
+       (tree-atomic? (tree-ref t 1))
+       (tree->number (tree-ref t 1))))
+
+(tm-define (overlays-switch-to t i)
+  (when (overlays-context? t)
+    (let* ((tot (tree->number (tree-ref t 1)))
+           (nxt (min (max i 1) tot)))
+      (tree-set t 0 (number->string nxt)))))
+
 (tm-define (dynamic-extremal t forwards?)
   (:require (overlays-context? t))
   (let* ((tot (tree->number (tree-ref t 1)))
@@ -320,6 +339,61 @@
          (nxt (min (max (+ cur inc) 1) tot)))
     (tree-set t 0 (number->string nxt))
     (tree-go-to t 2 :start)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Additional routines for inserting and removing overlays
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (overlay-renumber-sub t p cur tot delta)
+  (let* ((old (tree->number t))
+         (new (if (>= old cur) (+ old delta) old))
+         (ari (+ tot delta)))
+    (cond ((>= new cur) (tree-set t (number->string new)))
+          ((and (tree-is? p 'overlay-from) (<= cur ari))
+           (tree-set t (number->string cur)))
+          ((and (tree-is? p 'overlay-until) (>= new 1))
+           (tree-set t (number->string new)))
+          ((tree-in? p '(overlay-from overlay-until overlay-this))
+           (tree-assign-label p 'overlay-this)
+           (tree-set p 0 "0"))
+          ((tree-is? p 'overlay-other)
+           (tree-set t "0"))
+          (else ;; NOTE: should never occur
+           (tree-set t (number->string (min (max cur 1) ari)))))))
+
+(define (overlay-renumber t cur tot delta)
+  (cond ((tree-atomic? t) (noop))
+        ((overlays-context? t) (noop))
+        ((overlay-context? t)
+         (overlay-renumber (tree-ref t :last) cur tot delta)
+         (for-each (cut overlay-renumber-sub <> t cur tot delta)
+                   (cDr (tree-children t))))
+        (else
+         (for-each (cut overlay-renumber <> cur tot delta)
+                   (tree-children t)))))
+
+(tm-define (structured-horizontal? t)
+  (:require (overlays-context? t))
+  #t)
+
+(tm-define (structured-insert-horizontal t forwards?)
+  (:require (overlays-context? t))
+  (let* ((cur (tree->number (tree-ref t 0)))
+         (tot (tree->number (tree-ref t 1)))
+         (ins (if forwards? (+ cur 1) cur)))
+    (overlay-renumber (tree-ref t 2) ins tot 1)
+    (if forwards? (tree-set t 0 (number->string ins)))
+    (tree-set t 1 (number->string (+ tot 1)))))
+
+(tm-define (structured-remove-horizontal t forwards?)
+  (:require (overlays-context? t))
+  (let* ((cur (tree->number (tree-ref t 0)))
+         (tot (tree->number (tree-ref t 1)))
+         (del (if forwards? cur (- cur 1))))
+    (when (and (> del 0) (> tot 1))
+      (overlay-renumber (tree-ref t 2) del tot -1)
+      (if (not forwards?) (tree-set t 0 (number->string del)))
+      (tree-set t 1 (number->string (- tot 1))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Analyzing the environments occurring in folds

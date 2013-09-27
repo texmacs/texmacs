@@ -283,3 +283,42 @@
     //
     (minibar
      ((balloon "Title" "Insert title") (slide-insert-title t)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Menu customizations for overlays
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (focus-can-insert-remove? t)
+  (:require (overlays-context? t))
+  #t)
+
+(tm-define (focus-can-insert? t)
+  (:require (overlays-context? t))
+  #t)
+
+(tm-define (focus-can-remove? t)
+  (:require (overlays-context? t))
+  #t)
+
+(define (get-overlays-menu-name t)
+  (let* ((cur (overlays-current t))
+         (tot (overlays-arity t)))
+    (set! cur (if cur (number->string cur) "?"))
+    (set! tot (if tot (number->string tot) "?"))
+    (string-append "Overlay " cur "/" tot)))
+
+(tm-menu (focus-overlays-menu t)
+  (for (i (.. 0 (or (overlays-arity t) 1)))
+    ((eval (string-append "Overlay " (number->string (+ i 1))))
+     (overlays-switch-to t (+ i 1)))))
+
+(tm-menu (focus-hidden-menu t)
+  (:require (overlays-context? t))
+  ---
+  (dynamic (focus-overlays-menu t)))
+
+(tm-menu (focus-hidden-icons t)
+  (:require (overlays-context? t))
+  //
+  (=> (eval (get-overlays-menu-name t))
+      (dynamic (focus-overlays-menu t))))
