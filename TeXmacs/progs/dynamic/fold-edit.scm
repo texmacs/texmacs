@@ -24,7 +24,8 @@
 
 (tm-define (dynamic-context? t)
   (or (toggle-tag? (tree-label t))
-      (switch-tag? (tree-label t))))
+      (switch-tag? (tree-label t))
+      (overlays-tag? (tree-label t))))
 
 (tm-define (dynamic-extremal t forwards?)
   (and-with p (tree-outer t)
@@ -280,6 +281,32 @@
         (switch-select t i))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; User interface to overlays
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (overlays-context? t)
+  (overlays-tag? (tree-label t)))
+
+(define (tree->number t)
+  (if (tree-atomic? t) (string->number (tree->string t)) 0))
+
+(tm-define (dynamic-extremal t forwards?)
+  (:require (overlays-context? t))
+  (let* ((tot (tree->number (tree-ref t 1)))
+         (nxt (if forwards? tot 1)))
+    (tree-set t 0 (number->string nxt))
+    (tree-go-to t 2 :start)))
+
+(tm-define (dynamic-incremental t forwards?)
+  (:require (overlays-context? t))
+  (let* ((cur (tree->number (tree-ref t 0)))
+         (tot (tree->number (tree-ref t 1)))
+         (inc (if forwards? 1 -1))
+         (nxt (min (max (+ cur inc) 1) tot)))
+    (tree-set t 0 (number->string nxt))
+    (tree-go-to t 2 :start)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Analyzing the environments occurring in folds
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -400,7 +427,12 @@
          (cond ((== mode :var-compress)
                 (tree-assign-node! t 'switch)
                 (switch-set t 0 #t)
-                (switch-set-range t 1 :last #f))))))
+                (switch-set-range t 1 :last #f))))
+        ((overlays-context? t)
+         (cond ((== mode :first)
+                (dynamic-extremal t #f))
+               ((== mode :last)
+                (dynamic-extremal t #t))))))
 
 (define (dynamic-operate t mode)
   (when (tree-compound? t)
@@ -560,6 +592,17 @@
            #t))
         (else #f)))
 
+(define (dynamic-traverse-overlays t mode)
+  (let* ((cur (tree->number (tree-ref t 0)))
+         (tot (tree->number (tree-ref t 1)))
+         (inc (if (in? mode '(:next :var-next)) 1 -1))
+         (nxt (min (max (+ cur inc) 1) tot)))
+    (and (!= nxt cur)
+         (begin
+           (tree-set t 0 (number->string nxt))
+           (tree-go-to t 2 :start)
+           #t))))
+
 (define (dynamic-traverse-traversed t mode)
   (and (in? mode '(:previous :var-previous))
        (begin
@@ -598,6 +641,8 @@
                 (l (- (tree-arity t) 1)))
            (or (dynamic-traverse (tree-ref t i) mode)
                (dynamic-traverse-switch t i l mode))))
+        ((overlays-context? t)
+         (dynamic-traverse-overlays t mode))
         (else
          (let* ((c (tree-accessible-children t))
                 (forward? (in? mode '(:next :var-next)))

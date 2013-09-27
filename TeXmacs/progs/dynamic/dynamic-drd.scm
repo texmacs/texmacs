@@ -88,6 +88,17 @@
 (define-group expanded-tag
   expanded slides)
 
+;; overlays
+
+(define-group variant-tag (overlays-tag) (overlay-unary-tag))
+(define-group similar-tag (overlays-tag) (overlay-unary-tag))
+
+(define-group overlays-tag
+  overlays overlays-tiny)
+
+(define-group overlay-unary-tag
+  overlay-from overlay-until overlay-this overlay-other)
+
 ;; ornaments
 
 (define-group ornament-tag
