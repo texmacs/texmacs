@@ -295,14 +295,9 @@
   (if (tree-atomic? t) (string->number (tree->string t)) 0))
 
 (tm-define (make-overlays l)
-  (:interactive #t)
-  (interactive
-      (lambda (nr)
-        (if (not (> (string->number nr) 0)) (set! nr "1"))
-        (if (== l 'overlays)
-            (insert-go-to `(,l "1" ,nr (document "")) '(2 0 0))
-            (insert-go-to `(,l "1" ,nr "") '(2 0))))
-    (list "Number of overlays" "string" '())))
+  (if (== l 'overlays)
+      (insert-go-to `(,l "1" "1" (document "")) '(2 0 0))
+      (insert-go-to `(,l "1" "1" "") '(2 0))))
 
 (tm-define (make-overlay l)
   (with-innermost t overlays-context?

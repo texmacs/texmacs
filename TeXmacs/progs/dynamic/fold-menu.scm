@@ -90,10 +90,10 @@
           ("Tiny" (make-overlays 'overlays))))
   (if (tree-innermost overlays-context?)
       (-> "Overlay"
-          ("From" (make-overlay 'overlay-from))
-          ("Until" (make-overlay 'overlay-until))
-          ("This" (make-overlay 'overlay-this))
-          ("Other" (make-overlay 'overlay-other))))
+          ("Visible from here on" (make-overlay 'overlay-from))
+          ("Visible until here" (make-overlay 'overlay-until))
+          ("Visible only here" (make-overlay 'overlay-this))
+          ("Visible except here" (make-overlay 'overlay-other))))
   (if (!= (session-list) '())
       (-> "Executable"
           (link supported-executable-menu)))
