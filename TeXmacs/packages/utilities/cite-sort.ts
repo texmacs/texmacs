@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.0.7.20>
 
 <style|<tuple|source|std>>
 
@@ -10,7 +10,7 @@
       This package contains macros for the automatic sorting of citations.
     </src-purpose>
 
-    <src-copyright|2013|Fran<E7>ois Poulain, Joris van der Hoeven>
+    <src-copyright|2013|François Poulain, Joris van der Hoeven>
 
     <\src-license>
       This software falls under the <hlink|GNU general public license,
