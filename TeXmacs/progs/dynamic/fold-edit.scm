@@ -284,11 +284,26 @@
 ;; User interface to overlays
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (overlays-context? t)
-  (overlays-tag? (tree-label t)))
+(tm-define (overlays-context? t)
+  (and (overlays-tag? (tree-label t))
+       (== (tree-arity t) 3)))
 
 (define (tree->number t)
   (if (tree-atomic? t) (string->number (tree->string t)) 0))
+
+(tm-define (make-overlays l)
+  (:interactive #t)
+  (interactive
+      (lambda (nr)
+        (if (not (> (string->number nr) 0)) (set! nr "1"))
+        (if (== l 'overlays)
+            (insert-go-to `(,l "1" ,nr (document "")) '(2 0 0))
+            (insert-go-to `(,l "1" ,nr "") '(2 0))))
+    (list "Number of overlays" "string" '())))
+
+(tm-define (make-overlay l)
+  (with-innermost t overlays-context?
+    (insert-go-to `(,l ,(tree-copy (tree-ref t 0)) "") '(1 0))))
 
 (tm-define (dynamic-extremal t forwards?)
   (:require (overlays-context? t))

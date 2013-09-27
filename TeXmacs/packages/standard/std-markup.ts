@@ -284,7 +284,7 @@
     </src-comment>
   </active*>
 
-  <assign|with-opacity|<macro|fact|body|<with|opacity|<times|<arg|fact>|<value|opacity>>|<arg|body>>>>
+  <assign|with-opacity|<macro|factor|body|<with|opacity|<times|<arg|factor>|<value|opacity>>|<arg|body>>>>
 
   <assign|pastel|<macro|body|<with-opacity|0.1|<arg|body>>>>
 

@@ -31,6 +31,11 @@
   (interactive (lambda (s) (make-with var s))
     (list (logic-ref env-var-description% var) "string" (get-env var))))
 
+(tm-define (make-interactive-with-opacity)
+  (:interactive #t)
+  (interactive (lambda (s) (make-with-like `(with-opacity ,s "")))
+    (list "opacity" "string" '())))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting and toggling with-like tags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

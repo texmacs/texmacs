@@ -62,10 +62,7 @@
       ("Standard" (make-toggle 'folded-std))
       ("Environment" (make-toggle 'folded-env))
       ("Documentation" (make-toggle 'folded-documentation))
-      ("Grouped" (make-toggle 'folded-grouped))
-      ;;---
-      ;;(link fold-menu)
-      )
+      ("Grouped" (make-toggle 'folded-grouped)))
   (-> "Summarized"
       ("Default" (make-toggle 'summarized))
       ---
@@ -73,32 +70,30 @@
       ("Standard" (make-toggle 'summarized-std))
       ("Environment" (make-toggle 'summarized-env))
       ("Documentation" (make-toggle 'summarized-documentation))
-      ("Grouped" (make-toggle 'summarized-grouped))
-      ;;---
-      ;;(link fold-menu)
-      )
+      ("Grouped" (make-toggle 'summarized-grouped)))
   (-> "Switch"
       ("Standard" (make-switch 'switch))
       (when (not (screens-buffer?))
         ("Screens" (make-screens)))
-      ("Tiny" (make-switch 'tiny-switch))
-      ;;---
-      ;;(link switch-menu)
-      )
+      ("Tiny" (make-switch 'tiny-switch)))
   (-> "Unroll"
       ("Standard" (make-switch 'unroll))
       ("Itemize" (make-switch-list 'unroll 'itemize))
       ("Enumerate" (make-switch-list 'unroll 'enumerate))
-      ("Description" (make-switch-list 'unroll 'description))
-      ;;---
-      ;;(link switch-menu)
-      )
+      ("Description" (make-switch-list 'unroll 'description)))
   (-> "Expanded"
       ("Standard" (make-switch 'expanded))
-      ("Slides" (make-switch 'slides))
-      ;;---
-      ;;(link switch-menu)
-      )
+      ("Slides" (make-switch 'slides)))
+  (if (not (tree-innermost overlays-context?))
+      (-> "Overlays"
+          ("Standard" (make-overlays 'overlays))
+          ("Tiny" (make-overlays 'overlays))))
+  (if (tree-innermost overlays-context?)
+      (-> "Overlay"
+          ("From" (make-overlay 'overlay-from))
+          ("Until" (make-overlay 'overlay-until))
+          ("This" (make-overlay 'overlay-this))
+          ("Other" (make-overlay 'overlay-other))))
   (if (!= (session-list) '())
       (-> "Executable"
           (link supported-executable-menu)))

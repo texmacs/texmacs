@@ -41,6 +41,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind opacity-menu
+  ("10%" (make-with-like '(with-opacity "0.1" "")))
+  ("20%" (make-with-like '(with-opacity "0.2" "")))
+  ("30%" (make-with-like '(with-opacity "0.3" "")))
+  ("40%" (make-with-like '(with-opacity "0.4" "")))
+  ("50%" (make-with-like '(with-opacity "0.5" "")))
+  ("60%" (make-with-like '(with-opacity "0.6" "")))
+  ("70%" (make-with-like '(with-opacity "0.7" "")))
+  ("80%" (make-with-like '(with-opacity "0.8" "")))
+  ("90%" (make-with-like '(with-opacity "0.9" "")))
+  ("100%" (make-with-like '(with-opacity "1.0" "")))
+  ---
+  ("Other" (make-interactive-with-opacity)))
+  
+(menu-bind exact-opacity-menu
   ("10%" (make-with "opacity" "10%"))
   ("20%" (make-with "opacity" "20%"))
   ("30%" (make-with "opacity" "30%"))
