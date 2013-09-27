@@ -203,6 +203,10 @@
   (require-format x '(bold :*))
   `($widget-style ,widget-style-bold ,@(map gui-make (cdr x))))
 
+(define (gui-make-grey x)
+  (require-format x '(grey :*))
+  `($widget-style ,widget-style-grey ,@(map gui-make (cdr x))))
+
 (define (gui-make-tile x)
   (require-format x '(tile :integer? :*))
   `($tile ,(cadr x) ,@(map gui-make (cddr x))))
@@ -361,6 +365,7 @@
   (inert ,gui-make-inert)
   (explicit-buttons ,gui-make-explicit-buttons)
   (bold ,gui-make-bold)
+  (grey ,gui-make-grey)
   (tile ,gui-make-tile)
   (scrollable ,gui-make-scrollable)
   (resize ,gui-make-resize)

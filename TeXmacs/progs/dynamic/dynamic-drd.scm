@@ -90,8 +90,8 @@
 
 ;; overlays
 
-(define-group variant-tag (overlays-tag) (overlay-unary-tag))
-(define-group similar-tag (overlays-tag) (overlay-unary-tag))
+(define-group variant-tag (overlays-tag) (overlay-tag))
+(define-group similar-tag (overlays-tag) (overlay-tag))
 
 (define-group overlays-tag
   overlays overlays-tiny)

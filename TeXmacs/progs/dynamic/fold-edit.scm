@@ -319,12 +319,30 @@
            (nxt (min (max i 1) tot)))
       (tree-set t 0 (number->string nxt)))))
 
+(tm-define (overlay-current t)
+  (and-with p (tree-search-upwards t overlays-context?)
+    (overlays-current p)))
+
+(tm-define (overlay-arity t)
+  (and-with p (tree-search-upwards t overlays-context?)
+    (overlays-arity p)))
+
+(tm-define (overlay-visible? t i)
+  (and (overlay-context? t)
+       (with ref (tree->number (tree-ref t 0))
+         (cond ((tree-is? t 'overlay-from)  (>= i ref))
+               ((tree-is? t 'overlay-until) (<= i ref))
+               ((tree-is? t 'overlay-this)  (== i ref))
+               ((tree-is? t 'overlay-other) (!= i ref))
+               (else #f)))))
+
 (tm-define (dynamic-extremal t forwards?)
   (:require (overlays-context? t))
   (let* ((tot (tree->number (tree-ref t 1)))
          (nxt (if forwards? tot 1)))
     (tree-set t 0 (number->string nxt))
-    (tree-go-to t 2 :start)))
+    (when (not (tree-innermost overlay-context?))
+      (tree-go-to t 2 :start))))
 
 (tm-define (dynamic-incremental t forwards?)
   (:require (overlays-context? t))
@@ -333,7 +351,8 @@
          (inc (if forwards? 1 -1))
          (nxt (min (max (+ cur inc) 1) tot)))
     (tree-set t 0 (number->string nxt))
-    (tree-go-to t 2 :start)))
+    (when (not (tree-innermost overlay-context?))
+      (tree-go-to t 2 :start))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Additional routines for inserting and removing overlays
@@ -700,7 +719,8 @@
     (and (!= nxt cur)
          (begin
            (tree-set t 0 (number->string nxt))
-           (tree-go-to t 2 :start)
+           (when (not (tree-innermost overlay-context?))
+             (tree-go-to t 2 :start))
            #t))))
 
 (define (dynamic-traverse-traversed t mode)

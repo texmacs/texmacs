@@ -308,9 +308,9 @@
     (string-append "Overlay " cur "/" tot)))
 
 (tm-menu (focus-overlays-menu t)
-  (for (i (.. 0 (or (overlays-arity t) 1)))
-    ((eval (string-append "Overlay " (number->string (+ i 1))))
-     (overlays-switch-to t (+ i 1)))))
+  (for (i (.. 1 (or (+ (overlays-arity t) 1) 2)))
+    ((eval (string-append "Overlay " (number->string i)))
+     (overlays-switch-to t i))))
 
 (tm-menu (focus-hidden-menu t)
   (:require (overlays-context? t))
@@ -322,3 +322,25 @@
   //
   (=> (eval (get-overlays-menu-name t))
       (dynamic (focus-overlays-menu t))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Menu customizations for overlay filters
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (focus-overlay-icon t i here?)
+  ((eval (if here?
+             (string-append "[" (number->string i) "]")
+             (number->string i)))
+   (tree-set t 0 (number->string i))))
+
+(tm-menu (focus-overlay-icons t)
+  (for (i (.. 1 (or (+ (overlay-arity t) 1) 2)))
+    (if (overlay-visible? t i)
+        (bold (dynamic (focus-overlay-icon t i (== i (overlay-current t))))))
+    (if (not (overlay-visible? t i))
+        (grey (dynamic (focus-overlay-icon t i (== i (overlay-current t))))))))
+
+(tm-menu (focus-hidden-icons t)
+  (:require (overlay-context? t))
+  //
+  (dynamic (focus-overlay-icons t)))
