@@ -393,7 +393,11 @@
 
   \;
 
-  <assign|overlay-cond|<macro|cond|body|<with|opacity|<if|<arg|cond>|1|0>|<arg|body>>>>
+  <assign|overlay-hidden|<macro|body|<with|opacity|0|<arg|body>>>>
+
+  <assign|overlay-shown|<macro|body|<arg|body>>>
+
+  <assign|overlay-cond|<macro|cond|body|<compound|<if|<arg|cond>|overlay-shown|overlay-hidden>|<arg|body>>>>
 
   <assign|overlay-from|<macro|start|body|<overlay-cond|<greatereq|<value|overlay-nr>|<arg|start>>|<arg|body>>>>
 
@@ -402,6 +406,14 @@
   <assign|overlay-this|<macro|here|body|<overlay-cond|<equal|<value|overlay-nr>|<arg|here>>|<arg|body>>>>
 
   <assign|overlay-other|<macro|avoid|body|<overlay-cond|<unequal|<value|overlay-nr>|<arg|avoid>>|<arg|body>>>>
+
+  \;
+
+  <assign|hidden-deleted|<macro|body|<with|overlay-hidden|<macro|x|<hidden|<arg|x>>>|<arg|body>>>>
+
+  <assign|hidden-invisible|<macro|body|<with|overlay-hidden|<macro|x|<with|opacity|0|<arg|x>>>|<arg|body>>>>
+
+  <assign|hidden-greyed|<macro|body|<with|overlay-hidden|<macro|x|<with|opacity|0.1|<arg|x>>>|<arg|body>>>>
 
   <\active*>
     <\src-comment>

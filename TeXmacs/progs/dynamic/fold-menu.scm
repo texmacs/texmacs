@@ -97,6 +97,10 @@
   (if (!= (session-list) '())
       (-> "Executable"
           (link supported-executable-menu)))
+  (-> "Hidden content"
+      ("Deleted" (make 'hidden-deleted))
+      ("Invisible" (make 'hidden-invisible))
+      ("Greyed" (make 'hidden-greyed)))
   (-> "Traversal"
       ("Fold back" (make 'fold-back))
       ("Keep unfolded" (make 'keep-unfolded))

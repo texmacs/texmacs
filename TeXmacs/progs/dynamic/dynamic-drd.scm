@@ -99,6 +99,14 @@
 (define-group overlay-tag
   overlay-from overlay-until overlay-this overlay-other)
 
+;; hidden content
+
+(define-group variant-tag (hidden-tag))
+(define-group similar-tag (hidden-tag))
+
+(define-group hidden-tag
+  hidden-deleted hidden-invisible hidden-greyed)
+
 ;; ornaments
 
 (define-group ornament-tag
