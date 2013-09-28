@@ -70,6 +70,9 @@
 
 ;; switches
 
+(define-group variant-tag (unroll-tag))
+(define-group similar-tag (unroll-tag))
+
 (define-group switch-tag
   (alternative-tag) (unroll-tag) (expanded-tag))
 
@@ -83,7 +86,7 @@
   switch screens)
 
 (define-group unroll-tag
-  unroll)
+  unroll unroll-greyed unroll-phantoms)
 
 (define-group expanded-tag
   expanded slides)
@@ -94,7 +97,7 @@
 (define-group similar-tag (overlays-tag) (overlay-tag))
 
 (define-group overlays-tag
-  overlays overlays-tiny)
+  overlays overlays-compressed overlays-greyed)
 
 (define-group overlay-tag
   overlay-from overlay-until overlay-this overlay-other)

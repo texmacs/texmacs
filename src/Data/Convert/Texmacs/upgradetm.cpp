@@ -3664,6 +3664,23 @@ upgrade_abstract_data (tree t) {
 }
 
 /******************************************************************************
+* Upgrade unroll
+******************************************************************************/
+
+tree
+upgrade_unroll (tree t) {
+  if (is_atomic (t)) return t;
+  int i, n= N(t);
+  tree r (t, n);
+  for (i=0; i<n; i++) {
+    r[i]= upgrade_unroll (t[i]);
+    if (is_compound (t, "unroll") && is_func (r[i], HIDDEN, 1))
+      r[i]= compound ("hidden*", r[i][0]);
+  }
+  return r;
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -3833,6 +3850,8 @@ upgrade (tree t, string version) {
     t= upgrade_abstract_data (t);
     t= correct_metadata (t);
   }
+  if (version_inf_eq (version, "1.0.7.20"))
+    t= upgrade_unroll (t);
 
   if (is_non_style_document (t))
     t= automatic_correct (t, version);

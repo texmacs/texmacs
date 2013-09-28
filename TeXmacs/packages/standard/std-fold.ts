@@ -22,6 +22,24 @@
 
   <\active*>
     <\src-comment>
+      Customizable and shown content.
+    </src-comment>
+  </active*>
+
+  <assign|hidden*|<macro|body|<hidden|<arg|body>>>>
+
+  <assign|shown*|<macro|body|<arg|body>>>
+
+  <drd-props|hidden*|arity|1|hidden|all|unaccessible|all|border|no>
+
+  <assign|hidden-deleted|<macro|body|<with|hidden*|<macro|x|<hidden|<arg|x>>>|<arg|body>>>>
+
+  <assign|hidden-invisible|<macro|body|<with|hidden*|<macro|x|<with|opacity|0|<arg|x>>>|<arg|body>>>>
+
+  <assign|hidden-greyed|<macro|body|<with|hidden*|<macro|x|<with|opacity|0.1|<arg|x>>>|<arg|body>>>>
+
+  <\active*>
+    <\src-comment>
       Rendering folding tags.
     </src-comment>
   </active*>
@@ -317,6 +335,50 @@
 
   <\active*>
     <\src-comment>
+      Tags for unrolls.
+    </src-comment>
+  </active*>
+
+  <assign|unroll|<\xmacro|switch-args>
+    <\surround||<right-flush>>
+      <\hidden-deleted>
+        <\quasi>
+          <unquote*|<quote-arg|switch-args>>
+        </quasi>
+      </hidden-deleted>
+    </surround>
+  </xmacro>>
+
+  <assign|unroll-greyed|<\xmacro|switch-args>
+    <\surround||<right-flush>>
+      <\hidden-greyed>
+        <\quasi>
+          <unquote*|<quote-arg|switch-args>>
+        </quasi>
+      </hidden-greyed>
+    </surround>
+  </xmacro>>
+
+  <assign|unroll-phantoms|<\xmacro|switch-args>
+    <\surround||<right-flush>>
+      <\hidden-invisible>
+        <\quasi>
+          <unquote*|<quote-arg|switch-args>>
+        </quasi>
+      </hidden-invisible>
+    </surround>
+  </xmacro>>
+
+  \;
+
+  <drd-props|unroll|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <drd-props|unroll-greyed|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <drd-props|unroll-phantoms|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <\active*>
+    <\src-comment>
       Tags for switches.
     </src-comment>
   </active*>
@@ -349,8 +411,6 @@
 
   <assign|tiny-switch|<value|tiny-block>>
 
-  <assign|unroll|<value|document-block>>
-
   <assign|expanded|<value|document-block>>
 
   <assign|slides|<value|slides-block>>
@@ -362,8 +422,6 @@
   <drd-props|screens|arity|<tuple|repeat|1|1>|accessible|all|border|no>
 
   <drd-props|tiny-switch|arity|<tuple|repeat|1|1>|accessible|all>
-
-  <drd-props|unroll|arity|<tuple|repeat|1|1>|accessible|all>
 
   <drd-props|expanded|arity|<tuple|repeat|1|1>|accessible|all>
 
@@ -384,20 +442,28 @@
   </active*>
 
   <assign|overlays|<macro|current|total|body|<with|overlay-nr|<arg|current>|<\surround||<right-flush>>
-    <arg|body>
+    <\hidden-invisible>
+      <arg|body>
+    </hidden-invisible>
   </surround>>>>
 
-  <assign|overlays-tiny|<macro|current|total|body|<with|overlay-nr|<arg|current>|<arg|body>>>>
+  <assign|overlays-compressed|<macro|current|total|body|<with|overlay-nr|<arg|current>|<\surround||<right-flush>>
+    <\hidden-deleted>
+      <arg|body>
+    </hidden-deleted>
+  </surround>>>>
+
+  <assign|overlays-greyed|<macro|current|total|body|<with|overlay-nr|<arg|current>|<\surround||<right-flush>>
+    <\hidden-greyed>
+      <arg|body>
+    </hidden-greyed>
+  </surround>>>>
 
   <assign|overlays-range|<macro|start|end|body|<with|overlay-nr|<arg|start>|<arg|body>>>>
 
   \;
 
-  <assign|overlay-hidden|<macro|body|<with|opacity|0|<arg|body>>>>
-
-  <assign|overlay-shown|<macro|body|<arg|body>>>
-
-  <assign|overlay-cond|<macro|cond|body|<compound|<if|<arg|cond>|overlay-shown|overlay-hidden>|<arg|body>>>>
+  <assign|overlay-cond|<macro|cond|body|<compound|<if|<arg|cond>|shown*|hidden*>|<arg|body>>>>
 
   <assign|overlay-from|<macro|start|body|<overlay-cond|<greatereq|<value|overlay-nr>|<arg|start>>|<arg|body>>>>
 
@@ -406,14 +472,6 @@
   <assign|overlay-this|<macro|here|body|<overlay-cond|<equal|<value|overlay-nr>|<arg|here>>|<arg|body>>>>
 
   <assign|overlay-other|<macro|avoid|body|<overlay-cond|<unequal|<value|overlay-nr>|<arg|avoid>>|<arg|body>>>>
-
-  \;
-
-  <assign|hidden-deleted|<macro|body|<with|overlay-hidden|<macro|x|<hidden|<arg|x>>>|<arg|body>>>>
-
-  <assign|hidden-invisible|<macro|body|<with|overlay-hidden|<macro|x|<with|opacity|0|<arg|x>>>|<arg|body>>>>
-
-  <assign|hidden-greyed|<macro|body|<with|overlay-hidden|<macro|x|<with|opacity|0.1|<arg|x>>>|<arg|body>>>>
 
   <\active*>
     <\src-comment>

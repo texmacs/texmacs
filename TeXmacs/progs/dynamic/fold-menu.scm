@@ -78,6 +78,9 @@
       ("Tiny" (make-switch 'tiny-switch)))
   (-> "Unroll"
       ("Standard" (make-switch 'unroll))
+      ("Greyed" (make-switch 'unroll-greyed))
+      ("Phantoms" (make-switch 'unroll-phantoms))
+      ---
       ("Itemize" (make-switch-list 'unroll 'itemize))
       ("Enumerate" (make-switch-list 'unroll 'enumerate))
       ("Description" (make-switch-list 'unroll 'description)))
@@ -87,7 +90,8 @@
   (if (not (tree-innermost overlays-context?))
       (-> "Overlays"
           ("Standard" (make-overlays 'overlays))
-          ("Tiny" (make-overlays 'overlays))))
+          ("Compressed" (make-overlays 'overlays-compressed))
+          ("Greyed" (make-overlays 'overlays-greyed))))
   (if (tree-innermost overlays-context?)
       (-> "Overlay"
           ("Visible from here on" (make-overlay 'overlay-from))
@@ -97,10 +101,10 @@
   (if (!= (session-list) '())
       (-> "Executable"
           (link supported-executable-menu)))
-  (-> "Hidden content"
-      ("Deleted" (make 'hidden-deleted))
-      ("Invisible" (make 'hidden-invisible))
-      ("Greyed" (make 'hidden-greyed)))
+  ;;(-> "Hidden content"
+  ;;    ("Deleted" (make 'hidden-deleted))
+  ;;    ("Invisible" (make 'hidden-invisible))
+  ;;    ("Greyed" (make 'hidden-greyed)))
   (-> "Traversal"
       ("Fold back" (make 'fold-back))
       ("Keep unfolded" (make 'keep-unfolded))

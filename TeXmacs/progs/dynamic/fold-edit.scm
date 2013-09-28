@@ -109,20 +109,28 @@
 ;; Operations on switch trees
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (get-hidden-tag t)
+  'hidden)
+
+(tm-define (get-hidden-tag t)
+  (:require (unroll-context? t))
+  'hidden*)
+
 (define (switch-ref t i)
-  (and t (>= i 0) (< i (tree-arity t)) (not (tree-is? t i 'hidden))))
+  (and t (>= i 0) (< i (tree-arity t))
+       (not (hidden-context? (tree-ref t i)))))
 
 (define (switch-set t i on?)
   (if (== i :last) (set! i (- (tree-arity t) 1)))
   (when (and (>= i 0) (< i (tree-arity t)))
-    (cond ((and on? (tree-is? t i 'hidden))
+    (cond ((and on? (hidden-context? (tree-ref t i)))
            (tree-assign-node (tree-ref t i) 'shown))
           ((and (not on?) (tree-is? t i 'shown))
-           (tree-assign-node (tree-ref t i) 'hidden))
+           (tree-assign-node (tree-ref t i) (get-hidden-tag t)))
           ((and on? (not (tree-is? t i 'shown)))
            (tree-insert-node (tree-ref t i) 0 '(shown)))
-          ((and (not on?) (not (tree-is? t i 'hidden)))
-           (tree-insert-node (tree-ref t i) 0 '(hidden))))))
+          ((and (not on?) (not (hidden-context? (tree-ref t i))))
+           (tree-insert-node (tree-ref t i) 0 (list (get-hidden-tag t)))))))
 
 (define (switch-set-range t first last on?)
   (if (== last :last) (set! last (tree-arity t)))
@@ -268,16 +276,23 @@
   (:require (switch-context? t))
   (switch-to t :rotate-forward))
 
+(tm-define (switch-normalize-hidden t)
+  (with l (get-hidden-tag t)
+    (for (i (.. 0 (tree-arity t)))
+      (when (and (hidden-context? (tree-ref t i)) (not (tree-is? t i l)))
+        (tree-assign-node (tree-ref t i) l)))))
+
 (tm-define (variant-circulate t forward?)
   (:require (switch-context? t))
   (with i (switch-index t)
     (variant-circulate-in t (big-switch-tag-list) forward?)
+    (switch-normalize-hidden t)
     (switch-select t i)))
 
 (tm-define (tree-show-hidden t)
   (:require (switch-context? t))
   (with i (tree-down-index t)
-    (if (tree-is? (tree-ref t i) 'hidden)
+    (if (hidden-context? (tree-ref t i))
         (switch-select t i))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -594,7 +609,7 @@
              (tree-set t 0 (number->string (+ nr 1))))))))
 
 (define (dynamic-make-slide t)
-  (when (or (tm-func? t 'shown 1) (tm-func? t 'hidden 1))
+  (when (or (tm-func? t 'shown 1) (hidden-context? t))
     (tree-assign-node! t 'slide))
   (if (and (tm-func? t 'slide 1) (dynamic-first-alternative t))
       (let* ((p (tree-up t))

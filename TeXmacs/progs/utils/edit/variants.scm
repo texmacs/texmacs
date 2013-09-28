@@ -285,11 +285,14 @@
 ;; Folding-unfolding variants of tags with hidden arguments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (hidden-context? t)
+  (tree-in? t (hidden-tag-list)))
+
 (tm-define (tree-show-hidden t)
   (noop))
 
 (tm-define (tree-show-hidden t)
-  (:require (tree-is? t 'hidden))
+  (:require (hidden-context? t))
   (tree-assign-node! t 'shown))
 
 (tm-define (cursor-show-hidden)
@@ -305,6 +308,9 @@
 (define-group variant-tag
   (argument-tag) (value-tag) (quote-tag)
   (binary-operation-tag) (binary-compare-tag))
+
+(define-group hidden-tag
+  hidden hidden*)
 
 (define-group argument-tag
   arg quote-arg)
