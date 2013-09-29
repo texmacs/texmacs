@@ -20,6 +20,7 @@
 		4910FA7316EB3E2F0088B175 /* post_convert.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4910FA7216EB3E2F0088B175 /* post_convert.cpp */; };
 		4910FA7416EB3E2F0088B175 /* post_convert.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4910FA7216EB3E2F0088B175 /* post_convert.cpp */; };
 		4910FA7516EB3E2F0088B175 /* post_convert.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4910FA7216EB3E2F0088B175 /* post_convert.cpp */; };
+		4918B5CB17F83A7300130EA9 /* WINPrint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4918B5C917F83A7300130EA9 /* WINPrint.cpp */; };
 		491BB5951731182600A755DF /* enlightened.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491BB5911731182600A755DF /* enlightened.cpp */; };
 		491BB5961731182600A755DF /* enlightened.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491BB5911731182600A755DF /* enlightened.cpp */; };
 		491BB5971731182600A755DF /* enlightened.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491BB5911731182600A755DF /* enlightened.cpp */; };
@@ -1255,6 +1256,8 @@
 		4910FA7216EB3E2F0088B175 /* post_convert.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = post_convert.cpp; sourceTree = "<group>"; };
 		491132F216767D3E009F1A5C /* tt_tools.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tt_tools.cpp; sourceTree = "<group>"; };
 		491132F316767D3E009F1A5C /* tt_tools.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tt_tools.hpp; sourceTree = "<group>"; };
+		4918B5C917F83A7300130EA9 /* WINPrint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WINPrint.cpp; sourceTree = "<group>"; };
+		4918B5CA17F83A7300130EA9 /* WINPrint.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = WINPrint.hpp; sourceTree = "<group>"; };
 		491BB5911731182600A755DF /* enlightened.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = enlightened.cpp; sourceTree = "<group>"; };
 		491BB5921731182600A755DF /* spacial.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = spacial.hpp; sourceTree = "<group>"; };
 		491BB5931731182600A755DF /* transformed.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = transformed.cpp; sourceTree = "<group>"; };
@@ -1889,7 +1892,6 @@
 		9C61B41E141A1B780035D78F /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		9C61B41F141A1B780035D78F /* Base.xcconfig.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Base.xcconfig.in; sourceTree = "<group>"; };
 		9C61B420141A1B780035D78F /* bundle-libs.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "bundle-libs.sh"; sourceTree = "<group>"; };
-		9C61B421141A1B780035D78F /* deploy.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = deploy.sh; sourceTree = "<group>"; };
 		9C61B422141A1B780035D78F /* Info-Xcode.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-Xcode.plist"; sourceTree = "<group>"; };
 		9C61B423141A1B780035D78F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9C61B424141A1B780035D78F /* install_name_tool */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = install_name_tool; sourceTree = "<group>"; };
@@ -2984,6 +2986,8 @@
 				9C0B48BB10A8CC100097A335 /* QTMWidget.hpp */,
 				9C0B48BC10A8CC100097A335 /* QTMWindow.cpp */,
 				9C0B48BD10A8CC100097A335 /* QTMWindow.hpp */,
+				4918B5C917F83A7300130EA9 /* WINPrint.cpp */,
+				4918B5CA17F83A7300130EA9 /* WINPrint.hpp */,
 				9C0B48A410A8CC100097A335 /* NOTES */,
 				9C0B48BE10A8CC100097A335 /* TODO */,
 			);
@@ -3655,7 +3659,6 @@
 				9C61B41E141A1B780035D78F /* Base.xcconfig */,
 				9C61B41F141A1B780035D78F /* Base.xcconfig.in */,
 				9C61B420141A1B780035D78F /* bundle-libs.sh */,
-				9C61B421141A1B780035D78F /* deploy.sh */,
 				9C61B422141A1B780035D78F /* Info-Xcode.plist */,
 				9C61B423141A1B780035D78F /* Info.plist */,
 				9C61B424141A1B780035D78F /* install_name_tool */,
@@ -4501,6 +4504,7 @@
 				491BF374178BFF4C00C69EEF /* tm_winsparkle.cpp in Sources */,
 				493F45F9179EC49F00E2972D /* latex_preview.cpp in Sources */,
 				4950FA5317E8349800425005 /* highlight_boxes.cpp in Sources */,
+				4918B5CB17F83A7300130EA9 /* WINPrint.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
