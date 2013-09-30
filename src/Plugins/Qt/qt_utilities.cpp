@@ -287,12 +287,10 @@ to_qstringlist(array<string> l) {
  */
 QString
 to_qstring (const string& s) {
-  if (looks_ascii (s))
-    return utf8_to_qstring (cork_to_utf8 (s));
-  else if (looks_utf8 (s))
+  if (looks_utf8 (s) && !(looks_ascii (s) || looks_universal (s)))
     return utf8_to_qstring (s);
   else
-    return latin1_to_qstring (s);
+    return utf8_to_qstring (cork_to_utf8 (s));
 }
 
 QString
