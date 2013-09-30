@@ -160,7 +160,7 @@ converter_rep::load () {
   }
   else if (from=="UTF-8" && to=="LaTeX" ) {
     hashtree<char,string> dic;
-    hashtree_from_dictionary (dic,"utf8tolatex", CHAR_ENTITY, BIT2BIT, false);
+    hashtree_from_dictionary (dic,"utf8tolatex", UTF8, BIT2BIT, false);
     ht = dic;
   }
   else if (from=="Cork" && to=="ASCII") {
@@ -260,13 +260,13 @@ convert_utf8_to_LaTeX (string input) {
     }
     else {
       start = i;
-      string hex_code = '#' * as_hexadecimal (decode_from_utf8 (input, i));
-      r = apply (conv, hex_code);
-      if (r != hex_code) output << r;
-      else {
-	output << input(start, i);
-        cout << "TeXmacs] non ascii character " << hex_code << " on output: "
-          << input(start, i) << "\nLaTeX output may not compile.\n";
+      unsigned int code= decode_from_utf8 (input, i);
+      string unicode= input (start, i);
+      r = apply (conv, unicode);
+      output << r;
+      if (r == unicode) {
+        cout << "TeXmacs] non ascii character <#" << as_hexadecimal (code)
+          << "> on output: " << unicode << "\nLaTeX output may not compile.\n";
       }
     }
   }
