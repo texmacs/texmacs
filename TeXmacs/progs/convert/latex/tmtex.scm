@@ -110,12 +110,20 @@
     (== (assoc-ref opts "texmacs->latex:indirect-bib") "on"))
   (set! tmtex-use-macros?
     (== (assoc-ref opts "texmacs->latex:use-macros") "on"))
-  (set! tmtex-use-unicode?
-    (== (assoc-ref opts "texmacs->latex:encoding") "utf-8"))
-  (set! tmtex-use-catcodes? 
-    (== (assoc-ref opts "texmacs->latex:encoding") "cork"))
-  (set! tmtex-use-ascii? 
-    (== (assoc-ref opts "texmacs->latex:encoding") "ascii")))
+  (with charset (assoc-ref opts "texmacs->latex:encoding")
+    (if tmtex-cjk-document? (set! charset "utf-8"))
+    (cond ((== charset "utf-8")
+           (set! tmtex-use-catcodes? #f)
+           (set! tmtex-use-ascii?    #f)
+           (set! tmtex-use-unicode?  #t))
+          ((== charset "cork")
+           (set! tmtex-use-catcodes? #t)
+           (set! tmtex-use-ascii?    #f)
+           (set! tmtex-use-unicode?  #f))
+          ((== charset "ascii")
+           (set! tmtex-use-catcodes? #f)
+           (set! tmtex-use-ascii?    #t)
+           (set! tmtex-use-unicode?  #f)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Data
@@ -2416,6 +2424,8 @@
 	     (att (tmfile-extract x 'attachments))
 	     (doc (list '!file body style lan init att
                         (url->string (get-texmacs-path)))))
+        (set! tmtex-cjk-document?
+          (if (in? lan '("chinese" "japanese" "korean")) #t #f))
 	(latex-set-style main-style)
 	(latex-set-packages '())
 	(set! tmtex-style (car style))

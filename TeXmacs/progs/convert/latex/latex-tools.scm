@@ -17,6 +17,7 @@
   (:use (convert latex latex-drd)
 	(convert latex texout)))
 
+(tm-define tmtex-cjk-document? #f)
 (tm-define tmtex-use-catcodes? #f)
 (tm-define tmtex-use-unicode? #f)
 (tm-define tmtex-use-ascii? #f)
