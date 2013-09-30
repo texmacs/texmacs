@@ -449,9 +449,9 @@
 ;; LaTeX ----------
 
 (define-preference-names "texmacs->latex:encoding"
-  ("ascii" "Strict Ascii")
-  ("cork" "Cork charset with catcode definitions in preamble")
-  ("utf-8" "Utf-8 with inputenc LaTeX package"))
+  ("ascii" "Ascii")
+  ("cork"  "Cork with catcodes")
+  ("utf-8" "Utf-8 with inputenc"))
 
 (tm-widget (latex-preferences-widget)
   ===
@@ -488,7 +488,7 @@
   (aligned
     (item (text "Character encoding:")
       (enum (set-pretty-preference "texmacs->latex:encoding" answer)
-            '("ascii" "cork" "utf-8")
+            '("Ascii" "Cork with catcodes" "Utf-8 with inputenc")
             (get-pretty-preference "texmacs->latex:encoding")
             "5em"))))
 
