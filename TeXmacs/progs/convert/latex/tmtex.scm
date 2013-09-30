@@ -2425,7 +2425,7 @@
 	     (doc (list '!file body style lan init att
                         (url->string (get-texmacs-path)))))
         (set! tmtex-cjk-document?
-          (if (in? lan '("chinese" "japanese" "korean")) #t #f))
+          (if (in? lan '("chinese" "taiwanese" "japanese" "korean")) #t #f))
 	(latex-set-style main-style)
 	(latex-set-packages '())
 	(set! tmtex-style (car style))
