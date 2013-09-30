@@ -86,6 +86,26 @@ looks_iso_8859 (string s) {
   return true;
 }
 
+bool
+looks_universal (string s) {
+  // Looks if s can be from TeXmacs's universal charset
+  int i=0, n=N(s);
+  for (; i<n; i++) {
+    if (i+2 < n && s[i] == '<') {
+      bool unicode= s[++i] == '#';
+      if (unicode) i++;
+      while (i<n && s[i] != '>') {
+        if (unicode && !is_digit (s[i]))
+          return false;
+        if (!unicode && !(is_alpha (s[i]) || s[i] == '-'))
+          return false;
+        i++;
+      }
+    }
+  }
+  return true;
+}
+
 string
 guess_wencoding (string s) {
   if (looks_ascii (s))         return "ASCII";
