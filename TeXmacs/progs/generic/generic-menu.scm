@@ -45,6 +45,9 @@
 (tm-define (focus-has-geometry? t)
   #f)
 
+(tm-define (focus-has-preferences? t)
+  (and #f (tree-compound? t) (tree-label-extension? (tree-label t))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Variants
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -181,6 +184,9 @@
     ((check "Show hidden" "v" (tree-is? t :up 'inactive))
      (inactive-toggle t))))
 
+(tm-menu (focus-preferences-menu t)
+  ("Edit" (noop)))
+
 (tm-menu (focus-tag-menu t)
   (with l (focus-variants-of t)
     (assuming (<= (length l) 1)
@@ -189,6 +195,8 @@
       (-> (eval (focus-tag-name (tree-label t)))
           (dynamic (focus-variant-menu t)))))
   (dynamic (focus-toggle-menu t))
+  (assuming (focus-has-preferences? t)
+    (-> "Preferences" (focus-preferences-menu)))
   ("Describe" (focus-help))
   ("Delete" (remove-structure-upwards)))
 
@@ -294,6 +302,9 @@
      (structured-exit-right))
     ((balloon (icon "tm_focus_delete.xpm") "Remove tag")
      (remove-structure-upwards)))
+  (assuming (focus-has-preferences? t)
+    (=> (balloon (icon "tm_focus_prefs.xpm") "Describe tag")
+	(dynamic (focus-preferences-menu t))))
   ((balloon (icon "tm_focus_help.xpm") "Describe tag")
    (focus-help)))
 
