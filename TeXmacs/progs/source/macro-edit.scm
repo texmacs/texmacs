@@ -61,34 +61,28 @@
        (math "<assign>"))
      ,body)))
 
-
-(tm-define (ext-edit-macro* a)
-  (:secure #t)
-  (let* ((c (tree-children a))
-         (name (car c))
-         (args (cDr (cdr c)))
-         (args* (map (lambda (x) `(src-arg ,x)) args))
-         (body (cAr c)))
-  `(document
-     (concat
-       (inline-tag ,name ,@args*)
-       " "
-       (math "<assign>"))
-     (inactive* ,body))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Widget for editing macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (macro-retrieve u)
+(define (macro-retrieve* u)
   (and-with t (buffer-get-body u)
-    (if (tree-is? t 'document) (set! t (tree-ref t 0)))
-    (and (tree-in? t '(edit-macro edit-macro*)) t)))
+    (if (tm-is? t 'document) (set! t (tm-ref t 0)))
+    (and (tm-is? t 'edit-macro) t)))
+
+(define (macro-retrieve u)
+  (and-with t (macro-retrieve* u)
+    (cond ((tm-is? (tree-ref t :last) 'inactive*)
+           `(edit-macro ,@(cDr (tm-children t)) ,(tree-ref t :last 0)))
+          (else t))))
 
 (define (set-macro-mode u mode)
   (and-with t (macro-retrieve u)
-    (cond ((== mode "Source") (tree-assign-node! t 'edit-macro*))
-          (else (tree-assign-node! t 'edit-macro)))))
+    (with t* (macro-retrieve* u)
+      (cond ((== mode "Source")
+             (tree-set t* :last `(inactive* ,(cAr (tm-children t)))))
+            (else
+             (tree-set t* :last (cAr (tm-children t))))))))
 
 (define (buffer-has-preamble? buf)
   (tree-in? (tree-ref buf 0)
@@ -105,8 +99,8 @@
 
 (define (macro-apply b u old)
   (and-with t (macro-retrieve u)
-    (let* ((new `(macro ,@(cdr (tree-children t))))
-           (ass `(assign ,(tree-ref t 0) ,new))
+    (let* ((new `(macro ,@(cdr (tm-children t))))
+           (ass `(assign ,(tm-ref t 0) ,new))
            (buf (buffer-get-body b)))
       (if (tree->path old)
           (tree-set old 1 new)
@@ -122,14 +116,14 @@
     (resize "600px" "300px"
       (texmacs-input
         `(document
-           (edit-macro ,l ,@(tree-children (tree-ref def 1))))
+           (edit-macro ,l ,@(tm-children (tm-ref def 1))))
         '(style "macro-editor")
         u))
     ===
     (hlist
       (enum (set-macro-mode u answer)
             '("Text" "Source")
-            "Text" "5em")
+            "Text" "6em")
       >>
       (explicit-buttons
         ("Apply" (macro-apply b u def))
@@ -142,7 +136,7 @@
   (let* ((b (current-buffer-url))
          (u (string-append "tmfs://aux/edit-" l)))
     (and-with def (get-definition l)
-      (when (tm-func? (tree-ref def 1) 'macro)
+      (when (tm-func? (tm-ref def 1) 'macro)
         (dialogue-window (macro-editor b u l def)
                          (lambda x (noop))
                          "Macro editor")))))
