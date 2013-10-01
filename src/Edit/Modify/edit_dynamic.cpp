@@ -547,6 +547,7 @@ edit_dynamic_rep::activate_hybrid (bool with_args_hint) {
   // activate macro argument
   string name= st[0]->label;
   path mp= search_upwards (MACRO);
+  if (is_nil (mp)) mp= search_upwards ("edit-macro");
   if (!is_nil (mp)) {
     tree mt= subtree (et, mp);
     int i, n= N(mt)-1;

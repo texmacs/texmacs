@@ -26,6 +26,18 @@
 
   <use-package|generic>
 
+  <use-module|(source macro-edit)>
+
+  <\active*>
+    <\src-comment>
+      Special tags for macro editing.
+    </src-comment>
+  </active*>
+
+  <assign|edit-macro|<xmacro|args|<extern|ext-edit-macro|<quote-arg|args>>>>
+
+  <drd-props|edit-macro|arity|<tuple|repeat*|1|2>|accessible|all|border|no>
+
   \;
 </body>
 

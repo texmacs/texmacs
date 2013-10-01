@@ -45,22 +45,34 @@
       (get-init-tree l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Rendering of edit-macro tag
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (ext-edit-macro a)
+  (:secure #t)
+  (let* ((c (tree-children a))
+         (name (car c))
+         (args (cDr (cdr c)))
+         (args* (map (lambda (x) `(src-arg ,x)) args))
+         (body (cAr c)))
+  `(document
+     (concat
+       (inline-tag ,name ,@args*)
+       " "
+       (math "<assign>"))
+     ,body)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Widget for editing macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget ((macro-editor l args body) cmd)
   (padded
-    (form "Macro"
-      (hlist
-        (bold (text l))
-        //
-        (for (i (.. 0 (length args)))
-          //
-          (form-input (string-append "arg" (number->string i)) "string"
-                      (list (list-ref args i)) "1w")))
-      ======
-      (resize "500px" "300px"
-        (texmacs-input `(document ,body) '(style "macro-editor") (noop) #f)))))
+    (resize "500px" "300px"
+      (texmacs-input
+        `(document
+           (edit-macro ,l ,@args ,body))
+        '(style "macro-editor") (noop) #f))))
 
 (tm-define (open-macro-editor l)
   (:interactive #t)
