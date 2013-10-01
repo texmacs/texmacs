@@ -304,7 +304,7 @@
     ((balloon (icon "tm_focus_delete.xpm") "Remove tag")
      (remove-structure-upwards)))
   (assuming (focus-has-preferences? t)
-    (=> (balloon (icon "tm_focus_prefs.xpm") "Describe tag")
+    (=> (balloon (icon "tm_focus_prefs.xpm") "Preferences for tag")
 	(dynamic (focus-preferences-menu t))))
   ((balloon (icon "tm_focus_help.xpm") "Describe tag")
    (focus-help)))
