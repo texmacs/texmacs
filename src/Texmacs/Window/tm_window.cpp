@@ -193,12 +193,8 @@ close_embedded_command (tm_view vw) {
 url
 embedded_name (url name) {
   static int nr= 0;
-  if (!is_none (name)) {
-    cout << "Keep " << name << "\n";
-    return name;
-  }
+  if (!is_none (name)) return name;
   nr++;
-  cout << "New " << nr << "\n";
   return url (string ("tmfs://aux/TeXmacs-input-" * as_string (nr)));
 }
 
