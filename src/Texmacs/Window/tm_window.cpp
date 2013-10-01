@@ -504,12 +504,34 @@ window_create (int win, widget wid, string name, command quit) {
   window_table (win)= pww;
 }
 
+/*
+FIXME: this old implementation does not work in the presence
+of texmacs_input widgets.  The current hack remedies this situation
+by explicitly signalling the widget destruction slot before
+the actual destruction of the widget.  This is still not sufficient
+in the case of Qt though and also might cause the desruction slot
+to be signalled twice.
+
 void
 window_delete (int win) {
   ASSERT (window_table->contains (win), "window does not exist");
   widget pww= window_table [win];
   window_table->reset (win);
   destroy_window_widget (pww);
+}
+*/
+
+void
+window_delete (int win) {
+  static hashmap<int,bool> busy (false);
+  if (busy->contains (win)) return;
+  busy (win)= true;
+  ASSERT (window_table->contains (win), "window does not exist");
+  widget pww= window_table [win];
+  window_table->reset (win);
+  send_destroy (pww);
+  destroy_window_widget (pww);
+  busy (win)= false;
 }
 
 void
