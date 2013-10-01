@@ -5854,19 +5854,17 @@ tmg_widget_texmacs_output (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
-tmg_widget_texmacs_input (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
+tmg_widget_texmacs_input (tmscm arg1, tmscm arg2, tmscm arg3) {
   TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "widget-texmacs-input");
   TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "widget-texmacs-input");
-  TMSCM_ASSERT_COMMAND (arg3, TMSCM_ARG3, "widget-texmacs-input");
-  TMSCM_ASSERT_BOOL (arg4, TMSCM_ARG4, "widget-texmacs-input");
+  TMSCM_ASSERT_URL (arg3, TMSCM_ARG3, "widget-texmacs-input");
 
   content in1= tmscm_to_content (arg1);
   content in2= tmscm_to_content (arg2);
-  command in3= tmscm_to_command (arg3);
-  bool in4= tmscm_to_bool (arg4);
+  url in3= tmscm_to_url (arg3);
 
   // TMSCM_DEFER_INTS;
-  widget out= texmacs_input_widget (in1, in2, in3, in4);
+  widget out= texmacs_input_widget (in1, in2, in3);
   // TMSCM_ALLOW_INTS;
 
   return widget_to_tmscm (out);
@@ -7481,7 +7479,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("widget-hsplit",  tmg_widget_hsplit, 2, 0, 0);
   tmscm_install_procedure ("widget-vsplit",  tmg_widget_vsplit, 2, 0, 0);
   tmscm_install_procedure ("widget-texmacs-output",  tmg_widget_texmacs_output, 2, 0, 0);
-  tmscm_install_procedure ("widget-texmacs-input",  tmg_widget_texmacs_input, 4, 0, 0);
+  tmscm_install_procedure ("widget-texmacs-input",  tmg_widget_texmacs_input, 3, 0, 0);
   tmscm_install_procedure ("widget-ink",  tmg_widget_ink, 1, 0, 0);
   tmscm_install_procedure ("widget-refresh",  tmg_widget_refresh, 2, 0, 0);
   tmscm_install_procedure ("object->promise-widget",  tmg_object_2promise_widget, 1, 0, 0);

@@ -88,7 +88,7 @@
   `($texmacs-output ,@(cdr x)))
 
 (define (gui-make-texmacs-input x)
-  (require-format x '(texmacs-input :%4))
+  (require-format x '(texmacs-input :%3))
   `($texmacs-input ,@(cdr x)))
 
 (define (gui-make-input x)

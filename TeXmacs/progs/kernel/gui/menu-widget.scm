@@ -48,7 +48,7 @@
     (:menu-wide-label :%1)
     (symbol :string? :*)
     (texmacs-output :%2)
-    (texmacs-input :%4)
+    (texmacs-input :%3)
     (input :%1 :string? :%1 :string?)
     (enum :%3 :string?)
     (choice :%3)
@@ -220,10 +220,9 @@
     (widget-texmacs-output (t) (tmstyle))))
 
 (define (make-texmacs-input p style)
-  "Make @(texmacs-input :%4) item."
-  (with (tag t tmstyle cmd cont?) p
-    (widget-texmacs-input (t) (tmstyle) (object->command (menu-protect cmd))
-                          cont?)))
+  "Make @(texmacs-input :%3) item."
+  (with (tag t tmstyle name) p
+    (widget-texmacs-input (t) (tmstyle) (or (name) (url-none)))))
 
 (define (make-menu-input p style)
   "Make @(input :%1 :string? :%1 :string?) menu item."
@@ -617,7 +616,7 @@
           ,(lambda (p style bar?) (list (make-menu-symbol p style))))
   (texmacs-output (:%2)
     ,(lambda (p style bar?) (list (make-texmacs-output p style))))
-  (texmacs-input (:%4)
+  (texmacs-input (:%3)
     ,(lambda (p style bar?) (list (make-texmacs-input p style))))
   (input (:%1 :string? :%1 :string?)
          ,(lambda (p style bar?) (list (make-menu-input p style))))
@@ -722,8 +721,7 @@
   "Expand texmacs-input item @p."
   `(texmacs-input ,(replace-procedures (cadr p))
                   ,(replace-procedures (caddr p))
-                  ,(replace-procedures (cadddr p))
-                  ,(car (cdddr p))))
+                  ,(replace-procedures (cadddr p))))
 
 (define (menu-expand-texmacs-output p)
   "Expand output menu item @p."

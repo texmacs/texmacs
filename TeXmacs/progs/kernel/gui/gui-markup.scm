@@ -326,10 +326,10 @@
   (:synopsis "Make TeXmacs output field")
   `(list 'texmacs-output (lambda () ,doc) (lambda () ,tmstyle)))
 
-(tm-define-macro ($texmacs-input doc tmstyle cmd continuous?)
+(tm-define-macro ($texmacs-input doc tmstyle name)
   (:synopsis "Make TeXmacs input field")
-  `(list 'texmacs-input (lambda () ,doc) (lambda () ,tmstyle) 
-                        (lambda (answer) ,cmd) ,continuous?))
+  `(list 'texmacs-input (lambda () ,doc) (lambda () ,tmstyle)
+                        (lambda () ,name)))
 
 (tm-define-macro ($ink cmd)
   (:synopsis "Make an ink widget")

@@ -62,26 +62,70 @@
        (math "<assign>"))
      ,body)))
 
+
+(tm-define (ext-edit-macro* a)
+  (:secure #t)
+  (let* ((c (tree-children a))
+         (name (car c))
+         (args (cDr (cdr c)))
+         (args* (map (lambda (x) `(src-arg ,x)) args))
+         (body (cAr c)))
+  `(document
+     (concat
+       (inline-tag ,name ,@args*)
+       " "
+       (math "<assign>"))
+     (inactive* ,body))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Widget for editing macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget ((macro-editor l args body) cmd)
+(define (macro-retrieve u)
+  (and-with t (buffer-get-body u)
+    (if (tree-is? t 'document) (set! t (tree-ref t 0)))
+    (and (tree-in? t '(edit-macro edit-macro*)) t)))
+
+(define (macro-source-mode? u)
+  (and-with t (macro-retrieve u)
+    (tree-is? t 'edit-macro*)))
+
+(define (macro-toggle-source-mode u)
+  (and-with t (macro-retrieve u)
+    (cond ((tree-is? t 'edit-macro) (tree-assign-node! t 'edit-macro*))
+          ((tree-is? t 'edit-macro*) (tree-assign-node! t 'edit-macro)))))
+
+(define (macro-apply u)
+  (display* "u= " u "\n")
+  (display* "t= " (buffer-get-body u) "\n"))
+
+(tm-widget ((macro-editor u l args body) quit)
   (padded
     (resize "500px" "300px"
       (texmacs-input
         `(document
            (edit-macro ,l ,@args ,body))
-        '(style "macro-editor") (noop) #f))))
+        '(style "macro-editor")
+        u))
+    (bottom-buttons
+      (toggle (macro-toggle-source-mode u) (macro-source-mode? u))
+      ///
+      (minibar (text "Source"))
+      >>
+      ("Apply" (macro-apply u))
+      //
+      ("Ok" (begin (macro-apply u) (quit))))))
 
 (tm-define (open-macro-editor l)
   (:interactive #t)
   (if (symbol? l) (set! l (symbol->string l)))
-  (and-with def (get-definition l)
-    (when (tm-func? def 'macro)
-      (with args (map tree->string (cDr (tree-children def)))
-        (dialogue-window (macro-editor l args (tree-ref def :last))
-                         noop "Macro editor")))))
+  (with u (string-append "tmfs://aux/edit-" l)
+    (and-with def (get-definition l)
+      (when (tm-func? def 'macro)
+        (with args (map tree->string (cDr (tree-children def)))
+          (dialogue-window (macro-editor u l args (tree-ref def :last))
+                           (lambda x (display* "x= " x "\n"))
+                           "Macro editor"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Direct editing of the source of a macro

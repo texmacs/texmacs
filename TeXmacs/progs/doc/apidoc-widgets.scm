@@ -82,13 +82,11 @@
   (cond ((== where "scheme")
          (menu-dynamic
            (resize ("300px" "600px" "9999px") ("200px" "300px" "9999px")
-             (texmacs-input ($doc-explain-scm key) 
-                            '(style "tmdoc") (noop) #f))))
+             (texmacs-input ($doc-explain-scm key) '(style "tmdoc") #f))))
         ((== where "macros")
          (menu-dynamic
            (resize ("300px" "600px" "9999px") ("200px" "300px" "9999px")
-             (texmacs-input ($doc-explain-macro key)
-                            '(style "tmdoc") (noop) #f))))
+             (texmacs-input ($doc-explain-macro key) '(style "tmdoc") #f))))
         (else
           (menu-dynamic ("ERROR: unknow documentation set" (help-win-hide))))))
 
@@ -142,7 +140,7 @@
 
 (tm-widget (symbol-doc-widget)
   (resize ("200px" "400px" "9000px") ("100px" "200px" "3000px")
-    (texmacs-input ($doc-explain-scm mw-symbol) '(style "tmdoc") (noop) #f)))
+    (texmacs-input ($doc-explain-scm mw-symbol) '(style "tmdoc") #f)))
 
 (tm-widget (symbol-doc-buttons)
  (explicit-buttons >>

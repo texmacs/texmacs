@@ -125,8 +125,7 @@
         '(with "bg-color" "#fcfcf8"
            (document (proof (document "Trivial."
                                       "But you may add more details."))))
-        '(style "generic")
-        (noop) #f))))
+        '(style "generic") #f))))
 
 (tm-widget (widget7)
   (padded

@@ -36,7 +36,11 @@
 
   <assign|edit-macro|<xmacro|args|<extern|ext-edit-macro|<quote-arg|args>>>>
 
+  <assign|edit-macro*|<xmacro|args|<extern|ext-edit-macro*|<quote-arg|args>>>>
+
   <drd-props|edit-macro|arity|<tuple|repeat*|1|2>|accessible|all|border|no>
+
+  <drd-props|edit-macro*|arity|<tuple|repeat*|1|2>|accessible|all|border|no>
 
   \;
 </body>

@@ -191,9 +191,14 @@ close_embedded_command (tm_view vw) {
 ******************************************************************************/
 
 url
-embedded_name () {
+embedded_name (url name) {
   static int nr= 0;
+  if (!is_none (name)) {
+    cout << "Keep " << name << "\n";
+    return name;
+  }
   nr++;
+  cout << "New " << nr << "\n";
   return url (string ("tmfs://aux/TeXmacs-input-" * as_string (nr)));
 }
 
@@ -221,12 +226,11 @@ enrich_embedded_document (tree body, tree style) {
 }
 
 widget
-texmacs_input_widget (tree doc, tree style, command cmd, bool continuous) {
-  (void) cmd; (void) continuous;
+texmacs_input_widget (tree doc, tree style, url wname) {
   doc= enrich_embedded_document (doc, style);
   url       base = get_master_buffer (get_current_buffer ());
   tm_view   curvw= concrete_view (get_current_view ());
-  url       name = embedded_name (); create_buffer (name, doc);
+  url       name = embedded_name (wname); create_buffer (name, doc);
   tm_view   vw   = concrete_view (get_passive_view (name));
   tm_window win  = tm_new<tm_window_rep> (doc, command ());
   set_master_buffer (name, base);
