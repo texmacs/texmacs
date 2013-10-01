@@ -185,7 +185,7 @@
      (inactive-toggle t))))
 
 (tm-menu (focus-preferences-menu t)
-  ("Edit" (noop)))
+  ("Edit" (open-macro-editor (tree-label t))))
 
 (tm-menu (focus-tag-menu t)
   (with l (focus-variants-of t)
@@ -196,7 +196,8 @@
           (dynamic (focus-variant-menu t)))))
   (dynamic (focus-toggle-menu t))
   (assuming (focus-has-preferences? t)
-    (-> "Preferences" (focus-preferences-menu)))
+    (-> "Preferences"
+        (dynamic (focus-preferences-menu t))))
   ("Describe" (focus-help))
   ("Delete" (remove-structure-upwards)))
 
