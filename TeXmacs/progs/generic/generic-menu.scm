@@ -46,7 +46,7 @@
   #f)
 
 (tm-define (focus-has-preferences? t)
-  (and #f (tree-compound? t) (tree-label-extension? (tree-label t))))
+  (and (tree-compound? t) (tree-label-extension? (tree-label t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Variants

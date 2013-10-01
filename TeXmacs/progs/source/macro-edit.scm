@@ -25,8 +25,7 @@
 (define (search-definition l t)
   (cond ((and (tm-func? t 'assign 2)
               (tree-atomic? (tree-ref t 0))
-              (== (tree->string (tree-ref t 0)) l))
-         (tree-ref t 1))
+              (== (tree->string (tree-ref t 0)) l)) t)
         ((tree-atomic? t) #f)
         (else (first-match (reverse (tree-children t))
                            (cut search-definition l <>)))))
@@ -42,7 +41,7 @@
 (tm-define (get-definition l)
   (if (symbol? l) (set! l (symbol->string l)))
   (or (get-definition* l (buffer-tree))
-      (get-init-tree l)))
+      (tree 'assign l (get-init-tree l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Rendering of edit-macro tag
@@ -86,46 +85,67 @@
     (if (tree-is? t 'document) (set! t (tree-ref t 0)))
     (and (tree-in? t '(edit-macro edit-macro*)) t)))
 
-(define (macro-source-mode? u)
+(define (set-macro-mode u mode)
   (and-with t (macro-retrieve u)
-    (tree-is? t 'edit-macro*)))
+    (cond ((== mode "Source") (tree-assign-node! t 'edit-macro*))
+          (else (tree-assign-node! t 'edit-macro)))))
 
-(define (macro-toggle-source-mode u)
+(define (buffer-has-preamble? buf)
+  (tree-in? (tree-ref buf 0)
+            '(show-preamble hide-preamble)))
+
+(define (preamble-insert pre ass)
+  (with m (list-find (reverse (tree-children pre))
+                     (lambda (x)
+                       (and (tree-is? x 'assign)
+                            (tm-equal? (tm-ref x 0) (tm-ref ass 0)))))
+    (if m
+        (tree-set m ass)
+        (tree-insert pre (tree-arity pre) (list ass)))))
+
+(define (macro-apply b u old)
   (and-with t (macro-retrieve u)
-    (cond ((tree-is? t 'edit-macro) (tree-assign-node! t 'edit-macro*))
-          ((tree-is? t 'edit-macro*) (tree-assign-node! t 'edit-macro)))))
+    (let* ((new `(macro ,@(cdr (tree-children t))))
+           (ass `(assign ,(tree-ref t 0) ,new))
+           (buf (buffer-get-body b)))
+      (if (tree->path old)
+          (tree-set old 1 new)
+          (begin
+            (when (not (buffer-has-preamble? buf))
+              (tree-insert! buf 0 '((hide-preamble (document "")))))
+            (when (buffer-has-preamble? buf)
+              (with pre (tree-ref buf 0 0)
+                (preamble-insert pre ass))))))))
 
-(define (macro-apply u)
-  (display* "u= " u "\n")
-  (display* "t= " (buffer-get-body u) "\n"))
-
-(tm-widget ((macro-editor u l args body) quit)
+(tm-widget ((macro-editor b u l def) quit)
   (padded
-    (resize "500px" "300px"
+    (resize "600px" "300px"
       (texmacs-input
         `(document
-           (edit-macro ,l ,@args ,body))
+           (edit-macro ,l ,@(tree-children (tree-ref def 1))))
         '(style "macro-editor")
         u))
-    (bottom-buttons
-      (toggle (macro-toggle-source-mode u) (macro-source-mode? u))
-      ///
-      (minibar (text "Source"))
+    ===
+    (hlist
+      (enum (set-macro-mode u answer)
+            '("Text" "Source")
+            "Text" "5em")
       >>
-      ("Apply" (macro-apply u))
-      //
-      ("Ok" (begin (macro-apply u) (quit))))))
+      (explicit-buttons
+        ("Apply" (macro-apply b u def))
+        //
+        ("Ok" (begin (macro-apply b u def) (quit)))))))
 
 (tm-define (open-macro-editor l)
   (:interactive #t)
   (if (symbol? l) (set! l (symbol->string l)))
-  (with u (string-append "tmfs://aux/edit-" l)
+  (let* ((b (current-buffer-url))
+         (u (string-append "tmfs://aux/edit-" l)))
     (and-with def (get-definition l)
-      (when (tm-func? def 'macro)
-        (with args (map tree->string (cDr (tree-children def)))
-          (dialogue-window (macro-editor u l args (tree-ref def :last))
-                           (lambda x (display* "x= " x "\n"))
-                           "Macro editor"))))))
+      (when (tm-func? (tree-ref def 1) 'macro)
+        (dialogue-window (macro-editor b u l def)
+                         (lambda x (noop))
+                         "Macro editor")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Direct editing of the source of a macro
