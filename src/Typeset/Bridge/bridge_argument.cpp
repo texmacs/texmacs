@@ -145,7 +145,7 @@ bridge_argument_rep::my_typeset (int desired_status) {
 	if (is_accessible (new_valip)) valip= new_valip;
       }
     }
-    else value= tree (ERROR, "arg " * name);
+    else value= compound ("src-unknown", name);
   }
 
   path prefix;
