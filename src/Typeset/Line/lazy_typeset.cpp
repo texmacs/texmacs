@@ -358,7 +358,7 @@ make_lazy_argument (edit_env env, tree t, path ip) {
 	if (is_accessible (new_valip)) valip= new_valip;
       }
     }
-    else value= tree (ERROR, "arg " * name);
+    else value= compound ("src-unknown", name);
   }
 
   array<line_item> a= typeset_marker (env, descend (ip, 0));

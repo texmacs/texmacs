@@ -111,13 +111,13 @@
               (with pre (tree-ref buf 0 0)
                 (preamble-insert pre ass))))))))
 
-(tm-widget ((macro-editor b u l def) quit)
+(tm-widget ((macro-editor b u packs l def) quit)
   (padded
     (resize "600px" "300px"
       (texmacs-input
         `(document
            (edit-macro ,l ,@(tm-children (tm-ref def 1))))
-        '(style "macro-editor")
+        `(style (tuple ,@packs "macro-editor"))
         u))
     ===
     (hlist
@@ -134,10 +134,12 @@
   (:interactive #t)
   (if (symbol? l) (set! l (symbol->string l)))
   (let* ((b (current-buffer-url))
+         (style (get-style-tree))
+         (packs (if (tm-atomic? style) (list style) (tm-children style)))
          (u (string-append "tmfs://aux/edit-" l)))
     (and-with def (get-definition l)
       (when (tm-func? (tm-ref def 1) 'macro)
-        (dialogue-window (macro-editor b u l def)
+        (dialogue-window (macro-editor b u packs l def)
                          (lambda x (noop))
                          "Macro editor")))))
 
