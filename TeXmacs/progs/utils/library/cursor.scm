@@ -230,6 +230,15 @@
         (else (set-message `(concat "Error: no buffer " (verbatim ,name))
                            "switch to buffer"))))
 
+(define-public-macro (with-buffer name . body)
+  (let* ((old (gensym))
+         (res (gensym)))
+    `(with ,old (current-buffer)
+       (switch-to-buffer ,name)
+       (with ,res (begin ,@body)
+	 (switch-to-buffer ,old)
+	 ,res))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search and replace
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

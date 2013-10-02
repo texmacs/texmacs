@@ -70,7 +70,7 @@
 
 (define (macro-retrieve* u)
   (and-with t (buffer-get-body u)
-    (if (tm-is? t 'document) (set! t (tm-ref t 0)))
+    (if (tm-is? t 'document) (set! t (tm-ref t :last)))
     (and (tm-is? t 'edit-macro) t)))
 
 (define (macro-retrieve u)
@@ -100,21 +100,30 @@
         (tree-set m ass)
         (tree-insert pre (tree-arity pre) (list ass)))))
 
-(define (macro-apply b u old)
-  (and-with t (macro-retrieve u)
-    (let* ((new `(macro ,@(cdr (tm-children t))))
-           (ass `(assign ,(tm-ref t 0) ,new))
-           (buf (buffer-get-body b)))
-      (if (tree->path old)
-          (tree-set old 1 new)
-          (begin
+(define (macro-apply* u t)
+  (let* ((b   (buffer-get-master u))
+         (m   (buffer-get-master b))
+         (buf (buffer-get-body b))
+         (l   (tree->string (tm-ref t 0)))
+         (old (get-definition* l buf))
+         (mac `(macro ,@(cdr (tm-children t))))
+         (new `(assign ,l ,mac)))
+    (cond ((or (not (buffer-exists? u)) (not (buffer-exists? b))) #f)
+          ((and old (tree->path old)) (tree-set old 1 mac))
+          (else
             (when (not (buffer-has-preamble? buf))
               (tree-insert! buf 0 '((hide-preamble (document "")))))
             (when (buffer-has-preamble? buf)
               (with pre (tree-ref buf 0 0)
-                (preamble-insert pre ass))))))))
+                (preamble-insert pre new)))
+            (when (!= m b)
+              (macro-apply* b t))))))
 
-(tm-widget ((macro-editor b u packs l def) quit)
+(define (macro-apply u)
+  (and-with t (macro-retrieve u)
+    (macro-apply* u t)))
+
+(tm-widget ((macro-editor u packs l def) quit)
   (padded
     (resize "600px" "300px"
       (texmacs-input
@@ -129,9 +138,9 @@
             "Text" "6em")
       >>
       (explicit-buttons
-        ("Apply" (macro-apply b u def))
+        ("Apply" (macro-apply u))
         //
-        ("Ok" (begin (macro-apply b u def) (quit)))))))
+        ("Ok" (begin (macro-apply u) (quit)))))))
 
 (tm-define (open-macro-editor l)
   (:interactive #t)
@@ -143,9 +152,10 @@
          (u (string-append "tmfs://aux/edit-" l)))
     (and-with def (get-definition l)
       (when (tm-func? (tm-ref def 1) 'macro)
-        (dialogue-window (macro-editor b u styps l def)
+        (dialogue-window (macro-editor u styps l def)
                          (lambda x (noop))
-                         "Macro editor")))))
+                         "Macro editor")
+        (buffer-set-master u b)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Searching a definition in style files and packages

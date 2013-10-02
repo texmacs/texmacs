@@ -51,7 +51,8 @@
     define-preference-names
     with-focus-after
     logic-group logic-table logic-dispatcher
-    with-aux with-action with-module with-cursor with-server
+    with-aux with-action with-module
+    with-cursor with-buffer with-server
     user-ask
     tab icon-tab form item meti
     $when $let $let* $for
