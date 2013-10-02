@@ -5,9 +5,13 @@
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.7 to 1.0.7.20>
+  <section|Changes from version 1.0.7 to 1.0.7.21>
 
   <\itemize>
+    <item>New focus preferences menu (1.0.7.21).
+
+    <item>Improved CJK typesetting (1.0.7.21).
+
     <item>Improved presentation mode (1.0.7.20).
 
     <item>Various improvements for <LaTeX> import and export (1.0.7.20).
