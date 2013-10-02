@@ -143,6 +143,11 @@
         //
         ("Ok" (begin (macro-apply u) (quit)))))))
 
+(tm-define (editable-macro? l)
+  (if (symbol? l) (set! l (symbol->string l)))
+  (and-with def (get-definition l)
+    (tm-func? (tm-ref def 1) 'macro)))
+
 (tm-define (open-macro-editor l)
   (:interactive #t)
   (if (symbol? l) (set! l (symbol->string l)))
