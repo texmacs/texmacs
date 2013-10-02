@@ -91,6 +91,11 @@
   (tree-in? (tree-ref buf 0)
             '(show-preamble hide-preamble)))
 
+(define (buffer-get-preamble buf)
+  (if (buffer-has-preamble? buf)
+      (tree-ref buf 0 0)
+      `(document "")))
+
 (define (preamble-insert pre ass)
   (with m (list-find (reverse (tree-children pre))
                      (lambda (x)
@@ -123,14 +128,10 @@
   (and-with t (macro-retrieve u)
     (macro-apply* u t)))
 
-(tm-widget ((macro-editor u packs l def) quit)
+(tm-widget ((macro-editor u packs doc) quit)
   (padded
     (resize "600px" "300px"
-      (texmacs-input
-        `(document
-           (edit-macro ,l ,@(tm-children (tm-ref def 1))))
-        `(style (tuple ,@packs))
-        u))
+      (texmacs-input doc `(style (tuple ,@packs)) u))
     ===
     (hlist
       (enum (set-macro-mode u answer)
@@ -152,10 +153,13 @@
          (u (string-append "tmfs://aux/edit-" l)))
     (and-with def (get-definition l)
       (when (tm-func? (tm-ref def 1) 'macro)
-        (dialogue-window (macro-editor u styps l def)
-                         (lambda x (noop))
-                         "Macro editor")
-        (buffer-set-master u b)))))
+        (let* ((pre (buffer-get-preamble (buffer-tree)))
+               (mac `(edit-macro ,l ,@(tm-children (tm-ref def 1))))
+               (doc `(document (hide-preamble ,pre) ,mac)))
+          (dialogue-window (macro-editor u styps doc)
+                           (lambda x (noop))
+                           "Macro editor")
+          (buffer-set-master u b))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Searching a definition in style files and packages
