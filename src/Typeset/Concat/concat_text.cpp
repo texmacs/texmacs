@@ -58,6 +58,9 @@ concater_rep::typeset_colored_substring
   case SPC_PERIOD: \
     print (spc+ extra); \
     break; \
+  case SPC_CJK_PUNCT: \
+    print (space (-(spc->min>>2), 0, spc->max>>1)); \
+    break; \
   case SPC_TINY: \
     print (space (spc->min>>2, spc->def>>2, spc->max>>2)); \
     break; \
@@ -80,6 +83,9 @@ concater_rep::typeset_colored_substring
     break; \
   case SPC_PERIOD: \
     print (spc+ extra); \
+    break; \
+  case SPC_CJK_PUNCT: \
+    print (space (-(spc->min>>2), 0, spc->max>>1)); \
     break; \
   case SPC_TINY: \
     print (space (spc->min>>4, spc->def>>4, spc->max>>4)); \

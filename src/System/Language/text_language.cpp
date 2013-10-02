@@ -227,9 +227,12 @@ oriental_language_rep::advance (tree t, int& pos) {
     int start= pos;
     tm_char_forwards (s, pos);
     string c= s (start, pos);
-    if (starts (c, "<#300") && N(c) == 7) {
-      if (start > begin) pos= start;
-      break;
+    if ((starts (c, "<#300") || starts (c, "<#FF0")) && N(c) == 7) {
+      if (start > begin) {
+        pos= start;
+        break;
+      }
+      else return &tp_cjk_punct_rep;
     }
   }
   return &tp_normal_rep;
@@ -242,7 +245,7 @@ oriental_language_rep::get_hyphens (string s) {
   for (i=0; i<n-1; i++)
     T[i]= HYPH_INVALID;
   for (i=0, tm_char_forwards (s, i); i<n; tm_char_forwards (s, i))
-    if (s[i] == '<')
+    if (s[i] == '<' && !test (s, i, "<#300") && !test (s, i, "<#FF0"))
       T[i-1]= 0;
   return T;
 }

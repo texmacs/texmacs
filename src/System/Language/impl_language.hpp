@@ -18,6 +18,7 @@ extern text_property_rep tp_space_rep;
 extern text_property_rep tp_dspace_rep;
 extern text_property_rep tp_blank_rep;
 extern text_property_rep tp_period_rep;
+extern text_property_rep tp_cjk_punct_rep;
 extern text_property_rep tp_operator_rep;
 extern text_property_rep tp_shortop_rep;
 
