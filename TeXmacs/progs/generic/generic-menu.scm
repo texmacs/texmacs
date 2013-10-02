@@ -185,7 +185,9 @@
      (inactive-toggle t))))
 
 (tm-menu (focus-preferences-menu t)
-  ("Edit" (open-macro-editor (tree-label t))))
+  ("Edit macro" (open-macro-editor (tree-label t)))
+  (when (has-macro-source? (tree-label t))
+    ("Edit source" (edit-macro-source (tree-label t)))))
 
 (tm-menu (focus-tag-menu t)
   (with l (focus-variants-of t)

@@ -181,7 +181,8 @@
 (lazy-keyboard (source source-kbd) always?)
 (lazy-menu (source source-menu) source-menu source-icons
            source-transformational-menu source-executable-menu)
-(lazy-define (source macro-edit) open-macro-editor edit-macro-source)
+(lazy-define (source macro-edit) open-macro-editor
+             has-macro-source? edit-macro-source)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting table mode\n")

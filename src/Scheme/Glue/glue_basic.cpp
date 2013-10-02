@@ -6375,6 +6375,19 @@ tmg_tree_export (tmscm arg1, tmscm arg2, tmscm arg3) {
 }
 
 tmscm
+tmg_tree_load_style (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tree-load-style");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  tree out= load_style_tree (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
 tmg_view_list () {
   // TMSCM_DEFER_INTS;
   array_url out= get_all_views ();
@@ -7518,6 +7531,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tree-import-loaded",  tmg_tree_import_loaded, 3, 0, 0);
   tmscm_install_procedure ("tree-import",  tmg_tree_import, 2, 0, 0);
   tmscm_install_procedure ("tree-export",  tmg_tree_export, 3, 0, 0);
+  tmscm_install_procedure ("tree-load-style",  tmg_tree_load_style, 1, 0, 0);
   tmscm_install_procedure ("view-list",  tmg_view_list, 0, 0, 0);
   tmscm_install_procedure ("buffer->views",  tmg_buffer_2views, 1, 0, 0);
   tmscm_install_procedure ("current-view-url",  tmg_current_view_url, 0, 0, 0);

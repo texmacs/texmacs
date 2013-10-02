@@ -82,8 +82,11 @@ cache_file_name (tree t) {
   }
 }
 
+extern hashmap<string,tree> style_tree_cache;
+
 void
 style_invalidate_cache () {
+  style_tree_cache= hashmap<string,tree> ();
   if (sd != NULL) {
     tm_delete<style_data_rep> (sd);
     sd= NULL;

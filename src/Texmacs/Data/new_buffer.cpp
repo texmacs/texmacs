@@ -447,6 +447,28 @@ buffer_load (url name) {
   return buffer_import (name, name, fm);
 }
 
+hashmap<string,tree> style_tree_cache ("");
+
+tree
+load_style_tree (string package) {
+  if (style_tree_cache->contains (package))
+    return style_tree_cache [package];
+  url name= url_none ();
+  url styp= "$TEXMACS_STYLE_PATH";
+  if (ends (package, ".ts")) name= package;
+  else name= styp * (package * ".ts");
+  name= resolve (name);
+  string doc_s;
+  if (!load_string (name, doc_s, false)) {
+    tree doc= texmacs_document_to_tree (doc_s);
+    if (is_compound (doc)) doc= extract (doc, "body");
+    style_tree_cache (package)= doc;
+    return doc;
+  }
+  style_tree_cache (package)= "";
+  return "";
+}
+
 /******************************************************************************
 * Saving
 ******************************************************************************/
