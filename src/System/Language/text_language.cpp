@@ -201,6 +201,7 @@ ucs_text_language_rep::hyphenate (
 ******************************************************************************/
 
 struct oriental_language_rep: language_rep {
+  hashmap<string,bool> punct;
   oriental_language_rep (string lan_name);
   text_property advance (tree t, int& pos);
   array<int> get_hyphens (string s);
@@ -208,34 +209,77 @@ struct oriental_language_rep: language_rep {
 };
 
 oriental_language_rep::oriental_language_rep (string lan_name):
-  language_rep (lan_name) {}
+  language_rep (lan_name), punct (false)
+{
+  punct (".")= true;
+  punct (",")= true;
+  punct (":")= true;
+  punct (";")= true;
+  punct ("!")= true;
+  punct ("?")= true;
+  punct ("<#3000>")= true;
+  punct ("<#3001>")= true;
+  punct ("<#3002>")= true;
+  punct ("<#3003>")= true;
+  punct ("<#3004>")= true;
+  punct ("<#3005>")= true;
+  punct ("<#3006>")= true;
+  punct ("<#3007>")= true;
+  punct ("<#3008>")= true;
+  punct ("<#3009>")= true;
+  punct ("<#300a>")= true;
+  punct ("<#300b>")= true;
+  punct ("<#300c>")= true;
+  punct ("<#300d>")= true;
+  punct ("<#300e>")= true;
+  punct ("<#300f>")= true;
+  punct ("<#300A>")= true;
+  punct ("<#300B>")= true;
+  punct ("<#300C>")= true;
+  punct ("<#300D>")= true;
+  punct ("<#300E>")= true;
+  punct ("<#300F>")= true;
+  punct ("<#ff01>")= true;
+  punct ("<#ff0c>")= true;
+  punct ("<#ff0e>")= true;
+  punct ("<#ff1a>")= true;
+  punct ("<#ff1b>")= true;
+  punct ("<#ff1f>")= true;
+  punct ("<#FF01>")= true;
+  punct ("<#FF0C>")= true;
+  punct ("<#FF0E>")= true;
+  punct ("<#FF1A>")= true;
+  punct ("<#FF1B>")= true;
+  punct ("<#FF1F>")= true;
+}
 
 text_property
 oriental_language_rep::advance (tree t, int& pos) {
   string s= t->label;
   if (pos == N(s)) return &tp_normal_rep;
 
-  if (s[pos]==' ') {
+  if (s[pos] == ' ') {
     pos++;
-    if ((pos == N(s)) || (!is_punctuation (s[pos])))
-      return &tp_space_rep;
-    return &tp_blank_rep;
+    return &tp_space_rep;
   }
 
-  int begin= pos;
-  while (pos<N(s) && s[pos] != ' ') {
-    int start= pos;
-    tm_char_forwards (s, pos);
-    string c= s (start, pos);
-    if ((starts (c, "<#300") || starts (c, "<#FF0")) && N(c) == 7) {
-      if (start > begin) {
-        pos= start;
-        break;
-      }
-      else return &tp_cjk_punct_rep;
-    }
+  if (pos < N(s) && !test (s, pos, "<#")) {
+    while (pos < N(s) && s[pos] != ' ' && !test (s, pos, "<#"))
+      tm_char_forwards (s, pos);
+    return &tp_cjk_normal_rep;
   }
-  return &tp_normal_rep;
+
+  int start= pos;
+  tm_char_forwards (s, pos);
+  string c= s (start, pos);
+  if (punct->contains (c))
+    return &tp_cjk_period_rep;
+  int next= pos;
+  tm_char_forwards (s, next);
+  string x= s (pos, next);
+  if (punct->contains (x))
+    return &tp_cjk_no_break_rep;
+  return &tp_cjk_normal_rep;
 }
 
 array<int>
@@ -244,9 +288,6 @@ oriental_language_rep::get_hyphens (string s) {
   array<int> T (n-1);
   for (i=0; i<n-1; i++)
     T[i]= HYPH_INVALID;
-  for (i=0, tm_char_forwards (s, i); i<n; tm_char_forwards (s, i))
-    if (s[i] == '<' && !test (s, i, "<#300") && !test (s, i, "<#FF0"))
-      T[i-1]= 0;
   return T;
 }
 

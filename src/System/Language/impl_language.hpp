@@ -18,9 +18,11 @@ extern text_property_rep tp_space_rep;
 extern text_property_rep tp_dspace_rep;
 extern text_property_rep tp_blank_rep;
 extern text_property_rep tp_period_rep;
-extern text_property_rep tp_cjk_punct_rep;
 extern text_property_rep tp_operator_rep;
 extern text_property_rep tp_shortop_rep;
+extern text_property_rep tp_cjk_normal_rep;
+extern text_property_rep tp_cjk_no_break_rep;
+extern text_property_rep tp_cjk_period_rep;
 
 struct verb_language_rep: language_rep {
   verb_language_rep (string name);
