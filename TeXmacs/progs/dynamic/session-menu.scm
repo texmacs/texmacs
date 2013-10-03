@@ -82,6 +82,9 @@
   (when (alternate-context? t)
     ((check "Unfolded" "v" (alternate-second? (focus-tree)))
      (alternate-toggle (focus-tree))))
+  (assuming (focus-has-preferences? t)
+    (-> "Preferences"
+        (dynamic (focus-preferences-menu t))))
   ("Describe" (set-message "Not yet implemented" "")))
 
 (tm-menu (focus-move-menu t)
@@ -137,6 +140,9 @@
   (:require (field-context? t))
   (dynamic (focus-toggle-icons t))
   (mini #t (inert ((eval (focus-session-language)) (noop))))
+  (assuming (focus-has-preferences? t)
+    (=> (balloon (icon "tm_focus_prefs.xpm") "Preferences for tag")
+	(dynamic (focus-preferences-menu t))))
   ((balloon (icon "tm_focus_help.xpm") "Describe tag")
    (focus-help)))
 
