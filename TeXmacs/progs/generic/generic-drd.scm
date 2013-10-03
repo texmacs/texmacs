@@ -21,6 +21,9 @@
 (tm-define (standard-env-vars l)
   #f)
 
+(tm-define (tree-parameter? t)
+  (tree-label-parameter? (tree-label t)))
+
 (define (get-with-vars l)
   (cond ((or (null? l) (null? (cdr l))) '())
 	((tree-atomic? (car l))
@@ -37,16 +40,17 @@
 	 (let* ((v* (make-ahash-table))
 		(t* (make-ahash-table))
 		(vs (get-with-vars (cDr (tree-children def)))))
+	   (for-each (cut collect-env-vars-sub <> v* t) (tree-children def))
 	   (for (x vs) (ahash-remove! v* x))
-	   (for (x (ahash-set->list v*)) (ahash-set! v x))
-	   (for-each (cut collect-env-vars-sub <> v t)
-		     (cDr (tree-children def)))))
-	((tree-is? def 'compound)
-	 (when (tree-atomic? (tree-ref def 0))
-	   (collect-env-vars (tree->string (tree-ref def 0)) v t))
-	 (for-each (cut collect-env-vars-sub <> v t)
-		   (tree-children def)))
+	   (for (x (ahash-set->list v*)) (ahash-set! v x #t))))
+	((and (tree-is? def 'compound) (tree-atomic? (tree-ref def 0)))
+         (let* ((c (tree-children def))
+                (l (string->symbol (tree->string (car c))))
+                (u (tm->tree (cons l (cdr c)))))
+           (collect-env-vars-sub u v t)))
 	(else
+          (when (tree-parameter? def)
+            (ahash-set! v (symbol->string (tree-label def)) #t))
 	  (collect-env-vars (symbol->string (tree-label def)) v t)
 	  (for-each (cut collect-env-vars-sub <> v t)
 		    (tree-children def)))))
@@ -89,3 +93,7 @@
 	"ornament-hpadding" "ornament-vpadding"
 	"ornament-color" "ornament-extra-color"
 	"ornament-sunny-color" "ornament-shadow-color"))
+
+(tm-define (standard-env-vars l)
+  (:require (in? l '("reference" "pageref" "label" "tag")))
+  (list))
