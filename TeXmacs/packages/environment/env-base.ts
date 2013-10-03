@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.9>
+<TeXmacs|1.0.7.20>
 
 <style|source>
 
@@ -62,7 +62,7 @@
     </src-comment>
   </active*>
 
-  <assign|new-env|<macro|env|name|grp|render|<quasi|<style-with|src-compact|none|<add-to-counter-group|<unquote|<arg|env>>|<unquote|<arg|grp>>><assign|<unquote|<merge|<arg|env>|-text>>|<macro|<localize|<unquote|<arg|name>>>>><assign|<unquote|<merge|<arg|env>|-numbered>>|<macro|text|num|<arg|text>
+  <assign|new-env|<macro|env|name|grp|render|<quasi|<style-with|src-compact|none|<add-to-counter-group|<unquote|<arg|env>>|<unquote|<arg|grp>>><assign|<unquote|<merge|<arg|env>|-text>>|<macro|<localize|<unquote|<arg|name>>>>><drd-props|<unquote|<merge|<arg|env>|-text>>|macro-parameter|string><assign|<unquote|<merge|<arg|env>|-numbered>>|<macro|text|num|<arg|text>
   <with|font-shape|right|<arg|num>>>><assign|<unquote|<merge|<arg|env>|-unnumbered>>|<macro|text|<arg|text>>><assign|<unquote|<arg|env>>|<\macro|body>
     <surround|<compound|<unquote|<merge|next-|<arg|env>>>>||<style-with|src-compact|none|<compound|<unquote|<arg|render>>|<style-with|src-compact|none|<compound|<unquote|<merge|<arg|env>|-numbered>>|<compound|<unquote|<merge|<arg|env>|-text>>>|<compound|<unquote|<merge|the-|<arg|env>>>>>>|<arg|body>>>>
   </macro>><assign|<unquote|<merge|<arg|env>|*>>|<\macro|body>

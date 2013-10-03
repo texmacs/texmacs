@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.0.7.20>
 
 <style|<tuple|source|std>>
 
@@ -33,6 +33,10 @@
   <assign|aligned-item|<macro|name|<style-with|src-compact|none|<vspace*|<item-vsep>><with|par-first|<minus|<item-hsep>>|<yes-indent>><resize|<arg|name>|<minus|1r|<minus|<item-hsep>|0.5fn>>||<plus|1r|0.5fn>|>>>>
 
   <assign|compact-item|<macro|name|<style-with|src-compact|none|<vspace*|<item-vsep>><with|par-first|<minus|<over|<item-hsep>|2>>|<yes-indent>><resize|<arg|name>|||<maximum|1r|<over|<item-hsep>|2>>|>>>>
+
+  <drd-props|item-hsep|macro-parameter|length>
+
+  <drd-props|item-vsep|macro-parameter|length>
 
   <\active*>
     <\src-comment>
@@ -126,6 +130,8 @@
 
   <assign|itemize-level|0>
 
+  <assign|itemize-levels|3>
+
   <new-list|itemize-1|<value|aligned-space-item>|<macro|name|<active*|<with|mode|math|\<bullet\>>>>>
 
   <new-list|itemize-2|<value|aligned-space-item>|<macro|name|<active*|<with|mode|math|<rigid|\<circ\>>>>>>
@@ -134,7 +140,7 @@
 
   <new-list|itemize-4|<value|aligned-space-item>|<macro|name|<active*|<with|mode|math|<rigid|.>>>>>
 
-  <assign|itemize-reduce|<macro|nr|<plus|<mod|<minus|<arg|nr>|1>|3>|1>>>
+  <assign|itemize-reduce|<macro|nr|<plus|<mod|<minus|<arg|nr>|1>|<minimum|<value|itemize-levels>|4>>|1>>>
 
   <assign|itemize|<\macro|body>
     <\with|itemize-level|<plus|<value|itemize-level>|1>>
@@ -156,6 +162,8 @@
 
   <assign|enumerate-level|0>
 
+  <assign|enumerate-levels|4>
+
   <new-list|enumerate-1|<value|aligned-dot-item>|<value|identity>>
 
   <new-list|enumerate-2|<value|aligned-dot-item>|<macro|name|<number|<arg|name>|alpha>>>
@@ -164,7 +172,7 @@
 
   <new-list|enumerate-4|<value|aligned-dot-item>|<macro|name|<number|<arg|name>|Alpha>>>
 
-  <assign|enumerate-reduce|<macro|nr|<plus|<mod|<minus|<arg|nr>|1>|3>|1>>>
+  <assign|enumerate-reduce|<macro|nr|<plus|<mod|<minus|<arg|nr>|1>|<minimum|<value|enumerate-levels>|4>>|1>>>
 
   <assign|enumerate|<\macro|body>
     <\with|enumerate-level|<plus|<value|enumerate-level>|1>>

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.0.7.20>
 
 <style|source>
 
@@ -20,9 +20,17 @@
     </src-license>
   </src-title>>
 
+  <\active*>
+    <\src-comment>
+      Style parameters
+    </src-comment>
+  </active*>
+
   <assign|enunciation-name|<macro|name|<with|font-series|bold|<arg|name>>>>
 
   <assign|enunciation-sep|<macro|. >>
+
+  <assign|enunciation-padding|<macro|1fn>>
 
   <assign|theorem-name|<macro|name|<enunciation-name|<arg|name>>>>
 
@@ -36,6 +44,26 @@
 
   <assign|exercise-sep|<macro|<enunciation-sep>>>
 
+  <assign|exercise-padding|<macro|0.5fn>>
+
+  <assign|exercise-indentation|<macro|1.5fn>>
+
+  \;
+
+  <drd-props|enunciation-sep|macro-parameter|string>
+
+  <drd-props|enunciation-padding|macro-parameter|length>
+
+  <drd-props|theorem-sep|macro-parameter|string>
+
+  <drd-props|remark-sep|macro-parameter|string>
+
+  <drd-props|exercise-sep|macro-parameter|string>
+
+  <drd-props|exercise-padding|macro-parameter|length>
+
+  <drd-props|exercise-indentation|macro-parameter|length>
+
   <\active*>
     <\src-comment>
       Rendering of theorem-like environments and exercises.
@@ -43,7 +71,7 @@
   </active*>
 
   <assign|render-enunciation|<\macro|which|body>
-    <padded-normal|1fn|1fn|<surround|<arg|which>|<yes-indent*>|<arg|body>>>
+    <padded-normal|<enunciation-padding>|<enunciation-padding>|<surround|<arg|which>|<yes-indent*>|<arg|body>>>
   </macro>>
 
   <assign|render-remark|<\macro|which|body>
@@ -55,8 +83,8 @@
   </macro>>
 
   <assign|render-exercise|<\macro|which|body>
-    <\padded-normal|0.5fn|0.5fn>
-      <\indent-left|1.5fn>
+    <\padded-normal|<exercise-padding>|<exercise-padding>>
+      <\indent-left|<exercise-indentation>>
         <\small>
           <surround|<exercise-name|<arg|which><exercise-sep>>|<yes-indent*>|<arg|body>>
         </small>
