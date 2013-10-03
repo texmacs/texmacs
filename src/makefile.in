@@ -105,8 +105,7 @@ data_src     := $(call findsrc,Data)
 graphics_src := $(call findsrc,Graphics)
 plugins_src  := $(call findsrc_in,Plugins,Bibtex Cairo Imlib2 Sqlite3 \
                                           Ispell Metafont Openssl Updater \
-                                          LaTeX_Preview @CONFIG_PDF@)
-plugins_c_src:= $(call findc_in,Plugins,@CONFIG_PDF@)
+                                          LaTeX_Preview)
 x11_src      := $(call findsrc_in,Plugins,@CONFIG_X11@)
 cocoa_m_src  := $(call findm_in,Plugins,@CONFIG_COCOA@ @CONFIG_MACOS@)
 cocoa_mm_src := $(call findmm_in,Plugins,@CONFIG_COCOA@ @CONFIG_MACOS@ @CONFIG_SPARKLE@)
@@ -118,6 +117,7 @@ typeset_src  := $(call findsrc,Typeset)
 edit_src     := $(call findsrc,Edit)
 texmacs_src  := $(call findsrc,Texmacs)
 scheme_src   := $(call findsrc_in,Scheme,Scheme Guile)
+pdf_src      := $(call findsrc_in,Plugins,@CONFIG_PDF@)
 freetype_src := $(call findsrc_in,Plugins,Freetype)
 
 # Each makefile will have its own Deps directory. Okay that is a bit
@@ -136,10 +136,9 @@ texmacs_cpp_deps := $(call make_cpp_deps,$(system_src) $(kernel_src) $(data_src)
  $(edit_src) $(scheme_src) $(graphics_src)\
  $(plugins_src) $(x11_src) $(texmacs_src)\
  $(typeset_src) $(style_src) $(qt_src) $(gs_src) $(os_src)\
- $(freetype_src))
+ $(pdf_src) $(freetype_src))
 texmacs_m_deps += $(call make_m_deps,$(cocoa_m_src))
 texmacs_mm_deps += $(call make_mm_deps,$(cocoa_mm_src))
-texmacs_c_deps += $(call make_c_deps,$(plugins_c_src))
 
 deps += $(texmacs_cpp_deps) $(texmacs_c_deps) $(texmacs_m_deps) $(texmacs_mm_deps)
 
@@ -175,6 +174,7 @@ scheme_incl    := $(typeset_incl) $(call incl_flags,Plugins Texmacs)
 edit_incl     := $(scheme_incl) \
   $(call incl_flags,Edit/Editor Edit/Interface Edit/Modify)
 texmacs_incl  := $(scheme_incl)
+pdf_incl      := $(system_incl)
 freetype_incl := $(system_incl)
 
 ###############################################################################
@@ -266,10 +266,10 @@ moc_obj	     := $(call makeobj,$(qt_moc_src))
 qt_obj 	     := $(filter-out $(moc_obj), $(call makeobj,$(qt_src)))
 gs_obj       := $(call makeobj,$(gs_src))
 plugins_obj  := $(call makeobj,$(plugins_src))
-plugins_c_obj:= $(call makeobj_c,$(plugins_c_src))
 texmacs_obj  := $(call makeobj,$(texmacs_src))
 typeset_obj  := $(call makeobj,$(typeset_src))
 style_obj    := $(call makeobj,$(style_src))
+pdf_obj      := $(call makeobj,$(pdf_src))
 freetype_obj := $(call makeobj,$(freetype_src))
 
 # To enforce some degree of modularity, each object file must be
@@ -325,6 +325,8 @@ $(typeset_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(typeset_incl))
 $(style_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(style_incl))
+$(pdf_obj): Objects/%.o: %.cpp
+	$(call cxx_incl,$(pdf_incl) $(CXXFREETYPE))
 $(freetype_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(freetype_incl) $(CXXFREETYPE))
 
@@ -381,12 +383,13 @@ uses_style    := $(style_obj)
 uses_edit     := $(edit_obj)
 uses_scheme   := $(scheme_obj)
 uses_texmacs  := $(texmacs_obj)
+uses_pdf      := $(pdf_obj)
 uses_freetype := $(freetype_obj)
 
 # Compilation rules
 
 TEXMACS_objects := $(strip $(call uses,system kernel data graphics\
- plugins x11 os qt gs cocoa style typeset edit scheme texmacs freetype))
+ plugins x11 os qt gs cocoa style typeset edit scheme texmacs pdf freetype))
 
 link_options:=-L$(tmsrc)/lib $(LDRT) -lm $(LDPATH) $(LDGUI) $(LDGUILE) \
   $(LDAXEL) $(LDCAIRO) $(LDIMLIB2) $(LDSQLITE3) $(LDFREETYPE) $(LDICONV) $(LDDL) $(LDSPARKLE)

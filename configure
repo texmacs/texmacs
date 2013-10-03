@@ -7643,7 +7643,9 @@ $as_echo "enabling experimental PDF renderer" >&6; }
 
 $as_echo "#define PDF_RENDERER 1" >>confdefs.h
 
-        CONFIG_PDF="Pdf Pdf/dvipdfmx"
+#        CONFIG_PDF="Pdf Pdf/dvipdfmx"
+#        CONFIG_PDF="Pdf Pdf/PDFWriter"
+        CONFIG_PDF="Pdf"
         ;;
     no)
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling experimental PDF renderer" >&5
@@ -9068,9 +9070,14 @@ esac
 # Debugging options
 #--------------------------------------------------------------------
 
-STD_DEBUG_FLAGS="-fno-rtti -fno-exceptions"
+#STD_DEBUG_FLAGS="-fno-rtti -fno-exceptions"
+#if test "$enable_cocoa" = "yes"; then
+#    STD_DEBUG_FLAGS="-fno-exceptions"
+#fi
+
+STD_DEBUG_FLAGS="-fno-rtti"
 if test "$enable_cocoa" = "yes"; then
-    STD_DEBUG_FLAGS="-fno-exceptions"
+    STD_DEBUG_FLAGS=""
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking if compiler supports $STD_DEBUG_FLAGS" >&5

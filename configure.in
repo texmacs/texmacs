@@ -969,7 +969,9 @@ case "$enable_pdf_renderer" in
     yes)
 	AC_MSG_RESULT([enabling experimental PDF renderer])
         AC_DEFINE(PDF_RENDERER, 1, [Enabling experimental PDF renderer])
-        CONFIG_PDF="Pdf Pdf/dvipdfmx"
+#        CONFIG_PDF="Pdf Pdf/dvipdfmx"
+#        CONFIG_PDF="Pdf Pdf/PDFWriter"
+        CONFIG_PDF="Pdf"
         ;;
     no)
 	AC_MSG_RESULT([disabling experimental PDF renderer])
@@ -1118,9 +1120,14 @@ AC_SUBST(QT_PLUGINS_PATH)
 # Debugging options
 #--------------------------------------------------------------------
 
-STD_DEBUG_FLAGS="-fno-rtti -fno-exceptions"
+#STD_DEBUG_FLAGS="-fno-rtti -fno-exceptions"
+#if test "$enable_cocoa" = "yes"; then
+#    STD_DEBUG_FLAGS="-fno-exceptions"
+#fi
+
+STD_DEBUG_FLAGS="-fno-rtti"
 if test "$enable_cocoa" = "yes"; then
-    STD_DEBUG_FLAGS="-fno-exceptions"
+    STD_DEBUG_FLAGS=""
 fi
 
 AC_MSG_CHECKING(if compiler supports $STD_DEBUG_FLAGS)

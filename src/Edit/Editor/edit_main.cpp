@@ -26,7 +26,8 @@
 #endif
 
 #ifdef PDF_RENDERER
-#include "Pdf/pdf_renderer.hpp"
+//#include "Pdf/pdf_renderer.hpp"
+#include "Pdf/pdf_hummus_renderer.hpp"
 #endif
 
 #ifdef USE_GS
@@ -224,7 +225,8 @@ edit_main_rep::print_bis (url name, bool conform, int first, int last) {
   
 #ifdef PDF_RENDERER
   renderer ren = (pdf ? 
-    pdf_renderer (name, dpi, pages, page_type, landsc, w/cm, h/cm) :
+    //pdf_renderer (name, dpi, pages, page_type, landsc, w/cm, h/cm) :
+    pdf_hummus_renderer (name, dpi, pages, page_type, landsc, w/cm, h/cm) :
     printer (name, dpi, pages, page_type, landsc, w/cm, h/cm) );
 #else
   renderer ren = printer (name, dpi, pages, page_type, landsc, w/cm, h/cm);
