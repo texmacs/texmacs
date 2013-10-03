@@ -58,6 +58,7 @@ drd_decode_type (int i) {
   case TYPE_CODE: return "code";
   case TYPE_IDENTIFIER: return "identifier";
   case TYPE_URL: return "url";
+  case TYPE_COLOR: return "color";
   case TYPE_GRAPHICAL: return "graphical";
   case TYPE_POINT: return "point";
   case TYPE_ANIMATION: return "animation";
@@ -82,6 +83,7 @@ drd_encode_type (string s) {
   else if (s == "code") return TYPE_CODE;
   else if (s == "identifier") return TYPE_IDENTIFIER;
   else if (s == "url") return TYPE_URL;
+  else if (s == "color") return TYPE_COLOR;
   else if (s == "graphical") return TYPE_GRAPHICAL;
   else if (s == "point") return TYPE_POINT;
   else if (s == "animation") return TYPE_ANIMATION;
@@ -104,10 +106,12 @@ parent_info::parent_info (int a, int x, int am, int cm, bool frozen) {
   border_mode      = BORDER_YES;
   block            = BLOCK_NO;
   with_like        = false;
+  var_type         = VAR_MACRO;
   freeze_arity     = frozen;
   freeze_border    = frozen;
   freeze_block     = frozen;
   freeze_with      = frozen;
+  freeze_var_type  = frozen;
 }
 
 parent_info::parent_info (tree t) {
@@ -120,11 +124,13 @@ parent_info::parent_info (tree t) {
   get_bits (border_mode     , 2);
   get_bits (block           , 2);
   get_bits (with_like       , 1);
+  get_bits (var_type        , 2);
   get_bits (freeze_type     , 1);
   get_bits (freeze_arity    , 1);
   get_bits (freeze_border   , 1);
   get_bits (freeze_block    , 1);
   get_bits (freeze_with     , 1);
+  get_bits (freeze_var_type , 1);
 }
 
 parent_info::operator tree () {
@@ -137,11 +143,13 @@ parent_info::operator tree () {
   set_bits (border_mode     , 2);
   set_bits (block           , 2);
   set_bits (with_like       , 1);
+  set_bits (var_type        , 2);
   set_bits (freeze_type     , 1);
   set_bits (freeze_arity    , 1);
   set_bits (freeze_border   , 1);
   set_bits (freeze_block    , 1);
   set_bits (freeze_with     , 1);
+  set_bits (freeze_var_type , 1);
   return as_string (i);
 }
 
@@ -156,10 +164,12 @@ parent_info::operator == (const parent_info& pi) {
     (border_mode      == pi.border_mode     ) &&
     (block            == pi.block           ) &&
     (with_like        == pi.with_like       ) &&
+    (var_type         == pi.var_type        ) &&
     (freeze_arity     == pi.freeze_arity    ) &&
     (freeze_border    == pi.freeze_border   ) &&
     (freeze_block     == pi.freeze_block    ) &&
-    (freeze_with      == pi.freeze_with     );
+    (freeze_with      == pi.freeze_with     ) &&
+    (freeze_var_type  == pi.freeze_var_type );
 }
 
 bool
@@ -307,6 +317,18 @@ tag_info_rep::outer_border () {
 tag_info
 tag_info_rep::with_like () {
   pi.with_like= true;
+  return tag_info (pi, ci, extra);
+}
+
+tag_info
+tag_info_rep::var_parameter () {
+  pi.var_type= VAR_PARAMETER;
+  return tag_info (pi, ci, extra);
+}
+
+tag_info
+tag_info_rep::var_macro_parameter () {
+  pi.var_type= VAR_MACRO_PARAMETER;
   return tag_info (pi, ci, extra);
 }
 

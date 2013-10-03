@@ -19,6 +19,21 @@
 * Accessability
 ******************************************************************************/
 
+bool
+is_macro (tree_label l) {
+  return the_drd->get_var_type (l) != VAR_PARAMETER;
+}
+
+bool
+is_parameter (tree_label l) {
+  return the_drd->get_var_type (l) != VAR_MACRO;
+}
+
+string
+get_tag_type (tree_label l) {
+  return drd_decode_type (the_drd->get_type (l));
+}
+
 int
 minimal_arity (tree_label l) {
   return the_drd->get_minimal_arity (l);

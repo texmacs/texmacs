@@ -142,6 +142,8 @@ highlight (tree t, tree orig, int kind) {
     return compound ("src-tt", t);
   case TYPE_URL:
     return compound ("src-tt", t);
+  case TYPE_COLOR:
+    return compound ("src-textual", t);
   case TYPE_GRAPHICAL:
     return compound ("src-regular", t);
   case TYPE_POINT:

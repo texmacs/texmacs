@@ -683,6 +683,20 @@ edit_env_rep::exec_drd_props (tree t) {
 	drd->set_type (l, drd_encode_type (as_string (val)));
 	drd->freeze_type (l);
       }
+      else if (prop == "parameter" &&
+               drd_encode_type (as_string (val)) >= 0) {
+        drd->set_var_type (l, VAR_PARAMETER);
+	drd->set_type (l, drd_encode_type (as_string (val)));
+	drd->freeze_var_type (l);
+	drd->freeze_type (l);
+      }
+      else if (prop == "macro-parameter" &&
+               drd_encode_type (as_string (val)) >= 0) {
+        drd->set_var_type (l, VAR_MACRO_PARAMETER);
+	drd->set_type (l, drd_encode_type (as_string (val)));
+	drd->freeze_var_type (l);
+	drd->freeze_type (l);
+      }
       else if (drd_encode_type (prop) >= 0) {
 	int tp= drd_encode_type (prop);
 	if (is_int (val)) {

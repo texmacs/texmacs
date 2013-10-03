@@ -13,6 +13,9 @@
 #define TREE_TRAVERSE_H
 #include "tree_cursor.hpp"
 
+bool is_macro (tree_label l);
+bool is_parameter (tree_label l);
+string get_tag_type (tree_label l);
 int minimal_arity (tree_label l);
 int maximal_arity (tree_label l);
 bool correct_arity (tree_label l, int n);

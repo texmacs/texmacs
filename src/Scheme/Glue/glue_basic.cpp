@@ -1781,6 +1781,45 @@ tmg_tree_label_extensionP (tmscm arg1) {
 }
 
 tmscm
+tmg_tree_label_macroP (tmscm arg1) {
+  TMSCM_ASSERT_TREE_LABEL (arg1, TMSCM_ARG1, "tree-label-macro?");
+
+  tree_label in1= tmscm_to_tree_label (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= is_macro (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_tree_label_parameterP (tmscm arg1) {
+  TMSCM_ASSERT_TREE_LABEL (arg1, TMSCM_ARG1, "tree-label-parameter?");
+
+  tree_label in1= tmscm_to_tree_label (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= is_parameter (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_tree_label_type (tmscm arg1) {
+  TMSCM_ASSERT_TREE_LABEL (arg1, TMSCM_ARG1, "tree-label-type");
+
+  tree_label in1= tmscm_to_tree_label (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= get_tag_type (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_tree_multi_paragraphP (tmscm arg1) {
   TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "tree-multi-paragraph?");
 
@@ -7205,6 +7244,9 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tree-append",  tmg_tree_append, 2, 0, 0);
   tmscm_install_procedure ("tree-right-index",  tmg_tree_right_index, 1, 0, 0);
   tmscm_install_procedure ("tree-label-extension?",  tmg_tree_label_extensionP, 1, 0, 0);
+  tmscm_install_procedure ("tree-label-macro?",  tmg_tree_label_macroP, 1, 0, 0);
+  tmscm_install_procedure ("tree-label-parameter?",  tmg_tree_label_parameterP, 1, 0, 0);
+  tmscm_install_procedure ("tree-label-type",  tmg_tree_label_type, 1, 0, 0);
   tmscm_install_procedure ("tree-multi-paragraph?",  tmg_tree_multi_paragraphP, 1, 0, 0);
   tmscm_install_procedure ("tree-simplify",  tmg_tree_simplify, 1, 0, 0);
   tmscm_install_procedure ("tree-minimal-arity",  tmg_tree_minimal_arity, 1, 0, 0);

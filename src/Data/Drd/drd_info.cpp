@@ -305,6 +305,31 @@ drd_info_rep::is_with_like (tree t) {
 }
 
 /******************************************************************************
+* The var_type determines whether the tag is a regular macro,
+* or rather an environment variable (which could be a macro).
+******************************************************************************/
+
+void
+drd_info_rep::set_var_type (tree_label l, int vt) {
+  if (info[l]->pi.freeze_with) return;
+  if (!info->contains (l)) info(l)= copy (info[l]);
+  tag_info& ti= info(l);
+  ti->pi.var_type= vt;
+}
+
+int
+drd_info_rep::get_var_type (tree_label l) {
+  return info[l]->pi.var_type;
+}
+
+void
+drd_info_rep::freeze_var_type (tree_label l) {
+  if (!info->contains (l)) info(l)= copy (info[l]);
+  tag_info& ti= info(l);
+  ti->pi.freeze_with= true;
+}
+
+/******************************************************************************
 * Other attributes
 ******************************************************************************/
 

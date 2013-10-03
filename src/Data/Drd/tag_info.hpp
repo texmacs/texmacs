@@ -28,16 +28,17 @@
 #define TYPE_CODE            11
 #define TYPE_IDENTIFIER      12
 #define TYPE_URL             13
-#define TYPE_GRAPHICAL       14
-#define TYPE_POINT           15
-#define TYPE_CONSTRAINT      16
-#define TYPE_GRAPHICAL_ID    17
-#define TYPE_EFFECT          18
-#define TYPE_ANIMATION       19
-#define TYPE_DURATION        20
-#define TYPE_OBSOLETE        21
-#define TYPE_UNKNOWN         22
-#define TYPE_ERROR           23
+#define TYPE_COLOR           14
+#define TYPE_GRAPHICAL       15
+#define TYPE_POINT           16
+#define TYPE_CONSTRAINT      17
+#define TYPE_GRAPHICAL_ID    18
+#define TYPE_EFFECT          19
+#define TYPE_ANIMATION       20
+#define TYPE_DURATION        21
+#define TYPE_OBSOLETE        22
+#define TYPE_UNKNOWN         23
+#define TYPE_ERROR           24
 
 int    drd_encode (tree t);
 tree   drd_decode (int i);
@@ -96,6 +97,10 @@ string drd_decode_type (int i);
 #define BORDER_OUTER          2
 #define BORDER_NO             3
 
+#define VAR_MACRO             0
+#define VAR_PARAMETER         1
+#define VAR_MACRO_PARAMETER   2
+
 struct parent_info {
   unsigned type             : 5; // the type
   unsigned arity_mode       : 2; // arity layout
@@ -105,11 +110,13 @@ struct parent_info {
   unsigned border_mode      : 2; // is the border inaccessible?
   unsigned block            : 2; // is a block structure?
   unsigned with_like        : 1; // is only an environment modifier?
+  unsigned var_type         : 2; // macro, parameter or macro parameter
   unsigned freeze_type      : 1; // true => disable heuristic determination
   unsigned freeze_arity     : 1;
   unsigned freeze_border    : 1;
   unsigned freeze_block     : 1;
   unsigned freeze_with      : 1;
+  unsigned freeze_var_type  : 1;
 
   parent_info (int arity, int extra, int amode, int cmode, bool frozen= false);
   parent_info (tree t);
@@ -194,6 +201,8 @@ public:
   tag_info inner_border ();
   tag_info outer_border ();
   tag_info with_like ();
+  tag_info var_parameter ();
+  tag_info var_macro_parameter ();
   tag_info type (int tp);
   tag_info type (int i, int tp);
   tag_info accessible (int i);
