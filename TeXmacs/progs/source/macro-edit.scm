@@ -57,12 +57,13 @@
          (args (cDr (cdr c)))
          (args* (map (lambda (x) `(src-arg ,x)) args))
          (body (cAr c)))
-  `(document
-     (concat
-       (inline-tag ,name ,@args*)
-       " "
-       (math "<assign>"))
-     ,body)))
+    `(with "par-first" "0em" "par-par-sep" "0.5em"
+       (document
+         (concat
+           (inline-tag ,name ,@args*)
+           " "
+           (math "<assign>"))
+         ,body))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Widget for editing macros
