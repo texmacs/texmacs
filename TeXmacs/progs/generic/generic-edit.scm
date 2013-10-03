@@ -12,8 +12,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (generic generic-edit)
-  (:use (utils library tree) (utils library cursor) (utils edit variants)
-        (bibtex bib-complete)))
+  (:use (utils library tree)
+	(utils library cursor)
+	(utils edit variants)
+        (bibtex bib-complete)
+	(generic generic-drd)))
 
 (tm-define (generic-context? t) #t) ;; overridden in, e.g., graphics mode
 
