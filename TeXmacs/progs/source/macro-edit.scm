@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (source macro-edit)
-  (:use (generic document-part)))
+  (:use (utils library cursor)
+        (generic document-part)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Finding the definition of a macro
@@ -226,6 +227,7 @@
     (let* ((style-name (string-append name ".ts"))
            (style-url (url-append "$TEXMACS_STYLE_PATH" style-name))
            (file-name (url-resolve style-url "r")))
+      (cursor-history-add (cursor-path))
       (load-buffer file-name)
       (delayed
         (:idle 1)
