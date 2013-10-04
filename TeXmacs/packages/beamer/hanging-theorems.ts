@@ -28,8 +28,6 @@
 
   <assign|hang-length|0.15em>
 
-  <drd-props|hang-length|parameter|length>
-
   <\active*>
     <\src-comment>
       Framed theorems

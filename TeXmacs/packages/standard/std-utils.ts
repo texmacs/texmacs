@@ -64,27 +64,27 @@
     </src-comment>
   </active*>
 
-  <assign|overline-width|1ln>
+  <assign|overlined-width|1ln>
 
-  <assign|overline-sep|1sep>
+  <assign|overlined-sep|1sep>
 
-  <assign|underline-width|1ln>
+  <assign|underlined-width|1ln>
 
-  <assign|underline-sep|1sep>
+  <assign|underlined-sep|1sep>
 
   <assign|wide-bothlined|<macro|top-border|bot-border|top-sep|bot-sep|body|<surround|<no-indent>||<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-width|1par>|<cwith|1|1|1|1|cell-lsep|0pt>|<cwith|1|1|1|1|cell-rsep|0pt>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-tborder|<arg|top-border>>|<cwith|1|1|1|1|cell-bborder|<arg|bot-border>>|<cwith|1|1|1|1|cell-tsep|<arg|top-sep>>|<cwith|1|1|1|1|cell-bsep|<arg|bot-sep>>|<table|<row|<cell|<arg|body>>>>>>>>>
 
-  <assign|wide-std-bothlined|<macro|body|<wide-bothlined|<value|overline-width>|<value|underline-width>|<value|overline-sep>|<value|underline-sep>|<arg|body>>>>
+  <assign|wide-std-bothlined|<macro|body|<wide-bothlined|<value|overlined-width>|<value|underlined-width>|<value|overlined-sep>|<value|underlined-sep>|<arg|body>>>>
 
   <assign|padded-bothlined|<macro|before|after|top-border|bot-border|top-sep|bot-sep|body|<surround|<vspace*|<arg|before>>|<vspace|<arg|after>>|<wide-bothlined|<arg|top-border>|<arg|bot-border>|<arg|top-sep>|<arg|bot-sep>|<arg|body>>>>>
 
   <assign|padded-std-bothlined|<\macro|before|after|body>
-    <padded-bothlined|<arg|before>|<arg|after>|<value|overline-width>|<value|underline-width>|<value|overline-sep>|<value|underline-sep>|<arg|body>>
+    <padded-bothlined|<arg|before>|<arg|after>|<value|overlined-width>|<value|underlined-width>|<value|overlined-sep>|<value|underlined-sep>|<arg|body>>
   </macro>>
 
   <assign|wide-underlined|<macro|bborder|bsep|body|<wide-bothlined|0pt|<arg|bborder>|0pt|<arg|bsep>|<arg|body>>>>
 
-  <assign|wide-std-underlined|<macro|body|<wide-underlined|<value|underline-width>|<value|underline-sep>|<arg|body>>>>
+  <assign|wide-std-underlined|<macro|body|<wide-underlined|<value|underlined-width>|<value|underlined-sep>|<arg|body>>>>
 
   <assign|underlined|<\macro|body>
     <padded|<wide-std-underlined|<arg|body>>>

@@ -26,24 +26,6 @@
     </src-comment>
   </active*>
 
-  <assign|figure-name|<macro|name|<with|font-series|bold|<arg|name>>>>
-
-  <assign|figure-sep|<macro|. >>
-
-  <assign|footnote-sep|<macro|. >>
-
-  \;
-
-  <drd-props|figure-sep|macro-parameter|string>
-
-  <drd-props|footnote-sep|macro-parameter|string>
-
-  <\active*>
-    <\src-comment>
-      Further geometry style parameters
-    </src-comment>
-  </active*>
-
   <assign|figure-width|1par>
 
   <assign|figure-left-padding|0spc>
@@ -58,17 +40,17 @@
 
   \;
 
-  <drd-props|figure-width|parameter|length>
+  <assign|figure-name|<macro|name|<with|font-series|bold|<arg|name>>>>
 
-  <drd-props|figure-left-padding|parameter|length>
+  <assign|figure-sep|<macro|. >>
 
-  <drd-props|figure-right-padding|parameter|length>
+  <assign|footnote-sep|<macro|. >>
 
-  <drd-props|figure-caption-sep|parameter|length>
+  \;
 
-  <drd-props|caption-left-padding|parameter|length>
+  <drd-props|figure-sep|macro-parameter|string>
 
-  <drd-props|caption-right-padding|parameter|length>
+  <drd-props|footnote-sep|macro-parameter|string>
 
   <\active*>
     <\src-comment>

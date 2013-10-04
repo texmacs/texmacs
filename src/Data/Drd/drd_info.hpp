@@ -121,6 +121,8 @@ public:
   bool heuristic_with_like (tree t, tree arg);
   bool heuristic_init_macro (string var, tree macro);
   bool heuristic_init_xmacro (string var, tree xmacro);
+  bool heuristic_init_parameter (string var, string val);
+  bool heuristic_init_parameter (string var, tree val);
   void heuristic_init (hashmap<string,tree> env);
 
   friend class drd_info;

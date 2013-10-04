@@ -932,6 +932,33 @@ drd_info_rep::heuristic_init_xmacro (string var, tree xmacro) {
   return (old_ti != info[l]);
 }
 
+static bool
+is_length (string s) {
+  int i;
+  for (i=0; (i<N(s)) && ((s[i]<'a') || (s[i]>'z')); i++) {}
+  return is_double (s (0, i)) && is_locase_alpha (s (i, N(s)));
+}
+
+bool
+drd_info_rep::heuristic_init_parameter (string var, string val) {
+  tree_label l = make_tree_label (var);
+  tag_info old_ti= copy (info[l]);
+  set_arity (l, 0, 0, ARITY_NORMAL, CHILD_UNIFORM);
+  set_var_type (l, VAR_PARAMETER);
+  if (val == "true" || val == "false") set_type (l, TYPE_BOOLEAN);
+  else if (is_int (val)) set_type (l, TYPE_INTEGER);
+  else if (is_double (val)) set_type (l, TYPE_NUMERIC);
+  else if (is_length (val)) set_type (l, TYPE_LENGTH);
+  else set_type (l, TYPE_STRING);
+  return (old_ti != info[l]);
+}
+
+bool
+drd_info_rep::heuristic_init_parameter (string var, tree val) {
+  (void) var; (void) val;
+  return false;
+}
+
 void
 drd_info_rep::heuristic_init (hashmap<string,tree> env2) {
   // time_t tt= texmacs_time ();
@@ -945,10 +972,14 @@ drd_info_rep::heuristic_init (hashmap<string,tree> env2) {
     while (it->busy()) {
       string var= it->next();
       tree   val= env[var];
-      if (is_func (val, MACRO))
+      if (is_atomic (val))
+        flag= heuristic_init_parameter (var, val->label) | flag;
+      else if (is_func (val, MACRO))
 	flag= heuristic_init_macro (var, val) | flag;
-      if (is_func (val, XMACRO))
+      else if (is_func (val, XMACRO))
 	flag= heuristic_init_xmacro (var, val) | flag;
+      else
+        flag= heuristic_init_parameter (var, val) | flag;
     }
     if ((round++) == 10) {
       cout << "TeXmacs] Warning: bad heuristic drd convergence\n";
