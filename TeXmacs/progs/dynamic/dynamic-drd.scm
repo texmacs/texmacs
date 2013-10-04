@@ -34,6 +34,8 @@
      (define-group unfolded-tag ,unfolded)
      (define-alternate ,folded ,unfolded)))
 
+(define-toggle picture-mixed source-mixed)
+
 (define-fold folded unfolded)
 (define-fold folded-plain unfolded-plain)
 (define-fold folded-std unfolded-std)
@@ -41,7 +43,6 @@
 (define-fold folded-env unfolded-env)
 (define-fold folded-documentation unfolded-documentation)
 (define-fold folded-grouped unfolded-grouped)
-(define-fold picture-mixed source-mixed)
 
 ;; summarized <-> detailed toggles
 

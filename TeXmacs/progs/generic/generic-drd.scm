@@ -117,6 +117,6 @@
 (tm-define (parameter-show-in-menu? l) #t)
 
 (tm-define (parameter-show-in-menu? l)
-  (:require (in? l (list "auto-nr" "current-part" "language"
+  (:require (in? l (list "the-label" "auto-nr" "current-part" "language"
                          "page-nr" "page-the-page" "prog-language")))
   #f)
