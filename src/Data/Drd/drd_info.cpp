@@ -955,8 +955,12 @@ drd_info_rep::heuristic_init_parameter (string var, string val) {
 
 bool
 drd_info_rep::heuristic_init_parameter (string var, tree val) {
-  (void) var; (void) val;
-  return false;
+  tree_label l = make_tree_label (var);
+  tag_info old_ti= copy (info[l]);
+  set_arity (l, 0, 0, ARITY_NORMAL, CHILD_UNIFORM);
+  set_var_type (l, VAR_PARAMETER);
+  set_type (l, get_type (val));
+  return (old_ti != info[l]);
 }
 
 void

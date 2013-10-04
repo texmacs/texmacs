@@ -528,9 +528,10 @@ init_std_drd () {
   init (BACKUP, "backup",
 	fixed (2) -> regular (0));
   init (PATTERN, "pattern",
-	options (3, 1, DETAILED) -> url_type (0));
+	options (3, 1, DETAILED) -> returns_color () ->
+        url_type (0));
   init (GRADIENT, "gradient",
-	fixed (3));                           // not yet implemented
+	fixed (3) -> returns_color ());           // not yet implemented
   init (SPECIFIC, "specific",
 	fixed (1, 1, BIFORM) ->
 	string_type (0) -> name (0, "medium") ->
