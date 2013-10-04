@@ -28,7 +28,17 @@
     </src-comment>
   </active*>
 
+  <assign|edit-tag|<\macro|name|body>
+    <\with|par-first|0fn|par-par-sep|0.5em>
+      <src-var|<arg|name>> <math|\<assign\>>
+
+      <arg|body>
+    </with>
+  </macro>>
+
   <assign|edit-macro|<xmacro|args|<extern|ext-edit-macro|<quote-arg|args>>>>
+
+  <drd-props|edit-tag|arity|2|accessible|all|border|no>
 
   <drd-props|edit-macro|arity|<tuple|repeat*|1|2>|accessible|all|border|no>
 

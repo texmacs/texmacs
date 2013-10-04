@@ -260,6 +260,12 @@
   (tree-go-to t :end)
   (make 'label))
 
+(tm-define (parameter-show-in-menu? l)
+  (:require (and (string-ends? l "-numbered")
+                 (in? (string->symbol (string-drop-right l 9))
+                      (section-tag-list))))
+  #f)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for lists, enumerations and description
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -311,6 +317,18 @@
 (tm-define (numbered-toggle t)
   (:require (enumerate-context? t))
   (variant-set t 'itemize))
+
+(tm-define (standard-parameters l)
+  (:require (== l "itemize"))
+  (cons "itemize-levels" (search-parameters "itemize-1")))
+
+(tm-define (standard-parameters l)
+  (:require (== l "enumerate"))
+  (cons "enumerate-levels" (search-parameters "enumerate-1")))
+
+(tm-define (parameter-choice-list l)
+  (:require (in? l (list "itemize-levels" "enumerate-levels")))
+  (list "1" "2" "3" "4"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting formulas

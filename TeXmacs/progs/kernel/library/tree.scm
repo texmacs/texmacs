@@ -32,6 +32,9 @@
 (define-public (tree->list t)
   (cons (tree-label t) (tree-children t)))
 
+(define-public (tree->symbol t)
+  (string->symbol (tree->string t)))
+
 (define-public (tree-explode t)
   (if (atomic-tree? t)
       (tree->string t)

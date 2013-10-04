@@ -16,6 +16,7 @@
 	(generic generic-edit)
 	(generic format-edit)
 	(generic format-geometry-edit)
+        (generic document-edit)
         (source source-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -47,6 +48,10 @@
 
 (tm-define (focus-has-preferences? t)
   (and (tree-compound? t) (tree-label-extension? (tree-label t))))
+
+(tm-define (focus-has-preferences? t)
+  (:require (tree-in? t '(reference pageref hlink locus)))
+  #t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Variants
@@ -163,6 +168,75 @@
       (mini #t (group (eval (string-append s ":")))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Editing style parameters
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (focus-parameter-menu-item l)
+  ((eval (focus-tag-name (string->symbol l)))
+   (open-macro-editor l)))
+
+(tm-menu (init-env-menu l cs)
+  (with ss (list-filter cs string?)
+    ((check "Default" "*" (test-default? l))
+     (init-default l))
+    (if (nnull? ss)
+        ---
+        (for (c ss)
+          (if (string? c)
+              ((check (eval (upcase-first c)) "*" (test-init? l c))
+               (set-init-env l c)))))
+    (if (and (nnull? ss) (in? :other cs))
+        ---)
+    (if (in? :other cs)
+        ("Other" (init-interactive-env l)))))
+
+(tm-menu (focus-parameter-menu-item l)
+  (:require (and (tree-label-parameter? (string->symbol l))
+                 (string? (get-init-env l))
+                 (nin? (tree-label-type (string->symbol l))
+                       (list "unknown" "regular" "adhoc"))))
+  (-> (eval (focus-tag-name (string->symbol l)))
+      (dynamic (init-env-menu l (list :other)))))
+
+(tm-menu (focus-parameter-menu-item l)
+  (:require (and (tree-label-parameter? (string->symbol l))
+                 (string? (get-init-env l))
+                 (== (tree-label-type (string->symbol l)) "boolean")))
+  ((check (eval (focus-tag-name (string->symbol l))) "v"
+          (== (get-init-env l) "true"))
+   (toggle-init-env l)))
+
+(tm-menu (focus-parameter-menu-item l)
+  (:require (and (tree-label-parameter? (string->symbol l))
+                 (== (tree-label-type (string->symbol l)) "color")))
+  (-> (eval (focus-tag-name (string->symbol l)))
+      ((check "Default" "*" (test-default? l)) (init-default l))
+      ---
+      (pick-background "" (init-env-tree l answer))
+      ---
+      (if (in? l (list "locus-color" "visited-color"))
+          ((check "Preserve" "*" (test-init? l "preserve"))
+           (set-init-env l "preserve")))
+      ("Palette" (interactive-color (lambda (col) (init-env l col)) '()))
+      ("Other" (init-interactive-env l))))
+
+(tm-menu (focus-parameter-menu-item l)
+  (:require (parameter-choice-list l))
+  (with cs (parameter-choice-list l)
+    (-> (eval (focus-tag-name (string->symbol l)))
+        (dynamic (init-env-menu l cs)))))
+
+(tm-menu (focus-parameters-menu t)
+  (with ps (list-filter (search-parameters (tree-label t))
+                        parameter-show-in-menu?)
+    (if (nnull? ps)
+        (group "Style parameters")
+        (for (p ps)
+          (dynamic (focus-parameter-menu-item p)))
+        (if (tree-label-extension? (tree-label t))
+            ---))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Focus menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -185,10 +259,12 @@
      (inactive-toggle t))))
 
 (tm-menu (focus-preferences-menu t)
-  (when (editable-macro? (tree-label t))
-    ("Edit macro" (open-macro-editor (tree-label t))))
-  (when (has-macro-source? (tree-label t))
-    ("Edit source" (edit-macro-source (tree-label t)))))
+  (dynamic (focus-parameters-menu t))
+  (if (tree-label-extension? (tree-label t))
+      (when (editable-macro? (tree-label t))
+        ("Edit macro" (open-macro-editor (tree-label t))))
+      (when (has-macro-source? (tree-label t))
+        ("Edit source" (edit-macro-source (tree-label t))))))
 
 (tm-menu (focus-tag-menu t)
   (with l (focus-variants-of t)

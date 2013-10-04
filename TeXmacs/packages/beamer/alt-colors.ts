@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.10>
+<TeXmacs|1.0.7.20>
 
 <style|source>
 
@@ -27,6 +27,8 @@
   </active*>
 
   <assign|math-color|dark red>
+
+  <drd-props|math-color|parameter|color>
 
   <assign|uncolored-math|<value|math>>
 
@@ -59,6 +61,8 @@
   </active*>
 
   <assign|strong-color|dark blue>
+
+  <drd-props|strong-color|parameter|color>
 
   <assign|uncolored-enunciation-name|<value|enunciation-name>>
 

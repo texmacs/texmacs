@@ -67,7 +67,11 @@
   (for-each init-default-one args))
 
 (tm-define (get-init-env s)
-  (tree->string (get-init-tree s)))
+  (with t (get-init-tree s)
+    (cond ((tree-atomic? t) (tree->string t))
+          ((and (tree-func? t 'macro 1) (tree-atomic? (tree-ref t 0)))
+           (tree->string (tree-ref t 0)))
+          (else #f))))
 
 (tm-define (test-init? var val)
   (== (get-init-tree var) (string->tree val)))
@@ -75,10 +79,24 @@
 (tm-property (init-env var val)
   (:check-mark "*" test-init?))
 
+(tm-define (set-init-env s val)
+  (with old (get-init-tree s)
+    (if (and (tree-func? old 'macro 1) (not (tm-is? val 'macro)))
+        (init-env-tree s `(macro ,val))
+        (init-env-tree s val))))
+
 (tm-define (init-interactive-env var)
   (:interactive #t)
-  (interactive (lambda (s) (init-env var s))
-    (list (logic-ref env-var-description% var) "string" (get-init-env var))))
+  (interactive (lambda (s) (set-init-env var s))
+    (list (or (logic-ref env-var-description% var) var) "string"
+          (get-init-env var))))
+
+(tm-define (toggle-init-env var)
+  (with new (if (== (get-init-env var) "true") "false" "true")
+    (init-default var)
+    (delayed
+      (when (!= new (get-init-env var))
+        (set-init-env var new)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Text and paragraph properties
