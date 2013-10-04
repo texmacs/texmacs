@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.0.7.20>
 
 <style|source>
 
@@ -20,15 +20,59 @@
     </src-license>
   </src-title>>
 
+  <\active*>
+    <\src-comment>
+      Style parameters
+    </src-comment>
+  </active*>
+
   <assign|figure-name|<macro|name|<with|font-series|bold|<arg|name>>>>
 
   <assign|figure-sep|<macro|. >>
 
   <assign|footnote-sep|<macro|. >>
 
+  \;
+
+  <drd-props|figure-sep|macro-parameter|string>
+
+  <drd-props|footnote-sep|macro-parameter|string>
+
   <\active*>
     <\src-comment>
-      Figure-like environments.
+      Further geometry style parameters
+    </src-comment>
+  </active*>
+
+  <assign|figure-width|1par>
+
+  <assign|figure-left-padding|0spc>
+
+  <assign|figure-right-padding|0spc>
+
+  <assign|figure-caption-sep|0.5fn>
+
+  <assign|caption-left-padding|1.5fn>
+
+  <assign|caption-right-padding|1.5fn>
+
+  \;
+
+  <drd-props|figure-width|parameter|length>
+
+  <drd-props|figure-left-padding|parameter|length>
+
+  <drd-props|figure-right-padding|parameter|length>
+
+  <drd-props|figure-caption-sep|parameter|length>
+
+  <drd-props|caption-left-padding|parameter|length>
+
+  <drd-props|caption-right-padding|parameter|length>
+
+  <\active*>
+    <\src-comment>
+      Detailed and summarized captions
     </src-comment>
   </active*>
 
@@ -40,23 +84,17 @@
     <arg|short>
   </macro>>
 
-  <assign|figure-left-padding|0spc>
-
-  <assign|figure-right-padding|0spc>
-
-  <assign|caption-left-padding|1.5fn>
-
-  <assign|caption-right-padding|1.5fn>
-
-  <assign|figure-caption-sep|0.5fn>
-
-  <assign|figure-width|1par>
-
   <drd-props|caption-detailed|arity|2|accessible|0|border|no>
 
   <drd-props|caption-summarized|arity|2|accessible|1|border|no>
 
   <assign|list-caption|<macro|type|cap|<with|caption-detailed|<value|caption-summarized>|<style-with|src-compact|none|<auto-label><write|<arg|type>|<tuple|normal|<arg|cap>|<pageref|<the-auto>>>>>>>>
+
+  <\active*>
+    <\src-comment>
+      Figure-like environments.
+    </src-comment>
+  </active*>
 
   <assign|render-small-figure|<macro|type|name|fig|cap|<tabular*|<tformat|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|2|2|1|1|cell-height|0.5fn>|<twith|table-valign|B>|<cwith|3|3|1|1|cell-hyphen|t>|<twith|table-width|1par>|<twith|table-hmode|min>|<table|<row|<cell|<resize|<arg|fig>|<minus|1l|2fn>||<plus|1r|2fn>|>>>|<row|<cell|>>|<row|<\cell>
     <small|<\surround|<figure-name|<arg|name><figure-sep>><list-caption|<arg|type>|<arg|cap>>|>
