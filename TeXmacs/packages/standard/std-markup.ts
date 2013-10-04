@@ -193,24 +193,6 @@
     </src-comment>
   </active*>
 
-  <assign|padded|<\macro|body>
-    <\padded-normal|0.5fn|0.5fn>
-      <arg|body>
-    </padded-normal>
-  </macro>>
-
-  <assign|underlined|<\macro|body>
-    <padded|<wide-std-underlined|<arg|body>>>
-  </macro>>
-
-  <assign|bothlined|<\macro|body>
-    <padded|<wide-std-bothlined|<arg|body>>>
-  </macro>>
-
-  <assign|framed|<\macro|body>
-    <padded|<wide-std-framed|<arg|body>>>
-  </macro>>
-
   <assign|center|<macro|body|<with|par-mode|center|<arg|body>>>>
 
   <assign|left-aligned|<macro|body|<with|par-mode|left|<arg|body>>>>
