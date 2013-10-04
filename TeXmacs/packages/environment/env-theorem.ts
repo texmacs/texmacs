@@ -142,14 +142,32 @@
     </src-comment>
   </active*>
 
-  <assign|dueto|<macro|name|<with|font-shape|right|<theorem-name|(<arg|name>)
-  >>>>
+  <assign|qed|<active*|<with|mode|math|\<box\>>>>
 
   <assign|proof-text|<macro|<localize|Proof>>>
 
+  <assign|solution-text|<macro|<localize|Solution>>>
+
+  <assign|answer-text|<macro|<localize|Answer>>>
+
+  \;
+
+  <drd-props|qed|macro-parameter|regular>
+
+  <drd-props|proof-text|macro-parameter|string>
+
+  <drd-props|solution-text|macro-parameter|string>
+
+  <drd-props|answer-text|macro-parameter|string>
+
+  \;
+
+  <assign|dueto|<macro|name|<with|font-shape|right|<theorem-name|(<arg|name>)
+  >>>>
+
   <assign|render-proof|<\macro|which|body>
     <\render-remark|<arg|which>>
-      <\surround||<htab|0.5fn><active*|<with|mode|math|\<box\>>>>
+      <\surround||<htab|0.5fn><qed>>
         <arg|body>
       </surround>
     </render-remark>
@@ -163,7 +181,7 @@
     <render-proof|<proof-text> <arg|what>|<arg|body>>
   </macro>>
 
-  <assign|solution-text|<macro|<localize|Solution>>>
+  \;
 
   <assign|render-solution|<\macro|which|body>
     <\render-exercise|<arg|which>>
@@ -181,7 +199,7 @@
     <render-solution|<solution-text> <arg|what>|<arg|body>>
   </macro>>
 
-  <assign|answer-text|<macro|<localize|Answer>>>
+  \;
 
   <assign|render-answer|<value|render-remark>>
 

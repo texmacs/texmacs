@@ -543,6 +543,33 @@
 	(link focus-section-menu))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Focus menu for proofs
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (focus-toggle-menu t)
+  (:require (proof-context? t))
+  ((check "Named" "v" (proof-named? (focus-tree)))
+   (proof-toggle-name t)))
+
+(tm-menu (focus-toggle-icons t)
+  (:require (proof-context? t))
+  ((check (balloon (icon "tm_small_textual.xpm") "Toggle name") "v"
+	  (proof-named? (focus-tree)))
+   (proof-toggle-name t)))
+
+(tm-menu (focus-extra-menu t)
+  (:require (or (enunciation-context? t) (proof-context? t)))
+  ---
+  (when (not (dueto-added? t))
+    ("Due to" (dueto-add t))))
+
+(tm-menu (focus-extra-icons t)
+  (:require (or (enunciation-context? t) (proof-context? t)))
+  //
+  (when (not (dueto-added? t))
+    ("Due to" (dueto-add t))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Focus menus for algorithms
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

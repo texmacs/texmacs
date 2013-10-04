@@ -266,6 +266,10 @@
                       (section-tag-list))))
   #f)
 
+(tm-define (parameter-show-in-menu? l)
+  (:require (== l "appendix-prefix"))
+  #f)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for lists, enumerations and description
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -364,6 +368,31 @@
   (:argument file-name "Bibliography file")
   (if (not (make-return-after))
       (insert (list 'bibliography "bib" style file-name '(document "")))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Editing enunciations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (enunciation-context? t)
+  (tree-in? t (enunciation-tag-list)))
+
+(tm-define (dueto-added? t)
+  (tm-search-forwards t (lambda (x) (tm-is? x 'dueto))))
+
+(tm-define (dueto-add t)
+  (tree-go-to t :last :start)
+  (make 'dueto))
+
+(tm-define (proof-context? t)
+  (tree-in? t '(proof render-proof)))
+
+(tm-define (proof-named? t)
+  (tree-is? t 'render-proof))
+
+(tm-define (proof-toggle-name t)
+  (if (proof-named? t)
+      (tree-set! t `(proof ,(tree-ref t 1)))
+      (tree-set! t `(render-proof "" ,(tree-ref t 0)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Editing algorithms
