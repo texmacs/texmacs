@@ -21,6 +21,8 @@
 #include "sys_utils.hpp"
 #include "convert.hpp"
 #include "ntuple.hpp"
+#include "link.hpp"
+#include "frame.hpp"
 
 #include "PDFWriter/PDFWriter.h"
 #include "PDFWriter/PDFPage.h"
@@ -59,7 +61,10 @@ class pdf_hummus_renderer_rep : public renderer_rep {
   rgb       fill_rgb;
   color     fg, bg;
   SI        lw;
-  
+
+  pencil   pen;
+  brush    bgb;
+
   string    cfn;
   PDFUsedFont* cfid;
   int fsize;
@@ -163,13 +168,16 @@ public:
   bool is_printer ();
   void next_page ();
   
+  void set_transformation (frame fr);
+  void reset_transformation ();
+  
+
   void  set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
-  color get_color ();
-  color get_background ();
-  void  set_color (color c);
-  void  set_background (color c);
+  pencil get_pencil ();
+  brush get_background ();
+  void  set_pencil (pencil pen2);
+  void  set_background (brush b2);
   void  draw (int char_code, font_glyphs fn, SI x, SI y);
-  void  set_line_style (SI w, int type=0, bool round=true);
   void  line (SI x1, SI y1, SI x2, SI y2);
   void  lines (array<SI> x, array<SI> y);
   void  clear (SI x1, SI y1, SI x2, SI y2);
@@ -178,10 +186,15 @@ public:
   void  fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
   void  polygon (array<SI> x, array<SI> y, bool convex=true);
   void  xpm (url file_name, SI x, SI y);
+  
   void  image (url u, SI w, SI h, SI x, SI y,
                double cx1, double cy1, double cx2, double cy2,
                int alpha);
   
+  renderer shadow (picture& pic, SI x1, SI y1, SI x2, SI y2);
+  void draw_picture (picture p, SI x, SI y, int alpha);
+  void draw_scalable (scalable im, SI x, SI y, int alpha);
+
   void fetch (SI x1, SI y1, SI x2, SI y2, renderer ren, SI x, SI y);
   void new_shadow (renderer& ren);
   void delete_shadow (renderer& ren);
@@ -446,6 +459,40 @@ pdf_hummus_renderer_rep::end_text () {
 }
 
 /******************************************************************************
+ * Transformed rendering
+ ******************************************************************************/
+
+void
+pdf_hummus_renderer_rep::set_transformation (frame fr) {
+  ASSERT (fr->linear, "only linear transformations have been implemented");
+  
+  SI cx1, cy1, cx2, cy2;
+  get_clipping (cx1, cy1, cx2, cy2);
+  rectangle oclip (cx1, cy1, cx2, cy2);
+  
+  frame cv= scaling (point (pixel, -pixel),
+                     point (-ox+dpi*pixel, -oy-dpi*pixel));
+  frame tr= invert (cv) * fr * cv;
+  point o = tr (point (0.0, 0.0));
+  point ux= tr (point (1.0, 0.0)) - o;
+  point uy= tr (point (0.0, 1.0)) - o;
+  //cout << "Set transformation " << o << ", " << ux << ", " << uy << "\n";
+  double tx= o[0];
+  double ty= o[1];
+  contentContext->q();
+  contentContext->cm(ux[0],ux[1],uy[0],uy[1],tx,ty);
+  
+  rectangle nclip= fr [oclip];
+  renderer_rep::clip (nclip->x1, nclip->y1, nclip->x2, nclip->y2);
+}
+
+void
+pdf_hummus_renderer_rep::reset_transformation () {
+  renderer_rep::unclip ();
+  contentContext->Q();
+}
+
+/******************************************************************************
 * Clipping
 ******************************************************************************/
 
@@ -477,33 +524,45 @@ pdf_hummus_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore)
 * graphical routines
 ******************************************************************************/
 
-color
-pdf_hummus_renderer_rep::get_color () {
+pencil
+pdf_hummus_renderer_rep::get_pencil () {
 //  cerr << "get_color\n";
-  return fg;
+  return pen;
 }
 
-color
+brush
 pdf_hummus_renderer_rep::get_background () {
 //  cerr << "get_background\n";
-  return bg;
+  return bgb;
 }
 
 void
-pdf_hummus_renderer_rep::set_color (color c) {
+pdf_hummus_renderer_rep::set_pencil (pencil pen2) {
 //  cerr << "set_color\n";
-  if (fg==c) return;
-  fg= c;
-  draw_glyphs();
-  select_fill_color (c);
-  select_stroke_color (c);
+  pen= pen2;
+  color c= pen->get_color ();
+  if (fg!=c) {
+    fg= c;
+    draw_glyphs();
+    select_fill_color (c);
+    select_stroke_color (c);
+  }
+  //if (pen->w != lw) {
+  // FIXME: apparently, the line width can be overidden by some of
+  // the graphical constructs (example file: newimpl.tm, in which
+  // the second dag was not printed using the right width)
+  lw= pen->get_width ();
+  select_line_width (lw);
+  //}
+
 }
 
 void
-pdf_hummus_renderer_rep::set_background (color c) {
+pdf_hummus_renderer_rep::set_background (brush b) {
 //  cerr << "set_background\n";
-  if (bg==c) return;
-  bg= c;
+  //if (bgb==b) return;
+  bgb= b;
+  bg= b->get_color ();
 }
 
 /******************************************************************************
@@ -1001,14 +1060,6 @@ pdf_hummus_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
 }
 
 void
-pdf_hummus_renderer_rep::set_line_style (SI w, int type, bool round) {
-//  cerr << "set_line_style\n";
-  if (lw == w) return;
-  lw = w;
-  select_line_width (w);
-}
-
-void
 pdf_hummus_renderer_rep::line (SI x1, SI y1, SI x2, SI y2) {
 //  cerr << "line\n";
   end_text ();
@@ -1265,6 +1316,42 @@ pdf_hummus_renderer_rep::image (
   contentContext->Q();
 
 }
+
+
+void
+pdf_hummus_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
+  (void) alpha; // FIXME
+  int w= p->get_width (), h= p->get_height ();
+  int ox= p->get_origin_x (), oy= p->get_origin_y ();
+  int pixel= 5*PIXEL;
+  string name= "picture";
+  string eps= picture_as_eps (p, 600);
+  int x1= -ox;
+  int y1= -oy;
+  int x2= w - ox;
+  int y2= h - oy;
+  x -= (int) 2.06 * ox * pixel; // FIXME: where does the magic 2.06 come from?
+  y -= (int) 2.06 * oy * pixel;
+  //image (name, eps, x1, y1, x2, y2, w * pixel, h * pixel, x, y, 255);
+}
+
+void
+pdf_hummus_renderer_rep::draw_scalable (scalable im, SI x, SI y, int alpha) {
+  if (im->get_type () != scalable_image)
+    renderer_rep::draw_scalable (im, x, y, alpha);
+  else {
+    url u= im->get_name ();
+    rectangle r= im->get_logical_extents ();
+    SI w= r->x2, h= r->y2;
+    string ps_image= ps_load (u);
+    string imtext= is_ramdisc (u)? "inline image": as_string (u);
+    int x1, y1, x2, y2;
+    ps_bounding_box (u, x1, y1, x2, y2);
+   // image (imtext, ps_image, x1, y1, x2, y2, w, h, x, y, alpha);
+  }
+}
+
+
 /******************************************************************************
  * hyperlinks
  ******************************************************************************/
@@ -1410,6 +1497,14 @@ pdf_hummus_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
 //  cerr << "apply_shadow\n";
 //  (void) x1; (void) y1; (void) x2; (void) y2;
 }
+
+renderer
+pdf_hummus_renderer_rep::shadow (picture& pic, SI x1, SI y1, SI x2, SI y2) {
+  renderer ren= renderer_rep::shadow (pic, x1, y1, x2, y2);
+  ren->set_zoom_factor (1.0);
+  return ren;
+}
+
 
 /******************************************************************************
 * user interface
