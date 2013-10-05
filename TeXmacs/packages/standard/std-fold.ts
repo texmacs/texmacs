@@ -521,9 +521,13 @@
     </src-comment>
   </active*>
 
-  <assign|render-old|<macro|old|<with|color|dark red|<arg|old>>>>
+  <assign|old-version-color|dark red>
 
-  <assign|render-new|<macro|new|<with|color|dark green|<arg|new>>>>
+  <assign|new-version-color|dark green>
+
+  <assign|render-old|<macro|old|<with|color|<value|old-version-color>|<arg|old>>>>
+
+  <assign|render-new|<macro|new|<with|color|<value|new-version-color>|<arg|new>>>>
 
   <assign|version-old|<macro|old|new|<render-old|<arg|old>>>>
 

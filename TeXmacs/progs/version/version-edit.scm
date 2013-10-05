@@ -160,3 +160,12 @@
 
 (tm-define (version-retain-all which)
   (version-retain-version (buffer-tree) which))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Miscellaneous
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (standard-parameters l)
+  (:require (== l "version-both"))
+  (append (search-parameters "version-old")
+          (search-parameters "version-new")))

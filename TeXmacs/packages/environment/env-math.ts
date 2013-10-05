@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.0.7.20>
 
 <style|source>
 
@@ -47,6 +47,20 @@
   <assign|eqn-ver-sep|<macro|0.6fn>>
 
   <assign|eqn-row-sep|<macro|0.45fn>>
+
+  \;
+
+  <drd-props|eqn-short-above|macro-parameter|length>
+
+  <drd-props|eqn-short-below|macro-parameter|length>
+
+  <drd-props|eqn-long-above|macro-parameter|length>
+
+  <drd-props|eqn-long-below|macro-parameter|length>
+
+  <drd-props|eqn-ver-sep|macro-parameter|length>
+
+  <drd-props|eqn-row-sep|macro-parameter|length>
 
   <\active*>
     <\src-comment>
