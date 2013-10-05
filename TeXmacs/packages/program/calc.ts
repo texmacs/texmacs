@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.0.7.20>
 
 <style|source>
 
@@ -22,6 +22,16 @@
 
   <\active*>
     <\src-comment>
+      Style parameters
+    </src-comment>
+  </active*>
+
+  <assign|calc-ref-color|dark magenta>
+
+  <assign|calc-default-cell-width|6em>
+
+  <\active*>
+    <\src-comment>
       Macros for spreadsheet elements
     </src-comment>
   </active*>
@@ -34,7 +44,7 @@
 
   <assign|calc-output|<macro|ref|in|out|<locus|<id|<arg|ref>>|<arg|out>>>>
 
-  <assign|calc-ref|<macro|ref|<with|color|dark magenta|<arg|ref>>>>
+  <assign|calc-ref|<macro|ref|<with|color|<value|calc-ref-color>|<arg|ref>>>>
 
   \;
 
@@ -46,7 +56,7 @@
 
   <assign|calc-output|<macro|ref|in|out|<arg|out>>>
 
-  <assign|calc-ref|<macro|ref|<with|color|dark magenta|<arg|ref>>>>
+  <assign|calc-ref|<macro|ref|<with|color|<value|calc-ref-color>|<arg|ref>>>>
 
   \;
 
@@ -80,11 +90,11 @@
     </src-comment>
   </active*>
 
-  <assign|textual-table|<macro|body|<tformat|<cwith|1|-1|1|-1|cell-rborder|1ln>|<cwith|1|-1|1|-1|cell-bborder|1ln>|<cwith|1|1|1|-1|cell-tborder|1ln>|<cwith|1|-1|1|1|cell-lborder|1ln>|<cwith|1|-1|1|-1|cell-width|6em>|<cwith|1|-1|1|-1|cell-hmode|max>|<arg|body>>>>
+  <assign|textual-table|<macro|body|<tformat|<cwith|1|-1|1|-1|cell-rborder|1ln>|<cwith|1|-1|1|-1|cell-bborder|1ln>|<cwith|1|1|1|-1|cell-tborder|1ln>|<cwith|1|-1|1|1|cell-lborder|1ln>|<cwith|1|-1|1|-1|cell-width|<value|calc-default-cell-width>>|<cwith|1|-1|1|-1|cell-hmode|max>|<arg|body>>>>
 
-  <assign|numeric-dot-table|<macro|body|<tformat|<cwith|1|-1|1|-1|cell-rborder|1ln>|<cwith|1|-1|1|-1|cell-bborder|1ln>|<cwith|1|1|1|-1|cell-tborder|1ln>|<cwith|1|-1|1|1|cell-lborder|1ln>|<cwith|1|-1|1|-1|cell-width|6em>|<cwith|1|-1|1|-1|cell-hmode|max>|<cwith|1|-1|1|-1|cell-halign|R.>|<arg|body>>>>
+  <assign|numeric-dot-table|<macro|body|<tformat|<cwith|1|-1|1|-1|cell-rborder|1ln>|<cwith|1|-1|1|-1|cell-bborder|1ln>|<cwith|1|1|1|-1|cell-tborder|1ln>|<cwith|1|-1|1|1|cell-lborder|1ln>|<cwith|1|-1|1|-1|cell-width|<value|calc-default-cell-width>>|<cwith|1|-1|1|-1|cell-hmode|max>|<cwith|1|-1|1|-1|cell-halign|R.>|<arg|body>>>>
 
-  <assign|numeric-comma-table|<macro|body|<tformat|<cwith|1|-1|1|-1|cell-rborder|1ln>|<cwith|1|-1|1|-1|cell-bborder|1ln>|<cwith|1|1|1|-1|cell-tborder|1ln>|<cwith|1|-1|1|1|cell-lborder|1ln>|<cwith|1|-1|1|-1|cell-width|6em>|<cwith|1|-1|1|-1|cell-hmode|max>|<cwith|1|-1|1|-1|cell-halign|R,>|<arg|body>>>>
+  <assign|numeric-comma-table|<macro|body|<tformat|<cwith|1|-1|1|-1|cell-rborder|1ln>|<cwith|1|-1|1|-1|cell-bborder|1ln>|<cwith|1|1|1|-1|cell-tborder|1ln>|<cwith|1|-1|1|1|cell-lborder|1ln>|<cwith|1|-1|1|-1|cell-width|<value|calc-default-cell-width>>|<cwith|1|-1|1|-1|cell-hmode|max>|<cwith|1|-1|1|-1|cell-halign|R,>|<arg|body>>>>
 </body>
 
 <\initial>

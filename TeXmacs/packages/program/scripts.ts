@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.0.7.20>
 
 <style|source>
 
@@ -19,6 +19,26 @@
       which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
     </src-license>
   </src-title>>
+
+  <\active*>
+    <\src-comment>
+      Style parameters
+    </src-comment>
+  </active*>
+
+  <assign|script-border-color|grey>
+
+  <assign|script-background-color|pastel yellow>
+
+  <assign|script-language-color|white>
+
+  <assign|script-language-background-color|#8080A0>
+
+  <assign|script-status-color|red>
+
+  <assign|script-status-background-color|pastel yellow>
+
+  <assign|script-input-field-background-color|white>
 
   <\active*>
     <\src-comment>
@@ -44,8 +64,7 @@
     </src-comment>
   </active*>
 
-  <assign|script-status|<macro|body|<with|color|red|<block|<tformat|<cwith|1|1|1|1|cell-background|pastel
-  yellow>|<table|<row|<cell|<arg|body>>>>>>>>>
+  <assign|script-status|<macro|body|<with|color|<value|script-status-color>|<block|<tformat|<cwith|1|1|1|1|cell-background|<value|script-status-background-color>>|<table|<row|<cell|<arg|body>>>>>>>>>
 
   <assign|script-busy|<macro|msg|<script-status|<if|<equal|<arg|msg>|<uninit>>|<localize|Busy>...|<arg|msg>>>>>
 
@@ -67,17 +86,14 @@
 
   <assign|script-aux-3|<macro|language|body|<style-with|src-compact|none|<compound|<if|<equal|<value|mode>|math>|script-aux-1|script-aux-2>|<arg|language>|<arg|body>>>>>
 
-  <assign|render-big-script|<macro|language|body|<with|color|grey|<tabular|<tformat|<cwith|1|-1|1|-1|cell-lborder|0.5ln>|<cwith|1|-1|1|-1|cell-rborder|0.5ln>|<cwith|1|-1|1|-1|cell-bborder|0.5ln>|<cwith|1|-1|1|-1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-background|#8080A0>|<cwith|2|2|1|1|cell-background|pastel
-  yellow>|<cwith|1|1|1|1|cell-vcorrect|n>|<cwith|1|1|1|1|cell-bsep|0.15fn>|<cwith|1|1|1|1|cell-tsep|0.15fn>|<cwith|2|2|1|1|cell-width|1par>|<cwith|2|2|1|1|cell-hmode|min>|<cwith|2|2|1|1|cell-hyphen|t>|<cwith|2|2|1|1|cell-tsep|0.3fn>|<cwith|2|2|1|1|cell-bsep|0.3fn>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<small|<with|mode|text|font-family|ss|<with|color|white|<change-case|<arg|language>|Upcase>>>>>>|<row|<\cell>
-    <with|color|black|par-par-sep|0fn|<arg|body>>
+  <assign|render-big-script|<macro|language|body|<with|old-color|<value|color>|color|<value|script-border-color>|<tabular|<tformat|<cwith|1|-1|1|-1|cell-lborder|0.5ln>|<cwith|1|-1|1|-1|cell-rborder|0.5ln>|<cwith|1|-1|1|-1|cell-bborder|0.5ln>|<cwith|1|-1|1|-1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-background|<value|script-language-background-color>>|<cwith|2|2|1|1|cell-background|<value|script-background-color>>|<cwith|1|1|1|1|cell-vcorrect|n>|<cwith|1|1|1|1|cell-bsep|0.15fn>|<cwith|1|1|1|1|cell-tsep|0.15fn>|<cwith|2|2|1|1|cell-width|1par>|<cwith|2|2|1|1|cell-hmode|min>|<cwith|2|2|1|1|cell-hyphen|t>|<cwith|2|2|1|1|cell-tsep|0.3fn>|<cwith|2|2|1|1|cell-bsep|0.3fn>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<small|<with|mode|text|font-family|ss|<with|color|<value|script-language-color>|<change-case|<arg|language>|Upcase>>>>>>|<row|<\cell>
+    <with|color|<value|old-color>|par-par-sep|0fn|<arg|body>>
   </cell>>>>>>>>
 
-  <assign|render-small-script|<macro|language|body|<with|color|grey|<tabular|<tformat|<cwith|1|-1|1|-1|cell-lborder|0.5ln>|<cwith|1|-1|1|-1|cell-rborder|0.5ln>|<cwith|1|-1|1|-1|cell-bborder|0.5ln>|<cwith|1|-1|1|-1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-background|#8080A0>|<cwith|1|1|2|2|cell-lborder|0.5ln>|<cwith|1|1|2|2|cell-rborder|0.5ln>|<cwith|1|1|2|2|cell-bborder|0.5ln>|<cwith|1|1|2|2|cell-tborder|0.5ln>|<cwith|1|1|2|2|cell-background|pastel
-  yellow>|<cwith|1|1|1|1|cell-lsep|0.15fn>|<cwith|1|1|1|1|cell-rsep|0.15fn>|<table|<row|<cell|<small|<with|mode|text|font-family|ss|<with|color|white|<change-case|<arg|language>|Upcase>>>>>|<cell|<with|color|black|<arg|body>>>>>>>>>>
+  <assign|render-small-script|<macro|language|body|<with|old-color|<value|color>|color|<value|script-border-color>|<tabular|<tformat|<cwith|1|-1|1|-1|cell-lborder|0.5ln>|<cwith|1|-1|1|-1|cell-rborder|0.5ln>|<cwith|1|-1|1|-1|cell-bborder|0.5ln>|<cwith|1|-1|1|-1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-background|<value|script-language-background-color>>|<cwith|1|1|2|2|cell-lborder|0.5ln>|<cwith|1|1|2|2|cell-rborder|0.5ln>|<cwith|1|1|2|2|cell-bborder|0.5ln>|<cwith|1|1|2|2|cell-tborder|0.5ln>|<cwith|1|1|2|2|cell-background|<value|script-background-color>>|<cwith|1|1|1|1|cell-lsep|0.15fn>|<cwith|1|1|1|1|cell-rsep|0.15fn>|<table|<row|<cell|<small|<with|mode|text|font-family|ss|<with|color|<value|script-language-color>|<change-case|<arg|language>|Upcase>>>>>|<cell|<with|color|<value|old-color>|<arg|body>>>>>>>>>>
 
-  <assign|render-eval-script|<macro|language|body|<with|color|grey|<tabular|<tformat|<cwith|1|-1|1|-1|cell-lborder|0.5ln>|<cwith|1|-1|1|-1|cell-rborder|0.5ln>|<cwith|1|-1|1|-1|cell-bborder|0.5ln>|<cwith|1|-1|1|-1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-background|pastel
-  yellow>|<cwith|1|1|1|1|cell-width|1par>|<cwith|1|1|1|1|cell-hmode|min>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
-    <with|color|black|par-par-sep|0fn|<arg|body>>
+  <assign|render-eval-script|<macro|language|body|<with|old-color|<value|color>|color|<value|script-border-color>|<tabular|<tformat|<cwith|1|-1|1|-1|cell-lborder|0.5ln>|<cwith|1|-1|1|-1|cell-rborder|0.5ln>|<cwith|1|-1|1|-1|cell-bborder|0.5ln>|<cwith|1|-1|1|-1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-background|<value|script-background-color>>|<cwith|1|1|1|1|cell-width|1par>|<cwith|1|1|1|1|cell-hmode|min>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
+    <with|color|<value|old-color>|par-par-sep|0fn|<arg|body>>
   </cell>>>>>>>>
 
   <\active*>
@@ -106,7 +122,7 @@
 
   <assign|plot-group|<macro|text|<style-with|src-compact|none|<resize|<small|<with|font-shape|italic|font-series|bold|<arg|text>>>||<minus|1b|0.3fn>||<plus|1t|0.3fn>>>>>
 
-  <assign|plot-input-field|<macro|size|body|<with|color|grey|<tabular|<tformat|<cwith|1|1|1|1|cell-background|white>|<cwith|1|1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|1|cell-rborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0.5ln>|<cwith|1|1|1|1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-width|<arg|size>>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<cell|<with|color|black|<arg|body>>>>>>>>>>
+  <assign|plot-input-field|<macro|size|body|<with|old-color|<value|color>|color|<value|script-border-color>|<tabular|<tformat|<cwith|1|1|1|1|cell-background|<value|script-input-field-background-color>>|<cwith|1|1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|1|cell-rborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0.5ln>|<cwith|1|1|1|1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-width|<arg|size>>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<cell|<with|color|<value|old-color>|<arg|body>>>>>>>>>>
 
   <assign|plot-function|<macro|x|body|<style-with|src-compact|none|<resize|<math|<arg|x>>:
   |||1.5fn|><plot-input-field|0.666par|<math|<arg|body>>>>>>

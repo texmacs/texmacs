@@ -56,6 +56,18 @@
   (tm-in? t '(script-eval script-result script-approx)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Style parameters
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (search-tag-parameters t)
+  (:require (tree-is? t 'script-input))
+  (let* ((ch  (tree-ref t 0))
+         (lan (if (tree-atomic? ch) (tree->string ch) "unknown"))
+         (var (string-append lan "-script-input"))
+         (gen "render-big-script"))         
+    (search-parameters (if (style-has? var) var gen))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; In place asynchronous plug-in evaluations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
