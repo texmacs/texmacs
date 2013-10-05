@@ -227,8 +227,7 @@
         (dynamic (init-env-menu l cs)))))
 
 (tm-menu (focus-parameters-menu t)
-  (with ps (list-filter (search-parameters (tree-label t))
-                        parameter-show-in-menu?)
+  (with ps (list-filter (search-tag-parameters t) parameter-show-in-menu?)
     (if (nnull? ps)
         (group "Style parameters")
         (for (p ps)

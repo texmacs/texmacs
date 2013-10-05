@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.18>
+<TeXmacs|1.0.7.20>
 
 <style|source>
 
@@ -28,11 +28,18 @@
     </src-comment>
   </active*>
 
+  <assign|mmi-prompt-color|red>
+
+  <assign|mmi-input-color|dark brown>
+
   <assign|mmi-prompt|<macro|nr|<with|prog-language|verbatim|Mmi]<specific|html|&nbsp;>
   >>>
 
-  <assign|mmi-input|<macro|prompt|body|<style-with|src-compact|none|<generic-input|<with|color|red|<arg|prompt>>|<with|color|dark
-  brown|<arg|body>>>>>>
+  <assign|mmi-input|<\macro|prompt|body>
+    <\with|generic-prompt-color|<value|mmi-prompt-color>|generic-input-color|<value|mmi-input-color>>
+      <generic-input|<arg|prompt>|<arg|body>>
+    </with>
+  </macro>>
 
   <assign|mmi-output|<macro|body|<generic-output|<with|prog-language|verbatim|<arg|body>>>>>
 

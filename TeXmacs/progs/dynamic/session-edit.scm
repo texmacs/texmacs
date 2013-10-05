@@ -272,6 +272,35 @@
        (== (tree-down-index t) 1)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Style parameters
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (field-parameters kind)
+  (let* ((var (string-append (get-env "prog-language") "-" kind))
+         (gen (string-append "generic-" kind)))
+    (search-parameters (if (style-has? var) var gen))))
+
+(tm-define (standard-parameters l)
+  (:require (== l "session"))
+  (field-parameters "session"))
+
+(tm-define (standard-parameters l)
+  (:require (== l "input"))
+  (field-parameters "input"))
+
+(tm-define (standard-parameters l)
+  (:require (== l "output"))
+  (field-parameters "output"))
+
+(tm-define (standard-parameters l)
+  (:require (== l "errput"))
+  (field-parameters "errput"))
+
+(tm-define (standard-parameters l)
+  (:require (== l "textput"))
+  (field-parameters "textput"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

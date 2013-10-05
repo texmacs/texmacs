@@ -76,6 +76,9 @@
     (collect-parameters l v t)
     (sort (ahash-set->list v) string<=?)))
 
+(tm-define (search-tag-parameters t)
+  (search-parameters (tree-label t)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Standard environment variables for primitives
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

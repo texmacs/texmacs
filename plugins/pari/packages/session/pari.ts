@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.2>
+<TeXmacs|1.0.7.20>
 
 <style|source>
 
@@ -20,8 +20,15 @@
     </src-license>
   </src-title>>
 
-  <assign|pari-input|<macro|prompt|body|<style-with|src-compact|none|<generic-input|<with|color|dark
-  brown|<arg|prompt>>|<with|color|dark green|<arg|body>>>>>>
+  <assign|pari-prompt-color|dark brown>
+
+  <assign|pari-input-color|dark green>
+
+  <assign|pari-input|<\macro|prompt|body>
+    <\with|generic-prompt-color|<value|pari-prompt-color>|generic-input-color|<value|pari-input-color>>
+      <generic-input|<arg|prompt>|<arg|body>>
+    </with>
+  </macro>>
 
   <assign|pari-output|<macro|body|<style-with|src-compact|none|<generic-output|<with|math-display|false|<arg|body>>>>>>
 

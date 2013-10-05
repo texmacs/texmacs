@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.0.7.20>
 
 <style|source>
 
@@ -28,8 +28,15 @@
     </src-comment>
   </active*>
 
-  <assign|scilab-input|<macro|prompt|body|<style-with|src-compact|none|<generic-input|<with|color|dark
-  green|<arg|prompt>>|<with|color|black|<arg|body>>>>>>
+  <assign|scilab-prompt-color|dark green>
+
+  <assign|scilab-input-color|black>
+
+  <assign|scilab-input|<\macro|prompt|body>
+    <\with|generic-prompt-color|<value|scilab-prompt-color>|generic-input-color|<value|scilab-input-color>>
+      <generic-input|<arg|prompt> |<arg|body>>
+    </with>
+  </macro>>
 </body>
 
 <\initial>

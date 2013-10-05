@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.13>
+<TeXmacs|1.0.7.20>
 
 <style|source>
 
@@ -30,11 +30,18 @@
 
   \;
 
+  <assign|coq-prompt-color|red>
+
+  <assign|coq-input-color|dark brown>
+
   <assign|coq-prompt|<macro|nr|<with|prog-language|verbatim|Coq]<specific|html|&nbsp;>
   >>>
 
-  <assign|coq-input|<macro|prompt|body|<style-with|src-compact|none|<generic-input|<with|color|red|<arg|prompt>>|<with|color|dark
-  brown|<arg|body>>>>>>
+  <assign|coq-input|<\macro|prompt|body>
+    <\with|generic-prompt-color|<value|coq-prompt-color>|generic-input-color|<value|coq-input-color>>
+      <generic-input|<arg|prompt>|<arg|body>>
+    </with>
+  </macro>>
 
   <assign|coq-output|<macro|body|<generic-output|<with|prog-language|verbatim|<arg|body>>>>>
 

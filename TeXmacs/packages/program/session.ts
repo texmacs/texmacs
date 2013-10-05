@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.0.7.20>
 
 <style|source>
 
@@ -22,6 +22,22 @@
 
   <\active*>
     <\src-comment>
+      Style parameters
+    </src-comment>
+  </active*>
+
+  <assign|generic-prompt-color|dark brown>
+
+  <assign|generic-input-color|dark blue>
+
+  <assign|generic-error-color|#c00000>
+
+  <assign|scheme-prompt-color|dark green>
+
+  <assign|scheme-input-color|black>
+
+  <\active*>
+    <\src-comment>
       Englobing sessions.
     </src-comment>
   </active*>
@@ -35,9 +51,9 @@
   <assign|render-session|<macro|body|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<provides|<merge|<value|prog-language>|-session>>|<merge|<value|prog-language>|-session>|generic-session>>|<value|prog-language>|<arg|body>>>>>
 
   <assign|generic-session|<\macro|name|body>
-    <\padded-normal|1fn|1fn>
+    <\padded>
       <with|par-first|0fn|par-par-sep|0fn|<arg|body>>
-    </padded-normal>
+    </padded>
   </macro>>
 
   <\active*>
@@ -55,13 +71,16 @@
   <assign|id-function|<macro|body|<arg|body>>>
 
   <assign|generic-input|<\macro|prompt|body>
-    <tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|2|2|cell-hpart|1>|<cwith|1|1|1|1|cell-lsep|0fn>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|2|2|cell-lsep|0fn>|<cwith|1|1|2|2|cell-rsep|0fn>|<cwith|1|1|2|2|cell-hyphen|t>|<twith|table-hyphen|y>|<table|<row|<cell|<id-function|<arg|prompt>>>|<\cell>
-      <with|color|blue|math-display|true|<arg|body>>
+    <tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|2|2|cell-hpart|1>|<cwith|1|1|1|1|cell-lsep|0fn>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|2|2|cell-lsep|0fn>|<cwith|1|1|2|2|cell-rsep|0fn>|<cwith|1|1|2|2|cell-hyphen|t>|<twith|table-hyphen|y>|<table|<row|<cell|<id-function|<with|color|<value|generic-prompt-color>|<arg|prompt>>>>|<\cell>
+      <with|color|<value|generic-input-color>|math-display|true|<arg|body>>
     </cell>>>>>
   </macro>>
 
-  <assign|scheme-input|<macro|prompt|body|<style-with|src-compact|none|<generic-input|<with|color|dark
-  green|<arg|prompt>>|<with|color|black|<arg|body>>>>>>
+  <assign|scheme-input|<\macro|prompt|body>
+    <\with|generic-prompt-color|<value|scheme-prompt-color>|generic-input-color|<value|scheme-input-color>>
+      <generic-input|<arg|prompt>|<arg|body>>
+    </with>
+  </macro>>
 
   <\active*>
     <\src-comment>
@@ -74,18 +93,18 @@
   <assign|generic-output*|<macro|body|<with|par-mode|justify|par-flexibility|2.0|par-hyphen|normal|math-display|true|<arg|body>>>>
 
   <assign|generic-output|<\macro|body>
-    <\padded-normal|0.5fn|0.5fn>
-      <\indent-left|1.5fn>
+    <\padded>
+      <\indent>
         <generic-output*|<arg|body>>
-      </indent-left>
-    </padded-normal>
+      </indent>
+    </padded>
   </macro>>
 
   <assign|errput|<macro|body|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<provides|<merge|<value|prog-language>|-errput>>|<merge|<value|prog-language>|-textput>|generic-errput>>|<arg|body>>>>>
 
   <assign|generic-errput|<\macro|body>
     <\wide-normal>
-      <with|color|red|<arg|body>>
+      <with|color|<value|generic-error-color>|<arg|body>>
     </wide-normal>
   </macro>>
 
