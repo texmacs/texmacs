@@ -32,6 +32,7 @@ typedef metric_struct metric[1];
 ******************************************************************************/
 
 struct glyph_rep: concrete_struct {
+  unsigned int index;        // physical index of glyph in font
   short depth;               // number of bits per pixel >= depth
   short width, height;       // width and height in pixels
   short xoff, yoff;          // offset of origin

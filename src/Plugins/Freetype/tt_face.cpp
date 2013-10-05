@@ -158,6 +158,13 @@ tt_font_glyphs_rep::get (int i) {
     if (pitch<0) buf -= pitch*h;
     int x, y;
     glyph G (w, h, -ox, oy);
+    // mg:
+    // the index variable is used by code who need the glyph_index for unicode characters
+    // to locate the right glyph in the font file
+    G->index = (face->ft_face->charmap->encoding == FT_ENCODING_UNICODE ?
+                glyph_index : i);
+    G->lwidth= (tt_si (slot->metrics.horiAdvance)+(PIXEL>>1))/PIXEL;
+
     for (y=0; y<h; y++) {
       for (x=0; x<w; x++) {
 	unsigned char c= buf[x>>3];

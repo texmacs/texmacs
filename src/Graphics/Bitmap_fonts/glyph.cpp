@@ -18,6 +18,7 @@
 glyph_rep::glyph_rep (int w2, int h2, int xoff2, int yoff2,
 		      int depth2, int status2)
 {
+  index   = 0;
   depth   = depth2;
   width   = w2;
   height  = h2;

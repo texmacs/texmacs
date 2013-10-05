@@ -194,6 +194,7 @@ shrink (glyph gl, int xfactor, int yfactor,
   int new_depth= gl->depth+ log2i (nr);
   if (new_depth > 8) new_depth= 8;
   glyph CB (X2-X1, Y2-Y1, -X1, Y2-1, new_depth, gl->status);
+  CB->index = gl->index;
   for (Y=Y1; Y<Y2; Y++)
     for (X=X1; X<X2; X++) {
       sum=0;
