@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.0.7.20>
 
 <style|<tuple|source|std>>
 
@@ -130,11 +130,11 @@
 
   <assign|toc-1|<macro|left|right|<arg|left><toc-dots><no-break><arg|right>>>
 
-  <assign|toc-2|<macro|left|right|<with|par-left|1.5fn|<arg|left><toc-dots><no-break><arg|right>>>>
+  <assign|toc-2|<macro|left|right|<with|par-left|1tab|<arg|left><toc-dots><no-break><arg|right>>>>
 
-  <assign|toc-3|<macro|left|right|<with|par-left|3fn|<arg|left><toc-dots><no-break><arg|right>>>>
+  <assign|toc-3|<macro|left|right|<with|par-left|2tab|<arg|left><toc-dots><no-break><arg|right>>>>
 
-  <assign|toc-4|<macro|left|right|<with|par-left|6fn|<arg|left><toc-dots><no-break><arg|right><vspace|0.15fn>>>>
+  <assign|toc-4|<macro|left|right|<with|par-left|4tab|<arg|left><toc-dots><no-break><arg|right><vspace|0.15fn>>>>
 
   <assign|toc-5|<macro|left|right|<arg|left><toc-dots><no-break><arg|right><vspace|0.15fn>>>
 
@@ -173,21 +173,21 @@
 
   <assign|index-1*|<macro|left|<arg|left><no-page-break>>>
 
-  <assign|index-2|<macro|left|right|<with|par-left|1.5fn|<arg|left><index-dots><arg|right>>>>
+  <assign|index-2|<macro|left|right|<with|par-left|1tab|<arg|left><index-dots><arg|right>>>>
 
-  <assign|index-2*|<macro|left|<with|par-left|1.5fn|<arg|left><no-page-break>>>>
+  <assign|index-2*|<macro|left|<with|par-left|1tab|<arg|left><no-page-break>>>>
 
-  <assign|index-3|<macro|left|right|<with|par-left|3fn|<arg|left><index-dots><arg|right>>>>
+  <assign|index-3|<macro|left|right|<with|par-left|2tab|<arg|left><index-dots><arg|right>>>>
 
-  <assign|index-3*|<macro|left|<with|par-left|3fn|<arg|left><no-page-break>>>>
+  <assign|index-3*|<macro|left|<with|par-left|2tab|<arg|left><no-page-break>>>>
 
-  <assign|index-4|<macro|left|right|<with|par-left|4.5fn|<arg|left><index-dots><arg|right>>>>
+  <assign|index-4|<macro|left|right|<with|par-left|3tab|<arg|left><index-dots><arg|right>>>>
 
-  <assign|index-4*|<macro|left|<with|par-left|4.5fn|<arg|left><no-page-break>>>>
+  <assign|index-4*|<macro|left|<with|par-left|3tab|<arg|left><no-page-break>>>>
 
-  <assign|index-5|<macro|left|right|<with|par-left|6fn|<arg|left><index-dots><arg|right>>>>
+  <assign|index-5|<macro|left|right|<with|par-left|4tab|<arg|left><index-dots><arg|right>>>>
 
-  <assign|index-5*|<macro|left|<with|par-left|6fn|<arg|left><no-page-break>>>>
+  <assign|index-5*|<macro|left|<with|par-left|4tab|<arg|left><no-page-break>>>>
 
   <\active*>
     <\src-comment>
