@@ -434,6 +434,10 @@
   (minibar (dynamic (focus-title-icons)))
   //)
 
+(tm-define (focus-has-preferences? t)
+  (:require (tree-in? t '(doc-note author-note)))
+  #f)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Focus menus for entering authors
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -483,11 +487,11 @@
   #f)
 
 (tm-menu (focus-abstract-menu)
-  ("Arxiv Category"               (make-abstract-data-element 'abstract-arxiv))
-  ("A.C.M. Computing Class."      (make-abstract-data-element 'abstract-acm))
-  ("A.M.S. Subject Class."        (make-abstract-data-element 'abstract-msc))
-  ("Physics and Astronomy Class." (make-abstract-data-element 'abstract-pacs))
-  ("Keywords"                 (make-abstract-data-element 'abstract-keywords)))
+  ("Arxiv category" (make-abstract-data-element 'abstract-arxiv))
+  ("A.C.M. computing class" (make-abstract-data-element 'abstract-acm))
+  ("A.M.S. subject class" (make-abstract-data-element 'abstract-msc))
+  ("Physics and astronomy class" (make-abstract-data-element 'abstract-pacs))
+  ("Keywords" (make-abstract-data-element 'abstract-keywords)))
 
 (tm-define (focus-tag-name l)
   (:require (== l 'abstract))

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.0.7.20>
 
 <style|<tuple|source|std-pattern>>
 
@@ -44,7 +44,7 @@
 
   <assign|ACM-class-text|<macro|<localize|A.C.M. subject classification>>>
 
-  <assign|arXiv-class-text|<macro|<localize|arXiv subject classification>>>
+  <assign|arXiv-class-text|<macro|<localize|ArXiv subject classification>>>
 
   <assign|with-TeXmacs-text|<macro|This document has been written using the
   GNU <TeXmacs> text editor (see <hlink|<with|font-family|tt|www.texmacs.org>|http://www.texmacs.org>).>>

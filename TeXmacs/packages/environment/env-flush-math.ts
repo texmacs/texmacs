@@ -31,8 +31,6 @@
 
   <assign|eqn-left-indent|<macro|1.5fn>>
 
-  <drd-props|eqn-left-indent|macro-parameter|length>
-
   <\active*>
     <\src-comment>
       Single equations.

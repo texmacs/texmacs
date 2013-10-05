@@ -142,15 +142,7 @@
 
   <assign|answer-text|<macro|<localize|Answer>>>
 
-  \;
-
   <drd-props|qed|macro-parameter|regular>
-
-  <drd-props|proof-text|macro-parameter|string>
-
-  <drd-props|solution-text|macro-parameter|string>
-
-  <drd-props|answer-text|macro-parameter|string>
 
   \;
 

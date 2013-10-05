@@ -843,6 +843,13 @@ rewrite_symbolic_arguments (tree macro, tree& env) {
     }
 }
 
+static bool
+is_length (string s) {
+  int i;
+  for (i=0; (i<N(s)) && ((s[i]<'a') || (s[i]>'z')); i++) {}
+  return is_double (s (0, i)) && is_locase_alpha (s (i, N(s)));
+}
+
 bool
 drd_info_rep::heuristic_with_like (tree t, tree arg) {
   if (arg == "") {
@@ -863,7 +870,17 @@ drd_info_rep::heuristic_init_macro (string var, tree macro) {
   tag_info old_ti= copy (info[l]);
   int i, n= N(macro)-1;
   set_arity (l, n, 0, ARITY_NORMAL, CHILD_DETAILED);
-  set_type (l, get_type (macro[n]));
+  if (n == 0 && is_compound (macro[0], "localize", 1) &&
+      is_atomic (macro[0][0])) {
+    set_type (l, TYPE_STRING);
+    set_var_type (l, VAR_MACRO_PARAMETER);
+  }
+  else if (n == 0 && is_atomic (macro[0]) &&
+           is_length (macro[0]->label)) {
+    set_type (l, TYPE_LENGTH);
+    set_var_type (l, VAR_MACRO_PARAMETER);
+  }
+  else set_type (l, get_type (macro[n]));
   set_with_like (l, heuristic_with_like (macro, ""));
   //if (heuristic_with_like (macro, ""))
   //cout << "With-like: " << var << LF;
@@ -930,13 +947,6 @@ drd_info_rep::heuristic_init_xmacro (string var, tree xmacro) {
   // if (old_ti != info[l])
   //   cout << var << ": " << old_ti << " -> " << info[l] << "\n";
   return (old_ti != info[l]);
-}
-
-static bool
-is_length (string s) {
-  int i;
-  for (i=0; (i<N(s)) && ((s[i]<'a') || (s[i]>'z')); i++) {}
-  return is_double (s (0, i)) && is_locase_alpha (s (i, N(s)));
 }
 
 bool

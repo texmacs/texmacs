@@ -34,10 +34,6 @@
 
   <assign|compact-item|<macro|name|<style-with|src-compact|none|<vspace*|<item-vsep>><with|par-first|<minus|<over|<item-hsep>|2>>|<yes-indent>><resize|<arg|name>|||<maximum|1r|<over|<item-hsep>|2>>|>>>>
 
-  <drd-props|item-hsep|macro-parameter|length>
-
-  <drd-props|item-vsep|macro-parameter|length>
-
   <\active*>
     <\src-comment>
       Further variants for rendering items which should not be customized.

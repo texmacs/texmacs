@@ -56,24 +56,6 @@
 
   <assign|list-of-tables-text|<macro|<localize|List of tables>>>
 
-  \;
-
-  <drd-props|prologue-text|macro-parameter|string>
-
-  <drd-props|epilogue-text|macro-parameter|string>
-
-  <drd-props|bibliography-text|macro-parameter|string>
-
-  <drd-props|table-of-contents-text|macro-parameter|string>
-
-  <drd-props|index-text|macro-parameter|string>
-
-  <drd-props|glossary-text|macro-parameter|string>
-
-  <drd-props|list-of-figures-text|macro-parameter|string>
-
-  <drd-props|list-of-tables-text|macro-parameter|string>
-
   <\active*>
     <\src-comment>
       Some useful macros on which the rendering of section titles can be
