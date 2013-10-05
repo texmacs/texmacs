@@ -28,8 +28,6 @@
 
   <assign|math-color|dark red>
 
-  <drd-props|math-color|parameter|color>
-
   <assign|uncolored-math|<value|math>>
 
   <assign|uncolored-equation*|<value|equation*>>
@@ -61,8 +59,6 @@
   </active*>
 
   <assign|strong-color|dark blue>
-
-  <drd-props|strong-color|parameter|color>
 
   <assign|uncolored-enunciation-name|<value|enunciation-name>>
 

@@ -103,6 +103,7 @@
   ("Verse" (make 'verse))
   ---
   ("Padded" (make 'padded))
+  ("Overlined" (make 'overlined))
   ("Underlined" (make 'underlined))
   ("Lines around" (make 'bothlined))
   ("Framed" (make 'framed))

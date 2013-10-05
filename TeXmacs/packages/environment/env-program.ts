@@ -31,18 +31,18 @@
   <assign|algorithm-sep|<macro|<enunciation-sep>>>
 
   <assign|render-code|<\macro|body>
-    <\padded-normal|1fn|1fn>
+    <\padded*>
       <\indent>
-        <\with|par-first|0fn|par-par-sep|0fn|item-hsep|<macro|1.5fn>>
+        <\with|par-first|0fn|par-par-sep|0fn|item-hsep|<macro|1tab>>
           <arg|body>
         </with>
       </indent>
-    </padded-normal>
+    </padded*>
   </macro>>
 
   <assign|render-algorithm|<\macro|name|body>
-    <\padded-normal|1fn|1fn>
-      <\with|par-first|0fn|par-par-sep|0fn|item-hsep|<macro|1.5fn>>
+    <\padded*>
+      <\with|par-first|0fn|par-par-sep|0fn|item-hsep|<macro|1tab>>
         <surround||<vspace|0.5fn>|<algorithm-name|<arg|name>>>
 
         <\surround||<yes-indent*>>
@@ -51,12 +51,12 @@
           </indent>
         </surround>
       </with>
-    </padded-normal>
+    </padded*>
   </macro>>
 
   <assign|render-specified-algorithm|<\macro|name|intro|body>
-    <\padded-normal|1fn|1fn>
-      <\with|par-first|0fn|par-par-sep|0fn|item-hsep|<macro|1.5fn>>
+    <\padded*>
+      <\with|par-first|0fn|par-par-sep|0fn|item-hsep|<macro|1tab>>
         <\surround||<vspace|0.5fn>>
           <algorithm-name|<arg|name>>
 
@@ -69,7 +69,7 @@
           </indent>
         </surround>
       </with>
-    </padded-normal>
+    </padded*>
   </macro>>
 
   <new-algorithm|algorithm|Algorithm>
@@ -89,7 +89,7 @@
   </cell>>>>>>>
 
   <assign|render-big-algorithm|<\macro|type|name|fig|cap>
-    <padded-normal|1fn|1fn|<tabular*|<tformat|<twith|table-width|1par>|<cwith|3|3|1|1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|2|2|1|1|cell-height|0.5fn>|<cwith|3|3|1|1|cell-lsep|1.5fn>|<cwith|3|3|1|1|cell-rsep|1.5fn>|<table|<row|<cell|<arg|fig>>>|<row|<cell|>>|<row|<\cell>
+    <padded-normal|<enunciation-padding>|<enunciation-padding>|<tabular*|<tformat|<twith|table-width|1par>|<cwith|3|3|1|1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|2|2|1|1|cell-height|0.5fn>|<cwith|3|3|1|1|cell-lsep|1.5fn>|<cwith|3|3|1|1|cell-rsep|1.5fn>|<table|<row|<cell|<arg|fig>>>|<row|<cell|>>|<row|<\cell>
       <small|<\surround|<figure-name|<arg|name><figure-sep>><list-caption|<arg|type>|<arg|cap>>|>
         <arg|cap>
       </surround>>
@@ -106,8 +106,10 @@
     </src-comment>
   </active*>
 
+  <assign|indent-indentation|1tab>
+
   <assign|indent*|<\macro|body>
-    <\with|par-left|<plus|<value|par-left>|1.5fn>>
+    <\with|par-left|<plus|<value|par-left>|<value|indent-indentation>>>
       <arg|body>
     </with>
   </macro>>

@@ -30,8 +30,6 @@
 
   <assign|enunciation-sep|<macro|. >>
 
-  <assign|enunciation-padding|<macro|1fn>>
-
   <assign|theorem-name|<macro|name|<enunciation-name|<arg|name>>>>
 
   <assign|theorem-sep|<macro|<enunciation-sep>>>
@@ -44,25 +42,17 @@
 
   <assign|exercise-sep|<macro|<enunciation-sep>>>
 
-  <assign|exercise-padding|<macro|0.5fn>>
-
-  <assign|exercise-indentation|<macro|1.5fn>>
+  <assign|exercise-indentation|1tab>
 
   \;
 
   <drd-props|enunciation-sep|macro-parameter|string>
-
-  <drd-props|enunciation-padding|macro-parameter|length>
 
   <drd-props|theorem-sep|macro-parameter|string>
 
   <drd-props|remark-sep|macro-parameter|string>
 
   <drd-props|exercise-sep|macro-parameter|string>
-
-  <drd-props|exercise-padding|macro-parameter|length>
-
-  <drd-props|exercise-indentation|macro-parameter|length>
 
   <\active*>
     <\src-comment>
@@ -71,7 +61,9 @@
   </active*>
 
   <assign|render-enunciation|<\macro|which|body>
-    <padded-normal|<enunciation-padding>|<enunciation-padding>|<surround|<arg|which>|<yes-indent*>|<arg|body>>>
+    <\padded*>
+      <surround|<arg|which>|<yes-indent*>|<arg|body>>
+    </padded*>
   </macro>>
 
   <assign|render-remark|<\macro|which|body>
@@ -83,13 +75,13 @@
   </macro>>
 
   <assign|render-exercise|<\macro|which|body>
-    <\padded-normal|<exercise-padding>|<exercise-padding>>
-      <\indent-left|<exercise-indentation>>
+    <\padded>
+      <\indent-left|<value|exercise-indentation>>
         <\small>
           <surround|<exercise-name|<arg|which><exercise-sep>>|<yes-indent*>|<arg|body>>
         </small>
       </indent-left>
-    </padded-normal>
+    </padded>
   </macro>>
 
   <\active*>

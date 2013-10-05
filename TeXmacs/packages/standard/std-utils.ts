@@ -47,12 +47,22 @@
 
   <assign|padding-below|0.5fn>
 
+  <assign|large-padding-above|1fn>
+
+  <assign|large-padding-below|1fn>
+
   <assign|padded-normal|<macro|before|after|body|<surround|<vspace*|<arg|before>><no-indent>|<htab|0fn|first><vspace|<arg|after>>|<arg|body>>>>
 
   <assign|padded-centered|<macro|before|after|body|<surround|<vspace*|<arg|before>><no-indent><htab|0fn|last>|<htab|0fn|first><vspace|<arg|after>>|<arg|body>>>>
 
   <assign|padded|<\macro|body>
     <\padded-normal|<value|padding-above>|<value|padding-below>>
+      <arg|body>
+    </padded-normal>
+  </macro>>
+
+  <assign|padded*|<\macro|body>
+    <\padded-normal|<value|large-padding-above>|<value|large-padding-below>>
       <arg|body>
     </padded-normal>
   </macro>>
@@ -82,9 +92,17 @@
     <padded-bothlined|<arg|before>|<arg|after>|<value|overlined-width>|<value|underlined-width>|<value|overlined-sep>|<value|underlined-sep>|<arg|body>>
   </macro>>
 
+  <assign|wide-overlined|<macro|tborder|tsep|body|<wide-bothlined|<arg|tborder>|0pt|<arg|tsep>|0pt|<arg|body>>>>
+
+  <assign|wide-std-overlined|<macro|body|<wide-overlined|<value|overlined-width>|<value|overlined-sep>|<arg|body>>>>
+
   <assign|wide-underlined|<macro|bborder|bsep|body|<wide-bothlined|0pt|<arg|bborder>|0pt|<arg|bsep>|<arg|body>>>>
 
   <assign|wide-std-underlined|<macro|body|<wide-underlined|<value|underlined-width>|<value|underlined-sep>|<arg|body>>>>
+
+  <assign|overlined|<\macro|body>
+    <padded|<wide-std-overlined|<arg|body>>>
+  </macro>>
 
   <assign|underlined|<\macro|body>
     <padded|<wide-std-underlined|<arg|body>>>
@@ -101,15 +119,21 @@
     </src-comment>
   </active*>
 
-  <assign|wide-framed-color|>
+  <assign|framed-color|>
 
-  <assign|wide-framed|<macro|border-width|hsep|vsep|body|<surround|<no-indent>||<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-width|1par>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-lborder|<arg|border-width>>|<cwith|1|1|1|1|cell-rborder|<arg|border-width>>|<cwith|1|1|1|1|cell-tborder|<arg|border-width>>|<cwith|1|1|1|1|cell-bborder|<arg|border-width>>|<cwith|1|1|1|1|cell-lsep|<arg|hsep>>|<cwith|1|1|1|1|cell-rsep|<arg|hsep>>|<cwith|1|1|1|1|cell-tsep|<arg|vsep>>|<cwith|1|1|1|1|cell-bsep|<arg|vsep>>|<cwith|1|1|1|1|cell-background|<value|wide-framed-color>>|<table|<row|<cell|<arg|body>>>>>>>>>
+  <assign|framed-width|1ln>
 
-  <assign|wide-std-framed|<macro|body|<wide-framed|1ln|1spc|1sep|<arg|body>>>>
+  <assign|framed-hsep|1spc>
 
-  <assign|wide-framed-colored|<macro|border-color|body-color|border-width|hsep|vsep|body|<with|old-color|<value|color>|color|<arg|border-color>|wide-framed-color|<arg|body-color>|<wide-framed|<arg|border-width>|<arg|hsep>|<arg|vsep>|<with|color|<value|old-color>|<style-with|src-compact|none|<arg|body>>>>>>>
+  <assign|framed-vsep|1sep>
 
-  <assign|wide-std-framed-colored|<macro|border-color|body-color|body|<wide-framed-colored|<arg|border-color>|<arg|body-color>|1ln|1spc|1sep|<style-with|src-compact|none|<arg|body>>>>>
+  <assign|wide-framed|<macro|border-width|hsep|vsep|body|<surround|<no-indent>||<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-width|1par>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-lborder|<arg|border-width>>|<cwith|1|1|1|1|cell-rborder|<arg|border-width>>|<cwith|1|1|1|1|cell-tborder|<arg|border-width>>|<cwith|1|1|1|1|cell-bborder|<arg|border-width>>|<cwith|1|1|1|1|cell-lsep|<arg|hsep>>|<cwith|1|1|1|1|cell-rsep|<arg|hsep>>|<cwith|1|1|1|1|cell-tsep|<arg|vsep>>|<cwith|1|1|1|1|cell-bsep|<arg|vsep>>|<cwith|1|1|1|1|cell-background|<value|framed-color>>|<table|<row|<cell|<arg|body>>>>>>>>>
+
+  <assign|wide-std-framed|<macro|body|<wide-framed|<value|framed-width>|<value|framed-hsep>|<value|framed-vsep>|<arg|body>>>>
+
+  <assign|wide-framed-colored|<macro|border-color|body-color|border-width|hsep|vsep|body|<with|old-color|<value|color>|color|<arg|border-color>|framed-color|<arg|body-color>|<wide-framed|<arg|border-width>|<arg|hsep>|<arg|vsep>|<with|color|<value|old-color>|<style-with|src-compact|none|<arg|body>>>>>>>
+
+  <assign|wide-std-framed-colored|<macro|border-color|body-color|body|<wide-framed-colored|<arg|border-color>|<arg|body-color>|<value|framed-width>|<value|framed-hsep>|<value|framed-vsep>|<style-with|src-compact|none|<arg|body>>>>>
 
   <assign|framed|<\macro|body>
     <padded|<wide-std-framed|<arg|body>>>

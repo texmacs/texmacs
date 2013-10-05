@@ -193,23 +193,31 @@
     </src-comment>
   </active*>
 
-  <assign|center|<macro|body|<with|par-mode|center|<arg|body>>>>
+  <assign|tab-length|<macro|1.5fn>>
 
-  <assign|left-aligned|<macro|body|<with|par-mode|left|<arg|body>>>>
+  <assign|quote-left-indentation|2tab>
 
-  <assign|right-aligned|<macro|body|<with|par-mode|right|<arg|body>>>>
+  <assign|quote-right-indentation|2tab>
+
+  <assign|quote-interparagraph|0.25fn>
+
+  <assign|verse-hangover|1tab>
+
+  <assign|jump-in-hangover|1tab>
+
+  \;
 
   <assign|quote-env|<\macro|body>
     <\padded>
-      <\indent-both|3fn|3fn>
-        <with|par-first|0fn|par-par-sep|0.25fn|<arg|body>>
+      <\indent-both|<value|quote-left-indentation>|<value|quote-right-indentation>>
+        <with|par-first|0fn|par-par-sep|<value|quote-interparagraph>|<arg|body>>
       </indent-both>
     </padded>
   </macro>>
 
   <assign|quotation|<\macro|body>
     <\padded>
-      <\indent-both|3fn|3fn>
+      <\indent-both|<value|quote-left-indentation>|<value|quote-right-indentation>>
         <surround|<yes-indent>||<arg|body>>
       </indent-both>
     </padded>
@@ -217,15 +225,15 @@
 
   <assign|verse|<\macro|body>
     <\padded>
-      <\indent-both|4.5fn|3fn>
-        <with|par-first|-1.5fn|par-par-sep|0.fn|<surround|<yes-indent>||<arg|body>>>
+      <\indent-both|<plus|<value|quote-left-indentation>|<value|verse-hangover>>|<value|quote-right-indentation>>
+        <with|par-first|<minus|<value|verse-hangover>>|par-par-sep|0.fn|<surround|<yes-indent>||<arg|body>>>
       </indent-both>
     </padded>
   </macro>>
 
   <assign|jump-in|<\macro|body>
     <\surround||<right-flush>>
-      <\with|par-left|<plus|<value|par-left>|1.5fn>|par-first|-1.5fn>
+      <\with|par-left|<plus|<value|par-left>|<value|jump-in-hangover>>|par-first|<minus|<value|jump-in-hangover>>>
         <arg|body>
       </with>
     </surround>
@@ -239,12 +247,22 @@
     </surround>
   </macro>>
 
+  \;
+
+  <assign|center|<macro|body|<with|par-mode|center|<arg|body>>>>
+
+  <assign|left-aligned|<macro|body|<with|par-mode|left|<arg|body>>>>
+
+  <assign|right-aligned|<macro|body|<with|par-mode|right|<arg|body>>>>
+
+  \;
+
   <assign|verbatim|<macro|body|<with|font-family|tt|language|verbatim|<arg|body>>>>
 
   <assign|code|<\macro|body>
-    <\padded-normal|1fn|1fn>
-      <surround||<htab|5mm>|<with|font-family|tt|language|verbatim|par-first|0fn|<arg|body>>>
-    </padded-normal>
+    <\padded*>
+      <surround||<htab|5mm>|<with|font-family|tt|language|verbatim|par-first|0fn|par-par-sep|0fn|<arg|body>>>
+    </padded*>
   </macro>>
 
   <\active*>
