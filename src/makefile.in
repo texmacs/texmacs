@@ -41,6 +41,7 @@ CXXFREETYPE = @FREETYPE_CFLAGS@
 CXXICONV = @ICONV_CFLAGS@
 CXXGUILE = @GUILE_CFLAGS@
 CXXSPARKLE = @SPARKLE_CFLAGS@
+CXXPDF = @PDF_CFLAGS@
 
 LD = @CXX@
 LDFLAGS = @LDFLAGS@ @CONFIG_BFLAGS@ @QT_LDFLAGS@
@@ -326,7 +327,7 @@ $(typeset_obj): Objects/%.o: %.cpp
 $(style_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(style_incl))
 $(pdf_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(pdf_incl) $(CXXFREETYPE))
+	$(call cxx_incl,$(pdf_incl) $(CXXFREETYPE) $(CXXPDF))
 $(freetype_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(freetype_incl) $(CXXFREETYPE))
 

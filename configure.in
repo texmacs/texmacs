@@ -972,6 +972,7 @@ case "$enable_pdf_renderer" in
 #        CONFIG_PDF="Pdf Pdf/dvipdfmx"
 #        CONFIG_PDF="Pdf Pdf/PDFWriter"
         CONFIG_PDF="Pdf"
+      	PDF_CFLAGS="-DNO_TIFF -DNO_DCT"
         ;;
     no)
 	AC_MSG_RESULT([disabling experimental PDF renderer])
@@ -1106,6 +1107,7 @@ AC_SUBST(X11_CFLAGS)
 AC_SUBST(X11_LDFLAGS)
 AC_SUBST(COCOA_CFLAGS)
 AC_SUBST(COCOA_LDFLAGS)
+AC_SUBST(PDF_CFLAGS)
 
 AC_SUBST(CONFIG_X11)
 AC_SUBST(CONFIG_COCOA)
