@@ -255,11 +255,12 @@ qt_renderer_rep::set_brush (brush br) {
 
 void
 qt_renderer_rep::line (SI x1, SI y1, SI x2, SI y2) {
-  decode (x1, y1);
-  decode (x2, y2);
+  double rx1, ry1, rx2, ry2;
+  decode (x1, y1, rx1, ry1);
+  decode (x2, y2, rx2, ry2);
   // y1--; y2--; // top-left origin to bottom-left origin conversion
   painter->setRenderHints (QPainter::Antialiasing);
-  painter->drawLine (x1, y1, x2, y2);
+  painter->drawLine (QPointF (rx1, ry1), QPointF (rx2, ry2));
 }
 
 void
@@ -316,21 +317,23 @@ qt_renderer_rep::fill (SI x1, SI y1, SI x2, SI y2) {
 void
 qt_renderer_rep::arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
   if ((x1>=x2) || (y1>=y2)) return;
-  decode (x1, y1);
-  decode (x2, y2);
+  double rx1, ry1, rx2, ry2;
+  decode (x1, y1, rx1, ry1);
+  decode (x2, y2, rx2, ry2);
   painter->setRenderHints (QPainter::Antialiasing);
-  painter->drawArc (x1, y2, x2-x1, y1-y2, alpha / 4, delta / 4);
+  painter->drawArc (QRectF (rx1, ry2, rx2-rx1, ry1-ry2), alpha / 4, delta / 4);
 }
 
 void
 qt_renderer_rep::fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
   if ((x1>=x2) || (y1>=y2)) return;
-  decode (x1, y1);
-  decode (x2, y2);
+  double rx1, ry1, rx2, ry2;
+  decode (x1, y1, rx1, ry1);
+  decode (x2, y2, rx2, ry2);
   QBrush br(to_qcolor (pen->get_color ()));
   QPainterPath pp;
-  pp.arcMoveTo (x1, y2, x2-x1, y1-y2, alpha / 64);
-  pp.arcTo (x1, y2, x2-x1, y1-y2, alpha / 64, delta / 64);
+  pp.arcMoveTo (QRectF (rx1, ry2, rx2-rx1, ry1-ry2), alpha / 64);
+  pp.arcTo (QRectF (rx1, ry2, rx2-rx1, ry1-ry2), alpha / 64, delta / 64);
   pp.closeSubpath ();
   pp.setFillRule (Qt::WindingFill);
   painter->setRenderHints (QPainter::Antialiasing);
@@ -371,9 +374,9 @@ qt_renderer_rep::draw_triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3) {
   if ((N(y) != n) || (n<1)) return;
   QPolygonF poly(n);
   for (i=0; i<n; i++) {
-    SI xx= x[i], yy= y[i];
-    decode (xx, yy);
-    poly[i] = QPointF (xx, yy);
+    double qx, qy;
+    decode (x[i], y[i], qx, qy);
+    poly[i] = QPointF (qx, qy);
   }
   QBrush br= painter->brush ();
   if (is_nil (fg_brush) || fg_brush->get_type () != brush_pattern)
