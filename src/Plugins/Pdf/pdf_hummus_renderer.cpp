@@ -1405,11 +1405,16 @@ pdf_hummus_renderer_rep::anchor (string label, SI x, SI y)
 void
 pdf_hummus_renderer_rep::href (string label, SI x1, SI y1, SI x2, SI y2)
 {
+  bool preserve= (get_locus_rendering ("locus-on-paper") == "preserve");
   ObjectIDType annotId = pdfWriter.GetObjectsContext().GetInDirectObjectsRegistry().AllocateNewObjectID();
   pdfWriter.GetDocumentContext().RegisterAnnotationReferenceForNextPageWrite(annotId);
   string dict;
   dict << "<<\r\n\t/Type /Annot\r\n\t/Subtype /Link\r\n";
-  dict << "\t/Border [1.92 1.92 0.12[]]\r\n\t/Color [0.75 0.5 1.0]\r\n";
+//  dict << "\t/Border [1.92 1.92 0.12[]]\r\n\t/Color [0.75 0.5 1.0]\r\n";
+  if (preserve)
+    dict << "\t/Border [16 16 1 [3 10]] /Color [0.75 0.5 1.0]\r\n";
+  else
+    dict << "\t/Border [16 16 0 [3 10]] /Color [0.75 0.5 1.0]\r\n";
   dict << "\t/Rect [" << as_string(to_x(x1 - 5*PIXEL)) << " ";
   dict << as_string(to_y(y1 - 10*PIXEL)) << " ";
   dict << as_string(to_x(x2 + 5*PIXEL)) << " ";
