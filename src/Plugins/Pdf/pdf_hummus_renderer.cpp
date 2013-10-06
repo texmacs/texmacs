@@ -1522,6 +1522,7 @@ pdf_hummus_renderer (url pdf_file_name, int dpi, int nr_pages,
               double paper_w, 
               double paper_h)
 {
+  page_type= as_string (call ("standard-paper-size", object (page_type)));
   return tm_new<pdf_hummus_renderer_rep> (pdf_file_name, dpi, nr_pages,
 			  page_type, landscape, paper_w, paper_h);
 }
