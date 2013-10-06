@@ -341,11 +341,11 @@ void
 qt_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
   int i, n= N(x);
   if ((N(y) != n) || (n<1)) return;
-  QPolygonF poly(n);
+  QPolygonF poly (n);
   for (i=0; i<n; i++) {
-    SI xx= x[i], yy= y[i];
-    decode (xx, yy);
-    poly[i] = QPointF (xx, yy);
+    double qx, qy;
+    decode (x[i], y[i], qx, qy);
+    poly[i] = QPointF (qx, qy);
   }
   QBrush br= painter->brush ();
   if (is_nil (fg_brush) || fg_brush->get_type () != brush_pattern)
