@@ -1462,7 +1462,7 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --disable-fastalloc     omit fast allocator for small objects
   --enable-experimental   support new style rewriting code
-  --disable-macosx-extensions  don't use Mac specific services (spellchecker, image handling, ...)
+  --disable-macosx-extensions  do not use Mac specific services (spellchecker, image handling, ...)
   --enable-macosx-distr=ARCH   build for MacOSX >= 10.4 and arch ARCH
   --enable-pdf-renderer   use experimental PDF renderer for pdf export
   --enable-console        enable windows console
@@ -7629,17 +7629,17 @@ fi
 
 
 if test "$enable_macosx_distr" != "no" ; then
-  MACOSX_DEPLOYMENT_TARGET="MACOSX_DEPLOYMENT_TARGET=10.4"
-  CONFIG_CXXFLAGS="$CONFIG_CXXFLAGS -mmacosx-version-min=10.4 -DMACOSX_DEPLOYMENT_TARGET=10.4"
-  CONFIG_BFLAGS="$CONFIG_BFLAGS -mmacosx-version-min=10.4 -DMACOSX_DEPLOYMENT_TARGET=10.4"
-  if test "$enable_macosx_distr" != "yes" -a "$enable_macosx_distr" != "" ; then
-    CONFIG_ARCHS="$enable_macosx_distr"
-  	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling Mac OSX distribution for architecture $enable_macosx_distr" >&5
+    MACOSX_DEPLOYMENT_TARGET="MACOSX_DEPLOYMENT_TARGET=10.4"
+    CONFIG_CXXFLAGS="$CONFIG_CXXFLAGS -mmacosx-version-min=10.4 -DMACOSX_DEPLOYMENT_TARGET=10.4"
+    CONFIG_BFLAGS="$CONFIG_BFLAGS -mmacosx-version-min=10.4 -DMACOSX_DEPLOYMENT_TARGET=10.4"
+    if test "$enable_macosx_distr" != "yes" -a "$enable_macosx_distr" != "" ; then
+        CONFIG_ARCHS="$enable_macosx_distr"
+  	    { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling Mac OSX distribution for architecture $enable_macosx_distr" >&5
 $as_echo "enabling Mac OSX distribution for architecture $enable_macosx_distr" >&6; }
-  else
-	  { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling Mac OSX distribution" >&5
+    else
+	    { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling Mac OSX distribution" >&5
 $as_echo "enabling Mac OSX distribution" >&6; }
-  fi
+    fi
 else
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling Mac OSX distribution" >&5
 $as_echo "disabling Mac OSX distribution" >&6; }
@@ -7661,7 +7661,45 @@ fi
 
 case "$enable_pdf_renderer" in
     yes)
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling experimental PDF renderer" >&5
+        SAVE_CPPFLAGS="$CPPFLAGS"
+        SAVE_LDFLAGS="$LDFLAGS"
+        SAVE_LIBS="$LIBS"
+        if test -z "$FREETYPE_CFLAGS"; then
+            FREETYPE_CFLAGS=`freetype-config --cflags`
+        fi
+        CPPFLAGS="$CPPFLAGS $FREETYPE_CFLAGS"
+        if test -z "$FREETYPE_LDFLAGS"; then
+            FREETYPE_LDFLAGS=`freetype-config --libs`
+        fi
+        LIBS="$LDFLAGS $FREETYPE_LDFLAGS"
+        ac_fn_cxx_check_header_mongrel "$LINENO" "ft2build.h" "ac_cv_header_ft2build_h" "$ac_includes_default"
+if test "x$ac_cv_header_ft2build_h" = xyes; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether freetype defines T1_EncodingType" >&5
+$as_echo_n "checking whether freetype defines T1_EncodingType... " >&6; }
+        cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include FT_TYPE1_TABLES_H
+
+int
+main ()
+{
+
+FT_Library ft_library;
+T1_EncodingType t;
+(void) FT_Init_FreeType (&ft_library);
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling experimental PDF renderer" >&5
 $as_echo "enabling experimental PDF renderer" >&6; }
 
 $as_echo "#define PDF_RENDERER 1" >>confdefs.h
@@ -7670,9 +7708,29 @@ $as_echo "#define PDF_RENDERER 1" >>confdefs.h
 #        CONFIG_PDF="Pdf Pdf/PDFWriter"
         CONFIG_PDF="Pdf"
       	PDF_CFLAGS="-DNO_TIFF -DNO_DCT"
+
+else
+
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+        as_fn_error $? "cannot find FreeType or your version is < 2.4.8.
+If you have several versions installed please use the proper freetype-config script to set
+the environment variables FREETYPE_CFLAGS and FREETYPE_LDFLAGS.
+                     " "$LINENO" 5
+        CONFIG_PDF=""
+
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+fi
+
+
+        CPPFLAGS="$SAVE_CPPFLAGS"
+        LDFLAGS="$SAVE_LDFLAGS"
+        LIBS="$SAVE_LIBS"
         ;;
     no)
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling experimental PDF renderer" >&5
+    	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling experimental PDF renderer" >&5
 $as_echo "disabling experimental PDF renderer" >&6; }
         CONFIG_PDF=""
 	;;

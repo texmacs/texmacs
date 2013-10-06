@@ -910,7 +910,7 @@ AC_SUBST(CONFIG_EXPERIMENTAL)
 if test x"$CONFIG_OS" = xMACOS; then
 
 AC_ARG_ENABLE(macosx-extensions,
-[  --disable-macosx-extensions  don't use Mac specific services (spellchecker, image handling, ...)],
+[  --disable-macosx-extensions  do not use Mac specific services (spellchecker, image handling, ...)],
     [], [enable_macosx_extensions="yes"])
 case "$enable_macosx_extensions" in
     yes)
@@ -942,15 +942,15 @@ changequote([, ])dnl
 [], [enable_macosx_distr="no"])
 
 if test "$enable_macosx_distr" != "no" ; then    
-  MACOSX_DEPLOYMENT_TARGET="MACOSX_DEPLOYMENT_TARGET=10.4"
-  CONFIG_CXXFLAGS="$CONFIG_CXXFLAGS -mmacosx-version-min=10.4 -DMACOSX_DEPLOYMENT_TARGET=10.4"
-  CONFIG_BFLAGS="$CONFIG_BFLAGS -mmacosx-version-min=10.4 -DMACOSX_DEPLOYMENT_TARGET=10.4"
-  if test "$enable_macosx_distr" != "yes" -a "$enable_macosx_distr" != "" ; then
-    CONFIG_ARCHS="$enable_macosx_distr" 
-  	AC_MSG_RESULT([enabling Mac OSX distribution for architecture $enable_macosx_distr])
-  else
-	  AC_MSG_RESULT([enabling Mac OSX distribution])
-  fi
+    MACOSX_DEPLOYMENT_TARGET="MACOSX_DEPLOYMENT_TARGET=10.4"
+    CONFIG_CXXFLAGS="$CONFIG_CXXFLAGS -mmacosx-version-min=10.4 -DMACOSX_DEPLOYMENT_TARGET=10.4"
+    CONFIG_BFLAGS="$CONFIG_BFLAGS -mmacosx-version-min=10.4 -DMACOSX_DEPLOYMENT_TARGET=10.4"
+    if test "$enable_macosx_distr" != "yes" -a "$enable_macosx_distr" != "" ; then
+        CONFIG_ARCHS="$enable_macosx_distr" 
+  	    AC_MSG_RESULT([enabling Mac OSX distribution for architecture $enable_macosx_distr])
+    else
+	    AC_MSG_RESULT([enabling Mac OSX distribution])
+    fi
 else
 	AC_MSG_RESULT([disabling Mac OSX distribution])
 fi
@@ -963,19 +963,54 @@ AC_SUBST(MACOSX_DEPLOYMENT_TARGET)
 #--------------------------------------------------------------------
 
 AC_ARG_ENABLE(pdf-renderer,
-[  --enable-pdf-renderer   use experimental PDF renderer for pdf export],
-    [], [enable_pdf_renderer="no"])
+             [  --enable-pdf-renderer   use experimental PDF renderer for pdf export],
+             [], [enable_pdf_renderer="no"])
 case "$enable_pdf_renderer" in
     yes)
-	AC_MSG_RESULT([enabling experimental PDF renderer])
+        SAVE_CPPFLAGS="$CPPFLAGS"
+        SAVE_LDFLAGS="$LDFLAGS"
+        SAVE_LIBS="$LIBS"
+        if test -z "$FREETYPE_CFLAGS"; then
+            FREETYPE_CFLAGS=`freetype-config --cflags`
+        fi
+        CPPFLAGS="$CPPFLAGS $FREETYPE_CFLAGS"
+        if test -z "$FREETYPE_LDFLAGS"; then
+            FREETYPE_LDFLAGS=`freetype-config --libs`
+        fi
+        LIBS="$LDFLAGS $FREETYPE_LDFLAGS"
+        AC_CHECK_HEADER(ft2build.h,
+        AC_MSG_CHECKING(whether freetype defines T1_EncodingType)
+        AC_TRY_LINK(
+[
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include FT_TYPE1_TABLES_H
+],[
+FT_Library ft_library;
+T1_EncodingType t;
+(void) FT_Init_FreeType (&ft_library);
+],[
+        AC_MSG_RESULT(yes)
+   	AC_MSG_RESULT([enabling experimental PDF renderer])
         AC_DEFINE(PDF_RENDERER, 1, [Enabling experimental PDF renderer])
 #        CONFIG_PDF="Pdf Pdf/dvipdfmx"
 #        CONFIG_PDF="Pdf Pdf/PDFWriter"
         CONFIG_PDF="Pdf"
       	PDF_CFLAGS="-DNO_TIFF -DNO_DCT"
+],[
+        AC_MSG_RESULT(no)
+        AC_MSG_ERROR([cannot find FreeType or your version is < 2.4.8.
+If you have several versions installed please use the proper freetype-config script to set
+the environment variables FREETYPE_CFLAGS and FREETYPE_LDFLAGS. 
+                     ])
+        CONFIG_PDF=""
+]))
+        CPPFLAGS="$SAVE_CPPFLAGS"
+        LDFLAGS="$SAVE_LDFLAGS"
+        LIBS="$SAVE_LIBS"
         ;;
     no)
-	AC_MSG_RESULT([disabling experimental PDF renderer])
+    	AC_MSG_RESULT([disabling experimental PDF renderer])
         CONFIG_PDF=""
 	;;
     *)
