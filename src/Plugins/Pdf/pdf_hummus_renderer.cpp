@@ -305,9 +305,9 @@ pdf_hummus_renderer_rep::pdf_hummus_renderer_rep (
     char* _pdf_file_name;
     _pdf_file_name= as_charp (concretize (pdf_file_name));
 
-      status = pdfWriter.StartPDF(_pdf_file_name, ePDFVersion14, // PDF 1.4 for alpha
-                                  LogConfiguration(true, true, "/Users/mgubi/Desktop/pdfwriter-x.log"),
-                                  PDFCreationSettings(false)); // true = compression on
+      status = pdfWriter.StartPDF(_pdf_file_name, ePDFVersion14); // PDF 1.4 for alpha
+//                                  ,LogConfiguration(true, true, "/Users/mgubi/Desktop/pdfwriter-x.log")
+//                                  ,PDFCreationSettings(false)); // true = compression on
       if(status != PDFHummus::eSuccess)
       {
           cout << "failed to start PDF\n";
