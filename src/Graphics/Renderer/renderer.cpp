@@ -207,6 +207,18 @@ renderer_rep::decode (SI& x, SI& y) {
   if (y>=0) y= -(y/pixel); else y= -((y-pixel+1)/pixel);
 }
 
+void
+renderer_rep::encode (double x, double y, SI& rx, SI& ry) {
+  rx= ((SI) ((  x  + 0.5) * pixel)) - ox;
+  ry= ((SI) (((-y) + 0.5) * pixel)) - oy;
+}
+
+void
+renderer_rep::decode (SI x, SI y, double& rx, double& ry) {
+  rx=   ((double) (x + ox)) / pixel - 0.5;
+  ry= -(((double) (y + oy)) / pixel - 0.5);
+}
+
 #define RND(x) (((x)>=0)?(((x)/pixel)*pixel):((((x)-pixel+1)/pixel)*pixel))
 
 void

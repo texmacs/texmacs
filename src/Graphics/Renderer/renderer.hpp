@@ -74,6 +74,8 @@ public:
   /* reencoding and rounding */
   virtual void decode (SI& x, SI& y);
   virtual void encode (int& x, int& y);
+  virtual void decode (SI x, SI y, double& rx, double& ry);
+  virtual void encode (double x, double y, SI& rx, SI& ry);
   void round (SI& x, SI& y);
   void inner_round (SI& x1, SI& y1, SI& x2, SI& y2);
   void outer_round (SI& x1, SI& y1, SI& x2, SI& y2);

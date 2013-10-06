@@ -265,19 +265,12 @@ qt_renderer_rep::line (SI x1, SI y1, SI x2, SI y2) {
 void
 qt_renderer_rep::lines (array<SI> x, array<SI> y) {
   int i, n= N(x);
-  if ((N(y) != n) || (n<1)) return;
-  STACK_NEW_ARRAY (pnt, QPoint, n);
-  for (i=0; i<n; i++) {
-    SI xx= x[i], yy= y[i];
-    decode (xx, yy);
-    pnt[i].rx()= xx;
-    pnt[i].ry()= yy;
-    if (i>0) {
-      painter->setRenderHints (QPainter::Antialiasing);
-      painter->drawLine (pnt[i-1], pnt[i]); // FIX: hack
-    }
-  }
-  // XDrawLines (dpy, win, gc, pnt, n, CoordModeOrigin);
+  if ((N(y) != n) || (n<2)) return;
+  STACK_NEW_ARRAY (pnt, QPointF, n);
+  for (i=0; i<n; i++)
+    decode (x[i], y[i], pnt[i].rx(), pnt[i].ry());
+  painter->setRenderHints (QPainter::Antialiasing);
+  painter->drawPolyline (pnt, n);
   STACK_DELETE_ARRAY (pnt);
 }
 
