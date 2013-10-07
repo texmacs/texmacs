@@ -22,7 +22,7 @@
 
 (menu-bind texgraph-scripts-plot-menu
   ("Traceur de courbes" 	
-		(init-add-package "texgraph-scripts")
+		(add-style-package "texgraph-scripts")
 		(delayed
 		  (:pause 10) (make 'texgraph-plot-curve)))
 ;  ("Surfaces" (make 'texgraph-plot-surface))

@@ -70,8 +70,6 @@
   (init-env init_env (void string string))
   (init-env-tree init_env (void string content))
   (init-style init_style (void string))
-  (init-add-package init_add_package (void string))
-  (init-remove-package init_remove_package (void string))
   (get-style-tree get_style (tree))
   (set-style-tree set_style (void tree))
   (get-env get_env_string (string string))

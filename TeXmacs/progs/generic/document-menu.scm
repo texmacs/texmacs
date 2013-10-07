@@ -313,11 +313,11 @@
       (-> "Add package"
 	  (link add-package-menu)
 	  ---
-	  ("Other" (interactive init-add-package)))
+	  ("Other" (interactive add-style-package)))
       (-> "Remove package"
 	  (link remove-package-menu)
 	  ---
-	  ("Other" (interactive init-remove-package)))
+	  ("Other" (interactive remove-style-package)))
       (if (!= (get-init-tree "sectional-short-style") (tree 'macro "false"))
 	  (-> "Part" (link document-part-menu)))
       (-> "View" (link document-view-menu)))
@@ -631,7 +631,7 @@
         (link style-menu))
     (for (pack (cdr st))
       (-> (eval (upcase-first pack))
-          ("Remove package" (init-remove-package pack)))))
+          ("Remove package" (remove-style-package pack)))))
   (-> "Add style package"
       (link add-package-menu)))
 
@@ -661,7 +661,7 @@
 	 (link style-menu))
      (for (pack (cdr st))
        (=> (eval pack)
-	   ("Remove package" (init-remove-package pack)))))
+	   ("Remove package" (remove-style-package pack)))))
    (=> (balloon (icon "tm_add.xpm") "Add style package")
        (link add-package-menu))
    (assuming (tree-is-buffer? t)

@@ -24,12 +24,6 @@
   (:argument style "Document style")
   (:default  style "generic"))
 
-(tm-property (init-add-package pack)
-  (:argument pack "Use package"))
-
-(tm-property (init-remove-package pack)
-  (:argument pack "Remove package"))
-
 (tm-property (project-attach master)
   (:argument master "Master file"))
 
@@ -38,6 +32,49 @@
     (cond ((string? t) (list t))
           ((and (pair? t) (== (car t) 'tuple)) (cdr t))
           (else (texmacs-error "get-style-list ""invalid style ~S" t)))))
+
+(tm-define (style-category p) p)
+(tm-define (style-category-overrides? p q) (== p q))
+(tm-define (style-category-precedes? p q) #f)
+
+(tm-define (style-overrides? p q)
+  (style-category-overrides? (style-category p) (style-category q)))
+
+(tm-define (style-precedes? p q)
+  (style-category-precedes? (style-category p) (style-category q)))
+
+(define (normalize-style-list* l)
+  (cond ((null? l) l)
+        ((list-find (cdr l) (cut style-overrides? <> (car l))) (cdr l))
+        ((list-find (cdr l) (cut style-precedes? <> (car l)))
+         (normalize-style-list* (cons (cadr l) (cons (car l) (cddr l)))))
+        (else (cons (car l) (normalize-style-list* (cdr l))))))
+
+(define (normalize-style-list l)
+  (if (null? l) l (cons (car l) (normalize-style-list* (cdr l)))))
+
+(tm-define (set-style-list l)
+  (set-style-tree (tm->tree `(tuple ,@(normalize-style-list l)))))
+
+(tm-define (add-style-package pack)
+  (:argument pack "Use package")
+  (with l (list-remove-duplicates (append (get-style-list) (list pack)))
+    (set-style-list l)))
+
+(tm-define (remove-style-package pack)
+  (:argument pack "Use package")
+  (with l (list-difference (get-style-list) (list pack))
+    (set-style-list l)))
+
+(tm-define (has-style-package? pack)
+  (in? pack (get-style-list)))
+
+(tm-define (toggle-style-package pack)
+  (:argument pack "Toggle package")
+  (:check-mark "v" has-style-package?)
+  (if (has-style-package? pack)
+      (remove-style-package pack)
+      (add-style-package pack)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preamble mode

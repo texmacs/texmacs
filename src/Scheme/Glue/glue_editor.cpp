@@ -546,32 +546,6 @@ tmg_init_style (tmscm arg1) {
 }
 
 tmscm
-tmg_init_add_package (tmscm arg1) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "init-add-package");
-
-  string in1= tmscm_to_string (arg1);
-
-  // TMSCM_DEFER_INTS;
-  get_current_editor()->init_add_package (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return TMSCM_UNSPECIFIED;
-}
-
-tmscm
-tmg_init_remove_package (tmscm arg1) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "init-remove-package");
-
-  string in1= tmscm_to_string (arg1);
-
-  // TMSCM_DEFER_INTS;
-  get_current_editor()->init_remove_package (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return TMSCM_UNSPECIFIED;
-}
-
-tmscm
 tmg_get_style_tree () {
   // TMSCM_DEFER_INTS;
   tree out= get_current_editor()->get_style ();
@@ -2922,8 +2896,6 @@ initialize_glue_editor () {
   tmscm_install_procedure ("init-env",  tmg_init_env, 2, 0, 0);
   tmscm_install_procedure ("init-env-tree",  tmg_init_env_tree, 2, 0, 0);
   tmscm_install_procedure ("init-style",  tmg_init_style, 1, 0, 0);
-  tmscm_install_procedure ("init-add-package",  tmg_init_add_package, 1, 0, 0);
-  tmscm_install_procedure ("init-remove-package",  tmg_init_remove_package, 1, 0, 0);
   tmscm_install_procedure ("get-style-tree",  tmg_get_style_tree, 0, 0, 0);
   tmscm_install_procedure ("set-style-tree",  tmg_set_style_tree, 1, 0, 0);
   tmscm_install_procedure ("get-env",  tmg_get_env, 1, 0, 0);

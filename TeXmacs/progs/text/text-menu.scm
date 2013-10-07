@@ -571,6 +571,9 @@
 (tm-menu (focus-style-options-menu t)
   (:require (enunciation-context? t))
   (group "Style options")
+  ("European numbering" (toggle-style-package "number-europe"))
+  ;;("United States numbering" (add-style-package "number-us"))
+  ("Prefix by section number" (toggle-style-package "number-long-article"))
   ---)
 
 (tm-menu (focus-toggle-menu t)

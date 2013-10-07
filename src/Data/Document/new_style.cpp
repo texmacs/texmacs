@@ -282,8 +282,8 @@ compute_style_menu (url u, int kind) {
     if (!ends (l, ".ts")) return "";
     l= l(0, N(l)-3);
     string cmd ("init-style");
-    if (kind == 1) cmd= "init-add-package";
-    if (kind == 2) cmd= "init-remove-package";
+    if (kind == 1) cmd= "add-style-package";
+    if (kind == 2) cmd= "remove-style-package";
     return "((verbatim \"" * l * "\") (" * cmd * " \"" * l * "\"))";
   }
   return "";

@@ -418,7 +418,7 @@
       (with u (tree-ref t :previous 0)
 	(if (url-exists? (url-unix "$TEXMACS_STYLE_PATH"
 				   (string-append lan ".ts")))
-	    (init-add-package lan))
+	    (add-style-package lan))
 	(session-feed lan ses :start u t '())))))
 
 (define (field-process-input t)

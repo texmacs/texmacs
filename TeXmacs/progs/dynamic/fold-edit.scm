@@ -624,7 +624,7 @@
       (dynamic-operate (tree-ref t 0) :var-expand)))
 
 (tm-define (dynamic-make-slides)
-  (init-add-package "slides")
+  (add-style-package "slides")
   (init-default "page-medium" "page-type" "page-width" "page-height"
                 "page-width-margin" "page-height-margin"
                 "page-odd" "page-even" "page-right"
