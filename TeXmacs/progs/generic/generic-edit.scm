@@ -590,10 +590,6 @@
     (clipboard-cut "graphics background")
     (insert-go-to `(draw-over ,selection (graphics)) '(1 1)))))
 
-(tm-define (parameter-show-in-menu? l)
-  (:require (in? l '("caption-summarized" "figure-width")))
-  #f)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Thumbnails facility
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -260,16 +260,6 @@
   (tree-go-to t :end)
   (make 'label))
 
-(tm-define (parameter-show-in-menu? l)
-  (:require (and (string-ends? l "-numbered")
-                 (in? (string->symbol (string-drop-right l 9))
-                      (section-tag-list))))
-  #f)
-
-(tm-define (parameter-show-in-menu? l)
-  (:require (== l "appendix-prefix"))
-  #f)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for lists, enumerations and description
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

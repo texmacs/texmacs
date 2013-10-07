@@ -369,10 +369,6 @@
     (when (not (tree-innermost overlay-context?))
       (tree-go-to t 2 :start))))
 
-(tm-define (parameter-show-in-menu? l)
-  (:require (== l "overlay-nr"))
-  #f)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Additional routines for inserting and removing overlays
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -15,14 +15,19 @@
   (:use (utils edit variants)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Collecting environment variables which are parameters for a tag
+;; Routines for subsequent customization
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (standard-parameters l)
-  #f)
+(tm-define (standard-parameters l) #f)
 
 (tm-define (tree-parameter? t)
   (tree-label-parameter? (tree-label t)))
+
+(tm-define (parameter-choice-list l) #f)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Collecting environment variables which are parameters for a tag
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (get-with-vars l)
   (cond ((or (null? l) (null? (cdr l))) '())
@@ -111,15 +116,6 @@
 ;; Possible choices for parameters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (parameter-choice-list l) #f)
-
 (tm-define (parameter-choice-list l)
   (:require (== l "ornament-shape"))
   (list "classic" "rounded"))
-
-(tm-define (parameter-show-in-menu? l) #t)
-
-(tm-define (parameter-show-in-menu? l)
-  (:require (in? l (list "the-label" "auto-nr" "current-part" "language"
-                         "page-nr" "page-the-page" "prog-language")))
-  #f)

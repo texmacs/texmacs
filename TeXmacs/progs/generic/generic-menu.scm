@@ -226,6 +226,8 @@
     (-> (eval (focus-tag-name (string->symbol l)))
         (dynamic (init-env-menu l cs)))))
 
+(tm-define (parameter-show-in-menu? l) #t)
+
 (tm-menu (focus-parameters-menu t)
   (with ps (list-filter (search-tag-parameters t) parameter-show-in-menu?)
     (if (nnull? ps)
@@ -234,6 +236,12 @@
           (dynamic (focus-parameter-menu-item p)))
         (if (tree-label-extension? (tree-label t))
             ---))))
+
+(tm-define (parameter-show-in-menu? l)
+  (:require (in? l (list "the-label" "auto-nr" "current-part" "language"
+                         "page-nr" "page-the-page" "prog-language"
+			 "caption-summarized" "figure-width")))
+  #f)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Focus menu

@@ -525,6 +525,16 @@
 ;; Focus menus for sections
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (parameter-show-in-menu? l)
+  (:require (and (string-ends? l "-numbered")
+                 (in? (string->symbol (string-drop-right l 9))
+                      (section-tag-list))))
+  #f)
+
+(tm-define (parameter-show-in-menu? l)
+  (:require (== l "appendix-prefix"))
+  #f)
+
 (tm-menu (focus-section-menu)
   (for (s (tree-search-sections (buffer-tree)))
     ((eval (tm/section-get-title-string s))

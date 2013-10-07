@@ -308,6 +308,10 @@
   (:require (overlays-context? t))
   #t)
 
+(tm-define (parameter-show-in-menu? l)
+  (:require (== l "overlay-nr"))
+  #f)
+
 (define (get-overlays-menu-name t)
   (let* ((cur (overlays-current t))
          (tot (overlays-arity t)))
