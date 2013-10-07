@@ -360,7 +360,7 @@
     (open-auxiliary "Link page" doc)))
 
 (tm-define (build-navigation-page l)
-  (let* ((style (tree->stree (get-style-tree)))
+  (let* ((style `(tuple ,@(get-style-list)))
          (fun (lambda () (build-navigation-page-sub style l))))
     (resolve-navigation-list l fun)))
 

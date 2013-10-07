@@ -155,8 +155,7 @@
   (:interactive #t)
   (if (symbol? l) (set! l (symbol->string l)))
   (let* ((b (current-buffer-url))
-         (style (get-style-tree))
-         (packs (if (tm-atomic? style) (list style) (tm-children style)))
+         (packs (get-style-list))
          (styps (list-remove-duplicates (append packs (list "macro-editor"))))
          (u (string-append "tmfs://aux/edit-" l)))
     (and-with def (get-definition l)
@@ -175,7 +174,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (search-style-definition-in done l name)
-  (if (tree-atomic? name) (set! name (tree->string name)))
+  (when (and (tree? name) (tree-atomic? name))
+    (set! name (tree->string name)))
   (and (string? name)
        (not (in? name done))
        (with t (tree-load-style name)
@@ -199,8 +199,7 @@
         (else #f)))
 
 (define (search-style-package l)
-  (let* ((style (get-style-tree))
-         (packs (if (tm-atomic? style) (list style) (tm-children style))))
+  (with packs (get-style-list)
     (search-style-definition-in-list '() l packs)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

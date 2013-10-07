@@ -265,6 +265,8 @@
     ((check "Show hidden" "v" (tree-is? t :up 'inactive))
      (inactive-toggle t))))
 
+(tm-menu (focus-style-options-menu t))
+
 (tm-menu (focus-tag-edit-menu l)
   (if (tree-label-extension? l)
       (when (editable-macro? l)
@@ -273,6 +275,7 @@
         ("Edit source" (edit-macro-source l)))))
 
 (tm-menu (focus-preferences-menu t)
+  (dynamic (focus-style-options-menu t))
   (dynamic (focus-parameters-menu t))
   (dynamic (focus-tag-edit-menu (tree-label t))))
 

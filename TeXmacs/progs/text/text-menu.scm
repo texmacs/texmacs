@@ -565,8 +565,13 @@
 	(link focus-section-menu))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Focus menu for proofs
+;; Focus menu for theorems and proofs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (focus-style-options-menu t)
+  (:require (enunciation-context? t))
+  (group "Style options")
+  ---)
 
 (tm-menu (focus-toggle-menu t)
   (:require (proof-context? t))

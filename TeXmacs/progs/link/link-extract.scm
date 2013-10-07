@@ -52,7 +52,7 @@
 (tm-define (build-locus-page)
   (let* ((base (current-buffer))
          (name (string-append (buffer-get-title base) " - loci"))
-	 (style (tree->stree (get-style-tree)))
+	 (style `(tuple ,@(get-style-list)))
 	 (l (tree-search (buffer-tree) (cut tm-func? <> 'locus))))
     (build-locus-page-sub base name style l #t)))
 
@@ -66,7 +66,7 @@
 	(lambda ()
 	  (let* ((name (string-append (buffer-get-title (current-buffer))
                                       " - " env))
-		 (style (tree->stree (get-style-tree)))
+                 (style `(tuple ,@(get-style-list)))
 		 (r (filter-map environment->locus l)))
 	    (delayed (:pause 25) (build-locus-page-sub name style r #f))))
       (if (locified? l) (cont)
