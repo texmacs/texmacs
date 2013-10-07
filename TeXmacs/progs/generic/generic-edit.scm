@@ -16,7 +16,7 @@
 	(utils library cursor)
 	(utils edit variants)
         (bibtex bib-complete)
-	(generic generic-drd)))
+	(source macro-search)))
 
 (tm-define (generic-context? t) #t) ;; overridden in, e.g., graphics mode
 
