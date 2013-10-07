@@ -39,11 +39,11 @@ ABSTRACT_NULL(brush);
   brush (bool b);
   brush (color c);
   brush (tree p, int a= 255);
-  friend inline bool operator == (const brush& a, const brush& b);
+  friend bool operator == (const brush& a, const brush& b);
 };
 ABSTRACT_NULL_CODE(brush);
 
-inline bool operator == (const brush& a, const brush& b) {
-  return a.rep == b.rep; }
+bool operator == (const brush& a, const brush& b);
+inline bool operator != (const brush& a, const brush& b) { return !(a == b); }
 
 #endif // defined BRUSH_H

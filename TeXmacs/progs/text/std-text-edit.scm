@@ -363,6 +363,10 @@
 ;; Editing enunciations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (style-category p)
+  (:require (in? p (list "framed-theorems" "hanging-theorems")))
+  :theorem-decorations)
+
 (tm-define (enunciation-context? t)
   (tree-in? t (enunciation-tag-list)))
 

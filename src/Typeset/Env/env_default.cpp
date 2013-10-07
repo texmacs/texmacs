@@ -265,12 +265,12 @@ initialize_default_env () {
   env (CANVAS_BAR_COLOR)      = "grey";         // color of bar
   env (ORNAMENT_SHAPE)        = "classic";      // shape of the ornament
   env (ORNAMENT_BORDER)       = "1ln";          // border width
-  env (ORNAMENT_HPADDING)     = "0px";          // horizontal padding of body
-  env (ORNAMENT_VPADDING)     = "0px";          // vertical padding of body
-  env (ORNAMENT_COLOR)        = "light grey";   // background color
-  env (ORNAMENT_EXTRA_COLOR)  = "light grey";   // background color for titles
-  env (ORNAMENT_SUNNY_COLOR)  = "white";        // sunny color
-  env (ORNAMENT_SHADOW_COLOR) = "dark grey";    // shadow color
+  env (ORNAMENT_HPADDING)     = "1spc";         // horizontal padding of body
+  env (ORNAMENT_VPADDING)     = "1spc";         // vertical padding of body
+  env (ORNAMENT_COLOR)        = "";             // background color
+  env (ORNAMENT_EXTRA_COLOR)  = "#808080";      // background color for titles
+  env (ORNAMENT_SUNNY_COLOR)  = "black";        // sunny color
+  env (ORNAMENT_SHADOW_COLOR) = "black";        // shadow color
 
   /* hiding and showing content */
   env ("shown")= identity_m;

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.0.7.20>
 
 <style|source>
 
@@ -22,7 +22,7 @@
 
   <assign|ornament-shape|rounded>
 
-  <assign|ornament-border|0ln>
+  <if|<unequal|<value|ornament-color>|>|<assign|ornament-border|0ln>>
 </body>
 
 <\initial>

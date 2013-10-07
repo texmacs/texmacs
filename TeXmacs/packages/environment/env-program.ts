@@ -31,13 +31,15 @@
   <assign|algorithm-sep|<macro|<enunciation-sep>>>
 
   <assign|render-code|<\macro|body>
-    <\padded*>
-      <\indent>
-        <\with|par-first|0fn|par-par-sep|0fn|item-hsep|<macro|1tab>>
-          <arg|body>
-        </with>
-      </indent>
-    </padded*>
+    <\surround||<no-indent*>>
+      <\padded*>
+        <\indent>
+          <\with|par-first|0fn|par-par-sep|0fn|item-hsep|<macro|1tab>>
+            <arg|body>
+          </with>
+        </indent>
+      </padded*>
+    </surround>
   </macro>>
 
   <assign|render-algorithm|<\macro|name|body>

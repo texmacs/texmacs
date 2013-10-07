@@ -109,8 +109,10 @@ highlight_box_rep::display_classic (renderer& ren) {
   ren->set_brush (shad);
   ren->fill (x1+W, y1  , x2  , y1+W);
   ren->fill (x2-W, y1  , x2  , y2-W);
-  ren->draw_triangle (x1, y1, x1+W, y1, x1+W, y1+W);
-  ren->draw_triangle (x2, y2, x2, y2-W, x2-W, y2-W);
+  if (sunc != shad) {
+    ren->draw_triangle (x1, y1, x1+W, y1, x1+W, y1+W);
+    ren->draw_triangle (x2, y2, x2, y2-W, x2-W, y2-W);
+  }
 }
 
 /******************************************************************************

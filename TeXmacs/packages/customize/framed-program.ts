@@ -105,13 +105,15 @@
   </macro>>
 
   <assign|pseudo-code|<\macro|body>
-    <\framed-quoted>
-      <\with|par-first|0fn|par-par-sep|0fn|item-hsep|<macro|1.5fn>>
-        <\framed-code>
-          <arg|body>
-        </framed-code>
-      </with>
-    </framed-quoted>
+    <\surround||<no-indent*>>
+      <\framed-quoted>
+        <\with|par-first|0fn|par-par-sep|0fn|item-hsep|<macro|1.5fn>>
+          <\framed-code>
+            <arg|body>
+          </framed-code>
+        </with>
+      </framed-quoted>
+    </surround>
   </macro>>
 
   \;

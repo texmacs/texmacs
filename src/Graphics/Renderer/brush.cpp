@@ -13,6 +13,21 @@
 #include "gui.hpp"
 
 /******************************************************************************
+* Equality
+******************************************************************************/
+
+bool
+operator == (const brush& a, const brush& b) {
+  brush_rep* ar= (brush_rep*) a.rep;
+  brush_rep* br= (brush_rep*) b.rep;
+  return
+    ar->get_type () == br->get_type () &&
+    ar->get_color () == br->get_color () &&
+    ar->get_pattern () == br->get_pattern () &&
+    ar->get_alpha () == br->get_alpha ();
+}
+
+/******************************************************************************
 * No brush
 ******************************************************************************/
 

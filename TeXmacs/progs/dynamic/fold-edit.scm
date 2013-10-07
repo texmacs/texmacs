@@ -16,7 +16,26 @@
         (utils library cursor)
         (dynamic dynamic-drd)
         (generic generic-edit)
+        (generic document-edit)
         (text std-text-edit)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Style package rules for beamer
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (style-category p)
+  (:require (in? p (list "bluish" "ice" "metal" "reddish" "ridged-paper")))
+  :beamer-theme)
+
+(tm-define (style-category p)
+  (:require (in? p (list "title-bar")))
+  :beamer-title-theme)
+
+(tm-define (style-category-precedes? x y)
+  (:require (and (== x :beamer-theme)
+                 (in? y (list :beamer-title-theme
+                              :theorem-decorations))))
+  #t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dynamic movements for fold tags and switches

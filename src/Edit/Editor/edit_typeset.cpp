@@ -60,21 +60,12 @@ edit_typeset_rep::get_data (new_data& data) {
 
 typesetter edit_typeset_rep::get_typesetter () { return ttt; }
 tree edit_typeset_rep::get_style () { return the_style; }
+void edit_typeset_rep::set_style (tree t) { the_style= copy (t); }
 hashmap<string,tree> edit_typeset_rep::get_init () { return init; }
 hashmap<string,tree> edit_typeset_rep::get_fin () { return fin; }
 hashmap<string,tree> edit_typeset_rep::get_att () { return buf->data->att; }
 void edit_typeset_rep::set_fin (hashmap<string,tree> H) { fin= H; }
 void edit_typeset_rep::set_att (hashmap<string,tree> H) { buf->data->att= H; }
-
-void
-edit_typeset_rep::set_style (tree t) {
-  bool changed= (the_style != t);
-  the_style= copy (t);
-  if (changed) {
-    require_save ();
-    notify_change (THE_ENVIRONMENT);
-  }
-}
 
 void
 edit_typeset_rep::set_init (hashmap<string,tree> H) {
@@ -530,6 +521,16 @@ edit_typeset_rep::texmacs_exec (tree t) {
 /******************************************************************************
 * Initialization
 ******************************************************************************/
+
+void
+edit_typeset_rep::change_style (tree t) {
+  bool changed= (the_style != t);
+  the_style= copy (t);
+  if (changed) {
+    require_save ();
+    notify_change (THE_ENVIRONMENT);
+  }
+}
 
 void
 edit_typeset_rep::init_style () {

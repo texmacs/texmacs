@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.0.7.20>
 
 <style|source>
 
@@ -22,22 +22,46 @@
 
   <\active*>
     <\src-comment>
+      Extra style parameters
+    </src-comment>
+  </active*>
+
+  <assign|frame-titles|<unequal|<value|ornament-color>|>>
+
+  <drd-props|frame-titles|parameter|boolean>
+
+  <\active*>
+    <\src-comment>
       Framed theorems
     </src-comment>
   </active*>
 
-  <assign|enunciation-sep| >
-
-  <assign|enunciation-name|<macro|which|<with|color|<value|bg-color>|font-series|bold|<arg|which>>>>
-
   <assign|unframed-render-enunciation|<value|render-enunciation>>
 
-  <assign|render-enunciation|<\macro|which|body>
+  <assign|framed-render-enunciation|<\macro|which|body>
     <\ornament>
-      <\surround||<right-flush>>
+      <\unframed-render-enunciation|<arg|which>>
         <arg|body>
-      </surround>
-    </ornament|<arg|which>>
+      </unframed-render-enunciation>
+    </ornament>
+  </macro>>
+
+  <assign|enunciation-title-name|<macro|which|<with|color|<value|bg-color>|strong-color|<value|bg-color>|<enunciation-name|<arg|which>>>>>
+
+  <assign|framed-render-enunciation*|<\macro|which|body>
+    <\with|enunciation-sep|>
+      <\ornament>
+        <\surround||<right-flush>>
+          <arg|body>
+        </surround>
+      </ornament|<enunciation-title-name|<arg|which>>>
+    </with>
+  </macro>>
+
+  <assign|render-enunciation|<\macro|which|body>
+    <\with|dummy|<ornament|>>
+      <compound|<if|<value|frame-titles>|framed-render-enunciation*|framed-render-enunciation>|<arg|which>|<arg|body>>
+    </with>
   </macro>>
 </body>
 

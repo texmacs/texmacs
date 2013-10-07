@@ -26,7 +26,9 @@
     </src-comment>
   </active*>
 
-  <assign|hang-length|0.15em>
+  <assign|hang-length|<if|<unequal|<value|ornament-color>|>|0.15em|0em>>
+
+  <drd-props|hang-length|parameter|length>
 
   <\active*>
     <\src-comment>

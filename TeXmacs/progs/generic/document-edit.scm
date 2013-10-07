@@ -45,7 +45,8 @@
 
 (define (normalize-style-list* l)
   (cond ((null? l) l)
-        ((list-find (cdr l) (cut style-overrides? <> (car l))) (cdr l))
+        ((list-find (cdr l) (cut style-overrides? <> (car l)))
+         (normalize-style-list* (cdr l)))
         ((list-find (cdr l) (cut style-precedes? <> (car l)))
          (normalize-style-list* (cons (cadr l) (cons (car l) (cddr l)))))
         (else (cons (car l) (normalize-style-list* (cdr l))))))
