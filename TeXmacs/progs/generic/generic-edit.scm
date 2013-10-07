@@ -552,6 +552,38 @@
     beg))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Standard environment parameters for primitives
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (standard-parameters l)
+  (:require (== l "action"))
+  (list "locus-color"))
+
+(tm-define (standard-parameters l)
+  (:require (== l "locus"))
+  (list "locus-color" "visited-color"))
+
+(tm-define (standard-parameters l)
+  (:require (== l "ornament"))
+  (list "ornament-shape" "ornament-border"
+	"ornament-hpadding" "ornament-vpadding"
+	"ornament-color" "ornament-extra-color"
+	"ornament-sunny-color" "ornament-shadow-color"))
+
+(tm-define (standard-parameters l)
+  (:require (in? l '("reference" "pageref" "label" "tag" "hlink")))
+  (list))
+
+(tm-define (search-parameters l)
+  (:require (in? (if (string? l) l (symbol->string l))
+                 '("reference" "pageref" "hlink")))
+  (standard-parameters "locus"))
+
+(tm-define (parameter-choice-list l)
+  (:require (== l "ornament-shape"))
+  (list "classic" "rounded"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting various kinds of content
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
