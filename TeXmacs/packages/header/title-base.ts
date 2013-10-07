@@ -258,23 +258,23 @@
 
   <assign|acm-ref|<value|identity>>
 
-  <assign|abstract-acm|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<compound|ACM-class-text><localize|:>
+  <assign|abstract-acm|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<ACM-class-text><localize|:>
   ><concat-tuple|<map|acm-ref|<quote-arg|args>>|, >>>>
 
   <assign|arxiv-ref|<\macro|cat-id>
     <style-with|src-compact|none|<hlink|<arg|cat-id>|<style-with|src-compact|none|<merge|http://arxiv.org/find/all/1/cat:+|<arg|cat-id>|/0/1/0/all/0/1>>>>
   </macro>>
 
-  <assign|abstract-arxiv|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<compound|arXiv-class-text><localize|:>
+  <assign|abstract-arxiv|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<arXiv-class-text><localize|:>
   ><concat-tuple|<map|arxiv-ref|<quote-arg|args>>|, >>>>
 
   <assign|pacs-ref|<value|identity>>
 
-  <assign|abstract-pacs|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<compound|PACS-class-text><localize|:>
+  <assign|abstract-pacs|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<PACS-class-text><localize|:>
   ><concat-tuple|<map|pacs-ref|<quote-arg|args>>|, >>>>
 
   <assign|msc-ref|<\macro|msc-id>
-    <style-with|src-compact|none|<hlink|<arg|msc-id>|<style-with|src-compact|none|<merge|http://www.ams.org/mathscinet/search/mscbrowse.html?sk=default&sk=|<arg|msc-id>|&submit=Search>>>>
+    <style-with|src-compact|none|<hlink|<arg|msc-id>|<style-with|src-compact|none|<merge|http://www.ams.org/mathscinet/search/mscbrowse.html?sk=|<arg|msc-id>|&submit=Search>>>>
   </macro>>
 
   <assign|abstract-msc|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<AMS-class-text><localize|:>

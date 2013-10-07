@@ -257,13 +257,16 @@
     ((check "Show hidden" "v" (tree-is? t :up 'inactive))
      (inactive-toggle t))))
 
+(tm-menu (focus-tag-edit-menu l)
+  (if (tree-label-extension? l)
+      (when (editable-macro? l)
+        ("Edit macro" (open-macro-editor l)))
+      (when (has-macro-source? l)
+        ("Edit source" (edit-macro-source l)))))
+
 (tm-menu (focus-preferences-menu t)
   (dynamic (focus-parameters-menu t))
-  (if (tree-label-extension? (tree-label t))
-      (when (editable-macro? (tree-label t))
-        ("Edit macro" (open-macro-editor (tree-label t))))
-      (when (has-macro-source? (tree-label t))
-        ("Edit source" (edit-macro-source (tree-label t))))))
+  (dynamic (focus-tag-edit-menu (tree-label t))))
 
 (tm-menu (focus-tag-menu t)
   (with l (focus-variants-of t)

@@ -438,6 +438,13 @@
   (:require (tree-in? t '(doc-note author-note)))
   #f)
 
+(tm-menu (focus-tag-edit-menu l)
+  (:require (and (in? l '(author-email author-homepage author-misc))
+		 (or (test-doc-title-clustering? "cluster-all")
+		     (test-doc-title-clustering? "cluster-by-affiliation"))))
+  (with l* (symbol-append l '-note)
+    (dynamic (focus-tag-edit-menu l*))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Focus menus for entering authors
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
