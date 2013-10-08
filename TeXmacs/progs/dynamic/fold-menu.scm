@@ -193,14 +193,14 @@
   (:require (in? "beamer" (get-style-list)))
   (=> "Beamer theme"
       (for (theme (beamer-themes))
-        ((check (eval theme) "v" (has-style-package? theme))
+        ((check (eval (upcase-first theme)) "v" (has-style-package? theme))
          (add-style-package theme)))))
 
 (tm-menu (focus-style-extra-icons t)
   (:require (in? "beamer" (get-style-list)))
-  (=> (balloon (eval (current-beamer-theme)) "Beamer theme")
+  (=> (balloon (eval (upcase-first (current-beamer-theme))) "Beamer theme")
       (for (theme (beamer-themes))
-        ((check (eval theme) "v" (has-style-package? theme))
+        ((check (eval (upcase-first theme)) "v" (has-style-package? theme))
          (add-style-package theme)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

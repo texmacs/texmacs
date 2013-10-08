@@ -628,6 +628,8 @@
   (group "Style")
   (let* ((st* (get-style-list))
          (st (if (null? st*) (list "no style") st*)))
+    ;;((eval (upcase-first (car st)))
+    ;;(open-style-selector))
     (-> (eval (upcase-first (car st)))
         (link style-menu))
     (dynamic (focus-style-extra-menu t))
@@ -660,6 +662,8 @@
   (minibar
     (let* ((st* (get-style-list))
            (st (if (null? st*) (list "no style") st*)))
+      ;;((balloon (eval (upcase-first (car st))) "Document style")
+      ;; (open-style-selector))
       (=> (balloon (eval (upcase-first (car st))) "Document style")
           (link style-menu))
       (dynamic (focus-style-extra-icons t))
@@ -688,3 +692,44 @@
   (dynamic (focus-document-icons t))  
   //   
   (dynamic (focus-document-extra-icons t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Style chooser widget
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget (select-style-among-widget l)
+  (resize ("300px" "300px" "300px") ("200px" "300px" "1000px")
+    (scrollable
+      (choice (init-style answer) l "generic"))))
+
+(tm-widget (select-common-style-widget)
+  (dynamic (select-style-among-widget
+            (list "article" "beamer" "book" "browser" "exam"
+                  "generic" "letter" "manual" "seminar" "source"))))
+
+(tm-widget (select-education-style-widget)
+  (dynamic (select-style-among-widget
+            (list "exam" "lycee-examen" "lycee-tp"))))
+
+(tm-widget (select-article-style-widget)
+  (dynamic (select-style-among-widget
+            (list "article" "tmarticle"))))
+
+(tm-widget (select-any-style-widget)
+  (dynamic (select-style-among-widget
+            (list "article" "tmarticle"))))
+
+(tm-widget (select-style-widget)
+  (tabs
+    (tab (text "Common")
+      (dynamic (select-common-style-widget)))
+    (tab (text "Education")
+      (dynamic (select-education-style-widget)))
+    (tab (text "Article")
+      (dynamic (select-article-style-widget)))
+    (tab (text "Any")
+      (dynamic (select-any-style-widget)))))
+
+(tm-define (open-style-selector)
+  (:interactive #t)
+  (top-window select-style-widget "Select document style"))
