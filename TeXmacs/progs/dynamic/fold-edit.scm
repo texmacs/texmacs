@@ -28,13 +28,17 @@
   :beamer-theme)
 
 (tm-define (style-category p)
-  (:require (in? p (list "title-bar")))
+  (:require (in? p (list "title-bar" "framed-title")))
   :beamer-title-theme)
 
 (tm-define (style-category-precedes? x y)
   (:require (and (== x :beamer-theme)
                  (in? y (list :beamer-title-theme
                               :theorem-decorations))))
+  #t)
+
+(tm-define (style-includes? x y)
+  (:require (and (== x "beamer") (== y "framed-title")))
   #t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

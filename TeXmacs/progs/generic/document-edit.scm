@@ -37,6 +37,8 @@
 (tm-define (style-category-overrides? p q) (== p q))
 (tm-define (style-category-precedes? p q) #f)
 
+(tm-define (style-includes? p q) #f)
+
 (tm-define (style-overrides? p q)
   (style-category-overrides? (style-category p) (style-category q)))
 
@@ -51,8 +53,18 @@
          (normalize-style-list* (cons (cadr l) (cons (car l) (cddr l)))))
         (else (cons (car l) (normalize-style-list* (cdr l))))))
 
+(define (normalize-style-list** l before)
+  (cond ((null? l) l)
+        ((list-find before (cut style-includes? <> (car l)))
+         (normalize-style-list** (cdr l) (cons (car l) before)))
+        (else (cons (car l) (normalize-style-list** (cdr l)
+                                                    (cons (car l) before))))))
+
 (define (normalize-style-list l)
-  (if (null? l) l (cons (car l) (normalize-style-list* (cdr l)))))
+  (if (null? l) l
+      (cons (car l)
+            (normalize-style-list** (normalize-style-list* (cdr l))
+                                    (list (car l))))))
 
 (tm-define (set-style-list l)
   (set-style-tree (tm->tree `(tuple ,@(normalize-style-list l)))))
@@ -68,7 +80,9 @@
     (set-style-list l)))
 
 (tm-define (has-style-package? pack)
-  (in? pack (get-style-list)))
+  (or (in? pack (get-style-list))
+      (and (list-find (get-style-list) (cut style-includes? <> pack))
+           (not (list-find (get-style-list) (cut style-overrides? <> pack))))))
 
 (tm-define (toggle-style-package pack)
   (:argument pack "Toggle package")

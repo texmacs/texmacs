@@ -561,7 +561,7 @@ tmg_set_style_tree (tmscm arg1) {
   tree in1= tmscm_to_tree (arg1);
 
   // TMSCM_DEFER_INTS;
-  get_current_editor()->set_style (in1);
+  get_current_editor()->change_style (in1);
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;

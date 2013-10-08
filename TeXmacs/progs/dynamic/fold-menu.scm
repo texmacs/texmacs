@@ -227,6 +227,11 @@
 ;; Slide titles
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-menu (focus-style-options-menu t)
+  (:require (tree-is? t 'tit))
+  ("Framed title" (toggle-style-package "framed-title"))
+  ("Title bar" (toggle-style-package "title-bar")))
+
 (tm-define (slide-propose-title? t)
   (and-with u (tree-ref t :down :down)
     (and (tree-is? u 'document)

@@ -275,7 +275,11 @@
         ("Edit source" (edit-macro-source l)))))
 
 (tm-menu (focus-preferences-menu t)
-  (dynamic (focus-style-options-menu t))
+  (with options (focus-style-options-menu t)
+    (if (nnull? options)
+        (group "Style options")
+        (dynamic options)
+        ---))
   (dynamic (focus-parameters-menu t))
   (dynamic (focus-tag-edit-menu (tree-label t))))
 
