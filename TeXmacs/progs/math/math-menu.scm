@@ -1142,6 +1142,10 @@
 ;; Math focus menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-menu (focus-style-options-menu t)
+  (:require (tree-in? t '(math equation equation* eqnarray eqnarray*)))
+  ("Highlight errors" (toggle-style-package "math-check")))
+
 (tm-define (focus-tag-name l)
   (:require (== l 'math))
   "Formula")
@@ -1150,9 +1154,17 @@
   (:require (in? l '(equation equation*)))
   "Equation")
 
+(tm-define (focus-tag-name l)
+  (:require (in? l '(eqnarray eqnarray*)))
+  "Equations")
+
 (tm-define (focus-variants-of t)
   (:require (tree-in? t '(math equation equation*)))
   '(formula equation))
+
+(tm-define (focus-variants-of t)
+  (:require (tree-in? t '(eqnarray eqnarray*)))
+  '(eqnarray*))
 
 (tm-menu (focus-variant-menu t)
   (:require (tree-in? t '(math equation equation*)))
@@ -1255,6 +1267,14 @@
 ;; Around focus menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (focus-has-preferences? t)
+  (:require (tree-in? t '(around around*)))
+  #t)
+
+(tm-menu (focus-style-options-menu t)
+  (:require (tree-in? t '(around around*)))
+  ("Color according to nesting level" (toggle-style-package "math-brackets")))
+
 (tm-define (focus-tag-name l)
   (:require (in? l '(around around*)))
   "Around")
@@ -1274,15 +1294,3 @@
   ((check (balloon (icon "tm_large_around.xpm") "Large brackets") "v"
           (alternate-second? (focus-tree)))
    (alternate-toggle (focus-tree))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Eqnarray focus menus
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (focus-tag-name l)
-  (:require (in? l '(eqnarray eqnarray*)))
-  "Equations")
-
-(tm-define (focus-variants-of t)
-  (:require (tree-in? t '(eqnarray eqnarray*)))
-  '(eqnarray*))
