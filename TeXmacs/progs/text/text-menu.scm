@@ -565,6 +565,14 @@
 	(link focus-section-menu))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Focus menu for lists
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (focus-style-options-menu t)
+  (:require (list-context? t))
+  ("Compact lists" (toggle-style-package "compact-list")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Focus menu for theorems and proofs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -632,3 +640,8 @@
   ((check (balloon (icon "tm_specified.xpm") "Toggle specification") "v"
 	  (algorithm-specified? (focus-tree)))
    (algorithm-toggle-specification t)))
+
+(tm-menu (focus-style-options-menu t)
+  (:require (algorithm-context? t))
+  ("Centered programs" (toggle-style-package "centered-program"))
+  ("Framed programs" (toggle-style-package "framed-program")))

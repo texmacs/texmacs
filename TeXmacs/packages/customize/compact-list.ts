@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.10>
+<TeXmacs|1.0.7.20>
 
 <style|source>
 
@@ -21,7 +21,7 @@
     </src-license>
   </src-title>>
 
-  <assign|item-hsep|<macro|1.5fn>>
+  <assign|item-hsep|<macro|1tab>>
 
   <assign|item-vsep|<macro|0.25fn>>
 

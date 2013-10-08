@@ -76,6 +76,10 @@
   (with lan (get-env "prog-language")
     (or (session-name lan) "Scheme")))
 
+(tm-menu (focus-style-options-menu t)
+  (:require (field-context? t))
+  ("Framed input fields" (toggle-style-package "varsession")))
+
 (tm-menu (focus-tag-menu t)
   (:require (field-context? t))
   (inert ((eval (focus-session-language)) (noop) (noop)))
