@@ -69,8 +69,14 @@
 (tm-define (set-style-list l)
   (set-style-tree (tm->tree `(tuple ,@(normalize-style-list l)))))
 
+(tm-define (has-style-package? pack)
+  (or (in? pack (get-style-list))
+      (and (list-find (get-style-list) (cut style-includes? <> pack))
+           (not (list-find (get-style-list) (cut style-overrides? <> pack))))))
+
 (tm-define (add-style-package pack)
   (:argument pack "Use package")
+  (:check-mark "v" has-style-package?)
   (with l (list-remove-duplicates (append (get-style-list) (list pack)))
     (set-style-list l)))
 
@@ -78,11 +84,6 @@
   (:argument pack "Use package")
   (with l (list-difference (get-style-list) (list pack))
     (set-style-list l)))
-
-(tm-define (has-style-package? pack)
-  (or (in? pack (get-style-list))
-      (and (list-find (get-style-list) (cut style-includes? <> pack))
-           (not (list-find (get-style-list) (cut style-overrides? <> pack))))))
 
 (tm-define (toggle-style-package pack)
   (:argument pack "Toggle package")

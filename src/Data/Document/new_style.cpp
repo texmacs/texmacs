@@ -258,6 +258,54 @@ get_document_drd (tree doc) {
 * The style and package menus
 ******************************************************************************/
 
+static bool
+ignore_dir (string dir) {
+  return
+    (dir == "Beamer") ||
+    (dir == "Compute") ||
+    (dir == "Customize") ||
+    (dir == "Documentation") ||
+    (dir == "Environment") ||
+    (dir == "Gui") ||
+    (dir == "Header") ||
+    (dir == "Miscellaneous") ||
+    (dir == "Obsolete") ||
+    (dir == "Revtex") ||
+    (dir == "Section") ||
+    (dir == "Session") ||
+    (dir == "Standard") ||
+    (dir == "Test");
+}
+
+static bool
+hidden_package (url u, string name, bool hidden) {
+  if (is_or (u))
+    return hidden_package (u[1], name, hidden) ||
+           hidden_package (u[2], name, hidden);
+  if (is_concat (u)) {
+    string dir= upcase_first (as_string (u[1]));
+    if (dir == "CVS" || dir == ".svn") return false;
+    return hidden_package (u[2], name, hidden || ignore_dir (dir));
+  }
+  if (hidden && is_atomic (u)) {
+    string l= as_string (u);
+    if (!ends (l, ".ts")) return false;
+    l= l(0, N(l)-3);
+    return name == l;
+  }
+  return false;
+}
+
+bool
+hidden_package (string name) {
+  static hashmap<string,bool> hidden (false);
+  if (!hidden->contains (name)) {
+    url pck_u= descendance ("$TEXMACS_PACKAGE_ROOT");
+    hidden (name)= hidden_package (pck_u, name, false);
+  }
+  return hidden[name];
+}
+
 static string
 compute_style_menu (url u, int kind) {
   if (is_or (u)) {
@@ -273,22 +321,7 @@ compute_style_menu (url u, int kind) {
   if (is_concat (u)) {
     string dir= upcase_first (as_string (u[1]));
     string sub= compute_style_menu (u[2], kind);
-    if ((dir == "Beamer") ||
-        (dir == "Compute") ||
-        (dir == "Customize") ||
-        (dir == "Documentation") ||
-        (dir == "Environment") ||
-        (dir == "Gui") ||
-        (dir == "Header") ||
-        (dir == "Miscellaneous") ||
-        (dir == "Obsolete") ||
-        (dir == "Revtex") ||
-        (dir == "Section") ||
-        (dir == "Session") ||
-        (dir == "Standard") ||
-        (dir == "Test") ||
-	(dir == "CVS") ||
-        (dir == ".svn")) return "";
+    if (ignore_dir (dir) || dir == "CVS" || dir == ".svn") return "";
     return "(-> \"" * dir * "\" " * sub * ")";
   }
   if (is_atomic (u)) {

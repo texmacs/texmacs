@@ -5990,6 +5990,19 @@ tmg_get_style_menu () {
 }
 
 tmscm
+tmg_hidden_packageP (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "hidden-package?");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= hidden_package (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_get_add_package_menu () {
   // TMSCM_DEFER_INTS;
   object out= get_add_package_menu ();
@@ -7541,6 +7554,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tree-bounding-rectangle",  tmg_tree_bounding_rectangle, 1, 0, 0);
   tmscm_install_procedure ("show-balloon",  tmg_show_balloon, 3, 0, 0);
   tmscm_install_procedure ("get-style-menu",  tmg_get_style_menu, 0, 0, 0);
+  tmscm_install_procedure ("hidden-package?",  tmg_hidden_packageP, 1, 0, 0);
   tmscm_install_procedure ("get-add-package-menu",  tmg_get_add_package_menu, 0, 0, 0);
   tmscm_install_procedure ("get-remove-package-menu",  tmg_get_remove_package_menu, 0, 0, 0);
   tmscm_install_procedure ("refresh-now",  tmg_refresh_now, 1, 0, 0);

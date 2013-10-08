@@ -503,6 +503,7 @@
   (tree-bounding-rectangle get_bounding_rectangle (array_int tree))
   (show-balloon show_help_balloon (void widget int int))
   (get-style-menu get_style_menu (object))
+  (hidden-package? hidden_package (bool string))
   (get-add-package-menu get_add_package_menu (object))
   (get-remove-package-menu get_remove_package_menu (object))
   (refresh-now windows_refresh (void string))

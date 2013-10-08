@@ -45,7 +45,8 @@
   #t)
 
 (tm-define (style-includes? x y)
-  (:require (and (== x "beamer") (== y "framed-title")))
+  (:require (and (== x "beamer")
+                 (in? y (list "framed-title" "ridged-paper" "varsession"))))
   #t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -55,6 +55,7 @@
 
 (provide-public (identity x) x)
 (provide-public (ignore . l) (noop))
+(provide-public (negate pred?) (lambda x (not (apply pred? x))))
 
 (define-public (keyword->string x)
   (symbol->string (keyword->symbol x)))

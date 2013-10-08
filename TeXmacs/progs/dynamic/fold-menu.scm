@@ -193,13 +193,15 @@
   (:require (in? "beamer" (get-style-list)))
   (=> "Beamer theme"
       (for (theme (beamer-themes))
-        ((eval theme) (add-style-package theme)))))
+        ((check (eval theme) "v" (has-style-package? theme))
+         (add-style-package theme)))))
 
 (tm-menu (focus-style-extra-icons t)
   (:require (in? "beamer" (get-style-list)))
   (=> (balloon (eval (current-beamer-theme)) "Beamer theme")
       (for (theme (beamer-themes))
-        ((eval theme) (add-style-package theme)))))
+        ((check (eval theme) "v" (has-style-package? theme))
+         (add-style-package theme)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Propose insertion of 'screens' tag in beamer style
