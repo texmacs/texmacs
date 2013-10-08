@@ -264,10 +264,10 @@ ignore_dir (string dir) {
     (dir == "Beamer") ||
     (dir == "Compute") ||
     (dir == "Customize") ||
-    (dir == "Documentation") ||
     (dir == "Environment") ||
     (dir == "Gui") ||
     (dir == "Header") ||
+    (dir == "Help") ||
     (dir == "Miscellaneous") ||
     (dir == "Obsolete") ||
     (dir == "Revtex") ||
