@@ -622,6 +622,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-menu (focus-document-extra-menu t))
+(tm-menu (focus-style-extra-menu t))
 
 (tm-menu (focus-style-menu t)
   (group "Style")
@@ -629,6 +630,7 @@
          (st (if (null? st*) (list "no style") st*)))
     (-> (eval (upcase-first (car st)))
         (link style-menu))
+    (dynamic (focus-style-extra-menu))
     (for (pack (cdr st))
       (-> (eval (upcase-first pack))
           ("Remove package" (remove-style-package pack)))))
@@ -652,21 +654,23 @@
   ("Help" (focus-help)))
 
 (tm-menu (focus-document-extra-icons t))
+(tm-menu (focus-style-extra-icons t))
 
 (tm-menu (focus-style-icons t)
   (minibar
-   (let* ((st* (get-style-list))
-          (st (if (null? st*) (list "no style") st*)))
-     (=> (balloon (eval (upcase-first (car st))) "Document style")
-	 (link style-menu))
-     (for (pack (cdr st))
-       (=> (eval pack)
-	   ("Remove package" (remove-style-package pack)))))
-   (=> (balloon (icon "tm_add.xpm") "Add style package")
-       (link add-package-menu))
-   (assuming (tree-is-buffer? t)
-     ((balloon (icon "tm_focus_help.xpm") "Describe tag")
-      (focus-help)))))
+    (let* ((st* (get-style-list))
+           (st (if (null? st*) (list "no style") st*)))
+      (=> (balloon (eval (upcase-first (car st))) "Document style")
+          (link style-menu))
+      (dynamic (focus-style-extra-icons t))
+      (for (pack (cdr st))
+        (=> (eval pack)
+            ("Remove package" (remove-style-package pack)))))
+    (=> (balloon (icon "tm_add.xpm") "Add style package")
+        (link add-package-menu))
+    (assuming (tree-is-buffer? t)
+      ((balloon (icon "tm_focus_help.xpm") "Describe tag")
+       (focus-help)))))
 
 (tm-menu (focus-document-icons t)
   (minibar

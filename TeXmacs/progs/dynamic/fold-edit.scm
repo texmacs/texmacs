@@ -23,8 +23,15 @@
 ;; Style package rules for beamer
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (beamer-themes)
+  (list "bluish" "ice" "metal" "reddish" "ridged-paper"))
+
+(tm-define (current-beamer-theme)
+  (or (list-find (get-style-list) (cut in? <> (beamer-themes)))
+      "ridged-paper"))
+
 (tm-define (style-category p)
-  (:require (in? p (list "bluish" "ice" "metal" "reddish" "ridged-paper")))
+  (:require (in? p (beamer-themes)))
   :beamer-theme)
 
 (tm-define (style-category p)

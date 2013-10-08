@@ -273,8 +273,22 @@ compute_style_menu (url u, int kind) {
   if (is_concat (u)) {
     string dir= upcase_first (as_string (u[1]));
     string sub= compute_style_menu (u[2], kind);
-    if ((dir == "Test") || (dir == "Obsolete") ||
-	(dir == "CVS") || (dir == ".svn")) return "";
+    if ((dir == "Beamer") ||
+        (dir == "Compute") ||
+        (dir == "Customize") ||
+        (dir == "Documentation") ||
+        (dir == "Environment") ||
+        (dir == "Gui") ||
+        (dir == "Header") ||
+        (dir == "Miscellaneous") ||
+        (dir == "Obsolete") ||
+        (dir == "Revtex") ||
+        (dir == "Section") ||
+        (dir == "Session") ||
+        (dir == "Standard") ||
+        (dir == "Test") ||
+	(dir == "CVS") ||
+        (dir == ".svn")) return "";
     return "(-> \"" * dir * "\" " * sub * ")";
   }
   if (is_atomic (u)) {
