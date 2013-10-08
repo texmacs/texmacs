@@ -1,6 +1,6 @@
 <TeXmacs|1.0.7.20>
 
-<style|source>
+<style|<tuple|source|std>>
 
 <\body>
   <active*|<\src-title>
@@ -89,6 +89,10 @@
   </active*>
 
   <assign|img|<macro|body|<with|ornament-color|white|<ornament|<arg|body>>>>>
+
+  <assign|TeXmacs*|<macro|<active*|<anim-repeat|<anim-compose|<anim-constant|<with|color|brown|T<space|-0.2spc><with|color|brown|<rsub|<with|math-level|0|font-shape|small-caps|<smash|E>>>><space|-0.1spc>X<space|-0.2spc>><with|color|dark
+  green|<rsub|<with|math-level|0|font-shape|small-caps|ma<space|-0.2spc>cs>>>|1sec>|<anim-constant|<with|color|dark
+  green|T<space|-0.2spc><with|color|brown|<rsub|<with|math-level|0|font-shape|small-caps|<smash|E>>>><space|-0.1spc>X<space|-0.2spc>><with|color|brown|<rsub|<with|math-level|0|font-shape|small-caps|ma<space|-0.2spc>cs>>>|1sec>>>>>>
 
   \;
 </body>
