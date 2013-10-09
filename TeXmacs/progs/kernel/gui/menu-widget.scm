@@ -261,15 +261,19 @@
 ;; Menu entries
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (search-balloon-help action)
+  (and-with source (promise-source action)
+    (and (pair? source)
+         (or (and-with prop (property (car source) :balloon)
+               (with txt (apply (car prop) (cdr source))
+                 (and (string? txt) txt)))
+             #f))))
+
 (define (add-menu-entry-balloon but style action)
-  (with source (promise-source action)
-    (if (not (and source (pair? source))) but
-        (with prop (property (car source) :balloon)
-          (if (not prop) but
-              (with txt (apply (car prop) (cdr source))
-                (if (not (string? txt)) but
-                    (with bal (widget-text txt style (color "black") #t)
-                      (widget-balloon but bal)))))))))
+  (with txt (search-balloon-help action)
+    (if (not txt) but
+        (with bal (widget-text txt style (color "black") #t)
+          (widget-balloon but bal)))))
 
 (define (make-menu-entry-button style bar? bal? check label short action)
   (let* ((command (make-menu-command (if (active? style) (apply action '()))))
