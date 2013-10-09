@@ -14,7 +14,7 @@
 (texmacs-module (generic document-style))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Relations between style packages
+;; Relations between style files and packages
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (style-category p) p)
@@ -28,6 +28,16 @@
 
 (tm-define (style-precedes? p q)
   (style-category-precedes? (style-category p) (style-category q)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Integrated documentation of style files and packages
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-table style-synopsis)
+
+(tm-define (style-get-documentation style)
+  (with doc (ahash-ref style-synopsis style)
+    (and doc (nnull? doc) (car doc))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Getting and setting the list of style packages
@@ -83,7 +93,7 @@
   (:argument style "Main document style")
   (:default  style "generic")
   (:check-mark "v" has-main-style?)
-  (:balloon "Hi there")
+  (:balloon style-get-documentation)
   (let* ((old (get-style-list))
          (new (if (null? old) (list style) (cons style (cdr old)))))
     (set-style-list new)))
@@ -96,16 +106,19 @@
 (tm-define (add-style-package pack)
   (:argument pack "Add package")
   (:check-mark "v" has-style-package?)
+  (:balloon style-get-documentation)
   (set-style-list (append (get-style-list) (list pack))))
 
 (tm-define (remove-style-package pack)
   (:argument pack "Remove package")
   (:proposals pack (with l (get-style-list) (if (null? l) l (cdr l))))
+  (:balloon style-get-documentation)
   (set-style-list (list-difference (get-style-list) (list pack))))
 
 (tm-define (toggle-style-package pack)
   (:argument pack "Toggle package")
   (:check-mark "v" has-style-package?)
+  (:balloon style-get-documentation)
   (if (has-style-package? pack)
       (remove-style-package pack)
       (add-style-package pack)))
@@ -132,9 +145,9 @@
   ("ifac"           "IFAC article style")
   ("jsc"            "Style for Journal of Symbolic Computation")
   ("ieeeconf"       "IEEE conference style")
-  ("ieeetrans"      "Style for IEEE transactions")
+  ("ieeetran"       "Style for transactions by the IEEE")
   ("llncs"          "Style for Springer Lecture Notes in Computer Science")
-  ("svjour"         "Springer journals article style")
+  ("svjour"         "Article style for Springer journals")
   ("tmarticle"      "TeXmacs alternative article style")
 
   ("svmono"         "Style for Springer monographs")
@@ -169,5 +182,5 @@
   ("vdh"                "Example macro package by Joris van der Hoeven")
 
   ("graphical-macros"   "Collection of extra primitives for graphical mode")
-  ("structured-list"    "Considering item text as part of item tags")
-  ("structured-section" "Considering section titles as part of sectional tags"))
+  ("structured-list"    "Making item bodies part of item tags")
+  ("structured-section" "Making section bodies part of section tags"))

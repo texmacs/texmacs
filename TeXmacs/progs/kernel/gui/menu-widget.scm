@@ -261,13 +261,26 @@
 ;; Menu entries
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (make-menu-entry-button style bar? check label short command)
-  (let* ((l (make-menu-label label style))
+(define (add-menu-entry-balloon but style action)
+  (with source (promise-source action)
+    (if (not (and source (pair? source))) but
+        (with prop (property (car source) :balloon)
+          (if (not prop) but
+              (with txt (apply (car prop) (cdr source))
+                (if (not (string? txt)) but
+                    (with bal (widget-text txt style (color "black") #t)
+                      (widget-balloon but bal)))))))))
+
+(define (make-menu-entry-button style bar? check label short action)
+  (let* ((command (make-menu-command (if (active? style) (apply action '()))))
+         (l (make-menu-label label style))
          (pressed? (and bar? (!= check "")))
          (new-style (logior style (if pressed? widget-style-pressed 0))))
-    (if bar?
-        (widget-menu-button l command "" "" new-style)
-        (widget-menu-button l command check short style))))
+    (add-menu-entry-balloon
+     (if bar?
+         (widget-menu-button l command "" "" new-style)
+         (widget-menu-button l command check short style))
+     style action)))
 
 (define-public (promise-source action)
   "Helper routines for menu-widget and kbd-define"
@@ -332,7 +345,7 @@
      (make-menu-entry-check opt-check action)
      (make-menu-entry-dots label action)
      (make-menu-entry-shortcut label action opt-key)
-     (make-menu-command (if (active? style) (apply action '()))))))
+     action)))
 
 (define (make-menu-entry p style bar?)
   "Make @:menu-wide-item menu item."
