@@ -223,7 +223,7 @@
   (system-wait (string-append "Generating " type) "(can be long)")
   (with mmx? (style-has? "mmxdoc-style")
     (tmdoc-expand-help (current-buffer) type)
-    (if mmx? (init-style "mmxmanual"))
+    (if mmx? (set-main-style "mmxmanual"))
     (user-delayed
       (lambda ()
         (delayed-update "(pass 1/3)"

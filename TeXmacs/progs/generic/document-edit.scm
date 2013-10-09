@@ -17,15 +17,15 @@
         (generic generic-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Document style and packages
+;; Projects
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-property (init-style style)
-  (:argument style "Document style")
-  (:default  style "generic"))
 
 (tm-property (project-attach master)
   (:argument master "Master file"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Document style and packages
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (get-style-list)
   (with t (tree->stree (get-style-tree))
@@ -60,14 +60,34 @@
         (else (cons (car l) (normalize-style-list** (cdr l)
                                                     (cons (car l) before))))))
 
-(define (normalize-style-list l)
-  (if (null? l) l
-      (cons (car l)
-            (normalize-style-list** (normalize-style-list* (cdr l))
-                                    (list (car l))))))
+(define (normalize-style-list l2)
+  (with l (list-remove-duplicates l2)
+    (if (null? l) l
+        (cons (car l)
+              (normalize-style-list** (normalize-style-list* (cdr l))
+                                      (list (car l)))))))
 
 (tm-define (set-style-list l)
   (set-style-tree (tm->tree `(tuple ,@(normalize-style-list l)))))
+
+(tm-define (has-no-style?)
+  (null? (get-style-list)))
+
+(tm-define (set-no-style)
+  (:check-mark "v" has-no-style?)
+  (set-style-list '()))
+
+(tm-define (has-main-style? style)
+  (with l (get-style-list)
+    (and (nnull? l) (== (car l) style))))
+
+(tm-define (set-main-style style)
+  (:argument style "Main document style")
+  (:default  style "generic")
+  (:check-mark "v" has-main-style?)
+  (let* ((old (get-style-list))
+         (new (if (null? old) (list style) (cons style (cdr old)))))
+    (set-style-list new)))
 
 (tm-define (has-style-package? pack)
   (or (in? pack (get-style-list))
@@ -75,15 +95,14 @@
            (not (list-find (get-style-list) (cut style-overrides? <> pack))))))
 
 (tm-define (add-style-package pack)
-  (:argument pack "Use package")
+  (:argument pack "Add package")
   (:check-mark "v" has-style-package?)
-  (with l (list-remove-duplicates (append (get-style-list) (list pack)))
-    (set-style-list l)))
+  (set-style-list (append (get-style-list) (list pack))))
 
 (tm-define (remove-style-package pack)
-  (:argument pack "Use package")
-  (with l (list-difference (get-style-list) (list pack))
-    (set-style-list l)))
+  (:argument pack "Remove package")
+  (:proposals pack (with l (get-style-list) (if (null? l) l (cdr l))))
+  (set-style-list (list-difference (get-style-list) (list pack))))
 
 (tm-define (toggle-style-package pack)
   (:argument pack "Toggle package")

@@ -6021,6 +6021,15 @@ tmg_get_remove_package_menu () {
 }
 
 tmscm
+tmg_get_toggle_package_menu () {
+  // TMSCM_DEFER_INTS;
+  object out= get_toggle_package_menu ();
+  // TMSCM_ALLOW_INTS;
+
+  return object_to_tmscm (out);
+}
+
+tmscm
 tmg_refresh_now (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "refresh-now");
 
@@ -7557,6 +7566,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("hidden-package?",  tmg_hidden_packageP, 1, 0, 0);
   tmscm_install_procedure ("get-add-package-menu",  tmg_get_add_package_menu, 0, 0, 0);
   tmscm_install_procedure ("get-remove-package-menu",  tmg_get_remove_package_menu, 0, 0, 0);
+  tmscm_install_procedure ("get-toggle-package-menu",  tmg_get_toggle_package_menu, 0, 0, 0);
   tmscm_install_procedure ("refresh-now",  tmg_refresh_now, 1, 0, 0);
   tmscm_install_procedure ("buffer-list",  tmg_buffer_list, 0, 0, 0);
   tmscm_install_procedure ("current-buffer-url",  tmg_current_buffer_url, 0, 0, 0);

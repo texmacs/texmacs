@@ -25,6 +25,7 @@
 (tm-define (style-menu) (get-style-menu))
 (tm-define (add-package-menu) (get-add-package-menu))
 (tm-define (remove-package-menu) (get-remove-package-menu))
+(tm-define (toggle-package-menu) (get-toggle-package-menu))
 (menu-bind bookmarks-menu)
 (menu-bind test-menu)
 (menu-bind help-icons (if (in-session?) (link session-help-icons)))

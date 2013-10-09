@@ -30,5 +30,6 @@ object get_style_menu ();
 bool   hidden_package (string name);
 object get_add_package_menu ();
 object get_remove_package_menu ();
+object get_toggle_package_menu ();
 
 #endif // NEW_STYLE_H

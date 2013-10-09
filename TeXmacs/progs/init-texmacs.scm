@@ -11,6 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;(debug-enable 'backtrace 'debug)
+
 (define boot-start (texmacs-time))
 (define remote-list (list))
 

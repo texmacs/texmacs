@@ -328,9 +328,10 @@ compute_style_menu (url u, int kind) {
     string l  = as_string (u);
     if (!ends (l, ".ts")) return "";
     l= l(0, N(l)-3);
-    string cmd ("init-style");
+    string cmd ("set-main-style");
     if (kind == 1) cmd= "add-style-package";
     if (kind == 2) cmd= "remove-style-package";
+    if (kind == 3) cmd= "toggle-style-package";
     return "((verbatim \"" * l * "\") (" * cmd * " \"" * l * "\"))";
   }
   return "";
@@ -354,5 +355,12 @@ object
 get_remove_package_menu () {
   url pck_u= descendance ("$TEXMACS_PACKAGE_ROOT");
   string pck= compute_style_menu (pck_u, 2);
+  return eval ("(menu-dynamic " * pck * ")");
+}
+
+object
+get_toggle_package_menu () {
+  url pck_u= descendance ("$TEXMACS_PACKAGE_ROOT");
+  string pck= compute_style_menu (pck_u, 3);
   return eval ("(menu-dynamic " * pck * ")");
 }

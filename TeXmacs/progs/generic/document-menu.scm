@@ -42,11 +42,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind document-style-menu
-  ("No style" (init-style "none"))
+  ("No style" (set-no-style))
   ---
   (link style-menu)
   ---
-  ("Other style" (interactive init-style)))
+  ("Other style" (interactive set-main-style))
+  ---
+  (group "Customizations")
+  (with l (get-style-list)
+    (for (pack (if (null? l) l (cdr l)))
+      (-> (eval (upcase-first pack))
+          ("Remove package" (remove-style-package pack)))))
+  (-> "Add package"
+      (link toggle-package-menu)
+      ---
+      ("Add other package" (interactive add-style-package))))
 
 (menu-bind document-view-menu
   ("Edit source tree" (toggle-preamble))
@@ -310,14 +320,14 @@
 (menu-bind document-menu
   (-> "Style" (link document-style-menu))
   (if (detailed-menus?)
-      (-> "Add package"
-	  (link add-package-menu)
-	  ---
-	  ("Other" (interactive add-style-package)))
-      (-> "Remove package"
-	  (link remove-package-menu)
-	  ---
-	  ("Other" (interactive remove-style-package)))
+      ;;(-> "Add package"
+      ;;(link add-package-menu)
+      ;;---
+      ;;("Other" (interactive add-style-package)))
+      ;;(-> "Remove package"
+      ;;(link remove-package-menu)
+      ;;---
+      ;;("Other" (interactive remove-style-package)))
       (if (!= (get-init-tree "sectional-short-style") (tree 'macro "false"))
 	  (-> "Part" (link document-part-menu)))
       (-> "View" (link document-view-menu)))
@@ -631,13 +641,17 @@
     ;;((eval (upcase-first (car st)))
     ;;(open-style-selector))
     (-> (eval (upcase-first (car st)))
-        (link style-menu))
+        (link style-menu)
+        ---
+        ("Other style" (interactive set-main-style)))
     (dynamic (focus-style-extra-menu t))
     (for (pack (list-filter (cdr st) (negate hidden-package?)))
       (-> (eval (upcase-first pack))
           ("Remove package" (remove-style-package pack)))))
   (-> "Add style package"
-      (link add-package-menu)))
+      (link add-package-menu)
+      ---
+      ("Other package" (interactive add-style-package))))
 
 (tm-menu (focus-document-menu t)
   (group "Document")
@@ -665,13 +679,17 @@
       ;;((balloon (eval (upcase-first (car st))) "Document style")
       ;; (open-style-selector))
       (=> (balloon (eval (upcase-first (car st))) "Document style")
-          (link style-menu))
+          (link style-menu)
+          ---
+          ("Other style" (interactive set-main-style)))
       (dynamic (focus-style-extra-icons t))
       (for (pack (list-filter (cdr st) (negate hidden-package?)))
         (=> (eval pack)
             ("Remove package" (remove-style-package pack)))))
     (=> (balloon (icon "tm_add.xpm") "Add style package")
-        (link add-package-menu))
+        (link add-package-menu)
+        ---
+        ("Other package" (interactive add-style-package)))
     (assuming (tree-is-buffer? t)
       ((balloon (icon "tm_focus_help.xpm") "Describe tag")
        (focus-help)))))
@@ -700,7 +718,7 @@
 (tm-widget (select-style-among-widget l)
   (resize ("300px" "300px" "300px") ("200px" "300px" "1000px")
     (scrollable
-      (choice (init-style answer) l "generic"))))
+      (choice (set-main-style answer) l "generic"))))
 
 (tm-widget (select-common-style-widget)
   (dynamic (select-style-among-widget

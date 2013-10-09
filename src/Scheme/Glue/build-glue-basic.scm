@@ -506,6 +506,7 @@
   (hidden-package? hidden_package (bool string))
   (get-add-package-menu get_add_package_menu (object))
   (get-remove-package-menu get_remove_package_menu (object))
+  (get-toggle-package-menu get_toggle_package_menu (object))
   (refresh-now windows_refresh (void string))
 
   ;; buffers
