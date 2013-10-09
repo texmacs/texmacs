@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.0.7.20>
 
 <style|tmdoc>
 
@@ -23,17 +23,6 @@
     <item*|<markup|descriptive-table>>For descriptive tables; such tables can
     be used to document lists of keyboard shortcuts, different types of
     markup, <abbr|etc.>
-
-    <item*|<markup|cursor>>This macro can be used to indicate a cursor
-    position, as in <math|a<rsup|2>+b<rsup|2<cursor>>=c<rsup|2>>.
-
-    <item*|<markup|small-focus>, <markup|small-envbox>>This macro can be used
-    for indicating the visual aids around the current focus and the further
-    outer context (<abbr|e.g.> <math|<small-envbox|a+<frac|b|<small-focus|c>>>>),
-    in the case of inline elements.
-
-    <item*|<markup|big-focus>, <markup|big-envbox>>Block versions of
-    <markup|small-focus> and <markup|small-envbox>.
   </description>
 
   <tmdoc-copyright|1998--2011|Joris van der Hoeven>

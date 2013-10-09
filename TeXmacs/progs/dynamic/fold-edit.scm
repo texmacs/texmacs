@@ -27,8 +27,9 @@
   (list "bluish" "ice" "metal" "reddish" "ridged-paper"))
 
 (tm-define (current-beamer-theme)
-  (or (list-find (get-style-list) (cut in? <> (beamer-themes)))
-      "ridged-paper"))
+  (with l (get-style-list)
+    (or (list-find l (cut in? <> (beamer-themes)))
+        (if (!= (car l) "old-beamer") "bluish" "ridged-paper"))))
 
 (tm-define (style-category p)
   (:require (in? p (beamer-themes)))
@@ -46,6 +47,11 @@
 
 (tm-define (style-includes? x y)
   (:require (and (== x "beamer")
+                 (in? y (list "title-bar" "bluish" "varsession"))))
+  #t)
+
+(tm-define (style-includes? x y)
+  (:require (and (== x "old-beamer")
                  (in? y (list "framed-title" "ridged-paper" "varsession"))))
   #t)
 
@@ -826,6 +832,15 @@
   (:secure #t)
   (and-with t (tree-innermost 'screens)
     (switch-to t which :start)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Entering slide titles
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (kbd-enter t shift?)
+  (:require (tree-is? t 'tit))
+  (tree-go-to t :end)
+  (insert-return))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Specific behaviour for switches inside list environments

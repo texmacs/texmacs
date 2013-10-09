@@ -20,34 +20,6 @@
     </src-license>
   </src-title>>
 
-  <use-package|framed-program>
-
-  \;
-
-  <assign|intro-color|pastel yellow>
-
-  <assign|body-color|pastel blue>
-
-  <assign|frame-color|dark grey>
-
-  <\active*>
-    <\src-comment>
-      <TeXmacs> menus.
-    </src-comment>
-  </active*>
-
-  <assign|menu-item|<macro|body|<with|font-family|ss|<localize|<arg|body>>>>>
-
-  <assign|menu-extra|<macro|body|<active*|<with|mode|math|\<rightarrow\>>><menu-item|<arg|body>>>>
-
-  <assign|menu|<xmacro|x|<style-with|src-compact|none|<menu-item|<arg|x|0>><map-args|menu-extra|concat|x|1><index-write|<map-args|menu-item|tuple|x>>>>>
-
-  <assign|submenu|<xmacro|x|<style-with|src-compact|none|<menu-item|<arg|x|1>><map-args|menu-extra|concat|x|2><index-write|<map-args|menu-item|tuple|x>>>>>
-
-  <assign|subsubmenu|<xmacro|x|<style-with|src-compact|none|<menu-item|<arg|x|2>><map-args|menu-extra|concat|x|3><index-write|<map-args|menu-item|tuple|x>>>>>
-
-  <assign|subsubsubmenu|<xmacro|x|<style-with|src-compact|none|<menu-item|<arg|x|3>><map-args|menu-extra|concat|x|4><index-write|<map-args|menu-item|tuple|x>>>>>
-
   <\active*>
     <\src-comment>
       Content markup. Also used for indexing purposes. The <verbatim|markup>
@@ -135,65 +107,6 @@
 
   <\active*>
     <\src-comment>
-      Framed fragmentd.
-    </src-comment>
-  </active*>
-
-  <assign|framed-table|<macro|body|<with|color|<value|frame-color>|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-bsep|1spc>|<cwith|1|-1|1|-1|cell-tsep|1spc>|<cwith|1|-1|1|-1|cell-background|<value|body-color>>|<cwith|1|-1|1|-1|cell-lborder|0.5ln>|<cwith|1|-1|1|-1|cell-rborder|0.5ln>|<cwith|1|-1|1|-1|cell-bborder|0.5ln>|<cwith|1|-1|1|-1|cell-tborder|0.5ln>|<arg|body>>>>>
-
-  <assign|framed-fragment|<macro|body|<surround||<no-indent*>|<framed-table|<tformat|<table|<row|<\cell>
-    <with|color|black|<arg|body>>
-  </cell>>>>>>>>
-
-  <assign|framed-fragment*|<\macro|body>
-    <framed-table|<tformat|<twith|table-width|0.45par>|<table|<row|<\cell>
-      <with|color|black|<arg|body>>
-    </cell>>>>>
-  </macro>>
-
-  <assign|todo|<macro|body|<block|<tformat|<cwith|1|1|1|1|cell-background|pastel
-  red>|<cwith|1|1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|1|cell-rborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0.5ln>|<cwith|1|1|1|1|cell-tborder|0.5ln>|<table|<row|<cell|To
-  do: <arg|body>>>>>>>>
-
-  <\active*>
-    <\src-comment>
-      Fragments of <TeXmacs> code.
-    </src-comment>
-  </active*>
-
-  <assign|tm-fragment|<\macro|body>
-    <pseudo-code|<arg|body>>
-  </macro>>
-
-  <\active*>
-    <\src-comment>
-      Fragments of scheme code.
-    </src-comment>
-  </active*>
-
-  <assign|scm-verb|<macro|body|<with|prog-language|verbatim|<arg|body>>>>
-
-  <assign|scm-arg|<macro|body|<with|prog-font-shape|italic|<scm|<scm-verb|<arg|body>>>>>>
-
-  <assign|scm-args|<macro|body|<with|prog-font-shape|italic|<scm|<scm-verb|<arg|body>>>><rsup|*>>>
-
-  <assign|scm-opt-arg|<macro|body|<with|color|dark
-  grey|[<style-with|<scm-arg|<arg|body>>>]>>>
-
-  <\active*>
-    <\src-comment>
-      Fragments of mathemagix code.
-    </src-comment>
-  </active*>
-
-  <assign|mmxlib|<macro|<with|font-shape|small-caps|Mmxlib>>>
-
-  <assign|mmx-fragment*|<\macro|body>
-    <framed-fragment|<with|par-par-sep|0fn|<mmx|<arg|body>>>>
-  </macro>>
-
-  <\active*>
-    <\src-comment>
       Tabular environments.
     </src-comment>
   </active*>
@@ -203,39 +116,17 @@
 
   <\active*>
     <\src-comment>
-      Other tags.
+      Miscellaneous markup.
     </src-comment>
   </active*>
-
-  <assign|icon|<macro|name|<image|<find-file|$TEXMACS_PATH/misc/pixmaps/modern/24x24/main|$TEXMACS_PATH/misc/pixmaps/modern/20x20/mode|$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus|$TEXMACS_DOC_PATH/images/pixmaps|$TEXMACS_HOME_PATH/doc/images/pixmaps|$TEXMACS_PATH/doc/images/pixmaps|http://www.gnu.org/software/texmacs-doc/images/pixmaps|<arg|name>>||2ex||-0.333ex>>>
-
-  <assign|screenshot|<macro|name|<image|<find-file|$TEXMACS_DOC_PATH/images/screenshots|$TEXMACS_HOME_PATH/doc/images/screenshots|$TEXMACS_PATH/doc/images/screenshots|http://www.gnu.org/software/texmacs-doc/images/screenshots|<arg|name>>|0.5w|0.5h||>>>
-
-  \;
-
-  <assign|text-cursor|<macro|<with|color|red|\|>>>
-
-  <assign|math-cursor|<macro|<math-ignore|<with|color|#c000ff|\|>>>>
-
-  <assign|cursor|<macro|<math-ignore|<if|<equal|<value|mode>|math>|<math-cursor>|<text-cursor>>>>>
-
-  <assign|small-envbox|<macro|body|<with|color|#e8f0f0|<block|<tformat|<cwith|1|1|1|1|cell-lsep|0em>|<cwith|1|1|1|1|cell-rsep|0em>|<cwith|1|1|1|1|cell-bsep|0em>|<cwith|1|1|1|1|cell-tsep|0em>|<table|<row|<cell|<with|color|black|<arg|body>>>>>>>>>>
-
-  <assign|small-focus|<macro|body|<with|color|cyan|<tabular|<tformat|<cwith|1|1|1|1|cell-lsep|0em>|<cwith|1|1|1|1|cell-rsep|0em>|<cwith|1|1|1|1|cell-bsep|0em>|<cwith|1|1|1|1|cell-tsep|0em>|<cwith|1|1|1|1|cell-lborder|1ln>|<cwith|1|1|1|1|cell-rborder|1ln>|<cwith|1|1|1|1|cell-bborder|1ln>|<cwith|1|1|1|1|cell-tborder|1ln>|<table|<row|<cell|<with|color|black|<arg|body>>>>>>>>>>
-
-  <assign|big-envbox|<macro|body|<with|color|#e8f0f0|<rigid|<block|<tformat|<cwith|1|1|1|1|cell-lsep|0em>|<cwith|1|1|1|1|cell-rsep|0em>|<cwith|1|1|1|1|cell-bsep|0em>|<cwith|1|1|1|1|cell-tsep|0em>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
-    <with|color|black|<arg|body>>
-  </cell>>>>>>>>>
-
-  <assign|big-focus|<macro|body|<with|color|cyan|<rigid|<block|<tformat|<cwith|1|1|1|1|cell-lsep|0em>|<cwith|1|1|1|1|cell-rsep|0em>|<cwith|1|1|1|1|cell-bsep|0em>|<cwith|1|1|1|1|cell-tsep|0em>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
-    <with|color|black|<arg|body>>
-  </cell>>>>>>>>>
 
   <new-theorem|question|Question>
 
   <assign|answer|<macro|body|<quotation|<surround|<theorem-name|<localize|Answer><theorem-sep>>||<arg|body>>>>>
 
-  \;
+  <assign|todo|<macro|body|<block|<tformat|<cwith|1|1|1|1|cell-background|pastel
+  red>|<cwith|1|1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|1|cell-rborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0.5ln>|<cwith|1|1|1|1|cell-tborder|0.5ln>|<table|<row|<cell|To
+  do: <arg|body>>>>>>>>
 </body>
 
 <\initial>

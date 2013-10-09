@@ -22,6 +22,22 @@
 
   <use-package|alt-colors|ornaments|varsession>
 
+  <use-module|(dynamic fold-markup)>
+
+  <\active*>
+    <\src-comment>
+      External scheme routines
+    </src-comment>
+  </active*>
+
+  <assign|screens-index|<macro|body|<extern|screens-index|<quote-arg|body>>>>
+
+  <assign|screens-arity|<macro|body|<extern|screens-arity|<quote-arg|body>>>>
+
+  <assign|screens-summary|<macro|body|<if|<greater|<screens-arity|<quote-arg|body>>|0>|<move|<tiny|<plus|<screens-index|<quote-arg|body>>|1>/<screens-arity|<quote-arg|body>>>|0em|0.25ex>>>>
+
+  <assign|screens-bar|<macro|body|<extern|screens-bar|<quote-arg|body>>>>
+
   <\active*>
     <\src-comment>
       Global document layout
@@ -54,15 +70,33 @@
     </src-comment>
   </active*>
 
-  <assign|title-bar-color|dark blue>
+  <assign|title-theme|title-bar>
 
-  <assign|title-color|white>
+  <assign|title-bar-color|<macro|dark blue>>
 
-  <assign|title-left|<macro|>>
+  <assign|title-color|<macro|white>>
 
-  <assign|title-right|<macro|>>
+  <assign|title-left|<macro|body|>>
 
-  <assign|tit|<macro|body|<with|ornament-color|<value|title-bar-color>|<ornament|<title-left><htab|5mm><move|<with|font-series|bold|math-font-series|bold|<large|<with|color|<value|title-color>|math-color|<value|title-color>|<arg|body>>>>|0fn|0.333fn><htab|5mm><title-right>>>>>
+  <assign|title-right|<macro|body|>>
+
+  <assign|title-left|<macro|body|<phantom|<screens-summary|<quote-arg|body>>>>>
+
+  <assign|title-right|<macro|body|<screens-summary|<quote-arg|body>>>>
+
+  <drd-props|title-bar-color|macro-parameter|color>
+
+  <drd-props|title-color|macro-parameter|color>
+
+  <assign|tit|<macro|body|<with|color|<title-color>|math-color|<title-color>|ornament-color|<title-bar-color>|<ornament|<title-left|<arg|body>><htab|5mm><with|font-series|bold|math-font-series|bold|<large|<space|0em|-0.6ex|1.6ex><arg|body>>><htab|5mm><title-right|<arg|body>>>>>>
+
+  <assign|tit|<\macro|body>
+    <\with|par-left|<minus|<value|page-screen-left>>|par-right|<minus|<value|page-screen-right>>>
+      <shift|<with|color|<title-color>|math-color|<title-color>|<resize|<tabular*|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|-1|cell-background|<title-bar-color>>|<cwith|1|1|1|1|cell-halign|c>|<cwith|1|1|1|1|cell-hyphen|t>|<twith|table-valign|T>|<table|<row|<\cell>
+        <title-left|<arg|body>><htab|5mm><arg|body><htab|5mm><title-right|<arg|body>>
+      </cell>>>>>||0em||>>|0mm|<value|page-screen-top>>
+    </with>
+  </macro>>
 
   <\active*>
     <\src-comment>

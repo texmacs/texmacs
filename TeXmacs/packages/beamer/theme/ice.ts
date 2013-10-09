@@ -57,13 +57,10 @@
     </src-comment>
   </active*>
 
-  <assign|title-bar-color|<pattern|ice-dark-blue.png|*3/5|*3/5|dark blue>>
+  <assign|title-bar-color|<macro|<pattern|ice-dark-blue.png|*3/5|*3/5|dark
+  blue>>>
 
-  <assign|title-color|<pattern|ice-light.png|*3/5|*3/5|#f0f0f0>>
-
-  <assign|title-left|<macro|>>
-
-  <assign|title-right|<macro|>>
+  <assign|title-color|<macro|<pattern|ice-light.png|*3/5|*3/5|#f0f0f0>>>
 
   <\active*>
     <\src-comment>

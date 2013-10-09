@@ -24,7 +24,7 @@
     </src-title>
   </active*>
 
-  <use-package|generic|section-beamer|compact-list|presentation|bluish|title-bar>
+  <use-package|generic|compact-list|presentation|ridged-paper|framed-title>
 
   \;
 </body>

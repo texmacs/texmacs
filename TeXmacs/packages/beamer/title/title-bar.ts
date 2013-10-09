@@ -20,32 +20,18 @@
     </src-license>
   </src-title>>
 
-  <use-module|(dynamic fold-markup)>
-
-  <\active*>
-    <\src-comment>
-      External scheme routines
-    </src-comment>
-  </active*>
-
-  <assign|screens-index|<macro|body|<extern|screens-index|<quote-arg|body>>>>
-
-  <assign|screens-arity|<macro|body|<extern|screens-arity|<quote-arg|body>>>>
-
-  <assign|screens-summary|<macro|body|<if|<greater|<screens-arity|<quote-arg|body>>|0>|<move|<tiny|<plus|<screens-index|<quote-arg|body>>|1>/<screens-arity|<quote-arg|body>>>|0em|0.25ex>>>>
-
-  <assign|screens-bar|<macro|body|<extern|screens-bar|<quote-arg|body>>>>
-
   <\active*>
     <\src-comment>
       Customized title
     </src-comment>
   </active*>
 
+  <assign|title-theme|title-bar>
+
   <assign|tit|<\macro|body>
     <\with|par-left|<minus|<value|page-screen-left>>|par-right|<minus|<value|page-screen-right>>>
-      <shift|<with|color|<value|title-color>|math-color|<value|title-color>|<resize|<tabular*|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|-1|cell-background|<value|title-bar-color>>|<cwith|1|1|1|1|cell-halign|c>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|2|2|1|1|cell-vcorrect|n>|<cwith|2|2|1|1|cell-halign|l>|<twith|table-valign|T>|<table|<row|<\cell>
-        <phantom|<screens-summary|<quote-arg|body>>><htab|5mm><arg|body><htab|5mm><screens-summary|<quote-arg|body>>
+      <shift|<with|color|<title-color>|math-color|<title-color>|<resize|<tabular*|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|-1|cell-background|<title-bar-color>>|<cwith|1|1|1|1|cell-halign|c>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|2|2|1|1|cell-vcorrect|n>|<cwith|2|2|1|1|cell-halign|l>|<twith|table-valign|T>|<table|<row|<\cell>
+        <title-left|<arg|body>><htab|5mm><arg|body><htab|5mm><title-right|<arg|body>>
       </cell>>|<row|<cell|<with|locus-color|grey|opacity|100%|<tiny|<screens-bar|<quote-arg|body>>>>>>>>>||0em||>>|0mm|<value|page-screen-top>>
     </with>
   </macro>>

@@ -1,6 +1,6 @@
 <TeXmacs|1.0.7.20>
 
-<style|<tuple|source|tmdoc-markup>>
+<style|<tuple|source|doc>>
 
 <\body>
   <\active*>

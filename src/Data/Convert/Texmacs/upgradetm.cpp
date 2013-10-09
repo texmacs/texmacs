@@ -3681,6 +3681,40 @@ upgrade_unroll (tree t) {
 }
 
 /******************************************************************************
+* Upgrade style files
+******************************************************************************/
+
+tree
+upgrade_style (tree t, bool flag) {
+  int i;
+  if (is_atomic (t)) return t;
+  else if (is_compound (t, "style") || is_func (t, TUPLE)) {
+    int n= N(t);
+    tree r (t, 0);
+    bool doc= false;
+    for (i=0; i<n; i++)
+      if (!flag) r << upgrade_style (t[i], is_compound (t, "style"));
+      else if (t[i] == "beamer") r << "old-beamer";
+      else if (t[i] == "generic") r << "old-generic";
+      else if (t[i] == "help") r << "old-help";
+      else if (t[i] == "letter") r << "old-letter";
+      else if (t[i] == "seminar") r << "old-seminar";
+      else if (t[i] == "tmdoc-keyboard") { if (!doc) r << "doc"; doc= true; }
+      else if (t[i] == "tmdoc-markup") { if (!doc) r << "doc"; doc= true; }
+      else if (t[i] == "tmdoc-traversal") { if (!doc) r << "doc"; doc= true; }
+      else r << upgrade_style (t[i], flag);
+    return r;
+  }
+  else {
+    int n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_style (t[i], flag);
+    return r;
+  }
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -3850,8 +3884,10 @@ upgrade (tree t, string version) {
     t= upgrade_abstract_data (t);
     t= correct_metadata (t);
   }
-  if (version_inf_eq (version, "1.0.7.20"))
+  if (version_inf_eq (version, "1.0.7.20")) {
     t= upgrade_unroll (t);
+    t= upgrade_style (t, false);
+  }
 
   if (is_non_style_document (t))
     t= automatic_correct (t, version);

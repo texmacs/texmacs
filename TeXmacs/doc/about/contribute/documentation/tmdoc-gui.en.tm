@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.0.7.20>
 
 <style|tmdoc>
 
@@ -43,6 +43,17 @@
 
     <item*|<markup|screenshot>>Similar to the <markup|icon> tag, but for
     screenshots.
+
+    <item*|<markup|cursor>>This macro can be used to indicate a cursor
+    position, as in <math|a<rsup|2>+b<rsup|2<cursor>>=c<rsup|2>>.
+
+    <item*|<markup|small-focus>, <markup|small-envbox>>This macro can be used
+    for indicating the visual aids around the current focus and the further
+    outer context (<abbr|e.g.> <math|<small-envbox|a+<frac|b|<small-focus|c>>>>),
+    in the case of inline elements.
+
+    <item*|<markup|big-focus>, <markup|big-envbox>>Block versions of
+    <markup|small-focus> and <markup|small-envbox>.
   </description>
 
   Notice that the contents of none of the above tags should be translated

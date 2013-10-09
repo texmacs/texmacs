@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|tmdoc-markup>
+  <use-package|doc>
 
   <use-module|(doc apidoc-markup)>
 

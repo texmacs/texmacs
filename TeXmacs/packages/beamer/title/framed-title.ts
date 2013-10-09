@@ -26,7 +26,9 @@
     </src-comment>
   </active*>
 
-  <assign|tit|<macro|body|<with|ornament-color|<value|title-bar-color>|<ornament|<title-left><htab|5mm><move|<with|font-series|bold|math-font-series|bold|<large|<with|color|<value|title-color>|math-color|<value|title-color>|<arg|body>>>>|0fn|0.333fn><htab|5mm><title-right>>>>>
+  <assign|title-theme|framed-title>
+
+  <assign|tit|<macro|body|<with|color|<title-color>|math-color|<title-color>|ornament-color|<title-bar-color>|<ornament|<title-left|<arg|body>><htab|5mm><with|font-series|bold|math-font-series|bold|<large|<space|0em|-0.6ex|1.6ex><arg|body>>><htab|5mm><title-right|<arg|body>>>>>>
 </body>
 
 <\initial>

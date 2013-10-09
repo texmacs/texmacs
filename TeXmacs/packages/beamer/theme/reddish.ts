@@ -56,13 +56,9 @@
     </src-comment>
   </active*>
 
-  <assign|title-bar-color|#903000>
+  <assign|title-bar-color|<macro|#903000>>
 
-  <assign|title-color|white>
-
-  <assign|title-left|<macro|>>
-
-  <assign|title-right|<macro|>>
+  <assign|title-color|<macro|white>>
 
   <\active*>
     <\src-comment>

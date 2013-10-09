@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.12>
+<TeXmacs|1.0.7.20>
 
 <style|source>
 
@@ -24,7 +24,7 @@
     </src-title>
   </active*>
 
-  <use-package|old-jsc|tmdoc-traversal|tmdoc-markup|tmdoc-keyboard>
+  <use-package|old-jsc|doc>
 
   \;
 

@@ -73,11 +73,11 @@
 
   <assign|sectional-centered-italic|<macro|name|<sectional-centered|<with|font-shape|italic|<arg|name>>>>>
 
-  <assign|sectional-short-bold|<macro|name|<style-with|src-compact|none|<sectional-short|<with|math-font-series|bold|font-series|bold|<arg|name>>>>>>
+  <assign|sectional-short-bold|<macro|name|<style-with|src-compact|none|<sectional-short|<strong|<arg|name>>>>>>
 
-  <assign|sectional-normal-bold|<macro|name|<style-with|src-compact|none|<sectional-normal|<with|math-font-series|bold|font-series|bold|<arg|name>>>>>>
+  <assign|sectional-normal-bold|<macro|name|<style-with|src-compact|none|<sectional-normal|<strong|<arg|name>>>>>>
 
-  <assign|sectional-centered-bold|<macro|name|<style-with|src-compact|none|<sectional-centered|<with|math-font-series|bold|font-series|bold|<arg|name>>>>>>
+  <assign|sectional-centered-bold|<macro|name|<style-with|src-compact|none|<sectional-centered|<strong|<arg|name>>>>>>
 
   <\active*>
     <\src-comment>

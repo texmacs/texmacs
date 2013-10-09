@@ -190,14 +190,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-menu (focus-style-extra-menu t)
-  (:require (in? "beamer" (get-style-list)))
+  (:require (style-has? "beamer-style"))
   (=> "Beamer theme"
       (for (theme (beamer-themes))
         ((check (eval (upcase-first theme)) "v" (has-style-package? theme))
          (add-style-package theme)))))
 
 (tm-menu (focus-style-extra-icons t)
-  (:require (in? "beamer" (get-style-list)))
+  (:require (style-has? "beamer-style"))
   (=> (balloon (eval (upcase-first (current-beamer-theme))) "Beamer theme")
       (for (theme (beamer-themes))
         ((check (eval (upcase-first theme)) "v" (has-style-package? theme))
@@ -249,6 +249,10 @@
   (:require (tree-is? t 'tit))
   ("Framed title" (toggle-style-package "framed-title"))
   ("Title bar" (toggle-style-package "title-bar")))
+
+(tm-define (parameter-show-in-menu? l)
+  (:require (== l "title-theme"))
+  #f)
 
 (tm-define (slide-propose-title? t)
   (and-with u (tree-ref t :down :down)

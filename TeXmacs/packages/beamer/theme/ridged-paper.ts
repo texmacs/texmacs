@@ -56,13 +56,18 @@
     </src-comment>
   </active*>
 
-  <assign|title-bar-color|<pattern|paper-manila-medium.png|*3/5|*3/5|#f4f0d8>>
+  <assign|left-gnu|<macro|<move|<image|$TEXMACS_PATH/misc/images/left-head.png|0.222222w|0.222222h||>|0fn|-0.333fn>>>
 
-  <assign|title-color|dark brown>
+  <assign|right-gnu|<macro|<move|<image|$TEXMACS_PATH/misc/images/right-head.png|0.222222w|0.222222h||>|0fn|-0.333fn>>>
 
-  <assign|title-left|<macro|<image|$TEXMACS_PATH/misc/images/right-head.png|0.222222w|0.222222h||>>>
+  <assign|title-bar-color|<macro|<if|<equal|<value|title-theme>|title-bar>|<pattern|wood-medium.png|*3/5|*3/5|#804018>|<pattern|paper-manila-medium.png|*3/5|*3/5|#f4f0d8>>>>
 
-  <assign|title-right|<macro|<image|$TEXMACS_PATH/misc/images/left-head.png|0.222222w|0.222222h||>>>
+  <assign|title-color|<macro|<if|<equal|<value|title-theme>|title-bar>|<value|bg-color>|dark
+  brown>>>
+
+  <assign|title-left|<macro|body|<if|<equal|<value|title-theme>|title-bar>||<right-gnu>>>>
+
+  <assign|title-right|<macro|body|<if|<equal|<value|title-theme>|title-bar>||<left-gnu>>>>
 
   <\active*>
     <\src-comment>
