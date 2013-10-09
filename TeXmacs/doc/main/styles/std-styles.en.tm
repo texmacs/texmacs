@@ -50,9 +50,9 @@
   layout correspond to the policy of specific journals. Currently, we have
   implemented <TeXmacs> analogues of the common <LaTeX> styles
   <tmstyle|amsart>, <tmstyle|acmconf>, <tmstyle|elsart>, <tmstyle|ieeeconf>,
-  <tmstyle|svjour>, etc. Similarly, we are developing styles
-  <tmstyle|tmarticle> and <tmstyle|tmbook> which provide an alternative
-  layout for articles and books.
+  <tmstyle|aip>, <tmstyle|aps>, <tmstyle|svjour>, etc. Similarly, we are
+  developing styles <tmstyle|tmarticle> and <tmstyle|tmbook> which provide an
+  alternative layout for articles and books.
 
   In addition to variants of the <tmstyle|article> and <tmstyle|book> styles,
   <TeXmacs> provides also a few other styles, which are based on the main

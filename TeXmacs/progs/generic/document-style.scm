@@ -146,6 +146,8 @@
   ("jsc"            "Style for Journal of Symbolic Computation")
   ("ieeeconf"       "IEEE conference style")
   ("ieeetran"       "Style for transactions by the IEEE")
+  ("aip"            "REVTeX meta-style (American Institute of Physics)")
+  ("aps"            "REVTeX meta-style (American Physical Society)")
   ("llncs"          "Style for Springer Lecture Notes in Computer Science")
   ("svjour"         "Article style for Springer journals")
   ("tmarticle"      "TeXmacs alternative article style")

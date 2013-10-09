@@ -267,10 +267,9 @@ ignore_dir (string dir) {
     (dir == "Environment") ||
     (dir == "Gui") ||
     (dir == "Header") ||
-    (dir == "Help") ||
+    (dir == "Latex") ||
     (dir == "Miscellaneous") ||
     (dir == "Obsolete") ||
-    (dir == "Revtex") ||
     (dir == "Section") ||
     (dir == "Session") ||
     (dir == "Standard") ||

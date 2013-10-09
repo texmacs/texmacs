@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.7.20>
 
 <style|tmdoc>
 
@@ -8,10 +8,17 @@
   The user may select a major style from the <menu|Document|Style> menu. The
   major style usually reflects the kind of document you want to produce (like
   a letter, an article or a book) or a particular layout policy (like
-  publishing an article in a given journal). In addition to a major style,
-  the user may select one or more additional packages from <menu|Document|Use
-  package>. Such packages may customize the major style, provide additional
-  markup, or a combination of both.
+  publishing an article in a given journal).
+
+  The user may further customize the main style, by selecting one or more
+  additional style packages. Some of these packages are available in the menu
+  <menu|Document|Style|Add package>. Other style packages mainly customize
+  specific tags, and they can be selected from the
+  <menu|Focus|Preferences|Style options> menu group, whenever available. For
+  instance, inside a theorem, you may use <menu|Focus|Preferences|European
+  numbering> to enable European style numbering for theorem-like environments
+  (that is, theorems, propositions, lemmas, <abbr|etc.> are all numbered
+  using their own individual counters).
 
   In this chapter, we will survey the standard document styles and packages
   provided by <TeXmacs>. Most style files and packages have an abstract
@@ -23,7 +30,7 @@
   concerned with the description of the standard <abbr|d.t.d.>s, except when
   we focus on the rendering. Users may customize standard styles by defining
   new ones which match the same abstract interface (see the chapter on
-  <hyper-link|writing <TeXmacs> style files|../../devel/style/style.en.tm>).
+  <hlink|writing <TeXmacs> style files|../../devel/style/style.en.tm>).
 
   <\traverse>
     <branch|General organization|style-organize.en.tm>
