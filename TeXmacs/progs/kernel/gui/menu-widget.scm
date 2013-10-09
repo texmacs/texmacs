@@ -271,16 +271,15 @@
                     (with bal (widget-text txt style (color "black") #t)
                       (widget-balloon but bal)))))))))
 
-(define (make-menu-entry-button style bar? check label short action)
+(define (make-menu-entry-button style bar? bal? check label short action)
   (let* ((command (make-menu-command (if (active? style) (apply action '()))))
          (l (make-menu-label label style))
          (pressed? (and bar? (!= check "")))
          (new-style (logior style (if pressed? widget-style-pressed 0))))
-    (add-menu-entry-balloon
-     (if bar?
-         (widget-menu-button l command "" "" new-style)
-         (widget-menu-button l command check short style))
-     style action)))
+    (with but (if bar?
+                  (widget-menu-button l command "" "" new-style)
+                  (widget-menu-button l command check short style))
+      (if bal? but (add-menu-entry-balloon but style action)))))
 
 (define-public (promise-source action)
   "Helper routines for menu-widget and kbd-define"
@@ -341,7 +340,7 @@
       (label action opt-key opt-check)
       (make-menu-entry-attrs (car p) (cAr p) #f #f)
     (make-menu-entry-button
-     style bar?
+     style bar? (tuple? (car p) 'balloon 2)
      (make-menu-entry-check opt-check action)
      (make-menu-entry-dots label action)
      (make-menu-entry-shortcut label action opt-key)
