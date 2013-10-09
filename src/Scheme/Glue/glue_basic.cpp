@@ -4991,6 +4991,21 @@ tmg_system_2 (tmscm arg1, tmscm arg2, tmscm arg3) {
 }
 
 tmscm
+tmg_url_grep (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "url-grep");
+  TMSCM_ASSERT_URL (arg2, TMSCM_ARG2, "url-grep");
+
+  string in1= tmscm_to_string (arg1);
+  url in2= tmscm_to_url (arg2);
+
+  // TMSCM_DEFER_INTS;
+  url out= grep (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return url_to_tmscm (out);
+}
+
+tmscm
 tmg_persistent_set (tmscm arg1, tmscm arg2, tmscm arg3) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "persistent-set");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "persistent-set");
@@ -7498,6 +7513,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("system-search-score",  tmg_system_search_score, 2, 0, 0);
   tmscm_install_procedure ("system-1",  tmg_system_1, 2, 0, 0);
   tmscm_install_procedure ("system-2",  tmg_system_2, 3, 0, 0);
+  tmscm_install_procedure ("url-grep",  tmg_url_grep, 2, 0, 0);
   tmscm_install_procedure ("persistent-set",  tmg_persistent_set, 3, 0, 0);
   tmscm_install_procedure ("persistent-remove",  tmg_persistent_remove, 2, 0, 0);
   tmscm_install_procedure ("persistent-has?",  tmg_persistent_hasP, 2, 0, 0);

@@ -634,10 +634,9 @@ ps2pdf (url u1, url u2) {
 #endif
 }
 
-
 /******************************************************************************
- * Tab-completion for file names
- ******************************************************************************/
+* Tab-completion for file names
+******************************************************************************/
 
 #ifdef OS_WIN32
 #define URL_CONCATER  '\\'
@@ -685,3 +684,50 @@ file_completions (url search, url dir) {
   return a;
 }
 
+/******************************************************************************
+* Grepping of strings with heavy caching
+******************************************************************************/
+
+hashmap<tree,tree>   grep_cache (url_none () -> t);
+hashmap<tree,string> grep_load_cache ("");
+hashmap<tree,tree>   grep_complete_cache (url_none () -> t);
+
+static bool
+bad_url (url u) {
+  if (is_atomic (u))
+    return u == url ("aapi") || u == url (".svn");
+  else if (is_concat (u))
+    return bad_url (u[1]) || bad_url (u[2]);
+  else return false;
+}
+
+url
+grep_sub (string what, url u) {
+  if (is_or (u))
+    return grep_sub (what, u[1]) | grep_sub (what, u[2]);
+  else if (bad_url (u))
+    return url_none ();
+  else {
+    if (!grep_load_cache->contains (u->t)) {
+      //cout << "Loading " << u << "\n";
+      string s;
+      if (load_string (u, s, false)) s= "";
+      grep_load_cache (u->t)= s;
+    }
+    string contents= grep_load_cache [u->t];
+    if (occurs (what, contents)) return u;
+    else return url_none ();
+  }
+}
+
+url
+grep (string what, url u) {
+  tree key= tuple (what, u->t);
+  if (!grep_cache->contains (key)) {
+    if (!grep_complete_cache->contains (u->t))
+      grep_complete_cache (u->t)= expand (complete (u)) -> t;
+    url found= grep_sub (what, as_url (grep_complete_cache [u->t]));
+    grep_cache (key)= found->t;
+  }
+  return as_url (grep_cache [key]);
+}

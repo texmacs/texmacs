@@ -1,9 +1,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : std-text-edit.scm
-;; DESCRIPTION : editing routines for text mode
-;; COPYRIGHT   : (C) 2001  Joris van der Hoeven
+;; MODULE      : tmdoc-edit.scm
+;; DESCRIPTION : editing routines for TeXmacs documentation
+;; COPYRIGHT   : (C) 2012  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE

@@ -530,13 +530,13 @@ static hashmap<string,tree> document_inclusions ("");
 
 void
 reset_inclusions () {
-  document_inclusions= hashmap<string,tree> ("");
+  document_inclusions = hashmap<string,tree> ("");
 }
 
 void
 reset_inclusion (url name) {
   string name_s= as_string (name);
-  document_inclusions->reset (name_s);
+  document_inclusions -> reset (name_s);
 }
 
 tree

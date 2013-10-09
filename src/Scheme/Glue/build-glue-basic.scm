@@ -424,6 +424,7 @@
   (system-search-score search_score (int url array_string))
   (system-1 system (void string url))
   (system-2 system (void string url url))
+  (url-grep grep (url string url))
 
   ;; Persistent data
   (persistent-set persistent_set (void url string string))
