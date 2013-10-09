@@ -261,13 +261,21 @@
 ;; Menu entries
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (synopsis-substitute synopsis source)
+  (if (string-occurs? "@" synopsis)
+      #f ;; not yet implemented
+      synopsis))
+
 (define (search-balloon-help action)
   (and-with source (promise-source action)
     (and (pair? source)
          (or (and-with prop (property (car source) :balloon)
                (with txt (apply (car prop) (cdr source))
                  (and (string? txt) txt)))
-             #f))))
+             (and-with prop (property (car source) :synopsis)
+               (and (pair? prop) (string? (car prop))
+                    (with txt (synopsis-substitute (car prop) source)
+                      (and (string? txt) txt))))))))
 
 (define (add-menu-entry-balloon but style action)
   (with txt (search-balloon-help action)
