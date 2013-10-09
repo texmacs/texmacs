@@ -197,6 +197,7 @@
 (hash-set! define-option-table :secure (define-property* :secure))
 (hash-set! define-option-table :check-mark (define-property* :check-mark))
 (hash-set! define-option-table :interactive (define-property* :interactive))
+(hash-set! define-option-table :balloon (define-property* :balloon))
 
 (define-public (procedure-sources about)
   (or (and (procedure? about)

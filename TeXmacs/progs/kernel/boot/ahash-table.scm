@@ -144,7 +144,10 @@
 
 (define-public-macro (define-table name . l)
   `(begin
-     (define ,name (make-ahash-table))
+     (when (not (defined? ',name))
+       (if (defined? 'tm-define)
+           (tm-define ,name (make-ahash-table))
+           (define-public ,name (make-ahash-table))))
      (define-table-decls ,name ,(list 'quasiquote l))))
 
 (define-public-macro (extend-table name . l)

@@ -83,6 +83,7 @@
   (:argument style "Main document style")
   (:default  style "generic")
   (:check-mark "v" has-main-style?)
+  (:balloon "Hi there")
   (let* ((old (get-style-list))
          (new (if (null? old) (list style) (cons style (cdr old)))))
     (set-style-list new)))
@@ -108,3 +109,65 @@
   (if (has-style-package? pack)
       (remove-style-package pack)
       (add-style-package pack)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Table with brief descriptions for common styles and style packages
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-table style-synopsis
+  ("article"        "Default style for writing articles")
+  ("beamer"         "Style for laptop presentations")
+  ("book"           "Default style for writing books")
+  ("browser"        "Style for using TeXmacs as a web browser")
+  ("generic"        "Default document style")
+  ("letter"         "Default style for writing letters")
+  ("seminar"        "Style for presentations using an overhead projector")
+  ("source"         "Style for editing style files and packages")
+
+  ("acmconf"        "ACM conference style")
+  ("sig-alternate"  "Alternate ACM conference style")
+  ("amsart"         "AMS article style")
+  ("elsart"         "Elsevier article style")
+  ("elsarticle"     "Elsevier article style")
+  ("ifac"           "IFAC article style")
+  ("jsc"            "Style for Journal of Symbolic Computation")
+  ("ieeeconf"       "IEEE conference style")
+  ("ieeetrans"      "Style for IEEE transactions")
+  ("llncs"          "Style for Springer Lecture Notes in Computer Science")
+  ("svjour"         "Springer journals article style")
+  ("tmarticle"      "TeXmacs alternative article style")
+
+  ("svmono"         "Style for Springer monographs")
+  ("tmbook"         "TeXmacs alternative book style")
+
+  ("manual"         "Style for writing technical manuals")
+  ("mmxdoc"         "Style for writing Mathemagix documentation")
+  ("mmxmanual"      "Style for writing Mathemagix manuals")
+  ("tmdoc"          "Style for writing TeXmacs documentation")
+  ("tmmanual"       "Style for writing TeXmacs manuals")
+  ("tmweb"          "Style for writing pages for the TeXmacs website")
+
+  ("exam"           "Style for exams")
+
+  ("old-beamer"     "Former default style for laptop presentations")
+  ("old-book"       "Former default style for writing books")
+  ("old-generic"    "Former default document style")
+  ("old-letter"     "Former default style for writing letters")
+  ("old-seminar"    "Former style for overhead projector presentations")
+
+  ("bibliography"   "Style for editing bibliographic data files")
+  ("email"          "Style for writing and reading emails")
+  ("mailbox"        "Style for displaying mailboxes"))
+
+(define-table style-synopsis
+  ("doc"                "Rich collection of markup for writing documentation")
+  ("doxygen"            "Package for mixing TeXmacs and doxygen documentation")
+  ("poorman-doxygen"    "Replacement for 'doxygen' when lacking support")
+
+  ("allouche"           "Example macro package by David Allouche")
+  ("bpr"                "Example macro package for Basu/Pollack/Roy book")
+  ("vdh"                "Example macro package by Joris van der Hoeven")
+
+  ("graphical-macros"   "Collection of extra primitives for graphical mode")
+  ("structured-list"    "Considering item text as part of item tags")
+  ("structured-section" "Considering section titles as part of sectional tags"))
