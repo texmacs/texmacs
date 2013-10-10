@@ -189,6 +189,8 @@
     <surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<arg|body>>>
   </macro>>
 
+  <assign|author-misc-note|<macro|sym|id|misc|<doc-author-block|<doc-note-text|<arg|sym>|<arg|id>|<arg|misc>>>>>
+
   <assign|author-note|<\macro|note>
     <arg|note>
   </macro>>
