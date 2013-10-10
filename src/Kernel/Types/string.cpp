@@ -215,6 +215,24 @@ as_int (string s) {
   return val;
 }
 
+
+long int
+as_long_int (string s) {
+  int i=0, n=N(s);
+  long int val=0;
+  if (n==0) return 0;
+  if (s[0]=='-') i++;
+  while (i<n) {
+    if (s[i]<'0') break;
+    if (s[i]>'9') break;
+    val *= 10;
+    val += (int) (s[i]-'0');
+    i++;
+  }
+  if (s[0]=='-') val=-val;
+  return val;
+}
+
 double
 as_double (string s) {
   double x= 0.0;

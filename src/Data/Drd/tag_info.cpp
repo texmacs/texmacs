@@ -115,7 +115,7 @@ parent_info::parent_info (int a, int x, int am, int cm, bool frozen) {
 }
 
 parent_info::parent_info (tree t) {
-  int i= as_int (t);
+  long int i= as_long_int (t);
   get_bits (type            , 5);
   get_bits (arity_mode      , 2);
   get_bits (arity_base      , 6);
@@ -134,7 +134,8 @@ parent_info::parent_info (tree t) {
 }
 
 parent_info::operator tree () {
-  int i=0, offset=0;
+  long int i=0;
+  int offset=0;
   set_bits (type            , 5);
   set_bits (arity_mode      , 2);
   set_bits (arity_base      , 6);

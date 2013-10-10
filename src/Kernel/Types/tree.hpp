@@ -231,6 +231,9 @@ inline bool as_bool (tree t) {
 inline int as_int (tree t) {
   if (is_atomic (t)) return as_int (t->label);
   else return 0; }
+inline long int as_long_int (tree t) {
+  if (is_atomic (t)) return as_long_int (t->label);
+  else return 0; }
 inline double as_double (tree t) {
   if (is_atomic (t)) return as_double (t->label);
   else return 0.0; }
@@ -238,10 +241,11 @@ inline string as_string (tree t) {
   if (is_atomic (t)) return t->label;
   else return ""; }
 string tree_as_string (tree t);
-template<class T> inline tree as_tree(T x) { return (tree) x; }
-template<> inline tree as_tree(int x) { return as_string (x); }
-template<> inline tree as_tree(double x) { return as_string (x); }
-template<> inline tree as_tree(pointer x) { (void) x; return "pointer"; }
+template<class T> inline tree as_tree (T x) { return (tree) x; }
+template<> inline tree as_tree (int x) { return as_string (x); }
+template<> inline tree as_tree (long int x) { return as_string (x); }
+template<> inline tree as_tree (double x) { return as_string (x); }
+template<> inline tree as_tree (pointer x) { (void) x; return "pointer"; }
 inline tree bool_as_tree (bool f) {
   return (f? tree ("true"): tree ("false")); }
 
