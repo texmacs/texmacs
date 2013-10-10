@@ -1182,6 +1182,32 @@ AC_TRY_COMPILE([
 CXXFLAGS=""
 AC_SUBST(CONFIG_CXXDIALECT)
 
+AC_ARG_ENABLE(profile,
+[  --enable-profile        enable gcc compilation flag for profiling with gprof],
+    [], [enable_profile="no"])
+
+if test "$enable_profile" = "yes"; then
+    if test "$GXX" = "yes"; then
+        enable_profile="yes"
+    else
+        enable_profile="none"
+    fi
+fi
+
+case "$enable_profile" in
+    yes)
+	AC_MSG_RESULT([enabling gcc profiling compilation flag -pg])
+        CONFIG_CXXPROFILE="-pg"
+        ;;
+    none)
+	AC_MSG_RESULT([disabling gcc profiling compilation flag])
+        CONFIG_CXXPROFILE=""
+	;;
+    *)
+        CONFIG_CXXPROFILE=""
+	;;
+esac
+
 AC_ARG_ENABLE(debug,
 changequote(<<, >>)dnl
 <<  --enable-debug[=ARG]      install a debugging enable executable [-ggdb]>>,
@@ -1304,6 +1330,7 @@ AC_SUBST(CONFIG_CXXWARNING)
 AC_SUBST(CONFIG_CXXTEMPLATE)
 AC_SUBST(CONFIG_CXXOPTIMIZE)
 AC_SUBST(CONFIG_CXXDEBUG)
+AC_SUBST(CONFIG_CXXPROFILE)
 AC_SUBST(CONFIG_BFLAGS)
 AC_SUBST(CONFIG_BSTATIC)
 AC_SUBST(CONFIG_BSHARED)

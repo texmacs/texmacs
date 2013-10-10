@@ -653,6 +653,7 @@ CONFIG_BPATH
 CONFIG_BSHARED
 CONFIG_BSTATIC
 CONFIG_BFLAGS
+CONFIG_CXXPROFILE
 CONFIG_CXXDEBUG
 CONFIG_CXXOPTIMIZE
 CONFIG_CXXTEMPLATE
@@ -821,6 +822,7 @@ enable_qt
 with_qt
 enable_qtpipes
 enable_cocoa
+enable_profile
 enable_debug
 enable_assert
 enable_warnings
@@ -1469,6 +1471,7 @@ Optional Features:
   --disable-qt            replace Qt by X11 interface
   --enable-qtpipes        replace UNIX pipes by Qt pipes
   --enable-cocoa          replace X11 by Cocoa interface
+  --enable-profile        enable gcc compilation flag for profiling with gprof
   --enable-debug=ARG      install a debugging enable executable -ggdb
   --enable-assert         exit on failed assertions in code
   --enable-warnings       print warning messages during compilation
@@ -9197,6 +9200,38 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 CXXFLAGS=""
 
 
+# Check whether --enable-profile was given.
+if test "${enable_profile+set}" = set; then :
+  enableval=$enable_profile;
+else
+  enable_profile="no"
+fi
+
+
+if test "$enable_profile" = "yes"; then
+    if test "$GXX" = "yes"; then
+        enable_profile="yes"
+    else
+        enable_profile="none"
+    fi
+fi
+
+case "$enable_profile" in
+    yes)
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling gcc profiling compilation flag -pg" >&5
+$as_echo "enabling gcc profiling compilation flag -pg" >&6; }
+        CONFIG_CXXPROFILE="-pg"
+        ;;
+    none)
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling gcc profiling compilation flag" >&5
+$as_echo "disabling gcc profiling compilation flag" >&6; }
+        CONFIG_CXXPROFILE=""
+	;;
+    *)
+        CONFIG_CXXPROFILE=""
+	;;
+esac
+
 # Check whether --enable-debug was given.
 if test "${enable_debug+set}" = set; then :
   enableval=$enable_debug;
@@ -9336,6 +9371,7 @@ esac
 #--------------------------------------------------------------------
 # Substitute TeXmacs specific configuration parameters
 #--------------------------------------------------------------------
+
 
 
 
