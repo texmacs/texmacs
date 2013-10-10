@@ -289,6 +289,10 @@
     ($when #t
       ($unfolded-documentation "Usage"
 	(focus-doc-usage t)))
+    ($with tagdoc (tmdoc-search-tag (tree-label t))
+      ($when tagdoc
+	($unfolded-documentation "Description"
+	  tagdoc)))
     ($when (tree-label-extension? (tree-label t))
       ($unfolded-documentation "Current definition"
         (focus-doc-source t)))

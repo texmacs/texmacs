@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.7.20>
 
 <style|tmdoc>
 
@@ -11,27 +11,20 @@
   to produce numbered sections:
 
   <\explain>
-    <explain-macro|part|title>
+    <explain-macro|part|title>, <explain-macro|chapter|title>
 
-    <explain-macro|chapter|title>
-
-    <explain-macro|section|title>
-
-    <explain-macro|subsection|title>
-
+    <explain-macro|section|title>, <explain-macro|subsection|title>,
     <explain-macro|subsubsection|title>
 
-    <explain-macro|paragraph|title>
-
-    <explain-macro|subparagraph|title>
+    <explain-macro|paragraph|title>, <explain-macro|subparagraph|title>
 
     <explain-macro|appendix|title>
   <|explain>
-    The intention of this macro is to produce a numbered title for a part
+    The intention of these macros is to produce a numbered title for a part
     (<abbr|resp.> chapter, section, subsection, <abbr|etc.>). The numbering
     is not required, but merely an intention: the <markup|paragraph> and
-    <markup|subparagraph> tags are usually not numbered and some styles (like
-    the generic style) do not produce numbers at all.
+    <markup|subparagraph> tags are usually not numbered and some styles may
+    not produce numbers at all.
   </explain>
 
   The tags <markup|part*>, <markup|chapter*>, <markup|section*>,
