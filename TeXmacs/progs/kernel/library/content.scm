@@ -91,9 +91,22 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-public (tm-find t pred?)
+  "Find first subtree which matches predicate."
   (cond ((pred? t) t)
         ((tm-atomic? t) #f)
         (else (list-find (tm-children t) (cut tm-find <> pred?)))))
+
+(define-public (tm-search t pred?)
+  "Search list of subtrees which match a predicate."
+  (cond ((pred? t) (list t))
+        ((tm-atomic? t) (list))
+        (else (append-map (cut tm-search <> pred?) (tm-children t)))))
+
+(define-public (tm-find-tag t tag)
+  (tm-find t (cut tm-is? <> tag)))
+
+(define-public (tm-search-tag t tag)
+  (tm-search t (cut tm-is? <> tag)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TeXmacs lengths
