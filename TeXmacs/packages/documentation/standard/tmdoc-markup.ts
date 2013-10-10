@@ -81,7 +81,7 @@
 
   <assign|src-value|<macro|body|<with|font-shape|right|color|black|<arg|body>>>>
 
-  <assign|var-val|<macro|var|val|<src-var|<arg|var>><active*|<with|mode|math|\<assign\>>><with|font-family|tt|<arg|val>>>>
+  <assign|var-val|<macro|var|val|<src-var|<arg|var>><space|0.5spc><active*|<with|mode|math|\<assign\>>><space|0.5spc><with|font-family|tt|<arg|val>>>>
 
   <\active*>
     <\src-comment>

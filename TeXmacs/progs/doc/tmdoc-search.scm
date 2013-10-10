@@ -49,6 +49,20 @@
   (and (tm-func? t 'explain 2)
        (tm-find (tree-ref t 0) pred?)))
 
+(define (url-search-exact u what)
+  (with pred? (wrap-explain (cut tm-equal? <> what))
+    (tm-search (tree-load-inclusion u) pred?)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Searching TeXmacs styles or packages
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tmdoc-search-style style)
+  (tmdoc-search (string-append "<tmstyle|" style ">")
+                (cut url-search-exact <> `(tmstyle ,style))
+		(string-append "<tmpackage|" style ">")
+                (cut url-search-exact <> `(tmpackage ,style))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Searching TeXmacs tags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -62,16 +76,12 @@
   (with pred? (wrap-explain (cut explain-macro? <> tag))
     (tm-search (tree-load-inclusion u) pred?)))
 
-(define (url-search-markup u tag)
-  (with pred? (wrap-explain (cut tm-equal? <> `(markup ,tag)))
-    (tm-search (tree-load-inclusion u) pred?)))
-
 (tm-define (tmdoc-search-tag tag)
   (if (symbol? tag) (set! tag (symbol->string tag)))
   (tmdoc-search (string-append "<explain-macro|" tag "|")
                 (cut url-search-explain-macro <> tag)
 		(string-append "<markup|" tag ">")
-                (cut url-search-markup <> tag)))
+                (cut url-search-exact <> `(markup ,tag))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Searching style parameters
@@ -89,7 +99,9 @@
 (tm-define (tmdoc-search-parameter var)
   (if (symbol? var) (set! var (symbol->string var)))
   (tmdoc-search (string-append "<var-val|" var "|")
-                (cut url-search-parameter <> var)))
+                (cut url-search-parameter <> var)
+		(string-append "<src-var|" var ">")
+                (cut url-search-exact <> `(src-var ,var))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Searching scheme functions
@@ -111,8 +123,10 @@
   (with pred? (wrap-explain (cut scheme-function? <> fun))
     (tm-search (tree-load-inclusion u) pred?)))
 
-(tm-define (tmdoc-search-scheme-function f)
+(tm-define (tmdoc-search-scheme f)
   (let* ((fun (string->tmstring f))
          (fun* (string-replace (string-replace fun "<" "\\<") ">" "\\>")))
     (tmdoc-search (string-append "<scm|(" fun*)
-                  (cut url-search-scheme-function <> fun))))
+                  (cut url-search-scheme-function <> fun)
+		  (string-append "<scm|" fun* ">")
+                  (cut url-search-exact <> `(scm ,fun)))))
