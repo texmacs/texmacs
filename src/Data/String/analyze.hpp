@@ -122,6 +122,7 @@ void parse (string s, int& pos, SI*& a, int len);
 
 int    search_forwards (string what, string in);
 int    search_forwards (string what, int pos, string in);
+int    search_forwards (array<string> what_list, int pos, string in);
 int    search_backwards (string what, string in);
 int    search_backwards (string what, int pos, string in);
 int    count_occurrences (string what, string in);

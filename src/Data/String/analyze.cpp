@@ -1140,6 +1140,17 @@ parse (string s, int& pos, SI*& a, int len) {
 ******************************************************************************/
 
 int
+search_forwards (array<string> a, int pos, string in) {
+  int n= N(in), na= N(a);
+  while (pos <= n) {
+    for (int i=0; i<na; i++)
+      if (N(a[i])>0 && in[pos] == a[i][0] && test (in, pos, a[i])) return pos;
+    pos++;
+  }
+  return -1;
+}
+
+int
 search_forwards (string s, int pos, string in) {
   int k= N(s), n= N(in);
   if (k == 0) return pos;
