@@ -66,9 +66,12 @@
     (ahash-set! t l #t)
     (with std (standard-parameters l)
       (if std
-	  (for (x std)
-	    (ahash-set! v x #t))
+          (begin
+            ;;(display* "Std= " std "\n")
+            (for (x std)
+              (ahash-set! v x #t)))
 	  (with def (get-init-tree l)
+            ;;(display* "  Def= " def "\n")
 	    (cond ((tree-is? def 'uninit) (noop))
 		  ((tree-in? def '(macro xmacro))
 		   (collect-parameters-sub def v t))

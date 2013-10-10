@@ -571,7 +571,7 @@
 	"ornament-sunny-color" "ornament-shadow-color"))
 
 (tm-define (standard-parameters l)
-  (:require (in? l '("reference" "pageref" "label" "tag" "hlink")))
+  (:require (in? l '("reference" "pageref" "label" "tag")))
   (list))
 
 (tm-define (search-parameters l)
