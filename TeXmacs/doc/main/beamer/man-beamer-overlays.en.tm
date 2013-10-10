@@ -80,6 +80,34 @@
     will be visible on all but the current overlays.
   </description>
 
+  In a similar way, <TeXmacs> provides tags for alternate views: depending on
+  whether a certain predicate is met, we show the ``main content'' on certain
+  overlays and the ``alternate content'' on the remaining overlays. We use
+  the same four types of predicates:
+
+  <\description>
+    <item*|<subsubsubmenu|Insert|Fold|Overlay|Alternate from here on>>The
+    alternate text will be used on this and all subsequent overlays.
+
+    <item*|<subsubsubmenu|Insert|Fold|Overlay|Alternate until here>>The
+    alternate text will be used on this and all previous overlays.
+
+    <item*|<subsubsubmenu|Insert|Fold|Overlay|Alternate only here>>The
+    alternate text will only be used on this overlay.
+
+    <item*|<subsubsubmenu|Insert|Fold|Overlay|Alternate except here>>The
+    alternate text will be used on all but the current overlays.
+  </description>
+
+  <TeXmacs> finally provides a means of customizing the way that ``hidden''
+  and ``shown'' content should be rendered: user determined coloring schemes
+  can be used using the <markup|alter-colors> tag which can be inserted from
+  <menu|Insert|Fold|Overlay|Specify color alternation>. For instance, in
+  order to achieve the effect mentioned in the example from
+  Figure<nbsp><reference|red-x-fig>, you may specify a ``black to red'' color
+  alternation, and then use a <subsubsubmenu|Insert|Fold|Overlay|Visible from
+  here on> type of overlay.
+
   <tmdoc-copyright|2013|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this

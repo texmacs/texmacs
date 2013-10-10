@@ -341,6 +341,24 @@
 
   <assign|unroll|<\xmacro|switch-args>
     <\surround||<right-flush>>
+      <\quasi>
+        <unquote*|<quote-arg|switch-args>>
+      </quasi>
+    </surround>
+  </xmacro>>
+
+  <assign|unroll-phantoms|<\xmacro|switch-args>
+    <\surround||<right-flush>>
+      <\hidden-invisible>
+        <\quasi>
+          <unquote*|<quote-arg|switch-args>>
+        </quasi>
+      </hidden-invisible>
+    </surround>
+  </xmacro>>
+
+  <assign|unroll-compressed|<\xmacro|switch-args>
+    <\surround||<right-flush>>
       <\hidden-deleted>
         <\quasi>
           <unquote*|<quote-arg|switch-args>>
@@ -359,23 +377,15 @@
     </surround>
   </xmacro>>
 
-  <assign|unroll-phantoms|<\xmacro|switch-args>
-    <\surround||<right-flush>>
-      <\hidden-invisible>
-        <\quasi>
-          <unquote*|<quote-arg|switch-args>>
-        </quasi>
-      </hidden-invisible>
-    </surround>
-  </xmacro>>
-
   \;
 
   <drd-props|unroll|arity|<tuple|repeat|1|1>|accessible|all>
 
-  <drd-props|unroll-greyed|arity|<tuple|repeat|1|1>|accessible|all>
-
   <drd-props|unroll-phantoms|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <drd-props|unroll-compressed|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <drd-props|unroll-greyed|arity|<tuple|repeat|1|1>|accessible|all>
 
   <\active*>
     <\src-comment>
@@ -442,22 +452,32 @@
   </active*>
 
   <assign|overlays|<macro|current|total|body|<with|overlay-nr|<arg|current>|<\surround||<right-flush>>
-    <\hidden-invisible>
-      <arg|body>
-    </hidden-invisible>
+    <arg|body>
   </surround>>>>
 
-  <assign|overlays-compressed|<macro|current|total|body|<with|overlay-nr|<arg|current>|<\surround||<right-flush>>
-    <\hidden-deleted>
-      <arg|body>
-    </hidden-deleted>
-  </surround>>>>
+  <assign|overlays-phantoms|<\macro|current|total|body>
+    <\overlays|<arg|current>|<arg|total>>
+      <\hidden-invisible>
+        <arg|body>
+      </hidden-invisible>
+    </overlays>
+  </macro>>
 
-  <assign|overlays-greyed|<macro|current|total|body|<with|overlay-nr|<arg|current>|<\surround||<right-flush>>
-    <\hidden-greyed>
-      <arg|body>
-    </hidden-greyed>
-  </surround>>>>
+  <assign|overlays-compressed|<\macro|current|total|body>
+    <\overlays|<arg|current>|<arg|total>>
+      <\hidden-deleted>
+        <arg|body>
+      </hidden-deleted>
+    </overlays>
+  </macro>>
+
+  <assign|overlays-greyed|<\macro|current|total|body>
+    <\overlays|<arg|current>|<arg|total>>
+      <\hidden-greyed>
+        <arg|body>
+      </hidden-greyed>
+    </overlays>
+  </macro>>
 
   <assign|overlays-range|<macro|start|end|body|<with|overlay-nr|<arg|start>|<arg|body>>>>
 
@@ -472,6 +492,24 @@
   <assign|overlay-this|<macro|here|body|<overlay-cond|<equal|<value|overlay-nr>|<arg|here>>|<arg|body>>>>
 
   <assign|overlay-other|<macro|avoid|body|<overlay-cond|<unequal|<value|overlay-nr>|<arg|avoid>>|<arg|body>>>>
+
+  \;
+
+  <assign|alternate-cond|<macro|cond|b1|b2|<style-with|src-compact|none|<superpose|<compound|<if|<arg|cond>|hidden*|shown*>|<arg|b1>>|<compound|<if|<arg|cond>|shown*|hidden*>|<arg|b2>>>>>>
+
+  <assign|alternate-from|<macro|start|b1|b2|<alternate-cond|<greatereq|<value|overlay-nr>|<arg|start>>|<arg|b1>|<arg|b2>>>>
+
+  <assign|alternate-until|<macro|end|b1|b2|<alternate-cond|<lesseq|<value|overlay-nr>|<arg|end>>|<arg|b1>|<arg|b2>>>>
+
+  <assign|alternate-this|<macro|here|b1|b2|<alternate-cond|<equal|<value|overlay-nr>|<arg|here>>|<arg|b1>|<arg|b2>>>>
+
+  <assign|alternate-other|<macro|avoid|b1|b2|<alternate-cond|<unequal|<value|overlay-nr>|<arg|avoid>>|<arg|b1>|<arg|b2>>>>
+
+  \;
+
+  <assign|alter-colors|<macro|body|hidden-color|shown-color|<style-with|src-compact|none|<with|hidden*|<quasi|<macro|x|<with|color|<unquote|<arg|hidden-color>>|<arg|x>>>>|shown*|<quasi|<macro|x|<with|color|<unquote|<arg|shown-color>>|<arg|x>>>>|<arg|body>>>>>
+
+  <drd-props|alter-colors|arity|3|color|1|color|2>
 
   <\active*>
     <\src-comment>

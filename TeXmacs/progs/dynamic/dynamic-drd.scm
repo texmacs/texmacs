@@ -87,21 +87,30 @@
   switch screens)
 
 (define-group unroll-tag
-  unroll unroll-greyed unroll-phantoms)
+  unroll unroll-compressed unroll-phantoms unroll-greyed)
 
 (define-group expanded-tag
   expanded slides)
 
 ;; overlays
 
-(define-group variant-tag (overlays-tag) (overlay-tag))
-(define-group similar-tag (overlays-tag) (overlay-tag))
+(define-group variant-tag
+  (overlays-tag) (unary-overlay-tag) (binary-overlay-tag))
+
+(define-group similar-tag
+  (overlays-tag) (unary-overlay-tag) (binary-overlay-tag))
 
 (define-group overlays-tag
-  overlays overlays-compressed overlays-greyed)
+  overlays overlays-compressed overlays-phantoms overlays-greyed)
 
 (define-group overlay-tag
+  (unary-overlay-tag) (binary-overlay-tag))
+
+(define-group unary-overlay-tag
   overlay-from overlay-until overlay-this overlay-other)
+
+(define-group binary-overlay-tag
+  alternate-from alternate-until alternate-this alternate-other)
 
 ;; hidden content
 

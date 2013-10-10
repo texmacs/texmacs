@@ -77,9 +77,10 @@
         ("Screens" (make-screens)))
       ("Tiny" (make-switch 'tiny-switch)))
   (-> "Unroll"
-      ("Standard" (make-switch 'unroll))
-      ("Greyed" (make-switch 'unroll-greyed))
+      ("Default" (make-switch 'unroll))
+      ("Compressed" (make-switch 'unroll-compressed)) 
       ("Phantoms" (make-switch 'unroll-phantoms))
+      ("Greyed" (make-switch 'unroll-greyed))
       ---
       ("Itemize" (make-switch-list 'unroll 'itemize))
       ("Enumerate" (make-switch-list 'unroll 'enumerate))
@@ -91,13 +92,21 @@
       (-> "Overlays"
           ("Standard" (make-overlays 'overlays))
           ("Compressed" (make-overlays 'overlays-compressed))
+          ("Phantoms" (make-overlays 'overlays-phantoms))
           ("Greyed" (make-overlays 'overlays-greyed))))
   (if (tree-innermost overlays-context?)
       (-> "Overlay"
+          ("Specify color alternation" (make-alter-colors))
+          ---
           ("Visible from here on" (make-overlay 'overlay-from))
           ("Visible until here" (make-overlay 'overlay-until))
           ("Visible only here" (make-overlay 'overlay-this))
-          ("Visible except here" (make-overlay 'overlay-other))))
+          ("Visible except here" (make-overlay 'overlay-other))
+          ---
+          ("Alternate from here on" (make-overlay 'alternate-from))
+          ("Alternate until here" (make-overlay 'alternate-until))
+          ("Alternate only here" (make-overlay 'alternate-this))
+          ("Alternate except here" (make-overlay 'alternate-other))))
   (if (!= (session-list) '())
       (-> "Executable"
           (link supported-executable-menu)))

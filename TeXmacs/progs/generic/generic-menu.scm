@@ -135,18 +135,27 @@
          (s (string-append (upcase-first name) ":"))
          (active? (tree-atomic? (tree-ref t i)))
 	 (in (if active? (tree->string (tree-ref t i)) "n.a."))
+         (in* (if active? in ""))
          (type (tree-child-type t i))
          (fm (type->format type))
-         (w (type->width type)))
+         (w (type->width type))
+         (setter (lambda (x) (when x (tree-set (focus-tree) i x)))))
     (assuming (== name "")
       //)
     (assuming (!= name "")
       (glue #f #f 3 0)
       (mini #t (group (eval s))))
-    (when active?
-      (mini #t
-        (input (when answer (tree-set (focus-tree) i answer)) fm
-  	     (list in) w)))))
+    (if (!= type "color")
+        (when active?
+          (mini #t
+            (input (setter answer) fm (list in) w))))
+    (if (== type "color")
+        (=> (color (tree->stree (tree-ref t i)) #f #f 24 16)
+            (pick-background "" (setter answer))
+            ---
+            ("Palette" (interactive-color setter '()))
+            ("Other" (interactive setter
+                       (list (upcase-first name) "color" in*)))))))
 
 (tm-menu (string-input-menu t i)
   (let* ((name (tree-child-long-name* t i))
