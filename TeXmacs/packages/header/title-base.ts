@@ -101,6 +101,12 @@
 
   <drd-props|abstract-msc|arity|<tuple|repeat|1|1>|accessible|all|border|no>
 
+  <drd-props|abstract-acm|arity|<tuple|repeat|1|1>|accessible|all|border|no>
+
+  <drd-props|abstract-arxiv|arity|<tuple|repeat|1|1>|accessible|all|border|no>
+
+  <drd-props|abstract-pacs|arity|<tuple|repeat|1|1>|accessible|all|border|no>
+
   <drd-props|abstract-keywords|arity|<tuple|repeat|1|1>|accessible|all|border|no>
 
   <\active*>
