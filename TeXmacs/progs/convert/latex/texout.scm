@@ -57,8 +57,8 @@
              (with opt (cond ((== lan "japanese")  "{min}")
                              ((== lan "taiwanese") "{bsmi}")
                              ((== lan "chinese")   "{gbsn}"))
-               (set! post-begin (string-append "\\begin{CJK}{UTF8}" opt "\n"))
-               (set! pre-end "\n\\end{CJK}")
+               (set! post-begin (string-append "\\begin{CJK*}{UTF8}" opt "\n"))
+               (set! pre-end "\n\\end{CJK*}")
                (output-verbatim "\\usepackage{CJK}\n")))
             (else
               (output-verbatim "\\usepackage[" lan "]{babel}\n")
