@@ -17,18 +17,27 @@
 ;; Abstract master routine for searching in documentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (tmdoc-search-local grep-string searcher lan)
+(tm-define (tmdoc-search-local-one grep-string searcher lan)
   (let* ((docpath (string->url "$TEXMACS_DOC_PATH"))
          (suffix (url-wildcard (string-append "*." lan ".tm")))
          (docfiles (url-append docpath (url-append (url-any) suffix)))
-         (candidates (url->list (url-grep grep-string docfiles)))
-         (fragments (append-map searcher candidates)))
-    (and (nnull? fragments)
-         (tm->tree `(document ,@fragments)))))
+         (candidates (url->list (url-grep grep-string docfiles))))
+    (append-map searcher candidates)))
 
-(tm-define (tmdoc-search grep-string searcher)
+(tm-define (tmdoc-search-local-several queries lan)
+  (if (and (nnull? queries) (nnull? (cdr queries)))
+      (append (tmdoc-search-local-one (car queries) (cadr queries) lan)
+	      (tmdoc-search-local-several (cddr queries) lan))
+      (list)))
+
+(tm-define (tmdoc-search-local queries lan)
+  (with l (tmdoc-search-local-several queries lan)
+    (and (nnull? l) (tm->tree `(document ,@l)))))
+
+(tm-define (tmdoc-search . queries)
+  ;; queries is a list which alternates grep-strings and search routines
   (with lan (string-take (language-to-locale (get-output-language)) 2)
-    (or (tmdoc-search-local grep-string searcher lan)
+    (or (tmdoc-search-local queries lan)
         (and (!= lan "en")
              (tmdoc-search-local grep-string searcher "en")))))
 
@@ -49,14 +58,20 @@
        (tm-atomic? (tm-ref t 0))
        (== (tm->string (tm-ref t 0)) tag)))
 
-(define (url-search-tag u tag)
+(define (url-search-explain-macro u tag)
   (with pred? (wrap-explain (cut explain-macro? <> tag))
+    (tm-search (tree-load-inclusion u) pred?)))
+
+(define (url-search-markup u tag)
+  (with pred? (wrap-explain (cut tm-equal? <> `(markup ,tag)))
     (tm-search (tree-load-inclusion u) pred?)))
 
 (tm-define (tmdoc-search-tag tag)
   (if (symbol? tag) (set! tag (symbol->string tag)))
   (tmdoc-search (string-append "<explain-macro|" tag "|")
-                (cut url-search-tag <> tag)))
+                (cut url-search-explain-macro <> tag)
+		(string-append "<markup|" tag ">")
+                (cut url-search-markup <> tag)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Searching style parameters
