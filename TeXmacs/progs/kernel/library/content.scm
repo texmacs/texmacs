@@ -86,11 +86,14 @@
   (or (and (pair? x) (in? (car x) l))
       (and (compound-tree? x) (in? (tree-label x) l))))
 
-(define-public (tm-search-forwards t pred?)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Searching for certain subtrees
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public (tm-find t pred?)
   (cond ((pred? t) t)
         ((tm-atomic? t) #f)
-        (else (list-find (tm-children t)
-                         (cut tm-search-forwards <> pred?)))))
+        (else (list-find (tm-children t) (cut tm-find <> pred?)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TeXmacs lengths

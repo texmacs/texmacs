@@ -379,7 +379,7 @@
   (tree-in? t (enunciation-tag-list)))
 
 (tm-define (dueto-added? t)
-  (tm-search-forwards t (lambda (x) (tm-is? x 'dueto))))
+  (tm-find t (lambda (x) (tm-is? x 'dueto))))
 
 (tm-define (dueto-add t)
   (tree-go-to t :last :start)
