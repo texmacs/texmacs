@@ -64,6 +64,39 @@
       $lf)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Stylistic preferences for tag
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-generate (focus-doc-parameter par)
+  ($with par-doc (tmdoc-search-parameter par)
+    ($when par-doc par-doc)
+    ($when (not par-doc)
+      ($explain `(src-var ,par)
+        "A parameter of type " (tree-label-type (string->symbol par)) "."))))
+
+(tm-generate (focus-doc-preferences t)
+  ($let* ((lab (tree-label t))
+          (pars (list-filter (search-tag-parameters t)
+                             parameter-show-in-menu?)))
+    ($block
+      ($para
+        "The rendering of the " ($markup lab) " tag can be customized by "
+        "editing the macro which defines it. This can be done by clicking "
+        "on " ($menu "Edit macro") " button in the "
+        ($menu "Focus" "Preferences") " menu (or in the equivalent "
+        ($tmdoc-icon "tm_focus_prefs.xpm") " icon menu on the focus toolbar). "
+        "You may also directly edit the macro in the style file or package "
+        "where it was defined, using " ($menu "Edit source") ".")
+    
+      ($when (nnull? pars)
+        ($para
+          "Still using the " ($menu "Focus" "Preferences") " menu, "
+          "you may also edit the following style parameters which affect "
+          "the rendering of the " ($markup lab) " tag:")
+        ($for (par pars)
+          (focus-doc-parameter par))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document structured variants
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -296,6 +329,9 @@
     ($when (tree-label-extension? (tree-label t))
       ($unfolded-documentation "Current definition"
         (focus-doc-source t)))
+    ($when (focus-has-preferences? t)
+      ($unfolded-documentation "Style preferences"
+        (focus-doc-preferences t)))
     ($when (or (focus-has-variants? t) (focus-has-toggles? t))
       ($unfolded-documentation "Structured variants"
         (focus-doc-toggles-variants t)))
