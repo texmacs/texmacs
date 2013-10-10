@@ -13,28 +13,91 @@
 
 (texmacs-module (doc tmdoc-search))
 
-(define (explain-macro? t tag)
-  (and (tm-is? t 'explain-macro)
-       (tm-atomic? (tm-ref t 0))
-       (== (tm->string (tm-ref t 0)) tag)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Abstract master routine for searching in documentation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define ((wrap-explain pred?) t)
-  (and (tm-func? t 'explain 2)
-       (tm-find (tree-ref t 0) pred?)))
-
-(define (url-search-tag u tag)
-  (with pred? (wrap-explain (cut explain-macro? <> tag))
-    (tm-search (tree-load-inclusion u) pred?)))
-
-(tm-define (tmdoc-search grep-string searcher)
+(tm-define (tmdoc-search-local grep-string searcher lan)
   (let* ((docpath (string->url "$TEXMACS_DOC_PATH"))
-         (docfiles (url-append docpath (url-any)))
+         (suffix (url-wildcard (string-append "*." lan ".tm")))
+         (docfiles (url-append docpath (url-append (url-any) suffix)))
          (candidates (url->list (url-grep grep-string docfiles)))
          (fragments (append-map searcher candidates)))
     (and (nnull? fragments)
          (tm->tree `(document ,@fragments)))))
 
+(tm-define (tmdoc-search grep-string searcher)
+  (with lan (string-take (language-to-locale (get-output-language)) 2)
+    (or (tmdoc-search-local grep-string searcher lan)
+        (and (!= lan "en")
+             (tmdoc-search-local grep-string searcher "en")))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Other useful subroutines
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define ((wrap-explain pred?) t)
+  (and (tm-func? t 'explain 2)
+       (tm-find (tree-ref t 0) pred?)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Searching TeXmacs tags
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (explain-macro? t tag)
+  (and (tm-is? t 'explain-macro)
+       (tm-atomic? (tm-ref t 0))
+       (== (tm->string (tm-ref t 0)) tag)))
+
+(define (url-search-tag u tag)
+  (with pred? (wrap-explain (cut explain-macro? <> tag))
+    (tm-search (tree-load-inclusion u) pred?)))
+
 (tm-define (tmdoc-search-tag tag)
   (if (symbol? tag) (set! tag (symbol->string tag)))
   (tmdoc-search (string-append "<explain-macro|" tag "|")
                 (cut url-search-tag <> tag)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Searching style parameters
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (var-val? t var)
+  (and (tm-is? t 'var-val)
+       (tm-atomic? (tm-ref t 0))
+       (== (tm->string (tm-ref t 0)) var)))
+
+(define (url-search-parameter u var)
+  (with pred? (wrap-explain (cut var-val? <> var))
+    (tm-search (tree-load-inclusion u) pred?)))
+
+(tm-define (tmdoc-search-parameter var)
+  (if (symbol? var) (set! var (symbol->string var)))
+  (tmdoc-search (string-append "<var-val|" var "|")
+                (cut url-search-parameter <> var)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Searching scheme functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (name-starts? t prefix)
+  (cond ((tm-atomic? t) (string-starts? (tm->string t) prefix))
+        ((tm-in? t '(concat document))
+         (with l (tm-children t)
+           (and (nnull? l) (name-starts? (car l) prefix))))
+        (else #f)))
+
+(define (scheme-function? t fun)
+  (and (tm-func? t 'scm 1)
+       (or (name-starts? (tm-ref t 0) (string-append "(" fun " "))
+           (name-starts? (tm-ref t 0) (string-append "(" fun ")")))))
+
+(define (url-search-scheme-function u fun)
+  (with pred? (wrap-explain (cut scheme-function? <> fun))
+    (tm-search (tree-load-inclusion u) pred?)))
+
+(tm-define (tmdoc-search-scheme-function f)
+  (let* ((fun (string->tmstring f))
+         (fun* (string-replace (string-replace fun "<" "\\<") ">" "\\>")))
+    (tmdoc-search (string-append "<scm|(" fun*)
+                  (cut url-search-scheme-function <> fun))))

@@ -823,6 +823,25 @@ complete (url base, url u, string filter, bool flag) {
     // FIXME: test filter flags here
     return u;
   }
+  if (is_concat (u) && is_wildcard (u[1], 0) && is_wildcard (u[2], 1)) {
+    // FIXME: ret= ret | ... is unefficient (quadratic) in main loop
+    if (!(is_rooted (base, "default") || is_rooted (base, "file"))) {
+      cerr << LF << "base= " << base << LF;
+      FAILED ("wildcards only implemented for files");
+    }
+    url ret= url_none ();
+    bool error_flag;
+    array<string> dir= read_directory (base, error_flag);
+    int i, n= N(dir);
+    for (i=0; i<n; i++) {
+      if ((!is_none (ret)) && flag) return ret;
+      if ((dir[i] == ".") || (dir[i] == "..")) continue;
+      ret= ret | (dir[i] * complete (base * dir[i], u, filter, flag));
+      if (match_wildcard (dir[i], u[2][1]->t->label))
+	ret= ret | complete (base, dir[i], filter, flag);
+    }
+    return ret;
+  }
   if (is_concat (u)) {
     url sub= complete (base, u[1], "", false);
     // "" should often be faster than the more correct "d" here
