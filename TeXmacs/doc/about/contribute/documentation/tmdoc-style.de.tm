@@ -1,57 +1,75 @@
-<TeXmacs|1.0.4.5>
+<TeXmacs|1.0.7.20>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|Den tmdoc Stil benutzen>
 
-  Neben den Makros über die <hyper-link|Urheberrechtsinformationen|copyright.de.tm>
-  und den <hyper-link|Leit-Makros|traversal.de.tm>, die bereits dokumentiert
+  Neben den Makros über die <hlink|Urheberrechtsinformationen|copyright.de.tm>
+  und den <hlink|Leit-Makros|traversal.de.tm>, die bereits dokumentiert
   wurden, kommt der <tmstyle|tmdoc> Stil noch mit einigen anderen Makros, die
   sie benutzen sollten, wann immer es angebracht erscheint:
 
-  <\description>
-    <item*|<markup|key>>Dieses Makro wird benutzt, um Keyboard-Eingaben zu
-    kennzeichnen, wie <shortcut|(save-buffer)>.
+  <\explain|<markup|key>>
+    Dieses Makro wird benutzt, um Keyboard-Eingaben zu kennzeichnen, wie
+    <shortcut|(save-buffer)>.
+  </explain>
 
-    <item*|<markup|menu>>Dieses Makro kennzeichnet ein Hauptmenü, wie
-    <menu|Datei>.
+  <\explain|<markup|menu>>
+    Dieses Makro kennzeichnet ein Hauptmenü, wie <menu|Datei>.
+  </explain>
 
-    <item*|<markup|submenu>>Dieses Makro kennzeichnet ein Untermenü oder
-    einen Menü-Eintrag, wie <menu|Dokument|Sprache>.
+  <\explain|<markup|submenu>>
+    Dieses Makro kennzeichnet ein Untermenü oder einen Menü-Eintrag, wie
+    <menu|Dokument|Sprache>.
+  </explain>
 
-    <item*|<markup|subsubmenu>>Dieses Makro kennzeichnet ein Unteruntermenü
-    oder ein Untermenü-Eintrag, wie <menu|Insert|Farbe|Weiÿ>.
+  <\explain|<markup|subsubmenu>>
+    Dieses Makro kennzeichnet ein Unteruntermenü oder ein Untermenü-Eintrag,
+    wie <menu|Insert|Farbe|Weiÿ>.
+  </explain>
 
-    <item*|<markup|tmstyle>>Dieses Makro kennzeichnet den Namen einer
-    <TeXmacs> Stil-Datei oder eines Paketes, wie <tmstyle|article>.
+  <\explain|<markup|tmstyle>>
+    Dieses Makro kennzeichnet den Namen einer <TeXmacs> Stil-Datei oder eines
+    Paketes, wie <tmstyle|article>.
+  </explain>
 
-    <item*|<markup|markup>>Dieses Makro wird benutzt um ein Makro oder eine
-    Funktion zu kennzeichnen, wie <markup|section>.
-  </description>
+  <\explain|<markup|markup>>
+    Dieses Makro wird benutzt um ein Makro oder eine Funktion zu
+    kennzeichnen, wie <markup|section>.
+  </explain>
 
   Die folgenden Makros und Funktionen werden für Links und Indizierungen
   benutzt, auch wenn sie in der Zukunft noch verbessert werden sollten:
 
-  <\description>
-    <item*|<markup|simple-link>>Dieses Makro nimmt eine URL
-    <with|mode|math|x> als Argument entgegen und ist dann ein Hyperlink mit
-    Namen und Ziel <with|mode|math|x>.
+  <\explain|<markup|simple-link>>
+    Dieses Makro nimmt eine URL <math|x> als Argument entgegen und ist dann
+    ein Hyperlink mit Namen und Ziel <math|x>.
+  </explain>
 
-    <item*|<markup|hyper-link>>Dieses Makro ist ein normaler Hyperlink.
+  <\explain|<markup|hyper-link>>
+    Dieses Makro ist ein normaler Hyperlink.
+  </explain>
 
-    <item*|<markup|concept-link>>Dieses Makro nimmt ein Konzept als Argument.
-    Später könnte dann ein entsprechender Hyperlink automatisch erstellt
-    werden von dieser und anderer Dokumentation.
+  <\explain|<markup|concept-link>>
+    Dieses Makro nimmt ein Konzept als Argument. Später könnte dann ein
+    entsprechender Hyperlink automatisch erstellt werden von dieser und
+    anderer Dokumentation.
+  </explain>
 
-    <item*|<markup|only-index>>Eine einfache Zeichenkette indizieren.
+  <\explain|<markup|only-index>>
+    Eine einfache Zeichenkette indizieren.
+  </explain>
 
-    <item*|<markup|def-index>>Definition eines neuen Konzeptes; der Text wird
-    kursiv angezeigt und indiziert.
+  <\explain|<markup|def-index>>
+    Definition eines neuen Konzeptes; der Text wird kursiv angezeigt und
+    indiziert.
+  </explain>
 
-    <item*|<markup|re-index>>Wiederauftauchen eines schon definierten
-    Konzepts; der Text wird in Romanisch angezeigt und indiziert.
-  </description>
+  <\explain|<markup|re-index>>
+    Wiederauftauchen eines schon definierten Konzepts; der Text wird in
+    Romanisch angezeigt und indiziert.
+  </explain>
 
   Der <tmstyle|tmdoc> Stil leitet sich aus dem <tmstyle|Brief> Stil ab und
   sollte Makros wie <markup|em>, <markup|verbatim>, <markup|itemize>,

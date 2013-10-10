@@ -9,20 +9,26 @@
   graphical user interface elements, such as keyboard shortcuts, menus or
   icons.
 
-  <\description>
-    <item*|<markup|shortcut>>This macro is used to indicate a keyboard
-    shortcut for a <scheme> command. For instance, the shortcut for
-    <scm|(new-buffer)> is <shortcut|(new-buffer)>.
+  <\explain|<markup|shortcut>>
+    This macro is used to indicate a keyboard shortcut for a <scheme>
+    command. For instance, the shortcut for <scm|(new-buffer)> is
+    <shortcut|(new-buffer)>.
+  </explain>
 
-    <item*|<markup|key>>This unary macro is used for explicit keyboard input.
-    For instance, when giving <rigid|<verbatim|A C-b return>> as argument,
-    the result is <key|A C-b return>.
+  <\explain|<markup|key>>
+    This unary macro is used for explicit keyboard input. For instance, when
+    giving <rigid|<verbatim|A C-b return>> as argument, the result is <key|A
+    C-b return>.
+  </explain>
 
-    <item*|<markup|menu>>This function with an arbitrary number of arguments
-    indicates a menu like <menu|File> or <menu|Document|Language>. Menu
-    entries are automatically translated by this function.
+  <\explain|<markup|menu>>
+    This function with an arbitrary number of arguments indicates a menu like
+    <menu|File> or <menu|Document|Language>. Menu entries are automatically
+    translated by this function.
+  </explain>
 
-    <item*|<markup|submenu>>Consider the following sentence:
+  <\explain|<markup|submenu>>
+    Consider the following sentence:
 
     <\quote-env>
       ``You may use the <submenu|File|Load> and <submenu|File|Save> entries
@@ -35,26 +41,33 @@
     invisible argument is still taken into account when building the index
     (for instance). In a similar way, we provide <markup|subsubmenu> and
     <markup|subsubsubmenu> tags.
+  </explain>
 
-    <item*|<markup|icon>>Can be used in order to specify one of the <TeXmacs>
-    icons, such as <icon|tm_open.xpm> and <icon|tm_save.xpm>. The macro takes
-    one argument with the file name of the icon (the full path is not
-    needed).
+  <\explain|<markup|icon>>
+    Can be used in order to specify one of the <TeXmacs> icons, such as
+    <icon|tm_open.xpm> and <icon|tm_save.xpm>. The macro takes one argument
+    with the file name of the icon (the full path is not needed).
+  </explain>
 
-    <item*|<markup|screenshot>>Similar to the <markup|icon> tag, but for
-    screenshots.
+  <\explain|<markup|screenshot>>
+    Similar to the <markup|icon> tag, but for screenshots.
+  </explain>
 
-    <item*|<markup|cursor>>This macro can be used to indicate a cursor
-    position, as in <math|a<rsup|2>+b<rsup|2<cursor>>=c<rsup|2>>.
+  <\explain|<markup|cursor>>
+    This macro can be used to indicate a cursor position, as in
+    <math|a<rsup|2>+b<rsup|2<cursor>>=c<rsup|2>>.
+  </explain>
 
-    <item*|<markup|small-focus>, <markup|small-envbox>>This macro can be used
-    for indicating the visual aids around the current focus and the further
-    outer context (<abbr|e.g.> <math|<small-envbox|a+<frac|b|<small-focus|c>>>>),
-    in the case of inline elements.
+  <\explain|<markup|small-focus>, <markup|small-envbox>>
+    This macro can be used for indicating the visual aids around the current
+    focus and the further outer context (<abbr|e.g.>
+    <math|<small-envbox|a+<frac|b|<small-focus|c>>>>), in the case of inline
+    elements.
+  </explain>
 
-    <item*|<markup|big-focus>, <markup|big-envbox>>Block versions of
-    <markup|small-focus> and <markup|small-envbox>.
-  </description>
+  <\explain|<markup|big-focus>, <markup|big-envbox>>
+    Block versions of <markup|small-focus> and <markup|small-envbox>.
+  </explain>
 
   Notice that the contents of none of the above tags should be translated
   into foreign languages. Indeed, for menu tags, the translations are done

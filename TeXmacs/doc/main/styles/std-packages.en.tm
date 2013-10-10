@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|1.0.7.20>
 
 <style|tmdoc>
 
@@ -8,42 +8,49 @@
   First of all, <TeXmacs> provides several packages for customizing the
   behaviour of the standard styles:
 
-  <\description>
-    <item*|<tmpackage|number-long-article>>This package induces all numbers
-    of environments (theorems, remarks, equations, figures, <abbr|etc.>) to
-    be prefixed by the current section number. It is usually used in
-    combination with the <tmstyle|article> style (for long articles) and the
-    <tmstyle|book> style (for books with long chapters).
+  <\explain|<tmpackage|number-long-article>>
+    This package induces all numbers of environments (theorems, remarks,
+    equations, figures, <abbr|etc.>) to be prefixed by the current section
+    number. It is usually used in combination with the <tmstyle|article>
+    style (for long articles) and the <tmstyle|book> style (for books with
+    long chapters).
+  </explain>
 
-    <item*|<tmpackage|number-europe>>By default, <TeXmacs> uses ``American
-    style numbering''. This means that the same counter is used for numbering
-    similar environments like theorem and proposition. In other words, a
-    remark following ``Theorem 3'' will be numbered ``Remark 4''. If you want
-    each environment to have its individual counter, then you should enable
-    ``European style numbering'', by selecting the <tmpackage|number-europe>
-    package.
+  <\explain|<tmpackage|number-europe>>
+    By default, <TeXmacs> uses ``American style numbering''. This means that
+    the same counter is used for numbering similar environments like theorem
+    and proposition. In other words, a remark following ``Theorem 3'' will be
+    numbered ``Remark 4''. If you want each environment to have its
+    individual counter, then you should enable ``European style numbering'',
+    by selecting the <tmpackage|number-europe> package.
+  </explain>
 
-    <item*|<tmpackage|number-us>>This package may be used in order to switch
-    back to American style numbering in the case when a third parties style
-    file enforces European style numbering.
+  <\explain|<tmpackage|number-us>>
+    This package may be used in order to switch back to American style
+    numbering in the case when a third parties style file enforces European
+    style numbering.
+  </explain>
 
-    <item*|<tmpackage|structured-list>>This is an experimental package. By
-    default, items in unnumbered lists or enumerations take no arguments and
-    items in descriptions one argument. When using the
-    <tmpackage|structured-list> package, they take an optional additional
-    argument with the body of the item.
+  <\explain|<tmpackage|structured-list>>
+    This is an experimental package. By default, items in unnumbered lists or
+    enumerations take no arguments and items in descriptions one argument.
+    When using the <tmpackage|structured-list> package, they take an optional
+    additional argument with the body of the item.
+  </explain>
 
-    <item*|<tmpackage|structured-section>>This is an experimental package. By
-    default, sectional tags only take a title argument. When using the
-    <tmpackage|structured-section> package, they take an optional additional
-    argument with the body of the section. Moreover, the environment
-    <markup|rsection> for recursive sections is provided.
+  <\explain|<tmpackage|structured-section>>
+    This is an experimental package. By default, sectional tags only take a
+    title argument. When using the <tmpackage|structured-section> package,
+    they take an optional additional argument with the body of the section.
+    Moreover, the environment <markup|rsection> for recursive sections is
+    provided.
+  </explain>
 
-    <item*|<tmpackage|varsession>>This package may be used in order to obtain
-    an alternative rendering of interactive sessions. The rendering is
-    designed to be nice for interactive use, although less adequate for
-    printing.
-  </description>
+  <\explain|<tmpackage|varsession>>
+    This package may be used in order to obtain an alternative rendering of
+    interactive sessions. The rendering is designed to be nice for
+    interactive use, although less adequate for printing.
+  </explain>
 
   In addition to these packages, and the many packages for internal use,
   <TeXmacs> also provides a few personal example style packages
@@ -61,17 +68,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|par-width|150mm>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

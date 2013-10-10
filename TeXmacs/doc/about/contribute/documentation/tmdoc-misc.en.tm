@@ -7,10 +7,9 @@
 
   Some other potentially useful macros are the following:
 
-  <\description>
-    <item*|<markup|tm-fragment>>For indicating some <TeXmacs> document
-    fragment. This macro is especially useful for <TeXmacs> source code, as
-    in
+  <\explain|<markup|tm-fragment>>
+    For indicating some <TeXmacs> document fragment. This macro is especially
+    useful for <TeXmacs> source code, as in
 
     <\tm-fragment>
       <inactive*|<assign|red-text|<macro|body|<with|color|red|<arg|body>>>>>
@@ -19,11 +18,12 @@
     In this example, we used the keyboard shortcut <shortcut|(make-mod-active
     'inactive*)> in order to disactivate the source code inside an active
     outer document.
+  </explain>
 
-    <item*|<markup|descriptive-table>>For descriptive tables; such tables can
-    be used to document lists of keyboard shortcuts, different types of
-    markup, <abbr|etc.>
-  </description>
+  <\explain|<markup|descriptive-table>>
+    For descriptive tables; such tables can be used to document lists of
+    keyboard shortcuts, different types of markup, <abbr|etc.>
+  </explain>
 
   <tmdoc-copyright|1998--2011|Joris van der Hoeven>
 

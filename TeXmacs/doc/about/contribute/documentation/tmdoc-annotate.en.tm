@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.0.7.20>
 
 <style|tmdoc>
 
@@ -9,28 +9,40 @@
   the following useful macros for common annotations. You should use them
   whenever appropriate.
 
-  <\description>
-    <item*|<markup|markup>>This macro is used in order to indicate a macro or
-    a function like <markup|section>.
+  <\explain|<markup|markup>>
+    This macro is used in order to indicate a macro or a function like
+    <markup|section>.
+  </explain>
 
-    <item*|<markup|src-arg>>This macro should be used in order to indicate
-    macro arguments such as <src-arg|body>.
+  <\explain|<markup|src-arg>>
+    This macro should be used in order to indicate macro arguments such as
+    <src-arg|body>.
+  </explain>
 
-    <item*|<markup|src-var>>This macro is used for the indication of
-    environment variables such as <src-var|font-size>.
+  <\explain|<markup|src-var>>
+    This macro is used for the indication of environment variables such as
+    <src-var|font-size>.
+  </explain>
 
-    <item*|<markup|src-length>>This macro is used in order to indicate a
-    length such as <src-length|12em>.
+  <\explain|<markup|src-length>>
+    This macro is used in order to indicate a length such as
+    <src-length|12em>.
+  </explain>
 
-    <item*|<markup|tmstyle>>This macro indicates the name of a <TeXmacs>
-    style file or package like <tmstyle|article>.
+  <\explain|<markup|tmstyle>>
+    This macro indicates the name of a <TeXmacs> style file or package like
+    <tmstyle|article>.
+  </explain>
 
-    <item*|<markup|tmpackage>>This macro indicates the name of a <TeXmacs>
-    package like <tmpackage|std-markup>.
+  <\explain|<markup|tmpackage>>
+    This macro indicates the name of a <TeXmacs> package like
+    <tmpackage|std-markup>.
+  </explain>
 
-    <item*|<markup|tmdtd>>This macro indicates the name of a <TeXmacs>
-    <abbr|d.t.d.> like <tmdtd|number-env>.
-  </description>
+  <\explain|<markup|tmdtd>>
+    This macro indicates the name of a <TeXmacs> <abbr|d.t.d.> like
+    <tmdtd|number-env>.
+  </explain>
 
   <tmdoc-copyright|1998--2011|Joris van der Hoeven>
 
