@@ -766,9 +766,11 @@
         ---
         ("One column" (init-env "par-columns" "1"))
         ("Two columns" (init-env "par-columns" "2")))
-    (glue #f #f 0 0)
     (=> (balloon (icon (eval (current-language-icon))) "Document language")
-        (link document-language-menu))))
+        (link document-language-menu))
+    (if (new-fonts?)
+        ((balloon (icon "tm_focus_font.xpm") "Main font")
+         (interactive open-document-font-selector)))))
 
 (tm-menu (standard-focus-icons t)
   (:require (tree-is-buffer? t))
