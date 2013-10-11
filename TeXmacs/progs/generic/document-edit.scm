@@ -87,7 +87,9 @@
 ;; Text and paragraph properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (test-document-language? s) (string=? (get-env "language") s))
 (tm-define (init-language lan)
+  (:check-mark "*" test-document-language?)
   (let ((cyrillic-before (in? (tree->stree (get-init-tree "language"))
 			      '("bulgarian" "russian" "ukrainian")))
 	(cyrillic-after (in? lan '("bulgarian" "russian" "ukrainian")))
