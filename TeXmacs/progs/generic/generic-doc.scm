@@ -64,39 +64,6 @@
       $lf)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Stylistic preferences for tag
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-generate (focus-doc-parameter par)
-  ($with par-doc (tmdoc-search-parameter par)
-    ($when par-doc par-doc)
-    ($when (not par-doc)
-      ($explain `(src-var ,par)
-        "A parameter of type " (tree-label-type (string->symbol par)) "."))))
-
-(tm-generate (focus-doc-preferences t)
-  ($let* ((lab (tree-label t))
-          (pars (list-filter (search-tag-parameters t)
-                             parameter-show-in-menu?)))
-    ($block
-      ($para
-        "The rendering of the " ($markup lab) " tag can be customized by "
-        "editing the macro which defines it. This can be done by clicking "
-        "on " ($menu "Edit macro") " button in the "
-        ($menu "Focus" "Preferences") " menu (or in the equivalent "
-        ($tmdoc-icon "tm_focus_prefs.xpm") " icon menu on the focus toolbar). "
-        "You may also directly edit the macro in the style file or package "
-        "where it was defined, using " ($menu "Edit source") ".")
-    
-      ($when (nnull? pars)
-        ($para
-          "Still using the " ($menu "Focus" "Preferences") " menu, "
-          "you may also edit the following style parameters which affect "
-          "the rendering of the " ($markup lab) " tag:")
-        ($for (par pars)
-          (focus-doc-parameter par))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document structured variants
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -173,6 +140,68 @@
     (focus-doc-variants t))
   ($when (focus-has-toggles? t)
     (focus-doc-toggles t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Stylistic preferences for tag
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-generate (focus-doc-style-option opt)
+  ($with opt-doc (tmdoc-search-style opt)
+    ($when opt-doc opt-doc)
+    ($when (not opt-doc)
+      ($explain ($inline `(tmpackage ,opt)
+                         `(explain-synopsis ,(style-get-menu-name opt)))
+        ($with brief-doc (style-get-documentation opt)
+          ($when brief-doc brief-doc ".")
+          ($when (not brief-doc) "Undocumented style package."))))))
+
+(tm-generate (focus-doc-parameter par)
+  ($with par-doc (tmdoc-search-parameter par)
+    ($when par-doc par-doc)
+    ($when (not par-doc)
+      ($explain `(src-var ,par)
+        "A parameter of type " (tree-label-type (string->symbol par)) "."))))
+
+(tm-generate (focus-doc-preferences t)
+  ($let* ((lab (tree-label t))
+          (opts (search-tag-options t))
+          (pars (list-filter (search-tag-parameters t)
+                             parameter-show-in-menu?)))
+    ($block
+      ($para
+        "The rendering of the " ($markup lab)
+        " tag can be customized by editing the macro which defines it. "
+        "This can be done by clicking on " ($menu "Edit macro")
+        " button in the " ($menu "Focus" "Preferences") " menu "
+        "(or in the equivalent " ($tmdoc-icon "tm_focus_prefs.xpm")
+        " icon menu on the focus toolbar). "
+        "You may also directly edit the macro in the style file or package "
+        "where it was defined, using " ($menu "Edit source") ".")
+    
+      ($when (nnull? (append opts pars))
+        ($para
+          "Still using the " ($menu "Focus" "Preferences") " menu, "
+          "you may also specify "
+          ($when (and (nnull? opts) (null? pars))
+            "style options")
+          ($when (and (null? opts) (nnull? pars))
+            "style parameters")
+          ($when (and (nnull? opts) (nnull? pars))
+            "style options and parameters")
+          " which apply to the " ($markup lab) " tag. "
+          "These settings are global, so they will apply to all other "
+          ($markup lab) " tags in your document, and generally also to "
+          "other similar tags."))
+
+      ($when (nnull? opts)
+        ($folded ($strong "Style options")
+          ($for (opt opts)
+            (focus-doc-style-option opt))))
+
+      ($when (nnull? pars)
+        ($folded ($strong "Style parameters")
+          ($for (par pars)
+            (focus-doc-parameter par)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document structured editing operations
@@ -329,12 +358,12 @@
     ($when (tree-label-extension? (tree-label t))
       ($unfolded-documentation "Current definition"
         (focus-doc-source t)))
-    ($when (focus-has-preferences? t)
-      ($unfolded-documentation "Style preferences"
-        (focus-doc-preferences t)))
     ($when (or (focus-has-variants? t) (focus-has-toggles? t))
       ($unfolded-documentation "Structured variants"
         (focus-doc-toggles-variants t)))
+    ($when (focus-has-preferences? t)
+      ($unfolded-documentation "Style preferences"
+        (focus-doc-preferences t)))
     ($when (focus-can-move? t)
       ($unfolded-documentation "Structured navigation"
         (focus-doc-move t)))

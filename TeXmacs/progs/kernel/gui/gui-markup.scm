@@ -536,6 +536,14 @@
 (tm-define-macro ($tmfs-title . l)
   ($quote `(document (tmfs-title ($unquote ($inline ,@l))))))
 
+(tm-define-macro ($folded key . l)
+  ($quote `(document (folded ($unquote ($inline ,key))
+                             ($unquote ($block ,@l))))))
+
+(tm-define-macro ($unfolded key . l)
+  ($quote `(document (unfolded ($unquote ($inline ,key))
+                               ($unquote ($block ,@l))))))
+
 (tm-define-macro ($folded-documentation key . l)
   ($quote `(document (folded-documentation ($unquote ($inline ,key))
                                            ($unquote ($block ,@l))))))
