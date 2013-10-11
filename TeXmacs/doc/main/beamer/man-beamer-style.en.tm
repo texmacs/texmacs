@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.6>
+<TeXmacs|1.0.7.20>
 
 <style|tmdoc>
 
@@ -6,15 +6,20 @@
   <tmdoc-title|Beamer styles>
 
   In order to start writing a laptop presentation, you should first select
-  the <tmstyle|beamer> style using <menu|Document|Style|Beamer>. Currently,
-  there are two main ``themes'' for presentations: the default
-  <tmstyle|ridged-paper> theme and the <tmstyle|metal> theme, which can be
-  selected using <menu|Document|Add package|Beamer|metal>.
+  the <tmstyle|beamer> style using <menu|Document|Style|beamer>. There are
+  several main ``themes'' for presentations, such as
+  <subsubmenu|Document|Beamer theme|Bluish>, <subsubmenu|Document|Beamer
+  theme|Ice>, <subsubmenu|Document|Beamer theme|Metal>,
+  <subsubmenu|Document|Beamer theme|Reddish>, <subsubmenu|Document|Beamer
+  theme|Ridged paper>, which can be selected from the <menu|Document|Beamer
+  theme> menu.
 
   The presentation style includes the <tmstyle|alt-colors> style package,
   which features the use of colors for mathematical formulas, enunciations,
-  etc. Optionally, one may also select the <tmstyle|framed-env> package,
-  which puts frames around section titles and several standard environments.
+  etc. Additional customizations of the presentation style are available in
+  the <menu|Focus|Preferences> menus for the various tags to which they
+  apply. For instance, the rendering of slide titles and theorems can be
+  further customized.
 
   <tmdoc-copyright|2010|Joris van der Hoeven>
 

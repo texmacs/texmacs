@@ -198,6 +198,13 @@
 ;; Beamer themes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(menu-bind document-style-extra-menu
+  (:require (style-has? "beamer-style"))
+  (=> "Beamer theme"
+      (for (theme (beamer-themes))
+        ((check (eval (upcase-first theme)) "v" (has-style-package? theme))
+         (add-style-package theme)))))
+
 (tm-menu (focus-style-extra-menu t)
   (:require (style-has? "beamer-style"))
   (=> "Beamer theme"

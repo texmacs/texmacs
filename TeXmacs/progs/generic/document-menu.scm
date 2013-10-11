@@ -58,6 +58,8 @@
       ---
       ("Add other package" (interactive add-style-package))))
 
+(menu-bind document-style-extra-menu)
+
 (menu-bind document-view-menu
   ("Edit source tree" (toggle-preamble))
   (-> "Informative flags"
@@ -319,6 +321,7 @@
 
 (menu-bind document-menu
   (-> "Style" (link document-style-menu))
+  (link document-style-extra-menu)
   (if (detailed-menus?)
       ;;(-> "Add package"
       ;;(link add-package-menu)

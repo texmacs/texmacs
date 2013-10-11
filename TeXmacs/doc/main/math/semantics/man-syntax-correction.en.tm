@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.9>
+<TeXmacs|1.0.7.20>
 
 <style|tmdoc>
 
@@ -65,9 +65,10 @@
   color of the bounding box of the <hlink|semantic
   focus|man-semantics.en.tm#semantic-focus>: a<nbsp>green color corresponds
   to a correct formula and a<nbsp>red color indicates an error in the
-  formula. Alternatively, you may select <menu|Document|Add
-  package|Utilities|math-check>, in which all incorrect formulas are
-  highlighted inside red boxes.
+  formula. Alternatively, assuming that the focus is on a mathematical
+  formula, you may select <menu|Focus|Preferences|Highlight incorrect
+  formulas>, in which all incorrect formulas are highlighted inside red
+  boxes.
 
   For the second kind of ``easy-to-make'' errors, <TeXmacs> includes an
   automatic syntax corrector. Assuming that your cursor is inside a formula,
