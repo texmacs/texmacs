@@ -45,6 +45,9 @@ init_style_data () {
   if (sd == NULL) sd= tm_new<style_data_rep> ();
 }
 
+extern hashmap<string,tree> style_tree_cache;
+hashmap<string,bool> hidden_packages (false);
+
 /******************************************************************************
 * Modify style so as to search in all ancestor directories
 ******************************************************************************/
@@ -82,11 +85,10 @@ cache_file_name (tree t) {
   }
 }
 
-extern hashmap<string,tree> style_tree_cache;
-
 void
 style_invalidate_cache () {
   style_tree_cache= hashmap<string,tree> ();
+  hidden_packages= hashmap<string,bool> (false);
   if (sd != NULL) {
     tm_delete<style_data_rep> (sd);
     sd= NULL;
@@ -297,12 +299,11 @@ hidden_package (url u, string name, bool hidden) {
 
 bool
 hidden_package (string name) {
-  static hashmap<string,bool> hidden (false);
-  if (!hidden->contains (name)) {
+  if (!hidden_packages->contains (name)) {
     url pck_u= descendance ("$TEXMACS_PACKAGE_ROOT");
-    hidden (name)= hidden_package (pck_u, name, false);
+    hidden_packages (name)= hidden_package (pck_u, name, false);
   }
-  return hidden[name];
+  return hidden_packages [name];
 }
 
 static string
