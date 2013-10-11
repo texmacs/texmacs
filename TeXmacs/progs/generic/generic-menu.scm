@@ -274,7 +274,17 @@
     ((check "Show hidden" "v" (tree-is? t :up 'inactive))
      (inactive-toggle t))))
 
-(tm-menu (focus-style-options-menu t))
+(tm-menu (focus-style-options-menu t)
+  (with opts (search-tag-options t)
+    (if (nnull? opts)
+        (group "Style options")
+        (for (opt opts)
+          ((check (balloon (eval (style-get-menu-name opt))
+                           (eval (style-get-documentation opt))) "v"
+                  (has-style-package? opt))
+           (toggle-style-package opt)))
+        (if (tree-label-extension? (tree-label t))
+            ---))))
 
 (tm-menu (focus-tag-edit-menu l)
   (if (tree-label-extension? l)
@@ -284,11 +294,7 @@
         ("Edit source" (edit-macro-source l)))))
 
 (tm-menu (focus-preferences-menu t)
-  (with options (focus-style-options-menu t)
-    (if (nnull? options)
-        (group "Style options")
-        (dynamic options)
-        ---))
+  (dynamic (focus-style-options-menu t))
   (dynamic (focus-parameters-menu t))
   (dynamic (focus-tag-edit-menu (tree-label t))))
 

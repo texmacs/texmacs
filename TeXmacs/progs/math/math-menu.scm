@@ -1142,9 +1142,9 @@
 ;; Math focus menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-menu (focus-style-options-menu t)
-  (:require (tree-in? t '(math equation equation* eqnarray eqnarray*)))
-  ("Highlight errors" (toggle-style-package "math-check")))
+(tm-define (standard-options l)
+  (:require (in? l '(math equation equation* eqnarray eqnarray*)))
+  (list "math-check"))
 
 (tm-define (focus-tag-name l)
   (:require (== l 'math))
@@ -1271,9 +1271,9 @@
   (:require (tree-in? t '(around around*)))
   #t)
 
-(tm-menu (focus-style-options-menu t)
-  (:require (tree-in? t '(around around*)))
-  ("Color according to nesting level" (toggle-style-package "math-brackets")))
+(tm-define (standard-options l)
+  (:require (in? l '(around around*)))
+  (list "math-brackets"))
 
 (tm-define (focus-tag-name l)
   (:require (in? l '(around around*)))

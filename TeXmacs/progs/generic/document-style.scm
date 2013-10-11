@@ -30,14 +30,20 @@
   (style-category-precedes? (style-category p) (style-category q)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Integrated documentation of style files and packages
+;; Menu names of style files and packages, and balloon help
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-table style-synopsis)
+(define-table style-menu-name)
 
 (tm-define (style-get-documentation style)
   (with doc (ahash-ref style-synopsis style)
     (and doc (nnull? doc) (car doc))))
+
+(tm-define (style-get-menu-name style)
+  (with doc (ahash-ref style-menu-name style)
+    (if (and doc (nnull? doc)) (car doc)
+        (upcase-first style))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Getting and setting the list of style packages
@@ -124,6 +130,27 @@
       (add-style-package pack)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Table with menu names for style packages which are used as style options
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-table style-menu-name
+  ("framed-title"         "Framed titles")
+  ("title-bar"            "Title bars")
+
+  ("varsession"           "Framed input fields")
+
+  ("centered-program"     "Centered programs")
+  ("framed-program"       "Framed programs")
+  ("compact-list"         "Compact lists")
+  ("math-brackets"        "Color according to nesting level")
+  ("math-check"           "Highlight errors")
+  ("framed-theorems"      "Framed theorems")
+  ("hanging-theorems"     "Hanging theorems")
+  ("number-europe"        "European numbering style")
+  ("number-us"            "US numbering style")
+  ("number-long-article"  "Prefix by section number"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Table with brief descriptions for common styles and style packages
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -186,6 +213,8 @@
   ("ridged-paper"       "Ridged paper beamer theme")
   ("framed-title"       "Put titles of slides in wide frames")
   ("title-bar"          "Put titles of slides in bar at extreme top of screen")
+
+  ("varsession"         "Render session inputs in frames")
 
   ("centered-program"   "Use a centered rendering style for algorithms")
   ("framed-program"     "Display algorithms inside frames and center")

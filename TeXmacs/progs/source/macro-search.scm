@@ -18,12 +18,53 @@
 ;; Routines for subsequent customization
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (standard-options l) #f)
+
 (tm-define (standard-parameters l) #f)
 
 (tm-define (tree-parameter? t)
   (tree-label-parameter? (tree-label t)))
 
 (tm-define (parameter-choice-list l) #f)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Collecting style options for a tag
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (collect-options-sub def t)
+  ;;(display* "Collect sub " def "\n")
+  (cond ((tree-atomic? def) (list))
+	((and (tree-is? def 'compound) (tree-atomic? (tree-ref def 0)))
+         (let* ((c (tree-children def))
+                (l (string->symbol (tree->string (car c))))
+                (u (tm->tree (cons l (cdr c)))))
+           (collect-options-sub u t)))
+	(else
+          (let* ((head (collect-options (symbol->string (tree-label def)) t))
+                 (tail (map (cut collect-options-sub <> t)
+                            (tree-children def))))
+            (list-remove-duplicates (apply append (cons head tail)))))))
+
+(define (collect-options l t)
+  (when (not (ahash-ref t l))
+    ;;(display* "Collect " l "\n")
+    (ahash-set! t l
+      (with std (standard-options (string->symbol l))
+        (or std
+            (with def (get-init-tree l)
+              (if (tree-in? def '(macro xmacro))
+                  (collect-options-sub def t)
+                  (list)))))))
+  (ahash-ref t l))
+
+(tm-define (search-options l)
+  (if (symbol? l) (set! l (symbol->string l)))
+  (with t (make-ahash-table)
+    (collect-options l t)
+    (ahash-ref t l)))
+
+(tm-define (search-tag-options t)
+  (search-options (tree-label t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Collecting environment variables which are parameters for a tag

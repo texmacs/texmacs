@@ -568,22 +568,19 @@
 ;; Focus menu for lists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-menu (focus-style-options-menu t)
-  (:require (list-context? t))
-  ("Compact lists" (toggle-style-package "compact-list")))
+(tm-define (standard-options l)
+  (:require (in? l (list-tag-list)))
+  (list "compact-list"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Focus menu for theorems and proofs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-menu (focus-style-options-menu t)
-  (:require (enunciation-context? t))
-  ("European numbering" (toggle-style-package "number-europe"))
-  ;;("United States numbering" (add-style-package "number-us"))
-  ("Prefix by section number" (toggle-style-package "number-long-article"))
-  (-> "Decorations"
-      ("Framed theorems" (toggle-style-package "framed-theorems"))
-      ("Hanging theorems" (toggle-style-package "hanging-theorems"))))
+(tm-define (standard-options l)
+  (:require (in? l (enunciation-tag-list)))
+  (list "number-europe" ;; "number-us"
+        "number-long-article"
+        "framed-theorems" "hanging-theorems"))
 
 (tm-menu (focus-toggle-menu t)
   (:require (proof-context? t))
@@ -641,7 +638,6 @@
 	  (algorithm-specified? (focus-tree)))
    (algorithm-toggle-specification t)))
 
-(tm-menu (focus-style-options-menu t)
-  (:require (algorithm-context? t))
-  ("Centered programs" (toggle-style-package "centered-program"))
-  ("Framed programs" (toggle-style-package "framed-program")))
+(tm-define (standard-options l)
+  (:require (in? l (algorithm-tag-list)))
+  (list "centered-program" "framed-program"))

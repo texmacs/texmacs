@@ -254,10 +254,9 @@
 ;; Slide titles
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-menu (focus-style-options-menu t)
-  (:require (tree-is? t 'tit))
-  ("Framed title" (toggle-style-package "framed-title"))
-  ("Title bar" (toggle-style-package "title-bar")))
+(tm-define (standard-options l)
+  (:require (== l 'tit))
+  (list "framed-title" "title-bar"))
 
 (tm-define (parameter-show-in-menu? l)
   (:require (== l "title-theme"))
