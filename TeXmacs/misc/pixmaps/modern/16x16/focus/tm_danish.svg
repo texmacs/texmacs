@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="16"
+   id="svg2725"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:version="0.48.0 r9654"
+   sodipodi:docname="tm_danish.svg"
+   sodipodi:version="0.32"
+   version="1.0"
+   width="16">
+  <metadata
+     id="metadata14142">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title />
+        <dc:description />
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>unsorted</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://www.openclipart.org/">
+            <dc:title>Open Clip Art Library, Source: Wikimedia Commons, Source: Wikimedia Commons, Source: Wikimedia Commons, Source: Wikimedia Commons</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title />
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title />
+          </cc:Agent>
+        </dc:rights>
+        <dc:date />
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://en.wikipedia.org/wiki/Public_domain" />
+        <dc:language>en</dc:language>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs2734">
+    <inkscape:perspective
+       id="perspective2738"
+       inkscape:persp3d-origin="185 : 93.333333 : 1"
+       inkscape:vp_x="0 : 140 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="370 : 140 : 1"
+       sodipodi:type="inkscape:persp3d" />
+  </defs>
+  <sodipodi:namedview
+     bordercolor="#666666"
+     borderopacity="1.0"
+     gridtolerance="10.0"
+     guidetolerance="10.0"
+     id="base"
+     inkscape:current-layer="svg2725"
+     inkscape:cx="8.5270215"
+     inkscape:cy="7.6207504"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:window-height="1152"
+     inkscape:window-width="1920"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:zoom="48.345945"
+     objecttolerance="10.0"
+     pagecolor="#ffffff"
+     showgrid="true"
+     inkscape:window-maximized="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid14174"
+       empspacing="5"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true" />
+  </sodipodi:namedview>
+  <g
+     id="g14176"
+     transform="translate(-1.2693708e-5,0.03153694)"
+     style="opacity:0.75">
+    <rect
+       y="1.9684631"
+       x="1.2693708e-05"
+       width="15.940493"
+       style="fill:#d00c33"
+       id="rect2727"
+       height="12.063076" />
+    <path
+       inkscape:connector-curvature="0"
+       style="stroke:#ffffff;stroke-width:1.72329639999999995"
+       id="path2729"
+       d="m 6.03154,1.96846 0,12.06308" />
+    <path
+       inkscape:connector-curvature="0"
+       style="stroke:#ffffff;stroke-width:1.72329639999999995"
+       id="path2731"
+       d="M 0,8 15.9405,8" />
+  </g>
+</svg>

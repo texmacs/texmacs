@@ -38,7 +38,7 @@
   (buffer-list-menu (project-file-list)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Submenus for the Document menu and the iconbars
+;; Document style
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind document-style-menu
@@ -59,6 +59,10 @@
       ("Add other package" (interactive add-style-package))))
 
 (menu-bind document-style-extra-menu)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Document view
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind document-view-menu
   ("Edit source tree" (toggle-preamble))
@@ -114,6 +118,10 @@
       ("Stretched" (init-env "src-close" "long"))
       ("Compact" (init-env "src-close" "compact"))
       ("Minimal" (init-env "src-close" "minimal"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Global and document language
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind global-language-menu
   ("British"
@@ -213,13 +221,66 @@
      (init-language "ukrainian")
      (set-output-language "ukrainian"))))
 
-(tm-menu (supported-scripts-menu)
-  (let* ((dummy (lazy-plugin-force))
-         (l (scripts-list)))
-    (for (name l)
-      ((eval (scripts-name name))
-       (noop) ;; NOTE: inhibit segfault due to property searching?
-       (init-env "prog-scripts" name)))))
+(menu-bind document-language-menu
+  ("Default" (init-default "language"))
+  ---
+  ("British" (init-language "british"))
+  ("Bulgarian" (init-language "bulgarian"))
+  (when (supports-chinese?)
+    ("Chinese" (init-language "chinese")))
+  ("Czech" (init-language "czech"))
+  ("Danish" (init-language "danish"))
+  ("Dutch" (init-language "dutch"))
+  ("English" (init-language "english"))
+  ("Finnish" (init-language "finnish"))
+  ("French" (init-language "french"))
+  ("German" (init-language "german"))
+  ("Hungarian" (init-language "hungarian"))
+  ("Italian" (init-language "italian"))
+  (when (supports-japanese?)
+    ("Japanese" (init-language "japanese")))
+  (when (supports-korean?)
+    ("Korean" (init-language "korean")))
+  ("Polish" (init-language "polish"))
+  ("Portuguese" (init-language "portuguese"))
+  ("Romanian" (init-language "romanian"))
+  ("Russian" (init-language "russian"))
+  ("Slovene" (init-language "slovene"))
+  ("Spanish" (init-language "spanish"))
+  ("Swedish" (init-language "swedish"))
+  (when (supports-chinese?)
+    ("Taiwanese" (init-language "taiwanese")))
+  ("Ukrainian" (init-language "ukrainian")))
+
+(tm-define (current-language-icon)
+  (cond ((test-init? "language" "british") "tm_british.xpm")
+        ((test-init? "language" "bulgarian") "tm_bulgarian.xpm")
+        ((test-init? "language" "chinese") "tm_chinese.xpm")
+        ((test-init? "language" "czech") "tm_czech.xpm")
+        ((test-init? "language" "danish") "tm_danish.xpm")
+        ((test-init? "language" "dutch") "tm_dutch.xpm")
+        ((test-init? "language" "english") "tm_english.xpm")
+        ((test-init? "language" "finnish") "tm_finnish.xpm")
+        ((test-init? "language" "french") "tm_french.xpm")
+        ((test-init? "language" "german") "tm_german.xpm")
+        ((test-init? "language" "hungarian") "tm_hungarian.xpm")
+        ((test-init? "language" "italian") "tm_italian.xpm")
+        ((test-init? "language" "japanese") "tm_japanese.xpm")
+        ((test-init? "language" "korean") "tm_korean.xpm")
+        ((test-init? "language" "polish") "tm_polish.xpm")
+        ((test-init? "language" "portuguese") "tm_portuguese.xpm")
+        ((test-init? "language" "romanian") "tm_romanian.xpm")
+        ((test-init? "language" "russian") "tm_russian.xpm")
+        ((test-init? "language" "slovene") "tm_slovene.xpm")
+        ((test-init? "language" "spanish") "tm_spanish.xpm")
+        ((test-init? "language" "swedish") "tm_swedish.xpm")
+        ((test-init? "language" "taiwanese") "tm_taiwanese.xpm")
+        ((test-init? "language" "ukrainian") "tm_ukrainian.xpm")
+        (else "tm_stateless.xpm")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Page sizes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-menu (document-page-size-menu)
   ("Default"
@@ -299,6 +360,10 @@
   ---
   ("Other" (interactive init-page-size)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Other document submenus
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (tm-menu (document-font-base-size-menu)
   ("Default" (init-default "font-base-size"))
   ---
@@ -311,36 +376,13 @@
   ---
   ("Other" (init-interactive-env "font-base-size")))
 
-(menu-bind document-language-menu
-  ("Default" (init-default "language"))
-  ---
-  ("British" (init-language "british"))
-  ("Bulgarian" (init-language "bulgarian"))
-  (when (supports-chinese?)
-    ("Chinese" (init-language "chinese")))
-  ("Czech" (init-language "czech"))
-  ("Danish" (init-language "danish"))
-  ("Dutch" (init-language "dutch"))
-  ("English" (init-language "english"))
-  ("Finnish" (init-language "finnish"))
-  ("French" (init-language "french"))
-  ("German" (init-language "german"))
-  ("Hungarian" (init-language "hungarian"))
-  ("Italian" (init-language "italian"))
-  (when (supports-japanese?)
-    ("Japanese" (init-language "japanese")))
-  (when (supports-korean?)
-    ("Korean" (init-language "korean")))
-  ("Polish" (init-language "polish"))
-  ("Portuguese" (init-language "portuguese"))
-  ("Romanian" (init-language "romanian"))
-  ("Russian" (init-language "russian"))
-  ("Slovene" (init-language "slovene"))
-  ("Spanish" (init-language "spanish"))
-  ("Swedish" (init-language "swedish"))
-  (when (supports-chinese?)
-    ("Taiwanese" (init-language "taiwanese")))
-  ("Ukrainian" (init-language "ukrainian")))
+(tm-menu (supported-scripts-menu)
+  (let* ((dummy (lazy-plugin-force))
+         (l (scripts-list)))
+    (for (name l)
+      ((eval (scripts-name name))
+       (noop) ;; NOTE: inhibit segfault due to property searching?
+       (init-env "prog-scripts" name)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Document menu
@@ -707,15 +749,6 @@
         (else
          (cond ((test-init? "par-columns" "2") "tm_portrait_2col.xpm")
                (else "tm_portrait.xpm")))))
-
-(tm-define (current-language-icon)
-  (cond ((test-init? "language" "british") "tm_british.xpm")
-        ((test-init? "language" "dutch") "tm_dutch.xpm")
-        ((test-init? "language" "english") "tm_english.xpm")
-        ((test-init? "language" "french") "tm_french.xpm")
-        ((test-init? "language" "german") "tm_german.xpm")
-        ;;((test-init? "language" "") "tm_.xpm")
-        (else "tm_english.xpm")))
 
 (tm-menu (focus-document-icons t)
   (minibar
