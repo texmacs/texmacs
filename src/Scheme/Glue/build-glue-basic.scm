@@ -355,6 +355,8 @@
   (parse-bib parse_bib (tree string))
   (upgrade-tmml tmml_upgrade (tree scheme_tree))
   (upgrade-mathml upgrade_mathml (tree content))
+  (vernac->texmacs vernac_to_tree (tree string))
+  (vernac-document->texmacs vernac_document_to_tree (tree string))
 
   ;; routines for urls
   (url->url url (url url))

@@ -44,3 +44,17 @@
 
 (converter texmacs-stree coqml-stree
   (:function texmacs->coqml))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Vernacular
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-format vernac
+  (:name "Coq Vernacular")
+  (:suffix "v"))
+
+(converter vernac-snippet texmacs-tree
+  (:function vernac->texmacs))
+
+(converter vernac-document texmacs-tree
+  (:function vernac-document->texmacs))

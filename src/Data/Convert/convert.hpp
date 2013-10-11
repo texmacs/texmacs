@@ -89,4 +89,8 @@ bool   seems_buggy_paste (string s);
 string correct_buggy_paste (string s);
 tree   default_with_simplify (tree t);
 
+/*** Coq ***/
+tree vernac_to_tree (string s);
+tree vernac_document_to_tree (string s);
+
 #endif // defined CONVERT_H

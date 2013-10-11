@@ -47,6 +47,12 @@
 
   \;
 
+  <assign|coq-section|<\macro|name|body>
+    <section*|<arg|name>>
+
+    <arg|body>
+  </macro>>
+
   <assign|coq-command|<macro|id|status|body|<with|color|<arg|status>|<arg|body>
   >>>
 
