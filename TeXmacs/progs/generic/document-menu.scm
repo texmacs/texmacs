@@ -124,159 +124,27 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind global-language-menu
-  ("British"
-   (begin
-     (init-language "british")
-     (set-output-language "british")))
-  ("Bulgarian"
-   (begin
-     (init-language "bulgarian")
-     (set-output-language "bulgarian")))
-  (when (supports-chinese?)
-    ("Chinese"
-     (begin
-       (init-language "chinese")
-       (set-output-language "chinese"))))
-  ("Czech"
-   (begin
-     (init-language "czech")
-     (set-output-language "czech")))
-  ("Danish"
-   (begin
-     (init-language "danish")
-     (set-output-language "danish")))
-  ("Dutch"
-   (begin
-     (init-language "dutch")
-     (set-output-language "dutch")))
-  ("English"
-   (begin
-     (init-language "english")
-     (set-output-language "english")))
-  ("Finnish"
-   (begin
-     (init-language "finnish")
-     (set-output-language "finnish")))
-  ("French"
-   (begin
-     (init-language "french")
-     (set-output-language "french")))
-  ("German"
-   (begin
-     (init-language "german")
-     (set-output-language "german")))
-  ("Hungarian"
-   (begin
-     (init-language "hungarian")
-     (set-output-language "hungarian")))
-  ("Italian"
-   (begin
-     (init-language "italian")
-     (set-output-language "italian")))
-  (when (supports-japanese?)
-    ("Japanese"
-     (begin
-       (init-language "japanese")
-       (set-output-language "japanese"))))
-  (when (supports-korean?)
-    ("Korean"
-     (begin
-       (init-language "korean")
-       (set-output-language "korean"))))
-  ("Polish"
-   (begin
-     (init-language "polish")
-     (set-output-language "polish")))
-  ("Portuguese"
-   (begin
-     (init-language "portuguese")
-     (set-output-language "portuguese")))
-  ("Romanian"
-   (begin
-     (init-language "romanian")
-     (set-output-language "romanian")))
-  ("Russian"
-   (begin
-     (init-language "russian")
-     (set-output-language "russian")))
-  ("Slovene"
-   (begin
-     (init-language "slovene")
-     (set-output-language "slovene")))
-  ("Spanish"
-   (begin
-     (init-language "spanish")
-     (set-output-language "spanish")))
-  ("Swedish"
-   (begin
-     (init-language "swedish")
-     (set-output-language "swedish")))
-  (when (supports-chinese?)
-    ("Taiwanese"
-     (begin
-       (init-language "taiwanese")
-       (set-output-language "taiwanese"))))
-  ("Ukrainian"
-   (begin
-     (init-language "ukrainian")
-     (set-output-language "ukrainian"))))
+  (for (lan supported-languages)
+    (when (supported-language? lan)
+      ((check (eval (upcase-first lan)) "v"
+              (and (test-document-language? lan)
+                   (== lan (get-output-language))))
+       (init-language lan)
+       (set-output-language lan)))))
 
 (menu-bind document-language-menu
   ("Default" (init-default "language"))
   ---
-  ("British" (init-language "british"))
-  ("Bulgarian" (init-language "bulgarian"))
-  (when (supports-chinese?)
-    ("Chinese" (init-language "chinese")))
-  ("Czech" (init-language "czech"))
-  ("Danish" (init-language "danish"))
-  ("Dutch" (init-language "dutch"))
-  ("English" (init-language "english"))
-  ("Finnish" (init-language "finnish"))
-  ("French" (init-language "french"))
-  ("German" (init-language "german"))
-  ("Hungarian" (init-language "hungarian"))
-  ("Italian" (init-language "italian"))
-  (when (supports-japanese?)
-    ("Japanese" (init-language "japanese")))
-  (when (supports-korean?)
-    ("Korean" (init-language "korean")))
-  ("Polish" (init-language "polish"))
-  ("Portuguese" (init-language "portuguese"))
-  ("Romanian" (init-language "romanian"))
-  ("Russian" (init-language "russian"))
-  ("Slovene" (init-language "slovene"))
-  ("Spanish" (init-language "spanish"))
-  ("Swedish" (init-language "swedish"))
-  (when (supports-chinese?)
-    ("Taiwanese" (init-language "taiwanese")))
-  ("Ukrainian" (init-language "ukrainian")))
+  (for (lan supported-languages)
+    (when (supported-language? lan)
+      ((check (eval (upcase-first lan)) "v" (test-document-language? lan))
+       (init-language lan)))))
 
 (tm-define (current-language-icon)
-  (cond ((test-init? "language" "british") "tm_british.xpm")
-        ((test-init? "language" "bulgarian") "tm_bulgarian.xpm")
-        ((test-init? "language" "chinese") "tm_chinese.xpm")
-        ((test-init? "language" "czech") "tm_czech.xpm")
-        ((test-init? "language" "danish") "tm_danish.xpm")
-        ((test-init? "language" "dutch") "tm_dutch.xpm")
-        ((test-init? "language" "english") "tm_english.xpm")
-        ((test-init? "language" "finnish") "tm_finnish.xpm")
-        ((test-init? "language" "french") "tm_french.xpm")
-        ((test-init? "language" "german") "tm_german.xpm")
-        ((test-init? "language" "hungarian") "tm_hungarian.xpm")
-        ((test-init? "language" "italian") "tm_italian.xpm")
-        ((test-init? "language" "japanese") "tm_japanese.xpm")
-        ((test-init? "language" "korean") "tm_korean.xpm")
-        ((test-init? "language" "polish") "tm_polish.xpm")
-        ((test-init? "language" "portuguese") "tm_portuguese.xpm")
-        ((test-init? "language" "romanian") "tm_romanian.xpm")
-        ((test-init? "language" "russian") "tm_russian.xpm")
-        ((test-init? "language" "slovene") "tm_slovene.xpm")
-        ((test-init? "language" "spanish") "tm_spanish.xpm")
-        ((test-init? "language" "swedish") "tm_swedish.xpm")
-        ((test-init? "language" "taiwanese") "tm_taiwanese.xpm")
-        ((test-init? "language" "ukrainian") "tm_ukrainian.xpm")
-        (else "tm_stateless.xpm")))
+  (with lan (get-env "language")
+    (if (in? lan supported-languages)
+        (string-append "tm_" lan ".xpm")
+        "tm_stateless.xpm")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Page sizes

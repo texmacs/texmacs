@@ -296,48 +296,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind text-language-menu
-  ("British" (make-with "language" "british"))
-  ("Bulgarian"
-   (begin
-     (make-with "language" "bulgarian")
-     (make-with "font" "cyrillic")))
-  (when (supports-chinese?)
-    ("Chinese"
-     (begin
-       (make-with "language" "chinese")
-       (make-with "font" "fireflysung"))))
-  ("Czech" (make-with "language" "czech"))
-  ("Danish" (make-with "language" "danish"))
-  ("Dutch" (make-with "language" "dutch"))
-  ("English" (make-with "language" "english"))
-  ("Finnish" (make-with "language" "finnish"))
-  ("French" (make-with "language" "french"))
-  ("German" (make-with "language" "german"))
-  ("Hungarian" (make-with "language" "hungarian"))
-  ("Italian" (make-with "language" "italian"))
-  (when (supports-japanese?)
-    ("Japanese" (make-with "language" "japanese")))
-  (when (supports-korean?)
-    ("Korean" (make-with "language" "korean")))
-  ("Polish" (make-with "language" "polish"))
-  ("Portuguese" (make-with "language" "portuguese"))
-  ("Romanian" (make-with "language" "romanian"))
-  ("Russian"
-   (begin
-     (make-with "language" "russian")
-     (make-with "font" "cyrillic")))
-  ("Slovene" (make-with "language" "slovene"))
-  ("Spanish" (make-with "language" "spanish"))
-  ("Swedish" (make-with "language" "swedish"))
-  (when (supports-chinese?)
-    ("Taiwanese"
-     (begin
-       (make-with "language" "taiwanese")
-       (make-with "font" "fireflysung"))))
-  ("Ukrainian"
-   (begin
-     (make-with "language" "ukrainian")
-     (make-with "font" "cyrillic"))))
+  (for (lan supported-languages)
+    (when (supported-language? lan)
+      ((check (eval (upcase-first lan)) "v" (test-env? "language" lan))
+       (make-with "language" lan)
+       (when (not (new-fonts?))
+         (when (in? lan '("chinese" "taiwanese"))
+           (make-with "font" "fireflysung"))
+         (when (in? lan '("bulgarian" "russian" "ukrainian"))
+           (make-with "font" "cyrillic")))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Paragraph menu

@@ -136,11 +136,26 @@
 ;; Language related
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-public supported-languages
+  '("british" "bulgarian" "chinese" "czech" "danish" "dutch" "english"
+    "french" "german" "hungarian" "italian" "japanese" "korean" "polish"
+    "portuguese" "romanian" "russian" "slovene" "spanish" "swedish"
+    "taiwanese" "ukrainian"))
+
+(define-public (supported-language? lan)
+  (and (in? lan supported-languages)
+       (cond ((== lan "chinese") (supports-chinese?))
+             ((== lan "japanese") (supports-japanese?))
+             ((== lan "korean") (supports-korean?))
+             ((== lan "taiwanese") (supports-chinese?))
+             (else #t))))
+
 (texmacs-modes
   (in-cyrillic% (in? (get-env "language")
                      '("bulgarian" "russian" "ukrainian")) in-text%)
   (in-oriental% (in? (get-env "language")
                      '("chinese" "japanese" "korean" "taiwanese")) in-text%)
+  (in-british% (== (get-env "language") "british") in-text%)
   (in-bulgarian% (== (get-env "language") "bulgarian") in-cyrillic%)
   (in-chinese% (== (get-env "language") "chinese") in-oriental%)
   (in-czech% (== (get-env "language") "czech") in-text%)
