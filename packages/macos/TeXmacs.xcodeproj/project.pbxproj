@@ -395,6 +395,9 @@
 		491467B61801C1AB000E6455 /* XObjectContentContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491466401801C1AB000E6455 /* XObjectContentContext.cpp */; };
 		491467B71801C1AB000E6455 /* XObjectContentContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491466401801C1AB000E6455 /* XObjectContentContext.cpp */; };
 		491467B81801C1AB000E6455 /* XObjectContentContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491466401801C1AB000E6455 /* XObjectContentContext.cpp */; };
+		4915C7D218093E4D00C3D2B7 /* parse_vernac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4915C7D118093E4D00C3D2B7 /* parse_vernac.cpp */; };
+		4915C7D318093E4D00C3D2B7 /* parse_vernac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4915C7D118093E4D00C3D2B7 /* parse_vernac.cpp */; };
+		4915C7D418093E4D00C3D2B7 /* parse_vernac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4915C7D118093E4D00C3D2B7 /* parse_vernac.cpp */; };
 		4918B5CB17F83A7300130EA9 /* WINPrint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4918B5C917F83A7300130EA9 /* WINPrint.cpp */; };
 		491BB5951731182600A755DF /* enlightened.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491BB5911731182600A755DF /* enlightened.cpp */; };
 		491BB5961731182600A755DF /* enlightened.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491BB5911731182600A755DF /* enlightened.cpp */; };
@@ -1757,6 +1760,7 @@
 		4914663F1801C1AB000E6455 /* WrittenFontTrueType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WrittenFontTrueType.h; sourceTree = "<group>"; };
 		491466401801C1AB000E6455 /* XObjectContentContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XObjectContentContext.cpp; sourceTree = "<group>"; };
 		491466411801C1AB000E6455 /* XObjectContentContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XObjectContentContext.h; sourceTree = "<group>"; };
+		4915C7D118093E4D00C3D2B7 /* parse_vernac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = parse_vernac.cpp; sourceTree = "<group>"; };
 		4918B5C917F83A7300130EA9 /* WINPrint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WINPrint.cpp; sourceTree = "<group>"; };
 		4918B5CA17F83A7300130EA9 /* WINPrint.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = WINPrint.hpp; sourceTree = "<group>"; };
 		491BB5911731182600A755DF /* enlightened.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = enlightened.cpp; sourceTree = "<group>"; };
@@ -2861,6 +2865,14 @@
 			path = PDFWriter;
 			sourceTree = "<group>";
 		};
+		4915C7D018093E4D00C3D2B7 /* Coq */ = {
+			isa = PBXGroup;
+			children = (
+				4915C7D118093E4D00C3D2B7 /* parse_vernac.cpp */,
+			);
+			path = Coq;
+			sourceTree = "<group>";
+		};
 		491BB5901731182600A755DF /* Spacial */ = {
 			isa = PBXGroup;
 			children = (
@@ -2986,6 +2998,7 @@
 			isa = PBXGroup;
 			children = (
 				9CFEB3FE11D79AF6005C12C4 /* BibTeX */,
+				4915C7D018093E4D00C3D2B7 /* Coq */,
 				9C0B475F10A8CC0F0097A335 /* convert.hpp */,
 				9C0B476010A8CC0F0097A335 /* Generic */,
 				9C0B476410A8CC0F0097A335 /* Scheme */,
@@ -5127,6 +5140,7 @@
 				491467B01801C1AB000E6455 /* WrittenFontCFF.cpp in Sources */,
 				491467B31801C1AB000E6455 /* WrittenFontTrueType.cpp in Sources */,
 				491467B61801C1AB000E6455 /* XObjectContentContext.cpp in Sources */,
+				4915C7D218093E4D00C3D2B7 /* parse_vernac.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5573,6 +5587,7 @@
 				491467B21801C1AB000E6455 /* WrittenFontCFF.cpp in Sources */,
 				491467B51801C1AB000E6455 /* WrittenFontTrueType.cpp in Sources */,
 				491467B81801C1AB000E6455 /* XObjectContentContext.cpp in Sources */,
+				4915C7D418093E4D00C3D2B7 /* parse_vernac.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6047,6 +6062,7 @@
 				491467B11801C1AB000E6455 /* WrittenFontCFF.cpp in Sources */,
 				491467B41801C1AB000E6455 /* WrittenFontTrueType.cpp in Sources */,
 				491467B71801C1AB000E6455 /* XObjectContentContext.cpp in Sources */,
+				4915C7D318093E4D00C3D2B7 /* parse_vernac.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6241,7 +6257,7 @@
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				SDKROOT = macosx10.7;
+				SDKROOT = "";
 			};
 			name = Debug;
 		};
@@ -6254,7 +6270,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				SDKROOT = macosx10.7;
+				SDKROOT = "";
 			};
 			name = Release;
 		};
