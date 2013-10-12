@@ -127,6 +127,8 @@
       (=> (balloon (icon "tm_print.xpm") "Print") (link print-menu)))
   ((balloon (icon "tm_preferences.xpm") "Change the TeXmacs preferences")
    (open-preferences))
+  ;;(=> (balloon (icon "tm_preferences.xpm") "Change the TeXmacs preferences")
+  ;;    (link preferences-menu))
   (if (detailed-menus?)
       ;;(=> (balloon (icon "tm_style.xpm") "Select a document style")
       ;;(link document-style-menu))
