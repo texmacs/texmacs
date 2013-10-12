@@ -44,8 +44,8 @@
  To use this class, one typically takes some given command "cmd" and does the
  following:
  
-    QTMCommand* qtmcmd = new QTMCommand(theQWidget, cmd);
-    QObject::connect(theQWidget, SIGNAL(somethingHappened()), qtmcmd, SLOT(apply()));
+    QTMCommand* qtmcmd = new QTMCommand (theQWidget, cmd);
+    QObject::connect(theQWidget, SIGNAL (somethingHappened()), qtmcmd, SLOT (apply()));
  
  Since the slot in this class accepts no arguments, commands which require
  access to the QWidget must be subclassed from command_rep to accept the
@@ -69,41 +69,13 @@ public slots:
   void apply ();
 };
 
-/*! HACK: remove me!
- 
- This special QTMCommand applies its underlying texmacs command immediately
- and upon destruction. This is needed to circumvent some strange behaviour
- where children QObjects are destroyed before the destroyed() signal is
- emmitted. 
- 
- In particular, only qt_ui_widget_rep needs this for the wrapped_widget because
- it wants to connect the command to the destroyed() signal and the QTMCommand
- has already been deleted, the signal is disconnected and apply() never called.
- A nasty hack in the destructor applies the command anyway...
-*/
-class QTMOnDestroyCommand: public QTMCommand {
-  Q_OBJECT
-
-public:
-  QTMOnDestroyCommand (QObject* parent, command _cmd) : QTMCommand(parent, _cmd) {}
-  ~QTMOnDestroyCommand () { apply (); }
-
-public slots:
-  void apply() {
-    if (DEBUG_QT) 
-      cout << "QTMOnDestroyCommand::apply()\n";
-    if (! is_nil(cmd)) cmd ();      // Immediately apply!!
-  }
-};
-
 
 /*!
  */
 class QTMLazyMenu: public QMenu {
   Q_OBJECT
-
+  
   promise<widget> pm;
-
 public:
   QTMLazyMenu (promise<widget> _pm) : pm (_pm) {
       QObject::connect (this, SIGNAL (aboutToShow ()), this, SLOT (force ()));
@@ -297,15 +269,16 @@ public slots:
 class QTMRefreshWidget : public QWidget {
   Q_OBJECT
   
-  string  tmwid;
+  string strwid;
   string   kind;
   object curobj;
   widget    cur;
-  QWidget* qwid;
+  qt_widget tmwid;
+  QWidget*   qwid;
   hashmap<object,widget> cache;
   
 public:
-  QTMRefreshWidget (string _tmwid, string _kind);
+  QTMRefreshWidget (qt_widget _tmwid, string _strwid, string _kind);
 
   bool recompute (string what);
     //static void deleteLayout (QLayout*);

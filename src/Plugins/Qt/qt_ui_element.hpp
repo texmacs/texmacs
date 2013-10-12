@@ -73,52 +73,47 @@ public:
   
   operator tree ();
 
-  template<class X1> static widget create (types _type, X1 x1) {
+  template<class X1> static qt_widget create (types _type, X1 x1) {
     return tm_new <qt_ui_element_rep> (_type, close_box<X1>(x1));
   }
   
   template <class X1, class X2> 
-  static widget create (types _type, X1 x1, X2 x2) {
+  static qt_widget create (types _type, X1 x1, X2 x2) {
     typedef pair<X1,X2> T;
     return tm_new <qt_ui_element_rep> (_type, close_box<T> (T (x1,x2)));
   }
   
   template <class X1, class X2, class X3> 
-  static widget create (types _type, X1 x1, X2 x2, X3 x3) {
+  static qt_widget create (types _type, X1 x1, X2 x2, X3 x3) {
     typedef triple<X1,X2,X3> T;
     return tm_new <qt_ui_element_rep> (_type, close_box<T> (T (x1,x2,x3)));
   }
   
   template <class X1, class X2, class X3, class X4> 
-  static widget create (types _type, X1 x1, X2 x2, X3 x3, X4 x4) {
+  static qt_widget create (types _type, X1 x1, X2 x2, X3 x3, X4 x4) {
     typedef quartet<X1,X2,X3,X4> T;
     return tm_new <qt_ui_element_rep> (_type, close_box<T> (T (x1,x2,x3,x4)));
   }
   
   template <class X1, class X2, class X3, class X4, class X5> 
-  static widget create (types _type, X1 x1, X2 x2, X3 x3, X4 x4, X5 x5) {
+  static qt_widget create (types _type, X1 x1, X2 x2, X3 x3, X4 x4, X5 x5) {
     typedef quintuple<X1,X2,X3,X4,X5> T;
     return tm_new <qt_ui_element_rep> (_type, close_box<T> (T (x1,x2,x3,x4,x5)));
   }
-  
 };
 
 
-/*! A rectangular separator widget with a colored background.
- */
+/*! A rectangular separator widget with a colored background. */
 class qt_glue_widget_rep: public qt_widget_rep {
 public:
-  
   tree col;
   bool hx, vx;
   SI w,h;
   
-  
   qt_glue_widget_rep (tree _col, bool _hx, bool _vx, SI _w, SI _h)
-  : col(_col), hx(_hx), vx(_vx), w(_w), h(_h) 
-  {}
+    : col (_col), hx (_hx), vx (_vx), w (_w), h (_h) { }
   
-  qt_glue_widget_rep () {};
+  qt_glue_widget_rep () { }
   
   QPixmap render ();
   
@@ -126,6 +121,33 @@ public:
   virtual QWidget* as_qwidget ();
 };
 
+/*! A wrapper widget executing a quit command upon SLOT_DESTROY. */
+class qt_wrapped_widget_rep : public qt_widget_rep {
+  widget tmwid;
+  command quit;
+public:
+  qt_wrapped_widget_rep (widget _tmwid, command _quit)
+    : tmwid (_tmwid), quit (_quit) {
+    add_child (tmwid);
+  }
+  QWidget* as_qwidget () { return concrete(tmwid)->as_qwidget(); }
+  QLayoutItem* as_qlayoutitem () { return new QWidgetItem (as_qwidget()); }
+  void send (slot s, blackbox val) {
+    switch (s) {
+      case SLOT_DESTROY:
+        if (! is_nil (quit)) quit ();
+        quit = command();
+        break;
+      default:
+        qt_widget_rep::send (s, val);
+        return;
+    }
+    if (DEBUG_QT_WIDGETS)
+      cout << "qt_wrapped_widget_rep: sent " << slot_name (s)
+           << "\t\tto widget\t" << type_as_string() << LF;
+  }
+
+};
 
 /*!
  We use this class to properly initialize style options for our QWidgets

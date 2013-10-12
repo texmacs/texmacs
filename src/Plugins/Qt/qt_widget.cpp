@@ -44,7 +44,6 @@ qt_widget_rep::qt_widget_rep(types _type, QWidget* _qwid)
     cout << "qt_widget_rep: created a " << type_as_string() << LF;
 }
 
-
 qt_widget_rep::~qt_widget_rep() { 
   if (DEBUG_QT_WIDGETS)
     cout << "~qt_widget_rep: deleted a " << type_as_string() << LF;
@@ -53,6 +52,29 @@ qt_widget_rep::~qt_widget_rep() {
   //delete qwid; 
 }
 
+void
+qt_widget_rep::add_child (widget w) {
+  children << w;
+}
+
+void
+qt_widget_rep::add_children (array<widget> a) {
+  children << a;
+}
+
+void
+qt_widget_rep::send (slot s, blackbox val) {
+  if (DEBUG_QT_WIDGETS)
+    cout << "qt_widget_rep::send(), unhandled " << slot_name (s)
+         << " for widget of type: " << type_as_string() << "." << LF;
+
+  if (s == SLOT_DESTROY) {
+    if (DEBUG_QT_WIDGETS)
+      cout << "         Resending to " << N(children) << " children" << LF;
+    for (int i = 0; i < N(children); ++i)
+      concrete (children[i])->send (s, val);
+  }
+}
 
 /*! Returns the actual QWidget underlying this qt_widget_rep.
  
@@ -109,7 +131,7 @@ qt_widget_rep::get_qmenu () {
 /*! Returns the widget as a window.
  
  Each TeXmacs widget can at some point be asked to present itself into a window.
- The scheme-originating function window_create() expects this method in every
+ The scheme-originating function window_create () expects this method in every
  widget. 
 
  This default implementation constructs a wrapper qt_window_widget for the 
@@ -150,10 +172,12 @@ qt_widget_rep::plain_window_widget (string title, command quit) {
   
   win->setWindowTitle (to_qstring (title));
   int l,t,r,b;
-  win->layout()->getContentsMargins(&l, &t, &r, &b);
-  win->layout()->setContentsMargins(l+3, t+3, r+3, b+3);
+  win->layout()->getContentsMargins (&l, &t, &r, &b);
+  win->layout()->setContentsMargins (l+3, t+3, r+3, b+3);
   
-  return tm_new<qt_window_widget_rep>(win, quit);
+  qt_widget wid = tm_new<qt_window_widget_rep> (win, quit);
+  wid->add_child (this);
+  return abstract (wid);
 }
 
 /*! Instantiates and returns a new widget which will act as a popup widget.
@@ -164,7 +188,7 @@ qt_widget_rep::plain_window_widget (string title, command quit) {
  */
 widget
 qt_widget_rep::make_popup_widget () {
-  return tm_new<qt_popup_widget_rep>(this, command());
+  return tm_new<qt_popup_widget_rep> (this, command());
 }
 
 /*! Interface for the creation of popups.
@@ -257,85 +281,173 @@ destroy_window_widget (widget w) {
  ******************************************************************************/
 
 widget horizontal_menu (array<widget> arr) {
-  return qt_ui_element_rep::create (qt_widget_rep::horizontal_menu, arr); }
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::horizontal_menu, arr);
+  wid->add_children (arr);
+  return abstract (wid);
+}
 widget vertical_menu (array<widget> arr)  {
-  return qt_ui_element_rep::create (qt_widget_rep::vertical_menu, arr); }
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::vertical_menu, arr);
+  wid->add_children (arr);
+  return abstract (wid);
+}
 widget horizontal_list (array<widget> arr) { 
-  return qt_ui_element_rep::create (qt_widget_rep::horizontal_list, arr); }
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::horizontal_list, arr);
+  wid->add_children (arr);
+  return abstract (wid);
+}
 widget vertical_list (array<widget> arr) { 
-  return qt_ui_element_rep::create (qt_widget_rep::vertical_list, arr); }
-widget aligned_widget (array<widget> lhs, array<widget> rhs, SI hsep, SI vsep, SI lpad, SI rpad) { 
-  typedef triple<array<widget>, array<widget>, coord4> T;
-  return tm_new <qt_ui_element_rep> (qt_widget_rep::aligned_widget, 
-                                     close_box (T (lhs,rhs, coord4 (hsep, vsep, lpad, rpad)))); }
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::vertical_list, arr);
+  wid->add_children (arr);
+  return abstract (wid);
+}
+widget aligned_widget (array<widget> lhs, array<widget> rhs, SI hsep, SI vsep, SI lpad, SI rpad) {
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::aligned_widget,
+                                    lhs, rhs, coord4 (hsep, vsep, lpad, rpad));
+  wid->add_children (lhs);
+  wid->add_children (rhs);
+  return abstract (wid);
+}
 widget tabs_widget (array<widget> tabs, array<widget> bodies) {
-  return qt_ui_element_rep::create (qt_widget_rep::tabs_widget, tabs, bodies); }
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::tabs_widget, tabs, bodies);
+  wid->add_children (tabs);
+  wid->add_children (bodies);
+  return abstract (wid);
+}
 widget icon_tabs_widget (array<url> us, array<widget> ts, array<widget> bs) {
-  return qt_ui_element_rep::create (qt_widget_rep::icon_tabs_widget,
-                                    us, ts, bs); }
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::icon_tabs_widget,
+                                    us, ts, bs);
+  wid->add_children (ts);
+  wid->add_children (bs);
+  return abstract (wid);
+}
 widget wrapped_widget (widget w, command cmd) {
-  return qt_ui_element_rep::create (qt_widget_rep::wrapped_widget, w, cmd); }
-widget tile_menu (array<widget> a, int cols) { 
-  return qt_ui_element_rep::create (qt_widget_rep::tile_menu, a, cols); }
+  return tm_new<qt_wrapped_widget_rep> (w, cmd);
+}
+widget tile_menu (array<widget> arr, int cols) {
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::tile_menu, arr, cols);
+  wid->add_children (arr);
+  return abstract (wid);
+}
 widget minibar_menu (array<widget> arr) { 
-  return qt_ui_element_rep::create (qt_widget_rep::minibar_menu, arr); }
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::minibar_menu, arr);
+  wid->add_children (arr);
+  return abstract (wid);
+}
 widget menu_separator (bool vertical) { 
-  return qt_ui_element_rep::create (qt_widget_rep::menu_separator, vertical); }
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::menu_separator, vertical);
+  return abstract (wid);
+}
 widget menu_group (string name, int style) { 
-  return qt_ui_element_rep::create (qt_widget_rep::menu_group , name, style); }
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::menu_group , name, style);
+  return abstract (wid);
+}
 widget pulldown_button (widget w, promise<widget> pw) { 
-  return qt_ui_element_rep::create (qt_widget_rep::pulldown_button, w, pw); }
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::pulldown_button, w, pw);
+    // FIXME: the promise widget won't be added to the children when it is evaluated
+    //  wid->add_child (??);
+  return abstract(wid);
+}
 widget pullright_button (widget w, promise<widget> pw) { 
-  return qt_ui_element_rep::create (qt_widget_rep::pullright_button, w, pw); }
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::pullright_button, w, pw);
+    // FIXME: the promise widget won't be added to the children when it is evaluated
+    //  wid->add_child (??);
+  return abstract(wid);
+}
 widget menu_button (widget w, command cmd, string pre, string ks, int style) { 
-  return qt_ui_element_rep::create (qt_widget_rep::menu_button, w, cmd, pre, ks, style); }
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::menu_button,
+                                             w, cmd, pre, ks, style);
+  wid->add_child (w);
+  return abstract (wid);
+}
 widget balloon_widget (widget w, widget help) { 
-  return qt_ui_element_rep::create (qt_widget_rep::balloon_widget, w, help); }
-widget text_widget (string s, int style, color col, bool tsp) { 
-  return qt_ui_element_rep::create (qt_widget_rep::text_widget, s, style, col, tsp); }
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::balloon_widget,
+                                             w, help);
+  wid->add_child (w);
+  return abstract (wid);
+}
+widget text_widget (string s, int style, color col, bool tsp) {
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::text_widget,
+                                             s, style, col, tsp);
+  return abstract (wid);
+}
 widget xpm_widget (url file_name) { 
-  return qt_ui_element_rep::create (qt_widget_rep::xpm_widget, file_name); }
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::xpm_widget, file_name);
+  return abstract (wid);
+}
 widget toggle_widget (command cmd, bool on, int style) { 
-  return qt_ui_element_rep::create (qt_widget_rep::toggle_widget, cmd, on, style); }
-widget enum_widget (command cmd, array<string> vals, string val, int style, string width) { 
-  return qt_ui_element_rep::create (qt_widget_rep::enum_widget, cmd, vals, val, style, width); }
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::toggle_widget,
+                                             cmd, on, style);
+  return abstract (wid);
+}
+widget enum_widget (command cmd, array<string> vals, string val, int style, string width) {
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::enum_widget,
+                                             cmd, vals, val, style, width);
+  return abstract (wid);
+}
 widget choice_widget (command cmd, array<string> vals, array<string> chosen) {
-  return qt_ui_element_rep::create(qt_widget_rep::choice_widget, cmd, vals, chosen, true); }
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::choice_widget,
+                                             cmd, vals, chosen, true);
+  return abstract (wid);
+}
 widget choice_widget (command cmd, array<string> vals, string cur) {
   array<string> chosen (1);
   chosen[0]= cur;
-  return qt_ui_element_rep::create(qt_widget_rep::choice_widget, cmd, vals, chosen, false); }
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::choice_widget,
+                                             cmd, vals, chosen, false);
+  return abstract (wid);
+}
 widget choice_widget (command cmd, array<string> vals, string cur, string filter) {
-  return qt_ui_element_rep::create(qt_widget_rep::filtered_choice_widget, cmd, vals, cur, filter); }
-widget user_canvas_widget (widget wid, int style) {
-  return qt_ui_element_rep::create(qt_widget_rep::scrollable_widget, wid, style); }
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::filtered_choice_widget,
+                                             cmd, vals, cur, filter);
+  return abstract (wid);
+}
+widget user_canvas_widget (widget w, int style) {
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::scrollable_widget, w, style);
+  wid->add_child (w);
+  return abstract (wid);
+}
 widget resize_widget (widget w, int style, string w1, string h1,
                       string w2, string h2, string w3, string h3) {
   typedef triple<string, string, string> T1;
-  return qt_ui_element_rep::create(qt_widget_rep::resize_widget,
-                                   w, style, T1(w1,w2,w3), T1(h1,h2,h3)); }
-widget hsplit_widget (widget l, widget r) { 
-  return qt_ui_element_rep::create(qt_widget_rep::hsplit_widget, l, r); }
-widget vsplit_widget (widget t, widget b) { 
-  return qt_ui_element_rep::create(qt_widget_rep::vsplit_widget, t, b); }
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::resize_widget,
+                                             w, style, T1(w1,w2,w3), T1(h1,h2,h3));
+  wid->add_child (w);
+  return abstract (wid);
+}
+widget hsplit_widget (widget l, widget r) {
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::hsplit_widget, l, r);
+  wid->add_children (array<widget> (l, r));
+  return abstract (wid);
+}
+widget vsplit_widget (widget t, widget b) {
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::vsplit_widget, t, b);
+  wid->add_children (array<widget> (t, b));
+  return abstract (wid);
+}
 widget refresh_widget (string tmwid, string kind) {
-  return qt_ui_element_rep::create(qt_widget_rep::refresh_widget, tmwid, kind); }
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::refresh_widget, tmwid, kind);
+    // FIXME: decide what to do with children in QTMRefresh::recompute()
+  return abstract (wid);
+}
 widget glue_widget (bool hx, bool vx, SI w, SI h) {
-  return qt_ui_element_rep::create (qt_ui_element_rep::glue_widget,
-                                    hx, vx, w/PIXEL, h/PIXEL); }
+  qt_widget wid = qt_ui_element_rep::create (qt_ui_element_rep::glue_widget,
+                                             hx, vx, w/PIXEL, h/PIXEL);
+  return abstract (wid);
+}
 widget glue_widget (tree col, bool hx, bool vx, SI w, SI h) {
-  return tm_new<qt_glue_widget_rep> (col, hx, vx, w, h); }
+  return tm_new<qt_glue_widget_rep> (col, hx, vx, w, h);
+}
 widget inputs_list_widget (command call_back, array<string> prompts) {
   return tm_new<qt_inputs_list_widget_rep> (call_back, prompts); }
 widget input_text_widget (command call_back, string type, array<string> def,
                           int style, string width) {
   return tm_new<qt_input_text_widget_rep> (call_back, type, def, style, width);}
 widget color_picker_widget (command call_back, bool bg, array<tree> proposals) {
-  return tm_new<qt_color_picker_widget_rep>(call_back, bg, proposals); }
+  return tm_new<qt_color_picker_widget_rep> (call_back, bg, proposals); }
 widget file_chooser_widget (command cmd, string type, bool save) {
   return tm_new<qt_chooser_widget_rep> (cmd, type, save); }
 widget printer_widget (command cmd, url ps_pdf_file) {
-  return tm_new<qt_printer_widget_rep>(cmd, ps_pdf_file); }
+  return tm_new<qt_printer_widget_rep> (cmd, ps_pdf_file); }
 widget texmacs_widget (int mask, command quit) {
   if (mask) return tm_new<qt_tm_widget_rep> (mask, quit);
   else      return tm_new<qt_tm_embedded_widget_rep> (quit); }

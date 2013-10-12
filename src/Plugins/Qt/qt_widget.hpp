@@ -72,11 +72,14 @@ class qt_widget;
  exceptions. Creation from the TeXmacs side is done using the global functions
  declared in Graphics/Gui/widget.hpp.
  */
-class qt_widget_rep : public widget_rep {
-public:
-  long       id;
-  QWidget* qwid;
+class qt_widget;
 
+class qt_widget_rep : public widget_rep {
+  array<widget> children;
+  command           quit;
+public:
+  long                id;
+  QWidget*          qwid;
   /*! A list of all supported widget types.
    FIXME: This enum breaks the basic inheritance rules, since we have to 
    update the base class each time we implement a new subclass. It's also some
@@ -107,6 +110,8 @@ public:
   virtual widget make_popup_widget ();
   virtual widget popup_window_widget (string s);
 
+  void add_child (widget a);
+  void add_children (array<widget> a);
   
   ////////////////////// Qt semantics of abstract texmacs widgets  
   
@@ -143,12 +148,7 @@ public:
     /// See widkit_wrapper.cpp for the reference list of slots. Based on the
     /// handlers invoked by wk_widget_rep::send(), query() etc. we can decide
     /// what slots must implement each qt_widget.
-  virtual void send (slot s, blackbox val) {
-    (void) val;
-    if (DEBUG_QT)
-      cout << "qt_widget_rep::send(), unhandled " << slot_name (s) 
-           << " for widget of type: " << type_as_string() << LF;
-  }
+  virtual void send (slot s, blackbox val);
   
   virtual blackbox query (slot s, int type_id) {
     (void) type_id;

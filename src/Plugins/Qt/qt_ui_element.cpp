@@ -429,11 +429,11 @@ qt_ui_element_rep::as_qaction () {
       promise<widget> pw = x.x2;
       
       // a button w with a lazy pulldown menu pw
-      QAction* a= concrete (w) -> as_qaction ();
-      QTMLazyMenu* lm= new QTMLazyMenu (pw);
-      QMenu *old_menu = a->menu();
+      QAction*      a = concrete (w) -> as_qaction ();
+      QTMLazyMenu* lm = new QTMLazyMenu (pw);
+      QMenu* old_menu = a->menu();
       a->setMenu (lm);
-      a->setEnabled(true);
+      a->setEnabled (true);
       if (old_menu) {
         if (DEBUG_QT_WIDGETS)
           cout << "qt_ui_element_rep::as_qaction(), this should not happen\n";
@@ -698,7 +698,6 @@ qt_ui_element_rep::as_qlayoutitem () {
     case vsplit_widget:
     case tabs_widget:
     case icon_tabs_widget:
-    case wrapped_widget:
     case resize_widget:
     case refresh_widget:
     case balloon_widget:
@@ -812,14 +811,14 @@ qt_ui_element_rep::as_qwidget () {
       typedef pair<widget, T1> T;
       T      x = open_box<T>(load);
       widget w = x.x1;
-      T1    pw = x.x2;
+        //T1    pw = x.x2;
       
       // a button w with a lazy pulldown menu pw
       
-      QAction* a= concrete(this)->as_qaction ();
-      QToolButton *b = new QTMUIButton();
-      a->setParent(b);
-      b->setDefaultAction(a);
+      QAction*     a = concrete(this)->as_qaction ();
+      QToolButton* b = new QTMUIButton();
+      a->setParent (b);
+      b->setDefaultAction (a);
       qwid = b;
     }
       break;
@@ -1102,26 +1101,11 @@ qt_ui_element_rep::as_qwidget () {
     }
       break;
       
-    case wrapped_widget:
-    {
-      typedef pair<widget, command> T;
-      T         x = open_box<T>(load);
-      widget    w = x.x1;
-      command cmd = x.x2;
-      
-      QWidget* qw = concrete(w)->as_qwidget();
-      QTMOnDestroyCommand* c = new QTMOnDestroyCommand (qw, cmd);
-				// See QTMOnDestroyCommand for an explanation of why it exists
-      QObject::connect (qw, SIGNAL (destroyed ()), c, SLOT (apply ()));
-      qwid = qw;
-    }
-      break;
-      
     case refresh_widget:
     {
       typedef pair<string, string> T;
-      T x= open_box<T> (load);
-      qwid = new QTMRefreshWidget (x.x1, x.x2);
+      T  x = open_box<T> (load);
+      qwid = new QTMRefreshWidget (this, x.x1, x.x2);
     }
       break;
       

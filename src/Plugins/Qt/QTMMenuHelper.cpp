@@ -594,10 +594,9 @@ QTMTabWidget::resizeOthers(int current) {
 
 widget make_menu_widget (object wid);
 
-QTMRefreshWidget::QTMRefreshWidget (string _tmwid, string _kind):
-  QWidget (), tmwid (_tmwid), kind (_kind),
-  curobj (false), cur (), qwid(NULL),
-  cache (widget ())
+QTMRefreshWidget::QTMRefreshWidget (qt_widget _tmwid, string _strwid, string _kind)
+: QWidget (), strwid (_strwid), kind (_kind),
+  curobj (false), cur (), tmwid (_tmwid), qwid(NULL), cache (widget ())
 {   
   QObject::connect(the_gui->gui_helper, SIGNAL(tmSlotRefresh(string)),
                    this, SLOT(doRefresh(string)));
@@ -612,7 +611,7 @@ QTMRefreshWidget::QTMRefreshWidget (string _tmwid, string _kind):
 bool
 QTMRefreshWidget::recompute (string what) {
   if (what != "init" && kind != "any" && kind != what) return false;
-  string s = "'(vertical (link " * tmwid * "))";
+  string s = "'(vertical (link " * strwid * "))";
   eval ("(lazy-initialize-force)");
   object xwid = call ("menu-expand", eval (s));
   
@@ -625,6 +624,7 @@ QTMRefreshWidget::recompute (string what) {
     curobj = xwid;
     object uwid = eval (s);
     cur = make_menu_widget (uwid);
+    tmwid->add_child (cur); // FIXME?! Is this ok? what when we refresh?
     cache (xwid) = cur;
     return true;
   }
