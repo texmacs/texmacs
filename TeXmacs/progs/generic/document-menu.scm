@@ -282,12 +282,7 @@
 ;; Page sizes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-menu (document-page-size-menu)
-  ("Default"
-   (init-default "page-type" "page-width" "page-height")
-   (notify-page-change))
-  ---
-  (group "Common formats")
+(tm-menu (document-common-page-size-menu)
   ("A3" (init-page-type "a3"))
   ("A4" (init-page-type "a4"))
   ("A5" (init-page-type "a5"))
@@ -295,9 +290,31 @@
   ("B5" (init-page-type "b5"))
   ("Letter" (init-page-type "letter"))
   ("Legal" (init-page-type "legal"))
-  ("Executive" (init-page-type "executive"))
+  ("Executive" (init-page-type "executive")))
+
+(tm-menu (document-beamer-page-size-menu)
+  ("Widescreen 16:9" (init-page-type "16:9"))
+  ("Widescreen 8:5" (init-page-type "8:5"))
+  ;;("Widescreen 3:2" (init-page-type "3:2"))
+  ("Standard 4:3" (init-page-type "4:3"))
+  ("Standard 5:4" (init-page-type "5:4")))
+
+(tm-menu (document-page-size-menu)
+  ("Default"
+   (init-default "page-type" "page-width" "page-height")
+   (notify-page-change))
+  ---
+  (if (not (style-has? "beamer-style"))
+      (group "Common formats")
+      (link document-common-page-size-menu))
+  (if (style-has? "beamer-style")
+      (group "Beamer formats")
+      (link document-beamer-page-size-menu))
   ---
   (group "Standard formats")
+  (if (style-has? "beamer-style")
+      (-> "Common"
+          (link document-common-page-size-menu)))
   (-> "A series"
       ("A0" (init-page-type "a0"))
       ("A1" (init-page-type "a1"))
@@ -351,12 +368,9 @@
       ("Quarto" (init-page-type "quarto"))
       ("Statement" (init-page-type "statement"))
       ("Tabloid" (init-page-type "tabloid")))
-  (-> "Beamer"
-      ("Widescreen 16:9" (init-page-type "16:9"))
-      ("Widescreen 8:5" (init-page-type "8:5"))
-      ;;("Widescreen 3:2" (init-page-type "3:2"))
-      ("Standard 4:3" (init-page-type "4:3"))
-      ("Standard 5:4" (init-page-type "5:4")))
+  (if (not (style-has? "beamer-style"))
+      (-> "Beamer"
+          (link document-beamer-page-size-menu)))
   ---
   ("Other" (interactive init-page-size)))
 
