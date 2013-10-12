@@ -48,6 +48,8 @@
 
   <assign|page-medium|beamer>
 
+  <assign|page-orientation|landscape>
+
   <assign|page-screen-left|5mm>
 
   <assign|page-screen-right|5mm>
