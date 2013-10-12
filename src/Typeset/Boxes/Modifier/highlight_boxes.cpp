@@ -145,10 +145,10 @@ highlight_box_rep::display_rounded (renderer& ren) {
   SI W = w;
   SI Rx= (SI) (2 * (xpad-W));
   SI Ry= (SI) (2 * (ypad-W));
-  if (!ren->is_printer ()) {
-    SI pixel= ren->pixel;
-    W= ((w + (2*pixel) - 1) / (2*pixel)) * (2*pixel);
-  }
+  //if (!ren->is_printer ()) {
+  //  SI pixel= ren->pixel;
+  //  W= ((w + (2*pixel) - 1) / (2*pixel)) * (2*pixel);
+  //}
   SI l1= x1+(W>>1);
   SI l2= x1+Rx;
   SI r1= x2-(W>>1);

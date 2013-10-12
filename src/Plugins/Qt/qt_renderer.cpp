@@ -207,12 +207,14 @@ qt_renderer_rep::set_pencil (pencil np) {
   QPen p (painter->pen ());
   QBrush b (painter->brush ());
   QColor qc= to_qcolor (pen->get_color ());
-  SI pw= 0;
-  if (pen->get_width () > pixel)
-    pw= (pen->get_width () + thicken) / (1.0*pixel);
   p.setColor (qc);
   b.setColor (qc);
-  p.setWidth (pw);
+  //SI pw= 0;
+  //if (pen->get_width () > pixel)
+  //pw= (pen->get_width () + thicken) / (1.0*pixel);
+  //p.setWidth (pw);
+  qreal pw= (qreal) (((double) pen->get_width ()) / ((double) pixel));
+  p.setWidthF (pw);
   if (np->get_type () == pencil_brush) {
     brush br= np->get_brush ();
     QImage* pm= get_pattern_image (br, pixel);
