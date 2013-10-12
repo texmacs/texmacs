@@ -28,6 +28,20 @@ class QTMWidget;
  */
 class qt_simple_widget_rep: public qt_view_widget_rep {
 
+  typedef struct t_slot_entry {
+    int seq;
+    slot_id id;
+    blackbox val;
+    t_slot_entry() : seq(-1), id (slot_id__LAST), val (blackbox()) { }
+    t_slot_entry(const t_slot_entry& other)
+    : seq (other.seq), id (other.id), val (other.val) { };
+    bool operator< (const t_slot_entry& b) const { return this->seq < b.seq; }
+  } t_slot_entry;
+  
+  t_slot_entry sent_slots[slot_id__LAST];
+  
+  int sequencer;
+  
 public:
   qt_simple_widget_rep ();
 
@@ -41,7 +55,11 @@ public:
   virtual void handle_clear (SI x1, SI y1, SI x2, SI y2);
   virtual void handle_repaint (renderer win, SI x1, SI y1, SI x2, SI y2);
   
-  virtual void      send (slot s, blackbox val);
+    /// Storage of sent messages
+  
+  void save_send_slot (slot s, blackbox val);
+  void reapply_sent_slots();
+  virtual void send (slot s, blackbox val);
   
   virtual QAction* as_qaction();
   virtual QWidget* as_qwidget();

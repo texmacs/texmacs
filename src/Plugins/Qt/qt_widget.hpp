@@ -74,9 +74,9 @@ class qt_widget;
  */
 class qt_widget_rep : public widget_rep {
 public:
-  long id;
+  long       id;
   QWidget* qwid;
-  
+
   /*! A list of all supported widget types.
    FIXME: This enum breaks the basic inheritance rules, since we have to 
    update the base class each time we implement a new subclass. It's also some
@@ -99,7 +99,7 @@ public:
   
   types type;
   
-  qt_widget_rep(types _type=none, QWidget* _qwid=0);
+  qt_widget_rep (types _type=none, QWidget* _qwid=0);
   virtual ~qt_widget_rep ();
   virtual inline string get_nickname () { return "popup"; }
   
@@ -117,6 +117,7 @@ public:
   
 
   ////////////////////// Debugging
+  
   string type_as_string() { 
     static const char* qt_widget_type_strings[] = {
       "none",
@@ -138,25 +139,6 @@ public:
   }
   
   ////////////////////// Handling of TeXmacs' messages
-  
-    /// Storage of sent messages (used by qt_simple_widget_rep)
-    /// FIXME: don't burden every widget with the construction of sent_slots
-  
-  typedef struct t_slot_entry {
-    int seq;
-    slot_id id;
-    blackbox val;
-    t_slot_entry() : seq(-1), id(slot_id__LAST), val(blackbox()) {}
-    t_slot_entry(const t_slot_entry& other) : seq(other.seq), id(other.id), val(other.val) { }; 
-    bool operator< (const t_slot_entry& b) const { return this->seq < b.seq; }
-  } t_slot_entry;
-  
-  t_slot_entry sent_slots[slot_id__LAST];
-  
-  int sequencer;
-  
-  virtual void save_send_slot (slot s, blackbox val);
-  virtual void reapply_sent_slots();
 
     /// See widkit_wrapper.cpp for the reference list of slots. Based on the
     /// handlers invoked by wk_widget_rep::send(), query() etc. we can decide
@@ -169,41 +151,42 @@ public:
   }
   
   virtual blackbox query (slot s, int type_id) {
-		(void) type_id;
+    (void) type_id;
     if (DEBUG_QT)
       cout << "qt_widget_rep::query(), unhandled " << slot_name (s) 
            << " for widget of type: " << type_as_string() << LF;
 		return blackbox ();
-	}
+  }
   
   virtual widget read (slot s, blackbox index) {
-		(void) index;
+    (void) index;
     if (DEBUG_QT)
       cout << "qt_widget_rep::read(), unhandled " << slot_name (s) 
            << " for widget of type: " << type_as_string() << LF;
 		return widget ();
-	}	
+  }
   
   virtual void write (slot s, blackbox index, widget w) {
-		(void) index; (void) w;
+    (void) index; (void) w;
     if (DEBUG_QT)
       cout << "qt_widget_rep::write(), unhandled " << slot_name (s) 
            << " for widget of type: " << type_as_string() << LF;
-	}	
+  }
   
   virtual void notify (slot s, blackbox new_val) {
-		(void) new_val;
+    (void) new_val;
     if (DEBUG_QT)
-      cout << "qt_widget_rep::notify(), unhandled " << slot_name (s) 
+      cout << "qt_widget_rep::notify(), unhandled " << slot_name (s)
            << " for widget of type: " << type_as_string() << LF;
-	}
+  }
 };
 
 
 /*! Reference counting mechanism.
 
- Like elsewhere in TeXmacs, this is a wrapper around its corresponding qt_widget_rep 
- which implements reference counting. Please src/Kernel/Abstractions/basic.hpp
+ Like elsewhere in TeXmacs, this is a wrapper around its corresponding 
+ qt_widget_rep which implements reference counting.
+ See src/Kernel/Abstractions/basic.hpp
 */
 class qt_widget {
 public:
@@ -220,11 +203,12 @@ ABSTRACT_NULL_CODE(qt_widget);
   // Needed for the ntuples (see ntuple.h)
 tm_ostream& operator << (tm_ostream& out, qt_widget w);
 
-
-/*! casting form qt_widget to widget */
+/*! Casting form qt_widget to widget */
 inline widget abstract (qt_widget w) { return widget (w.rep); }
 
-/*! casting from widget to qt_widget */
-inline qt_widget concrete (widget w) { return qt_widget (static_cast<qt_widget_rep*>(w.rep)); }
+/*! Casting from widget to qt_widget */
+inline qt_widget concrete (widget w) {
+  return qt_widget (static_cast<qt_widget_rep*>(w.rep));
+}
 
 #endif // defined QT_WIDGET_HPP
