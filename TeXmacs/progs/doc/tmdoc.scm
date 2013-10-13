@@ -99,18 +99,9 @@
 ;; Further subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmdoc-search-env-var t which)
-  (cond ((nlist? t) #f)
-	((null? t) #f)
-	((match? t '(associate "language" :%1)) (caddr t))
-	(else (let ((val (tmdoc-search-env-var (car t) which)))
-		(if val val (tmdoc-search-env-var (cdr t) which))))))
-
 (define (tmdoc-language file-name)
-  (let* ((t (tree-import file-name "texmacs"))
-	 (init (assoc 'initial (cdr (tree->stree t))))
-	 (lan (and init (tmdoc-search-env-var (cadr init) "language"))))
-    (if lan lan "english")))
+  (with t (tree-import file-name "texmacs")
+    (tmfile-language t)))
 
 (define (tmdoc-add-aux doc)
   (let* ((l0 (cdr doc))
@@ -161,19 +152,17 @@
              (tm->stree
               `(document
                  (TeXmacs ,(texmacs-version))
-                 (style "tmmanual")
+                 (style (tuple "tmmanual" ,lan))
                  (body ,(tmdoc-add-aux body))
-                 (initial (collection (associate "language" ,lan)
-                                      (associate "page-medium" "paper")))))))
+                 (initial (collection (associate "page-medium" "paper")))))))
           (else
            (let* ((body (tmdoc-expand root root 'tmdoc-title))
                   (lan (tmdoc-language root)))
              (tm->stree
               `(document
                  (TeXmacs ,(texmacs-version))
-                 (style "tmdoc")
-                 (body ,body)
-                 (initial (collection (associate "language" ,lan))))))))))
+                 (style (tuple "tmdoc" ,lan))
+                 (body ,body))))))))
 
 (define (tmdoc-find-title-list l)
   (and (nnull? l)

@@ -3715,6 +3715,44 @@ upgrade_style (tree t, bool flag) {
 }
 
 /******************************************************************************
+* Upgrade document language
+******************************************************************************/
+
+tree
+upgrade_doc_language (tree t) {
+  tree style= extract (t, "style");
+  tree init = extract (t, "initial");
+  if (init == "" || N(init) == 0) return t;
+
+  string lan= "";
+  for (int i=0; i<N(init); i++)
+    if (is_func (init[i], ASSOCIATE, 2) && init[i][0] == LANGUAGE)
+      lan= as_string (init[i][1]);
+
+  tree new_style= copy (style);
+  tree new_init = tree (COLLECTION);
+  for (int i=0; i<N(init); i++)
+    if (is_func (init[i], ASSOCIATE, 2) && init[i][0] == LANGUAGE)
+      new_style << init[i][1];
+    else if (is_func (init[i], ASSOCIATE, 2) && init[i][0] == FONT) {
+      if (init[i][1] == "cyrillic" &&
+          (lan == "bulgarian" || lan == "russian" || lan == "ukrainian"));
+      else if (init[i][1] == "sys-chinese" &&
+               (lan == "chinese" || lan == "taiwanese"));
+      else if (init[i][1] == "sys-japanese" && lan == "japanese");
+      else if (init[i][1] == "sys-korean" && lan == "korean");
+      else new_init << init;
+    }
+    else new_init << init;
+
+  if (new_style != style)
+    t= change_doc_attr (t, "style", new_style);
+  if (new_init != init)
+    t= change_doc_attr (t, "initial", new_init);
+  return t;
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -3750,6 +3788,7 @@ upgrade_tex (tree t) {
   t= upgrade_math_ops (t);
   t= clean_spaces (t);
   t= clean_header (t);
+  t= upgrade_doc_language (t);
   upgrade_tex_flag= false;
   return t;
 }
@@ -3887,6 +3926,7 @@ upgrade (tree t, string version) {
   if (version_inf_eq (version, "1.0.7.20")) {
     t= upgrade_unroll (t);
     t= upgrade_style (t, false);
+    t= upgrade_doc_language (t);
   }
 
   if (is_non_style_document (t))

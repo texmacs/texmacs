@@ -15,7 +15,7 @@
   (use-modules (generic document-edit) (texmacs texmacs tm-print))
   (init-style "generic")
   (with lan (get-preference "language")
-    (if (!= lan "english") (init-language lan)))
+    (if (!= lan "english") (set-document-language lan)))
   (with psz (get-printer-paper-type)
     (if (!= psz "a4") (init-page-type psz)))
   (when (!= (get-preference "scripting language") "none")

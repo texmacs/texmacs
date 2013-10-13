@@ -21,10 +21,9 @@
   </src-title>>
 
   <assign|language|ukrainian>
+
+  <assign|font|cyrillic>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|preamble|true>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

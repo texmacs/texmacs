@@ -523,9 +523,8 @@
     ($quote
       `(document
          (TeXmacs ,(texmacs-version))
-         (style (tuple "tmdoc"))
-         (body ($unquote ($block ,@l)))
-         (initial (collection (associate "language" ,lan)))))))
+         (style (tuple "tmdoc" ,lan))
+         (body ($unquote ($block ,@l)))))))
 
 (tm-define-macro ($localize . l)
   `(tree-translate ($inline ,@l)))

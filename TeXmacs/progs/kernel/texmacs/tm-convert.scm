@@ -276,9 +276,12 @@
   (and (tmfile-extract doc 'TeXmacs) (tmfile-extract doc 'body)))
 
 (define-public (tmfile-extract doc what)
-  (if (not (func? doc 'document)) #f
-      (with val (assoc-ref (cdr doc) what)
-	(if val (car val) val))))
+  (if (tree? doc) (set! doc (tree->stree doc)))
+  (and (func? doc 'document)
+       (with val (assoc-ref (cdr doc) what)
+         (if (pair? val) (set! val (car val)))
+         (if (tree? val) (set! val (tree->stree val)))
+         val)))
 
 (define (default-init var)
   ;; FIXME: should use C++ code
@@ -286,11 +289,26 @@
 	((== var "language") "english")
 	(else "")))
 
-(define-public (tmfile-init doc var)
+(define-public (tmfile-init doc var . explicit?)
   (with init (tmfile-extract doc 'initial)
     (if (not init) (default-init var)
 	(with item (list-find (cdr init) (lambda (x) (== (cadr x) var)))
-	  (if item (caddr item) (default-init var))))))
+	  (if item (caddr item)
+              (and (null? explicit?)
+                   (default-init var)))))))
+
+(tm-define (tmfile-style-list doc)
+  (with style (tmfile-extract doc 'style)
+    (if (tm-func? style 'tuple) (set! style (cdr style)))
+    (if style style (list))))
+
+(tm-define (tmfile-language doc)
+  (let* ((style (tmfile-style-list doc))
+         (lans (list-intersection style supported-languages))
+	 (lan (tmfile-init doc "language" #t)))
+    (cond (lan lan)
+          ((nnull? lans) (car lans))
+          (else "english"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Adding new formats

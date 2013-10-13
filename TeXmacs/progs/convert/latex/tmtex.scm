@@ -2419,7 +2419,7 @@
       (let* ((body (tmfile-extract x 'body))
 	     (style (tmtex-get-style (tmfile-extract x 'style)))
 	     (main-style (or (tmtex-transform-style (car style)) "article"))
-	     (lan (tmfile-init x "language"))
+	     (lan (tmfile-language x))
 	     (init (tmfile-extract x 'initial))
 	     (att (tmfile-extract x 'attachments))
 	     (doc (list '!file body style lan init att

@@ -1,6 +1,6 @@
 <TeXmacs|1.0.7.20>
 
-<style|source>
+<style|<tuple|source|english>>
 
 <\body>
   <active*|<\src-title>
@@ -44,11 +44,11 @@
     </src-comment>
   </active*>
 
-  <assign|tmdoc-title|<macro|title|<style-with|src-compact|none|<with|font-series|bold|font-size|1.19|color|dark
+  <assign|tmdoc-title|<macro|title|<style-with|src-compact|none|<no-indent><with|font-series|bold|font-size|1.19|color|dark
   grey|<block*|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|1|cell-lborder|0.5ln>|<cwith|1|-1|1|1|cell-rborder|0.5ln>|<cwith|1|-1|1|1|cell-bborder|0.5ln>|<cwith|1|-1|1|1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|1|1|cell-lsep|0fn>|<cwith|1|1|1|-1|cell-background|pastel
   yellow>|<table|<row|<cell|<tmdoc-gnu-title|<with|color|black|<arg|title>>>>>>>>><vspace|1fn>>>>
 
-  <assign|tmdoc-title*|<macro|title|b|<style-with|src-compact|none|<with|font-series|bold|font-size|1.19|color|dark
+  <assign|tmdoc-title*|<macro|title|b|<style-with|src-compact|none|<no-indent><with|font-series|bold|font-size|1.19|color|dark
   grey|<block*|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|1|cell-lborder|0.5ln>|<cwith|1|-1|1|1|cell-rborder|0.5ln>|<cwith|1|-1|1|1|cell-bborder|0.5ln>|<cwith|1|-1|1|1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|1|1|cell-lsep|0fn>|<cwith|2|2|1|-1|cell-background|pastel
   orange>|<cwith|1|1|1|-1|cell-background|pastel
   yellow>|<cwith|2|2|1|1|cell-hyphen|c>|<table|<row|<cell|<tmdoc-gnu-title|<with|color|black|<arg|title>>>>>|<row|<\cell>
@@ -57,7 +57,7 @@
     </with>
   </cell>>>>>><vspace|1fn>>>>
 
-  <assign|tmdoc-title**|<macro|t|title|b|<style-with|src-compact|none|<with|font-series|bold|font-size|1.19|color|dark
+  <assign|tmdoc-title**|<macro|t|title|b|<style-with|src-compact|none|<no-indent><with|font-series|bold|font-size|1.19|color|dark
   grey|<block*|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|1|cell-lborder|0.5ln>|<cwith|1|-1|1|1|cell-rborder|0.5ln>|<cwith|1|-1|1|1|cell-bborder|0.5ln>|<cwith|1|-1|1|1|cell-tborder|0.5ln>|<cwith|2|2|1|1|cell-rsep|0fn>|<cwith|2|2|1|1|cell-lsep|0fn>|<cwith|1|1|1|-1|cell-background|pastel
   orange>|<cwith|3|3|1|-1|cell-background|pastel
   orange>|<cwith|2|2|1|-1|cell-background|pastel
@@ -105,7 +105,7 @@
 
   <assign|tmdoc-copyright-extra|<macro|name|, <arg|name>>>
 
-  <assign|tmdoc-copyright|<xmacro|x|<vspace*|1fn><tmdoc-bar|<copyright><with|font-size|0.84|
+  <assign|tmdoc-copyright|<xmacro|x|<no-indent><vspace*|1fn><tmdoc-bar|<copyright><with|font-size|0.84|
   \ <arg|x|0> <localize|by> <arg|x|1><map-args|tmdoc-copyright-extra|concat|x|2>>>>>
 
   <assign|tmdoc-license|<macro|body|<with|color|grey|font-size|0.59|<with|language|english|<arg|body>>>>>
@@ -145,9 +145,5 @@
   \;
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-    <associate|preamble|true>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

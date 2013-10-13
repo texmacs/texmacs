@@ -67,9 +67,8 @@
     ($quote
       `(document
          (TeXmacs ,(texmacs-version))
-         (style (tuple "tmdoc" "scheme-api"))
-         (body ($unquote ($block ,@l)))
-         (initial (collection (associate "language" ,lan)))))))
+         (style (tuple "tmdoc" "scheme-api" ,lan))
+         (body ($unquote ($block ,@l)))))))
 
 (define ($doc-all-symbols-buffer)
   (map append-command-alphabetically 

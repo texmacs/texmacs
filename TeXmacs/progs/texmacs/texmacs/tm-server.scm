@@ -33,7 +33,7 @@
 (define (notify-language var val)
   (set-output-language val)
   (if (and (current-view) (== (buffer-tree) (stree->tree '(document ""))))
-      (init-language val))
+      (set-document-language val))
   (cond ((or (== val "bulgarian") (== val "russian") (== val "ukrainian"))
          (notify-preference "cyrillic input method"))))
 

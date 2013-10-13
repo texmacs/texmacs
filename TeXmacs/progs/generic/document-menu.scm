@@ -126,19 +126,19 @@
 (menu-bind global-language-menu
   (for (lan supported-languages)
     (when (supported-language? lan)
-      ((check (eval (upcase-first lan)) "v"
+      ((check (eval (upcase-first lan)) "*"
               (and (test-document-language? lan)
                    (== lan (get-output-language))))
-       (init-language lan)
+       (set-document-language lan)
        (set-output-language lan)))))
 
 (menu-bind document-language-menu
-  ("Default" (init-default "language"))
+  ("Default" (set-default-document-language))
   ---
   (for (lan supported-languages)
     (when (supported-language? lan)
-      ((check (eval (upcase-first lan)) "v" (test-document-language? lan))
-       (init-language lan)))))
+      ((check (eval (upcase-first lan)) "*" (test-document-language? lan))
+       (set-document-language lan)))))
 
 (tm-define (current-language-icon)
   (with lan (get-env "language")

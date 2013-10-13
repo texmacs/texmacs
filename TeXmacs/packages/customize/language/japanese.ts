@@ -22,11 +22,10 @@
 
   <assign|language|japanese>
 
+  <assign|font|sys-japanese>
+
   <if|<greater|<value|par-first>|0fn>|<assign|par-first|2fn>>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|preamble|true>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
