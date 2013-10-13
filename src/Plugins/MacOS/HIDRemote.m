@@ -208,7 +208,8 @@ static HIDRemote *sHIDRemote = nil;
 						{
 							return (YES);
 						}
-					break;
+					default:
+						break;
 				}
 			break;
 		}
