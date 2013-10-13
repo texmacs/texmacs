@@ -102,6 +102,10 @@ tree
 sql_exec (url db_name, string cmd) {
   if (!sqlite3_initialized)
     tm_sqlite3_initialize ();
+  if (sqlite3_error) {
+    cout << "TeXmacs] ERROR: SQLite support not properly configured.\n";
+    return tree (TUPLE);
+  }
   string name= concretize (db_name);
   if (!sqlite3_connections->contains (name)) {
     c_string _name (name);
