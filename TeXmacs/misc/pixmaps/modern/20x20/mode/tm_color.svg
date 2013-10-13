@@ -13,13 +13,30 @@
    height="20"
    id="svg3039"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.48.0 r9654"
    sodipodi:docname="tm_color.svg"
-   inkscape:export-filename="/home/lebreton/logiciel/texmacs/TeXmacs/misc/pixmaps/modern/20x20/mode/tm_color2.png"
+   inkscape:export-filename="/Users/vdhoeven/magix/texmacs/icons/20x20/mode/tm_color.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
-     id="defs3041" />
+     id="defs3041">
+    <filter
+       inkscape:collect="always"
+       id="filter19724">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.23150476"
+         id="feGaussianBlur19726" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter19728">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.23150476"
+         id="feGaussianBlur19730" />
+    </filter>
+  </defs>
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -28,17 +45,17 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="31.392433"
-     inkscape:cx="3.7111362"
+     inkscape:cx="11.292581"
      inkscape:cy="9.4672047"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:grid-bbox="true"
      inkscape:document-units="px"
      inkscape:snap-grids="false"
-     inkscape:window-width="1680"
+     inkscape:window-width="1322"
      inkscape:window-height="1110"
-     inkscape:window-x="57"
-     inkscape:window-y="24"
+     inkscape:window-x="53"
+     inkscape:window-y="5"
      inkscape:window-maximized="0"
      showguides="true"
      inkscape:snap-global="true">
@@ -60,7 +77,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -161,14 +178,14 @@
        inkscape:connector-curvature="0"
        id="path5494"
        d="M 7.7622707,14.331808 18.249633,15.292904 19.69128,-0.43814298 9.203914,-1.3992384 z"
-       style="fill:#eb6767;fill-opacity:1;stroke:#404040;stroke-width:0.65820694000000002;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:#cbdbed;fill-opacity:1;stroke:#404040;stroke-width:0.65820694000000002;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        inkscape:transform-center-x="-3.1023897"
        inkscape:transform-center-y="-5.0034081"
        inkscape:export-filename="/Users/vdhoeven/magix/texmacs/icons/20x20/mode/path5502.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
     <path
-       style="fill:#76d990;fill-opacity:1;stroke:#404040;stroke-width:0.65820694000000002;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:#cfd9cb;fill-opacity:1;stroke:#404040;stroke-width:0.65820694000000002;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="M 8.7809317,15.185243 18.937844,12.402147 14.763198,-2.8332235 4.6062858,-0.05012619 z"
        id="path5490"
        inkscape:connector-curvature="0"
@@ -181,7 +198,7 @@
        inkscape:connector-curvature="0"
        id="path5492"
        d="M 10.215439,15.651098 18.435043,9.0672821 8.5593223,-3.2621262 0.33971683,3.321688 z"
-       style="fill:#95a1ed;fill-opacity:1;stroke:#404040;stroke-width:0.65820694000000002;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:#ebe5d8;fill-opacity:1;stroke:#404040;stroke-width:0.65820694000000002;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        inkscape:transform-center-x="1.2370056"
        inkscape:transform-center-y="-5.755755"
        inkscape:export-filename="/Users/vdhoeven/magix/texmacs/icons/20x20/mode/path5502.png"
@@ -195,7 +212,7 @@
        sodipodi:cy="3"
        sodipodi:rx="1"
        sodipodi:ry="1"
-       d="M 4,3 C 4,3.5522847 3.5522847,4 3,4 2.4477153,4 2,3.5522847 2,3 2,2.4477153 2.4477153,2 3,2 3.4221961,2 3.7989061,2.265154 3.9413585,2.6625919"
+       d="M 4,3 A 1,1 0 1 1 3.9413585,2.6625919"
        transform="matrix(0.9809735,-0.2687967,0.2687967,0.9809735,6.882091,9.8393148)"
        sodipodi:start="0"
        sodipodi:end="5.9390231"
