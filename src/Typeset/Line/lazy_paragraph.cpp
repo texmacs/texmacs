@@ -153,20 +153,24 @@ void
 lazy_paragraph_rep::find_first_last_text (int& first, int& last) {
   int i;
   first= last= -1;
-  for (i=cur_start; i<N(items); i++)
-    if (items[i]->get_type () == TEXT_BOX &&
-        items[i]->get_leaf_string () != "") {
+  for (i=cur_start; i<N(items); i++) {
+    int type= items[i]->get_type ();
+    if ((type == TEXT_BOX /*|| type == SHORTER_BOX*/) &&
+        items[i]->w () != 0) {
       first= i;
       break;
     }
     else if (items[i]->w() != 0) break;
-  for (i=N(items)-1; i>=cur_start; i--)
-    if (items[i]->get_type () == TEXT_BOX &&
-        items[i]->get_leaf_string () != "") {
+  }
+  for (i=N(items)-1; i>=cur_start; i--) {
+    int type= items[i]->get_type ();
+    if ((type == TEXT_BOX /*|| type == SHORTER_BOX*/) &&
+        items[i]->w () != 0) {
       last= i;
       break;
     }
     else if (items[i]->w() != 0) break;
+  }
 }
 
 box
@@ -206,6 +210,7 @@ lazy_paragraph_rep::adjust_kerning (SI dw) {
     if (type == TEXT_BOX || type == SHORTER_BOX)
       textw += items[i]->w ();
   }
+  if (textw == 0) return;
   space tot_spc= 0;
   for (i=cur_start; i<N(spcs)-1; i++)
     tot_spc += spcs[i];
