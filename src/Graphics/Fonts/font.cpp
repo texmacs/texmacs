@@ -67,13 +67,13 @@ font_rep::copy_math_pars (font fn) {
 }
 
 void
-font_rep::draw (renderer ren, string s, SI x, SI y) {
+font_rep::draw (renderer ren, string s, SI x, SI y, SI xspace, bool ext) {
   if (ren->zoomf == 1.0 || !ren->is_screen)
-    draw_fixed (ren, s, x, y);
+    draw_fixed (ren, s, x, y, xspace);
   else if (ren->zoomf != last_zoom) {
     last_zoom= ren->zoomf;
     zoomed_fn= magnify (ren->zoomf);
-    draw (ren, s, x, y);
+    draw (ren, s, x, y, xspace, ext);
   }
   else {
     // FIXME: low level rendering hack
@@ -106,7 +106,11 @@ font_rep::draw (renderer ren, string s, SI x, SI y) {
 
     SI xx= (SI) tm_round (x * old_zoomf);
     SI yy= (SI) tm_round (y * old_zoomf);
-    zoomed_fn->draw_fixed (ren, s, xx, yy);
+    if (ext) {
+      SI ss= (SI) tm_round (xspace * old_zoomf);
+      zoomed_fn->draw_fixed (ren, s, xx, yy, ss);
+    }
+    else zoomed_fn->draw_fixed (ren, s, xx, yy);
 
     ren->ox     = old_ox;
     ren->oy     = old_oy;
@@ -120,6 +124,29 @@ font_rep::draw (renderer ren, string s, SI x, SI y) {
     ren->pixel  = old_pixel;
     ren->thicken= old_thicken;
   }
+}
+
+void
+font_rep::draw (renderer ren, string s, SI x, SI y) {
+  draw (ren, s, x, y, 0, false);
+}
+
+void
+font_rep::draw (renderer ren, string s, SI x, SI y, SI xspace) {
+  draw (ren, s, x, y, xspace, true);
+}
+
+void
+font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI xspace) {
+  STACK_NEW_ARRAY (xpos, SI, N(s)+1);
+  get_xpositions (s, xpos, xspace);
+  int i= 0;
+  while (i<N(s)) {
+    int old= i;
+    tm_char_forwards (s, i);
+    draw_fixed (ren, s (old, i), x + xpos[old], y);
+  }
+  STACK_DELETE_ARRAY (xpos);  
 }
 
 double font_rep::get_left_slope  (string s) { (void) s; return slope; }
@@ -142,6 +169,28 @@ font_rep::get_xpositions (string s, SI* xpos) {
     get_extents (s (0, i), ex);
     x= ex->x2;
     xpos[i]= x;
+  }
+}
+
+
+void
+font_rep::get_xpositions (string s, SI* xpos, SI xspace) {
+  get_xpositions (s, xpos);
+  int n= tm_string_length (s);
+  int i= 0, count= 0;
+  xpos[0]= xspace / (2*n);
+  while (i < N(s)) {
+    SI dx= (xspace * (2*count + 1)) / (2*n);
+    if (s[i] == '<')
+      while ((i < N(s)) && (s[i] != '>')) {
+	i++;
+	xpos[i] += dx;
+      }
+    i++;
+    count++;
+    dx= (xspace * (2*count + 1)) / (2*n);
+    if (dx > xspace) dx= xspace;
+    xpos[i] += dx;
   }
 }
 

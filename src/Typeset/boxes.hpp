@@ -29,6 +29,7 @@
 #define CONTROL_BOX   3
 #define MOVE_BOX      4
 #define SCROLL_BOX    5
+#define SHORTER_BOX   6
 
 /******************************************************************************
 * The cursor class

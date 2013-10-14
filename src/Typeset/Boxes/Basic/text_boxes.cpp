@@ -23,8 +23,9 @@ struct text_box_rep: public box_rep {
   string    str;
   font      fn;
   pencil    pen;
+  SI        xspace;
 
-  text_box_rep (path ip, int pos, string s, font fn, pencil pen);
+  text_box_rep (path ip, int pos, string s, font fn, pencil pen, SI xspace);
   operator tree () { return str; }
 
   void      display (renderer ren);
@@ -64,21 +65,23 @@ struct text_box_rep: public box_rep {
 * Routines for text boxes
 ******************************************************************************/
 
-text_box_rep::text_box_rep (path ip, int pos2, string s, font fn2, pencil p2):
-  box_rep (ip), pos (pos2), str (s), fn (fn2), pen (p2)
+text_box_rep::text_box_rep (path ip, int pos2, string s,
+                            font fn2, pencil p2, SI xspace2):
+  box_rep (ip), pos (pos2), str (s), fn (fn2), pen (p2), xspace (xspace2)
 {
   metric ex;
   fn->get_extents (str, ex);
   x1= ex->x1; y1= ex->y1;
-  x2= ex->x2; y2= ex->y2;
+  x2= ex->x2 + xspace; y2= ex->y2;
   x3= ex->x3; y3= ex->y3;
-  x4= ex->x4; y4= ex->y4;
+  x4= ex->x4 + xspace; y4= ex->y4;
 }
 
 void
 text_box_rep::display (renderer ren) {
   ren->set_pencil (pen);
-  fn->draw (ren, str, 0, 0);
+  if (xspace == 0) fn->draw (ren, str, 0, 0);
+  else fn->draw (ren, str, 0, 0, xspace);
 }
 
 double text_box_rep::left_slope () {
@@ -137,7 +140,12 @@ text_box_rep::find_box_path (SI x, SI y, SI delta, bool force) {
   (void) y;
   (void) force;
   STACK_NEW_ARRAY (xpos, SI, N(str)+1);
-  fn->get_xpositions (str, xpos);
+  if (xspace == 0) fn->get_xpositions (str, xpos);
+  else {
+    fn->get_xpositions (str, xpos, xspace);
+    SI d= xpos[0];
+    for (int i=0; i<N(str)+1; i++) xpos[i] -= d;
+  } 
 
   int prev_i, prev_x=0, i=0;
   while (i<N(str)) {
@@ -207,6 +215,13 @@ text_box_rep::find_cursor (path bp) {
   int l= min (bp->item, N(str));
   fn->get_extents (str (0, l), ex);
   cu->ox= ex->x2;
+  if (xspace != 0) {
+    STACK_NEW_ARRAY (xpos, SI, N(str)+1);
+    fn->get_xpositions (str, xpos, xspace);
+    SI d= xpos[0];
+    cu->ox= xpos[l] - d;
+    STACK_DELETE_ARRAY (xpos);
+  }
   if (l != 0) {
     int k= l;
     tm_char_backwards (str, k);
@@ -226,6 +241,14 @@ text_box_rep::find_selection (path lbp, path rbp) {
   x1= ex->x2;
   fn->get_extents (str (0, rbp->item), ex);
   x2= ex->x2;
+  if (xspace != 0) {
+    STACK_NEW_ARRAY (xpos, SI, N(str)+1);
+    fn->get_xpositions (str, xpos, xspace);
+    SI d= xpos[0];
+    x1= xpos[lbp->item] - d;
+    x2= xpos[rbp->item] - d;
+    STACK_DELETE_ARRAY (xpos);
+  }
   fn->get_extents (str (lbp->item, rbp->item), ex);
   y1= ex->y1;
   y2= ex->y2;
@@ -383,6 +406,6 @@ wide_box (path ip, string s, font fn, pencil pen, SI width) {
 }
 
 box
-text_box (path ip, int pos, string s, font fn, pencil pen) {
-  return tm_new<text_box_rep> (ip, pos, s, fn, pen);
+text_box (path ip, int pos, string s, font fn, pencil pen, SI xspace) {
+  return tm_new<text_box_rep> (ip, pos, s, fn, pen, xspace);
 }

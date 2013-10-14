@@ -62,6 +62,10 @@ protected:
   void line_print (line_item item, path start, path end);
   void line_print (path start, path end);
 
+  void find_first_last_text (int& first, int& last);
+  box  adjust (box b, bool first, bool last, SI dw, SI textw);
+  void adjust_kerning (SI dw); // adjust kerning of current line unit
+
   void handle_decoration (int& i, int& j, SI& xoff, box& b, SI& b_sp);
   void handle_decorations (int& i, int& j, SI& xoff,
 			   array<box>& bs, array<SI>& bs_sp);

@@ -207,6 +207,7 @@ public:
   path   find_box_path (SI x, SI y, SI delta, bool force);
   path   find_rip ();
   path   find_right_box_path ();
+  int    get_type ();
   int    get_leaf_left_pos ();
   int    get_leaf_right_pos ();
   string get_leaf_string ();
@@ -239,6 +240,11 @@ path
 shorter_box_rep::find_right_box_path () {
   path bp= b->find_right_box_path ();
   return path (0, path_up (bp) * min (last_item (bp), len));
+}
+
+int
+shorter_box_rep::get_type () {
+  return SHORTER_BOX;
 }
 
 int
