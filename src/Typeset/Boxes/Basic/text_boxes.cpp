@@ -51,6 +51,7 @@ struct text_box_rep: public box_rep {
   cursor    find_cursor (path bp);
   selection find_selection (path lbp, path rbp);
 
+  int       get_type ();
   int       get_leaf_left_pos ();
   int       get_leaf_right_pos ();
   string    get_leaf_string ();
@@ -235,6 +236,11 @@ text_box_rep::find_selection (path lbp, path rbp) {
 /******************************************************************************
 * Getting information about box
 ******************************************************************************/
+
+int
+text_box_rep::get_type () {
+  return TEXT_BOX;
+}
 
 int
 text_box_rep::get_leaf_left_pos () {
