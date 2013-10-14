@@ -3741,9 +3741,9 @@ upgrade_doc_language (tree t) {
                (lan == "chinese" || lan == "taiwanese"));
       else if (init[i][1] == "sys-japanese" && lan == "japanese");
       else if (init[i][1] == "sys-korean" && lan == "korean");
-      else new_init << init;
+      else new_init << init[i];
     }
-    else new_init << init;
+    else new_init << init[i];
 
   if (new_style != style)
     t= change_doc_attr (t, "style", new_style);
