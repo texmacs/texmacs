@@ -48,7 +48,9 @@ struct unicode_font_rep: font_rep {
   unsigned int ligature_replace (unsigned int c, string s, int& i);
   bool supports (string c);
   void get_extents (string s, metric& ex);
+  void get_xpositions (string s, SI* xpos, bool ligf);
   void get_xpositions (string s, SI* xpos);
+  void draw_fixed (renderer ren, string s, SI x, SI y, bool ligf);
   void draw_fixed (renderer ren, string s, SI x, SI y);
   font magnify (double zoom);
   glyph get_glyph (string s);
@@ -261,7 +263,7 @@ unicode_font_rep::get_extents (string s, metric& ex) {
 }
 
 void
-unicode_font_rep::get_xpositions (string s, SI* xpos) {
+unicode_font_rep::get_xpositions (string s, SI* xpos, bool ligf) {
   int i= 0, n= N(s);
   if (n == 0) return;
   
@@ -271,7 +273,7 @@ unicode_font_rep::get_xpositions (string s, SI* xpos) {
     int start= i;
     unsigned int pc= uc;
     uc= read_unicode_char (s, i);
-    if (ligs > 0 && (((char) uc) == 'f' || ((char) uc) == 's'))
+    if (ligs > 0 && ligf && (((char) uc) == 'f' || ((char) uc) == 's'))
       uc= ligature_replace (uc, s, i);
     if (pc != 0xffffffff) x += ROUND (fnm->kerning (pc, uc));
     metric_struct* next= fnm->get (uc);
@@ -284,13 +286,18 @@ unicode_font_rep::get_xpositions (string s, SI* xpos) {
 }
 
 void
-unicode_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
+unicode_font_rep::get_xpositions (string s, SI* xpos) {
+  get_xpositions (s, xpos, true);
+}
+
+void
+unicode_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, bool ligf) {
   int i= 0, n= N(s);
   unsigned int uc= 0xffffffff;
   while (i<n) {
     unsigned int pc= uc;
     uc= read_unicode_char (s, i);
-    if (ligs > 0 && (((char) uc) == 'f' || ((char) uc) == 's'))
+    if (ligs > 0 && ligf && (((char) uc) == 'f' || ((char) uc) == 's'))
       uc= ligature_replace (uc, s, i);
     if (pc != 0xffffffff) x += ROUND (fnm->kerning (pc, uc));
     ren->draw (uc, fng, x, y);
@@ -300,6 +307,12 @@ unicode_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
     //cout << "Kerning " << ((char) pc) << ((char) uc) << " " << ROUND (fnm->kerning (pc, uc)) << ", " << ROUND (ex->x2) << "\n";
   }
 }
+
+void
+unicode_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
+  draw_fixed (ren, s, x, y, true);
+}
+
 
 font
 unicode_font_rep::magnify (double zoom) {

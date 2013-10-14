@@ -390,6 +390,7 @@ struct smart_font_rep: font_rep {
   bool   supports (string c);
   void   get_extents (string s, metric& ex);
   void   draw_fixed (renderer ren, string s, SI x, SI y);
+  void   draw_fixed (renderer ren, string s, SI x, SI y, SI dw);
   font   magnify (double zoom);
   glyph  get_glyph (string s);
   double get_left_slope  (string s);
@@ -824,6 +825,27 @@ smart_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
       if (i < n) {
 	fn[nr]->get_extents (r, ey);
 	x += ey->x2;
+      }
+    }
+  }
+}
+
+void
+smart_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI dw) {
+  int slen= tm_string_length (s);
+  int i=0, n= N(s);
+  while (i < n) {
+    int nr;
+    string r= s;
+    metric ey;
+    advance (s, i, r, nr);
+    if (nr >= 0) {
+      int rlen= tm_string_length (r);
+      SI  sdw = (SI) (((long int) dw) * rlen) / slen;
+      fn[nr]->draw_fixed (ren, r, x, y, sdw);
+      if (i < n) {
+	fn[nr]->get_extents (r, ey);
+	x += ey->x2 + sdw;
       }
     }
   }

@@ -63,8 +63,10 @@ struct font_rep: rep<font> {
   virtual bool   supports (string c) = 0;
   virtual void   get_extents (string s, metric& ex) = 0;
   virtual void   get_xpositions (string s, SI* xpos);
+  virtual void   get_xpositions (string s, SI* xpos, bool ligf);
   virtual void   get_xpositions (string s, SI* xpos, SI xspace);
   virtual void   draw_fixed (renderer ren, string s, SI x, SI y) = 0;
+  virtual void   draw_fixed (renderer ren, string s, SI x, SI y, bool ligf);
   virtual void   draw_fixed (renderer ren, string s, SI x, SI y, SI xspace);
   virtual font   magnify (double zoom) = 0;
   virtual void   draw (renderer ren, string s, SI x, SI y, SI xspc, bool ext);

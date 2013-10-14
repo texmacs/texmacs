@@ -235,7 +235,9 @@ tex_font_metric_rep::execute (int* s, int n, int* buf, int* ker, int& m) {
   }
 
 void
-tex_font_metric_rep::get_xpositions (int* s, int n, double unit, SI* xpos) {
+tex_font_metric_rep::get_xpositions (int* s, int n, double unit,
+                                     SI* xpos, bool ligf) {
+  (void) ligf;
   SI  x    = 0;
   SI  x_bis= 0;
   int pos  = 1;
@@ -262,6 +264,7 @@ tex_font_metric_rep::get_xpositions (int* s, int n, double unit, SI* xpos) {
 	if (byte0 (instr) >= 128) { ADVANCE (0); break; }
 	if (byte1 (instr) != next_char) { pc += byte0 (instr)+1; continue; }
 	if (byte2 (instr) < 128) {
+          if (!ligf) { ADVANCE (0); break; }
 	  int code= byte2 (instr);
 	  int a   = code>>2;
 	  int b   = (code>>1)&1;

@@ -43,6 +43,7 @@ struct tex_font_rep: font_rep {
   bool raw_supports (unsigned char c);
   bool supports (string c);
   void get_extents (string s, metric& ex);
+  void get_xpositions (string s, SI* xpos, bool ligf);
   void get_xpositions (string s, SI* xpos);
   void draw_fixed (renderer ren, string s, SI x, SI y);
   font magnify (double zoom);
@@ -50,12 +51,12 @@ struct tex_font_rep: font_rep {
   SI   get_right_correction (string s);
   glyph get_glyph (string s);
   void special_get_extents (string s, metric& ex);
-  void special_get_xpositions (string s, SI* xpos);
+  void special_get_xpositions (string s, SI* xpos, bool ligf);
   void special_draw (renderer ren, string s, SI x, SI y);
   SI   special_get_left_correction (string s);
   SI   special_get_right_correction (string s);
   void accented_get_extents (string s, metric& ex);
-  void accented_get_xpositions (string s, SI* xpos);
+  void accented_get_xpositions (string s, SI* xpos, bool ligf);
   void accented_draw (renderer ren, string s, SI x, SI y);
   SI   accented_get_left_correction (string s);
   SI   accented_get_right_correction (string s);
@@ -175,14 +176,14 @@ tex_font_rep::special_get_extents (string s, metric& ex) {
 }
 
 void
-tex_font_rep::special_get_xpositions (string s, SI* xpos) {
+tex_font_rep::special_get_xpositions (string s, SI* xpos, bool ligf) {
   SI offset= 0;
   register int l=0, i, j, n=N(s);
   while (l<n) {
     for (i=l; i<n; i++)
       if (s[i]=='<') break;
     if (l<i) {
-      get_xpositions (s (l, i), xpos + l);
+      get_xpositions (s (l, i), xpos + l, ligf);
       for (j=l+1; j<=i; j++) xpos[j] += offset;
       if (i==n) break;
       offset= xpos[i];
@@ -410,12 +411,12 @@ tex_font_rep::accented_get_extents (string s, metric& ex) {
 }
 
 void
-tex_font_rep::accented_get_xpositions (string s, SI* xpos) {
+tex_font_rep::accented_get_xpositions (string s, SI* xpos, bool ligf) {
   int old_status= status;
   status= TEX_ANY;
   string acc= get_accents (s);
   s= get_unaccented (s);
-  get_xpositions (s, xpos);
+  get_xpositions (s, xpos, ligf);
   status= old_status;
 }
 
@@ -590,7 +591,7 @@ tex_font_rep::get_extents (string s, metric& ex) {
 }
 
 void
-tex_font_rep::get_xpositions (string s, SI* xpos) {
+tex_font_rep::get_xpositions (string s, SI* xpos, bool ligf) {
   register int i, n= N(s);
   if (n == 0) return;
   
@@ -601,7 +602,7 @@ tex_font_rep::get_xpositions (string s, SI* xpos) {
     case TEX_LA:
       for (i=0; i<n; i++)
         if (s[i]=='<') {
-          special_get_xpositions (s, xpos);
+          special_get_xpositions (s, xpos, ligf);
           return;
         }
       break;
@@ -609,12 +610,12 @@ tex_font_rep::get_xpositions (string s, SI* xpos) {
     case TEX_ADOBE:
       for (i=0; i<n; i++) {
         if (s[i]=='<') {
-          special_get_xpositions (s, xpos);
+          special_get_xpositions (s, xpos, ligf);
           return;
         }
         if ((s[i] & 128) != 0) {
           ACCENTS_PREPARE;
-          accented_get_xpositions (s, xpos);
+          accented_get_xpositions (s, xpos, ligf);
           return;
         }
       }
@@ -623,8 +624,13 @@ tex_font_rep::get_xpositions (string s, SI* xpos) {
 
   STACK_NEW_ARRAY (s_copy, int, n);
   for (i=0; i<n; i++) s_copy[i]= ((QN) s[i]);
-  tfm->get_xpositions (s_copy, n, unit, xpos);
+  tfm->get_xpositions (s_copy, n, unit, xpos, ligf);
   STACK_DELETE_ARRAY (s_copy);
+}
+
+void
+tex_font_rep::get_xpositions (string s, SI* xpos) {
+  get_xpositions (s, xpos, true);
 }
 
 void

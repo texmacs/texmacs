@@ -137,6 +137,12 @@ font_rep::draw (renderer ren, string s, SI x, SI y, SI xspace) {
 }
 
 void
+font_rep::draw_fixed (renderer ren, string s, SI x, SI y, bool ligf) {
+  (void) ligf;
+  draw_fixed (ren, s, x, y);
+}
+
+void
 font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI xspace) {
   STACK_NEW_ARRAY (xpos, SI, N(s)+1);
   get_xpositions (s, xpos, xspace);
@@ -144,7 +150,7 @@ font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI xspace) {
   while (i<N(s)) {
     int old= i;
     tm_char_forwards (s, i);
-    draw_fixed (ren, s (old, i), x + xpos[old], y);
+    draw_fixed (ren, s (old, i), x + xpos[old], y, false);
   }
   STACK_DELETE_ARRAY (xpos);  
 }
@@ -172,10 +178,15 @@ font_rep::get_xpositions (string s, SI* xpos) {
   }
 }
 
+void
+font_rep::get_xpositions (string s, SI* xpos, bool ligf) {
+  (void) ligf;
+  get_xpositions (s, xpos);
+}
 
 void
 font_rep::get_xpositions (string s, SI* xpos, SI xspace) {
-  get_xpositions (s, xpos);
+  get_xpositions (s, xpos, false);
   int n= tm_string_length (s);
   int i= 0, count= 0;
   xpos[0]= xspace / (2*n);
