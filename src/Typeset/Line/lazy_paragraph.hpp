@@ -64,6 +64,7 @@ protected:
 
   void find_first_last_text (int& first, int& last);
   box  adjust (box b, bool first, bool last, SI dw, SI textw);
+  array<box> adjusted (double factor, int first, int last);
   void adjust_kerning (SI dw); // adjust kerning of current line unit
 
   void handle_decoration (int& i, int& j, SI& xoff, box& b, SI& b_sp);

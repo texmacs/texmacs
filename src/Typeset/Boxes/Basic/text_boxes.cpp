@@ -20,18 +20,17 @@
 
 struct xkerning_rep: concrete_struct {
   SI padding;
-  SI total;
   SI left;
   SI right;
-  xkerning_rep (SI p, SI t, SI l, SI r):
-    padding (p), total (t), left (l), right (r) {}
+  xkerning_rep (SI p, SI l, SI r):
+    padding (p), left (l), right (r) {}
   ~xkerning_rep() {}
 };
 
 class xkerning {
   CONCRETE_NULL(xkerning);
-  xkerning (SI p, SI t, SI l= 0, SI r= 0):
-    rep (tm_new<xkerning_rep> (p, t, l, r)) {};
+  xkerning (SI p, SI l, SI r):
+    rep (tm_new<xkerning_rep> (p, l, r)) {};
 };
 
 CONCRETE_NULL_CODE(xkerning);
@@ -111,9 +110,10 @@ text_box_rep::text_box_rep (path ip, int pos2, string s,
 
 box
 text_box_rep::adjust_kerning (int mode, double factor) {
-  (void) mode;
   SI pad= (SI) tm_round ((factor * fn->wfn) / 2);
-  xkerning xk (pad, 2 * tm_string_length (str) * pad);
+  xkerning xk (pad, 0, 0);
+  if ((mode & START_OF_LINE) != 0) xk->left =  pad;
+  if ((mode & END_OF_LINE  ) != 0) xk->right= -pad;
   return tm_new<text_box_rep> (ip, pos, str, fn, pen, xk);
 }
 
@@ -448,7 +448,6 @@ box
 text_box (path ip, int pos, string s, font fn, pencil pen, SI xspace) {
   int n= tm_string_length (s);
   xkerning xk;
-  if (xspace != 0 && n != 0)
-    xk= xkerning (xspace / (2*n), (2*n) * (xspace / (2*n)));
+  if (xspace != 0 && n != 0) xk= xkerning (xspace / (2*n), 0, 0);
   return tm_new<text_box_rep> (ip, pos, s, fn, pen, xk);
 }

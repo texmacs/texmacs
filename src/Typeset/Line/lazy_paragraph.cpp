@@ -155,7 +155,7 @@ lazy_paragraph_rep::find_first_last_text (int& first, int& last) {
   first= last= -1;
   for (i=cur_start; i<N(items); i++) {
     int type= items[i]->get_type ();
-    if ((type == TEXT_BOX /*|| type == SHORTER_BOX*/) &&
+    if ((type == TEXT_BOX /*|| type == SHORTER_BOX */) &&
         items[i]->w () != 0) {
       first= i;
       break;
@@ -164,13 +164,27 @@ lazy_paragraph_rep::find_first_last_text (int& first, int& last) {
   }
   for (i=N(items)-1; i>=cur_start; i--) {
     int type= items[i]->get_type ();
-    if ((type == TEXT_BOX /*|| type == SHORTER_BOX*/) &&
+    if ((type == TEXT_BOX /*|| type == SHORTER_BOX */) &&
         items[i]->w () != 0) {
       last= i;
       break;
     }
     else if (items[i]->w() != 0) break;
   }
+  /*
+  int i;
+  first= last= -1;
+  for (i=cur_start; i<N(items); i++)
+    if (items[i]->w () != 0 || spcs[i] != space (0)) {
+      first= i;
+      break;
+    }
+  for (i=N(items)-1; i>=cur_start; i--)
+    if (items[i]->w () != 0 || (i > cur_start && spcs[i-1] != space (0))) {
+      last= i;
+      break;
+    }
+  */
 }
 
 box
@@ -201,6 +215,26 @@ lazy_paragraph_rep::adjust (box b, bool first, bool last, SI dw, SI textw) {
   return b;
 }
 
+array<box>
+lazy_paragraph_rep::adjusted (double factor, int first, int last) {
+  array<box> bs;
+  for (int i=cur_start; i<N(items); i++) {
+    int mode= 0;
+    if (i == first) mode += START_OF_LINE;
+    if (i == last ) mode += END_OF_LINE;
+    bs << items[i]->adjust_kerning (mode, factor);
+  }
+  return bs;
+}
+
+static SI
+total_width (array<box> bs) {
+  SI r= 0;
+  for (int i=0; i<N(bs); i++)
+    r += bs[i]->w ();
+  return r;
+}
+
 void
 lazy_paragraph_rep::adjust_kerning (SI dw) {
   int i;
@@ -224,6 +258,22 @@ lazy_paragraph_rep::adjust_kerning (SI dw) {
     items[i]= new_b;
     cur_w += new_b->w() - old_b->w();    
   }
+
+  /*
+  // lower dw by taking into account kerning around spaces
+  int first, last;
+  find_first_last_text (first, last);
+  SI ref_w= total_width (range (items, cur_start, N(items)));
+  SI obj_w= ref_w + dw;
+  SI def_w= total_width (adjusted (0.0, first, last));
+  SI max_w= total_width (adjusted (0.5, first, last));
+  if (obj_w >= def_w && obj_w <= max_w) {
+    double ratio= ((double) (obj_w - def_w)) / ((double) (max_w - def_w));
+    array<box> bs= adjusted (0.5 * ratio, first, last);
+    for (int i=0; i<N(bs); i++)
+      items[cur_start + i]= bs[i];
+  }
+  */
 }
 
 /******************************************************************************
