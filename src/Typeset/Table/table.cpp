@@ -743,7 +743,7 @@ table_rep::finish () {
 	y  << C->y1;
       }
 
-  box   tb = composite_box (ip, bs, x, y, false);
+  box   tb= composite_box (ip, bs, x, y, false);
   SI    x1= tb->x1;
   SI    y1= tb->y1;
   SI    x2= tb->x2;
