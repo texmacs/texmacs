@@ -12,6 +12,7 @@
 
 #include "Boxes/modifier.hpp"
 #include "Boxes/composite.hpp"
+#include "Boxes/construct.hpp"
 
 /******************************************************************************
 * Modifier boxes
@@ -204,6 +205,7 @@ class shorter_box_rep: public modifier_box_rep {
 public:
   shorter_box_rep (path ip, box b, int len);
   operator tree () { return tuple ("shorter", subbox(0)); }
+  box    adjust_kerning (int mode, double factor);
   path   find_box_path (SI x, SI y, SI delta, bool force);
   path   find_rip ();
   path   find_right_box_path ();
@@ -218,6 +220,11 @@ public:
 
 shorter_box_rep::shorter_box_rep (path ip, box b2, int len2):
   modifier_box_rep (ip, b2), pos (b->get_leaf_left_pos ()), len (len2) {}
+
+box
+shorter_box_rep::adjust_kerning (int mode, double factor) {
+  return shorter_box (this->ip, this->b->adjust_kerning (mode, factor), len);
+}
 
 path
 shorter_box_rep::find_box_path (SI x, SI y, SI delta, bool force) {

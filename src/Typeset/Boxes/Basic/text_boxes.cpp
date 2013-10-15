@@ -49,6 +49,7 @@ struct text_box_rep: public box_rep {
 
   text_box_rep (path ip, int pos, string s, font fn, pencil pen, xkerning xk);
   operator tree () { return str; }
+  box adjust_kerning (int mode, double factor);
 
   void      display (renderer ren);
   double    left_slope ();
@@ -106,6 +107,14 @@ text_box_rep::text_box_rep (path ip, int pos2, string s,
     x4= x4 + (x2 - ex->x2) - xk->padding;
     STACK_DELETE_ARRAY (xpos);
   }
+}
+
+box
+text_box_rep::adjust_kerning (int mode, double factor) {
+  (void) mode;
+  SI pad= (SI) tm_round ((factor * fn->wfn) / 2);
+  xkerning xk (pad, 2 * tm_string_length (str) * pad);
+  return tm_new<text_box_rep> (ip, pos, str, fn, pen, xk);
 }
 
 void

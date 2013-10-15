@@ -24,11 +24,11 @@
 #include "grid.hpp"
 
 #define STD_BOX       0
-#define TEXT_BOX      1
-#define STACK_BOX     2
-#define CONTROL_BOX   3
-#define MOVE_BOX      4
-#define SCROLL_BOX    5
+#define STACK_BOX     1
+#define CONTROL_BOX   2
+#define MOVE_BOX      3
+#define SCROLL_BOX    4
+#define TEXT_BOX      5
 #define SHORTER_BOX   6
 
 /******************************************************************************
