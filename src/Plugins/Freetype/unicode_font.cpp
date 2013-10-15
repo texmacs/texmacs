@@ -121,8 +121,8 @@ unicode_font_rep::unicode_font_rep (string name,
 
   // get space length
   get_extents (" ", ex);
-  spc  = space ((3*(ex->x2-ex->x1))>>2, ex->x2-ex->x1, (ex->x2-ex->x1)<<1);
-  extra= spc;
+  spc  = space ((3*(ex->x2-ex->x1))>>2, ex->x2-ex->x1, (3*(ex->x2-ex->x1))>>1);
+  extra= spc/2;
   sep  = wfn/10;
 
   // get_italic space
