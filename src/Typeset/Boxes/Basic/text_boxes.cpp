@@ -98,14 +98,13 @@ text_box_rep::text_box_rep (path ip, int pos2, string s,
   x3= ex->x3; y3= ex->y3;
   x4= ex->x4; y4= ex->y4;
   if (!is_nil (xk)) {
-    SI d= xk->padding;
     STACK_NEW_ARRAY (xpos, SI, N(str)+1);
-    fn->get_xpositions (str, xpos, xk->total);
-    STACK_DELETE_ARRAY (xpos);
+    fn->get_xpositions (str, xpos, xk->padding);
     x1= -xk->left;
     x2= xpos[N(str)] + xk->right - xk->left;
-    x3= x3 + (x1 - ex->x1) + d;
-    x4= x4 + (x2 - ex->x2) - d;
+    x3= x3 + (x1 - ex->x1) + xk->padding;
+    x4= x4 + (x2 - ex->x2) - xk->padding;
+    STACK_DELETE_ARRAY (xpos);
   }
 }
 
@@ -113,7 +112,7 @@ void
 text_box_rep::display (renderer ren) {
   ren->set_pencil (pen);
   if (is_nil (xk)) fn->draw (ren, str, 0, 0);
-  else fn->draw (ren, str, x1, 0, xk->total);
+  else fn->draw (ren, str, x1, 0, xk->padding);
 }
 
 double text_box_rep::left_slope () {
@@ -174,7 +173,7 @@ text_box_rep::find_box_path (SI x, SI y, SI delta, bool force) {
   STACK_NEW_ARRAY (xpos, SI, N(str)+1);
   if (is_nil (xk)) fn->get_xpositions (str, xpos);
   else {
-    fn->get_xpositions (str, xpos, xk->total);
+    fn->get_xpositions (str, xpos, xk->padding);
     x += (xk->left + xk->padding);
   } 
 
@@ -248,7 +247,7 @@ text_box_rep::find_cursor (path bp) {
   cu->ox= ex->x2;
   if (!is_nil (xk)) {
     STACK_NEW_ARRAY (xpos, SI, N(str)+1);
-    fn->get_xpositions (str, xpos, xk->total);
+    fn->get_xpositions (str, xpos, xk->padding);
     SI d= xk->padding + xk->left;
     cu->ox= xpos[l] - d;
     STACK_DELETE_ARRAY (xpos);
@@ -274,7 +273,7 @@ text_box_rep::find_selection (path lbp, path rbp) {
   x2= ex->x2;
   if (!is_nil (xk)) {
     STACK_NEW_ARRAY (xpos, SI, N(str)+1);
-    fn->get_xpositions (str, xpos, xk->total);
+    fn->get_xpositions (str, xpos, xk->padding);
     SI d= xk->padding + xk->left;
     x1= xpos[lbp->item] - d;
     x2= xpos[rbp->item] - d;

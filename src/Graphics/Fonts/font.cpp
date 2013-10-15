@@ -67,15 +67,15 @@ font_rep::copy_math_pars (font fn) {
 }
 
 void
-font_rep::draw (renderer ren, string s, SI x, SI y, SI xspace, bool ext) {
+font_rep::draw (renderer ren, string s, SI x, SI y, SI xk, bool ext) {
   if (ren->zoomf == 1.0 || !ren->is_screen) {
-    if (ext) draw_fixed (ren, s, x, y, xspace);
+    if (ext) draw_fixed (ren, s, x, y, xk);
     else draw_fixed (ren, s, x, y);
   }
   else if (ren->zoomf != last_zoom) {
     last_zoom= ren->zoomf;
     zoomed_fn= magnify (ren->zoomf);
-    draw (ren, s, x, y, xspace, ext);
+    draw (ren, s, x, y, xk, ext);
   }
   else {
     // FIXME: low level rendering hack
@@ -109,8 +109,8 @@ font_rep::draw (renderer ren, string s, SI x, SI y, SI xspace, bool ext) {
     SI xx= (SI) tm_round (x * old_zoomf);
     SI yy= (SI) tm_round (y * old_zoomf);
     if (ext) {
-      SI ss= (SI) tm_round (xspace * old_zoomf);
-      zoomed_fn->draw_fixed (ren, s, xx, yy, ss);
+      SI kk= (SI) tm_round (xk * old_zoomf);
+      zoomed_fn->draw_fixed (ren, s, xx, yy, kk);
     }
     else zoomed_fn->draw_fixed (ren, s, xx, yy);
 
@@ -134,8 +134,8 @@ font_rep::draw (renderer ren, string s, SI x, SI y) {
 }
 
 void
-font_rep::draw (renderer ren, string s, SI x, SI y, SI xspace) {
-  draw (ren, s, x, y, xspace, true);
+font_rep::draw (renderer ren, string s, SI x, SI y, SI xk) {
+  draw (ren, s, x, y, xk, true);
 }
 
 void
@@ -145,9 +145,9 @@ font_rep::draw_fixed (renderer ren, string s, SI x, SI y, bool ligf) {
 }
 
 void
-font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI xspace) {
+font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI xk) {
   STACK_NEW_ARRAY (xpos, SI, N(s)+1);
-  get_xpositions (s, xpos, xspace);
+  get_xpositions (s, xpos, xk);
   int i= 0;
   while (i<N(s)) {
     int old= i;
@@ -187,14 +187,14 @@ font_rep::get_xpositions (string s, SI* xpos, bool ligf) {
 }
 
 void
-font_rep::get_xpositions (string s, SI* xpos, SI xspace) {
+font_rep::get_xpositions (string s, SI* xpos, SI xk) {
   get_xpositions (s, xpos, false);
   int n= tm_string_length (s);
   if (n == 0) return;
   int i= 0, count= 0;
-  xpos[0]= xspace / (2*n);
+  xpos[0]= xk;
   while (i < N(s)) {
-    SI dx= (xspace * (2*count + 1)) / (2*n);
+    SI dx= (2*count + 1) * xk;
     if (s[i] == '<')
       while ((i < N(s)) && (s[i] != '>')) {
 	i++;
@@ -202,8 +202,8 @@ font_rep::get_xpositions (string s, SI* xpos, SI xspace) {
       }
     i++;
     count++;
-    dx= (xspace * (2*count + 1)) / (2*n);
-    if (dx > xspace) dx= xspace;
+    if (i == N(s)) dx= 2 * count * xk;
+    else dx= (2*count + 1) * xk;
     xpos[i] += dx;
   }
 }

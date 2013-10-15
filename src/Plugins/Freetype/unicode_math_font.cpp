@@ -37,9 +37,9 @@ struct unicode_math_font_rep: font_rep {
   bool supports (string c);
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
-  void get_xpositions (string s, SI* xpos, SI dw);
+  void get_xpositions (string s, SI* xpos, SI xk);
   void draw_fixed (renderer ren, string s, SI x, SI y);
-  void draw_fixed (renderer ren, string s, SI x, SI y, SI dw);
+  void draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
   font magnify (double zoom);
   glyph get_glyph (string s);
 
@@ -209,16 +209,16 @@ unicode_math_font_rep::get_xpositions (string s, SI* xpos) {
 }
 
 void
-unicode_math_font_rep::get_xpositions (string s, SI* xpos, SI dw) {
+unicode_math_font_rep::get_xpositions (string s, SI* xpos, SI xk) {
   if (s == "") return;
   string r= s;
   font fn= search_font (r);
-  if (r == s) fn->get_xpositions (s, xpos, dw);
-  else if (N(r) != 1) font_rep::get_xpositions (s, xpos, dw);
+  if (r == s) fn->get_xpositions (s, xpos, xk);
+  else if (N(r) != 1) font_rep::get_xpositions (s, xpos, xk);
   else {
     int i, n=N(s);
     for (i=0; i<n; i++) xpos[i]= 0;
-    fn->get_xpositions (r, xpos+n-1, dw);
+    fn->get_xpositions (r, xpos+n-1, xk);
   }
 }
 
@@ -229,9 +229,9 @@ unicode_math_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
 }
 
 void
-unicode_math_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI dw) {
+unicode_math_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI xk) {
   font fn= search_font (s);
-  fn->draw_fixed (ren, s, x, y, dw);
+  fn->draw_fixed (ren, s, x, y, xk);
 }
 
 font

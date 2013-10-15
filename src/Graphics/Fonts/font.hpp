@@ -64,14 +64,14 @@ struct font_rep: rep<font> {
   virtual void   get_extents (string s, metric& ex) = 0;
   virtual void   get_xpositions (string s, SI* xpos);
   virtual void   get_xpositions (string s, SI* xpos, bool ligf);
-  virtual void   get_xpositions (string s, SI* xpos, SI xspace);
+  virtual void   get_xpositions (string s, SI* xpos, SI xk);
   virtual void   draw_fixed (renderer ren, string s, SI x, SI y) = 0;
   virtual void   draw_fixed (renderer ren, string s, SI x, SI y, bool ligf);
-  virtual void   draw_fixed (renderer ren, string s, SI x, SI y, SI xspace);
+  virtual void   draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
   virtual font   magnify (double zoom) = 0;
-  virtual void   draw (renderer ren, string s, SI x, SI y, SI xspc, bool ext);
+  virtual void   draw (renderer ren, string s, SI x, SI y, SI xk, bool ext);
   virtual void   draw (renderer ren, string s, SI x, SI y);
-  virtual void   draw (renderer ren, string s, SI x, SI y, SI xspace);
+  virtual void   draw (renderer ren, string s, SI x, SI y, SI xk);
 
   virtual double get_left_slope  (string s);
   virtual double get_right_slope (string s);

@@ -37,7 +37,7 @@ struct compound_font_rep: font_rep {
   void   advance (string s, int& pos, string& r, int& ch);
   void   get_extents (string s, metric& ex);
   void   draw_fixed (renderer ren, string s, SI x, SI y);
-  void   draw_fixed (renderer ren, string s, SI x, SI y, SI dw);
+  void   draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
   font   magnify (double zoom);
   glyph  get_glyph (string s);
   double get_left_slope  (string s);
@@ -124,8 +124,7 @@ compound_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
 }
 
 void
-compound_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI dw) {
-  int slen= tm_string_length (s);
+compound_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI xk) {
   int i=0, n= N(s);
   while (i < n) {
     int nr;
@@ -133,12 +132,10 @@ compound_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI dw) {
     metric ey;
     advance (s, i, r, nr);
     if (nr >= 0) {
-      int rlen= tm_string_length (r);
-      SI  sdw = (SI) (((long int) dw) * rlen) / slen;
-      fn[nr]->draw_fixed (ren, r, x, y, sdw);
+      fn[nr]->draw_fixed (ren, r, x, y, xk);
       if (i < n) {
 	fn[nr]->get_extents (r, ey);
-	x += ey->x2 + sdw;
+	x += ey->x2 + 2 * tm_string_length (r) * xk;
       }
     }
   }
