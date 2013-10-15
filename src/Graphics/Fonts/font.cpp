@@ -68,8 +68,10 @@ font_rep::copy_math_pars (font fn) {
 
 void
 font_rep::draw (renderer ren, string s, SI x, SI y, SI xspace, bool ext) {
-  if (ren->zoomf == 1.0 || !ren->is_screen)
-    draw_fixed (ren, s, x, y, xspace);
+  if (ren->zoomf == 1.0 || !ren->is_screen) {
+    if (ext) draw_fixed (ren, s, x, y, xspace);
+    else draw_fixed (ren, s, x, y);
+  }
   else if (ren->zoomf != last_zoom) {
     last_zoom= ren->zoomf;
     zoomed_fn= magnify (ren->zoomf);
@@ -188,6 +190,7 @@ void
 font_rep::get_xpositions (string s, SI* xpos, SI xspace) {
   get_xpositions (s, xpos, false);
   int n= tm_string_length (s);
+  if (n == 0) return;
   int i= 0, count= 0;
   xpos[0]= xspace / (2*n);
   while (i < N(s)) {
