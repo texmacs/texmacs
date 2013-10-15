@@ -82,6 +82,11 @@ box_rep::contains_rectangle (SI X1, SI Y1, SI X2, SI Y2) {
   return x1<=X1 && y1<=Y1 && x2>=X2 && y2>=Y2;
 }
 
+box
+box_rep::adjust_kerning (int mode, double factor) {
+  return this;
+}
+
 /******************************************************************************
 * Cursor routines
 ******************************************************************************/
@@ -306,7 +311,7 @@ box_rep::find_frame (path bp, bool last) {
 
 grid
 box_rep::find_grid (path bp) {
-  box   b= this;
+  box  b= this;
   grid g= get_grid ();
   while (!is_nil (bp)) {
     b  = b->subbox (bp->item);

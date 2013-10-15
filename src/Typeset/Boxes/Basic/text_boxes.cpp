@@ -18,14 +18,36 @@
 * Text boxes
 ******************************************************************************/
 
+struct xkerning_rep: concrete_struct {
+  SI padding;
+  SI total;
+  SI left;
+  SI right;
+  xkerning_rep (SI p, SI t, SI l, SI r):
+    padding (p), total (t), left (l), right (r) {}
+  ~xkerning_rep() {}
+};
+
+class xkerning {
+  CONCRETE_NULL(xkerning);
+  xkerning (SI p, SI t, SI l= 0, SI r= 0):
+    rep (tm_new<xkerning_rep> (p, t, l, r)) {};
+};
+
+CONCRETE_NULL_CODE(xkerning);
+
+/******************************************************************************
+* Text boxes
+******************************************************************************/
+
 struct text_box_rep: public box_rep {
   int       pos;
   string    str;
   font      fn;
   pencil    pen;
-  SI        xspace;
+  xkerning  xk;
 
-  text_box_rep (path ip, int pos, string s, font fn, pencil pen, SI xspace);
+  text_box_rep (path ip, int pos, string s, font fn, pencil pen, xkerning xk);
   operator tree () { return str; }
 
   void      display (renderer ren);
@@ -66,22 +88,32 @@ struct text_box_rep: public box_rep {
 ******************************************************************************/
 
 text_box_rep::text_box_rep (path ip, int pos2, string s,
-                            font fn2, pencil p2, SI xspace2):
-  box_rep (ip), pos (pos2), str (s), fn (fn2), pen (p2), xspace (xspace2)
+                            font fn2, pencil p2, xkerning xk2):
+  box_rep (ip), pos (pos2), str (s), fn (fn2), pen (p2), xk (xk2)
 {
   metric ex;
   fn->get_extents (str, ex);
   x1= ex->x1; y1= ex->y1;
-  x2= ex->x2 + xspace; y2= ex->y2;
+  x2= ex->x2; y2= ex->y2;
   x3= ex->x3; y3= ex->y3;
-  x4= ex->x4 + xspace; y4= ex->y4;
+  x4= ex->x4; y4= ex->y4;
+  if (!is_nil (xk)) {
+    SI d= xk->padding;
+    STACK_NEW_ARRAY (xpos, SI, N(str)+1);
+    fn->get_xpositions (str, xpos, xk->total);
+    STACK_DELETE_ARRAY (xpos);
+    x1= -xk->left;
+    x2= xpos[N(str)] + xk->right - xk->left;
+    x3= x3 + (x1 - ex->x1) + d;
+    x4= x4 + (x2 - ex->x2) - d;
+  }
 }
 
 void
 text_box_rep::display (renderer ren) {
   ren->set_pencil (pen);
-  if (xspace == 0) fn->draw (ren, str, 0, 0);
-  else fn->draw (ren, str, 0, 0, xspace);
+  if (is_nil (xk)) fn->draw (ren, str, 0, 0);
+  else fn->draw (ren, str, x1, 0, xk->total);
 }
 
 double text_box_rep::left_slope () {
@@ -140,11 +172,10 @@ text_box_rep::find_box_path (SI x, SI y, SI delta, bool force) {
   (void) y;
   (void) force;
   STACK_NEW_ARRAY (xpos, SI, N(str)+1);
-  if (xspace == 0) fn->get_xpositions (str, xpos);
+  if (is_nil (xk)) fn->get_xpositions (str, xpos);
   else {
-    fn->get_xpositions (str, xpos, xspace);
-    SI d= xpos[0];
-    for (int i=0; i<N(str)+1; i++) xpos[i] -= d;
+    fn->get_xpositions (str, xpos, xk->total);
+    x += (xk->left + xk->padding);
   } 
 
   int prev_i, prev_x=0, i=0;
@@ -215,10 +246,10 @@ text_box_rep::find_cursor (path bp) {
   int l= min (bp->item, N(str));
   fn->get_extents (str (0, l), ex);
   cu->ox= ex->x2;
-  if (xspace != 0) {
+  if (!is_nil (xk)) {
     STACK_NEW_ARRAY (xpos, SI, N(str)+1);
-    fn->get_xpositions (str, xpos, xspace);
-    SI d= xpos[0];
+    fn->get_xpositions (str, xpos, xk->total);
+    SI d= xk->padding + xk->left;
     cu->ox= xpos[l] - d;
     STACK_DELETE_ARRAY (xpos);
   }
@@ -241,10 +272,10 @@ text_box_rep::find_selection (path lbp, path rbp) {
   x1= ex->x2;
   fn->get_extents (str (0, rbp->item), ex);
   x2= ex->x2;
-  if (xspace != 0) {
+  if (!is_nil (xk)) {
     STACK_NEW_ARRAY (xpos, SI, N(str)+1);
-    fn->get_xpositions (str, xpos, xspace);
-    SI d= xpos[0];
+    fn->get_xpositions (str, xpos, xk->total);
+    SI d= xk->padding + xk->left;
     x1= xpos[lbp->item] - d;
     x2= xpos[rbp->item] - d;
     STACK_DELETE_ARRAY (xpos);
@@ -407,5 +438,9 @@ wide_box (path ip, string s, font fn, pencil pen, SI width) {
 
 box
 text_box (path ip, int pos, string s, font fn, pencil pen, SI xspace) {
-  return tm_new<text_box_rep> (ip, pos, s, fn, pen, xspace);
+  int n= tm_string_length (s);
+  xkerning xk;
+  if (xspace != 0 && n != 0)
+    xk= xkerning (xspace / (2*n), (2*n) * (xspace / (2*n)));
+  return tm_new<text_box_rep> (ip, pos, s, fn, pen, xk);
 }
