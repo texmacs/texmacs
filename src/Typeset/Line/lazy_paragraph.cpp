@@ -153,27 +153,6 @@ void
 lazy_paragraph_rep::find_first_last_text (int& first, int& last) {
   int i;
   first= last= -1;
-  for (i=cur_start; i<N(items); i++) {
-    int type= items[i]->get_type ();
-    if ((type == TEXT_BOX /*|| type == SHORTER_BOX */) &&
-        items[i]->w () != 0) {
-      first= i;
-      break;
-    }
-    else if (items[i]->w() != 0) break;
-  }
-  for (i=N(items)-1; i>=cur_start; i--) {
-    int type= items[i]->get_type ();
-    if ((type == TEXT_BOX /*|| type == SHORTER_BOX */) &&
-        items[i]->w () != 0) {
-      last= i;
-      break;
-    }
-    else if (items[i]->w() != 0) break;
-  }
-  /*
-  int i;
-  first= last= -1;
   for (i=cur_start; i<N(items); i++)
     if (items[i]->w () != 0 || spcs[i] != space (0)) {
       first= i;
@@ -184,35 +163,6 @@ lazy_paragraph_rep::find_first_last_text (int& first, int& last) {
       last= i;
       break;
     }
-  */
-}
-
-box
-lazy_paragraph_rep::adjust (box b, bool first, bool last, SI dw, SI textw) {
-  if (b->get_type () == TEXT_BOX) {
-    int    pos = b->get_leaf_left_pos ();
-    string s   = b->get_leaf_string ();
-    font   fn  = b->get_leaf_font ();
-    pencil pen = b->get_leaf_pencil ();
-    SI     d   = (SI) ((dw * ((long int) b->w())) / textw);
-    box rb= text_box (b->ip, pos, s, fn, pen, d);
-    if (first || last) {
-      int n= tm_string_length (s);
-      box t= rb;
-      SI x1= t->x1, x2= t->x2;
-      if (first) rb= move_box (decorate_middle (t->ip), rb, -(d / (2*n)), 0);
-      if (first) x2 -= d / (2*n);
-      if (last ) x2 -= d / (2*n);
-      rb= resize_box (decorate_middle (t->ip), rb, x1, t->y1, x2, t->y2);
-    }
-    return rb;
-  }
-  if (b->get_type () == SHORTER_BOX) {
-    box sb= adjust (b[0], first, last, dw, textw);
-    int n = N(b->get_leaf_string ());
-    return shorter_box (b->ip, sb, n);
-  }
-  return b;
 }
 
 array<box>
@@ -237,29 +187,6 @@ total_width (array<box> bs) {
 
 void
 lazy_paragraph_rep::adjust_kerning (SI dw) {
-  int i;
-  SI textw= 0;
-  for (i=cur_start; i<N(items); i++) {
-    int type= items[i]->get_type ();
-    if (type == TEXT_BOX || type == SHORTER_BOX)
-      textw += items[i]->w ();
-  }
-  if (textw == 0) return;
-  space tot_spc= 0;
-  for (i=cur_start; i<N(spcs)-1; i++)
-    tot_spc += spcs[i];
-  dw= (SI) ((((long int) dw) * textw) / (textw + tot_spc->def));
-  dw= max (min (dw, textw / 2), (-textw / 10));
-  int first, last;
-  find_first_last_text (first, last);
-  for (i=cur_start; i<N(items); i++) {
-    box old_b= items[i];
-    box new_b= adjust (old_b, i == first, i == last, dw, textw);
-    items[i]= new_b;
-    cur_w += new_b->w() - old_b->w();    
-  }
-
-  /*
   // lower dw by taking into account kerning around spaces
   int first, last;
   find_first_last_text (first, last);
@@ -267,13 +194,15 @@ lazy_paragraph_rep::adjust_kerning (SI dw) {
   SI obj_w= ref_w + dw;
   SI def_w= total_width (adjusted (0.0, first, last));
   SI max_w= total_width (adjusted (0.5, first, last));
-  if (obj_w >= def_w && obj_w <= max_w) {
+  if (obj_w >= def_w && max_w > def_w) {
     double ratio= ((double) (obj_w - def_w)) / ((double) (max_w - def_w));
+    ratio= min (ratio, 1.0);
     array<box> bs= adjusted (0.5 * ratio, first, last);
-    for (int i=0; i<N(bs); i++)
+    for (int i=0; i<N(bs); i++) {
+      cur_w += bs[i]->w() - items[cur_start + i]->w();
       items[cur_start + i]= bs[i];
+    }
   }
-  */
 }
 
 /******************************************************************************
@@ -329,6 +258,9 @@ lazy_paragraph_rep::make_unit (string mode, SI the_width, bool break_flag) {
       if (cur_w->max > cur_w->def)
         f= ((double) (the_width - cur_w->def)) /
            ((double) (cur_w->max - cur_w->def));
+      // if (f >= 1.0) ... _try_ kerning adjustment,
+      // test f <= flexibility only after adjustment,
+      // and undo adjustment if f > flexibility
       if (f <= flexibility) {
         if (f >= 1.0) {
           //adjust_kerning (the_width - cur_w->max);

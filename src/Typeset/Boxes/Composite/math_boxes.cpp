@@ -42,14 +42,17 @@ italic_correction (box L, box R) {
 ******************************************************************************/
 
 struct frac_box_rep: public composite_box_rep {
+  font fn, sfn;
+  pencil pen;
   frac_box_rep (path ip, box b1, box b2, font fn, font sfn, pencil pen);
   operator tree () { return tree (TUPLE, "frac", bs[0], bs[1]); }
+  box adjust_kerning (int mode, double factor);
   int find_child (SI x, SI y, SI delta, bool force);
 };
 
 frac_box_rep::frac_box_rep (
-  path ip, box b1, box b2, font fn, font sfn, pencil pen):
-    composite_box_rep (ip)
+  path ip, box b1, box b2, font fn2, font sfn2, pencil pen2):
+    composite_box_rep (ip), fn (fn2), sfn (sfn2), pen (pen2)
 {
   // Italic correction does not lead to nicer results,
   // because right correction is not equilibrated w.r.t. left correction
@@ -76,6 +79,12 @@ frac_box_rep::frac_box_rep (
   x2= max (w, x2);
   left_justify ();
   finalize ();
+}
+
+box
+frac_box_rep::adjust_kerning (int mode, double factor) {
+  return frac_box (ip, bs[0]->adjust_kerning (0, factor),
+                   bs[1]->adjust_kerning (0, factor), fn, sfn, pen);
 }
 
 int

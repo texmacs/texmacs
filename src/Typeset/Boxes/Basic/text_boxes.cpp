@@ -100,9 +100,9 @@ text_box_rep::text_box_rep (path ip, int pos2, string s,
   if (!is_nil (xk)) {
     STACK_NEW_ARRAY (xpos, SI, N(str)+1);
     fn->get_xpositions (str, xpos, xk->padding);
-    x1= -xk->left;
-    x2= xpos[N(str)] + xk->right - xk->left;
-    x3= x3 + (x1 - ex->x1) + xk->padding;
+    x1= 0;
+    x2= xpos[N(str)] + xk->right + xk->left;
+    x3= x3 + xk->left + xk->padding;
     x4= x4 + (x2 - ex->x2) - xk->padding;
     STACK_DELETE_ARRAY (xpos);
   }
@@ -110,9 +110,10 @@ text_box_rep::text_box_rep (path ip, int pos2, string s,
 
 box
 text_box_rep::adjust_kerning (int mode, double factor) {
+  if (N(str) == 0) return this;
   SI pad= (SI) tm_round ((factor * fn->wfn) / 2);
   xkerning xk (pad, 0, 0);
-  if ((mode & START_OF_LINE) != 0) xk->left =  pad;
+  if ((mode & START_OF_LINE) != 0) xk->left = -pad;
   if ((mode & END_OF_LINE  ) != 0) xk->right= -pad;
   return tm_new<text_box_rep> (ip, pos, str, fn, pen, xk);
 }
@@ -121,7 +122,7 @@ void
 text_box_rep::display (renderer ren) {
   ren->set_pencil (pen);
   if (is_nil (xk)) fn->draw (ren, str, 0, 0);
-  else fn->draw (ren, str, x1, 0, xk->padding);
+  else fn->draw (ren, str, xk->left, 0, xk->padding);
 }
 
 double text_box_rep::left_slope () {
@@ -183,7 +184,7 @@ text_box_rep::find_box_path (SI x, SI y, SI delta, bool force) {
   if (is_nil (xk)) fn->get_xpositions (str, xpos);
   else {
     fn->get_xpositions (str, xpos, xk->padding);
-    x += (xk->left + xk->padding);
+    x += (xk->padding - xk->left);
   } 
 
   int prev_i, prev_x=0, i=0;
@@ -257,8 +258,9 @@ text_box_rep::find_cursor (path bp) {
   if (!is_nil (xk)) {
     STACK_NEW_ARRAY (xpos, SI, N(str)+1);
     fn->get_xpositions (str, xpos, xk->padding);
-    SI d= xk->padding + xk->left;
+    SI d= xk->padding - xk->left;
     cu->ox= xpos[l] - d;
+    if (l == 0) cu->ox += xk->padding;
     STACK_DELETE_ARRAY (xpos);
   }
   if (l != 0) {
@@ -283,9 +285,11 @@ text_box_rep::find_selection (path lbp, path rbp) {
   if (!is_nil (xk)) {
     STACK_NEW_ARRAY (xpos, SI, N(str)+1);
     fn->get_xpositions (str, xpos, xk->padding);
-    SI d= xk->padding + xk->left;
+    SI d= xk->padding - xk->left;
     x1= xpos[lbp->item] - d;
     x2= xpos[rbp->item] - d;
+    if (lbp->item == 0) x1 += xk->padding;
+    if (rbp->item == 0) x2 += xk->padding;
     STACK_DELETE_ARRAY (xpos);
   }
   fn->get_extents (str (lbp->item, rbp->item), ex);
