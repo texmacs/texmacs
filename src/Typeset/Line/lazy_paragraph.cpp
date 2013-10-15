@@ -214,7 +214,7 @@ lazy_paragraph_rep::adjust_kerning (SI dw) {
   space tot_spc= 0;
   for (i=cur_start; i<N(spcs)-1; i++)
     tot_spc += spcs[i];
-  dw= (SI) ((((long int) dw) * textw) / (textw + tot_spc->max));
+  dw= (SI) ((((long int) dw) * textw) / (textw + tot_spc->def));
   dw= max (min (dw, textw / 2), (-textw / 10));
   int first, last;
   find_first_last_text (first, last);
