@@ -66,22 +66,28 @@ test_script_border (path p, box sb) {
 
 struct lim_box_rep: public composite_box_rep {
   box  ref;
+  font fn;
   bool glued;
+  int  type;
   lim_box_rep (path ip, box ref, box lo, box hi, font fn, bool glued);
   operator tree () { return tree (TUPLE, "lim", bs[0]); }
   void finalize ();
+  box adjust_kerning (int mode, double factor);
 
   path find_box_path (path p, bool& found);
   path find_tree_path (path bp);
 };
 
-lim_box_rep::lim_box_rep (path ip, box ref2, box lo, box hi, font fn, bool gl):
-  composite_box_rep (ip), ref (ref2), glued (gl)
+lim_box_rep::lim_box_rep (path ip, box r2, box lo, box hi, font fn2, bool gl):
+  composite_box_rep (ip), ref (r2), fn (fn2), glued (gl)
 {
   SI sep_lo= fn->sep + fn->yshift;
   SI sep_hi= fn->sep + (fn->yshift >> 1);
   SI X, Y;
   insert (ref, 0, 0);
+  type= 0;
+  if (!is_nil (lo)) type += 1;
+  if (!is_nil (hi)) type += 2;
   if (!is_nil (lo)) {
     SI top= max (lo->y2, fn->y2 * script (fn->size, 1) / fn->size) + sep_lo;
     Y= ref->y1;
@@ -115,6 +121,15 @@ lim_box_rep::finalize () {
       finalize_right (rip, bs[i]);
     }
   }
+}
+
+box
+lim_box_rep::adjust_kerning (int mode, double factor) {
+  box body= bs[0]->adjust_kerning (mode, factor);
+  box sub, sup;
+  if ((type & 1) != 0) sub= bs[1]->adjust_kerning (mode, factor/2);
+  if ((type & 2) != 0) sup= bs[N(bs)-1]->adjust_kerning (mode, factor/2);
+  return limit_box (ip, body, sub, sup, fn, glued);
 }
 
 path
@@ -154,21 +169,28 @@ lim_box_rep::find_tree_path (path bp) {
 ******************************************************************************/
 
 struct dummy_script_box_rep: public composite_box_rep {
+  font fn;
+  int  type;
   dummy_script_box_rep (path ip, box b1, box b2, font fn);
   operator tree () { return "dummy script"; }
   void finalize ();
+  box adjust_kerning (int mode, double factor);
 
   path      find_box_path (path p, bool& found);
   path      find_tree_path (path bp);
 };
 
-dummy_script_box_rep::dummy_script_box_rep (path ip, box b1, box b2, font fn):
-  composite_box_rep (ip)
+dummy_script_box_rep::dummy_script_box_rep (path ip, box b1, box b2, font fn2):
+  composite_box_rep (ip), fn (fn2)
 {
   SI sep  = fn->sep;
   SI lo_y = fn->ysub_lo_base;
   SI hi_y = fn->ysup_lo_base;
   SI miny2= (fn->y2 - fn->yshift) * script (fn->size, 1) / fn->size;
+
+  type= 0;
+  if (!is_nil (b1)) type += 1;
+  if (!is_nil (b2)) type += 2;
 
   if ((!is_nil (b1)) && (!is_nil (b2))) {
     SI y= max (b1->y2, miny2);
@@ -203,6 +225,14 @@ dummy_script_box_rep::finalize () {
     finalize_left  (lip, bs[i]);
     finalize_right (rip, bs[i]);
   }
+}
+
+box
+dummy_script_box_rep::adjust_kerning (int mode, double factor) {
+  box sub, sup;
+  if ((type & 1) != 0) sub= bs[0]->adjust_kerning (mode, factor/2);
+  if ((type & 2) != 0) sup= bs[N(bs)-1]->adjust_kerning (mode, factor/2);
+  return script_box (ip, sub, sup, fn);
 }
 
 path

@@ -43,6 +43,7 @@ lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
   mode       = as_string (env->read (PAR_MODE));
   flexibility= as_double (env->read (PAR_FLEXIBILITY));
   hyphen     = as_string (env->read (PAR_HYPHEN));
+  protrusion = as_string (env->read (PAR_KERNING_MARGIN));
   left       = env->get_length (PAR_LEFT);
   right      = env->get_length (PAR_RIGHT);
   bot        = 0;
@@ -55,6 +56,14 @@ lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
   line_sep   = env->get_vspace (PAR_LINE_SEP);
   par_sep    = env->get_vspace (PAR_PAR_SEP);
   nr_cols    = env->get_int (PAR_COLUMNS);
+
+  string ks= as_string (env->read (PAR_KERNING_STRETCH));
+  if (ks == "auto") {
+    double cpl= max (((double) width) / max (env->fn->wfn, 1), 10.0);
+    kstretch= 2.5 / cpl;
+  }
+  else if (is_double (ks)) kstretch= as_double (ks);
+  else kstretch= 0.0;
 
   tree dec   = env->read (ATOM_DECORATIONS);
   if (N(dec) > 0) decs << tuple ("0", dec);
@@ -198,11 +207,11 @@ lazy_paragraph_rep::adjust_kerning (SI dw, SI the_width) {
   SI ref_w= total_width (range (items, cur_start, N(items)));
   SI obj_w= ref_w + dw;
   SI def_w= total_width (adjusted (0.0, first, last));
-  SI max_w= total_width (adjusted (0.5, first, last));
+  SI max_w= total_width (adjusted (kstretch, first, last));
   if (obj_w >= def_w && max_w > def_w) {
     double ratio= ((double) (obj_w - def_w)) / ((double) (max_w - def_w));
     ratio= min (ratio, 1.0);
-    array<box> bs= adjusted (0.5 * ratio, first, last);
+    array<box> bs= adjusted (kstretch * ratio, first, last);
     for (int i=0; i<N(bs); i++) {
       cur_w += bs[i]->w() - items[cur_start + i]->w();
       items[cur_start + i]= bs[i];
@@ -262,7 +271,7 @@ lazy_paragraph_rep::make_unit (string mode, SI the_width, bool break_flag) {
       if (cur_w->max > cur_w->def)
         f= ((double) (the_width - cur_w->def)) /
            ((double) (cur_w->max - cur_w->def));
-      if (f > 1.0 && false) {
+      if (f > 1.0 && kstretch > 0.0) {
         array<box> backup= range (items, cur_start, N(items));
         adjust_kerning (the_width - cur_w->max, the_width);
         if (cur_w->max > cur_w->def)

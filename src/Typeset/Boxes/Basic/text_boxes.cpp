@@ -449,9 +449,6 @@ wide_box (path ip, string s, font fn, pencil pen, SI width) {
 }
 
 box
-text_box (path ip, int pos, string s, font fn, pencil pen, SI xspace) {
-  int n= tm_string_length (s);
-  xkerning xk;
-  if (xspace != 0 && n != 0) xk= xkerning (xspace / (2*n), 0, 0);
-  return tm_new<text_box_rep> (ip, pos, s, fn, pen, xk);
+text_box (path ip, int pos, string s, font fn, pencil pen) {
+  return tm_new<text_box_rep> (ip, pos, s, fn, pen, xkerning ());
 }

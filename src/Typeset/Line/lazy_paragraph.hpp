@@ -43,6 +43,8 @@ protected:
   string        mode;        // justified, left, center or right
   double        flexibility; // threshold for switching to ragged mode
   string        hyphen;      // hyphenation quality
+  double        kstretch;    // maximal kerning stretching
+  string        protrusion;  // marginal kerning mode
   SI            width;       // the width of the parbox
   SI            first;       // indentation of first line (added to left)
   SI            left;        // left indentation of paragraph lines

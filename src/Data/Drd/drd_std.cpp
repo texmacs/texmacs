@@ -861,6 +861,9 @@ init_std_drd () {
   init_var (PAR_MODE, TYPE_STRING);
   init_var (PAR_FLEXIBILITY, TYPE_NUMERIC);
   init_var (PAR_HYPHEN, TYPE_STRING);
+  init_var (PAR_SPACING, TYPE_STRING);
+  init_var (PAR_KERNING_STRETCH, TYPE_NUMERIC);
+  init_var (PAR_KERNING_MARGIN, TYPE_STRING);
   init_var (PAR_WIDTH, TYPE_LENGTH);
   init_var (PAR_LEFT, TYPE_LENGTH);
   init_var (PAR_RIGHT, TYPE_LENGTH);

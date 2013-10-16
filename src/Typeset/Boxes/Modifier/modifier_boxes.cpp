@@ -173,11 +173,17 @@ class symbol_box_rep: public modifier_box_rep {
 public:
   symbol_box_rep (path ip, box b, int n);
   operator tree () { return tree (TUPLE, "symbol", subbox(0)); }
+  box  adjust_kerning (int mode, double factor);
   path find_box_path (SI x, SI y, SI delta, bool force);
 };
 
 symbol_box_rep::symbol_box_rep (path ip, box b2, int n2):
   modifier_box_rep (ip, b2), n (n2) {}
+
+box
+symbol_box_rep::adjust_kerning (int mode, double factor) {
+  return symbol_box (ip, b->adjust_kerning (mode, factor), n);
+}
 
 static box
 subbox (box b, path p) {
@@ -223,7 +229,7 @@ shorter_box_rep::shorter_box_rep (path ip, box b2, int len2):
 
 box
 shorter_box_rep::adjust_kerning (int mode, double factor) {
-  return shorter_box (this->ip, this->b->adjust_kerning (mode, factor), len);
+  return shorter_box (ip, b->adjust_kerning (mode, factor), len);
 }
 
 path
@@ -292,12 +298,18 @@ class frozen_box_rep: public modifier_box_rep {
 public:
   frozen_box_rep (path ip, box b);
   operator tree () { return tree (TUPLE, "frozen", subbox(0)); }
+  box  adjust_kerning (int mode, double factor);
   path find_lip ();
   path find_rip ();
 };
 
 frozen_box_rep::frozen_box_rep (path ip, box b2):
   modifier_box_rep (ip, b2) {}
+
+box
+frozen_box_rep::adjust_kerning (int mode, double factor) {
+  return frozen_box (ip, b->adjust_kerning (mode, factor));
+}
 
 path
 frozen_box_rep::find_lip () {
@@ -317,6 +329,7 @@ struct macro_box_rep: public composite_box_rep {
   font big_fn; // big character font if non nil
   macro_box_rep (path ip, box b, font big_fn);
   operator tree () { return tree (TUPLE, "macro", (tree) bs[0]); }
+  box adjust_kerning (int mode, double factor);
 
   int       find_child (SI x, SI y, SI delta, bool force);
   path      find_box_path (SI x, SI y, SI delta, bool force);
@@ -359,6 +372,8 @@ struct macro_box_rep: public composite_box_rep {
 macro_box_rep::macro_box_rep (path ip, box b, font fn):
   composite_box_rep (ip), big_fn (fn) {
     insert (b, 0, 0); position (); finalize (); }
+box macro_box_rep::adjust_kerning (int mode, double factor) {
+  return macro_box (ip, bs[0]->adjust_kerning (mode, factor), big_fn); }
 int macro_box_rep::find_child (SI x, SI y, SI delta, bool force) {
   (void) x; (void) y; (void) delta; (void) force; return -1; }
 path macro_box_rep::find_box_path (SI x, SI y, SI delta, bool force) {

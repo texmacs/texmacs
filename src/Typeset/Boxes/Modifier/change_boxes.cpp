@@ -167,18 +167,26 @@ resize_box_rep::resize_box_rep (
 }
 
 struct vcorrect_box_rep: public change_box_rep {
+  SI top_cor, bot_cor;
   vcorrect_box_rep (path ip, box b, SI top_cor, SI bot_cor);
+  box adjust_kerning (int mode, double factor);
   operator tree () { return tree (TUPLE, "vcorrect", (tree) bs[0]); }
 };
 
-vcorrect_box_rep::vcorrect_box_rep (path ip, box b, SI top_cor, SI bot_cor):
-  change_box_rep (ip, false, false)
+vcorrect_box_rep::vcorrect_box_rep (path ip, box b, SI top_cor2, SI bot_cor2):
+  change_box_rep (ip, false, false), top_cor (top_cor2), bot_cor (bot_cor2)
 {
   insert (b, 0, -top_cor);
   position ();
   y1 -= bot_cor;
   y2 += top_cor;
   finalize ();
+}
+
+box
+vcorrect_box_rep::adjust_kerning (int mode, double factor) {
+  box body= bs[0]->adjust_kerning (mode, factor);
+  return vcorrect_box (ip, body, top_cor, bot_cor);
 }
 
 /******************************************************************************
@@ -360,12 +368,15 @@ clip_box_rep::find_selection (path lbp, path rbp) {
 ******************************************************************************/
 
 struct repeat_box_rep: public change_box_rep {
+  box repeat;
+  SI xoff;
   repeat_box_rep (path ip, box b, box repeat, SI xoff);
   operator tree () { return tree (TUPLE, "repeat", (tree) bs[0]); }
+  box adjust_kerning (int mode, double factor);
 };
 
-repeat_box_rep::repeat_box_rep (path ip, box b, box repeat, SI xoff):
-  change_box_rep (ip, false)
+repeat_box_rep::repeat_box_rep (path ip, box b, box repeat2, SI xoff2):
+  change_box_rep (ip, false), repeat (repeat2), xoff (xoff2)
 {
   insert (b, 0, 0);
   position ();
@@ -386,6 +397,12 @@ repeat_box_rep::repeat_box_rep (path ip, box b, box repeat, SI xoff):
   finalize ();
   x1= b->x1; y1= b->y1;
   x2= b->x2; y2= b->y2;
+}
+
+box
+repeat_box_rep::adjust_kerning (int mode, double factor) {
+  box body= bs[0]->adjust_kerning (mode, factor);
+  return repeat_box (ip, body, repeat, xoff);
 }
 
 /******************************************************************************
