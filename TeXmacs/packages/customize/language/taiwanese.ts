@@ -25,6 +25,8 @@
   <assign|font|sys-chinese>
 
   <if|<greater|<value|par-first>|0fn>|<assign|par-first|2fn>>
+
+  <assign|par-kerning-margin|cjk>
 </body>
 
 <initial|<\collection>

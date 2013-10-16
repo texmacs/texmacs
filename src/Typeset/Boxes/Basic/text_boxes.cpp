@@ -103,7 +103,7 @@ text_box_rep::text_box_rep (path ip, int pos2, string s,
     x1= 0;
     x2= xpos[N(str)] + xk->right + xk->left;
     x3= x3 + xk->left + xk->padding;
-    x4= x4 + (x2 - ex->x2) - xk->padding;
+    x4= x4 + (xpos[N(str)] - ex->x2) + xk->left - xk->padding;
     STACK_DELETE_ARRAY (xpos);
   }
 }

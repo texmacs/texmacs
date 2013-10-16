@@ -162,22 +162,6 @@ double font_rep::get_right_slope (string s) { (void) s; return slope; }
 SI     font_rep::get_left_correction  (string s) { (void) s; return 0; }
 SI     font_rep::get_right_correction (string s) { (void) s; return 0; }
 
-SI
-font_rep::get_left_protrusion (string s, int mode) {
-  (void) s; (void) mode;
-  return 0;
-}
-
-SI
-font_rep::get_right_protrusion (string s, int mode) {
-  if (mode == 0 || N(s) == 0) return 0;
-  int pos= N(s);
-  tm_char_backwards (s, pos);
-  string last= s (pos, N(s));
-  if (last == "<#3002>") return wfn / 2;
-  return 0;
-}
-
 void
 font_rep::get_xpositions (string s, SI* xpos) {
   int i= 0;
@@ -287,6 +271,89 @@ font_rep::get_glyph (string s) {
   }
   else cout << "  no bitmap available for " << s << "\n";
   return glyph (0, 0, 0, 0);
+}
+
+/******************************************************************************
+* Protrusion
+******************************************************************************/
+
+void
+add_cjk_left_protrusion (hashmap<string,double>& t) {
+  t ("<#3008>")= 0.5;
+  t ("<#300A>")= 0.5;
+  t ("<#300C>")= 0.5;
+  t ("<#300E>")= 0.5;
+  t ("<#3016>")= 0.5;
+  t ("<#3018>")= 0.5;
+  t ("<#301A>")= 0.5;
+  t ("<#301D>")= 0.5;
+}
+
+void
+add_cjk_right_protrusion (hashmap<string,double>& t) {
+  t ("<#3001>")= 0.5;
+  t ("<#3002>")= 0.5;
+  t ("<#3009>")= 0.5;
+  t ("<#300B>")= 0.5;
+  t ("<#300D>")= 0.5;
+  t ("<#300F>")= 0.5;
+  t ("<#3017>")= 0.5;
+  t ("<#3019>")= 0.5;
+  t ("<#301B>")= 0.5;
+  t ("<#301E>")= 0.5;
+  t ("<#301F>")= 0.5;
+  t ("<#FF01>")= 0.5;
+  t ("<#FF0C>")= 0.5;
+  t ("<#FF0E>")= 0.5;
+  t ("<#FF1A>")= 0.5;
+  t ("<#FF1B>")= 0.5;
+  t ("<#FF1F>")= 0.5;
+}
+
+hashmap<string,double>
+get_left_protrusion_table (int mode) {
+  static hashmap<string,double> cjk_t (0.0);
+  if (N(cjk_t) == 0) add_cjk_left_protrusion (cjk_t);
+  return cjk_t;
+}
+
+hashmap<string,double>
+get_right_protrusion_table (int mode) {
+  static hashmap<string,double> cjk_t (0.0);
+  if (N(cjk_t) == 0) add_cjk_right_protrusion (cjk_t);
+  return cjk_t;
+}
+
+SI
+font_rep::get_left_protrusion (string s, int mode) {
+  if (mode == 0 || N(s) == 0) return 0;
+  int pos= 0;
+  tm_char_forwards (s, pos);
+  string first= s (0, pos);
+  hashmap<string,double> t= get_left_protrusion_table (mode);
+  if (t->contains (first)) {
+    metric ex;
+    get_extents (first, ex);
+    double factor= t[first];
+    return (SI) tm_round (factor * ex->x2);
+  }
+  return 0;
+}
+
+SI
+font_rep::get_right_protrusion (string s, int mode) {
+  if (mode == 0 || N(s) == 0) return 0;
+  int pos= N(s);
+  tm_char_backwards (s, pos);
+  string last= s (pos, N(s));
+  hashmap<string,double> t= get_right_protrusion_table (mode);
+  if (t->contains (last)) {
+    metric ex;
+    get_extents (last, ex);
+    double factor= t[last];
+    return (SI) tm_round (factor * ex->x2);
+  }
+  return 0;
 }
 
 /******************************************************************************
