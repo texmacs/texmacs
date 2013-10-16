@@ -65,7 +65,7 @@
   (ieee-style%          (in? tmtex-style '("ieeeconf" "ieeetran")))
   (ieee-conf-style%     (in? tmtex-style '("ieeeconf")) ieee-style%)
   (ieee-tran-style%     (in? tmtex-style '("ieeetran")) ieee-style%)
-  (beamer-style%        (in? tmtex-style '("beamer")))
+  (beamer-style%        (in? tmtex-style '("beamer" "old-beamer")))
   (natbib-package%      (in? "cite-author-year" tmtex-packages)))
 
 (tm-define (tmtex-style-init body)
@@ -439,14 +439,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmtex-transform-style x)
-  (cond ((in? x '("article" "book" "letter")) x)
-	((in? x '("generic" "exam")) "article")
-	((== x "seminar") "slides")
-	((in? x '("tmarticle" "tmdoc" "mmxdoc")) "article")
-	((in? x '("tmbook" "tmmanual")) "book")
-	((in? x '("svjour")) "article")
-	((not tmtex-replace-style?) x)
-	(else #f)))
+  (cond ((in? x '("generic" "exam" "old-generic" "old-article"
+                  "tmarticle" "tmdoc" "mmxdoc"))          "article")
+        ((in? x '("book" "old-book" "tmbook" "tmmanual")) "book")
+        ((in? x '("letter"  "old-letter"))                "letter")
+        ((in? x '("beamer"  "old-beamer"))                "beamer")
+        ((in? x '("seminar" "old-seminar"))               "slides")
+        ((not tmtex-replace-style?) x)
+        (else #f)))
 
 (define (tmtex-filter-styles l)
   (if (null? l) l
@@ -2406,11 +2406,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmtex-get-style sty)
-  (cond ((not sty) (set! sty (list "generic")))
-	((string? sty) (set! sty (list sty)))
-	((func? sty 'tuple) (set! sty (cdr sty)))
-	((null? sty) (set! sty '("article"))))
-  (if (== (car sty) "generic") (set! sty (cons "article" (cdr sty))))
+  (cond ((not sty) (set! sty (list "article")))
+        ((string? sty) (set! sty (list sty)))
+        ((func? sty 'tuple) (set! sty (cdr sty)))
+        ((null? sty) (set! sty '("article"))))
   sty)
 
 (tm-define (texmacs->latex x opts)
