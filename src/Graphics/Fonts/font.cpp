@@ -310,18 +310,41 @@ add_cjk_right_protrusion (hashmap<string,double>& t) {
   t ("<#FF1F>")= 0.5;
 }
 
+static hashmap<string,double> no_protrusion (0.0);
+static hashmap<string,double> cjk_left (0.0);
+static hashmap<string,double> cjk_inner_left (0.0);
+static hashmap<string,double> cjk_right (0.0);
+static hashmap<string,double> cjk_inner_right (0.0);
+
 hashmap<string,double>
 get_left_protrusion_table (int mode) {
-  static hashmap<string,double> cjk_t (0.0);
-  if (N(cjk_t) == 0) add_cjk_left_protrusion (cjk_t);
-  return cjk_t;
+  switch (mode & (PROTRUSION_MASK + START_OF_LINE)) {
+  case CJK_PROTRUSION:
+    if (N(cjk_inner_left) == 0) add_cjk_left_protrusion (cjk_inner_left);
+    return cjk_inner_left;
+  case CJK_PROTRUSION + START_OF_LINE:
+    if (N(cjk_left) == 0) add_cjk_left_protrusion (cjk_left);
+    return cjk_left;
+  default:
+    return no_protrusion;
+  }
 }
 
 hashmap<string,double>
 get_right_protrusion_table (int mode) {
-  static hashmap<string,double> cjk_t (0.0);
-  if (N(cjk_t) == 0) add_cjk_right_protrusion (cjk_t);
-  return cjk_t;
+  switch (mode & (PROTRUSION_MASK + END_OF_LINE)) {
+  case CJK_PROTRUSION:
+    if (N(cjk_inner_right) == 0) {
+      add_cjk_right_protrusion (cjk_inner_right);
+      cjk_inner_right->reset ("<#3002>");
+    }
+    return cjk_inner_right;
+  case CJK_PROTRUSION + END_OF_LINE:
+    if (N(cjk_right) == 0) add_cjk_right_protrusion (cjk_right);
+    return cjk_right;
+  default:
+    return no_protrusion;
+  }
 }
 
 SI

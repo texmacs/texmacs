@@ -43,7 +43,6 @@ lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
   mode       = as_string (env->read (PAR_MODE));
   flexibility= as_double (env->read (PAR_FLEXIBILITY));
   hyphen     = as_string (env->read (PAR_HYPHEN));
-  protrusion = as_string (env->read (PAR_KERNING_MARGIN));
   left       = env->get_length (PAR_LEFT);
   right      = env->get_length (PAR_RIGHT);
   bot        = 0;
@@ -64,6 +63,12 @@ lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
   }
   else if (is_double (ks)) kstretch= as_double (ks);
   else kstretch= 0.0;
+
+  string ps= as_string (env->read (PAR_KERNING_MARGIN));
+  if (ps == "none") protrusion= 0;
+  else if (ps == "cjk") protrusion= CJK_PROTRUSION;
+  else if (ps == "western") protrusion= WESTERN_PROTRUSION;
+  else protrusion= 0;
 
   tree dec   = env->read (ATOM_DECORATIONS);
   if (N(dec) > 0) decs << tuple ("0", dec);
@@ -182,8 +187,8 @@ lazy_paragraph_rep::protrude (bool lf, bool rf) {
     int mode= 0;
     if (lf && i == first) mode += START_OF_LINE;
     if (rf && i == last ) mode += END_OF_LINE;
+    if (mode != 0 || protrusion <= INNER_PROTRUSION) mode += protrusion;
     if (mode != 0) {
-      mode += CJK_PROTRUSION;
       box pro= items[i]->adjust_kerning (mode, 0.0);
       cur_w += pro->w() - items[i]->w();
       items[i]= pro;
@@ -286,7 +291,7 @@ lazy_paragraph_rep::make_unit (string mode, SI the_width, bool break_flag) {
   bool protrude_right= (mode == "justify" || mode == "right");
   if (mode == "justify" && cur_w->def < the_width && break_flag)
     protrude_right= false;
-  if (protrusion != "none")
+  if (protrusion != 0)
     protrude (protrude_left, protrude_right);
 
   // stretching case

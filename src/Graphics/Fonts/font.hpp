@@ -23,6 +23,13 @@ struct glyph;
 #define FONT_TYPE_QT       2
 #define FONT_TYPE_OTHER    3
 
+#define START_OF_LINE         1
+#define END_OF_LINE           2
+#define PROTRUSION_MASK      28
+#define CJK_PROTRUSION        4
+#define INNER_PROTRUSION      4
+#define WESTERN_PROTRUSION    8
+
 /******************************************************************************
 * The font structure
 ******************************************************************************/

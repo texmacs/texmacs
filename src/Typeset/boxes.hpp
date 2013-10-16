@@ -31,12 +31,6 @@
 #define TEXT_BOX      5
 #define SHORTER_BOX   6
 
-#define START_OF_LINE         1
-#define END_OF_LINE           2
-#define PROTRUSION_MASK      12
-#define WESTERN_PROTRUSION    4
-#define CJK_PROTRUSION        8
-
 /******************************************************************************
 * The cursor class
 ******************************************************************************/
