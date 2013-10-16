@@ -263,12 +263,13 @@ text_box_rep::find_cursor (path bp) {
   int l= min (bp->item, N(str));
   fn->get_extents (str (0, l), ex);
   cu->ox= ex->x2;
-  if (!is_nil (xk)) {
+  if (!is_nil (xk) && N(str) != 0) {
     STACK_NEW_ARRAY (xpos, SI, N(str)+1);
     fn->get_xpositions (str, xpos, xk->padding);
     SI d= xk->padding - xk->left;
     cu->ox= xpos[l] - d;
-    if (l == 0) cu->ox += xk->padding;
+    if (l == 0) cu->ox += d;
+    if (l == N(str)) cu->ox += xk->right;
     STACK_DELETE_ARRAY (xpos);
   }
   if (l != 0) {
@@ -290,14 +291,16 @@ text_box_rep::find_selection (path lbp, path rbp) {
   x1= ex->x2;
   fn->get_extents (str (0, rbp->item), ex);
   x2= ex->x2;
-  if (!is_nil (xk)) {
+  if (!is_nil (xk) && N(str) != 0) {
     STACK_NEW_ARRAY (xpos, SI, N(str)+1);
     fn->get_xpositions (str, xpos, xk->padding);
     SI d= xk->padding - xk->left;
     x1= xpos[lbp->item] - d;
     x2= xpos[rbp->item] - d;
-    if (lbp->item == 0) x1 += xk->padding;
-    if (rbp->item == 0) x2 += xk->padding;
+    if (lbp->item == 0) x1 += d;
+    if (rbp->item == 0) x2 += d;
+    if (lbp->item == N(str)) x1 += xk->right;
+    if (rbp->item == N(str)) x2 += xk->right;
     STACK_DELETE_ARRAY (xpos);
   }
   fn->get_extents (str (lbp->item, rbp->item), ex);
