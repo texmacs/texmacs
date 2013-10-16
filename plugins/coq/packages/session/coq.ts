@@ -56,7 +56,7 @@
   <assign|coq-command|<macro|id|status|body|<with|color|<arg|status>|<arg|body>
   >>>
 
-  <assign|coq-comment|<macro|body|<with|color|#c08040|font-size|0.841|<arg|body>>>>
+  <assign|coq-comment|<macro|body|<with|color|#c08040|font-size|0.841|font-family|tt|<arg|body>>>>
 
   <assign|coq-enunciation|<\macro|id|status|type|name|thm-body|proof-body>
     <\render-theorem|<arg|type> <with|font-shape|italic|<arg|name>>>
