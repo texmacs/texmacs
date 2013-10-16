@@ -79,7 +79,7 @@ continue_ident (char c) {
 string
 parse_identifier (string s, int &i) {
   int n= N(s), start= i;
-  if (start_ident (s[i])) {
+  if (i<n && start_ident (s[i])) {
     i++;
     while (i<n && continue_ident (s[i])) i++;
   }
@@ -97,7 +97,7 @@ parse_identifier (string s) {
 string
 parse_command_name (string s, int &i) {
   int n= N(s), start= i;
-  if (s[i] >= 'A' && s[i] <= 'Z') {
+  if (i<n && s[i] >= 'A' && s[i] <= 'Z') {
     i++;
     while (i<n && s[i] >= 'a' && s[i] <= 'z') i++;
   }
@@ -135,9 +135,9 @@ end_command (string s, int i) {
 
 static int
 parse_indent (string s, int i) {
-  int indent= 0;
-  while (s[i] == ' ' || s[i] == '\t') i++, indent++;
-  if (s[i] != '\n') return indent;
+  int indent= 0, n= N(s);
+  while (i<n && (s[i] == ' ' || s[i] == '\t')) i++, indent++;
+  if (i<n && s[i] != '\n') return indent;
   else return -1;
 }
 
@@ -318,7 +318,7 @@ enunciate_parsed_coq (tree t) {
     if (is_enunciation (t[i])) {
       tree enun= parse_enunciation (as_string (t[i++][2]));
       tree proof (DOCUMENT);
-      while (!is_end_proof (t[i])) {
+      while (i<n && !is_end_proof (t[i])) {
         if (!is_proof (t[i]))
           proof << t[i];
         i++;
