@@ -60,7 +60,7 @@ lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
   string ks= as_string (env->read (PAR_KERNING_STRETCH));
   if (ks == "auto") {
     double cpl= max (((double) width) / max (env->fn->wfn, 1), 10.0);
-    kstretch= 2.5 / cpl;
+    kstretch= 2.0 / cpl;
   }
   else if (is_double (ks)) kstretch= as_double (ks);
   else kstretch= 0.0;
