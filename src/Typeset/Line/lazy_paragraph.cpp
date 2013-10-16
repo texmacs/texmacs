@@ -186,8 +186,13 @@ total_width (array<box> bs) {
 }
 
 void
-lazy_paragraph_rep::adjust_kerning (SI dw) {
-  // lower dw by taking into account kerning around spaces
+lazy_paragraph_rep::adjust_kerning (SI dw, SI the_width) {
+  // attempt to add dw space by adjusting the kerning of the current line unit
+  SI tot_spc= 0;
+  for (int i=cur_start; i<N(items)-1; i++)
+    tot_spc += spcs[i]->max;
+  dw= (((long int) dw) * (the_width - tot_spc)) / the_width;
+
   int first, last;
   find_first_last_text (first, last);
   SI ref_w= total_width (range (items, cur_start, N(items)));
@@ -252,22 +257,26 @@ lazy_paragraph_rep::make_unit (string mode, SI the_width, bool break_flag) {
   // stretching case
   if (mode == "justify") {
     if ((cur_w->def < the_width) &&
-	(cur_w->max > cur_w->def) &&
 	(!break_flag)) {
-      double f= 1.0;
+      double f= 2 * flexibility + 1.0;
       if (cur_w->max > cur_w->def)
         f= ((double) (the_width - cur_w->def)) /
            ((double) (cur_w->max - cur_w->def));
-      // if (f >= 1.0) ... _try_ kerning adjustment,
-      // test f <= flexibility only after adjustment,
-      // and undo adjustment if f > flexibility
+      /*
+      if (f > 1.0) {
+        array<box> backup= range (items, cur_start, N(items));
+        adjust_kerning (the_width - cur_w->max, the_width);
+        if (cur_w->max > cur_w->def)
+          f= ((double) (the_width - cur_w->def)) /
+             ((double) (cur_w->max - cur_w->def));
+        else if (cur_w->max >= the_width - PIXEL)
+          f= 1.0;
+        if (f > flexibility)
+          for (i=0; i<N(backup); i++)
+            items[cur_start + i]= backup[i];
+      }
+      */
       if (f <= flexibility) {
-        if (f >= 1.0) {
-          //adjust_kerning (the_width - cur_w->max);
-          if (cur_w->max > cur_w->def)
-            f= ((double) (the_width - cur_w->def)) /
-               ((double) (cur_w->max - cur_w->def));
-        }
         for (i=cur_start; i<N(items)-1; i++)
           items_sp <<
             (spcs[i]->def+ ((SI) (f*((double) spcs[i]->max- spcs[i]->def))));
