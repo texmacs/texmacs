@@ -65,6 +65,7 @@ protected:
   void line_print (path start, path end);
 
   void find_first_last_text (int& first, int& last);
+  void protrude (bool lf, bool rf);
   array<box> adjusted (double factor, int first, int last);
   void adjust_kerning (SI dw, SI the_width);
 

@@ -174,6 +174,23 @@ lazy_paragraph_rep::find_first_last_text (int& first, int& last) {
     }
 }
 
+void
+lazy_paragraph_rep::protrude (bool lf, bool rf) {
+  int first, last;
+  find_first_last_text (first, last);
+  for (int i=cur_start; i<N(items); i++) {
+    int mode= 0;
+    if (lf && i == first) mode += START_OF_LINE;
+    if (rf && i == last ) mode += END_OF_LINE;
+    if (mode != 0) {
+      mode += CJK_PROTRUSION;
+      box pro= items[i]->adjust_kerning (mode, 0.0);
+      cur_w += pro->w() - items[i]->w();
+      items[i]= pro;
+    }
+  }
+}
+
 array<box>
 lazy_paragraph_rep::adjusted (double factor, int first, int last) {
   array<box> bs;
@@ -263,38 +280,46 @@ lazy_paragraph_rep::make_unit (string mode, SI the_width, bool break_flag) {
     return;
   }
 
+  // protrusion
+  if (cur_w->def > the_width) break_flag= false;
+  bool protrude_left = (mode == "justify" || mode == "left");
+  bool protrude_right= (mode == "justify" || mode == "right");
+  if (mode == "justify" && cur_w->def < the_width && break_flag)
+    protrude_right= false;
+  if (protrusion != "none")
+    protrude (protrude_left, protrude_right);
+
   // stretching case
-  if (mode == "justify") {
-    if ((cur_w->def < the_width) &&
-	(!break_flag)) {
-      double f= 2 * flexibility + 1.0;
+  if (mode == "justify" &&
+      cur_w->def < the_width &&
+      !break_flag) {
+    double f= 2 * flexibility + 1.0;
+    if (cur_w->max > cur_w->def)
+      f= ((double) (the_width - cur_w->def)) /
+        ((double) (cur_w->max - cur_w->def));
+    if (f > 1.0 && kstretch > 0.0) {
+      array<box> backup= range (items, cur_start, N(items));
+      adjust_kerning (the_width - cur_w->max, the_width);
       if (cur_w->max > cur_w->def)
         f= ((double) (the_width - cur_w->def)) /
-           ((double) (cur_w->max - cur_w->def));
-      if (f > 1.0 && kstretch > 0.0) {
-        array<box> backup= range (items, cur_start, N(items));
-        adjust_kerning (the_width - cur_w->max, the_width);
-        if (cur_w->max > cur_w->def)
-          f= ((double) (the_width - cur_w->def)) /
-             ((double) (cur_w->max - cur_w->def));
-        else if (cur_w->max >= the_width - PIXEL)
-          f= 1.0;
-        if (f > flexibility)
-          for (i=0; i<N(backup); i++)
-            items[cur_start + i]= backup[i];
-      }
-      if (f <= flexibility) {
-        for (i=cur_start; i<N(items)-1; i++)
-          items_sp <<
-            (spcs[i]->def+ ((SI) (f*((double) spcs[i]->max- spcs[i]->def))));
-        return;
-      }
+          ((double) (cur_w->max - cur_w->def));
+      else if (cur_w->max >= the_width - PIXEL)
+        f= 1.0;
+      if (f > flexibility)
+        for (i=0; i<N(backup); i++)
+          items[cur_start + i]= backup[i];
+    }
+    if (f <= flexibility) {
+      for (i=cur_start; i<N(items)-1; i++)
+        items_sp <<
+          (spcs[i]->def+ ((SI) (f*((double) spcs[i]->max- spcs[i]->def))));
+      return;
     }
   }
   
   // shrinking case
-  if ((cur_w->def > the_width) &&
-      (cur_w->def > cur_w->min)) {
+  if (cur_w->def > the_width &&
+      cur_w->def > cur_w->min) {
     double f=
       ((double) (cur_w->def - the_width)) /
       ((double) (cur_w->def - cur_w->min));

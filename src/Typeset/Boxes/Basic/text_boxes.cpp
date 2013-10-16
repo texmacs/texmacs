@@ -112,10 +112,18 @@ box
 text_box_rep::adjust_kerning (int mode, double factor) {
   if (N(str) == 0) return this;
   SI pad= (SI) tm_round ((factor * fn->wfn) / 2);
-  xkerning xk (pad, 0, 0);
-  if ((mode & START_OF_LINE) != 0) xk->left = -pad;
-  if ((mode & END_OF_LINE  ) != 0) xk->right= -pad;
-  return tm_new<text_box_rep> (ip, pos, str, fn, pen, xk);
+  xkerning nxk (pad, 0, 0);
+  if (!is_nil (xk) && (mode & PROTRUSION_MASK) == 0) {
+    nxk->left = xk->left;
+    nxk->right= xk->right;
+  }
+  if ((mode & PROTRUSION_MASK) != 0) {
+    nxk->left = -fn->get_left_protrusion  (str, mode & PROTRUSION_MASK);
+    nxk->right= -fn->get_right_protrusion (str, mode & PROTRUSION_MASK);
+  }
+  if ((mode & START_OF_LINE) != 0) nxk->left  -= pad;
+  if ((mode & END_OF_LINE  ) != 0) nxk->right -= pad;
+  return tm_new<text_box_rep> (ip, pos, str, fn, pen, nxk);
 }
 
 void

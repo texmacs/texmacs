@@ -162,6 +162,22 @@ double font_rep::get_right_slope (string s) { (void) s; return slope; }
 SI     font_rep::get_left_correction  (string s) { (void) s; return 0; }
 SI     font_rep::get_right_correction (string s) { (void) s; return 0; }
 
+SI
+font_rep::get_left_protrusion (string s, int mode) {
+  (void) s; (void) mode;
+  return 0;
+}
+
+SI
+font_rep::get_right_protrusion (string s, int mode) {
+  if (mode == 0 || N(s) == 0) return 0;
+  int pos= N(s);
+  tm_char_backwards (s, pos);
+  string last= s (pos, N(s));
+  if (last == "<#3002>") return wfn / 2;
+  return 0;
+}
+
 void
 font_rep::get_xpositions (string s, SI* xpos) {
   int i= 0;
