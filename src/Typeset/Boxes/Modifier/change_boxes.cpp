@@ -99,33 +99,49 @@ change_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
 ******************************************************************************/
 
 struct move_box_rep: public change_box_rep {
+  SI dx, dy;
   move_box_rep (path ip, box b, SI x, SI y, bool fl1, bool fl2);
   int get_type () { return MOVE_BOX; }
+  box adjust_kerning (int mode, double factor);
   operator tree () { return tree (TUPLE, "move", (tree) bs[0]); }
 };
 
 move_box_rep::move_box_rep (path ip, box b, SI x, SI y, bool fl1, bool fl2):
-  change_box_rep (ip, fl1, fl2)
+  change_box_rep (ip, fl1, fl2), dx (x), dy (y)
 {
   insert (b, x, y);
   position ();
   finalize ();
 }
 
+box
+move_box_rep::adjust_kerning (int mode, double factor) {
+  box body= bs[0]->adjust_kerning (mode, factor);
+  return move_box (ip, body, dx, dy, child_flag, big_flag);
+}
+
 struct shift_box_rep: public change_box_rep {
+  SI dx, dy;
   shift_box_rep (path ip, box b, SI x, SI y, bool fl1, bool fl2);
   int get_type () { return MOVE_BOX; }
+  box adjust_kerning (int mode, double factor);
   operator tree () { return tree (TUPLE, "shift", (tree) bs[0]); }
 };
 
 shift_box_rep::shift_box_rep (path ip, box b, SI x, SI y, bool fl1, bool fl2):
-  change_box_rep (ip, fl1, fl2)
+  change_box_rep (ip, fl1, fl2), dx (x), dy (y)
 {
   insert (b, x, y);
   position ();
   x1 -= x; y1 -= y;
   x2 -= x; y2 -= y;
   finalize ();
+}
+
+box
+shift_box_rep::adjust_kerning (int mode, double factor) {
+  box body= bs[0]->adjust_kerning (mode, factor);
+  return move_box (ip, body, dx, dy, child_flag, big_flag);
 }
 
 /******************************************************************************
@@ -225,6 +241,7 @@ struct effect_box_rep: public change_box_rep {
 public:
   effect_box_rep (path ip, array<box> bs, tree eff);
   operator tree () { return tree (TUPLE, "effect", eff_t); }
+  box adjust_kerning (int mode, double factor);
   void redraw (renderer ren, path p, rectangles& l);
 };
 
@@ -250,6 +267,15 @@ effect_box_rep::effect_box_rep (path ip, array<box> bs, tree eff2):
   x4= r->x2;
   y4= r->y2;
   finalize ();
+}
+
+box
+effect_box_rep::adjust_kerning (int mode, double factor) {
+  int n= N(bs);
+  array<box> adj (n);
+  for (int i=0; i<n; i++)
+    adj[i]= bs[i]->adjust_kerning (mode, factor);
+  return effect_box (ip, adj, eff_t);
 }
 
 extern int nr_painted;
@@ -483,6 +509,7 @@ struct action_box_rep: public change_box_rep {
   path    vip;    // store this location before execution
   action_box_rep (path ip, box b, tree f, command c, bool ch, path vip);
   operator tree () { return tree (TUPLE, "action", bs[0]); }
+  box adjust_kerning (int mode, double factor);
   tree action (tree t, SI x, SI y, SI delta);
 };
 
@@ -494,6 +521,12 @@ action_box_rep::action_box_rep (
   position ();
   left_justify ();
   finalize ();
+}
+
+box
+action_box_rep::adjust_kerning (int mode, double factor) {
+  box body= bs[0]->adjust_kerning (mode, factor);
+  return action_box (ip, body, filter, cmd, child_flag, vip);
 }
 
 tree
@@ -519,9 +552,9 @@ struct locus_box_rep: public change_box_rep {
   locus_box_rep (path ip, box b, list<string> ids, SI pixel);
   locus_box_rep (path ip, box b, list<string> ids, SI pixel, string _rep, string _anchor);
   operator tree () { return tree (TUPLE, "locus"); }
+  box adjust_kerning (int mode, double factor);
   void loci (SI x, SI y, SI delta, list<string>& ids2, rectangles& rs);
   void post_display (renderer &ren);
-
 };
 
 locus_box_rep::locus_box_rep (path ip, box b, list<string> ids2, SI pixel2):
@@ -546,6 +579,11 @@ locus_box_rep::locus_box_rep (path ip, box b, list<string> ids2, SI pixel2, stri
   finalize ();
 }
 
+box
+locus_box_rep::adjust_kerning (int mode, double factor) {
+  box body= bs[0]->adjust_kerning (mode, factor);
+  return locus_box (ip, body, ids, pixel, ref, anchor);
+}
 
 void
 locus_box_rep::loci (SI x, SI y, SI delta, list<string>& l, rectangles& rs) {
@@ -568,6 +606,7 @@ struct tag_box_rep: public change_box_rep {
   tree keys;
   tag_box_rep (path ip, box b, tree keys);
   operator tree () { return tree (TUPLE, "tag", bs[0]); }
+  box adjust_kerning (int mode, double factor);
   tree tag (tree t, SI x, SI y, SI delta);
   void collect_page_numbers (hashmap<string,tree>& h, tree page);
   path find_tag (string name);
@@ -580,6 +619,12 @@ tag_box_rep::tag_box_rep (path ip, box b, tree keys2):
   position ();
   left_justify ();
   finalize ();
+}
+
+box
+tag_box_rep::adjust_kerning (int mode, double factor) {
+  box body= bs[0]->adjust_kerning (mode, factor);
+  return tag_box (ip, body, keys);
 }
 
 void

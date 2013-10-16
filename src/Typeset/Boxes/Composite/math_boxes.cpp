@@ -83,8 +83,9 @@ frac_box_rep::frac_box_rep (
 
 box
 frac_box_rep::adjust_kerning (int mode, double factor) {
-  return frac_box (ip, bs[0]->adjust_kerning (0, factor),
-                   bs[1]->adjust_kerning (0, factor), fn, sfn, pen);
+  box num= bs[0]->adjust_kerning (0, factor);
+  box den= bs[1]->adjust_kerning (0, factor);
+  return frac_box (ip, num, den, fn, sfn, pen);
 }
 
 int
@@ -103,14 +104,17 @@ frac_box_rep::find_child (SI x, SI y, SI delta, bool force) {
 ******************************************************************************/
 
 struct sqrt_box_rep: public composite_box_rep {
+  font fn;
+  pencil pen;
   sqrt_box_rep (path ip, box b1, box b2, box sqrtb, font fn, pencil pen);
   operator tree () { return tree (TUPLE, "sqrt", bs[0]); }
+  box adjust_kerning (int mode, double factor);
   int find_child (SI x, SI y, SI delta, bool force);
 };
 
 sqrt_box_rep::sqrt_box_rep (
-  path ip, box b1, box b2, box sqrtb, font fn, pencil pen):
-    composite_box_rep (ip)
+  path ip, box b1, box b2, box sqrtb, font fn2, pencil pen2):
+    composite_box_rep (ip), fn (fn2), pen (pen2)
 {
   right_italic_correct (b1);
 
@@ -144,6 +148,14 @@ sqrt_box_rep::sqrt_box_rep (
   finalize ();
 }
 
+box
+sqrt_box_rep::adjust_kerning (int mode, double factor) {
+  box body = bs[0]->adjust_kerning (0, factor);
+  box ramif= (N(bs) == 3? box (): bs[1]->adjust_kerning (0, factor/2));
+  box sqrtb= (N(bs) == 3? bs[1]: bs[2]);
+  return sqrt_box (ip, body, ramif, sqrtb, fn, pen);
+}
+
 int
 sqrt_box_rep::find_child (SI x, SI y, SI delta, bool force) {
   (void) y;
@@ -161,13 +173,16 @@ sqrt_box_rep::find_child (SI x, SI y, SI delta, bool force) {
 ******************************************************************************/
 
 struct neg_box_rep: public composite_box_rep {
+  font fn;
+  pencil pen;
   neg_box_rep (path ip, box b1, font fn, pencil pen);
   operator tree () { return tree (TUPLE, "neg", bs[0]); }
+  box adjust_kerning (int mode, double factor);
   int find_child (SI x, SI y, SI delta, bool force);
 };
 
-neg_box_rep::neg_box_rep (path ip, box b, font fn, pencil pen):
-  composite_box_rep (ip)
+neg_box_rep::neg_box_rep (path ip, box b, font fn2, pencil pen2):
+  composite_box_rep (ip), fn (fn2), pen (pen2)
 {
   SI wline= fn->wline;
   SI delta= fn->wfn/6;
@@ -193,6 +208,12 @@ neg_box_rep::neg_box_rep (path ip, box b, font fn, pencil pen):
   finalize ();
 }
 
+box
+neg_box_rep::adjust_kerning (int mode, double factor) {
+  box body= bs[0]->adjust_kerning (mode, factor);
+  return neg_box (ip, body, fn, pen);
+}
+
 int
 neg_box_rep::find_child (SI x, SI y, SI delta, bool force) {
   (void) y;
@@ -206,14 +227,17 @@ neg_box_rep::find_child (SI x, SI y, SI delta, bool force) {
 ******************************************************************************/
 
 struct tree_box_rep: public composite_box_rep {
+  font fn;
+  pencil pen;
   SI  border;
   tree_box_rep (path ip, array<box> bs, font fn, pencil pen);
   operator tree () { return "tree box"; }
+  box adjust_kerning (int mode, double factor);
   int find_child (SI x, SI y, SI delta, bool force);
 };
 
-tree_box_rep::tree_box_rep (path ip, array<box> bs, font fn, pencil pen):
-  composite_box_rep (ip)
+tree_box_rep::tree_box_rep (path ip, array<box> bs, font fn2, pencil pen2):
+  composite_box_rep (ip), fn (fn2), pen (pen2)
 {
   SI sep   = fn->sep;
   SI hsep  = 2*fn->spc->def;
@@ -253,6 +277,15 @@ tree_box_rep::tree_box_rep (path ip, array<box> bs, font fn, pencil pen):
   finalize ();
 }
 
+box
+tree_box_rep::adjust_kerning (int mode, double factor) {
+  int n= (N(bs)+1)>>1;
+  array<box> adj (n);
+  for (int i=0; i<n; i++)
+    adj[i]= bs[i]->adjust_kerning (0, factor);
+  return tree_box (ip, adj, fn, pen);
+}
+
 int
 tree_box_rep::find_child (SI x, SI y, SI delta, bool force) {
   if (outside (x, delta, x1, x2) && (is_accessible (ip) || force)) return -1;
@@ -276,10 +309,13 @@ tree_box_rep::find_child (SI x, SI y, SI delta, bool force) {
 
 struct wide_box_rep: public composite_box_rep {
   box ref;
-  SI  dw, dh, dd;
+  font fn;
+  SI sep;
   bool above;
+  SI  dw, dh, dd;
   wide_box_rep (path ip, box ref, box hi, font fn, SI sep, bool above);
   operator tree () { return tree (TUPLE, "wide", bs[0]); }
+  //box adjust_kerning (int mode, double factor);
   int find_child (SI x, SI y, SI delta, bool force);
   double left_slope ();
   double right_slope ();
@@ -323,8 +359,8 @@ struct wide_box_rep: public composite_box_rep {
 };
 
 wide_box_rep::wide_box_rep (
-  path ip, box ref2, box hi, font fn, SI sep, bool above2):
-    composite_box_rep (ip), ref (ref2), above (above2)
+  path ip, box ref2, box hi, font fn2, SI sep2, bool above2):
+  composite_box_rep (ip), ref (ref2), fn (fn2), sep (sep2), above (above2)
 {
   SI X, Y, dx;
   SI hw= max (ref->w(), hi->w()) >> 1;
@@ -352,6 +388,14 @@ wide_box_rep::wide_box_rep (
   if (!above) y1 += fn->sep - sep;
   finalize ();
 }
+
+/*
+box
+wide_box_rep::adjust_kerning (int mode, double factor) {
+  box body= ref->adjust_kerning (START_OF_LINE + END_OF_LINE, factor);
+  return wide_box (ip, body, bs[1], fn, sep, above);
+}
+*/
 
 int
 wide_box_rep::find_child (SI x, SI y, SI delta, bool force) {

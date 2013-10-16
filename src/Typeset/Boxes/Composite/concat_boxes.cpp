@@ -10,15 +10,18 @@
 ******************************************************************************/
 
 #include "Boxes/composite.hpp"
+#include "Boxes/construct.hpp"
 
 /******************************************************************************
 * The concat_box representation
 ******************************************************************************/
 
 struct concat_box_rep: public composite_box_rep {
+  array<SI> spc;
   bool indent;
   concat_box_rep (path ip, array<box> bs, array<SI> spc, bool indent);
   operator tree ();
+  box adjust_kerning (int mode, double factor);
 
   void      finalize ();
   void      clear_incomplete (rectangles& rs, SI pixel, int i, int i1, int i2);
@@ -104,8 +107,8 @@ concat_box_rep::position (array<SI> spc) {
 }
 
 concat_box_rep::concat_box_rep
-  (path ip, array<box> bs2, array<SI> spc, bool indent2):
-    composite_box_rep (ip), indent (indent2)
+  (path ip, array<box> bs2, array<SI> spc2, bool indent2):
+    composite_box_rep (ip), spc (spc2), indent (indent2)
 {
   bs = bs2;
   position (spc);
@@ -118,6 +121,22 @@ concat_box_rep::finalize () {
   ip= decorate_middle (ip);
   composite_box_rep::finalize ();
   ip= old_ip;
+}
+
+
+box
+concat_box_rep::adjust_kerning (int mode, double factor) {
+  int n= N(bs);
+  array<box> adj (n);
+  array<SI > spa (n);
+  for (int i=0; i<n; i++) {
+    int smode= mode;
+    if (sx1(i) > x1) smode= smode & (~START_OF_LINE);
+    if (sx2(i) < x2) smode= smode & (~END_OF_LINE);
+    adj[i]= bs[i]->adjust_kerning (smode, factor);
+    spa[i]= (SI) tm_round ((1 + 2*factor) * spc[i]);
+  }
+  return concat_box (ip, adj, spa, indent);
 }
 
 bool

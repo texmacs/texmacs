@@ -11,6 +11,7 @@
 
 #include "Boxes/composite.hpp"
 #include "Boxes/Composite/italic_correct.hpp"
+#include "Boxes/construct.hpp"
 
 /******************************************************************************
 * subroutine for scripts
@@ -241,14 +242,17 @@ dummy_script_box_rep::find_tree_path (path bp) {
 struct side_box_rep: public composite_box_rep {
   short nr_left, nr_right;
   short id_left, id_right;
+  font  fn;
+  short level, type;
   side_box_rep (path ip, box r, box l1, box l2, box r1, box r2, font f, int l);
   operator tree () {
     int i, n= N(bs);
     tree t (TUPLE, "side");
     for (i=0; i<n; i++) t << ((tree) bs[i]);
     return t;
-  }
+  } 
   void finalize ();
+  box adjust_kerning (int mode, double factor);
 
   int       find_child (SI x, SI y, SI delta, bool force);
   path      find_box_path (path p, bool& found);
@@ -277,8 +281,8 @@ struct side_box_rep: public composite_box_rep {
 };
 
 side_box_rep::side_box_rep (
-  path ip, box ref, box l1, box l2, box r1, box r2, font fn, int level):
-    composite_box_rep (ip)
+  path ip, box ref, box l1, box l2, box r1, box r2, font fn2, int level2):
+  composite_box_rep (ip), fn (fn2), level (level2)
 {
   insert (ref, 0, 0);
 
@@ -292,6 +296,12 @@ side_box_rep::side_box_rep (
   SI miny2      = (fn->y2 - fn->yshift) * script (fn->size, 1) / fn->size;
   SI lsub= sub_lo_base, lsup= sup_lo_base;
   SI rsub= sub_lo_base, rsup= sup_lo_base;
+
+  type= 0;
+  if (!is_nil (l1)) type += 1;
+  if (!is_nil (l2)) type += 2;
+  if (!is_nil (r1)) type += 4;
+  if (!is_nil (r2)) type += 8;
 
   if (is_nil (l1)) {
     if (is_nil (l2)) nr_left= 0;
@@ -389,6 +399,24 @@ side_box_rep::finalize () {
     finalize_left (lip, bs[i]);
     finalize_right (rip, bs[i]);
   }
+}
+
+box
+side_box_rep::adjust_kerning (int mode, double factor) {
+  int smode= mode;
+  if (nr_left  > 0) smode= smode & (~START_OF_LINE);
+  if (nr_right > 0) smode= smode & (~END_OF_LINE);
+  box body= bs[0]->adjust_kerning (smode, factor);
+  box lsub, lsup, rsub, rsup;
+  if ((type & 1) != 0)
+    lsub= bs[1]->adjust_kerning (mode & (~END_OF_LINE), factor/2);
+  if ((type & 2) != 0)
+    lsup= bs[nr_left]->adjust_kerning (mode & (~END_OF_LINE), factor/2);
+  if ((type & 4) != 0)
+    rsub= bs[1+nr_left]->adjust_kerning (mode & (~START_OF_LINE), factor/2);
+  if ((type & 8) != 0)
+    rsup= bs[N(bs)-1]->adjust_kerning (mode & (~START_OF_LINE), factor/2);
+  return side_box (ip, body, lsub, lsup, rsub, rsup, fn, level);
 }
 
 int

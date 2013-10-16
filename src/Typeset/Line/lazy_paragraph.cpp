@@ -262,8 +262,7 @@ lazy_paragraph_rep::make_unit (string mode, SI the_width, bool break_flag) {
       if (cur_w->max > cur_w->def)
         f= ((double) (the_width - cur_w->def)) /
            ((double) (cur_w->max - cur_w->def));
-      /*
-      if (f > 1.0) {
+      if (f > 1.0 && false) {
         array<box> backup= range (items, cur_start, N(items));
         adjust_kerning (the_width - cur_w->max, the_width);
         if (cur_w->max > cur_w->def)
@@ -275,7 +274,6 @@ lazy_paragraph_rep::make_unit (string mode, SI the_width, bool break_flag) {
           for (i=0; i<N(backup); i++)
             items[cur_start + i]= backup[i];
       }
-      */
       if (f <= flexibility) {
         for (i=cur_start; i<N(items)-1; i++)
           items_sp <<
