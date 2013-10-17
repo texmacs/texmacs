@@ -29,6 +29,7 @@ struct glyph;
 #define CJK_PROTRUSION        4
 #define INNER_PROTRUSION      4
 #define WESTERN_PROTRUSION    8
+#define TABLE_CELL           32
 
 /******************************************************************************
 * The font structure

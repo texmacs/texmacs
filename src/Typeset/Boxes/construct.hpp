@@ -55,6 +55,8 @@ box stack_box (path ip, array<box> bs, array<SI> spc);
 box composite_box (path ip, array<box> bs, bool bfl= true);
 box composite_box (path ip, array<box> bs, array<SI> x, array<SI> y,
 		   bool bfl= true);
+box table_box (path ip, array<box> bs, array<SI> x, array<SI> y,
+               array<string> halign, int cols);
 box superpose_box (path ip, array<box> bs, bool bfl= true);
 box scatter_box (path ip, array<box> bs, array<SI> x, array<SI> y);
 box cell_box (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
@@ -86,6 +88,7 @@ box move_box (path ip, box b, SI x, SI y, bool chf= false, bool bigf= false);
 box shift_box (path ip, box b, SI x, SI y, bool chf= false, bool bigf= false);
 box resize_box (path ip, box b, SI x1, SI y1, SI x2, SI y2,
 		bool chf= false, bool adjust= false);
+box vresize_box (path ip, box b, SI y1, SI y2);
 box transformed_box (path ip, box b, frame f);
 box effect_box (path ip, array<box> bs, tree eff);
 box clip_box (path ip, box b, SI x1, SI y1, SI x2, SI y2);

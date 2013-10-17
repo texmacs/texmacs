@@ -381,6 +381,61 @@ concrete_composite_box_rep::find_child (SI x, SI y, SI delta, bool force) {
 }
 
 /******************************************************************************
+* Table box
+******************************************************************************/
+
+struct table_box_rep: public concrete_composite_box_rep {
+  int rows, cols;
+  array<SI> x, y;
+  array<string> halign;
+  table_box_rep (
+    path ip, array<box> bs, array<SI> x2, array<SI> y2,
+    array<string> halign2, int cols2):
+      concrete_composite_box_rep (ip, bs, x2, y2, false),
+      rows (N(bs) / cols2), cols (cols2),
+      x (x2), y (y2), halign (halign2) { finalize (); }
+  operator tree () { return tree ("table"); }
+  box adjust_kerning (int mode, double factor);
+};
+
+box
+table_box_rep::adjust_kerning (int mode, double factor) {
+  int n= N(bs), i, j;
+  array<box> adj (n);
+  array<SI>  cdw (n);
+  for (i=0; i<n; i++) {
+    SI l, r;
+    adj[i]= bs[i]->adjust_kerning (TABLE_CELL, factor);
+    bs[i]->get_cell_extents (l, r);
+    SI w1= r - l;
+    adj[i]->get_cell_extents (l, r);
+    SI w2= r - l;
+    cdw[i]= w2 - w1;
+  }
+  SI dx= 0;
+  array<SI> nx (n);
+  for (j=0; j<cols; j++) {
+    for (i=0; i<rows; i++)
+      nx[i*cols+j]= x[i*cols+j] + dx;
+    SI dw= MINUS_INFINITY;
+    for (i=0; i<rows; i++)
+      dw= max (dw, cdw[i*cols+j]);
+    dx += dw;
+    for (i=0; i<rows; i++) {
+      int k= i*cols + j;
+      string ha= halign[k];
+      SI d= dw - cdw[k];
+      SI cdx= 0;
+      if (ha[0] == 'l') cdx= 0;
+      if (ha[0] == 'r') cdx= d;
+      if (ha[0] == 'c') cdx= d >> 1;
+      adj[k]= adj[k]->adjust_cell_geometry (cdx, 0, dw);
+    }
+  }
+  return table_box (ip, adj, nx, y, halign, cols);
+}
+
+/******************************************************************************
 * User interface
 ******************************************************************************/
 
@@ -392,4 +447,10 @@ composite_box (path ip, array<box> bs, bool bfl) {
 box
 composite_box (path ip, array<box> bs, array<SI> x, array<SI> y, bool bfl) {
   return tm_new<concrete_composite_box_rep> (ip, bs, x, y, bfl);
+}
+
+box
+table_box (path ip, array<box> bs, array<SI> x, array<SI> y,
+           array<string> halign, int cols) {
+  return tm_new<table_box_rep> (ip, bs, x, y, halign, cols);
 }

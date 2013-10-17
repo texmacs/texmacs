@@ -87,6 +87,19 @@ box_rep::adjust_kerning (int mode, double factor) {
   return this;
 }
 
+void
+box_rep::get_cell_extents (SI& l, SI& r) {
+  (void) l; (void) r;
+  FAILED ("cell box expected");
+}
+
+box
+box_rep::adjust_cell_geometry (SI dx, SI dl, SI dr) {
+  (void) dx; (void) dl; (void) dr;
+  FAILED ("cell box expected");
+  return this;
+}
+
 /******************************************************************************
 * Cursor routines
 ******************************************************************************/

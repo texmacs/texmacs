@@ -730,9 +730,11 @@ table_rep::finish_horizontal () {
 void
 table_rep::finish () {
   int i, j;
-  array<box> bs;
-  array<SI>  x;
-  array<SI>  y;
+  array<box>    bs;
+  array<SI>     x;
+  array<SI>     y;
+  array<string> ha;
+  bool ext_flag= true;
   for (i=0; i<nr_rows; i++)
     for (j=0; j<nr_cols; j++)
       if (!is_nil (T[i][j])) {
@@ -741,9 +743,16 @@ table_rep::finish () {
 	bs << C->b;
 	x  << C->x1;
 	y  << C->y1;
+        ha << C->halign;
+        if (N(ha) == 0) ext_flag= false;
+        else if (ha[0] != 'l' && ha[0] != 'c' && ha[0] != 'r') ext_flag= false;
       }
+      else ext_flag= false;
 
-  box   tb= composite_box (ip, bs, x, y, false);
+  box tb;
+  if (ext_flag) tb= table_box (ip, bs, x, y, ha, nr_cols);
+  else tb= composite_box (ip, bs, x, y, false);
+
   SI    x1= tb->x1;
   SI    y1= tb->y1;
   SI    x2= tb->x2;

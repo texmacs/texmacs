@@ -41,7 +41,7 @@ cell_rep::typeset (tree fm, tree t, path iq) {
 	SI y2= b->y2;
 	if ((vcorrect == "a") || (vcorrect == "b")) y1= min (y1, env->fn->y1);
 	if ((vcorrect == "a") || (vcorrect == "t")) y2= max (y2, env->fn->y2);
-	b= resize_box (iq, b, b->x1, y1, b->x2, y2);
+	b= vresize_box (iq, b, y1, y2);
       }
     }
     else {

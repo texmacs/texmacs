@@ -166,11 +166,33 @@ resize_box_rep::resize_box_rep (
   finalize ();
 }
 
+struct vresize_box_rep: public change_box_rep {
+  vresize_box_rep (path ip, box b, SI y1, SI y2);
+  operator tree () { return tree (TUPLE, "vresize", (tree) bs[0]); }
+  box adjust_kerning (int mode, double factor);
+};
+
+vresize_box_rep::vresize_box_rep (path ip, box b, SI Y1, SI Y2):
+  change_box_rep (ip, false)
+{
+  insert (b, 0, 0);
+  position ();
+  x1= b->x1; y1= Y1;
+  x2= b->x2; y2= Y2;
+  finalize ();
+}
+
+box
+vresize_box_rep::adjust_kerning (int mode, double factor) {
+  box body= bs[0]->adjust_kerning (mode, factor);
+  return vresize_box (ip, body, y1, y2);
+}
+
 struct vcorrect_box_rep: public change_box_rep {
   SI top_cor, bot_cor;
   vcorrect_box_rep (path ip, box b, SI top_cor, SI bot_cor);
-  box adjust_kerning (int mode, double factor);
   operator tree () { return tree (TUPLE, "vcorrect", (tree) bs[0]); }
+  box adjust_kerning (int mode, double factor);
 };
 
 vcorrect_box_rep::vcorrect_box_rep (path ip, box b, SI top_cor2, SI bot_cor2):
@@ -410,19 +432,24 @@ repeat_box_rep::adjust_kerning (int mode, double factor) {
 ******************************************************************************/
 
 struct cell_box_rep: public change_box_rep {
+  SI    X0, Y0;
   SI    bl, br, bb, bt;
   brush fg, bg, old_bg;
   cell_box_rep (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
 		SI bl, SI br, SI bb, SI bt, brush fg, brush bg);
   operator tree () { return tree (TUPLE, "cell", (tree) bs[0]); }
+  box  adjust_kerning (int mode, double factor);
+  void get_cell_extents (SI& l, SI& r);
+  box  adjust_cell_geometry (SI dx, SI dl, SI dr);
   void pre_display (renderer &ren);
   void post_display (renderer &ren);
 };
 
 cell_box_rep::cell_box_rep (
-  path ip, box b, SI X0, SI Y0, SI X1, SI Y1, SI X2, SI Y2,
+  path ip, box b, SI X0b, SI Y0b, SI X1, SI Y1, SI X2, SI Y2,
   SI Bl, SI Br, SI Bb, SI Bt, brush Fg, brush Bg):
   change_box_rep (ip, false),
+  X0 (X0b), Y0 (Y0b),
   bl (Bl<<1), br (Br<<1), bb (Bb<<1), bt (Bt<<1),
   fg (Fg), bg (Bg)
 {
@@ -438,6 +465,27 @@ cell_box_rep::cell_box_rep (
     y4= max (y4, y2 + (bt>>1) + (bt>0? PIXEL<<2: 0));
   }
   finalize ();
+}
+
+box
+cell_box_rep::adjust_kerning (int mode, double factor) {
+  box nb= bs[0]->adjust_kerning (mode, factor);
+  SI  d = nb->w() - bs[0]->w();
+  if ((mode & TABLE_CELL) != 0) d= 0;
+  return cell_box (ip, nb, X0, Y0, x1, y1, x2 + d, y2,
+                   bl>>1, br>>1, bb>>1, bt>>1, fg, bg);
+}
+
+void
+cell_box_rep::get_cell_extents (SI& l, SI& r) {
+  l= sx1 (0);
+  r= sx2 (0);
+}
+
+box
+cell_box_rep::adjust_cell_geometry (SI dx, SI dl, SI dr) {
+  return cell_box (ip, bs[0], X0+dx, Y0, x1+dl, y1, x2+dr, y2,
+                   bl>>1, br>>1, bb>>1, bt>>1, fg, bg);
 }
 
 void
@@ -791,6 +839,11 @@ box
 resize_box (path ip, box b, SI x1, SI y1, SI x2, SI y2,
 	    bool child_flag, bool adjust) {
   return tm_new<resize_box_rep> (ip, b, x1, y1, x2, y2, child_flag, adjust);
+}
+
+box
+vresize_box (path ip, box b, SI y1, SI y2) {
+  return tm_new<vresize_box_rep> (ip, b, y1, y2);
 }
 
 box
