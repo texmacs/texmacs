@@ -355,14 +355,17 @@ compute_wide_accent (path ip, box b, string s,
 ******************************************************************************/
 
 struct wide_box_rep: public composite_box_rep {
-  box ref;
-  font fn;
-  SI sep;
-  bool above;
-  SI  dw, dh, dd;
-  wide_box_rep (path ip, box ref, box hi, font fn, SI sep, bool above);
+  box    ref;
+  string s;
+  font   fn;
+  pencil pen;
+  bool   request_wide;
+  bool   above;
+  SI     sep;
+  SI     dw, dh, dd;
+  wide_box_rep (path ip, box b, string s, font fn, pencil p, bool wf, bool af);
   operator tree () { return tree (TUPLE, "wide", bs[0]); }
-  //box adjust_kerning (int mode, double factor);
+  box adjust_kerning (int mode, double factor);
   int find_child (SI x, SI y, SI delta, bool force);
   double left_slope ();
   double right_slope ();
@@ -406,9 +409,13 @@ struct wide_box_rep: public composite_box_rep {
 };
 
 wide_box_rep::wide_box_rep (
-  path ip, box ref2, box hi, font fn2, SI sep2, bool above2):
-  composite_box_rep (ip), ref (ref2), fn (fn2), sep (sep2), above (above2)
+  path ip, box ref2, string s2, font fn2, pencil pen2,
+  bool request_wide2, bool above2):
+    composite_box_rep (ip), ref (ref2), s (s2), fn (fn2), pen (pen2),
+    request_wide (request_wide2), above (above2)
 {
+  box hi;
+  compute_wide_accent (ip, ref, s, fn, pen, request_wide, above, hi, sep);
   SI X, Y, dx;
   SI hw= max (ref->w(), hi->w()) >> 1;
   SI m = (ref->x1 + ref->x2) >> 1;
@@ -436,13 +443,11 @@ wide_box_rep::wide_box_rep (
   finalize ();
 }
 
-/*
 box
 wide_box_rep::adjust_kerning (int mode, double factor) {
   box body= ref->adjust_kerning (START_OF_LINE + END_OF_LINE, factor);
-  return wide_box (ip, body, bs[1], fn, sep, above);
+  return wide_box (ip, body, s, fn, pen, request_wide, above);
 }
-*/
 
 int
 wide_box_rep::find_child (SI x, SI y, SI delta, bool force) {
@@ -488,8 +493,5 @@ tree_box (path ip, array<box> bs, font fn, pencil pen) {
 
 box
 wide_box (path ip, box ref, string s, font fn, pencil pen, bool wf, bool af) {
-  box hi;
-  SI sep;
-  compute_wide_accent (ip, ref, s, fn, pen, wf, af, hi, sep);
-  return tm_new<wide_box_rep> (ip, ref, hi, fn, sep, af);
+  return tm_new<wide_box_rep> (ip, ref, s, fn, pen, wf, af);
 }
