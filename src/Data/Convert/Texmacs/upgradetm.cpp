@@ -3737,10 +3737,12 @@ upgrade_doc_language (tree t) {
     else if (is_func (init[i], ASSOCIATE, 2) && init[i][0] == FONT) {
       if (init[i][1] == "cyrillic" &&
           (lan == "bulgarian" || lan == "russian" || lan == "ukrainian"));
-      else if (init[i][1] == "sys-chinese" &&
+      else if ((init[i][1] == "sys-chinese" || init[i][1] == "fireflysung") &&
                (lan == "chinese" || lan == "taiwanese"));
-      else if (init[i][1] == "sys-japanese" && lan == "japanese");
-      else if (init[i][1] == "sys-korean" && lan == "korean");
+      else if ((init[i][1] == "sys-japanese" || init[i][1] == "ipa") &&
+               lan == "japanese");
+      else if ((init[i][1] == "sys-korean" || init[i][1] == "unbatang") &&
+               lan == "korean");
       else new_init << init[i];
     }
     else new_init << init[i];

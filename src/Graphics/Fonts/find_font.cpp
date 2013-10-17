@@ -227,6 +227,19 @@ find_font (string family, string variant,
     as_string (sz) * "-" * as_string (dpi);
   if (font::instances->contains (s)) return font (s);
 
+  string family2= family;
+  if (family == "sys-chinese") family2= default_chinese_font_name ();
+  if (family == "sys-japanese") family2= default_japanese_font_name ();
+  if (family == "sys-korean") family2= default_korean_font_name ();
+  if (family2 != family) {
+    cout << "Substitute " family << " -> " << family2 << "\n";
+    font fn= find_font (family2, variant, series, shape, sz, dpi);
+    if (!is_nil (fn)) {
+      font::instances (s)= (pointer) fn.rep;
+      return fn;
+    }
+  }
+
   tree t1 (TUPLE, 6);
   t1[0]= family;
   t1[1]= variant;
