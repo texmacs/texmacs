@@ -134,7 +134,7 @@ concat_box_rep::adjust_kerning (int mode, double factor) {
     if (sx1(i) > x1) smode= smode & (~START_OF_LINE);
     if (sx2(i) < x2) smode= smode & (~END_OF_LINE);
     adj[i]= bs[i]->adjust_kerning (smode, factor);
-    spa[i]= (SI) tm_round ((1 + 2*factor) * spc[i]);
+    spa[i]= (SI) tm_round ((1 + 4*factor) * spc[i]);
   }
   return concat_box (ip, adj, spa, indent);
 }
