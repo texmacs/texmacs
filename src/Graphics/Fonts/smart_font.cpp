@@ -344,7 +344,9 @@ get_unicode_range (string c) {
   else if (code >= 0x80 && code <= 0x37f) range= "latin";
   else if (code >= 0x380 && code <= 0x3ff) range= "greek";
   else if (code >= 0x400 && code <= 0x4ff) range= "cyrillic";
+  else if (code >= 0x3000 && code <= 0x303f) range= "cjk";
   else if (code >= 0x4e00 && code <= 0x9fcc) range= "cjk";
+  else if (code >= 0xff00 && code <= 0xffef) range= "cjk";
   else if (code >= 0xac00 && code <= 0xd7af) range= "hangul";
   else if (code >= 0x2000 && code <= 0x23ff) range= "mathsymbols";
   else if (code >= 0x2900 && code <= 0x2e7f) range= "mathextra";
