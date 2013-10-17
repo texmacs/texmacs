@@ -13,6 +13,61 @@
 #include "analyze.hpp"
 
 /******************************************************************************
+* Protrusion for western fonts
+******************************************************************************/
+
+void
+add_upright_left_protrusion (hashmap<string,double>& t) {
+  t ("`")= 0.7;
+  t ("``")= 0.5;
+  t ("(")= 0.05;
+  t ("A")= 0.05;
+  t ("J")= 0.05;
+  t ("T")= 0.05;
+  t ("V")= 0.05;
+  t ("W")= 0.05;
+  t ("X")= 0.05;
+  t ("Y")= 0.05;
+  t ("v")= 0.05;
+  t ("w")= 0.05;
+  t ("x")= 0.05;
+  t ("y")= 0.05;
+}
+
+void
+add_upright_right_protrusion (hashmap<string,double>& t) {
+  t (".")= 0.7;
+  t ("-")= 0.7;
+  t (",")= 0.7;
+  t ("'")= 0.7;
+  t ("''")= 0.5;
+  t (";")= 0.5;
+  t (":")= 0.5;
+  t ("--")= 0.3;
+  t ("---")= 0.2;
+  t ("!")= 0.2;
+  t ("?")= 0.2;
+  t (")")= 0.05;
+  t ("A")= 0.05;
+  t ("F")= 0.05;
+  t ("K")= 0.05;
+  t ("L")= 0.05;
+  t ("T")= 0.05;
+  t ("V")= 0.05;
+  t ("W")= 0.05;
+  t ("X")= 0.05;
+  t ("Y")= 0.05;
+  t ("k")= 0.05;
+  t ("r")= 0.05;
+  t ("s")= 0.05;
+  t ("t")= 0.05;
+  t ("v")= 0.05;
+  t ("w")= 0.05;
+  t ("x")= 0.05;
+  t ("y")= 0.05;
+}
+
+/******************************************************************************
 * Protrusion for CJK fonts
 ******************************************************************************/
 
@@ -55,9 +110,11 @@ add_cjk_right_protrusion (hashmap<string,double>& t) {
 
 static hashmap<string,double> no_protrusion (0.0);
 static hashmap<string,double> cjk_left (0.0);
-static hashmap<string,double> cjk_inner_left (0.0);
 static hashmap<string,double> cjk_right (0.0);
+static hashmap<string,double> cjk_inner_left (0.0);
 static hashmap<string,double> cjk_inner_right (0.0);
+static hashmap<string,double> western_left (0.0);
+static hashmap<string,double> western_right (0.0);
 
 hashmap<string,double>
 get_left_protrusion_table (int mode) {
@@ -68,6 +125,10 @@ get_left_protrusion_table (int mode) {
   case CJK_PROTRUSION + START_OF_LINE:
     if (N(cjk_left) == 0) add_cjk_left_protrusion (cjk_left);
     return cjk_left;
+  case WESTERN_PROTRUSION:
+  case WESTERN_PROTRUSION + START_OF_LINE:
+    if (N(western_left) == 0) add_upright_left_protrusion (western_left);
+    return western_left;
   default:
     return no_protrusion;
   }
@@ -85,6 +146,10 @@ get_right_protrusion_table (int mode) {
   case CJK_PROTRUSION + END_OF_LINE:
     if (N(cjk_right) == 0) add_cjk_right_protrusion (cjk_right);
     return cjk_right;
+  case WESTERN_PROTRUSION:
+  case WESTERN_PROTRUSION + END_OF_LINE:
+    if (N(western_right) == 0) add_upright_right_protrusion (western_right);
+    return western_right;
   default:
     return no_protrusion;
   }
