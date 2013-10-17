@@ -388,6 +388,7 @@
   ("std u" (toggle-underlined))
   ("std v" (clipboard-paste "primary"))
   ("std w" (safely-kill-buffer))
+  ("std W" (safely-kill-window))
   ("std x" (clipboard-cut "primary"))
   ("std z" (undo 0))
   ("std Z" (redo 0))
@@ -549,7 +550,6 @@
   (:profile macos)
 
   ;; standard Mac OS keyboard shortcuts
-  ("macos F4" (safely-kill-buffer))
   ("macos ;" (spell-start))
   ("macos ?" (interactive docgrep-in-doc))
   ("macos ," (interactive open-preferences))
@@ -594,7 +594,6 @@
   ;;("macos C-v" (paste-style))
   ;;("macos C-V" (paste-match-style))
   ;;("macos A-v" (paste-formatting))
-  ;;("macos W" (safely-kill-buffer-windows))
   ;;("macos A-w" (safely-kill-all-windows))
   ;;("macos C-x" (cut-style))       ;; TeXmacs addition
   ;;("macos A-x" (cut-formatting))  ;; TeXmacs addition
