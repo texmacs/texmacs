@@ -13,6 +13,7 @@
 #include "Boxes/composite.hpp"
 #include "Boxes/construct.hpp"
 #include "Boxes/Composite/italic_correct.hpp"
+#include "analyze.hpp"
 
 /******************************************************************************
 * Miscellaneous routines
@@ -304,6 +305,52 @@ tree_box_rep::find_child (SI x, SI y, SI delta, bool force) {
 }
 
 /******************************************************************************
+* Computation of wide accent
+******************************************************************************/
+
+void
+compute_wide_accent (path ip, box b, string s,
+                     font fn, pencil pen, bool request_wide, bool above,
+                     box& wideb, SI& sep) {
+  bool wide= (b->w() >= (fn->wfn)) || request_wide;
+  if (ends (s, "dot>") || (s == "<acute>") ||
+      (s == "<grave>") || (s == "<abovering>")) wide= false;
+  if (wide) {
+    SI w= fn->wline;
+    pencil wpen= pen->set_width (w);
+    if ((s == "^") || (s == "<hat>"))
+      wideb= wide_hat_box   (decorate_middle (ip), b->x1, b->x2, wpen);
+    else if ((s == "~") || (s == "<tilde>"))
+      wideb= wide_tilda_box (decorate_middle (ip), b->x1, b->x2, wpen);
+    else if (s == "<bar>")
+      wideb= wide_bar_box   (decorate_middle (ip), b->x1, b->x2, wpen);
+    else if (s == "<vect>")
+      wideb= wide_vect_box  (decorate_middle (ip), b->x1, b->x2, wpen);
+    else if (s == "<check>")
+      wideb= wide_check_box (decorate_middle (ip), b->x1, b->x2, wpen);
+    else if (s == "<breve>")
+      wideb= wide_breve_box (decorate_middle (ip), b->x1, b->x2, wpen);
+    else if (s == "<invbreve>")
+      wideb= wide_invbreve_box(decorate_middle (ip), b->x1, b->x2, wpen);
+    else if (s == "<squnderbrace>" || s == "<squnderbrace*>")
+      wideb= wide_squbr_box (decorate_middle (ip), b->x1, b->x2, wpen);
+    else if (s == "<sqoverbrace>" || s == "<sqoverbrace*>")
+      wideb= wide_sqobr_box (decorate_middle (ip), b->x1, b->x2, wpen);
+    else wideb= wide_box (decorate_middle (ip),
+                          "<rubber-" * s (1, N(s)-1) * ">",
+                          fn, pen, b->x2- b->x1);
+    sep= fn->sep;
+  }
+  else {
+    wideb= text_box (decorate_middle (ip), 0, s, fn, pen);
+    if (fn->type == FONT_TYPE_UNICODE && b->right_slope () != 0)
+      wideb= shift_box (decorate_middle (ip), wideb,
+                        (SI) (-0.5 * b->right_slope () * fn->yx), 0);
+    sep= above? -fn->yx: fn->sep;
+  }
+}
+
+/******************************************************************************
 * wide hats, tildas, etc...
 ******************************************************************************/
 
@@ -440,6 +487,9 @@ tree_box (path ip, array<box> bs, font fn, pencil pen) {
 }
 
 box
-wide_box (path ip, box ref, box hi, font fn, SI sep, bool above) {
-  return tm_new<wide_box_rep> (ip, ref, hi, fn, sep, above);
+wide_box (path ip, box ref, string s, font fn, pencil pen, bool wf, bool af) {
+  box hi;
+  SI sep;
+  compute_wide_accent (ip, ref, s, fn, pen, wf, af, hi, sep);
+  return tm_new<wide_box_rep> (ip, ref, hi, fn, sep, af);
 }

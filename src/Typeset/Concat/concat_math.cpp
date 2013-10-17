@@ -259,7 +259,6 @@ concater_rep::typeset_sqrt (tree t, path ip) {
 void
 concater_rep::typeset_wide (tree t, path ip, bool above) {
   if (N(t) != 2) { typeset_error (t, ip); return; }
-  bool wide;
   box b= typeset_as_concat (env, t[0], descend (ip, 0));
   string s= as_string (t[1]);
   if (env->get_string (MATH_FONT) == "adobe" ||
@@ -267,54 +266,15 @@ concater_rep::typeset_wide (tree t, path ip, bool above) {
     if (s == "^") s= "<hat>";
     if (s == "~") s= "<tilde>";
   }
+  bool request_wide= is_func (t, VAR_WIDE);
   if (starts (s, "<wide-")) {
     s= "<" * s (6, N(s));
-    wide= true;
+    request_wide= true;
   }
-  else {
-    wide= (b->w() >= (env->fn->wfn)) || is_func (t, VAR_WIDE);
-    if (ends (s, "dot>") || (s == "<acute>") ||
-        (s == "<grave>") || (s == "<abovering>"))
-      wide= false;
-  }
-  if (wide) {
-    SI w= env->fn->wline;
-    pencil wpen= env->pen->set_width (w);
-    box wideb;
-    if ((s == "^") || (s == "<hat>"))
-      wideb= wide_hat_box   (decorate_middle (ip), b->x1, b->x2, wpen);
-    else if ((s == "~") || (s == "<tilde>"))
-      wideb= wide_tilda_box (decorate_middle (ip), b->x1, b->x2, wpen);
-    else if (s == "<bar>")
-      wideb= wide_bar_box   (decorate_middle (ip), b->x1, b->x2, wpen);
-    else if (s == "<vect>")
-      wideb= wide_vect_box  (decorate_middle (ip), b->x1, b->x2, wpen);
-    else if (s == "<check>")
-      wideb= wide_check_box (decorate_middle (ip), b->x1, b->x2, wpen);
-    else if (s == "<breve>")
-      wideb= wide_breve_box (decorate_middle (ip), b->x1, b->x2, wpen);
-    else if (s == "<invbreve>")
-      wideb= wide_invbreve_box(decorate_middle (ip), b->x1, b->x2, wpen);
-    else if (s == "<squnderbrace>" || s == "<squnderbrace*>")
-      wideb= wide_squbr_box (decorate_middle (ip), b->x1, b->x2, wpen);
-    else if (s == "<sqoverbrace>" || s == "<sqoverbrace*>")
-      wideb= wide_sqobr_box (decorate_middle (ip), b->x1, b->x2, wpen);
-    else wideb= wide_box (decorate_middle (ip),
-                          "<rubber-" * s (1, N(s)-1) * ">",
-                          env->fn, env->pen, b->x2- b->x1);
-    print (wide_box (ip, b, wideb, env->fn, env->fn->sep, above));
-    if ((s == "<underbrace>") || (s == "<overbrace>") ||
-        (s == "<squnderbrace>") || (s == "<sqoverbrace>"))
-      with_limits (LIMITS_ALWAYS);
-  }
-  else {
-    SI sep= above? -env->fn->yx: env->fn->sep;
-    box wideb= text_box (decorate_middle (ip), 0, s, env->fn, env->pen);
-    if (env->fn->type == FONT_TYPE_UNICODE && b->right_slope () != 0)
-      wideb= shift_box (decorate_middle (ip), wideb,
-                        (SI) (-0.5 * b->right_slope () * env->fn->yx), 0);
-    print (wide_box (ip, b, wideb, env->fn, sep, above));
-  }
+  print (wide_box (ip, b, s, env->fn, env->pen, request_wide, above));
+  if ((s == "<underbrace>") || (s == "<overbrace>") ||
+      (s == "<squnderbrace>") || (s == "<sqoverbrace>"))
+    with_limits (LIMITS_ALWAYS);
 }
 
 void

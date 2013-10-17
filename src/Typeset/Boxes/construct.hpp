@@ -67,7 +67,7 @@ box frac_box (path ip, box b1, box b2, font fn, font sfn, pencil pen);
 box sqrt_box (path ip, box b1, box b2, box sqrtb, font fn, pencil pen);
 box neg_box (path ip, box b, font fn, pencil pen);
 box tree_box (path ip, array<box> bs, font fn, pencil pen);
-box wide_box (path ip, box ref, box hi, font fn, SI sep, bool above);
+box wide_box (path ip, box ref, string s, font fn, pencil p, bool wf, bool af);
 box repeat_box (path ip, box ref, box repeat, SI xoff=0);
 box limit_box (path ip, box ref, box lo, box hi, font fn, bool glued);
 box script_box (path ip, box b1, box b2, font fn);
