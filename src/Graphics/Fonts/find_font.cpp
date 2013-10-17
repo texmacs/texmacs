@@ -232,7 +232,6 @@ find_font (string family, string variant,
   if (family == "sys-japanese") family2= default_japanese_font_name ();
   if (family == "sys-korean") family2= default_korean_font_name ();
   if (family2 != family) {
-    cout << "Substitute " family << " -> " << family2 << "\n";
     font fn= find_font (family2, variant, series, shape, sz, dpi);
     if (!is_nil (fn)) {
       font::instances (s)= (pointer) fn.rep;
