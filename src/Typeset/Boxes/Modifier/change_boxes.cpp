@@ -469,7 +469,7 @@ cell_box_rep::cell_box_rep (
 
 box
 cell_box_rep::adjust_kerning (int mode, double factor) {
-  box nb= bs[0]->adjust_kerning (mode, factor);
+  box nb= bs[0]->adjust_kerning (mode & (~TABLE_CELL), factor);
   SI  d = nb->w() - bs[0]->w();
   if ((mode & TABLE_CELL) != 0) d= 0;
   return cell_box (ip, nb, X0, Y0, x1, y1, x2 + d, y2,
