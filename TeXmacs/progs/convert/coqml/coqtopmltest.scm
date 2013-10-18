@@ -69,11 +69,30 @@
                          (msg   (if (test st) "test passed: " "test failed: "))
                          (color (if (test st) "dark green" "dark red")))
                      `(concat (with "color" ,color ,msg) ,test_verb)))))
-    (stree->tree `(document ,@(map proc idempotence-test-suite)))))
+    `(document
+       (strong "Idempotence testing: stree->coqtopml->stree")
+       ,@(map proc idempotence-test-suite))))
+
+(define (test-coqtopml-idempotence*)
+  (letrec ((test (lambda (st)
+                   (with xml (stree->coqtopml st)
+                     (== xml (stree->coqtopml (coqtopml->stree xml))))))
+           (proc (lambda (st)
+                   (let ((test_verb `(tt ,(object->string st)))
+                         (msg   (if (test st) "test passed: " "test failed: "))
+                         (color (if (test st) "dark green" "dark red")))
+                     `(concat (with "color" ,color ,msg) ,test_verb)))))
+    `(document
+       (strong "Idempotence testing: coqtopml->stree->coqtopml")
+       ,@(map proc idempotence-test-suite))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (test-coqtopml)
-  (test-coqtopml-idempotence))
+  (stree->tree
+    `(document
+       ,(test-coqtopml-idempotence)
+       ""
+       ,(test-coqtopml-idempotence*))))
