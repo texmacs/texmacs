@@ -181,24 +181,26 @@ TeXmacs_main (int argc, char** argv) {
       if ((N(s)>=2) && (s(0,2)=="--")) s= s (1, N(s));
       if ((s == "-s") || (s == "-silent")) flag= false;
       else if ((s == "-V") || (s == "-verbose"))
-	debug (DEBUG_FLAG_VERBOSE, true);
+        debug (DEBUG_FLAG_VERBOSE, true);
       else if ((s == "-d") || (s == "-debug")) debug (DEBUG_FLAG_STD, true);
       else if (s == "-debug-events") debug (DEBUG_FLAG_EVENTS, true);
       else if (s == "-debug-io") debug (DEBUG_FLAG_IO, true);
       else if (s == "-debug-bench") debug (DEBUG_FLAG_BENCH, true);
       else if (s == "-debug-history") debug (DEBUG_FLAG_HISTORY, true);
       else if (s == "-debug-qt") debug (DEBUG_FLAG_QT, true);
+      else if (s == "-debug-qt-widgets") debug (DEBUG_FLAG_QT_WIDGETS, true);
       else if (s == "-debug-keyboard") debug (DEBUG_FLAG_KEYBOARD, true);
       else if (s == "-debug-packrat") debug (DEBUG_FLAG_PACKRAT, true);
       else if (s == "-debug-flatten") debug (DEBUG_FLAG_FLATTEN, true);
       else if (s == "-debug-correct") debug (DEBUG_FLAG_CORRECT, true);
       else if (s == "-debug-all") {
-	debug (DEBUG_FLAG_EVENTS, true);
-	debug (DEBUG_FLAG_STD, true);
-	debug (DEBUG_FLAG_IO, true);
-	debug (DEBUG_FLAG_HISTORY, true);
-	debug (DEBUG_FLAG_BENCH, true);
-	debug (DEBUG_FLAG_QT, true);
+        debug (DEBUG_FLAG_EVENTS, true);
+        debug (DEBUG_FLAG_STD, true);
+        debug (DEBUG_FLAG_IO, true);
+        debug (DEBUG_FLAG_HISTORY, true);
+        debug (DEBUG_FLAG_BENCH, true);
+        debug (DEBUG_FLAG_QT, true);
+        debug (DEBUG_FLAG_QT_WIDGETS, true);
       }
       else if (s == "-disable-error-recovery") disable_error_recovery= true;
       else if ((s == "-fn") || (s == "-font")) {
