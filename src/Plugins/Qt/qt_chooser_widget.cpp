@@ -243,7 +243,7 @@ qt_chooser_widget_rep::perform_dialog () {
     QStringList filters;
     if (nameFilter != "")
       filters << nameFilter;
-    filters << to_qstring (translate ("All files (*.*)"));
+    filters << to_qstring (translate ("All files (*)"));
     dialog->setNameFilters (filters);
   }
 #endif
@@ -252,7 +252,7 @@ qt_chooser_widget_rep::perform_dialog () {
   QSize   sz = dialog->sizeHint();
   QPoint pos = to_qpoint (position);
   QRect r;
-  r.setSize (sz);
+
   r.moveCenter (pos);
   dialog->setGeometry (r);
   
@@ -273,7 +273,7 @@ qt_chooser_widget_rep::perform_dialog () {
 #if !defined(Q_WS_MAC) && !defined(Q_WS_WIN)
         file = "(list " * file * imgdialog->getParamsAsString () * ")";
 #else
-        QPixmap pic (fileNames[0]);
+        QPixmap pic (fileNames.first());
         string params;
           // HACK: which value should we choose here?
         int ww = (get_current_editor()->get_page_width () / PIXEL) / 3;
