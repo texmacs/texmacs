@@ -161,6 +161,20 @@ get_right_protrusion_table (int mode) {
 
 SI
 font_rep::get_left_protrusion (string s, int mode) {
+  /*
+  static bool done= false;
+  if (!done) {
+    cout << "Font= " << res_name << "\n";
+    glyph o= get_glyph ("o");
+    for (int c=33; c<127; c++) {
+      string s ((char) c);
+      glyph g= get_glyph (s);
+      cout << s << " -> " << left_protrusion (g, o) << "\n";
+    }
+    done= true;
+  }
+  */
+
   if (mode == 0 || N(s) == 0) return 0;
   int pos= 0;
   tm_char_forwards (s, pos);

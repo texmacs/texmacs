@@ -91,6 +91,16 @@ count_column_pixels (glyph g, int x) {
   return count;
 }
 
+int
+search_protrusion (glyph g, int x, int dx, int threshold) {
+  int s= 0;
+  while (x >= 0 && x<g->width && s < threshold) {
+    s += count_column_pixels (g, x);
+    x += dx;
+  }
+  return x;
+}
+
 /******************************************************************************
 * Public routines
 ******************************************************************************/
@@ -102,6 +112,23 @@ pixel_count (glyph g) {
     for (int x=0; x<g->width; x++)
       r += g->get_1 (x, y);
   return r;
+}
+
+double
+left_protrusion (glyph g, glyph o) {
+  // propose a protrusion for the glyph g,
+  // while providing the glyph of the character 'o' as a 'reference'
+  if (g->lwidth <= 0 || o->lwidth <= 0) return 0.0;
+  if (g->width <= 0 || o->width <= 0) return 0.0;
+  int threshold= max (pixel_count (o) / 8, 1);
+  int xg= search_protrusion (g, 0, 1, threshold);
+  if (xg >= g->width) cout << "** too small\n";
+  int xo= search_protrusion (o, 0, 1, threshold);
+  //int dx= (xg + g->xoff) - (xo + o->xoff);
+  //int dx= xg - xo;
+  //return ((double) dx) / ((double) g->lwidth);
+  return (((double) xg) / ((double) g->width)) -
+         (((double) xo) / ((double) o->width));
 }
 
 double

@@ -86,6 +86,8 @@ glyph hor_extend (glyph gl, int pos, int by);
 glyph ver_extend (glyph gl, int pos, int by);
 
 int pixel_count (glyph g);
+double left_protrusion (glyph g, glyph o);
+double right_protrusion (glyph g, glyph o);
 double fill_rate (glyph g);
 int vertical_stroke_width (glyph g);
 int horizontal_stroke_width (glyph g);
