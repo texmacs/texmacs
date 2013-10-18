@@ -20,6 +20,11 @@ verb_language_rep::verb_language_rep (string name):
   hl_lan= packrat_abbreviation (res_name, "Main");
 }
 
+inline static bool
+is_sep_char (char c) {
+  return c == '-' || c == '\\' || c == '/' || c == ',' || c == '?';
+}
+
 text_property
 verb_language_rep::advance (tree t, int& pos) {
   string s= t->label;
@@ -28,17 +33,18 @@ verb_language_rep::advance (tree t, int& pos) {
     pos++;
     return &tp_space_rep;
   }
-  if (s[pos]=='-') {
+  if (is_sep_char (s[pos])) {
     pos++;
+    while (pos<N(s) && is_sep_char (s[pos]) && s[pos] != '-') pos++;
     return &tp_hyph_rep;
   }
 
   array<int> cols= obtain_highlight (t, hl_lan);
   if (N(cols) == 0)
-    while ((pos<N(s)) && (s[pos]!=' ') && (s[pos]!='-')) pos++;
-  else if ((pos<N(s)) && (s[pos]!=' ') && (s[pos]!='-')) {
+    while ((pos<N(s)) && (s[pos]!=' ') && !is_sep_char (s[pos])) pos++;
+  else if ((pos<N(s)) && (s[pos]!=' ') && !is_sep_char (s[pos])) {
     pos++;
-    while ((pos<N(s)) && (s[pos]!=' ') && (s[pos]!='-') &&
+    while ((pos<N(s)) && (s[pos]!=' ') && !is_sep_char (s[pos]) &&
 	   cols[pos] == cols[pos-1]) pos++;
   }
   return &tp_normal_rep;
