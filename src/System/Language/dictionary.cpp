@@ -46,7 +46,7 @@ dictionary_rep::load (url u) {
     {
       string l= t[i][0]->label; if (is_quoted (l)) l= scm_unquote (l);
       string r= t[i][1]->label; if (is_quoted (r)) r= scm_unquote (r);
-      if (to == "chinese" ||  to == "japanese"  ||
+      if (to == "chinese" ||  to == "japanese"  || to == "german" ||
           to == "korean"  ||  to == "taiwanese" ||
           to == "russian" ||  to == "ukrainian" || to == "bulgarian")
         r= utf8_to_cork (r);
