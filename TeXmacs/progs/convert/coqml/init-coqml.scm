@@ -66,3 +66,9 @@
 (lazy-define (convert coqml coqtopmlout) serialize-coqtopml)
 (lazy-define (convert coqml scmcoqtopml) stree->coqtopml)
 (lazy-define (convert coqml coqtopmlscm) coqtopml->stree)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Tests
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(lazy-define (convert coqml coqtopmltest) test-coqtopml)
