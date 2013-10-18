@@ -25,7 +25,7 @@
 (lazy-define (convert coqml coqmltm)     parse-coqml-document)
 (lazy-define (convert coqml coqmltm)     coqml->texmacs)
 (lazy-define (convert coqml tmcoqml)     texmacs->coqml)
-(lazy-define (convert coqml coqmlout)    serialize-coqml)
+(lazy-define (convert coqml coqtopmlout) serialize-coqml)
 
 (converter coqml-document coqml-stree
   (:function parse-coqml-document))
@@ -58,3 +58,11 @@
 
 (converter vernac-document texmacs-tree
   (:function vernac-document->texmacs))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; CoqTopML
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(lazy-define (convert coqml coqtopmlout) serialize-coqtopml)
+(lazy-define (convert coqml scmcoqtopml) stree->coqtopml)
+(lazy-define (convert coqml coqtopmlscm) coqtopml->stree)

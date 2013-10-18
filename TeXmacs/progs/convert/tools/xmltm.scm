@@ -36,6 +36,7 @@
 ;;
 ;;Non-Normalized namespace prefixes are:
 ;;   v  --  Vernacular CoqML.
+;;   c  --  Coqtop XML format (CoqTopML).
 ;;
 ;; Since the parser is designed to be used for conversion to STM data format,
 ;; no provisions are made to preserve the namespace prefixes used in the
@@ -45,6 +46,7 @@
 (define xmlns-uri-xhtml "http://www.w3.org/1999/xhtml")
 (define xmlns-uri-mathml "http://www.w3.org/1998/Math/MathML")
 (define xmlns-uri-coqml "CoqML")
+(define xmlns-uri-coqtopml "CoqTopML")
 
 ;;; Building the namespace bindings environment
 
@@ -73,6 +75,9 @@
 	  (cute proc <> attrs)))))
 
 ;;; Converting nodes
+
+(tm-define (coqtopml-parse s)
+  (xmltm-parse xmlns-uri-coqtopml s))
 
 (tm-define (coqmltm-parse s)
   (xmltm-parse xmlns-uri-coqml s))
@@ -119,6 +124,7 @@
        (cond ((== ns-uri xmlns-uri-xhtml) "h:")
 	     ((== ns-uri xmlns-uri-mathml) "m:")
 	     ((== ns-uri xmlns-uri-coqml) "v:")
+	     ((== ns-uri xmlns-uri-coqtopml) "c:")
 	     ((== ns-uri xmlns-uri-xml) "x:")
 	     ((string-null? ns-uri) "")
 	     (else (string-append ns-uri ":")))
@@ -545,6 +551,39 @@
       (stm-serial l stm-document? htmltm-make-line htmltm-make-concat)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Producing coqtopml handlers for dispatch table
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define coqtopml-pre    htmltm-space-preformatted)
+(define coqtopml-elem   htmltm-space-element)
+
+(define (coqtop-handler/inline env a c proc)
+  (proc env a c))
+
+(define (coqtop-handler/bloc env a c proc)
+  `((document ,@(proc env a c))))
+
+(tm-define (coqtop-handler model method)
+  ;;  model:  content model category
+  ;;          :element -- text nodes are ignored
+  ;;          :pre -- drop newlines at ends and switch to preserved spaces
+  ;;            mode.
+  ;;  method: <procedure> to convert the element content to a node-list.
+  (if (not (in? model '(:pre :elem)))
+      (error "Bad model: " model))
+  (if (not (procedure? method))
+      (error "Bad method: " method))
+  (let ((clean (cond ((eq? model :pre)  coqtopml-pre)
+                     ((eq? model :elem) coqtopml-elem))))
+    (let ((proc method))
+      (lambda (env a c)
+        (coqtop-handler/inline env a (clean env c) proc)))))
+
+(tm-define (coqtop-serial p? l)
+  (if p? (stm-serial l stm-document?)
+      (stm-serial l stm-document? htmltm-make-line htmltm-make-concat)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Generic XML dispatcher
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -552,6 +591,7 @@
   (cond ((== ns-id "h") (logic-ref htmltm-methods% ncname))
 	((== ns-id "m") (logic-ref mathtm-methods% ncname))
 	((== ns-id "v") (logic-ref coqtm-methods% ncname))
+	((== ns-id "c") (logic-ref coqtop-methods% ncname))
 	(else #f)))
 
 (tm-define (sxml-dispatch x-string x-pass env t)
