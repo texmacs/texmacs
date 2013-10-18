@@ -118,7 +118,7 @@
        ;; FIXME: user namespace prefix list should be extensible
        (cond ((== ns-uri xmlns-uri-xhtml) "h:")
 	     ((== ns-uri xmlns-uri-mathml) "m:")
-	     ((== ns-uri xmlns-uri-xml) "v:")
+	     ((== ns-uri xmlns-uri-coqml) "v:")
 	     ((== ns-uri xmlns-uri-xml) "x:")
 	     ((string-null? ns-uri) "")
 	     (else (string-append ns-uri ":")))
@@ -551,7 +551,7 @@
 (define (sxml-meta-logic-ref ns-id ncname)
   (cond ((== ns-id "h") (logic-ref htmltm-methods% ncname))
 	((== ns-id "m") (logic-ref mathtm-methods% ncname))
-	((== ns-id "CoqML") (logic-ref coqtm-methods% ncname))
+	((== ns-id "v") (logic-ref coqtm-methods% ncname))
 	(else #f)))
 
 (tm-define (sxml-dispatch x-string x-pass env t)

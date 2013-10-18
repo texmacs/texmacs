@@ -16,6 +16,11 @@
 	(convert tools sxml)
 	(convert tools xmltm)))
 
+(define map map-in-order)
+
+(define (coqtm-error message)
+  `((with "color" "red" ,message)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Accessors
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -26,13 +31,6 @@
             (map (lambda (x)
                    (if (!= (car x) att) '()
                      (coqtm-as-serial (environment) (cadr x)))) att-l))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Low level
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (coqtm-string env s)
-  (xmltm-text s))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tactics expressions
@@ -127,8 +125,7 @@
   (coqtm-serial env (coqtm-args env l)))
 
 (define (coqtm env t)
-  (sxml-dispatch (lambda (env t) (list (coqtm-string env t)))
-		 coqtm-pass env t))
+  (sxml-dispatch (lambda (env t) (list t)) coqtm-pass env t))
 
 (tm-define coqtm-as-serial
     (case-lambda
