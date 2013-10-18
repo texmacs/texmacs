@@ -1411,7 +1411,7 @@
 ("reduction bottom margin" "reducción del margen inferior")
 ("reduction right margin" "reducción del margen derecho")
 ("reduction top margin" "reducción del margen superior")
-("right page margin" "margen de la página a la derecha)
+("right page margin" "margen de la página a la derecha")
 ("roman" "roman")
 ("use calligraphic font" "utilizar tipo caligráfico")
 ("more information about GNU TeXmacs can be found in the Help" "Puedes encontrar más información sobre GNU TeXmacs en la ayuda")
