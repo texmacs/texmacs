@@ -21,11 +21,11 @@
   (:name "CoqMl")
   (:suffix "coqml"))
 
-(lazy-define (convert coqml coqmltm) parse-coqml-snippet)
-(lazy-define (convert coqml coqmltm) parse-coqml-document)
-(lazy-define (convert coqml coqmltm) coqml->texmacs)
-(lazy-define (convert coqml coqmlout) serialize-coqml)
-(lazy-define (convert coqml tmcoqml) texmacs->coqml)
+(lazy-define (convert coqml coqmltm)     parse-coqml-snippet)
+(lazy-define (convert coqml coqmltm)     parse-coqml-document)
+(lazy-define (convert coqml coqmltm)     coqml->texmacs)
+(lazy-define (convert coqml tmcoqml)     texmacs->coqml)
+(lazy-define (convert coqml coqmlout)    serialize-coqml)
 
 (converter coqml-document coqml-stree
   (:function parse-coqml-document))
