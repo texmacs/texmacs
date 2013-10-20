@@ -163,6 +163,23 @@ SI     font_rep::get_left_correction  (string s) { (void) s; return 0; }
 SI     font_rep::get_right_correction (string s) { (void) s; return 0; }
 
 void
+font_rep::get_extents (string s, metric& ex, bool ligf) {
+  if (ligf) get_extents (s, ex);
+  else get_extents (s, ex, 0);
+}
+
+void
+font_rep::get_extents (string s, metric& ex, SI xk) {
+  get_extents (s, ex);
+  STACK_NEW_ARRAY (xpos, SI, N(s)+1);
+  get_xpositions (s, xpos, xk);
+  SI d= xpos[N(s)] - ex->x2;
+  ex->x2 += d;
+  ex->x4 += d - xk;
+  STACK_DELETE_ARRAY (xpos);
+}
+
+void
 font_rep::get_xpositions (string s, SI* xpos) {
   int i= 0;
   SI  x= 0;

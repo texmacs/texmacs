@@ -883,8 +883,8 @@ smart_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI xk) {
     if (nr >= 0) {
       fn[nr]->draw_fixed (ren, r, x, y, xk);
       if (i < n) {
-	fn[nr]->get_extents (r, ey);
-	x += ey->x2 + 2 * tm_string_length (r) * xk;
+	fn[nr]->get_extents (r, ey, xk);
+	x += ey->x2;
       }
     }
   }

@@ -70,6 +70,8 @@ struct font_rep: rep<font> {
 
   virtual bool   supports (string c) = 0;
   virtual void   get_extents (string s, metric& ex) = 0;
+  virtual void   get_extents (string s, metric& ex, bool ligf);
+  virtual void   get_extents (string s, metric& ex, SI xk);
   virtual void   get_xpositions (string s, SI* xpos);
   virtual void   get_xpositions (string s, SI* xpos, bool ligf);
   virtual void   get_xpositions (string s, SI* xpos, SI xk);
