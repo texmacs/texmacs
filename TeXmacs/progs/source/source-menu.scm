@@ -113,8 +113,8 @@
   ("Activate" (make-mod-active 'active*))
   ("Activate once" (make-mod-active 'active))
   (when (not (in-source?))
-	("Disactivate" (make-mod-active 'inactive*))
-	("Disactivate once" (make-mod-active 'inactive))))
+	("Deactivate" (make-mod-active 'inactive*))
+	("Deactivate once" (make-mod-active 'inactive))))
 
 (menu-bind source-layout-menu
   ("Compact" (make-style-with "src-compact" "all"))

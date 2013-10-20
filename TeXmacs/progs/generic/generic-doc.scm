@@ -326,12 +326,12 @@
       "In order to edit the hidden arguments, you should use "
       ($menu "Focus" "Show hidden") " or push the "
       ($tmdoc-icon "tm_show_hidden.xpm") " icon on the focus toolbar. "
-      "Disactivated tags can be reactivated by pressing "
+      "Deactivated tags can be reactivated by pressing "
       ($shortcut (kbd-return)) ".")
     ($para
       "Non internal hidden arguments which contain string values "
       "can also be edited directly in the text fields on the focus toolbar; "
-      "no need to disactivate the " ($markup lab) " tag in this case.")))
+      "no need to deactivate the " ($markup lab) " tag in this case.")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Change the geometry

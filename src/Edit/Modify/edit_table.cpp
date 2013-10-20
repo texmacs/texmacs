@@ -1112,7 +1112,7 @@ edit_table_rep::destroy_table () {
 }
 
 void
-edit_table_rep::table_disactivate () {
+edit_table_rep::table_deactivate () {
   path fp= search_format ();
   if (is_nil (fp)) return;
   tree st= subtree (et, fp);

@@ -16,7 +16,7 @@
     </tm-fragment>
 
     In this example, we used the keyboard shortcut <shortcut|(make-mod-active
-    'inactive*)> in order to disactivate the source code inside an active
+    'inactive*)> in order to deactivate the source code inside an active
     outer document.
   </explain>
 

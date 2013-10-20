@@ -1067,9 +1067,9 @@ tmg_make_subtable () {
 }
 
 tmscm
-tmg_table_disactivate () {
+tmg_table_deactivate () {
   // TMSCM_DEFER_INTS;
-  get_current_editor()->table_disactivate ();
+  get_current_editor()->table_deactivate ();
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;
@@ -2937,7 +2937,7 @@ initialize_glue_editor () {
   tmscm_install_procedure ("make-neg",  tmg_make_neg, 0, 0, 0);
   tmscm_install_procedure ("make-tree",  tmg_make_tree, 0, 0, 0);
   tmscm_install_procedure ("make-subtable",  tmg_make_subtable, 0, 0, 0);
-  tmscm_install_procedure ("table-disactivate",  tmg_table_disactivate, 0, 0, 0);
+  tmscm_install_procedure ("table-deactivate",  tmg_table_deactivate, 0, 0, 0);
   tmscm_install_procedure ("table-extract-format",  tmg_table_extract_format, 0, 0, 0);
   tmscm_install_procedure ("table-insert-row",  tmg_table_insert_row, 1, 0, 0);
   tmscm_install_procedure ("table-insert-column",  tmg_table_insert_column, 1, 0, 0);

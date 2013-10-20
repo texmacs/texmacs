@@ -67,7 +67,7 @@
   ("table L R" (table-interactive-set "table-max-rows"))
   ("table L C" (table-interactive-set "table-max-cols"))
   ("table home" (table-format-center))
-  ("table *" (table-disactivate))
+  ("table *" (table-deactivate))
   ("table t" (table-test))
 
   ("table m c" (set-cell-mode "cell"))

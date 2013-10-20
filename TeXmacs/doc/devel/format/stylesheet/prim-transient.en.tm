@@ -27,21 +27,21 @@
 
     The <markup|active> and <markup|inactive> tags only activate or
     desactivate the root tag of the <src-arg|content>. Typically, a tag which
-    contains hidden information (like <markup|hlink>) can be disactivated by
+    contains hidden information (like <markup|hlink>) can be deactivated by
     positioning the cursor just behind it and pressing <key|backspace>.
-    This action just disactivates the hyperlink, but not the potentially
+    This action just deactivates the hyperlink, but not the potentially
     complicated body of the hyperlink. Therefore, the hyperlink is
     transformed into an inactive tag of the form
     <explain-macro|inactive|<with|font-shape|right|<explain-macro|hlink|body|ref>>>.
 
     The <markup|active*> and <markup|inactive*> variants are used to activate
-    or disactivate the whole <src-arg|content> (except when other
+    or deactivate the whole <src-arg|content> (except when other
     (dis-)activation tags are found inside the <src-arg|content>). The
     <markup|inactive*> is used frequently inside the present documentation in
     order to show the inactive representation of <TeXmacs> content.
     Nevertheless, it is sometimes desirable to reactivate certain subtrees
-    inside disactivated content. For instance, the following piece of
-    disactivated code (using <markup|disactive*>) contains the reactivated
+    inside deactivated content. For instance, the following piece of
+    deactivated code (using <markup|disactive*>) contains the reactivated
     subexpression <with|mode|math|<with|color|red|\<heartsuit\>\<heartsuit\>\<heartsuit\>>>
     (using <markup|active*>):
 

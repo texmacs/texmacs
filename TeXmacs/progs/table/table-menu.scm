@@ -101,7 +101,7 @@
 
 (menu-bind table-special-menu
   ("Table breaking" (toggle-table-hyphen))
-  ("Deactivate" (table-disactivate))
+  ("Deactivate" (table-deactivate))
   ("Extract format" (table-extract-format)))
 
 (menu-bind cell-mode-menu

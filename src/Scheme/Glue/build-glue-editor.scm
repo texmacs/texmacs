@@ -119,7 +119,7 @@
 
   ;; modify tables
   (make-subtable make_subtable (void))
-  (table-disactivate table_disactivate (void))
+  (table-deactivate table_deactivate (void))
   (table-extract-format table_extract_format (void))
   (table-insert-row table_insert_row (void bool))
   (table-insert-column table_insert_column (void bool))

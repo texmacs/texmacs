@@ -87,7 +87,7 @@ public:
   void   make_table (int nr_rows, int nr_cols);
   void   make_subtable (int nr_rows, int nr_cols);
   void   destroy_table ();
-  void   table_disactivate ();
+  void   table_deactivate ();
   void   table_extract_format ();
   void   table_insert_row (bool forward);
   void   table_insert_column (bool forward);

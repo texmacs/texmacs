@@ -223,7 +223,7 @@ popup_button_rep::handle_mouse (mouse_event ev) {
       }
     }
 
-    // stick or disactivate
+    // stick or deactivate
     else {
       if (inside /* && false */) {
 	status= true;

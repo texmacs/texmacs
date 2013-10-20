@@ -189,7 +189,7 @@
 				(tree-is? t 'doc-inactive)))
 	(list-or (map fun l))))))
 
-(tm-define (doc-data-disactivated?)
+(tm-define (doc-data-deactivated?)
   (with-innermost t 'doc-data
     (with l (cdr (tree->list t))
       (list-or (map (lambda (t) (== (tm-car t) 'doc-inactive)) l)))))
@@ -205,19 +205,19 @@
 	(for-each doc-data-activate-one l))
       (doc-data-go-to-active t i))))
 
-(define (doc-data-disactivate-one t)
+(define (doc-data-deactivate-one t)
   (if (in? (tm-car t) doc-data-inactive-tags)
       (tree-insert-node! t 0 '(doc-inactive))))
 
-(tm-define (doc-data-disactivate-all)
+(tm-define (doc-data-deactivate-all)
   (with-innermost t 'doc-data
     (with l (cdr (tree->list t))
-      (for-each doc-data-disactivate-one l))))
+      (for-each doc-data-deactivate-one l))))
 
 (tm-define (doc-data-activate-toggle)
-  (if (doc-data-disactivated?)
+  (if (doc-data-deactivated?)
       (doc-data-activate-all)
-      (doc-data-disactivate-all)))
+      (doc-data-deactivate-all)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Making letter headings or titles

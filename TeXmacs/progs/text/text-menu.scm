@@ -410,7 +410,7 @@
 (tm-menu (focus-title-icons)
   (assuming (doc-data-has-hidden?)
     ((check (balloon (icon "tm_show_hidden.xpm") "Show hidden") "v"
-	    (doc-data-disactivated?))
+	    (doc-data-deactivated?))
      (doc-data-activate-toggle)))
   (mini #t
     (inert ("Title" (noop))))
