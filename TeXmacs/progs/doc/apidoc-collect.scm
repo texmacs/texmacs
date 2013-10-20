@@ -189,14 +189,13 @@
    (set-message "Finished collecting symbols documentation."
                 (string-append "(" lan ")"))))
 
-(tm-define (doc-check-cache-do cont)
-  (:synopsis "Call @cont after ensuring that the doc cache is built.")
+(tm-define (doc-check-cache)
+  (:synopsis "Ensure that the documentation cache is built.")
   (let  ((t (get-preference "doc:collect-timestamp"))
          (lan (get-output-language))
          (langs (get-preference "doc:collect-languages")))
     (if (not (and (!= t "default") (list? langs) (member lan langs)))
-        (doc-collect-all lan))
-    (cont)))
+        (doc-collect-all lan))))
 
 (define (doc-retrieve* cache key lan)
   (let ((docs (string->object (persistent-get cache key)))
@@ -209,7 +208,8 @@
   
 (tm-define (doc-retrieve cache key lan)
   (:synopsis "A list with all help items for @key in language @lan in @cache")
-  (doc-check-cache-do (lambda () (doc-retrieve* cache key lan))))
+  (doc-check-cache)
+  (doc-retrieve* cache key lan))
 
 (define (doc-delete-cache*)
   (with s (url->string (doc-scm-cache))

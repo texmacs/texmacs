@@ -21,29 +21,31 @@
 
 (define (%new-read-hook sym) (noop)) ; for autocompletion
 
-;; FIXME: how do we update this list dynamically?
-(define keywords-which-define
-  '(define define-macro define define-macro provide-public
-     tm-define tm-define-macro tm-menu menu-bind tm-widget))
+(define-public macro-keywords '(define-macro tm-define-macro))
+(define-public def-keywords
+  `(define provide-public
+    tm-define tm-menu menu-bind tm-widget ,@macro-keywords))
 
 (define old-read read)
 (define (new-read port)
   "A redefined reader which stores line number and file name in symbols."
-  ;; FIXME: handle overloaded redefinitions
+  ;; FIXME: handle overloaded definitions
   (let ((form (old-read port)))
-    (if (and (pair? form) (member (car form) keywords-which-define))
-      (let* ((l (source-property form 'line))
-             (c (source-property form 'column))
-             (f (source-property form 'filename))
-             (sym  (if (pair? (cadr form)) (caadr form) (cadr form))))
-        (if (symbol? sym) ; Just in case
-          (let ((old (or (symbol-property sym 'defs) '()))
-                (new `(,f ,l ,c)))
-            (%new-read-hook sym)
-            (if (not (member new old))
-              (set-symbol-property! sym 'defs (cons new old)))))))
+    (if (and (pair? form) (member (car form) def-keywords))
+        (let* ((l (source-property form 'line))
+               (c (source-property form 'column))
+               (f (source-property form 'filename))
+               (sym  (if (pair? (cadr form)) (caadr form) (cadr form))))
+          (if (symbol? sym) ; Just in case
+              (let ((old (or (symbol-property sym 'defs) '()))
+                    (new `(,f ,l ,c)))
+                (%new-read-hook sym)
+                (if (and (member (car form) macro-keywords)
+                         (not (member sym def-keywords)))
+                    (set! def-keywords (cons sym def-keywords)))
+                (if (not (member new old))
+                    (set-symbol-property! sym 'defs (cons new old)))))))
     form))
-
 
 (define old-primitive-load primitive-load)
 (define (new-primitive-load filename)
@@ -55,8 +57,7 @@
 (if developer-mode?
     (begin
       (module-export! (current-module)
-                      '(%new-read-hook old-read
-                        new-read keywords-which-define))
+                      '(%new-read-hook old-read new-read def-keywords))
       (set! read new-read)
       (module-export! (current-module)
                       '(old-primitive-load new-primitive-load))
@@ -227,13 +228,14 @@
 
 ;(display "Booting documentation\n")
 (lazy-keyboard (doc tmdoc-kbd) in-manual?)
+(lazy-keyboard (doc apidoc-kbd) developer-mode?)
 (lazy-menu (doc tmdoc-menu) tmdoc-menu tmdoc-icons)
 (lazy-menu (doc help-menu) help-menu)
 (lazy-define (doc tmdoc) tmdoc-expand-help tmdoc-expand-help-manual
              tmdoc-expand-this tmdoc-include)
 (lazy-define (doc docgrep) docgrep-in-doc docgrep-in-src docgrep-in-texts)
 (lazy-define (doc tmdoc-search) tmdoc-search-style tmdoc-search-tag
-	     tmdoc-search-parameter tmdoc-search-scheme)
+             tmdoc-search-parameter tmdoc-search-scheme)
 (lazy-define (doc tmweb) tmweb-convert-dir tmweb-update-dir
              tmweb-convert-dir-keep-texmacs tmweb-update-dir-keep-texmacs
              tmweb-interactive-build tmweb-interactive-update)

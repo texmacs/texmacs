@@ -88,7 +88,7 @@
            (resize ("300px" "600px" "9999px") ("200px" "300px" "9999px")
              (texmacs-input ($doc-explain-macro key) '(style "tmdoc") #f))))
         (else
-          (menu-dynamic ("ERROR: unknow documentation set" (help-win-hide))))))
+          (menu-dynamic ("ERROR: unknown documentation set" (help-win-hide))))))
 
 (tm-define (help-window where key)
   (:synopsis "Display the help window for @key in the @where documentation")
@@ -145,7 +145,7 @@
 (tm-widget (symbol-doc-buttons)
  (explicit-buttons >>
    ("Insert template"
-    (insert ($doc-symbol-template (string->symbol mw-symbol) "")))))
+    (insert ($doc-symbol-template (string->symbol mw-symbol) #t "")))))
 
 (tm-widget (module-list-widget)
   (vertical
@@ -199,8 +199,7 @@
                       clw-string
                       clw-string-filter))
    (explicit-buttons
-    ("See documentation" 
-     (doc-check-cache-do (lambda () (help-window "scheme" clw-string)))))))
+    ("See documentation" (help-window "scheme" clw-string)))))
 
 (tm-define (open-symbol-browser)
   (set! clw-string "")

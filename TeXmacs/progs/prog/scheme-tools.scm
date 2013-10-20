@@ -100,9 +100,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface for contextual help
-;; FIXME: the calls to doc-check-cache-do shouldn't be necessary, because
-;; cache-retrieve already does it, but we crash if we do the collecting that
-;; late.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (word-at str pos)
@@ -122,14 +119,12 @@
 
 (tm-define (scheme-popup-help word)
   (:synopsis "Pops up the help window for the scheme symbol @word")
-  (doc-check-cache-do (lambda () (help-window "scheme" word))))
+  (help-window "scheme" word))
 
 (tm-define (scheme-inbuffer-help word)
   (:synopsis "Opens a help buffer for the scheme symbol @word")
-  (doc-check-cache-do
-   (lambda ()
-     (load-buffer (string-append "tmfs://apidoc/type=symbol&what="
-                                 (string-replace word ":" "%3A")))))) ; HACK
+  (load-buffer (string-append "tmfs://apidoc/type=symbol&what="
+                              (string-replace word ":" "%3A")))); HACK
 
 (define (url-for-symbol s props)
   (with (file line column) props
@@ -168,7 +163,7 @@
   (:argument ssym "Symbol")
   (:proposals ssym (exp-modules))
   ;(:check-mark "*" (symbol-documented?)) ; right?
-  (insert ($doc-symbol-template (string->symbol ssym) "")))
+  (insert ($doc-symbol-template (string->symbol ssym) #t "")))
 
 (kbd-map
   (:require (and developer-mode? (in-tmdoc?)))

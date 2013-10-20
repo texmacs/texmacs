@@ -26,8 +26,8 @@
 
 (kbd-map
   (:require (and developer-mode? (in-prog-scheme?)))
-  ("cmd F1" (scheme-popup-help (cursor-word)))
-  ("cmd S-F1" (scheme-inbuffer-help (cursor-word)))
+  ("A-F1" (scheme-popup-help (cursor-word)))
+  ("cmd A-F1" (scheme-inbuffer-help (cursor-word)))
   ("std F1" (scheme-go-to-definition (cursor-word)))
   ("F5" (run-scheme-file (current-buffer-url))))
 
