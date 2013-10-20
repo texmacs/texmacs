@@ -145,7 +145,7 @@
 (tm-widget (symbol-doc-buttons)
  (explicit-buttons >>
    ("Insert template"
-    (insert ($doc-symbol-template (string->symbol mw-symbol) #t "")))))
+    (insert ($doc-symbol-template (string->symbol mw-symbol) "")))))
 
 (tm-widget (module-list-widget)
   (vertical
