@@ -301,20 +301,25 @@ lazy_paragraph_rep::make_unit (string mode, SI the_width, bool break_flag) {
     double f= 2 * flexibility + 1.0;
     if (cur_w->max > cur_w->def)
       f= ((double) (the_width - cur_w->def)) /
-        ((double) (cur_w->max - cur_w->def));
+         ((double) (cur_w->max - cur_w->def));
     if (f > 1.0 && kstretch > 0.0) {
+      space backup_cur_w= cur_w;
+      double backup_f= f;
       array<box> backup= range (items, cur_start, N(items));
       adjust_kerning (the_width - cur_w->max, the_width);
       if (cur_w->max > cur_w->def)
         f= ((double) (the_width - cur_w->def)) /
-          ((double) (cur_w->max - cur_w->def));
+           ((double) (cur_w->max - cur_w->def));
       else if (cur_w->max >= the_width - PIXEL)
         f= 1.0;
-      if (f > flexibility)
+      if (f < 0 || f > flexibility) {
+        cur_w= backup_cur_w;
+        f= backup_f;
         for (i=0; i<N(backup); i++)
           items[cur_start + i]= backup[i];
+      }
     }
-    if (f <= flexibility) {
+    if (f >= 0 && f <= flexibility) {
       for (i=cur_start; i<N(items)-1; i++)
         items_sp <<
           (spcs[i]->def+ ((SI) (f*((double) spcs[i]->max- spcs[i]->def))));

@@ -391,6 +391,8 @@ struct smart_font_rep: font_rep {
 
   bool   supports (string c);
   void   get_extents (string s, metric& ex);
+  void   get_xpositions (string s, SI* xpos);
+  void   get_xpositions (string s, SI* xpos, SI xk);
   void   draw_fixed (renderer ren, string s, SI x, SI y);
   void   draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
   font   magnify (double zoom);
@@ -811,6 +813,44 @@ smart_font_rep::get_extents (string s, metric& ex) {
         ex->x2 += ey->x2;
       }
     }
+  }
+}
+
+void
+smart_font_rep::get_xpositions (string s, SI* xpos) {
+  SI x= 0;
+  int i=0, n= N(s);
+  while (i < n) {
+    int nr;
+    string r= s;
+    int start= i;
+    advance (s, i, r, nr);
+    if (nr >= 0) {
+      fn[nr]->get_xpositions (r, xpos+start);
+      for (int j=0; j<=N(r); j++) xpos[start+j] += x;
+      x= xpos[i];
+    }
+    else
+      for (int j=0; j<=N(r); j++) xpos[start+j]= x;
+  }
+}
+
+void
+smart_font_rep::get_xpositions (string s, SI* xpos, SI xk) {
+  SI x= 0;
+  int i=0, n= N(s);
+  while (i < n) {
+    int nr;
+    string r= s;
+    int start= i;
+    advance (s, i, r, nr);
+    if (nr >= 0) {
+      fn[nr]->get_xpositions (r, xpos+start, xk);
+      for (int j=0; j<=N(r); j++) xpos[start+j] += x;
+      x= xpos[i];
+    }
+    else
+      for (int j=0; j<=N(r); j++) xpos[start+j]= x;
   }
 }
 
