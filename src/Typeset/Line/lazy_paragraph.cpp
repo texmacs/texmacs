@@ -65,14 +65,15 @@ lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
   else kstretch= 0.0;
 
   string ps= as_string (env->read (PAR_KERNING_MARGIN));
-  if (ps == "none") protrusion= 0;
-  else if (ps == "western") protrusion= WESTERN_PROTRUSION;
-  else if (ps == "quanjiao") protrusion= QUANJIAO;
-  else if (ps == "banjiao") protrusion= BANJIAO;
-  else if (ps == "hangmobanjiao") protrusion= HANGMOBANJIAO;
-  else if (ps == "kaiming") protrusion= KAIMING;
-  else if (ps == "cjk") protrusion= KAIMING;
+  if (ps == "true") protrusion= WESTERN_PROTRUSION;
   else protrusion= 0;
+
+  string sm= as_string (env->read (PAR_SPACING));
+  if (sm == "plain");
+  else if (sm == "quanjiao") protrusion += QUANJIAO;
+  else if (sm == "banjiao") protrusion += BANJIAO;
+  else if (sm == "hangmobanjiao") protrusion += HANGMOBANJIAO;
+  else if (sm == "kaiming") protrusion += KAIMING;
 
   tree dec   = env->read (ATOM_DECORATIONS);
   if (N(dec) > 0) decs << tuple ("0", dec);
