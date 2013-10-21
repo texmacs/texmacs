@@ -24,12 +24,7 @@ tm_winsparkle::~tm_winsparkle ()
 
 bool tm_winsparkle::setAppcast (url _appcast_url)
 {
-  if (running) {
-    if (DEBUG_STD)
-      cout << "Updater] WARNING: unable to change appcast for running instance.\n";
-    return false;
-  }
-
+  if (running) return false;
   c_string s (as_string (_appcast_url));  // FIXME! This has to be UTF8!
   win_sparkle_set_appcast_url (s);
   return true;
@@ -37,19 +32,19 @@ bool tm_winsparkle::setAppcast (url _appcast_url)
 
 bool tm_winsparkle::setAutomaticChecks (bool enable)
 {
-  if (running)
-    return false;
-
-    // TODO...
+  if (running) return false;
+#if (WIN_SPARKLE_VERSION_MINOR >= 4)
+  win_sparkle_set_automatic_check_for_updates (enable ? 1 : 0);
+#endif
   return true;
 }
 
 bool tm_winsparkle::setCheckInterval (int hours)
 {
-  if (running)
-    return false;
-  
-    // TODO...
+  if (running) return false;
+#if (WIN_SPARKLE_VERSION_MINOR >= 4)
+  win_sparkle_set_update_check_interval (hours*3600);
+#endif
   return true;
 }
 
@@ -60,16 +55,19 @@ time_t tm_winsparkle::lastCheck() const
 
 bool tm_winsparkle::checkInBackground ()
 {
-  win_sparkle_init();
-    // WinSparkle docs state that configuration must be finished before the
-    // first call to win_sparkle_init(), so we block any further attempts to
-    // change it.
+  // WinSparkle docs state that configuration must be finished before the first
+  // call to win_sparkle_init(), so we block any further attempts to change it.
+  if (running) return false;
   running = true;
+  win_sparkle_init();
   return true;
 }
 
 bool tm_winsparkle::checkInForeground ()
 {
+  if (running) return false;
+  running = true;
+  win_sparkle_init();
   win_sparkle_check_update_with_ui();
   return true;
 }

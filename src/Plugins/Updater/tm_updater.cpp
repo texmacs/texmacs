@@ -37,16 +37,7 @@ tm_updater* tm_updater::instance ()
     #else
       _instance = new tm_updater ();
     #endif
-    
-    int interval = as_int (get_preference ("updater:interval", "1"));
-    interval = (interval < 1 || interval > 24*31) ? 1 : interval;
-    _instance->setCheckInterval (interval);
-
-    bool auto_checks = as_bool (get_preference ("updater:automatic-checks", "#t"));
-    _instance->setAutomaticChecks (auto_checks);
- 
-    _instance->setAppcast (appcast);
-    }
+  }
 
   ASSERT (_instance != NULL, "Unable to instantiate updater.");
   return _instance;
@@ -66,6 +57,12 @@ bool updater_supported ()
     return false;
 }
 
+bool updater_is_running ()
+{
+  tm_updater* updater = tm_updater::instance ();
+  return updater && updater->isRunning();
+}
+
 bool updater_check_background ()
 {
   tm_updater* updater = tm_updater::instance ();
@@ -76,6 +73,12 @@ bool updater_check_foreground ()
 {
   tm_updater* updater = tm_updater::instance ();
   return updater && updater->checkInForeground();
+}
+
+bool updater_set_appcast (url appcast)
+{
+  tm_updater* updater = tm_updater::instance ();
+  return updater && updater->setAppcast (appcast);
 }
 
 bool updater_set_interval (int hours)

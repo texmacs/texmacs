@@ -13,6 +13,10 @@
 
 (texmacs-module (utils misc updater))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (tm-define (string->bool s)
   (and (string? s)
        (or (== s "#t") (== s "true") (== s "on"))))
@@ -20,8 +24,21 @@
 (tm-define (bool->string b)
   (if b "#t" "#f"))
 
+(tm-define (updater-initialize)
+   (let ((appcast  (get-preference "updater:appcast"))
+         (interval (string->number (get-preference "updater:interval")))
+         (auto?    (string->bool (get-preference "updater:auto"))))
+     (updater-set-appcast appcast)
+     (updater-set-interval interval)
+     (updater-set-automatic auto?)
+     (if auto? (updater-check-background))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Preference management
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define (updater-notify-pref pref val)
-  (cond ((== pref "updater:appcast") (noop))
+  (cond ((== pref "updater:appcast") (updater-set-appcast val))
         ((== pref "updater:public-dsa-key") (noop))
         ((== pref "updater:interval")
          (with n (string->number val)
