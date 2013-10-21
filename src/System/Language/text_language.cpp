@@ -272,23 +272,28 @@ oriental_language_rep::advance (tree t, int& pos) {
   int start= pos;
   tm_char_forwards (s, pos);
   string c= s (start, pos);
-  if (punct->contains (c))
-    return &tp_cjk_period_rep;
   int next= pos;
   tm_char_forwards (s, next);
   string x= s (pos, next);
-  if (punct->contains (x))
-    return &tp_cjk_no_break_rep;
-  return &tp_cjk_normal_rep;
+
+  if (punct->contains (c)) {
+    if (punct->contains (x) || pos == N(s))
+      return &tp_cjk_no_break_period_rep;
+    else return &tp_cjk_period_rep;
+  }
+  else {
+    if (punct->contains (x) || pos == N(s))
+      return &tp_cjk_no_break_rep;
+    else return &tp_cjk_normal_rep;
+  }
 }
 
 array<int>
 oriental_language_rep::get_hyphens (string s) {
-  int i, n= N(s);
-  array<int> T (n-1);
-  for (i=0; i<n-1; i++)
-    T[i]= HYPH_INVALID;
-  return T;
+  int i;
+  array<int> penalty (N(s)+1);
+  for (i=0; i<N(penalty); i++) penalty[i]= HYPH_INVALID;
+  return penalty;
 }
 
 void

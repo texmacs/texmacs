@@ -94,6 +94,7 @@ lazy_paragraph_rep::operator tree () {
 void
 lazy_paragraph_rep::line_print (line_item item) {
   // cout << "Printing: " << item << "\n";
+  // cout << "Printing: " << item << ", " << item->penalty << "\n";
   if (item->type == CONTROL_ITEM) {
     if (is_func (item->t, HTAB))
       tabs << tab (N(items), item->t);
