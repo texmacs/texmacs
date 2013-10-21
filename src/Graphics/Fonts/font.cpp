@@ -28,7 +28,8 @@ font_rep::font_rep (string s):
   spc       (0),
   extra     (0),
   last_zoom (0.0),
-  zoomed_fn (NULL)
+  zoomed_fn (NULL),
+  protrusion_maps (-1)
 {
 }
 
@@ -43,7 +44,8 @@ font_rep::font_rep (string s, font fn):
   extra        (fn->extra),
   sep          (fn->sep),
   last_zoom    (0.0),
-  zoomed_fn    (NULL)
+  zoomed_fn    (NULL),
+  protrusion_maps (-1)
 {
   copy_math_pars (fn);
 }

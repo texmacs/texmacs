@@ -66,8 +66,12 @@ lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
 
   string ps= as_string (env->read (PAR_KERNING_MARGIN));
   if (ps == "none") protrusion= 0;
-  else if (ps == "cjk") protrusion= CJK_PROTRUSION;
   else if (ps == "western") protrusion= WESTERN_PROTRUSION;
+  else if (ps == "quanjiao") protrusion= QUANJIAO;
+  else if (ps == "banjiao") protrusion= BANJIAO;
+  else if (ps == "hangmobanjiao") protrusion= HANGMOBANJIAO;
+  else if (ps == "kaiming") protrusion= KAIMING;
+  else if (ps == "cjk") protrusion= KAIMING;
   else protrusion= 0;
 
   tree dec   = env->read (ATOM_DECORATIONS);
@@ -187,7 +191,8 @@ lazy_paragraph_rep::protrude (bool lf, bool rf) {
     int mode= 0;
     if (lf && i == first) mode += START_OF_LINE;
     if (rf && i == last ) mode += END_OF_LINE;
-    if (mode != 0 || protrusion <= INNER_PROTRUSION) mode += protrusion;
+    if (mode != 0 || (protrusion & CJK_PROTRUSION_MASK) != 0)
+      mode += protrusion;
     if (mode != 0) {
       box pro= items[i]->adjust_kerning (mode, 0.0);
       cur_w += pro->w() - items[i]->w();

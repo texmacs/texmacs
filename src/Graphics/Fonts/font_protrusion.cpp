@@ -68,6 +68,58 @@ add_upright_right_protrusion (hashmap<string,double>& t) {
   t ("y")= 0.05;
 }
 
+void
+add_accented_protrusion (hashmap<string,double>& t, string c, string s) {
+  if (t->contains (c)) {
+    int pos= 0;
+    while (pos < N(s)) {
+      int start= pos;
+      tm_char_forwards (s, pos);
+      t (s (start, pos))= t[c];
+    }
+  }
+}
+
+void
+add_accented_protrusion (hashmap<string,double>& t) {
+  add_accented_protrusion (t, "A", "¿¡¬√ƒ≈\200\201");
+  add_accented_protrusion (t, "C", "«\202\203");
+  add_accented_protrusion (t, "E", "»… À\205\206");
+  add_accented_protrusion (t, "G", "\207");
+  add_accented_protrusion (t, "I", "ÃÕŒœ\235");
+  add_accented_protrusion (t, "L", "\210\212");
+  add_accented_protrusion (t, "N", "—\213\214");
+  add_accented_protrusion (t, "O", "“”‘’÷\216");
+  add_accented_protrusion (t, "R", "\217\220");
+  add_accented_protrusion (t, "S", "\221\222\223");
+  add_accented_protrusion (t, "T", "\224\225");
+  add_accented_protrusion (t, "U", "Ÿ⁄€‹\226\227");
+  add_accented_protrusion (t, "Y", "›\230");
+  add_accented_protrusion (t, "Z", "\231\232\233");
+  add_accented_protrusion (t, "a", "‡·‚„‰Â\240\241");
+  add_accented_protrusion (t, "c", "Á\242\243");
+  add_accented_protrusion (t, "e", "ËÈÍÎ\245\246");
+  add_accented_protrusion (t, "g", "\247");
+  add_accented_protrusion (t, "i", "ÏÌÓÔ");
+  add_accented_protrusion (t, "l", "\250\252");
+  add_accented_protrusion (t, "n", "Ò\253\254");
+  add_accented_protrusion (t, "o", "ÚÛÙıˆ\256");
+  add_accented_protrusion (t, "r", "\257\260");
+  add_accented_protrusion (t, "s", "\261\262\263");
+  add_accented_protrusion (t, "t", "\265");
+  add_accented_protrusion (t, "u", "˘˙˚¸\266\267");
+  add_accented_protrusion (t, "y", "˝\270");
+  add_accented_protrusion (t, "z", "\271\272\273");
+}
+
+void
+add_western (hashmap<string,double>& t, string font_name, bool right) {
+  (void) font_name;
+  if (right) add_upright_right_protrusion (t);
+  else add_upright_left_protrusion (t);
+  add_accented_protrusion (t);
+}
+
 /******************************************************************************
 * Protrusion for CJK fonts
 ******************************************************************************/
@@ -105,55 +157,82 @@ add_cjk_right_protrusion (hashmap<string,double>& t) {
   t ("<#FF1F>")= 0.5;
 }
 
-/******************************************************************************
-* Getting the protrusion tables
-******************************************************************************/
-
-static hashmap<string,double> no_protrusion (0.0);
-static hashmap<string,double> cjk_left (0.0);
-static hashmap<string,double> cjk_right (0.0);
-static hashmap<string,double> cjk_inner_left (0.0);
-static hashmap<string,double> cjk_inner_right (0.0);
-static hashmap<string,double> western_left (0.0);
-static hashmap<string,double> western_right (0.0);
-
-hashmap<string,double>
-get_left_protrusion_table (int mode) {
-  switch (mode & (PROTRUSION_MASK + START_OF_LINE)) {
-  case CJK_PROTRUSION:
-    if (N(cjk_inner_left) == 0) add_cjk_left_protrusion (cjk_inner_left);
-    return cjk_inner_left;
-  case CJK_PROTRUSION + START_OF_LINE:
-    if (N(cjk_left) == 0) add_cjk_left_protrusion (cjk_left);
-    return cjk_left;
-  case WESTERN_PROTRUSION:
-  case WESTERN_PROTRUSION + START_OF_LINE:
-    if (N(western_left) == 0) add_upright_left_protrusion (western_left);
-    return western_left;
-  default:
-    return no_protrusion;
+void
+add_quanjiao (hashmap<string,double>& t, int mode, bool right) {
+  // FIXME: successions of several punctuation symbols
+  if (right) {
+    if ((mode & END_OF_LINE) != 0)
+      add_cjk_right_protrusion (t);
+  }
+  else {
+    if ((mode & START_OF_LINE) != 0)
+      add_cjk_left_protrusion (t);
   }
 }
 
-hashmap<string,double>
-get_right_protrusion_table (int mode) {
-  switch (mode & (PROTRUSION_MASK + END_OF_LINE)) {
-  case CJK_PROTRUSION:
-    if (N(cjk_inner_right) == 0) {
-      add_cjk_right_protrusion (cjk_inner_right);
-      cjk_inner_right->reset ("<#3002>");
-    }
-    return cjk_inner_right;
-  case CJK_PROTRUSION + END_OF_LINE:
-    if (N(cjk_right) == 0) add_cjk_right_protrusion (cjk_right);
-    return cjk_right;
-  case WESTERN_PROTRUSION:
-  case WESTERN_PROTRUSION + END_OF_LINE:
-    if (N(western_right) == 0) add_upright_right_protrusion (western_right);
-    return western_right;
-  default:
-    return no_protrusion;
+void
+add_banjiao (hashmap<string,double>& t, int mode, bool right) {
+  if (right) add_cjk_right_protrusion (t);
+  else add_cjk_left_protrusion (t);
+}
+
+void
+add_hangmobanjiao (hashmap<string,double>& t, int mode, bool right) {
+  if (right) {
+    if ((mode & END_OF_LINE) != 0)
+      add_cjk_right_protrusion (t);
   }
+  else {
+    if ((mode & START_OF_LINE) != 0)
+      add_cjk_left_protrusion (t);
+  }
+}
+
+void
+add_kaiming (hashmap<string,double>& t, int mode, bool right) {
+  if (right) {
+    add_cjk_right_protrusion (t);
+    if ((mode & END_OF_LINE) == 0) {
+      t->reset ("<#3002>");
+    }
+  }
+  else add_cjk_left_protrusion (t);
+}
+
+/******************************************************************************
+* Setting up the global protrusion tables
+******************************************************************************/
+
+static hashmap<string,int> protrusion_index_table (-1);
+static array<hashmap<string,double> > protrusion_tables;
+
+int
+init_protrusion_table (string font_name, int mode, bool right) {
+  int index= (mode<<1) + (right?1:0);
+  string key= font_name * ":" * as_string (index);
+  if (!protrusion_index_table->contains (key)) {
+    int im= N(protrusion_tables);
+    protrusion_index_table (key)= im;
+    hashmap<string,double> t (0.0);
+    if ((mode & WESTERN_PROTRUSION) != 0)
+      add_western (t, font_name, right);
+    switch (mode & CJK_PROTRUSION_MASK) {
+    case QUANJIAO:
+      add_quanjiao (t, mode, right);
+      break;
+    case BANJIAO:
+      add_banjiao (t, mode, right);
+      break;
+    case HANGMOBANJIAO:
+      add_hangmobanjiao (t, mode, right);
+      break;
+    case KAIMING:
+      add_kaiming (t, mode, right);
+      break;
+    }
+    protrusion_tables << t;
+  }
+  return protrusion_index_table [key];
 }
 
 /******************************************************************************
@@ -177,10 +256,16 @@ font_rep::get_left_protrusion (string s, int mode) {
   */
 
   if (mode == 0 || N(s) == 0) return 0;
+  int index= (mode<<1);
+  if (!protrusion_maps->contains (index)) {
+    int code= init_protrusion_table (res_name, mode, false);
+    protrusion_maps (index)= code;
+  }
+  hashmap<string,double> t= protrusion_tables [protrusion_maps [index]];
+
   int pos= 0;
   tm_char_forwards (s, pos);
   string first= s (0, pos);
-  hashmap<string,double> t= get_left_protrusion_table (mode);
   if (t->contains (first)) {
     metric ex;
     get_extents (first, ex);
@@ -193,10 +278,16 @@ font_rep::get_left_protrusion (string s, int mode) {
 SI
 font_rep::get_right_protrusion (string s, int mode) {
   if (mode == 0 || N(s) == 0) return 0;
+  int index= (mode<<1) + 1;
+  if (!protrusion_maps->contains (index)) {
+    int code= init_protrusion_table (res_name, mode, true);
+    protrusion_maps (index)= code;
+  }
+  hashmap<string,double> t= protrusion_tables [protrusion_maps [index]];
+
   int pos= N(s);
   tm_char_backwards (s, pos);
   string last= s (pos, N(s));
-  hashmap<string,double> t= get_right_protrusion_table (mode);
   if (t->contains (last)) {
     metric ex;
     get_extents (last, ex);

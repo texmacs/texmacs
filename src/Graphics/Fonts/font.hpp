@@ -25,11 +25,14 @@ struct glyph;
 
 #define START_OF_LINE         1
 #define END_OF_LINE           2
-#define PROTRUSION_MASK      28
-#define CJK_PROTRUSION        4
-#define INNER_PROTRUSION      4
-#define WESTERN_PROTRUSION    8
-#define TABLE_CELL           32
+#define PROTRUSION_MASK      60
+#define CJK_PROTRUSION_MASK  28
+#define QUANJIAO              4
+#define BANJIAO               8
+#define HANGMOBANJIAO        12
+#define KAIMING              16
+#define WESTERN_PROTRUSION   32
+#define TABLE_CELL           64
 
 /******************************************************************************
 * The font structure
@@ -63,6 +66,8 @@ struct font_rep: rep<font> {
 
   double   last_zoom;        // last rendered zoom
   font     zoomed_fn;        // zoomed font for last_zoom (or nil)
+
+  hashmap<int,int> protrusion_maps;  // tables for protrusion
 
   font_rep (string name);
   font_rep (string name, font fn);
