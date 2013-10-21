@@ -131,14 +131,23 @@ unicode_font_rep::unicode_font_rep (string name,
   slope= ((double) italic_spc) / ((double) display_size) - 0.05;
   if (slope<0.15) slope= 0.0;
 
+  // determine whether we are dealing with a monospaced font
+  get_extents ("m", ex);
+  SI em= ex->x2 - ex->x1;
+  get_extents ("i", ex);
+  SI ei= ex->x2 - ex->x1;
+  bool mono= (em == ei);
+
   // available standard ligatures
-  if (fnm->exists (0xfb00)) ligs += LIGATURE_FF;
-  if (fnm->exists (0xfb01)) ligs += LIGATURE_FI;
-  if (fnm->exists (0xfb02)) ligs += LIGATURE_FL;
-  if (fnm->exists (0xfb03)) ligs += LIGATURE_FFI;
-  if (fnm->exists (0xfb04)) ligs += LIGATURE_FFL;
-  if (fnm->exists (0xfb05)) ligs += LIGATURE_FT;
-  if (fnm->exists (0xfb06)) ligs += LIGATURE_ST;
+  if (!mono) {
+    if (fnm->exists (0xfb00)) ligs += LIGATURE_FF;
+    if (fnm->exists (0xfb01)) ligs += LIGATURE_FI;
+    if (fnm->exists (0xfb02)) ligs += LIGATURE_FL;
+    if (fnm->exists (0xfb03)) ligs += LIGATURE_FFI;
+    if (fnm->exists (0xfb04)) ligs += LIGATURE_FFL;
+    if (fnm->exists (0xfb05)) ligs += LIGATURE_FT;
+    if (fnm->exists (0xfb06)) ligs += LIGATURE_ST;
+  }
   if (family == "Times New Roman")
     ligs= LIGATURE_FI + LIGATURE_FL;
   if (family == "Zapfino")
