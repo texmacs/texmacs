@@ -485,7 +485,36 @@
 	  ---
 	  ("1" (init-env "par-columns" "1"))
 	  ("2" (init-env "par-columns" "2"))
-	  ("3" (init-env "par-columns" "3"))))
+	  ("3" (init-env "par-columns" "3")))
+      (-> "Advanced"
+          (-> "Space stretchability"
+              ("Default" (init-default "par-flexibility"))
+              ---
+              ("Minimal (1)" (init-env "par-flexibility" "1"))
+              ("Small (2)" (init-env "par-flexibility" "2"))
+              ("Modest (4)" (init-env "par-flexibility" "4"))
+              ("Large (1000)" (init-env "par-flexibility" "1000"))
+              ---
+              ("Other" (init-interactive-env "par-flexibility")))
+          (-> "Intercharacter stretching"
+              ("Default" (init-default "par-kerning-stretch"))
+              ("Automatic" (init-env "par-kerning-stretch" "auto"))
+              ---
+              ("Off" (init-env "par-kerning-stretch" "0"))
+              ("Tiny (0.02)" (init-env "par-kerning-stretch" "0.02"))
+              ("Modest (0.05)" (init-env "par-kerning-stretch" "0.05"))
+              ("Flexible (1.0)" (init-env "par-kerning-stretch" "1.0"))
+              ---
+              ("Other" (init-interactive-env "par-kerning-stretch")))
+          (-> "CJK spacing"
+              ("Default" (init-default "par-spacing"))
+              ---
+              ("Plain" (init-env "par-spacing" "plain"))
+              ("Quanjiao" (init-env "par-spacing" "quanjiao"))
+              ("Banjiao" (init-env "par-spacing" "banjiao"))
+              ("Hangmobanjiao" (init-env "par-spacing" "hangmobanjiao"))
+              ("Kaiming" (init-env "par-spacing" "kaiming")))
+          ("Use protrusion" (toggle-init-env "par-kerning-margin"))))
   (-> "Page"
       (-> "Type"
 	  ("Default" (init-default-page-medium))

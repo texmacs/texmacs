@@ -76,7 +76,11 @@
     (list (or (logic-ref env-var-description% var) var) "string"
           (get-init-env var))))
 
+(tm-define (test-init-true? var)
+  (test-init? var "true"))
+
 (tm-define (toggle-init-env var)
+  (:check-mark "*" test-init-true?)
   (with new (if (== (get-init-env var) "true") "false" "true")
     (init-default var)
     (delayed

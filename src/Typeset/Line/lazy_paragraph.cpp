@@ -75,7 +75,7 @@ lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
   else if (sm == "hangmobanjiao") protrusion += HANGMOBANJIAO;
   else if (sm == "kaiming") protrusion += KAIMING;
 
-  tree dec   = env->read (ATOM_DECORATIONS);
+  tree dec= env->read (ATOM_DECORATIONS);
   if (N(dec) > 0) decs << tuple ("0", dec);
 }
 
