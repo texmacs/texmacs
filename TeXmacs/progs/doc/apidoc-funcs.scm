@@ -260,7 +260,7 @@
                (else (replace "Symbol not found or not a procedure")))))))
 
 (tm-define ($doc-symbol-template sym code? message)
-  (with contents (cons message (if code? ($doc-symbol-code sym) '()))
+  (with contents (cons message (if code? (list ($doc-symbol-code sym)) '()))
     `(explain
       (document
         (concat (scm ,(symbol->string sym))
@@ -290,7 +290,7 @@
   (:secure #t)
   (docgrep-new-window what))
 
-(define ($explain-not-found key)
+(define ($explain-scheme-not-found key)
   `(document
     ,($doc-symbol-template (string->symbol key) #t
       `(concat "Documentation unavailable. Search "
@@ -316,7 +316,7 @@
 (tm-define ($doc-explain-scm* key)
   (with docs (doc-retrieve (doc-scm-cache) key (get-output-language))
     (if (null? docs)
-        ($explain-not-found key) 
+        ($explain-scheme-not-found key) 
         `(document ,@(doc-explain-sub docs #t)))))
 
 (tm-define ($doc-explain-scm key)
