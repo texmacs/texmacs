@@ -5,24 +5,10 @@
 <\body>
   <tmdoc-title|\<#6570\>\<#5B66\>\<#516C\>\<#5F0F\>>
 
-  <TeXmacs>\<#8981\>\<#89E3\>\<#51B3\>\<#7684\>\<#4E3B\>\<#8981\>\<#95EE\>\<#9898\>\<#4E4B\>\<#4E00\>\<#4FBF\>\<#662F\>\<#6570\>\<#5B66\>\<#516C\>\<#5F0F\>\<#7684\>\<#7F16\>\<#8F91\>.If
-  the cursor is inside a<nbsp>formula (<abbr|i.e.> inside ``math mode''),
-  then the mode sensitive menus and toolbars provide buttons for entering
-  common mathematical constructs. Similarly, as will be detailed in this
-  section, the bahaviour of the keyboard changes so as to allow for the rapid
-  typing of mathematical symbols. For instance, typing <key|- \<gtr\>>
-  inserts the arrow <math|\<rightarrow\>>.
+  <TeXmacs>\<#8981\>\<#89E3\>\<#51B3\>\<#7684\>\<#4E3B\>\<#8981\>\<#95EE\>\<#9898\>\<#4E4B\>\<#4E00\>\<#4FBF\>\<#662F\>\<#6570\>\<#5B66\>\<#516C\>\<#5F0F\>\<#7684\>\<#7F16\>\<#8F91\>.\<#5F53\>\<#5149\>\<#6807\>\<#5904\>\<#4E8E\>\<#516C\>\<#5F0F\>\<#4E2D\>\<#65F6\>,\<#6A21\>\<#5F0F\>\<#654F\>\<#611F\>\<#7684\>\<#83DC\>\<#5355\>\<#548C\>\<#5DE5\>\<#5177\>\<#680F\>\<#5C31\>\<#4F1A\>\<#63D0\>\<#4F9B\>\<#76F8\>\<#5E94\>\<#7684\>\<#6570\>\<#5B66\>\<#7B26\>\<#53F7\>\<#8F93\>\<#5165\>\<#65B9\>\<#6CD5\>.\<#7C7B\>\<#4F3C\>\<#5730\>,\<#952E\>\<#76D8\>\<#7684\>\<#884C\>\<#4E3A\>\<#4E5F\>\<#4F1A\>\<#8DDF\>\<#7740\>\<#6539\>\<#53D8\>,\<#4EE5\>\<#4FBF\>\<#60A8\>\<#5FEB\>\<#901F\>\<#8F93\>\<#5165\>\<#6570\>\<#5B66\>\<#516C\>\<#5F0F\>.\<#6BD4\>\<#5982\>,\<#8F93\>\<#5165\><key|-
+  \<gtr\>>\<#53EF\>\<#5F97\><math|\<rightarrow\>>.\<#4E0A\>\<#8FF0\>\<#884C\>\<#4E3A\>\<#6539\>\<#53D8\>\<#5C06\>\<#5728\>\<#672C\>\<#8282\>\<#4E2D\>\<#8BE6\>\<#7EC6\>\<#8BF4\>\<#660E\>.
 
-  Starting with version 1.0.7.10, <TeXmacs> also incorporates several
-  features for the ``semantic'' editing of mathematical formulas, which will
-  be described at the end of this section. When used appropriately, this
-  allows you to write documents in which all formulas are at least correct
-  from a syntactical point of view. A ``syntax corrector'' is included to
-  assist you with this task. Documents with more semantics are for instance
-  useful when using formulas as inputs for a computer algebra system. Such
-  documents are also less likely to contain ``typos''. Other interesting
-  features, such as semantic search and replace, should be developed in the
-  feature.
+  \<#81EA\>\<#4ECE\>1.0.7.10\<#7248\>,<TeXmacs>\<#4E3A\>\<#6570\>\<#5B66\>\<#516C\>\<#5F0F\>\<#589E\>\<#6DFB\>\<#4E86\>\<#4E00\>\<#4E9B\>\<#8BED\>\<#4E49\>\<#7F16\>\<#8F91\>\<#529F\>\<#80FD\>.\<#53EA\>\<#8981\>\<#4F7F\>\<#7528\>\<#5F97\>\<#5F53\>,\<#8FD9\>\<#80FD\>\<#4F7F\>\<#60A8\>\<#7684\>\<#516C\>\<#5F0F\>\<#81F3\>\<#5C11\>\<#5728\>\<#53E5\>\<#6CD5\>\<#4E0A\>\<#4FDD\>\<#8BC1\>\<#6B63\>\<#786E\>.\<#60A8\>\<#53EF\>\<#7528\>\<#8BED\>\<#6CD5\>\<#7EA0\>\<#9519\>\<#6765\>\<#8FBE\>\<#5230\>\<#8FD9\>\<#4E00\>\<#76EE\>\<#6807\>.\<#5E26\>\<#6709\>\<#8BED\>\<#4E49\>\<#7684\>\<#6587\>\<#6863\>\<#663E\>\<#7136\>\<#66F4\>\<#52A0\>\<#5B9E\>\<#7528\>,\<#6BD4\>\<#5982\>\<#4F7F\>\<#7528\>\<#516C\>\<#5F0F\>\<#4F5C\>\<#4E3A\>\<#8BA1\>\<#7B97\>\<#673A\>\<#4EE3\>\<#6570\>\<#7CFB\>\<#7EDF\>\<#7684\>\<#8F93\>\<#5165\>.\<#8FD9\>\<#6837\>\<#7684\>\<#6587\>\<#6863\>\<#4F1A\>\<#6BD4\>\<#4E00\>\<#822C\>\<#7684\>\<#6587\>\<#6863\>typos\<#66F4\>\<#5C11\>.\<#5176\>\<#5B83\>\<#4E00\>\<#4E9B\>\<#6709\>\<#610F\>\<#601D\>\<#7684\>\<#7279\>\<#6027\>,\<#6BD4\>\<#5982\>\<#8BED\>\<#4E49\>\<#641C\>\<#7D22\>\<#548C\>\<#66FF\>\<#6362\>,\<#4F1A\>\<#5728\>\<#4E0D\>\<#4E45\>\<#7684\>\<#5C06\>\<#6765\>\<#5F00\>\<#53D1\>.
 
   <\traverse>
     <branch|\<#5728\>\<#6587\>\<#6863\>\<#4E2D\>\<#8F93\>\<#5165\>\<#6570\>\<#5B66\>\<#516C\>\<#5F0F\>|keyboard/man-enter-math.zh.tm>
@@ -35,15 +21,15 @@
 
     <branch|\<#5927\>\<#578B\>\<#7B97\>\<#7B26\>|keyboard/man-big.zh.tm>
 
-    <branch|Wide accents|keyboard/man-wide.zh.tm>
+    <branch|\<#52A0\>\<#5BBD\>\<#7684\>\<#9876\>\<#6807\>|keyboard/man-wide.zh.tm>
 
-    <branch|Semantic editing facilities|semantics/man-semantics.zh.tm>
+    <branch|\<#8BED\>\<#4E49\>\<#7F16\>\<#8F91\>\<#5DE5\>\<#5177\>|semantics/man-semantics.zh.tm>
 
-    <branch|Common errors and syntax correction|semantics/man-syntax-correction.zh.tm>
+    <branch|Common errors and syntax correction|semantics/man-syntax-correction.en.tm>
 
-    <branch|Semantics of mathematical symbols|semantics/man-semantics-symbols.zh.tm>
+    <branch|Semantics of mathematical symbols|semantics/man-semantics-symbols.en.tm>
 
-    <branch|Customized mathematical semantics|semantics/man-customized-semantics.zh.tm>
+    <branch|\<#5B9A\>\<#5236\>\<#6570\>\<#5B66\>\<#8BED\>\<#4E49\>|semantics/man-customized-semantics.zh.tm>
   </traverse>
 
   <tmdoc-copyright|1998--2011|Joris van der Hoeven>
