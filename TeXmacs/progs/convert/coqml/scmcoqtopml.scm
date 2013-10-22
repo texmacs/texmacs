@@ -113,7 +113,8 @@
           ((and node proc (not childs)) `(,node ,(proc t)))
           ((and node proc childs)       `(,node ,@(map proc t)))
           (else
-            (display* "Cannot translate: " t "\n")))))
+            `(error ,(string-append "stree->coqtopml: cannot translate "
+                                    (object->string t)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface

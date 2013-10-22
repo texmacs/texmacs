@@ -18,8 +18,10 @@
 
 (define map map-in-order)
 
-(define (coqtop-error message)
-  `((with "color" "red" ,message)))
+(define (coqtop-error message . tree)
+  (if (nlist-1? tree)
+    `((error ,message))
+    `((error ,(string-append message (object->string (car tree)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Low level
