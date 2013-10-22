@@ -15,7 +15,7 @@
   (:use (source macro-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Widget for editing macros
+;; Subroutines for macro editing widgets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (macro-retrieve* u)
@@ -80,6 +80,22 @@
   (and-with t (macro-retrieve u)
     (macro-apply* u t)))
 
+(define (build-macro-document l)
+  (and-with def (get-definition l)
+    (when (and (tm-func? def 'assign 2)
+               (tm-equal? (tm-ref def 1) '(uninit)))
+      (set! def `(assign ,(tm-ref def 0) (macro ""))))
+    (let* ((mac (if (tm-func? (tm-ref def 1) 'macro)
+                    `(edit-macro ,l ,@(tm-children (tm-ref def 1)))
+                    `(edit-tag ,l ,(tm-ref def 1))))
+           (pre (buffer-get-preamble (buffer-tree)))
+           (doc `(document (hide-preamble ,pre) ,mac)))
+      doc)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Editing a single macro
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (tm-widget ((macro-editor u packs doc) quit)
   (padded
     (resize "600px" "300px"
@@ -95,29 +111,75 @@
         //
         ("Ok" (begin (macro-apply u) (quit)))))))
 
+(tm-define (editable-macro? l)
+  (if (symbol? l) (set! l (symbol->string l)))
+  (get-definition l))
+
+(tm-define (open-macro-editor l)
+  (:interactive #t)
+  (if (symbol? l) (set! l (symbol->string l)))
+  (let* ((b (current-buffer-url))
+         (u (string-append "tmfs://aux/edit-" l))
+         (packs (get-style-list))
+         (styps (list-remove-duplicates (append packs (list "macro-editor")))))
+    (and-with doc (build-macro-document l)
+      (dialogue-window (macro-editor u styps doc)
+                       (lambda x (noop))
+                       "Macro editor")
+      (buffer-set-master u b))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Add list with all active macros in the current environment
+;; Editing a macro chosen from the list of all defined macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (get-key key-val)
-  (tree->string (tree-ref key-val 0)))
+(tm-define macro-current-macro  "")
+(tm-define macro-current-filter "")
 
-(tm-define (all-defined-macros)
-  (with env (tm-children (get-full-env))
-    (sort (map get-key env) string<=?)))
+(tm-define (macros-editor-select u macro filter)
+  (set! macro-current-macro  macro)
+  (set! macro-current-filter filter)
+  (tree-set (buffer-get-body u)
+            (build-macro-document macro-current-macro))
+  (refresh-now "macros-editor-documentation"))
 
-(tm-define cur-macro "")
-(tm-define cur-macro-filter "")
+(tm-define (macros-editor-current-help)
+  (with doc (tmdoc-search-tag (string->symbol macro-current-macro))
+    (if doc (tm->stree doc)
+        `(document (em "No documentation available.")))))
 
-(tm-widget ((macros-editor u l) quit)
+(tm-widget (macros-editor-documentation)
+  (texmacs-output
+    `(document
+       (paragraph-box "480px" ,(macros-editor-current-help)))
+    '(style "tmdoc")))
+
+(tm-widget ((macros-editor u packs l) quit)
   (padded
-    (resize "250px" "500px"
-      (filtered-choice (begin (set! cur-macro answer) 
-			      (set! cur-macro-filter filter))
-		       l
-		       cur-macro
-		       cur-macro-filter))
-    ===
+    (horizontal
+      (vertical
+        (bold (text "Macro name"))
+        === ===
+        (resize "250px" "500px"
+          (filtered-choice (macros-editor-select u answer filter) l
+                           macro-current-macro macro-current-filter)))
+      ///
+      (vertical
+        (bold (text "Macro definition"))
+        === ===
+        (resize "500px" "220px"
+          (texmacs-input (build-macro-document macro-current-macro)
+                         `(style (tuple ,@packs)) u))
+        ===
+        (glue #f #t 0 10)
+        ===
+        (bold (text "Documentation"))
+        === ===
+        (horizontal
+          (glue #t #f 0 0)
+          (resize "500px" "220px"
+            (refresh macros-editor-documentation))
+          (glue #t #f 0 0))))
+    ======
     (hlist
       (enum (set-macro-mode u answer)
             '("Text" "Source")
@@ -128,41 +190,21 @@
 	//
 	("Ok" (begin (macro-apply u) (quit)))))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; User interface
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define (get-key key-val)
+  (tree->string (tree-ref key-val 0)))
 
-(tm-define (editable-macro? l)
-  (if (symbol? l) (set! l (symbol->string l)))
-  (get-definition l))
-
-(tm-define (open-macro-editor l)
-  (:interactive #t)
-  (if (symbol? l) (set! l (symbol->string l)))
-  (let* ((b (current-buffer-url))
-         (packs (get-style-list))
-         (styps (list-remove-duplicates (append packs (list "macro-editor"))))
-         (u (string-append "tmfs://aux/edit-" l)))
-    (and-with def (get-definition l)
-      (when (and (tm-func? def 'assign 2)
-		 (tm-equal? (tm-ref def 1) '(uninit)))
-	(set! def `(assign ,(tm-ref def 0) (macro ""))))
-      (let* ((mac (if (tm-func? (tm-ref def 1) 'macro)
-                      `(edit-macro ,l ,@(tm-children (tm-ref def 1)))
-                      `(edit-tag ,l ,(tm-ref def 1))))
-             (pre (buffer-get-preamble (buffer-tree)))
-             (doc `(document (hide-preamble ,pre) ,mac)))
-        (dialogue-window (macro-editor u styps doc)
-                         (lambda x (noop))
-                         "Macro editor")
-        (buffer-set-master u b)))))
+(tm-define (all-defined-macros)
+  (with env (tm-children (get-full-env))
+    (sort (map get-key env) string<=?)))
 
 (tm-define (open-macros-editor)
   (:interactive #t)
   (let* ((b (current-buffer-url))
 	 (u "tmfs://aux/macro-editor")
-	 (names (all-defined-macros)))
-    (dialogue-window (macros-editor u names)
+	 (names (all-defined-macros))
+         (packs (get-style-list))
+         (styps (list-remove-duplicates (append packs (list "macro-editor")))))
+    (dialogue-window (macros-editor u styps names)
 		     (lambda x (noop))
 		     "Macros editor")
     (buffer-set-master u b)))
