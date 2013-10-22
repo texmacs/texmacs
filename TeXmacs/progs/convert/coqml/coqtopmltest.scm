@@ -55,11 +55,16 @@
 
     ;; compounds
     (unit)
+
     (call "Init" (unit))
     (call "SetOptions" ((pair ("key1" "val1") (option-value #t))
                         (pair ("key2" "val2") (option-value #f))
                         (pair ("key2" "val2") (option-value "opt"))
                         (pair ("key4" "val4") (option-value 1))))
+    (option 1)
+    (option #t)
+    (option "opt")
+
     (state-id 1)))
 
 (define (test-coqtopml-idempotence)

@@ -117,16 +117,33 @@
 (define (bool? b)
   (or (== b #t) (== b #f)))
 
+(define (coqtop-option env a c)
+  (with val (coqtop-get-attributes 'val a)
+    (if (and (list-1? val) (or (and (== val '("none")) (== (length c) 0))
+                               (and (== val '("some")) (== (length c) 1))))
+      (if (== val '("none")) `((option))
+        (with body (coqtop-as-serial env (first c))
+          `((option ,body))))
+      (coqtop-error "bad option"))))
+
 (define (coqtop-option-value env a c)
   (if (and (== (length c) 1)
            (with val (coqtop-get-attributes 'val a)
              (and (list-1? val) (string? (first val)))))
     (let* ((val  (first (coqtop-get-attributes 'val a)))
            (body (coqtop-as-serial env (first c))))
-      (if (or (and (== val "intvalue")    (integer? body))
+              ;; note: this behavior with int values will be changed in coq
+      (if (or (and (== val "intvalue")
+                   (or (func? body 'option 0)
+                       (and (func? body 'option 1) (integer? (cAr body)))))
+              ;; this is the future expected behavior
+              (and (== val "intvalue")    (integer? body))
               (and (== val "stringvalue") (string? body))
               (and (== val "boolvalue")   (bool? body)))
-      `((option-value ,body))
+        (begin
+          (if (and (func? body 'option) (integer? (cAr body)))
+            (set! body (cAr body)))
+          `((option-value ,body)))
       (coqtop-error "bad option-value type")))
     (coqtop-error "bad option-value")))
 
@@ -185,6 +202,7 @@
   (union        (handler :elem coqtop-union))
   (call         (handler :elem coqtop-call))
   (state_id     (handler :elem coqtop-state-id))
+  (option       (handler :elem coqtop-option))
   (option_value (handler :elem coqtop-option-value)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
