@@ -12,7 +12,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (source source-menu))
+(texmacs-module (source source-menu)
+  (:use (source source-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Transformational markup for the macro language
@@ -131,12 +132,20 @@
 ;; The main menu for editing source files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(menu-bind source-macros-menu
+  ("Edit macros" (open-macros-editor))
+  ("Edit preamble" (toggle-preamble))
+  ("Extract style file" (extract-style-file #t))
+  ("Extract style package" (extract-style-file #f)))
+
 (menu-bind source-menu
   (link source-transformational-menu)
   ---
   (link source-executable-menu)
   ---
-  (link source-presentation-menu))
+  (link source-presentation-menu)
+  ---
+  (link source-macros-menu))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The icon bar for editing source files

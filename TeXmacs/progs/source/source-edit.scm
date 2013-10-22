@@ -83,3 +83,10 @@
 (tm-define (inactive-toggle t)
   (:require (and (tree-is? t 'symbol) (tree-is? t :up 'inactive)))
   (activate-symbol))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Extracting a style file or package from the current file
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (extract-style-file style?)
+  (noop))

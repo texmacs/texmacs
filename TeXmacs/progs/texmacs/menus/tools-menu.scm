@@ -38,6 +38,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind tools-menu
+  (-> "Macros"
+      (link source-macros-menu))
   (-> "Execute"
       ("Execute system command" (interactive system))
       ("Evaluate scheme expression" (interactive footer-eval)))

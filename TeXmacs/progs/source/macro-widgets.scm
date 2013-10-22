@@ -120,3 +120,7 @@
                          (lambda x (noop))
                          "Macro editor")
         (buffer-set-master u b)))))
+
+(tm-define (open-macros-editor)
+  (:interactive #t)
+  (noop))
