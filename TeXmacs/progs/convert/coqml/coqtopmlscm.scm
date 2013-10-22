@@ -100,6 +100,21 @@
     `((unit))
     (coqtop-error "bad unit")))
 
+(define (coqtop-value env a c)
+  (cond ((and (== (length c) 1) (== (coqtop-get-attributes 'val a) '("good")))
+         (with body (coqtop-as-serial env (first c))
+           `((value "good" ,body))))
+        ((and (== (length c) 2) (== (coqtop-get-attributes 'val a) '("fail")))
+         (let ((loce (coqtop-get-attributes 'loc_e a))
+               (locs (coqtop-get-attributes 'loc_s a))
+               (stat (coqtop-as-serial env (first c)))
+               (msg  `((document ,@(cdr (second c))))))
+           (with loc
+             (if (and (list-1? locs) (list-1? loce)) `((,locs ,loce)) '())
+             `((value "fail" ,@loc ,stat ,msg)))))
+        (else
+          (coqtop-error "bad value: "(list 'c:value a c)))))
+
 (define (coqtop-call env a c)
   (if (and (== (length c) 1)
            (with val (coqtop-get-attributes 'val a)
@@ -204,6 +219,9 @@
   (union        (handler :elem coqtop-union))
   (call         (handler :elem coqtop-call))
   (state_id     (handler :elem coqtop-state-id))
+  (value        (handler :elem coqtop-value))
+  (status       (handler :elem coqtop-status))
+  (value        (handler :pre  coqtop-value))
   (option       (handler :elem coqtop-option))
   (option_value (handler :elem coqtop-option-value)))
 
