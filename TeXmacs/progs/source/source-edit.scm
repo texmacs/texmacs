@@ -11,7 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (source source-edit))
+(texmacs-module (source source-edit)
+  (:use (generic document-style)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Editing command tags
@@ -88,5 +89,73 @@
 ;; Extracting a style file or package from the current file
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (extract-source-title style?)
+  (let* ((tag (if style? 'src-style-file 'src-package))
+	 (what (if style? "style file" "style package"))
+	 (purpose (string-append "Automatically generated " what "."))
+	 (name (url-basename (current-buffer))))
+    `(active*
+       (document
+	 (src-title
+	   (document
+	     (,tag ,(string-append name "-macros") "1.0")
+	     (src-purpose ,purpose)))))))
+
+(define (extract-use-package style?)
+  (with l (get-style-list)
+    (when (and (not style?) (nnull? l))
+      (set! l (cdr l)))
+    (if (null? l) (list) (list `(use-package ,@l)))))
+
+(define (init<=? a b)
+  (and (tm-func? a 'associate 2) (tm-func? b 'associate 2)
+       (string? (tm-ref a 0)) (string? (tm-ref b 0))
+       (string<=? (tm-ref a 0) (tm-ref b 0))))
+
+(define (inits->assignments l)
+  (if (null? l) l
+      (let* ((head (car l))
+	     (tail (inits->assignments (cdr l))))
+	(cond ((not (and (tm-func? head 'associate 2)
+			 (string? (tm-ref head 0))))
+	       tail)
+	      ((in? (tm-ref head 0) (list "zoom-factor" "sfactor"
+					  "preamble"
+					  "page-screen-width"
+					  "page-screen-height"))
+	       tail)
+	      (else (cons `(assign ,(tm-ref head 0) ,(tm-ref head 1))
+			  tail))))))
+
+(define (source-comment s)
+  `(active* (document (src-comment (document ,s)))))
+
+(define (extract-style-parameters)
+  (let* ((inits (cdr (tm->stree (get-all-inits))))
+	 (sorted (sort inits init<=?))
+	 (pars (inits->assignments sorted)))
+    (if (null? pars) (list)
+	(cons (source-comment "Style parameters.") pars))))
+
+(define (extract-macro-definitions)
+  (with body (buffer-get-body (current-buffer))
+    (if (and (tree-is? body 'document)
+	     (tree-in? body 0 '(show-preamble hide-preamble))
+	     (tree-is? body 0 0 'document))
+	(cons (source-comment "Macro definitions.")
+	      (tree-children (tree-ref body 0 0))))))
+
 (tm-define (extract-style-file style?)
-  (noop))
+  (let* ((tit (extract-source-title style?))
+	 (packs (extract-use-package style?))
+	 (inits (extract-style-parameters))
+	 (defs (extract-macro-definitions))
+	 (body `(document ,tit ,@packs ,@inits ,@defs))
+	 (doc `(document
+		 (TeXmacs ,(texmacs-version))
+		 (style (tuple "source"))
+		 (body ,body))))
+    (new-buffer)
+    (delayed
+      (:idle 1)
+      (buffer-set (current-buffer) doc))))

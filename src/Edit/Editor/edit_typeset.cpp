@@ -546,6 +546,11 @@ edit_typeset_rep::init_style (string name) {
   notify_change (THE_ENVIRONMENT);
 }
 
+tree
+edit_typeset_rep::get_init_all () {
+  return (tree) init;
+}
+
 void
 edit_typeset_rep::init_env (string var, tree by) {
   if (init (var) == by) return;

@@ -278,6 +278,7 @@ public:
   virtual void     init_style () = 0;
   virtual void     init_style (string style) = 0;
   virtual void     change_style (tree style) = 0;
+  virtual tree     get_init_all () = 0;
   virtual void     init_env (string var, tree by) = 0;
   virtual void     init_default (string var) = 0;
   virtual void     typeset_invalidate (path p) = 0;

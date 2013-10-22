@@ -84,6 +84,7 @@ public:
   tree     texmacs_exec (tree t);
 
   void     change_style (tree style);
+  tree     get_init_all ();
   void     init_env (string var, tree by);
   void     init_default (string var);
   void     init_style ();

@@ -392,6 +392,7 @@
   (url-tail tail (url url))
   (url-format file_format (string url))
   (url-suffix suffix (string url))
+  (url-basename basename (string url))
   (url-glue glue (url url string))
   (url-unglue unglue (url url int))
   (url-relative relative (url url url))
