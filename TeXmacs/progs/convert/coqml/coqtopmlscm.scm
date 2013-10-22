@@ -160,8 +160,6 @@
 ;; Main translation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (coqtop-drop env a c) '())
-
 (define (coqtop-pass env a c)
   (let ((l (coqtop-args env c)))
     (if (and (null? l) (not (assoc 'id a))) '()

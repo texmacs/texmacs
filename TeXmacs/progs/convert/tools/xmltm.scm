@@ -557,12 +557,6 @@
 (define coqtopml-pre    htmltm-space-preformatted)
 (define coqtopml-elem   htmltm-space-element)
 
-(define (coqtop-handler/inline env a c proc)
-  (proc env a c))
-
-(define (coqtop-handler/bloc env a c proc)
-  `((document ,@(proc env a c))))
-
 (tm-define (coqtop-handler model method)
   ;;  model:  content model category
   ;;          :element -- text nodes are ignored
@@ -577,7 +571,7 @@
                      ((eq? model :elem) coqtopml-elem))))
     (let ((proc method))
       (lambda (env a c)
-        (coqtop-handler/inline env a (clean env c) proc)))))
+        (proc env a (clean env c))))))
 
 (tm-define (coqtop-serial p? l)
   (if p? (stm-serial l stm-document?)
