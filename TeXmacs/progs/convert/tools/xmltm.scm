@@ -77,19 +77,19 @@
 ;;; Converting nodes
 
 (tm-define (coqtopml-parse s)
-  (xmltm-parse xmlns-uri-coqtopml s))
+  (xmltm-parse xmlns-uri-coqtopml parse-xml s))
 
 (tm-define (coqmltm-parse s)
-  (xmltm-parse xmlns-uri-coqml s))
+  (xmltm-parse xmlns-uri-coqml parse-xml s))
 
 (tm-define (htmltm-parse s)
-  (xmltm-parse xmlns-uri-xhtml s))
+  (xmltm-parse xmlns-uri-xhtml parse-html s))
 
-(tm-define (xmltm-parse default-ns s)
+(tm-define (xmltm-parse default-ns parser s)
   (with-xmltm-environment
    env default-ns
    (let sub ((env env)
-	     (t (parse-html s)))
+	     (t (parser s)))
      (cond ((string? t) t)
 	   ((sxml-top-node? t) `(*TOP* ,@(map (cut sub env <>) (cdr t))))
 	   ((sxml-control-node? t) t)

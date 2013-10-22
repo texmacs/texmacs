@@ -111,7 +111,7 @@
   (define concat string-append)
   (regression-test-group
    "namespace-aware parser wrapper" "xmlns"
-   (cut xmltm-parse "" <>) :none
+   (cut xmltm-parse "" html-parse <>) :none
    (test "null string" "" '(*TOP*))
    (test "text" "hello" '(*TOP* "hello"))
    (test "element" "<hello>" '(*TOP* (hello)))
