@@ -101,11 +101,6 @@
 (define (module-description m)
   "Description TO-DO")
 
-; This list is incomplete!
-(define keywords
-  '(define-public define-public-macro provide-public tm-define 
-    tm-define-macro tm-menu menu-bind tm-widget))
-
 (define module-exported-cache (make-ahash-table))
 
 ; HACK: we use read (copying what's done in init-texmacs.scm) until the
@@ -113,7 +108,7 @@
 (define (parse-form form f)
   "Set symbol properties and return the symbol."
   (and (pair? form) 
-       (member (car form) keywords-which-define)
+       (member (car form) def-keywords) ;def-keywords defined in init-texmacs.scm
        (let* ((l (source-property form 'line))
               (c (source-property form 'column))
               (sym  (if (pair? (cadr form)) (caadr form) (cadr form))))
@@ -127,17 +122,18 @@
   (:synopsis "List of exported symbols in @module")
   (or (ahash-ref module-exported-cache module)
       (and (is-real-module? module)
-        (let* ((fname (module-source-path module #t))
-               (p (open-input-string (string-load fname)))
-               (defs '())
-               (add (lambda (f) 
-                      (with pf (parse-form f fname)
-                        (and (!= pf #f) (set! defs (rcons defs pf)))))))
-          (letrec ((r (lambda () (with form (read p)
-                                   (or (eof-object? form) 
-                                       (begin (add form) (r)))))))
-            (r))
-          (ahash-set! module-exported-cache module defs)))))
+           (let* ((fname (module-source-path module #t))
+                  (p (open-input-string (string-load fname)))
+                  (defs '())
+                  (add (lambda (f) 
+                         (with pf (parse-form f fname)
+                           (and (!= pf #f) (set! defs (rcons defs pf)))))))
+             (letrec ((r (lambda () (with form (read p)
+                                      (or (eof-object? form) 
+                                          (begin (add form) (r)))))))
+                     (r))
+             (ahash-set! module-exported-cache module defs)))
+      '()))
 
 (tm-define (module-count-exported module)
   (length (module-exported module)))
@@ -146,7 +142,7 @@
   (with l (module-exported module)
     (- (length l)
        (length
-         (list-filter l
+        (list-filter l
            (lambda (x)
              (and (symbol? x) 
                   (persistent-has? (doc-scm-cache) (symbol->string x)))))))))
@@ -155,12 +151,12 @@
   (with l (module-exported module)
     (with fun (lambda (sym)
                 (if (symbol? sym)
-                  (list ($doc-explain-scm* (symbol->string sym)))
-                  '()))
+                    (list ($doc-explain-scm* (symbol->string sym)))
+                    '()))
       (if (null? l)
-       `(document ,(replace "No symbols exported"))
-       `(document (subsection ,(replace "Symbol documentation"))
-                  ,@(append-map fun l))))))
+          `(document ,(replace "No symbols exported"))
+          `(document (subsection ,(replace "Symbol documentation"))
+                     ,@(append-map fun l))))))
 
 ; WRONG! what about unloaded modules
 (define (tm-exported? sym)
