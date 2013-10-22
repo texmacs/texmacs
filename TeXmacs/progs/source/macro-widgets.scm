@@ -96,6 +96,45 @@
         ("Ok" (begin (macro-apply u) (quit)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Add list with all active macros in the current environment
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (extract-macro-names l)
+  (if (null? l) l
+      (let* ((head (car l))
+	     (tail (extract-macro-names (cdr l))))
+	(cond ((and (tm-func? head 'associate 2)
+		    (string? (tm-ref head 0)))
+	       (cons (tm-ref head 0) tail))
+	      (else tail)))))
+
+(tm-define (all-defined-macros)
+  (with env (cdr (tm->stree (get-full-env)))
+    (sort (extract-macro-names env) string<=?)))
+
+(tm-define cur-macro "")
+(tm-define cur-macro-filter "")
+
+(tm-widget ((macros-editor u l) quit)
+  (padded
+    (resize "250px" "500px"
+      (filtered-choice (begin (set! cur-macro answer) 
+			      (set! cur-macro-filter filter))
+		       l
+		       cur-macro
+		       cur-macro-filter))
+    ===
+    (hlist
+      (enum (set-macro-mode u answer)
+            '("Text" "Source")
+            "Text" "6em")
+      >>
+      (explicit-buttons
+        ("Apply" (macro-apply u))
+	//
+	("Ok" (begin (macro-apply u) (quit)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -126,4 +165,10 @@
 
 (tm-define (open-macros-editor)
   (:interactive #t)
-  (noop))
+  (let* ((b (current-buffer-url))
+	 (u "tmfs://aux/macro-editor")
+	 (names (all-defined-macros)))
+    (dialogue-window (macros-editor u names)
+		     (lambda x (noop))
+		     "Macros editor")
+    (buffer-set-master u b)))

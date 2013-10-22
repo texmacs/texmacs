@@ -249,6 +249,7 @@ public:
 #ifdef EXPERIMENTAL
   virtual void     environment_update () = 0;
 #endif
+  virtual tree     get_full_env () = 0;
   virtual bool     defined_at_cursor (string var_name) = 0;
   virtual bool     defined_at_init (string var_name) = 0;
   virtual bool     defined_in_init (string var_name) = 0;

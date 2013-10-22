@@ -490,6 +490,15 @@ tmg_temp_proof_fix () {
 }
 
 tmscm
+tmg_get_full_env () {
+  // TMSCM_DEFER_INTS;
+  tree out= get_current_editor()->get_full_env ();
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
 tmg_get_all_inits () {
   // TMSCM_DEFER_INTS;
   tree out= get_current_editor()->get_init_all ();
@@ -2901,6 +2910,7 @@ initialize_glue_editor () {
   tmscm_install_procedure ("make-return-before",  tmg_make_return_before, 0, 0, 0);
   tmscm_install_procedure ("make-return-after",  tmg_make_return_after, 0, 0, 0);
   tmscm_install_procedure ("temp-proof-fix",  tmg_temp_proof_fix, 0, 0, 0);
+  tmscm_install_procedure ("get-full-env",  tmg_get_full_env, 0, 0, 0);
   tmscm_install_procedure ("get-all-inits",  tmg_get_all_inits, 0, 0, 0);
   tmscm_install_procedure ("init-default-one",  tmg_init_default_one, 1, 0, 0);
   tmscm_install_procedure ("init-env",  tmg_init_env, 2, 0, 0);

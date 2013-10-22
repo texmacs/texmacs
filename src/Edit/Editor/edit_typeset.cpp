@@ -260,6 +260,12 @@ edit_typeset_rep::typeset_exec_until (path p) {
   //if (t2 - t1 >= 10) cout << "typeset_exec_until took " << t2-t1 << "ms\n";
 }
 
+tree
+edit_typeset_rep::get_full_env () {
+  typeset_exec_until (tp);
+  return (tree) cur[tp];
+}
+
 bool
 edit_typeset_rep::defined_at_cursor (string var) {
   typeset_exec_until (tp);

@@ -66,6 +66,7 @@
   (temp-proof-fix temp_proof_fix (void))
 
   ;; document-wide modifications
+  (get-full-env get_full_env (tree))
   (get-all-inits get_init_all (tree))
   (init-default-one init_default (void string))
   (init-env init_env (void string string))

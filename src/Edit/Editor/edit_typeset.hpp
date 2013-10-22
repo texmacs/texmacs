@@ -56,6 +56,7 @@ public:
 #ifdef EXPERIMENTAL
   void     environment_update ();
 #endif
+  tree     get_full_env ();
   bool     defined_at_cursor (string var_name);
   bool     defined_at_init (string var_name);
   bool     defined_in_init (string var_name);
