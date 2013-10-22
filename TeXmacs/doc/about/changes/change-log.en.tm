@@ -12,6 +12,8 @@
 
     <item>New focus preferences menu (1.0.7.21).
 
+    <item>New widgets for editing macros (1.0.7.21).
+
     <item>Improved CJK typesetting and support for Fandol fonts (1.0.7.21).
 
     <item>Stretchable space between letters (1.0.7.21).
