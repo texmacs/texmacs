@@ -554,7 +554,12 @@
 ;; Producing coqtopml handlers for dispatch table
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define coqtopml-pre    htmltm-space-preformatted)
+(define (coqtopml-space-preformatted env l)
+  ;; Drop newlines. Conserve spaces.
+  (with strings (filter string? l)
+    (list (apply string-append strings))))
+
+(define coqtopml-pre    coqtopml-space-preformatted)
 (define coqtopml-elem   htmltm-space-element)
 
 (tm-define (coqtop-handler model method)

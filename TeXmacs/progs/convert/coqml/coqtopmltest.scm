@@ -21,6 +21,7 @@
 
 (define idempotence-test-suite
   '(;; strings
+    ""
     "a"
     "z"
     "\""
@@ -33,6 +34,8 @@
     "|"
     "/"
     "[] {} () a-z 0-9 \" ' ` & \\ <less> <gtr> | /"
+
+    "Eval compute in\n  let f := fun a b:nat =<gtr> (a+b) in\n    f 1 2."
 
     ;; bools
     #t

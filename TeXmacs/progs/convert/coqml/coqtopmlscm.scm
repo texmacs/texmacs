@@ -59,9 +59,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (coqtop-string env a c)
-  (if (and (== (length c) 1) (string? (first c)))
-    `(,(coqtop-as-serial env (first c)))
-    (coqtop-error "bad string")))
+  (cond
+    ((== (length c) 0) '(""))
+    ((and (== (length c) 1) (string? (first c)))
+     `(,(import-string (string-replace  (first c) "\n" ""))))
+    (else (coqtop-error "bad string: " c))))
 
 (define (coqtop-int env a c)
   (if (and (== (length c) 1)
@@ -191,7 +193,7 @@
   ;; basic type
   (string       (handler :pre  coqtop-string))
   (int          (handler :pre  coqtop-int))
-  (bool         (handler :pre  coqtop-bool))
+  (bool         (handler :elem coqtop-bool))
 
   ;; containers
   (list         (handler :elem coqtop-list))
