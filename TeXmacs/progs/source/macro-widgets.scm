@@ -99,18 +99,12 @@
 ;; Add list with all active macros in the current environment
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (extract-macro-names l)
-  (if (null? l) l
-      (let* ((head (car l))
-	     (tail (extract-macro-names (cdr l))))
-	(cond ((and (tm-func? head 'associate 2)
-		    (string? (tm-ref head 0)))
-	       (cons (tm-ref head 0) tail))
-	      (else tail)))))
+(define (get-key key-val)
+  (tree->string (tree-ref key-val 0)))
 
 (tm-define (all-defined-macros)
-  (with env (cdr (tm->stree (get-full-env)))
-    (sort (extract-macro-names env) string<=?)))
+  (with env (tm-children (get-full-env))
+    (sort (map get-key env) string<=?)))
 
 (tm-define cur-macro "")
 (tm-define cur-macro-filter "")
