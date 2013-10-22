@@ -210,7 +210,7 @@ enrich_embedded_document (tree body, tree style) {
   initial (PAGE_SCREEN_TOP)= "2px";
   initial (PAGE_SCREEN_BOT)= "2px";
   if (is_func (orig, WITH))
-    for (int i=0; i+2<N(orig); i++)
+    for (int i=0; i+2<N(orig); i+=2)
       if (is_atomic (orig[i]))
         initial (orig[i]->label)= orig[i+1];
   tree doc (DOCUMENT);
