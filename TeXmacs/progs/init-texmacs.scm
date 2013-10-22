@@ -133,8 +133,8 @@
 (lazy-menu (texmacs menus edit-menu) edit-menu)
 (lazy-menu (texmacs menus view-menu) view-menu)
 (lazy-menu (texmacs menus tools-menu) tools-menu)
-(lazy-menu (texmacs menus preferences-menu)
-           preferences-menu page-setup-menu open-preferences)
+(lazy-menu (texmacs menus preferences-menu) preferences-menu page-setup-menu)
+(lazy-menu (texmacs menus preferences-widgets) open-preferences)
 (use-modules (texmacs menus main-menu))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
@@ -184,9 +184,8 @@
 (lazy-keyboard (source source-kbd) always?)
 (lazy-menu (source source-menu) source-menu source-icons
            source-transformational-menu source-executable-menu)
-(lazy-define (source macro-edit)
-             editable-macro? open-macro-editor
-             has-macro-source? edit-macro-source)
+(lazy-define (source macro-edit) has-macro-source? edit-macro-source)
+(lazy-define (source macro-widgets) editable-macro? open-macro-editor)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting table mode\n")
