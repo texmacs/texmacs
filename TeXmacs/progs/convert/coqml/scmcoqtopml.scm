@@ -39,10 +39,10 @@
   (and (func? t 'union 2) (or (== (cadr t) "in_l")
                               (== (cadr t) "in_r"))))
 
-(define (option? t)
-  (and (func? t 'option 1) (or (integer? (cadr t))
-                               (bool?    (cadr t))
-                               (string?  (cadr t)))))
+(define (option-value? t)
+  (and (func? t 'option-value 1) (or (integer? (cadr t))
+                                     (bool?    (cadr t))
+                                     (string?  (cadr t)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Conversion routines
@@ -55,7 +55,7 @@
 (define (pair->xml-stree p)
   `(pair ,@(map stree->coqtopml-stree (cdr p))))
 
-(define (option->xml-stree t)
+(define (option-value->xml-stree t)
   (with o (cadr t)
     (with val
       (cond ((string? o)  "stringvalue")
@@ -85,16 +85,16 @@
 ;; Only intended for outputing values toward Coq.
 (define (stree->coqtopml-stree t)
   (with (node proc childs)
-    (cond ((bool? t)     (list #f      bool->xml-stree         #f))
-          ((pair? t)     (list #f      pair->xml-stree         #f))
-          ((union? t)    (list #f      union->xml-stree        #f))
-          ((call? t)     (list #f      call->xml-stree         #f))
-          ((state-id? t) (list #f      state-id->xml-stree     #f))
-          ((option? t)   (list #f      option->xml-stree       #f))
-          ((integer? t)  (list 'int    number->string          #f))
-          ((string? t)   (list 'string identity                #f))
-          ((unit? t)     (list 'unit   #f                      #f))
-          ((list? t)     (list 'list   stree->coqtopml-stree   #t))
+    (cond ((bool? t)         (list #f      bool->xml-stree         #f))
+          ((pair? t)         (list #f      pair->xml-stree         #f))
+          ((union? t)        (list #f      union->xml-stree        #f))
+          ((call? t)         (list #f      call->xml-stree         #f))
+          ((state-id? t)     (list #f      state-id->xml-stree     #f))
+          ((option-value? t) (list #f      option-value->xml-stree #f))
+          ((integer? t)      (list 'int    number->string          #f))
+          ((string? t)       (list 'string identity                #f))
+          ((unit? t)         (list 'unit   #f                      #f))
+          ((list? t)         (list 'list   stree->coqtopml-stree   #t))
           (else '(#f #f #f)))
     (cond ((and (not node) proc)        (proc t))
           ((and node (not proc))        `(,node))

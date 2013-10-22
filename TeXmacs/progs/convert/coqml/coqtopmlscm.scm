@@ -117,7 +117,7 @@
 (define (bool? b)
   (or (== b #t) (== b #f)))
 
-(define (coqtop-option env a c)
+(define (coqtop-option-value env a c)
   (if (and (== (length c) 1)
            (with val (coqtop-get-attributes 'val a)
              (and (list-1? val) (string? (first val)))))
@@ -126,9 +126,9 @@
       (if (or (and (== val "intvalue")    (integer? body))
               (and (== val "stringvalue") (string? body))
               (and (== val "boolvalue")   (bool? body)))
-      `((option ,body))
-      (coqtop-error "bad option type")))
-    (coqtop-error "bad option")))
+      `((option-value ,body))
+      (coqtop-error "bad option-value type")))
+    (coqtop-error "bad option-value")))
 
 (define (coqtop-union env a c)
   (if (and (== (length c) 1)
@@ -185,7 +185,7 @@
   (union        (handler :elem coqtop-union))
   (call         (handler :elem coqtop-call))
   (state_id     (handler :elem coqtop-state-id))
-  (option_value (handler :elem coqtop-option)))
+  (option_value (handler :elem coqtop-option-value)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface
