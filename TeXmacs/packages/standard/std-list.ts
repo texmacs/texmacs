@@ -1,6 +1,6 @@
 <TeXmacs|1.0.7.20>
 
-<style|<tuple|source|std>>
+<style|<tuple|source|std|english>>
 
 <\body>
   <active*|<\src-title>
@@ -74,11 +74,11 @@
 
   <new-counter|item>
 
-  <assign|last-item|<active*|<with|mode|math|||\<cdot\>||<with|math-font-series|bold|<rigid|\<ast\>>>>>>
+  <assign|last-item|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>
 
   <assign|current-item|<value|aligned-space-item>>
 
-  <assign|transform-item|<macro|name|<active*|<with|mode|math|||\<cdot\>||<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
+  <assign|transform-item|<macro|name|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
   <assign|the-item|<macro|<transform-item|<value|<counter-item>>>>>
 
@@ -217,8 +217,5 @@
   \;
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
