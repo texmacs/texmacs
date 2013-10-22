@@ -133,6 +133,12 @@
       `((state-id ,val)))
     (coqtop-error "bad state-id")))
 
+(define (coqtop-status env a c)
+  (if (== (length c) 4)
+    (with bodies (map (cut coqtop-as-serial env <>) c)
+      `((status ,@bodies)))
+    (coqtop-error "bad status")))
+
 (define (bool? b)
   (or (== b #t) (== b #f)))
 
@@ -219,6 +225,7 @@
   (union        (handler :elem coqtop-union))
   (call         (handler :elem coqtop-call))
   (state_id     (handler :elem coqtop-state-id))
+  (status       (handler :elem coqtop-status))
   (value        (handler :elem coqtop-value))
   (status       (handler :elem coqtop-status))
   (value        (handler :pre  coqtop-value))
