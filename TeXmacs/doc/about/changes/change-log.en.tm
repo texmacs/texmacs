@@ -1,6 +1,6 @@
 <TeXmacs|1.0.7.20>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
@@ -8,9 +8,16 @@
   <section|Changes from version 1.0.7 to 1.0.7.21>
 
   <\itemize>
+    <item>Complete reorganization of document styles and package (1.0.7.21).
+
     <item>New focus preferences menu (1.0.7.21).
 
-    <item>Improved CJK typesetting (1.0.7.21).
+    <item>Improved CJK typesetting and support for Fandol fonts (1.0.7.21).
+
+    <item>Stretchable space between letters (1.0.7.21).
+
+    <item>Implementation of protrusion for the standard <verbatim|ecrm> font
+    (1.0.7.21).
 
     <item>Improved presentation mode (1.0.7.20).
 
@@ -1791,8 +1798,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
