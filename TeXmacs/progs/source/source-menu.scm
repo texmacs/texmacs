@@ -133,6 +133,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind source-macros-menu
+  ("New macro" (open-macro-editor (string->symbol "")))
   ("Edit macros" (open-macros-editor))
   ("Edit preamble" (toggle-preamble))
   ("Extract style file" (extract-style-file #t))

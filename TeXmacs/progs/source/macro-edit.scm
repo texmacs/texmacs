@@ -34,7 +34,7 @@
                       (cut get-definition** l <>)))
         (else #f)))
 
-(define (get-definition* l t)
+(tm-define (get-definition* l t)
   (cond ((tm-func? t 'hide-preamble 1) (get-definition** l (tree-ref t 0)))
         ((tm-func? t 'show-preamble 1) (get-definition** l (tree-ref t 0)))
         ((tree-atomic? t) #f)
@@ -55,16 +55,22 @@
   (:secure #t)
   (let* ((c (tree-children a))
          (name (car c))
+	 (name* (if (not (tm-equal? name "")) name
+		    `(concat (with "color" "red" "font-shape" "italic"
+				   "enter-name") ,name)))
          (args (cDr (cdr c)))
          (args* (map (lambda (x) `(src-arg ,x)) args))
-         (body (cAr c)))
+         (body (cAr c))
+	 (body* (if (not (and (tm-equal? name "") (tm-equal? body ""))) body
+		    `(concat (with "color" "red" "font-shape" "italic"
+				   "enter-body") ,body))))		    
     `(with "par-first" "0em" "par-par-sep" "0.5em"
        (document
          (concat
-           (inline-tag ,name ,@args*)
+           (inline-tag ,name* ,@args*)
            " "
            (math "<assign>"))
-         ,body))))
+         ,body*))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Searching a definition in style files and packages
