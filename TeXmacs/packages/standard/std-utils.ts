@@ -167,6 +167,18 @@
 
   <\active*>
     <\src-comment>
+      Indentation.
+    </src-comment>
+  </active*>
+
+  <assign|paragraph-box|<\macro|width|body>
+    <tabular|<tformat|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-bsep|0spc>|<cwith|1|1|1|1|cell-tsep|0spc>|<cwith|1|1|1|1|cell-vcorrect|n>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-width|<arg|width>>|<cwith|1|1|1|1|cell-hmode|exact>|<table|<row|<\cell>
+      <arg|body>
+    </cell>>>>>
+  </macro>>
+
+  <\active*>
+    <\src-comment>
       Header information.
     </src-comment>
   </active*>
