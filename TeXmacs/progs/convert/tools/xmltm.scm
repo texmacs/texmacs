@@ -554,19 +554,40 @@
 ;; Producing coqtopml handlers for dispatch table
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (coqtopml-space-preformatted env l)
-  ;; Drop newlines. Conserve spaces.
-  (with strings (filter string? l)
-    (list (apply string-append strings))))
+(define (char-whitespace? c)
+  (in? c '(#\space #\ht #\newline)))
 
-(define coqtopml-pre    coqtopml-space-preformatted)
+(tm-define (blank? s)
+  (:synopsis "does @s contain only whitespace?")
+  (list-and (map char-whitespace? (string->list s))))
+
+(define (trim-newlines s)
+  (letrec ((nl? (lambda (c) (== c #\newline)))
+           (trim-right (lambda (l)
+                         (if (and (list>0? l) (nl? (car l)))
+                           (trim-right (cdr l)) l)))
+           (trim-left  (lambda (l)
+                         (if (and (list>0? l) (nl? (cAr l)))
+                           (trim-left  (cDr l)) l))))
+  (list->string (trim-right (trim-left (string->list s))))))
+
+(define (coqtopml-space-cleaning env l)
+  ;; Drop blank lines. Trim newlines at begin and end of strings.
+  ;; Conserve spaces. Put text in string tags.
+  (set! l (filter (lambda (x) (or (nstring? x)
+                                  (not (blank? x)))) l))
+  (if (and (nnull? l) (null? (filter nstring? l)))
+    (list (trim-newlines (apply string-append l)))
+    (map (lambda (x) (if (string? x) `(c:string ,(trim-newlines x)) x)) l)))
+
+(define coqtopml-pre    coqtopml-space-cleaning)
 (define coqtopml-elem   htmltm-space-element)
 
 (tm-define (coqtop-handler model method)
   ;;  model:  content model category
   ;;          :element -- text nodes are ignored
-  ;;          :pre -- drop newlines at ends and switch to preserved spaces
-  ;;            mode.
+  ;;          :pre -- Drop blank lines. Trim newlines at beginning and ending
+  ;;            of strings.  Conserve spaces. Put text in string tags.
   ;;  method: <procedure> to convert the element content to a node-list.
   (if (not (in? model '(:pre :elem)))
       (error "Bad model: " model))
