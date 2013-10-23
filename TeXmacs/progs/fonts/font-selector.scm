@@ -15,7 +15,9 @@
 
 (texmacs-module (fonts font-selector)
   (:use (kernel gui menu-widget)
-        (fonts font-sample)))
+        (fonts font-sample)
+        (generic format-edit)
+        (generic document-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Font samples
@@ -118,17 +120,6 @@
     (set! selector-font-style (cadr fn))
     (set! selector-font-size sz)
     (selector-initialize-search)))
-
-(tm-define (make-multi-with l)
-  (when (nnull? l)
-    (with t (if (selection-active-any?) (selection-tree) "")
-      (if (selection-active-any?) (clipboard-cut "null"))
-      (insert-go-to `(with ,@l ,t) (cons (length l) (path-end t '()))))))
-
-(tm-define (init-multi l)
-  (when (and (nnull? l) (nnull? (cdr l)))
-    (init-env (car l) (cadr l))
-    (init-multi (cddr l))))
 
 (tm-define (selector-get-changes)
   (if (== selector-font-style "Unknown")

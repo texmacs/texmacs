@@ -87,6 +87,11 @@
       (when (!= new (get-init-env var))
         (set-init-env var new)))))
 
+(tm-define (init-multi l)
+  (when (and (nnull? l) (nnull? (cdr l)))
+    (init-env (car l) (cadr l))
+    (init-multi (cddr l))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Text and paragraph properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

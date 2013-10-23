@@ -360,6 +360,7 @@
 (menu-bind text-format-menu
   (if (new-fonts?)
       ("Font" (interactive open-font-selector)))
+  ;;("Paragraph" (open-paragraph-format))
   (if (not (new-fonts?))
       (group "Font")
       (link text-font-menu))

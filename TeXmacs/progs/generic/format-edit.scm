@@ -17,6 +17,29 @@
 	(generic generic-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Simplification
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (with-simplify-sub t var)
+  (cond ((tree-is-buffer? t) (noop))
+        ((tree-func? t 'document 1)
+         (with-simplify-sub (tree-up t) var))
+        ((tree-func? t 'with)
+         (with-simplify-sub (tree-up t) var)
+         (for (i (reverse (.. 0 (quotient (tree-arity t) 2))))
+           (when (== (tree-ref t (* 2 i)) var)
+             (tree-remove! t (* 2 i) 2)))
+         (when (tree-func? t 'with 1)
+           (tree-remove-node! t 0)))))
+
+(tm-define (with-simplify t)
+  (when (and (not (tree-is-buffer? t)) (tree->path t))
+    (with-simplify (tree-up t))
+    (when (tree-is? t 'with)
+      (for (var (map car (list->assoc (cDr (tree-children t)))))
+        (with-simplify-sub (tree-up t) var)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Modifying environment variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -35,6 +58,45 @@
   (:interactive #t)
   (interactive (lambda (s) (make-with-like `(with-opacity ,s "")))
     (list "opacity" "string" '())))
+
+(define (add-with l t)
+  (if (tm-is? t 'with)
+      (with l (tm-children t)
+        `(with ,@(cDr l) ,(add-with l (cAr l))))
+      `(with ,@l ,t)))
+
+(tm-define (make-multi-with l)
+  (when (nnull? l)
+    (with t (if (selection-active-any?) (selection-tree) "")
+      (if (selection-active-any?) (clipboard-cut "null"))
+      (insert-go-to (add-with l t) (cons (length l) (path-end t '())))
+      (with-simplify (cursor-tree)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Modifying paragraph properties
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (make-line-with var val)
+  (:synopsis "Make 'with' with one or more paragraphs as its scope")
+  (:check-mark "o" test-env?)
+  (if (not (selection-active-normal?))
+      (select-line))
+  (make-with var val)
+  (insert-return)
+  (remove-text #f))
+
+(tm-define (make-interactive-line-with var)
+  (:interactive #t)
+  (interactive (lambda (s) (make-line-with var s))
+    (list (logic-ref env-var-description% var) "string" (get-env var))))
+
+(tm-define (make-multi-line-with l)
+  (when (nnull? l)
+    (when (not (selection-active-normal?))
+      (select-line))
+    (make-multi-with l)
+    (insert-return)
+    (remove-text #f)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting and toggling with-like tags

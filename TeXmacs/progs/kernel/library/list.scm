@@ -275,6 +275,15 @@
 	      (cons* head (cons (car tail) (car r)) (cdr r))
 	      (cons head r))))))
 
+(define-public (list->assoc l)
+  "Group entries of list @l two by two and construct association list"
+  (if (or (null? l) (null? (cdr l))) (list)
+      (cons (cons (car l) (cadr l)) (list->assoc (cddr l)))))
+
+(define-public (assoc->list l)
+  "intersperse all keys and values in @l into a flat list"
+  (append-map (lambda (x) (list (car x) (cdr x))) l))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search and replace
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

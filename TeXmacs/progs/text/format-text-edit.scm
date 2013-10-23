@@ -16,24 +16,6 @@
 	(generic format-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Modifying paragraph properties
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (make-line-with var val)
-  (:synopsis "Make 'with' with one or more paragraphs as its scope")
-  (:check-mark "o" test-env?)
-  (if (not (selection-active-normal?))
-      (select-line))
-  (make-with var val)
-  (insert-return)
-  (remove-text #f))
-
-(tm-define (make-interactive-line-with var)
-  (:interactive #t)
-  (interactive (lambda (s) (make-line-with var s))
-    (list (logic-ref env-var-description% var) "string" (get-env var))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Page breaking
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

@@ -154,6 +154,10 @@
 (lazy-menu (generic insert-menu) insert-menu texmacs-insert-icons
            insert-link-menu insert-image-menu insert-animation-menu)
 (lazy-define (generic generic-doc) focus-help)
+(lazy-define (generic format-widgets)
+             open-paragraph-format open-document-paragraph-format)
+(tm-property (open-paragraph-format) (:interactive #t))
+(tm-property (open-document-paragraph-format) (:interactive #t))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting text mode\n")
