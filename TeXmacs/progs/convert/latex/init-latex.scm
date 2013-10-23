@@ -14,12 +14,8 @@
 (texmacs-module (convert latex init-latex))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; LaTeX
+;; LaTeX format
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; FIXME: the intermediate latex-stree data format is different
-;; for conversions to and from TeXmacs. After rewriting
-;; the input filter, both formats should be identical.
 
 (define (latex-recognizes-at? s pos)
   (set! pos (format-skip-spaces s pos))
@@ -45,37 +41,12 @@
   (:name "LaTeX class")
   (:suffix "ltx" "sty" "cls"))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; TeXmacs->LaTeX
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (lazy-define (convert latex texout) serialize-latex)
 (lazy-define (convert latex tmtex) texmacs->latex)
-(lazy-define (convert latex tmtex-elsevier) init-elsevier)
-
-(converter latex-document latex-tree
-  (:function parse-latex-document))
-
-(tm-define (latex-document->texmacs x . opts)
-  (if (list-1? opts) (set! opts (car opts)))
-  (let*
-    ((as-pic   (== (get-preference "latex->texmacs:fallback-on-pictures") "on"))
-     (keep-src (== (get-preference "latex->texmacs:preserve-source") "on")))
-    (cpp-latex-document->texmacs x as-pic keep-src)))
-
-(converter latex-document texmacs-tree
-  (:function latex-document->texmacs))
-
-(converter latex-class-document texmacs-tree
-  (:function latex-class-document->texmacs))
-
-(converter latex-stree latex-document
-  (:function serialize-latex))
-
-(converter latex-snippet latex-tree
-  (:function parse-latex))
-
-(converter latex-stree latex-snippet
-  (:function serialize-latex))
-
-(converter latex-tree texmacs-tree
-  (:function latex->texmacs))
 
 (converter texmacs-stree latex-stree
   (:function-with-options texmacs->latex)
@@ -85,3 +56,35 @@
   (:option "texmacs->latex:indirect-bib" "off")
   (:option "texmacs->latex:use-macros" "on")
   (:option "texmacs->latex:encoding" "ascii"))
+
+(converter latex-stree latex-document
+  (:function serialize-latex))
+
+(converter latex-stree latex-snippet
+  (:function serialize-latex))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; LaTeX -> TeXmacs
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (latex-document->texmacs x . opts)
+  (if (list-1? opts) (set! opts (car opts)))
+  (let*
+    ((as-pic   (== (get-preference "latex->texmacs:fallback-on-pictures") "on"))
+     (keep-src (== (get-preference "latex->texmacs:preserve-source") "on")))
+    (cpp-latex-document->texmacs x as-pic keep-src)))
+
+(converter latex-document latex-tree
+  (:function parse-latex-document))
+
+(converter latex-snippet latex-tree
+  (:function parse-latex))
+
+(converter latex-document texmacs-tree
+  (:function latex-document->texmacs))
+
+(converter latex-class-document texmacs-tree
+  (:function latex-class-document->texmacs))
+
+(converter latex-tree texmacs-tree
+  (:function latex->texmacs))
