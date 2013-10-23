@@ -130,27 +130,36 @@
 ;; The main Format menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind math-format-menu
+(menu-bind full-math-format-menu
+  (group "Font")
   (if (new-fonts?)
-      ("Font" (interactive open-font-selector)))
+      ;;(link new-math-font-menu))
+      (link math-font-menu))
   (if (not (new-fonts?))
-      (group "Font")
       (link math-font-menu))
   (if (simple-menus?)
       (-> "Color" (link color-menu)))
   (if (detailed-menus?)
       ---
       (group "Text")
-      (-> "Color" (link color-menu))
-      (if (== (get-preference "experimental alpha") "on")
-          (-> "Opacity" (link opacity-menu)))
-      (-> "Scripts" (link local-supported-scripts-menu))
-      (-> "Space" (link horizontal-space-menu))
-      (-> "Transform" (link transform-menu))
-      (-> "Specific" (link specific-menu)))
+      (link textual-properties-menu))
   ---
-  (group "Special")
+  (group "Mathematics")
   (link math-special-format-menu))
+
+(menu-bind compressed-math-format-menu
+  (if (new-fonts?)
+      ("Font" (interactive open-font-selector)))
+  (if (not (new-fonts?))
+      (-> "Font" (link text-font-menu)))
+  (-> "Text" (link textual-properties-menu))
+  (-> "Mathematics" (link math-special-format-menu)))
+
+(menu-bind math-format-menu
+  (if (use-menus?)
+      (link full-math-format-menu))
+  (if (use-popups?)
+      (link compressed-math-format-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Icons for modifying mathematical text properties

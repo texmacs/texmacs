@@ -150,6 +150,12 @@
           (with s (look-and-feel)
             (or (== t s) (and (== t "std") (!= s "emacs")))))))
 
+(define-public (use-popups?)
+  (== (get-preference "complex actions") "popups"))
+
+(define-public (use-menus?)
+  (== (get-preference "complex actions") "menus"))
+
 (set! has-look-and-feel? test-look-and-feel)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

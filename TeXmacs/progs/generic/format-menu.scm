@@ -113,6 +113,25 @@
       ((eval (scripts-name name))
        (make-with "prog-scripts" name)))))
 
+(menu-bind text-properties-menu
+  (-> "Color" (link color-menu))
+  (if (== (get-preference "experimental alpha") "on")
+      (-> "Opacity" (link opacity-menu)))
+  (-> "Language" (link text-language-menu))
+  (-> "Scripts" (link local-supported-scripts-menu))
+  (-> "Space" (link horizontal-space-menu))
+  (-> "Transform" (link transform-menu))
+  (-> "Specific" (link specific-menu)))
+
+(menu-bind textual-properties-menu
+  (-> "Color" (link color-menu))
+  (if (== (get-preference "experimental alpha") "on")
+      (-> "Opacity" (link opacity-menu)))
+  (-> "Scripts" (link local-supported-scripts-menu))
+  (-> "Space" (link horizontal-space-menu))
+  (-> "Transform" (link transform-menu))
+  (-> "Specific" (link specific-menu)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menus for paragraph formatting
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

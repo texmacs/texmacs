@@ -436,6 +436,23 @@
        (init-env "prog-scripts" name)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The Document -> Text menu
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind document-text-menu
+  (-> "Magnification"
+      (link document-magnification-menu))
+  (-> "Color"
+      (link document-color-menu))
+  (if (detailed-menus?)
+      (-> "Language"
+          (link document-language-menu)))
+  (-> "Scripts"
+      ("Default" (init-default "prog-scripts"))
+      ---
+      (link supported-scripts-menu)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Document -> Paragraph menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -565,6 +582,10 @@
 ;; The Document -> Update menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (wait-update-current-buffer)
+  (system-wait "Updating current buffer, " "please wait")
+  (update-current-buffer))
+
 (menu-bind document-update-menu
   ("All" (generate-all-aux) (inclusions-gc) (wait-update-current-buffer))
   ---
@@ -581,10 +602,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Document menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (wait-update-current-buffer)
-  (system-wait "Updating current buffer, " "please wait")
-  (update-current-buffer))
 
 (menu-bind document-menu
   (-> "Style" (link document-style-menu))
@@ -610,20 +627,14 @@
           ---
           (-> "Size" (link document-font-base-size-menu))
           (-> "Dpi" (link document-font-dpi-menu))))
-  ;;("Paragraph" (open-document-paragraph-format))
-  (-> "Magnification"
-      (link document-magnification-menu))
-  (-> "Color"
-      (link document-color-menu))
-  (if (detailed-menus?)
-      (-> "Language"
-          (link document-language-menu)))
-  (-> "Scripts"
-      ("Default" (init-default "prog-scripts"))
-      ---
-      (link supported-scripts-menu))
-  (-> "Paragraph"
-      (link document-paragraph-menu))
+  (if (use-menus?)
+      (link document-text-menu))
+  (if (use-popups?)
+      (-> "Text" (link document-text-menu)))
+  (if (use-menus?)
+      (-> "Paragraph" (link document-paragraph-menu)))
+  (if (use-popups?)
+      ("Paragraph" (open-document-paragraph-format)))
   (-> "Page"
       (link document-page-menu))
   ---

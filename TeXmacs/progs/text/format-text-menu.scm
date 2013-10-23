@@ -357,32 +357,40 @@
 ;; The main Format menu in text mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind text-format-menu
+(menu-bind full-text-format-menu
+  (group "Font")
   (if (new-fonts?)
-      ("Font" (interactive open-font-selector)))
-  ;;("Paragraph" (open-paragraph-format))
+      ;;(link new-text-font-menu))
+      (link text-font-menu))
   (if (not (new-fonts?))
-      (group "Font")
       (link text-font-menu))
   (if (simple-menus?)
       (-> "Color" (link color-menu)))
   (if (detailed-menus?)
       ---
       (group "Text")
-      (-> "Color" (link color-menu))
-      (if (== (get-preference "experimental alpha") "on")
-          (-> "Opacity" (link opacity-menu)))
-      (-> "Language" (link text-language-menu))
-      (-> "Scripts" (link local-supported-scripts-menu))
-      (-> "Space" (link horizontal-space-menu))
-      (-> "Transform" (link transform-menu))
-      (-> "Specific" (link specific-menu)))
+      (link text-properties-menu))
   ---
   (group "Paragraph")
   (link paragraph-menu)
   ---
   (group "Page")
   (link page-menu))
+
+(menu-bind compressed-text-format-menu
+  (if (new-fonts?)
+      ("Font" (interactive open-font-selector)))
+  (if (not (new-fonts?))
+      (-> "Font" (link text-font-menu)))
+  (-> "Text" (link text-properties-menu))
+  ("Paragraph" (open-paragraph-format))
+  (-> "Page" (link page-menu)))
+
+(menu-bind text-format-menu
+  (if (use-menus?)
+      (link full-text-format-menu))
+  (if (use-popups?)
+      (link compressed-text-format-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Icons for modifying text properties

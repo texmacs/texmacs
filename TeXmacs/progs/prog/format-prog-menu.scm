@@ -43,30 +43,40 @@
 ;; The main Format menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind prog-format-menu
+(menu-bind full-prog-format-menu
+  (group "Font")
   (if (new-fonts?)
-      ("Font" (interactive open-font-selector)))
+      ;;(link new-prog-font-menu))
+      (link prog-font-menu))
   (if (not (new-fonts?))
-      (group "Font")
       (link prog-font-menu))
   (if (simple-menus?)
       (-> "Color" (link color-menu)))
   (if (detailed-menus?)
       ---
       (group "Text")
-      (-> "Color" (link color-menu))
-      (if (== (get-preference "experimental alpha") "on")
-          (-> "Opacity" (link opacity-menu)))
-      (-> "Scripts" (link local-supported-scripts-menu))
-      (-> "Space" (link horizontal-space-menu))
-      (-> "Transform" (link transform-menu))
-      (-> "Specific" (link specific-menu))
-      ---
-      (group "Paragraph")
-      (link paragraph-menu)
-      ---
-      (group "Page")
-      (link page-menu)))
+      (link textual-properties-menu))
+  ---
+  (group "Paragraph")
+  (link paragraph-menu)
+  ---
+  (group "Page")
+  (link page-menu))
+
+(menu-bind compressed-prog-format-menu
+  (if (new-fonts?)
+      ("Font" (interactive open-font-selector)))
+  (if (not (new-fonts?))
+      (-> "Font" (link text-font-menu)))
+  (-> "Text" (link textual-properties-menu))
+  ("Paragraph" (open-paragraph-format))
+  (-> "Page" (link page-menu)))
+
+(menu-bind prog-format-menu
+  (if (use-menus?)
+      (link full-prog-format-menu))
+  (if (use-popups?)
+      (link compressed-prog-format-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Icons for modifying text properties

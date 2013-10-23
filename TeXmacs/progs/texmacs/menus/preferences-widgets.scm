@@ -29,6 +29,10 @@
 (for (l supported-languages)
   (set-preference-name "language" l (upcase-first l)))
 
+(define-preference-names "complex actions"
+  ("menus" "Through the menus")
+  ("popups" "Through popup windows"))
+
 (define-preference-names "interactive questions"
   ("footer" "On the footer")
   ("popup" "In popup windows"))
@@ -43,7 +47,7 @@
       (enum (set-pretty-preference "look and feel" answer)
             '("Default" "Emacs" "Gnome" "KDE" "Mac OS" "Windows")
             (get-pretty-preference "look and feel")
-            "12em"))
+            "18em"))
     (item (text "User interface language:")
       (enum (set-pretty-preference "language" answer)
             '("British" "Bulgarian" "Chinese" "Czech" "Dutch" "Danish"
@@ -51,17 +55,22 @@
               "Japanese" "Korean" "Polish" "Portuguese" "Romanian" "Russian"
               "Slovene" "Spanish" "Swedish" "Taiwanese" "Ukrainian")
             (get-pretty-preference "language")
-            "12em"))
+            "18em"))
+    (item (text "Complex actions:")
+      (enum (set-pretty-preference "complex actions" answer)
+            '("Through the menus" "Through popup windows")
+            (get-pretty-preference "complex actions")
+            "18em"))
     (item (text "Interactive questions:")
       (enum (set-pretty-preference "interactive questions" answer)
             '("On the footer" "In popup windows")
             (get-pretty-preference "interactive questions")
-            "12em"))
+            "18em"))
     (item (text "Details in menus:")
       (enum (set-pretty-preference "detailed menus" answer)
             '("Simplified menus" "Detailed menus")
             (get-pretty-preference "detailed menus")
-            "12em"))))
+            "18em"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keyboard preferences

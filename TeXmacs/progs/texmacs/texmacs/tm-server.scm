@@ -69,6 +69,7 @@
   ("profile" "beginner" (lambda args (noop)))
   ("look and feel" "default" notify-look-and-feel)
   ("detailed menus" "detailed" noop)
+  ("complex actions" "menus" noop)
   ("interactive questions" (get-default-interactive-questions) noop)
   ("language" (get-locale-language) notify-language)
   ("fast environments" "on" notify-fast-environments)
