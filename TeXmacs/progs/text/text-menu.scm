@@ -695,5 +695,6 @@
 
 (tm-menu (focus-position-float-icons t)
   (:require (float-context? t))
-  (=> (balloon (icon "tm_floatpos.xpm") "Allowed positions of floating object")
+  (=> (balloon (icon "tm_position_float.xpm")
+               "Allowed positions of floating object")
       (link position-float-menu)))
