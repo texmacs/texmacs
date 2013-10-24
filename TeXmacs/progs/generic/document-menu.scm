@@ -405,23 +405,27 @@
 ;; The Document -> Color menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind document-color-menu
-  (-> "Foreground"
-      ("Default" (init-default "color"))
-      ---
-      (pick-color (init-env "color" answer))
-      ---
-      ("Palette" (interactive-color
-                  (lambda (col) (init-env "color" col)) '()))
-      ("Other" (init-interactive-env "color")))
-  (-> "Background"
-      ("Default" (init-default "bg-color"))
-      ---
-      (pick-background "" (init-env-tree "bg-color" answer))
-      ---
-      ("Palette" (interactive-background
-                  (lambda (col) (init-env "bg-color" col)) '()))
-      ("Other" (init-interactive-env "bg-color"))))
+(menu-bind document-foreground-color-menu
+  ("Default" (init-default "color"))
+  ---
+  (pick-color (init-env "color" answer))
+  ---
+  ("Palette" (interactive-color
+              (lambda (col) (init-env "color" col)) '()))
+  ("Other" (init-interactive-env "color")))
+
+(menu-bind document-background-color-menu
+  ("Default" (init-default "bg-color"))
+  ---
+  (pick-background "" (init-env-tree "bg-color" answer))
+  ---
+  ("Palette" (interactive-background
+              (lambda (col) (init-env "bg-color" col)) '()))
+  ("Other" (init-interactive-env "bg-color")))
+
+(menu-bind document-colors-menu
+  (-> "Foreground" (link document-foreground-color-menu))
+  (-> "Background" (link document-background-color-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Document -> Supported scripts menu
@@ -442,8 +446,8 @@
 (menu-bind document-text-menu
   (-> "Magnification"
       (link document-magnification-menu))
-  (-> "Color"
-      (link document-color-menu))
+  (-> "Colors"
+      (link document-colors-menu))
   (if (detailed-menus?)
       (-> "Language"
           (link document-language-menu)))
