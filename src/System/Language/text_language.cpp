@@ -266,7 +266,7 @@ oriental_language_rep::advance (tree t, int& pos) {
   if (pos < N(s) && !test (s, pos, "<#")) {
     while (pos < N(s) && s[pos] != ' ' && !test (s, pos, "<#"))
       tm_char_forwards (s, pos);
-    return &tp_cjk_normal_rep;
+    return &tp_cjk_no_break_rep;
   }
 
   int start= pos;
