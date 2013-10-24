@@ -152,9 +152,13 @@
       ("Font" (interactive open-font-selector)))
   (if (not (new-fonts?))
       (-> "Font" (link text-font-menu)))
-  (-> "Text" (link new-textual-properties-menu))
   (-> "Mathematics" (link math-special-format-menu))
   ---
+  (-> "Color"
+      (if (== (get-preference "experimental alpha") "on")
+	  (-> "Opacity" (link opacity-menu))
+	  ---)
+      (link color-menu))
   (-> "Whitespace" (link horizontal-space-menu))
   (-> "Line break" (link line-break-menu))
   (-> "Transform" (link transform-menu))

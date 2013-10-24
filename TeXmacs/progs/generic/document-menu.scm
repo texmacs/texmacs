@@ -622,19 +622,17 @@
       (if (!= (get-init-tree "sectional-short-style") (tree 'macro "false"))
 	  (-> "Part" (link document-part-menu)))
       (-> "View" (link document-view-menu)))
+  (-> "Update"
+      (link document-update-menu))
   ---
-  (if (new-fonts?)
+  (if (and (new-fonts?) (use-popups?))
       ("Font" (interactive open-document-font-selector)))
-  (if (not (new-fonts?))
+  (if (or (not (new-fonts?)) (use-menus?))
       (-> "Font"
           (link document-font-menu)
           ---
           (-> "Size" (link document-font-base-size-menu))
           (-> "Dpi" (link document-font-dpi-menu))))
-  (if (use-menus?)
-      (link document-text-menu))
-  (if (use-popups?)
-      (-> "Text" (link document-text-menu)))
   (if (use-menus?)
       (-> "Paragraph" (link document-paragraph-menu)))
   (if (use-popups?)
@@ -642,8 +640,7 @@
   (-> "Page"
       (link document-page-menu))
   ---
-  (-> "Update"
-      (link document-update-menu)))
+  (link document-text-menu))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document focus menus

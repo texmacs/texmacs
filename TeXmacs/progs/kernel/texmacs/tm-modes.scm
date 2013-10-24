@@ -138,9 +138,9 @@
 
 (define-public supported-languages
   '("british" "bulgarian" "chinese" "czech" "danish" "dutch" "english"
-    "french" "german" "hungarian" "italian" "japanese" "korean" "polish"
-    "portuguese" "romanian" "russian" "slovene" "spanish" "swedish"
-    "taiwanese" "ukrainian"))
+    "finnish" "french" "german" "hungarian" "italian" "japanese" "korean"
+    "polish" "portuguese" "romanian" "russian" "slovene" "spanish"
+    "swedish" "taiwanese" "ukrainian"))
 
 (define-public (supported-language? lan)
   (and (in? lan supported-languages)

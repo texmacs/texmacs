@@ -292,21 +292,6 @@
   (-> "Size" (link font-size-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The Language menu
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(menu-bind text-language-menu
-  (for (lan supported-languages)
-    (when (supported-language? lan)
-      ((check (eval (upcase-first lan)) "v" (test-env? "language" lan))
-       (make-with "language" lan)
-       (when (not (new-fonts?))
-         (when (in? lan '("chinese" "taiwanese"))
-           (make-with "font" "fireflysung"))
-         (when (in? lan '("bulgarian" "russian" "ukrainian"))
-           (make-with "font" "cyrillic")))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Format menu in text mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -335,10 +320,14 @@
       ("Font" (interactive open-font-selector)))
   (if (not (new-fonts?))
       (-> "Font" (link text-font-menu)))
-  (-> "Text" (link new-text-properties-menu))
   ("Paragraph" (open-paragraph-format))
   (-> "Page" (link new-page-menu))
   ---
+  (-> "Color"
+      (if (== (get-preference "experimental alpha") "on")
+	  (-> "Opacity" (link opacity-menu))
+	  ---)
+      (link color-menu))
   (-> "Whitespace" (link space-menu))
   (-> "Break" (link break-menu))
   (-> "Transform" (link transform-menu))

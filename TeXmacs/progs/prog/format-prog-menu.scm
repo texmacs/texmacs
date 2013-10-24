@@ -68,10 +68,14 @@
       ("Font" (interactive open-font-selector)))
   (if (not (new-fonts?))
       (-> "Font" (link text-font-menu)))
-  (-> "Text" (link new-textual-properties-menu))
   ("Paragraph" (open-paragraph-format))
   (-> "Page" (link new-page-menu))
   ---
+  (-> "Color"
+      (if (== (get-preference "experimental alpha") "on")
+	  (-> "Opacity" (link opacity-menu))
+	  ---)
+      (link color-menu))
   (-> "Whitespace" (link space-menu))
   (-> "Break" (link break-menu))
   (-> "Transform" (link transform-menu))

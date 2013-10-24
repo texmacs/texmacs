@@ -106,19 +106,10 @@
   ("Printer" (make-specific "printer"))
   ("Image" (make-specific "image")))
 
-(tm-menu (local-supported-scripts-menu)
-  (let* ((dummy (lazy-plugin-force))
-         (l (scripts-list)))
-    (for (name l)
-      ((eval (scripts-name name))
-       (make-with "prog-scripts" name)))))
-
 (menu-bind text-properties-menu
   (-> "Color" (link color-menu))
   (if (== (get-preference "experimental alpha") "on")
       (-> "Opacity" (link opacity-menu)))
-  (-> "Language" (link text-language-menu))
-  (-> "Scripts" (link local-supported-scripts-menu))
   (-> "Space" (link horizontal-space-menu))
   (-> "Transform" (link transform-menu))
   (-> "Specific" (link specific-menu)))
@@ -127,23 +118,9 @@
   (-> "Color" (link color-menu))
   (if (== (get-preference "experimental alpha") "on")
       (-> "Opacity" (link opacity-menu)))
-  (-> "Scripts" (link local-supported-scripts-menu))
   (-> "Space" (link horizontal-space-menu))
   (-> "Transform" (link transform-menu))
   (-> "Specific" (link specific-menu)))
-
-(menu-bind new-text-properties-menu
-  (-> "Color" (link color-menu))
-  (if (== (get-preference "experimental alpha") "on")
-      (-> "Opacity" (link opacity-menu)))
-  (-> "Language" (link text-language-menu))
-  (-> "Scripts" (link local-supported-scripts-menu)))
-
-(menu-bind new-textual-properties-menu
-  (-> "Color" (link color-menu))
-  (if (== (get-preference "experimental alpha") "on")
-      (-> "Opacity" (link opacity-menu)))
-  (-> "Scripts" (link local-supported-scripts-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Paragraph menu and submenus

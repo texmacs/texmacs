@@ -191,6 +191,19 @@
   ("Huge" (make 'huge))
   ("Really huge" (make 'really-huge)))
 
+(menu-bind text-language-menu
+  (for (lan supported-languages)
+    (when (supported-language? lan)
+      ((check (eval (upcase-first lan)) "v" (test-env? "language" lan))
+       (make (string->symbol lan))))))
+
+(tm-menu (local-supported-scripts-menu)
+  (let* ((dummy (lazy-plugin-force))
+         (l (scripts-list)))
+    (for (name l)
+      ((eval (scripts-name name))
+       (make-with "prog-scripts" name)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Enumerations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -292,6 +305,9 @@
       (-> "Content tag" (link content-tag-menu))
       (-> "Size tag" (link size-tag-menu)))
   (-> "Presentation tag" (link presentation-tag-menu))
+  (if (style-has? "std-markup-dtd")
+      (-> "Language" (link text-language-menu)))
+  (-> "Scripts" (link local-supported-scripts-menu))
   ---
   (-> "Mathematics" (link insert-math-menu))
   (-> "Table" (link insert-table-menu))
