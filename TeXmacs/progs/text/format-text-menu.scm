@@ -307,53 +307,6 @@
            (make-with "font" "cyrillic")))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The Paragraph menu
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(menu-bind paragraph-menu
-  (-> "Alignment"
-      ("Left aligned" (make-line-with "par-mode" "left"))
-      ("Centered" (make-line-with "par-mode" "center"))
-      ("Right aligned" (make-line-with "par-mode" "right"))
-      ---
-      ("Justified" (make-line-with "par-mode" "justify"))
-      ("Flexibility" (make-interactive-line-with "par-flexibility")))
-  (-> "Margins"
-      ("Left margin" (make-interactive-line-with "par-left"))
-      ("Right margin" (make-interactive-line-with "par-right"))
-      ("First indentation" (make-interactive-line-with "par-first"))
-      ---
-      (link indentation-menu))
-  (-> "Spacing"
-      ("Interline separation" (make-interactive-line-with "par-sep"))
-      ("Interline space" (make-interactive-line-with "par-line-sep"))
-      ("Interparagraph space" (make-interactive-line-with "par-par-sep"))
-      ---
-      (link vertical-space-menu))
-  (-> "Hyphenation"
-      ("Normal" (make-line-with "par-hyphen" "normal"))
-      ("Professional"
-       (make-line-with "par-hyphen" "professional"))
-      ---
-      (link line-break-menu))
-  (-> "Number of columns"
-      ("1" (make-line-with "par-columns" "1"))
-      ("2" (make-line-with "par-columns" "2"))
-      ("3" (make-line-with "par-columns" "3"))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The Page menu
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(menu-bind page-menu
-  (-> "Header" (link page-header-menu))
-  (-> "Footer" (link page-footer-menu))
-  (-> "Numbering" (link page-numbering-menu))
-  (-> "Break" (link page-break-menu))
-  (if (and (style-has? "env-float-dtd") (detailed-menus?))
-      (-> "Insertion" (link page-insertion-menu))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Format menu in text mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -382,9 +335,14 @@
       ("Font" (interactive open-font-selector)))
   (if (not (new-fonts?))
       (-> "Font" (link text-font-menu)))
-  (-> "Text" (link text-properties-menu))
+  (-> "Text" (link new-text-properties-menu))
   ("Paragraph" (open-paragraph-format))
-  (-> "Page" (link page-menu)))
+  (-> "Page" (link new-page-menu))
+  ---
+  (-> "Whitespace" (link space-menu))
+  (-> "Break" (link break-menu))
+  (-> "Transform" (link transform-menu))
+  (-> "Specific" (link specific-menu)))
 
 (menu-bind text-format-menu
   (if (use-menus?)

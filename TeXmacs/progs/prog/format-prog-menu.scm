@@ -68,9 +68,14 @@
       ("Font" (interactive open-font-selector)))
   (if (not (new-fonts?))
       (-> "Font" (link text-font-menu)))
-  (-> "Text" (link textual-properties-menu))
+  (-> "Text" (link new-textual-properties-menu))
   ("Paragraph" (open-paragraph-format))
-  (-> "Page" (link page-menu)))
+  (-> "Page" (link new-page-menu))
+  ---
+  (-> "Whitespace" (link space-menu))
+  (-> "Break" (link break-menu))
+  (-> "Transform" (link transform-menu))
+  (-> "Specific" (link specific-menu)))
 
 (menu-bind prog-format-menu
   (if (use-menus?)

@@ -152,8 +152,13 @@
       ("Font" (interactive open-font-selector)))
   (if (not (new-fonts?))
       (-> "Font" (link text-font-menu)))
-  (-> "Text" (link textual-properties-menu))
-  (-> "Mathematics" (link math-special-format-menu)))
+  (-> "Text" (link new-textual-properties-menu))
+  (-> "Mathematics" (link math-special-format-menu))
+  ---
+  (-> "Whitespace" (link horizontal-space-menu))
+  (-> "Line break" (link line-break-menu))
+  (-> "Transform" (link transform-menu))
+  (-> "Specific" (link specific-menu)))
 
 (menu-bind math-format-menu
   (if (use-menus?)

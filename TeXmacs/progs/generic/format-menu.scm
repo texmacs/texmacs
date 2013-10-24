@@ -132,27 +132,40 @@
   (-> "Transform" (link transform-menu))
   (-> "Specific" (link specific-menu)))
 
+(menu-bind new-text-properties-menu
+  (-> "Color" (link color-menu))
+  (if (== (get-preference "experimental alpha") "on")
+      (-> "Opacity" (link opacity-menu)))
+  (-> "Language" (link text-language-menu))
+  (-> "Scripts" (link local-supported-scripts-menu)))
+
+(menu-bind new-textual-properties-menu
+  (-> "Color" (link color-menu))
+  (if (== (get-preference "experimental alpha") "on")
+      (-> "Opacity" (link opacity-menu)))
+  (-> "Scripts" (link local-supported-scripts-menu)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Menus for paragraph formatting
+;; The Paragraph menu and submenus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind vertical-space-menu
-  (group "Space before")
+  (group "Vertical space before")
   ("Small skip" (make-vspace-before "0.5fn"))
   ("Medium skip" (make-vspace-before "1fn"))
   ("Big skip" (make-vspace-before "2fn"))
   ("Other" (interactive make-vspace-before))
   ---
-  (group "Space after")
+  (group "Vertical space after")
   ("Small skip" (make-vspace-after "0.5fn"))
   ("Medium skip" (make-vspace-after "1fn"))
   ("Big skip" (make-vspace-after "2fn"))
   ("Other" (interactive make-vspace-after)))
 
 (menu-bind indentation-menu
+  (group "Indentation")
   ("Disable indentation before" (make 'no-indent))
   ("Enable indentation before" (make 'yes-indent))
-  ---
   ("Disable indentation after" (make 'no-indent*))
   ("Enable indentation after" (make 'yes-indent*)))
 
@@ -162,8 +175,39 @@
   ("No line break" (make 'no-break))
   ("New paragraph" (make 'new-line)))
 
+(menu-bind paragraph-menu
+  (-> "Alignment"
+      ("Left aligned" (make-line-with "par-mode" "left"))
+      ("Centered" (make-line-with "par-mode" "center"))
+      ("Right aligned" (make-line-with "par-mode" "right"))
+      ---
+      ("Justified" (make-line-with "par-mode" "justify"))
+      ("Flexibility" (make-interactive-line-with "par-flexibility")))
+  (-> "Margins"
+      ("Left margin" (make-interactive-line-with "par-left"))
+      ("Right margin" (make-interactive-line-with "par-right"))
+      ("First indentation" (make-interactive-line-with "par-first"))
+      ---
+      (link indentation-menu))
+  (-> "Spacing"
+      ("Interline separation" (make-interactive-line-with "par-sep"))
+      ("Interline space" (make-interactive-line-with "par-line-sep"))
+      ("Interparagraph space" (make-interactive-line-with "par-par-sep"))
+      ---
+      (link vertical-space-menu))
+  (-> "Hyphenation"
+      ("Normal" (make-line-with "par-hyphen" "normal"))
+      ("Professional"
+       (make-line-with "par-hyphen" "professional"))
+      ---
+      (link line-break-menu))
+  (-> "Number of columns"
+      ("1" (make-line-with "par-columns" "1"))
+      ("2" (make-line-with "par-columns" "2"))
+      ("3" (make-line-with "par-columns" "3"))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Menus for page formatting
+;; The Page menu and submenus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind page-header-menu
@@ -183,13 +227,13 @@
   ("Page number text" (make 'set-page-number-macro)))
 
 (menu-bind page-break-menu
-  (group "Before")
+  (group "Page break before")
   ("New page" (make 'new-page*))
   ("New double page" (make 'new-dpage*))
   ("Page break" (make 'page-break*))
   ("No page break" (make 'no-page-break*))
   ---
-  (group "After")
+  (group "Page break after")
   ("New page" (make-new-page))
   ("New double page" (make-new-dpage))
   ("Page break" (make-page-break))
@@ -216,6 +260,39 @@
   (when (inside? 'float)
     (group "Position float")
     (link position-float-menu)))
+
+(menu-bind page-menu
+  (-> "Header" (link page-header-menu))
+  (-> "Footer" (link page-footer-menu))
+  (-> "Numbering" (link page-numbering-menu))
+  (-> "Break" (link page-break-menu))
+  (if (and (style-has? "env-float-dtd") (detailed-menus?))
+      (-> "Insertion" (link page-insertion-menu))))
+
+(menu-bind new-page-menu
+  (-> "Header" (link page-header-menu))
+  (-> "Footer" (link page-footer-menu))
+  (-> "Numbering" (link page-numbering-menu))
+  (if (and (style-has? "env-float-dtd") (detailed-menus?))
+      (-> "Insertion" (link page-insertion-menu))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; New formatting submenus
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind space-menu
+  (group "Horizontal space")
+  (link horizontal-space-menu)
+  ---
+  (link vertical-space-menu)
+  ---
+  (link indentation-menu))
+
+(menu-bind break-menu
+  (group "Line break")
+  (link line-break-menu)
+  ---
+  (link page-break-menu))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Format menu
