@@ -253,6 +253,7 @@ qt_chooser_widget_rep::perform_dialog () {
   QPoint pos = to_qpoint (position);
   QRect r;
 
+  r.setSize (sz);
   r.moveCenter (pos);
   dialog->setGeometry (r);
   
