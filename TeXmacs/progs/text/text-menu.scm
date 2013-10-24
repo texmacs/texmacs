@@ -147,6 +147,39 @@
       ("Verbatim" (make 'verbatim-code))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Floating objects
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind note-menu
+  (when (not (or (inside? 'float) (inside? 'footnote)))
+    ("Footnote" (make 'footnote))
+    ---
+    ("Floating object" (make-insertion "float"))
+    ("Floating figure" (begin (make-insertion "float") (make 'big-figure)))
+    ("Floating table" (begin (make-insertion "float") (make 'big-table)))
+    ("Floating algorithm" (begin (make-insertion "float") (make 'algorithm)))))
+
+(menu-bind position-float-menu
+  ("Top" (toggle-insertion-positioning "t"))
+  ("Here" (toggle-insertion-positioning "h"))
+  ("Bottom" (toggle-insertion-positioning "b"))
+  ("Other pages" (toggle-insertion-positioning-not "f")))
+
+(tm-define (float-context? t)
+  (cond ((tree-is? t 'float) #t)
+        ((tree-in? t '(big-figure big-figure*
+                       big-table big-table*
+                       algorithm algorithm*
+                       document concat))
+         (and (tree-up t) (float-context? (tree-up t))))
+        (else #f)))
+
+(tm-menu (focus-position-float-menu t)
+  (:require (float-context? t))
+  (-> "Allowed positions"
+      (link position-float-menu)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -293,6 +326,8 @@
       (-> "Prominent" (link prominent-menu)))
   (if (style-has? "std-markup-dtd")
       (-> "Program" (link code-menu)))
+  (if (and (style-has? "env-float-dtd") (detailed-menus?))
+      (-> "Note" (link note-menu)))
   (if (style-has? "section-base-dtd")
       (-> "Automatic" (link automatic-menu)))
   (if (style-has? "std-list-dtd")
@@ -358,12 +393,8 @@
       ;;((balloon (icon "tm_margin.xpm") "Insert a marginal note") ())
       ;;((balloon (icon "tm_floating.xpm") "Insert a floating object") ())
       ;;((balloon (icon "tm_multicol.xpm") "Start multicolumn context") ())
-      (if (not (inside? 'float))
-	  (=> (balloon (icon "tm_pageins.xpm") "Make a page insertion")
-	      (link insert-page-insertion-menu)))
-      (if (inside? 'float)
-	  (=> (balloon (icon "tm_floatpos.xpm") "Position floating object")
-	      (link position-float-menu))))
+      (=> (balloon (icon "tm_pageins.xpm") "Insert a note or a floating object")
+          (link note-menu)))
   (if (style-has? "section-base-dtd")
       (=> (balloon (icon "tm_index.xpm")
 		   "Insert automatically generated content")
@@ -657,3 +688,12 @@
 (tm-define (standard-options l)
   (:require (in? l (algorithm-tag-list)))
   (list "centered-program" "framed-program"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Focus menus for floating objects
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (focus-position-float-icons t)
+  (:require (float-context? t))
+  (=> (balloon (icon "tm_floatpos.xpm") "Allowed positions of floating object")
+      (link position-float-menu)))

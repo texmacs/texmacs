@@ -41,20 +41,22 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind opacity-menu
-  ("10%" (make-with-like '(with-opacity "0.1" "")))
-  ("20%" (make-with-like '(with-opacity "0.2" "")))
-  ("30%" (make-with-like '(with-opacity "0.3" "")))
-  ("40%" (make-with-like '(with-opacity "0.4" "")))
-  ("50%" (make-with-like '(with-opacity "0.5" "")))
-  ("60%" (make-with-like '(with-opacity "0.6" "")))
-  ("70%" (make-with-like '(with-opacity "0.7" "")))
-  ("80%" (make-with-like '(with-opacity "0.8" "")))
-  ("90%" (make-with-like '(with-opacity "0.9" "")))
-  ("100%" (make-with-like '(with-opacity "1.0" "")))
+  ("0%" (make-with-like '(with-opacity "0%" "")))
+  ("10%" (make-with-like '(with-opacity "10%" "")))
+  ("20%" (make-with-like '(with-opacity "20%" "")))
+  ("30%" (make-with-like '(with-opacity "30%" "")))
+  ("40%" (make-with-like '(with-opacity "40%" "")))
+  ("50%" (make-with-like '(with-opacity "50%" "")))
+  ("60%" (make-with-like '(with-opacity "60%" "")))
+  ("70%" (make-with-like '(with-opacity "70%" "")))
+  ("80%" (make-with-like '(with-opacity "80%" "")))
+  ("90%" (make-with-like '(with-opacity "90%" "")))
+  ("100%" (make-with-like '(with-opacity "100%" "")))
   ---
   ("Other" (make-interactive-with-opacity)))
   
 (menu-bind exact-opacity-menu
+  ("0%" (make-with "opacity" "0%"))
   ("10%" (make-with "opacity" "10%"))
   ("20%" (make-with "opacity" "20%"))
   ("30%" (make-with "opacity" "30%"))
@@ -84,12 +86,13 @@
   ("Tab" (make-htab "5mm"))
   ("Custom tab" (interactive make-htab)))
 
-(menu-bind transform-menu
+(menu-bind adjust-menu
   ("Move object" (interactive make-move))
   ("Shift object" (interactive make-shift))
   ("Resize object" (interactive make-resize))
-  ("Clip object" (interactive make-clipped))
-  ---
+  ("Clip object" (interactive make-clipped)))
+
+(menu-bind format-special-menu
   ("Group" (make-rigid))
   ("Superpose" (make 'superpose))
   ("Repeat object" (make 'repeat))
@@ -97,6 +100,11 @@
   ;;("Decorate lines" (make-arity 'dlines 2))
   ;;("Decorate pages" (make-arity 'dpages 2))
   )
+
+(menu-bind transform-menu
+  (link adjust-menu)
+  ---
+  (link format-special-menu))
 
 (menu-bind specific-menu
   ("TeXmacs" (make-specific "texmacs"))
@@ -140,7 +148,6 @@
   ("Other" (interactive make-vspace-after)))
 
 (menu-bind indentation-menu
-  (group "Indentation")
   ("Disable indentation before" (make 'no-indent))
   ("Enable indentation before" (make 'yes-indent))
   ("Disable indentation after" (make 'no-indent*))
@@ -216,42 +223,16 @@
   ("Page break" (make-page-break))
   ("No page break" (make 'no-page-break)))
 
-(menu-bind insert-page-insertion-menu
-  ("Footnote" (make 'footnote))
-  ---
-  ("Floating object" (make-insertion "float"))
-  ("Floating figure" (begin (make-insertion "float") (make 'big-figure)))
-  ("Floating table" (begin (make-insertion "float") (make 'big-table)))
-  ("Floating algorithm" (begin (make-insertion "float") (make 'algorithm))))
-
-(menu-bind position-float-menu
-  ("Top" (toggle-insertion-positioning "t"))
-  ("Here" (toggle-insertion-positioning "h"))
-  ("Bottom" (toggle-insertion-positioning "b"))
-  ("Other pages" (toggle-insertion-positioning-not "f")))
-
-(menu-bind page-insertion-menu
-  (when (not (inside? 'float))
-    (link insert-page-insertion-menu))
-  ---
-  (when (inside? 'float)
-    (group "Position float")
-    (link position-float-menu)))
-
 (menu-bind page-menu
   (-> "Header" (link page-header-menu))
   (-> "Footer" (link page-footer-menu))
   (-> "Numbering" (link page-numbering-menu))
-  (-> "Break" (link page-break-menu))
-  (if (and (style-has? "env-float-dtd") (detailed-menus?))
-      (-> "Insertion" (link page-insertion-menu))))
+  (-> "Break" (link page-break-menu)))
 
 (menu-bind new-page-menu
   (-> "Header" (link page-header-menu))
   (-> "Footer" (link page-footer-menu))
-  (-> "Numbering" (link page-numbering-menu))
-  (if (and (style-has? "env-float-dtd") (detailed-menus?))
-      (-> "Insertion" (link page-insertion-menu))))
+  (-> "Numbering" (link page-numbering-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; New formatting submenus
@@ -261,9 +242,7 @@
   (group "Horizontal space")
   (link horizontal-space-menu)
   ---
-  (link vertical-space-menu)
-  ---
-  (link indentation-menu))
+  (link vertical-space-menu))
 
 (menu-bind break-menu
   (group "Line break")

@@ -274,6 +274,8 @@
     ((check "Show hidden" "v" (tree-is? t :up 'inactive))
      (inactive-toggle t))))
 
+(tm-menu (focus-position-float-menu t))
+
 (tm-menu (focus-style-options-menu t)
   (with opts (search-tag-options t)
     (if (nnull? opts)
@@ -306,6 +308,7 @@
       (-> (eval (focus-tag-name (tree-label t)))
           (dynamic (focus-variant-menu t)))))
   (dynamic (focus-toggle-menu t))
+  (dynamic (focus-position-float-menu t))
   (assuming (focus-has-preferences? t)
     (-> "Preferences"
         (dynamic (focus-preferences-menu t))))
@@ -394,10 +397,13 @@
             (tree-is? t :up 'inactive))
      (inactive-toggle t))))
 
+(tm-menu (focus-position-float-icons t))
+
 (tm-menu (focus-tag-extra-icons t))
 
 (tm-menu (focus-tag-icons t)
   (dynamic (focus-toggle-icons t))
+  (dynamic (focus-position-float-icons t))
   (mini #t
     (with l (focus-variants-of t)
       (assuming (<= (length l) 1)

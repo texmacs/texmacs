@@ -146,8 +146,7 @@
            transform-menu specific-menu
            vertical-space-menu indentation-menu line-break-menu
            page-header-menu page-footer-menu page-numbering-menu
-           page-break-menu page-insertion-menu
-           insert-page-insertion-menu position-float-menu)
+           page-break-menu)
 (lazy-menu (generic document-menu) document-menu
            project-menu document-style-menu global-language-menu)
 (lazy-menu (generic document-part) document-part-menu project-manage-menu)

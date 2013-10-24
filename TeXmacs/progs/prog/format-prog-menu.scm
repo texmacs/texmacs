@@ -71,15 +71,18 @@
   ("Paragraph" (open-paragraph-format))
   (-> "Page" (link new-page-menu))
   ---
+  (-> "Whitespace" (link space-menu))
+  (-> "Indentation" (link indentation-menu))
+  (-> "Break" (link break-menu))
+  ---
   (-> "Color"
       (if (== (get-preference "experimental alpha") "on")
 	  (-> "Opacity" (link opacity-menu))
 	  ---)
       (link color-menu))
-  (-> "Whitespace" (link space-menu))
-  (-> "Break" (link break-menu))
-  (-> "Transform" (link transform-menu))
-  (-> "Specific" (link specific-menu)))
+  (-> "Adjust" (link adjust-menu))
+  (-> "Specific" (link specific-menu))
+  (-> "Special" (link format-special-menu)))
 
 (menu-bind prog-format-menu
   (if (use-menus?)
