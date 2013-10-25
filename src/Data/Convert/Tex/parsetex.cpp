@@ -53,10 +53,15 @@ struct latex_parser {
   bool keep_src;
   bool in_def;
   hashmap<string,bool> loaded_package;
+  hashmap<string,array<tree> > substituables;
   latex_parser (bool unicode2): level (0), unicode (unicode2) {}
   void latex_error (string s, int i, string message);
 
   bool is_opening_option (char c);
+  bool is_substituable (tree t);
+  string contains_substituable (tree t);
+  string resolve_substitution  (tree t);
+
   tree parse             (string s, int& i, string stop= "", bool ch= false);
   tree parse_backslash   (string s, int& i);
   tree parse_linefeed    (string s, int& i);
@@ -651,6 +656,74 @@ read_throught_env (string s, int &i, string cmd) {
   }
 }
 
+bool
+latex_parser::is_substituable (tree t) {
+  if (is_tuple (t) && N(t) > 0) {
+    string cmd= string_arg (t[0]);
+    if (substituables->contains (cmd) ||
+        (cmd[N(cmd)-1] == '*' && substituables->contains (cmd(0, N(cmd)-1))))
+      return true;
+  }
+  return false;
+}
+
+string
+latex_parser::contains_substituable (tree t) {
+  if (is_atomic (t)) return "";
+  if (is_substituable (t)) return string_arg (t[0]);
+  if (is_tuple (t) && N(t) > 0 &&
+      latex_type (string_arg (t[0])) == "as-picture") {
+    return string_arg (t[0]);
+  }
+  int i, n= N(t);
+  string subs= "";
+  for (i=0; i<n; i++) {
+    subs= contains_substituable (t[i]);
+    if (subs != "") return subs;
+  }
+  return "";
+}
+
+static tree
+tree_replace (tree t, tree what, tree by) {
+  if (t == what) return by;
+  if (is_atomic (t)) return t;
+  int i, n= N(t);
+  tree r(t, n);
+  for (i=0; i<n; i++)
+    r[i]= tree_replace (t[i], what, by);
+  return r;
+}
+
+string
+latex_parser::resolve_substitution (tree t) {
+  if (is_atomic (t)) return "";
+  if (is_tuple (t) && N(t) > 0 &&
+      latex_type (string_arg (t[0])) == "as-picture") {
+    return string_arg (t[0]);
+  }
+  if (is_substituable (t)) {
+    string cmd= string_arg (t[0]);
+    int n= N(cmd);
+    if (cmd[n-1] == '*' && substituables->contains (cmd(0, n-1)))
+      cmd= cmd(0, n-1);
+    array<tree> a= substituables[cmd];
+    string subs= as_string (a[0]);
+    n= N(subs);
+    if (subs[n-1] == '*' && substituables->contains (subs(0, n-1)))
+      subs= subs(0, n-1);
+    if (latex_type (subs) == "as-picture") return subs;
+    return resolve_substitution (a[1]);
+  }
+  string cmd= "";
+  int i, n= N(t);
+  for (i=0; i<n; i++) {
+    cmd= resolve_substitution (t[i]);
+    if (cmd != "") return cmd;
+  }
+  return "";
+}
+
 tree
 latex_parser::parse_command (string s, int& i, string cmd) {
   bool delimdef = false;
@@ -891,6 +964,7 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     command_type  (var)= "user";
     command_arity (var)= 0;
     command_def   (var)= as_string (u[2]);
+    // hack to retrive artity of shortcuts
     if (is_func (t[2], TUPLE, 1) && 
         latex_type (as_string (t[2][0])) != "undefined") {
       command_arity (var)= latex_arity (as_string (t[2][0]));
@@ -907,6 +981,14 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     command_type  (var)= "user";
     command_arity (var)= - as_int (t[2]);
     command_def   (var)= as_string (u[4]);
+  }
+  if (is_tuple (t, "\\def",   2) ||
+      is_tuple (t, "\\def*",  3) ||
+      is_tuple (t, "\\def**", 4)) {
+    int n= N(t) - 1;
+    string subs= contains_substituable (t[n]);
+    if (pic && subs != "")
+      substituables (string_arg (t[1]))= A (tuple (subs, t[n]));
   }
   if (is_tuple (t, "\\declaretheorem*", 2) || 
       is_tuple (t, "\\declaretheorem",  1)) {
@@ -1001,6 +1083,9 @@ latex_parser::parse_command (string s, int& i, string cmd) {
   }
 
   string orig_cmd= cmd;
+  if (pic && !in_def && is_substituable (t))
+    cmd= resolve_substitution (t);
+
   if (pic && !in_def && latex_type (cmd(1, N(cmd))) == "as-picture") {
     if (cmd(0, 7) == "\\begin-") {
       read_throught_env (s, i, cmd);
@@ -1013,7 +1098,9 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     return ret;
   }
 
-  if (cmd == "\\def" || cmd == "\\newenvironment") in_def= false;
+  if (cmd == "\\def" || cmd == "\\def*" || cmd == "\\def**" ||
+      cmd == "\\newenvironment" || cmd == "\\newenvironment*" ||
+      cmd == "\\newenvironment**") in_def= false;
   if (mbox_flag) command_type ("!mode") = "math";
   return t;
 }
