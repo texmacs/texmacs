@@ -571,7 +571,7 @@
           ---
           ("Sloppy" (init-env "page-breaking" "sloppy"))
           ("Medium" (init-env "page-breaking" "medium"))
-          ("Professional" (init-env "page-breaking" "optimal")))
+          ("Professional" (init-env "page-breaking" "professional")))
       (-> "Limits"
           ("Allowed reduction" (init-interactive-env "page-shrink"))
           ("Allowed extension" (init-interactive-env "page-extend")))

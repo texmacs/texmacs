@@ -119,7 +119,7 @@ initialize_default_env () {
   env (PAGE_WIDTH_MARGIN)  = "false";   // compute margins from par-width?
   env (PAGE_HEIGHT_MARGIN) = "false";   // compute margins from par-width?
   env (PAGE_SCREEN_MARGIN) = "true";    // special margins for screen editing?
-  env (PAGE_BREAKING)    = "optimal";   // quality of page breaking
+  env (PAGE_BREAKING)    = "professional";  // quality of page breaking
   env (PAGE_FLEXIBILITY) = "1";         // flexibility factor of stretch
   env (PAGE_NR)          = "0";         // the page number
   env (PAGE_THE_PAGE)    = the_page;    // the page number as text
