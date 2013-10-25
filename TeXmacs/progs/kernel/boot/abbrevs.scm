@@ -43,6 +43,7 @@
 
 (define-public (in? x l) (not (not (member x l))))
 (define-public (nin? x l) (not (member x l)))
+(define-public (cons-new x l) (if (in? x l) l (cons x l)))
 
 (define-public (always? . l) #t)
 (define-public (never? . l) #f)

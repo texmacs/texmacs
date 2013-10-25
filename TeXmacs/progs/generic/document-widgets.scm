@@ -73,7 +73,7 @@
 ;; Document -> Page / Format
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget (page-formatter-format u style settings quit)
+(tm-widget (page-formatter-format u style quit)
   (padded
     (glue #t #t 500 300)
     === ===
@@ -88,7 +88,7 @@
 ;; Document -> Page / Margins
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget (page-formatter-margins u style settings quit)
+(tm-widget (page-formatter-margins u style quit)
   (padded
     (glue #t #t 500 300)
     === ===
@@ -103,15 +103,36 @@
 ;; Document -> Page / Breaking
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget (page-formatter-breaking u style settings quit)
+(define page-breaking-parameters
+  (list "page-breaking" "page-shrink" "page-extend" "page-flexibility"))
+
+(tm-widget (page-formatter-breaking u style quit)
   (padded
-    (glue #t #t 500 300)
+    (centered
+      (aligned
+        (item (text "Page breaking algorithm:")
+          (enum (init-env "page-breaking" answer)
+                '("sloppy" "medium" "professional")
+                (get-init "page-breaking") "10em"))
+        (item (text "Allowed page reduction:")
+          (enum (init-env "page-shrink" answer)
+                (cons-new (get-init "page-shrink") '("0cm" "0.5cm" "1cm" ""))
+                (get-init "page-shrink") "10em"))
+        (item (text "Allowed page extension:")
+          (enum (init-env "page-extend" answer)
+                (cons-new (get-init "page-extend") '("0cm" "0.5cm" "1cm" ""))
+                (get-init "page-extend") "10em"))
+        (item (text "Vertical space stretchability:")
+          (enum (init-env "page-flexibility" answer)
+                (cons-new (get-init "page-flexibility")
+                          '("0" "0.25" "0.5" "0.75" "1" ""))
+                (get-init "page-flexibility") "10em"))))
     === ===
     (explicit-buttons
       (hlist
+        ("Defaults" (apply init-default page-breaking-parameters))
+        ;; FIXME: should refresh above settings
         >>>
-        ("Cancel" (noop))
-        // //
         ("Ok" (quit))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -128,7 +149,7 @@
       (set! t (tm-ref t 0)))
     t))
 
-(define (apply-headers-settings u settings)
+(define (apply-headers-settings u)
   (with l (list)
     (for (var header-parameters)
       (and-with doc (get-field-contents (string-append "tmfs://aux/" var))
@@ -145,7 +166,7 @@
        (map (lambda (x) (string->url (string-append "tmfs://aux/" x)))
             header-parameters)))
 
-(tm-widget (page-formatter-headers u style settings quit)
+(tm-widget (page-formatter-headers u style quit)
   (padded
     (for (var header-parameters)
       (bold (text (eval (parameter-name var))))
@@ -164,32 +185,31 @@
         // //
         ("Page number" (when (editing-headers?) (make 'page-the-page)))
         >>>
-        ("Ok" (apply-headers-settings u settings) (quit))))))
+        ("Ok" (apply-headers-settings u) (quit))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document -> Page
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget ((document-page-formatter u style settings) quit)
+(tm-widget ((document-page-formatter u style) quit)
   (padded
     (tabs
       (tab (text "Format")
         (padded
-          (dynamic (page-formatter-format u style settings quit))))
+          (dynamic (page-formatter-format u style quit))))
       (tab (text "Margins")
         (padded
-          (dynamic (page-formatter-margins u style settings quit))))
+          (dynamic (page-formatter-margins u style quit))))
       (tab (text "Breaking")
         (padded
-          (dynamic (page-formatter-breaking u style settings quit))))
+          (dynamic (page-formatter-breaking u style quit))))
       (tab (text "Headers")
         (padded
-          (dynamic (page-formatter-headers u style settings quit)))))))
+          (dynamic (page-formatter-headers u style quit)))))))
 
 (tm-define (open-document-page-format)
   (:interactive #t)
   (let* ((u  (current-buffer))
-         (st (list-remove-duplicates (rcons (get-style-list) "macro-editor")))
-         (t  (make-ahash-table)))
-    (dialogue-window (document-page-formatter u st t)
+         (st (list-remove-duplicates (rcons (get-style-list) "macro-editor"))))
+    (dialogue-window (document-page-formatter u st)
                      noop "Document page format")))
