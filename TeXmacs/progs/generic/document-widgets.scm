@@ -90,13 +90,106 @@
 
 (tm-widget (page-formatter-margins u quit)
   (padded
-    (glue #t #t 500 300)
-    === ===
+    (refreshable "page-margin-toggles"
+      (centered
+        (aligned
+          (meti (text "Determine margins from text width")
+            (toggle (begin
+                      (init-env "page-width-margin" (if answer "true" "false"))
+                      (refresh-now "page-margin-settings"))
+                    (== (get-env "page-width-margin") "true")))
+          (meti (text "Same screen margins as on paper")
+            (toggle (begin
+                      (init-env "page-screen-margin" (if answer "false" "true"))
+                      (refresh-now "page-screen-margin-settings"))
+                    (!= (get-env "page-screen-margin") "true"))))))
+    ======
+    (hlist
+      (refreshable "page-margin-settings"
+        (hlist (bold (text "Margins on paper")))
+        === ===
+        (if (!= (get-env "page-width-margin") "true")
+            (aligned
+              (item (text "(Odd page) Left:")
+                (enum (init-env "page-odd" answer)
+                      (list (get-init "page-odd") "")
+                      (get-init "page-odd") "6em"))
+              (item (text "(Even page) Left:")
+                (enum (init-env "page-odd" answer)
+                      (list (get-init "page-odd") "")
+                      (get-init "page-odd") "6em"))
+              (item (text "(Odd page) Right:")
+                (enum (init-env "page-right" answer)
+                      (list (get-init "page-right") "")
+                      (get-init "page-right") "6em"))
+              (item (text "Top:")
+                (enum (init-env "page-top" answer)
+                      (list (get-init "page-top") "")
+                      (get-init "page-top") "6em"))
+              (item (text "Bottom:")
+                (enum (init-env "page-bot" answer)
+                      (list (get-init "page-bot") "")
+                      (get-init "page-bot") "6em"))))
+        (if (== (get-env "page-width-margin") "true")
+            (aligned
+              (item (text "Text width:")
+                (enum (init-env "par-width" answer)
+                      (list (get-init "par-width") "")
+                      (get-init "par-width") "6em"))
+              (item (text "Odd page shift:")
+                (enum (init-env "page-odd-shift" answer)
+                      (list (get-init "page-odd-shift") "")
+                      (get-init "page-odd-shift") "6em"))
+              (item (text "Even page shift:")
+                (enum (init-env "page-even-shift" answer)
+                      (list (get-init "page-even-shift") "")
+                      (get-init "page-even-shift") "6em"))
+              (item (text "Top:")
+                (enum (init-env "page-top" answer)
+                      (list (get-init "page-top") "")
+                      (get-init "page-top") "6em"))
+              (item (text "Bottom:")
+                (enum (init-env "page-bot" answer)
+                      (list (get-init "page-bot") "")
+                      (get-init "page-bot") "6em"))))
+        (glue #f #t 0 0))
+      /// ///
+      (refreshable "page-screen-margin-settings"
+        (when (== (get-env "page-screen-margin") "true")
+          (hlist (bold (text "Margins on screen")))
+          === ===
+          (aligned
+            (item (text "Left:")
+              (enum (init-env "page-screen-left" answer)
+                    (list (get-init "page-screen-left") "")
+                    (get-init "page-screen-left") "6em"))
+            (item (text "Right:")
+              (enum (init-env "page-screen-right" answer)
+                    (list (get-init "page-screen-right") "")
+                    (get-init "page-screen-right") "6em"))
+            (item (text "Top:")
+              (enum (init-env "page-screen-top" answer)
+                    (list (get-init "page-screen-top") "")
+                    (get-init "page-screen-top") "6em"))
+            (item (text "Bottom:")
+              (enum (init-env "page-screen-bot" answer)
+                    (list (get-init "page-screen-bot") "")
+                    (get-init "page-screen-bot") "6em")))
+          (glue #f #t 0 0))))
+    ======
     (explicit-buttons
       (hlist
+        ("Defaults" (begin
+                      (init-default "page-odd" "page-even" "page-right"
+                                    "page-top" "page-bot" "par-width"
+                                    "page-odd-shift" "page-even-shift"
+                                    "page-screen-left" "page-screen-right"
+                                    "page-screen-top" "page-screen-bot"
+                                    "page-width-margin" "page-screen-margin")
+                      (refresh-now "page-margin-toggles")
+                      (refresh-now "page-margin-settings")
+                      (refresh-now "page-screen-margin-settings")))
         >>>
-        ("Cancel" (noop))
-        // //
         ("Ok" (quit))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
