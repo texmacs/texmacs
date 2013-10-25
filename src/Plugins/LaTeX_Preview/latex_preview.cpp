@@ -37,6 +37,8 @@ array<string>
 search_latex_previews (tree t) {
   array<string> r;
   if (is_atomic (t));
+  else if (is_tuple (t, "\\def") || is_tuple (t, "\\def*")
+      || is_tuple (t, "\\def**"));
   else if (is_tuple (t, "\\latex_preview", 2))
     r << as_string (t[1]);
   else {

@@ -304,6 +304,8 @@ substitute_latex_previews (tree t, array<tree> a, int &i) {
     t[0]= "\\picture-mixed";
     t[1]= a[i++];
   }
+  else if (is_tuple (t, "\\def") || is_tuple (t, "\\def*")
+      || is_tuple (t, "\\def**"));
   else {
     int j, n= N(t);
     for (j=0; j<n; j++)

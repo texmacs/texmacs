@@ -51,7 +51,6 @@ struct latex_parser {
   char lf;
   bool pic;
   bool keep_src;
-  bool in_def;
   hashmap<string,bool> loaded_package;
   hashmap<string,array<tree> > substituables;
   latex_parser (bool unicode2): level (0), unicode (unicode2) {}
@@ -60,7 +59,7 @@ struct latex_parser {
   bool is_opening_option (char c);
   bool is_substituable (tree t);
   string contains_substituable (tree t);
-  string resolve_substitution  (tree t);
+  tree   apply_substitution    (tree t);
 
   tree parse             (string s, int& i, string stop= "", bool ch= false);
   tree parse_backslash   (string s, int& i);
@@ -675,6 +674,7 @@ latex_parser::contains_substituable (tree t) {
       latex_type (string_arg (t[0])) == "as-picture") {
     return string_arg (t[0]);
   }
+  if (is_tuple (t, "\\latex_preview")) return "true";
   int i, n= N(t);
   string subs= "";
   for (i=0; i<n; i++) {
@@ -695,33 +695,41 @@ tree_replace (tree t, tree what, tree by) {
   return r;
 }
 
-string
-latex_parser::resolve_substitution (tree t) {
-  if (is_atomic (t)) return "";
+tree
+latex_parser::apply_substitution (tree t) {
+  if (is_atomic (t)) return t;
   if (is_tuple (t) && N(t) > 0 &&
       latex_type (string_arg (t[0])) == "as-picture") {
-    return string_arg (t[0]);
+    string cmd= string_arg (t[0]);
+    tuple ("\\latex_preview", cmd(1, N(cmd)), "");
   }
   if (is_substituable (t)) {
     string cmd= string_arg (t[0]);
     int n= N(cmd);
-    if (cmd[n-1] == '*' && substituables->contains (cmd(0, n-1)))
+    if (cmd[n-1] == '*' && substituables->contains (cmd(0, n-1))) {
       cmd= cmd(0, n-1);
+    }
     array<tree> a= substituables[cmd];
-    string subs= as_string (a[0]);
-    n= N(subs);
-    if (subs[n-1] == '*' && substituables->contains (subs(0, n-1)))
-      subs= subs(0, n-1);
-    if (latex_type (subs) == "as-picture") return subs;
-    return resolve_substitution (a[1]);
+    tree r (a[1]), o (a[2]);
+    if (N(t) == -latex_arity (cmd)) {
+      tree tmp (TUPLE);
+      tmp << t[0] << o;
+      n= N(t);
+      for (int i=1; i<n; i++) tmp << t[i];
+      t= tmp;
+    }
+    n= N(t);
+    for (int i=1; i<n; i++) {
+      string arg= "#" * as_string (i);
+      r= tree_replace (r, arg, t[i]);
+    }
+    return r;
   }
-  string cmd= "";
   int i, n= N(t);
-  for (i=0; i<n; i++) {
-    cmd= resolve_substitution (t[i]);
-    if (cmd != "") return cmd;
-  }
-  return "";
+  tree r (t, n);
+  for (i=0; i<n; i++)
+    r[i]= apply_substitution (t[i]);
+  return r;
 }
 
 tree
@@ -745,8 +753,6 @@ latex_parser::parse_command (string s, int& i, string cmd) {
   if (cmd == "\\end-split*") cmd= "\\end-eqsplit*";
   if (cmd == "\\begin-tabular*") cmd= "\\begin-tabularx";
   if (cmd == "\\end-tabular*") cmd= "\\end-tabularx";
-
-  if (cmd == "\\def" || cmd == "\\newenvironment") in_def= true;
 
   if (latex_type (cmd) == "undefined")
     return parse_unknown (s, i, cmd);
@@ -986,9 +992,16 @@ latex_parser::parse_command (string s, int& i, string cmd) {
       is_tuple (t, "\\def*",  3) ||
       is_tuple (t, "\\def**", 4)) {
     int n= N(t) - 1;
+
     string subs= contains_substituable (t[n]);
-    if (pic && subs != "")
-      substituables (string_arg (t[1]))= A (tuple (subs, t[n]));
+    if (subs == "" && is_tuple (t, "\\def**", 4)) {
+      subs= contains_substituable (t[n-1]);
+    }
+
+    if (pic && subs != "" && is_tuple (t, "\\def**", 4))
+      substituables (string_arg (t[1]))= A (tuple (subs, t[n], t[n-1]));
+    else if (pic && subs != "" && !is_tuple (t, "\\def**", 4))
+      substituables (string_arg (t[1]))= A (tuple (subs, t[n], ""));
   }
   if (is_tuple (t, "\\declaretheorem*", 2) || 
       is_tuple (t, "\\declaretheorem",  1)) {
@@ -1082,11 +1095,11 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     // the user defined shorthands for \\begin{env} and \\end{env}
   }
 
-  string orig_cmd= cmd;
-  if (pic && !in_def && is_substituable (t))
-    cmd= resolve_substitution (t);
+  if (pic && contains_substituable (t) != "")
+    t= apply_substitution (t);
 
-  if (pic && !in_def && latex_type (cmd(1, N(cmd))) == "as-picture") {
+  string orig_cmd= cmd;
+  if (pic && latex_type (cmd(1, N(cmd))) == "as-picture") {
     if (cmd(0, 7) == "\\begin-") {
       read_throught_env (s, i, cmd);
       orig_cmd= "\\begin{" * cmd(7, N(cmd)) * "}";
@@ -1098,9 +1111,6 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     return ret;
   }
 
-  if (cmd == "\\def" || cmd == "\\def*" || cmd == "\\def**" ||
-      cmd == "\\newenvironment" || cmd == "\\newenvironment*" ||
-      cmd == "\\newenvironment**") in_def= false;
   if (mbox_flag) command_type ("!mode") = "math";
   return t;
 }
@@ -1849,7 +1859,6 @@ parse_latex (string s, bool change, bool using_cork, bool as_pic, bool keep_src)
 
   latex_parser ltx (encoding != "Cork");
   ltx.lf= 'M';
-  ltx.in_def= false;
   ltx.pic= as_pic;
   ltx.keep_src= keep_src;
   string s1= s;
