@@ -90,6 +90,8 @@
 ;; 			      '(("a" "b") ("c" "d"))))
 ;; 	 (tabular "cc" '(("a" "b") ("c" "d"))))))
 
+;; TODO: getting menus entries :
+;; find . -name '*menu.scm' -exec grep 'make' {} \; | sed -e 's/^\s\+//' | grep -v '^;'
 (define idempotence-test-suite-0
   '(
     ;; Cork table
