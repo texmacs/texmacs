@@ -126,6 +126,7 @@ bool is_symbol (object obj) { return tmscm_is_symbol (object_to_tmscm (obj)); }
 bool is_tree (object obj) { return tmscm_is_tree (object_to_tmscm (obj)); }
 bool is_path (object obj) { return tmscm_is_path (object_to_tmscm (obj)); }
 bool is_url (object obj) { return tmscm_is_url (object_to_tmscm (obj)); }
+bool is_widget (object obj) { return tmscm_is_widget (object_to_tmscm (obj)); }
 
 /******************************************************************************
  * Basic conversions

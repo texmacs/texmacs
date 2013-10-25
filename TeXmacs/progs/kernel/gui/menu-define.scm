@@ -67,6 +67,10 @@
       (texmacs-error "gui-make-refresh" "invalid menu item ~S" x))
     `($refresh ,(cadr x) ,(symbol->string (car opts)))))
 
+(define (gui-make-refreshable x)
+  (require-format x '(refreshable :%1 :*))
+  `($refreshable ,(cadr x) ,@(map gui-make (cddr x))))
+
 (define (gui-make-group x)
   (require-format x '(group :%1))
   `($menu-group ,(cadr x)))
@@ -331,6 +335,7 @@
   (for ,gui-make-for)
   (cond ,gui-make-cond)
   (refresh ,gui-make-refresh)
+  (refreshable ,gui-make-refreshable)
   (group ,gui-make-group)
   (text ,gui-make-text)
   (glue ,gui-make-glue)

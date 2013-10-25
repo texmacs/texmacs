@@ -429,6 +429,11 @@ widget refresh_widget (string tmwid, string kind) {
     // FIXME: decide what to do with children in QTMRefresh::recompute()
   return abstract (wid);
 }
+widget refreshable_widget (object promise, string kind) {
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::refreshable_widget, promise, kind);
+    // FIXME: decide what to do with children in QTMRefreshable::recompute()
+  return abstract (wid);
+}
 widget glue_widget (bool hx, bool vx, SI w, SI h) {
   qt_widget wid = qt_ui_element_rep::create (qt_ui_element_rep::glue_widget,
                                              hx, vx, w/PIXEL, h/PIXEL);

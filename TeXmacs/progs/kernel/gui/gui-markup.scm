@@ -124,6 +124,10 @@
   (:synopsis "Make a refresh widget")
   `(list 'refresh ',s ,kind))
 
+(tm-define-macro ($refreshable kind . l)
+  (:synopsis "Make a refreshable widget")
+  `(cons* 'refreshable (lambda () ,kind) ($list ,@l)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General layout widgets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

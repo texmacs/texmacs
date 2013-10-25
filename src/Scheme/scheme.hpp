@@ -79,6 +79,7 @@ bool is_symbol (object obj);
 bool is_tree (object obj);
 bool is_path (object obj);
 bool is_url (object obj);
+bool is_widget (object obj);
 
 bool as_bool (object obj);
 int as_int (object obj);

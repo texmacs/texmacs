@@ -54,8 +54,8 @@
     with-aux with-action with-module
     with-cursor with-buffer with-server
     user-ask
-    tab icon-tab form item meti
-    $when $let $let* $for
+    tab icon-tab form item meti refreshable
+    $when $let $let* $for $refreshable
     tmfs-load-handler tmfs-save-handler
     tmfs-title-handler tmfs-permission-handler
     tmfs-master-handler tmfs-format-handler))

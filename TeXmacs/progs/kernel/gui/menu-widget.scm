@@ -76,6 +76,7 @@
     (hsplit :menu-item :menu-item)
     (vsplit :menu-item :menu-item)
     (refresh :%1 :string?)
+    (refreshable :%1 :menu-item-list)
     (if :%1 :menu-item-list)
     (when :%1 :menu-item-list)
     (mini :%1 :menu-item-list)
@@ -593,6 +594,13 @@
   (with (tag s kind) p
     (list (widget-refresh (if (string? s) s (symbol->string s)) kind))))
 
+(define (make-refreshable p style bar?)
+  "Make @(refreshable :%1 :menu-item-list) menu items."
+  (with (tag kind . items) p
+    (list (widget-refreshable
+            (lambda () (widget-vmenu (make-menu-items-list items style bar?)))
+            (kind)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main routines for making menu items
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -707,7 +715,9 @@
   (promise (:%1)
            ,(lambda (p style bar?) (make-menu-promise p style bar?)))
   (refresh (:%1 :string?)
-           ,(lambda (p style bar?) (make-refresh p style bar?))))
+           ,(lambda (p style bar?) (make-refresh p style bar?)))
+  (refreshable (:%1 :*)
+               ,(lambda (p style bar?) (make-refreshable p style bar?))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu expansion
@@ -856,7 +866,8 @@
   (when ,menu-expand-when)
   (mini ,menu-expand-mini)
   (promise ,menu-expand-promise)
-  (refresh ,replace-procedures))
+  (refresh ,replace-procedures)
+  (refreshable ,replace-procedures))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface

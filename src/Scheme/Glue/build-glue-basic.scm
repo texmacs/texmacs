@@ -505,6 +505,7 @@
   (widget-texmacs-input texmacs_input_widget (widget content content url))
   (widget-ink ink_widget (widget command))
   (widget-refresh refresh_widget (widget string string))
+  (widget-refreshable refreshable_widget (widget object string))
   (object->promise-widget as_promise_widget (promise_widget object))
   (tree-bounding-rectangle get_bounding_rectangle (array_int tree))
   (show-balloon show_help_balloon (void widget int int))

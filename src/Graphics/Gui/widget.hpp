@@ -240,6 +240,11 @@ widget refresh_widget (string tmwid, string kind= "any");
   // scheme widget tmwid. When receiving the send_refresh event,
   // the contents should also be updated dynamically by reevaluating
   // the scheme widget (in case of matching kind)
+widget refreshable_widget (object promise, string kind= "any");
+  // a widget which is automatically constructed from the a dynamic
+  // scheme widget promise. When receiving the send_refresh event,
+  // the contents should also be updated dynamically by reevaluating
+  // the scheme widget promise (in case of matching kind)
 
 /******************************************************************************
 * Besides the widget constructors, any GUI implementation should also provide

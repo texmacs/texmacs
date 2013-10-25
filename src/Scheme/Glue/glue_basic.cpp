@@ -6014,6 +6014,21 @@ tmg_widget_refresh (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_widget_refreshable (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_OBJECT (arg1, TMSCM_ARG1, "widget-refreshable");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "widget-refreshable");
+
+  object in1= tmscm_to_object (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  widget out= refreshable_widget (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return widget_to_tmscm (out);
+}
+
+tmscm
 tmg_object_2promise_widget (tmscm arg1) {
   TMSCM_ASSERT_OBJECT (arg1, TMSCM_ARG1, "object->promise-widget");
 
@@ -7641,6 +7656,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("widget-texmacs-input",  tmg_widget_texmacs_input, 3, 0, 0);
   tmscm_install_procedure ("widget-ink",  tmg_widget_ink, 1, 0, 0);
   tmscm_install_procedure ("widget-refresh",  tmg_widget_refresh, 2, 0, 0);
+  tmscm_install_procedure ("widget-refreshable",  tmg_widget_refreshable, 2, 0, 0);
   tmscm_install_procedure ("object->promise-widget",  tmg_object_2promise_widget, 1, 0, 0);
   tmscm_install_procedure ("tree-bounding-rectangle",  tmg_tree_bounding_rectangle, 1, 0, 0);
   tmscm_install_procedure ("show-balloon",  tmg_show_balloon, 3, 0, 0);

@@ -297,7 +297,13 @@ qt_ui_element_rep::operator tree () {
     typedef pair<string, string> T;
     T x= open_box<T> (load);
     return tree (TUPLE, "refresh", x.x1, x.x2);
-  } else {
+  }
+  else if (type == refresh_widget) {
+    typedef pair<object, string> T;
+    T x= open_box<T> (load);
+    return tree (TUPLE, "refreshable", x.x2);
+  }
+  else {
     return tree();
   }
 }
@@ -700,6 +706,7 @@ qt_ui_element_rep::as_qlayoutitem () {
     case icon_tabs_widget:
     case resize_widget:
     case refresh_widget:
+    case refreshable_widget:
     case balloon_widget:
     {
       QWidgetItem* wi = new QWidgetItem(this->as_qwidget());
@@ -1106,6 +1113,14 @@ qt_ui_element_rep::as_qwidget () {
       typedef pair<string, string> T;
       T  x = open_box<T> (load);
       qwid = new QTMRefreshWidget (this, x.x1, x.x2);
+    }
+      break;
+            
+    case refreshable_widget:
+    {
+      typedef pair<object, string> T;
+      T  x = open_box<T> (load);
+      qwid = new QTMRefreshableWidget (this, x.x1, x.x2);
     }
       break;
       

@@ -675,6 +675,84 @@ QTMRefreshWidget::doRefresh (string kind) {
   }
 }
 
+/******************************************************************************
+ * QTMRefreshableWidget
+ ******************************************************************************/
+
+widget make_menu_widget (object wid);
+
+QTMRefreshableWidget::QTMRefreshableWidget (qt_widget _tmwid, object _promise, string _kind)
+: QWidget (), promise (_promise), kind (_kind),
+  curobj (false), cur (), tmwid (_tmwid), qwid(NULL), cache (widget ())
+{   
+  QObject::connect(the_gui->gui_helper, SIGNAL(tmSlotRefresh(string)),
+                   this, SLOT(doRefresh(string)));
+  QVBoxLayout* l = new QVBoxLayout (this);
+  l->setContentsMargins (0, 0, 0, 0);
+  l->setMargin (0);
+  setLayout (l);
+  
+  doRefresh("init");
+}
+
+bool
+QTMRefreshableWidget::recompute (string what) {
+  if (what != "init" && kind != "any" && kind != what) return false;
+  eval ("(lazy-initialize-force)");
+  object xwid = call (promise);
+  if (curobj == xwid) return false;
+  if (!is_widget (xwid)) return false;
+  curobj= xwid;
+  cur= as_widget (xwid);
+  tmwid->add_child (cur); // FIXME?! Is this ok? what when we refresh?
+  return true;
+}
+
+/*
+void
+QTMRefreshableWidget::deleteLayout (QLayout* l) {
+  if (!l)
+    return;
+
+  QLayoutItem* item;
+  while ((item = l->takeAt(0)) != 0) {
+    if (item->widget()) {
+        //qDebug() << "Deleting widget: " << item->widget();
+      l->removeWidget (item->widget());
+      item->widget()->setParent (NULL);
+      delete item->widget();
+    }	else if (item->layout()) {
+        //qDebug() << "Deleting layout: " << item->layout();
+      item->layout()->setParent (NULL);
+      deleteLayout (item->layout());
+    }
+  }
+
+  delete l;
+}
+*/
+
+void
+QTMRefreshableWidget::doRefresh (string kind) {
+  if (recompute (kind)) {
+    if (qwid) qwid->setParent (NULL);
+    delete qwid;
+    qwid = concrete (cur)->as_qwidget();
+    qwid->setParent (this);
+
+    delete layout()->takeAt(0);
+    layout()->addWidget (qwid);
+    update();
+    
+      // Tell the window to fix its size to the new one if we had it fixed to
+      // begin with (this is indicated by minimum and maximum sizes set to 
+      // values other than the default)
+    if (window()->minimumSize() != QSize (0,0) &&
+        window()->maximumSize() != QSize (QWIDGETSIZE_MAX, QWIDGETSIZE_MAX))
+      window()->setFixedSize (window()->sizeHint());  
+  }
+}
+
 
 /******************************************************************************
  * QTMComboBox

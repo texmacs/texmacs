@@ -146,6 +146,18 @@
       ===
       (refresh widget8-sub auto))))
 
+(tm-widget (widget9)
+  (padded
+    (with flag? #f
+      (refreshable "test"
+        (if (not flag?) (text "Flag is off"))
+        (if flag? (text "Flag is on")))
+      ===
+      (hlist
+        (toggle (begin (set! flag? answer) (refresh-now "test")) flag?)
+        ///
+        (text "Toggle here")))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some test forms
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
