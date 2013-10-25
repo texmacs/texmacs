@@ -85,6 +85,7 @@ latex_install_preview (string s, tree t, url wdir, bool dvips) {
   s= latex_remove_fmt (s);
   int i= 0;
   array<string> macros= search_latex_previews (t);
+  hashmap<string,bool> done (false);
   string preview= "%%%%%%%%%%%%%% ADDED BY TEXMACS %%%%%%%%%%%%%%%%%%\n";
   if (dvips)
     preview  << "\\usepackage[active,tightpage,delayed]{preview}\n";
@@ -92,6 +93,8 @@ latex_install_preview (string s, tree t, url wdir, bool dvips) {
     preview  << "\\usepackage[active,tightpage,delayed,psfixbb,dvips]{preview}\n";
 
   for (i=0; i<N(macros); i++) {
+    if (macros[i] == "") continue;
+    if (done[macros[i]]) continue;
     int arity= latex_arity (macros[i]);
     bool option= (arity<0);
     string arity_code;
@@ -107,10 +110,11 @@ latex_install_preview (string s, tree t, url wdir, bool dvips) {
       cmd= "\\PreviewEnvironment";
     }
     preview << cmd << "[{" * arity_code * "}]{" * name * "}\n";
+    done(macros[i])= true;
   }
   preview << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n";
 
-  i= latex_search_forwards ("\n\\documentclass", i, s);
+  i= latex_search_forwards ("\\documentclass", 0, s);
   i= latex_search_forwards ("{", i, s);
   i= latex_search_forwards ("}", i, s);
   i= latex_search_forwards ("\n", i, s);
