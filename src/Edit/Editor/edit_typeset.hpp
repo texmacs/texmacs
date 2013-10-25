@@ -21,7 +21,8 @@ class edit_typeset_rep: virtual public editor_rep {
 protected:
   tree the_style;                         // document style
   hashmap<path,hashmap<string,tree> > cur; // environment at different paths
-  hashmap<string,tree> pre;               // environment after styles
+  hashmap<string,tree> stydef;            // environment after styles
+  hashmap<string,tree> pre;               // environment after styles and init
   hashmap<string,tree> init;              // environment changes w.r.t. style
   hashmap<string,tree> fin ;              // environment changes w.r.t. doc
   edit_env env;                           // the environment for typesetting

@@ -31,7 +31,7 @@ bool enable_fastenv= false;
 edit_typeset_rep::edit_typeset_rep ():
   the_style (TUPLE),
   cur (hashmap<string,tree> (UNINIT)),
-  pre (UNINIT), init (UNINIT), fin (UNINIT),
+  stydef (UNINIT), pre (UNINIT), init (UNINIT), fin (UNINIT),
   env (drd, buf->buf->master,
        buf->data->ref, (buf->prj==NULL? buf->data->ref: buf->prj->data->ref),
        buf->data->aux, (buf->prj==NULL? buf->data->aux: buf->prj->data->aux)),
@@ -154,6 +154,8 @@ void
 edit_typeset_rep::typeset_preamble () {
   env->write_default_env ();
   typeset_style_use_cache (the_style);
+  env->update ();
+  env->read_env (stydef);
   env->patch_env (init);
   env->update ();
   env->read_env (pre);
@@ -572,6 +574,8 @@ void
 edit_typeset_rep::init_default (string var) {
   if (!init->contains (var)) return;
   init->reset (var);
+  if (stydef->contains (var)) pre(var)= stydef[var];
+  else pre->reset (var);
   notify_change (THE_ENVIRONMENT);
 }
 

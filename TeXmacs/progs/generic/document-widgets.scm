@@ -73,7 +73,7 @@
 ;; Document -> Page / Format
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget (page-formatter-format u style quit)
+(tm-widget (page-formatter-format u quit)
   (padded
     (glue #t #t 500 300)
     === ===
@@ -88,7 +88,7 @@
 ;; Document -> Page / Margins
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget (page-formatter-margins u style quit)
+(tm-widget (page-formatter-margins u quit)
   (padded
     (glue #t #t 500 300)
     === ===
@@ -103,22 +103,19 @@
 ;; Document -> Page / Breaking
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define page-breaking-parameters
-  (list "page-breaking" "page-shrink" "page-extend" "page-flexibility"))
-
-(tm-widget (page-formatter-breaking u style quit)
+(tm-widget (page-formatter-breaking u quit)
   (padded
-    (centered
+    (refreshable "page-breaking-settings"
       (aligned
         (item (text "Page breaking algorithm:")
           (enum (init-env "page-breaking" answer)
                 '("sloppy" "medium" "professional")
                 (get-init "page-breaking") "10em"))
-        (item (text "Allowed page reduction:")
+        (item (text "Allowed page height reduction:")
           (enum (init-env "page-shrink" answer)
                 (cons-new (get-init "page-shrink") '("0cm" "0.5cm" "1cm" ""))
                 (get-init "page-shrink") "10em"))
-        (item (text "Allowed page extension:")
+        (item (text "Allowed page height extension:")
           (enum (init-env "page-extend" answer)
                 (cons-new (get-init "page-extend") '("0cm" "0.5cm" "1cm" ""))
                 (get-init "page-extend") "10em"))
@@ -130,8 +127,10 @@
     === ===
     (explicit-buttons
       (hlist
-        ("Defaults" (apply init-default page-breaking-parameters))
-        ;; FIXME: should refresh above settings
+        ("Defaults" (begin
+                      (init-default "page-breaking" "page-shrink"
+                                    "page-extend" "page-flexibility")
+                      (refresh-now "page-breaking-settings")))
         >>>
         ("Ok" (quit))))))
 
@@ -196,13 +195,13 @@
     (tabs
       (tab (text "Format")
         (padded
-          (dynamic (page-formatter-format u style quit))))
+          (dynamic (page-formatter-format u quit))))
       (tab (text "Margins")
         (padded
-          (dynamic (page-formatter-margins u style quit))))
+          (dynamic (page-formatter-margins u quit))))
       (tab (text "Breaking")
         (padded
-          (dynamic (page-formatter-breaking u style quit))))
+          (dynamic (page-formatter-breaking u quit))))
       (tab (text "Headers")
         (padded
           (dynamic (page-formatter-headers u style quit)))))))
