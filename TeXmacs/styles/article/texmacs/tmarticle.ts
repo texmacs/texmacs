@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.7.20>
 
 <style|source>
 
@@ -16,11 +16,10 @@
       </src-copyright>
 
       <\src-license>
-        This software falls under the <hlink|GNU general public
-        license, version 3 or later|$TEXMACS_PATH/LICENSE>.
-        It comes WITHOUT ANY WARRANTY WHATSOEVER.
-        You should have received a copy of the license which the software.
-        If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
+        This software falls under the <hlink|GNU general public license,
+        version 3 or later|$TEXMACS_PATH/LICENSE>. It comes WITHOUT ANY
+        WARRANTY WHATSOEVER. You should have received a copy of the license
+        which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
       </src-license>
     </src-title>
   </active*>
@@ -55,9 +54,9 @@
     </src-comment>
   </active*>
 
-  <assign|header-title|<macro|name|<style-with|src-compact|none|<simple-page><assign|page-even-header|<quasiquote|<small|<style-with|src-compact|none|<wide-std-underlined|<style-with|src-compact|none|<page-the-page><htab|5mm><with|font-shape|small-caps|<unquote|<arg|name>>>>>>>>>>>>
+  <assign|header-title|<macro|name|<style-with|src-compact|none|<simple-page><assign|page-even-header|<quasiquote|<small|<style-with|src-compact|none|<wide-std-underlined|<style-with|src-compact|none|<unquote|<page-number>><htab|5mm><with|font-shape|small-caps|<unquote|<arg|name>>>>>>>>>>>>
 
-  <assign|header-author|<macro|name|<assign|page-odd-header|<quasiquote|<small|<style-with|src-compact|none|<wide-std-underlined|<with|font-shape|small-caps|<unquote|<arg|name>>><htab|5mm><page-the-page>>>>>>>>
+  <assign|header-author|<macro|name|<assign|page-odd-header|<quasiquote|<small|<style-with|src-compact|none|<wide-std-underlined|<with|font-shape|small-caps|<unquote|<arg|name>>><htab|5mm><unquote|<page-number>>>>>>>>>
 
   <assign|header-primary|<macro|name|nr|what|>>
 

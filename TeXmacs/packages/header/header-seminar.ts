@@ -21,9 +21,9 @@
     </src-license>
   </src-title>>
 
-  <assign|page-odd-footer|<style-with|src-compact|none|<htab|5mm><with|magnification|1|<quote|<page-the-page>>><htab|5mm>>>
+  <assign|page-odd-footer|<style-with|src-compact|none|<htab|5mm><with|magnification|1|<page-number>><htab|5mm>>>
 
-  <assign|page-even-footer|<style-with|src-compact|none|<htab|5mm><with|magnification|1|<quote|<page-the-page>>><htab|5mm>>>
+  <assign|page-even-footer|<style-with|src-compact|none|<htab|5mm><with|magnification|1|<page-number>><htab|5mm>>>
 
   \;
 

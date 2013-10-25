@@ -126,10 +126,9 @@
   (and-with t (tm->stree (buffer-get-body u))
     (when (tm-func? t 'document 1)
       (set! t (tm-ref t 0)))
-    (and (!= t '(unchanged))
-         (tm-replace t '(page-number) '(quote (page-the-page))))))
+    t))
 
-(define (apply-page-settings u settings)
+(define (apply-headers-settings u settings)
   (with l (list)
     (for (var header-parameters)
       (and-with doc (get-field-contents (string-append "tmfs://aux/" var))
@@ -138,8 +137,13 @@
       (delayed
         (:idle 10)
         (when (== (current-buffer) u)
-          (for (x l) (init-env (car x) (cadr x)))
+          (for (x l) (init-env-tree (car x) (cadr x)))
           (refresh-window))))))
+
+(define (editing-headers?)
+  (in? (current-buffer)
+       (map (lambda (x) (string->url (string-append "tmfs://aux/" x)))
+            header-parameters)))
 
 (tm-widget (page-formatter-headers u style settings quit)
   (padded
@@ -147,7 +151,7 @@
       (bold (text (eval (parameter-name var))))
       ===
       (resize "600px" "60px"
-        (texmacs-input `(document (unchanged))
+        (texmacs-input `(document ,(get-init-tree var))
                        `(style (tuple ,@style))
                        (string-append "tmfs://aux/" var)))
       === ===)
@@ -156,9 +160,9 @@
       (hlist
         (text "Insert:")
         // //
-        ("Tab" (make-htab "5mm"))
+        ("Tab" (when (editing-headers?) (make-htab "5mm")))
         // //
-        ("Page number" (insert '(page-number)))
+        ("Page number" (when (editing-headers?) (make 'page-the-page)))
         >>>
         ("Ok" (apply-headers-settings u settings) (quit))))))
 

@@ -54,9 +54,9 @@
     </src-comment>
   </active*>
 
-  <assign|header-title|<macro|name|<style-with|src-compact|none|<simple-page><assign|page-even-header|<with|font-size|0.84|<style-with|src-compact|none|<no-indent><quote|<page-the-page>><htab|5mm><with|font-shape|small-caps|<arg|name>><htab|0mm>>>>>>>
+  <assign|header-title|<macro|name|<style-with|src-compact|none|<simple-page><assign|page-even-header|<with|font-size|0.84|<style-with|src-compact|none|<no-indent><page-number><htab|5mm><with|font-shape|small-caps|<arg|name>><htab|0mm>>>>>>>
 
-  <assign|header-author|<macro|name|<assign|page-odd-header|<with|font-size|0.84|<style-with|src-compact|none|<no-indent><htab|0mm><with|font-shape|small-caps|<arg|name>><htab|5mm><quote|<page-the-page>>>>>>>
+  <assign|header-author|<macro|name|<assign|page-odd-header|<with|font-size|0.84|<style-with|src-compact|none|<no-indent><htab|0mm><with|font-shape|small-caps|<arg|name>><htab|5mm><page-number>>>>>>
 
   <assign|header-primary|<macro|name|nr|what|>>
 

@@ -183,6 +183,8 @@
     </src-comment>
   </active*>
 
+  <assign|page-number|<macro|<quote|<page-the-page>>>>
+
   <assign|set-this-page-header|<macro|header|<style-with|src-compact|none|<flag|<localize|this
   page header>|brown|header><assign|page-this-header|<arg|header>>>>>
 
@@ -213,7 +215,7 @@
 
   <assign|blanc-page|<macro|<style-with|src-compact|none|<assign|page-this-header|><assign|page-this-footer|>>>>
 
-  <assign|simple-page|<macro|<style-with|src-compact|none|<assign|page-this-header|><assign|page-this-footer|<htab|5mm><quote|<page-the-page>><htab|5mm>>>>>
+  <assign|simple-page|<macro|<style-with|src-compact|none|<assign|page-this-header|><assign|page-this-footer|<htab|5mm><page-number><htab|5mm>>>>>
 
   <\active*>
     <\src-comment>

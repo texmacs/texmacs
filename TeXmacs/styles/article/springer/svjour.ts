@@ -148,9 +148,9 @@
     </src-comment>
   </active*>
 
-  <assign|header-title|<macro|name|<style-with|src-compact|none|<simple-page><assign|page-odd-header|<small|<style-with|src-compact|none|<no-indent><arg|name><htab|5mm><quote|<page-the-page>>>>>>>>
+  <assign|header-title|<macro|name|<style-with|src-compact|none|<simple-page><assign|page-odd-header|<small|<style-with|src-compact|none|<no-indent><arg|name><htab|5mm><page-number>>>>>>>
 
-  <assign|header-author|<macro|name|<assign|page-even-header|<small|<style-with|src-compact|none|<no-indent><quote|<page-the-page>><htab|5mm><arg|name>>>>>>
+  <assign|header-author|<macro|name|<assign|page-even-header|<small|<style-with|src-compact|none|<no-indent><page-number><htab|5mm><arg|name>>>>>>
 
   <assign|header-primary|<macro|name|nr|what|>>
 

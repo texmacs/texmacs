@@ -68,9 +68,9 @@
 
   <assign|page-even-header|>
 
-  <assign|page-odd-footer|<htab|5mm><quote|<page-the-page>><htab|5mm>>
+  <assign|page-odd-footer|<htab|5mm><page-number><htab|5mm>>
 
-  <assign|page-even-footer|<htab|5mm><quote|<page-the-page>><htab|5mm>>
+  <assign|page-even-footer|<htab|5mm><page-number><htab|5mm>>
 
   \;
 

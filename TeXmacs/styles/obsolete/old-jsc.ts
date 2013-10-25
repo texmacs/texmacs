@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.8>
+<TeXmacs|1.0.7.20>
 
 <style|source>
 
@@ -52,9 +52,9 @@
     </src-comment>
   </active*>
 
-  <assign|header-title|<macro|name|<style-with|src-compact|none|<simple-page><assign|page-even-header|<style-with|src-compact|none|<quasiquote|<small|<style-with|src-compact|none|<wide-std-underlined|<page-the-page><space|4spc><unquote|<arg|name>>>>>>>>>>>
+  <assign|header-title|<macro|name|<style-with|src-compact|none|<simple-page><assign|page-even-header|<style-with|src-compact|none|<quasiquote|<small|<style-with|src-compact|none|<wide-std-underlined|<unquote|<page-number>><space|4spc><unquote|<arg|name>>>>>>>>>>>
 
-  <assign|header-author|<macro|name|<assign|page-odd-header|<style-with|src-compact|none|<quasiquote|<small|<style-with|src-compact|none|<wide-std-underlined|<htab|0mm><unquote|<arg|name>><space|4spc><page-the-page>>>>>>>>>
+  <assign|header-author|<macro|name|<assign|page-odd-header|<style-with|src-compact|none|<quasiquote|<small|<style-with|src-compact|none|<wide-std-underlined|<htab|0mm><unquote|<arg|name>><space|4spc><unquote|<page-number>>>>>>>>>>
 
   <assign|header-primary|<macro|name|nr|what|>>
 

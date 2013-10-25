@@ -134,7 +134,7 @@
     Headers and footers.
   </src-comment>>
 
-  <set-header|<no-indent><tabular|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|1|cell-halign|r>|<table|<row|<cell|<quote|<page-the-page>>>>>>>>
+  <set-header|<no-indent><tabular|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|1|cell-halign|r>|<table|<row|<cell|<page-number>>>>>>>
 
   <set-footer|>
 

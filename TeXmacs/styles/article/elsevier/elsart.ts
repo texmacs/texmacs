@@ -96,7 +96,7 @@
 
   <set-header|>
 
-  <set-footer|<htab|5mm><quote|<page-the-page>><htab|5mm>>
+  <set-footer|<htab|5mm><page-number><htab|5mm>>
 
   <assign|header-title|<macro|name|>>
 

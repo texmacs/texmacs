@@ -25,7 +25,7 @@
 
   <assign|header-author|<macro|name|>>
 
-  <assign|header-primary|<macro|name|nr|what|<style-with|src-compact|none|<assign|page-odd-header|<with|font-size|0.84|<style-with|src-compact|none|<no-indent><with|font-shape|small-caps|<arg|name>><htab|5mm><quote|<page-the-page>>>>><assign|page-even-header|<with|font-size|0.84|<style-with|src-compact|none|<no-indent><quote|<page-the-page>><htab|5mm><with|font-shape|small-caps|<arg|what>
+  <assign|header-primary|<macro|name|nr|what|<style-with|src-compact|none|<assign|page-odd-header|<with|font-size|0.84|<style-with|src-compact|none|<no-indent><with|font-shape|small-caps|<arg|name>><htab|5mm><page-number>>>><assign|page-even-header|<with|font-size|0.84|<style-with|src-compact|none|<no-indent><page-number><htab|5mm><with|font-shape|small-caps|<arg|what>
   <arg|nr>>>>>>>>
 
   <assign|header-secondary|<macro|name|nr|what|>>

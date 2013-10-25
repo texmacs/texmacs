@@ -53,6 +53,9 @@
 
   <assign|page-number|<macro|<with|color|dark
   grey|font-shape|italic|page-number>>>
+
+  <assign|page-the-page|<macro|<with|color|dark
+  grey|font-shape|italic|page-number>>>
 </body>
 
 <\initial>

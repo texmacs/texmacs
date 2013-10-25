@@ -192,9 +192,9 @@
     </src-comment>
   </active*>
 
-  <assign|odd-page-text|<macro|s|<assign|page-odd-header|<style-with|src-compact|none|<small|<no-indent><htab|0mm><arg|s><hspace|<tmlen|0.5cc|2.5cc|2.5cc>><quote|<page-the-page>>>>>>>
+  <assign|odd-page-text|<macro|s|<assign|page-odd-header|<style-with|src-compact|none|<small|<no-indent><htab|0mm><arg|s><hspace|<tmlen|0.5cc|2.5cc|2.5cc>><page-number>>>>>>
 
-  <assign|even-page-text|<macro|s|<assign|page-even-header|<style-with|src-compact|none|<small|<no-indent><quote|<page-the-page>><hspace|<tmlen|0.5cc|2.5cc|2.5cc>><arg|s>>>>>>
+  <assign|even-page-text|<macro|s|<assign|page-even-header|<style-with|src-compact|none|<small|<no-indent><page-number><hspace|<tmlen|0.5cc|2.5cc|2.5cc>><arg|s>>>>>>
 
   \;
 

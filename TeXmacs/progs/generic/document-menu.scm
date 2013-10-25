@@ -644,8 +644,9 @@
   (if (use-menus?)
       (-> "Page" (link document-page-menu)))
   (if (use-popups?)
-      ;;("Page" (open-document-page-format)))
-      (-> "Page" (link document-page-menu)))
+      ;;("Page" (open-document-page-format))
+      (-> "Page" (link document-page-menu))
+      )
   ---
   (link document-text-menu))
 

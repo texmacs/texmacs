@@ -187,8 +187,7 @@
   (and-with t (tm->stree (buffer-get-body u))
     (when (tm-func? t 'document 1)
       (set! t (tm-ref t 0)))
-    (and (!= t '(unchanged))
-         (tm-replace t '(page-number) '(quote (page-the-page))))))
+    (and (!= t '(unchanged)) t)))
 
 (define (apply-page-settings u settings)
   (with l (list)
@@ -211,6 +210,11 @@
         (when (== (current-buffer) u)
           (for (x l) (insert x))
           (refresh-window))))))
+
+(define (editing-headers?)
+  (in? (current-buffer)
+       (list (string->url "tmfs://aux/this-page-header")
+             (string->url "tmfs://aux/this-page-footer"))))
 
 (tm-widget ((page-formatter u style settings) quit)
   (padded
@@ -241,9 +245,9 @@
      (hlist
        (text "Insert:")
        // //
-       ("Tab" (make-htab "5mm"))
+       ("Tab" (when (editing-headers?) (make-htab "5mm")))
        // //
-       ("Page number" (insert '(page-number)))
+       ("Page number" (when (editing-headers?) (insert '(page-number))))
        >>>
        ("Ok" (apply-page-settings u settings) (quit))))))
 

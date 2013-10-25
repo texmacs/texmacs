@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.17>
+<TeXmacs|1.0.7.20>
 
 <style|source>
 
@@ -20,9 +20,9 @@
     </src-license>
   </src-title>>
 
-  <assign|page-odd-footer|<htab|5mm><quote|<page-the-page>><htab|5mm>>
+  <assign|page-odd-footer|<htab|5mm><page-number><htab|5mm>>
 
-  <assign|page-even-footer|<htab|5mm><quote|<page-the-page>><htab|5mm>>
+  <assign|page-even-footer|<htab|5mm><page-number><htab|5mm>>
 
   \;
 
