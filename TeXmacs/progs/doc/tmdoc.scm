@@ -136,7 +136,7 @@
               (style "tmdoc")
               (body (document
                       "Broken link."
-                      ,(concat "File " (tt ,root) " does not exist")))))
+                      ,(concat "File " `(tt ,root) " does not exist")))))
           ((== (url-suffix root) "html")
            (with doc (tm->stree (tree-import root "html"))
              `(document
