@@ -179,15 +179,6 @@
     (dialogue-window (paragraph-formatter old new make-multi-line-with u)
                      noop "Paragraph format")))
 
-(tm-define (open-document-paragraph-format)
-  (:interactive #t)
-  (let* ((old (get-init-table paragraph-parameters))
-         (new (get-init-table paragraph-parameters))
-         (u   (current-buffer)))
-    (set! paragraph-cur-settings new)
-    (dialogue-window (paragraph-formatter old new init-multi u)
-                     noop "Document paragraph format")))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Page properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -262,4 +253,4 @@
          (st (list-remove-duplicates (rcons (get-style-list) "macro-editor")))
          (t  (make-ahash-table)))
     (dialogue-window (page-formatter u st t)
-                     noop "This page format")))
+                     noop "Page format")))

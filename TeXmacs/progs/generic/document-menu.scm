@@ -641,8 +641,11 @@
       (-> "Paragraph" (link document-paragraph-menu)))
   (if (use-popups?)
       ("Paragraph" (open-document-paragraph-format)))
-  (-> "Page"
-      (link document-page-menu))
+  (if (use-menus?)
+      (-> "Page" (link document-page-menu)))
+  (if (use-popups?)
+      ;;("Page" (open-document-page-format)))
+      (-> "Page" (link document-page-menu)))
   ---
   (link document-text-menu))
 

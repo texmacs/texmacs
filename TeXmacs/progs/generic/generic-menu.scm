@@ -180,9 +180,11 @@
 ;; Editing style parameters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (parameter-name l)
+  (focus-tag-name (string->symbol (tree-name (list (string->symbol l))))))
+
 (tm-menu (focus-parameter-menu-item l)
-  ((eval (focus-tag-name (string->symbol l)))
-   (open-macro-editor l)))
+  ((eval (parameter-name l)) (open-macro-editor l)))
 
 (tm-menu (init-env-menu l cs)
   (with ss (list-filter cs string?)

@@ -88,9 +88,10 @@ init (tree_label l, string name, tag_info ti) {
 }
 
 static void
-init_var (string var, int tp) {
+init_var (string var, int tp, string vname= "") {
   tree_label l= make_tree_label (var);
   tag_info ti= fixed (0) -> var_parameter () -> type (tp);
+  if (vname != "") ti= ti->name (vname);
   std_drd->info (l)= ti;
   std_drd->freeze_arity (l);
   std_drd->freeze_border (l);
@@ -903,10 +904,10 @@ init_std_drd () {
   init_var (PAGE_EXTEND, TYPE_LENGTH);
   init_var (PAGE_HEAD_SEP, TYPE_LENGTH);
   init_var (PAGE_FOOT_SEP, TYPE_LENGTH);
-  init_var (PAGE_ODD_HEADER, TYPE_REGULAR);
-  init_var (PAGE_ODD_FOOTER, TYPE_REGULAR);
-  init_var (PAGE_EVEN_HEADER, TYPE_REGULAR);
-  init_var (PAGE_EVEN_FOOTER, TYPE_REGULAR);
+  init_var (PAGE_ODD_HEADER, TYPE_REGULAR, "odd page header");
+  init_var (PAGE_ODD_FOOTER, TYPE_REGULAR, "odd page footer");
+  init_var (PAGE_EVEN_HEADER, TYPE_REGULAR, "even page header");
+  init_var (PAGE_EVEN_FOOTER, TYPE_REGULAR, "even page footer");
   init_var (PAGE_THIS_HEADER, TYPE_REGULAR);
   init_var (PAGE_THIS_FOOTER, TYPE_REGULAR);
   init_var (PAGE_SCREEN_WIDTH, TYPE_LENGTH);

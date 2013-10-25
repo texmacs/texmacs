@@ -154,12 +154,13 @@
            insert-link-menu insert-image-menu insert-animation-menu)
 (lazy-define (generic generic-edit) notify-activated notify-disactivated)
 (lazy-define (generic generic-doc) focus-help)
-(lazy-define (generic format-widgets)
-             open-paragraph-format open-document-paragraph-format
-             open-page-format)
+(lazy-define (generic format-widgets) open-paragraph-format open-page-format)
+(lazy-define (generic document-widgets) open-document-paragraph-format
+             open-document-page-format)
 (tm-property (open-paragraph-format) (:interactive #t))
-(tm-property (open-document-paragraph-format) (:interactive #t))
 (tm-property (open-page-format) (:interactive #t))
+(tm-property (open-document-paragraph-format) (:interactive #t))
+(tm-property (open-document-page-format) (:interactive #t))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting text mode\n")

@@ -12,10 +12,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (generic document-widgets)
-  (:use (generic document-menu)))
+  (:use (generic document-menu)
+        (generic format-widgets)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Style chooser widget
+;; Style chooser widget (still to be implemented)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget (select-style-among-widget l)
@@ -54,3 +55,137 @@
 (tm-define (open-style-selector)
   (:interactive #t)
   (top-window select-style-widget "Select document style"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Document -> Paragraph
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (open-document-paragraph-format)
+  (:interactive #t)
+  (let* ((old (get-init-table paragraph-parameters))
+         (new (get-init-table paragraph-parameters))
+         (u   (current-buffer)))
+    (set! paragraph-cur-settings new)
+    (dialogue-window (paragraph-formatter old new init-multi u)
+                     noop "Document paragraph format")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Document -> Page / Format
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget (page-formatter-format u style settings quit)
+  (padded
+    (glue #t #t 500 300)
+    === ===
+    (explicit-buttons
+      (hlist
+        >>>
+        ("Cancel" (noop))
+        // //
+        ("Ok" (quit))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Document -> Page / Margins
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget (page-formatter-margins u style settings quit)
+  (padded
+    (glue #t #t 500 300)
+    === ===
+    (explicit-buttons
+      (hlist
+        >>>
+        ("Cancel" (noop))
+        // //
+        ("Ok" (quit))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Document -> Page / Breaking
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget (page-formatter-breaking u style settings quit)
+  (padded
+    (glue #t #t 500 300)
+    === ===
+    (explicit-buttons
+      (hlist
+        >>>
+        ("Cancel" (noop))
+        // //
+        ("Ok" (quit))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Document -> Page / Headers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define header-parameters
+  (list "page-odd-header" "page-even-header"
+        "page-odd-footer" "page-even-footer"))
+
+(define (get-field-contents u)
+  (and-with t (tm->stree (buffer-get-body u))
+    (when (tm-func? t 'document 1)
+      (set! t (tm-ref t 0)))
+    (and (!= t '(unchanged))
+         (tm-replace t '(page-number) '(quote (page-the-page))))))
+
+(define (apply-page-settings u settings)
+  (with l (list)
+    (for (var header-parameters)
+      (and-with doc (get-field-contents (string-append "tmfs://aux/" var))
+        (set! l (cons `(,var ,doc) l))))
+    (when (nnull? l)
+      (delayed
+        (:idle 10)
+        (when (== (current-buffer) u)
+          (for (x l) (init-env (car x) (cadr x)))
+          (refresh-window))))))
+
+(tm-widget (page-formatter-headers u style settings quit)
+  (padded
+    (for (var header-parameters)
+      (bold (text (eval (parameter-name var))))
+      ===
+      (resize "600px" "60px"
+        (texmacs-input `(document (unchanged))
+                       `(style (tuple ,@style))
+                       (string-append "tmfs://aux/" var)))
+      === ===)
+    === ===
+    (explicit-buttons
+      (hlist
+        (text "Insert:")
+        // //
+        ("Tab" (make-htab "5mm"))
+        // //
+        ("Page number" (insert '(page-number)))
+        >>>
+        ("Ok" (apply-headers-settings u settings) (quit))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Document -> Page
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget ((document-page-formatter u style settings) quit)
+  (padded
+    (tabs
+      (tab (text "Format")
+        (padded
+          (dynamic (page-formatter-format u style settings quit))))
+      (tab (text "Margins")
+        (padded
+          (dynamic (page-formatter-margins u style settings quit))))
+      (tab (text "Breaking")
+        (padded
+          (dynamic (page-formatter-breaking u style settings quit))))
+      (tab (text "Headers")
+        (padded
+          (dynamic (page-formatter-headers u style settings quit)))))))
+
+(tm-define (open-document-page-format)
+  (:interactive #t)
+  (let* ((u  (current-buffer))
+         (st (list-remove-duplicates (rcons (get-style-list) "macro-editor")))
+         (t  (make-ahash-table)))
+    (dialogue-window (document-page-formatter u st t)
+                     noop "Document page format")))
