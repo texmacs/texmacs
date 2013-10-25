@@ -265,6 +265,7 @@
   (clear-buffer clear_buffer (void))
   (tex-buffer tex_buffer (void))
   (clear-local-info clear_local_info (void))
+  (refresh-window invalidate_all (void))
   (update-path typeset_invalidate (void path))
   (update-current-buffer typeset_invalidate_all (void))
   (generate-all-aux generate_aux (void))

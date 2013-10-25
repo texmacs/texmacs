@@ -146,6 +146,9 @@
 (tm-define (kbd-shift-tab)
   (kbd-variant (focus-tree) #f))
 
+(tm-define (notify-activated t) (noop))
+(tm-define (notify-disactivated t) (noop))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic predicates
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

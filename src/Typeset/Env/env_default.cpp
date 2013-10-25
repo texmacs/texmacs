@@ -147,7 +147,7 @@ initialize_default_env () {
   env (PAGE_SCREEN_RIGHT)= "5mm";       // right margin for screen editing
   env (PAGE_SCREEN_TOP)  = "15mm";      // top margin for screen editing
   env (PAGE_SCREEN_BOT)  = "15mm";      // bottom margin for screen editing
-  env (PAGE_SHOW_HF)     = "false";     // show header and footer
+  env (PAGE_SHOW_HF)     = "true";      // show header and footer
   env (PAGE_FNOTE_SEP)   = "1.0fn";     // space between text & footnotes
   env (PAGE_FNOTE_BARLEN)= "7.5fn";     // length of footnote separating bar
   env (PAGE_FLOAT_SEP)   = "1.5fn";     // space between text & floats

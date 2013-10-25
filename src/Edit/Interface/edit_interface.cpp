@@ -135,6 +135,11 @@ edit_interface_rep::invalidate (rectangles rs) {
 }
 
 void
+edit_interface_rep::invalidate_all () {
+  send_invalidate_all (this);
+}
+
+void
 edit_interface_rep::update_visible () {
   SERVER (get_visible (vx1, vy1, vx2, vy2));
   vx1= (SI) (vx1 / magf); vy1= (SI) (vy1 / magf);

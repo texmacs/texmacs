@@ -152,6 +152,7 @@
 (lazy-menu (generic document-part) document-part-menu project-manage-menu)
 (lazy-menu (generic insert-menu) insert-menu texmacs-insert-icons
            insert-link-menu insert-image-menu insert-animation-menu)
+(lazy-define (generic generic-edit) notify-activated notify-disactivated)
 (lazy-define (generic generic-doc) focus-help)
 (lazy-define (generic format-widgets)
              open-paragraph-format open-document-paragraph-format)

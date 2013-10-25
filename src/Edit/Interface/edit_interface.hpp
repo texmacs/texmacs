@@ -92,6 +92,7 @@ public:
   void set_zoom_factor (double zoom);
   void invalidate (SI x1, SI y1, SI x2, SI y2);
   void invalidate (rectangles rs);
+  void invalidate_all ();
   void update_visible ();
   void scroll_to (SI x, SI y1);
   void set_extents (SI x1, SI y1, SI x2, SI y2);

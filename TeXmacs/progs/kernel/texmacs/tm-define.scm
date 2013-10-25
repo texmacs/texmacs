@@ -335,16 +335,17 @@
 	 (new (if old (cons module old) (list module))))
     (ahash-set! lazy-define-table name new))
   (with name-star (string->symbol (string-append (symbol->string name) "*"))
-    `(tm-define (,name . args)
-       ,@opts
-       (let* ((m (resolve-module ',module))
-              (p (module-ref texmacs-user '%module-public-interface))
-              (r (module-ref p ',name #f)))
-         (if (not r)
-             (texmacs-error "lazy-define"
-                            ,(string-append "Could not retrieve "
-                                            (symbol->string name))))
-         (apply r args)))))
+    `(when (not (defined? ',name))
+       (tm-define (,name . args)
+         ,@opts
+         (let* ((m (resolve-module ',module))
+                (p (module-ref texmacs-user '%module-public-interface))
+                (r (module-ref p ',name #f)))
+           (if (not r)
+               (texmacs-error "lazy-define"
+                              ,(string-append "Could not retrieve "
+                                              (symbol->string name))))
+           (apply r args))))))
 
 (define-public-macro (lazy-define module . names)
   (receive (opts real-names) (list-break names not-define-option?)

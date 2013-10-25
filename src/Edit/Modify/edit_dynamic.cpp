@@ -152,12 +152,14 @@ edit_dynamic_rep::activate () {
     tree u (make_tree_label (st[0]->label));
     u << A (st (1, N(st)));
     assign (p, u);
+    call ("notify-activated", object (subtree (et, p)));
     go_to (end (et, p));
     correct (path_up (p));
   }
   else {
     bool acc= (p < path_up (tp) && drd->is_accessible_child (st, tp[N(p)]));
     remove_node (p * 0);
+    call ("notify-activated", object (subtree (et, p)));
     if (!acc) go_to (end (et, p));
     correct (path_up (p));
   }
@@ -179,6 +181,7 @@ edit_dynamic_rep::go_to_argument (path p, bool start_flag) {
 	(!inactive) && (!in_source ()))
       {
 	insert_node (path_up (p) * 0, INACTIVE);
+        call ("notify-disactivated", object (subtree (et, path_up (p) * 0)));
 	p= path_up (p) * path (0, i);
       }
     if (start_flag) go_to_start (p);

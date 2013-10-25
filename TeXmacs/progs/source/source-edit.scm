@@ -67,7 +67,9 @@
 (tm-define (inactive-toggle t)
   (if (or (tree-is? t 'inactive) (tree-is? t :up 'inactive))
       (activate)
-      (tree-set t `(inactive ,t))))
+      (with t-copy t
+        (tree-set t `(inactive ,t))
+        (notify-disactivated t-copy))))
 
 (tm-define (inactive-toggle t)
   (:require (and (tree-is? t 'hybrid) (tree-is? t :up 'inactive)))
