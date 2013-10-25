@@ -244,11 +244,6 @@
   (-> "Numbering" (link page-numbering-menu))
   (-> "Break" (link page-break-menu)))
 
-(menu-bind new-page-menu
-  (-> "Header" (link page-header-menu))
-  (-> "Footer" (link page-footer-menu))
-  (-> "Numbering" (link page-numbering-menu)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; New formatting submenus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

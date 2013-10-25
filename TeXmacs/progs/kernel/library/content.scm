@@ -108,6 +108,19 @@
 (define-public (tm-search-tag t tag)
   (tm-search t (cut tm-is? <> tag)))
 
+(define (tm-replace-sub t what? by)
+  (cond ((what? t) (by t))
+        ((tm-atomic? t) t)
+        (else `(,(tm-car t)
+                ,@(map (cut tm-replace-sub <> what? by) (tm-cdr t))))))
+
+(define-public (tm-replace t what by)
+  (cond ((not (procedure? what))
+         (tm-replace t (lambda (x) (tm-equal? x what)) by))
+        ((not (procedure? by))
+         (tm-replace t what (lambda (x) by)))
+        (else (tm-replace-sub t what by))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TeXmacs lengths
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

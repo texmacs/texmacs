@@ -15,7 +15,8 @@
 
 (texmacs-module (generic format-widgets)
   (:use (generic format-menu)
-        (generic document-edit)))
+        (generic document-edit)
+        (utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines
@@ -186,3 +187,79 @@
     (set! paragraph-cur-settings new)
     (dialogue-window (paragraph-formatter old new init-multi u)
                      noop "Document paragraph format")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Page properties
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (get-field-contents u)
+  (and-with t (tm->stree (buffer-get-body u))
+    (when (tm-func? t 'document 1)
+      (set! t (tm-ref t 0)))
+    (and (!= t '(unchanged))
+         (tm-replace t '(page-number) '(quote (page-the-page))))))
+
+(define (apply-page-settings u settings)
+  (with l (list)
+    (and-with nr (ahash-ref settings 'page-nr)
+      (set! l (cons `(assign "page-nr" ,nr) l)))
+    (and-with sty (ahash-ref settings 'page-the-page)
+      (when (!= sty "unchanged")
+        (with body (cond ((== sty "normal") `(value "page-nr"))
+                         ((== sty "roman") `(number (value "page-nr") "roman"))
+                         ((== sty "Roman") `(number (value "page-nr") "Roman"))
+                         (else `(value "page-nr")))
+          (set! l (cons `(assign "page-the-page" (macro ,body)) l)))))
+    (and-with doc (get-field-contents "tmfs://aux/this-page-header")
+      (set! l (cons `(set-this-page-header ,doc) l)))
+    (and-with doc (get-field-contents "tmfs://aux/this-page-footer")
+      (set! l (cons `(set-this-page-footer ,doc) l)))
+    (when (nnull? l)
+      (delayed
+        (:idle 10)
+        (when (== (current-buffer) u)
+          (for (x l) (insert x))
+          (refresh-window))))))
+
+(tm-widget ((page-formatter u style settings) quit)
+  (padded
+    (centered
+      (aligned
+        (item (text "This page number:")
+          (enum (ahash-set! settings 'page-nr answer)
+                '("unchanged" "")
+                "unchanged" "10em"))
+        (item (text "Page number rendering:")
+          (enum (ahash-set! settings 'page-the-page answer)
+                '("unchanged" "normal" "roman" "Roman")
+                "unchanged" "10em"))))
+    ======
+    (bold (text "This page header"))
+    ===
+    (resize "600px" "60px"
+      (texmacs-input `(document (unchanged))
+                     `(style (tuple ,@style)) "tmfs://aux/this-page-header"))
+    === ===
+    (bold (text "This page footer"))
+    ===
+    (resize "600px" "60px"
+      (texmacs-input `(document (unchanged))
+                     `(style (tuple ,@style)) "tmfs://aux/this-page-footer"))
+    ======
+    (explicit-buttons
+     (hlist
+       (text "Insert:")
+       // //
+       ("Tab" (make-htab "5mm"))
+       // //
+       ("Page number" (insert '(page-number)))
+       >>>
+       ("Ok" (apply-page-settings u settings) (quit))))))
+
+(tm-define (open-page-format)
+  (:interactive #t)
+  (let* ((u  (current-buffer))
+         (st (list-remove-duplicates (rcons (get-style-list) "macro-editor")))
+         (t  (make-ahash-table)))
+    (dialogue-window (page-formatter u st t)
+                     noop "This page format")))

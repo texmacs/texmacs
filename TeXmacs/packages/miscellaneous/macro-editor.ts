@@ -42,7 +42,17 @@
 
   <drd-props|edit-macro|arity|<tuple|repeat*|1|2>|accessible|all|border|no>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Further tags for page numbering editing.
+    </src-comment>
+  </active*>
+
+  <assign|unchanged|<macro|<with|color|dark
+  grey|font-shape|italic|unchanged>>>
+
+  <assign|page-number|<macro|<with|color|dark
+  grey|font-shape|italic|page-number>>>
 </body>
 
 <\initial>

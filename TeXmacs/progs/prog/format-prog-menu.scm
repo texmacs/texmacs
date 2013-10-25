@@ -69,7 +69,7 @@
   (if (not (new-fonts?))
       (-> "Font" (link text-font-menu)))
   ("Paragraph" (open-paragraph-format))
-  (-> "Page" (link new-page-menu))
+  ("Page" (open-page-format))
   ---
   (-> "Whitespace" (link space-menu))
   (-> "Indentation" (link indentation-menu))
