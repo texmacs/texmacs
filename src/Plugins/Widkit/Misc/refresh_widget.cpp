@@ -88,10 +88,70 @@ refresh_widget_rep::handle_refresh (refresh_event ev) {
 }
 
 /******************************************************************************
-* Refresh widget
+* Refreshable widgets
+******************************************************************************/
+
+class refreshable_widget_rep: public basic_widget_rep {
+  object prom;
+  string kind;
+  object curobj;
+  widget cur;
+public:
+  refreshable_widget_rep (object prom, string kind);
+  operator tree ();
+  bool recompute (string what);
+  void handle_refresh (refresh_event ev);
+};
+
+refreshable_widget_rep::refreshable_widget_rep (object prom2, string kind2):
+  basic_widget_rep (1), prom (prom2), kind (kind2),
+  curobj (false), cur () {
+    (void) recompute ("init");
+    a[0]= concrete (cur); }
+
+refreshable_widget_rep::operator tree () {
+  return tree (TUPLE, "refreshable", kind);
+}
+
+bool
+refreshable_widget_rep::recompute (string what) {
+  if (what != "init" && kind != "any" && kind != what) return false;
+  eval ("(lazy-initialize-force)");
+  object xwid = call (prom);
+  if (curobj == xwid) return false;
+  if (!is_widget (xwid)) return false;
+  curobj= xwid;
+  cur= as_widget (xwid);
+  return true;
+}
+
+void
+refreshable_widget_rep::handle_refresh (refresh_event ev) {
+  if (recompute (ev->kind)) {
+    SI ww1= a[0]->w, hh1= a[0]->h;
+    SI ww2= a[0]->w, hh2= a[0]->h;
+    a[0] << get_size (ww1, hh1);
+    a[0]= concrete (cur);
+    a[0] << get_size (ww1, hh1);
+    if (attached ()) {
+      if (!a[0]->attached () || a[0]->win != win)
+        a[0] << emit_attach_window (win);
+      if (ww1 == ww2 && hh1 == hh2) this << emit_update ();
+      else concrete (this->win->get_widget ()) << emit_update ();
+    }
+  }
+}
+
+/******************************************************************************
+* User interface
 ******************************************************************************/
 
 wk_widget
 refresh_wk_widget (string tmwid, string kind) {
   return tm_new<refresh_widget_rep> (tmwid, kind);
+}
+
+wk_widget
+refreshable_wk_widget (object prom, string kind) {
+  return tm_new<refreshable_widget_rep> (prom, kind);
 }

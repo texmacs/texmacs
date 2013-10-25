@@ -1145,6 +1145,7 @@ widget resize_widget (widget w, int style, string w1, string h1,
 widget hsplit_widget (widget l, widget r)  { return widget(); }
 widget vsplit_widget (widget t, widget b)  { return widget(); }
 widget refresh_widget (string tmwid, string kind)  { return widget(); }
+widget refreshable_widget (object promise, string kind)  { return widget(); }
 //widget glue_widget (bool hx, bool vx, SI w, SI h)  { return widget(); }
 //widget glue_widget (tree col, bool hx, bool vx, SI w, SI h)  { return widget(); }
 //widget inputs_list_widget (command call_back, array<string> prompts)  { return widget(); }

@@ -681,9 +681,9 @@ QTMRefreshWidget::doRefresh (string kind) {
 
 widget make_menu_widget (object wid);
 
-QTMRefreshableWidget::QTMRefreshableWidget (qt_widget _tmwid, object _promise, string _kind)
-: QWidget (), promise (_promise), kind (_kind),
-  curobj (false), cur (), tmwid (_tmwid), qwid(NULL), cache (widget ())
+QTMRefreshableWidget::QTMRefreshableWidget (qt_widget _tmwid, object _prom, string _kind)
+: QWidget (), prom (_prom), kind (_kind),
+  curobj (false), cur (), tmwid (_tmwid), qwid(NULL)
 {   
   QObject::connect(the_gui->gui_helper, SIGNAL(tmSlotRefresh(string)),
                    this, SLOT(doRefresh(string)));
@@ -699,7 +699,7 @@ bool
 QTMRefreshableWidget::recompute (string what) {
   if (what != "init" && kind != "any" && kind != what) return false;
   eval ("(lazy-initialize-force)");
-  object xwid = call (promise);
+  object xwid = call (prom);
   if (curobj == xwid) return false;
   if (!is_widget (xwid)) return false;
   curobj= xwid;

@@ -15,6 +15,7 @@
 #include "message.hpp"
 #include "window.hpp"
 #include "dictionary.hpp"
+#include "Scheme/object.hpp"
 
 #define THIS wk_widget (this)
 
@@ -330,6 +331,11 @@ ink_widget (command cb) {
 widget
 refresh_widget (string tmwid, string kind) {
   return abstract (refresh_wk_widget (tmwid, kind));
+}
+
+widget
+refreshable_widget (object prom, string kind) {
+  return abstract (refreshable_wk_widget (prom, kind));
 }
 
 widget

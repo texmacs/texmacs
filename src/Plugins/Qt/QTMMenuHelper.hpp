@@ -292,16 +292,15 @@ public slots:
 class QTMRefreshableWidget : public QWidget {
   Q_OBJECT
   
-  object promise;
-  string   kind;
-  object curobj;
-  widget    cur;
+  object     prom;
+  string     kind;
+  object   curobj;
+  widget      cur;
   qt_widget tmwid;
   QWidget*   qwid;
-  hashmap<object,widget> cache;
   
 public:
-  QTMRefreshableWidget (qt_widget _tmwid, object _promise, string _kind);
+  QTMRefreshableWidget (qt_widget _tmwid, object _prom, string _kind);
 
   bool recompute (string what);
     //static void deleteLayout (QLayout*);
