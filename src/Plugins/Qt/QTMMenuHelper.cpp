@@ -31,7 +31,7 @@ void
 QTMCommand::apply()  {
   if (DEBUG_QT)
     cout << "QTMCommand::apply() (delayed): " << cmd << "\n";
-  if (!is_nil(cmd)) { the_gui->process_command(cmd); }
+  if (!is_nil (cmd)) { the_gui->process_command (cmd); }
 }
 
 
@@ -39,10 +39,12 @@ QTMCommand::apply()  {
  * QTMAction
  ******************************************************************************/
 
-QTMAction::QTMAction(QObject *parent) : QAction(parent) { 
-  QObject::connect(the_gui->gui_helper, SIGNAL(refresh()), this, SLOT(doRefresh()));
-  _timer = new QTimer(this);
-  QObject::connect(_timer, SIGNAL(timeout()), this, SLOT(doShowToolTip()));
+QTMAction::QTMAction (QObject *parent) : QAction (parent) {
+  QObject::connect (the_gui->gui_helper, SIGNAL (refresh()),
+                    this,                  SLOT (doRefresh()));
+  _timer = new QTimer (this);
+  QObject::connect (_timer, SIGNAL (timeout()),
+                   this,     SLOT (doShowToolTip()));
 }
 
 QTMAction::~QTMAction() { 
@@ -68,7 +70,7 @@ QTMAction::doRefresh() {
 void
 QTMAction::showToolTip()
 {
-  _timer->start(500);   // Restarts the timer if already running
+  _timer->start (500);   // Restarts the timer if already running
   _pos = QCursor::pos();
 }
 
@@ -88,8 +90,8 @@ void
 QTMAction::doShowToolTip() {
   static int step = QApplication::font().pointSize();
   _timer->stop();
-  if((QCursor::pos() - _pos).manhattanLength() < step)  // Hideous HACK
-    QToolTip::showText(QCursor::pos(), toolTip());
+  if ((QCursor::pos() - _pos).manhattanLength() < step)  // Hideous HACK
+    QToolTip::showText (QCursor::pos(), toolTip());
   else
     QToolTip::hideText();
 }
@@ -102,13 +104,14 @@ QTMAction::doShowToolTip() {
 
 QTMWidgetAction::QTMWidgetAction (widget _wid, QObject *parent)
 : QWidgetAction (parent), wid (_wid) {
-  QObject::connect (the_gui->gui_helper, SIGNAL(refresh()), this, SLOT(doRefresh()));
+  QObject::connect (the_gui->gui_helper, SIGNAL (refresh()),
+                    this,                  SLOT (doRefresh()));
 }
 
 QWidget *
 QTMWidgetAction::createWidget (QWidget * parent) {
-  QWidget* qw = concrete(wid)->as_qwidget();
-  qw->setParent(parent);
+  QWidget* qw = concrete (wid)->as_qwidget();
+  qw->setParent (parent);
   return qw;
 }
 
@@ -120,12 +123,12 @@ QTMWidgetAction::createWidget (QWidget * parent) {
 QTMTileAction::QTMTileAction (QWidget* parent, array<widget>& arr, int _cols)
 : QWidgetAction (parent), cols (_cols)
 {
-  actions.reserve(N(arr));
-  for(int i = 0; i < N(arr); i++) {
-    if (is_nil(arr[i])) break;
-    QAction *act = concrete(arr[i])->as_qaction();
-    act->setParent(this);
-    actions.append(act);
+  actions.reserve (N (arr));
+  for (int i = 0; i < N (arr); i++) {
+    if (is_nil (arr[i])) break;
+    QAction* act = concrete (arr[i])->as_qaction();
+    act->setParent (this);
+    actions.append (act);
   };
 }
 
@@ -137,14 +140,14 @@ QTMTileAction::QTMTileAction (QWidget* parent, array<widget>& arr, int _cols)
  the widget so it results in a waste of time.
  */
 QWidget*
-QTMTileAction::createWidget(QWidget* parent)
+QTMTileAction::createWidget (QWidget* parent)
 {
   if (DEBUG_QT_WIDGETS)
     cout << "QTMTileAction::createWidget\n";
   QWidget* wid= new QTMMenuWidget (parent);
   QGridLayout* l= new QGridLayout (wid);
-    // wid->setAutoFillBackground(true);
-    // wid->setBackgroundRole(QPalette::Base);
+    // wid->setAutoFillBackground (true);
+    // wid->setBackgroundRole (QPalette::Base);
   wid->setLayout (l);
   l->setSizeConstraint (QLayout::SetFixedSize);
   l->setHorizontalSpacing (2);
@@ -155,7 +158,7 @@ QTMTileAction::createWidget(QWidget* parent)
     QAction* sa= actions[i];
     QToolButton* tb= new QTMMenuButton (wid);
     tb->setDefaultAction (sa);
-    QObject::connect(tb, SIGNAL(released()), this, SLOT(trigger()));
+    QObject::connect (tb, SIGNAL (released()), this, SLOT (trigger()));
       //  tb->setStyle (qtmstyle ());
     l->addWidget (tb, row, col);
     col++;
@@ -172,12 +175,12 @@ QTMTileAction::createWidget(QWidget* parent)
 QTMMinibarAction::QTMMinibarAction (QWidget* parent, array<widget>& arr)
 : QWidgetAction (parent)
 {
-  actions.reserve(N(arr));
-  for(int i = 0; i < N(arr); i++) {
-    if (is_nil(arr[i])) break;
-    QAction *act = concrete(arr[i])->as_qaction();
-    act->setParent(this);
-    actions.append(act);
+  actions.reserve (N (arr));
+  for (int i = 0; i < N (arr); i++) {
+    if (is_nil (arr[i])) break;
+    QAction *act = concrete (arr[i])->as_qaction();
+    act->setParent (this);
+    actions.append (act);
   };
 }
 
@@ -199,27 +202,27 @@ QTMMinibarAction::createWidget (QWidget* parent) {
   for (int i=0; i < actions.count(); i++) {
     QAction* sa= actions[i];
     if (QWidgetAction * wa = qobject_cast<QWidgetAction*> (sa)) {
-      QWidget *w = wa->requestWidget(wid);
+      QWidget *w = wa->requestWidget (wid);
       l->addWidget(w);
     } else if (sa->text().isNull() && sa->icon().isNull()) {
       l->addSpacing(8);
     } else {
-      QToolButton *tb = new QToolButton(wid);
+      QToolButton *tb = new QToolButton (wid);
       
         //HACK: texmacs does not use the checked state of the action
         // if the action is checkable then it means that it should be checked
-      sa->setChecked(sa->isCheckable());
+      sa->setChecked (sa->isCheckable());
       
       tb->setDefaultAction (sa);
       tb->setAutoRaise (true);
       tb->setPopupMode (QToolButton::InstantPopup);
       tb->setStyle (qtmstyle());
-        //  tb->setIconSize(QSize(12,12));
+        //  tb->setIconSize (QSize (12,12));
       QFont f = tb->font();
       int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
       f.setPixelSize (fs > 0 ? fs : QTM_MINI_FONTSIZE);
       tb->setFont(f);
-      l->addWidget(tb);
+      l->addWidget (tb);
     }
   }
   return wid;
@@ -263,7 +266,7 @@ QTMLazyMenu::force () {
  ******************************************************************************/
 
 QTMInputTextWidgetHelper::QTMInputTextWidgetHelper (qt_input_text_widget_rep* _wid) 
-: QObject(NULL), p_wid(abstract(_wid)), done(false) { }
+: QObject (NULL), p_wid (abstract (_wid)), done (false) { }
 
 /*! Destructor.
  Removes reference to the helper in the texmacs widget. If needed the texmacs
@@ -294,8 +297,8 @@ QTMInputTextWidgetHelper::commit () {
 
     // HACK: restore focus to the main editor widget
   widget_rep* win = qt_window_widget_rep::widget_from_qwidget (le);
-  if (win && concrete(win)->type == qt_widget_rep::texmacs_widget)
-    concrete(get_canvas(win))->qwid->setFocus();
+  if (win && concrete (win)->type == qt_widget_rep::texmacs_widget)
+    concrete (get_canvas (win))->qwid->setFocus();
 
   if (win) apply();    // This is 0 inside a dialog => no command
 }
@@ -314,7 +317,7 @@ QTMInputTextWidgetHelper::leave () {
     le->setText (to_qstring (wid()->input));
   }
 
-  widget_rep* win = qt_window_widget_rep::widget_from_qwidget(le);
+  widget_rep* win = qt_window_widget_rep::widget_from_qwidget (le);
   if (win) apply();    // This is 0 inside a dialog => no command
 }
 
@@ -342,7 +345,7 @@ QTMInputTextWidgetHelper::add (QObject* obj) {
  ******************************************************************************/
 
 QTMFieldWidgetHelper::QTMFieldWidgetHelper (qt_field_widget _wid) 
-  : QObject(NULL), wid(_wid), done(false) { }
+  : QObject (NULL), wid (_wid), done (false) { }
 
 /*! Destructor.
  Removes reference to the helper in the texmacs widget. Deletion of the texmacs
@@ -403,7 +406,7 @@ QTMLineEdit::QTMLineEdit (QWidget* parent, string _ww, int style)
 bool
 QTMLineEdit::event (QEvent* ev) {
   if (ev->type() == QEvent::KeyPress)  // Handle ALL keys
-    keyPressEvent(static_cast<QKeyEvent*> (ev));
+    keyPressEvent (static_cast<QKeyEvent*> (ev));
   else
     return QWidget::event (ev);
 
@@ -414,7 +417,7 @@ QTMLineEdit::event (QEvent* ev) {
  FIXME: This is a hideous mess...
  */
 void 
-QTMLineEdit::keyPressEvent(QKeyEvent* ev)
+QTMLineEdit::keyPressEvent (QKeyEvent* ev)
 {
   QCompleter* c = completer();
 
@@ -432,7 +435,7 @@ QTMLineEdit::keyPressEvent(QKeyEvent* ev)
       {
         if (completing) {
           if (c->completionCount() > 1) {
-            if(! c->setCurrentRow (c->currentRow() + 1))
+            if (! c->setCurrentRow (c->currentRow() + 1))
               c->setCurrentRow (0);    // cycle
           } else {
             setCursorPosition (text().length());
@@ -477,7 +480,7 @@ QTMLineEdit::keyPressEvent(QKeyEvent* ev)
         completing = true;
         c->complete();
         row = c->currentRow();
-        if(! c->setCurrentRow (row - 1))
+        if (! c->setCurrentRow (row - 1))
           c->setCurrentRow (c->completionCount() - 1);    // cycle
         if (c->currentCompletion() != "") {
           int pos;
@@ -530,7 +533,7 @@ QTMLineEdit::keyPressEvent(QKeyEvent* ev)
 
 QSize
 QTMLineEdit::sizeHint () const {
-  return qt_decode_length(ww, "", QLineEdit::sizeHint(), fontMetrics());
+  return qt_decode_length (ww, "", QLineEdit::sizeHint(), fontMetrics());
 }
 
 void 
@@ -554,8 +557,8 @@ QTMLineEdit::focusOutEvent (QFocusEvent* ev)
  * QTMTabWidget
  ******************************************************************************/
 
-QTMTabWidget::QTMTabWidget(QWidget *p) : QTabWidget(p) {
-  QObject::connect(this, SIGNAL(currentChanged(int)), this, SLOT(resizeOthers(int)));
+QTMTabWidget::QTMTabWidget (QWidget *p) : QTabWidget(p) {
+  QObject::connect (this, SIGNAL (currentChanged (int)), this, SLOT (resizeOthers (int)));
 }
 
 /*! Resizes the widget to the size of the tab given by the index.
@@ -566,12 +569,12 @@ QTMTabWidget::QTMTabWidget(QWidget *p) : QTabWidget(p) {
  case we must update the fixed size to reflect the change of tab.
  */
 void
-QTMTabWidget::resizeOthers(int current) {
-  for(int i = 0; i < count(); ++i) {
+QTMTabWidget::resizeOthers (int current) {
+  for (int i = 0; i < count(); ++i) {
     if (i != current)
-      widget(i)->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+      widget(i)->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Ignored);
     else
-      widget(i)->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+      widget(i)->setSizePolicy (QSizePolicy::Minimum, QSizePolicy::Minimum);
   }
   
     // FIXME? this could loop indefinitely if parents are cyclic.
@@ -582,9 +585,9 @@ QTMTabWidget::resizeOthers(int current) {
   }
   p->adjustSize();
 
-  if (window()->minimumSize()!=QSize(0,0) && 
-      window()->maximumSize() != QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX))
-    window()->setFixedSize(window()->sizeHint());
+  if (window()->minimumSize()!=QSize (0,0) && 
+      window()->maximumSize() != QSize (QWIDGETSIZE_MAX, QWIDGETSIZE_MAX))
+    window()->setFixedSize (window()->sizeHint());
 }
 
 
@@ -597,16 +600,16 @@ widget make_menu_widget (object wid);
 
 QTMRefreshWidget::QTMRefreshWidget (qt_widget _tmwid, string _strwid, string _kind)
 : QWidget (), strwid (_strwid), kind (_kind),
-  curobj (false), cur (), tmwid (_tmwid), qwid(NULL), cache (widget ())
+  curobj (false), cur (), tmwid (_tmwid), qwid (NULL), cache (widget ())
 {   
-  QObject::connect(the_gui->gui_helper, SIGNAL(tmSlotRefresh(string)),
-                   this, SLOT(doRefresh(string)));
+  QObject::connect (the_gui->gui_helper, SIGNAL (tmSlotRefresh (string)),
+                   this, SLOT (doRefresh (string)));
   QVBoxLayout* l = new QVBoxLayout (this);
   l->setContentsMargins (0, 0, 0, 0);
   l->setMargin (0);
   setLayout (l);
   
-  doRefresh("init");
+  doRefresh ("init");
 }
 
 bool
@@ -683,16 +686,16 @@ QTMRefreshWidget::doRefresh (string kind) {
 
 QTMRefreshableWidget::QTMRefreshableWidget (qt_widget _tmwid, object _prom, string _kind)
 : QWidget (), prom (_prom), kind (_kind),
-  curobj (false), cur (), tmwid (_tmwid), qwid(NULL)
+  curobj (false), cur (), tmwid (_tmwid), qwid (NULL)
 {   
-  QObject::connect(the_gui->gui_helper, SIGNAL(tmSlotRefresh(string)),
-                   this, SLOT(doRefresh(string)));
+  QObject::connect (the_gui->gui_helper, SIGNAL (tmSlotRefresh (string)),
+                   this, SLOT (doRefresh (string)));
   QVBoxLayout* l = new QVBoxLayout (this);
   l->setContentsMargins (0, 0, 0, 0);
   l->setMargin (0);
   setLayout (l);
   
-  doRefresh("init");
+  doRefresh ("init");
 }
 
 bool
@@ -761,17 +764,17 @@ QTMRefreshableWidget::doRefresh (string kind) {
 QTMComboBox::QTMComboBox (QWidget* parent) : QComboBox (parent) {
     ///// Obtain the minimum vertical size
   QComboBox cb;
-  cb.setSizeAdjustPolicy(AdjustToContents);
-  cb.addItem("");
+  cb.setSizeAdjustPolicy (AdjustToContents);
+  cb.addItem ("");
   minSize = cb.sizeHint();  // we'll just keep the height
   
     ///// Add width of the arrow button
   QStyleOptionComboBox opt;
-  opt.initFrom(&cb);
+  opt.initFrom (&cb);
   opt.activeSubControls = QStyle::SC_ComboBoxArrow;
   QRect r = style()->subControlRect (QStyle::CC_ComboBox, &opt,
                                      QStyle::SC_ComboBoxArrow, &cb);
-  minSize.setWidth(r.width());
+  minSize.setWidth (r.width());
 }
 
 /*! Add items and fix the ComboBox size using texmacs length units.
@@ -784,14 +787,14 @@ QTMComboBox::QTMComboBox (QWidget* parent) : QComboBox (parent) {
  */
 void
 QTMComboBox::addItemsAndResize (const QStringList& texts, string ww, string hh) {
-  QComboBox::addItems(texts);
+  QComboBox::addItems (texts);
   
     ///// Calculate the minimal contents size:
   calcSize = QApplication::globalStrut ();
   const QFontMetrics& fm = fontMetrics ();
   
   for (int i = 0; i < count(); ++i) {
-    QRect br = fm.boundingRect(itemText(i));
+    QRect br = fm.boundingRect (itemText(i));
     calcSize.setWidth (qMax (calcSize.width(), br.width()));
     calcSize.setHeight (qMax (calcSize.height(), br.height()));
   }
@@ -801,7 +804,7 @@ QTMComboBox::addItemsAndResize (const QStringList& texts, string ww, string hh) 
   calcSize.setHeight (qMax (calcSize.height(), minSize.height()));
   calcSize.rwidth() += minSize.width();
   
-  setFixedSize(calcSize);
+  setFixedSize (calcSize);
 }
 
 /*
@@ -815,7 +818,7 @@ QTMComboBox::event (QEvent* ev) {
     if (k->key() == Qt::Key_Up || k->key() == Qt::Key_Down)
       showPopup();
     else if (k->key() != Qt::Key_Escape) // HACK: QTMLineEdit won't need this
-      lineEdit()->event(ev);             // but we do.
+      lineEdit()->event (ev);             // but we do.
     else
       return false;
   } else
@@ -910,7 +913,7 @@ QTMListView::QTMListView (const command& cmd,
 
   for (int i = 0; i < model()->rowCount(); ++i) {
     QModelIndex item = model()->index (i, 0);
-    if (selections.contains (model()->data(item, Qt::DisplayRole).toString(), Qt::CaseSensitive))
+    if (selections.contains (model()->data (item, Qt::DisplayRole).toString(), Qt::CaseSensitive))
       selectionModel()->select (item, QItemSelectionModel::SelectCurrent);
   }
 
