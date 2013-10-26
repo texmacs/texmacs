@@ -101,6 +101,17 @@ none_accessible (tree t) {
   return the_drd->none_accessible (L(t));
 }
 
+bool
+exists_accessible_inside (tree t) {
+  if (is_atomic (t)) return true;
+  if (!the_drd->is_child_enforcing (t)) return true;
+  for (int i=0; i<N(t); i++)
+    if (the_drd->is_accessible_child (t, i) &&
+        exists_accessible_inside (t[i]))
+      return true;
+  return false;
+}
+
 /******************************************************************************
 * Further properties
 ******************************************************************************/

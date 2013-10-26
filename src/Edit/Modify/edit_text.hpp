@@ -32,6 +32,8 @@ public:
   void insert_tree (tree t, path p_in_t);
   void var_insert_tree (tree t, path p_in_t);
   void insert_tree (tree t);
+  void empty_document_fix ();
+  void remove_text_sub (bool forward);
   void remove_text (bool forward);
   void remove_structure (bool forward);
   void remove_structure_upwards ();

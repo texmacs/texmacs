@@ -28,6 +28,7 @@ bool is_accessible_child (tree t, int i);
 array<tree> accessible_children (tree t);
 bool all_accessible (tree t);
 bool none_accessible (tree t);
+bool exists_accessible_inside (tree t);
 
 string get_name (tree t);
 string get_long_name (tree t);

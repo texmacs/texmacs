@@ -73,7 +73,7 @@ is_multi_paragraph_or_sectional (tree t) {
 }
 
 void
-edit_text_rep::remove_text (bool forward) {
+edit_text_rep::remove_text_sub (bool forward) {
   path p;
   int  last, rix;
   tree t, u;
@@ -258,6 +258,26 @@ edit_text_rep::remove_text (bool forward) {
       break;
     }
   }
+}
+
+void
+edit_text_rep::empty_document_fix () {
+  // FIXME: we might want to call this after arbitrary editing operations
+  tree rt= subtree (et, rp);
+  if (exists_accessible_inside (rt)) return;
+  if (!is_func (rt, DOCUMENT)) {
+    insert_node (rt, 0, DOCUMENT);
+    rt= subtree (et, rp);
+  }
+  int n= N(rt);
+  insert (rt, n, tree (DOCUMENT, ""));
+  go_to (rp * path (n, 0));
+}
+
+void
+edit_text_rep::remove_text (bool forward) {
+  remove_text_sub (forward);
+  empty_document_fix ();
 }
 
 /******************************************************************************
