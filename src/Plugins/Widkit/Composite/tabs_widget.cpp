@@ -71,7 +71,7 @@ tabs_widget_rep::handle_get_size (get_size_event ev) {
   }
   int www= w, hhh= h - hh;
   a[l] << get_size (www, hhh, ev->mode);
-  w= max (ww, www); h= hh + hhh + 3*PIXEL;
+  w= max (ww, www + 2*PIXEL); h= hh + hhh + 4*PIXEL;
 }
 
 void
@@ -107,7 +107,7 @@ tabs_widget_rep::handle_position (position_event ev) {
     cur_w += the_w + 2*PIXEL;
     xs << cur_w;
   }
-  a[l] << emit_position (0, 0, w, last_h, south_west);
+  a[l] << emit_position (PIXEL, PIXEL, w-2*PIXEL, last_h-PIXEL, south_west);
   h1= last_h; h2= max_h;
 }
 
@@ -142,6 +142,11 @@ tabs_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
     ren->set_pencil (pencil (dark, PIXEL));
     ren->line (xs[i+1]-PIXEL, h1+2*PIXEL, xs[i+1]-PIXEL, top - PIXEL);
   }
+  ren->set_pencil (pencil (pastel, PIXEL));
+  ren->line (0, 0, 0, h1);
+  ren->set_pencil (pencil (dark, PIXEL));
+  ren->line (0, 0, w, 0);
+  ren->line (w-PIXEL, 0, w-PIXEL, h1);
 }
 
 void
