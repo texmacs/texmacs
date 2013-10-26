@@ -144,10 +144,11 @@
             '("plain" "quanjiao" "banjiao" "hangmobanjiao" "kaiming")
             (ahash-ref new "par-spacing") "10em")))
   ======
-  (aligned
-    (meti (text "Use margin kerning (protrusion)")
-      (toggle (ahash-set! new "par-kerning-margin" (if answer "true" "false"))
-              (== (ahash-ref new "par-kerning-margin") "true")))))
+  (centered
+    (aligned
+      (meti (text "Use margin kerning (protrusion)")
+        (toggle (ahash-set! new "par-kerning-margin" (if answer "true" "false"))
+                (== (ahash-ref new "par-kerning-margin") "true"))))))
 
 (tm-widget ((paragraph-formatter old new fun u) quit)
   (padded

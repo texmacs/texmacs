@@ -165,8 +165,8 @@ edit_env_rep::update_page_pars () {
     page_user_height  = page_height - page_top_margin - page_bottom_margin;
   }
   else {
-    page_width        = get_page_par (PAGE_WIDTH);
-    page_height       = get_page_par (PAGE_HEIGHT);
+    page_width  = get_page_par (PAGE_WIDTH);
+    page_height = get_page_par (PAGE_HEIGHT);
 
     if (width_flag == "false") {
       page_odd_margin   = get_page_par (PAGE_ODD);
@@ -203,6 +203,15 @@ edit_env_rep::update_page_pars () {
       page_user_height  = get_length (PAGE_USER_HEIGHT);
       page_top_margin   = get_page_par (PAGE_TOP);
       page_bottom_margin= page_height - page_top_margin - page_user_height;
+    }
+
+    if (page_type == "user") {
+      if (get_string (PAGE_EVEN) == "auto" &&
+          get_string (PAGE_ODD ) != "auto")
+        page_even_margin= page_odd_margin;
+      if (get_string (PAGE_ODD ) == "auto" &&
+          get_string (PAGE_EVEN) != "auto")
+        page_odd_margin= page_even_margin;
     }
 
     if (screen_flag) {

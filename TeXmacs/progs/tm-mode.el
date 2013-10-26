@@ -30,7 +30,7 @@
     wrap-selection-any wrap-selection-small
     try-modification
     tabs icon-tabs padded centered aligned bottom-buttons scrollable
-    hlist vlist hsplit vsplit
+    hlist vlist hsplit vsplit explicit-buttons
     $begin $cond))
 
 (setq nullary-no-highlight

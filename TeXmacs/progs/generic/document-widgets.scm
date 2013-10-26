@@ -73,16 +73,62 @@
 ;; Document -> Page / Format
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (page-size-list u)
+  (if (initial-defined? u "beamer-style")
+      (list "16:9" "8:5" "4:3" "5:4" "user")
+      (list "a3" "a4" "a5" "b4" "b5" "letter" "legal" "executive" "user")))
+
+(define (user-page-size? u)
+  (== (initial-get u "page-type") "user"))
+
 (tm-widget (page-formatter-format u quit)
-  (padded
-    (glue #t #t 500 300)
-    === ===
-    (explicit-buttons
-      (hlist
-        >>>
-        ("Cancel" (noop))
-        // //
-        ("Ok" (quit))))))
+  (centered
+    (refreshable "page-format-settings"
+      (aligned
+        (item (text "Screen rendering:")
+          (enum (initial-set u "page-medium" answer)
+                '("paper" "papyrus" "automatic" "beamer")
+                (initial-get u "page-medium") "10em"))
+        (item (text "Page type:")
+          (enum (begin
+                  (initial-set u "page-type" answer)
+                  (when (!= answer "user")
+                    (initial-set u "page-width" "auto")
+                    (initial-set u "page-height" "auto"))
+                  (refresh-now "page-user-format-settings"))
+                (cons-new (initial-get u "page-type") (page-size-list u))
+                (initial-get u "page-type") "10em"))
+        (item (text "Orientation:")
+          (enum (initial-set u "page-orientation" answer)
+                '("portrait" "landscape")
+                (initial-get u "page-orientation") "10em")))))
+  ===
+  (centered
+    (refreshable "page-user-format-settings"
+      (when (== (initial-get u "page-type") "user")
+        (aligned
+          (item (when (user-page-size? u) (text "Page width:"))
+            (when (user-page-size? u)
+              (enum (initial-set u "page-width" answer)
+                    (list (initial-get u "page-width") "")
+                    (initial-get u "page-width") "10em")))
+          (item (when (user-page-size? u) (text "Page height:"))
+            (when (user-page-size? u)
+              (enum (initial-set u "page-height" answer)
+                    (list (initial-get u "page-height") "")
+                    (initial-get u "page-height") "10em")))))))
+  ======
+  (explicit-buttons
+   (hlist
+     >>>
+     ("Reset"
+      (begin
+        (initial-default u "page-medium" "page-type" "page-orientation"
+                           "page-width" "page-height")
+        (refresh-now "page-format-settings")
+        (refresh-now "page-user-format-settings")))
+     // //
+     ("Ok" (quit)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document -> Page / Margins
@@ -95,102 +141,92 @@
         (aligned
           (meti (text "Determine margins from text width")
             (toggle (begin
-                      (init-env "page-width-margin" (if answer "true" "false"))
+                      (initial-set u "page-width-margin"
+                                   (if answer "true" "false"))
                       (refresh-now "page-margin-settings"))
-                    (== (get-env "page-width-margin") "true")))
+                    (== (initial-get u "page-width-margin") "true")))
           (meti (text "Same screen margins as on paper")
             (toggle (begin
-                      (init-env "page-screen-margin" (if answer "false" "true"))
+                      (initial-set u "page-screen-margin"
+                                   (if answer "false" "true"))
                       (refresh-now "page-screen-margin-settings"))
-                    (!= (get-env "page-screen-margin") "true"))))))
+                    (!= (initial-get u "page-screen-margin") "true"))))))
     ======
     (hlist
       (refreshable "page-margin-settings"
         (hlist (bold (text "Margins on paper")))
         === ===
-        (if (!= (get-env "page-width-margin") "true")
+        (if (!= (initial-get u "page-width-margin") "true")
             (aligned
               (item (text "(Odd page) Left:")
-                (enum (init-env "page-odd" answer)
-                      (list (get-init "page-odd") "")
-                      (get-init "page-odd") "6em"))
+                (input (initial-set u "page-odd" answer) "string"
+                       (list (initial-get u "page-odd")) "6em"))
               (item (text "(Even page) Left:")
-                (enum (init-env "page-odd" answer)
-                      (list (get-init "page-odd") "")
-                      (get-init "page-odd") "6em"))
+                (input (initial-set u "page-odd" answer) "string"
+                       (list (initial-get u "page-odd")) "6em"))
               (item (text "(Odd page) Right:")
-                (enum (init-env "page-right" answer)
-                      (list (get-init "page-right") "")
-                      (get-init "page-right") "6em"))
+                (input (initial-set u "page-right" answer) "string"
+                       (list (initial-get u "page-right")) "6em"))
               (item (text "Top:")
-                (enum (init-env "page-top" answer)
-                      (list (get-init "page-top") "")
-                      (get-init "page-top") "6em"))
+                (input (initial-set u "page-top" answer) "string"
+                       (list (initial-get u "page-top")) "6em"))
               (item (text "Bottom:")
-                (enum (init-env "page-bot" answer)
-                      (list (get-init "page-bot") "")
-                      (get-init "page-bot") "6em"))))
-        (if (== (get-env "page-width-margin") "true")
+                (input (initial-set u "page-bot" answer) "string"
+                       (list (initial-get u "page-bot")) "6em"))))
+        (if (== (initial-get u "page-width-margin") "true")
             (aligned
               (item (text "Text width:")
-                (enum (init-env "par-width" answer)
-                      (list (get-init "par-width") "")
-                      (get-init "par-width") "6em"))
+                (input (initial-set u "par-width" answer) "string"
+                       (list (initial-get u "par-width")) "6em"))
               (item (text "Odd page shift:")
-                (enum (init-env "page-odd-shift" answer)
-                      (list (get-init "page-odd-shift") "")
-                      (get-init "page-odd-shift") "6em"))
+                (input (initial-set u "page-odd-shift" answer) "string"
+                       (list (initial-get u "page-odd-shift")) "6em"))
               (item (text "Even page shift:")
-                (enum (init-env "page-even-shift" answer)
-                      (list (get-init "page-even-shift") "")
-                      (get-init "page-even-shift") "6em"))
+                (input (initial-set u "page-even-shift" answer) "string"
+                       (list (initial-get u "page-even-shift")) "6em"))
               (item (text "Top:")
-                (enum (init-env "page-top" answer)
-                      (list (get-init "page-top") "")
-                      (get-init "page-top") "6em"))
+                (input (initial-set u "page-top" answer) "string"
+                       (list (initial-get u "page-top")) "6em"))
               (item (text "Bottom:")
-                (enum (init-env "page-bot" answer)
-                      (list (get-init "page-bot") "")
-                      (get-init "page-bot") "6em"))))
+                (input (initial-set u "page-bot" answer) "string"
+                       (list (initial-get u "page-bot")) "6em"))))
         (glue #f #t 0 0))
       /// ///
       (refreshable "page-screen-margin-settings"
-        (when (== (get-env "page-screen-margin") "true")
+        (when (== (initial-get u "page-screen-margin") "true")
           (hlist (bold (text "Margins on screen")))
           === ===
           (aligned
             (item (text "Left:")
-              (enum (init-env "page-screen-left" answer)
-                    (list (get-init "page-screen-left") "")
-                    (get-init "page-screen-left") "6em"))
+              (input (initial-set u "page-screen-left" answer) "string"
+                     (list (initial-get u "page-screen-left")) "6em"))
             (item (text "Right:")
-              (enum (init-env "page-screen-right" answer)
-                    (list (get-init "page-screen-right") "")
-                    (get-init "page-screen-right") "6em"))
+              (input (initial-set u "page-screen-right" answer) "string"
+                     (list (initial-get u "page-screen-right")) "6em"))
             (item (text "Top:")
-              (enum (init-env "page-screen-top" answer)
-                    (list (get-init "page-screen-top") "")
-                    (get-init "page-screen-top") "6em"))
+              (input (initial-set u "page-screen-top" answer) "string"
+                     (list (initial-get u "page-screen-top")) "6em"))
             (item (text "Bottom:")
-              (enum (init-env "page-screen-bot" answer)
-                    (list (get-init "page-screen-bot") "")
-                    (get-init "page-screen-bot") "6em")))
-          (glue #f #t 0 0))))
-    ======
-    (explicit-buttons
-      (hlist
-        ("Defaults" (begin
-                      (init-default "page-odd" "page-even" "page-right"
-                                    "page-top" "page-bot" "par-width"
-                                    "page-odd-shift" "page-even-shift"
-                                    "page-screen-left" "page-screen-right"
-                                    "page-screen-top" "page-screen-bot"
-                                    "page-width-margin" "page-screen-margin")
-                      (refresh-now "page-margin-toggles")
-                      (refresh-now "page-margin-settings")
-                      (refresh-now "page-screen-margin-settings")))
-        >>>
-        ("Ok" (quit))))))
+              (input (initial-set u "page-screen-bot" answer) "string"
+                     (list (initial-get u "page-screen-bot")) "6em")))
+          (glue #f #t 0 0)))))
+  ======
+  (explicit-buttons
+   (hlist
+     >>>
+     ("Reset"
+      (begin
+        (initial-default u "page-odd" "page-even" "page-right"
+                           "page-top" "page-bot" "par-width"
+                           "page-odd-shift" "page-even-shift"
+                           "page-screen-left" "page-screen-right"
+                           "page-screen-top" "page-screen-bot"
+                           "page-width-margin" "page-screen-margin")
+        (refresh-now "page-margin-toggles")
+        (refresh-now "page-margin-settings")
+        (refresh-now "page-screen-margin-settings")))
+     // //
+     ("Ok" (quit)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document -> Page / Breaking
@@ -201,31 +237,35 @@
     (refreshable "page-breaking-settings"
       (aligned
         (item (text "Page breaking algorithm:")
-          (enum (init-env "page-breaking" answer)
+          (enum (initial-set u "page-breaking" answer)
                 '("sloppy" "medium" "professional")
-                (get-init "page-breaking") "10em"))
+                (initial-get u "page-breaking") "10em"))
         (item (text "Allowed page height reduction:")
-          (enum (init-env "page-shrink" answer)
-                (cons-new (get-init "page-shrink") '("0cm" "0.5cm" "1cm" ""))
-                (get-init "page-shrink") "10em"))
+          (enum (initial-set u "page-shrink" answer)
+                (cons-new (initial-get u "page-shrink")
+                          '("0cm" "0.5cm" "1cm" ""))
+                (initial-get u "page-shrink") "10em"))
         (item (text "Allowed page height extension:")
-          (enum (init-env "page-extend" answer)
-                (cons-new (get-init "page-extend") '("0cm" "0.5cm" "1cm" ""))
-                (get-init "page-extend") "10em"))
+          (enum (initial-set u "page-extend" answer)
+                (cons-new (initial-get u "page-extend")
+                          '("0cm" "0.5cm" "1cm" ""))
+                (initial-get u "page-extend") "10em"))
         (item (text "Vertical space stretchability:")
-          (enum (init-env "page-flexibility" answer)
-                (cons-new (get-init "page-flexibility")
+          (enum (initial-set u "page-flexibility" answer)
+                (cons-new (initial-get u "page-flexibility")
                           '("0" "0.25" "0.5" "0.75" "1" ""))
-                (get-init "page-flexibility") "10em"))))
-    === ===
-    (explicit-buttons
-      (hlist
-        ("Defaults" (begin
-                      (init-default "page-breaking" "page-shrink"
-                                    "page-extend" "page-flexibility")
-                      (refresh-now "page-breaking-settings")))
-        >>>
-        ("Ok" (quit))))))
+                (initial-get u "page-flexibility") "10em")))))
+  === ===
+  (explicit-buttons
+   (hlist
+     >>>
+     ("Reset"
+      (begin
+        (initial-default u "page-breaking" "page-shrink"
+                           "page-extend" "page-flexibility")
+        (refresh-now "page-breaking-settings")))
+     // //
+     ("Ok" (quit)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document -> Page / Headers
@@ -249,9 +289,8 @@
     (when (nnull? l)
       (delayed
         (:idle 10)
-        (when (== (current-buffer) u)
-          (for (x l) (init-env-tree (car x) (cadr x)))
-          (refresh-window))))))
+        (for (x l) (initial-set-tree u (car x) (cadr x)))
+        (refresh-window)))))
 
 (define (editing-headers?)
   (in? (current-buffer)
@@ -260,24 +299,30 @@
 
 (tm-widget (page-formatter-headers u style quit)
   (padded
-    (for (var header-parameters)
-      (bold (text (eval (parameter-name var))))
-      ===
-      (resize "600px" "60px"
-        (texmacs-input `(document ,(get-init-tree var))
-                       `(style (tuple ,@style))
-                       (string-append "tmfs://aux/" var)))
-      === ===)
-    === ===
-    (explicit-buttons
-      (hlist
-        (text "Insert:")
-        // //
-        ("Tab" (when (editing-headers?) (make-htab "5mm")))
-        // //
-        ("Page number" (when (editing-headers?) (make 'page-the-page)))
-        >>>
-        ("Ok" (apply-headers-settings u) (quit))))))
+    (refreshable "page-header-settings"
+      (for (var header-parameters)
+        (bold (text (eval (parameter-name var))))
+        ===
+        (resize "600px" "60px"
+          (texmacs-input `(document ,(initial-get-tree u var))
+                         `(style (tuple ,@style))
+                         (string-append "tmfs://aux/" var)))
+        ===)))
+  === ===
+  (explicit-buttons
+   (hlist
+     (text "Insert:")
+     // //
+     ("Tab" (when (editing-headers?) (make-htab "5mm")))
+     // //
+     ("Page number" (when (editing-headers?) (make 'page-the-page)))
+     >>>
+     ;;("Reset"
+     ;; (begin
+     ;;   (initial-default u header-parameters)
+     ;;   (refresh-now "page-header-settings")))
+     ;;// //
+     ("Ok" (apply-headers-settings u) (quit)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document -> Page

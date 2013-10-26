@@ -93,6 +93,41 @@
     (init-multi (cddr l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Initial environment management in specific buffers
+;; FIXME: should be rewritten using correct 'with-buffer'
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (initial-set-tree u var val)
+  (when (and (tm? val) (== (current-buffer) u))
+    (init-env-tree var val)))
+
+(tm-define (initial-set u var val)
+  (when (and (tm? val) (== (current-buffer) u))
+    (init-env var val)))
+
+(tm-define (initial-get-tree u var)
+  (if (== (current-buffer) u)
+      (get-init-tree var)
+      (tree "")))
+
+(tm-define (initial-get u var)
+  (if (== (current-buffer) u)
+      (get-init var)
+      ""))
+
+(tm-define (initial-defined? u var)
+  (and (== (current-buffer) u)
+       (style-has? var)))
+
+(tm-define (initial-has? u var)
+  (and (== (current-buffer) u)
+       (init-has? var)))
+
+(tm-define (initial-default u . vars)
+  (when (== (current-buffer) u)
+    (apply init-default vars)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Text and paragraph properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
