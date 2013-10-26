@@ -641,9 +641,7 @@
       (-> "Part" (link document-part-menu)))
   (-> "Source"
       ("Edit source tree" (toggle-preamble))
-      ---
-      (group "Preferences")
-      (link document-source-preferences-menu))
+      ("Preferences" (open-source-tree-preferences)))
   (-> "Update" (link document-update-menu))
   ---
   (if (new-fonts?)
