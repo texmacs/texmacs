@@ -115,12 +115,12 @@ qt_view_widget_rep::send (slot s, blackbox val) {
       
     case SLOT_MOUSE_GRAB:
         // Sent after a left click to indicate the start of cursor dragging.
-      NOT_IMPLEMENTED;
+      NOT_IMPLEMENTED("qt_view_widget::SLOT_MOUSE_GRAB");
       //send_mouse_grab (THIS, val);
       break;
       
     case SLOT_MOUSE_POINTER:
-      NOT_IMPLEMENTED;
+      NOT_IMPLEMENTED("qt_view_widget::SLOT_MOUSE_POINTER");
       //send_mouse_pointer (THIS, val);
       break;
       

@@ -475,13 +475,13 @@ widget texmacs_widget (int mask, command quit) {
   else      return tm_new<qt_tm_embedded_widget_rep> (quit);
 }
 widget ink_widget (command cb) {
-  if (DEBUG_QT_WIDGETS) cout << "Ink widget not yet implemented.\n";
+  NOT_IMPLEMENTED("Ink widget");
   (void) cb; return widget();
 }
 
   //// Widgets which are not strictly required by TeXmacs have void implementations
 
-widget empty_widget () { NOT_IMPLEMENTED; return widget(); }
+widget empty_widget () { NOT_IMPLEMENTED("empty_widget"); return widget(); }
 widget extend (widget w, array<widget> a) { (void) a; return w; }
 widget wait_widget (SI width, SI height, string message) {
   (void) width; (void) height; (void) message; return widget();

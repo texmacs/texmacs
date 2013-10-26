@@ -161,7 +161,7 @@ qt_inputs_list_widget_rep::send (slot s, blackbox val) {
       check_type<bool> (val, s);
       bool flag = open_box<bool> (val);
       (void) flag;
-      NOT_IMPLEMENTED
+      NOT_IMPLEMENTED("qt_inputs_list_widget::SLOT_VISIBILITY")
     }   
     break;
   case SLOT_SIZE:

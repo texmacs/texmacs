@@ -45,7 +45,6 @@ qt_chooser_widget_rep::qt_chooser_widget_rep (command _cmd, string _type, bool _
 
 qt_chooser_widget_rep::~qt_chooser_widget_rep() {}
 
-
 void
 qt_chooser_widget_rep::send (slot s, blackbox val) {
 
@@ -55,7 +54,7 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
       check_type<bool> (val, s);
       bool flag = open_box<bool> (val);
       (void) flag;
-      NOT_IMPLEMENTED
+      NOT_IMPLEMENTED("qt_chooser_widget::SLOT_VISIBILITY");
     }
       break;
     case SLOT_SIZE:
@@ -74,7 +73,7 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
       check_type<string>(val, s);
       if (DEBUG_QT_WIDGETS)
         cout << "\tString input: " << open_box<string> (val) << LF;
-      NOT_IMPLEMENTED
+      NOT_IMPLEMENTED("qt_chooser_widget::SLOT_STRING_INPUT");
       break;
     case SLOT_INPUT_TYPE:
       check_type<string>(val, s);
@@ -83,7 +82,7 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
 #if 0
     case SLOT_INPUT_PROPOSAL:
         //send_string (THIS, "default", val);
-      NOT_IMPLEMENTED
+      NOT_IMPLEMENTED("qt_chooser_widget::SLOT_INPUT_PROPOSAL")
       break;
 #endif
     case SLOT_FILE:

@@ -141,7 +141,7 @@ extern tm_ostream& operator << (tm_ostream& out, QRect rect);
 // deprecated, use check_type<T>(bb, slot) instead
 //#define TYPE_CHECK(b) ASSERT (b, "type mismatch")   
 
-#define NOT_IMPLEMENTED \
-{ if (DEBUG_QT) cout << "NOT YET IMPLEMENTED\n"; }
+#define NOT_IMPLEMENTED(x) \
+{ if (DEBUG_QT) cout << x << " not implemented yet.\n"; }
 
 #endif  // QT_UTILITIES_HPP
