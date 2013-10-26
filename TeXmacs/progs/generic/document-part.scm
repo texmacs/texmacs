@@ -77,6 +77,12 @@
       (tree-assign! t `(document (hide-preamble ,(tree-ref t 0 0))
 				 ,@(tree-children (tree-ref t 1 0)))))))
 
+(tm-define (kbd-remove t forwards?)
+  (:require (tree-is? t 'show-preamble))
+  (buffer-set-part-mode :all)
+  (when (buffer-has-preamble?)
+    (tree-remove (buffer-tree) 0 1)))
+
 (define (buffer-flatten-subpart t)
   (if (tree-in? t '(show-part hide-part))
       (tree-children (tree-ref t 1))
