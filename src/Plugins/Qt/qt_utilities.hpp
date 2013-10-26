@@ -52,9 +52,9 @@ void qt_apply_tm_style (QWidget* qwid, int style, color c);
 QSize qt_decode_length (string width, string height, 
                         const QSize& ref, const QFontMetrics& fm);
 
-QKeySequence to_qkeysequence (string s);
+QKeySequence to_qkeysequence (const string& s);
 
-QStringList     to_qstringlist (array<string> l);
+QStringList     to_qstringlist (const array<string>& l);
 array<string> from_qstringlist (const QStringList& l);
 
 ///// String conversion: Assumes UTF8 encodings both in QT and TeXmacs.

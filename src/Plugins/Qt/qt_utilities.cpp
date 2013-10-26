@@ -173,7 +173,7 @@ qt_decode_length (string width, string height,
 
 // used only by to_qkeysequence
 static string
-conv_sub (string ks) {
+conv_sub (const string& ks) {
   string r(ks);
 #ifdef Q_WS_MAC
   r = replace (r, "S-", "Shift+");
@@ -181,32 +181,52 @@ conv_sub (string ks) {
   r = replace (r, "A-", "Alt+");
   r = replace (r, "M-", "Ctrl+");
   //r = replace (r, "K-", "");
-  r = replace (r, " ", ",");
 #else
   r = replace (r, "S-", "Shift+");
   r = replace (r, "C-", "Ctrl+");
   r = replace (r, "A-", "Alt+");
   r = replace (r, "M-", "Meta+");
   //r = replace (r, "K-", "");
-  r = replace (r, " ", ",");
 #endif
-  if (N(r) == 1 || (N(r) > 2 && r[N(r)-2] == '+')) {
-    if (is_locase (r[N(r)-1]))
-      r = r (0, N(r)-1) * upcase_all (r (N(r)-1, N(r)));
-    else if (is_upcase (r[N(r)-1]))
-      r = r (0, N(r)-1) * "Shift+" * upcase_all (r (N(r)-1, N(r)));
+  r = replace (r, " ", ",");
+  array<string> a = tokenize (r, ",");
+  for (int i = 0; i < N(a); ++i) {
+    int p = search_forwards ("+", a[i]);
+    if (p != -1 && N(a[i]) > p+1) {
+      if (is_locase (a[i][p+1]))
+        a[i] = a[i](0, p) * upcase_all (a[i] (p, N(a[i])));
+      else if (is_upcase (a[i][p+1]))
+        a[i] = a[i](0, p) * "+Shift" * upcase_all (a[i] (p, N(a[i])));
   }
-  return r;
+}
+  return recompose (a, ",");
 }
 
 QKeySequence
-to_qkeysequence (string s) {
+to_qkeysequence (const string& ks) {
+#ifdef Q_WS_MAC
+    // If a key sequence defined in scheme with a kbd-map is made of several
+    // keys it contains spaces. Only those key sequences starting with a
+    // modifier key "C-", "M-", "A-", "S-" may comprise several keys and be
+    // valid application shortcuts. Otherwise, the shortcuts will conflict
+    // with normal text input.
+  if (N(ks) > 2 && !test (ks, 1, "-") && search_forwards (" ", 3, ks) != -1) {
+    if (DEBUG_QT) cout << "Ignoring keysequence: " << ks << LF;
+    return QKeySequence();
+  }
+#endif
   string r;
-  for (int i=0, k=0; k<=N(s); k++) {
-    if (k == N(s) || s[k] == ' ') {
-      r << conv_sub (s (i, k));
+  for (int i = 0, k = 0; k <= N(ks); ++k) {
+    if (k == N(ks) || ks[k] == ' ') {
+      r << conv_sub (ks (i, k));
       i = k;
     }
+  }
+  if (DEBUG_QT) {
+    QKeySequence qks (to_qstring (r));
+    cout << "ks: " << ks << " --> "
+         << qks.toString (QKeySequence::NativeText).toAscii().data() << LF;
+    return qks;
   }
   return QKeySequence (to_qstring (r));
 }
@@ -269,7 +289,7 @@ from_qstringlist(const QStringList& l) {
 }
 
 QStringList
-to_qstringlist(array<string> l) {
+to_qstringlist (const array<string>& l) {
   QStringList ql;
   for(int i=0; i<N(l); ++i)
     ql << to_qstring(l[i]);

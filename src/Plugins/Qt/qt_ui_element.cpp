@@ -463,16 +463,10 @@ qt_ui_element_rep::as_qaction () {
       // a command button with an optional prefix (o, * or v) and
       // keyboard shortcut; if ok does not hold, then the button is greyed
       bool ok= (style & WIDGET_STYLE_INERT) == 0;
-      QAction* a= NULL;
-      a= concrete(w)->as_qaction();
-#ifdef Q_WS_MAC
-      if (search_forwards (" ", ks) != -1) ks= "";
-#endif
       QTMCommand* c;
-      if (N(ks) > 0) {
-        QKeySequence qks = to_qkeysequence (ks);
-        if (DEBUG_QT)
-          cout << "ks: " << ks << " " << qks.toString().toAscii().data() << "\n";
+      QAction* a = concrete(w)->as_qaction();
+      const QKeySequence& qks = to_qkeysequence (ks);
+      if (!qks.isEmpty()) {
         a->setShortcut (qks);
         command key_cmd = tm_new<qt_key_command_rep>(ks);
         c= new QTMCommand (a, key_cmd);
