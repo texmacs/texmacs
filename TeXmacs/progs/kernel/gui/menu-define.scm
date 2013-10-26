@@ -476,7 +476,12 @@
     (for (col (standard-grey-list))
       (explicit-buttons
         ((color col #f #f 32 24)
-         (cmd col))))))
+         (cmd col))))
+    (for (i (.. 0 2))
+      (when #f
+        (explicit-buttons
+          ((color "#fff0" #f #f 32 24)
+           (noop)))))))
 
 (define (gui-make-pick-color x)
   `(menu-dynamic
