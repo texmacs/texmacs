@@ -156,11 +156,12 @@
 (lazy-define (generic generic-doc) focus-help)
 (lazy-define (generic format-widgets) open-paragraph-format open-page-format)
 (lazy-define (generic document-widgets) open-document-paragraph-format
-             open-document-page-format)
+             open-document-page-format open-document-colors)
 (tm-property (open-paragraph-format) (:interactive #t))
 (tm-property (open-page-format) (:interactive #t))
 (tm-property (open-document-paragraph-format) (:interactive #t))
 (tm-property (open-document-page-format) (:interactive #t))
+(tm-property (open-document-colors) (:interactive #t))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting text mode\n")

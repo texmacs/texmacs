@@ -424,8 +424,8 @@
   ("Other" (init-interactive-env "bg-color")))
 
 (menu-bind document-colors-menu
-  (-> "Foreground" (link document-foreground-color-menu))
-  (-> "Background" (link document-background-color-menu)))
+  (-> "Background" (link document-background-color-menu))
+  (-> "Foreground" (link document-foreground-color-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Document -> Supported scripts menu
@@ -638,13 +638,13 @@
           (-> "Size" (link document-font-base-size-menu))
           (-> "Dpi" (link document-font-dpi-menu))))
   (if (use-menus?)
-      (-> "Paragraph" (link document-paragraph-menu)))
-  (if (use-popups?)
-      ("Paragraph" (open-document-paragraph-format)))
-  (if (use-menus?)
+      (-> "Paragraph" (link document-paragraph-menu))
       (-> "Page" (link document-page-menu)))
   (if (use-popups?)
-      ("Page" (open-document-page-format)))
+      ("Paragraph" (open-document-paragraph-format))
+      ("Page" (open-document-page-format))
+      ;;("Colors" (open-document-colors))
+      )
   ---
   (link document-text-menu))
 

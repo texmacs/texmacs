@@ -350,3 +350,38 @@
          (st (list-remove-duplicates (rcons (get-style-list) "macro-editor"))))
     (dialogue-window (document-page-formatter u st)
                      noop "Document page format")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Document -> Color
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget (page-colors-background u)
+  (pick-background "" (initial-set-tree u "bg-color" answer)))
+
+(tm-widget (page-colors-foreground u)
+  (pick-color (initial-set-tree u "color" answer)))
+
+(tm-widget ((document-colors-picker u) quit)
+  (padded
+    (refreshable "page-colors"
+      (tabs
+        (tab (text "Background")
+          (padded
+            (dynamic (page-colors-background u))))
+        (tab (text "Foreground")
+          (padded
+            (dynamic (page-colors-foreground u))))))
+    ======
+    (explicit-buttons
+      (hlist
+        >>>
+        ("Reset" (begin
+                   (initial-default u "bg-color" "color")
+                   (refresh-now "page-colors")))
+        // //
+        ("Ok" (quit))))))
+
+(tm-define (open-document-colors)
+  (:interactive #t)
+  (with u (current-buffer)
+    (dialogue-window (document-colors-picker u) noop "Document colors")))
