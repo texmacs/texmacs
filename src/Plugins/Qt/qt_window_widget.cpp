@@ -172,6 +172,7 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       }
     }   
       break;
+
     case SLOT_NAME:
     {   
       check_type<string> (val, s);
@@ -179,7 +180,6 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       if (qwid) qwid->setWindowTitle (to_qstring (name));
     }
       break;
-      
       
     case SLOT_REFRESH:
     {

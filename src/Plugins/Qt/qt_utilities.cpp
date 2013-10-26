@@ -50,19 +50,19 @@ operator << (tm_ostream& out, QRect rect) {
 
 QFont
 to_qfont (int style, QFont font) {
-  if (style & WIDGET_STYLE_MINI) {  // use smaller text font inside widget
+  if (style & WIDGET_STYLE_MINI) {  // Use smaller text font
     int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
     font.setPointSize (fs > 0 ? fs : QTM_MINI_FONTSIZE);
   }
-  if (style & WIDGET_STYLE_MONOSPACED)  // use monospaced font inside widget
+  if (style & WIDGET_STYLE_MONOSPACED)  // Use monospaced font
     font.setFixedPitch (true);     //FIXME?
-//if (style & WIDGET_STYLE_GREY)  // use grey text font
+//if (style & WIDGET_STYLE_GREY)      // use grey text font
 //    font.set += "color: #414141";
-  if (style & WIDGET_STYLE_PRESSED)   // indicate that a button is currently pressed
+  if (style & WIDGET_STYLE_PRESSED)   // Button is currently pressed
     {}
-  if (style & WIDGET_STYLE_INERT)  // only render but don't associate any action to widget
+  if (style & WIDGET_STYLE_INERT)     // Only render, don't associate any action
     {}
-  if (style & WIDGET_STYLE_BUTTON)  // indicate that a button should explicitly rendered as a button
+  if (style & WIDGET_STYLE_BUTTON)    // Render button as standard button
     {}
   if (style & WIDGET_STYLE_BOLD)
     font.setBold(true);
@@ -73,21 +73,21 @@ to_qfont (int style, QFont font) {
 QString
 parse_tm_style (int style) {
   QString sheet;
-  if (style & WIDGET_STYLE_MINI) {  // use smaller text font inside widget
+  if (style & WIDGET_STYLE_MINI) {  // Use smaller text font
     int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
     sheet += QString("font-size: %1pt;").arg (fs > 0 ? fs : QTM_MINI_FONTSIZE);
   }
-  if (style & WIDGET_STYLE_MONOSPACED)  // use monospaced font inside widget
+  if (style & WIDGET_STYLE_MONOSPACED)  // Use monospaced font
     sheet += "font-family: \"monospace\";";
-  if (style & WIDGET_STYLE_GREY)  // use grey text font
+  if (style & WIDGET_STYLE_GREY)      // Use grey text font
     sheet += "color: #414141;";
-  if (style & WIDGET_STYLE_PRESSED)   // indicate that a button is currently pressed
+  if (style & WIDGET_STYLE_PRESSED)   // Button is currently pressed
     sheet += "";
-  if (style & WIDGET_STYLE_INERT)  // only render but don't associate any action to widget
+  if (style & WIDGET_STYLE_INERT)     // Only render, don't associate any action
     sheet += "color: #414141;";
-  if (style & WIDGET_STYLE_BUTTON)  // indicate that a button should explicitly rendered as a button
+  if (style & WIDGET_STYLE_BUTTON)    // Render button as standard button
     sheet += "";
-  if (style & WIDGET_STYLE_CENTERED)  // use centered text
+  if (style & WIDGET_STYLE_CENTERED)  // Use centered text
     sheet += "text-align: center;";
   if (style & WIDGET_STYLE_BOLD)
     sheet += "font-weight: bold;";
@@ -124,7 +124,8 @@ qt_apply_tm_style (QWidget* qwid, int style, color c) {
  FIXME: does 1w mean 100% of the contents' size or 100% of the available size?
  */
 QSize
-qt_decode_length (string width, string height, const QSize& ref, const QFontMetrics& fm) {
+qt_decode_length (string width, string height,
+                  const QSize& ref, const QFontMetrics& fm) {
   QSize size = ref;
 
     // Width as a function of the default width
@@ -191,25 +192,24 @@ conv_sub (string ks) {
 #endif
   if (N(r) == 1 || (N(r) > 2 && r[N(r)-2] == '+')) {
     if (is_locase (r[N(r)-1]))
-      r= r (0, N(r)-1) * upcase_all (r (N(r)-1, N(r)));
+      r = r (0, N(r)-1) * upcase_all (r (N(r)-1, N(r)));
     else if (is_upcase (r[N(r)-1]))
-      r= r (0, N(r)-1) * "Shift+" * upcase_all (r (N(r)-1, N(r)));
+      r = r (0, N(r)-1) * "Shift+" * upcase_all (r (N(r)-1, N(r)));
   }
   return r;
 }
 
 QKeySequence
 to_qkeysequence (string s) {
-  int i=0, k;
   string r;
-  for (k=0; k<=N(s); k++)
+  for (int i=0, k=0; k<=N(s); k++) {
     if (k == N(s) || s[k] == ' ') {
       r << conv_sub (s (i, k));
-      i= k;
+      i = k;
     }
+  }
   return QKeySequence (to_qstring (r));
 }
-
 
 coord4
 from_qrect (const QRect & rect) {
@@ -221,13 +221,13 @@ from_qrect (const QRect & rect) {
   return coord4 (c1, c2, c3, c4);
 }
 
-
 /*! Transforms a rectangle given by its lower left and upper right corners
  into one given by its upper left and width/height */
 QRect
 to_qrect (const coord4 & p) {
   float c= 1.0/SCREEN_PIXEL;
-  return QRect (p.x1*c, -p.x4*c, (p.x3-p.x1+SCREEN_PIXEL-1)*c, (p.x4-p.x2+SCREEN_PIXEL-1)*c);
+  return QRect (p.x1*c, -p.x4*c,
+                (p.x3-p.x1+SCREEN_PIXEL-1)*c, (p.x4-p.x2+SCREEN_PIXEL-1)*c);
 }
 
 coord2
@@ -324,8 +324,8 @@ from_qstring (const QString &s) {
 static QHash<QString, QColor> _NamedColors;
 
 /*!
- * This needn't be called more than once. Takes RGBColors, defined in
- * rgb_colors.hpp and initializes our QHash
+  This needn't be called more than once. Takes RGBColors, defined in
+  rgb_colors.hpp and initializes our QHash
  */
 void initNamedColors(void) {
   for(int i = 0; i < RGBColorsSize; ++i)
@@ -334,8 +334,8 @@ void initNamedColors(void) {
 }
 
 /*!
- * Takes either an hexadecimal RGB color, as in #e3a1ff, or a named color
- * as those defined in src/Graphics/Renderer/rgb_colors.hpp and returns a QColor
+  Takes either an hexadecimal RGB color, as in #e3a1ff, or a named color
+  as those defined in src/Graphics/Renderer/rgb_colors.hpp and returns a QColor
  */
 QColor
 to_qcolor (const string& col) {
@@ -351,7 +351,9 @@ to_qcolor (const string& col) {
   return QColor(100,100,100);  // FIXME? 
 }
 
-/*! Returns a color encoded as a string with hexadecimal RGB values, as in #e3a1ff */
+/*! Returns a color encoded as a string with hexadecimal RGB values, 
+ as in #e3a1ff 
+ */
 string
 from_qcolor (const QColor& col) {
   return from_qstring(col.name());
@@ -541,7 +543,7 @@ as_pixmap (const QImage& im) {
 
 string 
 qt_application_directory () {
-  return  string (QCoreApplication::applicationDirPath () .toAscii() .constData());
+  return  string (QCoreApplication::applicationDirPath().toAscii().constData());
   // return from_qstring (QCoreApplication::applicationDirPath ());
 }
 
@@ -580,7 +582,7 @@ qt_get_date (string lan, string fm) {
 
 #define PAPER(fmt)  case QPrinter::fmt : return "fmt"
 static string 
-qt_papersize_to_string( QPrinter::PaperSize sz ) {
+qt_papersize_to_string (QPrinter::PaperSize sz) {
   switch (sz) {
       PAPER (A0) ;
       PAPER (A1) ;
@@ -604,13 +606,11 @@ qt_papersize_to_string( QPrinter::PaperSize sz ) {
       PAPER (B9) ;
       PAPER (B10) ;      
       PAPER (Letter) ;
-      
     default:
       return "A4";
   }
 }
 #undef PAPER
-
 
 bool 
 qt_print (bool& to_file, bool& landscape, string& pname, url& filename, 

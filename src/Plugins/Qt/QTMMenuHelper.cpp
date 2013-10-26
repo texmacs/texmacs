@@ -676,11 +676,10 @@ QTMRefreshWidget::doRefresh (string kind) {
   }
 }
 
+
 /******************************************************************************
  * QTMRefreshableWidget
  ******************************************************************************/
-
-widget make_menu_widget (object wid);
 
 QTMRefreshableWidget::QTMRefreshableWidget (qt_widget _tmwid, object _prom, string _kind)
 : QWidget (), prom (_prom), kind (_kind),
