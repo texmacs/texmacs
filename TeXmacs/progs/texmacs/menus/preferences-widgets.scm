@@ -293,23 +293,25 @@
 ;; All converters ----------
 
 (tm-widget (conversion-preferences-widget)
-  ======
-  (tabs
-    (tab (text "Html")
-      (centered
-        (dynamic (html-preferences-widget))))
-    (tab (text "LaTeX")
-      (centered
-        (dynamic (latex-preferences-widget))))
-    (tab (text "BibTeX")
-      (centered
-        (dynamic (bibtex-preferences-widget))))
-    (tab (text "Verbatim")
-      (centered
-        (dynamic (verbatim-preferences-widget))))
-    (tab (text "Image")
-      (centered
-        (dynamic (image-preferences-widget))))))
+  ===
+  (padded
+    (tabs
+      (tab (text "Html")
+        (centered
+          (dynamic (html-preferences-widget))))
+      (tab (text "LaTeX")
+        (centered
+          (dynamic (latex-preferences-widget))))
+      (tab (text "BibTeX")
+        (centered
+          (dynamic (bibtex-preferences-widget))))
+      (tab (text "Verbatim")
+        (centered
+          (dynamic (verbatim-preferences-widget))))
+      (tab (text "Image")
+        (centered
+          (dynamic (image-preferences-widget))))))
+  ===)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Other
