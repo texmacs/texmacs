@@ -421,9 +421,9 @@ edit_interface_rep::has_changed (int question) {
 int
 edit_interface_rep::idle_time (int event_type) {
   if (env_change == 0 &&
-      (!query_invalid (this))  &&
-      (!check_event (event_type)) &&
-      got_focus)
+      got_focus &&
+      (!query_invalid (this)) &&
+      (!check_event (event_type)))
     return texmacs_time () - last_change;
   else return 0;
 }
