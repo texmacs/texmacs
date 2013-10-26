@@ -117,8 +117,8 @@
       Notice also that the mere selection of this mode does not imply the
       screen margins and page decorations to be as on paper. In order to
       previsualize a document in a fully realistic way, you should also set
-      <menu|Document|View|Page layout|Show header and footer> and
-      <menu|Document|View|Page layout|Margins as on paper>.
+      <menu|Document|Page|Screen margins|Show header and footer> and
+      <menu|Document|Page|Screen margins|Margins as on paper>.
 
       <item*|<verbatim|papyrus>>The paragraph width is the same as on paper,
       but page breaking is disabled. This mode is most useful during the

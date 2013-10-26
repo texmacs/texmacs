@@ -63,7 +63,7 @@
   <menu|Document|Page|Margins> festgelegt. Oft ist es jedoch erwünscht, den
   Text auf dem Bildschirm anders darzustellen, z. B. die Ränder auf dem
   Bildschirm zu verkleinern. Das kann man mit den Optionen von
-  <menu|Document|View|Page layout>.\ 
+  <menu|Document|Page|Screen margins>.\ 
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 

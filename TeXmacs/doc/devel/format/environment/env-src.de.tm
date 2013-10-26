@@ -14,7 +14,7 @@
     <var-val|src-style|angular><explain-synopsis|Darstellungsstil für
     Quellcode>
   <|explain>
-    Der Basis-Stil, wie er im Menü <menu|Document|View|Style> eingestellt
+    Der Basis-Stil, wie er im Menü <menu|Document|Source|Style> eingestellt
     werden kann. Mögliche Werte sind <verbatim|angular>
     (<translate|angular|english|german>), <verbatim|scheme>
     (<translate|scheme|english|german>), <verbatim|functional>,
@@ -28,7 +28,7 @@
   <|explain>
     Wie spezielle Konstrukte wie <markup|concat>, <markup|document>,
     <markup|compound>, usw. dargestellt werden sollen. Diese kann im Menü
-    <menu|Document|View|Special> eingestellt werden. Mögliche Werte sind
+    <menu|Document|Source|Special> eingestellt werden. Mögliche Werte sind
     <verbatim|raw> (<translate|none|english|german>), <verbatim|format>
     (<translate|formatting|english|german>), <verbatim|normal> und
     <verbatim|maximal>.
@@ -38,7 +38,7 @@
     <var-val|src-compact|normal><explain-synopsis|Verdichtungsgrad>
   <|explain>
     Wie verdichtet sollen Quellcode-Konstrukte dargestellt werden. Das kann
-    im Menü <menu|Document|View|Compactification> eingestellt werden.
+    im Menü <menu|Document|Source|Compactification> eingestellt werden.
     Mögliche Werte sind <verbatim|none> (Minimal), <verbatim|inline>
     (<translate|only inline tags|english|german>), <verbatim|normal>,
     <verbatim|inline tags> (<translate|inline arguments|english|german>) und
@@ -49,7 +49,7 @@
     <var-val|src-close|compact><explain-synopsis|Darstellung der Stoptags>
   <|explain>
     Die Darstellung von Stoptags in mehrzeiligen Befehlen kann im Menü
-    <menu|Document|View|Closing style> eingestellt werden. Mögliche Werte
+    <menu|Document|Source|Closing style> eingestellt werden. Mögliche Werte
     sind <verbatim|repeat> (<translate|repeat|english|german>),
     <verbatim|long> (<translate|stretched|english|german>),
     <verbatim|compact> (<translate|compact|english|german>) und

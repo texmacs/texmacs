@@ -121,8 +121,8 @@
       gewährleistet, dass alles auf dem Bildschirm so erscheint wie auf dem
       Papier. Um sicherzustellen, dass der Bildschirm exakt mit dem Druckbild
       übereinstimmt, müssen Sie noch folgende Optionen setzen:
-      <menu|Document|View|Page layout|Show header and footer> und
-      <menu|Document|View|Page layout|Margins as on paper>.
+      <menu|Document|Page|Screen margins|Show header and footer> und
+      <menu|Document|Page|Screen margins|Margins as on paper>.
 
       <item*|<verbatim|papyrus>><menu|Document|Page|Type|Papyrus> Die
       Absatzbreite auf dem Bildschirm entspricht dem Druckbild. Ein

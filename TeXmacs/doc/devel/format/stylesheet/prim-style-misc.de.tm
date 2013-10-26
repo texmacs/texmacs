@@ -60,14 +60,14 @@
     Diese Konstrukte dienen dazu, dem Anwender sichtbare Informationen zu
     geben, die nicht ausgedruckt werden sollen. <TeXmacs> zeigt solche
     informatorischen Flags für Label, Formatierbefehle, wie Seitenumbrüche
-    usw.. Im Menü <menu|Document|View|Informative flags> kann der Anwender
+    usw.. Im Menü <menu|Document|Informative flags> kann der Anwender
     einstellen, wie solche Flags dargestellt werden sollen.
 
     Die Variante mit zwei Argumenten gibt ein informatives Flag mit einem
     spezifischen Inhalt <src-arg|content> und Farbe <src-arg|color>. Der
     <src-arg|content> wird nur gezeigt, wenn die Darstellungsweise von
     informativen Flags auf <translate|detailed|english|german> eingestellt
-    ist, z.B. im Menü <menu|Document|View|Informative flags|Detailed>.
+    ist, z.B. im Menü <menu|Document|Informative flags|Detailed>.
     Beispielsweise wird <inactive*|<flag|warning|red>> im Text in der
     Voreinstellung als <flag|warning|red> \ 
 

@@ -59,7 +59,7 @@
     a given <src-arg|name> and arguments <src-arg|arg-1> until
     <src-arg|arg-n>. For instance, <inactive*|<inline-tag|foo|x|y>> produces
     <inline-tag|foo|x|y>. The style of the rendering may be customized in the
-    <menu|Document|View|Source tags> menu, or by modifying the
+    <menu|Document|Source|Source tags> menu, or by modifying the
     <src-var|src-style>, <src-var|src-special>, <src-var|src-compact> and
     <src-var|src-close> environment variables.
   </explain>

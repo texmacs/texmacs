@@ -10,7 +10,7 @@
   in Ihrem Dokument an Ihre Bedürfnisse azupassen. Wir empfehlen, daÿ Sie mit
   den verschiedenen Möglichkeiten an einem eigenen Dokument zu
   experimentieren, um die Vor- und Nachteile kennen zu lernen, nachdem Sie
-  den Quellmodus mit <menu|Document|View|Source> eingestellt haben.
+  den Quellmodus mit <menu|Document|Source|Source> eingestellt haben.
 
   Zuerst einmal können Sie zwischen verschiedenen Basis-Stilen wählen:
   \RAngular'', \RScheme'', \RFunctional'' und \R<LaTeX>''. Die verschiedenen
@@ -54,7 +54,7 @@
 
   Möglicherweise wollen Sie, daÿ bestimmte Quellcode-Konstrukte wie z.B.
   <markup|concat> und <markup|document> in besonderer Weise dargestellt
-  werden. Im Menü <menu|Document|View|Special> können Sie festlegen, in
+  werden. Im Menü <menu|Document|Source|Special> können Sie festlegen, in
   welchem Ausmaÿ Sie solche <translate|special|english|german> zulassen
   wollen:
 
@@ -114,7 +114,7 @@
   Darüber hinaus kann der Anwender noch kontrollieren, wie verdichtet die
   Darstellung von Quellcode-Konstrukten sein soll, wie stark also Konstrukte
   durch Zeilenumbrüche gegliedert werden sollen. Das Ausmaÿ kann im Menü
-  <menu|Document|View|Compactification> eingestellt werden:
+  <menu|Document|Source|Compactification> eingestellt werden:
 
   <\description>
     <item*|<menu|Minimal>>Alle Konstrukte werden durch Zeilenumbrüche
@@ -175,7 +175,7 @@
     Die verschiedenen Optionen für den Verdichtungsgrad.
   </big-figure>
 
-  Schlieÿlich kann der Anwender im Menü <menu|Document|View|Closing style>
+  Schlieÿlich kann der Anwender im Menü <menu|Document|Source|Closing style>
   die Darstellung der Stoptags von Quellcode-Befehlen einstellen, wenn sie
   mehrzeilig gegliedert dargestellt werden. Die folgenden Optionen sind
   verfügbar: <translate|minimal|english|german>,

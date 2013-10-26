@@ -144,7 +144,7 @@
   <|explain>
     This flag determines whether we are editing normal text or a style-sheet.
     The source tree or preamble mode may be selected in
-    <menu|Document|View|Edit source tree>.
+    <menu|Document|Source|Edit source tree>.
   </explain>
 
   <\explain>
@@ -168,7 +168,7 @@
     </tm-fragment>
 
     Usually, the rendering of informative flags is specified document-wide in
-    <menu|Document|View|Informative flags>.
+    <menu|Document|Informative flags>.
   </explain>
 
   <tmdoc-copyright|2004|Joris van der Hoeven>

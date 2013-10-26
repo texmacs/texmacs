@@ -29,7 +29,7 @@
   im Editor garantiert <em|wysiwyg>: das Druckresultat ist genau das, was Sie
   auf dem Bildschirm sehen. Um das zu erreichen, müssen Sie vor allem die
   richtige Papiergröÿe mit <menu|Document|Page|Type|Paper> und
-  <menu|Document|View|Page layout|Margins as on paper> einstellen. Sie
+  <menu|Document|Page|Screen margins|Margins as on paper> einstellen. Sie
   sollten unbedingt sicherstellen, dass die mit <menu|Document|Font|Dpi>
   festzulegende Auflösung genau derjenigen Ihres Druckers entspricht.
   Momentan können geringfügige Unterschiede im Schriftsatz auftreten, wenn

@@ -139,7 +139,7 @@
   <|explain>
     Dieses Flag steuert, ob eine normales Textdokument oder eine
     Stil-Definition editiert wird. Der Quellcode-Modus (preamble mode) kann
-    im Menü <menu|Document|View|Edit source tree> ausgewählt werden.
+    im Menü <menu|Document|Source|Edit source tree> ausgewählt werden.
   </explain>
 
   <\explain>
@@ -165,7 +165,7 @@
     </tm-fragment>
 
     Normalerweise wird die Darstellung von Informations-Marken global im Menü
-    <menu|Document|View|Informative flags> eingestellt.
+    <menu|Document|Informative flags> eingestellt.
   </explain>
 
   <tmdoc-copyright|2004|Joris van der Hoeven>

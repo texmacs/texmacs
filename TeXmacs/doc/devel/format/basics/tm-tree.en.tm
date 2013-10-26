@@ -72,7 +72,7 @@
   surprising to you, consider that a syntax is a way to represent information
   in a form suitable to understanding and modification. The on-screen typeset
   representation of a document, together with its interactive behaviour, is a
-  particularly concrete syntax. Moreover, in the <menu|Document|View> menu,
+  particularly concrete syntax. Moreover, in the <menu|Document|Source> menu,
   you may find different ways to customize the way documents are viewed, such
   as different levels of informative flags and a <hyper-link|``source tree''
   mode|../../style/presentation/src-present.en.tm> for editing style files.

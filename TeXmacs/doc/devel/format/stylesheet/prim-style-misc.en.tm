@@ -56,12 +56,12 @@
     This tag is used to in order to inform the user about information which
     is present in the document, but not visible when printed out. <TeXmacs>
     displays such informative flags for labels, formatting directives such as
-    page breaks, and so on. In <menu|Document|View|Informative flags>, the
+    page breaks, and so on. In <menu|Document|Informative flags>, the
     user may specify how the informative flags should be rendered.
 
     The two-argument variant displays an informative flag with a given
     <src-arg|content> and <src-arg|color>. The <src-arg|content> is only
-    rendered when selecting <menu|Document|View|Informative flags|Detailed>.
+    rendered when selecting <menu|Document|Informative flags|Detailed>.
     For instance, <inactive*|<flag|warning|red>> is rendered as
     <flag|warning|red>. The optional <src-arg|var> argument may be used in
     order to specify that the flag should only be visible if the macro

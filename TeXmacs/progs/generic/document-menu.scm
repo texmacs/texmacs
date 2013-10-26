@@ -61,34 +61,10 @@
 (menu-bind document-style-extra-menu)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Document view
+;; Document -> Source submenus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind document-view-menu
-  ("Edit source tree" (toggle-preamble))
-  (-> "Informative flags"
-      ("Default" (init-default "info-flag"))
-      ---
-      ("None" (init-env "info-flag" "none"))
-      ("Minimal" (init-env "info-flag" "minimal"))
-      ("Short" (init-env "info-flag" "short"))
-      ("Detailed" (init-env "info-flag" "detailed"))
-      ("Also on paper" (init-env "info-flag" "paper")))
-  (-> "Page layout"
-      ("Default" (init-default "page-screen-margin" "page-show-hf"
-			       "page-screen-left" "page-screen-right"
-			       "page-screen-top" "page-screen-bot"))
-      ---
-      ("Show header and footer" (toggle-visible-header-and-footer))
-      ("Margins as on paper" (toggle-page-screen-margin))
-      ---
-      (when (test-env? "page-screen-margin" "true")
-	("Left margin" (init-interactive-env "page-screen-left"))
-	("Right margin" (init-interactive-env "page-screen-right"))
-	("Top margin" (init-interactive-env "page-screen-top"))
-	("Bottom margin" (init-interactive-env "page-screen-bot"))))
-  ---
-  (group "Source tags")
+(menu-bind document-source-preferences-menu
   (-> "Style"
       ("Default" (init-default "src-style"))
       ---
@@ -120,130 +96,28 @@
       ("Minimal" (init-env "src-close" "minimal"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Global and document language
+;; The Document -> Update menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind global-language-menu
-  (for (lan supported-languages)
-    (when (supported-language? lan)
-      ((check (eval (upcase-first lan)) "*"
-              (and (test-document-language? lan)
-                   (== lan (get-output-language))))
-       (set-document-language lan)
-       (set-output-language lan)))))
+(define (wait-update-current-buffer)
+  (system-wait "Updating current buffer, " "please wait")
+  (update-current-buffer))
 
-(menu-bind document-language-menu
-  ("Default" (set-default-document-language))
+(menu-bind document-update-menu
+  ("All" (generate-all-aux) (inclusions-gc) (wait-update-current-buffer))
   ---
-  (for (lan supported-languages)
-    (when (supported-language? lan)
-      ((check (eval (upcase-first lan)) "*" (test-document-language? lan))
-       (set-document-language lan)))))
-
-(tm-define (current-language-icon)
-  (with lan (get-env "language")
-    (if (in? lan supported-languages)
-        (string-append "tm_" lan ".xpm")
-        "tm_stateless.xpm")))
+  ("Buffer" (wait-update-current-buffer))
+  ("Bibliography" (generate-all-aux) (wait-update-current-buffer))
+  ;; ("Bibliography" (generate-aux "bibliography"))
+  ("Table of contents" (generate-aux "table-of-contents"))
+  ("Index" (generate-aux "index"))
+  ("Glossary" (generate-aux "glossary"))
+  (if (project-attached?)
+      ---
+      ("Clear local information" (clear-local-info))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Page sizes
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-menu (document-common-page-size-menu)
-  ("A3" (init-page-type "a3"))
-  ("A4" (init-page-type "a4"))
-  ("A5" (init-page-type "a5"))
-  ("B4" (init-page-type "b4"))
-  ("B5" (init-page-type "b5"))
-  ("Letter" (init-page-type "letter"))
-  ("Legal" (init-page-type "legal"))
-  ("Executive" (init-page-type "executive")))
-
-(tm-menu (document-beamer-page-size-menu)
-  ("Widescreen 16:9" (init-page-type "16:9"))
-  ("Widescreen 8:5" (init-page-type "8:5"))
-  ;;("Widescreen 3:2" (init-page-type "3:2"))
-  ("Standard 4:3" (init-page-type "4:3"))
-  ("Standard 5:4" (init-page-type "5:4")))
-
-(tm-menu (document-page-size-menu)
-  ("Default"
-   (init-default "page-type" "page-width" "page-height")
-   (notify-page-change))
-  ---
-  (if (not (style-has? "beamer-style"))
-      (group "Common formats")
-      (link document-common-page-size-menu))
-  (if (style-has? "beamer-style")
-      (group "Beamer formats")
-      (link document-beamer-page-size-menu))
-  ---
-  (group "Standard formats")
-  (if (style-has? "beamer-style")
-      (-> "Common"
-          (link document-common-page-size-menu)))
-  (-> "A series"
-      ("A0" (init-page-type "a0"))
-      ("A1" (init-page-type "a1"))
-      ("A2" (init-page-type "a2"))
-      ("A3" (init-page-type "a3"))
-      ("A4" (init-page-type "a4"))
-      ("A5" (init-page-type "a5"))
-      ("A6" (init-page-type "a6"))
-      ("A7" (init-page-type "a7"))
-      ("A8" (init-page-type "a8"))
-      ("A9" (init-page-type "a9")))
-  (-> "B series"
-      ("B0" (init-page-type "b0"))
-      ("B1" (init-page-type "b1"))
-      ("B2" (init-page-type "b2"))
-      ("B3" (init-page-type "b3"))
-      ("B4" (init-page-type "b4"))
-      ("B5" (init-page-type "b5"))
-      ("B6" (init-page-type "b6"))
-      ("B7" (init-page-type "b7"))
-      ("B8" (init-page-type "b8"))
-      ("B9" (init-page-type "b9")))
-  (-> "Arch series"
-      ("ArchA" (init-page-type "archA"))
-      ("ArchB" (init-page-type "archB"))
-      ("ArchC" (init-page-type "archC"))
-      ("ArchD" (init-page-type "archD"))
-      ("ArchE" (init-page-type "archE")))
-  (-> "American"
-      ("10x14" (init-page-type "10x14"))
-      ("11x17" (init-page-type "11x17"))
-      ("C5" (init-page-type "C5"))
-      ("Comm10" (init-page-type "Comm10"))
-      ("DL" (init-page-type "DL"))
-      ("Executive" (init-page-type "executive"))
-      ("Half letter" (init-page-type "halfletter"))
-      ("Half executive" (init-page-type "halfexecutive"))
-      ("Ledger" (init-page-type "ledger"))
-      ("Legal" (init-page-type "legal"))
-      ("Letter" (init-page-type "letter"))
-      ("Monarch" (init-page-type "Monarch")))
-  (-> "Miscellaneous"
-      ("C sheet" (init-page-type "csheet"))
-      ("D sheet" (init-page-type "dsheet"))
-      ("E sheet" (init-page-type "esheet"))
-      ("Flsa" (init-page-type "flsa"))
-      ("Flse" (init-page-type "flse"))
-      ("Folio" (init-page-type "folio"))
-      ("Lecture note" (init-page-type "lecture note"))
-      ("Note" (init-page-type "note"))
-      ("Quarto" (init-page-type "quarto"))
-      ("Statement" (init-page-type "statement"))
-      ("Tabloid" (init-page-type "tabloid")))
-  (if (not (style-has? "beamer-style"))
-      (-> "Beamer"
-          (link document-beamer-page-size-menu)))
-  ---
-  ("Other" (interactive init-page-size)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The Document -> Font menu and related
+;; The Document -> Font menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind document-font-menu
@@ -384,77 +258,11 @@
   ---
   ("Other" (init-interactive-env "dpi")))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The Document -> Magnification menu
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(menu-bind document-magnification-menu
-  ("Default" (init-default "magnification"))
+(menu-bind document-full-font-menu
+  (link document-font-menu)
   ---
-  ("0.7" (init-env "magnification" "0.7"))
-  ("0.8" (init-env "magnification" "0.8"))
-  ("1" (init-env "magnification" "1"))
-  ("1.2" (init-env "magnification" "1.2"))
-  ("1.4" (init-env "magnification" "1.4"))
-  ("1.7" (init-env "magnification" "1.7"))
-  ("2" (init-env "magnification" "2"))
-  ---
-  ("Other" (init-interactive-env "magnification")))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The Document -> Color menu
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(menu-bind document-foreground-color-menu
-  ("Default" (init-default "color"))
-  ---
-  (pick-color (init-env "color" answer))
-  ---
-  ("Palette" (interactive-color
-              (lambda (col) (init-env "color" col)) '()))
-  ("Other" (init-interactive-env "color")))
-
-(menu-bind document-background-color-menu
-  ("Default" (init-default "bg-color"))
-  ---
-  (pick-background "" (init-env-tree "bg-color" answer))
-  ---
-  ("Palette" (interactive-background
-              (lambda (col) (init-env "bg-color" col)) '()))
-  ("Other" (init-interactive-env "bg-color")))
-
-(menu-bind document-colors-menu
-  (-> "Background" (link document-background-color-menu))
-  (-> "Foreground" (link document-foreground-color-menu)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The Document -> Supported scripts menu
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-menu (supported-scripts-menu)
-  (let* ((dummy (lazy-plugin-force))
-         (l (scripts-list)))
-    (for (name l)
-      ((eval (scripts-name name))
-       (noop) ;; NOTE: inhibit segfault due to property searching?
-       (init-env "prog-scripts" name)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The Document -> Text menu
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(menu-bind document-text-menu
-  (-> "Magnification"
-      (link document-magnification-menu))
-  (-> "Colors"
-      (link document-colors-menu))
-  (if (detailed-menus?)
-      (-> "Language"
-          (link document-language-menu)))
-  (-> "Scripts"
-      ("Default" (init-default "prog-scripts"))
-      ---
-      (link supported-scripts-menu)))
+  (-> "Size" (link document-font-base-size-menu))
+  (-> "Dpi" (link document-font-dpi-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Document -> Paragraph menu
@@ -521,6 +329,102 @@
       ("Use protrusion" (toggle-init-env "par-kerning-margin"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Page sizes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (document-common-page-size-menu)
+  ("A3" (init-page-type "a3"))
+  ("A4" (init-page-type "a4"))
+  ("A5" (init-page-type "a5"))
+  ("B4" (init-page-type "b4"))
+  ("B5" (init-page-type "b5"))
+  ("Letter" (init-page-type "letter"))
+  ("Legal" (init-page-type "legal"))
+  ("Executive" (init-page-type "executive")))
+
+(tm-menu (document-beamer-page-size-menu)
+  ("Widescreen 16:9" (init-page-type "16:9"))
+  ("Widescreen 8:5" (init-page-type "8:5"))
+  ;;("Widescreen 3:2" (init-page-type "3:2"))
+  ("Standard 4:3" (init-page-type "4:3"))
+  ("Standard 5:4" (init-page-type "5:4")))
+
+(tm-menu (document-page-size-menu)
+  ("Default"
+   (init-default "page-type" "page-width" "page-height")
+   (notify-page-change))
+  ---
+  (if (not (style-has? "beamer-style"))
+      (group "Common formats")
+      (link document-common-page-size-menu))
+  (if (style-has? "beamer-style")
+      (group "Beamer formats")
+      (link document-beamer-page-size-menu))
+  ---
+  (group "Standard formats")
+  (if (style-has? "beamer-style")
+      (-> "Common"
+          (link document-common-page-size-menu)))
+  (-> "A series"
+      ("A0" (init-page-type "a0"))
+      ("A1" (init-page-type "a1"))
+      ("A2" (init-page-type "a2"))
+      ("A3" (init-page-type "a3"))
+      ("A4" (init-page-type "a4"))
+      ("A5" (init-page-type "a5"))
+      ("A6" (init-page-type "a6"))
+      ("A7" (init-page-type "a7"))
+      ("A8" (init-page-type "a8"))
+      ("A9" (init-page-type "a9")))
+  (-> "B series"
+      ("B0" (init-page-type "b0"))
+      ("B1" (init-page-type "b1"))
+      ("B2" (init-page-type "b2"))
+      ("B3" (init-page-type "b3"))
+      ("B4" (init-page-type "b4"))
+      ("B5" (init-page-type "b5"))
+      ("B6" (init-page-type "b6"))
+      ("B7" (init-page-type "b7"))
+      ("B8" (init-page-type "b8"))
+      ("B9" (init-page-type "b9")))
+  (-> "Arch series"
+      ("ArchA" (init-page-type "archA"))
+      ("ArchB" (init-page-type "archB"))
+      ("ArchC" (init-page-type "archC"))
+      ("ArchD" (init-page-type "archD"))
+      ("ArchE" (init-page-type "archE")))
+  (-> "American"
+      ("10x14" (init-page-type "10x14"))
+      ("11x17" (init-page-type "11x17"))
+      ("C5" (init-page-type "C5"))
+      ("Comm10" (init-page-type "Comm10"))
+      ("DL" (init-page-type "DL"))
+      ("Executive" (init-page-type "executive"))
+      ("Half letter" (init-page-type "halfletter"))
+      ("Half executive" (init-page-type "halfexecutive"))
+      ("Ledger" (init-page-type "ledger"))
+      ("Legal" (init-page-type "legal"))
+      ("Letter" (init-page-type "letter"))
+      ("Monarch" (init-page-type "Monarch")))
+  (-> "Miscellaneous"
+      ("C sheet" (init-page-type "csheet"))
+      ("D sheet" (init-page-type "dsheet"))
+      ("E sheet" (init-page-type "esheet"))
+      ("Flsa" (init-page-type "flsa"))
+      ("Flse" (init-page-type "flse"))
+      ("Folio" (init-page-type "folio"))
+      ("Lecture note" (init-page-type "lecture note"))
+      ("Note" (init-page-type "note"))
+      ("Quarto" (init-page-type "quarto"))
+      ("Statement" (init-page-type "statement"))
+      ("Tabloid" (init-page-type "tabloid")))
+  (if (not (style-has? "beamer-style"))
+      (-> "Beamer"
+          (link document-beamer-page-size-menu)))
+  ---
+  ("Other" (interactive init-page-size)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Document -> Page menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -563,6 +467,17 @@
         (when (test-env? "page-height-margin" "false")
           ("Top margin" (init-interactive-env "page-top"))
           ("Bottom margin" (init-interactive-env "page-bot")))))
+  (-> "Screen margins"
+      ("Default" (init-default "page-screen-margin"
+			       "page-screen-left" "page-screen-right"
+			       "page-screen-top" "page-screen-bot"))
+      ("Margins as on paper" (toggle-page-screen-margin))
+      ---
+      (when (test-env? "page-screen-margin" "true")
+	("Left margin" (init-interactive-env "page-screen-left"))
+	("Right margin" (init-interactive-env "page-screen-right"))
+	("Top margin" (init-interactive-env "page-screen-top"))
+	("Bottom margin" (init-interactive-env "page-screen-bot"))))
   (if (detailed-menus?)
       ---
       (group "Breaking")
@@ -587,66 +502,173 @@
           ("Other" (init-interactive-env "page-flexibility")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The Document -> Update menu
+;; The Document -> Magnification menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (wait-update-current-buffer)
-  (system-wait "Updating current buffer, " "please wait")
-  (update-current-buffer))
-
-(menu-bind document-update-menu
-  ("All" (generate-all-aux) (inclusions-gc) (wait-update-current-buffer))
+(menu-bind document-magnification-menu
+  ("Default" (init-default "magnification"))
   ---
-  ("Buffer" (wait-update-current-buffer))
-  ("Bibliography" (generate-all-aux) (wait-update-current-buffer))
-  ;; ("Bibliography" (generate-aux "bibliography"))
-  ("Table of contents" (generate-aux "table-of-contents"))
-  ("Index" (generate-aux "index"))
-  ("Glossary" (generate-aux "glossary"))
-  (if (project-attached?)
-      ---
-      ("Clear local information" (clear-local-info))))
+  ("0.7" (init-env "magnification" "0.7"))
+  ("0.8" (init-env "magnification" "0.8"))
+  ("1" (init-env "magnification" "1"))
+  ("1.2" (init-env "magnification" "1.2"))
+  ("1.4" (init-env "magnification" "1.4"))
+  ("1.7" (init-env "magnification" "1.7"))
+  ("2" (init-env "magnification" "2"))
+  ---
+  ("Other" (init-interactive-env "magnification")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The Document -> Color menu
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind document-foreground-color-menu
+  ("Default" (init-default "color"))
+  ---
+  (pick-color (init-env "color" answer))
+  ---
+  ("Palette" (interactive-color
+              (lambda (col) (init-env "color" col)) '()))
+  ("Other" (init-interactive-env "color")))
+
+(menu-bind document-background-color-menu
+  ("Default" (init-default "bg-color"))
+  ---
+  (pick-background "" (init-env-tree "bg-color" answer))
+  ---
+  ("Palette" (interactive-background
+              (lambda (col) (init-env "bg-color" col)) '()))
+  ("Other" (init-interactive-env "bg-color")))
+
+(menu-bind document-colors-menu
+  (-> "Background" (link document-background-color-menu))
+  (-> "Foreground" (link document-foreground-color-menu)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Global and document language
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind global-language-menu
+  (for (lan supported-languages)
+    (when (supported-language? lan)
+      ((check (eval (upcase-first lan)) "*"
+              (and (test-document-language? lan)
+                   (== lan (get-output-language))))
+       (set-document-language lan)
+       (set-output-language lan)))))
+
+(menu-bind document-language-menu
+  ("Default" (set-default-document-language))
+  ---
+  (for (lan supported-languages)
+    (when (supported-language? lan)
+      ((check (eval (upcase-first lan)) "*" (test-document-language? lan))
+       (set-document-language lan)))))
+
+(tm-define (current-language-icon)
+  (with lan (get-env "language")
+    (if (in? lan supported-languages)
+        (string-append "tm_" lan ".xpm")
+        "tm_stateless.xpm")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The Document -> Supported scripts menu
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (supported-scripts-menu)
+  (let* ((dummy (lazy-plugin-force))
+         (l (scripts-list)))
+    (for (name l)
+      ((eval (scripts-name name))
+       (noop) ;; NOTE: inhibit segfault due to property searching?
+       (init-env "prog-scripts" name)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Document -> Informative flags menu
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind document-informative-flags-menu
+  ("Default" (init-default "info-flag"))
+  ---
+  ("None" (init-env "info-flag" "none"))
+  ("Minimal" (init-env "info-flag" "minimal"))
+  ("Short" (init-env "info-flag" "short"))
+  ("Detailed" (init-env "info-flag" "detailed"))
+  ("Also on paper" (init-env "info-flag" "paper")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Document menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind document-menu
+(menu-bind full-document-menu
   (-> "Style" (link document-style-menu))
   (link document-style-extra-menu)
+  ;;(-> "Add package"
+  ;;(link add-package-menu)
+  ;;---
+  ;;("Other" (interactive add-style-package)))
+  ;;(-> "Remove package"
+  ;;(link remove-package-menu)
+  ;;---
+  ;;("Other" (interactive remove-style-package)))
+  (if (!= (get-init-tree "sectional-short-style") (tree 'macro "false"))
+      (-> "Part" (link document-part-menu)))
+  (-> "Source"
+      ("Edit source tree" (toggle-preamble))
+      ---
+      (group "Preferences")
+      (link document-source-preferences-menu))
+  (-> "Update" (link document-update-menu))
+  ---
+  (-> "Font" (link document-full-font-menu))
+  (-> "Paragraph" (link document-paragraph-menu))
+  (-> "Page" (link document-page-menu))
+  ---
+  (-> "Magnification" (link document-magnification-menu))
+  (-> "Colors" (link document-colors-menu))
   (if (detailed-menus?)
-      ;;(-> "Add package"
-      ;;(link add-package-menu)
-      ;;---
-      ;;("Other" (interactive add-style-package)))
-      ;;(-> "Remove package"
-      ;;(link remove-package-menu)
-      ;;---
-      ;;("Other" (interactive remove-style-package)))
-      (if (!= (get-init-tree "sectional-short-style") (tree 'macro "false"))
-	  (-> "Part" (link document-part-menu)))
-      (-> "View" (link document-view-menu)))
-  (-> "Update"
-      (link document-update-menu))
+      (-> "Language" (link document-language-menu)))
+  (-> "Scripts"
+      ("Default" (init-default "prog-scripts"))
+      ---
+      (link supported-scripts-menu))
+  (-> "Informative flags" (link document-informative-flags-menu)))
+
+(menu-bind compressed-document-menu
+  (-> "Style" (link document-style-menu))
+  (link document-style-extra-menu)
+  (if (!= (get-init-tree "sectional-short-style") (tree 'macro "false"))
+      (-> "Part" (link document-part-menu)))
+  (-> "Source"
+      ("Edit source tree" (toggle-preamble))
+      ---
+      (group "Preferences")
+      (link document-source-preferences-menu))
+  (-> "Update" (link document-update-menu))
   ---
-  (if (and (new-fonts?) (use-popups?))
+  (if (new-fonts?)
       ("Font" (interactive open-document-font-selector)))
-  (if (or (not (new-fonts?)) (use-menus?))
-      (-> "Font"
-          (link document-font-menu)
-          ---
-          (-> "Size" (link document-font-base-size-menu))
-          (-> "Dpi" (link document-font-dpi-menu))))
-  (if (use-menus?)
-      (-> "Paragraph" (link document-paragraph-menu))
-      (-> "Page" (link document-page-menu)))
-  (if (use-popups?)
-      ("Paragraph" (open-document-paragraph-format))
-      ("Page" (open-document-page-format))
-      ;;("Colors" (open-document-colors))
-      )
+  (if (not (new-fonts?))
+      (-> "Font" (link document-full-font-menu)))
+  ("Paragraph" (open-document-paragraph-format))
+  ("Page" (open-document-page-format))
+  ;;("Colors" (open-document-colors))
   ---
-  (link document-text-menu))
+  (-> "Magnification" (link document-magnification-menu))
+  (-> "Colors" (link document-colors-menu))
+  (if (detailed-menus?)
+      (-> "Language" (link document-language-menu)))
+  (-> "Scripts"
+      ("Default" (init-default "prog-scripts"))
+      ---
+      (link supported-scripts-menu))
+  (-> "Informative flags" (link document-informative-flags-menu)))
+
+(menu-bind document-menu
+  (if (use-menus?)
+      (link full-document-menu))
+  (if (use-popups?)
+      (link compressed-document-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document focus menus

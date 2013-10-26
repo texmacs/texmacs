@@ -5,10 +5,10 @@
 <\body>
   <tmdoc-title|Global presentation>
 
-  In the <menu|Source tags> group of the <menu|Document|View> menu, you find
+  In the <menu|Source tags> group of the <menu|Document|Source> menu, you find
   several ways to customize the rendering of source trees in your document.
   We recommend you to play around with the different possibilities in a
-  document of your own (after enabling <menu|Document|View|Source tree>) or a
+  document of your own (after enabling <menu|Document|Source|Source tree>) or a
   standard style package in <verbatim|$TEXMACS_PATH/packages>.
 
   First of all, you may choose between the different major styles
@@ -57,7 +57,7 @@
 
   Secondly, you may wish to reserve a special treatment to certain tags like
   <markup|concat> and <markup|document>. In the menu
-  <menu|Document|View|Special> you may specify to which extent you want to
+  <menu|Document|Source|Special> you may specify to which extent you want to
   treat such tags in a special way:
 
   <\description>
@@ -122,7 +122,7 @@
   Another thing which may be controlled by the user is whether the
   presentation of tags should be compact or stretched out across several
   lines. Several levels of compactification may be specified in the
-  <menu|Document|View|Compactification> menu:
+  <menu|Document|Source|Compactification> menu:
 
   <\description>
     <item*|Minimal>The tags are all stretched out across several lines.

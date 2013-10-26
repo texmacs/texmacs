@@ -65,7 +65,7 @@
     dem Namen <src-arg|name> und den Argumenten <src-arg|arg-1> bis
     <src-arg|arg-n>. \ <inactive*|<inline-tag|foo|x|y>> erzeugt z.B.
     <inline-tag|foo|x|y>. Der Darstellungsstil kann im Menü
-    <menu|Document|View|Source tags> oder durch Modifizierung der
+    <menu|Document|Source|Source tags> oder durch Modifizierung der
     Kontext-Variablen <src-var|src-style>, <src-var|src-special>,
     <src-var|src-compact> und <src-var|src-close> angepasst werden.
   </explain>
