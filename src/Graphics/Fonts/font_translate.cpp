@@ -136,6 +136,8 @@ upgrade_family_name (string f) {
     t ("wqy-zenhei")= "WenQuanYi Zen Hei";
     t ("stix")= "Stix";
     t ("dejavu")= "DejaVu";
+    t ("pagella")= "TeX Gyre Pagella";
+    t ("termes")= "TeX Gyre Termes";
 
     t ("adobe")= "Stix";
     t ("Duerer")= "duerer";
