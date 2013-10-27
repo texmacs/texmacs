@@ -1,0 +1,16 @@
+//
+//  PDFWriter.xcconfig
+//  TeXmacs
+//
+//  Created by Massimiliano Gubinelli on 27/10/13.
+//  Copyright (c) 2013 TeXmacs.org. All rights reserved.
+//
+
+
+
+#include "Base"
+
+OTHER_CFLAGS =  $(TM_CPPFLAGS) $(TM_CXXQT) $(TM_CXXFREETYPE) $(TM_CXXGUILE) $(TM_CXXPDF) 
+OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS)
+OTHER_LDFLAGS = $(TM_LDFREETYPE)
+PRODUCT_NAME = PDFWriter

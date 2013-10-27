@@ -12,298 +12,129 @@
 		4906929C151B743F006645F4 /* new_view.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4906929A151B743F006645F4 /* new_view.cpp */; };
 		4906929D151B743F006645F4 /* new_view.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4906929A151B743F006645F4 /* new_view.cpp */; };
 		4907D0DC1812E2E200D893B4 /* AbstractContentContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914651E1801C1AA000E6455 /* AbstractContentContext.cpp */; };
-		4907D0DD1812E2E200D893B4 /* AbstractContentContext.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914651F1801C1AA000E6455 /* AbstractContentContext.h */; };
 		4907D0DE1812E2E200D893B4 /* AbstractWrittenFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465201801C1AA000E6455 /* AbstractWrittenFont.cpp */; };
-		4907D0DF1812E2E200D893B4 /* AbstractWrittenFont.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465211801C1AA000E6455 /* AbstractWrittenFont.h */; };
-		4907D0E01812E2E200D893B4 /* AdapterIByteReaderWithPositionToIReadPositionProvider.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465221801C1AA000E6455 /* AdapterIByteReaderWithPositionToIReadPositionProvider.h */; };
 		4907D0E11812E2E200D893B4 /* ANSIFontWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465231801C1AA000E6455 /* ANSIFontWriter.cpp */; };
-		4907D0E21812E2E200D893B4 /* ANSIFontWriter.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465241801C1AA000E6455 /* ANSIFontWriter.h */; };
 		4907D0E31812E2E200D893B4 /* Ascii7Encoding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465251801C1AA000E6455 /* Ascii7Encoding.cpp */; };
-		4907D0E41812E2E200D893B4 /* Ascii7Encoding.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465261801C1AA000E6455 /* Ascii7Encoding.h */; };
-		4907D0E51812E2E200D893B4 /* BetweenIncluding.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465271801C1AA000E6455 /* BetweenIncluding.h */; };
-		4907D0E61812E2E200D893B4 /* BoxingBase.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465281801C1AA000E6455 /* BoxingBase.h */; };
 		4907D0E71812E2E200D893B4 /* CatalogInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465291801C1AA000E6455 /* CatalogInformation.cpp */; };
-		4907D0E81812E2E200D893B4 /* CatalogInformation.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914652A1801C1AA000E6455 /* CatalogInformation.h */; };
 		4907D0E91812E2E200D893B4 /* CFFANSIFontWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914652B1801C1AA000E6455 /* CFFANSIFontWriter.cpp */; };
-		4907D0EA1812E2E200D893B4 /* CFFANSIFontWriter.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914652C1801C1AA000E6455 /* CFFANSIFontWriter.h */; };
 		4907D0EB1812E2E200D893B4 /* CFFDescendentFontWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914652D1801C1AA000E6455 /* CFFDescendentFontWriter.cpp */; };
-		4907D0EC1812E2E200D893B4 /* CFFDescendentFontWriter.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914652E1801C1AA000E6455 /* CFFDescendentFontWriter.h */; };
 		4907D0ED1812E2E200D893B4 /* CFFEmbeddedFontWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914652F1801C1AA000E6455 /* CFFEmbeddedFontWriter.cpp */; };
-		4907D0EE1812E2E200D893B4 /* CFFEmbeddedFontWriter.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465301801C1AA000E6455 /* CFFEmbeddedFontWriter.h */; };
 		4907D0EF1812E2E200D893B4 /* CFFFileInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465311801C1AA000E6455 /* CFFFileInput.cpp */; };
-		4907D0F01812E2E200D893B4 /* CFFFileInput.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465321801C1AA000E6455 /* CFFFileInput.h */; };
 		4907D0F11812E2E200D893B4 /* CFFPrimitiveReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465331801C1AA000E6455 /* CFFPrimitiveReader.cpp */; };
-		4907D0F21812E2E200D893B4 /* CFFPrimitiveReader.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465341801C1AA000E6455 /* CFFPrimitiveReader.h */; };
 		4907D0F31812E2E200D893B4 /* CFFPrimitiveWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465351801C1AA000E6455 /* CFFPrimitiveWriter.cpp */; };
-		4907D0F41812E2E200D893B4 /* CFFPrimitiveWriter.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465361801C1AA000E6455 /* CFFPrimitiveWriter.h */; };
-		4907D0F51812E2E200D893B4 /* CharStringDefinitions.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465371801C1AA000E6455 /* CharStringDefinitions.h */; };
 		4907D0F61812E2E200D893B4 /* CharStringType1Interpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465381801C1AA000E6455 /* CharStringType1Interpreter.cpp */; };
-		4907D0F71812E2E200D893B4 /* CharStringType1Interpreter.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465391801C1AA000E6455 /* CharStringType1Interpreter.h */; };
 		4907D0F81812E2E200D893B4 /* CharStringType1Tracer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914653A1801C1AA000E6455 /* CharStringType1Tracer.cpp */; };
-		4907D0F91812E2E200D893B4 /* CharStringType1Tracer.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914653B1801C1AA000E6455 /* CharStringType1Tracer.h */; };
 		4907D0FA1812E2E200D893B4 /* CharStringType2Flattener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914653C1801C1AA000E6455 /* CharStringType2Flattener.cpp */; };
-		4907D0FB1812E2E200D893B4 /* CharStringType2Flattener.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914653D1801C1AA000E6455 /* CharStringType2Flattener.h */; };
 		4907D0FC1812E2E200D893B4 /* CharStringType2Interpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914653E1801C1AA000E6455 /* CharStringType2Interpreter.cpp */; };
-		4907D0FD1812E2E200D893B4 /* CharStringType2Interpreter.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914653F1801C1AA000E6455 /* CharStringType2Interpreter.h */; };
 		4907D0FE1812E2E200D893B4 /* CharStringType2Tracer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465401801C1AA000E6455 /* CharStringType2Tracer.cpp */; };
-		4907D0FF1812E2E200D893B4 /* CharStringType2Tracer.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465411801C1AA000E6455 /* CharStringType2Tracer.h */; };
 		4907D1001812E2E200D893B4 /* CIDFontWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465421801C1AA000E6455 /* CIDFontWriter.cpp */; };
-		4907D1011812E2E200D893B4 /* CIDFontWriter.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465431801C1AA000E6455 /* CIDFontWriter.h */; };
 		4907D1021812E2E200D893B4 /* CMYKRGBColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465441801C1AA000E6455 /* CMYKRGBColor.cpp */; };
-		4907D1031812E2E200D893B4 /* CMYKRGBColor.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465451801C1AA000E6455 /* CMYKRGBColor.h */; };
-		4907D1041812E2E200D893B4 /* ContainerIterator.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465461801C1AA000E6455 /* ContainerIterator.h */; };
 		4907D1051812E2E200D893B4 /* DescendentFontWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465471801C1AA000E6455 /* DescendentFontWriter.cpp */; };
-		4907D1061812E2E200D893B4 /* DescendentFontWriter.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465481801C1AA000E6455 /* DescendentFontWriter.h */; };
 		4907D1071812E2E200D893B4 /* DictionaryContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465491801C1AA000E6455 /* DictionaryContext.cpp */; };
-		4907D1081812E2E200D893B4 /* DictionaryContext.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914654A1801C1AA000E6455 /* DictionaryContext.h */; };
-		4907D1091812E2E200D893B4 /* DictOperand.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914654B1801C1AA000E6455 /* DictOperand.h */; };
 		4907D10A1812E2E200D893B4 /* DocumentContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914654C1801C1AA000E6455 /* DocumentContext.cpp */; };
-		4907D10B1812E2E200D893B4 /* DocumentContext.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914654D1801C1AA000E6455 /* DocumentContext.h */; };
-		4907D10C1812E2E200D893B4 /* DocumentContextExtenderAdapter.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914654E1801C1AA000E6455 /* DocumentContextExtenderAdapter.h */; };
-		4907D10D1812E2E200D893B4 /* EFontStretch.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914654F1801C1AA000E6455 /* EFontStretch.h */; };
-		4907D10E1812E2E200D893B4 /* EPDFVersion.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465501801C1AA000E6455 /* EPDFVersion.h */; };
-		4907D10F1812E2E200D893B4 /* EStatusCode.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465511801C1AA000E6455 /* EStatusCode.h */; };
-		4907D1101812E2E200D893B4 /* ETokenSeparator.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465521801C1AA000E6455 /* ETokenSeparator.h */; };
 		4907D1111812E2E200D893B4 /* FontDescriptorWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465531801C1AA000E6455 /* FontDescriptorWriter.cpp */; };
-		4907D1121812E2E200D893B4 /* FontDescriptorWriter.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465541801C1AA000E6455 /* FontDescriptorWriter.h */; };
 		4907D1131812E2E200D893B4 /* FreeTypeFaceWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465551801C1AA000E6455 /* FreeTypeFaceWrapper.cpp */; };
-		4907D1141812E2E200D893B4 /* FreeTypeFaceWrapper.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465561801C1AA000E6455 /* FreeTypeFaceWrapper.h */; };
 		4907D1151812E2E200D893B4 /* FreeTypeOpenTypeWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465571801C1AA000E6455 /* FreeTypeOpenTypeWrapper.cpp */; };
-		4907D1161812E2E200D893B4 /* FreeTypeOpenTypeWrapper.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465581801C1AA000E6455 /* FreeTypeOpenTypeWrapper.h */; };
 		4907D1171812E2E200D893B4 /* FreeTypeType1Wrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465591801C1AA000E6455 /* FreeTypeType1Wrapper.cpp */; };
-		4907D1181812E2E200D893B4 /* FreeTypeType1Wrapper.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914655A1801C1AA000E6455 /* FreeTypeType1Wrapper.h */; };
 		4907D1191812E2E200D893B4 /* FreeTypeWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914655B1801C1AA000E6455 /* FreeTypeWrapper.cpp */; };
-		4907D11A1812E2E200D893B4 /* FreeTypeWrapper.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914655C1801C1AA000E6455 /* FreeTypeWrapper.h */; };
-		4907D11B1812E2E200D893B4 /* FSType.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914655D1801C1AA000E6455 /* FSType.h */; };
-		4907D11C1812E2E200D893B4 /* GlyphUnicodeMapping.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914655E1801C1AA000E6455 /* GlyphUnicodeMapping.h */; };
 		4907D11D1812E2E200D893B4 /* GraphicState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914655F1801C1AA000E6455 /* GraphicState.cpp */; };
-		4907D11E1812E2E200D893B4 /* GraphicState.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465601801C1AA000E6455 /* GraphicState.h */; };
 		4907D11F1812E2E200D893B4 /* GraphicStateStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465611801C1AA000E6455 /* GraphicStateStack.cpp */; };
-		4907D1201812E2E200D893B4 /* GraphicStateStack.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465621801C1AA000E6455 /* GraphicStateStack.h */; };
-		4907D1211812E2E200D893B4 /* IANSIFontWriterHelper.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465631801C1AA000E6455 /* IANSIFontWriterHelper.h */; };
-		4907D1221812E2E200D893B4 /* IByteReader.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465641801C1AA000E6455 /* IByteReader.h */; };
-		4907D1231812E2E200D893B4 /* IByteReaderWithPosition.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465651801C1AA000E6455 /* IByteReaderWithPosition.h */; };
-		4907D1241812E2E200D893B4 /* IByteWriter.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465661801C1AA000E6455 /* IByteWriter.h */; };
-		4907D1251812E2E200D893B4 /* IByteWriterWithPosition.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465671801C1AA000E6455 /* IByteWriterWithPosition.h */; };
-		4907D1261812E2E200D893B4 /* IContentContextListener.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465681801C1AA000E6455 /* IContentContextListener.h */; };
-		4907D1271812E2E200D893B4 /* IDescendentFontWriter.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465691801C1AA000E6455 /* IDescendentFontWriter.h */; };
-		4907D1281812E2E200D893B4 /* IDocumentContextExtender.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914656A1801C1AA000E6455 /* IDocumentContextExtender.h */; };
-		4907D1291812E2E200D893B4 /* IFontDescriptorHelper.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914656B1801C1AA000E6455 /* IFontDescriptorHelper.h */; };
-		4907D12A1812E2E200D893B4 /* IFormEndWritingTask.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914656C1801C1AA000E6455 /* IFormEndWritingTask.h */; };
-		4907D12B1812E2E200D893B4 /* IFreeTypeFaceExtender.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914656D1801C1AA000E6455 /* IFreeTypeFaceExtender.h */; };
 		4907D12C1812E2E200D893B4 /* IndirectObjectsReferenceRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914656E1801C1AA000E6455 /* IndirectObjectsReferenceRegistry.cpp */; };
-		4907D12D1812E2E200D893B4 /* IndirectObjectsReferenceRegistry.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914656F1801C1AA000E6455 /* IndirectObjectsReferenceRegistry.h */; };
 		4907D12E1812E2E200D893B4 /* InfoDictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465701801C1AA000E6455 /* InfoDictionary.cpp */; };
-		4907D12F1812E2E200D893B4 /* InfoDictionary.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465711801C1AA000E6455 /* InfoDictionary.h */; };
 		4907D1301812E2E200D893B4 /* InputAscii85DecodeStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465721801C1AA000E6455 /* InputAscii85DecodeStream.cpp */; };
-		4907D1311812E2E200D893B4 /* InputAscii85DecodeStream.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465731801C1AA000E6455 /* InputAscii85DecodeStream.h */; };
 		4907D1321812E2E200D893B4 /* InputBufferedStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465741801C1AA000E6455 /* InputBufferedStream.cpp */; };
-		4907D1331812E2E200D893B4 /* InputBufferedStream.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465751801C1AA000E6455 /* InputBufferedStream.h */; };
 		4907D1341812E2E200D893B4 /* InputByteArrayStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465761801C1AA000E6455 /* InputByteArrayStream.cpp */; };
-		4907D1351812E2E200D893B4 /* InputByteArrayStream.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465771801C1AA000E6455 /* InputByteArrayStream.h */; };
 		4907D1361812E2E200D893B4 /* InputCharStringDecodeStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465781801C1AA000E6455 /* InputCharStringDecodeStream.cpp */; };
-		4907D1371812E2E200D893B4 /* InputCharStringDecodeStream.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465791801C1AA000E6455 /* InputCharStringDecodeStream.h */; };
 		4907D1381812E2E200D893B4 /* InputDCTDecodeStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914657A1801C1AA000E6455 /* InputDCTDecodeStream.cpp */; };
-		4907D1391812E2E200D893B4 /* InputDCTDecodeStream.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914657B1801C1AA000E6455 /* InputDCTDecodeStream.h */; };
 		4907D13A1812E2E200D893B4 /* InputFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914657C1801C1AA000E6455 /* InputFile.cpp */; };
-		4907D13B1812E2E200D893B4 /* InputFile.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914657D1801C1AA000E6455 /* InputFile.h */; };
 		4907D13C1812E2E200D893B4 /* InputFileStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914657E1801C1AA000E6455 /* InputFileStream.cpp */; };
-		4907D13D1812E2E200D893B4 /* InputFileStream.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914657F1801C1AA000E6455 /* InputFileStream.h */; };
 		4907D13E1812E2E200D893B4 /* InputFlateDecodeStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465801801C1AA000E6455 /* InputFlateDecodeStream.cpp */; };
-		4907D13F1812E2E200D893B4 /* InputFlateDecodeStream.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465811801C1AA000E6455 /* InputFlateDecodeStream.h */; };
 		4907D1401812E2E200D893B4 /* InputLimitedStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465821801C1AA000E6455 /* InputLimitedStream.cpp */; };
-		4907D1411812E2E200D893B4 /* InputLimitedStream.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465831801C1AA000E6455 /* InputLimitedStream.h */; };
 		4907D1421812E2E200D893B4 /* InputPFBDecodeStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465841801C1AA000E6455 /* InputPFBDecodeStream.cpp */; };
-		4907D1431812E2E200D893B4 /* InputPFBDecodeStream.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465851801C1AA000E6455 /* InputPFBDecodeStream.h */; };
 		4907D1441812E2E200D893B4 /* InputPredictorPNGAverageStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465861801C1AA000E6455 /* InputPredictorPNGAverageStream.cpp */; };
-		4907D1451812E2E200D893B4 /* InputPredictorPNGAverageStream.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465871801C1AA000E6455 /* InputPredictorPNGAverageStream.h */; };
 		4907D1461812E2E200D893B4 /* InputPredictorPNGNoneStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465881801C1AA000E6455 /* InputPredictorPNGNoneStream.cpp */; };
-		4907D1471812E2E200D893B4 /* InputPredictorPNGNoneStream.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465891801C1AA000E6455 /* InputPredictorPNGNoneStream.h */; };
 		4907D1481812E2E200D893B4 /* InputPredictorPNGOptimumStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914658A1801C1AA000E6455 /* InputPredictorPNGOptimumStream.cpp */; };
-		4907D1491812E2E200D893B4 /* InputPredictorPNGOptimumStream.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914658B1801C1AA000E6455 /* InputPredictorPNGOptimumStream.h */; };
 		4907D14A1812E2E200D893B4 /* InputPredictorPNGPaethStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914658C1801C1AA000E6455 /* InputPredictorPNGPaethStream.cpp */; };
-		4907D14B1812E2E200D893B4 /* InputPredictorPNGPaethStream.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914658D1801C1AA000E6455 /* InputPredictorPNGPaethStream.h */; };
 		4907D14C1812E2E200D893B4 /* InputPredictorPNGSubStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914658E1801C1AA000E6455 /* InputPredictorPNGSubStream.cpp */; };
-		4907D14D1812E2E200D893B4 /* InputPredictorPNGSubStream.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914658F1801C1AA000E6455 /* InputPredictorPNGSubStream.h */; };
 		4907D14E1812E2E200D893B4 /* InputPredictorPNGUpStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465901801C1AA000E6455 /* InputPredictorPNGUpStream.cpp */; };
-		4907D14F1812E2E200D893B4 /* InputPredictorPNGUpStream.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465911801C1AA000E6455 /* InputPredictorPNGUpStream.h */; };
 		4907D1501812E2E200D893B4 /* InputPredictorTIFFSubStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465921801C1AA000E6455 /* InputPredictorTIFFSubStream.cpp */; };
-		4907D1511812E2E200D893B4 /* InputPredictorTIFFSubStream.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465931801C1AA000E6455 /* InputPredictorTIFFSubStream.h */; };
 		4907D1521812E2E200D893B4 /* InputStreamSkipperStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465941801C1AA000E6455 /* InputStreamSkipperStream.cpp */; };
-		4907D1531812E2E200D893B4 /* InputStreamSkipperStream.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465951801C1AA000E6455 /* InputStreamSkipperStream.h */; };
 		4907D1541812E2E200D893B4 /* InputStringBufferStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465961801C1AA000E6455 /* InputStringBufferStream.cpp */; };
-		4907D1551812E2E200D893B4 /* InputStringBufferStream.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465971801C1AA000E6455 /* InputStringBufferStream.h */; };
-		4907D1561812E2E200D893B4 /* IOBasicTypes.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465981801C1AA000E6455 /* IOBasicTypes.h */; };
-		4907D1571812E2E200D893B4 /* IObjectsContextExtender.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465991801C1AA000E6455 /* IObjectsContextExtender.h */; };
-		4907D1581812E2E200D893B4 /* IPDFParserExtender.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914659A1801C1AA000E6455 /* IPDFParserExtender.h */; };
-		4907D1591812E2E200D893B4 /* IReadPositionProvider.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914659B1801C1AA000E6455 /* IReadPositionProvider.h */; };
-		4907D15A1812E2E200D893B4 /* IResourceWritingTask.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914659C1801C1AA000E6455 /* IResourceWritingTask.h */; };
-		4907D15B1812E2E200D893B4 /* IType1InterpreterImplementation.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914659D1801C1AA000E6455 /* IType1InterpreterImplementation.h */; };
-		4907D15C1812E2E200D893B4 /* IType2InterpreterImplementation.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914659E1801C1AA000E6455 /* IType2InterpreterImplementation.h */; };
-		4907D15D1812E2E200D893B4 /* IWrittenFont.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914659F1801C1AA000E6455 /* IWrittenFont.h */; };
 		4907D15E1812E2E200D893B4 /* JPEGImageHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465A01801C1AA000E6455 /* JPEGImageHandler.cpp */; };
-		4907D15F1812E2E200D893B4 /* JPEGImageHandler.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465A11801C1AA000E6455 /* JPEGImageHandler.h */; };
 		4907D1601812E2E200D893B4 /* JPEGImageInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465A21801C1AA000E6455 /* JPEGImageInformation.cpp */; };
-		4907D1611812E2E200D893B4 /* JPEGImageInformation.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465A31801C1AA000E6455 /* JPEGImageInformation.h */; };
 		4907D1621812E2E200D893B4 /* JPEGImageParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465A41801C1AA000E6455 /* JPEGImageParser.cpp */; };
-		4907D1631812E2E200D893B4 /* JPEGImageParser.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465A51801C1AB000E6455 /* JPEGImageParser.h */; };
 		4907D1641812E2E200D893B4 /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465A61801C1AB000E6455 /* Log.cpp */; };
-		4907D1651812E2E200D893B4 /* Log.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465A71801C1AB000E6455 /* Log.h */; };
-		4907D1661812E2E200D893B4 /* MapIterator.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465A81801C1AB000E6455 /* MapIterator.h */; };
 		4907D1671812E2E200D893B4 /* MD5Generator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465A91801C1AB000E6455 /* MD5Generator.cpp */; };
-		4907D1681812E2E200D893B4 /* MD5Generator.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465AA1801C1AB000E6455 /* MD5Generator.h */; };
-		4907D1691812E2E200D893B4 /* MyStringBuf.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465AB1801C1AB000E6455 /* MyStringBuf.h */; };
-		4907D16A1812E2E200D893B4 /* ObjectsBasicTypes.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465AC1801C1AB000E6455 /* ObjectsBasicTypes.h */; };
 		4907D16B1812E2E200D893B4 /* ObjectsContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465AD1801C1AB000E6455 /* ObjectsContext.cpp */; };
-		4907D16C1812E2E200D893B4 /* ObjectsContext.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465AE1801C1AB000E6455 /* ObjectsContext.h */; };
-		4907D16D1812E2E200D893B4 /* ObjectsContextExtenderAdapter.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465AF1801C1AB000E6455 /* ObjectsContextExtenderAdapter.h */; };
 		4907D16E1812E2E200D893B4 /* OpenTypeFileInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465B01801C1AB000E6455 /* OpenTypeFileInput.cpp */; };
-		4907D16F1812E2E200D893B4 /* OpenTypeFileInput.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465B11801C1AB000E6455 /* OpenTypeFileInput.h */; };
 		4907D1701812E2E200D893B4 /* OpenTypePrimitiveReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465B21801C1AB000E6455 /* OpenTypePrimitiveReader.cpp */; };
-		4907D1711812E2E200D893B4 /* OpenTypePrimitiveReader.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465B31801C1AB000E6455 /* OpenTypePrimitiveReader.h */; };
 		4907D1721812E2E200D893B4 /* OutputBufferedStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465B41801C1AB000E6455 /* OutputBufferedStream.cpp */; };
-		4907D1731812E2E200D893B4 /* OutputBufferedStream.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465B51801C1AB000E6455 /* OutputBufferedStream.h */; };
 		4907D1741812E2E200D893B4 /* OutputFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465B61801C1AB000E6455 /* OutputFile.cpp */; };
-		4907D1751812E2E200D893B4 /* OutputFile.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465B71801C1AB000E6455 /* OutputFile.h */; };
 		4907D1761812E2E200D893B4 /* OutputFileStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465B81801C1AB000E6455 /* OutputFileStream.cpp */; };
-		4907D1771812E2E200D893B4 /* OutputFileStream.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465B91801C1AB000E6455 /* OutputFileStream.h */; };
 		4907D1781812E2E200D893B4 /* OutputFlateDecodeStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465BA1801C1AB000E6455 /* OutputFlateDecodeStream.cpp */; };
-		4907D1791812E2E200D893B4 /* OutputFlateDecodeStream.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465BB1801C1AB000E6455 /* OutputFlateDecodeStream.h */; };
 		4907D17A1812E2E200D893B4 /* OutputFlateEncodeStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465BC1801C1AB000E6455 /* OutputFlateEncodeStream.cpp */; };
-		4907D17B1812E2E200D893B4 /* OutputFlateEncodeStream.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465BD1801C1AB000E6455 /* OutputFlateEncodeStream.h */; };
 		4907D17C1812E2E200D893B4 /* OutputStreamTraits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465BE1801C1AB000E6455 /* OutputStreamTraits.cpp */; };
-		4907D17D1812E2E200D893B4 /* OutputStreamTraits.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465BF1801C1AB000E6455 /* OutputStreamTraits.h */; };
 		4907D17E1812E2E200D893B4 /* OutputStringBufferStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465C01801C1AB000E6455 /* OutputStringBufferStream.cpp */; };
-		4907D17F1812E2E200D893B4 /* OutputStringBufferStream.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465C11801C1AB000E6455 /* OutputStringBufferStream.h */; };
 		4907D1801812E2E200D893B4 /* PageContentContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465C21801C1AB000E6455 /* PageContentContext.cpp */; };
-		4907D1811812E2E200D893B4 /* PageContentContext.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465C31801C1AB000E6455 /* PageContentContext.h */; };
 		4907D1821812E2E200D893B4 /* PageTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465C41801C1AB000E6455 /* PageTree.cpp */; };
-		4907D1831812E2E200D893B4 /* PageTree.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465C51801C1AB000E6455 /* PageTree.h */; };
 		4907D1841812E2E200D893B4 /* ParsedPrimitiveHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465C61801C1AB000E6455 /* ParsedPrimitiveHelper.cpp */; };
-		4907D1851812E2E200D893B4 /* ParsedPrimitiveHelper.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465C71801C1AB000E6455 /* ParsedPrimitiveHelper.h */; };
 		4907D1861812E2E200D893B4 /* PDFArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465C81801C1AB000E6455 /* PDFArray.cpp */; };
-		4907D1871812E2E200D893B4 /* PDFArray.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465C91801C1AB000E6455 /* PDFArray.h */; };
 		4907D1881812E2E200D893B4 /* PDFBoolean.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465CA1801C1AB000E6455 /* PDFBoolean.cpp */; };
-		4907D1891812E2E200D893B4 /* PDFBoolean.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465CB1801C1AB000E6455 /* PDFBoolean.h */; };
 		4907D18A1812E2E200D893B4 /* PDFDate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465CC1801C1AB000E6455 /* PDFDate.cpp */; };
-		4907D18B1812E2E200D893B4 /* PDFDate.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465CD1801C1AB000E6455 /* PDFDate.h */; };
 		4907D18C1812E2E200D893B4 /* PDFDictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465CE1801C1AB000E6455 /* PDFDictionary.cpp */; };
-		4907D18D1812E2E200D893B4 /* PDFDictionary.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465CF1801C1AB000E6455 /* PDFDictionary.h */; };
 		4907D18E1812E2E200D893B4 /* PDFDocEncoding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465D01801C1AB000E6455 /* PDFDocEncoding.cpp */; };
-		4907D18F1812E2E200D893B4 /* PDFDocEncoding.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465D11801C1AB000E6455 /* PDFDocEncoding.h */; };
 		4907D1901812E2E200D893B4 /* PDFDocumentCopyingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465D21801C1AB000E6455 /* PDFDocumentCopyingContext.cpp */; };
-		4907D1911812E2E200D893B4 /* PDFDocumentCopyingContext.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465D31801C1AB000E6455 /* PDFDocumentCopyingContext.h */; };
 		4907D1921812E2E200D893B4 /* PDFDocumentHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465D41801C1AB000E6455 /* PDFDocumentHandler.cpp */; };
-		4907D1931812E2E200D893B4 /* PDFDocumentHandler.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465D51801C1AB000E6455 /* PDFDocumentHandler.h */; };
-		4907D1941812E2E200D893B4 /* PDFEmbedParameterTypes.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465D61801C1AB000E6455 /* PDFEmbedParameterTypes.h */; };
 		4907D1951812E2E200D893B4 /* PDFFormXObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465D71801C1AB000E6455 /* PDFFormXObject.cpp */; };
-		4907D1961812E2E200D893B4 /* PDFFormXObject.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465D81801C1AB000E6455 /* PDFFormXObject.h */; };
 		4907D1971812E2E200D893B4 /* PDFHexString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465D91801C1AB000E6455 /* PDFHexString.cpp */; };
-		4907D1981812E2E200D893B4 /* PDFHexString.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465DA1801C1AB000E6455 /* PDFHexString.h */; };
 		4907D1991812E2E200D893B4 /* PDFImageXObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465DB1801C1AB000E6455 /* PDFImageXObject.cpp */; };
-		4907D19A1812E2E200D893B4 /* PDFImageXObject.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465DC1801C1AB000E6455 /* PDFImageXObject.h */; };
 		4907D19B1812E2E200D893B4 /* PDFIndirectObjectReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465DD1801C1AB000E6455 /* PDFIndirectObjectReference.cpp */; };
-		4907D19C1812E2E200D893B4 /* PDFIndirectObjectReference.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465DE1801C1AB000E6455 /* PDFIndirectObjectReference.h */; };
 		4907D19D1812E2E200D893B4 /* PDFInteger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465DF1801C1AB000E6455 /* PDFInteger.cpp */; };
-		4907D19E1812E2E200D893B4 /* PDFInteger.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465E01801C1AB000E6455 /* PDFInteger.h */; };
 		4907D19F1812E2E200D893B4 /* PDFLiteralString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465E11801C1AB000E6455 /* PDFLiteralString.cpp */; };
-		4907D1A01812E2E200D893B4 /* PDFLiteralString.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465E21801C1AB000E6455 /* PDFLiteralString.h */; };
 		4907D1A11812E2E200D893B4 /* PDFName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465E31801C1AB000E6455 /* PDFName.cpp */; };
-		4907D1A21812E2E200D893B4 /* PDFName.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465E41801C1AB000E6455 /* PDFName.h */; };
 		4907D1A31812E2E200D893B4 /* PDFNull.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465E51801C1AB000E6455 /* PDFNull.cpp */; };
-		4907D1A41812E2E200D893B4 /* PDFNull.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465E61801C1AB000E6455 /* PDFNull.h */; };
 		4907D1A51812E2E200D893B4 /* PDFObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465E71801C1AB000E6455 /* PDFObject.cpp */; };
-		4907D1A61812E2E200D893B4 /* PDFObject.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465E81801C1AB000E6455 /* PDFObject.h */; };
-		4907D1A71812E2E200D893B4 /* PDFObjectCast.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465E91801C1AB000E6455 /* PDFObjectCast.h */; };
 		4907D1A81812E2E200D893B4 /* PDFObjectParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465EA1801C1AB000E6455 /* PDFObjectParser.cpp */; };
-		4907D1A91812E2E200D893B4 /* PDFObjectParser.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465EB1801C1AB000E6455 /* PDFObjectParser.h */; };
 		4907D1AA1812E2E200D893B4 /* PDFPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465EC1801C1AB000E6455 /* PDFPage.cpp */; };
-		4907D1AB1812E2E200D893B4 /* PDFPage.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465ED1801C1AB000E6455 /* PDFPage.h */; };
 		4907D1AC1812E2E200D893B4 /* PDFPageInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465EE1801C1AB000E6455 /* PDFPageInput.cpp */; };
-		4907D1AD1812E2E200D893B4 /* PDFPageInput.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465EF1801C1AB000E6455 /* PDFPageInput.h */; };
 		4907D1AE1812E2E200D893B4 /* PDFPageMergingHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465F01801C1AB000E6455 /* PDFPageMergingHelper.cpp */; };
-		4907D1AF1812E2E200D893B4 /* PDFPageMergingHelper.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465F11801C1AB000E6455 /* PDFPageMergingHelper.h */; };
 		4907D1B01812E2E200D893B4 /* PDFParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465F21801C1AB000E6455 /* PDFParser.cpp */; };
-		4907D1B11812E2E200D893B4 /* PDFParser.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465F31801C1AB000E6455 /* PDFParser.h */; };
 		4907D1B21812E2E200D893B4 /* PDFParserTokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465F41801C1AB000E6455 /* PDFParserTokenizer.cpp */; };
-		4907D1B31812E2E200D893B4 /* PDFParserTokenizer.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465F51801C1AB000E6455 /* PDFParserTokenizer.h */; };
 		4907D1B41812E2E200D893B4 /* PDFReal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465F61801C1AB000E6455 /* PDFReal.cpp */; };
-		4907D1B51812E2E200D893B4 /* PDFReal.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465F71801C1AB000E6455 /* PDFReal.h */; };
 		4907D1B61812E2E200D893B4 /* PDFRectangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465F81801C1AB000E6455 /* PDFRectangle.cpp */; };
-		4907D1B71812E2E200D893B4 /* PDFRectangle.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465F91801C1AB000E6455 /* PDFRectangle.h */; };
 		4907D1B81812E2E200D893B4 /* PDFStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465FA1801C1AB000E6455 /* PDFStream.cpp */; };
-		4907D1B91812E2E200D893B4 /* PDFStream.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465FB1801C1AB000E6455 /* PDFStream.h */; };
 		4907D1BA1812E2E200D893B4 /* PDFStreamInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465FC1801C1AB000E6455 /* PDFStreamInput.cpp */; };
-		4907D1BB1812E2E200D893B4 /* PDFStreamInput.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465FD1801C1AB000E6455 /* PDFStreamInput.h */; };
 		4907D1BC1812E2E200D893B4 /* PDFSymbol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491465FE1801C1AB000E6455 /* PDFSymbol.cpp */; };
-		4907D1BD1812E2E200D893B4 /* PDFSymbol.h in Sources */ = {isa = PBXBuildFile; fileRef = 491465FF1801C1AB000E6455 /* PDFSymbol.h */; };
 		4907D1BE1812E2E200D893B4 /* PDFTextString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491466001801C1AB000E6455 /* PDFTextString.cpp */; };
-		4907D1BF1812E2E200D893B4 /* PDFTextString.h in Sources */ = {isa = PBXBuildFile; fileRef = 491466011801C1AB000E6455 /* PDFTextString.h */; };
 		4907D1C01812E2E200D893B4 /* PDFUsedFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491466021801C1AB000E6455 /* PDFUsedFont.cpp */; };
-		4907D1C11812E2E200D893B4 /* PDFUsedFont.h in Sources */ = {isa = PBXBuildFile; fileRef = 491466031801C1AB000E6455 /* PDFUsedFont.h */; };
 		4907D1C21812E2E200D893B4 /* PDFWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491466041801C1AB000E6455 /* PDFWriter.cpp */; };
-		4907D1C31812E2E200D893B4 /* PDFWriter.h in Sources */ = {isa = PBXBuildFile; fileRef = 491466051801C1AB000E6455 /* PDFWriter.h */; };
 		4907D1C41812E2E200D893B4 /* PFMFileReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491466061801C1AB000E6455 /* PFMFileReader.cpp */; };
-		4907D1C51812E2E200D893B4 /* PFMFileReader.h in Sources */ = {isa = PBXBuildFile; fileRef = 491466071801C1AB000E6455 /* PFMFileReader.h */; };
 		4907D1C61812E2E200D893B4 /* PrimitiveObjectsWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491466081801C1AB000E6455 /* PrimitiveObjectsWriter.cpp */; };
-		4907D1C71812E2E200D893B4 /* PrimitiveObjectsWriter.h in Sources */ = {isa = PBXBuildFile; fileRef = 491466091801C1AB000E6455 /* PrimitiveObjectsWriter.h */; };
-		4907D1C81812E2E200D893B4 /* ProcsetResourcesConstants.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914660A1801C1AB000E6455 /* ProcsetResourcesConstants.h */; };
 		4907D1C91812E2E200D893B4 /* PSBool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914660B1801C1AB000E6455 /* PSBool.cpp */; };
-		4907D1CA1812E2E200D893B4 /* PSBool.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914660C1801C1AB000E6455 /* PSBool.h */; };
 		4907D1CB1812E2E200D893B4 /* RefCountObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914660D1801C1AB000E6455 /* RefCountObject.cpp */; };
-		4907D1CC1812E2E200D893B4 /* RefCountObject.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914660E1801C1AB000E6455 /* RefCountObject.h */; };
-		4907D1CD1812E2E200D893B4 /* RefCountPtr.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914660F1801C1AB000E6455 /* RefCountPtr.h */; };
 		4907D1CE1812E2E200D893B4 /* ResourcesDictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491466101801C1AB000E6455 /* ResourcesDictionary.cpp */; };
-		4907D1CF1812E2E200D893B4 /* ResourcesDictionary.h in Sources */ = {isa = PBXBuildFile; fileRef = 491466111801C1AB000E6455 /* ResourcesDictionary.h */; };
-		4907D1D01812E2E200D893B4 /* SafeBufferMacrosDefs.h in Sources */ = {isa = PBXBuildFile; fileRef = 491466121801C1AB000E6455 /* SafeBufferMacrosDefs.h */; };
-		4907D1D11812E2E200D893B4 /* Singleton.h in Sources */ = {isa = PBXBuildFile; fileRef = 491466131801C1AB000E6455 /* Singleton.h */; };
-		4907D1D21812E2E200D893B4 /* SingleValueContainerIterator.h in Sources */ = {isa = PBXBuildFile; fileRef = 491466141801C1AB000E6455 /* SingleValueContainerIterator.h */; };
 		4907D1D31812E2E200D893B4 /* StandardEncoding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491466151801C1AB000E6455 /* StandardEncoding.cpp */; };
-		4907D1D41812E2E200D893B4 /* StandardEncoding.h in Sources */ = {isa = PBXBuildFile; fileRef = 491466161801C1AB000E6455 /* StandardEncoding.h */; };
 		4907D1D51812E2E200D893B4 /* StateReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491466171801C1AB000E6455 /* StateReader.cpp */; };
-		4907D1D61812E2E200D893B4 /* StateReader.h in Sources */ = {isa = PBXBuildFile; fileRef = 491466181801C1AB000E6455 /* StateReader.h */; };
 		4907D1D71812E2E200D893B4 /* StateWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491466191801C1AB000E6455 /* StateWriter.cpp */; };
-		4907D1D81812E2E200D893B4 /* StateWriter.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914661A1801C1AB000E6455 /* StateWriter.h */; };
 		4907D1D91812E2E200D893B4 /* TIFFImageHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914661B1801C1AB000E6455 /* TIFFImageHandler.cpp */; };
-		4907D1DA1812E2E200D893B4 /* TIFFImageHandler.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914661C1801C1AB000E6455 /* TIFFImageHandler.h */; };
 		4907D1DB1812E2E200D893B4 /* TiffUsageParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914661D1801C1AB000E6455 /* TiffUsageParameters.cpp */; };
-		4907D1DC1812E2E200D893B4 /* TiffUsageParameters.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914661E1801C1AB000E6455 /* TiffUsageParameters.h */; };
 		4907D1DD1812E2E200D893B4 /* Trace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914661F1801C1AB000E6455 /* Trace.cpp */; };
-		4907D1DE1812E2E200D893B4 /* Trace.h in Sources */ = {isa = PBXBuildFile; fileRef = 491466201801C1AB000E6455 /* Trace.h */; };
 		4907D1DF1812E2E200D893B4 /* TrailerInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491466211801C1AB000E6455 /* TrailerInformation.cpp */; };
-		4907D1E01812E2E200D893B4 /* TrailerInformation.h in Sources */ = {isa = PBXBuildFile; fileRef = 491466221801C1AB000E6455 /* TrailerInformation.h */; };
 		4907D1E11812E2E200D893B4 /* TrueTypeANSIFontWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491466231801C1AB000E6455 /* TrueTypeANSIFontWriter.cpp */; };
-		4907D1E21812E2E200D893B4 /* TrueTypeANSIFontWriter.h in Sources */ = {isa = PBXBuildFile; fileRef = 491466241801C1AB000E6455 /* TrueTypeANSIFontWriter.h */; };
 		4907D1E31812E2E200D893B4 /* TrueTypeDescendentFontWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491466251801C1AB000E6455 /* TrueTypeDescendentFontWriter.cpp */; };
-		4907D1E41812E2E200D893B4 /* TrueTypeDescendentFontWriter.h in Sources */ = {isa = PBXBuildFile; fileRef = 491466261801C1AB000E6455 /* TrueTypeDescendentFontWriter.h */; };
 		4907D1E51812E2E200D893B4 /* TrueTypeEmbeddedFontWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491466271801C1AB000E6455 /* TrueTypeEmbeddedFontWriter.cpp */; };
-		4907D1E61812E2E200D893B4 /* TrueTypeEmbeddedFontWriter.h in Sources */ = {isa = PBXBuildFile; fileRef = 491466281801C1AB000E6455 /* TrueTypeEmbeddedFontWriter.h */; };
 		4907D1E71812E2E200D893B4 /* TrueTypePrimitiveWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491466291801C1AB000E6455 /* TrueTypePrimitiveWriter.cpp */; };
-		4907D1E81812E2E200D893B4 /* TrueTypePrimitiveWriter.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914662A1801C1AB000E6455 /* TrueTypePrimitiveWriter.h */; };
 		4907D1E91812E2E200D893B4 /* Type1Input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914662B1801C1AB000E6455 /* Type1Input.cpp */; };
-		4907D1EA1812E2E200D893B4 /* Type1Input.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914662C1801C1AB000E6455 /* Type1Input.h */; };
 		4907D1EB1812E2E200D893B4 /* Type1ToCFFEmbeddedFontWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914662D1801C1AB000E6455 /* Type1ToCFFEmbeddedFontWriter.cpp */; };
-		4907D1EC1812E2E200D893B4 /* Type1ToCFFEmbeddedFontWriter.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914662E1801C1AB000E6455 /* Type1ToCFFEmbeddedFontWriter.h */; };
 		4907D1ED1812E2E200D893B4 /* Type1ToType2Converter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914662F1801C1AB000E6455 /* Type1ToType2Converter.cpp */; };
-		4907D1EE1812E2E200D893B4 /* Type1ToType2Converter.h in Sources */ = {isa = PBXBuildFile; fileRef = 491466301801C1AB000E6455 /* Type1ToType2Converter.h */; };
 		4907D1EF1812E2E200D893B4 /* Type2CharStringWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491466311801C1AB000E6455 /* Type2CharStringWriter.cpp */; };
-		4907D1F01812E2E200D893B4 /* Type2CharStringWriter.h in Sources */ = {isa = PBXBuildFile; fileRef = 491466321801C1AB000E6455 /* Type2CharStringWriter.h */; };
 		4907D1F11812E2E200D893B4 /* UnicodeString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491466331801C1AB000E6455 /* UnicodeString.cpp */; };
-		4907D1F21812E2E200D893B4 /* UnicodeString.h in Sources */ = {isa = PBXBuildFile; fileRef = 491466341801C1AB000E6455 /* UnicodeString.h */; };
 		4907D1F31812E2E200D893B4 /* UppercaseSequance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491466351801C1AB000E6455 /* UppercaseSequance.cpp */; };
-		4907D1F41812E2E200D893B4 /* UppercaseSequance.h in Sources */ = {isa = PBXBuildFile; fileRef = 491466361801C1AB000E6455 /* UppercaseSequance.h */; };
 		4907D1F51812E2E200D893B4 /* UsedFontsRepository.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491466371801C1AB000E6455 /* UsedFontsRepository.cpp */; };
-		4907D1F61812E2E200D893B4 /* UsedFontsRepository.h in Sources */ = {isa = PBXBuildFile; fileRef = 491466381801C1AB000E6455 /* UsedFontsRepository.h */; };
 		4907D1F71812E2E200D893B4 /* WinAnsiEncoding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491466391801C1AB000E6455 /* WinAnsiEncoding.cpp */; };
-		4907D1F81812E2E200D893B4 /* WinAnsiEncoding.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914663A1801C1AB000E6455 /* WinAnsiEncoding.h */; };
 		4907D1F91812E2E200D893B4 /* WrittenFontCFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914663B1801C1AB000E6455 /* WrittenFontCFF.cpp */; };
-		4907D1FA1812E2E200D893B4 /* WrittenFontCFF.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914663C1801C1AB000E6455 /* WrittenFontCFF.h */; };
-		4907D1FB1812E2E200D893B4 /* WrittenFontRepresentation.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914663D1801C1AB000E6455 /* WrittenFontRepresentation.h */; };
 		4907D1FC1812E2E200D893B4 /* WrittenFontTrueType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914663E1801C1AB000E6455 /* WrittenFontTrueType.cpp */; };
-		4907D1FD1812E2E200D893B4 /* WrittenFontTrueType.h in Sources */ = {isa = PBXBuildFile; fileRef = 4914663F1801C1AB000E6455 /* WrittenFontTrueType.h */; };
 		4907D1FE1812E2E200D893B4 /* XObjectContentContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491466401801C1AB000E6455 /* XObjectContentContext.cpp */; };
-		4907D1FF1812E2E200D893B4 /* XObjectContentContext.h in Sources */ = {isa = PBXBuildFile; fileRef = 491466411801C1AB000E6455 /* XObjectContentContext.h */; };
-		4907D2001812E2E200D893B4 /* pdf_hummus_renderer.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914651C1801C1AA000E6455 /* pdf_hummus_renderer.hpp */; };
 		4907D2011812E2E200D893B4 /* pdf_hummus_renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914651B1801C1AA000E6455 /* pdf_hummus_renderer.cpp */; };
 		490A9D2616F8A5EC00EC29D5 /* metadata-revtex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 490A9D2516F8A5EC00EC29D5 /* metadata-revtex.cpp */; };
 		490A9D2716F8A5EC00EC29D5 /* metadata-revtex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 490A9D2516F8A5EC00EC29D5 /* metadata-revtex.cpp */; };
@@ -448,7 +279,6 @@
 		49F9FA181573BA86006C7258 /* new_window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F9FA111573BA86006C7258 /* new_window.cpp */; };
 		49FDFA6516F0C677002B830A /* metadata-ams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49FDFA6416F0C677002B830A /* metadata-ams.cpp */; };
 		49FDFA6616F0C677002B830A /* metadata-ams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49FDFA6416F0C677002B830A /* metadata-ams.cpp */; };
-		49FDFA6716F0C677002B830A /* metadata-ams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49FDFA6416F0C677002B830A /* metadata-ams.cpp */; };
 		49FFB07916EDF83A004A2A32 /* glyph_analyze.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49FFB07816EDF83A004A2A32 /* glyph_analyze.cpp */; };
 		49FFB07A16EDF83A004A2A32 /* glyph_analyze.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49FFB07816EDF83A004A2A32 /* glyph_analyze.cpp */; };
 		49FFB07B16EDF83A004A2A32 /* glyph_analyze.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49FFB07816EDF83A004A2A32 /* glyph_analyze.cpp */; };
@@ -717,6 +547,7 @@
 		9C4FCFF7150F73100087378D /* new_document.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4FCFF5150F73100087378D /* new_document.cpp */; };
 		9C4FCFF8150F73100087378D /* new_document.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4FCFF5150F73100087378D /* new_document.cpp */; };
 		9C4FCFF9150F73100087378D /* new_document.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4FCFF5150F73100087378D /* new_document.cpp */; };
+		9C5A817D181DCC4900B9C03D /* PDFWriter.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 4907D0D81812E2BC00D893B4 /* PDFWriter.o */; };
 		9C6061EA112442BD00054149 /* gs_utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C6061E8112442BC00054149 /* gs_utilities.cpp */; };
 		9C6061EB112442BD00054149 /* gs_utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C6061E8112442BC00054149 /* gs_utilities.cpp */; };
 		9C6061EC112442BD00054149 /* gs_utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C6061E8112442BC00054149 /* gs_utilities.cpp */; };
@@ -1267,6 +1098,9 @@
 		9CE18E83125E685D00641CFC /* tree_brackets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CE18E81125E685D00641CFC /* tree_brackets.cpp */; };
 		9CE18E84125E685D00641CFC /* tree_brackets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CE18E81125E685D00641CFC /* tree_brackets.cpp */; };
 		9CE18E85125E685D00641CFC /* tree_brackets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CE18E81125E685D00641CFC /* tree_brackets.cpp */; };
+		9CE5CF8A16EFDB55001A6292 /* guile_tm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CD46B11147429F900A7E2FC /* guile_tm.cpp */; };
+		9CE5CF8B16EFDB5B001A6292 /* glue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4DE77A1475AA9A00F41E44 /* glue.cpp */; };
+		9CE5CF8C16EFDB5E001A6292 /* object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CD46A9214740A3F00A7E2FC /* object.cpp */; };
 		9CEDAA301264FF6C009630CC /* tree_analyze.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CEDAA2E1264FF6C009630CC /* tree_analyze.cpp */; };
 		9CEDAA311264FF6C009630CC /* tree_analyze.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CEDAA2E1264FF6C009630CC /* tree_analyze.cpp */; };
 		9CEDAA321264FF6C009630CC /* tree_analyze.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CEDAA2E1264FF6C009630CC /* tree_analyze.cpp */; };
@@ -1305,6 +1139,13 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		9C5A8164181DC74C00B9C03D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4907D0D71812E2BC00D893B4;
+			remoteInfo = PDFWriter;
+		};
 		9CC614B110A99A8A0055F808 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -2314,6 +2155,7 @@
 		9C4DE77B1475AA9A00F41E44 /* glue.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = glue.hpp; sourceTree = "<group>"; };
 		9C4FCFF5150F73100087378D /* new_document.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = new_document.cpp; sourceTree = "<group>"; };
 		9C4FCFF6150F73100087378D /* new_document.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = new_document.hpp; sourceTree = "<group>"; };
+		9C5A817C181DC97900B9C03D /* PDFWriter.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = PDFWriter.xcconfig; sourceTree = "<group>"; };
 		9C5DBAD810A8DDD7008B7623 /* makefile.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = makefile.in; path = src/makefile.in; sourceTree = "<group>"; };
 		9C5DBADB10A8DF32008B7623 /* configure.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = configure.in; sourceTree = "<group>"; };
 		9C6061E8112442BC00054149 /* gs_utilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gs_utilities.cpp; sourceTree = "<group>"; };
@@ -2421,6 +2263,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9C5A817D181DCC4900B9C03D /* PDFWriter.o in Frameworks */,
 				9CC614B510A99B100055F808 /* MOCs.o in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4297,6 +4140,7 @@
 				9C61B42E141A1B780035D78F /* TeXmacsCocoa.xcconfig */,
 				9C61B42F141A1B780035D78F /* TeXmacsQt.xcconfig */,
 				9C61B430141A1B780035D78F /* TeXmacsX11.xcconfig */,
+				9C5A817C181DC97900B9C03D /* PDFWriter.xcconfig */,
 			);
 			name = macos;
 			path = packages/macos;
@@ -4414,6 +4258,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				9C5A8165181DC74C00B9C03D /* PBXTargetDependency */,
 				9CC614B210A99A8A0055F808 /* PBXTargetDependency */,
 			);
 			name = TeXmacsQt;
@@ -4657,298 +4502,129 @@
 			buildActionMask = 2147483647;
 			files = (
 				4907D0DC1812E2E200D893B4 /* AbstractContentContext.cpp in Sources */,
-				4907D0DD1812E2E200D893B4 /* AbstractContentContext.h in Sources */,
 				4907D0DE1812E2E200D893B4 /* AbstractWrittenFont.cpp in Sources */,
-				4907D0DF1812E2E200D893B4 /* AbstractWrittenFont.h in Sources */,
-				4907D0E01812E2E200D893B4 /* AdapterIByteReaderWithPositionToIReadPositionProvider.h in Sources */,
 				4907D0E11812E2E200D893B4 /* ANSIFontWriter.cpp in Sources */,
-				4907D0E21812E2E200D893B4 /* ANSIFontWriter.h in Sources */,
 				4907D0E31812E2E200D893B4 /* Ascii7Encoding.cpp in Sources */,
-				4907D0E41812E2E200D893B4 /* Ascii7Encoding.h in Sources */,
-				4907D0E51812E2E200D893B4 /* BetweenIncluding.h in Sources */,
-				4907D0E61812E2E200D893B4 /* BoxingBase.h in Sources */,
 				4907D0E71812E2E200D893B4 /* CatalogInformation.cpp in Sources */,
-				4907D0E81812E2E200D893B4 /* CatalogInformation.h in Sources */,
 				4907D0E91812E2E200D893B4 /* CFFANSIFontWriter.cpp in Sources */,
-				4907D0EA1812E2E200D893B4 /* CFFANSIFontWriter.h in Sources */,
 				4907D0EB1812E2E200D893B4 /* CFFDescendentFontWriter.cpp in Sources */,
-				4907D0EC1812E2E200D893B4 /* CFFDescendentFontWriter.h in Sources */,
 				4907D0ED1812E2E200D893B4 /* CFFEmbeddedFontWriter.cpp in Sources */,
-				4907D0EE1812E2E200D893B4 /* CFFEmbeddedFontWriter.h in Sources */,
 				4907D0EF1812E2E200D893B4 /* CFFFileInput.cpp in Sources */,
-				4907D0F01812E2E200D893B4 /* CFFFileInput.h in Sources */,
 				4907D0F11812E2E200D893B4 /* CFFPrimitiveReader.cpp in Sources */,
-				4907D0F21812E2E200D893B4 /* CFFPrimitiveReader.h in Sources */,
 				4907D0F31812E2E200D893B4 /* CFFPrimitiveWriter.cpp in Sources */,
-				4907D0F41812E2E200D893B4 /* CFFPrimitiveWriter.h in Sources */,
-				4907D0F51812E2E200D893B4 /* CharStringDefinitions.h in Sources */,
 				4907D0F61812E2E200D893B4 /* CharStringType1Interpreter.cpp in Sources */,
-				4907D0F71812E2E200D893B4 /* CharStringType1Interpreter.h in Sources */,
 				4907D0F81812E2E200D893B4 /* CharStringType1Tracer.cpp in Sources */,
-				4907D0F91812E2E200D893B4 /* CharStringType1Tracer.h in Sources */,
 				4907D0FA1812E2E200D893B4 /* CharStringType2Flattener.cpp in Sources */,
-				4907D0FB1812E2E200D893B4 /* CharStringType2Flattener.h in Sources */,
 				4907D0FC1812E2E200D893B4 /* CharStringType2Interpreter.cpp in Sources */,
-				4907D0FD1812E2E200D893B4 /* CharStringType2Interpreter.h in Sources */,
 				4907D0FE1812E2E200D893B4 /* CharStringType2Tracer.cpp in Sources */,
-				4907D0FF1812E2E200D893B4 /* CharStringType2Tracer.h in Sources */,
 				4907D1001812E2E200D893B4 /* CIDFontWriter.cpp in Sources */,
-				4907D1011812E2E200D893B4 /* CIDFontWriter.h in Sources */,
 				4907D1021812E2E200D893B4 /* CMYKRGBColor.cpp in Sources */,
-				4907D1031812E2E200D893B4 /* CMYKRGBColor.h in Sources */,
-				4907D1041812E2E200D893B4 /* ContainerIterator.h in Sources */,
 				4907D1051812E2E200D893B4 /* DescendentFontWriter.cpp in Sources */,
-				4907D1061812E2E200D893B4 /* DescendentFontWriter.h in Sources */,
 				4907D1071812E2E200D893B4 /* DictionaryContext.cpp in Sources */,
-				4907D1081812E2E200D893B4 /* DictionaryContext.h in Sources */,
-				4907D1091812E2E200D893B4 /* DictOperand.h in Sources */,
 				4907D10A1812E2E200D893B4 /* DocumentContext.cpp in Sources */,
-				4907D10B1812E2E200D893B4 /* DocumentContext.h in Sources */,
-				4907D10C1812E2E200D893B4 /* DocumentContextExtenderAdapter.h in Sources */,
-				4907D10D1812E2E200D893B4 /* EFontStretch.h in Sources */,
-				4907D10E1812E2E200D893B4 /* EPDFVersion.h in Sources */,
-				4907D10F1812E2E200D893B4 /* EStatusCode.h in Sources */,
-				4907D1101812E2E200D893B4 /* ETokenSeparator.h in Sources */,
 				4907D1111812E2E200D893B4 /* FontDescriptorWriter.cpp in Sources */,
-				4907D1121812E2E200D893B4 /* FontDescriptorWriter.h in Sources */,
 				4907D1131812E2E200D893B4 /* FreeTypeFaceWrapper.cpp in Sources */,
-				4907D1141812E2E200D893B4 /* FreeTypeFaceWrapper.h in Sources */,
 				4907D1151812E2E200D893B4 /* FreeTypeOpenTypeWrapper.cpp in Sources */,
-				4907D1161812E2E200D893B4 /* FreeTypeOpenTypeWrapper.h in Sources */,
 				4907D1171812E2E200D893B4 /* FreeTypeType1Wrapper.cpp in Sources */,
-				4907D1181812E2E200D893B4 /* FreeTypeType1Wrapper.h in Sources */,
 				4907D1191812E2E200D893B4 /* FreeTypeWrapper.cpp in Sources */,
-				4907D11A1812E2E200D893B4 /* FreeTypeWrapper.h in Sources */,
-				4907D11B1812E2E200D893B4 /* FSType.h in Sources */,
-				4907D11C1812E2E200D893B4 /* GlyphUnicodeMapping.h in Sources */,
 				4907D11D1812E2E200D893B4 /* GraphicState.cpp in Sources */,
-				4907D11E1812E2E200D893B4 /* GraphicState.h in Sources */,
 				4907D11F1812E2E200D893B4 /* GraphicStateStack.cpp in Sources */,
-				4907D1201812E2E200D893B4 /* GraphicStateStack.h in Sources */,
-				4907D1211812E2E200D893B4 /* IANSIFontWriterHelper.h in Sources */,
-				4907D1221812E2E200D893B4 /* IByteReader.h in Sources */,
-				4907D1231812E2E200D893B4 /* IByteReaderWithPosition.h in Sources */,
-				4907D1241812E2E200D893B4 /* IByteWriter.h in Sources */,
-				4907D1251812E2E200D893B4 /* IByteWriterWithPosition.h in Sources */,
-				4907D1261812E2E200D893B4 /* IContentContextListener.h in Sources */,
-				4907D1271812E2E200D893B4 /* IDescendentFontWriter.h in Sources */,
-				4907D1281812E2E200D893B4 /* IDocumentContextExtender.h in Sources */,
-				4907D1291812E2E200D893B4 /* IFontDescriptorHelper.h in Sources */,
-				4907D12A1812E2E200D893B4 /* IFormEndWritingTask.h in Sources */,
-				4907D12B1812E2E200D893B4 /* IFreeTypeFaceExtender.h in Sources */,
 				4907D12C1812E2E200D893B4 /* IndirectObjectsReferenceRegistry.cpp in Sources */,
-				4907D12D1812E2E200D893B4 /* IndirectObjectsReferenceRegistry.h in Sources */,
 				4907D12E1812E2E200D893B4 /* InfoDictionary.cpp in Sources */,
-				4907D12F1812E2E200D893B4 /* InfoDictionary.h in Sources */,
 				4907D1301812E2E200D893B4 /* InputAscii85DecodeStream.cpp in Sources */,
-				4907D1311812E2E200D893B4 /* InputAscii85DecodeStream.h in Sources */,
 				4907D1321812E2E200D893B4 /* InputBufferedStream.cpp in Sources */,
-				4907D1331812E2E200D893B4 /* InputBufferedStream.h in Sources */,
 				4907D1341812E2E200D893B4 /* InputByteArrayStream.cpp in Sources */,
-				4907D1351812E2E200D893B4 /* InputByteArrayStream.h in Sources */,
 				4907D1361812E2E200D893B4 /* InputCharStringDecodeStream.cpp in Sources */,
-				4907D1371812E2E200D893B4 /* InputCharStringDecodeStream.h in Sources */,
 				4907D1381812E2E200D893B4 /* InputDCTDecodeStream.cpp in Sources */,
-				4907D1391812E2E200D893B4 /* InputDCTDecodeStream.h in Sources */,
 				4907D13A1812E2E200D893B4 /* InputFile.cpp in Sources */,
-				4907D13B1812E2E200D893B4 /* InputFile.h in Sources */,
 				4907D13C1812E2E200D893B4 /* InputFileStream.cpp in Sources */,
-				4907D13D1812E2E200D893B4 /* InputFileStream.h in Sources */,
 				4907D13E1812E2E200D893B4 /* InputFlateDecodeStream.cpp in Sources */,
-				4907D13F1812E2E200D893B4 /* InputFlateDecodeStream.h in Sources */,
 				4907D1401812E2E200D893B4 /* InputLimitedStream.cpp in Sources */,
-				4907D1411812E2E200D893B4 /* InputLimitedStream.h in Sources */,
 				4907D1421812E2E200D893B4 /* InputPFBDecodeStream.cpp in Sources */,
-				4907D1431812E2E200D893B4 /* InputPFBDecodeStream.h in Sources */,
 				4907D1441812E2E200D893B4 /* InputPredictorPNGAverageStream.cpp in Sources */,
-				4907D1451812E2E200D893B4 /* InputPredictorPNGAverageStream.h in Sources */,
 				4907D1461812E2E200D893B4 /* InputPredictorPNGNoneStream.cpp in Sources */,
-				4907D1471812E2E200D893B4 /* InputPredictorPNGNoneStream.h in Sources */,
 				4907D1481812E2E200D893B4 /* InputPredictorPNGOptimumStream.cpp in Sources */,
-				4907D1491812E2E200D893B4 /* InputPredictorPNGOptimumStream.h in Sources */,
 				4907D14A1812E2E200D893B4 /* InputPredictorPNGPaethStream.cpp in Sources */,
-				4907D14B1812E2E200D893B4 /* InputPredictorPNGPaethStream.h in Sources */,
 				4907D14C1812E2E200D893B4 /* InputPredictorPNGSubStream.cpp in Sources */,
-				4907D14D1812E2E200D893B4 /* InputPredictorPNGSubStream.h in Sources */,
 				4907D14E1812E2E200D893B4 /* InputPredictorPNGUpStream.cpp in Sources */,
-				4907D14F1812E2E200D893B4 /* InputPredictorPNGUpStream.h in Sources */,
 				4907D1501812E2E200D893B4 /* InputPredictorTIFFSubStream.cpp in Sources */,
-				4907D1511812E2E200D893B4 /* InputPredictorTIFFSubStream.h in Sources */,
 				4907D1521812E2E200D893B4 /* InputStreamSkipperStream.cpp in Sources */,
-				4907D1531812E2E200D893B4 /* InputStreamSkipperStream.h in Sources */,
 				4907D1541812E2E200D893B4 /* InputStringBufferStream.cpp in Sources */,
-				4907D1551812E2E200D893B4 /* InputStringBufferStream.h in Sources */,
-				4907D1561812E2E200D893B4 /* IOBasicTypes.h in Sources */,
-				4907D1571812E2E200D893B4 /* IObjectsContextExtender.h in Sources */,
-				4907D1581812E2E200D893B4 /* IPDFParserExtender.h in Sources */,
-				4907D1591812E2E200D893B4 /* IReadPositionProvider.h in Sources */,
-				4907D15A1812E2E200D893B4 /* IResourceWritingTask.h in Sources */,
-				4907D15B1812E2E200D893B4 /* IType1InterpreterImplementation.h in Sources */,
-				4907D15C1812E2E200D893B4 /* IType2InterpreterImplementation.h in Sources */,
-				4907D15D1812E2E200D893B4 /* IWrittenFont.h in Sources */,
 				4907D15E1812E2E200D893B4 /* JPEGImageHandler.cpp in Sources */,
-				4907D15F1812E2E200D893B4 /* JPEGImageHandler.h in Sources */,
 				4907D1601812E2E200D893B4 /* JPEGImageInformation.cpp in Sources */,
-				4907D1611812E2E200D893B4 /* JPEGImageInformation.h in Sources */,
 				4907D1621812E2E200D893B4 /* JPEGImageParser.cpp in Sources */,
-				4907D1631812E2E200D893B4 /* JPEGImageParser.h in Sources */,
 				4907D1641812E2E200D893B4 /* Log.cpp in Sources */,
-				4907D1651812E2E200D893B4 /* Log.h in Sources */,
-				4907D1661812E2E200D893B4 /* MapIterator.h in Sources */,
 				4907D1671812E2E200D893B4 /* MD5Generator.cpp in Sources */,
-				4907D1681812E2E200D893B4 /* MD5Generator.h in Sources */,
-				4907D1691812E2E200D893B4 /* MyStringBuf.h in Sources */,
-				4907D16A1812E2E200D893B4 /* ObjectsBasicTypes.h in Sources */,
 				4907D16B1812E2E200D893B4 /* ObjectsContext.cpp in Sources */,
-				4907D16C1812E2E200D893B4 /* ObjectsContext.h in Sources */,
-				4907D16D1812E2E200D893B4 /* ObjectsContextExtenderAdapter.h in Sources */,
 				4907D16E1812E2E200D893B4 /* OpenTypeFileInput.cpp in Sources */,
-				4907D16F1812E2E200D893B4 /* OpenTypeFileInput.h in Sources */,
 				4907D1701812E2E200D893B4 /* OpenTypePrimitiveReader.cpp in Sources */,
-				4907D1711812E2E200D893B4 /* OpenTypePrimitiveReader.h in Sources */,
 				4907D1721812E2E200D893B4 /* OutputBufferedStream.cpp in Sources */,
-				4907D1731812E2E200D893B4 /* OutputBufferedStream.h in Sources */,
 				4907D1741812E2E200D893B4 /* OutputFile.cpp in Sources */,
-				4907D1751812E2E200D893B4 /* OutputFile.h in Sources */,
 				4907D1761812E2E200D893B4 /* OutputFileStream.cpp in Sources */,
-				4907D1771812E2E200D893B4 /* OutputFileStream.h in Sources */,
 				4907D1781812E2E200D893B4 /* OutputFlateDecodeStream.cpp in Sources */,
-				4907D1791812E2E200D893B4 /* OutputFlateDecodeStream.h in Sources */,
 				4907D17A1812E2E200D893B4 /* OutputFlateEncodeStream.cpp in Sources */,
-				4907D17B1812E2E200D893B4 /* OutputFlateEncodeStream.h in Sources */,
 				4907D17C1812E2E200D893B4 /* OutputStreamTraits.cpp in Sources */,
-				4907D17D1812E2E200D893B4 /* OutputStreamTraits.h in Sources */,
 				4907D17E1812E2E200D893B4 /* OutputStringBufferStream.cpp in Sources */,
-				4907D17F1812E2E200D893B4 /* OutputStringBufferStream.h in Sources */,
 				4907D1801812E2E200D893B4 /* PageContentContext.cpp in Sources */,
-				4907D1811812E2E200D893B4 /* PageContentContext.h in Sources */,
 				4907D1821812E2E200D893B4 /* PageTree.cpp in Sources */,
-				4907D1831812E2E200D893B4 /* PageTree.h in Sources */,
 				4907D1841812E2E200D893B4 /* ParsedPrimitiveHelper.cpp in Sources */,
-				4907D1851812E2E200D893B4 /* ParsedPrimitiveHelper.h in Sources */,
 				4907D1861812E2E200D893B4 /* PDFArray.cpp in Sources */,
-				4907D1871812E2E200D893B4 /* PDFArray.h in Sources */,
 				4907D1881812E2E200D893B4 /* PDFBoolean.cpp in Sources */,
-				4907D1891812E2E200D893B4 /* PDFBoolean.h in Sources */,
 				4907D18A1812E2E200D893B4 /* PDFDate.cpp in Sources */,
-				4907D18B1812E2E200D893B4 /* PDFDate.h in Sources */,
 				4907D18C1812E2E200D893B4 /* PDFDictionary.cpp in Sources */,
-				4907D18D1812E2E200D893B4 /* PDFDictionary.h in Sources */,
 				4907D18E1812E2E200D893B4 /* PDFDocEncoding.cpp in Sources */,
-				4907D18F1812E2E200D893B4 /* PDFDocEncoding.h in Sources */,
 				4907D1901812E2E200D893B4 /* PDFDocumentCopyingContext.cpp in Sources */,
-				4907D1911812E2E200D893B4 /* PDFDocumentCopyingContext.h in Sources */,
 				4907D1921812E2E200D893B4 /* PDFDocumentHandler.cpp in Sources */,
-				4907D1931812E2E200D893B4 /* PDFDocumentHandler.h in Sources */,
-				4907D1941812E2E200D893B4 /* PDFEmbedParameterTypes.h in Sources */,
 				4907D1951812E2E200D893B4 /* PDFFormXObject.cpp in Sources */,
-				4907D1961812E2E200D893B4 /* PDFFormXObject.h in Sources */,
 				4907D1971812E2E200D893B4 /* PDFHexString.cpp in Sources */,
-				4907D1981812E2E200D893B4 /* PDFHexString.h in Sources */,
 				4907D1991812E2E200D893B4 /* PDFImageXObject.cpp in Sources */,
-				4907D19A1812E2E200D893B4 /* PDFImageXObject.h in Sources */,
 				4907D19B1812E2E200D893B4 /* PDFIndirectObjectReference.cpp in Sources */,
-				4907D19C1812E2E200D893B4 /* PDFIndirectObjectReference.h in Sources */,
 				4907D19D1812E2E200D893B4 /* PDFInteger.cpp in Sources */,
-				4907D19E1812E2E200D893B4 /* PDFInteger.h in Sources */,
 				4907D19F1812E2E200D893B4 /* PDFLiteralString.cpp in Sources */,
-				4907D1A01812E2E200D893B4 /* PDFLiteralString.h in Sources */,
 				4907D1A11812E2E200D893B4 /* PDFName.cpp in Sources */,
-				4907D1A21812E2E200D893B4 /* PDFName.h in Sources */,
 				4907D1A31812E2E200D893B4 /* PDFNull.cpp in Sources */,
-				4907D1A41812E2E200D893B4 /* PDFNull.h in Sources */,
 				4907D1A51812E2E200D893B4 /* PDFObject.cpp in Sources */,
-				4907D1A61812E2E200D893B4 /* PDFObject.h in Sources */,
-				4907D1A71812E2E200D893B4 /* PDFObjectCast.h in Sources */,
 				4907D1A81812E2E200D893B4 /* PDFObjectParser.cpp in Sources */,
-				4907D1A91812E2E200D893B4 /* PDFObjectParser.h in Sources */,
 				4907D1AA1812E2E200D893B4 /* PDFPage.cpp in Sources */,
-				4907D1AB1812E2E200D893B4 /* PDFPage.h in Sources */,
 				4907D1AC1812E2E200D893B4 /* PDFPageInput.cpp in Sources */,
-				4907D1AD1812E2E200D893B4 /* PDFPageInput.h in Sources */,
 				4907D1AE1812E2E200D893B4 /* PDFPageMergingHelper.cpp in Sources */,
-				4907D1AF1812E2E200D893B4 /* PDFPageMergingHelper.h in Sources */,
 				4907D1B01812E2E200D893B4 /* PDFParser.cpp in Sources */,
-				4907D1B11812E2E200D893B4 /* PDFParser.h in Sources */,
 				4907D1B21812E2E200D893B4 /* PDFParserTokenizer.cpp in Sources */,
-				4907D1B31812E2E200D893B4 /* PDFParserTokenizer.h in Sources */,
 				4907D1B41812E2E200D893B4 /* PDFReal.cpp in Sources */,
-				4907D1B51812E2E200D893B4 /* PDFReal.h in Sources */,
 				4907D1B61812E2E200D893B4 /* PDFRectangle.cpp in Sources */,
-				4907D1B71812E2E200D893B4 /* PDFRectangle.h in Sources */,
 				4907D1B81812E2E200D893B4 /* PDFStream.cpp in Sources */,
-				4907D1B91812E2E200D893B4 /* PDFStream.h in Sources */,
 				4907D1BA1812E2E200D893B4 /* PDFStreamInput.cpp in Sources */,
-				4907D1BB1812E2E200D893B4 /* PDFStreamInput.h in Sources */,
 				4907D1BC1812E2E200D893B4 /* PDFSymbol.cpp in Sources */,
-				4907D1BD1812E2E200D893B4 /* PDFSymbol.h in Sources */,
 				4907D1BE1812E2E200D893B4 /* PDFTextString.cpp in Sources */,
-				4907D1BF1812E2E200D893B4 /* PDFTextString.h in Sources */,
 				4907D1C01812E2E200D893B4 /* PDFUsedFont.cpp in Sources */,
-				4907D1C11812E2E200D893B4 /* PDFUsedFont.h in Sources */,
 				4907D1C21812E2E200D893B4 /* PDFWriter.cpp in Sources */,
-				4907D1C31812E2E200D893B4 /* PDFWriter.h in Sources */,
 				4907D1C41812E2E200D893B4 /* PFMFileReader.cpp in Sources */,
-				4907D1C51812E2E200D893B4 /* PFMFileReader.h in Sources */,
 				4907D1C61812E2E200D893B4 /* PrimitiveObjectsWriter.cpp in Sources */,
-				4907D1C71812E2E200D893B4 /* PrimitiveObjectsWriter.h in Sources */,
-				4907D1C81812E2E200D893B4 /* ProcsetResourcesConstants.h in Sources */,
 				4907D1C91812E2E200D893B4 /* PSBool.cpp in Sources */,
-				4907D1CA1812E2E200D893B4 /* PSBool.h in Sources */,
 				4907D1CB1812E2E200D893B4 /* RefCountObject.cpp in Sources */,
-				4907D1CC1812E2E200D893B4 /* RefCountObject.h in Sources */,
-				4907D1CD1812E2E200D893B4 /* RefCountPtr.h in Sources */,
 				4907D1CE1812E2E200D893B4 /* ResourcesDictionary.cpp in Sources */,
-				4907D1CF1812E2E200D893B4 /* ResourcesDictionary.h in Sources */,
-				4907D1D01812E2E200D893B4 /* SafeBufferMacrosDefs.h in Sources */,
-				4907D1D11812E2E200D893B4 /* Singleton.h in Sources */,
-				4907D1D21812E2E200D893B4 /* SingleValueContainerIterator.h in Sources */,
 				4907D1D31812E2E200D893B4 /* StandardEncoding.cpp in Sources */,
-				4907D1D41812E2E200D893B4 /* StandardEncoding.h in Sources */,
 				4907D1D51812E2E200D893B4 /* StateReader.cpp in Sources */,
-				4907D1D61812E2E200D893B4 /* StateReader.h in Sources */,
 				4907D1D71812E2E200D893B4 /* StateWriter.cpp in Sources */,
-				4907D1D81812E2E200D893B4 /* StateWriter.h in Sources */,
 				4907D1D91812E2E200D893B4 /* TIFFImageHandler.cpp in Sources */,
-				4907D1DA1812E2E200D893B4 /* TIFFImageHandler.h in Sources */,
 				4907D1DB1812E2E200D893B4 /* TiffUsageParameters.cpp in Sources */,
-				4907D1DC1812E2E200D893B4 /* TiffUsageParameters.h in Sources */,
 				4907D1DD1812E2E200D893B4 /* Trace.cpp in Sources */,
-				4907D1DE1812E2E200D893B4 /* Trace.h in Sources */,
 				4907D1DF1812E2E200D893B4 /* TrailerInformation.cpp in Sources */,
-				4907D1E01812E2E200D893B4 /* TrailerInformation.h in Sources */,
 				4907D1E11812E2E200D893B4 /* TrueTypeANSIFontWriter.cpp in Sources */,
-				4907D1E21812E2E200D893B4 /* TrueTypeANSIFontWriter.h in Sources */,
 				4907D1E31812E2E200D893B4 /* TrueTypeDescendentFontWriter.cpp in Sources */,
-				4907D1E41812E2E200D893B4 /* TrueTypeDescendentFontWriter.h in Sources */,
 				4907D1E51812E2E200D893B4 /* TrueTypeEmbeddedFontWriter.cpp in Sources */,
-				4907D1E61812E2E200D893B4 /* TrueTypeEmbeddedFontWriter.h in Sources */,
 				4907D1E71812E2E200D893B4 /* TrueTypePrimitiveWriter.cpp in Sources */,
-				4907D1E81812E2E200D893B4 /* TrueTypePrimitiveWriter.h in Sources */,
 				4907D1E91812E2E200D893B4 /* Type1Input.cpp in Sources */,
-				4907D1EA1812E2E200D893B4 /* Type1Input.h in Sources */,
 				4907D1EB1812E2E200D893B4 /* Type1ToCFFEmbeddedFontWriter.cpp in Sources */,
-				4907D1EC1812E2E200D893B4 /* Type1ToCFFEmbeddedFontWriter.h in Sources */,
 				4907D1ED1812E2E200D893B4 /* Type1ToType2Converter.cpp in Sources */,
-				4907D1EE1812E2E200D893B4 /* Type1ToType2Converter.h in Sources */,
 				4907D1EF1812E2E200D893B4 /* Type2CharStringWriter.cpp in Sources */,
-				4907D1F01812E2E200D893B4 /* Type2CharStringWriter.h in Sources */,
 				4907D1F11812E2E200D893B4 /* UnicodeString.cpp in Sources */,
-				4907D1F21812E2E200D893B4 /* UnicodeString.h in Sources */,
 				4907D1F31812E2E200D893B4 /* UppercaseSequance.cpp in Sources */,
-				4907D1F41812E2E200D893B4 /* UppercaseSequance.h in Sources */,
 				4907D1F51812E2E200D893B4 /* UsedFontsRepository.cpp in Sources */,
-				4907D1F61812E2E200D893B4 /* UsedFontsRepository.h in Sources */,
 				4907D1F71812E2E200D893B4 /* WinAnsiEncoding.cpp in Sources */,
-				4907D1F81812E2E200D893B4 /* WinAnsiEncoding.h in Sources */,
 				4907D1F91812E2E200D893B4 /* WrittenFontCFF.cpp in Sources */,
-				4907D1FA1812E2E200D893B4 /* WrittenFontCFF.h in Sources */,
-				4907D1FB1812E2E200D893B4 /* WrittenFontRepresentation.h in Sources */,
 				4907D1FC1812E2E200D893B4 /* WrittenFontTrueType.cpp in Sources */,
-				4907D1FD1812E2E200D893B4 /* WrittenFontTrueType.h in Sources */,
 				4907D1FE1812E2E200D893B4 /* XObjectContentContext.cpp in Sources */,
-				4907D1FF1812E2E200D893B4 /* XObjectContentContext.h in Sources */,
-				4907D2001812E2E200D893B4 /* pdf_hummus_renderer.hpp in Sources */,
 				4907D2011812E2E200D893B4 /* pdf_hummus_renderer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5570,7 +5246,9 @@
 				4910FA7516EB3E2F0088B175 /* post_convert.cpp in Sources */,
 				497822CD16EC86D40054F5BA /* tt_analyze.cpp in Sources */,
 				49FFB07B16EDF83A004A2A32 /* glyph_analyze.cpp in Sources */,
-				49FDFA6716F0C677002B830A /* metadata-ams.cpp in Sources */,
+				9CE5CF8A16EFDB55001A6292 /* guile_tm.cpp in Sources */,
+				9CE5CF8B16EFDB5B001A6292 /* glue.cpp in Sources */,
+				9CE5CF8C16EFDB5E001A6292 /* object.cpp in Sources */,
 				4964705316F72CB500D95FC4 /* font_guess.cpp in Sources */,
 				4964705616F72CB500D95FC4 /* smart_font.cpp in Sources */,
 				490A9D2816F8A5EC00EC29D5 /* metadata-revtex.cpp in Sources */,
@@ -5959,6 +5637,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		9C5A8165181DC74C00B9C03D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4907D0D71812E2BC00D893B4 /* PDFWriter */;
+			targetProxy = 9C5A8164181DC74C00B9C03D /* PBXContainerItemProxy */;
+		};
 		9CC614B210A99A8A0055F808 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 9CC6148A10A998BC0055F808 /* MOCs */;
@@ -5996,8 +5679,10 @@
 /* Begin XCBuildConfiguration section */
 		4907D0DA1812E2BC00D893B4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9C5A817C181DC97900B9C03D /* PDFWriter.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
@@ -6027,8 +5712,10 @@
 		};
 		4907D0DB1812E2BC00D893B4 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9C5A817C181DC97900B9C03D /* PDFWriter.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
@@ -6081,6 +5768,7 @@
 			baseConfigurationReference = 4937B89A1521C59E00D87F22 /* MOCs.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -6095,6 +5783,7 @@
 			baseConfigurationReference = 4937B89A1521C59E00D87F22 /* MOCs.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_VERSION = "";
@@ -6108,11 +5797,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C61B42E141A1B780035D78F /* TeXmacsCocoa.xcconfig */;
 			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = "$(HOME)/Applications";
+				SDKROOT = macosx10.8;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
 			};
@@ -6122,9 +5813,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C61B42E141A1B780035D78F /* TeXmacsCocoa.xcconfig */;
 			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = "$(HOME)/Applications";
+				SDKROOT = macosx10.8;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -6158,6 +5851,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C61B42F141A1B780035D78F /* TeXmacsQt.xcconfig */;
 			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
@@ -6174,6 +5868,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C61B42F141A1B780035D78F /* TeXmacsQt.xcconfig */;
 			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
@@ -6185,8 +5880,8 @@
 		};
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9C61B41E141A1B780035D78F /* Base.xcconfig */;
 			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CLANG_LINK_OBJC_RUNTIME = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_VERSION = "";
@@ -6200,8 +5895,8 @@
 		};
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9C61B41E141A1B780035D78F /* Base.xcconfig */;
 			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CLANG_LINK_OBJC_RUNTIME = NO;
 				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
