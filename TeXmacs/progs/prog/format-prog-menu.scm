@@ -67,7 +67,7 @@
   (if (new-fonts?)
       ("Font" (interactive open-font-selector)))
   (if (not (new-fonts?))
-      (-> "Font" (link text-font-menu)))
+      (-> "Font" (link prog-font-menu)))
   ("Paragraph" (open-paragraph-format))
   ("Page" (open-page-format))
   ---

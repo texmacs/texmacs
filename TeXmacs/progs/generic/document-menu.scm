@@ -131,6 +131,7 @@
       (if (font-exists-in-tt? "STIX-Regular")
           ("Stix" (init-env "font" "stix")))
       ---
+      ("Avant Garde" (init-env "font" "avant-garde"))
       ("Bookman" (init-env "font" "bookman"))
       ("Courier" (init-env "font" "courier"))
       ("Helvetica" (init-env "font" "helvetica"))
@@ -143,6 +144,10 @@
       ("Lucida" (init-env "font" "x-lucida"))
       (if (font-exists-in-tt? "luxirr")
           ("Luxi" (init-env "font" "luxi")))
+      (if (font-exists-in-tt? "texgyrepagella-regular")
+          ("Pagella" (init-env "font" "pagella")))
+      (if (font-exists-in-tt? "texgyretermes-regular")
+          ("Termes" (init-env "font" "termes")))
       ("Utopia" (init-env "font" "x-utopia"))
       (if (or (supports-chinese?)
               (supports-japanese?)
@@ -150,6 +155,14 @@
           ---
           (if (font-exists-in-tt? "Batang")
               ("Batang" (init-env "font" "batang")))
+          (if (font-exists-in-tt? "FandolFang")
+              ("FandolFang" (init-env "font" "FandolFang")))
+          (if (font-exists-in-tt? "FandolHei")
+              ("FandolHei" (init-env "font" "FandolHei")))
+          (if (font-exists-in-tt? "FandolKai")
+              ("FandolKai" (init-env "font" "FandolKai")))
+          (if (font-exists-in-tt? "FandolSong")
+              ("FandolSong" (init-env "font" "FandolSong")))
           (if (font-exists-in-tt? "fireflysung")
               ("Fireflysung" (init-env "font" "fireflysung")))
           (if (font-exists-in-tt? "AppleGothic")
@@ -172,7 +185,8 @@
               ("MicroHei" (init-env "font" "wqy-microhei")))
           (if (font-exists-in-tt? "mingliu")
               ("MingLiU" (init-env "font" "mingliu")))
-          (if (font-exists-in-tt? "PMingLiU")
+          (if (and (font-exists-in-tt? "PMingLiU")
+                   (not (font-exists-in-tt? "mingliu")))
               ("MingLiU" (init-env "font" "pmingliu")))	      
           (if (font-exists-in-tt? "MS Gothic")
               ("MS Gothic" (init-env "font" "ms-gothic")))
@@ -263,6 +277,114 @@
   ---
   (-> "Size" (link document-font-base-size-menu))
   (-> "Dpi" (link document-font-dpi-menu)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Short document font menu for focus bar
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (test-default-font?)
+  (test-default? "font"))
+
+(tm-define (init-default-font)
+  (:check-mark "*" test-default-font?)
+  (init-default "font")
+  (init-default "math-font"))
+
+(tm-define (test-init-font? val math-val)
+  (== (get-init "font") val))
+
+(tm-define (init-font val math-val)
+  (:check-mark "*" test-init-font?)
+  (init-env "font" val)
+  (init-env "math-font" math-val))
+
+(menu-bind document-short-chinese-font-menu
+  (if (font-exists-in-tt? "AppleGothic")
+      ("Apple Gothic" (init-env "font" "apple-gothic")))
+  (if (font-exists-in-tt? "FandolSong")
+      ("FandolSong" (init-env "font" "FandolSong")))
+  (if (font-exists-in-tt? "fireflysung")
+      ("Fireflysung" (init-env "font" "fireflysung")))
+  (if (font-exists-in-tt? "wqy-microhei")
+      ("MicroHei" (init-env "font" "wqy-microhei")))
+  (if (font-exists-in-tt? "MS Gothic")
+      ("MS Gothic" (init-env "font" "ms-gothic")))
+  (if (font-exists-in-tt? "MS Mincho")
+      ("MS Mincho" (init-env "font" "ms-mincho")))
+  (if (font-exists-in-tt? "simsun")
+      ("SimSun" (init-env "font" "simsun")))
+  (if (font-exists-in-tt? "uming")
+      ("UMing" (init-env "font" "uming")))
+  (if (font-exists-in-tt? "wqy-zenhei")
+      ("ZenHei" (init-env "font" "wqy-zenhei"))))
+
+(menu-bind document-short-japanese-font-menu
+  (if (font-exists-in-tt? "AppleGothic")
+      ("Apple Gothic" (init-env "font" "apple-gothic")))
+  (if (font-exists-in-tt? "华文细黑")
+      ("HeiTi" (init-env "font" "heiti")))
+  (if (font-exists-in-tt? "ヒラギノ明朝 ProN W6")
+      ("Hiragino Kaku" (init-env "font" "kaku")))
+  (if (font-exists-in-tt? "ipam")
+      ("Ipa" (init-env "font" "ipa")))
+  (if (font-exists-in-tt? "ttf-japanese-gothic")
+      ("Japanese" (init-env "font" "ttf-japanese")))
+  (if (font-exists-in-tt? "sazanami-gothic")
+      ("Sazanami" (init-env "font" "sazanami")))
+  (if (font-exists-in-tt? "ukai")
+      ("UKai" (init-env "font" "ukai"))))
+
+(menu-bind document-short-korean-font-menu
+  (if (font-exists-in-tt? "AppleGothic")
+      ("Apple Gothic" (init-env "font" "apple-gothic")))
+  (if (font-exists-in-tt? "Batang")
+      ("Batang" (init-env "font" "batang")))
+  (if (font-exists-in-tt? "Gulim")
+      ("Gulim" (init-env "font" "gulim")))
+  (if (font-exists-in-tt? "unbatang")
+      ("Unbatang" (init-env "font" "unbatang"))))
+
+(menu-bind document-short-font-menu
+  ("Default" (init-default-font))
+  ---
+  ("Concrete" (init-font "concrete" "concrete"))
+  ("Roman" (init-font "roman" "roman"))
+  ("Stix" (init-font "stix" "math-stix"))
+  ---
+  ("Avant Garde" (init-env "font" "avant-garde"))
+  ("Bookman" (init-env "font" "bookman"))
+  ("Courier" (init-env "font" "courier"))
+  ("Helvetica" (init-env "font" "helvetica"))
+  ("NC Schoolbook" (init-env "font" "new-century-schoolbook"))
+  ("Palatino" (init-env "font" "palatino"))
+  ("Times" (init-env "font" "times"))
+  (if (or (font-exists-in-tt? "DejaVuSerif")
+          (font-exists-in-tt? "texgyrepagella-math")
+          (font-exists-in-tt? "texgyretermes-math"))
+      ---
+      (if (font-exists-in-tt? "DejaVuSerif")
+          ("Dejavu" (init-font "dejavu" "math-dejavu")))
+      (if (font-exists-in-tt? "texgyrepagella-math")
+          ("Pagella" (init-font "pagella" "math-pagella")))
+      (if (font-exists-in-tt? "texgyretermes-math")
+          ("Termes" (init-font "termes" "math-termes"))))
+  (if (and (supports-chinese?) (== (get-init "language") "chinese"))
+      ---
+      (link document-short-chinese-font-menu))
+  (if (and (supports-japanese?) (== (get-init "language") "japanese"))
+      ---
+      (link document-short-japanese-font-menu))
+  (if (and (supports-korean?) (== (get-init "language") "korean"))
+      ---
+      (link document-short-korean-font-menu))
+  (if (and (supports-chinese?) (== (get-init "language") "taiwanese"))
+      ---
+      (link document-short-chinese-font-menu))
+  ---
+  (if (and (new-fonts?) (use-popups?))
+      ("Other" (open-font-selector)))
+  (if (not (and (new-fonts?) (use-popups?)))
+      (-> "Other" (link document-font-menu))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Document -> Paragraph menu
@@ -715,8 +837,8 @@
       ("Two columns" (init-env "par-columns" "2")))
   (-> (eval (upcase-first (get-init "language")))
       (link document-language-menu))
-  ((eval (upcase-first (get-init "font")))
-   (interactive open-document-font-selector)))
+  (-> (eval (upcase-first (get-init "font")))
+      (link document-short-font-menu)))
 
 (tm-menu (standard-focus-menu t)
   (:require (tree-is-buffer? t))
@@ -770,6 +892,9 @@
     (=> (balloon (eval (string-append (get-init "font-base-size") "pt"))
                  "Font size")
         (link document-font-base-size-menu))
+    (=> (balloon (eval (upcase-first (get-init "font")))
+                 "Main document font")
+        (link document-short-font-menu))
     (=> (balloon (icon (eval (current-page-icon))) "Page layout")
         ("Portrait" (init-page-orientation "portrait"))
         ("Landscape" (init-page-orientation "landscape"))
@@ -777,10 +902,7 @@
         ("One column" (init-env "par-columns" "1"))
         ("Two columns" (init-env "par-columns" "2")))
     (=> (balloon (icon (eval (current-language-icon))) "Document language")
-        (link document-language-menu))
-    (if (new-fonts?)
-        ((balloon (icon "tm_focus_font.xpm") "Main font")
-         (interactive open-document-font-selector)))))
+        (link document-language-menu))))
 
 (tm-menu (standard-focus-icons t)
   (:require (tree-is-buffer? t))

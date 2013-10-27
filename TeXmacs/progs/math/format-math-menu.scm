@@ -151,7 +151,7 @@
   (if (new-fonts?)
       ("Font" (interactive open-font-selector)))
   (if (not (new-fonts?))
-      (-> "Font" (link text-font-menu)))
+      (-> "Font" (link math-font-menu)))
   (-> "Mathematics" (link math-special-format-menu))
   ---
   (-> "Whitespace" (link horizontal-space-menu))

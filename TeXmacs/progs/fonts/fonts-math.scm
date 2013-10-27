@@ -183,17 +183,17 @@
     ((roman it $a $b $s $d) (math-var ecti cmti cmmi $s $d))
     ((roman sl $a $b $s $d) (math-var ecsl cmsl cmmi $s $d))
 
-    ((concrete mr medium right $s $d) (math-conc eorm ccr xccmi $s $d))
-    ((concrete mr bold right $s $d) (bold-math-std ecbx cmbx cmmib $s $d))
-    ((concrete ms light right $s $d) (math-bright cmbr cmbr cmbrmi $s $d))
-    ((concrete ms medium right $s $d) (math-std ecss cmss cmssi $s $d))
-    ((concrete ms bold right $s $d) (math-std ecsx cmssbx cmmib $s $d))
-    ((concrete mt medium right $s $d) (math-std ectt cmtt cmitt $s $d))
-    ((concrete mr medium $a $s $d) (math-conc-var eorm ccr xcmmi $s $d))
-    ((concrete mr bold $a $s $d) (math-conc-var ecbx cmbx cmmib $s $d))
-    ((concrete ms medium $a $s $d) (math-alt ecss ecsi cmss cmmi $s $d))
-    ((concrete ms bold $a $s $d) (math-alt ecsx ecso cmssbx cmmib $s $d))
-    ((concrete mt medium $a $s $d) (math-alt ectt ecst cmtt cmmi $s $d))
+    ((concrete mr medium right $s $d) (math-conc-var eorm ccr xcmmi $s $d))
+    ((concrete mr bold right $s $d) (math-conc-var ecbx cmbx cmmib $s $d))
+    ((concrete ms medium right $s $d) (math-alt ecss ecsi cmss cmmi $s $d))
+    ((concrete ms bold right $s $d) (math-alt ecsx ecso cmssbx cmmib $s $d))
+    ((concrete mt medium right $s $d) (math-alt ectt ecst cmtt cmmi $s $d))
+    ((concrete mr medium $a $s $d) (math-conc eorm ccr xccmi $s $d))
+    ((concrete mr bold $a $s $d) (bold-math-std ecbx cmbx cmmib $s $d))
+    ((concrete ms light $a $s $d) (math-bright cmbr cmbr cmbrmi $s $d))
+    ((concrete ms medium $a $s $d) (math-std ecss cmss cmssi $s $d))
+    ((concrete ms bold $a $s $d) (math-std ecsx cmssbx cmmib $s $d))
+    ((concrete mt medium $a $s $d) (math-std ectt cmtt cmitt $s $d))
 
     ((concrete trm medium $a $s $d) (math-conc-var eorm ccr xcmmi $s $d))
     ((concrete trm bold $a $s $d) (math-conc-var ecbx cmbx cmmib $s $d))
@@ -375,13 +375,37 @@
      (unicode $bit $s $d)
      (roman $t $a $b $s $d)))
 
-   ((math-pagella $t $a $b $s $d)
+   ;;((math-pagella $t bold right $s $d)
+   ;; (unicode-math texgyrepagella-bold texgyrepagella-bold
+   ;;		  texgyrepagella-bold texgyrepagella-bold
+   ;;		  $t $a $b $s $d))
+   ((math-pagella $t $a right $s $d)
     (unicode-math texgyrepagella-math texgyrepagella-math
+		  texgyrepagella-bold texgyrepagella-bold
+		  $t $a $b $s $d))
+   ;;((math-pagella $t bold $b $s $d)
+   ;; (unicode-math texgyrepagella-bold texgyrepagella-bolditalic
+   ;;		  texgyrepagella-bold texgyrepagella-bolditalic
+   ;;		  $t $a $b $s $d))
+   ((math-pagella $t $a $b $s $d)
+    (unicode-math texgyrepagella-math texgyrepagella-italic
 		  texgyrepagella-bold texgyrepagella-bolditalic
 		  $t $a $b $s $d))
 
-   ((math-termes $t $a $b $s $d)
+   ;;((math-termes $t bold right $s $d)
+   ;; (unicode-math texgyretermes-bold texgyretermes-bold
+   ;;		  texgyretermes-bold texgyretermes-bold
+   ;;		  $t $a $b $s $d))
+   ((math-termes $t $a right $s $d)
     (unicode-math texgyretermes-math texgyretermes-math
+		  texgyretermes-bold texgyretermes-bold
+		  $t $a $b $s $d))
+   ;;((math-termes $t bold $b $s $d)
+   ;; (unicode-math texgyretermes-bold texgyretermes-bolditalic
+   ;;		  texgyretermes-bold texgyretermes-bolditalic
+   ;;		  $t $a $b $s $d))
+   ((math-termes $t $a $b $s $d)
+    (unicode-math texgyretermes-math texgyretermes-italic
 		  texgyretermes-bold texgyretermes-bolditalic
 		  $t $a $b $s $d))
 

@@ -313,6 +313,7 @@
              (fonts fonts-composite) (fonts fonts-truetype))
 (lazy-define (fonts font-selector)
              open-font-selector open-document-font-selector)
+(tm-property (open-font-selector) (:interactive #t))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "------------------------------------------------------\n")
