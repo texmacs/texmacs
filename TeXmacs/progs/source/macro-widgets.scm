@@ -108,8 +108,8 @@
       >>
       (explicit-buttons
         ("Apply" (macro-apply u))
-        //
-        ("Ok" (begin (macro-apply u) (quit)))))))
+        // //
+        ("Ok" (macro-apply u) (quit))))))
 
 (tm-define (editable-macro? l)
   (if (symbol? l) (set! l (symbol->string l)))
@@ -187,8 +187,8 @@
       >>
       (explicit-buttons
         ("Apply" (macro-apply u))
-	//
-	("Ok" (begin (macro-apply u) (quit)))))))
+	// //
+	("Ok" (macro-apply u) (quit))))))
 
 (define (get-key key-val)
   (tree->string (tree-ref key-val 0)))

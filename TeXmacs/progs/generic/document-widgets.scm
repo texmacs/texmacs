@@ -84,10 +84,10 @@
     (explicit-buttons
       (hlist
         >>>
-        ("Reset" (begin
-                   (initial-default u "src-style" "src-special"
-                                      "src-compact" "src-close")
-                   (refresh-now "source-tree-preferences")))
+        ("Reset"
+         (initial-default u "src-style" "src-special"
+                            "src-compact" "src-close")
+         (refresh-now "source-tree-preferences"))
         // //
         ("Ok" (quit))))))
 
@@ -107,7 +107,7 @@
          (new (get-init-table paragraph-parameters))
          (u   (current-buffer)))
     (set! paragraph-cur-settings new)
-    (dialogue-window (paragraph-formatter old new init-multi u)
+    (dialogue-window (paragraph-formatter old new init-multi u #t)
                      noop "Document paragraph format")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -163,11 +163,10 @@
    (hlist
      >>>
      ("Reset"
-      (begin
-        (initial-default u "page-medium" "page-type" "page-orientation"
-                           "page-width" "page-height")
-        (refresh-now "page-format-settings")
-        (refresh-now "page-user-format-settings")))
+      (initial-default u "page-medium" "page-type" "page-orientation"
+                         "page-width" "page-height")
+      (refresh-now "page-format-settings")
+      (refresh-now "page-user-format-settings"))
      // //
      ("Ok" (quit)))))
 
@@ -256,16 +255,15 @@
    (hlist
      >>>
      ("Reset"
-      (begin
-        (initial-default u "page-odd" "page-even" "page-right"
-                           "page-top" "page-bot" "par-width"
-                           "page-odd-shift" "page-even-shift"
-                           "page-screen-left" "page-screen-right"
-                           "page-screen-top" "page-screen-bot"
-                           "page-width-margin" "page-screen-margin")
-        (refresh-now "page-margin-toggles")
-        (refresh-now "page-margin-settings")
-        (refresh-now "page-screen-margin-settings")))
+      (initial-default u "page-odd" "page-even" "page-right"
+                         "page-top" "page-bot" "par-width"
+                         "page-odd-shift" "page-even-shift"
+                         "page-screen-left" "page-screen-right"
+                         "page-screen-top" "page-screen-bot"
+                         "page-width-margin" "page-screen-margin")
+      (refresh-now "page-margin-toggles")
+      (refresh-now "page-margin-settings")
+      (refresh-now "page-screen-margin-settings"))
      // //
      ("Ok" (quit)))))
 
@@ -301,10 +299,9 @@
    (hlist
      >>>
      ("Reset"
-      (begin
-        (initial-default u "page-breaking" "page-shrink"
-                           "page-extend" "page-flexibility")
-        (refresh-now "page-breaking-settings")))
+      (initial-default u "page-breaking" "page-shrink"
+                         "page-extend" "page-flexibility")
+      (refresh-now "page-breaking-settings"))
      // //
      ("Ok" (quit)))))
 
@@ -359,9 +356,8 @@
      ("Page number" (when (editing-headers?) (make 'page-the-page)))
      >>>
      ;;("Reset"
-     ;; (begin
-     ;;   (initial-default u header-parameters)
-     ;;   (refresh-now "page-header-settings")))
+     ;; (initial-default u header-parameters)
+     ;; (refresh-now "page-header-settings"))
      ;;// //
      ("Ok" (apply-headers-settings u) (quit)))))
 
@@ -416,9 +412,9 @@
     (explicit-buttons
       (hlist
         >>>
-        ("Reset" (begin
-                   (initial-default u "bg-color" "color")
-                   (refresh-now "page-colors")))
+        ("Reset"
+         (initial-default u "bg-color" "color")
+         (refresh-now "page-colors"))
         // //
         ("Ok" (quit))))))
 

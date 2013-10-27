@@ -150,19 +150,29 @@
         (toggle (ahash-set! new "par-kerning-margin" (if answer "true" "false"))
                 (== (ahash-ref new "par-kerning-margin") "true"))))))
 
-(tm-widget ((paragraph-formatter old new fun u) quit)
+(tm-widget ((paragraph-formatter old new fun u flag?) quit)
   (padded
-    (tabs
-      (tab (text "Basic")
-        (padded
-          (dynamic (paragraph-formatter-basic old new))))
-      (tab (text "Advanced")
-        (padded
-          (dynamic (paragraph-formatter-advanced old new)))))
+    (refreshable "paragraph-formatter"
+      (tabs
+        (tab (text "Basic")
+          (padded
+            (dynamic (paragraph-formatter-basic old new))))
+        (tab (text "Advanced")
+          (padded
+            (dynamic (paragraph-formatter-advanced old new))))))
     === ===
     (explicit-buttons
       (hlist
         >>>
+        (if flag?
+            ("Reset"
+             (apply init-default paragraph-parameters)
+             (with t (get-init-table paragraph-parameters)
+               (for (key (map car (ahash-table->list t)))
+                 (ahash-set! old key (ahash-ref t key))
+                 (ahash-set! new key (ahash-ref t key))))
+             (refresh-now "paragraph-formatter"))
+            // //)
         ("Apply"
          (when (== u (current-buffer))
            (fun (differences-list old new))
@@ -180,7 +190,7 @@
          (new (get-env-table paragraph-parameters))
          (u   (current-buffer)))
     (set! paragraph-cur-settings new)
-    (dialogue-window (paragraph-formatter old new make-multi-line-with u)
+    (dialogue-window (paragraph-formatter old new make-multi-line-with u #f)
                      noop "Paragraph format")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
