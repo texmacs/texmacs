@@ -28,15 +28,15 @@
     </src-comment>
   </active*>
 
-  <assign|edit-tag|<\macro|name|body>
+  <assign|edit-tag|<\macro|tag-name|tag-body>
     <\with|par-first|0fn|par-par-sep|0.5em>
-      <src-var|<arg|name>> <math|\<assign\>>
+      <src-var|<arg|tag-name>> <math|\<assign\>>
 
-      <arg|body>
+      <arg|tag-body>
     </with>
   </macro>>
 
-  <assign|edit-macro|<xmacro|args|<extern|ext-edit-macro|<quote-arg|args>>>>
+  <assign|edit-macro|<xmacro|macro-args|<extern|ext-edit-macro|<quote-arg|macro-args>>>>
 
   <drd-props|edit-tag|arity|2|accessible|all|border|no>
 
