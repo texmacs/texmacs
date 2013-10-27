@@ -71,7 +71,7 @@
 
 */
 
-#ifndef NO_TIFF
+#ifndef PDFHUMMUS_NO_TIFF
 
 #include "TIFFImageHandler.h"
 #include "Trace.h"
@@ -363,7 +363,7 @@ void ReportWarning(const char* inModel, const char* inFormat, va_list inParamete
 
 	SAFE_VSPRINTF(buffer,5001,formatter.str().c_str(),inParametersList);
 
-	Singleton<Trace>::GetInstance()->TraceToLog(buffer);
+    Trace::DefaultTrace.TraceToLog(buffer);
 }
 
 void ReportError(const char* inModel, const char* inFormat, va_list inParametersList)
@@ -374,7 +374,7 @@ void ReportError(const char* inModel, const char* inFormat, va_list inParameters
 
 	SAFE_VSPRINTF(buffer,5001,formatter.str().c_str(),inParametersList);
 
-	Singleton<Trace>::GetInstance()->TraceToLog(buffer);
+	Trace::DefaultTrace.TraceToLog(buffer);
 }
 
 TIFFImageHandler::TIFFImageHandler():mUserParameters(TIFFUsageParameters::DefaultTIFFUsageParameters)
@@ -1810,7 +1810,7 @@ void TIFFImageHandler::WriteXObjectCS(DictionaryContext* inContainerDictionary)
 		return;
 	}
 
-	if(mT2p->pdf_colorspace & T2P_CS_BILEVEL && !mUserParameters.BWTreatment.AsImageMask)
+	if((mT2p->pdf_colorspace & T2P_CS_BILEVEL) && !mUserParameters.BWTreatment.AsImageMask)
 	{
 		if(inContainerDictionary)
 			inContainerDictionary->WriteNameValue(scDeviceGray);
@@ -2655,11 +2655,10 @@ void TIFFImageHandler::TileCollapseLeft(tdata_t inBuffer, tsize_t inScanWidth,
 										uint32 inTileWidth, uint32 inEdgeTileWidth, 
 										uint32 inTileLength)
 {
-	uint32 i=0;
 	tsize_t edgescanwidth=0;
 	
 	edgescanwidth = (inScanWidth * inEdgeTileWidth + (inTileWidth - 1))/ inTileWidth;
-	for(i=i;i<inTileLength;i++)
+	for(uint32 i=0;i<inTileLength;i++)
 	{
 		_TIFFmemcpy( 
 			&(((char*)inBuffer)[edgescanwidth*i]), 
@@ -2738,7 +2737,7 @@ void TIFFImageHandler::WriteCommonImageDictionaryProperties(DictionaryContext* i
 	inImageContext->WriteIntegerValue(mT2p->tiff_bitspersample);
 
 	// color space
-	if(!mT2p->pdf_colorspace & T2P_CS_BILEVEL || !mUserParameters.BWTreatment.AsImageMask)
+	if(!(mT2p->pdf_colorspace & T2P_CS_BILEVEL) || !mUserParameters.BWTreatment.AsImageMask)
 	{
 		inImageContext->WriteKey(scColorSpace);
 		WriteXObjectCS(inImageContext);
@@ -3216,7 +3215,7 @@ PDFFormXObject* TIFFImageHandler::WriteImagesFormXObject(const PDFImageXObjectLi
 		}
 
 		// BiLevel tiff image handling, set the color to the "1" color 
-		if(mT2p->pdf_colorspace & T2P_CS_BILEVEL && mUserParameters.BWTreatment.AsImageMask)
+		if((mT2p->pdf_colorspace & T2P_CS_BILEVEL) && mUserParameters.BWTreatment.AsImageMask)
 		{
 			xobjectContentContext->q();
 			if(mUserParameters.BWTreatment.OneColor.UseCMYK)
@@ -3262,7 +3261,7 @@ PDFFormXObject* TIFFImageHandler::WriteImagesFormXObject(const PDFImageXObjectLi
 			xobjectContentContext->Q();
 		}
 		if(mT2p->tiff_transferfunctioncount != 0 || 
-			(mT2p->pdf_colorspace & T2P_CS_BILEVEL && mUserParameters.BWTreatment.AsImageMask))
+			((mT2p->pdf_colorspace & T2P_CS_BILEVEL) && mUserParameters.BWTreatment.AsImageMask))
 			xobjectContentContext->Q();
 
 		status = mContainerDocumentContext->EndFormXObjectNoRelease(xobjectForm);
@@ -3508,6 +3507,71 @@ PDFFormXObject* TIFFImageHandler::CreateFormXObjectFromTIFFStream(	IByteReaderWi
 		TIFFClose(input);
 
 	return imageFormXObject;
+}
+
+DoubleAndDoublePair TIFFImageHandler::ReadImageDimensions(IByteReaderWithPosition* inTIFFStream,unsigned long inImageIndex)
+{
+	TIFF* input = NULL;
+    DoubleAndDoublePair result(-1,-1);
+    EStatusCode status;
+    
+	do
+	{
+		TIFFSetErrorHandler(ReportError);
+		TIFFSetWarningHandler(ReportWarning);
+        
+		StreamWithPos streamInfo;
+		streamInfo.mStream = inTIFFStream;
+		streamInfo.mOriginalPosition = inTIFFStream->GetCurrentPosition();
+		
+		input = TIFFClientOpen("Stream","r",(thandle_t)&streamInfo,STATIC_streamRead,
+                               STATIC_streamWrite,
+                               STATIC_streamSeek,
+                               STATIC_streamClose,
+                               STATIC_tiffSize,
+                               STATIC_tiffMap,
+                               STATIC_tiffUnmap);
+		if(!input)
+		{
+			TRACE_LOG("TIFFImageHandler::ReadImageDimensions. cannot open stream for reading");
+			break;
+		}
+        
+        
+		InitializeConversionState();
+		mT2p->input = input;
+		mT2p->inputFilePath = "";
+		mT2p->pdf_page = inImageIndex;
+        
+        
+        status = ReadTopLevelTiffInformation();
+        if(status != PDFHummus::eSuccess)
+            break;
+            
+        if(mT2p->pdf_page >= mT2p->tiff_pagecount)
+        {
+            TRACE_LOG3(
+                           "TIFFImageHandler::ReadImageDimensions, Requested tiff page %u where the tiff only has %u pages. Tiff file name - %s",
+                           mT2p->pdf_page,
+                           mT2p->tiff_pagecount,
+                           mT2p->inputFilePath.c_str());
+            status = PDFHummus::eFailure;
+            break;
+        }
+        
+        status = ReadTIFFPageInformation();
+        if(status != PDFHummus::eSuccess)
+            break;
+        result.first = mT2p->pdf_mediabox.x2 - mT2p->pdf_mediabox.x1;
+        result.second = mT2p->pdf_mediabox.y2 - mT2p->pdf_mediabox.y1;
+		      
+	}while(false);
+    
+	DestroyConversionState();
+	if(input != NULL)
+		TIFFClose(input);
+    
+    return result;
 }
 
 #endif

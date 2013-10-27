@@ -114,7 +114,7 @@ void PDFWriter::Cleanup()
 {
 	mObjectsContext.Cleanup();
 	mDocumentContext.Cleanup();
-	ReleaseLog();
+	//ReleaseLog();
 }
 
 void PDFWriter::Reset()
@@ -149,9 +149,9 @@ EStatusCode PDFWriter::WritePageAndRelease(PDFPage* inPage)
 void PDFWriter::SetupLog(const LogConfiguration& inLogConfiguration)
 {
 	if(inLogConfiguration.LogStream)
-		Singleton<Trace>::GetInstance()->SetLogSettings(inLogConfiguration.LogStream,inLogConfiguration.ShouldLog);
+		Trace::DefaultTrace.SetLogSettings(inLogConfiguration.LogStream,inLogConfiguration.ShouldLog);
 	else
-		Singleton<Trace>::GetInstance()->SetLogSettings(inLogConfiguration.LogFileLocation,inLogConfiguration.ShouldLog,inLogConfiguration.StartWithBOM);
+		Trace::DefaultTrace.SetLogSettings(inLogConfiguration.LogFileLocation,inLogConfiguration.ShouldLog,inLogConfiguration.StartWithBOM);
 }
 
 void PDFWriter::SetupObjectsContext(const PDFCreationSettings& inPDFCreationSettings)
@@ -161,7 +161,7 @@ void PDFWriter::SetupObjectsContext(const PDFCreationSettings& inPDFCreationSett
 
 void PDFWriter::ReleaseLog()
 {
-	Singleton<Trace>::Reset();
+	//Singleton<Trace>::Reset();
 }
 
 DocumentContext& PDFWriter::GetDocumentContext()
@@ -204,6 +204,10 @@ PDFFormXObject* PDFWriter::StartFormXObject(const PDFRectangle& inBoundingBox,Ob
 	return mDocumentContext.StartFormXObject(inBoundingBox,inFormXObjectID,inMatrix);
 }
 
+EStatusCode PDFWriter::EndFormXObject(PDFFormXObject* inFormXObject)
+{
+	return mDocumentContext.EndFormXObject(inFormXObject);
+}
 
 EStatusCode PDFWriter::EndFormXObjectAndRelease(PDFFormXObject* inFormXObject)
 {
@@ -220,7 +224,7 @@ PDFFormXObject* PDFWriter::CreateFormXObjectFromJPGFile(const std::string& inJPG
 	return mDocumentContext.CreateFormXObjectFromJPGFile(inJPGFilePath); 
 }
 
-#ifndef NO_TIFF
+#ifndef PDFHUMMUS_NO_TIFF
 PDFFormXObject* PDFWriter::CreateFormXObjectFromTIFFFile(const std::string& inTIFFFilePath,const TIFFUsageParameters& inTIFFUsageParameters)
 {
 	return mDocumentContext.CreateFormXObjectFromTIFFFile(inTIFFFilePath,inTIFFUsageParameters); 
@@ -369,7 +373,7 @@ EStatusCode PDFWriter::Shutdown(const std::string& inStateFilePath)
 	}
 	else
 		status = mOutputFile.CloseFile();
-	ReleaseLog();
+	//ReleaseLog();
 	return status;
 }
 

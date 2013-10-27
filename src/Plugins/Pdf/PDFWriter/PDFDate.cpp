@@ -21,7 +21,7 @@
 #include "PDFDate.h"
 #include "SafeBufferMacrosDefs.h"
 #include "Trace.h"
-#if defined (__MWERKS__) || defined (__GNUC__)
+#if defined (__MWERKS__)
 	// MAC OSX methods for providing UTC difference
 	#include <CoreFoundation/CFDate.h>
 	#include <CoreFoundation/CFTimeZone.h>
@@ -29,6 +29,7 @@
 
 #include <ctime>
 #include <math.h>
+#include <stdlib.h>
 
 PDFDate::PDFDate(void)
 {
@@ -195,9 +196,25 @@ void PDFDate::SetToCurrentTime()
 	// if unsuccesful or method unknown don't provide UTC info (currently only knows for WIN32 and OSX
 #if defined (__MWERKS__) || defined (__GNUC__) || defined(WIN32)
 	int status;
-#ifdef WIN32 // (using MS methods)
+#if defined(WIN32) // (using MS methods)
 	status = _get_timezone(&timeZoneSecondsDifference);
-#else // gnuc or mwerks (using OSX methods)
+#elif defined (__GNUC__)
+	struct tm *gmTime;
+
+	time_t localEpoch, gmEpoch;
+
+	/*First get local epoch time*/
+	localEpoch = time(NULL);
+
+	/* Using local time epoch get the GM Time */
+	gmTime = gmtime(&localEpoch);
+
+	/* Convert gm time in to epoch format */
+	gmEpoch = mktime(gmTime);
+
+	timeZoneSecondsDifference =difftime(gmEpoch, localEpoch);
+	status = 0;
+#else // __MWERKS__ (using OSX methods)
 	CFTimeZoneRef tzRef = ::CFTimeZoneCopySystem();
 	if (tzRef)
 	{
@@ -225,6 +242,7 @@ void PDFDate::SetToCurrentTime()
 	}
 	else
 	{
+		UTC = eUndefined;
 		TRACE_LOG("PDFDate::SetToCurrentTime, Couldn't get UTC.");
 	}
 

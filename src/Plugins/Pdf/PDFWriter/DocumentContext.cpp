@@ -46,6 +46,7 @@
 #include "PDFName.h"
 #include "IResourceWritingTask.h"
 #include "IFormEndWritingTask.h"
+#include "IPageEndWritingTask.h"
 
 
 using namespace PDFHummus;
@@ -68,7 +69,7 @@ void DocumentContext::SetObjectsContext(ObjectsContext* inObjectsContext)
 	mJPEGImageHandler.SetOperationsContexts(this,mObjectsContext);
 	mPDFDocumentHandler.SetOperationsContexts(this,mObjectsContext);
 	mUsedFontsRepository.SetObjectsContext(mObjectsContext);
-#ifndef NO_TIFF
+#ifndef PDFHUMMUS_NO_TIFF
 	mTIFFImageHandler.SetOperationsContexts(this,mObjectsContext);
 #endif
 }
@@ -665,7 +666,25 @@ EStatusCodeAndObjectIDType DocumentContext::WritePage(PDFPage* inPage)
 			TRACE_LOG("DocumentContext::WritePage, unexpected failure. Failed to end dictionary in page write.");
 			break;
 		}
-		mObjectsContext->EndIndirectObject();	
+		mObjectsContext->EndIndirectObject();
+        
+        // now write writing tasks
+        PDFPageToIPageEndWritingTaskListMap::iterator itPageTasks= mPageEndTasks.find(inPage);
+        
+        result.first = eSuccess;
+        if(itPageTasks != mPageEndTasks.end())
+        {
+            IPageEndWritingTaskList::iterator itTasks = itPageTasks->second.begin();
+            
+            for(; itTasks != itPageTasks->second.end() && eSuccess == result.first; ++itTasks)
+                result.first = (*itTasks)->Write(inPage,mObjectsContext,this);
+            
+            // one time, so delete
+            for(itTasks = itPageTasks->second.begin(); itTasks != itPageTasks->second.end(); ++itTasks)
+                delete (*itTasks);
+            mPageEndTasks.erase(itPageTasks);
+        }
+        
 	}while(false);
 
 	return result;
@@ -848,6 +867,12 @@ EStatusCode DocumentContext::EndFormXObjectNoRelease(PDFFormXObject* inFormXObje
     
 	return status;
 }
+
+EStatusCode DocumentContext::EndFormXObject(PDFFormXObject* inFormXObject)
+{
+	return EndFormXObjectNoRelease(inFormXObject);
+}
+
 
 EStatusCode DocumentContext::EndFormXObjectAndRelease(PDFFormXObject* inFormXObject)
 {
@@ -1032,7 +1057,7 @@ JPEGImageHandler& DocumentContext::GetJPEGImageHandler()
 	return mJPEGImageHandler;
 }
 
-#ifndef NO_TIFF
+#ifndef PDFHUMMUS_NO_TIFF
 PDFFormXObject* DocumentContext::CreateFormXObjectFromTIFFFile(	const std::string& inTIFFFilePath,
 																const TIFFUsageParameters& inTIFFUsageParameters)
 {
@@ -1301,7 +1326,7 @@ void DocumentContext::WriteDateState(ObjectsContext* inStateWriter,const PDFDate
 
 void DocumentContext::WriteCatalogInformationState(ObjectsContext* inStateWriter,ObjectIDType inObjectID)
 {
-	ObjectIDType rootNodeID;
+	ObjectIDType rootNodeID = 0;
 	if(mCatalogInformation.GetCurrentPageTreeNode())
 	{
 		rootNodeID = inStateWriter->GetInDirectObjectsRegistry().AllocateNewObjectID();
@@ -1768,13 +1793,16 @@ void DocumentContext::Cleanup()
 	mTrailerInformation.Reset();
 	mCatalogInformation.Reset();
 	mJPEGImageHandler.Reset();
-#ifndef NO_TIFF
+#ifndef PDFHUMMUS_NO_TIFF
 	mTIFFImageHandler.Reset();
 #endif
 	mUsedFontsRepository.Reset();
 	mOutputFilePath.clear();
 	mExtenders.clear();
 	mAnnotations.clear();
+    PDFDocumentCopyingContextSet::iterator it = mCopyingContexts.begin();
+	for(; it != mCopyingContexts.end(); ++it)
+		(*it)->ReleaseDocumentContextReference();
 	mCopyingContexts.clear();
     mModifiedDocumentIDExists = false;
     
@@ -1799,6 +1827,18 @@ void DocumentContext::Cleanup()
         
     }
     mFormEndTasks.clear();
+    
+    PDFPageToIPageEndWritingTaskListMap::iterator itPageEnd = mPageEndTasks.begin();
+    
+    for(; itPageEnd != mPageEndTasks.end();++itPageEnd)
+    {
+        IPageEndWritingTaskList::iterator itPageEndWritingTasks = itPageEnd->second.begin();
+        for(; itPageEndWritingTasks != itPageEnd->second.end(); ++itPageEndWritingTasks)
+            delete *itPageEndWritingTasks;
+        
+    }
+    mPageEndTasks.clear();
+
 }
 
 void DocumentContext::SetParserExtender(IPDFParserExtender* inParserExtender)
@@ -2291,3 +2331,15 @@ void DocumentContext::RegisterFormEndWritingTask(PDFFormXObject* inFormXObject,I
     it->second.push_back(inWritingTask);    
 }
 
+void DocumentContext::RegisterPageEndWritingTask(PDFPage* inPage,IPageEndWritingTask* inWritingTask)
+{
+    PDFPageToIPageEndWritingTaskListMap::iterator it =
+    mPageEndTasks.find(inPage);
+    
+    if(it == mPageEndTasks.end())
+    {
+        it =mPageEndTasks.insert(PDFPageToIPageEndWritingTaskListMap::value_type(inPage,IPageEndWritingTaskList())).first;
+    }
+    
+    it->second.push_back(inWritingTask);
+}

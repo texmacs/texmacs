@@ -440,14 +440,14 @@ static const char scZero = '0';
 static const char scDot = '.';
 bool PDFObjectParser::IsNumber(const std::string& inToken)
 {
-	// it's a number if the first char is either a sign or digit, and the rest is 
+	// it's a number if the first char is either a sign or digit, or an initial decimal dot, and the rest is 
 	// digits, with the exception of a dot which can appear just once.
 
-	if(inToken.at(0) != scPlus && inToken.at(0) != scMinus && (inToken.at(0) > scNine || inToken.at(0) < scZero))
+	if(inToken.at(0) != scPlus && inToken.at(0) != scMinus && inToken.at(0) != scDot && (inToken.at(0) > scNine || inToken.at(0) < scZero))
 		return false;
 
 	bool isNumber = true;
-	bool dotEncountered = false;
+	bool dotEncountered = (inToken.at(0) == scDot);
 	std::string::const_iterator it = inToken.begin();
 	++it; //verified the first char already
 
@@ -613,9 +613,9 @@ BoolAndByte PDFObjectParser::GetHexValue(Byte inValue)
 	if('0' <= inValue && inValue <='9')
 		return BoolAndByte(true,inValue - '0');
 	else if('A' <= inValue && inValue <= 'F')
-		return BoolAndByte(true,inValue - 'A');
+		return BoolAndByte(true,inValue - 'A' + 10);
 	else if('a' <= inValue && inValue <= 'f')
-		return BoolAndByte(true,inValue - 'a');
+		return BoolAndByte(true,inValue - 'a' + 10);
 	else
 	{
 		TRACE_LOG1("PDFObjectParser::GetHexValue, unrecongnized hex value - %c",inValue);

@@ -114,7 +114,7 @@ EStatusCode PDFUsedFont::WriteState(ObjectsContext* inStateWriter,ObjectIDType i
 	pdfUsedFontObject->WriteKey("Type");
 	pdfUsedFontObject->WriteNameValue("PDFUsedFont");
 
-	ObjectIDType writtenFontObject;
+	ObjectIDType writtenFontObject = 0;
 
 	if(mWrittenFont)
 	{
@@ -150,4 +150,9 @@ EStatusCode PDFUsedFont::ReadState(PDFParser* inStateReader,ObjectIDType inObjec
 		return PDFHummus::eFailure;
 
 	return mWrittenFont->ReadState(inStateReader,writtenFontReference->mObjectID);
+}
+
+FreeTypeFaceWrapper* PDFUsedFont::GetFreeTypeFont()
+{
+    return &mFaceWrapper;
 }

@@ -30,7 +30,7 @@
 #include "DocumentContext.h"
 #include "ObjectsContext.h"
 #include "PDFRectangle.h"
-#include "TIFFUsageParameters.h"
+#include "TiffUsageParameters.h"
 #include "PDFEmbedParameterTypes.h"
 
 #include <string>
@@ -133,6 +133,7 @@ public:
 	// Form XObject creating and writing
 	PDFFormXObject* StartFormXObject(const PDFRectangle& inBoundingBox,const double* inMatrix = NULL);
 	PDFFormXObject* StartFormXObject(const PDFRectangle& inBoundingBox,ObjectIDType inFormXObjectID,const double* inMatrix = NULL);
+    PDFHummus::EStatusCode EndFormXObject(PDFFormXObject* inFormXObject);
 	PDFHummus::EStatusCode EndFormXObjectAndRelease(PDFFormXObject* inFormXObject);
 
 	// Image XObject creating [for TIFF nad JPG files]. 
@@ -158,7 +159,7 @@ public:
 	PDFFormXObject* CreateFormXObjectFromJPGStream(IByteReaderWithPosition* inJPGStream,ObjectIDType inFormXObjectID);
 	
 	// tiff
-#ifndef NO_TIFF
+#ifndef PDFHUMMUS_NO_TIFF
 	PDFFormXObject* CreateFormXObjectFromTIFFFile(	const std::string& inTIFFFilePath,
 													const TIFFUsageParameters& inTIFFUsageParameters = TIFFUsageParameters::DefaultTIFFUsageParameters);
 	PDFFormXObject* CreateFormXObjectFromTIFFStream(IByteReaderWithPosition* inTIFFStream,

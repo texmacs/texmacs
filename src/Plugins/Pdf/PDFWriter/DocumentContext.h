@@ -27,7 +27,7 @@
 #include "CatalogInformation.h"
 #include "JPEGImageHandler.h"
 #include "TIFFImageHandler.h"
-#include "TIFFUsageParameters.h"
+#include "TiffUsageParameters.h"
 #include "UsedFontsRepository.h"
 #include "PDFEmbedParameterTypes.h"
 #include "PDFDocumentHandler.h"
@@ -60,6 +60,7 @@ class PDFDictionary;
 class IResourceWritingTask;
 class IFormEndWritingTask;
 class PDFDocumentCopyingContext;
+class IPageEndWritingTask;
 
 typedef std::set<IDocumentContextExtender*> IDocumentContextExtenderSet;
 typedef std::pair<PDFHummus::EStatusCode,ObjectIDType> EStatusCodeAndObjectIDType;
@@ -72,6 +73,8 @@ typedef std::list<IResourceWritingTask*> IResourceWritingTaskList;
 typedef std::map<ResourcesDictionaryAndString,IResourceWritingTaskList> ResourcesDictionaryAndStringToIResourceWritingTaskListMap;
 typedef std::list<IFormEndWritingTask*> IFormEndWritingTaskList;
 typedef std::map<PDFFormXObject*,IFormEndWritingTaskList> PDFFormXObjectToIFormEndWritingTaskListMap;
+typedef std::list<IPageEndWritingTask*> IPageEndWritingTaskList;
+typedef std::map<PDFPage*,IPageEndWritingTaskList> PDFPageToIPageEndWritingTaskListMap;
 
 namespace PDFHummus
 {
@@ -119,6 +122,7 @@ namespace PDFHummus
 		// Form XObject creation and finalization
 		PDFFormXObject* StartFormXObject(const PDFRectangle& inBoundingBox,const double* inMatrix = NULL);
 		PDFFormXObject* StartFormXObject(const PDFRectangle& inBoundingBox,ObjectIDType inFormXObjectID,const double* inMatrix = NULL);
+		PDFHummus::EStatusCode EndFormXObject(PDFFormXObject* inFormXObject);
 		PDFHummus::EStatusCode EndFormXObjectAndRelease(PDFFormXObject* inFormXObject);
 
 		// no release version of ending a form XObject. owner should delete it (regular delete...nothin special)
@@ -143,7 +147,7 @@ namespace PDFHummus
 		PDFFormXObject* CreateFormXObjectFromJPGStream(IByteReaderWithPosition* inJPGStream,ObjectIDType inFormXObjectID);
 
 		// TIFF
-#ifndef NO_TIFF
+#ifndef PDFHUMMUS_NO_TIFF
 		PDFFormXObject* CreateFormXObjectFromTIFFFile(	const std::string& inTIFFFilePath,
 														const TIFFUsageParameters& inTIFFUsageParameters = TIFFUsageParameters::DefaultTIFFUsageParameters);
 		PDFFormXObject* CreateFormXObjectFromTIFFStream(IByteReaderWithPosition* inTIFFStream,
@@ -239,6 +243,8 @@ namespace PDFHummus
         
         // Extensibility option. option of writing a single time task for when a particular form ends
         void RegisterFormEndWritingTask(PDFFormXObject* inFormXObject,IFormEndWritingTask* inWritingTask);
+        // Extensibility option. option of writing a single time task for when a particular page ends
+        void RegisterPageEndWritingTask(PDFPage* inPageObject,IPageEndWritingTask* inWritingTask);
 
 
 		// JPG images handler for retrieving JPG images information
@@ -263,7 +269,7 @@ namespace PDFHummus
 		std::string mOutputFilePath;
 		IDocumentContextExtenderSet mExtenders;
 		JPEGImageHandler mJPEGImageHandler;
-#ifndef NO_TIFF
+#ifndef PDFHUMMUS_NO_TIFF
 		TIFFImageHandler mTIFFImageHandler;
 #endif
 		PDFDocumentHandler mPDFDocumentHandler;
@@ -276,6 +282,7 @@ namespace PDFHummus
 		ObjectIDType mCurrentPageTreeIDInState;
         ResourcesDictionaryAndStringToIResourceWritingTaskListMap mResourcesTasks;
         PDFFormXObjectToIFormEndWritingTaskListMap mFormEndTasks;
+        PDFPageToIPageEndWritingTaskListMap mPageEndTasks;
 		
 		void WriteHeaderComment(EPDFVersion inPDFVersion);
 		void Write4BinaryBytes();
