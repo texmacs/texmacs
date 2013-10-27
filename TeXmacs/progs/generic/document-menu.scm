@@ -900,7 +900,12 @@
         ("Landscape" (init-page-orientation "landscape"))
         ---
         ("One column" (init-env "par-columns" "1"))
-        ("Two columns" (init-env "par-columns" "2")))
+        ("Two columns" (init-env "par-columns" "2"))
+        ---
+        ("Paper" (init-page-medium "paper"))
+        ("Papyrus" (init-page-medium "papyrus"))
+        ("Automatic" (init-page-medium "automatic"))
+        ("Beamer" (init-page-medium "beamer")))
     (=> (balloon (icon (eval (current-language-icon))) "Document language")
         (link document-language-menu))))
 
