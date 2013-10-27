@@ -203,7 +203,7 @@ conv_sub (const string& ks) {
 }
 
 QKeySequence
-to_qkeysequence (const string& ks) {
+to_qkeysequence (string ks) {
 #ifdef Q_WS_MAC
     // If a key sequence defined in scheme with a kbd-map is made of several
     // keys it contains spaces. Only those key sequences starting with a
@@ -289,7 +289,7 @@ from_qstringlist(const QStringList& l) {
 }
 
 QStringList
-to_qstringlist (const array<string>& l) {
+to_qstringlist (array<string> l) {
   QStringList ql;
   for(int i=0; i<N(l); ++i)
     ql << to_qstring(l[i]);
