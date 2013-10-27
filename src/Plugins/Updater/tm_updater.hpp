@@ -11,6 +11,7 @@
 #ifndef TM_UPDATER_HPP
 #define TM_UPDATER_HPP
 
+#include <time.h>
 #include "url.hpp"
 
 class tm_updater
