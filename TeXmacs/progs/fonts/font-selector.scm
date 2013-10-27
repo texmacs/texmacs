@@ -106,12 +106,12 @@
     (logical-font-public selector-font-family selector-font-style)
     (selected-properties)))
 
-(define (selector-initialize-font)
-  (let* ((fam (font-family-main (get-env "font")))
-         (var (get-env "font-family"))
-         (ser (get-env "font-series"))
-         (sh  (get-env "font-shape"))
-         (sz  (get-env "font-base-size"))
+(define (selector-initialize-font getter)
+  (let* ((fam (font-family-main (getter "font")))
+         (var (getter "font-family"))
+         (ser (getter "font-series"))
+         (sh  (getter "font-shape"))
+         (sz  (getter "font-base-size"))
          (lf  (logical-font-private fam var ser sh))
          (fn  (logical-font-search-exact lf)))
     ;;(display* "lf= " lf "\n")
@@ -121,20 +121,20 @@
     (set! selector-font-size sz)
     (selector-initialize-search)))
 
-(tm-define (selector-get-changes)
+(tm-define (selector-get-changes getter)
   (if (== selector-font-style "Unknown")
       (list)
       (with fn (selector-get-font)
         (with l '()
-          (when (!= selector-font-size (get-env "font-base-size"))
+          (when (!= selector-font-size (getter "font-base-size"))
             (set! l (cons* "font-base-size" selector-font-size l)))
-          (when (!= (logical-font-shape fn) (get-env "font-shape"))
+          (when (!= (logical-font-shape fn) (getter "font-shape"))
             (set! l (cons* "font-shape" (logical-font-shape fn) l)))
-          (when (!= (logical-font-series fn) (get-env "font-series"))
+          (when (!= (logical-font-series fn) (getter "font-series"))
             (set! l (cons* "font-series" (logical-font-series fn) l)))
-          (when (!= (logical-font-variant fn) (get-env "font-family"))
+          (when (!= (logical-font-variant fn) (getter "font-family"))
             (set! l (cons* "font-family" (logical-font-variant fn) l)))
-          (when (!= (logical-font-family fn) (get-env "font"))
+          (when (!= (logical-font-family fn) (getter "font"))
             (set! l (cons* "font" (logical-font-family fn) l)))
           l))))
 
@@ -348,14 +348,16 @@
     (scrollable
       (link font-sample-text))))
 
-(tm-widget (font-selector quit)
+(tm-widget ((font-selector flag?) quit)
   (padded
     (horizontal
-      (refresh font-family-selector)
+      (refreshable "font-family-selector"
+        (link font-family-selector))
       ///
       (refresh font-style-selector auto)
       ///
-      (link font-size-selector)
+      (refreshable "font-size-selector"
+        (link font-size-selector))
       ///
       (link font-properties-selector))
     === === ===
@@ -372,14 +374,25 @@
                 "Unicode 4000-4fff")
               (get-font-sample-kind) "120px")
         >>>
-        ("Ok" (quit (selector-get-changes)))))))
+        (if flag?
+            ("Reset"
+             (begin
+               (init-default "font" "font-base-size"
+                             "font-family" "font-series" "font-shape")
+               (selector-initialize-font get-init)
+               (refresh-now "font-family-selector")
+               (refresh-now "font-size-selector")))
+            // //
+            ("Ok" (quit (selector-get-changes get-init))))
+        (if (not flag?)
+            ("Ok" (quit (selector-get-changes get-env))))))))
 
 (tm-define (open-font-selector)
   (:interactive #t)
-  (selector-initialize-font)
-  (dialogue-window font-selector make-multi-with "Font selector"))
+  (selector-initialize-font get-env)
+  (dialogue-window (font-selector #f) make-multi-with "Font selector"))
 
 (tm-define (open-document-font-selector)
   (:interactive #t)
-  (selector-initialize-font)
-  (dialogue-window font-selector init-multi "Document font selector"))
+  (selector-initialize-font get-init)
+  (dialogue-window (font-selector #t) init-multi "Document font selector"))
