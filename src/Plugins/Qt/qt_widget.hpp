@@ -85,6 +85,7 @@ public:
    update the base class each time we implement a new subclass. It's also some
    sort of bastardic and lame RTTI, which might be proof of bad design...
    But it comes handy in a few places right now ;)
+   NOTE: please modify qt_widget_type_strings[] in type_as_string() accordingly!
    */
   enum types {
     none = 0,
@@ -126,21 +127,21 @@ public:
   string type_as_string() { 
     static const char* qt_widget_type_strings[] = {
       "none",
-      "input_widget",       "file_chooser",     "window_widget",
-      "view_widget",        "horizontal_menu",  "vertical_menu",
-      "horizontal_list",    "vertical_list",    "tile_menu",
-      "minibar_menu",       "menu_separator",   "menu_group", 
-      "pulldown_button",    "pullright_button", "menu_button",
-      "balloon_widget",     "text_widget",      "xpm_widget",
-      "toggle_widget",      "enum_widget",      "choice_widget",
-      "scrollable_widget",  "hsplit_widget",    "vsplit_widget", 
-      "aligned_widget",     "tabs_widget",      "icon_tabs_widget",
-      "wrapped_widget",     "refresh_widget",   "glue_widget",
-      "resize_widget",      "texmacs_widget",   "simple_widget",
-      "embedded_tm_widget", "popup_widget",     "field_widget",
-      "filtered_choice_widget"
+      "input_widget",       "file_chooser",       "window_widget",
+      "view_widget",        "horizontal_menu",    "vertical_menu",
+      "horizontal_list",    "vertical_list",      "tile_menu",
+      "minibar_menu",       "menu_separator",     "menu_group",
+      "pulldown_button",    "pullright_button",   "menu_button",
+      "balloon_widget",     "text_widget",        "xpm_widget",
+      "toggle_widget",      "enum_widget",        "choice_widget",
+      "scrollable_widget",  "hsplit_widget",      "vsplit_widget",
+      "aligned_widget",     "tabs_widget",        "icon_tabs_widget",
+      "wrapped_widget",     "refresh_widget",     "refreshable_widget",
+      "glue_widget",        "resize_widget",      "texmacs_widget",
+      "simple_widget",      "embedded_tm_widget", "popup_widget",
+      "field_widget",       "filtered_choice_widget"
     };
-    return string(qt_widget_type_strings[type]) * "\t id: " * as_string(id);
+    return string (qt_widget_type_strings[type]) * "\t id: " * as_string (id);
   }
   
   ////////////////////// Handling of TeXmacs' messages
@@ -208,7 +209,7 @@ inline widget abstract (qt_widget w) { return widget (w.rep); }
 
 /*! Casting from widget to qt_widget */
 inline qt_widget concrete (widget w) {
-  return qt_widget (static_cast<qt_widget_rep*>(w.rep));
+  return qt_widget (static_cast<qt_widget_rep*> (w.rep));
 }
 
 #endif // defined QT_WIDGET_HPP
