@@ -21,6 +21,13 @@
 #include <x11/xlib.h>
 #endif
 
+/*
+ For certain LaTeX fonts, it is possible to have non integer font sizes, 
+ by multiplying the font size by 100. For instance, larm10 would be equivalent
+ to larm1000 and larm1050 would stand for a 10.5 point larm font.
+ 
+ See bug https://savannah.gnu.org/bugs/?37472
+ */
 static int
 mag (double dpi, double size, double dsize) {
   if ((size>=100) && (dsize<100)) dsize *= 100;
