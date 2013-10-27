@@ -147,12 +147,6 @@
     (if doc (tm->stree doc)
         `(document (em "No documentation available.")))))
 
-(tm-widget (macros-editor-documentation)
-  (texmacs-output
-    `(document
-       (paragraph-box "480px" ,(macros-editor-current-help)))
-    '(style "tmdoc")))
-
 (tm-widget ((macros-editor u packs l) quit)
   (padded
     (horizontal
@@ -177,7 +171,11 @@
         (horizontal
           (glue #t #f 0 0)
           (resize "500px" "220px"
-            (refresh macros-editor-documentation))
+            (refreshable "macros-editor-documentation"
+              (texmacs-output
+               `(document
+                  (paragraph-box "480px" ,(macros-editor-current-help)))
+               '(style "tmdoc"))))
           (glue #t #f 0 0))))
     ======
     (hlist
