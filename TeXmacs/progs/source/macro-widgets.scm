@@ -193,7 +193,14 @@
 
 (tm-define (all-defined-macros)
   (with env (tm-children (get-full-env))
-    (sort (map get-key env) string<=?)))
+    (sort (list-difference (map get-key env)
+                           (list "atom-decorations" "line-decorations"
+                                 "page-decorations" "xoff-decorations"
+                                 "yoff-decorations"
+                                 "cell-decoration" "cell-format"
+                                 "wide-framed-colored"
+                                 "wide-std-framed-colored"))
+          string<=?)))
 
 (tm-define (open-macros-editor)
   (:interactive #t)
