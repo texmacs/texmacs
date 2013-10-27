@@ -185,36 +185,57 @@ static HIDRemote *sHIDRemote = nil;
 	return (isInstalled);
 }
 
+
+static void get_system_version(int* major, int* minor, int* bugfix)
+{
+  static int mMajor = 10;
+  static int mMinor = 8;
+  static int mBugfix = 0;
+  static int done = 0;
+  if (!done) {
+    NSString* versionString = [[NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"] objectForKey:@"ProductVersion"];
+    NSArray* versions = [versionString componentsSeparatedByString:@"."];
+    int count = [versions count];
+    if (count >= 1)
+      mMajor = [[versions objectAtIndex:0] intValue];
+    if (count >= 2)
+      mMinor = [[versions objectAtIndex:1] intValue];
+    if (count >= 3)
+      mBugfix = [[versions objectAtIndex:2] intValue];
+  }
+  *major = mMajor;
+  *minor = mMinor;
+  *bugfix = mBugfix;
+}
+
+
 + (BOOL)isCandelairInstallationRequiredForRemoteMode:(HIDRemoteMode)remoteMode
 {
-	SInt32 systemVersion = 0;
-	
-	// Determine OS version
-	if (Gestalt(gestaltSystemVersion, &systemVersion) == noErr)
-	{
-		switch (systemVersion)
-		{
-			case 0x1060: // OS 10.6
-			case 0x1061: // OS 10.6.1
-				// OS X 10.6(.0) and OS X 10.6.1 require the Candelair driver for to be installed,
-				// so that third party apps can acquire an exclusive lock on the receiver HID Device
-				// via IOKit.
+  int mMajor = 10;
+  int mMinor = 8;
+  int mBugfix = 0;
 
-				switch (remoteMode)
-				{
-					case kHIDRemoteModeExclusive:
-					case kHIDRemoteModeExclusiveAuto:
-						if (![self isCandelairInstalled])
-						{
-							return (YES);
-						}
-					default:
-						break;
-				}
-			break;
-		}
-	}
-	
+  // Determine OS version
+  get_system_version(mMajor, mMinor, mBugfix);
+  
+
+  if ((mMajor == 10)&&(mMinor==6)&&((mBugfix==0)||(mBugfix==1))) {
+    // OS X 10.6(.0) and OS X 10.6.1 require the Candelair driver for to be installed,
+    // so that third party apps can acquire an exclusive lock on the receiver HID Device
+    // via IOKit.
+    
+    switch (remoteMode)
+    {
+      case kHIDRemoteModeExclusive:
+      case kHIDRemoteModeExclusiveAuto:
+        if (![self isCandelairInstalled])
+        {
+          return (YES);
+        }
+      default:
+        break;
+    }
+  }
 	return (NO);
 }
 
