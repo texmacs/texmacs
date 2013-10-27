@@ -56,15 +56,6 @@
         "par-sep" "par-hor-sep" "par-ver-sep" "par-line-sep" "par-par-sep"
         "par-fnote-sep" "par-columns" "par-columns-sep"))
 
-(tm-define paragraph-cur-settings (make-ahash-table))
-
-(tm-widget (paragraph-formatter-columns-sep)
-  (with new paragraph-cur-settings
-    (when (!= (ahash-ref new "par-columns") "1")
-      (enum (ahash-set! new "par-columns-sep" answer)
-            (cons-new (ahash-ref new "par-columns-sep") '("1fn" "2fn" "3fn" ""))
-            (ahash-ref new "par-columns-sep") "10em"))))
-
 (tm-widget (paragraph-formatter-basic old new)
   (aligned
     (item (text "Alignment:")
@@ -97,12 +88,19 @@
             (ahash-ref new "par-par-sep") "10em"))
     (item ====== ======)
     (item (text "Number of columns:")
-      (enum (ahash-set! new "par-columns" answer)
+      (enum (begin
+              (ahash-set! new "par-columns" answer)
+              (refresh-now "paragraph-formatter-columns-sep"))
             '("1" "2" "3" "4" "5" "6")
             (ahash-ref new "par-columns") "10em"))
     (item (when (!= (ahash-ref new "par-columns") "1")
             (text "Columns separation:"))
-      (refresh paragraph-formatter-columns-sep auto))))
+      (refreshable "paragraph-formatter-columns-sep"
+        (when (!= (ahash-ref new "par-columns") "1")
+          (enum (ahash-set! new "par-columns-sep" answer)
+                (cons-new (ahash-ref new "par-columns-sep")
+                          '("1fn" "2fn" "3fn" ""))
+                (ahash-ref new "par-columns-sep") "10em"))))))
 
 (tm-widget (paragraph-formatter-advanced old new)
   (aligned
@@ -189,7 +187,6 @@
   (let* ((old (get-env-table paragraph-parameters))
          (new (get-env-table paragraph-parameters))
          (u   (current-buffer)))
-    (set! paragraph-cur-settings new)
     (dialogue-window (paragraph-formatter old new make-multi-line-with u #f)
                      noop "Paragraph format")))
 

@@ -106,7 +106,6 @@
   (let* ((old (get-init-table paragraph-parameters))
          (new (get-init-table paragraph-parameters))
          (u   (current-buffer)))
-    (set! paragraph-cur-settings new)
     (dialogue-window (paragraph-formatter old new init-multi u #t)
                      noop "Document paragraph format")))
 
