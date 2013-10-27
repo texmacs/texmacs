@@ -996,7 +996,7 @@ T1_EncodingType t;
 #        CONFIG_PDF="Pdf Pdf/dvipdfmx"
 #        CONFIG_PDF="Pdf Pdf/PDFWriter"
         CONFIG_PDF="Pdf"
-      	PDF_CFLAGS="-DNO_TIFF -DNO_DCT"
+      	PDF_CFLAGS="-DPDFHUMMUS_NO_TIFF -DPDFHUMMUS_NO_DCT"
 ],[
         AC_MSG_RESULT(no)
         AC_MSG_ERROR([cannot find FreeType or your version is < 2.4.8.
