@@ -202,6 +202,7 @@ static void get_system_version(int* major, int* minor, int* bugfix)
       mMinor = [[versions objectAtIndex:1] intValue];
     if (count >= 3)
       mBugfix = [[versions objectAtIndex:2] intValue];
+    done = 1;
   }
   *major = mMajor;
   *minor = mMinor;
@@ -216,10 +217,10 @@ static void get_system_version(int* major, int* minor, int* bugfix)
   int mBugfix = 0;
 
   // Determine OS version
-  get_system_version(mMajor, mMinor, mBugfix);
+  get_system_version (&mMajor, &mMinor, &mBugfix);
   
 
-  if ((mMajor == 10)&&(mMinor==6)&&((mBugfix==0)||(mBugfix==1))) {
+  if ((mMajor == 10) && (mMinor==6) && ((mBugfix==0) || (mBugfix==1))) {
     // OS X 10.6(.0) and OS X 10.6.1 require the Candelair driver for to be installed,
     // so that third party apps can acquire an exclusive lock on the receiver HID Device
     // via IOKit.
