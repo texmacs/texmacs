@@ -12,6 +12,7 @@
 #include "mac_utilities.h"
 #include "timer.hpp"
 #include "gui.hpp"
+#include "analyze.hpp"
 
 #pragma push_macro("FAILED")  // CoreFoundation will rewrite our macro FAILED
 #define extend CARBON_extends // avoid name collision
@@ -200,8 +201,6 @@ mac_cancel_menu_tracking () {
 		}
 	}
 }
-
-extern string utf8_to_cork (string input);
 
 static string 
 from_nsstring (NSString *s) {
