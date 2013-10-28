@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (dynamic calc-edit)
-  (:use (text tm-structure)
+  (:use (text text-structure)
         (link locus-edit)
         (dynamic session-edit)
         (dynamic scripts-edit)

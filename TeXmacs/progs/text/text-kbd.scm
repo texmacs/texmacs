@@ -14,7 +14,7 @@
 (texmacs-module (text text-kbd)
   (:use (generic generic-kbd)
 	(utils edit auto-close)
-	(text std-text-edit)))
+	(text text-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Special symbols in text mode

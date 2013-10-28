@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : std-text-drd.scm
+;; MODULE      : text-drd.scm
 ;; DESCRIPTION : data relation definitions for text mode
 ;; COPYRIGHT   : (C) 2005  Joris van der Hoeven
 ;;
@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (text std-text-drd)
+(texmacs-module (text text-drd)
   (:use (utils edit variants)))
 
 ;; General groups

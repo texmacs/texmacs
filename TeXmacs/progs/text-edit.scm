@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : std-text-edit.scm
+;; MODULE      : text-edit.scm
 ;; DESCRIPTION : editing routines for text mode
 ;; COPYRIGHT   : (C) 2001  Joris van der Hoeven
 ;;
@@ -11,10 +11,10 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (text std-text-edit)
+(texmacs-module (text text-edit)
   (:use (utils library tree)
 	(utils edit variants)
-	(text std-text-drd)
+	(text text-drd)
 	(generic format-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

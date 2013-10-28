@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : std-text-natbib.scm
+;; MODULE      : text-natbib.scm
 ;; DESCRIPTION : Support for the natbib bibliography styles
 ;; COPYRIGHT   : (C) 2006  Joris van der Hoeven
 ;;
@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (text std-text-natbib))
+(texmacs-module (text text-natbib))
 
 (define (natbib-author s)
   (let* ((i (string-index s #\()))

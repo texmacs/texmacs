@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : tm-structure.scm
+;; MODULE      : text-structure.scm
 ;; DESCRIPTION : Routines for structuring the sections and lists
 ;; COPYRIGHT   : (C) 2005  Joris van der Hoeven
 ;;
@@ -11,8 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (text tm-structure)
-  (:use (text std-text-drd)))
+(texmacs-module (text text-structure)
+  (:use (text text-drd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra subroutines on lists

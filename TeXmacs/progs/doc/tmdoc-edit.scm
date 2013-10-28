@@ -14,7 +14,7 @@
 (texmacs-module (doc tmdoc-edit)
   (:use (utils library tree)
 	(utils edit variants)
-	(text std-text-edit)
+	(text text-edit)
 	(doc tmdoc-drd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

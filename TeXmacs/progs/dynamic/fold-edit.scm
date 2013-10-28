@@ -17,7 +17,7 @@
         (dynamic dynamic-drd)
         (generic generic-edit)
         (generic document-edit)
-        (text std-text-edit)))
+        (text text-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Style package rules for beamer
