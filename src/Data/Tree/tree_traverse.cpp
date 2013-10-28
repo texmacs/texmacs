@@ -486,7 +486,7 @@ init_sections () {
     section_traverse_tags->insert (as_tree_label ("hide-part"));
   }
   if (N(section_tags) == 0) {
-    eval ("(use-modules (text std-text-drd))");
+    eval ("(use-modules (text text-drd))");
     object l= eval ("(append (section-tag-list) (section*-tag-list))");
     while (!is_null (l)) {
       section_tags->insert (as_tree_label (as_symbol (car (l))));

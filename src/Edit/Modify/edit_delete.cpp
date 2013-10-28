@@ -68,7 +68,7 @@ static bool
 is_multi_paragraph_or_sectional (tree t) {
   if (is_atomic (t)) return false;
   if (is_multi_paragraph (t)) return true;
-  eval ("(use-modules (utils library tree) (text std-text-drd))");
+  eval ("(use-modules (utils library tree) (text text-drd))");
   return as_bool (call ("tree-in?", t, call ("section-tag-list")));
 }
 
