@@ -35,6 +35,7 @@ void notify_rename_after (url new_name);
 void window_set_view (url win, url new_u, bool focus);
 void switch_to_buffer (url name);
 void focus_on_editor (editor ed);
+bool focus_on_buffer (url name);
 
 // Low level types and routines
 class tm_view_rep;

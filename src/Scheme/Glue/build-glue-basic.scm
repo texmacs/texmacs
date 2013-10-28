@@ -547,6 +547,7 @@
   (tree-import import_tree (tree url string))
   (tree-export export_tree (bool tree url string))
   (tree-load-style load_style_tree (tree string))
+  (buffer-focus focus_on_buffer (bool url))
 
   (view-list get_all_views (array_url))
   (buffer->views buffer_to_views (array_url url))

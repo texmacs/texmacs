@@ -407,3 +407,14 @@ focus_on_editor (editor ed) {
   //cout << "Warning: name of buffer: " << ed->buf->buf->name << "\n";
   //FAILED ("invalid situation");
 }
+
+bool
+focus_on_buffer (url name) {
+  // Focus on the most recent view on a buffer being active in a window
+  // Return false if the buffer is not visible in any of the windows
+  if (the_view != NULL && the_view->buf->buf->name == name) return true;
+  url r= get_recent_view (name, true, false, true, false);
+  if (is_none (r)) return false;
+  set_current_view (r);
+  return true;
+}

@@ -233,11 +233,13 @@
 (define-public-macro (with-buffer name . body)
   (let* ((old (gensym))
          (res (gensym)))
-    `(with ,old (current-buffer)
-       (switch-to-buffer ,name)
-       (with ,res (begin ,@body)
-	 (switch-to-buffer ,old)
-	 ,res))))
+    `(if (== ,name (current-buffer))
+	 (begin ,@body)
+	 (with ,old (current-buffer)
+	   (when (buffer-focus ,name)
+	     (with ,res (begin ,@body)
+	       (buffer-focus ,old)
+	       ,res))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search and replace
