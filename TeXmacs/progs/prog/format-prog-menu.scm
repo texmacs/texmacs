@@ -12,32 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (prog format-prog-menu)
-  (:use (generic format-edit)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The Font submenu in prog mode
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(menu-bind prog-font-menu
-  (-> "Name"
-      ("roman" (make-with "prog-font" "roman"))
-      (if (url-exists-in-tex? "ccr10.mf")
-	  ("concrete" (make-with "prog-font" "concrete")))
-      (if (url-exists-in-tex? "pnr10.mf")
-	  ("pandora" (make-with "prog-font" "pandora"))))
-  (-> "Variant"
-      ("Roman" (make-with "prog-font-family" "rm"))
-      ("Typewriter" (make-with "prog-font-family" "tt"))
-      ("Sans serif" (make-with "prog-font-family" "ss")))
-  (-> "Series"
-      ("Medium" (make-with "prog-font-series" "medium"))
-      ("Bold" (make-with "prog-font-series" "bold")))
-  (-> "Shape"
-      ("Default" (make-with "prog-font-shape" "normal"))
-      ("Right" (make-with "prog-font-shape" "right"))
-      ("Slanted" (make-with "prog-font-shape" "slanted"))
-      ("Italic" (make-with "prog-font-shape" "italic")))
-  (-> "Size" (link font-size-menu)))
+  (:use (generic format-edit)
+	(fonts font-old-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Format menu
