@@ -13,7 +13,7 @@
 
 (texmacs-module (text format-text-kbd)
   (:use (generic generic-kbd)
-	(text format-text-edit)))
+	(generic format-edit)))
 
 (kbd-map
   (:mode in-text?)

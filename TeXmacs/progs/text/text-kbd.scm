@@ -14,7 +14,7 @@
 (texmacs-module (text text-kbd)
   (:use (generic generic-kbd)
 	(utils edit auto-close)
-	(text format-text-edit)))
+	(text std-text-edit)))
 
 (kbd-map
   (:mode in-text?)

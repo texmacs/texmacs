@@ -13,7 +13,6 @@
 
 (texmacs-module (text std-text-kbd)
   (:use (text text-kbd)
-	(text format-text-edit)
 	(text std-text-edit)))
 
 (kbd-map

@@ -12,8 +12,7 @@ for
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (text text-menu)
-  (:use (text format-text-edit)
-        (text std-text-edit)
+  (:use (text std-text-edit)
         (text tm-structure)
         (generic document-menu)))
 

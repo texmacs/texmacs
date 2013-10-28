@@ -14,7 +14,8 @@
 (texmacs-module (text std-text-edit)
   (:use (utils library tree)
 	(utils edit variants)
-	(text std-text-drd)))
+	(text std-text-drd)
+	(generic format-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Style package rules
