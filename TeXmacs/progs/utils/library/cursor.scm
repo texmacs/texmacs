@@ -236,10 +236,10 @@
     `(if (== ,name (current-buffer))
 	 (begin ,@body)
 	 (with ,old (current-buffer)
-	   (when (buffer-focus ,name)
-	     (with ,res (begin ,@body)
-	       (buffer-focus ,old)
-	       ,res))))))
+	   (and (buffer-focus ,name)
+		(with ,res (begin ,@body)
+		  (buffer-focus ,old)
+		  ,res))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search and replace

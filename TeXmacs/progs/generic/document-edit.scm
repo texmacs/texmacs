@@ -14,6 +14,7 @@
 (texmacs-module (generic document-edit)
   (:use (utils base environment)
         (utils library length)
+        (utils library cursor)
         (generic generic-edit)
         (generic document-style)))
 
@@ -98,33 +99,35 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (initial-set-tree u var val)
-  (when (and (tm? val) (== (current-buffer) u))
-    (init-env-tree var val)))
+  (when (tm? val)
+    (with-buffer u
+      (init-env-tree var val))))
 
 (tm-define (initial-set u var val)
-  (when (and (tm? val) (== (current-buffer) u))
-    (init-env var val)))
+  (when (string? val)
+    (with-buffer u
+      (init-env var val))))
 
 (tm-define (initial-get-tree u var)
-  (if (== (current-buffer) u)
-      (get-init-tree var)
+  (or (with-buffer u
+	(get-init-tree var))
       (tree "")))
 
 (tm-define (initial-get u var)
-  (if (== (current-buffer) u)
-      (get-init var)
+  (or (with-buffer u
+	(get-init var))
       ""))
 
 (tm-define (initial-defined? u var)
-  (and (== (current-buffer) u)
-       (style-has? var)))
+  (with-buffer u
+    (style-has? var)))
 
 (tm-define (initial-has? u var)
-  (and (== (current-buffer) u)
-       (init-has? var)))
+  (with-buffer u
+    (init-has? var)))
 
 (tm-define (initial-default u . vars)
-  (when (== (current-buffer) u)
+  (with-buffer u
     (apply init-default vars)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
