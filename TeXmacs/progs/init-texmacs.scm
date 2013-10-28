@@ -168,8 +168,6 @@
 
 ;(display "Booting text mode\n")
 (lazy-keyboard (text text-kbd) in-text?)
-(lazy-keyboard (text format-text-kbd) in-text?)
-(lazy-keyboard (text std-text-kbd) in-std-text?)
 (lazy-menu (text text-menu) text-format-menu text-format-icons
 	   text-menu text-icons)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
