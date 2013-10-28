@@ -14,19 +14,3 @@
 (texmacs-module (text format-text-edit)
   (:use (utils base environment)
 	(generic format-edit)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Page breaking
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (make-page-break)
-  (make 'page-break)
-  (insert-return))
-
-(tm-define (make-new-page)
-  (make 'new-page)
-  (insert-return))
-
-(tm-define (make-new-dpage)
-  (make 'new-dpage)
-  (insert-return))

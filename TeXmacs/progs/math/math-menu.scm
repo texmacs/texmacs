@@ -25,137 +25,66 @@
       ("Equations" (make-eqnarray*))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The Mathematics menu
+;; Special mathematical text properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind math-menu
-  ("Fraction" (make-fraction))
-  ("Square root" (make-sqrt))
-  ("N-th root" (make-var-sqrt))
-  ("Negation" (make-neg))
-  ("Tree" (make-tree))
-  ---
-  (-> "Size tag" (link size-tag-menu))
-  (-> "Script"
-      ("Left subscript" (make-script #f #f))
-      ("Left superscript" (make-script #t #f))
-      ("Right subscript" (make-script #f #t))
-      ("Right superscript" (make-script #t #t))
-      ("Script below" (make-below))
-      ("Script above" (make-above)))
-  (-> "Accent above"
-      ("Tilda" (make-wide "~"))
-      ("Hat" (make-wide "^"))
-      ("Bar" (make-wide "<bar>"))
-      ("Vector" (make-wide "<vect>"))
-      ("Check" (make-wide "<check>"))
-      ("Breve" (make-wide "<breve>"))
-      ("Inverted breve" (make-wide "<invbreve>"))
-      ---
-      ("Acute" (make-wide "<acute>"))
-      ("Grave" (make-wide "<grave>"))
-      ("Dot" (make-wide "<dot>"))
-      ("Two dots" (make-wide "<ddot>"))
-      ("Circle" (make-wide "<abovering>"))
-      ---
-      ("Overbrace" (make-wide "<wide-overbrace>"))
-      ("Underbrace" (make-wide "<wide-underbrace*>"))
-      ("Square overbrace" (make-wide "<wide-sqoverbrace>"))
-      ("Square underbrace" (make-wide "<wide-squnderbrace*>"))
-      ("Right arrow" (make-wide "<wide-varrightarrow>"))
-      ("Left arrow" (make-wide "<wide-varleftarrow>"))
-      ("Wide bar" (make-wide "<wide-bar>")))
-  (-> "Accent below"
-      ("Tilda" (make-wide-under "~"))
-      ("Hat" (make-wide-under "^"))
-      ("Bar" (make-wide-under "<bar>"))
-      ("Vector" (make-wide-under "<vect>"))
-      ("Check" (make-wide-under "<check>"))
-      ("Breve" (make-wide-under "<breve>"))
-      ("Inverted breve" (make-wide-under "<invbreve>"))
-      ---
-      ("Acute" (make-wide-under "<acute>"))
-      ("Grave" (make-wide-under "<grave>"))
-      ("Dot" (make-wide-under "<dot>"))
-      ("Two dots" (make-wide-under "<ddot>"))
-      ("Circle" (make-wide-under "<abovering>"))
-      ---
-      ("Overbrace" (make-wide-under "<wide-overbrace*>"))
-      ("Underbrace" (make-wide-under "<wide-underbrace>"))
-      ("Square overbrace" (make-wide-under "<wide-sqoverbrace*>"))
-      ("Square underbrace" (make-wide-under "<wide-squnderbrace>"))
-      ("Right arrow" (make-wide-under "<wide-varrightarrow>"))
-      ("Left arrow" (make-wide-under "<wide-varleftarrow>"))
-      ("Wide bar" (make-wide-under "<wide-bar>")))
-  (-> "Symbol" (link symbol-menu))
-  (-> "Textual operator" (link textual-operator-menu))
-  (if (== (get-preference "semantic editing") "on")
-      (-> "Semantics" (link semantic-annotation-menu)))
-  ---
-  ("Text" (make 'text))
-  (-> "Table" (link insert-table-menu))
-  (-> "Image" (link insert-image-menu))
-  (-> "Link" (link insert-link-menu))
+(menu-bind math-special-format-menu
+  (-> "Index level"
+      ("Normal" (make-with "math-level" "0"))
+      ("Script size" (make-with "math-level" "1"))
+      ("Script script size" (make-with "math-level" "2")))
+  (-> "Display style"
+      ("On" (make-with "math-display" "true"))
+      ("Off" (make-with "math-display" "false")))
+  (-> "Condensed"
+      ("On" (make-with "math-condensed" "true"))
+      ("Off" (make-with "math-condensed" "false"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The main Format menu
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind full-math-format-menu
+  (group "Font")
+  (if (new-fonts?)
+      ;;(link new-math-font-menu))
+      (link math-font-menu))
+  (if (not (new-fonts?))
+      (link math-font-menu))
+  (if (simple-menus?)
+      (-> "Color" (link color-menu)))
   (if (detailed-menus?)
-      (if (style-has? "std-fold-dtd")
-          (-> "Fold" (link insert-fold-menu)))
-      (-> "Animation" (link insert-animation-menu))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Semantic math menus
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(menu-bind math-correct-menu
-  ("Correct all" (math-correct-all))
-  (when (with-versioning-tool?)
-    ("Correct manually" (math-correct-manually)))
+      ---
+      (group "Text")
+      (link textual-properties-menu))
   ---
-  (group "Options")
-  ("Remove superfluous invisible operators"
-   (toggle-preference "manual remove superfluous invisible"))
-  ("Insert missing invisible operators"
-   (toggle-preference "manual insert missing invisible"))
-  ("Homoglyph substitutions"
-   (toggle-preference "manual homoglyph correct")))
+  (group "Mathematics")
+  (link math-special-format-menu))
 
-(menu-bind context-preferences-menu
-  ("Show full context" (toggle-preference "show full context"))
-  (when (inside? 'table)
-    ("Show table cells" (toggle-preference "show table cells")))
-  ("Show current focus" (toggle-preference "show focus"))
-  (when (!= (get-preference "semantic editing") "off")
-    ("Only show semantic focus"
-      (toggle-preference "show only semantic focus"))))
-
-(menu-bind semantic-math-preferences-menu
-  ("Semantic editing" (toggle-preference "semantic editing"))
-  (when (== (get-preference "semantic editing") "on")
-    ("Semantic selections" (toggle-preference "semantic selections"))))
-
-(menu-bind semantic-annotation-menu
-  ("Ordinary symbol" (make 'math-ordinary))
-  ("Ignore" (make 'math-ignore))
+(menu-bind compressed-math-format-menu
+  (if (new-fonts?)
+      ("Font" (interactive open-font-selector)))
+  (if (not (new-fonts?))
+      (-> "Font" (link math-font-menu)))
+  (-> "Mathematics" (link math-special-format-menu))
   ---
-  ("Separator" (make 'math-separator))
-  ("Quantifier" (make 'math-quantifier))
-  ("Logical implication" (make 'math-imply))
-  ("Logical or" (make 'math-or))
-  ("Logical and" (make 'math-and))
-  ("Logical not" (make 'math-not))
-  ("Relation" (make 'math-relation))
-  ("Set union" (make 'math-union))
-  ("Set intersection" (make 'math-intersection))
-  ("Set difference" (make 'math-exclude))
-  ("Addition" (make 'math-plus))
-  ("Subtraction" (make 'math-minus))
-  ("Multiplication" (make 'math-times))
-  ("Division" (make 'math-over))
-  ("Prefix" (make 'math-prefix))
-  ("Postfix" (make 'math-postfix))
-  ("Open" (make 'math-open))
-  ("Close" (make 'math-close))
+  (-> "Whitespace" (link horizontal-space-menu))
+  (-> "Line break" (link line-break-menu))
   ---
-  ("Other" (make 'syntax)))
+  (-> "Color"
+      (if (== (get-preference "experimental alpha") "on")
+	  (-> "Opacity" (link opacity-menu))
+	  ---)
+      (link color-menu))
+  (-> "Adjust" (link adjust-menu))
+  (-> "Specific" (link specific-menu))
+  (-> "Special" (link format-special-menu)))
+
+(menu-bind math-format-menu
+  (if (use-menus?)
+      (link full-math-format-menu))
+  (if (use-popups?)
+      (link compressed-math-format-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The mathematical symbol menus
@@ -1029,6 +958,162 @@
   (symbol "<bbb-X>")
   (symbol "<bbb-Y>")
   (symbol "<bbb-Z>"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Semantic math menus
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind math-correct-menu
+  ("Correct all" (math-correct-all))
+  (when (with-versioning-tool?)
+    ("Correct manually" (math-correct-manually)))
+  ---
+  (group "Options")
+  ("Remove superfluous invisible operators"
+   (toggle-preference "manual remove superfluous invisible"))
+  ("Insert missing invisible operators"
+   (toggle-preference "manual insert missing invisible"))
+  ("Homoglyph substitutions"
+   (toggle-preference "manual homoglyph correct")))
+
+(menu-bind context-preferences-menu
+  ("Show full context" (toggle-preference "show full context"))
+  (when (inside? 'table)
+    ("Show table cells" (toggle-preference "show table cells")))
+  ("Show current focus" (toggle-preference "show focus"))
+  (when (!= (get-preference "semantic editing") "off")
+    ("Only show semantic focus"
+      (toggle-preference "show only semantic focus"))))
+
+(menu-bind semantic-math-preferences-menu
+  ("Semantic editing" (toggle-preference "semantic editing"))
+  (when (== (get-preference "semantic editing") "on")
+    ("Semantic selections" (toggle-preference "semantic selections"))))
+
+(menu-bind semantic-annotation-menu
+  ("Ordinary symbol" (make 'math-ordinary))
+  ("Ignore" (make 'math-ignore))
+  ---
+  ("Separator" (make 'math-separator))
+  ("Quantifier" (make 'math-quantifier))
+  ("Logical implication" (make 'math-imply))
+  ("Logical or" (make 'math-or))
+  ("Logical and" (make 'math-and))
+  ("Logical not" (make 'math-not))
+  ("Relation" (make 'math-relation))
+  ("Set union" (make 'math-union))
+  ("Set intersection" (make 'math-intersection))
+  ("Set difference" (make 'math-exclude))
+  ("Addition" (make 'math-plus))
+  ("Subtraction" (make 'math-minus))
+  ("Multiplication" (make 'math-times))
+  ("Division" (make 'math-over))
+  ("Prefix" (make 'math-prefix))
+  ("Postfix" (make 'math-postfix))
+  ("Open" (make 'math-open))
+  ("Close" (make 'math-close))
+  ---
+  ("Other" (make 'syntax)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The Mathematics menu
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind math-menu
+  ("Fraction" (make-fraction))
+  ("Square root" (make-sqrt))
+  ("N-th root" (make-var-sqrt))
+  ("Negation" (make-neg))
+  ("Tree" (make-tree))
+  ---
+  (-> "Size tag" (link size-tag-menu))
+  (-> "Script"
+      ("Left subscript" (make-script #f #f))
+      ("Left superscript" (make-script #t #f))
+      ("Right subscript" (make-script #f #t))
+      ("Right superscript" (make-script #t #t))
+      ("Script below" (make-below))
+      ("Script above" (make-above)))
+  (-> "Accent above"
+      ("Tilda" (make-wide "~"))
+      ("Hat" (make-wide "^"))
+      ("Bar" (make-wide "<bar>"))
+      ("Vector" (make-wide "<vect>"))
+      ("Check" (make-wide "<check>"))
+      ("Breve" (make-wide "<breve>"))
+      ("Inverted breve" (make-wide "<invbreve>"))
+      ---
+      ("Acute" (make-wide "<acute>"))
+      ("Grave" (make-wide "<grave>"))
+      ("Dot" (make-wide "<dot>"))
+      ("Two dots" (make-wide "<ddot>"))
+      ("Circle" (make-wide "<abovering>"))
+      ---
+      ("Overbrace" (make-wide "<wide-overbrace>"))
+      ("Underbrace" (make-wide "<wide-underbrace*>"))
+      ("Square overbrace" (make-wide "<wide-sqoverbrace>"))
+      ("Square underbrace" (make-wide "<wide-squnderbrace*>"))
+      ("Right arrow" (make-wide "<wide-varrightarrow>"))
+      ("Left arrow" (make-wide "<wide-varleftarrow>"))
+      ("Wide bar" (make-wide "<wide-bar>")))
+  (-> "Accent below"
+      ("Tilda" (make-wide-under "~"))
+      ("Hat" (make-wide-under "^"))
+      ("Bar" (make-wide-under "<bar>"))
+      ("Vector" (make-wide-under "<vect>"))
+      ("Check" (make-wide-under "<check>"))
+      ("Breve" (make-wide-under "<breve>"))
+      ("Inverted breve" (make-wide-under "<invbreve>"))
+      ---
+      ("Acute" (make-wide-under "<acute>"))
+      ("Grave" (make-wide-under "<grave>"))
+      ("Dot" (make-wide-under "<dot>"))
+      ("Two dots" (make-wide-under "<ddot>"))
+      ("Circle" (make-wide-under "<abovering>"))
+      ---
+      ("Overbrace" (make-wide-under "<wide-overbrace*>"))
+      ("Underbrace" (make-wide-under "<wide-underbrace>"))
+      ("Square overbrace" (make-wide-under "<wide-sqoverbrace*>"))
+      ("Square underbrace" (make-wide-under "<wide-squnderbrace>"))
+      ("Right arrow" (make-wide-under "<wide-varrightarrow>"))
+      ("Left arrow" (make-wide-under "<wide-varleftarrow>"))
+      ("Wide bar" (make-wide-under "<wide-bar>")))
+  (-> "Symbol" (link symbol-menu))
+  (-> "Textual operator" (link textual-operator-menu))
+  (if (== (get-preference "semantic editing") "on")
+      (-> "Semantics" (link semantic-annotation-menu)))
+  ---
+  ("Text" (make 'text))
+  (-> "Table" (link insert-table-menu))
+  (-> "Image" (link insert-image-menu))
+  (-> "Link" (link insert-link-menu))
+  (if (detailed-menus?)
+      (if (style-has? "std-fold-dtd")
+          (-> "Fold" (link insert-fold-menu)))
+      (-> "Animation" (link insert-animation-menu))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Icons for modifying mathematical text properties
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind math-format-icons
+  /
+  (=> (balloon (icon "tm_color.xpm") "Select a foreground color")
+      (link color-menu))
+  (=> (balloon (icon "tm_math_style.xpm")
+               "Change the style of mathematical formulas")
+      (group "Style")
+      ("Small inline" (make-with "math-display" "false"))
+      ("Large displayed" (make-with "math-display" "true"))
+      ---
+      (group "Spacing")
+      ("Normal" (make-with "math-condensed" "false"))
+      ("Condensed" (make-with "math-condensed" "true"))
+      ---
+      (group "Size")
+      ("Normal" (make-with "math-level" "0"))
+      ("Script size" (make-with "math-level" "1"))
+      ("Script script size" (make-with "math-level" "2"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Icons for math mode

@@ -170,14 +170,14 @@
 (lazy-keyboard (text text-kbd) in-text?)
 (lazy-keyboard (text format-text-kbd) in-text?)
 (lazy-keyboard (text std-text-kbd) in-std-text?)
-(lazy-menu (text format-text-menu) text-format-menu text-format-icons)
-(lazy-menu (text text-menu) text-menu text-icons)
+(lazy-menu (text text-menu) text-format-menu text-format-icons
+	   text-menu text-icons)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting math mode\n")
 (lazy-keyboard (math math-kbd) in-math?)
-(lazy-menu (math format-math-menu) math-format-menu math-format-icons)
-(lazy-menu (math math-menu) math-menu math-icons insert-math-menu
+(lazy-menu (math math-menu) math-format-menu math-format-icons
+	   math-menu math-icons insert-math-menu
            math-correct-menu semantic-math-preferences-menu
            context-preferences-menu)
 (lazy-initialize (math math-menu) (in-math?))
@@ -186,8 +186,8 @@
 
 ;(display "Booting programming modes\n")
 (lazy-keyboard (prog prog-kbd) in-prog?)
-(lazy-menu (prog format-prog-menu) prog-format-menu prog-format-icons)
-(lazy-menu (prog prog-menu) prog-menu prog-icons)
+(lazy-menu (prog prog-menu) prog-format-menu prog-format-icons
+	   prog-menu prog-icons)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting source mode\n")
@@ -311,9 +311,12 @@
 (use-modules (fonts fonts-ec) (fonts fonts-adobe) (fonts fonts-x)
              (fonts fonts-math) (fonts fonts-foreign) (fonts fonts-misc)
              (fonts fonts-composite) (fonts fonts-truetype))
-(lazy-define (fonts font-selector)
+(lazy-define (fonts font-old-menu)
+	     text-font-menu math-font-menu prog-font-menu)
+(lazy-define (fonts font-new-widgets)
              open-font-selector open-document-font-selector)
 (tm-property (open-font-selector) (:interactive #t))
+(tm-property (open-document-font-selector) (:interactive #t))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "------------------------------------------------------\n")
