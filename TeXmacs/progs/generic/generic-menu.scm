@@ -498,6 +498,55 @@
     (dynamic (standard-focus-icons (focus-tree)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Focus menus for customizable environments
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (focus-customizable-menu-item setter var name)
+  (((eval name) (interactive setter (list name "string" (get-env var))))))
+
+(tm-menu (focus-customizable-menu-item setter var name)
+  (:require (== (tree-label-type (string->symbol var)) "color"))
+  (=> (eval name)
+      (pick-background "" (setter answer))
+      ---
+      ("Palette" (interactive-color setter '()))
+      ("Other" (interactive setter (list name "string" (get-env var))))))
+
+(tm-menu (focus-extra-menu t)
+  (:require (customizable-context? t))
+  ---
+  (for (p (customizable-parameters t))
+    (with (var name) p
+      (with l (tree-label t)
+        (with setter (lambda (val)
+                       (when (tree-is? (focus-tree) l)
+                         (tree-with-set (focus-tree) var val)))
+          (dynamic (focus-customizable-menu-item setter var name)))))))
+
+(tm-menu (focus-customizable-icons-item setter var name)
+  (input (setter answer) "string" (list (get-env var)) "5em"))
+
+(tm-menu (focus-customizable-icons-item setter var name)
+  (:require (== (tree-label-type (string->symbol var)) "color"))
+  (=> (color (tree->stree (get-env-tree var)) #f #f 24 16)
+      (pick-background "" (setter answer))
+      ---
+      ("Palette" (interactive-color setter '()))
+      ("Other" (interactive setter (list name "string" (get-env var))))))
+
+(tm-menu (focus-extra-icons t)
+  (:require (customizable-context? t))
+  (for (p (customizable-parameters t))
+    (with (var name) p
+      (with l (tree-label t)
+        (with setter (lambda (val)
+                       (when (tree-is? (focus-tree) l)
+                         (tree-with-set (focus-tree) var val)))
+          (glue #f #f 3 0)
+          (mini #t (group (eval (string-append name ":"))))
+          (dynamic (focus-customizable-icons-item setter var name)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Immediately load document-menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

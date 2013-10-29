@@ -39,6 +39,13 @@
       (for (var (map car (list->assoc (cDr (tree-children t)))))
         (with-simplify-sub (tree-up t) var)))))
 
+(tm-define (with-merge t)
+  (when (and (tree-is? t 'with) (tree-is? t :up 'with))
+    (let* ((p (tree-up t))
+           (c (map tree-copy (cDr (tree-children t)))))
+      (tree-remove-node t (- (tree-arity t) 1))
+      (tree-insert p (- (tree-arity p) 1) c))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Modifying environment variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -163,6 +170,21 @@
 
 (tm-define (toggle-underlined)
   (toggle-with-like '(underline "")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Customizable environments
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (customizable-context? t)
+  (nnull? (customizable-parameters t)))
+
+(tm-define (customizable-parameters t)
+  (list))
+
+(tm-define (tree-with-set t var val)
+  (tree-set! t `(with ,var ,val ,t))
+  (with-simplify t)
+  (with-merge t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Spacing

@@ -512,3 +512,46 @@
          (tree-set! t `(small-figure ,(tree-ref t 2) ,(tree-ref t 3))))
         ((tree-is? t 'render-big-figure)
          (tree-set! t `(big-figure ,(tree-ref t 2) ,(tree-ref t 3))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Customization of padded environments
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'padded))
+  (list (list "padding-above" "Above")
+        (list "padding-below" "Below")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'overlined))
+  (list (list "padding-above" "Above")
+        (list "padding-below" "Below")
+        (list "overlined-sep" "Inner")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'underlined))
+  (list (list "padding-above" "Above")
+        (list "padding-below" "Below")
+        (list "overlined-sep" "Inner")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'underlined))
+  (list (list "padding-above" "Above")
+        (list "padding-below" "Below")
+        (list "overlined-sep" "Top")
+        (list "underlined-sep" "Bottom")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'bothlined))
+  (list (list "padding-above" "Above")
+        (list "padding-below" "Below")
+        (list "overlined-sep" "Top")
+        (list "underlined-sep" "Bottom")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'framed))
+  (list (list "padding-above" "Above")
+        (list "padding-below" "Below")
+        (list "framed-vsep" "Inner")
+        (list "framed-hsep" "Indentation")
+        (list "framed-color" "Color")))
