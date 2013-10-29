@@ -190,11 +190,32 @@ concater_rep::typeset_set_binding (tree t, path ip) {
   else typeset_dynamic (keys, ip);
 }
 
+static tree
+remove_labels (tree t) {
+  if (is_atomic (t)) return copy (t);
+  else if (is_func (t, LABEL)) return "";
+  else if (is_func (t, CONCAT)) {
+    tree r (CONCAT);
+    for (int i=0; i<N(t); i++)
+      if (!is_func (t, LABEL))
+        r << remove_labels (t[i]);
+    if (N(r) == 0) return "";
+    else if (N(r) == 1) return r[0];
+    else return r;
+  }
+  else {
+    tree r (t, N(t));
+    for (int i=0; i<N(t); i++)
+      r[i]= remove_labels (t[i]);
+    return r;
+  }
+}
+
 void
 concater_rep::typeset_write (tree t, path ip) {
   if (N(t) != 2) { typeset_error (t, ip); return; }
   string s= env->exec_string (t[0]);
-  tree   r= copy (env->exec (t[1]));
+  tree   r= remove_labels (env->exec (t[1]));
   if (env->complete) {
     if (!env->local_aux->contains (s))
       env->local_aux (s)= tree (DOCUMENT);
