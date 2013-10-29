@@ -135,7 +135,7 @@
   quote-env quotation verse)
 
 (define-group frame-tag
-  padded overlined underlined bothlined framed)
+  padded overlined underlined bothlined framed ornamented)
 
 ;; Textual markup tags
 

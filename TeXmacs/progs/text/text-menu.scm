@@ -152,12 +152,6 @@ for
   ("Quotation" (make 'quotation))
   ("Verse" (make 'verse))
   ---
-  ("Padded" (make 'padded))
-  ("Overlined" (make 'overlined))
-  ("Underlined" (make 'underlined))
-  ("Lines around" (make 'bothlined))
-  ("Framed" (make 'framed))
-  ---
   ("Indent" (make 'indent))
   ("Jump in" (make 'jump-in))
   ("Compact" (make 'compact))
@@ -165,6 +159,13 @@ for
   ("Centered" (make 'center))
   ("Left aligned" (make 'left-aligned))
   ("Right aligned" (make 'right-aligned))
+  ---
+  ("Padded" (make 'padded))
+  ("Overlined" (make 'overlined))
+  ("Underlined" (make 'underlined))
+  ("Lines around" (make 'bothlined))
+  ("Framed" (make 'framed))
+  ("Ornamented" (make 'ornamented))
   (if (style-has? "ornaments-dtd")
       ---
       ("Manila paper" (make 'manila-paper))

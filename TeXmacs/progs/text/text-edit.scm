@@ -555,3 +555,12 @@
         (list "framed-vsep" "Inner")
         (list "framed-hsep" "Indentation")
         (list "framed-color" "Color")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'ornamented))
+  (list (list "padding-above" "Above")
+        (list "padding-below" "Below")
+        (list "ornament-vpadding" "Inner")
+        (list "ornament-hpadding" "Indentation")
+        (list "ornament-color" "Color")
+        (list "ornament-shape" "Shape")))

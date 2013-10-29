@@ -113,6 +113,12 @@ highlight_box_rep::display_classic (renderer& ren) {
     ren->draw_triangle (x1, y1, x1+W, y1, x1+W, y1+W);
     ren->draw_triangle (x2, y2, x2, y2-W, x2-W, y2-W);
   }
+  if (N(bs)>1 && W>0 && sunc == shad) {
+    SI m= (sy2(0) + sy1(1)) >> 1;
+    ren->set_brush (sunc);
+    ren->set_pencil (pencil (sunc, W));
+    ren->line (x1+W, m, x2-W, m);
+  }
 }
 
 /******************************************************************************
@@ -181,6 +187,10 @@ highlight_box_rep::display_rounded (renderer& ren) {
     ren->set_pencil (pencil (sunc, W));
     xs << l1; ys << b2;
     ren->lines (xs, ys);
+    if (N(bs)>1 && sunc == shad) {
+      SI m= (sy2(0) + sy1(1)) >> 1;
+      ren->line (l1, m, r1, m);
+    }
   }
 }
 

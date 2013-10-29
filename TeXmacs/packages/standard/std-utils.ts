@@ -139,6 +139,14 @@
     <padded|<wide-std-framed|<arg|body>>>
   </macro>>
 
+  <assign|ornamented|<\macro|body>
+    <padded|<\ornament>
+      <\surround||<right-flush>>
+        <arg|body>
+      </surround>
+    </ornament>>
+  </macro>>
+
   <\active*>
     <\src-comment>
       Indentation.
