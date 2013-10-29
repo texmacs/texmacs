@@ -376,8 +376,10 @@
   (:require (in? p (list "framed-theorems" "hanging-theorems")))
   :theorem-decorations)
 
-(tm-define (enunciation-context? t)
-  (tree-in? t (enunciation-tag-list)))
+(tm-define (dueto-supporting-context? t)
+  (or (tree-in? t (numbered-unnumbered-append (enunciation-tag-list)))
+      (tree-in? t (render-enunciation-tag-list))
+      (tree-in? t '(proof render-proof))))
 
 (tm-define (dueto-added? t)
   (tm-find t (lambda (x) (tm-is? x 'dueto))))
@@ -385,17 +387,6 @@
 (tm-define (dueto-add t)
   (tree-go-to t :last :start)
   (make 'dueto))
-
-(tm-define (proof-context? t)
-  (tree-in? t '(proof render-proof)))
-
-(tm-define (proof-named? t)
-  (tree-is? t 'render-proof))
-
-(tm-define (proof-toggle-name t)
-  (if (proof-named? t)
-      (tree-set! t `(proof ,(tree-ref t 1)))
-      (tree-set! t `(render-proof "" ,(tree-ref t 0)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Editing algorithms
@@ -475,3 +466,49 @@
 		 (tree-assign-node! t (symbol-append 'specified- r '*))))
 	  (tree-insert! t (- (tree-arity t) 1) '((document "")))
 	  (tree-go-to t (- (tree-arity t) 2) :start)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Possible to change the title of titled environments
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (titled-context? t)
+  (tree-in? t (numbered-unnumbered-append (titled-tag-list))))
+
+(tm-define (titled-named? t)
+  (tree-in? t (render-titled-tag-list)))
+
+(tm-define (titled-toggle-name t)
+  (cond ((tree-in? t (numbered-unnumbered-append (theorem-tag-list)))
+         (tree-set! t `(render-theorem "" ,(tree-ref t 0))))
+        ((tree-in? t (numbered-unnumbered-append (remark-tag-list)))
+         (tree-set! t `(render-remark "" ,(tree-ref t 0))))
+        ((tree-in? t '(question))
+         (tree-set! t `(render-theorem "" ,(tree-ref t 0))))
+        ((tree-in? t '(answer))
+         (tree-set! t `(render-remark "" ,(tree-ref t 0))))
+        ((tree-in? t (numbered-unnumbered-append (exercise-tag-list)))
+         (tree-set! t `(render-exercise "" ,(tree-ref t 0))))
+        ((tree-in? t (numbered-unnumbered-append (solution-tag-list)))
+         (tree-set! t `(render-solution "" ,(tree-ref t 0))))
+        ((tree-in? t '(proof))
+         (tree-set! t `(render-proof "" ,(tree-ref t 0))))
+        ((tree-in? t (numbered-unnumbered-append (small-figure-tag-list)))
+         (tree-set! t `(render-small-figure "" "" ,(tree-ref t 0)
+                                                  ,(tree-ref t 1))))
+        ((tree-in? t (numbered-unnumbered-append (big-figure-tag-list)))
+         (tree-set! t `(render-big-figure "" "" ,(tree-ref t 0)
+                                                ,(tree-ref t 1))))
+        ((tree-is? t 'render-theorem)
+         (tree-set! t `(theorem ,(tree-ref t 1))))
+        ((tree-is? t 'render-remark)
+         (tree-set! t `(remark ,(tree-ref t 1))))
+        ((tree-is? t 'render-exercise)
+         (tree-set! t `(exercise ,(tree-ref t 1))))
+        ((tree-is? t 'render-solution)
+         (tree-set! t `(solution ,(tree-ref t 1))))
+        ((tree-is? t 'render-proof)
+         (tree-set! t `(proof ,(tree-ref t 1))))
+        ((tree-is? t 'render-small-figure)
+         (tree-set! t `(small-figure ,(tree-ref t 2) ,(tree-ref t 3))))
+        ((tree-is? t 'render-big-figure)
+         (tree-set! t `(big-figure ,(tree-ref t 2) ,(tree-ref t 3))))))

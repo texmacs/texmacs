@@ -27,7 +27,20 @@
   (textual-tag) (code-tag) (equation-tag))
 
 (define-group numbered-tag
-  (section-tag) (enunciation-tag) (figure-tag) (equation-tag))
+  (section-tag)
+  (theorem-tag) (definition-tag) (remark-tag) (exercise-tag)
+  (figure-tag) (equation-tag))
+
+;; Environments with titles
+
+(define-group titled-tag
+  (auto-titled-tag) (render-titled-tag))
+
+(define-group auto-titled-tag
+  (enunciation-tag) proof (figure-tag))
+
+(define-group render-titled-tag
+  (render-enunciation-tag) render-proof (render-figure-tag))
 
 ;; Sections
 
@@ -113,6 +126,9 @@
 (define-group solution-tag
   solution answer)
 
+(define-group render-enunciation-tag
+  render-theorem render-remark render-exercise render-solution)
+
 ;; Other textual environments
 
 (define-group prominent-tag
@@ -153,18 +169,13 @@
 (define-group big-figure-tag
   big-figure big-table)
 
+(define-group render-figure-tag
+  render-small-figure render-big-figure)
+
 ;; Figures and tables
 
 (define-group equation-tag
   equation eqnarray)
-
-;; General groups
-
-(define-group variant-tag
-  (fragment-tag))
-
-(define-group similar-tag
-  (fragment-tag))
 
 ;; Algorithms
 

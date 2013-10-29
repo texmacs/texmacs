@@ -723,30 +723,21 @@ for
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (standard-options l)
-  (:require (in? l (enunciation-tag-list)))
+  (:require (or (in? l (enunciation-tag-list))
+                (in? l (render-enunciation-tag-list))
+                (in? l '(proof render-proof))))
   (list "number-europe" ;; "number-us"
         "number-long-article"
         "framed-theorems" "hanging-theorems"))
 
-(tm-menu (focus-toggle-menu t)
-  (:require (proof-context? t))
-  ((check "Named" "v" (proof-named? (focus-tree)))
-   (proof-toggle-name t)))
-
-(tm-menu (focus-toggle-icons t)
-  (:require (proof-context? t))
-  ((check (balloon (icon "tm_small_textual.xpm") "Toggle name") "v"
-	  (proof-named? (focus-tree)))
-   (proof-toggle-name t)))
-
 (tm-menu (focus-extra-menu t)
-  (:require (or (enunciation-context? t) (proof-context? t)))
+  (:require (dueto-supporting-context? t))
   ---
   (when (not (dueto-added? t))
     ("Due to" (dueto-add t))))
 
 (tm-menu (focus-extra-icons t)
-  (:require (or (enunciation-context? t) (proof-context? t)))
+  (:require (dueto-supporting-context? t))
   //
   (when (not (dueto-added? t))
     ("Due to" (dueto-add t))))
@@ -797,3 +788,20 @@ for
   (=> (balloon (icon "tm_position_float.xpm")
                "Allowed positions of floating object")
       (link position-float-menu)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Possibility to rename titled environments
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (focus-toggle-menu t)
+  (:require (titled-context? t))
+  ((check "Named" "v" (titled-named? (focus-tree)))
+   (titled-toggle-name t))
+  (dynamic (former t)))
+
+(tm-menu (focus-toggle-icons t)
+  (:require (titled-context? t))
+  ((check (balloon (icon "tm_small_textual.xpm") "Toggle name") "v"
+	  (titled-named? (focus-tree)))
+   (titled-toggle-name t))
+  (dynamic (former t)))
