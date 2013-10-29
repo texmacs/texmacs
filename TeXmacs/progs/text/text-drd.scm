@@ -19,12 +19,12 @@
 (define-group variant-tag
   (section-tag) (list-tag) (figure-tag)
   (enunciation-tag) (prominent-tag) (frame-tag)
-  (textual-tag) (code-tag))
+  (textual-tag) (code-tag) (ornament-tag))
 
 (define-group similar-tag
   (section-tag) (list-tag) (figure-tag)
   (enunciation-tag) (prominent-tag) (frame-tag)
-  (textual-tag) (code-tag) (equation-tag))
+  (textual-tag) (code-tag) (equation-tag) (ornament-tag))
 
 (define-group numbered-tag
   (section-tag)
@@ -193,3 +193,8 @@
 
 (define-group block-code-tag
   verbatim-code scm-code mmx-code cpp-code shell-code)
+
+;; ornaments
+
+(define-group ornament-tag
+  manila-paper rough-paper ridged-paper pine granite metal)

@@ -119,11 +119,3 @@
 
 (define-group hidden-tag
   hidden-deleted hidden-invisible hidden-greyed)
-
-;; ornaments
-
-(define-group ornament-tag
-  manila-paper rough-paper ridged-paper pine granite metal)
-
-(define-group variant-tag (ornament-tag))
-(define-group similar-tag (ornament-tag))

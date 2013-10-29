@@ -514,7 +514,7 @@
          (tree-set! t `(big-figure ,(tree-ref t 2) ,(tree-ref t 3))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Customization of padded environments
+;; Customization of paddedand ornamented environments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (customizable-parameters t)
@@ -564,3 +564,10 @@
         (list "ornament-hpadding" "Indentation")
         (list "ornament-color" "Color")
         (list "ornament-shape" "Shape")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-in? t (ornament-tag-list)))
+  (list (list "ornament-shape" "Shape")
+        (list "ornament-hpadding" "Horizontal padding")
+        (list "ornament-vpadding" "Vertical padding")
+        (list "ornament-border" "Border width")))
