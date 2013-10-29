@@ -56,21 +56,24 @@
         "par-sep" "par-hor-sep" "par-ver-sep" "par-line-sep" "par-par-sep"
         "par-fnote-sep" "par-columns" "par-columns-sep"))
 
-(tm-widget (paragraph-formatter-basic old new)
+(tm-widget (paragraph-formatter-basic old new flag?)
   (aligned
     (item (text "Alignment:")
       (enum (ahash-set! new "par-mode" answer)
             '("left" "center" "right" "justify")
             (ahash-ref new "par-mode") "10em"))
-    (item ====== ======)
-    (item (text "Left margin:")
-      (enum (ahash-set! new "par-left" answer)
-            (cons-new (ahash-ref new "par-left") '("0tab" "1tab" "2tab" ""))
-            (ahash-ref new "par-left") "10em"))
-    (item (text "Right margin:")
-      (enum (ahash-set! new "par-right" answer)
-            (cons-new (ahash-ref new "par-right") '("0tab" "1tab" "2tab" ""))
-            (ahash-ref new "par-right") "10em"))
+    (assuming (not flag?)
+      (item ====== ======)
+      (item (text "Left margin:")
+        (enum (ahash-set! new "par-left" answer)
+              (cons-new (ahash-ref new "par-left")
+                        '("0tab" "1tab" "2tab" ""))
+              (ahash-ref new "par-left") "10em"))
+      (item (text "Right margin:")
+        (enum (ahash-set! new "par-right" answer)
+              (cons-new (ahash-ref new "par-right")
+                        '("0tab" "1tab" "2tab" ""))
+              (ahash-ref new "par-right") "10em")))
     (item (text "First indentation:")
       (enum (ahash-set! new "par-first" answer)
             (cons-new (ahash-ref new "par-first") '("0tab" "1tab" "-1tab" ""))
@@ -154,7 +157,7 @@
       (tabs
         (tab (text "Basic")
           (padded
-            (dynamic (paragraph-formatter-basic old new))))
+            (dynamic (paragraph-formatter-basic old new flag?))))
         (tab (text "Advanced")
           (padded
             (dynamic (paragraph-formatter-advanced old new))))))
@@ -251,14 +254,14 @@
                      `(style (tuple ,@style)) "tmfs://aux/this-page-footer"))
     ======
     (explicit-buttons
-     (hlist
-       (text "Insert:")
-       // //
-       ("Tab" (when (editing-headers?) (make-htab "5mm")))
-       // //
-       ("Page number" (when (editing-headers?) (insert '(page-number))))
-       >>>
-       ("Ok" (apply-page-settings u settings) (quit))))))
+      (hlist
+        (text "Insert:")
+        // //
+        ("Tab" (when (editing-headers?) (make-htab "5mm")))
+        // //
+        ("Page number" (when (editing-headers?) (insert '(page-number))))
+        >>>
+        ("Ok" (apply-page-settings u settings) (quit))))))
 
 (tm-define (open-page-format)
   (:interactive #t)
