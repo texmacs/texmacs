@@ -170,7 +170,6 @@ qt_decode_length (string width, string height,
   return size;
 }
 
-
 // used only by to_qkeysequence
 static string
 conv_sub (const string& ks) {
@@ -188,6 +187,7 @@ conv_sub (const string& ks) {
   r = replace (r, "M-", "Meta+");
   //r = replace (r, "K-", "");
 #endif
+  // FIXME: tokenizing is unnecessary if we ignore keysequences with spaces!
   r = replace (r, " ", ",");
   array<string> a = tokenize (r, ",");
   for (int i = 0; i < N(a); ++i) {
@@ -204,27 +204,20 @@ conv_sub (const string& ks) {
 
 QKeySequence
 to_qkeysequence (string ks) {
-#ifdef Q_WS_MAC
     // If a key sequence defined in scheme with a kbd-map is made of several
-    // keys it contains spaces. Only those key sequences starting with a
-    // modifier key "C-", "M-", "A-", "S-" may comprise several keys and be
-    // valid application shortcuts. Otherwise, the shortcuts will conflict
-    // with normal text input.
-  if (N(ks) > 2 && !test (ks, 1, "-") && search_forwards (" ", 3, ks) != -1) {
+    // keys it contains spaces.
+    //  FIXME: Sometimes these shortcuts will conflict with normal text input
+    // (see bug #37399). Sometimes the qt_key_command won't do anything...
+    // Maybe we should bypass all this and simply add the shortcut names as text
+    // to the menu items' names...
+  if (search_forwards (" ", ks) != -1) {
     if (DEBUG_QT) cout << "Ignoring keysequence: " << ks << LF;
     return QKeySequence();
   }
-#endif
-  string r;
-  for (int i = 0, k = 0; k <= N(ks); ++k) {
-    if (k == N(ks) || ks[k] == ' ') {
-      r << conv_sub (ks (i, k));
-      i = k;
-    }
-  }
-  if (DEBUG_QT) {
+  string r (conv_sub (ks));
+  if (DEBUG_QT && N(r) > 0) {
     QKeySequence qks (to_qstring (r));
-    cout << "ks: " << ks << " --> "
+    cout << "ks: " << ks << " --> " << r << " --> "
          << qks.toString (QKeySequence::NativeText).toAscii().data() << LF;
     return qks;
   }
