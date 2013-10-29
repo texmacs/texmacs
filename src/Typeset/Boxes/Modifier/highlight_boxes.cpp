@@ -15,6 +15,10 @@
 #include "gui.hpp"
 #include "effect.hpp"
 
+#define ROUNDED_NORMAL   0
+#define ROUNDED_ANGULAR  1
+#define ROUNDED_SALOON   2
+
 /******************************************************************************
 * Highlight boxes
 ******************************************************************************/
@@ -31,7 +35,7 @@ struct highlight_box_rep: public change_box_rep {
   void pre_display (renderer &ren);
   void post_display (renderer &ren);
   void display_classic (renderer& ren);
-  void display_rounded (renderer& ren);
+  void display_rounded (renderer& ren, int style);
 };
 
 highlight_box_rep::highlight_box_rep (
@@ -75,7 +79,9 @@ highlight_box_rep::pre_display (renderer& ren) {
   old_bg = ren->get_background ();
   old_pen= ren->get_pencil ();
   if (shape == "classic") display_classic (ren);
-  else if (shape == "rounded") display_rounded (ren);
+  else if (shape == "rounded") display_rounded (ren, ROUNDED_NORMAL);
+  else if (shape == "angular") display_rounded (ren, ROUNDED_ANGULAR);
+  else if (shape == "saloon") display_rounded (ren, ROUNDED_SALOON);
   else display_classic (ren);
 }
 
@@ -128,29 +134,61 @@ highlight_box_rep::display_classic (renderer& ren) {
 void
 rounded (array<SI>& xs, array<SI>& ys,
          SI cx, SI cy, SI x1, SI y1, SI x2, SI y2,
-         bool start, bool end) {
-  const int n= 16;
-  for (int i=0; i<=n; i++)
-    if ((i>0 || start) && (i<n || end)) {
-      double a= (i * 1.57079632679) / n;
-      if (x1 != cx && y2 != cy) {
-        SI x= (SI) (cx + cos (a) * (x1 - cx));
-        SI y= (SI) (cy + sin (a) * (y2 - cy));
-        xs << x; ys << y;
-      }
-      else {
-        SI x= (SI) (cx + sin (a) * (x2 - cx));
-        SI y= (SI) (cy + cos (a) * (y1 - cy));
-        xs << x; ys << y;
+         bool start, bool end, int style) {
+  switch (style) {
+  case ROUNDED_NORMAL:
+  case ROUNDED_ANGULAR: {
+    int n= (style == ROUNDED_NORMAL? 16: 1);
+    for (int i=0; i<=n; i++)
+      if ((i>0 || start) && (i<n || end)) {
+        double a= (i * 1.57079632679) / n;
+        if (x1 != cx && y2 != cy) {
+          SI x= (SI) (cx + cos (a) * (x1 - cx));
+          SI y= (SI) (cy + sin (a) * (y2 - cy));
+          xs << x; ys << y;
+        }
+        else {
+          SI x= (SI) (cx + sin (a) * (x2 - cx));
+          SI y= (SI) (cy + cos (a) * (y1 - cy));
+          xs << x; ys << y;
+        }
       }
     }
+    break;
+  case ROUNDED_SALOON: {
+    int n= 16;
+    for (int i=0; i<=n; i++)
+      if ((i>0 || start) && (i<n || end)) {
+        double a= (i * 1.57079632679) / n;
+        if (x1 != cx && y2 != cy) {
+          SI x= (SI) (cx + (1 - sin (a)) * (x1 - cx));
+          SI y= (SI) (cy + (1 - cos (a)) * (y2 - cy));
+          xs << x; ys << y;
+        }
+        else {
+          SI x= (SI) (cx + (1 - cos (a)) * (x2 - cx));
+          SI y= (SI) (cy + (1 - sin (a)) * (y1 - cy));
+          xs << x; ys << y;
+        }
+      }
+    }
+    break;
+  }
 }
 
 void
-highlight_box_rep::display_rounded (renderer& ren) {
+highlight_box_rep::display_rounded (renderer& ren, int style) {
   SI W = w;
   SI Rx= (SI) (2 * (xpad-W));
   SI Ry= (SI) (2 * (ypad-W));
+  if (style == ROUNDED_ANGULAR) {
+    Rx= (SI) ((3 * (xpad-W)) / 2);
+    Ry= (SI) ((3 * (ypad-W)) / 2);
+  }
+  if (style == ROUNDED_SALOON) {
+    Rx= (SI) (xpad-W);
+    Ry= (SI) (ypad-W);
+  }
   //if (!ren->is_printer ()) {
   //  SI pixel= ren->pixel;
   //  W= ((w + (2*pixel) - 1) / (2*pixel)) * (2*pixel);
@@ -164,10 +202,10 @@ highlight_box_rep::display_rounded (renderer& ren) {
   SI t1= y2-(W>>1);
   SI t2= y2-Ry;
   array<SI> xs, ys;
-  rounded (xs, ys, l2, b2, l1, b2, l2, b1, true, true);
-  rounded (xs, ys, r2, b2, r2, b1, r1, b2, true, true);
-  rounded (xs, ys, r2, t2, r1, t2, r2, t1, true, true);
-  rounded (xs, ys, l2, t2, l2, t1, l1, t2, true, true);
+  rounded (xs, ys, l2, b2, l1, b2, l2, b1, true, true, style);
+  rounded (xs, ys, r2, b2, r2, b1, r1, b2, true, true, style);
+  rounded (xs, ys, r2, t2, r1, t2, r2, t1, true, true, style);
+  rounded (xs, ys, l2, t2, l2, t1, l1, t2, true, true, style);
   if (bg->get_type() != brush_none) {
     ren->set_brush (bg);
     ren->polygon (xs, ys);
@@ -177,8 +215,8 @@ highlight_box_rep::display_rounded (renderer& ren) {
     array<SI> Xs, Ys;
     Xs << l1; Ys << m;
     Xs << r1; Ys << m;
-    rounded (Xs, Ys, r2, t2, r1, t2, r2, t1, true, true);
-    rounded (Xs, Ys, l2, t2, l2, t1, l1, t2, true, true);
+    rounded (Xs, Ys, r2, t2, r1, t2, r2, t1, true, true, style);
+    rounded (Xs, Ys, l2, t2, l2, t1, l1, t2, true, true, style);
     ren->set_brush (xc);
     ren->polygon (Xs, Ys);
   }

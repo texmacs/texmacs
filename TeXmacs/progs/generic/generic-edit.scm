@@ -584,7 +584,7 @@
 
 (tm-define (parameter-choice-list l)
   (:require (== l "ornament-shape"))
-  (list "classic" "rounded"))
+  (list "classic" "rounded" "angular" "saloon"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting various kinds of content

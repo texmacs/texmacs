@@ -502,11 +502,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-menu (focus-customizable-menu-item setter var name)
-  (((eval name) (interactive setter (list name "string" (get-env var))))))
+  ((eval name) (interactive setter (list name "string" (get-env var)))))
+
+(tm-menu (focus-customizable-menu-item setter var name)
+  (:require (parameter-choice-list var))
+  (-> (eval name)
+      (for (val (parameter-choice-list var))
+        ((eval val) (setter val)))))
 
 (tm-menu (focus-customizable-menu-item setter var name)
   (:require (== (tree-label-type (string->symbol var)) "color"))
-  (=> (eval name)
+  (-> (eval name)
       (pick-background "" (setter answer))
       ---
       ("Palette" (interactive-color setter '()))
@@ -525,6 +531,13 @@
 
 (tm-menu (focus-customizable-icons-item setter var name)
   (input (setter answer) "string" (list (get-env var)) "5em"))
+
+(tm-menu (focus-customizable-icons-item setter var name)
+  (:require (parameter-choice-list var))
+  (mini #t
+    (=> (eval (get-env var))
+        (for (val (parameter-choice-list var))
+          ((eval val) (setter val))))))
 
 (tm-menu (focus-customizable-icons-item setter var name)
   (:require (== (tree-label-type (string->symbol var)) "color"))
