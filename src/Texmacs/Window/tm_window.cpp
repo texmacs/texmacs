@@ -42,15 +42,38 @@ unique_window_name (string name) {
   }
 }
 
+static bool
+move_accept (int old_x, int old_y, int x, int y) {
+  if (old_x == x && old_y == y) return false;
+  return true;
+}
+
 void
 notify_window_move (string name, SI xx, SI yy) {
   int x=  xx / PIXEL;
   int y= -yy / PIXEL;
   if (name != "popup") {
     //cout << "Move " << name << " to " << x << ", " << y << "\n";
-    set_user_preference ("abscissa " * name, as_string (x));
-    set_user_preference ("ordinate " * name, as_string (y));
+    string old_x= get_user_preference ("abscissa " * name, "");
+    string old_y= get_user_preference ("ordinate " * name, "");
+    //cout << "Move " << name << ": " << old_x << ", " << old_y
+    //<< " --> " << x << ", " << y << "\n";
+    if (old_x == "" || old_y == "" ||
+        move_accept (as_int (old_x), as_int (old_y), x, y)) {
+      set_user_preference ("abscissa " * name, as_string (x));
+      set_user_preference ("ordinate " * name, as_string (y));
+    }
   }
+}
+
+static bool
+resize_accept (int old_w, int old_h, int w, int h) {
+  if (old_w == w && old_h == h) return false;
+#ifdef QTTEXMACS
+  if (old_w == w && old_h == h + 16) return false;
+  if (old_w == w && old_h == h - 40) return false;
+#endif
+  return true;
 }
 
 void
@@ -59,8 +82,15 @@ notify_window_resize (string name, SI ww, SI hh) {
   int h= hh / PIXEL;
   if (name != "popup") {
     //cout << "Resize " << name << " to " << ww << ", " << hh << "\n";
-    set_user_preference ("width " * name, as_string (w));
-    set_user_preference ("height " * name, as_string (h));
+    string old_w= get_user_preference ("width " * name, "");
+    string old_h= get_user_preference ("height " * name, "");
+    //cout << "Resize " << name << ": " << old_w << ", " << old_h
+    //<< " --> " << w << ", " << h << "\n";
+    if (old_w == "" || old_h == "" ||
+        resize_accept (as_int (old_w), as_int (old_h), w, h)) {
+      set_user_preference ("width " * name, as_string (w));
+      set_user_preference ("height " * name, as_string (h));
+    }
   }
 }
 
