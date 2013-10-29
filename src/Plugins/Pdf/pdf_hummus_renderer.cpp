@@ -302,17 +302,15 @@ pdf_hummus_renderer_rep::pdf_hummus_renderer_rep (
 
   EStatusCode status;
   {
-    char* _pdf_file_name;
-    _pdf_file_name= as_charp (concretize (pdf_file_name));
+    c_string _pdf_file_name (concretize (pdf_file_name));
 
-    status = pdfWriter.StartPDF(_pdf_file_name, ePDFVersion14); // PDF 1.4 for alpha
-                                 // , LogConfiguration(true, true, "/Users/mgubi/Desktop/pdfwriter-x.log")
-                                 // , PDFCreationSettings(false) ); // true = compression on
+    status = pdfWriter.StartPDF((char*)_pdf_file_name, ePDFVersion14 //); // PDF 1.4 for alpha
+                                  , LogConfiguration(true, true, "/Users/mgubi/Desktop/pdfwriter-x.log")
+                                  , PDFCreationSettings(false) ); // true = compression on
       if(status != PDFHummus::eSuccess)
       {
           cout << "failed to start PDF\n";
       }	
-    tm_delete_array (_pdf_file_name);
   }
   
   destId = pdfWriter.GetObjectsContext().GetInDirectObjectsRegistry().AllocateNewObjectID();
@@ -359,10 +357,9 @@ pdf_hummus_renderer_rep::~pdf_hummus_renderer_rep () {
       objectsContext.StartNewIndirectObject(id);
       {
         string annot = annot_list(id);
-        char *buf = as_charp(annot);
-        objectsContext.StartFreeContext()->Write((const IOBasicTypes::Byte* )(buf), N(annot));
+        c_string buf (annot);
+        objectsContext.StartFreeContext()->Write((const IOBasicTypes::Byte* )((char*)buf), N(annot));
         objectsContext.EndFreeContext();
-        tm_delete_array(buf);
       }
       objectsContext.EndIndirectObject();
     }
@@ -651,10 +648,9 @@ create_pdf_image_raw (PDFWriter& pdfw, string raw_data, SI width, SI height, Obj
       // write stream
       objectsContext.WriteKeyword("stream");
       {
-        char *buf = as_charp(raw_data);
-        objectsContext.StartFreeContext()->Write((unsigned char*)buf, N(raw_data));
+        c_string buf (raw_data);
+        objectsContext.StartFreeContext()->Write((unsigned char*)(char *)buf, N(raw_data));
         objectsContext.EndFreeContext();
-        tm_delete_array(buf);
       }
       objectsContext.EndLine();
       objectsContext.WriteKeyword("endstream");
@@ -797,9 +793,10 @@ t3font_rep::write_char (glyph gl, ObjectIDType inCharID)
       }
       data << ">\r\nEI\r\n"; // ">" is the EOD char for ASCIIHex 
     }
-    char *buf = as_charp(data);
-    charStream->GetWriteStream()->Write((unsigned char *)buf,N(data));
-    tm_delete_array(buf);
+    {
+      c_string buf(data);
+      charStream->GetWriteStream()->Write((unsigned char *)(char*)buf,N(data));
+    }
   }
   objectsContext.EndPDFStream(charStream);
   delete charStream;
@@ -874,10 +871,9 @@ t3font_rep::write_definition ()
     dict << "\t\t]\r\n\t>>\r\n>>\r\n";
     {
       // flush the buffer
-      unsigned char *buf = (unsigned char *)as_charp(dict);
-      objectsContext.StartFreeContext()->Write(buf,N(dict));
+      c_string buf(dict);
+      objectsContext.StartFreeContext()->Write((unsigned char *)(char*)buf,N(dict));
       objectsContext.EndFreeContext();
-      tm_delete_array(buf);
     }
     objectsContext.EndIndirectObject();
   }
@@ -932,12 +928,13 @@ pdf_hummus_renderer_rep::make_pdf_font (string fontname)
     //double fsize= font_size (fn->res_name);
     
     //char *_rname = as_charp(fname);
-    char* _u= as_charp (concretize (u));
-    
-    cout << "GetFontForFile "  << u  << LF;
-    PDFUsedFont* font = pdfWriter.GetFontForFile(_u);
-    //tm_delete_array(_rname);
-    tm_delete_array(_u);
+    PDFUsedFont* font;
+    {
+      cout << "GetFontForFile "  << u  << LF;
+      c_string _u (concretize (u));
+      font = pdfWriter.GetFontForFile((char*)_u);
+      //tm_delete_array(_rname);
+    }
     
     if (font != 0) {
       pdf_fonts (fontname)= font;
@@ -1224,7 +1221,7 @@ public:
 //    string cmd = "ps2pdf14";
     system (cmd, u, temp);
     cout << temp << LF;
-    char *fname = as_charp (concretize (temp));
+    c_string fname (concretize (temp));
     
     cout << "flushing :" << fname << LF;
   
@@ -1240,7 +1237,7 @@ public:
     EStatusCode status = PDFHummus::eSuccess;
     DocumentContext& dc = pdfw.GetDocumentContext();
 
-    PDFDocumentCopyingContext *copyingContext = pdfw.CreatePDFCopyingContext(fname);
+    PDFDocumentCopyingContext *copyingContext = pdfw.CreatePDFCopyingContext((char*)fname);
     do {
       if(!copyingContext) break;
       PDFFormXObject *form = dc.StartFormXObject(cropBox, id, tMat);
@@ -1252,7 +1249,6 @@ public:
       delete copyingContext;
       copyingContext = NULL;
     }
-    tm_delete_array(fname);
     remove (temp);
 
     if (status == PDFHummus::eFailure) {
@@ -1454,10 +1450,9 @@ pdf_hummus_renderer_rep::flush_dests()
   dict << ">>\r\n";
   {
     // flush the buffer
-    unsigned char *buf = (unsigned char *)as_charp(dict);
-    objectsContext.StartFreeContext()->Write(buf,N(dict));
+    c_string buf (dict);
+    objectsContext.StartFreeContext()->Write((unsigned char *)(char*)buf,N(dict));
     objectsContext.EndFreeContext();
-    tm_delete_array(buf);
   }
   objectsContext.EndIndirectObject();
 }
