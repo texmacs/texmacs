@@ -38,7 +38,8 @@ search_latex_previews (tree t) {
   array<string> r;
   if (is_atomic (t));
   else if (is_tuple (t, "\\def") || is_tuple (t, "\\def*")
-      || is_tuple (t, "\\def**"));
+      || is_tuple (t, "\\def**") || is_tuple (t, "\\newenvironment**") ||
+      is_tuple (t, "\\newenvironment") || is_tuple (t, "\\newenvironment*"));
   else if (is_tuple (t, "\\latex_preview", 2))
     r << as_string (t[1]);
   else {
@@ -89,7 +90,7 @@ latex_install_preview (string s, tree t, url wdir, bool dvips) {
   array<string> macros= search_latex_previews (t);
   hashmap<string,bool> done (false);
   string preview= "%%%%%%%%%%%%%% ADDED BY TEXMACS %%%%%%%%%%%%%%%%%%\n";
-  if (dvips)
+  if (!dvips)
     preview  << "\\usepackage[active,tightpage,delayed]{preview}\n";
   else
     preview  << "\\usepackage[active,tightpage,delayed,psfixbb,dvips]{preview}\n";
@@ -97,6 +98,7 @@ latex_install_preview (string s, tree t, url wdir, bool dvips) {
   for (i=0; i<N(macros); i++) {
     if (macros[i] == "") continue;
     if (done[macros[i]]) continue;
+    if (test (macros[i], 0, "end-")) continue;
     int arity= latex_arity (macros[i]);
     bool option= (arity<0);
     string arity_code;
@@ -218,9 +220,14 @@ latex_preview (string s, tree t) {
     }
   }
   array<tree> r= latex_load_preview (wdir, dvips);
-  if (N(r) != N(search_latex_previews (t))) {
-    dbg ("Warning: did not found the expected number of pictures.");
-    dbg ("         LaTeX compilation or picture importation might have failed");
+  int exp= N(search_latex_previews (t));
+  if (N(r) != exp) {
+    string msg;
+    msg << "Warning: did not found the expected number of pictures:\n"
+      << "         Got " << as_string (N(r)) << " whereas expected "
+      << as_string (exp) << ".\n         LaTeX compilation or picture"
+      << " importation might have failed";
+    dbg (msg);
   }
   latex_clean_tmp_directory (wdir);
   return r;

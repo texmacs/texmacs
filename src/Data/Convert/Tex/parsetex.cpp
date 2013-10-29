@@ -14,7 +14,6 @@
 #include "wencoding.hpp"
 
 extern bool textm_class_flag;
-hashmap<string,int> textm_recursion_level (0);
 
 tree latex_symbol_to_tree (string s);
 string verbatim_escape (string s);
@@ -52,14 +51,12 @@ struct latex_parser {
   bool pic;
   bool keep_src;
   hashmap<string,bool> loaded_package;
-  hashmap<string,array<tree> > substituables;
   latex_parser (bool unicode2): level (0), unicode (unicode2) {}
   void latex_error (string s, int i, string message);
 
   bool is_opening_option (char c);
   bool is_substituable (tree t);
-  string contains_substituable (tree t);
-  tree   apply_substitution    (tree t);
+  bool contains_substituable (tree t);
 
   tree parse             (string s, int& i, string stop= "", bool ch= false);
   tree parse_backslash   (string s, int& i);
@@ -545,15 +542,27 @@ latex_parser::parse_backslash (string s, int& i) {
 }
 
 static string
-sharp_to_arg (string s, tree args) {
+sharp_to_arg (array<string> body, tree args, int arity) {
   int i;
+  string s= body[0], o= "";
+  if (N(body) == 2) o= body[1];
+
+  if (N(args) == -arity) {
+      tree tmp (TUPLE);
+      tmp << args[0] << o;
+      int n= N(args);
+      for (i=1; i<n; i++) tmp << args[i];
+      args= tmp;
+    }
+
   string r;
-  for (i=0; i<N(s); i++)
+  for (i=0; i<N(s); i++) {
     if ((s[i]=='#') && ((i+1)<N(s)) && (s[i+1]>='1') && (s[i+1]<='9')) {
       int nr= ((int) s[++i]) - ((int) '0');
       if (N(args)>nr) r << string_arg (args[nr]);
     }
     else r << s[i];
+  }
   return r;
 }
 
@@ -633,16 +642,18 @@ latex_parser::is_opening_option (char c) {
 }
 
 static void
-read_throught_env (string s, int &i, string cmd) {
+read_throught_env (string s, int &i, string cmd, bool end) {
   string env= cmd (7, N(cmd));
-  int count= 1;
-  while (i < N(s) && count > 0) {
+  int count= 1, count_aux= 0;
+  while (i < N(s) && count > 0 && count_aux >= 0) {
     if (s[i] == '\\' && test_env (s, i, env, false)) count++;
     if (s[i] == '\\' && test_env (s, i, env, true))  count--;
     if (s[i] == '%' && (i == 0 || s[i-1] != '\\')) {while (s[i] != '\n') i++;}
-    if (count > 0) i++;
+    if (s[i] == '{') count_aux++;
+    if (s[i] == '}') count_aux--;
+    if (count > 0 && count_aux >=0) i++;
   }
-  if (test_env (s, i, env, true) && count == 0) {
+  if (end && test_env (s, i, env, true) && count == 0) {
     i+= 4; // \end
     while (i < N(s) && s[i] == ' ') i++;
     i++; // "{"
@@ -657,78 +668,40 @@ read_throught_env (string s, int &i, string cmd) {
 
 bool
 latex_parser::is_substituable (tree t) {
+  if (is_tuple (t, "\\latex_preview", 2)) return true;
+  if (is_tuple (t) && N(t) > 0 &&
+      latex_type (string_arg (t[0])) == "as-picture")
+    return true;
   if (is_tuple (t) && N(t) > 0) {
     string cmd= string_arg (t[0]);
-    if (substituables->contains (cmd) ||
-        (cmd[N(cmd)-1] == '*' && substituables->contains (cmd(0, N(cmd)-1))))
+    if (latex_type (cmd) == "replace" ||
+        (cmd[N(cmd)-1] == '*' && latex_type (cmd(0, N(cmd)-1)) == "replace"))
       return true;
   }
   return false;
 }
 
-string
+bool
 latex_parser::contains_substituable (tree t) {
-  if (is_atomic (t)) return "";
-  if (is_substituable (t)) return string_arg (t[0]);
-  if (is_tuple (t) && N(t) > 0 &&
-      latex_type (string_arg (t[0])) == "as-picture") {
-    return string_arg (t[0]);
-  }
-  if (is_tuple (t, "\\latex_preview")) return "true";
+  if (is_atomic (t)) return false;
+  if (is_substituable (t)) return true;
   int i, n= N(t);
-  string subs= "";
-  for (i=0; i<n; i++) {
+  bool subs= false;
+  for (i=0; i<n && !subs; i++)
     subs= contains_substituable (t[i]);
-    if (subs != "") return subs;
-  }
-  return "";
+  return subs;
 }
 
-static tree
-tree_replace (tree t, tree what, tree by) {
-  if (t == what) return by;
-  if (is_atomic (t)) return t;
-  int i, n= N(t);
-  tree r(t, n);
-  for (i=0; i<n; i++)
-    r[i]= tree_replace (t[i], what, by);
+array<string> tree_to_str_array (tree t) {
+  array<string> r;
+  r << as_string (t);
   return r;
 }
 
-tree
-latex_parser::apply_substitution (tree t) {
-  if (is_atomic (t)) return t;
-  if (is_tuple (t) && N(t) > 0 &&
-      latex_type (string_arg (t[0])) == "as-picture") {
-    string cmd= string_arg (t[0]);
-    tuple ("\\latex_preview", cmd(1, N(cmd)), "");
-  }
-  if (is_substituable (t)) {
-    string cmd= string_arg (t[0]);
-    int n= N(cmd);
-    if (cmd[n-1] == '*' && substituables->contains (cmd(0, n-1))) {
-      cmd= cmd(0, n-1);
-    }
-    array<tree> a= substituables[cmd];
-    tree r (a[1]), o (a[2]);
-    if (N(t) == -latex_arity (cmd)) {
-      tree tmp (TUPLE);
-      tmp << t[0] << o;
-      n= N(t);
-      for (int i=1; i<n; i++) tmp << t[i];
-      t= tmp;
-    }
-    n= N(t);
-    for (int i=1; i<n; i++) {
-      string arg= "#" * as_string (i);
-      r= tree_replace (r, arg, t[i]);
-    }
-    return r;
-  }
-  int i, n= N(t);
-  tree r (t, n);
-  for (i=0; i<n; i++)
-    r[i]= apply_substitution (t[i]);
+array<string> tree_to_str_array (tree t1, tree t2) {
+  array<string> r;
+  r << as_string (t1);
+  r << as_string (t2);
   return r;
 }
 
@@ -951,8 +924,8 @@ latex_parser::parse_command (string s, int& i, string cmd) {
   /******************** store and process loaded packages ********************/
   if (is_tuple (t, "\\usepackage", 1) || is_tuple (t, "\\usepackage*", 2)) {
     array<string> p = trim_spaces (tokenize (as_string(u[N(t)-1]), ","));
-    for (int i=0; i<N(p); i++) {
-      loaded_package (p[i]) = true;
+    for (int j=0; j<N(p); j++) {
+      loaded_package (p[j]) = true;
     }
     if (loaded_package["algorithm2e"]) {
       command_arity ("\\Else")   = -2;
@@ -969,8 +942,8 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     string var= string_arg (t[1]);
     command_type  (var)= "user";
     command_arity (var)= 0;
-    command_def   (var)= as_string (u[2]);
-    // hack to retrive artity of shortcuts
+    command_def   (var)= tree_to_str_array (u[2]);
+    // hack to retrive arity of shortcuts
     if (is_func (t[2], TUPLE, 1) && 
         latex_type (as_string (t[2][0])) != "undefined") {
       command_arity (var)= latex_arity (as_string (t[2][0]));
@@ -980,28 +953,13 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     string var= string_arg (t[1]);
     command_type  (var)= "user";
     command_arity (var)= as_int (t[2]);
-    command_def   (var)= as_string (u[3]);
+    command_def   (var)= tree_to_str_array (u[3]);
   }
   if (is_tuple (t, "\\def**", 4)) {
     string var= string_arg (t[1]);
     command_type  (var)= "user";
     command_arity (var)= - as_int (t[2]);
-    command_def   (var)= as_string (u[4]);
-  }
-  if (is_tuple (t, "\\def",   2) ||
-      is_tuple (t, "\\def*",  3) ||
-      is_tuple (t, "\\def**", 4)) {
-    int n= N(t) - 1;
-
-    string subs= contains_substituable (t[n]);
-    if (subs == "" && is_tuple (t, "\\def**", 4)) {
-      subs= contains_substituable (t[n-1]);
-    }
-
-    if (pic && subs != "" && is_tuple (t, "\\def**", 4))
-      substituables (string_arg (t[1]))= A (tuple (subs, t[n], t[n-1]));
-    else if (pic && subs != "" && !is_tuple (t, "\\def**", 4))
-      substituables (string_arg (t[1]))= A (tuple (subs, t[n], ""));
+    command_def   (var)= tree_to_str_array (u[4], u[3]);
   }
   if (is_tuple (t, "\\declaretheorem*", 2) || 
       is_tuple (t, "\\declaretheorem",  1)) {
@@ -1045,70 +1003,103 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     string var= "\\begin-" * string_arg (t[1]);
     command_type  (var)= "user";
     command_arity (var)= 0;
-    command_def   (var)= as_string (u[2]);
+    command_def   (var)= tree_to_str_array (u[2]);
     if (is_math_environment (t)) command_type (var)= "math-environment";
+    // hack to retrive arity of shortcuts
+    if (is_func (t[2], TUPLE, 1) &&
+        latex_type (as_string (t[2][0])) != "undefined") {
+      command_arity (var)= latex_arity (as_string (t[1][0]));
+    }
     var= "\\end-" * string_arg (t[1]);
     command_type  (var)= "user";
     command_arity (var)= 0;
-    command_def   (var)= as_string (u[3]);
+    command_def   (var)= tree_to_str_array (u[3]);
     if (is_math_environment (t)) command_type (var)= "math-environment";
   }
   if (is_tuple (t, "\\newenvironment*", 4)) {
     string var= "\\begin-" * string_arg (t[1]);
     command_type  (var)= "user";
     command_arity (var)= as_int (t[2]);
-    command_def   (var)= as_string (u[3]);
+    command_def   (var)= tree_to_str_array (u[3]);
     if (is_math_environment (t)) command_type (var)= "math-environment";
     var= "\\end-" * string_arg (t[1]);
     command_type  (var)= "user";
     command_arity (var)= 0;
-    command_def   (var)= as_string (u[4]);
+    command_def   (var)= tree_to_str_array (u[4]);
     if (is_math_environment (t)) command_type (var)= "math-environment";
   }
   if (is_tuple (t, "\\newenvironment**", 5)) {
     string var= "\\begin-" * string_arg (t[1]);
     command_type  (var)= "user";
     command_arity (var)= -as_int (t[2]);
-    command_def   (var)= as_string (u[4]);
+    command_def   (var)= tree_to_str_array (u[4], u[3]);
     if (is_math_environment (t)) command_type (var)= "math-environment";
     var= "\\end-" * string_arg (t[1]);
     command_type  (var)= "user";
     command_arity (var)= 0;
-    command_def   (var)= as_string (u[5]);
+    command_def   (var)= tree_to_str_array (u[5]);
     if (is_math_environment (t)) command_type (var)= "math-environment";
   }
 
-  /***************** environment changes for user commands  ******************/
-  if ((is_tuple (t, "\\def", 2) || is_tuple (t, "\\def*", 3))
-      && latex_type (cmd) == "user") {
-    int pos= 0;
-    string body= command_def[cmd];
-    textm_recursion_level (cmd)++;
-    if (textm_recursion_level [cmd] <= 5) {
-      if (count_occurrences ("\\begin", body) ==
-	  count_occurrences ("\\end", body))
-	(void) parse (sharp_to_arg (body, u), pos, "", true);
-      else t= parse (sharp_to_arg (body, u), pos, "", true);
+  /***************** detecting substitutions and bords effects  **************/
+  if (pic && (is_tuple (t, "\\def",   2) ||
+              is_tuple (t, "\\def*",  3) ||
+              is_tuple (t, "\\def**", 4) ||
+              is_tuple (t, "\\newenvironment",   3) ||
+              is_tuple (t, "\\newenvironment*",  4) ||
+              is_tuple (t, "\\newenvironment**", 5))) {
+
+    bool subs= false;
+    n= N(t);
+    for (int j=2; j<n && !subs; j++)
+      subs= contains_substituable (t[j]);
+    if (subs && starts (as_string (t[0]), "\\def")) {
+      string name= string_arg (t[1]);
+      command_type (name)= "replace";
     }
-    textm_recursion_level (cmd)--;
-    // replaces macros by their definitions in the case when
-    // the user defined shorthands for \\begin{env} and \\end{env}
+    if (subs && starts (as_string (t[0]), "\\newenv")) {
+      string name= string_arg (t[1]);
+      command_type ("\\begin-"*name)= "replace";
+      command_type ("\\end-"*name)=   "replace";
+    }
   }
 
-  if (pic && contains_substituable (t) != "")
-    t= apply_substitution (t);
+  /***************** apply substitutions and bords effects  ******************/
+  if ((pic && latex_type (cmd) == "replace")
+      || latex_type (cmd) == "bordeffect") {
+    int pos= 0;
+    array<string> body= command_def[cmd];
+    arity= command_arity[cmd];
+    if (latex_type (cmd) == "bordeffect")
+      (void) parse (sharp_to_arg (body, u, arity), pos, "", true);
+    else {
+      if (cmd(0, 7) == "\\begin-") {
+        int env_i= i;
+        n= N(s);
+        while (env_i < n && s[env_i] == ' ') env_i++;
+        read_throught_env (s, i, cmd, false);
+        string env_body= s(env_i, i);
+        t= parse (sharp_to_arg (body, u, arity)*env_body, pos, "", true);
+      }
+      else
+        t= parse (sharp_to_arg (body, u, arity), pos, "", true);
+    }
+  }
 
+  /***************** importing as pictures  **********************************/
   string orig_cmd= cmd;
   if (pic && latex_type (cmd(1, N(cmd))) == "as-picture") {
     if (cmd(0, 7) == "\\begin-") {
-      read_throught_env (s, i, cmd);
+      read_throught_env (s, i, cmd, false);
       orig_cmd= "\\begin{" * cmd(7, N(cmd)) * "}";
     }
+    else if (cmd(0, 5) == "\\end-")
+      orig_cmd= "\\end{" * cmd(5, N(cmd)) * "}";
     string code= orig_cmd * s(begin_parse, i);
-    tree ret= tuple ("\\latex_preview", cmd(1, N(cmd)), code);
     if (command_type ("!mode") == "math")
-      return tree (TUPLE, "\\text", ret);
-    return ret;
+      t= tuple ("\\latex_preview", cmd(1, N(cmd)), compound ("text", code));
+    else
+      t= tuple ("\\latex_preview", cmd(1, N(cmd)), code);
   }
 
   if (mbox_flag) command_type ("!mode") = "math";

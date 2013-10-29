@@ -26,9 +26,11 @@ latex_arity_func (string s) {
 hashfunc<string,string>    latex_std_type (latex_type_func, "undefined");
 hashfunc<string,int>       latex_std_arity (latex_arity_func, 0);
 
+static array<string> empty_array;
+
 rel_hashmap<string,string> command_type ("undefined");
 rel_hashmap<string,int>    command_arity (0);
-rel_hashmap<string,string> command_def ("undefined");
+rel_hashmap<string,array<string> > command_def (empty_array);
 
 string
 latex_type (string s) {
