@@ -44,7 +44,8 @@ class pdf_raw_image;
 class t3font;
 
 class pdf_hummus_renderer_rep : public renderer_rep {
-  static const int default_dpi= 72;
+  
+  static const int default_dpi= 72; // PDF initial coordinate system corresponds to 72 dpi
   
   url       pdf_file_name;
   int       dpi;
@@ -61,16 +62,17 @@ class pdf_hummus_renderer_rep : public renderer_rep {
   rgb       fill_rgb;
   color     fg, bg;
   SI        lw;
-
+  double    current_width;
+  
+  
   pencil   pen;
   brush    bgb;
 
   string    cfn;
   PDFUsedFont* cfid;
-  int fsize;
+  double fsize;
   double prev_text_x, prev_text_y;
   
-  double p;
   double width, height;
   
   
@@ -96,14 +98,14 @@ class pdf_hummus_renderer_rep : public renderer_rep {
   
   double to_x (SI x) {
     x += ox;
-    if (x>=0) x= x/PIXEL; else x= (x-PIXEL+1)/PIXEL;
-    return p * x;
+    if (x>=0) x= x/pixel; else x= (x-pixel+1)/pixel;
+    return x;
   };
 
   double to_y (SI y) {
     y += oy;
-    if (y>=0) y= y/PIXEL; else y= (y-PIXEL+1)/PIXEL;
-    return p * y;
+    if (y>=0) y= y/pixel; else y= (y-pixel+1)/pixel;
+    return y;
   };
   
   void init_page_size ();
@@ -262,9 +264,12 @@ pdf_hummus_renderer_rep::select_fill_color (color c) {;
 
 void
 pdf_hummus_renderer_rep::select_line_width (SI w) {
-  double pw = p * w /PIXEL;
+  double pw = w /pixel;
   //if (pw < 1) pw= 1;
-  contentContext->w(pw);
+  if (pw != current_width) {
+    contentContext->w(pw);
+    current_width = pw;
+  }
 }
 
 /******************************************************************************
@@ -286,9 +291,6 @@ pdf_hummus_renderer_rep::pdf_hummus_renderer_rep (
   width= default_dpi * paper_w / 2.54;
   height= default_dpi * paper_h / 2.54;
 
-//  p= (double)default_dpi / dpi / PIXEL;
-  p= (double)default_dpi / dpi;
-
   if (landscape) {
     width= (width > height)? width : height;
     height= (width > height)? height : width;
@@ -304,9 +306,9 @@ pdf_hummus_renderer_rep::pdf_hummus_renderer_rep (
   {
     c_string _pdf_file_name (concretize (pdf_file_name));
 
-    status = pdfWriter.StartPDF((char*)_pdf_file_name, ePDFVersion14 //); // PDF 1.4 for alpha
-                                  , LogConfiguration(true, true, "/Users/mgubi/Desktop/pdfwriter-x.log")
-                                  , PDFCreationSettings(false) ); // true = compression on
+    status = pdfWriter.StartPDF((char*)_pdf_file_name, ePDFVersion14 ); // PDF 1.4 for alpha
+                               //   , LogConfiguration(true, true, "/Users/mgubi/Desktop/pdfwriter-x.log")
+                               //   , PDFCreationSettings(false) ); // true = compression on
       if(status != PDFHummus::eSuccess)
       {
           cout << "failed to start PDF\n";
@@ -402,14 +404,18 @@ pdf_hummus_renderer_rep::begin_page() {
   fg  = -1;
   bg  = -1;
   lw  = -1;
+  current_width = -1.0;
   cfn= "";
   cfid = NULL;
   inText = false;
 
-  //contentContext->q(); // outmost save (for clipping)
+  // outmost save of the graphics state
+  contentContext->q();
+  // set scaling suitable for dpi (pdf default is 72)
+  contentContext->cm((double)default_dpi / dpi, 0, 0, (double)default_dpi / dpi, 0, 0);
   
-  set_origin (0, paper_h*dpi*PIXEL/2.54);
-  set_clipping (0, (int) ((-dpi*PIXEL*paper_h)/2.54), (int) ((dpi*PIXEL*paper_w)/2.54), 0);
+  set_origin (0, paper_h*dpi*pixel/2.54);
+  set_clipping (0, (int) ((-dpi*pixel*paper_h)/2.54), (int) ((dpi*pixel*paper_w)/2.54), 0);
 }
 
 void
@@ -420,7 +426,8 @@ pdf_hummus_renderer_rep::end_page(){
 
   end_text ();
   
-  contentContext->Q(); // outmost restore (for clipping)
+  // outmost restore for the graphcis state (see begin_page)
+  contentContext->Q();
 
   status = pdfWriter.EndPageContentContext(contentContext);
   if(status != PDFHummus::eSuccess)
@@ -469,7 +476,7 @@ pdf_hummus_renderer_rep::set_transformation (frame fr) {
   get_clipping (cx1, cy1, cx2, cy2);
   rectangle oclip (cx1, cy1, cx2, cy2);
   frame cv= scaling (point (pixel, -pixel),
-                     point (-ox+dpi*pixel, -oy-dpi*pixel));
+                     point (-ox, -oy));
   frame tr= invert (cv) * fr * cv;
   point o = tr (point (0.0, 0.0));
   point ux= tr (point (1.0, 0.0)) - o;
@@ -500,14 +507,12 @@ pdf_hummus_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore)
   renderer_rep::set_clipping (x1, y1, x2, y2, restore);
   outer_round (x1, y1, x2, y2);
   if (restore) {
-    cerr << "restore clipping\n";
+    //cerr << "restore clipping\n";
     contentContext->Q();
-    //contentContext->q();
     cfn= "";
   }
   else {
-    cerr << "set clipping\n";
-    //contentContext->Q();
+    //cerr << "set clipping\n";
     contentContext->q();
     double xx1= to_x (min (x1, x2));
     double yy1= to_y (min (y1, y2));
@@ -930,7 +935,7 @@ pdf_hummus_renderer_rep::make_pdf_font (string fontname)
     //char *_rname = as_charp(fname);
     PDFUsedFont* font;
     {
-      cout << "GetFontForFile "  << u  << LF;
+      //cout << "GetFontForFile "  << u  << LF;
       c_string _u (concretize (u));
       font = pdfWriter.GetFontForFile((char*)_u);
       //tm_delete_array(_rname);
@@ -964,6 +969,7 @@ pdf_hummus_renderer_rep::draw_glyphs()
     bx = x; by = y;
     while (1) {
       drawn_glyph dg = drawn_glyphs->item;
+      //cout << "pushing " << dg.x4->index << " " << dg.x3 << LF;
       gbuf1.push_back(GlyphUnicodeMapping(dg.x4->index,dg.x3));
       drawn_glyphs = drawn_glyphs->next;
       if (is_nil(drawn_glyphs)) break;
@@ -982,7 +988,7 @@ pdf_hummus_renderer_rep::draw_glyphs()
           gbuf.push_back(gbuf1);
           gbuf1.clear();
         }
-        gbuf.push_back((double)(-p*dx*(1000.0/PIXEL)/fsize));
+        gbuf.push_back((double)(-dx*(1000.0/pixel)/fsize));
       } else dx = 0;
       x = x+w+dx;
       w = ww;
@@ -992,9 +998,9 @@ pdf_hummus_renderer_rep::draw_glyphs()
       gbuf1.clear();
     }
     
-    contentContext->Td(p*bx/PIXEL-prev_text_x, p*by/PIXEL-prev_text_y);
-    prev_text_x = p*bx/PIXEL;
-    prev_text_y = p*by/PIXEL;
+    contentContext->Td(bx/pixel-prev_text_x, by/pixel-prev_text_y);
+    prev_text_x = bx/pixel;
+    prev_text_y = by/pixel;
     //contentContext->Tm(1,0,0,1, p*bx/PIXEL, p*by/PIXEL);
     contentContext->TJ(gbuf);
     gbuf.clear();
@@ -1023,39 +1029,39 @@ pdf_hummus_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
     begin_text ();
     draw_glyphs();
     cfn = fontname;
-    fsize = font_size (fontname);
+    fsize = ((double)dpi / default_dpi)*font_size (fontname);
     if (pdf_fonts->contains(fontname)) {
       cfid = pdf_fonts (cfn);
-      contentContext->Tf(cfid, font_size (fontname));
+      contentContext->Tf(cfid, fsize);
     } else {
       cfid = NULL;
       std::string name = page->GetResourcesDictionary().AddFontMapping(t3font_list(cfn)->fontId);
-      contentContext->TfLow(name, font_size (fontname));
+      contentContext->TfLow(name, fsize);
     }
   }
-    if (cfid != NULL) {
+  if (cfid != NULL) {
+    begin_text ();
 #if 1
-        begin_text ();
-        contentContext->Td(to_x(x)-prev_text_x, to_y(y)-prev_text_y);
-        prev_text_x = to_x(x);
-        prev_text_y = to_y(y);
-        //cout << "char " << ch << "index " << gl->index <<" " << p*x << " " << p*y << " font " << cfn  << LF;
-        GlyphUnicodeMappingList glyphs;
-        glyphs.push_back(GlyphUnicodeMapping(gl->index, ch));
-        contentContext->Tj(glyphs);
+    contentContext->Td(to_x(x)-prev_text_x, to_y(y)-prev_text_y);
+    prev_text_x = to_x(x);
+    prev_text_y = to_y(y);
+    //cout << "char " << ch << "index " << gl->index <<" " << x << " " << y << " font " << cfn  << LF;
+    GlyphUnicodeMappingList glyphs;
+    glyphs.push_back(GlyphUnicodeMapping(gl->index, ch));
+    contentContext->Tj(glyphs);
 #else
-        drawn_glyphs << drawn_glyph(ox+x,oy+y,ch,gl);
+    drawn_glyphs << drawn_glyph(ox+x,oy+y,ch,gl);
 #endif
-    } else {
-        begin_text ();
-        contentContext->Td(to_x(x)-prev_text_x, to_y(y)-prev_text_y);
-        prev_text_x = to_x(x);
-        prev_text_y = to_y(y);
-        t3font_list(fontname)->add_glyph(ch);
-        std::string buf;
-        buf.push_back(ch);
-        contentContext->TjLow(buf);
-    }
+  } else {
+    begin_text ();
+    contentContext->Td(to_x(x)-prev_text_x, to_y(y)-prev_text_y);
+    prev_text_x = to_x(x);
+    prev_text_y = to_y(y);
+    t3font_list(fontname)->add_glyph(ch);
+    std::string buf;
+    buf.push_back(ch);
+    contentContext->TjLow(buf);
+  }
 }
 
 void
@@ -1126,7 +1132,7 @@ pdf_hummus_renderer_rep::fill (SI x1, SI y1, SI x2, SI y2) {
 
 void
 pdf_hummus_renderer_rep::arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
-  cerr << "arc\n";
+  //cerr << "arc\n";
   end_text ();
 #if 0
   double cx= to_x ((x1+x2)/2);
@@ -1153,7 +1159,7 @@ pdf_hummus_renderer_rep::arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) 
 
 void
 pdf_hummus_renderer_rep::fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
-  cerr << "fill_arc\n";
+  //cerr << "fill_arc\n";
   end_text ();
 #if 0
   double cx= to_x ((x1+x2)/2);
@@ -1302,8 +1308,8 @@ pdf_hummus_renderer_rep::image (
   int x2= im->bx1 + (int) (cx2 * (im->bx2 - im->bx1) + 0.5);
   int y2= im->by1 + (int) (cy2 * (im->by2 - im->by1) + 0.5);
 
-  double sc_x= (72.0/dpi) * ((double) (w/PIXEL)) / ((double) (x2-x1));
-  double sc_y= (72.0/dpi) * ((double) (h/PIXEL)) / ((double) (y2-y1));
+  double sc_x= (72.0/dpi) * ((double) (w/pixel)) / ((double) (x2-x1));
+  double sc_y= (72.0/dpi) * ((double) (h/pixel)) / ((double) (y2-y1));
   
   end_text();
   
@@ -1321,7 +1327,7 @@ pdf_hummus_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
   (void) alpha; // FIXME
   int w= p->get_width (), h= p->get_height ();
   int ox= p->get_origin_x (), oy= p->get_origin_y ();
-  int pixel= 5*PIXEL;
+  //int pixel= 5*PIXEL;
   string name= "picture";
   string eps= picture_as_eps (p, 600);
   int x1= -ox;
@@ -1413,10 +1419,10 @@ pdf_hummus_renderer_rep::href (string label, SI x1, SI y1, SI x2, SI y2)
     dict << "\t/Border [16 16 1 [3 10]] /Color [0.75 0.5 1.0]\r\n";
   else
     dict << "\t/Border [16 16 0 [3 10]] /Color [0.75 0.5 1.0]\r\n";
-  dict << "\t/Rect [" << as_string(to_x(x1 - 5*PIXEL)) << " ";
-  dict << as_string(to_y(y1 - 10*PIXEL)) << " ";
-  dict << as_string(to_x(x2 + 5*PIXEL)) << " ";
-  dict << as_string(to_y(y2 + 10*PIXEL)) << "]\r\n";
+  dict << "\t/Rect [" << as_string(to_x(x1 - 5*pixel)) << " ";
+  dict << as_string(to_y(y1 - 10*pixel)) << " ";
+  dict << as_string(to_x(x2 + 5*pixel)) << " ";
+  dict << as_string(to_y(y2 + 10*pixel)) << "]\r\n";
   if (starts (label, "#")) {
     dict << "\t/Dest /label" << as_string(get_label_id(prepare_text (label))) << "\r\n";
   }
