@@ -216,11 +216,9 @@
     (and-with doc (get-field-contents "tmfs://aux/this-page-footer")
       (set! l (cons `(set-this-page-footer ,doc) l)))
     (when (nnull? l)
-      (delayed
-        (:idle 10)
-        (when (== (current-buffer) u)
-          (for (x l) (insert x))
-          (refresh-window))))))
+      (with-buffer u
+        (for (x l) (insert x))
+        (refresh-window)))))
 
 (define (editing-headers?)
   (in? (current-buffer)
