@@ -50,7 +50,7 @@
   (and (tree-compound? t) (tree-label-extension? (tree-label t))))
 
 (tm-define (focus-has-preferences? t)
-  (:require (tree-in? t '(reference pageref hlink locus)))
+  (:require (tree-in? t '(reference pageref hlink locus ornament)))
   #t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
