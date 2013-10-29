@@ -305,9 +305,9 @@ pdf_hummus_renderer_rep::pdf_hummus_renderer_rep (
     char* _pdf_file_name;
     _pdf_file_name= as_charp (concretize (pdf_file_name));
 
-      status = pdfWriter.StartPDF(_pdf_file_name, ePDFVersion14); // PDF 1.4 for alpha
-//                                  ,LogConfiguration(true, true, "/Users/mgubi/Desktop/pdfwriter-x.log")
-//                                  ,PDFCreationSettings(false)); // true = compression on
+    status = pdfWriter.StartPDF(_pdf_file_name, ePDFVersion14); // PDF 1.4 for alpha
+                                 // , LogConfiguration(true, true, "/Users/mgubi/Desktop/pdfwriter-x.log")
+                                 // , PDFCreationSettings(false) ); // true = compression on
       if(status != PDFHummus::eSuccess)
       {
           cout << "failed to start PDF\n";
@@ -409,7 +409,7 @@ pdf_hummus_renderer_rep::begin_page() {
   cfid = NULL;
   inText = false;
 
-  contentContext->q(); // outmost save (for clipping)
+  //contentContext->q(); // outmost save (for clipping)
   
   set_origin (0, paper_h*dpi*PIXEL/2.54);
   set_clipping (0, (int) ((-dpi*PIXEL*paper_h)/2.54), (int) ((dpi*PIXEL*paper_w)/2.54), 0);
@@ -466,10 +466,11 @@ void
 pdf_hummus_renderer_rep::set_transformation (frame fr) {
   ASSERT (fr->linear, "only linear transformations have been implemented");
   
+  end_text ();
+
   SI cx1, cy1, cx2, cy2;
   get_clipping (cx1, cy1, cx2, cy2);
   rectangle oclip (cx1, cy1, cx2, cy2);
-  
   frame cv= scaling (point (pixel, -pixel),
                      point (-ox+dpi*pixel, -oy-dpi*pixel));
   frame tr= invert (cv) * fr * cv;
@@ -488,6 +489,7 @@ pdf_hummus_renderer_rep::set_transformation (frame fr) {
 
 void
 pdf_hummus_renderer_rep::reset_transformation () {
+  end_text ();
   renderer_rep::unclip ();
   contentContext->Q();
 }
@@ -503,12 +505,12 @@ pdf_hummus_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore)
   if (restore) {
     cerr << "restore clipping\n";
     contentContext->Q();
-    contentContext->q();
+    //contentContext->q();
     cfn= "";
   }
   else {
     cerr << "set clipping\n";
-    contentContext->Q();
+    //contentContext->Q();
     contentContext->q();
     double xx1= to_x (min (x1, x2));
     double yy1= to_y (min (y1, y2));
@@ -1035,7 +1037,7 @@ pdf_hummus_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
     }
   }
     if (cfid != NULL) {
-#if 0
+#if 1
         begin_text ();
         contentContext->Td(to_x(x)-prev_text_x, to_y(y)-prev_text_y);
         prev_text_x = to_x(x);
