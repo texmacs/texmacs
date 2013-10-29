@@ -332,18 +332,48 @@
 
   <assign|colored-frame|<macro|col|body|<block|<tformat|<cwith|1|1|1|1|cell-background|<arg|col>>|<table|<row|<cell|<arg|body>>>>>>>>
 
-  <assign|overline|<macro|body|<eval|<quasiquote|<style-with|src-compact|none|<datoms|<macro|body|<with|color|<unquote|<value|color>>|<wide|<arg|body>|\<wide-bar\>>>>|<arg|body>>>>>>>
-
-  <drd-props|overline|with-like|yes|arity|1|accessible|all>
-
-  <assign|underline|<macro|body|<eval|<quasiquote|<style-with|src-compact|none|<datoms|<macro|body|<with|color|<unquote|<value|color>>|<wide*|<arg|body>|\<wide-bar\>>>>|<arg|body>>>>>>>
-
-  <drd-props|underline|with-like|yes|arity|1|accessible|all>
-
   <assign|tmfs-title|<\macro|name>
     <surround||<vspace|1fn>|<block*|<tformat|<cwith|1|1|1|1|cell-background|pastel
     blue>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-lsep|2spc>|<cwith|1|1|1|1|cell-rsep|2spc>|<cwith|1|1|1|1|cell-bsep|2spc>|<cwith|1|1|1|1|cell-tsep|2spc>|<table|<row|<cell|<large|<strong|<arg|name>>>>>>>>>
   </macro>>
+
+  <\active*>
+    <\src-comment>
+      Decorated text
+    </src-comment>
+  </active*>
+
+  <assign|overline|<macro|body|<quasi|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<unquote|<value|color>>|<wide|<arg|x>|\<wide-bar\>>>>|<arg|body>>>>>>
+
+  <drd-props|overline|with-like|yes|arity|1|accessible|all>
+
+  <assign|underline|<macro|body|<quasi|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<unquote|<value|color>>|<wide*|<arg|x>|\<wide-bar\>>>>|<arg|body>>>>>>
+
+  <drd-props|underline|with-like|yes|arity|1|accessible|all>
+
+  <assign|strike-through|<macro|body|<quasi|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<unquote|<value|color>>|<repeat|<arg|x>|<resize|-|<plus|1l|0.1fn>||<plus|1r|-0.1fn>|>>>>|<arg|body>>>>>>
+
+  <drd-props|strike-through|with-like|yes|arity|1|accessible|all>
+
+  <assign|repeat-through|<macro|what|body|<quasi|<style-with|src-compact|none|<datoms|<macro|x|<repeat|<arg|x>|<unquote|<arg|what>>>>|<arg|body>>>>>>
+
+  <drd-props|repeat-through|arity|2|accessible|1>
+
+  <assign|deleted-color|red>
+
+  <assign|deleted|<macro|body|<repeat-through|<with|color|<value|deleted-color>|/>|<arg|body>>>>
+
+  <assign|fill-out-color|black>
+
+  <assign|fill-out-distance|0.2fn>
+
+  <assign|fill-out|<macro|body|<repeat-through|<with|color|<value|fill-out-color>|<move|.||<minus|<value|fill-out-distance>>>>|<arg|body>>>>
+
+  <assign|marked-color|yellow>
+
+  <assign|marked-padding|0.2fn>
+
+  <assign|marked|<macro|body|<style-with|src-compact|none|<datoms|<macro|x|<resize|<tabular|<tformat|<cwith|1|1|1|1|cell-background|<value|marked-color>>|<cwith|1|1|1|1|cell-lsep|<value|marked-padding>>|<cwith|1|1|1|1|cell-rsep|<value|marked-padding>>|<cwith|1|1|1|1|cell-bsep|<value|marked-padding>>|<cwith|1|1|1|1|cell-tsep|<value|marked-padding>>|<table|<row|<cell|<arg|x>>>>>>|<plus|1l|<value|marked-padding>>|<plus|1b|<value|marked-padding>>|<minus|1r|<value|marked-padding>>|<minus|1t|<value|marked-padding>>>>|<arg|body>>>>>
 
   <\active*>
     <\src-comment>

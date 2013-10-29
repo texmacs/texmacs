@@ -248,12 +248,18 @@ for
   ("Verbatim" (make 'verbatim))
   ("Keyboard" (make 'kbd))
   ("Code" (make 'code*))
-  ("Variable" (make 'var)))
+  ("Variable" (make 'var))
+  ---
+  ("Deleted" (make 'deleted))
+  ("Fill out" (make 'fill-out))
+  ("Marked" (make 'marked)))
 
 (menu-bind presentation-tag-menu
   (if (style-has? "std-markup-dtd")
       ("Underline" (make 'underline))
-      ("Overline" (make 'overline)))
+      ("Overline" (make 'overline))
+      ("Strike through" (make 'strike-through))
+      ---)
   ("Subscript" (make-script #f #t))
   ("Superscript" (make-script #t #t))
   (if (and (style-has? "std-markup-dtd")
