@@ -578,8 +578,16 @@
         (list "ornament-shape" "Shape")))
 
 (tm-define (customizable-parameters t)
+  (:require (tree-is? t 'ornament))
+  (list (list "ornament-shape" "Shape")
+        (list "ornament-color" "Color")
+        (list "ornament-border" "Border width")
+        (list "ornament-hpadding" "Horizontal padding")
+        (list "ornament-vpadding" "Vertical padding")))
+
+(tm-define (customizable-parameters t)
   (:require (tree-in? t (ornament-tag-list)))
   (list (list "ornament-shape" "Shape")
+        (list "ornament-border" "Border width")
         (list "ornament-hpadding" "Horizontal padding")
-        (list "ornament-vpadding" "Vertical padding")
-        (list "ornament-border" "Border width")))
+        (list "ornament-vpadding" "Vertical padding")))
