@@ -161,9 +161,11 @@ make_hor_bar (canvas_properties props, path ip, SI x1, SI x2, SI X1, SI X2) {
   int   a     = props->alpha;
   box   mask1 = empty_box (ip, x1, border, x2, h-border);
   box   mask2 = empty_box (ip, X1, 2*border, X2, h-2*border);
-  box   hl1   = highlight_box (ip, mask1, box (), "classic", border, 0, 0,
+  box   hl1   = highlight_box (ip, mask1, box (),
+                               "classic", "classic", border, 0, 0,
 			       brush (c1, a), brush (c1, a), c3, c2);
-  box   hl2   = highlight_box (ip, mask2, box (), "classic", border, 0, 0,
+  box   hl2   = highlight_box (ip, mask2, box (),
+                               "classic", "classic", border, 0, 0,
 			       brush (c4, a), brush (c4, a), c2, c3);
   array<box> bs (2);
   array<SI>  xs (2);
@@ -185,9 +187,11 @@ make_ver_bar (canvas_properties props, path ip, SI y1, SI y2, SI Y1, SI Y2) {
   int   a     = props->alpha;
   box   mask1 = empty_box (ip, border, y1, w-border, y2);
   box   mask2 = empty_box (ip, 2*border, Y1, w-2*border, Y2);
-  box   hl1   = highlight_box (ip, mask1, box (), "classic", border, 0, 0,
+  box   hl1   = highlight_box (ip, mask1, box (),
+                               "classic", "classic", border, 0, 0,
 			       brush (c1, a), brush (c1, a), c3, c2);
-  box   hl2   = highlight_box (ip, mask2, box (), "classic", border, 0, 0,
+  box   hl2   = highlight_box (ip, mask2, box (),
+                               "classic", "classic", border, 0, 0,
 			       brush (c4, a), brush (c4, a), c2, c3);
   array<box> bs (2);
   array<SI>  xs (2);
@@ -225,7 +229,8 @@ put_scroll_bars (canvas_properties props, box b, path ip,
   array<SI>  xs (1);
   array<SI>  ys (1);
   b     = resize_box (dip, b, b->x1-hpad, b->y1-vpad, b->x2+hpad, b->y2+vpad);
-  bs[0] = highlight_box (dip, b, box (), "classic", border, 0, 0,
+  bs[0] = highlight_box (dip, b, box (),
+                         "classic", "classic", border, 0, 0,
 			 brush (ccol, a), brush (ccol, a), cshad, csun);
   xs[0] = (ver < 0? bwid + bpad: 0) - border;
   ys[0] = (hor < 0? bwid + bpad: 0) + border;
@@ -283,6 +288,7 @@ void
 concater_rep::typeset_ornament (tree t, path ip) {
   if (N(t) != 1 && N(t) != 2) { typeset_error (t, ip); return; }
   tree  shape = env->read       (ORNAMENT_SHAPE);
+  tree  tst   = env->read       (ORNAMENT_TITLE_STYLE);
   SI    w     = env->get_length (ORNAMENT_BORDER);
   SI    xpad  = env->get_length (ORNAMENT_HPADDING);
   SI    ypad  = env->get_length (ORNAMENT_VPADDING);
@@ -294,6 +300,6 @@ concater_rep::typeset_ornament (tree t, path ip) {
   box   b     = typeset_as_concat (env, t[0], descend (ip, 0));
   box   xb;
   if (N(t) == 2) xb= typeset_as_concat (env, t[1], descend (ip, 1));
-  print (highlight_box (ip, b, xb, shape, w, xpad, ypad,
+  print (highlight_box (ip, b, xb, shape, tst, w, xpad, ypad,
                         brush (bg, alpha), brush (xc, alpha), sunny, shadow));
 }

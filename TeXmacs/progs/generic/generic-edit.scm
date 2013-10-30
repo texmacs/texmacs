@@ -568,7 +568,7 @@
 
 (tm-define (standard-parameters l)
   (:require (== l "ornament"))
-  (list "ornament-shape" "ornament-border"
+  (list "ornament-shape" "ornament-title-style" "ornament-border"
 	"ornament-hpadding" "ornament-vpadding"
 	"ornament-color" "ornament-extra-color"
 	"ornament-sunny-color" "ornament-shadow-color"))
@@ -585,6 +585,12 @@
 (tm-define (parameter-choice-list l)
   (:require (== l "ornament-shape"))
   (list "classic" "rounded" "angular" "saloon"))
+
+(tm-define (parameter-choice-list l)
+  (:require (== l "ornament-title-style"))
+  (list "classic"
+        "top left" "top center" "top right"
+        "bottom left" "bottom center" "bottom right"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting various kinds of content

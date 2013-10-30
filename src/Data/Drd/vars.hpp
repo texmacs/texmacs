@@ -248,6 +248,7 @@ extern string CANVAS_BAR_WIDTH;
 extern string CANVAS_BAR_PADDING;
 extern string CANVAS_BAR_COLOR;
 extern string ORNAMENT_SHAPE;
+extern string ORNAMENT_TITLE_STYLE;
 extern string ORNAMENT_BORDER;
 extern string ORNAMENT_HPADDING;
 extern string ORNAMENT_VPADDING;

@@ -14,6 +14,7 @@
 #include "scheme.hpp"
 #include "gui.hpp"
 #include "effect.hpp"
+#include "analyze.hpp"
 
 #define ROUNDED_NORMAL   0
 #define ROUNDED_ANGULAR  1
@@ -233,13 +234,57 @@ highlight_box_rep::display_rounded (renderer& ren, int style) {
 }
 
 /******************************************************************************
-* box construction routines
+* Putting titles by superposing several highlight boxes
 ******************************************************************************/
 
 box
-highlight_box (path ip, box b, box xb, tree shape,
-               SI w, SI xpad, SI ypad,
+title_box (path ip, box b, box xb,
+           tree shape, string title_style, SI w, SI xpad, SI ypad,
+           brush bg, brush xc, brush sunc, brush shad) {
+  bool at_top   = starts (title_style, "top ");
+  bool at_bot   = starts (title_style, "bottom ");
+  bool at_left  = ends (title_style, " left");
+  bool at_center= ends (title_style, " center");
+  bool at_right = ends (title_style, " right");
+  if (!(at_top || at_bot) || !(at_left || at_center || at_right))
+    return highlight_box (ip, b, xb, shape, "classic", w, xpad, ypad,
+                          bg, xc, sunc, shad);
+
+  box tit  = highlight_box (ip, xb, box (),
+                            shape, "classic", w, xpad, ypad,
+                            xc, xc, sunc, shad);
+  SI  shift= tit->h() >> 1;
+  box shb  = vresize_box (b->ip, b,
+                          b->y1 - (at_bot? shift: 0),
+                          b->y2 + (at_top? shift: 0));
+  box bb   = highlight_box (ip, shb, box (),
+                            shape, "classic", w, xpad, ypad,
+                            bg, bg, sunc, shad);
+  SI  tx   = ((bb->x1 + bb->x2) >> 1) - ((tit->x1 + tit->x2) >> 1);
+  SI  ty   = (at_top? bb->y2: bb->y1) - tit->y1 - shift;
+  if (at_left ) tx= bb->x1 - tit->x1 + w + 2 * xpad;
+  if (at_right) tx= bb->x2 - tit->x2 - w - 2 * xpad;
+  array<box> bs;
+  array<SI>  x, y;
+  bs << bb << tit;
+  x << 0 << tx;
+  y << 0 << ty;
+  return composite_box (ip, bs, x, y, false);
+  // FIXME: we should force redrawing the title box,
+  // whenever redrawing the body box.
+}
+
+/******************************************************************************
+* Box construction routines
+******************************************************************************/
+
+box
+highlight_box (path ip, box b, box xb,
+               tree shape, tree title_style, SI w, SI xpad, SI ypad,
 	       brush bg, brush xc, brush sunc, brush shad) {
+  if (title_style != "classic" && !is_nil (xb) && is_atomic (title_style))
+    return title_box (ip, b, xb, shape, title_style->label,
+                      w, xpad, ypad, bg, xc, sunc, shad);
   return tm_new<highlight_box_rep> (ip, b, xb, shape,
                                     w, xpad, ypad, bg, xc, sunc, shad);
 }

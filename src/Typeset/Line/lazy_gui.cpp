@@ -146,16 +146,17 @@ struct lazy_ornament_rep: public lazy_rep {
   lazy par;                 // the ornamented body
   box xb;                   // extra box
   tree shape;               // the shape
+  tree tst;                 // the title style
   SI w, xpad, ypad;         // spacing parameters
   tree bg, xc;              // background colors or patterns
   int alpha;                // alpha transparency of background
   color sunny, shadow;      // border colors
   lazy_ornament_rep (edit_env env2, lazy par2, box xb2, path ip,
-		     tree shape2, SI w2, SI xpad2, SI ypad2,
+		     tree shape2, tree tst2, SI w2, SI xpad2, SI ypad2,
 		     tree bg2, tree xc2, int alpha2,
 		     color sunny2, color shadow2):
     lazy_rep (LAZY_ORNAMENT, ip), env (env2), par (par2), xb (xb2),
-    shape (shape2), w (w2), xpad (xpad2), ypad (ypad2),
+    shape (shape2), tst (tst2), w (w2), xpad (xpad2), ypad (ypad2),
     bg (bg2), xc (xc2), alpha (alpha2), sunny (sunny2), shadow (shadow2) {}
   
   inline operator tree () { return "Ornament"; }
@@ -166,9 +167,10 @@ struct lazy_ornament_rep: public lazy_rep {
 struct lazy_ornament {
 EXTEND_NULL(lazy,lazy_ornament);
   lazy_ornament (edit_env env, lazy par, box xb, path ip,
-		 tree shape, SI w, SI xpad, SI ypad,
+		 tree shape, tree tst, SI w, SI xpad, SI ypad,
 		 tree bg, tree xc, int alpha, color sunny, color shadow):
-    rep (tm_new<lazy_ornament_rep> (env, par, xb, ip, shape, w, xpad, ypad,
+    rep (tm_new<lazy_ornament_rep> (env, par, xb, ip,
+                                    shape, tst, w, xpad, ypad,
                                     bg, xc, alpha, sunny, shadow)) {
     rep->ref_count= 1; }
 };
@@ -194,7 +196,7 @@ lazy_ornament_rep::produce (lazy_type request, format fm) {
       bfm= make_format_width (fvs->width - 2 * (w + xpad));
     }
     box b = (box) par->produce (LAZY_BOX, bfm);
-    box hb= highlight_box (ip, b, xb, shape, w, xpad, ypad,
+    box hb= highlight_box (ip, b, xb, shape, tst, w, xpad, ypad,
                            brush (bg, alpha), brush (xc, alpha),
 			   sunny, shadow);
     // FIXME: this dirty hack ensures that shoving is correct
@@ -214,6 +216,7 @@ lazy_ornament_rep::produce (lazy_type request, format fm) {
 lazy
 make_lazy_ornament (edit_env env, tree t, path ip) {
   tree  shape = env->read       (ORNAMENT_SHAPE);
+  tree  tst   = env->read       (ORNAMENT_TITLE_STYLE);
   SI    w     = env->get_length (ORNAMENT_BORDER);
   SI    xpad  = env->get_length (ORNAMENT_HPADDING);
   SI    ypad  = env->get_length (ORNAMENT_VPADDING);
@@ -225,6 +228,6 @@ make_lazy_ornament (edit_env env, tree t, path ip) {
   lazy  par   = make_lazy (env, t[0], descend (ip, 0));
   box   xb;
   if (N(t) == 2) xb= typeset_as_concat (env, t[1], descend (ip, 1));
-  return lazy_ornament (env, par, xb, ip,
-                        shape, w, xpad, ypad, bg, xc, a, sunny, shadow);
+  return lazy_ornament (env, par, xb, ip, shape, tst, w, xpad, ypad,
+                        bg, xc, a, sunny, shadow);
 }
