@@ -100,13 +100,17 @@
 
   <assign|wide-bothlined|<macro|top-border|bot-border|top-sep|bot-sep|body|<surround|<no-indent>||<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-width|1par>|<cwith|1|1|1|1|cell-lsep|0pt>|<cwith|1|1|1|1|cell-rsep|0pt>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-tborder|<arg|top-border>>|<cwith|1|1|1|1|cell-bborder|<arg|bot-border>>|<cwith|1|1|1|1|cell-tsep|<arg|top-sep>>|<cwith|1|1|1|1|cell-bsep|<arg|bot-sep>>|<table|<row|<cell|<arg|body>>>>>>>>>
 
-  <assign|wide-bothlined-titled|<macro|top-border|bot-border|top-sep|bot-sep|body|title|<surround|<no-indent>||<tabular|<tformat|<twith|table-width|1par>|<cwith|1|2|1|1|cell-width|1par>|<cwith|1|2|1|1|cell-lsep|0pt>|<cwith|1|2|1|1|cell-rsep|0pt>|<cwith|2|2|1|1|cell-hyphen|t>|<cwith|1|2|1|1|cell-tborder|<arg|top-border>>|<cwith|2|2|1|1|cell-bborder|<arg|bot-border>>|<cwith|1|2|1|1|cell-tsep|<arg|top-sep>>|<cwith|1|1|1|1|cell-bsep|<arg|top-sep>>|<cwith|2|2|1|1|cell-bsep|<arg|bot-sep>>|<table|<row|<cell|<arg|title>>>|<row|<\cell>
+  <assign|wide-bothlined-titled|<macro|top-border|bot-border|top-sep|bot-sep|body|title|<surround|<no-indent>||<tabular|<tformat|<twith|table-width|1par>|<cwith|1|2|1|1|cell-width|1par>|<cwith|1|2|1|1|cell-lsep|0pt>|<cwith|1|2|1|1|cell-rsep|0pt>|<cwith|2|2|1|1|cell-hyphen|t>|<cwith|1|2|1|1|cell-tborder|<arg|top-border>>|<cwith|2|2|1|1|cell-bborder|<arg|bot-border>>|<cwith|1|2|1|1|cell-tsep|<arg|top-sep>>|<cwith|1|1|1|1|cell-bsep|<arg|top-sep>>|<cwith|2|2|1|1|cell-bsep|<arg|bot-sep>>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
+    <arg|title>
+  </cell>>|<row|<\cell>
     <arg|body>
   </cell>>>>>>>>
 
-  <assign|wide-bothlined-titled*|<macro|top-border|bot-border|top-sep|bot-sep|body|title|<surround|<no-indent>||<tabular|<tformat|<twith|table-width|1par>|<cwith|1|2|1|1|cell-width|1par>|<cwith|1|2|1|1|cell-lsep|0pt>|<cwith|1|2|1|1|cell-rsep|0pt>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-tborder|<arg|top-border>>|<cwith|1|2|1|1|cell-bborder|<arg|bot-border>>|<cwith|1|1|1|1|cell-tsep|<arg|top-sep>>|<cwith|2|2|1|1|cell-tsep|<arg|bot-sep>>|<cwith|1|2|1|1|cell-bsep|<arg|bot-sep>>|<table|<row|<\cell>
+  <assign|wide-bothlined-titled*|<macro|top-border|bot-border|top-sep|bot-sep|body|title|<surround|<no-indent>||<tabular|<tformat|<twith|table-width|1par>|<cwith|1|2|1|1|cell-width|1par>|<cwith|1|2|1|1|cell-lsep|0pt>|<cwith|1|2|1|1|cell-rsep|0pt>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-tborder|<arg|top-border>>|<cwith|1|2|1|1|cell-bborder|<arg|bot-border>>|<cwith|1|1|1|1|cell-tsep|<arg|top-sep>>|<cwith|2|2|1|1|cell-tsep|<arg|bot-sep>>|<cwith|1|2|1|1|cell-bsep|<arg|bot-sep>>|<cwith|2|2|1|1|cell-hyphen|t>|<table|<row|<\cell>
     <arg|body>
-  </cell>>|<row|<cell|<arg|title>>>>>>>>>
+  </cell>>|<row|<\cell>
+    <arg|title>
+  </cell>>>>>>>>
 
   <assign|wide-std-bothlined|<macro|body|<wide-bothlined|<value|overlined-width>|<value|underlined-width>|<value|overlined-sep>|<value|underlined-sep>|<arg|body>>>>
 
@@ -171,7 +175,9 @@
 
   <assign|wide-framed|<macro|border-width|hsep|vsep|body|<surround|<no-indent>||<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-width|1par>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-lborder|<arg|border-width>>|<cwith|1|1|1|1|cell-rborder|<arg|border-width>>|<cwith|1|1|1|1|cell-tborder|<arg|border-width>>|<cwith|1|1|1|1|cell-bborder|<arg|border-width>>|<cwith|1|1|1|1|cell-lsep|<arg|hsep>>|<cwith|1|1|1|1|cell-rsep|<arg|hsep>>|<cwith|1|1|1|1|cell-tsep|<arg|vsep>>|<cwith|1|1|1|1|cell-bsep|<arg|vsep>>|<cwith|1|1|1|1|cell-background|<value|framed-color>>|<table|<row|<cell|<arg|body>>>>>>>>>
 
-  <assign|wide-framed-titled|<macro|border-width|hsep|vsep|body|title|<surround|<no-indent>||<tabular|<tformat|<twith|table-width|1par>|<cwith|1|2|1|1|cell-width|1par>|<cwith|2|2|1|1|cell-hyphen|t>|<cwith|1|2|1|1|cell-lborder|<arg|border-width>>|<cwith|1|2|1|1|cell-rborder|<arg|border-width>>|<cwith|1|2|1|1|cell-tborder|<arg|border-width>>|<cwith|1|2|1|1|cell-bborder|<arg|border-width>>|<cwith|1|2|1|1|cell-lsep|<arg|hsep>>|<cwith|1|2|1|1|cell-rsep|<arg|hsep>>|<cwith|1|2|1|1|cell-tsep|<arg|vsep>>|<cwith|1|2|1|1|cell-bsep|<arg|vsep>>|<cwith|1|2|1|1|cell-background|<value|framed-color>>|<table|<row|<cell|<arg|title>>>|<row|<\cell>
+  <assign|wide-framed-titled|<macro|border-width|hsep|vsep|body|title|<surround|<no-indent>||<tabular|<tformat|<twith|table-width|1par>|<cwith|1|2|1|1|cell-width|1par>|<cwith|2|2|1|1|cell-hyphen|t>|<cwith|1|2|1|1|cell-lborder|<arg|border-width>>|<cwith|1|2|1|1|cell-rborder|<arg|border-width>>|<cwith|1|2|1|1|cell-tborder|<arg|border-width>>|<cwith|1|2|1|1|cell-bborder|<arg|border-width>>|<cwith|1|2|1|1|cell-lsep|<arg|hsep>>|<cwith|1|2|1|1|cell-rsep|<arg|hsep>>|<cwith|1|2|1|1|cell-tsep|<arg|vsep>>|<cwith|1|2|1|1|cell-bsep|<arg|vsep>>|<cwith|1|2|1|1|cell-background|<value|framed-color>>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
+    <arg|title>
+  </cell>>|<row|<\cell>
     <arg|body>
   </cell>>>>>>>>
 
@@ -204,8 +210,12 @@
       <\surround||<right-flush>>
         <arg|body>
       </surround>
-    </ornament|<arg|title>>>
+    <|ornament>
+      <arg|title>
+    </ornament>>
   </macro>>
+
+  <drd-props|ornamented-titled|arity|2|accessible|all>
 
   <\active*>
     <\src-comment>

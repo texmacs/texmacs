@@ -46,7 +46,9 @@
     </ornament>
   </macro>>
 
-  <assign|enunciation-title-name|<macro|which|<with|color|<value|bg-color>|strong-color|<value|bg-color>|<enunciation-name|<arg|which>>>>>
+  <assign|enunciation-title-color|<macro|<if|<equal|<value|ornament-extra-color>|white>|<value|color>|<value|bg-color>>>>
+
+  <assign|enunciation-title-name|<macro|which|<with|color|<enunciation-title-color>|strong-color|<enunciation-title-color>|<enunciation-name|<arg|which>>>>>
 
   <assign|framed-render-enunciation*|<\macro|which|body>
     <\with|enunciation-sep|>
