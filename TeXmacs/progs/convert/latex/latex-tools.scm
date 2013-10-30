@@ -66,20 +66,43 @@
   (cond ((string? doc) (for-each latex-catcode-defs-char (string->list doc)))
         ((list? doc) (for-each latex-catcode-defs-sub doc))))
 
+(define (latex-catcode-defs-char* c)
+  (if (in? c '(#\< #\> #\|))
+    (ahash-set! latex-catcode-table (string c)
+                (number->string (char->integer c)))))
+
+(define (latex-catcode-defs-sub* doc)
+  (cond ((string? doc) (for-each latex-catcode-defs-char* (string->list doc)))
+        ((list? doc) (for-each latex-catcode-defs-sub* doc))))
+
 (define (latex-catcode-def key im)
   (string-append "\\catcode`\\" key "=\\active \\def" key "{" im "}\n"))
 
 (tm-define (latex-catcode-defs doc)
   (:synopsis "Return necessary catcode definitions for @doc")
-  (if tmtex-use-catcodes?
+  (string-append
+    (if tmtex-use-catcodes?
+      (begin
+        (set! latex-catcode-table (make-ahash-table))
+        (latex-catcode-defs-sub doc)
+        (let* ((l1 (ahash-table->list latex-catcode-table))
+               (l2 (list-sort l1 (lambda (x y) (string<=? (car x) (car y)))))
+               (l3 (map (lambda (x) (latex-catcode-def (car x) (cdr x))) l2)))
+          (apply string-append l3))) "")
     (begin
       (set! latex-catcode-table (make-ahash-table))
-      (latex-catcode-defs-sub doc)
+      (latex-catcode-defs-sub* doc)
       (let* ((l1 (ahash-table->list latex-catcode-table))
              (l2 (list-sort l1 (lambda (x y) (string<=? (car x) (car y)))))
-             (l3 (map (lambda (x) (latex-catcode-def (car x) (cdr x))) l2)))
-             (apply string-append l3)))
-  ""))
+             (keys (map car l2))
+             (ims (map (lambda (x)
+                         (string-append
+                           "\n\\fontencoding{T1}\\selectfont\\symbol{"
+                           (cdr x)
+                           "}\\fontencoding{\\encodingdefault}"))
+                       l2))
+             (l3 (map latex-catcode-def keys ims)))
+        (apply string-append l3)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Macro and environment expansion
