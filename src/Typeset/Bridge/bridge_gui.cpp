@@ -114,7 +114,7 @@ bridge_ornamented_rep::notify_macro (
   //cout << "Notify macro " << type << ", " << var << ", " << l
   //     << ", " << p << ", " << u << " in " << st << "\n";
   bool flag= body->notify_macro (type, var, l, p, u);
-  flag= flag || env->depends (st (0, 0), var, l);
+  flag= flag || env->depends (st, var, l);
   if (flag) status= CORRUPTED;
   return flag;
 }
