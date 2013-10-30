@@ -575,15 +575,6 @@ pdf_hummus_renderer_rep::set_background (brush b) {
 
 // obsolete support for direct placement of virtual glyphs without Type3 fonts.
 
-static double font_size (string name) {
-  int pos= search_forwards (".", name);
-  int szpos= pos-1;
-  while ((szpos>0) && is_numeric (name[szpos-1])) szpos--;
-  double size= as_double (name (szpos, pos));
-  if (size == 0) size= 10;
-  return size;
-}
-
 static string
 load_virtual_glyph (glyph gl) {
   string buf;
@@ -1007,6 +998,21 @@ pdf_hummus_renderer_rep::draw_glyphs()
   }
 }
 
+
+
+static double font_size (string name) {
+    int pos= search_forwards (".", name);
+    int szpos= pos-1;
+    while ((szpos>0) && is_numeric (name[szpos-1])) szpos--;
+    double size= as_double (name (szpos, pos));
+    if (size == 0) size= 10;
+    double dpi= as_double (name (pos+1, N(name)-2));
+//    double mag= 83.022 * (size/10.0) * (dpi/600.0); // ( 82.033 == 600.0/72.0) this assumes that dpi==600 in the renderer
+    double mag= (size) * (dpi/72.0); 
+    return mag;
+}
+
+
 void
 pdf_hummus_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
   //cerr << "draw \"" << (char)ch << "\" " << ch << " " << fn->res_name << "\n";
@@ -1029,7 +1035,7 @@ pdf_hummus_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
     begin_text ();
     draw_glyphs();
     cfn = fontname;
-    fsize = ((double)dpi / default_dpi)*font_size (fontname);
+    fsize = font_size (fontname);
     if (pdf_fonts->contains(fontname)) {
       cfid = pdf_fonts (cfn);
       contentContext->Tf(cfid, fsize);
