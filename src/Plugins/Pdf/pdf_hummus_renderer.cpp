@@ -913,11 +913,14 @@ pdf_hummus_renderer_rep::make_pdf_font (string fontname)
     u = tt_font_find (fname);
     //cerr << fname << " " << u << LF;
   }
+#if 0
+    // pk fonts cannot be handled by hummus
   if (is_none (u)) {
     //cerr << " try pk " << LF;
     u= resolve_tex (fontname);
     //cerr << fname << " " << u << LF;
   }
+#endif
   if (!is_none (u)) {
     int pos= search_forwards (".", fontname);
     string rname= (pos==-1? fontname: fontname (0, pos));
@@ -1007,8 +1010,7 @@ static double font_size (string name) {
     double size= as_double (name (szpos, pos));
     if (size == 0) size= 10;
     double dpi= as_double (name (pos+1, N(name)-2));
-//    double mag= 83.022 * (size/10.0) * (dpi/600.0); // ( 82.033 == 600.0/72.0) this assumes that dpi==600 in the renderer
-    double mag= (size) * (dpi/72.0); 
+    double mag= (size) * (dpi/72.0);
     return mag;
 }
 
