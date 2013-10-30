@@ -87,10 +87,20 @@
   ("Custom tab" (interactive make-htab)))
 
 (menu-bind adjust-menu
-  ("Move object" (interactive make-move))
-  ("Shift object" (interactive make-shift))
-  ("Resize object" (interactive make-resize))
-  ("Clip object" (interactive make-clipped)))
+  ;;("Move" (interactive make-move))
+  ;;("Shift" (interactive make-shift))
+  ("Move" (make-move "" ""))
+  ("Shift" (make-shift "" ""))
+  ---
+  ;;("Resize" (interactive make-resize))
+  ;;("Extend" (interactive make-extend))
+  ;;("Clip" (interactive make-clipped))
+  ("Resize" (make-resize "" "" "" ""))
+  ("Extend" (make-extend "" "" "" ""))
+  ("Clip" (make-clipped "" "" "" ""))
+  ---
+  ("Smash" (make 'smash))
+  ("Swell" (make 'swell)))
 
 (menu-bind format-special-menu
   ("Group" (make-rigid))

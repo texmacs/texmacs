@@ -13,7 +13,8 @@
 
 (texmacs-module (generic format-geometry-edit)
   (:use (utils edit selections)
-	(generic generic-edit)))
+	(generic generic-edit)
+        (generic format-drd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customizable step changes for length modifications
@@ -34,7 +35,7 @@
   ("sec increase" "1" noop)
   ("min increase" "0.1" noop)
   ("% increase" "5" noop)
-  ("default unit" "spc" noop))
+  ("default unit" "ex" noop))
 
 (define step-table (make-ahash-table))
 (define step-list
@@ -217,7 +218,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (move-context? t)
-  (tree-in? t '(move shift)))
+  (tree-in? t (move-tag-list)))
 
 (tm-define (make-move hor ver)
   (:argument hor "Horizontal")
@@ -262,7 +263,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (resize-context? t)
-  (tree-in? t '(resize clipped)))
+  (tree-in? t (resize-tag-list)))
 
 (tm-define (make-resize l b r t)
   (:argument l "Left")
@@ -271,6 +272,14 @@
   (:argument t "Top")
   (wrap-selection-small
     (insert-go-to `(resize "" ,l ,b ,r ,t) '(0 0))))
+
+(tm-define (make-extend l b r t)
+  (:argument l "Left")
+  (:argument b "Bottom")
+  (:argument r "Right")
+  (:argument t "Top")
+  (wrap-selection-small
+    (insert-go-to `(extend "" ,l ,b ,r ,t) '(0 0))))
 
 (tm-define (make-clipped l b r t)
   (:argument l "Left")

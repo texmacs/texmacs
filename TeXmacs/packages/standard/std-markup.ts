@@ -97,7 +97,7 @@
 
   <\active*>
     <\src-comment>
-      Below follow some frequently used content tags.
+      Frequently used content tags.
     </src-comment>
   </active*>
 
@@ -189,7 +189,7 @@
 
   <\active*>
     <\src-comment>
-      Below follow some frequently used content environments.
+      Frequently used content environments.
     </src-comment>
   </active*>
 
@@ -267,8 +267,7 @@
 
   <\active*>
     <\src-comment>
-      The following environments complete the most basic tabular
-      environments.
+      Basic tabular environments.
     </src-comment>
   </active*>
 
@@ -280,7 +279,7 @@
 
   <\active*>
     <\src-comment>
-      Other presentation tags.
+      Transparency.
     </src-comment>
   </active*>
 
@@ -294,24 +293,6 @@
 
   \;
 
-  <assign|hresize|<macro|body|left|right|<resize|<arg|body>|<arg|left>||<arg|right>|>>>
-
-  <assign|hextend|<macro|body|right|<resize|<arg|body>|||<maximum|1r|<arg|right>>|>>>
-
-  <assign|vresize|<macro|body|bottom|top|<resize|<arg|body>||<arg|bottom>||<arg|top>>>>
-
-  <assign|bcorrect|<macro|body|<resize|<arg|body>||<minimum|1b|1fnbot>||>>>
-
-  <assign|tcorrect|<macro|body|<resize|<arg|body>||||<maximum|1t|1fntop>>>>
-
-  <assign|vcorrect|<macro|body|<resize|<arg|body>||<minimum|1b|1fnbot>||<maximum|1t|1fntop>>>>
-
-  <assign|smash|<macro|body|<vresize|<arg|body>|0ex|1ex>>>
-
-  <assign|smash-top|<macro|body|<vresize|<arg|body>||1ex>>>
-
-  <assign|smash-bottom|<macro|body|<vresize|<arg|body>|0ex|>>>
-
   <assign|phantom|<macro|body|<if*|false|<arg|body>>>>
 
   <drd-props|phantom|arity|1|accessible|none|syntax|<macro|body|>>
@@ -320,13 +301,47 @@
 
   <assign|vphantom|<macro|body|<hresize|<phantom|<arg|body>>|0em|0em>>>
 
+  <\active*>
+    <\src-comment>
+      Adjusting the sizes of boxes.
+    </src-comment>
+  </active*>
+
+  <assign|hresize|<macro|body|left|right|<resize|<arg|body>|<arg|left>||<arg|right>|>>>
+
+  <assign|vresize|<macro|body|bottom|top|<resize|<arg|body>||<arg|bottom>||<arg|top>>>>
+
+  <assign|smash|<macro|body|<vresize|<arg|body>|0ex|1ex>>>
+
+  <assign|smash-top|<macro|body|<vresize|<arg|body>|1b|1ex>>>
+
+  <assign|smash-bottom|<macro|body|<vresize|<arg|body>|0ex|1t>>>
+
+  \;
+
+  <assign|extend|<macro|body|left|bottom|right|top|<style-with|src-compact|none|<resize|<arg|body>|<if|<equal|<arg|left>|>||<minimum|1l|<arg|left>>>|<if|<equal|<arg|bottom>|>||<minimum|1b|<arg|bottom>>>|<if|<equal|<arg|right>|>||<maximum|1r|<arg|right>>>|<if|<equal|<arg|top>|>||<maximum|1t|<arg|top>>>>>>>
+
+  <assign|extend-right|<macro|body|right|<resize|<arg|body>|||<maximum|1r|<arg|right>>|>>>
+
+  <assign|swell|<macro|body|<resize|<arg|body>||<minimum|1b|1fnbot>||<maximum|1t|1fntop>>>>
+
+  <assign|swell-bottom|<macro|body|<resize|<arg|body>||<minimum|1b|1fnbot>||>>>
+
+  <assign|swell-top|<macro|body|<resize|<arg|body>||||<maximum|1t|1fntop>>>>
+
+  \;
+
   <assign|mini-paragraph|<macro|width|body|<tabular|<tformat|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<twith|table-width|<arg|width>>|<twith|table-hmode|exact>|<twith|table-valign|T>|<table|<row|<\cell>
     <arg|body>
   </cell>>>>>>>
 
   <drd-props|mini-paragraph|arity|2|length|0|accessible|1>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Frames.
+    </src-comment>
+  </active*>
 
   <assign|frame|<macro|body|<block|<tformat|<table|<row|<cell|<arg|body>>>>>>>>
 
@@ -339,7 +354,7 @@
 
   <\active*>
     <\src-comment>
-      Decorated text
+      Decorated text.
     </src-comment>
   </active*>
 

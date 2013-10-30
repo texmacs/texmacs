@@ -1,6 +1,6 @@
-<TeXmacs|1.0.6.9>
+<TeXmacs|1.0.7.20>
 
-<style|source>
+<style|<tuple|source|english>>
 
 <\body>
   <active*|<\src-title>
@@ -13,11 +13,10 @@
     <src-copyright|2007|Joris van der Hoeven>
 
     <\src-license>
-      This software falls under the <hlink|GNU general public
-      license, version 3 or later|$TEXMACS_PATH/LICENSE>.
-      It comes WITHOUT ANY WARRANTY WHATSOEVER.
-      You should have received a copy of the license which the software.
-      If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
+      This software falls under the <hlink|GNU general public license,
+      version 3 or later|$TEXMACS_PATH/LICENSE>. It comes WITHOUT ANY
+      WARRANTY WHATSOEVER. You should have received a copy of the license
+      which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
     </src-license>
   </src-title>>
 
@@ -41,13 +40,13 @@
     </src-comment>
   </active*>
 
-  <assign|short-highlight|<macro|bg|sunny|shadow|pad|body|<with|ornament-color|<arg|bg>|ornament-sunny-color|<arg|sunny>|ornament-shadow-color|<arg|shadow>|ornament-hpadding|<arg|pad>|ornament-vpadding|<arg|pad>|<style-with|src-compact|none|<ornament|<vcorrect|<arg|body>>>>>>>
+  <assign|short-highlight|<macro|bg|sunny|shadow|pad|body|<with|ornament-color|<arg|bg>|ornament-sunny-color|<arg|sunny>|ornament-shadow-color|<arg|shadow>|ornament-hpadding|<arg|pad>|ornament-vpadding|<arg|pad>|<style-with|src-compact|none|<ornament|<swell|<arg|body>>>>>>>
 
   <assign|wide-highlight|<\macro|bg|sunny|shadow|pad|body>
     <\with|ornament-color|<arg|bg>|ornament-sunny-color|<arg|sunny>|ornament-shadow-color|<arg|shadow>|ornament-hpadding|<arg|pad>|ornament-vpadding|<arg|pad>>
       <\ornament>
         <\wide-normal>
-          <vcorrect|<arg|body>>
+          <swell|<arg|body>>
         </wide-normal>
       </ornament>
     </with>
@@ -140,7 +139,6 @@
 
 <\initial>
   <\collection>
-    <associate|language|english>
     <associate|preamble|true>
     <associate|sfactor|5>
   </collection>
