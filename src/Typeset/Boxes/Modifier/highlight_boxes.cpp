@@ -126,6 +126,13 @@ highlight_box_rep::display_classic (renderer& ren) {
     ren->set_pencil (pencil (sunc, W));
     ren->line (x1+W, m, x2-W, m);
   }
+
+  if (shape == "ring") {
+    static url u= resolve (url ("$TEXMACS_PATH/misc/images/ring-binder-1.png"));
+    tree p (PATTERN, as_string (u), "100%", "40@", "#fff0");
+    ren->set_background (brush (p));
+    ren->clear_pattern (x1-xpad, y1, x1+xpad, y2);
+  }
 }
 
 /******************************************************************************
