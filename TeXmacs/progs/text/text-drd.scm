@@ -18,12 +18,12 @@
 
 (define-group variant-tag
   (section-tag) (list-tag) (figure-tag)
-  (enunciation-tag) (prominent-tag) (frame-tag)
+  (enunciation-tag) (prominent-tag) (frame-tag) (frame-titled-tag)
   (textual-tag) (code-tag) (ornament-tag))
 
 (define-group similar-tag
   (section-tag) (list-tag) (figure-tag)
-  (enunciation-tag) (prominent-tag) (frame-tag)
+  (enunciation-tag) (prominent-tag) (frame-tag) (frame-titled-tag)
   (textual-tag) (code-tag) (equation-tag) (ornament-tag))
 
 (define-group numbered-tag
@@ -136,6 +136,10 @@
 
 (define-group frame-tag
   padded overlined underlined bothlined framed ornamented)
+
+(define-group frame-titled-tag
+  padded-titled overlined-titled underlined-titled bothlined-titled
+  framed-titled ornamented-titled)
 
 ;; Textual markup tags
 

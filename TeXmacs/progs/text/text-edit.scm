@@ -514,42 +514,54 @@
          (tree-set! t `(big-figure ,(tree-ref t 2) ,(tree-ref t 3))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Customization of paddedand ornamented environments
+;; Framed environments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (frame-context? t)
+  (tree-in? t (frame-tag-list)))
+
+(tm-define (frame-titled-context? t)
+  (tree-in? t (frame-titled-tag-list)))
+
+(tm-define (frame-titled? t)
+  (tree-in? t (frame-titled-tag-list)))
+
+(tm-define (frame-toggle-title t)
+  (cond ((tree-in? t (frame-tag-list))
+         (with l (symbol-append (tree-label t) '-titled)
+           (tree-set! t `(,l ,(tree-ref t 0) ""))
+           (tree-go-to t 1 :end)))
+        ((tree-in? t (frame-titled-tag-list))
+         (with l (symbol-drop-right (tree-label t) 7)
+           (tree-set! t `(,l ,(tree-ref t 0)))
+           (tree-go-to t 0 :end)))))
+
 (tm-define (customizable-parameters t)
-  (:require (tree-is? t 'padded))
+  (:require (tree-in? t '(padded padded-titled)))
   (list (list "padding-above" "Above")
         (list "padding-below" "Below")))
 
 (tm-define (customizable-parameters t)
-  (:require (tree-is? t 'overlined))
+  (:require (tree-in? t '(overlined overlined-titled)))
   (list (list "padding-above" "Above")
         (list "padding-below" "Below")
         (list "overlined-sep" "Inner")))
 
 (tm-define (customizable-parameters t)
-  (:require (tree-is? t 'underlined))
+  (:require (tree-in? t '(underlined underlined-titled)))
   (list (list "padding-above" "Above")
         (list "padding-below" "Below")
-        (list "overlined-sep" "Inner")))
+        (list "underlined-sep" "Inner")))
 
 (tm-define (customizable-parameters t)
-  (:require (tree-is? t 'underlined))
+  (:require (tree-in? t '(bothlined bothlined-titled)))
   (list (list "padding-above" "Above")
         (list "padding-below" "Below")
         (list "overlined-sep" "Top")
         (list "underlined-sep" "Bottom")))
 
 (tm-define (customizable-parameters t)
-  (:require (tree-is? t 'bothlined))
-  (list (list "padding-above" "Above")
-        (list "padding-below" "Below")
-        (list "overlined-sep" "Top")
-        (list "underlined-sep" "Bottom")))
-
-(tm-define (customizable-parameters t)
-  (:require (tree-is? t 'framed))
+  (:require (tree-in? t '(framed framed-titled)))
   (list (list "padding-above" "Above")
         (list "padding-below" "Below")
         (list "framed-vsep" "Inner")
@@ -557,7 +569,7 @@
         (list "framed-color" "Color")))
 
 (tm-define (customizable-parameters t)
-  (:require (tree-is? t 'ornamented))
+  (:require (tree-in? t '(ornamented ornamented-titled)))
   (list (list "padding-above" "Above")
         (list "padding-below" "Below")
         (list "ornament-vpadding" "Inner")

@@ -812,3 +812,20 @@ for
 	  (titled-named? (focus-tree)))
    (titled-toggle-name t))
   (dynamic (former t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Framed environments
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (focus-toggle-menu t)
+  (:require (or (frame-context? t) (frame-titled-context? t)))
+  ((check "Named" "v" (frame-titled? (focus-tree)))
+   (frame-toggle-title t))
+  (dynamic (former t)))
+
+(tm-menu (focus-toggle-icons t)
+  (:require (or (frame-context? t) (frame-titled-context? t)))
+  ((check (balloon (icon "tm_small_textual.xpm") "Toggle name") "v"
+	  (frame-titled? (focus-tree)))
+   (frame-toggle-title t))
+  (dynamic (former t)))
