@@ -252,17 +252,28 @@
 (tm-define (move-context? t)
   (tree-in? t (move-tag-list)))
 
+(define (set-adjust-message s c)
+  (let* ((l (kbd-find-inv-system-binding '(geometry-left)))
+	 (r (kbd-find-inv-system-binding '(geometry-right))))
+    (if (and l r)
+	(set-message (string-append s " using " l ", " r ", etc. or "
+				    "via the fields in the focus bar") c)
+	(set-message (string-append s " using the keyboard or "
+				    "via the fields in the focus bar") c))))
+
 (tm-define (make-move hor ver)
   (:argument hor "Horizontal")
   (:argument ver "Vertical")
   (wrap-selection-small
-    (insert-go-to `(move "" ,hor ,ver) '(0 0))))
+    (insert-go-to `(move "" ,hor ,ver) '(0 0))
+    (set-adjust-message "Adjust position" "move")))
 
 (tm-define (make-shift hor ver)
   (:argument hor "Horizontal")
   (:argument ver "Vertical")
   (wrap-selection-small
-    (insert-go-to `(shift "" ,hor ,ver) '(0 0))))
+    (insert-go-to `(shift "" ,hor ,ver) '(0 0))
+    (set-adjust-message "Adjust position" "shift")))
 
 (tm-define (geometry-speed t inc?)
   (:require (move-context? t))
@@ -303,7 +314,8 @@
   (:argument r "Right")
   (:argument t "Top")
   (wrap-selection-small
-    (insert-go-to `(resize "" ,l ,b ,r ,t) '(0 0))))
+    (insert-go-to `(resize "" ,l ,b ,r ,t) '(0 0))
+    (set-adjust-message "Adjust extents" "resize")))
 
 (tm-define (make-extend l b r t)
   (:argument l "Left")
@@ -311,7 +323,8 @@
   (:argument r "Right")
   (:argument t "Top")
   (wrap-selection-small
-    (insert-go-to `(extend "" ,l ,b ,r ,t) '(0 0))))
+    (insert-go-to `(extend "" ,l ,b ,r ,t) '(0 0))
+    (set-adjust-message "Adjust extension" "extend")))
 
 (tm-define (make-clipped l b r t)
   (:argument l "Left")
@@ -319,7 +332,8 @@
   (:argument r "Right")
   (:argument t "Top")
   (wrap-selection-small
-    (insert-go-to `(clipped "" ,l ,b ,r ,t) '(0 0))))
+    (insert-go-to `(clipped "" ,l ,b ,r ,t) '(0 0))
+    (set-adjust-message "Adjust clipping" "clipped")))
 
 (define (replace-empty-horizontal t)
   (replace-empty t 1 `(plus "1l" ,(get-zero-unit)))

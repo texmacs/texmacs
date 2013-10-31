@@ -145,6 +145,13 @@
   (with r (ctx-resolve (kbd-get-inv com) #f)
     (if r r "")))
 
+(tm-define (kbd-find-inv-system-binding com)
+  (:synopsis "Find system keyboard binding for command @com")
+  (and-with b (tm->stree (kbd-system-rewrite (kbd-find-inv-binding com)))
+    (when (tm-is? b 'render-key) (set! b (tm-ref b 0)))
+    (when (tm-is? b 'with) (set! b (tm-ref b (- (tm-arity b) 1))))
+    (and (string? b) b)))
+
 (tm-define (kbd-find-rev-binding cmd)
   (:synopsis "Find modeless keyboard binding for command @cmd")
   ;;(display* "Find reverse binding '" com "'\n")
