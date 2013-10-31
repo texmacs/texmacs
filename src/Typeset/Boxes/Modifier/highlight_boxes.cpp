@@ -18,7 +18,7 @@
 
 #define ROUNDED_NORMAL   0
 #define ROUNDED_ANGULAR  1
-#define ROUNDED_SALOON   2
+#define ROUNDED_CARTOON  2
 
 /******************************************************************************
 * Highlight boxes
@@ -82,7 +82,7 @@ highlight_box_rep::pre_display (renderer& ren) {
   if (shape == "classic") display_classic (ren);
   else if (shape == "rounded") display_rounded (ren, ROUNDED_NORMAL);
   else if (shape == "angular") display_rounded (ren, ROUNDED_ANGULAR);
-  else if (shape == "saloon") display_rounded (ren, ROUNDED_SALOON);
+  else if (shape == "cartoon") display_rounded (ren, ROUNDED_CARTOON);
   else display_classic (ren);
 }
 
@@ -163,7 +163,7 @@ rounded (array<SI>& xs, array<SI>& ys,
       }
     }
     break;
-  case ROUNDED_SALOON: {
+  case ROUNDED_CARTOON: {
     int n= 16;
     for (int i=0; i<=n; i++)
       if ((i>0 || start) && (i<n || end)) {
@@ -193,7 +193,7 @@ highlight_box_rep::display_rounded (renderer& ren, int style) {
     Rx= (SI) ((3 * (xpad-W)) / 2);
     Ry= (SI) ((3 * (ypad-W)) / 2);
   }
-  if (style == ROUNDED_SALOON) {
+  if (style == ROUNDED_CARTOON) {
     Rx= (SI) (xpad-W);
     Ry= (SI) (ypad-W);
   }
