@@ -83,6 +83,38 @@
 		 "Change default unit")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Extra conversion routines for lengths
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tm-rich-length? t)
+  (cond ((tm-atomic? t) #t)
+	((and (tm-is? t 'minus) (not (tm-atomic? (tm-ref t :last)))) #f)
+	((tm-in? t '(plus minus))
+	 (list-and (map tm-rich-length? (tm-children t))))
+	(else #f)))
+
+(tm-define (tm->rich-length t)
+  (cond ((tm-atomic? t) (tm->string t))
+	((tm-is? t 'plus)
+	 (with s (string-recompose (map tm->rich-length (tm-children t)) "+")
+	   (string-replace s "+-" "-")))
+	((tm-func? t 'minus 1)
+	 (with s (string-append "-" (tm->rich-length (tm-ref t 0)))
+	   (if (string-starts? s "--")
+	       (substring s 2 (string-length s))
+	       s)))
+	((tm-is? t 'minus)
+	 (with r `(plus ,@(cDr (tm-children t)) (minus ,(cAr (tm-children t))))
+	   (tm->rich-length r)))
+	(else "")))
+
+(tm-define (rich-length->tm s)
+  (with r (string-replace s "-" "+-")
+    (with l (string-decompose r "+")
+      (if (<= (length l) 1) s
+	  `(plus ,@l)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful subroutines for length manipulations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

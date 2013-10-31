@@ -130,16 +130,30 @@
         ((== type "duration") "3em")
         (else "1w")))
 
+(tm-define (inputter-active? t type)
+  (cond ((== type "length") (tm-rich-length? t))
+	(else (tree-atomic? t))))
+
+(tm-define (inputter-decode t type)
+  (cond ((== type "length") (tm->rich-length t))
+	(else (tree->string t))))
+
+(tm-define (inputter-encode s type)
+  (cond ((== type "length") (rich-length->tm s))
+	(else s)))
+
 (tm-menu (string-input-icon t i)
   (let* ((name (tree-child-name* t i))
-         (s (string-append (upcase-first name) ":"))
-         (active? (tree-atomic? (tree-ref t i)))
-	 (in (if active? (tree->string (tree-ref t i)) "n.a."))
-         (in* (if active? in ""))
          (type (tree-child-type t i))
+         (s (string-append (upcase-first name) ":"))
+         (active? (inputter-active? (tree-ref t i) type))
+	 (in (if active? (inputter-decode (tree-ref t i) type) "n.a."))
+         (in* (if active? in ""))
          (fm (type->format type))
          (w (type->width type))
-         (setter (lambda (x) (when x (tree-set (focus-tree) i x)))))
+         (setter (lambda (x)
+		   (when x
+		     (tree-set (focus-tree) i (inputter-encode x type))))))
     (assuming (== name "")
       //)
     (assuming (!= name "")
@@ -162,12 +176,15 @@
          (s `(concat "Set " ,name))
          (prompt (upcase-first name))
          (type (tree-child-type t i))
-         (fm (type->format type)))
+         (fm (type->format type))
+         (setter (lambda (x)
+		   (when x
+		     (tree-set (focus-tree) i (inputter-encode x type))))))
     (assuming (!= name "")
-      (when (tree-atomic? (tree-ref t i))
+      (when (inputter-active? (tree-ref t i) type)
         ((eval s)
-         (interactive (lambda (x) (tree-set (focus-tree) i x))
-           (list prompt fm (tree->string (tree-ref t i)))))))))
+         (interactive setter
+	   (list prompt fm (inputter-decode (tree-ref t i) type))))))))
 
 (tm-menu (string-input-icon t i)
   (:require (string-variable-name? t i))
@@ -346,12 +363,17 @@
 
 (tm-menu (focus-extra-menu t))
 
-(tm-define (hidden-string-children t)
-  (append-map (lambda (c) (if (tree-atomic? c) (list c) (list)))
+(tm-define (hidden-inputter-children t)
+  (append-map (lambda (c)
+		(if (and-with i (tree-index c)
+		      (with type (tree-child-type t i)
+			(inputter-active? c type)))
+		    (list c)
+		    (list)))
               (hidden-children t)))
 
 (tm-menu (focus-hidden-menu t)
-  (assuming (nnull? (hidden-string-children t))
+  (assuming (nnull? (hidden-inputter-children t))
     ---
     (for (i (.. 0 (tree-arity t)))
       (assuming (hidden-child? t i)
