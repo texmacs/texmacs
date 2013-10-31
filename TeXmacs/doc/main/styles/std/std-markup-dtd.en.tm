@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.17>
+<TeXmacs|1.0.7.20>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Standard markup>
@@ -196,6 +196,51 @@
     Centered tables with a border of standard <verbatim|1ln> width.
   </explain>
 
+  The folowing tags are used to adjust the typesetting of content whenever
+  necessary:
+
+  <\explain>
+    <explain-macro|smash|body>
+
+    <explain-macro|smash-top|body>, <explain-macro|smash-bottom|body><explain-synopsis|smash
+    vertical size to the size of an 'x'>
+  <|explain>
+    These macros can be used to adjust the vertical extents of the
+    <src-arg|body> to those of the character<nbsp>'x'. In the case of
+    <markup|smash-top> and <markup|smash-bottom>, only the top <abbr|resp.>
+    bottom are changed.
+  </explain>
+
+  <\explain>
+    <explain-macro|swell|body>
+
+    <explain-macro|swell-top|body>, <explain-macro|swell-bottom|body><explain-synopsis|increase
+    vertical size to the largest character in font>
+  <|explain>
+    These macros can be used to increase the vertical extents of the
+    <src-arg|body> to those of the largest character in the current font. In
+    the case of <markup|swell-top> and <markup|swell-bottom>, only the top
+    <abbr|resp.> bottom are changed. This kind of adjustments may for
+    instance be used in order to ensure that <math|2\<times\>2><nbsp>matrices
+    with simple textual contents always have the same size:
+
+    <\equation*>
+      <matrix|<tformat|<table|<row|<cell|f>|<cell|0>>|<row|<cell|0>|<cell|f>>>>>,<matrix|<tformat|<table|<row|<cell|a>|<cell|x>>|<row|<cell|0>|<cell|a>>>>><with|mode|text|
+      versus ><matrix|<tformat|<cwith|1|-1|1|-1|cell-vcorrect|n>|<table|<row|<cell|f>|<cell|0>>|<row|<cell|0>|<cell|f>>>>>,<matrix|<tformat|<cwith|1|-1|1|-1|cell-vcorrect|n>|<table|<row|<cell|a>|<cell|x>>|<row|<cell|0>|<cell|a>>>>>
+    </equation*>
+
+    In fact, for a more uniform appearance, swelling is activated by default
+    inside matrices.
+  </explain>
+
+  <\explain>
+    <explain-macro|extend|content|left-lim|bot-lim|right-lim|top-lim><explain-synopsis|extend
+    the size>
+  <|explain>
+    This primitive is similar to <markup|resize>, except that the new size of
+    the <src-arg|content> is always larger than the original size.
+  </explain>
+
   The following miscellaneous tags don't take arguments:
 
   <explain|<explain-macro|TeXmacs>|The <TeXmacs> logo.>
@@ -233,14 +278,14 @@
     lines.
   </explain>
 
-  <\explain|<explain-macro|fold|summary|body>>
+  <\explain|<explain-macro|folded|summary|body>>
     The <src-arg|summary> is displayed and the <src-arg|body> ignored: the
     macro corresponds to the folded presentation of a piece of content
     associated to a short title or abstract. The second argument can be made
     visible using <menu|Insert|Switch|Unfold>.
   </explain>
 
-  <\explain|<explain-macro|unfold|summary|body>>
+  <\explain|<explain-macro|unfolded|summary|body>>
     Unfolded presentation of a piece of content <src-arg|body> associated to
     a short title or abstract <src-arg|summary>. The second argument can be
     made invisible using <menu|Insert|Switch|Fold>.
@@ -265,8 +310,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

@@ -319,7 +319,7 @@
 
   \;
 
-  <assign|extend|<macro|body|left|bottom|right|top|<style-with|src-compact|none|<resize|<arg|body>|<if|<equal|<arg|left>|>||<minimum|1l|<arg|left>>>|<if|<equal|<arg|bottom>|>||<minimum|1b|<arg|bottom>>>|<if|<equal|<arg|right>|>||<maximum|1r|<arg|right>>>|<if|<equal|<arg|top>|>||<maximum|1t|<arg|top>>>>>>>
+  <assign|extend|<macro|body|left|bottom|right|top|<style-with|src-compact|none|<resize|<arg|body>|<if|<equal|<arg|left>|>|1l|<minimum|1l|<arg|left>>>|<if|<equal|<arg|bottom>|>|1b|<minimum|1b|<arg|bottom>>>|<if|<equal|<arg|right>|>|1r|<maximum|1r|<arg|right>>>|<if|<equal|<arg|top>|>|1t|<maximum|1t|<arg|top>>>>>>>
 
   <assign|extend-right|<macro|body|right|<resize|<arg|body>|||<maximum|1r|<arg|right>>|>>>
 
