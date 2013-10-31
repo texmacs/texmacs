@@ -13,7 +13,7 @@
 ;; See menu-define.scm for the grammar of menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (fonts font-selector)
+(texmacs-module (fonts font-new-widgets)
   (:use (kernel gui menu-widget)
         (fonts font-sample)
         (generic format-edit)
