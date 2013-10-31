@@ -1311,13 +1311,8 @@ pdf_hummus_renderer_rep::image (
 
   if (is_nil(im)) return;
   
-  int x1= im->bx1 + (int) (cx1 * (im->bx2 - im->bx1) + 0.5);
-  int y1= im->by1 + (int) (cy1 * (im->by2 - im->by1) + 0.5);
-  int x2= im->bx1 + (int) (cx2 * (im->bx2 - im->bx1) + 0.5);
-  int y2= im->by1 + (int) (cy2 * (im->by2 - im->by1) + 0.5);
-
-  double sc_x= (72.0/dpi) * ((double) (w/pixel)) / ((double) (x2-x1));
-  double sc_y= (72.0/dpi) * ((double) (h/pixel)) / ((double) (y2-y1));
+  double sc_x= ((double) (w/pixel)) / ((double) (cx2-cx1));
+  double sc_y= ((double) (h/pixel)) / ((double) (cy2-cy1));
   
   end_text();
   
@@ -1344,7 +1339,11 @@ pdf_hummus_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
   int y2= h - oy;
   x -= (int) 2.06 * ox * pixel; // FIXME: where does the magic 2.06 come from?
   y -= (int) 2.06 * oy * pixel;
-  //image (name, eps, x1, y1, x2, y2, w * pixel, h * pixel, x, y, 255);
+  
+  url temp= url_temp (".eps");
+  save_string(temp, eps);
+  
+  image (temp, w * pixel, h * pixel, x, y, x1, y1, x2, y2,  255);
 }
 
 void
@@ -1355,11 +1354,12 @@ pdf_hummus_renderer_rep::draw_scalable (scalable im, SI x, SI y, int alpha) {
     url u= im->get_name ();
     rectangle r= im->get_logical_extents ();
     SI w= r->x2, h= r->y2;
-    string ps_image= ps_load (u);
-    string imtext= is_ramdisc (u)? "inline image": as_string (u);
+    //string ps_image= ps_load (u);
+    //string imtext= is_ramdisc (u)? "inline image": as_string (u);
     int x1, y1, x2, y2;
     ps_bounding_box (u, x1, y1, x2, y2);
-   // image (imtext, ps_image, x1, y1, x2, y2, w, h, x, y, alpha);
+//    image (imtext, ps_image, x1, y1, x2, y2, w, h, x, y, alpha);
+    image (u,w, h, x, y, x1, y1, x2, y2,  alpha);
   }
 }
 
