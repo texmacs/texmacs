@@ -505,6 +505,9 @@ pdf_hummus_renderer_rep::reset_transformation () {
 void
 pdf_hummus_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
   renderer_rep::set_clipping (x1, y1, x2, y2, restore);
+
+  end_text();
+  
   outer_round (x1, y1, x2, y2);
   if (restore) {
     //cerr << "restore clipping\n";
@@ -1229,22 +1232,19 @@ public:
     if (is_none (name))
       name= "$TEXMACS_PATH/misc/pixmaps/unknown.ps";
 
-   // string filename = concretize (name);
+    // do not use "convert" to convert from eps to pdf since it rasterizes the picture
+    // string filename = concretize (name);
     url temp= url_temp (".pdf");
-    string cmd = "convert";
-//    string cmd = "ps2pdf14";
+    string cmd = "ps2pdf14";
     system (cmd, u, temp);
-    cout << temp << LF;
+//    system ("epstopdf " * sys_concretize(u) * " --outfile " * sys_concretize(temp));
+    //cout << temp << LF;
     c_string fname (concretize (temp));
     
     cout << "flushing :" << fname << LF;
   
-    // in the case of .eps files ps_bounding_box returns a shifted rectangle
-    // respect to the image returned by "convert"
-
-    bx2=bx2-bx1; bx1=0;
-    by2=by2-by1; by1=0;
     
+//    PDFRectangle cropBox (0,0,bx2-bx1,by2-by1);
     PDFRectangle cropBox (bx1,by1,bx2,by2);
     double tMat[6] = { 1, 0, 0, 1, -bx1, -by1};
 
@@ -1342,8 +1342,8 @@ pdf_hummus_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
   
   url temp= url_temp (".eps");
   save_string(temp, eps);
-  
   image (temp, w * pixel, h * pixel, x, y, x1, y1, x2, y2,  255);
+  remove(temp);
 }
 
 void
@@ -1358,7 +1358,6 @@ pdf_hummus_renderer_rep::draw_scalable (scalable im, SI x, SI y, int alpha) {
     //string imtext= is_ramdisc (u)? "inline image": as_string (u);
     int x1, y1, x2, y2;
     ps_bounding_box (u, x1, y1, x2, y2);
-//    image (imtext, ps_image, x1, y1, x2, y2, w, h, x, y, alpha);
     image (u,w, h, x, y, x1, y1, x2, y2,  alpha);
   }
 }
