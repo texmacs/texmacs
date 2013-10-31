@@ -81,7 +81,8 @@
   (:function parse-latex))
 
 (converter latex-document texmacs-tree
-  (:function latex-document->texmacs))
+  (:function-with-options latex-document->texmacs)
+  (:option "latex->texmacs:fallback-on-pictures" "on"))
 
 (converter latex-class-document texmacs-tree
   (:function latex-class-document->texmacs))
