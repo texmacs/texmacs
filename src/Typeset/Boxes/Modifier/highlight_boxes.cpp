@@ -29,9 +29,7 @@ struct highlight_box_rep: public change_box_rep {
   SI w, xpad, ypad;
   brush bg, xc, sunc, shad, old_bg;
   pencil old_pen;
-  highlight_box_rep (path ip, box b, box xb, tree shape,
-		     SI w, SI xpad, SI ypad,
-		     brush bg, brush xc, brush sunc, brush shad);
+  highlight_box_rep (path ip, box b, box xb, ornament_parameters ps);
   operator tree () { return tree (TUPLE, "highlight", (tree) bs[0]); }
   void pre_display (renderer &ren);
   void post_display (renderer &ren);
@@ -39,12 +37,11 @@ struct highlight_box_rep: public change_box_rep {
   void display_rounded (renderer& ren, int style);
 };
 
-highlight_box_rep::highlight_box_rep (
-  path ip, box b, box xb, tree shape2, SI w2, SI xp2, SI yp2,
-  brush bg2, brush xc2, brush sunc2, brush shad2):
-    change_box_rep (ip, true), shape (shape2),
-    w (w2), xpad (xp2), ypad (yp2),
-    bg (bg2), xc (xc2), sunc (sunc2), shad (shad2)
+highlight_box_rep::highlight_box_rep (path ip, box b, box xb,
+				      ornament_parameters ps):
+  change_box_rep (ip, true), shape (ps->shape),
+  w (ps->w), xpad (ps->xpad), ypad (ps->ypad),
+  bg (ps->bg), xc (ps->xc), sunc (ps->sunc), shad (ps->shad)
 {
   SI offx= 0, offy= 0;
   insert (b, w + xpad, 0);
@@ -245,32 +242,33 @@ highlight_box_rep::display_rounded (renderer& ren, int style) {
 ******************************************************************************/
 
 box
-title_box (path ip, box b, box xb,
-           tree shape, string title_style, SI w, SI xpad, SI ypad,
-           brush bg, brush xc, brush sunc, brush shad) {
-  bool at_top   = starts (title_style, "top ");
-  bool at_bot   = starts (title_style, "bottom ");
-  bool at_left  = ends (title_style, " left");
-  bool at_center= ends (title_style, " center");
-  bool at_right = ends (title_style, " right");
-  if (!(at_top || at_bot) || !(at_left || at_center || at_right))
-    return highlight_box (ip, b, xb, shape, "classic", w, xpad, ypad,
-                          bg, xc, sunc, shad);
+title_box (path ip, box b, box xb, ornament_parameters ps) {
+  string tst= ps->tst->label;
+  bool at_top   = starts (tst, "top ");
+  bool at_bot   = starts (tst, "bottom ");
+  bool at_left  = ends (tst, " left");
+  bool at_center= ends (tst, " center");
+  bool at_right = ends (tst, " right");
 
-  box tit  = highlight_box (ip, xb, box (),
-                            shape, "classic", w, xpad, ypad,
-                            xc, xc, sunc, shad);
+  ornament_parameters cps= copy (ps);
+  cps->tst= "classic";
+  ornament_parameters tit_ps= copy (cps);
+  ornament_parameters bb_ps = copy (cps);
+  tit_ps->bg= tit_ps->xc;
+  bb_ps->xc = bb_ps->bg;
+
+  if (!(at_top || at_bot) || !(at_left || at_center || at_right))
+    return highlight_box (ip, b, xb, cps);
+  box tit  = highlight_box (ip, xb, box (), tit_ps);
   SI  shift= tit->h() >> 1;
   box shb  = vresize_box (b->ip, b,
                           b->y1 - (at_bot? shift: 0),
                           b->y2 + (at_top? shift: 0));
-  box bb   = highlight_box (ip, shb, box (),
-                            shape, "classic", w, xpad, ypad,
-                            bg, bg, sunc, shad);
+  box bb   = highlight_box (ip, shb, box (), bb_ps);
   SI  tx   = ((bb->x1 + bb->x2) >> 1) - ((tit->x1 + tit->x2) >> 1);
   SI  ty   = (at_top? bb->y2: bb->y1) - tit->y1 - shift;
-  if (at_left ) tx= bb->x1 - tit->x1 + w + 2 * xpad;
-  if (at_right) tx= bb->x2 - tit->x2 - w - 2 * xpad;
+  if (at_left ) tx= bb->x1 - tit->x1 + ps->w + 2 * ps->xpad;
+  if (at_right) tx= bb->x2 - tit->x2 - ps->w - 2 * ps->xpad;
   array<box> bs;
   array<SI>  x, y;
   bs << bb << tit;
@@ -286,12 +284,14 @@ title_box (path ip, box b, box xb,
 ******************************************************************************/
 
 box
-highlight_box (path ip, box b, box xb,
-               tree shape, tree title_style, SI w, SI xpad, SI ypad,
-	       brush bg, brush xc, brush sunc, brush shad) {
-  if (title_style != "classic" && !is_nil (xb) && is_atomic (title_style))
-    return title_box (ip, b, xb, shape, title_style->label,
-                      w, xpad, ypad, bg, xc, sunc, shad);
-  return tm_new<highlight_box_rep> (ip, b, xb, shape,
-                                    w, xpad, ypad, bg, xc, sunc, shad);
+highlight_box (path ip, box b, box xb, ornament_parameters ps) {
+  if (ps->tst != "classic" && !is_nil (xb) && is_atomic (ps->tst))
+    return title_box (ip, b, xb, ps);
+  return tm_new<highlight_box_rep> (ip, b, xb, ps);
+}
+
+box
+highlight_box (path ip, box b, SI w, brush c, brush sunc, brush shad) {
+  ornament_parameters ps ("classic", "classic", w, 0, 0, c, c, sunc, shad);
+  return highlight_box (ip, b, box (), ps);
 }

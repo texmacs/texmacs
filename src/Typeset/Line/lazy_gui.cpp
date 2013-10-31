@@ -145,20 +145,11 @@ struct lazy_ornament_rep: public lazy_rep {
   edit_env env;             // "current" environment
   lazy par;                 // the ornamented body
   box xb;                   // extra box
-  tree shape;               // the shape
-  tree tst;                 // the title style
-  SI w, xpad, ypad;         // spacing parameters
-  tree bg, xc;              // background colors or patterns
-  int alpha;                // alpha transparency of background
-  color sunny, shadow;      // border colors
+  ornament_parameters ps;   // parameters for the ornament
   lazy_ornament_rep (edit_env env2, lazy par2, box xb2, path ip,
-		     tree shape2, tree tst2, SI w2, SI xpad2, SI ypad2,
-		     tree bg2, tree xc2, int alpha2,
-		     color sunny2, color shadow2):
-    lazy_rep (LAZY_ORNAMENT, ip), env (env2), par (par2), xb (xb2),
-    shape (shape2), tst (tst2), w (w2), xpad (xpad2), ypad (ypad2),
-    bg (bg2), xc (xc2), alpha (alpha2), sunny (sunny2), shadow (shadow2) {}
-  
+		     ornament_parameters ps2):
+    lazy_rep (LAZY_ORNAMENT, ip), env (env2), par (par2),
+    xb (xb2), ps (ps2) {}  
   inline operator tree () { return "Ornament"; }
   lazy produce (lazy_type request, format fm);
   format query (lazy_type request, format fm);
@@ -167,11 +158,8 @@ struct lazy_ornament_rep: public lazy_rep {
 struct lazy_ornament {
 EXTEND_NULL(lazy,lazy_ornament);
   lazy_ornament (edit_env env, lazy par, box xb, path ip,
-		 tree shape, tree tst, SI w, SI xpad, SI ypad,
-		 tree bg, tree xc, int alpha, color sunny, color shadow):
-    rep (tm_new<lazy_ornament_rep> (env, par, xb, ip,
-                                    shape, tst, w, xpad, ypad,
-                                    bg, xc, alpha, sunny, shadow)) {
+		 ornament_parameters ps):
+    rep (tm_new<lazy_ornament_rep> (env, par, xb, ip, ps)) {
     rep->ref_count= 1; }
 };
 EXTEND_NULL_CODE(lazy,lazy_ornament);
@@ -181,7 +169,7 @@ lazy_ornament_rep::query (lazy_type request, format fm) {
   if ((request == LAZY_BOX) && (fm->type == QUERY_VSTREAM_WIDTH)) {
     format body_fm= par->query (request, fm);
     format_width fmw= (format_width) body_fm;
-    return make_format_width (fmw->width + 2 * (w + xpad));
+    return make_format_width (fmw->width + 2 * (ps->w + ps->xpad));
   }
   return lazy_rep::query (request, fm);
 }
@@ -193,12 +181,10 @@ lazy_ornament_rep::produce (lazy_type request, format fm) {
     format bfm= fm;
     if (request == LAZY_VSTREAM) {
       format_vstream fvs= (format_vstream) fm;
-      bfm= make_format_width (fvs->width - 2 * (w + xpad));
+      bfm= make_format_width (fvs->width - 2 * (ps->w + ps->xpad));
     }
     box b = (box) par->produce (LAZY_BOX, bfm);
-    box hb= highlight_box (ip, b, xb, shape, tst, w, xpad, ypad,
-                           brush (bg, alpha), brush (xc, alpha),
-			   sunny, shadow);
+    box hb= highlight_box (ip, b, xb, ps);
     // FIXME: this dirty hack ensures that shoving is correct
     hb= move_box (decorate (ip), hb, 1, 0);
     hb= move_box (decorate (ip), hb, -1, 0);
@@ -225,9 +211,10 @@ make_lazy_ornament (edit_env env, tree t, path ip) {
   int   a     = env->alpha;
   color sunny = env->get_color  (ORNAMENT_SUNNY_COLOR);
   color shadow= env->get_color  (ORNAMENT_SHADOW_COLOR);
+  ornament_parameters ps (shape, tst, w, xpad, ypad,
+			  brush (bg, a), brush (xc, a), sunny, shadow);
   lazy  par   = make_lazy (env, t[0], descend (ip, 0));
   box   xb;
   if (N(t) == 2) xb= typeset_as_concat (env, t[1], descend (ip, 1));
-  return lazy_ornament (env, par, xb, ip, shape, tst, w, xpad, ypad,
-                        bg, xc, a, sunny, shadow);
+  return lazy_ornament (env, par, xb, ip, ps);
 }

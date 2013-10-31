@@ -19,6 +19,40 @@
 class frame;
 
 /******************************************************************************
+* Ornament parameters
+******************************************************************************/
+
+class ornament_parameters_rep: concrete_struct {
+public:
+  tree shape, tst;
+  SI w, xpad, ypad;
+  brush bg, xc, sunc, shad;
+
+  inline
+  ornament_parameters_rep (tree shape2, tree tst2, SI w2, SI xpad2, SI ypad2,
+			   brush bg2, brush xc2, brush sunc2, brush shad2):
+    shape (shape2), tst (tst2), w (w2), xpad (xpad2), ypad (ypad2),
+    bg (bg2), xc (xc2), sunc (sunc2), shad (shad2) {}
+  friend class ornament_parameters;
+};
+
+class ornament_parameters {
+  CONCRETE(ornament_parameters);
+  inline
+  ornament_parameters (tree shape2, tree tst2, SI w2, SI xpad2, SI ypad2,
+		       brush bg2, brush xc2, brush sunc2, brush shad2):
+    rep (tm_new<ornament_parameters_rep> (shape2, tst2, w2, xpad2, ypad2,
+					  bg2, xc2, sunc2, shad2)) {}
+};
+CONCRETE_CODE(ornament_parameters);
+
+inline ornament_parameters
+copy (ornament_parameters ps) {
+  return ornament_parameters (ps->shape, ps->tst, ps->w, ps->xpad, ps->ypad,
+			      ps->bg, ps->xc, ps->sunc, ps->shad);
+}
+
+/******************************************************************************
 * Construction routines for boxes
 ******************************************************************************/
 
@@ -62,9 +96,8 @@ box scatter_box (path ip, array<box> bs, array<SI> x, array<SI> y);
 box cell_box (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
 	      SI bl, SI br, SI bb, SI bt, brush fg, brush bg);
 box remember_box (path ip, box b);
-box highlight_box (path ip, box b, box xb,
-                   tree sh, tree tst, SI w, SI xpad, SI ypad,
-		   brush bg, brush xc, brush sunny, brush shadow);
+box highlight_box (path ip, box b, box xb, ornament_parameters ps);
+box highlight_box (path ip, box b, SI w, brush col, brush sunc, brush shad);
 
 box frac_box (path ip, box b1, box b2, font fn, font sfn, pencil pen);
 box sqrt_box (path ip, box b1, box b2, box sqrtb, font fn, pencil pen);
