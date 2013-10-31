@@ -17,6 +17,7 @@
 
 #include "url.hpp"
 
+string gs_prefix ();
 bool gs_supports (url image);
 void gs_image_size (url image, int& w_pt, int& h_pt);
 void gs_to_png (url image, url png, int w_px, int h_px);

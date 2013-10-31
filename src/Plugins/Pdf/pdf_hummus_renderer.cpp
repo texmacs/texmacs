@@ -23,6 +23,7 @@
 #include "ntuple.hpp"
 #include "link.hpp"
 #include "frame.hpp"
+#include "gs_utilities.hpp" // for gs_prefix
 
 #include "PDFWriter/PDFWriter.h"
 #include "PDFWriter/PDFPage.h"
@@ -1234,20 +1235,34 @@ public:
 
     // do not use "convert" to convert from eps to pdf since it rasterizes the picture
     // string filename = concretize (name);
+
     url temp= url_temp (".pdf");
+    string tempname= sys_concretize (temp);
+    c_string fname (tempname);
+    //cout << "flushing :" << fname << LF;
+    
+#if 0
     string cmd = "ps2pdf14";
     system (cmd, u, temp);
-//    system ("epstopdf " * sys_concretize(u) * " --outfile " * sys_concretize(temp));
-    //cout << temp << LF;
-    c_string fname (concretize (temp));
-    
-    cout << "flushing :" << fname << LF;
-  
-    
-//    PDFRectangle cropBox (0,0,bx2-bx1,by2-by1);
     PDFRectangle cropBox (bx1,by1,bx2,by2);
     double tMat[6] = { 1, 0, 0, 1, -bx1, -by1};
-
+#else
+    // use gs to convert eps to pdf and take care of properly handling the bounding box
+    // the resulting pdf image will always start at 0,0.
+    string cmd= gs_prefix();
+    cmd << " -dQUIET -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pdfwrite ";
+    cmd << " -sOutputFile=" << tempname << " ";
+    cmd << " -c \" << /PageSize [ " << as_string(bx2-bx1) << " " << as_string(by2-by1)
+        << " ] >> setpagedevice gsave  "
+        << as_string(-bx1) << " " << as_string(-by1) << " translate \" ";
+    cmd << " -f " << sys_concretize (name);
+    cmd << " -c \" grestore \"  ";
+    //cout << cmd << LF;
+    system(cmd);
+    PDFRectangle cropBox (0,0,bx2-bx1,by2-by1);
+    double tMat[6] = { 1, 0, 0, 1, 0, 0};
+#endif
+    
     EStatusCode status = PDFHummus::eSuccess;
     DocumentContext& dc = pdfw.GetDocumentContext();
 
@@ -1298,7 +1313,7 @@ pdf_hummus_renderer_rep::image (
   double cx1, double cy1, double cx2, double cy2,
   int alpha)
 {
-  cerr << "image " << u << LF;
+  //cerr << "image " << u << LF;
   (void) alpha; // FIXME
 
   tree lookup= tuple (u->t);
