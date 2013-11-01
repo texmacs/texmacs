@@ -27,7 +27,8 @@ class object_rep : concrete_struct {
 
 class tmscm_object_rep;
 
-struct object {
+class object {
+public:
 	CONCRETE(object);
 	object ();
     object (tmscm_object_rep* o);
