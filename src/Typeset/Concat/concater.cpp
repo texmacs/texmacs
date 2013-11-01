@@ -631,6 +631,9 @@ concater_rep::typeset (tree t, path ip) {
   case WRITE:
     typeset_write (t, ip);
     break;
+  case TOC_NOTIFY:
+    typeset_toc_notify (t, ip);
+    break;
 
   case TUPLE:
   case ATTR:

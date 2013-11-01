@@ -103,7 +103,7 @@
   </active*>
 
   <assign|toc-entry|<macro|type|what|<quasi|<style-with|src-compact|none|<flag|<localize|table
-  of contents>|dark green|what><auto-label><write|toc|<compound|<unquote|<arg|type>>|<arg|what>|<pageref|<the-auto>>>>>>>>
+  of contents>|dark green|what><auto-label><write|toc|<compound|<unquote|<arg|type>>|<arg|what>|<pageref|<the-auto>>>><toc-notify|<arg|type>|<arg|what>>>>>>
 
   <assign|toc-main-1|<macro|what|<toc-entry|toc-strong-1|<arg|what>>>>
 

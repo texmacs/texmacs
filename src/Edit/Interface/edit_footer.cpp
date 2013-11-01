@@ -228,6 +228,8 @@ edit_interface_rep::compute_operation_footer (tree st) {
       r= concat ("page reference: ", as_string (st[0])); break;
     case WRITE:
       r= concat ("write to ", as_string (st[0])); break;
+    case TOC_NOTIFY:
+      r= concat ("toc notify: ", as_string (st[1])); break;
     case SPECIFIC:
       r= concat ("specific ", as_string (st[0])); break;
     case IMAGE:

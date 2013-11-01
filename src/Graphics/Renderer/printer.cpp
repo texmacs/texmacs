@@ -972,6 +972,13 @@ printer_rep::href (string label, SI x1, SI y1, SI x2, SI y2) {
   cr ();
 }
 
+void
+printer_rep::toc_entry (string kind, string title, SI x, SI y) {
+  // FIXME: not yet implemented
+  (void) kind; (void) title; (void) x; (void) y;
+  // cout << kind << ", " << title << "\n";
+}
+
 /******************************************************************************
 * user interface
 ******************************************************************************/

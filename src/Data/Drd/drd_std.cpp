@@ -513,6 +513,10 @@ init_std_drd () {
 	fixed (1, 1, BIFORM) ->
 	string_type (0) -> name (0, "channel") ->
 	regular (1) -> name (1, "content"));
+  init (TOC_NOTIFY, "toc-notify",
+	fixed (1, 1, BIFORM) ->
+	string_type (0) -> name (0, "kind") ->
+	string_type (1) -> name (1, "title"));
 
   init (TUPLE, "tuple",
 	repeat (0, 1) -> accessible (0));

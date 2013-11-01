@@ -186,6 +186,7 @@ packrat_parser_rep::serialize (tree t, path p) {
     case REFERENCE:
     case PAGEREF:
     case WRITE:
+    case TOC_NOTIFY:
       break;
 
     case SPECIFIC:

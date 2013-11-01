@@ -41,6 +41,24 @@ struct specific_box_rep: public box_rep {
 };
 
 /******************************************************************************
+* TOC boxes
+******************************************************************************/
+
+struct toc_box_rep: public box_rep {
+  string kind, title;
+  toc_box_rep (path ip, string kind2, string title2, font fn):
+    box_rep (ip), kind (kind2), title (title2) {
+      x1=x2=y1=0;
+      y2=fn->yx;
+      x3=x4=y3=y3= 0;
+    }
+  operator tree () {
+    return tuple ("toc", kind, title); }
+  void display (renderer ren) {
+    ren->toc_entry (kind, title, 0, 0); }
+};
+
+/******************************************************************************
 * Flag boxes
 ******************************************************************************/
 
@@ -159,6 +177,11 @@ scrollbar_box_rep::action (tree type, SI x, SI y, SI delta) {
 box
 specific_box (path ip, box b, bool printer_flag, font fn) {
   return tm_new<specific_box_rep> (ip, b, printer_flag, fn);
+}
+
+box
+toc_box (path ip, string kind, string title, font fn) {
+  return tm_new<toc_box_rep> (ip, kind, title, fn);
 }
 
 box

@@ -76,8 +76,10 @@ public:
   void generate_tex_fonts ();
 
   /************************ subroutines hyperlinks ***************************/
-  void anchor(string label, SI x, SI y);
-  void href(string label, SI x1, SI y1, SI x2, SI y2);
+
+  void anchor (string label, SI x, SI y);
+  void href (string label, SI x1, SI y1, SI x2, SI y2);
+  void toc_entry (string kind, string title, SI x, SI y);
 
   /********************** routines from renderer.hpp *************************/
 
