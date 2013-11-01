@@ -238,6 +238,19 @@ tree_as_string (tree t) {
   return "";
 }
 
+tree
+replace (tree t, tree w, tree b) {
+  if (t == w) return b;
+  else if (is_atomic (t)) return t;
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= replace (t[i], w, b);
+    return r;
+  }
+}
+
 /******************************************************************************
 * Tree predicates
 ******************************************************************************/

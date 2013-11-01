@@ -241,6 +241,7 @@ inline string as_string (tree t) {
   if (is_atomic (t)) return t->label;
   else return ""; }
 string tree_as_string (tree t);
+tree replace (tree t, tree w, tree b);
 template<class T> inline tree as_tree (T x) { return (tree) x; }
 template<> inline tree as_tree (int x) { return as_string (x); }
 template<> inline tree as_tree (long int x) { return as_string (x); }

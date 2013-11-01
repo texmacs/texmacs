@@ -16,6 +16,7 @@
 #include "analyze.hpp"
 #include "scheme.hpp"
 #include "packrat.hpp"
+#include "convert.hpp"
 
 /******************************************************************************
 * Typesetting executable markup
@@ -227,8 +228,8 @@ concater_rep::typeset_write (tree t, path ip) {
 void
 concater_rep::typeset_toc_notify (tree t, path ip) {
   if (N(t) != 2) { typeset_error (t, ip); return; }
-  string kind = tree_as_string (env->exec (t[0]));
-  string title= tree_as_string (env->exec (t[1]));
+  string kind = tree_to_verbatim (env->exec (t[0]));
+  string title= tree_to_verbatim (env->exec (t[1]));
   box  b = toc_box (decorate_middle (ip), kind, title, env->fn);
   marker (descend (ip, 0));
   print (b);
