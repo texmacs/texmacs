@@ -213,8 +213,12 @@ public:
   void put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
 
-  void anchor(string label, SI x, SI y);
-  void href(string label, SI x1, SI y1, SI x2, SI y2);
+  /************************ subroutines hyperlinks ***************************/
+  
+  void anchor (string label, SI x, SI y);
+  void href (string label, SI x1, SI y1, SI x2, SI y2);
+  void toc_entry (string kind, string title, SI x, SI y);
+  
 };
 
 
@@ -1498,6 +1502,16 @@ pdf_hummus_renderer_rep::flush_dests()
   }
   objectsContext.EndIndirectObject();
 }
+
+
+
+void
+pdf_hummus_renderer_rep::toc_entry (string kind, string title, SI x, SI y) {
+  // FIXME: not yet implemented
+  (void) kind; (void) title; (void) x; (void) y;
+  cout << kind << ", " << title << "\n";
+}
+
 
 
 
