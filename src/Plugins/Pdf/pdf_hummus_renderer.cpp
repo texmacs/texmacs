@@ -97,6 +97,8 @@ class pdf_hummus_renderer_rep : public renderer_rep {
   PDFPage* page;
   PageContentContext* contentContext;
   
+  // geometry
+  
   double to_x (SI x) {
     x += ox;
     if (x>=0) x= x/pixel; else x= (x-pixel+1)/pixel;
@@ -109,6 +111,8 @@ class pdf_hummus_renderer_rep : public renderer_rep {
     return y;
   };
   
+  // various internal routines
+
   void init_page_size ();
   void select_stroke_color (color c);
   void select_fill_color (color c);
@@ -125,12 +129,15 @@ class pdf_hummus_renderer_rep : public renderer_rep {
   int get_label_id(string label);
 
     
-    // glyph positioning
-    typedef quartet<int,int,int,glyph> drawn_glyph;
-    list <drawn_glyph> drawn_glyphs;
-    void draw_glyphs();
+  // glyph positioning
+  
+  typedef quartet<int,int,int,glyph> drawn_glyph;
+  list <drawn_glyph> drawn_glyphs;
+  void draw_glyphs();
 
-    
+  
+  // various internal routines
+  
   void flush_images();
   void flush_glyphs();
   void flush_dests();
@@ -138,7 +145,13 @@ class pdf_hummus_renderer_rep : public renderer_rep {
   PDFImageXObject *create_pdf_image_raw (string raw_data, SI width, SI height, ObjectIDType imageXObjectID);
   void make_pdf_font (string fontname);
   void draw_bitmap_glyph (int ch, font_glyphs fn, SI x, SI y);
+  void  image (url u, SI w, SI h, SI x, SI y,
+               double cx1, double cy1, double cx2, double cy2,
+               int alpha);
   
+  
+  // hooks for the Hummus library
+
   class DestinationsWriter : public DocumentContextExtenderAdapter
   {
     pdf_hummus_renderer_rep *ren;
@@ -157,7 +170,6 @@ class pdf_hummus_renderer_rep : public renderer_rep {
     }
   };
   
-  
   PDFHummus::EStatusCode on_catalog_write (CatalogInformation* inCatalogInformation,
                                            DictionaryContext* inCatalogDictionaryContext,
                                            ObjectsContext* inPDFWriterObjectContext,
@@ -174,12 +186,13 @@ public:
   void set_transformation (frame fr);
   void reset_transformation ();
   
-
   void  set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
+  
   pencil get_pencil ();
   brush get_background ();
   void  set_pencil (pencil pen2);
   void  set_background (brush b2);
+
   void  draw (int char_code, font_glyphs fn, SI x, SI y);
   void  line (SI x1, SI y1, SI x2, SI y2);
   void  lines (array<SI> x, array<SI> y);
@@ -188,90 +201,23 @@ public:
   void  arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
   void  fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
   void  polygon (array<SI> x, array<SI> y, bool convex=true);
-  void  xpm (url file_name, SI x, SI y);
   
-  void  image (url u, SI w, SI h, SI x, SI y,
-               double cx1, double cy1, double cx2, double cy2,
-               int alpha);
-  
-  renderer shadow (picture& pic, SI x1, SI y1, SI x2, SI y2);
   void draw_picture (picture p, SI x, SI y, int alpha);
   void draw_scalable (scalable im, SI x, SI y, int alpha);
 
+  renderer shadow (picture& pic, SI x1, SI y1, SI x2, SI y2);
   void fetch (SI x1, SI y1, SI x2, SI y2, renderer ren, SI x, SI y);
   void new_shadow (renderer& ren);
   void delete_shadow (renderer& ren);
   void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
   void put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
+
   void anchor(string label, SI x, SI y);
   void href(string label, SI x1, SI y1, SI x2, SI y2);
 };
 
 
-
-
-
-void
-pdf_hummus_renderer_rep::select_alpha (int a) {
-  if (alpha != a) {
-    alpha = a;
-    if (!alpha_id->contains(a)) {
-      ObjectIDType temp = pdfWriter.GetObjectsContext().GetInDirectObjectsRegistry().AllocateNewObjectID();
-      alpha_id(a) = temp;
-    }
-    std::string name = page->GetResourcesDictionary().AddExtGStateMapping(alpha_id(a));
-    contentContext->gs(name);
-  }
-}
-
-void
-pdf_hummus_renderer_rep::select_stroke_color (color c) {;
-  int r, g, b, a;
-  get_rgb_color (c, r, g, b, a);
-  r= ((r*1000)/255);
-  g= ((g*1000)/255);
-  b= ((b*1000)/255);
-  a= ((a*1000)/255);
-  rgb c1 = rgb(r,g,b);
-  if (stroke_rgb != c1) {
-    double dr= ((double) r) / 1000.0;
-    double dg= ((double) g) / 1000.0;
-    double db= ((double) b) / 1000.0;
-    contentContext->RG(dr, dg, db); // stroke color;
-    stroke_rgb = c1;
-  }
-  select_alpha(a);
-}
-
-void
-pdf_hummus_renderer_rep::select_fill_color (color c) {;
-  int r, g, b, a;
-  get_rgb_color (c, r, g, b, a);
-  r= ((r*1000)/255);
-  g= ((g*1000)/255);
-  b= ((b*1000)/255);
-  a= ((a*1000)/255);
-  rgb c1 = rgb(r,g,b);
-  if (fill_rgb != c1) {
-    double dr= ((double) r) / 1000.0;
-    double dg= ((double) g) / 1000.0;
-    double db= ((double) b) / 1000.0;
-    contentContext->rg(dr, dg, db); // non-stroking color
-    fill_rgb = c1;
-  }
-  select_alpha(a);
-}
-
-void
-pdf_hummus_renderer_rep::select_line_width (SI w) {
-  double pw = w /pixel;
-  //if (pw < 1) pw= 1;
-  if (pw != current_width) {
-    contentContext->w(pw);
-    current_width = pw;
-  }
-}
 
 /******************************************************************************
 * constructors and destructors
@@ -427,7 +373,7 @@ pdf_hummus_renderer_rep::end_page(){
 
   end_text ();
   
-  // outmost restore for the graphcis state (see begin_page)
+  // outmost restore for the graphics state (see begin_page)
   contentContext->Q();
 
   status = pdfWriter.EndPageContentContext(contentContext);
@@ -527,10 +473,71 @@ pdf_hummus_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore)
     contentContext->n();
   }
 }
-  
+
 /******************************************************************************
-* graphical routines
-******************************************************************************/
+ * Graphic state management
+ ******************************************************************************/
+
+void
+pdf_hummus_renderer_rep::select_alpha (int a) {
+  if (alpha != a) {
+    alpha = a;
+    if (!alpha_id->contains(a)) {
+      ObjectIDType temp = pdfWriter.GetObjectsContext().GetInDirectObjectsRegistry().AllocateNewObjectID();
+      alpha_id(a) = temp;
+    }
+    std::string name = page->GetResourcesDictionary().AddExtGStateMapping(alpha_id(a));
+    contentContext->gs(name);
+  }
+}
+
+void
+pdf_hummus_renderer_rep::select_stroke_color (color c) {;
+  int r, g, b, a;
+  get_rgb_color (c, r, g, b, a);
+  r= ((r*1000)/255);
+  g= ((g*1000)/255);
+  b= ((b*1000)/255);
+  a= ((a*1000)/255);
+  rgb c1 = rgb(r,g,b);
+  if (stroke_rgb != c1) {
+    double dr= ((double) r) / 1000.0;
+    double dg= ((double) g) / 1000.0;
+    double db= ((double) b) / 1000.0;
+    contentContext->RG(dr, dg, db); // stroke color;
+    stroke_rgb = c1;
+  }
+  select_alpha(a);
+}
+
+void
+pdf_hummus_renderer_rep::select_fill_color (color c) {;
+  int r, g, b, a;
+  get_rgb_color (c, r, g, b, a);
+  r= ((r*1000)/255);
+  g= ((g*1000)/255);
+  b= ((b*1000)/255);
+  a= ((a*1000)/255);
+  rgb c1 = rgb(r,g,b);
+  if (fill_rgb != c1) {
+    double dr= ((double) r) / 1000.0;
+    double dg= ((double) g) / 1000.0;
+    double db= ((double) b) / 1000.0;
+    contentContext->rg(dr, dg, db); // non-stroking color
+    fill_rgb = c1;
+  }
+  select_alpha(a);
+}
+
+void
+pdf_hummus_renderer_rep::select_line_width (SI w) {
+  double pw = w /pixel;
+  //if (pw < 1) pw= 1;
+  if (pw != current_width) {
+    contentContext->w(pw);
+    current_width = pw;
+  }
+}
 
 pencil
 pdf_hummus_renderer_rep::get_pencil () {
@@ -720,7 +727,6 @@ pdf_hummus_renderer_rep::draw_bitmap_glyph (int ch, font_glyphs fn, SI x, SI y)
     pdf_glyphs (char_name) = pdf_raw_image (buf, gl->width, gl->height, imageXObjectID);
   }
 }
-
 
 
 /******************************************************************************
@@ -963,7 +969,7 @@ pdf_hummus_renderer_rep::draw_glyphs()
     SI bx, by;
     x = drawn_glyphs->item.x1;
     y = drawn_glyphs->item.x2;
-      w = drawn_glyphs->item.x4->lwidth*pixel;// - drawn_glyphs->item.x4->xoff;
+    w = drawn_glyphs->item.x4->lwidth*pixel;// - drawn_glyphs->item.x4->xoff;
     bx = x; by = y;
     while (1) {
       drawn_glyph dg = drawn_glyphs->item;
@@ -976,7 +982,7 @@ pdf_hummus_renderer_rep::draw_glyphs()
       
       xx = dg.x1;
       yy = dg.x2;
-        ww = dg.x4->lwidth*pixel;// - dg.x4->xoff;
+      ww = dg.x4->lwidth*pixel;// - dg.x4->xoff;
       
       if (yy != y) break;
       
@@ -1075,6 +1081,10 @@ pdf_hummus_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
     contentContext->TjLow(buf);
   }
 }
+
+/******************************************************************************
+ * Graphics primitives
+ ******************************************************************************/
 
 void
 pdf_hummus_renderer_rep::line (SI x1, SI y1, SI x2, SI y2) {
@@ -1204,15 +1214,6 @@ pdf_hummus_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
   contentContext->f();
 }
 
-void
-pdf_hummus_renderer_rep::xpm (url file_name, SI x, SI y) {
-  end_text ();
-  cerr << "xpm\n";
-/*  (void) file_name; (void) x; (void) y;
-  FAILED ("not yet implemented");*/
-}
-
-
 class pdf_image_rep : public concrete_struct
 {
 public:
@@ -1236,33 +1237,46 @@ public:
     // do not use "convert" to convert from eps to pdf since it rasterizes the picture
     // string filename = concretize (name);
 
+    PDFRectangle cropBox (0,0,bx2-bx1,by2-by1);
+    double tMat[6] = { 1, 0, 0, 1, 0, 0};
+
     url temp= url_temp (".pdf");
     string tempname= sys_concretize (temp);
     c_string fname (tempname);
     //cout << "flushing :" << fname << LF;
     
+    string s= suffix (name);
+    if (s == "pdf") {
+      // FIXME: better avoid copying in this case
+      string cmd= "cp";
+      system (cmd, name, temp);
+    } else if ( s != "ps" && s != "eps") {
+      // generic image format : use convert from ImageMagik
+      string cmd= "convert";
+      system (cmd, name, temp);
+    } else {
+      // ps or eps : use ghostscript
 #if 0
-    string cmd = "ps2pdf14";
-    system (cmd, u, temp);
-    PDFRectangle cropBox (bx1,by1,bx2,by2);
-    double tMat[6] = { 1, 0, 0, 1, -bx1, -by1};
+      // obsolete code : remove at some point
+      string cmd = "ps2pdf14";
+      system (cmd, u, temp);
+      PDFRectangle cropBox (bx1,by1,bx2,by2);
+      double tMat[6] = { 1, 0, 0, 1, -bx1, -by1};
 #else
-    // use gs to convert eps to pdf and take care of properly handling the bounding box
-    // the resulting pdf image will always start at 0,0.
-    string cmd= gs_prefix();
-    cmd << " -dQUIET -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pdfwrite ";
-    cmd << " -sOutputFile=" << tempname << " ";
-    cmd << " -c \" << /PageSize [ " << as_string(bx2-bx1) << " " << as_string(by2-by1)
-        << " ] >> setpagedevice gsave  "
-        << as_string(-bx1) << " " << as_string(-by1) << " translate \" ";
-    cmd << " -f " << sys_concretize (name);
-    cmd << " -c \" grestore \"  ";
-    //cout << cmd << LF;
-    system(cmd);
-    PDFRectangle cropBox (0,0,bx2-bx1,by2-by1);
-    double tMat[6] = { 1, 0, 0, 1, 0, 0};
+      // use gs to convert eps to pdf and take care of properly handling the bounding box
+      // the resulting pdf image will always start at 0,0.
+      string cmd= gs_prefix();
+      cmd << " -dQUIET -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pdfwrite ";
+      cmd << " -sOutputFile=" << tempname << " ";
+      cmd << " -c \" << /PageSize [ " << as_string(bx2-bx1) << " " << as_string(by2-by1)
+          << " ] >> setpagedevice gsave  "
+          << as_string(-bx1) << " " << as_string(-by1) << " translate \" ";
+      cmd << " -f " << sys_concretize (name);
+      cmd << " -c \" grestore \"  ";
+      //cout << cmd << LF;
+      system(cmd);
 #endif
-    
+    }
     EStatusCode status = PDFHummus::eSuccess;
     DocumentContext& dc = pdfw.GetDocumentContext();
 
@@ -1313,7 +1327,7 @@ pdf_hummus_renderer_rep::image (
   double cx1, double cy1, double cx2, double cy2,
   int alpha)
 {
-  //cerr << "image " << u << LF;
+  cerr << "image " << u << LF;
   (void) alpha; // FIXME
 
   tree lookup= tuple (u->t);
