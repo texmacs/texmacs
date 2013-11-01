@@ -39,6 +39,7 @@
 
 typedef triple<int,int,int> rgb;
 typedef quartet<string,int,SI,SI> dest_data;
+typedef quartet<string,int,SI,SI> outline_data;
 
 class pdf_image;
 class pdf_raw_image;
@@ -92,6 +93,11 @@ class pdf_hummus_renderer_rep : public renderer_rep {
   ObjectIDType destId;
   hashmap<string,int> label_id;
   int label_count;
+
+  // outline support
+  ObjectIDType outlineId;
+  list<outline_data> outlines;
+  
   
   PDFWriter pdfWriter;
   PDFPage* page;
@@ -141,6 +147,7 @@ class pdf_hummus_renderer_rep : public renderer_rep {
   void flush_images();
   void flush_glyphs();
   void flush_dests();
+  void flush_outlines();
   void flush_fonts();
   PDFImageXObject *create_pdf_image_raw (string raw_data, SI width, SI height, ObjectIDType imageXObjectID);
   void make_pdf_font (string fontname);
@@ -267,6 +274,7 @@ pdf_hummus_renderer_rep::pdf_hummus_renderer_rep (
   }
   
   destId = pdfWriter.GetObjectsContext().GetInDirectObjectsRegistry().AllocateNewObjectID();
+  outlineId = pdfWriter.GetObjectsContext().GetInDirectObjectsRegistry().AllocateNewObjectID();
   pdfWriter.GetDocumentContext().AddDocumentContextExtender (new DestinationsWriter(this));
 
   // start real work
@@ -281,6 +289,7 @@ pdf_hummus_renderer_rep::~pdf_hummus_renderer_rep () {
   flush_images();
   flush_glyphs();
   flush_dests();
+  flush_outlines();
   flush_fonts();
  
   {
@@ -1427,6 +1436,8 @@ pdf_hummus_renderer_rep::on_catalog_write (CatalogInformation* inCatalogInformat
 {
   inCatalogDictionaryContext->WriteKey("Dests");
   inCatalogDictionaryContext->WriteNewObjectReferenceValue(destId);
+  inCatalogDictionaryContext->WriteKey("Outlines");
+  inCatalogDictionaryContext->WriteNewObjectReferenceValue(outlineId);
   return PDFHummus::eSuccess;
 }
 
@@ -1489,7 +1500,8 @@ pdf_hummus_renderer_rep::flush_dests()
     int dest_x = it->item.x3;
     int dest_y = it->item.x4;
     {
-      dict << "\t\t/label" << as_string(get_label_id(label)) << " [ " << as_string(page_id(dest_page)) << " 0 R /XYZ " << as_string(dest_x) << " " << as_string(dest_y) << " null ]\r\n";
+      dict << "\t\t/label" << as_string(get_label_id(label)) << " [ " << as_string(page_id(dest_page)) << " 0 R /XYZ "
+           << as_string(((double)default_dpi / dpi)*dest_x) << " " << as_string(((double)default_dpi / dpi)*dest_y) << " null ]\r\n";
     }
     it = it->next;
   }
@@ -1507,13 +1519,89 @@ pdf_hummus_renderer_rep::flush_dests()
 
 void
 pdf_hummus_renderer_rep::toc_entry (string kind, string title, SI x, SI y) {
-  // FIXME: not yet implemented
   (void) kind; (void) title; (void) x; (void) y;
   cout << kind << ", " << title << "\n";
+  outlines << outline_data(title, page_num, to_x(x), to_y(y));
 }
 
 
+void
+pdf_hummus_renderer_rep::flush_outlines()
+{
+  
+  ObjectsContext& objectsContext= pdfWriter.GetObjectsContext();
 
+  ObjectIDType firstId= 0 , lastId= 0;
+  int count = 0;
+  // weave the tangle of forward/backward references
+  typedef quartet<outline_data, ObjectIDType, ObjectIDType, ObjectIDType> poo;
+  list<poo> l;
+  {
+    list<outline_data> it = outlines;
+    ObjectIDType prevId = 0, curId = 0, nextId = 0;
+    curId = pdfWriter.GetObjectsContext().GetInDirectObjectsRegistry().AllocateNewObjectID();
+    firstId = curId;
+    while (!is_nil(it)) {
+      count++;
+      if (!is_nil(it->next)) nextId = pdfWriter.GetObjectsContext().GetInDirectObjectsRegistry().AllocateNewObjectID();
+      else nextId = 0;
+      l << poo(it->item, curId, prevId, nextId);
+      prevId = curId; curId = nextId;
+      it = it->next;
+    }
+    lastId = prevId;
+  }
+  {
+    // create the dictionaries for each outline item
+    list<poo> it = l;
+    while (!is_nil(it)) {
+      poo oitem = it->item;
+      it = it->next;
+      {
+        string dict;
+        dict << "<<\r\n";
+        dict << "\t/Title (" << prepare_text(oitem.x1.x1) << ")\r\n";
+        dict << "\t/Parent " << as_string(outlineId) << " 0 R \r\n";
+        if (oitem.x3 != 0) dict << "\t/Prev " << as_string(oitem.x3) << " 0 R \r\n";
+        if (oitem.x4 != 0)  dict << "\t/Next " << as_string(oitem.x4) << " 0 R \r\n";
+        dict << "\t/Dest [ " << as_string(page_id(oitem.x1.x2)) << " 0 R /XYZ "
+             << as_string(((double)default_dpi / dpi)*oitem.x1.x3)
+             << " " << as_string(((double)default_dpi / dpi)*oitem.x1.x4) << " null ]\r\n";
+        dict << ">>\r\n";
+        
+        {
+          // flush the buffer
+          c_string buf (dict);
+          objectsContext.StartNewIndirectObject(oitem.x2);
+          objectsContext.StartFreeContext()->Write((unsigned char *)(char*)buf, N(dict));
+          objectsContext.EndFreeContext();
+          objectsContext.EndIndirectObject();
+        }
+      }
+    }
+  }
+  
+  {
+    // create top-level outline dictionary
+    string dict;
+    dict << "<<\r\n";
+    dict << "\t/Type /Outlines\r\n";
+    dict << "\t/First " << as_string(firstId) << " 0 R \r\n";
+    dict << "\t/Last " << as_string(lastId) << " 0 R \r\n";
+    dict << "\t/Count " << as_string(count) << "\r\n";
+    dict << ">>\r\n";
+    
+    {
+      // flush the buffer
+      c_string buf (dict);
+      objectsContext.StartNewIndirectObject(outlineId);
+      objectsContext.StartFreeContext()->Write((unsigned char *)(char*)buf, N(dict));
+      objectsContext.EndFreeContext();
+      objectsContext.EndIndirectObject();
+    }
+  }
+  
+}
 
 /******************************************************************************
  * shadow rendering in trivial on pdf
