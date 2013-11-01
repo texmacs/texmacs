@@ -23,7 +23,7 @@
 #include "ntuple.hpp"
 #include "link.hpp"
 #include "frame.hpp"
-#include "gs_utilities.hpp" // for gs_prefix
+#include "Ghostscript/gs_utilities.hpp" // for gs_prefix
 
 #include "PDFWriter/PDFWriter.h"
 #include "PDFWriter/PDFPage.h"
