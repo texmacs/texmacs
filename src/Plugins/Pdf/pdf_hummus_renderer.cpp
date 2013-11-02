@@ -287,8 +287,7 @@ pdf_hummus_renderer_rep::pdf_hummus_renderer_rep (
       }	
   }
   
-  destId = pdfWriter.GetObjectsContext().GetInDirectObjectsRegistry().AllocateNewObjectID();
-  outlineId = pdfWriter.GetObjectsContext().GetInDirectObjectsRegistry().AllocateNewObjectID();
+  destId = outlineId = 0;
   pdfWriter.GetDocumentContext().AddDocumentContextExtender (new DestinationsWriter(this));
 
   // start real work
@@ -1435,10 +1434,14 @@ pdf_hummus_renderer_rep::on_catalog_write (CatalogInformation* inCatalogInformat
                                          ObjectsContext* inPDFWriterObjectContext,
                                          PDFHummus::DocumentContext* inDocumentContext)
 {
-  inCatalogDictionaryContext->WriteKey("Dests");
-  inCatalogDictionaryContext->WriteNewObjectReferenceValue(destId);
-  inCatalogDictionaryContext->WriteKey("Outlines");
-  inCatalogDictionaryContext->WriteNewObjectReferenceValue(outlineId);
+  if (destId) {
+    inCatalogDictionaryContext->WriteKey("Dests");
+    inCatalogDictionaryContext->WriteNewObjectReferenceValue(destId);
+  }
+  if (outlineId) {
+    inCatalogDictionaryContext->WriteKey("Outlines");
+    inCatalogDictionaryContext->WriteNewObjectReferenceValue(outlineId);
+  }
   return PDFHummus::eSuccess;
 }
 
@@ -1489,6 +1492,8 @@ pdf_hummus_renderer_rep::href (string label, SI x1, SI y1, SI x2, SI y2)
 void
 pdf_hummus_renderer_rep::flush_dests()
 {
+  if (is_nil(dests)) return;
+
   // flush destinations
   
   string dict;
@@ -1509,6 +1514,7 @@ pdf_hummus_renderer_rep::flush_dests()
   {
     // flush the buffer
     ObjectsContext& objectsContext = pdfWriter.GetObjectsContext();
+    destId = objectsContext.GetInDirectObjectsRegistry().AllocateNewObjectID();
     write_indirect_obj(objectsContext, destId, dict);
   }
 }
@@ -1526,8 +1532,12 @@ pdf_hummus_renderer_rep::toc_entry (string kind, string title, SI x, SI y) {
 void
 pdf_hummus_renderer_rep::flush_outlines()
 {
-  
+  if (is_nil(outlines)) return;
+
   ObjectsContext& objectsContext= pdfWriter.GetObjectsContext();
+
+  outlineId = objectsContext.GetInDirectObjectsRegistry().AllocateNewObjectID();
+  
 
   ObjectIDType firstId= 0 , lastId= 0;
   int count = 0;
