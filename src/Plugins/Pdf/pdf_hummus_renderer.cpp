@@ -258,6 +258,7 @@ pdf_hummus_renderer_rep::pdf_hummus_renderer_rep (
     fg (-1), bg (-1), fill_rgb(-1,-1,-1), stroke_rgb(-1,-1,-1),
     lw (-1),  cfn (""), cfid (NULL),
     pdf_fonts (0), page_num(0), label_count(0),
+    destId(0), outlineId(0),
     inText (false)
 {
   width= default_dpi * paper_w / 2.54;
@@ -287,7 +288,6 @@ pdf_hummus_renderer_rep::pdf_hummus_renderer_rep (
       }	
   }
   
-  destId = outlineId = 0;
   pdfWriter.GetDocumentContext().AddDocumentContextExtender (new DestinationsWriter(this));
 
   // start real work
