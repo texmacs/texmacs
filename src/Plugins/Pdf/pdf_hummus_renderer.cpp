@@ -228,6 +228,20 @@ public:
   
 };
 
+/******************************************************************************
+ * local utilities
+ ******************************************************************************/
+
+
+static void
+write_indirect_obj(ObjectsContext&  objectsContext, ObjectIDType destId, string payload) {
+  objectsContext.StartNewIndirectObject(destId);
+  c_string buf (payload);
+  objectsContext.StartFreeContext()->Write((unsigned char *)(char*)buf, N(payload));
+  objectsContext.EndFreeContext();
+  objectsContext.EndIndirectObject();
+}
+
 
 
 /******************************************************************************
@@ -316,14 +330,7 @@ pdf_hummus_renderer_rep::~pdf_hummus_renderer_rep () {
     ObjectsContext& objectsContext = pdfWriter.GetObjectsContext();
     while (it->busy()) {
       ObjectIDType id = it->next();
-      objectsContext.StartNewIndirectObject(id);
-      {
-        string annot = annot_list(id);
-        c_string buf (annot);
-        objectsContext.StartFreeContext()->Write((const IOBasicTypes::Byte* )((char*)buf), N(annot));
-        objectsContext.EndFreeContext();
-      }
-      objectsContext.EndIndirectObject();
+      write_indirect_obj(objectsContext, id, annot_list(id));
     }
   }
   
@@ -852,7 +859,6 @@ t3font_rep::write_definition ()
   // create font dictionary
   {
     string dict;
-    objectsContext.StartNewIndirectObject(fontId);
     dict << "<<\r\n";
     dict << "\t/Type /Font\r\n";
     dict << "\t/Subtype /Type3\r\n\t/FontBBox [ 0 0 " << as_string(font_width) << " " << as_string(font_height) << "]\r\n";
@@ -888,13 +894,8 @@ t3font_rep::write_definition ()
         previousEncoding = i;
       }
     dict << "\t\t]\r\n\t>>\r\n>>\r\n";
-    {
-      // flush the buffer
-      c_string buf(dict);
-      objectsContext.StartFreeContext()->Write((unsigned char *)(char*)buf,N(dict));
-      objectsContext.EndFreeContext();
-    }
-    objectsContext.EndIndirectObject();
+    
+    write_indirect_obj(objectsContext, fontId, dict);
   }
   
   for(int i = 0; i < N(glyph_list); ++i)
@@ -1470,10 +1471,10 @@ pdf_hummus_renderer_rep::href (string label, SI x1, SI y1, SI x2, SI y2)
     dict << "\t/Border [16 16 1 [3 10]] /Color [0.75 0.5 1.0]\r\n";
   else
     dict << "\t/Border [16 16 0 [3 10]] /Color [0.75 0.5 1.0]\r\n";
-  dict << "\t/Rect [" << as_string(to_x(x1 - 5*pixel)) << " ";
-  dict << as_string(to_y(y1 - 10*pixel)) << " ";
-  dict << as_string(to_x(x2 + 5*pixel)) << " ";
-  dict << as_string(to_y(y2 + 10*pixel)) << "]\r\n";
+  dict << "\t/Rect [" << as_string(((double)default_dpi / dpi)*to_x(x1 - 5*pixel)) << " ";
+  dict << as_string(((double)default_dpi / dpi)*to_y(y1 - 10*pixel)) << " ";
+  dict << as_string(((double)default_dpi / dpi)*to_x(x2 + 5*pixel)) << " ";
+  dict << as_string(((double)default_dpi / dpi)*to_y(y2 + 10*pixel)) << "]\r\n";
   if (starts (label, "#")) {
     dict << "\t/Dest /label" << as_string(get_label_id(prepare_text (label))) << "\r\n";
   }
@@ -1484,12 +1485,11 @@ pdf_hummus_renderer_rep::href (string label, SI x1, SI y1, SI x2, SI y2)
   annot_list (annotId) = dict;
 }
 
+
 void
 pdf_hummus_renderer_rep::flush_dests()
 {
   // flush destinations
-  ObjectsContext& objectsContext = pdfWriter.GetObjectsContext();
-  objectsContext.StartNewIndirectObject(destId);
   
   string dict;
   dict << "<<\r\n";
@@ -1508,11 +1508,9 @@ pdf_hummus_renderer_rep::flush_dests()
   dict << ">>\r\n";
   {
     // flush the buffer
-    c_string buf (dict);
-    objectsContext.StartFreeContext()->Write((unsigned char *)(char*)buf,N(dict));
-    objectsContext.EndFreeContext();
+    ObjectsContext& objectsContext = pdfWriter.GetObjectsContext();
+    write_indirect_obj(objectsContext, destId, dict);
   }
-  objectsContext.EndIndirectObject();
 }
 
 
@@ -1520,7 +1518,7 @@ pdf_hummus_renderer_rep::flush_dests()
 void
 pdf_hummus_renderer_rep::toc_entry (string kind, string title, SI x, SI y) {
   (void) kind; (void) title; (void) x; (void) y;
-  cout << kind << ", " << title << "\n";
+  //cout << kind << ", " << title << "\n";
   outlines << outline_data(title, page_num, to_x(x), to_y(y));
 }
 
@@ -1569,14 +1567,7 @@ pdf_hummus_renderer_rep::flush_outlines()
              << " " << as_string(((double)default_dpi / dpi)*oitem.x1.x4) << " null ]\r\n";
         dict << ">>\r\n";
         
-        {
-          // flush the buffer
-          c_string buf (dict);
-          objectsContext.StartNewIndirectObject(oitem.x2);
-          objectsContext.StartFreeContext()->Write((unsigned char *)(char*)buf, N(dict));
-          objectsContext.EndFreeContext();
-          objectsContext.EndIndirectObject();
-        }
+        write_indirect_obj(objectsContext, oitem.x2, dict);
       }
     }
   }
@@ -1590,15 +1581,8 @@ pdf_hummus_renderer_rep::flush_outlines()
     dict << "\t/Last " << as_string(lastId) << " 0 R \r\n";
     dict << "\t/Count " << as_string(count) << "\r\n";
     dict << ">>\r\n";
-    
-    {
-      // flush the buffer
-      c_string buf (dict);
-      objectsContext.StartNewIndirectObject(outlineId);
-      objectsContext.StartFreeContext()->Write((unsigned char *)(char*)buf, N(dict));
-      objectsContext.EndFreeContext();
-      objectsContext.EndIndirectObject();
-    }
+
+    write_indirect_obj(objectsContext, outlineId, dict);
   }
   
 }
