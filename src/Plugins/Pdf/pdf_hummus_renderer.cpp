@@ -441,7 +441,7 @@ pdf_hummus_renderer_rep::set_transformation (frame fr) {
   SI cx1, cy1, cx2, cy2;
   get_clipping (cx1, cy1, cx2, cy2);
   rectangle oclip (cx1, cy1, cx2, cy2);
-  frame cv= scaling (point (pixel, -pixel),
+  frame cv= scaling (point (pixel, pixel),
                      point (-ox, -oy));
   frame tr= invert (cv) * fr * cv;
   point o = tr (point (0.0, 0.0));
@@ -1340,7 +1340,7 @@ pdf_hummus_renderer_rep::image (
   double cx1, double cy1, double cx2, double cy2,
   int alpha)
 {
-  cerr << "image " << u << LF;
+  //cerr << "image " << u << LF;
   (void) alpha; // FIXME
 
   tree lookup= tuple (u->t);
