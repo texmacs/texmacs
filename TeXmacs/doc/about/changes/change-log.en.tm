@@ -10,6 +10,8 @@
   <\itemize>
     <item>Complete reorganization of document styles and package (1.0.7.21).
 
+    <item>Major improvements for upcoming native Pdf renderer (1.0.7.21).
+
     <item>New focus preferences menu (1.0.7.21).
 
     <item>New widgets for editing macros (1.0.7.21).
@@ -20,6 +22,8 @@
 
     <item>Implementation of protrusion for the standard <verbatim|ecrm> font
     (1.0.7.21).
+
+    <item>Improved ornaments and typesetting adjustments (1.0.7.21).
 
     <item>Improved presentation mode (1.0.7.20).
 
