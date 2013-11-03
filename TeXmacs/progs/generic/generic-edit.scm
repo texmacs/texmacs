@@ -584,7 +584,9 @@
 
 (tm-define (parameter-choice-list l)
   (:require (== l "ornament-shape"))
-  (list "classic" "rounded" "angular" "cartoon" "ring"))
+  (list "classic" "rounded" "angular" "cartoon"
+        ;;"ring"
+        ))
 
 (tm-define (parameter-choice-list l)
   (:require (== l "ornament-title-style"))
