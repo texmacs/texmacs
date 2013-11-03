@@ -13,7 +13,7 @@
 #include <locale.h>
 #endif
 
-#if not defined(__MINGW__) && not defined(__MINGW32__)
+#if !defined(__MINGW__) && !defined(__MINGW32__)
 #include <langinfo.h>
 #endif
 

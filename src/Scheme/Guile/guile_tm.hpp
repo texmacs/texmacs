@@ -107,7 +107,7 @@
 #else
 #ifdef GUILE_B
 
-#define SCM_NULL scm_list_n (SCM_UNDEFINED)
+#define SCM_NULL gh_list (SCM_UNDEFINED)
 #define scm_is_list(x) SCM_NFALSEP(scm_list_p(x))
 #define scm_new_procedure(name,r,a,b,c) scm_c_define_gsubr(name,a,b,c,r)
 #define scm_lookup_string(name) scm_variable_ref(scm_c_lookup(name))
