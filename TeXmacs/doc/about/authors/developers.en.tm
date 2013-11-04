@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.0.7.21>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Developers of <TeXmacs>>
@@ -13,16 +13,19 @@
     to several computer algebra systems, support for Cyrillic, tools for the
     manipulation of dictionaries, etc.
 
+    <item>François Poulain has made significant improvements in the <LaTeX>
+    import and export converters, and contributed various other patches.
+
     <item>David Allouche replaced the gencc preprocessor by the more standard
     C++ template system. He also made many other patches, bug reports and he
     did a lot of the administration of TeXmacs.
 
-    <item>François Poulain works on the <LaTeX> converters and character
-    transcodings.
-
     <item>Miguel de Benito Delgado works on the <name|Qt> port, the usage of
     <TeXmacs> to develop and browse its <name|Scheme> code and general minor
     improvements to the user experience.
+
+    <item>Denis Raux maintains the website, the mailing lists, and the
+    Windows version.
 
     <item>Henri Lesourd developed a native mode for drawing technical
     pictures inside <TeXmacs>. He also fixed a bug in the presentation mode.
@@ -111,8 +114,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
