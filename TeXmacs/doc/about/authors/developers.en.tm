@@ -14,7 +14,8 @@
     manipulation of dictionaries, etc.
 
     <item>François Poulain has made significant improvements in the <LaTeX>
-    import and export converters, and contributed various other patches.
+    import and export converters, and he has contributed various other
+    patches.
 
     <item>David Allouche replaced the gencc preprocessor by the more standard
     C++ template system. He also made many other patches, bug reports and he
