@@ -1614,8 +1614,12 @@
     `((!begin* "tmcode" ,@lang) ,(tmtex-verbatim* "" l))))
 
 (define (tmtex-mixed s l)
+  (if (func? (cadr l) 'text) (set! l `("" ,(cadadr l))))
   (set! l (unescape-angles l))
-    (list '!unindent (list '!verbatim* (tmtex-tt (cadr l)))))
+  (tmtex-env-set "mode" "text")
+  (with src (list '!verbatim* (tmtex-tt (cadr l)))
+    (tmtex-env-reset "mode")
+    (list '!unindent src)))
 
 (define (tmtex-minipage s l)
   (let*
