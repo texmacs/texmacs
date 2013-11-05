@@ -1196,6 +1196,7 @@ latex_parser::parse_command (string s, int& i, string cmd, int change) {
     else if (cmd(0, 5) == "\\end-")
       orig_cmd= "\\end{" * cmd(5, N(cmd)) * "}";
     string code= orig_cmd * s(begin_parse, i);
+    code= verbatim_escape (code);
     if (command_type ("!mode") == "math")
       t= tuple ("\\latex_preview", cmd(1, N(cmd)), compound ("text", code));
     else
