@@ -803,6 +803,7 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
+enable_guile2
 with_x
 with_iconv
 with_freetype
@@ -1462,6 +1463,7 @@ Optional Features:
   --disable-option-checking  ignore unrecognized --enable/--with options
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+  --enable-guile2         enable compilation with Guile 2, for developping purpose
   --disable-fastalloc     omit fast allocator for small objects
   --enable-experimental   support new style rewriting code
   --disable-macosx-extensions  do not use Mac specific services (spellchecker, image handling, ...)
@@ -4641,6 +4643,14 @@ fi
 # Checks for Guile
 #--------------------------------------------------------------------
 
+# Check whether --enable-guile2 was given.
+if test "${enable_guile2+set}" = set; then :
+  enableval=$enable_guile2;
+else
+  enable_guile2="no"
+fi
+
+
 if test -z "$GUILE_CFLAGS" -a -z "$GUILE_LDFLAGS"; then
 
 ## The GUILE_FLAGS macro.
@@ -4686,6 +4696,10 @@ case "$GUILE_EFFECTIVE_VERSION" in
   ;;
   2.*)
     CONFIG_GUILE_SERIAL="D"
+    if test "$enable_guile2" != "yes"; then
+      as_fn_error $? "TeXmacs is incompatible with Guile 2.
+If you know what you are doing, configure with --enable-guile2=yes" "$LINENO" 5
+    fi
   ;;
   *)
     CONFIG_GUILE_SERIAL="C"

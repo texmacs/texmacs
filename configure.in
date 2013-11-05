@@ -92,6 +92,10 @@ AC_CPLUSPLUS_STACK
 # Checks for Guile
 #--------------------------------------------------------------------
 
+AC_ARG_ENABLE(guile2,
+[  --enable-guile2         enable compilation with Guile 2, for developping purpose],
+    [], [enable_guile2="no"])
+
 if test -z "$GUILE_CFLAGS" -a -z "$GUILE_LDFLAGS"; then
   GUILE_FLAGS
 fi
@@ -115,6 +119,10 @@ case "$GUILE_EFFECTIVE_VERSION" in
   ;;
   2.*)
     CONFIG_GUILE_SERIAL="D"
+    if test "$enable_guile2" != "yes"; then
+      AC_MSG_ERROR([TeXmacs is incompatible with Guile 2.
+If you know what you are doing, run configure with --enable-guile2=yes])
+    fi
   ;;
   *)
     CONFIG_GUILE_SERIAL="C"
