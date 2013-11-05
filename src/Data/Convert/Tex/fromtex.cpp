@@ -2992,7 +2992,7 @@ is_bibliography_command (tree t, tree& doc, string& bib_style) {
       tree begin (BEGIN, "bibliography");
       tree end (END, "bibliography");
       tree bib;
-      begin << "bib" << bib_style << t[1]->label;
+      begin << "bib" << bib_style << string_arg (t[1]);
       url bbl= get_file_focus ();
       bbl= glue (head (bbl) * basename (bbl, "tex"), "bbl");
       if (exists (bbl))
