@@ -57,7 +57,7 @@ latex_clean_tmp_directory (url u) {
   for (int i=0; i<N(content); i++)
     if (content[i] != "." && content[i] != "..")
       remove (u * content[i]);
-  remove (u * ".");
+  rmdir (u);
 }
 
 string
