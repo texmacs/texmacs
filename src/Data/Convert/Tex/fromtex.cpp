@@ -76,34 +76,36 @@ is_vertical_space (tree t) {
 
 bool
 might_not_be_typesetted (tree t) {
-  return (is_func (t, TUPLE) && t[0] == "\\\\")              ||
-         (is_func (t, TUPLE) && t[0] == "\\author")          ||
-         (is_func (t, TUPLE) && t[0] == "\\begin-document")  ||
-         (is_func (t, TUPLE) && t[0] == "\\date")            ||
-         (is_func (t, TUPLE) && t[0] == "\\declaretheorem")  ||
-         (is_func (t, TUPLE) && t[0] == "\\declaretheorem*") ||
-         (is_func (t, TUPLE) && t[0] == "\\def")             ||
-         (is_func (t, TUPLE) && t[0] == "\\def*")            ||
-         (is_func (t, TUPLE) && t[0] == "\\def**")           ||
-         (is_func (t, TUPLE) && t[0] == "\\hspace")          ||
-         (is_func (t, TUPLE) && t[0] == "\\index")           ||
-         (is_func (t, TUPLE) && t[0] == "\\label")           ||
-         (is_func (t, TUPLE) && t[0] == "\\newdef")          ||
-         (is_func (t, TUPLE) && t[0] == "\\newenvironment")  ||
-         (is_func (t, TUPLE) && t[0] == "\\newenvironment*") ||
-         (is_func (t, TUPLE) && t[0] == "\\newenvironment**")||
-         (is_func (t, TUPLE) && t[0] == "\\newtheorem")      ||
-         (is_func (t, TUPLE) && t[0] == "\\newtheorem*")     ||
-         (is_func (t, TUPLE) && t[0] == "\\noindent*")       ||
-         (is_func (t, TUPLE) && t[0] == "\\setcounter")      ||
-         (is_func (t, TUPLE) && t[0] == "\\setlength")       ||
-         (is_func (t, TUPLE) && t[0] == "\\maketitle")       ||
-         (is_func (t, TUPLE) && t[0] == "\\SetKw")           ||
-         (is_func (t, TUPLE) && t[0] == "\\SetKwData")       ||
-         (is_func (t, TUPLE) && t[0] == "\\SetKwInOut")      ||
-         (is_func (t, TUPLE) && t[0] == "\\SetKwInput")      ||
-         (is_func (t, TUPLE) && t[0] == "\\SetKwFunction")   ||
-          is_vertical_space (t);
+  return N(t) > 0 &&
+         ((is_func (t, TUPLE) && t[0] == "\\\\")              ||
+          (is_func (t, TUPLE) && t[0] == "\\author")          ||
+          (is_func (t, TUPLE) && t[0] == "\\begin-document")  ||
+          (is_func (t, TUPLE) && t[0] == "\\date")            ||
+          (is_func (t, TUPLE) && t[0] == "\\declaretheorem")  ||
+          (is_func (t, TUPLE) && t[0] == "\\declaretheorem*") ||
+          (is_func (t, TUPLE) && t[0] == "\\def")             ||
+          (is_func (t, TUPLE) && t[0] == "\\def*")            ||
+          (is_func (t, TUPLE) && t[0] == "\\def**")           ||
+          (is_func (t, TUPLE) && t[0] == "\\hspace")          ||
+          (is_func (t, TUPLE) && t[0] == "\\index")           ||
+          (is_func (t, TUPLE) && t[0] == "\\label")           ||
+          (is_func (t, TUPLE) && t[0] == "\\newdef")          ||
+          (is_func (t, TUPLE) && t[0] == "\\newenvironment")  ||
+          (is_func (t, TUPLE) && t[0] == "\\newenvironment*") ||
+          (is_func (t, TUPLE) && t[0] == "\\newenvironment**")||
+          (is_func (t, TUPLE) && t[0] == "\\newtheorem")      ||
+          (is_func (t, TUPLE) && t[0] == "\\newtheorem*")     ||
+          (is_func (t, TUPLE) && t[0] == "\\noindent*")       ||
+          (is_func (t, TUPLE) && t[0] == "\\setcounter")      ||
+          (is_func (t, TUPLE) && t[0] == "\\setlength")       ||
+          (is_func (t, TUPLE) && t[0] == "\\maketitle")       ||
+          (is_func (t, TUPLE) && t[0] == "\\SetKw")           ||
+          (is_func (t, TUPLE) && t[0] == "\\SetKwData")       ||
+          (is_func (t, TUPLE) && t[0] == "\\SetKwInOut")      ||
+          (is_func (t, TUPLE) && t[0] == "\\SetKwInput")      ||
+          (is_func (t, TUPLE) && t[0] == "\\SetKwFunction")   ||
+          (is_func (t, TUPLE) && t[0] == "\\textm@break")     ||
+           is_vertical_space (t));
 }
 
 bool
