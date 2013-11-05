@@ -157,6 +157,8 @@ class pdf_hummus_renderer_rep : public renderer_rep {
                int alpha);
   
   
+  void bezier_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
+
   // hooks for the Hummus library
 
   class DestinationsWriter : public DocumentContextExtenderAdapter
@@ -1165,52 +1167,81 @@ pdf_hummus_renderer_rep::fill (SI x1, SI y1, SI x2, SI y2) {
   contentContext->f();
 }
 
+
+void
+pdf_hummus_renderer_rep::bezier_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta)
+{
+  // PDF can describe only cubic bezier paths, so we have to make up the arc with them
+  
+  // Control points for an arc of radius 1, centered on the x-axis and spanning theta degrees
+  // are given by:
+  // bx0 = cos(theta/2.0); by0 = sin(theta/2.0);
+  // bx3 = bx0;            by3 = -by0;
+  // bx1 = (4.0-bx0)/3.0;  by1 = (1.0-bx0)*(3.0-bx0)/(3.0*by0);
+  // bx2 = bx1;            by2 = -by1;
+  // from: http://www.tinaja.com/glib/bezcirc2.pdf
+  
+  // we compose the arc using the above basic structure and user space transformations
+  
+
+  contentContext->q(); // save graphics state
+
+  {
+    double xx1 = to_x(x1), yy1 = to_y(y1), xx2 = to_x(x2), yy2 = to_y(y2);
+    double cx = (xx1+xx2)/2, cy = (yy1+yy2)/2;
+    double rx = (xx2-xx1)/2, ry = (yy2-yy1)/2;
+    contentContext->cm(rx, 0, 0, ry, cx, cy); // scaling and centering
+  }
+  
+  if (alpha != 0) {
+    double a = 2.0*M_PI*alpha/(360.0*64.0);
+    contentContext->cm(cos(a), sin(a), -sin(a), cos(a), 0, 0); // rotation
+  }
+  
+  if (delta == 360*64) {
+    // closed circle
+    contentContext->m(1.0,0.0);
+  } else {
+    // an open arc closed in the center
+    //FIXME: is this really what we want ?
+    contentContext->m(0.0,0.0);
+    contentContext->l(1.0,0.0);
+  }
+  
+  int prev_phi = 0;
+  while (delta > 0) {
+    int phi = min(delta,90*64); // draw arcs in portions of 90 degrees maximum
+    delta -= phi;
+    double sphi = sin(2*M_PI*(phi+prev_phi)/(2.0*360.0*64.0));
+    double cphi = cos(2*M_PI*(phi+prev_phi)/(2.0*360.0*64.0));
+    contentContext->cm(cphi, sphi, -sphi, cphi, 0, 0); // rotation of phi/2 degrees
+    sphi = sin(2*M_PI*(phi)/(2.0*360.0*64.0));
+    cphi = cos(2*M_PI*(phi)/(2.0*360.0*64.0));
+    double bx0 = cphi, by0 = sphi; // , bx3 = bx0, by3 = -by0;
+    double bx1 = (4.0-bx0)/3.0, by1 = (1.0-bx0)*(3.0-bx0)/(3.0*by0);
+    double bx2 = bx1, by2 = -by1;
+    contentContext->c(bx2, by2, bx1, by1, bx0, by0);
+    prev_phi = phi;
+  }
+  
+  contentContext->h(); // close the path
+  contentContext->Q(); // restore the graphics state
+}
+
 void
 pdf_hummus_renderer_rep::arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
   //cerr << "arc\n";
   end_text ();
-#if 0
-  double cx= to_x ((x1+x2)/2);
-  double cy= to_y ((y1+y2)/2);
-  double rx= (x2-x1);
-  double ry= (y2-y1);
-  double a= -(double)alpha / 64 + 90;
-  double d= -(double)(alpha + delta) / 64 + 90;
-  cerr << "arc GSave\n", HPDF_Page_GSave (page);
-  HPDF_Page_SetRGBFill (page, 1, 0, 0);
-  cerr << "arc Concat\n", HPDF_Page_Concat (page, p * rx, 0, 0, p * ry, cx, cy);
-  cerr << "arc Arc\n", HPDF_Page_Arc (page, 0, 0, 1, min (a, d), max (a, d));
-  cerr << "arc LineTo\n", HPDF_Page_LineTo (page, 0, 0);
-  cerr << "arc ClosePath\n", HPDF_Page_ClosePath (page);
-  cerr << "arc Clip\n", HPDF_Page_Clip (page);
-  cerr << "arc EndPath\n", HPDF_Page_EndPath (page);
-  cerr << "arc Concat\n", HPDF_Page_Concat (page, 1 / p / rx, 0, 0, 1 / p / ry, 0, 0);
-  cerr << "arc SetLineWidth\n", HPDF_Page_SetLineWidth (page, p * lw);  
-  cerr << "arc Ellipse\n", HPDF_Page_Ellipse (page, 0, 0, p * rx / 2, p * ry / 2);
-  cerr << "arc Stroke\n", HPDF_Page_Stroke (page);
-  cerr << "arc GRestore\n", HPDF_Page_GRestore (page);
-#endif
+  bezier_arc(x1, y1, x2, y2, alpha, delta);
+  contentContext->S();
 }
 
 void
 pdf_hummus_renderer_rep::fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
   //cerr << "fill_arc\n";
   end_text ();
-#if 0
-  double cx= to_x ((x1+x2)/2);
-  double cy= to_y ((y1+y2)/2);
-  double rx= (x2-x1);
-  double ry= (y2-y1);
-  double a= -(double)alpha / 64 + 90;
-  double d= -(double)(alpha + delta) / 64 + 90;
-  cerr << "arc GSave\n", HPDF_Page_GSave (page);
-  HPDF_Page_SetRGBFill (page, 1, 0, 0);
-  cerr << "arc Concat\n", HPDF_Page_Concat (page, p * (rx / 2), 0, 0, p * (ry / 2), cx, cy);
-  cerr << "arc Arc\n", HPDF_Page_Arc (page, 0, 0, 1, min (a, d), max (a, d));
-  cerr << "arc EndPath\n", HPDF_Page_ClosePath (page);
-  cerr << "arc Stroke\n", HPDF_Page_Fill (page);
-  cerr << "arc GRestore\n", HPDF_Page_GRestore (page);
-#endif
+  bezier_arc(x1, y1, x2, y2, alpha, delta);
+  contentContext->f();
 }
 
 void
