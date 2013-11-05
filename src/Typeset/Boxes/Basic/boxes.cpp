@@ -512,7 +512,7 @@ box_rep::reindex (int i, int item, int n) {
 
 void
 box_rep::redraw (renderer ren, path p, rectangles& l) {
-  if (((nr_painted&15) == 15) && gui_interrupted (true)) return;
+  if ((nr_painted&15) == 15 && ren->is_screen && gui_interrupted (true)) return;
   ren->move_origin (x0, y0);
   SI delta= ren->pixel; // adjust visibility to compensate truncation
   if (ren->is_visible (x3- delta, y3- delta, x4+ delta, y4+ delta)) {
@@ -538,7 +538,7 @@ box_rep::redraw (renderer ren, path p, rectangles& l) {
       }
     }
     
-    if (((nr_painted&15) == 15) && gui_interrupted ()) {
+    if ((nr_painted&15) == 15 && ren->is_screen && gui_interrupted ()) {
       l= translate (l, -ren->ox, -ren->oy);
       clear_incomplete (l, ren->pixel, item, i1, i2);
       l= translate (l, ren->ox, ren->oy);
