@@ -1187,10 +1187,6 @@
 ;; Additional tags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmhtml-locus l)
-  `((h:table (@ (class "title-block"))
-	     (h:tr (h:td ,@(tmhtml (car l)))))))
-
 (define (tmhtml-doc-title-block l)
   `((h:table (@ (class "title-block"))
 	     (h:tr (h:td ,@(tmhtml (car l)))))))
