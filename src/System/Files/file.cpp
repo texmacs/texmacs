@@ -508,6 +508,11 @@ remove (url u) {
 }
 
 void
+rmdir (url u) {
+  remove_sub (expand (complete (u, "dr")));
+}
+
+void
 mkdir (url u) {
 #if defined (HAVE_SYS_TYPES_H) && defined (HAVE_SYS_STAT_H)
   if (exists (u)) return;

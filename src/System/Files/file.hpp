@@ -53,6 +53,7 @@ void move (url from, url to);
 void copy (url from, url to);
 void remove (url what);
 void mkdir (url dir);
+void rmdir (url what);
 void change_mode (url u, int mode);
 void ps2pdf (url u1, url u2);
 
