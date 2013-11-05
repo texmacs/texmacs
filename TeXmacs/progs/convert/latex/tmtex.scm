@@ -478,6 +478,15 @@
 	   (tmtex-apply-init `(verbatim ,body) init*)))
 	(else body)))
 
+(define (filter-preamble? t)
+  (contains-tags? t '(assign hide-preamble)))
+
+(define (trim-document t)
+  (cond ((not (func? t 'document)) t)
+        ((== "" (cadr t)) (trim-document `(document ,@(cddr t))))
+        ((== "" (cAr t))  (trim-document `(document ,@(cDdr t))))
+        (else t)))
+
 (define (make-tree-src-hash t)
   (let* ((col (if (and (list>0? t) (list? (cdr t))) (cdr t) '()))
          (col (filter (lambda (x)
@@ -487,8 +496,18 @@
                      (let ((key  (second (cAr x)))
                            (val (third  (cAr x))))
                        (list key val))) col)))
-    (for-each (lambda (x) (ahash-set! tmtex-src (car x) (cdr x))) l)
-    ;; (display* (ahash-table->list tmtex-src) "\n\n")
+    (for-each
+      (lambda (x)
+        (let ((stm (car x))
+              (src (list (trim-document (cadr x)))))
+          (write src) (newline)
+          (if (filter-preamble? stm)
+            (begin
+              (ahash-set! tmtex-src (tmtex-filter-preamble stm) src)
+              (ahash-set! tmtex-src (tmtex-filter-body stm) src)))
+          (ahash-set! tmtex-src stm src)))
+      l)
+    ;(for-each (lambda (x) (display* (car x) "  --->  " (cdr x) "\n\n")) (ahash-table->list tmtex-src))
     tmtex-src))
 
 (define (tmtex-file l)
@@ -509,10 +528,7 @@
     (if (and
           (== (get-preference "latex->texmacs:preserve-source") "on")
           (nnull? att))
-      (begin
-        (make-tree-src-hash att)
-        ;... TODO : the preamble and end of the document are critical !
-        ))
+      (make-tree-src-hash att))
     (if (null? styles) (tmtex doc)
 	(let* ((styles* (tmtex-filter-styles styles))
 	       (preamble* (ahash-with tmtex-env :preamble #t
@@ -1996,12 +2012,18 @@
 (define (tmtex-list l)
   (map-in-order tmtex l))
 
+(define (convert-charset t)
+  (cond ((string? t) (unescape-angles (utf8->cork t)))
+        ((list>0? t) `(,(car t) ,@(map convert-charset (cdr t))))))
+
 (tm-define (tmtex x)
   (with src (ahash-ref tmtex-src x)
-    ;; (display* x "\n ---> " src "\n\n")
-    (cond ((not (not src)) (list '!verbatim* (tmtex-tt (car src))))
+    ;;(display* x "\n ---> " src "\n\n")
+    (cond ((not (not src))
+           (list '!verbatim* (tmtex-tt (convert-charset (car src)))))
           ((string? x) (tmtex-string x))
-          (else (tmtex-apply (car x) (cdr x))))))
+          ((list>0? x) (tmtex-apply (car x) (cdr x)))
+          (else ""))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dispatching
