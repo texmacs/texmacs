@@ -87,6 +87,7 @@ might_not_be_typesetted (tree t) {
           (is_func (t, TUPLE) && t[0] == "\\def*")            ||
           (is_func (t, TUPLE) && t[0] == "\\def**")           ||
           (is_func (t, TUPLE) && t[0] == "\\hspace")          ||
+          (is_func (t, TUPLE) && t[0] == "\\hyphenation")     ||
           (is_func (t, TUPLE) && t[0] == "\\index")           ||
           (is_func (t, TUPLE) && t[0] == "\\label")           ||
           (is_func (t, TUPLE) && t[0] == "\\newdef")          ||
@@ -96,9 +97,11 @@ might_not_be_typesetted (tree t) {
           (is_func (t, TUPLE) && t[0] == "\\newtheorem")      ||
           (is_func (t, TUPLE) && t[0] == "\\newtheorem*")     ||
           (is_func (t, TUPLE) && t[0] == "\\noindent*")       ||
+          (is_func (t, TUPLE) && t[0] == "\\pagenumbering")   ||
           (is_func (t, TUPLE) && t[0] == "\\setcounter")      ||
           (is_func (t, TUPLE) && t[0] == "\\setlength")       ||
           (is_func (t, TUPLE) && t[0] == "\\maketitle")       ||
+          (is_func (t, TUPLE) && t[0] == "\\sloppy")          ||
           (is_func (t, TUPLE) && t[0] == "\\SetKw")           ||
           (is_func (t, TUPLE) && t[0] == "\\SetKwData")       ||
           (is_func (t, TUPLE) && t[0] == "\\SetKwInOut")      ||
@@ -106,6 +109,45 @@ might_not_be_typesetted (tree t) {
           (is_func (t, TUPLE) && t[0] == "\\SetKwFunction")   ||
           (is_func (t, TUPLE) && t[0] == "\\textm@break")     ||
            is_vertical_space (t));
+}
+
+static bool
+end_environment (tree t) {
+  return is_func (t, TUPLE) && N(t) > 0 && starts (as_string (t[0]), "\\end-");
+}
+
+static bool
+end_block_environnement (tree t) {
+  if (!end_environment (t)) return false;
+  return t[0] != "end-matrix"   &&
+    t[0] != "\\end-math"        &&
+    t[0] != "\\end-displaymath" &&
+    t[0] != "\\end-equation"    &&
+    t[0] != "\\end-equation*"   &&
+    t[0] != "\\end-flalign"     &&
+    t[0] != "\\end-flalign*"    &&
+    t[0] != "\\end-align"       &&
+    t[0] != "\\end-align*"      &&
+    t[0] != "\\end-alignat"     &&
+    t[0] != "\\end-alignat*"    &&
+    t[0] != "\\end-gather"      &&
+    t[0] != "\\end-gather*"     &&
+    t[0] != "\\end-multline"    &&
+    t[0] != "\\end-multline*"   &&
+    t[0] != "\\end-split"       &&
+    t[0] != "\\end-eqsplit"     &&
+    t[0] != "\\end-split*"      &&
+    t[0] != "\\end-eqsplit*"    &&
+    t[0] != "\\end-pmatrix"     &&
+    t[0] != "\\end-bmatrix"     &&
+    t[0] != "\\end-vmatrix"     &&
+    t[0] != "\\end-smallmatrix" &&
+    t[0] != "\\end-cases"       &&
+    t[0] != "\\end-tabbing"     &&
+    t[0] != "\\end-array"       &&
+    t[0] != "\\end-tabular"     &&
+    t[0] != "\\end-minipage"    &&
+    t[0] != "\\end-tabular*";
 }
 
 bool
@@ -125,15 +167,15 @@ is_sectionnal (tree t) {
          (is_func (t, TUPLE, 2) && t[0] == "\\chapter")            ||
          (is_func (t, TUPLE, 2) && t[0] == "\\chapter*")           ||
          (is_func (t, TUPLE, 3) && t[0] == "\\chapter*")           ||
-         (is_func (t, TUPLE, 1) && t[0] == "\\textm@break")        ||
-         (is_func (t, TUPLE) && t[0] == "\\end-thebibliography")   ||
-         (is_func (t, TUPLE) && t[0] == "\\bibliography");
+         (is_func (t, TUPLE)    && t[0] == "\\bibliography")       ||
+         end_block_environnement (t);
 }
 
 tree
 kill_space_invaders (tree t, char &status) {
   // cout << "kill_space_invaders (" << status << "): " << t << LF;
   if (is_atomic (t)) return t;
+  if (is_tuple (t, "\\textm@break")) return t;
   if (is_tuple (t)) {
     tree r= copy(t);
     for (int i=1; i<N(t); i++)
@@ -146,7 +188,7 @@ kill_space_invaders (tree t, char &status) {
     if (is_concat (u)) r << kill_space_invaders (u, status);
     else if (is_tuple (u) && is_sectionnal (u)) {
         if (status != 'N') {
-          r << "\n";
+          if (!end_block_environnement (u)) r << "\n";
           status = 'N';
         }
         r << kill_space_invaders (u, status);
@@ -157,7 +199,7 @@ kill_space_invaders (tree t, char &status) {
             r << kill_space_invaders (t[i], status);
           i++;
         }
-        r << "\n";
+        if (!end_block_environnement (u)) r << "\n";
         status = 'N';
         i--;
     }
@@ -229,13 +271,12 @@ filter_preamble (tree t) {
       else if (is_tuple (u, "\\documentclass")  ||
 	       is_tuple (u, "\\documentclass*") ||
 	       is_tuple (u, "\\documentstyle")  ||
-	       is_tuple (u, "\\documentstyle*"))
-      {
-	      doc << u;
+	       is_tuple (u, "\\documentstyle*")) {
+        doc << u;
         latex_class = u;
       }
       else if (is_tuple (u, "\\textm@break", 1))
-        preamble << u << "\n" << "\n";
+        doc << u << "\n" << "\n";
       else if (is_tuple (u, "\\def") ||
 	       is_tuple (u, "\\def*") || is_tuple (u, "\\def**"))
 	preamble << u << "\n" << "\n";
@@ -2542,7 +2583,7 @@ finalize_layout (tree t) {
 	    i++;
 	  }
 	  if (i<n) r << t[i];
-	  spc_flag = (t[i-1] == tree (FORMAT, "new line"));
+	  spc_flag = i>0 && t[i-1] == tree (FORMAT, "new line");
 	  item_flag= false;
 	  continue;
 	}
@@ -2573,7 +2614,7 @@ finalize_layout (tree t) {
 
 	remove_space (r);
 	r << tree (END, translate_list (v[0]->label));
-	if (((i+1) == N(t)) || (t[i+1] != tree (FORMAT, "new line")))
+	if (i+1 == N(t) || t[i+1] != tree (FORMAT, "new line"))
 	  insert_return (r);
 	spc_flag = true;
 	item_flag= false;
@@ -2946,9 +2987,13 @@ finalize_document (tree t) {
   tree r (DOCUMENT);
   for (i=0; i<N(t); i++) {
     int start= i;
-    while ((i<N(t)) && (t[i]!=tree (FORMAT, "new line"))) i++;
+    while (i<N(t) && t[i]!=tree (FORMAT, "new line")) i++;
     if (i==start) r << "";
     else if (i==(start+1)) r << t[start];
+    else if (i==(start+2) && (is_apply (t[start], "textm@break") ||
+                              is_apply (t[start+1], "textm@break"))) {
+      r << t[start] << t[start+1];
+    }
     else r << t(start,i);
     if (i==(N(t)-1)) r << "";
   }
@@ -3282,11 +3327,6 @@ finalize_misc (tree t) {
 
 /**************************** Modernize newlines *****************************/
 
-static inline bool
-is_new_line (tree t) {
-  return is_compound (t, "new-line", 0);
-}
-
 static tree
 clean_concat (tree t) {
   if (!is_concat (t)) return concat (t);
@@ -3329,6 +3369,7 @@ contains_newline (tree t) {
 static tree
 modernize_newlines (tree t, bool skip) {
   if (is_atomic (t)) return t;
+  if (is_compound (t, "textm@break")) return t;
   if (is_compound (t, "doc-data") || is_compound (t, "abstract-data"))
     skip= true;
   tree r= tree (L(t));
@@ -3394,6 +3435,7 @@ eat_space_around_control (tree t, char &state, bool &ctrl, bool rev) {
     ctrl= true;
     return t;
   }
+  if (is_compound (t, "textm@break")) return t;
   if (is_atomic (t)) {
     string s= as_string (t);
     if (rev) {
@@ -3472,6 +3514,7 @@ remove_superfluous_newlines (tree t) {
 static tree
 concat_document_correct (tree t) {
   if (is_atomic (t)) return t;
+  if (is_compound (t, "textm@break")) return t;
   tree r (L(t));
   for (int i=0; i<N(t); i++)
     r << concat_document_correct (t[i]);
@@ -3501,6 +3544,44 @@ concat_document_correct (tree t) {
 
 /****************************** Finalize textm *******************************/
 
+static bool
+is_section (tree t) {
+  return is_compound (t, "part")     || is_compound (t, "part*")          ||
+    is_compound (t, "chapter")       || is_compound (t, "chapter*")       ||
+    is_compound (t, "section")       || is_compound (t, "section*")       ||
+    is_compound (t, "subsection")    || is_compound (t, "subsection*")    ||
+    is_compound (t, "subsubsection") || is_compound (t, "subsubsection*") ||
+    is_compound (t, "paragraph")     || is_compound (t, "paragraph*")     ||
+    is_compound (t, "subparagraph")  || is_compound (t, "subparagraph*");
+}
+
+static bool
+is_label (tree t) {
+  return is_compound (t, "label");
+}
+
+static tree
+concat_sections_and_labels (tree t) {
+  if (is_atomic (t)) return t;
+  int i, n= N(t);
+  tree r (L(t));
+  for (i=0; i<n; i++) {
+    if (i+1<n && is_document (t) && is_section (t[i]) && is_label (t[i+1])) {
+      r << concat (t[i], t[i+1]);
+      i++;
+    }
+    else if (i+2<n && is_document (t) && is_section (t[i])
+        && is_compound (t[i+1], "textm@break") && is_label (t[i+2])) {
+      r << concat (t[i], t[i+1], t[i+2]);
+      i+=2;
+    }
+    else r << concat_sections_and_labels (t[i]);
+  }
+  return r;
+}
+
+/****************************** Finalize textm *******************************/
+
 tree
 finalize_textm (tree t) {
   t= modernize_newlines (t, false);
@@ -3508,6 +3589,7 @@ finalize_textm (tree t) {
   t= eat_space_around_control (t);
   t= remove_superfluous_newlines (t);
   t= concat_document_correct (t);
+  t= concat_sections_and_labels (t);
   return simplify_correct (t);
 }
 
@@ -3521,8 +3603,10 @@ search_and_remove_breaks (tree t, tree &src) {
   int i, n= N(t);
   tree r(L(t));
   for (i=0; i<n; i++) {
-    if (is_compound (t[i], "textm@break", 1))
-      src << A(t[i][0]);
+    if (is_compound (t[i], "textm@break", 1)) {
+      if (!is_atomic (t[i][0]))
+        src << A(t[i][0]);
+    }
     else
       r << search_and_remove_breaks (t[i], src);
   }
@@ -3536,10 +3620,12 @@ merge_non_root_break_trees (tree t) {
   tree src (DOCUMENT), r (L(t));
   for (i=0; i<n; i++) {
     if (is_compound (t[i], "textm@break", 1)) {
-      src << A(t[i][0]);
-      t[i][0]= src;
-      r << t[i];
-      src= tree (DOCUMENT);
+        if (!is_atomic (t[i][0])) {
+          src << A(t[i][0]);
+        t[i][0]= src;
+        r << t[i];
+        src= tree (DOCUMENT);
+      }
     }
     else
       r << search_and_remove_breaks (t[i], src);
@@ -3557,7 +3643,8 @@ merge_empty_break_trees (tree t) {
       if (merge) {
         src= tree (DOCUMENT);
         src << A(r[N(r)-1][0]);
-        src << A(t[i][0]);
+        if (!is_atomic (t[i][0]))
+          src << A(t[i][0]);
         r[N(r)-1][0]= src;
       }
       else {
@@ -3607,7 +3694,8 @@ merge_non_ordered_break_trees (tree t) {
   n=N(r);
   for (i=0; i<n; i++) {
     if (is_compound (r[i], "textm@break", 1)) {
-      src << A(r[i][0]);
+      if (!is_atomic (r[i][0]))
+        src << A(r[i][0]);
       r[i][0]= src;
       break;
     }
@@ -3628,9 +3716,14 @@ pick_paragraph_breaks (tree t, array<tree> &b) {
   for (i=0; i<n; i++) {
     if (is_compound (t[i], "textm@break", 1)) {
       string uid= as_string (id_cnt++);
+      tree src= modernize_newlines (tree (CONCAT, A(t[i][0])), false);
+      src= remove_superfluous_newlines (src);
+      src= concat_document_correct (src);
+      src= simplify_correct (src);
       b << compound ("associate", "latex-tree-src" * uid,
-                     compound ("latex-tree-src", u, t[i][0]));
-      r << u;
+                     compound ("latex-tree-src", u, src));
+      if (u != document ())
+        r << u;
       u= tree (DOCUMENT);
     }
     else

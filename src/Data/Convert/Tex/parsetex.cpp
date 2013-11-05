@@ -760,6 +760,22 @@ contains_board_effects (tree t, bool root= true) {
   return false;
 }
 
+static string
+remove_textm_break (string s) {
+  string pattern= "\n\n\\textm@break{"; // followed by num + "}\n"
+  int i= 0, n= N(s), start= 0;
+  string r;
+  i= search_forwards (pattern, i, s);
+  while (i > 0 && i < n) {
+    r << s(start, i);
+    i= search_forwards ("}\n", i, s);
+    start= i+2;
+    i= search_forwards (pattern, i, s);
+  }
+  r << s(start, n);
+  return r;
+}
+
 tree
 latex_parser::parse_command (string s, int& i, string cmd, int change) {
   bool delimdef = false;
@@ -1197,6 +1213,7 @@ latex_parser::parse_command (string s, int& i, string cmd, int change) {
       orig_cmd= "\\end{" * cmd(5, N(cmd)) * "}";
     string code= orig_cmd * s(begin_parse, i);
     code= verbatim_escape (code);
+    code= remove_textm_break (code);
     if (command_type ("!mode") == "math")
       t= tuple ("\\latex_preview", cmd(1, N(cmd)), compound ("text", code));
     else
@@ -1836,11 +1853,11 @@ paragraph_break_here (string s, int i) {
 static string
 add_paragraph_markup (string s) {
   string r;
-  int i= 0, start= 0, n= N(s);
+  int i= 0, start= 0, n= N(s), count= 0;
   while (i < n) {
     int j= i+1;
-    if ((s[i] == '\n' && paragraph_break_here (s, i)) ||
-        (j < n && s[j] == '\\' &&
+    if (count == 0 && s[i] == '\n'
+        && (paragraph_break_here (s, i) || (j < n && s[j] == '\\' &&
         // strategic places to cut
         (test_env   (s, j, "abstract")          ||
          test_env   (s, j, "abstract", false)   ||
@@ -1856,7 +1873,7 @@ add_paragraph_markup (string s) {
          test_macro (s, j, "\\subsection")      ||
          test_macro (s, j, "\\subsubsection")   ||
          test_macro (s, j, "\\tableofcontents") ||
-         test_macro (s, j, "\\title")))) {
+         test_macro (s, j, "\\title"))))) {
       r << s(start, i+1)
         << "\n\n\\textm@break{" << as_string (i) << "}\n";
       start= i+1;
@@ -1872,6 +1889,10 @@ add_paragraph_markup (string s) {
         }
       }
     }
+    else if (((i == 0 || s[i-1] != '\\') && s[i] == '{') || s[i] == '[')
+      i++, count++;
+    else if (((i == 0 || s[i-1] != '\\') && s[i] == '}') || s[i] == ']')
+      i++, count--;
     else
       i++;
   }
@@ -1883,9 +1904,26 @@ static tree
 clean_paragraph_markup (tree t, int d) {
   if (is_atomic (t)) return t;
   tree r(L(t));
+  int i, n= N(t);
+  if (!is_concat (t)) {
+    for (i=0; i<n; i++)
+      r << clean_paragraph_markup (t[i], d + 1);
+    return r;
+  }
   bool merge= false;
-  for (int i=0; i<N(t); i++) {
-    if (is_tuple (t[i], "\\textm@break", 1)) {
+  for (i=0; i<n; i++) {
+    if (i+2 < n && t[i] == concat ("\n") && t[i+2] == concat ("\n")
+        && is_tuple (t[i+1], "\\textm@break", 1)) {
+      if (d == 0) {
+        if (merge)
+          r[N(r)-1]= t[i];
+        else
+          r << t[i+1];
+        merge= true;
+      }
+      else i++;
+    }
+    else if (is_tuple (t[i], "\\textm@break", 1)) {
       if (d == 0) {
         if (merge)
           r[N(r)-1]= t[i];
@@ -1895,23 +1933,29 @@ clean_paragraph_markup (tree t, int d) {
       }
     }
     else {
-      r << clean_paragraph_markup (t[i], d + 1);
+      r << clean_paragraph_markup (t[i], d);
       merge= false;
     }
 
-    if (is_tuple (t[i]) && as_string (t[i][0])(0, 7) == "\\begin-"
-                        && as_string (t[i][0]) != "\\begin-document")
+    if (is_tuple (t[i]) && N(t[i]) > 0
+        && starts (as_string (t[i][0]), "\\begin-")
+        && t[i][0] != "\\begin-document")
       d++;
-    else if (is_tuple (t[i]) && as_string (t[i][0])(0, 5) == "\\end-"
-                             && as_string (t[i][0]) != "\\end-document")
+    else if (is_tuple (t[i]) && N(t[i]) > 0
+        && starts (as_string (t[i][0]), "\\end-")
+        && t[i][0] != "\\end-document")
       d--;
+    else if (is_tuple (t[i]) && N(t[i]) > 0 && t[i][0] == "\\begin-document")
+      d--;
+    else if (is_tuple (t[i]) && N(t[i]) > 0 && t[i][0] == "\\end-document")
+      d++;
   }
   return r;
 }
 
 static tree
 clean_paragraph_markup (tree t) {
-  return clean_paragraph_markup (t, 0);
+  return clean_paragraph_markup (t, 1);
 }
 
 static tree
