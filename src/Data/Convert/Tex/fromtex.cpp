@@ -1168,17 +1168,17 @@ latex_command_to_tree (tree t) {
 
   if (is_tuple (t, "\\newtheorem", 2) || is_tuple (t, "\\newdef", 2) ||
       is_tuple (t, "\\newtheorem*", 2)) {
-    string var= l2e(t[1])->label;
-    string val= l2e(t[2])->label;
+    string var= t2e(t[1])->label;
+    string val= t2e(t[2])->label;
     return compound ("new-theorem", var, val);
   }
 
   if (is_tuple (t, "\\newenvironment", 3)) {
-    string var= l2e(t[1])->label;
+    string var= t2e(t[1])->label;
     return tree (ASSIGN, var, tree (ENV, l2e (t[2]), l2e (t[3])));
   }
   if (is_tuple (t, "\\newenvironment*", 4)) {
-    string var= l2e(t[1])->label;
+    string var= t2e(t[1])->label;
     int i, arity= as_int (l2e(t[2])->label);
     tree e (ENV);
     for (i=1; i<=arity; i++) e << as_string (i);
@@ -1187,7 +1187,7 @@ latex_command_to_tree (tree t) {
     return tree (ASSIGN, var, e);
   }
   if (is_tuple (t, "\\newenvironment**", 5)) {
-    string var= l2e(t[1])->label;
+    string var= t2e(t[1])->label;
     int i, arity= as_int (l2e(t[2])->label);
     tree default_option= l2e(t[3]);
     tree e1 (ENV), e2 (MACRO), e3 (APPLY);
@@ -1224,7 +1224,7 @@ latex_command_to_tree (tree t) {
       is_tuple (t, "\\subsection*", 2)    ||
       is_tuple (t, "\\subsubsection*", 2) ||
       is_tuple (t, "\\paragraph*", 2)     ||
-      is_tuple (t, "\\paragraph*", 2)     ||
+      is_tuple (t, "\\subparagraph*", 2)  ||
       is_tuple (t, "\\subsubparagraph*", 2)) {
     string s= as_string (t[0]);
     s= s(1, N(s)-1);
