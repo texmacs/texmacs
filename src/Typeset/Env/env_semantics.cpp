@@ -13,6 +13,7 @@
 #include "page_type.hpp"
 #include "typesetter.hpp"
 #include "Boxes/construct.hpp"
+#include "analyze.hpp"
 
 /******************************************************************************
 * Retrieving the page size
@@ -263,19 +264,59 @@ edit_env_rep::get_page_pars (SI& w, SI& h, SI& width, SI& height,
 * Retrieving ornament parameters
 ******************************************************************************/
 
+static tree
+tuplify (tree t) {
+  array<string> a= tokenize (t->label, ",");
+  tree r (TUPLE, N(a));
+  for (int i=0; i<N(a); i++)
+    r[i]= a[i];
+  return r;
+}
+
 ornament_parameters
 edit_env_rep::get_ornament_parameters () {
-  tree  shape = read       (ORNAMENT_SHAPE);
-  tree  tst   = read       (ORNAMENT_TITLE_STYLE);
-  SI    w     = get_length (ORNAMENT_BORDER);
-  SI    xpad  = get_length (ORNAMENT_HPADDING);
-  SI    ypad  = get_length (ORNAMENT_VPADDING);
-  tree  bg    = read       (ORNAMENT_COLOR);
-  tree  xc    = read       (ORNAMENT_EXTRA_COLOR);
+  tree  shape = read (ORNAMENT_SHAPE);
+  tree  tst   = read (ORNAMENT_TITLE_STYLE);
+  tree  bg    = read (ORNAMENT_COLOR);
+  tree  xc    = read (ORNAMENT_EXTRA_COLOR);
   int   a     = alpha;
-  color sunny = get_color  (ORNAMENT_SUNNY_COLOR);
-  color shadow= get_color  (ORNAMENT_SHADOW_COLOR);
-  return ornament_parameters (shape, tst, w, w, w, w, xpad, ypad, xpad, ypad,
+  color sunny = get_color (ORNAMENT_SUNNY_COLOR);
+  color shadow= get_color (ORNAMENT_SHADOW_COLOR);
+
+  tree w= env [ORNAMENT_BORDER];
+  SI lw, bw, rw, tw;
+  if (is_atomic (w) && occurs (",", w->label))
+    w= tuplify (w);
+  if (is_func (w, TUPLE, 4)) {
+    lw= as_length (w[0]);
+    bw= as_length (w[1]);
+    rw= as_length (w[2]);
+    tw= as_length (w[3]);
+  }
+  else lw= bw= rw= tw= as_length (w);
+
+  tree xpad= env [ORNAMENT_HPADDING];
+  SI lpad, rpad;
+  if (is_atomic (xpad) && occurs (",", xpad->label))
+    xpad= tuplify (xpad);
+  if (is_func (xpad, TUPLE, 2)) {
+    lpad= as_length (xpad[0]);
+    rpad= as_length (xpad[1]);
+  }
+  else lpad= rpad= as_length (xpad);
+
+  tree ypad= env [ORNAMENT_VPADDING];
+  SI bpad, tpad;
+  if (is_atomic (ypad) && occurs (",", ypad->label))
+    ypad= tuplify (ypad);
+  if (is_func (ypad, TUPLE, 2)) {
+    bpad= as_length (ypad[0]);
+    tpad= as_length (ypad[1]);
+  }
+  else bpad= tpad= as_length (ypad);
+
+  return ornament_parameters (shape, tst,
+                              lw, bw, rw, tw, lpad, bpad, rpad, tpad,
                               brush (bg, a), brush (xc, a), sunny, shadow);
 }
 
