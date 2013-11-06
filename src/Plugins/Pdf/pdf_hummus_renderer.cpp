@@ -39,7 +39,7 @@
 
 typedef triple<int,int,int> rgb;
 typedef quartet<string,int,SI,SI> dest_data;
-typedef quartet<string,int,SI,SI> outline_data;
+typedef quintuple<string,int,SI,SI,int> outline_data;
 
 class pdf_image;
 class pdf_raw_image;
@@ -184,6 +184,10 @@ class pdf_hummus_renderer_rep : public renderer_rep {
                                            ObjectsContext* inPDFWriterObjectContext,
                                            PDFHummus::DocumentContext* inDocumentContext);
   
+  
+  void recurse (ObjectsContext& objectsContext, list<outline_data>& it, ObjectIDType parentId,
+                ObjectIDType& firstId, ObjectIDType& lastId, int &count);
+
   
 public:
   pdf_hummus_renderer_rep (url pdf_file_name, int dpi, int nr_pages,
@@ -1556,63 +1560,88 @@ void
 pdf_hummus_renderer_rep::toc_entry (string kind, string title, SI x, SI y) {
   (void) kind; (void) title; (void) x; (void) y;
   //cout << kind << ", " << title << "\n";
-  outlines << outline_data(title, page_num, to_x(x), to_y(y));
+  int ls= 1;
+  if (kind == "toc-strong-1") ls= 1;
+  if (kind == "toc-strong-2") ls= 2;
+  if (kind == "toc-1") ls= 3;
+  if (kind == "toc-2") ls= 4;
+  if (kind == "toc-3") ls= 5;
+  if (kind == "toc-4") ls= 6;
+  if (kind == "toc-5") ls= 7;
+
+  outlines << outline_data(title, page_num, to_x(x), to_y(y), ls);
 }
 
+
+void pdf_hummus_renderer_rep::recurse (ObjectsContext& objectsContext, list<outline_data>& it, ObjectIDType parentId,
+              ObjectIDType& firstId, ObjectIDType& lastId, int &count)
+{
+  // weave the tangle of forward/backward references
+  // are recurse over substructures
+  
+  ObjectIDType prevId = 0, curId = 0, nextId = 0;
+  
+  if (!is_nil(it))
+    curId = objectsContext.GetInDirectObjectsRegistry().AllocateNewObjectID();
+
+  firstId = curId;
+  while (curId) {
+    ObjectIDType subFirstId = 0, subLastId = 0;
+    int subCount = 0;
+
+    outline_data oitem = it->item;
+    count++;
+    it = it->next;
+    
+    if (!is_nil(it) && ((it->item).x5 > oitem.x5)) {
+      // go down in level
+      recurse(objectsContext, it, curId, subFirstId, subLastId, subCount);
+    }
+    
+    // continue at this level or above
+    if (!is_nil(it) && ((it->item).x5 == oitem.x5)) {
+      nextId = objectsContext.GetInDirectObjectsRegistry().AllocateNewObjectID();
+    } else {
+      // finished this level, go up.
+      nextId = 0;
+    }
+    
+    {
+      // write current outline item dictionary
+      string dict;
+      dict << "<<\r\n"
+           << "\t/Title (" << prepare_text((oitem).x1) << ")\r\n"
+           << "\t/Parent " << as_string(parentId) << " 0 R \r\n";
+      if (prevId != 0) dict << "\t/Prev " << as_string(prevId) << " 0 R \r\n";
+      if (nextId  != 0)  dict << "\t/Next " << as_string(nextId) << " 0 R \r\n";
+      if (subCount > 0) {
+        dict << "\t/First " << as_string(subFirstId) << " 0 R \r\n"
+             << "\t/Last " << as_string(subLastId) << " 0 R \r\n"
+             << "\t/Count " << as_string(-subCount) << "\r\n";
+      }
+      dict << "\t/Dest [ " << as_string(page_id((oitem).x2)) << " 0 R /XYZ "
+           << as_string(((double)default_dpi / dpi)*((oitem).x3))
+           << " " << as_string(((double)default_dpi / dpi)*((oitem).x4)) << " null ]\r\n"
+           << ">>\r\n";
+      write_indirect_obj(objectsContext, curId, dict);
+    }
+    prevId = curId; curId = nextId;
+  }
+  lastId = prevId;
+}
 
 void
 pdf_hummus_renderer_rep::flush_outlines()
 {
   if (is_nil(outlines)) return;
-
+ 
   ObjectsContext& objectsContext= pdfWriter.GetObjectsContext();
-
-  outlineId = objectsContext.GetInDirectObjectsRegistry().AllocateNewObjectID();
-  
-
   ObjectIDType firstId= 0 , lastId= 0;
   int count = 0;
-  // weave the tangle of forward/backward references
-  typedef quartet<outline_data, ObjectIDType, ObjectIDType, ObjectIDType> poo;
-  list<poo> l;
-  {
-    list<outline_data> it = outlines;
-    ObjectIDType prevId = 0, curId = 0, nextId = 0;
-    curId = pdfWriter.GetObjectsContext().GetInDirectObjectsRegistry().AllocateNewObjectID();
-    firstId = curId;
-    while (!is_nil(it)) {
-      count++;
-      if (!is_nil(it->next)) nextId = pdfWriter.GetObjectsContext().GetInDirectObjectsRegistry().AllocateNewObjectID();
-      else nextId = 0;
-      l << poo(it->item, curId, prevId, nextId);
-      prevId = curId; curId = nextId;
-      it = it->next;
-    }
-    lastId = prevId;
-  }
-  {
-    // create the dictionaries for each outline item
-    list<poo> it = l;
-    while (!is_nil(it)) {
-      poo oitem = it->item;
-      it = it->next;
-      {
-        string dict;
-        dict << "<<\r\n";
-        dict << "\t/Title (" << prepare_text(oitem.x1.x1) << ")\r\n";
-        dict << "\t/Parent " << as_string(outlineId) << " 0 R \r\n";
-        if (oitem.x3 != 0) dict << "\t/Prev " << as_string(oitem.x3) << " 0 R \r\n";
-        if (oitem.x4 != 0)  dict << "\t/Next " << as_string(oitem.x4) << " 0 R \r\n";
-        dict << "\t/Dest [ " << as_string(page_id(oitem.x1.x2)) << " 0 R /XYZ "
-             << as_string(((double)default_dpi / dpi)*oitem.x1.x3)
-             << " " << as_string(((double)default_dpi / dpi)*oitem.x1.x4) << " null ]\r\n";
-        dict << ">>\r\n";
-        
-        write_indirect_obj(objectsContext, oitem.x2, dict);
-      }
-    }
-  }
+  list<outline_data> it = outlines;
   
+  outlineId = objectsContext.GetInDirectObjectsRegistry().AllocateNewObjectID();
+  recurse(objectsContext, it, outlineId, firstId, lastId, count);
   {
     // create top-level outline dictionary
     string dict;
@@ -1622,10 +1651,8 @@ pdf_hummus_renderer_rep::flush_outlines()
     dict << "\t/Last " << as_string(lastId) << " 0 R \r\n";
     dict << "\t/Count " << as_string(count) << "\r\n";
     dict << ">>\r\n";
-
     write_indirect_obj(objectsContext, outlineId, dict);
   }
-  
 }
 
 /******************************************************************************
