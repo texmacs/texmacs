@@ -279,11 +279,25 @@ edit_env_rep::get_ornament_parameters () {
   tree  tst   = read (ORNAMENT_TITLE_STYLE);
   tree  bg    = read (ORNAMENT_COLOR);
   tree  xc    = read (ORNAMENT_EXTRA_COLOR);
+  tree  sunny = read (ORNAMENT_SUNNY_COLOR);
+  tree  shadow= read (ORNAMENT_SHADOW_COLOR);
   int   a     = alpha;
-  color sunny = get_color (ORNAMENT_SUNNY_COLOR);
-  color shadow= get_color (ORNAMENT_SHADOW_COLOR);
+  tree  w     = read (ORNAMENT_BORDER);
+  tree  xpad  = read (ORNAMENT_HPADDING);
+  tree  ypad  = read (ORNAMENT_VPADDING);
 
-  tree w= env [ORNAMENT_BORDER];
+  array<brush> border;
+  if (is_func (sunny, TUPLE)) {
+    for (int i=0; i<N(sunny); i++)
+      border << brush (sunny[i], a);
+  }
+  else {
+    border << brush (sunny, a);
+    border << brush (shadow, a);
+  }
+  if (N(border) == 1) border << border[0];
+  if (N(border) == 2) border << border[1] << border[0];
+
   SI lw, bw, rw, tw;
   if (is_atomic (w) && occurs (",", w->label))
     w= tuplify (w);
@@ -295,7 +309,6 @@ edit_env_rep::get_ornament_parameters () {
   }
   else lw= bw= rw= tw= as_length (w);
 
-  tree xpad= env [ORNAMENT_HPADDING];
   SI lpad, rpad;
   if (is_atomic (xpad) && occurs (",", xpad->label))
     xpad= tuplify (xpad);
@@ -305,7 +318,6 @@ edit_env_rep::get_ornament_parameters () {
   }
   else lpad= rpad= as_length (xpad);
 
-  tree ypad= env [ORNAMENT_VPADDING];
   SI bpad, tpad;
   if (is_atomic (ypad) && occurs (",", ypad->label))
     ypad= tuplify (ypad);
@@ -317,7 +329,7 @@ edit_env_rep::get_ornament_parameters () {
 
   return ornament_parameters (shape, tst,
                               lw, bw, rw, tw, lpad, bpad, rpad, tpad,
-                              brush (bg, a), brush (xc, a), sunny, shadow);
+                              brush (bg, a), brush (xc, a), border);
 }
 
 /******************************************************************************

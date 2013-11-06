@@ -1689,8 +1689,8 @@ edit_env_rep::exec_pattern (tree t) {
     w= as_string (imw);
     h= as_string (imh);
   }
-  else if ((!is_int (w) && !is_percentage (w)) ||
-	   (!is_int (h) && !is_percentage (h)))
+  else if ((!is_int (w) && !is_percentage (w) && !is_percentage (w, "@")) ||
+	   (!is_int (h) && !is_percentage (h) && !is_percentage (h, "@")))
     return "white";
   tree r (PATTERN, as_string (image), w, h);
   if (N(t) == 4) r << exec (t[3]);

@@ -27,7 +27,9 @@
 struct highlight_box_rep: public change_box_rep {
   tree shape;
   SI lw, bw, rw, tw, lpad, bpad, rpad, tpad;
-  brush bg, xc, sunc, shad, old_bg;
+  brush bg, xc;
+  array<brush> bc;
+  brush old_bg;
   pencil old_pen;
   bool ring;
   highlight_box_rep (path ip, box b, box xb, ornament_parameters ps);
@@ -44,8 +46,9 @@ highlight_box_rep::highlight_box_rep (path ip, box b, box xb,
   change_box_rep (ip, true), shape (ps->shape),
   lw (ps->lw), bw (ps->bw), rw (ps->rw), tw (ps->tw),
   lpad (ps->lpad), bpad (ps->bpad), rpad (ps->rpad), tpad (ps->tpad),
-  bg (ps->bg), xc (ps->xc), sunc (ps->sunc), shad (ps->shad)
+  bg (ps->bg), xc (ps->xc), bc (ps->border)
 {
+  ASSERT (N(bc) == 4 || N(bc) == 8, "invalid number of border colors");
   if (shape == "ring") {
     lpad= lpad + rpad;
     rpad= 0;
@@ -119,21 +122,55 @@ highlight_box_rep::display_classic (renderer& ren) {
     ren->set_background (xc);
     ren->clear_pattern (x1+LW, m, x2-RW, y2-TW);    
   }
-  ren->set_brush (sunc);
-  ren->fill (x1  , y2-TW, x2   , y2  );
-  ren->fill (x1  , y1   , x1+LW, y2  );
-  ren->set_brush (shad);
-  ren->fill (x1+LW, y1  , x2  , y1+BW);
-  ren->fill (x2-RW, y1  , x2  , y2-TW);
-  if (sunc != shad) {
-    ren->draw_triangle (x1, y1, x1+LW, y1   , x1+LW, y1+BW);
-    ren->draw_triangle (x2, y2, x2   , y2-TW, x2-RW, y2-TW);
+  if (N(bc) == 4) {
+    ren->set_brush (bc[0]);
+    ren->fill (x1   , y1   , x1+LW, y2   );
+    ren->set_brush (bc[1]);
+    ren->fill (x1+LW, y1   , x2   , y1+BW);
+    ren->set_brush (bc[2]);
+    ren->fill (x2-RW, y1   , x2   , y2-TW);
+    ren->set_brush (bc[3]);  
+    ren->fill (x1   , y2-TW, x2   , y2   );
+    if (bc[0] != bc[1]) {
+      ren->set_brush (bc[1]);
+      ren->draw_triangle (x1, y1, x1+LW, y1   , x1+LW, y1+BW);
+    }
+    if (bc[2] != bc[1]) {
+      ren->set_brush (bc[1]);
+      ren->draw_triangle (x2, y1, x2-RW, y1   , x2-RW, y1+BW);
+    }
+    if (bc[2] != bc[3]) {
+      ren->set_brush (bc[2]);
+      ren->draw_triangle (x2, y2, x2   , y2-TW, x2-RW, y2-TW);
+    }
+    if (bc[0] != bc[3]) {
+      ren->set_brush (bc[0]);
+      ren->draw_triangle (x1, y2, x1   , y2-TW, x1+LW, y2-TW);
+    }
+    if (N(bs)>1 && TW>0 && bc[0] == bc[3] && bc[2] == bc[3]) {
+      SI m= (sy2(0) + sy1(1)) >> 1;
+      ren->set_brush (bc[3]);
+      ren->set_pencil (pencil (bc[3], TW));
+      ren->line (x1+LW, m, x2-RW, m);
+    }
   }
-  if (N(bs)>1 && TW>0 && sunc == shad) {
-    SI m= (sy2(0) + sy1(1)) >> 1;
-    ren->set_brush (sunc);
-    ren->set_pencil (pencil (sunc, TW));
-    ren->line (x1+LW, m, x2-RW, m);
+  if (N(bc) == 8) {
+    ren->set_brush (bc[0]);
+    ren->fill (x1   , y1+BW, x1+LW, y2-TW);
+    ren->set_brush (bc[1]);
+    ren->fill (x1+LW, y1   , x2-RW, y1+BW);
+    ren->set_brush (bc[2]);
+    ren->fill (x2-RW, y1+BW, x2   , y2-TW);
+    ren->set_brush (bc[3]);  
+    ren->fill (x1+RW, y2-TW, x2-RW, y2   );
+    ren->set_brush (bc[4]);
+    ren->fill (x1   , y1   , x1+LW, y1+BW);
+    ren->set_brush (bc[5]);
+    ren->fill (x2-RW, y1   , x2   , y1+BW);
+    ren->set_brush (bc[6]);
+    ren->fill (x2-RW, y2-TW, x2   , y2   );
+    ren->set_brush (bc[7]);
+    ren->fill (x1   , y2-TW, x1+LW, y2   );
   }
 }
 
@@ -152,9 +189,7 @@ highlight_box_rep::display_ring (renderer& ren) {
     TW= ((tw + pixel - 1) / pixel) * pixel;
   }
 
-  static url u= resolve (url ("$TEXMACS_PATH/misc/images/ring-binder-1.png"));
-  tree p (PATTERN, as_string (u), "100%", "40@", "#fff0");
-  ren->set_background (brush (p));
+  ren->set_background (bg);
   if ((y1+2*BW) < (y2-2*TW))
     ren->clear_pattern (x1, y1+2*BW, x1 + LW + 2*lpad, y2-2*TW);
 }
@@ -255,11 +290,11 @@ highlight_box_rep::display_rounded (renderer& ren, int style) {
     ren->polygon (Xs, Ys);
   }
   if (W > 0) {
-    ren->set_brush (sunc);
-    ren->set_pencil (pencil (sunc, W));
+    ren->set_brush (bc[0]);
+    ren->set_pencil (pencil (bc[0], W));
     xs << l1; ys << b2;
     ren->lines (xs, ys);
-    if (N(bs)>1 && sunc == shad) {
+    if (N(bs)>1 && bc[0] == bc[1]) {
       SI m= (sy2(0) + sy1(1)) >> 1;
       ren->line (l1, m, r1, m);
     }
@@ -321,8 +356,9 @@ highlight_box (path ip, box b, box xb, ornament_parameters ps) {
 
 box
 highlight_box (path ip, box b, SI w, brush c, brush sunc, brush shad) {
+  array<brush> border; border << sunc << shad << shad << sunc;
   ornament_parameters ps ("classic", "classic",
                           w, w, w, w, 0, 0, 0, 0,
-                          c, c, sunc, shad);
+                          c, c, border);
   return highlight_box (ip, b, box (), ps);
 }

@@ -49,10 +49,12 @@
 
   <assign|ring-indent|1fn>
 
+  <assign|ring-pattern|<pattern|$TEXMACS_PATH/misc/images/ring-binder-1.png|100%||#fff0>>
+
   <assign|ring-ornamented|<\macro|body>
-    <\with|old-shape|<value|ornament-shape>|old-hpadding|<value|ornament-hpadding>|old-vpadding|<value|ornament-vpadding>|ornament-shape|ring|ornament-hpadding|<over|<value|ring-width>|2>|ornament-vpadding|0spc>
+    <\with|old-shape|<value|ornament-shape>|old-color|<value|ornament-color>|old-hpadding|<value|ornament-hpadding>|old-vpadding|<value|ornament-vpadding>|ornament-shape|ring|ornament-color|<value|ring-pattern>|ornament-hpadding|<over|<value|ring-width>|2>|ornament-vpadding|0spc>
       <\ornamented>
-        <with|ornament-shape|<value|old-shape>|ornament-hpadding|<tuple|<plus|<value|old-hpadding>|<over|<value|ring-width>|2>|<value|ring-indent>>|<value|old-hpadding>>|ornament-vpadding|<value|old-vpadding>|<\ornament>
+        <with|ornament-shape|<value|old-shape>|ornament-color|<value|old-color>|ornament-hpadding|<tuple|<plus|<value|old-hpadding>|<over|<value|ring-width>|2>|<value|ring-indent>>|<value|old-hpadding>>|ornament-vpadding|<value|old-vpadding>|<\ornament>
           <\surround||<right-flush>>
             <\with|ornament-hpadding|<value|old-hpadding>>
               <arg|body>
