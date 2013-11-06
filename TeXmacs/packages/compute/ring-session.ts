@@ -28,11 +28,13 @@
     </src-comment>
   </active*>
 
-  <assign|session-ring|<pattern|$TEXMACS_PATH/misc/images/ring-binder-1.png|100%||#fff0>>
+  <assign|session-ring|<pattern|$TEXMACS_PATH/misc/images/ring-binder-2.png|100%||#fff0>>
 
   <assign|session-ring-width|1fn>
 
-  <assign|session-color|pastel blue>
+  <assign|session-color|#fdfdfa>
+
+  <assign|session-border|1ln,0ln,1ln,0ln>
 
   <assign|session-left-indent|0.5fn>
 
@@ -44,9 +46,19 @@
 
   <assign|input-border|0ln,1ln,0ln,1ln>
 
+  <assign|input-border-color|<tuple|dark grey>>
+
+  \;
+
   <assign|error-color|pastel red>
 
+  <assign|error-border|1ln>
+
+  <assign|error-border-color|<tuple|dark red>>
+
   <assign|generic-error-color|dark red>
+
+  \;
 
   <assign|fold-bar-color|pastel brown>
 
@@ -60,11 +72,11 @@
 
   <assign|generic-session|<\macro|name|body>
     <\padded>
-      <\with|par-first|0fn|par-par-sep|0fn|old-shape|<value|ornament-shape>|old-color|<value|ornament-color>|old-hpadding|<value|ornament-hpadding>|old-vpadding|<value|ornament-vpadding>|ornament-shape|ring|ornament-color|<value|session-ring>|ornament-hpadding|<over|<value|session-ring-width>|2>|ornament-vpadding|0spc>
+      <\with|par-first|0fn|par-par-sep|0fn|old-shape|<value|ornament-shape>|old-color|<value|ornament-color>|old-hpadding|<value|ornament-hpadding>|old-vpadding|<value|ornament-vpadding>|old-border|<value|ornament-border>|ornament-shape|ring|ornament-color|<value|session-ring>|ornament-hpadding|<over|<value|session-ring-width>|2>|ornament-vpadding|0spc>
         <\ornament>
-          <with|ornament-shape|classic|ornament-color|<value|session-color>|ornament-hpadding|0spc|<\ornament>
+          <with|ornament-shape|classic|ornament-color|<value|session-color>|ornament-border|<value|session-border>|ornament-hpadding|0spc|<\ornament>
             <\surround||<right-flush>>
-              <\with|ornament-shape|<value|old-shape>|ornament-color|<value|old-color>|ornament-hpadding|<value|old-hpadding>|ornament-vpadding|<value|old-vpadding>>
+              <\with|ornament-shape|<value|old-shape>|ornament-color|<value|old-color>|ornament-border|<value|old-border>|ornament-hpadding|<value|old-hpadding>|ornament-vpadding|<value|old-vpadding>>
                 <arg|body>
               </with>
             </surround>
@@ -99,7 +111,7 @@
   </active*>
 
   <assign|generic-input|<\macro|prompt|body>
-    <\with|ornament-shape|classic|ornament-color|<value|input-color>|ornament-hpadding|<tuple|<plus|<value|session-ring-width>|<value|session-left-indent>>|<value|session-right-indent>>|ornament-border|<value|input-border>>
+    <\with|ornament-shape|classic|ornament-color|<value|input-color>|ornament-hpadding|<tuple|<plus|<value|session-ring-width>|<value|session-left-indent>>|<value|session-right-indent>>|ornament-border|<value|input-border>|ornament-sunny-color|<value|input-border-color>>
       <\ornament>
         <\surround|<id-function|<with|color|<value|generic-prompt-color>|<arg|prompt>>>|<right-flush>>
           <arg|body>
@@ -112,13 +124,19 @@
 
   <assign|generic-output|<macro|body|<surround|<vspace*|0.75fn>|<vspace|0.75fn>|<generic-output*|<arg|body>>>>>
 
-  <assign|generic-textput|<macro|body|<with|par-left|<plus|<value|par-left>|0.5fn>|par-right|<plus|<value|par-right>|0.5fn>|<arg|body>>>>
+  <assign|generic-textput|<macro|body|<ornament-indent|<plus|<value|session-ring-width>|<value|session-left-indent>>|<value|session-right-indent>|0spc|0spc|<arg|body>>>>
 
-  <assign|generic-errput|<macro|body|<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|1|cell-rborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0.5ln>|<cwith|1|1|1|1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-background|<value|error-color>>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
-    <\with|color|<value|generic-error-color>>
-      <arg|body>
+  <assign|generic-errput|<\macro|body>
+    <\with|ornament-shape|classic|ornament-color|<value|error-color>|ornament-border|<value|error-border>|ornament-sunny-color|<value|error-border-color>>
+      <\ornament>
+        <\surround||<right-flush>>
+          <\with|color|<value|generic-error-color>>
+            <arg|body>
+          </with>
+        </surround>
+      </ornament>
     </with>
-  </cell>>>>>>>
+  </macro>>
 
   <\active*>
     <\src-comment>
