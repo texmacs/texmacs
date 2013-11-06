@@ -828,3 +828,16 @@ utf8_to_hex_entities (string s) {
   }
   return result;
 }
+
+string
+utf8_to_hex_string (string s) {
+  string result;
+  int i, n= N(s);
+  for (i=0; i<n; ) {
+    unsigned int code= decode_from_utf8 (s, i);
+    string hex= as_hexadecimal (code);
+    while (N(hex) < 4) hex = "0" * hex;
+    result << hex;
+  }
+  return result;
+}

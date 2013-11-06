@@ -21,6 +21,7 @@
 #include "image_files.hpp"
 #include "link.hpp"
 #include "frame.hpp"
+#include "converter.hpp"
 
 string PS_CLIP_PUSH ("gsave");
 string PS_CLIP_POP ("grestore");
@@ -50,7 +51,7 @@ printer_rep::printer_rep (
     use_alpha (get_preference ("experimental alpha") == "on"),
     linelen (0), fg ((color) (-1)), bg ((color) (-1)), opacity (255),
     ncols (0), lw (-1), nwidths (0), cfn (""), nfonts (0),
-    xpos (0), ypos (0), tex_flag (false),
+    xpos (0), ypos (0), tex_flag (false), toc (TUPLE),
     defs ("?"), tex_chars ("?"), tex_width ("?"),
     tex_fonts ("?"), tex_font_chars (array<int>(0))    
 {
@@ -120,6 +121,7 @@ printer_rep::printer_rep (
 
 printer_rep::~printer_rep () {
   next_page ();
+  generate_toc ();
   body << "\n%%Trailer\n"
        << "end\n"
        << "userdict /end-hook known{end-hook} if\n"
@@ -974,9 +976,43 @@ printer_rep::href (string label, SI x1, SI y1, SI x2, SI y2) {
 
 void
 printer_rep::toc_entry (string kind, string title, SI x, SI y) {
-  // FIXME: not yet implemented
-  (void) kind; (void) title; (void) x; (void) y;
-  // cout << kind << ", " << title << "\n";
+  decode (x, y);
+  string ls= "1";
+  if (kind == "toc-strong-1") ls= "1";
+  if (kind == "toc-strong-2") ls= "2";
+  if (kind == "toc-1") ls= "3";
+  if (kind == "toc-2") ls= "4";
+  if (kind == "toc-3") ls= "5";
+  if (kind == "toc-4") ls= "6";
+  if (kind == "toc-5") ls= "7";
+  string ps= as_string (cur_page);
+  string xs= as_string (x-dpi);
+  string ys= as_string (y-dpi);
+  toc << tuple (title, ls, ps, xs, ys);
+}
+
+void
+printer_rep::generate_toc () {
+  for (int i=0; i<N(toc); i++) {
+    string title= toc[i][0]->label;
+    string level= toc[i][1]->label;
+    string page = toc[i][2]->label;
+    string x    = toc[i][3]->label;
+    string y    = toc[i][4]->label;
+    string utit = cork_to_utf8 (title);
+    string htit = "<FEFF" * utf8_to_hex_string (utit) * ">";
+    print ("[");
+    print ("/Page");
+    print (page);
+    print ("/View [ /XYZ");
+    print (x);
+    print (y);
+    print ("0");
+    print ("]");
+    print ("/Title " * htit);
+    print ("/OUT pdfmark");
+    cr ();
+  }
 }
 
 /******************************************************************************
