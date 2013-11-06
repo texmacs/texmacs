@@ -27,7 +27,7 @@ static string as_verbatim (tree t, bool wrap);
 static void
 print_verbatim_arg (string& buf, tree t, bool wrap) {
   string s= as_verbatim (t, wrap);
-  if (tm_string_length (s) <= 1 || is_iso_alpha (s) || is_numeric (s))
+  if (tm_string_length (s) <= 1 || is_numeric (s) || is_iso_alpha (s))
     print_verbatim (buf, t, wrap);
   else {
     buf << "(";
@@ -86,6 +86,7 @@ print_verbatim (string& buf, tree t, bool wrap) {
       break;
     case HSPACE:
     case SPACE:
+      if (is_atomic (t[0]) && starts (t[0]->label, "-")) break;
     case HTAB:
       if (N(buf)>0 && buf[N(buf)-1] != '\n') buf << " ";
       break;

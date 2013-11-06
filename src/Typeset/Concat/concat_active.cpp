@@ -230,6 +230,9 @@ concater_rep::typeset_toc_notify (tree t, path ip) {
   if (N(t) != 2) { typeset_error (t, ip); return; }
   string kind = tree_to_verbatim (env->exec (t[0]));
   string title= tree_to_verbatim (env->exec (t[1]));
+  title= replace (title, "T_EX_MACS", "TeXmacs");
+  title= replace (title, "L^AT_EX", "LaTeX");
+  title= replace (title, "T_EX", "TeX");
   box  b = toc_box (decorate_middle (ip), kind, title, env->fn);
   marker (descend (ip, 0));
   print (b);
