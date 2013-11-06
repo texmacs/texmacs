@@ -992,27 +992,57 @@ printer_rep::toc_entry (string kind, string title, SI x, SI y) {
 }
 
 void
-printer_rep::generate_toc () {
-  for (int i=0; i<N(toc); i++) {
-    string title= toc[i][0]->label;
-    string level= toc[i][1]->label;
-    string page = toc[i][2]->label;
-    string x    = toc[i][3]->label;
-    string y    = toc[i][4]->label;
-    string utit = cork_to_utf8 (title);
-    string htit = "<FEFF" * utf8_to_hex_string (utit) * ">";
-    print ("[");
-    print ("/Page");
-    print (page);
-    print ("/View [ /XYZ");
-    print (x);
-    print (y);
-    print ("0");
-    print ("]");
-    print ("/Title " * htit);
-    print ("/OUT pdfmark");
-    cr ();
+structure_toc (tree t, int& i, tree& out, string level) {
+  //cout << "Structure " << t[i] << " at " << level << "\n";
+  if (i >= N(t)) return;
+  string nlevel= t[i][1]->label;
+  if (nlevel <= level) return;
+  tree next= tuple (t[i]);
+  i++;
+  while (i < N(t)) {
+    string slevel= t[i][1]->label;
+    if (slevel <= nlevel) break;
+    structure_toc (t, i, next, nlevel);
   }
+  out << next;
+}
+
+void
+printer_rep::generate_toc_item (tree t) {
+  string title= t[0][0]->label;
+  string level= t[0][1]->label;
+  string page = t[0][2]->label;
+  string x    = t[0][3]->label;
+  string y    = t[0][4]->label;
+  string utit = cork_to_utf8 (title);
+  string htit = "<FEFF" * utf8_to_hex_string (utit) * ">";
+  print ("[");
+  if (N(t) > 1) {
+    print ("/Count");
+    print (as_string (1 - N(t)));
+  }
+  print ("/Page");
+  print (page);
+  print ("/View [ /XYZ");
+  print (x);
+  print (y);
+  print ("0");
+  print ("]");
+  print ("/Title " * htit);
+  print ("/OUT pdfmark");
+  cr ();
+  for (int i=1; i<N(t); i++)
+    generate_toc_item (t[i]);
+}
+
+void
+printer_rep::generate_toc () {
+  tree rew (TUPLE);
+  int i=0;
+  while (i < N(toc))
+    structure_toc (toc, i, rew, "0");
+  for (i=0; i<N(rew); i++)
+    generate_toc_item (rew[i]);
 }
 
 /******************************************************************************
