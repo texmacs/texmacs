@@ -287,7 +287,7 @@ concater_rep::typeset_ornament (tree t, path ip) {
   int   a     = env->alpha;
   color sunny = env->get_color  (ORNAMENT_SUNNY_COLOR);
   color shadow= env->get_color  (ORNAMENT_SHADOW_COLOR);
-  ornament_parameters ps (shape, tst, w, xpad, ypad,
+  ornament_parameters ps (shape, tst, w, w, w, w, xpad, ypad, xpad, ypad,
 			  brush (bg, a), brush (xc, a), sunny, shadow);
   box   b     = typeset_as_concat (env, t[0], descend (ip, 0));
   box   xb;

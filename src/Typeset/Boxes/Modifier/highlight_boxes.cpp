@@ -26,7 +26,7 @@
 
 struct highlight_box_rep: public change_box_rep {
   tree shape;
-  SI lw, bw, rw, tw, xpad, ypad;
+  SI lw, bw, rw, tw, lpad, bpad, rpad, tpad;
   brush bg, xc, sunc, shad, old_bg;
   pencil old_pen;
   bool ring;
@@ -35,40 +35,45 @@ struct highlight_box_rep: public change_box_rep {
   void pre_display (renderer &ren);
   void post_display (renderer &ren);
   void display_classic (renderer& ren);
+  void display_ring (renderer& ren);
   void display_rounded (renderer& ren, int style);
 };
 
 highlight_box_rep::highlight_box_rep (path ip, box b, box xb,
 				      ornament_parameters ps):
   change_box_rep (ip, true), shape (ps->shape),
-  lw (ps->w), bw (ps->w), rw (ps->w), tw (ps->w),
-  xpad (ps->xpad), ypad (ps->ypad),
+  lw (ps->lw), bw (ps->bw), rw (ps->rw), tw (ps->tw),
+  lpad (ps->lpad), bpad (ps->bpad), rpad (ps->rpad), tpad (ps->tpad),
   bg (ps->bg), xc (ps->xc), sunc (ps->sunc), shad (ps->shad)
 {
+  if (shape == "ring") {
+    lpad= lpad + rpad;
+    rpad= 0;
+  }
   SI offx= 0, offy= 0;
-  insert (b, lw + xpad, 0);
+  insert (b, lw + lpad, 0);
   if (!is_nil (xb)) {
     offx= b->x1 - xb->x1;
-    offy= b->y2 - xb->y1 + bw + 2*ypad;
-    insert (xb, offx + lw + xpad, offy);
+    offy= b->y2 - xb->y1 + bw + bpad + tpad;
+    insert (xb, offx + lw + lpad, offy);
   }
   position ();
   x1= b->x1;
-  y1= b->y1 - bw - ypad;
-  x2= b->x2 + lw + rw + 2 * xpad;
-  y2= b->y2 + tw + ypad;
-  x3= min (x1, b->x3 + lw + xpad);
+  y1= b->y1 - bw - bpad;
+  x2= b->x2 + lw + rw + lpad + rpad;
+  y2= b->y2 + tw + tpad;
+  x3= min (x1, b->x3 + lw + lpad);
   y3= min (y1, b->y3);
-  x4= max (x2, b->x4 + lw + xpad);
+  x4= max (x2, b->x4 + lw + lpad);
   y4= max (y2, b->y4);
   if (!is_nil (xb)) {
     x1= min (x1, offx + xb->x1);
-    y1= min (y1, offy + xb->y1 - bw - ypad);
-    x2= max (x2, offx + xb->x2 + lw + rw + 2 * xpad);
-    y2= max (y2, offy + xb->y2 + tw + ypad);
-    x3= min (x3, min (x1, offx + xb->x3 + lw + xpad));
+    y1= min (y1, offy + xb->y1 - bw - bpad);
+    x2= max (x2, offx + xb->x2 + lw + rw + lpad + rpad);
+    y2= max (y2, offy + xb->y2 + tw + tpad);
+    x3= min (x3, min (x1, offx + xb->x3 + lw + lpad));
     y3= min (y3, min (y1, offy + xb->y3));
-    x4= max (x4, max (x2, offx + xb->x4 + lw + xpad));
+    x4= max (x4, max (x2, offx + xb->x4 + lw + lpad));
     y4= max (y4, max (y2, offy + xb->y4));
   }
   finalize ();
@@ -82,11 +87,13 @@ highlight_box_rep::pre_display (renderer& ren) {
   else if (shape == "rounded") display_rounded (ren, ROUNDED_NORMAL);
   else if (shape == "angular") display_rounded (ren, ROUNDED_ANGULAR);
   else if (shape == "cartoon") display_rounded (ren, ROUNDED_CARTOON);
+  else if (shape == "ring");
   else display_classic (ren);
 }
 
 void
 highlight_box_rep::post_display (renderer &ren) {
+  if (shape == "ring") display_ring (ren);
   ren->set_background (old_bg);
   ren->set_pencil (old_pen);
 }
@@ -128,13 +135,28 @@ highlight_box_rep::display_classic (renderer& ren) {
     ren->set_pencil (pencil (sunc, TW));
     ren->line (x1+LW, m, x2-RW, m);
   }
+}
 
-  if (shape == "ring") {
-    static url u= resolve (url ("$TEXMACS_PATH/misc/images/ring-binder-1.png"));
-    tree p (PATTERN, as_string (u), "100%", "40@", "#fff0");
-    ren->set_background (brush (p));
-    ren->clear_pattern (x1, y1, x1 + LW + 2*xpad, y2);
+/******************************************************************************
+* Ring ornaments
+******************************************************************************/
+
+void
+highlight_box_rep::display_ring (renderer& ren) {
+  SI LW= lw, BW= bw, RW= rw, TW= tw;
+  if (!ren->is_printer ()) {
+    SI pixel= ren->pixel;
+    LW= ((lw + pixel - 1) / pixel) * pixel;
+    BW= ((bw + pixel - 1) / pixel) * pixel;
+    RW= ((rw + pixel - 1) / pixel) * pixel;
+    TW= ((tw + pixel - 1) / pixel) * pixel;
   }
+
+  static url u= resolve (url ("$TEXMACS_PATH/misc/images/ring-binder-1.png"));
+  tree p (PATTERN, as_string (u), "100%", "40@", "#fff0");
+  ren->set_background (brush (p));
+  if ((y1+2*BW) < (y2-2*TW))
+    ren->clear_pattern (x1, y1+2*BW, x1 + LW + 2*lpad, y2-2*TW);
 }
 
 /******************************************************************************
@@ -188,7 +210,9 @@ rounded (array<SI>& xs, array<SI>& ys,
 
 void
 highlight_box_rep::display_rounded (renderer& ren, int style) {
-  SI W= max (max (lw, rw), max (bw, tw));
+  SI W   = max (max (lw, rw), max (bw, tw));
+  SI xpad= min (lpad, rpad);
+  SI ypad= min (bpad, tpad);
   SI Rx= (SI) (2 * xpad);
   SI Ry= (SI) (2 * ypad);
   if (style == ROUNDED_ANGULAR) {
@@ -272,8 +296,8 @@ title_box (path ip, box b, box xb, ornament_parameters ps) {
   box bb   = highlight_box (ip, shb, box (), bb_ps);
   SI  tx   = ((bb->x1 + bb->x2) >> 1) - ((tit->x1 + tit->x2) >> 1);
   SI  ty   = (at_top? bb->y2: bb->y1) - tit->y1 - shift;
-  if (at_left ) tx= bb->x1 - tit->x1 + ps->w + 2 * ps->xpad;
-  if (at_right) tx= bb->x2 - tit->x2 - ps->w - 2 * ps->xpad;
+  if (at_left ) tx= bb->x1 - tit->x1 + ps->lw + 2 * ps->lpad;
+  if (at_right) tx= bb->x2 - tit->x2 - ps->rw - 2 * ps->rpad;
   array<box> bs;
   array<SI>  x, y;
   bs << bb << tit;
@@ -297,6 +321,8 @@ highlight_box (path ip, box b, box xb, ornament_parameters ps) {
 
 box
 highlight_box (path ip, box b, SI w, brush c, brush sunc, brush shad) {
-  ornament_parameters ps ("classic", "classic", w, 0, 0, c, c, sunc, shad);
+  ornament_parameters ps ("classic", "classic",
+                          w, w, w, w, 0, 0, 0, 0,
+                          c, c, sunc, shad);
   return highlight_box (ip, b, box (), ps);
 }

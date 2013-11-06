@@ -25,13 +25,17 @@ class frame;
 class ornament_parameters_rep: concrete_struct {
 public:
   tree shape, tst;
-  SI w, xpad, ypad;
+  SI lw, bw, rw, tw, lpad, bpad, rpad, tpad;
   brush bg, xc, sunc, shad;
 
   inline
-  ornament_parameters_rep (tree shape2, tree tst2, SI w2, SI xpad2, SI ypad2,
+  ornament_parameters_rep (tree shape2, tree tst2,
+                           SI lw2, SI bw2, SI rw2, SI tw2,
+                           SI lpad2, SI bpad2, SI rpad2, SI tpad2,
 			   brush bg2, brush xc2, brush sunc2, brush shad2):
-    shape (shape2), tst (tst2), w (w2), xpad (xpad2), ypad (ypad2),
+    shape (shape2), tst (tst2),
+    lw (lw2), bw (bw2), rw (rw2), tw (tw2),
+    lpad (lpad2), bpad (bpad2), rpad (rpad2), tpad (tpad2),
     bg (bg2), xc (xc2), sunc (sunc2), shad (shad2) {}
   friend class ornament_parameters;
 };
@@ -39,16 +43,22 @@ public:
 class ornament_parameters {
   CONCRETE(ornament_parameters);
   inline
-  ornament_parameters (tree shape2, tree tst2, SI w2, SI xpad2, SI ypad2,
+  ornament_parameters (tree shape2, tree tst2,
+                       SI lw2, SI bw2, SI rw2, SI tw2,
+                       SI lpad2, SI bpad2, SI rpad2, SI tpad2,
 		       brush bg2, brush xc2, brush sunc2, brush shad2):
-    rep (tm_new<ornament_parameters_rep> (shape2, tst2, w2, xpad2, ypad2,
+    rep (tm_new<ornament_parameters_rep> (shape2, tst2,
+                                          lw2, bw2, rw2, tw2,
+                                          lpad2, bpad2, rpad2, tpad2,
 					  bg2, xc2, sunc2, shad2)) {}
 };
 CONCRETE_CODE(ornament_parameters);
 
 inline ornament_parameters
 copy (ornament_parameters ps) {
-  return ornament_parameters (ps->shape, ps->tst, ps->w, ps->xpad, ps->ypad,
+  return ornament_parameters (ps->shape, ps->tst,
+                              ps->lw, ps->bw, ps->rw, ps->tw,
+                              ps->lpad, ps->bpad, ps->rpad, ps->tpad,
 			      ps->bg, ps->xc, ps->sunc, ps->shad);
 }
 
