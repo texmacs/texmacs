@@ -26,9 +26,10 @@
 
 struct highlight_box_rep: public change_box_rep {
   tree shape;
-  SI w, xpad, ypad;
+  SI lw, bw, rw, tw, xpad, ypad;
   brush bg, xc, sunc, shad, old_bg;
   pencil old_pen;
+  bool ring;
   highlight_box_rep (path ip, box b, box xb, ornament_parameters ps);
   operator tree () { return tree (TUPLE, "highlight", (tree) bs[0]); }
   void pre_display (renderer &ren);
@@ -40,33 +41,34 @@ struct highlight_box_rep: public change_box_rep {
 highlight_box_rep::highlight_box_rep (path ip, box b, box xb,
 				      ornament_parameters ps):
   change_box_rep (ip, true), shape (ps->shape),
-  w (ps->w), xpad (ps->xpad), ypad (ps->ypad),
+  lw (ps->w), bw (ps->w), rw (ps->w), tw (ps->w),
+  xpad (ps->xpad), ypad (ps->ypad),
   bg (ps->bg), xc (ps->xc), sunc (ps->sunc), shad (ps->shad)
 {
   SI offx= 0, offy= 0;
-  insert (b, w + xpad, 0);
+  insert (b, lw + xpad, 0);
   if (!is_nil (xb)) {
     offx= b->x1 - xb->x1;
-    offy= b->y2 - xb->y1 + w + 2*ypad;
-    insert (xb, offx + w + xpad, offy);
+    offy= b->y2 - xb->y1 + bw + 2*ypad;
+    insert (xb, offx + lw + xpad, offy);
   }
   position ();
   x1= b->x1;
-  y1= b->y1 - w - ypad;
-  x2= b->x2 + 2 * (w + xpad);
-  y2= b->y2 + w + ypad;
-  x3= min (x1, b->x3 + w + xpad);
+  y1= b->y1 - bw - ypad;
+  x2= b->x2 + lw + rw + 2 * xpad;
+  y2= b->y2 + tw + ypad;
+  x3= min (x1, b->x3 + lw + xpad);
   y3= min (y1, b->y3);
-  x4= max (x2, b->x4 + w + xpad);
+  x4= max (x2, b->x4 + lw + xpad);
   y4= max (y2, b->y4);
   if (!is_nil (xb)) {
     x1= min (x1, offx + xb->x1);
-    y1= min (y1, offy + xb->y1 - w - ypad);
-    x2= max (x2, offx + xb->x2 + 2 * (w + xpad));
-    y2= max (y2, offy + xb->y2 + w + ypad);
-    x3= min (x3, min (x1, offx + xb->x3 + w + xpad));
+    y1= min (y1, offy + xb->y1 - bw - ypad);
+    x2= max (x2, offx + xb->x2 + lw + rw + 2 * xpad);
+    y2= max (y2, offy + xb->y2 + tw + ypad);
+    x3= min (x3, min (x1, offx + xb->x3 + lw + xpad));
     y3= min (y3, min (y1, offy + xb->y3));
-    x4= max (x4, max (x2, offx + xb->x4 + w + xpad));
+    x4= max (x4, max (x2, offx + xb->x4 + lw + xpad));
     y4= max (y4, max (y2, offy + xb->y4));
   }
   finalize ();
@@ -95,40 +97,43 @@ highlight_box_rep::post_display (renderer &ren) {
 
 void
 highlight_box_rep::display_classic (renderer& ren) {
-  SI W= w;
+  SI LW= lw, BW= bw, RW= rw, TW= tw;
   if (!ren->is_printer ()) {
     SI pixel= ren->pixel;
-    W= ((w + pixel - 1) / pixel) * pixel;
+    LW= ((lw + pixel - 1) / pixel) * pixel;
+    BW= ((bw + pixel - 1) / pixel) * pixel;
+    RW= ((rw + pixel - 1) / pixel) * pixel;
+    TW= ((tw + pixel - 1) / pixel) * pixel;
   }
   ren->set_background (bg);
-  ren->clear_pattern (x1+W, y1+W, x2-W, y2-W);
+  ren->clear_pattern (x1+LW, y1+BW, x2-RW, y2-TW);
   if (N(bs)>1) {
     SI m= (sy2(0) + sy1(1)) >> 1;
     ren->set_background (xc);
-    ren->clear_pattern (x1+W, m, x2-W, y2-W);    
+    ren->clear_pattern (x1+LW, m, x2-RW, y2-TW);    
   }
   ren->set_brush (sunc);
-  ren->fill (x1  , y2-W, x2  , y2  );
-  ren->fill (x1  , y1  , x1+W, y2  );
+  ren->fill (x1  , y2-TW, x2   , y2  );
+  ren->fill (x1  , y1   , x1+LW, y2  );
   ren->set_brush (shad);
-  ren->fill (x1+W, y1  , x2  , y1+W);
-  ren->fill (x2-W, y1  , x2  , y2-W);
+  ren->fill (x1+LW, y1  , x2  , y1+BW);
+  ren->fill (x2-RW, y1  , x2  , y2-TW);
   if (sunc != shad) {
-    ren->draw_triangle (x1, y1, x1+W, y1, x1+W, y1+W);
-    ren->draw_triangle (x2, y2, x2, y2-W, x2-W, y2-W);
+    ren->draw_triangle (x1, y1, x1+LW, y1   , x1+LW, y1+BW);
+    ren->draw_triangle (x2, y2, x2   , y2-TW, x2-RW, y2-TW);
   }
-  if (N(bs)>1 && W>0 && sunc == shad) {
+  if (N(bs)>1 && TW>0 && sunc == shad) {
     SI m= (sy2(0) + sy1(1)) >> 1;
     ren->set_brush (sunc);
-    ren->set_pencil (pencil (sunc, W));
-    ren->line (x1+W, m, x2-W, m);
+    ren->set_pencil (pencil (sunc, TW));
+    ren->line (x1+LW, m, x2-RW, m);
   }
 
   if (shape == "ring") {
     static url u= resolve (url ("$TEXMACS_PATH/misc/images/ring-binder-1.png"));
     tree p (PATTERN, as_string (u), "100%", "40@", "#fff0");
     ren->set_background (brush (p));
-    ren->clear_pattern (x1-xpad, y1, x1+xpad, y2);
+    ren->clear_pattern (x1, y1, x1 + LW + 2*xpad, y2);
   }
 }
 
@@ -183,20 +188,20 @@ rounded (array<SI>& xs, array<SI>& ys,
 
 void
 highlight_box_rep::display_rounded (renderer& ren, int style) {
-  SI W = w;
-  SI Rx= (SI) (2 * (xpad-W));
-  SI Ry= (SI) (2 * (ypad-W));
+  SI W= max (max (lw, rw), max (bw, tw));
+  SI Rx= (SI) (2 * xpad);
+  SI Ry= (SI) (2 * ypad);
   if (style == ROUNDED_ANGULAR) {
-    Rx= (SI) ((3 * (xpad-W)) / 2);
-    Ry= (SI) ((3 * (ypad-W)) / 2);
+    Rx= (SI) ((3 * xpad) / 2);
+    Ry= (SI) ((3 * ypad) / 2);
   }
   if (style == ROUNDED_CARTOON) {
-    Rx= (SI) (xpad-W);
-    Ry= (SI) (ypad-W);
+    Rx= (SI) xpad;
+    Ry= (SI) ypad;
   }
   //if (!ren->is_printer ()) {
   //  SI pixel= ren->pixel;
-  //  W= ((w + (2*pixel) - 1) / (2*pixel)) * (2*pixel);
+  //  W= ((W + (2*pixel) - 1) / (2*pixel)) * (2*pixel);
   //}
   SI l1= x1+(W>>1);
   SI l2= x1+Rx;
