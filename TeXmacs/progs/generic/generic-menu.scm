@@ -122,12 +122,12 @@
         (else "string")))
 
 (define (type->width type)
-  (cond ((== type "boolean") "3em")
-        ((== type "integer") "3em")
-        ((== type "length") "3em")
-        ((== type "numeric") "3em")
+  (cond ((== type "boolean") "5em")
+        ((== type "integer") "5em")
+        ((== type "length") "5em")
+        ((== type "numeric") "5em")
         ((== type "identifier") "8em")
-        ((== type "duration") "3em")
+        ((== type "duration") "5em")
         (else "1w")))
 
 (tm-define (inputter-active? t type)
