@@ -30,7 +30,7 @@
 
   <assign|session-ring|<pattern|$TEXMACS_PATH/misc/images/ring-binder-2.png|100%||#fff0>>
 
-  <assign|session-ring-width|1fn>
+  <assign|session-ring-width|0.75fn>
 
   <assign|session-color|#fdfdfa>
 
@@ -64,9 +64,9 @@
 
   \;
 
-  <assign|fold-bar-color|pastel brown>
+  <assign|fold-title-color|#e0d0b0>
 
-  <assign|fold-title-color|pastel orange>
+  <assign|fold-bar-color|pastel brown>
 
   <\active*>
     <\src-comment>
@@ -126,7 +126,7 @@
     </with>
   </macro>>
 
-  <assign|generic-output*|<macro|body|<with|par-mode|left|math-display|true|<ornament-indent|<plus|<value|session-ring-width>|<value|session-left-indent>>|<value|session-right-indent>|<value|output-vpadding>|<value|output-vpadding>|<with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>|<arg|body>>>>>>
+  <assign|generic-output*|<macro|body|<with|par-mode|justify|par-flexibility|2.0|par-hyphen|normal|math-display|true|<ornament-indent|<plus|<value|session-ring-width>|<value|session-left-indent>>|<value|session-right-indent>|<value|output-vpadding>|<value|output-vpadding>|<with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>|<arg|body>>>>>>
 
   <assign|generic-output|<macro|body|<generic-output*|<arg|body>>>>
 
@@ -150,17 +150,49 @@
     </src-comment>
   </active*>
 
-  <assign|folded|<macro|x|y|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|1|cell-rborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0.5ln>|<cwith|1|1|1|1|cell-tborder|0.5ln>|<cwith|1|1|2|2|cell-lborder|0.5ln>|<cwith|1|1|2|2|cell-rborder|0.5ln>|<cwith|1|1|2|2|cell-bborder|0.5ln>|<cwith|1|1|2|2|cell-tborder|0.5ln>|<cwith|1|1|2|2|cell-hpart|1>|<cwith|1|1|2|2|cell-background|<value|fold-title-color>>|<cwith|1|1|1|1|cell-background|<value|fold-bar-color>>|<cwith|1|1|2|2|cell-hyphen|t>|<cwith|1|1|2|2|cell-bsep|0.25fn>|<cwith|1|1|2|2|cell-tsep|0.25fn>|<cwith|1|1|2|2|cell-lsep|0.5fn>|<cwith|1|1|2|2|cell-rsep|0.5fn>|<table|<row|<cell|<action||(mouse-unfold)|<arg|x>>>|<\cell>
-    <arg|x>
-  </cell>>>>>>>>
+  <assign|folded|<\macro|x|y>
+    <\with|ornament-shape|classic|ornament-color|<value|fold-title-color>|ornament-hpadding|<tuple|<plus|<value|session-ring-width>|<value|session-left-indent>>|<value|session-right-indent>>|ornament-border|<value|input-border>|ornament-sunny-color|<value|input-border-color>>
+      <\ornament>
+        <\surround||<right-flush><action|<math|\<Downarrow\>>|(mouse-unfold)|<arg|x>>>
+          <\with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>>
+            <arg|x>
+          </with>
+        </surround>
+      </ornament>
+    </with>
+  </macro>>
 
-  <assign|unfolded|<macro|x|y|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<tabular|<tformat|<twith|table-width|1par>|<cwith|1|-1|2|2|cell-hpart|1>|<cwith|1|1|2|2|cell-lborder|0.5ln>|<cwith|1|1|2|2|cell-rborder|0.5ln>|<cwith|1|1|2|2|cell-bborder|0.5ln>|<cwith|1|1|2|2|cell-tborder|0.5ln>|<cwith|1|-1|1|1|cell-lborder|0.5ln>|<cwith|1|-1|1|1|cell-rborder|0.5ln>|<cwith|1|-1|1|1|cell-bborder|0.5ln>|<cwith|1|-1|1|1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0ln>|<cwith|2|2|1|1|cell-tborder|0ln>|<cwith|2|2|2|2|cell-lsep|0fn>|<cwith|2|2|2|2|cell-rsep|0fn>|<cwith|2|2|2|2|cell-hyphen|t>|<cwith|1|1|2|2|cell-hyphen|t>|<cwith|1|1|2|2|cell-bsep|0.25fn>|<cwith|1|1|2|2|cell-tsep|0.25fn>|<cwith|2|2|2|2|cell-tsep|0.5fn>|<cwith|1|-1|1|1|cell-background|<value|fold-bar-color>>|<cwith|1|1|2|2|cell-background|<value|fold-title-color>>|<cwith|2|2|2|2|cell-bsep|0fn>|<cwith|1|1|2|2|cell-lsep|0.5fn>|<cwith|1|1|2|2|cell-rsep|0.5fn>|<table|<row|<cell|<action||(mouse-fold)|<arg|x>>>|<\cell>
-    <arg|x>
-  </cell>>|<row|<cell|<action||(mouse-fold)|<arg|x>>>|<\cell>
-    <arg|y>
-  </cell>>>>>>>>
+  <assign|subsession|<\macro|body>
+    <\ornament-indent|<value|session-ring-width>|<value|session-right-indent>|<value|output-vpadding>|<value|output-vpadding>>
+      <\with|old-shape|<value|ornament-shape>|old-color|<value|ornament-color>|old-hpadding|<value|ornament-hpadding>|old-vpadding|<value|ornament-vpadding>|old-border|<value|ornament-border>|ornament-shape|ring|ornament-color|<value|session-ring>|ornament-hpadding|<over|<value|session-ring-width>|2>|ornament-vpadding|0spc>
+        <\ornament>
+          <with|ornament-shape|classic|ornament-color|<value|session-color>|ornament-border|<value|session-border>|ornament-hpadding|0spc|<\ornament>
+            <\surround||<right-flush>>
+              <\with|ornament-shape|<value|old-shape>|ornament-color|<value|old-color>|ornament-border|<value|old-border>|ornament-hpadding|<value|old-hpadding>|ornament-vpadding|<value|old-vpadding>>
+                <arg|body>
+              </with>
+            </surround>
+          </ornament>>
+        </ornament>
+      </with>
+    </ornament-indent>
+  </macro>>
 
-  \;
+  <assign|unfolded|<\macro|x|y>
+    <\with|ornament-shape|classic|ornament-color|<value|fold-title-color>|ornament-hpadding|<tuple|<plus|<value|session-ring-width>|<value|session-left-indent>>|<value|session-right-indent>>|ornament-border|<value|input-border>|ornament-sunny-color|<value|input-border-color>>
+      <\ornament>
+        <\surround||<right-flush><action|<math|\<Uparrow\>>|(mouse-fold)|<arg|x>>>
+          <\with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>>
+            <arg|x>
+          </with>
+        </surround>
+      </ornament>
+
+      <\subsession>
+        <arg|y>
+      </subsession>
+    </with>
+  </macro>>
 </body>
 
 <\initial>
