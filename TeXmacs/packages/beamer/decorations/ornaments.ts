@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.0.7.21>
 
 <style|source>
 
@@ -38,6 +38,30 @@
   <assign|ridged-paper|<macro|x|<with|ornament-color|<pattern|paper-ridged-medium.png|*3/5|*3/5|#e8dcdc>|ornament-sunny-color|#f0e0e0|ornament-shadow-color|#d0a0a0|<ornament|<arg|x>>>>>
 
   <assign|rough-paper|<macro|x|<with|ornament-color|<pattern|paper-rough-medium.png|*3/5|*3/5|#dcdcdc>|ornament-sunny-color|#e0e0e0|ornament-shadow-color|#a0a0a0|<ornament|<arg|x>>>>>
+
+  <\active*>
+    <\src-comment>
+      Ringed ornaments
+    </src-comment>
+  </active*>
+
+  <assign|ring-width|1fn>
+
+  <assign|ring-indent|1fn>
+
+  <assign|ring-ornamented|<\macro|body>
+    <\with|old-shape|<value|ornament-shape>|old-hpadding|<value|ornament-hpadding>|old-vpadding|<value|ornament-vpadding>|ornament-shape|ring|ornament-hpadding|<over|<value|ring-width>|2>|ornament-vpadding|0spc>
+      <\ornamented>
+        <with|ornament-shape|<value|old-shape>|ornament-hpadding|<tuple|<plus|<value|old-hpadding>|<over|<value|ring-width>|2>|<value|ring-indent>>|<value|old-hpadding>>|ornament-vpadding|<value|old-vpadding>|<\ornament>
+          <\surround||<right-flush>>
+            <\with|ornament-hpadding|<value|old-hpadding>>
+              <arg|body>
+            </with>
+          </surround>
+        </ornament>>
+      </ornamented>
+    </with>
+  </macro>>
 </body>
 
 <\initial>
