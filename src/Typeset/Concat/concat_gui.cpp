@@ -277,20 +277,9 @@ concater_rep::typeset_canvas (tree t, path ip) {
 void
 concater_rep::typeset_ornament (tree t, path ip) {
   if (N(t) != 1 && N(t) != 2) { typeset_error (t, ip); return; }
-  tree  shape = env->read       (ORNAMENT_SHAPE);
-  tree  tst   = env->read       (ORNAMENT_TITLE_STYLE);
-  SI    w     = env->get_length (ORNAMENT_BORDER);
-  SI    xpad  = env->get_length (ORNAMENT_HPADDING);
-  SI    ypad  = env->get_length (ORNAMENT_VPADDING);
-  tree  bg    = env->read       (ORNAMENT_COLOR);
-  tree  xc    = env->read       (ORNAMENT_EXTRA_COLOR);
-  int   a     = env->alpha;
-  color sunny = env->get_color  (ORNAMENT_SUNNY_COLOR);
-  color shadow= env->get_color  (ORNAMENT_SHADOW_COLOR);
-  ornament_parameters ps (shape, tst, w, w, w, w, xpad, ypad, xpad, ypad,
-			  brush (bg, a), brush (xc, a), sunny, shadow);
-  box   b     = typeset_as_concat (env, t[0], descend (ip, 0));
-  box   xb;
+  ornament_parameters ps= env->get_ornament_parameters ();
+  box b= typeset_as_concat (env, t[0], descend (ip, 0));
+  box xb;
   if (N(t) == 2) xb= typeset_as_concat (env, t[1], descend (ip, 1));
   print (highlight_box (ip, b, xb, ps));
 }

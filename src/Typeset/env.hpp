@@ -113,6 +113,7 @@
 ******************************************************************************/
 
 class edit_env;
+class ornament_parameters;
 class edit_env_rep: public concrete_struct {
 public:
   drd_info&                    drd;
@@ -388,6 +389,7 @@ public:
   void local_end (hashmap<string,tree>& prev_back);
 
   /* updating environment variables */
+  ornament_parameters get_ornament_parameters ();
   void   update_page_pars ();
   void   get_page_pars (SI& w, SI& h, SI& ww, SI& hh,
 			SI& odd, SI& even, SI& top, SI& bottom);

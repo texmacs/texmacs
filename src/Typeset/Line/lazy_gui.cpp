@@ -203,20 +203,9 @@ lazy_ornament_rep::produce (lazy_type request, format fm) {
 
 lazy
 make_lazy_ornament (edit_env env, tree t, path ip) {
-  tree  shape = env->read       (ORNAMENT_SHAPE);
-  tree  tst   = env->read       (ORNAMENT_TITLE_STYLE);
-  SI    w     = env->get_length (ORNAMENT_BORDER);
-  SI    xpad  = env->get_length (ORNAMENT_HPADDING);
-  SI    ypad  = env->get_length (ORNAMENT_VPADDING);
-  tree  bg    = env->read       (ORNAMENT_COLOR);
-  tree  xc    = env->read       (ORNAMENT_EXTRA_COLOR);
-  int   a     = env->alpha;
-  color sunny = env->get_color  (ORNAMENT_SUNNY_COLOR);
-  color shadow= env->get_color  (ORNAMENT_SHADOW_COLOR);
-  ornament_parameters ps (shape, tst, w, w, w, w, xpad, ypad, xpad, ypad,
-			  brush (bg, a), brush (xc, a), sunny, shadow);
-  lazy  par   = make_lazy (env, t[0], descend (ip, 0));
-  box   xb;
+  ornament_parameters ps= env->get_ornament_parameters ();
+  lazy par= make_lazy (env, t[0], descend (ip, 0));
+  box  xb;
   if (N(t) == 2) xb= typeset_as_concat (env, t[1], descend (ip, 1));
   return lazy_ornament (env, par, xb, ip, ps);
 }

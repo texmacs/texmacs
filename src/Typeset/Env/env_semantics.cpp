@@ -12,6 +12,7 @@
 #include "env.hpp"
 #include "page_type.hpp"
 #include "typesetter.hpp"
+#include "Boxes/construct.hpp"
 
 /******************************************************************************
 * Retrieving the page size
@@ -256,6 +257,26 @@ edit_env_rep::get_page_pars (SI& w, SI& h, SI& width, SI& height,
   cout << "bot   = " << (bot/PIXEL) << "\n";
   cout << "cols  = " << nr_cols << "\n";
   */
+}
+
+/******************************************************************************
+* Retrieving ornament parameters
+******************************************************************************/
+
+ornament_parameters
+edit_env_rep::get_ornament_parameters () {
+  tree  shape = read       (ORNAMENT_SHAPE);
+  tree  tst   = read       (ORNAMENT_TITLE_STYLE);
+  SI    w     = get_length (ORNAMENT_BORDER);
+  SI    xpad  = get_length (ORNAMENT_HPADDING);
+  SI    ypad  = get_length (ORNAMENT_VPADDING);
+  tree  bg    = read       (ORNAMENT_COLOR);
+  tree  xc    = read       (ORNAMENT_EXTRA_COLOR);
+  int   a     = alpha;
+  color sunny = get_color  (ORNAMENT_SUNNY_COLOR);
+  color shadow= get_color  (ORNAMENT_SHADOW_COLOR);
+  return ornament_parameters (shape, tst, w, w, w, w, xpad, ypad, xpad, ypad,
+                              brush (bg, a), brush (xc, a), sunny, shadow);
 }
 
 /******************************************************************************

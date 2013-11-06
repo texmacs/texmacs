@@ -261,27 +261,15 @@ bridge_ornament (typesetter ttt, tree st, path ip) {
 
 void
 bridge_ornament_rep::my_typeset (int desired_status) {
-  tree  shape = env->read       (ORNAMENT_SHAPE);
-  tree  tst   = env->read       (ORNAMENT_TITLE_STYLE);
-  SI    w     = env->get_length (ORNAMENT_BORDER);
-  SI    xpad  = env->get_length (ORNAMENT_HPADDING);
-  SI    ypad  = env->get_length (ORNAMENT_VPADDING);
-  tree  bg    = env->read       (ORNAMENT_COLOR);
-  tree  xc    = env->read       (ORNAMENT_EXTRA_COLOR);
-  int   a     = env->alpha;
-  color sunny = env->get_color  (ORNAMENT_SUNNY_COLOR);
-  color shadow= env->get_color  (ORNAMENT_SHADOW_COLOR);
-  ornament_parameters ps (shape, tst, w, w, w, w, xpad, ypad, xpad, ypad,
-			  brush (bg, a), brush (xc, a), sunny, shadow);
-
-  SI    l     = env->get_length (PAR_LEFT ) + ps->lw + ps->lpad;
-  SI    r     = env->get_length (PAR_RIGHT) + ps->rw + ps->rpad;
-  with        = tuple (PAR_LEFT , tree (TMLEN, as_string (l))) *
-                tuple (PAR_RIGHT, tree (TMLEN, as_string (r)));
-  box   b     = typeset_ornament (desired_status);
-  box   xb;
+  ornament_parameters ps= env->get_ornament_parameters ();
+  SI   l = env->get_length (PAR_LEFT ) + ps->lw + ps->lpad;
+  SI   r = env->get_length (PAR_RIGHT) + ps->rw + ps->rpad;
+  with   = tuple (PAR_LEFT , tree (TMLEN, as_string (l))) *
+           tuple (PAR_RIGHT, tree (TMLEN, as_string (r)));
+  box  b = typeset_ornament (desired_status);
+  box  xb;
   if (N(st) == 2) xb= typeset_as_concat (env, st[1], descend (ip, 1));
-  box   hb    = highlight_box (ip, b, xb, ps);
-  box   mb    = move_box (decorate (ip), hb, -l, 0);
+  box  hb= highlight_box (ip, b, xb, ps);
+  box  mb= move_box (decorate (ip), hb, -l, 0);
   insert_ornament (remember_box (decorate (ip), mb));
 }
