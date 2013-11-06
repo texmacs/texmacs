@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.0.7.21>
 
 <style|<tuple|source|std>>
 
@@ -242,6 +242,14 @@
   <assign|compact|<\macro|body>
     <\surround||<right-flush>>
       <\with|par-par-sep|0fn>
+        <arg|body>
+      </with>
+    </surround>
+  </macro>>
+
+  <assign|ultra-compact|<\macro|body>
+    <\surround||<right-flush>>
+      <\with|par-sep|0fn|par-ver-sep|0fn|par-line-sep|0fn|par-par-sep|0fn>
         <arg|body>
       </with>
     </surround>

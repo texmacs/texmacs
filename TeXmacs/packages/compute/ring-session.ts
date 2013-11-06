@@ -40,6 +40,8 @@
 
   <assign|session-right-indent|0.5fn>
 
+  <assign|session-sep|0.1fn>
+
   \;
 
   <assign|input-color|pastel yellow>
@@ -47,6 +49,8 @@
   <assign|input-border|0ln,1ln,0ln,1ln>
 
   <assign|input-border-color|<tuple|dark grey>>
+
+  <assign|output-vpadding|0.5fn>
 
   \;
 
@@ -72,7 +76,7 @@
 
   <assign|generic-session|<\macro|name|body>
     <\padded>
-      <\with|par-first|0fn|par-par-sep|0fn|old-shape|<value|ornament-shape>|old-color|<value|ornament-color>|old-hpadding|<value|ornament-hpadding>|old-vpadding|<value|ornament-vpadding>|old-border|<value|ornament-border>|ornament-shape|ring|ornament-color|<value|session-ring>|ornament-hpadding|<over|<value|session-ring-width>|2>|ornament-vpadding|0spc>
+      <\with|session-par-sep|<value|par-sep>|session-par-ver-sep|<value|par-ver-sep>|par-sep|<value|session-sep>|par-ver-sep|<value|session-sep>|par-first|0fn|par-par-sep|0fn|par-line-sep|0fn|old-shape|<value|ornament-shape>|old-color|<value|ornament-color>|old-hpadding|<value|ornament-hpadding>|old-vpadding|<value|ornament-vpadding>|old-border|<value|ornament-border>|ornament-shape|ring|ornament-color|<value|session-ring>|ornament-hpadding|<over|<value|session-ring-width>|2>|ornament-vpadding|0spc>
         <\ornament>
           <with|ornament-shape|classic|ornament-color|<value|session-color>|ornament-border|<value|session-border>|ornament-hpadding|0spc|<\ornament>
             <\surround||<right-flush>>
@@ -114,23 +118,25 @@
     <\with|ornament-shape|classic|ornament-color|<value|input-color>|ornament-hpadding|<tuple|<plus|<value|session-ring-width>|<value|session-left-indent>>|<value|session-right-indent>>|ornament-border|<value|input-border>|ornament-sunny-color|<value|input-border-color>>
       <\ornament>
         <\surround|<id-function|<with|color|<value|generic-prompt-color>|<arg|prompt>>>|<right-flush>>
-          <arg|body>
+          <\with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>>
+            <arg|body>
+          </with>
         </surround>
       </ornament>
     </with>
   </macro>>
 
-  <assign|generic-output*|<macro|body|<with|par-mode|left|math-display|true|<ornament-indent|<plus|<value|session-ring-width>|<value|session-left-indent>>|<value|session-right-indent>|0spc|0spc|<arg|body>>>>>
+  <assign|generic-output*|<macro|body|<with|par-mode|left|math-display|true|<ornament-indent|<plus|<value|session-ring-width>|<value|session-left-indent>>|<value|session-right-indent>|<value|output-vpadding>|<value|output-vpadding>|<with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>|<arg|body>>>>>>
 
-  <assign|generic-output|<macro|body|<surround|<vspace*|0.75fn>|<vspace|0.75fn>|<generic-output*|<arg|body>>>>>
+  <assign|generic-output|<macro|body|<generic-output*|<arg|body>>>>
 
-  <assign|generic-textput|<macro|body|<ornament-indent|<plus|<value|session-ring-width>|<value|session-left-indent>>|<value|session-right-indent>|0spc|0spc|<arg|body>>>>
+  <assign|generic-textput|<macro|body|<ornament-indent|<plus|<value|session-ring-width>|<value|session-left-indent>>|<value|session-right-indent>|<value|output-vpadding>|<value|output-vpadding>|<with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>|<arg|body>>>>>
 
   <assign|generic-errput|<\macro|body>
     <\with|ornament-shape|classic|ornament-color|<value|error-color>|ornament-border|<value|error-border>|ornament-sunny-color|<value|error-border-color>>
       <\ornament>
         <\surround||<right-flush>>
-          <\with|color|<value|generic-error-color>>
+          <\with|color|<value|generic-error-color>|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>>
             <arg|body>
           </with>
         </surround>
