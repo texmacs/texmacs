@@ -84,9 +84,10 @@ concater_rep::flag_ok (string s, path ip, color col) {
   SI h= 4*env->fn->wfn/5;
   int r, g, b, a;
   get_rgb_color (col, r, g, b, a);
-  r= 255- (255 - r)/6;
-  g= 255- (255 - g)/6;
-  b= 255- (255 - b)/6;
+  //r= 255- (255 - r)/6;
+  //g= 255- (255 - g)/6;
+  //b= 255- (255 - b)/6;
+  a= a/6;
   color light= rgb_color (r, g, b, a);
   int info= env->info_level;
   if (info == INFO_MINIMAL || info == INFO_SHORT) {
