@@ -69,10 +69,10 @@ highlight_box_rep::highlight_box_rep (path ip, box b, box xb,
   y1= b->y1 - bpad;
   x2= b->x2 + lpad + rpad;
   y2= b->y2 + tpad;
-  x3= min (x1, b->x3 + lpad);
-  y3= min (y1, b->y3);
-  x4= max (x2, b->x4 + lpad);
-  y4= max (y2, b->y4);
+  x3= min (x1 - lx, b->x3 + lpad);
+  y3= min (y1 - bx, b->y3);
+  x4= max (x2 + rx, b->x4 + lpad);
+  y4= max (y2 + tx, b->y4);
   if (!is_nil (xb)) {
     x1= min (x1, offx + xb->x1);
     y1= min (y1, offy + xb->y1 - bpad);
@@ -126,55 +126,57 @@ highlight_box_rep::display_classic (renderer& ren) {
     ren->set_background (xc);
     ren->clear_pattern (x1+LW, m, x2-RW, y2-TW);    
   }
+  SI X1= x1 - lx, Y1= y1 - bx;
+  SI X2= x2 + rx, Y2= y2 + tx;
   if (N(bc) == 4) {
     ren->set_brush (bc[0]);
-    ren->fill (x1   , y1   , x1+LW, y2   );
+    ren->fill (X1   , Y1   , X1+LW, Y2   );
     ren->set_brush (bc[1]);
-    ren->fill (x1+LW, y1   , x2   , y1+BW);
+    ren->fill (X1+LW, Y1   , X2   , Y1+BW);
     ren->set_brush (bc[2]);
-    ren->fill (x2-RW, y1   , x2   , y2-TW);
+    ren->fill (X2-RW, Y1   , X2   , Y2-TW);
     ren->set_brush (bc[3]);  
-    ren->fill (x1   , y2-TW, x2   , y2   );
+    ren->fill (X1   , Y2-TW, X2   , Y2   );
     if (bc[0] != bc[1]) {
       ren->set_brush (bc[1]);
-      ren->draw_triangle (x1, y1, x1+LW, y1   , x1+LW, y1+BW);
+      ren->draw_triangle (X1, Y1, X1+LW, Y1   , X1+LW, Y1+BW);
     }
     if (bc[2] != bc[1]) {
       ren->set_brush (bc[1]);
-      ren->draw_triangle (x2, y1, x2-RW, y1   , x2-RW, y1+BW);
+      ren->draw_triangle (X2, Y1, X2-RW, Y1   , X2-RW, Y1+BW);
     }
     if (bc[2] != bc[3]) {
       ren->set_brush (bc[2]);
-      ren->draw_triangle (x2, y2, x2   , y2-TW, x2-RW, y2-TW);
+      ren->draw_triangle (X2, Y2, X2   , Y2-TW, X2-RW, Y2-TW);
     }
     if (bc[0] != bc[3]) {
       ren->set_brush (bc[0]);
-      ren->draw_triangle (x1, y2, x1   , y2-TW, x1+LW, y2-TW);
+      ren->draw_triangle (X1, Y2, X1   , Y2-TW, X1+LW, Y2-TW);
     }
     if (N(bs)>1 && TW>0 && bc[0] == bc[3] && bc[2] == bc[3]) {
       SI m= (sy2(0) + sy1(1)) >> 1;
       ren->set_brush (bc[3]);
       ren->set_pencil (pencil (bc[3], TW));
-      ren->line (x1+LW, m, x2-RW, m);
+      ren->line (X1+LW, m, X2-RW, m);
     }
   }
   if (N(bc) == 8) {
     ren->set_brush (bc[0]);
-    ren->fill (x1   , y1+BW, x1+LW, y2-TW);
+    ren->fill (X1   , Y1+BW, X1+LW, Y2-TW);
     ren->set_brush (bc[1]);
-    ren->fill (x1+LW, y1   , x2-RW, y1+BW);
+    ren->fill (X1+LW, Y1   , X2-RW, Y1+BW);
     ren->set_brush (bc[2]);
-    ren->fill (x2-RW, y1+BW, x2   , y2-TW);
+    ren->fill (X2-RW, Y1+BW, X2   , Y2-TW);
     ren->set_brush (bc[3]);  
-    ren->fill (x1+RW, y2-TW, x2-RW, y2   );
+    ren->fill (X1+RW, Y2-TW, X2-RW, Y2   );
     ren->set_brush (bc[4]);
-    ren->fill (x1   , y1   , x1+LW, y1+BW);
+    ren->fill (X1   , Y1   , X1+LW, Y1+BW);
     ren->set_brush (bc[5]);
-    ren->fill (x2-RW, y1   , x2   , y1+BW);
+    ren->fill (X2-RW, Y1   , X2   , Y1+BW);
     ren->set_brush (bc[6]);
-    ren->fill (x2-RW, y2-TW, x2   , y2   );
+    ren->fill (X2-RW, Y2-TW, X2   , Y2   );
     ren->set_brush (bc[7]);
-    ren->fill (x1   , y2-TW, x1+LW, y2   );
+    ren->fill (X1   , Y2-TW, X1+LW, Y2   );
   }
 }
 
