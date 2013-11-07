@@ -23,7 +23,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (style-category p)
-  (:require (in? p (list "varsession")))
+  (:require (in? p (list "varsession" "ring-session")))
   :session-theme)
 
 (tm-define (style-category-precedes? x y)
