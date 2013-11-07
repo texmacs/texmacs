@@ -34,21 +34,23 @@
 
   <assign|session-color|#fdfdfa>
 
-  <assign|session-border|1ln,0ln,1ln,0ln>
+  <assign|session-border|2ln>
+
+  <assign|session-border-color|<tuple|pastel grey|grey>>
 
   <assign|session-left-indent|0.5fn>
 
   <assign|session-right-indent|0.5fn>
 
-  <assign|session-sep|0.1fn>
+  <assign|session-sep|2ln>
 
   \;
 
   <assign|input-color|pastel yellow>
 
-  <assign|input-border|0ln,1ln,0ln,1ln>
+  <assign|input-border|2ln>
 
-  <assign|input-border-color|<tuple|dark grey>>
+  <assign|input-border-color|<tuple|pastel grey|grey>>
 
   <assign|output-vpadding|0.5fn>
 
@@ -76,11 +78,11 @@
 
   <assign|generic-session|<\macro|name|body>
     <\padded>
-      <\with|session-par-sep|<value|par-sep>|session-par-ver-sep|<value|par-ver-sep>|par-sep|<value|session-sep>|par-ver-sep|<value|session-sep>|par-first|0fn|par-par-sep|0fn|par-line-sep|0fn|old-shape|<value|ornament-shape>|old-color|<value|ornament-color>|old-hpadding|<value|ornament-hpadding>|old-vpadding|<value|ornament-vpadding>|old-border|<value|ornament-border>|ornament-shape|ring|ornament-color|<value|session-ring>|ornament-hpadding|<over|<value|session-ring-width>|2>|ornament-vpadding|0spc>
+      <\with|session-par-sep|<value|par-sep>|session-par-ver-sep|<value|par-ver-sep>|par-sep|<value|session-sep>|par-ver-sep|<value|session-sep>|par-first|0fn|par-par-sep|0fn|par-line-sep|0fn|old-shape|<value|ornament-shape>|old-color|<value|ornament-color>|old-hpadding|<value|ornament-hpadding>|old-vpadding|<value|ornament-vpadding>|old-border|<value|ornament-border>|old-sunny-color|<value|ornament-sunny-color>|ornament-shape|ring|ornament-color|<value|session-ring>|ornament-hpadding|<over|<value|session-ring-width>|2>|ornament-vpadding|0spc>
         <\ornament>
-          <with|ornament-shape|classic|ornament-color|<value|session-color>|ornament-border|<value|session-border>|ornament-hpadding|0spc|<\ornament>
+          <with|ornament-shape|classic|ornament-color|<value|session-color>|ornament-border|<value|session-border>|ornament-sunny-color|<value|session-border-color>|ornament-hpadding|0spc|<\ornament>
             <\surround||<right-flush>>
-              <\with|ornament-shape|<value|old-shape>|ornament-color|<value|old-color>|ornament-border|<value|old-border>|ornament-hpadding|<value|old-hpadding>|ornament-vpadding|<value|old-vpadding>>
+              <\with|ornament-shape|<value|old-shape>|ornament-color|<value|old-color>|ornament-border|<value|old-border>|ornament-sunny-color|<value|old-sunny-color>|ornament-hpadding|<value|old-hpadding>|ornament-vpadding|<value|old-vpadding>>
                 <arg|body>
               </with>
             </surround>
@@ -164,11 +166,11 @@
 
   <assign|subsession|<\macro|body>
     <\ornament-indent|<value|session-ring-width>|<value|session-right-indent>|<value|output-vpadding>|<value|output-vpadding>>
-      <\with|old-shape|<value|ornament-shape>|old-color|<value|ornament-color>|old-hpadding|<value|ornament-hpadding>|old-vpadding|<value|ornament-vpadding>|old-border|<value|ornament-border>|ornament-shape|ring|ornament-color|<value|session-ring>|ornament-hpadding|<over|<value|session-ring-width>|2>|ornament-vpadding|0spc>
+      <\with|old-shape|<value|ornament-shape>|old-color|<value|ornament-color>|old-hpadding|<value|ornament-hpadding>|old-vpadding|<value|ornament-vpadding>|old-border|<value|ornament-border>|old-sunny-color|<value|ornament-sunny-color>|ornament-shape|ring|ornament-color|<value|session-ring>|ornament-hpadding|<over|<value|session-ring-width>|2>|ornament-vpadding|0spc>
         <\ornament>
-          <with|ornament-shape|classic|ornament-color|<value|session-color>|ornament-border|<value|session-border>|ornament-hpadding|0spc|<\ornament>
+          <with|ornament-shape|classic|ornament-color|<value|session-color>|ornament-border|<value|session-border>|ornament-sunny-color|<value|session-border-color>|ornament-hpadding|0spc|<\ornament>
             <\surround||<right-flush>>
-              <\with|ornament-shape|<value|old-shape>|ornament-color|<value|old-color>|ornament-border|<value|old-border>|ornament-hpadding|<value|old-hpadding>|ornament-vpadding|<value|old-vpadding>>
+              <\with|ornament-shape|<value|old-shape>|ornament-color|<value|old-color>|ornament-border|<value|old-border>|ornament-hpadding|<value|old-hpadding>|ornament-sunny-color|<value|old-sunny-color>|ornament-vpadding|<value|old-vpadding>>
                 <arg|body>
               </with>
             </surround>

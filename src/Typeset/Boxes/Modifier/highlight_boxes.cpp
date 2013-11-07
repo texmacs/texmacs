@@ -111,6 +111,8 @@ highlight_box_rep::post_display (renderer &ren) {
 
 void
 highlight_box_rep::display_classic (renderer& ren) {
+  SI X1= x1 - lx, Y1= y1 - bx;
+  SI X2= x2 + rx, Y2= y2 + tx;
   SI LW= lw, BW= bw, RW= rw, TW= tw;
   if (!ren->is_printer ()) {
     SI pixel= ren->pixel;
@@ -120,14 +122,12 @@ highlight_box_rep::display_classic (renderer& ren) {
     TW= ((tw + pixel - 1) / pixel) * pixel;
   }
   ren->set_background (bg);
-  ren->clear_pattern (x1+LW, y1+BW, x2-RW, y2-TW);
+  ren->clear_pattern (X1+LW, Y1+BW, X2-RW, Y2-TW);
   if (N(bs)>1) {
     SI m= (sy2(0) + sy1(1)) >> 1;
     ren->set_background (xc);
-    ren->clear_pattern (x1+LW, m, x2-RW, y2-TW);    
+    ren->clear_pattern (X1+LW, m, X2-RW, Y2-TW);    
   }
-  SI X1= x1 - lx, Y1= y1 - bx;
-  SI X2= x2 + rx, Y2= y2 + tx;
   if (N(bc) == 4) {
     ren->set_brush (bc[0]);
     ren->fill (X1   , Y1   , X1+LW, Y2   );
@@ -268,14 +268,14 @@ highlight_box_rep::display_rounded (renderer& ren, int style) {
   //  SI pixel= ren->pixel;
   //  W= ((W + (2*pixel) - 1) / (2*pixel)) * (2*pixel);
   //}
-  SI l1= x1+(W>>1);
-  SI l2= x1+Rx;
-  SI r1= x2-(W>>1);
-  SI r2= x2-Rx;
-  SI b1= y1+(W>>1);
-  SI b2= y1+Ry;
-  SI t1= y2-(W>>1);
-  SI t2= y2-Ry;
+  SI l1= x1 + (W>>1) - lx;
+  SI l2= x1 + Rx;
+  SI r1= x2 - (W>>1) + rx;
+  SI r2= x2 - Rx;
+  SI b1= y1 + (W>>1) - bx;
+  SI b2= y1 + Ry;
+  SI t1= y2 - (W>>1) + tx;
+  SI t2= y2 - Ry;
   array<SI> xs, ys;
   rounded (xs, ys, l2, b2, l1, b2, l2, b1, true, true, style);
   rounded (xs, ys, r2, b2, r2, b1, r1, b2, true, true, style);
