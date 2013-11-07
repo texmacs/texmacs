@@ -254,7 +254,7 @@ initialize_color_decodings (string lan_name) {
   lan->color_decoding (31)= get_preference (pfx * "declare_identifier", "#0000c0");
   lan->color_decoding (32)= get_preference (pfx * "declare_function", "#0000c0");
   lan->color_decoding (33)= get_preference (pfx * "declare_type", "#0000c0");
-  lan->color_decoding (34)= get_preference (pfx * "declare_category", "magenta");
+  lan->color_decoding (34)= get_preference (pfx * "declare_category", "#d030d0");
   lan->color_decoding (35)= get_preference (pfx * "declare_module", "#0000c0");
   lan->color_decoding (40)= get_preference (pfx * "operator", "#8b008b");
   lan->color_decoding (41)= get_preference (pfx * "operator_openclose", "#B02020");

@@ -19,7 +19,7 @@ scheme_language_rep::scheme_language_rep (string name):
   eval ("(use-modules (utils misc tm-keywords))");
   list<string> l= as_list_string (eval ("(map symbol->string highlight-any)"));
   while (!is_nil (l)) {
-    colored (l->item)= decode_color("scheme", encode_color("keyword"));
+    colored (l->item)= decode_color ("scheme", encode_color ("keyword"));
     l= l->next;
   }
 }
@@ -74,7 +74,7 @@ scheme_language_rep::get_color (tree t, int start, int end) {
     case ';':
       if (i>1 && s[i-1] == '\\' && s[i-2] == '#')
         break;
-      return decode_color("scheme", encode_color("comment"));
+      return decode_color ("scheme", encode_color ("comment"));
     case '\042':
       if (i>1 && s[i-1] == '\\' && s[i-2] == '#')
         break;
@@ -83,20 +83,21 @@ scheme_language_rep::get_color (tree t, int start, int end) {
 	if (s[i] == '\\' && i < start) i += 2;
 	else i++;
       if (i >= start)
-        return decode_color("scheme", encode_color("constant_string"));
+        return decode_color ("scheme", encode_color ("constant_string"));
       break;
     }
   if (is_numeric (s[start]))
-    return decode_color("scheme", encode_color("constant_number"));
+    return decode_color ("scheme", encode_color ("constant_number"));
   if (s[start] == '\042' || s[start] == '#')
-    return decode_color("scheme", encode_color("constant_string"));
+    return decode_color ("scheme", encode_color ("constant_string"));
   if (s[start] == ':')
-    return decode_color("scheme", encode_color("declare_category"));
+    return decode_color ("scheme", encode_color ("declare_category"));
   string r= s (start, end);
   if (!colored->contains (r)) {
     colored (r)= "";
     if (as_bool (call ("defined?", symbol_object (tm_decode (r)))))
-      colored (r)= decode_color("scheme", encode_color("variable_identifier"));
+      colored (r)= decode_color ("scheme",
+				 encode_color ("variable_identifier"));
   }
   return colored[r];
 }

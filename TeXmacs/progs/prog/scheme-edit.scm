@@ -194,6 +194,6 @@
   ("syntax:scheme:declare_identifier" "#0000c0" notify-scheme-pref)
   ("syntax:scheme:declare_function" "#0000c0" notify-scheme-pref)
   ("syntax:scheme:declare_type" "#0000c0" notify-scheme-pref)
-  ("syntax:scheme:declare_category" "magenta" notify-scheme-pref)
+  ("syntax:scheme:declare_category" "#d030d0" notify-scheme-pref)
   ("syntax:scheme:declare_module" "#0000c0" notify-scheme-pref))
 

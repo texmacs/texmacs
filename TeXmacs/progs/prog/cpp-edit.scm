@@ -50,6 +50,6 @@
   ("syntax:cpp:declare_identifier" "#0000c0" notify-cpp-pref)
   ("syntax:cpp:declare_function" "#0000c0" notify-cpp-pref)
   ("syntax:cpp:declare_type" "#0000c0" notify-cpp-pref)
-  ("syntax:cpp:declare_category" "magenta" notify-cpp-pref)
+  ("syntax:cpp:declare_category" "#d030d0" notify-cpp-pref)
   ("syntax:cpp:declare_module" "#0000c0" notify-cpp-pref))
 
