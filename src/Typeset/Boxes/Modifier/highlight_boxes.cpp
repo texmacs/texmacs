@@ -26,7 +26,9 @@
 
 struct highlight_box_rep: public change_box_rep {
   tree shape;
-  SI lw, bw, rw, tw, lpad, bpad, rpad, tpad;
+  SI lw, bw, rw, tw;
+  SI lx, bx, rx, tx;
+  SI lpad, bpad, rpad, tpad;
   brush bg, xc;
   array<brush> bc;
   brush old_bg;
@@ -45,6 +47,8 @@ highlight_box_rep::highlight_box_rep (path ip, box b, box xb,
 				      ornament_parameters ps):
   change_box_rep (ip, true), shape (ps->shape),
   lw (ps->lw), bw (ps->bw), rw (ps->rw), tw (ps->tw),
+  lx ((SI) (ps->lext * lw)), bx ((SI) (ps->bext * bw)),
+  rx ((SI) (ps->rext * rw)), tx ((SI) (ps->text * tw)),
   lpad (ps->lpad), bpad (ps->bpad), rpad (ps->rpad), tpad (ps->tpad),
   bg (ps->bg), xc (ps->xc), bc (ps->border)
 {
