@@ -262,8 +262,8 @@ bridge_ornament (typesetter ttt, tree st, path ip) {
 void
 bridge_ornament_rep::my_typeset (int desired_status) {
   ornament_parameters ps= env->get_ornament_parameters ();
-  SI   l = env->get_length (PAR_LEFT ) + ps->lw + ps->lpad;
-  SI   r = env->get_length (PAR_RIGHT) + ps->rw + ps->rpad;
+  SI   l = env->get_length (PAR_LEFT ) + ps->lpad;
+  SI   r = env->get_length (PAR_RIGHT) + ps->rpad;
   with   = tuple (PAR_LEFT , tree (TMLEN, as_string (l))) *
            tuple (PAR_RIGHT, tree (TMLEN, as_string (r)));
   box  b = typeset_ornament (desired_status);

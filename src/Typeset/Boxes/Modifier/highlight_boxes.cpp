@@ -58,29 +58,29 @@ highlight_box_rep::highlight_box_rep (path ip, box b, box xb,
     rpad= 0;
   }
   SI offx= 0, offy= 0;
-  insert (b, lw + lpad, 0);
+  insert (b, lpad, 0);
   if (!is_nil (xb)) {
     offx= b->x1 - xb->x1;
-    offy= b->y2 - xb->y1 + bw + bpad + tpad;
-    insert (xb, offx + lw + lpad, offy);
+    offy= b->y2 - xb->y1 + bpad + tpad;
+    insert (xb, offx + lpad, offy);
   }
   position ();
   x1= b->x1;
-  y1= b->y1 - bw - bpad;
-  x2= b->x2 + lw + rw + lpad + rpad;
-  y2= b->y2 + tw + tpad;
-  x3= min (x1, b->x3 + lw + lpad);
+  y1= b->y1 - bpad;
+  x2= b->x2 + lpad + rpad;
+  y2= b->y2 + tpad;
+  x3= min (x1, b->x3 + lpad);
   y3= min (y1, b->y3);
-  x4= max (x2, b->x4 + lw + lpad);
+  x4= max (x2, b->x4 + lpad);
   y4= max (y2, b->y4);
   if (!is_nil (xb)) {
     x1= min (x1, offx + xb->x1);
-    y1= min (y1, offy + xb->y1 - bw - bpad);
-    x2= max (x2, offx + xb->x2 + lw + rw + lpad + rpad);
-    y2= max (y2, offy + xb->y2 + tw + tpad);
-    x3= min (x3, min (x1, offx + xb->x3 + lw + lpad));
+    y1= min (y1, offy + xb->y1 - bpad);
+    x2= max (x2, offx + xb->x2 + lpad + rpad);
+    y2= max (y2, offy + xb->y2 + tpad);
+    x3= min (x3, min (x1, offx + xb->x3 + lpad));
     y3= min (y3, min (y1, offy + xb->y3));
-    x4= max (x4, max (x2, offx + xb->x4 + lw + lpad));
+    x4= max (x4, max (x2, offx + xb->x4 + lpad));
     y4= max (y4, max (y2, offy + xb->y4));
   }
   finalize ();

@@ -169,7 +169,7 @@ lazy_ornament_rep::query (lazy_type request, format fm) {
   if ((request == LAZY_BOX) && (fm->type == QUERY_VSTREAM_WIDTH)) {
     format body_fm= par->query (request, fm);
     format_width fmw= (format_width) body_fm;
-    SI dw= ps->lw + ps->rw + ps->lpad + ps->rpad;
+    SI dw= ps->lpad + ps->rpad;
     return make_format_width (fmw->width + dw);
   }
   return lazy_rep::query (request, fm);
@@ -182,7 +182,7 @@ lazy_ornament_rep::produce (lazy_type request, format fm) {
     format bfm= fm;
     if (request == LAZY_VSTREAM) {
       format_vstream fvs= (format_vstream) fm;
-      SI dw= ps->lw + ps->rw + ps->lpad + ps->rpad;
+      SI dw= ps->lpad + ps->rpad;
       bfm= make_format_width (fvs->width - dw);
     }
     box b = (box) par->produce (LAZY_BOX, bfm);
