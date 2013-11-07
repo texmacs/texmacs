@@ -283,6 +283,7 @@ edit_env_rep::get_ornament_parameters () {
   tree  shadow= read (ORNAMENT_SHADOW_COLOR);
   int   a     = alpha;
   tree  w     = read (ORNAMENT_BORDER);
+  tree  ext   = read (ORNAMENT_SWELL);
   tree  xpad  = read (ORNAMENT_HPADDING);
   tree  ypad  = read (ORNAMENT_VPADDING);
 
@@ -302,12 +303,23 @@ edit_env_rep::get_ornament_parameters () {
   if (is_atomic (w) && occurs (",", w->label))
     w= tuplify (w);
   if (is_func (w, TUPLE, 4)) {
-    lw= as_length (w[0]);
-    bw= as_length (w[1]);
-    rw= as_length (w[2]);
-    tw= as_length (w[3]);
+    lw= ((as_length (w[0]) >> 1) << 1);
+    bw= ((as_length (w[1]) >> 1) << 1);
+    rw= ((as_length (w[2]) >> 1) << 1);
+    tw= ((as_length (w[3]) >> 1) << 1);
   }
-  else lw= bw= rw= tw= as_length (w);
+  else lw= bw= rw= tw= ((as_length (w) >> 1) << 1);
+
+  double lx, bx, rx, tx;
+  if (is_atomic (ext) && occurs (",", ext->label))
+    ext= tuplify (ext);
+  if (is_func (ext, TUPLE, 4)) {
+    lx= as_double (ext[0]);
+    bx= as_double (ext[1]);
+    rx= as_double (ext[2]);
+    tx= as_double (ext[3]);
+  }
+  else lx= bx= rx= tx= as_double (ext);
 
   SI lpad, rpad;
   if (is_atomic (xpad) && occurs (",", xpad->label))
@@ -328,7 +340,9 @@ edit_env_rep::get_ornament_parameters () {
   else bpad= tpad= as_length (ypad);
 
   return ornament_parameters (shape, tst,
-                              lw, bw, rw, tw, lpad, bpad, rpad, tpad,
+                              lw, bw, rw, tw,
+			      lx, bx, rx, tx,
+			      lpad, bpad, rpad, tpad,
                               brush (bg, a), brush (xc, a), border);
 }
 

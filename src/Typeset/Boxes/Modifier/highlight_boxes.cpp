@@ -358,7 +358,9 @@ box
 highlight_box (path ip, box b, SI w, brush c, brush sunc, brush shad) {
   array<brush> border; border << sunc << shad << shad << sunc;
   ornament_parameters ps ("classic", "classic",
-                          w, w, w, w, 0, 0, 0, 0,
+                          w, w, w, w,
+			  0.0, 0.0, 0.0, 0.0,
+			  0, 0, 0, 0,
                           c, c, border);
   return highlight_box (ip, b, box (), ps);
 }

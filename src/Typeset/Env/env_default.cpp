@@ -269,6 +269,7 @@ initialize_default_env () {
   env (ORNAMENT_SHAPE)        = "classic";      // shape of the ornament
   env (ORNAMENT_TITLE_STYLE)  = "classic";      // title style
   env (ORNAMENT_BORDER)       = "1ln";          // border width
+  env (ORNAMENT_SWELL)        = "0.5";          // border swell
   env (ORNAMENT_HPADDING)     = "1spc";         // horizontal padding of body
   env (ORNAMENT_VPADDING)     = "1spc";         // vertical padding of body
   env (ORNAMENT_COLOR)        = "";             // background color
