@@ -3660,23 +3660,81 @@ is_label (tree t) {
 }
 
 static tree
-concat_sections_and_labels (tree t) {
+remove_labels_from_sections (tree t, bool in_section, array<tree> labels) {
   if (is_atomic (t)) return t;
+  if (!in_section && is_section (t))
+    return remove_labels_from_sections (t, true, labels);
   int i, n= N(t);
   tree r (L(t));
   for (i=0; i<n; i++) {
-    if (i+1<n && is_document (t) && is_section (t[i]) && is_label (t[i+1])) {
-      r << concat (t[i], t[i+1]);
-      i++;
+    if (in_section && is_label (t[i])) labels << t[i];
+    else r << remove_labels_from_sections (t[i], in_section, labels);
+    if (!in_section && (is_concat (t) || is_document (t)) && N(labels) > 0) {
+      r << labels;
+      labels= array<tree> ();
     }
-    else if (i+2<n && is_document (t) && is_section (t[i])
-        && is_compound (t[i+1], "textm@break") && is_label (t[i+2])) {
-      r << concat (t[i], t[i+1], t[i+2]);
-      i+=2;
-    }
-    else r << concat_sections_and_labels (t[i]);
   }
   return r;
+}
+
+static tree
+remove_labels_from_sections (tree t) {
+  bool in_section= false;
+  array<tree> labels;
+  return remove_labels_from_sections (t, in_section, labels);
+}
+
+static tree
+associate_sections_and_labels (tree t, array<int> &path,
+    array<array<int> > &paths, array<tree> &labels, array<int> &sec_path) {
+  if (is_compound (t, "textm@break")) return t;
+  if (!is_concat (t) && !is_document (t)) {
+    sec_path= array<int> ();
+    return t;
+  }
+  int i, n= N(t);
+  tree r (L(t));
+  path << 0;
+  for (i=0; i<n; i++) {
+    if (is_section (t[i])) {
+      r << t[i];
+      sec_path= copy (path);
+      path[N(path)-1]++;
+    }
+    else if (N(sec_path)>0 && is_label (t[i])) {
+      labels << t[i];
+      paths << sec_path;
+    }
+    else {
+      r << associate_sections_and_labels (t[i], path, paths, labels, sec_path);
+      path[N(path)-1]++;
+    }
+  }
+  path= range(path, 0, N(path)-1);
+  return r;
+}
+
+static tree
+insert_label (tree t, tree label, array<int> path) {
+  int i= path[0];
+  path= range(path, 1, N(path));
+  if (N(t) <= i) return t;
+  else if (N(path) > 0) t[i]= insert_label (t[i], label, path);
+  else if (is_concat (t) || is_document (t))
+    t[i]= concat (t[i], label);
+  return t;
+}
+
+static tree
+concat_sections_and_labels (tree t) {
+  array<int> path, sec_path;
+  array<array<int> > paths;
+  array<tree> labels;
+  t= associate_sections_and_labels (t, path, paths, labels, sec_path);
+  int i, n=N(labels);
+  for (i=0; i<n; i++)
+    t= insert_label (t, labels[i], paths[i]);
+  return t;
 }
 
 /****************************** Finalize textm *******************************/
@@ -3688,6 +3746,7 @@ finalize_textm (tree t) {
   t= eat_space_around_control (t);
   t= remove_superfluous_newlines (t);
   t= concat_document_correct (t);
+  t= remove_labels_from_sections (t);
   t= concat_sections_and_labels (t);
   return simplify_correct (t);
 }
@@ -3808,6 +3867,7 @@ pick_paragraph_breaks (tree t, array<tree> &b) {
   t= merge_non_root_break_trees (t);
   t= merge_empty_break_trees (t);
   t= merge_non_ordered_break_trees (t);
+  t= concat_sections_and_labels (t);
   int i, n= N(t);
   tree r (L(t));
   tree u (DOCUMENT);
