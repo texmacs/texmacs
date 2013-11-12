@@ -1311,6 +1311,56 @@ latex_command_to_tree (tree t) {
     s= s(1, N(s)-1);
     return tree (APPLY, s, l2e (t[2]));
   }
+
+  if (is_tuple (t, "\\begin-part")            ||
+      is_tuple (t, "\\begin-part*")           ||
+      is_tuple (t, "\\begin-part**")          ||
+      is_tuple (t, "\\begin-chapter")         ||
+      is_tuple (t, "\\begin-chapter*")        ||
+      is_tuple (t, "\\begin-chapter**")       ||
+      is_tuple (t, "\\begin-section")         ||
+      is_tuple (t, "\\begin-section*")        ||
+      is_tuple (t, "\\begin-section**")       ||
+      is_tuple (t, "\\begin-subsection")      ||
+      is_tuple (t, "\\begin-subsection*")     ||
+      is_tuple (t, "\\begin-subsection**")    ||
+      is_tuple (t, "\\begin-subsubsection")   ||
+      is_tuple (t, "\\begin-subsubsection*")  ||
+      is_tuple (t, "\\begin-subsubsection**") ||
+      is_tuple (t, "\\begin-paragraph")       ||
+      is_tuple (t, "\\begin-paragraph*")      ||
+      is_tuple (t, "\\begin-paragraph**")     ||
+      is_tuple (t, "\\begin-subparagraph")    ||
+      is_tuple (t, "\\begin-subparagraph*")   ||
+      is_tuple (t, "\\begin-subparagraph**")  ||
+      is_tuple (t, "\\begin-subsubparagraph") ||
+      is_tuple (t, "\\begin-subsubparagraph*")||
+      is_tuple (t, "\\begin-subsubparagraph**")) {
+    string s= as_string (t[0]);
+    s= s(7, N(s));
+    t[0]= s;
+    return l2e(t);
+  }
+
+  if (is_tuple (t, "\\end-part")           ||
+      is_tuple (t, "\\end-part*")          ||
+      is_tuple (t, "\\end-chapter")        ||
+      is_tuple (t, "\\end-chapter*")       ||
+      is_tuple (t, "\\end-section")        ||
+      is_tuple (t, "\\end-section*")       ||
+      is_tuple (t, "\\end-subsection")     ||
+      is_tuple (t, "\\end-subsection*")    ||
+      is_tuple (t, "\\end-subsubsection")  ||
+      is_tuple (t, "\\end-subsubsection*") ||
+      is_tuple (t, "\\end-paragraph")      ||
+      is_tuple (t, "\\end-paragraph*")     ||
+      is_tuple (t, "\\end-subparagraph")   ||
+      is_tuple (t, "\\end-subparagraph*")  ||
+      is_tuple (t, "\\end-subsubparagraph")||
+      is_tuple (t, "\\end-subsubparagraph*")) {
+    return "";
+  }
+
   if (is_tuple (t, "\\Roman", 1)) {
     tree u= l2e (t[1]);
     if (is_compound (u)) return "";
