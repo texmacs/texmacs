@@ -1149,14 +1149,7 @@ pdf_hummus_renderer_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   //cout << "clear" << xx1 << " " << yy1 << " " << xx2 << " " << yy2 << LF;
   contentContext->q();
   select_fill_color (bg);
-#if 0
-  contentContext->m(xx1, yy1);
-  contentContext->l(xx2, yy1);
-  contentContext->l(xx2, yy2);
-  contentContext->l(xx1, yy2);
-#else
   contentContext->re(xx1, yy1, xx2-xx1, yy2-yy1);
-#endif
   contentContext->h();
   contentContext->f();
   select_fill_color (fg);
@@ -1165,22 +1158,16 @@ pdf_hummus_renderer_rep::clear (SI x1, SI y1, SI x2, SI y2) {
 
 void
 pdf_hummus_renderer_rep::fill (SI x1, SI y1, SI x2, SI y2) {
-  end_text ();
-  double xx1= to_x (min (x1, x2));
-  double yy1= to_y (min (y1, y2));
-  double xx2= to_x (max (x1, x2));
-  double yy2= to_y (max (y1, y2));
-  //cout << "fill" << xx1 << " " << yy1 << " " << xx2 << " " << yy2 << LF;
-#if 0
-  contentContext->m(xx1, yy1);
-  contentContext->l(xx2, yy1);
-  contentContext->l(xx2, yy2);
-  contentContext->l(xx1, yy2);
-#else
-  contentContext->re(xx1, yy1, xx2-xx1, yy2-yy1);
-#endif
-  contentContext->h();
-  contentContext->f();
+  if ((x1<x2) && (y1<y2)) {
+    end_text ();
+    double xx1= to_x (min (x1, x2));
+    double yy1= to_y (min (y1, y2));
+    double xx2= to_x (max (x1, x2));
+    double yy2= to_y (max (y1, y2));
+    contentContext->re(xx1, yy1, xx2-xx1, yy2-yy1);
+    contentContext->h();
+    contentContext->f();
+  }
 }
 
 
