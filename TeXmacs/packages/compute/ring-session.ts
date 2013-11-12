@@ -66,9 +66,9 @@
 
   \;
 
-  <assign|fold-title-color|#e0d0b0>
+  <assign|fold-title-color|#dcd0b8>
 
-  <assign|fold-bar-color|pastel brown>
+  <assign|fold-bar-color|#ede8dc>
 
   <\active*>
     <\src-comment>
@@ -92,22 +92,20 @@
     </padded>
   </macro>>
 
-  <\active*>
-    <\src-comment>
-      Utility macro
-    </src-comment>
-  </active*>
-
-  <assign|ornament-indent|<\macro|left|right|bottom|top|body>
-    <\with|old-shape|<value|ornament-shape>|old-color|<value|ornament-color>|old-hpadding|<value|ornament-hpadding>|old-vpadding|<value|ornament-vpadding>|old-border|<value|ornament-border>|ornament-shape|classic|ornament-color|#fff0|ornament-hpadding|<tuple|<arg|left>|<arg|right>>|ornament-vpadding|<tuple|<arg|bottom>|<arg|top>>|ornament-border|0ln>
-      <\ornament>
-        <\surround||<right-flush>>
-          <\with|ornament-shape|<value|old-shape>|ornament-color|<value|old-color>|ornament-hpadding|<value|old-hpadding>|ornament-vpadding|<value|old-vpadding>|ornament-border|<value|old-border>>
-            <arg|body>
-          </with>
-        </surround>
-      </ornament>
-    </with>
+  <assign|subsession|<\macro|body>
+    <\ornament-indent|<value|session-ring-width>|<value|session-right-indent>|<value|output-vpadding>|<value|output-vpadding>>
+      <\with|old-shape|<value|ornament-shape>|old-color|<value|ornament-color>|old-hpadding|<value|ornament-hpadding>|old-vpadding|<value|ornament-vpadding>|old-border|<value|ornament-border>|old-sunny-color|<value|ornament-sunny-color>|ornament-shape|ring|ornament-color|<value|session-ring>|ornament-hpadding|<over|<value|session-ring-width>|2>|ornament-vpadding|0spc>
+        <\ornament>
+          <with|ornament-shape|classic|ornament-color|<value|session-color>|ornament-border|<value|session-border>|ornament-sunny-color|<value|session-border-color>|ornament-hpadding|0spc|<\ornament>
+            <\surround||<right-flush>>
+              <\with|ornament-shape|<value|old-shape>|ornament-color|<value|old-color>|ornament-border|<value|old-border>|ornament-hpadding|<value|old-hpadding>|ornament-sunny-color|<value|old-sunny-color>|ornament-vpadding|<value|old-vpadding>>
+                <arg|body>
+              </with>
+            </surround>
+          </ornament>>
+        </ornament>
+      </with>
+    </ornament-indent>
   </macro>>
 
   <\active*>
@@ -162,22 +160,6 @@
         </surround>
       </ornament>
     </with>
-  </macro>>
-
-  <assign|subsession|<\macro|body>
-    <\ornament-indent|<value|session-ring-width>|<value|session-right-indent>|<value|output-vpadding>|<value|output-vpadding>>
-      <\with|old-shape|<value|ornament-shape>|old-color|<value|ornament-color>|old-hpadding|<value|ornament-hpadding>|old-vpadding|<value|ornament-vpadding>|old-border|<value|ornament-border>|old-sunny-color|<value|ornament-sunny-color>|ornament-shape|ring|ornament-color|<value|session-ring>|ornament-hpadding|<over|<value|session-ring-width>|2>|ornament-vpadding|0spc>
-        <\ornament>
-          <with|ornament-shape|classic|ornament-color|<value|session-color>|ornament-border|<value|session-border>|ornament-sunny-color|<value|session-border-color>|ornament-hpadding|0spc|<\ornament>
-            <\surround||<right-flush>>
-              <\with|ornament-shape|<value|old-shape>|ornament-color|<value|old-color>|ornament-border|<value|old-border>|ornament-hpadding|<value|old-hpadding>|ornament-sunny-color|<value|old-sunny-color>|ornament-vpadding|<value|old-vpadding>>
-                <arg|body>
-              </with>
-            </surround>
-          </ornament>>
-        </ornament>
-      </with>
-    </ornament-indent>
   </macro>>
 
   <assign|unfolded|<\macro|x|y>

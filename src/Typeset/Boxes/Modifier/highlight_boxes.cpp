@@ -33,13 +33,13 @@ struct highlight_box_rep: public change_box_rep {
   array<brush> bc;
   brush old_bg;
   pencil old_pen;
-  bool ring;
   highlight_box_rep (path ip, box b, box xb, ornament_parameters ps);
   operator tree () { return tree (TUPLE, "highlight", (tree) bs[0]); }
   void pre_display (renderer &ren);
   void post_display (renderer &ren);
   void display_classic (renderer& ren);
   void display_ring (renderer& ren);
+  void display_band (renderer& ren);
   void display_rounded (renderer& ren, int style);
 };
 
@@ -53,7 +53,7 @@ highlight_box_rep::highlight_box_rep (path ip, box b, box xb,
   bg (ps->bg), xc (ps->xc), bc (ps->border)
 {
   ASSERT (N(bc) == 4 || N(bc) == 8, "invalid number of border colors");
-  if (shape == "ring") {
+  if (shape == "ring" || shape == "band") {
     lpad= lpad + rpad;
     rpad= 0;
   }
@@ -95,12 +95,14 @@ highlight_box_rep::pre_display (renderer& ren) {
   else if (shape == "angular") display_rounded (ren, ROUNDED_ANGULAR);
   else if (shape == "cartoon") display_rounded (ren, ROUNDED_CARTOON);
   else if (shape == "ring");
+  else if (shape == "band");
   else display_classic (ren);
 }
 
 void
 highlight_box_rep::post_display (renderer &ren) {
   if (shape == "ring") display_ring (ren);
+  if (shape == "band") display_band (ren);
   ren->set_background (old_bg);
   ren->set_pencil (old_pen);
 }
@@ -198,6 +200,52 @@ highlight_box_rep::display_ring (renderer& ren) {
   ren->set_background (bg);
   if ((y1+2*BW) < (y2-2*TW))
     ren->clear_pattern (x1, y1+2*BW, x1 + LW + 2*lpad, y2-2*TW);
+}
+
+/******************************************************************************
+* Band ornaments
+******************************************************************************/
+
+void
+highlight_box_rep::display_band (renderer& ren) {
+  SI X1= x1 - lx, Y1= y1 - bx;
+  SI X2= x1 + lpad + rx, Y2= y2 + tx;
+  SI LW= lw, BW= bw, RW= rw, TW= tw;
+  if (!ren->is_printer ()) {
+    SI pixel= ren->pixel;
+    LW= ((lw + pixel - 1) / pixel) * pixel;
+    BW= ((bw + pixel - 1) / pixel) * pixel;
+    RW= ((rw + pixel - 1) / pixel) * pixel;
+    TW= ((tw + pixel - 1) / pixel) * pixel;
+  }
+  ren->set_background (bg);
+  ren->clear_pattern (X1+LW, Y1+BW, X2-RW, Y2-TW);
+  if (N(bc) == 4) {
+    ren->set_brush (bc[0]);
+    ren->fill (X1   , Y1   , X1+LW, Y2   );
+    ren->set_brush (bc[1]);
+    ren->fill (X1+LW, Y1   , X2   , Y1+BW);
+    ren->set_brush (bc[2]);
+    ren->fill (X2-RW, Y1   , X2   , Y2-TW);
+    ren->set_brush (bc[3]);  
+    ren->fill (X1   , Y2-TW, X2   , Y2   );
+    if (bc[0] != bc[1]) {
+      ren->set_brush (bc[1]);
+      ren->draw_triangle (X1, Y1, X1+LW, Y1   , X1+LW, Y1+BW);
+    }
+    if (bc[2] != bc[1]) {
+      ren->set_brush (bc[1]);
+      ren->draw_triangle (X2, Y1, X2-RW, Y1   , X2-RW, Y1+BW);
+    }
+    if (bc[2] != bc[3]) {
+      ren->set_brush (bc[2]);
+      ren->draw_triangle (X2, Y2, X2   , Y2-TW, X2-RW, Y2-TW);
+    }
+    if (bc[0] != bc[3]) {
+      ren->set_brush (bc[0]);
+      ren->draw_triangle (X1, Y2, X1   , Y2-TW, X1+LW, Y2-TW);
+    }
+  }
 }
 
 /******************************************************************************

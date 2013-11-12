@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.0.7.21>
 
-<style|source>
+<style|<tuple|source|english>>
 
 <\body>
   <active*|<\src-title>
@@ -28,15 +28,69 @@
     </src-comment>
   </active*>
 
+  <assign|session-band-width|0.75fn>
+
+  <assign|session-border|1ln>
+
+  <assign|session-border-color|<tuple|pastel grey|grey>>
+
+  <assign|session-left-indent|0.5fn>
+
+  <assign|session-right-indent|0.5fn>
+
+  <assign|session-sep|1ln>
+
+  \;
+
   <assign|input-color|pastel yellow>
+
+  <assign|input-border|1ln>
+
+  <assign|input-border-color|<tuple|pastel grey|grey>>
+
+  <assign|output-vpadding|0.5fn>
+
+  \;
 
   <assign|error-color|pastel red>
 
+  <assign|error-border|1ln>
+
+  <assign|error-border-color|<tuple|dark red>>
+
   <assign|generic-error-color|dark red>
 
-  <assign|fold-bar-color|pastel brown>
+  \;
 
-  <assign|fold-title-color|pastel orange>
+  <assign|fold-title-color|#dcd0b8>
+
+  <assign|fold-bar-color|#ede8dc>
+
+  <\active*>
+    <\src-comment>
+      New sessions
+    </src-comment>
+  </active*>
+
+  <assign|generic-session|<\macro|name|body>
+    <\padded>
+      <\with|session-par-sep|<value|par-sep>|session-par-ver-sep|<value|par-ver-sep>|par-sep|<value|session-sep>|par-ver-sep|<value|session-sep>|par-first|0fn|par-par-sep|0fn|par-line-sep|0fn>
+        <arg|body>
+      </with>
+    </padded>
+  </macro>>
+
+  <assign|subsession|<\macro|body>
+    <\with|old-shape|<value|ornament-shape>|old-color|<value|ornament-color>|old-hpadding|<value|ornament-hpadding>|old-vpadding|<value|ornament-vpadding>|old-border|<value|ornament-border>|old-sunny-color|<value|ornament-sunny-color>|ornament-shape|band|ornament-color|<value|fold-bar-color>|ornament-hpadding|<over|<value|session-band-width>|2>|ornament-vpadding|0spc>
+      <\ornament>
+        <\surround||<right-flush>>
+          <\with|ornament-shape|<value|old-shape>|ornament-color|<value|old-color>|ornament-border|<value|old-border>|ornament-hpadding|<value|old-hpadding>|ornament-sunny-color|<value|old-sunny-color>|ornament-vpadding|<value|old-vpadding>>
+            <arg|body>
+          </with>
+        </surround>
+      </ornament>
+    </with>
+  </macro>>
 
   <\active*>
     <\src-comment>
@@ -44,21 +98,35 @@
     </src-comment>
   </active*>
 
-  <assign|generic-input|<macro|prompt|body|<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|2|2|cell-hpart|1>|<cwith|1|1|2|2|cell-background|<value|input-color>>|<cwith|1|1|1|1|cell-background|<value|input-color>>|<cwith|1|1|2|2|cell-hyphen|t>|<cwith|1|1|1|1|cell-lborder|0.5ln>|<cwith|1|1|2|2|cell-rborder|0.5ln>|<cwith|1|1|2|2|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0.5ln>|<cwith|1|1|2|2|cell-bborder|0.5ln>|<cwith|1|1|1|1|cell-lsep|0.5fn>|<cwith|1|1|2|2|cell-rsep|0.5fn>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|2|2|cell-lsep|0fn>|<cwith|1|1|2|2|cell-tsep|0.25fn>|<cwith|1|1|2|2|cell-bsep|0.25fn>|<table|<row|<cell|<id-function|<with|color|<value|generic-prompt-color>|<arg|prompt>>>>|<\cell>
-    <with|color|<value|generic-input-color>|math-display|true|<arg|body>>
-  </cell>>>>>>>
-
-  <assign|generic-output*|<macro|body|<with|par-left|<plus|<value|par-left>|0.5fn>|par-right|<plus|<value|par-right>|0.5fn>|par-mode|left|math-display|true|<arg|body>>>>
-
-  <assign|generic-output|<macro|body|<surround|<vspace*|0.75fn>|<vspace|0.75fn>|<generic-output*|<arg|body>>>>>
-
-  <assign|generic-textput|<macro|body|<with|par-left|<plus|<value|par-left>|0.5fn>|par-right|<plus|<value|par-right>|0.5fn>|<arg|body>>>>
-
-  <assign|generic-errput|<macro|body|<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|1|cell-rborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0.5ln>|<cwith|1|1|1|1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-background|<value|error-color>>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
-    <\with|color|<value|generic-error-color>>
-      <arg|body>
+  <assign|generic-input|<\macro|prompt|body>
+    <\with|ornament-shape|classic|ornament-color|<value|input-color>|ornament-hpadding|<tuple|<value|session-left-indent>|<value|session-right-indent>>|ornament-border|<value|input-border>|ornament-sunny-color|<value|input-border-color>>
+      <\ornament>
+        <\surround|<id-function|<with|color|<value|generic-prompt-color>|<arg|prompt>>>|<right-flush>>
+          <\with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>>
+            <arg|body>
+          </with>
+        </surround>
+      </ornament>
     </with>
-  </cell>>>>>>>
+  </macro>>
+
+  <assign|generic-output*|<macro|body|<with|par-mode|justify|par-flexibility|2.0|par-hyphen|normal|math-display|true|<ornament-indent|<value|session-left-indent>|<value|session-right-indent>|<value|output-vpadding>|<value|output-vpadding>|<with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>|<arg|body>>>>>>
+
+  <assign|generic-output|<macro|body|<generic-output*|<arg|body>>>>
+
+  <assign|generic-textput|<macro|body|<ornament-indent|<value|session-left-indent>|<value|session-right-indent>|<value|output-vpadding>|<value|output-vpadding>|<with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>|<arg|body>>>>>
+
+  <assign|generic-errput|<\macro|body>
+    <\with|ornament-shape|classic|ornament-color|<value|error-color>|ornament-border|<value|error-border>|ornament-sunny-color|<value|error-border-color>>
+      <\ornament>
+        <\surround||<right-flush>>
+          <\with|color|<value|generic-error-color>|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>>
+            <arg|body>
+          </with>
+        </surround>
+      </ornament>
+    </with>
+  </macro>>
 
   <\active*>
     <\src-comment>
@@ -66,22 +134,37 @@
     </src-comment>
   </active*>
 
-  <assign|folded|<macro|x|y|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|1|cell-rborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0.5ln>|<cwith|1|1|1|1|cell-tborder|0.5ln>|<cwith|1|1|2|2|cell-lborder|0.5ln>|<cwith|1|1|2|2|cell-rborder|0.5ln>|<cwith|1|1|2|2|cell-bborder|0.5ln>|<cwith|1|1|2|2|cell-tborder|0.5ln>|<cwith|1|1|2|2|cell-hpart|1>|<cwith|1|1|2|2|cell-background|<value|fold-title-color>>|<cwith|1|1|1|1|cell-background|<value|fold-bar-color>>|<cwith|1|1|2|2|cell-hyphen|t>|<cwith|1|1|2|2|cell-bsep|0.25fn>|<cwith|1|1|2|2|cell-tsep|0.25fn>|<cwith|1|1|2|2|cell-lsep|0.5fn>|<cwith|1|1|2|2|cell-rsep|0.5fn>|<table|<row|<cell|<action||(mouse-unfold)|<arg|x>>>|<\cell>
-    <arg|x>
-  </cell>>>>>>>>
+  <assign|folded|<\macro|x|y>
+    <\with|ornament-shape|classic|ornament-color|<value|fold-title-color>|ornament-hpadding|<tuple|0fn|<value|session-right-indent>>|ornament-border|<value|input-border>|ornament-sunny-color|<value|input-border-color>>
+      <\ornament>
+        <\surround|<action|<resize|<space|0.4spc><math|\<Downarrow\>>|||<value|session-band-width>|>|(mouse-unfold)|<arg|x>><space|<value|session-left-indent>>|<right-flush>>
+          <\with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>>
+            <arg|x>
+          </with>
+        </surround>
+      </ornament>
+    </with>
+  </macro>>
 
-  <assign|unfolded|<macro|x|y|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<tabular|<tformat|<twith|table-width|1par>|<cwith|1|-1|2|2|cell-hpart|1>|<cwith|1|1|2|2|cell-lborder|0.5ln>|<cwith|1|1|2|2|cell-rborder|0.5ln>|<cwith|1|1|2|2|cell-bborder|0.5ln>|<cwith|1|1|2|2|cell-tborder|0.5ln>|<cwith|1|-1|1|1|cell-lborder|0.5ln>|<cwith|1|-1|1|1|cell-rborder|0.5ln>|<cwith|1|-1|1|1|cell-bborder|0.5ln>|<cwith|1|-1|1|1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0ln>|<cwith|2|2|1|1|cell-tborder|0ln>|<cwith|2|2|2|2|cell-lsep|0fn>|<cwith|2|2|2|2|cell-rsep|0fn>|<cwith|2|2|2|2|cell-hyphen|t>|<cwith|1|1|2|2|cell-hyphen|t>|<cwith|1|1|2|2|cell-bsep|0.25fn>|<cwith|1|1|2|2|cell-tsep|0.25fn>|<cwith|2|2|2|2|cell-tsep|0.5fn>|<cwith|1|-1|1|1|cell-background|<value|fold-bar-color>>|<cwith|1|1|2|2|cell-background|<value|fold-title-color>>|<cwith|2|2|2|2|cell-bsep|0fn>|<cwith|1|1|2|2|cell-lsep|0.5fn>|<cwith|1|1|2|2|cell-rsep|0.5fn>|<table|<row|<cell|<action||(mouse-fold)|<arg|x>>>|<\cell>
-    <arg|x>
-  </cell>>|<row|<cell|<action||(mouse-fold)|<arg|x>>>|<\cell>
-    <arg|y>
-  </cell>>>>>>>>
+  <assign|unfolded|<\macro|x|y>
+    <\with|ornament-shape|classic|ornament-color|<value|fold-title-color>|ornament-hpadding|<tuple|0fn|<value|session-right-indent>>|ornament-border|<value|input-border>|ornament-sunny-color|<value|input-border-color>>
+      <\ornament>
+        <\surround|<action|<resize|<space|0.4spc><math|\<Uparrow\>>|||<value|session-band-width>|>|(mouse-fold)|<arg|x>><space|<value|session-left-indent>>|<right-flush>>
+          <\with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>>
+            <arg|x>
+          </with>
+        </surround>
+      </ornament>
 
-  \;
+      <\subsession>
+        <arg|y>
+      </subsession>
+    </with>
+  </macro>>
 </body>
 
 <\initial>
   <\collection>
-    <associate|language|english>
     <associate|preamble|true>
   </collection>
 </initial>

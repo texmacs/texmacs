@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.0.7.21>
 
 <style|<tuple|source|std>>
 
@@ -197,6 +197,12 @@
     <padded|<compound|wide-std-framed-titled|<arg|body>|<arg|title>>>
   </macro>>
 
+  <\active*>
+    <\src-comment>
+      Ornamented environments.
+    </src-comment>
+  </active*>
+
   <assign|ornamented|<\macro|body>
     <padded|<\ornament>
       <\surround||<right-flush>>
@@ -216,6 +222,18 @@
   </macro>>
 
   <drd-props|ornamented-titled|arity|2|accessible|all>
+
+  <assign|ornament-indent|<\macro|left|right|bottom|top|body>
+    <\with|old-shape|<value|ornament-shape>|old-color|<value|ornament-color>|old-hpadding|<value|ornament-hpadding>|old-vpadding|<value|ornament-vpadding>|old-border|<value|ornament-border>|ornament-shape|classic|ornament-color|#fff0|ornament-hpadding|<tuple|<arg|left>|<arg|right>>|ornament-vpadding|<tuple|<arg|bottom>|<arg|top>>|ornament-border|0ln>
+      <\ornament>
+        <\surround||<right-flush>>
+          <\with|ornament-shape|<value|old-shape>|ornament-color|<value|old-color>|ornament-hpadding|<value|old-hpadding>|ornament-vpadding|<value|old-vpadding>|ornament-border|<value|old-border>>
+            <arg|body>
+          </with>
+        </surround>
+      </ornament>
+    </with>
+  </macro>>
 
   <\active*>
     <\src-comment>
