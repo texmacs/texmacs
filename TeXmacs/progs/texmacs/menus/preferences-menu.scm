@@ -125,9 +125,8 @@
         (-> "LaTeX -> TeXmacs"
             (toggle ("Import sophisticated objects as pictures"
                      "latex->texmacs:fallback-on-pictures"))
-          )
-          ;;(toggle ("Keep track of the LaTeX source code"
-          ;;         "latex->texmacs:preserve-source")))
+            (toggle ("Keep track of the LaTeX source code"
+                     "latex->texmacs:preserve-source")))
         (-> "TeXmacs -> LaTeX"
             (toggle ("Replace unrecognized styles"
                      "texmacs->latex:replace-style"))

@@ -184,10 +184,9 @@
     (meti (text "Import sophisticated objects as pictures")
       (toggle (set-boolean-preference "latex->texmacs:fallback-on-pictures" answer)
               (get-boolean-preference "latex->texmacs:fallback-on-pictures")))
-  )
-  ;;(meti (text "Keep track of the LaTeX source code")
-  ;;  (toggle (set-boolean-preference "latex->texmacs:preserve-source" answer)
-  ;;          (get-boolean-preference "latex->texmacs:preserve-source"))))
+    (meti (text "Keep track of the LaTeX source code")
+      (toggle (set-boolean-preference "latex->texmacs:preserve-source" answer)
+              (get-boolean-preference "latex->texmacs:preserve-source"))))
   ======
   (bold (text "TeXmacs -> LaTeX"))
   ===
