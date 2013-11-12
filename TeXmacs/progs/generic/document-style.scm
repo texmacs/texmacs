@@ -137,7 +137,7 @@
   ("framed-title"         "Framed titles")
   ("title-bar"            "Title bars")
 
-  ("varsession"           "Framed input fields")
+  ("framed-session"       "Framed input fields")
   ("ring-session"         "Ring binder notebook style")
 
   ("centered-program"     "Centered programs")
@@ -215,7 +215,7 @@
   ("framed-title"       "Put titles of slides in wide frames")
   ("title-bar"          "Put titles of slides in bar at extreme top of screen")
 
-  ("varsession"         "Render session inputs in frames")
+  ("framed-session"     "Render session inputs in frames")
   ("ring-session"       "Ring binder notebook style")
 
   ("centered-program"   "Use a centered rendering style for algorithms")

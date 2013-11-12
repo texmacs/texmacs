@@ -4,7 +4,7 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|var-session|1.0|session|1.0>
+    <src-package-dtd|framed-session|1.0|session|1.0>
 
     <\src-purpose>
       European-style numbering.

@@ -3755,6 +3755,33 @@ upgrade_doc_language (tree t) {
 }
 
 /******************************************************************************
+* Rename varsession package
+******************************************************************************/
+
+tree
+upgrade_varsession (tree t) {
+  int i;
+  if (is_atomic (t)) return t;
+  else if (is_compound (t, "style") || is_func (t, TUPLE)) {
+    int n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++) {
+      if (t[i] == "varsession") r[i]= "framed-session";
+      else r[i]= upgrade_varsession (t[i]);
+    }
+    return r;
+  }
+  else if (is_func (t, DOCUMENT)) {
+    int n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_varsession (t[i]);
+    return r;
+  }
+  else return t;
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -3930,6 +3957,8 @@ upgrade (tree t, string version) {
     t= upgrade_style (t, false);
     t= upgrade_doc_language (t);
   }
+  if (version_inf_eq (version, "1.0.7.21"))
+    t= upgrade_varsession (t);
 
   if (is_non_style_document (t))
     t= automatic_correct (t, version);

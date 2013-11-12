@@ -32,7 +32,7 @@
   ``dobradas'' e ``desdobradas'' com \ <shortcut|(fold)> e
   <shortcut|(unfold)>, respectivamente. A formatação gráfica das
   subsessões na tela é muito atraente quando se usa o pacote
-  <tmpackage|varsession> que está em <apply|menu|Document|Use
+  <tmpackage|framed-session> que está em <apply|menu|Document|Use
   package|Program>.
 
   Outras operações de edição úteis para campos de text/entrada/saída são
@@ -102,7 +102,7 @@
       family|<quote|ss>|Insert fields>|<with|font family|<quote|ss>|Fold
       input field>>|<pageref|idx-4>>
 
-      <tuple|<tuple|<with|font family|<quote|tt>|color|<quote|brown>|varsession>>|<pageref|idx-5>>
+      <tuple|<tuple|<with|font family|<quote|tt>|color|<quote|brown>|framed-session>>|<pageref|idx-5>>
 
       <tuple|<tuple|<with|font family|<quote|ss>|Documento>|<with|font
       family|<quote|ss>|Usar pacote>|<with|font

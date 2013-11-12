@@ -47,12 +47,12 @@
 
 (tm-define (style-includes? x y)
   (:require (and (== x "beamer")
-                 (in? y (list "title-bar" "bluish" "varsession"))))
+                 (in? y (list "title-bar" "bluish" "framed-session"))))
   #t)
 
 (tm-define (style-includes? x y)
   (:require (and (== x "old-beamer")
-                 (in? y (list "framed-title" "ridged-paper" "varsession"))))
+                 (in? y (list "framed-title" "ridged-paper" "framed-session"))))
   #t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

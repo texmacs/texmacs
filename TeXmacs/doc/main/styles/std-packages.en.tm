@@ -46,7 +46,7 @@
     provided.
   </explain>
 
-  <\explain|<tmpackage|varsession>>
+  <\explain|<tmpackage|framed-session>>
     This package may be used in order to obtain an alternative rendering of
     interactive sessions. The rendering is designed to be nice for
     interactive use, although less adequate for printing.

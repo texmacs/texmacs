@@ -78,7 +78,7 @@
 
 (tm-define (standard-options l)
   (:require (in? l field-tags))
-  (list "varsession" "ring-session"))
+  (list "framed-session" "ring-session"))
 
 (tm-menu (focus-tag-menu t)
   (:require (field-context? t))

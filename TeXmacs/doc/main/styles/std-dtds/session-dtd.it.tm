@@ -29,7 +29,7 @@
   <markup|generic-output>. Si raccomanda di basare gli ambienti specifici per
   la lingua sugli ambienti generici, che possono avere diverse
   implementazioni a seconda dello stile (per esempio, il pacchetto
-  <tmstyle|varsession>). A questo scopo, forniamo anche l'ambiente
+  <tmstyle|framed-session>). A questo scopo, forniamo anche l'ambiente
   <markup|generic-output*>, che è simile a <markup|generic-output>, tranne
   per il fatto che i margini rimangono inalterati.
 

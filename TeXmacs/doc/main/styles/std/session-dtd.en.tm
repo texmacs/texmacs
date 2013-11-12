@@ -40,7 +40,7 @@
   <markup|generic-textput> and <markup|generic-errput> are taken instead. It
   is recommended to base the language-specific environments on the generic
   ones, which may have different implementations according to the style
-  (<abbr|e.g.> the <tmstyle|varsession> package). For this purpose, we also
+  (<abbr|e.g.> the <tmstyle|framed-session> package). For this purpose, we also
   provide the <markup|generic-output*> environment, which is similar to
   <markup|generic-output>, except that margins remain unaltered.
 

@@ -43,7 +43,7 @@
   <markup|generic-output>, <markup|generic-textput> und
   <markup|generic-errput> an ihrer Stelle benutzt. Wir empfehlen,
   sprach-spezifische Konstrukte auf Basis dieser Konstrukte zu
-  implementieren. Sie können je nach \ Stil (<tmstyle|varsession> Paket in
+  implementieren. Sie können je nach \ Stil (<tmstyle|framed-session> Paket in
   \ <menu|Document|Add package|Session>) unterschiedlich implementiert sein.
   Dafür dient das Konstrukt <markup|generic-output*>, \ das
   <markup|generic-output> entspricht, bei dem aber die Ränder aber

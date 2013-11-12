@@ -50,8 +50,8 @@
     rekursiv verwendet werden.
   </explain>
 
-  <\explain|<tmpackage|varsession>>
-    <strong|= <localize|varsession>:> Dieses Paket dient dazu, interaktive
+  <\explain|<tmpackage|framed-session>>
+    <strong|= <localize|framed-session>:> Dieses Paket dient dazu, interaktive
     Sitzungen, bei denen <TeXmacs> als Schnittstelle und Oberfläche für
     andere Programme dient, anders darzustellen. Die Darstellung ist für
     interaktive Sitzungen geeignet, aber weniger gut für den Druck.

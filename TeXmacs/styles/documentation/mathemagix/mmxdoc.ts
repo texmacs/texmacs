@@ -24,7 +24,7 @@
     </src-title>
   </active*>
 
-  <use-package|tmdoc|tmdoc-web|varsession>
+  <use-package|tmdoc|tmdoc-web|framed-session>
 
   <\active*>
     <\src-comment>

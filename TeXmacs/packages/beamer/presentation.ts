@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|alt-colors|ornaments|varsession>
+  <use-package|alt-colors|ornaments|framed-session>
 
   <use-module|(dynamic fold-markup)>
 

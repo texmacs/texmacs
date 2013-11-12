@@ -25,7 +25,7 @@
   body. Subsessions can be folded and unfolded using
   <shortcut|(dynamic-previous)> <abbr|resp.> <shortcut|(dynamic-next)>.
   Subsessions have a nice rendering on the screen when using the
-  <tmpackage|varsession> package in <menu|Document|Use package|Program>.
+  <tmpackage|framed-session> package in <menu|Document|Use package|Program>.
 
   Notice that input/output fields and subsessions are foldable: when clicking
   on the prompt with the mouse, you may fold or unfold the entry to hide or

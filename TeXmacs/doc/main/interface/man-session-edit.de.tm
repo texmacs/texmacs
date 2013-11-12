@@ -37,7 +37,7 @@
   Ausgabe-Feldern. Man kann verborgene Unter-Sitzungen mit
   \ <key|M-A-up> sichtbar machen und mit
   <key|M-A-down> verbergen. Unter-Sitzungen werden
-  besonders gut dargestellt, wenn man das <tmpackage|varsession>-Paket
+  besonders gut dargestellt, wenn man das <tmpackage|framed-session>-Paket
   benutzt: <menu|Document|Add package|Program|Varsession>.
 
   Nützlich ist auch der bereits erwähnte Befehl <menu|Session|Remove
