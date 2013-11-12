@@ -3638,6 +3638,8 @@ concat_document_correct (tree t) {
     }
     r= make_document (A(r));
   }
+  else if (is_document (r) && contains_document (r))
+    r= make_document (A(r));
   return r;
 }
 
@@ -3765,8 +3767,12 @@ search_and_remove_breaks (tree t, tree &src) {
       if (!is_atomic (t[i][0]))
         src << A(t[i][0]);
     }
-    else
-      r << search_and_remove_breaks (t[i], src);
+    else {
+      tree tmp= search_and_remove_breaks (t[i], src);
+      if (is_concat (tmp) && N(tmp) == 0);
+      else if (is_concat (tmp) && N(tmp) == 1) r << tmp[0];
+      else r << tmp;
+    }
   }
   return r;
 }
@@ -3775,18 +3781,22 @@ static tree
 merge_non_root_break_trees (tree t) {
   if (is_atomic (t)) return t;
   int i, n= N(t);
-  tree src (DOCUMENT), r (L(t));
+  tree src (CONCAT), r (L(t));
   for (i=0; i<n; i++) {
     if (is_compound (t[i], "textm@break", 1)) {
         if (!is_atomic (t[i][0])) {
-          src << A(t[i][0]);
+        src << A(t[i][0]);
         t[i][0]= src;
         r << t[i];
-        src= tree (DOCUMENT);
+        src= tree (CONCAT);
       }
     }
-    else
-      r << search_and_remove_breaks (t[i], src);
+    else {
+      tree tmp= search_and_remove_breaks (t[i], src);
+      if (is_concat (tmp) && N(tmp) == 0);
+      else if (is_concat (tmp) && N(tmp) == 1) r << tmp[0];
+      else r << tmp;
+    }
   }
   return r;
 }
@@ -3799,7 +3809,7 @@ merge_empty_break_trees (tree t) {
   for (i=0; i<n; i++) {
     if (is_compound (t[i], "textm@break", 1)) {
       if (merge) {
-        src= tree (DOCUMENT);
+        src= tree (CONCAT);
         src << A(r[N(r)-1][0]);
         if (!is_atomic (t[i][0]))
           src << A(t[i][0]);
@@ -3835,7 +3845,7 @@ merge_non_ordered_break_trees (tree t) {
   if (!contains_title_or_abstract (t)) return t;
   int i, n=N(t);
   bool merge= false;
-  tree src (DOCUMENT), r (L(t));
+  tree src (CONCAT), r (L(t));
   for (i=n-1; i>=0; i--) {
     if (is_compound (t[i], "textm@break", 1)) {
       if (merge)
@@ -3875,8 +3885,7 @@ pick_paragraph_breaks (tree t, array<tree> &b) {
   for (i=0; i<n; i++) {
     if (is_compound (t[i], "textm@break", 1)) {
       string uid= as_string (id_cnt++);
-      tree src= modernize_newlines (tree (CONCAT, A(t[i][0])), false);
-      src= remove_superfluous_newlines (src);
+      tree src= modernize_newlines (t[i][0], false);
       src= concat_document_correct (src);
       src= simplify_correct (src);
       b << compound ("associate", "latex-tree-src" * uid,

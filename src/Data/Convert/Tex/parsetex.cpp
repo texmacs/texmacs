@@ -1655,16 +1655,16 @@ clean_latex_comments (string s) {
   string r = "";
   int start = 0, stop = 0;
   while (stop < N(s)) {
-    //cout << start << " : " << stop << "\n";
     stop = search_forwards ("%", stop, s);
-    //cout << s[stop -1] << s[stop ] << s[stop +1];
     if (stop == -1) {
       r << s (start, N(s));
       return r;
     }
     else if (stop == 0 || s[stop -1] != '\\') {
       r << s (start, stop) << "\n";
-      stop = search_forwards ("\n", stop, s) + 1;
+      stop = search_forwards ("\n", stop, s);
+      if (stop == -1) break;
+      stop++;
       start = stop;
       continue;
     }
@@ -1889,9 +1889,9 @@ add_paragraph_markup (string s) {
         }
       }
     }
-    else if (((i == 0 || s[i-1] != '\\') && s[i] == '{') || s[i] == '[')
+    else if ((i == 0 || s[i-1] != '\\') && s[i] == '{')
       i++, count++;
-    else if (((i == 0 || s[i-1] != '\\') && s[i] == '}') || s[i] == ']')
+    else if ((i == 0 || s[i-1] != '\\') && s[i] == '}')
       i++, count--;
     else
       i++;
