@@ -1556,7 +1556,7 @@ latex_parser::parse (string s, int change) {
   // We first cut the string into pieces at strategic places
   // This reduces the risk that the parser gets confused
   array<string> a;
-  int i, start=0, cut=0, n= N(s);
+  int i, start=0, cut=0, n= N(s), count= 0;
   for (i=0; i<n; i++)
     if (s[i]=='\n' || (s[i] == '\\' && test (s, i, "\\nextbib"))) {
       while ((i<n) && is_space (s[i])) i++;
@@ -1567,18 +1567,19 @@ latex_parser::parse (string s, int change) {
 	i += 30;
 	start= i;
       }
-      else if (test_env   (s, i, "document")        ||
-               test_env   (s, i, "abstract")        ||
-               test_macro (s, i, "\\part")          ||
-               test_macro (s, i, "\\chapter")       ||
-               test_macro (s, i, "\\section")       ||
-               test_macro (s, i, "\\subsection")    ||
-               test_macro (s, i, "\\subsubsection") ||
-               test_macro (s, i, "\\paragraph")     ||
-               test_macro (s, i, "\\subparagraph")  ||
-               test_macro (s, i, "\\nextbib")       ||
-               test_macro (s, i, "\\newcommand")    ||
-               test_macro (s, i, "\\def")) {
+      else if (count == 0 &&
+                (test_env   (s, i, "document")        ||
+                 test_env   (s, i, "abstract")        ||
+                 test_macro (s, i, "\\part")          ||
+                 test_macro (s, i, "\\chapter")       ||
+                 test_macro (s, i, "\\section")       ||
+                 test_macro (s, i, "\\subsection")    ||
+                 test_macro (s, i, "\\subsubsection") ||
+                 test_macro (s, i, "\\paragraph")     ||
+                 test_macro (s, i, "\\subparagraph")  ||
+                 test_macro (s, i, "\\nextbib")       ||
+                 test_macro (s, i, "\\newcommand")    ||
+                 test_macro (s, i, "\\def"))) {
         a << s (start, i);
         start= i;
         while (i < n && test_macro (s, i, "\\nextbib")) {
@@ -1613,7 +1614,12 @@ latex_parser::parse (string s, int change) {
           i= cut + 1;
         }
       }
+      else if (s[i] != '\n') i--;
     }
+    else if ((i == 0 || s[i-1] != '\\') && s[i] == '{')
+      count++;
+    else if ((i == 0 || s[i-1] != '\\') && s[i] == '}')
+      count--;
   a << s (start, i);
 
   // We now parse each of the pieces
