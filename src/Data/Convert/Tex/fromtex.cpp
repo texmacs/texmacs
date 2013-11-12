@@ -112,42 +112,65 @@ might_not_be_typesetted (tree t) {
 }
 
 static bool
-end_environment (tree t) {
-  return is_func (t, TUPLE) && N(t) > 0 && starts (as_string (t[0]), "\\end-");
+is_begin (tree t) {
+  return is_tuple (t) && N(t) > 0 && starts (as_string (t[0]), "\\begin-");
 }
 
 static bool
-end_block_environnement (tree t) {
-  if (!end_environment (t)) return false;
-  return t[0] != "end-matrix"   &&
-    t[0] != "\\end-math"        &&
-    t[0] != "\\end-displaymath" &&
-    t[0] != "\\end-equation"    &&
-    t[0] != "\\end-equation*"   &&
-    t[0] != "\\end-flalign"     &&
-    t[0] != "\\end-flalign*"    &&
-    t[0] != "\\end-align"       &&
-    t[0] != "\\end-align*"      &&
-    t[0] != "\\end-alignat"     &&
-    t[0] != "\\end-alignat*"    &&
-    t[0] != "\\end-gather"      &&
-    t[0] != "\\end-gather*"     &&
-    t[0] != "\\end-multline"    &&
-    t[0] != "\\end-multline*"   &&
-    t[0] != "\\end-split"       &&
-    t[0] != "\\end-eqsplit"     &&
-    t[0] != "\\end-split*"      &&
-    t[0] != "\\end-eqsplit*"    &&
-    t[0] != "\\end-pmatrix"     &&
-    t[0] != "\\end-bmatrix"     &&
-    t[0] != "\\end-vmatrix"     &&
-    t[0] != "\\end-smallmatrix" &&
-    t[0] != "\\end-cases"       &&
-    t[0] != "\\end-tabbing"     &&
-    t[0] != "\\end-array"       &&
-    t[0] != "\\end-tabular"     &&
-    t[0] != "\\end-minipage"    &&
-    t[0] != "\\end-tabular*";
+is_end (tree t) {
+  return is_tuple (t) && N(t) > 0 && starts (as_string (t[0]), "\\end-");
+}
+
+static bool
+is_block_environnement (tree t) {
+  if (!is_begin (t) && ! is_end (t)) return false;
+  string s= as_string (t[0]);
+  s= replace (s, "*", "");
+  return
+    ends (s, "abstract")         ||
+    ends (s, "center")           ||
+    ends (s, "enumerate")        ||
+    ends (s, "figure")           ||
+    ends (s, "flushleft")        ||
+    ends (s, "flushright")       ||
+    ends (s, "itemize")          ||
+    ends (s, "list")             ||
+    ends (s, "quotation")        ||
+    ends (s, "quote")            ||
+    ends (s, "sloppypar")        ||
+    ends (s, "table")            ||
+    ends (s, "tabularx")         ||
+    ends (s, "thebibliography")  ||
+    ends (s, "theindex")         ||
+    ends (s, "titlepage")        ||
+    ends (s, "trivlist")         ||
+    ends (s, "verbatim")         ||
+    ends (s, "verse")            ||
+    ends (s, "multicols")        ||
+    ends (s, "acknowledgments")  ||
+    ends (s, "answer")           ||
+    ends (s, "axiom")            ||
+    ends (s, "conjecture")       ||
+    ends (s, "convention")       ||
+    ends (s, "corollary")        ||
+    ends (s, "definition")       ||
+    ends (s, "example")          ||
+    ends (s, "exercise")         ||
+    ends (s, "notation")         ||
+    ends (s, "note")             ||
+    ends (s, "problem")          ||
+    ends (s, "proof")            ||
+    ends (s, "proposition")      ||
+    ends (s, "question")         ||
+    ends (s, "remark")           ||
+    ends (s, "solution")         ||
+    ends (s, "theorem")          ||
+    ends (s, "theorem")          ||
+    ends (s, "warning")          ||
+    ends (s, "part")             ||
+    ends (s, "chapter")          ||
+    ends (s, "section");
+
 }
 
 bool
@@ -167,8 +190,7 @@ is_sectionnal (tree t) {
          (is_func (t, TUPLE, 2) && t[0] == "\\chapter")            ||
          (is_func (t, TUPLE, 2) && t[0] == "\\chapter*")           ||
          (is_func (t, TUPLE, 3) && t[0] == "\\chapter*")           ||
-         (is_func (t, TUPLE)    && t[0] == "\\bibliography")       ||
-         end_block_environnement (t);
+         (is_func (t, TUPLE)    && t[0] == "\\bibliography");
 }
 
 tree
@@ -186,10 +208,12 @@ kill_space_invaders (tree t, char &status) {
   for (int i=0; i<N(t); i++) {
     tree u= t[i];
     if (is_concat (u)) r << kill_space_invaders (u, status);
-    else if (is_tuple (u) && is_sectionnal (u)) {
-        if (status != 'N') {
-          if (!end_block_environnement (u)) r << "\n";
-          status = 'N';
+    else if (is_sectionnal (u) || is_block_environnement (u)) {
+        if (is_sectionnal (u) || is_begin (u)) {
+          if (status != 'N') {
+            r << "\n";
+            status = 'N';
+          }
         }
         r << kill_space_invaders (u, status);
         i++;
@@ -199,8 +223,12 @@ kill_space_invaders (tree t, char &status) {
             r << kill_space_invaders (t[i], status);
           i++;
         }
-        if (!end_block_environnement (u)) r << "\n";
-        status = 'N';
+        if (is_sectionnal (u) || is_end (u)) {
+          if (status != 'N') {
+            r << "\n";
+            status = 'N';
+          }
+        }
         i--;
     }
     else {
@@ -238,9 +266,21 @@ kill_space_invaders (tree t, char &status) {
   return r;
 }
 
+static tree
+simplify_unary_concat (tree t) {
+  if (is_atomic (t)) return t;
+  if (is_concat (t) && N(t) == 1) return t[0];
+  int i, n= N(t);
+  tree r (L(t));
+  for (i=0; i<n; i++)
+    r << simplify_unary_concat (t[i]);
+  return r;
+}
+
 tree
 kill_space_invaders (tree t) {
   char status = 'N';
+  t= simplify_unary_concat (t);
   return kill_space_invaders (t, status);
 }
 
