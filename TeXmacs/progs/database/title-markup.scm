@@ -112,8 +112,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (remove-annotations t)
-  (if (tm-func? t 'doc-note-ref 3)
-      (remove-annotations (tm-ref t 2))
+  (if (tm-func? t 'doc-note-ref 4)
+      (remove-annotations (tm-ref t 3))
       t))
 
 (tm-define (title->running-title t)
