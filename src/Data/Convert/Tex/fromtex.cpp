@@ -3077,14 +3077,23 @@ finalize_document (tree t) {
   tree r (DOCUMENT);
   for (i=0; i<N(t); i++) {
     int start= i;
-    while (i<N(t) && t[i]!=tree (FORMAT, "new line")) i++;
+    while (i<N(t) && t[i] != tree (FORMAT, "new line")) i++;
     if (i==start) r << "";
     else if (i==(start+1)) r << t[start];
     else if (i==(start+2) && (is_apply (t[start], "textm@break") ||
-                              is_apply (t[start+1], "textm@break"))) {
+          is_apply (t[start+1], "textm@break")))
       r << t[start] << t[start+1];
+    else {
+      if (is_apply (t[start], "textm@break")
+          && is_apply (t[i-1], "textm@break"))
+        r << t[start] << t(start+1,i-1) << t[i-1];
+      else if (is_apply (t[start], "textm@break"))
+        r << t[start] << t(start+1,i);
+      else if (is_apply (t[i-1], "textm@break"))
+        r << t(start,i-1) << t[i-1];
+      else
+        r << t(start,i);
     }
-    else r << t(start,i);
     if (i==(N(t)-1)) r << "";
   }
   r= finalize_sections (r);
