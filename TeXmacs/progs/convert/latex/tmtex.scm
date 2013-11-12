@@ -500,7 +500,6 @@
       (lambda (x)
         (let ((stm (car x))
               (src (list (trim-document (cadr x)))))
-          (write src) (newline)
           (if (filter-preamble? stm)
             (begin
               (ahash-set! tmtex-src (tmtex-filter-preamble stm) src)

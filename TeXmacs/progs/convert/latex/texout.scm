@@ -59,8 +59,6 @@
          (post-begin "")
          (pre-end    ""))
 
-    (display* "has-preamble?: " has-preamble? "\n")
-    (display* "has-end? " has-end? "\n")
     (if (not has-preamble?)
       (begin
         (receive
