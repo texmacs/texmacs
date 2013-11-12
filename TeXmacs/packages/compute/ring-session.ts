@@ -52,7 +52,9 @@
 
   <assign|input-border-color|<tuple|pastel grey|grey>>
 
-  <assign|output-vpadding|0.5fn>
+  <assign|input-vpadding|0.4fn>
+
+  <assign|output-vpadding|0.6fn>
 
   \;
 
@@ -115,13 +117,13 @@
   </active*>
 
   <assign|generic-input|<\macro|prompt|body>
-    <\with|ornament-shape|classic|ornament-color|<value|input-color>|ornament-hpadding|<tuple|<plus|<value|session-ring-width>|<value|session-left-indent>>|<value|session-right-indent>>|ornament-border|<value|input-border>|ornament-sunny-color|<value|input-border-color>>
+    <\with|ornament-shape|classic|ornament-color|<value|input-color>|ornament-hpadding|<tuple|<plus|<value|session-ring-width>|<value|session-left-indent>>|<value|session-right-indent>>|ornament-vpadding|<value|input-vpadding>|ornament-border|<value|input-border>|ornament-sunny-color|<value|input-border-color>>
       <\ornament>
-        <\surround|<id-function|<with|color|<value|generic-prompt-color>|<arg|prompt>>>|<right-flush>>
+        <surround||<right-flush>|<tabbed*|<tformat|<table|<row|<cell|<id-function|<with|color|<value|generic-prompt-color>|<arg|prompt>>>>|<\cell>
           <\with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>>
             <arg|body>
           </with>
-        </surround>
+        </cell>>>>>>
       </ornament>
     </with>
   </macro>>
@@ -151,7 +153,7 @@
   </active*>
 
   <assign|folded|<\macro|x|y>
-    <\with|ornament-shape|classic|ornament-color|<value|fold-title-color>|ornament-hpadding|<tuple|<plus|<value|session-ring-width>|<value|session-left-indent>>|<value|session-right-indent>>|ornament-border|<value|input-border>|ornament-sunny-color|<value|input-border-color>>
+    <\with|ornament-shape|classic|ornament-color|<value|fold-title-color>|ornament-hpadding|<tuple|<plus|<value|session-ring-width>|<value|session-left-indent>>|<value|session-right-indent>>|ornament-vpadding|<value|input-vpadding>|ornament-border|<value|input-border>|ornament-sunny-color|<value|input-border-color>>
       <\ornament>
         <\surround||<right-flush><action|<math|\<Downarrow\>>|(mouse-unfold)|<arg|x>>>
           <\with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>>
@@ -163,7 +165,7 @@
   </macro>>
 
   <assign|unfolded|<\macro|x|y>
-    <\with|ornament-shape|classic|ornament-color|<value|fold-title-color>|ornament-hpadding|<tuple|<plus|<value|session-ring-width>|<value|session-left-indent>>|<value|session-right-indent>>|ornament-border|<value|input-border>|ornament-sunny-color|<value|input-border-color>>
+    <\with|ornament-shape|classic|ornament-color|<value|fold-title-color>|ornament-hpadding|<tuple|<plus|<value|session-ring-width>|<value|session-left-indent>>|<value|session-right-indent>>|ornament-vpadding|<value|input-vpadding>|ornament-border|<value|input-border>|ornament-sunny-color|<value|input-border-color>>
       <\ornament>
         <\surround||<right-flush><action|<math|\<Uparrow\>>|(mouse-fold)|<arg|x>>>
           <\with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>>
