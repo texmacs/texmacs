@@ -198,17 +198,40 @@ for
       ("Verbatim" (make 'verbatim-code))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Floating objects
+;; Notes and floating objects
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind note-menu
   (when (not (or (inside? 'float) (inside? 'footnote)))
     ("Footnote" (make 'footnote))
+    ("Marginal note" (make-marginal-note))
     ---
     ("Floating object" (make-insertion "float"))
     ("Floating figure" (begin (make-insertion "float") (make 'big-figure)))
     ("Floating table" (begin (make-insertion "float") (make 'big-table)))
     ("Floating algorithm" (begin (make-insertion "float") (make 'algorithm)))))
+
+(menu-bind position-marginal-note-menu
+  (group "Horizontal position")
+  ("Automatic" (set-marginal-note-hpos "normal"))
+  ("Left" (set-marginal-note-hpos "left"))
+  ("Right" (set-marginal-note-hpos "right"))
+  ("Left on even pages" (set-marginal-note-hpos "even-left"))
+  ("Right on even pages" (set-marginal-note-hpos "even-right"))
+  ---
+  (group "Vertical alignment")
+  ("Top" (set-marginal-note-valign "t"))
+  ("Center" (set-marginal-note-valign "c"))
+  ("Bottom" (set-marginal-note-valign "b")))
+
+(tm-define (marginal-note-context? t)
+  (tree-is? t 'marginal-note))
+
+(tm-menu (focus-position-float-menu t)
+  (:require (marginal-note-context? t))
+  ---
+  (link position-marginal-note-menu)
+  ---)
 
 (menu-bind position-float-menu
   ("Top" (toggle-insertion-positioning "t"))
@@ -789,6 +812,12 @@ for
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Focus menus for floating objects
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (focus-position-float-icons t)
+  (:require (marginal-note-context? t))
+  (=> (balloon (icon "tm_position_float.xpm")
+               "Position of marginal note")
+      (link position-marginal-note-menu)))
 
 (tm-menu (focus-position-float-icons t)
   (:require (float-context? t))

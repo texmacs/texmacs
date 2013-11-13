@@ -676,6 +676,29 @@
 ;; Routines for floats
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (make-marginal-note)
+  (:synopsis "Insert a marginal note.")
+  (wrap-selection-small
+    (insert-go-to `(inactive (marginal-note "normal" "c" "")) '(0 2 0))))
+
+(tm-define (test-marginal-note-hpos? hp)
+  (and-with t (tree-innermost 'marginal-note #t)
+    (tm-equal? (tree-ref t 0) hp)))
+(tm-define (set-marginal-note-hpos hp)
+  (:synopsis "Set the horizontal position of the marginal note to @hp.")
+  (:check-mark "v" test-marginal-note-hpos?)
+  (and-with t (tree-innermost 'marginal-note #t)
+    (tree-set t 0 hp)))
+
+(tm-define (test-marginal-note-valign? va)
+  (and-with t (tree-innermost 'marginal-note #t)
+    (tm-equal? (tree-ref t 1) va)))
+(tm-define (set-marginal-note-valign va)
+  (:synopsis "Set the vertical alignment of the marginal note to @va.")
+  (:check-mark "v" test-marginal-note-valign?)
+  (and-with t (tree-innermost 'marginal-note #t)
+    (tree-set t 1 va)))
+
 (tm-define (make-insertion s)
   (:synopsis "Make an insertion of type @s.")
   (with pos (if (== s "float") "tbh" "")

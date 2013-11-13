@@ -426,6 +426,8 @@
   <assign|marginal-right-note|<macro|vpos|body|<line-note|<marginal-note-table|<arg|body>|l|left|<change-case|<arg|vpos>|UPCASE>|<arg|vpos>>|<plus|1par|<value|marginal-note-sep>|<value|par-left>|<value|par-right>>|0cm><flag|marginal
   note|dark brown>>>
 
+  <assign|marginal-normal-note|<macro|vpos|body|<compound|<if|<and|<equal|<value|page-odd>|<value|page-even>>|<equal|<value|page-odd-shift>|<value|page-even-shift>>>|marginal-left-note|marginal-even-left-note>|<arg|vpos>|<arg|body>>>>
+
   <assign|marginal-note|<macro|hpos|vpos|body|<with|dummy1|<value|marginal-note-width>|dummy2|<value|marginal-note-sep>|<compound|<merge|marginal-|<arg|hpos>|-note>|<arg|vpos>|<arg|body>|<arg|hpos>>>>>
 
   <drd-props|marginal-note|arity|3|accessible|none>
