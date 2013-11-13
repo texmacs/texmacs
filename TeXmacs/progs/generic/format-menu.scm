@@ -122,7 +122,9 @@
   ("HTML" (make-specific "html"))
   ("Screen" (make-specific "screen"))
   ("Printer" (make-specific "printer"))
-  ("Image" (make-specific "image")))
+  ("Image" (make-specific "image"))
+  ("Even pages" (make-specific "even"))
+  ("Odd pages" (make-specific "odd")))
 
 (menu-bind text-properties-menu
   (-> "Color" (link color-menu))

@@ -177,7 +177,7 @@ concater_rep::typeset_math_string (tree t, path ip, int pos, int end) {
       if (pos > start && s[start] == '*' && env->info_level >= INFO_SHORT) {
         color c = rgb_color (160, 160, 255);
         box   tb= text_box (decorate (ip), 0, "<cdot>", env->fn, c);
-        box   sb= specific_box (decorate (ip), tb, false, env->fn);
+        box   sb= specific_box (decorate (ip), tb, "screen", env->fn);
         box   mb= move_box (decorate (ip), sb, -tb->w()>>1, 0);
         box   rb= resize_box (decorate (ip), mb, 0, tb->y1, 0, tb->y2);
         a << line_item (STD_ITEM, OP_SKIP, rb, HYPH_INVALID);

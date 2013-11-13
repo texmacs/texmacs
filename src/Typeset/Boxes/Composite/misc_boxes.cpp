@@ -91,12 +91,16 @@ scatter_box_rep::find_selection (path lbp, path rbp) {
 
 struct page_box_rep: composite_box_rep {
   tree page;
+  int  page_nr;
   box  decoration;
+  int  old_page;
 
-  page_box_rep (path ip, tree page, SI w, SI h,
+  page_box_rep (path ip, tree page, int page_nr, SI w, SI h,
 		array<box> bs, array<SI> x, array<SI> y, box dec);
   operator tree ();
   int find_child (SI x, SI y, SI delta, bool force);
+  void pre_display (renderer& ren);
+  void post_display (renderer& ren);
   void display (renderer ren);
   void clear_incomplete (rectangles& rs, SI pixel, int i, int i1, int i2);
   void collect_page_numbers (hashmap<string,tree>& h, tree page);
@@ -104,9 +108,10 @@ struct page_box_rep: composite_box_rep {
   path find_right_box_path ();
 };
 
-page_box_rep::page_box_rep (path ip2, tree page2, SI w, SI h,
+page_box_rep::page_box_rep (path ip2, tree page2, int nr2, SI w, SI h,
 			    array<box> bs, array<SI> x, array<SI> y, box dec):
-  composite_box_rep (ip2, bs, x, y), page (page2), decoration (dec)
+  composite_box_rep (ip2, bs, x, y),
+  page (page2), page_nr (nr2), decoration (dec), old_page (1)
 {
   x1= min (x1, 0);
   x2= max (x2, w);
@@ -140,6 +145,17 @@ page_box_rep::find_child (SI x, SI y, SI delta, bool force) {
 	m= i;
       }
   return m;
+}
+
+void
+page_box_rep::pre_display (renderer& ren) {
+  old_page= ren->cur_page;
+  ren->set_page_nr (page_nr);
+}
+
+void
+page_box_rep::post_display (renderer& ren) {
+  ren->set_page_nr (old_page);
 }
 
 void
@@ -200,10 +216,10 @@ scatter_box (path ip, array<box> bs, array<SI> x, array<SI> y) {
 }
 
 box
-page_box (path ip, tree page, SI w, SI h,
+page_box (path ip, tree page, int page_nr, SI w, SI h,
 	  array<box> bs, array<SI> bs_x, array<SI> bs_y,
 	  array<box> decs, array<SI> decs_x, array<SI> decs_y) {
   box dec;
   if (N (decs) > 0) dec= composite_box (ip, decs, decs_x, decs_y, false);
-  return tm_new<page_box_rep> (ip, page, w, h, bs, bs_x, bs_y, dec);
+  return tm_new<page_box_rep> (ip, page, page_nr, w, h, bs, bs_x, bs_y, dec);
 }

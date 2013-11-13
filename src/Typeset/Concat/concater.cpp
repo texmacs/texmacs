@@ -92,7 +92,7 @@ concater_rep::flag_ok (string s, path ip, color col) {
   int info= env->info_level;
   if (info == INFO_MINIMAL || info == INFO_SHORT) {
     box infob= info_box (dip, h, pencil (col, env->fn->wline), light);
-    box specb= specific_box (ip, infob, false, env->fn);
+    box specb= specific_box (ip, infob, "screen", env->fn);
     print (specb);
   }
   else if (info == INFO_DETAILED || info == INFO_PAPER) {
@@ -101,7 +101,7 @@ concater_rep::flag_ok (string s, path ip, color col) {
     box textb= text_box (decorate (ip), 0, s, gfn, col);
     box flagb= flag_box (dip, textb, h, pencil (col, env->fn->wline), light);
     if (info == INFO_DETAILED) {
-      box specb= specific_box (ip, flagb, false, env->fn);
+      box specb= specific_box (ip, flagb, "screen", env->fn);
       print (specb);
     }
     else {

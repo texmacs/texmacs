@@ -128,7 +128,7 @@ box script_box (path ip, box b1, box b2, font fn);
 box left_script_box (path ip, box ref, box b1, box b2, font fn, int level);
 box right_script_box (path ip, box ref, box b1, box b2, font fn, int level);
 box side_box (path ip, box ref, box l1, box l2, box r1, box r2, font f, int l);
-box specific_box (path ip, box b, bool printer_flag, font fn);
+box specific_box (path ip, box b, string filter, font fn);
 box toc_box (path ip, string kind, string title, font fn);
 box flag_box (path ip, box b, SI h, pencil dark, brush light);
 box info_box (path ip, SI h, pencil dark, brush light);
@@ -148,7 +148,7 @@ box clip_box (path ip, box b, SI x1, SI y1, SI x2, SI y2);
 box clip_box (path ip, box b, SI x1, SI y1, SI x2, SI y2,
 	      tree xt, tree yt, SI scx, SI scy);
 box vcorrect_box (path ip, box b, SI top_cor, SI bot_cor);
-box page_box (path ip, tree page, SI w, SI h,
+box page_box (path ip, tree page, int page_nr, SI w, SI h,
 	      array<box> bs  , array<SI> bs_x  , array<SI> bs_y,
 	      array<box> decs, array<SI> decs_x, array<SI> decs_y);
 box action_box (path ip, box b, tree filter, command cmd, bool child_flag);

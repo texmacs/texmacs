@@ -126,7 +126,7 @@ format_stack (path ip, array<page_item> l, SI height, bool may_stretch) {
 }
 
 box
-page_box (path ip, box b, tree page,
+page_box (path ip, box b, tree page, int page_nr,
 	  SI width, SI height, SI left, SI top, SI bot,
 	  box header, box footer, SI head_sep, SI foot_sep)
 {
@@ -140,7 +140,7 @@ page_box (path ip, box b, tree page,
   array<SI>  decs_x (2); decs_x [0]= left  ; decs_x [1]= left;
   array<SI>  decs_y (2); decs_y [0]= h_y   ; decs_y [1]= f_y;
 
-  return page_box (ip, page, width, height,
+  return page_box (ip, page, page_nr, width, height,
 		   bs, bs_x, bs_y,
 		   decs, decs_x, decs_y);
 }
@@ -177,8 +177,9 @@ void
 pager_rep::end_page (bool flag) {
   box sb  = format_stack (ip, lines_bx, lines_ht, text_height, !flag);
   box lb  = move_box (ip, sb, 0, 0);
-  SI  left= (N(pages)&1)==0? odd: even;
-  box pb  = page_box (ip, lb, as_string (N(pages)+1+page_offset),
+  SI  nr  = N(pages)+1+page_offset;
+  SI  left= (nr&1)==0? even: odd;
+  box pb  = page_box (ip, lb, as_string (nr), nr,
 		      width, height, left, top, top+ text_height,
 		      make_header(), make_footer(), head_sep, foot_sep);
 

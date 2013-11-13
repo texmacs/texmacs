@@ -20,7 +20,8 @@ SI stretch_space (space spc, double stretch);
 page_item access (array<page_item> l, path p);
 skeleton break_pages (array<page_item> l, space ph, int qual,
 		      space fn_sep, space fnote_sep, space float_sep, font fn);
-box page_box (path ip, box b, tree page, SI width, SI height, SI left, SI top,
+box page_box (path ip, box b, tree page, int page_nr,
+              SI width, SI height, SI left, SI top,
 	      SI bot, box header, box footer, SI head_sep, SI foot_sep);
 
 box
@@ -155,13 +156,14 @@ box
 pager_rep::pages_make_page (pagelet pg) {
   box sb= pages_format (pg);
   box lb= move_box (ip, sb, 0, 0);
-  SI  left= (N(pages)&1)==0? odd: even;
-  env->write (PAGE_NR, as_string (N(pages)+1+page_offset));
+  int nr= N(pages) + 1 + page_offset;
+  SI  left= (nr&1)==0? even: odd;
+  env->write (PAGE_NR, as_string (nr));
   env->write (PAGE_THE_PAGE, style[PAGE_THE_PAGE]);
   tree page_t= env->exec (compound (PAGE_THE_PAGE));
   box header= make_header (N (pg->ins) == 0);
   box footer= make_footer (N (pg->ins) == 0);
-  return page_box (ip, lb, page_t,
+  return page_box (ip, lb, page_t, nr,
 		   width, height, left, top, top+ text_height,
 		   header, footer, head_sep, foot_sep);
 }
@@ -196,7 +198,7 @@ pager_rep::papyrus_make () {
   array<box> bs   (1); bs   [0]= b;
   array<SI>  bs_x (1); bs_x [0]= left;
   array<SI>  bs_y (1); bs_y [0]= -top;
-  box pb= page_box (ip, "?", width, height,
+  box pb= page_box (ip, "?", 1, width, height,
 		    bs, bs_x, bs_y, 0, 0, 0);
   pages << pb;
 }

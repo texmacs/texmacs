@@ -21,22 +21,26 @@ bool in_presentation_mode ();
 
 struct specific_box_rep: public box_rep {
   box b;
-  bool printer_flag;
-  specific_box_rep (path ip, box b2, bool flag, font fn):
-    box_rep (ip), b (b2), printer_flag (flag) {
+  string filter;
+  specific_box_rep (path ip, box b2, string filter2, font fn):
+    box_rep (ip), b (b2), filter (filter2) {
       x1=x2=y1=0;
       y2=fn->yx;
       x3= b->x3; y3= b->y3;
       x4= b->x4; y4= b->y4;
     }
   operator tree () {
-    return tuple ("specific", (tree) b, as_string (printer_flag)); }
+    return tuple ("specific", (tree) b, filter); }
   void display (renderer ren) {
-    if (ren->is_printer () == printer_flag)
-      if (printer_flag || !in_presentation_mode ()) {
-	rectangles rs;
-	b->redraw (ren, path (), rs);
-      }
+    bool ok= false;
+    if (filter == "screen") ok= !ren->is_printer () && !in_presentation_mode ();
+    else if (filter == "printer") ok= ren->is_printer ();
+    else if (filter == "even") ok= (ren->cur_page & 1) == 0;
+    else if (filter == "odd") ok= (ren->cur_page & 1) == 1;
+    if (ok) {
+      rectangles rs;
+      b->redraw (ren, path (), rs);
+    }
   }
 };
 
@@ -175,8 +179,8 @@ scrollbar_box_rep::action (tree type, SI x, SI y, SI delta) {
 ******************************************************************************/
 
 box
-specific_box (path ip, box b, bool printer_flag, font fn) {
-  return tm_new<specific_box_rep> (ip, b, printer_flag, fn);
+specific_box (path ip, box b, string filter, font fn) {
+  return tm_new<specific_box_rep> (ip, b, filter, fn);
 }
 
 box

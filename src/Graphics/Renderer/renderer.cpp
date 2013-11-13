@@ -25,7 +25,7 @@ renderer_rep::renderer_rep (bool screen_flag):
   ox (0), oy (0), cx1 (0), cy1 (0), cx2 (0), cy2 (0),
   is_screen (screen_flag),
   zoomf (std_shrinkf), shrinkf (1), pixel (PIXEL), brushpx (-1), thicken (0),
-  master (NULL) {}
+  master (NULL), cur_page (1) {}
 
 renderer_rep::~renderer_rep () {}
 
@@ -51,6 +51,11 @@ renderer_rep::is_printer () {
 void
 renderer_rep::get_extents (int& w, int& h) {
   w= h= 0;
+}
+
+void
+renderer_rep::set_page_nr (int nr) {
+  cur_page= nr;
 }
 
 void

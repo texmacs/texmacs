@@ -253,10 +253,10 @@ concater_rep::typeset_specific (tree t, path ip) {
     marker (descend (ip, 1));
     //typeset_dynamic (t[1], descend (ip, 1));
   }
-  else if ((which == "screen") || (which == "printer")) {
-    bool pr= (which != "screen");
+  else if (which == "screen" || which == "printer" ||
+           which == "even" || which == "odd") {
     box  sb= typeset_as_concat (env, attach_middle (t[1], ip));
-    box  b = specific_box (decorate_middle (ip), sb, pr, env->fn);
+    box  b = specific_box (decorate_middle (ip), sb, which, env->fn);
     marker (descend (ip, 0));
     print (b);
     marker (descend (ip, 1));
