@@ -111,7 +111,7 @@ struct page_box_rep: composite_box_rep {
 page_box_rep::page_box_rep (path ip2, tree page2, int nr2, SI w, SI h,
 			    array<box> bs, array<SI> x, array<SI> y, box dec):
   composite_box_rep (ip2, bs, x, y),
-  page (page2), page_nr (nr2), decoration (dec), old_page (1)
+  page (page2), page_nr (nr2), decoration (dec), old_page (0)
 {
   x1= min (x1, 0);
   x2= max (x2, w);

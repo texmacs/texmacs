@@ -198,7 +198,7 @@ pager_rep::papyrus_make () {
   array<box> bs   (1); bs   [0]= b;
   array<SI>  bs_x (1); bs_x [0]= left;
   array<SI>  bs_y (1); bs_y [0]= -top;
-  box pb= page_box (ip, "?", 1, width, height,
+  box pb= page_box (ip, "?", 0, width, height,
 		    bs, bs_x, bs_y, 0, 0, 0);
   pages << pb;
 }

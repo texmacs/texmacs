@@ -414,23 +414,21 @@
     </with>
   </cell>>>>>>>
 
-  <assign|left-marginal-note|<macro|body|<line-note|<marginal-note-table|<arg|body>|r|right|T|t>|<minus|0cm|<plus|<value|marginal-note-width>|<value|marginal-note-sep>>>|0cm><flag|marginal
+  <assign|marginal-even-left-note|<macro|vpos|body|<line-note|<specific|even|<marginal-note-table|<arg|body>|r|right|<change-case|<arg|vpos>|UPCASE>|<arg|vpos>>>|<minus|0cm|<plus|<value|marginal-note-width>|<value|marginal-note-sep>>>|0cm><line-note|<specific|odd|<marginal-note-table|<arg|body>|l|left|<change-case|<arg|vpos>|UPCASE>|<arg|vpos>>>|<plus|1par|<value|marginal-note-sep>|<value|par-left>|<value|par-right>>|0cm><flag|marginal
   note|dark brown>>>
 
-  <assign|right-marginal-note|<macro|body|<line-note|<marginal-note-table|<arg|body>|l|left|T|t>|<plus|1par|<value|marginal-note-sep>|<value|par-left>|<value|par-right>>|0cm><flag|marginal
+  <assign|marginal-even-right-note|<macro|vpos|body|<line-note|<specific|odd|<marginal-note-table|<arg|body>|r|right|<change-case|<arg|vpos>|UPCASE>|<arg|vpos>>>|<minus|0cm|<plus|<value|marginal-note-width>|<value|marginal-note-sep>>>|0cm><line-note|<specific|even|<marginal-note-table|<arg|body>|l|left|<change-case|<arg|vpos>|UPCASE>|<arg|vpos>>>|<plus|1par|<value|marginal-note-sep>|<value|par-left>|<value|par-right>>|0cm><flag|marginal
   note|dark brown>>>
 
-  <assign|left-marginal-note*|<macro|body|<line-note|<marginal-note-table|<arg|body>|r|right|B|b>|<minus|0cm|<plus|<value|marginal-note-width>|<value|marginal-note-sep>>>|0cm><flag|marginal
+  <assign|marginal-left-note|<macro|vpos|body|<line-note|<marginal-note-table|<arg|body>|r|right|<change-case|<arg|vpos>|UPCASE>|<arg|vpos>>|<minus|0cm|<plus|<value|marginal-note-width>|<value|marginal-note-sep>>>|0cm><flag|marginal
   note|dark brown>>>
 
-  <assign|right-marginal-note*|<macro|body|<line-note|<marginal-note-table|<arg|body>|l|left|B|b>|<plus|1par|<value|marginal-note-sep>|<value|par-left>|<value|par-right>>|0cm><flag|marginal
+  <assign|marginal-right-note|<macro|vpos|body|<line-note|<marginal-note-table|<arg|body>|l|left|<change-case|<arg|vpos>|UPCASE>|<arg|vpos>>|<plus|1par|<value|marginal-note-sep>|<value|par-left>|<value|par-right>>|0cm><flag|marginal
   note|dark brown>>>
 
-  <assign|left-marginal-note**|<macro|body|<line-note|<marginal-note-table|<arg|body>|r|right|C|c>|<minus|0cm|<plus|<value|marginal-note-width>|<value|marginal-note-sep>>>|0cm><flag|marginal
-  note|dark brown>>>
+  <assign|marginal-note|<macro|hpos|vpos|body|<with|dummy1|<value|marginal-note-width>|dummy2|<value|marginal-note-sep>|<compound|<merge|marginal-|<arg|hpos>|-note>|<arg|vpos>|<arg|body>|<arg|hpos>>>>>
 
-  <assign|right-marginal-note**|<macro|body|<line-note|<marginal-note-table|<arg|body>|l|left|C|c>|<plus|1par|<value|marginal-note-sep>|<value|par-left>|<value|par-right>>|0cm><flag|marginal
-  note|dark brown>>>
+  <drd-props|marginal-note|arity|3|accessible|none>
 
   <\active*>
     <\src-comment>
