@@ -565,47 +565,6 @@ public:
 };
 
 /******************************************************************************
-* action boxes
-******************************************************************************/
-
-struct action_box_rep: public change_box_rep {
-  tree    filter; // which events are accepted ?
-  command cmd;    // command to be executed
-  path    vip;    // store this location before execution
-  action_box_rep (path ip, box b, tree f, command c, bool ch, path vip);
-  operator tree () { return tree (TUPLE, "action", bs[0]); }
-  box adjust_kerning (int mode, double factor);
-  tree action (tree t, SI x, SI y, SI delta);
-};
-
-action_box_rep::action_box_rep (
-  path ip, box b, tree filter2, command cmd2, bool child_flag, path vip2):
-  change_box_rep (ip, child_flag), filter (filter2), cmd (cmd2), vip (vip2)
-{
-  insert (b, 0, 0);
-  position ();
-  left_justify ();
-  finalize ();
-}
-
-box
-action_box_rep::adjust_kerning (int mode, double factor) {
-  box body= bs[0]->adjust_kerning (mode, factor);
-  return action_box (ip, body, filter, cmd, child_flag, vip);
-}
-
-tree
-action_box_rep::action (tree t, SI x, SI y, SI delta) {
-  if (t == filter) {
-    call ("action-set-path", reverse (vip));
-    // FIXME: we should also reset the action path
-    cmd ();
-    return "done";
-  }
-  return change_box_rep::action (t, x, y, delta);
-}
-
-/******************************************************************************
 * locus boxes
 ******************************************************************************/
 
@@ -889,16 +848,6 @@ cell_box (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
 box
 remember_box (path ip, box b) {
   return tm_new<remember_box_rep> (ip, b);
-}
-
-box
-action_box (path ip, box b, tree filter, command cmd, bool ch, path vip) {
-  return tm_new<action_box_rep> (ip, b, filter, cmd, ch, vip);
-}
-
-box
-action_box (path ip, box b, tree filter, command cmd, bool ch) {
-  return tm_new<action_box_rep> (ip, b, filter, cmd, ch, decorate ());
 }
 
 box

@@ -151,8 +151,6 @@ box vcorrect_box (path ip, box b, SI top_cor, SI bot_cor);
 box page_box (path ip, tree page, int page_nr, SI w, SI h,
 	      array<box> bs  , array<SI> bs_x  , array<SI> bs_y,
 	      array<box> decs, array<SI> decs_x, array<SI> decs_y);
-box action_box (path ip, box b, tree filter, command cmd, bool child_flag);
-box action_box (path ip, box b, tree f, command c, bool ch, path vip);
 box locus_box (path ip, box b, list<string> ids, SI pixel);
 box locus_box (path ip, box b, list<string> ids, SI pixel, string ref, string anchor);
 box macro_box (path ip, box b, font big_fn= font ());

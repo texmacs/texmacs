@@ -1566,7 +1566,8 @@ tree
 edit_env_rep::exec_script (tree t) {
   if (N(t) != 1 && N(t) != 2) return tree (ERROR, "bad script");
   if (N(t) == 1) return tree (SCRIPT, exec (t[0]));
-  else return tree (SCRIPT, exec (t[0]), expand (t[1], true));
+  else return tree (SCRIPT, exec (t[0]), expand (t[1], false));
+  //else return tree (SCRIPT, exec (t[0]), expand (t[1], true));
 }
 
 tree

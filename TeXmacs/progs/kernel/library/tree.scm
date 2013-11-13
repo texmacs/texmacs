@@ -164,23 +164,15 @@
 (define-public (table-cell-tree row col)
   (path->tree (table-cell-path row col)))
 
-(define the-action-path '(-1))
-
-(define-public (action-set-path p)
-  (set! the-action-path p))
+(define the-action-tree #f)
 
 (define-public (exec-delayed-at cmd t)
-  (let* ((ip (tree-ip t))
-	 (old-path the-action-path)
-	 (new-path (if (or (null? ip) (>= (car ip) 0)) (reverse ip) '(-1))))
-    (action-set-path new-path)
-    (exec-delayed (lambda () (cmd) (action-set-path old-path)))))
-
-(define-public (action-path)
-  (and (!= the-action-path '(-1)) the-action-path))
+  (with old-t the-action-tree
+    (set! the-action-tree t)
+    (exec-delayed (lambda () (cmd) (set! the-action-tree old-t)))))
 
 (define-public (action-tree)
-  (and (!= the-action-path '(-1)) (path->tree the-action-path)))
+  the-action-tree)
 
 (define-public-macro (with-action t . body)
   `(and-with ,t (action-tree)
