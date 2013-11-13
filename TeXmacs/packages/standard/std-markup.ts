@@ -408,28 +408,28 @@
 
   <assign|marginal-note-sep|5mm>
 
-  <assign|marginal-note-table|<macro|body|vpos|hyph|<tabular|<tformat|<twith|table-width|<value|marginal-note-width>>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-hyphen|<arg|hyph>>|<twith|table-valign|<arg|vpos>>|<cwith|1|1|1|1|cell-lsep|0em>|<cwith|1|1|1|1|cell-rsep|0em>|<table|<row|<\cell>
-    <\with|par-par-sep|0em|par-line-sep|0em>
+  <assign|marginal-note-table|<macro|body|hpos|hhyph|vpos|vhyph|<tabular|<tformat|<twith|table-width|<value|marginal-note-width>>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-hyphen|<arg|vhyph>>|<twith|table-valign|<arg|vpos>>|<cwith|1|1|1|1|cell-lsep|0em>|<cwith|1|1|1|1|cell-rsep|0em>|<cwith|1|1|1|1|cell-halign|<arg|hpos>>|<table|<row|<\cell>
+    <\with|par-par-sep|0em|par-line-sep|0em|par-mode|<arg|hhyph>>
       <arg|body>
     </with>
   </cell>>>>>>>
 
-  <assign|left-marginal-note|<macro|body|<line-note|<marginal-note-table|<arg|body>|T|t>|<minus|0cm|<plus|<value|marginal-note-width>|<value|marginal-note-sep>>>|0cm><flag|marginal
+  <assign|left-marginal-note|<macro|body|<line-note|<marginal-note-table|<arg|body>|r|right|T|t>|<minus|0cm|<plus|<value|marginal-note-width>|<value|marginal-note-sep>>>|0cm><flag|marginal
   note|dark brown>>>
 
-  <assign|right-marginal-note|<macro|body|<line-note|<marginal-note-table|<arg|body>|T|t>|<plus|1par|<value|marginal-note-sep>|<value|par-left>|<value|par-right>>|0cm><flag|marginal
+  <assign|right-marginal-note|<macro|body|<line-note|<marginal-note-table|<arg|body>|l|left|T|t>|<plus|1par|<value|marginal-note-sep>|<value|par-left>|<value|par-right>>|0cm><flag|marginal
   note|dark brown>>>
 
-  <assign|left-marginal-note*|<macro|body|<line-note|<marginal-note-table|<arg|body>|B|b>|<minus|0cm|<plus|<value|marginal-note-width>|<value|marginal-note-sep>>>|0cm><flag|marginal
+  <assign|left-marginal-note*|<macro|body|<line-note|<marginal-note-table|<arg|body>|r|right|B|b>|<minus|0cm|<plus|<value|marginal-note-width>|<value|marginal-note-sep>>>|0cm><flag|marginal
   note|dark brown>>>
 
-  <assign|right-marginal-note*|<macro|body|<line-note|<marginal-note-table|<arg|body>|B|b>|<plus|1par|<value|marginal-note-sep>|<value|par-left>|<value|par-right>>|0cm><flag|marginal
+  <assign|right-marginal-note*|<macro|body|<line-note|<marginal-note-table|<arg|body>|l|left|B|b>|<plus|1par|<value|marginal-note-sep>|<value|par-left>|<value|par-right>>|0cm><flag|marginal
   note|dark brown>>>
 
-  <assign|left-marginal-note**|<macro|body|<line-note|<marginal-note-table|<arg|body>|C|c>|<minus|0cm|<plus|<value|marginal-note-width>|<value|marginal-note-sep>>>|0cm><flag|marginal
+  <assign|left-marginal-note**|<macro|body|<line-note|<marginal-note-table|<arg|body>|r|right|C|c>|<minus|0cm|<plus|<value|marginal-note-width>|<value|marginal-note-sep>>>|0cm><flag|marginal
   note|dark brown>>>
 
-  <assign|right-marginal-note**|<macro|body|<line-note|<marginal-note-table|<arg|body>|C|c>|<plus|1par|<value|marginal-note-sep>|<value|par-left>|<value|par-right>>|0cm><flag|marginal
+  <assign|right-marginal-note**|<macro|body|<line-note|<marginal-note-table|<arg|body>|l|left|C|c>|<plus|1par|<value|marginal-note-sep>|<value|par-left>|<value|par-right>>|0cm><flag|marginal
   note|dark brown>>>
 
   <\active*>
