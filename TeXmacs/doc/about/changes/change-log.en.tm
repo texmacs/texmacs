@@ -1,13 +1,15 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.0.7.21>
 
 <style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.7 to 1.0.7.21>
+  <section|Changes from version 1.0.7 to 1.0.7.22>
 
   <\itemize>
+    <item>Support for marginal notes (1.0.7.22).
+
     <item>Complete reorganization of document styles and package (1.0.7.21).
 
     <item>Major improvements for upcoming native Pdf renderer (1.0.7.21).
@@ -1803,6 +1805,3 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
-
-<initial|<\collection>
-</collection>>
