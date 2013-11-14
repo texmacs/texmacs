@@ -65,7 +65,7 @@ class pdf_hummus_renderer_rep : public renderer_rep {
   color     fg, bg;
   SI        lw;
   double    current_width;
-  
+  int       clip_level;
   
   pencil   pen;
   brush    bgb;
@@ -380,6 +380,7 @@ pdf_hummus_renderer_rep::begin_page() {
   cfn= "";
   cfid = NULL;
   inText = false;
+  clip_level = 0;
 
   // outmost save of the graphics state
   contentContext->q();
@@ -397,6 +398,11 @@ pdf_hummus_renderer_rep::end_page(){
   EStatusCode status;
 
   end_text ();
+  
+
+  // reset set_clipping calls in order to have well formed PDF.
+  while (clip_level--)
+    contentContext->Q();
   
   // outmost restore for the graphics state (see begin_page)
   contentContext->Q();
@@ -484,11 +490,12 @@ pdf_hummus_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore)
   if (restore) {
     //cerr << "restore clipping\n";
     contentContext->Q();
+    if (clip_level > 0) clip_level--;
     cfn= "";
   }
   else {
     //cerr << "set clipping\n";
-    contentContext->q();
+    contentContext->q(); clip_level++;
     double xx1= to_x (min (x1, x2));
     double yy1= to_y (min (y1, y2));
     double xx2= to_x (max (x1, x2));
