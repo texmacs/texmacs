@@ -510,7 +510,7 @@
   (if (null? opt-location) (exec-delayed cmd)
       (exec-delayed-at cmd (car opt-location))))
 
-(tm-define (execute-script s secure-origin? . opt-location)
+(tm-define (old-execute-script s secure-origin? opt-location)
   (let* ((secure-s (string-append "(secure? '" s ")"))
          (ok? (or secure-origin? (eval (string->object secure-s))))
          (cmd-s (string-append "(lambda () " s ")"))
@@ -522,6 +522,24 @@
              (lambda (answ)
                (when answ (execute-at cmd opt-location)))))
           (else (set-message "Unsecure script refused" "Evaluate script")))))
+
+(tm-define (new-execute-script s secure-origin? args)
+  (let* ((sym-fun (eval (string->object (string-append "'" s))))
+	 (sym-cmd (cons sym-fun args))
+         (ok? (or secure-origin? (secure? sym-cmd)))
+	 (cmd (eval (list 'lambda (list) sym-cmd))))
+    (cond ((or ok? (== (get-preference "security") "accept all scripts"))
+           (exec-delayed cmd))
+          ((== (get-preference "security") "prompt on scripts")
+           (user-confirm `(concat "Execute " ,s "?") #f
+             (lambda (answ)
+               (when answ (exec-delayed cmd)))))
+          (else (set-message "Unsecure script refused" "Evaluate script")))))
+
+(tm-define (execute-script s secure-origin? . opt-location)
+  (if (and (string-starts? s "(") (string-ends? s ")"))
+      (old-execute-script s secure-origin? opt-location)
+      (new-execute-script s secure-origin? opt-location)))
 
 (define (go-to-vertex v attrs)
   (cond ((func? v 'id 1) (go-to-id (cadr v) (cursor-path)))

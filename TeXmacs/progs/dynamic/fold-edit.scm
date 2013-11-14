@@ -884,9 +884,8 @@
     (with (x1 y1 x2 y2) (tree-bounding-rectangle body)
       (show-balloon w x1 (- y1 (* 5 256))))))
 
-(tm-define (show-move-over-balloon)
+(tm-define (show-move-over-balloon src)
   (:secure #t)
-  (with-action src
-    (and-with body (tree-ref src 0)
-      (and-with balloon (tree-ref src 1)
-        (show-texmacs-balloon body balloon)))))
+  (and-let* ((body (tree-ref src 0))
+	     (balloon (tree-ref src 1)))
+    (show-texmacs-balloon body balloon)))

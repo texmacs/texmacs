@@ -481,9 +481,9 @@ init_std_drd () {
 	accessible (0) -> url_type (0) ->
 	accessible (1) -> regular (1));       // FIXME: location?
   init (SCRIPT, "script",
-	options (1, 1, BIFORM) -> returns_adhoc () ->
-	accessible (0) -> code (0) -> name (0, "script") ->
-	accessible (1) -> regular (1) -> name (0, "where"));
+	repeat (1, 1, BIFORM) -> returns_adhoc () ->
+	accessible (0) -> code (0) -> name (0, "function") ->
+	accessible (1) -> regular (1) -> name (0, "arguments"));
   init (HLINK, "hlink",
 	fixed (1, 1, BIFORM) ->
 	accessible (0) -> name (0, "text") ->
