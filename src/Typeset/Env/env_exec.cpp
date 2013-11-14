@@ -1572,8 +1572,9 @@ edit_env_rep::exec_script (tree t) {
   tree r (t, n);
   r[0]= exec (t[0]);
   for (i=1; i<n; i++)
-    // r[i]= expand (t[i], true);
-    r[i]= expand (t[i], false);
+    //r[i]= expand (t[i], true);
+    //r[i]= expand (t[i], false);
+    r[i]= exec (t[i]);
   return r;
 }
 

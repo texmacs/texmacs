@@ -517,16 +517,17 @@
     </src-comment>
   </active*>
 
-  <assign|mouse-over|<macro|body|prg|where|<style-with|src-compact|none|<locus|<id|<hard-id|<arg|body>>>|<link|mouse-over|<id|<hard-id|<arg|body>>>|<script|<arg|prg>|<arg|body>|<arg|where>>>|<arg|body>>>>>
+  <assign|on-event|<xmacro|args|<style-with|src-compact|none|<locus|<id|<hard-id|<arg|args|1>>>|<link|<arg|args|0>|<id|<hard-id|<arg|args|1>>>|<map-args|identity|script|args|2>>|<arg|args|1>>>>>
 
-  <assign|keyboard-notify|<macro|body|prg|where|<style-with|src-compact|none|<locus|<id|<hard-id|<arg|body>>>|<link|keyboard|<id|<hard-id|<arg|body>>>|<script|<arg|prg>|<arg|body>|<arg|where>>>|<arg|body>>>>>
+  <assign|mouse-over-balloon|<macro|x|y|halign|valign|<on-event|mouse-over|<arg|x>|display-balloon|<arg|x>|<arg|y>|<arg|halign>|<arg|valign>|false>>>
 
-  <assign|move-over-balloon|<macro|x|y|<mouse-over|<arg|x>|show-move-over-balloon|<arg|y>>>>
+  <assign|mouse-over-balloon*|<macro|x|y|halign|valign|<on-event|mouse-over|<arg|x>|display-balloon|<arg|x>|<arg|y>|<arg|halign>|<arg|valign>|true>>>
 
-  <assign|help-balloon|<macro|x|y|<move-over-balloon|<arg|x>|<colored-frame|pastel
-  yellow|<arg|y>>>>>
+  <assign|focus-balloon|<macro|x|y|halign|valign|<on-event|focus|<arg|x>|display-balloon|<arg|x>|<arg|y>|<arg|halign>|<arg|valign>|false>>>
 
-  <assign|keyboard-balloon|<macro|x|y|<keyboard-notify|<arg|x>|show-move-over-balloon|<arg|y>>>>
+  <assign|help-balloon-color|pastel yellow>
+
+  <assign|help-balloon|<macro|x|y|<move-over-balloon|<arg|x>|<colored-frame|<value|help-balloon-color>|<arg|y>>>>>
 
   <\active*>
     <\src-comment>

@@ -879,7 +879,7 @@
 ;; Balloons
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (show-move-over-balloon body balloon)
+(tm-define (display-balloon body balloon halign valign mouse-flag)
   (:secure #t)
   (with w (widget-texmacs-output balloon '(style "generic"))
     (with (x1 y1 x2 y2) (tree-bounding-rectangle body)
