@@ -881,6 +881,9 @@
 
 (tm-define (display-balloon body balloon halign valign mouse-flag)
   (:secure #t)
-  (with w (widget-texmacs-output balloon '(style "generic"))
-    (with (x1 y1 x2 y2) (tree-bounding-rectangle body)
+  (with (x1 y1 x2 y2) (tree-bounding-rectangle body)
+    (let* ((zf (get-window-zoom-factor))
+           (balloon* `(with "magnification" ,(number->string zf) ,balloon))
+           (w (widget-texmacs-output balloon* '(style "generic"))))
+      ;;(display* "size= " (widget-size w) "\n")
       (show-balloon w x1 (- y1 (* 5 256))))))

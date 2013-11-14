@@ -96,7 +96,9 @@ get_bounding_rectangle (tree t) {
   rectangle wr= ed -> get_window_extents ();
   path p= reverse (obtain_ip (t));
   selection sel= ed->search_selection (p * start (t), p * end (t));
-  rectangle selr= least_upper_bound (sel->rs) / 5;
+  SI sz= ed->get_pixel_size ();
+  double sf= ((double) sz) / 256.0;
+  rectangle selr= least_upper_bound (sel->rs) / sf;
   rectangle r= translate (selr, wr->x1, wr->y2);
   array<int> ret;
   ret << (r->x1) << (r->y1) << (r->x2) << (r->y2);

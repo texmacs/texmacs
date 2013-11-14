@@ -6055,6 +6055,19 @@ tmg_tree_bounding_rectangle (tmscm arg1) {
 }
 
 tmscm
+tmg_widget_size (tmscm arg1) {
+  TMSCM_ASSERT_WIDGET (arg1, TMSCM_ARG1, "widget-size");
+
+  widget in1= tmscm_to_widget (arg1);
+
+  // TMSCM_DEFER_INTS;
+  array_int out= get_widget_size (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return array_int_to_tmscm (out);
+}
+
+tmscm
 tmg_show_balloon (tmscm arg1, tmscm arg2, tmscm arg3) {
   TMSCM_ASSERT_WIDGET (arg1, TMSCM_ARG1, "show-balloon");
   TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "show-balloon");
@@ -7672,6 +7685,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("widget-refreshable",  tmg_widget_refreshable, 2, 0, 0);
   tmscm_install_procedure ("object->promise-widget",  tmg_object_2promise_widget, 1, 0, 0);
   tmscm_install_procedure ("tree-bounding-rectangle",  tmg_tree_bounding_rectangle, 1, 0, 0);
+  tmscm_install_procedure ("widget-size",  tmg_widget_size, 1, 0, 0);
   tmscm_install_procedure ("show-balloon",  tmg_show_balloon, 3, 0, 0);
   tmscm_install_procedure ("get-style-menu",  tmg_get_style_menu, 0, 0, 0);
   tmscm_install_procedure ("hidden-package?",  tmg_hidden_packageP, 1, 0, 0);

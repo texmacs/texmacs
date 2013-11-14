@@ -527,7 +527,7 @@
 
   <assign|help-balloon-color|pastel yellow>
 
-  <assign|help-balloon|<macro|x|y|<move-over-balloon|<arg|x>|<colored-frame|<value|help-balloon-color>|<arg|y>>>>>
+  <assign|help-balloon|<macro|x|y|halign|valign|<mouse-over-balloon*|<arg|x>|<colored-frame|<value|help-balloon-color>|<arg|y>>|<arg|halign>|<arg|valign>>>>
 
   <\active*>
     <\src-comment>

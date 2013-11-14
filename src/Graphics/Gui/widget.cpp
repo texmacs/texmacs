@@ -221,3 +221,10 @@ get_default_styled_font (int style) {
 }
 
 bool use_side_tools= false;
+
+array<SI>
+get_widget_size (widget w) {
+  SI width, height;
+  get_size (w, width, height);
+  return array<SI> (width, height);
+}
