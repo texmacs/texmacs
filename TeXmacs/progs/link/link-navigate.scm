@@ -511,6 +511,8 @@
       (exec-delayed-at cmd (car opt-location))))
 
 (tm-define (old-execute-script s secure-origin? opt-location)
+  ;; NOTE: this code is deprecated; we should remove the old support
+  ;; when we will be sure that nobody uses it anymore.
   (let* ((secure-s (string-append "(secure? '" s ")"))
          (ok? (or secure-origin? (eval (string->object secure-s))))
          (cmd-s (string-append "(lambda () " s ")"))
