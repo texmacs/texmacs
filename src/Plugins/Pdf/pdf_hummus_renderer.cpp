@@ -267,17 +267,15 @@ pdf_hummus_renderer_rep::pdf_hummus_renderer_rep (
     destId(0), outlineId(0),
     inText (false)
 {
-  width= default_dpi * paper_w / 2.54;
-  height= default_dpi * paper_h / 2.54;
-
-  if (landscape) {
-    width= (width > height)? width : height;
-    height= (width > height)? height : width;
-  } else {
-    width= (width > height)? height : width;
-    height= (width > height)? width : height;
+  if (landscape) { // consistent with printer
+    width=  default_dpi * paper_h  / 2.54;
+    height= default_dpi *paper_w  / 2.54;
   }
-
+  else {
+	  width=  default_dpi *  paper_w / 2.54;
+    height= default_dpi * paper_h / 2.54;
+  }
+  
   
   // setup library
 
