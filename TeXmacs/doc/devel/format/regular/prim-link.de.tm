@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.1>
+<TeXmacs|1.0.7.21>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|german>>
 
 <\body>
   <tmdoc-title|Link-Konstrukte>
@@ -109,9 +109,13 @@
   <|explain>
     Ein ausführbares <scheme>-Skript, <src-arg|script> einbinden, dass bei
     einem doppelten Mausklick auf <src-arg|content> ausgeführt wird.
-    Beispielsweise, wenn Sie auf <action|hier|(system "xterm &")>
+    Beispielsweise, wenn Sie auf <action|hier|(lambda () (system "xterm &"))>
     doppelklicken, erzeugen Sie ein neues <verbatim|xterm>. Der Code dafür
-    ist <inactive*|<action|hier|(system "xterm &")>>.
+    ist
+
+    <\tm-fragment>
+      <inactive*|<action|hier|(lambda () (system "xterm &"))>>
+    </tm-fragment>
 
     Aus Sicherheitsgründen wird vom Nutzer normalerweise, wenn ausführbare
     Skripte eingeleitet werden sollen, eine Bestätigung verlangt. Das
@@ -133,7 +137,6 @@
 
 <\initial>
   <\collection>
-    <associate|language|german>
     <associate|preamble|false>
   </collection>
 </initial>

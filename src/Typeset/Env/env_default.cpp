@@ -299,14 +299,18 @@ initialize_default_env () {
   tree tagflag (FLAG, tree (ARG, "Id"), "blue", "Id");
   tree reftxt (GET_BINDING, tree (ARG, "Id"));
   tree preftxt (GET_BINDING, tree (ARG, "Id"), "1");
+  tree act_id (ID, tree (HARD_ID, tree (ARG, "args", "0")));
+  tree act_script (MAP_ARGS, "identity", "script", "args", "1");
+  tree act_ln (LINK, "action", copy (act_id), copy (act_script));
   env ("hlink")= tree (MACRO, "body", "destination",
 		       tree (LOCUS, copy (src_id), ln1,
                              tree (ARG, "body")));
-  env ("action")= tree (MACRO, "body", "destination", "where",
-			tree (LOCUS, copy (src_id), ln2,
-                              tree (ARG, "body")));
+  env ("action")= tree (XMACRO, "args",
+			tree (LOCUS, copy (act_id), copy (act_ln),
+                              tree (ARG, "args", "0")));
   env ("label")= tree (MACRO, "Id", 
-		       tree (LOCUS, copy (ref_id), ln4, tree (CONCAT, labflag, labtxt)));
+		       tree (LOCUS, copy (ref_id), ln4,
+			     tree (CONCAT, labflag, labtxt)));
   env ("tag")= tree (MACRO, "Id", "body",
 		     tree (WITH, "the-tags", merged,
 			   tree (SURROUND, tagflag, "",

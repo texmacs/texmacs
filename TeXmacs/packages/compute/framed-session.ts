@@ -139,7 +139,7 @@
   <assign|folded|<\macro|x|y>
     <\with|ornament-shape|classic|ornament-color|<value|fold-title-color>|ornament-hpadding|<tuple|0fn|<value|session-right-indent>>|ornament-vpadding|<value|input-vpadding>|ornament-border|<value|input-border>|ornament-sunny-color|<value|input-border-color>>
       <\ornament>
-        <\surround|<action|<resize|<space|0.4spc><math|\<Downarrow\>>|||<value|session-band-width>|>|(mouse-unfold)|<arg|x>><space|<value|session-left-indent>>|<right-flush>>
+        <\surround|<action|<resize|<space|0.4spc><math|\<Downarrow\>>|||<value|session-band-width>|>|mouse-unfold|<arg|x>><space|<value|session-left-indent>>|<right-flush>>
           <\with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>>
             <arg|x>
           </with>
@@ -151,7 +151,7 @@
   <assign|unfolded|<\macro|x|y>
     <\with|ornament-shape|classic|ornament-color|<value|fold-title-color>|ornament-hpadding|<tuple|0fn|<value|session-right-indent>>|ornament-vpadding|<value|input-vpadding>|ornament-border|<value|input-border>|ornament-sunny-color|<value|input-border-color>>
       <\ornament>
-        <\surround|<action|<resize|<space|0.4spc><math|\<Uparrow\>>|||<value|session-band-width>|>|(mouse-fold)|<arg|x>><space|<value|session-left-indent>>|<right-flush>>
+        <\surround|<action|<resize|<space|0.4spc><math|\<Uparrow\>>|||<value|session-band-width>|>|mouse-fold|<arg|x>><space|<value|session-left-indent>>|<right-flush>>
           <\with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>>
             <arg|x>
           </with>

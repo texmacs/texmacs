@@ -195,20 +195,20 @@
   (:synopsis "Unold at the current focus position")
   (alternate-unfold (focus-tree)))
 
-(tm-define (mouse-fold)
+(tm-define (mouse-fold t)
   (:type (-> void))
   (:synopsis "Fold using the mouse")
   (:secure #t)
-  (with-action t
+  (when (tree->path t)
     (tree-go-to t :start)
     (when (tree-up t)
       (alternate-fold (tree-up t)))))
 
-(tm-define (mouse-unfold)
+(tm-define (mouse-unfold t)
   (:type (-> void))
   (:synopsis "Unfold using the mouse")
   (:secure #t)
-  (with-action t
+  (when (tree->path t)
     (tree-go-to t :start)
     (when (tree-up t)
       (alternate-unfold (tree-up t)))))

@@ -351,14 +351,14 @@
     </with>
   </surround>>>
 
-  <assign|fold-bpr|<macro|x|y|<style-with|src-compact|none|<\surround|<with|par-first|-1.5fn|<style-with|src-compact|none|<yes-indent><action|<resize|<specific|screen|<active*|<with|mode|math|<op|\<circ\>>>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>>>|<right-flush>>
+  <assign|fold-bpr|<macro|x|y|<style-with|src-compact|none|<\surround|<with|par-first|-1.5fn|<style-with|src-compact|none|<yes-indent><action|<resize|<specific|screen|<active*|<with|mode|math|<op|\<circ\>>>>>|||r]1.5fn|>|mouse-unfold|<arg|x>>>>|<right-flush>>
     <\with|padded-normal|<value|fold-padded-normal>>
       <arg|x>
     </with>
   </surround>>>>
 
   <assign|unfold-bpr|<\macro|x|y>
-    <style-with|src-compact|none|<\surround|<with|par-first|-1.5fn|<style-with|src-compact|none|<yes-indent><action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>>>|<right-flush>>
+    <style-with|src-compact|none|<\surround|<with|par-first|-1.5fn|<style-with|src-compact|none|<yes-indent><action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|mouse-fold|<arg|x>>>>|<right-flush>>
       <\with|padded-normal|<value|fold-padded-normal>>
         <arg|y>
       </with>
@@ -385,14 +385,14 @@
 
   <assign|fold-item|<resize|<active*|<with|mode|math|\<bullet\>>>|||1.5fn||><assign|item|<value|old-item>>>
 
-  <assign|summarized-algorithm|<macro|x|y|<style-with|src-compact|none|<\surround|<with|par-first|-3fn|<style-with|src-compact|none|<yes-indent><action|<resize|<specific|screen|<active*|<with|mode|math|<op|\<circ\>>>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>>>|<right-flush>>
+  <assign|summarized-algorithm|<macro|x|y|<style-with|src-compact|none|<\surround|<with|par-first|-3fn|<style-with|src-compact|none|<yes-indent><action|<resize|<specific|screen|<active*|<with|mode|math|<op|\<circ\>>>>>|||r]1.5fn|>|mouse-unfold|<arg|x>>>>|<right-flush>>
     <\with|padded-normal|<value|fold-padded-normal>|item|<value|fold-item>>
       <arg|x>
     </with>
   </surround>>>>
 
   <assign|detailed-algorithm|<\macro|x|y>
-    <style-with|src-compact|none|<\surround|<with|par-first|-3fn|<style-with|src-compact|none|<yes-indent><action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>|<arg|y>>>>|<right-flush>>
+    <style-with|src-compact|none|<\surround|<with|par-first|-3fn|<style-with|src-compact|none|<yes-indent><action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|mouse-fold|<arg|x>|<arg|y>>>>|<right-flush>>
       <\with|padded-normal|<value|fold-padded-normal>|item|<value|fold-item>>
         <arg|y>
       </with>

@@ -120,7 +120,7 @@
   </macro>>
 
   <assign|folded-std|<\macro|x|y>
-    <\render-folded-std|<action|<resize|<active*|<with|mode|math|<op|\<circ\>>>>|||<maximum|1r|1.5fn>|>|(mouse-unfold)|<arg|x>>>
+    <\render-folded-std|<action|<resize|<active*|<with|mode|math|<op|\<circ\>>>>|||<maximum|1r|1.5fn>|>|mouse-unfold|<arg|x>>>
       <arg|x>
 
       <hidden|<arg|y>>
@@ -128,7 +128,7 @@
   </macro>>
 
   <assign|unfolded-std|<\macro|x|y>
-    <\render-folded-std|<action|<resize|<active*|<with|mode|math|\<bullet\>>>|||<maximum|1r|1.5fn>|>|(mouse-fold)|<arg|x>>>
+    <\render-folded-std|<action|<resize|<active*|<with|mode|math|\<bullet\>>>|||<maximum|1r|1.5fn>|>|mouse-fold|<arg|x>>>
       <arg|x>
 
       <arg|y>
@@ -136,7 +136,7 @@
   </macro>>
 
   <assign|folded-env|<\macro|x|y>
-    <\render-folded-env|<action|<resize|<specific|screen|<active*|<with|mode|math|<op|\<circ\>>>>>|||<maximum|1r|1.5fn>|>|(mouse-unfold)|<arg|x>>>
+    <\render-folded-env|<action|<resize|<specific|screen|<active*|<with|mode|math|<op|\<circ\>>>>>|||<maximum|1r|1.5fn>|>|mouse-unfold|<arg|x>>>
       <arg|x>
 
       <hidden|<arg|y>>
@@ -144,7 +144,7 @@
   </macro>>
 
   <assign|unfolded-env|<\macro|x|y>
-    <\render-folded-env|<action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||<maximum|1r|1.5fn>|>|(mouse-fold)|<arg|x>>>
+    <\render-folded-env|<action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||<maximum|1r|1.5fn>|>|mouse-fold|<arg|x>>>
       <arg|x>
 
       <arg|y>
@@ -152,25 +152,25 @@
   </macro>>
 
   <assign|folded-explain|<\macro|x|y>
-    <\render-folded-explain|<with|color*|<value|color>|<action|<with|color|<value|color*>|<arg|x>>|(mouse-unfold)|<arg|x>>>>
+    <\render-folded-explain|<with|color*|<value|color>|<action|<with|color|<value|color*>|<arg|x>>|mouse-unfold|<arg|x>>>>
       <hidden|<arg|y>>
     </render-folded-explain>
   </macro>>
 
   <assign|unfolded-explain|<\macro|x|y>
-    <\render-folded-explain|<with|color*|<value|color>|<action|<with|color|<value|color*>|<arg|x>>|(mouse-fold)|<arg|x>>>>
+    <\render-folded-explain|<with|color*|<value|color>|<action|<with|color|<value|color*>|<arg|x>>|mouse-fold|<arg|x>>>>
       <arg|y>
     </render-folded-explain>
   </macro>>
 
   <assign|folded-documentation|<\macro|x|y>
-    <\render-folded-documentation|<action|<with|color|#336666|<strong|<large|<math|<op|\<ldots\>>>>>>|(mouse-unfold)|<arg|x>>>
+    <\render-folded-documentation|<action|<with|color|#336666|<strong|<large|<math|<op|\<ldots\>>>>>>|mouse-unfold|<arg|x>>>
       <strong|<large|<arg|x>>><hidden|<arg|y>>
     </render-folded-documentation>
   </macro>>
 
   <assign|unfolded-documentation|<\macro|x|y>
-    <\render-unfolded-documentation|<action|<with|color|#336666|<strong|<math|<op|\<Leftarrow\>>>>>|(mouse-fold)|<arg|x>>>
+    <\render-unfolded-documentation|<action|<with|color|#336666|<strong|<math|<op|\<Leftarrow\>>>>>|mouse-fold|<arg|x>>>
       <strong|<large|<arg|x>>>
 
       <arg|y>
@@ -178,17 +178,17 @@
   </macro>>
 
   <assign|picture-mixed|<\macro|x|y>
-    <action|<arg|x>|(mouse-unfold)|<arg|x>><hidden|<arg|y>>
+    <action|<arg|x>|mouse-unfold|<arg|x>><hidden|<arg|y>>
   </macro>>
 
   <assign|source-mixed|<\macro|x|y>
-    <\render-folded-std|<action|<resize|<active*|<with|mode|math|||||\<blacktriangleleft\>>>|||<maximum|1r|1.5fn>|>|(mouse-fold)|<verbatim|<arg|y>>>>
+    <\render-folded-std|<action|<resize|<active*|<with|mode|math|||||\<blacktriangleleft\>>>|||<maximum|1r|1.5fn>|>|mouse-fold|<verbatim|<arg|y>>>>
       <verbatim|<arg|y>><hidden|<arg|x>>
     </render-folded-std>
   </macro>>
 
   <assign|folded-grouped|<\macro|x|y>
-    <\render-folded-grouped|<action| |(mouse-unfold)|<arg|x>>>
+    <\render-folded-grouped|<action| |mouse-unfold|<arg|x>>>
       <arg|x>
 
       <hidden|<arg|y>>
@@ -196,7 +196,7 @@
   </macro>>
 
   <assign|unfolded-grouped|<\macro|x|y>
-    <\render-folded-grouped|<action| |(mouse-fold)|<arg|x>>>
+    <\render-folded-grouped|<action| |mouse-fold|<arg|x>>>
       <arg|x>
 
       <arg|y>
@@ -244,49 +244,49 @@
   </macro>>
 
   <assign|summarized-std|<\macro|x|y>
-    <\render-folded-std|<action|<resize|<specific|screen|<active*|<with|mode|math|<op|\<circ\>>>>>|||<maximum|1r|1.5fn>|>|(mouse-unfold)|<arg|x>>>
+    <\render-folded-std|<action|<resize|<specific|screen|<active*|<with|mode|math|<op|\<circ\>>>>>|||<maximum|1r|1.5fn>|>|mouse-unfold|<arg|x>>>
       <arg|x>
     </render-folded-std>
   </macro>>
 
   <assign|detailed-std|<\macro|x|y>
-    <\render-folded-std|<action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||<maximum|1r|1.5fn>|>|(mouse-fold)|<arg|x>>>
+    <\render-folded-std|<action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||<maximum|1r|1.5fn>|>|mouse-fold|<arg|x>>>
       <arg|y>
     </render-folded-std>
   </macro>>
 
   <assign|summarized-env|<\macro|x|y>
-    <\render-folded-env|<action|<resize|<specific|screen|<active*|<with|mode|math|<op|\<circ\>>>>>|||<maximum|1r|1.5fn>|>|(mouse-unfold)|<arg|x>>>
+    <\render-folded-env|<action|<resize|<specific|screen|<active*|<with|mode|math|<op|\<circ\>>>>>|||<maximum|1r|1.5fn>|>|mouse-unfold|<arg|x>>>
       <arg|x>
     </render-folded-env>
   </macro>>
 
   <assign|detailed-env|<\macro|x|y>
-    <\render-folded-env|<action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||<maximum|1r|1.5fn>|>|(mouse-fold)|<arg|x>>>
+    <\render-folded-env|<action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||<maximum|1r|1.5fn>|>|mouse-fold|<arg|x>>>
       <arg|y>
     </render-folded-env>
   </macro>>
 
   <assign|summarized-grouped|<\macro|x|y>
-    <\render-folded-grouped|<action| |(mouse-unfold)|<arg|x>>>
+    <\render-folded-grouped|<action| |mouse-unfold|<arg|x>>>
       <arg|x>
     </render-folded-grouped>
   </macro>>
 
   <assign|detailed-grouped|<\macro|x|y>
-    <\render-folded-grouped|<action| |(mouse-fold)|<arg|x>>>
+    <\render-folded-grouped|<action| |mouse-fold|<arg|x>>>
       <arg|y>
     </render-folded-grouped>
   </macro>>
 
   <assign|summarized-documentation|<\macro|x|y>
-    <\render-folded-documentation|<action|<with|color|#336666|<strong|<large|<math|<op|\<ldots\>>>>>>|(mouse-unfold)|<arg|x>>>
+    <\render-folded-documentation|<action|<with|color|#336666|<strong|<large|<math|<op|\<ldots\>>>>>>|mouse-unfold|<arg|x>>>
       <strong|<large|<arg|x>>>
     </render-folded-documentation>
   </macro>>
 
   <assign|detailed-documentation|<\macro|x|y>
-    <\render-unfolded-documentation|<action|<with|color|#336666|<strong|<math|<op|\<Leftarrow\>>>>>|(mouse-fold)|<arg|x>>>
+    <\render-unfolded-documentation|<action|<with|color|#336666|<strong|<math|<op|\<Leftarrow\>>>>>|mouse-fold|<arg|x>>>
       <arg|y>
     </render-unfolded-documentation>
   </macro>>
@@ -295,11 +295,11 @@
 
   <assign|detailed-raw|<macro|x|y|<arg|y>>>
 
-  <assign|unfold-summarized|<macro|x|<action|<arg|x>|(mouse-unfold)|<arg|x>>>>
+  <assign|unfold-summarized|<macro|x|<action|<arg|x>|mouse-unfold|<arg|x>>>>
 
-  <assign|fold-detailed|<macro|x|<action|<arg|x>|(mouse-fold)|<arg|x>>>>
+  <assign|fold-detailed|<macro|x|<action|<arg|x>|mouse-fold|<arg|x>>>>
 
-  <assign|summarized-tiny|<macro|x|y|<action|<arg|x>|(mouse-unfold)|<arg|x>>>>
+  <assign|summarized-tiny|<macro|x|y|<action|<arg|x>|mouse-unfold|<arg|x>>>>
 
   <assign|detailed-tiny|<macro|x|y|<arg|y>>>
 

@@ -270,12 +270,12 @@
   <assign|recall|<macro|key|<block|<tformat|<cwith|1|1|1|1|cell-background|pastel
   red>|<table|<row|<cell|<arg|key>>>>>>>>
 
-  <assign|fold|<macro|x|y|<surround||<right-flush><action|<active*|<with|color|blue|<with|mode|math|<rigid|\<Rightarrow\>>>>>|(mouse-unfold)|<arg|x>>|<arg|x>>>>
+  <assign|fold|<macro|x|y|<surround||<right-flush><action|<active*|<with|color|blue|<with|mode|math|<rigid|\<Rightarrow\>>>>>|mouse-unfold|<arg|x>>|<arg|x>>>>
 
   <assign|unfold|<\macro|x|y>
     <arg|x>
 
-    <surround||<right-flush><action|<active*|<with|color|blue|<with|mode|math|<rigid|\<Leftarrow\>>>>>|(mouse-fold)|<arg|x>>|<arg|y>>
+    <surround||<right-flush><action|<active*|<with|color|blue|<with|mode|math|<rigid|\<Leftarrow\>>>>>|mouse-fold|<arg|x>>|<arg|y>>
   </macro>>
 
   <assign|solution|<\macro|body>

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.0.7.21>
 
 <style|letter>
 
@@ -32,7 +32,7 @@
 
   vertical white space. It is also possible to
 
-  <surround||an object or to <block*|<tformat|<table|<row|<cell|<resize|resize|l[-1cm|b[-1cm|r]1cm|t]1cm>>>>>>
+  <surround||an object or to <block*|<tformat|<table|<row|<cell|<resize|resize|<minimum|1l|-1cm>|<minimum|1b|-1cm>|<maximum|1r|1cm>|<maximum|1t|1cm>>>>>>>
   it.|<with|par-mode|center|<move|move|0cm|1cm>>>
 
   The ``rigid group symbol'' also prevents from line breaking. An empty group
@@ -56,7 +56,7 @@
   Here is a formula that demonstrates large delimiters and big operators:
 
   <\equation*>
-    X=<left|langle><big|sum><rsub|i=1><rsup|\<infty\>><frac|a<rsub|i>|b<rsub|i>+c<rsub|i>><mid|\|><big|prod><rsub|i=1><rsup|\<infty\>><frac|1|1+\<alpha\>*z<rsup|2<rsup|i>>><right|rangle>
+    X=<around*|\<langle\>|<big|sum><rsub|i=1><rsup|\<infty\>><frac|a<rsub|i>|b<rsub|i>+c<rsub|i>><mid|\|><big|prod><rsub|i=1><rsup|\<infty\>><frac|1|1+\<alpha\>*z<rsup|2<rsup|i>>>|\<rangle\>>
   </equation*>
 
   Some other handy operators are ``above'' and ``below''
@@ -74,7 +74,7 @@
   Some mathematical symbols:
 
   <\equation*>
-    \<alpha\>\<oplus\>b\<amalg\>c\<precprec\>x\<boxtimes\>y+\<nabla\>(\<wp\>(x<rsub|1>),\<ldots\>,\<wp\>(x<rsub|n>))+<neg|x>+<neg|y>\<precprec\>S<rsub|a\<rightarrow\>b\<rightsquigarrow\>c>
+    \<alpha\>\<oplus\>b\<amalg\>c\<precprec\>x\<boxtimes\>y+\<nabla\><around|(|\<wp\><around|(|x<rsub|1>|)>,\<ldots\>,\<wp\><around|(|x<rsub|n>|)>|)>+<neg|x>+<neg|y>\<precprec\>S<rsub|a\<rightarrow\>b\<rightsquigarrow\>c>
   </equation*>
 
   We obtained <with|mode|math|<neg|x>> using the ``negation'' construct. We
@@ -87,7 +87,7 @@
   and some tabular material:
 
   <\equation*>
-    <left|(><tabular*|<tformat|<table|<row|<cell|a<rsub|1,1>>|<cell|\<cdots\>>|<cell|a<rsub|1,n>>>|<row|<cell|\<vdots\>>|<cell|>|<cell|\<vdots\>>>|<row|<cell|a<rsub|n,1>>|<cell|\<cdots\>>|<cell|a<rsub|n,n>>>>>><right|)><space|8spc><block*|<tformat|<table|<row|<cell|b<rsub|1,1>>|<cell|\<cdots\>>|<cell|b<rsub|1,n>>>|<row|<cell|\<vdots\>>|<cell|>|<cell|\<vdots\>>>|<row|<cell|b<rsub|n,1>>|<cell|\<cdots\>>|<cell|b<rsub|n,n>>>>>><space|8spc><tabular|<tformat|<cwith|1|-1|1|-1|cell
+    <around*|(|<tabular*|<tformat|<table|<row|<cell|a<rsub|1,1>>|<cell|\<cdots\>>|<cell|a<rsub|1,n>>>|<row|<cell|\<vdots\>>|<cell|>|<cell|\<vdots\>>>|<row|<cell|a<rsub|n,1>>|<cell|\<cdots\>>|<cell|a<rsub|n,n>>>>>>|)><space|8spc><block*|<tformat|<table|<row|<cell|b<rsub|1,1>>|<cell|\<cdots\>>|<cell|b<rsub|1,n>>>|<row|<cell|\<vdots\>>|<cell|>|<cell|\<vdots\>>>|<row|<cell|b<rsub|n,1>>|<cell|\<cdots\>>|<cell|b<rsub|n,n>>>>>><space|8spc><tabular|<tformat|<cwith|1|-1|1|-1|cell
     mode|c>|<cwith|1|2|1|2|cell-halign|c>|<cwith|1|3|1|3|cell-halign|r>|<cwith|2|2|2|2|cell-halign|c>|<cwith|2|3|2|3|cell-halign|r>|<cwith|3|2|3|2|cell-halign|c>|<cwith|3|3|3|3|cell-halign|r>|<table|<row|<cell|links
     boven>|<cell|<with|color|blue|boven>>|<cell|rechts
     boven>>|<row|<cell|links>|<cell|<with|color|blue|centrum>>|<cell|rechts>>|<row|<cell|links
@@ -133,17 +133,23 @@
   A reference to the equation (<reference|eq>).
 
   Here comes an active hyperlink to <hlink|http://www.gnu.org|http://www.gnu.org>.
-  Click <action|here|(display "Hello\\n")> to print hello to the standard
-  output. <specific|texmacs|This text><specific|latex|some funny stuff> is
-  only visible inside TeXmacs and will be translated to ``some funny stuff''
-  when converted to LaTeX. We conclude with a picture:
+  Click <action|here|(lambda () (display "Hello\\n"))> to print hello to the
+  standard output. <specific|texmacs|This text><specific|latex|some funny
+  stuff> is only visible inside TeXmacs and will be translated to ``some
+  funny stuff'' when converted to LaTeX. We conclude with a picture:
 
   <\with|par-mode|center>
-    <image|../../misc/pixmaps/TeXmacs-solid.xpm||||||>
+    <image|../../misc/pixmaps/TeXmacs-solid.xpm||||>
   </with>
 
   \;
 </body>
+
+<\initial>
+  <\collection>
+    <associate|par-hyphen|normal>
+  </collection>
+</initial>
 
 <\references>
   <\collection>
@@ -158,19 +164,19 @@
 <\auxiliary>
   <\collection>
     <\associate|toc>
-      <vspace*|2fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|font-size|<quote|1.19>|TeXmacs
+      <vspace*|2fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|font-size|<quote|1.19>|1<space|2spc>TeXmacs
       overview> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-1><vspace|1fn>
 
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Formatting
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|1<space|2spc>Formatting
       primitives> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-2><vspace|0.5fn>
 
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Mathematics>
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|2<space|2spc>Mathematics>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-3><vspace|0.5fn>
 
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Dynamic
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|3<space|2spc>Dynamic
       constructs> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-4><vspace|0.5fn>
     </associate>

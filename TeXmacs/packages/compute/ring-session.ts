@@ -155,7 +155,7 @@
   <assign|folded|<\macro|x|y>
     <\with|ornament-shape|classic|ornament-color|<value|fold-title-color>|ornament-hpadding|<tuple|<plus|<value|session-ring-width>|<value|session-left-indent>>|<value|session-right-indent>>|ornament-vpadding|<value|input-vpadding>|ornament-border|<value|input-border>|ornament-sunny-color|<value|input-border-color>>
       <\ornament>
-        <\surround||<right-flush><action|<math|\<Downarrow\>>|(mouse-unfold)|<arg|x>>>
+        <\surround||<right-flush><action|<math|\<Downarrow\>>|mouse-unfold|<arg|x>>>
           <\with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>>
             <arg|x>
           </with>
@@ -167,7 +167,7 @@
   <assign|unfolded|<\macro|x|y>
     <\with|ornament-shape|classic|ornament-color|<value|fold-title-color>|ornament-hpadding|<tuple|<plus|<value|session-ring-width>|<value|session-left-indent>>|<value|session-right-indent>>|ornament-vpadding|<value|input-vpadding>|ornament-border|<value|input-border>|ornament-sunny-color|<value|input-border-color>>
       <\ornament>
-        <\surround||<right-flush><action|<math|\<Uparrow\>>|(mouse-fold)|<arg|x>>>
+        <\surround||<right-flush><action|<math|\<Uparrow\>>|mouse-fold|<arg|x>>>
           <\with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>>
             <arg|x>
           </with>

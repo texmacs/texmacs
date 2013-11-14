@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.16>
+<TeXmacs|1.0.7.21>
 
 <style|tmdoc>
 
@@ -239,8 +239,8 @@
     <item*|<with|font-series|medium|<explain-macro|action|text|script>>>This
     tag works like a hyperlink with body <src-arg|text>, but such that the
     <scheme> command <src-arg|script> is invoked when clicking on the
-    <src-arg|text>. For instance, when clicking <action|here|(system
-    "xterm")>, you will launch an<nbsp><verbatim|xterm>.
+    <src-arg|text>. For instance, when clicking <action|here|(lambda ()
+    (system "xterm"))>, you will launch an<nbsp><verbatim|xterm>.
 
     <item*|<with|font-series|medium|<explain-macro|extern|fun|arg-1|...|arg-n>>>This
     tag is used in order to implement macros whose body is written in
@@ -262,10 +262,10 @@
   within documents carries as risk: an evil person might send you a document
   with a script which attempts to erase your hard disk (for instance). For
   this reason, <TeXmacs> implements a way to test whether scripts can be
-  considered secure or not. For instance, when clicking <action|here|(system
-  "xterm")> (so as to launch an <verbatim|xterm>), the editor will prompt you
-  by default in order to confirm whether you wish to execute this script. The
-  desired level of security can be specified in
+  considered secure or not. For instance, when clicking <action|here|(lambda
+  () (system "xterm"))> (so as to launch an <verbatim|xterm>), the editor
+  will prompt you by default in order to confirm whether you wish to execute
+  this script. The desired level of security can be specified in
   <menu|Edit|Preferences|Security>. When writing your own <scheme> extensions
   to <TeXmacs>, it is also possible to define routines as being secure.
 
@@ -278,3 +278,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>

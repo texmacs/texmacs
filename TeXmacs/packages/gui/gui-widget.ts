@@ -1,6 +1,6 @@
-<TeXmacs|1.0.6.9>
+<TeXmacs|1.0.7.21>
 
-<style|source>
+<style|<tuple|source|english>>
 
 <\body>
   <active*|<\src-title>
@@ -13,11 +13,10 @@
     <src-copyright|2007|Joris van der Hoeven>
 
     <\src-license>
-      This software falls under the <hlink|GNU general public
-      license, version 3 or later|$TEXMACS_PATH/LICENSE>.
-      It comes WITHOUT ANY WARRANTY WHATSOEVER.
-      You should have received a copy of the license which the software.
-      If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
+      This software falls under the <hlink|GNU general public license,
+      version 3 or later|$TEXMACS_PATH/LICENSE>. It comes WITHOUT ANY
+      WARRANTY WHATSOEVER. You should have received a copy of the license
+      which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
     </src-license>
   </src-title>>
 
@@ -75,15 +74,14 @@
 
   <assign|widget-value|<macro|name|<extern|widget-ref|<arg|name>|<value|widget-prefix>>>>
 
-  <assign|widget-cmd|<macro|cmd|<merge|(widget-delay (widget-with
-  "|<value|widget-prefix>|" |<arg|cmd>|))>>>
+  <assign|widget-cmd|<macro|cmd|<merge|(lambda args (widget-delay
+  (widget-with "|<value|widget-prefix>|" |<arg|cmd>|)))>>>
 
   \;
 </body>
 
 <\initial>
   <\collection>
-    <associate|language|english>
     <associate|preamble|true>
     <associate|sfactor|5>
   </collection>

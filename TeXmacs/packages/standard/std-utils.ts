@@ -337,9 +337,6 @@
 
   <assign|hidden-title|<macro|title|>>
 
-  <assign|wiki-link|<macro|body|name|<style-with|src-compact|none|<action|<arg|body>|<merge|(remote-project-load-by-name
-  "|<arg|name>|")>>>>>
-
   <assign|inline-block|<macro|body|<tabular|<tformat|<cwith|1|1|1|1|cell-lsep|0fn>|<twith|table-width|1par>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
     <arg|body>
   </cell>>>>>>>

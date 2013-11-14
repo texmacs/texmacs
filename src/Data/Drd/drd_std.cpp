@@ -490,10 +490,10 @@ init_std_drd () {
 	url_type (1) -> name (1, "destination") ->
 	name ("hyperlink"));
   init (ACTION, "action",
-	options (2, 1, DETAILED) ->
+	repeat (2, 1, DETAILED) ->
 	accessible (0) -> name (0, "text") ->
-	code (1) -> name (1, "script") ->
-	regular (2) -> name (2, "where"));
+	code (1) -> name (1, "function") ->
+	regular (2) -> name (2, "arguments"));
   init (SET_BINDING, "set-binding",
 	options (1, 2));                      // see env_exec.cpp
   init (GET_BINDING, "get-binding",

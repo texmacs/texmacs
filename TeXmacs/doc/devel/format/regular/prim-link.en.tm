@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.1>
+<TeXmacs|1.0.7.21>
 
 <style|tmdoc>
 
@@ -98,9 +98,13 @@
     to content>
   <|explain>
     Bind a <scheme> <src-arg|script> to a double mouse click on
-    <src-arg|content>. For instance, when clicking <action|here|(system
-    "xterm &")>, you may launch an <verbatim|xterm>. This action is encoded
-    by <inactive*|<action|here|(system "xterm &")>>.
+    <src-arg|content>. For instance, when clicking <action|here|(lambda ()
+    (system "xterm &"))>, you may launch an <verbatim|xterm>. This action is
+    encoded by
+
+    <\tm-fragment>
+      <inactive*|<action|here|(lambda () (system "xterm &"))>>
+    </tm-fragment>
 
     When clicking on actions, the user is usually prompted for confirmation,
     so as to avoid security problems. The user may control the desired level
@@ -119,3 +123,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>
