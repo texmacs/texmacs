@@ -519,10 +519,14 @@
 
   <assign|mouse-over|<macro|body|prg|where|<style-with|src-compact|none|<locus|<id|<hard-id|<arg|body>>>|<link|mouse-over|<id|<hard-id|<arg|body>>>|<script|<arg|prg>|<arg|body>|<arg|where>>>|<arg|body>>>>>
 
+  <assign|keyboard-notify|<macro|body|prg|where|<style-with|src-compact|none|<locus|<id|<hard-id|<arg|body>>>|<link|keyboard|<id|<hard-id|<arg|body>>>|<script|<arg|prg>|<arg|body>|<arg|where>>>|<arg|body>>>>>
+
   <assign|move-over-balloon|<macro|x|y|<mouse-over|<arg|x>|show-move-over-balloon|<arg|y>>>>
 
   <assign|help-balloon|<macro|x|y|<move-over-balloon|<arg|x>|<colored-frame|pastel
   yellow|<arg|y>>>>>
+
+  <assign|keyboard-balloon|<macro|x|y|<keyboard-notify|<arg|x>|show-move-over-balloon|<arg|y>>>>
 
   <\active*>
     <\src-comment>

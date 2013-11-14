@@ -706,8 +706,10 @@ edit_interface_rep::apply_changes () {
   }
   
   // cout << "Handling locus highlighting\n";
-  if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_EXTENTS))
-    update_active_loci ();
+  if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_EXTENTS)) {
+    update_mouse_loci ();
+    update_focus_loci ();
+  }
   if (env_change & THE_LOCUS) {
     if (locus_new_rects != locus_rects) {
       invalidate (locus_rects);

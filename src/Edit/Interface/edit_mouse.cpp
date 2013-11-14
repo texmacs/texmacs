@@ -122,8 +122,8 @@ edit_interface_rep::mouse_drag (SI x, SI y) {
 void
 edit_interface_rep::mouse_select (SI x, SI y, int mods, bool drag) {
   if (eb->action ("select" , x, y, 0) != "") return;
-  if (!is_nil (active_ids) && (mods & ShiftMask) == 0) {
-    call ("link-follow-ids", object (active_ids), object ("click"));
+  if (!is_nil (mouse_ids) && (mods & ShiftMask) == 0) {
+    call ("link-follow-ids", object (mouse_ids), object ("click"));
     return;
   }
   tree g;
@@ -255,7 +255,7 @@ edit_interface_rep::set_pointer (
 ******************************************************************************/
 
 void
-edit_interface_rep::update_active_loci () {
+edit_interface_rep::update_mouse_loci () {
   int old_mode= set_access_mode (DRD_ACCESS_SOURCE);
   path cp= path_up (tree_path (path (), last_x, last_y, 0));
   set_access_mode (old_mode);
@@ -270,7 +270,7 @@ edit_interface_rep::update_active_loci () {
   }
 
   locus_new_rects= rectangles ();
-  active_ids= list<string> ();
+  mouse_ids= list<string> ();
   if (!is_nil (ids1 * ids2) && !has_changed (THE_FOCUS)) {
     list<tree> l= as_list_tree (call ("link-active-upwards", object (mt)));
     while (!is_nil (l)) {
@@ -285,9 +285,24 @@ edit_interface_rep::update_active_loci () {
     if (is_nil (ids1)) rs1= rectangles ();
     // FIXME: we should keep track which id corresponds to which rectangle
     locus_new_rects= rs1 * rs2;
-    active_ids= ids1 * ids2;
+    mouse_ids= ids1 * ids2;
   }
   if (locus_new_rects != locus_rects) notify_change (THE_LOCUS);
+}
+
+void
+edit_interface_rep::update_focus_loci () {
+  path p= path_up (tp);
+  list<string> ids;
+  while (rp <= p) {
+    ids << get_ids (subtree (et, p));
+    p= path_up (p);
+  }
+  focus_ids= list<string> ();
+  if (!is_nil (ids) && !has_changed (THE_FOCUS)) {
+    ids= as_list_string (call ("link-active-ids", object (ids)));
+    focus_ids= ids;
+  }
 }
 
 /******************************************************************************
@@ -410,9 +425,9 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
   bool move_like=
     (type == "move" || type == "dragging-left" || type == "dragging-right");
   if ((!move_like) || (is_attached (this) && !check_event (MOTION_EVENT)))
-    update_active_loci ();
+    update_mouse_loci ();
   if (type == "move")
-    call ("link-follow-ids", object (active_ids), object ("mouse-over"));
+    call ("link-follow-ids", object (mouse_ids), object ("mouse-over"));
 
   if (type == "leave")
     set_pointer ("XC_top_left_arrow");

@@ -71,7 +71,8 @@ protected:
   renderer      stored;
   rectangles    locus_new_rects;
   rectangles    locus_rects;
-  list<string>  active_ids;
+  list<string>  mouse_ids;
+  list<string>  focus_ids;
   int           cur_sb, cur_wb;
   SI            cur_wx, cur_wy;
 
@@ -164,7 +165,8 @@ public:
   cursor get_cursor ();
   void set_pointer (string name);
   void set_pointer (string curs_name, string mask_name);
-  void update_active_loci ();
+  void update_mouse_loci ();
+  void update_focus_loci ();
 
   /* the footer */
   tree compute_text_footer (tree st);
