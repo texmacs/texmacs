@@ -525,7 +525,7 @@
 
 (tm-define (new-execute-script s secure-origin? args)
   (let* ((sym-fun (eval (string->object (string-append "'" s))))
-	 (sym-cmd (cons sym-fun args))
+	 (sym-cmd (cons sym-fun (map (lambda (x) (list 'quote x)) args)))
          (ok? (or secure-origin? (secure? sym-cmd)))
 	 (cmd (eval (list 'lambda (list) sym-cmd))))
     (cond ((or ok? (== (get-preference "security") "accept all scripts"))
