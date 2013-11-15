@@ -179,6 +179,7 @@ public:
   virtual void mouse_adjust_selection (SI x, SI y, int mods) = 0;
   virtual void mouse_scroll (SI x, SI y, bool up) = 0;
   virtual cursor get_cursor () = 0;
+  virtual array<SI> get_mouse_position () = 0;
   virtual void set_pointer (string name) = 0;
   virtual void set_pointer (string curs_name, string mask_name) = 0;
   virtual void set_message (tree l, tree r= "", bool temp= false) = 0;

@@ -238,6 +238,16 @@ edit_interface_rep::get_cursor () {
   return copy (the_cursor ());
 }
 
+array<SI>
+edit_interface_rep::get_mouse_position () {
+  rectangle wr= get_window_extents ();
+  SI sz= get_pixel_size ();
+  double sf= ((double) sz) / 256.0;
+  SI mx= ((SI) (last_x / sf)) + wr->x1;
+  SI my= ((SI) (last_y / sf)) + wr->y2;
+  return array<SI> (mx, my);
+}
+
 void
 edit_interface_rep::set_pointer (string name) {
   send_mouse_pointer (this, name);

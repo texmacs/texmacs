@@ -163,6 +163,7 @@ public:
   void mouse_adjust_selection (SI x, SI y, int mods);
   void mouse_scroll (SI x, SI y, bool up);
   cursor get_cursor ();
+  array<SI> get_mouse_position ();
   void set_pointer (string name);
   void set_pointer (string curs_name, string mask_name);
   void update_mouse_loci ();

@@ -158,6 +158,7 @@
   (key-press-spell spell_keypress (bool string))
   (key-press-complete complete_keypress (bool string))
   (mouse-any mouse_any (void string int int int double))
+  (get-mouse-position get_mouse_position (array_int))
   (set-mouse-pointer set_pointer (void string string))
   (set-predef-mouse-pointer set_pointer (void string))
   

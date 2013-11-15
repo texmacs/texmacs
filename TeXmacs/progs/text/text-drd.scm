@@ -206,5 +206,4 @@
 ;; balloons
 
 (define-group balloon-tag
-  mouse-over-balloon ;;mouse-over-balloon*
-  focus-balloon help-balloon)
+  mouse-over-balloon mouse-over-balloon* focus-balloon help-balloon)
