@@ -343,9 +343,6 @@
 (tm-define (overlay-context? t)
   (overlay-tag? (tree-label t)))
 
-(define (tree->number t)
-  (if (tree-atomic? t) (string->number (tree->string t)) 0))
-
 (tm-define (make-overlays l)
   (if (== l 'overlays)
       (insert-go-to `(,l "1" "1" (document "")) '(2 0 0))
@@ -874,36 +871,3 @@
       (begin
         (switch-insert-at t :var-next)
         (make-item))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Balloons
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (integer-floor x)
-  (inexact->exact (floor x)))
-
-(tm-define (display-balloon body balloon halign valign mouse-flag extents)
-  (:secure #t)
-  (with (x1 y1 x2 y2) (tree-bounding-rectangle body)
-    (let* ((zf (get-window-zoom-factor))
-           (sf (/ 5.0 zf))
-           (balloon* `(with "magnification" ,(number->string zf) ,balloon))
-           (w (widget-texmacs-output balloon* '(style "generic")))
-           (ww (integer-floor (/ (tree->number (tree-ref extents 0)) sf)))
-           (wh (integer-floor (/ (tree->number (tree-ref extents 1)) sf)))
-           (ha (tree->stree halign))
-           (va (tree->stree valign))
-           (x (cond ((== ha "Left") (- (- x1 ww) (* 3 256)))
-                    ((== ha "left") x1)
-                    ((== ha "center") (quotient (+ x1 x2 (- ww)) 2))
-                    ((== ha "right") (- (- x2 ww) (* 3 256)))
-                    ((== ha "Right") x2)
-                    (else x1)))
-           (y (cond ((== va "Bottom") (- y1 (* 5 256)))
-                    ((== va "bottom") (+ y1 wh))
-                    ((== va "center") (quotient (+ y1 y2 wh) 2))
-                    ((== va "top") y2)
-                    ((== va "Top") (+ y2 wh (* 5 256)))
-                    (else (- y1 (* 5 256))))))
-      ;;(display* "size= " (widget-size w) "\n")
-      (show-balloon w x y))))

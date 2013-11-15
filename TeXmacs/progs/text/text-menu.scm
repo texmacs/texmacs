@@ -205,6 +205,7 @@ for
   (when (not (or (inside? 'float) (inside? 'footnote)))
     ("Footnote" (make 'footnote))
     ("Marginal note" (make-marginal-note))
+    ("Balloon" (make-balloon))
     ---
     ("Floating object" (make-insertion "float"))
     ("Floating figure" (begin (make-insertion "float") (make 'big-figure)))
@@ -252,6 +253,27 @@ for
   (:require (float-context? t))
   (-> "Allowed positions"
       (link position-float-menu)))
+
+(menu-bind position-balloon-menu
+  (group "Horizontal alignment")
+  ("Outer left" (set-balloon-halign "Left"))
+  ("Inner left" (set-balloon-halign "left"))
+  ("Center" (set-balloon-halign "center"))
+  ("Inner right" (set-balloon-halign "right"))
+  ("Outer right" (set-balloon-halign "Right"))
+  ---
+  (group "Vertical alignment")
+  ("Outer bottom" (set-balloon-valign "Bottom"))
+  ("Inner bottom" (set-balloon-valign "bottom"))
+  ("Center" (set-balloon-valign "center"))
+  ("Inner top" (set-balloon-valign "top"))
+  ("Outer top" (set-balloon-valign "Top")))
+
+(tm-menu (focus-position-float-menu t)
+  (:require (balloon-context? t))
+  ---
+  (link position-balloon-menu)
+  ---)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tags
@@ -824,6 +846,12 @@ for
   (=> (balloon (icon "tm_position_float.xpm")
                "Allowed positions of floating object")
       (link position-float-menu)))
+
+(tm-menu (focus-position-float-icons t)
+  (:require (balloon-context? t))
+  (=> (balloon (icon "tm_position_float.xpm")
+               "Alignment of balloon")
+      (link position-balloon-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Possibility to rename titled environments

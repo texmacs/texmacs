@@ -19,12 +19,12 @@
 (define-group variant-tag
   (section-tag) (list-tag) (figure-tag)
   (enunciation-tag) (prominent-tag) (frame-tag) (frame-titled-tag)
-  (textual-tag) (code-tag) (ornament-tag))
+  (textual-tag) (code-tag) (ornament-tag) (balloon-tag))
 
 (define-group similar-tag
   (section-tag) (list-tag) (figure-tag)
   (enunciation-tag) (prominent-tag) (frame-tag) (frame-titled-tag)
-  (textual-tag) (code-tag) (equation-tag) (ornament-tag))
+  (textual-tag) (code-tag) (equation-tag) (ornament-tag) (balloon-tag))
 
 (define-group numbered-tag
   (section-tag)
@@ -202,3 +202,9 @@
 
 (define-group ornament-tag
   manila-paper rough-paper ridged-paper pine granite metal)
+
+;; balloons
+
+(define-group balloon-tag
+  mouse-over-balloon ;;mouse-over-balloon*
+  focus-balloon help-balloon)

@@ -35,6 +35,9 @@
 (define-public (tree->symbol t)
   (string->symbol (tree->string t)))
 
+(define-public (tree->number t)
+  (if (tree-atomic? t) (string->number (tree->string t)) 0))
+
 (define-public (tree-explode t)
   (if (atomic-tree? t)
       (tree->string t)
