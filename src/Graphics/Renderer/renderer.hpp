@@ -128,7 +128,7 @@ public:
   virtual void get_extents (int& w, int& h);
   virtual void set_page_nr (int nr);
   virtual void next_page ();
-  virtual void anchor (string label, SI x, SI y);
+  virtual void anchor (string label, SI x1, SI y1, SI x2, SI y2);
   virtual void href (string label, SI x1, SI y1, SI x2, SI y2);
   virtual void toc_entry (string kind, string title, SI x, SI y);
 };

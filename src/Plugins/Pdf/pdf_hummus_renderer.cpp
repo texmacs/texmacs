@@ -228,7 +228,7 @@ public:
 
   /************************ subroutines hyperlinks ***************************/
   
-  void anchor (string label, SI x, SI y);
+  void anchor (string label, SI x1, SI y1, SI x2, SI y2);
   void href (string label, SI x1, SI y1, SI x2, SI y2);
   void toc_entry (string kind, string title, SI x, SI y);
   
@@ -1494,10 +1494,10 @@ int pdf_hummus_renderer_rep::get_label_id(string label)
 }
 
 void
-pdf_hummus_renderer_rep::anchor (string label, SI x, SI y)
+pdf_hummus_renderer_rep::anchor (string label, SI x1, SI y1, SI x2, SI y2)
 {
   string l = prepare_text (label);
-  dests << dest_data(l, page_num, to_x(x), to_y(y));
+  dests << dest_data(l, page_num, to_x(x1), to_y(y2+20*pixel));
 }
 
 void

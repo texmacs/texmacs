@@ -936,14 +936,14 @@ printer_rep::draw_scalable (scalable im, SI x, SI y, int alpha) {
 }
 
 void
-printer_rep::anchor (string label, SI x, SI y) {
+printer_rep::anchor (string label, SI x1, SI y1, SI x2, SI y2) {
   string s = "(";
   s = s << prepare_text (label) << ") cvn";
   if (linelen>0) cr ();
   print ("[ /Dest");
   print (s);
   print ("/View [/XYZ");
-  print (x, y);
+  print (x1, y1);
   print ("null] /DEST pdfmark");
   cr ();
 }
