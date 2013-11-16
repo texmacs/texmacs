@@ -25,6 +25,10 @@
 #include "frame.hpp"
 #include "Ghostscript/gs_utilities.hpp" // for gs_prefix
 
+#ifdef QTTEXMACS
+#include "Qt/qt_utilities.hpp"
+#endif
+
 #include "PDFWriter/PDFWriter.h"
 #include "PDFWriter/PDFPage.h"
 #include "PDFWriter/PageContentContext.h"
@@ -32,6 +36,12 @@
 #include "PDFWriter/PDFImageXObject.h"
 #include "PDFWriter/PDFStream.h"
 #include "PDFWriter/PDFDocumentCopyingContext.h"
+#include "PDFWriter/InputByteArrayStream.h"
+#include "PDFWriter/ProcsetResourcesConstants.h"
+#include "PDFWriter/OutputStreamTraits.h"
+#include "PDFWriter/XObjectContentContext.h"
+#include "PDFWriter/PDFFormXObject.h"
+
 
 /******************************************************************************
  * pdf_hummus_renderer
@@ -153,7 +163,6 @@ class pdf_hummus_renderer_rep : public renderer_rep {
   void make_pdf_font (string fontname);
   void draw_bitmap_glyph (int ch, font_glyphs fn, SI x, SI y);
   void  image (url u, SI w, SI h, SI x, SI y,
-               double cx1, double cy1, double cx2, double cy2,
                int alpha);
   
   
@@ -643,7 +652,8 @@ static const std::string scDecode = "Decode";
 static const std::string scBitsPerComponent = "BitsPerComponent";
 static const std::string scFilter = "Filter";
 static const std::string scDCTDecode = "DCTDecode";
-static const std::string KProcsetImageB = "ImageB";
+static const std::string scLength = "Length";
+
 
 static void
 create_pdf_image_raw (PDFWriter& pdfw, string raw_data, SI width, SI height, ObjectIDType imageXObjectID)
@@ -1270,95 +1280,217 @@ class pdf_image_rep : public concrete_struct
 {
 public:
   url u;
-  int bx1, by1, bx2, by2;
+  int w,h;
   ObjectIDType id;
+  int dpi;
   
-  pdf_image_rep(url _u, ObjectIDType _id)
-    : u(_u), id(_id)
-  {
-    ps_bounding_box (u, bx1, by1, bx2, by2);
-  }
+  pdf_image_rep(url _u, ObjectIDType _id, int _dpi)
+    : u(_u), id(_id), dpi(_dpi)
+  { image_size (u, w, h); }
   ~pdf_image_rep() {}
-  
-  void flush(PDFWriter& pdfw)
-  {
-    url name= resolve (u);
-    if (is_none (name))
-      name= "$TEXMACS_PATH/misc/pixmaps/unknown.ps";
 
-    // do not use "convert" to convert from eps to pdf since it rasterizes the picture
-    // string filename = concretize (name);
+  bool flush_raster (PDFWriter& pdfw, url image);
+  void flush(PDFWriter& pdfw);
 
-    PDFRectangle cropBox (0,0,bx2-bx1,by2-by1);
-    double tMat[6] = { 1, 0, 0, 1, 0, 0};
-
-    url temp= url_temp (".pdf");
-    string tempname= sys_concretize (temp);
-    c_string fname (tempname);
-    //cout << "flushing :" << fname << LF;
-    
-    string s= suffix (name);
-    if (s == "pdf") {
-      // FIXME: better avoid copying in this case
-      string cmd= "cp";
-      system (cmd, name, temp);
-    } else if ( s != "ps" && s != "eps") {
-      // generic image format : use convert from ImageMagik
-      string cmd= "convert";
-      system (cmd, name, temp);
-    } else {
-      // ps or eps : use ghostscript
-#if 0
-      // obsolete code : remove at some point
-      string cmd = "ps2pdf14";
-      system (cmd, u, temp);
-      PDFRectangle cropBox (bx1,by1,bx2,by2);
-      double tMat[6] = { 1, 0, 0, 1, -bx1, -by1};
-#else
-      // use gs to convert eps to pdf and take care of properly handling the bounding box
-      // the resulting pdf image will always start at 0,0.
-      string cmd= gs_prefix();
-      cmd << " -dQUIET -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pdfwrite ";
-      cmd << " -sOutputFile=" << tempname << " ";
-      cmd << " -c \" << /PageSize [ " << as_string(bx2-bx1) << " " << as_string(by2-by1)
-          << " ] >> setpagedevice gsave  "
-          << as_string(-bx1) << " " << as_string(-by1) << " translate \" ";
-      cmd << " -f " << sys_concretize (name);
-      cmd << " -c \" grestore \"  ";
-      //cout << cmd << LF;
-      system(cmd);
-#endif
-    }
-    EStatusCode status = PDFHummus::eSuccess;
-    DocumentContext& dc = pdfw.GetDocumentContext();
-
-    PDFDocumentCopyingContext *copyingContext = pdfw.CreatePDFCopyingContext((char*)fname);
-    do {
-      if(!copyingContext) break;
-      PDFFormXObject *form = dc.StartFormXObject(cropBox, id, tMat);
-      status = copyingContext->MergePDFPageToFormXObject(form,0);
-      if(status != eSuccess) break;
-      pdfw.EndFormXObjectAndRelease(form);
-    } while (false);
-    if (copyingContext) {
-      delete copyingContext;
-      copyingContext = NULL;
-    }
-    remove (temp);
-
-    if (status == PDFHummus::eFailure) {
-      cerr <<  "pdf_hummus: failed to include image file:" << fname << LF;
-    }
-  }
 }; // class pdf_image_ref
 
 class pdf_image {
   CONCRETE_NULL(pdf_image);
-  pdf_image (url _u, ObjectIDType _id):
-    rep (tm_new<pdf_image_rep> (_u,_id)) {};
+  pdf_image (url _u, ObjectIDType _id, int _dpi):
+    rep (tm_new<pdf_image_rep> (_u,_id,_dpi)) {};
 };
 
 CONCRETE_NULL_CODE(pdf_image);
+
+
+void
+pdf_image_rep::flush(PDFWriter& pdfw)
+{
+  url name= resolve (u);
+  if (is_none (name))
+    name= "$TEXMACS_PATH/misc/pixmaps/unknown.ps";
+  
+  // do not use "convert" to convert from eps to pdf since it rasterizes the picture
+  // string filename = concretize (name);
+  
+  url temp= url_temp (".pdf");
+  string tempname= sys_concretize (temp);
+  c_string fname (tempname);
+  string s= suffix (name);
+  double scale_x  = 1, scale_y  = 1;
+  // cout << "flushing :" << fname << LF;
+  
+  if (s == "pdf") {
+    // * PDF
+    // FIXME: better avoid copying in this case
+    string cmd= "cp";
+    system (cmd, name, temp);
+  } else if ( s != "ps" && s != "eps") {
+    // * generic image format
+    
+    // try to work out inclusion using our own tools
+    // note that we have to return since flush_raster
+    // already build the appopriate Form XObject into the PDF
+    if (flush_raster (pdfw, name)) return;
+
+    // if this fails try using convert from ImageMagik
+    // to convert to pdf
+    string cmd= "convert";
+    system (cmd, name, temp);
+  } else {
+    // * ps or eps
+    // use gs to convert eps to pdf and take care of properly handling the bounding box
+    // the resulting pdf image will always start at 0,0.
+    
+    int bx1, by1, bx2, by2; // bounding box
+    ps_bounding_box(u, bx1, by1, bx2, by2);
+    
+    string cmd= gs_prefix();
+    cmd << " -dQUIET -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pdfwrite ";
+    cmd << " -sOutputFile=" << tempname << " ";
+    cmd << " -c \" << /PageSize [ " << as_string(bx2-bx1) << " " << as_string(by2-by1)
+    << " ] >> setpagedevice gsave  "
+    << as_string(-bx1) << " " << as_string(-by1) << " translate \" ";
+    cmd << " -f " << sys_concretize (name);
+    cmd << " -c \" grestore \"  ";
+    //cout << cmd << LF;
+    system(cmd);
+    
+    scale_x = w/((double)(bx2-bx1));
+    scale_y = h/((double)(by2-by1));
+  }
+  EStatusCode status = PDFHummus::eSuccess;
+  DocumentContext& dc = pdfw.GetDocumentContext();
+  
+  PDFRectangle cropBox (0, 0, w, h);
+  double tMat[6] = { scale_x, 0, 0, scale_y, 0, 0};
+  
+  PDFDocumentCopyingContext *copyingContext = pdfw.CreatePDFCopyingContext((char*)fname);
+  do {
+    if(!copyingContext) break;
+    PDFFormXObject *form = dc.StartFormXObject(cropBox, id, tMat);
+    status = copyingContext->MergePDFPageToFormXObject(form,0);
+    if(status != eSuccess) break;
+    pdfw.EndFormXObjectAndRelease(form);
+  } while (false);
+  if (copyingContext) {
+    delete copyingContext;
+    copyingContext = NULL;
+  }
+  remove (temp);
+  
+  if (status == PDFHummus::eFailure) {
+    cerr <<  "pdf_hummus: failed to include image file:" << fname << LF;
+  }
+}
+
+bool
+pdf_image_rep::flush_raster (PDFWriter& pdfw, url image) {
+  string data, mask, palette;
+  int iw = 0, ih =0;
+  
+#ifdef QTTEXMACS
+  qt_image_data (image, iw, ih, data, palette, mask);
+#endif
+  
+  
+  if ((iw==0)||(ih==0)) return false;
+  
+  if ((iw==0)||(ih==0)) {
+    // we do not have image data, something went wrong.
+    // put a placeholder in the XForm
+    
+    PDFFormXObject* xobjectForm = pdfw.StartFormXObject(PDFRectangle(0, 0, w, h), id);
+    
+    XObjectContentContext* xobjectContentContext = xobjectForm->GetContentContext();
+    
+    xobjectContentContext->q();
+    xobjectContentContext->cm(w, 0, 0, h, 0, 0);
+    xobjectContentContext->re(0,0,1,1);
+    xobjectContentContext->S();
+    xobjectContentContext->m(0,0);
+    xobjectContentContext->l(1,1);
+    xobjectContentContext->S();
+    xobjectContentContext->m(0,1);
+    xobjectContentContext->l(1,0);
+    xobjectContentContext->S();
+    xobjectContentContext->Q();
+    
+    EStatusCode status = pdfw.EndFormXObjectAndRelease(xobjectForm);
+    (void) status;
+    
+  } else {
+    
+    // ok, we have enough data to put a real image into the pdf
+    // encode the image into an Image XObject
+    // and put a Form XObject to do proper scaling
+    
+    ObjectsContext& objectsContext = pdfw.GetObjectsContext();
+    ObjectIDType imageId = objectsContext.StartNewIndirectObject();
+    do {
+      {
+        // write stream dictionary
+        DictionaryContext* imageContext = objectsContext.StartDictionary();
+        // type
+        imageContext->WriteKey(scType);
+        imageContext->WriteNameValue(scXObject);
+        // subtype
+        imageContext->WriteKey(scSubType);
+        imageContext->WriteNameValue(scImage);
+        // Width
+        imageContext->WriteKey(scWidth);
+        imageContext->WriteIntegerValue(iw);
+        // Height
+        imageContext->WriteKey(scHeight);
+        imageContext->WriteIntegerValue(ih);
+        // Bits Per Component
+        imageContext->WriteKey(scBitsPerComponent);
+        imageContext->WriteIntegerValue(8);
+        // Color Space and Decode Array if necessary
+        imageContext->WriteKey(scColorSpace);
+        imageContext->WriteNameValue(scDeviceRGB);
+        // Data stream
+        {
+          PDFStream* imageStream = objectsContext.StartPDFStream(imageContext, true);
+          
+          OutputStreamTraits outputTraits(imageStream->GetWriteStream());
+          c_string buf (data);
+          
+          InputByteArrayStream reader((IOBasicTypes::Byte*)(char *)buf, N(data));
+          EStatusCode status = outputTraits.CopyToOutputStream(&reader);
+          if(status != PDFHummus::eSuccess)
+          {
+            delete imageStream;
+            break;
+          }
+          objectsContext.EndPDFStream(imageStream);
+          delete imageStream;
+        }
+      }
+      objectsContext.EndIndirectObject();
+      
+      PDFImageXObject *imageXObject = new PDFImageXObject(imageId, KProcsetImageC);
+      
+      PDFFormXObject* xobjectForm = pdfw.StartFormXObject(PDFRectangle(0, 0, w, h), id);
+      
+      XObjectContentContext* xobjectContentContext = xobjectForm->GetContentContext();
+      
+      xobjectContentContext->q();
+      xobjectContentContext->cm(w, 0, 0, h, 0, 0);
+      std::string pdfImageName = xobjectForm->GetResourcesDictionary().AddImageXObjectMapping(imageXObject);
+      xobjectContentContext->Do(pdfImageName);
+      xobjectContentContext->Q();
+      
+      delete imageXObject; imageXObject = NULL;
+      
+      EStatusCode status = pdfw.EndFormXObjectAndRelease(xobjectForm);
+      (void) status;
+      
+    } while (false);
+  }
+  
+  return true;
+}
 
 
 void
@@ -1375,9 +1507,7 @@ pdf_hummus_renderer_rep::flush_images ()
 
 void
 pdf_hummus_renderer_rep::image (
-  url u, SI w, SI h, SI x, SI y,
-  double cx1, double cy1, double cx2, double cy2,
-  int alpha)
+  url u, SI w, SI h, SI x, SI y, int alpha)
 {
   //cerr << "image " << u << LF;
   (void) alpha; // FIXME
@@ -1386,25 +1516,22 @@ pdf_hummus_renderer_rep::image (
   pdf_image im = ( image_pool->contains(lookup) ? image_pool[lookup] : pdf_image() );
   
   if (is_nil(im)) {
-    im = pdf_image(u, pdfWriter.GetObjectsContext().GetInDirectObjectsRegistry().AllocateNewObjectID());
+    im = pdf_image(u, pdfWriter.GetObjectsContext().GetInDirectObjectsRegistry().AllocateNewObjectID(), dpi);
     image_pool(lookup) = im;
   }
 
   if (is_nil(im)) return;
   
-  double sc_x= ((double) (w/pixel)) / ((double) (cx2-cx1));
-  double sc_y= ((double) (h/pixel)) / ((double) (cy2-cy1));
-  
   end_text();
   
   contentContext->q();
-  contentContext->cm(sc_x,0,0,sc_y,to_x(x), to_y(y));
+  contentContext->cm(((double)w)/(pixel*(double)im->w), 0, 0, ((double)h)/(pixel*(double)im->h), to_x(x), to_y(y));
   std::string pdfFormName = page->GetResourcesDictionary().AddFormXObjectMapping(im->id);
   contentContext->Do(pdfFormName);
+  //contentContext->re(0,0,im->w,im->h);
+  contentContext->S();
   contentContext->Q();
-
 }
-
 
 void
 pdf_hummus_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
@@ -1414,16 +1541,18 @@ pdf_hummus_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
   //int pixel= 5*PIXEL;
   string name= "picture";
   string eps= picture_as_eps (p, 600);
+#if 0
   int x1= -ox;
   int y1= -oy;
   int x2= w - ox;
   int y2= h - oy;
+#endif
   x -= (int) 2.06 * ox * pixel; // FIXME: where does the magic 2.06 come from?
   y -= (int) 2.06 * oy * pixel;
   
   url temp= url_temp (".eps");
   save_string(temp, eps);
-  image (temp, w * pixel, h * pixel, x, y, x1, y1, x2, y2,  255);
+  image (temp, w * pixel, h * pixel, x, y,  255);
   remove(temp);
 }
 
@@ -1437,9 +1566,9 @@ pdf_hummus_renderer_rep::draw_scalable (scalable im, SI x, SI y, int alpha) {
     SI w= r->x2, h= r->y2;
     //string ps_image= ps_load (u);
     //string imtext= is_ramdisc (u)? "inline image": as_string (u);
-    int x1, y1, x2, y2;
-    ps_bounding_box (u, x1, y1, x2, y2);
-    image (u,w, h, x, y, x1, y1, x2, y2,  alpha);
+    //int x1, y1, x2, y2;
+    //ps_bounding_box (u, x1, y1, x2, y2);
+    image (u,w, h, x, y, alpha);
   }
 }
 
