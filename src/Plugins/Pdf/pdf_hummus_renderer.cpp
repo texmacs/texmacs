@@ -713,8 +713,6 @@ create_pdf_image_raw (PDFWriter& pdfw, string raw_data, SI width, SI height, Obj
   }
 }
 
-
-
 class pdf_raw_image_rep : public concrete_struct
 {
 public:
@@ -1185,7 +1183,6 @@ pdf_hummus_renderer_rep::fill (SI x1, SI y1, SI x2, SI y2) {
   }
 }
 
-
 void
 pdf_hummus_renderer_rep::bezier_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta)
 {
@@ -1282,10 +1279,9 @@ public:
   url u;
   int w,h;
   ObjectIDType id;
-  int dpi;
   
-  pdf_image_rep(url _u, ObjectIDType _id, int _dpi)
-    : u(_u), id(_id), dpi(_dpi)
+  pdf_image_rep(url _u, ObjectIDType _id)
+    : u(_u), id(_id)
   { image_size (u, w, h); }
   ~pdf_image_rep() {}
 
@@ -1296,12 +1292,11 @@ public:
 
 class pdf_image {
   CONCRETE_NULL(pdf_image);
-  pdf_image (url _u, ObjectIDType _id, int _dpi):
-    rep (tm_new<pdf_image_rep> (_u,_id,_dpi)) {};
+  pdf_image (url _u, ObjectIDType _id):
+    rep (tm_new<pdf_image_rep> (_u,_id)) {};
 };
 
 CONCRETE_NULL_CODE(pdf_image);
-
 
 void
 pdf_image_rep::flush(PDFWriter& pdfw)
@@ -1392,7 +1387,6 @@ pdf_image_rep::flush_raster (PDFWriter& pdfw, url image) {
 #ifdef QTTEXMACS
   qt_image_data (image, iw, ih, data, palette, mask);
 #endif
-  
   
   if ((iw==0)||(ih==0)) return false;
   
@@ -1516,7 +1510,7 @@ pdf_hummus_renderer_rep::image (
   pdf_image im = ( image_pool->contains(lookup) ? image_pool[lookup] : pdf_image() );
   
   if (is_nil(im)) {
-    im = pdf_image(u, pdfWriter.GetObjectsContext().GetInDirectObjectsRegistry().AllocateNewObjectID(), dpi);
+    im = pdf_image(u, pdfWriter.GetObjectsContext().GetInDirectObjectsRegistry().AllocateNewObjectID());
     image_pool(lookup) = im;
   }
 
@@ -1687,8 +1681,6 @@ pdf_hummus_renderer_rep::flush_dests()
   }
 }
 
-
-
 void
 pdf_hummus_renderer_rep::toc_entry (string kind, string title, SI x, SI y) {
   (void) kind; (void) title; (void) x; (void) y;
@@ -1704,7 +1696,6 @@ pdf_hummus_renderer_rep::toc_entry (string kind, string title, SI x, SI y) {
 
   outlines << outline_data(title, page_num, to_x(x), to_y(y), ls);
 }
-
 
 void pdf_hummus_renderer_rep::recurse (ObjectsContext& objectsContext, list<outline_data>& it, ObjectIDType parentId,
               ObjectIDType& firstId, ObjectIDType& lastId, int &count)
@@ -1843,10 +1834,7 @@ pdf_hummus_renderer_rep::shadow (picture& pic, SI x1, SI y1, SI x2, SI y2) {
 
 renderer
 pdf_hummus_renderer (url pdf_file_name, int dpi, int nr_pages,
-	 string page_type, 
-              bool landscape, 
-              double paper_w, 
-              double paper_h)
+                     string page_type, bool landscape, double paper_w, double paper_h)
 {
   page_type= as_string (call ("standard-paper-size", object (page_type)));
   return tm_new<pdf_hummus_renderer_rep> (pdf_file_name, dpi, nr_pages,
