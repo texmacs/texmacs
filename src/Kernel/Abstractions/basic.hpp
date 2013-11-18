@@ -94,6 +94,9 @@ void tm_failure (const char* msg);
 #define FAILED(msg) { tm_failure (msg); }
 #endif
 
+class tree;
+void debug_message (string channel, tree msg);
+
 /******************************************************************************
 * miscellaneous routines
 ******************************************************************************/

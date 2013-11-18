@@ -89,6 +89,12 @@ debug_get (string s) {
   else return false;
 }
 
+void
+debug_message (string channel, tree msg) {
+  (void) channel;
+  cout << msg;
+}
+
 /******************************************************************************
 * miscellaneous routines
 ******************************************************************************/

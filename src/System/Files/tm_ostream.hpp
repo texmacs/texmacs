@@ -76,4 +76,17 @@ public:
 extern tm_ostream& cout;
 extern tm_ostream& cerr;
 
+extern tm_ostream qt_error;
+extern tm_ostream font_error;
+extern tm_ostream conversion_error;
+extern tm_ostream other_error;
+
+extern tm_ostream debug_qt;
+extern tm_ostream debug_font;
+extern tm_ostream debug_convert;
+extern tm_ostream debug_typeset;
+extern tm_ostream debug_edit;
+extern tm_ostream debug_io;
+extern tm_ostream debug_other;
+
 #endif // defined OUT_STREAM_HPP

@@ -10,7 +10,7 @@
 ******************************************************************************/
 
 #include "tm_ostream.hpp"
-#include "string.hpp"
+#include "tree.hpp"
 
 /******************************************************************************
 * Routines for abstract base class
@@ -128,6 +128,40 @@ buffered_ostream_rep::is_writable () const {
 void
 buffered_ostream_rep::write (const char* s) {
   buf << s;
+}
+
+/******************************************************************************
+* Streams for debugging purposes
+******************************************************************************/
+
+class debug_ostream_rep: public tm_ostream_rep {
+public:
+  string channel;
+
+public:
+  debug_ostream_rep (string channel);
+  ~debug_ostream_rep ();
+
+  bool is_writable () const;
+  void write (const char*);
+};
+
+debug_ostream_rep::debug_ostream_rep (string channel2): channel (channel2) {}
+debug_ostream_rep::~debug_ostream_rep () {}
+
+bool
+debug_ostream_rep::is_writable () const {
+  return true;
+}
+
+void
+debug_ostream_rep::write (const char* s) {
+  debug_message (channel, s);
+}
+
+tm_ostream
+debug_ostream (string channel) {
+  return (tm_ostream_rep*) tm_new<debug_ostream_rep> (channel);
 }
 
 /******************************************************************************
@@ -302,3 +336,16 @@ tm_ostream  tm_ostream::private_cerr (stderr);
 
 tm_ostream& tm_ostream::cout= private_cout;
 tm_ostream& tm_ostream::cerr= private_cerr;
+
+tm_ostream qt_error        = debug_ostream ("qt-error");
+tm_ostream font_error      = debug_ostream ("font-error");
+tm_ostream conversion_error= debug_ostream ("conversion-error");
+tm_ostream other_error     = debug_ostream ("other-error");
+
+tm_ostream debug_qt        = debug_ostream ("debug-qt");
+tm_ostream debug_font      = debug_ostream ("debug-font");
+tm_ostream debug_convert   = debug_ostream ("debug-convert");
+tm_ostream debug_typeset   = debug_ostream ("debug-typeset");
+tm_ostream debug_edit      = debug_ostream ("debug-edit");
+tm_ostream debug_io        = debug_ostream ("debug-io");
+tm_ostream debug_other     = debug_ostream ("debug-other");
