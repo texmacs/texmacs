@@ -37,45 +37,21 @@ public:
   std_ostream_rep (FILE*);
   ~std_ostream_rep ();
 
-  bool open ();
-  bool open (char*);
-  bool open (FILE*);
-  void close ();
   bool is_writable () const;
   void write (const char*);
   void flush ();
 };
 
-std_ostream_rep::std_ostream_rep () :
-  file (0), is_w (false), is_mine (false) {
-}
-
-std_ostream_rep::std_ostream_rep (char* fn) :
-  file (0), is_w (false), is_mine (false) {
-  open (fn);
-}
-
-std_ostream_rep::std_ostream_rep (FILE* f) :
-  file (0), is_w (false), is_mine (false) {
-  open (f);
-}
-
-std_ostream_rep::~std_ostream_rep () {
-  if (file && is_mine) fclose (file);
-}
-
-bool
-std_ostream_rep::open () {
-  if (file && is_mine) fclose (file);
-  file= 0;
+std_ostream_rep::std_ostream_rep ():
+  file (0), is_w (false), is_mine (false)
+{
   is_w= true;
   is_mine= true;
-  return is_w;
 }
 
-bool
-std_ostream_rep::open (char* fn) {
-  if (file && is_mine) fclose (file);
+std_ostream_rep::std_ostream_rep (char* fn):
+  file (0), is_w (false), is_mine (false)
+{
   file= fopen (fn, "w");
   if (file) {
     is_w= true;
@@ -85,25 +61,19 @@ std_ostream_rep::open (char* fn) {
     is_w= false;
     is_mine= false;
   }
-  return is_w;
 }
 
-bool
-std_ostream_rep::open (FILE* f) {
-  if (file && is_mine) fclose (file);
+std_ostream_rep::std_ostream_rep (FILE* f) :
+  file (0), is_w (false), is_mine (false)
+{
   file= f;
   if (file) is_w= true;
   else is_w= false;
   is_mine= false;
-  return is_w;
 }
 
-void
-std_ostream_rep::close () {
+std_ostream_rep::~std_ostream_rep () {
   if (file && is_mine) fclose (file);
-  file= 0;
-  is_w= false;
-  is_mine= false;
 }
 
 bool
