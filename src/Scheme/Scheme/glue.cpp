@@ -112,12 +112,12 @@ get_bounding_rectangle (tree t) {
 
 void
 cout_buffer () {
-  cout.buffer ();
+  cout->buffer ();
 }
 
 string
 cout_unbuffer () {
-  return cout.unbuffer ();
+  return cout->unbuffer ();
 }
 
 /******************************************************************************

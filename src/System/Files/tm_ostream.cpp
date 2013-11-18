@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : tm_ostream.cpp
 * DESCRIPTION: Output stream class
-* COPYRIGHT  : (C) 2009  David MICHEL
+* COPYRIGHT  : (C) 2009-2013  David MICHEL, Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -12,62 +12,30 @@
 #include "tm_ostream.hpp"
 #include "string.hpp"
 
-tm_ostream
-tm_ostream::private_cout (stdout);
-
-tm_ostream
-tm_ostream::private_cerr (stderr);
-
-tm_ostream::tm_ostream (const tm_ostream& out) { // private
-  file= out.file;
-  is_w= out.is_w;
-  is_buf= out.is_buf;
-  *buf= *(out.buf);
-  is_mine= false;
-}
-
-tm_ostream&
-tm_ostream::operator= (const tm_ostream& out) { // private
-  if (this != &out) {
-    file= out.file;
-    is_w= out.is_w;
-    is_buf= out.is_buf;
-    *buf= *(out.buf);
-    is_mine= false;
-  }
-  return *this;
-}
-
-tm_ostream&
-tm_ostream::cout= private_cout;
-
-tm_ostream&
-tm_ostream::cerr= private_cerr;
-
-tm_ostream::tm_ostream () :
-  file (0), is_w (false), is_mine (false), is_buf (false) {
+tm_ostream_rep::tm_ostream_rep () :
+  ref_count (0), file (0), is_w (false), is_mine (false), is_buf (false) {
   buf= tm_new<string> ();
 }
 
-tm_ostream::tm_ostream (char* fn) :
-  file (0), is_w (false), is_mine (false), is_buf (false) {
+tm_ostream_rep::tm_ostream_rep (char* fn) :
+  ref_count (0), file (0), is_w (false), is_mine (false), is_buf (false) {
   buf= tm_new<string> ();
   open (fn);
 }
 
-tm_ostream::tm_ostream (FILE* f) :
-  file (0), is_w (false), is_mine (false), is_buf (false) {
+tm_ostream_rep::tm_ostream_rep (FILE* f) :
+  ref_count (0), file (0), is_w (false), is_mine (false), is_buf (false) {
   buf= tm_new<string> ();
   open (f);
 }
 
-tm_ostream::~tm_ostream () {
+tm_ostream_rep::~tm_ostream_rep () {
   if (file && is_mine) fclose (file);
   tm_delete (buf);
 }
 
 bool
-tm_ostream::open () {
+tm_ostream_rep::open () {
   if (file && is_mine) fclose (file);
   file= 0;
   *buf= "";
@@ -79,7 +47,7 @@ tm_ostream::open () {
 
 /*
 bool
-tm_ostream::open (url u) {
+tm_ostream_rep::open (url u) {
   if (file) fclose (file);
   c_string _u (concretize (u));
   file= fopen (_u, "w");
@@ -90,7 +58,7 @@ tm_ostream::open (url u) {
 */ 
 
 bool
-tm_ostream::open (char* fn) {
+tm_ostream_rep::open (char* fn) {
   if (file && is_mine) fclose (file);
   file= fopen (fn, "w");
   *buf= "";
@@ -106,7 +74,7 @@ tm_ostream::open (char* fn) {
 }
 
 bool
-tm_ostream::open (FILE* f) {
+tm_ostream_rep::open (FILE* f) {
   if (file && is_mine) fclose (file);
   file= f;
   *buf= "";
@@ -118,22 +86,22 @@ tm_ostream::open (FILE* f) {
 }
 
 bool
-tm_ostream::is_writable () const {
+tm_ostream_rep::is_writable () const {
   return is_w;
 }
 
 bool
-tm_ostream::is_buffered () const {
+tm_ostream_rep::is_buffered () const {
   return is_buf;
 }
 
 void
-tm_ostream::flush () {
+tm_ostream_rep::flush () {
   if (file && is_w) fflush (file);
 }
   
 void
-tm_ostream::close () {
+tm_ostream_rep::close () {
   if (file && is_mine) fclose (file);
   file= 0;
   *buf= "";
@@ -143,21 +111,25 @@ tm_ostream::close () {
 }
 
 void
-tm_ostream::buffer () {
+tm_ostream_rep::buffer () {
   is_buf= true;
   *buf= "";
 }
 
 string
-tm_ostream::unbuffer () {
+tm_ostream_rep::unbuffer () {
   string res= *buf;
   *buf= "";
   is_buf= false;
   return res;
 }
 
-tm_ostream&
-tm_ostream::operator << (bool b) {
+/******************************************************************************
+* Standard constructors
+******************************************************************************/
+
+void
+tm_ostream_rep::print (bool b) {
   if (is_buf) {
     if (b) *buf << "true";
     else *buf << "false";
@@ -169,11 +141,10 @@ tm_ostream::operator << (bool b) {
       if (0 > fprintf (file, "%s", "false")) is_w= false;
     }
   }
-  return *this;
 }
 
-tm_ostream&
-tm_ostream::operator << (char c) {
+void
+tm_ostream_rep::print (char c) {
   if (is_buf) {
     char _buf[8];
     sprintf (_buf, "%c", c);
@@ -181,11 +152,10 @@ tm_ostream::operator << (char c) {
   }
   else if (file && is_w)
     if (0 > fprintf (file, "%c", c)) is_w= false;
-  return *this;
 }
 
-tm_ostream&
-tm_ostream::operator << (short sh) {
+void
+tm_ostream_rep::print (short sh) {
   if (is_buf) {
     char _buf[32];
     sprintf (_buf, "%hd", sh);
@@ -193,11 +163,10 @@ tm_ostream::operator << (short sh) {
   }
   else if (file && is_w)
     if (0 > fprintf (file, "%hd", sh)) is_w= false;
-  return *this;
 }
 
-tm_ostream&
-tm_ostream::operator << (unsigned short ush) {
+void
+tm_ostream_rep::print (unsigned short ush) {
   if (is_buf) {
     char _buf[32];
     sprintf (_buf, "%hu", ush);
@@ -205,11 +174,10 @@ tm_ostream::operator << (unsigned short ush) {
   }
   else if (file && is_w)
     if (0 > fprintf (file, "%hu", ush)) is_w= false;
-  return *this;
 }
 
-tm_ostream&
-tm_ostream::operator << (int i) {
+void
+tm_ostream_rep::print (int i) {
   if (is_buf) {
     char _buf[64];
     sprintf (_buf, "%d", i);
@@ -217,11 +185,10 @@ tm_ostream::operator << (int i) {
   }
   else if (file && is_w)
     if (0 > fprintf (file, "%d", i)) is_w= false;
-  return *this;
 }
 
-tm_ostream&
-tm_ostream::operator << (unsigned int ui) {
+void
+tm_ostream_rep::print (unsigned int ui) {
   if (is_buf) {
     char _buf[64];
     sprintf (_buf, "%u", ui);
@@ -229,11 +196,10 @@ tm_ostream::operator << (unsigned int ui) {
   }
   else if (file && is_w)
     if (0 > fprintf (file, "%u", ui)) is_w= false;
-  return *this;
 }
 
-tm_ostream&
-tm_ostream::operator << (long l) {
+void
+tm_ostream_rep::print (long l) {
   if (is_buf) {
     char _buf[64];
     sprintf (_buf, "%ld", l);
@@ -241,11 +207,10 @@ tm_ostream::operator << (long l) {
   }
   else if (file && is_w)
     if (0 > fprintf (file, "%ld", l)) is_w= false;
-  return *this;
 }
 
-tm_ostream&
-tm_ostream::operator << (unsigned long ul) {
+void
+tm_ostream_rep::print (unsigned long ul) {
   if (is_buf) {
     char _buf[64];
     sprintf (_buf, "%lu", ul);
@@ -253,11 +218,10 @@ tm_ostream::operator << (unsigned long ul) {
   }
   else if (file && is_w)
     if (0 > fprintf (file, "%lu", ul)) is_w= false;
-  return *this;
 }
 
-tm_ostream&
-tm_ostream::operator << (long long int l) {
+void
+tm_ostream_rep::print (long long int l) {
   if (is_buf) {
     char _buf[64];
     sprintf (_buf, "%lld", l);
@@ -265,11 +229,10 @@ tm_ostream::operator << (long long int l) {
   }
   else if (file && is_w)
     if (0 > fprintf (file, "%lld", l)) is_w= false;
-  return *this;
 }
 
-tm_ostream&
-tm_ostream::operator << (unsigned long long int ul) {
+void
+tm_ostream_rep::print (unsigned long long int ul) {
   if (is_buf) {
     char _buf[64];
     sprintf (_buf, "%llu", ul);
@@ -277,11 +240,10 @@ tm_ostream::operator << (unsigned long long int ul) {
   }
   else if (file && is_w)
     if (0 > fprintf (file, "%llu", ul)) is_w= false;
-  return *this;
 }
 
-tm_ostream&
-tm_ostream::operator << (float f) {
+void
+tm_ostream_rep::print (float f) {
   if (is_buf) {
     char _buf[32];
     sprintf (_buf, "%g", f);
@@ -289,11 +251,10 @@ tm_ostream::operator << (float f) {
   }
   else if (file && is_w)
     if (0 > fprintf (file, "%g", f)) is_w= false;
-  return *this;
 }
 
-tm_ostream&
-tm_ostream::operator << (double d) {
+void
+tm_ostream_rep::print (double d) {
   if (is_buf) {
     char _buf[64];
     sprintf (_buf, "%g", d);
@@ -302,11 +263,10 @@ tm_ostream::operator << (double d) {
   else 
   if (file && is_w)
     if (0 > fprintf (file, "%g", d)) is_w= false;
-  return *this;
 }
 
-tm_ostream&
-tm_ostream::operator << (long double ld) {
+void
+tm_ostream_rep::print (long double ld) {
   if (is_buf) {
     char _buf[128];
     sprintf (_buf, "%Lg", ld);
@@ -314,11 +274,10 @@ tm_ostream::operator << (long double ld) {
   }
   else if (file && is_w)
     if (0 > fprintf (file, "%Lg", ld)) is_w= false;
-  return *this;
 }
 
-tm_ostream&
-tm_ostream::operator << (const char* s) {
+void
+tm_ostream_rep::print (const char* s) {
   if (is_buf) *buf << s;
   else if (file && is_w) {
     if (0 <= fprintf (file, "%s", s)) {
@@ -329,11 +288,69 @@ tm_ostream::operator << (const char* s) {
       is_w= false;
     }
   }    
-  return *this;
 }
 
-bool
-tm_ostream::operator == (tm_ostream& out) {
-  return (&out == this);
-}
+/******************************************************************************
+* Abstract user interface
+******************************************************************************/
 
+tm_ostream::tm_ostream ():
+  rep (tm_new<tm_ostream_rep> ()) { INC_COUNT (this->rep); }
+tm_ostream::tm_ostream (char* s):
+  rep (tm_new<tm_ostream_rep> (s)) { INC_COUNT (this->rep); }
+tm_ostream::tm_ostream (FILE* f):
+  rep (tm_new<tm_ostream_rep> (f)) { INC_COUNT (this->rep); }
+tm_ostream::tm_ostream (const tm_ostream& x):
+  rep(x.rep) { INC_COUNT (this->rep); }
+tm_ostream::tm_ostream (tm_ostream_rep* rep2): rep(rep2) {
+  INC_COUNT (this->rep); }
+tm_ostream::~tm_ostream () {
+  DEC_COUNT (this->rep); }
+tm_ostream_rep* tm_ostream::operator -> () {
+  return rep; }
+tm_ostream& tm_ostream::operator = (tm_ostream x) {
+  INC_COUNT (x.rep); DEC_COUNT (this->rep);
+  this->rep=x.rep; return *this; }
+bool tm_ostream::operator == (tm_ostream& out) {
+  return (&out == this); }
+void tm_ostream::flush () {
+  rep->flush (); }
+
+tm_ostream& tm_ostream::operator << (bool b) {
+  rep->print (b); return *this; }
+tm_ostream& tm_ostream::operator << (char c) {
+  rep->print (c); return *this; }
+tm_ostream& tm_ostream::operator << (short i) {
+  rep->print (i); return *this; }
+tm_ostream& tm_ostream::operator << (unsigned short i) {
+  rep->print (i); return *this; }
+tm_ostream& tm_ostream::operator << (int i) {
+  rep->print (i); return *this; }
+tm_ostream& tm_ostream::operator << (unsigned int i) {
+  rep->print (i); return *this; }
+tm_ostream& tm_ostream::operator << (long i) {
+  rep->print (i); return *this; }
+tm_ostream& tm_ostream::operator << (unsigned long i) {
+  rep->print (i); return *this; }
+tm_ostream& tm_ostream::operator << (long long i) {
+  rep->print (i); return *this; }
+tm_ostream& tm_ostream::operator << (unsigned long long i) {
+  rep->print (i); return *this; }
+tm_ostream& tm_ostream::operator << (float x) {
+  rep->print (x); return *this; }
+tm_ostream& tm_ostream::operator << (double x) {
+  rep->print (x); return *this; }
+tm_ostream& tm_ostream::operator << (long double x) {
+  rep->print (x); return *this; }
+tm_ostream& tm_ostream::operator << (const char* s) {
+  rep->print (s); return *this; }
+
+/******************************************************************************
+* Standard output streams
+******************************************************************************/
+
+tm_ostream  tm_ostream::private_cout (stdout);
+tm_ostream  tm_ostream::private_cerr (stderr);
+
+tm_ostream& tm_ostream::cout= private_cout;
+tm_ostream& tm_ostream::cerr= private_cerr;

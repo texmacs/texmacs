@@ -477,7 +477,7 @@ immediate_options (int argc, char** argv) {
       i++;
       char* log_file = argv[i];
       FILE* f= fopen (log_file, "w");
-      if (! f || ! cout.open (f) || ! cerr.open (f))
+      if (! f || ! cout->open (f) || ! cerr->open (f))
         cerr << "TeXmacs] Error: could not open " << log_file << "\n";
     }
   }
@@ -524,7 +524,7 @@ main (int argc, char** argv) {
 //  test_environments ();
 //#endif
   start_scheme (argc, argv, TeXmacs_main);
-  cout.close ();
-  cerr.close ();
+  cout->close ();
+  cerr->close ();
   return 0;
 }
