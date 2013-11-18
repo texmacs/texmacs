@@ -13,11 +13,18 @@
 #include "string.hpp"
 
 /******************************************************************************
-* Constructor and destructor for abstract base class
+* Routines for abstract base class
 ******************************************************************************/
 
 tm_ostream_rep::tm_ostream_rep (): ref_count (0) {}
 tm_ostream_rep::~tm_ostream_rep () {}
+void tm_ostream_rep::flush () {}
+bool tm_ostream_rep::open () { FAILED ("invalid open"); }
+bool tm_ostream_rep::open (char*) { FAILED ("invalid open"); }
+bool tm_ostream_rep::open (FILE*) { FAILED ("invalid open"); }
+void tm_ostream_rep::close () { FAILED ("invalid close"); }
+bool tm_ostream_rep::is_writable () const { return false; }
+void tm_ostream_rep::write (const char*) {}
 
 /******************************************************************************
 * Standard streams
@@ -25,10 +32,8 @@ tm_ostream_rep::~tm_ostream_rep () {}
 
 class std_ostream_rep: public tm_ostream_rep {
   FILE *file;
-  string *buf;
   bool is_w;
   bool is_mine;
-  bool is_buf;
 
 public:
   std_ostream_rep ();
@@ -39,53 +44,36 @@ public:
   bool open ();
   bool open (char*);
   bool open (FILE*);
-  bool is_writable () const;
-  bool is_buffered () const;
-  void flush ();
   void close ();
-  void buffer ();
-  string unbuffer ();
+  bool is_writable () const;
   void write (const char*);
+  void flush ();
 };
 
-/******************************************************************************
-* Standard constructors
-******************************************************************************/
-
 std_ostream_rep::std_ostream_rep () :
-  file (0), is_w (false), is_mine (false), is_buf (false) {
-  buf= tm_new<string> ();
+  file (0), is_w (false), is_mine (false) {
 }
 
 std_ostream_rep::std_ostream_rep (char* fn) :
-  file (0), is_w (false), is_mine (false), is_buf (false) {
-  buf= tm_new<string> ();
+  file (0), is_w (false), is_mine (false) {
   open (fn);
 }
 
 std_ostream_rep::std_ostream_rep (FILE* f) :
-  file (0), is_w (false), is_mine (false), is_buf (false) {
-  buf= tm_new<string> ();
+  file (0), is_w (false), is_mine (false) {
   open (f);
 }
 
 std_ostream_rep::~std_ostream_rep () {
   if (file && is_mine) fclose (file);
-  tm_delete (buf);
 }
-
-/******************************************************************************
-* Basic methods
-******************************************************************************/
 
 bool
 std_ostream_rep::open () {
   if (file && is_mine) fclose (file);
   file= 0;
-  *buf= "";
   is_w= true;
   is_mine= true;
-  is_buf= false;
   return is_w;
 }
 
@@ -93,12 +81,11 @@ bool
 std_ostream_rep::open (char* fn) {
   if (file && is_mine) fclose (file);
   file= fopen (fn, "w");
-  *buf= "";
-  is_buf= false;
   if (file) {
     is_w= true;
     is_mine= true;
-  } else {
+  }
+  else {
     is_w= false;
     is_mine= false;
   }
@@ -109,12 +96,18 @@ bool
 std_ostream_rep::open (FILE* f) {
   if (file && is_mine) fclose (file);
   file= f;
-  *buf= "";
-  is_buf= false;
   if (file) is_w= true;
   else is_w= false;
   is_mine= false;
   return is_w;
+}
+
+void
+std_ostream_rep::close () {
+  if (file && is_mine) fclose (file);
+  file= 0;
+  is_w= false;
+  is_mine= false;
 }
 
 bool
@@ -122,52 +115,53 @@ std_ostream_rep::is_writable () const {
   return is_w;
 }
 
-bool
-std_ostream_rep::is_buffered () const {
-  return is_buf;
+void
+std_ostream_rep::write (const char* s) {
+  if (file && is_w) {
+    if (0 <= fprintf (file, "%s", s)) {
+      const char* c= s;
+      while (*c != 0 && *c != '\n') ++c;
+      if (*c == '\n') flush ();
+    }
+    else is_w= false;
+  }    
 }
 
 void
 std_ostream_rep::flush () {
   if (file && is_w) fflush (file);
 }
-  
-void
-std_ostream_rep::close () {
-  if (file && is_mine) fclose (file);
-  file= 0;
-  *buf= "";
-  is_w= false;
-  is_mine= false;
-  is_buf= false;
+
+/******************************************************************************
+* Buffered streams
+******************************************************************************/
+
+class buffered_ostream_rep: public tm_ostream_rep {
+public:
+  tm_ostream_rep* master;
+  string buf;
+
+public:
+  buffered_ostream_rep (tm_ostream_rep* master);
+  ~buffered_ostream_rep ();
+
+  bool is_writable () const;
+  void write (const char*);
+};
+
+buffered_ostream_rep::buffered_ostream_rep (tm_ostream_rep* master2):
+  master (master2) {}
+
+buffered_ostream_rep::~buffered_ostream_rep () {}
+
+bool
+buffered_ostream_rep::is_writable () const {
+  return true;
 }
 
 void
-std_ostream_rep::buffer () {
-  is_buf= true;
-  *buf= "";
-}
-
-string
-std_ostream_rep::unbuffer () {
-  string res= *buf;
-  *buf= "";
-  is_buf= false;
-  return res;
-}
-
-void
-std_ostream_rep::write (const char* s) {
-  if (is_buf) *buf << s;
-  else if (file && is_w) {
-    if (0 <= fprintf (file, "%s", s)) {
-      const char* c= s;
-      while (*c != 0 && *c != '\n') ++c;
-      if (*c == '\n') flush ();
-    } else {
-      is_w= false;
-    }
-  }    
+buffered_ostream_rep::write (const char* s) {
+  buf << s;
 }
 
 /******************************************************************************
@@ -193,8 +187,25 @@ tm_ostream& tm_ostream::operator = (tm_ostream x) {
   this->rep=x.rep; return *this; }
 bool tm_ostream::operator == (tm_ostream& out) {
   return (&out == this); }
-void tm_ostream::flush () {
-  rep->flush (); }
+
+void
+tm_ostream::flush () {
+  rep->flush ();
+}
+
+void
+tm_ostream::buffer () {
+  rep= tm_new<buffered_ostream_rep> (rep);
+}
+
+string
+tm_ostream::unbuffer () {
+  buffered_ostream_rep* ptr= (buffered_ostream_rep*) rep;
+  rep= ptr->master;
+  string r= ptr->buf;
+  tm_delete<buffered_ostream_rep> (ptr);
+  return r;
+}
 
 /******************************************************************************
 * Print methods for standard types

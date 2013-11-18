@@ -24,16 +24,13 @@ public:
   tm_ostream_rep ();
   virtual ~tm_ostream_rep ();
 
-  virtual bool open () = 0;
-  virtual bool open (char*) = 0;
-  virtual bool open (FILE*) = 0;
-  virtual bool is_writable () const = 0;
-  virtual bool is_buffered () const = 0;
-  virtual void flush () = 0;
-  virtual void close () = 0;
-  virtual void buffer () = 0;
-  virtual string unbuffer () = 0;
-  virtual void write (const char*) = 0;
+  virtual bool open ();
+  virtual bool open (char*);
+  virtual bool open (FILE*);
+  virtual void close ();
+  virtual bool is_writable () const;
+  virtual void write (const char*);
+  virtual void flush ();
 
   friend class tm_ostream;
 };
@@ -58,7 +55,10 @@ public:
   tm_ostream_rep* operator -> ();
   tm_ostream& operator = (tm_ostream x);
   bool operator == (tm_ostream&);
+
   void flush ();
+  void buffer ();
+  string unbuffer ();
 
   tm_ostream& operator << (bool);
   tm_ostream& operator << (char);
