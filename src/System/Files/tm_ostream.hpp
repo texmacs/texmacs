@@ -24,10 +24,6 @@ public:
   tm_ostream_rep ();
   virtual ~tm_ostream_rep ();
 
-  virtual bool open ();
-  virtual bool open (char*);
-  virtual bool open (FILE*);
-  virtual void close ();
   virtual bool is_writable () const;
   virtual void write (const char*);
   virtual void flush ();
@@ -59,6 +55,7 @@ public:
   void flush ();
   void buffer ();
   string unbuffer ();
+  void redirect (tm_ostream x);
 
   tm_ostream& operator << (bool);
   tm_ostream& operator << (char);

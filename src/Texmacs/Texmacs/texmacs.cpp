@@ -476,9 +476,11 @@ immediate_options (int argc, char** argv) {
     else if (s == "-log-file" && i + 1 < argc) {
       i++;
       char* log_file = argv[i];
-      FILE* f= fopen (log_file, "w");
-      if (! f || ! cout->open (f) || ! cerr->open (f))
+      tm_ostream logf (log_file);
+      if (!logf->is_writable ())
         cerr << "TeXmacs] Error: could not open " << log_file << "\n";
+      cout.redirect (logf);
+      cerr.redirect (logf);
     }
   }
 }
@@ -524,7 +526,5 @@ main (int argc, char** argv) {
 //  test_environments ();
 //#endif
   start_scheme (argc, argv, TeXmacs_main);
-  cout->close ();
-  cerr->close ();
   return 0;
 }

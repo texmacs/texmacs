@@ -19,10 +19,6 @@
 tm_ostream_rep::tm_ostream_rep (): ref_count (0) {}
 tm_ostream_rep::~tm_ostream_rep () {}
 void tm_ostream_rep::flush () {}
-bool tm_ostream_rep::open () { FAILED ("invalid open"); }
-bool tm_ostream_rep::open (char*) { FAILED ("invalid open"); }
-bool tm_ostream_rep::open (FILE*) { FAILED ("invalid open"); }
-void tm_ostream_rep::close () { FAILED ("invalid close"); }
 bool tm_ostream_rep::is_writable () const { return false; }
 void tm_ostream_rep::write (const char*) {}
 
@@ -205,6 +201,13 @@ tm_ostream::unbuffer () {
   string r= ptr->buf;
   tm_delete<buffered_ostream_rep> (ptr);
   return r;
+}
+
+void
+tm_ostream::redirect (tm_ostream x) {
+  INC_COUNT (x.rep);
+  DEC_COUNT (this->rep);
+  this->rep= x.rep;
 }
 
 /******************************************************************************
