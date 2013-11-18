@@ -13,7 +13,7 @@
 #include "string.hpp"
 
 /******************************************************************************
-* Constructors and default implementations
+* Constructor and destructor for abstract base class
 ******************************************************************************/
 
 tm_ostream_rep::tm_ostream_rep (): ref_count (0) {}
@@ -45,21 +45,7 @@ public:
   void close ();
   void buffer ();
   string unbuffer ();
-
-  void print (bool);
-  void print (char);
-  void print (short);
-  void print (unsigned short);
-  void print (int);
-  void print (unsigned int);
-  void print (long);
-  void print (unsigned long);
-  void print (long long int);
-  void print (unsigned long long int);
-  void print (float);
-  void print (double);
-  void print (long double);
-  void print (const char*);
+  void write (const char*);
 };
 
 /******************************************************************************
@@ -170,160 +156,8 @@ std_ostream_rep::unbuffer () {
   return res;
 }
 
-/******************************************************************************
-* Printing instances of standard types
-******************************************************************************/
-
 void
-std_ostream_rep::print (bool b) {
-  if (is_buf) {
-    if (b) *buf << "true";
-    else *buf << "false";
-  }
-  else if (file && is_w) {
-    if (b) {
-      if (0 > fprintf (file, "%s", "true")) is_w= false;
-    } else {
-      if (0 > fprintf (file, "%s", "false")) is_w= false;
-    }
-  }
-}
-
-void
-std_ostream_rep::print (char c) {
-  if (is_buf) {
-    char _buf[8];
-    sprintf (_buf, "%c", c);
-    *buf << _buf;
-  }
-  else if (file && is_w)
-    if (0 > fprintf (file, "%c", c)) is_w= false;
-}
-
-void
-std_ostream_rep::print (short sh) {
-  if (is_buf) {
-    char _buf[32];
-    sprintf (_buf, "%hd", sh);
-    *buf << _buf;
-  }
-  else if (file && is_w)
-    if (0 > fprintf (file, "%hd", sh)) is_w= false;
-}
-
-void
-std_ostream_rep::print (unsigned short ush) {
-  if (is_buf) {
-    char _buf[32];
-    sprintf (_buf, "%hu", ush);
-    *buf << _buf;
-  }
-  else if (file && is_w)
-    if (0 > fprintf (file, "%hu", ush)) is_w= false;
-}
-
-void
-std_ostream_rep::print (int i) {
-  if (is_buf) {
-    char _buf[64];
-    sprintf (_buf, "%d", i);
-    *buf << _buf;
-  }
-  else if (file && is_w)
-    if (0 > fprintf (file, "%d", i)) is_w= false;
-}
-
-void
-std_ostream_rep::print (unsigned int ui) {
-  if (is_buf) {
-    char _buf[64];
-    sprintf (_buf, "%u", ui);
-    *buf << _buf;
-  }
-  else if (file && is_w)
-    if (0 > fprintf (file, "%u", ui)) is_w= false;
-}
-
-void
-std_ostream_rep::print (long l) {
-  if (is_buf) {
-    char _buf[64];
-    sprintf (_buf, "%ld", l);
-    *buf << _buf;
-  }
-  else if (file && is_w)
-    if (0 > fprintf (file, "%ld", l)) is_w= false;
-}
-
-void
-std_ostream_rep::print (unsigned long ul) {
-  if (is_buf) {
-    char _buf[64];
-    sprintf (_buf, "%lu", ul);
-    *buf << _buf;
-  }
-  else if (file && is_w)
-    if (0 > fprintf (file, "%lu", ul)) is_w= false;
-}
-
-void
-std_ostream_rep::print (long long int l) {
-  if (is_buf) {
-    char _buf[64];
-    sprintf (_buf, "%lld", l);
-    *buf << _buf;
-  }
-  else if (file && is_w)
-    if (0 > fprintf (file, "%lld", l)) is_w= false;
-}
-
-void
-std_ostream_rep::print (unsigned long long int ul) {
-  if (is_buf) {
-    char _buf[64];
-    sprintf (_buf, "%llu", ul);
-    *buf << _buf;
-  }
-  else if (file && is_w)
-    if (0 > fprintf (file, "%llu", ul)) is_w= false;
-}
-
-void
-std_ostream_rep::print (float f) {
-  if (is_buf) {
-    char _buf[32];
-    sprintf (_buf, "%g", f);
-    *buf << _buf;
-  }
-  else if (file && is_w)
-    if (0 > fprintf (file, "%g", f)) is_w= false;
-}
-
-void
-std_ostream_rep::print (double d) {
-  if (is_buf) {
-    char _buf[64];
-    sprintf (_buf, "%g", d);
-    *buf << _buf;
-  }
-  else 
-  if (file && is_w)
-    if (0 > fprintf (file, "%g", d)) is_w= false;
-}
-
-void
-std_ostream_rep::print (long double ld) {
-  if (is_buf) {
-    char _buf[128];
-    sprintf (_buf, "%Lg", ld);
-    *buf << _buf;
-  }
-  else if (file && is_w)
-    if (0 > fprintf (file, "%Lg", ld)) is_w= false;
-}
-
-void
-std_ostream_rep::print (const char* s) {
+std_ostream_rep::write (const char* s) {
   if (is_buf) *buf << s;
   else if (file && is_w) {
     if (0 <= fprintf (file, "%s", s)) {
@@ -362,34 +196,118 @@ bool tm_ostream::operator == (tm_ostream& out) {
 void tm_ostream::flush () {
   rep->flush (); }
 
-tm_ostream& tm_ostream::operator << (bool b) {
-  rep->print (b); return *this; }
-tm_ostream& tm_ostream::operator << (char c) {
-  rep->print (c); return *this; }
-tm_ostream& tm_ostream::operator << (short i) {
-  rep->print (i); return *this; }
-tm_ostream& tm_ostream::operator << (unsigned short i) {
-  rep->print (i); return *this; }
-tm_ostream& tm_ostream::operator << (int i) {
-  rep->print (i); return *this; }
-tm_ostream& tm_ostream::operator << (unsigned int i) {
-  rep->print (i); return *this; }
-tm_ostream& tm_ostream::operator << (long i) {
-  rep->print (i); return *this; }
-tm_ostream& tm_ostream::operator << (unsigned long i) {
-  rep->print (i); return *this; }
-tm_ostream& tm_ostream::operator << (long long i) {
-  rep->print (i); return *this; }
-tm_ostream& tm_ostream::operator << (unsigned long long i) {
-  rep->print (i); return *this; }
-tm_ostream& tm_ostream::operator << (float x) {
-  rep->print (x); return *this; }
-tm_ostream& tm_ostream::operator << (double x) {
-  rep->print (x); return *this; }
-tm_ostream& tm_ostream::operator << (long double x) {
-  rep->print (x); return *this; }
-tm_ostream& tm_ostream::operator << (const char* s) {
-  rep->print (s); return *this; }
+/******************************************************************************
+* Print methods for standard types
+******************************************************************************/
+
+tm_ostream&
+tm_ostream::operator << (bool b) {
+  if (b) rep->write ("true");
+  else rep->write ("false");
+  return *this;
+}
+
+tm_ostream&
+tm_ostream::operator << (char c) {
+  static char _buf[8];
+  sprintf (_buf, "%c", c);
+  rep->write (_buf);
+  return *this;
+}
+
+tm_ostream&
+tm_ostream::operator << (short sh) {
+  static char _buf[32];
+  sprintf (_buf, "%hd", sh);
+  rep->write (_buf);
+  return *this;
+}
+
+tm_ostream&
+tm_ostream::operator << (unsigned short ush) {
+  static char _buf[32];
+  sprintf (_buf, "%hu", ush);
+  rep->write (_buf);
+  return *this;
+}
+
+tm_ostream&
+tm_ostream::operator << (int i) {
+  static char _buf[64];
+  sprintf (_buf, "%d", i);
+  rep->write (_buf);
+  return *this;
+}
+
+tm_ostream&
+tm_ostream::operator << (unsigned int ui) {
+  static char _buf[64];
+  sprintf (_buf, "%u", ui);
+  rep->write (_buf);
+  return *this;
+}
+
+tm_ostream&
+tm_ostream::operator << (long l) {
+  static char _buf[64];
+  sprintf (_buf, "%ld", l);
+  rep->write (_buf);
+  return *this;
+}
+
+tm_ostream&
+tm_ostream::operator << (unsigned long ul) {
+  static char _buf[64];
+  sprintf (_buf, "%lu", ul);
+  rep->write (_buf);
+  return *this;
+}
+
+tm_ostream&
+tm_ostream::operator << (long long ll) {
+  static char _buf[64];
+  sprintf (_buf, "%lld", ll);
+  rep->write (_buf);
+  return *this;
+}
+
+tm_ostream&
+tm_ostream::operator << (unsigned long long ull) {
+  static char _buf[64];
+  sprintf (_buf, "%llu", ull);
+  rep->write (_buf);
+  return *this;
+}
+
+tm_ostream&
+tm_ostream::operator << (float f) {
+  static char _buf[32];
+  sprintf (_buf, "%g", f);
+  rep->write (_buf);
+  return *this;
+}
+
+tm_ostream&
+tm_ostream::operator << (double d) {
+  static char _buf[64];
+  sprintf (_buf, "%g", d);
+  rep->write (_buf);
+  return *this;
+}
+
+tm_ostream&
+tm_ostream::operator << (long double ld) {
+  static char _buf[128];
+  sprintf (_buf, "%Lg", ld);
+  rep->write (_buf);
+  return *this;
+}
+
+tm_ostream&
+tm_ostream::operator << (const char* s) {
+  rep->write (s);
+  return *this;
+}
 
 /******************************************************************************
 * Standard output streams

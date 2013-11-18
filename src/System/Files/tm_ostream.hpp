@@ -33,21 +33,7 @@ public:
   virtual void close () = 0;
   virtual void buffer () = 0;
   virtual string unbuffer () = 0;
-
-  virtual void print (bool) = 0;
-  virtual void print (char) = 0;
-  virtual void print (short) = 0;
-  virtual void print (unsigned short) = 0;
-  virtual void print (int) = 0;
-  virtual void print (unsigned int) = 0;
-  virtual void print (long) = 0;
-  virtual void print (unsigned long) = 0;
-  virtual void print (long long int) = 0;
-  virtual void print (unsigned long long int) = 0;
-  virtual void print (float) = 0;
-  virtual void print (double) = 0;
-  virtual void print (long double) = 0;
-  virtual void print (const char*) = 0;
+  virtual void write (const char*) = 0;
 
   friend class tm_ostream;
 };
