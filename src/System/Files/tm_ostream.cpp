@@ -12,30 +12,88 @@
 #include "tm_ostream.hpp"
 #include "string.hpp"
 
-tm_ostream_rep::tm_ostream_rep () :
-  ref_count (0), file (0), is_w (false), is_mine (false), is_buf (false) {
+/******************************************************************************
+* Constructors and default implementations
+******************************************************************************/
+
+tm_ostream_rep::tm_ostream_rep (): ref_count (0) {}
+tm_ostream_rep::~tm_ostream_rep () {}
+
+/******************************************************************************
+* Standard streams
+******************************************************************************/
+
+class std_ostream_rep: public tm_ostream_rep {
+  FILE *file;
+  string *buf;
+  bool is_w;
+  bool is_mine;
+  bool is_buf;
+
+public:
+  std_ostream_rep ();
+  std_ostream_rep (char*);
+  std_ostream_rep (FILE*);
+  ~std_ostream_rep ();
+
+  bool open ();
+  bool open (char*);
+  bool open (FILE*);
+  bool is_writable () const;
+  bool is_buffered () const;
+  void flush ();
+  void close ();
+  void buffer ();
+  string unbuffer ();
+
+  void print (bool);
+  void print (char);
+  void print (short);
+  void print (unsigned short);
+  void print (int);
+  void print (unsigned int);
+  void print (long);
+  void print (unsigned long);
+  void print (long long int);
+  void print (unsigned long long int);
+  void print (float);
+  void print (double);
+  void print (long double);
+  void print (const char*);
+};
+
+/******************************************************************************
+* Standard constructors
+******************************************************************************/
+
+std_ostream_rep::std_ostream_rep () :
+  file (0), is_w (false), is_mine (false), is_buf (false) {
   buf= tm_new<string> ();
 }
 
-tm_ostream_rep::tm_ostream_rep (char* fn) :
-  ref_count (0), file (0), is_w (false), is_mine (false), is_buf (false) {
+std_ostream_rep::std_ostream_rep (char* fn) :
+  file (0), is_w (false), is_mine (false), is_buf (false) {
   buf= tm_new<string> ();
   open (fn);
 }
 
-tm_ostream_rep::tm_ostream_rep (FILE* f) :
-  ref_count (0), file (0), is_w (false), is_mine (false), is_buf (false) {
+std_ostream_rep::std_ostream_rep (FILE* f) :
+  file (0), is_w (false), is_mine (false), is_buf (false) {
   buf= tm_new<string> ();
   open (f);
 }
 
-tm_ostream_rep::~tm_ostream_rep () {
+std_ostream_rep::~std_ostream_rep () {
   if (file && is_mine) fclose (file);
   tm_delete (buf);
 }
 
+/******************************************************************************
+* Basic methods
+******************************************************************************/
+
 bool
-tm_ostream_rep::open () {
+std_ostream_rep::open () {
   if (file && is_mine) fclose (file);
   file= 0;
   *buf= "";
@@ -45,20 +103,8 @@ tm_ostream_rep::open () {
   return is_w;
 }
 
-/*
 bool
-tm_ostream_rep::open (url u) {
-  if (file) fclose (file);
-  c_string _u (concretize (u));
-  file= fopen (_u, "w");
-  if (file) is_w= true;
-  else is_w= false;
-  return is_w;
-}
-*/ 
-
-bool
-tm_ostream_rep::open (char* fn) {
+std_ostream_rep::open (char* fn) {
   if (file && is_mine) fclose (file);
   file= fopen (fn, "w");
   *buf= "";
@@ -74,7 +120,7 @@ tm_ostream_rep::open (char* fn) {
 }
 
 bool
-tm_ostream_rep::open (FILE* f) {
+std_ostream_rep::open (FILE* f) {
   if (file && is_mine) fclose (file);
   file= f;
   *buf= "";
@@ -86,22 +132,22 @@ tm_ostream_rep::open (FILE* f) {
 }
 
 bool
-tm_ostream_rep::is_writable () const {
+std_ostream_rep::is_writable () const {
   return is_w;
 }
 
 bool
-tm_ostream_rep::is_buffered () const {
+std_ostream_rep::is_buffered () const {
   return is_buf;
 }
 
 void
-tm_ostream_rep::flush () {
+std_ostream_rep::flush () {
   if (file && is_w) fflush (file);
 }
   
 void
-tm_ostream_rep::close () {
+std_ostream_rep::close () {
   if (file && is_mine) fclose (file);
   file= 0;
   *buf= "";
@@ -111,13 +157,13 @@ tm_ostream_rep::close () {
 }
 
 void
-tm_ostream_rep::buffer () {
+std_ostream_rep::buffer () {
   is_buf= true;
   *buf= "";
 }
 
 string
-tm_ostream_rep::unbuffer () {
+std_ostream_rep::unbuffer () {
   string res= *buf;
   *buf= "";
   is_buf= false;
@@ -125,11 +171,11 @@ tm_ostream_rep::unbuffer () {
 }
 
 /******************************************************************************
-* Standard constructors
+* Printing instances of standard types
 ******************************************************************************/
 
 void
-tm_ostream_rep::print (bool b) {
+std_ostream_rep::print (bool b) {
   if (is_buf) {
     if (b) *buf << "true";
     else *buf << "false";
@@ -144,7 +190,7 @@ tm_ostream_rep::print (bool b) {
 }
 
 void
-tm_ostream_rep::print (char c) {
+std_ostream_rep::print (char c) {
   if (is_buf) {
     char _buf[8];
     sprintf (_buf, "%c", c);
@@ -155,7 +201,7 @@ tm_ostream_rep::print (char c) {
 }
 
 void
-tm_ostream_rep::print (short sh) {
+std_ostream_rep::print (short sh) {
   if (is_buf) {
     char _buf[32];
     sprintf (_buf, "%hd", sh);
@@ -166,7 +212,7 @@ tm_ostream_rep::print (short sh) {
 }
 
 void
-tm_ostream_rep::print (unsigned short ush) {
+std_ostream_rep::print (unsigned short ush) {
   if (is_buf) {
     char _buf[32];
     sprintf (_buf, "%hu", ush);
@@ -177,7 +223,7 @@ tm_ostream_rep::print (unsigned short ush) {
 }
 
 void
-tm_ostream_rep::print (int i) {
+std_ostream_rep::print (int i) {
   if (is_buf) {
     char _buf[64];
     sprintf (_buf, "%d", i);
@@ -188,7 +234,7 @@ tm_ostream_rep::print (int i) {
 }
 
 void
-tm_ostream_rep::print (unsigned int ui) {
+std_ostream_rep::print (unsigned int ui) {
   if (is_buf) {
     char _buf[64];
     sprintf (_buf, "%u", ui);
@@ -199,7 +245,7 @@ tm_ostream_rep::print (unsigned int ui) {
 }
 
 void
-tm_ostream_rep::print (long l) {
+std_ostream_rep::print (long l) {
   if (is_buf) {
     char _buf[64];
     sprintf (_buf, "%ld", l);
@@ -210,7 +256,7 @@ tm_ostream_rep::print (long l) {
 }
 
 void
-tm_ostream_rep::print (unsigned long ul) {
+std_ostream_rep::print (unsigned long ul) {
   if (is_buf) {
     char _buf[64];
     sprintf (_buf, "%lu", ul);
@@ -221,7 +267,7 @@ tm_ostream_rep::print (unsigned long ul) {
 }
 
 void
-tm_ostream_rep::print (long long int l) {
+std_ostream_rep::print (long long int l) {
   if (is_buf) {
     char _buf[64];
     sprintf (_buf, "%lld", l);
@@ -232,7 +278,7 @@ tm_ostream_rep::print (long long int l) {
 }
 
 void
-tm_ostream_rep::print (unsigned long long int ul) {
+std_ostream_rep::print (unsigned long long int ul) {
   if (is_buf) {
     char _buf[64];
     sprintf (_buf, "%llu", ul);
@@ -243,7 +289,7 @@ tm_ostream_rep::print (unsigned long long int ul) {
 }
 
 void
-tm_ostream_rep::print (float f) {
+std_ostream_rep::print (float f) {
   if (is_buf) {
     char _buf[32];
     sprintf (_buf, "%g", f);
@@ -254,7 +300,7 @@ tm_ostream_rep::print (float f) {
 }
 
 void
-tm_ostream_rep::print (double d) {
+std_ostream_rep::print (double d) {
   if (is_buf) {
     char _buf[64];
     sprintf (_buf, "%g", d);
@@ -266,7 +312,7 @@ tm_ostream_rep::print (double d) {
 }
 
 void
-tm_ostream_rep::print (long double ld) {
+std_ostream_rep::print (long double ld) {
   if (is_buf) {
     char _buf[128];
     sprintf (_buf, "%Lg", ld);
@@ -277,7 +323,7 @@ tm_ostream_rep::print (long double ld) {
 }
 
 void
-tm_ostream_rep::print (const char* s) {
+std_ostream_rep::print (const char* s) {
   if (is_buf) *buf << s;
   else if (file && is_w) {
     if (0 <= fprintf (file, "%s", s)) {
@@ -295,11 +341,11 @@ tm_ostream_rep::print (const char* s) {
 ******************************************************************************/
 
 tm_ostream::tm_ostream ():
-  rep (tm_new<tm_ostream_rep> ()) { INC_COUNT (this->rep); }
+  rep (tm_new<std_ostream_rep> ()) { INC_COUNT (this->rep); }
 tm_ostream::tm_ostream (char* s):
-  rep (tm_new<tm_ostream_rep> (s)) { INC_COUNT (this->rep); }
+  rep (tm_new<std_ostream_rep> (s)) { INC_COUNT (this->rep); }
 tm_ostream::tm_ostream (FILE* f):
-  rep (tm_new<tm_ostream_rep> (f)) { INC_COUNT (this->rep); }
+  rep (tm_new<std_ostream_rep> (f)) { INC_COUNT (this->rep); }
 tm_ostream::tm_ostream (const tm_ostream& x):
   rep(x.rep) { INC_COUNT (this->rep); }
 tm_ostream::tm_ostream (tm_ostream_rep* rep2): rep(rep2) {

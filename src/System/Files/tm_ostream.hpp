@@ -19,43 +19,35 @@ class tm_ostream;
 
 class tm_ostream_rep {
   int ref_count;
-  FILE *file;
-  string *buf;
-  bool is_w;
-  bool is_mine;
-  bool is_buf;
 
 public:
   tm_ostream_rep ();
-  tm_ostream_rep (char*);
-  tm_ostream_rep (FILE*);
-  ~tm_ostream_rep ();
+  virtual ~tm_ostream_rep ();
 
-  bool open ();
-  // bool open (url);
-  bool open (char*);
-  bool open (FILE*);
-  bool is_writable () const;
-  bool is_buffered () const;
-  void flush ();
-  void close ();
-  void buffer ();
-  string unbuffer ();
+  virtual bool open () = 0;
+  virtual bool open (char*) = 0;
+  virtual bool open (FILE*) = 0;
+  virtual bool is_writable () const = 0;
+  virtual bool is_buffered () const = 0;
+  virtual void flush () = 0;
+  virtual void close () = 0;
+  virtual void buffer () = 0;
+  virtual string unbuffer () = 0;
 
-  void print (bool);
-  void print (char);
-  void print (short);
-  void print (unsigned short);
-  void print (int);
-  void print (unsigned int);
-  void print (long);
-  void print (unsigned long);
-  void print (long long int);
-  void print (unsigned long long int);
-  void print (float);
-  void print (double);
-  void print (long double);
-  void print (const char*);
+  virtual void print (bool) = 0;
+  virtual void print (char) = 0;
+  virtual void print (short) = 0;
+  virtual void print (unsigned short) = 0;
+  virtual void print (int) = 0;
+  virtual void print (unsigned int) = 0;
+  virtual void print (long) = 0;
+  virtual void print (unsigned long) = 0;
+  virtual void print (long long int) = 0;
+  virtual void print (unsigned long long int) = 0;
+  virtual void print (float) = 0;
+  virtual void print (double) = 0;
+  virtual void print (long double) = 0;
+  virtual void print (const char*) = 0;
 
   friend class tm_ostream;
 };
