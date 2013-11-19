@@ -305,7 +305,7 @@ unicode_math_font (font up, font it, font bup, font bit, font fb) {
     bup->res_name * "," *
     bit->res_name * "," *
     fb->res_name * "]";
-  cerr << "\n\nFont name= " << name << "\n";
+  failed_error << "Font name= " << name << "\n";
   FAILED ("true type support was disabled");
   return font ();
 }

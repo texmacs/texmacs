@@ -168,12 +168,12 @@ populates_colorhash_from_dictionary (string file_name, colorhash ch) {
   file_name = file_name * ".scm";
   if (load_string (url ("$TEXMACS_PATH/langs/colors", file_name),
         file, false)) {
-    conversion_error << "Couldn't open encoding dictionary " << file_name << LF;
+    convert_error << "Couldn't open encoding dictionary " << file_name << LF;
     return;
   }
   tree t = block_to_scheme_tree (file);
   if (!is_tuple (t)) {
-    conversion_error << "Malformed encoding dictionary " << file_name << LF;
+    convert_error << "Malformed encoding dictionary " << file_name << LF;
     return;
   }
   for (int i=0; i<N(t); i++) {

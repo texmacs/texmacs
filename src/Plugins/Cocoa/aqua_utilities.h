@@ -34,7 +34,7 @@ string aqua_translate (string s);
 inline void
 check_type_void (blackbox bb, string s) {
   if (!is_nil (bb)) {
-    cerr << "\nslot type= " << s << "\n";
+    failed_error << "slot type= " << s << "\n";
     FAILED ("type mismatch");
   }
 }
@@ -42,7 +42,7 @@ check_type_void (blackbox bb, string s) {
 template<class T> void
 check_type (blackbox bb, string s) {
   if (type_box (bb) != type_helper<T>::id) {
-    cerr << "\nslot type= " << s << "\n";
+    failed_error << "slot type= " << s << "\n";
     FAILED ("type mismatch");
   }
 }

@@ -159,7 +159,7 @@ subtree (tree& t, path p) {
   else
     if (N(t) > p->item) return subtree (t[p->item], p->next);
     else {
-      cerr << "TeXmacs] warning, the required path does not exist\n";
+      std_warning << "The required path does not exist\n";
       return t;
     }
 }

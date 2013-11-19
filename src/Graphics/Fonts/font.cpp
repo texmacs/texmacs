@@ -285,7 +285,7 @@ bool get_glyph_fatal= false;
 glyph
 font_rep::get_glyph (string s) {
   if (get_glyph_fatal) {
-    cerr << "glyph name: " << s << "\n";
+    failed_error << "glyph name: " << s << "\n";
     FAILED ("no bitmap available");
   }
   else cout << "  no bitmap available for " << s << "\n";

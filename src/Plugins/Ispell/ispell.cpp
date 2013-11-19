@@ -96,7 +96,7 @@ ispeller_rep::retrieve () {
       ln->listen (10000);
       string mess = ln->read (LINK_ERR);
       string extra= ln->read (LINK_OUT);
-      if (mess  != "") cerr << "TeXmacs] aspell error: " << mess << "\n";
+      if (mess  != "") io_error << "Aspell error: " << mess << "\n";
       if (extra == "") {
 	ln->stop ();
 	return "Error: aspell does not respond";

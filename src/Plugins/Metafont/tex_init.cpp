@@ -23,47 +23,47 @@
 static void
 init_helper_binaries () {
   if (exists_in_path ("kpsepath")) {
-    cerr << "TeXmacs] kpsepath works with your TeX distribution\n";
+    debug_boot << "kpsepath works with your TeX distribution\n";
     set_setting ("KPSEPATH", "true");
   }
   else set_setting ("KPSEPATH", "false");
 
   if (exists_in_path ("kpsewhich")) {
-    cerr << "TeXmacs] kpsewhich works with your TeX distribution\n";
+    debug_boot << "kpsewhich works with your TeX distribution\n";
     set_setting ("KPSEWHICH", "true");
   }
   else set_setting ("KPSEWHICH", "false");
 
   if (exists_in_path ("mktextfm")) { 	 
-   cerr << "TeXmacs] mktextfm works with your TeX distribution\n"; 	 
+   debug_boot << "mktextfm works with your TeX distribution\n"; 	 
    set_setting ("MAKETFM", "mktextfm"); 	 
   } 	 
   else if (exists_in_path ("MakeTeXTFM")) { 	 
-    cerr << "TeXmacs] MakeTeXTFM works with your TeX distribution\n"; 	 
+    debug_boot << "MakeTeXTFM works with your TeX distribution\n"; 	 
     set_setting ("MAKETFM", "MakeTeXTFM"); 	 
   } 	 
   else if (exists_in_path ("maketfm")){ 	 
-    cerr << "TeXmacs] maketfm works with your TeX distribution\n"; 	 
+    debug_boot << "maketfm works with your TeX distribution\n"; 	 
     set_setting ("MAKETFM", "maketfm"); 	 
   } 	 
   else set_setting ("MAKETFM", "false");
   
   if (exists_in_path ("mktexpk")) { 	 
-    cerr << "TeXmacs] mktexpk works with your TeX distribution\n"; 	 
+    debug_boot << "mktexpk works with your TeX distribution\n"; 	 
     set_setting ("MAKEPK", "mktexpk"); 	 
   } 	 
   else if (exists_in_path ("MakeTeXPK")) { 	 
-    cerr << "TeXmacs] MakeTeXPK works with your TeX distribution\n"; 	 
+    debug_boot << "MakeTeXPK works with your TeX distribution\n"; 	 
     set_setting ("MAKEPK", "MakeTeXPK"); 	 
   } 	 
   else if (exists_in_path ("makepk")){ 	 
-    cerr << "TeXmacs] makepk works with your TeX distribution\n"; 	 
+    debug_boot << "makepk works with your TeX distribution\n"; 	 
     set_setting ("MAKEPK", "makepk"); 	 
   } 	 
   else set_setting ("MAKEPK", "false");
 
   if (exists_in_path ("texhash")) { 	 
-    cerr << "TeXmacs] texhash works with your TeX distribution\n"; 	 
+    debug_boot << "texhash works with your TeX distribution\n"; 	 
     set_setting ("TEXHASH", "true"); 	 
   } 	 
   else set_setting ("TEXHASH", "false");
@@ -96,7 +96,7 @@ static void
 search_sub_dirs (url root, url& tfm, url& pk, url& pfb) {
   url dirs= complete (root * url_wildcard (), "dr");
   if (!is_none (dirs)) {
-    cerr << "TeXmacs] found TeX directory " << root << "\n";
+    debug_boot << "Found TeX directory " << root << "\n";
     search_sub_dirs_sub (url_here (), dirs, tfm, pk, pfb, 0);
   }
 }

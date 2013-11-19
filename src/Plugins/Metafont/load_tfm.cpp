@@ -205,9 +205,9 @@ tex_font_metric_rep::execute (int* s, int n, int* buf, int* ker, int& m) {
     /***************** end ligature-kerning program ******************/
 
     if ((bp>=m-2) || (sp>=m-2)) {
-      cerr << "\nString is ";
-      for (i=0; i<n; i++) cerr << (char) s[i];
-      cerr << "\n";
+      failed_error << "\nString is ";
+      for (i=0; i<n; i++) failed_error << (char) s[i];
+      failed_error << "\n";
       FAILED ("string too complex for ligature kerning");
     }
   }
@@ -283,9 +283,9 @@ tex_font_metric_rep::get_xpositions (int* s, int n, double unit,
     /***************** end ligature-kerning program ******************/
 
     if ((bp>=m-2) || (sp>=m-2)) {
-      cerr << "\nString is ";
-      for (i=0; i<n; i++) cerr << (char) s[i];
-      cerr << "\n";
+      failed_error << "\nString is ";
+      for (i=0; i<n; i++) failed_error << (char) s[i];
+      failed_error << "\n";
       FAILED ("string too complex for ligature kerning");
     }
   }

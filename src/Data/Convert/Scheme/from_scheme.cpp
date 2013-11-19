@@ -125,7 +125,7 @@ tree
 scheme_tree_to_tree (scheme_tree t, hashmap<string,int> codes, bool flag) {
   if (is_atomic (t)) return scm_unquote (t->label);
   else if ((N(t) == 0) || is_compound (t[0])) {
-    conversion_error << "Invalid scheme tree " << t << "\n";
+    convert_error << "Invalid scheme tree " << t << "\n";
     return
       compound ("errput", 
                 concat ("The tree was ", as_string (L(t)), ": ", tree (t)));

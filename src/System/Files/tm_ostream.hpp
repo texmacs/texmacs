@@ -76,16 +76,19 @@ public:
 extern tm_ostream& cout;
 extern tm_ostream& cerr;
 
+extern tm_ostream std_error;
 extern tm_ostream failed_error;
 extern tm_ostream qt_error;
 extern tm_ostream font_error;
-extern tm_ostream conversion_error;
-extern tm_ostream other_error;
+extern tm_ostream convert_error;
+extern tm_ostream io_error;
 
 extern tm_ostream std_warning;
+extern tm_ostream convert_warning;
 extern tm_ostream typeset_warning;
 extern tm_ostream io_warning;
 
+extern tm_ostream debug_std;
 extern tm_ostream debug_qt;
 extern tm_ostream debug_aqua;
 extern tm_ostream debug_widgets;
@@ -103,7 +106,6 @@ extern tm_ostream debug_shell;
 extern tm_ostream debug_io;
 extern tm_ostream debug_spell;
 extern tm_ostream debug_updater;
-extern tm_ostream debug_other;
 
 extern tm_ostream std_bench;
 

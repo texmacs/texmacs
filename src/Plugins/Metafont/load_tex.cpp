@@ -325,7 +325,7 @@ load_tex (string family, int size, int dpi, int dsize,
 #ifdef OS_WIN32
   else {
     string name= family * as_string (size) * "@" * as_string (dpi);
-    cerr << "\n\nCould not open font " << name << "\nLoading default" << LF;
+    failed_error << "Could not open font " << name << "\nLoading default" << LF;
     cout << "Could not load font...\nLoading default" << LF;
     XNoTexWarn();
     if (load_tex_tfm ("ecrm", 10, 10, tfm) &&
@@ -337,7 +337,7 @@ load_tex (string family, int size, int dpi, int dsize,
   }
 #endif
   string name= family * as_string (size) * "@" * as_string (dpi);
-  cerr << "\n\nI could not open " << name << "\n";
+  failed_error << "Could not open " << name << "\n";
   FAILED ("Tex seems not to be installed properly");
   bench_cumul ("load tex font");
 }

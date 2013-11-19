@@ -337,17 +337,20 @@ tm_ostream  tm_ostream::private_cerr (stderr);
 tm_ostream& tm_ostream::cout= private_cout;
 tm_ostream& tm_ostream::cerr= private_cerr;
 
+tm_ostream std_error       = debug_ostream ("std-error");
 tm_ostream failed_error    = debug_ostream ("failed-error");
 tm_ostream qt_error        = debug_ostream ("qt-error");
 tm_ostream aqua_error      = debug_ostream ("aqua-error");
 tm_ostream font_error      = debug_ostream ("font-error");
-tm_ostream conversion_error= debug_ostream ("conversion-error");
-tm_ostream other_error     = debug_ostream ("other-error");
+tm_ostream convert_error   = debug_ostream ("convert-error");
+tm_ostream io_error        = debug_ostream ("io-error");
 
 tm_ostream std_warning     = debug_ostream ("std-warning");
+tm_ostream convert_warning = debug_ostream ("convert-warning");
 tm_ostream typeset_warning = debug_ostream ("typeset-warning");
 tm_ostream io_warning      = debug_ostream ("io-warning");
 
+tm_ostream debug_std       = debug_ostream ("debug-std");
 tm_ostream debug_qt        = debug_ostream ("debug-qt");
 tm_ostream debug_aqua      = debug_ostream ("debug-aqua");
 tm_ostream debug_widgets   = debug_ostream ("debug-widgets");
@@ -365,6 +368,5 @@ tm_ostream debug_shell     = debug_ostream ("debug-shell");
 tm_ostream debug_io        = debug_ostream ("debug-io");
 tm_ostream debug_spell     = debug_ostream ("debug-spell");
 tm_ostream debug_updater   = debug_ostream ("debug-updater");
-tm_ostream debug_other     = debug_ostream ("debug-other");
 
 tm_ostream std_bench       = debug_ostream ("std-bench");

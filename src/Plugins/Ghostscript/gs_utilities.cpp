@@ -78,8 +78,8 @@ gs_image_size (url image, int& w_pt, int& h_pt) {
     buf= eval_system (cmd);
   }
   if (!err && gs_image_size_sub (buf, w_pt, h_pt)) return;
-  cerr << "TeXmacs Cannot read image file '" << image << "'"
-       << " in gs_image_size" << LF;
+  convert_error << "Cannot read image file '" << image << "'"
+                << " in gs_image_size" << LF;
   w_pt= 0; h_pt= 0;
 }
 

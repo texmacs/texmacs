@@ -159,7 +159,7 @@ scm
 eval_scheme_file (string file) {
 	//static int cumul= 0;
 	//timer tm;
-	if (DEBUG_STD) debug_other << "Evaluating " << file << "...\n";
+	if (DEBUG_STD) debug_std << "Evaluating " << file << "...\n";
 	c_string _file (file);
 	FILE *f = fopen(_file, "r");
 	scm result= scm_eval_file (f);

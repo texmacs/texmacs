@@ -232,7 +232,7 @@ edit_typeset_rep::typeset_exec_until (path p) {
   typeset_prepare ();
   if (enable_fastenv) {
     if (!(rp < p)) {
-      cerr << "TeXmacs] erroneous path " << p << "\n";
+      failed_error << "Erroneous path " << p << "\n";
       FAILED ("invalid typesetting path");
     }
     tree t= subtree (et, rp);

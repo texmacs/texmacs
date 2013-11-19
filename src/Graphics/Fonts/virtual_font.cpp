@@ -223,7 +223,7 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     return ver_extend (gl, pos, by);
   }
 
-  cerr << "TeXmacs] The defining tree is " << t << "\n";
+  failed_error << "TeXmacs] The defining tree is " << t << "\n";
   FAILED ("invalid virtual character");
   return glyph ();
 }

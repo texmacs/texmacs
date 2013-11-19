@@ -200,7 +200,7 @@ load_xpm (url file_name) {
   skip_spaces (s, i);
   ok= read_int (s, i, b) && ok;
   if ((!ok) || (N(t)<(c+1)) || (c<=0)) {
-    cerr << "file_name= " << file_name << "\n";
+    error_failed << "file_name= " << file_name << "\n";
     FAILED ("invalid xpm");
   }
 

@@ -852,10 +852,10 @@ edit_select_rep::raw_cut (path p1, path p2) {
   }
 
   if ((N(p1) != (N(p)+1)) || (N(p2) != (N(p)+1))) {
-    cerr << "t = " << t << "\n";
-    cerr << "p = " << p << "\n";
-    cerr << "p1= " << p1 << "\n";
-    cerr << "p2= " << p2 << "\n";
+    failed_error << "t = " << t << "\n";
+    failed_error << "p = " << p << "\n";
+    failed_error << "p1= " << p1 << "\n";
+    failed_error << "p2= " << p2 << "\n";
     FAILED ("invalid cut");
   }
 
@@ -866,10 +866,10 @@ edit_select_rep::raw_cut (path p1, path p2) {
   }
   else {
     if ((last_item (p1) != 0) || (last_item (p2) != 1)) {
-      cerr << "t = " << t << "\n";
-      cerr << "p = " << p << "\n";
-      cerr << "p1= " << p1 << "\n";
-      cerr << "p2= " << p2 << "\n";
+      failed_error << "t = " << t << "\n";
+      failed_error << "p = " << p << "\n";
+      failed_error << "p1= " << p1 << "\n";
+      failed_error << "p2= " << p2 << "\n";
       FAILED ("invalid object cut");
     }
     assign (p, "");

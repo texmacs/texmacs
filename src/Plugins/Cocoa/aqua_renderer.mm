@@ -425,7 +425,7 @@ NSImage* xpm_init(url file_name)
   skip_spaces (s, i);
   ok= read_int (s, i, b) && ok;
   if ((!ok) || (N(t)<(c+1)) || (c<=0)) {
-    cerr << "File name= " << file_name << "\n";
+    failed_error << "File name= " << file_name << "\n";
     FAILED ("invalid xpm");
   }
   

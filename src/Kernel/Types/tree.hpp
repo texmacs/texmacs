@@ -131,12 +131,12 @@ typedef tree scheme_tree;
 #ifdef debug_trees
 #define CHECK_ATOMIC(t) \
   if (((t).rep)->op != STRING) { \
-    cerr << "\nThe tree : " << (t) << "\n"; \
+    failed_error << "The tree : " << (t) << "\n"; \
     FAILED ("atomic tree expected"); \
   }
 #define CHECK_COMPOUND(t) \
   if (((t).rep)->op == STRING) { \
-    cerr << "\nThe tree : " << (t) << "\n"; \
+    failed_error << "The tree : " << (t) << "\n"; \
     FAILED ("compound tree expected"); \
   }
 #else

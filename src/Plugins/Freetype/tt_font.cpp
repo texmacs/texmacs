@@ -213,7 +213,7 @@ tt_font (string family, int size, int dpi) {
 font
 tt_font (string family, int size, int dpi) {
   string name= "tt:" * family * as_string (size) * "@" * as_string(dpi);
-  cerr << "\n\nFont name= " << name << "\n";
+  failed_error << "Font name= " << name << "\n";
   FAILED ("true type support was disabled");
   return font ();
 }

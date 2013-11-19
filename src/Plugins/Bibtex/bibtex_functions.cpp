@@ -139,7 +139,7 @@ bib_to_latex (string s) {
   while (pos < N(s)) {
     specialsav= special;
     string ch= bib_parse_char (s, pos, depth, special, math);
-    //    cerr << ch << " " << as_string (keepcase) << " " << as_string (depth) << "\n";
+    // convert_warning << ch << " " << as_string (keepcase) << " " << as_string (depth) << "\n";
     if (ch == "$$") r << "$";
     else if (special || math) r << ch;
     else if (bib_is_space (ch)) {
@@ -165,7 +165,7 @@ bib_to_latex (string s) {
   }
   for (int i= keepcase; i>0; i--) r << "}";
   r << "}";
-  //  cerr << r << "\n";
+  // convert_warning << r << "\n";
   return r;
 }
 

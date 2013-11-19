@@ -40,7 +40,7 @@ pk_loader::pk_loader (url pk_file_name, tex_font_metric tfm2, int dpi2):
 HI
 pk_loader::pkbyte () {
   if (input_pos == N(input_s)) {
-    cerr << "\npk file= " << file_name << "\n";
+    failed_error << "pk file= " << file_name << "\n";
     FAILED ("unexpected eof in pk file");
   }
   return (HI) ((QN) input_s [input_pos++]);
@@ -146,7 +146,7 @@ pk_loader::rest () {
     real_func_flag = true;
     return i;
   }
-  cerr << "\npk file= " << file_name << "\n";
+  failed_error << "pk file= " << file_name << "\n";
   FAILED ("unexpected situation");
   return 0;
 }
@@ -262,7 +262,7 @@ pk_loader::unpack (glyph& gl) {
       turnon = ! turnon; 
     }
     if ((rowsleft != 0) || (hbit != gl->width)) {
-      cerr << "\npk file= " << file_name << "\n";
+      failed_error << "pk file= " << file_name << "\n";
       FAILED ("more bits than required while unpacking");
     }
   }
@@ -297,11 +297,11 @@ pk_loader::load_pk () {
 
   // Preamble
   if (pkbyte ()!=247) {
-    cerr << "\npk file= " << file_name << "\n";
+    failed_error << "pk file= " << file_name << "\n";
     FAILED ("bad pk file");
   }
   if (pkbyte ()!=89) {
-    cerr << "\npk file= " << file_name << "\n";
+    failed_error << "pk file= " << file_name << "\n";
     FAILED ("bad version of pk file");
   }
   for(i=pkbyte (); i>0; i--) (void) pkbyte (); /* creator of pkfile */
@@ -334,13 +334,13 @@ pk_loader::load_pk () {
 	i = i * 256 + pkbyte ();        /* pixelwidth */
 	break;
       case 5:
-	cerr << "\npk file= " << file_name << "\n";
-	cerr << "last charcode= " << charcode << "\n";
+	failed_error << "pk file= " << file_name << "\n";
+	failed_error << "last charcode= " << charcode << "\n";
 	FAILED ("lost sync in pk file (character too big / status = 5)");
 	break;
       case 6:
-	cerr << "\npk file= " << file_name << "\n";
-	cerr << "last charcode= " << charcode << "\n";
+	failed_error << "pk file= " << file_name << "\n";
+	failed_error << "last charcode= " << charcode << "\n";
 	FAILED ("lost sync in pk file (character too big / status = 6)");
 	break;
       case 7:
@@ -409,9 +409,9 @@ pk_loader::load_pk () {
       case 244: k = pkquad (); break;
       case 246: break;
       default :
-	cerr << "\npk file= " << file_name << "\n";
-	cerr << "last charcode= " << charcode << "\n";
-	cerr << "flagbyte= " << flagbyte << "\n";
+	failed_error << "pk file= " << file_name << "\n";
+	failed_error << "last charcode= " << charcode << "\n";
+	failed_error << "flagbyte= " << flagbyte << "\n";
 	FAILED ("lost sync in pk file");
       }
     }

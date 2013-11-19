@@ -453,8 +453,8 @@ iconv_converter::iconv_converter (string from2, string to2, bool errors):
   c_string to_cp   (to);
   cd= iconv_open (to_cp, from_cp);
   if (!is_valid() && show_errors)
-    conversion_error << "Initialization of iconv from " << from
-                     << " to " << to << " failed\n";
+    convert_error << "Initialization of iconv from " << from
+                  << " to " << to << " failed\n";
   successful= true;
 }
 
@@ -475,7 +475,7 @@ iconv_adaptor(size_t(*iconv_func)(iconv_t, T, size_t *, char**, size_t*),
 string apply (iconv_converter &conv, string input) {
   if (! conv.is_valid()) {
     conv.successful= false;
-    conversion_error << "Conversion concelled\n";
+    convert_error << "Conversion concelled\n";
     return input;
   }
   string result;
@@ -492,8 +492,8 @@ string apply (iconv_converter &conv, string input) {
 			     &in_cursor, &in_left, &out_cursor, &out_left);
     if(r == (size_t)-1 && errno != E2BIG) {
       if (conv.show_errors) {
-	conversion_error << "Iconv conversion from " << conv.from
-                         << " to " << conv.to << " failed\n";
+	convert_error << "Iconv conversion from " << conv.from
+                      << " to " << conv.to << " failed\n";
       }
       conv.successful= false;
       return input;
@@ -579,12 +579,12 @@ hashtree_from_dictionary (
   file_name = file_name * ".scm";
   if (load_string (url ("$TEXMACS_PATH/langs/encoding", file_name),
                    file, false)) {
-    conversion_error << "Couldn't open encoding dictionary " << file_name << LF;
+    convert_error << "Couldn't open encoding dictionary " << file_name << LF;
     return;
   }
   tree t = block_to_scheme_tree (file);
   if (!is_tuple (t)) {
-    conversion_error << "Malformed encoding dictionary " << file_name << LF;
+    convert_error << "Malformed encoding dictionary " << file_name << LF;
     return;
   }
   for (int i=0; i<N(t); i++) {

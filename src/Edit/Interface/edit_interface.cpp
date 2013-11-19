@@ -33,7 +33,7 @@ MODE_LANGUAGE (string mode) {
   else if (mode == "math") return MATH_LANGUAGE;
   else if (mode == "prog") return PROG_LANGUAGE;
   else if (mode == "src") return LANGUAGE;
-  cerr << "Mode = " << mode << "\n";
+  failed_error << "Mode = " << mode << "\n";
   FAILED ("invalid mode");
   return LANGUAGE;
 }
