@@ -339,7 +339,9 @@ tm_ostream& tm_ostream::cerr= private_cerr;
 
 tm_ostream std_error       = debug_ostream ("std-error");
 tm_ostream failed_error    = debug_ostream ("failed-error");
+tm_ostream boot_error      = debug_ostream ("boot-error");
 tm_ostream qt_error        = debug_ostream ("qt-error");
+tm_ostream widkit_error    = debug_ostream ("widkit-error");
 tm_ostream aqua_error      = debug_ostream ("aqua-error");
 tm_ostream font_error      = debug_ostream ("font-error");
 tm_ostream convert_error   = debug_ostream ("convert-error");
@@ -349,6 +351,7 @@ tm_ostream std_warning     = debug_ostream ("std-warning");
 tm_ostream convert_warning = debug_ostream ("convert-warning");
 tm_ostream typeset_warning = debug_ostream ("typeset-warning");
 tm_ostream io_warning      = debug_ostream ("io-warning");
+tm_ostream widkit_warning  = debug_ostream ("widkit-warning");
 
 tm_ostream debug_std       = debug_ostream ("debug-std");
 tm_ostream debug_qt        = debug_ostream ("debug-qt");

@@ -120,8 +120,12 @@ debug_message (string channel, tree msg) {
     else {
       debug_messages << tuple (channel, msg);
       debug_lf_flag= false;
-      cout << "TeXmacs] ";
-      if (channel != "debug-automatic") cout << channel << ", ";
+      if (channel != "debug-boot") {
+        cout << "TeXmacs] ";
+        if (channel != "debug-automatic" &&
+            channel != "boot-error")
+          cout << channel << ", ";
+      }
       cout << msg;
     }
   }

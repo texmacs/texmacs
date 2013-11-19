@@ -133,11 +133,12 @@ void
 init_upgrade () {
   string install_version= get_setting ("VERSION");
 
-  cerr << HRULE;
-  cerr << "Your disk contains a configuration file for TeXmacs-";
-  cerr << install_version << ".\n";
-  cerr << "I will now perform the upgrade to version " TEXMACS_VERSION "\n";
-  cerr << HRULE;
+  debug_boot << HRULE;
+  debug_boot << "Your disk contains a configuration file for TeXmacs-";
+  debug_boot << install_version << ".\n";
+  debug_boot << "I will now perform the upgrade to version ";
+  debug_boot << TEXMACS_VERSION <<"\n";
+  debug_boot << HRULE;
 
   url old_settings= "$TEXMACS_HOME_PATH/system" * url_wildcard ("TEX_PATHS*");
   url new_settings= "$TEXMACS_HOME_PATH/system/settings.scm";

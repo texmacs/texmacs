@@ -251,9 +251,9 @@ test_round (wk_widget w, string var, SI num) {
 static void
 test_window_attached (event ev, wk_widget w) {
   if (!w->attached ()) {
-    cerr << "\n" << HRULE << "\n";
-    cerr << ev << " was sent to\n" << w;
-    cerr << HRULE << "\n";
+    failed_error << HRULE << "\n";
+    failed_error << ev << " was sent to\n" << w;
+    failed_error << HRULE << "\n";
     FAILED ("widget was not yet attached to window");
   }
 }

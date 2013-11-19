@@ -144,7 +144,7 @@ bridge_docrange_rep::notify_insert (path p, tree u) {
   //      << " [ " << begin << "--" << end << " ]\n";
   ASSERT (!is_nil (p), "erroneous nil path");
   if (p->item > end) {
-    cerr << "\nNotify insert " << u << " at " << p << "\n";
+    failed_error << "Notify insert " << u << " at " << p << "\n";
     FAILED ("out of range");
   }
   if (p->item >= begin) status= CORRUPTED;

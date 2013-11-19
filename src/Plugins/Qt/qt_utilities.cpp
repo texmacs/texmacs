@@ -415,8 +415,8 @@ qt_image_size (url image, int& w, int& h) {
       remove (temp);
     }
     else {
-      cerr << "TeXmacs] cannot read image file '" << image << "'" 
-           << " in qt_image_size" << LF;
+      convert_error << "Cannot read image file '" << image << "'" 
+                    << " in qt_image_size" << LF;
       w= 35; h= 35;
     }
   }
@@ -430,8 +430,8 @@ void
 qt_convert_image (url image, url dest, int w, int h) {
   QImage im (utf8_to_qstring (concretize (image)));
   if (im.isNull ())
-    cerr << "TeXmacs] cannot read image file '" << image << "'" 
-         << " in qt_convert_image" << LF;
+    convert_error << "Cannot read image file '" << image << "'" 
+                  << " in qt_convert_image" << LF;
   else {
     if (w > 0 && h > 0) 
       im= im.scaled (w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
@@ -451,8 +451,8 @@ qt_image_to_eps (url image, int w_pt, int h_pt, int dpi) {
   QImage im (utf8_to_qstring (concretize (image)));
   string r;
   if (im.isNull ())
-    cerr << "TeXmacs Cannot read image file '" << image << "'"
-	 << " in qt_image_to_eps" << LF;
+    convert_error << "Cannot read image file '" << image << "'"
+                  << " in qt_image_to_eps" << LF;
   else {
     bool alpha= im.hasAlphaChannel ();
     if (dpi > 0 && w_pt > 0 && h_pt > 0) {
@@ -552,8 +552,8 @@ qt_image_data (url image, int& w, int&h, string& data, string& palette, string& 
   
   
   if (im.isNull ())
-    cerr << "TeXmacs Cannot read image file '" << image << "'"
-    << " in qt_image_data" << LF;
+    convert_error << "Cannot read image file '" << image << "'"
+                  << " in qt_image_data" << LF;
   else {
     bool alpha= im.hasAlphaChannel ();
     w=  im.width ();

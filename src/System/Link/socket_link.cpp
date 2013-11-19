@@ -171,7 +171,7 @@ socket_link_rep::write (string s, int channel) {
   if (DEBUG_IO) debug_io << "---> " << debug_io_string (s) << "\n";
   int len= N(s);
   if (send_all (io, &(s[0]), &len) == -1) {
-    cerr << "TeXmacs] write to '" << host << ":" << port << "' failed\n";
+    io_error << "Write to '" << host << ":" << port << "' failed\n";
     stop ();
   }
 }

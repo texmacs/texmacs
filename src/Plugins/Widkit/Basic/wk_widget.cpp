@@ -133,17 +133,16 @@ wk_widget_rep::is_window_widget () {
 
 void
 wk_widget_rep::wk_error (string message) {
-  cerr << "\n------------------------------------------------------------------------------\n";
-  cerr << wk_widget (this);
-  cerr << "------------------------------------------------------------------------------\n";
-  cerr << "Error: " << message << "\n";
+  widkit_error << "------------------------------------------------------------------------------\n";
+  widkit_error << wk_widget (this);
+  widkit_error << "------------------------------------------------------------------------------\n";
+  widkit_error << message << "\n";
 }
 
 wk_widget
 operator << (wk_widget w, event ev) {
   if (!w->handle (ev))
-    cerr << "Warning: " << ((tree) ev)
-	 << " cannot be handled by\n" << w << "\n";
+    widkit_warning << ((tree) ev) << " cannot be handled by\n" << w << "\n";
   return w;
 }
 

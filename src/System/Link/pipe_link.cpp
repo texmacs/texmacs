@@ -242,7 +242,7 @@ pipe_link_rep::feed (int channel) {
   if (channel == LINK_OUT) r = ::read (out, tempout, 1024);
   else r = ::read (err, tempout, 1024);
   if (r == -1) {
-    cerr << "TeXmacs] read failed for#'" << cmd << "'\n";
+    io_error << "Read failed for '" << cmd << "'\n";
     wait (NULL);
   }
   else if (r == 0) {

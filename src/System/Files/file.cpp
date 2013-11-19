@@ -77,8 +77,8 @@ load_string (url u, string& s, bool fatal) {
     if (fin == NULL) {
       err= true;
       if (!occurs ("system", name))
-        cerr << "TeXmacs] warning, load error for " << name << ", "
-             << strerror(errno) << "\n";
+        std_warning << "Load error for " << name << ", "
+                    << strerror(errno) << "\n";
     }
     int size= 0;
     if (!err) {
@@ -88,7 +88,7 @@ load_string (url u, string& s, bool fatal) {
 	if (size<0) err= true;
       }
       if (err) {
-        cerr << "TeXmacs] warning, seek failed for " << as_string (u) << "\n";
+        std_warning << "Seek failed for " << as_string (u) << "\n";
         fclose (fin);
       }
     }
@@ -108,7 +108,7 @@ load_string (url u, string& s, bool fatal) {
     // End caching
   }
   if (err && fatal) {
-    cerr << "File name= " << as_string (u) << "\n";
+    failed_error << "File name= " << as_string (u) << "\n";
     FAILED ("file not readable");
   }
   return err;
@@ -119,7 +119,7 @@ save_string (url u, string s, bool fatal) {
   if (is_rooted_tmfs (u)) {
     bool err= save_to_server (u, s);
     if (err && fatal) {
-      cerr << "File name= " << as_string (u) << "\n";
+      failed_error << "File name= " << as_string (u) << "\n";
       FAILED ("file not writeable");
     }
     return err;
@@ -142,8 +142,8 @@ save_string (url u, string s, bool fatal) {
 #endif
       if (fout == NULL) {
         err= true;
-        cerr << "TeXmacs] warning, save error for " << name << ", "
-        << strerror(errno) << "\n";
+        std_warning << "Save error for " << name << ", "
+                    << strerror(errno) << "\n";
       }
       if (!err) {
         int i, n= N(s);
@@ -164,7 +164,7 @@ save_string (url u, string s, bool fatal) {
   }
 
   if (err && fatal) {
-    cerr << "File name= " << as_string (u) << "\n";
+    failed_error << "File name= " << as_string (u) << "\n";
     FAILED ("file not writeable");
   }
   return err;
@@ -194,9 +194,10 @@ get_attributes (url name, struct stat* buf,
         buf->st_mtime= ((unsigned int) as_int (r[1]));
         return false;
       } 
-      cerr << "TeXmacs] Inconsistent value in stat_cache.scm for key:" << name_s << LF;
-      cerr << "TeXmacs] The current value is:" << r << LF;
-      cerr << "TeXmacs] I'm resetting this key" << LF;
+      std_warning << "Inconsistent value in stat_cache.scm for key "
+                  << name_s << LF;
+      std_warning << "The current value is " << r << LF;
+      std_warning << "I'm resetting this key" << LF;
       // continue and recache, the current value is inconsistent. 
     }
   // End caching

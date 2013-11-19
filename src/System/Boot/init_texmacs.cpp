@@ -86,11 +86,11 @@ init_main_paths () {
 #else
   if (is_none (get_env_path ("TEXMACS_HOME_PATH", "~/.TeXmacs"))) {
 #endif
-    cerr << "\nTeXmacs]\n";
-    cerr << "TeXmacs] Installation problem: please send a bug report.\n";
-    cerr << "TeXmacs] 'TEXMACS_HOME_PATH' could not be set to '~/.TeXmacs'.\n";
-    cerr << "TeXmacs] You may try to set this environment variable manually\n";
-    cerr << "TeXmacs]\n";
+    boot_error << "\n";
+    boot_error << "Installation problem: please send a bug report.\n";
+    boot_error << "'TEXMACS_HOME_PATH' could not be set to '~/.TeXmacs'.\n";
+    boot_error << "You may try to set this environment variable manually\n";
+    boot_error << "\n";
     FAILED ("installation problem");
     exit (1);
   }
@@ -155,16 +155,16 @@ static void
 init_guile () {
   url guile_path= "$TEXMACS_PATH/progs:$GUILE_LOAD_PATH";
   if (!exists (guile_path * "init-texmacs.scm")) {
-    cerr << "\nTeXmacs]\n";
-    cerr << "TeXmacs] Installation problem: please send a bug report.\n";
-    cerr << "TeXmacs] The initialization file init-texmacs.scm"
-	 << " could not be found.\n";
-    cerr << "TeXmacs] Please check the values of the environment variables\n";
-    cerr << "TeXmacs] TEXMACS_PATH and GUILE_LOAD_PATH."
-	 << " init-texmacs.scm should\n";
-    cerr << "TeXmacs] be readable and in the directory $TEXMACS_PATH/progs\n";
-    cerr << "TeXmacs] or in the directory $GUILE_LOAD_PATH\n";
-    cerr << "TeXmacs]\n";
+    boot_error << "\n";
+    boot_error << "Installation problem: please send a bug report.\n";
+    boot_error << "The initialization file init-texmacs.scm"
+               << " could not be found.\n";
+    boot_error << "Please check the values of the environment variables\n";
+    boot_error << "TEXMACS_PATH and GUILE_LOAD_PATH."
+               << " init-texmacs.scm should\n";
+    boot_error << "be readable and in the directory $TEXMACS_PATH/progs\n";
+    boot_error << "or in the directory $GUILE_LOAD_PATH\n";
+    boot_error << "\n";
     FAILED ("guile could not be found");
   }
 
@@ -194,7 +194,7 @@ init_guile () {
     guile_path= guile_path | guile_dir;
     set_env_path ("GUILE_LOAD_PATH", guile_path);
     if (!exists ("$GUILE_LOAD_PATH/ice-9/boot-9.scm")) {
-      cerr << "\nGUILE_LOAD_PATH=" << guile_path << "\n";
+      failed_error << "\nGUILE_LOAD_PATH=" << guile_path << "\n";
       FAILED ("guile seems not to be installed on your system");
     }
   }
@@ -309,13 +309,13 @@ setup_inkscape_extension () {
     url f2 = url (ink_ext * "texmacs_reedit.py");
     url f3 = url (ink_ext * "texmacs_latex.sty");
     url plug_source = url ("$TEXMACS_PATH/misc/inkscape_plugin/");
-    cerr << "TeXmacs] installing or updating inkscape plugin\n";
+    debug_boot << "installing or updating inkscape plugin\n";
     copy (url (plug_source * "texmacs.inx"), f1);
     copy (url (plug_source * "texmacs_reedit.py"), f2);
     copy (url (plug_source * "texmacs_latex.sty"), f3);
     if (!(exists (f1) && exists (f2))) {
-      cerr << "TeXmacs] automatic install of inkscape plugin failed\n; ";
-      cerr << "TeXmacs] see documentation for manual install\n";
+      debug_boot << "automatic install of inkscape plugin failed\n; ";
+      debug_boot << "see documentation for manual install\n";
     }
   }
 }
@@ -370,8 +370,8 @@ set_setting (string var, string val) {
 void
 setup_texmacs () {
   url settings_file= "$TEXMACS_HOME_PATH/system/settings.scm";
-  cerr << "Welcome to TeXmacs " TEXMACS_VERSION "\n";
-  cerr << HRULE;
+  debug_boot << "Welcome to TeXmacs " TEXMACS_VERSION "\n";
+  debug_boot << HRULE;
 
   set_setting ("VERSION", TEXMACS_VERSION);
   setup_tex ();
@@ -381,19 +381,19 @@ setup_texmacs () {
   //cout << "settings_t= " << texmacs_settings << "\n";
   //cout << "settings_s= " << s << "\n";
   if (save_string (settings_file, s) || load_string (settings_file, s, false)) {
-    cerr << HRULE;
-    cerr << "I could not save or reload the file\n\n";
-    cerr << "\t" << settings_file << "\n\n";
-    cerr << "Please give me full access control over this file and\n";
-    cerr << "rerun 'TeXmacs'.\n";
-    cerr << HRULE;
+    failed_error << HRULE;
+    failed_error << "I could not save or reload the file\n\n";
+    failed_error << "\t" << settings_file << "\n\n";
+    failed_error << "Please give me full access control over this file and\n";
+    failed_error << "rerun 'TeXmacs'.\n";
+    failed_error << HRULE;
     FAILED ("unable to write settings");
   }
   
-  cerr << HRULE;
-  cerr << "Installation completed successfully !\n";
-  cerr << "I will now start up the editor\n";
-  cerr << HRULE;
+  debug_boot << HRULE;
+  debug_boot << "Installation completed successfully !\n";
+  debug_boot << "I will now start up the editor\n";
+  debug_boot << HRULE;
 }
 
 /******************************************************************************

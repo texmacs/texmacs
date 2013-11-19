@@ -76,7 +76,7 @@ xpm_size (url u, int& w, int& h) {
   skip_spaces (s, i);
   ok= read_int (s, i, h) && ok;
   if (!ok) {
-    cerr << "File name= " << file_name << "\n";
+    failed_error << "File name= " << file_name << "\n";
     FAILED ("invalid xpm");
   }
 }
@@ -278,9 +278,10 @@ image_size (url image, int& w, int& h) {
 
 void
 image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
-/*  if ((suffix (eps) != "eps") && (suffix (eps) != "ps")) {
-    cerr << "TeXmacs] warning: " << concretize (eps) << " has no .eps or .ps suffix\n";
-  }*/
+  /* if ((suffix (eps) != "eps") && (suffix (eps) != "ps")) {
+       std_warning << concretize (eps) << " has no .eps or .ps suffix\n";
+     }
+  */
 #ifdef QTTEXMACS
   if (qt_supports (image)) {
     qt_image_to_eps (image, eps, w_pt, h_pt, dpi);
@@ -322,9 +323,10 @@ image_to_psdoc (url image) {
 
 void
 image_to_png (url image, url png, int w, int h) {
-/*  if (suffix (png) != "png") {
-    cerr << "TeXmacs] warning: " << concretize (png) << " has no .png suffix\n";
-  }*/
+  /* if (suffix (png) != "png") {
+       std_warning << concretize (png) << " has no .png suffix\n";
+     }
+  */
 #ifdef MACOSX_EXTENSIONS
   //cout << "mac convert " << image << ", " << png << "\n";
   if (mac_supports (image)) {

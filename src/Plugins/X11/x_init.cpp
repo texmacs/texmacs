@@ -87,7 +87,7 @@ x_alloc_color (int r, int g, int b) {
   col.green= g;
   col.blue = b;
   if (!XAllocColor (the_gui->dpy, the_gui->cols, &col))
-    cerr << "Warning: can't allocate color\n";
+    widkit_warning << "Can't allocate color\n";
   return col.pixel;
 }
 
@@ -296,14 +296,14 @@ void
 x_gui_rep::initialize_input_method () {
   im_ok= false;
   if (setlocale (LC_CTYPE, "") == NULL)
-    cerr << "TeXmacs] Warning: locale could not be set\n";
+    widkit_warning << "Locale could not be set\n";
   else {
     if (!XSetLocaleModifiers (""))
-      cerr << "TeXmacs] Warning: could not set locale modifiers\n";
+      widkit_warning << "Could not set locale modifiers\n";
     if (XSupportsLocale () == False)
-      cerr << "TeXmacs] Warning: locale is not supported\n";
+      widkit_warning << "Locale is not supported\n";
     else if ((im = XOpenIM (dpy, NULL, NULL, NULL)) == NULL)
-      cout << "TeXmacs] Warning: could not open input method\n";
+      widkit_warning << "Could not open input method\n";
     else im_ok= true;
   }
 }

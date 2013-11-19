@@ -413,63 +413,63 @@ box_rep::get_info (tree in) {
 
 int
 box_rep::get_leaf_left_pos () {
-  cerr << "\nTeXmacs] the box is " << box (this) << "\n";
+  failed_error << "The box is " << box (this) << "\n";
   FAILED ("this box is not textual");
   return 0;
 }
 
 int
 box_rep::get_leaf_right_pos () {
-  cerr << "\nTeXmacs] the box is " << box (this) << "\n";
+  failed_error << "The box is " << box (this) << "\n";
   FAILED ("this box is not textual");
   return 0;
 }
 
 string
 box_rep::get_leaf_string () {
-  cerr << "\nTeXmacs] the box is " << box (this) << "\n";
+  failed_error << "The box is " << box (this) << "\n";
   FAILED ("this box is not textual");
   return "";
 }
 
 font
 box_rep::get_leaf_font () {
-  cerr << "\nTeXmacs] the box is " << box (this) << "\n";
+  failed_error << "The box is " << box (this) << "\n";
   FAILED ("this box is not textual");
   return font ();
 }
 
 pencil
 box_rep::get_leaf_pencil () {
-  cerr << "\nTeXmacs] the box is " << box (this) << "\n";
+  failed_error << "The box is " << box (this) << "\n";
   FAILED ("this box is not textual");
   return pencil (false);
 }
 
 language
 box_rep::get_leaf_language () {
-  cerr << "\nTeXmacs] the box is " << box (this) << "\n";
+  failed_error << "The box is " << box (this) << "\n";
   FAILED ("this box is not textual");
   return language ();
 }
 
 tree
 box_rep::get_leaf_tree () {
-  cerr << "\nTeXmacs] the box is " << box (this) << "\n";
+  failed_error << "The box is " << box (this) << "\n";
   FAILED ("no tree attached to this box");
   return "";
 }
 
 box
 box_rep::get_leaf_box () {
-  cerr << "\nTeXmacs] the box is " << box (this) << "\n";
+  failed_error << "The box is " << box (this) << "\n";
   FAILED ("no box attached to this box");
   return box ();
 }
 
 lazy
 box_rep::get_leaf_lazy () {
-  cerr << "\nTeXmacs] the box is " << box (this) << "\n";
+  failed_error << "The box is " << box (this) << "\n";
   FAILED ("no lazy attached to this box");
   return lazy ();
 }

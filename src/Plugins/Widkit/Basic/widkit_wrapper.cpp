@@ -365,7 +365,7 @@ destroy_window_widget (widget w) {
 void
 check_type_void (blackbox bb, string s) {
   if (!is_nil (bb)) {
-    cerr << "\nslot type= " << s << "\n";
+    failed_error << "slot type= " << s << "\n";
     FAILED ("type mismatch");
   }
 }
@@ -373,7 +373,7 @@ check_type_void (blackbox bb, string s) {
 template<class T> void
 check_type (blackbox bb, string s) {
   if (type_box (bb) != type_helper<T>::id) {
-    cerr << "\nslot type= " << s << "\n";
+    failed_error << "slot type= " << s << "\n";
     FAILED ("type mismatch");
   }
 }
@@ -401,7 +401,7 @@ principal_widget_check (wk_widget wid) {
   // Currently, we only allow geometry access of the unique child of
   // a window widget.
   if (bad_parent (wid)) {
-    cerr << "Widget= " << wid << "\n";
+    failed_error << "Widget= " << wid << "\n";
     FAILED ("invalid geometry access");
   }
 }

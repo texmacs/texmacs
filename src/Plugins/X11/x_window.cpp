@@ -202,7 +202,7 @@ Window
 get_Window (widget w) {
   int id= get_identifier (w);
   if (id == 0) {
-    cerr << "\nwidget = " << w << "\n";
+    failed_error << "widget = " << w << "\n";
     FAILED ("widget is not attached to a window");
   }
   return (Window) id;

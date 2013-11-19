@@ -89,9 +89,9 @@ popup_button_rep::consistent (string s) {
 		((!require_map) && (popup == NULL));
   else flag= (!require_map) && (popup != NULL);
   if (flag) {
-    cerr << "status     = " << status << "\n";
-    cerr << "require map= " << require_map << "\n";
-    cerr << "popup      = " << (popup != NULL) << "\n";
+    failed_error << "status     = " << status << "\n";
+    failed_error << "require map= " << require_map << "\n";
+    failed_error << "popup      = " << (popup != NULL) << "\n";
     WK_FAILED ("inconsistency in " * s);
   }
 }

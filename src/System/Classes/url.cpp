@@ -601,8 +601,8 @@ glue (url u, string s) {
   if (is_atomic (u)) return as_url (tree (u->t->label * s));
   if (is_concat (u)) return u[1] * glue (u[2], s);
   if (is_or (u)) return glue (u[1], s) | glue (u[2], s);
-  cerr << "\nu= " << u << "\n";
-  cerr << "s= " << s << "\n";
+  failed_error << "u= " << u << "\n";
+  failed_error << "s= " << s << "\n";
   FAILED ("can't glue string to url");
   return u;
 }
@@ -613,8 +613,8 @@ unglue (url u, int nr) {
     return as_url (tree (u->t->label (0, max (N(u->t->label) - nr, 0))));
   if (is_concat (u)) return u[1] * unglue (u[2], nr);
   if (is_or (u)) return unglue (u[1], nr) | unglue (u[2], nr);
-  cerr << "\nu= " << u << "\n";
-  cerr << "nr= " << nr << "\n";
+  failed_error << "u = " << u << "\n";
+  failed_error << "nr= " << nr << "\n";
   FAILED ("can't unglue from url");
   return u;
 }
@@ -808,7 +808,7 @@ complete (url base, url u, string filter, bool flag) {
   if (is_none (base)) return base;
   if (is_none (u)) return u;
   if ((!is_root (base)) && (!is_rooted_name (base))) {
-    cerr << "base= " << base << LF;
+    failed_error << "base= " << base << LF;
     FAILED ("invalid base url");
   }
   if (is_name (u) || (is_concat (u) && is_root (u[1]) && is_name (u[2]))) {
@@ -821,8 +821,8 @@ complete (url base, url u, string filter, bool flag) {
       if (is_of_type (comp, filter)) return u;
       return url_none ();
     }
-    cerr << LF << "base= " << base << LF;
-    cerr << "u= " << u << LF;
+    failed_error << "base= " << base << LF;
+    failed_error << "u= " << u << LF;
     ASSERT (is_rooted (comp), "unrooted url");
     FAILED ("bad protocol in url");
   }
@@ -833,7 +833,7 @@ complete (url base, url u, string filter, bool flag) {
   if (is_concat (u) && is_wildcard (u[1], 0) && is_wildcard (u[2], 1)) {
     // FIXME: ret= ret | ... is unefficient (quadratic) in main loop
     if (!(is_rooted (base, "default") || is_rooted (base, "file"))) {
-      cerr << LF << "base= " << base << LF;
+      failed_error << "base= " << base << LF;
       FAILED ("wildcards only implemented for files");
     }
     url ret= url_none ();
@@ -862,7 +862,7 @@ complete (url base, url u, string filter, bool flag) {
   if (is_wildcard (u)) {
     // FIXME: ret= ret | ... is unefficient (quadratic) in main loop
     if (!(is_rooted (base, "default") || is_rooted (base, "file"))) {
-      cerr << LF << "base= " << base << LF;
+      failed_error << "base= " << base << LF;
       FAILED ("wildcards only implemented for files");
     }
     url ret= url_none ();
@@ -991,8 +991,8 @@ concretize (url u) {
   if (is_here (u)) return as_string (url_pwd ());
   if (is_parent (u)) return as_string (url_pwd () * url_parent ());
   if (is_wildcard (u, 1)) return u->t[1]->label;
-  cerr << "TeXmacs] couldn't concretize " << u->t << LF;
-  // cerr << "\nu= " << u << LF;
+  std_warning << "Couldn't concretize " << u->t << LF;
+  // failed_error << "u= " << u << LF;
   // FAILED ("url has no root");
   return "xxx";
 }
@@ -1002,7 +1002,7 @@ materialize (url u, string filter) {
   // Combines resolve and concretize
   url r= resolve (u, filter);
   if (!(is_rooted (r) || is_here (r) || is_parent (r))) {
-    cerr << "\nu= " << u << LF;
+    failed_error << "u= " << u << LF;
     FAILED ("url could not be resolved");
   }
   return concretize (r);

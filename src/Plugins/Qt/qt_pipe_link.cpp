@@ -83,7 +83,7 @@ void
 qt_pipe_link_rep::write (string s, int channel) {
   if ((!alive) || (channel != LINK_IN)) return;
   if (-1 == PipeLink.writeStdin (s)) {
-    cerr << "TeXmacs] Error: cannot write to '" << PipeLink.cmd << "'\n";
+    io_error << "Error: cannot write to '" << PipeLink.cmd << "'\n";
     PipeLink.killProcess ();
   }
 }

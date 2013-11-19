@@ -103,7 +103,7 @@ QPixmap as_pixmap (const QImage& im);
 inline void
 check_type_void (blackbox bb, slot s) {
   if (!is_nil (bb)) {
-    cerr << "\nslot type= " << as_string(s) << LF;
+    failed_error << "slot type= " << as_string(s) << LF;
     FAILED ("type mismatch");
   }
 }
@@ -111,7 +111,7 @@ check_type_void (blackbox bb, slot s) {
 template<class T> inline void
 check_type_id (int type_id, slot s) {
   if (type_id != type_helper<T>::id) {
-    cerr << "\nslot type= " << as_string(s) << LF;
+    failed_error << "slot type= " << as_string(s) << LF;
     FAILED ("type mismatch");
   }
 }
@@ -119,7 +119,7 @@ check_type_id (int type_id, slot s) {
 template<class T> void
 check_type (blackbox bb, slot s) {
   if (type_box (bb) != type_helper<T>::id) {
-    cerr << "\nslot type= " << as_string(s) << LF;
+    failed_error << "slot type= " << as_string(s) << LF;
     FAILED ("type mismatch");
   }
 }

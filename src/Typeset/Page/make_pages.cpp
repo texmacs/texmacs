@@ -184,7 +184,7 @@ pager_rep::papyrus_make () {
   skeleton sk=
     break_pages (l, ht, quality, fn_sep, fnote_sep, float_sep, env->fn);
   if (N(sk) != 1) {
-    cerr << "Number of pages: " << N(sk) << "\n";
+    failed_error << "Number of pages: " << N(sk) << "\n";
     FAILED ("unexpected situation");
   }
 
