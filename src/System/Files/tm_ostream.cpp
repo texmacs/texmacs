@@ -337,6 +337,7 @@ tm_ostream  tm_ostream::private_cerr (stderr);
 tm_ostream& tm_ostream::cout= private_cout;
 tm_ostream& tm_ostream::cerr= private_cerr;
 
+tm_ostream failed_error    = debug_ostream ("failed-error");
 tm_ostream qt_error        = debug_ostream ("qt-error");
 tm_ostream aqua_error      = debug_ostream ("aqua-error");
 tm_ostream font_error      = debug_ostream ("font-error");

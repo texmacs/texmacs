@@ -386,22 +386,7 @@ is_id (string s) {
 * Error messages
 ******************************************************************************/
 
-static void (*the_info_handler) (string, string, int) = NULL;
 static void (*the_wait_handler) (string, string, int) = NULL;
-static void (*the_warning_handler) (string, string, int) = NULL;
-static void (*the_error_handler) (string, string, int) = NULL;
-
-void
-set_info_handler (void (*routine) (string, string, int)) {
-  the_info_handler= routine; }
-
-void
-system_info (string message, string argument, int level) {
-  if (DEBUG_AUTO)
-    cout << "TeXmacs] " << message << " " << argument << LF;
-  if (the_info_handler != NULL)
-    the_info_handler (message, argument, level);
-}
 
 void
 set_wait_handler (void (*routine) (string, string, int)) {
@@ -423,25 +408,7 @@ system_wait (string message, string argument, int level) {
 }
 
 void
-set_warning_handler (void (*routine) (string, string, int)) {
-  the_warning_handler= routine; }
-
-void
 system_warning (string message, string argument, int level) {
   if (DEBUG_AUTO)
     cout << "TeXmacs] Warning: " << message << " " << argument << LF;
-  if (the_info_handler != NULL)
-    the_info_handler ("Warning: " * message, argument, level);
-}
-
-void
-set_error_handler (void (*routine) (string, string, int)) {
-  the_error_handler= routine; }
-
-void
-system_error (string message, string argument, int level) {
-  if (DEBUG_AUTO)
-    cout << "TeXmacs] Error: " << message << " " << argument << LF;
-  if (the_info_handler != NULL)
-    the_info_handler ("Error: " * message, argument, level);
 }

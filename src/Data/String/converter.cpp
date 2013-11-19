@@ -453,8 +453,8 @@ iconv_converter::iconv_converter (string from2, string to2, bool errors):
   c_string to_cp   (to);
   cd= iconv_open (to_cp, from_cp);
   if (!is_valid() && show_errors)
-    system_error ("Initialization of iconv from " * from *
-		  " to " * to * " failed!");
+    conversion_error << "Initialization of iconv from " << from
+                     << " to " << to << " failed\n";
   successful= true;
 }
 
@@ -475,7 +475,7 @@ iconv_adaptor(size_t(*iconv_func)(iconv_t, T, size_t *, char**, size_t*),
 string apply (iconv_converter &conv, string input) {
   if (! conv.is_valid()) {
     conv.successful= false;
-    system_error ("Conversion concelled.");
+    conversion_error << "Conversion concelled\n";
     return input;
   }
   string result;
@@ -492,8 +492,8 @@ string apply (iconv_converter &conv, string input) {
 			     &in_cursor, &in_left, &out_cursor, &out_left);
     if(r == (size_t)-1 && errno != E2BIG) {
       if (conv.show_errors) {
-	cerr << "\nConverting from " << conv.from << " to " << conv.to << "\n";
-	system_error ("String conversion using iconv failed!");
+	conversion_error << "Iconv conversion from " << conv.from
+                         << " to " << conv.to << " failed\n";
       }
       conv.successful= false;
       return input;
@@ -574,16 +574,17 @@ hashtree_from_dictionary (
   hashtree<char,string> dic, string file_name, escape_type key_escape,
   escape_type val_escape, bool reverse)
 {
-  system_info ("Loading",file_name);
+  if (DEBUG_STD) debug_convert << "Loading dictionary " << file_name << LF;
   string key_string, val_string, file;
   file_name = file_name * ".scm";
-  if (load_string (url ("$TEXMACS_PATH/langs/encoding", file_name), file, false)) {
-    system_error ("Couldn't open encoding dictionary", file_name);
+  if (load_string (url ("$TEXMACS_PATH/langs/encoding", file_name),
+                   file, false)) {
+    conversion_error << "Couldn't open encoding dictionary " << file_name << LF;
     return;
   }
   tree t = block_to_scheme_tree (file);
   if (!is_tuple (t)) {
-    system_error ("Malformed encoding dictionary", file_name);
+    conversion_error << "Malformed encoding dictionary " << file_name << LF;
     return;
   }
   for (int i=0; i<N(t); i++) {

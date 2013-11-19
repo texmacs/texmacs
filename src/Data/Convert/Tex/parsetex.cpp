@@ -83,10 +83,10 @@ struct latex_parser {
 void
 latex_parser::latex_error (string s, int i, string message) {
   if (!textm_class_flag) {
-    cerr << "Latex error] " << message << "\n";
+    conversion_error << "latex error, " << message << "\n";
     if (i>30) s= "..." * s (i-27, N(s));
     if (N(s)>60) s= s (0, 57) * "...";
-    cerr << "Latex error] in " << s << "\n";
+    conversion_error << "latex error in " << s << "\n";
   }
 }
 

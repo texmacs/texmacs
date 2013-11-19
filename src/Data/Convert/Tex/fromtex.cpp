@@ -715,9 +715,9 @@ latex_symbol_to_tree (string s) {
       if (s == "brown")        return tree (SET, COLOR, "brown");
       if (s == "pink")         return tree (SET, COLOR, "pink");
 
-			if (s == "boldmath") return tree (SET, MATH_FONT_SERIES, "bold");
+      if (s == "boldmath") return tree (SET, MATH_FONT_SERIES, "bold");
 
-      cerr << "The symbol was " << "\\"*s << "\n";
+      conversion_error << "The symbol was \\" << s << "\n";
       FAILED ("unexpected situation");
     }
 

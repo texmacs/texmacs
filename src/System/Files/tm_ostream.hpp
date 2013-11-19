@@ -76,6 +76,7 @@ public:
 extern tm_ostream& cout;
 extern tm_ostream& cerr;
 
+extern tm_ostream failed_error;
 extern tm_ostream qt_error;
 extern tm_ostream font_error;
 extern tm_ostream conversion_error;

@@ -33,9 +33,9 @@ bib_ok (string s, int pos) {
 void
 bib_error () {
   if (bib_current_tag == "")
-    cerr << "TeXmacs] BibTeX parse error encountered\n";
+    conversion_error << "BibTeX parse error encountered\n";
   else
-    cerr << "TeXmacs] BibTeX parse error in " << bib_current_tag << "\n";
+    conversion_error << "BibTeX parse error in " << bib_current_tag << "\n";
 }
 
 void
@@ -44,8 +44,8 @@ bib_char (string s, int& pos, char c) {
   if (s[pos] == c) pos++;
   else {
     bib_error ();
-    if (c) cerr << "       ] Invalid char: \'" << s[pos]
-		<< "\', expected \'" << c << "\'\n";
+    if (c) conversion_error << "Invalid char: \'" << s[pos]
+                            << "\', expected \'" << c << "\'\n";
     pos= -1;
   }
 }
@@ -57,7 +57,7 @@ bib_open (string s, int& pos, char& cend) {
   case '(': cend= ')'; return false;
   default:
     bib_error ();
-    cerr << "       ] Expected '{' or '(' instead of '" << s[pos] << "'\n";
+    conversion_error << "Expected '{' or '(' instead of '" << s[pos] << "'\n";
     while (pos < N(s) && s[pos] != '{' && s[pos] != '(') pos++;
     if (pos < N(s)) return bib_open (s, pos, cend);
     pos= -1;
@@ -368,9 +368,9 @@ bib_list (string s, int& pos, tree& t) {
       }
     }
   }
-//  cerr << "ENTRIES: " << tentry << "\n";
-//  cerr << "PREAMBLE: " << tpreamble << "\n";
-//  cerr << "STRING: " << tstring << "\n";
+//  conversion_error << "ENTRIES: " << tentry << "\n";
+//  conversion_error << "PREAMBLE: " << tpreamble << "\n";
+//  conversion_error << "STRING: " << tstring << "\n";
 //  if (N(tpreamble) != 0) t << compound ("bib-preamble", tpreamble);
 //  if (N(tstring) != 0) t << compound ("bib-string", tstring);
 //  t << A(tentry);
@@ -388,7 +388,7 @@ parse_bib (string s) {
   bib_list (s, pos, r);
   if (N(s) == 0 || N(r) == 0) return tree ();
   if (pos < 0) {
-    cerr << "TeXmacs] Error: failed to load BibTeX file.\n";
+    conversion_error << "Failed to load BibTeX file.\n";
     return tree ();
   }
   return r;

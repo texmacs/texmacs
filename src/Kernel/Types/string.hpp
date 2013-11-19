@@ -77,14 +77,9 @@ bool     is_charp  (string s);
 bool  is_quoted (string s);
 bool  is_id     (string s);
 
-void  set_info_handler (void (*) (string, string, int));
 void  set_wait_handler (void (*) (string, string, int));
-void  set_warning_handler (void (*) (string, string, int));
-void  set_error_handler (void (*) (string, string, int));
-void  system_info (string message, string argument= "", int level= 0);
 void  system_wait (string message, string argument= "", int level= 0);
 void  system_warning (string message, string argument= "", int level= 0);
-void  system_error (string message, string argument= "", int level= 0);
 
 /******************************************************************************
 * C-style strings with automatic memory management
