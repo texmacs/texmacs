@@ -88,6 +88,6 @@ save_user_preferences () {
     s << "(" << scm_quote (a[i])
       << " " << scm_quote (user_prefs[a[i]]) << ")\n";
   if (save_string (prefs_file, s))
-    system_warning ("the user preferences could not be saved");
+    std_warning << "The user preferences could not be saved\n";
   user_prefs_modified= false;
 }

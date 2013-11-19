@@ -183,8 +183,9 @@ socket_link_rep::feed (int channel) {
   char tempout[1024];
   int r= recv (io, tempout, 1024, 0);
   if (r <= 0) {
-    if (r == 0) cout << "TeXmacs] '" << host << ":" << port << "' hung up\n";
-    else cerr << "TeXmacs] read failed from '" << host << ":" << port << "'\n";
+    if (r == 0) debug_io << host << ":" << port << "' hung up\n";
+    else io_warning << "TeXmacs] read failed from '" << host
+                    << ":" << port << "'\n";
     stop ();
   }
   else if (r != 0) {
@@ -256,7 +257,7 @@ socket_callback (void *obj, void* info) {
   socket_link_rep* con= (socket_link_rep*) obj;
   if (!con->alive) {
     //cout << "con= " << con << ", " << con->alive << ", " << con->io << "\n";
-    system_warning ("invalid callback invocation of deleted socket link");
+    io_warning << "invalid callback invocation of deleted socket link\n";
     return;
   }
   bool busy= true;

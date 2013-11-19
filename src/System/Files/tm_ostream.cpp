@@ -345,6 +345,8 @@ tm_ostream conversion_error= debug_ostream ("conversion-error");
 tm_ostream other_error     = debug_ostream ("other-error");
 
 tm_ostream std_warning     = debug_ostream ("std-warning");
+tm_ostream typeset_warning = debug_ostream ("typeset-warning");
+tm_ostream io_warning      = debug_ostream ("io-warning");
 
 tm_ostream debug_qt        = debug_ostream ("debug-qt");
 tm_ostream debug_aqua      = debug_ostream ("debug-aqua");

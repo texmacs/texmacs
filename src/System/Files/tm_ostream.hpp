@@ -83,6 +83,8 @@ extern tm_ostream conversion_error;
 extern tm_ostream other_error;
 
 extern tm_ostream std_warning;
+extern tm_ostream typeset_warning;
+extern tm_ostream io_warning;
 
 extern tm_ostream debug_qt;
 extern tm_ostream debug_aqua;

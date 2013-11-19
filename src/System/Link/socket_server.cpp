@@ -115,10 +115,10 @@ socket_server_rep::start_client () {
   struct sockaddr_in remote_address;
   socklen_t addrlen= sizeof (remote_address);
   int client= accept (server, (struct sockaddr *) &remote_address, &addrlen);
-  if (client == -1) system_warning ("Call to 'accept' failed");
+  if (client == -1) io_warning << "Call to 'accept' failed\n";
   else {
     string addr= inet_ntoa (remote_address.sin_addr);
-    cout << "TeXmacs] opened connection from '" << addr << "'\n";
+    debug_io << "Opened connection from '" << addr << "'\n";
     array<tm_link> update;
     for (int i=0; i<N(incoming); i++)
       if (incoming[i]->alive)

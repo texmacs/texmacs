@@ -304,8 +304,8 @@ void
 edit_interface_rep::handle_repaint (renderer win, SI x1, SI y1, SI x2, SI y2) {
   if (is_nil (eb)) apply_changes ();
   if (env_change != 0) {
-    system_warning ("Invalid situation (" * as_string (env_change) * ")",
-		    "(edit_interface_rep::handle_repaint)");
+    std_warning << "Invalid situation (" << env_change << ")"
+                << " in edit_interface_rep::handle_repaint\n";
     return;
   }
 

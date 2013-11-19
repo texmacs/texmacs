@@ -117,8 +117,8 @@ evaluate_set_binding (tree t) {
       string old_s= tree_as_string (old_value[0]);
       string new_s= tree_as_string (value);
       if (new_s != old_s && !starts (key, "auto-")) {
-	if (new_s == "") system_warning ("Redefined", key);
-	else system_warning ("Redefined " * key * " as", new_s);
+        if (new_s == "") typeset_warning << "Redefined " << key << LF;
+	else typeset_warning << "Redefined " << key << " as " << new_s << LF;
       }
     }
     */
@@ -138,7 +138,7 @@ evaluate_get_binding (tree t) {
   else if (type == 1) value= tree (UNINIT);
   /* FIXME:
   if (complete && value == tree (UNINIT))
-    system_warning ("Undefined reference", key);
+    typeset_warning << "Undefined reference " << key << LF;
   */
   return value;
 }

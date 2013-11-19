@@ -79,7 +79,6 @@ bool  is_id     (string s);
 
 void  set_wait_handler (void (*) (string, string, int));
 void  system_wait (string message, string argument= "", int level= 0);
-void  system_warning (string message, string argument= "", int level= 0);
 
 /******************************************************************************
 * C-style strings with automatic memory management

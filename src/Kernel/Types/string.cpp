@@ -406,9 +406,3 @@ system_wait (string message, string argument, int level) {
   }
   else the_wait_handler (message, argument, level);
 }
-
-void
-system_warning (string message, string argument, int level) {
-  if (DEBUG_AUTO)
-    cout << "TeXmacs] Warning: " << message << " " << argument << LF;
-}
