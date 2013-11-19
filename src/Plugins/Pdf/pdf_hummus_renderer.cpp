@@ -277,11 +277,11 @@ pdf_hummus_renderer_rep::pdf_hummus_renderer_rep (
     inText (false)
 {
   if (landscape) { // consistent with printer
-    width=  default_dpi * paper_h  / 2.54;
-    height= default_dpi *paper_w  / 2.54;
+    width = default_dpi * paper_h / 2.54;
+    height= default_dpi * paper_w / 2.54;
   }
   else {
-	  width=  default_dpi *  paper_w / 2.54;
+    width = default_dpi * paper_w / 2.54;
     height= default_dpi * paper_h / 2.54;
   }
   
@@ -295,10 +295,9 @@ pdf_hummus_renderer_rep::pdf_hummus_renderer_rep (
     status = pdfWriter.StartPDF((char*)_pdf_file_name, ePDFVersion14 ); // PDF 1.4 for alpha
                                //   , LogConfiguration(true, true, "/Users/mgubi/Desktop/pdfwriter-x.log")
                                //   , PDFCreationSettings(false) ); // true = compression on
-      if(status != PDFHummus::eSuccess)
-      {
-          cout << "failed to start PDF\n";
-      }	
+    if (status != PDFHummus::eSuccess) {
+      convert_error << "failed to start PDF\n";
+    }
   }
   
   pdfWriter.GetDocumentContext().AddDocumentContextExtender (new DestinationsWriter(this));
@@ -347,15 +346,14 @@ pdf_hummus_renderer_rep::~pdf_hummus_renderer_rep () {
   }
   
   EStatusCode status = pdfWriter.EndPDF();
-  if(status != PDFHummus::eSuccess)
-  {
-    cout << "failed in end PDF\n";
+  if (status != PDFHummus::eSuccess) {
+    convert_error << "Failed in end PDF\n";
   }
 }
 
 bool
 pdf_hummus_renderer_rep::is_printer () {
-//  cerr << "is_printer\n";
+  // debug_convert << "is_printer\n";
   return true;
 }
 
@@ -373,10 +371,9 @@ pdf_hummus_renderer_rep::begin_page() {
   page = new PDFPage();
   page->SetMediaBox(PDFRectangle(0,0,width,height));
   contentContext = pdfWriter.StartPageContentContext(page);
-  if (NULL == contentContext)
-  {
+  if (NULL == contentContext) {
     status = PDFHummus::eFailure;
-    cout << "failed to create content context for page\n";
+    convert_error << "Failed to create content context for page\n";
   }
   
   alpha = 255;
@@ -415,9 +412,8 @@ pdf_hummus_renderer_rep::end_page(){
   contentContext->Q();
 
   status = pdfWriter.EndPageContentContext(contentContext);
-  if(status != PDFHummus::eSuccess)
-  {
-    cout<<"failed to end page content context\n";
+  if (status != PDFHummus::eSuccess) {
+    convert_error << "Failed to end page content context\n";
   }
   
   EStatusCodeAndObjectIDType res = pdfWriter.GetDocumentContext().WritePageAndRelease(page);
@@ -466,7 +462,7 @@ pdf_hummus_renderer_rep::set_transformation (frame fr) {
   point o = tr (point (0.0, 0.0));
   point ux= tr (point (1.0, 0.0)) - o;
   point uy= tr (point (0.0, 1.0)) - o;
-  //cout << "Set transformation " << o << ", " << ux << ", " << uy << "\n";
+  // debug_convert << "Set transformation " << o << ", " << ux << ", " << uy << "\n";
   double tx= o[0];
   double ty= o[1];
   contentContext->q();
@@ -495,13 +491,13 @@ pdf_hummus_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore)
   
   outer_round (x1, y1, x2, y2);
   if (restore) {
-    //cerr << "restore clipping\n";
+    // debug_convert << "restore clipping\n";
     contentContext->Q();
     if (clip_level > 0) clip_level--;
     cfn= "";
   }
   else {
-    //cerr << "set clipping\n";
+    // debug_convert << "set clipping\n";
     contentContext->q(); clip_level++;
     double xx1= to_x (min (x1, x2));
     double yy1= to_y (min (y1, y2));
@@ -580,19 +576,19 @@ pdf_hummus_renderer_rep::select_line_width (SI w) {
 
 pencil
 pdf_hummus_renderer_rep::get_pencil () {
-//  cerr << "get_color\n";
+  // debug_convert << "get_color\n";
   return pen;
 }
 
 brush
 pdf_hummus_renderer_rep::get_background () {
-//  cerr << "get_background\n";
+  // debug_convert << "get_background\n";
   return bgb;
 }
 
 void
 pdf_hummus_renderer_rep::set_pencil (pencil pen2) {
-//  cerr << "set_color\n";
+  // debug_convert << "set_color\n";
   pen= pen2;
   color c= pen->get_color ();
   if (fg!=c) {
@@ -613,7 +609,7 @@ pdf_hummus_renderer_rep::set_pencil (pencil pen2) {
 
 void
 pdf_hummus_renderer_rep::set_background (brush b) {
-//  cerr << "set_background\n";
+  // debug_convert << "set_background\n";
   //if (bgb==b) return;
   bgb= b;
   bg= b->get_color ();
@@ -664,7 +660,7 @@ create_pdf_image_raw (PDFWriter& pdfw, string raw_data, SI width, SI height, Obj
 
   ObjectsContext& objectsContext = pdfw.GetObjectsContext();
   objectsContext.StartNewIndirectObject(imageXObjectID);
-	do {
+  do {
     {
       // write stream dictionary
       DictionaryContext* imageContext = objectsContext.StartDictionary();
@@ -703,14 +699,12 @@ create_pdf_image_raw (PDFWriter& pdfw, string raw_data, SI width, SI height, Obj
       objectsContext.WriteKeyword("endstream");
     }
     objectsContext.EndIndirectObject();
-		imageXObject = new PDFImageXObject(imageXObjectID, KProcsetImageB);
-	} while(false);
+    imageXObject = new PDFImageXObject(imageXObjectID, KProcsetImageB);
+  } while(false);
  
-  if (imageXObject == NULL) {
-    cerr <<  "pdf_hummus: failed to include glyph." << LF;
-  } else {
-    delete imageXObject;
-  }
+  if (imageXObject == NULL)
+    convert_error <<  "pdf_hummus, failed to include glyph" << LF;
+  else delete imageXObject;
 }
 
 class pdf_raw_image_rep : public concrete_struct
@@ -724,9 +718,8 @@ public:
    : data(_data), w(_w), h(_h), id(_id) {}
   pdf_raw_image_rep () {}
   
-  void flush(PDFWriter& pdfw)
-  {
-    //cout << "flushing :" << id << LF;
+  void flush(PDFWriter& pdfw) {
+    // debug_convert << "flushing :" << id << LF;
     create_pdf_image_raw (pdfw, data, w, h, id);
   }
 }; // pdf_raw_image_ref
@@ -757,7 +750,7 @@ pdf_hummus_renderer_rep::draw_bitmap_glyph (int ch, font_glyphs fn, SI x, SI y)
   string fontname = fn->res_name;
   string char_name (fontname * "-" * as_string ((int) ch));
   if (!pdf_glyphs->contains(char_name)) {
-    //cerr << "draw bitmap glyph " << (double)gl->width / 8 << " " << (double)gl->height / 8 << "\n";
+    // debug_convert << "draw bitmap glyph " << (double)gl->width / 8 << " " << (double)gl->height / 8 << "\n";
     glyph gl= fn->get(ch);
     if (is_nil (gl)) return;
     string buf= load_virtual_glyph (gl);
@@ -968,9 +961,9 @@ pdf_hummus_renderer_rep::make_pdf_font (string fontname)
   string fname= (pos==-1? fontname: fontname (0, pos));
   url u = url_none ();
   {
-    //cerr << " try freetype " << LF;
+    //debug_convert << " try freetype " << LF;
     u = tt_font_find (fname);
-    //cerr << fname << " " << u << LF;
+    //debug_convert << fname << " " << u << LF;
   }
   if (!is_none (u)) {
     int pos= search_forwards (".", fontname);
@@ -980,7 +973,7 @@ pdf_hummus_renderer_rep::make_pdf_font (string fontname)
     //char *_rname = as_charp(fname);
     PDFUsedFont* font;
     {
-      //cout << "GetFontForFile "  << u  << LF;
+      //debug_convert << "GetFontForFile "  << u  << LF;
       c_string _u (concretize (u));
       font = pdfWriter.GetFontForFile((char*)_u);
       //tm_delete_array(_rname);
@@ -988,8 +981,9 @@ pdf_hummus_renderer_rep::make_pdf_font (string fontname)
     
     if (font != 0) {
       pdf_fonts (fontname)= font;
-    }  else {
-      cout << "(pdf_hummus_renderer) Problems with font: " << fname << " file " << u << LF;
+    }
+    else {
+      convert_error << "pdf_hummus_renderer, problems with font: " << fname << " file " << u << LF;
     }
   }
 }
@@ -1014,7 +1008,7 @@ pdf_hummus_renderer_rep::draw_glyphs()
     bx = x; by = y;
     while (1) {
       drawn_glyph dg = drawn_glyphs->item;
-      //cout << "pushing " << dg.x4->index << " " << dg.x3 << LF;
+      //debug_convert << "pushing " << dg.x4->index << " " << dg.x3 << LF;
       gbuf1.push_back(GlyphUnicodeMapping(dg.x4->index,dg.x3));
       drawn_glyphs = drawn_glyphs->next;
       if (is_nil(drawn_glyphs)) break;
@@ -1068,7 +1062,7 @@ static double font_size (string name) {
 
 void
 pdf_hummus_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
-  //cerr << "draw \"" << (char)ch << "\" " << ch << " " << fn->res_name << "\n";
+  //debug_convert << "draw \"" << (char)ch << "\" " << ch << " " << fn->res_name << "\n";
   glyph gl= fn->get(ch);
   if (is_nil (gl)) return;
   string fontname = fn->res_name;
@@ -1084,7 +1078,7 @@ pdf_hummus_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
         }
       }
     }
-    //cout << "CHANGE FONT" << LF;
+    //debug_convert << "CHANGE FONT" << LF;
     begin_text ();
     draw_glyphs();
     cfn = fontname;
@@ -1107,7 +1101,7 @@ pdf_hummus_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
     contentContext->Td(to_x(x)-prev_text_x, to_y(y)-prev_text_y);
     prev_text_x = to_x(x);
     prev_text_y = to_y(y);
-    //cout << "char " << ch << "index " << gl->index <<" " << x << " " << y << " font " << cfn  << LF;
+    //debug_convert << "char " << ch << "index " << gl->index <<" " << x << " " << y << " font " << cfn  << LF;
     GlyphUnicodeMappingList glyphs;
     glyphs.push_back(GlyphUnicodeMapping(gl->index, ch));
     contentContext->Tj(glyphs);
@@ -1132,7 +1126,7 @@ pdf_hummus_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
 
 void
 pdf_hummus_renderer_rep::line (SI x1, SI y1, SI x2, SI y2) {
-//  cerr << "line\n";
+  // debug_convert << "line\n";
   end_text ();
   contentContext->m(to_x (x1), to_y (y1));
   contentContext->l(to_x (x2), to_y (y2));
@@ -1141,7 +1135,7 @@ pdf_hummus_renderer_rep::line (SI x1, SI y1, SI x2, SI y2) {
 
 void
 pdf_hummus_renderer_rep::lines (array<SI> x, array<SI> y) {
- // cerr << "lines\n";
+  // debug_convert << "lines\n";
   end_text ();
   int i, n= N(x);
   if ((N(y) != n) || (n<1)) return;
@@ -1159,7 +1153,7 @@ pdf_hummus_renderer_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   double yy1= to_y (min (y1, y2));
   double xx2= to_x (max (x1, x2));
   double yy2= to_y (max (y1, y2));
-  //cout << "clear" << xx1 << " " << yy1 << " " << xx2 << " " << yy2 << LF;
+  // debug_convert << "clear" << xx1 << " " << yy1 << " " << xx2 << " " << yy2 << LF;
   contentContext->q();
   select_fill_color (bg);
   contentContext->re(xx1, yy1, xx2-xx1, yy2-yy1);
@@ -1245,7 +1239,7 @@ pdf_hummus_renderer_rep::bezier_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int 
 
 void
 pdf_hummus_renderer_rep::arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
-  //cerr << "arc\n";
+  // debug_convert << "arc\n";
   end_text ();
   bezier_arc(x1, y1, x2, y2, alpha, delta);
   contentContext->S();
@@ -1253,7 +1247,7 @@ pdf_hummus_renderer_rep::arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) 
 
 void
 pdf_hummus_renderer_rep::fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
-  //cerr << "fill_arc\n";
+  // debug_convert << "fill_arc\n";
   end_text ();
   bezier_arc(x1, y1, x2, y2, alpha, delta);
   contentContext->f();
@@ -1262,7 +1256,7 @@ pdf_hummus_renderer_rep::fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int de
 void
 pdf_hummus_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
   end_text ();
-  //cerr << "polygon\n";
+  // debug_convert << "polygon\n";
   int i, n= N(x);
   if ((N(y) != n) || (n<1)) return;
   contentContext->m(to_x (x[0]), to_y (y[0]));
@@ -1314,7 +1308,7 @@ pdf_image_rep::flush (PDFWriter& pdfw)
   c_string fname (tempname);
   string s= suffix (name);
   double scale_x  = 1, scale_y  = 1;
-  // cout << "flushing :" << fname << LF;
+  // debug_convert << "flushing :" << fname << LF;
   
   if (s == "pdf") {
     // * PDF
@@ -1354,7 +1348,7 @@ pdf_image_rep::flush (PDFWriter& pdfw)
     << as_string(-bx1) << " " << as_string(-by1) << " translate \" ";
     cmd << " -f " << sys_concretize (name);
     cmd << " -c \" grestore \"  ";
-    //cout << cmd << LF;
+    // debug_convert << cmd << LF;
     system(cmd);
     
     scale_x = w/((double)(bx2-bx1));
@@ -1381,7 +1375,8 @@ pdf_image_rep::flush (PDFWriter& pdfw)
   remove (temp);
   
   if (status == PDFHummus::eFailure) {
-    cerr <<  "pdf_hummus: failed to include image file:" << fname << LF;
+    convert_error << "pdf_hummus, failed to include image file: "
+                  << fname << LF;
   }
 }
 
@@ -1654,13 +1649,13 @@ pdf_image_rep::flush_jpg (PDFWriter& pdfw, url image) {
   
   while (!succ) {
     if (buf.pos >= buf.size) {
-      cerr << "pdf_image_rep::flush_jpg : reading JPEG image failed (premature file end) in " << image << LF;
+      convert_error << "pdf_image_rep::flush_jpg: reading JPEG image failed (premature file end) in " << image << LF;
       break;
     }
     int marker = buf.read_byte();
     if (marker != 0xFF) {
       // fail: no marker found
-      cerr << "pdf_image_rep::flush_jpg : reading JPEG image failed (no marker found) in " << image << LF;
+      convert_error << "pdf_image_rep::flush_jpg: reading JPEG image failed (no marker found) in " << image << LF;
       break;
     }
     unsigned char ch = buf.read_byte();
@@ -1715,7 +1710,7 @@ pdf_image_rep::flush_jpg (PDFWriter& pdfw, url image) {
   // we have enough information proceed to create Image XForm
   
   if ((w != xsize) || (h != ysize)) {
-    cerr << "pdf_image_rep::flush_jpg : error embedding JPEG image (size mismatch) in " << image << LF;
+    convert_error << "pdf_image_rep::flush_jpg: error embedding JPEG image (size mismatch) in " << image << LF;
   }
   
   ObjectsContext& objectsContext = pdfw.GetObjectsContext();
@@ -1826,7 +1821,7 @@ void
 pdf_hummus_renderer_rep::image (
   url u, SI w, SI h, SI x, SI y, int alpha)
 {
-  //cerr << "image " << u << LF;
+  // debug_convert << "image " << u << LF;
   (void) alpha; // FIXME
 
   tree lookup= tuple (u->t);
@@ -2007,7 +2002,7 @@ pdf_hummus_renderer_rep::flush_dests()
 void
 pdf_hummus_renderer_rep::toc_entry (string kind, string title, SI x, SI y) {
   (void) kind; (void) title; (void) x; (void) y;
-  //cout << kind << ", " << title << "\n";
+  // debug_convert << kind << ", " << title << "\n";
   int ls= 1;
   if (kind == "toc-strong-1") ls= 1;
   if (kind == "toc-strong-2") ls= 2;
@@ -2108,39 +2103,39 @@ pdf_hummus_renderer_rep::flush_outlines()
 
 void
 pdf_hummus_renderer_rep::fetch (SI x1, SI y1, SI x2, SI y2, renderer ren, SI x, SI y) {
-//  cerr << "fetch\n";
-/*  (void) x1; (void) y1; (void) x2; (void) y2;
-  (void) ren; (void) x; (void) y;*/
+  // debug_convert << "fetch\n";
+  /* (void) x1; (void) y1; (void) x2; (void) y2;
+     (void) ren; (void) x; (void) y;*/
 }
 
 void
 pdf_hummus_renderer_rep::new_shadow (renderer& ren) {
-//  cerr << "new_shadow\n";
-//  (void) ren;
+  // debug_convert << "new_shadow\n";
+  // (void) ren;
 }
 
 void
 pdf_hummus_renderer_rep::delete_shadow (renderer& ren) {
-//  cerr << "delete_shadow\n";
-//  (void) ren;
+  // debug_convert << "delete_shadow\n";
+  // (void) ren;
 }
 
 void
 pdf_hummus_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
-//  cerr << "get_shadow\n";
-//  (void) ren; (void) x1; (void) y1; (void) x2; (void) y2;
+  // debug_convert << "get_shadow\n";
+  // (void) ren; (void) x1; (void) y1; (void) x2; (void) y2;
 }
 
 void
 pdf_hummus_renderer_rep::put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
-// cerr << "put_shadow\n";
-//  (void) ren; (void) x1; (void) y1; (void) x2; (void) y2;
+  // debug_convert << "put_shadow\n";
+  // (void) ren; (void) x1; (void) y1; (void) x2; (void) y2;
 }
 
 void
 pdf_hummus_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
-//  cerr << "apply_shadow\n";
-//  (void) x1; (void) y1; (void) x2; (void) y2;
+  // debug_convert << "apply_shadow\n";
+  // (void) x1; (void) y1; (void) x2; (void) y2;
 }
 
 renderer
