@@ -17,16 +17,30 @@
 ;; Build a document with the list of all messages of a certain kind
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (message-among? m selected) #t)
+(tm-define (message-among? m selected)
+  (let* ((k (tm-ref m 0))
+         (s (tm-ref m 1)))
+    (and (tree-atomic? k)
+         (tree-atomic? s))))
 
 (tm-define (build-message m)
-  (with s (tm-ref (tree->stree m) 1)
-    (if (string? s) s "invalid message")))
+  (let* ((k (tm->stree (tm-ref m 0)))
+         (s (tm-ref m 1)))
+    (cond ((string-ends? k "-error")
+           `(with "color" "#c04040" (concat "Error: " ,s)))
+          ((string-ends? k "-warning")
+           `(with "color" "dark magenta" (concat "Warning: " ,s)))
+          ((string-ends? k "-bench")
+           `(with "color" "dark blue" ,s))
+          (else s))))
 
 (tm-define (messages->document selected)
   (let* ((all-ms (tree-children (get-debug-messages)))
          (sel-ms (list-filter all-ms (cut message-among? <> selected))))
-    `(document ,@(map build-message sel-ms))))
+    `(document
+       (with "language" "verbatim" "font-family" "tt" "par-par-sep" "0fn"
+             (document
+               ,@(map build-message sel-ms))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main console widget
@@ -34,7 +48,7 @@
 
 (tm-widget ((console-widget kinds selected) quit)
   (padded
-    (resize "500px" "300px"
+    (resize ("500px" "800px" "1200px") ("300px" "600px" "1000px")
       (refreshable "console-widget"
         (texmacs-output
           (messages->document selected)
