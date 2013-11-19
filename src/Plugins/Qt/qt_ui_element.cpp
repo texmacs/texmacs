@@ -130,7 +130,7 @@ public:
     if (N(ks)) { 
       QTMWidget *w = qobject_cast<QTMWidget*>(qApp->focusWidget());
       if (w && w->tm_widget()) {
-        if (DEBUG_QT) cout << "shortcut: " << ks << LF;
+        if (DEBUG_QT) debug_qt << "shortcut: " << ks << LF;
         the_gui->process_keypress (w->tm_widget(), ks, texmacs_time());
       }
     }
@@ -310,7 +310,7 @@ qt_ui_element_rep::operator tree () {
 QAction* 
 qt_ui_element_rep::as_qaction () {
   //if (DEBUG_QT_WIDGETS)
-  //cout << "as_qaction: " << type_as_string() << LF;
+  //debug_widgets << "as_qaction: " << type_as_string() << LF;
   
   switch (type) {
     case vertical_menu:
@@ -442,7 +442,8 @@ qt_ui_element_rep::as_qaction () {
       a->setEnabled (true);
       if (old_menu) {
         if (DEBUG_QT_WIDGETS)
-          cout << "qt_ui_element_rep::as_qaction(), this should not happen\n";
+          debug_widgets << "qt_ui_element_rep::as_qaction(), "
+                        << "this should not happen\n";
         delete old_menu;
       }
       return a;
@@ -555,7 +556,7 @@ qt_ui_element_rep::as_qaction () {
 QLayoutItem *
 qt_ui_element_rep::as_qlayoutitem () {
   if (DEBUG_QT_WIDGETS)
-    cout << "as_qlayoutitem: " << type_as_string() << LF;
+    debug_widgets << "as_qlayoutitem: " << type_as_string() << LF;
 
   switch (type) {
     case horizontal_menu:
@@ -737,7 +738,7 @@ qt_ui_element_rep::as_qlayoutitem () {
 QWidget *
 qt_ui_element_rep::as_qwidget () {
   if (DEBUG_QT_WIDGETS)
-    cout << "as_qwidget: " << type_as_string() << LF;
+    debug_widgets << "as_qwidget: " << type_as_string() << LF;
 
   switch (type) {
     case horizontal_menu:
@@ -756,7 +757,8 @@ qt_ui_element_rep::as_qwidget () {
         w->setLayout(l);
       else if (DEBUG_QT_WIDGETS)
           // should we create a default layout?
-        cout << "qt_ui_element_rep::as_qwidget() : invalid situation" << LF;
+        debug_widgets << "qt_ui_element_rep::as_qwidget(): "
+                      << "invalid situation" << LF;
       qwid = w;
     }
       break;

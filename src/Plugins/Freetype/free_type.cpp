@@ -60,7 +60,7 @@ ft_initialize () {
   ft_render_glyph  = (glyph_renderer) ((void*) FT_Render_Glyph);
   ft_get_kerning   = FT_Get_Kerning;
   if (ft_init_freetype (&ft_library)) return true;
-  if (DEBUG_AUTO) cout << "TeXmacs] With linked TrueType support\n";
+  if (DEBUG_AUTO) debug_automatic << "With linked TrueType support\n";
 #else
   int status= debug_off ();
   (void) symbol_install ("/usr/lib/libfreetype.so", "FT_Init_FreeType" ,
@@ -86,7 +86,7 @@ ft_initialize () {
   if (ft_render_glyph == NULL) return true;
   debug_on (status);
   if (ft_init_freetype (&ft_library)) return true;
-  if (DEBUG_AUTO) cout << "TeXmacs] Installed TrueType support\n";
+  if (DEBUG_AUTO) debug_automatic << "Installed TrueType support\n";
 #endif
   ft_error= false;
   return false;

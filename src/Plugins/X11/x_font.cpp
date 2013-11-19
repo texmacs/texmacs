@@ -273,13 +273,13 @@ x_gui_rep::load_system_font (string family, int size, int dpi,
   name << "-*-" * sz1 * "-" * sz2 * "-*-*-*-*-*-*";
   if (size == 0) name= family;
 
-  if (DEBUG_VERBOSE) cout << "TeXmacs] Loading ps font " << name << "\n";
+  if (DEBUG_VERBOSE) debug_fonts << "Loading X font " << name << "\n";
   XFontStruct *xfs = NULL;
   c_string temp (name);
   xfs = XLoadQueryFont (dpy, temp);
   if (xfs == NULL) {
-    if (DEBUG_VERBOSE) cout << "TeXmacs] Font " << name << " not found\n";
-    if (DEBUG_VERBOSE) cout << "TeXmacs] Using default font instead\n";
+    if (DEBUG_VERBOSE) debug_fonts << "Font " << name << " not found\n";
+    if (DEBUG_VERBOSE) debug_fonts << "Using default font instead\n";
     xfs = XLoadQueryFont (dpy, "*");
     ASSERT (xfs != NULL, "could not load default X font");
   }

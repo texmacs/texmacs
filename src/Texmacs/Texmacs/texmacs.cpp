@@ -309,11 +309,11 @@ TeXmacs_main (int argc, char** argv) {
     }
   if (flag) debug (DEBUG_FLAG_AUTO, true);
 
-  if (DEBUG_STD) cout << "TeXmacs] Installing internal plug-ins...\n";
+  if (DEBUG_STD) debug_boot << "Installing internal plug-ins...\n";
   bench_start ("initialize plugins");
   init_plugins ();
   bench_cumul ("initialize plugins");
-  if (DEBUG_STD) cout << "TeXmacs] Opening display...\n";
+  if (DEBUG_STD) debug_boot << "Opening display...\n";
   
 #if defined(X11TEXMACS) && defined(MACOSX_EXTENSIONS)
   init_mac_application ();
@@ -321,7 +321,7 @@ TeXmacs_main (int argc, char** argv) {
     
   gui_open (argc, argv);
   set_default_font (the_default_font);
-  if (DEBUG_STD) cout << "TeXmacs] Starting server...\n";
+  if (DEBUG_STD) debug_boot << "Starting server...\n";
   { // opening scope for server sv
   server sv;
 
@@ -337,7 +337,7 @@ TeXmacs_main (int argc, char** argv) {
     string s= argv[i];
     if ((N(s)>=2) && (s(0,2)=="--")) s= s (1, N(s));
     if ((s[0] != '-') && (s[0] != '+')) {
-      if (DEBUG_STD) cout << "TeXmacs] Loading " << s << "...\n";
+      if (DEBUG_STD) debug_boot << "Loading " << s << "...\n";
       url u= url_system (s);
       if (!is_rooted (u)) u= resolve (url_pwd (), "") * u;
       string b= scm_quote (as_string (u));
@@ -354,7 +354,7 @@ TeXmacs_main (int argc, char** argv) {
              (s == "-log-file")) i++;
   }
   if (install_status == 1) {
-    if (DEBUG_STD) cout << "TeXmacs] Loading welcome message...\n";
+    if (DEBUG_STD) debug_boot << "Loading welcome message...\n";
     url u= "tmfs://help/plain/tm/doc/about/welcome/first.en.tm";
     string b= scm_quote (as_string (u));
     string cmd= "(load-buffer " * b * " " * where * ")";
@@ -362,7 +362,7 @@ TeXmacs_main (int argc, char** argv) {
     exec_delayed (scheme_cmd (cmd));
   }
   else if (install_status == 2) {
-    if (DEBUG_STD) cout << "TeXmacs] Loading upgrade message...\n";
+    if (DEBUG_STD) debug_boot << "Loading upgrade message...\n";
     url u= "tmfs://help/plain/tm/doc/about/changes/changes-recent.en.tm";
     string b= scm_quote (as_string (u));
     string cmd= "(load-buffer " * b * " " * where * ")";
@@ -370,7 +370,7 @@ TeXmacs_main (int argc, char** argv) {
     exec_delayed (scheme_cmd (cmd));
   }
   if (number_buffers () == 0) {
-    if (DEBUG_STD) cout << "TeXmacs] Creating 'no name' buffer...\n";
+    if (DEBUG_STD) debug_boot << "Creating 'no name' buffer...\n";
     open_window ();
   }
 
@@ -379,22 +379,22 @@ TeXmacs_main (int argc, char** argv) {
   bench_reset ("initialize plugins");
   bench_reset ("initialize scheme");
 
-  if (DEBUG_STD) cout << "TeXmacs] Starting event loop...\n";
+  if (DEBUG_STD) debug_boot << "Starting event loop...\n";
   texmacs_started= true;
   if (!disable_error_recovery) signal (SIGSEGV, clean_exit_on_segfault);
   gui_start_loop ();
 
-  if (DEBUG_STD) cout << "TeXmacs] Stopping server...\n";
+  if (DEBUG_STD) debug_boot << "Stopping server...\n";
   } // ending scope for server sv
 
-  if (DEBUG_STD) cout << "TeXmacs] Closing display...\n";
+  if (DEBUG_STD) debug_boot << "Closing display...\n";
   gui_close ();
   
 #if defined(X11TEXMACS) && defined(MACOSX_EXTENSIONS)
   finalize_mac_application ();
 #endif
   
-  if (DEBUG_STD) cout << "TeXmacs] Good bye...\n";
+  if (DEBUG_STD) debug_boot << "Good bye...\n";
 }
 
 /******************************************************************************

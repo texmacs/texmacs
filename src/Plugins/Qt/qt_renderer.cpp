@@ -96,9 +96,9 @@ void
 qt_renderer_rep::begin (void* handle) {
   QPaintDevice *device = static_cast<QPaintDevice*>(handle);
   if (!painter->begin (device) && DEBUG_QT)
-    cout << "qt_renderer_rep::begin(): uninitialized QPixmap of size "
-         << ((QPixmap*)handle)->width() << " x " << ((QPixmap*)handle)->height()
-         << LF;
+    debug_qt << "qt_renderer_rep::begin(): uninitialized QPixmap of size "
+             << ((QPixmap*)handle)->width() << " x "
+             << ((QPixmap*)handle)->height() << LF;
     
   w = painter->device()->width();
   h = painter->device()->height();

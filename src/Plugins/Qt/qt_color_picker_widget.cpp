@@ -38,7 +38,7 @@ qt_color_picker_widget_rep::~qt_color_picker_widget_rep() { }
 void
 qt_color_picker_widget_rep::send (slot s, blackbox val) {
   if (DEBUG_QT_WIDGETS)
-    cout << "qt_color_picker_widget_rep::send " << slot_name(s) << LF;
+    debug_widgets << "qt_color_picker_widget_rep::send " << slot_name(s) << LF;
   switch (s) {
     case SLOT_VISIBILITY:   // Activates the widget
       check_type<bool>(val, s);

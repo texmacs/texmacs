@@ -37,16 +37,16 @@ qt_system (string cmd, string& result) {
 #endif
   proc.start (qcmd);
   if (! proc.waitForStarted ()) {
-    if (DEBUG_STD) cerr << "TeXmacs] System: failed to launch command\n";
+    if (DEBUG_STD) debug_shell << "System: failed to launch command\n";
     return 1;
   }
   proc.closeWriteChannel ();
   if (! proc.waitForFinished (-1)) {
-    if (DEBUG_STD) cerr << "TeXmacs] System: waiting for too long\n";
+    if (DEBUG_STD) debug_shell << "System: waiting for too long\n";
     return 1;
   }
   result = proc.readAll ().constData ();
-  if (DEBUG_STD) cerr << result;
+  if (DEBUG_STD) debug_shell << result;
   return proc.exitCode ();
 }
 

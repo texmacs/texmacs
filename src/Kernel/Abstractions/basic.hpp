@@ -83,6 +83,8 @@ bool debug_get (string s);
 #define DEBUG_PACKRAT (debug (DEBUG_FLAG_PACKRAT))
 #define DEBUG_FLATTEN (debug (DEBUG_FLAG_FLATTEN))
 #define DEBUG_CORRECT (debug (DEBUG_FLAG_CORRECT))
+#define DEBUG_AQUA (debug (DEBUG_FLAG_QT))
+#define DEBUG_AQUA_WIDGETS (debug (DEBUG_FLAG_QT_WIDGETS))
 
 void tm_failure (const char* msg);
 #ifdef DEBUG_ASSERT
@@ -96,6 +98,7 @@ void tm_failure (const char* msg);
 
 class tree;
 void debug_message (string channel, tree msg);
+tree get_debug_messages ();
 
 /******************************************************************************
 * miscellaneous routines

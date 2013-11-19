@@ -232,7 +232,7 @@ texmacs_input_rep::verbatim_flush (bool force) {
     if (!ignore_verb)
       write (verbatim_to_tree (buf, false, "auto"));
     else if (DEBUG_IO)
-      cout << "\nTeXmacs] ignore verb. (aborted input): "  << buf << LF;
+      debug_convert << "ignore verbatim (aborted input): "  << buf << LF;
     buf= "";
   }
 }

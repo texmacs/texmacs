@@ -45,7 +45,7 @@ static bool mac_spelling_language(string lang)
   if (available_dicts->contains (lang)) {
     current_lang = lang;
     [[NSSpellChecker sharedSpellChecker]  setLanguage: to_nsstring_utf8(available_dicts(lang))];
-    if (DEBUG_EVENTS) cout << "setting lang:"  << lang << LF;
+    if (DEBUG_EVENTS) debug_spell << "setting lang:"  << lang << LF;
     return true;
     }
   return false;
@@ -101,7 +101,7 @@ mac_spell_start (string lan) {
 
 tree
 mac_spell_check (string lan, string s) {
-  if (DEBUG_EVENTS) cout << "spell_check " << lan << " :: " << s << LF;
+  if (DEBUG_EVENTS) debug_spell << "check " << lan << " :: " << s << LF;
   tree t;
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   if ((lan != current_lang) && (! mac_spelling_language (lan))) {
@@ -135,7 +135,7 @@ mac_spell_check (string lan, string s) {
   }
   [pool release];
 
-  if (DEBUG_EVENTS)   cout << t << LF;     
+  if (DEBUG_EVENTS) debug_spell << t << LF;     
   return t;
 }
 

@@ -315,7 +315,8 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
 
 qt_tm_widget_rep::~qt_tm_widget_rep () {
   if (DEBUG_QT_WIDGETS)
-    cout << "qt_tm_widget_rep::~qt_tm_widget_rep of widget" << type_as_string() << LF;
+    debug_widgets << "qt_tm_widget_rep::~qt_tm_widget_rep of widget "
+                  << type_as_string() << LF;
   
     // clear any residual waiting menu installation
   waiting_widgets = remove(waiting_widgets, this);
@@ -446,8 +447,8 @@ qt_tm_widget_rep::read(slot s, blackbox index) {
   }
   
   if (DEBUG_QT_WIDGETS)
-    cout << "qt_tm_widget_rep::read " << slot_name (s) << "\t\tfor widget\t" 
-         << type_as_string() << LF;
+    debug_widgets << "qt_tm_widget_rep::read " << slot_name (s)
+                  << "\t\tfor widget\t" << type_as_string() << LF;
   
   return ret;
 }
@@ -570,7 +571,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     {
       check_type<string>(val, s);
       string file = open_box<string> (val);
-      if (DEBUG_QT_WIDGETS) cout << "\tFile: " << file << LF;
+      if (DEBUG_QT_WIDGETS) debug_widgets << "\tFile: " << file << LF;
 #if (QT_VERSION >= 0x040400)
       mainwindow()->setWindowFilePath(utf8_to_qstring(file));
 #endif
@@ -615,15 +616,15 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
   }
   
   if (DEBUG_QT_WIDGETS)
-    cout << "qt_tm_widget_rep: sent " << slot_name (s) 
-         << "\t\tto widget\t"      << type_as_string() << LF;
+    debug_widgets << "qt_tm_widget_rep: sent " << slot_name (s) 
+                  << "\t\tto widget\t"      << type_as_string() << LF;
 }
 
 blackbox
 qt_tm_widget_rep::query (slot s, int type_id) {
   if (DEBUG_QT_WIDGETS)
-    cout << "qt_tm_widget_rep: queried " << slot_name(s)
-         << "\t\tto widget\t" << type_as_string() << LF;
+    debug_widgets << "qt_tm_widget_rep: queried " << slot_name(s)
+                  << "\t\tto widget\t" << type_as_string() << LF;
   
   switch (s) {
     case SLOT_SCROLL_POSITION:
@@ -737,7 +738,7 @@ qt_tm_widget_rep::install_main_menu () {
 void
 qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
   if (DEBUG_QT_WIDGETS)
-    cout << "qt_tm_widget_rep::write " << slot_name (s) << LF;
+    debug_widgets << "qt_tm_widget_rep::write " << slot_name (s) << LF;
   
   switch (s) {
         // Widget w is usually a qt_simple_widget_rep, with a QTMWidget as
@@ -783,7 +784,8 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
           // menu interaction ongoing.
           // postpone menu installation when the menu interaction is done
         if (DEBUG_QT_WIDGETS)
-          cout << "Main menu is busy: postponing menu installation" << LF;
+          debug_widgets << "Main menu is busy: "
+                        << "postponing menu installation" << LF;
         if (!contains(waiting_widgets,this))
           waiting_widgets << this;
       }
@@ -953,14 +955,14 @@ qt_tm_embedded_widget_rep::send (slot s, blackbox val) {
       return;
   }
   if (DEBUG_QT_WIDGETS)
-    cout << "qt_tm_embedded_widget_rep: sent " << slot_name (s) 
-         << "\t\tto widget\t" << type_as_string() << LF;  
+    debug_widgets << "qt_tm_embedded_widget_rep: sent " << slot_name (s) 
+                  << "\t\tto widget\t" << type_as_string() << LF;  
 }
 
 blackbox
 qt_tm_embedded_widget_rep::query (slot s, int type_id) {
   if (DEBUG_QT_WIDGETS)
-    cout << "qt_tm_embedded_widget_rep::query " << slot_name (s) << LF;
+    debug_widgets << "qt_tm_embedded_widget_rep::query " << slot_name (s) << LF;
   
   switch (s) {
     case SLOT_IDENTIFIER:
@@ -1004,8 +1006,8 @@ qt_tm_embedded_widget_rep::read(slot s, blackbox index) {
   }
   
   if (DEBUG_QT_WIDGETS)
-    cout << "qt_tm_widget_rep::read " << slot_name (s) 
-         << "\t\tfor widget\t" << type_as_string() << LF;
+    debug_widgets << "qt_tm_widget_rep::read " << slot_name (s) 
+                  << "\t\tfor widget\t" << type_as_string() << LF;
   
   return ret;
 }
@@ -1013,7 +1015,7 @@ qt_tm_embedded_widget_rep::read(slot s, blackbox index) {
 void
 qt_tm_embedded_widget_rep::write (slot s, blackbox index, widget w) {
   if (DEBUG_QT_WIDGETS)
-    cout << "qt_tm_embedded_widget_rep::write " << slot_name (s) << LF;
+    debug_widgets << "qt_tm_embedded_widget_rep::write " << slot_name (s) << LF;
 
   switch (s) {
       // Widget w is a qt_simple_widget_rep, with a QTMWidget as underlying

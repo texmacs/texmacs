@@ -237,7 +237,7 @@ void initkeymap()
 
 - (void) focusIn
 {
-  if (DEBUG_EVENTS) cout << "FOCUSIN" << LF;
+  if (DEBUG_EVENTS) debug_events << "FOCUSIN" << LF;
   if (wid) {
     wid -> handle_keyboard_focus (true, texmacs_time ());
   }
@@ -245,7 +245,7 @@ void initkeymap()
 
 - (void) focusOut
 {
-  if (DEBUG_EVENTS)   cout << "FOCUSOUT" << LF;
+  if (DEBUG_EVENTS)   debug_events << "FOCUSOUT" << LF;
   if (wid) {
     wid -> handle_keyboard_focus (false, texmacs_time ());
   }
@@ -280,7 +280,7 @@ void initkeymap()
 		[NSBezierPath strokeRect:NSInsetRect(bounds,1,1)];
 		//    return;
 	}
-//	cout << "DRAWING : " << rect.origin.x << ","<< rect.origin.x << ","<< rect.size.width<< "," << rect.size.height <<  "\n";
+//	debug_events << "DRAWING : " << rect.origin.x << ","<< rect.origin.x << ","<< rect.size.width<< "," << rect.size.height <<  "\n";
 //	NSRect bounds = [self bounds];
 	
   {
@@ -294,18 +294,18 @@ void initkeymap()
   //  r -> set_origin(0,0);
     r -> encode (x1,y1);
     r -> encode (x2,y2);
- //   cout << "DRAWING RECT " << x1 << "," << y1 << "," << x2 << "," << y2 << LF;
+ //   debug_events << "DRAWING RECT " << x1 << "," << y1 << "," << x2 << "," << y2 << LF;
     r -> set_clipping (x1,y1,x2,y2);
     wid->handle_repaint (x1,y1,x2,y2);
 		r->end();
     if (gui_interrupted())
       aqua_update_flag= true;
 	}
-//	cout << "END DRAWING" << "\n";
+//	debug_events << "END DRAWING" << "\n";
  
   if (aqua_update_flag) {
     if (DEBUG_EVENTS)
-      cout << "Postponed redrawing\n"; 
+      debug_events << "Postponed redrawing\n"; 
     [self performSelector:@selector(delayedUpdate) withObject: nil afterDelay: 10];
   }
   
@@ -354,7 +354,7 @@ void initkeymap()
 	  // if (mods & NSHelpKeyMask) s= "H-" * s;
           // if (mods & NSFunctionKeyMask) s= "F-" * s;
         }
-        cout << "key press: " << s << LF;
+        debug_events << "key press: " << s << LF;
         wid -> handle_keypress (s, texmacs_time());    
       }
     }
@@ -382,7 +382,7 @@ void initkeymap()
   static bool fInit = false;
   if (!fInit) {
     if (DEBUG_EVENTS)
-      cout << "Initializing keymap\n";
+      debug_events << "Initializing keymap\n";
     initkeymap();
     fInit= true;
   }
@@ -409,7 +409,7 @@ void initkeymap()
         if (nskeymap->contains(key)) {
           r = nskeymap[key];
           r = ((mods & NSShiftKeyMask)? "S-" * modstr: modstr) * r;          
-          cout << "function key press: " << r << LF;
+          debug_events << "function key press: " << r << LF;
           [self deleteWorkingText];
           wid -> handle_keypress (r, texmacs_time());    
           return;
@@ -421,7 +421,7 @@ void initkeymap()
           r= utf8_to_cork (rr);          
           
           string s ( modstr * r);
-          cout << "modified  key press: " << s << LF;
+          debug_events << "modified  key press: " << s << LF;
           [self deleteWorkingText];
           wid -> handle_keypress (s, texmacs_time());    
           the_gui->update (); // FIXME: remove this line when
@@ -478,7 +478,7 @@ mouse_decode (unsigned int mstate) {
     string s= "press-" * mouse_decode (mstate);
     wid -> handle_mouse (s, point.x , point.y , mstate, texmacs_time ());
     if (DEBUG_EVENTS)
-      cout << "mouse event: " << s << " at "
+      debug_events << "mouse event: " << s << " at "
       << point.x << ", " << point.y  << LF;
   }
 }
@@ -492,7 +492,7 @@ mouse_decode (unsigned int mstate) {
     string s= "release-" * mouse_decode (mstate);
     wid -> handle_mouse (s, point.x , point.y , mstate, texmacs_time ());
     if (DEBUG_EVENTS)
-      cout << "mouse event: " << s << " at "
+      debug_events << "mouse event: " << s << " at "
       << point.x  << ", " << point.y  << LF;
   }
 }
@@ -506,7 +506,7 @@ mouse_decode (unsigned int mstate) {
     string s= "move";
     wid -> handle_mouse (s, point.x , point.y , mstate, texmacs_time ());
     if (DEBUG_EVENTS)
-      cout << "mouse event: " << s << " at "
+      debug_events << "mouse event: " << s << " at "
       << point.x  << ", " << point.y  << LF;
   }  
 }
@@ -520,7 +520,7 @@ mouse_decode (unsigned int mstate) {
     string s= "move";
     wid -> handle_mouse (s, point.x , point.y , mstate, texmacs_time ());
     if (DEBUG_EVENTS)
-      cout << "mouse event: " << s << " at "
+      debug_events << "mouse event: " << s << " at "
       << point.x  << ", " << point.y  << LF;
   }  
 }
@@ -579,7 +579,7 @@ mouse_decode (unsigned int mstate) {
     [[str substringWithRange:NSMakeRange(i, 1)] getCString:buf maxLength:256 encoding:NSUTF8StringEncoding];
     string rr (buf, strlen(buf));
     string s= utf8_to_cork (rr);          
-    cout << "key press: " << s << LF;
+    debug_events << "key press: " << s << LF;
     wid -> handle_keypress (s, texmacs_time());        
   }
 }

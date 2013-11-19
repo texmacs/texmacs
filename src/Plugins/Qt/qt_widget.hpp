@@ -154,31 +154,31 @@ public:
   virtual blackbox query (slot s, int type_id) {
     (void) type_id;
     if (DEBUG_QT)
-      cout << "qt_widget_rep::query(), unhandled " << slot_name (s) 
-           << " for widget of type: " << type_as_string() << LF;
-		return blackbox ();
+      debug_qt << "qt_widget_rep::query(), unhandled " << slot_name (s) 
+               << " for widget of type: " << type_as_string() << LF;
+    return blackbox ();
   }
   
   virtual widget read (slot s, blackbox index) {
     (void) index;
     if (DEBUG_QT)
-      cout << "qt_widget_rep::read(), unhandled " << slot_name (s) 
-           << " for widget of type: " << type_as_string() << LF;
-		return widget ();
+      debug_qt << "qt_widget_rep::read(), unhandled " << slot_name (s) 
+               << " for widget of type: " << type_as_string() << LF;
+    return widget ();
   }
   
   virtual void write (slot s, blackbox index, widget w) {
     (void) index; (void) w;
     if (DEBUG_QT)
-      cout << "qt_widget_rep::write(), unhandled " << slot_name (s) 
-           << " for widget of type: " << type_as_string() << LF;
+      debug_qt << "qt_widget_rep::write(), unhandled " << slot_name (s) 
+               << " for widget of type: " << type_as_string() << LF;
   }
   
   virtual void notify (slot s, blackbox new_val) {
     (void) new_val;
     if (DEBUG_QT)
-      cout << "qt_widget_rep::notify(), unhandled " << slot_name (s)
-           << " for widget of type: " << type_as_string() << LF;
+      debug_qt << "qt_widget_rep::notify(), unhandled " << slot_name (s)
+               << " for widget of type: " << type_as_string() << LF;
   }
 };
 

@@ -40,11 +40,11 @@ system (string s, string& result) {
 
 int
 system (string s) {
-  if (DEBUG_STD) cerr << "TeXmacs] System: " << s << "\n";
+  if (DEBUG_STD) debug_shell << s << "\n";
   if (DEBUG_VERBOSE) {
     string result;
     int r= system (s, result);
-    cerr << result;
+    debug_shell << result;
     return r;
   }
   else {

@@ -299,7 +299,8 @@ void qt_gui_rep::set_mouse_pointer (string curs_name, string mask_name)
 void
 qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
   if (DEBUG_QT)
-    cout << "show_wait_indicator \"" << message << "\"\"" << arg << "\"" << LF;
+    debug_qt << "show_wait_indicator \"" << message
+             << "\"\"" << arg << "\"" << LF;
 
   qt_window_widget_rep *wid = static_cast<qt_window_widget_rep*> (w.rep);
 
@@ -397,7 +398,7 @@ qt_gui_rep::add_notifier (socket_notifier sn)
 
   remove_notifier (sn);
 
-  if (DEBUG_QT) cout << "ADD NOTIFIER " << sn->fd << LF;
+  if (DEBUG_QT) debug_qt << "ADD NOTIFIER " << sn->fd << LF;
   
   // installs both a read and a write notifier 
   // (the texmacs interface does not specify enough its needs)
@@ -418,7 +419,7 @@ qt_gui_rep::remove_notifier (socket_notifier sn)
 {  
   QSocketNotifier *qsn;
 
-  if (DEBUG_QT) cout << "REMOVE NOTIFIER" << LF;
+  if (DEBUG_QT) debug_qt << "REMOVE NOTIFIER" << LF;
 
   // disable the (r/w) notifiers to prevent them to fire past this point
   // and schedule them for deletion at the end of the current runloop
@@ -552,7 +553,7 @@ gui_root_extents (SI& width, SI& height) {
   // get the screen size
   the_gui->get_extents (width, height);
     //if (DEBUG_QT) 
-    //cout << "gui_root_extents (" << width << "," << height << ")" << LF;
+    //debug_qt << "gui_root_extents (" << width << "," << height << ")" << LF;
 }
 
 void
@@ -560,7 +561,7 @@ gui_maximal_extents (SI& width, SI& height) {
   // get the maximal size of a window (can be larger than the screen size)
   the_gui->get_max_size (width, height);
     //if (DEBUG_QT) 
-    //cout << "gui_maximal_extents (" << width << "," << height << ")" << LF;
+    //debug_qt << "gui_maximal_extents (" << width << "," << height << ")" << LF;
 }
 
 void
@@ -755,8 +756,8 @@ qt_gui_rep::process_keypress (qt_simple_widget_rep *wid, string key, time_t t) {
   typedef triple<widget, string, time_t > T;
   if (wid->type != qt_widget_rep::simple_widget) {
     if (DEBUG_QT)
-      cout << "WTF! Situation] process_keypress() for non simple_widget. Widget: " 
-           << wid->type_as_string() << LF; 
+      debug_qt << "WTF! Situation] process_keypress() for non simple_widget. "
+               << "Widget: " << wid->type_as_string() << LF; 
 
     return;
   }
@@ -771,8 +772,9 @@ qt_gui_rep::process_keyboard_focus (qt_simple_widget_rep *wid, bool has_focus,
   typedef triple<widget, bool, time_t > T;
   if (wid->type != qt_widget_rep::simple_widget) {
     if (DEBUG_QT)
-      cout << "WTF! Situation] process_keyboard_focus() for non simple_widget. Widget: " 
-           << wid->type_as_string() << LF; 
+      debug_qt << "WTF! Situation] process_keyboard_focus() "
+               << "for non simple_widget. "
+               << "Widget: " << wid->type_as_string() << LF; 
 
     return;
   }
@@ -790,8 +792,8 @@ qt_gui_rep::process_mouse (qt_simple_widget_rep *wid, string kind, SI x, SI y,
 
   if (wid->type != qt_widget_rep::simple_widget) {
     if (DEBUG_QT)
-      cout << "WTF! Situation] process_mouse() for non simple_widget. Widget: " 
-           << wid->type_as_string() << LF; 
+      debug_qt << "WTF! Situation] process_mouse() for non simple_widget. "
+               << "Widget: " << wid->type_as_string() << LF; 
     return;
   }
   add_event ( 
@@ -805,8 +807,8 @@ qt_gui_rep::process_resize (qt_simple_widget_rep *wid, SI x, SI y ) {
   typedef triple<widget, SI, SI > T;
   if (wid->type != qt_widget_rep::simple_widget) {
     if (DEBUG_QT)
-      cout << "WTF! Situation] process_resize() for non simple_widget. Widget: " 
-           << wid->type_as_string() << LF; 
+      debug_qt << "WTF! Situation] process_resize() for non simple_widget. "
+               << "Widget: " << wid->type_as_string() << LF; 
    
     return;
   }
@@ -1065,7 +1067,7 @@ get_default_font (bool tt, bool mini, bool bold) {
   // get the default font or monospaced font (if tt is true)
         
   // return a null font since this function is not called in the Qt port.
-  if (DEBUG_QT) cout << "get_default_font(): SHOULD NOT BE CALLED\n";
+  if (DEBUG_QT) debug_qt << "get_default_font(): SHOULD NOT BE CALLED\n";
   return NULL;
   //return tex_font (this, "ecrm", 10, 300, 0);
 }
@@ -1078,7 +1080,7 @@ load_system_font (string family, int size, int dpi,
                   font_metric& fnm, font_glyphs& fng)
 {
   (void) family; (void) size; (void) dpi; (void) fnm; (void) fng;
-  if (DEBUG_QT) cout << "load_system_font(): SHOULD NOT BE CALLED\n";
+  if (DEBUG_QT) debug_qt << "load_system_font(): SHOULD NOT BE CALLED\n";
 }
 
 /******************************************************************************

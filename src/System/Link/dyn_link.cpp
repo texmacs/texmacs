@@ -59,7 +59,7 @@ symbol_install (string lib, string symb, pointer& f) {
     if (out == "") out= "Couldn't find dynamic library '" * lib * "'";
   }
 
-  if (DEBUG_AUTO) cout << "TeXmacs] " << out << "\n";
+  if (DEBUG_AUTO) debug_automatic << out << "\n";
   return out;
 #else
   return "Dynamic linking not implemented";
@@ -114,7 +114,7 @@ dyn_link_rep::start () {
   if (routs != NULL)
     return "continuation of#'" * lib * "'";
   if (DEBUG_AUTO)
-    cout << "TeXmacs] Installing dynamic link '" << lib << "'\n";
+    debug_automatic << "Installing dynamic link '" << lib << "'\n";
 
   string message= symbol_install (lib, symbol, routs);
   if (routs != NULL) {

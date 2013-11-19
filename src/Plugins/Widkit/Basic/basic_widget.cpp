@@ -260,7 +260,7 @@ test_window_attached (event ev, wk_widget w) {
 
 bool
 basic_widget_rep::handle (event ev) {
-  if (DEBUG_EVENTS) cout << "TeXmacs] " << ev << "\n";
+  if (DEBUG_EVENTS) debug_events << ev << "\n";
   // " ---> " << wk_widget (this) << "\n";
   switch (ev->type) {
   case GET_SIZE_EVENT:

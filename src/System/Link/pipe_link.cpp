@@ -146,7 +146,7 @@ string
 pipe_link_rep::start () {
 #ifndef __MINGW32__
   if (alive) return "busy";
-  if (DEBUG_AUTO) cout << "TeXmacs] Launching '" << cmd << "'\n";
+  if (DEBUG_AUTO) debug_io << "Launching '" << cmd << "'\n";
 
   int e1= pipe (pp_in ); (void) e1;
   int e2= pipe (pp_out); (void) e2;
@@ -226,7 +226,7 @@ void
 pipe_link_rep::write (string s, int channel) {
 #ifndef __MINGW32__
   if ((!alive) || (channel != LINK_IN)) return;
-  if (DEBUG_IO) cout << "[INPUT]" << debug_io_string (s);
+  if (DEBUG_IO) debug_io << "[INPUT]" << debug_io_string (s);
   c_string _s (s);
   int err= ::write (in, _s, N(s));
   (void) err;
@@ -256,7 +256,7 @@ pipe_link_rep::feed (int channel) {
     remove_notifier (snerr);      
   }
   else {
-    if (DEBUG_IO) cout << debug_io_string (string (tempout, r));
+    if (DEBUG_IO) debug_io << debug_io_string (string (tempout, r));
     if (channel == LINK_OUT) outbuf << string (tempout, r);
     else errbuf << string (tempout, r);
   }

@@ -68,9 +68,11 @@ qt_pipe_link_rep::~qt_pipe_link_rep () {
 string
 qt_pipe_link_rep::start () {
   if (alive) return "busy";
-  if (DEBUG_AUTO) cerr << "TeXmacs] Launching '" << PipeLink.cmd << "'\n";
+  if (DEBUG_AUTO)
+    debug_shell << "Launching '" << PipeLink.cmd << "'\n";
   if (! PipeLink.launchCmd ()) {
-    if (DEBUG_AUTO) cerr << "TeXmacs] Error: cannot start '" << PipeLink.cmd << "'\n";
+    if (DEBUG_AUTO)
+      debug_shell << "TeXmacs] Error: cannot start '" << PipeLink.cmd << "'\n";
     return "Error: cannot start application";
   }
   alive= true;

@@ -58,7 +58,7 @@ QTMPipeLink::launchCmd () {
 int
 QTMPipeLink::writeStdin (string s) {
   c_string _s (s);
-  if (DEBUG_IO) cout << "[INPUT]" << debug_io_string ((char*)_s);
+  if (DEBUG_IO) debug_io << "[INPUT]" << debug_io_string ((char*)_s);
   int err= QIODevice::write (_s, N(s));
   return err;
 }
@@ -70,7 +70,7 @@ QTMPipeLink::feedBuf (ProcessChannel channel) {
   if (channel == QProcess::StandardOutput) outbuf << tempout.constData ();
   else errbuf << tempout.constData ();
   if (DEBUG_IO)
-    cout << "[OUTPUT " << channel << "]" << debug_io_string (tempout.constData ()) << "\n";
+    debug_io << "[OUTPUT " << channel << "]" << debug_io_string (tempout.constData ()) << "\n";
 }
 
 bool

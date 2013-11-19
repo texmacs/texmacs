@@ -77,9 +77,9 @@ tm_sqlite3_initialize () {
   debug_on (status);
 
 #ifdef LINKED_SQLITE3
-  if (DEBUG_AUTO) cout << "TeXmacs] With linked Sqlite3 support\n";
+  if (DEBUG_AUTO) debug_automatic << "With linked Sqlite3 support\n";
 #else
-  if (DEBUG_AUTO) cout << "TeXmacs] Installed Sqlite3 support\n";
+  if (DEBUG_AUTO) debug_automatic << "Installed Sqlite3 support\n";
 #endif
 
   sqlite3_error= false;

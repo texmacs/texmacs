@@ -46,9 +46,9 @@ axel_initialize () {
   debug_on (status);
 
 #ifdef LINKED_AXEL
-  if (DEBUG_AUTO) cout << "TeXmacs] With linked Axel support\n";
+  if (DEBUG_AUTO) debug_automatic << "With linked Axel support\n";
 #else
-  if (DEBUG_AUTO) cout << "TeXmacs] Installed Axel support\n";
+  if (DEBUG_AUTO) debug_automatic << "Installed Axel support\n";
 #endif
 
   axel_error= false;

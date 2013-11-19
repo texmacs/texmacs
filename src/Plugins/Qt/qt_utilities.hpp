@@ -143,6 +143,6 @@ extern tm_ostream& operator << (tm_ostream& out, QRect rect);
 //#define TYPE_CHECK(b) ASSERT (b, "type mismatch")   
 
 #define NOT_IMPLEMENTED(x) \
-{ if (DEBUG_QT) cout << x << " not implemented yet.\n"; }
+{ if (DEBUG_QT) debug_qt << x << " not implemented yet.\n"; }
 
 #endif  // QT_UTILITIES_HPP

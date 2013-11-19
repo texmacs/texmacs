@@ -89,10 +89,47 @@ debug_get (string s) {
   else return false;
 }
 
+/******************************************************************************
+* debugging messages
+******************************************************************************/
+
+tree debug_messages (TUPLE);
+bool debug_lf_flag= false;
+
 void
 debug_message (string channel, tree msg) {
-  (void) channel;
-  cout << msg;
+  if (is_atomic (msg) && occurs ("\n", msg->label)) {
+    string s= msg->label;
+    int pos= search_forwards ("\n", 0, s);
+    debug_message (channel, s (0, pos));
+    debug_lf_flag= true;
+    cout << "\n";
+    if (pos+1 < N(s))
+      debug_message (channel, s (pos+1, N(s)));
+  }
+  else {
+    int n= N(debug_messages);
+    if (!debug_lf_flag && n>0 && is_tuple (debug_messages[n-1], channel)) {
+      tree *t= &(debug_messages[n-1][1]);
+      if (is_concat (*t) && is_atomic ((*t)[N(*t)-1])) t= &((*t)[N(*t)-1]);
+      if (is_atomic (msg) && is_atomic (*t)) *t= (*t)->label * msg->label;
+      else if (is_concat (*t)) (*t) << msg;
+      else *t= tree (CONCAT, *t, msg);
+      cout << msg;
+    }
+    else {
+      debug_messages << tuple (channel, msg);
+      debug_lf_flag= false;
+      cout << "TeXmacs] ";
+      if (channel != "debug-automatic") cout << channel << ", ";
+      cout << msg;
+    }
+  }
+}
+
+tree
+get_debug_messages () {
+  return debug_messages;
 }
 
 /******************************************************************************

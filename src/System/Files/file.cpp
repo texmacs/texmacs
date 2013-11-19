@@ -496,8 +496,8 @@ remove_sub (url u) {
   else {
     c_string _u (concretize (u));
     if (::remove (_u) && DEBUG_AUTO) {
-      cerr << "TeXmacs] warning, remove failed: " << strerror (errno) << LF;
-      cerr << "       ] file was: " << u << LF;
+      std_warning << "Remove failed: " << strerror (errno) << LF;
+      std_warning << "File was: " << u << LF;
     }
   }
 }

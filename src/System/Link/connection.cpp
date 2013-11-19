@@ -112,7 +112,7 @@ connection_rep::read (int channel) {
     for (i=0; i<n; i++)
       if (tm_in->put (s[i])) {
 	status= WAITING_FOR_INPUT;
-	if (DEBUG_IO) cout << LF << HRULE;
+	if (DEBUG_IO) debug_io << LF << HRULE;
       }
   }
   else if (channel == LINK_ERR) {
@@ -232,7 +232,7 @@ connection_start (string name, string session, bool again) {
   connection con= connection (name * "-" * session);
   if (is_nil (con)) {
     if (DEBUG_VERBOSE)
-      cout << "TeXmacs] Starting session '" << session << "'\n";
+      debug_io << "Starting session '" << session << "'\n";
     tree t= connection_info (name, session);
     if (is_tuple (t, "pipe", 1)) {
       tm_link ln= make_pipe_link (t[1]->label);

@@ -230,7 +230,7 @@ aqua_renderer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
   // Given an image of original size (W, H),
   // we display it at position (x, y) in a rectangle of size (w, h)
   
-  // if (DEBUG_EVENTS) cout << "cg_renderer_rep::image " << as_string(u) << LF;
+  // if (DEBUG_EVENTS) debug_events << "cg_renderer_rep::image " << as_string(u) << LF;
   (void) alpha; // FIXME
   
   w= w/pixel; h= h/pixel;
@@ -243,7 +243,7 @@ aqua_renderer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
   if (suffix (u) == "png") {
     // rendering
     string suu = as_string (u);
-    // cout << suu << LF;
+    // debug_events << suu << LF;
     pm = [[NSImage alloc] initWithContentsOfFile:to_nsstring(suu)];
   }
   else if (suffix (u) == "ps" ||
@@ -258,7 +258,7 @@ aqua_renderer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
   }
     
   if (pm == NULL ) {
-    cout << "TeXmacs] warning: cannot render " << as_string (u) << "\n";
+    debug_events << "TeXmacs] warning: cannot render " << as_string (u) << "\n";
     return;
   }
  
@@ -356,7 +356,7 @@ void aqua_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
   basic_character xc (c, fng, std_shrinkf, 0, 0);
   cg_image mi = character_image [xc];
   if (is_nil(mi)) {
-    // cout << "CACHING:" << c << "\n" ;
+    // debug_events << "CACHING:" << c << "\n" ;
     SI xo, yo;
     glyph pre_gl= fng->get (c); if (is_nil (pre_gl)) return;
     glyph gl= shrink (pre_gl, std_shrinkf, std_shrinkf, xo, yo);

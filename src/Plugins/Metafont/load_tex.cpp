@@ -49,12 +49,12 @@ try_tfm (string family, int size, int osize, tex_font_metric& tfm, bool make) {
     return true;
   }
   string name= family * (size==0? string (""): as_string (size)) * ".tfm";
-  if (DEBUG_STD) cout << "TeXmacs] Try tfm " << name << "\n";
+  if (DEBUG_STD) debug_fonts << "Try tfm " << name << "\n";
   url u= resolve_tex (name);
   if (is_none (u)) {
     if (exists (url ("$TEXMACS_HOME_PATH/fonts/error", name))) {
       if (DEBUG_STD)
-        cout << "TeXmacs] Error during " << name << " loading\n";
+        debug_fonts << "Error during " << name << " loading\n";
       return false;
     }
     if (make) {
@@ -77,7 +77,7 @@ try_tfm (string family, int size, int osize, tex_font_metric& tfm, bool make) {
 	       "tfm:" * family * as_string (osize), as_string (size));
   if (size == 0) {
     size= tfm->size;
-    if (DEBUG_STD) cout << "TeXmacs] Design size = " << size << "\n";
+    if (DEBUG_STD) debug_fonts << "Design size = " << size << "\n";
   }
   if (size != osize)
     tfm->header[1]= mag (tfm->header[1], osize, size);
@@ -223,12 +223,12 @@ try_pk (string family, int size, int dpi, int dsize,
   }
   string size_name (dsize==0? string (""): as_string (size));
   string name (family * size_name * "." * as_string (dpi) * "pk");
-  if (DEBUG_STD) cout << "TeXmacs] Open pk " << name << "\n";
+  if (DEBUG_STD) debug_fonts << "Open pk " << name << "\n";
   url u= resolve_tex (name);
   if (is_none (u)) {
     if (exists (url ("$TEXMACS_HOME_PATH/fonts/error", name))) {
       if (DEBUG_STD)
-        cout << "TeXmacs] Error during " << name << " loading\n";
+        debug_fonts << "Error during " << name << " loading\n";
       return false;
     }
     if (get_setting ("MAKEPK") != "false") {
@@ -244,7 +244,7 @@ try_pk (string family, int size, int dpi, int dsize,
     if (is_none (u)) {
       save_string (url ("$TEXMACS_HOME_PATH/fonts/error", name), "");
       if (DEBUG_STD)
-        cout << "TeXmacs] Error during " << name << " loading\n";
+        debug_fonts << "Error during " << name << " loading\n";
       return false;
     }
   }
@@ -301,8 +301,8 @@ load_tex (string family, int size, int dpi, int dsize,
 {
   bench_start ("load tex font");
   if (DEBUG_VERBOSE)
-    cout << "TeXmacs] loading " << family << size
-	 << " at " << dpi << " dpi\n";
+    debug_fonts << "Loading " << family << size
+                << " at " << dpi << " dpi\n";
   if (load_tex_tfm (family, size, dsize, tfm) &&
       load_tex_pk (family, size, dpi, dsize, tfm, pk))
     {
@@ -311,10 +311,10 @@ load_tex (string family, int size, int dpi, int dsize,
       return;
     }
   if (DEBUG_VERBOSE) {
-    cout << "TeXmacs] font " << family << size
-         << " at " << dpi << " dpi not found\n";
-    cout << "TeXmacs] loading ecrm" << size
-	 << " at " << dpi << " dpi instead\n";
+    debug_fonts << "Font " << family << size
+                << " at " << dpi << " dpi not found\n";
+    debug_fonts << "Loading ecrm" << size
+                << " at " << dpi << " dpi instead\n";
   }
   if (load_tex_tfm ("ecrm", size, 10, tfm) &&
       load_tex_pk ("ecrm", size, dpi, 10, tfm, pk))

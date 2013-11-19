@@ -25,7 +25,7 @@
 
 #define TYPE_CHECK(b) ASSERT (b, "type mismatch")
 #define NOT_IMPLEMENTED \
-  { if (DEBUG_EVENTS) cout << "STILL NOT IMPLEMENTED\n";  }
+  { if (DEBUG_EVENTS) debug_events << "STILL NOT IMPLEMENTED\n";  }
 
 #pragma mark aqua_chooser_widget_rep
 

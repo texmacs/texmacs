@@ -93,7 +93,7 @@ socket_link_rep::start () {
 #ifndef __MINGW32__
   if (alive) return "busy";
   if (DEBUG_AUTO)
-    cout << "TeXmacs] Connecting to '" << host << ":" << port << "'\n";
+    debug_io << "Connecting to '" << host << ":" << port << "'\n";
   
   // getting host
   
@@ -168,7 +168,7 @@ send_all (int s, char *buf, int *len) {
 void
 socket_link_rep::write (string s, int channel) {
   if ((!alive) || (channel != LINK_IN)) return;
-  if (DEBUG_IO) cout << "---> " << debug_io_string (s) << "\n";
+  if (DEBUG_IO) debug_io << "---> " << debug_io_string (s) << "\n";
   int len= N(s);
   if (send_all (io, &(s[0]), &len) == -1) {
     cerr << "TeXmacs] write to '" << host << ":" << port << "' failed\n";
@@ -188,7 +188,7 @@ socket_link_rep::feed (int channel) {
     stop ();
   }
   else if (r != 0) {
-    if (DEBUG_IO) cout << debug_io_string (string (tempout, r));
+    if (DEBUG_IO) debug_io << debug_io_string (string (tempout, r));
     outbuf << string (tempout, r);
   }
 #endif

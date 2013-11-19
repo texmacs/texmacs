@@ -1,13 +1,14 @@
 
 /******************************************************************************
- * MODULE     : QTMGuiHelper.cpp
- * DESCRIPTION: QT Gui helper class. Infrastructure for delayed menu installation 
- * COPYRIGHT  : (C) 2008 Massimiliano Gubinelli
- *******************************************************************************
- * This software falls under the GNU general public license version 3 or later.
- * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
- * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
- ******************************************************************************/
+* MODULE     : QTMGuiHelper.cpp
+* DESCRIPTION: QT Gui helper class.
+*              Infrastructure for delayed menu installation 
+* COPYRIGHT  : (C) 2008 Massimiliano Gubinelli
+*******************************************************************************
+* This software falls under the GNU general public license version 3 or later.
+* It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+* in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+******************************************************************************/
 
 #include "QTMGuiHelper.hpp"
 #include "qt_tm_widget.hpp"
@@ -18,7 +19,7 @@
 
 void
 QTMGuiHelper::doUpdate () {
-    //  cout << "UPDATE " << texmacs_time () << LF;
+  // cout << "UPDATE " << texmacs_time () << LF;
   gui->update();
 }
 
@@ -44,8 +45,8 @@ QTMGuiHelper::eventFilter (QObject *obj, QEvent *event) {
 void
 QTMGuiHelper::doWriteSocketNotification (int socket) {
   if (DEBUG_QT)
-    cout << "WRITE SOCKET NOTIFICATION " << socket << " "
-    << texmacs_time () << LF;
+    debug_qt << "WRITE SOCKET NOTIFICATION " << socket << " "
+             << texmacs_time () << LF;
   iterator<socket_notifier> it = iterate (gui->write_notifiers);
   while (it->busy ()) {
     socket_notifier sn= it->next ();
@@ -60,8 +61,8 @@ QTMGuiHelper::doWriteSocketNotification (int socket) {
 void
 QTMGuiHelper::doReadSocketNotification (int socket) {
   if (DEBUG_QT)
-    cout << "READ SOCKET NOTIFICATION " << socket << " "
-    << texmacs_time () << LF;
+    debug_qt << "READ SOCKET NOTIFICATION " << socket << " "
+             << texmacs_time () << LF;
   iterator<socket_notifier> it = iterate (gui->read_notifiers);
   while (it->busy ()) {
     socket_notifier sn= it->next ();
@@ -75,7 +76,7 @@ QTMGuiHelper::doReadSocketNotification (int socket) {
 
 void
 QTMGuiHelper::aboutToShowMainMenu() {
-    //cout << "Show :" << menu_count << LF;
+  //cout << "Show :" << menu_count << LF;
   menu_count++;
 }
 
@@ -93,7 +94,7 @@ void
 QTMGuiHelper::doPopWaitingWidgets() {
   if (!is_nil (waiting_widgets)) {
     if (DEBUG_QT)
-      cout << "Installing postponed menu" << LF;
+      debug_qt << "Installing postponed menu" << LF;
     waiting_widgets->item->install_main_menu();
     waiting_widgets = waiting_widgets->next;
   }

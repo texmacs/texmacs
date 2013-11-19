@@ -98,7 +98,7 @@ SCM
 eval_scheme_file (string file) {
     //static int cumul= 0;
     //timer tm;
-  if (DEBUG_STD) cout << "TeXmacs] Evaluating " << file << "...\n";
+  if (DEBUG_STD) debug_other << "Evaluating " << file << "...\n";
   c_string _file (file);
   SCM result= TeXmacs_eval_file (_file);
     //int extra= tm->watch (); cumul += extra;

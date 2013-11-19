@@ -67,7 +67,7 @@ encapsulate_postscript (string s) {
 void
 ghostscript_run (Display* dpy, Window gs_win, Pixmap pm, url im, SI w, SI h) {
   if (DEBUG_VERBOSE)
-    cout << "TeXmacs] Running ghostscript " << im << "\n";
+    debug_io << "Running ghostscript " << im << "\n";
 
   int x1, y1, x2, y2;
   ps_bounding_box (im, x1, y1, x2, y2);

@@ -18,7 +18,7 @@
 
 static inline void
 dbg (string s) {
-  if (DEBUG_AUTO) cout << "TeXmacs] " << s << LF;
+  if (DEBUG_AUTO) debug_convert << s << LF;
 }
 
 static string latex_command= "pdflatex";

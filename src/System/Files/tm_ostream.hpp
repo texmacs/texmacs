@@ -81,12 +81,27 @@ extern tm_ostream font_error;
 extern tm_ostream conversion_error;
 extern tm_ostream other_error;
 
+extern tm_ostream std_warning;
+
 extern tm_ostream debug_qt;
-extern tm_ostream debug_font;
+extern tm_ostream debug_aqua;
+extern tm_ostream debug_widgets;
+extern tm_ostream debug_fonts;
 extern tm_ostream debug_convert;
 extern tm_ostream debug_typeset;
 extern tm_ostream debug_edit;
+extern tm_ostream debug_packrat;
+extern tm_ostream debug_history;
+extern tm_ostream debug_keyboard;
+extern tm_ostream debug_automatic;
+extern tm_ostream debug_boot;
+extern tm_ostream debug_events;
+extern tm_ostream debug_shell;
 extern tm_ostream debug_io;
+extern tm_ostream debug_spell;
+extern tm_ostream debug_updater;
 extern tm_ostream debug_other;
+
+extern tm_ostream std_bench;
 
 #endif // defined OUT_STREAM_HPP

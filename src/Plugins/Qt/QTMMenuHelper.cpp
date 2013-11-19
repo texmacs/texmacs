@@ -30,7 +30,7 @@
 void 
 QTMCommand::apply()  {
   if (DEBUG_QT)
-    cout << "QTMCommand::apply() (delayed): " << cmd << "\n";
+    debug_qt << "QTMCommand::apply() (delayed): " << cmd << "\n";
   if (!is_nil (cmd)) { the_gui->process_command (cmd); }
 }
 
@@ -143,7 +143,7 @@ QWidget*
 QTMTileAction::createWidget (QWidget* parent)
 {
   if (DEBUG_QT_WIDGETS)
-    cout << "QTMTileAction::createWidget\n";
+    debug_widgets << "QTMTileAction::createWidget\n";
   QWidget* wid= new QTMMenuWidget (parent);
   QGridLayout* l= new QGridLayout (wid);
     // wid->setAutoFillBackground (true);
@@ -192,7 +192,7 @@ QTMMinibarAction::QTMMinibarAction (QWidget* parent, array<widget>& arr)
  */
 QWidget*
 QTMMinibarAction::createWidget (QWidget* parent) {
-  if (DEBUG_QT_WIDGETS) cout << "QTMMinibarAction::createWidget\n";
+  if (DEBUG_QT_WIDGETS) debug_widgets << "QTMMinibarAction::createWidget\n";
   QWidget* wid= new QWidget (parent);
   QBoxLayout* l= new QBoxLayout (QBoxLayout::LeftToRight, wid);
   wid->setLayout (l);
@@ -253,7 +253,7 @@ rerootActions (QWidget* dest, QWidget* src) {
 
 void
 QTMLazyMenu::force () {
-  if (DEBUG_QT_WIDGETS) cout << "Force lazy menu" << LF;
+  if (DEBUG_QT_WIDGETS) debug_widgets << "Force lazy menu" << LF;
   widget w = pm ();
   QMenu* menu2 = concrete(w)->get_qmenu();
   rerootActions (this, menu2);

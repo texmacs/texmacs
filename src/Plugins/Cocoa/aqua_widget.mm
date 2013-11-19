@@ -32,7 +32,7 @@
 
 #define TYPE_CHECK(b) ASSERT (b, "type mismatch")
 #define NOT_IMPLEMENTED \
-  { if (DEBUG_EVENTS) cout << "STILL NOT IMPLEMENTED\n"; }
+  { if (DEBUG_EVENTS) debug_events << "STILL NOT IMPLEMENTED\n"; }
 
 widget the_keyboard_focus(NULL);
 
@@ -133,7 +133,7 @@ aqua_view_widget_rep::send (slot s, blackbox val) {
     break;
 	
   default:
-    cout << "slot type= " << slot_name (s) << "\n";
+    debug_events << "slot type= " << slot_name (s) << "\n";
     FAILED ("cannot handle slot type");
   }
 }
@@ -481,7 +481,7 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
       coord2 p= open_box<coord2> (val);
       NSPoint pt = to_nspoint(p);
       NSSize sz = [[sv contentView] bounds].size;
-      if (DEBUG_EVENTS) cout << "Scroll position :" << pt.x << "," << pt.y << LF;
+      if (DEBUG_EVENTS) debug_events << "Scroll position :" << pt.x << "," << pt.y << LF;
       [[sv documentView] scrollPoint:pt];
  //     [[sv documentView] scrollRectToVisible:NSMakeRect(pt.x,pt.y,1.0,1.0)];
     }
@@ -508,7 +508,7 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
       simple_widget_rep *w = (simple_widget_rep *)[(TMView*)[sv documentView] widget];
       if (w) {
         double new_zoom = open_box<double> (val);
-        if (DEBUG_EVENTS) cout << "New zoom factor :" << new_zoom << LF;
+        if (DEBUG_EVENTS) debug_events << "New zoom factor :" << new_zoom << LF;
         w->handle_set_zoom_factor (new_zoom);
       }
       break;
@@ -518,7 +518,7 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
     {
       TYPE_CHECK (type_box (val) == type_helper<string>::id);
       string file = open_box<string> (val);
-      if (DEBUG_EVENTS) cout << "File: " << file << LF;
+      if (DEBUG_EVENTS) debug_events << "File: " << file << LF;
 //      view->window()->setWindowFilePath(to_qstring(file));
     }
       break;
@@ -537,7 +537,7 @@ aqua_tm_widget_rep::query (slot s, int type_id) {
       TYPE_CHECK (type_id == type_helper<coord2>::id);
       NSPoint pt = [[sv documentView] frame].origin;
       if (DEBUG_EVENTS)
-        cout << "Position (" << pt.x << "," << pt.y << ")\n"; 
+        debug_events << "Position (" << pt.x << "," << pt.y << ")\n"; 
       return close_box<coord2> (from_nspoint(pt));
     }
         
@@ -546,7 +546,7 @@ aqua_tm_widget_rep::query (slot s, int type_id) {
       TYPE_CHECK (type_id == type_helper<coord4>::id);
       NSRect rect= [[sv documentView] frame];
       coord4 c= from_nsrect (rect);
-      if (DEBUG_EVENTS) cout << "Canvas geometry (" << rect.origin.x 
+      if (DEBUG_EVENTS) debug_events << "Canvas geometry (" << rect.origin.x 
         << "," << rect.origin.y
         << "," << rect.size.width
         << "," << rect.size.height
@@ -560,7 +560,7 @@ aqua_tm_widget_rep::query (slot s, int type_id) {
       TYPE_CHECK (type_id == type_helper<coord4>::id);
       NSRect rect= [sv documentVisibleRect];
       coord4 c= from_nsrect (rect);
-      if (DEBUG_EVENTS) cout << "Visible region (" << rect.origin.x 
+      if (DEBUG_EVENTS) debug_events << "Visible region (" << rect.origin.x 
         << "," << rect.origin.y
         << "," << rect.size.width
         << "," << rect.size.height
@@ -939,17 +939,16 @@ simple_widget_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2) {
   (void) x1; (void) y1; (void) x2; (void) y2;
 }
 
-
 void
 simple_widget_rep::send (slot s, blackbox val) {
-  if (DEBUG_QT) cout << "aqua_simple_widget_rep::send " << slot_name(s) << LF;
+  if (DEBUG_AQUA) debug_aqua << "aqua_simple_widget_rep::send " << slot_name(s) << LF;
   switch (s) {
     case SLOT_INVALIDATE:
     {
       TYPE_CHECK (type_box (val) == type_helper<coord4>::id);
       coord4 p= open_box<coord4> (val);
-      if (DEBUG_QT)
-        cout << "Invalidating rect " << rectangle(p.x1,p.x2,p.x3,p.x4) << LF;
+      if (DEBUG_AQUA)
+        debug_aqua << "Invalidating rect " << rectangle(p.x1,p.x2,p.x3,p.x4) << LF;
       aqua_renderer_rep* ren = (aqua_renderer_rep*)get_renderer (this);
       if (ren) {
         SI x1 = p.x1, y1 = p.x2, x2 = p.x3, y2 = p.x4;    
@@ -963,8 +962,8 @@ simple_widget_rep::send (slot s, blackbox val) {
     case SLOT_INVALIDATE_ALL:
     {
       ASSERT (is_nil (val), "type mismatch");
-      if (DEBUG_QT)
-        cout << "Invalidating all"<<  LF;
+      if (DEBUG_AQUA)
+        debug_aqua << "Invalidating all"<<  LF;
       //tm_canvas()->invalidate_all ();
     }
       break;
@@ -978,14 +977,11 @@ simple_widget_rep::send (slot s, blackbox val) {
       break;
       
     default:
-      if (DEBUG_QT) cout << "[aqua_simple_widget_rep] ";
+      if (DEBUG_AQUA) debug_aqua << "[aqua_simple_widget_rep] ";
       aqua_view_widget_rep::send (s, val);
       //      FAILED ("unhandled slot type");
   }
-  
 }
-
-
 
 blackbox
 simple_widget_rep::query (slot s, int type_id) {

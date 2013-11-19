@@ -260,7 +260,7 @@ cairo_renderer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
   // Given an image of original size (W, H),
   // we display it at position (x, y) in a rectangle of size (w, h)
 
-  // if (DEBUG_EVENTS) cout << "cairo_renderer_rep::image " << as_string(u) << LF;
+  // if (DEBUG_EVENTS) debug_events << "cairo_renderer_rep::image " << as_string(u) << LF;
   (void) alpha; // FIXME
 
   w= w/pixel; h= h/pixel;

@@ -151,9 +151,9 @@ tm_cairo_initialize () {
     
 #undef CAIRO_LINK
 #ifdef LINKED_CAIRO
-  if (DEBUG_AUTO) cout << "TeXmacs] With linked Cairo support\n";
+  if (DEBUG_AUTO) debug_automatic << "With linked Cairo support\n";
 #else
-  if (DEBUG_AUTO) cout << "TeXmacs] Installed Cairo support\n";
+  if (DEBUG_AUTO) debug_automatic << "Installed Cairo support\n";
   debug_on (status);
 #endif
   

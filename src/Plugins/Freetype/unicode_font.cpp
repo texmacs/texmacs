@@ -76,8 +76,8 @@ unicode_font_rep::unicode_font_rep (string name,
     fnm= std_font_metric (res_name, NULL, 0, -1);
     fng= std_font_glyphs (res_name, NULL, 0, -1);
     if (DEBUG_AUTO)
-      cout << "TeXmacs] Font " << family << " " << size
-	   << "pt at " << dpi << " dpi could not be loaded\n";
+      debug_fonts << "TeXmacs] Font " << family << " " << size << "pt "
+                  << "at " << dpi << " dpi could not be loaded\n";
     
   }
 

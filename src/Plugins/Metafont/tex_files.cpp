@@ -121,7 +121,7 @@ make_tex_tfm (string name) {
   int r= 0;
   if (get_setting ("MAKETFM") == "MakeTeXTFM") {
     s= "MakeTeXTFM " * name;
-    if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
+    if (DEBUG_VERBOSE) debug_fonts << "Executing " << s << "\n";
     r= system (s);
   }
   if (get_setting ("MAKETFM") == "mktextfm") {
@@ -129,7 +129,7 @@ make_tex_tfm (string name) {
     s= "mktextfm " *
       string ("--destdir ") * as_string (tfm_dir) * " " *
       name;
-    if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
+    if (DEBUG_VERBOSE) debug_fonts << "Executing " << s << "\n";
     r= system (s);
     string superfluous= name * ".600pk";
     if (ends (name, ".tfm")) superfluous= name (0, N(name)-4) * ".600pk";
@@ -140,7 +140,7 @@ make_tex_tfm (string name) {
       name = name (0, N(name) - 4);
     s = "maketfm --dest-dir \"" * get_env("$TEXMACS_HOME_PATH")
       * "\\fonts\\tfm\" " * name;
-    if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
+    if (DEBUG_VERBOSE) debug_fonts << "Executing " << s << "\n";
     r= system (s);
   }
   if (r) cout << "TeXmacs] system command failed: " << s << "\n";
@@ -154,7 +154,7 @@ make_tex_pk (string name, int dpi, int design_dpi) {
     s="MakeTeXPK " * name * " " *
       as_string (dpi) * " " * as_string (design_dpi) * " " *
       as_string (dpi) * "/" * as_string (design_dpi) * " localfont";
-    if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
+    if (DEBUG_VERBOSE) debug_fonts << "Executing " << s << "\n";
     r= system (s);
   }
   if (get_setting ("MAKEPK") == "mktexpk") {
@@ -165,7 +165,7 @@ make_tex_pk (string name, int dpi, int design_dpi) {
       string ("--mag ") * as_string (dpi) *"/"* as_string (design_dpi) * " " *
       string ("--destdir ") * as_string (pk_dir) * " " *
       name;
-    if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
+    if (DEBUG_VERBOSE) debug_fonts << "Executing " << s << "\n";
     r= system (s);
   }
   if (get_setting ("MAKEPK") == "makepk") {
@@ -180,7 +180,7 @@ make_tex_pk (string name, int dpi, int design_dpi) {
       * name * " " * as_string(dpi) * " " * as_string(design_dpi)
       * " " * as_string(dpi) * "/" * as_string(design_dpi);
 #endif
-    if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
+    if (DEBUG_VERBOSE) debug_fonts << "Executing " << s << "\n";
     r= system (s);
   }
   if (r) cout << "TeXmacs] system command failed: " << s << "\n";

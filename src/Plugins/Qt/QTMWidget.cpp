@@ -177,9 +177,9 @@ QTMWidget::QTMWidget (QWidget* _parent, qt_simple_widget_rep* _tmwid)
 
 QTMWidget::~QTMWidget () {
   if (DEBUG_QT) 
-    cout << "Destroying QTMWidget " << (long)this 
-         << " of widget " << (tm_widget() ? tm_widget()->type_as_string() : "NULL") 
-         << LF;
+    debug_qt << "Destroying QTMWidget " << (long)this << " of widget "
+             << (tm_widget() ? tm_widget()->type_as_string() : "NULL") 
+             << LF;
   
     // remove ourselves from the list of QWidgets to be repainted.
   all_widgets.remove(this);
@@ -451,7 +451,7 @@ QTMWidget::paintEvent (QPaintEvent* event) {
   /*
   if (DEBUG_QT) {
     QRect rect = event->rect ();
-    cout << "paintEvent ("<< rect.x() << "," <<  rect.y()
+    debug_qt << "paintEvent ("<< rect.x() << "," <<  rect.y()
     << "," <<  rect.width() << "," <<  rect.height() << ")" << LF ;
   }
   */
@@ -470,13 +470,13 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
   static bool fInit = false;
   if (!fInit) {
     if (DEBUG_QT)
-      cout << "Initializing keymap\n";
+      debug_qt << "Initializing keymap\n";
     initkeymap();
     fInit= true;
   }
 
   if (DEBUG_QT)
-    cout << "keypressed\n";
+    debug_qt << "keypressed\n";
   if (tm_widget()->ref_count == 0) return;
 
   {
@@ -484,14 +484,14 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
     Qt::KeyboardModifiers mods = event->modifiers();
 
     if (DEBUG_QT) {
-      cout << "key  : " << key << LF;
-      cout << "text : " << event->text().toAscii().data() << LF;
-      cout << "count: " << event->text().count() << LF;
-      if (mods & Qt::ShiftModifier) cout << "shift\n";
-      if (mods & Qt::MetaModifier) cout << "meta\n";
-      if (mods & Qt::ControlModifier) cout << "control\n";
-      if (mods & Qt::KeypadModifier) cout << "keypad\n";
-      if (mods & Qt::AltModifier) cout << "alt\n";
+      debug_qt << "key  : " << key << LF;
+      debug_qt << "text : " << event->text().toAscii().data() << LF;
+      debug_qt << "count: " << event->text().count() << LF;
+      if (mods & Qt::ShiftModifier) debug_qt << "shift\n";
+      if (mods & Qt::MetaModifier) debug_qt << "meta\n";
+      if (mods & Qt::ControlModifier) debug_qt << "control\n";
+      if (mods & Qt::KeypadModifier) debug_qt << "keypad\n";
+      if (mods & Qt::AltModifier) debug_qt << "alt\n";
     }
 
     string r;
@@ -504,7 +504,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
         char ac=c.toAscii();
         if (ac && ac != ' ') { // a true ascii printable
           r= ac;
-          if (DEBUG_QT) cout << "ascii key= " <<r << "\n";	
+          if (DEBUG_QT) debug_qt << "ascii key= " <<r << "\n";	
           the_gui->process_keypress(tm_widget(), r, texmacs_time());
           return;
         }
@@ -589,12 +589,12 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
 #endif
 
     if (DEBUG_QT)
-      cout << "key press: " << r << LF;
+      debug_qt << "key press: " << r << LF;
     //int start= texmacs_time ();
     //tm_widget() -> handle_keypress (r, texmacs_time());
     the_gui -> process_keypress (tm_widget(), r, texmacs_time());
     //int end= texmacs_time ();
-    //if (end > start) cout << "Keypress " << end - start << "\n";
+    //if (end > start) debug_qt << "Keypress " << end - start << "\n";
     //the_gui->update (); // FIXME: remove this line when
                         // edit_typeset_rep::get_env_value will be faster
     
@@ -688,7 +688,7 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     imwidget->hide();
   } else {
     if (DEBUG_QT)
-      cout << "IM preediting :" << preedit_string.toUtf8().data() << LF;
+      debug_qt << "IM preediting :" << preedit_string.toUtf8().data() << LF;
     imwidget->setText(preedit_string);
     imwidget->adjustSize();
     QSize sz = size();
@@ -698,7 +698,7 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     // g.moveCenter(QPoint(sz.width()/2,sz.height()/2));
     g.moveTopLeft(c);
     if (DEBUG_QT)
-      cout << "IM hotspot: " << cursor_pos.x() << "," << cursor_pos.y() << LF;
+      debug_qt << "IM hotspot: " << cursor_pos.x() << "," << cursor_pos.y() << LF;
     imwidget->setGeometry(g);
     // setRoundedMask(imwidget);
     imwidget->show();
@@ -714,7 +714,7 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
   
   if (!commit_string.isEmpty()) {
     if (DEBUG_QT)
-      cout << "IM committing :" << commit_string.toUtf8().data() << LF;
+      debug_qt << "IM committing :" << commit_string.toUtf8().data() << LF;
 
     int key = 0;
 #if 1
@@ -753,7 +753,7 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
   
   if (!commit_string.isEmpty()) {
     if (DEBUG_QT)
-      cout << "IM committing :" << commit_string.toUtf8().data() << LF;
+      debug_qt << "IM committing :" << commit_string.toUtf8().data() << LF;
     
     int key = 0;
 #if 1
@@ -768,7 +768,7 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
   }
   
   if (DEBUG_QT)
-    cout << "IM preediting :" << preedit_string.toUtf8().data() << LF;
+    debug_qt << "IM preediting :" << preedit_string.toUtf8().data() << LF;
   
   string r = "pre-edit:";
   if (!preedit_string.isEmpty())
@@ -837,8 +837,8 @@ QTMWidget::mousePressEvent (QMouseEvent* event) {
  // tm_widget() -> handle_mouse (s, point.x (), point.y (), mstate, texmacs_time ());
   /*
   if (DEBUG_QT)
-    cout << "mouse event: " << s << " at "
-         << point.x () << ", " << point.y () << LF;
+    debug_qt << "mouse event: " << s << " at "
+             << point.x () << ", " << point.y () << LF;
    */
   event->accept();
 }
@@ -855,8 +855,8 @@ QTMWidget::mouseReleaseEvent (QMouseEvent* event) {
 //  tm_widget() -> handle_mouse (s, point.x (), point.y (), mstate, texmacs_time ());
   /*
   if (DEBUG_QT)
-    cout << "mouse event: " << s << " at "
-         << point.x () << ", " << point.y () << LF;
+    debug_qt << "mouse event: " << s << " at "
+             << point.x () << ", " << point.y () << LF;
    */
   event->accept();
 }
@@ -873,8 +873,8 @@ QTMWidget::mouseMoveEvent (QMouseEvent* event) {
 //  tm_widget() -> handle_mouse (s, point.x (), point.y (), mstate, texmacs_time ());
   /*
   if (DEBUG_QT)
-    cout << "mouse event: " << s << " at "
-         << point.x () << ", " << point.y () << LF;
+    debug_qt << "mouse event: " << s << " at "
+             << point.x () << ", " << point.y () << LF;
    */
   event->accept();
 }
@@ -894,7 +894,8 @@ QTMWidget::event (QEvent* event) {
 void
 QTMWidget::focusInEvent ( QFocusEvent * event ) {
   if (tm_widget()->ref_count != 0) {
-    if (DEBUG_QT) cout << "FOCUSIN: " << tm_widget()->type_as_string() << LF;
+    if (DEBUG_QT)
+      debug_qt << "FOCUSIN: " << tm_widget()->type_as_string() << LF;
     the_gui -> process_keyboard_focus (tm_widget(), true, texmacs_time());
     //tm_widget() -> handle_keyboard_focus (true, texmacs_time ());
   }
@@ -904,7 +905,8 @@ QTMWidget::focusInEvent ( QFocusEvent * event ) {
 void
 QTMWidget::focusOutEvent ( QFocusEvent * event ) {
   if (tm_widget()->ref_count != 0) {
-    if (DEBUG_QT) cout << "FOCUSOUT: " << tm_widget()->type_as_string() << LF;
+    if (DEBUG_QT)
+      debug_qt << "FOCUSOUT: " << tm_widget()->type_as_string() << LF;
     the_gui -> process_keyboard_focus (tm_widget(), false, texmacs_time());
 //    tm_widget() -> handle_keyboard_focus (false, texmacs_time ());
   }

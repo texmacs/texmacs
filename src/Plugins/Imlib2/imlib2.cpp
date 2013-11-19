@@ -76,9 +76,9 @@ imlib2_initialize () {
   debug_on (status);
 
 #ifdef LINKED_IMLIB2
-  if (DEBUG_AUTO) cout << "TeXmacs] With linked Imlib2 support\n";
+  if (DEBUG_AUTO) debug_automatic << "With linked Imlib2 support\n";
 #else
-  if (DEBUG_AUTO) cout << "TeXmacs] Installed Imlib2 support\n";
+  if (DEBUG_AUTO) debug_automatic << "Installed Imlib2 support\n";
 #endif
 
   imlib2_error= false;

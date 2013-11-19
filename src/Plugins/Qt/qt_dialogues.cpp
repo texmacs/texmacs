@@ -51,7 +51,7 @@ qt_field_widget_rep::qt_field_widget_rep (qt_inputs_list_widget_rep* _parent,
 void
 qt_field_widget_rep::send (slot s, blackbox val) {
   if (DEBUG_QT_WIDGETS)
-    cout << "qt_field_widget_rep::send " << slot_name(s) << LF;
+    debug_widgets << "qt_field_widget_rep::send " << slot_name(s) << LF;
   switch (s) {
   case SLOT_STRING_INPUT:
     check_type<string>(val, s);
@@ -76,7 +76,7 @@ qt_field_widget_rep::send (slot s, blackbox val) {
 blackbox
 qt_field_widget_rep::query (slot s, int type_id) {
   if (DEBUG_QT_WIDGETS)
-    cout << "qt_field_widget_rep::query " << slot_name(s) << LF;
+    debug_widgets << "qt_field_widget_rep::query " << slot_name(s) << LF;
   switch (s) {
   case SLOT_STRING_INPUT:
     check_type_id<string> (type_id, s);
@@ -153,7 +153,7 @@ qt_inputs_list_widget_rep::plain_window_widget (string s, command q)
 void
 qt_inputs_list_widget_rep::send (slot s, blackbox val) {
   if (DEBUG_QT_WIDGETS)
-    cout << "qt_inputs_list_widget_rep::send " << slot_name(s) << LF;
+    debug_widgets << "qt_inputs_list_widget_rep::send " << slot_name(s) << LF;
 
   switch (s) {
   case SLOT_VISIBILITY:
@@ -184,7 +184,7 @@ qt_inputs_list_widget_rep::send (slot s, blackbox val) {
 blackbox
 qt_inputs_list_widget_rep::query (slot s, int type_id) {
   if (DEBUG_QT_WIDGETS)
-    cout << "qt_inputs_list_widget_rep::query " << slot_name(s) << LF;
+    debug_widgets << "qt_inputs_list_widget_rep::query " << slot_name(s) << LF;
   switch (s) {
   case SLOT_POSITION:
     {
@@ -206,7 +206,7 @@ qt_inputs_list_widget_rep::query (slot s, int type_id) {
 widget
 qt_inputs_list_widget_rep::read (slot s, blackbox index) {
   if (DEBUG_QT_WIDGETS)
-    cout << "qt_inputs_list_widget_rep::read " << slot_name(s) << LF;
+    debug_widgets << "qt_inputs_list_widget_rep::read " << slot_name(s) << LF;
   switch (s) {
   case SLOT_WINDOW:
     check_type_void (index, s);

@@ -56,8 +56,8 @@ tt_font_rep::tt_font_rep (string name, string family2, int size2, int dpi2):
     fnm= std_font_metric (res_name, NULL, 0, -1);
     fng= std_font_glyphs (res_name, NULL, 0, -1);
     if (DEBUG_AUTO)
-      cout << "TeXmacs] Font " << family << " " << size
-	   << "pt at " << dpi << " dpi could not be loaded\n";
+      debug_fonts << "Font " << family << " " << size << "pt "
+                  << "at " << dpi << " dpi could not be loaded\n";
     
   }
 

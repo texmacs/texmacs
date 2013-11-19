@@ -57,7 +57,7 @@ dictionary_rep::load (url u) {
 void
 dictionary_rep::load (string fname) {
   fname= fname * ".scm";
-  if (DEBUG_VERBOSE) cout << "TeXmacs] Loading " << fname << "\n";
+  if (DEBUG_VERBOSE) debug_convert << "Loading " << fname << "\n";
   url u= url ("$TEXMACS_DIC_PATH") * url_wildcard ("*" * fname);
   load (expand (complete (u)));
 }

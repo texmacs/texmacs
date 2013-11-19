@@ -174,9 +174,11 @@ edit_interface_rep::key_press (string gkey) {
     archive_state ();
     insert_tree (key);
     interrupt_shortcut ();    
-  } else if (DEBUG_KEYBOARD)
-    cout << "Keyboard] unrecognized key " << key 
-         << ". Undefined shortcut or key missing in the encoding files.\n";
+  }
+  else if (DEBUG_KEYBOARD)
+    debug_keyboard
+      << "unrecognized key " << key << ". "
+      << "Undefined shortcut or key missing in the encoding files.\n";
 }
 
 void
@@ -217,7 +219,7 @@ edit_interface_rep::kbd_shortcut (string cmd) {
 void
 edit_interface_rep::handle_keypress (string key, time_t t) {
   if (DEBUG_KEYBOARD)
-    cout << "Keyboard] Pressed " << key << " at " << t << "\n";
+    debug_keyboard << "Pressed " << key << " at " << t << "\n";
   //time_t t1= texmacs_time ();
   if (is_nil (eb)) apply_changes ();
   start_editing ();
@@ -239,8 +241,8 @@ void drag_right_reset ();
 void
 edit_interface_rep::handle_keyboard_focus (bool has_focus, time_t t) {
   if (DEBUG_KEYBOARD) {
-    if (has_focus) cout << "Keyboard] Got focus at " << t << "\n";
-    else cout << "Keyboard] Lost focus at " << t << "\n";
+    if (has_focus) debug_keyboard << "Got focus at " << t << "\n";
+    else debug_keyboard << "Lost focus at " << t << "\n";
   }
   if (got_focus != has_focus) {
     drag_left_reset ();

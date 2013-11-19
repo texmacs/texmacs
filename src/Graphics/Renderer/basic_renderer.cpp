@@ -162,7 +162,7 @@ cmyk_color (unsigned int c, unsigned int m, unsigned int y, unsigned int k) {
 
 static void
 populates_colorhash_from_dictionary (string file_name, colorhash ch) {
-  if (DEBUG_STD) system_info ("Loading colors: ",file_name);
+  if (DEBUG_STD) debug_convert << "Loading colors " << file_name << LF;
   string file, name;
   color col;
   file_name = file_name * ".scm";
@@ -202,9 +202,9 @@ populates_colorhash_from_dictionary (string file_name, colorhash ch) {
     if (name[0] == '"')         name= name (1, N(name));
     if (name[N(name)-1] == '"') name= name (0, N(name)-1);
     if (DEBUG_STD && ch->contains (name) && ch [name] != col) {
-      if (DEBUG_STD); system_error ("Redefined color: ", name);
-      cout << "         " << get_named_color (ch [name])
-        << " replaced by " << get_named_color (col) << LF;
+      debug_convert << "Redefined color " << name << LF
+                    << get_named_color (ch [name]) << " replaced by "
+                    << get_named_color (col) << LF;
     }
     ch (name)= col;
   }
@@ -406,43 +406,43 @@ basic_renderer_rep::fetch (SI x1, SI y1, SI x2, SI y2,
 {
   (void) x1; (void) y1; (void) x2; (void) y2; (void) dev; (void) x; (void) y; 
   if (DEBUG_EVENTS)
-    cout << "REN fetch (" << x1 << "," << x2 << "," << y1 << "," << y2
-	 << ", dev ," << x << "," << y << ")\n";
+    debug_events << "REN fetch (" << x1 << "," << x2 << "," << y1 << "," << y2
+                 << ", dev ," << x << "," << y << ")\n";
 }
 
 void
 basic_renderer_rep::new_shadow (renderer& dev) {
   dev = this; 
-  if (DEBUG_EVENTS) cout << "REN new_shadow\n";
+  if (DEBUG_EVENTS) debug_events << "REN new_shadow\n";
 }
 
 void
 basic_renderer_rep::delete_shadow (renderer& dev) { dev= NULL; 
-  if (DEBUG_EVENTS) cout << "REN delete_shadow\n";
+  if (DEBUG_EVENTS) debug_events << "REN delete_shadow\n";
 }
 
 void
 basic_renderer_rep::get_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2) {
   (void) x1; (void) y1; (void) x2; (void) y2; (void) dev; 
   if (DEBUG_EVENTS)
-    cout << "REN get_shadow (" << x1 << "," << x2
-	 << "," << y1 << "," << y2 << ", dev )\n";
+    debug_events << "REN get_shadow (" << x1 << "," << x2
+                 << "," << y1 << "," << y2 << ", dev )\n";
 }
 
 void
 basic_renderer_rep::put_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2) {
   (void) x1; (void) y1; (void) x2; (void) y2; (void) dev; 
   if (DEBUG_EVENTS)
-    cout << "REN put_shadow (dev, " << x1 << "," << x2
-	 << "," << y1 << "," << y2 << ")\n";
+    debug_events << "REN put_shadow (dev, " << x1 << "," << x2
+                 << "," << y1 << "," << y2 << ")\n";
 }
 
 void
 basic_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
   (void) x1; (void) y1; (void) x2; (void) y2; 
   if (DEBUG_EVENTS)
-    cout << "REN apply_shadow (" << x1 << "," << x2
-	 << "," << y1 << "," << y2 << ")\n";
+    debug_events << "REN apply_shadow (" << x1 << "," << x2
+                 << "," << y1 << "," << y2 << ")\n";
 }
 
 bool

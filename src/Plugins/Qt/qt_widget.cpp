@@ -41,12 +41,12 @@ qt_widget_rep::qt_widget_rep(types _type, QWidget* _qwid)
   : widget_rep (), id (widget_counter++), qwid (_qwid), type (_type)
 {
   if (DEBUG_QT_WIDGETS)
-    cout << "qt_widget_rep: created a " << type_as_string() << LF;
+    debug_widgets << "qt_widget_rep: created a " << type_as_string() << LF;
 }
 
 qt_widget_rep::~qt_widget_rep() { 
   if (DEBUG_QT_WIDGETS)
-    cout << "~qt_widget_rep: deleted a " << type_as_string() << LF;
+    debug_widgets << "~qt_widget_rep: deleted a " << type_as_string() << LF;
   
   // DON'T DO THIS! (several qt_widget_rep may have the same underlying QWidget)
   //delete qwid; 
@@ -65,12 +65,12 @@ qt_widget_rep::add_children (array<widget> a) {
 void
 qt_widget_rep::send (slot s, blackbox val) {
   if (DEBUG_QT_WIDGETS)
-    cout << "qt_widget_rep::send(), unhandled " << slot_name (s)
-         << " for widget of type: " << type_as_string() << "." << LF;
+    debug_widgets << "qt_widget_rep::send(), unhandled " << slot_name (s)
+                  << " for widget of type: " << type_as_string() << "." << LF;
 
   if (s == SLOT_DESTROY) {
     if (DEBUG_QT_WIDGETS)
-      cout << "         Resending to " << N(children) << " children" << LF;
+      debug_widgets << "Resending to " << N(children) << " children" << LF;
     for (int i = 0; i < N(children); ++i)
       concrete (children[i])->send (s, val);
   }
@@ -88,7 +88,8 @@ qt_widget_rep::send (slot s, blackbox val) {
 inline QWidget*
 qt_widget_rep::as_qwidget () {
   if (DEBUG_QT_WIDGETS)
-    cout << "qt_widget_rep::as_qwidget() for " << type_as_string() << LF;
+    debug_widgets << "qt_widget_rep::as_qwidget() for "
+                  << type_as_string() << LF;
   return qwid;
 }
 
@@ -148,7 +149,8 @@ qt_widget_rep::get_qmenu () {
 widget
 qt_widget_rep::plain_window_widget (string title, command quit) {
   if (DEBUG_QT_WIDGETS)
-    cout << "qt_widget_rep::plain_window_widget() around a " << type_as_string() << LF;
+    debug_widgets << "qt_widget_rep::plain_window_widget() around a "
+                  << type_as_string() << LF;
 
   QTMPlainWindow* win = new QTMPlainWindow(0);
   QLayoutItem*     li = as_qlayoutitem();
@@ -270,8 +272,8 @@ popup_widget (widget w) {
 void
 destroy_window_widget (widget w) {
   if (DEBUG_QT_WIDGETS)
-    cout << "destroy_window_widget() on "
-         << static_cast<qt_widget_rep*>(w.rep)->type_as_string() << LF;
+    debug_widgets << "destroy_window_widget() on "
+                  << static_cast<qt_widget_rep*>(w.rep)->type_as_string() << LF;
 }
 
 

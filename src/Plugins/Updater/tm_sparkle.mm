@@ -1,12 +1,13 @@
+
 /******************************************************************************
- * MODULE     : tm_sparkle.mm
- * DESCRIPTION: Manager class for the autoupdater Sparkle framework
- * COPYRIGHT  : (C) 2013 Miguel de Benito Delgado
- *******************************************************************************
- * This software falls under the GNU general public license version 3 or later.
- * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
- * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
- ******************************************************************************/
+* MODULE     : tm_sparkle.mm
+* DESCRIPTION: Manager class for the autoupdater Sparkle framework
+* COPYRIGHT  : (C) 2013 Miguel de Benito Delgado
+*******************************************************************************
+* This software falls under the GNU general public license version 3 or later.
+* It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+* in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+******************************************************************************/
 
 #include "tm_configure.hpp"
 
@@ -38,7 +39,7 @@ public:
 tm_sparkle::tm_sparkle () : tm_updater ()
 {
   if (DEBUG_STD)
-    cout << "Updater] Instantiating Sparkle object.\n";
+    debug_updater << "Instantiating Sparkle object.\n";
 
   updater = new tm_suupdater;
 }
@@ -46,7 +47,8 @@ tm_sparkle::tm_sparkle () : tm_updater ()
 tm_sparkle::~tm_sparkle ()
 {
   if (DEBUG_STD)
-    cout << "Updater] Deleting Sparkle object for " << as_string (appcast) << LF;
+    debug_updater << "Deleting Sparkle object for "
+                  << as_string (appcast) << LF;
   delete updater;
 }
 
@@ -84,8 +86,8 @@ bool tm_sparkle::setCheckInterval (int hours)
   interval = (hours < 1 || hours > 24*31) ? 1 : hours;
 
   if (DEBUG_STD)
-    cout << "Updater] Changing interval from "
-         << interval << " to " << hours << " hour(s).\n";
+    debug_updater << "Changing interval from "
+                  << interval << " to " << hours << " hour(s).\n";
 
   [updater->p setUpdateCheckInterval: interval*3600];
   [updater->p resetUpdateCycle];
@@ -98,9 +100,9 @@ bool tm_sparkle::setAppcast (url _appcast)
     return true;
 
   if (DEBUG_STD)
-    cout << "Updater] Changing appcast url from "
-         << as_string (appcast) << " to "
-         << as_string (_appcast) << ".\n";
+    debug_updater << "Changing appcast url from "
+                  << as_string (appcast) << " to "
+                  << as_string (_appcast) << ".\n";
   
   c_string s (as_string (_appcast));  // FIXME! This has to be UTF8!
   NSURL* nsurl = [NSURL URLWithString: [NSString stringWithUTF8String: s]];
@@ -114,13 +116,13 @@ bool tm_sparkle::checkInBackground ()
 {
   if (isRunning()) {
     if (DEBUG_STD)
-      cout << "Updater] ERROR: an update is already in progress.\n";
+      debug_updater << "ERROR: an update is already in progress.\n";
       return false;
   }
 
   if (DEBUG_STD)
-    cout << "Updater] Scheduling background check at "
-         << as_string (appcast) << LF;
+    debug_updater << "Scheduling background check at "
+                  << as_string (appcast) << LF;
   
   [updater->p checkForUpdatesInBackground];
   return true;
@@ -130,13 +132,13 @@ bool tm_sparkle::checkInForeground ()
 {
   if (isRunning()) {
     if (DEBUG_STD)
-      cout << "Updater] ERROR: an update is already in progress.\n";
+      debug_updater << "ERROR: an update is already in progress.\n";
     return false;
   }
 
   if (DEBUG_STD)
-    cout << "Updater] Starting foreground check at "
-         << as_string (appcast) << LF;
+    debug_updater << "Starting foreground check at "
+                  << as_string (appcast) << LF;
 
   [updater->p checkForUpdates:nil];
   return true;

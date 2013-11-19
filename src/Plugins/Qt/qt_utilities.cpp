@@ -211,14 +211,14 @@ to_qkeysequence (string ks) {
     // Maybe we should bypass all this and simply add the shortcut names as text
     // to the menu items' names...
   if (search_forwards (" ", ks) != -1) {
-    if (DEBUG_QT) cout << "Ignoring keysequence: " << ks << LF;
+    if (DEBUG_QT) debug_qt << "Ignoring keysequence: " << ks << LF;
     return QKeySequence();
   }
   string r (conv_sub (ks));
   if (DEBUG_QT && N(r) > 0) {
     QKeySequence qks (to_qstring (r));
-    cout << "ks: " << ks << " --> " << r << " --> "
-         << qks.toString (QKeySequence::NativeText).toAscii().data() << LF;
+    debug_qt << "ks: " << ks << " --> " << r << " --> "
+             << qks.toString (QKeySequence::NativeText).toAscii().data() << LF;
     return qks;
   }
   return QKeySequence (to_qstring (r));
@@ -360,7 +360,8 @@ to_qcolor (const string& col) {
   if(_NamedColors.contains(_col))
     return _NamedColors[_col];
   if(DEBUG_QT_WIDGETS)
-    cout << "to_qcolor(" << col << "): name is not defined in RGBColors.\n";
+    debug_widgets << "to_qcolor(" << col << "): "
+                  << "name is not defined in RGBColors.\n";
   return QColor(100,100,100);  // FIXME? 
 }
 

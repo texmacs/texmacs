@@ -161,7 +161,9 @@ bibtex_run (string bib, string style, url bib_file, tree bib_t) {
   cmdln << "BIBINPUTS=\"" << dir << "\":$BIBINPUTS "
 	<< "BSTINPUTS=\"" << dir << "\":$BSTINPUTS "
 	<< bibtex_command << " temp";
-  if (DEBUG_AUTO) cout << "TeXmacs] BibTeX command: " << cmdln << "\n";
+  if (DEBUG_AUTO)
+    if (!(DEBUG_STD))
+      debug_shell << cmdln << "\n";
   system (cmdln);
 #endif
 

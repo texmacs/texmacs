@@ -49,8 +49,8 @@ edit_process_rep::generate_bibliography (
 {
   system_wait ("Generating bibliography, ", "please wait");
   if (DEBUG_AUTO)
-    cout << "TeXmacs] Generating bibliography"
-	 << " [" << bib << ", " << style << ", " << fname << "]\n";
+    debug_automatic << "Generating bibliography"
+                    << " [" << bib << ", " << style << ", " << fname << "]\n";
   tree bib_t= buf->data->aux[bib];
   if (buf->prj != NULL) bib_t= buf->prj->data->aux[bib];
   tree t;
@@ -97,7 +97,7 @@ edit_process_rep::generate_bibliography (
 void
 edit_process_rep::generate_table_of_contents (string toc) {
   if (DEBUG_AUTO)
-    cout << "TeXmacs] Generating table of contents [" << toc << "]\n";
+    debug_automatic << "Generating table of contents [" << toc << "]\n";
   tree toc_t= buf->data->aux[toc];
   if (buf->prj != NULL) toc_t= copy (buf->prj->data->aux[toc]);
   if (N(toc_t)>0) insert_tree (toc_t);
@@ -249,7 +249,7 @@ void
 edit_process_rep::generate_index (string idx) {
   system_wait ("Generating index, ", "please wait");
   if (DEBUG_AUTO)
-    cout << "TeXmacs] Generating index [" << idx << "]\n";
+    debug_automatic << "Generating index [" << idx << "]\n";
   tree I= copy (buf->data->aux[idx]);
   if (buf->prj != NULL) I= copy (buf->prj->data->aux[idx]);
   if (N(I)>0) {
@@ -291,7 +291,7 @@ void
 edit_process_rep::generate_glossary (string gly) {
   system_wait ("Generating glossary, ", "please wait");
   if (DEBUG_AUTO)
-    cout << "TeXmacs] Generating glossary [" << gly << "]\n";
+    debug_automatic << "Generating glossary [" << gly << "]\n";
   tree G= copy (buf->data->aux[gly]);
   if (buf->prj != NULL) G= copy (buf->prj->data->aux[gly]);
   if (N(G)>0) {

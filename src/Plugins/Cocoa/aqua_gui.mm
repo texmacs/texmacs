@@ -432,7 +432,7 @@ get_default_font (bool tt, bool mini, bool bold) {
   // get the default font or monospaced font (if tt is true)
 	
   // return a null font since this function is not called in the Qt port.
-  if (DEBUG_EVENTS) cout << "get_default_font(): SHOULD NOT BE CALLED\n";
+  if (DEBUG_EVENTS) debug_events << "get_default_font(): SHOULD NOT BE CALLED\n";
   return NULL;
   //return tex_font (this, "ecrm", 10, 300, 0);
 }
@@ -445,7 +445,7 @@ load_system_font (string family, int size, int dpi,
                   font_metric& fnm, font_glyphs& fng)
 {
 	(void) family; (void) size; (void) dpi; (void) fnm; (void) fng;
-	if (DEBUG_EVENTS) cout << "load_system_font(): SHOULD NOT BE CALLED\n";
+	if (DEBUG_EVENTS) debug_events << "load_system_font(): SHOULD NOT BE CALLED\n";
 }
 
 /******************************************************************************

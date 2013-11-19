@@ -68,7 +68,7 @@ load_virtual (string name) {
 
   string s, r;
   name= name * ".vfn";
-  if (DEBUG_STD) cout << "TeXmacs] Loading " << name << "\n";
+  if (DEBUG_STD) debug_fonts << "Loading " << name << "\n";
   url u ("$TEXMACS_HOME_PATH/fonts/virtual:$TEXMACS_PATH/fonts/virtual", name);
   load_string (u, s, true);
   tree t= string_to_scheme_tree (s);
@@ -98,7 +98,7 @@ load_translator (string name) {
 
   string s, r;
   string file_name= name * ".enc";
-  if (DEBUG_STD) cout << "TeXmacs] Loading " << file_name << "\n";
+  if (DEBUG_STD) debug_fonts << "Loading " << file_name << "\n";
   url u ("$TEXMACS_HOME_PATH/fonts/enc:$TEXMACS_PATH/fonts/enc", file_name);
   if (load_string (u, s, false)) return load_virtual (name);
 

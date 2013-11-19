@@ -77,7 +77,7 @@ packrat_parser_rep::set_input (tree t) {
   current_tree  = t;
   serialize (t, path ());
   if (DEBUG_FLATTEN)
-    cout << "Input " << current_string << "\n";
+    debug_packrat << "Input " << current_string << "\n";
   current_input= encode_tokens (current_string);
 }
 
@@ -188,7 +188,8 @@ packrat_parser_rep::parse (C sym, C pos) {
   }
   current_cache (key)= PACKRAT_FAILED;
   if (DEBUG_PACKRAT)
-    cout << "Parse " << packrat_decode[sym] << " at " << pos << INDENT << LF;
+    debug_packrat << "Parse " << packrat_decode[sym]
+                  << " at " << pos << INDENT << LF;
   if (sym >= PACKRAT_TM_OPEN) {
     array<C> inst= grammar [sym];
     //cout << "Parse " << inst << " at " << pos << LF;
@@ -302,8 +303,8 @@ packrat_parser_rep::parse (C sym, C pos) {
   }
   current_cache (key)= im;
   if (DEBUG_PACKRAT)
-    cout << UNINDENT << "Parsed " << packrat_decode[sym]
-	 << " at " << pos << " -> " << im << LF;
+    debug_packrat << UNINDENT << "Parsed " << packrat_decode[sym]
+                  << " at " << pos << " -> " << im << LF;
   return im;
 }
 
