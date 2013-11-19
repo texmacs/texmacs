@@ -297,7 +297,7 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting debugging and developer facilities\n")
-(lazy-menu (texmacs menus debug-menu) debug-menu)
+(lazy-menu (debug debug-menu) debug-menu)
 (lazy-menu (texmacs menus developer-menu) developer-menu)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
