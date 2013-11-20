@@ -132,7 +132,7 @@ debug_message_sub (string channel, tree msg) {
   }
 
   int n= N(debug_messages);
-  if (n > 250) debug_messages= debug_messages (n-200, n);
+  if (n > 11000) debug_messages= debug_messages (n-10000, n);
 }
 
 void
@@ -142,8 +142,21 @@ debug_message (string channel, tree msg) {
 }
 
 tree
-get_debug_messages () {
-  return debug_messages;
+get_debug_messages (string kind, int max_number) {
+  tree m (TUPLE);
+  for (int i=N(debug_messages)-1; i>=0; i--) {
+    tree t= debug_messages[i];
+    if (!is_func (t, TUPLE, 2) || !is_atomic (t[0])) continue;
+    string s= t[0]->label;
+    if (kind == "Debugging console" ||
+        ends (s, "-error") ||
+        ends (s, "-warning"))
+      m << t;
+    if (N(m) >= max_number) break;
+  }
+  tree r (TUPLE);
+  for (int i=N(m)-1; i>=0; i--) r << m[i];
+  return r;
 }
 
 /******************************************************************************

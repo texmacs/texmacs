@@ -25,14 +25,10 @@
         (else m)))
 
 (define (list-message-types kind)
-  (let* ((l (tree-children (get-debug-messages)))
+  (let* ((l (tree-children (get-debug-messages kind 100)))
          (t (make-ahash-table)))
     (for (m l)
-      (with s (tree->string (tree-ref m 0))
-        (when (or (== kind "Debugging console")
-                  (string-ends? s "-error")
-                  (string-ends? s "-warning"))
-          (ahash-set! t (message-type s) #t))))
+      (ahash-set! t (message-type (tree->string (tree-ref m 0))) #t))
     (sort (ahash-set->list t) string<=?)))
 
 (define (message-among? m selected)
@@ -57,8 +53,8 @@
            `(with "color" "dark blue" ,s))
           (else s))))
 
-(define (messages->document selected)
-  (let* ((all-ms (tree-children (get-debug-messages)))
+(define (messages->document kind selected)
+  (let* ((all-ms (tree-children (get-debug-messages kind 100)))
          (sel-ms (list-filter all-ms (cut message-among? <> selected))))
     `(document
        (with "language" "verbatim" "font-family" "tt" "par-par-sep" "0fn"
@@ -94,7 +90,7 @@
             ("300px" "600px" "1000px" "bottom")
           (refreshable "console-widget-messages"
             (texmacs-output
-              (messages->document (ahash-ref console-selected kind))
+              (messages->document kind (ahash-ref console-selected kind))
               '(style "generic"))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

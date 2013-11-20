@@ -98,7 +98,7 @@ void tm_failure (const char* msg);
 
 class tree;
 void debug_message (string channel, tree msg);
-tree get_debug_messages ();
+tree get_debug_messages (string kind, int max_number);
 
 /******************************************************************************
 * miscellaneous routines

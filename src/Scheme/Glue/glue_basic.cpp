@@ -831,9 +831,15 @@ tmg_debug_get (tmscm arg1) {
 }
 
 tmscm
-tmg_get_debug_messages () {
+tmg_get_debug_messages (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "get-debug-messages");
+  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "get-debug-messages");
+
+  string in1= tmscm_to_string (arg1);
+  int in2= tmscm_to_int (arg2);
+
   // TMSCM_DEFER_INTS;
-  tree out= get_debug_messages ();
+  tree out= get_debug_messages (in1, in2);
   // TMSCM_ALLOW_INTS;
 
   return tree_to_tmscm (out);
@@ -7324,7 +7330,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("get-author",  tmg_get_author, 0, 0, 0);
   tmscm_install_procedure ("debug-set",  tmg_debug_set, 2, 0, 0);
   tmscm_install_procedure ("debug-get",  tmg_debug_get, 1, 0, 0);
-  tmscm_install_procedure ("get-debug-messages",  tmg_get_debug_messages, 0, 0, 0);
+  tmscm_install_procedure ("get-debug-messages",  tmg_get_debug_messages, 2, 0, 0);
   tmscm_install_procedure ("cout-buffer",  tmg_cout_buffer, 0, 0, 0);
   tmscm_install_procedure ("cout-unbuffer",  tmg_cout_unbuffer, 0, 0, 0);
   tmscm_install_procedure ("mark-new",  tmg_mark_new, 0, 0, 0);
