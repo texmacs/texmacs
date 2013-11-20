@@ -408,37 +408,39 @@ test_commute () {
       modification m2= test_modification (j);
       modification t1= m1;
       modification t2= m2;
-      cout << "m1  = " << m1 << "\n";
-      cout << "m2  = " << m2 << "\n";
+      debug_std << "m1  = " << m1 << "\n";
+      debug_std << "m2  = " << m2 << "\n";
       bool r= swap (m1, m2);
       modification u1= m1;
       modification u2= m2;
-      if (!r) cout << "  Modifications do not commute\n\n";
+      if (!r) debug_std << "  Modifications do not commute\n\n";
       else {
-	cout << "m1' = " << m1 << "\n";
-	cout << "m2' = " << m2 << "\n";
+	debug_std << "m1' = " << m1 << "\n";
+	debug_std << "m2' = " << m2 << "\n";
 	if (clean_apply (clean_apply (tt, t1), t2) !=
 	    clean_apply (clean_apply (tt, m1), m2)) {
-	  cout << "t1  = " << clean_apply (clean_apply (tt, t1), t2) << "\n";
-	  cout << "t2  = " << clean_apply (clean_apply (tt, m1), m2) << "\n";
+	  failed_error << "t1  = "
+                       << clean_apply (clean_apply (tt, t1), t2) << "\n";
+	  failed_error << "t2  = "
+                       << clean_apply (clean_apply (tt, m1), m2) << "\n";
 	  FAILED ("inconsistency");
 	}
 	r= swap (m1, m2);
-	if (!r) cout << "r   = " << r << "\n";
+	if (!r) debug_std << "r   = " << r << "\n";
 	else if (m1 != t1 || m2 != t2) {
-	  cout << "m1''= " << m1 << "\n";
-	  cout << "m2''= " << m2 << "\n";
+	  debug_std << "m1''= " << m1 << "\n";
+	  debug_std << "m2''= " << m2 << "\n";
 	  r= swap (m1, m2);
-	  if (!r) cout << "r   = " << r << "\n";
+	  if (!r) debug_std << "r   = " << r << "\n";
 	  else if (m1 != u1 || m2 != u2) {
-	    cout << "m1* = " << m1 << "\n";
-	    cout << "m2* = " << m2 << "\n";
+	    debug_std << "m1* = " << m1 << "\n";
+	    debug_std << "m2* = " << m2 << "\n";
 	    r= false;
 	  }
 	}
-	if (r) cout << "  Consistency check succeeded\n\n";
+	if (r) debug_std << "  Consistency check succeeded\n\n";
 	else {
-	  cout << "  Consistency check failed\n\n";
+	  failed_error << "  Consistency check failed\n\n";
 	  FAILED ("inconsistency");
 	}
       }
@@ -455,11 +457,11 @@ test_invert () {
     tree t3= clean_apply (t2, m2);
     modification m3= invert (m2, t2);
     if (m1 != m3 || t1 != t3) {
-      cout << "t1= " << t1 << "\n";
-      cout << "m1= " << m1 << "\n";
-      cout << "t2= " << t2 << "\n";
-      cout << "m2= " << m2 << "\n";
-      cout << "t3= " << t3 << "\n";
+      failed_error << "t1= " << t1 << "\n";
+      failed_error << "m1= " << m1 << "\n";
+      failed_error << "t2= " << t2 << "\n";
+      failed_error << "m2= " << m2 << "\n";
+      failed_error << "t3= " << t3 << "\n";
       FAILED ("inconsistency");
     }
  }

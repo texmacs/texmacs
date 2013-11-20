@@ -146,8 +146,10 @@ view_to_window (url u) {
 editor
 view_to_editor (url u) {
   tm_view vw= concrete_view (u);
-  if (vw == NULL) cout << "TeXmacs] view is " << u << "\n";
-  ASSERT (vw != NULL, "view admits no editor");
+  if (vw == NULL) {
+    failed_error << "View is " << u << "\n";
+    FAILED ("View admits no editor");
+  }
   return vw->ed;
 }
 
@@ -402,9 +404,9 @@ focus_on_editor (editor ed) {
     }
   */
 
-  cout << "Warning: editor no longer exists, "
-       << "may indicate synchronization error\n";
-  //cout << "Warning: name of buffer: " << ed->buf->buf->name << "\n";
+  std_warning << "Warning: editor no longer exists, "
+              << "may indicate synchronization error\n";
+  //failed_error << "Name of buffer: " << ed->buf->buf->name << "\n";
   //FAILED ("invalid situation");
 }
 

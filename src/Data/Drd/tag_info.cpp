@@ -475,14 +475,14 @@ child_info&
 tag_info::operator () (int child, int n) {
   int index= rep->get_index (child, n);
   if (index < 0 || index >= N(rep->ci)) {
-    cout << "child       = " << child << "\n";
-    cout << "out of      = " << n << "\n";
-    cout << "child_mode  = " << rep->pi.child_mode << "\n";
-    cout << "arity_mode  = " << rep->pi.arity_mode << "\n";
-    cout << "arity_base  = " << rep->pi.arity_base << "\n";
-    cout << "arity_extra = " << rep->pi.arity_extra << "\n";
-    cout << "N(ci)       = " << N(rep->ci) << "\n";
-    ASSERT (false, "index out of range");
+    failed_error << "child       = " << child << "\n";
+    failed_error << "out of      = " << n << "\n";
+    failed_error << "child_mode  = " << rep->pi.child_mode << "\n";
+    failed_error << "arity_mode  = " << rep->pi.arity_mode << "\n";
+    failed_error << "arity_base  = " << rep->pi.arity_base << "\n";
+    failed_error << "arity_extra = " << rep->pi.arity_extra << "\n";
+    failed_error << "N(ci)       = " << N(rep->ci) << "\n";
+    FAILED ("index out of range");
   }
   return rep->ci [index];
 }

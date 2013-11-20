@@ -168,7 +168,7 @@ qt_widget_rep::plain_window_widget (string title, command quit) {
       l->addWidget(qw);        // The original QWidget now belongs to the layout
       win->setLayout(l);       // And the QLayout to the QTMPlainWindow.
     } else {
-      FAILED("attempt to create a window around a nil QWidget");
+      FAILED ("attempt to create a window around a nil QWidget");
     }
   }
   

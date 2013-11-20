@@ -149,6 +149,7 @@ get_transformation (tree t) {
     return rotation_2D (point (0.0, 0.0), as_double (t[1]));
   if (is_tuple (t, "rotation", 2))
     return rotation_2D (as_point (t[1]), as_double (t[2]));
+  failed_error << "t= " << t << LF;
   FAILED ("transformation expected");
   return frame ();
 }

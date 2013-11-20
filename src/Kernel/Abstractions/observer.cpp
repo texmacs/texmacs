@@ -388,9 +388,9 @@ busy_tree (tree& ref) {
 void
 apply (tree& ref, modification mod) {
   if (!is_applicable (ref, mod)) {
-    cout << "mod= " << mod << "\n";
-    cout << "ref= " << ref << "\n";
-    ASSERT (is_applicable (ref, mod), "invalid modification");
+    failed_error << "mod= " << mod << "\n";
+    failed_error << "ref= " << ref << "\n";
+    FAILED ("invalid modification");
   }
   path ip= obtain_ip (ref);
   path rp= reverse (ip);

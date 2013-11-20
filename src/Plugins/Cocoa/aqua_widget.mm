@@ -133,7 +133,7 @@ aqua_view_widget_rep::send (slot s, blackbox val) {
     break;
 	
   default:
-    debug_events << "slot type= " << slot_name (s) << "\n";
+    debug_failed << "slot type= " << slot_name (s) << "\n";
     FAILED ("cannot handle slot type");
   }
 }

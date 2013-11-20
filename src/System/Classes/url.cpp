@@ -880,7 +880,7 @@ complete (url base, url u, string filter, bool flag) {
     }
     return ret;
   }
-  cout << LF << "url= " << u << LF;
+  failed_error << "url= " << u << LF;
   FAILED ("bad url");
   return u;
 }

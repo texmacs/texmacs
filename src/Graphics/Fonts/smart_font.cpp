@@ -741,8 +741,9 @@ smart_font_rep::initialize_font (int nr) {
   }
   //cout << "Font " << nr << ", " << a << " -> " << fn[nr]->res_name << "\n";
   if (fn[nr]->res_name == res_name) {
-    cout << "Font " << nr << ", " << a << " -> " << fn[nr]->res_name << "\n";
-    ASSERT (false, "substitution font loop detected");
+    failed_error << "Font " << nr << ", " << a
+                 << " -> " << fn[nr]->res_name << "\n";
+    FAILED ("substitution font loop detected");
   }
 }
 
