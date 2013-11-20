@@ -14,16 +14,36 @@
 (texmacs-module (debug debug-widgets))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Build a document with the list of all messages of a certain kind
+;; Message selection
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (message-among? m selected)
+(define (message-type m)
+  (cond ((string-ends? m "-error") (string-drop-right m 6))
+        ((string-ends? m "-warning") (string-drop-right m 8))
+        ((string-ends? m "-bench") (string-drop-right m 6))
+        ((string-starts? m "debug-") (string-drop m 6))
+        (else m)))
+
+(define (list-message-types select?)
+  (let* ((l (tree-children (get-debug-messages)))
+         (t (make-ahash-table)))
+    (for (m l)
+      (when (select? m)
+        (ahash-set! t (message-type (tree->stree (tree-ref m 0))) #t)))
+    (sort (ahash-set->list t) string<=?)))
+
+(define (message-among? m selected)
   (let* ((k (tm-ref m 0))
          (s (tm-ref m 1)))
     (and (tree-atomic? k)
-         (tree-atomic? s))))
+         (tree-atomic? s)
+         (in? (message-type (tree->string k)) selected))))
 
-(tm-define (build-message m)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Build a document with the list of all messages of a certain kind
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (build-message m)
   (let* ((k (tm->stree (tm-ref m 0)))
          (s (tm-ref m 1)))
     (cond ((string-ends? k "-error")
@@ -34,7 +54,7 @@
            `(with "color" "dark blue" ,s))
           (else s))))
 
-(tm-define (messages->document selected)
+(define (messages->document selected)
   (let* ((all-ms (tree-children (get-debug-messages)))
          (sel-ms (list-filter all-ms (cut message-among? <> selected))))
     `(document
@@ -46,20 +66,36 @@
 ;; The main console widget
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget ((console-widget kinds selected) quit)
-  (padded
-    (resize ("500px" "800px" "1200px" "left")
-            ("300px" "600px" "1000px" "bottom")
-      (refreshable "console-widget"
-        (texmacs-output
-          (messages->document selected)
-          '(style "generic"))))
-    (glue #t #f 0 0)
-    ======
-    (hlist
-      >>
-      (explicit-buttons
-        ("Done" (quit))))))
+(tm-widget ((console-widget select?) quit)
+  (with types (list-message-types select?)
+    (with selected types
+      (padded
+        (horizontal
+          (vertical
+            (bold (text "Categories"))
+            ===
+            (resize ("100px" "100px" "100px") ("300px" "600px" "1000px")
+              (refreshable "console-widget-types"
+                (choices (begin
+                           (set! selected answer)
+                           (refresh-now "console-widget-messages"))
+                         types selected))))
+          ///
+          (vertical
+            (bold (text "Messages"))
+            ===
+            (resize ("500px" "800px" "1200px" "left")
+                ("300px" "600px" "1000px" "bottom")
+              (refreshable "console-widget-messages"
+                (texmacs-output
+                  (messages->document selected)
+                  '(style "generic"))))))
+        (glue #t #f 0 0)
+        ======
+        (hlist
+          >>
+          (explicit-buttons
+            ("Done" (quit))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User interface
@@ -70,6 +106,6 @@
   (let* ((kinds (list "debug-automatic" "debug-boot"
                       "debug-io" "debug-std"))
          (selected kinds))
-    (dialogue-window (console-widget kinds selected)
+    (dialogue-window (console-widget (lambda (x) #t))
 		     (lambda x (noop))
 		     "Debugging console")))
