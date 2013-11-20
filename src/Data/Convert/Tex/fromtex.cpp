@@ -318,7 +318,7 @@ filter_preamble (tree t) {
         doc << u;
         latex_class = u;
       }
-      else if (is_tuple (u, "\\textm@break", 1))
+      else if (is_tuple (u, "\\textm@break", 3))
         doc << u << "\n" << "\n";
       else if (is_tuple (u, "\\def") ||
 	       is_tuple (u, "\\def*") || is_tuple (u, "\\def**"))
@@ -1292,8 +1292,8 @@ latex_command_to_tree (tree t) {
     return concat (tree (ASSIGN, var*"*", e1), tree (ASSIGN, var, e2));
   }
 
-  if (is_tuple (t, "\\textm@break", 1))
-    return tree (APPLY, "textm@break", t[1]);
+  if (is_tuple (t, "\\textm@break", 3))
+    return tree (APPLY, "textm@break", t[1], t[2], t[3]);
 
   if (is_tuple (t, "\\latex_preview", 2))
       return tree (APPLY, "latex_preview", l2e (t[1]), t[2]);
@@ -3078,10 +3078,10 @@ clean_paragraph_concat (tree t) {
   else if (n == 2 && (is_apply (t[0], "textm@break") ||
                       is_apply (t[1], "textm@break")))
     r << t[0] << t[1];
-  else if (n > 2 && is_apply (t[0], "textm@break")
+  else if (n > 2 && is_apply (t[0],   "textm@break")
                  && is_apply (t[n-1], "textm@break"))
     r << t[0] << t(1,n-1) << t[n-1];
-  else if (n > 2 && is_apply (t[0], "textm@break"))
+  else if (n > 2 && is_apply (t[0],   "textm@break"))
     r << t[0] << t(1,n);
   else if (n > 2 && is_apply (t[n-1], "textm@break"))
     r << t(0,n-1) << t[n-1];
@@ -4011,7 +4011,7 @@ search_and_remove_breaks (tree t, tree &src) {
   int i, n= N(t);
   tree r(L(t));
   for (i=0; i<n; i++) {
-    if (is_compound (t[i], "textm@break", 1)) {
+    if (is_compound (t[i], "textm@break", 3)) {
       if (!is_atomic (t[i][0]))
         src << A(t[i][0]);
     }
@@ -4029,14 +4029,16 @@ static tree
 merge_non_root_break_trees (tree t) {
   if (is_atomic (t)) return t;
   int i, n= N(t);
-  tree src (CONCAT), r (L(t));
+  tree start (as_string (0)), src (CONCAT), r (L(t));
   for (i=0; i<n; i++) {
-    if (is_compound (t[i], "textm@break", 1)) {
+    if (is_compound (t[i], "textm@break", 3)) {
         if (!is_atomic (t[i][0])) {
         src << A(t[i][0]);
         t[i][0]= src;
+        t[i][1]= start;
         r << t[i];
         src= tree (CONCAT);
+        start= t[i][2];
       }
     }
     else {
@@ -4055,7 +4057,7 @@ merge_empty_break_trees (tree t) {
   bool merge= false;
   tree src, r (L(t));
   for (i=0; i<n; i++) {
-    if (is_compound (t[i], "textm@break", 1)) {
+    if (is_compound (t[i], "textm@break", 3)) {
       if (merge) {
         src= tree (CONCAT);
         src << A(r[N(r)-1][0]);
@@ -4095,7 +4097,7 @@ merge_non_ordered_break_trees (tree t) {
   bool merge= false;
   tree src (CONCAT), r (L(t));
   for (i=n-1; i>=0; i--) {
-    if (is_compound (t[i], "textm@break", 1)) {
+    if (is_compound (t[i], "textm@break", 3)) {
       if (merge)
         src= (t[i][0] << A(src));
       else
@@ -4109,7 +4111,7 @@ merge_non_ordered_break_trees (tree t) {
   }
   n=N(r);
   for (i=0; i<n; i++) {
-    if (is_compound (r[i], "textm@break", 1)) {
+    if (is_compound (r[i], "textm@break", 3)) {
       if (!is_atomic (r[i][0]))
         src << A(r[i][0]);
       r[i][0]= src;
@@ -4134,13 +4136,14 @@ pick_paragraph_breaks (tree t, array<tree> &b) {
   tree u (DOCUMENT);
   unsigned int id_cnt= 0;
   for (i=0; i<n; i++) {
-    if (is_compound (t[i], "textm@break", 1)) {
+    if (is_compound (t[i], "textm@break", 3)) {
       string uid= as_string (id_cnt++);
       tree src= modernize_newlines (t[i][0], false);
+      tree from= t[i][1], to= t[i][2];
       src= concat_document_correct (src);
       src= simplify_correct (src);
       b << compound ("associate", "latex-tree-src" * uid,
-                     compound ("latex-tree-src", u, src));
+                     compound ("latex-tree-src", u, src, from, to));
       if (u != document ())
         r << u;
       u= tree (DOCUMENT);

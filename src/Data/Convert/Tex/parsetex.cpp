@@ -1975,14 +1975,16 @@ fill_paragraph_markup (tree t, string s) {
   for (int i=0; i<N(t); i++) {
     if (is_tuple (t[i], "\\textm@break", 1)) {
       stop= as_int (simplify_concat (t[i][1])) + 1;
-      r << tuple ("\\textm@break", verbatim_escape (s(start, stop)));
+      r << tuple ("\\textm@break", verbatim_escape (s(start, stop)),
+            as_string (start),  as_string (stop));
       start= stop;
     }
     else
       r << t[i];
   }
   if (!is_tuple (t[N(t)-1], "\\textm@break", 1))
-    r << tuple ("\\textm@break", verbatim_escape (s(start, N(s))));
+    r << tuple ("\\textm@break", verbatim_escape (s(start, N(s))),
+          as_string (start),  as_string (N(s)));
   return r;
 }
 
