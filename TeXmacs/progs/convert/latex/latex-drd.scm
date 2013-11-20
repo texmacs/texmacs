@@ -230,16 +230,22 @@
   begin-formula begin-equation*
   begin-math begin-displaymath begin-equation
   begin-eqnarray begin-eqnarray*
+  begin-flalign begin-flalign*
   begin-align begin-align*
   begin-multline begin-multline*
   begin-gather begin-gather*
   begin-eqsplit begin-eqsplit*)
+
+(logic-group latex-math-environment-1%
+  begin-alignat begin-alignat*)
 
 (logic-rules
   ((latex-arity% 'x 0) (latex-control% 'x))
   ((latex-arity% 'x 0) (latex-operator% 'x))
   ((latex-environment-0*% 'x) (latex-list% 'x))
   ((latex-math-environment% 'x) (latex-math-environment-0% 'x))
+  ((latex-math-environment% 'x) (latex-math-environment-1% 'x))
+  ((latex-environment-1% 'x) (latex-math-environment-1% 'x))
   ((latex-environment-0% 'x) (latex-math-environment-0% 'x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

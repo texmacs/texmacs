@@ -1374,6 +1374,19 @@ upgrade_split (tree t, bool eq= false) {
         return r;
       }
     }
+    else if (upgrade_tex_flag && (n == 2 || is_func (t, EXPAND, 3))) {
+      string s= as_string (L(t));
+      if (is_func (t, EXPAND, 3) && is_atomic (t[0])) s= t[0]->label;
+      if (ends (s, "*")) s= s (0, N(s)-1);
+      if (s == "alignat") {
+        tree arg= t[n-1];
+        if (is_func (arg, DOCUMENT, 1)) arg= arg[0];
+        if (!is_concat (arg)) arg= tree (CONCAT, arg);
+        r= copy (t);
+        r[n-1]= upgrade_split (arg, true);
+        return r;
+      }
+    }
     for (i=0; i<n; i++)
       r[i]= upgrade_split (t[i]);
     return r;

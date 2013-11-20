@@ -2687,7 +2687,8 @@ finalize_layout (tree t) {
 	}
 
 	insert_return (r);
-	r << tree (BEGIN, translate_list (v[0]->label));
+        v[0]= translate_list (v[0]->label);
+	r << v;
 	spc_flag = true;
 	item_flag= (latex_type ("\\begin-" * v[0]->label) == "list");
 	continue;

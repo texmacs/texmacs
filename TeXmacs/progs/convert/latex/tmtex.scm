@@ -1012,7 +1012,7 @@
     (apply string-append 
 	   (tmtex-table-args-assemble lb (cons (car lb) rb) l))))
 
-(define (tmtex-table-apply key x)
+(define (tmtex-table-apply key args x)
   (let* ((props (logic-ref tmtex-table-props% key)))
     (if props
 	(let* ((env (if (tmtex-math-mode?) 'array 'tabular))
@@ -1024,14 +1024,14 @@
 	       (e (list '!begin (symbol->string env) (tmtex-table-args p)))
 	       (r (tmtex-table-make p)))
 	  (tex-concat (list before (list e r) after)))
-	(list (list '!begin (symbol->string key))
+	(list `(!begin ,(symbol->string key) ,@args)
 	      (tmtex-table-make (tmtable-parser x))))))
 
 (define (tmtex-tformat l)
-  (tmtex-table-apply 'tabular (cons 'tformat l)))
+  (tmtex-table-apply 'tabular '() (cons 'tformat l)))
 
 (define (tmtex-table l)
-  (tmtex-table-apply 'tabular (cons 'table l)))
+  (tmtex-table-apply 'tabular '() (cons 'table l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Local and global environment changes
@@ -1715,7 +1715,7 @@
 
 (define (tmtex-eqnarray s l)
   (tmtex-env-set "mode" "math")
-  (let ((r (tmtex-table-apply (string->symbol s) (car l))))
+  (let ((r (tmtex-table-apply '() (string->symbol s) (car l))))
     (tmtex-env-reset "mode")
     r))
 
@@ -1977,22 +1977,25 @@
 
 (define (tmtex-apply key args)
   (let ((n (length args))
-	(r (or (ahash-ref tmtex-dynamic key) (logic-ref tmtex-methods% key))))
+        (r (or (ahash-ref tmtex-dynamic key) (logic-ref tmtex-methods% key))))
     (if (in? key '(quote quasiquote unquote)) (set! r tmtex-noop))
     (cond ((== r 'environment)
            (tmtex-std-env (symbol->string key) args))
           (r (r args))
           (else
             (let ((p (logic-ref tmtex-tmstyle% key)))
-              (if (and p (or (= (cadr p) -1) (= (cadr p) n)))
-                ((car p) (symbol->string key) args)
-                (if (and p (= (cadr p) -2))
-                  ((car p) `(,key ,@args))
-                  (if (and (= n 1)
-                           (or (func? (car args) 'tformat)
-                               (func? (car args) 'table)))
-                    (tmtex-table-apply key (car args))
-                    (tmtex-function key args)))))))))
+              (cond ((and p (or (= (cadr p) -1) (= (cadr p) n)))
+                     ((car p) (symbol->string key) args))
+                    ((and p (= (cadr p) -2)) ((car p) `(,key ,@args)))
+                    ((and (= n 1)
+                          (or (func? (car args) 'tformat)
+                              (func? (car args) 'table)))
+                     (tmtex-table-apply key '() (car args)))
+                    ((and (= n 2)
+                          (or (func? (cAr args) 'tformat)
+                              (func? (cAr args) 'table)))
+                     (tmtex-table-apply key (cDr args) (cAr args)))
+                    (else (tmtex-function key args))))))))
 
 (define (tmtex-function f l)
   (if (== (string-ref (symbol->string f) 0) #\!)
