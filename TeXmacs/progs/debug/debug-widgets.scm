@@ -50,7 +50,7 @@
   (let* ((k (tm->stree (tm-ref m 0)))
          (s (tm-ref m 1)))
     (cond ((string-ends? k "-error")
-           `(with "color" "#c04040" (concat "Error: " ,s)))
+           `(with "color" "#e02020" (concat "Error: " ,s)))
           ((string-ends? k "-warning")
            `(with "color" "dark magenta" (concat "Warning: " ,s)))
           ((string-ends? k "-bench")
