@@ -291,8 +291,9 @@ AC_TRY_LINK(
     fi
 ],[
     AC_MSG_RESULT(no)
-    AC_MSG_ERROR([cannot find freetype library])
-]))
+    AC_MSG_ERROR([cannot link freetype library])
+]),
+AC_MSG_ERROR([cannot find freetype library]))
 
 CPPFLAGS="$SAVE_CPPFLAGS"
 LDFLAGS="$SAVE_LDFLAGS"

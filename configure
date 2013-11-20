@@ -4698,7 +4698,7 @@ case "$GUILE_EFFECTIVE_VERSION" in
     CONFIG_GUILE_SERIAL="D"
     if test "$enable_guile2" != "yes"; then
       as_fn_error $? "TeXmacs is incompatible with Guile 2.
-If you know what you are doing, configure with --enable-guile2=yes" "$LINENO" 5
+If you know what you are doing, run configure with --enable-guile2=yes" "$LINENO" 5
     fi
   ;;
   *)
@@ -6461,11 +6461,13 @@ else
 
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-    as_fn_error $? "cannot find freetype library" "$LINENO" 5
+    as_fn_error $? "cannot link freetype library" "$LINENO" 5
 
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
+else
+  as_fn_error $? "cannot find freetype library" "$LINENO" 5
 fi
 
 
