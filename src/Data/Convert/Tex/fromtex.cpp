@@ -129,6 +129,7 @@ is_block_environnement (tree t) {
   return
     ends (s, "abstract")         ||
     ends (s, "center")           ||
+    ends (s, "description")      ||
     ends (s, "enumerate")        ||
     ends (s, "figure")           ||
     ends (s, "flushleft")        ||
