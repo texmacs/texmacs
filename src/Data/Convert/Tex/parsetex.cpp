@@ -345,7 +345,9 @@ latex_parser::parse (string s, int& i, string stop, int change) {
       break;
     case '{': {
       i++;
+      t << tree (TUPLE, "\\begingroup");
       t << parse (s, i, "}", change);
+      t << tree (TUPLE, "\\endgroup");
       if ((i<n) && (s[i]=='}')) i++;
 
       int ln=0;

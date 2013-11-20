@@ -80,12 +80,14 @@ might_not_be_typesetted (tree t) {
          ((is_func (t, TUPLE) && t[0] == "\\\\")              ||
           (is_func (t, TUPLE) && t[0] == "\\author")          ||
           (is_func (t, TUPLE) && t[0] == "\\begin-document")  ||
+          (is_func (t, TUPLE) && t[0] == "\\begingroup")      ||
           (is_func (t, TUPLE) && t[0] == "\\date")            ||
           (is_func (t, TUPLE) && t[0] == "\\declaretheorem")  ||
           (is_func (t, TUPLE) && t[0] == "\\declaretheorem*") ||
           (is_func (t, TUPLE) && t[0] == "\\def")             ||
           (is_func (t, TUPLE) && t[0] == "\\def*")            ||
           (is_func (t, TUPLE) && t[0] == "\\def**")           ||
+          (is_func (t, TUPLE) && t[0] == "\\endgroup")        ||
           (is_func (t, TUPLE) && t[0] == "\\hspace")          ||
           (is_func (t, TUPLE) && t[0] == "\\hyphenation")     ||
           (is_func (t, TUPLE) && t[0] == "\\index")           ||
@@ -3303,6 +3305,7 @@ env_hacks (tree t) {
 tree
 handle_improper_matches (tree t) {
   if (is_atomic (t)) return t;
+  else if (is_apply (t, "begingroup") || is_apply (t, "endgroup")) return "";
   else {
     int i, n= N(t);
     tree r (t, n);
