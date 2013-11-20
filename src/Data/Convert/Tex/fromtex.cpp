@@ -3965,12 +3965,36 @@ merge_successive_withs (tree t, bool force_concat= false) {
   return r;
 }
 
+static tree
+unnest_withs (tree t) {
+  if (is_atomic (t)) return t;
+  if (is_func (t, WITH) && N(t) > 0) {
+    int n= N(t);
+    if (is_func (t[n-1], WITH)) {
+      tree r= t(0, n-1);
+      r << A(t[n-1]);
+      return r;
+    }
+    else if ((is_func (t[n-1], CONCAT, 1)   && is_func (t[n-1][0], WITH)) ||
+             (is_func (t[n-1], DOCUMENT, 1) && is_func (t[n-1][0], WITH))) {
+      t[n-1]= t[n-1][0];
+      return unnest_withs (t);
+    }
+  }
+  int i, n= N(t);
+  tree r(t,n);
+  for (i=0; i<n; i++)
+    r[i]= unnest_withs (t[i]);
+  return r;
+}
+
 /****************************** Finalize textm *******************************/
 
 tree
 finalize_textm (tree t) {
   t= modernize_newlines (t, false);
   t= merge_successive_withs (t);
+  t= unnest_withs (t);
   t= remove_empty_withs (t);
   t= nonumber_to_eqnumber (t);
   t= eat_space_around_control (t);
@@ -4106,6 +4130,7 @@ pick_paragraph_breaks (tree t, array<tree> &b) {
   t= merge_empty_break_trees (t);
   t= merge_non_ordered_break_trees (t);
   t= merge_successive_withs (t);
+  t= unnest_withs (t);
   t= remove_empty_withs (t);
   t= concat_sections_and_labels (t);
   int i, n= N(t);
