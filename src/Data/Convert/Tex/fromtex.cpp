@@ -3908,11 +3908,70 @@ concat_sections_and_labels (tree t) {
   return t;
 }
 
+static tree
+remove_empty_withs (tree t) {
+  if (is_atomic (t)) return t;
+  if (is_func (t, WITH)) {
+    int n= N(t);
+    if (t[n-1] == "" || t[n-1] == document () || t[n-1] == concat ()
+        || t[n-1] == document ("") || t[n-1] == concat (""))
+      return "";
+  }
+  int i, n= N(t);
+  tree r(L(t));
+  for (i=0; i<n; i++) {
+    tree tmp= remove_empty_withs (t[i]);
+    if (tmp != "" || !is_func (t[i], WITH)) {
+      r << tmp;
+    }
+  }
+  return r;
+}
+
+static tree
+merge_successive_withs (tree t, bool force_concat= false) {
+  if (is_atomic (t)) return t;
+  int i, n= N(t);
+  tree r(L(t));
+  if (!is_concat (t) && !is_document (t)) {
+    r= tree (t, n);
+    for (i=0; i<n; i++)
+      r[i]= merge_successive_withs (t[i]);
+  }
+  else {
+    for (i=0; i<n; i++) {
+      if (N(t[i]) > 0 && is_func (t[i], WITH)) {
+        tree with= t[i](0, N(t[i])-1);
+        int start= i++;
+        while (i < n && N(t[i]) > 0 && is_func (t[i], WITH)
+            && t[i](0, N(t[i])-1) == with)
+          i++;
+        if (i == start+1) r << merge_successive_withs (t[start]);
+        else {
+          tree tmp= t(start,i);
+          int j, m= N(tmp);
+          for (j=0; j<m; j++) {
+            tmp[j]= merge_successive_withs (tmp[j][N(tmp[j])-1]);
+          }
+          with << concat_document_correct (tmp);
+          r << with;
+        }
+        i--;
+      }
+      else
+        r << merge_successive_withs (t[i]);
+    }
+  }
+  return r;
+}
+
 /****************************** Finalize textm *******************************/
 
 tree
 finalize_textm (tree t) {
   t= modernize_newlines (t, false);
+  t= merge_successive_withs (t);
+  t= remove_empty_withs (t);
   t= nonumber_to_eqnumber (t);
   t= eat_space_around_control (t);
   t= remove_superfluous_newlines (t);
@@ -4046,6 +4105,8 @@ pick_paragraph_breaks (tree t, array<tree> &b) {
   t= merge_non_root_break_trees (t);
   t= merge_empty_break_trees (t);
   t= merge_non_ordered_break_trees (t);
+  t= merge_successive_withs (t);
+  t= remove_empty_withs (t);
   t= concat_sections_and_labels (t);
   int i, n= N(t);
   tree r (L(t));
