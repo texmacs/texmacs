@@ -28,11 +28,11 @@
   (let* ((l (tree-children (get-debug-messages)))
          (t (make-ahash-table)))
     (for (m l)
-      (with mt (message-type (tree->string (tree-ref m 0)))
+      (with s (tree->string (tree-ref m 0))
         (when (or (== kind "Debugging console")
-                  (string-ends? mt "-error")
-                  (string-ends? mt "-warning"))
-          (ahash-set! t mt #t))))
+                  (string-ends? s "-error")
+                  (string-ends? s "-warning"))
+          (ahash-set! t (message-type s) #t))))
     (sort (ahash-set->list t) string<=?)))
 
 (define (message-among? m selected)
@@ -73,12 +73,12 @@
 (tm-define console-categories (make-ahash-table))
 (tm-define console-selected (make-ahash-table))
 
-(tm-widget ((console-widget kind) quit)
+(tm-widget ((console-widget kind))
   (padded
     (horizontal
       (vertical
         (bold (text "Categories"))
-        ===
+        === ===
         (resize ("100px" "100px" "100px") ("300px" "600px" "1000px")
           (refreshable "console-widget-categories"
             (choices (begin
@@ -89,28 +89,22 @@
       ///
       (vertical
         (bold (text "Messages"))
-        ===
+        === ===
         (resize ("500px" "800px" "1200px" "left")
             ("300px" "600px" "1000px" "bottom")
           (refreshable "console-widget-messages"
             (texmacs-output
               (messages->document (ahash-ref console-selected kind))
-              '(style "generic"))))))
-    (glue #t #f 0 0)
-    ======
-    (hlist
-      >>
-      (explicit-buttons
-        ("Done" (quit))))))
+              '(style "generic"))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Automatic updates of consoles
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define console-updating? #f)
+(tm-define console-errors? #f)
 
 (tm-define (update-consoles)
-  (set! console-updating? #f)
   (for (kind (ahash-set->list console-active?))
     (let* ((old (ahash-ref console-categories kind))
            (new (list-message-types kind))
@@ -120,9 +114,19 @@
                   (list-union (ahash-ref console-selected kind) delta))))
   (when (nnull? (ahash-set->list console-active?))
     (refresh-now "console-widget-categories")
-    (refresh-now "console-widget-messages")))
+    (refresh-now "console-widget-messages"))
+  (when (and console-errors?
+             (not (ahash-ref console-active? "Error messages")))
+    (delayed
+      (:idle 1)
+      (open-error-messages)))
+  (set! console-updating? #f)
+  (set! console-errors? #f))
 
 (tm-define (notify-debug-message channel)
+  (when (or (string-ends? channel "-error")
+            (string-ends? channel "-warning"))
+    (set! console-errors? #t))
   (when (not console-updating?)
     (set! console-updating? #t)
     (delayed
@@ -138,9 +142,8 @@
     (ahash-set! console-active? kind #t)
     (ahash-set! console-categories kind (list-message-types kind))
     (ahash-set! console-selected kind (ahash-ref console-categories kind))
-    (dialogue-window (console-widget kind)
-                     (lambda x (ahash-remove! console-active? kind))
-                     kind)))
+    (top-window (console-widget kind) kind
+                (lambda x (ahash-remove! console-active? kind)))))
 
 (tm-define (open-debug-console)
   (open-console "Debugging console"))
