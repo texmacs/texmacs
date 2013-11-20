@@ -216,9 +216,11 @@ widget user_canvas_widget (widget wid, int style= 0);
   // a widget whose contents can be scrolled
   // if the size of the inner contents exceed the specified size
 widget resize_widget (widget w, int style, string w1, string h1,
-                      string w2, string h2, string w3, string h3);
+                      string w2, string h2, string w3, string h3,
+                      string hpos, string vpos);
   // resize the widget w to be of minimal size (w1, h1),
-  // of default size (w2, h2) and of maximal size (w3, h3)
+  // of default size (w2, h2), of maximal size (w3, h3),
+  // and initial scrolling position (hpos, vpos)
 widget hsplit_widget (widget l, widget r);
   // two horizontally juxtaposed widgets l and r with an ajustable border
 widget vsplit_widget (widget t, widget b);

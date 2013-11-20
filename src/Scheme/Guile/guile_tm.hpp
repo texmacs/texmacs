@@ -182,6 +182,8 @@ typedef SCM (*scm_t_catch_handler) (void *data, SCM tag, SCM throw_args);
 
 #define SCM_ARG8 8
 #define SCM_ARG9 9
+#define SCM_ARG10 10
+#define SCM_ARG11 11
 
 #ifdef DOTS_OK
 typedef SCM (*FN)(...);
@@ -282,6 +284,8 @@ tmscm call_scheme (tmscm fun, array<tmscm> a);
 #define TMSCM_ARG6 SCM_ARG6
 #define TMSCM_ARG7 SCM_ARG7
 #define TMSCM_ARG8 SCM_ARG8
+#define TMSCM_ARG9 SCM_ARG9
+#define TMSCM_ARG10 SCM_ARG10
 
 #define TMSCM_UNSPECIFIED SCM_UNSPECIFIED
 

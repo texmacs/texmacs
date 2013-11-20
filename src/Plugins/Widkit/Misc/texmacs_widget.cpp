@@ -167,7 +167,8 @@ static wk_widget
 middle_widget () {
   wk_widget w1= canvas_widget (glue_wk_widget (), center, true);
   wk_widget w2= glue_wk_widget (true, true, 200*PIXEL, 0);
-  wk_widget w3= resize_widget (w2, 0, "200px", "", "200px", "", "200px", "");
+  wk_widget w3= resize_widget (w2, 0, "200px", "", "200px", "", "200px", "",
+                               "left", "top");
   if (!use_side_tools) return w1;
   else return hsplit_widget (w1, w3);
 }
@@ -333,7 +334,8 @@ texmacs_widget_rep::handle_set_widget (set_widget_event ev) {
     set_subwidget (THIS ["header"] ["user"] ["bar"], "icons", ev->w);
   else if (use_side_tools && ev->which == "side tools") {
     wk_widget side=
-      resize_widget (ev->w, 0, "200px", "", "200px", "", "200px", "");
+      resize_widget (ev->w, 0, "200px", "", "200px", "", "200px", "",
+                     "left", "top");
     THIS ["middle"] << set_widget ("right", side);
     if (attached ()) {
       side << emit_attach_window (win);

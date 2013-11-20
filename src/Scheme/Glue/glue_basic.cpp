@@ -5906,7 +5906,7 @@ tmg_widget_scrollable (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
-tmg_widget_resize (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4, tmscm arg5, tmscm arg6, tmscm arg7, tmscm arg8) {
+tmg_widget_resize (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4, tmscm arg5, tmscm arg6, tmscm arg7, tmscm arg8, tmscm arg9, tmscm arg10) {
   TMSCM_ASSERT_WIDGET (arg1, TMSCM_ARG1, "widget-resize");
   TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "widget-resize");
   TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "widget-resize");
@@ -5915,6 +5915,8 @@ tmg_widget_resize (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4, tmscm arg5, t
   TMSCM_ASSERT_STRING (arg6, TMSCM_ARG6, "widget-resize");
   TMSCM_ASSERT_STRING (arg7, TMSCM_ARG7, "widget-resize");
   TMSCM_ASSERT_STRING (arg8, TMSCM_ARG8, "widget-resize");
+  TMSCM_ASSERT_STRING (arg9, TMSCM_ARG9, "widget-resize");
+  TMSCM_ASSERT_STRING (arg10, TMSCM_ARG10, "widget-resize");
 
   widget in1= tmscm_to_widget (arg1);
   int in2= tmscm_to_int (arg2);
@@ -5924,9 +5926,11 @@ tmg_widget_resize (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4, tmscm arg5, t
   string in6= tmscm_to_string (arg6);
   string in7= tmscm_to_string (arg7);
   string in8= tmscm_to_string (arg8);
+  string in9= tmscm_to_string (arg9);
+  string in10= tmscm_to_string (arg10);
 
   // TMSCM_DEFER_INTS;
-  widget out= resize_widget (in1, in2, in3, in4, in5, in6, in7, in8);
+  widget out= resize_widget (in1, in2, in3, in4, in5, in6, in7, in8, in9, in10);
   // TMSCM_ALLOW_INTS;
 
   return widget_to_tmscm (out);
@@ -7685,7 +7689,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("widget-tabs",  tmg_widget_tabs, 2, 0, 0);
   tmscm_install_procedure ("widget-icon-tabs",  tmg_widget_icon_tabs, 3, 0, 0);
   tmscm_install_procedure ("widget-scrollable",  tmg_widget_scrollable, 2, 0, 0);
-  tmscm_install_procedure ("widget-resize",  tmg_widget_resize, 8, 0, 0);
+  tmscm_install_procedure ("widget-resize",  tmg_widget_resize, 10, 0, 0);
   tmscm_install_procedure ("widget-hsplit",  tmg_widget_hsplit, 2, 0, 0);
   tmscm_install_procedure ("widget-vsplit",  tmg_widget_vsplit, 2, 0, 0);
   tmscm_install_procedure ("widget-texmacs-output",  tmg_widget_texmacs_output, 2, 0, 0);

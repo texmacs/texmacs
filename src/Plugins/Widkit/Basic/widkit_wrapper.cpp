@@ -251,9 +251,10 @@ user_canvas_widget (widget wid, int style) {
 }
 
 widget
-resize_widget (widget w, int style, string w1, string h1,
-               string w2, string h2, string w3, string h3) {
-  return abstract (resize_widget (concrete (w), style, w1, h1, w2, h2, w3, h3));
+resize_widget (widget w, int style, string w1, string h1, string w2, string h2,
+               string w3, string h3, string hpos, string vpos) {
+  return abstract (resize_widget (concrete (w), style,
+                                  w1, h1, w2, h2, w3, h3, hpos, vpos));
 }
 
 widget

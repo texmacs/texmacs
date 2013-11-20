@@ -1137,7 +1137,8 @@ widget choice_widget (command cmd, array<string> vals, string cur) { return widg
 widget choice_widget (command cmd, array<string> vals, string cur, string filter)  { return widget(); }
 widget user_canvas_widget (widget wid, int style)  { return widget(); }
 widget resize_widget (widget w, int style, string w1, string h1,
-                      string w2, string h2, string w3, string h3)  { return widget(); }
+                      string w2, string h2, string w3, string h3,
+                      string hpos, string vpos)  { return widget(); }
 widget hsplit_widget (widget l, widget r)  { return widget(); }
 widget vsplit_widget (widget t, widget b)  { return widget(); }
 widget refresh_widget (string tmwid, string kind)  { return widget(); }

@@ -519,18 +519,19 @@
     (with inner (make-menu-items (list (cons 'vertical items)) style #f)
       (widget-scrollable (car inner) style))))
 
-(define (decode-resize x)
-  (cond ((string? x) (list x x x))
-        ((list-3? x) x)
+(define (decode-resize x default)
+  (cond ((string? x) (list x x x default))
+        ((list-3? x) (append x (list default)))
+        ((list-4? x) x)
         (else (make-menu-error "bad length in " (object->string x)))))
 
 (define (make-resize p style)
   "Make @(resize :%2 :menu-item-list) item."
   (with (tag w h . items) p
     (with inner (make-menu-items (list (cons 'vertical items)) style #f)
-      (with (w1 w2 w3) (decode-resize w)
-        (with (h1 h2 h3) (decode-resize h)
-          (widget-resize (car inner) style w1 h1 w2 h2 w3 h3))))))
+      (with (w1 w2 w3 hpos) (decode-resize w "left")
+        (with (h1 h2 h3 vpos) (decode-resize h "top")
+          (widget-resize (car inner) style w1 h1 w2 h2 w3 h3 hpos vpos))))))
 
 (define (make-hsplit p style)
   "Make @(hsplit :menu-item :menu-item) item."

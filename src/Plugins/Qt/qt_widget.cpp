@@ -418,11 +418,13 @@ widget user_canvas_widget (widget w, int style) {
   return abstract (wid);
 }
 widget resize_widget (widget w, int style, string w1, string h1,
-                      string w2, string h2, string w3, string h3) {
+                      string w2, string h2, string w3, string h3,
+                      string hpos, string vpos) {
   typedef triple<string, string, string> T1;
+  (void) hpos; (void) vpos;
   qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::resize_widget,
-                                             w, style,
-                                             T1(w1, w2, w3), T1(h1, h2, h3));
+                                             w, style, T1(w1, w2, w3),
+                                                       T1(h1, h2, h3));
   wid->add_child (w);
   return abstract (wid);
 }
