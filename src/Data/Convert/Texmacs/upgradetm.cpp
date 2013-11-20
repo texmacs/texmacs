@@ -1000,7 +1000,7 @@ needs_transfer (tree t) {
 
 static tree
 upgrade_surround (tree t) {
-  if (is_atomic (t)) return t;
+  if (upgrade_tex_flag || is_atomic (t)) return t;
   int i, n= N(t);
   tree r (t, n);
   for (i=0; i<n; i++) {
@@ -1053,11 +1053,28 @@ upgrade_indent (tree t) {
 }
 
 static tree
+upgrade_equations (tree t) {
+  if (!upgrade_tex_flag || is_atomic (t)) return t;
+  else if (needs_transfer (t) && !is_document (t[1])) {
+    t[1]= document (upgrade_equations (t[1]));
+    return t;
+  }
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_equations (t[i]);
+    return r;
+  }
+}
+
+static tree
 upgrade_new_environments (tree t) {
   t= upgrade_set_begin (t);
   t= eliminate_set_begin (t);
   t= upgrade_surround (t);
   t= upgrade_indent (t);
+  t= upgrade_equations (t);
   return t;
 }
 

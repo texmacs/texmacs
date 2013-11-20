@@ -3064,6 +3064,64 @@ finalize_returns_bis (tree t) {
   return u;
 }
 
+static array<tree>
+clean_paragraph_concat (tree t) {
+  int n= N(t);
+  array<tree> r;
+  if (!is_concat (t)) r << t;
+  else if (n == 0) r << tree ("");
+  else if (n == 1) r << t[0];
+  else if (n == 2 && (is_apply (t[0], "textm@break") ||
+                      is_apply (t[1], "textm@break")))
+    r << t[0] << t[1];
+  else if (n > 2 && is_apply (t[0], "textm@break")
+                 && is_apply (t[n-1], "textm@break"))
+    r << t[0] << t(1,n-1) << t[n-1];
+  else if (n > 2 && is_apply (t[0], "textm@break"))
+    r << t[0] << t(1,n);
+  else if (n > 2 && is_apply (t[n-1], "textm@break"))
+    r << t(0,n-1) << t[n-1];
+  else r << t;
+  return r;
+}
+
+static tree
+make_paragraphs (tree t, tree r) {
+  int i, n= N(t);
+  tree s (CONCAT);
+  for (i=0; i<n; i++) {
+    if (is_document (r) && t[i] == tree (FORMAT, "new line")) {
+      r << clean_paragraph_concat (s);
+      s= tree (CONCAT);
+    }
+    else if (is_func (t[i], BEGIN) && N(t[i]) > 0 && t[i][0] != "document") {
+      tree name= t[i][0];
+      int start= i++, count= 1;
+      while (i<n && count != 0) {
+        if (is_func (t[i], BEGIN) && N(t[i]) > 0 && name == t[i][0]) count++;
+        if (is_func (t[i], END)   && N(t[i]) > 0 && name == t[i][0]) count--;
+        i++;
+      }
+      if (is_func (t[i-1], END) && N(t[i-1]) > 0 && name == t[i-1][0]) {
+        tree tmp= make_paragraphs (t(start+1, i-1), tree (CONCAT));
+        s << t[start] << A(tmp) << t[i-1];
+      }
+      else
+        s << t(start, i);
+      i--;
+    }
+    else if (is_func (t[i], END) && N(t[i]) > 0 && t[i][0] == "document") {
+      s << t[i];
+      break;
+    }
+    else
+      s << t[i];
+  }
+  if (s != concat ())
+    r << clean_paragraph_concat (s);
+  return r;
+}
+
 static tree
 finalize_document (tree t) {
   if (is_atomic (t)) t= tree (CONCAT, t);
@@ -3072,33 +3130,10 @@ finalize_document (tree t) {
   t= finalize_pmatrix  (t);
   t= finalize_layout   (t);
   if (!is_func (t, CONCAT)) return tree (DOCUMENT, t);
-
-  int i;
-  tree r (DOCUMENT);
-  for (i=0; i<N(t); i++) {
-    int start= i;
-    while (i<N(t) && t[i] != tree (FORMAT, "new line")) i++;
-    if (i==start) r << "";
-    else if (i==(start+1)) r << t[start];
-    else if (i==(start+2) && (is_apply (t[start], "textm@break") ||
-          is_apply (t[start+1], "textm@break")))
-      r << t[start] << t[start+1];
-    else {
-      if (is_apply (t[start], "textm@break")
-          && is_apply (t[i-1], "textm@break"))
-        r << t[start] << t(start+1,i-1) << t[i-1];
-      else if (is_apply (t[start], "textm@break"))
-        r << t[start] << t(start+1,i);
-      else if (is_apply (t[i-1], "textm@break"))
-        r << t(start,i-1) << t[i-1];
-      else
-        r << t(start,i);
-    }
-    if (i==(N(t)-1)) r << "";
-  }
-  r= finalize_sections (r);
-  r= finalize_returns_bis (r);
-  return r;
+  t= make_paragraphs (t, tree (DOCUMENT));
+  t= finalize_sections (t);
+  t= finalize_returns_bis (t);
+  return t;
 }
 
 bool
