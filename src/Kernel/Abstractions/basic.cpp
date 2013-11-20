@@ -95,17 +95,18 @@ debug_get (string s) {
 
 tree debug_messages (TUPLE);
 bool debug_lf_flag= false;
+extern bool texmacs_started;
 
 void
-debug_message (string channel, tree msg) {
+debug_message_sub (string channel, tree msg) {
   if (is_atomic (msg) && occurs ("\n", msg->label)) {
     string s= msg->label;
     int pos= search_forwards ("\n", 0, s);
-    debug_message (channel, s (0, pos));
+    debug_message_sub (channel, s (0, pos));
     debug_lf_flag= true;
     cout << "\n";
     if (pos+1 < N(s))
-      debug_message (channel, s (pos+1, N(s)));
+      debug_message_sub (channel, s (pos+1, N(s)));
   }
   else {
     int n= N(debug_messages);
@@ -129,6 +130,12 @@ debug_message (string channel, tree msg) {
       cout << msg;
     }
   }
+}
+
+void
+debug_message (string channel, tree msg) {
+  debug_message_sub (channel, msg);
+  if (texmacs_started) call ("notify-debug-message", object (channel));
 }
 
 tree

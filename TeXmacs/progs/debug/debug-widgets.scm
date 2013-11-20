@@ -24,12 +24,15 @@
         ((string-starts? m "debug-") (string-drop m 6))
         (else m)))
 
-(define (list-message-types select?)
+(define (list-message-types kind)
   (let* ((l (tree-children (get-debug-messages)))
          (t (make-ahash-table)))
     (for (m l)
-      (when (select? m)
-        (ahash-set! t (message-type (tree->stree (tree-ref m 0))) #t)))
+      (with mt (message-type (tree->string (tree-ref m 0)))
+        (when (or (== kind "Debugging console")
+                  (string-ends? mt "-error")
+                  (string-ends? mt "-warning"))
+          (ahash-set! t mt #t))))
     (sort (ahash-set->list t) string<=?)))
 
 (define (message-among? m selected)
@@ -66,46 +69,81 @@
 ;; The main console widget
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget ((console-widget select?) quit)
-  (with types (list-message-types select?)
-    (with selected types
-      (padded
-        (horizontal
-          (vertical
-            (bold (text "Categories"))
-            ===
-            (resize ("100px" "100px" "100px") ("300px" "600px" "1000px")
-              (refreshable "console-widget-types"
-                (choices (begin
-                           (set! selected answer)
-                           (refresh-now "console-widget-messages"))
-                         types selected))))
-          ///
-          (vertical
-            (bold (text "Messages"))
-            ===
-            (resize ("500px" "800px" "1200px" "left")
-                ("300px" "600px" "1000px" "bottom")
-              (refreshable "console-widget-messages"
-                (texmacs-output
-                  (messages->document selected)
-                  '(style "generic"))))))
-        (glue #t #f 0 0)
-        ======
-        (hlist
-          >>
-          (explicit-buttons
-            ("Done" (quit))))))))
+(tm-define console-active? (make-ahash-table))
+(tm-define console-categories (make-ahash-table))
+(tm-define console-selected (make-ahash-table))
+
+(tm-widget ((console-widget kind) quit)
+  (padded
+    (horizontal
+      (vertical
+        (bold (text "Categories"))
+        ===
+        (resize ("100px" "100px" "100px") ("300px" "600px" "1000px")
+          (refreshable "console-widget-categories"
+            (choices (begin
+                       (ahash-set! console-selected kind answer)
+                       (refresh-now "console-widget-messages"))
+                     (ahash-ref console-categories kind)
+                     (ahash-ref console-selected kind)))))
+      ///
+      (vertical
+        (bold (text "Messages"))
+        ===
+        (resize ("500px" "800px" "1200px" "left")
+            ("300px" "600px" "1000px" "bottom")
+          (refreshable "console-widget-messages"
+            (texmacs-output
+              (messages->document (ahash-ref console-selected kind))
+              '(style "generic"))))))
+    (glue #t #f 0 0)
+    ======
+    (hlist
+      >>
+      (explicit-buttons
+        ("Done" (quit))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Automatic updates of consoles
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define console-updating? #f)
+
+(tm-define (update-consoles)
+  (set! console-updating? #f)
+  (for (kind (ahash-set->list console-active?))
+    (let* ((old (ahash-ref console-categories kind))
+           (new (list-message-types kind))
+           (delta (list-difference new old)))
+      (ahash-set! console-categories kind new)
+      (ahash-set! console-selected kind
+                  (list-union (ahash-ref console-selected kind) delta))))
+  (when (nnull? (ahash-set->list console-active?))
+    (refresh-now "console-widget-categories")
+    (refresh-now "console-widget-messages")))
+
+(tm-define (notify-debug-message channel)
+  (when (not console-updating?)
+    (set! console-updating? #t)
+    (delayed
+      (:idle 1)
+      (update-consoles))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (open-console kind)
+  (when (not (ahash-ref console-active? kind))
+    (ahash-set! console-active? kind #t)
+    (ahash-set! console-categories kind (list-message-types kind))
+    (ahash-set! console-selected kind (ahash-ref console-categories kind))
+    (dialogue-window (console-widget kind)
+                     (lambda x (ahash-remove! console-active? kind))
+                     kind)))
+
 (tm-define (open-debug-console)
-  (:interactive #t)
-  (let* ((kinds (list "debug-automatic" "debug-boot"
-                      "debug-io" "debug-std"))
-         (selected kinds))
-    (dialogue-window (console-widget (lambda (x) #t))
-		     (lambda x (noop))
-		     "Debugging console")))
+  (open-console "Debugging console"))
+
+(tm-define (open-error-messages)
+  (open-console "Error messages"))

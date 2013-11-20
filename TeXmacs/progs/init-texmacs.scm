@@ -299,7 +299,7 @@
 ;(display "Booting debugging and developer facilities\n")
 (lazy-menu (debug debug-menu) debug-menu)
 (lazy-menu (texmacs menus developer-menu) developer-menu)
-(lazy-define (debug debug-widgets) open-debug-console)
+(lazy-define (debug debug-widgets) open-debug-console notify-debug-message)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting plugins\n")
