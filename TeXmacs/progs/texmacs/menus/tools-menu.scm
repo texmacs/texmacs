@@ -64,7 +64,8 @@
       ("Count words" (show-word-count))
       ("Count lines" (show-line-count)))
   (-> "Miscellaneous"
-      ("Clear undo history" (clear-undo-history)))
+      ("Clear undo history" (clear-undo-history))
+      ("Show debugging console" (open-debug-console)))
   (-> "Experimental"
       ("Fast environments" (toggle-preference "fast environments"))
       ("Alpha transparency" (toggle-preference "experimental alpha"))
