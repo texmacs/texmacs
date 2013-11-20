@@ -3114,10 +3114,6 @@ make_paragraphs (tree t, tree r) {
         s << t(start, i);
       i--;
     }
-    else if (is_func (t[i], END) && N(t[i]) > 0 && t[i][0] == "document") {
-      s << t[i];
-      break;
-    }
     else
       s << t[i];
   }
