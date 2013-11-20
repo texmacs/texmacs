@@ -3326,6 +3326,132 @@ handle_improper_matches (tree t) {
   }
 }
 
+static bool
+repeat_envs (tree env) {
+  return env == FONT_SERIES || env == FONT_SHAPE || env == FONT_SIZE
+      || env == FONT_FAMILY || env == COLOR;
+}
+
+static array<tree>
+get_envs (array< array<tree> > envs, array<tree> done) {
+  int i, m, n= N(envs);
+  array<tree> r, env;
+  if (N(envs) > 0) env= envs[n-1];
+  m= N(env);
+  for (i=m-1; i>=0; i--)
+    if (!contains (env[i][0], done)) {
+      r << copy (env[i]);
+      done << copy (env[i][0]);
+    }
+  return r;
+}
+
+static void
+set_envs (tree e, array< array<tree> > &envs) {
+  int i, m, n= N(envs);
+  array<tree> env;
+  if (N(envs) > 0) env= envs[n-1];
+  m= N(env);
+  for (i=m-1; i>=0; i--)
+    if (env[i][0] == e[0]) {
+      envs[n-1][i]= e;
+      return;
+    }
+  if (N(envs) > 0)
+    envs[n-1] << e;
+  else {
+    env << e;
+    envs << env;
+  }
+}
+
+static void
+reset_envs (tree e, array< array<tree> > &envs) {
+  int i, m, n= N(envs);
+  array<tree> env;
+  if (N(envs) > 0) env= envs[n-1];
+  m= N(env);
+  for (i=m-1; i>=0; i--)
+    if (env[i][0] == e[0]) {
+      env= range (envs[n-1], 0, i);
+      env << range (envs[n-1], i+1, m);
+      envs[n-1]= env;
+      return;
+    }
+}
+
+static tree
+reopen_envs (tree t, array< array<tree> > &envs) {
+  if (is_atomic (t)) {
+    tree r (CONCAT);
+    r << get_envs (envs, array<tree> ());
+    if (r != concat ()) {
+      r << t;
+      return r;
+    }
+  }
+  if (!is_concat (t)) return t;
+  bool begin= true;
+  int i, n= N(t), m= N(envs);
+  tree r (CONCAT);
+  array<tree> done;
+  for (i=0; i<n; i++) {
+    if (is_apply (t[i], "begingroup")) {
+      array<tree> tmp;
+      if (m > 0) tmp= envs[m-1];
+      envs << copy (tmp);
+      m= N(envs);
+    }
+    else if (is_apply (t[i], "endgroup")) {
+      if (m > 0)
+        envs= range (envs, 0, m-1);
+      m= N(envs);
+      r << get_envs (envs, array<tree> ());
+    }
+    else if (is_func (t[i], SET, 2) && repeat_envs (t[i][0])) {
+      r << t[i];
+      done << t[i][0];
+      set_envs (t[i], envs);
+    }
+    else if (is_func (t[i], SET, 2) && t[i][0] == MODE && t[i][1] == "text") {
+      r << t[i];
+      r << get_envs (envs, array<tree> ());
+    }
+    else if (is_func (t[i], RESET, 1)) {
+      r << t[i];
+      reset_envs (t[i], envs);
+    }
+    else if (begin) {
+      r << get_envs (envs, done);
+      r << t[i];
+      begin= false;
+    }
+    else
+      r << t[i];
+  }
+  return r;
+}
+
+tree
+reopen_long_matches (tree t) {
+  if (!is_document (t)) return t;
+  int i, n= N(t);
+  tree r (DOCUMENT);
+  array< array<tree> > envs;
+  for (i=0; i<n; i++) {
+    tree tmp= reopen_envs (t[i], envs);
+    r << tmp;
+  }
+  return r;
+}
+
+static tree
+handle_matches (tree t) {
+  t= reopen_long_matches (t);
+  t= handle_improper_matches (t);
+  return t;
+}
+
 /******************************************************************************
 * Further finalization after upgrading
 ******************************************************************************/
@@ -3973,7 +4099,7 @@ latex_to_tree (tree t1) {
   // cout << "\n\nt4= " << t4 << "\n\n";
   tree t5= is_document? finalize_preamble (t4, style): t4;
   // cout << "\n\nt5= " << t5 << "\n\n";
-  tree t6= handle_improper_matches (t5);
+  tree t6= handle_matches (t5);
   // cout << "\n\nt6= " << t6 << "\n\n";
   if ((!is_document) && is_func (t6, DOCUMENT, 1)) t6= t6[0];
   tree t7= upgrade_tex (t6);
