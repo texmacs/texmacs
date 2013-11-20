@@ -188,12 +188,11 @@ highlight_box_rep::display_classic (renderer& ren) {
 
 void
 highlight_box_rep::display_ring (renderer& ren) {
-  SI LW= lw, BW= bw, RW= rw, TW= tw;
+  SI LW= lw, BW= bw, TW= tw;
   if (!ren->is_printer ()) {
     SI pixel= ren->pixel;
     LW= ((lw + pixel - 1) / pixel) * pixel;
     BW= ((bw + pixel - 1) / pixel) * pixel;
-    RW= ((rw + pixel - 1) / pixel) * pixel;
     TW= ((tw + pixel - 1) / pixel) * pixel;
   }
 
