@@ -1249,17 +1249,17 @@ latex_command_to_tree (tree t) {
 
   if (is_tuple (t, "\\newtheorem", 2) || is_tuple (t, "\\newdef", 2) ||
       is_tuple (t, "\\newtheorem*", 2)) {
-    string var= t2e(t[1])->label;
-    string val= t2e(t[2])->label;
+    string var= v2e(t[1]);
+    string val= v2e(t[2]);
     return compound ("new-theorem", var, val);
   }
 
   if (is_tuple (t, "\\newenvironment", 3)) {
-    string var= t2e(t[1])->label;
+    string var= v2e(t[1]);
     return tree (ASSIGN, var, tree (ENV, l2e (t[2]), l2e (t[3])));
   }
   if (is_tuple (t, "\\newenvironment*", 4)) {
-    string var= t2e(t[1])->label;
+    string var= v2e(t[1]);
     int i, arity= as_int (l2e(t[2])->label);
     tree e (ENV);
     for (i=1; i<=arity; i++) e << as_string (i);
@@ -1268,7 +1268,7 @@ latex_command_to_tree (tree t) {
     return tree (ASSIGN, var, e);
   }
   if (is_tuple (t, "\\newenvironment**", 5)) {
-    string var= t2e(t[1])->label;
+    string var= v2e(t[1]);
     int i, arity= as_int (l2e(t[2])->label);
     tree default_option= l2e(t[3]);
     tree e1 (ENV), e2 (MACRO), e3 (APPLY);
