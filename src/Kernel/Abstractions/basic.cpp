@@ -130,6 +130,9 @@ debug_message_sub (string channel, tree msg) {
       cout << msg;
     }
   }
+
+  int n= N(debug_messages);
+  if (n > 250) debug_messages= debug_messages (n-200, n);
 }
 
 void

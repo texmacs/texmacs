@@ -43,6 +43,9 @@
   (-> "Execute"
       ("Execute system command" (interactive system))
       ("Evaluate scheme expression" (interactive footer-eval)))
+  (-> "Consoles"
+      ("Debugging console" (open-debug-console))
+      ("Error messages" (open-error-messages)))
   (-> "Selections"
       (link tools-selections-menu))
   (-> "Update"
@@ -64,8 +67,7 @@
       ("Count words" (show-word-count))
       ("Count lines" (show-line-count)))
   (-> "Miscellaneous"
-      ("Clear undo history" (clear-undo-history))
-      ("Show debugging console" (open-debug-console)))
+      ("Clear undo history" (clear-undo-history)))
   (-> "Experimental"
       ("Fast environments" (toggle-preference "fast environments"))
       ("Alpha transparency" (toggle-preference "experimental alpha"))
