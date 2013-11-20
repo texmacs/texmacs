@@ -1715,7 +1715,7 @@
 
 (define (tmtex-eqnarray s l)
   (tmtex-env-set "mode" "math")
-  (let ((r (tmtex-table-apply '() (string->symbol s) (car l))))
+  (let ((r (tmtex-table-apply (string->symbol s) '() (car l))))
     (tmtex-env-reset "mode")
     r))
 
