@@ -48,17 +48,18 @@
 
 (tm-widget ((console-widget kinds selected) quit)
   (padded
-    (resize ("500px" "800px" "1200px") ("300px" "600px" "1000px")
+    (resize ("500px" "800px" "1200px" "left")
+            ("300px" "600px" "1000px" "bottom")
       (refreshable "console-widget"
         (texmacs-output
           (messages->document selected)
           '(style "generic"))))
-    (glue #t #f 0 0))
-  ======
-  (hlist
-    >>
-    (explicit-buttons
-      ("Done" (quit)))))
+    (glue #t #f 0 0)
+    ======
+    (hlist
+      >>
+      (explicit-buttons
+        ("Done" (quit))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User interface

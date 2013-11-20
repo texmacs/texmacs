@@ -20,6 +20,7 @@
 SI get_dx (gravity grav, SI w);
 SI get_dy (gravity grav, SI h);
 gravity opposite (gravity grav);
+wk_widget wrap_scroll_widget (wk_widget w);
 
 /******************************************************************************
 * Canvas widgets
@@ -291,11 +292,9 @@ canvas_widget_rep::handle (event ev) {
 class resize_widget_rep: public basic_widget_rep {
   int style;
   string minw, minh, defw, defh, maxw, maxh;
-  string hpos, vpos;
 public:
   resize_widget_rep (wk_widget w, int style, string w1, string h1,
-                     string w2, string h2, string w3, string j3,
-                     string hpos2, string vpos2);
+                     string w2, string h2, string w3, string j3);
   operator tree ();
   void handle_get_size (get_size_event ev);
   void handle_repaint (repaint_event ev);
@@ -306,8 +305,7 @@ resize_widget_rep::resize_widget_rep (wk_widget w, int style2,
                                       string w2, string h2,
                                       string w3, string h3):
   basic_widget_rep (1), style (style2), minw (w1), minh (h1),
-  defw (w2), defh (h2), maxw (w3), maxh (h3),
-  hpos (hpos2), vpos (vpos2) { a[0]= w; }
+  defw (w2), defh (h2), maxw (w3), maxh (h3) { a[0]= w; }
 
 resize_widget_rep::operator tree () {
   return tree (TUPLE, "resize", (tree) a[0], defw, defh);
@@ -338,12 +336,27 @@ resize_widget_rep::handle_repaint (repaint_event ev) {
 
 wk_widget
 resize_widget (wk_widget w, int style, string w1, string h1,
-               string w2, string h2, string w3, string h3,
-               string hp, string vp) {
+               string w2, string h2, string w3, string h3) {
   //cout << "min: " << w1 << ", " << h1 << "\n";
   //cout << "def: " << w2 << ", " << h2 << "\n";
   //cout << "max: " << w3 << ", " << h3 << "\n";
-  return tm_new<resize_widget_rep> (w, style, w1, h1, w2, h2, w3, h3, hp, vp);
+  return tm_new<resize_widget_rep> (w, style, w1, h1, w2, h2, w3, h3);
+}
+
+wk_widget
+resize_widget (wk_widget w, int style, string w1, string h1,
+               string w2, string h2, string w3, string h3,
+               string hp, string vp) {
+  wk_widget cw= w;
+  if (vp == "bottom") {
+    cw= canvas_widget (wrap_scroll_widget (cw), south_west, false);
+    SI widw, widh;
+    w << get_size (widw, widh, -1);
+    abs_round (widw, widh);
+    cw << set_coord4 ("extents", 0, -widh, widw, 0);
+    cw << set_scroll_pos (0, -widh);
+  }
+  return resize_widget (cw, style, w1, h1, w2, h2, w3, h3);
 }
 
 /******************************************************************************
