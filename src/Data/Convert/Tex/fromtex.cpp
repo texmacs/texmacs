@@ -3406,6 +3406,9 @@ is_hyper_link (string s) {
 tree
 finalize_misc (tree t) {
   if (is_atomic (t)) return t;
+  // Fixme: to be improved when TeXmacs will allow easy personalisation
+  else if (is_compound (t, "enumerate", 2))
+    return compound ("enumerate", t[1]);
   else if (is_compound (t, "verbatim", 1) &&
            is_atomic (t[0]) && is_hyper_link (t[0]->label)) {
     return compound ("href", finalize_misc (t[0]));
