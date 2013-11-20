@@ -1569,7 +1569,7 @@ latex_parser::parse (string s, int change) {
 	i += 30;
 	start= i;
       }
-      else if (count == 0 &&
+      else if (test_macro (s, i, "\\nextbib") || (count == 0 &&
                 (test_env   (s, i, "document")        ||
                  test_env   (s, i, "abstract")        ||
                  test_macro (s, i, "\\part")          ||
@@ -1581,7 +1581,7 @@ latex_parser::parse (string s, int change) {
                  test_macro (s, i, "\\subparagraph")  ||
                  test_macro (s, i, "\\nextbib")       ||
                  test_macro (s, i, "\\newcommand")    ||
-                 test_macro (s, i, "\\def"))) {
+                 test_macro (s, i, "\\def")))) {
         a << s (start, i);
         start= i;
         while (i < n && test_macro (s, i, "\\nextbib")) {
@@ -1616,7 +1616,8 @@ latex_parser::parse (string s, int change) {
           i= cut + 1;
         }
       }
-      else if (s[i] != '\n') i--;
+      else if (s[i] != '\n' && !(s[i] == '\\' && test (s, i, "\\nextbib")))
+        i--;
     }
     else if ((i == 0 || s[i-1] != '\\') && s[i] == '{')
       count++;
