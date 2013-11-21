@@ -494,8 +494,8 @@ protected_call (object cmd) {
     get_current_editor()->before_menu_action ();
     call (cmd);
     get_current_editor()->after_menu_action ();
-  }
 #ifdef USE_EXCEPTIONS
+  }
   catch (string s) {
     get_current_editor()->cancel_menu_action ();
   }
