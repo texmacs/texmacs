@@ -1,13 +1,13 @@
 
 /******************************************************************************
- * MODULE     : object.cpp
- * DESCRIPTION: Implementation of scheme objects
- * COPYRIGHT  : (C) 1999-2011 Joris van der Hoeven and Massimiliano Gubinelli
- *******************************************************************************
- * This software falls under the GNU general public license version 3 or later.
- * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
- * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
- ******************************************************************************/
+* MODULE     : object.cpp
+* DESCRIPTION: Implementation of scheme objects
+* COPYRIGHT  : (C) 1999-2011 Joris van der Hoeven and Massimiliano Gubinelli
+*******************************************************************************
+* This software falls under the GNU general public license version 3 or later.
+* It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+* in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+******************************************************************************/
 
 #include "object.hpp"
 #include "glue.hpp"
@@ -18,11 +18,12 @@
 #include "promise.hpp"
 #include "widget.hpp"
 #include "boot.hpp"
+#include "editor.hpp"
 
 
 /******************************************************************************
- * The object representation class
- ******************************************************************************/
+* The object representation class
+******************************************************************************/
 
 static list<tmscm > destroy_list;
 extern tmscm  object_stack;
@@ -48,8 +49,8 @@ tmscm_object_rep::~tmscm_object_rep () {
 
 
 /******************************************************************************
- * Routines on objects
- ******************************************************************************/
+* Routines on objects
+******************************************************************************/
 
 tm_ostream&
 operator << (tm_ostream& out, object obj) {
@@ -79,8 +80,8 @@ hash (object obj) {
 
 
 /******************************************************************************
- * Utilities
- ******************************************************************************/
+* Utilities
+******************************************************************************/
 
 object null_object () {
   return tmscm_to_object (tmscm_null ()); }
@@ -113,8 +114,8 @@ object cadddr (object obj) {
 
 
 /******************************************************************************
- * Predicates
- ******************************************************************************/
+* Predicates
+******************************************************************************/
 
 bool is_null (object obj) { return tmscm_is_null (object_to_tmscm (obj)); }
 bool is_list (object obj) { return tmscm_is_list (object_to_tmscm (obj)); }
@@ -129,8 +130,9 @@ bool is_url (object obj) { return tmscm_is_url (object_to_tmscm (obj)); }
 bool is_widget (object obj) { return tmscm_is_widget (object_to_tmscm (obj)); }
 
 /******************************************************************************
- * Basic conversions
- ******************************************************************************/
+* Basic conversions
+******************************************************************************/
+
 object::object (tmscm_object_rep* o): rep (static_cast<object_rep*>(o)) {}
 object::object (): rep (tm_new<tmscm_object_rep> (tmscm_null ())) {}
 object::object (bool b): rep (tm_new<tmscm_object_rep> (bool_to_tmscm  (b))) {}
@@ -286,8 +288,8 @@ scheme_cmd (object cmd) {
 }
 
 /******************************************************************************
- * Conversions to functional objects
- ******************************************************************************/
+* Conversions to functional objects
+******************************************************************************/
 
 static inline array<tmscm >
 array_lookup (array<object> a) {
@@ -335,8 +337,8 @@ as_promise_widget (object obj) {
 }
 
 /******************************************************************************
- * Evaluation and function calls
- ******************************************************************************/
+* Evaluation and function calls
+******************************************************************************/
 
 object eval (const char* expr) {
   return tmscm_to_object (eval_scheme (expr)); }
@@ -398,8 +400,8 @@ object call (object fun, array<object> a) {
   return tmscm_to_object (call_scheme (object_to_tmscm (fun), array_lookup(a))); }
 
 /******************************************************************************
- * User preferences
- ******************************************************************************/
+* User preferences
+******************************************************************************/
 
 static bool preferences_ok= false;
 
@@ -430,8 +432,8 @@ get_preference (string var, string def) {
 }
 
 /******************************************************************************
- * Delayed evaluation
- ******************************************************************************/
+* Delayed evaluation
+******************************************************************************/
 
 #ifndef QTTEXMACS
 static array<object> delayed_queue;
@@ -479,3 +481,10 @@ clear_pending_commands () {
   start_queue  = array<time_t> (0);
 }
 #endif // QTTEXMACS
+
+void
+protected_call (object cmd) {
+  get_current_editor()->before_menu_action ();
+  call (cmd);
+  get_current_editor()->after_menu_action ();
+}

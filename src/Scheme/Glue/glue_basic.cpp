@@ -553,6 +553,19 @@ tmg_exec_delayed_pause (tmscm arg1) {
 }
 
 tmscm
+tmg_protected_call (tmscm arg1) {
+  TMSCM_ASSERT_OBJECT (arg1, TMSCM_ARG1, "protected-call");
+
+  object in1= tmscm_to_object (arg1);
+
+  // TMSCM_DEFER_INTS;
+  protected_call (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_notify_preferences_booted () {
   // TMSCM_DEFER_INTS;
   notify_preferences_booted ();
@@ -7308,6 +7321,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("object->command",  tmg_object_2command, 1, 0, 0);
   tmscm_install_procedure ("exec-delayed",  tmg_exec_delayed, 1, 0, 0);
   tmscm_install_procedure ("exec-delayed-pause",  tmg_exec_delayed_pause, 1, 0, 0);
+  tmscm_install_procedure ("protected-call",  tmg_protected_call, 1, 0, 0);
   tmscm_install_procedure ("notify-preferences-booted",  tmg_notify_preferences_booted, 0, 0, 0);
   tmscm_install_procedure ("cpp-has-preference?",  tmg_cpp_has_preferenceP, 1, 0, 0);
   tmscm_install_procedure ("cpp-get-preference",  tmg_cpp_get_preference, 2, 0, 0);

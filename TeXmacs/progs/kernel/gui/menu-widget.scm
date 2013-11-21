@@ -103,18 +103,13 @@
   (object->command (lambda () (exec-delayed cmd))))
 
 (define-macro (make-menu-command cmd)
-  `(delay-command (lambda ()
-                    (menu-before-action)
-                    ,cmd
-                    (menu-after-action))))
+  `(delay-command (lambda () (protected-call (lambda () ,cmd)))))
 
 (define (menu-protect cmd)
   (lambda x
     (exec-delayed
       (lambda ()
-        (menu-before-action)
-        (apply cmd x)
-        (menu-after-action)))))
+	(protected-call (lambda () (apply cmd x)))))))
 
 (define (kbd-system shortcut menu-flag?)
   (cond ((nstring? shortcut) "")

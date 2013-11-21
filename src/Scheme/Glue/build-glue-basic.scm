@@ -66,6 +66,7 @@
   (object->command as_command (command object))
   (exec-delayed exec_delayed (void object))
   (exec-delayed-pause exec_delayed_pause (void object))
+  (protected-call protected_call (void object))
   (notify-preferences-booted notify_preferences_booted (void))
   (cpp-has-preference? has_user_preference (bool string))
   (cpp-get-preference get_user_preference (string string string))
