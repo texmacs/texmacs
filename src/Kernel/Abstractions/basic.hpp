@@ -86,7 +86,12 @@ bool debug_get (string s);
 #define DEBUG_AQUA (debug (DEBUG_FLAG_QT))
 #define DEBUG_AQUA_WIDGETS (debug (DEBUG_FLAG_QT_WIDGETS))
 
+//#define USE_EXCEPTIONS
 void tm_failure (const char* msg);
+#ifdef USE_EXCEPTIONS
+#define ASSERT(cond,msg) { if (!(cond)) throw string (msg); }
+#define FAILED(msg) { throw string (msg); }
+#else
 #ifdef DEBUG_ASSERT
 #include <assert.h>
 #define ASSERT(cond,msg) { if (!(cond)) { tm_failure (msg); assert (cond); } }
@@ -94,6 +99,7 @@ void tm_failure (const char* msg);
 #else
 #define ASSERT(cond,msg) { if (!(cond)) { tm_failure (msg); } }
 #define FAILED(msg) { tm_failure (msg); }
+#endif
 #endif
 
 class tree;

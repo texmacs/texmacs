@@ -482,9 +482,34 @@ clear_pending_commands () {
 }
 #endif // QTTEXMACS
 
+/******************************************************************************
+* Protected evaluation
+******************************************************************************/
+
+#ifdef USE_EXCEPTIONS
+string the_exception;
+
+void
+protected_call (object cmd) {
+  try {
+    get_current_editor()->before_menu_action ();
+    call (cmd);
+    get_current_editor()->after_menu_action ();
+  }
+  catch (string s) {
+    the_exception= s;
+  }
+
+  if (N(the_exception) != 0) {
+    failed_error << "Exception: " << the_exception << LF;
+    the_exception= "";
+  }
+}
+#else
 void
 protected_call (object cmd) {
   get_current_editor()->before_menu_action ();
   call (cmd);
   get_current_editor()->after_menu_action ();
 }
+#endif
