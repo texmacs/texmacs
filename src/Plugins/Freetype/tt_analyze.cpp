@@ -565,4 +565,19 @@ tt_analyze (string family) {
   return r;
 }
 
+double
+trace_distance (string v1, string v2, double m) {
+  return 0;
+}
+
+string
+find_attribute_value (array<string> a, string s) {
+  return "";
+}
+
+int
+characteristic_distance (array<string> a, array<string> s) {
+  return 0;
+}
+
 #endif // USE_FREETYPE
