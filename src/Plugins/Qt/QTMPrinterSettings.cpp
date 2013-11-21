@@ -10,7 +10,6 @@
  ******************************************************************************/
 
 #include "QTMPrinterSettings.hpp"
-#include "tm_ostream.hpp"
 #include "qt_utilities.hpp"
 
 #include <QPrinter>
@@ -483,12 +482,13 @@ WinQTMPrinterSettings::systemCommandFinished(int exitCode,
       printerOptions["Duplex"] = "Yes No"; 
     if (capt[1] == "COLORDEVICE" && capt[2].toInt() > 0)
       printerOptions["ColorModel"] = "Monochrome Gray Color";
-    if (capt[1] == "COLLATE")
-      if (capt[2].toInt() > 0)
+    if (capt[1] == "COLLATE") {
+      if (capt[2].toInt() > 0) {
         printerOptions["Collate"] = "No *Yes";
-      else
+      } else {
         printerOptions["Collate"] = "*No Yes";
-    
+      }
+    }
     if (capt[1] == "ENUMRESOLUTIONS") {
       resolutionsCounter = capt[2].toInt();   // The next iterations are special
       //printerOptions["Resolution"] = QString();
