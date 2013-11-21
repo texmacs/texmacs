@@ -10,11 +10,11 @@
 ******************************************************************************/
 
 #if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
-#include <iostream>
 #include <QtCore/Qstring>
 #include <QtGui>
 #include "poppler/qt4/poppler-qt4.h"
 #include "WINPrint.hpp"
+#include "tm_ostream.hpp"
 
 QPrinter* WINPrint::Prt=NULL;
 
