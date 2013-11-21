@@ -31,6 +31,7 @@
 (tm-define tmtex-replace-style? #t)
 (define tmtex-src (make-ahash-table))
 (define tmtex-env (make-ahash-table))
+(define tmtex-macros (make-ahash-table))
 (define tmtex-dynamic (make-ahash-table))
 (define tmtex-serial 0)
 (define tmtex-ref-cnt 1)
@@ -91,6 +92,7 @@
 (define (tmtex-initialize opts)
   (set! tmtex-ref-cnt 1)
   (set! tmtex-env (make-ahash-table))
+  (set! tmtex-macros (make-ahash-table))
   (set! tmtex-dynamic (make-ahash-table))
   (set! tmtex-serial 0)
   (set! tmtex-auto-produce 0)
@@ -509,6 +511,19 @@
     ;(for-each (lambda (x) (display* (car x) "  --->  " (cdr x) "\n\n")) (ahash-table->list tmtex-src))
     tmtex-src))
 
+(define (attach-macros t)
+  (with macros
+    (filter (lambda (x) (not (ahash-ref tmtex-macros x)))
+            (cdr (latex-macro-defs t)))
+    (if (not (list>0? macros)) t
+      (begin
+        (for-each (lambda (x) (ahash-set! tmtex-macros x #t)) macros)
+        (with preamble
+          `(!preamble ,(latex-serialize-preamble `(!append ,@macros)))
+          `(!concat (!preamble "%%%%%%%%%% Start TeXmacs macros\n")
+                    ,preamble (!preamble "%%%%%%%%%% End TeXmacs macros\n")
+                    ,t))))))
+
 (define (tmtex-file l)
   (let* ((doc (car l))
 	 (styles (cadr l))
@@ -533,6 +548,8 @@
 	       (preamble* (ahash-with tmtex-env :preamble #t
 			    (map-in-order tmtex doc-preamble)))
                (body* (tmtex doc-body)))
+          (if (== (get-preference "latex->texmacs:preserve-source") "on")
+            (set! body* (map-in-order attach-macros body*)))
 	  (list '!file body* styles* lang init preamble*)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
