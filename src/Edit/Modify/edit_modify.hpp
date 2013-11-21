@@ -42,6 +42,7 @@ public:
   void archive_state ();
   void start_editing ();
   void end_editing ();
+  void cancel_editing ();
   void start_slave (double a);
   void mark_start (double a);
   bool mark_cancel (double a);

@@ -218,21 +218,36 @@ edit_interface_rep::kbd_shortcut (string cmd) {
 
 void
 edit_interface_rep::handle_keypress (string key, time_t t) {
-  if (DEBUG_KEYBOARD)
-    debug_keyboard << "Pressed " << key << " at " << t << "\n";
-  //time_t t1= texmacs_time ();
-  if (is_nil (eb)) apply_changes ();
-  start_editing ();
-  string zero= "a"; zero[0]= '\0';
-  string gkey= replace (key, zero, "<#0>");
-  call ("keyboard-press", object (gkey), object ((double) t));
-  update_focus_loci ();
-  if (!is_nil (focus_ids))
-    call ("link-follow-ids", object (focus_ids), object ("focus"));
-  notify_change (THE_DECORATIONS);
-  end_editing ();
-  //time_t t2= texmacs_time ();
-  //if (t2 - t1 >= 10) cout << "handle_keypress took " << t2-t1 << "ms\n";
+  bool started= false;
+#ifdef USE_EXCEPTIONS
+  try {
+#endif
+    if (DEBUG_KEYBOARD)
+      debug_keyboard << "Pressed " << key << " at " << t << "\n";
+    //time_t t1= texmacs_time ();
+    if (is_nil (eb)) apply_changes ();
+    start_editing ();
+    started= true;
+    string zero= "a"; zero[0]= '\0';
+    string gkey= replace (key, zero, "<#0>");
+    call ("keyboard-press", object (gkey), object ((double) t));
+    update_focus_loci ();
+    if (!is_nil (focus_ids))
+      call ("link-follow-ids", object (focus_ids), object ("focus"));
+    notify_change (THE_DECORATIONS);
+    end_editing ();
+    //time_t t2= texmacs_time ();
+    //if (t2 - t1 >= 10) cout << "handle_keypress took " << t2-t1 << "ms\n";
+#ifdef USE_EXCEPTIONS
+  }
+  catch (string msg) {
+    if (started) {
+      cancel_editing ();
+      interrupt_shortcut ();
+    }
+  }
+  handle_exceptions ();
+#endif
 }
 
 void drag_left_reset ();

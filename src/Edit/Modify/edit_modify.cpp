@@ -298,6 +298,11 @@ edit_modify_rep::end_editing () {
 }
 
 void
+edit_modify_rep::cancel_editing () {
+  global_cancel ();
+}
+
+void
 edit_modify_rep::start_slave (double a) {
   arch->start_slave (a);
 }

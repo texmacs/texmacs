@@ -788,6 +788,13 @@ edit_interface_rep::after_menu_action () {
   windows_delayed_refresh (1);
 }
 
+void
+edit_interface_rep::cancel_menu_action () {
+  notify_change (THE_DECORATIONS);
+  cancel_editing ();
+  windows_delayed_refresh (1);
+}
+
 rectangle
 edit_interface_rep::get_window_extents () {
   SI ox, oy, w, h;

@@ -519,28 +519,39 @@ delayed_call_mouse_event (string kind, SI x, SI y, SI m, time_t t) {
 
 void
 edit_interface_rep::handle_mouse (string kind, SI x, SI y, int m, time_t t) {
-  if (is_nil (eb)) apply_changes ();
-  start_editing ();
-  x= ((SI) (x / magf));
-  y= ((SI) (y / magf));
-  //cout << kind << " (" << x << ", " << y << "; " << m << ")"
-  //     << " at " << t << "\n";
+  bool started= false;
+#ifdef USE_EXCEPTIONS
+  try {
+#endif
+    if (is_nil (eb)) apply_changes ();
+    start_editing ();
+    started= true;
+    x= ((SI) (x / magf));
+    y= ((SI) (y / magf));
+    //cout << kind << " (" << x << ", " << y << "; " << m << ")"
+    //     << " at " << t << "\n";
 
-  string rew= kind;
-  SI dist= (SI) (5 * PIXEL / magf);
-  rew= detect_left_drag ((void*) this, rew, x, y, t, dist);
-  if (rew == "start-drag-left") {
-    call_mouse_event (rew, left_x, left_y, m, t);
-    delayed_call_mouse_event ("dragging-left", x, y, m, t);
-  }
-  else {
-    rew= detect_right_drag ((void*) this, rew, x, y, t, dist);
-    if (rew == "start-drag-right") {
-      call_mouse_event (rew, right_x, right_y, m, t);
-      delayed_call_mouse_event ("dragging-right", x, y, m, t);
+    string rew= kind;
+    SI dist= (SI) (5 * PIXEL / magf);
+    rew= detect_left_drag ((void*) this, rew, x, y, t, dist);
+    if (rew == "start-drag-left") {
+      call_mouse_event (rew, left_x, left_y, m, t);
+      delayed_call_mouse_event ("dragging-left", x, y, m, t);
     }
-    else call_mouse_event (rew, x, y, m, t);
+    else {
+      rew= detect_right_drag ((void*) this, rew, x, y, t, dist);
+      if (rew == "start-drag-right") {
+        call_mouse_event (rew, right_x, right_y, m, t);
+        delayed_call_mouse_event ("dragging-right", x, y, m, t);
+      }
+      else call_mouse_event (rew, x, y, m, t);
+    }
+    end_editing ();
+#ifdef USE_EXCEPTIONS
   }
-
-  end_editing ();
+  catch (string msg) {
+    if (started) cancel_editing ();
+  }
+  handle_exceptions ();
+#endif
 }

@@ -150,6 +150,7 @@ public:
   virtual void full_screen_mode (bool flag) = 0;
   virtual void before_menu_action () = 0;
   virtual void after_menu_action () = 0;
+  virtual void cancel_menu_action () = 0;
   virtual rectangle get_window_extents () = 0;
   virtual cursor search_cursor (path p) = 0;
   virtual selection search_selection (path start, path end) = 0;
@@ -303,6 +304,7 @@ public:
   virtual void archive_state () = 0;
   virtual void start_editing () = 0;
   virtual void end_editing () = 0;
+  virtual void cancel_editing () = 0;
   virtual void start_slave (double a) = 0;
   virtual void mark_start (double a) = 0;
   virtual bool mark_cancel (double a) = 0;

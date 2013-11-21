@@ -101,6 +101,17 @@ global_confirm () {
   pending_archs= hashset<pointer> ();
 }
 
+void
+global_cancel () {
+  iterator<pointer> it = iterate (pending_archs);
+  while (it->busy()) {
+    archiver_rep* arch= (archiver_rep*) it->next();
+    arch->cancel ();
+    arch->simplify ();
+  }
+  pending_archs= hashset<pointer> ();
+}
+
 /******************************************************************************
 * Useful subroutines
 ******************************************************************************/

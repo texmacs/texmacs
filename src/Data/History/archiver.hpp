@@ -15,6 +15,7 @@
 
 void global_clear_history ();
 void global_confirm ();
+void global_cancel ();
 
 class archiver_rep: public concrete_struct {
   patch    archive;        // undo and redo archive
@@ -74,6 +75,7 @@ public:
   friend void archive_announce (archiver_rep* arch, modification mod);
   friend void global_clear_history ();
   friend void global_confirm ();
+  friend void global_cancel ();
 };
 
 class archiver {

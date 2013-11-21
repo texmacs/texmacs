@@ -89,8 +89,10 @@ bool debug_get (string s);
 //#define USE_EXCEPTIONS
 void tm_failure (const char* msg);
 #ifdef USE_EXCEPTIONS
-#define ASSERT(cond,msg) { if (!(cond)) throw string (msg); }
-#define FAILED(msg) { throw string (msg); }
+void tm_throw (const char* msg);
+void handle_exceptions ();
+#define ASSERT(cond,msg) { if (!(cond)) tm_throw (msg); }
+#define FAILED(msg) { tm_throw (msg); }
 #else
 #ifdef DEBUG_ASSERT
 #include <assert.h>

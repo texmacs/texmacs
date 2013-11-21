@@ -159,6 +159,29 @@ get_debug_messages (string kind, int max_number) {
   return r;
 }
 
+#ifdef USE_EXCEPTIONS
+string the_exception;
+string the_report;
+string get_crash_report (const char* msg);
+
+void
+tm_throw (const char* msg) {
+  the_exception= msg;
+  the_report   = get_crash_report (msg);
+  throw string (msg);
+}
+
+void
+handle_exceptions () {
+  if (N (the_exception) != 0) {
+    failed_error << "Exception: " << the_exception << LF;
+    //failed_error << the_report;
+    the_exception= "";
+    the_report   = "";
+  }
+}
+#endif
+
 /******************************************************************************
 * miscellaneous routines
 ******************************************************************************/
