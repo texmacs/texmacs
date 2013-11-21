@@ -806,6 +806,7 @@ enable_option_checking
 enable_guile2
 with_x
 with_iconv
+enable_freetype
 with_freetype
 with_cairo
 with_imlib2
@@ -1464,6 +1465,7 @@ Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-guile2         enable compilation with Guile 2, for developping purpose
+  --disable-freetype      enable compilation without freetype
   --disable-fastalloc     omit fast allocator for small objects
   --enable-experimental   support new style rewriting code
   --disable-macosx-extensions  do not use Mac specific services (spellchecker, image handling, ...)
@@ -6403,6 +6405,14 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 # Checks for freetype library
 #--------------------------------------------------------------------
 
+# Check whether --enable-freetype was given.
+if test "${enable_freetype+set}" = set; then :
+  enableval=$enable_freetype; disable_freetype="yes"
+else
+  disable_freetype="no"
+fi
+
+
 
 # Check whether --with-freetype was given.
 if test "${with_freetype+set}" = set; then :
@@ -6467,7 +6477,14 @@ fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 else
-  as_fn_error $? "cannot find freetype library" "$LINENO" 5
+
+    if test "$disable_freetype" != "yes"; then
+      as_fn_error $? "Cannot find freetype library.
+TeXmacs almost need freetype library to work properly.
+If you know what you are doing, you can configure with --disable-freetype" "$LINENO" 5
+    fi
+
+
 fi
 
 
