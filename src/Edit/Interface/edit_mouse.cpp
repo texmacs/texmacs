@@ -266,6 +266,12 @@ edit_interface_rep::set_pointer (
 
 void
 edit_interface_rep::update_mouse_loci () {
+  if (is_nil (eb)) {
+    locus_new_rects= rectangles ();
+    mouse_ids= list<string> ();
+    return;
+  }
+
   int old_mode= set_access_mode (DRD_ACCESS_SOURCE);
   path cp= path_up (tree_path (path (), last_x, last_y, 0));
   set_access_mode (old_mode);
