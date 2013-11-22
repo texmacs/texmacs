@@ -76,8 +76,8 @@ public:
     eff (eff2), dx (dx2), dy (dy2) {}
   rectangle get_extents (array<rectangle> rs) {
     rectangle r= eff->get_extents (rs);
-    return rectangle (floor (r->x1 + dx), floor (r->y1 + dy),
-                      ceil  (r->x2 + dx), ceil  (r->y2 + dy)); }
+    return rectangle ((SI) floor (r->x1 + dx), (SI) floor (r->y1 + dy),
+                      (SI) ceil  (r->x2 + dx), (SI) ceil  (r->y2 + dy)); }
   picture apply (array<picture> pics, SI pixel) {
     return shift (eff->apply (pics, pixel), dx / pixel, dy / pixel); }
 };
@@ -90,8 +90,8 @@ public:
     eff (eff2), sx (sx2), sy (sy2) {}
   rectangle get_extents (array<rectangle> rs) {
     rectangle r= eff->get_extents (rs);
-    return rectangle (floor (sx * r->x1), floor (sy * r->y1),
-                      ceil  (sx * r->x2), ceil  (sy * r->y2)); }
+    return rectangle ((SI) floor (sx * r->x1), (SI) floor (sy * r->y1),
+                      (SI) ceil  (sx * r->x2), (SI) ceil  (sy * r->y2)); }
   picture apply (array<picture> pics, SI pixel) {
     return magnify (eff->apply (pics, pixel), sx, sy); }
 };
@@ -105,8 +105,10 @@ public:
   rectangle get_extents (array<rectangle> rs) {
     rectangle rect= eff->get_extents (rs);
     double delta= r * (1 - a);
-    return rectangle (floor (rect->x1 - delta), floor (rect->y1 - delta),
-                      ceil  (rect->x2 + delta), ceil  (rect->y2 + delta)); }
+    return rectangle ((SI) floor (rect->x1 - delta),
+                      (SI) floor (rect->y1 - delta),
+                      (SI) ceil  (rect->x2 + delta),
+                      (SI) ceil  (rect->y2 + delta)); }
   picture apply (array<picture> pics, SI pixel) {
     return bubble (eff->apply (pics, pixel), r / pixel, a); }
 };
@@ -164,8 +166,8 @@ public:
   motion_pen_effect_rep (double dx2, double dy2):
     dx (dx2), dy (dy2) {}
   rectangle get_extents (array<rectangle> rs) { (void) rs;
-    return rectangle (min (dx, 0.0), min (dy, 0.0),
-                      max (dx, 0.0), max (dy, 0.0)); }
+    return rectangle ((SI) min (dx, 0.0), (SI) min (dy, 0.0),
+                      (SI) max (dx, 0.0), (SI) max (dy, 0.0)); }
   picture apply (array<picture> pics, SI pixel) { (void) pics;
     return motion_pen_picture (dx / pixel, dy / pixel); }
 };

@@ -108,7 +108,8 @@ box
 wide_invbreve_box (path ip, SI x1, SI x2, pencil pen) {
   SI width, height;
   get_wide_parameters (x1, x2, pen, width, height);
-  return arc_box (ip, 0, -height, width, 1.1*height, 370<<6, 530<<6, pen);
+  return arc_box (ip, 0, -height, width,
+                  (SI) (1.1*height), 370<<6, 530<<6, pen);
 }
 
 box
