@@ -372,4 +372,11 @@ array<T>::operator tree () {
   return t;
 }
 
+class formatted {
+public:
+  tree rep;
+  inline formatted (tree t): rep (t) {}
+  inline formatted (const formatted& f): rep (f.rep) {}
+};
+
 #endif // defined TREE_H

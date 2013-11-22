@@ -15,6 +15,7 @@
 #include "Freetype/tt_file.hpp"
 #include "dictionary.hpp"
 #include "sys_utils.hpp"
+#include "convert.hpp"
 
 /******************************************************************************
 * debugging
@@ -98,28 +99,24 @@ bool debug_lf_flag= false;
 extern bool texmacs_started;
 
 void
-debug_message_sub (string channel, tree msg) {
-  if (is_atomic (msg) && occurs ("\n", msg->label)) {
-    string s= msg->label;
-    int pos= search_forwards ("\n", 0, s);
-    debug_message_sub (channel, s (0, pos));
+debug_message_sub (string channel, string msg) {
+  if (occurs ("\n", msg)) {
+    int pos= search_forwards ("\n", 0, msg);
+    debug_message_sub (channel, msg (0, pos));
     debug_lf_flag= true;
     cout << "\n";
-    if (pos+1 < N(s))
-      debug_message_sub (channel, s (pos+1, N(s)));
+    if (pos+1 < N(msg))
+      debug_message_sub (channel, msg (pos+1, N(msg)));
   }
   else {
     int n= N(debug_messages);
     if (!debug_lf_flag && n>0 && is_tuple (debug_messages[n-1], channel)) {
       tree *t= &(debug_messages[n-1][1]);
-      if (is_concat (*t) && is_atomic ((*t)[N(*t)-1])) t= &((*t)[N(*t)-1]);
-      if (is_atomic (msg) && is_atomic (*t)) *t= (*t)->label * msg->label;
-      else if (is_concat (*t)) (*t) << msg;
-      else *t= tree (CONCAT, *t, msg);
+      *t= (*t)->label * msg;
       cout << msg;
     }
     else {
-      debug_messages << tuple (channel, msg);
+      debug_messages << tuple (channel, msg, "");
       debug_lf_flag= false;
       if (channel != "debug-boot") {
         cout << "TeXmacs] ";
@@ -130,15 +127,21 @@ debug_message_sub (string channel, tree msg) {
       cout << msg;
     }
   }
-
-  int n= N(debug_messages);
-  if (n > 11000) debug_messages= debug_messages (n-10000, n);
 }
 
 void
-debug_message (string channel, tree msg) {
+debug_message (string channel, string msg) {
   debug_message_sub (channel, msg);
   if (texmacs_started) call ("notify-debug-message", object (channel));
+}
+
+void
+debug_formatted (string channel, tree msg) {
+  int n= N(debug_messages);
+  if (n>0 && is_tuple (debug_messages[n-1], channel)) {
+    debug_messages[n-1][2]= msg;
+    if (texmacs_started) call ("notify-debug-message", object (channel));
+  }
 }
 
 tree
@@ -146,7 +149,7 @@ get_debug_messages (string kind, int max_number) {
   tree m (TUPLE);
   for (int i=N(debug_messages)-1; i>=0; i--) {
     tree t= debug_messages[i];
-    if (!is_func (t, TUPLE, 2) || !is_atomic (t[0])) continue;
+    if (!is_func (t, TUPLE, 3) || !is_atomic (t[0])) continue;
     string s= t[0]->label;
     if (kind == "Debugging console" ||
         ends (s, "-error") ||
@@ -157,6 +160,12 @@ get_debug_messages (string kind, int max_number) {
   tree r (TUPLE);
   for (int i=N(m)-1; i>=0; i--) r << m[i];
   return r;
+}
+
+void
+clear_debug_messages () {
+  debug_messages= tree (TUPLE);
+  debug_lf_flag = false;
 }
 
 #ifdef USE_EXCEPTIONS
@@ -174,8 +183,8 @@ tm_throw (const char* msg) {
 void
 handle_exceptions () {
   if (N (the_exception) != 0) {
-    failed_error << "Exception: " << the_exception << LF;
-    //failed_error << the_report;
+    formatted arg (verbatim_to_tree (the_report, false, "utf-8"));
+    failed_error << "Exception, " << the_exception << arg << LF;
     the_exception= "";
     the_report   = "";
   }

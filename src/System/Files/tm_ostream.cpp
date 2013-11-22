@@ -21,6 +21,7 @@ tm_ostream_rep::~tm_ostream_rep () {}
 void tm_ostream_rep::flush () {}
 bool tm_ostream_rep::is_writable () const { return false; }
 void tm_ostream_rep::write (const char*) {}
+void tm_ostream_rep::write (tree t) {}
 
 /******************************************************************************
 * Standard streams
@@ -144,6 +145,7 @@ public:
 
   bool is_writable () const;
   void write (const char*);
+  void write (tree t);
 };
 
 debug_ostream_rep::debug_ostream_rep (string channel2): channel (channel2) {}
@@ -157,6 +159,11 @@ debug_ostream_rep::is_writable () const {
 void
 debug_ostream_rep::write (const char* s) {
   debug_message (channel, s);
+}
+
+void
+debug_ostream_rep::write (tree t) {
+  debug_formatted (channel, t);
 }
 
 tm_ostream
@@ -324,6 +331,12 @@ tm_ostream::operator << (long double ld) {
 tm_ostream&
 tm_ostream::operator << (const char* s) {
   rep->write (s);
+  return *this;
+}
+
+tm_ostream&
+tm_ostream::operator << (formatted f) {
+  rep->write (f.rep);
   return *this;
 }
 

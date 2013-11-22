@@ -16,6 +16,8 @@
 #include <cstdio>
 class string;
 class tm_ostream;
+class formatted;
+class tree;
 
 class tm_ostream_rep {
   int ref_count;
@@ -26,6 +28,7 @@ public:
 
   virtual bool is_writable () const;
   virtual void write (const char*);
+  virtual void write (tree);
   virtual void flush ();
 
   friend class tm_ostream;
@@ -71,6 +74,7 @@ public:
   tm_ostream& operator << (double);
   tm_ostream& operator << (long double);
   tm_ostream& operator << (const char*);
+  tm_ostream& operator << (formatted);
 };
 
 extern tm_ostream& cout;

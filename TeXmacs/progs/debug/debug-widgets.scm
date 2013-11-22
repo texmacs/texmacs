@@ -14,6 +14,28 @@
 (texmacs-module (debug debug-widgets))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Preferences
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (refresh-console . x)
+  (refresh-now "console-widget-categories")
+  (refresh-now "console-widget-messages"))
+
+(define-preferences
+  ("console details" "normal" refresh-console)
+  ("console size" "100" refresh-console))
+
+(define (encode-size sz)
+  (cond ((== sz "All") "1000000")
+        ((string-starts? sz "Last ") (string-drop sz 5))
+        (else "100")))
+
+(define (decode-size sz)
+  (cond ((not (string->number sz)) "Last 100")
+        ((> (string->number sz) 10000) "All")
+        (else (string-append "Last " sz))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Message selection
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -44,8 +66,12 @@
 
 (define (build-message m)
   (let* ((k (tm->stree (tm-ref m 0)))
-         (s (tm-ref m 1)))
-    (cond ((string-ends? k "-error")
+         (s (utf8->cork (tm->stree (tm-ref m 1))))
+         (t (tm->stree (tm-ref m 2))))
+    (cond ((and (!= t "") (== (get-preference "console details") "detailed"))
+           `(document ,(build-message `(tuple ,(tm-ref m 0) ,(tm-ref m 1) ""))
+                      (indent (small ,t))))
+          ((string-ends? k "-error")
            `(with "color" "#e02020" (concat "Error: " ,s)))
           ((string-ends? k "-warning")
            `(with "color" "dark magenta" (concat "Warning: " ,s)))
@@ -54,7 +80,8 @@
           (else s))))
 
 (define (messages->document kind selected)
-  (let* ((all-ms (tree-children (get-debug-messages kind 100)))
+  (let* ((n (or (string->number (get-preference "console size")) 100))
+         (all-ms (tree-children (get-debug-messages kind n)))
          (sel-ms (list-filter all-ms (cut message-among? <> selected))))
     `(document
        (with "language" "verbatim" "font-family" "tt" "par-par-sep" "0fn"
@@ -91,7 +118,19 @@
           (refreshable "console-widget-messages"
             (texmacs-output
               (messages->document kind (ahash-ref console-selected kind))
-              '(style "generic"))))))))
+              '(style "generic"))))))
+    ======
+    (explicit-buttons
+      (hlist
+        (enum (set-preference "console details" (locase-all answer))
+              '("Normal" "Detailed")
+              (upcase-first (get-preference "console details")) "80px")
+        // //
+        (enum (set-preference "console size" (encode-size answer))
+              '("Last 25" "Last 100" "Last 250" "Last 1000" "All")
+              (decode-size (get-preference "console size")) "80px")
+        >>>
+        ("Clear" (clear-debug-messages) (refresh-console))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Automatic updates of consoles
@@ -109,8 +148,7 @@
       (ahash-set! console-selected kind
                   (list-union (ahash-ref console-selected kind) delta))))
   (when (nnull? (ahash-set->list console-active?))
-    (refresh-now "console-widget-categories")
-    (refresh-now "console-widget-messages"))
+    (refresh-console))
   (when (and console-errors?
              (not (ahash-ref console-active? "Error messages")))
     (delayed

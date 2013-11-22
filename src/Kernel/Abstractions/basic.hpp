@@ -86,7 +86,7 @@ bool debug_get (string s);
 #define DEBUG_AQUA (debug (DEBUG_FLAG_QT))
 #define DEBUG_AQUA_WIDGETS (debug (DEBUG_FLAG_QT_WIDGETS))
 
-//#define USE_EXCEPTIONS
+#define USE_EXCEPTIONS
 void tm_failure (const char* msg);
 #ifdef USE_EXCEPTIONS
 void tm_throw (const char* msg);
@@ -105,8 +105,10 @@ void handle_exceptions ();
 #endif
 
 class tree;
-void debug_message (string channel, tree msg);
+void debug_message (string channel, string msg);
+void debug_formatted (string channel, tree msg);
 tree get_debug_messages (string kind, int max_number);
+void clear_debug_messages ();
 
 /******************************************************************************
 * miscellaneous routines
