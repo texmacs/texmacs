@@ -154,12 +154,20 @@ x_window_rep::initialize () {
   notify_size (w, Def_w, Def_h);
 }
 
+static x_drawable_rep*
+new_drawable (x_gui gui, x_window win) {
+  // FIXME: for gcc 3.*, use this in order to avoid ambiguity
+  // for tm_new with two arguments
+  return new x_drawable_rep (gui, win);
+  //return tm_new<x_drawable_rep> (gui, win);
+}
+
 x_window_rep::x_window_rep (widget w2, x_gui gui2, char* n2,
 			    SI min_w, SI min_h, SI def_w, SI def_h,
 			    SI max_w, SI max_h):
   window_rep (), w (w2), gui (gui2),
   orig_name (n2 == ((char*) NULL)? string ("popup"): n2), name (n2),
-  ren (tm_new<x_drawable_rep> ((const x_gui&) gui2, (const x_window&) this)),
+  ren (new_drawable (gui2, this)),
   Min_w (min_w), Min_h (min_h), Def_w (def_w), Def_h (def_h),
   Max_w (max_w), Max_h (max_h),
   win_x (0), win_y (0), win_w (Def_w/PIXEL), win_h (Def_h/PIXEL),
