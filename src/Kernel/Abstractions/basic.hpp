@@ -133,7 +133,7 @@ inline int hash (pointer ptr) {
 inline int hash (float x) {
   return (*((int*) ((void*) &x))) & 0xffffffff; }
 inline int hash (double x) {
-  union { long int n; double d; } u;
+  union { DI n; double d; } u;
   u.d= x; return (int) (u.n ^ (u.n >> 32)); }
 inline int copy (int x) { return x; }
 inline SI as_int (double x) { return (SI) floor (x + 0.5); }
