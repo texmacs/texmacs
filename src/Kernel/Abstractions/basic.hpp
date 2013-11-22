@@ -39,8 +39,10 @@ typedef char QI;
 typedef unsigned char QN;
 #ifdef OS_WIN32
 typedef __int64 DI;
+typedef unsigned __int64 DN;
 #else
 typedef long long int DI;
+typedef unsigned long long int DN;
 #endif
 typedef void* pointer;
 typedef unsigned int color;
@@ -121,13 +123,18 @@ inline DI max (DI i, DI j) { if (i>j) return i; else return j; }
 inline double min (double i, double j) { if (i<j) return i; else return j; }
 inline double max (double i, double j) { if (i>j) return i; else return j; }
 inline int hash (int i) { return i; }
+inline int hash (long int i) { return (int) i; }
+inline int hash (DI i) { return (int) i; }
+inline int hash (unsigned int i) { return i; }
+inline int hash (unsigned long int i) { return (int) i; }
+inline int hash (DN i) { return (int) i; }
 inline int hash (pointer ptr) {
   return ((int) ((intptr_t) ptr)) + (((int) ((intptr_t) ptr)) % 19); }
 inline int hash (float x) {
   return (*((int*) ((void*) &x))) & 0xffffffff; }
-inline int hash (const double& x) {
-  union { int n; double d; } u;
-  u.d= x; return u.n; }
+inline int hash (double x) {
+  union { long int n; double d; } u;
+  u.d= x; return (int) (u.n ^ (u.n >> 32)); }
 inline int copy (int x) { return x; }
 inline SI as_int (double x) { return (SI) floor (x + 0.5); }
 inline double tm_round (double x) { return floor (x + 0.5); }

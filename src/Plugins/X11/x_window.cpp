@@ -159,7 +159,7 @@ x_window_rep::x_window_rep (widget w2, x_gui gui2, char* n2,
 			    SI max_w, SI max_h):
   window_rep (), w (w2), gui (gui2),
   orig_name (n2 == ((char*) NULL)? string ("popup"): n2), name (n2),
-  ren (tm_new<x_drawable_rep> (gui2, this)),
+  ren (tm_new<x_drawable_rep> ((const x_gui&) gui2, (const x_window&) this)),
   Min_w (min_w), Min_h (min_h), Def_w (def_w), Def_h (def_h),
   Max_w (max_w), Max_h (max_h),
   win_x (0), win_y (0), win_w (Def_w/PIXEL), win_h (Def_h/PIXEL),
