@@ -123,6 +123,11 @@ inline double max (double i, double j) { if (i>j) return i; else return j; }
 inline int hash (int i) { return i; }
 inline int hash (pointer ptr) {
   return ((int) ((intptr_t) ptr)) + (((int) ((intptr_t) ptr)) % 19); }
+inline int hash (float x) {
+  return (*((int*) ((void*) &x))) & 0xffffffff; }
+inline int hash (const double& x) {
+  union { int n; double d; } u;
+  u.d= x; return u.n; }
 inline int copy (int x) { return x; }
 inline SI as_int (double x) { return (SI) floor (x + 0.5); }
 inline double tm_round (double x) { return floor (x + 0.5); }
