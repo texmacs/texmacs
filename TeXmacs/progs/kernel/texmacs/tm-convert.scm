@@ -300,7 +300,7 @@
 (tm-define (tmfile-style-list doc)
   (with style (tmfile-extract doc 'style)
     (if (tm-func? style 'tuple) (set! style (cdr style)))
-    (if style style (list))))
+    (if style (list style) (list))))
 
 (tm-define (tmfile-language doc)
   (let* ((style (tmfile-style-list doc))
