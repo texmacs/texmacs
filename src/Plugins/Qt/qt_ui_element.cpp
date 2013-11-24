@@ -263,7 +263,8 @@ qt_ui_element_rep::qt_ui_element_rep (types _type, blackbox _load)
   : qt_widget_rep(_type), load(_load), cachedAction(NULL)  { }
 
 qt_ui_element_rep::~qt_ui_element_rep() {
-  if (cachedAction) delete cachedAction;
+  // WARNING: Deleting here the cachedAction would contradict our memory policy
+  // in qt_menu_rep and lead to crashes
 }
 
 /*! Returns the ui element as a popup widget.
@@ -281,12 +282,9 @@ qt_ui_element_rep::make_popup_widget () {
 
 QMenu *
 qt_ui_element_rep::get_qmenu() {
-  if (!cachedAction) {
-    cachedAction = as_qaction();
-  }
+  if (!cachedAction) cachedAction = as_qaction();
   return (cachedAction ? cachedAction->menu() : NULL);
 }
-
 
 /*! For the refresh_widget
  * FIXME? Is this really used?
@@ -297,7 +295,7 @@ qt_ui_element_rep::operator tree () {
     T x= open_box<T> (load);
     return tree (TUPLE, "refresh", x.x1, x.x2);
   }
-  else if (type == refresh_widget) {
+  else if (type == refreshable_widget) {
     typedef pair<object, string> T;
     T x= open_box<T> (load);
     return tree (TUPLE, "refreshable", x.x2);
