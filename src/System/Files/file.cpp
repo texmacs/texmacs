@@ -385,7 +385,7 @@ url_temp (string suffix) {
 }
 
 url
-url_numbered (url dir, string prefix, string postfix, int i) {
+url_numbered (url dir, string prefix, string postfix, int& i) {
   if (!exists (dir)) mkdir (dir);
   for (; true; i++) {
     url name= dir * (prefix * as_string (i) * postfix);
@@ -395,7 +395,7 @@ url_numbered (url dir, string prefix, string postfix, int i) {
 }
 
 url
-url_scratch (string prefix, string postfix, int i) {
+url_scratch (string prefix, string postfix, int& i) {
   url dir ("$TEXMACS_HOME_PATH/texts/scratch");
   return url_numbered (dir, prefix, postfix, i);
 }
