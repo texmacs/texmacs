@@ -99,7 +99,7 @@ tree_report (string& s, tree t, path p, int indent) {
 }
 
 string
-  tree_report (tree t, path p) {
+tree_report (tree t, path p) {
   string s;
   tree_report (s, t, p, 0);
   return s;
@@ -134,8 +134,7 @@ tm_failure (const char* msg) {
   //cerr << "Saving crash report...\n";
   string report= get_crash_report (msg);
   url dir ("$TEXMACS_HOME_PATH/system/crash");
-  int i=1;
-  url err= url_numbered (dir, "crash_report_", "", i);
+  url err= url_numbered (dir, "crash_report_", "");
   if (!save_string (err, report))
     cerr << "TeXmacs] Crash report saved in " << err << "\n";
   else
