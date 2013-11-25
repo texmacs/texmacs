@@ -142,7 +142,9 @@
 
 (define-public (define-regexp-grammar-decls l)
   (define (insert rule)
-    (ahash-set! match-term (car rule) (cdr rule)))
+    (if (== (length (cdr rule)) 1)
+        (ahash-set! match-term (car rule) (cdr rule))
+        (ahash-set! match-term (car rule) (list (cons :or (cdr rule))))))
   (for-each insert l))
 
 (define-public-macro (define-regexp-grammar . l)
