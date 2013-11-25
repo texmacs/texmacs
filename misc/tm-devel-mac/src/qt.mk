@@ -23,6 +23,7 @@ endef
 
 define $(PKG)_BUILD
     cd '$(1)' && ./configure \
+        -platform unsupported/macx-clang \
         -opensource \
         -confirm-license \
         -fast \
@@ -57,6 +58,8 @@ define $(PKG)_BUILD
         -system-zlib \
         -qt-libpng \
         -qt-libmng \
+        -system-libtiff \
+        -system-libjpeg \
         -openssl \
         -no-sql-db2 -no-sql-ibase -no-sql-mysql -no-sql-oci \
 		-no-sql-odbc -no-sql-psql -no-sql-sqlite -no-sql-sqlite2 \
