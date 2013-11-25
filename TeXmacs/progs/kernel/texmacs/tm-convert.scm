@@ -289,9 +289,11 @@
 	((== var "language") "english")
 	(else "")))
 
-(define-public (tmfile-init doc var . explicit?)
+(tm-define (tmfile-init doc var . explicit?)
   (with init (tmfile-extract doc 'initial)
-    (if (not init) (default-init var)
+    (if (not init)
+        (and (null? explicit?)
+             (default-init var))
 	(with item (list-find (cdr init) (lambda (x) (== (cadr x) var)))
 	  (if item (caddr item)
               (and (null? explicit?)
@@ -299,8 +301,9 @@
 
 (tm-define (tmfile-style-list doc)
   (with style (tmfile-extract doc 'style)
-    (if (tm-func? style 'tuple) (set! style (cdr style)))
-    (if style (list style) (list))))
+    (cond ((tm-func? style 'tuple) (cdr style))
+          ((string? style) (list style))
+          (else (list)))))
 
 (tm-define (tmfile-language doc)
   (let* ((style (tmfile-style-list doc))

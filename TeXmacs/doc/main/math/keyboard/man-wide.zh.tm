@@ -39,6 +39,6 @@
 <\initial>
   <\collection>
     <associate|font|fireflysung>
-    <associate|language|english>
+    <associate|language|chinese>
   </collection>
 </initial>
