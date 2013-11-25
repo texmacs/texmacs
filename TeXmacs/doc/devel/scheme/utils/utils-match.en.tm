@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.16>
+<TeXmacs|1.0.7.21>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Matching regular expressions>
@@ -16,11 +16,13 @@
   <|explain>
     This function determines whether a scheme expression <scm-arg|expr>
     satisfies a given <scm-arg|pattern>. It will be detailed below how to
-    form valid patterns. The matching routines recursively understand that
-    native trees match their scheme counterparts. For instance, <scm|(match?
-    (tree "x") "x<name|">)> will return <scm|(())> (meaning <scm|<scm|>#t>
-    <with|color|red|-is this as intended?>) and <scm|(match? (tree "x")
-    "y<name|">)> will return <scm|#f>.
+    form valid patterns. The pattern may contain named wildcards, in case of
+    success, we return a list with matches for these wildcards. In case of
+    failure, we return<nbsp><scm|#f>. The expression <scm|expr> may contain
+    trees, in which case we understand that such tree subexpressions should
+    match their scheme counterparts. For instance, <scm|(match? (tree "x")
+    "x<name|">)> will return<nbsp><scm|(())>, whereas <scm|(match? (tree "x")
+    "y<name|">)> returns <scm|#f>.
   </explain>
 
   <\explain>
@@ -33,8 +35,6 @@
     routine determines all substitutions of free variables by values
     (extending the given <scm-arg|bindings>), for which <scm-arg|l> matches
     the <scm-arg|pattern>.
-
-    <with|color|red|Give an example, please.>
   </explain>
 
   <\explain>
@@ -142,11 +142,8 @@
 
     matches the pattern <scm|(foo (:repeat (bar :%1)) :*)>, but not <scm|(foo
     (:repeat (bar 'x)) :*)>. The call <scm|(match t '(foo 'x 'y :*))> will
-    return <scm|(((x . (bar "x")) (y . (bar "y"))))>.
-
-    <\with|color|red>
-      Actually this gives ``wrong-number-of-args'' but we have:
-    </with>
+    return <scm|(((x . (bar "x")) (y . (bar "y"))))>. Notice that <scm|(x .
+    (bar "x"))> will be displayed as <scm|(x bar "x")>:
 
     <\session|scheme|default>
       <\input|Scheme] >
@@ -159,8 +156,6 @@
         (((y bar "y") (x bar "x")))
       </unfolded-io>
     </session>
-
-    Which has a different format
   </example>
 
   <\example>
@@ -176,28 +171,6 @@
 
     Then the list <scm|(a b x y c a a)> matches the pattern <scm|(:b :%2
     :b)>.
-
-    <with|color|red|Does it?>
-
-    <\session|scheme|default>
-      <\input|Scheme] >
-        (define-regexp-grammar
-
-        \ \ (:a a b c)
-
-        \ \ (:b (:repeat :a)))
-      </input>
-
-      <\unfolded-io|Scheme] >
-        (match? \ '(a b x y c a a) \ (:b :%2 :b))
-      <|unfolded-io>
-        misc-error
-      </unfolded-io>
-
-      <\input|Scheme] >
-        \;
-      </input>
-    </session>
   </example>
 
   <tmdoc-copyright|2007|Joris van der Hoeven>
@@ -210,8 +183,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
