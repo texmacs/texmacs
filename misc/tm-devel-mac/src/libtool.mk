@@ -26,7 +26,7 @@ endef
 
 define $(PKG)_BUILD_ARCH
     cd '$(1)/libltdl' && ./configure \
-        --host='$(TARGET_$(3))' \
+        $(CONFIGURE_HOST) \
         --prefix='$(PREFIX)' \
         --disable-shared \
         --enable-ltdl-install \

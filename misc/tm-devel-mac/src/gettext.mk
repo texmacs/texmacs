@@ -28,8 +28,7 @@ endef
 
 define $(PKG)_BUILD_ARCH
     cd '$(1)' && '$(1)'/gettext-runtime/configure\
-        NM='$(DEVTOOLS)/usr/bin/nm -p' \
-        --host='$(TARGET_$(3))' \
+        $(CONFIGURE_HOST) \
         --prefix='$(PREFIX)' \
         --disable-shared \
         --enable-threads \
@@ -38,6 +37,7 @@ define $(PKG)_BUILD_ARCH
 	    CC='gcc $(BASE_FLAGS)' CXX='g++ $(BASE_FLAGS)' \
         CPP='gcc -E $(BASE_FLAGS)' CXXCPP='g++ -E $(BASE_FLAGS)' \
         CFLAGS='$(BASE_CFLAGS)' LDFLAGS='$(BASE_LDFLAGS)' \
+        NM='$(DEVTOOLS)/usr/bin/nm -p' \
         CONFIG_SHELL=$(SHELL)
     $(MAKE) -C '$(1)/intl' -j '$(JOBS)' 
     $(MAKE) -C '$(1)/intl' -j 1 install

@@ -29,7 +29,7 @@ define $(PKG)_BUILD_ARCH
 #    $(SED) -i 's,^ *case SIGQUIT:.*,,' '$(1)/signals.c'
 #    $(SED) -i 's,^ *case SIGTSTP:.*,,' '$(1)/signals.c'
     cd '$(1)' && ./configure \
-        --host='$(TARGET_$(3))' \
+        $(CONFIGURE_HOST) \
         --disable-shared \
         --prefix='$(PREFIX)' \
         --enable-multibyte \

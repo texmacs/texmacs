@@ -27,8 +27,8 @@ define $(PKG)_BUILD
 endef
 
 define $(PKG)_BUILD_ARCH
-    cd '$(1)' && ./configure \
-        --host='$(TARGET_$(3))' \
+    cd '$(1)' && ./configure 
+        $(CONFIGURE_HOST) \
         --prefix='$(PREFIX)' \
         --disable-shared \
         --enable-cplusplus \

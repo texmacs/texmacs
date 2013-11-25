@@ -28,7 +28,7 @@ endef
 define $(PKG)_BUILD_ARCH
 #    $(SED) -i 's, sed , $(SED) ,g' '$(1)/windows/windres-options'
     cd '$(1)' && ./configure \
-        --host='$(TARGET_$(3))' \
+        $(CONFIGURE_HOST) \
         --prefix='$(PREFIX)' \
         --disable-shared \
         --disable-nls \

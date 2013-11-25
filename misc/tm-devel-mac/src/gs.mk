@@ -33,7 +33,7 @@ endef
 
 define $(PKG)_BUILD_ARCH
     cd '$(1)' && '$(1)'/configure\
-        --host='$(TARGET_$(3))' \
+        $(CONFIGURE_HOST) \
         NM='$(DEVTOOLS)/usr/bin/nm -p' \
         --prefix='$(PREFIX)' \
         --disable-shared \

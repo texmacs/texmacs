@@ -26,9 +26,9 @@ endef
 
 define $(PKG)_BUILD_ARCH
     cd '$(1)' && GNUMAKE=$(MAKE) '$(1)'/configure \
-        --host='$(TARGET_$(3))' \
-        --disable-shared \
+        $(CONFIGURE_HOST) \
         --prefix='$(PREFIX)' \
+        --disable-shared \
 	    CC='gcc $(BASE_FLAGS)' CXX='g++ $(BASE_FLAGS)' \
         CPP='gcc -E $(BASE_FLAGS)' CXXCPP='g++ -E $(BASE_FLAGS)' \
         CFLAGS='$(BASE_CFLAGS)' LDFLAGS='$(BASE_LDFLAGS)' 

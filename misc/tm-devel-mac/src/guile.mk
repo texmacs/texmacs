@@ -40,15 +40,16 @@ define $(PKG)_BUILD_ARCH
     cd '$(1)' && \
         PKG_CONFIG_PATH='$(PREFIX)/lib/pkgconfig/' \
         ./configure \
-        --host='$(TARGET_$(3))' \
+        $(CONFIGURE_HOST) \
         --prefix='$(PREFIX)' \
         --disable-shared \
         --without-threads \
-	    --with-sysroot='$(MACOS_SDK)'  \
 	    CC='gcc $(BASE_FLAGS)' CXX='g++ $(BASE_FLAGS)' \
         CPP='gcc -E $(BASE_FLAGS)' CXXCPP='g++ -E $(BASE_FLAGS)' \
         CFLAGS='$(BASE_CFLAGS)' LDFLAGS='$(BASE_LDFLAGS)' \
         $(MORE_OPT_$(3))
+
+#	    --with-sysroot='$(MACOS_SDK)'  \
 
 #    $(MAKE) -C '$(1)' -j '$(JOBS)' schemelib_DATA=
 #    $(MAKE) -C '$(1)' -j 1 install schemelib_DATA=

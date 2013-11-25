@@ -27,7 +27,7 @@ endef
 
 define $(PKG)_BUILD_ARCH
     cd '$(1)' && ./configure \
-        --host='$(TARGET_$(3))' \
+        $(CONFIGURE_HOST) \
         --prefix='$(PREFIX)' \
         --disable-shared \
     	CC='gcc $(BASE_FLAGS)' CXX='g++ $(BASE_FLAGS)' \

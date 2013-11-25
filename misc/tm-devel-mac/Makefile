@@ -33,6 +33,8 @@ VERSION    := 0.1
 HOST := $(shell uname -p)-apple-darwin$(shell uname -r)
 BUILD_ARCH    :=  $(shell uname -m)
 TARGET_$(BUILD_ARCH) := $(HOST)
+#CONFIGURE_HOST := --host='$(TARGET_$(3))'
+CONFIGURE_HOST := 
 
 # point to your devtools here
 
@@ -40,7 +42,7 @@ TARGET_$(BUILD_ARCH) := $(HOST)
 #MACOS_SDK := $(DEVTOOLS)/SDKs/MacOSX10.5.sdk
 #BASE_FLAGS := -arch $(BUILD_ARCH) -mmacosx-version-min=10.5 -isysroot $(MACOS_SDK) -Wl,-syslibroot,$(MACOS_SDK) -Wl,-search_paths_first
 
-BASE_FLAGS := -arch $(BUILD_ARCH) -Wl,-search_paths_first
+BASE_FLAGS := -arch $(BUILD_ARCH)
 BASE_CFLAGS := -I$(PREFIX)/include 
 BASE_LDFLAGS :=  -L$(PREFIX)/lib  
 
