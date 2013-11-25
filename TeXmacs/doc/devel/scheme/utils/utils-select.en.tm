@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.0.7.21>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Selection of subexpressions>
@@ -33,8 +33,7 @@
   <\explain>
     <scm|:first>, <scm|:last><explain-synopsis|select first or last child>
   <|explain>
-    Select first or last child of the input tree. <with|color|red|-This does
-    not work AFAICT>
+    Select first or last child of the input tree.
   </explain>
 
   <\explain>
@@ -168,7 +167,6 @@
 
 <\initial>
   <\collection>
-    <associate|language|english>
     <associate|preamble|false>
   </collection>
 </initial>
