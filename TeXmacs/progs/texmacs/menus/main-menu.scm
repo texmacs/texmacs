@@ -181,13 +181,18 @@
         (else (cons t (upward-context-trees (tree-up t))))))
 
 (tm-widget (texmacs-side-tool t)
-  ((eval (symbol->string (tree-label t)))
-   (tree-select t)))
+  (horizontal
+    (mini #t
+      ((eval (symbol->string (tree-label t)))
+       (tree-select t)))
+    >>>))
 
 (tm-widget (texmacs-side-tools)
   (for (t (upward-context-trees (cursor-tree)))
     (dynamic (texmacs-side-tool t))
-    ===))
+    ===)
+  (glue #t #t 0 0)
+  ("                              " (noop)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The mode dependent icon bar
