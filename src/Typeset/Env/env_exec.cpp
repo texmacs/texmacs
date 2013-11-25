@@ -1571,10 +1571,11 @@ edit_env_rep::exec_script (tree t) {
   if (n < 1) return tree (ERROR, "bad script");
   tree r (t, n);
   r[0]= exec (t[0]);
-  for (i=1; i<n; i++)
+  for (i=1; i<n; i++) {
     //r[i]= expand (t[i], true);
-    //r[i]= expand (t[i], false);
-    r[i]= exec (t[i]);
+    r[i]= expand (t[i], false);
+    //r[i]= exec (t[i]);
+  }
   return r;
 }
 
