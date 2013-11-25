@@ -8,14 +8,13 @@
 #you need to set PREFIX to the root of the development tree (*/usr)
 #you need to set DEVTOOLS to the root of the development tools (usually /Developer)
 
-ARCH=i386
+ARCH=`uname -m`
 PREFIX=`(cd ..; pwd)`/usr
-DEVTOOLS=/Developer_3.2.6
-
 
 PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig/
 
-SDK=$DEVTOOLS/SDKs/MacOSX10.5.sdk 
+#DEVTOOLS=/Developer_3.2.6
+#SDK=$DEVTOOLS/SDKs/MacOSX10.5.sdk 
 
 #---------------------------------------------------------------------------------------------------
 # setup target architecure
@@ -31,12 +30,12 @@ case $ARCH in
   export ARCH=`arch` 
 esac
 
-TARGET_i386=i686-apple-darwin10
-TARGET_x86_64=x86_64-apple-darwin10
-TARGET_ppc=powerpc-apple-darwin10
+#TARGET_i386=i686-apple-darwin10
+#TARGET_x86_64=x86_64-apple-darwin10
+#TARGET_ppc=powerpc-apple-darwin10
+#TARGET_ARCH=TARGET_${ARCH}
 
-TARGET_ARCH=TARGET_${ARCH}
-
+TARGET_ARCH=`uname -m`-apple-darwin`uname -r`
 
 # the TeXmacs configure script do not know how to use info from pkg-config
 # so we override its behaviour to take into account this
@@ -55,9 +54,16 @@ TARGET_ARCH=TARGET_${ARCH}
 # ideally we need to have a mkspec for this situation...
 
 #---------------------------------------------------------------------------------------------------
-# Let gos
+# Let's go!
 
 #printenv
+
+
+#  CC="gcc -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $SDK  -I$SDK/usr/include/c++/4.2.1/i686-apple-darwin10" \
+#  CXX="g++ -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $SDK -I$SDK/usr/include/c++/4.2.1/i686-apple-darwin10" \
+#  CPP="gcc -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $SDK -E" \
+#  CPPCXX="g++ -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $SDK -E" \
+#  LDFLAGS="-Wl,-search_paths_first -Wl,-syslibroot $SDK -L$PREFIX/lib" \
 
 
 PATH=$DEVTOOLS/usr/bin:$PREFIX/bin:$PATH \
@@ -66,12 +72,12 @@ PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig/ \
   --host=${!TARGET_ARCH} \
   --enable-macosx-extensions\
   --enable-qt\
-  CC="gcc -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $SDK  -I$SDK/usr/include/c++/4.2.1/i686-apple-darwin10" \
-  CXX="g++ -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $SDK -I$SDK/usr/include/c++/4.2.1/i686-apple-darwin10" \
-  CPP="gcc -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $SDK -E" \
-  CPPCXX="g++ -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $SDK -E" \
+  CC="gcc -arch $ARCH  -mmacosx-version-min=10.5 " \
+  CXX="g++ -arch $ARCH  -mmacosx-version-min=10.5 " \
+  CPP="gcc -arch $ARCH  -mmacosx-version-min=10.5 -E" \
+  CPPCXX="g++ -arch $ARCH  -mmacosx-version-min=10.5 -E" \
   CPPFLAGS="-I$PREFIX/include" CFLAGS="-I$PREFIX/include" CXXFLAGS="-I$PREFIX/include" \
-  LDFLAGS="-Wl,-search_paths_first -Wl,-syslibroot $SDK -L$PREFIX/lib" \
+  LDFLAGS="-Wl,-search_paths_first -L$PREFIX/lib" \
   GUILE_CFLAGS="`pkg-config --static --cflags guile-1.8`" \
   GUILE_LDFLAGS="`pkg-config --static --libs guile-1.8`" \
   GUILE_DATA_PATH="`pkg-config --variable=datadir guile-1.8`" \
