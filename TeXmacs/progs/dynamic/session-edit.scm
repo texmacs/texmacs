@@ -352,6 +352,12 @@
   (and (session-alive?)
        (plugin-supports-completions? (get-env "prog-language"))))
 
+(define (field-next* t forward?)
+  (and-with u (tree-ref t (if forward? :next :previous))
+    (cond ((field-context? u) u)
+          ((tree-in? u '(folded unfolded)) #f)
+          (else (field-next u forward?)))))
+
 (define (field-next t forward?)
   (and-with u (tree-ref t (if forward? :next :previous))
     (if (field-context? u) u (field-next u forward?))))
@@ -449,7 +455,7 @@
 	   (opts '()))
       (when (session-output-timings?) (set! opts (cons :timings opts)))
       (when (field-math-context? t) (set! opts (cons :math-input opts)))
-      (with u (or (field-next t #t) (field-create t p #t))
+      (with u (or (field-next* t #t) (field-create t p #t))
 	(session-feed lan ses in out u opts)
 	(tree-go-to u 1 :end)))))
 
@@ -655,7 +661,7 @@
                   (tree-remove (tree-ref t :up) (tree-index t) 1)
                   (tree-go-to u 1 :start))
               (field-remove-extreme t #t)))
-        (with u (field-next t #f)
+        (with u (field-next* t #f)
           (if u (tree-remove (tree-ref u :up) (tree-index u) 1)
               (field-remove-banner t))))))
 
