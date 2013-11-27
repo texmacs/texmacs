@@ -14,7 +14,8 @@
 (texmacs-module (table table-edit)
   (:use (utils library tree)
 	(utils base environment)
-	(utils edit variants)))
+	(utils edit variants)
+        (utils edit selections)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some drd properties, which should go into table-drd.scm later on
@@ -609,8 +610,8 @@
     (insert-go-to '(eq-number) '(0))))
 
 (tm-define (table-nonumber-equation)
-  (let ((r (table-search-number-equation)))
-    (if r (clipboard-cut-at (tree->path r)))))
+  (and-with r (table-search-number-equation)
+    (tree-cut r)))
 
 (define (table-inside-sub? t1 t2)
   (or (== t1 t2)

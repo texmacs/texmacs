@@ -205,6 +205,7 @@
   (clipboard-copy selection_copy (void string))
   (clipboard-cut selection_cut (void string))
   (clipboard-cut-at cut (void path))
+  (clipboard-cut-between cut (void path path))
   (clipboard-paste selection_paste (void string))
   (selection-move selection_move (void))
   (clipboard-clear selection_clear (void string))

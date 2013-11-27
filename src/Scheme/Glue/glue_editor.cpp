@@ -1957,6 +1957,21 @@ tmg_clipboard_cut_at (tmscm arg1) {
 }
 
 tmscm
+tmg_clipboard_cut_between (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_PATH (arg1, TMSCM_ARG1, "clipboard-cut-between");
+  TMSCM_ASSERT_PATH (arg2, TMSCM_ARG2, "clipboard-cut-between");
+
+  path in1= tmscm_to_path (arg1);
+  path in2= tmscm_to_path (arg2);
+
+  // TMSCM_DEFER_INTS;
+  get_current_editor()->cut (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_clipboard_paste (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "clipboard-paste");
 
@@ -3053,6 +3068,7 @@ initialize_glue_editor () {
   tmscm_install_procedure ("clipboard-copy",  tmg_clipboard_copy, 1, 0, 0);
   tmscm_install_procedure ("clipboard-cut",  tmg_clipboard_cut, 1, 0, 0);
   tmscm_install_procedure ("clipboard-cut-at",  tmg_clipboard_cut_at, 1, 0, 0);
+  tmscm_install_procedure ("clipboard-cut-between",  tmg_clipboard_cut_between, 2, 0, 0);
   tmscm_install_procedure ("clipboard-paste",  tmg_clipboard_paste, 1, 0, 0);
   tmscm_install_procedure ("selection-move",  tmg_selection_move, 0, 0, 0);
   tmscm_install_procedure ("clipboard-clear",  tmg_clipboard_clear, 1, 0, 0);
