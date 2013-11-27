@@ -3812,6 +3812,32 @@ upgrade_varsession (tree t) {
 }
 
 /******************************************************************************
+* Upgrade subsessions
+******************************************************************************/
+
+tree
+upgrade_subsession (tree t, bool in_session= false) {
+  int i;
+  if (is_atomic (t)) return t;
+  else if (in_session && is_compound (t, "folded", 2))
+    return compound ("folded-subsession", upgrade_subsession (t[0]),
+                     upgrade_subsession (t[1], true));
+  else if (in_session && is_compound (t, "unfolded", 2))
+    return compound ("unfolded-subsession", upgrade_subsession (t[0]),
+                     upgrade_subsession (t[1], true));
+  else {
+    bool flag=
+      (is_func (t, DOCUMENT) && in_session) ||
+      is_compound (t, "session");
+    int n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_subsession (t[i], flag);
+    return r;
+  }
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -3987,9 +4013,11 @@ upgrade (tree t, string version) {
     t= upgrade_style (t, false);
     t= upgrade_doc_language (t);
   }
-  if (version_inf_eq (version, "1.0.7.21"))
+  if (version_inf_eq (version, "1.0.7.21")) {
     t= upgrade_varsession (t);
-
+    t= upgrade_subsession (t);
+  }
+    
   if (is_non_style_document (t))
     t= automatic_correct (t, version);
   return t;

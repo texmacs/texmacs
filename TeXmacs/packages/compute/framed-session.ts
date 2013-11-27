@@ -136,7 +136,7 @@
     </src-comment>
   </active*>
 
-  <assign|folded|<\macro|x|y>
+  <assign|folded-subsession|<\macro|x|y>
     <\with|ornament-shape|classic|ornament-color|<value|fold-title-color>|ornament-hpadding|<tuple|0fn|<value|session-right-indent>>|ornament-vpadding|<value|input-vpadding>|ornament-border|<value|input-border>|ornament-sunny-color|<value|input-border-color>>
       <\ornament>
         <\surround|<action|<resize|<space|0.4spc><math|\<Downarrow\>>|||<value|session-band-width>|>|mouse-unfold|<arg|x>><space|<value|session-left-indent>>|<right-flush>>
@@ -148,7 +148,7 @@
     </with>
   </macro>>
 
-  <assign|unfolded|<\macro|x|y>
+  <assign|unfolded-subsession|<\macro|x|y>
     <\with|ornament-shape|classic|ornament-color|<value|fold-title-color>|ornament-hpadding|<tuple|0fn|<value|session-right-indent>>|ornament-vpadding|<value|input-vpadding>|ornament-border|<value|input-border>|ornament-sunny-color|<value|input-border-color>>
       <\ornament>
         <\surround|<action|<resize|<space|0.4spc><math|\<Uparrow\>>|||<value|session-band-width>|>|mouse-fold|<arg|x>><space|<value|session-left-indent>>|<right-flush>>

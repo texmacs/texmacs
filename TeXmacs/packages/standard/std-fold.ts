@@ -207,6 +207,10 @@
 
   <assign|unfolded|<value|unfolded-std>>
 
+  <assign|folded-subsession|<value|folded-std>>
+
+  <assign|unfolded-subsession|<value|unfolded-std>>
+
   \;
 
   <drd-props|folded-plain|arity|2|accessible|0|hidden|1>
@@ -224,6 +228,8 @@
   <drd-props|folded-grouped|arity|2|accessible|0|hidden|1>
 
   <drd-props|folded|arity|2|accessible|0|hidden|1>
+
+  <drd-props|folded-subsession|arity|2|accessible|0|hidden|1>
 
   <\active*>
     <\src-comment>

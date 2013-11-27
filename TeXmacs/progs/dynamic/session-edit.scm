@@ -248,7 +248,7 @@
   (or (and (tm-func? t 'document)
 	   (tm-func? (tree-ref t :up) 'session))
       (and (tm-func? t 'document)
-	   (tm-func? (tree-ref t :up) 'unfolded)
+	   (tm-func? (tree-ref t :up) 'unfolded-subsession)
 	   (== (tree-index t) 1))))
 
 (tm-define field-tags
@@ -355,7 +355,7 @@
 (define (field-next* t forward?)
   (and-with u (tree-ref t (if forward? :next :previous))
     (cond ((field-context? u) u)
-          ((tree-in? u '(folded unfolded)) #f)
+          ((tree-in? u '(folded-subsession unfolded-subsession)) #f)
           (else (field-next u forward?)))))
 
 (define (field-next t forward?)
@@ -414,7 +414,7 @@
   (for (u (tree-children t))
     (when (field-context? u)
       (fun u))
-    (when (and (tm-func? u 'unfolded)
+    (when (and (tm-func? u 'unfolded-subsession)
 	       (tm-func? (tree-ref u 1) 'document))
       (session-forall-sub fun (tree-ref u 1)))))
 
@@ -696,7 +696,7 @@
 
 (tm-define (field-insert-fold t*)
   (and-with t (tree-search-upwards t* field-input-context?)
-    (tree-set! t `(unfolded (document "") (document ,t)))
+    (tree-set! t `(unfolded-subsession (document "") (document ,t)))
     (tree-go-to t 0 :end)))
 
 (tm-define (session-split)
