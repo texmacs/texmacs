@@ -3451,6 +3451,32 @@ tmg_string_convert (tmscm arg1, tmscm arg2, tmscm arg3) {
 }
 
 tmscm
+tmg_encode_base64 (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "encode-base64");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= encode_base64 (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
+tmg_decode_base64 (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "decode-base64");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= decode_base64 (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_utf8_2cork (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "utf8->cork");
 
@@ -7546,6 +7572,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("string-quote",  tmg_string_quote, 1, 0, 0);
   tmscm_install_procedure ("string-unquote",  tmg_string_unquote, 1, 0, 0);
   tmscm_install_procedure ("string-convert",  tmg_string_convert, 3, 0, 0);
+  tmscm_install_procedure ("encode-base64",  tmg_encode_base64, 1, 0, 0);
+  tmscm_install_procedure ("decode-base64",  tmg_decode_base64, 1, 0, 0);
   tmscm_install_procedure ("utf8->cork",  tmg_utf8_2cork, 1, 0, 0);
   tmscm_install_procedure ("cork->utf8",  tmg_cork_2utf8, 1, 0, 0);
   tmscm_install_procedure ("utf8->t2a",  tmg_utf8_2t2a, 1, 0, 0);

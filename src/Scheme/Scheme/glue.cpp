@@ -992,6 +992,7 @@ tmscm_to_list_tree (tmscm  p) {
 #include "client_server.hpp"
 #include "analyze.hpp"
 #include "wencoding.hpp"
+#include "base64.hpp"
 #include "tree_traverse.hpp"
 #include "tree_analyze.hpp"
 #include "tree_correct.hpp"

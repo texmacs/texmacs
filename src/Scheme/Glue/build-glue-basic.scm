@@ -303,6 +303,8 @@
   (string-quote scm_quote (string string))
   (string-unquote scm_unquote (string string))
   (string-convert convert (string string string string))
+  (encode-base64 encode_base64 (string string))
+  (decode-base64 decode_base64 (string string))
   (utf8->cork utf8_to_cork (string string))
   (cork->utf8 cork_to_utf8 (string string))
   (utf8->t2a utf8_to_t2a (string string))
