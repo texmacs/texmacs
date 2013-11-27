@@ -131,7 +131,8 @@ inline int hash (DN i) { return (int) i; }
 inline int hash (pointer ptr) {
   return ((int) ((intptr_t) ptr)) + (((int) ((intptr_t) ptr)) % 19); }
 inline int hash (float x) {
-  return (*((int*) ((void*) &x))) & 0xffffffff; }
+  union { int n; float d; } u;
+  u.d= x; return u.n & 0xffffffff; }
 inline int hash (double x) {
   union { DI n; double d; } u;
   u.d= x; return (int) (u.n ^ (u.n >> 32)); }
