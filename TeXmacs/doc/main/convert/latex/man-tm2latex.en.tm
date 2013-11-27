@@ -1,6 +1,6 @@
-<TeXmacs|1.0.5.11>
+<TeXmacs|1.0.7.21>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Conversion from <TeXmacs> to <LaTeX>>
@@ -16,7 +16,7 @@
   Notice that the exportation of a <TeXmacs> document with images may cause
   the creation of additional image files. If your destination file is called
   <verbatim|name.tex>, these files are named <verbatim|name-1.eps>,
-  <group|<verbatim|name-2.eps>>, <abbr|etc.> and they are stored in the same
+  <rigid|<verbatim|name-2.eps>>, <abbr|etc.> and they are stored in the same
   directory. In particular, all pictures drawn with the editor, and all
   images which are not already in <name|Postscript> format, will be converted
   to encapsulated <name|Postscript> files.
@@ -25,7 +25,7 @@
   files and packages or macros with no <LaTeX> equivalents are either ignored
   or replaced by a reasonable substitute. The precise behaviour of the
   converter may be customized using several user preferences in the
-  <menu|Edit|Preferences|Converters|TeXmacs-\<gtr\>LaTeX> menu:
+  <menu|Edit|Preferences|Converters|LaTeX|TeXmacs--\<gtr\>LaTeX> menu:
 
   <\description-long>
     <item*|<menu|Replace unrecognized styles>>This option (which is set by
@@ -33,7 +33,7 @@
     equivalents by the <verbatim|letter> style. Furthermore, all additional
     style packages are ignored.
 
-    In the case when you know how to <hyper-link|write your own style
+    In the case when you know how to <hlink|write your own style
     files|../../../devel/style/style.en.tm>, then you might wish to create
     <TeXmacs> equivalents of certain journal styles which you often use.
     Similarly, you might wish to create a style package with your own macros
@@ -72,13 +72,6 @@
     using <name|Bib<TeX>>. In this case, you need to enable the <menu|Export
     bibliographies as links> option.
 
-    <item*|<menu|Use catcode definitions in preamble>>By default, accented
-    characters like ``é'' are exported to <LaTeX> as <verbatim|\\'e>. In
-    order to increase readability and especially in case that you want to
-    edit the resulting <LaTeX> file, you may wish to keep the accented
-    characters ``as is''. This can be achieved by allowing <TeXmacs> to put
-    additional catcode definitions into your preamble.
-
     <item*|<menu|Allow for macro definitions in preamble>>Certain <TeXmacs>
     macros like <markup|strong> have no direct <LaTeX> analogues. For a
     certain number of frequently used macros, <TeXmacs> automatically
@@ -91,6 +84,25 @@
     of additional macros in the preamble. When disallowing for macro
     definitions in preambles, <TeXmacs> will automatically expand all
     corresponding macro applications.
+
+    <item*|Character encoding>This define the behavior of the converter with
+    respect to characters encoding. There is three possible choices:
+
+    <\description>
+      <item*|Utf-8 with inputenc>This will generate <verbatim|utf-8> document
+      with the package <verbatim|inputenc> loaded. If, for any reason, you
+      don't want to rely on <verbatim|inputenc>, you should consider others
+      options.
+
+      <item*|Cork with catcodes>This keep the accented characters ``as is''.
+      This can be achieved by allowing <TeXmacs> to put additional catcode
+      definitions into your preamble. This provides a good trade-off between
+      readability (accented characters are kept in a 8 bit charset) and
+      simplicity (you don't need the <verbatim|inputenc> package).
+
+      <item*|Ascii>This will generate pure ascii characters, using plain
+      <TeX> sequencies to compose non-ascii symbols.
+    </description>
   </description-long>
 
   Sometimes, the converter does not produce a satisfactory <LaTeX> file even
@@ -119,7 +131,8 @@
     <item>Type the latex code <verbatim|blauw\\-bil\\-gor\\-gel> with the
     correct hyphenation.
 
-    <item>Press <shortcut|(kbd-return)> to activate the <LaTeX>-specific text.
+    <item>Press <shortcut|(kbd-return)> to activate the <LaTeX>-specific
+    text.
   </enumerate>
 
   In a similar fashion, you may insert <LaTeX>-specific line breaks, page
@@ -127,7 +140,7 @@
   force arbitrary content to be exported as an image using
   <menu|Format|Specific|Image>.
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2013|Joris van der Hoeven, François Poulain>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -137,8 +150,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

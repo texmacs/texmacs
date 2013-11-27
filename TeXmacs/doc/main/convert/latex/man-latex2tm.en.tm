@@ -1,6 +1,6 @@
-<TeXmacs|1.0.5.10>
+<TeXmacs|1.0.7.21>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Conversion from <LaTeX> to <TeXmacs>>
@@ -13,10 +13,10 @@
   <TeXmacs> is more problematic than conversions the other way around. As
   long as you restrict yourself to using the most common <LaTeX> commands,
   the conversion process should not give rise to any major difficulties.
-  However, as soon as your documents contain ``weird macro definitions'',
-  then the converter may get confused. We also notice that <TeXmacs> is
-  currently unable to convert <LaTeX> style files and no plans exist to
-  enhance the converter in this direction.
+  However, as soon as your documents contain ``weird <TeX> primitives''
+  (think about <verbatim|\\csname>...), then the converter may get confused.
+  We also notice that <TeXmacs> is currently unable to convert <LaTeX> style
+  files and no plans exist to enhance the converter in this direction.
 
   There are two major reasons for <LaTeX> documents to get imported in an
   inappropriate way, and which can easily be corrected by the user. First of
@@ -41,7 +41,34 @@
   style package with <TeXmacs> counterparts for the macros which were not
   recognized.
 
-  <tmdoc-copyright|1998--2005|Joris van der Hoeven>
+  The behaviour of the converter may be customized using several user
+  preferences in the <menu|Edit|Preferences|Converters|LaTeX|LaTeX--\<gtr\>TeXmacs>
+  menu:
+
+  <\description-long>
+    <item*|Import sophisticated objects as pictures>This option allows
+    <TeXmacs> to compile the <LaTeX> document in a temporary directory, with
+    the package <verbatim|preview> installed, in order to import some macros
+    or environments as pictures. The source of each picture is also imported
+    in order to be re-exported if needed. Currently, the following macros are
+    imported as pictures when this option is set: <verbatim|\\xymatrix>,
+    <verbatim|pspicture>, <verbatim|tikzpicture>.
+
+    <item*|Keep track of the <LaTeX> source code>One should be interested in
+    this option in order to use <TeXmacs> to make small or isolated
+    modifications into a <LaTeX> file (e.g. for a proofreading). This option
+    allows <TeXmacs> to import the <LaTeX> document with added markup in
+    order to track the original sources of the document paragraphs. These
+    tracked sources are, as far as possible, re-used during a <LaTeX>
+    re-export.
+
+    <item*|Ensure transparent tracking>This option, subject to the above,
+    verify that the added markup does not change the result of the
+    conversion. It has been added for testing purpose and may <em|strongly>
+    increase the time of the import process (at least it double it).
+  </description-long>
+
+  <tmdoc-copyright|1998--2013|Joris van der Hoeven, François Poulain>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -51,8 +78,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
