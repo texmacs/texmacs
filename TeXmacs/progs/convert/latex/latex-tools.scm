@@ -143,6 +143,19 @@
 	      (else (cons head tail))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Adding TeXmacs sources
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (latex-add-texmacs-sources t doc)
+  (:synopsis "Add to @t the source @doc coded in base64 @t")
+  (if (not (func? t '!file)) t
+    (let* ((str  (object->string doc))
+           (str* (string-append "-----BEGIN TEXMACS DOCUMENT-----\n\n"
+                                (encode-base64 str)
+                                "\n\n-----END TEXMACS DOCUMENT-----")))
+      `(!file ,@(cdr t) (!paragraph "" (!comment ,str*))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Compute macro and environment definitions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

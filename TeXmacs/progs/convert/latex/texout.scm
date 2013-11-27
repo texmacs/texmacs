@@ -56,6 +56,7 @@
 	 (init (collection->ahash-table (cadddr l)))
 	 (doc-preamble (car (cddddr l)))
 	 (doc-misc (append '(!concat) doc-preamble (list doc-body)))
+	 (doc-src (cdr (cddddr l)))
          (post-begin "")
          (pre-end    ""))
 
@@ -108,7 +109,8 @@
         (output-tex pre-end)
         (output-lf)
         (output-tex "\\end{document}")
-        (output-lf)))))
+        (output-lf)))
+    (if (nnull? doc-src) (texout (car doc-src)))))
 
 (define (texout-usepackage x)
   (output-verbatim "\\usepackage{" x "}\n"))
