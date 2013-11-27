@@ -73,7 +73,7 @@
     ((as-pic   (== (get-preference "latex->texmacs:fallback-on-pictures") "on"))
      (keep-src (== (get-preference "latex->texmacs:preserve-source") "on")))
     (if (== (get-preference "latex->texmacs:secure-tracking") "on")
-      (secured-latex-document->texmacs x as-pic keep-src '())
+      (secured-latex-document->texmacs x as-pic keep-src)
       (cpp-latex-document->texmacs x as-pic keep-src '()))))
 
 (converter latex-document latex-tree
@@ -96,8 +96,68 @@
 ;; LaTeX -> TeXmacs with secure source tracking
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (secured-latex-document->texmacs t as-pic keep-src forbidden-range)
-  (cpp-latex-document->texmacs t as-pic keep-src '()))
+(define (flatten-document t)
+  (cond ((nlist>0? t) t)
+        ((not (func? t 'document)) (map flatten-document t))
+        (else
+          (apply append '(document)
+                 (map-in-order
+                   (lambda (x)
+                     (with y (flatten-document x)
+                       (if (func? y 'document) (cdr y) (list y))))
+                   (cdr t))))))
+
+(define (simplify-document* t)
+  (cond ((nlist>0? t) t)
+        ((not (func? t 'document)) (map simplify-document* t))
+        (else
+          `(document
+                 ,@(map-in-order
+                     (lambda (x)
+                       (with y (simplify-document* x)
+                         (if (func? y 'document 1) (cadr y) y)))
+                     (cdr t))))))
+
+(define (resolve-range ref curr*)
+  (let* ((curr     (simplify-document* (cDr curr*)))
+         (assocs   (cdadr (cAr   curr*)))
+         (assocs   (map-in-order caddr assocs))
+         (assocs   (filter (lambda (x) (!= '(document) (cadr x))) assocs))
+         (rbody    (cdadr (caddr ref)))
+         (cbody    (cdadr (caddr curr)))
+         (diffs    (map (lambda (cpar)
+                          (with l (map (lambda (rpar) (== rpar cpar)) rbody)
+                            (with nor-l (nin? #t l)
+                              (if nor-l (delete1! cpar rbody))
+                              nor-l)))
+                        cbody))
+         (ranges   (map-in-order cdddr assocs))
+         (ranges*  (map-in-order
+                     (lambda (x p)
+                       (if p (map string->number x) '())) ranges diffs))
+         (ranges*  (filter nnull? ranges*)))
+  ranges*))
+
+(define (secured-latex-document->texmacs s as-pic keep-src)
+  (let* ((range        `((0 ,(string-length s))))
+         (reference    (cpp-latex-document->texmacs s as-pic keep-src range))
+         (s-reference  (flatten-document (cDr (tree->stree reference))))
+         (range        '())
+         (s-old        '())
+         (current      (cpp-latex-document->texmacs s as-pic keep-src range))
+         (s-current*   (tree->stree current))
+         (s-current    (flatten-document (cDr s-current*))))
+    (while (and (!= s-reference s-current) (!= s-old s-current))
+           (set! range
+             (append range (resolve-range s-reference s-current*)))
+           (set! s-old s-current)
+           (set! current
+             (cpp-latex-document->texmacs s as-pic keep-src range))
+           (set! s-current* (tree->stree current))
+           (set! s-current (flatten-document (cDr s-current*))))
+    (if (== s-old s-current)
+      (display* "TeXmacs] LaTeX: the secure tracking is not garanteed"))
+  current))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tests

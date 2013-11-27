@@ -1987,7 +1987,7 @@ fill_paragraph_markup (tree t, string s) {
       stop= as_int (simplify_concat (t[i][1])) + 1;
       r << tuple ("\\textm@break", verbatim_escape (s(start, stop)),
             as_string (start),  as_string (stop));
-      start= stop;
+      start= stop+1;
     }
     else
       r << t[i];
