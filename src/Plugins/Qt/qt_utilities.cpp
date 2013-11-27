@@ -106,7 +106,7 @@ qt_apply_tm_style (QWidget* qwid, int style) {
 void
 qt_apply_tm_style (QWidget* qwid, int style, color c) {
   int r,g,b,a;
-  get_rgb_color(c, r, g, b, a);
+  get_rgb_color (c, r, g, b, a);
   a = a*100/255;
   QString sheet = "* {" + parse_tm_style (style)
     + QString("color: rgba(%1, %2, %3, %4%);").arg(r).arg(g).arg(b).arg(a)
@@ -378,6 +378,7 @@ QColor
 to_qcolor(color c) {
   int r, g, b, a;
   get_rgb_color (c, r, g, b, a);
+  if (reverse_colors) reverse (r, g, b);
   return QColor (r, g, b, a);
 }
 
@@ -385,6 +386,7 @@ color
 to_color (const QColor& c) {
   int r, g, b, a;
   c.getRgb (&r, &g, &b, &a);
+  if (reverse_colors) reverse (r, g, b);
   return rgb_color (r, g, b, a);
 }
 

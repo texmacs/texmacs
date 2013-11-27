@@ -456,6 +456,7 @@ qt_renderer_rep::draw_bis (int c, font_glyphs fng, SI x, SI y) {
         color patcol= im->pixel (i, j);
         int r, g, b, a;
         get_rgb (patcol, r, g, b, a);
+        if (reverse_colors) reverse (r, g, b);
         int col = gl->get_x (i, j);
         im->setPixel (i, j, qRgba (r, g, b, (a*col)/nr_cols));
       }
@@ -479,6 +480,7 @@ qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
   if (is_nil(mi)) {
     int r, g, b, a;
     get_rgb (fgc, r, g, b, a);
+    if (reverse_colors) reverse (r, g, b);
     SI xo, yo;
     glyph pre_gl= fng->get (c); if (is_nil (pre_gl)) return;
     glyph gl= shrink (pre_gl, std_shrinkf, std_shrinkf, xo, yo);
