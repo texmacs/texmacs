@@ -85,6 +85,11 @@
     definitions in preambles, <TeXmacs> will automatically expand all
     corresponding macro applications.
 
+    <item*|Dump <TeXmacs> document into <LaTeX> code>When this option is set,
+    a copy of the <TeXmacs> document is appended to the <LaTeX> export in a
+    lossless kind. This allows to re-import the document with as less as
+    possible conversion artefacts.
+
     <item*|Character encoding>This define the behavior of the converter with
     respect to characters encoding. There is three possible choices:
 
