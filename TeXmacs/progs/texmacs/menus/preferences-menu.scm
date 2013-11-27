@@ -126,7 +126,10 @@
             (toggle ("Import sophisticated objects as pictures"
                      "latex->texmacs:fallback-on-pictures"))
             (toggle ("Keep track of the LaTeX source code"
-                     "latex->texmacs:preserve-source")))
+                     "latex->texmacs:preserve-source"))
+            (when (== (get-preference "latex->texmacs:preserve-source") "on")
+              (toggle ("Ensure transparent tracking"
+                       "latex->texmacs:secure-tracking"))))
         (-> "TeXmacs -> LaTeX"
             (toggle ("Replace unrecognized styles"
                      "texmacs->latex:replace-style"))

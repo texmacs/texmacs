@@ -182,11 +182,26 @@
   ===
   (aligned
     (meti (text "Import sophisticated objects as pictures")
-      (toggle (set-boolean-preference "latex->texmacs:fallback-on-pictures" answer)
-              (get-boolean-preference "latex->texmacs:fallback-on-pictures")))
+      (toggle
+        (set-boolean-preference "latex->texmacs:fallback-on-pictures" answer)
+        (get-boolean-preference "latex->texmacs:fallback-on-pictures")))
     (meti (text "Keep track of the LaTeX source code")
-      (toggle (set-boolean-preference "latex->texmacs:preserve-source" answer)
-              (get-boolean-preference "latex->texmacs:preserve-source"))))
+      (toggle
+        (begin (set-boolean-preference "latex->texmacs:preserve-source" answer)
+               (refresh-now "secure-tracking-text")
+               (refresh-now "secure-tracking-box"))
+        (get-boolean-preference "latex->texmacs:preserve-source")))
+    (meti
+      (refreshable
+        "secure-tracking-text"
+        (when (== (get-preference "latex->texmacs:preserve-source") "on")
+          (text "Ensure transparent tracking")))
+      (refreshable
+        "secure-tracking-box"
+        (when (== (get-preference "latex->texmacs:preserve-source") "on")
+          (toggle
+            (set-boolean-preference "latex->texmacs:secure-tracking" answer)
+            (get-boolean-preference "latex->texmacs:secure-tracking"))))))
   ======
   (bold (text "TeXmacs -> LaTeX"))
   ===
