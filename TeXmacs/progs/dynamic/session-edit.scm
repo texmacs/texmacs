@@ -35,27 +35,48 @@
 ;; Switches
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define session-math-input #f)
+(define session-math-input (make-ahash-table))
+
+(define (session-key)
+  (let* ((lan (get-env "prog-language"))
+	 (ses (get-env "prog-session")))
+    (cons lan ses)))
 
 (tm-define (session-math-input?)
-  session-math-input)
+  (ahash-ref session-math-input (session-key)))
 
 (tm-define (toggle-session-math-input)
   (:synopsis "Toggle mathematical input in sessions.")
   (:check-mark "v" session-math-input?)
-  (set! session-math-input (not session-math-input))
+  (ahash-set! session-math-input (session-key) (not (session-math-input?)))
   (with-innermost t field-context?
     (field-update-math t)))
 
-(define session-multiline-input #f)
+(define session-multiline-input (make-ahash-table))
 
 (tm-define (session-multiline-input?)
-  session-multiline-input)
+  (ahash-ref session-multiline-input (session-key)))
 
 (tm-define (toggle-session-multiline-input)
   (:synopsis "Toggle multi-line input in sessions.")
   (:check-mark "v" session-multiline-input?)
-  (set! session-multiline-input (not session-multiline-input)))
+  (ahash-set! session-multiline-input (session-key)
+              (not (session-multiline-input?))))
+
+(define session-output-timings (make-ahash-table))
+
+(tm-define (session-output-timings?)
+  (ahash-ref session-output-timings (session-key)))
+
+(tm-define (toggle-session-output-timings)
+  (:synopsis "Toggle output of evaluation timings.")
+  (:check-mark "v" session-output-timings?)
+  (ahash-set! session-output-timings (session-key)
+              (not (session-output-timings?))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Specific switches for Scheme sessions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define session-scheme-trees #t)
 
@@ -76,16 +97,6 @@
   (:synopsis "Toggle pretty math output in scheme sessions.")
   (:check-mark "v" session-scheme-math?)
   (set! session-scheme-math (not session-scheme-math)))
-
-(define session-output-timings #f)
-
-(tm-define (session-output-timings?)
-  session-output-timings)
-
-(tm-define (toggle-session-output-timings)
-  (:synopsis "Toggle output of evaluation timings.")
-  (:check-mark "v" session-output-timings?)
-  (set! session-output-timings (not session-output-timings)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Scheme sessions
