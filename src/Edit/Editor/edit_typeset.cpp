@@ -589,7 +589,21 @@ edit_typeset_rep::typeset (SI& x1, SI& y1, SI& x2, SI& y2) {
   eb= empty_box (reverse (rp));
   // saves memory, also necessary for change_log update
   bench_start ("typeset");
-  eb= ::typeset (ttt, x1, y1, x2, y2);
+#ifdef USE_EXCEPTIONS
+  try {
+#endif
+    eb= ::typeset (ttt, x1, y1, x2, y2);
+#ifdef USE_EXCEPTIONS
+  }
+  catch (string msg) {
+    the_exception= msg;
+    std_error << "Typesetting failure, resetting to empty document\n";
+    assign (rp, tree (DOCUMENT, ""));
+    ::notify_assign (ttt, path(), subtree (et, rp));
+    eb= ::typeset (ttt, x1, y1, x2, y2);    
+  }
+  handle_exceptions ();
+#endif
   bench_end ("typeset");
   //time_t t2= texmacs_time ();
   //if (t2 - t1 >= 10) cout << "typeset took " << t2-t1 << "ms\n";

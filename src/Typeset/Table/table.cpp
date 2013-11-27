@@ -28,7 +28,8 @@ table_rep::table_rep (edit_env env2, int status2, int i0b, int j0b):
 table_rep::~table_rep () {
   if (T != NULL) {
     int i;
-    for (i=0; i<nr_rows; i++) tm_delete_array (T[i]);
+    for (i=0; i<nr_rows; i++)
+      if (T[i] != NULL) tm_delete_array (T[i]);
     tm_delete_array (T);
   }
   if (mw != NULL) tm_delete_array (mw);
@@ -88,6 +89,7 @@ table_rep::typeset_table (tree fm, tree t, path ip) {
   nr_rows= N(t);
   nr_cols= 0;
   T= tm_new_array<cell*> (nr_rows);
+  for (i=0; i<nr_rows; i++) T[i]= NULL;
   STACK_NEW_ARRAY (subformat, tree, nr_rows);
   extract_format (fm, subformat, nr_rows);
   for (i=0; i<nr_rows; i++) {

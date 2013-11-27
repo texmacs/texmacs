@@ -429,7 +429,6 @@ boot_hacks () {
 
 #ifdef QTTEXMACS
 #ifdef USE_EXCEPTIONS
-extern string the_exception;
 class TeXmacs_Application: public QApplication {
 public:
   TeXmacs_Application (int argc, char** argv):
