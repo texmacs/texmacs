@@ -220,7 +220,11 @@
               (get-boolean-preference "texmacs->latex:indirect-bib")))
     (meti (text "Allow for macro definitions in preamble")
       (toggle (set-boolean-preference "texmacs->latex:use-macros" answer)
-              (get-boolean-preference "texmacs->latex:use-macros"))))
+              (get-boolean-preference "texmacs->latex:use-macros")))
+    (meti (text "Dump TeXmacs document into LaTeX source")
+      (toggle
+        (set-boolean-preference "texmacs->latex:preserve-source" answer)
+        (get-boolean-preference "texmacs->latex:preserve-source"))))
   ===
   (aligned
     (item (text "Character encoding:")
