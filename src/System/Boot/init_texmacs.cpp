@@ -17,6 +17,9 @@
 #include "merge_sort.hpp"
 #include "drd_std.hpp"
 #include "language.hpp"
+#ifndef __MINGW32__
+#include <unistd.h>
+#endif
 
 tree texmacs_settings = tuple ();
 int  install_status   = 0;
@@ -97,14 +100,58 @@ init_main_paths () {
 }
 
 /******************************************************************************
-* Make user directories
+* Directory for temporary files
 ******************************************************************************/
+
+static string main_tmp_dir= "$TEXMACS_HOME_PATH/system/tmp";
 
 static void
 make_dir (url which) {
   if (!is_directory (which))
     mkdir (which);
 }
+
+static url
+url_temp_dir_sub () {
+#ifdef __MINGW32__
+  static string pid= "1";
+  return url (main_tmp_dir) * url (pid);
+#else
+  static string pid= as_string ((int) getpid ());
+  return url (main_tmp_dir) * url (pid);
+#endif
+}
+
+url
+url_temp_dir () {
+  url u= url_temp_dir_sub ();
+  make_dir (u);
+  return u;
+}
+
+bool
+process_running (int pid) {
+  string cmd= "ps -p " * as_string (pid);
+  string ret= eval_system (cmd);
+  return occurs ("texmacs", ret) && occurs (as_string (pid), ret);
+}
+
+static void
+clean_temp_dirs () {
+#ifndef __MINGW32__
+  bool err= false;
+  array<string> a= read_directory (main_tmp_dir, err);
+  for (int i=0; i<N(a); i++)
+    if (is_int (a[i]))
+      if (!process_running (as_int (a[i])))
+        if (a[i] != as_string ((int) getpid ()))
+          rmdir (url (main_tmp_dir) * url (a[i]));
+#endif
+}
+
+/******************************************************************************
+* Make user directories
+******************************************************************************/
 
 static void
 init_user_dirs () {
@@ -144,7 +191,7 @@ init_user_dirs () {
   make_dir ("$TEXMACS_HOME_PATH/texts");
   change_mode ("$TEXMACS_HOME_PATH/server", 7 << 6);
   change_mode ("$TEXMACS_HOME_PATH/system", 7 << 6);
-  remove (url ("$TEXMACS_HOME_PATH/system/tmp") * url_wildcard ("*"));
+  clean_temp_dirs ();
 }
 
 /******************************************************************************

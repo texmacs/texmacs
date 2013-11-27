@@ -379,7 +379,7 @@ url_temp (string suffix) {
   int rnd= random ();
 #endif
   string name= "tmp_" * as_string (rnd) * suffix;
-  url u ("$TEXMACS_HOME_PATH/system/tmp", name);
+  url u= url_temp_dir () * url (name);
   if (exists (u)) return url_temp (suffix);
   return u;
 }
