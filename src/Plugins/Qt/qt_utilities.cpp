@@ -547,6 +547,7 @@ qt_image_to_eps (url image, int w_pt, int h_pt, int dpi) {
 
 void
 qt_image_data (url image, int& w, int&h, string& data, string& palette, string& mask) {
+  (void) palette;
   QImage im (utf8_to_qstring (concretize (image)));
 
   
