@@ -36,7 +36,9 @@ main () {
     else {
       int  n = strlen (buffer);
       cout << DATA_BEGIN << "scheme:";
-      if (buffer[n-3] == ';') cout << "#t";
+      if (n>0 && buffer[n-1] == ')') n--;
+      if (n>0 && buffer[n-1] == '\"') n--;
+      if (n>0 && buffer[n-1] == ';') cout << "#t";
       else cout << "#f";
       cout << DATA_END;
     }
