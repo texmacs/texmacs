@@ -26,9 +26,11 @@
   (:suffix "pdf"))
 
 (converter pdf-file postscript-file
+  (:require (url-exists-in-path? "pdf2ps"))
   (:shell "pdf2ps" from to))
 
 (converter postscript-file pdf-file
+  (:require (url-exists-in-path? "ps2pdf"))
   (:shell "ps2pdf" from to))
 
 (define-format xfig
