@@ -72,7 +72,9 @@
   (let*
     ((as-pic   (== (get-preference "latex->texmacs:fallback-on-pictures") "on"))
      (keep-src (== (get-preference "latex->texmacs:preserve-source") "on")))
-    (cpp-latex-document->texmacs x as-pic keep-src)))
+    (if (== (get-preference "latex->texmacs:secure-tracking") "on")
+      (secured-latex-document->texmacs x as-pic keep-src '())
+      (cpp-latex-document->texmacs x as-pic keep-src '()))))
 
 (converter latex-document latex-tree
   (:function parse-latex-document))
@@ -89,6 +91,13 @@
 
 (converter latex-tree texmacs-tree
   (:function latex->texmacs))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; LaTeX -> TeXmacs with secure source tracking
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (secured-latex-document->texmacs t as-pic keep-src forbidden-range)
+  (cpp-latex-document->texmacs t as-pic keep-src '()))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tests

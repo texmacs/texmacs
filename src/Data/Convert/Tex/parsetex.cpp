@@ -1859,13 +1859,23 @@ paragraph_break_here (string s, int i) {
   return true;
 }
 
+static bool
+in_range (double i, array<array<double> > ranges) {
+  int j, n= N(ranges);
+  for (j=0; j<n; j++)
+    if (N(ranges[j]) == 2 && ranges[j][0] <= i && i <= ranges[j][1])
+      return true;
+  return false;
+}
+
 static string
-add_paragraph_markup (string s) {
+add_paragraph_markup (string s, array<array<double> > ranges) {
   string r;
   int i= 0, start= 0, n= N(s), count= 0;
   while (i < n) {
     int j= i+1;
     if (count == 0 && s[i] == '\n'
+        && !in_range (i, ranges)
         && (paragraph_break_here (s, i) || (j < n && s[j] == '\\' &&
         // strategic places to cut
         (test_env   (s, j, "abstract")          ||
@@ -1989,7 +1999,8 @@ fill_paragraph_markup (tree t, string s) {
 }
 
 tree
-parse_latex (string s, bool change, bool using_cork, bool as_pic, bool keep_src) {
+parse_latex (string s, bool change, bool using_cork, bool as_pic,
+    bool keep_src, array<array<double> > ranges) {
   tree r;
   s= dos_to_better (s);
   string encoding= "Cork";
@@ -2009,7 +2020,7 @@ parse_latex (string s, bool change, bool using_cork, bool as_pic, bool keep_src)
   ltx.pic= as_pic;
   ltx.keep_src= keep_src;
   string s1= s;
-  if (keep_src) s1= add_paragraph_markup (s);
+  if (keep_src) s1= add_paragraph_markup (s, ranges);
   r= ltx.parse (s1, change?2:0);
   if (keep_src) {
     r= clean_paragraph_markup (r);
@@ -2021,6 +2032,8 @@ parse_latex (string s, bool change, bool using_cork, bool as_pic, bool keep_src)
 }
 
 tree
-parse_latex_document (string s, bool change, bool as_pic, bool keep_src) {
-  return compound ("!file", parse_latex (s, change, false, as_pic, keep_src));
+parse_latex_document (string s, bool change, bool as_pic,
+    bool keep_src, array<array<double> > range) {
+  return compound ("!file",
+           parse_latex (s, change, false, as_pic, keep_src, range));
 }
