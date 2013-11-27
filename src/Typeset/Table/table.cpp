@@ -103,8 +103,9 @@ table_rep::typeset_table (tree fm, tree t, path ip) {
 
 void
 table_rep::typeset_row (int i, tree fm, tree t, path ip) {
+  //ASSERT (i==0 || nr_cols == N(t), "inconsistent number of columns");
   int j;
-  nr_cols= N(t);
+  nr_cols= (i==0? N(t): min (nr_cols, N(t)));
   T[i]= tm_new_array<cell> (nr_cols);
   STACK_NEW_ARRAY (subformat, tree, nr_cols);
   extract_format (fm, subformat, nr_cols);
