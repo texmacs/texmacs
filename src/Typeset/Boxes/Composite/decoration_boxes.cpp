@@ -54,7 +54,7 @@ struct toc_box_rep: public box_rep {
     box_rep (ip), kind (kind2), title (title2) {
       x1=x2=y1=0;
       y2=fn->yx;
-      x3=x4=y3=y3= 0;
+      x3=x4=y3=y4= 0;
     }
   operator tree () {
     return tuple ("toc", kind, title); }
