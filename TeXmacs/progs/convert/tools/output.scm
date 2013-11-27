@@ -125,6 +125,13 @@
   (if (!= output-tail "") (output-flush))
   (output-prepared (apply string-append ss)))
 
+(tm-define (output-comment . ss)
+  ;(display-err* "Output comment " ss "\n")
+  (output-flush)
+  (output-raw "% ")
+  (output-raw (string-replace (apply string-append ss) "\n" "\n% "))
+  (output-raw "\n"))
+
 (tm-define (output-lf-verbatim . ss)
   ;(display-err* "Output lf verbatim " ss "\n")
   (output-flush)

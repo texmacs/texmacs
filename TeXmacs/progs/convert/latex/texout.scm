@@ -117,6 +117,9 @@
 ;; Outputting main flow
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (texout-comment s)
+  (output-comment s))
+
 (tm-define (texout-preamble l)
   (output-verbatim l))
 
@@ -351,6 +354,7 @@
 	((== (car x) '!widechar) (output-tex (symbol->string (cadr x))))
 	((== (car x) '!file) (texout-file (cdr x)))
 	((== (car x) '!preamble) (texout-preamble (cadr x)))
+        ((== (car x) '!comment) (texout-comment (cadr x)))
 	((== (car x) '!document) (texout-document (cdr x)))
 	((== (car x) '!paragraph) (texout-paragraph (cdr x)))
 	((== (car x) '!table) (texout-table (cdr x)))
