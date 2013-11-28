@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(when (buffer-needs-init? (current-buffer))
+(when (buffer-newly-created? (current-buffer))
   (use-modules (generic document-edit) (texmacs texmacs tm-print))
   (init-style "generic")
   (with lan (get-preference "language")

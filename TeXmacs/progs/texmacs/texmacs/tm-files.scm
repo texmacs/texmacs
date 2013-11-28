@@ -44,14 +44,11 @@
        (switch-to-buffer name)
        r)))
 
-(define buffer-needs-init-table (make-ahash-table))
+(define buffer-newly-created-table (make-ahash-table))
 
-(tm-define (buffer-needs-init? name)
-  (cond ((not (buffer-has-name? name)) #t)
-	((ahash-ref buffer-needs-init-table name)
-	 (ahash-remove! buffer-needs-init-table name)
-	 #t)
-	(else #f)))
+(tm-define (buffer-newly-created? name)
+  (or (not (buffer-has-name? name))
+      (ahash-ref buffer-newly-created-table name)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Saving buffers
@@ -342,8 +339,9 @@
           (else
 	    (with uname (if (string? name) (string->url name) name)
 	      (buffer-set-body name '(document ""))
-	      (ahash-set! buffer-needs-init-table uname #t)
+	      (ahash-set! buffer-newly-created-table uname #t)
 	      (load-buffer-open name opts)
+	      (ahash-remove! buffer-newly-created-table uname)
 	      (set-message `(concat "Could not load " ,vname
 				    ". Created new document")
 			   "Load file"))))))
