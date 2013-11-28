@@ -44,6 +44,15 @@
        (switch-to-buffer name)
        r)))
 
+(define buffer-needs-init-table (make-ahash-table))
+
+(tm-define (buffer-needs-init? name)
+  (cond ((not (buffer-has-name? name)) #t)
+	((ahash-ref buffer-needs-init-table name)
+	 (ahash-remove! buffer-needs-init-table name)
+	 #t)
+	(else #f)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Saving buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -331,11 +340,13 @@
                (set-message `(concat "Could not load " ,vname) "Load file")
                (load-buffer-open name opts)))
           (else
-            (buffer-set-body name '(document ""))
-            (load-buffer-open name opts)
-            (set-message `(concat "Could not load " ,vname
-                                  ". Created new document")
-                         "Load file")))))
+	    (with uname (if (string? name) (string->url name) name)
+	      (buffer-set-body name '(document ""))
+	      (ahash-set! buffer-needs-init-table uname #t)
+	      (load-buffer-open name opts)
+	      (set-message `(concat "Could not load " ,vname
+				    ". Created new document")
+			   "Load file"))))))
 
 (define (load-buffer-check-permissions name opts)
   ;;(display* "load-buffer-check-permissions " name ", " opts "\n")
