@@ -50,6 +50,7 @@ class printer_rep: public renderer_rep {
   hashmap<string,string> tex_width;
   hashmap<string,string> tex_fonts;
   hashmap<string,array<int> > tex_font_chars;
+  hashmap<string,string> metadata;
 
 public:
   printer_rep (url ps_file_name, int dpi, int nr_pages,
@@ -83,6 +84,8 @@ public:
   void toc_entry (string kind, string title, SI x, SI y);
   void generate_toc_item (tree t);
   void generate_toc ();
+  void set_metadata (string kind, string val);
+  void generate_metadata ();
 
   /********************** routines from renderer.hpp *************************/
 

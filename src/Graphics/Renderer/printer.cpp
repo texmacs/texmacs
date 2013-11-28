@@ -53,7 +53,7 @@ printer_rep::printer_rep (
     ncols (0), lw (-1), nwidths (0), cfn (""), nfonts (0),
     xpos (0), ypos (0), tex_flag (false), toc (TUPLE),
     defs ("?"), tex_chars ("?"), tex_width ("?"),
-    tex_fonts ("?"), tex_font_chars (array<int>(0))    
+    tex_fonts ("?"), tex_font_chars (array<int>(0)), metadata ("")
 {
   string tex_pro, special_pro, color_pro, texps_pro;
   load_string ("$TEXMACS_PATH/misc/convert/tex.pro", tex_pro, true);
@@ -122,6 +122,7 @@ printer_rep::printer_rep (
 printer_rep::~printer_rep () {
   next_page ();
   generate_toc ();
+  generate_metadata ();
   body << "\n%%Trailer\n"
        << "end\n"
        << "userdict /end-hook known{end-hook} if\n"
@@ -1007,6 +1008,11 @@ structure_toc (tree t, int& i, tree& out, string level) {
   out << next;
 }
 
+static string
+to_hex_string (string s) {
+  return "<FEFF" * utf8_to_hex_string (cork_to_utf8 (s)) * ">";  
+}
+
 void
 printer_rep::generate_toc_item (tree t) {
   string title= t[0][0]->label;
@@ -1014,8 +1020,7 @@ printer_rep::generate_toc_item (tree t) {
   string page = t[0][2]->label;
   string x    = t[0][3]->label;
   string y    = t[0][4]->label;
-  string utit = cork_to_utf8 (title);
-  string htit = "<FEFF" * utf8_to_hex_string (utit) * ">";
+  string htit = to_hex_string (title);
   print ("[");
   if (N(t) > 1) {
     print ("/Count");
@@ -1043,6 +1048,24 @@ printer_rep::generate_toc () {
     structure_toc (toc, i, rew, "0");
   for (i=0; i<N(rew); i++)
     generate_toc_item (rew[i]);
+}
+
+void
+printer_rep::set_metadata (string kind, string val) {
+  metadata (kind)= val;
+}
+
+void
+printer_rep::generate_metadata () {
+  if (N(metadata) == 0) return;
+  print ("[");
+  if (metadata->contains ("title"))
+    print ("/Title " * to_hex_string (metadata ["title"]));
+  if (metadata->contains ("author"))
+    print ("/Author " * to_hex_string (metadata ["author"]));
+  if (metadata->contains ("subject"))
+    print ("/Subject " * to_hex_string (metadata ["subject"]));
+  print ("/DOCINFO pdfmark");
 }
 
 /******************************************************************************
