@@ -253,6 +253,9 @@
 		49BEF71816FDD566004BAE73 /* metadata-springer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BEF71616FDD566004BAE73 /* metadata-springer.cpp */; };
 		49BEF71916FDD566004BAE73 /* metadata-springer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BEF71616FDD566004BAE73 /* metadata-springer.cpp */; };
 		49BEF71A16FDD566004BAE73 /* metadata-springer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BEF71616FDD566004BAE73 /* metadata-springer.cpp */; };
+		49D6464618478DD2001541E1 /* base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D6464418478DD2001541E1 /* base64.cpp */; };
+		49D6464718478DD2001541E1 /* base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D6464418478DD2001541E1 /* base64.cpp */; };
+		49D6464818478DD2001541E1 /* base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D6464418478DD2001541E1 /* base64.cpp */; };
 		49D662FC128B331A0006E948 /* QTMFileDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D662FA128B331A0006E948 /* QTMFileDialog.cpp */; };
 		49D662FD128B333F0006E948 /* QTMFileDialog.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D662FB128B331A0006E948 /* QTMFileDialog.hpp */; };
 		49DD8FA916DB75C100647CA2 /* sqlite3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49DD8FA716DB75C100647CA2 /* sqlite3.cpp */; };
@@ -1583,6 +1586,8 @@
 		49AA0884181166140090FD84 /* font_protrusion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_protrusion.cpp; sourceTree = "<group>"; };
 		49BEF71616FDD566004BAE73 /* metadata-springer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "metadata-springer.cpp"; sourceTree = "<group>"; };
 		49BEF71716FDD566004BAE73 /* metadata.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = metadata.hpp; sourceTree = "<group>"; };
+		49D6464418478DD2001541E1 /* base64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = base64.cpp; sourceTree = "<group>"; };
+		49D6464518478DD2001541E1 /* base64.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = base64.hpp; sourceTree = "<group>"; };
 		49D662FA128B331A0006E948 /* QTMFileDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMFileDialog.cpp; sourceTree = "<group>"; };
 		49D662FB128B331A0006E948 /* QTMFileDialog.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMFileDialog.hpp; sourceTree = "<group>"; };
 		49DD8FA716DB75C100647CA2 /* sqlite3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sqlite3.cpp; sourceTree = "<group>"; };
@@ -2901,6 +2906,8 @@
 		9C0B478F10A8CC0F0097A335 /* String */ = {
 			isa = PBXGroup;
 			children = (
+				49D6464418478DD2001541E1 /* base64.cpp */,
+				49D6464518478DD2001541E1 /* base64.hpp */,
 				49FFF7C41635D3690031CFDC /* wencoding.cpp */,
 				49FFF7C51635D3690031CFDC /* wencoding.hpp */,
 				9C0B479010A8CC0F0097A335 /* analyze.cpp */,
@@ -4650,6 +4657,7 @@
 				9C0B49FE10A8CC110097A335 /* drd_mode.cpp in Sources */,
 				9C0B49FF10A8CC110097A335 /* drd_std.cpp in Sources */,
 				9C0B4A0010A8CC110097A335 /* tag_info.cpp in Sources */,
+				49D6464618478DD2001541E1 /* base64.cpp in Sources */,
 				9C0B4A0110A8CC110097A335 /* vars.cpp in Sources */,
 				9C0B4A0210A8CC110097A335 /* archiver.cpp in Sources */,
 				9C0B4A0310A8CC110097A335 /* commute.cpp in Sources */,
@@ -4995,6 +5003,7 @@
 				9CCC740B10D303D900E88D90 /* parsexml.cpp in Sources */,
 				9CCC740C10D303D900E88D90 /* drd_info.cpp in Sources */,
 				9CCC740D10D303D900E88D90 /* drd_mode.cpp in Sources */,
+				49D6464818478DD2001541E1 /* base64.cpp in Sources */,
 				9CCC740E10D303D900E88D90 /* drd_std.cpp in Sources */,
 				9CCC740F10D303D900E88D90 /* tag_info.cpp in Sources */,
 				9CCC741010D303D900E88D90 /* vars.cpp in Sources */,
@@ -5340,6 +5349,7 @@
 				9CD4E63010B14AB300E0DD5C /* edit_search.cpp in Sources */,
 				9CD4E63110B14AB300E0DD5C /* edit_select.cpp in Sources */,
 				9CD4E63210B14AB300E0DD5C /* edit_spell.cpp in Sources */,
+				49D6464718478DD2001541E1 /* base64.cpp in Sources */,
 				9CD4E63310B14AB300E0DD5C /* bitmap_font.cpp in Sources */,
 				9CD4E63410B14AB300E0DD5C /* glyph.cpp in Sources */,
 				9CD4E63510B14AB300E0DD5C /* glyph_ops.cpp in Sources */,
