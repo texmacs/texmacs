@@ -90,6 +90,7 @@ bool
 looks_universal (string s) {
   // Looks if s can be from TeXmacs's universal charset
   int i=0, n=N(s);
+  bool glyph= false;
   for (; i<n; i++) {
     if (i+2 < n && s[i] == '<') {
       bool unicode= s[++i] == '#';
@@ -101,9 +102,10 @@ looks_universal (string s) {
           return false;
         i++;
       }
+      glyph= true;
     }
   }
-  return true;
+  return glyph;
 }
 
 string
