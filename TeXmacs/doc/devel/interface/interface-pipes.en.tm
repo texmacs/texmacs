@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.0.7.21>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Basic input/output using pipes>
@@ -105,9 +105,9 @@
     the initial <render-key|DATA_BEGIN>. So all output has to be inside one
     <em|single> outer <render-key|DATA_BEGIN>-<render-key|DATA_END> block: if
     you send more blocks, then <TeXmacs> will retake control before reading
-    all your output. It <em|is> possible to nest
-    <render-key|DATA_BEGIN>-<render-key|DATA_END> blocks though, as we will
-    see below.
+    all your output. For certain formats (such as <verbatim|verbatim>), it
+    <em|is> possible to nest <render-key|DATA_BEGIN>-<render-key|DATA_END>
+    blocks though, as we will see below.
   </remark>
 
   <\remark>
@@ -153,8 +153,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

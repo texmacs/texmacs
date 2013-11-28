@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.0.7.21>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Formatted and structured output>
@@ -12,9 +12,10 @@
     <framed-fragment|<verbatim|<render-key|DATA_BEGIN><em|format>:<em|message><render-key|DATA_END>>>
   </quotation>
 
-  In fact, the <verbatim|<em|message>> may recursively contain blocks of the
-  same form. Currently implemented formats include <verbatim|verbatim>,
-  <verbatim|latex>, <verbatim|html>, <verbatim|ps>, <verbatim|scheme>. The
+  Currently implemented formats include <verbatim|verbatim>,
+  <verbatim|latex>, <verbatim|html>, <verbatim|ps>, and <verbatim|scheme>.
+  Certain formats, such as <verbatim|verbatim>, allow the
+  <verbatim|<em|message>> to recursively contain blocks of the same form. The
   <verbatim|scheme> format is used for sending <TeXmacs> trees in the form of
   <scheme> expressions.
 
@@ -159,8 +160,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
