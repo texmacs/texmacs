@@ -41,6 +41,7 @@ tree   upgrade (tree t, string version);
 tree   substitute (tree t, tree which, tree by);
 tree   nonumber_to_eqnumber (tree t);
 tree   eqnumber_to_nonumber (tree t);
+string search_metadata (tree doc, string kind);
 
 /*** Scheme ***/
 string scheme_tree_to_string (scheme_tree t);

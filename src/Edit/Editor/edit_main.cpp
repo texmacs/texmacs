@@ -163,6 +163,17 @@ edit_main_rep::get_metadata (string kind) {
   string var= "global-" * kind;
   string val= get_init_string (var);
   if (val != "") return val;
+  val= search_metadata (subtree (et, rp), kind);
+  if (val != "") return val;
+  if (kind == "title") return as_string (tail (get_name ()));
+#ifndef __MINGW32__
+  if (kind == "author" &&
+      !is_none (resolve_in_path ("finger")) &&
+      !is_none (resolve_in_path ("sed"))) {
+    string val= var_eval_system ("finger `whoami` | sed -e '/Name/!d' -e 's/.*Name: //'");
+    if (N(val) > 1) return val;
+  }
+#endif
   return "";
 }
 

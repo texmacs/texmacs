@@ -506,3 +506,60 @@ change_doc_attr (tree doc, string attr, tree val) {
   if (!done) r << compound (attr, val);
   return r;
 }
+
+/******************************************************************************
+* Extracting metadata
+******************************************************************************/
+
+static tree
+search_tag_quick (tree t, string tag) {
+  if (is_compound (t, tag)) return t;
+  if (!(is_func (t, DOCUMENT) || is_func (t, CONCAT) ||
+        is_func (t, SURROUND) || is_func (t, WITH))) return "";
+  for (int i=0; i<N(t); i++) {
+    tree r= search_tag_quick (t[i], tag);
+    if (r != "") return r;
+  }
+  return "";
+}
+
+static tree
+search_tag (tree t, string tag) {
+  if (is_atomic (t)) return tuple ();
+  else if (is_compound (t, tag, 1)) return tuple (t[0]);
+  else {
+    tree r (TUPLE);
+    for (int i=0; i<N(t); i++) {
+      tree f= search_tag (t[i], tag);
+      r << A(f);
+    }
+    return r;
+  }
+}
+
+static string
+search_metadata_tag (tree doc, string tag) {
+  string r;
+  tree t= search_tag (doc, tag);
+  for (int i=0; i<N(t); i++) {
+    if (N(r) != 0) r << ", ";
+    r << tree_to_verbatim (t[i]);
+  }
+  return r;
+}
+
+string
+search_metadata (tree doc, string kind) {
+  tree dd= search_tag_quick (doc, "doc-data");
+  if (dd != "") {
+    if (kind == "title")
+      return search_metadata_tag (dd, "doc-title");
+    if (kind == "author")
+      return search_metadata_tag (dd, "author-name");
+  }
+  if (kind == "title") {
+    tree t= search_tag_quick (doc, "tmdoc-title");
+    if (t != "") return tree_to_verbatim (t[0]);
+  }
+  return "";
+}
