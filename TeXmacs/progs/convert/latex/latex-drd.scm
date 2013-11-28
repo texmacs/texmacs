@@ -414,18 +414,23 @@
   ignorespacesafterend ignorespaces balancecolumns)
 
 (logic-group latex-ignore-0*%
-	displaybreak allowdisplaybreaks)
+  displaybreak allowdisplaybreaks)
 
 (logic-group latex-ignore-1%
-	tag hyphenation)
+  tag hyphenation)
+
+(logic-group latex-ignore-2%
+  newdir)
 
 (logic-rules
 	((latex-ignore% 'x)       (latex-ignore-0% 'x))
 	((latex-ignore% 'x)       (latex-ignore-0*% 'x))
 	((latex-ignore% 'x)       (latex-ignore-1% 'x))
+	((latex-ignore% 'x)       (latex-ignore-2% 'x))
   ((latex-arity% 'x 0)      (latex-ignore-0% 'x))
   ((latex-arity% 'x 0)      (latex-ignore-0*% 'x))
   ((latex-arity% 'x 1)      (latex-ignore-1% 'x))
+  ((latex-arity% 'x 2)      (latex-ignore-2% 'x))
   ((latex-optional-arg% 'x) (latex-ignore-1*% 'x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
