@@ -48,6 +48,22 @@
 ;; Inserting foldable and switchable tags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (get-extern-converters)
+  (let* ((l1 (converters-from "texmacs-snippet"))
+         (l2 (filter
+               (lambda (x) (and (string? x)
+                                (string-ends? x "-snippet")
+                                (not (string-contains? x "texmacs")))) l1))
+         (l3 (map (cut string-replace <> "-snippet" "") l2))
+         (l4 (sort l3 (lambda (x y) (string<? (format-get-name x)
+                                              (format-get-name y))))))
+    l4))
+
+(tm-menu (supported-convertible-menu)
+  (for (name (get-extern-converters))
+       ((eval (format-get-name name))
+        (insert-go-to `(converter-input ,name "" "" "") '(1 0)))))
+
 (tm-menu (supported-executable-menu)
   (for (name (session-list))
     (with menu-name (session-name name)
@@ -107,6 +123,7 @@
           ("Alternate until here" (make-overlay 'alternate-until))
           ("Alternate only here" (make-overlay 'alternate-this))
           ("Alternate except here" (make-overlay 'alternate-other))))
+  (-> "Convertible" (link supported-convertible-menu))
   (if (!= (session-list) '())
       (-> "Executable"
           (link supported-executable-menu)))
