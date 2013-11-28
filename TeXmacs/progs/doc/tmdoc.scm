@@ -185,8 +185,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmdoc-expand-help root type)
-  (load-buffer (string-append "tmfs://help/" type "/"
-                              (url->tmfs-string root))))
+  (with name (url->tmfs-string root)
+    (when (string-starts? name "tmfs/help/")
+      (set! name (string-drop name 10))
+      (set! name (tmfs-cdr name)))
+    (load-buffer (string-append "tmfs://help/" type "/" name))))
 
 (tm-define (delayed-update nr cont)
   (system-wait "Generating automatic content" nr)
