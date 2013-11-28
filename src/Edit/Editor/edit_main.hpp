@@ -63,6 +63,7 @@ public:
   void focus_on_this_editor ();
   void notify_page_change ();
 
+  string get_metadata (string kind);
   void print_bis (url ps_name, bool to_file, int first, int last);
   void print (url ps_name, bool to_file, int first, int last);
   void print_to_file (url ps_name, string first="1", string last="1000000");

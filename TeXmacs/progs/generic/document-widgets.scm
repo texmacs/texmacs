@@ -388,6 +388,38 @@
                      noop "Document page format")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Document -> Metadata
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget ((document-metadata-editor u) quit)
+  (padded
+    (refreshable "document-metadata"
+      (aligned
+        (item (text "Title:")
+          (input (initial-set u "global-title" answer) "string"
+                 (list (initial-get u "global-title")) "20em"))
+        (item (text "Author:")
+          (input (initial-set u "global-author" answer) "string"
+                 (list (initial-get u "global-author")) "20em"))
+        (item (text "Subject:")
+          (input (initial-set u "global-subject" answer) "string"
+                 (list (initial-get u "global-subject")) "20em"))))
+    ======
+    (explicit-buttons
+      (hlist
+        >>>
+        ("Reset"
+         (initial-default u "global-title" "global-author" "global-subject")
+         (refresh-now "document-metadata"))
+        // //
+        ("Ok" (quit))))))
+
+(tm-define (open-document-metadata)
+  (:interactive #t)
+  (let* ((u (current-buffer)))
+    (dialogue-window (document-metadata-editor u) noop "Document metadata")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document -> Color
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

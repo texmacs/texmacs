@@ -519,6 +519,7 @@ public:
   virtual url  get_name () = 0;
   virtual void focus_on_this_editor () = 0;
   virtual void notify_page_change () = 0;
+  virtual string get_metadata (string kind) = 0;
   virtual void print (url ps_name, bool to_file, int first, int last) = 0;
   virtual void print_to_file (url ps_name,
 			      string first="1", string last="1000000") = 0;

@@ -158,6 +158,14 @@ edit_main_rep::notify_page_change () {
   if (is_attached (this)) send_invalidate_all (this);
 }
 
+string
+edit_main_rep::get_metadata (string kind) {
+  string var= "global-" * kind;
+  string val= get_init_string (var);
+  if (val != "") return val;
+  return "";
+}
+
 /******************************************************************************
 * Printing
 ******************************************************************************/
@@ -232,6 +240,9 @@ edit_main_rep::print_bis (url name, bool conform, int first, int last) {
   renderer ren = printer (name, dpi, pages, page_type, landsc, w/cm, h/cm);
 #endif
   
+  ren->set_metadata ("title", get_metadata ("title"));
+  ren->set_metadata ("author", get_metadata ("author"));
+  ren->set_metadata ("subject", get_metadata ("subject"));
   for (i=start; i<end; i++) {
     tree bg= env->read (BG_COLOR);
     ren->set_background (bg);

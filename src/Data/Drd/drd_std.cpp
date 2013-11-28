@@ -822,6 +822,9 @@ init_std_drd () {
   init_var (THE_LABEL, TYPE_REGULAR);
   init_var (THE_TAGS, TYPE_ADHOC);
   init_var (THE_MODULES, TYPE_ADHOC);
+  init_var (GLOBAL_TITLE, TYPE_STRING);
+  init_var (GLOBAL_AUTHOR, TYPE_STRING);
+  init_var (GLOBAL_SUBJECT, TYPE_STRING);
 
   init_var (FONT, TYPE_STRING);
   init_var (FONT_FAMILY, TYPE_STRING);

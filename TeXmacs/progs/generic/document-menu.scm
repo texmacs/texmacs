@@ -624,6 +624,15 @@
           ("Other" (init-interactive-env "page-flexibility")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The Document -> Metadata menu
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind document-metadata-menu
+  ("Title" (init-interactive-env "global-title"))
+  ("Author" (init-interactive-env "global-author"))
+  ("Subject" (init-interactive-env "global-subject")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Document -> Magnification menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -745,6 +754,7 @@
   (-> "Font" (link document-full-font-menu))
   (-> "Paragraph" (link document-paragraph-menu))
   (-> "Page" (link document-page-menu))
+  (-> "Metadata" (link document-metadata-menu))
   ---
   (-> "Magnification" (link document-magnification-menu))
   (-> "Colors" (link document-colors-menu))
@@ -772,6 +782,7 @@
       (-> "Font" (link document-full-font-menu)))
   ("Paragraph" (open-document-paragraph-format))
   ("Page" (open-document-page-format))
+  ("Metadata" (open-document-metadata))
   ;;("Colors" (open-document-colors))
   ---
   (-> "Magnification" (link document-magnification-menu))

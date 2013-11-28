@@ -83,6 +83,11 @@ renderer_rep::toc_entry (string kind, string title, SI x, SI y) {
   return;
 }
 
+void
+renderer_rep::set_metadata (string kind, string val) {
+  (void) kind; (void) val;
+}
+
 /******************************************************************************
 * Origin and shrinking factor
 ******************************************************************************/

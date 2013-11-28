@@ -30,6 +30,9 @@ extern string TABULAR;
 extern string THE_LABEL;
 extern string THE_TAGS;
 extern string THE_MODULES;
+extern string GLOBAL_TITLE;
+extern string GLOBAL_AUTHOR;
+extern string GLOBAL_SUBJECT;
 
 extern string FONT;
 extern string FONT_FAMILY;
