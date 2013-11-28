@@ -95,7 +95,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initial environment management in specific buffers
-;; FIXME: should be rewritten using correct 'with-buffer'
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (initial-set-tree u var val)
@@ -129,6 +128,12 @@
 (tm-define (initial-default u . vars)
   (with-buffer u
     (apply init-default vars)))
+
+
+(tm-define (buffer-get-metadata u kind)
+  (or (with-buffer u
+	(get-metadata kind))
+      ""))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Text and paragraph properties

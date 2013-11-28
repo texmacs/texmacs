@@ -397,13 +397,13 @@
       (aligned
         (item (text "Title:")
           (input (initial-set u "global-title" answer) "string"
-                 (list (initial-get u "global-title")) "20em"))
+                 (list (buffer-get-metadata u "title")) "30em"))
         (item (text "Author:")
           (input (initial-set u "global-author" answer) "string"
-                 (list (initial-get u "global-author")) "20em"))
+                 (list (buffer-get-metadata u "author")) "30em"))
         (item (text "Subject:")
           (input (initial-set u "global-subject" answer) "string"
-                 (list (initial-get u "global-subject")) "20em"))))
+                 (list (buffer-get-metadata u "subject")) "30em"))))
     ======
     (explicit-buttons
       (hlist
