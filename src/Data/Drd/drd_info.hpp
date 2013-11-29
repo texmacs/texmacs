@@ -91,6 +91,7 @@ public:
   bool all_accessible (tree_label tag);
   bool none_accessible (tree_label tag);
   bool is_accessible_child (tree t, int child);
+  bool is_accessible_path (tree t, path p);
 
   void set_writability (tree_label tag, int nr, int writability);
   int  get_writability (tree_label tag, int nr);

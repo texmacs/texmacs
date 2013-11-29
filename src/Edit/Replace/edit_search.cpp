@@ -121,15 +121,6 @@ edit_replace_rep::search_upwards_in_set (tree t) {
   }
 }
 
-static bool
-is_accessible_path (drd_info drd, tree t, path p) {
-  if (is_nil (p)) return true;
-  return
-    drd->is_accessible_child (t, p->item) &&
-    (p->item < N(t)) &&
-    is_accessible_path (drd, t[p->item], p->next);
-}
-
 path
 edit_replace_rep::search_previous_compound (path init, string which) {
   path p= init;
@@ -144,7 +135,7 @@ edit_replace_rep::search_previous_compound (path init, string which) {
 	p= p * (N(st)-1);
       }
     }
-    if (is_accessible_path (drd, et, p) &&
+    if (drd->is_accessible_path (et, p) &&
 	is_compound (subtree (et, p), which))
       return p;
   }
@@ -164,7 +155,7 @@ edit_replace_rep::search_next_compound (path init, string which) {
 	p= p * 0;
       }
     }
-    if (is_accessible_path (drd, et, p) &&
+    if (drd->is_accessible_path (et, p) &&
 	is_compound (subtree (et, p), which))
       return p;
   }

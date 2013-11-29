@@ -551,6 +551,15 @@ drd_info_rep::is_accessible_child (tree t, int i) {
   return true; // NOT REACHED
 }
 
+bool
+drd_info_rep::is_accessible_path (tree t, path p) {
+  if (is_nil (p)) return true;
+  return
+    is_accessible_child (t, p->item) &&
+    (p->item < N(t)) &&
+    is_accessible_path (t[p->item], p->next);
+}
+
 /******************************************************************************
 * Children's writability
 ******************************************************************************/

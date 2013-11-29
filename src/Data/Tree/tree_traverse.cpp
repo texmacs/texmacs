@@ -11,6 +11,7 @@
 
 #include "tree_traverse.hpp"
 #include "drd_std.hpp"
+#include "drd_mode.hpp"
 #include "analyze.hpp"
 #include "hashset.hpp"
 #include "scheme.hpp"
@@ -215,7 +216,7 @@ path previous_any (tree t, path p) {
 ******************************************************************************/
 
 static path
-move_valid (tree t, path p, bool forward) {
+move_valid_sub (tree t, path p, bool forward) {
   ASSERT (is_inside (t, p), "invalid cursor");
   path q= p;
   while (true) {
@@ -224,6 +225,16 @@ move_valid (tree t, path p, bool forward) {
     if (valid_cursor (t, r)) return r;
     q= r;
   }
+}
+
+static path
+move_valid (tree t, path p, bool forward) {
+  bool inside= the_drd->is_accessible_path (t, p);
+  if (inside) return move_valid_sub (t, p, forward);
+  bool old_mode= set_access_mode (DRD_ACCESS_SOURCE);
+  path r= move_valid_sub (t, p, forward);
+  set_access_mode (old_mode);
+  return r;
 }
 
 path next_valid (tree t, path p) {
