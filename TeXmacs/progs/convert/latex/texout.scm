@@ -44,6 +44,14 @@
         (else (or (latex-stree-contains? (car t) u)
                   (in? #t (map (lambda (x)
                                  (latex-stree-contains? x u)) (cdr t)))))))
+(define (attached_macro? t)
+  (and (func? t '!concat 4)
+       (== (cadr t) '(!preamble "%%%%%%%%%% Start TeXmacs macros\n"))))
+
+(define (detach-macros t)
+  (cond ((attached_macro? t) (fifth t))
+        ((list>0? t) (map-in-order detach-macros t))
+        (else t)))
 
 (define (texout-file l)
   (let* ((doc-body (car l))
@@ -62,6 +70,7 @@
 
     (if (not has-preamble?)
       (begin
+        (set! doc-body (detach-macros doc-body))
         (receive
           (tm-style-options tm-uses tm-init tm-preamble)
           (latex-preamble doc-misc style lan init)

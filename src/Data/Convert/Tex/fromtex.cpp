@@ -4144,7 +4144,9 @@ pick_paragraph_breaks (tree t, array<tree> &b) {
       src= simplify_correct (src);
       b << compound ("associate", "latex-tree-src" * uid,
                      compound ("latex-tree-src", u, src, from, to));
-      if (u != document ())
+      if (N(u) == 1 && is_compound (u[0], "hide-preamble"))
+        r << u[0];
+      else if (u != document ())
         r << u;
       u= tree (DOCUMENT);
     }
