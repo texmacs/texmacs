@@ -272,7 +272,7 @@ concater_rep::typeset_wide (tree t, path ip, bool above) {
     request_wide= true;
   }
   if (ends (s, "brace>") || ends (s, "brace*>"))
-    b= move_box (descend (ip, 0), b, 0, 0, true);
+    b= move_box (decorate_middle (descend (ip, 0)), b, 0, 0, true);
   print (wide_box (ip, b, s, env->fn, env->pen, request_wide, above));
   if ((s == "<underbrace>") || (s == "<overbrace>") ||
       (s == "<squnderbrace>") || (s == "<sqoverbrace>"))
