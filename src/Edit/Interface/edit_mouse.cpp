@@ -28,6 +28,8 @@
 #define Mod4Mask    16384
 #define Mod5Mask    32768
 
+void disable_double_clicks ();
+
 /******************************************************************************
 * Routines for the mouse
 ******************************************************************************/
@@ -124,6 +126,7 @@ edit_interface_rep::mouse_select (SI x, SI y, int mods, bool drag) {
   if (eb->action ("select" , x, y, 0) != "") return;
   if (!is_nil (mouse_ids) && (mods & ShiftMask) == 0) {
     call ("link-follow-ids", object (mouse_ids), object ("click"));
+    disable_double_clicks ();
     return;
   }
   tree g;
@@ -331,6 +334,7 @@ static bool   left_dragging= false;
 static SI     left_x= 0;
 static SI     left_y= 0;
 static time_t left_last= 0;
+static int    double_click_delay= 500;
 
 void
 drag_left_reset () {
@@ -338,6 +342,11 @@ drag_left_reset () {
   left_dragging= false;
   left_x       = 0;
   left_y       = 0;
+}
+
+void
+disable_double_clicks () {
+  left_last -= (double_click_delay + 1);
 }
 
 static string
@@ -364,7 +373,7 @@ detect_left_drag (void* handle, string type, SI x, SI y, time_t t, SI d) {
       drag_left_reset ();
       return "end-drag-left";
     }
-    if ((t >= left_last) && ((t - left_last) <= 500)) {
+    if ((t >= left_last) && ((t - left_last) <= double_click_delay)) {
       left_last= t;
       return "double-left";
     }
