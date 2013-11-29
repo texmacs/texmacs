@@ -116,7 +116,9 @@
 
 (tm-define (go-to-same-buffer fun)
   (with p (fun (root-tree) (cursor-path))
-    (if (list-starts? (cDr p) (buffer-path)) (go-to p))))
+    (when (list-starts? (cDr p) (buffer-path))
+      (go-to p)
+      (select-from-cursor))))
 
 (tm-define (go-to-next) (go-to-same-buffer path-next))
 (tm-define (go-to-previous) (go-to-same-buffer path-previous))
