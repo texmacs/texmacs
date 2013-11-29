@@ -461,10 +461,17 @@
        (string? (cadr x))
        (func? (caddr x) 'macro)))
 
+(define (comment-preamble t)
+  (cond ((string? t) `(!comment ,t))
+        ((or (func? t 'para)
+             (func? t 'concat)
+             (func? t 'document)) (map comment-preamble t))
+        (else t)))
+
 (define (tmtex-filter-preamble l)
   (cond ((or (nlist? l) (null? l)) '())
 	((macro-definition? l) (list l))
-	((== (car l) 'hide-preamble) (cdadr l))
+	((== (car l) 'hide-preamble) (map comment-preamble (cdadr l)))
 	(else (append-map tmtex-filter-preamble (cdr l)))))
 
 (define (tmtex-filter-body l)
