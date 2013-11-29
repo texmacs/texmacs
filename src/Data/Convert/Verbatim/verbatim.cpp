@@ -281,7 +281,7 @@ encode (string s, string enc) {
   else if (enc == "utf-8") return utf8_to_cork (s);
   else if (enc == "iso-8859-1") return tm_encode (s);
   else if (enc == "SourceCode") return sourcecode_to_cork(s);
-  else return s;
+  else return tm_encode (s);
 }
 
 tree

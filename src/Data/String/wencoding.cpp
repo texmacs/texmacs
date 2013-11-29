@@ -127,7 +127,8 @@ western_to_cork (string s) {
     if (charset != "")
       return convert (s, charset, "Cork");
   }
-  return s;
+  if (looks_universal (s)) return s;
+  return tm_encode (s);
 }
 string
 western_to_utf8 (string s) {
