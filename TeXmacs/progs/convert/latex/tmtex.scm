@@ -515,7 +515,6 @@
               (ahash-set! tmtex-src (tmtex-filter-body stm) src)))
           (ahash-set! tmtex-src stm src)))
       l)
-    ;(for-each (lambda (x) (display* (car x) "  --->  " (cdr x) "\n\n")) (ahash-table->list tmtex-src))
     tmtex-src))
 
 (define (attach-macros t)
@@ -2044,7 +2043,6 @@
 
 (tm-define (tmtex x)
   (with src (ahash-ref tmtex-src x)
-    ;;(display* x "\n ---> " src "\n\n")
     (cond ((not (not src))
            (list '!verbatim* (tmtex-tt (convert-charset (car src)))))
           ((string? x) (tmtex-string x))
