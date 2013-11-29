@@ -98,8 +98,12 @@ edit_interface_rep::resume () {
   if (use_side_tools)
     { SERVER (side_tools (0, "(vertical (link texmacs-side-tools))")); }
   cur_sb= 2;
-  tp= make_cursor_accessible (tp, true);
-  notify_change (THE_FOCUS + THE_EXTENTS + THE_CURSOR);
+  notify_change (THE_FOCUS + THE_EXTENTS);
+  path new_tp= make_cursor_accessible (tp, true);
+  if (new_tp != tp) {
+    notify_change (THE_CURSOR);
+    tp= new_tp;
+  }
 }
 
 /******************************************************************************
