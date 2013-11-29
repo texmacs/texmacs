@@ -690,14 +690,20 @@ edit_select_rep::selection_paste (string key) {
   if (is_tuple (t, "extern", 1)) {
     string mode= get_env_string (MODE);
     string lan = get_env_string (MODE_LANGUAGE (mode));
+    string s   = selection_decode (lan, as_string (t[1]));
+    if (mode == "prog")
+      if (selection_import == "latex" || selection_import == "html")
+        selection_import= "verbatim";
+    if (mode == "math")
+      if (selection_import == "latex")
+        if (!starts (s, "$") && !ends (s, "$"))
+          s= "$" * s * "$";
     string fm;
-    if ((selection_import == "latex") && (mode == "prog")) mode= "verbatim";
-    if ((selection_import == "latex") && (mode == "math")) mode= "latex-math";
-    if ((selection_import == "html") && (mode == "prog")) mode= "verbatim";
     if (selection_import == "default") fm= "texmacs-snippet";
     else fm= selection_import * "-snippet";
-    tree doc= generic_to_tree (selection_decode(lan, as_string(t[1])), fm);
+    tree doc= generic_to_tree (s, fm);
     if (is_func (doc, DOCUMENT, 1)) doc= doc[0]; // temporary fix
+    if (mode == "math" && is_compound (doc, "math", 1)) doc= doc[0];
     insert_tree (doc);
   }
   if (is_tuple (t, "texmacs", 3)) {
