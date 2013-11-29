@@ -149,11 +149,15 @@
 (tm-define (latex-add-texmacs-sources t doc)
   (:synopsis "Add to @t the source @doc coded in base64 @t")
   (if (not (func? t '!file)) t
-    (let* ((str  (object->string doc))
-           (str* (string-append "-----BEGIN TEXMACS DOCUMENT-----\n\n"
-                                (encode-base64 str)
-                                "\n\n-----END TEXMACS DOCUMENT-----")))
-      `(!file ,@(cdr t) (!paragraph "" (!comment ,str*))))))
+    (let* ((str (object->string doc))
+           (d   (cpp-verbatim-snippet->texmacs (encode-base64 str) #t "ascii"))
+           (d*  `(!paragraph ""
+                             "-----BEGIN TEXMACS DOCUMENT-----"
+                             ""
+                             ,(tree->stree d)
+                             ""
+                             "-----END TEXMACS DOCUMENT-----")))
+      `(!file ,@(cdr t) (!paragraph "" (!comment ,(tmtex d*)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Compute macro and environment definitions

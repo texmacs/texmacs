@@ -119,8 +119,12 @@
 ;; Outputting main flow
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (texout-comment s)
-  (output-comment s))
+(tm-define (texout-comment l)
+    (set-output-comment #t)
+    (output-tex "% ")
+    (texout l)
+    (set-output-comment #f)
+    (output-lf))
 
 (tm-define (texout-preamble l)
   (output-verbatim l))

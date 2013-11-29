@@ -18,6 +18,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define output-accu '())
+(define output-comment #f)
 (define output-indentation 0)
 (define output-count 0)
 (define output-start-flag #t)
@@ -39,6 +40,7 @@
   (output-flush)
   (let ((r (apply string-append (reverse output-accu))))
     (set! output-accu '())
+    (set! output-comment #f)
     (set! output-indentation 0)
     (set! output-count 0)
     (set! output-start-flag #t)
@@ -47,6 +49,12 @@
     (set! output-tail "")
 ;;    (display* "OUTPUT\n" r "\n")
     r))
+
+(tm-define (get-output-comment)
+  output-comment)
+
+(tm-define (set-output-comment comment)
+  (set! output-comment comment))
 
 (tm-define (get-output-indent)
   output-indentation)
@@ -61,8 +69,9 @@
 (define (output-return)
   (set! output-start-flag #t)
   (with indent (max 0 (min 40 output-indentation))
-    (let ((s (if output-exact "" (make-string indent #\space))))
-      (set! output-accu (cons (string-append "\n" s) output-accu))
+    (let ((s (if output-exact "" (make-string indent #\space)))
+          (c (if output-comment "% " "")))
+      (set! output-accu (cons (string-append "\n" s c) output-accu))
       (set! output-count indent))))
 
 (define (output-raw s)
@@ -124,13 +133,6 @@
   ;(display-err* "Output verb " ss "\n")
   (if (!= output-tail "") (output-flush))
   (output-prepared (apply string-append ss)))
-
-(tm-define (output-comment . ss)
-  ;(display-err* "Output comment " ss "\n")
-  (output-flush)
-  (output-raw "% ")
-  (output-raw (string-replace (apply string-append ss) "\n" "\n% "))
-  (output-raw "\n"))
 
 (tm-define (output-lf-verbatim . ss)
   ;(display-err* "Output lf verbatim " ss "\n")
