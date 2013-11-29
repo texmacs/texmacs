@@ -843,6 +843,8 @@ complete (url base, url u, string filter, bool flag) {
     for (i=0; i<n; i++) {
       if ((!is_none (ret)) && flag) return ret;
       if ((dir[i] == ".") || (dir[i] == "..")) continue;
+      if (starts (dir[i], "http://") || starts (dir[i], "ftp://"))
+        if (is_directory (base * dir[i])) continue;
       ret= ret | (dir[i] * complete (base * dir[i], u, filter, flag));
       if (match_wildcard (dir[i], u[2][1]->t->label))
 	ret= ret | complete (base, dir[i], filter, flag);
@@ -873,6 +875,8 @@ complete (url base, url u, string filter, bool flag) {
     for (i=0; i<n; i++) {
       if ((!is_none (ret)) && flag) return ret;
       if ((dir[i] == ".") || (dir[i] == "..")) continue;
+      if (starts (dir[i], "http://") || starts (dir[i], "ftp://"))
+        if (is_directory (base * dir[i])) continue;
       if (is_wildcard (u, 0))
 	ret= ret | (dir[i] * complete (base * dir[i], u, filter, flag));
       else if (match_wildcard (dir[i], u[1]->t->label))
