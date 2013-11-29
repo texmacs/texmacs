@@ -459,7 +459,7 @@ void
 immediate_options (int argc, char** argv) {
   if (get_env ("TEXMACS_HOME_PATH") == "")
 #ifdef __MINGW32__
-    set_env ("TEXMACS_HOME_PATH", get_env ("APPDATA") * "/TeXmacs");
+    set_env ("TEXMACS_HOME_PATH", get_env ("APPDATA") * "\TeXmacs");
 #else
   set_env ("TEXMACS_HOME_PATH", get_env ("HOME") * "/.TeXmacs");
 #endif
