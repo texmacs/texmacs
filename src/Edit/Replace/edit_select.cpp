@@ -695,9 +695,12 @@ edit_select_rep::selection_paste (string key) {
       if (selection_import == "latex" || selection_import == "html")
         selection_import= "verbatim";
     if (mode == "math")
-      if (selection_import == "latex")
+      if (selection_import == "latex") {
+        while (starts (s, " ")) s= s(1, N(s));
+        while (ends (s, " ")) s= s(0, N(s)-1);
         if (!starts (s, "$") && !ends (s, "$"))
           s= "$" * s * "$";
+      }
     string fm;
     if (selection_import == "default") fm= "texmacs-snippet";
     else fm= selection_import * "-snippet";
