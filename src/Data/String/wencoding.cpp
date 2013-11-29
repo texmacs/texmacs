@@ -102,8 +102,10 @@ looks_universal (string s) {
           return false;
         i++;
       }
-      glyph= true;
+      if (i<n && s[i] == '>') glyph= true;
+      else return false;
     }
+    else if (s[i] == '>') return false;
   }
   return glyph;
 }
