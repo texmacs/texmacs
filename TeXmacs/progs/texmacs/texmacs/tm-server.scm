@@ -141,10 +141,11 @@
         (lambda (answ)
           (when answ (buffer-close (current-buffer)))))))
 
-(tm-define (safely-kill-window)
-  (if (<= (windows-number) 1)
-      (safely-quit-TeXmacs)
-      (kill-window)))
+(tm-define (safely-kill-window . opt-name)
+  (with name (if (null? opt-name) (current-window) (car opt-name))
+    (if (<= (windows-number) 1)
+        (safely-quit-TeXmacs)
+        (kill-window name))))
 
 (tm-define (safely-quit-TeXmacs)
   (if (not (buffers-modified?)) (quit-TeXmacs)

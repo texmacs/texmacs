@@ -144,7 +144,7 @@
 	   (lambda ()
 	     (widget-delete-call-backs aux-begin aux-end)
 	     (widget-internal-delete aux-handle)
-	     (kill-window-and-buffer))))
+	     (kill-current-window-and-buffer))))
      (set! widget-serial-number (+ widget-serial-number 1))
      (widget-internal-new aux-handle)
      (set! aux-result ,body)

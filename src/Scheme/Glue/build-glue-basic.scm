@@ -582,8 +582,8 @@
   (open-window-geometry open_window (url content))
   (clone-window clone_window (void))
   (buffer-close kill_buffer (void url))
-  (kill-window kill_window (void))
-  (kill-window-and-buffer kill_window_and_buffer (void))
+  (kill-window kill_window (void url))
+  (kill-current-window-and-buffer kill_current_window_and_buffer (void))
 
   (project-attach project_attach (void string))
   (project-detach project_attach (void))

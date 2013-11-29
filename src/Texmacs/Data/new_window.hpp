@@ -27,8 +27,8 @@ url  create_buffer ();
 url  open_window (tree geom= "");
 void clone_window ();
 void kill_buffer (url name);
-void kill_window ();
-void kill_window_and_buffer ();
+void kill_window (url name);
+void kill_current_window_and_buffer ();
 
 // Low level types and routines
 class tm_window_rep;

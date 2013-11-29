@@ -6938,18 +6938,22 @@ tmg_buffer_close (tmscm arg1) {
 }
 
 tmscm
-tmg_kill_window () {
+tmg_kill_window (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "kill-window");
+
+  url in1= tmscm_to_url (arg1);
+
   // TMSCM_DEFER_INTS;
-  kill_window ();
+  kill_window (in1);
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;
 }
 
 tmscm
-tmg_kill_window_and_buffer () {
+tmg_kill_current_window_and_buffer () {
   // TMSCM_DEFER_INTS;
-  kill_window_and_buffer ();
+  kill_current_window_and_buffer ();
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;
@@ -7823,8 +7827,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("open-window-geometry",  tmg_open_window_geometry, 1, 0, 0);
   tmscm_install_procedure ("clone-window",  tmg_clone_window, 0, 0, 0);
   tmscm_install_procedure ("buffer-close",  tmg_buffer_close, 1, 0, 0);
-  tmscm_install_procedure ("kill-window",  tmg_kill_window, 0, 0, 0);
-  tmscm_install_procedure ("kill-window-and-buffer",  tmg_kill_window_and_buffer, 0, 0, 0);
+  tmscm_install_procedure ("kill-window",  tmg_kill_window, 1, 0, 0);
+  tmscm_install_procedure ("kill-current-window-and-buffer",  tmg_kill_current_window_and_buffer, 0, 0, 0);
   tmscm_install_procedure ("project-attach",  tmg_project_attach, 1, 0, 0);
   tmscm_install_procedure ("project-detach",  tmg_project_detach, 0, 0, 0);
   tmscm_install_procedure ("project-attached?",  tmg_project_attachedP, 0, 0, 0);

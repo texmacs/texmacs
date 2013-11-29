@@ -64,9 +64,14 @@ abstract_window (tm_window win) {
 static hashmap<url,tm_window> tm_window_table (NULL);
 
 class kill_window_command_rep: public command_rep {
+  url* id;
 public:
-  inline kill_window_command_rep () {}
-  inline void apply () { exec_delayed (scheme_cmd ("(safely-kill-window)")); }
+  inline kill_window_command_rep (url* id2): id (id2) {}
+  inline ~kill_window_command_rep () { tm_delete (id); }
+  inline void apply () {
+    object cmd= list_object (symbol_object ("safely-kill-window"),
+                             object (*id));
+    exec_delayed (scheme_cmd (cmd)); }
   tm_ostream& print (tm_ostream& out) { return out << "kill window"; }
 };
 
@@ -80,10 +85,12 @@ new_window (bool map_flag= true, tree geom= "") {
   if (get_preference ("user provided icons") == "on") mask += 16;
   if (get_preference ("status bar") == "on") mask += 32;
   if (get_preference ("side tools") == "on") mask += 64;
-  command quit= tm_new<kill_window_command_rep> ();
+  url* id= tm_new<url> (url_none ());
+  command quit= tm_new<kill_window_command_rep> (id);
   tm_window win= tm_new<tm_window_rep> (texmacs_widget (mask, quit), geom);
   tm_window_table (win->id)= win;
   if (map_flag) win->map ();
+  *id= abstract_window (win);
   return abstract_window (win);
 }
 
@@ -93,7 +100,9 @@ delete_view_from_window (url win) {
   for (int i=0; i<N(vs); i++)
     if (view_to_window (vs[i]) == win) {
       detach_view (vs[i]);
-      delete_view (vs[i]);
+      // delete_view (vs[i]);
+      // Don't delete view alltogether, because at least one view is needed
+      // for making the 'buffer_modified' predicate function appropriately
       return true;
     }
   return false;
@@ -251,24 +260,23 @@ kill_buffer (url name) {
 }
 
 void
-kill_window () {
-  url cur= get_current_window ();
+kill_window (url wname) {
   array<url> vs= get_all_views ();
   for (int i=0; i<N(vs); i++) {
     url win= view_to_window (vs[i]);
-    if (!is_none (win) && win != cur) {
+    if (!is_none (win) && win != wname) {
       set_current_view (vs[i]);
       // FIXME: make sure that win obtains the focus of the GUI too
-      delete_window (cur);
+      delete_window (wname);
       return;
     }
   }
   if (number_of_servers () == 0) get_server () -> quit ();
-  else delete_window (cur);
+  else delete_window (wname);
 }
 
 void
-kill_window_and_buffer () {
+kill_current_window_and_buffer () {
   if (N(bufs) <= 1) get_server () -> quit();
   url name= get_current_buffer ();
   array<url> vs= buffer_to_views (get_current_buffer ());
@@ -277,6 +285,6 @@ kill_window_and_buffer () {
   for (int i=0; i<N(vs); i++)
     if (view_to_window (vs[i]) != win)
       kill= false;
-  kill_window ();
+  kill_window (win);
   if (kill) remove_buffer (name);
 }
