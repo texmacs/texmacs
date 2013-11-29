@@ -78,7 +78,7 @@
 				 ,@(tree-children (tree-ref t 1 0)))))))
 
 (tm-define (kbd-remove t forwards?)
-  (:require (tree-is? t 'show-preamble))
+  (:require (and (tree-is? t 'show-preamble) (tree-empty? (tree-ref t 0))))
   (buffer-set-part-mode :all)
   (when (buffer-has-preamble?)
     (tree-remove (buffer-tree) 0 1)))
