@@ -244,6 +244,7 @@ composite_box_rep::find_box_path (path p, bool& found) {
   if (n == 0) return box_rep::find_box_path (p, found);
 
   int start= n>>1, acc= start, step= (start+1)>>1;
+  bool last= false;
   while (step > 0) {
     path sr= bs[acc]->find_rip ();
     while (!is_accessible (sr)) {
@@ -267,7 +268,8 @@ composite_box_rep::find_box_path (path p, bool& found) {
       start= max (0, start- step);
       acc  = min (acc, start);
     }
-    if (step <= 1) break;
+    if (last) break;
+    if (step <= 1) last= true;
     step= (step+1)>>1;
   }
 
