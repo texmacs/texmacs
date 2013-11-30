@@ -12,9 +12,9 @@
 #ifndef QT_SIMPLE_WIDGET_HPP
 #define QT_SIMPLE_WIDGET_HPP
 
-#include "qt_view_widget.hpp"
-
-class QTMWidget;
+#include "qt_widget.hpp"
+#include "QTMScrollView.hpp"
+#include "QTMWidget.hpp"
 
 /*! A widget containing a TeXmacs canvas.
  

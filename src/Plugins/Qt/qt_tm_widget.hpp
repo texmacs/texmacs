@@ -17,7 +17,6 @@
 #include "qt_widget.hpp"
 #include "qt_simple_widget.hpp"
 #include "qt_window_widget.hpp"
-#include "qt_view_widget.hpp"
 
 #include "QTMInteractiveInputHelper.hpp"
 #include "QTMWidget.hpp"
