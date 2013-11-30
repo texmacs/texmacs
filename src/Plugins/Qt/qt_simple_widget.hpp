@@ -21,12 +21,12 @@ class QTMWidget;
  This canvas can be used both for input or output of typesetted documents. 
  Editors (editor_rep), output-only widgets (box_widget_rep) and
  other classes are extensions to a "simple_widget", quite a misnomer...
-
- FIXME: check how box_widget_rep, which subclasses this to implement what in
- scheme code is a texmacs-output widget does resizing (is it wrong?). The
- problem with these widgets seems to be that set_extents is never called. ??
- */
-class qt_simple_widget_rep: public qt_view_widget_rep {
+ 
+ MEMORY POLICY: as usual, we give ownership of the QWidget to the caller of
+ as_qwidget(), which in our case will be one of qt_tm_widget_rep or 
+ qt_tm_embedded_rep.
+  */
+class qt_simple_widget_rep: public qt_widget_rep {
 
   typedef struct t_slot_entry {
     int seq;
@@ -59,7 +59,12 @@ public:
   
   void save_send_slot (slot s, blackbox val);
   void reapply_sent_slots();
-  virtual void send (slot s, blackbox val);
+  virtual void      send (slot s, blackbox val);
+  virtual blackbox query (slot s, int type_id);
+  virtual widget    read (slot s, blackbox index);
+  
+  QTMWidget*         canvas () { return qobject_cast<QTMWidget*> (qwid); }
+  QTMScrollView* scrollarea () { return qobject_cast<QTMScrollView*> (qwid); }
   
   virtual QAction* as_qaction();
   virtual QWidget* as_qwidget();

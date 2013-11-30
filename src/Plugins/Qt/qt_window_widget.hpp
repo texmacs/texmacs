@@ -27,7 +27,7 @@ class QWidget;
  "texmacs_window_widget" using QObject::property(). The value of the property is
  set to this qt_window_widget_rep.
 
- Later, the handling of some texmacs messages (SLOT_WINDOW in qt_view_widget_rep 
+ Later, the handling of some texmacs messages (SLOT_WINDOW in qt_simple_widget_rep 
  for instance) will require access to an instance of qt_window_widget which they
  retrieve using the static member widget_from_qwidget(), who in turn uses the
  mentioned property.
