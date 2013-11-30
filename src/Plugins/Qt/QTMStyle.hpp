@@ -27,6 +27,7 @@
   // frame around widgets in the status bar
 
 class QTMProxyStyle: public QStyle {
+  Q_OBJECT
   
 protected:
   QStyle* base;
@@ -66,7 +67,7 @@ public:
 };
 
 class QTMStyle: public QTMProxyStyle {
-  
+  Q_OBJECT
   
 public:
   inline QTMStyle (QStyle* _style = NULL): QTMProxyStyle (_style) {}
