@@ -9,17 +9,17 @@
  * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
  ******************************************************************************/
 
-#include "QTMScrollView.hpp"
 #include "tm_ostream.hpp"
 #include "message.hpp"
+
+#include "QTMScrollView.hpp"
+#include "QTMApplication.hpp"
 
 #include <QScrollBar>
 #include <QPainter>
 #include <QBoxLayout>
-
 #include <QPaintEvent>
 #include <QStyle>
-#include <QApplication>
 
 /*! Constructor.
  

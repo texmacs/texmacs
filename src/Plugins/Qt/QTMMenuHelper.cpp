@@ -9,14 +9,17 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "QTMMenuHelper.hpp"
-#include "QTMGuiHelper.hpp"
-#include "QTMStyle.hpp"
+#include "analyze.hpp"
+
 #include "qt_gui.hpp"
 #include "qt_utilities.hpp"
 #include "qt_window_widget.hpp"
 #include "qt_ui_element.hpp"  // qt_choice_command_rep
-#include "analyze.hpp"
+
+#include "QTMMenuHelper.hpp"
+#include "QTMGuiHelper.hpp"
+#include "QTMStyle.hpp"
+#include "QTMApplication.hpp"
 
 #include <QToolTip>
 #include <QCompleter>

@@ -12,8 +12,7 @@
 #ifndef QT_GUI_HPP
 #define QT_GUI_HPP
 
-#include <QPixmap>
-#include <QApplication>
+#include <QTranslator>
 #include <QTimer>
 #include <QLabel>
 #include <QList>

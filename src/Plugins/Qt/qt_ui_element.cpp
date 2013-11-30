@@ -28,6 +28,7 @@
 #include "QTMGuiHelper.hpp"
 #include "QTMMenuHelper.hpp"
 #include "QTMStyle.hpp"
+#include "QTMApplication.hpp"
 
 #include <QCheckBox>
 #include <QPushButton>

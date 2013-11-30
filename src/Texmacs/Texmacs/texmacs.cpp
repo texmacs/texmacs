@@ -27,8 +27,8 @@ void mac_fix_paths ();
 #endif
 
 #ifdef QTTEXMACS
+#include "Qt/QTMApplication.hpp"
 #include "Qt/qt_utilities.hpp"
-#include <QApplication>
 #include <QDir>
 #endif
 
@@ -424,34 +424,6 @@ boot_hacks () {
 }
 
 /******************************************************************************
-* TeXmacs as a Qt application
-******************************************************************************/
-
-#ifdef QTTEXMACS
-#ifdef USE_EXCEPTIONS
-class TeXmacs_Application: public QApplication {
-public:
-  TeXmacs_Application (int argc, char** argv):
-    QApplication (argc, argv) {}
-  virtual bool notify (QObject* receiver, QEvent* event) {
-    try {
-      return QApplication::notify(receiver, event);
-    }
-    catch (string s) {
-      //c_string cs (s);
-      //tm_failure (cs);
-      //qt_error << "Thrown " << s << LF;
-      the_exception= s;
-    }
-    return false;
-  }
-};
-#else
-#define TeXmacs_Application QApplication
-#endif
-#endif
-
-/******************************************************************************
 * Main program
 ******************************************************************************/
 
@@ -537,7 +509,7 @@ main (int argc, char** argv) {
     // Work around Qt bug: https://bugreports.qt-project.org/browse/QTBUG-32789
   QFont::insertSubstitution (".Lucida Grande UI", "Lucida Grande");
 #endif
-  new TeXmacs_Application (argc, argv);
+  new QTMApplication (argc, argv);
 #endif
   TeXmacs_init_paths (argc, argv);
   //cout << "Bench  ] Started TeXmacs\n";

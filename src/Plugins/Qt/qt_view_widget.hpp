@@ -18,12 +18,10 @@
 
 /*! A widget with a renderer.
  
- TeXmacs input and output buffers are based upon this widget: qt_tm_widget_rep
- (for the main TeXmacs window), qt_tm_embedded_widget_rep (for simpler, 
- auxilliary texmacs input buffers without toolbars, etc.) and
- qt_simple_widget_rep inherit from this class. The latter is a bit different
- because it is subclassed many times across all of TeXmacs, for instance to
- implement pure output widgets.
+ TeXmacs input and output buffers are based upon this widget via
+ qt_simple_widget_rep who inherits from this class. This is in turn subclassed
+ many times across all of TeXmacs, for instance to implement pure output
+ widgets.
  
  Buffers are drawn in qt_view_widgets (...)
  

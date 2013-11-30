@@ -9,15 +9,25 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include <locale.h>
+
 #include "convert.hpp"
 #include "iterator.hpp"
 #include "dictionary.hpp"
-#include "qt_gui.hpp"
-#include "qt_utilities.hpp"
+#include "file.hpp" // added for copy_as_graphics
 #include "analyze.hpp"
-#include <locale.h>
 #include "language.hpp"
 #include "message.hpp"
+#include "scheme.hpp"
+#include "tm_window.hpp"
+#include "new_window.hpp"
+
+#include "qt_gui.hpp"
+#include "qt_utilities.hpp"
+#include "qt_renderer.hpp" // for the_qt_renderer
+#include "qt_simple_widget.hpp"
+#include "qt_window_widget.hpp"
+
 #include <QDesktopWidget>
 #include <QClipboard>
 #include <QFileOpenEvent>
@@ -27,29 +37,20 @@
 #include <QSetIterator>
 #include <QTranslator>
 #include <QLocale>
+#include <QMimeData>
+#include <QByteArray>
+#include <QCoreApplication>
+#include <QLibraryInfo>
+#include <QImage>
+
 #include "QTMGuiHelper.hpp"
 #include "QTMWidget.hpp"
 #include "QTMWindow.hpp"
-#include "qt_renderer.hpp" // for the_qt_renderer
-#include "file.hpp" // added for copy_as_graphics
-#include <QMimeData>
-#include <QByteArray>
-#include <QApplication>
-#include <QCoreApplication>
-#include <QImage>
+#include "QTMApplication.hpp"
 
 #ifdef MACOSX_EXTENSIONS
 #include "MacOS/mac_utilities.h"
 #endif
-
-#include "tm_link.hpp" // for number_of_servers
-#include "scheme.hpp"
-//#include "server.hpp" // for get_server
-#include "tm_window.hpp"
-#include "new_window.hpp"
-#include "qt_simple_widget.hpp"
-#include "qt_window_widget.hpp"
-
 
 qt_gui_rep* the_gui= NULL;
 int nr_windows = 0; // FIXME: fake variable, referenced in tm_server
@@ -70,8 +71,6 @@ bool wait_for_delayed_commands = true;
 /******************************************************************************
 * Constructor and geometry
 ******************************************************************************/
-
-#include <QLibraryInfo>
 
 qt_gui_rep::qt_gui_rep(int &argc, char **argv):
   interrupted (false), waitWindow (NULL), popup_wid_time(0), q_translator(0)
@@ -378,7 +377,7 @@ void gui_interpose (void (*r) (void)) { the_interpose_handler= r; }
 
 void
 qt_gui_rep::event_loop () {
-  QApplication *app = (QApplication*) QApplication::instance();
+  QTMApplication* app = static_cast<QTMApplication*>(QApplication::instance());
   update();
   //needs_update();
   app->exec();

@@ -9,10 +9,12 @@
  * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
  ******************************************************************************/
 
-#include "QTMStyle.hpp"
-#include <QApplication>
-#include <QStyleOptionMenuItem>
 #include "tm_ostream.hpp"
+
+#include "QTMStyle.hpp"
+#include "QTMApplication.hpp"
+
+#include <QStyleOptionMenuItem>
 #include <qdrawutil.h>
 #include <QPainter>
 #include <QMainWindow>

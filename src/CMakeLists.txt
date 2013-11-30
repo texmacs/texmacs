@@ -389,6 +389,7 @@ SET(TeXmacs_Qt_Moc_HDRS
     ./Plugins/Qt/QTMMenuHelper.hpp
     ./Plugins/Qt/QTMStyle.hpp
     ./Plugins/Qt/QTMWidget.hpp
+    ./Plugins/Qt/QTMApplication.hpp
 )
 
 
