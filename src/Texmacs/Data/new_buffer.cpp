@@ -414,6 +414,7 @@ attach_subformat (tree t, url u, string fm) {
 tree
 import_loaded_tree (string s, url u, string fm) {
   set_file_focus (u);
+  if (fm == "generic" && suffix (u) == "txt") fm= "verbatim";
   if (fm == "generic") fm= get_format (s, suffix (u));
   if (fm == "texmacs" && starts (s, "(document (TeXmacs")) fm= "stm";
   if (fm == "verbatim" && starts (s, "(document (TeXmacs")) fm= "stm";
