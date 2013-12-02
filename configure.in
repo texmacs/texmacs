@@ -93,7 +93,7 @@ AC_CPLUSPLUS_STACK
 #--------------------------------------------------------------------
 
 AC_ARG_ENABLE(guile2,
-[  --enable-guile2         enable compilation with Guile 2, for developping purpose],
+[  --enable-guile2         enable compilation with Guile 2, for development purposes],
     [], [enable_guile2="no"])
 
 if test -z "$GUILE_CFLAGS" -a -z "$GUILE_LDFLAGS"; then
