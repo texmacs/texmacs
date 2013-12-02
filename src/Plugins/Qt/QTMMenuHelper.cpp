@@ -32,9 +32,16 @@
 /*! Queues the object's command into the main queue. */
 void 
 QTMCommand::apply()  {
-  if (DEBUG_QT)
-    debug_qt << "QTMCommand::apply() (delayed): " << cmd << "\n";
-  if (!is_nil (cmd)) { the_gui->process_command (cmd); }
+  if (!is_nil (cmd)) {
+    the_gui->process_command (cmd);
+    if (DEBUG_QT) {
+      debug_qt << "QTMCommand::apply() (delayed)\n";
+      /* FIXME: this sometimes crashes:
+      cmd->print(debug_qt);
+      debug_qt << "\n";
+       */
+    }
+  }
 }
 
 
