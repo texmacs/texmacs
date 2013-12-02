@@ -575,6 +575,15 @@
   (display* "TeXmacs] error in conversion: " l "\n")
   "")
 
+(define (tmtex-marginal-left-note l)
+  `(marginpar (!option ,(tmtex (cAr l))) ,(tmtex '())))
+
+(define (tmtex-marginal-right-note l)
+  `(marginpar (!option "") ,(tmtex (cAr l))))
+
+(define (tmtex-marginal-note l)
+  `(marginpar ,(tmtex (cAr l))))
+
 (define (tmtex-document l)
   (cons '!document (tmtex-list l)))
 
@@ -2089,6 +2098,9 @@
   (resize tmtex-noop)
   (repeat tmtex-noop)
   (float tmtex-float)
+  ((:or marginal-note marginal-normal-note) tmtex-marginal-note)
+  ((:or marginal-left-note marginal-even-left-note) tmtex-marginal-left-note)
+  ((:or marginal-right-note marginal-even-right-note)tmtex-marginal-right-note)
   ((:or datoms dlines dpages dbox) tmtex-noop)
 
   (number tmtex-number)
