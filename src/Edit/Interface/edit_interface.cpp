@@ -455,6 +455,9 @@ edit_interface_rep::apply_changes () {
         { SERVER (side_tools (0, "(vertical (link texmacs-side-tools))")); }
       set_footer ();
       if (has_current_window ()) {
+#ifdef QTTEXMACS
+        concrete(concrete_window()->wid)->qwid->setWindowModified (need_save());
+#endif
         if (need_save())
           concrete_window () -> set_window_name (buf->buf->title * " *");
         else
