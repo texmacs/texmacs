@@ -747,6 +747,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
         // glue_widget, so we may not just use canvas() everywhere.
     case SLOT_SCROLLABLE:
     {
+/*
       check_type_void (index, s);
       
       QLayout* l = centralwidget()->layout();
@@ -771,6 +772,27 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
         // Fix size to draw margins around.
         scrollarea()->surface()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
       }
+*/
+      check_type_void (index, s);
+      
+      QWidget* q = concrete(main_widget)->qwid;
+      q->hide();
+      QLayout* l = centralwidget()->layout();
+      l->removeWidget(q);
+      
+      q = concrete(w)->as_qwidget();   // force creation of the new QWidget
+      l->addWidget(q); // The layout will automatically reparent the widgets so
+                       // that they are children of the widget on which the layout is installed.
+      main_widget = w; // canvas() now returns the new QTMWidget (or 0)
+      
+      if (canvas()) {
+        canvas()->show();
+        canvas()->setFocusPolicy(Qt::StrongFocus);
+        canvas()->setFocus();
+          // Fix size to draw margins around.
+        scrollarea()->surface()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+      }
+
     }
       break;
       
@@ -1025,18 +1047,17 @@ qt_tm_embedded_widget_rep::write (slot s, blackbox index, widget w) {
     {
       check_type_void (index, s);
       
-      QLayout* l = qwid->layout();
       QWidget* q = concrete(main_widget)->qwid;
+      q->hide();
+      QLayout* l = qwid->layout();
       l->removeWidget(q);
-      q->deleteLater();
-      concrete(main_widget)->qwid = 0;
-      q = concrete(w)->as_qwidget();
-      q->setParent(qwid);
+      
+      q = concrete(w)->as_qwidget();   // force creation of the new QWidget
       l->addWidget(q);
-      main_widget = w;
-        //qwid->show();
-      qwid->setFocusPolicy (Qt::StrongFocus);
-      qwid->setFocus ();       
+      main_widget = w; // canvas() now returns the new QTMWidget (or 0)
+      
+      qwid->setFocusPolicy(Qt::StrongFocus);
+      qwid->setFocus();
     }
       break;
 
@@ -1058,9 +1079,9 @@ QWidget*
 qt_tm_embedded_widget_rep::as_qwidget() {
   qwid = new QWidget();
   QVBoxLayout* l = new QVBoxLayout();
-  l->setContentsMargins(0,0,0,0);
-  qwid->setLayout(l);
-  l->addWidget(concrete(main_widget)->as_qwidget());
+  l->setContentsMargins (0,0,0,0);
+  qwid->setLayout (l);
+  l->addWidget (concrete(main_widget)->as_qwidget());
   return qwid;
 }
 

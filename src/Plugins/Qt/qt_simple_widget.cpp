@@ -17,6 +17,7 @@
 #include "QTMWidget.hpp"
 #include "QTMMenuHelper.hpp"
 #include <QPixmap>
+#include <QLayout>
 
 qt_simple_widget_rep::qt_simple_widget_rep ()
  : qt_widget_rep (simple_widget), sequencer (0) { }

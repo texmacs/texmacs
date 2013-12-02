@@ -24,7 +24,8 @@
  
  MEMORY POLICY: as usual, we give ownership of the QWidget to the caller of
  as_qwidget(), which in our case will be one of qt_tm_widget_rep or 
- qt_tm_embedded_rep.
+ qt_tm_embedded_rep. These will embed our QWidget in a QLayout who will reparent
+ it to the QWidget using the layout (e.g. QTMWindow::centralWidget())
   */
 class qt_simple_widget_rep: public qt_widget_rep {
 
@@ -55,7 +56,7 @@ public:
   virtual void handle_clear (SI x1, SI y1, SI x2, SI y2);
   virtual void handle_repaint (renderer win, SI x1, SI y1, SI x2, SI y2);
   
-    /// Storage of sent messages
+    ////////////////////// Handling of TeXmacs' messages
   
   void save_send_slot (slot s, blackbox val);
   void reapply_sent_slots();
@@ -63,11 +64,13 @@ public:
   virtual blackbox query (slot s, int type_id);
   virtual widget    read (slot s, blackbox index);
   
-  QTMWidget*         canvas () { return qobject_cast<QTMWidget*> (qwid); }
-  QTMScrollView* scrollarea () { return qobject_cast<QTMScrollView*> (qwid); }
-  
+    ////////////////////// Qt semantics of abstract texmacs widgets
+
   virtual QAction* as_qaction();
   virtual QWidget* as_qwidget();
+  
+  QTMWidget*         canvas () { return qobject_cast<QTMWidget*> (qwid); }
+  QTMScrollView* scrollarea () { return qobject_cast<QTMScrollView*> (qwid); }
 };
 
 inline qt_simple_widget_rep* concrete_simple_widget (widget w) { 
