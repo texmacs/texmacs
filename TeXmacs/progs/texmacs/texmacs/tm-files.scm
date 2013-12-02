@@ -47,8 +47,9 @@
 (define buffer-newly-created-table (make-ahash-table))
 
 (tm-define (buffer-newly-created? name)
-  (or (not (buffer-has-name? name))
-      (ahash-ref buffer-newly-created-table name)))
+  (and name
+       (or (not (buffer-has-name? name))
+           (ahash-ref buffer-newly-created-table name))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Saving buffers
