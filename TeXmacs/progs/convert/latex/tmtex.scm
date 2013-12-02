@@ -2211,7 +2211,7 @@
 
   ((:or format line-sep split delay hold release
 	old-matrix old-table old-mosaic old-mosaic-item
-	set reset expand expand* hide-expand
+	set reset expand expand* hide-expand display-baloon
 	apply begin end func env) tmtex-noop)
   
   (shown tmtex-id)
