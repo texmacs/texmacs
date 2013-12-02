@@ -1581,6 +1581,24 @@
   (if (== s "quote-env") (set! s "quote"))
   (list (list '!begin s) (tmtex (car l))))
 
+(define (filter-enunciation-due-to l)
+  (cond ((func? l 'dueto) (list l))
+        ((nlist>0? l) '())
+        (else (append-map filter-enunciation-due-to l))))
+
+(define (filter-enunciation-body l)
+  (cond ((func? l 'dueto) '())
+        ((nlist>0? l) l)
+        (else (filter nnull? (map filter-enunciation-body l)))))
+
+(define (tmtex-enunciation s l)
+  (let* ((t       (car l))
+         (option  (filter-enunciation-due-to t))
+         (option* (map (lambda (x) `(!option ,(tmtex (cadr x)))) option))
+         (body    (filter-enunciation-body t)))
+    (display* option* "\n\n" body "\n\n\n")
+  `((!begin ,s ,@option*) ,(tmtex body))))
+
 (define (tmtex-appendix s l)
   (with app (list (if (latex-book-style?) 'chapter 'section) (tmtex (car l)))
     (if tmtex-appendices? app
@@ -2202,7 +2220,7 @@
 	notation conjecture remark note example exercise problem warning
 	convention quote-env quotation verse solution question answer
 	acknowledgments)
-   (,tmtex-std-env 1))
+   (,tmtex-enunciation 1))
   (new-theorem (,tmtex-new-theorem 2))
   (verbatim (,tmtex-verbatim 1))
   (center (,tmtex-std-env 1))
