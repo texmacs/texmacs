@@ -303,7 +303,7 @@ initialize_default_env () {
   tree reftxt (GET_BINDING, tree (ARG, "Id"));
   tree preftxt (GET_BINDING, tree (ARG, "Id"), "1");
   tree act_id (ID, tree (HARD_ID, tree (ARG, "args", "0")));
-  tree act_script (MAP_ARGS, "identity", "script", "args", "1");
+  tree act_script (MAP_ARGS, "find-accessible", "script", "args", "1");
   tree act_ln (LINK, "action", copy (act_id), copy (act_script));
   env ("hlink")= tree (MACRO, "body", "destination",
 		       tree (LOCUS, copy (src_id), ln1,

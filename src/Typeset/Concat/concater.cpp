@@ -612,6 +612,7 @@ concater_rep::typeset (tree t, path ip) {
   case LINK:
   case URL:
   case SCRIPT:
+  case FIND_ACCESSIBLE:
     typeset_inactive (t, ip);
     break;
   case HLINK:

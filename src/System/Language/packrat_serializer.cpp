@@ -175,6 +175,7 @@ packrat_parser_rep::serialize (tree t, path p) {
     case LINK:
     case URL:
     case SCRIPT:
+    case FIND_ACCESSIBLE:
       break;
     case HLINK:
     case ACTION:

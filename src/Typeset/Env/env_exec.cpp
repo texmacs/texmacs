@@ -421,6 +421,8 @@ edit_env_rep::exec (tree t) {
     return exec_hard_id (t);
   case SCRIPT:
     return exec_script (t);
+  case FIND_ACCESSIBLE:
+    return exec_find_accessible (t);
   case HLINK:
   case ACTION:
     return exec_compound (t);
@@ -1571,12 +1573,15 @@ edit_env_rep::exec_script (tree t) {
   if (n < 1) return tree (ERROR, "bad script");
   tree r (t, n);
   r[0]= exec (t[0]);
-  for (i=1; i<n; i++) {
-    //r[i]= expand (t[i], true);
-    r[i]= expand (t[i], false);
-    //r[i]= exec (t[i]);
-  }
+  for (i=1; i<n; i++)
+    r[i]= exec (t[i]);
   return r;
+}
+
+tree
+edit_env_rep::exec_find_accessible (tree t) {
+  if (N(t) < 1) return tree (ERROR, "bad find-accessible");
+  return expand (t[0], true);
 }
 
 tree

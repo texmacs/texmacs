@@ -86,7 +86,7 @@ enum tree_label {
 
   // linking primitives
   LOCUS, ID, HARD_ID,
-  LINK, URL, SCRIPT, HLINK, ACTION,
+  LINK, URL, SCRIPT, FIND_ACCESSIBLE, HLINK, ACTION,
   SET_BINDING, GET_BINDING, LABEL, REFERENCE, PAGEREF, WRITE, TOC_NOTIFY,
 
   // various other tags
