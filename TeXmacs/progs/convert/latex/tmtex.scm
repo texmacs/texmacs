@@ -1605,7 +1605,6 @@
          (option  (filter-enunciation-due-to t))
          (option* (map (lambda (x) `(!option ,(tmtex (cadr x)))) option))
          (body    (filter-enunciation-body t)))
-    (display* option* "\n\n" body "\n\n\n")
   `((!begin ,s ,@option*) ,(tmtex body))))
 
 (define (tmtex-appendix s l)
