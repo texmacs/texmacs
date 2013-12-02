@@ -1365,13 +1365,13 @@ latex_command_to_tree (tree t) {
   }
 
   if (is_tuple (t, "\\marginpar", 1))
-    return tree (APPLY, "marginal-note", "", "", l2e (t[1]));
+    return tree (APPLY, "marginal-note", "normal", "", l2e (t[1]));
 
   if (is_tuple (t, "\\marginpar*", 2)) {
     tree l= l2e (t[1]), r= l2e (t[2]);
-    if (l == concat () && r != concat ())
+    if (l == "" && r != "")
       return tree (APPLY, "marginal-right-note", "", r);
-    if (r == concat () && l != concat ())
+    if (r == "" && l != "")
       return tree (APPLY, "marginal-left-note",  "", l);
     return (concat (
           tree (APPLY, "marginal-right-note", "", r),

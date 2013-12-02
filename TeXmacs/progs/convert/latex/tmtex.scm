@@ -582,7 +582,9 @@
   `(marginpar (!option "") ,(tmtex (cAr l))))
 
 (define (tmtex-marginal-note l)
-  `(marginpar ,(tmtex (cAr l))))
+  (cond ((== (car l) "left") (tmtex-marginal-left-note (cdr l)))
+        ((== (car l) "right") (tmtex-marginal-right-note (cdr l)))
+        (else `(marginpar ,(tmtex (cAr l))))))
 
 (define (tmtex-document l)
   (cons '!document (tmtex-list l)))
