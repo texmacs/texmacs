@@ -459,7 +459,8 @@ iconv_converter::iconv_converter (string from2, string to2, bool errors):
 }
 
 iconv_converter::~iconv_converter () {
-  iconv_close(cd);
+  if (is_valid())
+    iconv_close(cd);
 }
 
 // From the standard C++ library (remember, TeXmacs does _not_ use std!)
@@ -475,7 +476,7 @@ iconv_adaptor(size_t(*iconv_func)(iconv_t, T, size_t *, char**, size_t*),
 string apply (iconv_converter &conv, string input) {
   if (! conv.is_valid()) {
     conv.successful= false;
-    convert_error << "Conversion concelled\n";
+    convert_error << "Conversion cancelled\n";
     return input;
   }
   string result;
