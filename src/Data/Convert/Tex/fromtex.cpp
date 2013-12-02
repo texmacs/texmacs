@@ -2465,6 +2465,13 @@ admissible_env (tree t) {
   return false;
 }
 
+static bool
+is_enunciation (tree t) {
+  string s= t[0]->label;
+  if (ends (s, "*")) s= s (0, N(s)-1);
+  return latex_type ("\\begin-" * s) == "enunciation";
+}
+
 static string
 translate_list (string s) {
   if (s == "itemizeminus") return "itemize-minus";
@@ -2512,6 +2519,13 @@ finalize_layout (tree t) {
 	spc_flag = true;
 	item_flag= false;
 	continue;
+      }
+
+      if (is_func (v, BEGIN, 2) && is_enunciation (v)) {
+        string s= as_string (v[0]);
+        s= s(0, N(s)-1);
+        r << tree (BEGIN, s) << compound ("dueto", v[1]);
+        continue;
       }
 
       if (is_func (v, BEGIN) &&

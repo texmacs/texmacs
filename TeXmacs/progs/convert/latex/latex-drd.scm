@@ -186,6 +186,20 @@
   ((latex-optional-arg% 'x) (latex-environment-2*% 'x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Enunciations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(logic-group latex-enunciation%
+  begin-theorem begin-proposition begin-lemma begin-corollary begin-proof
+  begin-axiom begin-definition begin-notation begin-conjecture begin-remark
+  begin-note begin-example begin-exercise begin-problem begin-warning
+  begin-convention begin-quote-begin-env begin-quotation begin-verse
+  begin-solution begin-question begin-answer begin-acknowledgments)
+
+(logic-rules
+  ((latex-environment-0*% 'x) (latex-enunciation% 'x)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Modifiers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -590,6 +604,7 @@
 	  ((logic-in? s latex-operator%) "operator")
 	  ((logic-in? s latex-list%) "list")
 	  ((logic-in? s latex-math-environment%) "math-environment")
+	  ((logic-in? s latex-enunciation%) "enunciation")
 	  ((logic-in? s latex-environment%) "environment")
 	  ((logic-in? s latex-texmacs%) "texmacs")
 	  ((logic-in? s latex-symbol%) "symbol")
