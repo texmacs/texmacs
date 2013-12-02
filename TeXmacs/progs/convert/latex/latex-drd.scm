@@ -119,7 +119,7 @@
 
 (logic-group latex-command-1*%
   usepackage documentclass documentstyle sqrt bibitem cite caption  
-  title author thanks
+  title author thanks marginpar
   part chapter section subsection subsubsection paragraph subparagraph
   includegraphics includegraphics*
   subjclass declaretheorem footnotetext
