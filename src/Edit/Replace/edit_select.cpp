@@ -344,7 +344,6 @@ edit_select_rep::select_enlarge_environmental () {
 bool
 edit_select_rep::selection_active_any () {
   return !is_empty (cur_sel);
-  // return made_selection;
 }
 
 bool
@@ -685,6 +684,7 @@ edit_select_rep::selection_clear (string key) {
 void
 edit_select_rep::selection_cancel () {
   selecting= shift_selecting= false;
+  alt_sels= hashmap<string,range_set> ();
   if (is_empty (cur_sel)) return;
   select (start (cur_sel), start (cur_sel));
 }

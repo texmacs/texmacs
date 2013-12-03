@@ -52,10 +52,10 @@ protected:
   time_t        last_t;
   SI            start_x, start_y;
   SI            end_x, end_y;
-  bool          made_selection;
   bool          table_selection;
   int           mouse_adjusting;  // mask with active key modifiers upon click
   rectangles    selection_rects;
+  rectangles    alt_selection_rects;
   rectangles    env_rects;
   rectangles    foc_rects;
   rectangles    sem_rects;

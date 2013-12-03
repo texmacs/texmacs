@@ -53,7 +53,7 @@ edit_interface_rep::edit_interface_rep ():
   magf (zoomf / std_shrinkf),
   pixel ((SI) tm_round ((std_shrinkf * PIXEL) / zoomf)), copy_always (),
   last_x (0), last_y (0), last_t (0),
-  made_selection (false), table_selection (false), mouse_adjusting(false),
+  table_selection (false), mouse_adjusting (false),
   oc (0, 0), temp_invalid_cursor (false),
   shadow (NULL), stored (NULL),
   cur_sb (2), cur_wb (2)
@@ -529,13 +529,18 @@ edit_interface_rep::apply_changes () {
   
   // cout << "Handling selection\n";
   if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_SELECTION)) {
-    if (made_selection) {
+    if (!is_nil (selection_rects)) {
       invalidate (selection_rects);
       if (!selection_active_any ()) {
-        made_selection= false;
         set_selection (tp, tp);
         selection_rects= rectangles ();
       }
+    }
+    if (!is_nil (alt_selection_rects)) {
+      invalidate (alt_selection_rects);
+      range_set alt_sel= get_alt_selection ("alternate");
+      if (is_empty (alt_sel))
+        alt_selection_rects= rectangles ();
     }
   }
   
@@ -698,8 +703,7 @@ edit_interface_rep::apply_changes () {
   
   // cout << "Handling selection\n";
   if (env_change & THE_SELECTION) {
-    made_selection= selection_active_any ();
-    if (made_selection) {
+    if (selection_active_any ()) {
       table_selection= selection_active_table ();
       selection sel; selection_get (sel);
       rectangles rs= thicken (sel->rs, pixel, 3*pixel);
@@ -708,6 +712,16 @@ edit_interface_rep::apply_changes () {
 #endif
       selection_rects= rs;
       invalidate (selection_rects);
+    }
+    range_set alt_sel= get_alt_selection ("alternate");
+    if (!is_empty (alt_sel)) {
+      selection sel= compute_selection (alt_sel);
+      rectangles rs= thicken (sel->rs, pixel, 3*pixel);
+#ifndef QTTEXMACS
+      rs= simplify (::correct (rs - thicken (rs, -pixel, -pixel)));
+#endif
+      alt_selection_rects= rs;
+      invalidate (alt_selection_rects);
     }
   }
   

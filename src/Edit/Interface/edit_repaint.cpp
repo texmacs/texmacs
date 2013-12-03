@@ -123,9 +123,17 @@ edit_interface_rep::draw_selection (renderer ren) {
     ren->set_pencil (pencil (rgb_color (32, 160, 96), ren->pixel));
     ren->draw_rectangles (locus_rects);
   }
-  if (made_selection && !is_nil (selection_rects)) {
-    ren->set_pencil (pencil (table_selection? rgb_color (192, 0, 255): red,
-                             ren->pixel));
+  if (!is_nil (alt_selection_rects)) {
+    ren->set_pencil (pencil (orange, ren->pixel));
+#ifdef QTTEXMACS
+    ren->draw_selection (alt_selection_rects);
+#else
+    ren->draw_rectangles (alt_selection_rects);
+#endif
+  }
+  if (!is_nil (selection_rects)) {
+    color col= (table_selection? rgb_color (192, 0, 255): red);
+    ren->set_pencil (pencil (col, ren->pixel));
 #ifdef QTTEXMACS
     ren->draw_selection (selection_rects);
 #else
