@@ -355,13 +355,7 @@ edit_select_rep::selection_active_normal () {
 bool
 edit_select_rep::selection_active_table (bool strict) {
   if (!selection_active_any ()) return false;
-  path p= common (cur_sel);
-  if (p == start (cur_sel) || p == end (cur_sel)) p= path_up (p);
-  tree t= subtree (et, p);
-  return
-    is_func (t, TFORMAT) || is_func (t, TABLE) ||
-    is_func (t, ROW) || is_func (t, CELL) ||
-    (!strict && N(t) == 1 && is_func (t[0], TFORMAT));
+  return is_table_selection (et, start (cur_sel), end (cur_sel), strict);
 }
 
 bool
@@ -377,58 +371,6 @@ edit_select_rep::selection_active_small () {
 bool
 edit_select_rep::selection_active_enlarging () {
   return (selecting || !is_empty (cur_sel)) && (mid_p == tp);
-}
-
-/******************************************************************************
-* Subroutines for table selections
-******************************************************************************/
-
-static path
-table_search_format (tree t, path p) {
-  tree st= subtree (t, p);
-  if (is_func (st, TFORMAT) && is_func (st[N(st)-1], TABLE)) return p;
-  while ((!is_nil (p)) && (!is_func (subtree (t, p), TABLE))) p= path_up (p);
-  if ((!is_nil (p)) && (is_func (subtree (t, path_up (p)), TFORMAT)))
-    p= path_up (p);
-  return p;
-}
-
-static void
-table_search_coordinates (tree t, path p, int& row, int& col) {
-  row= col= 0;
-  while (true) {
-    if (is_nil (p)) p= path (1);
-    if (p == path (0)) p= path (0, 0);
-    if (p == path (1)) p= path (N(t)-1, 1);
-    if (is_func (t, TFORMAT));
-    else if (is_func (t, TABLE)) row= p->item;
-    else if (is_func (t, ROW)) col= p->item;
-    else return;
-    t= t [p->item];
-    p= p->next;
-  }
-}
-
-static path
-table_search_cell (tree t, int row, int col) {
-  path p;
-  while (is_func (t, TFORMAT)) {
-    p= p * (N(t)-1);
-    t= t [N(t)-1];
-  }
-  p= p * row;
-  t= t [row];
-  while (is_func (t, TFORMAT)) {
-    p= p * (N(t)-1);
-    t= t [N(t)-1];
-  }
-  p= p * col;
-  t= t [col];
-  while (is_func (t, TFORMAT)) {
-    p= p * (N(t)-1);
-    t= t [N(t)-1];
-  }
-  return p;
 }
 
 /******************************************************************************
@@ -450,64 +392,59 @@ path
 edit_select_rep::selection_get_subtable (
   int& row1, int& col1, int& row2, int& col2)
 {
-  if (selection_active_table ()) {
-    path fp= ::table_search_format (et, common (cur_sel));
-    if (is_nil (fp)) return fp;
-    tree st= subtree (et, fp);
-    table_search_coordinates (st, tail (start (cur_sel), N(fp)), row1, col1);
-    table_search_coordinates (st, tail (end   (cur_sel), N(fp)), row2, col2);
-    if (row1>row2) { int tmp= row1; row1= row2; row2= tmp; }
-    if (col1>col2) { int tmp= col1; col1= col2; col2= tmp; }
-    table_bound (fp, row1, col1, row2, col2);
-    return fp;
-  }
-  else if (selection_active_table (false)) {
-    path fp= ::table_search_format (et, common (cur_sel) * 0);
-    if (is_nil (fp)) return fp;
-    path p= fp;
-    tree st;
-    while (true) {
-      st= subtree (et, p);
-      if (is_func (st, TABLE) && N(st) > 0 && is_func (st[0], ROW)) break;
-      if (!is_func (st, TFORMAT)) return path ();
-      p= p * (N(st) - 1);
-    }
-    row1= 0; col1= 0;
-    row2= N(st)-1; col2= N(st[0])-1;
-    return fp;
-  }
-  else return path ();
+  path fp= find_subtable_selection (et, start (cur_sel), end (cur_sel),
+                                    row1, col1, row2, col2);
+  table_bound (fp, row1, col1, row2, col2);
+  return fp;
 }
 
-void
-edit_select_rep::selection_get (selection& sel) {
-  if (selection_active_table ()) {
+selection
+edit_select_rep::compute_selection (path p1, path p2) {
+  if (is_table_selection (et, p1, p2, true)) {
     int row1, col1, row2, col2;
-    path fp= selection_get_subtable (row1, col1, row2, col2);
+    path fp= find_subtable_selection (et, p1, p2, row1, col1, row2, col2);
     tree st= subtree (et, fp);
+    table_bound (fp, row1, col1, row2, col2);
 
     int i, j;
     rectangle r (0, 0, 0, 0);
     for (i=row1; i<=row2; i++)
       for (j=col1; j<=col2; j++) {
 	path cp= fp * ::table_search_cell (st, i, j);
-	sel= eb->find_check_selection (cp * 0, cp * 1);
+	selection sel= eb->find_check_selection (cp * 0, cp * 1);
 	if (sel->valid) {
 	  rectangles rs= sel->rs;
 	  if (r != rectangle (0, 0, 0, 0)) rs= rectangles (r, rs);
 	  r= least_upper_bound (rs);
 	}
       }
-    sel= selection (rectangles (r), fp * 0, fp * 1);
+    return selection (rectangles (r), fp * 0, fp * 1);
   }
   else {
     path p_start, p_end;
     //cout << "Find " << cur_sel << "\n";
-    selection_correct (start (cur_sel), end (cur_sel), p_start, p_end);
+    selection_correct (p1, p2, p_start, p_end);
     //cout << "Find " << p_start << " -- " << p_end << "\n";
-    sel= eb->find_check_selection (p_start, p_end);
+    selection sel= eb->find_check_selection (p_start, p_end);
     //cout << "sel= " << sel << "\n";
+    return sel;
   }
+}
+
+selection
+edit_select_rep::compute_selection (range_set sel) {
+  if (is_empty (sel)) return selection ();
+  rectangles rs;
+  for (int i=0; i+1<N(sel); i+=2) {
+    selection ssel= compute_selection (sel[i], sel[i+1]);
+    rs << ssel->rs;
+  }
+  return selection (rs, start (sel), end (sel));
+}
+
+void
+edit_select_rep::selection_get (selection& sel) {
+  sel= compute_selection (cur_sel);
 }
 
 void
@@ -980,4 +917,18 @@ edit_select_rep::focus_get (bool skip_flag) {
     return focus_search (selection_get_path (), skip_flag, false);
   else
     return focus_search (path_up (tp), skip_flag, true);
+}
+
+/******************************************************************************
+* Alternative selections
+******************************************************************************/
+
+void
+edit_select_rep::set_alt_selection (string name, range_set sel) {
+  alt_sels (name)= sel;
+}
+
+range_set
+edit_select_rep::get_alt_selection (string name) {
+  return alt_sels[name];
 }

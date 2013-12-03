@@ -17,6 +17,13 @@
 void selection_correct (tree t, path i1, path i2, path& o1, path& o2);
 tree selection_compute (tree t, path i1, path i2);
 
+path table_search_format (tree t, path p);
+void table_search_coordinates (tree t, path p, int& row, int& col);
+path table_search_cell (tree t, int row, int col);
+bool is_table_selection (tree et, path p1, path p2, bool strict);
+path find_subtable_selection (tree et, path p1, path p2,
+                              int& row1, int& col1, int& row2, int& col2);
+
 typedef array<path> range_set;
 range_set no_ranges ();
 range_set simple_range (path start, path end);

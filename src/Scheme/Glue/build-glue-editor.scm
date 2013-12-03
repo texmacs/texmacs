@@ -217,6 +217,8 @@
   (set-manual-focus-path manual_focus_set (void path))
   (get-manual-focus-path manual_focus_get (path))
   (get-focus-path focus_get (path))
+  (set-alt-selection set_alt_selection (void string array_path))
+  (get-alt-selection get_alt_selection (array_path string))
 
   ;; undo and redo
   (clear-undo-history clear_undo_history (void))

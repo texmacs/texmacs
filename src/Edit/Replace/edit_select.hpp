@@ -12,7 +12,6 @@
 #ifndef EDIT_SELECT_H
 #define EDIT_SELECT_H
 #include "editor.hpp"
-#include "tree_select.hpp"
 
 #define DIRECT 0
 #define CENTER 1
@@ -28,6 +27,7 @@ protected:
   string    selection_export;
   path      focus_p;
   bool      focus_hold;
+  hashmap<string,range_set> alt_sels;
 
 protected:
   void get_selection (path& start, path& end);
@@ -64,6 +64,8 @@ public:
   tree selection_raw_get (string key);
   void selection_correct (path i1, path i2, path& o1, path& o2);
   path selection_get_subtable (int& row1, int& col1, int& row2, int& col2);
+  selection compute_selection (path p1, path p2);
+  selection compute_selection (range_set sel);
   void selection_get (selection& sel);
   void selection_get (path& start, path& end);
   path selection_get_start ();
@@ -96,6 +98,9 @@ public:
   void manual_focus_release ();
   path focus_search (path p, bool skip_flag, bool up_flag);
   path focus_get (bool skip_flag);
+
+  void set_alt_selection (string s, range_set sel);
+  range_set get_alt_selection (string s);
 };
 
 #endif // defined EDIT_SELECT_H

@@ -2091,6 +2091,34 @@ tmg_get_focus_path () {
 }
 
 tmscm
+tmg_set_alt_selection (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "set-alt-selection");
+  TMSCM_ASSERT_ARRAY_PATH (arg2, TMSCM_ARG2, "set-alt-selection");
+
+  string in1= tmscm_to_string (arg1);
+  array_path in2= tmscm_to_array_path (arg2);
+
+  // TMSCM_DEFER_INTS;
+  get_current_editor()->set_alt_selection (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_get_alt_selection (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "get-alt-selection");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  array_path out= get_current_editor()->get_alt_selection (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return array_path_to_tmscm (out);
+}
+
+tmscm
 tmg_clear_undo_history () {
   // TMSCM_DEFER_INTS;
   get_current_editor()->clear_undo_history ();
@@ -3093,6 +3121,8 @@ initialize_glue_editor () {
   tmscm_install_procedure ("set-manual-focus-path",  tmg_set_manual_focus_path, 1, 0, 0);
   tmscm_install_procedure ("get-manual-focus-path",  tmg_get_manual_focus_path, 0, 0, 0);
   tmscm_install_procedure ("get-focus-path",  tmg_get_focus_path, 0, 0, 0);
+  tmscm_install_procedure ("set-alt-selection",  tmg_set_alt_selection, 2, 0, 0);
+  tmscm_install_procedure ("get-alt-selection",  tmg_get_alt_selection, 1, 0, 0);
   tmscm_install_procedure ("clear-undo-history",  tmg_clear_undo_history, 0, 0, 0);
   tmscm_install_procedure ("commit-changes",  tmg_commit_changes, 0, 0, 0);
   tmscm_install_procedure ("start-slave",  tmg_start_slave, 1, 0, 0);

@@ -12,6 +12,7 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 #include "typesetter.hpp"
+#include "tree_select.hpp"
 #ifdef AQUATEXMACS
 #  include "Cocoa/aqua_simple_widget.h"
 #else
@@ -455,6 +456,8 @@ public:
   virtual tree selection_raw_get (string key) = 0;
   virtual void selection_correct (path i1, path i2, path& o1, path& o2) = 0;
   virtual path selection_get_subtable (int& i1, int& j1, int& i2, int& j2) = 0;
+  virtual selection compute_selection (path p1, path p2) = 0;
+  virtual selection compute_selection (range_set sel) = 0;
   virtual void selection_get (selection& sel) = 0;
   virtual void selection_get (path& start, path& end) = 0;
   virtual path selection_get_start () = 0;
@@ -486,6 +489,9 @@ public:
   virtual void manual_focus_set (path p, bool force= true) = 0;
   virtual void manual_focus_release () = 0;
   virtual path focus_get (bool skip_flag= true) = 0;
+
+  virtual void set_alt_selection (string s, range_set sel) = 0;
+  virtual range_set get_alt_selection (string s) = 0;
 
   /* public routines from edit_replace */
   virtual bool inside (string what) = 0;

@@ -214,6 +214,105 @@ selection_compute (tree t, path start, path end) {
 }
 
 /******************************************************************************
+* Selections in tables
+******************************************************************************/
+
+path
+table_search_format (tree t, path p) {
+  tree st= subtree (t, p);
+  if (is_func (st, TFORMAT) && is_func (st[N(st)-1], TABLE)) return p;
+  while ((!is_nil (p)) && (!is_func (subtree (t, p), TABLE))) p= path_up (p);
+  if ((!is_nil (p)) && (is_func (subtree (t, path_up (p)), TFORMAT)))
+    p= path_up (p);
+  return p;
+}
+
+void
+table_search_coordinates (tree t, path p, int& row, int& col) {
+  row= col= 0;
+  while (true) {
+    if (is_nil (p)) p= path (1);
+    if (p == path (0)) p= path (0, 0);
+    if (p == path (1)) p= path (N(t)-1, 1);
+    if (is_func (t, TFORMAT));
+    else if (is_func (t, TABLE)) row= p->item;
+    else if (is_func (t, ROW)) col= p->item;
+    else return;
+    t= t [p->item];
+    p= p->next;
+  }
+}
+
+path
+table_search_cell (tree t, int row, int col) {
+  path p;
+  while (is_func (t, TFORMAT)) {
+    p= p * (N(t)-1);
+    t= t [N(t)-1];
+  }
+  p= p * row;
+  t= t [row];
+  while (is_func (t, TFORMAT)) {
+    p= p * (N(t)-1);
+    t= t [N(t)-1];
+  }
+  p= p * col;
+  t= t [col];
+  while (is_func (t, TFORMAT)) {
+    p= p * (N(t)-1);
+    t= t [N(t)-1];
+  }
+  return p;
+}
+
+
+bool
+is_table_selection (tree et, path p1, path p2, bool strict) {
+  if (p1 == p2) return false;
+  path p= common (p1, p2);
+  if ((p == p1 || p == p2) && !is_nil (p)) p= path_up (p);
+  tree t= subtree (et, p);
+  return
+    is_func (t, TFORMAT) || is_func (t, TABLE) ||
+    is_func (t, ROW) || is_func (t, CELL) ||
+    (!strict && N(t) == 1 && is_func (t[0], TFORMAT));
+}
+
+path
+find_subtable_selection (tree et, path p1, path p2,
+                         int& row1, int& col1, int& row2, int& col2) {
+  if (is_table_selection (et, p1, p2, true)) {
+    path fp= table_search_format (et, common (p1, p2));
+    if (is_nil (fp)) return fp;
+    tree st= subtree (et, fp);
+    table_search_coordinates (st, tail (p1, N(fp)), row1, col1);
+    table_search_coordinates (st, tail (p2, N(fp)), row2, col2);
+    if (row1>row2) { int tmp= row1; row1= row2; row2= tmp; }
+    if (col1>col2) { int tmp= col1; col1= col2; col2= tmp; }
+    // table_bound (fp, row1, col1, row2, col2);
+    // FIXME: table editing routines should be moved to src/Data/Tree
+    return fp;
+  }
+  else if (is_table_selection (et, p1, p2, false)) {
+    path fp= table_search_format (et, common (p1, p2) * 0);
+    if (is_nil (fp)) return fp;
+    path p= fp;
+    tree st;
+    while (true) {
+      st= subtree (et, p);
+      if (is_func (st, TABLE) && N(st) > 0 && is_func (st[0], ROW)) break;
+      if (!is_func (st, TFORMAT)) return path ();
+      p= p * (N(st) - 1);
+    }
+    row1= 0; col1= 0;
+    row2= N(st)-1; col2= N(st[0])-1;
+    return fp;
+  }
+  else return path ();
+}
+
+
+/******************************************************************************
 * Range sets
 ******************************************************************************/
 

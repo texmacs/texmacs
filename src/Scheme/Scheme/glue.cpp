@@ -675,6 +675,7 @@ typedef array<int> array_int;
 typedef array<string> array_string;
 typedef array<tree> array_tree;
 typedef array<url> array_url;
+typedef array<path> array_path;
 typedef array<widget> array_widget;
 typedef array<double> array_double;
 typedef array<array<double> > array_array_double;
@@ -897,6 +898,7 @@ tmscm_is_array_url (tmscm  p) {
     tmscm_is_array_url (tmscm_cdr (p));
 }
 
+
 #define TMSCM_ASSERT_ARRAY_URL(p,arg,rout) \
 TMSCM_ASSERT (tmscm_is_array_url (p), p, arg, rout)
 
@@ -913,6 +915,35 @@ tmscm_to_array_url (tmscm  p) {
   array<url> a;
   while (!tmscm_is_null (p)) {
     a << tmscm_to_url (tmscm_car (p));
+    p= tmscm_cdr (p);
+  }
+  return a;
+}
+
+static bool
+tmscm_is_array_path (tmscm  p) {
+  if (tmscm_is_null (p)) return true;
+  else return tmscm_is_pair (p) &&
+    tmscm_is_path (tmscm_car (p)) &&
+    tmscm_is_array_path (tmscm_cdr (p));
+}
+
+#define TMSCM_ASSERT_ARRAY_PATH(p,arg,rout) \
+TMSCM_ASSERT (tmscm_is_array_path (p), p, arg, rout)
+
+/* static */ tmscm 
+array_path_to_tmscm (array<path> a) {
+  int i, n= N(a);
+  tmscm  p= tmscm_null ();
+  for (i=n-1; i>=0; i--) p= tmscm_cons (path_to_tmscm (a[i]), p);
+  return p;
+}
+
+/* static */ array<path>
+tmscm_to_array_path (tmscm  p) {
+  array<path> a;
+  while (!tmscm_is_null (p)) {
+    a << tmscm_to_path (tmscm_car (p));
     p= tmscm_cdr (p);
   }
   return a;
