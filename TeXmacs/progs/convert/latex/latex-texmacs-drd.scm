@@ -219,6 +219,37 @@
   (tmcodeinline ((!option "") (!group (ttfamily) (!group 2)))))
 
 (logic-table latex-texmacs-2%
+  (tmfoldeddocumentation   (trivlist (!append (item (!option "")) "\\large\\bf" 1)))
+  (tmunfoldeddocumentation (trivlist
+                             (!append (item (!option ""))
+                                      (!group "\\large\\bf" 1) "\\\\"
+                                      (item (!option "")) 2 )))
+  (tmfoldedgrouped        (trivlist (!append (item (!option "[")) 1)))
+  (tmunfoldedgrouped      (trivlist
+                            (!append (item (!option "$\\lceil$")) 1 "\\\\"
+                                     (item (!option "$\\lfloor$")) 2 )))
+  (tmfoldedexplain        (trivlist (!append (item (!option "")) "\\bf" 1)))
+  (tmunfoldedexplain      (trivlist
+                            (!append (item (!option ""))
+                                     (!group "\\bf" 1) "\\\\"
+                                     (item (!option "")) 2 )))
+  (tmfoldedplain          (trivlist (!append (item (!option "")) 1)))
+  (tmunfoldedplain        (trivlist
+                            (!append (item (!option "")) 1 "\\\\"
+                                     (item (!option "")) 2 )))
+  (tmfoldedenv            (trivlist (!append (item (!option "$\\bullet$")) 1)))
+  (tmunfoldedenv          (trivlist
+                            (!append (item (!option "$\\circ$")) 1 "\\\\"
+                                     (item (!option "")) 2 )))
+  (tmfoldedstd            (trivlist (!append (item (!option "$\\bullet$")) 1)))
+  (tmunfoldedstd          (trivlist
+                            (!append (item (!option "$\\circ$")) 1 "\\\\"
+                                     (item (!option "")) 2 )))
+  (tmfolded               (trivlist (!append (item (!option "$\\bullet$")) 1)))
+  (tmunfolded             (trivlist
+                            (!append (item (!option "$\\circ$")) 1 "\\\\"
+                                     (item (!option "")) 2 )))
+
   (tmhlink  (!group (!append (color "blue") 1)))
   (tmaction (!group (!append (color "blue") 1)))
   (ontop ("{\\genfrac{}{}{0pt}{}{#1}{#2}}"))

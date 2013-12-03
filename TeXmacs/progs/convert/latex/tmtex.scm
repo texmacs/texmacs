@@ -1725,6 +1725,10 @@
 (define (tmtex-indent s l)
   (list (list '!begin "tmindent") (tmtex (car l))))
 
+(define (tmtex-fold s l)
+  (with name (string->symbol (string-append "tm" (string-replace s "-" "")))
+    `(,name ,@(map tmtex l))))
+
 (define (tmtex-list-env s l)
   (let* ((r (string-replace s "-" ""))
 	 (t (cond ((== r "enumerateRoman") "enumerateromancap")
@@ -2244,6 +2248,11 @@
 	enumerate enumerate-numeric enumerate-roman enumerate-Roman
 	enumerate-alpha enumerate-Alpha)
    (,tmtex-list-env 1))
+  ((:or folded unfolded folded-plain unfolded-plain folded-std unfolded-std
+        folded-explain unfolded-explain folded-env unfolded-env
+        folded-documentation unfolded-documentation folded-grouped
+        unfolded-grouped)
+   (,tmtex-fold 2))
   (really-tiny (,tmtex-tiny 1))
   (very-tiny (,tmtex-tiny 1))
   (really-small (,tmtex-scriptsize 1))
