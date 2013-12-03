@@ -28,14 +28,14 @@
   (with what (buffer-tree)
     (when (tm-func? what 'document 1)
       (set! what (tm-ref what 0)))
-    (when (not (tree-empty? what))
-      (delayed
-        (:idle 1)
-        (with-buffer (buffer-get-master (current-buffer))
-          (with t (buffer-tree)
-            (with sels (tree-search-tree t what (tree->path t))
-              (when (nnull? sels)
-                (set-alt-selection "alternate" sels)))))))))
+    (with-buffer (buffer-get-master (current-buffer))
+      (if (tree-empty? what)
+          (selection-cancel)
+          (let* ((t (buffer-tree))
+                 (sels (tree-search-tree t what (tree->path t))))
+            (if (null? sels)
+                (selection-cancel)
+                (set-alt-selection "alternate" sels)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search

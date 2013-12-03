@@ -683,8 +683,11 @@ edit_select_rep::selection_clear (string key) {
 
 void
 edit_select_rep::selection_cancel () {
+  if (N(alt_sels) > 0) {
+    alt_sels= hashmap<string,range_set> ();
+    notify_change (THE_SELECTION);
+  }
   selecting= shift_selecting= false;
-  alt_sels= hashmap<string,range_set> ();
   if (is_empty (cur_sel)) return;
   select (start (cur_sel), start (cur_sel));
 }
