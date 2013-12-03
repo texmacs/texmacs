@@ -412,10 +412,15 @@ focus_on_editor (editor ed) {
 
 bool
 focus_on_buffer (url name) {
-  // Focus on the most recent view on a buffer being active in a window
-  // Return false if the buffer is not visible in any of the windows
+  // Focus on the most recent view on a buffer, preferably active in a window
+  // Return false if no view exists for the buffer
   if (the_view != NULL && the_view->buf->buf->name == name) return true;
   url r= get_recent_view (name, true, false, true, false);
+  if (is_none (r)) r= get_recent_view (name, true, false, false, false);
+  if (is_none (r)) {
+    array<url> vws= buffer_to_views (name);
+    if (N(vws) > 0) r= vws[0];
+  }
   if (is_none (r)) return false;
   set_current_view (r);
   return true;
