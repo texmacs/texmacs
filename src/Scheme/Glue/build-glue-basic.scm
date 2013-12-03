@@ -201,6 +201,7 @@
   (tree-empty? is_empty (bool content))
   (tree-is-buffer? admits_edit_observer (bool tree))
   (tree-search-sections search_sections (array_tree tree))
+  (tree-search-tree search (array_path content content path))
   (tag-minimal-arity minimal_arity (int tree_label))
   (tag-maximal-arity maximal_arity (int tree_label))
   (tag-possible-arity? correct_arity (bool tree_label int))

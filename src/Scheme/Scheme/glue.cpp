@@ -13,6 +13,7 @@
 
 #include "promise.hpp"
 #include "tree.hpp"
+#include "tree_search.hpp"
 
 #include "boxes.hpp"
 #include "editor.hpp"
