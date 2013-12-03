@@ -42,12 +42,12 @@ get_pos (array<SI> a, SI which) {
   int step, test;
   step= test= N(a)>>1;
   while (a[test] != which) {
-    step= step >> 1;
-    if (step==0) {
+    if (step==1) {
       if (which < a[test]) return test-1;
       else return test+1;
     }
     else {
+      step = (step + 1) >> 1;
       if (which < a[test]) test= max (0, test- step);
       else test= min (N(a)-1, test+ step);
     }
