@@ -17,4 +17,12 @@
 void selection_correct (tree t, path i1, path i2, path& o1, path& o2);
 tree selection_compute (tree t, path i1, path i2);
 
+typedef array<path> range_set;
+range_set no_ranges ();
+range_set simple_range (path start, path end);
+bool is_empty (range_set sel);
+path start (range_set sel);
+path end (range_set sel);
+path common (range_set sel);
+
 #endif // defined TREE_SELECT_H

@@ -49,6 +49,7 @@ selection_decode (string lan, string s) {
 ******************************************************************************/
 
 edit_select_rep::edit_select_rep ():
+  cur_sel (no_ranges ()),
   selecting (false), shift_selecting (false), mid_p (),
   selection_import ("default"), selection_export ("default"),
   focus_p (), focus_hold (false) {}
@@ -120,11 +121,10 @@ edit_select_rep::semantic_select (path p, path& q1, path& q2, int mode) {
 void
 edit_select_rep::select (path p1, path p2) {
   //cout << "Select " << p1 << " -- " << p2 << "\n";
-  if (start_p == p1 && end_p == p2) return;
+  if (cur_sel == simple_range (p1, p2)) return;
   if (!(rp <= p1 && rp <= p2)) return;
-  if (start_p == end_p && p1 == p2) {
-    start_p= copy (p1);
-    end_p  = copy (p2);
+  if (is_empty (cur_sel) && p1 == p2) {
+    cur_sel= simple_range (p1, p2);
     return;
   }
   if (p1 != p2) {
@@ -133,14 +133,10 @@ edit_select_rep::select (path p1, path p2) {
     if (!is_func (st, TABLE) && !is_func (st, ROW))
       (void) semantic_select (cp, p1, p2, 0);
   }
-  if (path_less (p1, p2)) {
-    start_p= copy (p1);
-    end_p  = copy (p2);
-  }
-  else {
-    start_p= copy (p2);
-    end_p  = copy (p1);
-  }
+  if (path_less (p1, p2))
+    cur_sel= simple_range (p1, p2);
+  else
+    cur_sel= simple_range (p2, p1);
   notify_change (THE_SELECTION);
 }
 
@@ -159,10 +155,10 @@ edit_select_rep::select_line () {
   select (search_parent_upwards (DOCUMENT));
 }
 
-void edit_select_rep::get_selection (path& start, path& end) {
-  start= copy (start_p); end= copy (end_p); }
-void edit_select_rep::set_selection (path start, path end) {
-  select (start, end); }
+void edit_select_rep::get_selection (path& p1, path& p2) {
+  p1= start (cur_sel); p2= end (cur_sel); }
+void edit_select_rep::set_selection (path p1, path p2) {
+  select (p1, p2); }
 
 /******************************************************************************
 * For interface with cursor movement
@@ -187,16 +183,15 @@ edit_select_rep::select_from_keyboard (bool flag) {
   selecting= flag;
   shift_selecting= false;
   if (flag) {
-    start_p= copy (tp);
+    cur_sel= simple_range (tp, tp);
     mid_p  = copy (tp);
-    end_p  = copy (tp);
   }
   else mid_p= rp;
 }
 
 void
 edit_select_rep::select_from_shift_keyboard () {
-  if (!shift_selecting || end_p == start_p) mid_p= copy (tp);
+  if (!shift_selecting || is_empty (cur_sel)) mid_p= copy (tp);
   selecting= true;
   shift_selecting= true;
 }
@@ -215,14 +210,14 @@ breaking_force (char c) {
 
 void
 edit_select_rep::select_enlarge_text () {
-  path p= common (start_p, end_p);
-  if (start_p == end_p) p= path_up (p);
+  path p= common (cur_sel);
+  if (is_empty (cur_sel) && !is_nil (p)) p= path_up (p);
   tree st= subtree (et, p);
   ASSERT (is_atomic (st), "non textual tree");
   string s= st->label;
   string mode= get_env_string (MODE);
-  int i1= last_item (start_p), j1= i1;
-  int i2= last_item (end_p), j2= i2;
+  int i1= last_item (start (cur_sel)), j1= i1;
+  int i2= last_item (end   (cur_sel)), j2= i2;
   path q= path_up (p);
 
   if (mode == "text" || mode == "src") {
@@ -272,12 +267,12 @@ incomplete_script_selection (tree t, path lp, path rp) {
 void
 edit_select_rep::select_enlarge () {
   path sp, sq;
-  if (start_p == end_p) {
-    sp= path_up (start_p);
+  if (is_empty (cur_sel) && !is_nil (start (cur_sel))) {
+    sp= path_up (start (cur_sel));
     sq= sp;
   }
   else {
-    sp= common (start_p, end_p);
+    sp= common (cur_sel);
     if (!(rp < sp)) {
       selection_cancel ();
       set_message ("", "");
@@ -285,8 +280,9 @@ edit_select_rep::select_enlarge () {
     }
     sq= path_up (sp);
   }
-  path pp= sp, p1= start_p, p2= end_p;
-  if (start_p == pp * 0 && end_p == pp * right_index (subtree (et, pp)))
+  path pp= sp, p1= start (cur_sel), p2= end (cur_sel);
+  if (start (cur_sel) == pp * 0 &&
+      end   (cur_sel) == pp * right_index (subtree (et, pp)))
     if (!is_nil (pp)) pp= path_up (pp);
   if (is_func (subtree (et, pp), TFORMAT)) pp= path_up (pp);
   if (semantic_select (pp, p1, p2, 1))
@@ -296,13 +292,13 @@ edit_select_rep::select_enlarge () {
     else select (sq * 0, sq * 1);
   }
 
-  path p = common (start_p, end_p);
+  path p = common (cur_sel);
   tree st= subtree (et, p);
   if (drd->var_without_border (L(st)) ||
       is_func (st, TFORMAT) ||
       is_func (st, DOCUMENT, 1) ||
       is_script (st) ||
-      incomplete_script_selection (st, start_p / p, end_p / p))
+      incomplete_script_selection (st, start (cur_sel) / p, end (cur_sel) / p))
     select_enlarge ();
   else {
     tree s;
@@ -334,8 +330,8 @@ stop_enlarge_environmental (tree t) {
 void
 edit_select_rep::select_enlarge_environmental () {
   select_enlarge ();
-  if (end_p == start_p) return;
-  path p= common (start_p, end_p);
+  if (is_empty (cur_sel)) return;
+  path p= common (cur_sel);
   tree st= subtree (et, p);
   if (stop_enlarge_environmental (st)) return;
   select_enlarge_environmental ();
@@ -347,7 +343,7 @@ edit_select_rep::select_enlarge_environmental () {
 
 bool
 edit_select_rep::selection_active_any () {
-  return end_p != start_p;
+  return !is_empty (cur_sel);
   // return made_selection;
 }
 
@@ -359,8 +355,8 @@ edit_select_rep::selection_active_normal () {
 bool
 edit_select_rep::selection_active_table (bool strict) {
   if (!selection_active_any ()) return false;
-  path p= common (start_p, end_p);
-  if ((p == start_p) || (p == end_p)) p= path_up (p);
+  path p= common (cur_sel);
+  if (p == start (cur_sel) || p == end (cur_sel)) p= path_up (p);
   tree t= subtree (et, p);
   return
     is_func (t, TFORMAT) || is_func (t, TABLE) ||
@@ -380,7 +376,7 @@ edit_select_rep::selection_active_small () {
 
 bool
 edit_select_rep::selection_active_enlarging () {
-  return (selecting || (end_p != start_p)) && (mid_p == tp);
+  return (selecting || !is_empty (cur_sel)) && (mid_p == tp);
 }
 
 /******************************************************************************
@@ -455,18 +451,18 @@ edit_select_rep::selection_get_subtable (
   int& row1, int& col1, int& row2, int& col2)
 {
   if (selection_active_table ()) {
-    path fp= ::table_search_format (et, common (start_p, end_p));
+    path fp= ::table_search_format (et, common (cur_sel));
     if (is_nil (fp)) return fp;
     tree st= subtree (et, fp);
-    table_search_coordinates (st, tail (start_p, N(fp)), row1, col1);
-    table_search_coordinates (st, tail (end_p, N(fp)), row2, col2);
+    table_search_coordinates (st, tail (start (cur_sel), N(fp)), row1, col1);
+    table_search_coordinates (st, tail (end   (cur_sel), N(fp)), row2, col2);
     if (row1>row2) { int tmp= row1; row1= row2; row2= tmp; }
     if (col1>col2) { int tmp= col1; col1= col2; col2= tmp; }
     table_bound (fp, row1, col1, row2, col2);
     return fp;
   }
   else if (selection_active_table (false)) {
-    path fp= ::table_search_format (et, common (start_p, end_p) * 0);
+    path fp= ::table_search_format (et, common (cur_sel) * 0);
     if (is_nil (fp)) return fp;
     path p= fp;
     tree st;
@@ -506,8 +502,8 @@ edit_select_rep::selection_get (selection& sel) {
   }
   else {
     path p_start, p_end;
-    //cout << "Find " << start_p << " -- " << end_p << "\n";
-    selection_correct (start_p, end_p, p_start, p_end);
+    //cout << "Find " << cur_sel << "\n";
+    selection_correct (start (cur_sel), end (cur_sel), p_start, p_end);
     //cout << "Find " << p_start << " -- " << p_end << "\n";
     sel= eb->find_check_selection (p_start, p_end);
     //cout << "sel= " << sel << "\n";
@@ -515,29 +511,29 @@ edit_select_rep::selection_get (selection& sel) {
 }
 
 void
-edit_select_rep::selection_get (path& start, path& end) {
+edit_select_rep::selection_get (path& p1, path& p2) {
   if (selection_active_table ()) {
     int row1, col1, row2, col2;
     path fp= selection_get_subtable (row1, col1, row2, col2);
-    start= fp * 0;
-    end= fp * 1;
+    p1= fp * 0;
+    p2= fp * 1;
   }
-  else selection_correct (start_p, end_p, start, end);
+  else selection_correct (start (cur_sel), end (cur_sel), p1, p2);
   /*
   selection sel; selection_get (sel);
-  start= sel->start;
-  end  = sel->end;
+  p1= sel->start;
+  p2= sel->end;
   */
 }
 
 path
 edit_select_rep::selection_get_start () {
-  return start_p;
+  return start (cur_sel);
 }
 
 path
 edit_select_rep::selection_get_end () {
-  return end_p;
+  return end (cur_sel);
 }
 
 tree
@@ -549,11 +545,11 @@ edit_select_rep::selection_get () {
     return table_get_subtable (fp, row1, col1, row2, col2);
   }
   else {
-    path start, end;
+    path p1, p2;
     // cout << "Selecting...\n";
-    selection_get (start, end);
-    // cout << "Between paths: " << start << " and " << end << "\n";
-    tree t= selection_compute (et, start, end);
+    selection_get (p1, p2);
+    // cout << "Between paths: " << p1 << " and " << p2 << "\n";
+    tree t= selection_compute (et, p1, p2);
     // cout << "Selection : " << t << "\n";
     return simplify_correct (t);
   }
@@ -561,11 +557,11 @@ edit_select_rep::selection_get () {
 
 path
 edit_select_rep::selection_get_path () {
-  path start, end;
-  selection_get (start, end);
-  if (end == start && end_p != start_p)
-    return path_up (start);
-  return common (start, end);
+  path p1, p2;
+  selection_get (p1, p2);
+  if (p2 == p1 && !is_empty (cur_sel))
+    return path_up (p1);
+  return common (p1, p2);
 }
 
 path
@@ -599,26 +595,26 @@ edit_select_rep::selection_raw_get (string key) {
 void
 edit_select_rep::selection_set_start (path p) {
   if (!selection_active_any ()) {
-    if (rp < start_p) select (start_p, start_p);
+    if (rp < start (cur_sel)) select (start (cur_sel), start (cur_sel));
     else select (tp, tp);
   }
   if (is_nil (p)) selection_set_start (tp);
-  else if (path_less_eq (end_p, p)) select (p, p);
-  else if (rp < p) select (p, end_p);
+  else if (path_less_eq (end (cur_sel), p)) select (p, p);
+  else if (rp < p) select (p, end (cur_sel));
 }
 
 void
 edit_select_rep::selection_set_end (path p) {
   if (is_nil (p)) selection_set_end (tp);
-  else if (path_less_eq (p, start_p)) select (p, p);
-  else if (rp < p) select (start_p, p);
+  else if (path_less_eq (p, start (cur_sel))) select (p, p);
+  else if (rp < p) select (start (cur_sel), p);
 }
 
 void
-edit_select_rep::selection_set_paths (path start, path end) {
-  if (is_nil (start) || is_nil (end)) selection_set_paths (tp, tp);
-  else if (path_less_eq (end, start)) select (start, start);
-  else if (rp < start && rp < end) select (start, end);
+edit_select_rep::selection_set_paths (path p1, path p2) {
+  if (is_nil (p1) || is_nil (p2)) selection_set_paths (tp, tp);
+  else if (path_less_eq (p2, p1)) select (p1, p1);
+  else if (rp < p1 && rp < p2) select (p1, p2);
 }
 
 void
@@ -752,8 +748,8 @@ edit_select_rep::selection_clear (string key) {
 void
 edit_select_rep::selection_cancel () {
   selecting= shift_selecting= false;
-  if (end_p == start_p) return;
-  select (start_p, start_p);
+  if (is_empty (cur_sel)) return;
+  select (start (cur_sel), start (cur_sel));
 }
 
 void
@@ -896,7 +892,7 @@ edit_select_rep::selection_cut (string key) {
   else if (selection_active_any ()) {
     path p1, p2;
     if (selection_active_table ()) {
-      p1= start_p; p2= end_p;
+      p1= start (cur_sel); p2= end (cur_sel);
       if(key != "none") {
         tree sel= selection_get ();
         selection_set (key, sel);

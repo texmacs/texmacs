@@ -212,3 +212,40 @@ selection_compute (tree t, path start, path end) {
   for (i=1; i<N(r)-1; i++) r[i]= copy (t[i+i1]);
   return r;
 }
+
+/******************************************************************************
+* Range sets
+******************************************************************************/
+
+range_set
+no_ranges () {
+  return range_set (path (), path ());
+}
+
+range_set
+simple_range (path p1, path p2) {
+  return range_set (copy (p1), copy (p2));
+}
+
+bool
+is_empty (range_set sel) {
+  return N(sel) == 0 || sel[0] == sel[N(sel)-1];
+}
+
+path
+start (range_set sel) {
+  if (N(sel) == 0) return path ();
+  else return copy (sel[0]);
+}
+
+path
+end (range_set sel) {
+  if (N(sel) == 0) return path ();
+  else return copy (sel[N(sel)-1]);
+}
+
+path
+common (range_set sel) {
+  if (N(sel) == 0) return path ();
+  else return common (sel[0], sel[N(sel)-1]);
+}

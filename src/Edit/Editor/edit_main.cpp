@@ -458,7 +458,7 @@ edit_main_rep::show_cursor () {
 void
 edit_main_rep::show_selection () {
   selection sel; selection_get (sel);
-  cout << "physical  selection: " << start_p << " --- " << end_p << "\n";
+  cout << "physical  selection: " << cur_sel << "\n";
   cout << "logical   selection: " << sel->start << " --- " << sel->end << "\n";
 }
 

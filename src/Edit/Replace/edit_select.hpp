@@ -12,6 +12,7 @@
 #ifndef EDIT_SELECT_H
 #define EDIT_SELECT_H
 #include "editor.hpp"
+#include "tree_select.hpp"
 
 #define DIRECT 0
 #define CENTER 1
@@ -20,13 +21,13 @@
 
 class edit_select_rep: virtual public editor_rep {
 protected:
-  path   start_p, end_p;
-  bool   selecting, shift_selecting;
-  path   mid_p;
-  string selection_import;
-  string selection_export;
-  path   focus_p;
-  bool   focus_hold;
+  range_set cur_sel;
+  bool      selecting, shift_selecting;
+  path      mid_p;
+  string    selection_import;
+  string    selection_export;
+  path      focus_p;
+  bool      focus_hold;
 
 protected:
   void get_selection (path& start, path& end);
