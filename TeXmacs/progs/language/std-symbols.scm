@@ -63,13 +63,13 @@
     (:type infix)
     (:penalty 10)
     (:spacing default default)
-    "<vee>" "<curlyvee>")
+    "<vee>" "<curlyvee>" "<veebar>" "<obar>" "<boxbar>")
 
   (define And-symbol
     (:type infix)
     (:penalty 10)
     (:spacing default default)
-    "<wedge>" "<curlywedge>")
+    "<wedge>" "<curlywedge>" "<barwedge>" "<doublebarwedge>")
 
   (define Not-symbol
     (:type prefix)
@@ -92,7 +92,8 @@
     "<parallel>" "<shortparallel>" "<nparallel>" "<nshortparallel>"
     "<shortmid>" "<nshortmid>" "<nmid>" "<divides>" "<ndivides>"
 
-    "<approxeq>" "<backsim>" "<backsimeq>" "<Bumpeq>" "<bumpeq>" "<circeq>"
+    "<approxeq>" "<backsim>" "<backsimeq>"
+    "<Bumpeq>" "<bumpeq>" "<circeq>" "<triangleq>"
     "<curlyeqprec>" "<curlyeqsucc>" "<Doteq>" "<doteqdot>" "<eqcirc>"
     "<eqslantgtr>" "<eqslantless>" "<fallingdotseq>" "<geqq>" "<geqslant>"
     "<ggg>" "<gggtr>" "<gnapprox>" "<gneq>" "<gneqq>" "<gnsim>" "<gtrapprox>"
@@ -129,7 +130,9 @@
     "<nprecprec>" "<nprecpreceq>" "<nprecprecprec>" "<nprecprecpreceq>"
     "<nsuccsucc>" "<nsuccsucceq>" "<nsuccsuccsucc>" "<nsuccsuccsucceq>"
     "<asympasymp>" "<nasympasymp>" "<simsim>" "<nsimsim>" "<nin>" "<nni>"
-    "<notin>" "<notni>" "<precdot>" "<preceqdot>" "<dotsucc>" "<dotsucceq>")
+    "<notin>" "<notni>" "<precdot>" "<preceqdot>" "<dotsucc>" "<dotsucceq>"
+
+    "<because>" "<between>" "<therefore>")
 
   (define Relation-lim-symbol
     (:type infix)
@@ -228,7 +231,8 @@
     (:type infix)
     (:penalty 30)
     (:spacing default default)
-    "-" "<pm>" "<mp>" "<minus>" "<ominus>" "<boxminus>" "<longminus>")
+    "-" "<pm>" "<mp>" "<minus>" "<longminus>"
+    "<ominus>" "<boxminus>" "<circleddash>")
 
   (define Minus-prefix-symbol
     (:type prefix)
@@ -240,9 +244,13 @@
     (:type infix)
     (:penalty 40)
     (:spacing default default)
-    "<cdot>" "<times>" "<otimes>" "<circ>" "<odot>" "<boxdot>" "<boxtimes>"
+    "<cdot>" "<times>" "<otimes>"
+    "<circ>" "<bullet>" "<odot>" "<boxdot>" "<boxtimes>"
     "<dottimes>" "<dototimes>" "<ltimes>" "<rtimes>" "<atimes>" "<btimes>"
-    "<exterior>" "<join>" "<ast>" "<star>" "<oast>" "<asterisk>")
+    "<exterior>" "<join>"
+    "<ast>" "<star>" "<oast>" "<boxast>"
+    "<circledast>" "<circledcirc>" "<varocircle>" "<boxbox>"
+    "<leftthreetimes>" "<rightthreetimes>")
 
   (define Times-invisible-symbol
     (:type infix)
@@ -257,7 +265,7 @@
     (:type infix)
     (:penalty 40)
     (:spacing default default)
-    "<div>" "<oover>")
+    "<div>" "<oover>" "<divideontimes>" "<oslash>" "<boxslash>")
 
   (define Over-condensed-symbol
     (:type infix)
@@ -339,7 +347,7 @@
   (define Prime-symbol
     (:type symbol)
     (:penalty panic)
-    "'" "`" "<dag>" "<ddag>" "<ast>")
+    "'" "`" "<dag>" "<ddag>" "<asterisk>")
 
   (define Ponctuation-visible-symbol
     (:type separator)
@@ -529,18 +537,15 @@
     "<sun>" "<leftmoon>" "<rightmoon>" "<earth>" "<male>" "<female>"
     "<kreuz>" "<recorder>" "<phone>" "<checked>" "<bell>"
 
-    "<backprime>" "<barwedge>" "<because>"
-    "<between>" "<bigstar>" "<blacklozenge>"
+    "<backprime>" "<bigstar>" "<blacklozenge>"
     "<blacksquare>" "<blacktriangle>" "<blacktriangledown>"
-    "<centerdot>" "<checkmark>" "<circledast>" "<circledcirc>"
-    "<circleddash>" "<divideontimes>" "<doublebarwedge>"
-    "<intercal>" "<leftthreetimes>" "<llcorner>"
+    "<centerdot>" "<checkmark>"
+    "<intercal>" "<llcorner>"
     "<lozenge>" "<lrcorner>" "<maltese>" "<measuredangle>"
-    "<pitchfork>" "<rightthreetimes>"
-    "<smallfrown>" "<smallsmile>" "<sphericalangle>"
-    "<square>" "<therefore>" "<thorn>" "<triangledown>"
-    "<triangleq>" "<ulcorner>" "<urcorner>" "<varkappa>"
-    "<varnothing>" "<vartriangle>" "<veebar>" "<yen>")
+    "<pitchfork>" "<smallfrown>" "<smallsmile>" "<sphericalangle>"
+    "<square>" "<thorn>" "<triangledown>"
+    "<ulcorner>" "<urcorner>" "<varkappa>"
+    "<varnothing>" "<vartriangle>" "<yen>")
 
   (define Spacing-visible-symbol
     (:type symbol)

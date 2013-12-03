@@ -573,7 +573,7 @@ fnsymbol_nr (int nr) {
   string sym, r;
   int i, m= (nr-1)%6, n= ((nr-1)/6)+1;
   switch (m) {
-    case 0: sym= "<ast>";        break;
+    case 0: sym= "<asterisk>";   break;
     case 1: sym= "<dag>";        break;
     case 2: sym= "<ddag>";       break;
     case 3: sym= "<paragraph>";  break;

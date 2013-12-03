@@ -56,6 +56,7 @@
   ("math:greek '" (make-rprime "<dag>"))
   ("math:greek \"" (make-rprime "<ddag>"))
   ("math:greek +" (make-rprime "<kreuz>"))
+  ("math:greek *" (make-rprime "<asterisk>"))
   ("\"" (make-rprime "'") (make-rprime "'"))
   ("_" (make-script #f #t))
   ("_ var" "_")

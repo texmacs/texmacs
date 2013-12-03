@@ -328,7 +328,7 @@
   (symbol "<thickapprox>")
   (symbol "<approxeq>")
   (symbol "<triangleq>")
-  (symbol "<neq>" "= /")
+  (symbol "<neq>")
   (symbol "<nin>")
   (symbol "<perp>")
   (symbol "<smile>")
