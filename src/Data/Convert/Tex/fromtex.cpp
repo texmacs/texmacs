@@ -2016,14 +2016,20 @@ latex_command_to_tree (tree t) {
     return tree (HLINK, l2e (t[1]), l2e (t[2]));
   if (is_tuple (t, "\\tmaction", 1))
     return tree (ACTION, l2e (t[1]), l2e (t[2]));
-  if (is_tuple (t, "\\foldtext", 2))
-    return compound ("fold-text", l2e (t[1]), l2e (t[2]));
-  if (is_tuple (t, "\\foldproof", 2))
-    return compound ("fold-proof", l2e (t[1]), l2e (t[2]));
-  if (is_tuple (t, "\\foldalgorithm", 2))
-    return compound ("fold-algorithm", l2e (t[1]), l2e (t[2]));
-  if (is_tuple (t, "\\foldexercise", 2))
-    return compound ("fold-exercise", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t) && N(t) == 3 && starts (as_string (t[0]), "\\tmfolded")) {
+    string name= as_string (t[0]);
+    name= name (3, N(name));
+    if (name != "folded" && N(name) > 6)
+      name= "folded-"* name (6, N(name));
+    return compound (name, l2e (t[1]), l2e (t[2]));
+  }
+  if (is_tuple (t) && N(t) == 3 && starts (as_string (t[0]), "\\tmunfolded")) {
+    string name= as_string (t[0]);
+    name= name (3, N(name));
+    if (name != "unfolded" && N(name) > 6)
+      name= "unfolded-"* name (8, N(name));
+    return compound (name, l2e (t[1]), l2e (t[2]));
+  }
   // End TeXmacs specific markup
 
   if (L(t) == IMAGE) return t;
