@@ -124,7 +124,7 @@ edit_interface_rep::draw_selection (renderer ren) {
     ren->draw_rectangles (locus_rects);
   }
   if (!is_nil (alt_selection_rects)) {
-    ren->set_pencil (pencil (orange, ren->pixel));
+    ren->set_pencil (pencil (rgb_color (240, 192, 0), ren->pixel));
 #ifdef QTTEXMACS
     ren->draw_selection (alt_selection_rects);
 #else

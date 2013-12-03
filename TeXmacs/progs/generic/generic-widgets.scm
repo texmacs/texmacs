@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (generic generic-widgets)
-  (:use (generic generic-edit)))
+  (:use (generic generic-edit)
+        (utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Highlighting the search results
@@ -24,7 +25,17 @@
 (tm-define (keyboard-press key time)
   (:require (inside-search-widget?))
   (former key time)
-  (display* "key= " key " in " (buffer-get-master (current-buffer)) "\n"))
+  (with what (buffer-tree)
+    (when (tm-func? what 'document 1)
+      (set! what (tm-ref what 0)))
+    (when (not (tree-empty? what))
+      (delayed
+        (:idle 1)
+        (with-buffer (buffer-get-master (current-buffer))
+          (with t (buffer-tree)
+            (with sels (tree-search-tree t what (tree->path t))
+              (when (nnull? sels)
+                (set-alt-selection "alternate" sels)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search

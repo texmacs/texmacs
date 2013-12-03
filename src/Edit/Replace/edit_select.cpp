@@ -925,7 +925,10 @@ edit_select_rep::focus_get (bool skip_flag) {
 
 void
 edit_select_rep::set_alt_selection (string name, range_set sel) {
-  alt_sels (name)= sel;
+  if (alt_sels[name] != sel) {
+    alt_sels (name)= sel;
+    notify_change (THE_SELECTION);
+  }
 }
 
 range_set
