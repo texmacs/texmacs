@@ -194,4 +194,20 @@ hash (array<T> a) {
   return h;
 }
 
+template<class T> array<T>
+operator * (array<T> a, T c) {
+  register int i, n= N(a);
+  array<T> r (n);
+  for (i=0; i<n; i++) r[i]= a[i] * c;
+  return r;
+}
+
+template<class T> array<T>
+operator / (array<T> a, T c) {
+  register int i, n= N(a);
+  array<T> r (n);
+  for (i=0; i<n; i++) r[i]= a[i] / c;
+  return r;
+}
+
 #endif // defined ARRAY_CC
