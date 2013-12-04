@@ -2016,6 +2016,18 @@ latex_command_to_tree (tree t) {
     return tree (HLINK, l2e (t[1]), l2e (t[2]));
   if (is_tuple (t, "\\tmaction", 1))
     return tree (ACTION, l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\tmconverterinput", 4))
+    return compound ("converter-input",
+        l2e (t[1]), l2e (t[3]), l2e (t[4]));
+  if (is_tuple (t, "\\tmconverteroutput", 4))
+    return compound ("converter-output",
+        l2e (t[1]), l2e (t[3]), l2e (t[4]));
+  if (is_tuple (t, "\\tmscriptinput", 4))
+    return compound ("script-input",
+        l2e (t[1]), "default", l2e (t[3]), l2e (t[4]));
+  if (is_tuple (t, "\\tmscriptoutput", 4))
+    return compound ("script-output",
+        l2e (t[1]), "default", l2e (t[3]), l2e (t[4]));
   if (is_tuple (t) && N(t) == 3 &&
       (starts (as_string (t[0]), "\\tmfolded")    ||
        starts (as_string (t[0]), "\\tmunfolded")  ||
