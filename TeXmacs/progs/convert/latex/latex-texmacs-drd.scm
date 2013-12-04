@@ -281,6 +281,10 @@
   (glossaryentry (!append (item (!option (!append 1 (hfill)))) 2 (dotfill) 3)))
 
 (logic-table latex-texmacs-4%
+  (tmscriptinput (fbox (!append (fbox (!append (sf) 2)) " " (!append (tt) 3))))
+  (tmscriptoutput (!append 4))
+  (tmconverterinput (fbox (!append (fbox (!append (sf) 2)) " " (!append (tt) 3))))
+  (tmconverteroutput (!append 4))
   (subsubsubindex (index (!append 1 "!" 2 "!" 3 "!" 4))))
 
 (logic-rules

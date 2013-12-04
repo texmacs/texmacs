@@ -1725,6 +1725,22 @@
 (define (tmtex-indent s l)
   (list (list '!begin "tmindent") (tmtex (car l))))
 
+(define (tmtex-script-inout s l)
+  (let ((name  (string->symbol (string-append "tm" (string-replace s "-" ""))))
+        (lang  (car l))
+        (lang* (session-name (car l)))
+        (in    (tmtex (caddr l)))
+        (out   (tmtex (cadddr l))))
+    `(,name ,lang ,lang* ,in ,out)))
+
+(define (tmtex-converter s l)
+  (let ((name  (string->symbol (string-append "tm" (string-replace s "-" ""))))
+        (lang  (car l))
+        (lang* (format-get-name (car l)))
+        (in    (tmtex (cadr l)))
+        (out   (tmtex (caddr l))))
+    `(,name ,lang ,lang* ,in ,out)))
+
 (define (tmtex-fold s l)
   (with name (string->symbol (string-append "tm" (string-replace s "-" "")))
     `(,name ,@(map tmtex l))))
@@ -2256,6 +2272,8 @@
         summarized-raw summarized-tiny detailed-plain detailed-std detailed-env
         detailed-documentation detailed-grouped detailed-raw detailed-tiny)
    (,tmtex-fold 2))
+  ((:or converter-input converter-output) (,tmtex-converter 3))
+  ((:or script-input script-output) (,tmtex-script-inout 4))
   (really-tiny (,tmtex-tiny 1))
   (very-tiny (,tmtex-tiny 1))
   (really-small (,tmtex-scriptsize 1))
