@@ -30,7 +30,8 @@
 (tm-define (keyboard-press key time)
   (:require (inside-search-widget?))
   (former key time)
-  (with what (buffer-tree)
+  (let* ((what (buffer-tree))
+         (ok? #t))
     (when (tm-func? what 'document 1)
       (set! what (tm-ref what 0)))
     (with-search-buffer
@@ -45,10 +46,12 @@
                 (begin
                   (selection-cancel)
                   (cancel-alt-selection "alternate")
-                  (go-to (get-search-reference #t)))
+                  (go-to (get-search-reference #t))
+                  (set! ok? #f))
                 (begin
                   (set-alt-selection "alternate" sels)
-                  (next-search-result #t #f))))))))
+                  (next-search-result #t #f))))))
+    (if ok? (init-default "bg-color") (init-env "bg-color" "#fff0f0"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Highlighting a particular next or previous search result
