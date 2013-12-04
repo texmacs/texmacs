@@ -37,13 +37,15 @@
       (if (tree-empty? what)
           (begin
             (selection-cancel)
-            (cancel-alt-selection "alternate"))
+            (cancel-alt-selection "alternate")
+            (go-to (get-search-reference #t)))
           (let* ((t (buffer-tree))
                  (sels (tree-search-tree t what (tree->path t))))
             (if (null? sels)
                 (begin
                   (selection-cancel)
-                  (cancel-alt-selection "alternate"))
+                  (cancel-alt-selection "alternate")
+                  (go-to (get-search-reference #t)))
                 (begin
                   (set-alt-selection "alternate" sels)
                   (next-search-result #t #f))))))))
@@ -52,11 +54,13 @@
 ;; Highlighting a particular next or previous search result
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (get-search-cursor forward?)
-  (if forward? (cursor-path) (cursor-path*)))
+(define (set-search-reference cur)
+  (set-alt-selection "search-reference" (list cur cur)))
 
-(define (set-search-cursor cur)
-  (go-to cur))
+(define (get-search-reference forward?)
+  (with sel (get-alt-selection "search-reference")
+    (if (nnull? sel) (car sel)
+        (if forward? (cursor-path) (cursor-path*)))))
 
 (define (search-next sels cur strict?)
   (while (and (nnull? sels)
@@ -81,13 +85,14 @@
 
 (define (next-search-result forward? strict?)
   (let* ((sels (get-alt-selection "alternate"))
-         (cur (get-search-cursor forward?)))
+         (cur (get-search-reference forward?)))
     (and (nnull? sels)
          (and-with sel (if forward?
                            (search-next sels cur strict?)
                            (search-previous sels cur strict?))
            (selection-set-range-set sel)
-           (when strict? (set-search-cursor (car sel)))))))
+           (go-to (car sel))
+           (when strict? (set-search-reference (car sel)))))))
 
 (define (extreme-search-result last?)
   (with sels (get-alt-selection "alternate")
@@ -96,7 +101,8 @@
                            (list (cAr (cDr sels)) (cAr sels))
                            (list (car sels) (cadr sels)))
            (selection-set-range-set sel)
-           (set-search-cursor (car sel))))))
+           (go-to (car sel))
+           (set-search-reference (car sel))))))
 
 (tm-define (search-next-match forward?)
   (with-search-buffer
@@ -133,4 +139,5 @@
          (st (list-remove-duplicates (rcons (get-style-list) "macro-editor")))
          (aux "tmfs://aux/search"))
     (buffer-set-master aux u)
+    (set-search-reference (cursor-path))
     (dialogue-window (search-widget u st aux) (search-cancel u) "Search")))
