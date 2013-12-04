@@ -1072,7 +1072,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmtex-get-with-cmd var val)
-  (logic-ref tex-with-cmd% (list var val)))
+  (if (or (and (string-prefix? "math-font" var) (not (tmtex-math-mode?)))
+          (and (string-prefix? "font-" var) (tmtex-math-mode?))) #f
+    (logic-ref tex-with-cmd% (list var val))))
 
 (define (tmtex-get-assign-cmd var val)
   (if (== var "font-size")
@@ -1799,6 +1801,9 @@
     (tmtex-env-reset "mode")
     r))
 
+(define (tmtex-text s l)
+  (list 'text (tmtex-textual (car l))))
+
 (define (tmtex-math-up s l)
   (list 'mathrm (tmtex-textual (car l))))
 
@@ -2288,6 +2293,7 @@
   (really-huge (,tmtex-Huge 1))
 
   (math (,tmtex-math 1))
+  (text (,tmtex-text 1))
   (math-up (,tmtex-math-up 1))
   (math-ss (,tmtex-math-ss 1))
   (math-tt (,tmtex-math-tt 1))
