@@ -219,6 +219,26 @@
   (tmcodeinline ((!option "") (!group (ttfamily) (!group 2)))))
 
 (logic-table latex-texmacs-2%
+  (tmsummarizeddocumentation (trivlist (!append (item (!option "")) "\\large\\bf" 1)))
+  (tmsummarizedgrouped       (trivlist (!append (item (!option "[")) 1)))
+  (tmsummarizedexplain       (trivlist (!append (item (!option "")) "\\bf" 1)))
+  (tmsummarizedplain         (trivlist (!append (item (!option "")) 1)))
+  (tmsummarizedtiny          (trivlist (!append (item (!option "")) 1)))
+  (tmsummarizedraw           (trivlist (!append (item (!option "")) 1)))
+  (tmsummarizedenv           (trivlist (!append (item (!option "$\\bullet$")) 1)))
+  (tmsummarizedstd           (trivlist (!append (item (!option "$\\bullet$")) 1)))
+  (tmsummarized              (trivlist (!append (item (!option "$\\bullet$")) 1)))
+
+  (tmdetaileddocumentation (trivlist (!append (item (!option "")) "\\large\\bf" 2)))
+  (tmdetailedgrouped       (trivlist (!append (item (!option "[")) 2)))
+  (tmdetailedexplain       (trivlist (!append (item (!option "")) "\\bf" 2)))
+  (tmdetailedplain         (trivlist (!append (item (!option "")) 2)))
+  (tmdetailedtiny          (trivlist (!append (item (!option "")) 2)))
+  (tmdetailedraw           (trivlist (!append (item (!option "")) 2)))
+  (tmdetailedenv           (trivlist (!append (item (!option "$\\circ$")) 2)))
+  (tmdetailedstd           (trivlist (!append (item (!option "$\\circ$")) 2)))
+  (tmdetailed              (trivlist (!append (item (!option "$\\circ$")) 2)))
+
   (tmfoldeddocumentation   (trivlist (!append (item (!option "")) "\\large\\bf" 1)))
   (tmunfoldeddocumentation (trivlist
                              (!append (item (!option ""))

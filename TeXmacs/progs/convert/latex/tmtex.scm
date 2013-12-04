@@ -2251,7 +2251,10 @@
   ((:or folded unfolded folded-plain unfolded-plain folded-std unfolded-std
         folded-explain unfolded-explain folded-env unfolded-env
         folded-documentation unfolded-documentation folded-grouped
-        unfolded-grouped)
+        unfolded-grouped summarized detailed summarized-plain summarized-std
+        summarized-env summarized-documentation summarized-grouped
+        summarized-raw summarized-tiny detailed-plain detailed-std detailed-env
+        detailed-documentation detailed-grouped detailed-raw detailed-tiny)
    (,tmtex-fold 2))
   (really-tiny (,tmtex-tiny 1))
   (very-tiny (,tmtex-tiny 1))
