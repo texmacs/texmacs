@@ -290,9 +290,7 @@ delete_view (url u) {
       buf->vws= a;
     }
   notify_delete_view (u);
-  // tm_delete (vw);
-  // FIXME: causes very annoying segfault;
-  // recently introduced during reorganization
+  tm_delete (vw);
 }
 
 void
