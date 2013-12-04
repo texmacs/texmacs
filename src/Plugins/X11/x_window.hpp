@@ -27,6 +27,7 @@ public:
   string           orig_name;
   char*            name;
   string           the_name;
+  string           mod_name;
   x_drawable_rep*  ren;
 
   Display*      dpy;

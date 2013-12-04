@@ -117,7 +117,10 @@ x_window_rep::initialize () {
   //     << def_w << ", " << def_h << " --- "
   //     << max_w << ", " << max_h << "\n";
   if (name == NULL) name= const_cast<char*> ("popup");
-  if (the_name == "") the_name= name;
+  if (the_name == "") {
+    the_name= name;
+    mod_name= name;
+  }
   set_hints (min_w, min_h, max_w, max_h);
 
   unsigned long ic_mask= 0;
@@ -305,10 +308,13 @@ x_window_rep::set_size_limits (SI min_w, SI min_h, SI max_w, SI max_h) {
 
 void
 x_window_rep::set_name (string name) {
-  c_string s (name);
-  XStoreName (dpy, win, s);
-  XSetIconName (dpy, win, s);
-  the_name= name;
+  if (the_name != name) {
+    c_string s (name);
+    XStoreName (dpy, win, s);
+    XSetIconName (dpy, win, s);
+    the_name= name;
+    mod_name= name;
+  }
 }
 
 string
@@ -318,9 +324,13 @@ x_window_rep::get_name () {
 
 void
 x_window_rep::set_modified (bool flag) {
-  c_string cs (flag ? (the_name * " *") : the_name);
-  XStoreName (dpy, win, cs);
-  XSetIconName (dpy, win, cs);
+  string name= (flag? (the_name * " *"): the_name);
+  if (mod_name != name) {
+    c_string s (name);
+    XStoreName (dpy, win, s);
+    XSetIconName (dpy, win, s);
+    mod_name= name;
+  }
 }
 
 void
