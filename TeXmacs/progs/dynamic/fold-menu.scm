@@ -62,7 +62,7 @@
 (tm-menu (supported-convertible-menu)
   (for (name (get-extern-converters))
        ((eval (format-get-name name))
-        (insert-go-to `(converter-input ,name "" "" "") '(1 0)))))
+        (insert-go-to `(converter-input ,name "" "") '(1 0)))))
 
 (tm-menu (supported-executable-menu)
   (for (name (session-list))
