@@ -270,11 +270,16 @@ pdf_hummus_renderer_rep::pdf_hummus_renderer_rep (
     pdf_file_name (pdf_file_name2), dpi (dpi2),
     nr_pages (nr_pages2), page_type (page_type2),
     landscape (landscape2), paper_w (paper_w2), paper_h (paper_h2),
-    fg (-1), bg (-1), fill_rgb(-1,-1,-1), stroke_rgb(-1,-1,-1),
-    lw (-1),  cfn (""), cfid (NULL),
-    pdf_fonts (0), page_num(0), label_count(0),
-    destId(0), outlineId(0),
-    inText (false)
+    page_num(0),
+    inText (false),
+    stroke_rgb(-1,-1,-1),
+    fill_rgb(-1,-1,-1),
+    fg (-1), bg (-1),
+    lw (-1), cfn (""), cfid (NULL),
+    pdf_fonts (0),
+    destId(0),
+    label_count(0),
+    outlineId(0)
 {
   if (landscape) { // consistent with printer
     width = default_dpi * paper_h / 2.54;
