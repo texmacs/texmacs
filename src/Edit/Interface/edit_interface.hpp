@@ -55,7 +55,7 @@ protected:
   bool          table_selection;
   int           mouse_adjusting;  // mask with active key modifiers upon click
   rectangles    selection_rects;
-  rectangles    alt_selection_rects;
+  array<rectangles> alt_selection_rects;
   rectangles    env_rects;
   rectangles    foc_rects;
   rectangles    sem_rects;
@@ -104,7 +104,7 @@ public:
   void draw_context (renderer ren, rectangle r);
   void draw_env (renderer ren);
   void draw_cursor (renderer ren);
-  void draw_selection (renderer ren);
+  void draw_selection (renderer ren, rectangle r);
   void draw_graphics (renderer ren);
   void draw_pre (renderer win, renderer ren, rectangle r);
   void draw_post (renderer win, renderer ren, rectangle r);

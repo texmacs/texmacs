@@ -52,8 +52,8 @@
 ;; Highlighting a particular next or previous search result
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (get-search-cursor)
-  (cursor-path))
+(define (get-search-cursor forward?)
+  (if forward? (cursor-path) (cursor-path*)))
 
 (define (set-search-cursor cur)
   (go-to cur))
@@ -81,7 +81,7 @@
 
 (define (next-search-result forward? strict?)
   (let* ((sels (get-alt-selection "alternate"))
-         (cur (get-search-cursor)))
+         (cur (get-search-cursor forward?)))
     (and (nnull? sels)
          (and-with sel (if forward?
                            (search-next sels cur strict?)

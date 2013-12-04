@@ -237,9 +237,15 @@ correct (rectangles l) {
 }
 
 rectangles
-simplify (rectangles l) {
+simplify_bis (rectangles l) {
   if (is_nil (l) || is_atom (l)) return l;
-  return simplify (l->next) | rectangles (l->item);
+  return simplify_bis (l->next) | rectangles (l->item);
+}
+
+rectangles
+simplify (rectangles l) {
+  if (N(l) > 25) return copy (l);
+  else return simplify_bis (l);
 }
 
 rectangle

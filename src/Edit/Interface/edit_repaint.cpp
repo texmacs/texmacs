@@ -118,26 +118,27 @@ edit_interface_rep::draw_context (renderer ren, rectangle r) {
 }
 
 void
-edit_interface_rep::draw_selection (renderer ren) {
+edit_interface_rep::draw_selection (renderer ren, rectangle r) {
+  rectangles visible (thicken (r, 2 * ren->pixel, 2 * ren->pixel));
   if (!is_nil (locus_rects)) {
     ren->set_pencil (pencil (rgb_color (32, 160, 96), ren->pixel));
     ren->draw_rectangles (locus_rects);
   }
-  if (!is_nil (alt_selection_rects)) {
+  for (int i=0; i<N(alt_selection_rects); i++) {
     ren->set_pencil (pencil (rgb_color (240, 192, 0), ren->pixel));
 #ifdef QTTEXMACS
-    ren->draw_selection (alt_selection_rects);
+    ren->draw_selection (alt_selection_rects[i] & visible);
 #else
-    ren->draw_rectangles (alt_selection_rects);
+    ren->draw_rectangles (alt_selection_rects[i] & visible);
 #endif
   }
   if (!is_nil (selection_rects)) {
     color col= (table_selection? rgb_color (192, 0, 255): red);
     ren->set_pencil (pencil (col, ren->pixel));
 #ifdef QTTEXMACS
-    ren->draw_selection (selection_rects);
+    ren->draw_selection (selection_rects & visible);
 #else
-    ren->draw_rectangles (selection_rects);
+    ren->draw_rectangles (selection_rects & visible);
 #endif
   }
 }
@@ -200,7 +201,7 @@ edit_interface_rep::draw_post (renderer win, renderer ren, rectangle r) {
   ren->set_zoom_factor (zoomf);
   draw_context (ren, r);
   draw_env (ren);
-  draw_selection (ren);
+  draw_selection (ren, r);
   draw_graphics (ren);
   draw_cursor (ren); // the text cursor must be drawn over the graphical object
   ren->reset_zoom_factor ();

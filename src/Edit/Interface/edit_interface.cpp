@@ -536,11 +536,13 @@ edit_interface_rep::apply_changes () {
         selection_rects= rectangles ();
       }
     }
-    if (!is_nil (alt_selection_rects)) {
-      invalidate (alt_selection_rects);
+    if (N (alt_selection_rects) != 0) {
+      rectangles visible (rectangle (vx1, vy1, vx2, vy2));
+      for (int i=0; i<N(alt_selection_rects); i++)
+        invalidate (alt_selection_rects[i] & visible);
       range_set alt_sel= get_alt_selection ("alternate");
       if (is_empty (alt_sel))
-        alt_selection_rects= rectangles ();
+        alt_selection_rects= array<rectangles> ();
     }
   }
   
@@ -715,13 +717,19 @@ edit_interface_rep::apply_changes () {
     }
     range_set alt_sel= get_alt_selection ("alternate");
     if (!is_empty (alt_sel)) {
-      selection sel= compute_selection (alt_sel);
-      rectangles rs= thicken (sel->rs, pixel, 3*pixel);
+      alt_selection_rects= array<rectangles> ();
+      for (int i=0; i+1<N(alt_sel); i+=2) {
+        range_set sub_sel= simple_range (alt_sel[i], alt_sel[i+1]);
+        selection sel= compute_selection (sub_sel);
+        rectangles rs= thicken (sel->rs, pixel, 3*pixel);
 #ifndef QTTEXMACS
-      rs= simplify (::correct (rs - thicken (rs, -pixel, -pixel)));
+        rs= simplify (::correct (rs - thicken (rs, -pixel, -pixel)));
 #endif
-      alt_selection_rects= rs;
-      invalidate (alt_selection_rects);
+        if (N(rs) != 0) alt_selection_rects << rs;
+      }
+      rectangles visible (rectangle (vx1, vy1, vx2, vy2));
+      for (int i=0; i<N(alt_selection_rects); i++)
+        invalidate (alt_selection_rects[i] & visible);
     }
   }
   

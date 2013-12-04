@@ -436,7 +436,7 @@ edit_select_rep::compute_selection (range_set sel) {
   rectangles rs;
   for (int i=0; i+1<N(sel); i+=2) {
     selection ssel= compute_selection (sel[i], sel[i+1]);
-    rs << ssel->rs;
+    if (ssel->valid) rs << ssel->rs;
   }
   return selection (rs, start (sel), end (sel));
 }
