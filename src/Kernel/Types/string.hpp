@@ -89,9 +89,9 @@ class c_string_rep: concrete_struct {
   char* value;
   
 private:
-  inline c_string_rep (c_string_rep &): concrete_struct () {};
+  inline c_string_rep (c_string_rep &): concrete_struct () {}
     // disable copy constructor
-  inline c_string_rep& operator=(c_string_rep&) {};
+  inline c_string_rep& operator=(c_string_rep&) { return *this; }
     // disable assignment
   
 public:
