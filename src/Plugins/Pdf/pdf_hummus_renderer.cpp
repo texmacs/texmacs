@@ -1067,6 +1067,8 @@ pdf_hummus_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
   if (is_nil (gl)) return;
   string fontname = fn->res_name;
   if (ch == 0) {
+    // This fix is necessary for avoiding bugs in certain Pdf viewers,
+    // such as old versions of Preview under MacOS (<= 10.6.*).
     if (starts (fontname, "cm") ||
         starts (fontname, "euex") ||
         starts (fontname, "euf") ||
