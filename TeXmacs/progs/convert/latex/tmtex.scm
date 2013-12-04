@@ -1743,10 +1743,6 @@
         (out   (tmtex (caddr l))))
     `(,name ,lang ,lang* ,in ,out)))
 
-(define (tmtex-fold s l)
-  (with name (string->symbol (string-append "tm" (string-replace s "-" "")))
-    `(,name ,@(map tmtex l))))
-
 (define (tmtex-list-env s l)
   (let* ((r (string-replace s "-" ""))
 	 (t (cond ((== r "enumerateRoman") "enumerateromancap")
@@ -1908,22 +1904,26 @@
 (define (tmtex-nbhyph s l)
   '(!nbhyph))
 
-(define (tmtex-session s l)
-  (tmtex (cAr l)))
+(define (tmtex-tm s l)
+  (with tag (string->symbol (string-append "tm" (string-replace s "-" "")))
+  `(,tag ,@(map tmtex l))))
 
-(define (tmtex-input s l)
-  (let ((prompt (car l)) (x (cadr l)))
-    (tex-concat
-     (list '(noindent)
-	   `(!group (!concat (color "red") (ttfamily ,(tmtex prompt))))
-	   (cond ((func? x 'math 1)
-		  (tmtex-env-set "mode" "math")
-		  (let ((r (tmtex (cadr x))))
-		    (tmtex-env-reset "mode")
-		    `(!math (!group (!concat (color "blue") ,r)))))
-		 (else `(!group (!concat (color "blue")
-					 (!verb ,(tmtex-tt x))))))
-	   '(smallskip)))))
+(define (tmtex-input-math s l)
+  (list-set! l 1 `(math ,(cadr l)))
+  (tmtex-tm s l))
+
+(define (tmtex-fold-io-math s l)
+  (list-set! l 1 `(math ,(cadr l)))
+  (tmtex-tm s l))
+
+(define (tmtex-session s l)
+  (let* ((tag (string->symbol (string-append "tm" (string-replace s "-" ""))))
+         (arg (tmtex (car l)))
+         (lan (tmtex (cadr l)))
+         (lst (tmtex (caddr l))))
+    (if (func? lst '!document)
+      (set! lst `(!indent (!paragraph ,@(cdr lst)))))
+    `(!document (,tag ,arg ,lan ,lst))))
 
 (define (tmtex-output s l)
   (tex-concat
@@ -2275,8 +2275,13 @@
         unfolded-grouped summarized detailed summarized-plain summarized-std
         summarized-env summarized-documentation summarized-grouped
         summarized-raw summarized-tiny detailed-plain detailed-std detailed-env
-        detailed-documentation detailed-grouped detailed-raw detailed-tiny)
-   (,tmtex-fold 2))
+        detailed-documentation detailed-grouped detailed-raw detailed-tiny
+        unfolded-subsession folded-subsession folded-io unfolded-io
+        input output timing)
+   (,tmtex-tm -1))
+  ((:or folded-io-math unfolded-io-math) (,tmtex-fold-io-math 3))
+  (input-math (,tmtex-input-math 2))
+  (session (,tmtex-session 3))
   ((:or converter-input converter-output) (,tmtex-converter 3))
   ((:or script-input script-output) (,tmtex-script-inout 4))
   (really-tiny (,tmtex-tiny 1))
@@ -2348,9 +2353,6 @@
   (render-proof (,tmtex-render-proof 2))
   (nbsp (,tmtex-nbsp 0))
   (nbhyph (,tmtex-nbhyph 0))
-  (session (,tmtex-session -1))
-  (input (,tmtex-input 2))
-  (output (,tmtex-output 1))
   (hlink (,tmtex-hlink 2))
   (action (,tmtex-action -1))
   (href (,tmtex-href 1))
