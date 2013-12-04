@@ -1066,6 +1066,17 @@ pdf_hummus_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
   glyph gl= fn->get(ch);
   if (is_nil (gl)) return;
   string fontname = fn->res_name;
+  if (ch == 0) {
+    if (starts (fontname, "cm") ||
+        starts (fontname, "euex") ||
+        starts (fontname, "euf") ||
+        starts (fontname, "eur") ||
+        starts (fontname, "eus") ||
+        starts (fontname, "msam") ||
+        starts (fontname, "msbm"))
+      draw (161, fn, x, y);
+    return;
+  }
   string char_name (fontname * "-" * as_string ((int) ch));
   pdf_raw_image glyph;
   if (cfn != fontname) {
