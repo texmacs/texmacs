@@ -120,6 +120,26 @@
     (cancel-alt-selection "alternate")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Customized keyboard shortcuts in search mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (kbd-enter t shift?)
+  (:require (inside-search-widget?))
+  (if (or shift? (inside? 'inactive))
+      (former t shift?)
+      (with ok? (search-next-match #t)
+        (when (not ok?)
+          (search-extreme-match #f)))))
+
+(tm-define (traverse-incremental t forwards?)
+  (:require (inside-search-widget?))
+  (search-next-match forwards?))
+
+(tm-define (traverse-extremal t forwards?)
+  (:require (inside-search-widget?))
+  (search-extreme-match forwards?))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
