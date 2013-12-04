@@ -77,6 +77,7 @@ public:
 
   void   set_name (string name);
   string get_name ();
+  void   set_modified (bool flag);
   void   set_visibility (bool flag);
   void   set_full_screen (bool flag);
   void   set_size (SI w, SI h);

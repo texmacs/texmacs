@@ -317,6 +317,13 @@ x_window_rep::get_name () {
 }
 
 void
+x_window_rep::set_modified (bool flag) {
+  c_string cs (flag ? (the_name * " *") : the_name);
+  XStoreName (dpy, win, cs);
+  XSetIconName (dpy, win, cs);
+}
+
+void
 x_window_rep::set_visibility (bool flag) {
   if (flag) XMapRaised (dpy, win);
   else XUnmapWindow (dpy, win);

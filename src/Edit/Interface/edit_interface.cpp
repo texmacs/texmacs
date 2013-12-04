@@ -454,15 +454,7 @@ edit_interface_rep::apply_changes () {
       if (use_side_tools)
         { SERVER (side_tools (0, "(vertical (link texmacs-side-tools))")); }
       set_footer ();
-      if (has_current_window ()) {
-#ifdef QTTEXMACS
-        concrete(concrete_window()->wid)->qwid->setWindowModified (need_save());
-#endif
-        if (need_save())
-          concrete_window () -> set_window_name (buf->buf->title * " *");
-        else
-          concrete_window () -> set_window_name (buf->buf->title);
-      }
+      if (has_current_window ()) concrete_window()->set_modified (need_save());
       if (!gui_interrupted ()) drd_update ();
       cache_memorize ();
       last_update= last_change;

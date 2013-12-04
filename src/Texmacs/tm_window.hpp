@@ -37,6 +37,7 @@ public:
   tm_window_rep (tree doc, command quit);
   ~tm_window_rep ();
   void set_window_name (string s);
+  void set_modified (bool flag);
   void set_window_url (url u);
   void map ();
   void unmap ();

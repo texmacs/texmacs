@@ -27,6 +27,8 @@ public:
     // Get the top widget associated to the window
   virtual void set_name (string name) = 0;
     // Set the window title
+  virtual void set_modified (bool flag) = 0;
+    // Set the modified flag to decorate the title bar / window title
   virtual void set_visibility (bool flag) = 0;
     // Map or unmap the window
   virtual void set_full_screen (bool flag) = 0;

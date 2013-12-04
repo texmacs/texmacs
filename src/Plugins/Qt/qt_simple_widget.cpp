@@ -130,15 +130,6 @@ qt_simple_widget_rep::send (slot s, blackbox val) {
   save_send_slot (s, val);
 
   switch (s) {
-    case SLOT_NAME:
-    {
-      check_type<string> (val, s);
-      string name = open_box<string> (val);
-      if (canvas() && canvas()->window())
-        canvas()->window()->setWindowTitle (to_qstring (name));
-    }
-      break;
-      
     case SLOT_INVALIDATE:
     {
       check_type<coord4>(val, s);
@@ -181,15 +172,15 @@ qt_simple_widget_rep::send (slot s, blackbox val) {
     {
       check_type<coord2>(val, s);
       coord2 p = open_box<coord2> (val);
-      canvas()->resize(to_qsize(p));   // FIXME?
+      canvas()->resize (to_qsize(p));   // FIXME?
     }
       break;
       
     case SLOT_SCROLL_POSITION:
     {
       check_type<coord2>(val, s);
-      coord2 p = open_box<coord2> (val);
-      QPoint qp= to_qpoint (p);
+      coord2  p = open_box<coord2> (val);
+      QPoint qp = to_qpoint (p);
       QSize  sz = canvas()->surface()->size();
       qp -= QPoint (sz.width() / 2, sz.height() / 2);
         // NOTE: adjust because child is centered

@@ -166,8 +166,8 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       check_type<bool> (val, s);
       bool flag = open_box<bool> (val);  // true= get grab, false= release grab
       if (flag && qwid) {
-        qwid->setWindowFlags(Qt::Window);  // ok?
-        qwid->setWindowModality(Qt::WindowModal); //ok?
+        qwid->setWindowFlags (Qt::Window);  // ok?
+        qwid->setWindowModality (Qt::WindowModal); //ok?
         qwid->show();
       }
     }   
@@ -177,10 +177,17 @@ qt_window_widget_rep::send (slot s, blackbox val) {
     {   
       check_type<string> (val, s);
       string name = open_box<string> (val);
-      if (qwid) qwid->setWindowTitle (to_qstring (name));
+        // The [*] is for QWidget::setWindowModified()
+      if (qwid) qwid->setWindowTitle (to_qstring (name * "[*]"));
     }
       break;
-      
+    case SLOT_MODIFIED:
+    {
+      check_type<bool> (val, s);
+      bool flag = open_box<bool> (val);
+      if (qwid) qwid->setWindowModified (flag);
+    }
+      break;
     case SLOT_REFRESH:
     {
       check_type<string> (val, s);

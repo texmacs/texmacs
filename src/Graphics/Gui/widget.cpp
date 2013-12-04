@@ -27,6 +27,7 @@ slot_name (const slot s) {
     "SLOT_VISIBILITY",
     "SLOT_FULL_SCREEN",
     "SLOT_NAME",
+    "SLOT_MODIFIED",
     "SLOT_SIZE",
     "SLOT_POSITION",
     "SLOT_UPDATE",

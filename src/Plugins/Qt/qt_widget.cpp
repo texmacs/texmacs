@@ -64,15 +64,26 @@ qt_widget_rep::add_children (array<widget> a) {
 
 void
 qt_widget_rep::send (slot s, blackbox val) {
-  if (DEBUG_QT_WIDGETS)
-    debug_widgets << "qt_widget_rep::send(), unhandled " << slot_name (s)
-                  << " for widget of type: " << type_as_string() << "." << LF;
-
-  if (s == SLOT_DESTROY) {
-    if (DEBUG_QT_WIDGETS)
-      debug_widgets << "Resending to " << N(children) << " children" << LF;
-    for (int i = 0; i < N(children); ++i)
-      concrete (children[i])->send (s, val);
+  switch (s) {
+    case SLOT_NAME:
+    {
+        // CHECK ME!
+      widget win = qt_window_widget_rep::widget_from_qwidget (qwid);
+      if (! is_nil (win)) win->send (SLOT_NAME, val);
+    }
+      break;
+    case SLOT_DESTROY:
+    {
+      if (DEBUG_QT_WIDGETS)
+        debug_widgets << "Resending to " << N(children) << " children" << LF;
+      for (int i = 0; i < N(children); ++i)
+        concrete (children[i])->send (s, val);
+    }
+      break;
+    default:
+      if (DEBUG_QT_WIDGETS)
+        debug_widgets << "qt_widget_rep::send(), unhandled " << slot_name (s)
+        << " for widget of type: " << type_as_string() << "." << LF;
   }
 }
 

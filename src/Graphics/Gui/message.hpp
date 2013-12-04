@@ -27,6 +27,7 @@ enum slot_id {
   SLOT_VISIBILITY,
   SLOT_FULL_SCREEN,
   SLOT_NAME,
+  SLOT_MODIFIED,
   SLOT_SIZE,
   SLOT_POSITION,
   SLOT_UPDATE,
@@ -264,6 +265,12 @@ inline void
 set_name (widget w, string s) {
   // set the name of a widget (usually a window)
   send<string> (w, SLOT_NAME, s);
+}
+
+inline void
+set_modified (widget w, bool flag) {
+  // set the modified flag for a widget (usually a window)
+  send<bool> (w, SLOT_MODIFIED, flag);
 }
 
 inline void

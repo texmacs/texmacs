@@ -623,6 +623,10 @@ wk_widget_rep::send (slot s, blackbox val) {
   case SLOT_NAME:
     send_string (THIS, "window name", val);
     break;
+  case SLOT_MODIFIED:
+    check_type<bool> (val, "SLOT_MODIFIED");
+    win->set_modified (open_box<bool> (val));
+    break;
   case SLOT_SIZE:
     send_size (THIS, val);
     break;
