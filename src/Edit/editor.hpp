@@ -493,6 +493,8 @@ public:
 
   virtual void set_alt_selection (string s, range_set sel) = 0;
   virtual range_set get_alt_selection (string s) = 0;
+  virtual void cancel_alt_selection (string s) = 0;
+  virtual void cancel_alt_selections () = 0;
 
   /* public routines from edit_replace */
   virtual bool inside (string what) = 0;

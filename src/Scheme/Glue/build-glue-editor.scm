@@ -220,6 +220,8 @@
   (get-focus-path focus_get (path))
   (set-alt-selection set_alt_selection (void string array_path))
   (get-alt-selection get_alt_selection (array_path string))
+  (cancel-alt-selection cancel_alt_selection (void string))
+  (cancel-alt-selections cancel_alt_selections (void))
 
   ;; undo and redo
   (clear-undo-history clear_undo_history (void))

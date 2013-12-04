@@ -2132,6 +2132,28 @@ tmg_get_alt_selection (tmscm arg1) {
 }
 
 tmscm
+tmg_cancel_alt_selection (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cancel-alt-selection");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  get_current_editor()->cancel_alt_selection (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_cancel_alt_selections () {
+  // TMSCM_DEFER_INTS;
+  get_current_editor()->cancel_alt_selections ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_clear_undo_history () {
   // TMSCM_DEFER_INTS;
   get_current_editor()->clear_undo_history ();
@@ -3137,6 +3159,8 @@ initialize_glue_editor () {
   tmscm_install_procedure ("get-focus-path",  tmg_get_focus_path, 0, 0, 0);
   tmscm_install_procedure ("set-alt-selection",  tmg_set_alt_selection, 2, 0, 0);
   tmscm_install_procedure ("get-alt-selection",  tmg_get_alt_selection, 1, 0, 0);
+  tmscm_install_procedure ("cancel-alt-selection",  tmg_cancel_alt_selection, 1, 0, 0);
+  tmscm_install_procedure ("cancel-alt-selections",  tmg_cancel_alt_selections, 0, 0, 0);
   tmscm_install_procedure ("clear-undo-history",  tmg_clear_undo_history, 0, 0, 0);
   tmscm_install_procedure ("commit-changes",  tmg_commit_changes, 0, 0, 0);
   tmscm_install_procedure ("start-slave",  tmg_start_slave, 1, 0, 0);

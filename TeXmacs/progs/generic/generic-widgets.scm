@@ -19,6 +19,11 @@
 ;; Highlighting the search results
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-macro (with-search-buffer . body)
+  `(and (inside-search-widget?)
+        (with-buffer (buffer-get-master (current-buffer))
+          ,@body)))
+
 (tm-define (inside-search-widget?)
   (== (current-buffer) (string->url "tmfs://aux/search")))
 
@@ -28,13 +33,17 @@
   (with what (buffer-tree)
     (when (tm-func? what 'document 1)
       (set! what (tm-ref what 0)))
-    (with-buffer (buffer-get-master (current-buffer))
+    (with-search-buffer
       (if (tree-empty? what)
-          (selection-cancel)
+          (begin
+            (selection-cancel)
+            (cancel-alt-selection "alternate"))
           (let* ((t (buffer-tree))
                  (sels (tree-search-tree t what (tree->path t))))
             (if (null? sels)
-                (selection-cancel)
+                (begin
+                  (selection-cancel)
+                  (cancel-alt-selection "alternate"))
                 (begin
                   (set-alt-selection "alternate" sels)
                   (next-search-result #t #f))))))))
@@ -80,10 +89,26 @@
            (selection-set-range-set sel)
            (when strict? (set-search-cursor (car sel)))))))
 
+(define (extreme-search-result last?)
+  (with sels (get-alt-selection "alternate")
+    (and (nnull? sels)
+         (and-with sel (if last?
+                           (list (cAr (cDr sels)) (cAr sels))
+                           (list (car sels) (cadr sels)))
+           (selection-set-range-set sel)
+           (set-search-cursor (car sel))))))
+
 (tm-define (search-next-match forward?)
-  (when (inside-search-widget?)
-    (with-buffer (buffer-get-master (current-buffer))
-      (next-search-result forward? #t))))
+  (with-search-buffer
+    (next-search-result forward? #t)))
+
+(tm-define (search-extreme-match last?)
+  (with-search-buffer
+    (extreme-search-result last?)))
+
+(tm-define ((search-cancel u) . args)
+  (with-buffer u
+    (cancel-alt-selection "alternate")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search
@@ -96,14 +121,16 @@
     ======
     (explicit-buttons
       (hlist
+        ("First" (search-extreme-match #f)) // //
         ("Previous" (search-next-match #f)) // //
-        ("Next" (search-next-match #t)) >>>
+        ("Next" (search-next-match #t)) // //
+        ("Last" (search-extreme-match #t)) >>>
         ("Done" (quit))))))
 
 (tm-define (open-search)
   (:interactive #t)
-  (let* ((u  (current-buffer))
+  (let* ((u (current-buffer))
          (st (list-remove-duplicates (rcons (get-style-list) "macro-editor")))
          (aux "tmfs://aux/search"))
     (buffer-set-master aux u)
-    (dialogue-window (search-widget u st aux) noop "Search")))
+    (dialogue-window (search-widget u st aux) (search-cancel u) "Search")))

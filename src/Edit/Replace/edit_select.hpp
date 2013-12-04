@@ -102,6 +102,8 @@ public:
 
   void set_alt_selection (string s, range_set sel);
   range_set get_alt_selection (string s);
+  void cancel_alt_selection (string s);
+  void cancel_alt_selections ();
 };
 
 #endif // defined EDIT_SELECT_H

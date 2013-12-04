@@ -688,10 +688,6 @@ edit_select_rep::selection_clear (string key) {
 
 void
 edit_select_rep::selection_cancel () {
-  if (N(alt_sels) > 0) {
-    alt_sels= hashmap<string,range_set> ();
-    notify_change (THE_SELECTION);
-  }
   selecting= shift_selecting= false;
   if (is_empty (cur_sel)) return;
   select (start (cur_sel), start (cur_sel));
@@ -942,4 +938,20 @@ edit_select_rep::set_alt_selection (string name, range_set sel) {
 range_set
 edit_select_rep::get_alt_selection (string name) {
   return alt_sels[name];
+}
+
+void
+edit_select_rep::cancel_alt_selection (string name) {
+  if (alt_sels->contains (name)) {
+    alt_sels->reset (name);
+    notify_change (THE_SELECTION);
+  }
+}
+
+void
+edit_select_rep::cancel_alt_selections () {
+  if (N(alt_sels) > 0) {
+    alt_sels= hashmap<string,range_set> ();
+    notify_change (THE_SELECTION);
+  }
 }
