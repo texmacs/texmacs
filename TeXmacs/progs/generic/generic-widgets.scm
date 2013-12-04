@@ -35,7 +35,55 @@
                  (sels (tree-search-tree t what (tree->path t))))
             (if (null? sels)
                 (selection-cancel)
-                (set-alt-selection "alternate" sels)))))))
+                (begin
+                  (set-alt-selection "alternate" sels)
+                  (next-search-result #t #f))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Highlighting a particular next or previous search result
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (get-search-cursor)
+  (cursor-path))
+
+(define (set-search-cursor cur)
+  (go-to cur))
+
+(define (search-next sels cur strict?)
+  (while (and (nnull? sels)
+              (nnull? (cdr sels))
+              (not (path-inf-eq? cur (cadr sels))))
+    (set! sels (cddr sels)))
+  (if (and strict? (>= (length sels) 2))
+      (set! sels (cddr sels)))
+  (and (>= (length sels) 2)
+       (list (car sels) (cadr sels))))
+
+(define (search-previous sels cur strict?)
+  (set! sels (reverse sels))
+  (while (and (nnull? sels)
+              (nnull? (cdr sels))
+              (not (path-inf-eq? (cadr sels) cur)))
+    (set! sels (cddr sels)))
+  (if (and strict? (>= (length sels) 2))
+      (set! sels (cddr sels)))
+  (and (>= (length sels) 2)
+       (list (cadr sels) (car sels))))
+
+(define (next-search-result forward? strict?)
+  (let* ((sels (get-alt-selection "alternate"))
+         (cur (get-search-cursor)))
+    (and (nnull? sels)
+         (and-with sel (if forward?
+                           (search-next sels cur strict?)
+                           (search-previous sels cur strict?))
+           (selection-set-range-set sel)
+           (when strict? (set-search-cursor (car sel)))))))
+
+(tm-define (search-next-match forward?)
+  (when (inside-search-widget?)
+    (with-buffer (buffer-get-master (current-buffer))
+      (next-search-result forward? #t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search
@@ -48,8 +96,8 @@
     ======
     (explicit-buttons
       (hlist
-        ("Previous" (noop)) // //
-        ("Next" (noop)) >>>
+        ("Previous" (search-next-match #f)) // //
+        ("Next" (search-next-match #t)) >>>
         ("Done" (quit))))))
 
 (tm-define (open-search)

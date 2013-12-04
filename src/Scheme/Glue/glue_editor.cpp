@@ -1918,6 +1918,19 @@ tmg_selection_set (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_selection_set_range_set (tmscm arg1) {
+  TMSCM_ASSERT_ARRAY_PATH (arg1, TMSCM_ARG1, "selection-set-range-set");
+
+  array_path in1= tmscm_to_array_path (arg1);
+
+  // TMSCM_DEFER_INTS;
+  get_current_editor()->selection_set_range_set (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_clipboard_copy (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "clipboard-copy");
 
@@ -3106,6 +3119,7 @@ initialize_glue_editor () {
   tmscm_install_procedure ("selection-get-end",  tmg_selection_get_end, 0, 0, 0);
   tmscm_install_procedure ("selection-path",  tmg_selection_path, 0, 0, 0);
   tmscm_install_procedure ("selection-set",  tmg_selection_set, 2, 0, 0);
+  tmscm_install_procedure ("selection-set-range-set",  tmg_selection_set_range_set, 1, 0, 0);
   tmscm_install_procedure ("clipboard-copy",  tmg_clipboard_copy, 1, 0, 0);
   tmscm_install_procedure ("clipboard-cut",  tmg_clipboard_cut, 1, 0, 0);
   tmscm_install_procedure ("clipboard-cut-at",  tmg_clipboard_cut_at, 1, 0, 0);

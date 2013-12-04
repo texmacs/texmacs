@@ -554,6 +554,11 @@ edit_select_rep::selection_set_paths (path p1, path p2) {
 }
 
 void
+edit_select_rep::selection_set_range_set (range_set sel) {
+  selection_set_paths (start (sel), end (sel));
+}
+
+void
 edit_select_rep::selection_set (string key, tree t, bool persistant) {
   selecting= shift_selecting= false;
   string mode= as_string (selection_get_env_value (MODE));
