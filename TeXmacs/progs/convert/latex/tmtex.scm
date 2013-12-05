@@ -1909,12 +1909,23 @@
   `(,tag ,@(map tmtex l))))
 
 (define (tmtex-input-math s l)
-  (list-set! l 1 `(math ,(cadr l)))
-  (tmtex-tm s l))
+  (let ((tag (string->symbol (string-append "tm" (string-replace s "-" ""))))
+        (a1  (tmtex (car l)))
+        (a2  (with r (begin
+                       (tmtex-env-set "mode" "math")
+                       (tmtex (cadr l)))
+               (tmtex-env-reset "mode") r)))
+  (list tag a1 a2)))
 
 (define (tmtex-fold-io-math s l)
-  (list-set! l 1 `(math ,(cadr l)))
-  (tmtex-tm s l))
+  (let ((tag (string->symbol (string-append "tm" (string-replace s "-" ""))))
+        (a1  (tmtex (car l)))
+        (a2  (with r (begin
+                       (tmtex-env-set "mode" "math")
+                       (tmtex (cadr l)))
+               (tmtex-env-reset "mode") r))
+        (a3  (tmtex (caddr l))))
+  (list tag a1 a2 a3)))
 
 (define (tmtex-session s l)
   (let* ((tag (string->symbol (string-append "tm" (string-replace s "-" ""))))

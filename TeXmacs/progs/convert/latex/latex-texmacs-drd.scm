@@ -276,7 +276,7 @@
                             (!append (item (!option "$\\circ$")) (mbox "") 1 "\\\\"
                                      (item (!option "")) (mbox "") 2 )))
   (tminput     (trivlist (!append (item (!option 1)) (mbox "") 2)))
-  (tminputmath (trivlist (!append (item (!option 1)) (mbox "") 2)))
+  (tminputmath (trivlist (!append (item (!option 1)) (ensuremath 2))))
   (tmhlink  (!group (!append (color "blue") 1)))
   (tmaction (!group (!append (color "blue") 1)))
   (ontop ("{\\genfrac{}{}{0pt}{}{#1}{#2}}"))
@@ -284,8 +284,8 @@
 
 (logic-table latex-texmacs-3%
   (tmsession (!append (tt) 3))
-  (tmfoldediomath   (trivlist (!append (item (!option 1))  (mbox "") 2)))
-  (tmunfoldediomath (trivlist (!append (item (!option 1))  (mbox "") 2
+  (tmfoldediomath   (trivlist (!append (item (!option 1)) (ensuremath 2))))
+  (tmunfoldediomath (trivlist (!append (item (!option 1)) (ensuremath 2)
                                        (item (!option "")) (mbox "") 3)))
   (tmfoldedio       (trivlist (!append (item (!option 1))  (mbox "") 2)))
   (tmunfoldedio     (trivlist (!append (item (!option 1))  (mbox "") 2
