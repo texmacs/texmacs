@@ -25,25 +25,35 @@ tm_winsparkle::~tm_winsparkle ()
 bool tm_winsparkle::setAppcast (url _appcast_url)
 {
   if (running) return false;
+  if (appcast == _appcast_url) return true;
+  
+  appcast = _appcast_url;
   c_string s (as_string (_appcast_url));  // FIXME! This has to be UTF8!
   win_sparkle_set_appcast_url (s);
+  
   return true;
 }
 
 bool tm_winsparkle::setAutomaticChecks (bool enable)
 {
   if (running) return false;
+  
 #if (WIN_SPARKLE_VERSION_MINOR >= 4)
   win_sparkle_set_automatic_check_for_updates (enable ? 1 : 0);
 #endif
+
   return true;
 }
 
 bool tm_winsparkle::setCheckInterval (int hours)
 {
   if (running) return false;
+  if (interval == hours) return true;
+  
+  interval = max (MinimumCheckInterval, min (MaximumCheckInterval, hours));
+  
 #if (WIN_SPARKLE_VERSION_MINOR >= 4)
-  win_sparkle_set_update_check_interval (hours*3600);
+  win_sparkle_set_update_check_interval (interval * 3600);
 #endif
   return true;
 }

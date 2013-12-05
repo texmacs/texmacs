@@ -42,7 +42,7 @@
         ((== pref "updater:public-dsa-key") (noop))
         ((== pref "updater:interval")
          (with n (string->number val)
-           (if (< n 1)
+           (if (< n 24)
                (set-preference "updater:automatic-checks" #f)
                (begin 
                  (updater-set-interval n)
@@ -56,7 +56,7 @@
                      updater-notify-pref)
   ; dsa key ignored by Sparkle (set in Info.plist), unused by WinSparkle
   ("updater:public-dsa-key" "texmacs_updates_dsa_pub.pem" updater-notify-pref)
-  ("updater:interval" "1" updater-notify-pref)
+  ("updater:interval" "24" updater-notify-pref)
   ("updater:automatic-checks" 
    (bool->string (or (os-win32?) (os-mingw?) (os-macos?)))
    updater-notify-pref))

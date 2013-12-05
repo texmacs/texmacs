@@ -83,7 +83,7 @@ bool tm_sparkle::setCheckInterval (int hours)
   if (interval == hours)
     return true;
 
-  interval = (hours < 1 || hours > 24*31) ? 1 : hours;
+  interval = max (MinimumCheckInterval, min (MaximumCheckInterval, hours));
 
   if (DEBUG_STD)
     debug_updater << "Changing interval from "

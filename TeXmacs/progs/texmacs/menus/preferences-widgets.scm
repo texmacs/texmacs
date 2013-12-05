@@ -350,7 +350,6 @@
 (define-preference-names "updater:interval"
   ("0" "Never")
   ("0" "Unsupported")
-  ("1" "Every hour")
   ("24" "Once a day")
   ("168" "Once a week")
   ("720" "Once a month"))
@@ -372,7 +371,7 @@
 
 (define (automatic-checks-choices)
   (if (updater-supported?)
-      '("Never" "Every hour" "Once a day" "Once a week" "Once a month")
+      '("Never" "Once a day" "Once a week" "Once a month")
       '("Unsupported")))
 
 (tm-define (scripts-preferences-list)
@@ -399,14 +398,14 @@
             (scripts-preferences-list)
             (get-pretty-preference "scripting language")
             "15em"))
-    ;(if (updater-supported?) ; FIXME: (if...) doesn't work here?
+    (assuming (updater-supported?)
         (item (text "Check for automatic updates:")
           (enum (set-pretty-preference "updater:interval" answer)
                 (automatic-checks-choices)
                 (get-pretty-preference "updater:interval")
-                "15em"));)
-    ;(if (updater-supported?) ; FIXME: (if...) doesn't work here?
-      (item (text "Last check:") (text (last-check-string)))));)
+                "15em")))
+    (assuming (updater-supported?)
+      (item (text "Last check:") (text (last-check-string))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences widget

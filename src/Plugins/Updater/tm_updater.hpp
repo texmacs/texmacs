@@ -17,6 +17,9 @@
 class tm_updater
 {
 protected:
+  static const int MinimumCheckInterval = 24;     //<! in hours
+  static const int MaximumCheckInterval = 24*31;  //<! in hours
+  
   url appcast;
   int interval;
   
