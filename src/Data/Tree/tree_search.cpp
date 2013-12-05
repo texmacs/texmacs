@@ -51,6 +51,44 @@ initialize_search () {
 ******************************************************************************/
 
 bool
+match_atomic (string s, tree what, int pos, int i, int& start, int& end) {
+  if (i == 0) start= pos;
+  if (i >= N(what)) {
+    end= pos;
+    if (initial_match_flag) return true;
+    return pos == N(s);
+  }
+  if (is_atomic (what[i])) {
+    if (test (s, pos, what[i]->label) &&
+        match_atomic (s, what, pos + N(what[i]->label), i+1, start, end))
+      return true;
+    if (i == 0 &&
+        partial_match_flag &&
+        pos < N(s) &&
+        match_atomic (s, what, tm_char_next (s, pos), i, start, end))
+      return true;
+    return false;
+  }
+  else if (is_func (what[i], WILDCARD, 1)) {
+    if (i+1 >= N(what)) {
+      end= N(s);
+      return true;
+    }
+    if (is_func (what[i+1], WILDCARD, 1))
+      return match_atomic (s, what, pos, i+1, start, end);
+    if (!is_atomic (what[i+1])) return false;
+    while (pos < N(s)) {
+      pos= tm_search_forwards (what[i+1]->label, pos, s);
+      if (pos < 0) return false;
+      if (match_atomic (s, what, pos, i+1, start, end)) return true;
+      if (pos < N(s)) tm_char_forwards (s, pos);
+    }
+    return false;
+  }
+  else return false;
+}
+
+bool
 match_cascaded (tree t, tree what) {
   if (match (t, what)) return true;
   if (cascaded_match_flag && is_compound (t))
@@ -64,7 +102,12 @@ match_cascaded (tree t, tree what) {
 bool
 match (tree t, tree what) {
   if (blank_match_flag && what == "") return true;
+  if (is_func (what, WILDCARD, 1)) return true;
   if (is_atomic (t)) {
+    if (is_concat (what)) {
+      int start, end;
+      return match_atomic (t->label, what, 0, 0, start, end);
+    }
     if (!is_atomic (what)) return false;
     if (partial_match_flag) {
       int pos= 0;
@@ -106,6 +149,16 @@ search_string (range_set& sel, string s, tree what, path p) {
       if (next < 0 || next >= N(s)) break;
       sel << (p * next) << (p * (next + N(w)));
       pos= next + N(w);
+    }
+  }
+  else if (is_concat (what)) {
+    for (int pos=0; pos<N(s); ) {
+      int start, end;
+      if (match_atomic (s, what, pos, 0, start, end)) {
+        sel << (p * start) << (p * end);
+        pos= end;
+      }
+      else break;
     }
   }
 }
