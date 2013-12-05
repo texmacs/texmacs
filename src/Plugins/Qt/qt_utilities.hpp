@@ -129,8 +129,6 @@ check_type (blackbox bb, string s) {
   check_type<pair<T1,T2> > (bb, s);
 }
 
-extern widget the_keyboard_focus;
-
 /*! the run-loop should exit when the number of windows is zero */
 extern int nr_windows; 
 
