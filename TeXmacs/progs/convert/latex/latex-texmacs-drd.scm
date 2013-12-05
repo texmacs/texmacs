@@ -276,7 +276,8 @@
   (tmunfolded             (trivlist
                             (!append (item (!option "$\\circ$")) (mbox "") 1 "\\\\"
                                      (item (!option "")) (mbox "") 2 )))
-  (tminput     (trivlist (!append (item (!option 1)) (mbox "") 2)))
+  (tminput     (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
+                                  (!group (!append (color "blue!50!black") (mbox "") 2)))))
   (tminputmath (trivlist (!append (item (!option 1)) (ensuremath 2))))
   (tmhlink  (!group (!append (color "blue") 1)))
   (tmaction (!group (!append (color "blue") 1)))
@@ -285,11 +286,15 @@
 
 (logic-table latex-texmacs-3%
   (tmsession (!append (tt) 3))
-  (tmfoldediomath   (trivlist (!append (item (!option 1)) (ensuremath 2))))
-  (tmunfoldediomath (trivlist (!append (item (!option 1)) (ensuremath 2)
+  (tmfoldediomath   (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
+                                       (!group (!append (color "blue!50!black") (ensuremath 2))))))
+  (tmunfoldediomath (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
+                                       (!group (!append (color "blue!50!black") (ensuremath 2)))
                                        (item (!option "")) (mbox "") 3)))
-  (tmfoldedio       (trivlist (!append (item (!option 1))  (mbox "") 2)))
-  (tmunfoldedio     (trivlist (!append (item (!option 1))  (mbox "") 2
+  (tmfoldedio       (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
+                                       (mbox "") (!group (!append (color "blue!50!black") 2)))))
+  (tmunfoldedio     (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
+                                       (mbox "") (!group (!append (color "blue!50!black") 2))
                                        (item (!option "")) (mbox "") 3)))
   (subsubindex (index (!append 1 "!" 2 "!" 3)))
   (tmref 1)
