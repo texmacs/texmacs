@@ -21,23 +21,29 @@ bool cascaded_match_flag= false;
 
 void search (range_set& sel, tree t, tree what, path p);
 bool match (tree t, tree what);
+void select (range_set& sel, tree t, tree what, path p);
+
+tree_label WILDCARD= UNKNOWN;
+tree_label SELECT_REGION= UNKNOWN;
 
 /******************************************************************************
-* String searching
+* Initialization
 ******************************************************************************/
 
-void
-search_string (range_set& sel, string s, tree what, path p) {
-  if (is_atomic (what)) {
-    string w= what->label;
-    int pos= 0;
-    while (pos < N(s)) {
-      int next= tm_search_forwards (w, pos, s);
-      if (next < 0 || next >= N(s)) break;
-      sel << (p * next) << (p * (next + N(w)));
-      pos= next + N(w);
-    }
-  }
+static void
+initialize_search () {
+  WILDCARD= make_tree_label ("wildcard");
+  SELECT_REGION= make_tree_label ("select-region");
+  blank_match_flag=
+    (get_user_preference ("allow-blank-match", "on") == "on");
+  initial_match_flag=
+    (get_user_preference ("allow-initial-match", "on") == "on");
+  partial_match_flag=
+    (get_user_preference ("allow-partial-match", "on") == "on");
+  injective_match_flag=
+    (get_user_preference ("allow-injective-match", "on") == "on");
+  cascaded_match_flag=
+    (get_user_preference ("allow-cascaded-match", "on") == "on");
 }
 
 /******************************************************************************
@@ -87,8 +93,22 @@ match (tree t, tree what) {
 }
 
 /******************************************************************************
-* Compound expressions
+* Searching
 ******************************************************************************/
+
+void
+search_string (range_set& sel, string s, tree what, path p) {
+  if (is_atomic (what)) {
+    string w= what->label;
+    int pos= 0;
+    while (pos < N(s)) {
+      int next= tm_search_forwards (w, pos, s);
+      if (next < 0 || next >= N(s)) break;
+      sel << (p * next) << (p * (next + N(w)));
+      pos= next + N(w);
+    }
+  }
+}
 
 void
 search_compound (range_set& sel, tree t, tree what, path p) {
@@ -138,10 +158,6 @@ search_format (range_set& sel, tree t, tree what, path p) {
   }
 }
 
-/******************************************************************************
-* Front end
-******************************************************************************/
-
 void
 search (range_set& sel, tree t, tree what, path p) {
   if (is_atomic (t))
@@ -154,19 +170,79 @@ search (range_set& sel, tree t, tree what, path p) {
     search_compound (sel, t, what, p);
 }
 
+/******************************************************************************
+* Selections inside specified contexts
+******************************************************************************/
+
+bool
+contains_select_region (tree t) {
+  if (is_atomic (t)) return false;
+  else if (is_func (t, SELECT_REGION, 1)) return true;
+  else {
+    for (int i=0; i<N(t); i++)
+      if (contains_select_region (t[i]))
+        return true;
+    return false;
+  }
+}
+
+void
+select_direct (range_set& sel, tree t, tree what, path p) {
+  if (L(t) != L(what)) return;
+  int cur=0;
+  for (int i=0; i<N(t); i++)
+    if (contains_select_region (what[cur])) {
+      range_set ssel;
+      select (ssel, t[i], what[cur], p * i);
+      if (N(ssel) == 0) continue;
+      int cur2= cur+1;
+      for (int i2=i+1; i2<N(t); i2++)
+        if (cur2 >= N(what)) break;
+        else if (contains_select_region (what[cur2])) return;
+        else if (match_cascaded (t[i2], what[cur2])) cur2++;
+      if (cur2 >= N(what)) sel << ssel;
+      continue;
+    }
+    else {
+      if (match_cascaded (t[i], what[cur])) cur++;
+      if (cur >= N(what)) return;
+    }
+}
+
+void
+select_cascaded (range_set& sel, tree t, tree what, path p) {
+  for (int i=0; i<N(t); i++)
+    if (is_accessible_child (t, i))
+      select (sel, t[i], what, p*i);  
+}
+
+void
+select (range_set& sel, tree t, tree what, path p) {
+  if (is_func (what, SELECT_REGION, 1)) {
+    if (is_empty (what[0]))
+      sel << (p * start (t)) << (p * end (t));
+    else
+      search (sel, t, what[0], p);
+  }
+  else {
+    range_set ssel;
+    select_direct (ssel, t, what, p);
+    if (N(ssel) > 0) sel << ssel;
+    else select_cascaded (sel, t, what, p);
+  }
+}
+
+/******************************************************************************
+* Front end
+******************************************************************************/
+
 range_set
 search (tree t, tree what, path p) {
+  initialize_search ();
   range_set sel;
-  blank_match_flag=
-    (get_user_preference ("allow-blank-match", "on") == "on");
-  initial_match_flag=
-    (get_user_preference ("allow-initial-match", "on") == "on");
-  partial_match_flag=
-    (get_user_preference ("allow-partial-match", "on") == "on");
-  injective_match_flag=
-    (get_user_preference ("allow-injective-match", "on") == "on");
-  cascaded_match_flag=
-    (get_user_preference ("allow-cascaded-match", "on") == "on");
-  search (sel, t, what, p);
+  //cout << "Search " << what << ", " << contains_select_region (what) << "\n";
+  if (contains_select_region (what)) select (sel, t, what, p);
+  else search (sel, t, what, p);
+  //cout << "Selected " << sel << "\n";
   return sel;
 }

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.0.7.21>
 
 <style|source>
 
@@ -44,7 +44,7 @@
 
   <\active*>
     <\src-comment>
-      Further tags for page numbering editing.
+      Special tags for page numbering editing.
     </src-comment>
   </active*>
 
@@ -56,6 +56,18 @@
 
   <assign|page-the-page|<macro|<with|color|dark
   grey|font-shape|italic|page-number>>>
+
+  <\active*>
+    <\src-comment>
+      Special tags for search and replace patterns.
+    </src-comment>
+  </active*>
+
+  <assign|wildcard|<macro|var|<with|color|dark
+  magenta|(<with|font-shape|italic|<arg|var>>)>>>
+
+  <assign|select-region|<macro|body|<colored-frame|pastel
+  yellow|<arg|body>>>>
 </body>
 
 <\initial>

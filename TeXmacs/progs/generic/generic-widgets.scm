@@ -40,6 +40,8 @@
         (set! what (tm-ref what 0)))
       (when (tm-func? what 'inactive 1)
         (set! what (tm-ref what 0)))
+      (when (tm-func? what 'inactive* 1)
+        (set! what (tm-ref what 0)))
       (with-search-buffer
         (if (tree-empty? what)
             (begin
@@ -56,7 +58,9 @@
                     (set! ok? #f))
                   (begin
                     (set-alt-selection "alternate" sels)
-                    (next-search-result #t #f))))))
+                    (with after? (next-search-result #t #f)
+                      (when (not after?)
+                        (selection-cancel))))))))
       (if ok? (init-default "bg-color") (init-env "bg-color" "#fff0f0")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -136,12 +140,13 @@
 
 (tm-define (kbd-enter t shift?)
   (:require (inside-search-widget?))
-  (set! search-kbd-intercepted? #t)
-  (if (or shift? (inside? 'inactive))
+  (if (or shift? (inside? 'inactive) (inside? 'inactive*))
       (former t shift?)
-      (with ok? (search-next-match #t)
-        (when (not ok?)
-          (search-extreme-match #f)))))
+      (begin
+        (set! search-kbd-intercepted? #t)
+        (with ok? (search-next-match #t)
+          (when (not ok?)
+            (search-extreme-match #f))))))
 
 (tm-define (kbd-incremental t forwards?)
   (:require (inside-search-widget?))
