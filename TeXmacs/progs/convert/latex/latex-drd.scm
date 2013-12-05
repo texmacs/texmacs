@@ -540,6 +540,8 @@
   
   (color "xcolor")
 
+  (newmdenv "mdframed")
+
   (omicron "pslatex")
   (multicols "multicol")
   (bundle "epic")

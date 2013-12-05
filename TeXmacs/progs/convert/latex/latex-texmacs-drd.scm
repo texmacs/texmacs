@@ -564,6 +564,32 @@
                     "\\Leftarrow" "\\Relbar" "\\Rightarrow")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Ornamented environments
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(logic-table latex-texmacs-env-preamble%
+  ("tmpadded"     (!append (newmdenv (!option "") "tmpadded") "\n"))
+  ("tmoverlined"  (!append
+                    (newmdenv
+                      (!option "topline=true,innertopmargin=10pt")
+                      "tmoverlined") "\n"))
+  ("tmunderlined" (!append
+                    (newmdenv
+                      (!option "bottomline=true,innerbottommargin=10pt")
+                      "tmunderlined") "\n"))
+  ("tmbothlined"  (!append
+                    (newmdenv
+                      (!option "topline=true,bottomline=true,innertopmargin=10pt,innerbottommargin=10pt")
+                      "tmbothlined") "\n"))
+  ("tmframed"     (!append
+                    (newmdenv
+                      (!option "hidealllines=false,innertopmargin=10pt,innerbottommargin=10pt,innerleftmargin=5pt,innerrightmargin=5pt")
+                      "tmframed") "\n"))
+  ("tmornamented" (!append
+                    (newmdenv
+                      (!option "hidealllines=false,innertopmargin=10pt,innerbottommargin=10pt,innerleftmargin=5pt,innerrightmargin=5pt")
+                      "tmornamented") "\n")))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Plain style theorems
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

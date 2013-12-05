@@ -1908,6 +1908,12 @@
 (define (tmtex-nbhyph s l)
   '(!nbhyph))
 
+(define (tmtex-ornamented s l)
+  (let* ((env     (string-append "tm" s))
+         (option  '())
+         (option* (if (nnull? option) `((!option "")) '())))
+  `((!begin ,env ,@option*) ,(tmtex (car  l)))))
+
 (define (tmtex-tm s l)
   (with tag (string->symbol (string-append "tm" (string-replace s "-" "")))
   `(,tag ,@(map tmtex l))))
@@ -2288,6 +2294,8 @@
         unfolded-subsession folded-subsession folded-io unfolded-io
         input output errput timing)
    (,tmtex-tm -1))
+  ((:or padded underlined overlined bothlined framed ornamented)
+   (,tmtex-ornamented 1))
   ((:or folded-io-math unfolded-io-math) (,tmtex-fold-io-math 3))
   (input-math (,tmtex-input-math 2))
   (session (,tmtex-session 3))
