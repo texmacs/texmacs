@@ -85,6 +85,8 @@ string tm_backward_access (string s, int i);
 int    tm_string_length (string s);
 array<string> tm_tokenize (string s);
 string tm_recompose (array<string> a);
+int    tm_search_forwards (string s, int pos, string in);
+int    tm_search_backwards (string s, int pos, string in);
 
 string scm_quote (string s);
 string scm_unquote (string s);

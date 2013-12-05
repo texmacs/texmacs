@@ -19,6 +19,8 @@
 ;; Highlighting the search results
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define search-kbd-intercepted? #f)
+
 (define-macro (with-search-buffer . body)
   `(and (inside-search-widget?)
         (with-buffer (buffer-get-master (current-buffer))
@@ -29,29 +31,33 @@
 
 (tm-define (keyboard-press key time)
   (:require (inside-search-widget?))
+  (set! search-kbd-intercepted? #f)
   (former key time)
-  (let* ((what (buffer-tree))
-         (ok? #t))
-    (when (tm-func? what 'document 1)
-      (set! what (tm-ref what 0)))
-    (with-search-buffer
-      (if (tree-empty? what)
-          (begin
-            (selection-cancel)
-            (cancel-alt-selection "alternate")
-            (go-to (get-search-reference #t)))
-          (let* ((t (buffer-tree))
-                 (sels (tree-search-tree t what (tree->path t))))
-            (if (null? sels)
-                (begin
-                  (selection-cancel)
-                  (cancel-alt-selection "alternate")
-                  (go-to (get-search-reference #t))
-                  (set! ok? #f))
-                (begin
-                  (set-alt-selection "alternate" sels)
-                  (next-search-result #t #f))))))
-    (if ok? (init-default "bg-color") (init-env "bg-color" "#fff0f0"))))
+  (when (not search-kbd-intercepted?)
+    (let* ((what (buffer-tree))
+           (ok? #t))
+      (when (tm-func? what 'document 1)
+        (set! what (tm-ref what 0)))
+      (when (tm-func? what 'inactive 1)
+        (set! what (tm-ref what 0)))
+      (with-search-buffer
+        (if (tree-empty? what)
+            (begin
+              (selection-cancel)
+              (cancel-alt-selection "alternate")
+              (go-to (get-search-reference #t)))
+            (let* ((t (buffer-tree))
+                   (sels (tree-search-tree t what (tree->path t))))
+              (if (null? sels)
+                  (begin
+                    (selection-cancel)
+                    (cancel-alt-selection "alternate")
+                    (go-to (get-search-reference #t))
+                    (set! ok? #f))
+                  (begin
+                    (set-alt-selection "alternate" sels)
+                    (next-search-result #t #f))))))
+      (if ok? (init-default "bg-color") (init-env "bg-color" "#fff0f0")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Highlighting a particular next or previous search result
@@ -68,8 +74,12 @@
 (define (search-next sels cur strict?)
   (while (and (nnull? sels)
               (nnull? (cdr sels))
-              (not (path-inf-eq? cur (cadr sels))))
+              (not (path-less-eq? cur (cadr sels))))
     (set! sels (cddr sels)))
+  (if (and (>= (length sels) 4)
+           (== (cadr sels) (caddr sels))
+           (== (cadr sels) cur))
+      (set! sels (cddr sels)))
   (if (and strict? (>= (length sels) 2))
       (set! sels (cddr sels)))
   (and (>= (length sels) 2)
@@ -79,7 +89,7 @@
   (set! sels (reverse sels))
   (while (and (nnull? sels)
               (nnull? (cdr sels))
-              (not (path-inf-eq? (cadr sels) cur)))
+              (not (path-less-eq? (cadr sels) cur)))
     (set! sels (cddr sels)))
   (if (and strict? (>= (length sels) 2))
       (set! sels (cddr sels)))
@@ -95,7 +105,8 @@
                            (search-previous sels cur strict?))
            (selection-set-range-set sel)
            (go-to (car sel))
-           (when strict? (set-search-reference (car sel)))))))
+           (when strict? (set-search-reference (car sel)))
+           #t))))
 
 (define (extreme-search-result last?)
   (with sels (get-alt-selection "alternate")
@@ -125,6 +136,7 @@
 
 (tm-define (kbd-enter t shift?)
   (:require (inside-search-widget?))
+  (set! search-kbd-intercepted? #t)
   (if (or shift? (inside? 'inactive))
       (former t shift?)
       (with ok? (search-next-match #t)
@@ -133,14 +145,17 @@
 
 (tm-define (kbd-incremental t forwards?)
   (:require (inside-search-widget?))
+  (set! search-kbd-intercepted? #t)
   (search-next-match forwards?))
 
 (tm-define (traverse-incremental t forwards?)
   (:require (inside-search-widget?))
+  (set! search-kbd-intercepted? #t)
   (search-next-match forwards?))
 
 (tm-define (traverse-extremal t forwards?)
   (:require (inside-search-widget?))
+  (set! search-kbd-intercepted? #t)
   (search-extreme-match forwards?))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -11,8 +11,20 @@
 
 #include "tree_search.hpp"
 #include "analyze.hpp"
+#include "boot.hpp"
+
+bool blank_match_flag= false;
+bool initial_match_flag= false;
+bool partial_match_flag= false;
+bool injective_match_flag= false;
+bool cascaded_match_flag= false;
 
 void search (range_set& sel, tree t, tree what, path p);
+bool match (tree t, tree what);
+
+/******************************************************************************
+* String searching
+******************************************************************************/
 
 void
 search_string (range_set& sel, string s, tree what, path p) {
@@ -20,7 +32,7 @@ search_string (range_set& sel, string s, tree what, path p) {
     string w= what->label;
     int pos= 0;
     while (pos < N(s)) {
-      int next= search_forwards (w, pos, s);
+      int next= tm_search_forwards (w, pos, s);
       if (next < 0 || next >= N(s)) break;
       sel << (p * next) << (p * (next + N(w)));
       pos= next + N(w);
@@ -28,54 +40,133 @@ search_string (range_set& sel, string s, tree what, path p) {
   }
 }
 
+/******************************************************************************
+* Matching
+******************************************************************************/
+
 bool
-search_match (tree t, tree what) {
-  if (what == "") return true;
-  if (is_atomic (t)) return t == what;
-  if (L(t) != L(what) || N(t) != N(what)) return false;
-  for (int i=0; i<N(t); i++)
-    if (!search_match (t[i], what[i])) return false;
-  return true;
+match_cascaded (tree t, tree what) {
+  if (match (t, what)) return true;
+  if (cascaded_match_flag && is_compound (t))
+    for (int i=0; i<N(t); i++)
+      if (is_accessible_child (t, i))
+        if (match_cascaded (t[i], what))
+          return true;
+  return false;
 }
 
-void
-search_exact (range_set& sel, tree t, tree what, path p) {
-  if (L(t) != L(what) || N(t) != N(what)) return;
-  for (int i=0; i<N(t); i++)
-    if (!search_match (t[i], what[i]))
-      return;
-  sel << (p * start (t)) << (p * end (t));
+bool
+match (tree t, tree what) {
+  if (blank_match_flag && what == "") return true;
+  if (is_atomic (t)) {
+    if (!is_atomic (what)) return false;
+    if (partial_match_flag) {
+      int pos= 0;
+      return tm_search_forwards (what->label, pos, t->label) != -1;
+    }
+    else if (initial_match_flag)
+      return starts (t->label, what->label);
+    else
+      return t->label == what->label;
+  }
+  else if (injective_match_flag) {
+    if (L(t) != L(what)) return false;
+    int cur=0;
+    for (int i=0; i<N(t); i++) {
+      if (match_cascaded (t[i], what[cur])) cur++;
+      if (cur >= N(what)) return true;
+    }
+    return false;
+  }
+  else {
+    if (L(t) != L(what) || N(t) != N(what)) return false;
+    for (int i=0; i<N(t); i++)
+      if (!match_cascaded (t[i], what[i])) return false;
+    return true;
+  }
 }
+
+/******************************************************************************
+* Compound expressions
+******************************************************************************/
 
 void
 search_compound (range_set& sel, tree t, tree what, path p) {
-  search_exact (sel, t, what, p);
+  if (match (t, what)) {
+    sel << (p * start (t)) << (p * end (t));
+    return;
+  }
   for (int i=0; i<N(t); i++)
     if (is_accessible_child (t, i))
       search (sel, t[i], what, p * i);
 }
 
 void
-search_concat (range_set& sel, tree t, tree what, path p) {
-  return search_compound (sel, t, what, p);
+search_format (range_set& sel, tree t, tree what, path p) {
+  if (N(what) == 0) return;
+  for (int i=0; i<N(t); i++) {
+    bool found= false;
+    range_set fsel;
+    search (fsel, t[i], what[0], p * i);
+    if (N(fsel) != 0 && fsel[N(fsel)-1] == (p * i) * end (t[i]))
+      if (N(sel) == 0 || path_less_eq (sel[N(sel)-1], fsel[N(fsel)-2])) {
+        int cur= 1;
+        for (int j=i+1; j<N(t); j++) {
+          if (cur == N(what) - 1) {
+            range_set lsel;
+            search (lsel, t[j], what[cur], p * j);
+            if (N(lsel) != 0) {
+              if (lsel[0] != (p * j) * start (t[j])) break;
+              sel << fsel[N(fsel) - 2] << lsel[1];
+              found= true;
+              i= j-1;
+            }
+            break;
+          }
+          else {
+            range_set msel;
+            search (msel, t[j], what[cur], p * j);
+            if (N(msel) == 0) break;
+            if (msel[0] != (p * j) * start (t[j])) break;
+            if (msel[N(msel)-1] != (p * j) * end (t[j])) break;
+            cur++;
+            if (cur >= N(what)) break;
+          }
+        }
+      }
+    if (!found) search (sel, t[i], what, p * i);
+  }
 }
 
-void
-search_document (range_set& sel, tree t, tree what, path p) {
-  return search_compound (sel, t, what, p);
-}
+/******************************************************************************
+* Front end
+******************************************************************************/
 
 void
 search (range_set& sel, tree t, tree what, path p) {
-  if (is_atomic (t)) search_string (sel, t->label, what, p);
-  else if (is_func (t, CONCAT)) search_concat (sel, t, what, p);
-  else if (is_func (t, DOCUMENT)) search_document (sel, t, what, p);
-  else search_compound (sel, t, what, p);
+  if (is_atomic (t))
+    search_string (sel, t->label, what, p);
+  else if (is_func (t, CONCAT) && is_func (what, CONCAT))
+    search_format (sel, t, what, p);
+  else if (is_func (t, DOCUMENT) && is_func (what, DOCUMENT))
+    search_format (sel, t, what, p);
+  else
+    search_compound (sel, t, what, p);
 }
 
 range_set
 search (tree t, tree what, path p) {
   range_set sel;
+  blank_match_flag=
+    (get_user_preference ("allow-blank-match", "on") == "on");
+  initial_match_flag=
+    (get_user_preference ("allow-initial-match", "on") == "on");
+  partial_match_flag=
+    (get_user_preference ("allow-partial-match", "on") == "on");
+  injective_match_flag=
+    (get_user_preference ("allow-injective-match", "on") == "on");
+  cascaded_match_flag=
+    (get_user_preference ("allow-cascaded-match", "on") == "on");
   search (sel, t, what, p);
   return sel;
 }
