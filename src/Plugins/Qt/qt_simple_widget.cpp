@@ -197,24 +197,33 @@ qt_simple_widget_rep::send (slot s, blackbox val) {
       break;
       
     case SLOT_MOUSE_GRAB:
-        // Sent after a left click to indicate the start of cursor dragging.
-      NOT_IMPLEMENTED("qt_simple_widget::SLOT_MOUSE_GRAB");
-        //send_mouse_grab (THIS, val);
+    {
+      check_type<bool> (val, s);
+      bool grab = open_box<bool>(val);
+      if (grab && canvas() && !canvas()->hasFocus())
+        canvas()->setFocus (Qt::MouseFocusReason);
+    }
       break;
-      
+
     case SLOT_MOUSE_POINTER:
+    {
+      typedef pair<string, string> T;
+      check_type<T> (val, s);
+      T contents = open_box<T> (val); // x1 = name, x2 = mask.
+      if (contents.x2 == "")   // mask == ""
+        ;                      // set default pointer.
+      else                     // set new pointer
+        ;
       NOT_IMPLEMENTED("qt_simple_widget::SLOT_MOUSE_POINTER");
-        //send_mouse_pointer (THIS, val);
+    }
       break;
       
     case SLOT_KEYBOARD_FOCUS:
     {
-        //send_keyboard_focus (THIS, val);
-      check_type<bool>(val, s);
-      if (open_box<bool> (val))
-        the_keyboard_focus = this;
-      if (DEBUG_QT_WIDGETS)
-        debug_widgets << "   Ignored!\n";
+      check_type<bool> (val, s);
+      bool focus = open_box<bool> (val);
+      if (focus && canvas() && !canvas()->hasFocus())
+        canvas()->setFocus(Qt::OtherFocusReason);
     }
       break;
       

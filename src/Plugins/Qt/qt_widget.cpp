@@ -28,8 +28,6 @@
 #include "QTMMenuHelper.hpp"
 #include "QTMWindow.hpp"
 
-widget the_keyboard_focus (NULL);
-
 
 /******************************************************************************
  * qt_widget_rep: the base widget for the Qt port.
