@@ -47,7 +47,7 @@ initialize_search () {
 }
 
 /******************************************************************************
-* Matching
+* Matching complex patterns inside strings
 ******************************************************************************/
 
 bool
@@ -87,6 +87,10 @@ match_atomic (string s, tree what, int pos, int i, int& start, int& end) {
   }
   else return false;
 }
+
+/******************************************************************************
+* Matching
+******************************************************************************/
 
 bool
 match_cascaded (tree t, tree what) {
@@ -134,6 +138,47 @@ match (tree t, tree what) {
     return true;
   }
 }
+
+/******************************************************************************
+* Matching complex patterns inside concat and document tags
+******************************************************************************/
+
+/*
+bool
+search_format (tree t, tree what, int pos, int i, path p, path& p1, path& p2) {
+  if (pos >= N(t)) return false;
+  if (is_atomic (t, what, pos, i, p, p1, p2)) {
+  }
+  else if (is_func (what[i], WILDCARD, 1)) {
+    if (i == 0) p1= (t * 0) * start (t[0]);
+    if (i+1 < N(what) && is_func (what[i+1], WILDCARD, 1))
+      return search_format (t, what, pos, i+1, p, p1, p2);
+    if (i+1 >= N(what)) {
+      p2= (t * (N(t)-1)) * end (t[N(t)-1]);
+      return true;
+    }
+    if (search_format (t, what, pos, i+1, p, p1, p2)) return true;
+    path dummy;
+    return search_format (t, what, pos+1, i, p, dummy, p2);
+  }
+  else {
+    range_set sel;
+    search (sel, t[pos], what[i], p * pos);
+    if (N(sel) != 0) {
+      bool c1= (i == 0 || sel[0] == (p * pos) * start (t[pos]));
+      bool c2= (i == N(t)-1 || sel[N(sel)-1] == (p * pos) * end (t[pos]));
+      if (i == 0) p1= sel[0];
+      if (i == N(what)-1) p2= sel[N(sel)-1];
+      if (c1 && c2) {
+        if (i+1 >= N(what)) return true;
+        if (search_format (t, what, pos+1, i+1, p, p1, p2)) return true;
+      }
+      if (i == 0) return search_format (t, what, pos+1, i, p, p1, p2);
+      return false;
+    }
+  }
+}
+*/
 
 /******************************************************************************
 * Searching
