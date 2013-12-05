@@ -1940,12 +1940,6 @@
       (set! lst `(!indent (!paragraph ,@(cdr lst)))))
     `(!document (,tag ,arg ,lan ,lst))))
 
-(define (tmtex-output s l)
-  (tex-concat
-   (list '(noindent)
-	 (list '!group (list 'ttfamily (tmtex (car l))))
-	 '(medskip))))
-
 (define (escape-backslashes-in-url l)
   (cond ((string? l) (string-replace l "\\" "\\\\"))
         ((symbol? l) l)
