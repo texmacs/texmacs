@@ -131,6 +131,10 @@
         (when (not ok?)
           (search-extreme-match #f)))))
 
+(tm-define (kbd-incremental t forwards?)
+  (:require (inside-search-widget?))
+  (search-next-match forwards?))
+
 (tm-define (traverse-incremental t forwards?)
   (:require (inside-search-widget?))
   (search-next-match forwards?))
