@@ -2042,6 +2042,8 @@ latex_command_to_tree (tree t) {
     return document (compound ("input", l2e (t[1]), l2e (t[2])));
   if (is_tuple (t, "\\tmtiming", 1))
     return document (compound ("timing", l2e (t[1])));
+  if (is_tuple (t, "\\tmerrput", 1))
+    return document (compound ("errput", l2e (t[1])));
   if (is_tuple (t, "\\tmoutput", 1))
     return document (compound ("output", l2e (t[1])));
   if (is_tuple (t) && N(t) == 3 &&

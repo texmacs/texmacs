@@ -2286,7 +2286,7 @@
         summarized-raw summarized-tiny detailed-plain detailed-std detailed-env
         detailed-documentation detailed-grouped detailed-raw detailed-tiny
         unfolded-subsession folded-subsession folded-io unfolded-io
-        input output timing)
+        input output errput timing)
    (,tmtex-tm -1))
   ((:or folded-io-math unfolded-io-math) (,tmtex-fold-io-math 3))
   (input-math (,tmtex-input-math 2))
