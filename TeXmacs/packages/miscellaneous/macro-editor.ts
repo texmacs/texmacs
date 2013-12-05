@@ -63,8 +63,8 @@
     </src-comment>
   </active*>
 
-  <assign|wildcard|<macro|var|<with|color|dark
-  magenta|(<with|font-shape|italic|<arg|var>>)>>>
+  <assign|wildcard|<macro|var|<with|color|dark magenta|<colored-frame|pastel
+  magenta|<with|font-shape|italic|<arg|var>>>>>>
 
   <assign|select-region|<macro|body|<colored-frame|pastel
   yellow|<arg|body>>>>

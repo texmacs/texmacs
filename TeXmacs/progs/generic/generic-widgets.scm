@@ -163,6 +163,13 @@
   (set! search-kbd-intercepted? #t)
   (search-extreme-match forwards?))
 
+(kbd-map
+  (:require (inside-search-widget?))
+  ("std ?" (make 'select-region))
+  ("std 1" (insert '(wildcard "x")))
+  ("std 2" (insert '(wildcard "y")))
+  ("std 3" (insert '(wildcard "z"))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
