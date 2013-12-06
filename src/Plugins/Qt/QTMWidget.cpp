@@ -165,7 +165,7 @@ QTMWidget::QTMWidget (QWidget* _parent, qt_simple_widget_rep* _tmwid)
 : QTMScrollView (_parent), tmwid (_tmwid), backingPixmap (1,1), imwidget (NULL),
   id (QTMWcounter++)
 {
-  setObjectName ("A QTMWidget");  // FIXME: What is this for?
+  setObjectName (to_qstring ("QTMWidget" * as_string (id)));// What is this for?
   setFocusPolicy (Qt::StrongFocus);
   setAttribute (Qt::WA_InputMethodEnabled);
   all_widgets.insert (this);
@@ -175,15 +175,13 @@ QTMWidget::QTMWidget (QWidget* _parent, qt_simple_widget_rep* _tmwid)
   
   if (DEBUG_QT)
     debug_qt << "Creating QTMWidget " << as_string (id) << " of widget "
-             << (tm_widget() ? tm_widget()->type_as_string() : "NULL")
-             << LF;
+             << (tm_widget() ? tm_widget()->type_as_string() : "NULL") << LF;
 }
 
 QTMWidget::~QTMWidget () {
   if (DEBUG_QT) 
     debug_qt << "Destroying QTMWidget " << as_string (id) << " of widget "
-             << (tm_widget() ? tm_widget()->type_as_string() : "NULL")
-             << LF;
+             << (tm_widget() ? tm_widget()->type_as_string() : "NULL") << LF;
   
     // remove ourselves from the list of QWidgets to be repainted.
   all_widgets.remove (this);
@@ -386,12 +384,10 @@ QTMWidget::repaint_invalid_regions () {
       
       ren->end();
     } // !is_nil (invalid_regions)
-    
   }
 
-  // propagate immediatly the changes to the screen  
+  // propagate immediately the changes to the screen
   surface()->repaint (qrgn);
-  
 }
 
 void 
@@ -427,8 +423,6 @@ QTMWidget::resizeEventBis (QResizeEvent *event) {
   the_gui -> process_resize (tm_widget(), s.x1, s.x2);
 }
 
-
-
 /*!
  In the current implementation repainting takes place during the call to
  the widget's repaint_invalid_regions() method in the_gui::update. All
@@ -439,36 +433,25 @@ QTMWidget::resizeEventBis (QResizeEvent *event) {
 */
 void
 QTMWidget::paintEvent (QPaintEvent* event) {
-  /*
-  if (DEBUG_QT) {
-    QRect rect = event->rect ();
-    debug_qt << "paintEvent ("<< rect.x() << "," <<  rect.y()
-    << "," <<  rect.width() << "," <<  rect.height() << ")" << LF ;
-  }
-  */
-
   QPainter p (surface());
   QVector<QRect> rects = event->region().rects();
-  for (int i=0; i< rects.count(); i++) {
+  for (int i = 0; i < rects.count(); ++i) {
     QRect qr = rects.at (i);
-    p.drawPixmap (qr,backingPixmap,qr);
+    p.drawPixmap (qr, backingPixmap, qr);
   }
 }
 
-
 void
 QTMWidget::keyPressEvent (QKeyEvent* event) {
+  if (is_nil (tmwid)) return;
   static bool fInit = false;
   if (!fInit) {
-    if (DEBUG_QT && DEBUG_KEYBOARD)
-      debug_qt << "Initializing keymap\n";
+    if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "Initializing keymap\n";
     initkeymap();
     fInit= true;
   }
 
-  if (DEBUG_QT && DEBUG_KEYBOARD)
-    debug_qt << "keypressed\n";
-  if (tm_widget()->ref_count == 0) return;
+  if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "keypressed\n";
 
   {
     int key = event->key();
@@ -579,13 +562,8 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
     //if (mods & Qt::KeypadModifier) r= "K-" * r;
 #endif
 
-    if (DEBUG_QT && DEBUG_KEYBOARD)
-      debug_qt << "key press: " << r << LF;
-    //int start= texmacs_time ();
-    //tm_widget() -> handle_keypress (r, texmacs_time());
-    the_gui -> process_keypress (tm_widget(), r, texmacs_time());
-    //int end= texmacs_time ();
-    //if (end > start) debug_qt << "Keypress " << end - start << "\n";
+    if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "key press: " << r << LF;
+    the_gui->process_keypress (tm_widget(), r, texmacs_time());
     //the_gui->update (); // FIXME: remove this line when
                         // edit_typeset_rep::get_env_value will be faster
     
@@ -811,10 +789,7 @@ QTMWidget::inputMethodQuery (Qt::InputMethodQuery query) const {
   }
 }
 
-
 #endif // input method variants
-
-
 
 void
 QTMWidget::mousePressEvent (QMouseEvent* event) {
@@ -830,37 +805,25 @@ QTMWidget::mousePressEvent (QMouseEvent* event) {
 
 void
 QTMWidget::mouseReleaseEvent (QMouseEvent* event) {
-  if (tm_widget()->ref_count == 0) return;
+  if (is_nil (tmwid)) return;
   QPoint point = event->pos() + origin();
   scale (point);
-  unsigned int mstate= mouse_state (event, true);
-  string s= "release-" * mouse_decode (mstate);
-  the_gui -> process_mouse (tm_widget(), s, point.x (), point.y (), 
-                            mstate, texmacs_time ());
-//  tm_widget() -> handle_mouse (s, point.x (), point.y (), mstate, texmacs_time ());
-  /*
-  if (DEBUG_QT)
-    debug_qt << "mouse event: " << s << " at "
-             << point.x () << ", " << point.y () << LF;
-   */
+  unsigned int mstate = mouse_state (event, true);
+  string s = "release-" * mouse_decode (mstate);
+  the_gui->process_mouse (tm_widget(), s, point.x(), point.y(),
+                            mstate, texmacs_time());
   event->accept();
 }
 
 void
 QTMWidget::mouseMoveEvent (QMouseEvent* event) {
-  if (tm_widget()->ref_count == 0) return;
+  if (is_nil (tmwid)) return;
   QPoint point = event->pos() + origin();
   scale (point);
-  unsigned int mstate= mouse_state (event, false);
-  string s= "move";
-  the_gui -> process_mouse (tm_widget(), s, point.x (), point.y (), 
-                            mstate, texmacs_time ());
-//  tm_widget() -> handle_mouse (s, point.x (), point.y (), mstate, texmacs_time ());
-  /*
-  if (DEBUG_QT)
-    debug_qt << "mouse event: " << s << " at "
-             << point.x () << ", " << point.y () << LF;
-   */
+  unsigned int mstate = mouse_state (event, false);
+  string s = "move";
+  the_gui->process_mouse (tm_widget(), s, point.x(), point.y(),
+                          mstate, texmacs_time ());
   event->accept();
 }
 
@@ -875,33 +838,27 @@ QTMWidget::event (QEvent* event) {
   return QTMScrollView::event (event);
 }
 
-
 void
 QTMWidget::focusInEvent (QFocusEvent * event) {
-  if (tm_widget()->ref_count != 0) {
-    if (DEBUG_QT)
-      debug_qt << "FOCUSIN: " << tm_widget()->type_as_string() << LF;
-    the_gui -> process_keyboard_focus (tm_widget(), true, texmacs_time());
-    //tm_widget() -> handle_keyboard_focus (true, texmacs_time ());
+  if (!is_nil (tmwid)) {
+    if (DEBUG_QT) debug_qt << "FOCUSIN: " << tm_widget()->type_as_string() << LF;
+    the_gui->process_keyboard_focus (tm_widget(), true, texmacs_time());
   }
   QTMScrollView::focusInEvent (event);
 }
 
 void
 QTMWidget::focusOutEvent (QFocusEvent * event) {
-  if (tm_widget()->ref_count != 0) {
-    if (DEBUG_QT)
-      debug_qt << "FOCUSOUT: " << tm_widget()->type_as_string() << LF;
+  if (!is_nil (tmwid)) {
+    if (DEBUG_QT) debug_qt << "FOCUSOUT: " << tm_widget()->type_as_string() << LF;
     the_gui -> process_keyboard_focus (tm_widget(), false, texmacs_time());
-//    tm_widget() -> handle_keyboard_focus (false, texmacs_time ());
   }
   QTMScrollView::focusOutEvent (event);
 }
 
-
 QSize
 QTMWidget::sizeHint () const {
-  SI w,h;
-  tm_widget()->handle_get_size_hint (w,h);
+  SI w = 0, h = 0;
+  if (!is_nil (tmwid)) tm_widget()->handle_get_size_hint (w, h);
   return to_qsize (w, h);
 }
