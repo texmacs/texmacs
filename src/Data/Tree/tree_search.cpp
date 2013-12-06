@@ -27,7 +27,7 @@ tree_label WILDCARD= UNKNOWN;
 tree_label SELECT_REGION= UNKNOWN;
 
 /******************************************************************************
-* Initialization
+* Initialization and useful subroutines
 ******************************************************************************/
 
 static void
@@ -44,6 +44,13 @@ initialize_search () {
     (get_user_preference ("allow-injective-match", "on") == "on");
   cascaded_match_flag=
     (get_user_preference ("allow-cascaded-match", "on") == "on");
+}
+
+static void
+merge (range_set& sel, range_set ssel) {
+  for (int i=0; i+1<N(ssel); i+=2)
+    if (N(sel) == 0 || path_less_eq (sel[N(sel)-1], ssel[i]))
+      sel << ssel[i] << ssel[i+1];
 }
 
 /******************************************************************************
@@ -140,45 +147,71 @@ match (tree t, tree what) {
 }
 
 /******************************************************************************
-* Matching complex patterns inside concat and document tags
+* Matching complex patterns inside concat tags
 ******************************************************************************/
 
-/*
 bool
-search_format (tree t, tree what, int pos, int i, path p, path& p1, path& p2) {
+search_concat (tree t, tree what, int pos, int i,
+	       path p, path mp, path& p1, path& p2) {
   if (pos >= N(t)) return false;
-  if (is_atomic (t, what, pos, i, p, p1, p2)) {
+  if (is_atomic (t[pos])) {
+    int j, k= i;
+    while (k<N(what) &&
+	   (is_atomic (what[k]) || is_func (what[k], WILDCARD, 1))) k++;
+    for (j=k; j>i; j--) {
+      if (is_func (what[j-1], WILDCARD, 1)) continue;
+      tree swhat= what (i, j);
+      range_set sel;
+      search (sel, t[pos], swhat, p * pos);
+      if (N(sel) != 0) {
+	bool c1= (i == 0 || sel[0] == (p * pos) * start (t[pos]));
+	bool c2= (j == N(what) || sel[N(sel)-1] == (p * pos) * end (t[pos]));
+	if (j<N(t) && is_func (what[j], WILDCARD, 1)) c2= true;
+	if (i == 0) p1= sel[0];
+	if (j == N(what)) p2= sel[N(sel)-1];
+	if (i == 0 && is_func (what[0], WILDCARD, 1))
+	  p1= (p * 0) * start (t[0]);
+	if (c1 && c2 && (i > 0 || path_less_eq (mp, p1))) {
+	  if (j >= N(what)) return true;
+	  if (search_concat (t, what, pos+1, j, p, mp, p1, p2)) return true;
+	}
+      }
+    }
+    if (i == 0) return search_concat (t, what, pos+1, i, p, mp, p1, p2);
+    return false;
   }
   else if (is_func (what[i], WILDCARD, 1)) {
-    if (i == 0) p1= (t * 0) * start (t[0]);
+    if (i == 0) {
+      p1= (p * 0) * start (t[0]);
+      if (!path_less_eq (mp, p1)) return false;
+    }
     if (i+1 < N(what) && is_func (what[i+1], WILDCARD, 1))
-      return search_format (t, what, pos, i+1, p, p1, p2);
+      return search_concat (t, what, pos, i+1, p, mp, p1, p2);
     if (i+1 >= N(what)) {
-      p2= (t * (N(t)-1)) * end (t[N(t)-1]);
+      p2= (p * (N(t)-1)) * end (t[N(t)-1]);
       return true;
     }
-    if (search_format (t, what, pos, i+1, p, p1, p2)) return true;
+    if (search_concat (t, what, pos, i+1, p, mp, p1, p2)) return true;
     path dummy;
-    return search_format (t, what, pos+1, i, p, dummy, p2);
+    return search_concat (t, what, pos+1, i, p, mp, dummy, p2);
   }
   else {
     range_set sel;
     search (sel, t[pos], what[i], p * pos);
     if (N(sel) != 0) {
       bool c1= (i == 0 || sel[0] == (p * pos) * start (t[pos]));
-      bool c2= (i == N(t)-1 || sel[N(sel)-1] == (p * pos) * end (t[pos]));
+      bool c2= (i == N(what)-1 || sel[N(sel)-1] == (p * pos) * end (t[pos]));
       if (i == 0) p1= sel[0];
       if (i == N(what)-1) p2= sel[N(sel)-1];
-      if (c1 && c2) {
+      if (c1 && c2 && (i > 0 || path_less_eq (mp, p1))) {
         if (i+1 >= N(what)) return true;
-        if (search_format (t, what, pos+1, i+1, p, p1, p2)) return true;
+        if (search_concat (t, what, pos+1, i+1, p, mp, p1, p2)) return true;
       }
-      if (i == 0) return search_format (t, what, pos+1, i, p, p1, p2);
-      return false;
     }
+    if (i == 0) return search_concat (t, what, pos+1, i, p, mp, p1, p2);
+    return false;
   }
 }
-*/
 
 /******************************************************************************
 * Searching
@@ -192,7 +225,7 @@ search_string (range_set& sel, string s, tree what, path p) {
     while (pos < N(s)) {
       int next= tm_search_forwards (w, pos, s);
       if (next < 0 || next >= N(s)) break;
-      sel << (p * next) << (p * (next + N(w)));
+      merge (sel, simple_range (p * next, p * (next + N(w))));
       pos= next + N(w);
     }
   }
@@ -200,7 +233,7 @@ search_string (range_set& sel, string s, tree what, path p) {
     for (int pos=0; pos<N(s); ) {
       int start, end;
       if (match_atomic (s, what, pos, 0, start, end)) {
-        sel << (p * start) << (p * end);
+        merge (sel, simple_range (p * start, p * end));
         pos= end;
       }
       else break;
@@ -211,12 +244,31 @@ search_string (range_set& sel, string s, tree what, path p) {
 void
 search_compound (range_set& sel, tree t, tree what, path p) {
   if (match (t, what)) {
-    sel << (p * start (t)) << (p * end (t));
+    merge (sel, simple_range (p * start (t), p * end (t)));
     return;
   }
   for (int i=0; i<N(t); i++)
     if (is_accessible_child (t, i))
       search (sel, t[i], what, p * i);
+}
+
+void
+search_concat (range_set& sel, tree t, tree what, path p) {
+  for (int pos=0; pos<N(t); ) {
+    range_set ssel;
+    search (ssel, t[pos], what, p * pos);
+    if (N(ssel) != 0) {
+      merge (sel, ssel);
+      pos++;
+    }
+    path p1, p2, mp= (p * 0) * start (t[0]);
+    if (N(sel) != 0) mp= sel[N(sel)-1];
+    if (search_concat (t, what, pos, 0, p, mp, p1, p2)) {
+      merge (sel, simple_range (p1, p2));
+      int next= (p2 / p)->item;
+      pos= max (pos+1, next);
+    }
+  }
 }
 
 void
@@ -235,7 +287,7 @@ search_format (range_set& sel, tree t, tree what, path p) {
             search (lsel, t[j], what[cur], p * j);
             if (N(lsel) != 0) {
               if (lsel[0] != (p * j) * start (t[j])) break;
-              sel << fsel[N(fsel) - 2] << lsel[1];
+              merge (sel, simple_range (fsel[N(fsel) - 2], lsel[1]));
               found= true;
               i= j-1;
             }
@@ -262,6 +314,7 @@ search (range_set& sel, tree t, tree what, path p) {
     search_string (sel, t->label, what, p);
   else if (is_func (t, CONCAT) && is_func (what, CONCAT))
     search_format (sel, t, what, p);
+  //search_concat (sel, t, what, p);
   else if (is_func (t, DOCUMENT) && is_func (what, DOCUMENT))
     search_format (sel, t, what, p);
   else
@@ -298,7 +351,7 @@ select_direct (range_set& sel, tree t, tree what, path p) {
         if (cur2 >= N(what)) break;
         else if (contains_select_region (what[cur2])) return;
         else if (match_cascaded (t[i2], what[cur2])) cur2++;
-      if (cur2 >= N(what)) sel << ssel;
+      if (cur2 >= N(what)) merge (sel, ssel);
       continue;
     }
     else {
@@ -318,14 +371,14 @@ void
 select (range_set& sel, tree t, tree what, path p) {
   if (is_func (what, SELECT_REGION, 1)) {
     if (is_empty (what[0]))
-      sel << (p * start (t)) << (p * end (t));
+      merge (sel, simple_range (p * start (t), p * end (t)));
     else
       search (sel, t, what[0], p);
   }
   else {
     range_set ssel;
     select_direct (ssel, t, what, p);
-    if (N(ssel) > 0) sel << ssel;
+    if (N(ssel) > 0) merge (sel, ssel);
     else select_cascaded (sel, t, what, p);
   }
 }
