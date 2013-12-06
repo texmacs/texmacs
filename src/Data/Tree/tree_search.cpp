@@ -153,6 +153,8 @@ match (tree t, tree what) {
 bool
 search_concat (tree t, tree what, int pos, int i,
 	       path p, path mp, path& p1, path& p2) {
+  //cout << "Search " << what << ", " << i
+  //     << " in " << t << ", " << pos << "\n";
   if (pos >= N(t)) return false;
   if (is_atomic (t[pos])) {
     int j, k= i;
@@ -161,14 +163,15 @@ search_concat (tree t, tree what, int pos, int i,
     for (j=k; j>i; j--) {
       if (is_func (what[j-1], WILDCARD, 1)) continue;
       tree swhat= what (i, j);
+      if (j == i+1) swhat= swhat[0];
       range_set sel;
       search (sel, t[pos], swhat, p * pos);
       if (N(sel) != 0) {
 	bool c1= (i == 0 || sel[0] == (p * pos) * start (t[pos]));
 	bool c2= (j == N(what) || sel[N(sel)-1] == (p * pos) * end (t[pos]));
-	if (j<N(t) && is_func (what[j], WILDCARD, 1)) c2= true;
+	if (j<N(what) && is_func (what[j], WILDCARD, 1)) c2= true;
 	if (i == 0) p1= sel[0];
-	if (j == N(what)) p2= sel[N(sel)-1];
+	if (j == N(what)) p2= sel[1];
 	if (i == 0 && is_func (what[0], WILDCARD, 1))
 	  p1= (p * 0) * start (t[0]);
 	if (c1 && c2 && (i > 0 || path_less_eq (mp, p1))) {
@@ -177,7 +180,8 @@ search_concat (tree t, tree what, int pos, int i,
 	}
       }
     }
-    if (i == 0) return search_concat (t, what, pos+1, i, p, mp, p1, p2);
+    if (i == 0 || is_func (what[i], WILDCARD, 1))
+      return search_concat (t, what, pos+1, i, p, mp, p1, p2);
     return false;
   }
   else if (is_func (what[i], WILDCARD, 1)) {
@@ -202,7 +206,7 @@ search_concat (tree t, tree what, int pos, int i,
       bool c1= (i == 0 || sel[0] == (p * pos) * start (t[pos]));
       bool c2= (i == N(what)-1 || sel[N(sel)-1] == (p * pos) * end (t[pos]));
       if (i == 0) p1= sel[0];
-      if (i == N(what)-1) p2= sel[N(sel)-1];
+      if (i == N(what)-1) p2= sel[1];
       if (c1 && c2 && (i > 0 || path_less_eq (mp, p1))) {
         if (i+1 >= N(what)) return true;
         if (search_concat (t, what, pos+1, i+1, p, mp, p1, p2)) return true;
@@ -258,6 +262,12 @@ search_concat (range_set& sel, tree t, tree what, path p) {
     range_set ssel;
     search (ssel, t[pos], what, p * pos);
     if (N(ssel) != 0) {
+      if (is_func (what[0], WILDCARD, 1))
+	for (int i=0; i+1<N(ssel); i++)
+	  ssel[i]= (p * 0) * start (t[0]);
+      if (is_func (what[N(what)-1], WILDCARD, 1))
+	for (int i=0; i+1<N(ssel); i++)
+	  ssel[i+1]= (p * (N(t)-1)) * end (t[N(t)-1]);
       merge (sel, ssel);
       pos++;
     }
@@ -268,6 +278,7 @@ search_concat (range_set& sel, tree t, tree what, path p) {
       int next= (p2 / p)->item;
       pos= max (pos+1, next);
     }
+    else pos++;
   }
 }
 
@@ -313,8 +324,7 @@ search (range_set& sel, tree t, tree what, path p) {
   if (is_atomic (t))
     search_string (sel, t->label, what, p);
   else if (is_func (t, CONCAT) && is_func (what, CONCAT))
-    search_format (sel, t, what, p);
-  //search_concat (sel, t, what, p);
+    search_concat (sel, t, what, p);
   else if (is_func (t, DOCUMENT) && is_func (what, DOCUMENT))
     search_format (sel, t, what, p);
   else
