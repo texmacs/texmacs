@@ -283,7 +283,7 @@ search_concat (range_set& sel, tree t, tree what, path p) {
 }
 
 void
-search_format (range_set& sel, tree t, tree what, path p) {
+search_document (range_set& sel, tree t, tree what, path p) {
   if (N(what) == 0) return;
   for (int i=0; i<N(t); i++) {
     bool found= false;
@@ -326,7 +326,7 @@ search (range_set& sel, tree t, tree what, path p) {
   else if (is_func (t, CONCAT) && is_func (what, CONCAT))
     search_concat (sel, t, what, p);
   else if (is_func (t, DOCUMENT) && is_func (what, DOCUMENT))
-    search_format (sel, t, what, p);
+    search_document (sel, t, what, p);
   else
     search_compound (sel, t, what, p);
 }
