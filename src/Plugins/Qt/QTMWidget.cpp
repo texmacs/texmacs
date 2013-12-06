@@ -24,10 +24,10 @@
 #include "Cairo/cairo_renderer.hpp"
 #include "Cairo/tm_cairo.hpp"
 
-#if defined(Q_WS_X11)
+#if defined (Q_WS_X11)
 #include <QX11Info>
-extern Drawable qt_x11Handle(const QPaintDevice *pd);
-extern const QX11Info *qt_x11Info(const QPaintDevice *pd);
+extern Drawable qt_x11Handle (const QPaintDevice *pd);
+extern const QX11Info *qt_x11Info (const QPaintDevice *pd);
 #undef KeyPress  // conflict between QEvent::KeyPress and X11 defintion
 #endif // Q_WS_X11
 
@@ -56,11 +56,11 @@ scale (QPoint& point) {
 
 inline void
 map (int code, string name) {
-  qtkeymap(code) = name;
+  qtkeymap (code) = name;
 }
 inline void
 deadmap (int code, string name) {
-  qtdeadmap(code) = name;
+  qtdeadmap (code) = name;
 }
 
 void
@@ -162,7 +162,8 @@ static long int QTMWcounter = 0; // debugging hack
   \param _tmwid the TeXmacs widget who owns this object.
  */
 QTMWidget::QTMWidget (QWidget* _parent, qt_simple_widget_rep* _tmwid) 
-: QTMScrollView (_parent), backingPixmap (1,1), imwidget (NULL), id (QTMWcounter++)
+: QTMScrollView (_parent), tmwid (_tmwid), backingPixmap (1,1), imwidget (NULL),
+  id (QTMWcounter++)
 {
   setObjectName ("A QTMWidget");  // FIXME: What is this for?
   setFocusPolicy (Qt::StrongFocus);
@@ -171,8 +172,6 @@ QTMWidget::QTMWidget (QWidget* _parent, qt_simple_widget_rep* _tmwid)
 
   backing_pos = origin ();
   surface()->setMouseTracking (true);
-  if(_tmwid)
-    set_tm_widget (_tmwid);
   
   if (DEBUG_QT)
     debug_qt << "Creating QTMWidget " << as_string (id) << " of widget "
@@ -187,24 +186,12 @@ QTMWidget::~QTMWidget () {
              << LF;
   
     // remove ourselves from the list of QWidgets to be repainted.
-  all_widgets.remove(this);
-}
-
-/*! Sets the underlying qt_simple_widget_rep for this object.
- 
- Because construction of QTMWidgets is always done at a stage where either 
- there is no such object (see qt_tm_embedded_rep's constructor) or it is not yet
- properly initialized (see qt_simple_widget_rep's constructor), we need this
- extra method.
-*/
-void
-QTMWidget::set_tm_widget (qt_simple_widget_rep* _tmwid) {
-  tmwid = widget(_tmwid);
+  all_widgets.remove (this);
 }
 
 qt_simple_widget_rep*
 QTMWidget::tm_widget () const { 
-  return concrete_simple_widget(tmwid); 
+  return concrete_simple_widget (tmwid); 
 }
 
 void 
@@ -232,7 +219,7 @@ QTMWidget::invalidate_all () {
 
 bool
 QTMWidget::is_invalid () {
-  return !is_nil(invalid_regions);
+  return !is_nil (invalid_regions);
 }
 
 basic_renderer_rep* 
@@ -241,16 +228,16 @@ QTMWidget::getRenderer() {
   cairo_renderer_rep *ren = the_cairo_renderer ();
   cairo_surface_t *surf;
 #ifdef Q_WS_X11
-  //const QX11Info & info = x11Info();//qt_x11Info(this);
+  //const QX11Info & info = x11Info();//qt_x11Info (this);
   //    Display *dpy = x11Info().display();
-  //backingPixmap = QPixmap(width(),height());
+  //backingPixmap = QPixmap (width(),height());
   //cout << backingPixmap.width() << LF;
   Display *dpy = QX11Info::display();
   Drawable drawable = backingPixmap.handle();
   Visual *visual = (Visual*)(backingPixmap.x11Info().visual());
   surf = tm_cairo_xlib_surface_create (dpy, drawable, visual, 
                             backingPixmap.width (), backingPixmap.height ());
-#elif defined(Q_WS_MAC)
+#elif defined (Q_WS_MAC)
   surf = tm_cairo_quartz_surface_create_for_cg_context (
                     (CGContextRef)(this->macCGHandle()), width(), height());
 #endif
@@ -260,7 +247,7 @@ QTMWidget::getRenderer() {
   tm_cairo_destroy (ct);
 #else
   qt_renderer_rep * ren = the_qt_renderer();
-  ren->begin(&backingPixmap);
+  ren->begin (&backingPixmap);
 #endif
   return ren;
 }
@@ -282,7 +269,7 @@ QTMWidget::repaint_invalid_regions () {
   // qrgn is to keep track of the area on the screen which needs to be updated 
 
   // update backing store origin wrt. TeXmacs document
-  if ( backing_pos != origin() ) {
+  if (backing_pos != origin()) {
 
     int dx =  origin().x() - backing_pos.x();
     int dy =  origin().y() - backing_pos.y();
@@ -290,8 +277,8 @@ QTMWidget::repaint_invalid_regions () {
     
     QPixmap newBackingPixmap (backingPixmap.size());
     QPainter p (&newBackingPixmap);
-    //newBackingPixmap.fill(Qt::black);
-    p.drawPixmap(-dx,-dy,backingPixmap);
+    //newBackingPixmap.fill (Qt::black);
+    p.drawPixmap (-dx,-dy,backingPixmap);
     p.end();
     backingPixmap = newBackingPixmap;
     //cout << "SCROLL CONTENTS BY " << dx << " " << dy << LF;
@@ -299,35 +286,35 @@ QTMWidget::repaint_invalid_regions () {
     QSize sz = backingPixmap.size();
     
     rectangles invalid;
-    while (!is_nil(invalid_regions)) {
+    while (!is_nil (invalid_regions)) {
       rectangle r = invalid_regions->item ;
-      //      rectangle q = rectangle(r->x1+dx,r->y1-dy,r->x2+dx,r->y2-dy);
-      rectangle q = rectangle(r->x1-dx,r->y1-dy,r->x2-dx,r->y2-dy);
+      //      rectangle q = rectangle (r->x1+dx,r->y1-dy,r->x2+dx,r->y2-dy);
+      rectangle q = rectangle (r->x1-dx,r->y1-dy,r->x2-dx,r->y2-dy);
       invalid = rectangles (q, invalid);
       //cout << r << " ---> " << q << LF;
       invalid_regions = invalid_regions->next;
     }
-    invalid_regions= invalid & rectangles(rectangle(0,0,
+    invalid_regions= invalid & rectangles (rectangle (0,0,
                                                     sz.width(),sz.height()));
     
     if (dy<0) 
-      invalidate_rect(0,0,sz.width(),min(sz.height(),-dy));
+      invalidate_rect (0,0,sz.width(),min (sz.height(),-dy));
     else if (dy>0)
-      invalidate_rect(0,max(0,sz.height()-dy),sz.width(),sz.height());
+      invalidate_rect (0,max (0,sz.height()-dy),sz.width(),sz.height());
     
     if (dx<0) 
-      invalidate_rect(0,0,min(-dx,sz.width()),sz.height());
+      invalidate_rect (0,0,min (-dx,sz.width()),sz.height());
     else if (dx>0)
-      invalidate_rect(max(0,sz.width()-dx),0,sz.width(),sz.height());
+      invalidate_rect (max (0,sz.width()-dx),0,sz.width(),sz.height());
     
     // we call update now to allow repainting of invalid regions
     // this cannot be done directly since interpose_handler needs
     // to be run at least once in some situations
     // (for example when scrolling is initiated by TeXmacs itself)
     //the_gui->update();
-    //  QAbstractScrollArea::viewport()->scroll(-dx,-dy);
+    //  QAbstractScrollArea::viewport()->scroll (-dx,-dy);
    // QAbstractScrollArea::viewport()->update();
-    qrgn += QRect(QPoint(0,0),sz);
+    qrgn += QRect (QPoint (0,0),sz);
   }
   
     //cout << "   repaint QPixmap of size " << backingPixmap.width() << " x " 
@@ -345,15 +332,15 @@ QTMWidget::repaint_invalid_regions () {
       // cout << "RESIZING BITMAP"<< LF;
       QPixmap newBackingPixmap (_newSize);
       QPainter p (&newBackingPixmap);
-      p.drawPixmap(0,0,backingPixmap);
-      //p.fillRect(0, 0, _newSize.width(), _newSize.height(), Qt::red);
+      p.drawPixmap (0,0,backingPixmap);
+      //p.fillRect (0, 0, _newSize.width(), _newSize.height(), Qt::red);
       if (_newSize.width() >= _oldSize.width()) {
-        invalidate_rect(_oldSize.width(), 0, _newSize.width(), _newSize.height());
-        p.fillRect(QRect(_oldSize.width(), 0, _newSize.width()-_oldSize.width(), _newSize.height()), Qt::gray);
+        invalidate_rect (_oldSize.width(), 0, _newSize.width(), _newSize.height());
+        p.fillRect (QRect (_oldSize.width(), 0, _newSize.width()-_oldSize.width(), _newSize.height()), Qt::gray);
       }
       if (_newSize.height() >= _oldSize.height()) {
-        invalidate_rect(0,_oldSize.height(), _newSize.width(), _newSize.height());
-        p.fillRect(QRect(0,_oldSize.height(), _newSize.width(), _newSize.height()-_oldSize.height()), Qt::gray);
+        invalidate_rect (0,_oldSize.height(), _newSize.width(), _newSize.height());
+        p.fillRect (QRect (0,_oldSize.height(), _newSize.width(), _newSize.height()-_oldSize.height()), Qt::gray);
       }
       p.end();
       backingPixmap = newBackingPixmap;
@@ -379,9 +366,9 @@ QTMWidget::repaint_invalid_regions () {
       while (!is_nil (rects)) {
         rectangle r = copy (rects->item);
         rectangle r0 = rects->item;
-        QRect qr = QRect(r0->x1, r0->y1, r0->x2 - r0->x1, r0->y2 - r0->y1);
+        QRect qr = QRect (r0->x1, r0->y1, r0->x2 - r0->x1, r0->y2 - r0->y1);
         //cout << "repainting " << r0 << "\n";
-        ren->set_origin(ox, oy); 
+        ren->set_origin (ox, oy); 
         ren->encode (r->x1, r->y1);
         ren->encode (r->x2, r->y2);
         ren->set_clipping (r->x1, r->y2, r->x2, r->y1);
@@ -389,8 +376,8 @@ QTMWidget::repaint_invalid_regions () {
         if (gui_interrupted ()) {
           //cout << "interrupted repainting of  " << r0 << "\n";
           //ren->set_pencil (green);
-          //ren->line(r->x1, r->y1, r->x2, r->y2);
-          //ren->line(r->x1, r->y2, r->x2, r->y1);
+          //ren->line (r->x1, r->y1, r->x2, r->y2);
+          //ren->line (r->x1, r->y2, r->x2, r->y1);
           invalidate_rect (r0->x1, r0->y1, r0->x2, r0->y2);
         } 
         qrgn += qr;
@@ -398,17 +385,17 @@ QTMWidget::repaint_invalid_regions () {
       }
       
       ren->end();
-    } // !is_nil(invalid_regions)
+    } // !is_nil (invalid_regions)
     
   }
 
   // propagate immediatly the changes to the screen  
-  surface()->repaint(qrgn);
+  surface()->repaint (qrgn);
   
 }
 
 void 
-QTMWidget::scrollContentsBy ( int dx, int dy ) {
+QTMWidget::scrollContentsBy (int dx, int dy) {
   QTMScrollView::scrollContentsBy (dx,dy);
 
   force_update();
@@ -417,11 +404,11 @@ QTMWidget::scrollContentsBy ( int dx, int dy ) {
 }
 
 void 
-QTMWidget::resizeEvent( QResizeEvent* event ) {
+QTMWidget::resizeEvent (QResizeEvent* event) {
   (void) event;
   // Is this ok?
-  //coord2 s = from_qsize(event->size());
-  //the_gui -> process_resize(tm_widget(), s.x1, s.x2);
+  //coord2 s = from_qsize (event->size());
+  //the_gui -> process_resize (tm_widget(), s.x1, s.x2);
 
   // force_update();
 
@@ -436,8 +423,8 @@ QTMWidget::resizeEvent( QResizeEvent* event ) {
 
 void
 QTMWidget::resizeEventBis (QResizeEvent *event) {
-  coord2 s = from_qsize(event->size());
-  the_gui -> process_resize(tm_widget(), s.x1, s.x2);
+  coord2 s = from_qsize (event->size());
+  the_gui -> process_resize (tm_widget(), s.x1, s.x2);
 }
 
 
@@ -463,8 +450,8 @@ QTMWidget::paintEvent (QPaintEvent* event) {
   QPainter p (surface());
   QVector<QRect> rects = event->region().rects();
   for (int i=0; i< rects.count(); i++) {
-    QRect qr = rects.at(i);
-    p.drawPixmap(qr,backingPixmap,qr);
+    QRect qr = rects.at (i);
+    p.drawPixmap (qr,backingPixmap,qr);
   }
 }
 
@@ -509,7 +496,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
         if (ac && ac != ' ') { // a true ascii printable
           r= ac;
           if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "ascii key= " <<r << "\n";	
-          the_gui->process_keypress(tm_widget(), r, texmacs_time());
+          the_gui->process_keypress (tm_widget(), r, texmacs_time());
           return;
         }
       }
@@ -534,7 +521,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
         mods &=~ Qt::ShiftModifier;
         r= string ((char) key);
       } else {
-        switch(unic) {
+        switch (unic) {
           case 96:   r= "`"; 
             // unicode to cork conversion not appropriate for this case...
 #ifdef Q_WS_MAC
@@ -559,9 +546,9 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
             // converter_rep::load()), enclose the texmacs symbols in "< >", 
             // but this format is not used for keypresses, so we must remove
             // them.
-            int len= N(tstr);
+            int len= N (tstr);
             if (len >= 1 && tstr[0] == '<' && tstr[1] != '#' && tstr[len-1] == '>')
-              r= tstr(1, len-1);
+              r= tstr (1, len-1);
             else
               r= tstr;
             if (r == "less") r= "<";
@@ -636,28 +623,28 @@ mouse_state (QMouseEvent* event, bool flag) {
 
 static string
 mouse_decode (unsigned int mstate) {
-  if (mstate & 2 ) return "middle";
-  else if (mstate & 4 ) return "right";
+  if (mstate & 2) return "middle";
+  else if (mstate & 4) return "right";
     // we check for left clicks after the others for macos (see ifdef in mouse_state)
-  else if (mstate & 1 ) return "left";
-  else if (mstate & 8 ) return "up";
+  else if (mstate & 1) return "left";
+  else if (mstate & 8) return "up";
   else if (mstate & 16) return "down";
   return "unknown";
 }
 
 #if 0 // NOT USED
-static void setRoundedMask(QWidget *widget)
+static void setRoundedMask (QWidget *widget)
 {
-  QPixmap pixmap(widget->size());
-  QPainter painter(&pixmap);
-  painter.fillRect(pixmap.rect(), Qt::white);
-  painter.setBrush(Qt::black);
+  QPixmap pixmap (widget->size());
+  QPainter painter (&pixmap);
+  painter.fillRect (pixmap.rect(), Qt::white);
+  painter.setBrush (Qt::black);
 #if (QT_VERSION >= 0x040400)
-  painter.drawRoundedRect(pixmap.rect(),8,8, Qt::AbsoluteSize);
+  painter.drawRoundedRect (pixmap.rect(),8,8, Qt::AbsoluteSize);
 #else
-  painter.drawRect(pixmap.rect());
+  painter.drawRect (pixmap.rect());
 #endif
-  widget->setMask(pixmap.createMaskFromColor(Qt::white));
+  widget->setMask (pixmap.createMaskFromColor (Qt::white));
 }
 #endif
 
@@ -667,22 +654,22 @@ static void setRoundedMask(QWidget *widget)
 void
 QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
   if (! imwidget) {   
-    imwidget = new QLabel(this);
-    imwidget->setWindowFlags(Qt::Tool | Qt::FramelessWindowHint);
-  //  imwidget->setAttribute(Qt::WA_TranslucentBackground);
-//    imwidget->setAutoFillBackground(false);
-       imwidget->setAutoFillBackground(true);
-    imwidget->setWindowOpacity(0.5);
-    imwidget->setFocusPolicy(Qt::NoFocus);
+    imwidget = new QLabel (this);
+    imwidget->setWindowFlags (Qt::Tool | Qt::FramelessWindowHint);
+  //  imwidget->setAttribute (Qt::WA_TranslucentBackground);
+//    imwidget->setAutoFillBackground (false);
+       imwidget->setAutoFillBackground (true);
+    imwidget->setWindowOpacity (0.5);
+    imwidget->setFocusPolicy (Qt::NoFocus);
     QPalette pal = imwidget->palette();
-//    pal.setColor(QPalette::Window, QColor(0,0,255,80));
-    pal.setColor(QPalette::Window, QColor(0,0,255,255));
-    pal.setColor(QPalette::WindowText, Qt::white);
-    imwidget->setPalette(pal);
+//    pal.setColor (QPalette::Window, QColor (0,0,255,80));
+    pal.setColor (QPalette::Window, QColor (0,0,255,255));
+    pal.setColor (QPalette::WindowText, Qt::white);
+    imwidget->setPalette (pal);
     QFont f = imwidget->font();
-    f.setPointSize(30);
-    imwidget->setFont(f);
-    imwidget->setMargin(5);
+    f.setPointSize (30);
+    imwidget->setFont (f);
+    imwidget->setMargin (5);
   }
 
   QString const & preedit_string = event->preeditString();
@@ -693,18 +680,18 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
   } else {
     if (DEBUG_QT)
       debug_qt << "IM preediting :" << preedit_string.toUtf8().data() << LF;
-    imwidget->setText(preedit_string);
+    imwidget->setText (preedit_string);
     imwidget->adjustSize();
     QSize sz = size();
     QRect g = imwidget->geometry();
-    QPoint c = mapToGlobal(cursor_pos);
-    c += QPoint(5,5);
-    // g.moveCenter(QPoint(sz.width()/2,sz.height()/2));
-    g.moveTopLeft(c);
+    QPoint c = mapToGlobal (cursor_pos);
+    c += QPoint (5,5);
+    // g.moveCenter (QPoint (sz.width()/2,sz.height()/2));
+    g.moveTopLeft (c);
     if (DEBUG_QT)
       debug_qt << "IM hotspot: " << cursor_pos.x() << "," << cursor_pos.y() << LF;
-    imwidget->setGeometry(g);
-    // setRoundedMask(imwidget);
+    imwidget->setGeometry (g);
+    // setRoundedMask (imwidget);
     imwidget->show();
 #ifdef QT_MAC_USE_COCOA
     // HACK: we unexplicably loose the focus even when showing the small window,
@@ -723,12 +710,12 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     int key = 0;
 #if 1
     for (int i = 0; i < commit_string.size(); ++i) {
-      QKeyEvent ev(QEvent::KeyPress, key, Qt::NoModifier, commit_string[i]);
-      keyPressEvent(&ev);
+      QKeyEvent ev (QEvent::KeyPress, key, Qt::NoModifier, commit_string[i]);
+      keyPressEvent (&ev);
     }
 #else
-    QKeyEvent ev(QEvent::KeyPress, key, Qt::NoModifier, commit_string);
-    keyPressEvent(&ev);
+    QKeyEvent ev (QEvent::KeyPress, key, Qt::NoModifier, commit_string);
+    keyPressEvent (&ev);
 #endif
   }
   
@@ -737,10 +724,10 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
 }  
 
 QVariant 
-QTMWidget::inputMethodQuery ( Qt::InputMethodQuery query ) const {
+QTMWidget::inputMethodQuery (Qt::InputMethodQuery query) const {
   switch (query) {
     case Qt::ImMicroFocus :
-      return QVariant(QRect(cursor_pos + QPoint(10,10),QSize(20,40)));
+      return QVariant (QRect (cursor_pos + QPoint (10,10),QSize (20,40)));
     default:
       return QVariant();
   }
@@ -762,12 +749,12 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     int key = 0;
 #if 1
     for (int i = 0; i < commit_string.size(); ++i) {
-      QKeyEvent ev(QEvent::KeyPress, key, Qt::NoModifier, commit_string[i]);
-      keyPressEvent(&ev);
+      QKeyEvent ev (QEvent::KeyPress, key, Qt::NoModifier, commit_string[i]);
+      keyPressEvent (&ev);
     }
 #else
-    QKeyEvent ev(QEvent::KeyPress, key, Qt::NoModifier, commit_string);
-    keyPressEvent(&ev);
+    QKeyEvent ev (QEvent::KeyPress, key, Qt::NoModifier, commit_string);
+    keyPressEvent (&ev);
 #endif
   }
   
@@ -783,7 +770,7 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     //    int pos = preedit_string.count();
     int pos = 0;
     bool visible_cur = false;
-    for(int i=0; i< attrs.count(); i++) 
+    for (int i=0; i< attrs.count(); i++) 
       if (attrs[i].type == QInputMethodEvent::Cursor) {
         pos = attrs[i].start;
         visible_cur = (attrs[i].length != 0);
@@ -793,7 +780,7 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     int sel_start = 0;
     int sel_length = 0;
     if (pos <  preedit_string.count()) {
-      for(int i=0; i< attrs.count(); i++) 
+      for (int i=0; i< attrs.count(); i++) 
         if ((attrs[i].type == QInputMethodEvent::TextFormat) &&
             (attrs[i].start <= pos) &&
             (pos < attrs[i].start + attrs[i].length)) {
@@ -807,7 +794,7 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     }
     (void) sel_start; (void) sel_length;
     
-    r = r * as_string(pos) * ":" * from_qstring(preedit_string);
+    r = r * as_string (pos) * ":" * from_qstring (preedit_string);
   }
   if (tm_widget()->ref_count != 0)
     the_gui -> process_keypress (tm_widget(), r, texmacs_time());
@@ -815,7 +802,7 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
 }  
 
 QVariant 
-QTMWidget::inputMethodQuery ( Qt::InputMethodQuery query ) const {
+QTMWidget::inputMethodQuery (Qt::InputMethodQuery query) const {
   switch (query) {
     case Qt::ImMicroFocus :
       return QVariant (QRect (cursor_pos, QSize (5,5)));
@@ -831,19 +818,13 @@ QTMWidget::inputMethodQuery ( Qt::InputMethodQuery query ) const {
 
 void
 QTMWidget::mousePressEvent (QMouseEvent* event) {
-  if (tm_widget()->ref_count == 0) return;
+  if (is_nil (tmwid)) return;
   QPoint point = event->pos() + origin();
   scale (point);
   unsigned int mstate= mouse_state (event, false);
   string s= "press-" * mouse_decode (mstate);
   the_gui -> process_mouse (tm_widget(), s, point.x (), point.y (), 
                             mstate, texmacs_time ());
- // tm_widget() -> handle_mouse (s, point.x (), point.y (), mstate, texmacs_time ());
-  /*
-  if (DEBUG_QT)
-    debug_qt << "mouse event: " << s << " at "
-             << point.x () << ", " << point.y () << LF;
-   */
   event->accept();
 }
 
@@ -896,7 +877,7 @@ QTMWidget::event (QEvent* event) {
 
 
 void
-QTMWidget::focusInEvent ( QFocusEvent * event ) {
+QTMWidget::focusInEvent (QFocusEvent * event) {
   if (tm_widget()->ref_count != 0) {
     if (DEBUG_QT)
       debug_qt << "FOCUSIN: " << tm_widget()->type_as_string() << LF;
@@ -907,7 +888,7 @@ QTMWidget::focusInEvent ( QFocusEvent * event ) {
 }
 
 void
-QTMWidget::focusOutEvent ( QFocusEvent * event ) {
+QTMWidget::focusOutEvent (QFocusEvent * event) {
   if (tm_widget()->ref_count != 0) {
     if (DEBUG_QT)
       debug_qt << "FOCUSOUT: " << tm_widget()->type_as_string() << LF;
@@ -921,6 +902,6 @@ QTMWidget::focusOutEvent ( QFocusEvent * event ) {
 QSize
 QTMWidget::sizeHint () const {
   SI w,h;
-  tm_widget()->handle_get_size_hint(w,h);
-  return to_qsize(w, h);
+  tm_widget()->handle_get_size_hint (w,h);
+  return to_qsize (w, h);
 }

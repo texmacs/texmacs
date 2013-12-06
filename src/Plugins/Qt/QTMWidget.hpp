@@ -55,7 +55,6 @@ public:
   void setCursorPos (QPoint pos) { cursor_pos = pos; }
 
   qt_simple_widget_rep* tm_widget () const;
-  void              set_tm_widget (qt_simple_widget_rep* _tmwid);
   
   virtual QSize	sizeHint () const;
 

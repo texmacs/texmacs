@@ -217,16 +217,7 @@ qt_simple_widget_rep::send (slot s, blackbox val) {
       NOT_IMPLEMENTED("qt_simple_widget::SLOT_MOUSE_POINTER");
     }
       break;
-      
-    case SLOT_KEYBOARD_FOCUS:
-    {
-      check_type<bool> (val, s);
-      bool focus = open_box<bool> (val);
-      if (focus && canvas() && !canvas()->hasFocus())
-        canvas()->setFocus(Qt::OtherFocusReason);
-    }
-      break;
-      
+
     case SLOT_CURSOR:
     {
       check_type<coord2>(val, s);

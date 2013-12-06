@@ -749,32 +749,6 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
         // glue_widget, so we may not just use canvas() everywhere.
     case SLOT_SCROLLABLE:
     {
-/*
-      check_type_void (index, s);
-      
-      QLayout* l = centralwidget()->layout();
-      
-        //// Reparent the current main_widget's QWidget to the window
-      QWidget* q = concrete(main_widget)->qwid;
-      l->removeWidget(q);
-      q->setParent(qwid);
-      q->deleteLater();                 // careful with pending QEvents...
-      concrete(main_widget)->qwid = 0;  // Unnecessary in principle.
-      
-      q = concrete(w)->as_qwidget();   // force creation of the new QWidget
-      q->setParent(qwid);  // l->removeWidget(q) will reset ownership to this
-      l->addWidget(q);
-
-      main_widget = w; // canvas() now returns the new QTMWidget (or 0)
-
-      if (canvas()) {
-        canvas()->show();
-        canvas()->setFocusPolicy(Qt::StrongFocus);
-        canvas()->setFocus();
-        // Fix size to draw margins around.
-        scrollarea()->surface()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-      }
-*/
       check_type_void (index, s);
       
       QWidget* q = concrete(main_widget)->qwid;
@@ -787,14 +761,8 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
                        // that they are children of the widget on which the layout is installed.
       main_widget = w; // canvas() now returns the new QTMWidget (or 0)
       
-      if (canvas()) {
-        canvas()->show();
-        canvas()->setFocusPolicy(Qt::StrongFocus);
-        canvas()->setFocus();
-          // Fix size to draw margins around.
+      if (scrollarea())   // Fix size to draw margins around.
         scrollarea()->surface()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-      }
-
     }
       break;
       
@@ -931,10 +899,7 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
 
 qt_tm_embedded_widget_rep::qt_tm_embedded_widget_rep (command _quit) 
  : qt_widget_rep(embedded_tm_widget), quit(_quit) {
-
   main_widget = ::glue_widget (true, true, 1, 1);
-    // force creation of QWidget and reparent main_widget's QWidget to it.
-  qwid = as_qwidget();
 }
 
 void
@@ -1048,21 +1013,9 @@ qt_tm_embedded_widget_rep::write (slot s, blackbox index, widget w) {
     case SLOT_SCROLLABLE:
     {
       check_type_void (index, s);
-      
-      QWidget* q = concrete(main_widget)->qwid;
-      q->hide();
-      QLayout* l = qwid->layout();
-      l->removeWidget(q);
-      
-      q = concrete(w)->as_qwidget();   // force creation of the new QWidget
-      l->addWidget(q);
-      main_widget = w; // canvas() now returns the new QTMWidget (or 0)
-      
-      qwid->setFocusPolicy(Qt::StrongFocus);
-      qwid->setFocus();
+      main_widget = w;
     }
       break;
-
         /// FIXME: decide what to do with these for embedded widgets
     case SLOT_MAIN_MENU:
     case SLOT_MAIN_ICONS:

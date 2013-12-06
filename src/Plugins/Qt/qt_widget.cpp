@@ -63,6 +63,14 @@ qt_widget_rep::add_children (array<widget> a) {
 void
 qt_widget_rep::send (slot s, blackbox val) {
   switch (s) {
+    case SLOT_KEYBOARD_FOCUS:
+    {
+      check_type<bool> (val, s);
+      bool focus = open_box<bool> (val);
+      if (focus && qwid && !qwid->hasFocus())
+        qwid->setFocus(Qt::OtherFocusReason);
+    }
+      break;
     case SLOT_NAME:
     {
         // CHECK ME!
