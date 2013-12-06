@@ -302,7 +302,7 @@
 (define (latex-command-uses s)
   (with packlist (logic-ref-list latex-needs% s)
     (when packlist
-      (if (string? packlist) (set! packlist (list packlist)))
+      (set! packlist (list packlist))
       (for-each (cut ahash-set! latex-uses-table <> #t) packlist))))
 
 (define (latex-use-which-package l)
@@ -325,13 +325,25 @@
 (define (filter-packages l)
   (filter (lambda (x) (nin? x tmtex-provided-packages)) l))
 
+(define (filter-packages* l)
+  (filter (lambda (x) (nin? (cAr x) tmtex-provided-packages)) l))
+
+(define (make-use-package l)
+  (let ((opt (apply string-append (list-intersperse (cDr l) ",")))
+        (sty (cAr l)))
+    (string-append "\\usepackage[" opt "]{" sty "}\n")))
+
 (define (latex-as-use-package l1)
-  (let* ((l2 (sort l1 latex-use-package-compare))
-	 (l3 (map force-string l2))
-         (l4 (filter-packages l3))
-	 (l5 (list-intersperse l4 ","))
-	 (s  (apply string-append l5)))
-    (if (== s "") "" (string-append "\\usepackage{" s "}\n"))))
+  (let* ((l2  (sort l1 latex-use-package-compare))
+	 (l3  (filter string? l2))
+         (l3* (map (lambda (x)
+                     (map force-string x)) (filter list>0? l2)))
+         (l4  (filter-packages  l3))
+         (l4* (filter-packages* l3*))
+	 (l5  (list-intersperse l4 ","))
+	 (s   (apply string-append l5))
+         (s*  (apply string-append (map make-use-package l4*))))
+    (if (== s "") s* (string-append "\\usepackage{" s "}\n" s*))))
 
 (tm-define (latex-use-package-command doc)
   (:synopsis "Return the usepackage command for @doc")
