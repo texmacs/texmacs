@@ -464,7 +464,7 @@
 (logic-table latex-texmacs-preamble%
   (newmdenv (!append
               (mdfsetup (!append "outerlinecolor=black,innerlinewidth=0.3pt,"
-                                 "skipabove=\\topskip,skipbelow=\\topskip,"
+                                 "skipabove=0.5em,skipbelow=0.5em,"
                                  "hidealllines=true,\ninnerleftmargin=0pt,"
                                  "innerrightmargin=0pt,innertopmargin=0pt,"
                                  "innerbottommargin=0pt" )) "\n"))
@@ -577,23 +577,23 @@
   ("tmpadded"     (!append (newmdenv (!option "") "tmpadded") "\n"))
   ("tmoverlined"  (!append
                     (newmdenv
-                      (!option "topline=true,innertopmargin=10pt")
+                      (!option "topline=true,innertopmargin=1ex")
                       "tmoverlined") "\n"))
   ("tmunderlined" (!append
                     (newmdenv
-                      (!option "bottomline=true,innerbottommargin=10pt")
+                      (!option "bottomline=true,innerbottommargin=1ex")
                       "tmunderlined") "\n"))
   ("tmbothlined"  (!append
                     (newmdenv
-                      (!option "topline=true,bottomline=true,innertopmargin=10pt,innerbottommargin=10pt")
+                      (!option "topline=true,bottomline=true,innertopmargin=1ex,innerbottommargin=1ex")
                       "tmbothlined") "\n"))
   ("tmframed"     (!append
                     (newmdenv
-                      (!option "hidealllines=false,innertopmargin=10pt,innerbottommargin=10pt,innerleftmargin=5pt,innerrightmargin=5pt")
+                      (!option "hidealllines=false,innertopmargin=1ex,innerbottommargin=1ex,innerleftmargin=1ex,innerrightmargin=1ex")
                       "tmframed") "\n"))
   ("tmornamented" (!append
                     (newmdenv
-                      (!option "hidealllines=false,innertopmargin=10pt,innerbottommargin=10pt,innerleftmargin=5pt,innerrightmargin=5pt")
+                      (!option "hidealllines=false,innertopmargin=1ex,innerbottommargin=1ex,innerleftmargin=1ex,innerrightmargin=1ex")
                       "tmornamented") "\n")))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Plain style theorems

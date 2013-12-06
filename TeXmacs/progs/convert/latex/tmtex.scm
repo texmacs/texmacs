@@ -666,6 +666,7 @@
   (with s (force-string len)
     (cond ((string-ends? s "fn") (string-replace s "fn" "em"))
 	  ((string-ends? s "spc") (string-replace s "spc" "em"))
+	  ((string-ends? s "sep") (string-replace s "sep" "ex"))
 	  ((string-ends? s "par") (string-replace s "par" "\\columnwidth"))
 	  (else s))))
 
@@ -1908,11 +1909,50 @@
 (define (tmtex-nbhyph s l)
   '(!nbhyph))
 
+;; to be done
+(define (tmtex-decode-color s) s)
+
+(define (tmtex-ornament-shape s)
+  (if (== s "rounded") "1.7ex" "0pt"))
+
+(define (assign-ornament-env l)
+  (let* ((keys* (car  l))
+         (val   (cadr l))
+         (keys  (cDr keys*))
+         (fun   (cAr keys*)))
+    (apply string-append
+           (list-intersperse
+             (map (lambda (key)
+                    (string-append key "=" (fun val))) keys) ","))))
+
+(define (get-ornament-env)
+  (let* ((l1  (ahash-set->list tmtex-env))
+         (l21 (map (cut logic-ref tex-ornament-opts% <>) l1))
+         (l22 (map (cut tmtex-env-get <>) l1))
+         (l3  (map (lambda (x y) (if (and x y) (list x y) '())) l21 l22))
+         (l4  (filter nnull? l3))
+         (l5  (map assign-ornament-env l4)))
+  (apply string-append (list-intersperse l5 ","))))
+
 (define (tmtex-ornamented s l)
   (let* ((env     (string-append "tm" s))
-         (option  '())
-         (option* (if (nnull? option) `((!option "")) '())))
+         (option  (get-ornament-env))
+         (option* (if (!= option "") `((!option ,option)) '())))
   `((!begin ,env ,@option*) ,(tmtex (car  l)))))
+
+(logic-table tex-ornament-opts%
+  ("padding-above"     ("skipabove" ,tmtex-decode-length))
+  ("padding-below"     ("skipbelow" ,tmtex-decode-length))
+  ("overlined-sep"     ("innertopmargin" ,tmtex-decode-length))
+  ("underlined-sep"    ("innerbottommargin" ,tmtex-decode-length))
+  ("framed-vsep"       ("innertopmargin"  "innerbottommargin"
+                        ,tmtex-decode-length))
+  ("ornament-vpadding" ("innertopmargin"  "innerbottommargin"
+                        ,tmtex-decode-length))
+  ("ornament-hpadding" ("innerleftmargin" "innerrightmargin"
+                        ,tmtex-decode-length))
+  ("ornament-color"    ("backgroundcolor" ,tmtex-decode-color))
+  ("ornament-shape"    ("roundcorner" ,tmtex-ornament-shape)))
 
 (define (tmtex-tm s l)
   (with tag (string->symbol (string-append "tm" (string-replace s "-" "")))
