@@ -19,6 +19,7 @@
 
 #include "message.hpp"
 #include "analyze.hpp"
+#include "window.hpp"
 
 #include <QWidget>
 #include <QVariant>
@@ -33,8 +34,9 @@
  The parameter "fake" means this qt_window_widget_rep is not part of the window
  list, so the nr_windows global variable must not be updated.
  */
-qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, command _quit, bool _fake)
-: qt_widget_rep (window_widget, _wid), fake(_fake), quit(_quit)
+qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, string name,
+                                            command _quit, bool _fake)
+: qt_widget_rep (window_widget, _wid), orig_name(name), quit(_quit), fake(_fake)
 {
   qwid->setProperty ("texmacs_window_widget",
                      QVariant::fromValue ((void*) this));
@@ -43,15 +45,18 @@ qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, command _quit, bool _
     // We need this for the QDockWidgets we use in side tools (see qt_tm_widget_rep)
   if (qwid->metaObject() -> 
       indexOfSignal (QMetaObject::normalizedSignature ("closed()").constData ()) != -1) {
-    QTMCommand* qtmcmd = new QTMCommand(qwid, quit);
+    QTMCommand* qtmcmd = new QTMCommand (qwid, quit);
     QObject::connect(qwid, SIGNAL (closed()), qtmcmd, SLOT (apply()));
   }
 
-  if (!has_resizable_children(_wid))
-    qwid->setFixedSize(qwid->sizeHint());
+  if (!has_resizable_children (_wid))
+    qwid->setFixedSize (qwid->sizeHint());
   
     // HACK: don't increment window count for side tools or any other fake windows
   if (!fake) win_id = ++nr_windows;
+  
+  if (DEBUG_QT)
+    debug_qt << "Creating qt_window_widget " << id << "\n";
 }
 
 /*!
@@ -60,12 +65,13 @@ qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, command _quit, bool _
 qt_window_widget_rep::~qt_window_widget_rep ()
 {
   if (!fake) nr_windows--;
-
+  if (DEBUG_QT)
+    debug_qt << "Deleting qt_window_widget " << id << "\n";
   qwid->deleteLater();
 }
 
 widget
-qt_window_widget_rep::popup_window_widget(string s)
+qt_window_widget_rep::popup_window_widget (string s)
 {
   qwid->setWindowTitle (to_qstring (s));
   qwid->setWindowModality (Qt::NonModal);
@@ -126,8 +132,7 @@ qt_window_widget_rep::send (slot s, blackbox val) {
         qwid->resize (size);
       }
     }
-      break;
-      
+      break; 
     case SLOT_POSITION:
     {
       check_type<coord2>(val, s);
@@ -143,7 +148,6 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       }
     }
       break;
-      
     case SLOT_VISIBILITY:
     {
       check_type<bool> (val, s);
@@ -160,7 +164,6 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       }
     }
       break;
-
     case SLOT_MOUSE_GRAB:
     {   
       check_type<bool> (val, s);
@@ -172,8 +175,7 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       }
     }   
       break;
-
-    case SLOT_NAME:
+    case SLOT_NAME:   // sets window *title* not the name
     {   
       check_type<string> (val, s);
       string name = open_box<string> (val);
@@ -193,8 +195,8 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       check_type<string> (val, s);
       string kind = open_box<string> (val);
       the_gui->gui_helper->emitTmSlotRefresh (kind);
-      break;
     }
+      break;
     default:
       qt_widget_rep::send(s, val);
   }

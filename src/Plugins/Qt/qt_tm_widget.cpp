@@ -119,11 +119,10 @@ tweak_iconbar_size (QSize& sz) {
 }
 
 qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
- : qt_window_widget_rep (new QTMWindow (0), _quit), helper (this), 
+ : qt_window_widget_rep (new QTMWindow (0), "popup", _quit), helper (this),
    prompt (NULL), full_screen (false)
 {
   type = texmacs_widget;
-  orig_name = "popup";
 
   main_widget = ::glue_widget (true, true, 1, 1);
   
@@ -189,7 +188,10 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   sideDock     = new QDockWidget ("Side tools", 0);
     // HACK: Wrap the dock in a "fake" window widget (last parameter = true) to
     // have clicks report the right position.
-  dock_window_widget = tm_new<qt_window_widget_rep> (sideDock, command(), true);
+  static int cnt=0;
+  string dock_name = "dock:" * as_string(cnt++);
+  dock_window_widget = tm_new<qt_window_widget_rep> (sideDock, dock_name,
+                                                     command(), true);
   
   mainToolBar->setStyle (qtmstyle ());
   modeToolBar->setStyle (qtmstyle ());
@@ -322,13 +324,13 @@ qt_tm_widget_rep::~qt_tm_widget_rep () {
   waiting_widgets = remove(waiting_widgets, this);
 }
 
-/*! FIXME: should we overwrite the previous quit command?
+/*! Return ourselves as a window widget.
+ \param name A unique identifier for the window (e.g. "TeXmacs:3")
  */
 widget
-qt_tm_widget_rep::plain_window_widget (string title, command quit) {
-  (void) quit;
-  orig_name = title;
-  qwid->setWindowTitle (to_qstring (title));
+qt_tm_widget_rep::plain_window_widget (string name, command _quit) {
+  (void) _quit; // The widget already has a command. Don't overwrite. 
+  orig_name = name;
   return this;
 }
 

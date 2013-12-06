@@ -38,15 +38,18 @@ class QWidget;
  return a qt_window_widget_rep or we'll leak.
 */
 class qt_window_widget_rep: public qt_widget_rep {
-  int win_id;
-  bool fake;
+protected:
+  int win_id;        //!< Unique integer identifier, returned by SLOT_WINDOW.
+  string orig_name;  //!< Unique name assigned to the window.
+  command quit;      //!< Command to be executed when the window is closed.
+  bool fake;         //!< Whether this truly is a window (or a docked widget).
 
 public:
-  command quit;
   
-  qt_window_widget_rep (QWidget* _wid, command q, bool fake=false);
+  qt_window_widget_rep (QWidget* _wid, string name, command q, bool fake=false);
   ~qt_window_widget_rep ();
 
+  virtual inline string get_nickname () { return orig_name; }
   virtual widget popup_window_widget (string s);
 
   virtual void      send (slot s, blackbox val);
@@ -56,7 +59,7 @@ public:
 	
   static widget_rep* widget_from_qwidget (QWidget* qwid);
 
-  static bool has_resizable_children(QWidget* w, bool ret=false);
+  static bool has_resizable_children (QWidget* w, bool ret=false);
 };
 
 /*!

@@ -154,6 +154,7 @@ initkeymap () {
   // map (Qt::Key_ModeSwitchFunctionKey, "modeswitch" );
 }
 
+static long int QTMWcounter = 0; // debugging hack
 
 /*! Constructor.
  
@@ -161,9 +162,9 @@ initkeymap () {
   \param _tmwid the TeXmacs widget who owns this object.
  */
 QTMWidget::QTMWidget (QWidget* _parent, qt_simple_widget_rep* _tmwid) 
-  : QTMScrollView (_parent), backingPixmap(1,1), imwidget(NULL)
+: QTMScrollView (_parent), backingPixmap (1,1), imwidget (NULL), id (QTMWcounter++)
 {
-  setObjectName ("A QTMWidget");
+  setObjectName ("A QTMWidget");  // FIXME: What is this for?
   setFocusPolicy (Qt::StrongFocus);
   setAttribute (Qt::WA_InputMethodEnabled);
   all_widgets.insert (this);
@@ -172,13 +173,17 @@ QTMWidget::QTMWidget (QWidget* _parent, qt_simple_widget_rep* _tmwid)
   surface()->setMouseTracking (true);
   if(_tmwid)
     set_tm_widget (_tmwid);
+  
+  if (DEBUG_QT)
+    debug_qt << "Creating QTMWidget " << as_string (id) << " of widget "
+             << (tm_widget() ? tm_widget()->type_as_string() : "NULL")
+             << LF;
 }
-
 
 QTMWidget::~QTMWidget () {
   if (DEBUG_QT) 
-    debug_qt << "Destroying QTMWidget " << (long)this << " of widget "
-             << (tm_widget() ? tm_widget()->type_as_string() : "NULL") 
+    debug_qt << "Destroying QTMWidget " << as_string (id) << " of widget "
+             << (tm_widget() ? tm_widget()->type_as_string() : "NULL")
              << LF;
   
     // remove ourselves from the list of QWidgets to be repainted.
@@ -201,7 +206,6 @@ qt_simple_widget_rep*
 QTMWidget::tm_widget () const { 
   return concrete_simple_widget(tmwid); 
 }
-
 
 void 
 QTMWidget::invalidate_rect (int x1, int y1, int x2, int y2) {
@@ -469,13 +473,13 @@ void
 QTMWidget::keyPressEvent (QKeyEvent* event) {
   static bool fInit = false;
   if (!fInit) {
-    if (DEBUG_QT)
+    if (DEBUG_QT && DEBUG_KEYBOARD)
       debug_qt << "Initializing keymap\n";
     initkeymap();
     fInit= true;
   }
 
-  if (DEBUG_QT)
+  if (DEBUG_QT && DEBUG_KEYBOARD)
     debug_qt << "keypressed\n";
   if (tm_widget()->ref_count == 0) return;
 
@@ -483,7 +487,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
     int key = event->key();
     Qt::KeyboardModifiers mods = event->modifiers();
 
-    if (DEBUG_QT) {
+    if (DEBUG_QT && DEBUG_KEYBOARD) {
       debug_qt << "key  : " << key << LF;
       debug_qt << "text : " << event->text().toAscii().data() << LF;
       debug_qt << "count: " << event->text().count() << LF;
@@ -504,7 +508,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
         char ac=c.toAscii();
         if (ac && ac != ' ') { // a true ascii printable
           r= ac;
-          if (DEBUG_QT) debug_qt << "ascii key= " <<r << "\n";	
+          if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "ascii key= " <<r << "\n";	
           the_gui->process_keypress(tm_widget(), r, texmacs_time());
           return;
         }
@@ -588,7 +592,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
     //if (mods & Qt::KeypadModifier) r= "K-" * r;
 #endif
 
-    if (DEBUG_QT)
+    if (DEBUG_QT && DEBUG_KEYBOARD)
       debug_qt << "key press: " << r << LF;
     //int start= texmacs_time ();
     //tm_widget() -> handle_keypress (r, texmacs_time());

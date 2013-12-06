@@ -72,8 +72,6 @@ class qt_tm_widget_rep: public qt_window_widget_rep {
   bool visibility[7];
   bool full_screen;
   
-  string orig_name;
-  
   widget main_widget;
   widget main_menu_widget;
   widget main_icons_widget;
@@ -87,9 +85,8 @@ class qt_tm_widget_rep: public qt_window_widget_rep {
 public:
   qt_tm_widget_rep (int mask, command _quit);
   ~qt_tm_widget_rep ();
-  virtual inline string get_nickname () { return orig_name; }
   
-  virtual widget plain_window_widget (string title, command quit);
+  virtual widget plain_window_widget (string name, command quit);
 
   virtual void      send (slot s, blackbox val);
   virtual blackbox query (slot s, int type_id);

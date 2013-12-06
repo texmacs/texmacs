@@ -151,12 +151,12 @@ qt_widget_rep::get_qmenu () {
  
  The default implementation should suffice in most cases.
 
-  \param title (Often?) a title for the window.
-  \param quit Scheme closure to be executed upon close. 
-  \return The new qt_window_widget.
+ \param name A unique identifier for the window. This is *not* the window title.
+ \param quit A command to be executed when the window closes.
+ \return The new qt_window_widget.
 */
 widget
-qt_widget_rep::plain_window_widget (string title, command quit) {
+qt_widget_rep::plain_window_widget (string name, command quit) {
   if (DEBUG_QT_WIDGETS)
     debug_widgets << "qt_widget_rep::plain_window_widget() around a "
                   << type_as_string() << LF;
@@ -181,14 +181,14 @@ qt_widget_rep::plain_window_widget (string title, command quit) {
     }
   }
   
-  win->setWindowTitle (to_qstring (title));
   int l,t,r,b;
   win->layout()->getContentsMargins (&l, &t, &r, &b);
   win->layout()->setContentsMargins (l+3, t+3, r+3, b+3);
   
-  qt_widget wid = tm_new<qt_window_widget_rep> (win, quit);
+  qt_window_widget_rep* wid = tm_new<qt_window_widget_rep> (win, name, quit);
   wid->add_child (this);
-  return abstract (wid);
+
+  return widget (wid);
 }
 
 /*! Instantiates and returns a new widget which will act as a popup widget.
@@ -223,21 +223,23 @@ tm_ostream& operator << (tm_ostream& out, qt_widget w) {
 
 /*! Creates a decorated window using the given widget.
 
- The window will have name s, contents w and perform command q upon closing.
- 
  Each widget type may choose how to present itself as a window, by 
  reimplementing qt_widget_rep::plain_window_widget(), although the base class
  qt_widget_rep provides a default implementation which suffices in most cases.
  See its documentation.
+
+ \param w    The contents of the window.
+ \param name A unique identifier for the window. This is *not* the window title.
+ \param q    A command to be executed when the window closes.
 */
 widget
-plain_window_widget (widget w, string s, command q) {
-  widget win= concrete(w)->plain_window_widget (s, q);
-  if (s != "popup") {
+plain_window_widget (widget w, string name, command q) {
+  widget win= concrete(w)->plain_window_widget (name, q);
+  if (name != "popup") {
     int xx, yy, ww, hh;
     xx = yy = ww = hh = -1;
-    get_preferred_position (s, xx, yy);
-    get_preferred_size (s, ww, hh);
+    get_preferred_position (name, xx, yy);
+    get_preferred_size (name, ww, hh);
     if (xx != -1)
       set_position (win, xx, yy);
     if (ww != -1)

@@ -76,7 +76,6 @@ class qt_widget;
 
 class qt_widget_rep : public widget_rep {
   array<widget> children;
-  command           quit;
 public:
   long                id;
   QWidget*          qwid;
@@ -107,7 +106,7 @@ public:
   virtual ~qt_widget_rep ();
   virtual inline string get_nickname () { return "popup"; }
   
-  virtual widget plain_window_widget (string title, command quit);
+  virtual widget plain_window_widget (string name, command quit);
   virtual widget make_popup_widget ();
   virtual widget popup_window_widget (string s);
 

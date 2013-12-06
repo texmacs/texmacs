@@ -31,13 +31,13 @@ class basic_renderer_rep;
 class QTMWidget: public QTMScrollView {
   Q_OBJECT
 
-  mutable widget tmwid;
-
+  mutable widget       tmwid;
   rectangles invalid_regions;
   QPixmap      backingPixmap;
   QLabel*           imwidget;
   QPoint          cursor_pos;
-
+  long                    id;
+  
 public:
 
   static QSet<QTMWidget*> all_widgets;  // needed by qt_gui_rep::update()

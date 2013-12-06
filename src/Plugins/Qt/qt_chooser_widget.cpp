@@ -154,6 +154,10 @@ qt_chooser_widget_rep::read (slot s, blackbox index) {
   }
 }
 
+/*!
+ @note: name is a unique identifier for the window, but for this widget we
+ identify it with the window title. This is not always the case.
+ */
 widget
 qt_chooser_widget_rep::plain_window_widget (string s, command q)
 {
@@ -161,7 +165,6 @@ qt_chooser_widget_rep::plain_window_widget (string s, command q)
   quit      = q;
   return this;
 }
-
 
 bool
 qt_chooser_widget_rep::set_type (const string& _type)

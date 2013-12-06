@@ -50,13 +50,15 @@ qt_color_picker_widget_rep::send (slot s, blackbox val) {
   }
 }
 
-/**
- * window_create() expects this method in widgets which implement windows
+/*!
+ window_create() expects this method in widgets which implement windows
+ @note: name is a unique identifier for the window, but for this widget we
+ identify it with the window title. This is not always the case.
  */
 widget
-qt_color_picker_widget_rep::plain_window_widget (string title, command q)
+qt_color_picker_widget_rep::plain_window_widget (string name, command q)
 {
-  _windowTitle = title;
+  _windowTitle = name;
   (void) q;
   return this;
 }
