@@ -131,9 +131,12 @@ qt_pipe_link_rep::listen (int msecs) {
 
 bool
 qt_pipe_link_rep::is_readable (int channel) {
-  if ((!alive) || ((channel != LINK_OUT) && (channel != LINK_ERR))) return false;
-  if (channel == LINK_OUT) PipeLink.listenChannel (QProcess::StandardOutput, 0);
-  else PipeLink.listenChannel (QProcess::StandardError, 0);
+  if ((!alive) || ((channel != LINK_OUT) && (channel != LINK_ERR)))
+    return false;
+  if (channel == LINK_OUT)
+    return PipeLink.listenChannel (QProcess::StandardOutput, 0);
+  else
+    return PipeLink.listenChannel (QProcess::StandardError, 0);
 }
 
 void
