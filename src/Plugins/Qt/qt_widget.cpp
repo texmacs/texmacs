@@ -75,7 +75,7 @@ qt_widget_rep::send (slot s, blackbox val) {
       if (DEBUG_QT_WIDGETS)
         debug_widgets << "Resending to " << N(children) << " children" << LF;
       for (int i = 0; i < N(children); ++i)
-        concrete (children[i])->send (s, val);
+        if (!is_nil(children[i])) concrete (children[i])->send (s, val);
     }
       break;
     default:
