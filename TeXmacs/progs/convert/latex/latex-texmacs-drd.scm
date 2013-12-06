@@ -462,6 +462,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (logic-table latex-texmacs-preamble%
+  (newmdenv (!append
+              (mdfsetup (!append "outerlinecolor=black,innerlinewidth=0.3pt,"
+                                 "skipabove=\\topskip,skipbelow=\\topskip,"
+                                 "hidealllines=true,\ninnerleftmargin=0pt,"
+                                 "innerrightmargin=0pt,innertopmargin=0pt,"
+                                 "innerbottommargin=0pt" )) "\n"))
   (tmkeywords (!append
                 (newcommand (tmkeywords)
                             (!append (textbf (!translate "Keywords:")) " "))

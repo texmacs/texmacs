@@ -540,7 +540,7 @@
   
   (color "xcolor")
 
-  (newmdenv "mdframed")
+  (mdfsetup ("tikz" "mdframed"))
 
   (omicron "pslatex")
   (multicols "multicol")
