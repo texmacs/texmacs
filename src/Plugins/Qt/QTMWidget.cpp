@@ -774,8 +774,8 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     
     r = r * as_string (pos) * ":" * from_qstring (preedit_string);
   }
-  if (tm_widget()->ref_count != 0)
-    the_gui -> process_keypress (tm_widget(), r, texmacs_time());
+  if (!is_nil (tmwid))
+    the_gui->process_keypress (tm_widget(), r, texmacs_time());
   event->accept();
 }  
 

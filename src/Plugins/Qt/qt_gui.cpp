@@ -118,7 +118,6 @@ qt_gui_rep::get_max_size (SI& width, SI& height) {
   height = 6000 * PIXEL;
 }
 
-
 qt_gui_rep::~qt_gui_rep()  {
   delete gui_helper;
   
@@ -131,6 +130,7 @@ qt_gui_rep::~qt_gui_rep()  {
     // delete updatetimer; we do not need this given that gui_helper is the
     // parent of updatetimer
 }
+
 
 /******************************************************************************
  * interclient communication
@@ -298,10 +298,9 @@ void qt_gui_rep::set_mouse_pointer (string curs_name, string mask_name)
 void
 qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
   if (DEBUG_QT)
-    debug_qt << "show_wait_indicator \"" << message
-    << "\"\"" << arg << "\"" << LF;
+    debug_qt << "show_wait_indicator \"" << message << "\"\"" << arg << "\"\n";
   
-  qt_window_widget_rep *wid = static_cast<qt_window_widget_rep*> (w.rep);
+  qt_window_widget_rep* wid = static_cast<qt_window_widget_rep*> (w.rep);
   
     // we move the texmacs window during an operation.
     // We need to disable updates of the window to avoid erasure of the canvas
@@ -364,7 +363,6 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
   qApp->processEvents();
   QApplication::flush();
   
-  
     //    wid->wid->setUpdatesEnabled (true);
   
     // next time we do update the dialog will disappear
@@ -391,11 +389,8 @@ qt_gui_rep::event_loop () {
 void
 qt_gui_rep::add_notifier (socket_notifier sn)
 {
-  QSocketNotifier *qsn;
-  
-    // replace any already present notifier
-  
-  remove_notifier (sn);
+  QSocketNotifier* qsn;
+  remove_notifier (sn);     // replace any already present notifier
   
   if (DEBUG_QT) debug_qt << "ADD NOTIFIER " << sn->fd << LF;
   
@@ -403,14 +398,14 @@ qt_gui_rep::add_notifier (socket_notifier sn)
     // (the texmacs interface does not specify enough its needs)
   
   qsn = new QSocketNotifier (sn->fd, QSocketNotifier::Read, gui_helper);
-  read_notifiers (sn) = (pointer) (qsn);
-  QObject::connect ( qsn, SIGNAL (activated (int)),
-                    gui_helper, SLOT (doReadSocketNotification (int)) );
+  read_notifiers (sn) = static_cast<pointer> (qsn);
+  QObject::connect (qsn, SIGNAL (activated (int)),
+                    gui_helper, SLOT (doReadSocketNotification (int)));
   
   qsn = new QSocketNotifier (sn->fd, QSocketNotifier::Write, gui_helper);
-  write_notifiers (sn) = (pointer) (qsn);
-  QObject::connect ( qsn, SIGNAL (activated (int)),
-                    gui_helper, SLOT (doWriteSocketNotification (int)) );
+  write_notifiers (sn) = static_cast<pointer> (qsn);
+  QObject::connect (qsn, SIGNAL (activated (int)),
+                    gui_helper, SLOT (doWriteSocketNotification (int)));
 }
 
 void
@@ -513,10 +508,10 @@ clear_pending_commands () {
   start_queue = array<time_t> (0);
 }
 
+
 /******************************************************************************
  * Main routines
  ******************************************************************************/
-
 
 void
 gui_open (int& argc, char** argv) {
@@ -551,16 +546,12 @@ void
 gui_root_extents (SI& width, SI& height) {
     // get the screen size
   the_gui->get_extents (width, height);
-    //if (DEBUG_QT)
-    //debug_qt << "gui_root_extents (" << width << "," << height << ")" << LF;
 }
 
 void
 gui_maximal_extents (SI& width, SI& height) {
     // get the maximal size of a window (can be larger than the screen size)
   the_gui->get_max_size (width, height);
-    //if (DEBUG_QT)
-    //debug_qt << "gui_maximal_extents (" << width << "," << height << ")" << LF;
 }
 
 void
@@ -614,51 +605,53 @@ void add_event (const queued_event &ev);
 
 void
 process_event (queued_event ev) {
-    //cout << "<" << (qp_type_id) ev.x1 << LF;
-  switch ((qp_type_id) ev.x1) {
+  switch (static_cast<qp_type_id> (ev.x1)) {
     case QP_NULL :
       break;
     case QP_KEYPRESS :
     {
       typedef triple<widget, string, time_t > T;
-      T x = open_box <T> (ev.x2) ;
-      concrete_simple_widget (x.x1) -> handle_keypress (x.x2, x.x3) ;
+      T x = open_box <T> (ev.x2);
+      if (!is_nil (x.x1))
+        concrete_simple_widget (x.x1)->handle_keypress (x.x2, x.x3);
     }
       break;
     case QP_KEYBOARD_FOCUS :
     {
       typedef triple<widget, bool, time_t > T;
-      T x = open_box <T> (ev.x2) ;
-      concrete_simple_widget (x.x1) -> handle_keyboard_focus (x.x2, x.x3) ;
+      T x = open_box <T> (ev.x2);
+      if (!is_nil (x.x1))
+        concrete_simple_widget (x.x1)->handle_keyboard_focus (x.x2, x.x3);
     }
       break;
     case QP_MOUSE :
     {
       typedef quintuple<string, SI, SI, int, time_t > T1;
       typedef pair<widget, T1> T;
-      T x = open_box <T> (ev.x2) ;
-      concrete_simple_widget (x.x1) -> handle_mouse (x.x2.x1, x.x2.x2, x.x2.x3, x.x2.x4, x.x2.x5) ;
+      T x = open_box <T> (ev.x2);
+      if (!is_nil (x.x1))
+        concrete_simple_widget (x.x1)->handle_mouse (x.x2.x1, x.x2.x2,
+                                                     x.x2.x3, x.x2.x4, x.x2.x5);
     }
       break;
     case QP_RESIZE :
     {
       typedef triple<widget, SI, SI > T;
-      T x = open_box <T> (ev.x2) ;
-      concrete_simple_widget (x.x1) -> handle_notify_resize (x.x2, x.x3) ;
+      T x = open_box <T> (ev.x2);
+      if (!is_nil (x.x1))
+        concrete_simple_widget (x.x1)->handle_notify_resize (x.x2, x.x3) ;
     }
       break;
     case QP_SOCKET_NOTIFICATION :
     {
       socket_notifier sn = open_box <socket_notifier> (ev.x2) ;
-        // cout << "QP_SOCKET_NOTIFICATION " << sn->fd << LF;
-      sn -> notify ();
+      sn->notify ();
       the_gui->enable_notifier (sn, true);
     }
       break;
     case QP_COMMAND :
     {
       command cmd = open_box <command> (ev.x2) ;
-        // cout << "QP_COMMAND" << LF;
       cmd->apply();
     }
       break;
@@ -666,13 +659,11 @@ process_event (queued_event ev) {
     {
       typedef pair<command, object> T;
       T x = open_box <T> (ev.x2);
-        // cout << "QP_COMMAND_ARGS" << LF;
       x.x1->apply (x.x2);
     }
       break;
     case QP_DELAYED_COMMANDS :
     {
-        // cout << "QP_DELAYED_COMMANDS" << LF;
       exec_pending_commands();
       wait_for_delayed_commands = true;
     }
@@ -681,18 +672,17 @@ process_event (queued_event ev) {
     default:
       FAILED ("Unexpected queued event");
   }
-    //cout << ">" << (qp_type_id) ev.x1 << LF;
 }
 
 queued_event
 next_event() {
   queued_event ev;
-  if (N(waiting_events)>0)
+  if (N(waiting_events) > 0)
     ev = waiting_events[0];
   
   array<queued_event> a;
   
-  for (int i = 1; i<N(waiting_events); i++)
+  for (int i = 1; i < N(waiting_events); i++)
     a << waiting_events[i];
   waiting_events = a;
   
@@ -710,8 +700,7 @@ qt_gui_rep::process_queued_events (int max) {
     // Likewise this function is just an hack to get things working properly.
   
   int count = 0;
-    //cout << "(" << n << " events)"
-  while ((max < 0) || (count<max))  {
+  while (max < 0 || count < max)  {
     queued_event ev = next_event();
     if (ev.x1 == QP_NULL) break;
     process_event (ev);
