@@ -220,7 +220,9 @@
                         (logic-ref latex-texmacs-env-preamble% (cadar t)
                                    latex-style-hyp latex-amsthm-hyp)))
       (when body
-	(ahash-set! latex-preamble-table (car t) body)))))
+        (ahash-set! latex-preamble-table
+                    (if (env-begin? (car t)) (cadar t) (car t)) body)
+        (latex-macro-defs-sub body)))))
 
 (define (latex<=? x y)
   (if (symbol? x) (set! x (symbol->string x)))
