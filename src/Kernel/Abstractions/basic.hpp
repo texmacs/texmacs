@@ -185,9 +185,11 @@ struct abstract_struct {
 ******************************************************************************/
 
 #define INC_COUNT(R)      { (R)->ref_count++; }
-#define DEC_COUNT(R)      { if(0==--((R)->ref_count)) tm_delete (R); }
+#define DEC_COUNT(R)      { if(0==--((R)->ref_count)) { tm_delete (R); R=NULL;}}
 #define INC_COUNT_NULL(R) { if ((R)!=NULL) (R)->ref_count++; }
-#define DEC_COUNT_NULL(R) { if ((R)!=NULL && 0==--((R)->ref_count)) tm_delete (R); }
+#define DEC_COUNT_NULL(R) \
+  { if ((R)!=NULL && 0==--((R)->ref_count)) { tm_delete (R); R=NULL;} }
+
 
 // concrete
 #define CONCRETE(PTR)               \
