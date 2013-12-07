@@ -2304,6 +2304,33 @@ tmg_show_history () {
 }
 
 tmscm
+tmg_start_editing () {
+  // TMSCM_DEFER_INTS;
+  get_current_editor()->start_editing ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_end_editing () {
+  // TMSCM_DEFER_INTS;
+  get_current_editor()->end_editing ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_cancel_editing () {
+  // TMSCM_DEFER_INTS;
+  get_current_editor()->cancel_editing ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_in_graphicsP () {
   // TMSCM_DEFER_INTS;
   bool out= get_current_editor()->inside_graphics ();
@@ -3175,6 +3202,9 @@ initialize_glue_editor () {
   tmscm_install_procedure ("redo-possibilities",  tmg_redo_possibilities, 0, 0, 0);
   tmscm_install_procedure ("redo",  tmg_redo, 1, 0, 0);
   tmscm_install_procedure ("show-history",  tmg_show_history, 0, 0, 0);
+  tmscm_install_procedure ("start-editing",  tmg_start_editing, 0, 0, 0);
+  tmscm_install_procedure ("end-editing",  tmg_end_editing, 0, 0, 0);
+  tmscm_install_procedure ("cancel-editing",  tmg_cancel_editing, 0, 0, 0);
   tmscm_install_procedure ("in-graphics?",  tmg_in_graphicsP, 0, 0, 0);
   tmscm_install_procedure ("get-graphical-x",  tmg_get_graphical_x, 0, 0, 0);
   tmscm_install_procedure ("get-graphical-y",  tmg_get_graphical_y, 0, 0, 0);

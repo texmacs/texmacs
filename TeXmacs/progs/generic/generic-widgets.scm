@@ -170,15 +170,20 @@
 
 (tm-define (replace-one)
   (and-with by (by-tree)
-    (and (with-buffer (master-buffer)
-           (replace-next by))
-         (begin
-           (perform-search)
-           #t))))
+    (with-buffer (master-buffer)
+      (start-editing)
+      (replace-next by)
+      (end-editing))
+    (perform-search)))
 
 (tm-define (replace-all)
-  (while (replace-one)
-    (noop)))
+  (and-with by (by-tree)
+    (with-buffer (master-buffer)
+      (start-editing)
+      (while (replace-next by)
+        (perform-search))
+      (end-editing))
+    (perform-search)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customized keyboard shortcuts in search and replace modes
