@@ -16,52 +16,64 @@
         (utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Basic search and replace buffers management
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (search-buffer)
+  (string->url "tmfs://aux/search"))
+
+(tm-define (replace-buffer)
+  (string->url "tmfs://aux/replace"))
+
+(tm-define (master-buffer)
+  (and (buffer-exists? (search-buffer))
+       (buffer-get-master (search-buffer))))
+
+(tm-define (inside-search-buffer?)
+  (== (current-buffer) (search-buffer)))
+
+(tm-define (inside-replace-buffer?)
+  (== (current-buffer) (replace-buffer)))
+
+(tm-define (inside-search-or-replace-buffer?)
+  (in? (current-buffer) (list (search-buffer) (replace-buffer))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Highlighting the search results
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define search-kbd-intercepted? #f)
-
-(define-macro (with-search-buffer . body)
-  `(and (inside-search-widget?)
-        (with-buffer (buffer-get-master (current-buffer))
-          ,@body)))
-
-(tm-define (inside-search-widget?)
-  (== (current-buffer) (string->url "tmfs://aux/search")))
-
-(tm-define (keyboard-press key time)
-  (:require (inside-search-widget?))
-  (set! search-kbd-intercepted? #f)
-  (former key time)
-  (when (not search-kbd-intercepted?)
-    (let* ((what (buffer-tree))
-           (ok? #t))
-      (when (tm-func? what 'document 1)
-        (set! what (tm-ref what 0)))
-      (when (tm-func? what 'inactive 1)
-        (set! what (tm-ref what 0)))
-      (when (tm-func? what 'inactive* 1)
-        (set! what (tm-ref what 0)))
-      (with-search-buffer
-        (if (tree-empty? what)
-            (begin
-              (selection-cancel)
-              (cancel-alt-selection "alternate")
-              (go-to (get-search-reference #t)))
-            (let* ((t (buffer-tree))
-                   (sels (tree-search-tree t what (tree->path t))))
-              (if (null? sels)
-                  (begin
-                    (selection-cancel)
-                    (cancel-alt-selection "alternate")
-                    (go-to (get-search-reference #t))
-                    (set! ok? #f))
-                  (begin
-                    (set-alt-selection "alternate" sels)
-                    (with after? (next-search-result #t #f)
-                      (when (not after?)
-                        (selection-cancel))))))))
-      (if ok? (init-default "bg-color") (init-env "bg-color" "#fff0f0")))))
+(define (perform-search)
+  (let* ((what (buffer-get-body (search-buffer)))
+         (ok? #t))
+    (when (tm-func? what 'document 1)
+      (set! what (tm-ref what 0)))
+    (when (tm-func? what 'inactive 1)
+      (set! what (tm-ref what 0)))
+    (when (tm-func? what 'inactive* 1)
+      (set! what (tm-ref what 0)))
+    (with-buffer (master-buffer)
+      (if (tree-empty? what)
+          (begin
+            (selection-cancel)
+            (cancel-alt-selection "alternate")
+            (go-to (get-search-reference #t)))
+          (let* ((t (buffer-tree))
+                 (sels (tree-search-tree t what (tree->path t))))
+            (if (null? sels)
+                (begin
+                  (selection-cancel)
+                  (cancel-alt-selection "alternate")
+                  (go-to (get-search-reference #t))
+                  (set! ok? #f))
+                (begin
+                  (set-alt-selection "alternate" sels)
+                  (with after? (next-search-result #t #f)
+                    (when (not after?)
+                      (selection-cancel))))))))
+    (with-buffer (search-buffer)
+      (if ok?
+          (init-default "bg-color")
+          (init-env "bg-color" "#fff0f0")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Highlighting a particular next or previous search result
@@ -123,11 +135,11 @@
            (set-search-reference (car sel))))))
 
 (tm-define (search-next-match forward?)
-  (with-search-buffer
+  (with-buffer (master-buffer)
     (next-search-result forward? #t)))
 
 (tm-define (search-extreme-match last?)
-  (with-search-buffer
+  (with-buffer (master-buffer)
     (extreme-search-result last?)))
 
 (tm-define ((search-cancel u) . args)
@@ -135,11 +147,54 @@
     (cancel-alt-selection "alternate")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Customized keyboard shortcuts in search mode
+;; Replace occurrences
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (by-tree)
+  (and (buffer-exists? (replace-buffer))
+       (with by (buffer-get-body (replace-buffer))
+         (when (tm-func? by 'document 1)
+           (set! by (tm-ref by 0)))
+         by)))
+
+(define (replace-next by)
+  (let* ((sels (get-alt-selection "alternate"))
+         (cur (get-search-reference #t)))
+    (and (nnull? sels)
+         (and-with sel (search-next sels cur #f)
+           (go-to (car sel))
+           (selection-set-range-set sel)
+           (clipboard-cut "dummy")
+           (insert-go-to (tree-copy by) (path-end by '()))
+           #t))))
+
+(tm-define (replace-one)
+  (and-with by (by-tree)
+    (and (with-buffer (master-buffer)
+           (replace-next by))
+         (begin
+           (perform-search)
+           #t))))
+
+(tm-define (replace-all)
+  (while (replace-one)
+    (noop)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Customized keyboard shortcuts in search and replace modes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define search-kbd-intercepted? #f)
+
+(tm-define (keyboard-press key time)
+  (:require (inside-search-buffer?))
+  (set! search-kbd-intercepted? #f)
+  (former key time)
+  (when (not search-kbd-intercepted?)
+    (perform-search)))
+
 (tm-define (kbd-enter t shift?)
-  (:require (inside-search-widget?))
+  (:require (inside-search-buffer?))
   (if (or shift? (inside? 'inactive) (inside? 'inactive*))
       (former t shift?)
       (begin
@@ -148,30 +203,36 @@
           (when (not ok?)
             (search-extreme-match #f))))))
 
+(tm-define (kbd-enter t shift?)
+  (:require (inside-replace-buffer?))
+  (if (or shift? (inside? 'inactive) (inside? 'inactive*))
+      (former t shift?)
+      (replace-one)))
+
 (tm-define (kbd-incremental t forwards?)
-  (:require (inside-search-widget?))
+  (:require (inside-search-or-replace-buffer?))
   (set! search-kbd-intercepted? #t)
   (search-next-match forwards?))
 
 (tm-define (traverse-incremental t forwards?)
-  (:require (inside-search-widget?))
+  (:require (inside-search-or-replace-buffer?))
   (set! search-kbd-intercepted? #t)
   (search-next-match forwards?))
 
 (tm-define (traverse-extremal t forwards?)
-  (:require (inside-search-widget?))
+  (:require (inside-search-or-replace-buffer?))
   (set! search-kbd-intercepted? #t)
   (search-extreme-match forwards?))
 
 (kbd-map
-  (:require (inside-search-widget?))
+  (:require (inside-search-or-replace-buffer?))
   ("std ?" (make 'select-region))
   ("std 1" (insert '(wildcard "x")))
   ("std 2" (insert '(wildcard "y")))
   ("std 3" (insert '(wildcard "z"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Search
+;; Search widget
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget ((search-widget u style aux) quit)
@@ -191,7 +252,40 @@
   (:interactive #t)
   (let* ((u (current-buffer))
          (st (list-remove-duplicates (rcons (get-style-list) "macro-editor")))
-         (aux "tmfs://aux/search"))
+         (aux (search-buffer)))
     (buffer-set-master aux u)
     (set-search-reference (cursor-path))
     (dialogue-window (search-widget u st aux) (search-cancel u) "Search")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Search and replace widget
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget ((replace-widget u style saux raux) quit)
+  (padded
+    (resize "600px" "60px"
+      (texmacs-input `(document "") `(style (tuple ,@style)) saux))
+    ===
+    (resize "600px" "60px"
+      (texmacs-input `(document "") `(style (tuple ,@style)) raux))
+    ======
+    (explicit-buttons
+      (hlist
+        ("Previous" (search-next-match #f)) // //
+        ("Next" (search-next-match #t)) // //
+        ("Replace" (replace-one)) // //
+        ("Replace all" (replace-all)) >>>
+        ("Done" (quit))))))
+
+(tm-define (open-replace)
+  (:interactive #t)
+  (let* ((u (current-buffer))
+         (st (list-remove-duplicates (rcons (get-style-list) "macro-editor")))
+         (saux (search-buffer))
+         (raux (replace-buffer)))
+    (buffer-set-master saux u)
+    (buffer-set-master raux u)
+    (set-search-reference (cursor-path))
+    (dialogue-window (replace-widget u st saux raux)
+                     (search-cancel u)
+                     "Search and replace")))
