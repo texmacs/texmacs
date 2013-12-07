@@ -757,12 +757,14 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       l->removeWidget(q);
       
       q = concrete(w)->as_qwidget();   // force creation of the new QWidget
-      l->addWidget(q); // The layout will automatically reparent the widgets so
-                       // that they are children of the widget on which the layout is installed.
+      l->addWidget(q);
+        // The layout will automatically reparent the widgets so
+        // that they are children of the widget on which the layout is installed.
       main_widget = w; // canvas() now returns the new QTMWidget (or 0)
       
       if (scrollarea())   // Fix size to draw margins around.
-        scrollarea()->surface()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        scrollarea()->surface()->setSizePolicy (QSizePolicy::Fixed,
+                                                QSizePolicy::Fixed);
     }
       break;
       

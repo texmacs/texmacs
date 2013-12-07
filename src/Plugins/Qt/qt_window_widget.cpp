@@ -82,7 +82,7 @@ qt_window_widget_rep::popup_window_widget (string s)
 /*! Looks among the widget's parents for the containing texmacs window
  */
 widget_rep* 
-qt_window_widget_rep::widget_from_qwidget(QWidget* q)
+qt_window_widget_rep::widget_from_qwidget (QWidget* q)
 {
   while (q != NULL) {
     QVariant v = q->property ("texmacs_window_widget");
@@ -98,21 +98,21 @@ qt_window_widget_rep::widget_from_qwidget(QWidget* q)
  sizes, as set by qt_ui_element_rep::as_qwidget() for resize_widgets.
  */
 bool
-qt_window_widget_rep::has_resizable_children(QWidget* w, bool ret) {
+qt_window_widget_rep::has_resizable_children (QWidget* w, bool ret) {
     // Ignore any non QWidgets
   if (!w) return false;
   
     // Hack: these must always be resizable
-  if (qobject_cast<QMainWindow*>(w) || qobject_cast<QDockWidget*>(w))
+  if (qobject_cast<QMainWindow*> (w) || qobject_cast<QDockWidget*> (w))
     return true;
 
-  ret = (w->minimumSize() != QSize(0,0) && 
-         w->maximumSize() != QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX) &&
+  ret = (w->minimumSize() != QSize (0,0) &&
+         w->maximumSize() != QSize (QWIDGETSIZE_MAX, QWIDGETSIZE_MAX) &&
          w->minimumSize() != w->maximumSize());
   
   QObjectList ch = w->children();
   for (int i=0; i<ch.size(); ++i)
-    ret = ret || has_resizable_children(qobject_cast<QWidget*>(ch[i]), ret);
+    ret = ret || has_resizable_children (qobject_cast<QWidget*> (ch[i]), ret);
   
   return ret;
 }
@@ -126,9 +126,9 @@ qt_window_widget_rep::send (slot s, blackbox val) {
     case SLOT_SIZE:
     {
       check_type<coord2>(val, s);
-      coord2 p= open_box<coord2> (val);
+      coord2 p = open_box<coord2> (val);
       if (qwid) {
-        QSize size= to_qsize (p);
+        QSize size = to_qsize (p);
         qwid->resize (size);
       }
     }
@@ -136,7 +136,7 @@ qt_window_widget_rep::send (slot s, blackbox val) {
     case SLOT_POSITION:
     {
       check_type<coord2>(val, s);
-      coord2 p= open_box<coord2> (val);
+      coord2 p = open_box<coord2> (val);
       if (qwid) {
         QPoint pt = to_qpoint (p);
 #ifdef OS_MACOS

@@ -169,21 +169,21 @@ qt_widget_rep::plain_window_widget (string name, command quit) {
     debug_widgets << "qt_widget_rep::plain_window_widget() around a "
                   << type_as_string() << LF;
 
-  QTMPlainWindow* win = new QTMPlainWindow(0);
+  QTMPlainWindow* win = new QTMPlainWindow (0);
   QLayoutItem*     li = as_qlayoutitem();
   if (li) {
     QLayout* l = li->layout();
     if (! l) {
-      l = new QVBoxLayout(win);
-      l->addItem(li);
+      l = new QVBoxLayout (win);
+      l->addItem (li); // Layout owns the QLayoutItem
     }
-    win->setLayout(l);  // Transfers ownership
+    win->setLayout (l);// Transfers ownership of QWidgets in QLayoutItems to win
   } else {
     QWidget* qw = as_qwidget();
     if (qw) {
-      QLayout* l = new QVBoxLayout(win);
-      l->addWidget(qw);        // The original QWidget now belongs to the layout
-      win->setLayout(l);       // And the QLayout to the QTMPlainWindow.
+      QLayout* l = new QVBoxLayout (win);
+      win->setLayout (l); // And the QLayout to the QTMPlainWindow.
+      l->addWidget (qw);  // qw now belongs to the QWidget with the layout (win)
     } else {
       FAILED ("attempt to create a window around a nil QWidget");
     }
@@ -192,6 +192,7 @@ qt_widget_rep::plain_window_widget (string name, command quit) {
   int l,t,r,b;
   win->layout()->getContentsMargins (&l, &t, &r, &b);
   win->layout()->setContentsMargins (l+3, t+3, r+3, b+3);
+  win->setWindowTitle (to_qstring (name));  // HACK: remove me (see bug#40837)
   
   qt_window_widget_rep* wid = tm_new<qt_window_widget_rep> (win, name, quit);
   wid->add_child (this);
