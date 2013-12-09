@@ -2118,6 +2118,23 @@ tmg_tree_child_env (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
 }
 
 tmscm
+tmg_tree_descendant_env (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "tree-descendant-env");
+  TMSCM_ASSERT_PATH (arg2, TMSCM_ARG2, "tree-descendant-env");
+  TMSCM_ASSERT_CONTENT (arg3, TMSCM_ARG3, "tree-descendant-env");
+
+  content in1= tmscm_to_content (arg1);
+  path in2= tmscm_to_path (arg2);
+  content in3= tmscm_to_content (arg3);
+
+  // TMSCM_DEFER_INTS;
+  tree out= get_env_descendant (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
 tmg_tree_load_inclusion (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "tree-load-inclusion");
 
@@ -2658,6 +2675,21 @@ tmg_math_status_reset () {
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_path_strip (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_PATH (arg1, TMSCM_ARG1, "path-strip");
+  TMSCM_ASSERT_PATH (arg2, TMSCM_ARG2, "path-strip");
+
+  path in1= tmscm_to_path (arg1);
+  path in2= tmscm_to_path (arg2);
+
+  // TMSCM_DEFER_INTS;
+  path out= strip (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return path_to_tmscm (out);
 }
 
 tmscm
@@ -7498,6 +7530,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tree-child-long-name",  tmg_tree_child_long_name, 2, 0, 0);
   tmscm_install_procedure ("tree-child-type",  tmg_tree_child_type, 2, 0, 0);
   tmscm_install_procedure ("tree-child-env",  tmg_tree_child_env, 4, 0, 0);
+  tmscm_install_procedure ("tree-descendant-env",  tmg_tree_descendant_env, 3, 0, 0);
   tmscm_install_procedure ("tree-load-inclusion",  tmg_tree_load_inclusion, 1, 0, 0);
   tmscm_install_procedure ("tree-as-string",  tmg_tree_as_string, 1, 0, 0);
   tmscm_install_procedure ("tree-extents",  tmg_tree_extents, 1, 0, 0);
@@ -7537,6 +7570,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tree-downgrade-big",  tmg_tree_downgrade_big, 1, 0, 0);
   tmscm_install_procedure ("math-status-print",  tmg_math_status_print, 0, 0, 0);
   tmscm_install_procedure ("math-status-reset",  tmg_math_status_reset, 0, 0, 0);
+  tmscm_install_procedure ("path-strip",  tmg_path_strip, 2, 0, 0);
   tmscm_install_procedure ("path-inf?",  tmg_path_infP, 2, 0, 0);
   tmscm_install_procedure ("path-inf-eq?",  tmg_path_inf_eqP, 2, 0, 0);
   tmscm_install_procedure ("path-less?",  tmg_path_lessP, 2, 0, 0);

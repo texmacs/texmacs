@@ -195,6 +195,7 @@
   (tree-child-long-name get_child_long_name (string content int))
   (tree-child-type get_child_type (string content int))
   (tree-child-env get_env_child (tree content int string content))
+  (tree-descendant-env get_env_descendant (tree content path content))
   (tree-load-inclusion load_inclusion (tree url))
   (tree-as-string tree_as_string (string content))
   (tree-extents tree_extents (tree content))
@@ -240,6 +241,7 @@
   (math-status-reset math_status_reset (void))
 
   ;; paths
+  (path-strip strip (path path path))
   (path-inf? path_inf (bool path path))
   (path-inf-eq? path_inf_eq (bool path path))
   (path-less? path_less (bool path path))

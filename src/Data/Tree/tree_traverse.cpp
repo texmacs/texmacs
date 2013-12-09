@@ -147,6 +147,16 @@ get_env_child (tree t, int i, string var, tree val) {
   return the_drd->get_env_child (t, i, var, val);
 }
 
+tree
+get_env_child (tree t, int i, tree env) {
+  return the_drd->get_env_child (t, i, env);
+}
+
+tree
+get_env_descendant (tree t, path p, tree env) {
+  return the_drd->get_env_descendant (t, p, env);  
+}
+
 /******************************************************************************
 * Traversal of a tree
 ******************************************************************************/

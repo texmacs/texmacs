@@ -39,6 +39,61 @@
   (in? (current-buffer) (list (search-buffer) (replace-buffer))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Filtered searching
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define search-filter-table (make-ahash-table))
+
+(define (mode-language mode)
+  (cond ((== mode "text") "language")
+        ((== mode "math") "math-language")
+        ((== mode "prog") "prog-language")
+        (else "language")))
+
+(define (get-main-attrs getter)
+  (list "mode" (getter "mode")
+        "language" (getter "language")
+        "math-language" (getter "math-language")
+        "prog-language" (getter "prog-language")))
+
+(define (set-search-filter)
+  (let* ((vars (list "mode" (mode-language (get-env "mode"))))
+         (vals (map get-env-tree vars))
+         (attrs (append-map list vars vals))
+         (env `(attr ,@attrs)))
+    (ahash-set! search-filter-table (current-buffer) env)))
+
+(define (get-search-filter)
+  (ahash-ref search-filter-table (current-buffer)))
+
+(define (check-same-sub? env var val)
+  (cond ((or (null? env) (null? (cdr env))) #f)
+        ((tm-equal? (car env) var) (tm-equal? (cadr env) val))
+        (else (check-same-sub? (cddr env) var val))))
+
+(define (check-same? new-env old-env)
+  ;;(display* "Check " new-env ", " old-env "\n")
+  (if (null? old-env) #t
+      (and (check-same-sub? new-env (car old-env) (cadr old-env))
+           (check-same? new-env (cddr old-env)))))
+
+(define (accept-search-result? p)
+  (let* ((buf (buffer-tree))
+         (rel (path-strip (cDr p) (tree->path buf)))
+         (initial (cons 'attr (get-main-attrs get-init)))
+         (old-env (get-search-filter))
+         (new-env (tree-descendant-env buf rel initial)))
+    ;;(display* p " ~> " new-env "\n")
+    (check-same? (tm-children new-env) (tm-children old-env))))
+
+(define (filter-search-results sels)
+  (if (or (null? sels) (null? (cdr sels))) (list)
+      (with r (filter-search-results (cddr sels))
+        (if (accept-search-result? (car sels))
+            (cons* (car sels) (cadr sels) r)
+            r))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Highlighting the search results
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -58,7 +113,8 @@
             (cancel-alt-selection "alternate")
             (go-to (get-search-reference #t)))
           (let* ((t (buffer-tree))
-                 (sels (tree-search-tree t what (tree->path t))))
+                 (sels* (tree-search-tree t what (tree->path t)))
+                 (sels (filter-search-results sels*)))
             (if (null? sels)
                 (begin
                   (selection-cancel)
@@ -240,10 +296,11 @@
 ;; Search widget
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget ((search-widget u style aux) quit)
+(tm-widget ((search-widget u style init aux) quit)
   (padded
     (resize "600px" "60px"
-      (texmacs-input `(document "") `(style (tuple ,@style)) aux))
+      (texmacs-input `(with ,@init (document ""))
+                     `(style (tuple ,@style)) aux))
     ======
     (explicit-buttons
       (hlist
@@ -257,22 +314,28 @@
   (:interactive #t)
   (let* ((u (current-buffer))
          (st (list-remove-duplicates (rcons (get-style-list) "macro-editor")))
+         (init (get-main-attrs get-env))
          (aux (search-buffer)))
     (buffer-set-master aux u)
     (set-search-reference (cursor-path))
-    (dialogue-window (search-widget u st aux) (search-cancel u) "Search")))
+    (set-search-filter)
+    (dialogue-window (search-widget u st init aux)
+                     (search-cancel u)
+                     "Search")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search and replace widget
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget ((replace-widget u style saux raux) quit)
+(tm-widget ((replace-widget u style init saux raux) quit)
   (padded
     (resize "600px" "60px"
-      (texmacs-input `(document "") `(style (tuple ,@style)) saux))
+      (texmacs-input `(with ,@init (document ""))
+                     `(style (tuple ,@style)) saux))
     ===
     (resize "600px" "60px"
-      (texmacs-input `(document "") `(style (tuple ,@style)) raux))
+      (texmacs-input `(with ,@init (document ""))
+                     `(style (tuple ,@style)) raux))
     ======
     (explicit-buttons
       (hlist
@@ -286,11 +349,13 @@
   (:interactive #t)
   (let* ((u (current-buffer))
          (st (list-remove-duplicates (rcons (get-style-list) "macro-editor")))
+         (init (get-main-attrs get-env))
          (saux (search-buffer))
          (raux (replace-buffer)))
     (buffer-set-master saux u)
     (buffer-set-master raux u)
     (set-search-reference (cursor-path))
-    (dialogue-window (replace-widget u st saux raux)
+    (set-search-filter)
+    (dialogue-window (replace-widget u st init saux raux)
                      (search-cancel u)
                      "Search and replace")))
