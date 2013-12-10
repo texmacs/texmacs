@@ -134,8 +134,8 @@ public slots:
   
 protected:
   virtual QWidget* createWidget (QWidget * parent);
-  
 };
+
 
 /*!
  
@@ -152,6 +152,7 @@ public:
     // virtual void activate (ActionEvent event) {
     //   cout << "TRIG\n"; QWidgetAction::activate (event); }
 };
+
 
 /*!
  */

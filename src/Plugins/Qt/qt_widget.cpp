@@ -68,7 +68,7 @@ qt_widget_rep::send (slot s, blackbox val) {
       check_type<bool> (val, s);
       bool focus = open_box<bool> (val);
       if (focus && qwid && !qwid->hasFocus())
-        qwid->setFocus(Qt::OtherFocusReason);
+        qwid->setFocus (Qt::OtherFocusReason);
     }
       break;
     case SLOT_NAME:

@@ -187,9 +187,9 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
       input_format = "verbatim-snippet";
     }
   }
-  else if (format == "verbatim" && (
-                                    get_preference ("verbatim->texmacs:encoding") == "utf-8" ||
-                                    get_preference ("verbatim->texmacs:encoding") == "auto"  ))
+  else if (format == "verbatim"
+           && (get_preference ("verbatim->texmacs:encoding") == "utf-8" ||
+               get_preference ("verbatim->texmacs:encoding") == "auto"  ))
     buf = md->text().toUtf8 ();
   else {
     if (md->hasFormat ("plain/text")) buf = md->data ("plain/text").data();
@@ -798,15 +798,12 @@ fill_event_queue() {
   }
 }
 
+/*!
+  FIXME: add more types and refine, compare with X11 version.
+ */
 bool
 qt_gui_rep::check_event (int type) {
-    //FIXME: add more types and refine, compare with X11 version.
-  
-    // cout << "."; cout.flush();
-    //  return false;
-  
-    // do not interrupt while not in update
-    // (for example while painting the icons in the menus)
+    // do not interrupt if not updating (e.g. while painting the icons in menus)
   if (!updating || disable_check_event) return false;
   
   switch (type) {
@@ -817,8 +814,6 @@ qt_gui_rep::check_event (int type) {
         if (now - timeout_time < 0) return false;
         timeout_time = now + time_credit;
         interrupted = (N(waiting_events) > 0);
-          //if (interrupted) cout << "INTERRUPT "
-          //  << now << "------------------" << LF;
         return interrupted;
       }
     case INTERRUPTED_EVENT:
@@ -828,13 +823,13 @@ qt_gui_rep::check_event (int type) {
   }
 }
 
+/*!
+ This is called by doUpdate(), which in turn is fired by a timer activated in
+ needs_update(), and ensuring that interpose_handler() is run during a pass in
+ the event loop after we reactivate the timer with a pause (see FIXME below).
+ */
 void
 qt_gui_rep::update () {
-    // this is called by doUpdate, which in turns is fired by a timer activated in
-    // needs_update, and ensuring that interpose_handler is run during a pass in
-    // the eventloop afterwards we reactivate the timer with a pause
-    // (see FIXME below)
-  
   if (updating) {
     cout << "NESTED UPDATING: This should not happen" << LF;
     needs_update();
@@ -846,18 +841,16 @@ qt_gui_rep::update () {
   updatetimer->stop();
   updating = true;
   
-  static int count_events = 0;
+  static int count_events    = 0;
   static int max_proc_events = 10;
   
-  time_t now = texmacs_time();
+  time_t     now = texmacs_time();
   needing_update = false;
-  
-  time_credit = 100 / (N(waiting_events)+1);
-  
+  time_credit    = 100 / (N(waiting_events) + 1);
   
     // 1.
-    // check if a wait dialog is active and in the case remove it.
-    // if we are here then the long operation is finished.
+    // Check if a wait dialog is active and in that case remove it.
+    // If we are here then the long operation has finished.
   
   if (waitDialogs.count()) {
     waitWindow->layout()->removeWidget (waitDialogs.last());
@@ -870,72 +863,50 @@ qt_gui_rep::update () {
   
   if (popup_wid_time > 0 && now > popup_wid_time) {
     popup_wid_time = 0;
-    _popup_wid->send (SLOT_VISIBILITY, close_box<bool>(true));
+    _popup_wid->send (SLOT_VISIBILITY, close_box<bool> (true));
   }
   
     // 2.
-    // manage delayed commands
+    // Manage delayed commands
   
   if (wait_for_delayed_commands && (lapse <= now)) process_delayed_commands();
   
     // 3.
-    // if there are pending events in the private queue process them up to some
+    // If there are pending events in the private queue process them until the
     // limit in processed events is reached.
-    // if there are no events or the limit is reached then proceed to a redraw.
+    // If there are no events or the limit is reached then proceed to a redraw.
   
   if (N(waiting_events) == 0) {
-      // if there are not waiting events call at least once
-      // the interpose handler
+      // If there are no waiting events call the interpose handler at least once
     if (the_interpose_handler) the_interpose_handler();
-  } else while ((N(waiting_events) > 0) && (count_events < max_proc_events)) {
-      // cout << "e";
-      //cout << "PROCESS QUEUED EVENTS START..."; cout.flush();
+  } else while (N(waiting_events) > 0 && count_events < max_proc_events) {
     process_queued_events (1);
-      //cout << "AND END"  << LF;
     count_events++;
-    
-      //cout << "TYPESET START..."; cout.flush();
     if (the_interpose_handler) the_interpose_handler();
-      //cout << "AND END" << LF;
   }
+    // Repaint invalid regions and redraw
+  count_events = 0;
   
-  {
-      // redrawing
-      // cout << "r";
-    count_events = 0;
-    
-      // repaint invalid regions
-    interrupted = false;
-    timeout_time = texmacs_time() + time_credit;
-    
-      //cout << "REPAINT START..."; cout.flush();
-    
-    QSetIterator<QTMWidget*> i (QTMWidget::all_widgets);
-    while (i.hasNext()) {
-      QTMWidget *w = i.next();
-      if (w->isVisible())
-        w->repaint_invalid_regions();
-    }
-      //cout << "AND END" << LF;
+  interrupted  = false;
+  timeout_time = texmacs_time() + time_credit;
+  
+  QSetIterator<QTMWidget*> i (QTMWidget::all_widgets);
+  while (i.hasNext()) {
+    QTMWidget* w = i.next();
+    if (w->isVisible()) w->repaint_invalid_regions();
   }
   
   if (N(waiting_events) > 0) needing_update = true;
-  if (interrupted) needing_update = true;
-    // if (interrupted)     cout << "*";
-  
-  if (nr_windows == 0) {
-    qApp->quit();
-  }
+  if (interrupted)           needing_update = true;
+  if (nr_windows == 0)       qApp->quit();
   
   time_t delay = lapse - texmacs_time();
   if (delay > 1000/6) delay = 1000/6;
-  if (delay < 0) delay = 0;
+  if (delay < 0)      delay = 0;
   if (needing_update) delay = 0;
-    //cout << delay << ">" <<  LF;
+  
   updatetimer->start (delay);
-  
   updating = false;
-  
   
     // FIXME: we need to ensure that the interpose_handler is run at regular
     //        intervals (1/6th of sec) so that informations on the footbar are
@@ -953,9 +924,11 @@ qt_gui_rep::update () {
  */
 void
 qt_gui_rep::refresh_language() {
+  /* FIXME: why is this here? We don't use QTranslators...
   QTranslator* qtr = new QTranslator();
   if (qtr->load ("qt_" +
-                 QLocale (to_qstring (language_to_locale (get_output_language()))).name(),
+                 QLocale (to_qstring 
+                           (language_to_locale (get_output_language()))).name(),
                  QLibraryInfo::location (QLibraryInfo::TranslationsPath))) {
     if (q_translator)
       qApp->removeTranslator (q_translator);
@@ -964,6 +937,7 @@ qt_gui_rep::refresh_language() {
   } else {
     delete qtr;
   }
+   */
   gui_helper->doRefresh();
 }
 
@@ -983,46 +957,45 @@ qt_gui_rep::show_help_balloon (widget wid, SI x, SI y) {
   
   _popup_wid = popup_window_widget (wid, "Balloon");
   SI winx, winy;
-    // HACK around wrong? reporting of window widget for embedded texmacs-inputs:
-    // call get_window on the current window (concrete_window()->win is set to
-    // the texmacs-input widget whenever there is one)
-  get_position (get_window (concrete_window()->win), winx, winy);
+  get_position (get_window (wid), winx, winy);
   set_position (_popup_wid, x+winx, y+winy);
-  popup_wid_time = texmacs_time() + 666;  // update() will eventually show the widget
+  popup_wid_time = texmacs_time() + 666;
+    // update() will eventually show the widget
 }
+
 
 /******************************************************************************
  * Font support
  ******************************************************************************/
 
+/*! Sets the name of the default font.
+ @note This is ignored since Qt handles fonts for the widgets.
+ */
 void
 set_default_font (string name) {
   (void) name;
-    // set the name of the default font
-    // this is ignored since Qt handles fonts for the widgets
 }
 
+/*! Gets the default font or monospaced font (if tt is true).
+ @return A null font since this function is not called in the Qt port.
+ */
 font
 get_default_font (bool tt, bool mini, bool bold) {
   (void) tt; (void) mini; (void) bold;
-    // get the default font or monospaced font (if tt is true)
-  
-    // return a null font since this function is not called in the Qt port.
   if (DEBUG_QT) debug_qt << "get_default_font(): SHOULD NOT BE CALLED\n";
-  return NULL;
-    //return tex_font (this, "ecrm", 10, 300, 0);
+  return NULL;  //return tex_font (this, "ecrm", 10, 300, 0);
 }
 
-  // load the metric and glyphs of a system font
-  // you are not obliged to provide any system fonts
-
+/*! Loads the metric and glyphs of a system font.
+ You are not forced to provide any system fonts.
+ */
 void
-load_system_font (string family, int size, int dpi,
-                  font_metric& fnm, font_glyphs& fng)
+load_system_font (string fam, int sz, int dpi, font_metric& fnm, font_glyphs& fng)
 {
-  (void) family; (void) size; (void) dpi; (void) fnm; (void) fng;
+  (void) fam; (void) sz; (void) dpi; (void) fnm; (void) fng;
   if (DEBUG_QT) debug_qt << "load_system_font(): SHOULD NOT BE CALLED\n";
 }
+
 
 /******************************************************************************
  * Clipboard support
