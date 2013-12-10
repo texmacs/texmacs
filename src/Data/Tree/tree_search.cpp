@@ -152,7 +152,7 @@ match (tree t, tree what) {
 
 bool
 search_concat (tree t, tree what, int pos, int i,
-	       path p, path mp, path& p1, path& p2) {
+	       path p, path cur, path& p1, path& p2) {
   //cout << "Search " << what << ", " << i
   //     << " in " << t << ", " << pos << "\n";
   if (pos >= N(t)) return false;
@@ -174,30 +174,30 @@ search_concat (tree t, tree what, int pos, int i,
 	if (j == N(what)) p2= sel[1];
 	if (i == 0 && is_func (what[0], WILDCARD, 1))
 	  p1= (p * 0) * start (t[0]);
-	if (c1 && c2 && (i > 0 || path_less_eq (mp, p1))) {
+	if (c1 && c2 && (i > 0 || path_less_eq (cur, p1))) {
 	  if (j >= N(what)) return true;
-	  if (search_concat (t, what, pos+1, j, p, mp, p1, p2)) return true;
+	  if (search_concat (t, what, pos+1, j, p, cur, p1, p2)) return true;
 	}
       }
     }
     if (i == 0 || is_func (what[i], WILDCARD, 1))
-      return search_concat (t, what, pos+1, i, p, mp, p1, p2);
+      return search_concat (t, what, pos+1, i, p, cur, p1, p2);
     return false;
   }
   else if (is_func (what[i], WILDCARD, 1)) {
     if (i == 0) {
       p1= (p * 0) * start (t[0]);
-      if (!path_less_eq (mp, p1)) return false;
+      if (!path_less_eq (cur, p1)) return false;
     }
     if (i+1 < N(what) && is_func (what[i+1], WILDCARD, 1))
-      return search_concat (t, what, pos, i+1, p, mp, p1, p2);
+      return search_concat (t, what, pos, i+1, p, cur, p1, p2);
     if (i+1 >= N(what)) {
       p2= (p * (N(t)-1)) * end (t[N(t)-1]);
       return true;
     }
-    if (search_concat (t, what, pos, i+1, p, mp, p1, p2)) return true;
+    if (search_concat (t, what, pos, i+1, p, cur, p1, p2)) return true;
     path dummy;
-    return search_concat (t, what, pos+1, i, p, mp, dummy, p2);
+    return search_concat (t, what, pos+1, i, p, cur, dummy, p2);
   }
   else {
     range_set sel;
@@ -207,12 +207,12 @@ search_concat (tree t, tree what, int pos, int i,
       bool c2= (i == N(what)-1 || sel[N(sel)-1] == (p * pos) * end (t[pos]));
       if (i == 0) p1= sel[0];
       if (i == N(what)-1) p2= sel[1];
-      if (c1 && c2 && (i > 0 || path_less_eq (mp, p1))) {
+      if (c1 && c2 && (i > 0 || path_less_eq (cur, p1))) {
         if (i+1 >= N(what)) return true;
-        if (search_concat (t, what, pos+1, i+1, p, mp, p1, p2)) return true;
+        if (search_concat (t, what, pos+1, i+1, p, cur, p1, p2)) return true;
       }
     }
-    if (i == 0) return search_concat (t, what, pos+1, i, p, mp, p1, p2);
+    if (i == 0) return search_concat (t, what, pos+1, i, p, cur, p1, p2);
     return false;
   }
 }
@@ -271,9 +271,9 @@ search_concat (range_set& sel, tree t, tree what, path p) {
       merge (sel, ssel);
       pos++;
     }
-    path p1, p2, mp= (p * 0) * start (t[0]);
-    if (N(sel) != 0) mp= sel[N(sel)-1];
-    if (search_concat (t, what, pos, 0, p, mp, p1, p2)) {
+    path p1, p2, cur= (p * 0) * start (t[0]);
+    if (N(sel) != 0) cur= sel[N(sel)-1];
+    if (search_concat (t, what, pos, 0, p, cur, p1, p2)) {
       merge (sel, simple_range (p1, p2));
       int next= (p2 / p)->item;
       pos= max (pos+1, next);
