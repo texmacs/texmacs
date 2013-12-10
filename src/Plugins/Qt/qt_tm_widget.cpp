@@ -466,7 +466,14 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     case SLOT_MOUSE_GRAB:
       main_widget->send(s, val);
       return;
-      
+    case SLOT_KEYBOARD_FOCUS:
+    {
+      check_type<bool> (val, s);
+      bool focus = open_box<bool> (val);
+      if (focus && canvas() && !canvas()->hasFocus())
+        canvas()->setFocus (Qt::OtherFocusReason);
+    }
+      break;
     case SLOT_HEADER_VISIBILITY:
     {
       check_type<bool>(val, s);
@@ -474,7 +481,6 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       update_visibility();
     }
       break;
-
     case SLOT_MAIN_ICONS_VISIBILITY:
     {
       check_type<bool>(val, s);
@@ -482,7 +488,6 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       update_visibility();
     }
       break;
-
     case SLOT_MODE_ICONS_VISIBILITY:
     {
       check_type<bool>(val, s);
@@ -490,7 +495,6 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       update_visibility();
     }
       break;
-
     case SLOT_FOCUS_ICONS_VISIBILITY:
     {
       check_type<bool>(val, s);
@@ -498,7 +502,6 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       update_visibility();
     }
       break;
-
     case SLOT_USER_ICONS_VISIBILITY:
     {
       check_type<bool>(val, s);
@@ -514,7 +517,6 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       update_visibility();
     }
       break;
-
     case SLOT_SIDE_TOOLS_VISIBILITY:
     {
       check_type<bool>(val, s);
@@ -531,7 +533,6 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       leftLabel->update ();
     }
       break;
-
     case SLOT_RIGHT_FOOTER:
     {
       check_type<string>(val, s);
@@ -540,12 +541,10 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       rightLabel->update ();
     }
       break;
-
     case SLOT_SCROLLBARS_VISIBILITY:
         // ignore this: qt handles scrollbars independently
         //                send_int (THIS, "scrollbars", val);
       break;
-
     case SLOT_INTERACTIVE_MODE:
     {
       check_type<bool>(val, s);
@@ -568,18 +567,16 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       }
     }
       break;
-      
     case SLOT_FILE:
     {
       check_type<string>(val, s);
       string file = open_box<string> (val);
       if (DEBUG_QT_WIDGETS) debug_widgets << "\tFile: " << file << LF;
 #if (QT_VERSION >= 0x040400)
-      mainwindow()->setWindowFilePath(utf8_to_qstring(file));
+      mainwindow()->setWindowFilePath (utf8_to_qstring (file));
 #endif
     }
       break;
-
     case SLOT_POSITION:
     {
       check_type<coord2>(val, s);
@@ -587,7 +584,6 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       mainwindow()->move (to_qpoint (p));
     }
       break;
-
     case SLOT_SIZE:
     {
       check_type<coord2>(val, s);
@@ -595,7 +591,6 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       mainwindow()->resize (to_qsize (p));
     }
       break;
-      
     case SLOT_DESTROY:
     {
       ASSERT (is_nil (val), "type mismatch");
@@ -604,14 +599,12 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       needs_update ();
     }
       break;
-
     case SLOT_FULL_SCREEN:
     {
       check_type<bool> (val, s);
       set_full_screen(open_box<bool> (val));
     }
       break;
-      
     default:
       qt_window_widget_rep::send (s, val);
       return;
@@ -765,6 +758,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       if (scrollarea())   // Fix size to draw margins around.
         scrollarea()->surface()->setSizePolicy (QSizePolicy::Fixed,
                                                 QSizePolicy::Fixed);
+      send_keyboard_focus (main_widget);
     }
       break;
       
