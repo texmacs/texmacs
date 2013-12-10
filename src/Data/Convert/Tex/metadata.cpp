@@ -14,6 +14,7 @@
 
 array<tree>
 tokenize_concat (tree t, array<tree> a, bool keep) {
+  if (!is_concat (t)) return array<tree> ();
   tree tmp (CONCAT);
   array<tree> r;
   for (int i=0; i<N(t); i++) {
