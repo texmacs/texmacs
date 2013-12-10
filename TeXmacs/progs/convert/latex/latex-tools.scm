@@ -28,6 +28,7 @@
 (define latex-style-hyp 'generic-style%)
 (define latex-packages '())
 (define latex-amsthm-hyp 'no-amsthm-package%)
+(define latex-framed-sessions-hyp 'no-framed-sessions%)
 
 (define latex-uses-table (make-ahash-table))
 (define latex-catcode-table (make-ahash-table))
@@ -38,6 +39,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Setting global parameters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (latex-init-style-hyps l)
+  (if (in? "framed-session" l)
+    (set! latex-framed-sessions-hyp 'framed-sessions%)))
 
 (tm-define (latex-set-language lan)
   (set! latex-language lan))
@@ -127,15 +132,19 @@
       (let* ((head  (car t))
 	     (tail  (map latex-expand-macros (cdr t)))
 	     (body  (logic-ref latex-texmacs-macro% head
-			     latex-style-hyp latex-amsthm-hyp))
+                               latex-framed-sessions-hyp
+                               latex-style-hyp latex-amsthm-hyp))
 	     (arity (logic-ref latex-texmacs-arity% head
-			     latex-style-hyp latex-amsthm-hyp))
+			     latex-framed-sessions-hyp
+                             latex-style-hyp latex-amsthm-hyp))
 	     (env   (and (env-begin? head)
 			 (logic-ref latex-texmacs-environment% (cadr head)
-				  latex-style-hyp latex-amsthm-hyp)))
+                                    latex-framed-sessions-hyp
+                                    latex-style-hyp latex-amsthm-hyp)))
 	     (envar (and (env-begin? head)
 			 (logic-ref latex-texmacs-env-arity% (cadr head)
-				  latex-style-hyp latex-amsthm-hyp))))
+                                    latex-framed-sessions-hyp
+                                    latex-style-hyp latex-amsthm-hyp))))
 	(cond ((and body (== (length tail) arity))
 	       (latex-substitute body t))
 	      ((and env (== (length tail) 1) (== (length (cddr head)) envar))
@@ -179,9 +188,11 @@
     (let* ((body  (and
                     (not (logic-ref latex-needs% (car t)))
                     (logic-ref latex-texmacs-macro% (car t)
+                               latex-framed-sessions-hyp
                                latex-style-hyp latex-amsthm-hyp)))
 	   (arity (logic-ref latex-texmacs-arity% (car t)
-			   latex-style-hyp latex-amsthm-hyp))
+                             latex-framed-sessions-hyp
+                             latex-style-hyp latex-amsthm-hyp))
            (option (logic-ref latex-texmacs-option% (car t)))
            (args   (if option (filter (lambda (x)
                                         (not (and (list? x)
@@ -214,10 +225,12 @@
     (with body (or (and
                      (not (logic-ref latex-needs% (car t)))
                      (logic-ref latex-texmacs-preamble% (car t)
+                                latex-framed-sessions-hyp
                                 latex-style-hyp latex-amsthm-hyp))
 		   (and (env-begin? (car t))
                         (not (logic-ref latex-needs% (string->symbol (cadar t))))
                         (logic-ref latex-texmacs-env-preamble% (cadar t)
+                                   latex-framed-sessions-hyp
                                    latex-style-hyp latex-amsthm-hyp)))
       (when body
         (ahash-set! latex-preamble-table

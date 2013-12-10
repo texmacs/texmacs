@@ -542,6 +542,7 @@
 	 (doc-preamble (tmtex-filter-preamble doc))
 	 (doc-body-pre (tmtex-filter-body doc))
 	 (doc-body (tmtex-apply-init doc-body-pre init-bis)))
+         (latex-init-style-hyps styles)
     (if (== (get-preference "texmacs->latex:expand-user-macros") "on")
 	(set! doc-preamble '()))
     (set! tmtex-src (make-ahash-table))

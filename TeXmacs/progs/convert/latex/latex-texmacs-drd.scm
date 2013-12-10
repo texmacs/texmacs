@@ -204,8 +204,10 @@
   (dueto (textup (textbf (!append "(" 1 ") "))))
   (op 1)
   (tmoutput 1)
-  (tmerrput (!append (color "red!50!black") 1))
-  (tmtiming (!append (hfill) (footnotesize) (color "black!50") 1))
+  (tmerrput (!append (color "red!50!black") 1) no-framed-sessions%)
+  (tmerrput ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={red!15},linecolor={red!50!black}"))
+             (!append (color "red!50!black") 1)) framed-sessions%)
+  (tmtiming (!append (hfill) (footnotesize) (color "black!50") 1 (par)))
   (tmrunningtitle (!append (!translate "Running title:") " " 1))
   (tmrunningauthor (!append (!translate "Running author:") " " 1))
   (tmaffiliation (thanks (!append (textit (!translate "Affiliation:")) " " 1)))
@@ -247,10 +249,21 @@
                              (!append (item (!option "")) (mbox "")
                                       (!group "\\large\\bf" 1) "\\\\"
                                       (item (!option "")) (mbox "") 2 )))
-  (tmfoldedsubsession     (trivlist (!append (item (!option "$\\bullet$")) (mbox "") 1)))
+  (tmfoldedsubsession     (trivlist (!append (item (!option "$\\bullet$")) (mbox "") 1))
+                          no-framed-sessions%)
   (tmunfoldedsubsession   (trivlist
                             (!append (item (!option "$\\circ$"))   (mbox "") 1 "\\\\"
-                                     (item (!option "")) (mbox "") 2 )))
+                                     (item (!option "")) (mbox "") 2 ))
+                          no-framed-sessions%)
+  (tmfoldedsubsession     ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={rgb:white,10;red,9;green,4;yellow,2},linecolor={black!50}"))
+                           (trivlist (!append (item (!option "$\\bullet$")) (mbox "") 1)))
+                          framed-sessions%)
+  (tmunfoldedsubsession   (!append
+                            ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={rgb:white,10;red,9;green,4;yellow,2},linecolor={black!50}"))
+                             (trivlist (!append (item (!option "$\\circ$")) (mbox "") 1)))
+                            ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={rgb:white,50;red,9;green,4;yellow,2},linecolor={black!50}"))
+                             (trivlist (!append (item (!option "")) (mbox "") 2 ))))
+                          framed-sessions%)
   (tmfoldedgrouped        (trivlist (!append (item (!option "["))  (mbox "") 1)))
   (tmunfoldedgrouped      (trivlist
                             (!append (item (!option "$\\lceil$"))  (mbox "") 1 "\\\\"
@@ -277,8 +290,17 @@
                             (!append (item (!option "$\\circ$")) (mbox "") 1 "\\\\"
                                      (item (!option "")) (mbox "") 2 )))
   (tminput     (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-                                  (!group (!append (color "blue!50!black") (mbox "") 2)))))
-  (tminputmath (trivlist (!append (item (!option 1)) (ensuremath 2))))
+                                  (!group (!append (color "blue!50!black") (mbox "") 2))))
+               no-framed-sessions%)
+  (tminputmath (trivlist (!append (item (!option 1)) (ensuremath 2)))
+               no-framed-sessions%)
+  (tminput     ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
+                (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
+                                   (!group (!append (color "blue!50!black") (mbox "") 2)))))
+               framed-sessions%)
+  (tminputmath ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
+                (trivlist (!append (item (!option 1)) (mbox "") (ensuremath 2))))
+               framed-sessions%)
   (tmhlink  (!group (!append (color "blue") 1)))
   (tmaction (!group (!append (color "blue") 1)))
   (ontop ("{\\genfrac{}{}{0pt}{}{#1}{#2}}"))
@@ -287,15 +309,41 @@
 (logic-table latex-texmacs-3%
   (tmsession (!group (!append (tt) 3)))
   (tmfoldediomath   (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-                                       (!group (!append (color "blue!50!black") (ensuremath 2))))))
+                                       (!group (!append (color "blue!50!black") (ensuremath 2)))))
+                    no-framed-sessions%)
   (tmunfoldediomath (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
                                        (!group (!append (color "blue!50!black") (ensuremath 2)))
-                                       (item (!option "")) (mbox "") 3)))
+                                       (item (!option "")) (mbox "") 3))
+                    no-framed-sessions%)
   (tmfoldedio       (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-                                       (mbox "") (!group (!append (color "blue!50!black") 2)))))
+                                       (mbox "") (!group (!append (color "blue!50!black") 2))))
+                    no-framed-sessions%)
   (tmunfoldedio     (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
                                        (mbox "") (!group (!append (color "blue!50!black") 2))
-                                       (item (!option "")) (mbox "") 3)))
+                                       (item (!option "")) (mbox "") 3))
+                    no-framed-sessions%)
+  (tmfoldediomath   ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
+                     (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
+                                        (mbox "") (!group (!append (color "blue!50!black") (ensuremath 2))))))
+                    framed-sessions%)
+  (tmunfoldediomath (!append
+                      ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
+                       (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
+                                          (mbox "") (!group (!append (color "blue!50!black") (ensuremath 2))))))
+                      ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor=white,linewidth=0pt"))
+                       (trivlist (!append (item (!option "")) (mbox "") 3))))
+                    framed-sessions%)
+  (tmfoldedio      ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
+                    (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
+                                       (mbox "") (!group (!append (color "blue!50!black") 2)))))
+                   framed-sessions%)
+  (tmunfoldedio    (!append
+                     ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
+                      (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
+                                         (mbox "") (!group (!append (color "blue!50!black") 2)))))
+                     ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor=white,linewidth=0pt"))
+                      (trivlist (!append (item (!option "")) (mbox "") 3))))
+                   framed-sessions%)
   (subsubindex (index (!append 1 "!" 2 "!" 3)))
   (tmref 1)
   (glossaryentry (!append (item (!option (!append 1 (hfill)))) 2 (dotfill) 3)))
@@ -463,7 +511,7 @@
 
 (logic-table latex-texmacs-preamble%
   (newmdenv (!append
-              (mdfsetup (!append "outerlinecolor=black,innerlinewidth=0.3pt,"
+              (mdfsetup (!append "linecolor=black,linewidth=0.5pt,"
                                  "skipabove=0.5em,skipbelow=0.5em,"
                                  "hidealllines=true,\ninnerleftmargin=0pt,"
                                  "innerrightmargin=0pt,innertopmargin=0pt,"
@@ -595,6 +643,7 @@
                     (newmdenv
                       (!option "hidealllines=false,innertopmargin=1ex,innerbottommargin=1ex,innerleftmargin=1ex,innerrightmargin=1ex")
                       "tmornamented") "\n")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Plain style theorems
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
