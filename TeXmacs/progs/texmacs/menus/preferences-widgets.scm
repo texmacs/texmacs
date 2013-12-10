@@ -231,7 +231,7 @@
       (enum (set-pretty-preference "texmacs->latex:encoding" answer)
             '("Ascii" "Cork with catcodes" "Utf-8 with inputenc")
             (get-pretty-preference "texmacs->latex:encoding")
-            "5em"))))
+            "15em"))))
 
 ;; BibTeX ----------
 
