@@ -1401,6 +1401,44 @@ latex_command_to_tree (tree t) {
     return "";
   }
 
+  if (is_tuple (t, "\\begin-tmpadded*", 1)     ||
+      is_tuple (t, "\\begin-tmunderlined*", 1) ||
+      is_tuple (t, "\\begin-tmoverlined*", 1)  ||
+      is_tuple (t, "\\begin-tmbothlined*", 1)  ||
+      is_tuple (t, "\\begin-tmornamented*", 1) ||
+      is_tuple (t, "\\begin-tmframed*", 1)) {
+        string env= as_string (t[0]);
+        env= env (7, N(env));
+        hashmap<tree,tree> dic ("");
+        dic("skipabove")=            "padding-above";
+        dic("skipbelow")=            "padding-below";
+        if (env == "tmpadded*") {
+          dic("innertopmargin")=     "framed-vsep";
+          dic("innerbottommargin")=  "framed-vsep";
+        }
+        else if (env == "tmunderlined*" || env == "tmbothlined*" ||
+                 env == "tmoverlined*") {
+          dic("innerbottommargin")=  "underlined-sep";
+          dic("innertopmargin")=     "overlined-sep";
+        }
+        else if (env == "tmframed*") {
+          dic("innertopmargin")=     "framed-vsep";
+          dic("innerbottommargin")=  "framed-vsep";
+          dic("innerleftmargin")=    "framed-hsep";
+          dic("innerrightmargin")=   "framed-hsep";
+        }
+        else if (env == "tmornamented*") {
+          dic("innertopmargin")=     "ornament-vpadding";
+          dic("innerbottommargin")=  "ornament-vpadding";
+          dic("innerleftmargin")=    "ornament-hpadding";
+          dic("innerrightmargin")=   "ornament-hpadding";
+          dic("backgroundcolor")=    "ornament-color";
+          dic("roundcorner")=        tuple ("ornament-shape", "rounded");
+        }
+        tree keys= translate_keys (decode_keys_vals (t[1]), dic);
+        return tree (BEGIN, env, keys);
+  }
+
   if (is_tuple (t, "\\marginpar", 1))
     return tree (APPLY, "marginal-note", "normal", "", l2e (t[1]));
 
@@ -2632,6 +2670,27 @@ finalize_layout (tree t) {
         string s= as_string (v[0]);
         s= s(0, N(s)-1);
         r << tree (BEGIN, s) << compound ("dueto", v[1]);
+        continue;
+      }
+
+      if ((is_func (v, BEGIN) || is_func (v, END)) && N(v) > 0 &&
+          (v[0] == "tmpadded"     || v[0] == "tmpadded*"      ||
+           v[0] == "tmframed"     || v[0] == "tmframed*"      ||
+           v[0] == "tmunderlined" || v[0] == "tmunderlined*"  ||
+           v[0] == "tmoverlined"  || v[0] == "tmoverlined*"   ||
+           v[0] == "tmbothlined"  || v[0] == "tmbothlined*"   ||
+           v[0] == "tmornamented" || v[0] == "tmornamented*" )) {
+        string env= as_string (v[0]);
+        if (env[N(env)-1] == '*' && N(v) > 1) {
+          if (is_concat (v[1]))
+            r << A (v[1]);
+          else
+            r << v[1];
+          env= env (2, N(env)-1);
+        }
+        else
+          env= env (2, N(env));
+        r << tree (L(v), env);
         continue;
       }
 
