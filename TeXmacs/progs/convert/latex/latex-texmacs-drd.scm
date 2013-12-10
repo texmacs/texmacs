@@ -285,7 +285,7 @@
   (subindex (index (!append 1 "!" 2))))
 
 (logic-table latex-texmacs-3%
-  (tmsession (!append (tt) 3))
+  (tmsession (!group (!append (tt) 3)))
   (tmfoldediomath   (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
                                        (!group (!append (color "blue!50!black") (ensuremath 2))))))
   (tmunfoldediomath (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
