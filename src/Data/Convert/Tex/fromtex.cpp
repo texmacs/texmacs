@@ -1150,6 +1150,43 @@ latex_eps_get (tree t, string var) {
   return "";
 }
 
+static array< array<tree> >
+tokenize_keys_vals (tree t) {
+  array<tree> l1= tokenize_concat (t, A(concat (",")));
+  array< array<tree> > l2;
+  for (int i= 0; i<N(l1); i++)
+    l2 << tokenize_concat (l1[i], A(concat ("=")));
+  return l2;
+}
+
+static array<tree>
+decode_keys_vals (tree t) {
+  array< array<tree> > l= tokenize_keys_vals (t);
+  int i, n= N(l);
+  array<tree> r;
+  for (i=0; i<n; i++) {
+    if (N(l[i]) != 2) continue;
+    r << l2e (l[i][0]) << l2e (l[i][1]);
+  }
+  return r;
+}
+
+static tree
+translate_keys (array<tree> a, hashmap<tree,tree> dic) {
+  int i, n= N(a);
+  tree r (CONCAT);
+  for (i=0; i<n-1; i+=2) {
+    tree tmp= dic[a[i]];
+    if (tmp == "")
+      r << tree (SET, a[i], a[i+1]);
+    else if (is_tuple (tmp) && N(tmp) == 2)
+      r << tree (SET, tmp[0], tmp[1]);
+    else
+      r << tree (SET, tmp, a[i+1]);
+  }
+  return r;
+}
+
 tree
 latex_command_to_tree (tree t) {
   if (is_tuple (t) && N(t)>1) {
