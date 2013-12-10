@@ -1945,6 +1945,8 @@
   ("padding-below"     ("skipbelow" ,tmtex-decode-length))
   ("overlined-sep"     ("innertopmargin" ,tmtex-decode-length))
   ("underlined-sep"    ("innerbottommargin" ,tmtex-decode-length))
+  ("framed-hsep"       ("innerleftmargin" "innerrightmargin"
+                        ,tmtex-decode-length))
   ("framed-vsep"       ("innertopmargin"  "innerbottommargin"
                         ,tmtex-decode-length))
   ("ornament-vpadding" ("innertopmargin"  "innerbottommargin"
