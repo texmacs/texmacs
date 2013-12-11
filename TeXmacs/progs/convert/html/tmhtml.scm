@@ -637,6 +637,7 @@
 (define (tmcolor->htmlcolor x)
   (with s (tmhtml-force-string x)
     (cond ((== s "light grey") "#d0d0d0")
+	  ((== s "pastel grey") "#dfdfdf")
 	  ((== s "dark grey") "#707070")
 	  ((== s "dark red") "#800000")
 	  ((== s "dark green") "#008000")
