@@ -129,6 +129,7 @@
 		    (tmhtml-find-title (cdr doc)))))))
 
 (define (tmhtml-css-header)
+  ;; TODO: return only used CSS properties
   (let ((html
 	 (string-append
 	  "body { text-align: justify } "
@@ -147,6 +148,8 @@
 	  ".compact-block p { margin-top: 0px; margin-bottom: 0px } "
 	  ".left-tab { text-align: left } "
 	  ".center-tab { text-align: center } "
+	  ".ornament  { border-width: 1px; border-style: solid; border-color: "
+                      " black; display: inline-block; padding: 0.2em; } "
 	  ".right-tab { float: right; position: relative; top: -1em } "))
 	(mathml "math { font-family: cmr, times, verdana } "))
     (if tmhtml-mathml? (string-append html mathml) html)))
@@ -631,6 +634,13 @@
   `("not(" ,@(tmhtml (car l)) ")"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Shape conversions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmshape->htmllength x)
+  (if (== (tmhtml-force-string x) "rounded") "15px" "0px"))
+
+ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Color conversions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1113,6 +1123,42 @@
                         ,@(if w `((width ,w)) '())
                         ,@(if h `((height ,h)) '()))))))))
 
+(define (tmhtml-ornament-get-env-style)
+  (let* ((l0 (hash-map->list list tmhtml-env))
+         (l1 (filter (lambda (x)
+                       (and (list>0? (car x))
+                            (cadr x)
+                            (string-prefix? "#:ornament-"
+                                            (object->string (caar x))))) l0))
+         (l2   (map car l1))
+         (args (map cadr l1))
+         (funs (map cAr l2))
+         (stys (map (lambda (x) (cdr (cDr x))) l2)))
+    (apply
+      string-append
+      (list-intersperse
+        (map (lambda (f arg sty)
+               (with args (string-tokenize-by-char arg #\;)
+                 (apply
+                   string-append
+                   (list-intersperse
+                     (cond ((== (length args) (length sty))
+                            (map (lambda (x y)
+                                   (string-append x ":" (f y))) sty args))
+                           ((>= 1 (length sty))
+                            (map (lambda (y)
+                                   (string-append (car sty) ":" (f y))) args))
+                           (else '()))
+                     ";"))))
+             funs args stys) ";"))))
+
+(define (tmhtml-ornament l)
+  (let* ((body (tmhtml (car l)))
+         (styl (tmhtml-ornament-get-env-style))
+         (args (if (== styl "") '() `((style ,styl))))
+         (tag  (if (stm-block-structure? (car l)) 'h:div 'h:span)))
+    `((,tag (@ (class "ornament") ,@args) ,@body))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Standard markup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1470,6 +1516,7 @@
   (graphics tmhtml-graphics)
   ((:or point line arc bezier) tmhtml-noop)
   (image tmhtml-image)
+  (ornament tmhtml-ornament)
 
   (!file tmhtml-file))
 
@@ -1548,6 +1595,27 @@
   ("par-right" ,tmhtml-with-par-right)
   ("par-first" ,tmhtml-with-par-first)
   ("par-par-sep" ,tmhtml-with-par-par-sep)
+  (("ornament-hpadding")      (:ornament-hpadding
+                                "padding-left" "padding-right"
+                                ,tmlength->htmllength))
+  (("ornament-vpadding")      (:ornament-vpadding
+                                "padding-top"  "padding-bottom"
+                                ,tmlength->htmllength))
+  (("ornament-border")        (:ornament-border
+                                "border-width"     ,tmlength->htmllength))
+  (("ornament-shape")         (:ornament-shape
+                                "border-radius"    ,tmshape->htmllength))
+  (("ornament-color")         (:ornament-color
+                                "background-color" ,tmcolor->htmlcolor))
+  (("ornament-shadow-color")  (:ornament-shadow-color
+                                "border-bottom-color" "border-right-color"
+                                ,tmcolor->htmlcolor))
+  (("ornament-sunny-color")   (:ornament-sunny-color
+                                "border-left-color" "border-top-color"
+                                ,tmcolor->htmlcolor))
+  ;;(("ornament-extra-color")   :ornament-extra-color ""  ,tmcolor->htmlcolor))
+  ;;(("ornament-swell")        :ornament-swell "" ,identity))
+  ;;(("ornament-title-style")   :ornament-title-style "" ,identity))
   (("font-family" "tt") (h:tt))
   (("font-family" "ss") (h:class (@ (style "font-family: sans-serif"))))
   (("font-series" "bold") (h:b))
