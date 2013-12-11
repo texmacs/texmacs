@@ -688,7 +688,8 @@
 			       (= x (exact->inexact (inexact->exact x))))
 			  (inexact->exact x) x))))
 
-(define (tmlength->htmllength len css?)
+(define (tmlength->htmllength len . css?)
+  (if (list>0? css?) (set! css? (car css?)) (set! css? #t))
   (and-let* ((len-str (tmhtml-force-string len))
 	     (tmlen (string->tmlength len-str))
 	     (dummy2? (not (tmlength-null? tmlen)))
