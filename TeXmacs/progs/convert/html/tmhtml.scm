@@ -776,6 +776,8 @@
 (define (tmhtml-with-one var val arg)
   (cond ((logic-ref tmhtml-with-cmd% (list var val)) =>
 	 (lambda (w) (list (append w (tmhtml arg)))))
+	((logic-ref tmhtml-with-cmd% (list var)) =>
+	 (lambda (x) (ahash-with tmhtml-env x val (tmhtml arg))))
 	((logic-ref tmhtml-with-cmd% var) =>
 	 (lambda (h) (h val arg)))
 	(else (tmhtml arg))))
