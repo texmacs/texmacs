@@ -201,7 +201,7 @@
                 (input (initial-set u "page-odd" answer) "string"
                        (list (initial-get u "page-odd")) "6em"))
               (item (text "(Even page) Left:")
-                (input (initial-set u "page-odd" answer) "string"
+                (input (initial-set u "page-even" answer) "string"
                        (list (initial-get u "page-odd")) "6em"))
               (item (text "(Odd page) Right:")
                 (input (initial-set u "page-right" answer) "string"
