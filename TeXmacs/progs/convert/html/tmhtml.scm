@@ -1152,9 +1152,19 @@
                      ";"))))
              funs args stys) ";"))))
 
+(define (contains-surround? l)
+  (cond ((nlist? l) #f)
+        ((func? l 'surround 3) #t)
+        (else (with r #f
+                (for-each (lambda (x)
+                            (set! r (or r (contains-surround? x)))) l)
+                r))))
+
 (define (tmhtml-ornament l)
   (let* ((body (tmhtml (car l)))
          (styl (tmhtml-ornament-get-env-style))
+         (styl (if (contains-surround? l)
+                 (string-append styl ";display:block;") styl))
          (args (if (== styl "") '() `((style ,styl))))
          (tag  (if (stm-block-structure? (car l)) 'h:div 'h:span)))
     `((,tag (@ (class "ornament") ,@args) ,@body))))
