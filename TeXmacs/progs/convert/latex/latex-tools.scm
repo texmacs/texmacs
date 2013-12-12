@@ -378,9 +378,21 @@
       (string-append "\\usepackage[" lan "]{babel}\n"))
 
 (define (latex-preamble-page-type init)
-  (let* ((page-type (ahash-ref init "page-type"))
-	 (page-size (logic-ref latex-paper-type% page-type)))
-    (if page-size `(!append (geometry ,page-size) "\n") "")))
+  (let* ((l0 (ahash-table->list init))
+         (l1 (map car l0))
+         (l2 (map cdr l0))
+         (l3 (map (cut logic-ref latex-paper-opts% <>) l1))
+         (l4 (map (lambda (key val)
+                    (cond ((not val) '())
+                          ((== key "")   val)
+                          ((== key "page-type")
+                           (or (logic-ref latex-paper-type% val) '()))
+                          ((string? key)
+                           (string-append key "= " val));(decode-length val)))
+                          (else '()))) l3 l2))
+         (l5 (filter nnull? l4))
+         (page-opts (list-intersperse l5 ",")))
+    (if page-opts `(!append (geometry (!concat ,@page-opts)) "\n") "")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Building the preamble

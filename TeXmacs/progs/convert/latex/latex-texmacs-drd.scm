@@ -797,6 +797,17 @@
 ;; Page size settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(logic-table latex-paper-opts%
+  ("page-top"         "top")
+  ("page-bot"         "bottom")
+  ("page-even"        "left")
+  ("page-odd"         "left")
+  ("page-right"       "right")
+  ("page-height"      "paperheight")
+  ("page-page-width"  "paperwidth")
+  ("page-type"        "page-type")
+  ("page-orientation" ""))
+
 (logic-table latex-paper-type%
   ("a0" "a0paper")
   ("a1" "a1paper")
