@@ -269,7 +269,7 @@
   <assign|abstract-acm|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<ACM-class-text><localize|:>
   ><concat-tuple|<map|acm-ref|<quote-arg|args>>|, >>>>
 
-  <assign|arxiv-ref|<macro|cat-id|<style-with|src-compact|none|<hlink|<arg|cat-id>|<style-with|src-compact|none|<merge|http://arxiv.org/find/all/1/cat:+|<arg|cat-id>|/0/1/0/all/0/1>>>>>>
+  <assign|arxiv-ref|<macro|cat-id|<style-with|src-compact|none|<hlink|<arg|cat-id>|<style-with|src-compact|none|<merge|http://arxiv.org/find/all/1/cat%3A+|<arg|cat-id>|/0/1/0/all/0/1>>>>>>
 
   <assign|abstract-arxiv|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<arXiv-class-text><localize|:>
   ><concat-tuple|<map|arxiv-ref|<quote-arg|args>>|, >>>>
