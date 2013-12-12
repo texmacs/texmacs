@@ -346,7 +346,8 @@
 (define (make-use-package l)
   (let ((opt (apply string-append (list-intersperse (cDr l) ",")))
         (sty (cAr l)))
-    (string-append "\\usepackage[" opt "]{" sty "}\n")))
+    (with opts (if (== opt "") "" (string-append "["  opt "]"))
+      (string-append "\\usepackage" opt "{" sty "}\n"))))
 
 (define (latex-as-use-package l1)
   (let* ((l2  (sort l1 latex-use-package-compare))
