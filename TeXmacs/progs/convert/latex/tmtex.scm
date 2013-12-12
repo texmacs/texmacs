@@ -461,6 +461,18 @@
        (string? (cadr x))
        (func? (caddr x) 'macro)))
 
+(define (tmtex-filter-style-macro t)
+  (letrec ((ndef-style? (lambda (x env) (or (not (macro-definition? x))
+                                            (nin? (cadr x) env))))
+           (filter-style-macro
+             (lambda (t env)
+               (cond ((nlist? t) t)
+                     (else (map (cut filter-style-macro <> env)
+                                (filter (cut ndef-style? <> env) t)))))))
+    (with env (append (logic-first-list 'tmtex-methods%)
+                      (logic-first-list 'tmtex-tmstyle%))
+      (filter-style-macro t env))))
+
 (define (comment-preamble t)
   (cond ((string? t) `(!comment ,t))
         ((or (func? t 'para)
@@ -539,7 +551,7 @@
                      (map (lambda (x) (cons (cadr x) (caddr x))) (cdr init))
                      '()))
          (att (or (cadddr (cdr l)) '()))
-	 (doc-preamble (tmtex-filter-preamble doc))
+	 (doc-preamble (tmtex-filter-preamble (tmtex-filter-style-macro doc)))
 	 (doc-body-pre (tmtex-filter-body doc))
 	 (doc-body (tmtex-apply-init doc-body-pre init-bis)))
          (latex-init-style-hyps styles)
@@ -2307,6 +2319,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (logic-table tmtex-tmstyle%
+  ((:or section subsection subsubsection paragraph subparagraph part chapter)
+   (,tmtex-default 1))
   ((:or hide-preamble show-preamble) (,tmtex-default -1))
   (hide-part (,tmtex-hide-part -1))
   (show-part (,tmtex-show-part -1))
