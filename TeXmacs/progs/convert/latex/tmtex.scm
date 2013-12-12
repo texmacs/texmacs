@@ -674,13 +674,14 @@
 (define (tmtex-no-break l) '(!group (nobreak)))
 (define (tmtex-emdash l) "---")
 
-(define (tmtex-decode-length len)
+(tm-define (tmtex-decode-length len)
   ;; FIXME: should be completed
   (with s (force-string len)
-    (cond ((string-ends? s "fn") (string-replace s "fn" "em"))
-	  ((string-ends? s "spc") (string-replace s "spc" "em"))
-	  ((string-ends? s "sep") (string-replace s "sep" "ex"))
-	  ((string-ends? s "par") (string-replace s "par" "\\columnwidth"))
+    (cond ((string-ends? s "fn")   (string-replace s "fn"   "em"))
+	  ((string-ends? s "spc")  (string-replace s "spc"  "em"))
+	  ((string-ends? s "sep")  (string-replace s "sep"  "ex"))
+	  ((string-ends? s "par")  (string-replace s "par"  "\\columnwidth"))
+	  ((string-ends? s "pag")  (string-replace s "pag"  "\\textheight"))
 	  (else s))))
 
 (define (tmtex-hrule l) (list 'tmhrule))
