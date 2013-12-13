@@ -14,6 +14,16 @@
 #include "scheme.hpp"
 
 static string
+paper_opts_func (string s) {
+  return as_string (call ("latex-paper-opts", s));
+}
+
+static string
+paper_type_func (string s) {
+  return as_string (call ("latex-paper-type", s));
+}
+
+static string
 latex_type_func (string s) {
   return as_string (call ("latex-type", s));
 }
@@ -23,6 +33,8 @@ latex_arity_func (string s) {
   return as_int (call ("latex-arity", s));
 }
 
+hashfunc<string,string>    paper_std_opts (paper_opts_func, "undefined");
+hashfunc<string,string>    paper_std_type (paper_type_func, "undefined");
 hashfunc<string,string>    latex_std_type (latex_type_func, "undefined");
 hashfunc<string,int>       latex_std_arity (latex_arity_func, 0);
 
@@ -31,6 +43,16 @@ static array<string> empty_array_string;
 rel_hashmap<string,string> command_type ("undefined");
 rel_hashmap<string,int>    command_arity (0);
 rel_hashmap<string,array<string> > command_def (empty_array_string);
+
+string
+paper_opts (string s) {
+  return paper_std_opts [s];
+}
+
+string
+paper_type (string s) {
+  return paper_std_type [s];
+}
 
 string
 latex_type (string s) {

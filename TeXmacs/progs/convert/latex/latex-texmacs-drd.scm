@@ -800,11 +800,11 @@
 (logic-table latex-paper-opts%
   ("page-top"         "top")
   ("page-bot"         "bottom")
-  ("page-even"        "left")
   ("page-odd"         "left")
+  ("page-even"        "left")
   ("page-right"       "right")
   ("page-height"      "paperheight")
-  ("page-page-width"  "paperwidth")
+  ("page-width"       "paperwidth")
   ("page-type"        "page-type")
   ("page-orientation" "page-orientation"))
 
@@ -857,3 +857,13 @@
   ("quarto" "papersize={215mm,275mm}")
   ("statement" "papersize={140mm,216mm}")
   ("tabloid" "papersize={279mm,432mm}"))
+
+;; cpp interface with reversed access
+
+(tm-define (latex-paper-opts s)
+  (with r (query `(latex-paper-opts% 'x ,s))
+    (if (nnull? r) (cdaar r) "undefined")))
+
+(tm-define (latex-paper-type s)
+  (with r (query `(latex-paper-type% 'x ,s))
+    (if (nnull? r) (cdaar r) "undefined")))

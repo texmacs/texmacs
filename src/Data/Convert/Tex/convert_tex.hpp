@@ -19,6 +19,8 @@ extern rel_hashmap<string,string> command_type;
 extern rel_hashmap<string,int>    command_arity;
 extern rel_hashmap<string,array<string> > command_def;
 
+string paper_opts  (string cmd);
+string paper_type  (string cmd);
 string latex_type  (string cmd);
 int    latex_arity (string cmd);
 

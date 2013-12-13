@@ -318,6 +318,8 @@ filter_preamble (tree t) {
         doc << u;
         latex_class = u;
       }
+      else if (is_tuple (u, "\\geometry", 1))
+        preamble << u << "\n" << "\n";
       else if (is_tuple (u, "\\textm@break", 3))
         doc << u << "\n" << "\n";
       else if (is_tuple (u, "\\def") ||
@@ -1437,6 +1439,38 @@ latex_command_to_tree (tree t) {
         }
         tree keys= translate_keys (decode_keys_vals (t[1]), dic);
         return tree (BEGIN, env, keys);
+  }
+
+  if (is_tuple (t, "\\geometry", 1)) {
+    array< array<tree> > l= tokenize_keys_vals (t[1]);
+    int i, n= N(l);
+    tree r (COLLECTION);
+    for (i=0; i<n; i++) {
+      if (N(l[i]) < 1 || N(l[i]) > 2) continue;
+      string  key= trim_spaces (as_string (l2e (l[i][0])));
+      string type= paper_type (key);
+      string opts= paper_opts (key);
+      if (N(l[i]) == 1) {
+        if (key == "landscape" || key == "portrait")
+          r << tree (ASSOCIATE, "page-orientation", key);
+        else if (type != "undefined")
+          r << tree (ASSOCIATE, "paper-type", type);
+      }
+      else if (N(l[i]) == 2) {
+        tree val= trim_spaces (l2e (l[i][1]));
+        string sval= trim_spaces (as_string (val));
+        if ((key == "landscape" || key == "portrait") && sval == "true")
+          r << tree (ASSOCIATE, "page-orientation", key);
+        else if (type != "undefined" && sval == "true")
+          r << tree (ASSOCIATE, "paper-type", type);
+        else if (opts != "undefined") {
+          r << tree (ASSOCIATE, opts, val);
+          if (opts == "page-height" || opts == "page-width")
+            r << tree (ASSOCIATE, "page-type", "user");
+        }
+      }
+    }
+    return tree (APPLY, "geometry", r);
   }
 
   if (is_tuple (t, "\\marginpar", 1))
@@ -4164,10 +4198,24 @@ unnest_withs (tree t) {
   return r;
 }
 
+/****************************** Remove geometry ******************************/
+
+static tree
+remove_geometry (tree t) {
+  if (is_atomic (t)) return t;
+  int i, n= N(t);
+  tree r(L(t));
+  for (i=0; i<n; i++)
+    if (!is_compound (t[i], "geometry"))
+      r << remove_geometry (t[i]);
+  return r;
+}
+
 /****************************** Finalize textm *******************************/
 
 tree
 finalize_textm (tree t) {
+  t= remove_geometry (t);
   t= modernize_newlines (t, false);
   t= merge_successive_withs (t);
   t= unnest_withs (t);
@@ -4341,6 +4389,28 @@ pick_paragraph_breaks (tree t, array<tree> &b) {
 }
 
 /******************************************************************************
+* Page geometry
+******************************************************************************/
+
+static array<tree>
+filter_geometry (tree t) {
+  array<tree> r;
+  if (is_atomic (t));
+  else if (is_compound (t, "geometry", 1)) {
+    int i, n= N(t[0]);
+    for (i=0; i<n; i++)
+      if (is_compound (t[0][i], "associate"))
+        r << t[0][i];
+  }
+  else {
+    int i, n= N(t);
+    for (i=0; i<n; i++)
+      r << filter_geometry (t[i]);
+  }
+  return r;
+}
+
+/******************************************************************************
 * Interface
 ******************************************************************************/
 
@@ -4375,6 +4445,10 @@ latex_to_tree (tree t1) {
   // cout << "\n\nt8= " << t8 << "\n\n";
   tree t9= finalize_misc (t8);
   // cout << "\n\nt9= " << t9 << "\n\n";
+
+  tree initial (COLLECTION), mods (WITH);
+  if (is_document) initial << filter_geometry (t9);
+
   tree t10= finalize_textm (t9);
   // cout << "\n\nt10= " << t10 << "\n\n";
   tree t11= drd_correct (std_drd, t10);
@@ -4382,7 +4456,6 @@ latex_to_tree (tree t1) {
 
   if (!exists (url ("$TEXMACS_STYLE_PATH", style * ".ts")))
     style= "generic";
-  tree initial (COLLECTION), mods (WITH);
 
   if (lan != "") {
     initial << tree (ASSOCIATE, LANGUAGE, lan);
