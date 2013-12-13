@@ -244,9 +244,9 @@ tree_to_verbatim (tree t, bool wrap, string enc) {
   string buf= as_verbatim (t, wrap);
   if (enc == "auto")
     enc= get_locale_charset ();
-  if (enc == "utf-8" || enc == "UTF-8") buf= var_cork_to_utf8 (buf);
-  else if (enc == "iso-8859-1" || enc == "ISO-8859-1") buf= tm_decode (buf);
+  if (enc == "iso-8859-1" || enc == "ISO-8859-1") buf= tm_decode (buf);
   else if (enc == "SourceCode") buf= var_cork_to_sourcecode (buf);
+  else if (enc != "cork" && enc != "Cork") buf= var_cork_to_utf8 (buf);
 #ifdef OS_WIN32
   return unix_to_dos (buf);
 #else
