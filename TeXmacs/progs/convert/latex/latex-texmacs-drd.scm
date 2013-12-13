@@ -806,7 +806,7 @@
   ("page-height"      "paperheight")
   ("page-page-width"  "paperwidth")
   ("page-type"        "page-type")
-  ("page-orientation" ""))
+  ("page-orientation" "page-orientation"))
 
 (logic-table latex-paper-type%
   ("a0" "a0paper")
