@@ -300,11 +300,15 @@ edit_process_rep::generate_glossary (string gly) {
     for (i=0; i<n; i++)
       if (is_func (G[i], TUPLE, 1)) D << G[i][0];
       else if (is_func (G[i], TUPLE, 3) && (G[i][0] == "normal")) {
-	tree L= compound ("glossary-1", G[i][1], G[i][2]);
+        tree content= G[i][1];
+        if (is_document (content) && N(content) == 1) content= content[0];;
+	tree L= compound ("glossary-1", content, G[i][2]);
 	D << L;
       }
       else if (is_func (G[i], TUPLE, 4) && (G[i][0] == "normal")) {
-	tree L= compound ("glossary-2", G[i][1], G[i][2], G[i][3]);
+        tree content= G[i][1];
+        if (is_document (content) && N(content) == 1) content= content[0];;
+	tree L= compound ("glossary-2", content, G[i][2], G[i][3]);
 	D << L;
       }
       else if (is_func (G[i], TUPLE, 3) && (G[i][0] == "dup")) {
