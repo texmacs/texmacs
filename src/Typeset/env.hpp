@@ -136,6 +136,8 @@ public:
   hashmap<string,tree>&        global_aux;
   bool                         complete;    // typeset complete document ?
   bool                         read_only;   // write-protected ?
+  hashmap<string,tree>         missing;     // missing refs
+  array<tree>                  redefined;   // redefined labels
   link_repository              link_env;
 
   int          dpi;

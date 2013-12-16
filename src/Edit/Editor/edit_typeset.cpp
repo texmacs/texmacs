@@ -17,6 +17,8 @@
 #include "timer.hpp"
 #include "Bridge/impl_typesetter.hpp"
 #include "new_style.hpp"
+#include "iterator.hpp"
+#include "merge_sort.hpp"
 #ifdef EXPERIMENTAL
 #include "../../Style/Environment/std_environment.hpp"
 #endif // EXPERIMENTAL
@@ -583,7 +585,7 @@ edit_typeset_rep::init_default (string var) {
 ******************************************************************************/
 
 void
-edit_typeset_rep::typeset (SI& x1, SI& y1, SI& x2, SI& y2) {
+edit_typeset_rep::typeset_sub (SI& x1, SI& y1, SI& x2, SI& y2) {
   //time_t t1= texmacs_time ();
   typeset_prepare ();
   eb= empty_box (reverse (rp));
@@ -608,6 +610,48 @@ edit_typeset_rep::typeset (SI& x1, SI& y1, SI& x2, SI& y2) {
   //time_t t2= texmacs_time ();
   //if (t2 - t1 >= 10) cout << "typeset took " << t2-t1 << "ms\n";
   picture_cache_clean ();
+}
+
+static void
+report_missing (hashmap<string,tree> missing) {
+  array<string> a;
+  for (iterator<string> it= iterate (missing); it->busy(); a << it->next ());
+  merge_sort (a);
+  for (int i=0; i<N(a); i++)
+    typeset_warning << "Undefined reference " << a[i] << LF;
+}
+
+static void
+report_redefined (array<tree> redefined) {
+  for (int i=0; i<N(redefined); i++) {
+    tree t= redefined[i];
+    if (t[1]->label == "")
+      typeset_warning << "Redefined " << t[0]->label << LF;
+    else
+      typeset_warning << "Redefined " << t[0]->label
+                      << " as " << t[1]->label << LF;
+  }
+}
+
+void
+edit_typeset_rep::typeset (SI& x1, SI& y1, SI& x2, SI& y2) {
+  int missing_nr= 1000000;
+  int redefined_nr= 1000000;
+  while (true) {
+    typeset_sub (x1, y1, x2, y2);
+    if (!env->complete) break;
+    env->complete= false;
+    if (N(env->missing) == 0 && N(env->redefined) == 0) break;
+    if ((N(env->missing) == missing_nr && N(env->redefined) == redefined_nr) ||
+        (N(env->missing) > missing_nr || N(env->redefined) > redefined_nr)) {
+      report_missing (env->missing);
+      report_redefined (env->redefined);
+      break;
+    }
+    missing_nr= N(env->missing);
+    redefined_nr= N(env->redefined);
+    ::notify_assign (ttt, path(), ttt->br->st);
+  }
 }
 
 void

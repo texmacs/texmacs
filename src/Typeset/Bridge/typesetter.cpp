@@ -157,15 +157,18 @@ typesetter_rep::typeset () {
   }
 
   // Typeset
-  if (env->complete) env->local_aux= hashmap<string,tree> (UNINIT);
+  if (env->complete) {
+    env->local_aux= hashmap<string,tree> (UNINIT);
+    env->missing= hashmap<string,tree> (UNINIT);
+    env->redefined= array<tree> ();
+  }
   br->typeset (PROCESSED+ WANTED_PARAGRAPH);
   pager ppp= tm_new<pager_rep> (br->ip, env, l);
-  box b= ppp->make_pages ();
-  if (env->complete && paper) determine_page_references (b);
+  box rb= ppp->make_pages ();
+  if (env->complete && paper) determine_page_references (rb);
   tm_delete (ppp);
-  env->complete= false;
-
-  return b;
+  // env->complete= false;  // moved to edit_typeset_rep::typeset
+  return rb;
 }
 
 box
