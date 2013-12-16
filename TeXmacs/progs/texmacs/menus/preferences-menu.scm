@@ -165,7 +165,11 @@
             (enum ("Format" "texmacs->graphics:format")
                   ("Svg" "svg")
                   ("Eps" "eps")
-                  ("Png" "png"))))
+                  ("Png" "png")))
+        (when (and (supports-native-pdf?) (supports-ghostscript?))
+          (-> "TeXmacs -> Pdf/Postscript"
+              (toggle ("Produce native Pdf" "native pdf"))
+              (toggle ("Produce native Postscript" "native postscript")))))
     (-> "Mathematics"
         (-> "Keyboard"
             (item ("Enforce brackets to match" (toggle-matching-brackets)))

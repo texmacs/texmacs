@@ -253,6 +253,24 @@ tmg_cpp_error () {
 }
 
 tmscm
+tmg_supports_native_pdfP () {
+  // TMSCM_DEFER_INTS;
+  bool out= supports_native_pdf ();
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_supports_ghostscriptP () {
+  // TMSCM_DEFER_INTS;
+  bool out= supports_ghostscript ();
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_rescue_modeP () {
   // TMSCM_DEFER_INTS;
   bool out= in_rescue_mode ();
@@ -7385,6 +7403,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tm-errput",  tmg_tm_errput, 1, 0, 0);
   tmscm_install_procedure ("win32-display",  tmg_win32_display, 1, 0, 0);
   tmscm_install_procedure ("cpp-error",  tmg_cpp_error, 0, 0, 0);
+  tmscm_install_procedure ("supports-native-pdf?",  tmg_supports_native_pdfP, 0, 0, 0);
+  tmscm_install_procedure ("supports-ghostscript?",  tmg_supports_ghostscriptP, 0, 0, 0);
   tmscm_install_procedure ("rescue-mode?",  tmg_rescue_modeP, 0, 0, 0);
   tmscm_install_procedure ("scheme-dialect",  tmg_scheme_dialect, 0, 0, 0);
   tmscm_install_procedure ("get-texmacs-path",  tmg_get_texmacs_path, 0, 0, 0);

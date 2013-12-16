@@ -290,6 +290,20 @@
             (get-pretty-preference "verbatim->texmacs:encoding")
             "5em"))))
 
+;; Pdf ----------
+
+(tm-widget (pdf-preferences-widget)
+  ===
+  (bold (text "TeXmacs -> Pdf/Postscript"))
+  ===
+  (aligned
+    (meti (text "Produce Pdf using native export filter")
+      (toggle (set-boolean-preference "native pdf" answer)
+              (get-boolean-preference "native pdf")))
+    (meti (text "Produce Postscript using native export filter")
+      (toggle (set-boolean-preference "native postscript" answer)
+              (get-boolean-preference "native postscript")))))
+
 ;; Images ----------
 
 (define-preference-names "texmacs->graphics:format"
@@ -326,6 +340,10 @@
       (tab (text "Verbatim")
         (centered
           (dynamic (verbatim-preferences-widget))))
+      (assuming (and (supports-native-pdf?) (supports-ghostscript?))
+        (tab (text "Pdf")
+          (centered
+            (dynamic (pdf-preferences-widget)))))
       (tab (text "Image")
         (centered
           (dynamic (image-preferences-widget))))))

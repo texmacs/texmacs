@@ -40,6 +40,8 @@
   (tm-errput tm_errput (void string))
   (win32-display win32_display (void string))
   (cpp-error cpp_error (void))
+  (supports-native-pdf? supports_native_pdf (bool))
+  (supports-ghostscript? supports_ghostscript (bool))
   (rescue-mode? in_rescue_mode (bool))
   (scheme-dialect scheme_dialect (string))
   (get-texmacs-path get_texmacs_path (url))
