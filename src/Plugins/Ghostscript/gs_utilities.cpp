@@ -168,6 +168,29 @@ gs_to_pdf (url doc, url pdf, bool landscape, double paper_h, double paper_w) {
 }
 
 void
+gs_to_ps (url doc, url ps, bool landscape, double paper_h, double paper_w) {
+  string cmd= gs_prefix ();
+  cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER -sDEVICE=ps2write ";
+  if (landscape)
+    cmd << "-dDEVICEWIDTHPOINTS=" << as_string ((int) (28.36*paper_h+ 0.5))
+      << " -dDEVICEHEIGHTPOINTS=" << as_string ((int) (28.36*paper_w+ 0.5));
+  else
+    cmd << "-dDEVICEWIDTHPOINTS=" << as_string ((int) (28.36*paper_w+ 0.5))
+      << " -dDEVICEHEIGHTPOINTS=" << as_string ((int) (28.36*paper_h+ 0.5));
+
+  cmd << " -sOutputFile=" << sys_concretize (ps) << " ";
+  cmd << sys_concretize (doc);
+  cmd << " -c \"[ /Title (" << as_string (tail(ps)) << ") /DOCINFO pdfmark\" ";
+
+  // NOTE: when converting from pdf to ps the title of the document is 
+  // incorrectly referring to the name of the temporary file
+  // so we add some PS code to override the PS document title with
+  // the name of the PS file.
+
+  system (cmd);
+}
+
+void
 tm_gs (url image) {
   string cmd= gs_prefix ();
   cmd << "-q -sDEVICE=x11alpha -dBATCH -dNOPAUSE -dSAFER -dNOEPS ";

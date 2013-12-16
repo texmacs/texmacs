@@ -194,14 +194,26 @@ use_pdf () {
 #endif
 }
 
+bool
+use_ps () {
+#ifdef PDF_RENDERER
+  return get_preference ("native postscript", "on") == "on";
+#else
+  return true;
+#endif
+}
+
 void
 edit_main_rep::print_bis (url name, bool conform, int first, int last) {
-  bool pdf= (suffix (name) == "pdf");
-  url orig= resolve (name, "");
+  bool ps  = (suffix (name) == "ps");
+  bool pdf = (suffix (name) == "pdf");
+  url  orig= resolve (name, "");
 
 #ifdef USE_GS
   if (!use_pdf () && pdf)
     name= url_temp (".ps");
+  if (!use_ps () && ps)
+    name= url_temp (".pdf");
 #endif
   
   string medium = env->get_string (PAGE_MEDIUM);
@@ -246,7 +258,7 @@ edit_main_rep::print_bis (url name, bool conform, int first, int last) {
 
   // Print pages
   renderer ren;
-  if (use_pdf () && pdf)
+  if (use_pdf () && (pdf || !use_ps ()))
     ren= pdf_hummus_renderer (name, dpi, pages, page_type, landsc, w/cm, h/cm);
   else
     ren= printer (name, dpi, pages, page_type, landsc, w/cm, h/cm);
@@ -272,6 +284,10 @@ edit_main_rep::print_bis (url name, bool conform, int first, int last) {
 #ifdef USE_GS
   if (!use_pdf () && pdf) {
     gs_to_pdf (name, orig, landsc, h/cm, w/cm);
+    ::remove (name);
+  }
+  if (!use_ps () && ps) {
+    gs_to_ps (name, orig, landsc, h/cm, w/cm);
     ::remove (name);
   }
 #endif
@@ -304,9 +320,9 @@ edit_main_rep::print_buffer (string first, string last) {
    url target;
 #if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
    {
-      target= url_temp (".pdf"); 
-      WINPrint wprt(to_qstring(as_string(target)),env->page_landscape);
-      if(wprt.doit) print (target, false,wprt.first_page,wprt.last_page);
+     target= url_temp (".pdf"); 
+     WINPrint wprt(to_qstring(as_string(target)),env->page_landscape);
+     if(wprt.doit) print (target, false,wprt.first_page,wprt.last_page);
    }
 #else
   target= url_temp (".ps"); 
