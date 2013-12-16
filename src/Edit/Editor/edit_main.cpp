@@ -185,17 +185,23 @@ string printing_dpi ("600");
 string printing_cmd ("lpr");
 string printing_on ("a4");
 
+bool
+use_pdf () {
+#ifdef PDF_RENDERER
+  return get_preference ("native pdf", "on") == "on";
+#else
+  return false;
+#endif
+}
+
 void
 edit_main_rep::print_bis (url name, bool conform, int first, int last) {
   bool pdf= (suffix (name) == "pdf");
   url orig= resolve (name, "");
 
-#ifndef PDF_RENDERER
 #ifdef USE_GS
-  if (pdf) name= url_temp (".ps");
-#endif
-#else
-  (void) pdf;  // avoid annoying warning
+  if (!use_pdf () && pdf)
+    name= url_temp (".ps");
 #endif
   
   string medium = env->get_string (PAGE_MEDIUM);
@@ -239,18 +245,13 @@ edit_main_rep::print_bis (url name, bool conform, int first, int last) {
   }
 
   // Print pages
-
+  renderer ren;
+  if (use_pdf () && pdf)
+    ren= pdf_hummus_renderer (name, dpi, pages, page_type, landsc, w/cm, h/cm);
+  else
+    ren= printer (name, dpi, pages, page_type, landsc, w/cm, h/cm);
+  
   int i;
-  
-#ifdef PDF_RENDERER
-  renderer ren = (pdf ? 
-    //pdf_renderer (name, dpi, pages, page_type, landsc, w/cm, h/cm) :
-    pdf_hummus_renderer (name, dpi, pages, page_type, landsc, w/cm, h/cm) :
-    printer (name, dpi, pages, page_type, landsc, w/cm, h/cm) );
-#else
-  renderer ren = printer (name, dpi, pages, page_type, landsc, w/cm, h/cm);
-#endif
-  
   ren->set_metadata ("title", get_metadata ("title"));
   ren->set_metadata ("author", get_metadata ("author"));
   ren->set_metadata ("subject", get_metadata ("subject"));
@@ -268,13 +269,11 @@ edit_main_rep::print_bis (url name, bool conform, int first, int last) {
   }
   tm_delete (ren);
 
-#ifndef PDF_RENDERER
 #ifdef USE_GS
-  if (pdf) {
+  if (!use_pdf () && pdf) {
     gs_to_pdf (name, orig, landsc, h/cm, w/cm);
     ::remove (name);
   }
-#endif
 #endif
 }
 
