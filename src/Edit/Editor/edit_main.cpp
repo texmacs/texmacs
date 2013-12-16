@@ -258,10 +258,14 @@ edit_main_rep::print_bis (url name, bool conform, int first, int last) {
 
   // Print pages
   renderer ren;
+#ifdef PDF_RENDERER
   if (use_pdf () && (pdf || !use_ps ()))
     ren= pdf_hummus_renderer (name, dpi, pages, page_type, landsc, w/cm, h/cm);
   else
     ren= printer (name, dpi, pages, page_type, landsc, w/cm, h/cm);
+#else
+  ren= printer (name, dpi, pages, page_type, landsc, w/cm, h/cm);
+#endif
   
   int i;
   ren->set_metadata ("title", get_metadata ("title"));
