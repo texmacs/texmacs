@@ -45,4 +45,4 @@
              html-javascript html-javascript-src html-video
 	     tmdoc-title tmdoc-flag tmdoc-license key
 	     tmdoc-title* tmdoc-title** tmdoc-copyright
-	     hlink action hyper-link))))
+	     hlink action hyper-link mouse-over-balloon mouse-over-balloon*))))

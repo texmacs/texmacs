@@ -148,6 +148,14 @@
 	  ".compact-block p { margin-top: 0px; margin-bottom: 0px } "
 	  ".left-tab { text-align: left } "
 	  ".center-tab { text-align: center } "
+          ".balloon-anchor { border-bottom: 1px dotted #000000; outline:none;"
+          "                  cursor: help; position: relative; }"
+          ".balloon-anchor [hidden] { margin-left: -999em; position: absolute;"
+                                    " display: none; }"
+          ".balloon-anchor:hover [hidden] { position: absolute; left: 1em;"
+                                 " top: 2em; z-index: 99; margin-left: 0;"
+                                 " width: 500px; display: inline-block; }"
+          ".balloon-body { }"
 	  ".ornament  { border-width: 1px; border-style: solid; border-color: "
                       " black; display: inline-block; padding: 0.2em; } "
 	  ".right-tab { float: right; position: relative; top: -1em } "))
@@ -1169,6 +1177,14 @@
          (tag  (if (stm-block-structure? (car l)) 'h:div 'h:span)))
     `((,tag (@ (class "ornament") ,@args) ,@body))))
 
+(define (tmhtml-balloon l)
+  (let* ((anch (tmhtml (car  l)))
+         (body (tmhtml (cadr l)))
+         (tag1 (if (stm-block-structure? (car  l)) 'h:div 'h:span))
+         (tag2 (if (stm-block-structure? (cadr l)) 'h:div 'h:span)))
+    `((,tag1 (@ (class "balloon-anchor")) ,@anch
+             (,tag2 (@ (class "balloon-body") (hidden "hidden")) ,@body)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Standard markup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1527,6 +1543,7 @@
   ((:or point line arc bezier) tmhtml-noop)
   (image tmhtml-image)
   (ornament tmhtml-ornament)
+  ((:or mouse-over-balloon mouse-over-balloon*) tmhtml-balloon)
 
   (!file tmhtml-file))
 
