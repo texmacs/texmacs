@@ -108,7 +108,7 @@
 (define cork-rdquo (char->string (integer->char 17)))
 
 (define (make-ligatures s)
-  ;; Make texmacs ligatures in Cork encoding  
+  ;; Make texmacs ligatures in Cork encoding
   (string-replace
    (string-replace
     (string-replace s "--" cork-endash) "``" cork-ldquo) "''" cork-rdquo))
@@ -720,7 +720,7 @@
 	   (string-append (number->htmlstring val) "px"))
 	  (css? len)
 	  (else (number->htmlstring (* cmpx val incm))))))
- 
+
 (define (tmlength->px len)
   (and-let* ((tmlen (string->tmlength len))
 	     (dummy? (not (tmlength-null? tmlen)))
@@ -1497,7 +1497,7 @@
   (mark tmhtml-mark)
   (eval tmhtml-noop)
   ((:or if if* case while for-each extern include use-package) tmhtml-noop)
-  
+
   ((:or or xor and not plus minus times over div mod merge length range
 	number date translate is-tuple look-up equal unequal less lesseq
 	greater greatereq if case while extern authorize)
