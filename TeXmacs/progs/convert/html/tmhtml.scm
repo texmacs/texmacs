@@ -226,9 +226,13 @@
       (xmlns:m "http://www.w3.org/1998/Math/MathML")
       (xmlns:x "http://www.texmacs.org/2002/extensions")))
   (define doctype-list
-    (let ((html "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN")
-	  (mathml "http://www.w3.org/TR/MathML2/dtd/xhtml-math11-f.dtd"))
-      (if tmhtml-mathml? (list html mathml) (list html))))
+    (let ((html       "-//W3C//DTD XHTML 1.1//EN")
+          (mathml     "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN")
+	  (html-drd   "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd")
+	  (mathml-drd (string-append
+                        "http://www.w3.org/2002/04/xhtml-math-svg/"
+                        "xhtml-math-svg.dtd")))
+      (if tmhtml-mathml? (list mathml mathml-drd) (list html html-drd))))
   `(*TOP* (*PI* xml "version=\"1.0\" encoding=\"UTF-8\"")
 	  (*DOCTYPE* html PUBLIC ,@doctype-list)
 	  ,((cut sxml-set-attrs <> xmlns-attrs)
