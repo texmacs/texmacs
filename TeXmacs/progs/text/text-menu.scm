@@ -205,7 +205,7 @@ for
   (when (not (or (inside? 'float) (inside? 'footnote)))
     ("Footnote" (make 'footnote))
     ("Marginal note" (make-marginal-note))
-    ("Balloon" (make-balloon))
+    ;;("Balloon" (make-balloon))
     ---
     ("Floating object" (make-insertion "float"))
     ("Floating figure" (begin (make-insertion "float") (make 'big-figure)))
