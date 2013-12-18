@@ -5,10 +5,20 @@
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.7 to 1.0.7.22>
+  <section|Changes from version 1.0.7 to 1.99.1>
 
   <\itemize>
-    <item>Support for marginal notes (1.0.7.22).
+    <item>Activate the native Pdf renderer by default (1.99.1).
+
+    <item>Many, many bug fixes (1.99.1).
+
+    <item>Introduction of a debugging console (1.99.1).
+
+    <item>Limited recovery from errors (1.99.1).
+
+    <item>Started implementation of search and replace widget (1.99.1).
+
+    <item>Support for marginal notes (1.99.1).
 
     <item>Complete reorganization of document styles and package (1.0.7.21).
 
