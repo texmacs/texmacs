@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 
+* Wed Dec 18 2013   Joris van der Hoeven <vdhoeven@texmacs.org>
+- 1.99.1 Add --disable-pdf-renderer option to ./configure
+
 * Sun Mar 10 2012   Joris van der Hoeven <vdhoeven@texmacs.org>
 - 1.0.7.14 Updated mimetype support
 
