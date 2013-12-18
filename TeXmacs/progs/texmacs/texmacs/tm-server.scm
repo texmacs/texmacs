@@ -97,7 +97,7 @@
   ("presentation tool" "off" notify-tool)
   ("source tool" "off" notify-tool)
   ("versioning tool" "off" notify-tool)
-  ("experimental alpha" "off" notify-tool)
+  ("experimental alpha" "on" notify-tool)
   ("new style fonts" "off" notify-new-fonts))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
