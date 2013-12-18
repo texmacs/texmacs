@@ -162,6 +162,7 @@ array<string> font_database_search (string family, string style);
 array<string> font_database_search (string fam, string var,
                                     string series, string shape);
 array<string> font_database_characteristics (string family, string style);
+tree font_database_substitutions (string family);
 
 // Font selection
 tree array_as_tuple (array<string> a);
@@ -189,6 +190,7 @@ array<string> search_font_exact (array<string> v);
 array<string> search_font_families (array<string> v);
 array<string> search_font_styles (string s, array<string> v);
 array<string> patch_font (array<string> v, array<string> w, bool decode= true);
+array<string> apply_substitutions (array<string> v);
 string main_family (string f);
 
 #endif // defined FONT_H

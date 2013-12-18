@@ -123,6 +123,8 @@
   (font-database-search font_database_search (array_string string string))
   (font-database-characteristics
    font_database_characteristics (array_string string string))
+  (font-database-substitutions
+   font_database_substitutions (scheme_tree string))
   (font-family->master family_to_master (string string))
   (font-master->families master_to_families (array_string string))
   (font-master-features master_features (array_string string))
@@ -149,6 +151,7 @@
   (search-font-families search_font_families (array_string array_string))
   (search-font-styles search_font_styles (array_string string array_string))
   (logical-font-patch patch_font (array_string array_string array_string))
+  (logical-font-substitute apply_substitutions (array_string array_string))
   (font-family-main main_family (string string))
 
   ;; routines for images

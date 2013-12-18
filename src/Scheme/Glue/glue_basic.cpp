@@ -1182,6 +1182,19 @@ tmg_font_database_characteristics (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_font_database_substitutions (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "font-database-substitutions");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  scheme_tree out= font_database_substitutions (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return scheme_tree_to_tmscm (out);
+}
+
+tmscm
 tmg_font_family_2master (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "font-family->master");
 
@@ -1520,6 +1533,19 @@ tmg_logical_font_patch (tmscm arg1, tmscm arg2) {
 
   // TMSCM_DEFER_INTS;
   array_string out= patch_font (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
+tmg_logical_font_substitute (tmscm arg1) {
+  TMSCM_ASSERT_ARRAY_STRING (arg1, TMSCM_ARG1, "logical-font-substitute");
+
+  array_string in1= tmscm_to_array_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  array_string out= apply_substitutions (in1);
   // TMSCM_ALLOW_INTS;
 
   return array_string_to_tmscm (out);
@@ -7482,6 +7508,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("font-database-styles",  tmg_font_database_styles, 1, 0, 0);
   tmscm_install_procedure ("font-database-search",  tmg_font_database_search, 2, 0, 0);
   tmscm_install_procedure ("font-database-characteristics",  tmg_font_database_characteristics, 2, 0, 0);
+  tmscm_install_procedure ("font-database-substitutions",  tmg_font_database_substitutions, 1, 0, 0);
   tmscm_install_procedure ("font-family->master",  tmg_font_family_2master, 1, 0, 0);
   tmscm_install_procedure ("font-master->families",  tmg_font_master_2families, 1, 0, 0);
   tmscm_install_procedure ("font-master-features",  tmg_font_master_features, 1, 0, 0);
@@ -7506,6 +7533,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("search-font-families",  tmg_search_font_families, 1, 0, 0);
   tmscm_install_procedure ("search-font-styles",  tmg_search_font_styles, 2, 0, 0);
   tmscm_install_procedure ("logical-font-patch",  tmg_logical_font_patch, 2, 0, 0);
+  tmscm_install_procedure ("logical-font-substitute",  tmg_logical_font_substitute, 1, 0, 0);
   tmscm_install_procedure ("font-family-main",  tmg_font_family_main, 1, 0, 0);
   tmscm_install_procedure ("image->psdoc",  tmg_image_2psdoc, 1, 0, 0);
   tmscm_install_procedure ("tree->stree",  tmg_tree_2stree, 1, 0, 0);

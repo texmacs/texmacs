@@ -27,6 +27,7 @@ static array<string> font_database_families (hashmap<tree,tree> ftab);
 #define GLOBAL_FEATURES "$TEXMACS_PATH/fonts/font-features.scm"
 #define GLOBAL_FEATURES_BIS "$TEXMACS_PATH/fonts/font-features.bis.scm"
 #define GLOBAL_CHARACTERISTICS "$TEXMACS_PATH/fonts/font-characteristics.scm"
+#define GLOBAL_SUBSTITUTIONS "$TEXMACS_PATH/fonts/font-substitutions.scm"
 #define LOCAL_DATABASE "$TEXMACS_HOME_PATH/fonts/font-database.scm"
 #define LOCAL_FEATURES "$TEXMACS_HOME_PATH/fonts/font-features.scm"
 #define LOCAL_CHARACTERISTICS \
@@ -81,6 +82,7 @@ hashmap<tree,tree> font_global_table (UNINIT);
 hashmap<tree,tree> font_features (UNINIT);
 hashmap<tree,tree> font_variants (UNINIT);
 hashmap<tree,tree> font_characteristics (UNINIT);
+hashmap<string,tree> font_substitutions (UNINIT);
 
 void set_new_fonts (bool new_val) { new_fonts= new_val; }
 bool get_new_fonts () { return new_fonts; }
@@ -187,6 +189,26 @@ font_database_save_characteristics (url u) {
 }
 
 void
+font_database_load_substitutions (url u) {
+  if (!exists (u)) return;
+  string s;
+  if (!load_string (u, s, false)) {
+    tree t= block_to_scheme_tree (s);
+    for (int i=0; i<N(t); i++)
+      if (is_func (t[i], TUPLE, 2) &&
+          is_func (t[i][0], TUPLE) &&
+          is_func (t[i][1], TUPLE) &&
+          N(t[i][0]) > 0 &&
+          is_atomic (t[i][0][0])) {
+        string key= t[i][0][0]->label;
+        if (!font_substitutions->contains (key))
+          font_substitutions (key)= tree (TUPLE);
+        font_substitutions (key) << t[i];
+      }
+  }
+}
+
+void
 font_database_load () {
   if (fonts_loaded) return;
   font_database_load_database (LOCAL_DATABASE);
@@ -207,6 +229,7 @@ font_database_load () {
     font_database_filter_characteristics ();
     font_database_save_characteristics (LOCAL_CHARACTERISTICS);
   }
+  font_database_load_substitutions (GLOBAL_SUBSTITUTIONS);
   fonts_loaded= true;
 }
 
@@ -217,6 +240,7 @@ font_database_global_load () {
   font_database_load_database (GLOBAL_DATABASE, font_global_table);
   font_database_load_features (GLOBAL_FEATURES);
   font_database_load_characteristics (GLOBAL_CHARACTERISTICS);
+  font_database_load_substitutions (GLOBAL_SUBSTITUTIONS);
   fonts_global_loaded= true;
 }
 
@@ -612,4 +636,12 @@ font_database_characteristics (string family, string style) {
 	r << im[i]->label;
   }
   return r;
+}
+
+tree
+font_database_substitutions (string family) {
+  font_database_load ();
+  if (font_substitutions->contains (family))
+    return font_substitutions [family];
+  else return tree (TUPLE);
 }

@@ -816,3 +816,57 @@ patch_font (array<string> v, array<string> w, bool decode) {
   //cout << v << ", " << w << " -> " << r << "\n";
   return r;
 }
+
+/******************************************************************************
+* Font substitution
+******************************************************************************/
+
+bool
+match_properties (array<string> v, tree props) {
+  for (int i=0; i<N(props); i++)
+    if (is_atomic (props[i])) {
+      bool found= false;
+      for (int j=0; j<N(v); j++)
+        if (v[j] == props[i]->label)
+          found= true;
+      if (!found) return false;
+    }
+  return true;
+}
+
+array<string>
+remove_properties (array<string> v, tree props) {
+  array<string> r;
+  for (int j=0; j<N(v); j++) {
+    bool found= false;
+    for (int i=0; i<N(props); i++)
+      if (is_atomic (props[i]))
+        if (v[j] == props[i]->label)
+          found= true;
+    if (!found) r << v[j];
+  }
+  return r;
+}
+
+array<string>
+add_properties (array<string> v, tree props) {
+  array<string> r;
+  for (int i=0; i<N(props); i++)
+    if (is_atomic (props[i]))
+      r << props[i]->label;
+  r << v;
+  return r;
+}
+
+array<string>
+apply_substitutions (array<string> v) {
+  if (N(v) <= 0) return v;
+  tree t= font_database_substitutions (v[0]);
+  for (int i=0; i<N(t); i++)
+    if (match_properties (v, t[i][0])) {
+      v= remove_properties (v, t[i][0]);
+      v= add_properties (v, t[i][1]);
+      return apply_substitutions (v);
+    }
+  return v;
+}

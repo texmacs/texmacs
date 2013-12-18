@@ -264,6 +264,7 @@ find_closest (string& family, string& variant, string& series, string& shape,
     //cout << "< " << family << ", " << variant
     //     << ", " << series << ", " << shape << "\n";
     array<string> lfn= logical_font (family, variant, series, shape);
+    lfn= apply_substitutions (lfn);
     array<string> pfn= search_font (lfn, attempt);
     array<string> nfn= logical_font (pfn[0], pfn[1]);
     family= get_family (nfn);
