@@ -792,11 +792,15 @@ smart_font_rep::get_extents (string s, metric& ex) {
     int nr;
     string r= s;
     metric ey;
-    while (i < n) {
+    while (true) {
       advance (s, i, r, nr);
       if (nr >= 0) {
         //cout << "From " << nr << " -> " << sm->fn_spec[nr] << "\n";
         fn[nr]->get_extents (r, ex);
+        break;
+      }
+      if (i >= n) {
+        fn[0]->get_extents (empty_string, ex);
         break;
       }
     }
@@ -821,18 +825,28 @@ void
 smart_font_rep::get_xpositions (string s, SI* xpos) {
   SI x= 0;
   int i=0, n= N(s);
+  xpos[0]= x;
   while (i < n) {
     int nr;
     string r= s;
     int start= i;
     advance (s, i, r, nr);
     if (nr >= 0) {
-      fn[nr]->get_xpositions (r, xpos+start);
-      for (int j=0; j<=N(r); j++) xpos[start+j] += x;
+      if (r == s (start, i)) {
+        fn[nr]->get_xpositions (r, xpos+start);
+        for (int j=0; j<=N(r); j++) xpos[start+j] += x;
+      }
+      else {
+        STACK_NEW_ARRAY (tmp, SI, N(r)+1);
+        fn[nr]->get_xpositions (r, tmp);
+        for (int j=start; j<i; j++) xpos[j]= x;
+        xpos[i]= x + tmp[N(r)];
+        STACK_DELETE_ARRAY (tmp);
+      }
       x= xpos[i];
     }
     else
-      for (int j=0; j<=N(r); j++) xpos[start+j]= x;
+      for (int j=start; j<=i; j++) xpos[j]= x;
   }
 }
 
@@ -840,18 +854,28 @@ void
 smart_font_rep::get_xpositions (string s, SI* xpos, SI xk) {
   SI x= 0;
   int i=0, n= N(s);
+  xpos[0]= x;
   while (i < n) {
     int nr;
     string r= s;
     int start= i;
     advance (s, i, r, nr);
     if (nr >= 0) {
-      fn[nr]->get_xpositions (r, xpos+start, xk);
-      for (int j=0; j<=N(r); j++) xpos[start+j] += x;
+      if (r == s (start, i)) {
+        fn[nr]->get_xpositions (r, xpos+start, xk);
+        for (int j=0; j<=N(r); j++) xpos[start+j] += x;
+      }
+      else {
+        STACK_NEW_ARRAY (tmp, SI, N(r)+1);
+        fn[nr]->get_xpositions (r, tmp, xk);
+        for (int j=start; j<i; j++) xpos[j]= x;
+        xpos[i]= x + tmp[N(r)];
+        STACK_DELETE_ARRAY (tmp);
+      }
       x= xpos[i];
     }
     else
-      for (int j=0; j<=N(r); j++) xpos[start+j]= x;
+      for (int j=start; j<=i; j++) xpos[j]= x;
   }
 }
 
