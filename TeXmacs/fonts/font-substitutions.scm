@@ -24,3 +24,10 @@
 ((UnBatang sansserif) (UnDotum))
 ((UnBatang italic) (UnGraphic))
 ((UnBatang typewriter) (UnGungseo))
+
+((concrete cjk) (FandolSong))
+((concrete cjk) (SimSun))
+((roman cjk) (FandolSong))
+((roman cjk) (SimSun))
+((Stix cjk) (FandolSong))
+((Stix cjk) (SimSun))

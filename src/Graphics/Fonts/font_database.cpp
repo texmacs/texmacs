@@ -188,6 +188,9 @@ font_database_save_characteristics (url u) {
   cache_refresh ();
 }
 
+static array<string>
+font_database_styles (string family, hashmap<tree,tree> ftab);
+
 void
 font_database_load_substitutions (url u) {
   if (!exists (u)) return;
@@ -199,11 +202,16 @@ font_database_load_substitutions (url u) {
           is_func (t[i][0], TUPLE) &&
           is_func (t[i][1], TUPLE) &&
           N(t[i][0]) > 0 &&
-          is_atomic (t[i][0][0])) {
+          N(t[i][1]) > 0 &&
+          is_atomic (t[i][0][0]) &&
+          is_atomic (t[i][1][0])) {
         string key= t[i][0][0]->label;
-        if (!font_substitutions->contains (key))
-          font_substitutions (key)= tree (TUPLE);
-        font_substitutions (key) << t[i];
+        string im = t[i][1][0]->label;
+        if (N(font_database_styles (im, font_table)) != 0) {
+          if (!font_substitutions->contains (key))
+            font_substitutions (key)= tree (TUPLE);
+          font_substitutions (key) << t[i];
+        }
       }
   }
 }
