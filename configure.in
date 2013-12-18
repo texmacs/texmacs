@@ -979,12 +979,12 @@ AC_SUBST(MACOSX_DEPLOYMENT_TARGET)
 
 
 #--------------------------------------------------------------------
-# Experimental PDF renderer
+# Native PDF renderer based on Hummus
 #--------------------------------------------------------------------
 
 AC_ARG_ENABLE(pdf-renderer,
-             [  --enable-pdf-renderer   use experimental PDF renderer for pdf export],
-             [], [enable_pdf_renderer="no"])
+             [  --enable-pdf-renderer   use native PDF renderer for pdf export],
+             [], [enable_pdf_renderer="yes"])
 case "$enable_pdf_renderer" in
     yes)
         SAVE_CPPFLAGS="$CPPFLAGS"
@@ -1011,8 +1011,8 @@ T1_EncodingType t;
 (void) FT_Init_FreeType (&ft_library);
 ],[
         AC_MSG_RESULT(yes)
-   	AC_MSG_RESULT([enabling experimental PDF renderer])
-        AC_DEFINE(PDF_RENDERER, 1, [Enabling experimental PDF renderer])
+   	AC_MSG_RESULT([enabling native PDF renderer])
+        AC_DEFINE(PDF_RENDERER, 1, [Enabling native PDF renderer])
 #        CONFIG_PDF="Pdf Pdf/dvipdfmx"
 #        CONFIG_PDF="Pdf Pdf/PDFWriter"
         CONFIG_PDF="Pdf"
@@ -1030,7 +1030,7 @@ the environment variables FREETYPE_CFLAGS and FREETYPE_LDFLAGS.
         LIBS="$SAVE_LIBS"
         ;;
     no)
-    	AC_MSG_RESULT([disabling experimental PDF renderer])
+    	AC_MSG_RESULT([disabling native PDF renderer])
         CONFIG_PDF=""
 	;;
     *)

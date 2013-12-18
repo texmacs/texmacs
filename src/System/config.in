@@ -111,7 +111,7 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* Enabling experimental PDF renderer */
+/* Enabling native PDF renderer */
 #undef PDF_RENDERER
 
 /* Enabling Qt pipes */

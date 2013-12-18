@@ -1470,7 +1470,7 @@ Optional Features:
   --enable-experimental   support new style rewriting code
   --disable-macosx-extensions  do not use Mac specific services (spellchecker, image handling, ...)
   --enable-macosx-distr=ARCH   build for MacOSX >= 10.4 and arch ARCH
-  --enable-pdf-renderer   use experimental PDF renderer for pdf export
+  --enable-pdf-renderer   use native PDF renderer for pdf export
   --enable-console        enable windows console
   --disable-qt            replace Qt by X11 interface
   --enable-qtpipes        replace UNIX pipes by Qt pipes
@@ -7685,14 +7685,14 @@ fi
 
 
 #--------------------------------------------------------------------
-# Experimental PDF renderer
+# Native PDF renderer based on Hummus
 #--------------------------------------------------------------------
 
 # Check whether --enable-pdf-renderer was given.
 if test "${enable_pdf_renderer+set}" = set; then :
   enableval=$enable_pdf_renderer;
 else
-  enable_pdf_renderer="no"
+  enable_pdf_renderer="yes"
 fi
 
 case "$enable_pdf_renderer" in
@@ -7735,8 +7735,8 @@ if ac_fn_cxx_try_link "$LINENO"; then :
 
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling experimental PDF renderer" >&5
-$as_echo "enabling experimental PDF renderer" >&6; }
+   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling native PDF renderer" >&5
+$as_echo "enabling native PDF renderer" >&6; }
 
 $as_echo "#define PDF_RENDERER 1" >>confdefs.h
 
@@ -7766,8 +7766,8 @@ fi
         LIBS="$SAVE_LIBS"
         ;;
     no)
-    	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling experimental PDF renderer" >&5
-$as_echo "disabling experimental PDF renderer" >&6; }
+    	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling native PDF renderer" >&5
+$as_echo "disabling native PDF renderer" >&6; }
         CONFIG_PDF=""
 	;;
     *)
