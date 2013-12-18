@@ -310,7 +310,7 @@ GENERIC_PACKAGE: COPY_SOURCES COPY_GUILE
 	$(RM) -r ../distr/build
 
 GENERIC_X11_PACKAGE: COPY_SOURCES COPY_GUILE
-	cd $(BUILD_DIR); ./configure --disable-qt
+	cd $(BUILD_DIR); ./configure --disable-qt --disable-pdf-renderer
 	cd $(BUILD_DIR); make STATIC_TEXMACS
 	cd $(BUILD_DIR); make ACCESS_FLAGS
 	$(MV) $(BUILD_DIR)/TeXmacs $(BUILD_DIR)/$(STATIC_X11)

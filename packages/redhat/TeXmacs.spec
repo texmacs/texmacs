@@ -38,7 +38,7 @@ Pdf files. Converters exist for TeX/LaTeX and Html/Mathml.
 %setup -q -n TeXmacs-1.99.1
 
 %build
-./configure --disable-qt --prefix=/usr
+./configure --disable-qt --disable-pdf-renderer --prefix=/usr
 make STATIC_TEXMACS
 
 %install
