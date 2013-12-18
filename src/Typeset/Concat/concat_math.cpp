@@ -261,11 +261,8 @@ concater_rep::typeset_wide (tree t, path ip, bool above) {
   if (N(t) != 2) { typeset_error (t, ip); return; }
   box b= typeset_as_concat (env, t[0], descend (ip, 0));
   string s= as_string (t[1]);
-  if (env->get_string (MATH_FONT) == "adobe" ||
-      env->fn->type == FONT_TYPE_UNICODE) {
-    if (s == "^") s= "<hat>";
-    if (s == "~") s= "<tilde>";
-  }
+  if (s == "^") s= "<hat>";
+  if (s == "~") s= "<tilde>";
   bool request_wide= is_func (t, VAR_WIDE);
   if (starts (s, "<wide-")) {
     s= "<" * s (6, N(s));
