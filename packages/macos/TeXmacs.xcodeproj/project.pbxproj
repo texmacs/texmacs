@@ -216,6 +216,9 @@
 		4929A896170207440028991F /* point.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4929A888170207440028991F /* point.cpp */; };
 		4929A897170207440028991F /* point.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4929A888170207440028991F /* point.cpp */; };
 		4929A898170207440028991F /* point.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4929A888170207440028991F /* point.cpp */; };
+		492EA53D18634091007F16D8 /* fromtex_post.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 492EA53C18634091007F16D8 /* fromtex_post.cpp */; };
+		492EA53E18634091007F16D8 /* fromtex_post.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 492EA53C18634091007F16D8 /* fromtex_post.cpp */; };
+		492EA53F18634091007F16D8 /* fromtex_post.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 492EA53C18634091007F16D8 /* fromtex_post.cpp */; };
 		492EBEAF1840D54B0001177C /* PDFWriter.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 4907D0D81812E2BC00D893B4 /* PDFWriter.o */; };
 		492ED6CC150FD27D00DB0FB5 /* new_data.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 492ED6C8150FD27D00DB0FB5 /* new_data.cpp */; };
 		492ED6CD150FD27D00DB0FB5 /* new_style.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 492ED6CA150FD27D00DB0FB5 /* new_style.cpp */; };
@@ -1571,6 +1574,7 @@
 		4929A887170207440028991F /* math_util.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = math_util.hpp; sourceTree = "<group>"; };
 		4929A888170207440028991F /* point.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = point.cpp; sourceTree = "<group>"; };
 		4929A889170207440028991F /* point.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = point.hpp; sourceTree = "<group>"; };
+		492EA53C18634091007F16D8 /* fromtex_post.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fromtex_post.cpp; sourceTree = "<group>"; };
 		492ED6C8150FD27D00DB0FB5 /* new_data.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = new_data.cpp; sourceTree = "<group>"; };
 		492ED6C9150FD27D00DB0FB5 /* new_data.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = new_data.hpp; sourceTree = "<group>"; };
 		492ED6CA150FD27D00DB0FB5 /* new_style.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = new_style.cpp; sourceTree = "<group>"; };
@@ -2825,6 +2829,7 @@
 				9C0B476810A8CC0F0097A335 /* convert_tex.hpp */,
 				9C0B09B614FF0A3D004ABDCE /* fromcls.cpp */,
 				9C0B476910A8CC0F0097A335 /* fromtex.cpp */,
+				492EA53C18634091007F16D8 /* fromtex_post.cpp */,
 				9C0B476A10A8CC0F0097A335 /* inittex.cpp */,
 				495712F716E90E5900934EA3 /* metadata-acm.cpp */,
 				49FDFA6416F0C677002B830A /* metadata-ams.cpp */,
@@ -4881,6 +4886,7 @@
 				9C1D126810D102B300232476 /* qt_pipe_link.cpp in Sources */,
 				9C1D126910D102B300232476 /* QTMPipeLink.cpp in Sources */,
 				9C722BED10D2F7C700C41915 /* qt_sys_utils.cpp in Sources */,
+				492EA53D18634091007F16D8 /* fromtex_post.cpp in Sources */,
 				9C722C0F10D2F88900C41915 /* unix_sys_utils.cpp in Sources */,
 				9C060A9C10FC6D8B00C51583 /* tm_ostream.cpp in Sources */,
 				9C6061EA112442BD00054149 /* gs_utilities.cpp in Sources */,
@@ -5267,6 +5273,7 @@
 				4910FA7516EB3E2F0088B175 /* post_convert.cpp in Sources */,
 				497822CD16EC86D40054F5BA /* tt_analyze.cpp in Sources */,
 				49FFB07B16EDF83A004A2A32 /* glyph_analyze.cpp in Sources */,
+				492EA53F18634091007F16D8 /* fromtex_post.cpp in Sources */,
 				9CE5CF8A16EFDB55001A6292 /* guile_tm.cpp in Sources */,
 				9CE5CF8B16EFDB5B001A6292 /* glue.cpp in Sources */,
 				9CE5CF8C16EFDB5E001A6292 /* object.cpp in Sources */,
@@ -5610,6 +5617,7 @@
 				4906929C151B743F006645F4 /* new_view.cpp in Sources */,
 				49F9FA141573BA86006C7258 /* new_project.cpp in Sources */,
 				49F9FA171573BA86006C7258 /* new_window.cpp in Sources */,
+				492EA53E18634091007F16D8 /* fromtex_post.cpp in Sources */,
 				9CD1513C15A72D0F006F2205 /* metadata.cpp in Sources */,
 				49FFF7C71635D3690031CFDC /* wencoding.cpp in Sources */,
 				9C6632E31676B229000D7974 /* font_database.cpp in Sources */,
