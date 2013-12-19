@@ -393,7 +393,8 @@
                           (else '()))) l3 l2))
          (l5 (filter nnull? l4))
          (page-opts (list-intersperse l5 ",")))
-    (if page-opts `(!append (geometry (!concat ,@page-opts)) "\n") "")))
+    (if (nnull? page-opts)
+      `(!append (geometry (!concat ,@page-opts)) "\n") "")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Building the preamble
