@@ -1613,6 +1613,9 @@
   (if (== s "quote-env") (set! s "quote"))
   (list (list '!begin s) (tmtex (car l))))
 
+(define (tmtex-footnotemark s l)
+  `(footnotemark (!option ,(tmtex (car l)))))
+
 (define (filter-enunciation-due-to l)
   (cond ((func? l 'dueto) (list l))
         ((nlist>0? l) '())
@@ -2336,6 +2339,9 @@
   (verbatim (,tmtex-verbatim 1))
   (center (,tmtex-std-env 1))
   (indent (,tmtex-indent 1))
+  (footnote (,tmtex-default 1))
+  (footnotemark (,tmtex-default 0))
+  (footnotemark* (,tmtex-footnotemark 1))
   ((:or description description-compact description-aligned
 	description-dash description-long
 	itemize itemize-minus itemize-dot itemize-arrow

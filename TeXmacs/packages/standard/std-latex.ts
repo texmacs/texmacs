@@ -165,6 +165,16 @@
   </src-comment>>
 
   <assign|latex_preview|<macro|pic|src|<verbatim|<arg|src>>>>
+
+  <\active*>
+    <\src-comment>
+      Footnotes.
+    </src-comment>
+  </active*>
+
+  <assign|footnotemark|<macro|<rsup|<with|font-shape|right|<next-footnote><reference|<merge|footnote-|<the-footnote>>>>>>>
+
+  <assign|footnotemark*|<macro|num|<rsup|<with|font-shape|right|<reference|<merge|footnote-|<arg|num>>>>>>>
 </body>
 
 <\initial>
