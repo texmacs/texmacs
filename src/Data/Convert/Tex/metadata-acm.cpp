@@ -155,6 +155,19 @@ collect_metadata_acm (tree t) {
         abstract_text << t[i++];
       abstract_data << tree (APPLY, "\\abstract", abstract_text);
     }
+    else if (is_tuple (u, "\\begin-keywords")) {
+      tree keywords (CONCAT);
+      i++;
+      while (i<n && !is_tuple (t[i], "\\end-keywords"))
+        keywords << t[i++];
+      array<tree> tmp= tokenize_concat (keywords, A(concat (",", ";",
+              tree (TUPLE, "\\tmsep"), tree (TUPLE, "\\tmSep"))));
+      if (N(tmp) > 0) {
+        tree kw= tree (APPLY, "\\abstract-keywords");
+        kw << tmp;
+        abstract_data << kw;
+      }
+    }
     else if (is_tuple (u, "\\tmmsc")  || is_tuple (u, "\\tmarxiv") ||
              is_tuple (u, "\\tmpacs"))
       abstract_data << collect_abstract_data (u);
