@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.8>
+<TeXmacs|1.99.1>
 
 <style|source>
 
@@ -25,6 +25,42 @@
   </active*>
 
   <use-package|std|env|title-generic|header-article|section-article|two-columns>
+
+  <active*|<\src-comment>
+    Conference information and copyrights
+  </src-comment>>
+
+  <assign|conference-boilerplate|Permission to make digital or hard copies of
+  all or part of this work for personal or classroom use is granted without
+  fee provided that copies are not made or distributed for profit or
+  commercial advantage and that copies bear this notice and the full citation
+  on the first page. \ To copy otherwise, to republish, to post on servers or
+  to redistribute to lists, requires prior specific permission and/or a fee.>
+
+  <assign|conference-name|(Please declare
+  <with|font-shape|right|<src-macro|conferenceinfo>>,
+  <with|font-shape|right|<src-macro|CopyrightYear>>, and
+  <with|font-shape|right|<src-macro|crdata>> in your preamble, following ACM
+  guidelines:<next-line><hlink|http://www.acm.org/sigs/publications/proceedings-templates|http://www.acm.org/sigs/publications/proceedings-templates>)>
+
+  <assign|conference-info|>
+
+  <assign|conference-copyright-year|20XX>
+
+  <assign|conference-cr-data|X-XXXXX-XX-X/XX/XX>
+
+  <assign|conference-price|$15.00>
+
+  <assign|conferenceinfo|<macro|name|infos|<assign|conference-name|<arg|name>><assign|conference-info|<arg|infos>>>>
+
+  <assign|CopyrightYear|<macro|year|<assign|conference-copyright-year|<arg|year>>>>
+
+  <assign|crdata|<macro|data|<assign|conference-cr-data|<arg|data>>>>
+
+  <assign|make-conference-permissions|<macro|<with|font|times|par-par-sep|0pt|par-line-sep|0pt|par-sep|1pt|font-base-size|8pt|<no-indent><value|conference-boilerplate><new-line><no-indent><with|font-shape|italic|<value|conference-name>>,
+  <value|conference-info><new-line><no-indent>Copyright
+  <value|conference-copyright-year> ACM <value|conference-cr-data>
+  ...<value|conference-price>.>>>
 
   <\active*>
     <\src-comment>
