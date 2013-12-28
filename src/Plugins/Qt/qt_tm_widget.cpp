@@ -47,54 +47,46 @@
 int menu_count = 0;
 list<qt_tm_widget_rep*> waiting_widgets;
 
-void
+static void
 replaceActions (QWidget* dest, QWidget* src) {
     //NOTE: the parent hierarchy of the actions is not modified while installing
     //      the menu in the GUI (see qt_menu.hpp for this memory management 
     //      policy)
-  dest->setUpdatesEnabled(false);
+  dest->setUpdatesEnabled (false);
   QList<QAction *> list = dest->actions();
-  while (!list.isEmpty()) {
-    QAction* a= list.takeFirst();
-    dest->removeAction (a);
-  }
+  while (!list.isEmpty()) dest->removeAction (list.takeFirst());
   list = src->actions();
-  while (!list.isEmpty()) {
-    QAction* a= list.takeFirst();
-    dest->addAction (a);
-  }
-  dest->setUpdatesEnabled(true);
+  while (!list.isEmpty()) dest->addAction (list.takeFirst());
+  dest->setUpdatesEnabled (true);
 }
 
-void
-replaceButtons(QToolBar* dest, QWidget* src) {
-  dest->setUpdatesEnabled(false);
+static void
+replaceButtons (QToolBar* dest, QWidget* src) {
+  dest->setUpdatesEnabled (false);
   bool visible = dest->isVisible();
   if (visible) dest->hide(); //TRICK: to avoid flicker of the dest widget
   replaceActions (dest, src);
-  QList<QObject*> list= dest->children();
+  QList<QObject*> list = dest->children();
   for (int i=0; i<list.count(); i++) {
-    QToolButton* button= qobject_cast<QToolButton*> (list[i]);
+    QToolButton* button = qobject_cast<QToolButton*> (list[i]);
     if (button) {
       button->setPopupMode (QToolButton::InstantPopup);
-      button->setStyle( qtmstyle() );
+      button->setStyle (qtmstyle());
     }
   }
   if (visible) dest->show(); //TRICK: see above
-  dest->setUpdatesEnabled(true);
+  dest->setUpdatesEnabled (true);
 }
 
-void QTMInteractiveInputHelper::commit(int result) {
-  if (wid) {
-    if (result == QDialog::Accepted) {
-      QString item = "#f";
-      QComboBox *cb = sender()->findChild<QComboBox*>("input");
-      if (cb) {
-        item = cb->currentText();
-      }      
-      static_cast<qt_input_text_widget_rep*>(wid->int_input.rep)->input = from_qstring (item);
-      static_cast<qt_input_text_widget_rep*>(wid->int_input.rep)->cmd ();      
-    }
+void
+QTMInteractiveInputHelper::commit (int result) {
+  if (wid && result == QDialog::Accepted) {
+    QString  item = "#f";
+    QComboBox* cb = sender()->findChild<QComboBox*> ("input");
+    if (cb)  item = cb->currentText();
+    static_cast<qt_input_text_widget_rep*>(wid->int_input.rep)->input =
+      from_qstring (item);
+    static_cast<qt_input_text_widget_rep*>(wid->int_input.rep)->cmd ();
   }
   sender()->deleteLater();
 }
@@ -783,7 +775,6 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     case SLOT_MAIN_ICONS:
       check_type_void (index, s);
     {
-        //cout << "widget :" << (void*)w.rep << LF;
       main_icons_widget = w;
       QMenu* m= concrete (w)->get_qmenu();
       replaceButtons (mainToolBar, m);
@@ -803,9 +794,9 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       
     case SLOT_FOCUS_ICONS:
       check_type_void (index, s);
-    {   
+    {
       focus_icons_widget = w;
-      QMenu* m= concrete (w)->get_qmenu();
+      QMenu* m = static_cast<qt_widget_rep*> (w.rep)->get_qmenu();
       replaceButtons (focusToolBar, m);
       update_visibility();
     }

@@ -275,15 +275,12 @@ QTMLazyMenu::force () {
  * QTMInputTextWidgetHelper
  ******************************************************************************/
 
-QTMInputTextWidgetHelper::QTMInputTextWidgetHelper (qt_input_text_widget_rep* _wid) 
-: QObject (NULL), p_wid (abstract (_wid)), done (false) { }
-
-/*! Destructor.
- Removes reference to the helper in the texmacs widget. If needed the texmacs
- widget is automatically deleted.
- */
-QTMInputTextWidgetHelper::~QTMInputTextWidgetHelper() {
-  wid()->helper = NULL;
+QTMInputTextWidgetHelper::QTMInputTextWidgetHelper (qt_widget _wid,
+                                                    QTMLineEdit* le)
+: QObject (le), p_wid (_wid), done (false) {
+  ASSERT (le != NULL, "QTMInputTextWidgetHelper: expecting valid QTMLineEdit");
+  QObject::connect (le, SIGNAL (returnPressed ()), this, SLOT (commit ()));
+  QObject::connect (le, SIGNAL (focusOut ()),      this, SLOT (leave ()));
 }
 
 void
@@ -331,62 +328,22 @@ QTMInputTextWidgetHelper::leave () {
   if (win) apply();    // This is 0 inside a dialog => no command
 }
 
-void
-QTMInputTextWidgetHelper::remove (QObject* obj) {
-  views.removeAll (qobject_cast<QTMLineEdit*> (obj));
-  if (views.count () == 0)
-    deleteLater();
-}
-
-void
-QTMInputTextWidgetHelper::add (QObject* obj) {
-  QTMLineEdit* le = qobject_cast<QTMLineEdit*> (obj);
-  if (le && !views.contains (le)) {
-    QObject::connect (le, SIGNAL (destroyed (QObject*)), this, SLOT (remove (QObject*)));
-    QObject::connect (le, SIGNAL (returnPressed ()),     this, SLOT (commit ()));
-    QObject::connect (le, SIGNAL (focusOut ()),          this, SLOT (leave ()));
-    views << le;
-  }
-}
-
-
 /******************************************************************************
  * QTMFieldWidgetHelper
  ******************************************************************************/
 
-QTMFieldWidgetHelper::QTMFieldWidgetHelper (qt_field_widget _wid) 
-  : QObject (NULL), wid (_wid), done (false) { }
-
-/*! Destructor.
- Removes reference to the helper in the texmacs widget. Deletion of the texmacs
- widget is automagic.
- */
-QTMFieldWidgetHelper::~QTMFieldWidgetHelper() {
-  wid->helper = NULL;
+QTMFieldWidgetHelper::QTMFieldWidgetHelper (qt_widget _wid, QComboBox* cb)
+: QObject (cb), wid (_wid), done (false) {
+  ASSERT (cb != NULL, "QTMFieldWidgetHelper: expecting valid QComboBox");
+  QObject::connect (cb, SIGNAL (editTextChanged (const QString&)),
+                    this, SLOT (commit (const QString&)));
 }
 
 void
 QTMFieldWidgetHelper::commit (const QString& qst) {
-  wid->input = scm_quote (from_qstring (qst));
+  static_cast<qt_field_widget_rep*> (wid.rep)->input =
+      scm_quote (from_qstring (qst));
 }
-
-void
-QTMFieldWidgetHelper::remove (QObject* obj) {
-  views.removeAll (qobject_cast<QTMComboBox*> (obj));
-  if (views.count () == 0)
-    deleteLater();
-}
-
-void
-QTMFieldWidgetHelper::add (QObject* obj) {
-  QComboBox* cb = qobject_cast<QComboBox*> (obj);
-  if (obj && !views.contains (cb)) {
-    QObject::connect (cb, SIGNAL (destroyed (QObject*)), this, SLOT (remove (QObject*)));
-    QObject::connect (cb, SIGNAL (editTextChanged (const QString&)), this, SLOT (commit (const QString&)));
-    views << cb;
-  }
-}
-
 
 /******************************************************************************
  * QTMLineEdit

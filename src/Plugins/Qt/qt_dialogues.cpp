@@ -46,7 +46,7 @@
 qt_field_widget_rep::qt_field_widget_rep (qt_inputs_list_widget_rep* _parent, 
                                           string _prompt)
   : qt_widget_rep(field_widget), prompt(_prompt), input(""), proposals(), 
-    parent(_parent), helper(NULL)
+    parent(_parent)
 { }
 
 void
@@ -94,38 +94,38 @@ qt_field_widget_rep::as_qwidget () {
   QHBoxLayout* hl = new QHBoxLayout (qwid);
   QLabel*     lab = new QLabel (to_qstring (prompt), qwid);
   
-  qwid -> setLayout (hl);
-  hl   -> addWidget (lab, 0, Qt::AlignRight);
+  qwid->setLayout (hl);
+  hl->addWidget (lab, 0, Qt::AlignRight);
 
   if (ends (type, "file") || type == "directory") {
-    widget wid = input_text_widget (command(), type, array<string>(0), 0, "20em");
-    QLineEdit* le = qobject_cast<QLineEdit*> (concrete(wid)->as_qwidget());
-    lab -> setBuddy (le);
-    hl  -> addWidget(le);
+    widget wid    = input_text_widget (command(), type,
+                                       array<string>(0), 0, "20em");
+    QLineEdit* le = qobject_cast<QTMLineEdit*> (concrete(wid)->as_qwidget());
+    ASSERT (le != NULL, "qt_field_widget_rep: expecting QTMLineEdit");
+    lab->setBuddy (le);
+    hl->addWidget (le);
 
     QCompleter*     completer = new QCompleter(le);
     QFileSystemModel* fsModel = new QFileSystemModel(le);
-    fsModel->setRootPath(QDir::homePath()); // this is NOT the starting location
+    fsModel->setRootPath (QDir::homePath());// this is NOT the starting location
     completer->setModel (fsModel);
-    le->setCompleter(completer);
+    
+    le->setCompleter (completer);
   } else {
-    if (! helper)
-      helper = new QTMFieldWidgetHelper (this);
-
-    QTMComboBox* cb = new QTMComboBox (qwid);
-    helper -> add (cb);
+    QTMComboBox* cb              = new QTMComboBox (qwid);
+    QTMFieldWidgetHelper* helper = new QTMFieldWidgetHelper (this, cb);
+    (void) helper;
+    cb->addItems (to_qstringlist (proposals));
+    cb->setEditText (to_qstring (scm_unquote (input)));
+    cb->setEditable (true);
+    cb->setLineEdit (new QTMLineEdit (cb, "1w", WIDGET_STYLE_MINI));
+    cb->setSizeAdjustPolicy (QComboBox::AdjustToContents);
+    cb->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
+    cb->setDuplicatesEnabled (true); 
+    cb->completer()->setCaseSensitivity (Qt::CaseSensitive);  
     
-    cb -> addItems (to_qstringlist (proposals));
-    cb -> setEditText (to_qstring (scm_unquote (input)));
-    cb -> setEditable (true);
-    cb -> setLineEdit (new QTMLineEdit (cb, "1w", WIDGET_STYLE_MINI));
-    cb -> setSizeAdjustPolicy (QComboBox::AdjustToContents);
-    cb -> setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
-    cb -> setDuplicatesEnabled (true); 
-    cb -> completer() -> setCaseSensitivity (Qt::CaseSensitive);  
-    
-    lab -> setBuddy (cb);
-    hl  -> addWidget (cb);
+    lab->setBuddy (cb);
+    hl->addWidget (cb);
   }
   return qwid;
 }
@@ -198,7 +198,7 @@ qt_inputs_list_widget_rep::query (slot s, int type_id) {
       return close_box<coord2> (size);
     }
   case SLOT_STRING_INPUT:
-    return fields[0]->query (s, type_id);
+    return field(0)->query (s, type_id);
   default:
     return qt_widget_rep::query (s, type_id);
   }
@@ -220,9 +220,14 @@ qt_inputs_list_widget_rep::read (slot s, blackbox index) {
   }
 }
 
+qt_field_widget_rep*
+qt_inputs_list_widget_rep::field (int i) {
+  return static_cast<qt_field_widget_rep*> (fields[i].rep);
+}
+
 void
 qt_inputs_list_widget_rep::perform_dialog() {
-  if ((N(fields)==1) && (fields[0]->type == "question")) {
+  if ((N(fields)==1) && (field(0)->type == "question")) {
    // then use Qt messagebox for smoother, more standard UI
     QWidget* mainwindow = QApplication::activeWindow ();
     // main texmacs window. There are probably better ways...
@@ -231,13 +236,13 @@ qt_inputs_list_widget_rep::perform_dialog() {
     // before calling the dialog
     QMessageBox* msgBox=new QMessageBox (mainwindow);
     //sets parent widget, so that it appears at the proper location	
-    msgBox->setText (to_qstring (fields[0]->prompt));
+    msgBox->setText (to_qstring (field(0)->prompt));
     msgBox->setStandardButtons (QMessageBox::Cancel);
-    int choices = N(fields[0]->proposals);
+    int choices = N(field(0)->proposals);
     QVector<QPushButton*> buttonlist (choices);
     //allowing for any number of choices
     for(int i=0; i<choices; i++) {
-      string blabel= "&" * upcase_first (fields[0]->proposals[i]);
+      string blabel= "&" * upcase_first (field(0)->proposals[i]);
       //capitalize the first character?
       buttonlist[i] = msgBox->addButton (to_qstring (blabel),
                                          QMessageBox::ActionRole);
@@ -250,12 +255,12 @@ qt_inputs_list_widget_rep::perform_dialog() {
     bool buttonclicked=false;
     for(int i=0; i<choices; i++) {
       if (msgBox->clickedButton() == buttonlist[i]) {
-        fields[0] -> input = scm_quote (fields[0]->proposals[i]);
+        field(0)->input = scm_quote (field(0)->proposals[i]);
         buttonclicked=true;
         break;
       }
     }
-    if (!buttonclicked) {fields[0] -> input = "#f";} //cancelled
+    if (!buttonclicked) {field(0)->input = "#f";} //cancelled
   } 
   
   else {  //usual dialog layout
@@ -263,14 +268,14 @@ qt_inputs_list_widget_rep::perform_dialog() {
     QVBoxLayout* vl = new QVBoxLayout(&d);
 
     for(int i=0; i<N(fields); i++)
-      vl->addWidget(fields[i]->as_qwidget());
+      vl->addWidget(field(i)->as_qwidget());
     
     QDialogButtonBox* buttonBox =
           new QDialogButtonBox (QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
                                 Qt::Horizontal, &d);
     QObject::connect (buttonBox, SIGNAL (accepted()), &d, SLOT (accept()));
     QObject::connect (buttonBox, SIGNAL (rejected()), &d, SLOT (reject()));
-    vl -> addWidget (buttonBox);
+    vl->addWidget (buttonBox);
     
     d.setWindowTitle (to_qstring (win_title)); 
     d.updateGeometry();
@@ -282,7 +287,7 @@ qt_inputs_list_widget_rep::perform_dialog() {
     
     if (d.exec() != QDialog::Accepted)
       for(int i=0; i<N(fields); ++i)
-        fields[i]->input = "#f";
+        field(i)->input = "#f";
   }
 
   if (!is_nil(cmd)) cmd ();
@@ -293,40 +298,42 @@ qt_inputs_list_widget_rep::perform_dialog() {
  * qt_input_text_widget_rep
  ******************************************************************************/
 
-qt_input_text_widget_rep::qt_input_text_widget_rep 
-(command _cmd, string _type, array<string> _proposals, int _style, string _width)
-: cmd (_cmd), type (_type), proposals (_proposals), input (""), style(_style),
-  width(_width), ok(false), helper(NULL)
+qt_input_text_widget_rep::qt_input_text_widget_rep (command _cmd,
+                                                    string _type,
+                                                    array<string> _proposals,
+                                                    int _style,
+                                                    string _width)
+: qt_widget_rep (input_widget), cmd (_cmd), type (_type),
+  proposals (_proposals), input (""), style (_style), width (_width),
+  ok (false)
 {
   if (N(proposals) > 0) input = proposals[0];
 }
 
-QAction *
+QAction*
 qt_input_text_widget_rep::as_qaction () {
-  QTMWidgetAction *a = new QTMWidgetAction (this);
-  return a;
+  return new QTMWidgetAction (this);
 }
 
-QWidget *
+/*!
+ Returns a QTMLineEdit with the proper completer and the helper object to
+ keep it in sync with us.
+ */
+QWidget*
 qt_input_text_widget_rep::as_qwidget () {
-  if (! helper) {
-    helper = new QTMInputTextWidgetHelper(this);
-    // helper retains the current widget
-    // in toolbars the widget is not referenced directly in texmacs code
-    // so must be retained by Qt objects
-  }
-  QTMLineEdit* le = new QTMLineEdit (NULL, width, style);
-  helper->add (le);
+  QTMLineEdit* le                  = new QTMLineEdit (NULL, width, style);
+  QTMInputTextWidgetHelper* helper = new QTMInputTextWidgetHelper (this, le);
+  (void) helper;
   le->setText (to_qstring (input));
   
   if (ends (type, "file") || type == "directory") {
     QCompleter*     completer = new QCompleter(le);
     QFileSystemModel* fsModel = new QFileSystemModel(le);
-    fsModel->setRootPath(QDir::homePath()); // this is NOT the starting location
+    fsModel->setRootPath (QDir::homePath());// This is NOT the starting location
     completer->setModel (fsModel);
 
     le->setCompleter(completer);
-  } else if (N(proposals) > 0 && ! (N(proposals) == 1 && N(proposals[0]) == 0)) {
+  } else if (N(proposals) > 0 && ! (N(proposals) == 1 && N(proposals[0]) == 0)){
     QCompleter* completer = new QCompleter(to_qstringlist(proposals), le);
     completer->setCaseSensitivity (Qt::CaseSensitive);
     completer->setCompletionMode (QCompleter::InlineCompletion);

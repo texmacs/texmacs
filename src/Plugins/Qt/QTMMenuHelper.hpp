@@ -190,11 +190,11 @@ protected:
 };
 
 
-/*! A class to keep a QTMLineEdit object and a qt_input_text_widget_rep object
- in sync.
+/*! A class to keep a QTMLineEdit and a qt_input_text_widget_rep in sync.
  
  After certain events we store state information about the QLineEdit into the 
- qt_input_text_widget_rep: 
+ qt_input_text_widget_rep:
+ 
   - When the user has finished editing (i.e. has pressed enter) we save the text
     from the QWidget in the texmacs widget and set a "modified" flag.
   - When the user leaves the QWidget we restore the text from the texmacs widget
@@ -202,55 +202,50 @@ protected:
  
  Additionally and depending on user configuration we may always store the text
  when leaving or apply the command when pressing enter.
+ 
+ @note On memory management: the QTMInputTextWidgetHelper is owned by the
+       QTMLineEdit it is helping with.
 */
 class QTMInputTextWidgetHelper : public QObject {
   Q_OBJECT
-
-  widget            p_wid; //<! A reference to a qt_input_text_widget_rep
-  bool               done; //<! Has the command been executed after a modif.?
-  QList<QTMLineEdit*> views;
   
+  qt_widget   p_wid;  //!< A pointer to a qt_input_text_widget_rep
+  bool         done;  //!< Has the command been executed after a modification?
+
 public:
-  QTMInputTextWidgetHelper (qt_input_text_widget_rep*  _wid); 
-  ~QTMInputTextWidgetHelper();
-
-  qt_input_text_widget_rep* wid () { // useful cast
-    return static_cast<qt_input_text_widget_rep*>(p_wid.rep); }
+  QTMInputTextWidgetHelper (qt_widget _wid, QTMLineEdit* parent);
   
-  void add (QObject *);
+protected:
+  qt_input_text_widget_rep* wid () { // useful cast
+    return static_cast<qt_input_text_widget_rep*> (p_wid.rep); }
   void apply ();
 
 public slots:
   void commit ();
   void leave ();
-  void remove (QObject *);
 };
 
-class QTMComboBox;
 
-/*! A class to keep a QComboBox object and a qt_field_widget_rep object in
- sync.
+/*! A class to keep a QComboBox and a qt_field_widget_rep in sync.
  
  After certain events we store state information about the QComboBox into the 
  qt_input_text_widget_rep: when the user has finished editing (i.e. has pressed
  enter), or has left the QComboBox for instance.
+ 
+ @note On memory management: the QTMFieldWidgetHelper is owned by the
+       QComboBox it is helping with.
 */
 class QTMFieldWidgetHelper : public QObject {
   Q_OBJECT
   
-  qt_field_widget     wid;
-  bool               done;
-  QList<QComboBox*> views;
-
-public:
-  QTMFieldWidgetHelper (qt_field_widget  _wid); 
-  ~QTMFieldWidgetHelper ();
+  qt_widget wid;
+  bool     done;
   
-  void add (QObject* cb);
+public:
+  QTMFieldWidgetHelper (qt_widget _wid, QComboBox* parent);
 
 public slots:
   void commit (const QString& qst);
-  void remove (QObject* obj);  
 };
 
 
@@ -259,7 +254,7 @@ class QTMTabWidget : public QTabWidget {
   Q_OBJECT
 
 public:
-  QTMTabWidget(QWidget* p = NULL);
+  QTMTabWidget (QWidget* p = NULL);
 
 public slots:
   void resizeOthers(int index);
