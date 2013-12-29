@@ -54,11 +54,11 @@ QTMAction::QTMAction (QObject *parent) : QAction (parent) {
                     this,                  SLOT (doRefresh()));
   _timer = new QTimer (this);
   QObject::connect (_timer, SIGNAL (timeout()),
-                   this,     SLOT (doShowToolTip()));
+                    this,     SLOT (doShowToolTip()));
 }
 
 QTMAction::~QTMAction() { 
-  if (menu() && !(menu()->parent())) delete menu(); 
+  if (menu() && !menu()->parent()) delete menu();
 }
 
 void
@@ -243,31 +243,50 @@ QTMMinibarAction::createWidget (QWidget* parent) {
  * QTMLazyMenu
  ******************************************************************************/
 
+QTMLazyMenu::QTMLazyMenu (promise<widget> _pm, QWidget* p)
+: QMenu (p), promise_widget (_pm), done (false) {
+  QObject::connect (this, SIGNAL (aboutToShow ()), this, SLOT (force ()));
+}
+
+/*! Sets the QTMLazyMenu as the menu for the QAction and makes its destruction
+ depend on that of the latter. */
 void
-rerootActions (QWidget* dest, QWidget* src) {
-  if (src == NULL || dest == NULL) return;
-  QList<QAction *> list = dest->actions();
+QTMLazyMenu::attachTo (QAction* a) {
+  QObject::connect (a,  SIGNAL (destroyed (QObject*)),
+                    this, SLOT (destroy (QObject*)));
+  a->setMenu (this);
+}
+
+void
+QTMLazyMenu::transferActions (QWidget* from) {
+  if (from == NULL) return;
+  QList<QAction*> list = actions();
   while (!list.isEmpty()) {
-    QAction* a= list.takeFirst();
-    dest->removeAction (a);
-    //    delete a;
+    QAction* a = list.takeFirst();
+    removeAction (a);
     a->deleteLater();
   }
-  list = src->actions();
+  list = from->actions();
   while (!list.isEmpty()) {
-    QAction* a= list.takeFirst();
-    dest->addAction (a);
-    a->setParent (dest);
+    QAction* a = list.takeFirst();
+    addAction (a);
+    a->setParent (this);
   }
 }
 
 void
 QTMLazyMenu::force () {
-  if (DEBUG_QT_WIDGETS) debug_widgets << "Force lazy menu" << LF;
-  widget w = pm ();
-  QMenu* menu2 = concrete(w)->get_qmenu();
-  rerootActions (this, menu2);
-    //menu2->deleteLater();  // OK? Conflicting policies in qt_menu and qt_ui_element
+  if (done) return;
+  done = true;
+  QAction* a = concrete (promise_widget())->as_qaction();
+  transferActions (a->menu());
+  delete a;
+}
+
+void
+QTMLazyMenu::destroy (QObject* obj) {
+  (void) obj;
+  deleteLater();
 }
 
 

@@ -72,15 +72,16 @@ class qt_tm_widget_rep: public qt_window_widget_rep {
   bool visibility[7];
   bool full_screen;
   
-  widget main_widget;
-  widget main_menu_widget;
-  widget main_icons_widget;
-  widget mode_icons_widget;
-  widget focus_icons_widget;
-  widget user_icons_widget;
-  widget side_tools_widget;
-  widget dock_window_widget;   // trick to return correct widget position
-  widget waiting_main_menu_widget;
+  qt_widget main_widget;
+  qt_widget main_menu_widget;
+  qt_widget waiting_main_menu_widget;
+  qt_widget main_icons_widget;
+  qt_widget mode_icons_widget;
+  qt_widget focus_icons_widget;
+  qt_widget user_icons_widget;
+  qt_widget side_tools_widget;
+  qt_widget dock_window_widget;   // trick to return correct widget position
+
   
 public:
   qt_tm_widget_rep (int mask, command _quit);
@@ -110,10 +111,10 @@ protected:
     return mainwindow()->centralWidget();
   }
   QTMScrollView* scrollarea () {
-    return qobject_cast<QTMScrollView*> (concrete(main_widget)->qwid);
+    return qobject_cast<QTMScrollView*> (main_widget->qwid);
   }
   QTMWidget* canvas () {
-    return qobject_cast<QTMWidget*> (concrete(main_widget)->qwid);
+    return qobject_cast<QTMWidget*> (main_widget->qwid);
   }
 };
 

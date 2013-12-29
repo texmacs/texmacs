@@ -37,8 +37,8 @@
 /*! Construction of UI elements / widgets.
 
  Most of the items in the UI are constructed by this class, although in fact,
- the actual QWidgets and layout items aren't instantiated until one of
- as_qwidget(), as_qaction(), get_qmenu() or as_qlayoutmenu() is called.
+ the actual QWidgets and layout items aren't instantiated ("compiled") until
+ one of as_qwidget(), as_qaction(), get_qmenu() or as_qlayoutmenu() is called.
  
  A UI element is first created using the factory methods create(), these store
  the parameters for the widget until they are needed upon creation. as_*()
@@ -49,9 +49,9 @@
  See the documentation of qt_widget_rep for the rationale behind the four
  methods as_qaction(), get_qmenu(), as_qlayoutmenu(), as_qwidget()
  
- NOTE: although it might seem wasteful to instantiate the QObjects "on demand",
- caching makes no sense given the current infrastructure, because TeXmacs always
- discards the scheme-created widgets as soon as they exist.
+ NOTE: although we store the QWidgets in qt_widget_rep::qwid after creating 
+ them, this caching achieves nothing for the current infrastructure, because
+ TeXmacs always discards widgets which are not menus or toolbars.
 */
 class qt_ui_element_rep: public qt_widget_rep {
   
@@ -59,7 +59,8 @@ class qt_ui_element_rep: public qt_widget_rep {
     // deletion of all the nested widgets within.
   blackbox         load;  
   QAction* cachedAction;
-  
+  QMenu*     cachedMenu;
+
 public:  
   qt_ui_element_rep (types _type, blackbox _load);
   virtual ~qt_ui_element_rep(); 
@@ -100,6 +101,9 @@ public:
     typedef quintuple<X1,X2,X3,X4,X5> T;
     return tm_new <qt_ui_element_rep> (_type, close_box<T> (T (x1,x2,x3,x4,x5)));
   }
+  
+protected:
+  static blackbox get_load (qt_widget qtw, types check_type = none);
 };
 
 

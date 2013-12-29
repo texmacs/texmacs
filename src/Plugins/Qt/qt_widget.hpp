@@ -60,13 +60,19 @@ class qt_widget;
  * as_qwidget() returns a regular QWidget, for example to be embedded in a
    standalone window.
  
- In all four cases a new instance of the QObject is created and ownership is
- transferred to the caller. One reason why the underlying QWidget is NOT owned
- by the qt_widget is that several qt_widgets may have the same underlying 
- QWidget. The only exceptional qt_widgets are those whose compiled widgets are
- windows to whom we leave the responsibility of deletion. They are the outmost
- widget, typically a QTMPlainWindow or a QTMWindow, who should be the parent of
- all the related QWidgets.
+ * get_qmenu() wraps its as_qaction() in a QMenu and returns it. This method
+   also promotes the object where it was invoked to owner of the QMenu. Again:
+   calling wid->get_qmenu() creates the QMenu and leaves ownership of it to wid.
+ 
+ In the first three cases a new instance of the QObject is created if neede
+ and ownership is transferred to the caller. One reason why the underlying
+ QWidget is NOT owned by the qt_widget is that several qt_widgets may have the
+ same underlying QWidget (UPD: which?). Another are the problems due to delayed
+ deletion of TeXmacs objects. The only exception to this rule are those
+ qt_widgets whose compiled widgets are windows to whom we leave the
+ responsibility of deletion. They are the outmost widget, typically a 
+ QTMPlainWindow or a QTMWindow, who should be the parent of all the related
+ QWidgets.
  
  Most of the UI items are implemented by qt_ui_element_rep, with some
  exceptions. Creation from the TeXmacs side is done using the global functions

@@ -21,13 +21,9 @@
 
 QStyle*
 qtmstyle () {
-  static QStyle* qtmstyle= NULL;
-  if (!qtmstyle) {
-    qtmstyle = new QTMStyle ();
-  }
-  if (!qtmstyle) {
-    qtmstyle = qApp->style ();
-  }
+  static QStyle* qtmstyle = NULL;
+  if (!qtmstyle)
+    qtmstyle = new QTMStyle (qApp->style());
   return qtmstyle;
 }
 
@@ -35,17 +31,11 @@ qtmstyle () {
  * QTMProxyStyle (does not own *style)
  ******************************************************************************/
 
-QTMProxyStyle::QTMProxyStyle (QStyle* _base):
-QStyle (), base (_base) {}
-
-QTMProxyStyle::~QTMProxyStyle() {
-  // delete style;
-}
+QTMProxyStyle::QTMProxyStyle (QStyle* _base) : QStyle (), base (_base) { }
 
 inline  QStyle *QTMProxyStyle::baseStyle() const {
   return ( base ? base : qApp->style() );
 }
-
 
 void
 QTMProxyStyle::drawComplexControl (ComplexControl control, const QStyleOptionComplex* option, QPainter* painter, const QWidget* widget) const {

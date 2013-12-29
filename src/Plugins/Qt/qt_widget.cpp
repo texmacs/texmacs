@@ -47,7 +47,9 @@ qt_widget_rep::~qt_widget_rep() {
     debug_widgets << "~qt_widget_rep: deleted a " << type_as_string() << LF;
   
   // DON'T DO THIS! (several qt_widget_rep may have the same underlying QWidget)
-  //delete qwid; 
+  // UPD: really? when? The problem is rather order of destruction. If we
+  // completely bypassed QObject's hierarchy deleting should be ok.
+  //delete qwid;
 }
 
 void
@@ -119,7 +121,7 @@ qt_widget_rep::as_qwidget () {
 QAction*
 qt_widget_rep::as_qaction() {
   QAction* a = new QTMAction (NULL); 
-  a->setEnabled(false);
+  a->setEnabled (false);
   return a;
 }
 
@@ -138,7 +140,6 @@ qt_widget_rep::as_qlayoutitem () {
  This method must not give ownership of the menu to the caller, thus
  allowing menu caching at the TeXmacs level. See the implementations in
  qt_ui_element_rep and qt_menu_rep.
- Called only by code which attaches root menus in the GUI elements.
  */
 QMenu*
 qt_widget_rep::get_qmenu () {

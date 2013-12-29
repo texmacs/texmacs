@@ -688,7 +688,7 @@ add_input_proposal (widget w, string s) {
 
 inline void
 set_file (widget w, string s) {
-  // set current file of file chooser widget
+  // set current file of file chooser widget or texmacs window
   send<string> (w, SLOT_FILE, s);
 }
 

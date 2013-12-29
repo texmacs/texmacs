@@ -261,6 +261,7 @@
 		498BA6B6184C966F00608A7B /* PDFWriter.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 4907D0D81812E2BC00D893B4 /* PDFWriter.o */; };
 		498BA6B7184C968000608A7B /* PDFWriter.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 4907D0D81812E2BC00D893B4 /* PDFWriter.o */; };
 		49AA0887181166140090FD84 /* font_protrusion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49AA0884181166140090FD84 /* font_protrusion.cpp */; };
+		49BC67AA186F52D900ED3D79 /* QTMStyle.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48B910A8CC100097A335 /* QTMStyle.hpp */; };
 		49BEF71816FDD566004BAE73 /* metadata-springer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BEF71616FDD566004BAE73 /* metadata-springer.cpp */; };
 		49BEF71916FDD566004BAE73 /* metadata-springer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BEF71616FDD566004BAE73 /* metadata-springer.cpp */; };
 		49BEF71A16FDD566004BAE73 /* metadata-springer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BEF71616FDD566004BAE73 /* metadata-springer.cpp */; };

@@ -70,19 +70,32 @@ public slots:
 };
 
 
-/*!
+/*! A QMenu which builds its entries just before show()ing. 
+ 
+ If this is intended as a submenu of a QAction, we must attachTo() it: then,
+ when the action is about to be destroyed() we are notified and remove ourselves
+ 
+ If this is used as a menu for a button, then it suffices to set the parent
+ accordingly in the constructor.
  */
 class QTMLazyMenu: public QMenu {
   Q_OBJECT
   
-  promise<widget> pm;
-public:
-  QTMLazyMenu (promise<widget> _pm) : pm (_pm) {
-      QObject::connect (this, SIGNAL (aboutToShow ()), this, SLOT (force ()));
-  }
+  promise<widget> promise_widget;
+  bool                      done;
 
+public:
+  QTMLazyMenu (promise<widget> _pm, QWidget* p = NULL);
+  void attachTo (QAction* a);
+  
 public slots:
   void force ();
+
+protected:
+  void transferActions (QWidget* src);
+
+protected slots:
+  void destroy (QObject* obj=0);
 };
 
 

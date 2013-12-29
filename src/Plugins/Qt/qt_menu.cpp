@@ -15,29 +15,25 @@
 #include "QTMMenuHelper.hpp"
 
 
-qt_menu_rep::qt_menu_rep (QAction* _item) 
- : qt_widget_rep(vertical_menu), item (_item ? _item : new QTMAction (NULL)) { }
+qt_menu_rep::qt_menu_rep (qt_widget _content)
+ : qt_widget_rep (vertical_menu), qact (NULL), content (_content) { }
 
-/*
- The convention is that any implementation of as_qaction() gives ownership of
- the action to the caller. However in this case, because we are the root menu,
- we do not want to replicate the action so we must be sure to be called only once.
- 
- FIXME: I (mbd) don't see how exactly the code below relates to this assertion.
+/*! Destructor. Remember that qt_menu is the only parsed widget which by
+ default owns its actions.
  */
-QAction*
-qt_menu_rep::as_qaction() {
-  if (!item) cout << "THIS MUST NOT HAPPEN TWICE" << LF;
-  QAction *ret = item;
-  item = NULL;
-  return ret;
+qt_menu_rep::~qt_menu_rep () {
+  delete qact;
 }
 
-QWidget*
-qt_menu_rep::as_qwidget() {
-  qwid= item->menu();
-  item= NULL;
-  return qwid;
+QAction*
+qt_menu_rep::as_qaction() {
+  if (!qact) qact = content->as_qaction();
+  return qact;
+}
+
+QMenu*
+qt_menu_rep::get_qmenu() {
+  return as_qaction()->menu();
 }
 
 /*!
@@ -52,7 +48,7 @@ qt_menu_rep::make_popup_widget () {
 
 widget
 qt_menu_rep::popup_window_widget (string s) {
-  item->menu()->setWindowTitle (to_qstring (s));  // totally useless
+//  as_qaction()->menu()->setWindowTitle (to_qstring (s));  // totally useless
   return this;
 }
 
@@ -62,20 +58,20 @@ qt_menu_rep::send (slot s, blackbox val) {
   case SLOT_POSITION:
     {
       check_type<coord2>(val, s);
-      if (item) item->menu()->move (to_qpoint (open_box<coord2> (val)));
+      get_qmenu()->move (to_qpoint (open_box<coord2> (val)));
     }
     break;
   case SLOT_VISIBILITY:
     {   
       check_type<bool> (val, s);
-      if (item) item->menu()->setVisible(open_box<bool> (val));
+      get_qmenu()->setVisible (open_box<bool> (val));
     }   
     break;
   case SLOT_MOUSE_GRAB:
     {   
       check_type<bool> (val, s);
       bool flag = open_box<bool> (val);  // true= get grab, false= release grab
-      if (flag && item) item->menu()->exec();
+      if (flag) get_qmenu()->exec();
     }   
     break;
   default:

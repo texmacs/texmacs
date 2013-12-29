@@ -261,30 +261,68 @@ qt_glue_widget_rep::as_qwidget() {
  ******************************************************************************/
 
 qt_ui_element_rep::qt_ui_element_rep (types _type, blackbox _load)
-  : qt_widget_rep(_type), load(_load), cachedAction(NULL)  { }
+: qt_widget_rep (_type), load (_load), cachedAction (NULL), cachedMenu (NULL) {}
 
+/*!
+ WARNING: Deleting here the cachedAction would contradict our memory policy
+ in qt_menu_rep and lead to crashes
+ 
+ HOWEVER: if we have a cachedMenu, it means somebody promoted us to managers
+ of a root menu which we have to delete. But we MUST ensure nobody calls
+ get_qmenu() when they shouldn't.
+ */
 qt_ui_element_rep::~qt_ui_element_rep() {
-  // WARNING: Deleting here the cachedAction would contradict our memory policy
-  // in qt_menu_rep and lead to crashes
+  if (cachedMenu)
+    cachedMenu->deleteLater();
+}
+
+blackbox
+qt_ui_element_rep::get_load (qt_widget qtw, types check_type) {
+  ASSERT (check_type == none || qtw->type == check_type,
+          c_string ("get_load: widget " * qtw->type_as_string() *
+                    " was not of the expected type."));
+  switch (qtw->type) {
+    case horizontal_menu:   case vertical_menu:    case horizontal_list:
+    case vertical_list:     case tile_menu:        case aligned_widget:
+    case minibar_menu:      case menu_separator:   case menu_group:
+    case pulldown_button:   case pullright_button: case menu_button:
+    case text_widget:       case xpm_widget:       case toggle_widget:
+    case enum_widget:       case choice_widget:    case filtered_choice_widget:
+    case scrollable_widget: case hsplit_widget:    case vsplit_widget:
+    case tabs_widget:       case icon_tabs_widget: case resize_widget:
+    case refresh_widget:    case refreshable_widget:  case balloon_widget:
+    case glue_widget:
+    {
+      qt_ui_element_rep* rep = static_cast<qt_ui_element_rep*> (qtw.rep);
+      return rep->load;
+    }
+      break;
+    default:
+      return blackbox();
+  }
 }
 
 /*! Returns the ui element as a popup widget.
  If the widget is of type vertical_menu, it is understood that the popup widget
- must be of the standard OS dependent type implemented by qt_menu_rep using 
+ must be of the standard OS dependent type implemented by qt_menu_rep using
  QMenu.
  */
 widget 
 qt_ui_element_rep::make_popup_widget () {
   if (type == qt_widget_rep::vertical_menu)
-    return tm_new<qt_menu_rep>(as_qaction());
+    return tm_new<qt_menu_rep> (this);
   else
     return qt_widget_rep::make_popup_widget();
 }
 
-QMenu *
+/*! Returns a QMenu* to be installed in the menu bar.
+ This method *DOES NOT* transfer ownership to the caller. On the contrary, it
+ "promotes" this qt_ui_element_rep to responsible for its deletion.
+ */
+QMenu*
 qt_ui_element_rep::get_qmenu() {
-  if (!cachedAction) cachedAction = as_qaction();
-  return (cachedAction ? cachedAction->menu() : NULL);
+  if (!cachedMenu) cachedMenu = as_qaction()->menu();
+  return cachedMenu;
 }
 
 /*! For the refresh_widget
@@ -310,7 +348,10 @@ QAction*
 qt_ui_element_rep::as_qaction () {
   //if (DEBUG_QT_WIDGETS)
   //debug_widgets << "as_qaction: " << type_as_string() << LF;
-  
+
+  if (cachedAction)
+    return cachedAction;
+
   switch (type) {
     case vertical_menu:
     case horizontal_menu:
@@ -330,7 +371,7 @@ qt_ui_element_rep::as_qaction () {
         a->setParent (m);
       }
       act->setMenu (m);
-      return act;
+      cachedAction = act;
     }
       break;
     
@@ -339,7 +380,7 @@ qt_ui_element_rep::as_qaction () {
     {
       typedef array<widget> T;
       array<widget> arr = open_box<T> (load);
-      return new QTMMinibarAction (NULL, arr);
+      cachedAction = new QTMMinibarAction (NULL, arr);
     }
       break;
       
@@ -360,7 +401,7 @@ qt_ui_element_rep::as_qaction () {
         wids[3*i+2] = ::glue_widget(false, true, 1, 1);
       }
 
-      return new QTMMinibarAction (NULL, wids);
+      cachedAction = new QTMMinibarAction (NULL, wids);
     }
       break;
 
@@ -373,8 +414,7 @@ qt_ui_element_rep::as_qaction () {
       array<widget> a = x.x1;
       int        cols = x.x2;
 
-      QWidgetAction* act= new QTMTileAction (NULL, a, cols);
-      return act;
+      cachedAction = new QTMTileAction (NULL, a, cols);
     }
       break;
       
@@ -383,29 +423,22 @@ qt_ui_element_rep::as_qaction () {
       typedef array<widget> T;
       array<widget> arr = open_box<T> (load);
 
-      QWidgetAction* act= new QTMMinibarAction (NULL, arr);
-      return act;
+      cachedAction = new QTMMinibarAction (NULL, arr);
     }
       break;
       
     case menu_separator:
         // a horizontal or vertical menu separator
     {
-      typedef bool T;
-      bool vertical = open_box<T> (load);
-
-      (void) vertical;
-      QAction* a= new QTMAction (NULL);
-      a->setSeparator (true);
-      return a;
+      cachedAction = new QTMAction (NULL);
+      cachedAction->setSeparator (true);
     }
       break;
 
     case glue_widget:
     {
-      QTMAction* a = new QTMAction();
-      a->setEnabled(false);
-      return a;
+      cachedAction = new QTMAction();
+      cachedAction->setEnabled(false);
     }
       break;
 
@@ -413,15 +446,14 @@ qt_ui_element_rep::as_qaction () {
         // a menu group; the name should be greyed and centered
     {
       typedef pair<string, int> T;
-      T x = open_box<T>(load);
+      T         x = open_box<T> (load);
       string name = x.x1;
       int   style = x.x2;  //FIXME: ignored. Use a QWidgeAction to use it?
       
-      QAction* a= new QTMAction (NULL);
-      a->setText (to_qstring (name));
-      a->setEnabled (false);
-      a->setFont (to_qfont(style, a->font())); 
-      return a;
+      cachedAction = new QTMAction (NULL);
+      cachedAction->setText (to_qstring (name));
+      cachedAction->setEnabled (false);
+      cachedAction->setFont (to_qfont (style, cachedAction->font())); 
     }
       break;
       
@@ -430,22 +462,14 @@ qt_ui_element_rep::as_qaction () {
         // a button w with a lazy pulldown menu pw
     {
       typedef pair<widget, promise<widget> > T;
-      T x = open_box<T>(load);
-      widget w = x.x1;
+      T                x = open_box<T> (load);
+      qt_widget      qtw = concrete (x.x1);
       promise<widget> pw = x.x2;
 
-      QAction*      a = concrete (w) -> as_qaction ();
+      cachedAction    = qtw->as_qaction ();
       QTMLazyMenu* lm = new QTMLazyMenu (pw);
-      QMenu* old_menu = a->menu();
-      a->setMenu (lm);
-      a->setEnabled (true);
-      if (old_menu) {
-        if (DEBUG_QT_WIDGETS)
-          debug_widgets << "qt_ui_element_rep::as_qaction(), "
-                        << "this should not happen\n";
-        delete old_menu;
-      }
-      return a;
+      lm->attachTo (cachedAction);  // lm deletes itself after cachedAction dies
+      cachedAction->setEnabled (true);
     }
       break;
       
@@ -454,42 +478,40 @@ qt_ui_element_rep::as_qaction () {
         // keyboard shortcut; if ok does not hold, then the button is greyed
     {
       typedef quintuple<widget, command, string, string, int> T;
-      T x = open_box<T>(load);
+      T x = open_box<T> (load);
 
-      widget w    = x.x1;
-      command cmd = x.x2;
-      string pre  = x.x3;
-      string ks   = x.x4;
-      int style   = x.x5;
+      qt_widget qtw = concrete (x.x1);
+      command   cmd = x.x2;
+      string   pre  = x.x3;
+      string   ks   = x.x4;
+      int   style   = x.x5;
       
-      bool ok= (style & WIDGET_STYLE_INERT) == 0;
       QTMCommand* c;
-      QAction* a = concrete(w)->as_qaction();
+      cachedAction = qtw->as_qaction();
       const QKeySequence& qks = to_qkeysequence (ks);
       if (!qks.isEmpty()) {
-        a->setShortcut (qks);
+        cachedAction->setShortcut (qks);
         command key_cmd = tm_new<qt_key_command_rep> (ks);
-        c= new QTMCommand (a, key_cmd);
+        c= new QTMCommand (cachedAction, key_cmd);
       } else {
-        c= new QTMCommand (a, cmd);
+        c= new QTMCommand (cachedAction, cmd);
       }
         
       // NOTE: this used to be a Qt::QueuedConnection, but the slot would not
       // be called if in a contextual menu
-      QObject::connect (a, SIGNAL (triggered ()), c, SLOT (apply ()));    
+      QObject::connect (cachedAction, SIGNAL (triggered()), c, SLOT (apply()));    
   
-      // FIXME: implement complete prefix handling
-      a->setEnabled (ok? true: false);
+      bool ok = (style & WIDGET_STYLE_INERT) == 0;
+      cachedAction->setEnabled (ok? true: false);
       
+        // FIXME: implement complete prefix handling
       bool check = (pre != "") || (style & WIDGET_STYLE_PRESSED);
-      
-      a->setCheckable (check? true: false);
-      a->setChecked (check? true: false);
+      cachedAction->setCheckable (check? true: false);
+      cachedAction->setChecked (check? true: false);
       if (pre == "v") {}
       else if (pre == "*") {}
       // [mi setOnStateImage:[NSImage imageNamed:@"TMStarMenuBullet"]];
       else if (pre == "o") {}
-      return a;
     }
       break;
       
@@ -499,20 +521,19 @@ qt_ui_element_rep::as_qaction () {
         // small while
     {
       typedef pair<widget, widget> T;
-      T x = open_box<T>(load);
-      widget text = x.x1;
-      widget help = x.x2;
+      T            x = open_box<T> (load);
+      qt_widget  qtw = concrete (x.x1);
+      qt_widget help = concrete (x.x2);
 
-      QAction* a= concrete(text)->as_qaction();
+      cachedAction = qtw->as_qaction();
       {
         typedef quartet<string, int, color, bool> T1;
-        T1 x = open_box<T1> (static_cast<qt_ui_element_rep*> (help.rep)->load);
-        string str = x.x1;
-        a->setToolTip (to_qstring (str));
+        T1 y = open_box<T1> (get_load (help, text_widget));
+        cachedAction->setToolTip (to_qstring (y.x1));
         // HACK: force displaying of the tooltip (needed for items in the QMenuBar)
-        QObject::connect (a, SIGNAL(hovered()), a, SLOT(showToolTip()));
+        QObject::connect (cachedAction, SIGNAL(hovered()),
+                          cachedAction, SLOT(showToolTip()));
       }
-      return a;
     }
       break;
       
@@ -529,26 +550,24 @@ qt_ui_element_rep::as_qaction () {
       QTMAction* a = new QTMAction (NULL);
       a->set_text (str);
       a->setFont (to_qfont (style, a->font()));
-      return a;
+      cachedAction = a;
     }
       break;
       
     case xpm_widget:
         // a widget with an X pixmap icon
     {
-      url  image = open_box<url>(load);
-
-      QAction* a = new QTMAction (NULL);
-      a->setIcon (QIcon (as_pixmap (*xpm_image (image))));
-      return a;
+      url    image = open_box<url>(load);
+      cachedAction = new QTMAction (NULL);
+      cachedAction->setIcon (QIcon (as_pixmap (*xpm_image (image))));
     }
       break;
 
     default:
-      ;
+      FAILED (c_string ("qt_ui_element: unknown type for as_qaction, "
+                        * type_as_string()));
   }
-  
-  return NULL;
+  return cachedAction;
 }
 
 
@@ -739,6 +758,8 @@ qt_ui_element_rep::as_qwidget () {
   if (DEBUG_QT_WIDGETS)
     debug_widgets << "as_qwidget: " << type_as_string() << LF;
 
+  if (qwid) return qwid; // This never happens anyway...
+  
   switch (type) {
     case horizontal_menu:
     case vertical_menu:
@@ -809,18 +830,23 @@ qt_ui_element_rep::as_qwidget () {
     case pulldown_button:
     case pullright_button:
     {
-      typedef promise<widget> T1;
-      typedef pair<widget, T1> T;
-      T      x = open_box<T>(load);
-      widget w = x.x1;
-        //T1    pw = x.x2;
-      
-      // a button w with a lazy pulldown menu pw
-      
-      QAction*     a = concrete(this)->as_qaction ();
-      QToolButton* b = new QTMUIButton();
-      a->setParent (b);
-      b->setDefaultAction (a);
+      typedef pair<widget, promise<widget> > T;
+      T                x = open_box<T> (load);
+      qt_widget      qtw = concrete (x.x1);
+      promise<widget> pw = x.x2;
+    
+      QPushButton* b  = new QPushButton();
+      QTMLazyMenu* lm = new QTMLazyMenu (pw, b);
+      b->setMenu (lm);
+      b->setAutoDefault (false);
+      if (qtw->type == xpm_widget) {
+        url image = open_box<url> (get_load (qtw));
+        b->setIcon (QIcon (as_pixmap (*xpm_image (image))));
+      } else if (qtw->type == text_widget) {
+        typedef quartet<string, int, color, bool> T1;
+        T1 y = open_box<T1> (get_load (qtw));
+        b->setText (to_qstring (y.x1));
+      }
       qwid = b;
     }
       break;
@@ -831,15 +857,13 @@ qt_ui_element_rep::as_qwidget () {
     {
       typedef quintuple<widget, command, string, string, int> T;
       T x = open_box<T>(load);
-      widget    w = x.x1; // the button's contents: xpm_widget, text_widget, ...?
-      command cmd = x.x2;
-      string  pre = x.x3;
-      string   ks = x.x4;
-      int   style = x.x5;
+      qt_widget qtw = concrete(x.x1); // contents: xpm_widget, text_widget, ...?
+      command   cmd = x.x2;
+      string    pre = x.x3;
+      string     ks = x.x4;
+      int     style = x.x5;
       
-      QWidget* qw = concrete(w)->as_qwidget();  // will be discarded at the end
-
-      if (concrete(w)->type == xpm_widget) {  // Toolbar button
+      if (qtw->type == xpm_widget) {  // Toolbar button
         QAction*     a = as_qaction();        // Create key shortcuts and actions
         QTMUIButton* b = new QTMUIButton();
         b->setDefaultAction (a);
@@ -849,13 +873,14 @@ qt_ui_element_rep::as_qwidget () {
         QPushButton*     b = new QPushButton();
         QTMCommand* qtmcmd = new QTMCommand(b, cmd);
         QObject::connect (b, SIGNAL (clicked ()), qtmcmd, SLOT (apply ()));
-        if (qw && concrete(w)->type == text_widget)
-          b->setText (static_cast<QLabel*> (qw)->text());
+        if (qtw->type == text_widget) {
+          typedef quartet<string, int, color, bool> T1;
+          b->setText (to_qstring (open_box<T1> (get_load (qtw)).x1));
+        }
         b->setFlat (! (style & WIDGET_STYLE_BUTTON));
         qwid = b;
       }
       qwid->setEnabled (! (style & WIDGET_STYLE_INERT));
-      delete qw;
     }
       break;
       
@@ -864,17 +889,14 @@ qt_ui_element_rep::as_qwidget () {
     case balloon_widget:
     {
       typedef pair<widget, widget> T;
-      T         x = open_box<T>(load);
-      widget text = x.x1;
-      widget help = x.x2;
-
-      QWidget* w = concrete(text)->as_qwidget();
-      if (w) {
-        typedef quartet<string, int, color, bool> T1;
-        T1 x = open_box<T1> (static_cast<qt_ui_element_rep*> (help.rep)->load);
-        string str = x.x1;
-        w->setToolTip (to_qstring (str));
-      }
+      T            x = open_box<T>(load);
+      qt_widget  qtw = concrete (x.x1);
+      qt_widget help = concrete (x.x2);
+      
+      typedef quartet<string, int, color, bool> T1;
+      T1 y = open_box<T1>(get_load (help, text_widget));
+      QWidget* w = qtw->as_qwidget();
+      w->setToolTip (to_qstring (y.x1));
       qwid = w;
     }
       break;
@@ -909,7 +931,7 @@ qt_ui_element_rep::as_qwidget () {
     case xpm_widget:
     {
       url image = open_box<url>(load);
-      QLabel*   l = new QLabel (NULL);
+      QLabel* l = new QLabel (NULL);
       l->setPixmap (as_pixmap (*xpm_image (image)));
       qwid = l;
     }

@@ -31,6 +31,7 @@
 #include "qt_dialogues.hpp"
 #include "qt_simple_widget.hpp"
 #include "qt_window_widget.hpp"
+#include "qt_menu.hpp"
 #include "QTMWindow.hpp"
 #include "QTMStyle.hpp"      // qtstyle()
 #include "QTMGuiHelper.hpp"  // needed to connect()
@@ -44,7 +45,7 @@
 // a modification of the widget hierarchy of the main window.
 #endif
 
-int menu_count = 0;
+int menu_count = 0;  // zero if no menu is currently being displayed
 list<qt_tm_widget_rep*> waiting_widgets;
 
 static void
@@ -52,6 +53,8 @@ replaceActions (QWidget* dest, QWidget* src) {
     //NOTE: the parent hierarchy of the actions is not modified while installing
     //      the menu in the GUI (see qt_menu.hpp for this memory management 
     //      policy)
+  if (src == NULL || dest == NULL)
+    FAILED ("replaceActions expects valid objects");
   dest->setUpdatesEnabled (false);
   QList<QAction *> list = dest->actions();
   while (!list.isEmpty()) dest->removeAction (list.takeFirst());
@@ -62,12 +65,14 @@ replaceActions (QWidget* dest, QWidget* src) {
 
 static void
 replaceButtons (QToolBar* dest, QWidget* src) {
+   if (src == NULL || dest == NULL)
+     FAILED ("replaceButtons expects valid objects");
   dest->setUpdatesEnabled (false);
   bool visible = dest->isVisible();
   if (visible) dest->hide(); //TRICK: to avoid flicker of the dest widget
   replaceActions (dest, src);
   QList<QObject*> list = dest->children();
-  for (int i=0; i<list.count(); i++) {
+  for (int i = 0; i < list.count(); ++i) {
     QToolButton* button = qobject_cast<QToolButton*> (list[i]);
     if (button) {
       button->setPopupMode (QToolButton::InstantPopup);
@@ -116,7 +121,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
 {
   type = texmacs_widget;
 
-  main_widget = ::glue_widget (true, true, 1, 1);
+  main_widget = concrete (::glue_widget (true, true, 1, 1));
   
   // decode mask
   visibility[0] = (mask & 1)  == 1;  // header
@@ -216,7 +221,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   bl->setContentsMargins(0,1,0,0);
   bl->setSpacing(0);
   cw->setLayout(bl);
-  QWidget* q = concrete(main_widget)->as_qwidget(); // force creation of QWidget
+  QWidget* q = main_widget->as_qwidget(); // force creation of QWidget
   q->setParent(qwid); // q->layout()->removeWidget(q) will reset the parent to this
   bl->addWidget(q);
   
@@ -433,7 +438,7 @@ qt_tm_widget_rep::read(slot s, blackbox index) {
   switch (s) {
     case SLOT_CANVAS:
       check_type_void (index, s);
-      ret = main_widget;
+      ret = abstract (main_widget);
       break;
       
     default:
@@ -683,43 +688,47 @@ qt_tm_widget_rep::query (slot s, int type_id) {
 void
 qt_tm_widget_rep::install_main_menu () {
   main_menu_widget = waiting_main_menu_widget;
-  QMenu* m= concrete (main_menu_widget)->get_qmenu();
-  if (m) {
-      // REMARK: We do not want the menubar shared across windows as suggested  
-      // in http://doc.qt.nokia.com/4.7/qmainwindow.html#menuBar
-      // e.g. :
-      //
-      //     QMenuBar *dest = new QMenuBar(0);
-      //     mainwindow()->setMenuBar(dest);
-      //
-      // as the default behavior on MacOS. The main reason is that in TeXmacs
-      // different windows can have different main menus so that it is indeed
-      // appropriate to change the main menu as the window focus changes. 
-      // So we kindly ask to each window to give us its own menu and we install
-      // there our actions.
-      // So we do:
-    
-    QMenuBar *dest = mainwindow()->menuBar();
-    
-      // and everything is fine.
-      // Also please note that we have to do the replacement and not simply 
-      // install the menu returned by get_qmenu() since the main menu there 
-      // could contain some default items appropriate for the given OS (like the
-      // service menu on MacOS) which are not present in our menu widget.
-    
-    QWidget *src = m;
-    replaceActions(dest,src);
-    QList<QAction*> list = dest->actions();
-    for (int i= 0; i < list.count(); i++) {
-      QAction* a= list[i];
-      if (a->menu()) {
-        QObject::connect(a->menu(), SIGNAL(aboutToShow()),
-                         the_gui->gui_helper, SLOT(aboutToShowMainMenu()));
-        QObject::connect(a->menu(), SIGNAL(aboutToHide()),
-                         the_gui->gui_helper, SLOT(aboutToHideMainMenu()));
-      }
+  QMenu* src = main_menu_widget->get_qmenu();
+  if (!src) return;
+
+    // REMARK: We do not want the menubar shared across windows as suggested
+    // in http://doc.qt.nokia.com/4.7/qmainwindow.html#menuBar
+    // e.g. :
+    //
+    //     QMenuBar *dest = new QMenuBar(0);
+    //     mainwindow()->setMenuBar(dest);
+    //
+    // as the default behavior on MacOS. The main reason is that in TeXmacs
+    // different windows can have different main menus so that it is indeed
+    // appropriate to change the main menu as the window focus changes.
+    // So we kindly ask to each window to give us its own menu and we install
+    // there our actions.
+    // So we do:
+  
+  QMenuBar* dest = mainwindow()->menuBar();
+  
+    // and everything is fine.
+  
+    // Also please note that we have to do the replacement and not simply
+    // install the menu returned by get_qmenu() since the main menu there
+    // could contain some default items appropriate for the given OS (like the
+    // service menu on MacOS) which are not present in our menu widget.
+    // UPDATE: But replaceActions() *does remove* all actions (!?)
+    // It looks more like the reason is that we have to "flatten out" the first
+    // level of the QMenu returned... ?
+  
+  replaceActions (dest, src);
+  QList<QAction*> list = dest->actions();
+  for (int i = 0; i < list.count(); i++) {
+    QAction* a = list[i];
+    if (a->menu()) {
+      QObject::connect (a->menu(),         SIGNAL (aboutToShow()),
+                        the_gui->gui_helper, SLOT (aboutToShowMainMenu()));
+      QObject::connect (a->menu(),         SIGNAL (aboutToHide()),
+                        the_gui->gui_helper, SLOT (aboutToHideMainMenu()));
     }
   }
+
 }
 
 void
@@ -736,7 +745,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     {
       check_type_void (index, s);
       
-      QWidget* q = concrete(main_widget)->qwid;
+      QWidget* q = main_widget->qwid;
       q->hide();
       QLayout* l = centralwidget()->layout();
       l->removeWidget(q);
@@ -745,84 +754,87 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       l->addWidget(q);
         // The layout will automatically reparent the widgets so
         // that they are children of the widget on which the layout is installed.
-      main_widget = w; // canvas() now returns the new QTMWidget (or 0)
+      main_widget = concrete (w); 
+        // canvas() now returns the new QTMWidget (or 0)
       
       if (scrollarea())   // Fix size to draw margins around.
         scrollarea()->surface()->setSizePolicy (QSizePolicy::Fixed,
                                                 QSizePolicy::Fixed);
-      send_keyboard_focus (main_widget);
+      send_keyboard_focus (abstract (main_widget));
     }
       break;
       
     case SLOT_MAIN_MENU:
       check_type_void (index, s);
     {
-      waiting_main_menu_widget = w;
-      if (menu_count <=0) {
-        install_main_menu();
-      } else { 
-          // menu interaction ongoing.
-          // postpone menu installation when the menu interaction is done
-        if (DEBUG_QT_WIDGETS)
-          debug_widgets << "Main menu is busy: "
-                        << "postponing menu installation" << LF;
-        if (!contains(waiting_widgets,this))
-          waiting_widgets << this;
-      }
+       waiting_main_menu_widget = concrete (w);
+       if (menu_count <= 0)
+         install_main_menu();
+       else if (!contains (waiting_widgets, this))
+         // menu interaction ongoing, postpone new menu installation until done
+         waiting_widgets << this;
     }
       break;
       
     case SLOT_MAIN_ICONS:
       check_type_void (index, s);
     {
-      main_icons_widget = w;
-      QMenu* m= concrete (w)->get_qmenu();
-      replaceButtons (mainToolBar, m);
-      update_visibility();
+       main_icons_widget = concrete (w);
+       QMenu* m = main_icons_widget->get_qmenu();
+       if (m) {
+         replaceButtons (mainToolBar, m);
+         update_visibility();
+       }
     }
       break;
       
     case SLOT_MODE_ICONS:
       check_type_void (index, s);
     {   
-      mode_icons_widget = w;
-      QMenu* m= concrete (w)->get_qmenu();
-      replaceButtons (modeToolBar, m);
-      update_visibility();
+       mode_icons_widget = concrete (w);
+       QMenu* m = mode_icons_widget->get_qmenu();
+       if (m) {
+         replaceButtons (modeToolBar, m);
+         update_visibility();
+       }
     }
       break;
       
     case SLOT_FOCUS_ICONS:
       check_type_void (index, s);
     {
-      focus_icons_widget = w;
-      QMenu* m = static_cast<qt_widget_rep*> (w.rep)->get_qmenu();
-      replaceButtons (focusToolBar, m);
-      update_visibility();
+       focus_icons_widget = concrete (w);
+       QMenu* m = focus_icons_widget->get_qmenu();
+       if (m) {
+         replaceButtons (focusToolBar, m);
+         update_visibility();
+       }
     }
       break;
       
     case SLOT_USER_ICONS:
       check_type_void (index, s);
     {   
-      user_icons_widget = w;
-      QMenu* m= concrete (w)->get_qmenu();
-      replaceButtons (userToolBar, m);
-      update_visibility();
+       user_icons_widget = concrete (w);
+       QMenu* m = user_icons_widget->get_qmenu();
+       if (m) {
+         replaceButtons (userToolBar, m);
+         update_visibility();
+       }
     }
       break;
       
     case SLOT_SIDE_TOOLS:
       check_type_void (index, s);
     {
-      side_tools_widget = w;
-      QWidget* new_qwidget = concrete (w)->as_qwidget();
-      QWidget* old_qwidget = sideDock->widget();
-      old_qwidget->deleteLater();
-      old_qwidget = 0;  // HACK, FIXME
-      sideDock->setWidget (new_qwidget); 
-      update_visibility();
-      new_qwidget->show();
+       side_tools_widget = concrete (w);
+       QWidget* new_qwidget = side_tools_widget->as_qwidget();
+       QWidget* old_qwidget = sideDock->widget();
+       old_qwidget->setParent (0);
+       old_qwidget->deleteLater();
+       sideDock->setWidget (new_qwidget);
+       update_visibility();
+       new_qwidget->show();
     }
       break;
       
