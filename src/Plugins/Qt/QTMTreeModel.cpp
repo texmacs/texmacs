@@ -28,17 +28,20 @@ const char* QTMTreeModel::no_observer_exception =
 /*! Creates a QTMTreeModel attached to a given tree or returns the one already
     attached if present.
  
+ See the documentation for QTMTreeModel for the format for data roles.
+ 
  @note The tree pointer is marked const because we don't retain the tree_rep
-       inside.
+       inside. However, we do attach observers to the tree, so maybe it 
+       shouldn't be const after all.
  */
 QTMTreeModel*
-QTMTreeModel::instance (const tree& data, QObject* parent) {
+QTMTreeModel::instance (const tree& data, const tree& roles, QObject* parent) {
   tree& t = const_cast<tree&> (data);
   if (!is_nil (data) && !is_nil (t->obs) &&
       t->obs->get_type () == OBSERVER_WIDGET)
     return static_cast<qt_tree_observer_rep*> (t->obs.rep)->model;
   else
-    return new QTMTreeModel (data, parent);
+    return new QTMTreeModel (data, roles, parent);
 }
 
 /*! Internal construction of QTMTreeModels
@@ -47,26 +50,27 @@ QTMTreeModel::instance (const tree& data, QObject* parent) {
  only one model is built and attached to a given tree. This is done internally
  with a qt_tree_observer attached to trees. This observer takes ownership of
  the QTMTreeModel.
-
  */
-QTMTreeModel::QTMTreeModel (const tree& data, QObject* parent)
-: QAbstractItemModel (parent), _t_rep (data.rep) {
+QTMTreeModel::QTMTreeModel (const tree& data, const tree& roles, QObject* p)
+: QAbstractItemModel (p), _t_rep (data.rep) {
   tree t = tree (_t_rep);
-  if (ipath_has_parent (obtain_ip (t))) _iprefix = obtain_ip (t);
-  else                                  attach_ip (t, _iprefix << 0);
-  _prefix = reverse (_iprefix);
+  parse_roles (roles);
+  const path& ip = obtain_ip (t);
+  if (is_nil (ip) || const_cast<path&>(ip)->item == DETACHED)
+    attach_ip (t, path(0));
 
     // the qt_tree_observer takes ownership of this object
-    // there
   attach_observer (t, qt_tree_observer (this));
 }
 
 QTMTreeModel::~QTMTreeModel () {
-    /// Don't do (something like) this:
-    //clean_all_observers (_t->obs, OBSERVER_IP);
-    // If the tree is part of a document, TeXmacs won't particularly like it
-    // that we delete all of its inverse paths. If it isn't, then it's most
-    // likely about to be discarded anyway.
+    // We must not detach our observers here: the qt_tree_observer_rep is the
+    // owner of this object: if we are here, it is dying
+}
+
+inline int
+QTMTreeModel::row_offset (const tree& t) const {
+  return _roles[L(const_cast<tree&>(t))][NumberOfArguments];
 }
 
 tree
@@ -76,24 +80,34 @@ QTMTreeModel::item_from_index (const QModelIndex& index) const {
 }
 
 inline QModelIndex
-QTMTreeModel::index_from_item (tree& ref) const {
-  return createIndex (0, 0, ref.rep);  // FIXME: is this ok?
+QTMTreeModel::index_from_item (const tree& tref) const {
+  tree& t = const_cast<tree&> (tref);
+  tree _t = tree (_t_rep);
+  path ip = obtain_ip (t);
+  if (ipath_has_parent (ip)) {
+    path   p = reverse (ip->next) / reverse (obtain_ip (_t));// Look one item up
+    if (is_nil (p)) return createIndex (ip->item, 0, t.rep); // parent is root?
+    tree& pt = subtree (_t, p);                              // pt is the parent
+    int  row = ip->item - row_offset (pt);
+    return createIndex (row, 0, t.rep);
+  }
+  return QModelIndex();
 }
 
 bool
 QTMTreeModel::hasIndex (int row, int column, const QModelIndex& parent) const {
   (void) column;
   const tree& t = item_from_index (parent);
-  return is_compound(t) && N(t) > row;
+  return is_compound(t) && row + row_offset(t) < N(t) && column == 0;
 }
 
 QModelIndex
 QTMTreeModel::index (int row, int column, const QModelIndex& parent) const {
   if (!hasIndex (row, column, parent)) return QModelIndex();
-  tree pt = item_from_index (parent);
+  tree t = item_from_index (parent);
 
-  if (is_compound (pt) && row < N(pt))
-    return createIndex (row, column, inside (pt[row]));
+  if (is_compound (t) && row + row_offset(t) < N(t))
+    return createIndex (row, column, t[row + row_offset(t)].rep);
   else
     return QModelIndex();
 }
@@ -101,16 +115,15 @@ QTMTreeModel::index (int row, int column, const QModelIndex& parent) const {
 QModelIndex
 QTMTreeModel::parent (const QModelIndex& index) const {
   if (!index.isValid()) return QModelIndex();
-  tree t = item_from_index (index);
+  tree  t = item_from_index (index);
   path ip = obtain_ip (t);
   if (ipath_has_parent (ip)) {
-    path p = reverse (ip->next); // Look one item up in the path
+    path p = reverse (ip->next);            // Look one item up in the path
     if (is_nil (p)) return QModelIndex();
-    p = p / _prefix;
-    tree _t = tree (_t_rep);
-    tree& t = subtree (_t, p); // t is the parent
-    int   i = is_nil (p) ? 0 : p->item;
-    return createIndex (i, 0, t.rep);
+    tree  _t = tree (_t_rep);
+    p        = p / reverse (obtain_ip(_t));
+    tree& pt = subtree (_t, p);             // pt is the parent
+    return index_from_item (pt);
   }
   return QModelIndex();
 }
@@ -118,7 +131,7 @@ QTMTreeModel::parent (const QModelIndex& index) const {
 int
 QTMTreeModel::rowCount (const QModelIndex& parent) const {
   tree t = item_from_index (parent);
-  return is_compound (t) ? N(t) : 0;
+  return is_compound (t) ? N(t) - row_offset (t) : 0;
 }
 
 int
@@ -127,34 +140,43 @@ QTMTreeModel::columnCount (const QModelIndex& parent) const {
   return 1;
 }
 
+  /// FIXME: this method is called quite often, maybe some (more?) caching is
+  // necessary
 QVariant
 QTMTreeModel::data (const QModelIndex& index, int role) const {
-  tree t = item_from_index (index);
-  QString qs;
-  if (is_atomic (t)) qs = to_qstring (t->label);
-  else               qs = to_qstring (as_string (L(t)));
-
-  /* TODO */
+  const tree& tref = item_from_index (index);
+  tree& t = const_cast<tree&> (tref);
+  int pos = _roles.contains(L(t)) && _roles[L(t)].contains(role)
+              ? _roles[L(t)][role] : -1;
   switch (role) {
-      // The key data to be rendered in the form of text (QString)
     case Qt::DisplayRole:
-      return qs;
-       // The data to be rendered as a decoration (QColor, QIcon or QPixmap)
-    case Qt::DecorationRole:
-      return QPixmap (qs);
-       // The data in a form suitable for editing in an editor (QString)
     case Qt::EditRole:
-      return qs;
-       // The data displayed in the item's tooltip (QString)
     case Qt::ToolTipRole:
-      return qs;
-       // The data displayed in the status bar (QString)
     case Qt::StatusTipRole:
-      return qs;
-       // The data displayed for the item in "What's This?" mode (QString)
-    case Qt::WhatsThisRole:
-      return qs;
-        // The size hint for the item that will be supplied to views (QSize)
+      if (is_atomic (t))
+        return to_qstring (t->label);
+      else if (pos == -1 || !is_atomic (t[pos]))
+        return to_qstring (as_string (L(t)));
+      else
+        return to_qstring (t[pos]->label);
+    case Qt::DecorationRole:
+    {
+        // NOTE: By calling QPixmap's constructor with a file name, I'm bypassing
+        // TeXmacs' caching of pictures in qt_load_xpm(), but since I need a
+        // QPixmap and TeXmacs stores QImages this is preferable because Qt uses
+        // QPixmapCache for all files it loads.
+        // It might actually be better to cache the QIcons first and return them
+      url u;
+      if (pos == -1 || is_atomic (t) || !is_atomic (t[pos]))
+        u = resolve ("$TEXMACS_PIXMAP_PATH" * url(as_string (L(t))));
+      else
+        u = resolve ("$TEXMACS_PIXMAP_PATH" * url(t[pos]->label * ".xpm"));
+      if (is_rooted_name (u))
+        return QPixmap (to_qstring (concretize (u)));
+      else
+        return QVariant();
+    }
+      break;
     case Qt::SizeHintRole:
     default:
       return QVariant();
@@ -164,7 +186,7 @@ QTMTreeModel::data (const QModelIndex& index, int role) const {
 bool
 QTMTreeModel::hasChildren (const QModelIndex& parent) const {
   tree t = item_from_index (parent);
-  return is_compound (t) && N(t) > 0;  // redundant?
+  return is_compound (t) && N(t) > row_offset(t);
 }
 
 Qt::ItemFlags
@@ -175,9 +197,8 @@ QTMTreeModel::flags (const QModelIndex& index) const {
 }
 
 QVariant
-QTMTreeModel::headerData (int section, Qt::Orientation orientation,
-                          int role) const {
-  (void) section; (void) orientation; (void) role;
+QTMTreeModel::headerData (int section, Qt::Orientation orient, int role) const {
+  (void) section; (void) orient; (void) role;
   return QVariant();
 }
 
@@ -185,20 +206,39 @@ inline bool
 QTMTreeModel::ipath_has_parent (const path& ip) const {
     // Careful: our root _t might be a subtree of some other tree in TeXmacs
     // already with inverse paths which lead further up the hierarchy
-    // than we manage. That's why we need the extra check with _iprefix
-  
-    // ************ FIXME! What if the original tree is moved!!!
-  
+    // than we manage. That's why we need the extra check with obtain_ip()
+  tree _t = tree (_t_rep);
   return !is_nil (ip) && const_cast<path&>(ip)->item != DETACHED
-                      && _iprefix != ip;
+                      && obtain_ip (_t) != ip;
 }
 
 void
 QTMTreeModel::parse_roles (const tree& roles) {
-  if (!is_compound (roles))
-    return;
-    // TODO
+  tree& r = const_cast<tree&> (roles);
+  
+  if (!is_compound (roles)) return;
+  
+  for (int i = 0; i < N(roles); ++i) {
+    if (is_compound (r[i])) {
+      tree_label tag = L(r[i]);
+      _roles[tag][NumberOfArguments] = N(r[i]);
+      for (int j = 0; j < N(r[i]); ++j) {
+        ASSERT (is_atomic (r[i][j]), "QTMTreeModel: bad format declaration");
+        string role = r[i][j]->label;
+        if      (role == "DisplayRole")    _roles[tag][Qt::DisplayRole]    = j;
+        else if (role == "EditRole")       _roles[tag][Qt::EditRole]       = j;
+        else if (role == "DecorationRole") _roles[tag][Qt::DecorationRole] = j;
+        else if (role == "ToolTipRole")    _roles[tag][Qt::ToolTipRole]    = j;
+        else if (role == "CommandRole")    _roles[tag][CommandRole]        = j;
+        else if (string ("UserRole:") <= role) {
+          int num = abs (as_int (role (9, N(role))));
+          _roles[tag][TMUserRole + num] = j;
+        }
+      }
+    }
+  }
 }
+
 
 /******************************************************************************
  * qt_tree_observer_rep

@@ -1032,10 +1032,10 @@ qt_ui_element_rep::as_qwidget () {
     case tree_view_widget:
     {
       typedef pair<tree, tree> T;
-      T          x = open_box<T>(load);
-      tree    data = x.x1;
-      tree actions = x.x2;
-      qwid         = new QTMTreeView (data);
+      T        x = open_box<T>(load);
+      tree  data = x.x1;
+      tree roles = x.x2;
+      qwid       = new QTMTreeView (data, roles);
     }
       break;
       

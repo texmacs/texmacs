@@ -28,6 +28,9 @@ class QTMTreeModel;
   * it owns the QTMTreeModel and deletes it when the observer is detached from
     the tree and deleted.
  
+ NOTE: we might want to manage a QSelectionItemModel as well. See the comments
+       in announce().
+ 
  FIXME: Currently we just beginResetModel() in announce() and endResetModel()
         in done(). This is wasteful and will scale very badly.
  */
@@ -51,13 +54,36 @@ observer qt_tree_observer (QTMTreeModel* model);
 
 /*! QTMTreeModel is a QT model around a TeXmacs tree.
  
- This object installs a qt_tree_observer at the root of the tree it is
- passed, which acts as a proxy for announcements and notifications of
- modifications performed on the tree elements by e.g. the editor. Currently,
- we are very crude and simply reset the whole (!) model each time there's a
- modification. This is extremely wasteful, but a complete implementation
- requires much more work, because there are tree operations which don't
- translate easily into the beginInsertRows / endInsertRows framework of
+ The tree may be part of a document or any other tree. The first node in the 
+ data won't be displayed by views. Together with the data one may specify data
+ roles for nodes in a separate argument. If the data is
+ 
+ (root
+   (library "First library" "icon.xpm" 12345
+     (collection "First collection" 001)
+     (collection "Second collection" 002)
+     (collection "Third collection" 003
+       (collection "First subcollection" 004)
+       (collection "Second subcollection" 005))))
+ 
+ Then one may define the data roles as:
+ 
+  (list
+    (library    DisplayRole DecorationRole UserRole:1)
+    (collection DisplayRole UserRole:1))
+ 
+ Here "UserRole:number" is intended to be used to store things like database ids
+ (in the example) or anything else. In addition to (some) of Qt::ItemDataRole
+ this object supports the CommandRole, intended to assign commands to items
+ which will be executed when (double) clicked. (TODO)
+ 
+ @note On memory management: This object installs a qt_tree_observer at the 
+ root of the tree it is passed, which acts as a proxy for announcements and
+ notifications of modifications performed on the tree elements by e.g. the editor.
+ Currently we are very crude and simply reset the whole (!) model each time
+ there's a modification. This is extremely wasteful, but a complete
+ implementation requires much more work, because there are tree operations which
+ don't translate easily into the beginInsertRows / endInsertRows framework of
  QAbstractItemModel. In particular, raw_insert_node replaces a node and this
  isn't either an insertion or a deletion. In order to keep the views in sync
  we could:
@@ -67,10 +93,7 @@ observer qt_tree_observer (QTMTreeModel* model);
   * Tag subtrees as "dirty" when they are about to be edited and return phony
     ones when the views request updates
   * ...
- 
- Anyway: it's too much work for now.
  */
-
 class QTMTreeModel : public QAbstractItemModel {
   Q_OBJECT
   
@@ -78,20 +101,28 @@ class QTMTreeModel : public QAbstractItemModel {
   static const char*   no_observer_exception;
   
   static const int DETACHED = -5;
+    // NOTE: for some reason using hashmap was resulting in overwritten values.
+    // The very same code with QHash works ok. ?!?!
+    //typedef hashmap<tree_label, hashmap <int, int> > roles_t;
+  typedef QHash<tree_label, QHash<int, int> > roles_t;
+
+  enum QTMRoles {
+    NumberOfArguments = Qt::UserRole +  1,   // shouldn'be here...
+    CommandRole       = Qt::UserRole +  2,
+    TMUserRole        = Qt::UserRole + 32
+  };
   
-  tree_rep*         _t_rep;  //!< Our data. Must be tree_rep or we have a cycle!
-  path             _prefix;  //!< Path of the root _t.
-  path            _iprefix;  //!< Inverse path of the root _t (for convenience).
+  tree_rep* _t_rep;  //!< Our data. Must be tree_rep* or we have a cycle!
+  roles_t   _roles;  //!< Where in the data tree each data role is.
   
-  hashmap<string, QVariant> roles;
-  
-  QTMTreeModel (const tree& data, QObject* parent = 0);
+  QTMTreeModel (const tree& data, const tree& roles, QObject* parent = 0);
   QTMTreeModel (const QTMTreeModel& _other);
   QTMTreeModel& operator= (QTMTreeModel& other);
   
 public:
   virtual ~QTMTreeModel ();
-  static QTMTreeModel* instance (const tree& data, QObject* parent = 0);
+  static QTMTreeModel* instance (const tree& data, const tree& roles,
+                                 QObject* parent = 0);
   
   virtual QModelIndex   index (int row, int column,
                               const QModelIndex& parent = QModelIndex()) const;
@@ -110,10 +141,11 @@ public:
   friend class qt_tree_observer_rep;
   
 private:
-  QModelIndex index_from_item (tree& ref) const;
+  QModelIndex index_from_item (const tree& ref) const;
   tree        item_from_index (const QModelIndex& index) const;
   bool       ipath_has_parent (const path& ip) const;
   void            parse_roles (const tree& roles);
+  int              row_offset (const tree& t) const;
 };
 
 #endif // QTMTREEMODEL_HPP

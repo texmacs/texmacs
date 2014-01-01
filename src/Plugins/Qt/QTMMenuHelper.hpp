@@ -378,8 +378,9 @@ class QTMTreeView : public QTreeView {
   tree _t;
   
 public:
-  QTMTreeView (tree data, QWidget* parent=0) : QTreeView (parent), _t (data) {
-    QTMTreeModel* model = QTMTreeModel::instance (_t);
+  QTMTreeView (tree data, const tree& roles, QWidget* parent=0)
+  : QTreeView (parent), _t (data) {
+    QTMTreeModel* model = QTMTreeModel::instance (_t, roles);
     setModel (model);
     setUniformRowHeights (true);  // assuming we display only text
     setHeaderHidden (true);       // for now...
