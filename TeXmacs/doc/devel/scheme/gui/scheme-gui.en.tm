@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.16>
+<TeXmacs|1.0.7.21>
 
 <style|tmdoc>
 
@@ -24,6 +24,8 @@
     <branch|An introduction to widgets.|scheme-gui-intro.en.tm>
 
     <branch|Menus and toolbars.|scheme-gui-menus.en.tm>
+
+    <branch|Displaying lists and trees.|scheme-gui-lists-trees.en.tm>
 
     <branch|Dialogs and composite widgets.|scheme-gui-dialogs.en.tm>
 

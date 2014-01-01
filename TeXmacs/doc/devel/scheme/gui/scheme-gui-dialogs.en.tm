@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.16>
+<TeXmacs|1.0.7.21>
 
 <style|tmdoc>
 
@@ -147,7 +147,7 @@
 
   Note that our second dialog, <scm|widget1-buttons> is just a copy of
   <scm|widget1> with an extra line at the end. We could have spared us the
-  keytrokes in this way:
+  keystrokes in this way:
 
   <\session|scheme|default>
     <\unfolded-io|Scheme] >
@@ -183,3 +183,6 @@
   with no Back-Cover Texts. A copy of\nthe license is included in the section
   entitled "GNU Free Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>

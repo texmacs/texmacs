@@ -158,6 +158,13 @@
         ///
         (text "Toggle here")))))
 
+(tm-widget (widget10)
+  (resize ("150px" "400px" "9000px") ("300px" "600px" "9000px")
+    (vertical
+      (bold (text "Testing tree-view"))
+      ===
+      (tree-view (buffer-tree) (stree->tree '(dummy))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some test forms
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

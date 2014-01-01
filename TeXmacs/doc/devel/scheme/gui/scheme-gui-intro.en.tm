@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.0.7.21>
 
 <style|tmdoc>
 
@@ -149,6 +149,10 @@
       (top-window example3 "Some text")
     </input>
   </session>
+
+  From here you can go on reading ``<hlink|Extending the graphical user
+  interface|scheme-gui.en.tm>'' or see the sample widgets in
+  <hlink|menu-test.scm|$TEXMACS_PATH/progs/kernel/gui/menu-test.scm>.
 
   <tmdoc-copyright|2012|the <TeXmacs> team.>
 
