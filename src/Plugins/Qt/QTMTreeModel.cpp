@@ -148,6 +148,7 @@ QTMTreeModel::data (const QModelIndex& index, int role) const {
   tree& t = const_cast<tree&> (tref);
   int pos = _roles.contains(L(t)) && _roles[L(t)].contains(role)
               ? _roles[L(t)][role] : -1;
+
   switch (role) {
     case Qt::DisplayRole:
     case Qt::EditRole:
@@ -166,11 +167,11 @@ QTMTreeModel::data (const QModelIndex& index, int role) const {
         // QPixmap and TeXmacs stores QImages this is preferable because Qt uses
         // QPixmapCache for all files it loads.
         // It might actually be better to cache the QIcons first and return them
-      url u;
+      url u = "$TEXMACS_PIXMAP_PATH";
       if (pos == -1 || is_atomic (t) || !is_atomic (t[pos]))
-        u = resolve ("$TEXMACS_PIXMAP_PATH" * url(as_string (L(t))));
+        u = resolve (u * url (as_string (L(t)) * ".xpm"));
       else
-        u = resolve ("$TEXMACS_PIXMAP_PATH" * url(t[pos]->label * ".xpm"));
+        u = resolve (u * url(t[pos]->label));
       if (is_rooted_name (u))
         return QPixmap (to_qstring (concretize (u)));
       else
