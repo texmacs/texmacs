@@ -761,7 +761,9 @@ qt_ui_element_rep::as_qwidget () {
   if (DEBUG_QT_WIDGETS)
     debug_widgets << "as_qwidget: " << type_as_string() << LF;
 
-  if (qwid) return qwid; // This never happens anyway...
+    // Don't return the cached widget, this only happens for refresh_widgets
+    // and then we crash.
+//  if (qwid) return qwid;
   
   switch (type) {
     case horizontal_menu:
