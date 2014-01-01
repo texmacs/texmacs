@@ -93,6 +93,9 @@ public:
   friend class undo_observer_rep;
   friend class tree_links_rep;
   friend class link_repository_rep;
+#ifdef QTTEXMACS
+  friend class QTMTreeModel;  // hack: wouldn't need it with a widget_observer
+#endif
   friend blackbox as_blackbox (const tree& t);
 };
 

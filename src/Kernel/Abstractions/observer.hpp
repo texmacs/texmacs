@@ -32,6 +32,7 @@ typedef list<int> path;
 #define OBSERVER_EDIT       6
 #define OBSERVER_UNDO       7
 #define OBSERVER_HIGHLIGHT  8
+#define OBSERVER_WIDGET     9
 
 /******************************************************************************
 * The observer class

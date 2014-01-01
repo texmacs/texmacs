@@ -54,6 +54,7 @@
     (choice :%3)
     (choices :%3)
     (filtered-choice :%4)
+    (tree-view :%2)
     (toggle :%2)
     (horizontal :menu-item-list)
     (vertical :menu-item-list)
@@ -109,7 +110,7 @@
   (lambda x
     (exec-delayed
       (lambda ()
-	(protected-call (lambda () (apply cmd x)))))))
+        (protected-call (lambda () (apply cmd x)))))))
 
 (define (kbd-system shortcut menu-flag?)
   (cond ((nstring? shortcut) "")
@@ -247,6 +248,11 @@
   (with (tag cmd vals val filterstr) p
     (widget-filtered-choice (object->command (menu-protect cmd)) (vals) (val)
                             (filterstr))))
+
+(define (make-tree-view p style)
+  "Make @(tree-view :%2) item."
+  (with (tag data roles) p
+    (widget-tree-view (data) (roles))))
 
 (define (make-toggle p style)
   "Make @(toggle :%2) item."
@@ -654,6 +660,8 @@
           ,(lambda (p style bar?) (list (make-choice p style))))
   (choices (:%3)
            ,(lambda (p style bar?) (list (make-choices p style))))
+  (tree-view (:%2)
+             ,(lambda (p style bar?) (list (make-tree-view p style))))
   (filtered-choice (:%4)
            ,(lambda (p style bar?) (list (make-filtered-choice p style))))
   (toggle (:%2)

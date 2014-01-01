@@ -115,6 +115,10 @@
   (require-format x '(filtered-choice :%4))
   `($filtered-choice ,@(cdr x)))
 
+(define (gui-make-tree-view x)
+  (require-format x '(tree-view :%2))
+  `($tree-view ,@(cdr x)))
+
 (define (gui-make-toggle x)
   (require-format x '(toggle :%2))
   `($toggle ,@(cdr x)))
@@ -346,6 +350,7 @@
   (enum ,gui-make-enum)
   (choice ,gui-make-choice)
   (choices ,gui-make-choices)
+  (tree-view ,gui-make-tree-view)
   (filtered-choice ,gui-make-filtered-choice)
   (toggle ,gui-make-toggle)
   (icon ,gui-make-icon)

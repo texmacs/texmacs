@@ -29,10 +29,12 @@
 #include "QTMMenuHelper.hpp"
 #include "QTMStyle.hpp"
 #include "QTMApplication.hpp"
+#include "QTMTreeModel.hpp"
 
 #include <QCheckBox>
 #include <QPushButton>
 #include <QSplitter>
+#include <QTreeView>
 
 /******************************************************************************
  * Auxiliary classes
@@ -706,6 +708,7 @@ qt_ui_element_rep::as_qlayoutitem () {
     case enum_widget:
     case choice_widget:
     case filtered_choice_widget:
+    case tree_view_widget:
     case scrollable_widget:
     case hsplit_widget:
     case vsplit_widget:
@@ -999,7 +1002,7 @@ qt_ui_element_rep::as_qwidget () {
                               x.x4);
     }
       break;
-    
+
     case filtered_choice_widget:
     {
       typedef quartet<command, array<string>, string, string> T;
@@ -1023,6 +1026,16 @@ qt_ui_element_rep::as_qwidget () {
       
       qwid = new QWidget();
       qwid->setLayout (layout);
+    }
+      break;
+      
+    case tree_view_widget:
+    {
+      typedef pair<tree, tree> T;
+      T          x = open_box<T>(load);
+      tree    data = x.x1;
+      tree actions = x.x2;
+      qwid         = new QTMTreeView (data);
     }
       break;
       
@@ -1061,8 +1074,8 @@ qt_ui_element_rep::as_qwidget () {
       QSplitter* split = new QSplitter();
       split->setOrientation(type == hsplit_widget ? Qt::Horizontal 
                                                   : Qt::Vertical);
-      split->addWidget(qw1);
-      split->addWidget(qw2);
+      split->addWidget (qw1);
+      split->addWidget (qw2);
       
       qwid = split;
     }

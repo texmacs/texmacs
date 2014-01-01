@@ -503,7 +503,12 @@ widget ink_widget (command cb) {
   NOT_IMPLEMENTED("Ink widget");
   (void) cb; return widget();
 }
+widget tree_view_widget (tree data, tree actions) {
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::tree_view_widget,
+                                             data, actions);
+  return abstract (wid);
 
+}
   //// Widgets which are not strictly required by TeXmacs have void implementations
 
 widget empty_widget () { NOT_IMPLEMENTED("empty_widget"); return widget(); }

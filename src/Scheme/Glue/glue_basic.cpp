@@ -5893,6 +5893,21 @@ tmg_widget_filtered_choice (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
 }
 
 tmscm
+tmg_widget_tree_view (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "widget-tree-view");
+  TMSCM_ASSERT_TREE (arg2, TMSCM_ARG2, "widget-tree-view");
+
+  tree in1= tmscm_to_tree (arg1);
+  tree in2= tmscm_to_tree (arg2);
+
+  // TMSCM_DEFER_INTS;
+  widget out= tree_view_widget (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return widget_to_tmscm (out);
+}
+
+tmscm
 tmg_widget_xpm (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "widget-xpm");
 
@@ -7843,6 +7858,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("widget-choice",  tmg_widget_choice, 3, 0, 0);
   tmscm_install_procedure ("widget-choices",  tmg_widget_choices, 3, 0, 0);
   tmscm_install_procedure ("widget-filtered-choice",  tmg_widget_filtered_choice, 4, 0, 0);
+  tmscm_install_procedure ("widget-tree-view",  tmg_widget_tree_view, 2, 0, 0);
   tmscm_install_procedure ("widget-xpm",  tmg_widget_xpm, 1, 0, 0);
   tmscm_install_procedure ("widget-box",  tmg_widget_box, 5, 0, 0);
   tmscm_install_procedure ("widget-glue",  tmg_widget_glue, 4, 0, 0);

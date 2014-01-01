@@ -18,6 +18,7 @@
 
 #include "qt_gui.hpp"
 #include "qt_dialogues.hpp"
+#include "QTMTreeModel.hpp"
 
 #include <QTimer>
 #include <QPoint>
@@ -29,6 +30,7 @@
 #include <QLineEdit>
 #include <QComboBox>
 #include <QListView>
+#include <QTreeView>
 #include <QScrollArea>
 #include <QTabWidget>
 
@@ -363,6 +365,26 @@ protected slots:
   virtual void selectionChanged (const QItemSelection& c, const QItemSelection& p);
 };
 
+/*! A simple wrapper around a QTreeView.
+ 
+ This class keeps a pointer to the tree it's displaying, in order to keep alive.
+ It also instantiates (if necessary) the QTMTreeModel it needs to sync with the
+ data. This model is property of a qt_tree_observer, which will delete it when
+ the tree is.
+ */
+class QTMTreeView : public QTreeView {
+  Q_OBJECT
+
+  tree _t;
+  
+public:
+  QTMTreeView (tree data, QWidget* parent=0) : QTreeView (parent), _t (data) {
+    QTMTreeModel* model = QTMTreeModel::instance (_t);
+    setModel (model);
+    setUniformRowHeights (true);  // assuming we display only text
+    setHeaderHidden (true);       // for now...
+  }
+};
 
 /*! A QScrollArea which automatically scrolls to selected items in QListWidgets.
  

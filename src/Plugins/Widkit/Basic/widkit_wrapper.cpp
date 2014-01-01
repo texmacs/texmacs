@@ -300,6 +300,12 @@ choice_widget (command cb, array<string> vals, string v, string f) {
 }
 
 widget
+tree_view_widget (tree data, tree data_roles) {
+    // FIXME: not implemented
+  return text_widget ("Not implemented", WIDGET_STYLE_BOLD, black);
+}
+
+widget
 file_chooser_widget (command cmd, string type, bool save) {
   return abstract (file_chooser_wk_widget (cmd, type));
 }

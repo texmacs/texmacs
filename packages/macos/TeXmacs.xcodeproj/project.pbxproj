@@ -204,6 +204,8 @@
 		491FC57C16F900140038929C /* font_translate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491FC57B16F900140038929C /* font_translate.cpp */; };
 		491FC57D16F900140038929C /* font_translate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491FC57B16F900140038929C /* font_translate.cpp */; };
 		491FC57E16F900140038929C /* font_translate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491FC57B16F900140038929C /* font_translate.cpp */; };
+		49250531186DD64A00D32374 /* QTMTreeModel.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 49630B5A186D6A3600C9268F /* QTMTreeModel.hpp */; };
+		49250532186DD65400D32374 /* QTMTreeModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49630B59186D6A3600C9268F /* QTMTreeModel.cpp */; };
 		4929A88A170207440028991F /* curve.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4929A87F170207440028991F /* curve.cpp */; };
 		4929A88B170207440028991F /* curve.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4929A87F170207440028991F /* curve.cpp */; };
 		4929A88C170207440028991F /* curve.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4929A87F170207440028991F /* curve.cpp */; };
@@ -1597,6 +1599,8 @@
 		4950FA5217E8349800425005 /* highlight_boxes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = highlight_boxes.cpp; sourceTree = "<group>"; };
 		495712F716E90E5900934EA3 /* metadata-acm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "metadata-acm.cpp"; sourceTree = "<group>"; };
 		495712F816E90E5900934EA3 /* metadata-elsevier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "metadata-elsevier.cpp"; sourceTree = "<group>"; };
+		49630B59186D6A3600C9268F /* QTMTreeModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMTreeModel.cpp; sourceTree = "<group>"; };
+		49630B5A186D6A3600C9268F /* QTMTreeModel.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMTreeModel.hpp; sourceTree = "<group>"; };
 		4964704F16F72CB500D95FC4 /* font_guess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_guess.cpp; sourceTree = "<group>"; };
 		4964705016F72CB500D95FC4 /* smart_font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smart_font.cpp; sourceTree = "<group>"; };
 		497822CA16EC86D40054F5BA /* tt_analyze.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tt_analyze.cpp; sourceTree = "<group>"; };
@@ -3477,6 +3481,8 @@
 				9C99F04510AD84DE00B2113D /* QTMScrollView.hpp */,
 				9C0B48B810A8CC100097A335 /* QTMStyle.cpp */,
 				9C0B48B910A8CC100097A335 /* QTMStyle.hpp */,
+				49630B59186D6A3600C9268F /* QTMTreeModel.cpp */,
+				49630B5A186D6A3600C9268F /* QTMTreeModel.hpp */,
 				9C0B48BA10A8CC100097A335 /* QTMWidget.cpp */,
 				9C0B48BB10A8CC100097A335 /* QTMWidget.hpp */,
 				9C0B48BC10A8CC100097A335 /* QTMWindow.cpp */,
@@ -4985,6 +4991,7 @@
 				4915C7D218093E4D00C3D2B7 /* parse_vernac.cpp in Sources */,
 				491563F618141C2000EEBBC9 /* font_protrusion.cpp in Sources */,
 				49194C6C184E892800DC45E2 /* tree_search.cpp in Sources */,
+ 				49250532186DD65400D32374 /* QTMTreeModel.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5005,6 +5012,7 @@
 				9CC6149310A999460055F808 /* QTMWidget.hpp in Sources */,
 				9CC6149410A999460055F808 /* QTMWindow.hpp in Sources */,
 				490536BD184A503A008B9ECE /* QTMStyle.hpp in Sources */,
+ 				49250531186DD64A00D32374 /* QTMTreeModel.hpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
