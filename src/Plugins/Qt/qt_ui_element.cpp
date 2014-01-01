@@ -719,7 +719,7 @@ qt_ui_element_rep::as_qlayoutitem () {
     case refreshable_widget:
     case balloon_widget:
     {
-      QWidgetItem* wi = new QWidgetItem(this->as_qwidget());
+      QWidgetItem* wi = new QWidgetItem (this->as_qwidget());
       return wi;
     }
       break;
@@ -1033,11 +1033,9 @@ qt_ui_element_rep::as_qwidget () {
       
     case tree_view_widget:
     {
-      typedef pair<tree, tree> T;
-      T        x = open_box<T>(load);
-      tree  data = x.x1;
-      tree roles = x.x2;
-      qwid       = new QTMTreeView (data, roles);
+      typedef triple<command, tree, tree> T;
+      T  x = open_box<T>(load);
+      qwid = new QTMTreeView (x.x1, x.x2, x.x3);  // command, data, roles
     }
       break;
       

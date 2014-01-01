@@ -18,7 +18,6 @@
 
 #include "qt_gui.hpp"
 #include "qt_dialogues.hpp"
-#include "QTMTreeModel.hpp"
 
 #include <QTimer>
 #include <QPoint>
@@ -365,27 +364,33 @@ protected slots:
   virtual void selectionChanged (const QItemSelection& c, const QItemSelection& p);
 };
 
+
+class QTMTreeModel;
+
 /*! A simple wrapper around a QTreeView.
  
- This class keeps a pointer to the tree it's displaying, in order to keep alive.
- It also instantiates (if necessary) the QTMTreeModel it needs to sync with the
- data. This model is property of a qt_tree_observer, which will delete it when
- the tree is.
+ This class keeps a pointer to the tree it's displaying, in order to keep it
+ alive. It also instantiates (if necessary) the QTMTreeModel it needs to sync 
+ with the data. This model is property of a qt_tree_observer, which will delete
+ it when the tree is.
  */
 class QTMTreeView : public QTreeView {
   Q_OBJECT
 
-  tree _t;
+  tree      _t;
+  command _cmd;
+  
+  QTMTreeView (const QTMTreeView&);
+  QTMTreeView& operator= (const QTMTreeView&);
   
 public:
-  QTMTreeView (tree data, const tree& roles, QWidget* parent=0)
-  : QTreeView (parent), _t (data) {
-    QTMTreeModel* model = QTMTreeModel::instance (_t, roles);
-    setModel (model);
-    setUniformRowHeights (true);  // assuming we display only text
-    setHeaderHidden (true);       // for now...
-  }
+  QTMTreeView (command cmd, tree data, const tree& roles, QWidget* parent=0);
+  QTMTreeModel* tmModel() const;
+
+private slots:
+  void callOnClick (const QModelIndex& index);
 };
+
 
 /*! A QScrollArea which automatically scrolls to selected items in QListWidgets.
  

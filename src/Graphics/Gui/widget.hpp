@@ -184,7 +184,7 @@ widget choice_widget (command cb, array<string> vals, array<string> mc);
   // select multiple values from a long list
 widget choice_widget (command cb, array<string> vals, string val, string filt);
   // select a value from a long list with scrollbars and an input to filter
-widget tree_view_widget (tree data, tree data_roles);
+widget tree_view_widget (command cmd, tree data, tree data_roles);
   // A widget with a tree view which observes the data and updates automatically
 
 /******************************************************************************

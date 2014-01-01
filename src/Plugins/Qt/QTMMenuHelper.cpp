@@ -20,6 +20,7 @@
 #include "QTMGuiHelper.hpp"
 #include "QTMStyle.hpp"
 #include "QTMApplication.hpp"
+#include "QTMTreeModel.hpp"
 
 #include <QToolTip>
 #include <QCompleter>
@@ -932,3 +933,42 @@ QTMListView::selectionChanged (const QItemSelection& c, const QItemSelection& p)
   QListView::selectionChanged (c, p);
   emit selectionChanged (c);
 }
+
+
+/******************************************************************************
+ * QTMTreeView
+ ******************************************************************************/
+
+QTMTreeView::QTMTreeView (command cmd, tree data, const tree& roles, QWidget* p)
+: QTreeView (p), _t (data), _cmd (cmd) {
+  setModel (QTMTreeModel::instance (_t, roles));
+  setUniformRowHeights (true);  // assuming we display only text.
+  setHeaderHidden (true);       // for now...
+  QObject::connect (this, SIGNAL (pressed (const QModelIndex&)),
+                    this,   SLOT (callOnClick (const QModelIndex&)));
+}
+
+void
+QTMTreeView::callOnClick (const QModelIndex& index) {
+  object arguments = list_object ((int)QApplication::mouseButtons());
+    // docs state the index is valid, no need to check
+  QVariant d = tmModel()->data (index, QTMTreeModel::CommandRole);
+    // If there's no CommandRole, we return the subtree by default
+  if (!d.isValid() || !d.canConvert (QVariant::String))
+    arguments = cons (tmModel()->item_from_index (index), arguments);
+  else
+    arguments = cons (from_qstring (d.toString()), arguments);
+  int cnt = QTMTreeModel::TMUserRole;
+  d = tmModel()->data (index, cnt);
+  while (d.isValid() && d.canConvert (QVariant::String)) {
+    arguments = cons (from_qstring (d.toString()), arguments);
+    d = tmModel()->data (index, ++cnt);
+  }
+  _cmd (arguments);
+}
+
+inline QTMTreeModel*
+QTMTreeView::tmModel() const {
+  return static_cast<QTMTreeModel*> (model());
+}
+

@@ -105,12 +105,6 @@ class QTMTreeModel : public QAbstractItemModel {
     // The very same code with QHash works ok. ?!?!
     //typedef hashmap<tree_label, hashmap <int, int> > roles_t;
   typedef QHash<tree_label, QHash<int, int> > roles_t;
-
-  enum QTMRoles {
-    NumberOfArguments = Qt::UserRole +  1,   // shouldn'be here...
-    CommandRole       = Qt::UserRole +  2,
-    TMUserRole        = Qt::UserRole + 32
-  };
   
   tree_rep* _t_rep;  //!< Our data. Must be tree_rep* or we have a cycle!
   roles_t   _roles;  //!< Where in the data tree each data role is.
@@ -120,6 +114,12 @@ class QTMTreeModel : public QAbstractItemModel {
   QTMTreeModel& operator= (QTMTreeModel& other);
   
 public:
+  enum QTMRoles {
+    NumberOfArguments = Qt::UserRole +  1,   // shouldn'be here...
+    CommandRole       = Qt::UserRole +  2,
+    TMUserRole        = Qt::UserRole + 32
+  };
+
   virtual ~QTMTreeModel ();
   static QTMTreeModel* instance (const tree& data, const tree& roles,
                                  QObject* parent = 0);
@@ -138,11 +138,12 @@ public:
                                int role = Qt::DisplayRole) const;
   virtual bool    hasChildren (const QModelIndex& parent = QModelIndex()) const;
   
+  QModelIndex index_from_item (const tree& ref) const;
+  tree        item_from_index (const QModelIndex& index) const;
+
   friend class qt_tree_observer_rep;
   
 private:
-  QModelIndex index_from_item (const tree& ref) const;
-  tree        item_from_index (const QModelIndex& index) const;
   bool       ipath_has_parent (const path& ip) const;
   void            parse_roles (const tree& roles);
   int              row_offset (const tree& t) const;

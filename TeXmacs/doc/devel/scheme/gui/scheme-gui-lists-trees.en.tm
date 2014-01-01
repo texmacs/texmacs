@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.21>
+<TeXmacs|1.99.1>
 
 <style|tmdoc>
 
@@ -110,7 +110,7 @@
   <paragraph|Displaying trees with <scm|tree-widget>>
 
   <\explain>
-    <scm|(tree-widget <scm-arg|data> <scm-arg|data-roles>)><explain-synopsis|a
+    <scm|(tree-widget cmd <scm-arg|data> <scm-arg|data-roles>)><explain-synopsis|a
     tree view>
   <|explain>
     The <scm|tree-widget> provides a graphical representation of a <TeXmacs>
@@ -137,7 +137,7 @@
     <\scm-code>
       (root
 
-      \ \ (library "My bibliography" "icon.xpm" 12345
+      \ \ (library "Library" "icon.png" 12345
 
       \ \ \ \ (collection "Cool stuff" 001)
 
@@ -168,28 +168,69 @@
         StatusTipRole \ \ \ \ \ ; for the status bar (if present and
         supported)
 
-        DecorationRole \ \ \ \ ; file name of an icon to use (in
-        $TEXMACS_PIXMAP_PATH)
+        DecorationRole \ \ \ \ ; file name of an icon to use
 
-        CommandRole \ \ \ \ \ \ \ ; command to be executed when the user
+        CommandRole \ \ \ \ \ \ \ ; sent to the command executed after
         (double?) clicks
 
-        UserRole:\<less\>number\<gtr\> \ ; left to user definition
+        UserRole:\<less\>number\<gtr\> \ ; left to user definition (will be
+        returned as strings)
       </code>
     </verbatim-code>
 
-    It is possible to omit the data role specification. By default the widget
-    will use the tree label's string representation as <scm|DisplayRole>,
-    <scm|EditRole>, <scm|ToolTipRole> and <scm|StatusTipRole>. For the
-    <scm|DecorationRole> it will try to load pixmaps named
-    <shell|treelabel.xpm> in <shell|$TEXMACS_PIXMAP_PATH>.
+    <paragraph|Default data roles>It is possible to omit some or all of the
+    data role specification. By default the widget will use the tree label's
+    string representation for <scm|DisplayRole>, <scm|EditRole>,
+    <scm|ToolTipRole> and <scm|StatusTipRole>. For the <scm|DecorationRole>
+    it will try to load pixmaps named <shell|treelabel-\<less\>label\<gtr\>.xpm>
+    in <shell|$TEXMACS_PIXMAP_PATH>. This search
+    <with|font-series|bold|won't> happen if the <scm|DecorationRole> is
+    specified (i.e. a full path with or without environment variables and
+    wildcards must be given). The default <scm|CommandRole> is the subtree
+    itself (see below).
 
-    For an example see <scm|widget10> in <hlink|menu-test.scm|$TEXMACS_PATH/progs/kernel/gui/menu-test.scm>.
+    <paragraph|Using commands>The first argument of <scm|tree-widget>,
+    <scm-arg|cmd>, \ is a <scheme> lambda that will be called when items are
+    clicked. The procedure must have the following signature:
+
+    <\scm-code>
+      (lambda (Event CommandRole . UserRoles) (...))
+    </scm-code>
+
+    where:
+
+    <\itemize-dot>
+      <item><scm|Event> is an integer: either 1, 2 or 4 for a single, right
+      or middle click respectively. In the future, other events could be
+      supported (like double clicks, drag&drop, unfold, etc.)
+
+      <item><scm|CommandRole> is either the value of that role if given for
+      the data item, or the subtree itself otherwise.
+
+      <item><scm|UserRoles> is a (possibly empty) list with the data for
+      those roles given in the data role specification.
+    </itemize-dot>
+
+    If multiple selections are enabled and one is made, <scm|CommandRole> and
+    <scm|UserRole> will both be lists (not implemented yet). Keep in mind
+    that the data is a <TeXmacs> tree and thus not a copy but always a
+    pointer to the actual data (unless you copy or transform it into another
+    format with e.g. <scm|tree-\<gtr\>stree>)
+
+    <paragraph|Examples>See <scm|widget10> in
+    <hlink|menu-test.scm|$TEXMACS_PATH/progs/kernel/gui/menu-test.scm> and
+    ``<hlink|Displaying lists and trees|$TEXMACS_PATH/doc/devel/scheme/gui/scheme-gui-lists-trees.scm>''.
   </explain>
 
-  <subparagraph|An example using data roles>
+  <paragraph|An example using data roles>
 
-  We build on the previous example:
+  We build on the previous example, but now we add a command. Notice how the
+  way one adds commands to <scm|tree-view> departs from that of other
+  widgets, where instead of a procedure one must provide a list with code
+  expecting one or two arguments with fixed names (usually <scm|answer> and
+  <scm|filter>). <with|font-shape|italic|Note to self>: this is easily
+  changed in <scm|$tree-view>, but it seems easier to manage empty arguments
+  this way.
 
   <\session|scheme|default>
     <\input|Scheme] >
@@ -199,7 +240,7 @@
 
       \ \ \ '(root
 
-      \ \ \ \ \ (library "My bibliography" "icon.xpm" 12345
+      \ \ \ \ \ (library "Library" "$TEXMACS_PIXMAP_PATH/tm_german.xpm" 01
 
       \ \ \ \ \ \ \ \ \ \ \ \ \ \ (collection "Cool stuff" 001)
 
@@ -224,7 +265,15 @@
       \ \ \ \ \ \ \ \ \ \ (collection DisplayRole UserRole:1))))
     </input>
 
-    <\unfolded-io|Scheme] >
+    <\input|Scheme] >
+      (define (action clicked cmd-role . user-roles)
+
+      \ \ (display* "clicked= " clicked ", cmd-role= " cmd-role
+
+      \ \ \ \ \ \ \ \ \ \ \ \ ", user-roles= " user-roles "\\n")))
+    </input>
+
+    <\input|Scheme] >
       (tm-widget (widget-library)
 
       \ \ (resize ("150px" "400px" "9000px") ("300px" "600px" "9000px")
@@ -235,15 +284,16 @@
 
       \ \ \ \ \ \ ===
 
-      \ \ \ \ \ \ (tree-view t dd))))
-    <|unfolded-io>
-      \;
-    </unfolded-io>
+      \ \ \ \ \ \ (tree-view action t dd))))
+    </input>
 
     <\input|Scheme] >
       (top-window widget-library "Tree View")
     </input>
   </session>
+
+  Notice how we must add <shell|$TEXMACS_PIXMAP_PATH> to the name of the
+  pixmap because we are not using the default <scm|DecorationRole>.\ 
 
   <subparagraph|An example using the buffer tree>
 

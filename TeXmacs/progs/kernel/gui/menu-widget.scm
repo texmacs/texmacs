@@ -54,7 +54,7 @@
     (choice :%3)
     (choices :%3)
     (filtered-choice :%4)
-    (tree-view :%2)
+    (tree-view :%3)
     (toggle :%2)
     (horizontal :menu-item-list)
     (vertical :menu-item-list)
@@ -250,9 +250,10 @@
                             (filterstr))))
 
 (define (make-tree-view p style)
-  "Make @(tree-view :%2) item."
-  (with (tag data roles) p
-    (widget-tree-view (data) (roles))))
+  "Make @(tree-view :%3) item."
+  (with (tag cmd data roles) p
+    (widget-tree-view (object->command (menu-protect cmd)) (data) (roles))))
+
 
 (define (make-toggle p style)
   "Make @(toggle :%2) item."
@@ -660,10 +661,10 @@
           ,(lambda (p style bar?) (list (make-choice p style))))
   (choices (:%3)
            ,(lambda (p style bar?) (list (make-choices p style))))
-  (tree-view (:%2)
-             ,(lambda (p style bar?) (list (make-tree-view p style))))
   (filtered-choice (:%4)
            ,(lambda (p style bar?) (list (make-filtered-choice p style))))
+  (tree-view (:%3)
+             ,(lambda (p style bar?) (list (make-tree-view p style))))
   (toggle (:%2)
           ,(lambda (p style bar?) (list (make-toggle p style))))
   (link (:%1)
@@ -789,10 +790,18 @@
 
 (define (menu-expand-filtered-choice p)
   "Expand filtered choice item @p."
+  
   `(,(car p) ,(replace-procedures (cadr p))
              ,(caddr p)
              ,(cadddr p)
              ,(car (cddddr p))))
+
+(define (menu-expand-tree-view p)
+  "Expand tree-view item @p."
+  (display* "menu-expand-tree-view\n")
+  `(,(car p) ,(replace-procedures (cadr p))
+             ,(caddr p)
+             ,(cadddr p)))
 
 (define (menu-expand-toggle p)
   "Expand toggle item @p."
@@ -843,6 +852,7 @@
   (choice ,menu-expand-choice)
   (choices ,menu-expand-choice)
   (filtered-choice ,menu-expand-filtered-choice)
+  (tree-view ,menu-expand-tree-view)
   (toggle ,menu-expand-toggle)
   (link ,menu-expand-link p)
   (horizontal ,(lambda (p) `(horizontal ,@(menu-expand-list (cdr p)))))

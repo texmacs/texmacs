@@ -326,9 +326,10 @@
   `(list 'filtered-choice (lambda (answer filter) ,cmd) (lambda () ,vals)
                            (lambda () ,val) (lambda () ,filterstr)))
 
-(tm-define-macro ($tree-view data roles)
+(tm-define-macro ($tree-view cmd data roles)
   (:synopsis "Make a tree view of the data")
-  `(list 'tree-view (lambda () ,data) (lambda () ,roles)))
+  `(list 'tree-view (lambda x (apply ,cmd (reverse x)))
+                    (lambda () ,data) (lambda () ,roles)))
 
 (tm-define-macro ($texmacs-output doc tmstyle)
   (:synopsis "Make TeXmacs output field")

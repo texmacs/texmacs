@@ -116,7 +116,7 @@
   `($filtered-choice ,@(cdr x)))
 
 (define (gui-make-tree-view x)
-  (require-format x '(tree-view :%2))
+  (require-format x '(tree-view :%3))
   `($tree-view ,@(cdr x)))
 
 (define (gui-make-toggle x)

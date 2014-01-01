@@ -503,9 +503,9 @@ widget ink_widget (command cb) {
   NOT_IMPLEMENTED("Ink widget");
   (void) cb; return widget();
 }
-widget tree_view_widget (tree data, tree actions) {
+widget tree_view_widget (command cmd, tree data, tree actions) {
   qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::tree_view_widget,
-                                             data, actions);
+                                             cmd, data, actions);
   return abstract (wid);
 
 }

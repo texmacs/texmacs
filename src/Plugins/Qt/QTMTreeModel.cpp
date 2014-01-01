@@ -148,7 +148,10 @@ QTMTreeModel::data (const QModelIndex& index, int role) const {
   tree& t = const_cast<tree&> (tref);
   int pos = _roles.contains(L(t)) && _roles[L(t)].contains(role)
               ? _roles[L(t)][role] : -1;
-
+  if (role >= TMUserRole && pos > -1 && !is_atomic (t) && N(t) >= pos && 
+      is_atomic (t[pos]))
+    return QVariant (to_qstring (t[pos]->label));
+  
   switch (role) {
     case Qt::DisplayRole:
     case Qt::EditRole:
@@ -169,15 +172,21 @@ QTMTreeModel::data (const QModelIndex& index, int role) const {
         // It might actually be better to cache the QIcons first and return them
       url u = "$TEXMACS_PIXMAP_PATH";
       if (pos == -1 || is_atomic (t) || !is_atomic (t[pos]))
-        u = resolve (u * url (as_string (L(t)) * ".xpm"));
+        u = resolve ("$TEXMACS_PIXMAP_PATH" *
+                     url ("treelabel-" * as_string (L(t)) * ".xpm"));
       else
-        u = resolve (u * url(t[pos]->label));
+        u = resolve (url (t[pos]->label));
       if (is_rooted_name (u))
         return QPixmap (to_qstring (concretize (u)));
       else
         return QVariant();
     }
       break;
+    case CommandRole:
+      if (pos > -1 && !is_atomic (t) && N(t) >= pos && is_atomic (t[pos]))
+        return QVariant (to_qstring (t[pos]->label));
+      else
+        return QVariant();
     case Qt::SizeHintRole:
     default:
       return QVariant();
@@ -232,7 +241,7 @@ QTMTreeModel::parse_roles (const tree& roles) {
         else if (role == "ToolTipRole")    _roles[tag][Qt::ToolTipRole]    = j;
         else if (role == "CommandRole")    _roles[tag][CommandRole]        = j;
         else if (string ("UserRole:") <= role) {
-          int num = abs (as_int (role (9, N(role))));
+          int num = min (0, as_int (role (9, N(role))) - 1);  // make it >= 0
           _roles[tag][TMUserRole + num] = j;
         }
       }

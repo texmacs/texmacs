@@ -499,7 +499,7 @@
   (widget-choices choice_widget (widget command array_string array_string))
   (widget-filtered-choice choice_widget
     (widget command array_string string string))
-  (widget-tree-view tree_view_widget (widget tree tree))
+  (widget-tree-view tree_view_widget (widget command tree tree))
   (widget-xpm xpm_widget (widget url))
   (widget-box box_widget (widget scheme_tree string int bool bool))
   (widget-glue glue_widget (widget bool bool int int))
