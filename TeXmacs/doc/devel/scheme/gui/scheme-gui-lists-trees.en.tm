@@ -48,7 +48,7 @@
     widget.
 
     <\session|scheme|default>
-      <\unfolded-io|Scheme] >
+      <\input|Scheme] >
         (tm-widget (test-choice)
 
         \ \ (resize "200px" "50px"
@@ -61,9 +61,7 @@
         "Fifth" "Sixth")
 
         \ \ \ \ \ \ \ \ \ \ \ \ \ \ "Third"))))
-      <|unfolded-io>
-        \;
-      </unfolded-io>
+      </input>
 
       <\input|Scheme] >
         (show test-choice)
@@ -84,7 +82,7 @@
     The width of the widget may be set using a <scm|resize> widget.
 
     <\session|scheme|default>
-      <\unfolded-io|Scheme] >
+      <\input|Scheme] >
         (tm-widget (test-choices)
 
         \ \ (resize "200px" "100px"
@@ -97,9 +95,7 @@
         "J" "K" "L")
 
         \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ '("B" "D" "F" "H" "J" "L")))))
-      <|unfolded-io>
-        \;
-      </unfolded-io>
+      </input>
 
       <\input|Scheme] >
         (show test-choices)
@@ -312,7 +308,7 @@
   </warning>
 
   <\session|scheme|default>
-    <\unfolded-io|Scheme] >
+    <\input|Scheme] >
       (tm-widget (widget-buffer)
 
       \ \ (resize ("150px" "400px" "9000px") ("300px" "600px" "9000px")
@@ -323,10 +319,9 @@
 
       \ \ \ \ \ \ ===
 
-      \ \ \ \ \ \ (tree-view (buffer-tree) (stree-\<gtr\>tree '(dummy))))))
-    <|unfolded-io>
-      \;
-    </unfolded-io>
+      \ \ \ \ \ \ (tree-view (noop) (buffer-tree) (stree-\<gtr\>tree
+      '(dummy))))))
+    </input>
 
     <\input|Scheme] >
       (top-window widget-buffer "Tree View")
@@ -338,7 +333,7 @@
   If your <TeXmacs> has the side tools enabled, you can try this:
 
   <\session|scheme|default>
-    <\unfolded-io|Scheme] >
+    <\input|Scheme] >
       (tm-widget (texmacs-side-tools)
 
       \ \ (vertical
@@ -348,10 +343,9 @@
 
       \ \ \ \ ---
 
-      \ \ \ \ (tree-view (buffer-tree) (stree-\<gtr\>tree '(unused)))))
-    <|unfolded-io>
-      \;
-    </unfolded-io>
+      \ \ \ \ (tree-view (noop) (buffer-tree) (stree-\<gtr\>tree
+      '(unused)))))
+    </input>
   </session>
 
   <tmdoc-copyright|2013|the <TeXmacs> team.>
