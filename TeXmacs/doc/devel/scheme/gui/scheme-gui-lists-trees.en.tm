@@ -319,7 +319,7 @@
 
       \ \ \ \ \ \ ===
 
-      \ \ \ \ \ \ (tree-view (noop) (buffer-tree) (stree-\<gtr\>tree
+      \ \ \ \ \ \ (tree-view noop (buffer-tree) (stree-\<gtr\>tree
       '(dummy))))))
     </input>
 
@@ -343,8 +343,7 @@
 
       \ \ \ \ ---
 
-      \ \ \ \ (tree-view (noop) (buffer-tree) (stree-\<gtr\>tree
-      '(unused)))))
+      \ \ \ \ (tree-view noop (buffer-tree) (stree-\<gtr\>tree '(unused)))))
     </input>
   </session>
 
