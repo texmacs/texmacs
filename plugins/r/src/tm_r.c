@@ -115,7 +115,7 @@ if( !is.element(\"TeXmacs\", installed.packages()[,1]) || \n\
 	system(paste(\"R CMD build \",Sys.getenv(\"TEXMACS_PATH\"),\"/plugins/r/r/TeXmacs\",sep=\"\") );\n\
 	pack=list.files(pattern=\"TeXmacs.*gz\"); \n\
     install.packages(pack,repos=NULL,type=\"source\");	\n\
-	library(TeXmacs) }\n\n" ;
+	library(TeXmacs) }\n" ;
 
 // Add one more DATA_BEGIN, i.e. open bracket.
 #define B_DATA_BEGIN( TXB )					\
