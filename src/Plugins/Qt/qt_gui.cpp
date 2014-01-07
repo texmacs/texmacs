@@ -30,6 +30,7 @@
 
 #include <QDesktopWidget>
 #include <QClipboard>
+#include <QBuffer>
 #include <QFileOpenEvent>
 #include <QStackedLayout>
 #include <QLabel>
@@ -174,6 +175,13 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
       buf = md->data ("application/x-texmacs-clipboard");
       input_format = "texmacs-snippet";
     }
+    else if (md->hasImage ()) {
+      QBuffer qbuf(&buf);
+      QImage image= qvariant_cast<QImage> (md->imageData());
+      qbuf.open (QIODevice::WriteOnly);
+      image.save (&qbuf, "PNG");
+      input_format = "picture";
+    }
     else if (md->hasHtml ()) {
       buf = md->html().toUtf8 ();
       input_format = "html-snippet";
@@ -198,14 +206,22 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
   if (!(buf.isEmpty())) s << string (buf.constData(), buf.size());
   if (input_format == "html-snippet" && seems_buggy_html_paste (s))
     s = correct_buggy_html_paste (s);
-  if (seems_buggy_paste (s))
+  if (input_format != "picture" && seems_buggy_paste (s))
     s = correct_buggy_paste (s);
-  if (input_format != "")
+  if (input_format != "" && input_format != "picture")
     s = as_string (call ("convert", s, input_format, "texmacs-snippet"));
   if (input_format == "html-snippet") {
     tree t = as_tree (call ("convert", s, "texmacs-snippet", "texmacs-tree"));
     t = default_with_simplify (t);
     s = as_string (call ("convert", t, "texmacs-tree", "texmacs-snippet"));
+  }
+  if (input_format == "picture") {
+    tree t (IMAGE);
+    QSize size= qvariant_cast<QImage>(md->imageData()).size ();
+    string w= as_string (size.width ()) * "px";
+    string h= as_string (size.height ()) * "px";
+    t << tuple (tree (RAW_DATA, s), "png") << w << h << "" << "";
+    s=  as_string (call ("convert", t, "texmacs-tree", "texmacs-snippet"));
   }
   t = tuple ("extern", s);
   return true;
