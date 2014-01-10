@@ -25,7 +25,7 @@
 	assign( "t.help.quest.old", get("?"),envir=as.environment("package:TeXmacs"))
 	assign("?",t.display.html.help, ,envir=as.environment("package:TeXmacs"))
 
-	assign("TeXmacsR.version","0.15",envir=as.environment("package:TeXmacs") )
+	assign("TeXmacsR.version","0.16",envir=as.environment("package:TeXmacs") )
 	motd=paste("TeXmacs to R interface version ",TeXmacsR.version,"\n\
 	Run start.view() to use graphics without x11()\
 	Use t.help.start() to view R documentation pages separately. Otherwise they are displayed in the buffer.\

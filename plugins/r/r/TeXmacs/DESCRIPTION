@@ -1,6 +1,6 @@
 Package: TeXmacs
 Title: R interface with TeXmacs
-Version: 0.15
+Version: 0.16
 Author: Michael Lachmann Tamarlin
 Description: This package interfaces with TeXmacs - inserting figures, help files and more.
 Maintainer: Michael Lachmann Tamarlin <mlachmann@gmail.com>
