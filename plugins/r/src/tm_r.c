@@ -901,6 +901,8 @@ DEBUG_LOG( "TEXMACS_SEND=%s",TEXMACS_SEND_E) ;
       if( TEXMACS_R[i] == ' ' ) 
 	n++ ;
 	
+unsetenv( "DYLD_LIBRARY_PATH") ;
+	
     exec_argv = (char **) malloc( (n+2)*sizeof( char * ) ) ;
 	
     /* split TEXMACS_R into arguments into exec_argv, 
