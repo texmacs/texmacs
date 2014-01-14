@@ -163,7 +163,7 @@
     (vertical
       (bold (text "Testing tree-view"))
       ===
-      (tree-view (noop) (buffer-tree) (stree->tree '(dummy))))))
+      (tree-view noop (buffer-tree) (stree->tree '(dummy))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some test forms
