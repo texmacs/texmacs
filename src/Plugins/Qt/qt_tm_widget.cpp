@@ -738,7 +738,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
   
   switch (s) {
         // Widget w is usually a qt_simple_widget_rep, with a QTMWidget as
-        // underlying widget. We must discard the current main_widget and 
+        // underlying widget. We must discard the current main_widget and
         // display the new. But while switching buffers the widget w is a
         // glue_widget, so we may not just use canvas() everywhere.
     case SLOT_SCROLLABLE:
@@ -754,7 +754,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       l->addWidget(q);
         // The layout will automatically reparent the widgets so
         // that they are children of the widget on which the layout is installed.
-      main_widget = concrete (w); 
+      main_widget = concrete (w);
         // canvas() now returns the new QTMWidget (or 0)
       
       if (scrollarea())   // Fix size to draw margins around.
@@ -767,74 +767,76 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     case SLOT_MAIN_MENU:
       check_type_void (index, s);
     {
-       waiting_main_menu_widget = concrete (w);
-       if (menu_count <= 0)
-         install_main_menu();
-       else if (!contains (waiting_widgets, this))
-         // menu interaction ongoing, postpone new menu installation until done
-         waiting_widgets << this;
+      waiting_main_menu_widget = concrete (w);
+      if (menu_count <= 0)
+        install_main_menu();
+      else if (!contains (waiting_widgets, this))
+          // menu interaction ongoing, postpone new menu installation until done
+        waiting_widgets << this;
     }
       break;
       
     case SLOT_MAIN_ICONS:
       check_type_void (index, s);
     {
-       main_icons_widget = concrete (w);
-       QMenu* m = main_icons_widget->get_qmenu();
-       if (m) {
-         replaceButtons (mainToolBar, m);
-         update_visibility();
-       }
+      main_icons_widget = concrete (w);
+      QMenu* m = main_icons_widget->get_qmenu();
+      if (m) {
+        replaceButtons (mainToolBar, m);
+        update_visibility();
+      }
     }
       break;
       
     case SLOT_MODE_ICONS:
       check_type_void (index, s);
-    {   
-       mode_icons_widget = concrete (w);
-       QMenu* m = mode_icons_widget->get_qmenu();
-       if (m) {
-         replaceButtons (modeToolBar, m);
-         update_visibility();
-       }
+    {
+      mode_icons_widget = concrete (w);
+      QMenu* m = mode_icons_widget->get_qmenu();
+      if (m) {
+        replaceButtons (modeToolBar, m);
+        update_visibility();
+      }
     }
       break;
       
     case SLOT_FOCUS_ICONS:
       check_type_void (index, s);
     {
-       focus_icons_widget = concrete (w);
-       QMenu* m = focus_icons_widget->get_qmenu();
-       if (m) {
-         replaceButtons (focusToolBar, m);
-         update_visibility();
-       }
+      focus_icons_widget = concrete (w);
+      QMenu* m = focus_icons_widget->get_qmenu();
+      if (m) {
+        replaceButtons (focusToolBar, m);
+        update_visibility();
+      }
     }
       break;
       
     case SLOT_USER_ICONS:
       check_type_void (index, s);
     {   
-       user_icons_widget = concrete (w);
-       QMenu* m = user_icons_widget->get_qmenu();
-       if (m) {
-         replaceButtons (userToolBar, m);
-         update_visibility();
-       }
+      user_icons_widget = concrete (w);
+      QMenu* m = user_icons_widget->get_qmenu();
+      if (m) {
+        replaceButtons (userToolBar, m);
+        update_visibility();
+      }
     }
       break;
       
     case SLOT_SIDE_TOOLS:
       check_type_void (index, s);
     {
-       side_tools_widget = concrete (w);
-       QWidget* new_qwidget = side_tools_widget->as_qwidget();
-       QWidget* old_qwidget = sideDock->widget();
-       old_qwidget->setParent (0);
-       old_qwidget->deleteLater();
-       sideDock->setWidget (new_qwidget);
-       update_visibility();
-       new_qwidget->show();
+      side_tools_widget = concrete (w);
+      QWidget* new_qwidget = side_tools_widget->as_qwidget();
+      QWidget* old_qwidget = sideDock->widget();
+      if (old_qwidget) {
+        old_qwidget->setParent (0);
+        old_qwidget->deleteLater();
+      }
+      sideDock->setWidget (new_qwidget);
+      update_visibility();
+      new_qwidget->show();
     }
       break;
       
