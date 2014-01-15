@@ -77,20 +77,20 @@ void QTMWindow::resizeEvent (QResizeEvent * event)
 QTMPopupWidget::QTMPopupWidget(QWidget* contents) {
   
   QHBoxLayout* l = new QHBoxLayout();
-  l->addWidget(contents);
-  l->setContentsMargins(0,0,0,0);
-  l->setEnabled(false);   // Tell the layout not to adjust itself (!)
-  setLayout(l);
+  l->addWidget (contents);
+  l->setContentsMargins (0,0,0,0);
+  l->setEnabled (false);   // Tell the layout not to adjust itself (!)
+  setLayout (l);
 
-  resize(contents->size());
-  setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-  setWindowFlags(Qt::Popup);
-  setAttribute(Qt::WA_NoSystemBackground);
-  setMouseTracking(true);            // Receive mouse events
-  setFocusPolicy(Qt::StrongFocus);   // Receive key events
-    //setWindowOpacity(0.9);
+  resize (contents->size());
+  setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+  setWindowFlags (Qt::Popup);
+  setAttribute (Qt::WA_NoSystemBackground);
+  setMouseTracking (true);            // Receive mouse events
+//  setFocusPolicy(Qt::StrongFocus);   // Don't! Receive key events
+//  setWindowOpacity(0.9);
 
-    //cout << "QTMPopupWidget created with size: " << size().width() 
+    //cout << "QTMPopupWidget created with size: " << size().width()
     // << " x " << size().height() << LF;
 }
 
