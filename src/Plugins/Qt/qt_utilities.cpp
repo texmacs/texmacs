@@ -76,6 +76,7 @@ parse_tm_style (int style) {
   if (style & WIDGET_STYLE_MINI) {  // Use smaller text font
     int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
     sheet += QString("font-size: %1pt;").arg (fs > 0 ? fs : QTM_MINI_FONTSIZE);
+    sheet += QString("padding: 1px;");
   }
   if (style & WIDGET_STYLE_MONOSPACED)  // Use monospaced font
     sheet += "font-family: \"monospace\";";

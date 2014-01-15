@@ -191,8 +191,7 @@
   (for (t (upward-context-trees (cursor-tree)))
     (dynamic (texmacs-side-tool t))
     ===)
-  (glue #t #t 0 0)
-  ("                              " (noop)))
+  (glue #t #t 100 0))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The mode dependent icon bar

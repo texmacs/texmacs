@@ -190,17 +190,17 @@ public:
 
 QPixmap 
 qt_glue_widget_rep::render () {
-  QSize s = to_qsize(w, h);
+  QSize s = to_qsize (w, h);
   QPixmap pxm(s);
     //cout << "glue (" << s.width() << "," << s.height() << ")\n";
   pxm.fill (Qt::transparent);
   QPaintDevice *pd = static_cast<QPaintDevice*>(&pxm);
   
   if (pd && !pxm.isNull()) {
-    qt_renderer_rep *ren = the_qt_renderer();
+    qt_renderer_rep* ren = the_qt_renderer();
     ren->begin (pd);
     rectangle r = rectangle (0, 0, s.width(), s.height());
-    ren->set_origin(0,0);
+    ren->set_origin (0,0);
     ren->encode (r->x1, r->y1);
     ren->encode (r->x2, r->y2);
     ren->set_clipping (r->x1, r->y2, r->x2, r->y1);
@@ -209,13 +209,13 @@ qt_glue_widget_rep::render () {
         // do nothing
     } else {
       if (is_atomic (col)) {
-        color c= named_color (col->label);
+        color c = named_color (col->label);
         ren->set_background (c);
         ren->set_pencil (c);
         ren->fill (r->x1, r->y2, r->x2, r->y1);
       } else {
         ren->set_shrinking_factor (std_shrinkf);
-        brush old_b= ren->get_background ();
+        brush old_b = ren->get_background ();
         ren->set_background (col);
         ren->clear_pattern (5*r->x1, 5*r->y2, 5*r->x2, 5*r->y1);
         ren->set_background (old_b);
@@ -230,7 +230,7 @@ qt_glue_widget_rep::render () {
 
 QAction *
 qt_glue_widget_rep::as_qaction() {
-  QAction *a= new QTMAction();
+  QAction* a = new QTMAction();
   a->setText (to_qstring (as_string (col)));
   QIcon icon;
 #if 0
@@ -249,11 +249,12 @@ qt_glue_widget_rep::as_qaction() {
 
 QWidget *
 qt_glue_widget_rep::as_qwidget() {
-  QLabel* w = new QLabel();
-  w->setText (to_qstring (as_string (col)));
-  w->setPixmap (render ());  
+  QLabel* qw = new QLabel();
+  qw->setText (to_qstring (as_string (col)));
+  qw->setPixmap (render ());
+  qw->setMinimumSize (to_qsize (w, h));
     //  w->setEnabled(false);
-  qwid = w;
+  qwid = qw;
   return qwid;
 }
 
@@ -730,17 +731,11 @@ qt_ui_element_rep::as_qlayoutitem () {
       typedef quartet<bool, bool, SI, SI> T;
       T x = open_box<T>(load);
 
-      /* This should be right, but actually breaks lots of stuff... ?!?
-      QSizePolicy::Policy hpolicy = x.x1 ? QSizePolicy::Minimum 
-                                         : QSizePolicy::Fixed;
-      QSizePolicy::Policy vpolicy = x.x2 ? QSizePolicy::Minimum
-                                         : QSizePolicy::Fixed;
-       */
-      QSizePolicy::Policy hpolicy = x.x1 ? QSizePolicy::Expanding 
+      QSizePolicy::Policy hpolicy = x.x1 ? QSizePolicy::MinimumExpanding
                                          : QSizePolicy::Minimum;
-      QSizePolicy::Policy vpolicy = x.x2 ? QSizePolicy::Expanding
+      QSizePolicy::Policy vpolicy = x.x2 ? QSizePolicy::MinimumExpanding
                                          : QSizePolicy::Minimum;
-      
+
       return new QSpacerItem (x.x3, x.x4, hpolicy, vpolicy);
     }
       break;
@@ -876,11 +871,12 @@ qt_ui_element_rep::as_qwidget () {
         qwid = b;
       } else { // text_widget
         QPushButton*     b = new QPushButton();
-        QTMCommand* qtmcmd = new QTMCommand(b, cmd);
+        QTMCommand* qtmcmd = new QTMCommand (b, cmd);
         QObject::connect (b, SIGNAL (clicked ()), qtmcmd, SLOT (apply ()));
         if (qtw->type == text_widget) {
           typedef quartet<string, int, color, bool> T1;
           b->setText (to_qstring (open_box<T1> (get_load (qtw)).x1));
+          qt_apply_tm_style (b, style);
         }
         b->setFlat (! (style & WIDGET_STYLE_BUTTON));
         qwid = b;
