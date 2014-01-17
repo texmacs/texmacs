@@ -109,6 +109,7 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting utilities\n")
+(lazy-define (utils library cursor) notify-cursor-moved)
 (lazy-define (utils cas cas-out) cas->stree)
 (lazy-define (utils plugins plugin-cmd) pre-serialize verbatim-serialize)
 (use-modules (utils plugins plugin-convert))

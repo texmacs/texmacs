@@ -28,17 +28,6 @@
            (char-set-adjoin char-set:whitespace #\( #\) #\" #\'))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Rudimentary editing aids
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (scheme-auto-parenthesis)
-  (insert "()") (emulate-keyboard "left"))
-
-(kbd-map
-  (:require (in-prog-scheme?))
-  ("(" (scheme-auto-parenthesis)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Importing and exporting of sessions (incomplete, ugly and fragile)
 ;; TODO:
 ;;  - convert text into comments and viceversa

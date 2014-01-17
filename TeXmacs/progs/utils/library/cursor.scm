@@ -19,25 +19,25 @@
 
 (define-public-macro (with-cursor p . body)
   (let* ((pos (gensym))
-	 (res (gensym)))
+         (res (gensym)))
     `(with ,pos (position-new)
        (position-set ,pos (cursor-path))
        (go-to ,p)
        (with ,res (begin ,@body)
-	 (go-to (position-get ,pos))
-	 (position-delete ,pos)
-	 ,res))))
+         (go-to (position-get ,pos))
+         (position-delete ,pos)
+         ,res))))
 
 (define-public-macro (cursor-after . body)
   (let* ((pos (gensym))
-	 (res (gensym)))
+         (res (gensym)))
     `(with ,pos (position-new)
        (position-set ,pos (cursor-path))
        ,@body
        (with ,res (cursor-path)
-	 (go-to (position-get ,pos))
-	 (position-delete ,pos)
-	 ,res))))
+         (go-to (position-get ,pos))
+         (position-delete ,pos)
+         ,res))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Modifying the behaviour of a cursor movement routine
@@ -47,37 +47,37 @@
   (with p (cursor-path)
     (fun)
     (if (!= (cursor-path) p)
-	(go-to-repeat fun))))
+        (go-to-repeat fun))))
 
 (define (label-in-range? lab p until)
   (cond ((== p until) #f)
-	((tree-is? (path->tree p) lab) #t)
-	(else (label-in-range? lab (cDr p) until))))
+        ((tree-is? (path->tree p) lab) #t)
+        (else (label-in-range? lab (cDr p) until))))
 
 (define (check-pattern p l)
   (or (null? l)
       (with t (path->tree (list-drop-right p (length l)))
-	(cond ((and (symbol? (car l)) (== (tm-car t) (car l)))
-	       (check-pattern p (cdr l)))
-	      ((and (procedure? (car l)) ((car l) t))
-	       (check-pattern p (cdr l)))
-	      ((and (number? (car l))
-		    (== (car l) (list-ref p (- (length p) (length l) 1)))
-		    (> (length p) 1))
-	       (check-pattern p (cdr l)))
-	      (else #f)))))
+        (cond ((and (symbol? (car l)) (== (tm-car t) (car l)))
+               (check-pattern p (cdr l)))
+              ((and (procedure? (car l)) ((car l) t))
+               (check-pattern p (cdr l)))
+              ((and (number? (car l))
+                    (== (car l) (list-ref p (- (length p) (length l) 1)))
+                    (> (length p) 1))
+               (check-pattern p (cdr l)))
+              (else #f)))))
 
 (define (innermost-pattern p l)
   (cond ((<= (length p) (length l)) #f)
-	((check-pattern p l) (cDr p))
-	(else (innermost-pattern (cDr p) l))))
+        ((check-pattern p l) (cDr p))
+        (else (innermost-pattern (cDr p) l))))
 
 (tm-define (go-to-remain-inside fun . l)
   (with p (cursor-path)
     (fun)
     (let* ((q (cursor-path))
-	   (pp (innermost-pattern p l))
-	   (qq (innermost-pattern q l)))
+           (pp (innermost-pattern p l))
+           (qq (innermost-pattern q l)))
       (if (!= pp qq) (go-to p)))))
 
 (define (go-to-next-inside-sub fun l)
@@ -136,6 +136,10 @@
 (tm-define (go-to-previous-tag-same-argument lab)
   (go-to-same-buffer (lambda (t p) (path-previous-tag-same-argument t p lab))))
 
+; Hook for notifications of any cursor movement after it happens (mouse too)
+(tm-define (notify-cursor-moved status)
+  (noop))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Cursor history
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -155,12 +159,12 @@
   (:synopsis "Add current cursor position into the history")
   (if (cursor-same? (future-get) p)
       (with pos (car (future-get))
-	(future-set (cdr (future-get)))
-	(history-set (cons pos (history-get))))
+        (future-set (cdr (future-get)))
+        (history-set (cons pos (history-get))))
       (when (not (cursor-same? (history-get) p))
-	(with pos (position-new)
-	  (position-set pos p)
-	  (history-set (cons pos (history-get)))))))
+        (with pos (position-new)
+          (position-set pos p)
+          (history-set (cons pos (history-get)))))))
 
 (define (position-valid? pos)
   (and-with t (path->tree (cDr (position-get pos)))
@@ -176,16 +180,16 @@
     (with pos (car (history-get))
       (history-set (cdr (history-get)))
       (if (position-valid? pos)
-	  (begin
-	    (future-set (cons pos (future-get)))
-	    (if (== (cursor-path) (position-get pos))
-		(cursor-history-backward)
-		(begin
-		  (go-to (position-get pos))
-		  (cursor-show-if-hidden))))
-	  (begin
-	    (position-delete pos)
-	    (cursor-history-backward))))))
+          (begin
+            (future-set (cons pos (future-get)))
+            (if (== (cursor-path) (position-get pos))
+                (cursor-history-backward)
+                (begin
+                  (go-to (position-get pos))
+                  (cursor-show-if-hidden))))
+          (begin
+            (position-delete pos)
+            (cursor-history-backward))))))
 
 (tm-define (cursor-has-future?)
   (:synopsis "Does there exist a next position in history?")
@@ -197,16 +201,16 @@
     (with pos (car (future-get))
       (future-set (cdr (future-get)))
       (if (position-valid? pos)
-	  (begin
-	    (history-set (cons pos (history-get)))
-	    (if (== (cursor-path) (position-get pos))
-		(cursor-history-forward)
-		(begin
-		  (go-to (position-get pos))
-		  (cursor-show-if-hidden))))
-	  (begin
-	    (position-delete pos)
-	    (cursor-future-backward))))))
+          (begin
+            (history-set (cons pos (history-get)))
+            (if (== (cursor-path) (position-get pos))
+                (cursor-history-forward)
+                (begin
+                  (go-to (position-get pos))
+                  (cursor-show-if-hidden))))
+          (begin
+            (position-delete pos)
+            (cursor-future-backward))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Changing buffers
@@ -237,15 +241,15 @@
          (new (gensym))
          (res (gensym)))
     `(if (== ,name (current-buffer))
-	 (begin ,@body)
-	 (let* ((,old (current-buffer))
+         (begin ,@body)
+         (let* ((,old (current-buffer))
                 (,new ,name))
-	   (and (or (url? ,new) (string? ,new))
+           (and (or (url? ,new) (string? ,new))
                 (buffer-exists? ,new)
                 (buffer-focus ,new)
-		(with ,res (begin ,@body)
-		  (buffer-focus ,old)
-		  ,res))))))
+                (with ,res (begin ,@body)
+                  (buffer-focus ,old)
+                  ,res))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search and replace

@@ -222,7 +222,7 @@ get_default_styled_font (int style) {
 }
 
 #ifdef QTTEXMACS
-bool use_side_tools= false;
+bool use_side_tools= true;
 #else
 bool use_side_tools= false;
 #endif

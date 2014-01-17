@@ -14,15 +14,27 @@
 (texmacs-module (prog prog-kbd)
   (:use (kernel gui kbd-define)
         (utils edit selections)
-        (prog scheme-tools) (prog scheme-edit)))
+        (prog scheme-tools) (prog scheme-edit) (prog cpp-edit)))
 
 (kbd-map
-  (:require (in-prog-scheme?))
+  (:mode in-prog?)
+  ; rewrite some text mode shortcuts
+  ("space var" (insert-tabstop))
+  ("space var var" (begin (insert-tabstop) (insert-tabstop))))
+
+(kbd-map
+  (:mode in-prog-scheme?)
   ("cmd i" (scheme-indent))
   ("cmd tab" (scheme-indent))
+  ("cmd A-tab" (scheme-program-indent))
   ("std c" (clipboard-copy-export "scheme" "primary"))
   ("std v" (clipboard-paste-import "scheme" "primary"))
-  ("std x" (clipboard-cut-export "scheme" "primary")))
+  ("std x" (clipboard-cut-export "scheme" "primary"))
+  ("(" (scheme-bracket-open #\( #\) ))
+  (")" (scheme-bracket-close #\( #\) ))
+  ("[" (scheme-bracket-open #\[ #\] ))
+  ("]" (scheme-bracket-close #\[ #\] ))
+  ("\"" (scheme-bracket-open #\" #\" )))
 
 (kbd-map
   (:require (and developer-mode? (in-prog-scheme?)))
@@ -31,7 +43,12 @@
   ("std F1" (scheme-go-to-definition (cursor-word)))
   ("F5" (run-scheme-file (current-buffer-url))))
 
-(kbd-map ; rewrite some text mode shortcuts
-  (:mode in-prog?)
-  ("space var" (insert-tabstop))
-  ("space var var" (begin (insert-tabstop) (insert-tabstop))))
+(kbd-map
+  (:mode in-prog-cpp?)
+  ("{" (cpp-bracket-open #\{ #\} ))
+  ("}" (cpp-bracket-close #\{ #\} ))
+  ("(" (cpp-bracket-open #\( #\) ))
+  (")" (cpp-bracket-close #\( #\) ))
+  ("[" (cpp-bracket-open #\[ #\] ))
+  ("]" (cpp-bracket-close #\[ #\] ))
+  ("\"" (cpp-bracket-open #\" #\" )))

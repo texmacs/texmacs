@@ -56,13 +56,34 @@
     (tree-go-to doc row col)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Preferences for bracket handling
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public prog-auto-close-brackets? #f)
+(define-public prog-highlight-brackets? #f)
+
+(define (notify-auto-close-brackets var val)
+  (set! prog-auto-close-brackets? (== val "on")))
+
+(define (notify-highlight-brackets var val)
+  (set! prog-highlight-brackets? (== val "on")))
+
+(define-preferences
+  ("prog:automatic brackets" "on" notify-auto-close-brackets)
+  ("prog:highlight brackets" "on" notify-highlight-brackets))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Bracket handling
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (string-bracket-find* s pos inc br ibr level)
-  (cond ((or (< pos 0) (>= pos (string-length s))) (- -1 level))
-        ((and (== level 0) (== (string-ref s pos) br)) pos)
+  ;(display* "find: pos= " pos ", level= " level "\n")
+  (cond ((or (< pos 0) (>= pos (string-length s))) (- -1 (abs level)))
+        ((and (== level 1) (== (string-ref s pos) br)) 
+         ;(display* "returning at " pos "\n")
+         pos)
         ((== (string-ref s pos) br)
+         ;(display* "found at " pos "\n")
          (string-bracket-find* s (+ pos inc) inc br ibr (- level 1)))
         ((== (string-ref s pos) ibr)
          (string-bracket-find* s (+ pos inc) inc br ibr (+ level 1)))
@@ -72,10 +93,10 @@
   (with r (string-bracket-find* s pos inc br ibr level)
     (and (>= r 0) r)))
 
-(define (string-bracket-level s pos inc br ibr)
+(tm-define (string-bracket-level s pos inc br ibr)
   (with ret (string-bracket-find* s pos inc br ibr 0)
     (if (< ret 0) (- -1 ret)
-        (string-bracket-level s (+ ret inc) br ibr))))
+        (string-bracket-level s (+ ret inc) inc br ibr))))
 
 (tm-define (string-bracket-forward s pos br ibr)
   (:synopsis "find previous bracket @br with inverse @ibr in @s at @pos")
@@ -85,26 +106,100 @@
   (:synopsis "find next bracket @br with inverse @ibr in @s at @pos")
   (string-bracket-find s pos -1 br ibr 0))
 
-(define (program-bracket-find row col inc br ibr level)
+(define (program-bracket-find* row col inc br ibr level)
   (and-with s (program-row row)
     (with ret (string-bracket-find* s col inc br ibr level)
-      (if (>= ret 0) (cons row ret)
-          (with level* (- -1 ret)
-            (and-with s* (program-row (+ row inc))
-              (with col* (if (> inc 0) 0 (- (string-length s*) 1))
-                (program-bracket-find (+ row inc) col* inc
-                                      br ibr level*))))))))
+      (cond ((>= ret 0) (cons row (min ret (- (string-length s) 1))))
+            ((== ret -1) (cons row 0))
+            (else
+              (and-with s* (program-row (+ row inc))
+                (let ((level* (- -1 ret))
+                      (col* (if (> inc 0) 0 (- (string-length s*) 1))))
+                  (program-bracket-find* (+ row inc) col* 
+                                         inc br ibr level*))))))))
 
-(tm-define (program-previous-match row br ibr)
-  (:synopsis "find matching opening row for @row and bracket @br")
-  (let* ((s (program-row row))
-         (last (- (string-length s) 1)))    
-    (if (not s) row
-        (with ret (string-bracket-level s last -1 br ibr)
-          (if (== ret 0) row
-              (with pos (program-bracket-find row last -1 br ibr -1)
-                (if (not pos) row
-                    (car pos))))))))
+(define (program-bracket-find row col inc br ibr level)
+  (let* ((p (tree->path (program-tree)))
+         (rc (program-bracket-find* row col inc br ibr level))
+         (row* (max 0 (or (and (pair? rc) (car rc)) row)))
+         (col* (max -1 (or (and (pair? rc) (cdr rc)) (- col 1))))
+         (left (append p `(,row* ,(max 0 col*))))
+         (right (append p `(,row* ,(+ 1 col*)))))
+    (list left right)))
+
+(tm-define (program-bracket-backward row col br ibr)
+  (:synopsis 
+   "Returns the paths to the left and right of a bracket @br matching @ibr")
+  (with level (if (== (program-character row col) ibr) 0 1)
+    (program-bracket-find row col -1 br ibr level)))
+
+(tm-define (program-bracket-forward row col br ibr)
+  (:synopsis 
+   "Returns the paths to the left and right of a bracket @br matching @ibr")
+  (with level (if (== (program-character row col) br) 0 1)
+    (program-bracket-find row col 1 ibr br level)))
+
+(define (select-brackets* row col br ibr)
+  (let* ((prev (program-bracket-backward row col br ibr ))
+         (next (program-bracket-forward row col br ibr ))
+         ; avoid too many delayed commands while moving fast
+         (sel? (nnull? (get-alt-selection "alternate"))))
+    (if sel? (cancel-alt-selection "alternate"))
+    (set-alt-selection "alternate" (append prev next))
+    (if (not sel?) (delayed (:pause 1000) (cancel-alt-selection "alternate")))))
+
+(tm-define (select-brackets br ibr)
+  (:synopsis "Highlights the innermost matching brackets around the cursor")
+  (let* ((row (program-row-number))
+         (col (program-column-number)))
+    (select-brackets* row col br ibr)))
+
+(tm-define (select-brackets-after-movement br ibr esc)
+  (:synopsis "Hihghlight brackets after a cursor movement")
+  (let* ((row (program-row-number))
+         (col (program-column-number))
+         (col* (max 0 (- (or col 0) 1)))
+         (ch (program-character row col*)))
+    (cond ((== esc ch) (noop))
+          ((== ibr ch) (select-brackets* row col* br ibr))
+          ((== br ch) (select-brackets* row col br ibr)))))
+
+(tm-define (bracket-open br ibr esc)
+  (with sel? (selection-active-normal?)
+    (if prog-auto-close-brackets?
+        (if sel? 
+            (begin
+              (clipboard-cut "temp")
+              (insert-go-to (list->string `(,br ,ibr)) '(1))
+              (clipboard-paste "temp"))
+            (let* ((ch (or (before-cursor) ""))
+                   (srow (program-row (program-row-number)))
+                   (col (program-column-number))
+                   (llev (string-bracket-level srow col -1 br ibr))
+                   (rlev (string-bracket-level srow col 1 br ibr)))
+              ; Don't create right bracket if there are unmatched ones
+              ; or the previous char is an escape char.
+              (if (or (== ch (char->string esc)) (> rlev llev))
+                  (insert (char->string br))
+                  (insert-go-to (list->string `(,br ,ibr)) '(1)))))
+        (insert (char->string br))))
+  (select-brackets br ibr))
+
+; TODO: warn if unmatched
+(tm-define (bracket-close br ibr esc)
+  (insert (char->string ibr))
+  (select-brackets-after-movement br ibr esc))
+
+(tm-define (prog-select-enlarge br ibr)
+  (let* ((start (selection-get-start))
+         (end (selection-get-end))
+         (start-row (cADr start))
+         (start-col (- (cAr start) 1))
+         (end-row (cADr end))
+         (end-col (cAr end))
+         (prev (program-bracket-backward start-row start-col br ibr))
+         (next (program-bracket-forward end-row end-col br ibr)))
+    (selection-set (car prev) (cadr next))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Whitespace handling

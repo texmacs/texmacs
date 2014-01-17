@@ -19,10 +19,29 @@
   (:use (prog prog-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Automatic insertion, highlighting and selection of brackets and quotes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (cpp-bracket-open br ibr)
+  (bracket-open br ibr #\\))
+(tm-define (cpp-bracket-close br ibr)
+  (bracket-close br ibr #\\))
+
+; TODO: select strings first
+(tm-define (kbd-select-enlarge)
+  (:mode in-prog-cpp?)
+  (prog-select-enlarge #\{ #\}))
+
+(tm-define (notify-cursor-moved status)
+  (:require prog-highlight-brackets?)
+  (:mode in-prog-cpp?)
+  (select-brackets-after-movement #\{ #\} #\\))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences for syntax highlighting
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (notify-cpp-pref var val)
+(define (notify-cpp-pref var val)
    (syntax-read-preferences "cpp"))
 
 (define-preferences

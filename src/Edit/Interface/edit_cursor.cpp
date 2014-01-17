@@ -160,6 +160,7 @@ edit_cursor_rep::notify_cursor_moved (int status) {
   mv_status= status;
   cu= eb->find_check_cursor (tp);
   notify_change (THE_CURSOR);
+  call ("notify-cursor-moved", object (status));
 }
 
 void
