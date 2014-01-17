@@ -21,9 +21,10 @@
 
 (define (%new-read-hook sym) (noop)) ; for autocompletion
 
-(define-public macro-keywords '(define-macro tm-define-macro))
+(define-public macro-keywords '(define-macro define-public-macro 
+                                tm-define-macro))
 (define-public def-keywords
-  `(define provide-public
+  `(define-public provide-public
     tm-define tm-menu menu-bind tm-widget ,@macro-keywords))
 
 (define old-read read)
