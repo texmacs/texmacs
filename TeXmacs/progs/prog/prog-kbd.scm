@@ -20,7 +20,8 @@
   (:mode in-prog?)
   ; rewrite some text mode shortcuts
   ("space var" (insert-tabstop))
-  ("space var var" (begin (insert-tabstop) (insert-tabstop))))
+  ("space var var" (begin (insert-tabstop) (insert-tabstop)))
+  ("$" (insert "$")))
 
 (kbd-map
   (:mode in-prog-scheme?)

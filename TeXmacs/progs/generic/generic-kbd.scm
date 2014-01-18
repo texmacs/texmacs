@@ -44,7 +44,7 @@
   ("\\" (if (or (inside? 'hybrid) (in-prog?)) (insert "\\") (make-hybrid)))
   ("\\ var" "\\")
   ("\\ var var" "<setminus>")
-  ("$" (if (or (inside? 'hybrid) (inside? 'session)) (insert "$") (make 'math)))
+  ("$" (make 'math))
   ("$ var" "$")
 
   ("-" "-")
@@ -361,10 +361,11 @@
 
   ("C-<" (cursor-history-backward))
   ("C->" (cursor-history-forward))
-  ("A-#" (numbered-toggle (focus-tree)))
-  ("A-*" (alternate-toggle (focus-tree)))
-  ("A-+" (zoom-in (sqrt (sqrt 2.0))))
-  ("A--" (zoom-out (sqrt (sqrt 2.0)))))
+  ("C-#" (numbered-toggle (focus-tree)))
+  ("C-*" (alternate-toggle (focus-tree)))
+  ("C-+" (zoom-in (sqrt (sqrt 2.0))))
+  ("C--" (zoom-out (sqrt (sqrt 2.0))))
+  ("C-0" (fit-to-screen-width)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Standard cross-platform keybindings
