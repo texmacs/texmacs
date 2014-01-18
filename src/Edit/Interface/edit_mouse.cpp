@@ -37,8 +37,8 @@ void disable_double_clicks ();
 void
 edit_interface_rep::mouse_click (SI x, SI y) {
   if (eb->action ("click", x, y, 0) != "") return;
-  start_x   = x;
-  start_y   = y;
+  start_x= x;
+  start_y= y;
   send_mouse_grab (this, true);
 }
 
@@ -61,6 +61,8 @@ edit_interface_rep::mouse_adjust_selection (SI x, SI y, int mods) {
   if (inside_graphics () || mods <=1) return;
   if (eb->action ("drag", x, y, 0) != "") return;
   go_to (x, y);
+  end_x= x;
+  end_y= y;
   path sp= find_innermost_scroll (eb, tp);
   path p1= tree_path (sp, start_x, start_y, 0);
   path p2= tree_path (sp, end_x  , end_y  , 0);
