@@ -452,7 +452,6 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
   }
 
   if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "keypressed\n";
-
   {
     int key = event->key();
     Qt::KeyboardModifiers mods = event->modifiers();
@@ -494,6 +493,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
       r = qtdeadmap[key];
     }
     else {
+        // We need to use text(): Alt-{5,6,7,8,9} are []|{} under MacOS, etc.
       QString nss = event->text();
       unsigned short unic= nss.data()[0].unicode();
       if (unic < 32 && key < 128 && key > 0) {
@@ -536,38 +536,28 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
               r= tstr;
             if (r == "less") r= "<";
             else if (r == "gtr")r= ">";
-
         }
 #ifdef Q_WS_MAC
-        // CHECKME: are these two MAC exceptions really needed?
+          // Alt produces many symbols in Mac keyboards: []|{} etc.
         mods &=~ Qt::AltModifier;
 #endif
         mods &=~ Qt::ShiftModifier;
       }
     }
-    
     if (r == "") return;
-
+    if (mods & Qt::ShiftModifier) r= "S-" * r;
+    if (mods & Qt::AltModifier) r= "A-" * r;
+    //if (mods & Qt::KeypadModifier) r= "K-" * r;
 #ifdef Q_WS_MAC
-    if (mods & Qt::ShiftModifier) r= "S-" * r;
     if (mods & Qt::MetaModifier) r= "C-" * r;        // The "Control" key
-    if (mods & Qt::AltModifier) r= "A-" * r;
     if (mods & Qt::ControlModifier) r= "M-" * r;  // The "Command" key
-    //if (mods & Qt::KeypadModifier) r= "K-" * r;
 #else
-    if (mods & Qt::ShiftModifier) r= "S-" * r;
     if (mods & Qt::ControlModifier) r= "C-" * r;
-    if (mods & Qt::AltModifier) r= "A-" * r;
     if (mods & Qt::MetaModifier) r= "M-" * r;     // The "Windows" key
-    //if (mods & Qt::KeypadModifier) r= "K-" * r;
 #endif
 
     if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "key press: " << r << LF;
     the_gui->process_keypress (tm_widget(), r, texmacs_time());
-    //the_gui->update (); // FIXME: remove this line when
-                        // edit_typeset_rep::get_env_value will be faster
-    
-    //needs_update();
   }
 }
 
@@ -830,11 +820,19 @@ QTMWidget::mouseMoveEvent (QMouseEvent* event) {
 
 bool
 QTMWidget::event (QEvent* event) {
+    // Catch Keypresses to avoid default handling of (Shift+)Tab keys
   if (event->type() == QEvent::KeyPress) {
     QKeyEvent *ke = static_cast<QKeyEvent*> (event);
     keyPressEvent (ke);
     return true;
   } 
+  /* NOTE: we catch ShortcutOverride in order to disable the QKeySequences we
+   assigned to QActions while building menus, etc. In doing this, we keep the
+   shortcut text in the menus while relaying all keypresses through the editor*/
+  if (event->type() == QEvent::ShortcutOverride) {
+    event->accept();
+    return true;
+  }
   return QTMScrollView::event (event);
 }
 

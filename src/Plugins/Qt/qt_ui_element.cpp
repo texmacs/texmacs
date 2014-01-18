@@ -491,6 +491,11 @@ qt_ui_element_rep::as_qaction () {
       
       QTMCommand* c;
       cachedAction = qtw->as_qaction();
+        /* NOTE: we install shortcuts but in QTMWidget::event() we also handle
+         QEvent::ShortcutOverride, effectively disabling the shortcuts. This
+         allows us to keep the shortcut text in the menus while relaying all
+         keypresses through the editor.
+         */
       const QKeySequence& qks = to_qkeysequence (ks);
       if (!qks.isEmpty()) {
         cachedAction->setShortcut (qks);

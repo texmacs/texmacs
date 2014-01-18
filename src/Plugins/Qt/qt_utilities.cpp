@@ -175,29 +175,29 @@ qt_decode_length (string width, string height,
 static string
 conv_sub (const string& ks) {
   string r(ks);
+  r = replace (r, "S-", "Shift+");
+  r = replace (r, "A-", "Alt+");
+  //r = replace (r, "K-", "");
 #ifdef Q_WS_MAC
-  r = replace (r, "S-", "Shift+");
   r = replace (r, "C-", "Meta+");
-  r = replace (r, "A-", "Alt+");
   r = replace (r, "M-", "Ctrl+");
-  //r = replace (r, "K-", "");
 #else
-  r = replace (r, "S-", "Shift+");
   r = replace (r, "C-", "Ctrl+");
-  r = replace (r, "A-", "Alt+");
   r = replace (r, "M-", "Meta+");
-  //r = replace (r, "K-", "");
 #endif
-  // FIXME: tokenizing is unnecessary if we ignore keysequences with spaces!
-  r = replace (r, " ", ",");
-  array<string> a = tokenize (r, ",");
+  array<string> a = tokenize (r, " ");
   for (int i = 0; i < N(a); ++i) {
-    int p = search_forwards ("+", a[i]);
-    if (p != -1 && N(a[i]) > p+1) {
-      if (is_locase (a[i][p+1]))
-        a[i] = a[i](0, p) * upcase_all (a[i] (p, N(a[i])));
-      else if (is_upcase (a[i][p+1]))
-        a[i] = a[i](0, p) * "+Shift" * upcase_all (a[i] (p, N(a[i])));
+    int pos = -1, tmp = 0, n = N(a[i]);
+    while (tmp < n && (tmp = search_forwards ("+", tmp, a[i])) != -1)
+      pos = tmp++;
+    if (pos != -1 && n > pos+1) {
+      if (a[i][pos+1] == '&')
+         // FIXME: this isn't enough to see the ampersand in the menus... (?)
+        a[i] = a[i](0, pos+1) * "&&";
+      else if (is_locase (a[i][pos+1]))
+        a[i] = a[i](0, pos) * upcase_all (a[i] (pos, n));
+      else if (is_upcase (a[i][pos+1]))
+        a[i] = a[i](0, pos) * "+Shift" * upcase_all (a[i] (pos, n));
   }
 }
   return recompose (a, ",");
@@ -205,16 +205,6 @@ conv_sub (const string& ks) {
 
 QKeySequence
 to_qkeysequence (string ks) {
-    // If a key sequence defined in scheme with a kbd-map is made of several
-    // keys it contains spaces.
-    //  FIXME: Sometimes these shortcuts will conflict with normal text input
-    // (see bug #37399). Sometimes the qt_key_command won't do anything...
-    // Maybe we should bypass all this and simply add the shortcut names as text
-    // to the menu items' names...
-  if (search_forwards (" ", ks) != -1) {
-    if (DEBUG_QT) debug_qt << "Ignoring keysequence: " << ks << LF;
-    return QKeySequence();
-  }
   string r (conv_sub (ks));
   if (DEBUG_QT && N(r) > 0) {
     QKeySequence qks (to_qstring (r));
