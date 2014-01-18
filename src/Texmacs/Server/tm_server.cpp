@@ -16,6 +16,7 @@
 #include "connect.hpp"
 #include "sys_utils.hpp"
 #include "file.hpp"
+#include "analyze.hpp"
 #include "dictionary.hpp"
 #include "tm_link.hpp"
 #include "socket_notifier.hpp"
@@ -231,13 +232,11 @@ tm_server_rep::typeset_update_all () {
     view_to_editor (vs[i]) -> typeset_invalidate_all ();
 }
 
-#include "dictionary.hpp"
-
 bool
 tm_server_rep::is_yes (string s) {
   s= locase_all (s);
   string st= locase_all (translate ("yes"));
-  return s == st || (N(st)>0 && s == st[0]); //FIXME: fails for multibyte chars?
+  return tm_forward_access (s, 0) == tm_forward_access (st, 0) || s == st;
 }
 
 void
