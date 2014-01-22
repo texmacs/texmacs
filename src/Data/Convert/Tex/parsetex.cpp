@@ -590,7 +590,7 @@ latex_parser::parse_symbol (string s, int& i) {
   }
   while ((i<N(s)) && s[i] == ' ') i++;
   if (s[i] == '\n') {lf= 'N'; i++;}
-  return s(start, end);
+  return tree (TUPLE, s(start, end));
 }
 
 static bool
@@ -988,6 +988,8 @@ latex_parser::parse_command (string s, int& i, string cmd, int change) {
         if (arity>0) {
           i=j;
           tree st= parse_symbol (s, i);
+          if (cmd == "\\def" && arity == 2 && is_tuple (st) && N(st) == 1)
+            st= st[0];
           t << st;
           u << st;
           arity--;
