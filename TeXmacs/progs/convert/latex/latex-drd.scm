@@ -204,7 +204,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (logic-group latex-modifier-0%
-  rm tt sf md bf it em sl sc rmfamily ttfamily sffamily
+  normalfont rm tt sf md bf it em sl sc rmfamily ttfamily sffamily
   mdseries bfseries upshape itshape slshape scshape
   displaystyle textstyle scriptstyle scriptscriptstyle cal frak Bbb boldmath
   tiny scriptsize footnotesize small normalsize
@@ -213,6 +213,7 @@
   centering raggedleft raggedright flushleft flushright)
 
 (logic-group latex-modifier-1%
+  textnormalfont
   textrm texttt textsf textmd textbf textup textit textsl textsc emph
   mathrm mathtt mathsf mathmd mathbf mathup mathit mathsl mathnormal
   mathcal mathfrak mathbb mathbbm mathscr operatorname boldsymbol

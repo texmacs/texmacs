@@ -658,6 +658,9 @@ latex_symbol_to_tree (string s) {
       if (s == "raggedleft" || s == "flushright")
         return tree (SET, PAR_MODE, "right");
 
+      if (s == "normalfont") return concat (tree (SET, FONT_FAMILY, "rm"),
+          tree (SET, FONT_SHAPE , "right"), tree (SET, FONT_SERIES, "medium"));
+
       if (s == "rmfamily") return tree (SET, FONT_FAMILY, "rm");
       if (s == "ttfamily") return tree (SET, FONT_FAMILY, "tt");
       if (s == "sffamily") return tree (SET, FONT_FAMILY, "sf");
@@ -1543,6 +1546,8 @@ latex_command_to_tree (tree t) {
 
   if (is_tuple (t, "\\color", 1)) return tree (SET, "color", l2e (t[1]));
 
+  if (is_tuple (t, "\\textnormalfont", 1)) return m2e (m2e (m2e (t,
+          FONT_FAMILY, "rm"), FONT_SERIES, "medium"), FONT_SHAPE, "right");
   if (is_tuple (t, "\\textrm", 1)) return m2e (t, FONT_FAMILY, "rm");
   if (is_tuple (t, "\\texttt", 1)) return m2e (t, FONT_FAMILY, "tt");
   if (is_tuple (t, "\\textsf", 1)) return m2e (t, FONT_FAMILY, "ss");
