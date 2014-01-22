@@ -18,6 +18,7 @@
 #include "vars.hpp"
 #include "tree_correct.hpp"
 #include "url.hpp"
+#include "merge_sort.hpp"
 
 tree upgrade_tex (tree t);
 extern bool textm_class_flag;
@@ -2313,6 +2314,134 @@ latex_to_tree (tree t1) {
   else return t13;
 }
 
+static array<string>
+remove_empty (array<string> l) {
+  array<string> r;
+  for (int i=0; i<N(l); i++)
+    if (l[i] != "")
+      r << l[i];
+  return r;
+}
+
+static tree
+remove_preamble_marks (tree t) {
+  if (!is_compound (t, "hide-preamble", 1) ||
+      !is_document (t[0]) || N(t[0]) <= 2)
+    return t;
+  int n= N(t[0]);
+  return compound ("hide-preamble", t[0](1, n-1));
+}
+
+static string
+clean_preamble (string s) {
+  return replace (s, "{\\tmtexmarkpreamble}\n", "");
+}
+
+static array<string>
+populates_lambda (hashmap<string,tree> &lambda, tree doc, tree src) {
+  string s= as_string (src);
+  array<tree> l_body;
+  array<string> l_src= tokenize (s, "\n\n{\\tmtexmark}\n\n");
+  l_src= remove_empty (l_src);
+  tree body= (N(doc) > 2 && N(doc[2]) > 0)? doc[2][0] : tree (DOCUMENT);
+  tree tmp (DOCUMENT);
+  for (int i=0; i<N(body); i++) {
+    if (is_compound (body[i], "tmtex@mark")) {
+      if (N(tmp) > 0) {
+        l_body << tmp;
+        tmp= tree (DOCUMENT);
+      }
+    }
+    else
+      tmp << body[i];
+  }
+  if (N(tmp) > 0) l_body << tmp;
+  bool has_preamble= N(l_body) > 0 && N(l_body[0]) > 0
+    && is_compound (l_body[0][0], "hide-preamble", 1);
+  if (has_preamble && N(l_body)+1 == N(l_src)) {
+    // asymetry due to \\end{document} only present in src.
+    l_src[0]= clean_preamble (l_src[0]);
+    l_body[0][0]= remove_preamble_marks (l_body[0][0]);
+    l_src= range (l_src, 0, N(l_src)-1);
+  }
+  else if (!has_preamble && N(l_body)+2 == N(l_src))
+    // asymetry due to \\end{document} and preamble only present in src.
+    l_src= range (l_src, 1, N(l_src)-1);
+  else
+    return array<string> ();
+  for (int i=0; i<N(l_body); i++)
+    lambda(l_src[i])= l_body[i];
+  return l_src;
+}
+
+struct key_less_eq_operator {
+  static bool leq (string s1, string s2) {
+    return N(s1) > N(s2);
+  }
+};
+
+static array<string>
+sort_keys (array<string> l) {
+  merge_sort_leq<string,key_less_eq_operator> (l);
+  return l;
+}
+
+static array<string>
+recover_document (string s, string p) {
+  array<string> r, t= tokenize (s, p);
+  int i, n= N(t);
+  if (n < 2) return t;
+  for (i=0; i<n-1; i++)
+    r << t[i] << p;
+  r << t[n-1];
+  return r;
+}
+
+static array<string>
+recover_document (array<string> a, array<string> l, array<string> keys) {
+  if (N(l) == 0) return a;
+  string p= l[0];
+  array<string> r;
+  int i, n= N(a);
+  for (i=0; i<n; i++)
+    if (contains (a[i], keys))
+      r << a[i];
+    else
+      r << recover_document (a[i], p);
+  return recover_document (r, range (l, 1, N(l)), keys);
+}
+
+array<string>
+remove_whitespace (array<string> l) {
+  int i, n=N(l);
+  array<string> r;
+  for (i=0; i<n; i++)
+    if (replace (replace (l[i], " ", ""), "\n", "") != "")
+      r << l[i];
+  return r;
+}
+
+static array<string>
+recover_document (string s, array<string> l) {
+  array<string> a;
+  a << s;
+  return remove_whitespace (recover_document (a, l, l));
+}
+
+bool
+is_uptodate_tm_document (tree t) {
+  return is_document (t) && N(t) > 1 && is_compound (t[0], "TeXmacs", 1)
+    && as_string (t[0][0]) == TEXMACS_VERSION;
+}
+
+int
+latex_search_forwards (string s, string in);
+
+bool
+is_preamble (string s) {
+  return latex_search_forwards ("\\documentclass", s) >= 0;
+}
+
 tree
 latex_document_to_tree (string s,
     bool as_pic, bool keep_src, array<array<double> > range) {
@@ -2321,11 +2450,41 @@ latex_document_to_tree (string s,
     b= search_forwards ("%\n% -----BEGIN TEXMACS DOCUMENT-----\n%", 0, s) + 38;
     e= search_forwards ("% \n% -----END TEXMACS DOCUMENT-----", b, s);
     if (b < e) {
-      s= replace (s(b,e), "% ", "");
-      tree d= stree_to_tree (string_to_object (decode_base64 (s)));
-      if (is_document (d) && N(d) == 3)
-        return d[0];
+      string code= replace (s(b,e), "% ", "");
+      s= s(0, b-38);
+      tree d= stree_to_tree (string_to_object (decode_base64 (code)));
+      if (is_document (d) && N(d) == 2 && is_uptodate_tm_document (d[0])) {
+        tree document= d[0](1, N(d[0]));
+        tree uninit= tree (UNINIT);
+        hashmap<string,tree> lambda (uninit);
+        array<string> keys= populates_lambda (lambda, d[0], d[1]);
+        keys= sort_keys (keys);
+        array<string> l= recover_document (s, keys);
+        tree body (DOCUMENT);
+        int i, n= N(l);
+        for (i=0; i<n; i++) {
+          tree tmp= lambda[l[i]];
+          if (tmp != uninit)
+            body << tmp;
+          else if (i == 0 && is_preamble (l[i])) {
+            document= latex_to_tree (parse_latex_document (
+                  l[i] * "\n\\end{document}",
+                  true, as_pic, false, array<array<double> > ()));
+            if (is_document (document)       && N(document)       > 1 &&
+                is_compound (document[1], "body", 1)                  &&
+                is_document (document[1][0]) && N(document[1][0]) > 0 &&
+                is_compound (document[1][0][0], "hide-preamble", 1))
+              body << document[1][0][0];
+          }
+          else
+            body << latex_to_tree (parse_latex (l[i], true, false, as_pic,
+                  false, array<array<double> > ()));
+        }
+        document[1]= compound ("body", body);
+        return document;
+      }
     }
+    return "";
   }
   command_type ->extend ();
   command_arity->extend ();
