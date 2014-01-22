@@ -499,9 +499,6 @@
 	   (tmtex-apply-init `(verbatim ,body) init*)))
 	(else body)))
 
-(define (filter-preamble? t)
-  (contains-tags? t '(assign hide-preamble)))
-
 (define (trim-document t)
   (cond ((not (func? t 'document)) t)
         ((== "" (cadr t)) (trim-document `(document ,@(cddr t))))
@@ -515,7 +512,7 @@
                              (func? (cAr x) 'latex-tree-src))) col))
          (l   (map (lambda (x)
                      (let ((key  (second (cAr x)))
-                           (val (third  (cAr x))))
+                           (val  (third  (cAr x))))
                        (list key val))) col)))
     (for-each
       (lambda (x)
