@@ -108,6 +108,22 @@
                        (if (func? y 'document) (cdr y) (list y))))
                    (cdr t))))))
 
+(define (remove-creation-date* s)
+  (let* ((start (string-search-forwards "%%CreationDate" 0 s))
+         (stop  (if (== start -1) 0 (string-search-forwards "\n" start s))))
+    (if (== start -1) s
+      (string-append (string-take s start) (string-drop s stop)))))
+
+(define (remove-creation-date t)
+  ;; Remove "%%CreationDate.*\n" from eps pictures, since it seems impossible
+  ;; to prevent Ghostscript from adding it.
+  (cond ((func? t 'raw-data) `(raw-data ,(remove-creation-date* (cadr t))))
+        ((list>0? t) (map remove-creation-date t))
+        (else t)))
+
+(define (prepare-document t)
+  (flatten-document (remove-creation-date t)))
+
 (define (simplify-document* t)
   (cond ((nlist>0? t) t)
         ((not (func? t 'document)) (map simplify-document* t))
@@ -142,12 +158,12 @@
 (define (secured-latex-document->texmacs s as-pic keep-src)
   (let* ((range        `((0 ,(string-length s))))
          (reference    (cpp-latex-document->texmacs s as-pic keep-src range))
-         (s-reference  (flatten-document (cDr (tree->stree reference))))
+         (s-reference  (prepare-document (cDr (tree->stree reference))))
          (range        '())
          (s-old        '())
          (current      (cpp-latex-document->texmacs s as-pic keep-src range))
          (s-current*   (tree->stree current))
-         (s-current    (flatten-document (cDr s-current*))))
+         (s-current    (prepare-document (cDr s-current*))))
     (while (and (!= s-reference s-current) (!= s-old s-current))
            (set! range
              (append range (resolve-range s-reference s-current*)))
@@ -155,7 +171,7 @@
            (set! current
              (cpp-latex-document->texmacs s as-pic keep-src range))
            (set! s-current* (tree->stree current))
-           (set! s-current (flatten-document (cDr s-current*))))
+           (set! s-current (prepare-document (cDr s-current*))))
     (if (== s-old s-current)
       (display* "TeXmacs] LaTeX: the secure tracking is not garanteed"))
   current))
