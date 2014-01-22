@@ -155,17 +155,40 @@
 ;; Adding TeXmacs sources
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (latex-mark-document t)
+  (with body-ref (list-index (map (lambda (x) (func? x 'body)) t) #t)
+    (if body-ref
+      (list-set!
+        t body-ref
+        `(body
+           (document
+             (tmtex@mark)
+             ,@(list-intersperse
+                 (map (lambda (x)
+                        (if (and (func? x 'hide-preamble 1)
+                                 (func? (cadr x) 'document))
+                          `(hide-preamble
+                             (document (tmtex@mark@preamble)
+                                       ,@(cdadr x)
+                                       (tmtex@mark@preamble)))
+                          x))
+                      (cdadr (list-ref t body-ref))) '(tmtex@mark))
+             (tmtex@mark)))))
+    t))
+
 (tm-define (latex-add-texmacs-sources t doc)
   (:synopsis "Add to @t the source @doc coded in base64 @t")
   (if (not (func? t '!file)) t
-    (let* ((str (object->string doc))
-           (d   (cpp-verbatim-snippet->texmacs (encode-base64 str) #t "ascii"))
-           (d*  `(!paragraph ""
-                             "-----BEGIN TEXMACS DOCUMENT-----"
-                             ""
-                             ,(tree->stree d)
-                             ""
-                             "-----END TEXMACS DOCUMENT-----")))
+    (let* ((doc* (latex-mark-document (list-copy doc)))
+           (src* (serialize-latex (texmacs->latex doc* '())))
+           (str  (object->string `(document ,doc* ,src*)))
+           (d    (cpp-verbatim-snippet->texmacs (encode-base64 str) #t "ascii"))
+           (d*   `(!paragraph ""
+                              "-----BEGIN TEXMACS DOCUMENT-----"
+                              ""
+                              ,(tree->stree d)
+                              ""
+                              "-----END TEXMACS DOCUMENT-----")))
       `(!file ,@(cdr t) (!paragraph "" (!comment ,(tmtex d*)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

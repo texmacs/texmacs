@@ -13,6 +13,7 @@
 #include "Tex/convert_tex.hpp"
 #include "Bibtex/bibtex.hpp"
 #include "metadata.hpp"
+#include "base64.hpp"
 #include "scheme.hpp"
 #include "vars.hpp"
 #include "tree_correct.hpp"
@@ -2315,6 +2316,17 @@ latex_to_tree (tree t1) {
 tree
 latex_document_to_tree (string s,
     bool as_pic, bool keep_src, array<array<double> > range) {
+  if (occurs ("%\n% -----BEGIN TEXMACS DOCUMENT-----\n%", s)) {
+    int b, e;
+    b= search_forwards ("%\n% -----BEGIN TEXMACS DOCUMENT-----\n%", 0, s) + 38;
+    e= search_forwards ("% \n% -----END TEXMACS DOCUMENT-----", b, s);
+    if (b < e) {
+      s= replace (s(b,e), "% ", "");
+      tree d= stree_to_tree (string_to_object (decode_base64 (s)));
+      if (is_document (d) && N(d) == 3)
+        return d[0];
+    }
+  }
   command_type ->extend ();
   command_arity->extend ();
   command_def  ->extend ();
