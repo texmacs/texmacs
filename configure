@@ -7915,7 +7915,8 @@ $as_echo_n "checking for the QMAKE to use with Qt... " >&6; }
 $as_echo "$QMAKE" >&6; }
   fi
   if test x"$QMAKE" = xmissing; then
-    as_fn_error $? "Cannot find qmake in your PATH. Try using --with-qt." "$LINENO" 5
+    as_fn_error $? "Cannot find qmake in your PATH. Verify that the Qt 4 library is properly
+installed with its development tools, or try using --with-qt." "$LINENO" 5
   fi
 
   # Find moc (Meta Object Compiler).
@@ -8539,7 +8540,8 @@ $as_echo_n "checking for the QMAKE to use with Qt... " >&6; }
 $as_echo "$QMAKE" >&6; }
   fi
   if test x"$QMAKE" = xmissing; then
-    as_fn_error $? "Cannot find qmake in your PATH. Try using --with-qt." "$LINENO" 5
+    as_fn_error $? "Cannot find qmake in your PATH. Verify that the Qt 4 library is properly
+installed with its development tools, or try using --with-qt." "$LINENO" 5
   fi
 
   # Find moc (Meta Object Compiler).

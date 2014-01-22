@@ -122,7 +122,8 @@ dnl Memo: AC_ARG_WITH(package, help-string, [if-given], [if-not-given])
     AC_MSG_RESULT([$QMAKE])
   fi
   if test x"$QMAKE" = xmissing; then
-    AC_MSG_ERROR([Cannot find qmake in your PATH. Try using --with-qt.])
+    AC_MSG_ERROR([Cannot find qmake in your PATH. Verify that the Qt 4 library is properly
+installed with its development tools, or try using --with-qt.])
   fi
 
   # Find moc (Meta Object Compiler).
