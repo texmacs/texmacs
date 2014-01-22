@@ -66,11 +66,13 @@ tree   parse_latex (string s, bool change= false, bool using_cork= false, bool a
 tree   parse_latex_document (string s, bool change= false, bool as_pic= false, bool keep_src= false, array<array<double> > range= empty_array_of_array_of_double);
 tree   latex_to_tree (tree t);
 tree   latex_document_to_tree (string s, bool as_pic= false, bool keep_src= false, array<array<double> > range= empty_array_of_array_of_double);
+tree   latex_conservative_document_to_tree (string s, bool as_pic, bool keep_src, array<array<double> > range);
 tree   latex_class_document_to_tree (string s);
 string latex_verbarg_to_string (tree t);
 string get_latex_style (tree t);
 string string_arg (tree t, bool url= false);
 array<tree> tokenize_concat (tree t, array<tree> a, bool keep= false);
+tree   pick_paragraph_breaks (tree t, array<tree> &b);
 bool   is_verbatim (tree t);
 int    latex_search_forwards (string s, int pos, string in);
 int    latex_search_forwards (string s, string in);
