@@ -266,6 +266,9 @@
 		498BA6B6184C966F00608A7B /* PDFWriter.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 4907D0D81812E2BC00D893B4 /* PDFWriter.o */; };
 		498BA6B7184C968000608A7B /* PDFWriter.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 4907D0D81812E2BC00D893B4 /* PDFWriter.o */; };
 		49AA0887181166140090FD84 /* font_protrusion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49AA0884181166140090FD84 /* font_protrusion.cpp */; };
+		49AA65411891A58B003DA304 /* fromtex_cons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49AA65401891A58B003DA304 /* fromtex_cons.cpp */; };
+		49AA65421891A58B003DA304 /* fromtex_cons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49AA65401891A58B003DA304 /* fromtex_cons.cpp */; };
+		49AA65431891A58B003DA304 /* fromtex_cons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49AA65401891A58B003DA304 /* fromtex_cons.cpp */; };
 		49BEF71816FDD566004BAE73 /* metadata-springer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BEF71616FDD566004BAE73 /* metadata-springer.cpp */; };
 		49BEF71916FDD566004BAE73 /* metadata-springer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BEF71616FDD566004BAE73 /* metadata-springer.cpp */; };
 		49BEF71A16FDD566004BAE73 /* metadata-springer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BEF71616FDD566004BAE73 /* metadata-springer.cpp */; };
@@ -1605,6 +1608,7 @@
 		4964705016F72CB500D95FC4 /* smart_font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smart_font.cpp; sourceTree = "<group>"; };
 		497822CA16EC86D40054F5BA /* tt_analyze.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tt_analyze.cpp; sourceTree = "<group>"; };
 		49AA0884181166140090FD84 /* font_protrusion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_protrusion.cpp; sourceTree = "<group>"; };
+		49AA65401891A58B003DA304 /* fromtex_cons.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fromtex_cons.cpp; sourceTree = "<group>"; };
 		49BEF71616FDD566004BAE73 /* metadata-springer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "metadata-springer.cpp"; sourceTree = "<group>"; };
 		49BEF71716FDD566004BAE73 /* metadata.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = metadata.hpp; sourceTree = "<group>"; };
 		49D6464418478DD2001541E1 /* base64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = base64.cpp; sourceTree = "<group>"; };
@@ -2837,6 +2841,7 @@
 				9C0B476810A8CC0F0097A335 /* convert_tex.hpp */,
 				9C0B09B614FF0A3D004ABDCE /* fromcls.cpp */,
 				9C0B476910A8CC0F0097A335 /* fromtex.cpp */,
+				49AA65401891A58B003DA304 /* fromtex_cons.cpp */,
 				492EA53C18634091007F16D8 /* fromtex_post.cpp */,
 				9C0B476A10A8CC0F0097A335 /* inittex.cpp */,
 				495712F716E90E5900934EA3 /* metadata-acm.cpp */,
@@ -4824,6 +4829,7 @@
 				9C0B4AFB10A8CC110097A335 /* tm_button.cpp in Sources */,
 				9C0B4AFC10A8CC110097A335 /* tm_dialogue.cpp in Sources */,
 				9C0B4AFD10A8CC110097A335 /* tm_frame.cpp in Sources */,
+				49AA65411891A58B003DA304 /* fromtex_cons.cpp in Sources */,
 				9C0B4AFE10A8CC110097A335 /* tm_window.cpp in Sources */,
 				9C0B4AFF10A8CC110097A335 /* animate_boxes.cpp in Sources */,
 				9C0B4B0010A8CC110097A335 /* basic_boxes.cpp in Sources */,
@@ -4991,7 +4997,7 @@
 				4915C7D218093E4D00C3D2B7 /* parse_vernac.cpp in Sources */,
 				491563F618141C2000EEBBC9 /* font_protrusion.cpp in Sources */,
 				49194C6C184E892800DC45E2 /* tree_search.cpp in Sources */,
- 				49250532186DD65400D32374 /* QTMTreeModel.cpp in Sources */,
+				49250532186DD65400D32374 /* QTMTreeModel.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5012,7 +5018,7 @@
 				9CC6149310A999460055F808 /* QTMWidget.hpp in Sources */,
 				9CC6149410A999460055F808 /* QTMWindow.hpp in Sources */,
 				490536BD184A503A008B9ECE /* QTMStyle.hpp in Sources */,
- 				49250531186DD64A00D32374 /* QTMTreeModel.hpp in Sources */,
+				49250531186DD64A00D32374 /* QTMTreeModel.hpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5243,6 +5249,7 @@
 				9CCC751F10D304EB00E88D90 /* aqua_gui.mm in Sources */,
 				9CCC752010D304EB00E88D90 /* aqua_menu.mm in Sources */,
 				9CCC752110D304EB00E88D90 /* aqua_renderer.mm in Sources */,
+				49AA65431891A58B003DA304 /* fromtex_cons.cpp in Sources */,
 				9CCC752210D304EB00E88D90 /* aqua_utilities.mm in Sources */,
 				9CCC752310D304EB00E88D90 /* aqua_widget.mm in Sources */,
 				9CCC752510D304EB00E88D90 /* TMView.mm in Sources */,
@@ -5395,6 +5402,7 @@
 				9CD4E63A10B14AB300E0DD5C /* font.cpp in Sources */,
 				9CD4E63B10B14AB300E0DD5C /* math_font.cpp in Sources */,
 				9CD4E63C10B14AB300E0DD5C /* translator.cpp in Sources */,
+				49AA65421891A58B003DA304 /* fromtex_cons.cpp in Sources */,
 				9CD4E63D10B14AB300E0DD5C /* virtual_font.cpp in Sources */,
 				9CD4E63E10B14AB300E0DD5C /* widget.cpp in Sources */,
 				9CD4E63F10B14AB300E0DD5C /* math_tree.cpp in Sources */,
