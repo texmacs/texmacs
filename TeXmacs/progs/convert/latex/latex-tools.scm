@@ -210,11 +210,15 @@
              (tmtex@mark)))))
     t))
 
-(tm-define (latex-add-texmacs-sources t doc)
+(tm-define (latex-add-texmacs-sources t doc opts)
   (:synopsis "Add to @t the source @doc coded in base64 @t")
   (if (not (func? t '!file)) t
-    (let* ((doc* (latex-mark-document (list-copy doc)))
-           (src* (serialize-latex (texmacs->latex doc* '())))
+    (let* ((opts (filter
+                   (lambda (x)
+                     (!= (car x) "texmacs->latex:preserve-source"))
+                   opts))
+           (doc* (latex-mark-document (list-copy doc)))
+           (src* (serialize-latex (texmacs->latex doc* opts)))
            (str  (object->string `(document ,doc* ,src*)))
            (d    (cpp-verbatim-snippet->texmacs (encode-base64 str) #t "ascii"))
            (d*   `(!paragraph ""

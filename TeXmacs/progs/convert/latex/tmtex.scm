@@ -2633,7 +2633,7 @@
 	  (set! tmtex-style "generic")
 	  (set! tmtex-packages '())
 	  (if (== (assoc-ref opts "texmacs->latex:preserve-source") "on")
-	      (set! result (latex-add-texmacs-sources result x)))
+	      (set! result (latex-add-texmacs-sources result x opts)))
 	  result))
       (let* ((x2 (tree->stree (tmtm-eqnumber->nonumber (stree->tree x))))
 	     (x3 (tmtm-match-brackets x2)))
