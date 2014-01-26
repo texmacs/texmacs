@@ -899,7 +899,7 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
  ******************************************************************************/
 
 qt_tm_embedded_widget_rep::qt_tm_embedded_widget_rep (command _quit) 
- : qt_widget_rep(embedded_tm_widget), quit(_quit) {
+ : qt_widget_rep (embedded_tm_widget), quit (_quit) {
   main_widget = ::glue_widget (true, true, 1, 1);
 }
 
@@ -956,7 +956,8 @@ qt_tm_embedded_widget_rep::query (slot s, int type_id) {
   
   switch (s) {
     case SLOT_IDENTIFIER:
-      return qt_window_widget_rep::widget_from_qwidget(qwid)->query(s, type_id);
+      if (qwid)
+        return qt_window_widget_rep::widget_from_qwidget(qwid)->query(s, type_id);
 
     case SLOT_SCROLL_POSITION:
     case SLOT_EXTENTS:
