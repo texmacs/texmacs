@@ -8,7 +8,6 @@
 ;;
 ;; Inspired from utf8enc.dfu
 
-("#A"  "\n")
 ("#A1" "{\\textexclamdown}")
 ("#A2" "{\\textcent}")
 ("#A3" "{\\textsterling}")
@@ -31,7 +30,7 @@
 ("#B5" "{\\textmu}") ; micro sign
 ("#B6" "{\\textparagraph}")
 ("#B7" "{\\textperiodcentered}")
-("#B8" "{\\c\ }")
+("#B8" "\\c{}")
 ("#B9" "{\\textonesuperior}")
 ("#BA" "{\\textordmasculine}")
 ("#BB" "{\\guillemotright}")
@@ -395,11 +394,7 @@
 ("#2013" "{\\textendash}")
 ("#2014" "{\\textemdash}")
 ("#2016" "{\\textbardbl}")
-("#2018" "`")
-("#2019" "'")
 ("#201A" "{\\quotesinglbase}")
-("#201C" "``")
-("#201D" "''")
 ("#201E" "{\\quotedblbase}")
 ("#2020" "{\\textdagger}")
 ("#2021" "{\\textdaggerdbl}")

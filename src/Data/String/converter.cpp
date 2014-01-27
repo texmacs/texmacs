@@ -161,6 +161,12 @@ converter_rep::load () {
   else if (from=="UTF-8" && to=="LaTeX" ) {
     hashtree<char,string> dic;
     hashtree_from_dictionary (dic,"utf8tolatex", UTF8, BIT2BIT, false);
+    hashtree_from_dictionary (dic,"utf8tolatex-onedir", UTF8, BIT2BIT, false);
+    ht = dic;
+  }
+  else if (from=="LaTeX" && to=="UTF-8" ) {
+    hashtree<char,string> dic;
+    hashtree_from_dictionary (dic,"utf8tolatex", BIT2BIT, UTF8, true);
     ht = dic;
   }
   else if (from=="Cork" && to=="ASCII") {
@@ -210,6 +216,8 @@ convert (string input, string from, string to) {
     return convert_from_cork (input, to);
   else if (to == "Cork")
     return convert_to_cork (input,from);
+  else if (from == "LaTeX" && to == "UTF-8")
+    return convert_LaTeX_to_utf8 (input);
   else if (from == "UTF-8" && to == "LaTeX")
     return convert_utf8_to_LaTeX (input);
 #ifdef USE_ICONV
@@ -246,6 +254,14 @@ convert_from_cork (string input, string to) {
 #else
   return input; // can't do anything.
 #endif
+}
+
+string
+convert_LaTeX_to_utf8 (string input) {
+  converter conv= load_converter ("LaTeX", "UTF-8");
+  string output;
+  output= apply (conv, input);
+  return output;
 }
 
 string

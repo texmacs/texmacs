@@ -2018,6 +2018,7 @@ parse_latex (string s, bool change, bool using_cork, bool as_pic,
       // we then make heuristic charset detection
       s= western_to_utf8 (s);
   }
+  s= convert (s, "LaTeX", "UTF-8");
 
   latex_parser ltx (encoding != "Cork");
   ltx.lf= 'M';
