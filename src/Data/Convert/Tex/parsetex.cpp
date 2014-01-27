@@ -1531,7 +1531,7 @@ accented_to_Cork (tree t) {
       if (s[1] == 'v' ) return "\007";
       if (s[1] == 'u' ) return "\010";
       if (s[1] == '=' ) return "\011";
-      if (s[1] == '.' ) return "\012";
+      if (s[1] == '.' ) return tuple ("\\math", tuple ("\\wide", "", "<dot>"));
       if (s[1] == 'c' ) return "\013";
       if (s[1] == 'k' ) return "\014";
       if (s[1] == '^' ) return "\136";
