@@ -1525,15 +1525,17 @@ accented_to_Cork (tree t) {
 	return ret_s;
       }
       if (s[1] == '\'') return "\001";
+      if (s[1] == '\"') return "\004";
+      if (s[1] == 'H' ) return "\005";
+      if (s[1] == 'r' ) return "\006";
+      if (s[1] == 'v' ) return "\007";
+      if (s[1] == 'u' ) return "\010";
+      if (s[1] == '=' ) return "\011";
+      if (s[1] == '.' ) return "\012";
+      if (s[1] == 'c' ) return "\013";
+      if (s[1] == 'k' ) return "\014";
       if (s[1] == '^' ) return "\136";
-      if (s[1] == '\"') return "\004"; // "
       if (s[1] == '~' ) return "\176";
-      if (s[1] == '=' ) return "\026";
-      if (s[1] == '.' ) return "\137";
-      if (s[1] == 'u' ) return "\025";
-      if (s[1] == 'v' ) return "\024";
-      if (s[1] == 'H' ) return "\175";
-      if (s[1] == 'c' ) return "\030";
     }
     else {
       char c1= v[0], c2= s[1];
