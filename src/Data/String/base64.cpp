@@ -51,7 +51,7 @@ encode_base64 (string s) {
     if (i > 0 && i % 60 == 0) r << "\n";
     r << encode_base64 (s[i], s[i+1], '\0')(0,3) << "=";
   }
-  else return r;
+  return r;
 }
 
 // 'A' maps to (64+0), 'B' maps to (64+1), and so on, until '/' maps to (64+63)

@@ -20,6 +20,15 @@
  * Reimport of exported TeXmacs documents
  ******************************************************************************/
 
+static array<tree>
+remove_empty (array<tree> l) {
+  array<tree> r;
+  for (int i=0; i<N(l); i++)
+    if (N(l[i] != document ("")) > 0)
+      r << l[i];
+  return r;
+}
+
 static array<string>
 remove_empty (array<string> l) {
   array<string> r;
@@ -43,25 +52,32 @@ clean_preamble (string s) {
   return replace (s, "{\\tmtexmarkpreamble}\n", "");
 }
 
-static array<string>
-populates_lambda (hashmap<string,tree> &lambda, tree doc, tree src) {
-  string s= as_string (src);
-  array<tree> l_body;
-  array<string> l_src= tokenize (s, "\n\n{\\tmtexmark}\n\n");
-  l_src= remove_empty (l_src);
-  tree body= (N(doc) > 2 && N(doc[2]) > 0)? doc[2][0] : tree (DOCUMENT);
+static array<tree>
+tokenize_document (tree body) {
+  array<tree> r;
   tree tmp (DOCUMENT);
   for (int i=0; i<N(body); i++) {
     if (is_compound (body[i], "tmtex@mark")) {
       if (N(tmp) > 0) {
-        l_body << tmp;
+        r << tmp;
         tmp= tree (DOCUMENT);
       }
     }
     else
       tmp << body[i];
   }
-  if (N(tmp) > 0) l_body << tmp;
+  if (N(tmp) > 0) r << tmp;
+  return r;
+}
+
+static array<string>
+populates_lambda (hashmap<string,tree> &lambda, tree doc, tree src) {
+  string s= as_string (src);
+  array<string> l_src= tokenize (s, "\n\n{\\tmtexmark}\n\n");
+  l_src= remove_empty (l_src);
+  tree body= (N(doc) > 2 && N(doc[2]) > 0)? doc[2][0] : tree (DOCUMENT);
+  array<tree> l_body= tokenize_document (body);
+  l_body= remove_empty (l_body);
   bool has_preamble= N(l_body) > 0 && N(l_body[0]) > 0
     && is_compound (l_body[0][0], "hide-preamble", 1);
   if (has_preamble && N(l_body)+1 == N(l_src)) {
@@ -74,8 +90,9 @@ populates_lambda (hashmap<string,tree> &lambda, tree doc, tree src) {
     // asymetry due to \\end{document} and preamble only present in src.
     l_src= range (l_src, 1, N(l_src)-1);
   else
-    for (int i=0; i<N(l_body); i++)
-      lambda(l_src[i])= l_body[i];
+  return array<string> ();
+  for (int i=0; i<N(l_body); i++)
+    lambda(l_src[i])= l_body[i];
   return l_src;
 }
 
@@ -93,7 +110,7 @@ sort_keys (array<string> l) {
 
 static array<string>
 recover_document (string s, string p) {
-  array<string> r, t= tokenize (s, p);
+  array<string> r, t= tokenize (s, "\n" * p * "\n");
   int i, n= N(t);
   if (n < 2) return t;
   for (i=0; i<n-1; i++)
@@ -126,10 +143,22 @@ remove_whitespace (array<string> l) {
   return r;
 }
 
+int
+latex_search_forwards (string s, string in);
+
+static string
+remove_end_of_document (string s) {
+  int e= latex_search_forwards ("\\end{document}", s);
+  if (e > 0)
+    return s(0, e);
+  else
+    return s;
+}
+
 static array<string>
 recover_document (string s, array<string> l) {
   array<string> a;
-  a << s;
+  a << remove_end_of_document (s);
   return remove_whitespace (recover_document (a, l, l));
 }
 
@@ -139,14 +168,12 @@ is_uptodate_tm_document (tree t) {
     && as_string (t[0][0]) == TEXMACS_VERSION;
 }
 
-int
-latex_search_forwards (string s, string in);
-
 bool
 is_preamble (string s) {
   return latex_search_forwards ("\\documentclass", s) >= 0;
 }
 
+tree concat_document_correct (tree t);
 
 tree
 latex_conservative_document_to_tree (string s, bool as_pic, bool keep_src,
@@ -163,6 +190,7 @@ latex_conservative_document_to_tree (string s, bool as_pic, bool keep_src,
       tree uninit= tree (UNINIT);
       hashmap<string,tree> lambda (uninit);
       array<string> keys= populates_lambda (lambda, d[0], d[1]);
+      if (N(keys) == 0) return "";
       keys= sort_keys (keys);
       array<string> l= recover_document (s, keys);
       tree body (DOCUMENT);
@@ -186,7 +214,7 @@ latex_conservative_document_to_tree (string s, bool as_pic, bool keep_src,
                 false, array<array<double> > ()));
       }
       document[1]= compound ("body", body);
-      return document;
+      return concat_document_correct (document);
     }
   }
   return "";
@@ -201,7 +229,6 @@ tree unnest_withs (tree t);
 tree remove_empty_withs (tree t);
 tree concat_sections_and_labels (tree t);
 tree modernize_newlines (tree t, bool skip);
-tree concat_document_correct (tree t);
 
 static tree
 search_and_remove_breaks (tree t, tree &src) {
