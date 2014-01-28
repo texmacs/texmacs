@@ -20,6 +20,57 @@
  * Reimport of exported TeXmacs documents
  ******************************************************************************/
 
+struct latex_hash {
+  hashmap<string,tree> h;
+  string latex_normalize (string s);
+  inline latex_hash (tree init, int n=1, int max=1): h (init, n, max) { };
+  inline tree  operator [] (string x) { return h[latex_normalize (x)]; }
+  inline tree& operator () (string x) { return h(latex_normalize (x)); }
+};
+
+string
+latex_hash::latex_normalize (string s) {
+  // Normalize a bit LaTeX spaces and clean comments
+  char status= 'N';
+  int i, n= N(s);
+  string r;
+  for (i=0; i<n; i++) {
+    if (s[i] == '\n') {                     // New line
+      if (status != 'N')
+        r << s[i];
+      status= 'N';
+    }
+    else if (s[i] == ' ' || s[i] == '\t') { // Space
+      if (status == 'O') {
+        status= 'S';
+        r << s[i];
+      }
+      else if (status == 'T')
+        status= 'S';
+    }
+    else if (s[i] == '%') {                 // Comment
+      if (status != 'C')
+        r << s[i];
+      status= 'C';
+    }
+    else if (s[i] == '\\') {                // Token
+      if (status != 'C') {
+        r << s[i];
+        status= 'T';
+      }
+    }
+    else {                                  // Other
+      if (status == 'T')
+        r << s[i];
+      else if (status != 'C') {
+        r << s[i];
+        status= 'O';
+      }
+    }
+  }
+  return r;
+}
+
 static array<tree>
 remove_empty (array<tree> l) {
   array<tree> r;
@@ -71,7 +122,7 @@ tokenize_document (tree body) {
 }
 
 static array<string>
-populates_lambda (hashmap<string,tree> &lambda, tree doc, tree src) {
+populates_lambda (latex_hash &lambda, tree doc, tree src) {
   string s= as_string (src);
   array<string> l_src= tokenize (s, "\n\n{\\tmtexmark}\n\n");
   l_src= remove_empty (l_src);
@@ -188,7 +239,7 @@ latex_conservative_document_to_tree (string s, bool as_pic, bool keep_src,
     if (is_document (d) && N(d) == 2 && is_uptodate_tm_document (d[0])) {
       tree document= d[0](1, N(d[0]));
       tree uninit= tree (UNINIT);
-      hashmap<string,tree> lambda (uninit);
+      latex_hash lambda (uninit);
       array<string> keys= populates_lambda (lambda, d[0], d[1]);
       if (N(keys) == 0) return "";
       keys= sort_keys (keys);
