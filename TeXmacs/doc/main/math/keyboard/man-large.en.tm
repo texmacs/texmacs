@@ -54,7 +54,7 @@
 
   Sometimes you may want large delimiters of a particular size, instead of
   self-adjusting ones. This can be achieved by resizing the expression in
-  between the brackets using <menu|Format|Transform|Resize object>.
+  between the brackets using the items in <menu|Format|Adjust>.
 
   Notice that it is possible to insert a pair of invisible brackets using
   <shortcut|(math-bracket-open "." "." #t)>. This is for instance useful in

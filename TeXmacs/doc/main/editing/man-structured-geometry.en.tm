@@ -55,8 +55,8 @@
     tag for the shortcuts to apply.
 
     <item*|Box modifiers>The tags <markup|move>, <markup|shift>,
-    <markup|resize> and <markup|clipped><compound|markup|> from the
-    <menu|Format|Transform> menu.
+    <markup|resize>, <markup|extend>, <markup|clipped>, <markup|smashed>,
+    <markup|swell> from the <menu|Format|Adjust> menu.
 
     <item*|Animations>The durations of animations can be modified using
     <shortcut|(geometry-left)> and <shortcut|(geometry-right)>.
