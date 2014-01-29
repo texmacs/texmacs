@@ -20,16 +20,8 @@
  * Reimport of exported TeXmacs documents
  ******************************************************************************/
 
-struct latex_hash {
-  hashmap<string,tree> h;
-  string latex_normalize (string s);
-  inline latex_hash (tree init, int n=1, int max=1): h (init, n, max) { };
-  inline tree  operator [] (string x) { return h[latex_normalize (x)]; }
-  inline tree& operator () (string x) { return h(latex_normalize (x)); }
-};
-
 string
-latex_hash::latex_normalize (string s) {
+latex_normalize (string s) {
   // Normalize a bit LaTeX spaces and clean comments
   char status= 'N';
   int i, n= N(s);
@@ -68,8 +60,16 @@ latex_hash::latex_normalize (string s) {
       }
     }
   }
-  return r;
+  return trim_spaces (r);
 }
+
+struct latex_hash {
+  hashmap<string,tree> h;
+  inline string latex_normalize (string s) { return ::latex_normalize (s); };
+  inline latex_hash (tree init, int n=1, int max=1): h (init, n, max) { };
+  inline tree  operator [] (string x) { return h[latex_normalize (x)]; }
+  inline tree& operator () (string x) { return h(latex_normalize (x)); }
+};
 
 static array<tree>
 remove_empty (array<tree> l) {
@@ -141,7 +141,7 @@ populates_lambda (latex_hash &lambda, tree doc, tree src) {
     // asymetry due to \\end{document} and preamble only present in src.
     l_src= range (l_src, 1, N(l_src)-1);
   else
-  return array<string> ();
+    return array<string> ();
   for (int i=0; i<N(l_body); i++)
     lambda(l_src[i])= l_body[i];
   return l_src;
@@ -159,9 +159,39 @@ sort_keys (array<string> l) {
   return l;
 }
 
+static bool
+latex_paragraph_end (string s, int i) {
+  int n= N(s), count= 0;
+  while (i<n && count < 2) {
+    if (s[i] == '\n') count++;
+    else if (s[i] == ' ' || s[i] == '\t');
+    else if (s[i] == '%' && (i > 0 && s[i-1] != '\\'))
+      while (i < n && s[i] != '\n') i++;
+    else return false;
+    i++;
+  }
+  return true;
+}
+
+array<string>
+tokenize_at_line_feed (string s, string sep) {
+  int start=0;
+  array<string> a;
+  for (int i=0; i<N(s); )
+    if (test (s, i, sep)
+        && (N(s) == N(sep) + i || latex_paragraph_end (s, i+N(sep)))) {
+      a << s (start, i);
+      i += N(sep);
+      start= i;
+    }
+    else i++;
+  a << s(start, N(s));
+  return a;
+}
+
 static array<string>
 recover_document (string s, string p) {
-  array<string> r, t= tokenize (s, "\n" * p * "\n");
+  array<string> r, t= tokenize_at_line_feed (s, p);
   int i, n= N(t);
   if (n < 2) return t;
   for (i=0; i<n-1; i++)
