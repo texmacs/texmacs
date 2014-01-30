@@ -29,6 +29,7 @@
 (tm-define tmtex-packages '())
 (tm-define tmtex-provided-packages '())
 (tm-define tmtex-replace-style? #t)
+(define tmtex-languages '())
 (define tmtex-src (make-ahash-table))
 (define tmtex-env (make-ahash-table))
 (define tmtex-macros (make-ahash-table))
@@ -559,7 +560,6 @@
 (define (tmtex-file l)
   (let* ((doc (car l))
 	 (styles (cadr l))
-	 (lang (caddr l))
 	 (init (or (cadddr l) '(collection)))
 	 (init-bis (if (list>1? init)
                      (map (lambda (x) (cons (cadr x) (caddr x))) (cdr init))
@@ -583,7 +583,7 @@
                (body* (tmtex doc-body)))
           (if (== (get-preference "latex->texmacs:preserve-source") "on")
             (set! body* (map-in-order attach-macros body*)))
-	  (list '!file body* styles* lang init preamble*)))))
+	  (list '!file body* styles* tmtex-languages init preamble*)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Simple text
@@ -1170,7 +1170,9 @@
 	      ((== "par-first" var) (tmtex-make-parmod "0pt" "0pt" val arg))
 	      ((== "par-par-sep" var) (tmtex-make-parsep val arg))
               ((== var "language")
-               `(!group (!concat (selectlanguage ,val) " " ,arg)))
+                (begin
+                  (set! tmtex-languages (append (list val) tmtex-languages))
+                  `(!group (!concat (selectlanguage ,val) " " ,arg))))
 	      ((== var "color")
                ;; TODO: define color when necessary
 	        (if (and (= (string-length val) 7) (char=? (string-ref val 0) #\#))
@@ -2641,6 +2643,7 @@
 	(latex-set-packages '())
 	(set! tmtex-style (car style))
 	(set! tmtex-packages (cdr style))
+	(set! tmtex-languages (list lan))
         (import-tmtex-styles)
 	(tmtex-style-init body)
         (set! doc (tmtex-style-preprocess doc))

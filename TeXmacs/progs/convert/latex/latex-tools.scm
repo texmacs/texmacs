@@ -436,9 +436,6 @@
 ;; Page size settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (latex-preamble-language lan)
-      (string-append "\\usepackage[" lan "]{babel}\n"))
-
 (define (latex-preamble-page-type init)
   (let* ((l0 (ahash-table->list init))
          (l1 (map car l0))

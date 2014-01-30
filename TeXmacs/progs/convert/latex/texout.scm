@@ -77,19 +77,23 @@
           (output-verbatim "\\documentclass")
           (output-verbatim tm-style-options)
           (output-verbatim "{" (if (nlist? style) style (cAr style)) "}\n")
-          (cond ((== lan "korean")
-                 (output-verbatim "\\usepackage{hangul}\n"))
-                ((in? lan '("chinese" "taiwanese" "japanese"))
-                 (with opt (cond ((== lan "japanese")  "{min}")
-                                 ((== lan "taiwanese") "{bsmi}")
-                                 ((== lan "chinese")   "{gbsn}"))
-                   (set! post-begin (string-append "\\begin{CJK*}{UTF8}" opt "\n"))
-                   (set! pre-end "\n\\end{CJK*}")
-                   (output-verbatim "\\usepackage{CJK}\n")))
-                (else
-                  (output-verbatim "\\usepackage[" lan "]{babel}\n")
-                  (if tmtex-use-unicode?
-                    (output-verbatim "\\usepackage[utf8]{inputenc}\n"))))
+          (with main-lang (cAr lan)
+            (cond ((== main-lang "korean")
+                   (output-verbatim "\\usepackage{hangul}\n"))
+                  ((in? main-lang '("chinese" "taiwanese" "japanese"))
+                   (with opt (cond ((== main-lang "japanese")  "{min}")
+                                   ((== main-lang "taiwanese") "{bsmi}")
+                                   ((== main-lang "chinese")   "{gbsn}"))
+                     (set! post-begin
+                       (string-append "\\begin{CJK*}{UTF8}" opt "\n"))
+                     (set! pre-end "\n\\end{CJK*}")
+                     (output-verbatim "\\usepackage{CJK}\n")))
+                  (else
+                    (with langs
+                      (apply string-append (list-intersperse lan ", "))
+                      (output-verbatim "\\usepackage[" langs "]{babel}\n"))
+                    (if tmtex-use-unicode?
+                      (output-verbatim "\\usepackage[utf8]{inputenc}\n")))))
           (output-verbatim tm-uses)
           (if (string-occurs? "makeidx" (latex-use-package-command doc-body))
             (output-verbatim "\\makeindex"))
