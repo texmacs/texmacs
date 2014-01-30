@@ -219,7 +219,7 @@
 ("<bullet>"	"#2022")
 
 ;; General punctuation
-("<ldots>"	"#2026")
+("..."	        "#2026")
 ;("<permil>"	"#2030") ; see symbol-unicode-math.scm
 ("<prime>"	"#2032")
 ("<backprime>"	"#2035")
