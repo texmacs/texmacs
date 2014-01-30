@@ -141,6 +141,8 @@
                      "texmacs->latex:indirect-bib"))
             (toggle ("Allow for macro definitions in preamble"
                      "texmacs->latex:use-macros"))
+            (toggle ("Dump TeXmacs document into LaTeX source"
+                     "texmacs->latex:preserve-source"))
             (enum ("Encoding" "texmacs->latex:encoding")
                   ("Strict Ascii" "ascii")
                   ("Cork charset with TeX catcode definition in preamble" "cork")
