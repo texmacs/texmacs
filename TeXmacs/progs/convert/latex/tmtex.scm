@@ -1298,9 +1298,7 @@
 
 (define (tmtex-as-eps name)
   (with u (url-relative current-save-target (unix->url name))
-    (if (or (string-ends? name ".ps")
-	    (string-ends? name ".eps")
-	    (not (url-exists? u)))
+    (if (url-exists? u)
 	(list 'includegraphics name)
 	(let* ((suffix (url-suffix u))
 	       (fm (string-append (format-from-suffix suffix) "-file")))
