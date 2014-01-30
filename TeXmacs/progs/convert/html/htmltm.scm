@@ -593,7 +593,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (html-postproc st)
-  (let* ((st (replace-in-stree st "<varspace>" '(nbsp))))
+  (let* ((st (replace-in-stree st "<varspace>" '(nbsp)))
+         (st (replace-in-stree st "\" " "'' "))
+         (st (replace-in-stree st " \"" " ``")))
     st))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
