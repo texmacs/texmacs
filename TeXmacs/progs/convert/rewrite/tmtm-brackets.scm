@@ -42,6 +42,16 @@
 ;; Bracket matching
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (contains-tags? t l)
+  (cond ((or (nlist? t) (null? t)) #f)
+        ((in? (car t) l) #t)
+        (else
+          (with found? #f
+            (for-each (lambda (x)
+                        (set! found? (or found? (contains-tags? x l))))
+                      t)
+            found?))))
+
 (define (tmtm-match-brackets-sub l level)
   ;; Returns (l' level') with
   ;;   l     : list to complete
@@ -68,7 +78,7 @@
 
 (define (tmtm-match-brackets-bis l)
   (cond ((npair? l) l)
-	((== (car l) 'concat)
+	((and (== (car l) 'concat) (or (contains-tags? l '(right left))))
 	 (let ((complete (tmtm-match-brackets-concat (cdr l))))
 	   (cons 'concat (map tmtm-match-brackets-bis complete))))
 	((or (func? l 'around 3) (func? l 'around* 3) (func? l 'big-around 2))
