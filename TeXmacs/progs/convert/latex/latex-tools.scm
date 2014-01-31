@@ -220,11 +220,11 @@
            (doc* (latex-mark-document (list-copy doc)))
            (src* (serialize-latex (texmacs->latex doc* opts)))
            (str  (object->string `(document ,doc* ,src*)))
-           (d    (cpp-verbatim-snippet->texmacs (encode-base64 str) #t "ascii"))
+           (d    (cpp-verbatim-snippet->texmacs (encode-base64 str) #f "ascii"))
            (d*   `(!paragraph ""
                               "-----BEGIN TEXMACS DOCUMENT-----"
                               ""
-                              ,(tree->stree d)
+                              ,@(cdr (tree->stree d))
                               ""
                               "-----END TEXMACS DOCUMENT-----")))
       `(!file ,@(cdr t) (!paragraph "" (!comment ,(tmtex d*)))))))
