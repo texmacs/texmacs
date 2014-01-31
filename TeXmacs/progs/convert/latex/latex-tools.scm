@@ -72,7 +72,7 @@
         ((list? doc) (for-each latex-catcode-defs-sub doc))))
 
 (define (latex-catcode-defs-char* c)
-  (if (in? c '(#\< #\> #\|))
+  (if (in? c '(#\< #\>))
     (ahash-set! latex-catcode-table (string c)
                 (number->string (char->integer c)))))
 

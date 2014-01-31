@@ -375,6 +375,7 @@
 	      ((== c #\35) (tmtex-text-sub "fl" l))
 	      ((== c #\36) (tmtex-text-sub "ffi" l))
 	      ((== c #\37) (tmtex-text-sub "ffl" l))
+	      ((== c #\174) (tmtex-text-sub "{\\textbar}" l))
 	      (else 
 		(cons
 		  (if (or tmtex-use-unicode? tmtex-use-ascii?)
