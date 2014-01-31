@@ -339,6 +339,7 @@
   (list->tmstring tm_recompose (string array_string))
   (string-next tm_char_next (int string int))
   (string-previous tm_char_previous (int string int))
+  (tmstring-split tm_string_split (array_string string))
 
   ;; Packrat grammar and parsing tools
   (packrat-define packrat_define (void string string tree))

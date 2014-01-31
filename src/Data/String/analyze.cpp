@@ -808,6 +808,14 @@ tm_search_backwards (string s, int pos, string in) {
   return -1;
 }
 
+array<string>
+tm_string_split (string s) {
+  int i= 0, n= N(s);
+  while (i < n/2)
+    tm_char_forwards (s, i);
+  return array<string> (s(0, i), s(i, n));
+}
+
 /******************************************************************************
 * Quoting
 ******************************************************************************/
