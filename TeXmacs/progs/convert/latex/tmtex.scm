@@ -2435,7 +2435,10 @@
   (math-close (,tmtex-mathclose 1))
   (math-ordinary (,tmtex-mathord 1))
   (math-ignore (,tmtex-mathord 1))
-  ((:or eqnarray eqnarray* leqnarray*) (,tmtex-eqnarray 1))
+  ((:or eqnarray eqnarray* leqnarray*
+        gather multline gather* multline* align
+        flalign alignat align* flalign* alignat*) (,tmtex-eqnarray  1))
+
   (eq-number (,tmtex-default -1))
 
   ((:or code cpp-code mmx-code scm-code shell-code scilab-code verbatim-code)
