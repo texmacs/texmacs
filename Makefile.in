@@ -536,7 +536,7 @@ DLLPATH = $(PATH) $(WINSPARKLE_PATH)
 DLLS_IN_PATH = $(wildcard $(addsuffix /$(1),$(subst :, ,$(DLLPATH))))
 DLL_LIST = pthreadGC2.dll libgcc_s_dw2-1.dll QtCore4.dll QtGui4.dll QtXml4.dll \
            mingwm10.dll libgmp*.dll libguile*.dll libfreetype*.dll libltdl*.dll libiconv*.dll \
-           libintl-8.dll libstdc++*.dll libpoppler*.dll libpng16*.dll libz*.dll $(GS_EXE) $(GS_DLL) wget.exe $(WINSPARKLE_DLL)
+           libintl-8.dll libstdc++*.dll libpoppler*.dll libpng16*.dll zlib1.dll $(GS_EXE) $(GS_DLL) wget.exe $(WINSPARKLE_DLL)
 DLLS = $(foreach DLL,$(DLL_LIST),$(call DLLS_IN_PATH,$(DLL)))
 
 WINDOWS_BUNDLE: TEXMACS
