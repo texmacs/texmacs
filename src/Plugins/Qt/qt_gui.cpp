@@ -1063,7 +1063,7 @@ qt_gui_rep::put_graphics_on_clipboard (url file) {
     if (extension == "svg") mime = "image/svg+xml"; //this works with Inskcape version >= 0.47
     
     string filecontent;
-    load_string (as_string (file), filecontent, true);
+    load_string (file, filecontent, true);
     
     c_string tmp (filecontent);
     QByteArray rawdata (tmp);
