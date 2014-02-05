@@ -342,26 +342,23 @@ init_misc () {
 
 static void
 setup_inkscape_extension () {
+debug_boot << "attempt install of inkscape extension \n ";
 #if defined(__MINGW__) || defined(__MINGW32__) || defined (OS_WIN32)
-  url ink_ext = url( get_env ("APPDATA") * "/inkscape/extensions/");
+  url ink_ext = url ("$APPDATA/inkscape/extensions");
 #else
   url ink_ext = "~/.config/inkscape/extensions/";
 #endif 
-  if (exists_in_path ("inkscape") && exists (ink_ext)) {
-    // this detection is used in scheme.
-    // Does it really work for windows?
-    // Shouldn't we rather detect inkscape.exe?
-
+  if ( exists (ink_ext)) {
     url f1 = url (ink_ext * "texmacs.inx");
     url f2 = url (ink_ext * "texmacs_reedit.py");
     url f3 = url (ink_ext * "texmacs_latex.sty");
     url plug_source = url ("$TEXMACS_PATH/misc/inkscape_plugin/");
-    debug_boot << "installing or updating inkscape plugin\n";
+    debug_boot << "installing or updating inkscape extension\n";
     copy (url (plug_source * "texmacs.inx"), f1);
     copy (url (plug_source * "texmacs_reedit.py"), f2);
     copy (url (plug_source * "texmacs_latex.sty"), f3);
     if (!(exists (f1) && exists (f2))) {
-      debug_boot << "automatic install of inkscape plugin failed\n; ";
+      debug_boot << "automatic install of inkscape extension failed\n; ";
       debug_boot << "see documentation for manual install\n";
     }
   }

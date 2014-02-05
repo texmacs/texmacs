@@ -150,8 +150,8 @@ TeXmacs_init_paths (int& argc, char** argv) {
   
   if (get_env ("TEXMACS_PATH") == "")
     set_env ("TEXMACS_PATH", as_string (exedir * ".."));
-  if (get_env ("HOME") == "")
-    set_env ("HOME", get_env("USERPROFILE"));
+//  if (get_env ("HOME") == "") //now set in immediate_options otherwise --setup option fails
+//    set_env ("HOME", get_env("USERPROFILE"));
   // HACK
   // In WINE the variable PWD is already in the outer Unix environment 
   // so we need to override it to have a correct behaviour
@@ -431,6 +431,8 @@ void
 immediate_options (int argc, char** argv) {
   if (get_env ("TEXMACS_HOME_PATH") == "")
 #ifdef __MINGW32__
+    if (get_env ("HOME") == "")
+        set_env ("HOME", get_env("USERPROFILE"));
     set_env ("TEXMACS_HOME_PATH", get_env ("APPDATA") * "\\TeXmacs");
 #else
     set_env ("TEXMACS_HOME_PATH", get_env ("HOME") * "/.TeXmacs");
