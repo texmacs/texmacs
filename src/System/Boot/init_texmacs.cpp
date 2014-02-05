@@ -352,7 +352,7 @@ debug_boot << "attempt install of inkscape extension \n ";
     url f1 = url (ink_ext * "texmacs.inx");
     url f2 = url (ink_ext * "texmacs_reedit.py");
     url f3 = url (ink_ext * "texmacs_latex.sty");
-    url plug_source = url ("$TEXMACS_PATH/misc/inkscape_plugin/");
+    url plug_source = url ("$TEXMACS_PATH/misc/inkscape_extension/");
     debug_boot << "installing or updating inkscape extension\n";
     copy (url (plug_source * "texmacs.inx"), f1);
     copy (url (plug_source * "texmacs_reedit.py"), f2);
