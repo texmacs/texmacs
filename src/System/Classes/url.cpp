@@ -805,11 +805,13 @@ complete (url base, url sub, url u, string filter, bool flag) {
 url
 complete (url base, url u, string filter, bool flag) {
   // cout << "complete " << base << " |||| " << u << LF;
-  if (is_none (base)) return base;
-  if (is_none (u)) return u;
-  if ((!is_root (base)) && (!is_rooted_name (base))) {
-    failed_error << "base= " << base << LF;
-    FAILED ("invalid base url");
+  if (!is_rooted(u)) {
+     if (is_none (base)) return base;
+     if (is_none (u)) return u;
+     if ((!is_root (base)) && (!is_rooted_name (base))) {
+        failed_error << "base= " << base << LF;
+        FAILED ("invalid base url");
+     }
   }
   if (is_name (u) || (is_concat (u) && is_root (u[1]) && is_name (u[2]))) {
     url comp= base * u;
