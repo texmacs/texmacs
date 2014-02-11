@@ -339,10 +339,10 @@ edit_cursor_rep::adjust_cursor () {
 	if (dx == 0) ddelta= DELTA;
       }
       else if (ddelta > 0) {
-	if (p != tp ||
-	    tree_path (sp, mv->ox, mv->oy, mv->delta + eps * ddelta) == tp)
-	  mv->delta += eps * ddelta;
-	ddelta >>= 1;
+        if (p != tp ||
+            tree_path (sp, mv->ox, mv->oy, mv->delta + eps * ddelta) == tp)
+          mv->delta += eps * ddelta;
+        ddelta >>= 1;
       }
     }
   }
@@ -363,6 +363,7 @@ edit_cursor_rep::go_to_here () {
   if (cu->valid) adjust_cursor ();
   if (mv_status == DIRECT) mv= copy (cu);
   notify_change (THE_CURSOR);
+  call ("notify-cursor-moved", object (DIRECT));
 }
 
 void
@@ -377,6 +378,7 @@ edit_cursor_rep::go_to (path p) {
       mv= copy (cu);
     }
     notify_change (THE_CURSOR);
+    call ("notify-cursor-moved", object (DIRECT));
   }
 }
 
