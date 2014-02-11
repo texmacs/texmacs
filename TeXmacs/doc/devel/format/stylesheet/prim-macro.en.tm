@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.16>
+<TeXmacs|1.0.7.21>
 
 <style|tmdoc>
 
@@ -62,7 +62,7 @@
       arguments of a macro-defined tag while it is active.
     </itemize>
 
-    When more than one arguments are specified,
+    When more than one argument is specified,
     <explain-macro|arg|var|index-1|<math|\<cdots\>>|index-n> expands to a
     subtree of the argument <src-arg|var>. The value of the named argument
     must be a compound tree (not a string). The operands <src-arg|var> until
@@ -106,7 +106,7 @@
 
     Stated otherwise, <markup|map-args> applies <src-arg|foo> to all subtrees
     of the macro argument <src-arg|var> (or a range of subtrees if
-    <src-arg|first> and <src-arg|last> are specified) and collect the result
+    <src-arg|first> and <src-arg|last> are specified) and collects the result
     in a tree with label <src-arg|root>. In addition, the second argument to
     <src-arg|foo> gives its position of the first argument in the expansion
     of <src-arg|var>.
@@ -119,7 +119,7 @@
       Comma-separated lists.
 
       The <markup|comma-separated> tag has any arity (though it does not make
-      much sense with arity zero) and typeset its operands interspersed with
+      much sense with arity zero) and typesets its operands interspersed with
       commas.
 
       <\tm-fragment>
