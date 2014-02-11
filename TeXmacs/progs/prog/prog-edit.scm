@@ -141,8 +141,12 @@
 
 (define (select-brackets* row col br ibr)
   (let* ((prev (program-bracket-backward row col br ibr ))
-         (next (program-bracket-forward row col br ibr )))
-    (set-alt-selection "alternate" (append prev next))))
+         (next (program-bracket-forward row col br ibr ))
+         ; avoid too many delayed commands while moving fast
+         (sel? (nnull? (get-alt-selection "alternate"))))
+    (if sel? (cancel-alt-selection "alternate"))
+    (set-alt-selection "alternate" (append prev next))
+    (if (not sel?) (delayed (:pause 1000) (cancel-alt-selection "alternate")))))
 
 (tm-define (select-brackets br ibr)
   (:synopsis "Highlights the innermost matching brackets around the cursor")
@@ -158,9 +162,7 @@
          (ch (program-character row col*)))
     (cond ((== esc ch) (noop))
           ((== ibr ch) (select-brackets* row col* br ibr))
-          ((== br ch) (select-brackets* row col br ibr))
-          ((nnull? (get-alt-selection "alternate"))
-           (cancel-alt-selection "alternate")))))
+          ((== br ch) (select-brackets* row col br ibr)))))
 
 (tm-define (bracket-open br ibr esc)
   (with sel? (selection-active-normal?)
