@@ -275,8 +275,7 @@ qt_ui_element_rep::qt_ui_element_rep (types _type, blackbox _load)
  get_qmenu() when they shouldn't.
  */
 qt_ui_element_rep::~qt_ui_element_rep() {
-  if (cachedMenu)
-    cachedMenu->deleteLater();
+  delete cachedMenu;
 }
 
 blackbox
@@ -324,7 +323,8 @@ qt_ui_element_rep::make_popup_widget () {
  */
 QMenu*
 qt_ui_element_rep::get_qmenu() {
-  if (!cachedMenu) cachedMenu = as_qaction()->menu();
+  delete cachedMenu;
+  cachedMenu = as_qaction()->menu();
   return cachedMenu;
 }
 
@@ -352,9 +352,10 @@ qt_ui_element_rep::as_qaction () {
   //if (DEBUG_QT_WIDGETS)
   //debug_widgets << "as_qaction: " << type_as_string() << LF;
 
-  if (cachedAction)
-    return cachedAction;
-
+    // DON'T: this breaks dynamic menus! cachedMenu seems to duplicate what
+    // cachedAction did before, and now cachedAction makes no sense... :(
+    //  if (cachedAction) return cachedAction;
+  
   switch (type) {
     case vertical_menu:
     case horizontal_menu:
