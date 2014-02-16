@@ -156,7 +156,8 @@
   (let* ((c (cursor-path))
          (p (cDr c))
          (q (tree->path t)))
-    (and (> (length p) (length q))
+    (and (list? q)
+         (> (length p) (length q))
          (== (sublist p 0 (length q)) q)
          (sublist c (length q) (length c)))))
 
