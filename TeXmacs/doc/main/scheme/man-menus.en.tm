@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.99.1>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Creating your own dynamic menus>
@@ -18,7 +18,7 @@
   </scm-code>
 
   Here <scm-arg|def> is a program which represents the entries of the menu.
-  In particular, you may take a<nbsp>look at the files in the directory
+  In particular, you may take a look at the files in the directory
 
   <\verbatim>
     \ \ \ \ $TEXMACS_PATH/progs/menu
@@ -43,37 +43,73 @@
 
     (if <scm-arg|condition> <scm-arg|menu-definition>)
 
+    (when condition menu-definition)
+
     (link <scm-arg|variable>)
+
+    (former)
   </scm-code>
 
-  \;
-
   The constructors <scm|=\<gtr\>> and <scm|-\<gtr\>> are used to create
-  pulldown or pullright menus and <scm-arg|menu-definition> should contain a
-  program which creates the submenu. The constructor <scm|("entry"
-  <scm-arg|action>)> creates an ordinary entry, where <scm-arg|action> will
-  be compiled and executed when you click on <scm|entry>. Items of a menu may
-  be separated using <verbatim|--->. The constructor <scm|if> is used for
-  inserting menu items only if a certain <scm-arg|condition> is satisfied
-  (for instance, if we are in math mode).
+  <with|font-shape|italic|pulldown> or <with|font-shape|italic|pullright>
+  menus and <scm-arg|menu-definition> should contain a program which creates
+  the submenu. In the main (or system) menu bar all root items are pulldown
+  menus and all submenus of these are pullright. Both pulldown and pullright
+  may be used in toolbars or other widgets.
 
-  Finally, if you declared a menu <scm-arg|name>, then you may use this menu
-  indirectly using the <scm|link> constructor. This indirect way of declaring
-  submenus has two advantages
+  The constructor <scm|("entry" <scm-arg|action>)> creates an ordinary entry,
+  where <scm-arg|action> will be compiled and executed when you click on
+  <scm|entry>. Items of a menu may be separated using <verbatim|--->. The
+  constructor <scm|if> is used for inserting menu items only if a certain
+  <scm-arg|condition> is satisfied (for instance, if we are in math mode),
+  whereas <scm|while> always inserts the item but deactivates (e.g. greying
+  it out) it <scm-arg|condition> is not met.
 
-  <\itemize>
-    <item>An ``indirect'' submenu may be linked to as many menus as we like.
+  If you declared a menu <scm-arg|name>, then you may use this menu
+  indirectly using the <scm|link> constructor, thus one may link any such
+  ``indirect'' submenu to as many menus as desired.
 
-    <item>New items may be added to ``indirect'' submenus
-    <with|font-shape|italic|a posteriori> using <scm|menu-append>.
-  </itemize>
+  Finally, new items may be added to any given menu <with|font-shape|italic|a
+  posteriori> using <scm|former>, as in the following example:
 
-  The main <TeXmacs> menus are <scm|texmacs-menu>, <scm|texmacs-popup-menu>,
-  <scm|texmacs-main-icons>, <scm|texmacs-mode-icons>,
-  <scm|texmacs-focus-icons> and <scm|texmacs-extra-icons>. Other standard
-  indirect menus are <scm|file-menu>, <scm|edit-menu>, <scm|insert-menu>,
-  <scm|text-menu>, <scm|paragraph-menu>, <scm|document-menu> and
-  <scm|help-menu>.
+  <\scm-code>
+    (tm-menu (tools-menu)
+
+    \ \ (former)
+
+    \ \ ---
+
+    \ \ ("New item" (noop)))
+  </scm-code>
+
+  The main <TeXmacs> menus are:
+
+  <\itemize-dot>
+    <item><scm|texmacs-menu>: contains the root entries of the main menu bar
+    at the top of the window (or desktop under <name|MacOS>). It uses
+    <scm|link> to display <scm|file-menu>, <scm|edit-menu>,
+    <scm|insert-menu>, <scm|text-menu>, <scm|paragraph-menu>,
+    <scm|document-menu> and <scm|help-menu> among others.
+
+    <item><scm|texmacs-main-icons>: contains the main toolbar, which
+    typically features buttons to open and save files, copy and paste text,
+    etc.
+
+    <item><scm|texmacs-mode-icons>: contains the icons which depend on the
+    current editing mode, that is: mathematics, text, code, etc.
+
+    <item><scm|texmacs-focus-icons>: these icons change with the cursor. One
+    should install here any icons that are specific to a particular tag or
+    context.
+
+    <item><scm|texmacs-extra-icons>: custom icons for user extensions.
+
+    <item><scm|texmacs-popup-menu>: the menu which pops up when the user
+    right-clicks on a <TeXmacs> document. Extending or replacing this menu is
+    useful for instance for plugin writers: you may want to display some
+    extra actions while removing others when the user in inside a session for
+    your plugin.
+  </itemize-dot>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
@@ -85,8 +121,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
