@@ -48,6 +48,7 @@ qt_menu_rep::make_popup_widget () {
 
 widget
 qt_menu_rep::popup_window_widget (string s) {
+  (void) s;
 //  as_qaction()->menu()->setWindowTitle (to_qstring (s));  // totally useless
   return this;
 }

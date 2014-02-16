@@ -1,6 +1,6 @@
 
 /******************************************************************************
-* MODULE     : qt_menu.h
+* MODULE     : qt_menu.hpp
 * DESCRIPTION: QT menu proxies
 * COPYRIGHT  : (C) 2007  Massimiliano Gubinelli
 *******************************************************************************
@@ -36,7 +36,7 @@
  is owned by us as explained. This ensures correct memory management between
  TeXmacs and Qt since qt_menu_rep is sometimes cached at TeXmacs level.
  
- @note This object is *not intended* for its use in toolbars, menu bars or
+ @note This object is *not intended* to be used in toolbars, menu bars or
        windows.
  */
 class qt_menu_rep: public qt_widget_rep {
