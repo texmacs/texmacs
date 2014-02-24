@@ -96,7 +96,8 @@ qt_printer_widget_rep::showDialog () {
   qt_system(from_qstring(_cmd));  // FIXME? qt_system is synchronous (blocking!)
   
   // execute the scheme closure 
-  commandAfterExecution ();
+  if (!is_nil (commandAfterExecution))
+    commandAfterExecution ();
 }
 
 
