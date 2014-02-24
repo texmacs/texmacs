@@ -15,6 +15,7 @@
 #include "qt_utilities.hpp"
 #include "qt_window_widget.hpp"
 #include "qt_ui_element.hpp"  // qt_choice_command_rep
+#include "qt_picture.hpp"  // xpm_image
 
 #include "QTMMenuHelper.hpp"
 #include "QTMGuiHelper.hpp"
@@ -203,6 +204,9 @@ QTMMinibarAction::QTMMinibarAction (QWidget* parent, array<widget>& arr)
  */
 QWidget*
 QTMMinibarAction::createWidget (QWidget* parent) {
+  static QImage* pxm = xpm_image ("tm_add.xpm"); // See qt_tm_widget.cpp 
+  static QSize sz = (pxm ? pxm->size() : QSize (16, 16));
+  
   if (DEBUG_QT_WIDGETS) debug_widgets << "QTMMinibarAction::createWidget\n";
   QWidget* wid= new QWidget (parent);
   QBoxLayout* l= new QBoxLayout (QBoxLayout::LeftToRight, wid);
@@ -228,7 +232,7 @@ QTMMinibarAction::createWidget (QWidget* parent) {
       tb->setAutoRaise (true);
       tb->setPopupMode (QToolButton::InstantPopup);
       tb->setStyle (qtmstyle());
-        //  tb->setIconSize (QSize (12,12));
+      tb->setIconSize (sz);
       QFont f = tb->font();
       int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
       f.setPixelSize (fs > 0 ? fs : QTM_MINI_FONTSIZE);
