@@ -38,13 +38,6 @@
 #include "QTMInteractivePrompt.hpp"
 #include "QTMInteractiveInputHelper.hpp"
 
-
-#ifdef Q_WS_MAC
-#define UNIFIED_TOOLBAR
-// enable the unified toolbar style on the mac. To work properly this requires
-// a modification of the widget hierarchy of the main window.
-#endif
-
 int menu_count = 0;  // zero if no menu is currently being displayed
 list<qt_tm_widget_rep*> waiting_widgets;
 
@@ -199,17 +192,17 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   {
     // set proper sizes for icons
     QImage *pxm = xpm_image ("tm_new.xpm");
-    QSize sz = (pxm ? pxm->size() : QSize(24,24));
+    QSize sz = (pxm ? pxm->size() : QSize (24, 24));
     tweak_iconbar_size (sz);
     mainToolBar->setIconSize (sz);
     pxm = xpm_image ("tm_section.xpm");
-    sz = (pxm ? pxm->size() : QSize(20,20));
+    sz = (pxm ? pxm->size() : QSize (20, 20));
     tweak_iconbar_size (sz);
-    modeToolBar->setIconSize(sz);
+    modeToolBar->setIconSize (sz);
     pxm = xpm_image ("tm_add.xpm");
-    sz = (pxm ? pxm->size() : QSize(16,16));
+    sz = (pxm ? pxm->size() : QSize (16, 16));
     tweak_iconbar_size (sz);
-    focusToolBar->setIconSize(sz);
+    focusToolBar->setIconSize (sz);
   }  
   
   QWidget *cw= new QWidget();
@@ -217,16 +210,16 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   
     // The main layout
   
-  QVBoxLayout *bl = new QVBoxLayout(cw);
-  bl->setContentsMargins(0,1,0,0);
-  bl->setSpacing(0);
-  cw->setLayout(bl);
+  QVBoxLayout *bl = new QVBoxLayout (cw);
+  bl->setContentsMargins (0, 1, 0, 0);
+  bl->setSpacing (0);
+  cw->setLayout (bl);
   QWidget* q = main_widget->as_qwidget(); // force creation of QWidget
-  q->setParent(qwid); // q->layout()->removeWidget(q) will reset the parent to this
-  bl->addWidget(q);
+  q->setParent (qwid); // q->layout()->removeWidget(q) will reset the parent to this
+  bl->addWidget (q);
   
-  mw->setCentralWidget(cw);
-  
+  mw->setCentralWidget (cw);
+
 #ifdef UNIFIED_TOOLBAR
 
   mw->setUnifiedTitleAndToolBarOnMac(true);
