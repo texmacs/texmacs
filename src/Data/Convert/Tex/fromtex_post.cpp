@@ -2136,12 +2136,14 @@ latex_to_tree (tree t1) {
 
   if (is_document) {
     tree the_body   = compound ("body", t13);
-    tree the_style  = compound ("style", style);
+    tree the_version= compound ("TeXmacs", TEXMACS_VERSION);
+    tree the_style  = compound ("style", tuple (style));
     if (textm_natbib)
       the_style= compound ("style", tuple (style, "cite-author-year"));
 
     tree r= tree (DOCUMENT, the_style, the_body);
     if (N (initial) > 0) r << compound ("initial", initial);
+    r << the_version;
 
     r= latex_add_conservative_attachments (r);
     // cout << "\n\nr= " << r << "\n\n";
