@@ -1121,6 +1121,7 @@
 ("small figure" "figura pequeña")
 ("small skip" "salto pequeño")
 ("small table" "tabla pequeña")
+("solution" "solución")
 ("source code" "código fuente")
 ("space" "espacio")
 ("space between lines" "espacio entre líneas")

@@ -1186,6 +1186,7 @@
 ("small figure" "kleine Abbildung")
 ("small skip" "kleiner Abstand")
 ("small table" "kleiner eigenständiger Tabellenblock")
+("solution" "Lösung")
 ("source" "Quellcode")
 ("source code" "Quellcode")
 ("source tags" "Codeformatierung")

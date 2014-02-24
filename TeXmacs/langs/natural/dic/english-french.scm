@@ -1414,6 +1414,7 @@
 ("small skip" "petit saut")
 ("small table" "petit tableau")
 ("small" "petit")
+("solution" "solution")
 ("solve in" "résoudre en")
 ("solve" "résoudre")
 ("solving equations" "résolution d'équations")
