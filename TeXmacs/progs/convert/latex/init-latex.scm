@@ -164,7 +164,8 @@
          (current      (cpp-latex-document->texmacs s as-pic keep-src range))
          (s-current*   (tree->stree current))
          (s-current    (prepare-document (cDr s-current*))))
-    (while (and (!= s-reference s-current) (!= s-old s-current))
+    (while (and (!= s-reference s-current) (!= s-old s-current)
+                (or (< (length range) 2) (!= (cAr range) (cADr range))))
            (set! range
              (append range (resolve-range s-reference s-current*)))
            (set! s-old s-current)
