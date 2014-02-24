@@ -75,7 +75,7 @@ static array<tree>
 remove_empty (array<tree> l) {
   array<tree> r;
   for (int i=0; i<N(l); i++)
-    if (N(l[i] != document ("")) > 0)
+    if (N(l[i]) > 0 && l[i] != document (""))
       r << l[i];
   return r;
 }
@@ -173,7 +173,7 @@ latex_paragraph_end (string s, int i) {
   return true;
 }
 
-array<string>
+static array<string>
 tokenize_at_line_feed (string s, string sep) {
   int start=0;
   array<string> a;
@@ -466,8 +466,10 @@ separate_documents (tree t, tree &the_good, tree &the_bad, tree &the_ugly) {
     the_good= t;
   else if (N(u) > 0) {
     the_good << u;
-    the_bad << u << compound ("textm@break");
+    the_bad << u;
   }
+  else if (N(the_bad) > 0 && the_bad[N(the_bad)-1] == compound ("textm@break"))
+    the_bad= the_bad(0, N(the_bad)-1);
 }
 
 tree
@@ -479,13 +481,222 @@ latex_add_conservative_attachments (tree doc) {
   for (int i=2; i<N(doc); i++)
     mdoc[i]= doc[i];
 
-  tree unmarked (DOCUMENT), marked (DOCUMENT), msrc (DOCUMENT), aux;
+  tree unmarked (DOCUMENT), marked (DOCUMENT), msrc (DOCUMENT), att;
   separate_documents (doc[1][0], unmarked, marked, msrc);
   mdoc[1]= compound ("body", marked);
   doc[1][0]= unmarked;
   msrc= compound ("associate", "latex-src", msrc);
   mdoc= compound ("associate", "latex-doc", mdoc);
-  aux= compound ("auxiliary", compound ("collection", mdoc, msrc));
-  doc << aux;
+  att= compound ("attachments", compound ("collection", mdoc, msrc));
+  doc << att;
   return doc;
+}
+
+/******************************************************************************
+ * Reexport of imported LaTeX documents
+ ******************************************************************************/
+
+static tree
+extract_from_doc (tree t, string label) {
+  if (!is_document (t))
+    return "";
+  int i= 0, n= N(t);
+  while (i<n) {
+    if (as_string (L(t[i])) == label)
+      return t[i];
+    i++;
+  }
+  return "";
+}
+
+static tree
+extract_from_attachements (tree t, string what) {
+  if (!(is_compound (t, "attachments", 1) &&
+        is_compound (t[0], "collection") && N(t[0]) > 0))
+    return "";
+  tree u, col= t[0];
+  int i= 0, n= N(col);
+  while (i<n) {
+    u= col[i];
+    if (as_string (L(u)) == "associate" && N(u) == 2 && u[0] == what)
+      return u[1];
+    i++;
+  }
+  return "";
+}
+
+static array<tree>
+populate_texmacs_latex_hash (tree t, hashmap<tree,tree> &h) {
+  tree msrc= extract_from_attachements (t, "latex-src");
+  // recovering list of doc fragments from marked document
+  tree mdoc= extract_from_attachements (t, "latex-doc");
+  if (extract_from_doc (mdoc, "TeXmacs")
+      != compound ("TeXmacs", TEXMACS_VERSION) || msrc == "")
+    return array<tree> ();
+  mdoc= extract_from_doc (mdoc, "body");
+  if (!(is_compound (mdoc, "body", 1) && is_document (mdoc[0])))
+    return array<tree> ();
+  mdoc= mdoc[0];
+  array<tree> ldoc;
+  tree tmp (DOCUMENT);
+  int i, n= N(mdoc);
+  for (i=0; i<n; i++) {
+    if (is_compound (mdoc[i], "textm@break")) {
+      if (N(tmp) > 0)
+        ldoc << tmp;
+      tmp= tree (DOCUMENT);
+    }
+    else
+      tmp << mdoc[i];
+  }
+  if (N(tmp) > 0)
+    ldoc << tmp;
+
+  // recovering list of src fragments from source snippet
+  array<tree> lsrc (N(msrc));
+  n= N(msrc);
+  for (i=0; i<n; i++) {
+    if (is_compound (msrc[i], "latex-src", 3))
+      lsrc[i]= msrc[i][2];
+    else
+      lsrc[i]= "";
+  }
+
+  // associating fragments
+  if (N(lsrc) != N(ldoc))
+    debug_convert << "Warning: marked doc and marked source"
+      << "are not associable\n";
+  n= N(ldoc);
+  for (i=0; i<n; i++)
+    h(ldoc[i])= lsrc[i];
+
+  // we return the list of keys
+  return ldoc;
+}
+
+static bool
+test_subdocument (tree t, int i, tree test) {
+  int n= N(t), m= N(test), j=0;
+  while (j<m) {
+    if (i>=n) return false;
+    if (t[i]!=test[j]) return false;
+    i++; j++;
+  }
+  return true;
+}
+
+static array<tree>
+split_document_childs (tree t, tree sep) {
+  int start=0;
+  array<tree> a;
+  if (!is_document (t)) {
+    a << t;
+    return a;
+  }
+  for (int i=0; i<N(t); )
+    if (test_subdocument (t, i, sep)) {
+      a << t (start, i);
+      i += N(sep);
+      start= i;
+    }
+    else i++;
+  a << t(start, N(t));
+  return a;
+}
+
+static array<tree>
+recover_latex_texmacs (tree u, tree p) {
+  array<tree> r, t= split_document_childs (u, p);
+  int i, n= N(t);
+  if (n < 2) return t;
+  for (i=0; i<n-1; i++)
+    r << t[i] << p;
+  r << t[n-1];
+  return r;
+}
+
+static array<tree>
+recover_latex_texmacs (array<tree> a, array<tree> l, array<tree> keys) {
+  if (N(l) == 0) return a;
+  tree p= l[0];
+  array<tree> r;
+  int i, n= N(a);
+  for (i=0; i<n; i++)
+    if (contains (a[i], keys))
+      r << a[i];
+    else
+      r << recover_latex_texmacs (a[i], p);
+  return recover_latex_texmacs (r, range (l, 1, N(l)), keys);
+}
+
+static array<tree>
+recover_latex_texmacs (tree body, array<tree> keys) {
+  return remove_empty (recover_latex_texmacs (A(body), keys, keys));
+}
+
+static bool
+same_containers (tree u, tree v) {
+  return is_document (u) && is_document (v) && N(u) > 2 && N(v) > 2    &&
+    extract_from_doc (u, "TeXmacs") == extract_from_doc (v, "TeXmacs")   &&
+    extract_from_doc (u, "style")   == extract_from_doc (v, "style")   &&
+    extract_from_doc (u, "initial") == extract_from_doc (v, "initial");
+}
+
+struct tkey_less_eq_operator {
+  static bool leq (tree s1, tree s2) {
+    return N(s1) > N(s2);
+  }
+};
+
+static array<tree>
+sort_keys (array<tree> l) {
+  merge_sort_leq<tree,tkey_less_eq_operator> (l);
+  return l;
+}
+
+tree
+conservative_texmacs_to_latex (tree t) {
+  tree uninit= tree (UNINIT);
+  hashmap<tree,tree> h (uninit);
+  tree body= extract_from_doc (t, "body");
+  tree atts= extract_from_doc (t, "attachments");
+  tree mdoc= extract_from_attachements (atts, "latex-doc");
+  array<tree> keys= populate_texmacs_latex_hash (atts, h);
+  if (N(keys) == 0)
+    return "";
+  keys= sort_keys (keys);
+  array<tree> ldoc= recover_latex_texmacs (body, keys);
+
+  /*
+    Since we recover using only the document's body, we have to compare
+    the "container" of t and the original "container" in att (the style
+    and the initial, actually) and invalid the ldoc preamble related stuff.
+
+    If the container is valid: use a simple '(document ...) as container.
+
+    If preamble has changed OR if containers differs : use t as container.
+  */
+
+  tree rbody (DOCUMENT);
+  int i, n= N (ldoc);
+  for (i=0; i<n; i++) {
+    tree tmp= h[ldoc[i]];
+    if (tmp != uninit)
+      rbody << compound ("!conservative", tmp);
+    else
+      rbody << ldoc[i];
+  }
+  tree r (DOCUMENT);
+  if (!same_containers (t, mdoc)
+      || (N(rbody) > 0 && !is_compound (rbody[0], "!conservative", 1))) {
+    if (N(ldoc) > 0 && N(rbody) > 0 && is_compound (rbody[0], "!conservative"))
+      rbody[0]= ldoc[0];
+    r << extract_from_doc (t, "TeXmacs")
+      << extract_from_doc (t, "style")
+      << compound ("body", rbody)
+      << extract_from_doc (t, "initial");
+  }
+  else
+    r= rbody;
+  return r;
 }

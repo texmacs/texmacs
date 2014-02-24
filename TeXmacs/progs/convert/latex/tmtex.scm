@@ -594,6 +594,13 @@
             (set! body* (map-in-order attach-macros body*)))
 	  (list '!file body* styles* tmtex-languages init preamble*)))))
 
+(define (convert-charset t)
+  (cond ((string? t) (unescape-angles (utf8->cork t)))
+        ((list>0? t) `(,(car t) ,@(map convert-charset (cdr t))))))
+
+(define (tmtex-conservative l)
+  `(!verbatim* ,(tmtex-tt (convert-charset (car l)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Simple text
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2192,10 +2199,6 @@
 (define (tmtex-list l)
   (map-in-order tmtex l))
 
-(define (convert-charset t)
-  (cond ((string? t) (unescape-angles (utf8->cork t)))
-        ((list>0? t) `(,(car t) ,@(map convert-charset (cdr t))))))
-
 (tm-define (tmtex x)
   (with src (ahash-ref tmtex-src x)
     (cond ((not (not src))
@@ -2343,6 +2346,7 @@
 	apply begin end func env) tmtex-noop)
   
   (shown tmtex-id)
+  (!conservative tmtex-conservative)
   (!file tmtex-file)
   (!arg tmtex-tex-arg))
       
@@ -2645,6 +2649,9 @@
 
 (tm-define (texmacs->latex x opts)
   ;;(display* "texmacs->latex [" opts "], " x "\n")
+  (if (and (tmfile? x) (tmfile-extract x 'attachments))
+    (with try (tree->stree (conservative-texmacs->latex (stree->tree x)))
+      (if (!= try "") (set! x try))))
   (if (tmfile? x)
       (let* ((body (tmfile-extract x 'body))
 	     (style (tmtex-get-style (tmfile-extract x 'style)))

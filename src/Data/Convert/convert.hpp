@@ -73,6 +73,7 @@ string get_latex_style (tree t);
 string string_arg (tree t, bool url= false);
 array<tree> tokenize_concat (tree t, array<tree> a, bool keep= false);
 tree   latex_add_conservative_attachments (tree t);
+tree   conservative_texmacs_to_latex (tree t);
 bool   is_verbatim (tree t);
 int    latex_search_forwards (string s, int pos, string in);
 int    latex_search_forwards (string s, string in);

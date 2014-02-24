@@ -363,6 +363,7 @@
   (cpp-verbatim->texmacs verbatim_document_to_tree (tree string bool string))
   (parse-latex parse_latex (tree string))
   (parse-latex-document parse_latex_document (tree string))
+  (conservative-texmacs->latex conservative_texmacs_to_latex (tree tree))
   (latex->texmacs latex_to_tree (tree tree))
   (cpp-latex-document->texmacs latex_document_to_tree (tree string bool bool array_array_double))
   (latex-class-document->texmacs latex_class_document_to_tree (tree string))

@@ -4194,6 +4194,19 @@ tmg_parse_latex_document (tmscm arg1) {
 }
 
 tmscm
+tmg_conservative_texmacs_2latex (tmscm arg1) {
+  TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "conservative-texmacs->latex");
+
+  tree in1= tmscm_to_tree (arg1);
+
+  // TMSCM_DEFER_INTS;
+  tree out= conservative_texmacs_to_latex (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
 tmg_latex_2texmacs (tmscm arg1) {
   TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "latex->texmacs");
 
@@ -7752,6 +7765,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("cpp-verbatim->texmacs",  tmg_cpp_verbatim_2texmacs, 3, 0, 0);
   tmscm_install_procedure ("parse-latex",  tmg_parse_latex, 1, 0, 0);
   tmscm_install_procedure ("parse-latex-document",  tmg_parse_latex_document, 1, 0, 0);
+  tmscm_install_procedure ("conservative-texmacs->latex",  tmg_conservative_texmacs_2latex, 1, 0, 0);
   tmscm_install_procedure ("latex->texmacs",  tmg_latex_2texmacs, 1, 0, 0);
   tmscm_install_procedure ("cpp-latex-document->texmacs",  tmg_cpp_latex_document_2texmacs, 4, 0, 0);
   tmscm_install_procedure ("latex-class-document->texmacs",  tmg_latex_class_document_2texmacs, 1, 0, 0);
