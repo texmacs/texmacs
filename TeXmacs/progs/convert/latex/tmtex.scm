@@ -509,7 +509,8 @@
 (define (tmtex-filter-preamble l)
   (cond ((or (nlist? l) (null? l)) '())
 	((macro-definition? l) (list l))
-	((== (car l) 'hide-preamble) (map comment-preamble (cdadr l)))
+	((and (func? l 'hide-preamble 1)
+              (list>0? (cadr l))) (map comment-preamble (cdadr l)))
 	(else (append-map tmtex-filter-preamble (cdr l)))))
 
 (define (tmtex-filter-body l)
