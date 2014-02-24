@@ -30,7 +30,6 @@
 (tm-define tmtex-provided-packages '())
 (tm-define tmtex-replace-style? #t)
 (define tmtex-languages '())
-(define tmtex-src (make-ahash-table))
 (define tmtex-env (make-ahash-table))
 (define tmtex-macros (make-ahash-table))
 (define tmtex-dynamic (make-ahash-table))
@@ -526,33 +525,6 @@
 	   (tmtex-apply-init `(verbatim ,body) init*)))
 	(else body)))
 
-(define (trim-document t)
-  (cond ((not (func? t 'document)) t)
-        ((== "" (cadr t)) (trim-document `(document ,@(cddr t))))
-        ((== "" (cAr t))  (trim-document `(document ,@(cDdr t))))
-        (else t)))
-
-(define (make-tree-src-hash t)
-  (let* ((col (if (and (list>0? t) (list? (cdr t))) (cdr t) '()))
-         (col (filter (lambda (x)
-                        (and (func? x 'associate)
-                             (func? (cAr x) 'latex-tree-src))) col))
-         (l   (map (lambda (x)
-                     (let ((key  (second (cAr x)))
-                           (val  (third  (cAr x))))
-                       (list key val))) col)))
-    (for-each
-      (lambda (x)
-        (let ((stm (car x))
-              (src (list (trim-document (cadr x)))))
-          (if (filter-preamble? stm)
-            (begin
-              (ahash-set! tmtex-src (tmtex-filter-preamble stm) src)
-              (ahash-set! tmtex-src (tmtex-filter-body stm) src)))
-          (ahash-set! tmtex-src stm src)))
-      l)
-    tmtex-src))
-
 (define (attach-macros t)
   (with macros
     (filter (lambda (x) (not (ahash-ref tmtex-macros x)))
@@ -580,11 +552,6 @@
          (latex-init-style-hyps styles)
     (if (== (get-preference "texmacs->latex:expand-user-macros") "on")
 	(set! doc-preamble '()))
-    (set! tmtex-src (make-ahash-table))
-    (if (and
-          (== (get-preference "latex->texmacs:preserve-source") "on")
-          (nnull? att))
-      (make-tree-src-hash att))
     (if (null? styles) (tmtex doc)
 	(let* ((styles* (tmtex-filter-styles styles))
 	       (preamble* (ahash-with tmtex-env :preamble #t
@@ -2200,12 +2167,9 @@
   (map-in-order tmtex l))
 
 (tm-define (tmtex x)
-  (with src (ahash-ref tmtex-src x)
-    (cond ((not (not src))
-           (list '!verbatim* (tmtex-tt (convert-charset (car src)))))
-          ((string? x) (tmtex-string x))
+    (cond ((string? x) (tmtex-string x))
           ((list>0? x) (tmtex-apply (car x) (cdr x)))
-          (else ""))))
+          (else "")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dispatching
