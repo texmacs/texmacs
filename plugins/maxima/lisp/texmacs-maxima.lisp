@@ -22,7 +22,7 @@
 (declare-top
 	 (special lop rop ccol $gcprint $inchar)
 	 (*expr tex-lbp tex-rbp))
-(defconstant texport *standard-output*)
+(setq texport *standard-output*)
 
 (defun tex-stripdollar (x)
   (let ((s (quote-% (maybe-invert-string-case (symbol-name (stripdollar x))))))
