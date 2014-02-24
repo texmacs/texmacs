@@ -51,6 +51,16 @@ struct mathemagix_language_rep: language_rep {
   string get_color (tree t, int start, int end);
 };
 
+struct r_language_rep: language_rep {
+  hashmap<string,string> colored;
+  r_language_rep (string name);
+  text_property advance (tree t, int& pos);
+  array<int> get_hyphens (string s);
+  void hyphenate (string s, int after, string& left, string& right);
+  string get_color (tree t, int start, int end);
+};
+
+
 struct cpp_language_rep: language_rep {
   hashmap<string,string> colored;
   cpp_language_rep (string name);
