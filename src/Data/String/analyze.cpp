@@ -539,7 +539,7 @@ static string hundreds[10]= {
 
 string
 roman_nr (int nr) {
-  if (nr<0) return "-" * roman_nr (nr);
+  if (nr<0) return "-" * roman_nr (-nr);
   if (nr==0) return "o";
   if (nr>1000) return "m" * roman_nr (nr-1000);
   if (nr==1000) return "m";
@@ -557,7 +557,7 @@ Roman_nr (int nr) {
 
 string
 alpha_nr (int nr) {
-  if (nr<0) return "-" * alpha_nr (nr);
+  if (nr<0) return "-" * alpha_nr (-nr);
   if (nr==0) return "0";
   if (nr<=26) return string ((char) (((int) 'a')+ nr-1));
   return alpha_nr ((nr-1)/26) * alpha_nr (((nr-1)%26)+1);
@@ -570,6 +570,7 @@ Alpha_nr (int nr) {
 
 string
 fnsymbol_nr (int nr) {
+  if (nr<0) nr= -nr;
   string sym, r;
   int i, m= (nr-1)%6, n= ((nr-1)/6)+1;
   switch (m) {
