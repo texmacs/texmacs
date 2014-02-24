@@ -526,19 +526,6 @@
 	   (tmtex-apply-init `(verbatim ,body) init*)))
 	(else body)))
 
-(define (attach-macros t)
-  (with macros
-    (filter (lambda (x) (not (ahash-ref tmtex-macros x)))
-            (cdr (latex-macro-defs t)))
-    (if (not (list>0? macros)) t
-      (begin
-        (for-each (lambda (x) (ahash-set! tmtex-macros x #t)) macros)
-        (with preamble
-          `(!preamble ,(latex-serialize-preamble `(!append ,@macros)))
-          `(!concat (!preamble "%%%%%%%%%% Start TeXmacs macros\n")
-                    ,preamble (!preamble "%%%%%%%%%% End TeXmacs macros\n")
-                    ,t))))))
-
 (define (tmtex-file l)
   (let* ((doc (car l))
          (styles (cadr l))
@@ -558,8 +545,6 @@
              (preamble* (ahash-with tmtex-env :preamble #t
                                     (map-in-order tmtex doc-preamble)))
              (body* (tmtex doc-body)))
-        (if (== (get-preference "latex->texmacs:preserve-source") "on")
-          (set! body* (map-in-order attach-macros body*)))
         (list '!file body* styles* tmtex-languages init preamble*)))))
 
 (define (convert-charset t)
@@ -2605,6 +2590,19 @@
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (attach-macros t)
+  (with macros
+    (filter (lambda (x) (not (ahash-ref tmtex-macros x)))
+            (cdr (latex-macro-defs t)))
+    (if (not (list>0? macros)) t
+      (begin
+        (for-each (lambda (x) (ahash-set! tmtex-macros x #t)) macros)
+        (with preamble
+          `(!preamble ,(latex-serialize-preamble `(!append ,@macros)))
+          `(!concat (!preamble "%%%%%%%%%% Start TeXmacs macros\n")
+                    ,preamble (!preamble "%%%%%%%%%% End TeXmacs macros\n")
+                    ,t))))))
+
 (define (tmtex-get-style sty)
   (cond ((not sty) (set! sty (list "article")))
         ((string? sty) (set! sty (list sty)))
@@ -2614,9 +2612,11 @@
 
 (tm-define (texmacs->latex x opts)
   ;;(display* "texmacs->latex [" opts "], " x "\n")
+  (define attach-macros? #f)
   (if (and (tmfile? x) (tmfile-extract x 'attachments))
     (with try (tree->stree (conservative-texmacs->latex (stree->tree x)))
-      (if (!= try "") (set! x try))))
+      (if (!= try "") (set! x try))
+      (if (func? x 'document) (set! attach-macros? #t))))
   (if (tmfile? x)
       (let* ((body (tmfile-extract x 'body))
 	     (style (tmtex-get-style (tmfile-extract x 'style)))
@@ -2646,6 +2646,7 @@
 	     (x3 (tmtm-match-brackets x2)))
 	(tmtex-initialize opts)
 	(with r (tmtex (tmpre-produce x3))
+          (if attach-macros? (set! r (map-in-order attach-macros r)))
 	  (if (not tmtex-use-macros?)
 	      (set! r (latex-expand-macros r)))
           r))))
