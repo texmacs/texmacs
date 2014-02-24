@@ -41,7 +41,7 @@
 #include "PDFWriter/OutputStreamTraits.h"
 #include "PDFWriter/XObjectContentContext.h"
 #include "PDFWriter/PDFFormXObject.h"
-
+#include "PDFWriter/InfoDictionary.h"
 
 /******************************************************************************
  * pdf_hummus_renderer
@@ -103,6 +103,7 @@ class pdf_hummus_renderer_rep : public renderer_rep {
   ObjectIDType destId;
   hashmap<string,int> label_id;
   int label_count;
+  hashmap<string,string> metadata;
 
   // outline support
   ObjectIDType outlineId;
@@ -240,7 +241,8 @@ public:
   void anchor (string label, SI x1, SI y1, SI x2, SI y2);
   void href (string label, SI x1, SI y1, SI x2, SI y2);
   void toc_entry (string kind, string title, SI x, SI y);
-  
+  void set_metadata (string kind, string val);
+  void flush_metadata ();
 };
 
 /******************************************************************************
@@ -321,6 +323,7 @@ pdf_hummus_renderer_rep::~pdf_hummus_renderer_rep () {
   flush_dests();
   flush_outlines();
   flush_fonts();
+  flush_metadata();
  
   {
     // flush alphas
@@ -2116,8 +2119,43 @@ pdf_hummus_renderer_rep::flush_outlines()
 }
 
 /******************************************************************************
- * shadow rendering in trivial on pdf
- ******************************************************************************/
+* shadow rendering is trivial on pdf
+******************************************************************************/
+
+void
+pdf_hummus_renderer_rep::set_metadata (string kind, string val) {
+  metadata (kind)= val;
+}
+
+static PDFTextString
+as_hummus_string (string s) {
+  c_string u (cork_to_utf8 (s));
+  PDFTextString r;
+  std::string stds ((char*) u);
+  return r.FromUTF8 (stds);
+}
+
+void
+pdf_hummus_renderer_rep::flush_metadata () {
+  if (N(metadata) == 0) return;
+  DocumentContext& documentContext= pdfWriter.GetDocumentContext();
+  TrailerInformation& trailerInfo= documentContext.GetTrailerInformation();
+  InfoDictionary& info= trailerInfo.GetInfo();
+  if (metadata->contains ("title"))
+    info.Title= as_hummus_string (metadata ["title"]);
+  if (metadata->contains ("author"))
+    info.Author= as_hummus_string (metadata ["author"]);
+  if (metadata->contains ("subject"))
+    info.Subject= as_hummus_string (metadata ["subject"]);
+  string creator= "TeXmacs " * string (TEXMACS_VERSION);
+  string producer= creator * " + Hummus" ;
+  info.Creator= as_hummus_string (creator);
+  info.Producer= as_hummus_string (producer);
+}
+
+/******************************************************************************
+* shadow rendering is trivial on pdf
+******************************************************************************/
 
 void
 pdf_hummus_renderer_rep::fetch (SI x1, SI y1, SI x2, SI y2, renderer ren, SI x, SI y) {
