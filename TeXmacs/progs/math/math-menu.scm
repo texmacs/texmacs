@@ -527,7 +527,12 @@
   (symbol "<supsetneq>")
   (symbol "<supsetneqq>")
   (symbol "<varsupsetneq>")
-  (symbol "<varsupsetneqq>"))
+  (symbol "<varsupsetneqq>")
+
+  (symbol "<nsqsubset>")
+  (symbol "<nsqsubseteq>")
+  (symbol "<nsqsupset>")
+  (symbol "<nsqsupseteq>"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Greek characters
