@@ -2135,18 +2135,15 @@ latex_to_tree (tree t1) {
   // cout << "\n\nt13= " << t13 << "\n\n";
 
   if (is_document) {
-    array<tree> breaks;
-    tree t14= pick_paragraph_breaks (t13, breaks);
-    // cout << "\n\nt14= " << t14 << "\n\n";
-    tree auxiliary  = compound ("collection", breaks);
-    tree the_body   = compound ("body", t14);
+    tree the_body   = compound ("body", t13);
     tree the_style  = compound ("style", style);
     if (textm_natbib)
       the_style= compound ("style", tuple (style, "cite-author-year"));
 
     tree r= tree (DOCUMENT, the_style, the_body);
     if (N (initial) > 0) r << compound ("initial", initial);
-    if (N (breaks) > 0)  r << compound ("attachments", auxiliary);
+
+    r= latex_add_conservative_attachments (r);
     // cout << "\n\nr= " << r << "\n\n";
     return r;
   }

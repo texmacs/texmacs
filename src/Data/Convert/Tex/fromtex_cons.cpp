@@ -427,9 +427,12 @@ merge_non_ordered_break_trees (tree t) {
   return tree (DOCUMENT, reverse (A(r)));
 }
 
-tree
-pick_paragraph_breaks (tree t, array<tree> &b) {
-  if (is_atomic (t)) return t;
+static void
+separate_documents (tree t, tree &the_good, tree &the_bad, tree &the_ugly) {
+  if (is_atomic (t)) {
+    the_good= t;
+    return;
+  }
   t= merge_non_root_break_trees (t);
   t= merge_empty_break_trees (t);
   t= merge_non_ordered_break_trees (t);
@@ -438,7 +441,6 @@ pick_paragraph_breaks (tree t, array<tree> &b) {
   t= remove_empty_withs (t);
   t= concat_sections_and_labels (t);
   int i, n= N(t);
-  tree r (L(t));
   tree u (DOCUMENT);
   unsigned int id_cnt= 0;
   for (i=0; i<n; i++) {
@@ -450,18 +452,40 @@ pick_paragraph_breaks (tree t, array<tree> &b) {
       src= simplify_correct (src);
       if (N(u) == 1 && is_compound (u[0], "hide-preamble"))
         u= u[0];
-      b << compound ("associate", "latex-tree-src" * uid,
-          compound ("latex-tree-src", u, src, from, to));
-      if (u != document ())
-        r << u;
+      the_ugly << compound ("latex-src", from, to, src);
+      if (u != document ()) {
+        the_good << u;
+        the_bad << u << compound ("textm@break");
+      }
       u= tree (DOCUMENT);
     }
     else
       u << t[i];
   }
-  if (N(u) > 0 && r == document ())
-    return t;
-  if (N(u) > 0)
-    r << u;
-  return r;
+  if (N(u) > 0 && the_good == document ())
+    the_good= t;
+  else if (N(u) > 0) {
+    the_good << u;
+    the_bad << u << compound ("textm@break");
+  }
+}
+
+tree
+latex_add_conservative_attachments (tree doc) {
+  if (!(is_document (doc) && N(doc) > 1 && is_compound (doc[1], "body", 1)))
+    return doc;
+  tree mdoc (L(doc), N(doc));
+  mdoc[0]= doc[0];
+  for (int i=2; i<N(doc); i++)
+    mdoc[i]= doc[i];
+
+  tree unmarked (DOCUMENT), marked (DOCUMENT), msrc (DOCUMENT), aux;
+  separate_documents (doc[1][0], unmarked, marked, msrc);
+  mdoc[1]= compound ("body", marked);
+  doc[1][0]= unmarked;
+  msrc= compound ("associate", "latex-src", msrc);
+  mdoc= compound ("associate", "latex-doc", mdoc);
+  aux= compound ("auxiliary", compound ("collection", mdoc, msrc));
+  doc << aux;
+  return doc;
 }
