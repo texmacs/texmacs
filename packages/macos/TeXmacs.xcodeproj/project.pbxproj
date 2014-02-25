@@ -259,6 +259,9 @@
 		4964705416F72CB500D95FC4 /* smart_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4964705016F72CB500D95FC4 /* smart_font.cpp */; };
 		4964705516F72CB500D95FC4 /* smart_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4964705016F72CB500D95FC4 /* smart_font.cpp */; };
 		4964705616F72CB500D95FC4 /* smart_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4964705016F72CB500D95FC4 /* smart_font.cpp */; };
+		4973E9A118BC945F001F74F0 /* r_language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4973E9A018BC945F001F74F0 /* r_language.cpp */; };
+		4973E9A218BC945F001F74F0 /* r_language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4973E9A018BC945F001F74F0 /* r_language.cpp */; };
+		4973E9A318BC945F001F74F0 /* r_language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4973E9A018BC945F001F74F0 /* r_language.cpp */; };
 		497822CB16EC86D40054F5BA /* tt_analyze.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 497822CA16EC86D40054F5BA /* tt_analyze.cpp */; };
 		497822CC16EC86D40054F5BA /* tt_analyze.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 497822CA16EC86D40054F5BA /* tt_analyze.cpp */; };
 		497822CD16EC86D40054F5BA /* tt_analyze.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 497822CA16EC86D40054F5BA /* tt_analyze.cpp */; };
@@ -1606,6 +1609,7 @@
 		49630B5A186D6A3600C9268F /* QTMTreeModel.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMTreeModel.hpp; sourceTree = "<group>"; };
 		4964704F16F72CB500D95FC4 /* font_guess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_guess.cpp; sourceTree = "<group>"; };
 		4964705016F72CB500D95FC4 /* smart_font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smart_font.cpp; sourceTree = "<group>"; };
+		4973E9A018BC945F001F74F0 /* r_language.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = r_language.cpp; sourceTree = "<group>"; };
 		497822CA16EC86D40054F5BA /* tt_analyze.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tt_analyze.cpp; sourceTree = "<group>"; };
 		49AA0884181166140090FD84 /* font_protrusion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_protrusion.cpp; sourceTree = "<group>"; };
 		49AA65401891A58B003DA304 /* fromtex_cons.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fromtex_cons.cpp; sourceTree = "<group>"; };
@@ -3790,6 +3794,7 @@
 				9C74D95C123BF892008959D1 /* packrat_parser.cpp */,
 				9C74D95D123BF892008959D1 /* packrat_parser.hpp */,
 				9C4B87A512AE5BD100F8571A /* packrat_serializer.cpp */,
+				4973E9A018BC945F001F74F0 /* r_language.cpp */,
 				9C0B494210A8CC110097A335 /* scheme_language.cpp */,
 				490DBDA8176EEEBD001F362A /* scilab_language.cpp */,
 				9C0B494310A8CC110097A335 /* text_language.cpp */,
@@ -4883,6 +4888,7 @@
 				9C0B4B3010A8CC110097A335 /* env_inactive.cpp in Sources */,
 				9C0B4B3110A8CC110097A335 /* env_length.cpp in Sources */,
 				9C0B4B3210A8CC110097A335 /* env_semantics.cpp in Sources */,
+				4973E9A118BC945F001F74F0 /* r_language.cpp in Sources */,
 				9C0B4B3310A8CC110097A335 /* format.cpp in Sources */,
 				9C0B4B3410A8CC110097A335 /* formatter.cpp in Sources */,
 				9C0B4B3510A8CC110097A335 /* line_item.cpp in Sources */,
@@ -5310,6 +5316,7 @@
 				4929A895170207440028991F /* grid.cpp in Sources */,
 				4929A898170207440028991F /* point.cpp in Sources */,
 				4932C1A61704F54200E87D8C /* brush.cpp in Sources */,
+				4973E9A318BC945F001F74F0 /* r_language.cpp in Sources */,
 				49DEED25170ACFB800332D9F /* picture.cpp in Sources */,
 				49DEED28170ACFB800332D9F /* raster_picture.cpp in Sources */,
 				49DEED2D170ACFDB00332D9F /* qt_picture.cpp in Sources */,
@@ -5370,6 +5377,7 @@
 				9CD4E61010B14AB300E0DD5C /* converter.cpp in Sources */,
 				9CD4E61C10B14AB300E0DD5C /* tree_correct.cpp in Sources */,
 				9CD4E61D10B14AB300E0DD5C /* tree_cursor.cpp in Sources */,
+				4973E9A218BC945F001F74F0 /* r_language.cpp in Sources */,
 				9CD4E61E10B14AB300E0DD5C /* tree_traverse.cpp in Sources */,
 				9CD4E61F10B14AB300E0DD5C /* edit_main.cpp in Sources */,
 				9CD4E62010B14AB300E0DD5C /* edit_typeset.cpp in Sources */,
