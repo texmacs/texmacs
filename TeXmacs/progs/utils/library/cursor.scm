@@ -256,6 +256,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (replace-start-forward what by)
-  (:argument what "Replace")
+  (:argument what "Find text")
   (:argument by "Replace by")
   (replace-start what by #t))
