@@ -43,6 +43,7 @@
 #include <QCoreApplication>
 #include <QLibraryInfo>
 #include <QImage>
+#include <QUrl>
 
 #include "QTMGuiHelper.hpp"
 #include "QTMWidget.hpp"
@@ -176,11 +177,20 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
       input_format = "texmacs-snippet";
     }
     else if (md->hasImage ()) {
-      QBuffer qbuf(&buf);
-      QImage image= qvariant_cast<QImage> (md->imageData());
-      qbuf.open (QIODevice::WriteOnly);
-      image.save (&qbuf, "PNG");
-      input_format = "picture";
+      if (md->hasUrls ()) {
+        QList<QUrl> l= md->urls ();
+        if (l.size () == 1) {
+          s= from_qstring (l[0].toString ());
+          input_format = "linked-picture";
+        }
+      }
+      else {
+        QBuffer qbuf(&buf);
+        QImage image= qvariant_cast<QImage> (md->imageData());
+        qbuf.open (QIODevice::WriteOnly);
+        image.save (&qbuf, "PNG");
+        input_format = "picture";
+      }
     }
     else if (md->hasHtml ()) {
       buf = md->html().toUtf8 ();
@@ -208,7 +218,9 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
     s = correct_buggy_html_paste (s);
   if (input_format != "picture" && seems_buggy_paste (s))
     s = correct_buggy_paste (s);
-  if (input_format != "" && input_format != "picture")
+  if (input_format != "" &&
+      input_format != "picture" &&
+      input_format != "linked-picture")
     s = as_string (call ("convert", s, input_format, "texmacs-snippet"));
   if (input_format == "html-snippet") {
     tree t = as_tree (call ("convert", s, "texmacs-snippet", "texmacs-tree"));
@@ -221,7 +233,11 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
     string w= as_string (size.width ()) * "px";
     string h= as_string (size.height ()) * "px";
     t << tuple (tree (RAW_DATA, s), "png") << w << h << "" << "";
-    s=  as_string (call ("convert", t, "texmacs-tree", "texmacs-snippet"));
+    s= as_string (call ("convert", t, "texmacs-tree", "texmacs-snippet"));
+  }
+  if (input_format == "linked-picture") {
+    tree im (IMAGE, s, "", "", "", "");
+    s= as_string (call ("convert", im, "texmacs-tree", "texmacs-snippet"));
   }
   t = tuple ("extern", s);
   return true;
