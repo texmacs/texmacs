@@ -125,11 +125,12 @@
         (-> "LaTeX -> TeXmacs"
             (toggle ("Import sophisticated objects as pictures"
                      "latex->texmacs:fallback-on-pictures"))
-            (toggle ("Keep track of the LaTeX source code"
-                     "latex->texmacs:preserve-source"))
-            (when (== (get-preference "latex->texmacs:preserve-source") "on")
-              (toggle ("Ensure transparent tracking"
-                       "latex->texmacs:secure-tracking"))))
+            ---
+            (toggle ("Keep track of source code and only convert changes"
+                     "latex<->texmacs:preserve-source"))
+            (when (== (get-preference "latex<->texmacs:preserve-source") "on")
+              (toggle ("Guarantee at least the quality of non conservative conversion"
+                       "latex<->texmacs:secure-tracking"))))
         (-> "TeXmacs -> LaTeX"
             (toggle ("Replace unrecognized styles"
                      "texmacs->latex:replace-style"))
@@ -146,7 +147,13 @@
             (enum ("Encoding" "texmacs->latex:encoding")
                   ("Strict Ascii" "ascii")
                   ("Cork charset with TeX catcode definition in preamble" "cork")
-                  ("Utf-8 with inputenc LaTeX package" "utf-8")))
+                  ("Utf-8 with inputenc LaTeX package" "utf-8"))
+            ---
+            (toggle ("Keep track of source code and only convert changes"
+                     "latex<->texmacs:preserve-source"))
+            (when (== (get-preference "latex<->texmacs:preserve-source") "on")
+              (toggle ("Guarantee at least the quality of non conservative conversion"
+                       "latex<->texmacs:secure-tracking"))))
         (-> "TeXmacs -> Verbatim"
             (toggle ("Wrap lines"
                      "texmacs->verbatim:wrap"))

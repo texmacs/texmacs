@@ -223,15 +223,15 @@
       (meti (text "Keep track of source code and only convert changes")
         (toggle
           (begin
-            (set-boolean-preference "latex->texmacs:preserve-source" answer)
+            (set-boolean-preference "latex<->texmacs:preserve-source" answer)
             (refresh-now "source-tracking"))
-          (get-boolean-preference "latex->texmacs:preserve-source")))
-      (meti (when (== (get-preference "latex->texmacs:preserve-source") "on")
-              (text "Ensure transparent tracking"))
-        (when (== (get-preference "latex->texmacs:preserve-source") "on")
+          (get-boolean-preference "latex<->texmacs:preserve-source")))
+      (meti (when (== (get-preference "latex<->texmacs:preserve-source") "on")
+              (text "Guarantee at least the quality of non conservative conversion"))
+        (when (== (get-preference "latex<->texmacs:preserve-source") "on")
           (toggle
-           (set-boolean-preference "latex->texmacs:secure-tracking" answer)
-           (get-boolean-preference "latex->texmacs:secure-tracking")))))))
+           (set-boolean-preference "latex<->texmacs:secure-tracking" answer)
+           (get-boolean-preference "latex<->texmacs:secure-tracking")))))))
 
 ;; BibTeX ----------
 

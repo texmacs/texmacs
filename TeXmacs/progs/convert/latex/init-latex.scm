@@ -72,8 +72,8 @@
   (if (list-1? opts) (set! opts (car opts)))
   (let*
     ((as-pic   (== (get-preference "latex->texmacs:fallback-on-pictures") "on"))
-     (keep-src (== (get-preference "latex->texmacs:preserve-source") "on")))
-    (if (== (get-preference "latex->texmacs:secure-tracking") "on")
+     (keep-src (== (get-preference "latex<->texmacs:preserve-source") "on")))
+    (if (== (get-preference "latex<->texmacs:secure-tracking") "on")
       (secured-latex-document->texmacs x as-pic keep-src)
       (cpp-latex-document->texmacs x as-pic keep-src '()))))
 
