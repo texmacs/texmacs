@@ -184,24 +184,7 @@
     (meti (text "Import sophisticated objects as pictures")
       (toggle
         (set-boolean-preference "latex->texmacs:fallback-on-pictures" answer)
-        (get-boolean-preference "latex->texmacs:fallback-on-pictures")))
-    (meti (text "Keep track of the LaTeX source code")
-      (toggle
-        (begin (set-boolean-preference "latex->texmacs:preserve-source" answer)
-               (refresh-now "secure-tracking-text")
-               (refresh-now "secure-tracking-box"))
-        (get-boolean-preference "latex->texmacs:preserve-source")))
-    (meti
-      (refreshable
-        "secure-tracking-text"
-        (when (== (get-preference "latex->texmacs:preserve-source") "on")
-          (text "Ensure transparent tracking")))
-      (refreshable
-        "secure-tracking-box"
-        (when (== (get-preference "latex->texmacs:preserve-source") "on")
-          (toggle
-            (set-boolean-preference "latex->texmacs:secure-tracking" answer)
-            (get-boolean-preference "latex->texmacs:secure-tracking"))))))
+        (get-boolean-preference "latex->texmacs:fallback-on-pictures"))))
   ======
   (bold (text "TeXmacs -> LaTeX"))
   ===
@@ -231,7 +214,24 @@
       (enum (set-pretty-preference "texmacs->latex:encoding" answer)
             '("Ascii" "Cork with catcodes" "Utf-8 with inputenc")
             (get-pretty-preference "texmacs->latex:encoding")
-            "15em"))))
+            "15em")))
+  ======
+  (bold (text "Conservative conversion options"))
+  ===
+  (refreshable "source-tracking"
+    (aligned
+      (meti (text "Keep track of source code and only convert changes")
+        (toggle
+          (begin
+            (set-boolean-preference "latex->texmacs:preserve-source" answer)
+            (refresh-now "source-tracking"))
+          (get-boolean-preference "latex->texmacs:preserve-source")))
+      (meti (when (== (get-preference "latex->texmacs:preserve-source") "on")
+              (text "Ensure transparent tracking"))
+        (when (== (get-preference "latex->texmacs:preserve-source") "on")
+          (toggle
+           (set-boolean-preference "latex->texmacs:secure-tracking" answer)
+           (get-boolean-preference "latex->texmacs:secure-tracking")))))))
 
 ;; BibTeX ----------
 
