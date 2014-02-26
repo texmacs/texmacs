@@ -153,7 +153,9 @@
                      "latex<->texmacs:preserve-source"))
             (when (== (get-preference "latex<->texmacs:preserve-source") "on")
               (toggle ("Guarantee at least the quality of non conservative conversion"
-                       "latex<->texmacs:secure-tracking"))))
+                       "latex<->texmacs:secure-tracking"))
+              (toggle ("Store tracking information in LaTeX files"
+                       "texmacs->latex:transparent-tracking"))))
         (-> "TeXmacs -> Verbatim"
             (toggle ("Wrap lines"
                      "texmacs->verbatim:wrap"))

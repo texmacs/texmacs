@@ -231,7 +231,13 @@
         (when (== (get-preference "latex<->texmacs:preserve-source") "on")
           (toggle
            (set-boolean-preference "latex<->texmacs:secure-tracking" answer)
-           (get-boolean-preference "latex<->texmacs:secure-tracking")))))))
+           (get-boolean-preference "latex<->texmacs:secure-tracking"))))
+      (meti (when (== (get-preference "latex<->texmacs:preserve-source") "on")
+              (text "Store tracking information in LaTeX files"))
+        (when (== (get-preference "latex<->texmacs:preserve-source") "on")
+          (toggle
+           (set-boolean-preference "texmacs->latex:transparent-tracking" answer)
+           (get-boolean-preference "texmacs->latex:transparent-tracking")))))))
 
 ;; BibTeX ----------
 
