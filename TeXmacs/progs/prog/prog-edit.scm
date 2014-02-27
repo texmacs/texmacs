@@ -59,8 +59,8 @@
 ;; Preferences for bracket handling
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public prog-auto-close-brackets? #f)
-(define-public prog-highlight-brackets? #f)
+(tm-define prog-auto-close-brackets? #f)
+(tm-define prog-highlight-brackets? #f)
 
 (define (notify-auto-close-brackets var val)
   (set! prog-auto-close-brackets? (== val "on")))
@@ -184,12 +184,14 @@
                   (insert (char->string br))
                   (insert-go-to (list->string `(,br ,ibr)) '(1)))))
         (insert (char->string br))))
-  (select-brackets br ibr))
+  (if prog-highlight-brackets?
+      (select-brackets br ibr)))
 
 ; TODO: warn if unmatched
 (tm-define (bracket-close br ibr esc)
   (insert (char->string ibr))
-  (select-brackets-after-movement br ibr esc))
+  (if prog-highlight-brackets?
+      (select-brackets-after-movement br ibr esc)))
 
 (tm-define (prog-select-enlarge br ibr)
   (let* ((start (selection-get-start))
