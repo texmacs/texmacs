@@ -215,7 +215,7 @@
   (if (not (func? t '!file)) t
     (let* ((opts (filter
                    (lambda (x)
-                     (!= (car x) "texmacs->latex:preserve-source"))
+                     (!= (car x) "latex<->texmacs:preserve-source"))
                    opts))
            (doc* (latex-mark-document (list-copy doc)))
            (src* (serialize-latex (texmacs->latex doc* opts)))

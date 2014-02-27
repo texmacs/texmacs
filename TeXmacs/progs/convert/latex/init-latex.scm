@@ -53,7 +53,7 @@
 
 (converter texmacs-stree latex-stree
   (:function-with-options texmacs->latex)
-  (:option "texmacs->latex:preserve-source" "off")
+  (:option "latex<->texmacs:preserve-source" "off")
   (:option "texmacs->latex:replace-style" "on")
   (:option "texmacs->latex:expand-macros" "off")
   (:option "texmacs->latex:expand-user-macros" "off")
