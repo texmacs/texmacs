@@ -444,13 +444,13 @@ parse_number (string s, int& pos) {
 	possible_exp = 0 ;
 	continue ;
       }
-      if( (possible_hex == 3 ) ) 
+      if( (possible_hex == 3 ) ) {
 	if( is_in_str( s[i], "0123456789abcdefABCDEF" ) ) {
 	  valid_number = true ;
 	  continue ;
 	} else 
 	  break ;
-      
+      }
       if( (possible_exp > 0) && valid_number && is_in_str( s[i], "eE" ) ) {
 	possible_exp = 3 ; // this means we are in the exponent
 	continue ;
