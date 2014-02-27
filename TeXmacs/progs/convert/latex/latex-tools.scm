@@ -245,7 +245,7 @@
 ;; TODO: to be rewrited with better factorisation
 (define (latex-macro-defs-sub t)
   (when (pair? t)
-    (if (or (func? t 'newcommand) (func? t 'renewcommand))
+    (if (and (or (func? t 'newcommand) (func? t 'renewcommand)) (length t > 2))
       (for-each latex-macro-defs-sub (cddr t))
       (for-each latex-macro-defs-sub (cdr t)))
     (let* ((body  (and
