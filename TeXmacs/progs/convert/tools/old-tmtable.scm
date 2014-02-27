@@ -169,7 +169,9 @@
 				  (string->number j2)
 				  name
 				  (stm-table-decode-format name value))))
-			(list-filter (cDdr x) (lambda (l) (= (length l) 7))))
+			(list-filter (cDdr x)
+                                     (lambda (l)
+                                        (and (list? l) (= (length l) 7)))))
 		   (stm-table-formats (cAr x))))
          (else '())))
 
