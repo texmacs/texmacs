@@ -373,14 +373,14 @@ pdf_hummus_renderer_rep::next_page () {
 
 void
 pdf_hummus_renderer_rep::begin_page() {
-  EStatusCode status;
+  //EStatusCode status;
   
 
   page = new PDFPage();
   page->SetMediaBox(PDFRectangle(0,0,width,height));
   contentContext = pdfWriter.StartPageContentContext(page);
   if (NULL == contentContext) {
-    status = PDFHummus::eFailure;
+    //status = PDFHummus::eFailure;
     convert_error << "Failed to create content context for page\n";
   }
   
