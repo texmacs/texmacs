@@ -245,7 +245,9 @@
 ;; TODO: to be rewrited with better factorisation
 (define (latex-macro-defs-sub t)
   (when (pair? t)
-    (for-each latex-macro-defs-sub (cdr t))
+    (if (or (func? t 'newcommand) (func? t 'renewcommand))
+      (for-each latex-macro-defs-sub (cddr t))
+      (for-each latex-macro-defs-sub (cdr t)))
     (let* ((body  (and
                     (not (logic-ref latex-needs% (car t)))
                     (logic-ref latex-texmacs-macro% (car t)
