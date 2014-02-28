@@ -332,7 +332,7 @@ latex_conservative_document_to_tree (string s, bool as_pic, bool keep_src,
   string code= replace (s(b,e), "% ", "");
   s= s(0, b-37);
   tree d= stree_to_tree (string_to_object (decode_base64 (code)));
-  if (!is_document (d) || N(d) != 2)
+  if (!is_document (d) || !is_valid_tm_document (d))
     return tree (ERROR);
   tree mdoc= d[0];
   if (!is_uptodate_tm_document (mdoc))
@@ -743,8 +743,9 @@ populate_texmacs_latex_hash (tree t, hashmap<tree,tree> &h) {
   tree msrc= extract_from_attachements (t, "latex-src");
   // recovering list of doc fragments from marked document
   tree mdoc= extract_from_attachements (t, "latex-doc");
-  if (msrc == tree (ERROR))
+  if (msrc == tree (ERROR) || N(mdoc) < 2 || !is_valid_tm_document (mdoc))
     return array<tree> ();
+  mdoc= mdoc;
   if (!is_uptodate_tm_document (mdoc))
     mdoc= upgrade (mdoc, get_document_version (mdoc));
   mdoc= extract_from_doc (mdoc, "body");
