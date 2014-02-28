@@ -186,50 +186,6 @@
 	      (else (cons head tail))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Adding TeXmacs sources
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (latex-mark-document t)
-  (with body-ref (list-index (map (lambda (x) (func? x 'body)) t) #t)
-    (if body-ref
-      (list-set!
-        t body-ref
-        `(body
-           (document
-             (tmtex@mark)
-             ,@(list-intersperse
-                 (map (lambda (x)
-                        (if (and (func? x 'hide-preamble 1)
-                                 (func? (cadr x) 'document))
-                          `(hide-preamble
-                             (document (tmtex@mark@preamble)
-                                       ,@(cdadr x)
-                                       (tmtex@mark@preamble)))
-                          x))
-                      (cdadr (list-ref t body-ref))) '(tmtex@mark))
-             (tmtex@mark)))))
-    t))
-
-(tm-define (latex-add-texmacs-sources t doc opts)
-  (:synopsis "Add to @t the source @doc coded in base64 @t")
-  (if (not (func? t '!file)) t
-    (let* ((opts (filter
-                   (lambda (x)
-                     (!= (car x) "latex<->texmacs:preserve-source"))
-                   opts))
-           (doc* (latex-mark-document (list-copy doc)))
-           (src* (serialize-latex (texmacs->latex doc* opts)))
-           (str  (object->string `(document ,doc* ,src*)))
-           (d    (cpp-verbatim-snippet->texmacs (encode-base64 str) #f "ascii"))
-           (d*   `(!paragraph ""
-                              "-----BEGIN TEXMACS DOCUMENT-----"
-                              ""
-                              ,@(cdr (tree->stree d))
-                              ""
-                              "-----END TEXMACS DOCUMENT-----")))
-      `(!file ,@(cdr t) (!paragraph "" (!comment ,(tmtex d*)))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Compute macro and environment definitions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

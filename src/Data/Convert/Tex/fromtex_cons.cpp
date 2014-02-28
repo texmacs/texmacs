@@ -17,6 +17,40 @@
 #include "merge_sort.hpp"
 
 /******************************************************************************
+ * Export of native TeXmacs documents
+ ******************************************************************************/
+
+tree
+texmacs_to_latex_mark_document (tree t) {
+  if (is_atomic (t)) return t;
+  tree r (DOCUMENT);
+  int i=0, j, n= N(t);
+  while (i<n && !is_compound (t[i], "body", 1) && !is_document (t[i][0]))
+    r << t[i++];
+  if (i == n) return t;
+  tree mbody (DOCUMENT), body= t[i][0];
+  n= N(body);
+  for (j=0; j<n-1; j++) {
+    if (is_compound (body[j], "hide-preamble", 1) && is_document (body[j][0]))
+    {
+      tree tmp (DOCUMENT);
+      tmp << compound ("tmtex@mark@preamble");
+      tmp << A(body[j][0]);
+      tmp << compound ("tmtex@mark@preamble");
+      mbody << compound ("hide-preamble", tmp) << compound ("tmtex@mark");
+    }
+    else
+      mbody << body[j] << compound ("tmtex@mark");
+  }
+  mbody << body[j];
+  r << mbody;
+  i++, n= N(t);
+  while (i<n)
+    r << t[i++];
+  return r;
+}
+
+/******************************************************************************
  * Reimport of exported TeXmacs documents
  ******************************************************************************/
 
@@ -260,11 +294,11 @@ tree
 latex_conservative_document_to_tree (string s, bool as_pic, bool keep_src,
     array<array<double> > range) {
   int b, e;
-  b= search_forwards ("%\n% -----BEGIN TEXMACS DOCUMENT-----\n%", 0, s) + 38;
+  b= search_forwards ("\n% -----BEGIN TEXMACS DOCUMENT-----\n%", 0, s) + 37;
   e= search_forwards ("% \n% -----END TEXMACS DOCUMENT-----", b, s);
   if (b < e) {
     string code= replace (s(b,e), "% ", "");
-    s= s(0, b-38);
+    s= s(0, b-37);
     tree d= stree_to_tree (string_to_object (decode_base64 (code)));
     if (is_document (d) && N(d) == 2 && is_uptodate_tm_document (d[0])) {
       tree document= d[0](1, N(d[0]));

@@ -53,6 +53,29 @@
         ((list>0? t) (map-in-order detach-macros t))
         (else t)))
 
+(define (texout-conservative-file l)
+  (let ((t     (car l))
+        (doc   (cadr l))
+        (opts  (caddr l)))
+    ;; Add to @t the source @doc coded in base64 @t
+    (if (not (func? t '!file)) t
+      (let* ((opts (filter
+                     (lambda (x)
+                       (!= (car x) "latex<->texmacs:preserve-source"))
+                     opts))
+             (doc* (tree->stree
+                     (texmacs->latex-mark-document (stree->tree doc))))
+             (src* (serialize-latex (texmacs->latex doc* opts)))
+             (str  (object->string `(document ,doc* ,src*)))
+             (d    (cpp-verbatim-snippet->texmacs
+                     (encode-base64 str) #f "ascii"))
+             (d*   `(!paragraph "-----BEGIN TEXMACS DOCUMENT-----"
+                                ""
+                                ,@(cdr (tree->stree d))
+                                ""
+                                "-----END TEXMACS DOCUMENT-----")))
+        (texout `(!file ,@(cdr t) (!paragraph "" (!comment ,d*))))))))
+
 (define (texout-file l)
   (let* ((doc-body (car l))
          (has-preamble? (latex-stree-contains? doc-body "\\begin{document}"))
@@ -372,6 +395,7 @@
         ((nlist>0? x) (display* "TeXmacs] bad formated stree:\n" x "\n"))
 	((== (car x) '!widechar) (output-tex (symbol->string (cadr x))))
 	((== (car x) '!file) (texout-file (cdr x)))
+	((== (car x) '!conservative-file) (texout-conservative-file (cdr x)))
 	((== (car x) '!preamble) (texout-preamble (cadr x)))
         ((== (car x) '!comment) (texout-comment (cadr x)))
 	((== (car x) '!document) (texout-document (cdr x)))

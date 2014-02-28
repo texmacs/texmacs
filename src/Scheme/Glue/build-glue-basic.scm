@@ -367,6 +367,7 @@
   (latex->texmacs latex_to_tree (tree tree))
   (cpp-latex-document->texmacs latex_document_to_tree (tree string bool bool array_array_double))
   (latex-class-document->texmacs latex_class_document_to_tree (tree string))
+  (texmacs->latex-mark-document texmacs_to_latex_mark_document (tree tree))
   (parse-xml parse_xml (scheme_tree string))
   (parse-html parse_html (scheme_tree string))
   (parse-bib parse_bib (tree string))

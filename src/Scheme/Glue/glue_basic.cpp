@@ -4252,6 +4252,19 @@ tmg_latex_class_document_2texmacs (tmscm arg1) {
 }
 
 tmscm
+tmg_texmacs_2latex_mark_document (tmscm arg1) {
+  TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "texmacs->latex-mark-document");
+
+  tree in1= tmscm_to_tree (arg1);
+
+  // TMSCM_DEFER_INTS;
+  tree out= texmacs_to_latex_mark_document (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
 tmg_parse_xml (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "parse-xml");
 
@@ -7769,6 +7782,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("latex->texmacs",  tmg_latex_2texmacs, 1, 0, 0);
   tmscm_install_procedure ("cpp-latex-document->texmacs",  tmg_cpp_latex_document_2texmacs, 4, 0, 0);
   tmscm_install_procedure ("latex-class-document->texmacs",  tmg_latex_class_document_2texmacs, 1, 0, 0);
+  tmscm_install_procedure ("texmacs->latex-mark-document",  tmg_texmacs_2latex_mark_document, 1, 0, 0);
   tmscm_install_procedure ("parse-xml",  tmg_parse_xml, 1, 0, 0);
   tmscm_install_procedure ("parse-html",  tmg_parse_html, 1, 0, 0);
   tmscm_install_procedure ("parse-bib",  tmg_parse_bib, 1, 0, 0);
