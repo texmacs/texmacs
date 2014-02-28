@@ -332,7 +332,7 @@ latex_conservative_document_to_tree (string s, bool as_pic, bool keep_src,
   string code= replace (s(b,e), "% ", "");
   s= s(0, b-37);
   tree d= stree_to_tree (string_to_object (decode_base64 (code)));
-  if (!is_document (d) || !is_valid_tm_document (d))
+  if (!is_document (d) || N(d) < 1 || !is_valid_tm_document (d[0]))
     return tree (ERROR);
   tree mdoc= d[0];
   if (!is_uptodate_tm_document (mdoc))
