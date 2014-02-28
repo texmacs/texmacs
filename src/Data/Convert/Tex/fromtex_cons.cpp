@@ -296,43 +296,41 @@ latex_conservative_document_to_tree (string s, bool as_pic, bool keep_src,
   int b, e;
   b= search_forwards ("\n% -----BEGIN TEXMACS DOCUMENT-----\n%", 0, s) + 37;
   e= search_forwards ("% \n% -----END TEXMACS DOCUMENT-----", b, s);
-  if (b < e) {
-    string code= replace (s(b,e), "% ", "");
-    s= s(0, b-37);
-    tree d= stree_to_tree (string_to_object (decode_base64 (code)));
-    if (is_document (d) && N(d) == 2 && is_uptodate_tm_document (d[0])) {
-      tree document= d[0](1, N(d[0]));
-      tree uninit= tree (UNINIT);
-      latex_hash lambda (uninit);
-      array<string> keys= populates_lambda (lambda, d[0], d[1]);
-      if (N(keys) == 0) return "";
-      keys= sort_keys (keys);
-      array<string> l= recover_document (s, keys);
-      tree body (DOCUMENT);
-      int i, n= N(l);
-      for (i=0; i<n; i++) {
-        tree tmp= lambda[l[i]];
-        if (tmp != uninit)
-          body << tmp;
-        else if (i == 0 && is_preamble (l[i])) {
-          document= latex_to_tree (parse_latex_document (
-                l[i] * "\n\\end{document}",
-                true, as_pic, false, array<array<double> > ()));
-          if (is_document (document)       && N(document)       > 1 &&
-              is_compound (document[1], "body", 1)                  &&
-              is_document (document[1][0]) && N(document[1][0]) > 0 &&
-              is_compound (document[1][0][0], "hide-preamble", 1))
-            body << document[1][0][0];
-        }
-        else
-          body << latex_to_tree (parse_latex (l[i], true, false, as_pic,
-                false, array<array<double> > ()));
-      }
-      document[1]= compound ("body", body);
-      return concat_document_correct (document);
+  if (b >= e) return tree (ERROR);
+  string code= replace (s(b,e), "% ", "");
+  s= s(0, b-37);
+  tree d= stree_to_tree (string_to_object (decode_base64 (code)));
+  if (!(is_document (d) && N(d) == 2 && is_uptodate_tm_document (d[0])))
+    return tree (ERROR);
+  tree document= d[0](1, N(d[0]));
+  tree uninit= tree (UNINIT);
+  latex_hash lambda (uninit);
+  array<string> keys= populates_lambda (lambda, d[0], d[1]);
+  if (N(keys) == 0) return tree (ERROR);
+  keys= sort_keys (keys);
+  array<string> l= recover_document (s, keys);
+  tree body (DOCUMENT);
+  int i, n= N(l);
+  for (i=0; i<n; i++) {
+    tree tmp= lambda[l[i]];
+    if (tmp != uninit)
+      body << tmp;
+    else if (i == 0 && is_preamble (l[i])) {
+      document= latex_to_tree (parse_latex_document (
+            l[i] * "\n\\end{document}",
+            true, as_pic, false, array<array<double> > ()));
+      if (is_document (document)       && N(document)       > 1 &&
+          is_compound (document[1], "body", 1)                  &&
+          is_document (document[1][0]) && N(document[1][0]) > 0 &&
+          is_compound (document[1][0][0], "hide-preamble", 1))
+        body << document[1][0][0];
     }
+    else
+      body << latex_to_tree (parse_latex (l[i], true, false, as_pic,
+            false, array<array<double> > ()));
   }
-  return "";
+  document[1]= compound ("body", body);
+  return concat_document_correct (document);
 }
 
 /******************************************************************************
@@ -693,21 +691,21 @@ latex_add_conservative_attachments (tree doc) {
 static tree
 extract_from_doc (tree t, string label) {
   if (!is_document (t))
-    return "";
+    return tree (ERROR);
   int i= 0, n= N(t);
   while (i<n) {
     if (as_string (L(t[i])) == label)
       return t[i];
     i++;
   }
-  return "";
+  return tree (ERROR);
 }
 
 static tree
 extract_from_attachements (tree t, string what) {
   if (!(is_compound (t, "attachments", 1) &&
         is_compound (t[0], "collection") && N(t[0]) > 0))
-    return "";
+    return tree (ERROR);
   tree u, col= t[0];
   int i= 0, n= N(col);
   while (i<n) {
@@ -716,7 +714,7 @@ extract_from_attachements (tree t, string what) {
       return u[1];
     i++;
   }
-  return "";
+  return tree (ERROR);
 }
 
 static array<tree>
@@ -725,7 +723,7 @@ populate_texmacs_latex_hash (tree t, hashmap<tree,tree> &h) {
   // recovering list of doc fragments from marked document
   tree mdoc= extract_from_attachements (t, "latex-doc");
   if (extract_from_doc (mdoc, "TeXmacs")
-      != compound ("TeXmacs", TEXMACS_VERSION) || msrc == "")
+      != compound ("TeXmacs", TEXMACS_VERSION) || msrc == tree (ERROR))
     return array<tree> ();
   mdoc= extract_from_doc (mdoc, "body");
   if (!(is_compound (mdoc, "body", 1) && is_document (mdoc[0])))
@@ -856,8 +854,7 @@ conservative_texmacs_to_latex (tree t) {
   tree atts= extract_from_doc (t, "attachments");
   tree mdoc= extract_from_attachements (atts, "latex-doc");
   array<tree> keys= populate_texmacs_latex_hash (atts, h);
-  if (N(keys) == 0)
-    return "";
+  if (N(keys) == 0) return tree (ERROR);
   keys= sort_keys (keys);
   array<tree> ldoc= recover_latex_texmacs (body, keys);
 

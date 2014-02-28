@@ -2615,7 +2615,7 @@
   (define attach-macros? #f)
   (if (and (tmfile? x) (tmfile-extract x 'attachments))
     (with try (tree->stree (conservative-texmacs->latex (stree->tree x)))
-      (if (!= try "") (set! x try))
+      (if (!= try '(error)) (set! x try))
       (if (func? x 'document) (set! attach-macros? #t))))
   (if (tmfile? x)
       (let* ((body (tmfile-extract x 'body))

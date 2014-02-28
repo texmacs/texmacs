@@ -2156,9 +2156,10 @@ tree
 latex_document_to_tree (string s,
     bool as_pic, bool keep_src, array<array<double> > range) {
   tree r;
-  if (occurs ("\n% -----BEGIN TEXMACS DOCUMENT-----\n%", s))
+  if (occurs ("\n% -----BEGIN TEXMACS DOCUMENT-----\n%", s)) {
     r= latex_conservative_document_to_tree (s, as_pic, keep_src, range);
-  if (r != "") return r;
+    if (r != tree (ERROR)) return r;
+  }
 
   command_type ->extend ();
   command_arity->extend ();
