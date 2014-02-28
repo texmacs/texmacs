@@ -78,6 +78,12 @@ tree   texmacs_to_latex_mark_document (tree t);
 bool   is_verbatim (tree t);
 int    latex_search_forwards (string s, int pos, string in);
 int    latex_search_forwards (string s, string in);
+bool   test_macro (string s, int i, string name);
+bool   test_env (string s, int i, string name, bool end=false);
+string verbatim_escape (string s);
+string latex_to_texmacs_mark_document_pre (string s, array<array<double> > ranges);
+tree   latex_to_texmacs_mark_document_post (tree r, string s);
+
 
 /*** Xml / Html / Mathml ***/
 tree   parse_xml (string s);

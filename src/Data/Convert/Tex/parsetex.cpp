@@ -134,15 +134,15 @@ is_tex_alpha (string s) {
   return true;
 }
 
-static bool
+bool
 test_macro (string s, int i, string name) {
   while (i < N(s) && s[i] == ' ') i++;
   return test (s, i, name) &&
     (N(s) == i + N(name) || !is_tex_alpha (s[i+N(name)]));
 }
 
-static bool
-test_env (string s, int i, string name, bool end=false) {
+bool
+test_env (string s, int i, string name, bool end) {
   string tok= end? "\\end":"\\begin";
   int step= end? 4:6;
   if (!test_macro (s, i, tok)) return false;
@@ -1853,155 +1853,6 @@ latex_encoding_to_iconv (string s) {
   return "";
 }
 
-static bool
-paragraph_break_here (string s, int i) {
-  int n= N(s);
-  if (i >= n || s[i] != '\n') return false;
-  i++;
-  while (i < n && s[i] == ' ') i++;
-  if (i >= n || s[i] != '\n') return false;
-  return true;
-}
-
-static bool
-in_range (double i, array<array<double> > ranges) {
-  int j, n= N(ranges);
-  for (j=0; j<n; j++)
-    if (N(ranges[j]) == 2 && ranges[j][0] <= i && i <= ranges[j][1])
-      return true;
-  return false;
-}
-
-static string
-add_paragraph_markup (string s, array<array<double> > ranges) {
-  string r;
-  int i= 0, start= 0, n= N(s), count= 0;
-  while (i < n) {
-    int j= i+1;
-    if (count == 0 && s[i] == '\n'
-        && !in_range (i, ranges)
-        && (paragraph_break_here (s, i) || (j < n && s[j] == '\\' &&
-        // strategic places to cut
-        (test_env   (s, j, "abstract")          ||
-         test_env   (s, j, "abstract", false)   ||
-         test_env   (s, j, "document")          ||
-         test_env   (s, j, "document", false)   ||
-         test_env   (s, j, "titlepage")         ||
-         test_env   (s, j, "titlepage", false)  ||
-         test_macro (s, j, "\\chapter")         ||
-         test_macro (s, j, "\\date")            ||
-         test_macro (s, j, "\\maketitle")       ||
-         test_macro (s, j, "\\part")            ||
-         test_macro (s, j, "\\section")         ||
-         test_macro (s, j, "\\subsection")      ||
-         test_macro (s, j, "\\subsubsection")   ||
-         test_macro (s, j, "\\tableofcontents") ||
-         test_macro (s, j, "\\title"))))) {
-      r << s(start, i+1)
-        << "\n\n\\textm@break{" << as_string (i) << "}\n";
-      start= i+1;
-      if (!(s[i] == '\n' && paragraph_break_here (s, i))) {
-        i+= 4;
-      }
-      else {
-        while (i < n) {
-          if (s[i] == ' ' || s[i] == '\n') i++;
-          else if (s[i] == '%' && (i == 0 || s[i-1] != '\\'))
-            while (i < n && s[i] != '\n') i++;
-          else break;
-        }
-      }
-    }
-    else if ((i == 0 || s[i-1] != '\\') && s[i] == '{')
-      i++, count++;
-    else if ((i == 0 || s[i-1] != '\\') && s[i] == '}')
-      i++, count--;
-    else
-      i++;
-  }
-  if (i!= start) r << s(start, n);
-  return r;
-}
-
-static tree
-clean_paragraph_markup (tree t, int d) {
-  if (is_atomic (t)) return t;
-  tree r(L(t));
-  int i, n= N(t);
-  if (!is_concat (t)) {
-    for (i=0; i<n; i++)
-      r << clean_paragraph_markup (t[i], d + 1);
-    return r;
-  }
-  bool merge= false;
-  for (i=0; i<n; i++) {
-    if (i+2 < n && t[i] == concat ("\n") && t[i+2] == concat ("\n")
-        && is_tuple (t[i+1], "\\textm@break", 1)) {
-      if (d == 0) {
-        if (merge)
-          r[N(r)-1]= t[i];
-        else
-          r << t[i+1];
-        merge= true;
-      }
-      else i++;
-    }
-    else if (is_tuple (t[i], "\\textm@break", 1)) {
-      if (d == 0) {
-        if (merge)
-          r[N(r)-1]= t[i];
-        else
-          r << t[i];
-        merge= true;
-      }
-    }
-    else {
-      r << clean_paragraph_markup (t[i], d);
-      merge= false;
-    }
-
-    if (is_tuple (t[i]) && N(t[i]) > 0
-        && starts (as_string (t[i][0]), "\\begin-")
-        && t[i][0] != "\\begin-document")
-      d++;
-    else if (is_tuple (t[i]) && N(t[i]) > 0
-        && starts (as_string (t[i][0]), "\\end-")
-        && t[i][0] != "\\end-document")
-      d--;
-    else if (is_tuple (t[i]) && N(t[i]) > 0 && t[i][0] == "\\begin-document")
-      d--;
-    else if (is_tuple (t[i]) && N(t[i]) > 0 && t[i][0] == "\\end-document")
-      d++;
-  }
-  return r;
-}
-
-static tree
-clean_paragraph_markup (tree t) {
-  return clean_paragraph_markup (t, 1);
-}
-
-static tree
-fill_paragraph_markup (tree t, string s) {
-  if (is_atomic (t)) return t;
-  tree r(L(t));
-  int start= 0, stop= 0;
-  for (int i=0; i<N(t); i++) {
-    if (is_tuple (t[i], "\\textm@break", 1)) {
-      stop= as_int (simplify_concat (t[i][1])) + 1;
-      r << tuple ("\\textm@break", verbatim_escape (s(start, stop)),
-            as_string (start),  as_string (stop));
-      start= stop+1;
-    }
-    else
-      r << t[i];
-  }
-  if (!is_tuple (t[N(t)-1], "\\textm@break", 1))
-    r << tuple ("\\textm@break", verbatim_escape (s(start, N(s))),
-          as_string (start),  as_string (N(s)));
-  return r;
-}
-
 tree
 parse_latex (string s, bool change, bool using_cork, bool as_pic,
     bool keep_src, array<array<double> > ranges) {
@@ -2025,12 +1876,11 @@ parse_latex (string s, bool change, bool using_cork, bool as_pic,
   ltx.pic= as_pic;
   ltx.keep_src= keep_src;
   string s1= s;
-  if (keep_src) s1= add_paragraph_markup (s, ranges);
+  if (keep_src)
+    s1= latex_to_texmacs_mark_document_pre (s, ranges);
   r= ltx.parse (s1, change?2:0);
-  if (keep_src) {
-    r= clean_paragraph_markup (r);
-    r= fill_paragraph_markup (r, s);
-  }
+  if (keep_src)
+    r= latex_to_texmacs_mark_document_post (r, s);
   r= accented_to_Cork (r);
   if (lan == "") return r;
   return compound ("!language", r, lan);
