@@ -17,6 +17,62 @@
 #include "merge_sort.hpp"
 
 /******************************************************************************
+ * Utilities
+ ******************************************************************************/
+
+static array<tree>
+remove_empty (array<tree> l) {
+  array<tree> r;
+  for (int i=0; i<N(l); i++)
+    if (N(l[i]) > 0 && l[i] != document (""))
+      r << l[i];
+  return r;
+}
+
+static array<string>
+remove_empty (array<string> l) {
+  array<string> r;
+  for (int i=0; i<N(l); i++)
+    if (l[i] != "")
+      r << l[i];
+  return r;
+}
+
+static tree
+extract_from_doc (tree t, string label) {
+  if (!is_document (t))
+    return tree (ERROR);
+  int i= 0, n= N(t);
+  while (i<n) {
+    if (as_string (L(t[i])) == label)
+      return t[i];
+    i++;
+  }
+  return tree (ERROR);
+}
+
+static string
+get_document_version (tree t) {
+  tree version= extract_from_doc (t, "TeXmacs");
+  if (is_compound (version, "TeXmacs", 1))
+    return as_string (version[0]);
+  return "";
+}
+
+bool
+is_valid_tm_document (tree t) {
+  return is_document (t) && N(t) > 2 &&
+         extract_from_doc (t, "TeXmacs") != tree (ERROR) &&
+         extract_from_doc (t, "style") != tree (ERROR) &&
+         extract_from_doc (t, "body") != tree (ERROR);
+}
+
+bool
+is_uptodate_tm_document (tree t) {
+  return get_document_version (t) == TEXMACS_VERSION;
+}
+
+/******************************************************************************
  * Export of native TeXmacs documents
  ******************************************************************************/
 
@@ -104,24 +160,6 @@ struct latex_hash {
   inline tree  operator [] (string x) { return h[latex_normalize (x)]; }
   inline tree& operator () (string x) { return h(latex_normalize (x)); }
 };
-
-static array<tree>
-remove_empty (array<tree> l) {
-  array<tree> r;
-  for (int i=0; i<N(l); i++)
-    if (N(l[i]) > 0 && l[i] != document (""))
-      r << l[i];
-  return r;
-}
-
-static array<string>
-remove_empty (array<string> l) {
-  array<string> r;
-  for (int i=0; i<N(l); i++)
-    if (l[i] != "")
-      r << l[i];
-  return r;
-}
 
 static tree
 remove_preamble_marks (tree t) {
@@ -275,32 +313,6 @@ recover_document (string s, array<string> l) {
   array<string> a;
   a << remove_end_of_document (s);
   return remove_whitespace (recover_document (a, l, l));
-}
-
-static tree
-extract_from_doc (tree t, string label) {
-  if (!is_document (t))
-    return tree (ERROR);
-  int i= 0, n= N(t);
-  while (i<n) {
-    if (as_string (L(t[i])) == label)
-      return t[i];
-    i++;
-  }
-  return tree (ERROR);
-}
-
-static string
-get_document_version (tree t) {
-  tree version= extract_from_doc (t, "TeXmacs");
-  if (is_compound (version, "TeXmacs", 1))
-    return as_string (version[0]);
-  return "";
-}
-
-bool
-is_uptodate_tm_document (tree t) {
-  return get_document_version (t) == TEXMACS_VERSION;
 }
 
 bool
