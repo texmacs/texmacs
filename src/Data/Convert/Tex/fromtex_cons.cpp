@@ -331,28 +331,28 @@ latex_conservative_document_to_tree (string s, bool as_pic, bool keep_src,
   if (N(keys) == 0) return tree (ERROR);
   keys= sort_keys (keys);
   array<string> l= recover_document (s, keys);
-  tree body (DOCUMENT);
+  tree container= mdoc, body (DOCUMENT);
   int i, n= N(l);
   for (i=0; i<n; i++) {
     tree tmp= lambda[l[i]];
     if (tmp != uninit)
       body << tmp;
     else if (i == 0 && is_preamble (l[i])) {
-      document= latex_to_tree (parse_latex_document (
+      container= latex_to_tree (parse_latex_document (
             l[i] * "\n\\end{document}",
             true, as_pic, false, array<array<double> > ()));
-      if (is_document (document)       && N(document)       > 1 &&
-          is_compound (document[1], "body", 1)                  &&
-          is_document (document[1][0]) && N(document[1][0]) > 0 &&
-          is_compound (document[1][0][0], "hide-preamble", 1))
-        body << document[1][0][0];
+      if (is_document (container)       && N(container)       > 1 &&
+          is_compound (container[1], "body", 1)                   &&
+          is_document (container[1][0]) && N(container[1][0]) > 0 &&
+          is_compound (container[1][0][0], "hide-preamble", 1))
+        body << container[1][0][0];
     }
     else
       body << latex_to_tree (parse_latex (l[i], true, false, as_pic,
             false, array<array<double> > ()));
   }
-  document[1]= compound ("body", body);
-  return concat_document_correct (document);
+  container[1]= compound ("body", body);
+  return concat_document_correct (container);
 }
 
 /******************************************************************************
