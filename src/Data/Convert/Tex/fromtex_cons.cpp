@@ -716,14 +716,14 @@ conservative_texmacs_to_latex (tree t) {
   for (i=0; i<n; i++) {
     tree tmp= h[ldoc[i]];
     if (tmp != uninit)
-      rbody << compound ("!conservative", tmp);
+      rbody << compound ("!invariant", tmp);
     else
       rbody << ldoc[i];
   }
   tree r (DOCUMENT);
   if (!same_containers (t, mdoc)
-      || (N(rbody) > 0 && !is_compound (rbody[0], "!conservative", 1))) {
-    if (N(ldoc) > 0 && N(rbody) > 0 && is_compound (rbody[0], "!conservative"))
+      || (N(rbody) > 0 && !is_compound (rbody[0], "!invariant", 1))) {
+    if (N(ldoc) > 0 && N(rbody) > 0 && is_compound (rbody[0], "!invariant"))
       rbody[0]= ldoc[0];
     r << extract_from_doc (t, "TeXmacs")
       << extract_from_doc (t, "style")

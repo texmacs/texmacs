@@ -551,7 +551,7 @@
   (cond ((string? t) (unescape-angles (utf8->cork t)))
         ((list>0? t) `(,(car t) ,@(map convert-charset (cdr t))))))
 
-(define (tmtex-conservative l)
+(define (tmtex-invariant l)
   `(!verbatim* ,(tmtex-tt (convert-charset (car l)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2296,7 +2296,7 @@
 	apply begin end func env) tmtex-noop)
   
   (shown tmtex-id)
-  (!conservative tmtex-conservative)
+  (!invariant tmtex-invariant)
   (!file tmtex-file)
   (!arg tmtex-tex-arg))
       
