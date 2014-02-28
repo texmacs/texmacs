@@ -277,10 +277,30 @@ recover_document (string s, array<string> l) {
   return remove_whitespace (recover_document (a, l, l));
 }
 
+static tree
+extract_from_doc (tree t, string label) {
+  if (!is_document (t))
+    return tree (ERROR);
+  int i= 0, n= N(t);
+  while (i<n) {
+    if (as_string (L(t[i])) == label)
+      return t[i];
+    i++;
+  }
+  return tree (ERROR);
+}
+
+static string
+get_document_version (tree t) {
+  tree version= extract_from_doc (t, "TeXmacs");
+  if (is_compound (version, "TeXmacs", 1))
+    return as_string (version[0]);
+  return "";
+}
+
 bool
 is_uptodate_tm_document (tree t) {
-  return is_document (t) && N(t) > 1 && is_compound (t[0], "TeXmacs", 1)
-    && as_string (t[0][0]) == TEXMACS_VERSION;
+  return get_document_version (t) == TEXMACS_VERSION;
 }
 
 bool
@@ -300,12 +320,14 @@ latex_conservative_document_to_tree (string s, bool as_pic, bool keep_src,
   string code= replace (s(b,e), "% ", "");
   s= s(0, b-37);
   tree d= stree_to_tree (string_to_object (decode_base64 (code)));
-  if (!(is_document (d) && N(d) == 2 && is_uptodate_tm_document (d[0])))
+  if (!is_document (d) || N(d) != 2)
     return tree (ERROR);
-  tree document= d[0](1, N(d[0]));
+  tree mdoc= d[0];
+  if (!is_uptodate_tm_document (mdoc))
+    mdoc= upgrade (mdoc, get_document_version (mdoc));
   tree uninit= tree (UNINIT);
   latex_hash lambda (uninit);
-  array<string> keys= populates_lambda (lambda, d[0], d[1]);
+  array<string> keys= populates_lambda (lambda, mdoc, d[1]);
   if (N(keys) == 0) return tree (ERROR);
   keys= sort_keys (keys);
   array<string> l= recover_document (s, keys);
@@ -689,19 +711,6 @@ latex_add_conservative_attachments (tree doc) {
  ******************************************************************************/
 
 static tree
-extract_from_doc (tree t, string label) {
-  if (!is_document (t))
-    return tree (ERROR);
-  int i= 0, n= N(t);
-  while (i<n) {
-    if (as_string (L(t[i])) == label)
-      return t[i];
-    i++;
-  }
-  return tree (ERROR);
-}
-
-static tree
 extract_from_attachements (tree t, string what) {
   if (!(is_compound (t, "attachments", 1) &&
         is_compound (t[0], "collection") && N(t[0]) > 0))
@@ -722,9 +731,10 @@ populate_texmacs_latex_hash (tree t, hashmap<tree,tree> &h) {
   tree msrc= extract_from_attachements (t, "latex-src");
   // recovering list of doc fragments from marked document
   tree mdoc= extract_from_attachements (t, "latex-doc");
-  if (extract_from_doc (mdoc, "TeXmacs")
-      != compound ("TeXmacs", TEXMACS_VERSION) || msrc == tree (ERROR))
+  if (msrc == tree (ERROR))
     return array<tree> ();
+  if (!is_uptodate_tm_document (mdoc))
+    mdoc= upgrade (mdoc, get_document_version (mdoc));
   mdoc= extract_from_doc (mdoc, "body");
   if (!(is_compound (mdoc, "body", 1) && is_document (mdoc[0])))
     return array<tree> ();
