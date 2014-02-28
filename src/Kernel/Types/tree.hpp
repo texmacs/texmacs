@@ -281,6 +281,7 @@ is_applicable (tree t) {
 }
 
 tree simplify_concat (tree t);
+tree simplify_document (tree t);
 tree simplify_correct (tree t);
 
 /******************************************************************************

@@ -481,6 +481,22 @@ simplify_concat (tree t) {
   return r;
 }
 
+static void
+simplify_document (tree& r, tree t) {
+  int i, n= N(t);
+  for (i=0; i<n; i++)
+    if (is_document (t[i])) simplify_document (r, t[i]);
+    else r << t[i];
+}
+
+tree
+simplify_document (tree t) {
+  if (!is_document (t)) return t;
+  tree r (DOCUMENT);
+  simplify_document (r, t);
+  return r;
+}
+
 tree
 simplify_correct (tree t) {
   if (is_atomic (t)) return t;
@@ -490,5 +506,6 @@ simplify_correct (tree t) {
   for (i=0; i<n; i++)
     r[i]= simplify_correct (t[i]);
   if (is_concat (r)) r= simplify_concat (r);
+  if (is_document (r)) r= simplify_document (r);
   return r;
 }
