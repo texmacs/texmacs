@@ -43,7 +43,7 @@ texmacs_to_latex_mark_document (tree t) {
       mbody << body[j] << compound ("tmtex@mark");
   }
   mbody << body[j];
-  r << mbody;
+  r << compound ("body", mbody);
   i++, n= N(t);
   while (i<n)
     r << t[i++];
