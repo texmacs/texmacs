@@ -15,6 +15,7 @@
 #include "hashmap.hpp"
 typedef tree scheme_tree;
 class url;
+class object;
 
 /*** Miscellaneous ***/
 bool   is_snippet (tree doc);
@@ -83,7 +84,10 @@ bool   test_env (string s, int i, string name, bool end=false);
 string verbatim_escape (string s);
 string latex_to_texmacs_mark_document_pre (string s, array<array<double> > ranges);
 tree   latex_to_texmacs_mark_document_post (tree r, string s);
-
+tree   tracked_latex_to_texmacs (string s, bool as_pic);
+string var_conservative_texmacs_to_latex (tree doc, object opts);
+string tracked_texmacs_to_latex (tree doc, object opts);
+tree   conservative_latex_to_texmacs (string s, bool as_pic);
 
 /*** Xml / Html / Mathml ***/
 tree   parse_xml (string s);

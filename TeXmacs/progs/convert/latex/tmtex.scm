@@ -554,6 +554,14 @@
 (define (tmtex-invariant l)
   `(!verbatim* ,(tmtex-tt (convert-charset (car l)))))
 
+(define (tmtex-ilx l)
+  `(!verbatim* ,(car l)))
+
+(define (tmtex-mtm l)
+  `(!concat (!group (btm ,(car l)))
+            ,(tmtex (cadr l))
+            (!group (etm ,(car l)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Simple text
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2297,6 +2305,8 @@
   
   (shown tmtex-id)
   (!invariant tmtex-invariant)
+  (!ilx tmtex-ilx)
+  (mtm tmtex-mtm)
   (!file tmtex-file)
   (!arg tmtex-tex-arg))
       
