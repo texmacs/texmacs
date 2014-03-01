@@ -444,6 +444,7 @@ extract (tree doc, string attr) {
   if (attr == "final") return tree (COLLECTION);
   if (attr == "references") return tree (COLLECTION);
   if (attr == "auxiliary") return tree (COLLECTION);
+  if (attr == "attachments") return tree (COLLECTION);
   return "";
 }
 
