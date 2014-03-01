@@ -15,6 +15,7 @@
 #include "scheme.hpp"
 #include "base64.hpp"
 #include "iterator.hpp"
+#include "fast_search.hpp"
 
 string encode_as_string (path p);
 path decode_as_path (string s);
@@ -79,7 +80,7 @@ latex_correspondence (string mtar, hashmap<path,path>& corr) {
 ******************************************************************************/
 
 void
-latex_invarianted_search (string s, tree t, path p, string tar,
+latex_invarianted_search (string_searcher finder, tree t, path p, string tar,
                           hashmap<path,path> corr,
                           array<bool>& done, hashmap<int,path>& subs) {
   if (corr->contains (p)) {
@@ -87,10 +88,10 @@ latex_invarianted_search (string s, tree t, path p, string tar,
     int b= r->item, e= r->next->item;
     if (b >= 0 && e <= N(tar)) {
       string ss= tar (b, e);
-      int pos= search_forwards (ss, 0, s);
-      // TODO: more efficient searching
-      // TODO: several matches
-      if (pos >= 0) {
+      array<int> ps= finder->search_all (ss);
+      if (N(ps) == 1) {
+        // TODO: several matches
+        int pos= ps[0];
         bool ok= true;
         for (int i= pos; i<pos+N(ss); i++)
           ok= ok && !done[i];
@@ -104,7 +105,7 @@ latex_invarianted_search (string s, tree t, path p, string tar,
   }
   if (is_compound (t)) {
     for (int i=0; i<N(t); i++)
-      latex_invarianted_search (s, t[i], p * i, tar, corr, done, subs);
+      latex_invarianted_search (finder, t[i], p * i, tar, corr, done, subs);
   }
 }
 
@@ -130,7 +131,8 @@ latex_invarianted (string s, tree src, string tar, hashmap<path,path> corr) {
   array<bool> done (N(s));
   hashmap<int,path> subs;
   for (int i=0; i<N(s); i++) done[i]= false;
-  latex_invarianted_search (s, src, path (), tar, corr, done, subs);
+  string_searcher finder (s);
+  latex_invarianted_search (finder, src, path (), tar, corr, done, subs);
   cout << "subs= " << subs << "\n";
   string invs= latex_invarianted_apply (s, subs);
   return invs;
