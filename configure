@@ -1468,31 +1468,34 @@ Optional Features:
   --disable-freetype      enable compilation without freetype
   --disable-fastalloc     omit fast allocator for small objects
   --enable-experimental   support new style rewriting code
-  --disable-macosx-extensions  do not use Mac specific services (spellchecker, image handling, ...)
-  --enable-macosx-distr=ARCH   build for MacOSX >= 10.4 and arch ARCH
+  --disable-macosx-extensions
+                          do not use Mac specific services (spellchecker,
+                          image handling, ...)
+  --enable-macosx-distr=ARCH
+                          build for MacOSX >= 10.4 and arch [ARCH]
   --enable-pdf-renderer   use native PDF renderer for pdf export
   --enable-console        enable windows console
   --disable-qt            replace Qt by X11 interface
   --enable-qtpipes        replace UNIX pipes by Qt pipes
   --enable-cocoa          replace X11 by Cocoa interface
   --enable-profile        enable gcc compilation flag for profiling with gprof
-  --enable-debug=ARG      install a debugging enable executable -ggdb
+  --enable-debug=ARG      install a debugging enable executable [-ggdb]
   --enable-assert         exit on failed assertions in code
   --enable-warnings       print warning messages during compilation
-  --enable-optimize=ARG   compile with optimizations guessed
+  --enable-optimize=ARG   compile with optimizations [guessed]
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-x                use the X Window System
-  --with-iconv=DIR        where to find iconv system
-  --with-freetype=ARG     with freetype support ARG=linked
-  --with-cairo=ARG        with cairo support ARG=no
-  --with-imlib2=ARG       with imlib2 support ARG=no
-  --with-axel=ARG         with axel support ARG=no
-  --with-gs=ARG           with ghostscript support ARG=yes
-  --with-sqlite3=ARG      with sqlite3 support ARG=no
-  --with-sparkle=ARG      with (Win)Sparkle autoupdater ARG=no
+  --with-iconv=DIR        where to find iconv [system]
+  --with-freetype=ARG     with freetype support [ARG=linked]
+  --with-cairo=ARG        with cairo support [ARG=no]
+  --with-imlib2=ARG       with imlib2 support [ARG=no]
+  --with-axel=ARG         with axel support [ARG=no]
+  --with-gs=ARG           with ghostscript support [ARG=yes]
+  --with-sqlite3=ARG      with sqlite3 support [ARG=no]
+  --with-sparkle=ARG      with (Win)Sparkle autoupdater [ARG=no]
   --with-qt               Path to Qt [Look in PATH and /usr/local/Trolltech]
 
 Some influential environment variables:
