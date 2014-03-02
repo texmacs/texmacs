@@ -44,3 +44,8 @@
 ;;; for old-style initialization files
 (define-public (exec-file . args)
   (noop))
+
+;;; certain Guile versions do not define 'filter'
+(if (not (defined? 'filter))
+    (define-public (filter pred? l)
+      (apply append (map (lambda (x) (if (pred? x) (list x) (list))) l))))
