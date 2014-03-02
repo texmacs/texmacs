@@ -14,6 +14,7 @@
 (texmacs-module (generic format-edit)
   (:use (utils base environment)
 	(utils edit selections)
+	(utils library cursor)
 	(generic generic-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -147,29 +148,37 @@
 	(else
 	  (insert-go-to w (list (- (tm-arity w) 1) 0)))))
 
-(tm-define (toggle-with-like w)
+(tm-define (toggle-with-like w back)
   (with t (if (and (selection-active-any?)
 		   (== (selection-tree) (path->tree (selection-path))))
 	      (path->tree (selection-path))
 	      (with-like-search (tree-ref (cursor-tree) :up)))
     ;;(display* "t= " t "\n")
-    (if (and t (with-like? t) (with-same-type? t w))
-	(begin
-	  (tree-remove-node! t (- (tree-arity t) 1))
-	  (tree-correct-node (tree-ref t :up)))
-	(make-with-like w))))
+    (cond ((not (and t (with-like? t) (with-same-type? t w)))
+           (make-with-like w))
+          ((or (not back) (tree-empty? (tm-ref t :last)))
+           (tree-remove-node! t (- (tree-arity t) 1))
+           (tree-correct-node (tree-ref t :up)))
+          ((tree-at-start? (tm-ref t :last))
+           (tree-go-to t 0))
+          ((tree-at-end? (tm-ref t :last))
+           (tree-go-to t 1))
+          (else (make-with-like back)))))
 
 (tm-define (toggle-bold)
-  (toggle-with-like '(with "font-series" "bold" "")))
+  (toggle-with-like '(with "font-series" "bold" "")
+                    '(with "font-series" "medium" "")))
 
 (tm-define (toggle-italic)
-  (toggle-with-like '(with "font-shape" "italic" "")))
+  (toggle-with-like '(with "font-shape" "italic" "")
+                    '(with "font-shape" "right" "")))
 
 (tm-define (toggle-small-caps)
-  (toggle-with-like '(with "font-shape" "small-caps" "")))
+  (toggle-with-like '(with "font-shape" "small-caps" "")
+                    '(with "font-shape" "right" "")))
 
 (tm-define (toggle-underlined)
-  (toggle-with-like '(underline "")))
+  (toggle-with-like '(underline "") #f))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customizable environments

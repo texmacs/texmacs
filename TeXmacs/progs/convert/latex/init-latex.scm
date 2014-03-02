@@ -70,16 +70,16 @@
 (tm-define (texmacs->latex-document x opts)
   (serialize-latex (texmacs->latex (tm->stree x) opts)))
 
-;; (converter texmacs-stree latex-document
-;;   (:function-with-options var-conservative-texmacs->latex)
-;;   ;;(:function-with-options tracked-texmacs->latex)
-;;   (:option "latex<->texmacs:preserve-source" "off")
-;;   (:option "texmacs->latex:replace-style" "on")
-;;   (:option "texmacs->latex:expand-macros" "off")
-;;   (:option "texmacs->latex:expand-user-macros" "off")
-;;   (:option "texmacs->latex:indirect-bib" "off")
-;;   (:option "texmacs->latex:use-macros" "on")
-;;   (:option "texmacs->latex:encoding" "ascii"))
+(converter texmacs-stree latex-document
+  (:function-with-options var-conservative-texmacs->latex)
+  ;;(:function-with-options tracked-texmacs->latex)
+  (:option "latex<->texmacs:preserve-source" "off")
+  (:option "texmacs->latex:replace-style" "on")
+  (:option "texmacs->latex:expand-macros" "off")
+  (:option "texmacs->latex:expand-user-macros" "off")
+  (:option "texmacs->latex:indirect-bib" "off")
+  (:option "texmacs->latex:use-macros" "on")
+  (:option "texmacs->latex:encoding" "ascii"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; LaTeX -> TeXmacs
@@ -90,10 +90,10 @@
   (let*
     ((as-pic   (== (get-preference "latex->texmacs:fallback-on-pictures") "on"))
      (keep-src (== (get-preference "latex<->texmacs:preserve-source") "on")))
-    ;;(conservative-latex->texmacs x as-pic)
-    (if (== (get-preference "latex<->texmacs:secure-tracking") "on")
-      (secured-latex-document->texmacs x as-pic keep-src)
-      (cpp-latex-document->texmacs x as-pic keep-src '()))))
+    (conservative-latex->texmacs x as-pic)))
+;;    (if (== (get-preference "latex<->texmacs:secure-tracking") "on")
+;;      (secured-latex-document->texmacs x as-pic keep-src)
+;;      (cpp-latex-document->texmacs x as-pic keep-src '()))))
 
 (converter latex-document latex-tree
   (:function parse-latex-document))
