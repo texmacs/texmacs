@@ -160,7 +160,7 @@ public:
   void mouse_drag (SI x, SI y);
   void mouse_select (SI x, SI y, int mods, bool drag);
   void mouse_paste (SI x, SI y);
-  void mouse_adjust (SI x, SI y);
+  void mouse_adjust (SI x, SI y, int mods);
   void mouse_adjust_selection (SI x, SI y, int mods);
   void mouse_scroll (SI x, SI y, bool up);
   cursor get_cursor ();

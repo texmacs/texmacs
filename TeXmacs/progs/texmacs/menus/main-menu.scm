@@ -76,12 +76,13 @@
   (=> "Help" (link help-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The TeXmacs popup menu
+;; The TeXmacs popup menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind texmacs-popup-menu
-  (link focus-menu)
-  ---
+  (link focus-menu))
+
+(menu-bind texmacs-alternative-popup-menu
   (-> "File" (link file-menu))
   (-> "Edit" (link edit-menu))
   (if (in-graphics?)

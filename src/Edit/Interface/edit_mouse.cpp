@@ -163,7 +163,7 @@ edit_interface_rep::mouse_paste (SI x, SI y) { (void) x; (void) y;
 }
 
 void
-edit_interface_rep::mouse_adjust (SI x, SI y) {
+edit_interface_rep::mouse_adjust (SI x, SI y, int mods) {
   if (eb->action ("adjust", x, y, 0) != "") return;
   x= (SI) (x * magf);
   y= (SI) (y * magf);
@@ -172,7 +172,10 @@ edit_interface_rep::mouse_adjust (SI x, SI y) {
     SI wx, wy;
     ::get_position (get_window (this), wx, wy);
     widget wid;
-    SERVER (menu_widget ("(vertical (link texmacs-popup-menu))", wid));
+    string menu= "texmacs-popup-menu";
+    if ((mods & (ShiftMask + ControlMask)) != 0)
+      menu= "texmacs-alternative-popup-menu";
+    SERVER (menu_widget ("(vertical (link " * menu * "))", wid));
     widget popup_wid= ::popup_widget (wid);
     popup_win= ::popup_window_widget (popup_wid, "Popup menu");
 #if defined (QTTEXMACS) || defined(AQUATEXMACS)
@@ -499,7 +502,7 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
       drag_left_reset ();
   }
   if (type == "press-middle") mouse_paste (x, y);
-  if (type == "press-right") mouse_adjust (x, y);
+  if (type == "press-right") mouse_adjust (x, y, mods);
   if (type == "press-up") mouse_scroll (x, y, true);
   if (type == "press-down") mouse_scroll (x, y, false);
 

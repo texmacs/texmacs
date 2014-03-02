@@ -49,7 +49,7 @@
        ("Run current file" (run-scheme-file (current-buffer-url)))))
 
 ; Simpler popup menu.
-(menu-bind texmacs-popup-menu
+(menu-bind texmacs-alternative-popup-menu
   (:require (in-prog-scheme?))
   (-> "File" (link file-menu))
   (-> "Edit" (link edit-menu))
