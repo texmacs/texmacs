@@ -98,13 +98,21 @@ latex_unmark (string s, hashset<path> l, hashmap<int,path>& corr) {
 ******************************************************************************/
 
 string
+tree_to_latex_document (tree d, object opts) {
+  eval ("(use-modules (convert latex init-latex))");
+  return as_string (call ("texmacs->latex-document", object (d), opts));
+}
+
+string
 tracked_texmacs_to_latex (tree d, object opts) {
+  if (get_preference ("texmacs->latex:source-tracking", "off") != "on")
+    return tree_to_latex_document (d, opts);
   tree t= extract (d, "body");
   hashset<path> l;
   tree mt= texmacs_mark (t, path (), l);
   cout << HRULE << "Marked texmacs" << LF << HRULE << mt << LF;
   tree md= change_doc_attr (d, "body", mt);
-  string ms= as_string (call ("texmacs->latex-document", object (md), opts));
+  string ms= tree_to_latex_document (md, opts);
   cout << HRULE << "Marked latex" << LF << HRULE << ms << LF;
   l->insert (path (-1)); // force checking
   hashmap<int,path> corr;

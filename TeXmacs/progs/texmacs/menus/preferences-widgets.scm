@@ -176,6 +176,32 @@
   ("cork"  "Cork with catcodes")
   ("utf-8" "Utf-8 with inputenc"))
 
+(define (get-latex-source-tracking)
+  (or (get-boolean-preference "latex->texmacs:source-tracking")
+      (get-boolean-preference "texmacs->latex:source-tracking")))
+
+(define (set-latex-source-tracking on?)
+  (set-boolean-preference "latex->texmacs:source-tracking" on?)
+  (set-boolean-preference "texmacs->latex:source-tracking" on?)
+  (refresh-now "source-tracking"))
+
+(define (get-latex-conservative)
+  (or (get-boolean-preference "latex->texmacs:conservative")
+      (get-boolean-preference "texmacs->latex:conservative")))
+
+(define (set-latex-conservative on?)
+  (set-boolean-preference "latex->texmacs:conservative" on?)
+  (set-boolean-preference "texmacs->latex:conservative" on?)
+  (refresh-now "source-tracking"))
+
+(define (get-latex-transparent-source-tracking)
+  (or (get-boolean-preference "latex->texmacs:transparent-source-tracking")
+      (get-boolean-preference "texmacs->latex:transparent-source-tracking")))
+
+(define (set-latex-transparent-source-tracking on?)
+  (set-boolean-preference "latex->texmacs:transparent-source-tracking" on?)
+  (set-boolean-preference "texmacs->latex:transparent-source-tracking" on?))
+
 (tm-widget (latex-preferences-widget)
   ===
   (bold (text "LaTeX -> TeXmacs"))
@@ -216,24 +242,26 @@
   ===
   (refreshable "source-tracking"
     (aligned
-      (meti (text "Keep track of source code and only convert changes")
+      (meti (text "Keep track of source code")
         (toggle
-          (begin
-            (set-boolean-preference "latex<->texmacs:preserve-source" answer)
-            (refresh-now "source-tracking"))
-          (get-boolean-preference "latex<->texmacs:preserve-source")))
-      (meti (when (== (get-preference "latex<->texmacs:preserve-source") "on")
-              (text "Guarantee at least the quality of non conservative conversion"))
-        (when (== (get-preference "latex<->texmacs:preserve-source") "on")
+         (set-latex-source-tracking answer)
+         (get-latex-source-tracking)))
+      (meti (text "Only convert changes with respect to tracked version")
+        (toggle
+         (set-latex-conservative answer)
+         (get-latex-conservative)))
+      (meti (when (get-latex-source-tracking)
+              (text "Guarantee transparent source tracking"))
+        (when (get-latex-source-tracking)
           (toggle
-           (set-boolean-preference "latex<->texmacs:secure-tracking" answer)
-           (get-boolean-preference "latex<->texmacs:secure-tracking"))))
-      (meti (when (== (get-preference "latex<->texmacs:preserve-source") "on")
+           (set-latex-transparent-source-tracking answer)
+           (get-latex-transparent-source-tracking))))
+      (meti (when (get-latex-source-tracking)
               (text "Store tracking information in LaTeX files"))
-        (when (== (get-preference "latex<->texmacs:preserve-source") "on")
+        (when (get-latex-source-tracking)
           (toggle
-           (set-boolean-preference "texmacs->latex:transparent-tracking" answer)
-           (get-boolean-preference "texmacs->latex:transparent-tracking")))))))
+           (set-boolean-preference "texmacs->latex:attach-tracking-info" answer)
+           (get-boolean-preference "texmacs->latex:attach-tracking-info")))))))
 
 ;; BibTeX ----------
 

@@ -335,6 +335,8 @@ tree texmacs_clean_markers (tree t) { return texmacs_unmark (t, false); }
 
 tree
 tracked_latex_to_texmacs (string s, bool as_pic) {
+  if (get_preference ("latex->texmacs:source-tracking", "off") != "on")
+    return latex_document_to_tree (s, as_pic);
   hashset<int> l;
   string ms= latex_mark (s, l);
   cout << HRULE << "Marked latex" << LF << HRULE << ms << LF;

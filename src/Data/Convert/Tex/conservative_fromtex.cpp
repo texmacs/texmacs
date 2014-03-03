@@ -165,6 +165,8 @@ latex_invarianted_replace (tree t, tree src) {
 
 tree
 conservative_latex_to_texmacs (string s, bool as_pic) {
+  if (get_preference ("latex->texmacs:conservative", "off") != "on")
+    return tracked_latex_to_texmacs (s, as_pic);
   string mod;
   tree src;
   string mtar;

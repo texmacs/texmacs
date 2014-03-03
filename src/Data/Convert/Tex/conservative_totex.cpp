@@ -215,6 +215,8 @@ texmacs_invarianted (tree t, tree oldt, string src) {
 
 string
 var_conservative_texmacs_to_latex (tree doc, object opts) {
+  if (get_preference ("texmacs->latex:conservative", "off") != "on")
+    return tracked_texmacs_to_latex (doc, opts);
   tree atts= extract (doc, "attachments");
   hashmap<string,tree> atts_map (UNINIT, atts);
   if (atts_map->contains ("latex-source")) {

@@ -126,11 +126,13 @@
             (toggle ("Import sophisticated objects as pictures"
                      "latex->texmacs:fallback-on-pictures"))
             ---
-            (toggle ("Keep track of source code and only convert changes"
-                     "latex<->texmacs:preserve-source"))
-            (when (== (get-preference "latex<->texmacs:preserve-source") "on")
-              (toggle ("Guarantee at least the quality of non conservative conversion"
-                       "latex<->texmacs:secure-tracking"))))
+            (toggle ("Keep track of source code"
+                     "latex->texmacs:source-tracking"))
+            (toggle ("Only convert changes with respect to tracked version"
+                     "latex<->texmacs:conservative"))
+            (when (== (get-preference "latex->texmacs:source-tracking") "on")
+              (toggle ("Guarantee transparent source tracking"
+                       "latex->texmacs:transparent-source-tracking"))))
         (-> "TeXmacs -> LaTeX"
             (toggle ("Replace unrecognized styles"
                      "texmacs->latex:replace-style"))
@@ -147,13 +149,15 @@
                   ("Cork charset with TeX catcode definition in preamble" "cork")
                   ("Utf-8 with inputenc LaTeX package" "utf-8"))
             ---
-            (toggle ("Keep track of source code and only convert changes"
-                     "latex<->texmacs:preserve-source"))
-            (when (== (get-preference "latex<->texmacs:preserve-source") "on")
-              (toggle ("Guarantee at least the quality of non conservative conversion"
-                       "latex<->texmacs:secure-tracking"))
+            (toggle ("Keep track of source code"
+                     "texmacs->latex:source-tracking"))
+            (toggle ("Only convert changes with respect to tracked version"
+                     "texmacs->latex:conservative"))
+            (when (== (get-preference "texmacs->latex:source-tracking") "on")
+              (toggle ("Guarantee transparent source tracking"
+                       "texmacs->latex:transparent-source-tracking"))
               (toggle ("Store tracking information in LaTeX files"
-                       "texmacs->latex:transparent-tracking"))))
+                       "texmacs->latex:attach-tracking-info"))))
         (-> "TeXmacs -> Verbatim"
             (toggle ("Wrap lines"
                      "texmacs->verbatim:wrap"))
