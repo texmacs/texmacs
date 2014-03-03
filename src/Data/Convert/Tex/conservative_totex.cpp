@@ -66,6 +66,15 @@ get_range (tree id, int& b, int& e, string src) {
 }
 
 tree
+texmacs_best_match (tree ids, tree p, int c,
+                    hashmap<tree,tree> corr,
+                    hashmap<tree,tree> pred,
+                    hashmap<tree,tree> succ) {
+  if (N(ids) == 1) return ids[0];
+  return tree (UNINIT);
+}
+
+tree
 texmacs_invarianted (tree t, tree p, int c, string src,
                      hashmap<tree,tree> corr,
                      hashmap<tree,tree> pred,
@@ -76,9 +85,10 @@ texmacs_invarianted (tree t, tree p, int c, string src,
       int b, e;
       if (get_range (oids[i], b, e, src)) ids << oids[i];
     }
-    if (N(ids) == 1)
-      return compound ("ilx", ids[0]);
-    // TODO: handle ambiguities
+    if (N(ids) >= 1) {
+      tree id= texmacs_best_match (ids, p, c, corr, pred, succ);
+      if (id != tree (UNINIT)) return compound ("ilx", id);
+    }
   }
   if (is_atomic (t)) return t;
   else {
