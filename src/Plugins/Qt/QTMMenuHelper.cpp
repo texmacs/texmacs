@@ -249,7 +249,7 @@ QTMMinibarAction::createWidget (QWidget* parent) {
  ******************************************************************************/
 
 QTMLazyMenu::QTMLazyMenu (promise<widget> _pm, QWidget* p)
-: QMenu (p), promise_widget (_pm), done (false) {
+: QMenu (p), promise_widget (_pm) {
   QObject::connect (this, SIGNAL (aboutToShow ()), this, SLOT (force ()));
 }
 
@@ -281,8 +281,6 @@ QTMLazyMenu::transferActions (QWidget* from) {
 
 void
 QTMLazyMenu::force () {
-  if (done) return;
-  done = true;
   QAction* a = concrete (promise_widget())->as_qaction();
   transferActions (a->menu());
   delete a;

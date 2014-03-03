@@ -17,8 +17,11 @@
 #include <QAction>
 
 
-/*! Implements a system standard popup menu.
+/*! Implements a system standard contextual popup menu.
 
+ @note This object is *not intended* to be used in toolbars, menu bars or
+ windows.
+ 
  This widget owns no underlying QWidget but a QAction. When SLOT_VISIBILITY or
  SLOT_MOUSE_GRAB are sent, it show()s or exec()s the QMenu associated to the
  action.
@@ -35,9 +38,6 @@
  deletes all of the tree below it. The root menu itself (without parent QObject)
  is owned by us as explained. This ensures correct memory management between
  TeXmacs and Qt since qt_menu_rep is sometimes cached at TeXmacs level.
- 
- @note This object is *not intended* to be used in toolbars, menu bars or
-       windows.
  */
 class qt_menu_rep: public qt_widget_rep {
   QAction*     qact;

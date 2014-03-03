@@ -71,7 +71,11 @@ public slots:
 };
 
 
-/*! A QMenu which builds its entries just before show()ing. 
+/*! A QMenu which builds its entries just before show()ing.
+ 
+ The menu entries are given as a texmacs widget in form of a promise which is
+ evaluated each time we force(). No caching internal to this object should be
+ performed lest we break dynamic menus.
  
  If this is intended as a submenu of a QAction, we must attachTo() it: then,
  when the action is about to be destroyed() we are notified and remove ourselves
@@ -83,7 +87,6 @@ class QTMLazyMenu: public QMenu {
   Q_OBJECT
   
   promise<widget> promise_widget;
-  bool                      done;
 
 public:
   QTMLazyMenu (promise<widget> _pm, QWidget* p = NULL);
