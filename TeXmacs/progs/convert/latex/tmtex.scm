@@ -626,15 +626,16 @@
       (and (func? x '!concat) (tmtex-no-space-before? (cadr x)))))
 
 (define (tmtex-no-space-after? x)
-  (and (string? x) (!= x "")
-       (in? (string-ref x 0) '(#\( #\[))))
+  (or (and (string? x) (!= x "")
+           (in? (string-ref x 0) '(#\( #\[)))
+      (and (func? x '!concat) (tmtex-no-space-after? (cAr x)))))
 
 (define (tmtex-math-concat-spaces l)
   (if (or (null? l) (null? (cdr l))) l
       (let* ((head (car l))
 	     (tail (tmtex-math-concat-spaces (cdr l))))
-	(if (or (tmtex-no-space-before? (car tail))
-                (tmtex-no-space-after? head))
+	(if (or (tmtex-no-space-after? head)
+                (tmtex-no-space-before? (car tail)))
 	    (cons head tail)
 	    (cons* head " " tail)))))
 
