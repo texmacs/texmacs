@@ -4194,19 +4194,6 @@ tmg_parse_latex_document (tmscm arg1) {
 }
 
 tmscm
-tmg_conservative_texmacs_2latex (tmscm arg1) {
-  TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "conservative-texmacs->latex");
-
-  tree in1= tmscm_to_tree (arg1);
-
-  // TMSCM_DEFER_INTS;
-  tree out= conservative_texmacs_to_latex (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return tree_to_tmscm (out);
-}
-
-tmscm
 tmg_latex_2texmacs (tmscm arg1) {
   TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "latex->texmacs");
 
@@ -4220,19 +4207,15 @@ tmg_latex_2texmacs (tmscm arg1) {
 }
 
 tmscm
-tmg_cpp_latex_document_2texmacs (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
+tmg_cpp_latex_document_2texmacs (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cpp-latex-document->texmacs");
   TMSCM_ASSERT_BOOL (arg2, TMSCM_ARG2, "cpp-latex-document->texmacs");
-  TMSCM_ASSERT_BOOL (arg3, TMSCM_ARG3, "cpp-latex-document->texmacs");
-  TMSCM_ASSERT_ARRAY_ARRAY_DOUBLE (arg4, TMSCM_ARG4, "cpp-latex-document->texmacs");
 
   string in1= tmscm_to_string (arg1);
   bool in2= tmscm_to_bool (arg2);
-  bool in3= tmscm_to_bool (arg3);
-  array_array_double in4= tmscm_to_array_array_double (arg4);
 
   // TMSCM_DEFER_INTS;
-  tree out= latex_document_to_tree (in1, in2, in3, in4);
+  tree out= latex_document_to_tree (in1, in2);
   // TMSCM_ALLOW_INTS;
 
   return tree_to_tmscm (out);
@@ -4246,19 +4229,6 @@ tmg_latex_class_document_2texmacs (tmscm arg1) {
 
   // TMSCM_DEFER_INTS;
   tree out= latex_class_document_to_tree (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return tree_to_tmscm (out);
-}
-
-tmscm
-tmg_texmacs_2latex_mark_document (tmscm arg1) {
-  TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "texmacs->latex-mark-document");
-
-  tree in1= tmscm_to_tree (arg1);
-
-  // TMSCM_DEFER_INTS;
-  tree out= texmacs_to_latex_mark_document (in1);
   // TMSCM_ALLOW_INTS;
 
   return tree_to_tmscm (out);
@@ -7838,11 +7808,9 @@ initialize_glue_basic () {
   tmscm_install_procedure ("cpp-verbatim->texmacs",  tmg_cpp_verbatim_2texmacs, 3, 0, 0);
   tmscm_install_procedure ("parse-latex",  tmg_parse_latex, 1, 0, 0);
   tmscm_install_procedure ("parse-latex-document",  tmg_parse_latex_document, 1, 0, 0);
-  tmscm_install_procedure ("conservative-texmacs->latex",  tmg_conservative_texmacs_2latex, 1, 0, 0);
   tmscm_install_procedure ("latex->texmacs",  tmg_latex_2texmacs, 1, 0, 0);
-  tmscm_install_procedure ("cpp-latex-document->texmacs",  tmg_cpp_latex_document_2texmacs, 4, 0, 0);
+  tmscm_install_procedure ("cpp-latex-document->texmacs",  tmg_cpp_latex_document_2texmacs, 2, 0, 0);
   tmscm_install_procedure ("latex-class-document->texmacs",  tmg_latex_class_document_2texmacs, 1, 0, 0);
-  tmscm_install_procedure ("texmacs->latex-mark-document",  tmg_texmacs_2latex_mark_document, 1, 0, 0);
   tmscm_install_procedure ("tracked-latex->texmacs",  tmg_tracked_latex_2texmacs, 2, 0, 0);
   tmscm_install_procedure ("var-conservative-texmacs->latex",  tmg_var_conservative_texmacs_2latex, 2, 0, 0);
   tmscm_install_procedure ("tracked-texmacs->latex",  tmg_tracked_texmacs_2latex, 2, 0, 0);

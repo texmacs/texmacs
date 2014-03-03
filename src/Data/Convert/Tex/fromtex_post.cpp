@@ -2145,7 +2145,6 @@ latex_to_tree (tree t1) {
     if (N (initial) > 0) r << compound ("initial", initial);
     r << the_version;
 
-    r= latex_add_conservative_attachments (r);
     // cout << "\n\nr= " << r << "\n\n";
     return r;
   }
@@ -2153,18 +2152,12 @@ latex_to_tree (tree t1) {
 }
 
 tree
-latex_document_to_tree (string s,
-    bool as_pic, bool keep_src, array<array<double> > range) {
+latex_document_to_tree (string s, bool as_pic) {
   tree r;
-  if (occurs ("\n% -----BEGIN TEXMACS DOCUMENT-----\n%", s)) {
-    r= latex_conservative_document_to_tree (s, as_pic, keep_src, range);
-    if (r != tree (ERROR)) return r;
-  }
-
   command_type ->extend ();
   command_arity->extend ();
   command_def  ->extend ();
-  tree t= parse_latex_document (s, true, as_pic, keep_src, range);
+  tree t= parse_latex_document (s, true, as_pic);
   if (as_pic) t= latex_fallback_on_pictures (s, t);
   r= latex_to_tree (t);
   command_type ->shorten ();

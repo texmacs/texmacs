@@ -551,9 +551,6 @@
   (cond ((string? t) (unescape-angles (utf8->cork t)))
         ((list>0? t) `(,(car t) ,@(map convert-charset (cdr t))))))
 
-(define (tmtex-invariant l)
-  `(!verbatim* ,(tmtex-tt (convert-charset (car l)))))
-
 (define (tmtex-ilx l)
   `(!verbatim* ,(car l)))
 
@@ -2304,7 +2301,6 @@
 	apply begin end func env) tmtex-noop)
   
   (shown tmtex-id)
-  (!invariant tmtex-invariant)
   (!ilx tmtex-ilx)
   (mtm tmtex-mtm)
   (!file tmtex-file)
@@ -2623,10 +2619,6 @@
 (tm-define (texmacs->latex x opts)
   ;;(display* "texmacs->latex [" opts "], " x "\n")
   (define attach-macros? #f)
-  (if (and (tmfile? x) (tmfile-extract x 'attachments))
-    (with try (tree->stree (conservative-texmacs->latex (stree->tree x)))
-      (if (!= try '(error)) (set! x try))
-      (if (func? x 'document) (set! attach-macros? #t))))
   (if (tmfile? x)
       (let* ((body (tmfile-extract x 'body))
 	     (style (tmtex-get-style (tmfile-extract x 'style)))
@@ -2649,8 +2641,6 @@
 	(with result (texmacs->latex doc opts)
 	  (set! tmtex-style "generic")
 	  (set! tmtex-packages '())
-	  (if (== (assoc-ref opts "latex<->texmacs:preserve-source") "on")
-	      (set! result `(!conservative-file ,result ,x ,opts)))
 	  result))
       (let* ((x2 (tree->stree (tmtm-eqnumber->nonumber (stree->tree x))))
 	     (x3 (tmtm-match-brackets x2)))

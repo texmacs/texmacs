@@ -65,6 +65,7 @@ is_var_compound (tree t, string s, int n) {
 /******************************************************************************
 * Clean extra spaces and linefeed (inspired from TeX tokenizing rules)
 ******************************************************************************/
+
 bool
 is_vertical_space (tree t) {
   return (is_func (t, TUPLE, 2) && t[0] == "\\vspace")     ||
@@ -109,7 +110,6 @@ might_not_be_typesetted (tree t) {
           (is_func (t, TUPLE) && t[0] == "\\SetKwInOut")      ||
           (is_func (t, TUPLE) && t[0] == "\\SetKwInput")      ||
           (is_func (t, TUPLE) && t[0] == "\\SetKwFunction")   ||
-          (is_func (t, TUPLE) && t[0] == "\\textm@break")     ||
            is_vertical_space (t));
 }
 
@@ -200,7 +200,7 @@ tree
 kill_space_invaders (tree t, char &status) {
   // cout << "kill_space_invaders (" << status << "): " << t << LF;
   if (is_atomic (t)) return t;
-  if (is_tuple (t, "\\textm@break")) return t;
+  //if (is_tuple (t, "\\blx") || is_tuple (t, "\\elx")) return t;
   if (is_tuple (t)) {
     tree r= copy(t);
     for (int i=1; i<N(t); i++)
@@ -320,8 +320,6 @@ filter_preamble (tree t) {
       }
       else if (is_tuple (u, "\\geometry", 1))
         preamble << u << "\n" << "\n";
-      else if (is_tuple (u, "\\textm@break", 3))
-        doc << u << "\n" << "\n";
       else if (is_tuple (u, "\\def") ||
 	       is_tuple (u, "\\def*") || is_tuple (u, "\\def**"))
 	preamble << u << "\n" << "\n";
@@ -1333,9 +1331,6 @@ latex_command_to_tree (tree t) {
     e2 << "body" << e3;
     return concat (tree (ASSIGN, var*"*", e1), tree (ASSIGN, var, e2));
   }
-
-  if (is_tuple (t, "\\textm@break", 3))
-    return tree (APPLY, "textm@break", t[1], t[2], t[3]);
 
   if (is_tuple (t, "\\latex_preview", 2))
       return tree (APPLY, "latex_preview", l2e (t[1]), t[2]);

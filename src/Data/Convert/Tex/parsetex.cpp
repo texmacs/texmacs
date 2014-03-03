@@ -49,7 +49,6 @@ struct latex_parser {
   bool unicode;
   char lf;
   bool pic;
-  bool keep_src;
   hashmap<string,bool> loaded_package;
   latex_parser (bool unicode2): level (0), unicode (unicode2) {}
   void latex_error (string s, int i, string message);
@@ -142,7 +141,7 @@ test_macro (string s, int i, string name) {
 }
 
 bool
-test_env (string s, int i, string name, bool end) {
+test_env (string s, int i, string name, bool end= false) {
   string tok= end? "\\end":"\\begin";
   int step= end? 4:6;
   if (!test_macro (s, i, tok)) return false;
@@ -762,22 +761,6 @@ contains_board_effects (tree t, bool root= true) {
   return false;
 }
 
-static string
-remove_textm_break (string s) {
-  string pattern= "\n\n\\textm@break{"; // followed by num + "}\n"
-  int i= 0, n= N(s), start= 0;
-  string r;
-  i= search_forwards (pattern, i, s);
-  while (i > 0 && i < n) {
-    r << s(start, i);
-    i= search_forwards ("}\n", i, s);
-    start= i+2;
-    i= search_forwards (pattern, i, s);
-  }
-  r << s(start, n);
-  return r;
-}
-
 tree
 latex_parser::parse_command (string s, int& i, string cmd, int change) {
   bool delimdef = false;
@@ -1217,7 +1200,6 @@ latex_parser::parse_command (string s, int& i, string cmd, int change) {
       orig_cmd= "\\end{" * cmd(5, N(cmd)) * "}";
     string code= orig_cmd * s(begin_parse, i);
     code= verbatim_escape (code);
-    code= remove_textm_break (code);
     if (command_type ("!mode") == "math")
       t= tuple ("\\latex_preview", cmd(1, N(cmd)), compound ("text", code));
     else
@@ -1854,8 +1836,7 @@ latex_encoding_to_iconv (string s) {
 }
 
 tree
-parse_latex (string s, bool change, bool using_cork, bool as_pic,
-    bool keep_src, array<array<double> > ranges) {
+parse_latex (string s, bool change, bool using_cork, bool as_pic) {
   tree r;
   s= dos_to_better (s);
   string encoding= "Cork";
@@ -1874,21 +1855,14 @@ parse_latex (string s, bool change, bool using_cork, bool as_pic,
   latex_parser ltx (encoding != "Cork");
   ltx.lf= 'M';
   ltx.pic= as_pic;
-  ltx.keep_src= keep_src;
   string s1= s;
-  if (keep_src)
-    s1= latex_to_texmacs_mark_document_pre (s, ranges);
   r= ltx.parse (s1, change?2:0);
-  if (keep_src)
-    r= latex_to_texmacs_mark_document_post (r, s);
   r= accented_to_Cork (r);
   if (lan == "") return r;
   return compound ("!language", r, lan);
 }
 
 tree
-parse_latex_document (string s, bool change, bool as_pic,
-    bool keep_src, array<array<double> > range) {
-  return compound ("!file",
-           parse_latex (s, change, false, as_pic, keep_src, range));
+parse_latex_document (string s, bool change, bool as_pic) {
+  return compound ("!file", parse_latex (s, change, false, as_pic));
 }
