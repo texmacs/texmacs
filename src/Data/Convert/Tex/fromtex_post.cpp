@@ -1101,16 +1101,6 @@ clean_paragraph_concat (tree t) {
   if (!is_concat (t)) r << t;
   else if (n == 0) r << tree ("");
   else if (n == 1) r << t[0];
-  else if (n == 2 && (is_apply (t[0], "textm@break") ||
-                      is_apply (t[1], "textm@break")))
-    r << t[0] << t[1];
-  else if (n > 2 && is_apply (t[0],   "textm@break")
-                 && is_apply (t[n-1], "textm@break"))
-    r << t[0] << t(1,n-1) << t[n-1];
-  else if (n > 2 && is_apply (t[0],   "textm@break"))
-    r << t[0] << t(1,n);
-  else if (n > 2 && is_apply (t[n-1], "textm@break"))
-    r << t(0,n-1) << t[n-1];
   else r << t;
   return r;
 }
@@ -1659,7 +1649,6 @@ contains_newline (tree t) {
 tree
 modernize_newlines (tree t, bool skip) {
   if (is_atomic (t)) return t;
-  if (is_compound (t, "textm@break")) return t;
   if (is_compound (t, "doc-data") || is_compound (t, "abstract-data"))
     skip= true;
   tree r= tree (L(t));
@@ -1725,7 +1714,6 @@ eat_space_around_control (tree t, char &state, bool &ctrl, bool rev) {
     ctrl= true;
     return t;
   }
-  if (is_compound (t, "textm@break")) return t;
   if (is_atomic (t)) {
     string s= as_string (t);
     if (rev) {
@@ -1783,8 +1771,7 @@ is_verbatim (tree t) {
          is_compound (t, "code")     || is_compound (t, "verbatim")   ||
          is_compound (t, "scilab-code") ||
          is_compound (t, "latex_preview") ||
-         is_compound (t, "picture-mixed") ||
-         is_compound (t, "textm@break");
+         is_compound (t, "picture-mixed");
 }
 
 static tree
@@ -1804,7 +1791,6 @@ remove_superfluous_newlines (tree t) {
 tree
 concat_document_correct (tree t) {
   if (is_atomic (t)) return t;
-  if (is_compound (t, "textm@break")) return t;
   tree r (L(t));
   for (int i=0; i<N(t); i++)
     r << concat_document_correct (t[i]);
@@ -1880,7 +1866,6 @@ remove_labels_from_sections (tree t) {
 static tree
 associate_sections_and_labels (tree t, array<int> &path,
     array<array<int> > &paths, array<tree> &labels, array<int> &sec_path) {
-  if (is_compound (t, "textm@break")) return t;
   if (!is_concat (t) && !is_document (t)) {
     sec_path= array<int> ();
     return t;
