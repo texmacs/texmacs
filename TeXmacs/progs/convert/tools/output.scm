@@ -152,38 +152,39 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (output-verb . ss)
-  ;(display-err* "Output verb " ss "\n")
+  ;;(display-err* "Output verb " ss "\n")
   (if (!= output-tail "") (output-flush))
   (output-prepared (apply string-append ss)))
 
 (tm-define (output-lf-verbatim . ss)
-  ;(display-err* "Output lf verbatim " ss "\n")
+  ;;(display-err* "Output lf verbatim " ss "\n")
   (output-flush)
   (if (not output-start-flag) (output-raw "\n"))
   (output-raw (apply string-append ss))
   (set! output-break-flag #f))
 
 (tm-define (output-invariant . ss)
-  ;(display-err* "Output invariant " ss "\n")
+  ;;(display-err* "Output invariant " ss "\n")
   (output-remove-indentation)
   (apply output-lf-verbatim ss))
 
 (tm-define (output-verbatim . ss)
-  ;(display-err* "Output verbatim " ss "\n")
+  ;;(display-err* "Output verbatim " ss "\n")
   (output-flush)
   (output-raw (apply string-append ss))
   (set! output-break-flag #f))
 
 (tm-define (output-lf)
-  ;(display-err* "Output lf\n")
+  ;;(display-err* "Output lf\n")
   (if (!= output-tail "") (output-flush))
   (output-return))
 
 (tm-define (output-text . ss)
-  ;(display-err* "Output text " ss "\n")
+  ;;(display-err* "Output text " ss "\n")
   (let ((s (apply string-append (cons output-tail ss))))
     (output-sub s 0)))
 
 (tm-define (output-marker s)
+  ;;(display-err* "Output marker " s "\n")
   (if (!= output-tail "") (output-flush))
   (set! output-accu (cons s output-accu)))
