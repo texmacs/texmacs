@@ -129,7 +129,7 @@
             (toggle ("Keep track of source code"
                      "latex->texmacs:source-tracking"))
             (toggle ("Only convert changes with respect to tracked version"
-                     "latex<->texmacs:conservative"))
+                     "latex->texmacs:conservative"))
             (when (== (get-preference "latex->texmacs:source-tracking") "on")
               (toggle ("Guarantee transparent source tracking"
                        "latex->texmacs:transparent-source-tracking"))))
