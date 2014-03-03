@@ -435,7 +435,6 @@
   ("tmparmod" 3)
   ("tmparsep" 1)
   ("tmindent" 0)
-  ("proof" 0)
   ("elsequation" 0)
   ("elsequation*" 0)
   ("theglossary" 1))

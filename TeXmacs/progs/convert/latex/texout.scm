@@ -72,8 +72,8 @@
       (begin
         (set! doc-body (detach-macros doc-body))
         (receive
-          (tm-style-options tm-uses tm-init tm-preamble)
-          (latex-preamble doc-misc style lan init)
+            (tm-style-options tm-uses tm-init tm-preamble)
+            (latex-preamble doc-misc style lan init)
           (output-verbatim "\\documentclass")
           (output-verbatim tm-style-options)
           (output-verbatim "{" (if (nlist? style) style (cAr style)) "}\n")
