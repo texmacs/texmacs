@@ -532,7 +532,7 @@
   (xRightarrow "amsmath")
   (xLeftrightarrow "amsmath")
 
-  (proof "amsmath")
+  ;;(proof "amsthm")
 
   (bigbox "stmaryrd")
   (bigcurlyvee "stmaryrd")
