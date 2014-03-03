@@ -149,7 +149,7 @@
 	(if (nnull? (cdr l))
 	    (begin
 	      (output-lf)
-	      (output-lf)))
+              (output-lf)))
 	(texout-document (cdr l)))))
 
 (define (texout-paragraph l)
@@ -279,6 +279,9 @@
 (define (texout-verbatim* x)
   (output-lf-verbatim x))
 
+(define (texout-invariant x)
+  (output-invariant x))
+
 (define (texout-group x)
   (output-tex "{")
   (texout x)
@@ -400,6 +403,7 @@
 	((== (car x) '!verb) (texout-verb (cadr x)))
 	((== (car x) '!verbatim) (texout-verbatim (cadr x)))
 	((== (car x) '!verbatim*) (texout-verbatim* (cadr x)))
+	((== (car x) '!invariant) (texout-invariant (cadr x)))
 	((== (car x) '!arg) (texout-arg (cadr x)))
 	((== (car x) '!group) (texout-group (cons '!append (cdr x))))
 	((== (car x) '!marker) (texout-marker (cadr x) (caddr x)))

@@ -113,13 +113,35 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (output-test-end? s)
-  ; to be used with extreme care
+  ;; to be used with extreme care
   (string-ends? output-tail s))
 
 (tm-define (output-remove n)
-  ; to be used with extreme care
+  ;; to be used with extreme care
   (let ((k (string-length output-tail)))
     (if (>= k n) (set! output-tail (substring output-tail 0 (- k n))))))
+
+(define (trim-right-spaces s)
+  (if (string-ends? s " ")
+      (trim-right-spaces (string-drop-right s 1))
+      s))
+
+(tm-define (output-remove-indentation)
+  ;; to be used with extreme care
+  (if (== output-tail "")
+      (when (nnull? output-accu)
+        (with s (trim-right-spaces (car output-accu))
+          (cond ((== s "")
+                 (set! output-accu (cdr output-accu))
+                 (output-remove-indentation))
+                ((string-ends? s "\n")
+                 (set! output-accu (cons s (cdr output-accu)))))))
+      (with s (trim-right-spaces output-tail)
+        (cond ((== s "")
+               (set! output-tail "")
+               (output-remove-indentation))
+              ((string-ends? s "\n")
+               (set! output-tail s))))))
 
 (tm-define (output-flush)
   (output-prepared output-tail)
@@ -140,6 +162,11 @@
   (if (not output-start-flag) (output-raw "\n"))
   (output-raw (apply string-append ss))
   (set! output-break-flag #f))
+
+(tm-define (output-invariant . ss)
+  ;(display-err* "Output invariant " ss "\n")
+  (output-remove-indentation)
+  (apply output-lf-verbatim ss))
 
 (tm-define (output-verbatim . ss)
   ;(display-err* "Output verbatim " ss "\n")

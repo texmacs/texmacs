@@ -556,7 +556,7 @@
         ((list>0? t) `(,(car t) ,@(map convert-charset (cdr t))))))
 
 (define (tmtex-ilx l)
-  `(!verbatim* ,(car l)))
+  `(!invariant ,(car l)))
 
 (define (tmtex-mtm l)
   `(!concat (!marker btm ,(car l))
