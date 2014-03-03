@@ -13,6 +13,7 @@
 #include "analyze.hpp"
 #include "hashset.hpp"
 #include "scheme.hpp"
+#include "convert.hpp"
 
 /******************************************************************************
 * Add markers to LaTeX document
