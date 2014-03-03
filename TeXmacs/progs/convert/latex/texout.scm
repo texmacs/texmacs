@@ -216,7 +216,7 @@
           (texout (car l))
           (texout-concat-sub prev (cdr l)))
         (begin
-          (if (texout-want-space prev (car l)) (texout " "))
+          (if (and prev (texout-want-space prev (car l))) (texout " "))
           (texout (car l))
           (texout-concat-sub (car l) (cdr l))))))
 
