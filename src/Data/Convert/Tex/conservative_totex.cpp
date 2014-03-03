@@ -84,10 +84,8 @@ texmacs_invarianted (tree t, tree p, int c, string src,
   else {
     int i, n= N(t);
     tree r (t, n);
-    for (i=0; i<n; i++) {
+    for (i=0; i<n; i++)
       r[i]= texmacs_invarianted (t[i], t, i, src, corr, pred, succ);
-      // TODO: fusion of comments and consecutive invarianted fragments
-    }
     return r;
   }
 }
