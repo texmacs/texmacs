@@ -555,9 +555,9 @@
   `(!verbatim* ,(car l)))
 
 (define (tmtex-mtm l)
-  `(!concat (!group (btm ,(car l)))
+  `(!concat (!marker btm ,(car l))
             ,(tmtex (cadr l))
-            (!group (etm ,(car l)))))
+            (!marker etm ,(car l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Simple text
@@ -651,9 +651,9 @@
             (t (list-tail l s)))
         (tmtex-concat `((concat ,@h) (concat ,@t)))))
     (if (tmtex-math-mode?)
-      (tex-concat (tmtex-math-concat-spaces
-                    (tmtex-list (pre-brackets-recurse l))))
-      (tex-concat (tmtex-list (tmtex-rewrite-no-break l))))))
+        (tex-concat (tmtex-math-concat-spaces
+                     (tmtex-list (pre-brackets-recurse l))))
+        (tex-concat (tmtex-list (tmtex-rewrite-no-break l))))))
 
 (define (tmtex-rigid l)
   (tmtex-function '!group l))

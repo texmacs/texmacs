@@ -209,13 +209,19 @@
                 (string? x2) (> (string-length x2) 0))
 	   (and (nlist? x1) (nlist? x2)))))
 
-(define (texout-concat l)
+(define (texout-concat-sub prev l)
   (when (nnull? l)
-    (texout (car l))
-    (if (nnull? (cdr l))
-	(texout-concat (if (texout-want-space (car l) (cadr l))
-			   (cons " " (cdr l))
-			   (cdr l))))))
+    (if (func? (car l) '!marker)
+        (begin
+          (texout (car l))
+          (texout-concat-sub prev (cdr l)))
+        (begin
+          (if (texout-want-space prev (car l)) (texout " "))
+          (texout (car l))
+          (texout-concat-sub (car l) (cdr l))))))
+
+(define (texout-concat l)
+  (texout-concat-sub #f l))
 
 (define (texout-multiline? x)
   (cond ((nlist? x) #f)
@@ -277,6 +283,10 @@
   (output-tex "{")
   (texout x)
   (output-tex "}"))
+
+(define (texout-marker tag arg)
+  (with s (string-append "{\\" (symbol->string tag) "{" arg "}}")
+    (output-marker s)))
 
 (define (texout-empty? x)
   (cond ((== x "") #t)
@@ -392,6 +402,7 @@
 	((== (car x) '!verbatim*) (texout-verbatim* (cadr x)))
 	((== (car x) '!arg) (texout-arg (cadr x)))
 	((== (car x) '!group) (texout-group (cons '!append (cdr x))))
+	((== (car x) '!marker) (texout-marker (cadr x) (caddr x)))
 	((== (car x) '!math) (texout-math (cadr x)))
 	((== (car x) '!eqn) (texout-eqn (cadr x)))
 	((== (car x) '!sub) (texout-script "_" (cdr x)))

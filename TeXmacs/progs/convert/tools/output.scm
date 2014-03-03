@@ -157,3 +157,6 @@
   (let ((s (apply string-append (cons output-tail ss))))
     (output-sub s 0)))
 
+(tm-define (output-marker s)
+  (if (!= output-tail "") (output-flush))
+  (set! output-accu (cons s output-accu)))
