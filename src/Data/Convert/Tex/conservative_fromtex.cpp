@@ -105,6 +105,7 @@ latex_best_match (int b, int e, array<int> ms, string orig, string modif) {
     else if (e_orig - b_orig == best_len)
       best= -1;
   }
+  //if (best >= 0)
   //cout << HRULE << "Multiple matches: " << ms
   //<< " -> " << ms[best] << LF << HRULE;
   return best;

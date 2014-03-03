@@ -41,14 +41,18 @@ texmacs_correspondence (tree t, hashmap<tree,tree>& h) {
 }
 
 void
-texmacs_predecessors (tree t, hashmap<tree,tree>& h) {
+texmacs_neighbours (tree t,
+                    hashmap<tree,tree>& prec,
+                    hashmap<tree,tree>& succ) {
   if (is_atomic (t)) return;
   else {
     int i, n= N(t);
     for (i=1; i<n; i++)
       if (is_compound (t[i-1], "mlx", 2) &&
-          is_compound (t[i], "mlx", 2))
-        h(t[i][0])= t[i-1][0];
+          is_compound (t[i], "mlx", 2)) {
+        prec (t[i  ][0])= t[i-1][0];
+        succ (t[i-1][0])= t[i  ][0];
+      }
   }
 }
 
@@ -65,13 +69,49 @@ get_range (tree id, int& b, int& e, string src) {
   return b >= 0 && b <= e && e <= N(src);
 }
 
+int
+common_len (tree id, tree p, int c, int delta,
+            hashmap<tree,tree> corr,
+            hashmap<tree,tree> next) {
+  int len= 0;
+  while (true) {
+    c += delta;
+    if (c < 0 || c >= N(p)) break;
+    if (!corr->contains (p[c])) break;
+    tree next_ids= corr[p[c]];
+    if (!next->contains (id)) break;
+    tree next_id= next[id];
+    bool found= false;
+    for (int k=0; k<N(next_ids); k++)
+      found= found || (next_ids[k] == next_id);
+    if (!found) break;
+    len++;
+  }
+  return len;
+}
+
 tree
 texmacs_best_match (tree ids, tree p, int c,
                     hashmap<tree,tree> corr,
                     hashmap<tree,tree> pred,
                     hashmap<tree,tree> succ) {
   if (N(ids) == 1) return ids[0];
-  return tree (UNINIT);
+  int best= -1, best_len= -1;
+  for (int i=0; i<N(ids); i++) {
+    int plen= common_len (ids[i], p, c, -1, corr, pred);
+    int slen= common_len (ids[i], p, c,  1, corr, succ);
+    int len = plen + slen;
+    if (len > best_len) {
+      best= i;
+      best_len= len;
+    }
+    else if (len == best_len)
+      best= -1;
+  }
+  //if (best >= 0)
+  //cout << HRULE << "Multiple matches: " << ids
+  //<< " -> " << ids[best] << LF << HRULE;
+  return best >= 0? ids[best]: tree (UNINIT);
 }
 
 tree
@@ -209,8 +249,7 @@ texmacs_invarianted (tree t, tree oldt, string src) {
   hashmap<tree,tree> pred (UNINIT);
   hashmap<tree,tree> succ (UNINIT);
   (void) texmacs_correspondence (oldbody, corr);
-  texmacs_predecessors (oldbody, pred);
-  // TODO: succ= reverse (pred);
+  texmacs_neighbours (oldbody, pred, succ);
   body= texmacs_invarianted (body, UNINIT, -1, src, corr, pred, succ);
   body= texmacs_invarianted_merge (body, src);
   body= texmacs_invarianted_replace (body, src);
