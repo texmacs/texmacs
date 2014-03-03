@@ -79,6 +79,37 @@ latex_correspondence (string mtar, hashmap<path,path>& corr) {
 * Construct invarianted LaTeX document
 ******************************************************************************/
 
+int
+latex_best_match (int b, int e, array<int> ms, string orig, string modif) {
+  if (N(ms) == 1) return ms[0];
+  int best= -1, best_len= 0;
+  for (int i=0; i<N(ms); i++) {
+    int b_orig = b;
+    int e_orig = e;
+    int b_modif= ms[i];
+    int e_modif= b_modif + (e_orig - b_orig);
+    while (b_orig > 0 && b_modif > 0 &&
+           orig[b_orig-1] == modif[b_modif-1]) {
+      b_orig--;
+      b_modif--;
+    }
+    while (b_orig + 1 < N(orig) && e_modif + 1 < N (modif) &&
+           orig[e_orig+1] == modif[e_modif+1]) {
+      e_orig++;
+      e_modif++;
+    }
+    if (e_orig - b_orig > best_len) {
+      best= i;
+      best_len= e_orig - b_orig;
+    }
+    else if (e_orig - b_orig == best_len)
+      best= -1;
+  }
+  //cout << HRULE << "Multiple matches: " << ms
+  //<< " -> " << ms[best] << LF << HRULE;
+  return best;
+}
+
 void
 latex_invarianted_search (string_searcher finder, tree t, path p, string tar,
                           hashmap<path,path> corr,
@@ -89,16 +120,20 @@ latex_invarianted_search (string_searcher finder, tree t, path p, string tar,
     if (b >= 0 && e <= N(tar)) {
       string ss= tar (b, e);
       array<int> ps= finder->search_all (ss);
-      if (N(ps) == 1) {
-        // TODO: several matches
-        int pos= ps[0];
-        bool ok= true;
-        for (int i= pos; i<pos+N(ss); i++)
-          ok= ok && !done[i];
-        if (ok) {
+      //cout << "Search " << ss << " ~~~> " << ps << LF;
+      if (N(ps) >= 1) {
+        string mod= finder->get_string ();
+        int pos= latex_best_match (b, e, ps, tar, mod);
+        if (pos >= 0) {
+          int pos= ps[0];
+          bool ok= true;
           for (int i= pos; i<pos+N(ss); i++)
-            done[i]= true;
-          subs (pos)= path (N(ss), p);
+            ok= ok && !done[i];
+          if (ok) {
+            for (int i= pos; i<pos+N(ss); i++)
+              done[i]= true;
+            subs (pos)= path (N(ss), p);
+          }
         }
       }
     }

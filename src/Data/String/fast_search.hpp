@@ -24,6 +24,7 @@ class string_searcher_rep: concrete_struct {
 
 public:
   string_searcher_rep (string s);
+  string get_string ();
   int search_next (string what, int pos);
   array<int> search_all (string what);
   friend class string_searcher;
