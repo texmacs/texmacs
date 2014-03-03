@@ -376,10 +376,12 @@
 	      ((== c #\37) (tmtex-text-sub "ffl" l))
 	      ((== c #\174) (tmtex-text-sub "{\\textbar}" l))
 	      (else 
-		(cons
-		  (if (or tmtex-use-unicode? tmtex-use-ascii?)
-		    (list (string-convert (char->string c) "Cork" "UTF-8")) c)
-		    (tmtex-text-list (cdr l))))))))
+		(append
+                  (if (or tmtex-use-unicode? tmtex-use-ascii?)
+                      (string->list (string-convert (char->string c)
+                                                    "Cork" "UTF-8"))
+                      (list c))
+                  (tmtex-text-list (cdr l))))))))
 
 (define (tmtex-math-operator l)
   (receive (p q) (list-break l (lambda (c) (not (char-alphabetic? c))))
@@ -410,8 +412,10 @@
 	      (else
                 (with c
                   (if (or tmtex-use-unicode? tmtex-use-ascii?)
-                    (list (string-convert (char->string c) "Cork" "UTF-8")) c)
-                  (cons c (tmtex-math-list (cdr l)))))))))
+                      (string->list (string-convert (char->string c)
+                                                    "Cork" "UTF-8"))
+                      (list c))
+                  (append c (tmtex-math-list (cdr l)))))))))
 
 (define (tmtex-verb-list l)
   (if (null? l) l
@@ -432,12 +436,12 @@
   (if (null? l) l
       (if (not (tmtex-string-break? (car l) (car l)))
 	  (receive (p q)
-            (list-break l (lambda (x) (tmtex-string-break? x (car l))))
+              (list-break l (lambda (x) (tmtex-string-break? x (car l))))
 	    (cons (list->string p) (tmtex-string-produce q)))
 	  (if (equal? (car l) #\space)
 	      (tmtex-string-produce (cdr l))
 	      (cons (if (char? (car l)) (char->string (car l)) (car l))
-		(tmtex-string-produce (cdr l)))))))
+                    (tmtex-string-produce (cdr l)))))))
 
 (define (tmtex-string s)
   (if (> (string-length s) 1000)
@@ -651,8 +655,12 @@
             (t (list-tail l s)))
         (tmtex-concat `((concat ,@h) (concat ,@t)))))
     (if (tmtex-math-mode?)
-        (tex-concat (tmtex-math-concat-spaces
-                     (tmtex-list (pre-brackets-recurse l))))
+        (begin
+          ;;(display* "l1= " l "\n")
+          ;;(display* "l2= " (pre-brackets-recurse l) "\n")
+          ;;(display* "l3= " (tmtex-list (pre-brackets-recurse l)) "\n")
+          (tex-concat (tmtex-math-concat-spaces
+                       (tmtex-list (pre-brackets-recurse l)))))
         (tex-concat (tmtex-list (tmtex-rewrite-no-break l))))))
 
 (define (tmtex-rigid l)
