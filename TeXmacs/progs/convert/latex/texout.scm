@@ -142,12 +142,18 @@
 (tm-define (texout-preamble l)
   (output-verbatim l))
 
+(define (empty-line? x)
+  (or (== x "")
+      (func? x '!marker)
+      (and (func? x '!concat)
+           (list-and (map empty-line? (cdr x))))))
+
 (tm-define (texout-document l)
   (if (nnull? l)
       (begin
-        (if (== (car l) "")
-          (output-tex "\\")
-	  (texout (car l)))
+        (texout (car l))
+        (if (empty-line? (car l))
+            (output-tex "\\"))
 	(if (nnull? (cdr l))
 	    (begin
 	      (output-lf)
