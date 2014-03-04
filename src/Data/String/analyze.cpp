@@ -907,7 +907,7 @@ raw_quote (string s) {
   // Mark the label of a STRING tree as representing a string and not a symbol.
   return "\"" * s * "\"";
 }
- 
+
 string
 raw_unquote (string s) {
   // Get the string value of a STRING tree label representing a string.
