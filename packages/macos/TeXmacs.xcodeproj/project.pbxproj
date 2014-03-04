@@ -235,6 +235,21 @@
 		4932C1A41704F54200E87D8C /* brush.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4932C1A11704F54200E87D8C /* brush.cpp */; };
 		4932C1A51704F54200E87D8C /* brush.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4932C1A11704F54200E87D8C /* brush.cpp */; };
 		4932C1A61704F54200E87D8C /* brush.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4932C1A11704F54200E87D8C /* brush.cpp */; };
+		4934A46718C5D00000BF1E6A /* conservative_fromtex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4934A46318C5D00000BF1E6A /* conservative_fromtex.cpp */; };
+		4934A46818C5D00000BF1E6A /* conservative_fromtex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4934A46318C5D00000BF1E6A /* conservative_fromtex.cpp */; };
+		4934A46918C5D00000BF1E6A /* conservative_fromtex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4934A46318C5D00000BF1E6A /* conservative_fromtex.cpp */; };
+		4934A46A18C5D00000BF1E6A /* conservative_totex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4934A46418C5D00000BF1E6A /* conservative_totex.cpp */; };
+		4934A46B18C5D00000BF1E6A /* conservative_totex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4934A46418C5D00000BF1E6A /* conservative_totex.cpp */; };
+		4934A46C18C5D00000BF1E6A /* conservative_totex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4934A46418C5D00000BF1E6A /* conservative_totex.cpp */; };
+		4934A46D18C5D00000BF1E6A /* tracked_fromtex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4934A46518C5D00000BF1E6A /* tracked_fromtex.cpp */; };
+		4934A46E18C5D00000BF1E6A /* tracked_fromtex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4934A46518C5D00000BF1E6A /* tracked_fromtex.cpp */; };
+		4934A46F18C5D00000BF1E6A /* tracked_fromtex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4934A46518C5D00000BF1E6A /* tracked_fromtex.cpp */; };
+		4934A47018C5D00000BF1E6A /* tracked_totex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4934A46618C5D00000BF1E6A /* tracked_totex.cpp */; };
+		4934A47118C5D00000BF1E6A /* tracked_totex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4934A46618C5D00000BF1E6A /* tracked_totex.cpp */; };
+		4934A47218C5D00000BF1E6A /* tracked_totex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4934A46618C5D00000BF1E6A /* tracked_totex.cpp */; };
+		4934A47518C5D01E00BF1E6A /* fast_search.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4934A47318C5D01E00BF1E6A /* fast_search.cpp */; };
+		4934A47618C5D01E00BF1E6A /* fast_search.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4934A47318C5D01E00BF1E6A /* fast_search.cpp */; };
+		4934A47718C5D01E00BF1E6A /* fast_search.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4934A47318C5D01E00BF1E6A /* fast_search.cpp */; };
 		493D309A15190AEA00A19C3D /* new_buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493D309915190AEA00A19C3D /* new_buffer.cpp */; };
 		493D309B15190AEA00A19C3D /* new_buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493D309915190AEA00A19C3D /* new_buffer.cpp */; };
 		493D309C15190AEA00A19C3D /* new_buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493D309915190AEA00A19C3D /* new_buffer.cpp */; };
@@ -269,9 +284,6 @@
 		498BA6B6184C966F00608A7B /* PDFWriter.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 4907D0D81812E2BC00D893B4 /* PDFWriter.o */; };
 		498BA6B7184C968000608A7B /* PDFWriter.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 4907D0D81812E2BC00D893B4 /* PDFWriter.o */; };
 		49AA0887181166140090FD84 /* font_protrusion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49AA0884181166140090FD84 /* font_protrusion.cpp */; };
-		49AA65411891A58B003DA304 /* fromtex_cons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49AA65401891A58B003DA304 /* fromtex_cons.cpp */; };
-		49AA65421891A58B003DA304 /* fromtex_cons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49AA65401891A58B003DA304 /* fromtex_cons.cpp */; };
-		49AA65431891A58B003DA304 /* fromtex_cons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49AA65401891A58B003DA304 /* fromtex_cons.cpp */; };
 		49BEF71816FDD566004BAE73 /* metadata-springer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BEF71616FDD566004BAE73 /* metadata-springer.cpp */; };
 		49BEF71916FDD566004BAE73 /* metadata-springer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BEF71616FDD566004BAE73 /* metadata-springer.cpp */; };
 		49BEF71A16FDD566004BAE73 /* metadata-springer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BEF71616FDD566004BAE73 /* metadata-springer.cpp */; };
@@ -1596,6 +1608,12 @@
 		4932C1A11704F54200E87D8C /* brush.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = brush.cpp; sourceTree = "<group>"; };
 		4932C1A21704F54200E87D8C /* brush.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = brush.hpp; sourceTree = "<group>"; };
 		4932C1A31704F54200E87D8C /* pencil.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = pencil.hpp; sourceTree = "<group>"; };
+		4934A46318C5D00000BF1E6A /* conservative_fromtex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = conservative_fromtex.cpp; sourceTree = "<group>"; };
+		4934A46418C5D00000BF1E6A /* conservative_totex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = conservative_totex.cpp; sourceTree = "<group>"; };
+		4934A46518C5D00000BF1E6A /* tracked_fromtex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tracked_fromtex.cpp; sourceTree = "<group>"; };
+		4934A46618C5D00000BF1E6A /* tracked_totex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tracked_totex.cpp; sourceTree = "<group>"; };
+		4934A47318C5D01E00BF1E6A /* fast_search.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fast_search.cpp; sourceTree = "<group>"; };
+		4934A47418C5D01E00BF1E6A /* fast_search.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = fast_search.hpp; sourceTree = "<group>"; };
 		4937B89A1521C59E00D87F22 /* MOCs.xcconfig */ = {isa = PBXFileReference; comments = "This addtional .xcconfig is needed to have an empty OTHER_LDFLAGS for the target MOCs. Newer versions of the linker complain and fail when they find dylibs in the link line."; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = MOCs.xcconfig; sourceTree = "<group>"; };
 		493D309915190AEA00A19C3D /* new_buffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = new_buffer.cpp; sourceTree = "<group>"; };
 		493F45F7179EC49F00E2972D /* latex_preview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = latex_preview.cpp; sourceTree = "<group>"; };
@@ -1612,7 +1630,6 @@
 		4973E9A018BC945F001F74F0 /* r_language.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = r_language.cpp; sourceTree = "<group>"; };
 		497822CA16EC86D40054F5BA /* tt_analyze.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tt_analyze.cpp; sourceTree = "<group>"; };
 		49AA0884181166140090FD84 /* font_protrusion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_protrusion.cpp; sourceTree = "<group>"; };
-		49AA65401891A58B003DA304 /* fromtex_cons.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fromtex_cons.cpp; sourceTree = "<group>"; };
 		49BEF71616FDD566004BAE73 /* metadata-springer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "metadata-springer.cpp"; sourceTree = "<group>"; };
 		49BEF71716FDD566004BAE73 /* metadata.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = metadata.hpp; sourceTree = "<group>"; };
 		49D6464418478DD2001541E1 /* base64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = base64.cpp; sourceTree = "<group>"; };
@@ -2842,10 +2859,11 @@
 		9C0B476710A8CC0F0097A335 /* Tex */ = {
 			isa = PBXGroup;
 			children = (
+				4934A46318C5D00000BF1E6A /* conservative_fromtex.cpp */,
+				4934A46418C5D00000BF1E6A /* conservative_totex.cpp */,
 				9C0B476810A8CC0F0097A335 /* convert_tex.hpp */,
 				9C0B09B614FF0A3D004ABDCE /* fromcls.cpp */,
 				9C0B476910A8CC0F0097A335 /* fromtex.cpp */,
-				49AA65401891A58B003DA304 /* fromtex_cons.cpp */,
 				492EA53C18634091007F16D8 /* fromtex_post.cpp */,
 				9C0B476A10A8CC0F0097A335 /* inittex.cpp */,
 				495712F716E90E5900934EA3 /* metadata-acm.cpp */,
@@ -2857,6 +2875,8 @@
 				9CD1513A15A72D0F006F2205 /* metadata.cpp */,
 				49BEF71716FDD566004BAE73 /* metadata.hpp */,
 				9C0B476B10A8CC0F0097A335 /* parsetex.cpp */,
+				4934A46518C5D00000BF1E6A /* tracked_fromtex.cpp */,
+				4934A46618C5D00000BF1E6A /* tracked_totex.cpp */,
 			);
 			path = Tex;
 			sourceTree = "<group>";
@@ -2938,15 +2958,17 @@
 		9C0B478F10A8CC0F0097A335 /* String */ = {
 			isa = PBXGroup;
 			children = (
-				49D6464418478DD2001541E1 /* base64.cpp */,
-				49D6464518478DD2001541E1 /* base64.hpp */,
-				49FFF7C41635D3690031CFDC /* wencoding.cpp */,
-				49FFF7C51635D3690031CFDC /* wencoding.hpp */,
 				9C0B479010A8CC0F0097A335 /* analyze.cpp */,
 				9C0B479110A8CC0F0097A335 /* analyze.hpp */,
+				49D6464418478DD2001541E1 /* base64.cpp */,
+				49D6464518478DD2001541E1 /* base64.hpp */,
 				9C0B479210A8CC0F0097A335 /* converter.cpp */,
 				9C0B479310A8CC0F0097A335 /* converter.hpp */,
+				4934A47318C5D01E00BF1E6A /* fast_search.cpp */,
+				4934A47418C5D01E00BF1E6A /* fast_search.hpp */,
 				9C0B479410A8CC0F0097A335 /* merge_sort.hpp */,
+				49FFF7C41635D3690031CFDC /* wencoding.cpp */,
+				49FFF7C51635D3690031CFDC /* wencoding.hpp */,
 			);
 			path = String;
 			sourceTree = "<group>";
@@ -4722,6 +4744,7 @@
 				9C0B4A2510A8CC110097A335 /* edit_repaint.cpp in Sources */,
 				9C0B4A2610A8CC110097A335 /* edit_delete.cpp in Sources */,
 				9C0B4A2710A8CC110097A335 /* edit_dynamic.cpp in Sources */,
+				4934A46718C5D00000BF1E6A /* conservative_fromtex.cpp in Sources */,
 				9C0B4A2810A8CC110097A335 /* edit_math.cpp in Sources */,
 				9C0B4A2910A8CC110097A335 /* edit_modify.cpp in Sources */,
 				9C0B4A2A10A8CC110097A335 /* edit_table.cpp in Sources */,
@@ -4735,6 +4758,7 @@
 				9C0B4A3210A8CC110097A335 /* glyph_ops.cpp in Sources */,
 				9C0B4A3310A8CC110097A335 /* glyph_shrink.cpp in Sources */,
 				9C0B4A3410A8CC110097A335 /* charmap.cpp in Sources */,
+				4934A46A18C5D00000BF1E6A /* conservative_totex.cpp in Sources */,
 				9C0B4A3510A8CC110097A335 /* compound_font.cpp in Sources */,
 				9C0B4A3610A8CC110097A335 /* find_font.cpp in Sources */,
 				9C0B4A3710A8CC110097A335 /* font.cpp in Sources */,
@@ -4761,6 +4785,7 @@
 				9C0B4A5910A8CC110097A335 /* list.cpp in Sources */,
 				9C0B4A5A10A8CC110097A335 /* rel_hashmap.cpp in Sources */,
 				9C0B4A5B10A8CC110097A335 /* modification.cpp in Sources */,
+				4934A47018C5D00000BF1E6A /* tracked_totex.cpp in Sources */,
 				9C0B4A5C10A8CC110097A335 /* parse_string.cpp in Sources */,
 				9C0B4A5D10A8CC110097A335 /* path.cpp in Sources */,
 				9C0B4A5E10A8CC110097A335 /* rectangles.cpp in Sources */,
@@ -4834,7 +4859,6 @@
 				9C0B4AFB10A8CC110097A335 /* tm_button.cpp in Sources */,
 				9C0B4AFC10A8CC110097A335 /* tm_dialogue.cpp in Sources */,
 				9C0B4AFD10A8CC110097A335 /* tm_frame.cpp in Sources */,
-				49AA65411891A58B003DA304 /* fromtex_cons.cpp in Sources */,
 				9C0B4AFE10A8CC110097A335 /* tm_window.cpp in Sources */,
 				9C0B4AFF10A8CC110097A335 /* animate_boxes.cpp in Sources */,
 				9C0B4B0010A8CC110097A335 /* basic_boxes.cpp in Sources */,
@@ -4849,6 +4873,7 @@
 				9C0B4B0910A8CC110097A335 /* misc_boxes.cpp in Sources */,
 				9C0B4B0A10A8CC110097A335 /* script_boxes.cpp in Sources */,
 				9C0B4B0B10A8CC110097A335 /* stack_boxes.cpp in Sources */,
+				4934A47518C5D01E00BF1E6A /* fast_search.cpp in Sources */,
 				9C0B4B0C10A8CC110097A335 /* superpose_boxes.cpp in Sources */,
 				9C0B4B0D10A8CC110097A335 /* graphics_boxes.cpp in Sources */,
 				9C0B4B0E10A8CC110097A335 /* grid_boxes.cpp in Sources */,
@@ -4989,6 +5014,7 @@
 				491BB59B1731182600A755DF /* triangulated.cpp in Sources */,
 				491BB59F1731183800A755DF /* pencil.cpp in Sources */,
 				491BB5A71731186A00A755DF /* effect.cpp in Sources */,
+				4934A46D18C5D00000BF1E6A /* tracked_fromtex.cpp in Sources */,
 				491BB5AA1731186A00A755DF /* scalable.cpp in Sources */,
 				491BB5AD1731186A00A755DF /* true_color.cpp in Sources */,
 				491BB5B2173118C700A755DF /* metadata-ieee.cpp in Sources */,
@@ -5097,6 +5123,7 @@
 				9CCC744610D303D900E88D90 /* font.cpp in Sources */,
 				9CCC744710D303D900E88D90 /* math_font.cpp in Sources */,
 				9CCC744810D303D900E88D90 /* translator.cpp in Sources */,
+				4934A47718C5D01E00BF1E6A /* fast_search.cpp in Sources */,
 				9CCC744910D303D900E88D90 /* virtual_font.cpp in Sources */,
 				9CCC744A10D303D900E88D90 /* widget.cpp in Sources */,
 				9CCC744B10D303D900E88D90 /* math_tree.cpp in Sources */,
@@ -5108,6 +5135,7 @@
 				9CCC745110D303D900E88D90 /* basic.cpp in Sources */,
 				9CCC745210D303D900E88D90 /* command.cpp in Sources */,
 				9CCC745310D303D900E88D90 /* observer.cpp in Sources */,
+				4934A46C18C5D00000BF1E6A /* conservative_totex.cpp in Sources */,
 				9CCC745410D303D900E88D90 /* array.cpp in Sources */,
 				9CCC745510D303D900E88D90 /* hashfunc.cpp in Sources */,
 				9CCC745610D303D900E88D90 /* hashmap.cpp in Sources */,
@@ -5213,6 +5241,7 @@
 				9CCC74D810D303D900E88D90 /* bridge_hidden.cpp in Sources */,
 				9CCC74D910D303D900E88D90 /* bridge_locus.cpp in Sources */,
 				9CCC74DA10D303D900E88D90 /* bridge_mark.cpp in Sources */,
+				4934A46F18C5D00000BF1E6A /* tracked_fromtex.cpp in Sources */,
 				9CCC74DB10D303D900E88D90 /* bridge_rewrite.cpp in Sources */,
 				9CCC74DC10D303D900E88D90 /* bridge_surround.cpp in Sources */,
 				9CCC74DD10D303D900E88D90 /* bridge_with.cpp in Sources */,
@@ -5240,6 +5269,7 @@
 				9CCC74F810D303D900E88D90 /* lazy_gui.cpp in Sources */,
 				9CCC74F910D303D900E88D90 /* lazy_paragraph.cpp in Sources */,
 				9CCC74FA10D303D900E88D90 /* lazy_typeset.cpp in Sources */,
+				4934A46918C5D00000BF1E6A /* conservative_fromtex.cpp in Sources */,
 				9CCC74FB10D303D900E88D90 /* lazy_vstream.cpp in Sources */,
 				9CCC74FC10D303D900E88D90 /* line_breaker.cpp in Sources */,
 				9CCC74FD10D303D900E88D90 /* make_pages.cpp in Sources */,
@@ -5255,7 +5285,6 @@
 				9CCC751F10D304EB00E88D90 /* aqua_gui.mm in Sources */,
 				9CCC752010D304EB00E88D90 /* aqua_menu.mm in Sources */,
 				9CCC752110D304EB00E88D90 /* aqua_renderer.mm in Sources */,
-				49AA65431891A58B003DA304 /* fromtex_cons.cpp in Sources */,
 				9CCC752210D304EB00E88D90 /* aqua_utilities.mm in Sources */,
 				9CCC752310D304EB00E88D90 /* aqua_widget.mm in Sources */,
 				9CCC752510D304EB00E88D90 /* TMView.mm in Sources */,
@@ -5290,6 +5319,7 @@
 				49F9FA151573BA86006C7258 /* new_project.cpp in Sources */,
 				49F9FA181573BA86006C7258 /* new_window.cpp in Sources */,
 				9CD1513D15A72D0F006F2205 /* metadata.cpp in Sources */,
+				4934A47218C5D00000BF1E6A /* tracked_totex.cpp in Sources */,
 				49FFF7C81635D3690031CFDC /* wencoding.cpp in Sources */,
 				9C6632E41676B229000D7974 /* font_database.cpp in Sources */,
 				9C6632EA1676B272000D7974 /* preferences.cpp in Sources */,
@@ -5351,6 +5381,7 @@
 				9CD4E5F610B14AB300E0DD5C /* to_scheme.cpp in Sources */,
 				9CD4E5F710B14AB300E0DD5C /* fromtex.cpp in Sources */,
 				9CD4E5F810B14AB300E0DD5C /* inittex.cpp in Sources */,
+				4934A46E18C5D00000BF1E6A /* tracked_fromtex.cpp in Sources */,
 				9CD4E5F910B14AB300E0DD5C /* parsetex.cpp in Sources */,
 				9CD4E5FA10B14AB300E0DD5C /* fromtm.cpp in Sources */,
 				9CD4E5FB10B14AB300E0DD5C /* totm.cpp in Sources */,
@@ -5410,7 +5441,6 @@
 				9CD4E63A10B14AB300E0DD5C /* font.cpp in Sources */,
 				9CD4E63B10B14AB300E0DD5C /* math_font.cpp in Sources */,
 				9CD4E63C10B14AB300E0DD5C /* translator.cpp in Sources */,
-				49AA65421891A58B003DA304 /* fromtex_cons.cpp in Sources */,
 				9CD4E63D10B14AB300E0DD5C /* virtual_font.cpp in Sources */,
 				9CD4E63E10B14AB300E0DD5C /* widget.cpp in Sources */,
 				9CD4E63F10B14AB300E0DD5C /* math_tree.cpp in Sources */,
@@ -5424,6 +5454,7 @@
 				9CD4E64810B14AB300E0DD5C /* array.cpp in Sources */,
 				9CD4E64910B14AB300E0DD5C /* hashfunc.cpp in Sources */,
 				9CD4E64A10B14AB300E0DD5C /* hashmap.cpp in Sources */,
+				4934A46818C5D00000BF1E6A /* conservative_fromtex.cpp in Sources */,
 				9CD4E64B10B14AB300E0DD5C /* hashmap_extra.cpp in Sources */,
 				9CD4E64C10B14AB300E0DD5C /* hashset.cpp in Sources */,
 				9CD4E64D10B14AB300E0DD5C /* hashtree.cpp in Sources */,
@@ -5463,6 +5494,7 @@
 				9CD4E68C10B14AB300E0DD5C /* timer.cpp in Sources */,
 				9CD4E68D10B14AB300E0DD5C /* url.cpp in Sources */,
 				9CD4E68E10B14AB300E0DD5C /* file.cpp in Sources */,
+				4934A47618C5D01E00BF1E6A /* fast_search.cpp in Sources */,
 				9CD4E68F10B14AB300E0DD5C /* image_files.cpp in Sources */,
 				9CD4E69010B14AB300E0DD5C /* web_files.cpp in Sources */,
 				9CD4E69110B14AB300E0DD5C /* cpp_language.cpp in Sources */,
@@ -5470,6 +5502,7 @@
 				9CD4E69410B14AB300E0DD5C /* hyphenate.cpp in Sources */,
 				9CD4E69510B14AB300E0DD5C /* language.cpp in Sources */,
 				9CD4E69610B14AB300E0DD5C /* math_language.cpp in Sources */,
+				4934A46B18C5D00000BF1E6A /* conservative_totex.cpp in Sources */,
 				9CD4E69710B14AB300E0DD5C /* mathemagix_language.cpp in Sources */,
 				9CD4E69810B14AB300E0DD5C /* scheme_language.cpp in Sources */,
 				9CD4E69910B14AB300E0DD5C /* text_language.cpp in Sources */,
@@ -5514,6 +5547,7 @@
 				9CD4E6C210B14AB300E0DD5C /* bridge.cpp in Sources */,
 				9CD4E6C310B14AB300E0DD5C /* bridge_argument.cpp in Sources */,
 				9CD4E6C410B14AB300E0DD5C /* bridge_auto.cpp in Sources */,
+				4934A47118C5D00000BF1E6A /* tracked_totex.cpp in Sources */,
 				9CD4E6C510B14AB300E0DD5C /* bridge_compound.cpp in Sources */,
 				9CD4E6C610B14AB300E0DD5C /* bridge_default.cpp in Sources */,
 				9CD4E6C710B14AB300E0DD5C /* bridge_docrange.cpp in Sources */,
