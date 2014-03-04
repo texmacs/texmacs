@@ -145,7 +145,9 @@
 (tm-define (texout-document l)
   (if (nnull? l)
       (begin
-	(texout (car l))
+        (if (== (car l) "")
+          (output-tex "\\")
+	  (texout (car l)))
 	(if (nnull? (cdr l))
 	    (begin
 	      (output-lf)
