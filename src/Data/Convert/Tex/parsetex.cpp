@@ -294,6 +294,7 @@ latex_parser::parse (string s, int& i, string stop, int change) {
       else {
 	tree u= parse_backslash (s, i, change);
 	if (u != "") t << u;
+        if (u == tuple ("\\\n")) t << "\n";
       }
       break;
     case '\'':
@@ -503,14 +504,21 @@ latex_parser::parse_backslash (string s, int& i, int change) {
     if (i<n && s[i] == '{') { i++; u= parse (s, i, "}"); i++; }
     return tree (TUPLE, "\\href", ss, u);
   }
-  if (((i+3)<n) && (s(i,i+2)=="\\\n")) {i++; return "";}
 
   /************************ special commands *********************************/
   i++;
   if (i==n) return "";
   if (s[i]==' ') {
-    i++;
-    return tree (TUPLE, "\\ ");
+    while (i<n && (s[i] == ' ' || s[i] == '\t')) i++;
+    if (i<n && s[i] != '\n')
+      return tree (TUPLE, "\\ ");
+    else
+      return tree (TUPLE, "\\\n");
+  }
+  if (s[i]=='\n') {
+    while (i<n && s[i]=='\n') i++;
+    lf= 'N';
+    return tree (TUPLE, "\\\n");
   }
   if (!is_tex_alpha(s[i])) {
     i++;

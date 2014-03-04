@@ -1777,6 +1777,7 @@ is_verbatim (tree t) {
 static tree
 remove_superfluous_newlines (tree t) {
   if (is_verbatim (t) || is_atomic (t)) return t;
+  if (is_compound (t, "!emptyline")) return "";
   tree r (L(t));
   for (int i=0; i<N(t); i++) {
     if (!is_document (t) || t[i] != "")

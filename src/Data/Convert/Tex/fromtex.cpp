@@ -487,6 +487,7 @@ latex_symbol_to_tree (string s) {
     s= s(1,N(s));
     if ((s == "ldots" || s == "dots" || s == "dotso")
         && (command_type ("!mode") != "math")) return "...";
+    if (s == "\n")     return tree (APPLY, "!emptyline");
     if (latex_type ('\\' * s) == "command") {
       if (s == " ")      return " ";
       if (s == "-")      return "";
