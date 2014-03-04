@@ -809,8 +809,56 @@ tm_search_backwards (string s, int pos, string in) {
   return -1;
 }
 
+static array<string>
+tm_string_split_between_words (string s) {
+  int i= 0, j= -1, n= N(s);
+  char status= 'o';
+  array<string> r;
+  while (i < n && j < n/2) {
+    char c= s[i];
+    if      (is_numeric (c)   && status == 'c');
+    else if (is_iso_alpha (c) && status == 'a');
+    else {
+      if      (is_numeric   (c)) status= 'c';
+      else if (is_iso_alpha (c)) status= 'a';
+      else status= 'x';
+      j= i;
+    }
+    tm_char_forwards (s, i);
+  }
+  if (j > 0 && j < n)
+    r << s(0, j) << s(j, n);
+  else
+    r << s;
+  return r;
+}
+
+static array<string>
+tm_string_split_at_spaces (string s) {
+  int i= 0, j= 0, n= N(s);
+  array<string> r;
+  while (i>=0 && j < n/2) {
+    i= tm_search_forwards (" ", i, s);
+    if (i == -1) break;
+    j= i++;
+  }
+  if (j < 1 || j >= n)
+    r << s;
+  else if (j == n-1)
+    r << s(0, j) << s(j, n);
+  else
+    r << s(0, j) << s(j, j+1) << s(j+1, n);
+  return r;
+}
+
 array<string>
 tm_string_split (string s) {
+  array<string> r;
+  r= tm_string_split_at_spaces (s);
+  if (N(r) > 1) return r;
+  r= tm_string_split_between_words (s);
+  if (N(r) > 1) return r;
+  /* else split anywhere */
   int i= 0, n= N(s);
   while (i < n/2)
     tm_char_forwards (s, i);
