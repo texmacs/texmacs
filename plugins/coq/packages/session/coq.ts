@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.1>
 
 <style|source>
 
@@ -45,8 +45,6 @@
 
   <assign|coq-output|<macro|body|<generic-output|<with|prog-language|verbatim|<arg|body>>>>>
 
-  \;
-
   <assign|coq-section|<\macro|name|body>
     <section*|<arg|name>>
 
@@ -76,7 +74,19 @@
     </proof>
   </macro>>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Coq Doc
+    </src-comment>
+  </active*>
+
+  <assign|coq-coqdoc|<macro|body|<coq-comment|<arg|body>>>>
+
+  <assign|coqdoc-coq|<macro|body|<with|color|<value|coq-input-color>|font-size|0.841|font-family|tt|<arg|body>>>>
+
+  <assign|coqdoc-verbatim|<macro|body|<with|color|black|font-size|0.841|font-family|tt|<arg|body>>>>
+
+  <assign|coqdoc-vernac|<macro|body|<with|color|<value|coq-input-color>|font-size|0.841|font-family|tt|<arg|body>>>>
 </body>
 
 <\initial>

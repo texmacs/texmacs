@@ -47,6 +47,37 @@ is_blank (char c) {
 }
 
 bool
+is_blank (string s) {
+  int i= 0, n= N(s);
+  while (i<n)
+    if (!is_blank (s[i++]))
+      return false;
+  return true;
+}
+
+bool
+is_blank (tree t) {
+  if (is_atomic (t))
+    return is_blank (as_string (t));
+  int i= 0, n= N(t);
+  if (is_compound (t, "with"))
+    return is_blank (t[n-1]);
+  else if (is_document (t) || is_concat (t)) {
+    while (i<n)
+      if (!is_blank (t[i++]))
+        return false;
+    return true;
+  }
+  else
+    return false;
+}
+
+bool
+start_coqdoc (string s, int i) {
+  return test (s, i, "(** ");
+}
+
+bool
 start_comment (string s, int i) {
   return test (s, i, "(*");
 }
@@ -111,20 +142,152 @@ parse_command_name (string s) {
 }
 
 /******************************************************************************
+* Parse coqdoc
+******************************************************************************/
+
+static tree coqdoc_to_tree (string s);
+
+static string
+parse_delimited (string s, int& i, char c) {
+  int start= i + 1, n= N(s);
+  i++;
+  while (i < n) {
+    if (s[i] == c && !(i+1 == n || s[i+1] == c))
+      break;
+    i++;
+  }
+  if (s[i] == c) i++;
+  return s (start, i-1);
+}
+
+static string
+parse_delimited (string s, int& i, string beg, string end, bool keep= true) {
+  int start= i + (!keep)*N(beg), cnt= 1;
+  i++;
+  while (i < N(s) && cnt > 0) {
+    if (test (s, i, beg)) cnt++;
+    if (test (s, i, end)) cnt--;
+    i++;
+  }
+  if (test (s, i-1, end)) i+=N(end)-1;
+  return s (start, i - (!keep)*N(end));
+}
+
+static void
+add_line(tree &c, tree &d) {
+  tree tmp= simplify_concat (c);
+  if (!is_blank (c))
+    d << simplify_concat (c);
+  c= tree (CONCAT);
+}
+
+static tree
+coqdoc_parse_emphasis (string s, int &i) {
+  int n= N(s), start= ++i;
+  while (i<n && !(s[i] == '_' && (i+1 == n || !start_ident (s[i+1])))) i++;
+  return compound ("em", coqdoc_to_tree (s (start, i++)));
+}
+
+// TODO:
+// - lists
+// - commands
+//   - sectionning
+//   - prettytyping rules
+//   - hide / show
+// - prettytyping
+static tree
+coqdoc_to_tree (string s) {
+  int i=0, n= N(s);
+  tree coqdoc (DOCUMENT), line (CONCAT);
+  while (i < n) {
+    if (test (s, i, "[[\n")) {
+      add_line (line, coqdoc);
+      tree vernac=
+        vernac_to_tree (parse_delimited (s, i, "[[\n", "\n]]", false));
+      coqdoc << compound ("coqdoc-vernac", vernac);
+    }
+    else if (s[i] == '[')
+      line << compound ("coqdoc-coq", parse_delimited (s, i, "[", "]", false));
+    else if (test (s, i, "%%"))
+      line << "%";
+    else if (test (s, i, "$$"))
+      line << "$";
+    else if (test (s, i, "##"))
+      line << "#";
+    else if (s[i] == '#' || s[i] == '%' || s[i] == '$') {
+      add_line (line, coqdoc);
+      char delim= s[i];
+      string ext= parse_delimited (s, i, delim);
+      tree tm;
+      if (delim == '#')
+        tm= generic_to_tree (ext, "html-snippet");
+      else if (delim == '$')
+        tm= generic_to_tree ("$"*ext*"$", "latex-snippet");
+      else if (delim == '%')
+        tm= generic_to_tree (ext, "latex-snippet");
+      if (is_multi_paragraph (tm)) {
+        add_line (line, coqdoc);
+        coqdoc << tm;
+      }
+      else
+        line << tm;
+    }
+    else if (test (s, i, "<<\n")) {
+      add_line (line, coqdoc);
+      tree verb=
+        verbatim_to_tree (parse_delimited (s, i, "<<\n", "\n>>", false));
+      coqdoc << compound ("coqdoc-verbatim", verb);
+    }
+    else if (s[i] == '_' && (i == 0 || !start_ident(s[i-1]))) {
+      line << coqdoc_parse_emphasis (s, i);
+    }
+    else if (test (s, i, "----")) {
+      i+=  4;
+      add_line (line, coqdoc);
+      coqdoc << compound ("hrule");
+      while (i<n && s[i] == '-') i++;
+    }
+    else if (s[i] == '\n') {
+      add_line (line, coqdoc);
+      i++;
+    }
+    else if (s[i] == '<') {
+      line << "<less>";
+      i++;
+    }
+    else if (s[i] == '>') {
+      line << "<gtr>";
+      i++;
+    }
+    else {
+      line << s(i, 1+i);
+      i++;
+    }
+  }
+  if (N(line) > 0)
+    add_line (line, coqdoc);
+  if (N(coqdoc) == 0)
+    return "";
+  else if (N(coqdoc) == 1)
+    return coqdoc[0];
+  else
+    return coqdoc;
+}
+
+static tree
+parse_coqdoc (string s, int& i) {
+  string coqdoc= parse_delimited (s, i, "(*", "*)");
+  return compound ("coq-coqdoc", coqdoc_to_tree (coqdoc));
+}
+
+/******************************************************************************
 * Parse raw coq
 ******************************************************************************/
 
 static tree
 parse_comment (string s, int& i) {
-  int start= i, cnt= 1;
-  i++;
-  while (i < N(s) && cnt > 0) {
-    if (start_comment (s, i)) cnt++;
-    if (end_comment   (s, i)) cnt--;
-    i++;
-  }
-  if (end_comment (s, i-1)) i++;
-  return compound ("coq-comment", from_verbatim (s (start, i+1)));
+  string coqdoc= parse_delimited (s, i, "(*", "*)");
+  return compound ("coq-comment", from_verbatim (coqdoc));
 }
 
 static bool
@@ -150,7 +313,9 @@ parse_raw_coq (string s) {
   int i= 0, startcmd= 0, n= N(s), indent_level=0;
   bool in_cmd= false;
   while (i<n) {
-    if (start_comment (s, i))
+    if (start_coqdoc (s, i))
+      r << parse_coqdoc (s, i);
+    else if (start_comment (s, i))
       r << parse_comment (s, i);
     else if (end_command (s, i)) {
       i++;
