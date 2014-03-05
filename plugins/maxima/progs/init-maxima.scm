@@ -44,8 +44,10 @@
               (cons launch-default launch-rest))
             '()))))
 
+(plugin-add-macos-path "Maxima*" "Contents/Resources/maxima/bin" #f)
+(plugin-add-windows-path "Maxima*" "bin" #f)
+
 (plugin-configure maxima
-  (:winpath "Maxima*" "bin")
   (:require (url-exists-in-path? "maxima"))
   (:versions (maxima-versions))
   ,@(maxima-launchers)

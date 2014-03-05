@@ -363,17 +363,30 @@
              (when (not (ahash-ref check-dir-table s))
                (ahash-set! check-dir-table s (url-last-modified v))))))))
 
-(define (add-to-path u)
+(define (add-to-path u after?)
   (add-to-check-dir-table u)
-  (with p (url-expand (url-or "$PATH" (url-complete u "dr")))
+  (let* ((u1 (url-complete u "dr"))
+         (u2 "$PATH")
+         (u3 (if after? (url-or u2 u1) (url-or u1 u2)))
+         (p  (url-expand u3)))
     (setenv "PATH" (url->system p))))
 
-(define (add-windows-program-path u)
-  (add-to-path (url-expand (url-append (url-or (system->url "C:\\.")
-				   (system->url "C:\\Program File*")) u))))
+(define (add-windows-program-path u after?)
+  (add-to-path
+   (url-expand
+    (url-append (url-or (system->url "C:\\.")
+                        (system->url "C:\\Program File*")) u)) after?))
 
-(define (add-macos-program-path u)
-  (add-to-path (url-append (system->url "/Applications") u)))
+(define (add-macos-program-path u after?)
+  (add-to-path (url-append (system->url "/Applications") u) after?))
+
+(define-public (plugin-add-windows-path rad rel after?)
+  (when (os-macos?)
+    (add-windows-program-path (url-append rad rel) after?)))
+
+(define-public (plugin-add-macos-path rad rel after?)
+  (when (os-macos?)
+    (add-macos-program-path (url-append rad rel) after?)))
 
 (define (path-up-to-date?)
   (with ok? #t
@@ -420,10 +433,10 @@
 	  name (second cmd) (symbol->string (third cmd))))
 	((func? cmd :winpath 2)
 	 (when (os-mingw?)
-           (add-windows-program-path (url-append (second cmd) (third cmd)))))
+           (add-windows-program-path (url-append (second cmd) (third cmd)) #t)))
 	((func? cmd :macpath 2)
 	 (when (os-macos?)
-           (add-macos-program-path (url-append (second cmd) (third cmd)))))
+           (add-macos-program-path (url-append (second cmd) (third cmd)) #t)))
 	((func? cmd :session 1)
 	 (session-setup name (second cmd)))
 	((func? cmd :scripts 1)
