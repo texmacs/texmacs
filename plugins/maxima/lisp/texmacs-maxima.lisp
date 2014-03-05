@@ -1,7 +1,14 @@
 (in-package :maxima)
-#+clisp (defvar *old-suppress-check-redefinition* 
-	      custom:*suppress-check-redefinition*)
-#+clisp (setf custom:*suppress-check-redefinition* t)
+
+;; borrowed from wxmaxima by Andrej Vodopivec
+(defmacro texmacs-no-warning (form)
+  #+sbcl `(handler-bind
+            ((style-warning #'muffle-warning)
+              (sb-ext:compiler-note #'muffle-warning))
+          ,form)
+  #+clisp `(let ((custom:*suppress-check-redefinition* t)) ,form)
+  #-(or sbcl clisp) `(progn ,form))
+
 (setf *alt-display2d* 'texmacs)
 (setf *prompt-prefix* "channel:promptlatex:\\red ")
 (setf *prompt-suffix* "\\black")
@@ -15,20 +22,22 @@
 ;; Small changes to mactex.lisp for interfacing with TeXmacs
 ;; Andrey Grozin, 2001-2006
 
+(texmacs-no-warning
 (defun main-prompt ()
   (format () "~A(~A~D) ~A" *prompt-prefix* 
-    (tex-stripdollar $inchar) $linenum *prompt-suffix*))
+          (tex-stripdollar $inchar) $linenum *prompt-suffix*)))
 
 (declare-top
 	 (special lop rop ccol $gcprint $inchar)
 	 (*expr tex-lbp tex-rbp))
 (defconstant texport *standard-output*)
 
+(texmacs-no-warning
 (defun tex-stripdollar (x)
   (let ((s (quote-% (maybe-invert-string-case (symbol-name (stripdollar x))))))
     (if (> (length s) 1)
-      (concatenate 'string "\\mathrm{" s "}")
-      s)))
+        (concatenate 'string "\\mathrm{" s "}")
+      s))))
 
 (defprop mtimes ("\\*") texsym)
 
@@ -51,25 +60,27 @@
 
 ;; Also, we should output f(x)^2, not f^2(x)
 
+(texmacs-no-warning
 (defun tex-mexpt (x l r)
   (let((nc (eq (caar x) 'mncexpt)))	; true if a^^b rather than a^b
     (setq l (if (and (numberp (cadr x)) (numneedsparen (cadr x)))
                 (tex (cadr x) (cons "\\left(" l) '("\\right)") lop (caar x))
-		(tex (cadr x) l nil lop (caar x)))
+              (tex (cadr x) l nil lop (caar x)))
           r (if (mmminusp (setq x (nformat (caddr x))))
-		;; the change in base-line makes parens unnecessary
-		(if nc
-		    (tex (cadr x) '("^ {-\\langle ")(cons "\\rangle }" r) 'mparen 'mparen)
-		    (tex (cadr x) '("^ {- ")(cons " }" r) 'mminus 'mparen))
-		(if nc
-		    (tex x (list "^{\\langle ")(cons "\\rangle}" r) 'mparen 'mparen)
-		    (if (and (integerp x) (< x 10))
-			(tex x (list "^")(cons "" r) 'mparen 'mparen)
-			(tex x (list "^{")(cons "}" r) 'mparen 'mparen)))))
-    (append l r)))
+                ;; the change in base-line makes parens unnecessary
+                (if nc
+                    (tex (cadr x) '("^ {-\\langle ")(cons "\\rangle }" r) 'mparen 'mparen)
+                  (tex (cadr x) '("^ {- ")(cons " }" r) 'mminus 'mparen))
+              (if nc
+                  (tex x (list "^{\\langle ")(cons "\\rangle}" r) 'mparen 'mparen)
+                (if (and (integerp x) (< x 10))
+                    (tex x (list "^")(cons "" r) 'mparen 'mparen)
+                  (tex x (list "^{")(cons "}" r) 'mparen 'mparen)))))
+    (append l r))))
 
 ;; binomial coefficients
 
+(texmacs-no-warning
 (defun tex-choose (x l r)
   `(,@l
     "\\binom{"
@@ -77,10 +88,11 @@
     "}{"
     ,@(tex (caddr x) nil nil 'mparen 'mparen)
     "}"
-    ,@r))
+    ,@r)))
 
 ;; Integrals, sums, products
 
+(texmacs-no-warning
 (defun tex-int (x l r)
   (let ((s1 (tex (cadr x) nil nil 'mparen 'mparen)) ;;integrand delims / & d
 	(var (tex (caddr x) nil nil 'mparen rop))) ;; variable
@@ -90,8 +102,9 @@
 	  (let ((low (tex (nth 3 x) nil nil 'mparen 'mparen))
 		;; 1st item is 0
 		(hi (tex (nth 4 x) nil nil 'mparen 'mparen)))
-	    (append l `("\\int_{" ,@low "}^{" ,@hi "}{" ,@s1 "\\;\\mathd\\;" ,@var "}\\big.") r))))))
+	    (append l `("\\int_{" ,@low "}^{" ,@hi "}{" ,@s1 "\\;\\mathd\\;" ,@var "}\\big.") r)))))))
 
+(texmacs-no-warning
 (defun tex-sum(x l r)
   (let ((op (cond ((eq (caar x) '%sum) "\\sum_{")
 		  ((eq (caar x) '%product) "\\prod_{")
@@ -102,8 +115,9 @@
 	(index ;; "index = lowerlimit"
 	 (tex `((mequal simp) ,(caddr x),(cadddr x)) nil nil 'mparen 'mparen))
 	(toplim (tex (car(cddddr x)) nil nil 'mparen 'mparen)))
-    (append l `( ,op ,@index "}^{" ,@toplim "}{" ,@s1 "}\\big.") r)))
+    (append l `( ,op ,@index "}^{" ,@toplim "}{" ,@s1 "}\\big.") r))))
 
+(texmacs-no-warning
 (defun tex-lsum(x l r)
   (let ((op (cond ((eq (caar x) '%lsum) "\\sum_{")
 		  ;; extend here
@@ -112,7 +126,7 @@
 	(s1 (tex (cadr x) nil nil 'mparen rop))	;; summand
 	(index ;; "index = lowerlimit"
 	 (tex `((min simp) , (caddr x), (cadddr x))  nil nil 'mparen 'mparen)))
-    (append l `( ,op ,@index "}}{" ,@s1 "}\\big.") r)))
+    (append l `( ,op ,@index "}}{" ,@s1 "}\\big.") r))))
 
 ;; This is a hack for math input of integrals, sums, products
 
@@ -143,6 +157,3 @@
   (if (= (length l) 3)
       (dosum (caddr l) (cadar l) (meval (caddar l)) (meval (cadr l)) nil)
       (wna-err '$tmprod)))
-
-#+clisp (setf custom:*suppress-check-redefinition*
-	      *old-suppress-check-redefinition*)
