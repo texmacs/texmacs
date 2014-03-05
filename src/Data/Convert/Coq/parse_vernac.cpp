@@ -129,8 +129,11 @@ parse_comment (string s, int& i) {
 
 static bool
 end_command (string s, int i) {
-  return i < N(s) && s[i] == '.'
-    && (i == N(s)-1 || s[i+1] == ' ' || s[i+1] == '\t' || s[i+1] == '\n');
+  int n= N(s);
+  if (!(i<n && s[i] == '.')) return false;
+  i++;
+  while (i<n && (s[i] == ' ' || s[i] == '\t')) i++;
+  return i == n || s[i] == '\n';
 }
 
 static int
