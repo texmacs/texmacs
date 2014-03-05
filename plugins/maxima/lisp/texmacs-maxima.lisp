@@ -43,8 +43,9 @@
 
 (defun texmacs (x)
   (let ((ccol 1))
+    ;;(mapc #'(lambda (y) (myprinc y t))
     (mapc #'myprinc
-        (tex x '("latex:$\\displaystyle ") '("$
+          (tex x '("latex:$\\displaystyle ") '("$
 ") 'mparen 'mparen))))
 
 ;; In order to allow cut-and-paste from output to input,
