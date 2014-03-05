@@ -1,6 +1,7 @@
 (in-package :maxima)
 
 ;; borrowed from wxmaxima by Andrej Vodopivec
+;; and a patch proposed by John Lapeyre
 (defmacro texmacs-no-warning (form)
   #+sbcl `(handler-bind
             ((style-warning #'muffle-warning)
