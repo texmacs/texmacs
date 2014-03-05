@@ -357,6 +357,14 @@
   (:synopsis "Remove all implied packages in package list @ps")
   (list-filter ps (lambda (p) (non-redundant-package? p ps))))
 
+(define (latex-command-provided-by cmd)
+  (logic-ref-list latex-provides% cmd))
+
+(tm-define (latex-command-provided-by? cmd ps)
+  (:synopsis "Check whether command @cmd is provided by package in @ps")
+  (with l (latex-command-provided-by cmd)
+    (list-or (map (cut in? <> ps) l))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Compute usepackage command for a document
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
