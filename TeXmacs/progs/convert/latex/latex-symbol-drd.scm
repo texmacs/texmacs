@@ -11,7 +11,90 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert latex latex-symbol-drd))
+(texmacs-module (convert latex latex-symbol-drd)
+  (:use (convert latex latex-command-drd)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Basic symbols
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(logic-group latex-symbol%
+  ;; Greek letters
+  Gamma Delta Theta Lambda Xi Pi Sigma Upsilon Phi Psi Omega
+  alpha beta gamma delta epsilon
+  varepsilon zeta eta theta vartheta
+  iota kappa lambda mu nu omicron
+  xi pi varpi rho
+  varrho sigma varsigma tau upsilon
+  phi varphi chi psi omega
+
+  ;; Binary operations
+  pm mp times div ast star circ bullet cdot
+  cap cup uplus sqcap sqcup vee wedge setminus wr
+  diamond triangleleft triangleright land lor lnot
+  oplus ominus otimes oslash odot bigcirc amalg notin
+
+  ;; Relations
+  leq le geq ge equiv models prec
+  succ sim perp preceq succeq
+  simeq mid ll gg asymp
+  parallel subset supset approx bowtie
+  subseteq supseteq cong Join sqsubset
+  sqsupset ne neq smile sqsubseteq sqsupseteq
+  doteq frown in ni propto
+  vdash dashv
+  
+  ;; Arrows
+  leftarrow rightarrow uparrow downarrow
+  Leftarrow Rightarrow Uparrow Downarrow
+  nearrow searrow swarrow nwarrow
+  leftrightarrow updownarrow Updownarrow Leftrightarrow 
+  leftharpoonup leftharpoondown rightharpoonup rightharpoondown
+  hookleftarrow hookrightarrow
+  to mapsto longmapsto
+  longrightarrow longleftarrow longleftrightarrow
+  Longrightarrow Longleftarrow Longleftrightarrow 
+  
+  ;; Miscellaneous symbols
+  ldots cdots vdots ddots hdots aleph
+  prime forall infty hbar emptyset
+  exists nabla surd triangle
+  imath jmath ell neg
+  top flat natural sharp wp
+  bot clubsuit diamondsuit heartsuit spadesuit
+  Re Im angle partial textbackslash
+  dag ddag dagger ddagger guillemotleft guillemotright
+
+  ;; Delimiters
+  uparrow Uparrow downarrow Downarrow
+  updownarrow Updownarrow
+  lfloor rfloor lceil rceil
+  langle rangle backslash
+
+  ;; Big delimiters
+  rmoustache lmoustache rgroup lgroup lbrace rbrace
+  arrowvert Arrowvert bracevert
+
+  ;; Binary operations (latexsym or amssymb required)
+  lhd rhd unlhd unrhd leadsto
+
+  ;; Miscellaneous symbols (amssymb or graphicx required)
+  Diamond mho)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Big symbols
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(logic-group latex-big-symbol%
+  sum int bigintwl oint bigointwl prod coprod
+  bignone bigtimes bigoplus bigotimes bigodot
+  bigvee bigwedge bigsqcup bigcup bigcap bigpluscup bigtriangledown
+  bigtriangleup bigcurlyvee bigcurlywedge bigsqcap bigbox bigparallel
+  biginterleave bignplus bigvarint bigiint bigiiint bigvaroint bigoiint)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Symbols from amssymb package
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (logic-group latex-ams-symbol%
   ;;`
@@ -53,6 +136,10 @@
   varsubsetneqq varsupsetneq varsupsetneqq vartriangle
   vartriangleleft vartriangleright veebar yen)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Symbols from wasysym package
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (logic-group latex-wasy-symbol%
   agemO APLbox APLcomment APLdownarrowbox APLdown APLinput
   APLleftarrowbox APLrightarrowbox APLstar APLuparrowbox APLup apprge
@@ -75,6 +162,10 @@
   wasypropto wasyrhd wasysqsubset wasysqsupset wasytherefore
   wasyunlhd wasyunrhd XBox)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Symbols from stmaryrd package
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (logic-group latex-stmary-symbol%
   Arrownot arrownot baro bbslash binampersand bindnasrepma
   boxast boxbar boxbox boxbslash boxcircle
@@ -96,11 +187,25 @@
   varodot varogreaterthan varolessthan varominus varoplus varoslash
   varotimes varovee varowedge vartimes Ydown Yleft Yright Yup)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Symbols from mathabx package
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (logic-group latex-mathabx-symbols%
   divides ndivides)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Rules
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (logic-rules
+  ((latex-arity% 'x 0) (latex-symbol% 'x))
+  ((latex-arity% 'x 0) (latex-big-symbol% 'x))
+  ((latex-symbol% 'x) (latex-ams-symbol% 'x))
   ((latex-needs% 'x "amssymb") (latex-ams-symbol% 'x))
+  ((latex-symbol% 'x) (latex-wasy-symbol% 'x))
   ((latex-needs% 'x "wasysym") (latex-wasy-symbol% 'x))
+  ((latex-symbol% 'x) (latex-stmary-symbol% 'x))
   ((latex-needs% 'x "stmaryrd") (latex-stmary-symbol% 'x))
+  ((latex-symbol% 'x) (latex-mathabx-symbol% 'x))
   ((latex-needs% 'x "mathabx") (latex-mathabx-symbol% 'x)))
