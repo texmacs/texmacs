@@ -331,6 +331,33 @@
 	(else (serialize-latex t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Package dependencies management
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (latex-package-direct-dependencies p)
+  (logic-ref-list latex-depends% p))
+
+(define (insert-dependencies l p)
+  (if (null? p) l
+      (if (in? (car p) l)
+          (insert-dependencies l (cdr p))
+          (with deps (latex-package-direct-dependencies (car p))
+            (insert-dependencies (append l (list (car p)))
+                                 (append deps (cdr p)))))))
+
+(tm-define (latex-packages-dependencies ps)
+  (:synopsis "Determine all dependencies of packages @ps")
+  (insert-dependencies (list) ps))
+
+(define (non-redundant-package? p among)
+  (with c (latex-packages-dependencies (list-difference among (list p)))
+    (not (in? p c))))
+
+(tm-define (latex-packages-simplify ps)
+  (:synopsis "Remove all implied packages in package list @ps")
+  (list-filter ps (lambda (p) (non-redundant-package? p ps))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Compute usepackage command for a document
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
