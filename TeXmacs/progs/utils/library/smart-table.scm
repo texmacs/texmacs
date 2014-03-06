@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (kernel library smart-table))
+(texmacs-module (utils library smart-table))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Defining smart tables
@@ -49,8 +49,8 @@
 	 (smart-table-insert t (rcons conds (car l)) (cdr l)))
 	(else (map (lambda (x) (smart-table-insert-one t conds x)) l))))
 
-(define-public-macro (smart-table t . l)
-  "Define a smart table @t with entries @l"
+(tm-define-macro (smart-table t . l)
+  (:synopsis "Define a smart table @t with entries @l")
   `(begin
      (when (not (defined? ',t))
        (tm-define ,t (make-ahash-table)))
@@ -60,6 +60,7 @@
 ;; Routines for smart tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public (smart-ref t key)
+(tm-define (smart-ref t key)
+  (:synopsis "Get the entry @key in the table @t")
   (let ((fun (ahash-ref t key)))
     (and fun (fun))))
