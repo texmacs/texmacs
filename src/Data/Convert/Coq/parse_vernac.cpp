@@ -188,8 +188,107 @@ coqdoc_parse_emphasis (string s, int &i) {
   return compound ("em", coqdoc_to_tree (s (start, i++)));
 }
 
+static bool
+is_list_begining (string s, int i) {
+  int n= N(s);
+  if (!(i<n && s[i] == '\n')) return false;
+  i++;
+  while (i<n && s[i] == ' ' && !test(s, i, "----")) i++;
+  if (!(i<n && s[i] == '-' && !test(s, i, "----"))) return false;
+  return true;
+}
+
+static int
+get_list_depth (string s, int i) {
+  int iitem= 0, n= N(s);
+  if (i<n && s[i] == '\n') i++;
+  while (i<n && s[i] == ' ') {
+    iitem++;
+    i++;
+  }
+  if (i<n && s[i] == '-' && !test(s, i, "----"))
+    return iitem;
+  else
+    return -iitem;
+}
+
+static bool
+can_parse_item (string s, int i, int iitem) {
+  return get_list_depth (s, i) >= iitem;
+}
+
+static bool
+can_parse_line (string s, int i, int itext) {
+  if (get_list_depth (s, i) <= -itext || get_list_depth (s, i) >= itext)
+    return true;
+  int n= N(s);
+  i++;
+  while (i<n && (s[i] == ' ' || s[i] == '\t'))
+    i++;
+  return s[i] == '\n';
+}
+
+static tree
+parse_line (string s, int &i, int itext) {
+  int n= N(s);
+  int start= i;
+  if (i<n && s[i] == '\n') i++;
+  while (i<n && s[i] == ' ') i++;
+  if (i<n && s[i] != '-' && !test(s, i, "----")) {
+    start= i;
+    while (i<n && s[i] != '\n') i++;
+  }
+  else {
+    while (i<n && s[i] != '\n') i++;
+    while (can_parse_line (s, i, itext+1)) {
+      i++;
+      while (i<n && s[i] != '\n') i++;
+    }
+  }
+  return coqdoc_to_tree (s(start, i));
+}
+
+static tree
+parse_item (string s, int &i, int iitem) {
+  int itext= iitem, n= N(s);
+  if (i<n && s[i] == '\n') i++;
+  i += iitem;
+  if (i<n && s[i] == '-' && !test(s, i, "----")) {
+    itext++;
+    i++;
+  }
+  while (i<n && s[i] == ' ') {
+    itext++;
+    i++;
+  }
+  tree r (CONCAT);
+  r << compound ("item");
+  tree tmp= parse_line (s, i, itext);
+  if (tmp != "")
+    r << tmp;
+  if (can_parse_line (s, i, itext)) {
+    tree rr (DOCUMENT, r);
+    while (can_parse_line (s, i, itext)) {
+      tmp= parse_line (s, i, itext);
+      if (tmp != "")
+        rr << tmp;
+    }
+    return rr;
+  }
+  else
+    return r;
+}
+
+static tree
+parse_list (string s, int &i) {
+  int iitem= get_list_depth (s, i);
+  tree r (DOCUMENT);
+  while (can_parse_item (s, i, iitem))
+    r << parse_item (s, i, iitem);
+  return compound ("itemize", r);
+}
+
 // TODO:
-// - lists
 // - commands
 //   - sectionning
 //   - prettytyping rules
@@ -231,6 +330,11 @@ coqdoc_to_tree (string s) {
       }
       else
         line << tm;
+    }
+    else if (is_list_begining (s, i)) {
+      tree list= parse_list (s, i);
+      add_line (line, coqdoc);
+      coqdoc << list;
     }
     else if (test (s, i, "<<\n")) {
       add_line (line, coqdoc);
