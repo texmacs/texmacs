@@ -492,7 +492,7 @@
 ;; Extra preamble definitions which are needed to export certain macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(logic-table latex-texmacs-preamble%
+(smart-table latex-texmacs-preamble
   (newmdenv
    (!append (mdfsetup (!append "linecolor=black,linewidth=0.5pt,"
 			       "skipabove=0.5em,skipbelow=0.5em,"
@@ -578,7 +578,7 @@
 ;;       "\\ext@arrow 0099" ,prim "fill@{#1}{#2}}\n"))))
 
 (define-macro (latex-texmacs-long prim x l m r)
-  `(logic-table latex-texmacs-preamble%
+  `(smart-table latex-texmacs-preamble
      (,(string->symbol (substring prim 1 (string-length prim)))
       (!append
        "\\providecommand{" ,prim "}[2][]{"

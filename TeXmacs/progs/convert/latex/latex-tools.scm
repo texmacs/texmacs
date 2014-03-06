@@ -238,11 +238,8 @@
 	(ahash-set! latex-env-table (cadar t)
 		    (list arity (latex-expand-def body)))
 	(latex-macro-defs-sub body)))
-    (with body (or (and
-                     (not (logic-ref latex-needs% (car t)))
-                     (logic-ref latex-texmacs-preamble% (car t)
-                                latex-framed-sessions-hyp
-                                latex-style-hyp latex-amsthm-hyp))
+    (with body (or (and (not (logic-ref latex-needs% (car t)))
+                        (smart-ref latex-texmacs-preamble (car t)))
 		   (and (env-begin? (car t))
                         (not (logic-ref latex-needs% (string->symbol (cadar t))))
                         (logic-ref latex-texmacs-env-preamble% (cadar t)
