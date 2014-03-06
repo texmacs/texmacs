@@ -66,7 +66,7 @@
     tm-define tm-define-macro lazy-body-macro tm-property request-handler
     tm-menu define-menu tm-widget define-widget tm-generate
     tm-build tm-build-macro tm-build-widget
-    menu-bind define-table extend-table
+    menu-bind define-table extend-table smart-table
     tm-service tm-call-back
     define-format define-language define-graphics))
 
