@@ -279,7 +279,7 @@
 (lazy-define (convert latex latex-drd) latex-arity latex-type)
 (lazy-define (convert latex tmtex) tmtex-env-patch)
 (lazy-define (convert latex latex-tools)
-             latex-has-style? latex-has-texmacs-package?)
+             latex-has-style? latex-has-package? latex-has-texmacs-package?)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting remote facilities\n")

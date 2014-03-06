@@ -27,9 +27,6 @@
 (define latex-style "generic")
 (define latex-packages '())
 (define latex-texmacs-packages '())
-(define latex-style-hyp 'generic-style%)
-(define latex-amsthm-hyp 'no-amsthm-package%)
-(define latex-framed-sessions-hyp 'no-framed-sessions%)
 
 (define latex-uses-table (make-ahash-table))
 (define latex-catcode-table (make-ahash-table))
@@ -42,24 +39,22 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (latex-init-style-hyps l)
-  (set! latex-texmacs-packages l)
-  (if (in? "framed-session" l)
-    (set! latex-framed-sessions-hyp 'framed-sessions%)))
+  (set! latex-texmacs-packages l))
 
 (tm-define (latex-set-language lan)
   (set! latex-language lan))
 
 (tm-define (latex-set-style sty)
-  (set! latex-style sty)
-  (set! latex-style-hyp (string->symbol (string-append sty "-style%"))))
+  (set! latex-style sty))
 
 (tm-define (latex-set-packages ps)
-  (set! latex-packages ps)
-  (when (in? "amsthm" ps)
-    (set! latex-amsthm-hyp 'amsthm-package%)))
+  (set! latex-packages ps))
 
 (tm-define (latex-has-style? sty)
   (== sty latex-style))
+
+(tm-define (latex-has-package? p)
+  (in? p latex-packages))
 
 (tm-define (latex-has-texmacs-package? p)
   (in? p latex-texmacs-packages))
@@ -242,9 +237,7 @@
                         (smart-ref latex-texmacs-preamble (car t)))
 		   (and (env-begin? (car t))
                         (not (logic-ref latex-needs% (string->symbol (cadar t))))
-                        (logic-ref latex-texmacs-env-preamble% (cadar t)
-                                   latex-framed-sessions-hyp
-                                   latex-style-hyp latex-amsthm-hyp)))
+                        (smart-ref latex-texmacs-env-preamble (cadar t))))
       (when body
         (ahash-set! latex-preamble-table
                     (if (env-begin? (car t)) (cadar t) (car t)) body)

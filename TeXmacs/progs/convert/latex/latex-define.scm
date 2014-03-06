@@ -570,7 +570,7 @@
     "  \\end{minipage}}\n")))
 
 ;;(define-macro (latex-texmacs-long prim x l m r)
-;;  `(logic-table latex-texmacs-preamble%
+;;  `(smart-table latex-texmacs-preamble
 ;;     (,(string->symbol (substring prim 1 (string-length prim)))
 ;;      (!append
 ;;       "\\def" ,prim "fill@{\\arrowfill@" ,l ,m ,r "}\n"
@@ -606,10 +606,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-macro (latex-texmacs-thmenv prim name before after)
-  `(logic-table latex-texmacs-env-preamble%
+  `(smart-table latex-texmacs-env-preamble
      (,prim (!append ,@before (newtheorem ,prim (!translate ,name))
-		     ,@after "\n")
-	    no-amsthm-package%)))
+		     ,@after "\n"))))
 
 (define-macro (latex-texmacs-theorem prim name)
   `(latex-texmacs-thmenv ,prim ,name () ()))
@@ -647,40 +646,32 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-macro (ams-texmacs-theorem abbr full)
-  `(begin
-     (logic-table latex-texmacs-env-preamble%
-       (,abbr (!append "\\theoremstyle{plain}\n"
-		       (newtheorem ,abbr (!translate ,full))
-		       "\n")
-	      amsthm-package%))))
+  `(smart-table latex-texmacs-env-preamble
+     (:require (latex-has-package? "amsthm"))
+     (,abbr (!append "\\theoremstyle{plain}\n"
+                     (newtheorem ,abbr (!translate ,full)) "\n"))))
 
 (define-macro (ams-texmacs-remark abbr full)
-  `(begin
-     (logic-table latex-texmacs-env-preamble%
-       (,abbr (!append "\\theoremstyle{remark}\n"
-		       (newtheorem ,abbr (!translate ,full))
-		       "\n")
-	      amsthm-package%))))
+  `(smart-table latex-texmacs-env-preamble
+     (:require (latex-has-package? "amsthm"))
+     (,abbr (!append "\\theoremstyle{remark}\n"
+                     (newtheorem ,abbr (!translate ,full)) "\n"))))
 
 (define-macro (ams-texmacs-indent-exercise abbr full)
-  `(begin
-     (logic-table latex-texmacs-env-preamble%
-       (,abbr (!append "\\newtheoremstyle{indent-exercise}{3pt}{3pt}"
-		       "{\\small}{\\parindent}{\\bf\\small}{.}{.5em}{}{}\n"
-		       "\\theoremstyle{indent-exercise}\n"
-		       (newtheorem ,abbr (!translate ,full))
-		       "\n")
-	      amsthm-package%))))
+  `(smart-table latex-texmacs-env-preamble
+     (:require (latex-has-package? "amsthm"))
+     (,abbr (!append "\\newtheoremstyle{indent-exercise}{3pt}{3pt}"
+                     "{\\small}{\\parindent}{\\bf\\small}{.}{.5em}{}{}\n"
+                     "\\theoremstyle{indent-exercise}\n"
+                     (newtheorem ,abbr (!translate ,full)) "\n"))))
 
 (define-macro (ams-texmacs-noindent-exercise abbr full)
-  `(begin
-     (logic-table latex-texmacs-env-preamble%
-       (,abbr (!append "\\newtheoremstyle{noindent-exercise}{3pt}{3pt}"
-		       "{\\small}{}{\\bf\\small}{.}{.5em}{}{}\n"
-		       "\\theoremstyle{noindent-exercise}\n"
-		       (newtheorem ,abbr (!translate ,full))
-		       "\n")
-	      amsthm-package%))))
+  `(smart-table latex-texmacs-env-preamble
+     (:require (latex-has-package? "amsthm"))
+     (,abbr (!append "\\newtheoremstyle{noindent-exercise}{3pt}{3pt}"
+                     "{\\small}{}{\\bf\\small}{.}{.5em}{}{}\n"
+                     "\\theoremstyle{noindent-exercise}\n"
+                     (newtheorem ,abbr (!translate ,full)) "\n"))))
 
 (ams-texmacs-theorem "theorem" "Theorem")
 (ams-texmacs-theorem "proposition" "Proposition")
@@ -706,7 +697,7 @@
 ;; Ornamented environments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(logic-table latex-texmacs-env-preamble%
+(smart-table latex-texmacs-env-preamble
   ("tmpadded" (!append (newmdenv (!option "") "tmpadded") "\n"))
   ("tmoverlined"
    (!append (newmdenv (!option "topline=true,innertopmargin=1ex")
