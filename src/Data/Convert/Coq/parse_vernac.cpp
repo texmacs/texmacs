@@ -440,6 +440,33 @@ parse_indent (string s, int i) {
 }
 
 static tree
+parse_coqdoc_hide_show (string str, int &i) {
+  tree r (UNINIT);
+  string s= parse_delimited (str, i, "(*", "*)", false);
+  int j= 0, n= N(s);
+  while (j<n && s[j] == ' ') j++;
+  if (test(s, j, "begin")) {
+    r= tree (BEGIN);
+    j+= 5;
+  }
+  else if (test(s, j, "end")) {
+    r= tree (END);
+    j+= 3;
+  }
+  else return r;
+  while (j<n && s[j] == ' ') j++;
+  if (test(s, j, "hide") || test(s, j, "show")) {
+    r << s (j, j+4);
+  }
+  return r;
+}
+
+static bool
+is_hide_or_show (string s, int i) {
+  return parse_coqdoc_hide_show (s, i) != tree (UNINIT);
+}
+
+static tree
 parse_raw_coq (string s) {
   tree r (DOCUMENT);
   int i= 0, startcmd= 0, n= N(s), indent_level=0;
@@ -447,8 +474,12 @@ parse_raw_coq (string s) {
   while (i<n) {
     if (start_coqdoc (s, i))
       r << parse_coqdoc (s, i);
-    else if (start_comment (s, i))
-      r << parse_comment (s, i);
+    else if (start_comment (s, i)) {
+      if (is_hide_or_show (s, i))
+        r << parse_coqdoc_hide_show (s, i);
+      else
+        r << parse_comment (s, i);
+    }
     else if (end_command (s, i)) {
       i++;
       r << compound ("coq-command", "", "dark grey",
@@ -653,7 +684,43 @@ clean_indent (tree t) {
   return t;
 }
 
-/******************************************************************************
+static tree
+show_hide_parsed_coq (tree t) {
+  if (is_atomic (t)) return t;
+  tree r (L(t)), tmp (DOCUMENT);
+  string s, msg;
+  int i, n= N(t), cnt= 0;
+  if (is_document (t)) {
+    for (i=0; i<n; i++) {
+      if (is_func (t[i], BEGIN, 1)) {
+        cnt= 1;
+        if (as_string (t[i++][0]) == "hide") {
+          s= "folded";
+          msg= "(* hidden *)";
+        }
+        else {
+          s= "unfolded";
+          msg= "(* shown *)";
+        }
+        while (i<n && cnt > 0) {
+          if (is_func (t[i], BEGIN, 1)) cnt++;
+          if (is_func (t[i], END, 1))   cnt--;
+          tmp << t[i++];
+        }
+        r << compound (s, msg, show_hide_parsed_coq (tmp));
+        if (i<n) i--;
+      }
+      else
+        r << t[i];
+    }
+  }
+  else
+    for (i=0; i<n; i++)
+      r << show_hide_parsed_coq (t[i]);
+  return r;
+}
+
+ /******************************************************************************
 * Interface
 ******************************************************************************/
 
@@ -661,6 +728,7 @@ tree
 vernac_to_tree (string s) {
   tree r (DOCUMENT);
   r= parse_raw_coq (s);
+  r= show_hide_parsed_coq (r);
   r= section_parsed_coq (r);
   r= enunciate_parsed_coq (r);
   r= indent_parsed_coq (r);
