@@ -26,6 +26,7 @@
 (define latex-language "english")
 (define latex-style "generic")
 (define latex-packages '())
+(define latex-texmacs-style "generic")
 (define latex-texmacs-packages '())
 
 (define latex-uses-table (make-ahash-table))
@@ -38,9 +39,6 @@
 ;; Setting and testing global parameters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (latex-init-style-hyps l)
-  (set! latex-texmacs-packages l))
-
 (tm-define (latex-set-language lan)
   (set! latex-language lan))
 
@@ -50,11 +48,20 @@
 (tm-define (latex-set-packages ps)
   (set! latex-packages ps))
 
+(tm-define (latex-set-texmacs-style sty)
+  (set! latex-texmacs-style sty))
+
+(tm-define (latex-set-texmacs-packages l)
+  (set! latex-texmacs-packages l))
+
 (tm-define (latex-has-style? sty)
   (== sty latex-style))
 
 (tm-define (latex-has-package? p)
   (in? p latex-packages))
+
+(tm-define (latex-has-texmacs-style? sty)
+  (== sty latex-texmacs-style))
 
 (tm-define (latex-has-texmacs-package? p)
   (in? p latex-texmacs-packages))
