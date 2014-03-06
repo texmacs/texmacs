@@ -117,29 +117,12 @@ m4_include([misc/autotroll/autotroll.m4])
 AC_DEFUN([HACKED_AT_WITH_QT],[
 if test -z $TMBUILDENV; then #QT has the install dir hard coded in library so we need to fix it manually for relocatable environment
   if test "$QT_LDFLAGS" == ""; then
-    if test -r "/c/Qt"; then
-      MOC="`which moc`"
-      qt_bin="`dirname $MOC`"
-      qt_home="`dirname $qt_bin`"
-      qt_version="`basename $qt_home`"
-      qt_parent="`dirname $qt_home`"
-      QT_CPPFLAGS="-I$qt_home/mkspecs/macx-g++ -I$qt_home/include/QtCore -I$qt_home/include/QtGui -I$qt_home/include -I/$qt_home/include/ActiveQt -I."
-      QT_CXXFLAGS="-pipe -g -Wall -W -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT"
-      QT_LDFLAGS="-enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc -mthreads -Wl -Wl,-subsystem,windows"
-      QT_LIBS="-L'c:/Qt/$qt_version/lib' -lmingw32 -lqtmaind -lQtGuid4 -lQtCored4 -lpoppler-qt4"
-    
-      if test "$qt_parent" != "/c/Qt"; then
-        at_cv_qt_build="ko"
-      fi
-    else
       AT_WITH_QT
       # MacOS specific: (FIXME! shouldn't we be using qmake -query everywhere?)
       QT_FRAMEWORKS_PATH=`qmake -query | grep QT_INSTALL_LIBS | cut -f 2 -d:`
       QT_PLUGINS_PATH=`qmake -query | grep QT_INSTALL_PLUGINS | cut -f 2 -d:`
-    fi
   fi
 else
-  if test -r "/Qt"; then
     QT_FRAMEWORKS_PATH=/Qt
     QT_PATH=$QT_FRAMEWORKS_PATH/bin
     QT_PLUGINS_PATH=$QT_FRAMEWORKS_PATH/plugins
@@ -152,11 +135,6 @@ else
     MOCFLAGS=$QT_DEFINES
     MOC=$QT_PATH/moc
     QMAKE=$QT_PATH/qmake
-  else
-    AT_WITH_QT
-    QT_FRAMEWORKS_PATH=$QT_PATH/..         # MacOS specific
-    QT_PLUGINS_PATH=$QT_PATH/../plugins    # MacOS specific
-  fi
 fi
 ])
 
