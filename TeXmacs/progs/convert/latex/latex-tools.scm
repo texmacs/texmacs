@@ -25,8 +25,9 @@
 
 (define latex-language "english")
 (define latex-style "generic")
-(define latex-style-hyp 'generic-style%)
 (define latex-packages '())
+(define latex-texmacs-packages '())
+(define latex-style-hyp 'generic-style%)
 (define latex-amsthm-hyp 'no-amsthm-package%)
 (define latex-framed-sessions-hyp 'no-framed-sessions%)
 
@@ -37,10 +38,11 @@
 (define latex-preamble-table (make-ahash-table))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Setting global parameters
+;; Setting and testing global parameters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (latex-init-style-hyps l)
+  (set! latex-texmacs-packages l)
   (if (in? "framed-session" l)
     (set! latex-framed-sessions-hyp 'framed-sessions%)))
 
@@ -55,6 +57,12 @@
   (set! latex-packages ps)
   (when (in? "amsthm" ps)
     (set! latex-amsthm-hyp 'amsthm-package%)))
+
+(tm-define (latex-has-style? sty)
+  (== sty latex-style))
+
+(tm-define (latex-has-texmacs-package? p)
+  (in? p latex-texmacs-packages))
 
 (tm-define (latex-book-style?)
   (in? latex-style '("book")))
@@ -166,18 +174,12 @@
   (if (npair? t) t
       (let* ((head  (car t))
 	     (tail  (map latex-expand-macros (cdr t)))
-	     (body  (logic-ref latex-texmacs-macro% head
-                               latex-framed-sessions-hyp
-                               latex-style-hyp latex-amsthm-hyp))
-	     (arity (logic-ref latex-texmacs-arity% head
-			     latex-framed-sessions-hyp
-                             latex-style-hyp latex-amsthm-hyp))
+	     (body  (smart-ref latex-texmacs-macro head))
+	     (arity (and body (logic-ref latex-texmacs-arity% head)))
 	     (env   (and (env-begin? head)
 			 (smart-ref latex-texmacs-environment (cadr head))))
 	     (envar (and env
-			 (logic-ref latex-texmacs-env-arity% (cadr head)
-                                    latex-framed-sessions-hyp
-                                    latex-style-hyp latex-amsthm-hyp))))
+			 (logic-ref latex-texmacs-env-arity% (cadr head)))))
 	(cond ((and body (== (length tail) arity))
 	       (latex-substitute body t))
 	      ((and env (== (length tail) 1) (== (length (cddr head)) envar))
@@ -204,14 +206,9 @@
              (> (length t) 2))
       (for-each latex-macro-defs-sub (cddr t))
       (for-each latex-macro-defs-sub (cdr t)))
-    (let* ((body  (and
-                    (not (logic-ref latex-needs% (car t)))
-                    (logic-ref latex-texmacs-macro% (car t)
-                               latex-framed-sessions-hyp
-                               latex-style-hyp latex-amsthm-hyp)))
-	   (arity (logic-ref latex-texmacs-arity% (car t)
-                             latex-framed-sessions-hyp
-                             latex-style-hyp latex-amsthm-hyp))
+    (let* ((body   (and (not (logic-ref latex-needs% (car t)))
+                        (smart-ref latex-texmacs-macro (car t))))
+	   (arity  (and body (logic-ref latex-texmacs-arity% (car t))))
            (option (logic-ref latex-texmacs-option% (car t)))
            (args   (if option (filter (lambda (x)
                                         (not (and (list? x)

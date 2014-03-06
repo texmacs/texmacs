@@ -20,7 +20,7 @@
 ;; Extra TeXmacs symbols
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(logic-table latex-texmacs-macro%
+(smart-table latex-texmacs-macro
   ;; arrows with limits
   (leftarrowlim "\\mathop{\\leftarrow}\\limits")
   (rightarrowlim "\\mathop{\\rightarrow}\\limits")
@@ -146,7 +146,7 @@
 ;; Extra TeXmacs macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(logic-table latex-texmacs-macro%
+(smart-table latex-texmacs-macro
   ;; Nullary macros
   (tmunsc "\\_")
   (emdash "---")
@@ -198,9 +198,7 @@
   (dueto (textup (textbf (!append "(" 1 ") "))))
   (op 1)
   (tmoutput 1)
-  (tmerrput (!append (color "red!50!black") 1) no-framed-sessions%)
-  (tmerrput ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={red!15},linecolor={red!50!black}"))
-             (!append (color "red!50!black") 1)) framed-sessions%)
+  (tmerrput (!append (color "red!50!black") 1))
   (tmtiming (!append (hfill) (footnotesize) (color "black!50") 1 (par)))
   (tmrunningtitle (!append (!translate "Running title:") " " 1))
   (tmrunningauthor (!append (!translate "Running author:") " " 1))
@@ -252,23 +250,10 @@
 		      (!group "\\large\\bf" 1) "\\\\"
 		      (item (!option "")) (mbox "") 2)))
   (tmfoldedsubsession
-   (trivlist (!append (item (!option "$\\bullet$")) (mbox "") 1))
-   no-framed-sessions%)
+   (trivlist (!append (item (!option "$\\bullet$")) (mbox "") 1)))
   (tmunfoldedsubsession
    (trivlist (!append (item (!option "$\\circ$"))   (mbox "") 1 "\\\\"
-		      (item (!option "")) (mbox "") 2 ))
-   no-framed-sessions%)
-  (tmfoldedsubsession
-   ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={rgb:white,10;red,9;green,4;yellow,2},linecolor={black!50}"))
-    (trivlist (!append (item (!option "$\\bullet$")) (mbox "") 1)))
-   framed-sessions%)
-  (tmunfoldedsubsession
-   (!append
-    ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={rgb:white,10;red,9;green,4;yellow,2},linecolor={black!50}"))
-     (trivlist (!append (item (!option "$\\circ$")) (mbox "") 1)))
-    ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={rgb:white,50;red,9;green,4;yellow,2},linecolor={black!50}"))
-     (trivlist (!append (item (!option "")) (mbox "") 2 ))))
-   framed-sessions%)
+		      (item (!option "")) (mbox "") 2 )))
   (tmfoldedgrouped
    (trivlist (!append (item (!option "["))  (mbox "") 1)))
   (tmunfoldedgrouped
@@ -296,20 +281,9 @@
 				 (item (!option "")) (mbox "") 2 )))
   (tminput
    (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-		      (!group (!append (color "blue!50!black") (mbox "") 2))))
-   no-framed-sessions%)
+		      (!group (!append (color "blue!50!black") (mbox "") 2)))))
   (tminputmath
-   (trivlist (!append (item (!option 1)) (ensuremath 2)))
-   no-framed-sessions%)
-  (tminput
-   ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
-    (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-		       (!group (!append (color "blue!50!black") (mbox "") 2)))))
-   framed-sessions%)
-  (tminputmath
-   ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
-    (trivlist (!append (item (!option 1)) (mbox "") (ensuremath 2))))
-   framed-sessions%)
+   (trivlist (!append (item (!option 1)) (ensuremath 2))))
   (tmhlink  (!group (!append (color "blue") 1)))
   (tmaction (!group (!append (color "blue") 1)))
   (ontop ("{\\genfrac{}{}{0pt}{}{#1}{#2}}"))
@@ -319,46 +293,18 @@
   (tmsession (!group (!append (tt) 3)))
   (tmfoldediomath
    (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-		      (!group (!append (color "blue!50!black") (ensuremath 2)))))
-   no-framed-sessions%)
+		      (!group (!append (color "blue!50!black") (ensuremath 2))))))
   (tmunfoldediomath
    (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
 		      (!group (!append (color "blue!50!black") (ensuremath 2)))
-		      (item (!option "")) (mbox "") 3))
-   no-framed-sessions%)
+		      (item (!option "")) (mbox "") 3)))
   (tmfoldedio
    (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-		      (mbox "") (!group (!append (color "blue!50!black") 2))))
-   no-framed-sessions%)
+		      (mbox "") (!group (!append (color "blue!50!black") 2)))))
   (tmunfoldedio
    (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
 		      (mbox "") (!group (!append (color "blue!50!black") 2))
-		      (item (!option "")) (mbox "") 3))
-   no-framed-sessions%)
-  (tmfoldediomath
-   ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
-    (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-		       (mbox "") (!group (!append (color "blue!50!black") (ensuremath 2))))))
-   framed-sessions%)
-  (tmunfoldediomath
-   (!append ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
-	     (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-				(mbox "") (!group (!append (color "blue!50!black") (ensuremath 2))))))
-	    ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor=white,linewidth=0pt"))
-	     (trivlist (!append (item (!option "")) (mbox "") 3))))
-   framed-sessions%)
-  (tmfoldedio
-   ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
-    (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-		       (mbox "") (!group (!append (color "blue!50!black") 2)))))
-   framed-sessions%)
-  (tmunfoldedio
-   (!append ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
-	     (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-				(mbox "") (!group (!append (color "blue!50!black") 2)))))
-	    ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor=white,linewidth=0pt"))
-	     (trivlist (!append (item (!option "")) (mbox "") 3))))
-   framed-sessions%)
+		      (item (!option "")) (mbox "") 3)))
   (subsubindex (index (!append 1 "!" 2 "!" 3)))
   (tmref 1)
   (glossaryentry (!append (item (!option (!append 1 (hfill)))) 2 (dotfill) 3))
@@ -372,36 +318,80 @@
   (tmconverteroutput (!append 4))
   (subsubsubindex (index (!append 1 "!" 2 "!" 3 "!" 4))))
 
+(smart-table latex-texmacs-macro
+  (:require (latex-has-texmacs-package? "framed-session"))
+  (tmerrput ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={red!15},linecolor={red!50!black}"))
+             (!append (color "red!50!black") 1)))
+  (tmfoldedsubsession
+   ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={rgb:white,10;red,9;green,4;yellow,2},linecolor={black!50}"))
+    (trivlist (!append (item (!option "$\\bullet$")) (mbox "") 1))))
+  (tmunfoldedsubsession
+   (!append
+    ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={rgb:white,10;red,9;green,4;yellow,2},linecolor={black!50}"))
+     (trivlist (!append (item (!option "$\\circ$")) (mbox "") 1)))
+    ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={rgb:white,50;red,9;green,4;yellow,2},linecolor={black!50}"))
+     (trivlist (!append (item (!option "")) (mbox "") 2 )))))
+  (tminput
+   ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
+    (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
+		       (!group (!append (color "blue!50!black") (mbox "") 2))))))
+  (tminputmath
+   ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
+    (trivlist (!append (item (!option 1)) (mbox "") (ensuremath 2)))))
+  
+
+  (tmfoldediomath
+   ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
+    (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
+		       (mbox "") (!group (!append (color "blue!50!black") (ensuremath 2)))))))
+  (tmunfoldediomath
+   (!append ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
+	     (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
+				(mbox "") (!group (!append (color "blue!50!black") (ensuremath 2))))))
+	    ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor=white,linewidth=0pt"))
+	     (trivlist (!append (item (!option "")) (mbox "") 3)))))
+  (tmfoldedio
+   ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
+    (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
+		       (mbox "") (!group (!append (color "blue!50!black") 2))))))
+  (tmunfoldedio
+   (!append ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
+	     (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
+				(mbox "") (!group (!append (color "blue!50!black") 2)))))
+	    ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor=white,linewidth=0pt"))
+	     (trivlist (!append (item (!option "")) (mbox "") 3))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Style-dependent extra macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(logic-table latex-texmacs-macro%
-  (appendix "" letter-style%))
+(smart-table latex-texmacs-macro
+  (:require (latex-has-style? "letter"))
+  (appendix ""))
 
-(define-macro (latex-texmacs-section name inside . conds)
-  `(logic-table latex-texmacs-macro%
-     (,name (!append (medskip) (bigskip) "\n\n" (noindent) (textbf ,inside))
-	    ,@conds)))
+(define-macro (latex-texmacs-section name inside style)
+  `(smart-table latex-texmacs-macro
+     (:require (latex-has-style? ,style))
+     (,name (!append (medskip) (bigskip) "\n\n" (noindent) (textbf ,inside)))))
 
-(define-macro (latex-texmacs-paragraph name inside . conds)
-  `(logic-table latex-texmacs-macro%
-     (,name (!append (smallskip) "\n\n" (noindent) (textbf ,inside))
-	    ,@conds)))
+(define-macro (latex-texmacs-paragraph name inside style)
+  `(smart-table latex-texmacs-macro
+     (:require (latex-has-style? ,style))
+     (,name (!append (smallskip) "\n\n" (noindent) (textbf ,inside)))))
 
-(latex-texmacs-section chapter (!append "\\huge " 1) article-style%)
-(latex-texmacs-section chapter (!append "\\huge " 1) letter-style%)
-(latex-texmacs-section section (!append "\\LARGE " 1) letter-style%)
-(latex-texmacs-section subsection (!append "\\Large " 1) letter-style%)
-(latex-texmacs-section subsubsection (!append "\\large " 1) letter-style%)
-(latex-texmacs-paragraph paragraph 1 letter-style%)
-(latex-texmacs-paragraph subparagraph 1 letter-style%)
+(latex-texmacs-section chapter (!append "\\huge " 1) "article")
+(latex-texmacs-section chapter (!append "\\huge " 1) "letter")
+(latex-texmacs-section section (!append "\\LARGE " 1) "letter")
+(latex-texmacs-section subsection (!append "\\Large " 1) "letter")
+(latex-texmacs-section subsubsection (!append "\\large " 1) "letter")
+(latex-texmacs-paragraph paragraph 1 "letter")
+(latex-texmacs-paragraph subparagraph 1 "letter")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Deprecated extra macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(logic-table latex-texmacs-macro%
+(smart-table latex-texmacs-macro
   (labeleqnum "\\addtocounter{equation}{-1}\\refstepcounter{equation}\\addtocounter{equation}{1})")
   (eqnumber (!append "\\hfill(\\theequation" (!recurse (labeleqnum)) ")"))
   (leqnumber (!append "(\\theequation" (!recurse (labeleqnum)) ")\\hfill"))
