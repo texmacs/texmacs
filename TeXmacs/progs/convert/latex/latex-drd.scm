@@ -98,7 +98,6 @@
   (llleq "amsmath")
   (ggeq "amsmath")
   (gggeq "amsmath")
-  (qed "amsmath")
 
   (xminus "amsmath")
   (xleftarrow "amsmath")
@@ -162,14 +161,6 @@
   (printindex "makeidx")
 
   (inparaenum "paralist"))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Commands which are provided in certain packages or style files
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(logic-table latex-provides%
-  (proof "amsthm")
-  (qed "amsthm"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Page size settings

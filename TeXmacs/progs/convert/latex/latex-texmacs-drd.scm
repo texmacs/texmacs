@@ -69,7 +69,7 @@
 (logic-group latex-texmacs-0%
   tmunsc emdash tmhrule tmat tmbsl tmdummy
   TeXmacs madebyTeXmacs withTeXmacstext
-  scheme tmsep tmSep pari)
+  scheme tmsep tmSep pari qed)
 
 (logic-group latex-texmacs-1%
   tmrsub tmrsup

@@ -46,6 +46,14 @@
 ;; amsthm package
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(smart-table latex-texmacs-macro
+  (:require (latex-has-package? "amsthm"))
+  (qed #f))
+
+(smart-table latex-texmacs-environment
+  (:require (latex-has-package? "amsthm"))
+  ("proof" #f))
+
 (define-macro (ams-texmacs-theorem abbr full)
   `(smart-table latex-texmacs-env-preamble
      (:require (latex-has-package? "amsthm"))

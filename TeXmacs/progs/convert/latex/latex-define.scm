@@ -165,6 +165,7 @@
   (tmsep  ", ")
   (tmSep  "; ")
   (pari "{\\sc Pari}")
+  (qed (!math (Box)))
 
   ;; Unary macros
   (tmrsub (ensuremath (!append "_{" (textrm 1) "}")))
