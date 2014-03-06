@@ -53,7 +53,7 @@
   "Define a smart table @t with entries @l"
   `(begin
      (when (not (defined? ',t))
-       (define-public ,t (make-ahash-table)))
+       (tm-define ,t (make-ahash-table)))
      ,@(smart-table-insert t '() l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

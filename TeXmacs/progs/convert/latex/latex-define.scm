@@ -418,7 +418,7 @@
 ;; Extra TeXmacs environments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(logic-table latex-texmacs-environment%
+(smart-table latex-texmacs-environment
   ("proof"
    (!append (noindent) (textbf (!append (!translate "Proof") "\\ "))
 	    ---
@@ -468,7 +468,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-macro (latex-texmacs-itemize env lab)
-  `(logic-table latex-texmacs-environment%
+  `(smart-table latex-texmacs-environment
      (,env
       ((!begin "itemize")
        (!append "\\renewcommand{\\labelitemi}{" ,lab "}"
@@ -478,11 +478,11 @@
 		---)))))
 
 (define-macro (latex-texmacs-enumerate env lab)
-  `(logic-table latex-texmacs-environment%
+  `(smart-table latex-texmacs-environment
      (,env ((!begin "enumerate" (!option ,lab)) ---))))
 
 (define-macro (latex-texmacs-description env)
-  `(logic-table latex-texmacs-environment%
+  `(smart-table latex-texmacs-environment
      (,env ((!begin "description") ---))))
 
 (latex-texmacs-itemize "itemizeminus" "$-$")

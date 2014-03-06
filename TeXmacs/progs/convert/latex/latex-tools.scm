@@ -48,9 +48,7 @@
   (set! latex-language lan))
 
 (tm-define (latex-set-style sty)
-  (if (list? latex-style)
-    (set! latex-style (append (cDr latex-style) (list sty)))
-    (set! latex-style sty))
+  (set! latex-style sty)
   (set! latex-style-hyp (string->symbol (string-append sty "-style%"))))
 
 (tm-define (latex-set-packages ps)
@@ -60,6 +58,10 @@
 
 (tm-define (latex-book-style?)
   (in? latex-style '("book")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Catcode generation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (latex-catcode-defs-char c)
   (let* ((s (string-convert (list->string (list c)) "Cork" "UTF-8"))
@@ -80,22 +82,21 @@
   (and (list>0? t) (func? (car t) '!begin) (list>1? (car t)) (== x (cadar t))))
 
 (define (latex-is-math? t)
-  (or
-    (func? t '!math)
-    (func? t '!eqn)
-    (env? t "equation")
-    (env? t "gather")
-    (env? t "multline")
-    (env? t "split")
-    (env? t "equation*")
-    (env? t "gather*")
-    (env? t "multline*")
-    (env? t "align")
-    (env? t "flalign")
-    (env? t "alignat")
-    (env? t "align*")
-    (env? t "flalign*")
-    (env? t "alignat*")))
+  (or (func? t '!math)
+      (func? t '!eqn)
+      (env? t "equation")
+      (env? t "gather")
+      (env? t "multline")
+      (env? t "split")
+      (env? t "equation*")
+      (env? t "gather*")
+      (env? t "multline*")
+      (env? t "align")
+      (env? t "flalign")
+      (env? t "alignat")
+      (env? t "align*")
+      (env? t "flalign*")
+      (env? t "alignat*")))
 
 (define (latex-is-text? t)
   (func? t 'text))
@@ -172,10 +173,8 @@
 			     latex-framed-sessions-hyp
                              latex-style-hyp latex-amsthm-hyp))
 	     (env   (and (env-begin? head)
-			 (logic-ref latex-texmacs-environment% (cadr head)
-                                    latex-framed-sessions-hyp
-                                    latex-style-hyp latex-amsthm-hyp)))
-	     (envar (and (env-begin? head)
+			 (smart-ref latex-texmacs-environment (cadr head))))
+	     (envar (and env
 			 (logic-ref latex-texmacs-env-arity% (cadr head)
                                     latex-framed-sessions-hyp
                                     latex-style-hyp latex-amsthm-hyp))))
@@ -226,12 +225,12 @@
 	(latex-macro-defs-sub body)))
     (let* ((body  (and (env-begin? (car t))
                        (not (logic-ref latex-needs% (string->symbol (cadar t))))
-                       (logic-ref latex-texmacs-environment% (cadar t))))
-	   (arity (and (env-begin? (car t))
+                       (smart-ref latex-texmacs-environment (cadar t))))
+	   (arity (and body
 		       (logic-ref latex-texmacs-env-arity% (cadar t))))
-           (option (and (env-begin? (car t))
+           (option (and body
                         (logic-ref latex-texmacs-option% (cadar t))))
-           (args   (and (env-begin? (car t))
+           (args   (and body
                         (if option (filter (lambda (x)
                                              (not (and (list? x)
                                                        (== (car x) '!option))))
