@@ -23,8 +23,7 @@
 (logic-rules
   ((latex-texmacs-tag% 'x) (latex-texmacs-macro% 'x 'body))
   ((latex-arity% 'x 'arity) (latex-texmacs-arity% 'x 'arity))
-  ;;((latex-optional-arg% 'x) (latex-texmacs-option% 'x 'flag))
-  )
+  ((latex-optional-arg% 'x) (latex-texmacs-option% 'x 'flag)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra TeXmacs symbols
@@ -67,284 +66,71 @@
 ;; Extra TeXmacs macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(logic-table latex-texmacs-0%
-  (tmunsc "\\_")
-  (emdash "---")
-  (tmhrule "\\noindent\\rule[0.3\\baselineskip]{\\textwidth}{0.4pt}")
-  (tmat "\\symbol{\"40}")
-  (tmbsl "\\ensuremath{\\backslash}")
-  (tmdummy "$\\mbox{}$")
-  (TeXmacs "T\\kern-.1667em\\lower.5ex\\hbox{E}\\kern-.125emX\\kern-.1em\\lower.5ex\\hbox{\\textsc{m\\kern-.05ema\\kern-.125emc\\kern-.05ems}}")
-  (madebyTeXmacs (footnote (!recurse (withTeXmacstext))))
-  (withTeXmacstext
-    (!append (!translate "This document has been produced using the GNU") " "
-             (!group (!recurse (TeXmacs))) " " (!translate "text editor") " ("
-             (!translate "see") " "
-             (url "http://www.texmacs.org") ")"))
-  (scheme "{\\sc Scheme}")
-  (tmsep  ", ")
-  (tmSep  "; ")
-  (pari "{\\sc Pari}"))
+(logic-group latex-texmacs-0%
+  tmunsc emdash tmhrule tmat tmbsl tmdummy
+  TeXmacs madebyTeXmacs withTeXmacstext
+  scheme tmsep tmSep pari)
 
-(logic-table latex-texmacs-1%
-  (tmrsub (ensuremath (!append "_{" (textrm 1) "}")))
-  (tmrsup (textsuperscript 1))
-  (tmverbatim (!group (ttfamily) (!group 1)))
-  (tmtextrm (!group (rmfamily) (!group 1)))
-  (tmtextsf (!group (sffamily) (!group 1)))
-  (tmtexttt (!group (ttfamily) (!group 1)))
-  (tmtextmd (!group (mdseries) (!group 1)))
-  (tmtextbf (!group (bfseries) (!group 1)))
-  (tmtextup (!group (upshape) (!group 1)))
-  (tmtextsl (!group (slshape) (!group 1)))
-  (tmtextit (!group (itshape) (!group 1)))
-  (tmtextsc (!group (scshape) (!group 1)))
-  (tmmathbf (ensuremath (boldsymbol 1)))
-  (tmop (ensuremath (operatorname 1)))
-  (tmstrong (textbf 1))
-  (tmem (!group "\\em " 1 "\\/"))
-  (tmtt (texttt 1))
-  (tmdate (today))
-  (tmname (textsc 1))
-  (tmsamp (textsf 1))
-  (tmabbr 1)
-  (tmdfn (textbf 1))
-  (tmkbd (texttt 1))
-  (tmvar (texttt 1))
-  (tmacronym (textsc 1))
-  (tmperson (textsc 1))
-  (tmscript (text (scriptsize (!math 1))))
-  (tmdef 1)
-  (dueto (textup (textbf (!append "(" 1 ") "))))
-  (op 1)
-  (tmoutput 1)
-  (tmerrput (!append (color "red!50!black") 1) no-framed-sessions%)
-  (tmerrput ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={red!15},linecolor={red!50!black}"))
-             (!append (color "red!50!black") 1)) framed-sessions%)
-  (tmtiming (!append (hfill) (footnotesize) (color "black!50") 1 (par)))
-  (tmrunningtitle (!append (!translate "Running title:") " " 1))
-  (tmrunningauthor (!append (!translate "Running author:") " " 1))
-  (tmaffiliation (thanks (!append (textit (!translate "Affiliation:")) " " 1)))
-  (tmemail (thanks (!append (textit (!translate "Email:")) " " (texttt 1))))
-  (tmhomepage (thanks (!append (textit (!translate "Web:")) " " (texttt 1))))
-  (tmsubtitle (thanks (!append (textit (!translate "Subtitle:")) " " 1)))
-  (tmacmhomepage (titlenote (!append (textit (!translate "Web:")) " " 1)))
-  (tmacmmisc (titlenote (!append (textit (!translate "Misc:")) " " 1)))
-  (tmieeeemail (!append (textit (!translate "Email:")) " " 1))
-  (tmnote (thanks (!append (textit (!translate "Note:")) " " 1)))
-  (tmmisc (thanks (!append (textit (!translate "Misc:")) " " 1))))
+(logic-group latex-texmacs-1%
+  tmrsub tmrsup
+  tmtextrm tmtextsf tmtexttt tmtextmd tmtextbf
+  tmtextup tmtextsl tmtextit tmtextsc tmmathbf
+  tmverbatim tmop tmstrong tmem tmtt tmname tmsamp tmabbr
+  tmdfn tmkbd tmvar tmacronym tmperson tmscript tmdef
+  dueto op tmdate tmoutput tmerrput tmtiming
+  tmrunningtitle tmrunningauthor tmaffiliation tmemail tmhomepage
+  tmsubtitle tmacmhomepage tmacmmisc tmieeeemail tmnote tmmisc)
 
-(logic-table latex-texmacs-1*%
-  (tmcodeinline ((!option "") (!group (ttfamily) (!group 2)))))
+(logic-group latex-texmacs-1*%
+  tmcodeinline)
 
-(logic-table latex-texmacs-2%
-  (tmsummarizeddocumentation (trivlist (!append (item (!option "")) (mbox "") "\\large\\bf" 1)))
-  (tmsummarizedgrouped       (trivlist (!append (item (!option "[")) (mbox "") 1)))
-  (tmsummarizedexplain       (trivlist (!append (item (!option "")) (mbox "") "\\bf" 1)))
-  (tmsummarizedplain         (trivlist (!append (item (!option "")) (mbox "") 1)))
-  (tmsummarizedtiny          (trivlist (!append (item (!option "")) (mbox "") 1)))
-  (tmsummarizedraw           (trivlist (!append (item (!option "")) (mbox "") 1)))
-  (tmsummarizedenv           (trivlist (!append (item (!option "$\\bullet$")) (mbox "") 1)))
-  (tmsummarizedstd           (trivlist (!append (item (!option "$\\bullet$")) (mbox "") 1)))
-  (tmsummarized              (trivlist (!append (item (!option "$\\bullet$")) (mbox "") 1)))
+(logic-group latex-texmacs-2%
+  tmsummarizeddocumentation tmsummarizedgrouped tmsummarizedexplain
+  tmsummarizedplain tmsummarizedtiny tmsummarizedraw tmsummarizedenv
+  tmsummarizedstd tmsummarized
+  tmdetaileddocumentation tmdetailedgrouped tmdetailedexplain
+  tmdetailedplain tmdetailedtiny tmdetailedraw tmdetailedenv
+  tmdetailedstd tmdetailed
+  tmfoldeddocumentation tmunfoldeddocumentation
+  tmfoldedsubsession tmunfoldedsubsession
+  tmfoldedgrouped tmunfoldedgrouped tmfoldedexplain tmunfoldedexplain
+  tmfoldedplain tmunfoldedplain tmfoldedenv tmunfoldedenv
+  tmfoldedstd tmunfoldedstd tmfolded tmunfolded
+  tminput tminputmath tmhlink tmaction ontop subindex)
 
-  (tmdetaileddocumentation (trivlist (!append (item (!option "")) (mbox "") "\\large\\bf" 2)))
-  (tmdetailedgrouped       (trivlist (!append (item (!option "[")) (mbox "") 2)))
-  (tmdetailedexplain       (trivlist (!append (item (!option "")) (mbox "") "\\bf" 2)))
-  (tmdetailedplain         (trivlist (!append (item (!option "")) (mbox "") 2)))
-  (tmdetailedtiny          (trivlist (!append (item (!option "")) (mbox "") 2)))
-  (tmdetailedraw           (trivlist (!append (item (!option "")) (mbox "") 2)))
-  (tmdetailedenv           (trivlist (!append (item (!option "$\\circ$")) (mbox "") 2)))
-  (tmdetailedstd           (trivlist (!append (item (!option "$\\circ$")) (mbox "") 2)))
-  (tmdetailed              (trivlist (!append (item (!option "$\\circ$")) (mbox "") 2)))
+(logic-group latex-texmacs-3%
+  tmsession tmfoldedio tmunfoldedio tmfoldediomath tmunfoldediomath
+  subsubindex tmref glossaryentry)
 
-  (tmfoldeddocumentation   (trivlist (!append (item (!option "")) (mbox "") "\\large\\bf" 1)))
-  (tmunfoldeddocumentation (trivlist
-                             (!append (item (!option "")) (mbox "")
-                                      (!group "\\large\\bf" 1) "\\\\"
-                                      (item (!option "")) (mbox "") 2 )))
-  (tmfoldedsubsession     (trivlist (!append (item (!option "$\\bullet$")) (mbox "") 1))
-                          no-framed-sessions%)
-  (tmunfoldedsubsession   (trivlist
-                            (!append (item (!option "$\\circ$"))   (mbox "") 1 "\\\\"
-                                     (item (!option "")) (mbox "") 2 ))
-                          no-framed-sessions%)
-  (tmfoldedsubsession     ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={rgb:white,10;red,9;green,4;yellow,2},linecolor={black!50}"))
-                           (trivlist (!append (item (!option "$\\bullet$")) (mbox "") 1)))
-                          framed-sessions%)
-  (tmunfoldedsubsession   (!append
-                            ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={rgb:white,10;red,9;green,4;yellow,2},linecolor={black!50}"))
-                             (trivlist (!append (item (!option "$\\circ$")) (mbox "") 1)))
-                            ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={rgb:white,50;red,9;green,4;yellow,2},linecolor={black!50}"))
-                             (trivlist (!append (item (!option "")) (mbox "") 2 ))))
-                          framed-sessions%)
-  (tmfoldedgrouped        (trivlist (!append (item (!option "["))  (mbox "") 1)))
-  (tmunfoldedgrouped      (trivlist
-                            (!append (item (!option "$\\lceil$"))  (mbox "") 1 "\\\\"
-                                     (item (!option "$\\lfloor$")) (mbox "") 2 )))
-  (tmfoldedexplain        (trivlist (!append (item (!option "")) "\\bf" 1)))
-  (tmunfoldedexplain      (trivlist
-                            (!append (item (!option "")) (mbox "")
-                                     (!group "\\bf" 1) "\\\\"
-                                     (item (!option "")) (mbox "") 2 )))
-  (tmfoldedplain          (trivlist (!append (item (!option "")) (mbox "") 1)))
-  (tmunfoldedplain        (trivlist
-                            (!append (item (!option "")) (mbox "") 1 "\\\\"
-                                     (item (!option "")) (mbox "") 2 )))
-  (tmfoldedenv            (trivlist (!append (item (!option "$\\bullet$")) (mbox "") 1)))
-  (tmunfoldedenv          (trivlist
-                            (!append (item (!option "$\\circ$")) (mbox "") 1 "\\\\"
-                                     (item (!option "")) (mbox "") 2 )))
-  (tmfoldedstd            (trivlist (!append (item (!option "$\\bullet$")) (mbox "") 1)))
-  (tmunfoldedstd          (trivlist
-                            (!append (item (!option "$\\circ$")) (mbox "") 1 "\\\\"
-                                     (item (!option "")) (mbox "") 2 )))
-  (tmfolded               (trivlist (!append (item (!option "$\\bullet$")) (mbox "") 1)))
-  (tmunfolded             (trivlist
-                            (!append (item (!option "$\\circ$")) (mbox "") 1 "\\\\"
-                                     (item (!option "")) (mbox "") 2 )))
-  (tminput     (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-                                  (!group (!append (color "blue!50!black") (mbox "") 2))))
-               no-framed-sessions%)
-  (tminputmath (trivlist (!append (item (!option 1)) (ensuremath 2)))
-               no-framed-sessions%)
-  (tminput     ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
-                (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-                                   (!group (!append (color "blue!50!black") (mbox "") 2)))))
-               framed-sessions%)
-  (tminputmath ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
-                (trivlist (!append (item (!option 1)) (mbox "") (ensuremath 2))))
-               framed-sessions%)
-  (tmhlink  (!group (!append (color "blue") 1)))
-  (tmaction (!group (!append (color "blue") 1)))
-  (ontop ("{\\genfrac{}{}{0pt}{}{#1}{#2}}"))
-  (subindex (index (!append 1 "!" 2))))
-
-(logic-table latex-texmacs-3%
-  (tmsession (!group (!append (tt) 3)))
-  (tmfoldediomath   (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-                                       (!group (!append (color "blue!50!black") (ensuremath 2)))))
-                    no-framed-sessions%)
-  (tmunfoldediomath (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-                                       (!group (!append (color "blue!50!black") (ensuremath 2)))
-                                       (item (!option "")) (mbox "") 3))
-                    no-framed-sessions%)
-  (tmfoldedio       (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-                                       (mbox "") (!group (!append (color "blue!50!black") 2))))
-                    no-framed-sessions%)
-  (tmunfoldedio     (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-                                       (mbox "") (!group (!append (color "blue!50!black") 2))
-                                       (item (!option "")) (mbox "") 3))
-                    no-framed-sessions%)
-  (tmfoldediomath   ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
-                     (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-                                        (mbox "") (!group (!append (color "blue!50!black") (ensuremath 2))))))
-                    framed-sessions%)
-  (tmunfoldediomath (!append
-                      ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
-                       (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-                                          (mbox "") (!group (!append (color "blue!50!black") (ensuremath 2))))))
-                      ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor=white,linewidth=0pt"))
-                       (trivlist (!append (item (!option "")) (mbox "") 3))))
-                    framed-sessions%)
-  (tmfoldedio      ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
-                    (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-                                       (mbox "") (!group (!append (color "blue!50!black") 2)))))
-                   framed-sessions%)
-  (tmunfoldedio    (!append
-                     ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
-                      (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-                                         (mbox "") (!group (!append (color "blue!50!black") 2)))))
-                     ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor=white,linewidth=0pt"))
-                      (trivlist (!append (item (!option "")) (mbox "") 3))))
-                   framed-sessions%)
-  (subsubindex (index (!append 1 "!" 2 "!" 3)))
-  (tmref 1)
-  (glossaryentry (!append (item (!option (!append 1 (hfill)))) 2 (dotfill) 3)))
-
-(logic-table latex-texmacs-4%
-  (tmscriptinput (fbox (!append (fbox (!append (sf) 2)) " " (!append (tt) 3))))
-  (tmscriptoutput (!append 4))
-  (tmconverterinput (fbox (!append (fbox (!append (sf) 2)) " " (!append (tt) 3))))
-  (tmconverteroutput (!append 4))
-  (subsubsubindex (index (!append 1 "!" 2 "!" 3 "!" 4))))
+(logic-group latex-texmacs-4%
+  tmscriptinput tmscriptoutput tmconverterinput tmconverteroutput
+  subsubsubindex)
 
 (logic-rules
-  ((latex-texmacs-macro% 'x 'body) (latex-texmacs-0% 'x 'body))
-  ((latex-texmacs-arity% 'x 0) (latex-texmacs-0% 'x 'body))
-  ((latex-texmacs-macro% 'x 'body) (latex-texmacs-1% 'x 'body))
-  ((latex-texmacs-arity% 'x 1) (latex-texmacs-1% 'x 'body))
-  ((latex-texmacs-macro% 'x 'body) (latex-texmacs-1*% 'x 'body))
-  ((latex-texmacs-arity% 'x 1) (latex-texmacs-1*% 'x 'body))
-  ((latex-texmacs-macro% 'x 'body) (latex-texmacs-2% 'x 'body))
-  ((latex-texmacs-arity% 'x 2) (latex-texmacs-2% 'x 'body))
-  ((latex-texmacs-macro% 'x 'body) (latex-texmacs-3% 'x 'body))
-  ((latex-texmacs-arity% 'x 3) (latex-texmacs-3% 'x 'body))
-  ((latex-texmacs-macro% 'x 'body) (latex-texmacs-4% 'x 'body))
-  ((latex-texmacs-arity% 'x 4) (latex-texmacs-4% 'x 'body))
+  ((latex-texmacs-arity% 'x 0) (latex-texmacs-0% 'x))
+  ((latex-texmacs-arity% 'x 1) (latex-texmacs-1% 'x))
+  ((latex-texmacs-arity% 'x 1) (latex-texmacs-1*% 'x))
+  ((latex-texmacs-option% 'x #t) (latex-texmacs-1*% 'x))
+  ((latex-texmacs-arity% 'x 2) (latex-texmacs-2% 'x))
+  ((latex-texmacs-arity% 'x 3) (latex-texmacs-3% 'x))
+  ((latex-texmacs-arity% 'x 4) (latex-texmacs-4% 'x))
   ;;;
-  ((latex-texmacs% 'x) (latex-texmacs-0% 'x 'body))
-  ((latex-texmacs% 'x) (latex-texmacs-1% 'x 'body))
-  ((latex-texmacs% 'x) (latex-texmacs-1*% 'x 'body))
-  ((latex-texmacs% 'x) (latex-texmacs-2% 'x 'body))
-  ((latex-texmacs% 'x) (latex-texmacs-3% 'x 'body))
-  ((latex-texmacs% 'x) (latex-texmacs-4% 'x 'body))
-
-  ((latex-texmacs-option% 'x #t) (latex-texmacs-1*% 'x 'body))
-  ((latex-optional-arg% 'x) (latex-texmacs-option% 'x 'body)))
+  ((latex-texmacs% 'x) (latex-texmacs-0% 'x))
+  ((latex-texmacs% 'x) (latex-texmacs-1% 'x))
+  ((latex-texmacs% 'x) (latex-texmacs-1*% 'x))
+  ((latex-texmacs% 'x) (latex-texmacs-2% 'x))
+  ((latex-texmacs% 'x) (latex-texmacs-3% 'x))
+  ((latex-texmacs% 'x) (latex-texmacs-4% 'x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra TeXmacs environments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(logic-table latex-texmacs-environment%
-  ("proof"
-   (!append (noindent) (textbf (!append (!translate "Proof") "\\ "))
-	    ---
-	    (hspace* (fill)) (!math (Box)) (medskip)))
-  ("proof*"
-   (!append (noindent) (textbf (!append 1 "\\ "))
-	    ---
-	    (hspace* (fill)) (!math (Box)) (medskip)))
-  ("left-aligned"
-   (!append (!begin "flushleft")
-	    ---
-            (!end "flushleft")))
-  ("tmcode"
-   ((!option "")
-    (!append (begin "alltt")
-	    ---
-             (end "alltt"))))
-  ("right-aligned"
-   (!append (!begin "flushright")
-	    ---
-            (!end "flushright")))
-  ("tmparmod"
-   ((!begin "list" "" (!append "\\setlength{\\topsep}{0pt}"
-			       "\\setlength{\\leftmargin}{" 1 "}"
-			       "\\setlength{\\rightmargin}{" 2 "}"
-			       "\\setlength{\\parindent}{" 3 "}"
-			       "\\setlength{\\listparindent}{\\parindent}"
-			       "\\setlength{\\itemindent}{\\parindent}"
-			       "\\setlength{\\parsep}{\\parskip}"))
-    (!append "\\item[]"
-	     ---)))
-  ("tmparsep"
-   (!append (begingroup) "\\setlength{\\parskip}{" 1 "}"
-	     ---
-	     (endgroup)))
-  ("tmindent"
-   ((!begin "tmparmod" "1.5em" "0pt" "0pt") ---))
-  ("elsequation" ((!begin "eqnarray") (!append --- "&&")))
-  ("elsequation*" ((!begin "eqnarray*") (!append --- "&&")))
-  ("theglossary"
-   ((!begin "list" "" (!append "\\setlength{\\labelwidth}{6.5em}"
-			       "\\setlength{\\leftmargin}{7em}"
-			       "\\small")) ---)))
-
 (logic-table latex-texmacs-env-arity%
   ("proof" 0)
   ("proof*" 1)
+  ("left-aligned" 0)
+  ("right-aligned" 0)
   ("tmcode" 0)
   ("tmparmod" 3)
   ("tmparsep" 1)
@@ -356,352 +142,108 @@
 (logic-table latex-texmacs-option%
   ("tmcode" #t))
 
-(logic-group latex-texmacs-tag%
-  begin-proof begin-proof* begin-tmparmod begin-tmparsep begin-tmindent
-  begin-elsequation begin-elsequation* begin-theglossary)
-
-(logic-group latex-environment-0%
+(logic-group latex-texmacs-environment-0%
   begin-proof begin-tmindent begin-elsequation begin-elsequation*)
 
-(logic-group latex-environment-1%
+(logic-group latex-texmacs-environment-1%
   begin-proof* begin-theglossary)
 
-(logic-group latex-environment-3%
+(logic-group latex-texmacs-environment-3%
   begin-tmparmod begin-tmparsep)
 
-(define-macro (latex-texmacs-itemize env lab)
-  (with env-sym (string->symbol (string-append "begin-" env))
-    `(begin
-       (logic-table latex-texmacs-environment%
-	 (,env
-	  ((!begin "itemize")
-	   (!append "\\renewcommand{\\labelitemi}{" ,lab "}"
-		    "\\renewcommand{\\labelitemii}{" ,lab "}"
-		    "\\renewcommand{\\labelitemiii}{" ,lab "}"
-		    "\\renewcommand{\\labelitemiv}{" ,lab "}"
-		    ---))))
-       (logic-table latex-texmacs-env-arity% (,env 0))
-       ;;;
-       (logic-group latex-texmacs-tag% ,env-sym)
-       (logic-group latex-list% ,env-sym))))
-
-(define-macro (latex-texmacs-enumerate env lab)
-  (with env-sym (string->symbol (string-append "begin-" env))
-    `(begin
-       (logic-table latex-texmacs-environment%
-	 (,env ((!begin "enumerate" (!option ,lab)) ---)))
-       (logic-table latex-texmacs-env-arity% (,env 0))
-       ;;;
-       (logic-group latex-texmacs-tag% ,env-sym)
-       (logic-group latex-list% ,env-sym))))
-
-(define-macro (latex-texmacs-description env)
-  (with env-sym (string->symbol (string-append "begin-" env))
-    `(begin
-       (logic-table latex-texmacs-environment%
-	 (,env ((!begin "description") ---)))
-       (logic-table latex-texmacs-env-arity% (,env 0))
-       ;;;
-       (logic-group latex-texmacs-tag% ,env-sym)
-       (logic-group latex-list% ,env-sym))))
-
-(latex-texmacs-itemize "itemizeminus" "$-$")
-(latex-texmacs-itemize "itemizedot" "$\\bullet$")
-(latex-texmacs-itemize "itemizearrow" "$\\rightarrow$")
-(latex-texmacs-enumerate "enumeratenumeric" "1.")
-(latex-texmacs-enumerate "enumerateroman" "i.")
-(latex-texmacs-enumerate "enumerateromancap" "I.")
-(latex-texmacs-enumerate "enumeratealpha" "a{\\textup{)}}")
-(latex-texmacs-enumerate "enumeratealphacap" "A.")
-(latex-texmacs-description "descriptioncompact")
-(latex-texmacs-description "descriptionaligned")
-(latex-texmacs-description "descriptiondash")
-(latex-texmacs-description "descriptionlong")
+(logic-rules
+  ((latex-texmacs-tag%   'x) (latex-texmacs-environment-0% 'x))
+  ((latex-environment-0% 'x) (latex-texmacs-environment-0% 'x))
+  ((latex-texmacs-tag%   'x) (latex-texmacs-environment-1% 'x))
+  ((latex-environment-1% 'x) (latex-texmacs-environment-1% 'x))
+  ((latex-texmacs-tag%   'x) (latex-texmacs-environment-3% 'x))
+  ((latex-environment-3% 'x) (latex-texmacs-environment-3% 'x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Extra preamble definitions which are needed to export certain macros
+;; TeXmacs list environments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(logic-table latex-texmacs-preamble%
-  (newmdenv (!append
-              (mdfsetup (!append "linecolor=black,linewidth=0.5pt,"
-                                 "skipabove=0.5em,skipbelow=0.5em,"
-                                 "hidealllines=true,\ninnerleftmargin=0pt,"
-                                 "innerrightmargin=0pt,innertopmargin=0pt,"
-                                 "innerbottommargin=0pt" )) "\n"))
-  (tmkeywords (!append
-                (newcommand (tmkeywords)
-                            (!append (textbf (!translate "Keywords:")) " "))
-                "\n"))
-  (tmacm (!append
-           (newcommand (tmacm)
-                       (!append
-                         (textbf
-                           (!translate "A.C.M. subject classification:")) " "))
-           "\n"))
-  (tmarxiv (!append
-             (newcommand (tmarxiv)
-                         (!append
-                           (textbf
-                             (!translate "arXiv subject classification:")) " "))
-           "\n"))
-  (tmpacs (!append
-            (newcommand (tmpacs)
-                        (!append
-                          (textbf
-                            (!translate "P.A.C.S. subject classification:"))
-                          " ")) "\n"))
-  (tmmsc (!append
-           (newcommand (tmmsc)
-                       (!append
-                         (textbf
-                           (!translate "A.M.S. subject classification:")) " "))
-           "\n"))
-  (fmtext        (!append "\\newcommand{\\fmtext}[2][]{\\fntext[#1]{"
-                          (!translate "Misc:") " #2}}\n"))
-  (tdatetext     (!append "\\newcommand{\\tdatetext}[2][]{\\tnotetext[#1]{"
-                          (!translate "Date:") " #2}}\n"))
-  (tmisctext     (!append "\\newcommand{\\tmisctext}[2][]{\\tnotetext[#1]{"
-                          (!translate "Misc:") " #2}}\n"))
-  (tsubtitletext (!append "\\newcommand{\\tsubtitletext}[2][]{\\tnotetext[#1]{"
-                          (!translate "Subtitle:") " #2}}\n"))
-  (thankshomepage (!append "\\newcommand{\\thankshomepage}[2][]{\\thanks[#1]{"
-                          (!translate "URL:") " #2}}\n"))
-  (thanksemail    (!append "\\newcommand{\\thanksemail}[2][]{\\thanks[#1]{"
-                          (!translate "Email:") " #2}}\n"))
-  (thanksdate     (!append "\\newcommand{\\thanksdate}[2][]{\\thanks[#1]{"
-                           (!translate "Date:") " #2}}\n"))
-  (thanksamisc    (!append "\\newcommand{\\thanksamisc}[2][]{\\thanks[#1]{"
-                           (!translate "Misc:") " #2}}\n"))
-  (thanksmisc     (!append "\\newcommand{\\thanksmisc}[2][]{\\thanks[#1]{"
-                           (!translate "Misc:") " #2}}\n"))
-  (thankssubtitle (!append "\\newcommand{\\thankssubtitle}[2][]{\\thanks[#1]{"
-                           (!translate "Subtitle:") " #2}}\n"))
-  (mho
-   (!append
-    "\\renewcommand{\\mho}{\\mbox{\\rotatebox[origin=c]{180}{$\\omega$}}}"))
-  (tmfloat
-   (!append
-    "\\newcommand{\\tmfloatcontents}{}\n"
-    "\\newlength{\\tmfloatwidth}\n"
-    "\\newcommand{\\tmfloat}[5]{\n"
-    "  \\renewcommand{\\tmfloatcontents}{#4}\n"
-    "  \\setlength{\\tmfloatwidth}{\\widthof{\\tmfloatcontents}+1in}\n"
-    "  \\ifthenelse{\\equal{#2}{small}}\n"
-    "    {\\ifthenelse{\\lengthtest{\\tmfloatwidth > \\linewidth}}\n"
-    "      {\\setlength{\\tmfloatwidth}{\\linewidth}}{}}\n"
-    "    {\\setlength{\\tmfloatwidth}{\\linewidth}}\n"
-    "  \\begin{minipage}[#1]{\\tmfloatwidth}\n"
-    "    \\begin{center}\n"
-    "      \\tmfloatcontents\n"
-    "      \\captionof{#3}{#5}\n"
-    "    \\end{center}\n"
-    "  \\end{minipage}}\n")))
+(logic-table latex-texmacs-env-arity%
+  ("itemizeminus" 0)
+  ("itemizedot" 0)
+  ("itemizearrow" 0)
+  ("enumeratenumeric" 0)
+  ("enumerateroman" 0)
+  ("enumerateromancap" 0)
+  ("enumeratealpha" 0)
+  ("enumeratealphacap" 0)
+  ("descriptioncompact" 0)
+  ("descriptionaligned" 0)
+  ("descriptiondash" 0)
+  ("descriptionlong" 0))
 
-;;(define-macro (latex-texmacs-long prim x l m r)
-;;  `(logic-table latex-texmacs-preamble%
-;;     (,(string->symbol (substring prim 1 (string-length prim)))
-;;      (!append
-;;       "\\def" ,prim "fill@{\\arrowfill@" ,l ,m ,r "}\n"
-;;       "\\providecommand{" ,prim "}[2][]{"
-;;       "\\ext@arrow 0099" ,prim "fill@{#1}{#2}}\n"))))
+(logic-group latex-texmacs-list%
+  begin-itemizeminus begin-itemizedot begin-itemizearrow
+  begin-enumeratenumeric begin-enumerateroman begin-enumerateromancap
+  begin-enumeratealpha begin-enumeratealphacap
+  begin-descriptioncompact begin-descriptionaligned
+  begin-descriptiondash begin-descriptionlong)
 
-(define-macro (latex-texmacs-long prim x l m r)
-  `(logic-table latex-texmacs-preamble%
-     (,(string->symbol (substring prim 1 (string-length prim)))
-      (!append
-       "\\providecommand{" ,prim "}[2][]{"
-       "\\mathop{" ,x "}\\limits_{#1}^{#2}}\n"))))
-
-(latex-texmacs-long "\\xminus" "-"
-                    "\\DOTSB\\relbar" "\\relbar" "\\DOTSB\\relbar")
-(latex-texmacs-long "\\xleftrightarrow" "\\longleftrightarrow"
-                    "\\leftarrow" "\\relbar" "\\rightarrow")
-(latex-texmacs-long "\\xmapsto" "\\longmapsto"
-                    "\\vdash" "\\relbar" "\\rightarrow")
-(latex-texmacs-long "\\xmapsfrom" "\\leftarrow\\!\\!\\dashv"
-                    "\\leftarrow" "\\relbar" "\\dashv")
-(latex-texmacs-long "\\xequal" "="
-                    "\\DOTSB\\Relbar" "\\Relbar" "\\DOTSB\\Relbar")
-(latex-texmacs-long "\\xLeftarrow" "\\Longleftarrow"
-                    "\\Leftarrow" "\\Relbar" "\\Relbar")
-(latex-texmacs-long "\\xRightarrow" "\\Longrightarrow"
-                    "\\Relbar" "\\Relbar" "\\Rightarrow")
-(latex-texmacs-long "\\xLeftrightarrow" "\\Longleftrightarrow"
-                    "\\Leftarrow" "\\Relbar" "\\Rightarrow")
+(logic-rules
+  ((latex-texmacs-tag% 'x) (latex-texmacs-list% 'x))
+  ((latex-list% 'x) (latex-texmacs-list% 'x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Ornamented environments
+;; Commands requiring special definitions in the preamble
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(logic-table latex-texmacs-env-preamble%
-  ("tmpadded"     (!append (newmdenv (!option "") "tmpadded") "\n"))
-  ("tmoverlined"  (!append
-                    (newmdenv
-                      (!option "topline=true,innertopmargin=1ex")
-                      "tmoverlined") "\n"))
-  ("tmunderlined" (!append
-                    (newmdenv
-                      (!option "bottomline=true,innerbottommargin=1ex")
-                      "tmunderlined") "\n"))
-  ("tmbothlined"  (!append
-                    (newmdenv
-                      (!option "topline=true,bottomline=true,innertopmargin=1ex,innerbottommargin=1ex")
-                      "tmbothlined") "\n"))
-  ("tmframed"     (!append
-                    (newmdenv
-                      (!option "hidealllines=false,innertopmargin=1ex,innerbottommargin=1ex,innerleftmargin=1ex,innerrightmargin=1ex")
-                      "tmframed") "\n"))
-  ("tmornamented" (!append
-                    (newmdenv
-                      (!option "hidealllines=false,innertopmargin=1ex,innerbottommargin=1ex,innerleftmargin=1ex,innerrightmargin=1ex")
-                      "tmornamented") "\n")))
+(logic-group latex-texmacs-preamble-command%
+  newmdenv
+  tmkeywords tmacm tmarxiv tmpacs tmmsc
+  fmtext tdatetext tmisctext tsubtitletext
+  thankshomepage thanksemail thanksdate thanksamisc thanksmisc thankssubtitle
+  mho tmfloat
+
+  xminus xleftrightarrow xmapsto xmapsfrom xequal
+  xLeftarrow xRightarrow xLeftrightarrow)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Plain style theorems
+;; Environments requiring special definitions in the preamble
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-macro (latex-texmacs-thmenv prim name before after)
-  (with env-sym (string->symbol (string-append "begin-" prim))
-    `(begin
-       (logic-table latex-texmacs-env-preamble%
-	 (,prim (!append ,@before (newtheorem ,prim (!translate ,name))
-			 ,@after "\n")
-		no-amsthm-package%))
-       ;;;
-       (logic-group latex-texmacs-tag% ,env-sym)
-       (logic-group latex-environment-0% ,env-sym))))
+(logic-group latex-texmacs-env-preamble-environment%
+  "tmpadded" "tmoverlined" "tmunderlined" "tmbothlined"
+  "tmframed" "tmornamented")
 
-(define-macro (latex-texmacs-theorem prim name)
-  `(latex-texmacs-thmenv ,prim ,name () ()))
+(logic-group latex-texmacs-env-preamble-environment%
+  "theorem" "proposition" "lemma" "corollary"
+  "axiom" "definition" "notation" "conjecture"
+  "remark" "note" "example" "convention"
+  "warning" "acknowledgments" "answer" "question"
+  "exercise" "problem" "solution")
 
-(define-macro (latex-texmacs-remark prim name)
-  `(latex-texmacs-thmenv
-    ,prim ,name ("{" (!recurse (theorembodyfont "\\rmfamily"))) ("}")))
+(logic-group latex-texmacs-theorem%
+  begin-theorem begin-proposition begin-lemma begin-corollary
+  begin-axiom begin-definition begin-notation begin-conjecture
+  begin-remark begin-note begin-example begin-convention
+  begin-warning begin-acknowledgments begin-answer begin-question
+  begin-exercise begin-problem begin-solution)
 
-(define-macro (latex-texmacs-exercise prim name)
-  `(latex-texmacs-thmenv
-    ,prim ,name ("{" (!recurse (theorembodyfont "\\rmfamily\\small"))) ("}")))
-
-(latex-texmacs-theorem "theorem" "Theorem")
-(latex-texmacs-theorem "proposition" "Proposition")
-(latex-texmacs-theorem "lemma" "Lemma")
-(latex-texmacs-theorem "corollary" "Corollary")
-(latex-texmacs-theorem "axiom" "Axiom")
-(latex-texmacs-theorem "definition" "Definition")
-(latex-texmacs-theorem "notation" "Notation")
-(latex-texmacs-theorem "conjecture" "Conjecture")
-(latex-texmacs-remark "remark" "Remark")
-(latex-texmacs-remark "note" "Note")
-(latex-texmacs-remark "example" "Example")
-(latex-texmacs-remark "convention" "Convention")
-(latex-texmacs-remark "warning" "Warning")
-(latex-texmacs-remark "acknowledgments" "Acknowledgments")
-(latex-texmacs-remark "answer" "Answer")
-(latex-texmacs-remark "question" "Question")
-(latex-texmacs-exercise "exercise" "Exercise")
-(latex-texmacs-exercise "problem" "Problem")
-(latex-texmacs-exercise "solution" "Solution")
+(logic-rules
+  ((latex-texmacs-tag% 'x) (latex-texmacs-theorem% 'x))
+  ((latex-environment-0% 'x) (latex-texmacs-theorem% 'x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; AMS style theorems
+;; These macros are defined by TeXmacs in certain styles
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-macro (ams-texmacs-theorem abbr full)
-  `(begin
-     (logic-table latex-texmacs-env-preamble%
-       (,abbr (!append "\\theoremstyle{plain}\n"
-		       (newtheorem ,abbr (!translate ,full))
-		       "\n")
-	      amsthm-package%))))
+(logic-group latex-texmacs-0%
+  appendix)
 
-(define-macro (ams-texmacs-remark abbr full)
-  `(begin
-     (logic-table latex-texmacs-env-preamble%
-       (,abbr (!append "\\theoremstyle{remark}\n"
-		       (newtheorem ,abbr (!translate ,full))
-		       "\n")
-	      amsthm-package%))))
-
-(define-macro (ams-texmacs-indent-exercise abbr full)
-  `(begin
-     (logic-table latex-texmacs-env-preamble%
-		  (,abbr (!append "\\newtheoremstyle{indent-exercise}{3pt}{3pt}{\\small}"
-				  "{\\parindent}{\\bf\\small}{.}{.5em}{}{}\n"
-				  "\\theoremstyle{indent-exercise}\n"
-		       (newtheorem ,abbr (!translate ,full))
-		       "\n")
-	      amsthm-package%))))
-
-(define-macro (ams-texmacs-noindent-exercise abbr full)
-  `(begin
-     (logic-table latex-texmacs-env-preamble%
-		  (,abbr (!append "\\newtheoremstyle{noindent-exercise}{3pt}{3pt}{\\small}"
-				  "{}{\\bf\\small}{.}{.5em}{}{}\n"
-				  "\\theoremstyle{noindent-exercise}\n"
-		       (newtheorem ,abbr (!translate ,full))
-		       "\n")
-	      amsthm-package%))))
-
-(ams-texmacs-theorem "theorem" "Theorem")
-(ams-texmacs-theorem "proposition" "Proposition")
-(ams-texmacs-theorem "lemma" "Lemma")
-(ams-texmacs-theorem "corollary" "Corollary")
-(ams-texmacs-theorem "axiom" "Axiom")
-(ams-texmacs-theorem "definition" "Definition")
-(ams-texmacs-theorem "notation" "Notation")
-(ams-texmacs-theorem "conjecture" "Conjecture")
-(ams-texmacs-remark "remark" "Remark")
-(ams-texmacs-remark "note" "Note")
-(ams-texmacs-remark "example" "Example")
-(ams-texmacs-remark "convention" "Convention")
-(ams-texmacs-remark "acknowledgments" "Acknowledgments")
-(ams-texmacs-remark "warning" "Warning")
-(ams-texmacs-remark "answer" "Answer")
-(ams-texmacs-remark "question" "Question")
-(ams-texmacs-indent-exercise "exercise" "Exercise")
-(ams-texmacs-indent-exercise "problem" "Problem")
-(ams-texmacs-noindent-exercise "solution" "Solution")
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Style-dependent extra macros
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(logic-table latex-texmacs-0%
-  (appendix "" letter-style%))
-
-(define-macro (latex-texmacs-section name inside . conds)
-  `(logic-table latex-texmacs-1%
-     (,name (!append (medskip) (bigskip) "\n\n" (noindent) (textbf ,inside))
-	    ,@conds)))
-
-(define-macro (latex-texmacs-paragraph name inside . conds)
-  `(logic-table latex-texmacs-1%
-     (,name (!append (smallskip) "\n\n" (noindent) (textbf ,inside))
-	    ,@conds)))
-
-(latex-texmacs-section chapter (!append "\\huge " 1) article-style%)
-(latex-texmacs-section chapter (!append "\\huge " 1) letter-style%)
-(latex-texmacs-section section (!append "\\LARGE " 1) letter-style%)
-(latex-texmacs-section subsection (!append "\\Large " 1) letter-style%)
-(latex-texmacs-section subsubsection (!append "\\large " 1) letter-style%)
-(latex-texmacs-paragraph paragraph 1 letter-style%)
-(latex-texmacs-paragraph subparagraph 1 letter-style%)
+(logic-group latex-texmacs-1%
+  chapter section subsection paragraph subparagraph)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Deprecated extra macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(logic-table latex-texmacs-0%
-  (labeleqnum "\\addtocounter{equation}{-1}\\refstepcounter{equation}\\addtocounter{equation}{1})")
-  (eqnumber (!append "\\hfill(\\theequation" (!recurse (labeleqnum)) ")"))
-  (leqnumber (!append "(\\theequation" (!recurse (labeleqnum)) ")\\hfill"))
-  (reqnumber (!append "\\hfill(\\theequation" (!recurse (labeleqnum)) ")")))
+(logic-group latex-texmacs-0%
+  labeleqnum eqnumber leqnumber reqnumber)
 
-(logic-table latex-texmacs-1%
-  (key (!append "\\fbox{\\rule[-2pt]{0pt}{9pt}" (texttt 1) "}"))
-  (skey (!recurse (key (!append "shift-" 1))))
-  (ckey (!recurse (key (!append "ctrl-" 1))))
-  (akey (!recurse (key (!append "alt-" 1))))
-  (mkey (!recurse (key (!append "meta-" 1))))
-  (hkey (!recurse (key (!append "hyper-" 1)))))
+(logic-group latex-texmacs-1%
+  key skey ckey akey mkey hkey)
