@@ -289,13 +289,10 @@ parse_list (string s, int &i) {
 }
 
 // TODO:
-// - commands
-//   - sectionning
-//   - prettytyping rules
-//   - hide / show
-// - prettytyping
+// - prettytyping rules managment
 static tree
 coqdoc_to_tree (string s) {
+  bool newline= true;
   int i=0, n= N(s);
   tree coqdoc (DOCUMENT), line (CONCAT);
   while (i < n) {
@@ -304,16 +301,38 @@ coqdoc_to_tree (string s) {
       tree vernac=
         vernac_to_tree (parse_delimited (s, i, "[[\n", "\n]]", false));
       coqdoc << compound ("coqdoc-vernac", vernac);
+      newline= true;
     }
     else if (s[i] == '[')
       line << compound ("coqdoc-coq", parse_delimited (s, i, "[", "]", false));
-    else if (test (s, i, "%%"))
+    else if (newline && (test (s, i, "**** ") || test (s, i, "*** ") ||
+                         test (s, i, "** ")   || test (s, i, "* "))) {
+      line= tree (CONCAT);
+      string header= "section";
+      if (test (s, i, "** "))    header= "subsection";
+      if (test (s, i, "*** "))   header= "subsubsection";
+      if (test (s, i, "**** "))  header= "paragraph";
+      while (i<n && (s[i] == '*')) i++;
+      while (i<n && (s[i] == ' ')) i++;
+      int start= i;
+      while (i<n && (s[i] != '\n')) i++;
+      coqdoc << compound (header, coqdoc_to_tree (s (start, i)));
+      newline= true;
+    }
+    else if (test (s, i, "%%")) {
       line << "%";
-    else if (test (s, i, "$$"))
+      newline= false;
+    }
+    else if (test (s, i, "$$")) {
       line << "$";
-    else if (test (s, i, "##"))
+      newline= false;
+    }
+    else if (test (s, i, "##")) {
       line << "#";
+      newline= false;
+    }
     else if (s[i] == '#' || s[i] == '%' || s[i] == '$') {
+      newline= false;
       add_line (line, coqdoc);
       char delim= s[i];
       string ext= parse_delimited (s, i, delim);
@@ -335,35 +354,44 @@ coqdoc_to_tree (string s) {
       tree list= parse_list (s, i);
       add_line (line, coqdoc);
       coqdoc << list;
+      newline= true;
     }
     else if (test (s, i, "<<\n")) {
       add_line (line, coqdoc);
       tree verb=
         verbatim_to_tree (parse_delimited (s, i, "<<\n", "\n>>", false));
       coqdoc << compound ("coqdoc-verbatim", verb);
+      newline= true;
     }
     else if (s[i] == '_' && (i == 0 || !start_ident(s[i-1]))) {
       line << coqdoc_parse_emphasis (s, i);
+      newline= false;
     }
     else if (test (s, i, "----")) {
       i+=  4;
       add_line (line, coqdoc);
       coqdoc << compound ("hrule");
       while (i<n && s[i] == '-') i++;
+      newline= true;
     }
     else if (s[i] == '\n') {
       add_line (line, coqdoc);
       i++;
+      newline= true;
     }
     else if (s[i] == '<') {
       line << "<less>";
       i++;
+      newline= false;
     }
     else if (s[i] == '>') {
       line << "<gtr>";
       i++;
+      newline= false;
     }
     else {
+      if (s[i] != ' ')
+        newline= false;
       line << s(i, 1+i);
       i++;
     }
