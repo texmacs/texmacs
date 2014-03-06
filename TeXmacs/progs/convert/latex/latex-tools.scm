@@ -28,6 +28,7 @@
 (define latex-packages '())
 (define latex-texmacs-style "generic")
 (define latex-texmacs-packages '())
+(define latex-dependencies '("generic"))
 
 (define latex-uses-table (make-ahash-table))
 (define latex-catcode-table (make-ahash-table))
@@ -43,16 +44,22 @@
   (set! latex-language lan))
 
 (tm-define (latex-set-style sty)
-  (set! latex-style sty))
+  (set! latex-style sty)
+  (latex-set-dependencies))
 
 (tm-define (latex-set-packages ps)
-  (set! latex-packages ps))
+  (set! latex-packages ps)
+  (latex-set-dependencies))
 
 (tm-define (latex-set-texmacs-style sty)
   (set! latex-texmacs-style sty))
 
 (tm-define (latex-set-texmacs-packages l)
   (set! latex-texmacs-packages l))
+
+(define (latex-set-dependencies)
+  (set! latex-dependencies
+        (latex-packages-dependencies (cons latex-style latex-packages))))
 
 (tm-define (latex-has-style? sty)
   (== sty latex-style))
@@ -65,6 +72,9 @@
 
 (tm-define (latex-has-texmacs-package? p)
   (in? p latex-texmacs-packages))
+
+(tm-define (latex-depends? p)
+  (in? p latex-dependencies))
 
 (tm-define (latex-book-style?)
   (in? latex-style '("book")))

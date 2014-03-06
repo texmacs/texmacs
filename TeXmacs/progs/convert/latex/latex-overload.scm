@@ -47,28 +47,28 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (smart-table latex-texmacs-macro
-  (:require (latex-has-package? "amsthm"))
+  (:require (latex-depends? "amsthm"))
   (qed #f))
 
 (smart-table latex-texmacs-environment
-  (:require (latex-has-package? "amsthm"))
+  (:require (latex-depends? "amsthm"))
   ("proof" #f))
 
 (define-macro (ams-texmacs-theorem abbr full)
   `(smart-table latex-texmacs-env-preamble
-     (:require (latex-has-package? "amsthm"))
+     (:require (latex-depends? "amsthm"))
      (,abbr (!append "\\theoremstyle{plain}\n"
                      (newtheorem ,abbr (!translate ,full)) "\n"))))
 
 (define-macro (ams-texmacs-remark abbr full)
   `(smart-table latex-texmacs-env-preamble
-     (:require (latex-has-package? "amsthm"))
+     (:require (latex-depends? "amsthm"))
      (,abbr (!append "\\theoremstyle{remark}\n"
                      (newtheorem ,abbr (!translate ,full)) "\n"))))
 
 (define-macro (ams-texmacs-indent-exercise abbr full)
   `(smart-table latex-texmacs-env-preamble
-     (:require (latex-has-package? "amsthm"))
+     (:require (latex-depends? "amsthm"))
      (,abbr (!append "\\newtheoremstyle{indent-exercise}{3pt}{3pt}"
                      "{\\small}{\\parindent}{\\bf\\small}{.}{.5em}{}{}\n"
                      "\\theoremstyle{indent-exercise}\n"
@@ -76,7 +76,7 @@
 
 (define-macro (ams-texmacs-noindent-exercise abbr full)
   `(smart-table latex-texmacs-env-preamble
-     (:require (latex-has-package? "amsthm"))
+     (:require (latex-depends? "amsthm"))
      (,abbr (!append "\\newtheoremstyle{noindent-exercise}{3pt}{3pt}"
                      "{\\small}{}{\\bf\\small}{.}{.5em}{}{}\n"
                      "\\theoremstyle{noindent-exercise}\n"
