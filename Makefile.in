@@ -63,7 +63,7 @@ TEXMACS: EMPTY_DIRS
 	@echo dynamic TeXmacs has been successfully compiled
 
 STATIC_TEXMACS: EMPTY_DIRS
-	cd src; $(MAKE) -f makefile link=static
+	cd src; $(MAKE) -f makefile link=static CFLAGS=-D__TMSTATIC__
 	$(MAKE) -f Makefile PLUGINS
 	$(MAKE) -f Makefile EX_PLUGINS
 	$(CP) misc/scripts/fig2ps $(tmdir)/bin

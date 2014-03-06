@@ -687,7 +687,7 @@ CONFIG_SO="so"
 CONFIG_LIB_PATH="LD_LIBRARY_PATH"
 CONFIG_CHMOD="chmod -f"
 CONFIG_CXXOPTIMIZE="-O2"
-CONFIG_BSTATIC="-Wl,-Bstatic"
+CONFIG_BSTATIC="-lxcb -lXdmcp -lXau -lXrender"
 CONFIG_BSHARED="-Wl,-Bdynamic"
 CONFIG_BFLAGS=""
 CONFIG_BPATH="-Wl,-rpath,"
@@ -859,7 +859,7 @@ esac
 
 case "$GXX_VERSION" in
      3.* | 4.*)
-	 CONFIG_BSTATIC="-static"
+#	 CONFIG_BSTATIC="-static"
 	 CONFIG_BSHARED="-dynamic"
      ;;
 esac

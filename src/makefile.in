@@ -130,7 +130,7 @@ freetype_src := $(call findsrc_in,Plugins,Freetype)
 # compiles.
 
 make_cpp_deps = $(patsubst %.cpp,Deps/%.d,$(notdir $(1)))
-make_c_deps = $(patsubst %.c,Deps/%.d,$(notdir $(1)))
+make_c_deps = $(patsubst %.c,Objects/%.o,$(notdir $(1)))
 make_m_deps = $(patsubst %.m,Deps/%.d,$(notdir $(1)))
 make_mm_deps = $(patsubst %.mm,Deps/%.d,$(notdir $(1)))
 
@@ -141,8 +141,9 @@ texmacs_cpp_deps := $(call make_cpp_deps,$(system_src) $(kernel_src) $(data_src)
  $(pdf_src) $(freetype_src))
 texmacs_m_deps += $(call make_m_deps,$(cocoa_m_src))
 texmacs_mm_deps += $(call make_mm_deps,$(cocoa_mm_src))
+texmacs_c_deps := $(call make_c_deps, $(call findc_in,System,Misc))
 
-deps += $(texmacs_cpp_deps) $(texmacs_c_deps) $(texmacs_m_deps) $(texmacs_mm_deps)
+deps += $(texmacs_cpp_deps) $(texmacs_m_deps) $(texmacs_mm_deps)
 
 ###############################################################################
 # Include files
@@ -332,6 +333,8 @@ $(pdf_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(pdf_incl) $(CXXFREETYPE) $(CXXPDF))
 $(freetype_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(freetype_incl) $(CXXFREETYPE))
+$(texmacs_c_deps):   Objects/%.o: %.c
+	$(call cc_flags, $(CFLAGS))
 
 ###############################################################################
 # Make editor
@@ -359,7 +362,7 @@ ifeq "$(link)" "static"
 ifeq "$(CONFIG_OS)" "DEC"
 link_bin = $(strip $(LD) $(LDFLAGS) $^ $(LDSTATIC) $(1) -lstdc++ -o $@)
 else
-link_bin = $(strip $(LD) $(LDFLAGS) $^ $(LDSTATIC) $(1) -o $@)
+link_bin = $(strip $(LD) $(LDFLAGS) $^ -Wl,-Bstatic $(1) $(LDSTATIC) -static-libgcc -o $@)
 endif
 endif
 
@@ -392,7 +395,7 @@ uses_freetype := $(freetype_obj)
 # Compilation rules
 
 TEXMACS_objects := $(strip $(call uses,system kernel data graphics\
- plugins x11 os qt gs cocoa style typeset edit scheme texmacs pdf freetype))
+ plugins x11 os qt gs cocoa style typeset edit scheme texmacs pdf freetype)) $(texmacs_c_deps)
 
 link_options:=-L$(tmsrc)/lib $(LDRT) -lm $(LDPATH) $(LDGUI) $(LDICONV) \
    $(LDGUILE) $(LDAXEL) $(LDCAIRO) $(LDIMLIB2) $(LDSQLITE3) $(LDFREETYPE) \
