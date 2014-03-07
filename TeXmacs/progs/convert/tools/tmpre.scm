@@ -52,7 +52,9 @@
 	   (= (length l) 2)
 	   (logic-in? (car l) tmpre-inline-env%)
 	   (pair? (cadr l))
-	   (in? (caadr l) '(document tformat table)))))
+	   (in? (caadr l) '(document tformat table)))
+      (and (func? l 'mtm 2)
+           (tmpre-glueable? (caddr l)))))
 
 (define (tmpre-para x l)
   (cond ((func? (car l) 'para)
