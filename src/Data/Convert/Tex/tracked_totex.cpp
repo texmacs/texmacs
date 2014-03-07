@@ -98,16 +98,6 @@ latex_unmark (string s, hashset<path> l, hashmap<int,array<path> >& corr) {
   return r;
 }
 
-string
-latex_unmark (string s, hashset<path> l) {
-  bool flag= (N(l) == 0);
-  if (flag) l->insert (path (-1)); // force checking
-  hashmap<int,array<path> > corr;
-  string r= latex_unmark (s, l, corr);
-  if (flag) l->remove (path (-1));
-  return r;
-}
-
 /******************************************************************************
 * Check transparency of marking process
 ******************************************************************************/
@@ -121,6 +111,31 @@ latex_declare_transparent (string ms, hashset<path>& l) {
     path p= it->next ();
     l->remove (p);
   }
+}
+
+static void
+get_invalid_regions (string s1, int b1, int e1, string s2, int b2, int e2,
+                     hashset<int>& regions) {
+  while (b1 < e1 && b2 < e2 && s1[b1] == s2[b2]) { b1++; b2++; }
+  while (b1 < e1 && b2 < e2 && s1[e1-1] == s2[e2-1]) { e1--; e2--; }
+  cout << HRULE << "Bad region" << LF << HRULE << s1 (b1, e1) << LF;
+  for (int i=b1; i<=e1; i++)
+    regions->insert (i);
+}
+
+void
+latex_check_transparency (string ums, string s,
+                          hashmap<int,array<path> > corr,
+                          hashset<path>& invalid) {
+  hashset<int> regions;
+  get_invalid_regions (ums, 0, N(ums), s, 0, N(s), regions);
+
+  for (int i=0; i<=N(s); i++)
+    if (regions->contains (i) && corr->contains (i)) {
+      array<path> a= corr[i];
+      for (int j=0; j<N(a); j++)
+        invalid->insert (path_up (a[j]));
+    }
 }
 
 /******************************************************************************
@@ -139,31 +154,34 @@ tracked_texmacs_to_latex (tree d, object opts) {
     return tree_to_latex_document (d, opts);
   tree t= extract (d, "body");
 
-  string ms, s;
+  string ums, ms, s;
   string tt_opt = "texmacs->latex:transparent-source-tracking";
   bool   tt_flag= get_preference (tt_opt, "off") == "on";
   if (tt_flag) s= tree_to_latex_document (d, opts);
 
   hashset<path> invalid;
+  hashmap<int,array<path> > corr;
   while (true) {
+    //cout << HRULE << "Invalid markers" << LF << HRULE << invalid << LF;
     hashset<path> l= copy (invalid);
     tree mt= texmacs_mark (t, path (), l);
     //cout << HRULE << "Marked texmacs" << LF << HRULE << mt << LF;
     tree md= change_doc_attr (d, "body", mt);
     string ms= tree_to_latex_document (md, opts);
     //cout << HRULE << "Marked latex" << LF << HRULE << ms << LF;
-    string ums= latex_unmark (ms, l);
+    l->insert (path (-1)); // force checking
+    string ums= latex_unmark (ms, l, corr);
+    l->remove (path (-1));
     //cout << HRULE << "Unmarked latex" << LF << HRULE << ums << LF;
     if (!tt_flag || ums == s) { s= ums; break; }
 
     //cout << HRULE << "Expected" << LF << HRULE << s << LF;
     int old_nr= N(invalid);
-    latex_declare_transparent (ms, l);
-    //cout << "Difference: " << N(l) - N(invalid) << LF;
-    if (N(l) > N(invalid)) { invalid= l; continue; }
-    //latex_check_transparency (ms, s, invalid);
+    hashset<path> new_invalid= copy (l);
+    latex_declare_transparent (ms, new_invalid);
+    if (N(new_invalid) > N(invalid)) { invalid= new_invalid; continue; }
+    latex_check_transparency (ums, s, corr, invalid);
     if (N(invalid) <= old_nr) break;
-    break;
   }
 
   string post;
