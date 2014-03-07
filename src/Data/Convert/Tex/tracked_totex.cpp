@@ -136,6 +136,7 @@ tracked_texmacs_to_latex (tree d, object opts) {
     cout << HRULE << "Unmarked latex" << LF << HRULE << ums << LF;
     if (!tt_flag || ums == s) { s= ums; break; }
 
+    cout << HRULE << "Expected" << LF << HRULE << s << LF;
     //int old_nr= N(invalid);
     //latex_declare_transparent (ms, l);
     //if (N(l) > N(invalid)) { invalid= l; continue; }

@@ -1329,7 +1329,7 @@
 	  (else (list 'scalebox (number->string mhor) fig)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Matadatas of documents
+;; Metadata for documents
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmtex-doc-title t)
@@ -1380,7 +1380,7 @@
   `(tmmisc ,(tmtex (cadr t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;  Usefull macros for metadata presentation
+;; Useful macros for metadata presentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmtex-select-args-by-func n l)
@@ -1422,7 +1422,7 @@
                       t)
             found?))))
 
-;;  Metadata clustering
+;; Metadata clustering
 
 (define (stree-replace l what by)
   (cond ((or (null? l) (nlist? l)) l)
@@ -1468,7 +1468,7 @@
     `(,@data-refs ,@data-labels)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;  Authors metadata presentation
+;; Author metadata presentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmtex-prepare-author-data l) l)
@@ -1508,7 +1508,7 @@
                          affs* emails* urls* miscs* notes*))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;  Document metadata presentation
+;; Document metadata presentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmtex-prepare-doc-data l)
@@ -1563,7 +1563,7 @@
                          subtits-l dates-l miscs-l notes-l tr ar)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;  Abstract metadata presentation
+;; Abstract metadata presentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmtex-abstract t)
@@ -1589,7 +1589,7 @@
   (with args (list-intersperse (map tmtex (cdr t)) '(tmsep))
     `(!concat (tmpacs) ,@(map (lambda (x) `(!group ,x)) args))))
 
-(tm-define  (tmtex-make-abstract-data keywords acm arxiv msc pacs abstract)
+(tm-define (tmtex-make-abstract-data keywords acm arxiv msc pacs abstract)
   (with result `(,@abstract ,@acm ,@arxiv ,@msc ,@pacs ,@keywords)
     (if (null? result) "" `(!document ,@result))))
 
