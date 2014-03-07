@@ -149,8 +149,9 @@ latex_mark (string s, hashset<int>& l) {
       r << s (b, i);
       break;
     }
+    int bb= i;
     if (parse_begin_end (s, i)) {
-      if (s[b+1] == 'b') {
+      if (s[bb+1] == 'b') {
         r << s (b, i);
         b= i;
         if (skip_latex_spaces (s, i)) i= b;
@@ -224,11 +225,11 @@ texmacs_group_markers (tree t) {
             if (is_compound (r[j], "elx", 1)) { ok= true; break; }
             if (is_concat (r[j])) {
               bool br= false;
-              for (int k=0; k<N(r[j]); j++)
+              for (int k=0; k<N(r[j]); k++)
                 if (is_compound (r[j][k], "blx", 1)) {
                   br= true; break; }
                 else if (is_compound (r[j][k], "elx", 1)) {
-                  br= true; ok= (k == N(r[j]) - 1); break; }
+                  br= true; ok= (k == (N(r[j]) - 1)); break; }
               if (br) break;
             }
             j++;
@@ -341,7 +342,34 @@ tree texmacs_clean_markers (tree t) { return texmacs_unmark (t, false); }
 * Check transparency of marking process
 ******************************************************************************/
 
-/*
+void texmacs_check_transparency (tree mt, tree t, hashset<int>& invalid);
+
+static void
+texmacs_declare_transparent (tree mt, hashset<int>& invalid) {
+  if (is_compound (mt, "mlx", 2)) {
+    int b, e;
+    get_range (mt[0], b, e);
+    invalid->remove (b);
+    invalid->remove (e);
+  }
+  if (is_compound (mt))
+    for (int i=0; i<N(mt); i++)
+      texmacs_declare_transparent (mt[i], invalid);
+}
+
+static void
+texmacs_declare_opaque (tree mt, hashset<int>& invalid) {
+  if (is_compound (mt, "mlx", 2)) {
+    int b, e;
+    get_range (mt[0], b, e);
+    invalid->insert (b);
+    invalid->insert (e);
+  }
+  if (is_compound (mt))
+    for (int i=0; i<N(mt); i++)
+      texmacs_declare_opaque (mt[i], invalid);
+}
+
 static bool
 texmacs_relative_transparency (tree mt, tree t) {
   if (is_compound (mt, "mlx", 2)) return true;
@@ -354,25 +382,39 @@ texmacs_relative_transparency (tree mt, tree t) {
 }
 
 static void
-texmacs_declare_opaque (tree mt, hashset<int>& invalid) {
-  if (is_compound (mt, "mlx", 2)) {
-    int b, e;
-    get_range (mt, b, e);
-    invalid->insert (b);
-    invalid->insert (e);
+texmacs_document_transparency (tree mt, int& mpos, tree t, int& pos,
+                               hashset<int>& invalid) {
+  while (mpos < N(mt) && pos < N(t)) {
+    if (is_compound (mt[mpos], "mlx", 2) && is_document (mt[mpos][1])) {
+      int spos= 0, bpos= pos;
+      texmacs_document_transparency (mt[mpos][1], spos, t, pos, invalid);
+      if (spos != N(mt[mpos][1])) break;
+      if (!texmacs_relative_transparency (mt[mpos][1], t (bpos, pos)))
+        texmacs_declare_opaque (mt[mpos], invalid);
+      mpos++;
+    }
+    else {
+      texmacs_check_transparency (mt[mpos], t[pos], invalid);
+      mpos++; pos++;
+    }
   }
-  if (is_compound (mt))
-    for (int i=0; i<N(mt); i++)
-      texmacs_declare_opaque (mt[i], invalid);
 }
 
-static void
+void
 texmacs_check_transparency (tree mt, tree t, hashset<int>& invalid) {
-  if (texmacs_unmark (mt) == t || !is_compound (mt));
-  else if (is_compound (mt, "mlx", 2)) {
+  if (texmacs_unmark (mt) == t || !is_compound (mt)) return;
+  //cout << "Problematic " << mt << LF
+  //<< "........... " << t << LF;
+  if (is_compound (mt, "mlx", 2)) {
     if (texmacs_relative_transparency (mt[1], t))
       texmacs_check_transparency (mt[1], t[1], invalid);
     else
+      texmacs_declare_opaque (mt, invalid);
+  }
+  else if (is_document (mt) && is_document (t)) {
+    int mpos= 0, pos= 0;
+    texmacs_document_transparency (mt, mpos, t, pos, invalid);
+    if (mpos < N(mt) || pos < N(t))
       texmacs_declare_opaque (mt, invalid);
   }
   else if (!is_compound (t) || N(mt) != N(t))
@@ -381,7 +423,6 @@ texmacs_check_transparency (tree mt, tree t, hashset<int>& invalid) {
     for (int i=0; i<N(mt); i++)
       texmacs_check_transparency (mt[i], t[i], invalid);
 }
-*/
 
 /******************************************************************************
 * LaTeX -> TeXmacs conversion with source tracking
@@ -391,23 +432,44 @@ tree
 tracked_latex_to_texmacs (string s, bool as_pic) {
   if (get_preference ("latex->texmacs:source-tracking", "off") != "on")
     return latex_document_to_tree (s, as_pic);
-  hashset<int> l;
-  string ms= latex_mark (s, l);
-  cout << HRULE << "Marked latex" << LF << HRULE << ms << LF;
-  tree mt= latex_document_to_tree (ms, as_pic);
-  tree body= extract (mt, "body");
-  cout << HRULE << "Marked texmacs" << LF << HRULE << body << LF;
-  body= texmacs_group_markers (body);
-  cout << HRULE << "Grouped texmacs" << LF << HRULE << body << LF;
-  body= texmacs_correct_markers (body, -1000000000, 1000000000);
-  cout << HRULE << "Corrected texmacs" << LF << HRULE << body << LF;
-  body= texmacs_clean_markers (body);
-  cout << HRULE << "Cleaned texmacs" << LF << HRULE << body << LF;
+  
+  tree   t, body, mt, mbody;
+  string tt_opt = "latex->texmacs:transparent-source-tracking";
+  bool   tt_flag= get_preference (tt_opt, "off") == "on";
+  if (tt_flag) {
+    t= latex_document_to_tree (s, as_pic);
+    body= extract (t, "body");
+  }
+
+  hashset<int> invalid;
+  while (true) {
+    //cout << HRULE << "Invalid markers" << LF << HRULE << invalid << LF;
+    hashset<int> l= copy (invalid);
+    string ms= latex_mark (s, l);
+    //cout << HRULE << "Marked latex" << LF << HRULE << ms << LF;
+    mt= latex_document_to_tree (ms, as_pic);
+    mbody= extract (mt, "body");
+    //cout << HRULE << "Marked texmacs" << LF << HRULE << mbody << LF;
+    mbody= texmacs_group_markers (mbody);
+    //cout << HRULE << "Grouped texmacs" << LF << HRULE << mbody << LF;
+    mbody= texmacs_correct_markers (mbody, -1000000000, 1000000000);
+    //cout << HRULE << "Corrected texmacs" << LF << HRULE << mbody << LF;
+    mbody= texmacs_clean_markers (mbody);
+    //cout << HRULE << "Cleaned texmacs" << LF << HRULE << mbody << LF;
+    if (!tt_flag || texmacs_unmark (mbody) == body) break;
+
+    int old_nr= N(invalid);
+    texmacs_declare_transparent (mbody, l);
+    if (N(l) > N(invalid)) { invalid= l; continue; }
+    texmacs_check_transparency (mbody, body, invalid);
+    if (N(invalid) <= old_nr) { mt= t; mbody= body; break; }
+  }
+
   tree lsrc (ASSOCIATE, "latex-source", s);
-  tree ltar (ASSOCIATE, "latex-target", change_doc_attr (mt, "body", body));
+  tree ltar (ASSOCIATE, "latex-target", change_doc_attr (mt, "body", mbody));
   tree atts (COLLECTION, lsrc, ltar);
-  body= texmacs_unmark (body);
-  mt= change_doc_attr (mt, "body", body);
+  mbody= texmacs_unmark (mbody);
+  mt= change_doc_attr (mt, "body", mbody);
   mt= change_doc_attr (mt, "attachments", atts);
   return mt;
 }
