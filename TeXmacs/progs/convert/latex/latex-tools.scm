@@ -80,31 +80,6 @@
   (in? latex-style '("book")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Reading the database
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (env-begin? x)
-  (or (func? x '!begin) (func? x '!begin*)))
-
-(define (latex-texmacs-arity x)
-  (if (env-begin? x)
-      (latex-texmacs-arity
-       (string->symbol (string-append "begin-" (cadr x))))
-      (logic-ref latex-texmacs-arity% x)))
-
-(define (latex-needs? x)
-  (if (env-begin? x)
-      (latex-needs?
-       (string->symbol (string-append "begin-" (cadr x))))
-      (logic-ref latex-needs% x)))
-
-(define (latex-texmacs-option? x)
-  (if (env-begin? x)
-      (latex-texmacs-option?
-       (string->symbol (string-append "begin-" (cadr x))))
-      (logic-ref latex-texmacs-option% x)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Catcode generation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -188,6 +163,31 @@
                        l2))
              (l3 (map latex-catcode-def keys ims)))
         (apply string-append l3)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Subroutines for reading the database
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (env-begin? x)
+  (or (func? x '!begin) (func? x '!begin*)))
+
+(define (latex-texmacs-arity x)
+  (if (env-begin? x)
+      (latex-texmacs-arity
+       (string->symbol (string-append "begin-" (cadr x))))
+      (logic-ref latex-texmacs-arity% x)))
+
+(define (latex-needs? x)
+  (if (env-begin? x)
+      (latex-needs?
+       (string->symbol (string-append "begin-" (cadr x))))
+      (logic-ref latex-needs% x)))
+
+(define (latex-texmacs-option? x)
+  (if (env-begin? x)
+      (latex-texmacs-option?
+       (string->symbol (string-append "begin-" (cadr x))))
+      (logic-ref latex-texmacs-option% x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Macro and environment expansion
