@@ -97,17 +97,6 @@
   (ggeq "amsmath")
   (gggeq "amsmath")
 
-  (xminus "amsmath")
-  (xleftarrow "amsmath")
-  (xrightarrow "amsmath")
-  (xleftrightarrow "amsmath")
-  (xmapsto "amsmath")
-  (xmapsfrom "amsmath")
-  (xequal "amsmath")
-  (xLeftarrow "amsmath")
-  (xRightarrow "amsmath")
-  (xLeftrightarrow "amsmath")
-
   (btimes "graphicx")
   (Backepsilon "graphicx")
   (Mho "graphicx")
