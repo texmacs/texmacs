@@ -2121,16 +2121,13 @@ latex_to_tree (tree t1) {
   // cout << "\n\nt13= " << t13 << "\n\n";
 
   if (is_document) {
-    tree the_body   = compound ("body", t13);
     tree the_version= compound ("TeXmacs", TEXMACS_VERSION);
     tree the_style  = compound ("style", tuple (style));
+    tree the_body   = compound ("body", t13);
     if (textm_natbib)
       the_style= compound ("style", tuple (style, "cite-author-year"));
-
-    tree r= tree (DOCUMENT, the_style, the_body);
+    tree r= tree (DOCUMENT, the_version, the_style, the_body);
     if (N (initial) > 0) r << compound ("initial", initial);
-    r << the_version;
-
     // cout << "\n\nr= " << r << "\n\n";
     return r;
   }
