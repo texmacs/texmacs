@@ -53,11 +53,20 @@
   (:name "Coq Vernacular")
   (:suffix "v"))
 
+(lazy-define (convert coqml tmvernac) texmacs->vernac)
+(lazy-define (convert coqml tmvernac) texmacs->vernac-document)
+
 (converter vernac-snippet texmacs-tree
   (:function vernac->texmacs))
 
 (converter vernac-document texmacs-tree
   (:function vernac-document->texmacs))
+
+(converter texmacs-tree vernac-snippet
+  (:function texmacs->vernac))
+
+(converter texmacs-tree vernac-document
+  (:function texmacs->vernac-document))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; CoqTopML
