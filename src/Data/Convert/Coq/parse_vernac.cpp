@@ -333,7 +333,6 @@ coqdoc_to_tree (string s) {
     }
     else if (s[i] == '#' || s[i] == '%' || s[i] == '$') {
       newline= false;
-      add_line (line, coqdoc);
       char delim= s[i];
       string ext= parse_delimited (s, i, delim);
       tree tm;
