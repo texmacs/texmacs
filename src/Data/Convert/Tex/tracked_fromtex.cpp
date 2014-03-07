@@ -16,6 +16,39 @@
 #include "convert.hpp"
 
 /******************************************************************************
+* Protect against adding markers to a LaTeX document
+******************************************************************************/
+
+static void
+latex_protect (string s, hashset<int>& l, int& i, string env) {
+  string b= "\\begin{" * env * "}";
+  string e= "\\end{" * env * "}";
+  if (test (s, i, b)) {
+    i += N(b);
+    int j= i;
+    while (j < N(s) && !test (s, j, e)) j++;
+    for (int k=i; k<min(N(s),j+1); k++)
+      l->insert (k);
+    i= j + N(e);
+  }
+  else i++;
+}
+
+static void
+latex_protect (string s, hashset<int>& l) {
+  int i, n= N(s);
+  for (i=0; i<n; )
+    if (s[i] == '\\') {
+      if (test (s, i, "\\begin{verbatim}"))
+        latex_protect (s, l, i, "verbatim");
+      else if (test (s, i, "\\begin{alltt}"))
+        latex_protect (s, l, i, "alltt");
+      else i++;
+    }
+    else i++;
+}
+
+/******************************************************************************
 * Add markers to LaTeX document
 ******************************************************************************/
 
@@ -442,6 +475,7 @@ tracked_latex_to_texmacs (string s, bool as_pic) {
   }
 
   hashset<int> invalid;
+  latex_protect (s, invalid);
   while (true) {
     //cout << HRULE << "Invalid markers" << LF << HRULE << invalid << LF;
     hashset<int> l= copy (invalid);
