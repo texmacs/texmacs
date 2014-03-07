@@ -57,10 +57,10 @@
   (succsucceq "\\succeq\\!\\!\\!\\succeq")
   (succsuccsucc "\\succ\\!\\!\\!\\succ\\!\\!\\!\\succ")
   (succsuccsucceq "\\succeq\\!\\!\\!\\succeq\\!\\!\\!\\succeq")
-  (lleq "\\leq\\negmedspace\\negmedspace\\leq")
-  (llleq "\\leq\\negmedspace\\negmedspace\\leq\\negmedspace\\negmedspace\\leq")
-  (ggeq "\\geq\\negmedspace\\negmedspace\\geq")
-  (gggeq "\\geq\\negmedspace\\negmedspace\\geq\\negmedspace\\negmedspace\\geq")
+  (lleq "\\leq\\!\\!\\!\\leq")
+  (llleq "\\leq\\!\\!\\!\\leq\\!\\!\\!\\leq")
+  (ggeq "\\geq\\!\\!\\!\\geq")
+  (gggeq "\\geq\\!\\!\\!\\geq\\!\\!\\!\\geq")
 
   ;; extra literal symbols
   (btimes "{\\mbox{\\rotatebox[origin=c]{90}{$\\ltimes$}}}")
