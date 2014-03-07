@@ -276,15 +276,22 @@ texmacs_group_markers (tree t) {
   }
 }
 
+static void
+get_range (tree id, int& b, int& e) {
+  array<string> a= tokenize (as_string (id), ":");
+  if (N(a) != 2) b= e= -1;
+  else {
+    b= as_int (a[0]);
+    e= as_int (a[1]);
+  }
+}
+
 tree
 texmacs_correct_markers (tree t, int b, int e) {
   if (is_atomic (t)) return t;
   else if (is_compound (t, "mlx", 2)) {
-    array<string> a= tokenize (as_string (t[0]), ":");
-    if (N(a) != 2)
-      return texmacs_correct_markers (t[1], b, e);
-    int sb= as_int (a[0]);
-    int se= as_int (a[1]);
+    int sb, se;
+    get_range (t[0], sb, se);
     if (sb <= b || se >= e)
       return texmacs_correct_markers (t[1], b, e);
     return compound ("mlx", t[0], texmacs_correct_markers (t[1], sb, se));
@@ -329,6 +336,52 @@ texmacs_unmark (tree t, bool all) {
 
 tree texmacs_unmark (tree t) { return texmacs_unmark (t, true); }
 tree texmacs_clean_markers (tree t) { return texmacs_unmark (t, false); }
+
+/******************************************************************************
+* Check transparency of marking process
+******************************************************************************/
+
+/*
+static bool
+texmacs_relative_transparency (tree mt, tree t) {
+  if (is_compound (mt, "mlx", 2)) return true;
+  if (!is_compound (mt) || !is_compound (t)) return mt == t;
+  if (N(mt) != N(t)) return false;
+  for (int i=0; i<N(mt); i++)
+    if (!texmacs_relative_transparency (mt[i], t[i]))
+      return false;
+  return true;
+}
+
+static void
+texmacs_declare_opaque (tree mt, hashset<int>& invalid) {
+  if (is_compound (mt, "mlx", 2)) {
+    int b, e;
+    get_range (mt, b, e);
+    invalid->insert (b);
+    invalid->insert (e);
+  }
+  if (is_compound (mt))
+    for (int i=0; i<N(mt); i++)
+      texmacs_declare_opaque (mt[i], invalid);
+}
+
+static void
+texmacs_check_transparency (tree mt, tree t, hashset<int>& invalid) {
+  if (texmacs_unmark (mt) == t || !is_compound (mt));
+  else if (is_compound (mt, "mlx", 2)) {
+    if (texmacs_relative_transparency (mt[1], t))
+      texmacs_check_transparency (mt[1], t[1], invalid);
+    else
+      texmacs_declare_opaque (mt, invalid);
+  }
+  else if (!is_compound (t) || N(mt) != N(t))
+    texmacs_declare_opaque (mt, invalid);
+  else
+    for (int i=0; i<N(mt); i++)
+      texmacs_check_transparency (mt[i], t[i], invalid);
+}
+*/
 
 /******************************************************************************
 * LaTeX -> TeXmacs conversion with source tracking
