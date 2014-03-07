@@ -18,7 +18,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (logic-rules
-  ((latex-tag% 'x) (latex-arity% 'x 'y)))
+  ((latex-tag% 'x) (latex-arity% 'x 'y))
+  ((latex-supports-option% 'x #t) (latex-optional-arg% 'x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; LaTeX commands

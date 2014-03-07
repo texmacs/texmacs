@@ -349,19 +349,19 @@
    (!append (noindent) (textbf (!append 1 "\\ "))
 	    ---
 	    (hspace* (fill)) (!math (Box)) (medskip)))
-  ("left-aligned"
+  ("leftaligned"
    (!append (!begin "flushleft")
 	    ---
             (!end "flushleft")))
+  ("rightaligned"
+   (!append (!begin "flushright")
+	    ---
+            (!end "flushright")))
   ("tmcode"
    ((!option "")
     (!append (begin "alltt")
 	    ---
              (end "alltt"))))
-  ("right-aligned"
-   (!append (!begin "flushright")
-	    ---
-            (!end "flushright")))
   ("tmparmod"
    ((!begin "list" "" (!append "\\setlength{\\topsep}{0pt}"
 			       "\\setlength{\\leftmargin}{" 1 "}"

@@ -17,15 +17,6 @@
   (:use (convert latex latex-symbol-drd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; General rules
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(logic-rules
-  ((latex-texmacs-tag% 'x) (latex-texmacs-macro% 'x 'body))
-  ((latex-arity% 'x 'arity) (latex-texmacs-arity% 'x 'arity))
-  ((latex-optional-arg% 'x) (latex-texmacs-option% 'x 'flag)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra TeXmacs symbols
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -107,20 +98,25 @@
   subsubsubindex)
 
 (logic-rules
-  ((latex-texmacs-arity% 'x 0) (latex-texmacs-0% 'x))
-  ((latex-texmacs-arity% 'x 1) (latex-texmacs-1% 'x))
-  ((latex-texmacs-arity% 'x 1) (latex-texmacs-1*% 'x))
-  ((latex-texmacs-option% 'x #t) (latex-texmacs-1*% 'x))
-  ((latex-texmacs-arity% 'x 2) (latex-texmacs-2% 'x))
-  ((latex-texmacs-arity% 'x 3) (latex-texmacs-3% 'x))
-  ((latex-texmacs-arity% 'x 4) (latex-texmacs-4% 'x))
-  ;;;
   ((latex-texmacs% 'x) (latex-texmacs-0% 'x))
   ((latex-texmacs% 'x) (latex-texmacs-1% 'x))
   ((latex-texmacs% 'x) (latex-texmacs-1*% 'x))
   ((latex-texmacs% 'x) (latex-texmacs-2% 'x))
   ((latex-texmacs% 'x) (latex-texmacs-3% 'x))
-  ((latex-texmacs% 'x) (latex-texmacs-4% 'x)))
+  ((latex-texmacs% 'x) (latex-texmacs-4% 'x))
+  ((latex-texmacs-arity% 'x 0) (latex-texmacs-0% 'x))
+  ((latex-texmacs-arity% 'x 1) (latex-texmacs-1% 'x))
+  ((latex-texmacs-arity% 'x 1) (latex-texmacs-1*% 'x))
+  ((latex-texmacs-arity% 'x 2) (latex-texmacs-2% 'x))
+  ((latex-texmacs-arity% 'x 3) (latex-texmacs-3% 'x))
+  ((latex-texmacs-arity% 'x 4) (latex-texmacs-4% 'x))
+  ((latex-texmacs-option% 'x #t) (latex-texmacs-1*% 'x))
+  ((latex-command-0% 'x) (latex-texmacs-0% 'x))
+  ((latex-command-1% 'x) (latex-texmacs-1% 'x))
+  ((latex-command-1*% 'x) (latex-texmacs-1*% 'x))
+  ((latex-command-2% 'x) (latex-texmacs-2% 'x))
+  ((latex-command-3% 'x) (latex-texmacs-3% 'x))
+  ((latex-command-4% 'x) (latex-texmacs-4% 'x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra TeXmacs environments
@@ -129,8 +125,8 @@
 (logic-table latex-texmacs-env-arity%
   ("proof" 0)
   ("proof*" 1)
-  ("left-aligned" 0)
-  ("right-aligned" 0)
+  ("leftaligned" 0)
+  ("rightaligned" 0)
   ("tmcode" 0)
   ("tmparmod" 3)
   ("tmparsep" 1)
@@ -143,21 +139,28 @@
   ("tmcode" #t))
 
 (logic-group latex-texmacs-environment-0%
-  begin-proof begin-tmindent begin-elsequation begin-elsequation*)
+  begin-proof begin-leftaligned begin-rightaligned
+  begin-tmindent begin-elsequation begin-elsequation*)
+
+(logic-group latex-texmacs-environment-0*%
+  begin-tmcode)
 
 (logic-group latex-texmacs-environment-1%
-  begin-proof* begin-theglossary)
+  begin-proof* begin-tmparsep begin-theglossary)
 
 (logic-group latex-texmacs-environment-3%
-  begin-tmparmod begin-tmparsep)
+  begin-tmparmod)
 
 (logic-rules
-  ((latex-texmacs-tag%   'x) (latex-texmacs-environment-0% 'x))
-  ((latex-environment-0% 'x) (latex-texmacs-environment-0% 'x))
-  ((latex-texmacs-tag%   'x) (latex-texmacs-environment-1% 'x))
-  ((latex-environment-1% 'x) (latex-texmacs-environment-1% 'x))
-  ((latex-texmacs-tag%   'x) (latex-texmacs-environment-3% 'x))
-  ((latex-environment-3% 'x) (latex-texmacs-environment-3% 'x)))
+  ((latex-texmacs-arity% 'x 0) (latex-texmacs-environment-0% 'x))
+  ((latex-texmacs-arity% 'x 0) (latex-texmacs-environment-0*% 'x))
+  ((latex-texmacs-arity% 'x 1) (latex-texmacs-environment-1% 'x))
+  ((latex-texmacs-arity% 'x 3) (latex-texmacs-environment-3% 'x))
+  ((latex-texmacs-option% 'x #t) (latex-texmacs-environment-0*% 'x))
+  ((latex-environment-0%  'x) (latex-texmacs-environment-0% 'x))
+  ((latex-environment-0*% 'x) (latex-texmacs-environment-0*% 'x))
+  ((latex-environment-1%  'x) (latex-texmacs-environment-1% 'x))
+  ((latex-environment-3%  'x) (latex-texmacs-environment-3% 'x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TeXmacs list environments
@@ -185,7 +188,7 @@
   begin-descriptiondash begin-descriptionlong)
 
 (logic-rules
-  ((latex-texmacs-tag% 'x) (latex-texmacs-list% 'x))
+  ((latex-texmacs-arity% 'x 0) (latex-texmacs-list% 'x))
   ((latex-list% 'x) (latex-texmacs-list% 'x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -225,7 +228,7 @@
   begin-exercise begin-problem begin-solution)
 
 (logic-rules
-  ((latex-texmacs-tag% 'x) (latex-texmacs-theorem% 'x))
+  ((latex-texmacs-arity% 'x 0) (latex-texmacs-theorem% 'x))
   ((latex-environment-0% 'x) (latex-texmacs-theorem% 'x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

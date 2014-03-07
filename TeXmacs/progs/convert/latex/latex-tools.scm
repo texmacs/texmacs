@@ -171,6 +171,12 @@
 (define (env-begin? x)
   (or (func? x '!begin) (func? x '!begin*)))
 
+(define (latex-texmacs-arity x)
+  (if (env-begin? x)
+      (latex-texmacs-arity
+       (string->symbol (string-append "begin-" (cadr x))))
+      (logic-ref latex-texmacs-arity% x)))
+
 (define (latex-substitute t args)
   (cond ((number? t) (list-ref args t))
 	((== t '---) (car args))
@@ -187,11 +193,10 @@
       (let* ((head  (car t))
 	     (tail  (map latex-expand-macros (cdr t)))
 	     (body  (smart-ref latex-texmacs-macro head))
-	     (arity (and body (logic-ref latex-texmacs-arity% head)))
+	     (arity (and body (latex-texmacs-arity head)))
 	     (env   (and (env-begin? head)
 			 (smart-ref latex-texmacs-environment (cadr head))))
-	     (envar (and env
-			 (logic-ref latex-texmacs-env-arity% (cadr head)))))
+	     (envar (and env (latex-texmacs-arity head))))
 	(cond ((and body (== (length tail) arity))
 	       (latex-substitute body t))
 	      ((and env (== (length tail) 1) (== (length (cddr head)) envar))
@@ -201,6 +206,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Compute macro and environment definitions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (latex-needs? x)
+  (if (env-begin? x)
+      (latex-needs?
+       (string->symbol (string-append "begin-" (cadr x))))
+      (logic-ref latex-needs% x)))
+
+(define (latex-texmacs-option? x)
+  (if (env-begin? x)
+      (latex-texmacs-option?
+       (string->symbol (string-append "begin-" (cadr x))))
+      (logic-ref latex-texmacs-option% x)))
 
 (define (latex-expand-def t)
   (cond ((== t '---) "#-#-#")
@@ -218,10 +235,10 @@
              (> (length t) 2))
       (for-each latex-macro-defs-sub (cddr t))
       (for-each latex-macro-defs-sub (cdr t)))
-    (let* ((body   (and (not (logic-ref latex-needs% (car t)))
+    (let* ((body   (and (not (latex-needs? (car t)))
                         (smart-ref latex-texmacs-macro (car t))))
-	   (arity  (and body (logic-ref latex-texmacs-arity% (car t))))
-           (option (logic-ref latex-texmacs-option% (car t)))
+	   (arity  (and body (latex-texmacs-arity (car t))))
+           (option (and body (latex-texmacs-option? (car t))))
            (args   (if option (filter (lambda (x)
                                         (not (and (list? x)
                                                   (== (car x) '!option))))
@@ -233,12 +250,10 @@
 		    (list arity (latex-expand-def body)))
 	(latex-macro-defs-sub body)))
     (let* ((body  (and (env-begin? (car t))
-                       (not (logic-ref latex-needs% (string->symbol (cadar t))))
+                       (not (latex-needs? (string->symbol (cadar t))))
                        (smart-ref latex-texmacs-environment (cadar t))))
-	   (arity (and body
-		       (logic-ref latex-texmacs-env-arity% (cadar t))))
-           (option (and body
-                        (logic-ref latex-texmacs-option% (cadar t))))
+	   (arity (and body (latex-texmacs-arity (car t))))
+           (option (and body (latex-texmacs-option? (car t))))
            (args   (and body
                         (if option (filter (lambda (x)
                                              (not (and (list? x)
@@ -250,10 +265,10 @@
 	(ahash-set! latex-env-table (cadar t)
 		    (list arity (latex-expand-def body)))
 	(latex-macro-defs-sub body)))
-    (with body (or (and (not (logic-ref latex-needs% (car t)))
+    (with body (or (and (not (latex-needs? (car t)))
                         (smart-ref latex-texmacs-preamble (car t)))
 		   (and (env-begin? (car t))
-                        (not (logic-ref latex-needs% (string->symbol (cadar t))))
+                        (not (latex-needs? (string->symbol (cadar t))))
                         (smart-ref latex-texmacs-env-preamble (cadar t))))
       (when body
         (ahash-set! latex-preamble-table
