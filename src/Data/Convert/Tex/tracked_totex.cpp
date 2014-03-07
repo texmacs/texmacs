@@ -114,13 +114,36 @@ latex_declare_transparent (string ms, hashset<path>& l) {
 }
 
 static void
+get_largest_common (string s1, string s2, int& b1, int& e1, int& b2, int& e2) {
+  b1= e1= b2= e2= 0;
+  if (N(s1) < 6) return;
+  int tb1= (N(s1) >> 1) - 3;
+  int te1= tb1 + 6;
+  int tb2= search_forwards (s1 (tb1, te1), s2);
+  if (tb2 >= 0) {
+    b1= tb1;
+    e1= te1;
+    b2= tb2;
+    e2= tb2 + 6;
+  }
+}
+
+static void
 get_invalid_regions (string s1, int b1, int e1, string s2, int b2, int e2,
                      hashset<int>& regions) {
   while (b1 < e1 && b2 < e2 && s1[b1] == s2[b2]) { b1++; b2++; }
   while (b1 < e1 && b2 < e2 && s1[e1-1] == s2[e2-1]) { e1--; e2--; }
-  cout << HRULE << "Bad region" << LF << HRULE << s1 (b1, e1) << LF;
-  for (int i=b1; i<=e1; i++)
-    regions->insert (i);
+  int sb1, se1, sb2, se2;
+  get_largest_common (s1 (b1, e1), s2 (b2, e2), sb1, se1, sb2, se2);
+  if (se1 <= sb1) {
+    //cout << HRULE << "Bad region" << LF << HRULE << s1 (b1, e1) << LF;
+    for (int i=b1; i<=e1; i++)
+      regions->insert (i);
+  }
+  else {
+    get_invalid_regions (s1, b1, b1+sb1, s2, b2, b2+sb2, regions);
+    get_invalid_regions (s1, b1+se1, e1, s2, b2+se2, e2, regions);
+  }
 }
 
 void
@@ -154,7 +177,7 @@ tracked_texmacs_to_latex (tree d, object opts) {
     return tree_to_latex_document (d, opts);
   tree t= extract (d, "body");
 
-  string ums, ms, s;
+  string ms, s;
   string tt_opt = "texmacs->latex:transparent-source-tracking";
   bool   tt_flag= get_preference (tt_opt, "off") == "on";
   if (tt_flag) s= tree_to_latex_document (d, opts);
@@ -167,7 +190,7 @@ tracked_texmacs_to_latex (tree d, object opts) {
     tree mt= texmacs_mark (t, path (), l);
     //cout << HRULE << "Marked texmacs" << LF << HRULE << mt << LF;
     tree md= change_doc_attr (d, "body", mt);
-    string ms= tree_to_latex_document (md, opts);
+    ms= tree_to_latex_document (md, opts);
     //cout << HRULE << "Marked latex" << LF << HRULE << ms << LF;
     l->insert (path (-1)); // force checking
     string ums= latex_unmark (ms, l, corr);
@@ -181,8 +204,9 @@ tracked_texmacs_to_latex (tree d, object opts) {
     latex_declare_transparent (ms, new_invalid);
     if (N(new_invalid) > N(invalid)) { invalid= new_invalid; continue; }
     latex_check_transparency (ums, s, corr, invalid);
-    if (N(invalid) <= old_nr) break;
+    if (N(invalid) <= old_nr) return s;
   }
+  //cout << HRULE << "Marked latex" << LF << HRULE << ms << LF;
 
   string post;
   post << tree_to_scheme (t);
