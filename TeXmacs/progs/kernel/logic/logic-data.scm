@@ -30,6 +30,7 @@
 
 (define logic-facts-table (make-ahash-table))
 (define logic-apply-table (make-ahash-table))
+(define logic-apply-list-table (make-ahash-table))
 
 (define-public (logic-holds? test . conds)
   "Does the relation @test hold under conditions @conds?"
@@ -74,11 +75,11 @@
 (define-public (logic-apply-list fun . conds)
   "Retrieve list of @r such that @(rcons fun r) holds under conditions @conds."
   (let* ((what (cons fun conds))
-	 (handle (ahash-get-handle logic-apply-table what)))
+	 (handle (ahash-get-handle logic-apply-list-table what)))
     (if handle (cdr handle)
 	(let* ((goal (cons (append fun '('r)) conds))
 	       (val (logic-list-result (apply query goal))))
-	  (ahash-set! logic-apply-table what val)
+	  (ahash-set! logic-apply-list-table what val)
 	  val))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -80,6 +80,31 @@
   (in? latex-style '("book")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Reading the database
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (env-begin? x)
+  (or (func? x '!begin) (func? x '!begin*)))
+
+(define (latex-texmacs-arity x)
+  (if (env-begin? x)
+      (latex-texmacs-arity
+       (string->symbol (string-append "begin-" (cadr x))))
+      (logic-ref latex-texmacs-arity% x)))
+
+(define (latex-needs? x)
+  (if (env-begin? x)
+      (latex-needs?
+       (string->symbol (string-append "begin-" (cadr x))))
+      (logic-ref latex-needs% x)))
+
+(define (latex-texmacs-option? x)
+  (if (env-begin? x)
+      (latex-texmacs-option?
+       (string->symbol (string-append "begin-" (cadr x))))
+      (logic-ref latex-texmacs-option% x)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Catcode generation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -168,15 +193,6 @@
 ;; Macro and environment expansion
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (env-begin? x)
-  (or (func? x '!begin) (func? x '!begin*)))
-
-(define (latex-texmacs-arity x)
-  (if (env-begin? x)
-      (latex-texmacs-arity
-       (string->symbol (string-append "begin-" (cadr x))))
-      (logic-ref latex-texmacs-arity% x)))
-
 (define (latex-substitute t args)
   (cond ((number? t) (list-ref args t))
 	((== t '---) (car args))
@@ -206,18 +222,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Compute macro and environment definitions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (latex-needs? x)
-  (if (env-begin? x)
-      (latex-needs?
-       (string->symbol (string-append "begin-" (cadr x))))
-      (logic-ref latex-needs% x)))
-
-(define (latex-texmacs-option? x)
-  (if (env-begin? x)
-      (latex-texmacs-option?
-       (string->symbol (string-append "begin-" (cadr x))))
-      (logic-ref latex-texmacs-option% x)))
 
 (define (latex-expand-def t)
   (cond ((== t '---) "#-#-#")
@@ -381,9 +385,7 @@
 
 (define (latex-command-uses s)
   (with packlist (logic-ref-list latex-needs% s)
-    (when packlist
-      (set! packlist (list packlist))
-      (for-each (cut ahash-set! latex-uses-table <> #t) packlist))))
+    (for-each (cut ahash-set! latex-uses-table <> #t) packlist)))
 
 (define (latex-use-which-package l)
   (when (and (list? l) (nnull? l))
