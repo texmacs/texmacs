@@ -254,7 +254,7 @@
 		    (list arity (latex-expand-def body)))
 	(latex-macro-defs-sub body)))
     (let* ((body  (and (env-begin? (car t))
-                       (not (latex-needs? (string->symbol (cadar t))))
+                       (not (latex-needs? (car t)))
                        (smart-ref latex-texmacs-environment (cadar t))))
 	   (arity (and body (latex-texmacs-arity (car t))))
            (option (and body (latex-texmacs-option? (car t))))
@@ -272,7 +272,7 @@
     (with body (or (and (not (latex-needs? (car t)))
                         (smart-ref latex-texmacs-preamble (car t)))
 		   (and (env-begin? (car t))
-                        (not (latex-needs? (string->symbol (cadar t))))
+                        (not (latex-needs? (car t)))
                         (smart-ref latex-texmacs-env-preamble (cadar t))))
       (when body
         (ahash-set! latex-preamble-table
@@ -392,7 +392,8 @@
     (let ((x (car l)))
       (if (symbol? x) (latex-command-uses x))
       (if (and (list? x) (>= (length l) 2) (== (car x) '!begin))
-	  (latex-command-uses (string->symbol (cadr x))))
+	  (latex-command-uses
+           (string->symbol (string-append "begin-" (cadr x)))))
       (if (match? x '(!begin "enumerate" (!option :%1)))
 	  (ahash-set! latex-uses-table "enumerate" #t))
       (for-each latex-use-which-package (cdr l)))))
