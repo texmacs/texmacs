@@ -39,8 +39,8 @@
   succ sim perp preceq succeq
   simeq mid ll gg asymp
   parallel subset supset approx bowtie
-  subseteq supseteq cong Join sqsubset
-  sqsupset ne neq smile sqsubseteq sqsupseteq
+  subseteq supseteq cong
+  ne neq smile sqsubseteq sqsupseteq
   doteq frown in ni propto
   vdash dashv
   
@@ -73,13 +73,7 @@
 
   ;; Big delimiters
   rmoustache lmoustache rgroup lgroup lbrace rbrace
-  arrowvert Arrowvert bracevert
-
-  ;; Binary operations (latexsym or amssymb required)
-  lhd rhd unlhd unrhd leadsto
-
-  ;; Miscellaneous symbols (amssymb or graphicx required)
-  Diamond mho)
+  arrowvert Arrowvert bracevert)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Big symbols
@@ -93,12 +87,21 @@
   biginterleave bignplus bigvarint bigiint bigiiint bigvaroint bigoiint)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Symbols from latexsym package
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(logic-group latex-latexsym-symbol%
+  mho Join Box Diamond leadsto
+  sqsubset sqsupset lhd rhd unlhd unrhd)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Symbols from amssymb package
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (logic-group latex-ams-symbol%
   ;;`
-  Bbbk Box Bumpeq Cap Cup Finv Game Lleftarrow Lsh
+  ;; Box sqsubset sqsupset lhd unlhd rhd unrhd
+  Bbbk Bumpeq Cap Cup Finv Game Lleftarrow Lsh
   Rrightarrow Rsh Subset Supset Vdash Vvdash
   angle approxeq backepsilon backprime backsim backsimeq barwedge
   because beth between bigstar blacklozenge blacksquare blacktriangle
@@ -113,7 +116,7 @@
   gnsim gtrapprox gtrdot gtreqless gtreqqless gtrless gtrsim gvertneqq
   hslash intercal leftarrowtail leftleftarrows leftrightarrows
   leftrightharpoons leftrightsquigarrow leftthreetimes leqq leqslant
-  lessapprox lessdot lesseqgtr lesseqqgtr lessgtr lesssim lhd
+  lessapprox lessdot lesseqgtr lesseqqgtr lessgtr lesssim
   llcorner lll lnapprox lneq lneqq lnsim looparrowleft looparrowright
   lozenge lrcorner ltimes lvert lVert lvertneqq maltese measuredangle models
   multimap nLeftarrow nLeftrightarrow nRightarrow nVDash nVdash
@@ -126,12 +129,12 @@
   rightleftarrows rightleftharpoons rightrightarrows rightsquigarrow
   rightthreetimes risingdotseq rtimes rvert rVert shortleftarrow shortmid
   shortparallel shortrightarrow smalldash smallfrown smallsetminus
-  smallsmile smile sphericalangle sqsubset sqsupset subseteqq
+  smallsmile smile sphericalangle subseteqq
   subsetneq subsetneqq succapprox succcurlyeq succnapprox succneqq
   succnsim succsim supseteqq supsetneq supsetneqq therefore
   thickapprox thicksim triangle triangledown trianglelefteq
   triangleq trianglerighteq twoheadleftarrow twoheadrightarrow
-  ulcorner unlhd unrhd upharpoonleft upharpoonright upuparrows
+  ulcorner upharpoonleft upharpoonright upuparrows
   urcorner vDash varkappa varnothing varpropto varsubsetneq
   varsubsetneqq varsupsetneq varsupsetneqq vartriangle
   vartriangleleft vartriangleright veebar yen)
@@ -201,6 +204,8 @@
 (logic-rules
   ((latex-arity% 'x 0) (latex-symbol% 'x))
   ((latex-arity% 'x 0) (latex-big-symbol% 'x))
+  ((latex-symbol% 'x) (latex-latexsym-symbol% 'x))
+  ((latex-needs% 'x "latexsym") (latex-latexsym-symbol% 'x))
   ((latex-symbol% 'x) (latex-ams-symbol% 'x))
   ((latex-needs% 'x "amssymb") (latex-ams-symbol% 'x))
   ((latex-symbol% 'x) (latex-wasy-symbol% 'x))

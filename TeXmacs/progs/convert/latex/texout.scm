@@ -419,6 +419,7 @@
 	((== (car x) '!eqn) (texout-eqn (cadr x)))
 	((== (car x) '!sub) (texout-script "_" (cdr x)))
 	((== (car x) '!sup) (texout-script "^" (cdr x)))
+	((== (car x) '!annotate) (texout (cadr x)))
 	((and (list? (car x)) (== (caar x) '!begin))
 	 (texout-begin (cadar x) (cddar x) (cadr x)))
 	((and (list? (car x)) (== (caar x) '!begin*))

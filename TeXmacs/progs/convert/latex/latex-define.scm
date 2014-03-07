@@ -109,7 +109,7 @@
   (nni "\\not\\ni")
   (notni "\\not\\ni")
   (nequiv "\\not\\equiv")
-  (nleadsto "\\not\\leadsto")
+  (nleadsto (!annotate "\\not\\leadsto" (leadsto)))
   (dotamalg "\\mathaccent95{\\amalg}")
   (dottimes "\\mathaccent95{\\times}")
   (dotoplus "\\mathaccent95{\\oplus}")

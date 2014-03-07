@@ -79,9 +79,6 @@
   (begin-multline* "amsmath")
   (begin-split "amsmath")
 
-  (leadsto "leadsto")
-  (nleadsto "leadsto")
-  (Diamond "amssymb")
   (text "amsmath")
   (binom "amsmath")
   (dbinom "amsmath")
