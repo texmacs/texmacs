@@ -181,12 +181,16 @@ add_line(tree &c, tree &d) {
   c= tree (CONCAT);
 }
 
+/* Parse emphasis ************************************************************/
+
 static tree
 coqdoc_parse_emphasis (string s, int &i) {
   int n= N(s), start= ++i;
   while (i<n && !(s[i] == '_' && (i+1 == n || !start_ident (s[i+1])))) i++;
   return compound ("em", coqdoc_to_tree (s (start, i++)));
 }
+
+/* Parse lists ***************************************************************/
 
 static bool
 is_list_begining (string s, int i) {
@@ -288,8 +292,31 @@ parse_list (string s, int &i) {
   return compound ("itemize", r);
 }
 
-// TODO:
-// - prettytyping rules managment
+/* Parse pretty printing managment *******************************************/
+
+// TODO.
+// Nota: this interesting feature is used nowhere in Coq sources
+
+static void
+parse_pretty_printing_definition (string s) {
+}
+
+static void
+parse_pretty_printing_removal (string s) {
+}
+
+static bool
+is_defining_pretty_printing (string s, int i) {
+  return false;
+}
+
+static bool
+is_removing_pretty_printing (string s, int i) {
+  return false;
+}
+
+/* Main parse routine ********************************************************/
+
 static tree
 coqdoc_to_tree (string s) {
   bool newline= true;
@@ -318,6 +345,14 @@ coqdoc_to_tree (string s) {
       while (i<n && (s[i] != '\n')) i++;
       coqdoc << compound (header, coqdoc_to_tree (s (start, i)));
       newline= true;
+    }
+    else if (newline && is_defining_pretty_printing (s, i)) {
+      string str= parse_delimited (s, i, "(*", "*)", false);
+      parse_pretty_printing_definition (str);
+    }
+    else if (newline && is_removing_pretty_printing (s, i)) {
+      string str= parse_delimited (s, i, "(*", "*)", false);
+      parse_pretty_printing_removal (str);
     }
     else if (test (s, i, "%%")) {
       line << "%";
