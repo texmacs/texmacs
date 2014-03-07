@@ -43,6 +43,8 @@ latex_protect (string s, hashset<int>& l) {
         latex_protect (s, l, i, "verbatim");
       else if (test (s, i, "\\begin{alltt}"))
         latex_protect (s, l, i, "alltt");
+      else if (test (s, i, "\\begin{tmcode}"))
+        latex_protect (s, l, i, "alltt");
       else i++;
     }
     else i++;

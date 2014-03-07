@@ -93,6 +93,16 @@ latex_unmark (string s, hashset<path> l, hashmap<int,path>& corr) {
   return r;
 }
 
+string
+latex_unmark (string s, hashset<path> l) {
+  bool flag= (N(l) == 0);
+  if (flag) l->insert (path (-1)); // force checking
+  hashmap<int,path> corr;
+  string r= latex_unmark (s, l, corr);
+  if (flag) l->remove (path (-1));
+  return r;
+}
+
 /******************************************************************************
 * LaTeX -> TeXmacs conversion with source tracking
 ******************************************************************************/
@@ -108,16 +118,32 @@ tracked_texmacs_to_latex (tree d, object opts) {
   if (get_preference ("texmacs->latex:source-tracking", "off") != "on")
     return tree_to_latex_document (d, opts);
   tree t= extract (d, "body");
-  hashset<path> l;
-  tree mt= texmacs_mark (t, path (), l);
-  cout << HRULE << "Marked texmacs" << LF << HRULE << mt << LF;
-  tree md= change_doc_attr (d, "body", mt);
-  string ms= tree_to_latex_document (md, opts);
-  cout << HRULE << "Marked latex" << LF << HRULE << ms << LF;
-  l->insert (path (-1)); // force checking
-  hashmap<int,path> corr;
-  string s= latex_unmark (ms, l, corr);
-  cout << HRULE << "Unmarked latex" << LF << HRULE << s << LF;
+
+  string ms, s;
+  string tt_opt = "texmacs->latex:transparent-source-tracking";
+  bool   tt_flag= get_preference (tt_opt, "off") == "on";
+  if (tt_flag) s= tree_to_latex_document (d, opts);
+
+  hashset<path> invalid;
+  while (true) {
+    hashset<path> l= copy (invalid);
+    tree mt= texmacs_mark (t, path (), l);
+    cout << HRULE << "Marked texmacs" << LF << HRULE << mt << LF;
+    tree md= change_doc_attr (d, "body", mt);
+    string ms= tree_to_latex_document (md, opts);
+    cout << HRULE << "Marked latex" << LF << HRULE << ms << LF;
+    string ums= latex_unmark (ms, l);
+    cout << HRULE << "Unmarked latex" << LF << HRULE << ums << LF;
+    if (!tt_flag || ums == s) { s= ums; break; }
+
+    //int old_nr= N(invalid);
+    //latex_declare_transparent (ms, l);
+    //if (N(l) > N(invalid)) { invalid= l; continue; }
+    //latex_check_transparency (ms, s, invalid);
+    //if (N(invalid) <= old_nr) break;
+    break;
+  }
+
   string post;
   post << tree_to_scheme (t);
   post << "\n% Separate attachments\n";
