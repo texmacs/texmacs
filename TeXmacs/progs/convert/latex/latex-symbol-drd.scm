@@ -15,7 +15,7 @@
   (:use (convert latex latex-command-drd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Basic symbols
+;; Basic symbols and big symbols
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (logic-group latex-symbol%
@@ -75,16 +75,11 @@
   rmoustache lmoustache rgroup lgroup lbrace rbrace
   arrowvert Arrowvert bracevert)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Big symbols
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (logic-group latex-big-symbol%
   sum int bigintwl oint bigointwl prod coprod
   bignone bigtimes bigoplus bigotimes bigodot
   bigvee bigwedge bigsqcup bigcup bigcap bigpluscup bigtriangledown
-  bigtriangleup bigcurlyvee bigcurlywedge bigsqcap bigbox bigparallel
-  biginterleave bignplus bigvarint bigiint bigiiint bigvaroint bigoiint)
+  bigtriangleup bigvarint bigiint bigiiint bigvaroint bigoiint)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Symbols from latexsym package
@@ -190,6 +185,10 @@
   varodot varogreaterthan varolessthan varominus varoplus varoslash
   varotimes varovee varowedge vartimes Ydown Yleft Yright Yup)
 
+(logic-group latex-stmary-big-symbol%
+  bigbox bigcurlyvee bigcurlywedge biginterleave
+  bignplus bigparallel bigsqcap)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Symbols from mathabx package
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -212,5 +211,7 @@
   ((latex-needs% 'x "wasysym") (latex-wasy-symbol% 'x))
   ((latex-symbol% 'x) (latex-stmary-symbol% 'x))
   ((latex-needs% 'x "stmaryrd") (latex-stmary-symbol% 'x))
+  ((latex-big-symbol% 'x) (latex-stmary-big-symbol% 'x))
+  ((latex-needs% 'x "stmaryrd") (latex-stmary-big-symbol% 'x))
   ((latex-symbol% 'x) (latex-mathabx-symbol% 'x))
   ((latex-needs% 'x "mathabx") (latex-mathabx-symbol% 'x)))

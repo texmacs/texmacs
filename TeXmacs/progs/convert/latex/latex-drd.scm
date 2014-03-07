@@ -108,14 +108,6 @@
   (xRightarrow "amsmath")
   (xLeftrightarrow "amsmath")
 
-  (bigbox "stmaryrd")
-  (bigcurlyvee "stmaryrd")
-  (bigcurlywedge "stmaryrd")
-  (biginterleave "stmaryrd")
-  (bignplus "stmaryrd")
-  (bigparallel "stmaryrd")
-  (bigsqcap "stmaryrd")
-
   (btimes "graphicx")
   (Backepsilon "graphicx")
   (Mho "graphicx")
