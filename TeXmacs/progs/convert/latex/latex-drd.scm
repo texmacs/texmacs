@@ -40,8 +40,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (logic-table latex-depends%
-  ("amsart" "amsmath")
-  ("amsart" "amsthm"))
+  ("amsart" "amstex")
+  ("amstex" "amsmath")
+  ("amstex" "amsthm"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dependencies of commands on packages
@@ -85,17 +86,13 @@
   (tbinom "amsmath")
   (dddot "amsmath")
   (ddddot "amsmath")
-  (ontop "amsmath")
+  (genfrac "amsmath")
   (mod "amsmath")
   (pod "amsmath")
   (overset "amsmath")
   (underset "amsmath")
   (operatorname "amsmath")
   (boldsymbol "amsmath")
-  (lleq "amsmath")
-  (llleq "amsmath")
-  (ggeq "amsmath")
-  (gggeq "amsmath")
 
   (btimes "graphicx")
   (Backepsilon "graphicx")

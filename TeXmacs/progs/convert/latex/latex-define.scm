@@ -287,7 +287,7 @@
    (trivlist (!append (item (!option 1)) (ensuremath 2))))
   (tmhlink  (!group (!append (color "blue") 1)))
   (tmaction (!group (!append (color "blue") 1)))
-  (ontop ("{\\genfrac{}{}{0pt}{}{#1}{#2}}"))
+  (ontop (genfrac "" "" "0pt" "" 1 2))
   (subindex (index (!append 1 "!" 2)))
 
   ;; Ternary macros

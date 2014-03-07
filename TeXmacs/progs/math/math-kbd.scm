@@ -50,7 +50,7 @@
   ("altcmd F8" (make 'math-ss))
 
   ("$" (math-make-math))
-  ("math $" (make-with "mode" "text"))
+  ("math $" (make 'text))
   ("`" (make-lprime "`"))
   ("'" (make-rprime "'"))
   ("math:greek '" (make-rprime "<dag>"))
