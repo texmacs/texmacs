@@ -19,7 +19,8 @@
 
 string encode_as_string (path p);
 path decode_as_path (string s);
-string latex_unmark (string s, hashset<path> l, hashmap<int,path>& corr);
+string latex_unmark (string s, hashset<path> l,
+                     hashmap<int,array<path> >& corr);
 
 /******************************************************************************
 * Getting the TeXmacs attachments
@@ -54,25 +55,33 @@ get_texmacs_attachments (string s, string& mod, tree& src, string& mtar) {
 ******************************************************************************/
 
 string
-latex_correspondence (string mtar, hashmap<path,path>& corr) {
-  hashset<path> l;
-  hashmap<int,path> pcorr;
+latex_correspondence (string mtar, hashset<path> l, hashmap<path,path>& corr) {
+  hashmap<int,array<path> > pcorr;
   string tar= latex_unmark (mtar, l, pcorr);
   hashmap<path,int> inv (-1);
   iterator<int> it= iterate (pcorr);
   while (it->busy ()) {
     int pos= it->next ();
-    path p= pcorr [pos];
-    path cp= path_up (p) * (1 - last_item (p));
-    inv (p)= pos;
-    int cpos= inv [cp];
-    if (cpos >= 0) {
-      int b= min (pos, cpos);
-      int e= max (pos, cpos);
-      corr (path_up (p))= path (b, e);
+    array<path> a= pcorr[pos];
+    for (int i=0; i<N(a); i++) {
+      path p= a[i];
+      path cp= path_up (p) * (1 - last_item (p));
+      inv (p)= pos;
+      int cpos= inv [cp];
+      if (cpos >= 0) {
+        int b= min (pos, cpos);
+        int e= max (pos, cpos);
+        corr (path_up (p))= path (b, e);
+      }
     }
   }
   return tar;
+}
+
+string
+latex_correspondence (string mtar, hashmap<path,path>& corr) {
+  hashset<path> l;
+  return latex_correspondence (mtar, l, corr);
 }
 
 /******************************************************************************
