@@ -17,9 +17,9 @@
 ;; CoqMl
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-format coqml
-  (:name "CoqMl")
-  (:suffix "coqml"))
+;(define-format coqml
+;  (:name "")
+;  (:suffix ""))
 
 (lazy-define (convert coqml coqmltm)     parse-coqml-snippet)
 (lazy-define (convert coqml coqmltm)     parse-coqml-document)
@@ -39,11 +39,11 @@
 (converter coqml-stree coqml-snippet
   (:function serialize-coqml))
 
-(converter coqml-stree texmacs-stree
-  (:function coqml->texmacs))
-
-(converter texmacs-stree coqml-stree
-  (:function texmacs->coqml))
+;(converter coqml-stree texmacs-stree
+;  (:function coqml->texmacs))
+;
+;(converter texmacs-stree coqml-stree
+;  (:function texmacs->coqml))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Vernacular
