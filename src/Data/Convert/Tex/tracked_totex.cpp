@@ -114,27 +114,14 @@ latex_declare_transparent (string ms, hashset<path>& l) {
 }
 
 static void
-get_largest_common (string s1, string s2, int& b1, int& e1, int& b2, int& e2) {
-  b1= e1= b2= e2= 0;
-  if (N(s1) < 6) return;
-  int tb1= (N(s1) >> 1) - 3;
-  int te1= tb1 + 6;
-  int tb2= search_forwards (s1 (tb1, te1), s2);
-  if (tb2 >= 0) {
-    b1= tb1;
-    e1= te1;
-    b2= tb2;
-    e2= tb2 + 6;
-  }
-}
-
-static void
 get_invalid_regions (string s1, int b1, int e1, string s2, int b2, int e2,
                      hashset<int>& regions) {
   while (b1 < e1 && b2 < e2 && s1[b1] == s2[b2]) { b1++; b2++; }
   while (b1 < e1 && b2 < e2 && s1[e1-1] == s2[e2-1]) { e1--; e2--; }
   int sb1, se1, sb2, se2;
-  get_largest_common (s1 (b1, e1), s2 (b2, e2), sb1, se1, sb2, se2);
+  get_longest_common (s1 (b1, e1), s2 (b2, e2), sb1, se1, sb2, se2);
+  //cout << HRULE << "Problematic" << LF << HRULE << s1 (b1, e1) << LF;
+  //cout << HRULE << "Separator" << LF << HRULE << s1 (b1+sb1, b1+se1) << LF;
   if (se1 <= sb1) {
     //cout << HRULE << "Bad region" << LF << HRULE << s1 (b1, e1) << LF;
     for (int i=b1; i<=e1; i++)

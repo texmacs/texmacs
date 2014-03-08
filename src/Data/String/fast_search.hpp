@@ -28,6 +28,8 @@ public:
   int search_next (string what, int pos);
   array<int> search_all (string what);
   friend class string_searcher;
+  friend void get_longest_common (string s1, string s2,
+                                  int& b1, int& e1, int& b2, int& e2);
 };
 
 class string_searcher {
@@ -36,5 +38,8 @@ CONCRETE(string_searcher);
   inline string_searcher (string s): rep (tm_new<string_searcher_rep> (s)) {}
 };
 CONCRETE_CODE(string_searcher);
+
+void get_longest_common (string s1, string s2,
+                         int& b1, int& e1, int& b2, int& e2);
 
 #endif // FAST_SEARCH_H

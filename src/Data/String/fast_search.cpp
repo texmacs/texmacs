@@ -11,6 +11,7 @@
 
 #include "fast_search.hpp"
 #include "analyze.hpp"
+#include "iterator.hpp"
 
 /******************************************************************************
 * Subroutines
@@ -109,4 +110,47 @@ string_searcher_rep::search_all (string what) {
     if (test (s, pos, what)) r << pos;
   }
   return r;
+}
+
+/******************************************************************************
+* Get (leftmost) longest common substring
+******************************************************************************/
+
+void
+get_longest_common (string s1, string s2, int& b1, int& e1, int& b2, int& e2) {
+  b1= e1= b2= e2= 0;
+  int bestl= 0;
+  string_searcher ss1 (s1);
+  string_searcher ss2 (s2);
+  for (int i= min (N(ss1->a), N(ss2->a)) - 1; i>=0; i--) {
+    hashmap<int,array<int> > a1= ss1->a[i];
+    hashmap<int,array<int> > a2= ss2->a[i];
+    iterator<int> it= iterate (a1);
+    while (it->busy ()) {
+      int h= it->next ();
+      array<int> ps1= a1[h];
+      array<int> ps2= a2[h];
+      if (N(ps1) == 0 || N(ps2) == 0) continue;
+      for (int j1=0; j1<N(ps1); j1++) {
+        int pos1= ps1[j1];
+        if (b1 <= pos1 && pos1 < e1) continue;
+        for (int j2=0; j2<N(ps2); j2++) {
+          int pos2= ps2[j2];
+          int bb1= pos1, ee1= pos1, bb2= pos2, ee2= pos2;
+          while (bb1 > 0 && bb2 > 0 && s1[bb1-1] == s2[bb2-1]) {
+            bb1--; bb2--; }
+          while (ee1 < N(s1) && ee2 < N(s2) && s1[ee1] == s2[ee2]) {
+            ee1++; ee2++; }
+          if (ee1 - bb1 > bestl ||
+              (ee1 - bb1 == bestl &&
+               (bb1 < b1 ||
+                (bb1 == b1 && bb2 < b2)))) {
+            b1= bb1; e1= ee1;
+            b2= bb2; e2= ee2;
+            bestl= e1 - b1;
+          }
+        }
+      }
+    }
+  }
 }
