@@ -103,6 +103,8 @@ string_searcher_rep::search_next (string what, int pos) {
 
 array<int>
 string_searcher_rep::search_all (string what) {
+  // NOTE: There are better algorithms based on generalized suffix trees.
+  // However, in practice, our approach based on hashtables might be faster
   array<int> r;
   array<int> ps= search_sub (what);
   for (int i=0; i<N(ps); i++) {
@@ -118,6 +120,7 @@ string_searcher_rep::search_all (string what) {
 
 void
 get_longest_common (string s1, string s2, int& b1, int& e1, int& b2, int& e2) {
+  // NOTE: There are better algorithms based on generalized suffix trees.
   b1= e1= b2= e2= 0;
   int bestl= 0;
   string_searcher ss1 (s1);
