@@ -268,6 +268,9 @@
 		495712FC16E90E5900934EA3 /* metadata-elsevier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 495712F816E90E5900934EA3 /* metadata-elsevier.cpp */; };
 		495712FD16E90E5900934EA3 /* metadata-elsevier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 495712F816E90E5900934EA3 /* metadata-elsevier.cpp */; };
 		495712FE16E90E5900934EA3 /* metadata-elsevier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 495712F816E90E5900934EA3 /* metadata-elsevier.cpp */; };
+		495DB2D618CCB02300FE485A /* fakedlopen.c in Sources */ = {isa = PBXBuildFile; fileRef = 495DB2D518CCB02300FE485A /* fakedlopen.c */; };
+		495DB2D718CCB02300FE485A /* fakedlopen.c in Sources */ = {isa = PBXBuildFile; fileRef = 495DB2D518CCB02300FE485A /* fakedlopen.c */; };
+		495DB2D818CCB02300FE485A /* fakedlopen.c in Sources */ = {isa = PBXBuildFile; fileRef = 495DB2D518CCB02300FE485A /* fakedlopen.c */; };
 		4964705116F72CB500D95FC4 /* font_guess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4964704F16F72CB500D95FC4 /* font_guess.cpp */; };
 		4964705216F72CB500D95FC4 /* font_guess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4964704F16F72CB500D95FC4 /* font_guess.cpp */; };
 		4964705316F72CB500D95FC4 /* font_guess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4964704F16F72CB500D95FC4 /* font_guess.cpp */; };
@@ -1623,6 +1626,7 @@
 		4950FA5217E8349800425005 /* highlight_boxes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = highlight_boxes.cpp; sourceTree = "<group>"; };
 		495712F716E90E5900934EA3 /* metadata-acm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "metadata-acm.cpp"; sourceTree = "<group>"; };
 		495712F816E90E5900934EA3 /* metadata-elsevier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "metadata-elsevier.cpp"; sourceTree = "<group>"; };
+		495DB2D518CCB02300FE485A /* fakedlopen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fakedlopen.c; sourceTree = "<group>"; };
 		49630B59186D6A3600C9268F /* QTMTreeModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMTreeModel.cpp; sourceTree = "<group>"; };
 		49630B5A186D6A3600C9268F /* QTMTreeModel.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMTreeModel.hpp; sourceTree = "<group>"; };
 		4964704F16F72CB500D95FC4 /* font_guess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_guess.cpp; sourceTree = "<group>"; };
@@ -3852,6 +3856,7 @@
 		9C0B495710A8CC110097A335 /* Misc */ = {
 			isa = PBXGroup;
 			children = (
+				495DB2D518CCB02300FE485A /* fakedlopen.c */,
 				49F251D2151B70840091FF99 /* persistent.cpp */,
 				49F251D3151B70840091FF99 /* persistent.hpp */,
 				9C61B443141A21630035D78F /* stack_trace.cpp */,
@@ -4730,6 +4735,7 @@
 				9C0B4A0C10A8CC110097A335 /* analyze.cpp in Sources */,
 				9C0B4A0D10A8CC110097A335 /* converter.cpp in Sources */,
 				9C0B4A1910A8CC110097A335 /* tree_correct.cpp in Sources */,
+				495DB2D618CCB02300FE485A /* fakedlopen.c in Sources */,
 				9C0B4A1A10A8CC110097A335 /* tree_cursor.cpp in Sources */,
 				9C0B4A1B10A8CC110097A335 /* tree_traverse.cpp in Sources */,
 				9C0B4A1C10A8CC110097A335 /* edit_main.cpp in Sources */,
@@ -5268,6 +5274,7 @@
 				9CCC74F210D303D900E88D90 /* page_item.cpp in Sources */,
 				9CCC74F810D303D900E88D90 /* lazy_gui.cpp in Sources */,
 				9CCC74F910D303D900E88D90 /* lazy_paragraph.cpp in Sources */,
+				495DB2D818CCB02300FE485A /* fakedlopen.c in Sources */,
 				9CCC74FA10D303D900E88D90 /* lazy_typeset.cpp in Sources */,
 				4934A46918C5D00000BF1E6A /* conservative_fromtex.cpp in Sources */,
 				9CCC74FB10D303D900E88D90 /* lazy_vstream.cpp in Sources */,
@@ -5716,6 +5723,7 @@
 				491BB59C1731182600A755DF /* triangulated.cpp in Sources */,
 				491BB5A01731183800A755DF /* pencil.cpp in Sources */,
 				491BB5A81731186A00A755DF /* effect.cpp in Sources */,
+				495DB2D718CCB02300FE485A /* fakedlopen.c in Sources */,
 				491BB5AB1731186A00A755DF /* scalable.cpp in Sources */,
 				491BB5AE1731186A00A755DF /* true_color.cpp in Sources */,
 				491BB5B3173118C700A755DF /* metadata-ieee.cpp in Sources */,
