@@ -372,11 +372,12 @@ coqdoc_to_tree (string s) {
       string ext= parse_delimited (s, i, delim);
       tree tm;
       if (delim == '#')
-        tm= generic_to_tree (ext, "html-snippet");
+        tm= compound ("coqdoc-html", generic_to_tree (ext, "html-snippet"));
       else if (delim == '$')
-        tm= generic_to_tree ("$"*ext*"$", "latex-snippet");
+        tm= compound ("coqdoc-latex",
+              generic_to_tree ("$"*ext*"$", "latex-snippet"));
       else if (delim == '%')
-        tm= generic_to_tree (ext, "latex-snippet");
+        tm= compound ("coqdoc-latex", generic_to_tree (ext, "latex-snippet"));
       if (is_multi_paragraph (tm)) {
         add_line (line, coqdoc);
         coqdoc << tm;
@@ -739,7 +740,8 @@ show_hide_parsed_coq (tree t) {
         while (i<n && cnt > 0) {
           if (is_func (t[i], BEGIN, 1)) cnt++;
           if (is_func (t[i], END, 1))   cnt--;
-          tmp << t[i++];
+          if (cnt > 0) tmp << t[i];
+          i++;
         }
         r << compound (s, msg, show_hide_parsed_coq (tmp));
         if (i<n) i--;

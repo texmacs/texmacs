@@ -84,6 +84,10 @@
 
   <assign|coqdoc-coq|<macro|body|<with|color|<value|coq-input-color>|font-size|0.841|font-family|tt|<arg|body>>>>
 
+  <assign|coqdoc-html|<value|identity>>
+
+  <assign|coqdoc-latex|<value|identity>>
+
   <assign|coqdoc-verbatim|<macro|body|<with|color|black|font-size|0.841|font-family|tt|<arg|body>>>>
 
   <assign|coqdoc-vernac|<macro|body|<with|color|<value|coq-input-color>|font-size|0.841|font-family|tt|<arg|body>>>>
