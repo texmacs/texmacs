@@ -12,55 +12,139 @@
 
 (texmacs-module (convert coqml tmvernac))
 
+(define mode "text")
+
+(define (initialize-converter)
+  (set! mode "text"))
+
+(define-macro (with-mode new-mode x)
+  `(let ((old-mode mode))
+     (set! mode ,new-mode)
+     (let ((r ,x))
+       (set! mode old-mode)
+       r)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TeXmacs primitives
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmvernac-string x)
   ;; should take care of charset.
+  ;; should take care of escaping ($, #, %).
   x)
 
-(define (tmvernac-document l)
+(define (tmvernac-document s l)
   `(!document ,@(map tmvernac l)))
 
-(define (tmvernac-concat l)
+(define (tmvernac-concat s l)
   `(!concat ,@(map tmvernac l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; DoCoq macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmvernac-coq-comment l)
-  (tmvernac (car l)))
+(define (tmvernac-coq-coqdoc s l)
+  (with-mode "coqdoc"
+    (tmvernac (car l))))
 
-(define (tmvernac-coq-command l)
-  (tmvernac (caddr l)))
+(define (tmvernac-coq-comment s l)
+  (with-mode "code"
+    (tmvernac (car l))))
 
-(define (tmvernac-coq-enunciation l)
-  (let ((kind  (tmvernac (caddr l)))
-        (name  (tmvernac (cadddr l)))
-        (body  (tmvernac (fifth l)))
-        (proof (tmvernac (sixth l))))
-  `(!paragraph
-     (!concat ,kind " " ,name " : " ,body)
-     "Proof."
-     ,proof
-     "Qed.")))
+(define (tmvernac-coq-command s l)
+  (with-mode "code"
+    (tmvernac (caddr l))))
 
-(define (tmvernac-coq-section l)
-  (let ((name (tmvernac (car l)))
-        (body (tmvernac (cadr l))))
+(define (tmvernac-coq-enunciation s l)
+  (with-mode "code"
+    (let ((kind  (tmvernac (caddr l)))
+          (name  (tmvernac (cadddr l)))
+          (body  (tmvernac (fifth l)))
+          (proof (tmvernac (sixth l))))
+      `(!paragraph
+         (!concat ,kind " " ,name " : " ,body)
+         "Proof."
+         ,proof
+         "Qed."))))
+
+(define (tmvernac-coq-section s l)
+  (with-mode "code"
+    (let ((name (tmvernac (car l)))
+          (body (tmvernac (cadr l))))
+      `(!paragraph
+         (!concat "Section" ,name ".")
+         ,body
+         (!concat "End"     ,name ".")))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; CoqDoc macros
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; TODO: require mode= doc
+
+(define (tmcoqdoc-sectionning s l)
+  (let ((body (tmvernac (car l)))
+        (mark (cond ((== s 'paragraph)     "**** ")
+                    ((== s 'subsubsection) "*** ")
+                    ((== s 'subsection)    "** ")
+                    ((== s 'section)       "* ")
+                    (else ""))))
+    `(!concat ,mark ,body)))
+
+(define (tmcoqdoc-folds s l)
+  (let ((body (tmvernac (cadr l)))
+        (mark (cond ((== s 'folded)     "hide")
+                    ((== s 'unfolded)   "show")
+                    (else ""))))
     `(!paragraph
-       (!concat "Section" ,name ".")
+       (!concat "(* begin " ,mark " *)")
        ,body
-       (!concat "End"     ,name "."))))
+       (!concat "(* end " ,mark " *)"))))
+
+;; NOTA: could be merged in a "tmcoqdoc-delimited" function
+(define (tmcoqdoc-coq s l)
+  (with coq (tmvernac (car l))
+    `(!concat "[" ,coq "]")))
+
+(define (tmcoqdoc-vernac s l)
+  (with vernac (tmvernac (car l))
+    `(!concat "[[\n" ,vernac "\n]]")))
+
+(define (tmcoqdoc-latex s l)
+  (with tex (tmvernac-string
+              (texmacs->generic (stree->tree (car l)) "latex-snippet"))
+    (if (func? (car l) 'math 1)
+      `(!concat ,tex)
+      `(!concat "%" ,tex "%"))))
+
+(define (tmcoqdoc-html s l)
+  (with html (tmvernac-string
+               (texmacs->generic (stree->tree (car l)) "html-snippet"))
+    `(!concat "#" ,html "#")))
+
+(define (tmcoqdoc-verbatim s l)
+  (with verb (tmvernac (car l))
+    `(!concat "<<\n" ,verb "\n>>")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TeXmacs style macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmvernac-indent l)
-  `(!indent ,(tmvernac (car l))))
+;; TODO: require mode= doc
+
+(define (tmvernac-hrule s l) "----")
+
+(define (tmvernac-item s l) '(!item "- "))
+
+(define (tmvernac-itemize s l)
+  `(!paragraph ,(tmvernac (car l))))
+
+(define (tmvernac-indent s l)
+  `(!paragraph (!indent ,(tmvernac (car l)))))
+
+(define (tmvernac-emphasis s l)
+  (with coq (tmvernac (car l))
+    `(!concat "_" ,coq "_")))
 
 ;; Nota:
 ;; - we should add support for all TeXmacs primitives;
@@ -72,27 +156,45 @@
 ;; Dispatching
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; FIXME: Add arity verification.
 (logic-dispatcher tmvernac-methods%
   ; TeXmacs primitives
   (document        tmvernac-document)
   (concat          tmvernac-concat)
 
   ; DoCoq macros
-  (coq-comment     tmvernac-coq-comment)
   (coq-command     tmvernac-coq-command)
+  (coq-comment     tmvernac-coq-comment)
+  (coq-coqdoc      tmvernac-coq-coqdoc)
   (coq-enunciation tmvernac-coq-enunciation)
   (coq-section     tmvernac-coq-section)
+  ; CoqDoc
+  (coqdoc-coq      tmcoqdoc-coq)
+  (coqdoc-html     tmcoqdoc-html)
+  (coqdoc-latex    tmcoqdoc-latex)
+  (coqdoc-vernac   tmcoqdoc-vernac)
+  (coqdoc-verbatim tmcoqdoc-verbatim)
 
   ; TeXmacs style macros
+  ((:or section subsection subsubsection paragraph) tmcoqdoc-sectionning)
+  ((:or folded unfolded) tmcoqdoc-folds)
+  (em              tmvernac-emphasis)
+  (itemize         tmvernac-itemize)
+  (item            tmvernac-item)
+  (hrule           tmvernac-hrule)
   (indent          tmvernac-indent))
 
 (define (tmvernac-apply key args)
   (let ((n (length args))
         (r (logic-ref tmvernac-methods% key)))
-    (if (not r ) (map write (list "tmvernac-apply: " key ", " args)))
-    (if r (r args))))
+    (if (not r )
+      (begin (map write (list "tmvernac-apply: " key ", " args "\nr: " r))
+             (newline)))
+    (if r (r key args))))
 
 (tm-define (tmvernac x)
+  ;; TODO: catching errors and save/restore state in order to maximize the
+  ;; robustness of the converter
   (cond ((string? x) (tmvernac-string x))
         ((list>0? x) (tmvernac-apply (car x) (cdr x)))
         (else "")))
@@ -102,9 +204,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (texmacs->vernac x)
+  (initialize-converter)
   (if (tree? x) (set! x (tree->stree x)))
   (display* x "\n\n")
-  (with y (tmvernac x)
+  (let ((y (tmvernac x)))
     (display* "\n\nresult: " y "\n\n")
     y))
 
