@@ -15,6 +15,7 @@
 #include "scheme.hpp"
 
 bool skip_latex_spaces (string s, int& i);
+tree texmacs_unmark (tree t);
 
 /******************************************************************************
 * Extract tables for source/target correspondences
@@ -257,6 +258,57 @@ texmacs_invarianted (tree t, tree oldt, string src) {
 }
 
 /******************************************************************************
+* Conserve style and preamble in case of unchanged preambles
+******************************************************************************/
+
+static tree
+simplify_initial (tree init) {
+  if (!is_func (init, COLLECTION)) return init;
+  tree r (COLLECTION);
+  for (int i=0; i<N(init); i++)
+    if (is_func (init[i], ASSOCIATE, 2) && is_atomic (init[i][0])) {
+      string s= init[i][0]->label;
+      if (s == "font-base-size" ||
+          s == "language" ||
+          s == "page-top" ||
+          s == "page-bot" ||
+          s == "page-odd" ||
+          s == "page-even" ||
+          s == "page-right" ||
+          s == "page-height" ||
+          s == "page-width" ||
+          s == "page-orientation")
+        r << init[i];
+    }
+  return r;
+}
+
+bool
+texmacs_unchanged_preamble (tree oldt, tree newt) {
+  tree olds= extract (oldt, "style");
+  tree news= extract (newt, "style");
+  tree oldi= extract (oldt, "initial");
+  tree newi= extract (newt, "initial");
+  tree oldb= extract (oldt, "body");
+  tree newb= extract (newt, "body");
+  if (news != olds) return false;
+  if (simplify_initial (newi) != simplify_initial (oldi)) return false;
+  if (!is_document (oldb) || !is_document (newb)) return false;
+  if (is_compound (oldb[0], "hide-preamble", 1)) {
+    if (!is_compound (newb[0], "hide-preamble", 1)) return false;
+    if (newb[0] != oldb[0]) return false;
+  }
+  return true;
+}
+
+string
+latex_recover_preamble (string doc, string src) {
+  //cout << "Can recover preamble\n";
+  (void) src;
+  return doc;
+}
+
+/******************************************************************************
 * Conservative TeXmacs -> LaTeX conversion
 ******************************************************************************/
 
@@ -266,10 +318,15 @@ conservative_texmacs_to_latex (tree doc, object opts) {
     return tracked_texmacs_to_latex (doc, opts);
   tree atts= extract (doc, "attachments");
   hashmap<string,tree> atts_map (UNINIT, atts);
-  if (atts_map->contains ("latex-source")) {
-    string lsource= as_string (atts_map["latex-source"]);
-    tree ltarget= atts_map["latex-target"];
-    doc= texmacs_invarianted (doc, ltarget, lsource);
-  }
-  return tracked_texmacs_to_latex (doc, opts);
+  if (!atts_map->contains ("latex-source"))
+    return tracked_texmacs_to_latex (doc, opts);
+  string lsource= as_string (atts_map["latex-source"]);
+  tree ltarget= atts_map["latex-target"];
+  tree target= texmacs_unmark (ltarget);
+  if (doc == target) return lsource;
+  tree idoc= texmacs_invarianted (doc, ltarget, lsource);
+  string conv= tracked_texmacs_to_latex (idoc, opts);
+  if (texmacs_unchanged_preamble (target, doc))
+    conv= latex_recover_preamble (conv, lsource);
+  return conv;
 }
