@@ -1858,10 +1858,10 @@ latex_command_to_tree (tree t) {
     for (int i = 0 ; i < N(style) ; i++) {
       if (is_func(style[i], RESET) && !inserted) {
         if (center)
-          r << spb << compound("center", tree(ARG, "name"))
+          r << spb << compound ("center", tree (ARG, "name"))
             << spa << indentafter;
         else
-          r << spb << tree(HSPACE, indent) << tree(ARG, "name")
+          r << spb << tree(HSPACE, indent) << tree (ARG, "name")
             << spa << indentafter;
         inserted = true;
       }
