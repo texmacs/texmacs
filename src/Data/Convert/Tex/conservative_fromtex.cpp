@@ -157,16 +157,21 @@ latex_invarianted_search (string_searcher finder, tree t, path p, string tar,
 string
 latex_invarianted_apply (string s, hashmap<int,path> subs) {
   string r;
+  bool empty_flag= true;
   int i= 0, n= N(s);
   while (i<n) {
-    if (subs->contains (i)) {
+    if (subs->contains (i) && empty_flag) {
       path p= subs[i];
       int len= p->item;
       string id= encode_as_string (p->next);
       r << "{\\itm{" << id << "}}";
       i += len;
+      empty_flag= (len != 0);
     }
-    else r << s[i++];
+    else {
+      r << s[i++];
+      empty_flag= true;
+    }
   }
   return r;
 }
@@ -178,7 +183,7 @@ latex_invarianted (string s, tree src, string tar, hashmap<path,path> corr) {
   for (int i=0; i<N(s); i++) done[i]= false;
   string_searcher finder (s);
   latex_invarianted_search (finder, src, path (), tar, corr, done, subs);
-  cout << "subs= " << subs << "\n";
+  //cout << "subs= " << subs << "\n";
   string invs= latex_invarianted_apply (s, subs);
   return invs;
 }
@@ -205,6 +210,39 @@ latex_invarianted_replace (tree t, tree src) {
 }
 
 /******************************************************************************
+* Conserve style and preamble in case of unchanged preambles
+******************************************************************************/
+
+bool
+latex_unchanged_preamble (string old, string mod) {
+  int old_pos= search_forwards ("\\begin{document}", old);
+  int mod_pos= search_forwards ("\\begin{document}", mod);
+  if (old_pos < 0 && mod_pos < 0) return true;
+  if (old_pos != mod_pos) return false;
+  return old (0, old_pos) == mod (0, mod_pos);
+}
+
+tree
+texmacs_recover_preamble (tree doc, tree src) {
+  tree s= extract (src, "style");
+  tree i= extract (src, "initial");
+  doc= change_doc_attr (doc, "style", s);
+  doc= change_doc_attr (doc, "initial", i);
+  tree old_body= extract (src, "body");
+  tree new_body= extract (doc, "body");
+  if (!is_document (old_body)) old_body= tree (DOCUMENT, old_body);
+  if (!is_document (new_body)) new_body= tree (DOCUMENT, new_body);
+  if (is_compound (old_body[0], "hide-preamble", 1)) {
+    if (is_compound (new_body[0], "hide-preamble", 1))
+      new_body[0][0]= old_body[0][0];
+    else
+      new_body= tree (DOCUMENT, old_body[0]) * new_body;
+    doc= change_doc_attr (doc, "body", new_body);
+  }
+  return doc;
+}
+
+/******************************************************************************
 * Conservative TeXmacs -> LaTeX conversion
 ******************************************************************************/
 
@@ -216,17 +254,21 @@ conservative_latex_to_texmacs (string s, bool as_pic) {
   tree src;
   string mtar;
   bool ok= get_texmacs_attachments (s, mod, src, mtar);
+  tree srcb= extract (src, "body");
   if (!ok) return tracked_latex_to_texmacs (s, as_pic);
   hashmap<path,path> corr;
   string tar= latex_correspondence (mtar, corr);
-  cout << "corr= " << corr << LF;
-  string imod= latex_invarianted (mod, src, tar, corr);
-  cout << "imod= " << imod << LF;
+  if (s == tar) return src;
+  //cout << "corr= " << corr << LF;
+  string imod= latex_invarianted (mod, srcb, tar, corr);
+  //cout << "imod= " << imod << LF;
   tree iconv= tracked_latex_to_texmacs (imod, as_pic);
-  cout << "iconv= " << iconv << LF;
+  //cout << "iconv= " << iconv << LF;
   tree ibody= extract (iconv, "body");
-  tree body= latex_invarianted_replace (ibody, src);
+  tree body= latex_invarianted_replace (ibody, srcb);
   tree conv= change_doc_attr (iconv, "body", body);
-  cout << "conv= " << conv << LF;
+  if (latex_unchanged_preamble (tar, s))
+    conv= texmacs_recover_preamble (conv, src);
+  //cout << "conv= " << conv << LF;
   return conv;
 }

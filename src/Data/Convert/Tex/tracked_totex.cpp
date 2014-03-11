@@ -158,6 +158,22 @@ tree_to_latex_document (tree d, object opts) {
   return as_string (call ("texmacs->latex-document", object (d), opts));
 }
 
+static tree
+purify (tree d) {
+  tree v= extract (d, "TeXmacs");
+  tree s= extract (d, "style");
+  tree p= extract (d, "project");
+  tree b= extract (d, "body");
+  tree i= extract (d, "initial");
+  tree r (DOCUMENT);
+  r << compound ("TeXmacs", v)
+    << compound ("style", s);
+  if (p != "") r << compound ("project", "");
+  r << compound ("body", b);
+  if (N(i) > 0) r << compound ("initial", i);
+  return r;
+}
+
 string
 tracked_texmacs_to_latex (tree d, object opts) {
   if (get_preference ("texmacs->latex:source-tracking", "off") != "on")
@@ -196,7 +212,7 @@ tracked_texmacs_to_latex (tree d, object opts) {
   //cout << HRULE << "Marked latex" << LF << HRULE << ms << LF;
 
   string post;
-  post << tree_to_scheme (t);
+  post << tree_to_scheme (purify (d));
   post << "\n% Separate attachments\n";
   post << ms;
   // TODO: add integrity checksum
