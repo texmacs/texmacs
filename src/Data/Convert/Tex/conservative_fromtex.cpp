@@ -248,6 +248,9 @@ texmacs_recover_preamble (tree doc, tree src) {
 
 bool
 latex_unchanged_metadata (string old, string mod) {
+  int old_start= search_forwards ("\\title", old);
+  int mod_start= search_forwards ("\\title", mod);
+  if (old_start < 0 || mod_start < 0) return false;
   int old_pos= search_forwards ("\\maketitle", old);
   int mod_pos= search_forwards ("\\maketitle", mod);
   if (old_pos < 0 && mod_pos < 0) {
@@ -255,7 +258,7 @@ latex_unchanged_metadata (string old, string mod) {
     mod_pos= search_forwards ("\\end{frontmatter}", mod);
   }
   if (old_pos < 0 || mod_pos < 0) return false;
-  return old (0, old_pos) == mod (0, mod_pos);
+  return old (old_start, old_pos) == mod (mod_start, mod_pos);
 }
 
 static int
