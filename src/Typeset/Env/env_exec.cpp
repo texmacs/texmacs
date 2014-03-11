@@ -505,7 +505,10 @@ edit_env_rep::exec_assign (tree t) {
   tree r= exec (t[0]);
   if (is_compound (r)) return tree (ERROR, "bad assign");
   assign (r->label, copy (t[1]));
-  return tree (ASSIGN, r, tree (QUOTE, read (r->label)));
+  tree v= read (r->label);
+  if (is_atomic (v) || is_func (v, MACRO));
+  else v= tree (QUOTE, v);
+  return tree (ASSIGN, r, v);
 }
 
 tree
