@@ -243,6 +243,47 @@ texmacs_recover_preamble (tree doc, tree src) {
 }
 
 /******************************************************************************
+* Conserve titles when possible
+******************************************************************************/
+
+bool
+latex_unchanged_metadata (string old, string mod) {
+  int old_pos= search_forwards ("\\maketitle", old);
+  int mod_pos= search_forwards ("\\maketitle", mod);
+  if (old_pos < 0 && mod_pos < 0) {
+    old_pos= search_forwards ("\\end{frontmatter}", old);
+    mod_pos= search_forwards ("\\end{frontmatter}", mod);
+  }
+  if (old_pos < 0 || mod_pos < 0) return false;
+  return old (0, old_pos) == mod (0, mod_pos);
+}
+
+static int
+search_doc_data (tree doc) {
+  if (!is_document (doc)) return -1;
+  int pos= -1;
+  for (int i=0; i<N(doc); i++)
+    if (is_compound (doc[i], "doc-data")) {
+      if (pos != -1) return -1;
+      pos= i;
+    }
+  return pos;
+}
+
+tree
+texmacs_recover_metadata (tree doc, tree src) {
+  tree old_body= extract (src, "body");
+  tree new_body= extract (doc, "body");
+  int old_pos= search_doc_data (old_body);
+  int new_pos= search_doc_data (new_body);
+  if (old_pos < 0 || new_pos < 0) return doc;
+  new_body[new_pos]= old_body[old_pos];
+  //cout << "Recovered metadata " << old_body[old_pos] << LF;
+  doc= change_doc_attr (doc, "body", new_body);
+  return doc;
+}
+
+/******************************************************************************
 * Conservative TeXmacs -> LaTeX conversion
 ******************************************************************************/
 
@@ -269,6 +310,8 @@ conservative_latex_to_texmacs (string s, bool as_pic) {
   tree conv= change_doc_attr (iconv, "body", body);
   if (latex_unchanged_preamble (tar, s))
     conv= texmacs_recover_preamble (conv, src);
+  if (latex_unchanged_metadata (tar, s))
+    conv= texmacs_recover_metadata (conv, src);
   //cout << "conv= " << conv << LF;
   return conv;
 }
