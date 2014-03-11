@@ -10,7 +10,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert coqml tmvernac))
+(texmacs-module (convert coqml tmvernac)
+          (:use (convert coqml vernacout)))
 
 (define mode "text")
 
@@ -46,10 +47,12 @@
 (define (tmvernac-coq-coqdoc s l)
   (with-mode "coqdoc"
     (tmvernac (car l))))
+;    `(!document (!coqdoc ,(tmvernac (car l))))))
 
 (define (tmvernac-coq-comment s l)
   (with-mode "code"
     (tmvernac (car l))))
+;    `(!document (!comment ,(tmvernac (car l))))))
 
 (define (tmvernac-coq-command s l)
   (with-mode "code"
@@ -209,7 +212,7 @@
   (display* x "\n\n")
   (let ((y (tmvernac x)))
     (display* "\n\nresult: " y "\n\n")
-    y))
+    (serialize-vernac y)))
 
 (tm-define (texmacs->vernac-document x)
   (if (tree? x) (set! x (tree->stree x)))
