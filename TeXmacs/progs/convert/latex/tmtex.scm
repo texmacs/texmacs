@@ -517,10 +517,22 @@
               (list>0? (cadr l))) (map comment-preamble (cdadr l)))
 	(else (append-map tmtex-filter-preamble (cdr l)))))
 
+(define (tmtex-non-preamble-statement? l)
+  (cond ((or (nlist? l) (null? l)) #t)
+        ((== (car l) 'assign) #f)
+        ((== (car l) 'hide-preamble) #f)
+        ((func? l 'mtm 2) (tmtex-non-preamble-statement? (caddr l)))
+        (else #t)))
+
 (define (tmtex-filter-body l)
   (cond ((or (nlist? l) (null? l)) l)
         ((== (car l) 'assign) "")
         ((== (car l) 'hide-preamble) "")
+        ((in? (car l) '(concat document))
+         (with a (list-filter (cdr l) tmtex-non-preamble-statement?)
+           (if (null? l)
+               (if (== (car l) 'concat "" '(document "")))
+               (cons (car l) (map tmtex-filter-body a)))))
         (else (cons (car l) (map tmtex-filter-body (cdr l))))))
 
 (define (tmtex-apply-init body init)
