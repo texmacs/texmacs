@@ -53,8 +53,12 @@
                            (tree->string (tree-ref (car l) 2))))
               (url-none))))))
 
-(tm-define (citekey-completions u root)
-  (:synopsis "Completions for @root in the bibtex file @u for custom-complete")
-  `(tuple ,root
-     ,@(map string->tmstring
-            (pt-words-below (pt-find (get-citekeys-pt u) (tree->string root))))))
+(tm-define (citekey-list u s)
+  (:synopsis "Completions for @s in the bibtex file @u as a list")
+  (if (url-none? u) '()
+      (pt-words-below (pt-find (get-citekeys-pt u) s))))
+
+(tm-define (citekey-completions u t)
+  (:synopsis "Completions for @t in the bibtex file @u for custom-complete")
+  `(tuple ,t
+     ,@(map string->tmstring (citekey-list u (tree->string t)))))
