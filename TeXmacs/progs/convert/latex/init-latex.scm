@@ -74,7 +74,7 @@
   (serialize-latex (texmacs->latex (tm->stree x) opts)))
 
 (converter texmacs-stree latex-document
-  (:function-with-options var-conservative-texmacs->latex)
+  (:function-with-options conservative-texmacs->latex)
   ;;(:function-with-options tracked-texmacs->latex)
   (:option "texmacs->latex:source-tracking" "off")
   (:option "texmacs->latex:conservative" "off")

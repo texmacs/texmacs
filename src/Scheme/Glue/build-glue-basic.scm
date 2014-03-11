@@ -367,7 +367,8 @@
   (cpp-latex-document->texmacs latex_document_to_tree (tree string bool))
   (latex-class-document->texmacs latex_class_document_to_tree (tree string))
   (tracked-latex->texmacs tracked_latex_to_texmacs (tree string bool))
-  (var-conservative-texmacs->latex var_conservative_texmacs_to_latex (string content object))
+  (conservative-texmacs->latex conservative_texmacs_to_latex
+                               (string content object))
   (tracked-texmacs->latex tracked_texmacs_to_latex (string content object))
   (conservative-latex->texmacs conservative_latex_to_texmacs (tree string bool))
   (parse-xml parse_xml (scheme_tree string))

@@ -4250,15 +4250,15 @@ tmg_tracked_latex_2texmacs (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
-tmg_var_conservative_texmacs_2latex (tmscm arg1, tmscm arg2) {
-  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "var-conservative-texmacs->latex");
-  TMSCM_ASSERT_OBJECT (arg2, TMSCM_ARG2, "var-conservative-texmacs->latex");
+tmg_conservative_texmacs_2latex (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "conservative-texmacs->latex");
+  TMSCM_ASSERT_OBJECT (arg2, TMSCM_ARG2, "conservative-texmacs->latex");
 
   content in1= tmscm_to_content (arg1);
   object in2= tmscm_to_object (arg2);
 
   // TMSCM_DEFER_INTS;
-  string out= var_conservative_texmacs_to_latex (in1, in2);
+  string out= conservative_texmacs_to_latex (in1, in2);
   // TMSCM_ALLOW_INTS;
 
   return string_to_tmscm (out);
@@ -7812,7 +7812,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("cpp-latex-document->texmacs",  tmg_cpp_latex_document_2texmacs, 2, 0, 0);
   tmscm_install_procedure ("latex-class-document->texmacs",  tmg_latex_class_document_2texmacs, 1, 0, 0);
   tmscm_install_procedure ("tracked-latex->texmacs",  tmg_tracked_latex_2texmacs, 2, 0, 0);
-  tmscm_install_procedure ("var-conservative-texmacs->latex",  tmg_var_conservative_texmacs_2latex, 2, 0, 0);
+  tmscm_install_procedure ("conservative-texmacs->latex",  tmg_conservative_texmacs_2latex, 2, 0, 0);
   tmscm_install_procedure ("tracked-texmacs->latex",  tmg_tracked_texmacs_2latex, 2, 0, 0);
   tmscm_install_procedure ("conservative-latex->texmacs",  tmg_conservative_latex_2texmacs, 2, 0, 0);
   tmscm_install_procedure ("parse-xml",  tmg_parse_xml, 1, 0, 0);

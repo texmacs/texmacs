@@ -75,7 +75,7 @@ bool   is_verbatim (tree t);
 int    latex_search_forwards (string s, int pos, string in);
 int    latex_search_forwards (string s, string in);
 tree   tracked_latex_to_texmacs (string s, bool as_pic);
-string var_conservative_texmacs_to_latex (tree doc, object opts);
+string conservative_texmacs_to_latex (tree doc, object opts);
 string tracked_texmacs_to_latex (tree doc, object opts);
 tree   conservative_latex_to_texmacs (string s, bool as_pic);
 
