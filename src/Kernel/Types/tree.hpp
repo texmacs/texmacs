@@ -84,7 +84,7 @@ public:
   friend tree& operator << (tree& t, array<tree> a);
   friend tm_ostream& operator << (tm_ostream& out, tree t);
   friend tree operator * (tree t1, tree t2);
-  friend void print_tree (tree t, int tab=0);
+  friend void print_tree (tree t, int tab);
   friend list<tree> as_trees (list<pointer> l);
   friend class tree_pointer_rep;
   friend class tree_position_rep;
@@ -382,5 +382,7 @@ public:
   inline formatted (tree t): rep (t) {}
   inline formatted (const formatted& f): rep (f.rep) {}
 };
+
+void print_tree (tree t, int tab=0);
 
 #endif // defined TREE_H
