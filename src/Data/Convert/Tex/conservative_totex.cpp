@@ -339,13 +339,16 @@ merge_preambles (string olds, string news) {
       path newp= newd[cmd];
       oldw (oldp[0])= olds (oldp[0], oldp[1]);
       oldb (oldp[0])= news (newp[0], newp[1]);
-      neww (newp[0])= news (newp[0], newp[1]);
+      int l= newp[1];
+      if (l<N(news) && news[l] == '\n') l++;
+      neww (newp[0])= news (newp[0], l);
       newb (newp[0])= "";
     }
   }
-  cout << "Replace " << oldw << ", " << oldb << LF;
   olds= replace (olds, oldw, oldb);
   news= replace (news, neww, newb);
+  cout << "olds ->" << LF << HRULE << olds << HRULE;
+  cout << "news ->" << LF << HRULE << news << HRULE;
   return olds;
 }
 
