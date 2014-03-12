@@ -62,19 +62,20 @@ skip_curly (string s, int& i) {
   i++;
   while (true) {
     if (i >= n) return false;
-    if (s[i] == '{') {
+    if (s[i] == '{' && (i == 0 || s[i-1] != '\\')) {
       if (!skip_curly (s, i)) return false;
       continue;
     }
-    if (s[i] == '}') {
+    if (s[i] == '}' && (i == 0 || s[i-1] != '\\')) {
       i++;
       return true;
     }
-    i++;
+    if (s[i] == '%') skip_line (s, i);
+    else i++;
   }
 }
 
-static bool
+bool
 skip_square (string s, int& i) {
   int n= N(s);
   skip_spaces (s, i);
@@ -82,15 +83,16 @@ skip_square (string s, int& i) {
   i++;
   while (true) {
     if (i >= n) return false;
-    if (s[i] == '[') {
+    if (s[i] == '[' && (i == 0 || s[i-1] != '\\')) {
       if (!skip_square (s, i)) return false;
       continue;
     }
-    if (s[i] == ']') {
+    if (s[i] == ']' && (i == 0 || s[i-1] != '\\')) {
       i++;
       return true;
     }
-    i++;
+    if (s[i] == '%') skip_line (s, i);
+    else i++;
   }
 }
 
