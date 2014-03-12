@@ -375,11 +375,94 @@ texmacs_unmark (tree t, bool all) {
 tree texmacs_unmark (tree t) { return texmacs_unmark (t, true); }
 tree texmacs_clean_markers (tree t) { return texmacs_unmark (t, false); }
 
+static void
+texmacs_unmark_document (tree mt, path p, tree& doc, array<path>& ps) {
+  if (is_document (mt)) {
+    for (int i=0; i<N(mt); i++)
+      texmacs_unmark_document (mt[i], p * i, doc, ps);
+  }
+  else if (is_compound (mt, "mlx", 2))
+    texmacs_unmark_document (mt[1], p * 1, doc, ps);
+  else {
+    doc << texmacs_unmark (mt);
+    ps  << p;
+  }
+}
+
+static tree
+texmacs_unmark_document (tree mt, array<path>& ps) {
+  tree doc (DOCUMENT);
+  texmacs_unmark_document (mt, path (), doc, ps);
+  return doc;
+}
+
+/******************************************************************************
+* Subroutine for finding increasing matches between paragraphs
+******************************************************************************/
+
+static void
+find_matches (tree d1, int b1, int e1,
+              tree d2, int b2, int e2,
+              array<int>& c) {
+  while (b1 < e1 && b2 < e2 && d1[b1] == d2[b2]) {
+    c[b1]= b2; b1++; b2++; }
+  while (b1 < e1 && b2 < e2 && d1[e1-1] == d2[e2-1]) {
+    c[e1-1]= e2-1; e1--; e2--; }
+  hashmap<tree,int> h (-1);
+  for (int j= e2-1; j >= b2; j--)
+    h (d2[j])= j;
+  int best_b1= -1, best_b2= -1, best_len= 0;
+  for (int i= b1; i < e1; i++) {
+    int j= h[d1[i]];
+    if (j >= 0) {
+      int start1= i, start2= j;
+      while (i < e1 && j < e2 && d1[i] == d2[j]) { i++; j++; }
+      if (i - start1 > best_len) {
+        best_b1 = start1;
+        best_b2 = start2;
+        best_len= i - start1;
+      }
+    }
+  }
+  if (best_len > 0) {
+    //cout << "Best match for " << b1 << " -- " << e1
+    //     << " is " << best_b1 << " -- " << best_b1 + best_len
+    //     << " ~> " << best_b2 << " -- " << best_b2 + best_len << LF;
+    find_matches (d1, b1, best_b1, d2, b2, best_b2, c);
+    find_matches (d1, best_b1, e1, d2, best_b2, e2, c);
+  }
+}
+
+static array<int>
+increasing_matches (tree d1, tree d2) {
+  int i, n= N(d1);
+  array<int> c;
+  for (i=0; i<n; i++) c << -1;
+  find_matches (d1, 0, n, d2, 0, N(d2), c);
+  //cout << "Matches(1) " << c << LF << HRULE;
+  //for (i=0; i<min (N(d1), N(d2)); i++) {
+  //  cout << i << " <<< " << d1[i] << LF;
+  //  cout << i << " >>> " << d2[i] << LF;
+  //  cout << HRULE;
+  //}
+
+  for (i=0; i<n; i++)
+    if (c[i] < 0) {
+      int p1= i;
+      int p2= (i>0? (c[i-1] + 1): 0);
+      while (i<n && c[i] < 0) i++;
+      int q1= i;
+      int q2= (i<n? c[i]: N(d2));
+      for (int j=0; j < min (q1-p1, q2-p2); j++)
+        c[p1+j]= p2+j;
+    }
+  //cout << "Matches(2) " << c << LF << HRULE;
+  return c;
+}
+
 /******************************************************************************
 * Check transparency of marking process
 ******************************************************************************/
-
-void texmacs_check_transparency (tree mt, tree t, hashset<int>& invalid);
 
 static void
 texmacs_declare_transparent (tree mt, hashset<int>& invalid) {
@@ -407,58 +490,71 @@ texmacs_declare_opaque (tree mt, hashset<int>& invalid) {
       texmacs_declare_opaque (mt[i], invalid);
 }
 
-static bool
-texmacs_relative_transparency (tree mt, tree t) {
-  if (is_compound (mt, "mlx", 2)) return true;
-  if (!is_compound (mt) || !is_compound (t)) return mt == t;
-  if (N(mt) != N(t)) return false;
-  for (int i=0; i<N(mt); i++)
-    if (!texmacs_relative_transparency (mt[i], t[i]))
-      return false;
-  return true;
-}
-
 static void
-texmacs_document_transparency (tree mt, int& mpos, tree t, int& pos,
-                               hashset<int>& invalid) {
-  while (mpos < N(mt) && pos < N(t)) {
-    if (is_compound (mt[mpos], "mlx", 2) && is_document (mt[mpos][1])) {
-      int spos= 0, bpos= pos;
-      texmacs_document_transparency (mt[mpos][1], spos, t, pos, invalid);
-      if (spos != N(mt[mpos][1])) break;
-      if (!texmacs_relative_transparency (mt[mpos][1], t (bpos, pos)))
-        texmacs_declare_opaque (mt[mpos], invalid);
-      mpos++;
-    }
-    else {
-      texmacs_check_transparency (mt[mpos], t[pos], invalid);
-      mpos++; pos++;
-    }
+texmacs_declare_opaque (tree mt, path p, hashset<int>& invalid) {
+  if (is_compound (mt, "mlx", 2)) {
+    int b, e;
+    get_range (mt[0], b, e);
+    invalid->insert (b);
+    invalid->insert (e);
   }
+  if (!is_nil (p))
+    texmacs_declare_opaque (mt[p->item], p->next, invalid);
 }
 
-void
+bool
 texmacs_check_transparency (tree mt, tree t, hashset<int>& invalid) {
-  if (texmacs_unmark (mt) == t || !is_compound (mt)) return;
-  //cout << "Problematic " << mt << LF
-  //<< "........... " << t << LF;
+  if (texmacs_unmark (mt) == t) return true;
+  if (!is_compound (mt)) return false;
+  //if (!is_compound (mt, "mlx", 2) && !is_document (mt))
+  //  cout << "Problematic " << mt << LF
+  //       << "........... " << t << LF << HRULE;
   if (is_compound (mt, "mlx", 2)) {
-    if (texmacs_relative_transparency (mt[1], t))
-      texmacs_check_transparency (mt[1], t, invalid);
-    else
-      texmacs_declare_opaque (mt, invalid);
+    if (!texmacs_check_transparency (mt[1], t, invalid))
+      texmacs_declare_opaque (mt, path (), invalid);
+    return true;
   }
   else if (is_document (mt) && is_document (t)) {
-    int mpos= 0, pos= 0;
-    texmacs_document_transparency (mt, mpos, t, pos, invalid);
-    if (mpos < N(mt) || pos < N(t))
-      texmacs_declare_opaque (mt, invalid);
-  }
-  else if (!is_compound (t) || N(mt) != N(t))
-    texmacs_declare_opaque (mt, invalid);
-  else
+    array<path> a;
+    tree umt= texmacs_unmark_document (mt, a);
+    array<int> c= increasing_matches (umt, t);
+    bool ok= true;
+    int invalid_count= N(invalid);
+    for (int i=0; i<N(umt); i++) {
+      tree mst= subtree (mt, a[i]);
+      if (c[i] >= 0) {
+        if (!texmacs_check_transparency (mst, t[c[i]], invalid)) {
+          ok= false;
+          c[i]= -1;
+        }
+      }
+      else {
+        ok= false;
+        texmacs_declare_opaque (mt, a[i], invalid);
+      }
+    }
+    if (ok) return true;
+    //cout << "Matches(3) " << c << LF << HRULE;
+    if (N(invalid) > invalid_count) return true;
     for (int i=0; i<N(mt); i++)
-      texmacs_check_transparency (mt[i], t[i], invalid);
+      if ((c[i] < 0) || (i>0 && c[i-1] < 0) || (i+1<N(mt) && c[i+1] < 0))
+        texmacs_declare_opaque (mt, a[i], invalid);
+    if (N(invalid) > invalid_count) return true;
+    for (int i=0; i<N(mt); i++)
+      texmacs_declare_opaque (mt, a[i], invalid);
+    if (N(invalid) > invalid_count) return true;
+    return false;
+  }
+  else if (!is_compound (t) || N(mt) != N(t)) {
+    texmacs_declare_opaque (mt, invalid);
+    return false;
+  }
+  else {
+    bool ok= true;
+    for (int i=0; i<N(mt); i++)
+      ok= texmacs_check_transparency (mt[i], t[i], invalid) && ok;
+    return ok;
+  }
 }
 
 /******************************************************************************
@@ -499,7 +595,7 @@ tracked_latex_to_texmacs (string s, bool as_pic) {
     int old_nr= N(invalid);
     texmacs_declare_transparent (mbody, l);
     if (N(l) > N(invalid)) { invalid= l; continue; }
-    texmacs_check_transparency (mbody, body, invalid);
+    (void) texmacs_check_transparency (mbody, body, invalid);
     if (N(invalid) <= old_nr) { mt= t; mbody= body; break; }
   }
 
