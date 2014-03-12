@@ -1154,6 +1154,12 @@ skip_spaces (string s, int& i) {
 }
 
 void
+skip_whitespace (string s, int& i) {
+  int n=N(s);
+  while ((i<n) && ((s[i]==' ') || (s[i]=='\t') || (s[i]=='\n'))) i++;
+}
+
+void
 skip_line (string s, int& i) {
   int n=N(s);
   while ((i<n) && (s[i]!='\n')) i++;
