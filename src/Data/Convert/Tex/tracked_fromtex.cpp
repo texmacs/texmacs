@@ -444,7 +444,7 @@ texmacs_check_transparency (tree mt, tree t, hashset<int>& invalid) {
   //<< "........... " << t << LF;
   if (is_compound (mt, "mlx", 2)) {
     if (texmacs_relative_transparency (mt[1], t))
-      texmacs_check_transparency (mt[1], t[1], invalid);
+      texmacs_check_transparency (mt[1], t, invalid);
     else
       texmacs_declare_opaque (mt, invalid);
   }
