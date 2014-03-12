@@ -16,6 +16,7 @@
 #include "base64.hpp"
 #include "iterator.hpp"
 #include "fast_search.hpp"
+#include "merge_sort.hpp"
 
 string encode_as_string (path p);
 path decode_as_path (string s);
@@ -214,6 +215,25 @@ latex_invarianted_replace (tree t, tree src) {
 ******************************************************************************/
 
 bool
+latex_unchanged_style (string old, string mod) {
+  int old_pos= search_forwards ("\\documentclass", old);
+  int mod_pos= search_forwards ("\\documentclass", mod);
+  if (old_pos < 0 && mod_pos < 0) return true;
+  if (old_pos < 0 || mod_pos < 0) return false;
+  skip_line (old, old_pos);
+  skip_line (mod, mod_pos);
+  if (old_pos != mod_pos) return false;
+  return old (0, old_pos) == mod (0, mod_pos);
+}
+
+tree
+texmacs_recover_style (tree doc, tree src) {
+  tree s= extract (src, "style");
+  doc= change_doc_attr (doc, "style", s);
+  return doc;
+}
+
+bool
 latex_unchanged_preamble (string old, string mod) {
   int old_pos= search_forwards ("\\begin{document}", old);
   int mod_pos= search_forwards ("\\begin{document}", mod);
@@ -240,6 +260,85 @@ texmacs_recover_preamble (tree doc, tree src) {
     doc= change_doc_attr (doc, "body", new_body);
   }
   return doc;
+}
+
+/******************************************************************************
+* Conserve style and preamble as much as possible otherwise
+******************************************************************************/
+
+static tree
+rename_arguments (tree val, tree old) {
+  if (is_func (val, MACRO) && is_func (old, MACRO) && N(val) == N(old)) {
+    val= copy (val);
+    int a= N(old) - 1;
+    for (int i=0; i<a; i++)
+      if (is_atomic (val[i]) && is_atomic (old[i])) {
+        val[a]= replace (val[a], tree (ARG, val[i]), tree (ARG, old[i]));
+        val[i]= old[i];
+      }
+  }
+  return val;
+}
+
+tree
+texmacs_merge_preamble (tree newt, tree oldt) {
+  // Merge document styles
+  tree olds= copy (extract (oldt, "style"));
+  tree news= extract (newt, "style");
+  if (is_atomic (olds)) olds= tuple (olds);
+  if (is_atomic (news)) news= tuple (news);
+  if (N(olds) >= 1 && N(news) >= 1 && news != olds) {
+    //cout << "Old style: " << olds << LF;
+    //cout << "New style: " << news << LF;
+    olds[0]= news[0];
+    for (int i=1; i<N(news); i++) {
+      int j;
+      for (j=0; j<N(olds); j++)
+        if (olds[j] == news[i]) break;
+      if (j == N(olds)) olds << news[i];
+    }
+    //cout << "Merged style: " << olds << LF;
+    newt= change_doc_attr (newt, "style", olds);
+  }
+
+  // Merge initial settings of environment variables
+  hashmap<string,tree> oldi (UNINIT, extract (oldt, "initial"));
+  hashmap<string,tree> newi (UNINIT, extract (newt, "initial"));
+  oldi->join (newi);
+  newt= change_doc_attr (newt, "initial", make_collection (oldi));
+
+  // Merge preambles
+  tree oldb= extract (oldt, "body");
+  tree newb= extract (newt, "body");
+  if (!is_document (oldb)) oldb= tree (DOCUMENT, oldb);
+  if (!is_document (newb)) newb= tree (DOCUMENT, newb);
+  if (is_compound (oldb[0], "hide-preamble", 1) &&
+      is_compound (newb[0], "hide-preamble", 1) &&
+      is_document (oldb[0][0]) &&
+      is_document (newb[0][0])) {
+    tree oldp= copy (oldb[0][0]);
+    tree newp= newb[0][0];
+    //cout << "Old preamble: " << oldp << LF;
+    //cout << "New preamble: " << newp << LF;
+    int j, n= N(oldp);
+    for (int i=0; i<N(newp); i++) {
+      for (j=0; j<n; j++)
+        if (newp[i] == oldp[j]) break;
+      if (j<n) continue;
+      if (is_func (newp[i], ASSIGN, 2)) {
+        for (j=0; j<n; j++)
+          if (is_func (oldp[j], ASSIGN, 2) && newp[i][0] == oldp[i][0]) break;
+        if (j<n) oldp[j][1]= rename_arguments (newp[j][1], oldp[j][1]);
+        else oldp << newp[j];
+      }
+      else if (!is_atomic (newp[i]))
+        cout << "Ignored preamble change: " << newp[i] << LF;
+    }
+    oldb[0][0]= oldp;
+    //cout << "Merged preamble: " << oldp << LF;
+    newt= change_doc_attr (newt, "body", oldb);
+  }
+  return newt;
 }
 
 /******************************************************************************
@@ -311,8 +410,12 @@ conservative_latex_to_texmacs (string s, bool as_pic) {
   tree ibody= extract (iconv, "body");
   tree body= latex_invarianted_replace (ibody, srcb);
   tree conv= change_doc_attr (iconv, "body", body);
+  if (latex_unchanged_style (tar, s))
+    conv= texmacs_recover_style (conv, src);
   if (latex_unchanged_preamble (tar, s))
     conv= texmacs_recover_preamble (conv, src);
+  else
+    conv= texmacs_merge_preamble (conv, src);
   if (latex_unchanged_metadata (tar, s))
     conv= texmacs_recover_metadata (conv, src);
   //cout << "conv= " << conv << LF;

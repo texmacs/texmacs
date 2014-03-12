@@ -319,33 +319,35 @@ filter_preamble (tree t) {
         latex_class = u;
       }
       else if (is_tuple (u, "\\geometry", 1))
-        preamble << u << "\n" << "\n";
+        preamble << u << "\n\n";
       else if (is_tuple (u, "\\def") ||
 	       is_tuple (u, "\\def*") || is_tuple (u, "\\def**"))
-	preamble << u << "\n" << "\n";
+	preamble << u << "\n\n";
       else if (is_tuple (u, "\\newdef", 2))
-	preamble << tuple("\\newtheorem", u[1], u[2]) << "\n" << "\n";
+	preamble << tuple("\\newtheorem", u[1], u[2]) << "\n\n";
       else if (is_tuple (u, "\\declaretheorem", 1) ||
           is_tuple (u, "\\declaretheorem*", 2))
-	preamble << tuple("\\newtheorem", u[N(u)-1], u[N(u)-1]) << "\n" << "\n";
+	preamble << tuple("\\newtheorem", u[N(u)-1], u[N(u)-1]) << "\n\n";
       else if (is_tuple (u, "\\newtheorem") ||
 	       is_tuple (u, "\\newtheorem*"))
-	preamble << u << "\n" << "\n";
+	preamble << u << "\n\n";
       else if (is_tuple (u, "\\newenvironment")    ||
 	       is_tuple (u, "\\newenvironment*")   ||
 	       is_tuple (u, "\\newenvironment**"))
-	preamble << u << "\n" << "\n";
+	preamble << u << "\n\n";
       else if (is_tuple (u, "\\SetKw", 2)          ||
                is_tuple (u, "\\SetKwData", 2)      ||
                is_tuple (u, "\\SetKwInOut", 2)     ||
                is_tuple (u, "\\SetKwInput", 2)     ||
                is_tuple (u, "\\SetKwFunction", 2))
-	preamble << u << "\n" << "\n";
+	preamble << u << "\n\n";
       else if (is_tuple (u, "\\conferenceinfo")    ||
                is_tuple (u, "\\CopyrightYear")     ||
                is_tuple (u, "\\crdata")) {
-        preamble << u << "\n" << "\n";
+        preamble << u << "\n\n";
       }
+      else if (is_tuple (u, "\\itm"))
+        preamble << u << "\n\n";
     }
     else if (is_metadata_env (t[i])) {
       string s= as_string (t[i][0]);
