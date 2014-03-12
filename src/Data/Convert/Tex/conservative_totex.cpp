@@ -13,9 +13,7 @@
 #include "analyze.hpp"
 #include "hashset.hpp"
 #include "scheme.hpp"
-
-bool skip_latex_spaces (string s, int& i);
-tree texmacs_unmark (tree t);
+#include "iterator.hpp"
 
 /******************************************************************************
 * Extract tables for source/target correspondences
@@ -302,10 +300,65 @@ texmacs_unchanged_preamble (tree oldt, tree newt) {
 }
 
 string
-latex_recover_preamble (string doc, string src) {
-  //cout << "Can recover preamble\n";
-  (void) src;
-  return doc;
+latex_recover_preamble (string news, string olds) {
+  int oldp= search_forwards ("\\begin{document}", olds);
+  int newp= search_forwards ("\\begin{document}", news);
+  if (oldp < 0 || newp < 0) return news;
+  return olds (0, oldp) * news (newp, N(news));
+}
+
+/******************************************************************************
+* Conserve as much of the style and preamble as possible, otherwise
+******************************************************************************/
+
+static string
+replace (string s, hashmap<int,string> w, hashmap<int,string> b) {
+  string r;
+  for (int i=0; i<N(s); )
+    if (w->contains (i)) {
+      r << b[i];
+      i += N(w[i]);
+      // TODO: remove whitespace if b is empty
+    }
+    else r << s[i++];
+  return r;
+}
+
+static string
+merge_preambles (string olds, string news) {
+  hashmap<string,path> oldd= latex_get_declarations (olds);
+  hashmap<string,path> newd= latex_get_declarations (news);
+  cout << "oldd= " << oldd << "\n";
+  cout << "newd= " << newd << "\n";
+  hashmap<int,string> oldw, oldb, neww, newb;
+  iterator<string> it= iterate (oldd);
+  while (it->busy ()) {
+    string cmd= it->next ();
+    if (newd->contains (cmd)) {
+      path oldp= oldd[cmd];
+      path newp= newd[cmd];
+      oldw (oldp[0])= olds (oldp[0], oldp[1]);
+      oldb (oldp[0])= news (newp[0], newp[1]);
+      neww (newp[0])= news (newp[0], newp[1]);
+      newb (newp[0])= "";
+    }
+  }
+  cout << "Replace " << oldw << ", " << oldb << LF;
+  olds= replace (olds, oldw, oldb);
+  news= replace (news, neww, newb);
+  return olds;
+}
+
+string
+latex_merge_preamble (string news, string olds) {
+  string oldl= latex_remove_texmacs_preamble (olds);
+  string newl= latex_remove_texmacs_preamble (news);
+  string oldt= latex_get_texmacs_preamble (olds);
+  string newt= latex_get_texmacs_preamble (news);
+  newl= merge_preambles (oldl, newl);
+  newt= merge_preambles (oldt, newt);
+  if (newt == "") return newl;
+  else return latex_set_texmacs_preamble (newl, newt);
 }
 
 /******************************************************************************
@@ -328,5 +381,7 @@ conservative_texmacs_to_latex (tree doc, object opts) {
   string conv= tracked_texmacs_to_latex (idoc, opts);
   if (texmacs_unchanged_preamble (target, doc))
     conv= latex_recover_preamble (conv, lsource);
+  else
+    conv= latex_merge_preamble (conv, lsource);
   return conv;
 }

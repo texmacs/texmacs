@@ -17,9 +17,6 @@
 #include "iterator.hpp"
 #include "fast_search.hpp"
 
-bool skip_curly (string s, int& i);
-string latex_correspondence (string, hashset<path>, hashmap<path,path>&);
-
 /******************************************************************************
 * Add markers to TeXmacs document
 ******************************************************************************/

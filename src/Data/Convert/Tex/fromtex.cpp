@@ -291,6 +291,18 @@ kill_space_invaders (tree t) {
 * Preprocess preamble
 ******************************************************************************/
 
+static bool
+is_declaration (tree u) {
+  return (is_tuple (u, "\\def") ||
+          is_tuple (u, "\\def*") ||
+          is_tuple (u, "\\def**") ||
+          is_tuple (u, "\\newenvironment") ||
+          is_tuple (u, "\\newenvironment*") ||
+          is_tuple (u, "\\newenvironment**") ||
+          is_tuple (u, "\\newtheorem") ||
+          is_tuple (u, "\\newtheorem*"));
+}
+
 tree
 filter_preamble (tree t) {
   int i, n=N(t);
@@ -319,35 +331,36 @@ filter_preamble (tree t) {
         latex_class = u;
       }
       else if (is_tuple (u, "\\geometry", 1))
-        preamble << u << "\n\n";
-      else if (is_tuple (u, "\\def") ||
-	       is_tuple (u, "\\def*") || is_tuple (u, "\\def**"))
-	preamble << u << "\n\n";
+        preamble << u << "\n" << "\n";
+      else if (is_declaration (u))
+	preamble << u << "\n" << "\n";
       else if (is_tuple (u, "\\newdef", 2))
-	preamble << tuple("\\newtheorem", u[1], u[2]) << "\n\n";
+	preamble << tuple("\\newtheorem", u[1], u[2]) << "\n" << "\n";
       else if (is_tuple (u, "\\declaretheorem", 1) ||
-          is_tuple (u, "\\declaretheorem*", 2))
-	preamble << tuple("\\newtheorem", u[N(u)-1], u[N(u)-1]) << "\n\n";
-      else if (is_tuple (u, "\\newtheorem") ||
-	       is_tuple (u, "\\newtheorem*"))
-	preamble << u << "\n\n";
-      else if (is_tuple (u, "\\newenvironment")    ||
-	       is_tuple (u, "\\newenvironment*")   ||
-	       is_tuple (u, "\\newenvironment**"))
-	preamble << u << "\n\n";
+               is_tuple (u, "\\declaretheorem*", 2))
+	preamble << tuple("\\newtheorem", u[N(u)-1], u[N(u)-1]) << "\n" << "\n";
       else if (is_tuple (u, "\\SetKw", 2)          ||
                is_tuple (u, "\\SetKwData", 2)      ||
                is_tuple (u, "\\SetKwInOut", 2)     ||
                is_tuple (u, "\\SetKwInput", 2)     ||
                is_tuple (u, "\\SetKwFunction", 2))
-	preamble << u << "\n\n";
+	preamble << u << "\n" << "\n";
       else if (is_tuple (u, "\\conferenceinfo")    ||
                is_tuple (u, "\\CopyrightYear")     ||
                is_tuple (u, "\\crdata")) {
-        preamble << u << "\n\n";
+        preamble << u << "\n" << "\n";
       }
+      else if (i+6 < N(t) &&
+               is_tuple (t[i  ], "\\begingroup") &&
+               is_tuple (t[i+1], "\\blx") &&
+               is_tuple (t[i+2], "\\endgroup") &&
+               is_declaration (t[i+3]) &&
+               is_tuple (t[i+4], "\\begingroup") &&
+               is_tuple (t[i+5], "\\elx") &&
+               is_tuple (t[i+6], "\\endgroup")) {
+        preamble << A(t(i,i+7)) << "\n" << "\n"; i += 6; continue; }
       else if (is_tuple (u, "\\itm"))
-        preamble << u << "\n\n";
+        preamble << u << "\n" << "\n";
     }
     else if (is_metadata_env (t[i])) {
       string s= as_string (t[i][0]);

@@ -1,7 +1,7 @@
 
 /******************************************************************************
 * MODULE     : convert_tex.h
-* DESCRIPTION: declaration shared among the tex conversion units
+* DESCRIPTION: declarations shared among the tex conversion units
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
@@ -23,5 +23,22 @@ string paper_opts  (string cmd);
 string paper_type  (string cmd);
 string latex_type  (string cmd);
 int    latex_arity (string cmd);
+
+string latex_get_texmacs_preamble (string s);
+string latex_remove_texmacs_preamble (string s);
+string latex_set_texmacs_preamble (string s, string p);
+hashmap<string,path> latex_get_packages (string s);
+hashmap<string,path> latex_get_declarations (string s);
+hashmap<int,int> latex_declaration_positions (string s);
+
+bool skip_curly (string s, int& i);
+bool skip_square (string s, int& i);
+bool skip_latex_spaces (string s, int& i);
+
+string encode_as_string (path p);
+path decode_as_path (string s);
+string latex_unmark (string, hashset<path>, hashmap<int,array<path> >&);
+tree texmacs_unmark (tree t);
+string latex_correspondence (string, hashset<path>, hashmap<path,path>&);
 
 #endif // defined CONVERT_TEX_H

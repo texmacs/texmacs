@@ -11,9 +11,7 @@
 
 #include "Tex/convert_tex.hpp"
 #include "analyze.hpp"
-
-bool skip_curly (string s, int& i);
-bool skip_square (string s, int& i);
+#include "iterator.hpp"
 
 /******************************************************************************
 * TeXmacs preamble management
@@ -186,4 +184,17 @@ latex_get_declarations (string s) {
     else if (s[i] == '%') skip_line (s, i);
     else i++;
   return h;
+}
+
+hashmap<int,int>
+latex_declaration_positions (string s) {
+  hashmap<int,int> r (-1);
+  hashmap<string,path> h= latex_get_declarations (s);
+  iterator<string> it= iterate (h);
+  while (it->busy ()) {
+    path p= h [it->next ()];
+    r (p[0])= 0;
+    r (p[1])= 1;
+  }
+  return r;
 }

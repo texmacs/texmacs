@@ -167,12 +167,15 @@ skip_latex_spaces (string s, int& i) {
 string
 latex_mark (string s, hashset<int>& l) {
   // FIXME: attention to Windows line breaks
+  hashmap<int,int> h= latex_declaration_positions (s);
   string r;
   int i= 0, n= N(s);
   skip_latex_spaces (s, i);
   mark_begin (r, i, l);
   while (true) {
     int b= i;
+    if (h[i] == 0) mark_begin (r, i, l);
+    if (h[i] == 1) mark_end (r, i, l);
     if (skip_latex_spaces (s, i)) {
       if (i < n) {
         mark_end (r, b, l);
@@ -201,8 +204,11 @@ latex_mark (string s, hashset<int>& l) {
       }
     }
     else {
-      i++;
       r << s (b, i);
+      if (h[i] == 0) mark_begin (r, i, l);
+      if (h[i] == 1) mark_end (r, i, l);
+      i++;
+      r << s (i-1, i);
     }
   }
   return r;
@@ -580,10 +586,10 @@ tracked_latex_to_texmacs (string s, bool as_pic) {
     //cout << HRULE << "Invalid markers" << LF << HRULE << invalid << LF;
     hashset<int> l= copy (invalid);
     string ms= latex_mark (s, l);
-    //cout << HRULE << "Marked latex" << LF << HRULE << ms << LF;
+    cout << HRULE << "Marked latex" << LF << HRULE << ms << LF;
     mt= latex_document_to_tree (ms, as_pic);
     mbody= extract (mt, "body");
-    //cout << HRULE << "Marked texmacs" << LF << HRULE << mbody << LF;
+    cout << HRULE << "Marked texmacs" << LF << HRULE << mbody << LF;
     mbody= texmacs_group_markers (mbody);
     //cout << HRULE << "Grouped texmacs" << LF << HRULE << mbody << LF;
     mbody= texmacs_correct_markers (mbody, -1000000000, 1000000000);

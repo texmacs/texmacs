@@ -18,11 +18,6 @@
 #include "fast_search.hpp"
 #include "merge_sort.hpp"
 
-string encode_as_string (path p);
-path decode_as_path (string s);
-string latex_unmark (string s, hashset<path> l,
-                     hashmap<int,array<path> >& corr);
-
 /******************************************************************************
 * Getting the TeXmacs attachments
 ******************************************************************************/
