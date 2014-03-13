@@ -101,19 +101,21 @@ latex_get_packages (string s) {
   int i, n= N(s);
   for (i=0; i<n; )
     if (test (s, i, usepackage)) {
+      int bb= i;
       i += N(usepackage);
       skip_square (s, i);
       skip_spaces (s, i);
       if (i<n && s[i] == '{') {
         int start= i+1;
         if (skip_curly (s, i)) {
+	  int ee= i;
           int j= start;
           skip_spaces (s, j);
           while (true) {
             int b= j;
             while (s[j] != ' ' && s[j] != ',' && s[j] != '}') j++;
             int e= j;
-            h (s (b, e))= path (b, e);
+            h (s (b, e))= path (bb, ee);
             //cout << s (b, e) << " ~~> " << s (start, i-1) << LF;
             skip_spaces (s, j);
             if (s[j] == '}') break;

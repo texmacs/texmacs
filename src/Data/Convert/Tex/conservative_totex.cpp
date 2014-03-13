@@ -321,6 +321,33 @@ merge_styles (string olds, string news) {
 }
 
 static string
+merge_packages (string olds, string news) {
+  // Extract usepackage commands from news
+  hashmap<string,path> newp= latex_get_packages (news);
+  hashmap<int,string> packs;
+  iterator<string> it= iterate (newp);
+  while (it->busy ()) {
+    path p= newp [it->next ()];
+    packs (p[0])= news (p[0], p[1]);
+  }
+  string accum;
+  for (int i=0; i<N(news); i++)
+    if (test (news, i, "\\begin{document}")) break;
+    else if (packs->contains (i)) accum << packs[i] << "\n";
+
+  // Insert result into olds, just after last \usepackage{...}
+  int docpos= search_forwards ("\\begin{document}", olds);
+  if (docpos < 0) return olds;
+  int start= search_backwards ("\\usepackage", docpos, olds);
+  if (start < 0) start= search_backwards ("\\documentclass", docpos, olds);
+  if (start < 0) start= search_backwards ("\\documentstyle", docpos, olds);
+  if (start < 0) return olds;
+  skip_line (olds, start);
+  if (start > docpos) return olds;
+  return olds (0, start) * accum * olds (start, N(olds));
+}
+
+static string
 replace (string s, hashmap<int,string> w, hashmap<int,string> b) {
   string r;
   for (int i=0; i<N(s); )
@@ -390,6 +417,7 @@ latex_merge_preamble (string news, string olds) {
   string oldt= latex_get_texmacs_preamble (olds);
   string newt= latex_get_texmacs_preamble (news);
   oldl= merge_styles (oldl, newl);
+  oldl= merge_packages (oldl, newl);
   oldl= merge_declarations (oldl, newl);
   oldt= merge_declarations (oldt, newt);
   if (oldt == "") return oldl;
