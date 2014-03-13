@@ -278,7 +278,7 @@
 (lazy-define (convert html tmhtml-expand) tmhtml-env-patch)
 (lazy-define (convert latex latex-drd) latex-arity latex-type)
 (lazy-define (convert latex tmtex) tmtex-env-patch)
-(lazy-define (convert latex latex-tools)
+(lazy-define (convert latex latex-tools) latex-set-virtual-packages
              latex-has-style? latex-has-package?
              latex-has-texmacs-style? latex-has-texmacs-package?)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")

@@ -26,6 +26,8 @@
 (define latex-language "english")
 (define latex-style "generic")
 (define latex-packages '())
+(define latex-virtual-packages '())
+(define latex-all-packages '())
 (define latex-texmacs-style "generic")
 (define latex-texmacs-packages '())
 (define latex-dependencies '("generic"))
@@ -51,6 +53,10 @@
   (set! latex-packages ps)
   (latex-set-dependencies))
 
+(tm-define (latex-set-virtual-packages ps)
+  (set! latex-virtual-packages ps)
+  (latex-set-dependencies))
+
 (tm-define (latex-set-texmacs-style sty)
   (set! latex-texmacs-style sty))
 
@@ -58,8 +64,10 @@
   (set! latex-texmacs-packages l))
 
 (define (latex-set-dependencies)
+  (set! latex-all-packages
+        (list-remove-duplicates (append latex-packages latex-virtual-packages)))
   (set! latex-dependencies
-        (latex-packages-dependencies (cons latex-style latex-packages))))
+        (latex-packages-dependencies (cons latex-style latex-all-packages))))
 
 (tm-define (latex-has-style? sty)
   (== sty latex-style))
@@ -433,7 +441,7 @@
   (:synopsis "Return the usepackage command for @doc")
   (set! latex-uses-table (make-ahash-table))
   (latex-use-which-package doc)
-  (let* ((l1 latex-packages)
+  (let* ((l1 latex-all-packages)
 	 (s1 (latex-as-use-package (list-difference l1 '("amsthm"))))
 	 (l2 (map car (ahash-table->list latex-uses-table)))
 	 (s2 (latex-as-use-package (list-difference l2 l1))))
@@ -478,7 +486,8 @@
 	 (pre-catcode  (latex-catcode-defs Text))
 	 (pre-uses     (latex-use-package-command Text)))
     (values
-      (cond ((and (in? "amsthm" latex-packages)(== style "amsart")) "[amsthm]")
+      (cond ((and (in? "amsthm" latex-all-packages)
+                  (== style "amsart")) "[amsthm]")
             ((list? style) (latex-make-option (cDr style)))
             (else ""))
       (string-append pre-uses)

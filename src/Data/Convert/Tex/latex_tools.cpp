@@ -34,7 +34,7 @@ string
 latex_get_texmacs_preamble (string s) {
   int b, e;
   if (!latex_search_texmacs_preamble (s, b, e)) return "";
-  return s (b + N(tmpre_start), e - N(tmpre_start));
+  return s (b + N(tmpre_start), e - N(tmpre_end));
 }
 
 string
@@ -116,7 +116,7 @@ latex_get_packages (string s) {
             while (s[j] != ' ' && s[j] != ',' && s[j] != '}') j++;
             int e= j;
             h (s (b, e))= path (bb, ee);
-            //cout << s (b, e) << " ~~> " << s (start, i-1) << LF;
+            //cout << s (b, e) << " ~~> " << s (bb, ee) << LF;
             skip_spaces (s, j);
             if (s[j] == '}') break;
             if (s[j] == ',') j++;

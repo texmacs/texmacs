@@ -311,6 +311,16 @@ latex_recover_preamble (string news, string olds) {
 * Conserve as much of the style and preamble as possible, otherwise
 ******************************************************************************/
 
+static object
+get_used_packages (string src) {
+  hashmap<string,path> h= latex_get_packages (src);
+  object packs= null_object ();
+  iterator<string> it= iterate (h);
+  while (it->busy ())
+    packs= cons (object (it->next ()), packs);
+  return packs;
+}
+
 static string
 merge_styles (string olds, string news) {
   int oldb, olde, newb, newe;
@@ -444,8 +454,11 @@ conservative_texmacs_to_latex (tree doc, object opts) {
   tree ltarget= atts_map["latex-target"];
   tree target= texmacs_unmark (ltarget);
   if (doc == target) return lsource;
+  call ("latex-set-virtual-packages", get_used_packages (lsource));
   tree idoc= texmacs_invarianted (doc, ltarget, lsource);
+  call ("latex-set-virtual-packages", null_object ());
   string conv= tracked_texmacs_to_latex (idoc, opts);
+  //cout << "Conversion" << LF << HRULE << conv << HRULE;
   if (texmacs_unchanged_preamble (target, doc))
     conv= latex_recover_preamble (conv, lsource);
   else
