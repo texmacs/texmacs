@@ -318,19 +318,20 @@ replace (string s, hashmap<int,string> w, hashmap<int,string> b) {
     if (w->contains (i)) {
       r << b[i];
       i += N(w[i]);
-      // TODO: remove whitespace if b is empty
     }
     else r << s[i++];
   return r;
 }
 
 static string
-merge_preambles (string olds, string news) {
+merge_declarations (string olds, string news) {
   hashmap<string,path> oldd= latex_get_declarations (olds);
   hashmap<string,path> newd= latex_get_declarations (news);
-  cout << "oldd= " << oldd << "\n";
-  cout << "newd= " << newd << "\n";
-  hashmap<int,string> oldw, oldb, neww, newb;
+  //cout << "oldd= " << oldd << "\n";
+  //cout << "newd= " << newd << "\n";
+
+  // Substitute redefinitions into old preamble
+  hashmap<int,string> oldw, oldb;
   iterator<string> it= iterate (oldd);
   while (it->busy ()) {
     string cmd= it->next ();
@@ -339,17 +340,38 @@ merge_preambles (string olds, string news) {
       path newp= newd[cmd];
       oldw (oldp[0])= olds (oldp[0], oldp[1]);
       oldb (oldp[0])= news (newp[0], newp[1]);
-      int l= newp[1];
-      if (l<N(news) && news[l] == '\n') l++;
-      neww (newp[0])= news (newp[0], l);
-      newb (newp[0])= "";
     }
   }
   olds= replace (olds, oldw, oldb);
-  news= replace (news, neww, newb);
-  cout << "olds ->" << LF << HRULE << olds << HRULE;
-  cout << "news ->" << LF << HRULE << news << HRULE;
-  return olds;
+
+  // Extract new definitions from new preamble
+  hashmap<int,string> back;
+  it= iterate (newd);
+  while (it->busy ()) {
+    string cmd= it->next ();
+    if (!oldd->contains (cmd)) {
+      path p= newd [cmd];
+      back (p[0])= news (p[0], p[1]);
+    }
+  }
+  string accum;
+  for (int i=0; i<N(news); i++)
+    if (test (news, i, "\\begin{document}")) break;
+    else if (back->contains (i)) accum << back[i] << "\n";
+
+  // Insert new definitions into old preamble
+  int oldi= search_forwards ("\\begin{document}", olds);
+  int newi= search_forwards ("\\begin{document}", news);
+  if (oldi < 0) {
+    if (ends (olds, "\n") || olds == "" || accum == "") return olds * accum;
+    else return olds * "\n" * accum;
+  }
+  int i= oldi, cnt= 0;
+  while (i>0 && (olds[i-1] == ' ' || olds[i-1] == '\t' || olds[i-1] == '\n')) {
+    i--; if (olds[i] == '\n') cnt++; }
+  if (cnt < 2 && N(accum) != 0) accum= "\n" * accum;
+  if (N(accum) != 0) accum << "\n";
+  return olds (0, oldi) * accum * news (newi, N(news));
 }
 
 string
@@ -358,8 +380,8 @@ latex_merge_preamble (string news, string olds) {
   string newl= latex_remove_texmacs_preamble (news);
   string oldt= latex_get_texmacs_preamble (olds);
   string newt= latex_get_texmacs_preamble (news);
-  newl= merge_preambles (oldl, newl);
-  newt= merge_preambles (oldt, newt);
+  newl= merge_declarations (oldl, newl);
+  newt= merge_declarations (oldt, newt);
   if (newt == "") return newl;
   else return latex_set_texmacs_preamble (newl, newt);
 }
