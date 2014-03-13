@@ -175,12 +175,16 @@ latex_get_declarations (string s) {
       parse_declaration (s, i, "\\newcommand", 2, false, h);
     else if (test (s, i, "\\renewcommand"))
       parse_declaration (s, i, "\\renewcommand", 2, false, h);
+    else if (test (s, i, "\\providecommand"))
+      parse_declaration (s, i, "\\providecommand", 2, false, h);
     else if (test (s, i, "\\newenvironment"))
       parse_declaration (s, i, "\\newenvironment", 3, false, h);
     else if (test (s, i, "\\renewenvironment"))
       parse_declaration (s, i, "\\renewenvironment", 3, false, h);
     else if (test (s, i, "\\newtheorem"))
-      parse_declaration (s, i, "\\newtheorem", 2, false, h);
+      parse_declaration (s, i, "\\newtheorem", 2, true, h);
+    else if (test (s, i, "\\newlength"))
+      parse_declaration (s, i, "\\newlength", 1, false, h);
     else if (s[i] == '%') skip_line (s, i);
     else i++;
   return h;
