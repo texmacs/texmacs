@@ -27,6 +27,7 @@ int    latex_arity (string cmd);
 string latex_get_texmacs_preamble (string s);
 string latex_remove_texmacs_preamble (string s);
 string latex_set_texmacs_preamble (string s, string p);
+string latex_get_style (string s, int& b, int& e);
 hashmap<string,path> latex_get_packages (string s);
 hashmap<string,path> latex_get_declarations (string s);
 hashmap<int,int> latex_declaration_positions (string s);

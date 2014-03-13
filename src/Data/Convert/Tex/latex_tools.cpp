@@ -68,6 +68,30 @@ latex_set_texmacs_preamble (string s, string p) {
 * Collecting the LaTeX packages being used
 ******************************************************************************/
 
+string
+latex_get_style (string s, int& b, int& e) {
+  b= search_forwards ("\\documentclass", s);
+  if (b >= 0) e= b + N (string ("\\documentclass"));
+  else {
+    b= search_forwards ("\\documentstyle", s);
+    if (b >= 0) e= b + N (string ("\\documentstyle"));
+    else { e= -1; return ""; }
+  }
+  skip_spaces (s, e);
+  if (e<N(s) && s[e] == '[')
+    if (!skip_square (s, e)) {
+      b= e= -1; return ""; }
+  skip_spaces (s, e);
+  if (e<N(s) && s[e] == '{') {
+    int bb= e+1;
+    if (skip_curly (s, e)) {
+      int ee= e-1;
+      return s (bb, ee);
+    }
+  }
+  b= e= -1; return "";
+}
+
 hashmap<string,path>
 latex_get_packages (string s) {
   int pos= search_forwards (s, "\\begin{document}");

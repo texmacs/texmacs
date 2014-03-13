@@ -312,6 +312,15 @@ latex_recover_preamble (string news, string olds) {
 ******************************************************************************/
 
 static string
+merge_styles (string olds, string news) {
+  int oldb, olde, newb, newe;
+  string oldst= latex_get_style (olds, oldb, olde);
+  string newst= latex_get_style (news, newb, newe);
+  if (newst == oldst || oldst == "" || newst == "") return olds;
+  return olds (0, oldb) * news (newb, newe) * olds (olde, N(olds));
+}
+
+static string
 replace (string s, hashmap<int,string> w, hashmap<int,string> b) {
   string r;
   for (int i=0; i<N(s); )
@@ -380,10 +389,11 @@ latex_merge_preamble (string news, string olds) {
   string newl= latex_remove_texmacs_preamble (news);
   string oldt= latex_get_texmacs_preamble (olds);
   string newt= latex_get_texmacs_preamble (news);
-  newl= merge_declarations (oldl, newl);
-  newt= merge_declarations (oldt, newt);
-  if (newt == "") return newl;
-  else return latex_set_texmacs_preamble (newl, newt);
+  oldl= merge_styles (oldl, newl);
+  oldl= merge_declarations (oldl, newl);
+  oldt= merge_declarations (oldt, newt);
+  if (oldt == "") return oldl;
+  else return latex_set_texmacs_preamble (oldl, oldt);
 }
 
 /******************************************************************************
