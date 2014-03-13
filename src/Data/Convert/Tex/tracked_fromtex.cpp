@@ -586,10 +586,10 @@ tracked_latex_to_texmacs (string s, bool as_pic) {
     //cout << HRULE << "Invalid markers" << LF << HRULE << invalid << LF;
     hashset<int> l= copy (invalid);
     string ms= latex_mark (s, l);
-    cout << HRULE << "Marked latex" << LF << HRULE << ms << LF;
+    //cout << HRULE << "Marked latex" << LF << HRULE << ms << LF;
     mt= latex_document_to_tree (ms, as_pic);
     mbody= extract (mt, "body");
-    cout << HRULE << "Marked texmacs" << LF << HRULE << mbody << LF;
+    //cout << HRULE << "Marked texmacs" << LF << HRULE << mbody << LF;
     mbody= texmacs_group_markers (mbody);
     //cout << HRULE << "Grouped texmacs" << LF << HRULE << mbody << LF;
     mbody= texmacs_correct_markers (mbody, -1000000000, 1000000000);

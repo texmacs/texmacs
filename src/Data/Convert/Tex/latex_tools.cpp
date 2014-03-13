@@ -107,6 +107,16 @@ latex_get_packages (string s) {
 * Collecting LaTeX declarations
 ******************************************************************************/
 
+static void
+rewind_start_line (string s, int& i) {
+  while (i>0 && s[i-1] != '\n') i--;
+}
+
+static void
+skip_end_line (string s, int& i) {
+  while (i<N(s) && s[i] != '\n') i++;
+}
+
 static bool
 parse_declaration_sub (string s, int& i, string cmd,
                        int arity, bool trail_opt,
@@ -148,6 +158,24 @@ parse_declaration_sub (string s, int& i, string cmd,
   }
   if (starts (first, "\\"))
     first= first (1, N(first));
+  if (cmd == "\\newtheorem") {
+    int bb= b;
+    rewind_start_line (s, bb);
+    if (test (s, bb, "{\\theorembodyfont") && e<N(s) && s[e] == '}') {
+      b= bb;
+      skip_end_line (s, e);
+    }
+    else if (bb>0) {
+      bb--;
+      rewind_start_line (s, bb);
+      if (test (s, bb, "\\theoremstyle")) {
+	int bbb= bb-1;
+	rewind_start_line (s, bb);
+	if (test (s, bbb, "\\newtheoremstyle")) bb= bbb;
+	b= bb;
+      }
+    }
+  }
   h (first)= path (b, e);
   //cout << first << " ~~> " << s (b, e) << LF;
   return true;
