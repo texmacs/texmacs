@@ -185,40 +185,85 @@ texmacs_invarianted_extend (tree id, string src) {
   return as_string (b) * ":" * as_string (e);
 }
 
+static void
+get_subtree_paths (tree t, path p, hashmap<tree,path>& h) {
+  if (h->contains (t)) h (t)= path (-1);
+  else h (t)= p;
+  if (is_compound (t))
+    for (int i=0; i<N(t); i++)
+      get_subtree_paths (t[i], p * i, h);
+}
+
 tree
-texmacs_invarianted_merge (tree t, string src) {
+texmacs_invarianted_merge (tree t, string src,
+                           tree org, tree u, hashmap<tree,path> h) {
   if (is_atomic (t)) return t;
   else {
-    int i, n= N(t);
-    tree r (t, n);
-    for (i=0; i<n; i++)
-      r[i]= texmacs_invarianted_merge (t[i], src);
-    if (is_concat (r) || is_document (r)) {
-      tree m (L(r));
+    if (true) {
+      int i, n= N(t);
+      tree r (t, n);
+      for (i=0; i<n; i++)
+        r[i]= texmacs_invarianted_merge (t[i], src, org, u, h);
+      t= r;
+    }
+    if (is_concat (t) || is_document (t)) {
+      int i, n= N(t);
+      tree r (L(t));
       for (i=0; i<n; i++) {
-        if (is_document (r) && is_compound (r[i], "ilx", 1))
-          r[i]= compound ("ilx", texmacs_invarianted_extend (r[i][0], src));
-        if (N(m) > 0 &&
-            is_compound (m[N(m)-1], "ilx", 1) &&
-            is_compound (r[i], "ilx", 1)) {
+        if (is_document (t) && is_compound (t[i], "ilx", 1))
+          t[i]= compound ("ilx", texmacs_invarianted_extend (t[i][0], src));
+
+        if (N(r) > 0 &&
+            is_compound (r[N(r)-1], "ilx", 1) &&
+            is_compound (t[i], "ilx", 1)) {
           int b1, e1, b2, e2;
-          get_range (m[N(m)-1][0], b1, e1, src);
-          get_range (r[i][0], b2, e2, src);
+          get_range (r[N(r)-1][0], b1, e1, src);
+          get_range (t[i][0], b2, e2, src);
           if (e1 <= b2) {
             skip_latex_spaces (src, e1);
             if (e1 >= b2) {
               string id= as_string (b1) * ":" * as_string (e2);
-              m[N(m)-1][0]= id;
+              r[N(r)-1][0]= id;
               continue;
             }
           }
         }
-        m << r[i];
+
+        int j= i;
+        while (j<n && !is_compound (t[j], "ilx", 1)) j++;
+        if (j < n && j > i && N(r) > 0 && is_compound (r[N(r)-1], "ilx", 1)) {
+          // NOTE: this special treatment allows for the recognition of
+          // pieces which may be invarianted even in case of missing markers
+          int b1, e1, b2, e2;
+          bool ok1= get_range (r[N(r)-1][0], b1, e1, src);
+          bool ok2= get_range (t[j][0], b2, e2, src);
+          if (ok1 && ok2 && e1 <= b2) {
+            path p= h [org[i-1]];
+            if (p != path (-1)) {
+              tree pt= subtree (u, path_up (p));
+              int k, k2= last_item (p);
+              for (k=i-1; k<=j && k2<N(pt); k++, k2++)
+                if (org[k] != pt[k2]) {
+                  //cout << "  <<< " << org[k] << LF
+                  //     << "  >>> " << pt[k2] << LF;
+                  break;
+                }
+              if (k > j) {
+                string id= as_string (b1) * ":" * as_string (e2);
+                r[N(r)-1]= id;
+                i= j;
+                continue;
+              }
+            }
+          }
+        }
+
+        r << t[i];
       }
-      if (is_concat (m) && N(m) == 1) m= m[0];
-      return m;
+      if (is_concat (r) && N(r) == 1) r= r[0];
+      return r;
     }
-    else return r;
+    return t;
   }
 }
 
@@ -241,16 +286,21 @@ texmacs_invarianted_replace (tree t, string src) {
 
 tree
 texmacs_invarianted (tree t, tree oldt, string src) {
-  // TODO: style, preamble, environment variables, etc.
-  tree body= extract (t, "body");
+  tree orgbody= extract (t, "body");
   tree oldbody= extract (oldt, "body");
   hashmap<tree,tree> corr (UNINIT);
   hashmap<tree,tree> pred (UNINIT);
   hashmap<tree,tree> succ (UNINIT);
-  (void) texmacs_correspondence (oldbody, corr);
+  tree uoldbody= texmacs_correspondence (oldbody, corr);
   texmacs_neighbours (oldbody, pred, succ);
+  tree body= orgbody;
   body= texmacs_invarianted (body, UNINIT, -1, src, corr, pred, succ);
-  body= texmacs_invarianted_merge (body, src);
+  hashmap<tree,path> h (path (-1));
+  //cout << "body" << LF << HRULE << body << LF << HRULE;
+  //cout << "orgbody" << LF << HRULE << orgbody << LF << HRULE;
+  //cout << "uoldbody" << LF << HRULE << uoldbody << LF << HRULE;
+  get_subtree_paths (uoldbody, path (), h);
+  body= texmacs_invarianted_merge (body, src, orgbody, uoldbody, h);
   body= texmacs_invarianted_replace (body, src);
   return change_doc_attr (t, "body", body);
 }
