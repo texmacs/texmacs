@@ -323,12 +323,16 @@ merge_styles (string olds, string news) {
 static string
 merge_packages (string olds, string news) {
   // Extract usepackage commands from news
+  hashmap<string,path> oldp= latex_get_packages (olds);
   hashmap<string,path> newp= latex_get_packages (news);
   hashmap<int,string> packs;
   iterator<string> it= iterate (newp);
   while (it->busy ()) {
-    path p= newp [it->next ()];
-    packs (p[0])= news (p[0], p[1]);
+    string name= it->next ();
+    if (!oldp->contains (name)) {
+      path p= newp [name];
+      packs (p[0])= news (p[0], p[1]);
+    }
   }
   string accum;
   for (int i=0; i<N(news); i++)
