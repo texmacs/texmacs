@@ -2584,11 +2584,9 @@
 	(else (for-each collect-user-defs-sub (cdr t)))))
 
 (define (collect-user-defs t)
-  (if (== (get-preference "texmacs->latex:expand-user-macros") "on") '()
-      (begin
-	(set! tmtex-user-defs-table (make-ahash-table))
-	(collect-user-defs-sub (cons 'document (tmtex-filter-preamble t)))
-	(ahash-set->list tmtex-user-defs-table))))
+  (set! tmtex-user-defs-table (make-ahash-table))
+  (collect-user-defs-sub (cons 'document (tmtex-filter-preamble t)))
+  (ahash-set->list tmtex-user-defs-table))
 
 (define (as-string sym)
   (with s (symbol->string sym)
@@ -2601,18 +2599,32 @@
 	 (l2 (map (cut assoc-ref <> 'first) l1)))
     (map as-string l2)))
 
+(define (collect-user-macros-in t h)
+  (when (tm-compound? t)
+    (when (tree-label-extension? (tm-label t))
+      (ahash-set! h (symbol->string (tm-label t)) #t))
+    (for-each (cut collect-user-macros-in <> h) (tm-children t))))
+
+(define (collect-user-macros t)
+  (with h (make-ahash-table)
+    (collect-user-macros-in t h)
+    (ahash-set->list h)))
+
 (define (tmtex-env-macro name)
   `(associate ,name (xmacro "x" (eval-args "x"))))
 
-(tm-define (tmtex-env-patch t)
-  (let* ((l1 (logic-first-list 'tmtex-methods%))
+(tm-define (tmtex-env-patch t l0)
+  (let* ((st (tree->stree t))
+         (l1 (list-difference (logic-first-list 'tmtex-methods%) '("!ilx")))
 	 (l2 (logic-first-list 'tmtex-tmstyle%))
 	 (l3 (map as-string (logic-apply-list '(latex-tag%))))
 	 (l4 (map as-string (logic-apply-list '(latex-symbol%))))
 	 (l5 (list-difference l3 l4))
-	 (l6 (map as-string (collect-user-defs (tree->stree t))))
-	 (l7 (list-difference (list-union l2 (list-union l5 l6)) l1)))
-    `(collection ,@(map tmtex-env-macro l7))))
+	 (l6 (map as-string (collect-user-defs st)))
+	 (l7 (if (preference-on? "texmacs->latex:expand-user-macros") '() l6))
+         (l8 (list-difference (collect-user-macros st) (list-union l0 l6)))
+	 (l9 (list-difference (list-union l2 l5 l7 l8) l1)))
+    `(collection ,@(map tmtex-env-macro l9))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface
