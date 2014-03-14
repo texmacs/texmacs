@@ -33,6 +33,7 @@ hashmap<string,path> latex_get_declarations (string s);
 hashmap<int,int> latex_declaration_positions (string s);
 hashmap<string,path> latex_get_metadata (string s, bool abs_flag);
 array<path> latex_get_metadata_snippets (string s, bool abs_flag);
+bool latex_unchanged_metadata (string olds, string news, bool abs_flag);
 
 bool skip_curly (string s, int& i);
 bool skip_square (string s, int& i);

@@ -340,21 +340,6 @@ texmacs_merge_preamble (tree newt, tree oldt) {
 * Conserve titles when possible
 ******************************************************************************/
 
-bool
-latex_unchanged_metadata (string old, string mod) {
-  int old_start= search_forwards ("\\title", old);
-  int mod_start= search_forwards ("\\title", mod);
-  if (old_start < 0 || mod_start < 0) return false;
-  int old_pos= search_forwards ("\\maketitle", old);
-  int mod_pos= search_forwards ("\\maketitle", mod);
-  if (old_pos < 0 && mod_pos < 0) {
-    old_pos= search_forwards ("\\end{frontmatter}", old);
-    mod_pos= search_forwards ("\\end{frontmatter}", mod);
-  }
-  if (old_pos < 0 || mod_pos < 0) return false;
-  return old (old_start, old_pos) == mod (mod_start, mod_pos);
-}
-
 int
 search_doc_data (tree doc) {
   if (!is_document (doc)) return -1;
@@ -371,6 +356,8 @@ tree
 texmacs_recover_metadata (tree doc, tree src) {
   tree old_body= extract (src, "body");
   tree new_body= extract (doc, "body");
+  //cout << "old_body" << LF << HRULE << old_body << LF << HRULE;
+  //cout << "new_body" << LF << HRULE << new_body << LF << HRULE;
   int old_pos= search_doc_data (old_body);
   int new_pos= search_doc_data (new_body);
   if (old_pos < 0 || new_pos < 0) return doc;
@@ -384,8 +371,6 @@ texmacs_recover_metadata (tree doc, tree src) {
 * Conserve abstracts when possible
 ******************************************************************************/
 
-// TODO: to be completed
-
 int
 search_abstract_data (tree doc) {
   if (!is_document (doc)) return -1;
@@ -396,6 +381,33 @@ search_abstract_data (tree doc) {
       pos= i;
     }
   return pos;
+}
+
+tree
+texmacs_recover_abstract (tree doc, tree src) {
+  tree old_body= extract (src, "body");
+  tree new_body= extract (doc, "body");
+  //cout << "old_body" << LF << HRULE << old_body << LF << HRULE;
+  //cout << "new_body" << LF << HRULE << new_body << LF << HRULE;
+  int old_pos= search_abstract_data (old_body);
+  int new_pos= search_abstract_data (new_body);
+  if (old_pos < 0 || new_pos < 0) return doc;
+  new_body[new_pos]= old_body[old_pos];
+  //cout << "Recovered abstract " << old_body[old_pos] << LF;
+  doc= change_doc_attr (doc, "body", new_body);
+  return doc;
+}
+
+tree
+texmacs_title_before_abstract (tree doc) {
+  tree body= extract (doc, "body");
+  int tit= search_doc_data (body);
+  int abs= search_abstract_data (body);
+  if (tit < 0 || abs < 0 || tit < abs) return doc;
+  tree r (DOCUMENT);
+  r << A (body (0, abs)) << body[tit] << body[abs]
+    << A (body (abs+1, tit)) << A (body (tit+1, N(body)));
+  return change_doc_attr (doc, "body", r);
 }
 
 /******************************************************************************
@@ -423,14 +435,20 @@ conservative_latex_to_texmacs (string s, bool as_pic) {
   tree ibody= extract (iconv, "body");
   tree body= latex_invarianted_replace (ibody, srcb);
   tree conv= change_doc_attr (iconv, "body", body);
+  //cout << "Old body" << LF << HRULE << srcb << LF << HRULE;
+  //cout << "New body" << LF << HRULE << body << LF << HRULE;
+  //cout << "Inv body" << LF << HRULE << ibody << LF << HRULE;
   if (latex_unchanged_style (tar, s))
     conv= texmacs_recover_style (conv, src);
   if (latex_unchanged_preamble (tar, s))
     conv= texmacs_recover_preamble (conv, src);
   else
     conv= texmacs_merge_preamble (conv, src);
-  if (latex_unchanged_metadata (tar, s))
+  if (latex_unchanged_metadata (tar, s, false))
     conv= texmacs_recover_metadata (conv, src);
+  if (latex_unchanged_metadata (tar, s, true))
+    conv= texmacs_recover_abstract (conv, src);
+  conv= texmacs_title_before_abstract (conv);
   //cout << "conv= " << conv << LF;
   return conv;
 }

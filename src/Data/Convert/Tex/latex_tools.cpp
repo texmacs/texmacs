@@ -448,3 +448,14 @@ latex_get_metadata_snippets (string s, bool abs_flag) {
   //cout << "a= " << a << ", " << abs_flag << LF;
   return a;
 }
+
+bool
+latex_unchanged_metadata (string olds, string news, bool abs_flag) {
+  array<path> oldps= latex_get_metadata_snippets (olds, abs_flag);
+  array<path> newps= latex_get_metadata_snippets (news, abs_flag);
+  if (N(oldps) != N(newps)) return false;
+  for (int i=0; i<N(oldps); i++)
+    if (olds (oldps[i][0], oldps[i][1]) != news (newps[i][0], newps[i][1]))
+      return false;
+  return true;
+}
