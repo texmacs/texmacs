@@ -392,8 +392,15 @@
   (with s (list->ahash-set l2)
     (list-filter l1 (lambda (x) (not (ahash-ref s x))))))
 
-(define-public (list-union l1 l2)
-  (append l1 (list-difference l2 l1)))
+(define-public (list-union . ls)
+  (let* ((cumul (list))
+         (done? (make-ahash-table)))
+    (for (l ls)
+      (for (x l)
+        (when (not (ahash-ref done? x))
+          (set! cumul (cons x cumul))
+          (ahash-set! done? x #t))))
+    (reverse cumul)))
 
 (define-public (list-permutation? l1 l2)
   (and (null? (list-difference l1 l2))
