@@ -19,11 +19,55 @@
 #include "merge_sort.hpp"
 
 /******************************************************************************
+* Get correspondence between subtrees when upgrading texmacs documents
+******************************************************************************/
+
+static void
+trivial_correspondence (tree ot, tree nt, path op, path np,
+                        hashmap<path,path>& updic) {
+  updic (op)= np;
+  if (is_compound (ot))
+    for (int i=0; i<N(ot); i++)
+      trivial_correspondence (ot[i], nt[i], op * i, np * i, updic);
+}
+
+static void
+get_correspondence (tree ot, tree nt, path op, path np, string v,
+                    hashmap<path,path>& updic) {
+  // NOTE: this is a very naive implementation
+  // In the future we might want to do something more sophisticated
+  if (ot == nt)
+    trivial_correspondence (ot, nt, op, np, updic);
+  else {
+    if (is_nil (op) || upgrade (ot, v) == nt) updic (op)= np;
+    if (is_compound (ot) && L(ot) == L(nt) && N(ot) == N(nt)) {
+      for (int i=0; i<N(ot); i++)
+        get_correspondence (ot[i], nt[i], op * i, np * i, v, updic);
+    }
+  }
+}
+
+static tree
+upgrade_texmacs_attachments (tree oldt, hashmap<path,path>& updic) {
+  string v= as_string (extract (oldt, "TeXmacs"));
+  //cout << "Old version: " << v << LF;
+  //cout << "New version: " << TEXMACS_VERSION << LF;
+  if (v == "") return oldt;
+  if (v == TEXMACS_VERSION) return oldt;
+  tree newt= upgrade (oldt, v);
+  tree oldb= extract (oldt, "body");
+  tree newb= extract (newt, "body");
+  get_correspondence (oldb, newb, path (), path (), v, updic);
+  return newt;
+}
+
+/******************************************************************************
 * Getting the TeXmacs attachments
 ******************************************************************************/
 
 static bool
-get_texmacs_attachments (string s, string& mod, tree& src, string& mtar) {
+get_texmacs_attachments (string s, string& mod, tree& src, string& mtar,
+                         hashmap<path,path>& updic) {
   string bs= "\n%%%%%%%%%% Begin TeXmacs source\n";
   string es= "\n%%%%%%%%%% End TeXmacs source\n";
   int bpos= search_forwards (bs, 0, s);
@@ -43,7 +87,22 @@ get_texmacs_attachments (string s, string& mod, tree& src, string& mtar) {
   mod = s (0, bpos);
   src= scheme_to_tree (atts (0, spos));
   mtar= atts (spos + N(sep), N(atts));
+  src= upgrade_texmacs_attachments (src, updic);
   return true;
+}
+
+static hashmap<path,path>
+pullback (hashmap<path,path> corr, hashmap<path,path> updic) {
+  hashmap<path,path> r;
+  iterator<path> it= iterate (corr);
+  while (it->busy ()) {
+    path p= it->next ();
+    if (updic->contains (p)) {
+      r (updic [p])= corr [p];
+      //cout << updic[p] << " <- " << p << " -> " << corr[p] << LF;
+    }
+  }
+  return r;
 }
 
 /******************************************************************************
@@ -421,13 +480,15 @@ conservative_latex_to_texmacs (string s, bool as_pic) {
   string mod;
   tree src;
   string mtar;
-  bool ok= get_texmacs_attachments (s, mod, src, mtar);
-  tree srcb= extract (src, "body");
+  hashmap<path,path> updic;
+  bool ok= get_texmacs_attachments (s, mod, src, mtar, updic);
   if (!ok) return tracked_latex_to_texmacs (s, as_pic);
   hashmap<path,path> corr;
   string tar= latex_correspondence (mtar, corr);
-  if (s == tar) return src;
+  if (N(updic) != 0) corr= pullback (corr, updic);
   //cout << "corr= " << corr << LF;
+  if (s == tar) return src;
+  tree srcb= extract (src, "body");
   string imod= latex_invarianted (mod, srcb, tar, corr);
   //cout << "imod= " << imod << LF;
   tree iconv= tracked_latex_to_texmacs (imod, as_pic);
