@@ -308,6 +308,32 @@ texmacs_invarianted (tree t, tree oldt, string src) {
 }
 
 /******************************************************************************
+* Conserve as much of the metadata as possible
+******************************************************************************/
+
+static bool
+latex_unchanged_metadata (tree oldt, tree newt) {
+  tree oldb= extract (oldt, "body");
+  tree newb= extract (newt, "body");
+  int  oldi= search_doc_data (oldb);
+  int  newi= search_doc_data (newb);
+  return oldi >= 0 && newi >= 0 && oldb[oldi] == newb[newi];
+}
+
+string
+latex_merge_metadata (string olds, string news) {
+  array<path> oldps= latex_get_metadata_snippets (olds);
+  array<path> newps= latex_get_metadata_snippets (news);
+  if (N(oldps) > 0 && N(newps) == 1) {
+    string accum;
+    for (int i=0; i<N(oldps); i++)
+      accum << olds (oldps[i][0], oldps[i][1]);
+    return news (0, newps[0][0]) * accum * news (newps[0][1], N(news));
+  }
+  else return news;
+}
+
+/******************************************************************************
 * Conserve style and preamble in case of unchanged preambles
 ******************************************************************************/
 
@@ -477,7 +503,7 @@ merge_declarations (string olds, string news) {
 }
 
 string
-latex_merge_preamble (string news, string olds) {
+latex_merge_preamble (string olds, string news) {
   string oldl= latex_remove_texmacs_preamble (olds);
   string newl= latex_remove_texmacs_preamble (news);
   string oldt= latex_get_texmacs_preamble (olds);
@@ -510,10 +536,12 @@ conservative_texmacs_to_latex (tree doc, object opts) {
   call ("latex-set-virtual-packages", get_used_packages (lsource));
   string conv= tracked_texmacs_to_latex (latex_expand (idoc), opts);
   call ("latex-set-virtual-packages", null_object ());
+  if (latex_unchanged_metadata (target, doc))
+    conv= latex_merge_metadata (lsource, conv);
   //cout << "Conversion" << LF << HRULE << conv << HRULE;
   //if (texmacs_unchanged_preamble (target, doc))
   //conv= latex_recover_preamble (conv, lsource);
   //else
-  conv= latex_merge_preamble (conv, lsource);
+  conv= latex_merge_preamble (lsource, conv);
   return conv;
 }

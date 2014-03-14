@@ -355,7 +355,7 @@ latex_unchanged_metadata (string old, string mod) {
   return old (old_start, old_pos) == mod (mod_start, mod_pos);
 }
 
-static int
+int
 search_doc_data (tree doc) {
   if (!is_document (doc)) return -1;
   int pos= -1;

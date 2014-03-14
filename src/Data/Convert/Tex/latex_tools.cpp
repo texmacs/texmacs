@@ -256,3 +256,166 @@ latex_declaration_positions (string s) {
   }
   return r;
 }
+
+/******************************************************************************
+* Collecting LaTeX metadata
+******************************************************************************/
+
+static hashmap<string,int> metadata_commands (-1);
+
+static int
+get_metadata_arity (string s) {
+  if (N (metadata_commands) == 0) {
+    metadata_commands ("\\accepted")= 1;
+    metadata_commands ("\\address")= 1;
+    metadata_commands ("\\additionalauthors")= 1;
+    metadata_commands ("\\addtocmark")= 1;
+    metadata_commands ("\\affiliation")= 1;
+    metadata_commands ("\\altaffiliation")= 1;
+    metadata_commands ("\\author")= 1;
+    metadata_commands ("\\authorrunning")= 1;
+    metadata_commands ("\\category")= 1;
+    metadata_commands ("\\classification")= 1;
+    metadata_commands ("\\contrib")= 1;
+    metadata_commands ("\\copyrightholder")= 1;
+    metadata_commands ("\\copyrightyear")= 1;
+    metadata_commands ("\\curaddr")= 1;
+    metadata_commands ("\\date")= 1;
+    metadata_commands ("\\dedicatory")= 1;
+    metadata_commands ("\\email")= 1;
+    metadata_commands ("\\homepage")= 1;
+    metadata_commands ("\\institute")= 1;
+    metadata_commands ("\\footnotetext")= 1;
+    metadata_commands ("\\maketitle")= 0;
+    metadata_commands ("\\noaffiliation")= 1;
+    metadata_commands ("\\numberofauthors")= 1;
+    metadata_commands ("\\preprint")= 1;
+    metadata_commands ("\\received")= 1;
+    metadata_commands ("\\revised")= 1;
+    metadata_commands ("\\subtitle")= 1;
+    metadata_commands ("\\title")= 1;
+    metadata_commands ("\\titlerunning")= 1;
+    metadata_commands ("\\thanks")= 1;
+    metadata_commands ("\\tmaffiliation")= 1;
+    metadata_commands ("\\tmemail")= 1;
+    metadata_commands ("\\tmhomepage")= 1;
+    metadata_commands ("\\tmmisc")= 1;
+    metadata_commands ("\\tmnote")= 1;
+    metadata_commands ("\\tmsubtitle")= 1;
+    metadata_commands ("\\toctitle")= 1;
+    metadata_commands ("\\tocauthor")= 1;
+    metadata_commands ("\\translator")= 1;
+    metadata_commands ("\\urladdr")= 1;
+
+    //metadata_commands ("\\keywords")= 1;
+    //metadata_commands ("\\pacs")= 1;
+    //metadata_commands ("\\pagenumbering")= 1;
+    //metadata_commands ("\\subclass")= 1;
+    //metadata_commands ("\\subjclass")= 1;
+    //metadata_commands ("\\terms")= 1;
+    //metadata_commands ("\\tmacm")= 1;
+    //metadata_commands ("\\tmarxiv")= 1;
+    //metadata_commands ("\\tmkeywords")= 1;
+    //metadata_commands ("\\tmmsc")= 1;
+    //metadata_commands ("\\tmpacs")= 1;
+  }
+  return metadata_commands [s];
+}
+
+static bool
+parse_command_sub (string s, int& i, string cmd, int arity,
+                   hashmap<string,path>& h) {
+  int b= i, n= N(s);
+  i += N(cmd);
+  for (int arg=0; arg<arity; arg++) {
+    skip_whitespace (s, i);
+    while (i<n && s[i] == '[') {
+      if (!skip_square (s, i)) return false;
+      skip_whitespace (s, i);
+    }
+    if (i<n && s[i] == '{') {
+      if (!skip_curly (s, i)) return false;
+    }
+    else return false;
+  }
+  h (cmd)= path (b, i);
+  //cout << cmd << " ~~> " << s (b, i) << LF;
+  return true;
+}
+
+static void
+parse_command (string s, int& i, string cmd, int arity,
+               hashmap<string,path>& h) {
+  int b= i;
+  if (!parse_command_sub (s, i, cmd, arity, h))
+    i= b + N(cmd);
+}
+
+static void
+parse_environment (string s, int& i, string env, hashmap<string,path>& h) {
+  string envb= "\\begin{" * env * "}";
+  string enve= "\\end{" * env * "}";
+  skip_whitespace (s, i);
+  if (test (s, i, envb)) {
+    int pos= search_forwards (enve, i + N(envb), s);
+    if (pos > i) i= pos;
+  }
+}
+
+hashmap<string,path>
+latex_get_metadata (string s) {
+  hashmap<string,path> h;
+  int i, n= N(s);
+  for (i=0; i<n; )
+    if (s[i] == '%') {
+      if (test (s, i, "%%%%%%%%%% Start TeXmacs macros")) {
+        int pos= search_forwards ("%%%%%%%%%% End TeXmacs macros", i, s);
+        if (pos > i) i= pos;
+      }
+      skip_line (s, i);
+    }
+    else if (s[i] != '\\') i++;
+    else if (test (s, i, "\\begin{frontmatter}"))
+      parse_environment (s, i, "frontmatter", h);
+    else {
+      int start= i;
+      i++;
+      while (i<n && is_alpha (s[i])) i++;
+      string cmd= s (start, i);
+      int arity= get_metadata_arity (cmd);
+      if (arity >= 0) {
+        i= start;
+        parse_command (s, i, cmd, arity, h);
+      }
+      if (cmd == "\\maketitle") break;
+    }
+  return h;
+}
+
+array<path>
+latex_get_metadata_snippets (string s) {
+  hashmap<string,path> h= latex_get_metadata (s);
+  hashmap<int,int> portions;
+  iterator<string> it= iterate (h);
+  while (it->busy ()) {
+    path p= h [it->next ()];
+    portions (p[0])= p[1];
+  }
+  array<path> a;
+  int i, n= N(s);
+  for (i=0; i<n; ) {
+    if (portions->contains (i)) {
+      int j= portions[i];
+      while (j<n)
+        if (s[j] == ' ' || s[j] == '\t' || s[j] == '\n') j++;
+        else if (s[j] == '%') skip_line (s, j);
+        else break;
+      if (N(a) > 0 && a[N(a)-1][1] == i) a[N(a)-1][1]= j;
+      else a << path (i, j);
+      i= j;
+    }
+    else i++;
+  }
+  //cout << "a= " << a << LF;
+  return a;
+}
