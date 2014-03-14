@@ -407,6 +407,8 @@ latex_get_metadata_snippets (string s) {
     if (portions->contains (i)) {
       int j= portions[i];
       while (j<n)
+        // TODO: we might refine the inclusion/exclusion of comments
+        // inside the portions, by a careful examination of double line breaks
         if (s[j] == ' ' || s[j] == '\t' || s[j] == '\n') j++;
         else if (s[j] == '%') skip_line (s, j);
         else break;
