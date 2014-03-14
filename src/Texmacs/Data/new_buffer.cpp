@@ -499,11 +499,14 @@ buffer_export (url name, url dest, string fm) {
     body= vw->ed->exec_verbatim (body);
   if (fm == "html")
     body= vw->ed->exec_html (body);
-  if (fm == "latex")
-    body= vw->ed->exec_latex (body);
+  //if (fm == "latex")
+  //body= vw->ed->exec_latex (body);
 
   vw->ed->get_data (vw->buf->data);
   tree doc= attach_data (body, vw->buf->data, !vw->ed->get_save_aux());
+
+  if (fm == "latex")
+    doc= change_doc_attr (doc, "view", as_string (abstract_view (vw)));
 
   object arg1 (vw->buf->buf->name);
   object arg2 (body);
@@ -512,6 +515,14 @@ buffer_export (url name, url dest, string fm) {
     doc << compound ("links", links);
   
   return export_tree (doc, dest, fm);
+}
+
+tree
+latex_expand (tree doc) {
+  tm_view vw= concrete_view (url (as_string (extract (doc, "view"))));
+  tree body= vw->ed->exec_latex (extract (doc, "body"));
+  doc= change_doc_attr (doc, "body", body);
+  return remove_doc_attr (doc, "view");
 }
 
 bool

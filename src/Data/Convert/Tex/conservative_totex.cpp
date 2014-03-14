@@ -15,6 +15,8 @@
 #include "scheme.hpp"
 #include "iterator.hpp"
 
+tree latex_expand (tree doc);
+
 /******************************************************************************
 * Extract tables for source/target correspondences
 ******************************************************************************/
@@ -250,7 +252,7 @@ texmacs_invarianted_merge (tree t, string src,
                 }
               if (k > j) {
                 string id= as_string (b1) * ":" * as_string (e2);
-                r[N(r)-1]= id;
+                r[N(r)-1][0]= id;
                 i= j;
                 continue;
               }
@@ -495,18 +497,18 @@ latex_merge_preamble (string news, string olds) {
 string
 conservative_texmacs_to_latex (tree doc, object opts) {
   if (get_preference ("texmacs->latex:conservative", "off") != "on")
-    return tracked_texmacs_to_latex (doc, opts);
+    return tracked_texmacs_to_latex (latex_expand (doc), opts);
   tree atts= extract (doc, "attachments");
   hashmap<string,tree> atts_map (UNINIT, atts);
   if (!atts_map->contains ("latex-source"))
-    return tracked_texmacs_to_latex (doc, opts);
+    return tracked_texmacs_to_latex (latex_expand (doc), opts);
   string lsource= as_string (atts_map["latex-source"]);
   tree ltarget= atts_map["latex-target"];
   tree target= texmacs_unmark (ltarget);
   if (doc == target) return lsource;
   tree idoc= texmacs_invarianted (doc, ltarget, lsource);
   call ("latex-set-virtual-packages", get_used_packages (lsource));
-  string conv= tracked_texmacs_to_latex (idoc, opts);
+  string conv= tracked_texmacs_to_latex (latex_expand (idoc), opts);
   call ("latex-set-virtual-packages", null_object ());
   //cout << "Conversion" << LF << HRULE << conv << HRULE;
   //if (texmacs_unchanged_preamble (target, doc))
