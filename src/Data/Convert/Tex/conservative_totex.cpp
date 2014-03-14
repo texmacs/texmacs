@@ -363,6 +363,8 @@ latex_merge_abstract (string olds, string news) {
 * Conserve style and preamble in case of unchanged preambles
 ******************************************************************************/
 
+/* NOTE: this code has currently been superseded
+
 static tree
 simplify_initial (tree init) {
   if (!is_func (init, COLLECTION)) return init;
@@ -410,6 +412,8 @@ latex_recover_preamble (string news, string olds) {
   if (oldp < 0 || newp < 0) return news;
   return olds (0, oldp) * news (newp, N(news));
 }
+
+*/
 
 /******************************************************************************
 * Conserve as much of the style and preamble as possible, otherwise
