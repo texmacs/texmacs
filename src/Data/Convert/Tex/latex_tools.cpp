@@ -262,9 +262,10 @@ latex_declaration_positions (string s) {
 ******************************************************************************/
 
 static hashmap<string,int> metadata_commands (-1);
+static hashmap<string,int> abstract_commands (-1);
 
 static int
-get_metadata_arity (string s) {
+get_metadata_arity (string s, bool abs_flag) {
   if (N (metadata_commands) == 0) {
     metadata_commands ("\\accepted")= 1;
     metadata_commands ("\\address")= 1;
@@ -307,19 +308,20 @@ get_metadata_arity (string s) {
     metadata_commands ("\\translator")= 1;
     metadata_commands ("\\urladdr")= 1;
 
-    //metadata_commands ("\\keywords")= 1;
-    //metadata_commands ("\\pacs")= 1;
-    //metadata_commands ("\\pagenumbering")= 1;
-    //metadata_commands ("\\subclass")= 1;
-    //metadata_commands ("\\subjclass")= 1;
-    //metadata_commands ("\\terms")= 1;
-    //metadata_commands ("\\tmacm")= 1;
-    //metadata_commands ("\\tmarxiv")= 1;
-    //metadata_commands ("\\tmkeywords")= 1;
-    //metadata_commands ("\\tmmsc")= 1;
-    //metadata_commands ("\\tmpacs")= 1;
+    abstract_commands ("\\keywords")= 1;
+    abstract_commands ("\\pacs")= 1;
+    abstract_commands ("\\subclass")= 1;
+    abstract_commands ("\\subjclass")= 1;
+    abstract_commands ("\\terms")= 1;
+    abstract_commands ("\\category")= 3;
+    abstract_commands ("\\tmacm")= 1;
+    abstract_commands ("\\tmarxiv")= 1;
+    abstract_commands ("\\tmkeywords")= 1;
+    abstract_commands ("\\tmmsc")= 1;
+    abstract_commands ("\\tmpacs")= 1;
   }
-  return metadata_commands [s];
+  if (abs_flag) return abstract_commands [s];
+  else return metadata_commands [s];
 }
 
 static bool
@@ -338,8 +340,18 @@ parse_command_sub (string s, int& i, string cmd, int arity,
     }
     else return false;
   }
-  h (cmd)= path (b, i);
-  //cout << cmd << " ~~> " << s (b, i) << LF;
+  int e= i;
+  if (cmd == "\\category") {
+    skip_whitespace (s, i);
+    if (i<n && s[i] == '[') {
+      skip_square (s, i);
+      e= i;
+    }
+  }
+  string key= cmd;
+  while (h->contains (key)) key << "#";
+  h (key)= path (b, e);
+  //cout << key << " ~~> " << s (b, e) << LF;
   return true;
 }
 
@@ -356,17 +368,26 @@ parse_environment (string s, int& i, string env, hashmap<string,path>& h) {
   string envb= "\\begin{" * env * "}";
   string enve= "\\end{" * env * "}";
   skip_whitespace (s, i);
+  int start= i;
   if (test (s, i, envb)) {
     int pos= search_forwards (enve, i + N(envb), s);
-    if (pos > i) i= pos;
+    if (pos > i) {
+      string key= env;
+      while (h->contains (key)) key << "#";
+      h (key)= path (start, pos + N(enve));
+      //cout << key << " ~~> " << s (start, pos + N(enve)) << LF;
+      i= pos;
+    }
   }
 }
 
 hashmap<string,path>
-latex_get_metadata (string s) {
+latex_get_metadata (string s, bool abs_flag) {
   hashmap<string,path> h;
-  int i, n= N(s);
-  for (i=0; i<n; )
+  int i= 0, n= N(s);
+  if (abs_flag) i= search_forwards ("\\begin{document}", s);
+  if (i<0) return h;
+  while (i<n)
     if (s[i] == '%') {
       if (test (s, i, "%%%%%%%%%% Start TeXmacs macros")) {
         int pos= search_forwards ("%%%%%%%%%% End TeXmacs macros", i, s);
@@ -375,26 +396,29 @@ latex_get_metadata (string s) {
       skip_line (s, i);
     }
     else if (s[i] != '\\') i++;
-    else if (test (s, i, "\\begin{frontmatter}"))
+    else if (!abs_flag && test (s, i, "\\begin{frontmatter}"))
       parse_environment (s, i, "frontmatter", h);
+    else if (abs_flag && test (s, i, "\\begin{abstract}"))
+      parse_environment (s, i, "abstract", h);
     else {
       int start= i;
       i++;
       while (i<n && is_alpha (s[i])) i++;
       string cmd= s (start, i);
-      int arity= get_metadata_arity (cmd);
+      int arity= get_metadata_arity (cmd, abs_flag);
       if (arity >= 0) {
         i= start;
         parse_command (s, i, cmd, arity, h);
       }
-      if (cmd == "\\maketitle") break;
+      if (!abs_flag && cmd == "\\maketitle") break;
+      if (abs_flag && cmd == "\\section") break;
     }
   return h;
 }
 
 array<path>
-latex_get_metadata_snippets (string s) {
-  hashmap<string,path> h= latex_get_metadata (s);
+latex_get_metadata_snippets (string s, bool abs_flag) {
+  hashmap<string,path> h= latex_get_metadata (s, abs_flag);
   hashmap<int,int> portions;
   iterator<string> it= iterate (h);
   while (it->busy ()) {
@@ -413,11 +437,14 @@ latex_get_metadata_snippets (string s) {
         else if (s[j] == '%') skip_line (s, j);
         else break;
       if (N(a) > 0 && a[N(a)-1][1] == i) a[N(a)-1][1]= j;
-      else a << path (i, j);
+      else {
+        //if (N(a) > 0) cout << "Skipped " << s (a[N(a)-1][1], i) << LF;
+        a << path (i, j);
+      }
       i= j;
     }
     else i++;
   }
-  //cout << "a= " << a << LF;
+  //cout << "a= " << a << ", " << abs_flag << LF;
   return a;
 }

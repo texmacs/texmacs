@@ -31,8 +31,8 @@ string latex_get_style (string s, int& b, int& e);
 hashmap<string,path> latex_get_packages (string s);
 hashmap<string,path> latex_get_declarations (string s);
 hashmap<int,int> latex_declaration_positions (string s);
-hashmap<string,path> latex_get_metadata (string s);
-array<path> latex_get_metadata_snippets (string s);
+hashmap<string,path> latex_get_metadata (string s, bool abs_flag);
+array<path> latex_get_metadata_snippets (string s, bool abs_flag);
 
 bool skip_curly (string s, int& i);
 bool skip_square (string s, int& i);
@@ -44,5 +44,6 @@ string latex_unmark (string, hashset<path>, hashmap<int,array<path> >&);
 tree texmacs_unmark (tree t);
 string latex_correspondence (string, hashset<path>, hashmap<path,path>&);
 int search_doc_data (tree doc);
+int search_abstract_data (tree doc);
 
 #endif // defined CONVERT_TEX_H

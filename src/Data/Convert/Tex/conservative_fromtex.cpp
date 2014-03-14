@@ -381,6 +381,24 @@ texmacs_recover_metadata (tree doc, tree src) {
 }
 
 /******************************************************************************
+* Conserve abstracts when possible
+******************************************************************************/
+
+// TODO: to be completed
+
+int
+search_abstract_data (tree doc) {
+  if (!is_document (doc)) return -1;
+  int pos= -1;
+  for (int i=0; i<N(doc); i++)
+    if (is_compound (doc[i], "abstract-data")) {
+      if (pos != -1) return -1;
+      pos= i;
+    }
+  return pos;
+}
+
+/******************************************************************************
 * Conservative TeXmacs -> LaTeX conversion
 ******************************************************************************/
 

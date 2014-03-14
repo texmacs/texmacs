@@ -322,8 +322,34 @@ latex_unchanged_metadata (tree oldt, tree newt) {
 
 string
 latex_merge_metadata (string olds, string news) {
-  array<path> oldps= latex_get_metadata_snippets (olds);
-  array<path> newps= latex_get_metadata_snippets (news);
+  array<path> oldps= latex_get_metadata_snippets (olds, false);
+  array<path> newps= latex_get_metadata_snippets (news, false);
+  if (N(oldps) > 0 && N(newps) == 1) {
+    string accum;
+    for (int i=0; i<N(oldps); i++)
+      accum << olds (oldps[i][0], oldps[i][1]);
+    return news (0, newps[0][0]) * accum * news (newps[0][1], N(news));
+  }
+  else return news;
+}
+
+/******************************************************************************
+* Conserve as much of the abstract as possible
+******************************************************************************/
+
+static bool
+latex_unchanged_abstract (tree oldt, tree newt) {
+  tree oldb= extract (oldt, "body");
+  tree newb= extract (newt, "body");
+  int  oldi= search_abstract_data (oldb);
+  int  newi= search_abstract_data (newb);
+  return oldi >= 0 && newi >= 0 && oldb[oldi] == newb[newi];
+}
+
+string
+latex_merge_abstract (string olds, string news) {
+  array<path> oldps= latex_get_metadata_snippets (olds, true);
+  array<path> newps= latex_get_metadata_snippets (news, true);
   if (N(oldps) > 0 && N(newps) == 1) {
     string accum;
     for (int i=0; i<N(oldps); i++)
@@ -538,6 +564,8 @@ conservative_texmacs_to_latex (tree doc, object opts) {
   call ("latex-set-virtual-packages", null_object ());
   if (latex_unchanged_metadata (target, doc))
     conv= latex_merge_metadata (lsource, conv);
+  if (latex_unchanged_abstract (target, doc))
+    conv= latex_merge_abstract (lsource, conv);
   //cout << "Conversion" << LF << HRULE << conv << HRULE;
   //if (texmacs_unchanged_preamble (target, doc))
   //conv= latex_recover_preamble (conv, lsource);
