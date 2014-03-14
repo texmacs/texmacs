@@ -80,7 +80,7 @@
          (r (cpp-get-preference which (if s? def (object->string def)))))
     (if s? r (string->object r))))
 
-(define (preference-on? which)
+(tm-define (preference-on? which)
   (test-preference? which "on"))
 
 (tm-define (toggle-preference which)
