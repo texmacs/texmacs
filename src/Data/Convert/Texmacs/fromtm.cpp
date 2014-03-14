@@ -508,6 +508,16 @@ change_doc_attr (tree doc, string attr, tree val) {
   return r;
 }
 
+tree
+remove_doc_attr (tree doc, string attr) {
+  int i, n= arity (doc);
+  tree r (L(doc));
+  for (i=0; i<n; i++)
+    if (!is_compound (doc[i], attr, 1))
+      r << doc[i];
+  return r;
+}
+
 /******************************************************************************
 * Extracting metadata
 ******************************************************************************/

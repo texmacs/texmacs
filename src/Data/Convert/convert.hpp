@@ -36,6 +36,7 @@ string tree_to_texmacs (tree t);
 tree   extract (tree doc, string attr);
 tree   extract_document (tree doc);
 tree   change_doc_attr (tree doc, string attr, tree val);
+tree   remove_doc_attr (tree doc, string attr);
 hashmap<string,int> get_codes (string version);
 tree   string_to_tree (string s, string version);
 tree   upgrade (tree t, string version);
