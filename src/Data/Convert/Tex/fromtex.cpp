@@ -1810,6 +1810,8 @@ latex_command_to_tree (tree t) {
       return tree (VSPACE, l2e (t[1]));
     return tree (VSPACE, t2e (t[1]));
   }
+  if (is_tuple (t, "\\raisebox", 2))
+    return tree (MOVE, l2e (t[2]), "0pt", t2e (t[1]));
   if (is_tuple (t, "\\tmcodeinline", 1) || is_tuple (t, "\\tmverbatim", 1))
     return compound ("verbatim", v2e (t[1]));
   if (is_tuple (t, "\\tmcodeinline*", 2))
