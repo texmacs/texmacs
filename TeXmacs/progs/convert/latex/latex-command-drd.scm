@@ -40,7 +40,7 @@
   ;; AMS commands
   qed dotsc dotsb dotsm dotsi dotso
   ;; temporarily
-  hline
+  hline hrulefill
   ;; rewritten
   notin vert Vert addots
   implies iff gets

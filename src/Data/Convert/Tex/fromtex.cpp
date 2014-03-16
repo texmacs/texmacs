@@ -607,6 +607,7 @@ latex_symbol_to_tree (string s) {
       if (s == "toprule")    return tree (APPLY, "hline");
       if (s == "midrule")    return tree (APPLY, "hline");
       if (s == "bottomrule") return tree (APPLY, "hline");
+      if (s == "hrulefill")  return tree (APPLY, "hrule");
       if (s == "appendix") { textm_appendices= true; return ""; }
       if (s == "limits")   return ""; // tree (FORMAT, "with limits");
       if (s == "nolimits") return ""; // temporarily
