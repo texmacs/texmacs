@@ -946,7 +946,7 @@ eliminate_set_begin (tree t) {
 * Upgrade surround, indentation after and final routine
 ******************************************************************************/
 
-static bool
+bool
 expand_needs_surrounding (string s) {
   return
     (s == "maketitle") || (s == "abstract") ||

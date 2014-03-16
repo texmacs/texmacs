@@ -14,6 +14,7 @@
 #include "drd_std.hpp"
 
 tree drd_correct (drd_info drd, tree t);
+tree correct_concat_block (tree t);
 tree with_correct (tree t);
 tree superfluous_with_correct (tree t);
 tree superfluous_invisible_correct (tree t);
