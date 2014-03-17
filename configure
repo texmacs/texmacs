@@ -7299,7 +7299,7 @@ CONFIG_SO="so"
 CONFIG_LIB_PATH="LD_LIBRARY_PATH"
 CONFIG_CHMOD="chmod -f"
 CONFIG_CXXOPTIMIZE="-O2"
-CONFIG_BSTATIC="-lxcb -lXdmcp -lXau -lXrender"
+CONFIG_BSTATIC="-lXdmcp -lXau -lXrender"
 CONFIG_BSHARED="-Wl,-Bdynamic"
 CONFIG_BFLAGS=""
 CONFIG_BPATH="-Wl,-rpath,"
@@ -7313,6 +7313,8 @@ CONFIG_HOST_VENDOR="$host_vendor"
 CONFIG_HOST_CPU="$host_cpu"
 CONFIG_USER="$USER"
 CONFIG_DATE="`date`"
+
+
 # tweak for XCode project
 CONFIG_ARCHS='$(NATIVE_ARCH)'
 
@@ -7527,6 +7529,93 @@ case "$GXX_VERSION" in
 	 CONFIG_BSHARED="-dynamic"
      ;;
 esac
+
+#--------------------------------------------------------------------
+# Check for  lib expat and xcb which exitonly in only some  OS version
+#--------------------------------------------------------------------
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for XML_ParserCreate in -lexpat" >&5
+$as_echo_n "checking for XML_ParserCreate in -lexpat... " >&6; }
+if test "${ac_cv_lib_expat_XML_ParserCreate+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lexpat  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char XML_ParserCreate ();
+int
+main ()
+{
+return XML_ParserCreate ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_expat_XML_ParserCreate=yes
+else
+  ac_cv_lib_expat_XML_ParserCreate=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_expat_XML_ParserCreate" >&5
+$as_echo "$ac_cv_lib_expat_XML_ParserCreate" >&6; }
+if test "x$ac_cv_lib_expat_XML_ParserCreate" = x""yes; then :
+  CONFIG_BSTATIC="-lexpat $CONFIG_BSTATIC"
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for xcb_disconnect in -lxcb" >&5
+$as_echo_n "checking for xcb_disconnect in -lxcb... " >&6; }
+if test "${ac_cv_lib_xcb_xcb_disconnect+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lxcb  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char xcb_disconnect ();
+int
+main ()
+{
+return xcb_disconnect ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_xcb_xcb_disconnect=yes
+else
+  ac_cv_lib_xcb_xcb_disconnect=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_xcb_xcb_disconnect" >&5
+$as_echo "$ac_cv_lib_xcb_xcb_disconnect" >&6; }
+if test "x$ac_cv_lib_xcb_xcb_disconnect" = x""yes; then :
+  CONFIG_BSTATIC="-lxcb $CONFIG_BSTATIC"
+fi
+
+
+
 
 #--------------------------------------------------------------------
 # Memory allocation options
