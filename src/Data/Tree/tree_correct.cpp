@@ -62,24 +62,6 @@ is_migratable (tree t) {
     is_func (t, VAR_NEW_DPAGE) || is_func (t, NEW_DPAGE);
 }
 
-static tree
-migrate_left (tree t, tree& mig) {
-  t= to_concat (t);
-  int i=0;
-  while (i<N(t) && is_migratable (t[i])) i++;
-  mig= from_concat (t (0, i));
-  return from_concat (t (i, N(t)));
-}
-
-static tree
-migrate_right (tree t, tree& mig) {
-  t= to_concat (t);
-  int i=N(t);
-  while (i>0 && is_migratable (t[i-1])) i--;
-  mig= from_concat (t (i, N(t)));
-  return from_concat (t (0, i));
-}
-
 bool expand_needs_surrounding (string s); // defined in upgrade.cpp
 
 static bool
