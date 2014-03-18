@@ -231,13 +231,15 @@
 ;; Compute macro and environment definitions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (latex-expand-def t)
+(define (latex-expand-def t protect?)
+  (cond ((and protect? (number? t)) (set! t `(!group ,t)) (set! protect? #f))
+        ((and (not protect?) (func? t '!option) (set! protect? #t))))
   (cond ((== t '---) "#-#-#")
 	((number? t) (string-append "#" (number->string t)))
-	((func? t '!recurse 1) (latex-expand-def (cadr t)))
+	((func? t '!recurse 1) (latex-expand-def (cadr t) protect?))
 	((func? t '!translate 1)
 	 (translate-from-to (cadr t) "english" latex-language))
-	((list? t) (map latex-expand-def t))
+	((list? t) (map (cut latex-expand-def <> protect?) t))
 	(else t)))
 
 ;; TODO: to be rewrited with better factorisation
@@ -259,7 +261,7 @@
       (when (and body (== (length args) arity))
         (if option (set! arity (+ 1 arity)))
 	(ahash-set! latex-macro-table (car t)
-		    (list arity (latex-expand-def body)))
+		    (list arity (latex-expand-def body #f)))
 	(latex-macro-defs-sub body)))
     (let* ((body  (and (env-begin? (car t))
                        (not (latex-needs? (car t)))
@@ -275,7 +277,7 @@
       (when (and body (== (length args) (+ arity 2)))
         (if option (set! arity (+ 1 arity)))
 	(ahash-set! latex-env-table (cadar t)
-		    (list arity (latex-expand-def body)))
+		    (list arity (latex-expand-def body #f)))
 	(latex-macro-defs-sub body)))
     (with body (or (and (not (latex-needs? (car t)))
                         (smart-ref latex-texmacs-preamble (car t)))
@@ -308,7 +310,7 @@
 	 (e3 (map (cut cons '!newenvironment <>) e2))
 	 (p1 (ahash-table->list latex-preamble-table))
 	 (p2 (list-sort p1 (lambda (x y) (latex<=? (car x) (car y)))))
-	 (p3 (map cdr (map latex-expand-def p2))))
+	 (p3 (map cdr (map (cut latex-expand-def <> #f) p2))))
     (cons '!append (append c3 e3 p3))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -319,10 +321,10 @@
   (with option ""
     (if (and (list>1? body) (list? (car body)) (== (caar body) '!option))
       (begin
-        (set! option (serialize-latex (latex-expand-def (cadar body))))
+        (set! option (serialize-latex (latex-expand-def (cadar body) #f)))
         (set! option (string-append "[" option "]"))
         (set! body (cadr body))))
-    (set! body (serialize-latex (latex-expand-def body)))
+    (set! body (serialize-latex (latex-expand-def body #f)))
     (set! body (string-replace body "\n\n" "*/!!/*"))
     (set! body (string-replace body "\n" " "))
     (set! body (string-replace body "*/!!/*" "\n\n"))
@@ -335,10 +337,10 @@
   (with option ""
     (if (and (list>1? body) (list? (car body)) (== (caar body) '!option))
       (begin
-        (set! option (serialize-latex (latex-expand-def (cadar body))))
+        (set! option (serialize-latex (latex-expand-def (cadar body) #f)))
         (set! option (string-append "[" option "]"))
         (set! body (cadr body))))
-    (set! body (serialize-latex (latex-expand-def body)))
+    (set! body (serialize-latex (latex-expand-def body #f)))
     (set! body (string-replace body "\n\n" "*/!!/*"))
     (set! body (string-replace body "\n  " " "))
     (set! body (string-replace body "\n" " "))
