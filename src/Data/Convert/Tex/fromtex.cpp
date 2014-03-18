@@ -132,6 +132,7 @@ is_block_environnement (tree t) {
     ends (s, "abstract")         ||
     ends (s, "center")           ||
     ends (s, "description")      ||
+    ends (s, "document")         ||
     ends (s, "enumerate")        ||
     ends (s, "figure")           ||
     ends (s, "flushleft")        ||
@@ -201,9 +202,11 @@ kill_space_invaders (tree t, char &status) {
   // cout << "kill_space_invaders (" << status << "): " << t << LF;
   if (is_atomic (t)) return t;
   //if (is_tuple (t, "\\blx") || is_tuple (t, "\\elx")) return t;
-  if (is_tuple (t)) {
-    tree r= copy(t);
-    for (int i=1; i<N(t); i++)
+  if (!is_concat (t)) {
+    tree r(L(t), N(t));
+    int i= is_tuple (t)? 1:0;
+    if (i == 1) r[0]= copy(t[0]);
+    for (; i<N(t); i++)
       r[i]= kill_space_invaders (t[i], status);
     return r;
   }
@@ -373,9 +376,8 @@ filter_preamble (tree t) {
   if (in_preamble) return t;
   metadata = collect_metadata (t, latex_class);
   // cout << "Parsed metadatas: " << metadata << "\n\n";
-  r << A(kill_space_invaders (metadata));
-  // cout << "Parsed metadatas: " << kill_space_invaders (metadata) << "\n";
-  r << A(kill_space_invaders (doc));
+  r << A(metadata);
+  r << A(doc);
   return r;
 }
 

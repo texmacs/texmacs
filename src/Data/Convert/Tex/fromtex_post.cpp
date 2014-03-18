@@ -25,6 +25,7 @@ extern bool textm_appendices;
 extern bool textm_unicode;
 extern bool textm_natbib;
 
+tree kill_space_invaders (tree t);
 tree filter_preamble (tree t);
 tree latex_fallback_on_pictures (string s, tree t);
 tree parsed_latex_to_tree (tree t);
@@ -2054,7 +2055,9 @@ filter_geometry (tree t) {
 ******************************************************************************/
 
 tree
-latex_to_tree (tree t1) {
+latex_to_tree (tree t0) {
+  // cout << "\n\nt0= " << t0 << "\n\n";
+  tree t1= kill_space_invaders (t0);
   string style, lan= "";
   bool is_document= is_compound (t1, "!file", 1);
   if (is_document) t1= t1[0];
