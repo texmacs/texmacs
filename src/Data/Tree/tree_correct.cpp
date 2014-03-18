@@ -67,8 +67,9 @@ bool expand_needs_surrounding (string s); // defined in upgrade.cpp
 static bool
 is_basic_environment (tree t) {
   return // TODO: to be completed using DRD properties
-    is_compound (t) && N(t) == 1 &&
-    expand_needs_surrounding (as_string (L(t)));
+    (is_compound (t) && N(t) == 1 &&
+     expand_needs_surrounding (as_string (L(t)))) ||
+    is_compound (t, "equation", 1) || is_compound (t, "equation*", 1);
 }
 
 static tree

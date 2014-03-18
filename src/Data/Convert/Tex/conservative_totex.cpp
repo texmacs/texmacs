@@ -303,6 +303,7 @@ texmacs_invarianted (tree t, tree oldt, string src) {
   //cout << "uoldbody" << LF << HRULE << uoldbody << LF << HRULE;
   get_subtree_paths (uoldbody, path (), h);
   body= texmacs_invarianted_merge (body, src, orgbody, uoldbody, h);
+  //cout << "merged" << LF << HRULE << body << LF << HRULE;
   body= texmacs_invarianted_replace (body, src);
   return change_doc_attr (t, "body", body);
 }
