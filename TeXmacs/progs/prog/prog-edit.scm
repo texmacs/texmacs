@@ -69,8 +69,8 @@
   (set! prog-highlight-brackets? (== val "on")))
 
 (define-preferences
-  ("prog:automatic brackets" "on" notify-auto-close-brackets)
-  ("prog:highlight brackets" "on" notify-highlight-brackets))
+  ("prog:automatic brackets" "off" notify-auto-close-brackets)
+  ("prog:highlight brackets" "off" notify-highlight-brackets))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Bracket handling
