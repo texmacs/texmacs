@@ -373,8 +373,16 @@ texmacs_unmark (tree t, bool all) {
     tree r (t, n);
     for (i=0; i<n; i++)
       r[i]= texmacs_unmark (t[i], all);
-    if (is_concat (r)) return simplify_concat (r);
-    return r;
+    if (!is_concat (r)) return r;
+
+    t= r;
+    r= tree (CONCAT);
+    for (i=0; i<n; i++)
+      if (is_concat (t[i])) r << A(t[i]);
+      else r << t[i];
+    if (N(r) == 0) return "";
+    else if (N(r) == 1) return r[0];
+    else return r;
   }
 }
 

@@ -54,7 +54,7 @@ from_concat (tree t) {
 static bool
 is_migratable (tree t) {
   return
-    t == " " ||
+    t == " " || is_compound (t, "mlx", 2) ||
     is_func (t, VAR_VSPACE) || is_func (t, VSPACE) ||
     is_func (t, VAR_PAGE_BREAK) || is_func (t, PAGE_BREAK) ||
     is_func (t, VAR_NO_PAGE_BREAK) || is_func (t, NO_PAGE_BREAK) ||
