@@ -14,6 +14,7 @@
 #include "hashset.hpp"
 #include "scheme.hpp"
 #include "convert.hpp"
+#include "iterator.hpp"
 
 /******************************************************************************
 * Protect against adding markers to a LaTeX document
@@ -431,6 +432,7 @@ find_matches (tree d1, int b1, int e1,
     }
   }
   if (best_len > 0) {
+    //if (N(d1) > 50 && N(d2) > 50)
     //cout << "Best match for " << b1 << " -- " << e1
     //     << " is " << best_b1 << " -- " << best_b1 + best_len
     //     << " ~> " << best_b2 << " -- " << best_b2 + best_len << LF;
@@ -542,13 +544,27 @@ texmacs_check_transparency (tree mt, tree t, hashset<int>& invalid) {
     if (ok) return true;
     //cout << "Matches(3) " << c << LF << HRULE;
     if (N(invalid) > invalid_count) return true;
-    for (int i=0; i<N(mt); i++)
-      if ((c[i] < 0) || (i>0 && c[i-1] < 0) || (i+1<N(mt) && c[i+1] < 0))
-        texmacs_declare_opaque (mt, a[i], invalid);
-    if (N(invalid) > invalid_count) return true;
-    for (int i=0; i<N(mt); i++)
-      texmacs_declare_opaque (mt, a[i], invalid);
-    if (N(invalid) > invalid_count) return true;
+    
+    int delta= 1;
+    while (delta < N(umt)) {
+      for (int i=0; i<N(umt); i++)
+        if ((c[i] < 0) || (i>0 && c[i-1] < 0) || (i+1<N(umt) && c[i+1] < 0))
+          texmacs_declare_opaque (mt, a[i], invalid);
+      if (N(invalid) > invalid_count) return true;
+      int i=0;
+      while (i<N(umt)) {
+        while (i<N(umt) && c[i] >= 0) i++;
+        int start= i;
+        if (i == N(umt)) break;
+        while (i<N(umt) && c[i] < 0) i++;
+        if (i != N(umt)) i++;
+        for (int j= max (0, start-delta); j<start; j++) c[i]= -1;
+        for (int j= i; j <= min (N(umt), i+delta); j++) c[i]= -1;
+        i= min (N(umt), i+delta);
+      }
+      delta *= 2;
+    }
+    //cout << "No invalidatable markers found" << LF;
     return false;
   }
   else if (!is_compound (t) || N(mt) != N(t)) {
