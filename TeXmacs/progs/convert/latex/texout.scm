@@ -153,7 +153,7 @@
       (begin
         (texout (car l))
         (if (empty-line? (car l))
-            (output-tex "\\"))
+            (output-tex "\\ "))
 	(if (nnull? (cdr l))
 	    (begin
 	      (output-lf)
