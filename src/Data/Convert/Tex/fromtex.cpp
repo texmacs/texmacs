@@ -171,12 +171,10 @@ is_block_environnement (tree t) {
     ends (s, "remark")           ||
     ends (s, "solution")         ||
     ends (s, "theorem")          ||
-    ends (s, "theorem")          ||
     ends (s, "warning")          ||
     ends (s, "part")             ||
     ends (s, "chapter")          ||
     ends (s, "section");
-
 }
 
 bool
