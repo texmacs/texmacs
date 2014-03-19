@@ -870,8 +870,8 @@ esac
 # Check for  lib expat and xcb which exitonly in only some  OS version
 #--------------------------------------------------------------------
 
-AC_CHECK_LIB(expat,XML_ParserCreate,[CONFIG_BSTATIC="-lexpat $CONFIG_BSTATIC"])
-AC_CHECK_LIB(xcb,xcb_disconnect,[CONFIG_BSTATIC="-lxcb $CONFIG_BSTATIC"])
+AC_CHECK_LIB(expat,XML_ParserCreate,[CONFIG_BSTATIC="-lexpat $CONFIG_BSTATIC";CONFIG_STYPE=A])
+AC_CHECK_LIB(xcb,xcb_disconnect,[CONFIG_BSTATIC="-lxcb $CONFIG_BSTATIC";CONFIG_STYPE=B])
 
 
 
@@ -1344,6 +1344,7 @@ AC_SUBST(CONFIG_CXXDEBUG)
 AC_SUBST(CONFIG_CXXPROFILE)
 AC_SUBST(CONFIG_BFLAGS)
 AC_SUBST(CONFIG_BSTATIC)
+AC_SUBST(CONFIG_STYPE)
 AC_SUBST(CONFIG_BSHARED)
 AC_SUBST(CONFIG_BPATH)
 AC_SUBST(CONFIG_WORD_LENGTH)

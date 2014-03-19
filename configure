@@ -623,6 +623,7 @@ CONFIG_WORD_LENGTH_INC
 CONFIG_WORD_LENGTH
 CONFIG_BPATH
 CONFIG_BSHARED
+CONFIG_STYPE
 CONFIG_BSTATIC
 CONFIG_BFLAGS
 CONFIG_CXXPROFILE
@@ -7571,7 +7572,7 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_expat_XML_ParserCreate" >&5
 $as_echo "$ac_cv_lib_expat_XML_ParserCreate" >&6; }
 if test "x$ac_cv_lib_expat_XML_ParserCreate" = x""yes; then :
-  CONFIG_BSTATIC="-lexpat $CONFIG_BSTATIC"
+  CONFIG_BSTATIC="-lexpat $CONFIG_BSTATIC";CONFIG_STYPE=A
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for xcb_disconnect in -lxcb" >&5
@@ -7611,7 +7612,7 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_xcb_xcb_disconnect" >&5
 $as_echo "$ac_cv_lib_xcb_xcb_disconnect" >&6; }
 if test "x$ac_cv_lib_xcb_xcb_disconnect" = x""yes; then :
-  CONFIG_BSTATIC="-lxcb $CONFIG_BSTATIC"
+  CONFIG_BSTATIC="-lxcb $CONFIG_BSTATIC";CONFIG_STYPE=B
 fi
 
 
@@ -8838,6 +8839,7 @@ esac
 #--------------------------------------------------------------------
 # Substitute TeXmacs specific configuration parameters
 #--------------------------------------------------------------------
+
 
 
 

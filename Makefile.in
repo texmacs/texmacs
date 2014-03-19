@@ -47,7 +47,7 @@ SIGN = misc/admin/sign_update
 ###############################################################################
 # Main makes
 ###############################################################################
-
+.NOTPARALLEL:
 TEXMACS: EMPTY_DIRS
 	cd src; $(MAKE) -f makefile link=shared
 	$(MAKE) -f Makefile PLUGINS
@@ -299,16 +299,13 @@ GENERIC_PACKAGE_DIR = ../distr/generic
 STATIC_QT = $(tm_devel)-$(tm_suffix)
 STATIC_X11 = $(tm_devel)-x11-$(tm_suffix)
 
-GENERIC_PACKAGE: COPY_SOURCES COPY_GUILE
-	cd $(BUILD_DIR); ./configure
-	cd $(BUILD_DIR); make STATIC_TEXMACS
-	cd $(BUILD_DIR); make ACCESS_FLAGS
-	$(MV) $(BUILD_DIR)/TeXmacs $(BUILD_DIR)/$(STATIC_QT)
-	cd $(BUILD_DIR); tar -czf $(STATIC_QT).tar.gz $(STATIC_QT)
+GENERIC_PACKAGE: STATIC_TEXMACS STRIP
 	$(MKDIR) $(GENERIC_PACKAGE_DIR)
-	$(MV) $(BUILD_DIR)/$(STATIC_QT).tar.gz $(GENERIC_PACKAGE_DIR)
-	$(RM) -r ../distr/build
-
+	-find `guile-config info pkgdatadir` -type d -name ice-9 -exec ln -s {} $(tmdir)/progs \; && \
+	   ln -s $(tmdir) $(STATIC_QT) && \
+	   tar -czhf $(GENERIC_PACKAGE_DIR)/$(STATIC_QT)-@CONFIG_STYPE@.tar.gz $(STATIC_QT) --exclude .svn --mode go=rX
+	$(RM) $(tmdir)proges/ice-9  $(STATIC_QT)
+	
 GENERIC_X11_PACKAGE: COPY_SOURCES COPY_GUILE
 	cd $(BUILD_DIR); ./configure --disable-qt --disable-pdf-renderer
 	cd $(BUILD_DIR); make STATIC_TEXMACS
