@@ -380,7 +380,8 @@
 (define (texout-script where l)
   (output-tex where)
   (let ((x (car l)))
-    (cond ((and (string? x) (= (string-length x) 1)) (output-tex x))
+    (cond ((and (string? x) (= (string-length x) 1) (nin? x (list "<" ">")))
+           (output-tex x))
 	  (else (texout-args l)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
