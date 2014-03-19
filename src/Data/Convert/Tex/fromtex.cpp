@@ -1009,9 +1009,7 @@ v2e (tree t) {
 }
 
 static bool
-is_left_type (tree t) {
-  if (is_compound (t)) return false;
-  string s= t->label;
+is_left_type (string s) {
   return
     (s == "(") || (s == "[") || (s == "\\{") ||
     (s == "\\lvert") || (s == "lVert") ||
@@ -1019,9 +1017,7 @@ is_left_type (tree t) {
 }
 
 static bool
-is_right_type (tree t) {
-  if (is_compound (t)) return false;
-  string s= t->label;
+is_right_type (string s) {
   return
     (s == ")") || (s == "]") || (s == "\\}") ||
     (s == "\\rvert") || (s == "\\rVert") ||
@@ -1029,9 +1025,7 @@ is_right_type (tree t) {
 }
 
 static bool
-is_mid_type (tree t) {
-  if (is_compound (t)) return false;
-  string s= t->label;
+is_mid_type (string s) {
   return
     (s == "|")             || (s == "||")            || (s == "\\|")         ||
     (s == "\\vert")        || (s == "\\Vert")        || (s == "\\lvert")     ||
@@ -1044,23 +1038,28 @@ is_mid_type (tree t) {
 
 static bool
 is_large_delimiter (tree t, int& type) {
-  if ((!is_tuple (t)) || (N(t) != 2) ||
-      is_compound (t[0]) || is_compound (t[1])) return false;
+  if (!is_tuple (t) || N(t) != 2 || is_compound (t[0])) return false;
+  string br;
+  if (is_atomic (t[1]))
+    br= t[1]->label;
+  else if (is_tuple (t[1]) && N(t[1]) == 1 && is_atomic (t[1][0]))
+    br= t[1][0]->label;
+  else return false;
   string s= t[0]->label;
   if (starts (s, "\\Big")) s= "\\big" * s(4,N(s));
   if (starts (s, "\\bigg")) s= "\\big" * s(5,N(s));
   if ((s == "\\left") || (s == "\\bigl") ||
-      ((s == "\\big") && is_left_type (t[1]))) {
+      ((s == "\\big") && is_left_type (br))) {
     type= -1;
     return true;
   }
   if ((s == "\\right") || (s == "\\bigr") ||
-      ((s == "\\big") && is_right_type (t[1]))) {
+      ((s == "\\big") && is_right_type (br))) {
     type= 1;
     return true;
   }
   if ((s == "\\middle") || (s == "\\bigm") ||
-      ((s == "\\big") && is_mid_type (t[1]))) {
+      ((s == "\\big") && is_mid_type (br))) {
     type= 0;
     return true;
   }
@@ -1940,7 +1939,9 @@ latex_command_to_tree (tree t) {
 
   int dtype= 0;
   if (is_large_delimiter (t, dtype)) {
-    string s= t[1]->label;
+    string s;
+    if (is_atomic (t[1])) s= t[1]->label;
+    else s= t[1][0]->label;
     if ((N(s)>1) && (s[0]=='\\')) s=s(1,N(s));
     if (s == "vert" || s == "arrowvert") s= "|";
     if (s == "Vert" || s == "Arrowvert") s= "||";
