@@ -18,6 +18,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (check-latex-export-one tm-file)
+  (display* "Checking LaTeX export of " tm-file "...\n")
   (with latex-file (url-glue (url-unglue tm-file 3) ".tex")
     (with-aux tm-file
       (if (url? latex-file) (set! current-save-target latex-file))
