@@ -135,6 +135,42 @@ qt_field_widget_rep::as_qwidget () {
  * qt_inputs_list_widget_rep
  ******************************************************************************/
 
+#ifdef Q_WS_MAC
+#include <QKeyEvent>
+
+/*! An event filter to circumvent a Qt Mac bug in QMessageBox.
+ 
+ Pressing tab has no effect on QMessageBox dialogs under MacOS.
+ See e.g. https://bugreports.qt-project.org/browse/QTBUG-13330
+ 
+ The bug is present at least in versions >= 4.6.1 and <= 4.8.5
+ */
+class QTMFilterHack : public QWidget {
+  typedef QList<QAbstractButton*> ButtonList;
+  ButtonList buttons;
+  int current;
+  int N;
+public:
+  QTMFilterHack (ButtonList _buttons) : buttons (_buttons), current (1),
+  N (_buttons.size()) { }
+  bool eventFilter(QObject *target, QEvent *event)
+  {
+    if (event->type() == QEvent::KeyPress) {
+      QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+      if (keyEvent->key() == Qt::Key_Tab) {
+        if (keyEvent->modifiers() & Qt::ShiftModifier)
+          current = current - 1 < 0 ? N-1 : current - 1;
+        else
+          current = ++current % N;
+        buttons[current]->setFocus (Qt::TabFocusReason);
+        return true;
+      }
+    }
+    return QWidget::eventFilter (target, event);
+  }
+};
+#endif
+
 qt_inputs_list_widget_rep::qt_inputs_list_widget_rep (command _cmd, array<string> _prompts):
    qt_widget_rep (input_widget), cmd (_cmd), fields (N (_prompts)),
    size (coord2 (100, 100)), position (coord2 (0, 0)), win_title (""), style (0)
@@ -234,27 +270,36 @@ qt_inputs_list_widget_rep::perform_dialog() {
     // Presently not checking if the windows has the focus;
     // In case it has not, it should be brought into focus
     // before calling the dialog
-    QMessageBox* msgBox=new QMessageBox (mainwindow);
+    QMessageBox msgBox (mainwindow);
     //sets parent widget, so that it appears at the proper location	
-    msgBox->setText (to_qstring (field(0)->prompt));
-    msgBox->setStandardButtons (QMessageBox::Cancel);
+    msgBox.setText (to_qstring (field(0)->prompt));
+    msgBox.setStandardButtons (QMessageBox::Cancel);
+    
+      // Allow any number of choices. The first one is the default.
     int choices = N(field(0)->proposals);
     QVector<QPushButton*> buttonlist (choices);
-    //allowing for any number of choices
-    for(int i=0; i<choices; i++) {
-      string blabel= "&" * upcase_first (field(0)->proposals[i]);
-      //capitalize the first character?
-      buttonlist[i] = msgBox->addButton (to_qstring (blabel),
-                                         QMessageBox::ActionRole);
+    if (choices > 0) {
+      for(int i = 0; i < choices; ++i) {
+          // Capitalize the first character?
+        string blabel= "&" * upcase_first (field(0)->proposals[i]);
+        buttonlist[i] = msgBox.addButton (to_qstring (blabel),
+                                           QMessageBox::ActionRole);
+      }
+      msgBox.setDefaultButton (buttonlist[0]);
+      for (int i = 0; i < choices - 1; ++i)
+        QWidget::setTabOrder (buttonlist[i], buttonlist[i+1]);
+      QWidget::setTabOrder (buttonlist[choices-1], msgBox.escapeButton());
     }
-    msgBox->setDefaultButton (buttonlist[0]); //default is first choice
-    msgBox->setWindowTitle (qt_translate ("Question"));
-    msgBox->setIcon (QMessageBox::Question);
-
-    msgBox->exec();
+    msgBox.setWindowTitle (qt_translate ("Question"));
+    msgBox.setIcon (QMessageBox::Question);
+#ifdef Q_WS_MAC
+    QTMFilterHack filter (msgBox.buttons());
+    msgBox.installEventFilter (&filter);
+#endif
+    msgBox.exec();
     bool buttonclicked=false;
     for(int i=0; i<choices; i++) {
-      if (msgBox->clickedButton() == buttonlist[i]) {
+      if (msgBox.clickedButton() == buttonlist[i]) {
         field(0)->input = scm_quote (field(0)->proposals[i]);
         buttonclicked=true;
         break;
@@ -266,9 +311,13 @@ qt_inputs_list_widget_rep::perform_dialog() {
   else {  //usual dialog layout
     QDialog d (0, Qt::Sheet);
     QVBoxLayout* vl = new QVBoxLayout(&d);
-
-    for(int i=0; i<N(fields); i++)
-      vl->addWidget(field(i)->as_qwidget());
+    QVector<QWidget*> widgets;
+    for(int i=0; i<N(fields); ++i) {
+      widgets.push_back (field(i)->as_qwidget());
+      vl->addWidget(widgets[i]);
+    }
+    for (int i = 0; i < N(fields) - 1; ++i)
+      QWidget::setTabOrder (widgets[i], widgets[i+1]);
     
     QDialogButtonBox* buttonBox =
           new QDialogButtonBox (QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
