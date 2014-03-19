@@ -34,6 +34,47 @@ drd_correct (drd_info drd, tree t) {
 }
 
 /******************************************************************************
+* Add missing explicit document tags when necessary
+******************************************************************************/
+
+static bool
+is_block_pseudo_code (tree t) {
+  if (!is_compound (t) || N(t) == 0) return false;
+  string s= as_string (L(t));
+  if (!starts (s, "algo-")) return false;
+  return
+    s == "algo-procedure" ||
+    s == "algo-function" ||
+    s == "algo-for" ||
+    s == "algo-forall" ||
+    s == "algo-foreach" ||
+    s == "algo-while" ||
+    s == "algo-repeat" ||
+    s == "algo-loop" ||
+    s == "algo-body" ||
+    s == "algo-begin" ||
+    s == "algo-inputs" ||
+    s == "algo-outputs" ||
+    s == "algo-if" ||
+    s == "algo-else-if" ||
+    s == "algo-else";
+}
+
+tree
+correct_missing_block (tree t) {
+  if (is_atomic (t)) return t;
+  int i, n= N(t);
+  tree r (t, n);
+  for (i=0; i<n; i++)
+    r[i]= correct_missing_block (t[i]);
+  t= r;
+  if (is_block_pseudo_code (t))
+    if (!is_document (t[N(t)-1]))
+      t[N(t)-1]= tree (DOCUMENT, t[N(t)-1]);
+  return t;
+}
+
+/******************************************************************************
 * Correct incorrectly concatenated block content
 ******************************************************************************/
 
@@ -991,6 +1032,7 @@ latex_correct (tree t) {
   //if (enabled_preference ("insert missing invisible"))
   t= missing_invisible_correct (t, 1);
   t= downgrade_big (t);
+  t= correct_missing_block (t);
   t= correct_concat_block (t);
   return t;
 }

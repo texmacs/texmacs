@@ -121,89 +121,89 @@
   </active*>
 
   <assign|algo-procedure|<\macro|name|args|body>
-    <render-procedure> <with|font-shape|small-caps|<arg|name>>(<arg|args>)
+    <render-procedure> <with|font-shape|small-caps|<arg|name>>(<arg|args>)<no-page-break>
 
     <\indent>
       <arg|body>
     </indent>
 
-    <render-end-procedure>
+    <render-end-procedure><right-flush>
   </macro>>
 
   <assign|algo-function|<\macro|name|args|body>
-    <render-function> <with|font-shape|small-caps|<arg|name>>(<arg|args>)
+    <render-function> <with|font-shape|small-caps|<arg|name>>(<arg|args>)<no-page-break>
 
     <\indent>
       <arg|body>
     </indent>
 
-    <render-end-function>
+    <render-end-function><right-flush>
   </macro>>
 
   <assign|algo-for|<\macro|cond|block>
-    <render-for> <arg|cond> <render-do>
+    <render-for> <arg|cond> <render-do><no-page-break>
 
     <\indent>
       <arg|block>
     </indent>
 
-    <render-end-for>
+    <render-end-for><right-flush>
   </macro>>
 
   <assign|algo-for-all|<\macro|cond|block>
-    <render-for-all> <arg|cond> <render-do>
+    <render-for-all> <arg|cond> <render-do><no-page-break>
 
     <\indent>
       <arg|block>
     </indent>
 
-    <render-end-for>
+    <render-end-for><right-flush>
   </macro>>
 
   <assign|algo-for-each|<\macro|cond|block>
-    <render-for-each> <arg|cond> <render-do>
+    <render-for-each> <arg|cond> <render-do><no-page-break>
 
     <\indent>
       <arg|block>
     </indent>
 
-    <render-end-for>
+    <render-end-for><right-flush>
   </macro>>
 
   <assign|algo-while|<\macro|cond|block>
-    <render-while> <arg|cond> <render-do>
+    <render-while> <arg|cond> <render-do><no-page-break>
 
     <\indent>
       <arg|block>
     </indent>
 
-    <render-end-while>
+    <render-end-while><right-flush>
   </macro>>
 
   <assign|algo-repeat|<\macro|cond|block>
-    <render-repeat>
+    <render-repeat><no-page-break>
 
     <\indent>
       <arg|block>
     </indent>
 
-    <render-until> \ <arg|cond>
+    <surround|<render-until> |<right-flush>|<arg|cond>>
   </macro>>
 
   <assign|algo-loop|<\macro|block>
-    <render-loop>
+    <render-loop><no-page-break>
 
     <\indent>
       <arg|block>
     </indent>
 
-    <render-end-loop>
+    <render-end-loop><right-flush>
   </macro>>
 
   \;
 
   <assign|algo-body|<\macro|block>
-    <render-do>
+    <render-do><no-page-break>
 
     <\indent>
       <arg|block>
@@ -211,7 +211,7 @@
   </macro>>
 
   <assign|algo-begin|<\macro|block>
-    <render-begin>
+    <render-begin><no-page-break>
 
     <\indent>
       <arg|block>
@@ -219,7 +219,7 @@
   </macro>>
 
   <assign|algo-inputs|<\macro|block>
-    <render-inputs>
+    <render-inputs><no-page-break>
 
     <\indent>
       <arg|block>
@@ -227,7 +227,7 @@
   </macro>>
 
   <assign|algo-outputs|<\macro|block>
-    <render-outputs>
+    <render-outputs><no-page-break>
 
     <\indent>
       <arg|block>
@@ -241,19 +241,19 @@
   </active*>
 
   <assign|algo-if|<\macro|cond|body>
-    <render-if> <arg|cond> <render-then>
+    <render-if> <arg|cond> <render-then><no-page-break>
 
     <indent|<arg|body>>
   </macro>>
 
   <assign|algo-else-if|<\macro|cond|body>
-    <render-else> <render-if> <arg|cond> <render-then>
+    <render-else> <render-if> <arg|cond> <render-then><no-page-break>
 
     <indent|<arg|body>>
   </macro>>
 
   <assign|algo-else|<\macro|body>
-    <render-else>
+    <render-else><no-page-break>
 
     <indent|<arg|body>>
   </macro>>
@@ -261,7 +261,7 @@
   <assign|algo-make-if-else-if|<\macro|args>
     <compound|<if|<equal|<length|<arg|args>>|0>|algo-null|<compound|<if|<equal|<length|<arg|args>>|1>|algo-else|<compound|<if|<greatereq|<length|<arg|args>>|2>|algo-else-if|algo-null>|<look-up|<arg|args>|0>|<look-up|<arg|args>|1>>>|<look-up|<arg|args>|0>>>>
 
-    <compound|<if|<greater|<length|<arg|args>>|2>|algo-make-if-else-if|<render-end-if>>|<range|<arg|args>|2|<length|<arg|args>>>>
+    <compound|<if|<greater|<length|<arg|args>>|2>|algo-make-if-else-if|<render-end-if><right-flush>>|<range|<arg|args>|2|<length|<arg|args>>>>
   </macro>>
 
   <assign|algo-if-else-if|<\xmacro|test-seq>
