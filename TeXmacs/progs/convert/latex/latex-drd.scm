@@ -56,6 +56,7 @@
   (geometry "geometry")
   (epsfig "epsfig")
   (includegraphics "graphicx")
+  (rotatebox "graphicx")
 
   (mathscr "mathrsfs")
   (EuScript "euscript")
@@ -93,12 +94,6 @@
   (underset "amsmath")
   (operatorname "amsmath")
   (boldsymbol "amsmath")
-
-  (btimes "graphicx")
-  (Backepsilon "graphicx")
-  (Mho "graphicx")
-  (mho "graphicx")
-  (upequal "graphicx")
 
   (ifthenelse "ifthen")
   (captionof "capt-of")

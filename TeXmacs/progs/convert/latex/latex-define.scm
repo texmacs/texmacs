@@ -63,10 +63,13 @@
   (gggeq "\\geq\\!\\!\\!\\geq\\!\\!\\!\\geq")
 
   ;; extra literal symbols
-  (btimes "{\\mbox{\\rotatebox[origin=c]{90}{$\\ltimes$}}}")
-  (Backepsilon "{\\mbox{\\rotatebox[origin=c]{180}{E}}}")
-  (Mho "{\\mbox{\\rotatebox[origin=c]{180}{$\\Omega$}}}")
-  (mapmulti "{\\mbox{\\rotatebox[origin=c]{180}{$\\multimap$}}}")
+  (upequal (!group (mbox (rotatebox (!option "origin=c") "90" (!math "=")))))
+  (Backepsilon (!group (mbox (rotatebox (!option "origin=c") "180" "E"))))
+  (Mho (!group (mbox (rotatebox (!option "origin=c") "180" (!math "\\Omega")))))
+  (btimes (!group (mbox (rotatebox (!option "origin=c") "90"
+                                   (!math "\\ltimes")))))
+  (mapmulti (!group (mbox (rotatebox (!option "origin=c") "180"
+                                   (!math "\\multimap")))))
   (mathcatalan "C")
   (mathd "\\mathrm{d}")
   (mathD "\\mathrm{D}")
@@ -130,7 +133,6 @@
   (upl "+")
   (upm "\\pm")
   (ump "\\mp")
-  (upequal "{\\mbox{\\rotatebox[origin=c]{90}{$=$}}}")
   (assign ":=")
   (plusassign "+\\!\\!=")
   (minusassign "-\\!\\!=")
