@@ -1877,7 +1877,7 @@
 (define (tmtex-mathop s l)
   (list 'mathop (tmtex (car l))))
 
-(define (tmtex-syntax s l)
+(define (tmtex-syntax l)
   (tmtex (car l)))
 
 (define (tmtex-theindex s l)
