@@ -71,7 +71,8 @@
   (-> "Experimental"
       ("Fast environments" (toggle-preference "fast environments"))
       ("Alpha transparency" (toggle-preference "experimental alpha"))
-      ("New style fonts" (toggle-preference "new style fonts")))
+      ("New style fonts" (toggle-preference "new style fonts"))
+      ("Program bracket matching" (toggle-preference "prog:highlight brackets")))
   ---
   (-> "Server"
       (link server-menu))
