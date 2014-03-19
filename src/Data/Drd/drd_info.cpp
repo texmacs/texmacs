@@ -398,17 +398,12 @@ replace (tree t, hashmap<tree,tree> h) {
 
 tree
 drd_info_rep::get_syntax (tree t, path p) {
-  if (is_atomic (t)) {
-    string s= t->label;
-    if (N(s) == 1 || !existing_tree_label (s)) return UNINIT;
-    return get_syntax (as_tree_label (s));
-  }
-  else if (is_func (t, VALUE, 1) && is_atomic (t[0])) {
+  if (is_func (t, VALUE, 1) && is_atomic (t[0])) {
     string s= t[0]->label;
     if (!existing_tree_label (s)) return UNINIT;
     return get_syntax (as_tree_label (s));
   }
-  else if (L(t) < START_EXTENSIONS)
+  else if (L(t) < START_EXTENSIONS || is_atomic (t))
     return UNINIT;
   else {
     tree fun= the_drd->get_syntax (L(t));
