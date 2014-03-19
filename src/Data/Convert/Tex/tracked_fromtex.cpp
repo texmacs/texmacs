@@ -597,6 +597,7 @@ tree
 tracked_latex_to_texmacs (string s, bool as_pic) {
   if (get_preference ("latex->texmacs:source-tracking", "off") != "on")
     return latex_document_to_tree (s, as_pic);
+  s= dos_to_better (s);
   
   tree   t, body, mt, mbody;
   string tt_opt = "latex->texmacs:transparent-source-tracking";
