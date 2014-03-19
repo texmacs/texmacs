@@ -62,6 +62,8 @@
   (system-wait system_wait (void string string))
   (set-latex-command set_latex_command (void string))
   (set-bibtex-command set_bibtex_command (void string))
+  (number-latex-errors number_latex_errors (int url))
+  (number-latex-pages number_latex_pages (int url))
   (math-symbol-group math_symbol_group (string string))
   (math-group-members math_group_members (array_string string))
   (math-symbol-type math_symbol_type (string string))
@@ -448,6 +450,7 @@
   (system-search-score search_score (int url array_string))
   (system-1 system (void string url))
   (system-2 system (void string url url))
+  (system-url->string sys_concretize (string url))
   (url-grep grep (url string url))
 
   ;; Persistent data

@@ -12,6 +12,7 @@
 #include "Tex/convert_tex.hpp"
 #include "analyze.hpp"
 #include "iterator.hpp"
+#include "file.hpp"
 
 /******************************************************************************
 * TeXmacs preamble management
@@ -458,4 +459,30 @@ latex_unchanged_metadata (string olds, string news, bool abs_flag) {
     if (olds (oldps[i][0], oldps[i][1]) != news (newps[i][0], newps[i][1]))
       return false;
   return true;
+}
+
+/******************************************************************************
+* Getting information out of log files
+******************************************************************************/
+
+int
+number_latex_errors (url log) {
+  string s;
+  if (load_string (log, s, false)) return -1;
+  //cout << "Log file" << LF << HRULE << s << HRULE;
+  //return count_occurrences ("\n! ", s);
+  return count_occurrences ("! ", s);
+}
+
+int
+number_latex_pages (url log) {
+  string s;
+  if (load_string (log, s, false)) return -1;
+  int pos= search_backwards ("Output written on ", s);
+  if (pos < 0) return -1;
+  pos= search_forwards (" pages, ", pos, s);
+  if (pos < 0) return -1;
+  int end= pos;
+  while (pos > 0 && is_numeric (s[pos-1])) pos--;
+  return as_int (s (pos, end));
 }

@@ -493,6 +493,32 @@ tmg_set_bibtex_command (tmscm arg1) {
 }
 
 tmscm
+tmg_number_latex_errors (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "number-latex-errors");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  int out= number_latex_errors (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_number_latex_pages (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "number-latex-pages");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  int out= number_latex_pages (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
 tmg_math_symbol_group (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "math-symbol-group");
 
@@ -5279,6 +5305,19 @@ tmg_system_2 (tmscm arg1, tmscm arg2, tmscm arg3) {
 }
 
 tmscm
+tmg_system_url_2string (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "system-url->string");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= sys_concretize (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_url_grep (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "url-grep");
   TMSCM_ASSERT_URL (arg2, TMSCM_ARG2, "url-grep");
@@ -7537,6 +7576,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("system-wait",  tmg_system_wait, 2, 0, 0);
   tmscm_install_procedure ("set-latex-command",  tmg_set_latex_command, 1, 0, 0);
   tmscm_install_procedure ("set-bibtex-command",  tmg_set_bibtex_command, 1, 0, 0);
+  tmscm_install_procedure ("number-latex-errors",  tmg_number_latex_errors, 1, 0, 0);
+  tmscm_install_procedure ("number-latex-pages",  tmg_number_latex_pages, 1, 0, 0);
   tmscm_install_procedure ("math-symbol-group",  tmg_math_symbol_group, 1, 0, 0);
   tmscm_install_procedure ("math-group-members",  tmg_math_group_members, 1, 0, 0);
   tmscm_install_procedure ("math-symbol-type",  tmg_math_symbol_type, 1, 0, 0);
@@ -7889,6 +7930,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("system-search-score",  tmg_system_search_score, 2, 0, 0);
   tmscm_install_procedure ("system-1",  tmg_system_1, 2, 0, 0);
   tmscm_install_procedure ("system-2",  tmg_system_2, 3, 0, 0);
+  tmscm_install_procedure ("system-url->string",  tmg_system_url_2string, 1, 0, 0);
   tmscm_install_procedure ("url-grep",  tmg_url_grep, 2, 0, 0);
   tmscm_install_procedure ("persistent-set",  tmg_persistent_set, 3, 0, 0);
   tmscm_install_procedure ("persistent-remove",  tmg_persistent_remove, 2, 0, 0);

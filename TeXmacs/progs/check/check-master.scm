@@ -17,13 +17,40 @@
 ;; Test LaTeX export
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (run-pdflatex tex-file)
+  (and (url-exists? tex-file)
+       (let* ((tex-dir  (url-head tex-file))
+              (pdf-file (url-glue (url-unglue tex-file 4) ".pdf"))
+              (log-file (url-glue (url-unglue tex-file 4) ".log"))
+              (cmd1 (string-append "cd " (system-url->string tex-dir)))
+              (cmd2 (string-append "pdflatex -interaction=batchmode "
+                                   (url->string (url-tail tex-file))))
+              (cmd  (string-append cmd1 "; " cmd2 " > /dev/null")))
+         (system-remove pdf-file)
+         (system-remove log-file)
+         (system cmd)
+         (and (url-exists? log-file)
+              (list (url-exists? pdf-file)
+                    (number-latex-errors log-file)
+                    (number-latex-pages log-file))))))
+
 (define (check-latex-export-one tm-file)
-  (display* "Checking LaTeX export of " tm-file "...\n")
+  (display* "Checking LaTeX export of " (url->string tm-file) "...\n")
   (with latex-file (url-glue (url-unglue tm-file 3) ".tex")
     (with-aux tm-file
+      (system-remove latex-file)
       (if (url? latex-file) (set! current-save-target latex-file))
       (export-buffer-main (current-buffer) latex-file
-                          "latex" (list :overwrite)))))
+                          "latex" (list :overwrite))
+      (display* "Checking LaTeX on " (url->string latex-file) "...\n")
+      (with status (run-pdflatex latex-file)
+        (cond ((not status) (display* "  LaTeX export failed\n"))
+              ((not (car status)) (display* "  PdfLaTeX failed\n"))
+              (else
+                (with (ok? errs pages) status
+                  (when (or (!= errs 0) (<= pages 0))
+                    (display* "  PdfLaTeX encountered " errs " error(s)\n")
+                    (display* "  PdfLaTeX produced " pages " page(s)\n")))))))))
 
 (tm-define (check-latex-export u)
   (:synopsis "Try to export and LaTeX all TeXmacs files inside @u")

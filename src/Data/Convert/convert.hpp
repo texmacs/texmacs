@@ -70,7 +70,7 @@ tree   latex_document_to_tree (string s, bool as_pic= false);
 tree   latex_class_document_to_tree (string s);
 string latex_verbarg_to_string (tree t);
 string get_latex_style (tree t);
-string string_arg (tree t, bool url= false);
+string string_arg (tree t, bool u= false);
 array<tree> tokenize_concat (tree t, array<tree> a, bool keep= false);
 bool   is_verbatim (tree t);
 int    latex_search_forwards (string s, int pos, string in);
@@ -79,6 +79,8 @@ tree   tracked_latex_to_texmacs (string s, bool as_pic);
 string conservative_texmacs_to_latex (tree doc, object opts);
 string tracked_texmacs_to_latex (tree doc, object opts);
 tree   conservative_latex_to_texmacs (string s, bool as_pic);
+int    number_latex_errors (url aux);
+int    number_latex_pages (url aux);
 
 /*** Xml / Html / Mathml ***/
 tree   parse_xml (string s);
