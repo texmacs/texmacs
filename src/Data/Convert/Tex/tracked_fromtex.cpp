@@ -545,12 +545,22 @@ texmacs_check_transparency (tree mt, tree t, hashset<int>& invalid) {
     //cout << "Matches(3) " << c << LF << HRULE;
     if (N(invalid) > invalid_count) return true;
     
-    int delta= 1;
+    int delta= 0;
     while (delta < N(umt)) {
       for (int i=0; i<N(umt); i++)
-        if ((c[i] < 0) || (i>0 && c[i-1] < 0) || (i+1<N(umt) && c[i+1] < 0))
+        if (c[i] < 0) {
+          //cout << "Make opaque: " << a[i] << ", " << subtree (mt, a[i]) << LF;
           texmacs_declare_opaque (mt, a[i], invalid);
+          if (delta > 0) {
+            tree st= subtree (mt, a[i]);
+            if (is_compound (st) && N(st) == 1 &&
+                is_document (st[0]) && N(st[0]) == 1 &&
+                is_compound (st[0][0], "mlx", 2))
+              texmacs_declare_opaque (mt, a[i] * path (0, 0), invalid);
+          }
+        }
       if (N(invalid) > invalid_count) return true;
+      if (delta == 0) { delta= 1; continue; }
       int i=0;
       while (i<N(umt)) {
         while (i<N(umt) && c[i] >= 0) i++;
