@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.21>
+<TeXmacs|1.99.1>
 
 <style|<tuple|source|std>>
 
@@ -387,20 +387,20 @@
     <with|font-shape|small-caps|<arg|name>>(<arg|args>)
   </macro>>
 
-  <assign|algo-print|<macro|body|<render-print> <arg|body>>>
+  <assign|algo-print|<macro|body|<surround|<render-print> ||<arg|body>>>>
 
   <assign|algo-comment|<macro|body|<with|font-shape|italic|color|dark
   grey|{<arg|body>}>>>
 
-  <assign|algo-require|<macro|body|<render-require> <arg|body>>>
+  <assign|algo-require|<macro|body|<surround|<render-require> ||<arg|body>>>>
 
-  <assign|algo-data|<macro|body|<render-data> <arg|body>>>
+  <assign|algo-data|<macro|body|<surround|<render-data> ||<arg|body>>>>
 
-  <assign|algo-result|<macro|body|<render-result> <arg|body>>>
+  <assign|algo-result|<macro|body|<surround|<render-result> ||<arg|body>>>>
 
-  <assign|algo-ensure|<macro|body|<render-ensure> <arg|body>>>
+  <assign|algo-ensure|<macro|body|<surround|<render-ensure> ||<arg|body>>>>
 
-  <assign|algo-return|<macro|body|<render-return> <arg|body>>>
+  <assign|algo-return|<macro|body|<surround|<render-return> ||<arg|body>>>>
 
   <assign|algo-state|<macro|body|<arg|body>>>
 
