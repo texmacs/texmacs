@@ -205,8 +205,8 @@
   ("tan" "Insert tan" (insert "tan"))
   ("tanh" "Insert tanh" (insert "tanh"))
 
-  ("maketitle" "Insert title"
-   (begin (make 'make-title) (make 'title)))
+  ("abstract"  "Insert abstract" (make-abstract-data))
+  ("maketitle" "Insert title"    (make-doc-data))
   ("tableofcontents" "Insert table of contents"
    (make-aux "table-of-contents" "toc"))
   ("appendix" "Insert appendix" (make-section 'appendix))
