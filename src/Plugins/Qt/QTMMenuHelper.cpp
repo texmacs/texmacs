@@ -383,7 +383,7 @@ QTMLineEdit::QTMLineEdit (QWidget* parent, string _ww, int style)
   }
   
     // just to be sure we don't capture the wrong keys in keyPressEvent
-  setCompleter(0);
+  setCompleter (0);
 
   qt_apply_tm_style (this, style);
 }
@@ -398,7 +398,6 @@ QTMLineEdit::event (QEvent* ev) {
     keyPressEvent (static_cast<QKeyEvent*> (ev));
   else
     return QWidget::event (ev);
-
   return true;
 }
 
@@ -409,7 +408,7 @@ void
 QTMLineEdit::keyPressEvent (QKeyEvent* ev)
 {
   QCompleter* c = completer();
-
+  
   int key = (ev->key() == Qt::Key_Tab && ev->modifiers() & Qt::ShiftModifier)
             ? Qt::Key_Backtab
             : ev->key();
@@ -419,10 +418,18 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
     switch (key) {
       case Qt::Key_Down:
         completing = true;
+        c->setCompletionPrefix (text().left (cursorPosition()));
         c->complete();
+        return;
       case Qt::Key_Tab:
       {
+//        cout << "Completing= " << completing << LF;
+//        cout << "hasSelectedText= " << hasSelectedText() << LF;
+//        cout << "CursorPosition= " << cursorPosition() << LF;
+//        cout << "SelectionStart= " << selectionStart() << LF;
+        
         if (completing) {
+//          cout << "CompletionCount= " << c->completionCount() << LF;
           if (c->completionCount() > 1) {
             if (! c->setCurrentRow (c->currentRow() + 1))
               c->setCurrentRow (0);    // cycle
@@ -431,56 +438,98 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
             completing = false;
               //c->popup()->hide();
           }
-        } else {
           if (hasSelectedText())
-            c->setCompletionPrefix (text().left (selectionStart()));
-          else
-            c->setCompletionPrefix (text().left (cursorPosition()));
+            setCursorPosition (selectionStart());
+          if (c->currentCompletion() != "") {
+            int pos = cursorPosition();
+            setText (c->currentCompletion ());
+            setSelection (pos, text().length());
+          } else {
+            completing = false;
+            setSelection (0, text(). length());
+          }
 
-            // If there are no completions, send the key up for tab navigation
+        } else {
+          QString prefix;
+          if (hasSelectedText())
+            prefix = text().left (selectionStart());
+          else
+            prefix = text().left (cursorPosition());
+          c->setCompletionPrefix (prefix);
+//          cout << "prefix= " << from_qstring (prefix) << LF;
+//          cout << "CompletionCount= " << c->completionCount() << LF;
+          
+            // If there are no completions, go to the end of the line or
+            // send the key up for tab navigation
           if (c->completionCount() == 0 ||
               (c->completionCount() == 1 && c->currentCompletion() == text())) {
-            QLineEdit::keyPressEvent (ev);
+            if (c->popup() && c->popup()->isVisible()) {
+              setCursorPosition (text().length());
+              c->popup()->hide();
+            } else if (cursorPosition() == text().length()) {
+              QLineEdit::keyPressEvent (ev);
+            } else {
+              setCursorPosition (text().length());
+            }
             return;
           }
-          
+
           completing = true;
+            // hack: advance one completion (needed after tab navigation)
+          if (c->currentCompletion() == text()) {
+            clear();
+            if (! c->setCurrentRow (c->currentRow() + 1))
+              c->setCurrentRow (0);    // cycle
+          }
           c->complete();
         }
-        if (hasSelectedText())
-          setCursorPosition (selectionStart());
-        if (c->currentCompletion() != "") {
-          int pos = cursorPosition();
-          setText (c->currentCompletion ());
-          setSelection (pos, text().length() - 1);
-        } else {
-          completing = false;
-          setSelection (0, text(). length() - 1);
-        }
-
         ev->accept();
       }
         return;
           // This is different on purpose: when "back-completing" suggested text
           // we want to display the previous entry to the one suggested
       case Qt::Key_Up:
+        completing = true;
+        c->setCompletionPrefix (text().left (cursorPosition()));
+        c->complete();
+        return;
       case Qt::Key_Backtab:
       {
-        completing = true;
-        c->complete();
-        row = c->currentRow();
-        if (! c->setCurrentRow (row - 1))
-          c->setCurrentRow (c->completionCount() - 1);    // cycle
-        if (c->currentCompletion() != "") {
-          int pos;
+        if (!completing) {
           if (hasSelectedText())
-            pos = selectionStart();
+            c->setCompletionPrefix (text().left (selectionStart()));
           else
-            pos = cursorPosition();
-          setText (c->currentCompletion ());
-          setSelection (pos, text().length() - 1);
+            c->setCompletionPrefix (text().left (cursorPosition()));
+            // If there are no completions, go to the end of the line or
+            // send the key up for tab navigation
+          if (c->completionCount() == 0 ||
+              (c->completionCount() == 1 && c->currentCompletion() == text())) {
+            if (c->popup() && c->popup()->isVisible()) {
+              setCursorPosition (text().length());
+              c->popup()->hide();
+            } else if (cursorPosition() == text().length()) {
+              QLineEdit::keyPressEvent (ev);
+            } else {
+              setCursorPosition (text().length());
+            }
+
+            return;
+          }
+          completing = true;
+          c->complete();
         } else {
-            // TODO: blink somehow
+          row = c->currentRow();
+          if (! c->setCurrentRow (row - 1))
+            c->setCurrentRow (c->completionCount() - 1);    // cycle
+          if (c->currentCompletion() != "") {
+            int pos;
+            if (hasSelectedText())
+              pos = selectionStart();
+            else
+              pos = cursorPosition();
+            setText (c->currentCompletion ());
+            setSelection (pos, text().length());
+          }
         }
         ev->accept();
       }
