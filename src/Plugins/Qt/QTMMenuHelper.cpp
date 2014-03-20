@@ -493,10 +493,12 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
         } else if (completing) {
           setText (c->currentCompletion());
           setCursorPosition (text().length());
+          completing = false;
         } else {
-          emit returnPressed();
+          completing = false;
+          QLineEdit::keyPressEvent (ev);
+          return;
         }
-        completing = false;
         ev->accept();
         return;
       case Qt::Key_Escape:
