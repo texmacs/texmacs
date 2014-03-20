@@ -44,10 +44,12 @@ STRIP = @CONFIG_STRIP@
 TOUCH = touch
 SIGN = misc/admin/sign_update
 
+.NOTPARALLEL:
+
 ###############################################################################
 # Main makes
 ###############################################################################
-.NOTPARALLEL:
+
 TEXMACS: EMPTY_DIRS
 	cd src; $(MAKE) -f makefile link=shared
 	$(MAKE) -f Makefile PLUGINS
@@ -305,7 +307,7 @@ GENERIC_PACKAGE: STATIC_TEXMACS STRIP
 	   ln -s $(tmdir) $(STATIC_QT) && \
 	   tar -czhf $(GENERIC_PACKAGE_DIR)/$(STATIC_QT)-@CONFIG_STYPE@.tar.gz $(STATIC_QT) --exclude .svn --mode go=rX
 	$(RM) $(tmdir)proges/ice-9  $(STATIC_QT)
-	
+
 GENERIC_X11_PACKAGE: COPY_SOURCES COPY_GUILE
 	cd $(BUILD_DIR); ./configure --disable-qt --disable-pdf-renderer
 	cd $(BUILD_DIR); make STATIC_TEXMACS
