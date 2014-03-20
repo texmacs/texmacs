@@ -1709,12 +1709,12 @@ get_latex_language (string s) {
       break;
   string r = s(start+1, stop+1);
 
-  tree langs = concat();
-  langs << "british" << "bulgarian" << "chinese" << "czech" << "danish"
-    << "dutch" << "finnish" << "french" << "german" << "hungarian" << "italian"
-    << "japanese" << "korean" << "polish" << "portuguese" << "romanian"
-    << "russian" << "slovene" << "spanish" << "swedish" << "taiwanese"
-    << "ukrainian";
+  tree langs = concat(); 
+  langs << "british" << "bulgarian" << "chinese" << "croatian" << "czech"
+        << "danish" << "dutch" << "finnish" << "french" << "german"
+        << "hungarian" << "italian" << "japanese" << "korean" << "polish"
+        << "portuguese" << "romanian" << "russian" << "slovene" << "spanish"
+        << "swedish" << "taiwanese" << "ukrainian";
 
   for (int i = 0 ; i < N(langs) ; i++)
     if (test(r, 0 , as_string(langs[i])))
