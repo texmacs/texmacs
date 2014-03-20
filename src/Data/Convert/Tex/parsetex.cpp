@@ -25,8 +25,8 @@ string verbatim_escape (string s);
 * During the parsing, the following global variables are used:
 *
 *     command_type   Contains the types of all currently defined tex commands.
-*                    This is either 'command' 'modifier' 'operator'
-*                    'environment' 'list' 'symbol' 'big-symbol' or 'user'.
+*                    See latex-type in latex-drd.scm for the list of possible
+*                    types.
 *     command_arity  Contains the corresponding arity.
 *     command_def    Contains the definitions of user commands.
 *
@@ -1051,18 +1051,18 @@ latex_parser::parse_command (string s, int& i, string cmd, int change) {
     if (is_tuple (t, "\\declaretheorem*", 2) ||
         is_tuple (t, "\\declaretheorem",  1)) {
       string var= "\\begin-" * string_arg (t[N(t)-1]);
-      command_type  (var)= "environment";
+      command_type  (var)= "enunciation";
       command_arity (var)= 0;
       var= "\\end-" * string_arg (t[N(t)-1]);
-      command_type  (var)= "environment";
+      command_type  (var)= "enunciation";
       command_arity (var)= 0;
     }
     if (is_tuple (t, "\\newtheorem", 2) || is_tuple (t, "\\newtheorem*", 2)) {
       string var= "\\begin-" * string_arg (t[1]);
-      command_type  (var)= "environment";
+      command_type  (var)= "enunciation";
       command_arity (var)= 0;
       var= "\\end-" * string_arg (t[1]);
-      command_type  (var)= "environment";
+      command_type  (var)= "enunciation";
       command_arity (var)= 0;
     }
     if (is_tuple (t, "\\SetKwData", 2) || is_tuple (t, "\\SetKwFunction", 2)) {

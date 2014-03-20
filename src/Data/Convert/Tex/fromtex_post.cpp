@@ -451,10 +451,9 @@ static bool
 admissible_env (tree t) {
   string s= t[0]->label;
   if (ends (s, "*")) s= s (0, N(s)-1);
-  if (latex_type ("\\begin-" * s) == "list") return true;
-  if (latex_type ("\\begin-" * s) == "environment") return true;
-  if (latex_type ("\\begin-" * s) == "math-environment") return true;
-  return false;
+  string type= latex_type ("\\begin-" * s);
+  return type == "list"        || type == "environment"     ||
+         type == "enunciation" || type == "math-environment";
 }
 
 static bool
