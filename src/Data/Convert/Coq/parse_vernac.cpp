@@ -458,7 +458,7 @@ parse_comment (string s, int& i) {
 }
 
 static bool
-end_command (string s, int i) {
+end_vernac_command (string s, int i) {
   int n= N(s);
   if (!(i<n && s[i] == '.')) return false;
   i++;
@@ -501,6 +501,24 @@ is_hide_or_show (string s, int i) {
   return parse_coqdoc_hide_show (s, i) != tree (UNINIT);
 }
 
+static array<string>
+split_command (string s) {
+  int start= 0, i=0, n= N(s);
+  array<string> r;
+  while (i<n) {
+    if (s[i] == '.' && i+1<n && (s[i+1] == ' ' || s[i+1] == '\t')) {
+      r << s(start, ++i);
+      while (i<n && (s[i] == ' ' || s[i] == '\t')) i++;
+      start= i;
+    }
+    else
+      i++;
+  }
+  if (start < n)
+    r << s(start, n);
+  return r;
+}
+
 static tree
 parse_raw_coq (string s) {
   tree r (DOCUMENT);
@@ -515,10 +533,17 @@ parse_raw_coq (string s) {
       else
         r << parse_comment (s, i);
     }
-    else if (end_command (s, i)) {
+    else if (end_vernac_command (s, i)) {
       i++;
-      r << compound ("coq-command", "", "dark grey",
-          from_verbatim (s (startcmd, i)));
+      array<string> a= split_command (s (startcmd, i));
+      if (N(a) == 1)
+        r << compound ("coq-command", "", "dark grey", from_verbatim (a[0]));
+      else if (N(a) > 0) {
+        tree u (CONCAT);
+        for (int j=0; j<N(a); j++)
+          u << compound ("coq-command", "", "dark grey", from_verbatim (a[j]));
+        r << u;
+      }
       in_cmd= false;
     }
     else if (!in_cmd && s[i] == '\n') {
