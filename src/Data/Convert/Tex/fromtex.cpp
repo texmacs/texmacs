@@ -126,11 +126,18 @@ is_end (tree t) {
 }
 
 static bool
+is_enunciation (string s) {
+  if (ends (s, "*")) s= s (0, N(s)-1);
+  return latex_type (s) == "enunciation";
+}
+
+static bool
 is_block_environnement (tree t) {
   if (!is_begin (t) && ! is_end (t)) return false;
   string s= as_string (t[0]);
   s= replace (s, "*", "");
   return
+    is_enunciation (s)           ||
     ends (s, "abstract")         ||
     ends (s, "center")           ||
     ends (s, "description")      ||
