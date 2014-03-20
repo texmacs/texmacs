@@ -30,6 +30,7 @@ namespace win32 {
     if (s == "british") return MAKELCID(LANG_ENGLISH, SUBLANG_ENGLISH_UK);
     if (s == "bulgarian") return MAKELCID(LANG_BULGARIAN, SUBLANG_BULGARIAN_BULGARIA);
     if (s == "chinese") return MAKELCID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED);
+    if (s == "croatian") return MAKELCID(LANG_CROATIAN, SUBLANG_CROATIAN_CROATIA);
     if (s == "czech") return MAKELCID(LANG_CZECH, SUBLANG_CZECH_CZECH_REPUBLIC);
     if (s == "danish") return MAKELCID(LANG_DANISH, SUBLANG_DANISH_DENMARK);
     if (s == "dutch") return MAKELCID(LANG_DUTCH, SUBLANG_DUTCH);

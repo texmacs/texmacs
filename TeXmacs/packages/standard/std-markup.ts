@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.21>
+<TeXmacs|1.99.1>
 
 <style|<tuple|source|std>>
 
@@ -146,6 +146,8 @@
   <assign|bulgarian|<macro|body|<with|language|bulgarian|<arg|body>>>>
 
   <assign|chinese|<macro|body|<with|language|chinese|<arg|body>>>>
+
+  <assign|croatian|<macro|body|<with|language|croatian|<arg|body>>>>
 
   <assign|czech|<macro|body|<with|language|czech|<arg|body>>>>
 

@@ -319,6 +319,7 @@ windows_locale_to_language (string s) {
     return "taiwanese"; // for windows xp
   if (s == "Chinese (Traditional)_Taiwan.950")
     return "taiwanese"; // for windows 7
+  if (s == "Croatian_Croatia.1250") return "croatian";
   if (s == "Czech_Czech Republic.1250") return "czech";
   if (s == "Danish_Denmark.1252") return "danish";
   if (s == "Dutch_Netherlands.1252") return "dutch";
@@ -357,6 +358,7 @@ locale_to_language (string s) {
   if (s == "fi") return "finnish";
   if (s == "fr") return "french";
   if (s == "de") return "german";
+  if (s == "hr") return "croatian";
   if (s == "hu") return "hungarian";
   if (s == "it") return "italian";
   if (s == "ja") return "japanese";
@@ -378,6 +380,7 @@ language_to_locale (string s) {
   if (s == "british")    return "en_GB";
   if (s == "bulgarian")  return "bg_BG";
   if (s == "chinese")    return "zh_CN";
+  if (s == "croatian")   return "hr_HR";
   if (s == "czech")      return "cs_CZ";
   if (s == "danish")     return "da_DK";
   if (s == "dutch")      return "nl_NL";
@@ -405,6 +408,7 @@ string
 language_to_local_ISO_charset (string s) {
   if (s == "bulgarian")  return "ISO-8859-5";
   if (s == "chinese")    return "";
+  if (s == "croatian")   return "ISO-8859-2";
   if (s == "czech")      return "ISO-8859-2";
   if (s == "hungarian")  return "ISO-8859-2";
   if (s == "japanese")   return "";
@@ -541,6 +545,7 @@ text_language (string s) {
   if (s == "british")    return make_text_language (s, "ukenglish");
   if (s == "bulgarian")  return make_ucs_text_language (s, "bulgarian");
   if (s == "chinese")    return make_oriental_language (s);
+  if (s == "croatian")   return make_text_language (s, "croatian");
   if (s == "czech")      return make_text_language (s, "czech");
   if (s == "danish")     return make_text_language (s, "danish");
   if (s == "dutch")      return make_text_language (s, "dutch");

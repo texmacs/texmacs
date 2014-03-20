@@ -1,9 +1,18 @@
-<TeXmacs|1.0.7.21>
+<TeXmacs|1.99.1>
 
 <style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
+
+  <section|Changes from version 1.99.1 to 1.99.2>
+
+  <\itemize>
+    <item>Added support for the Croatian language (1.99.2).
+
+    <item>Added experimental ``conservative'' converters for <LaTeX>
+    (1.99.2).
+  </itemize>
 
   <section|Changes from version 1.0.7 to 1.99.1>
 

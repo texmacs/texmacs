@@ -139,9 +139,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-public supported-languages
-  '("british" "bulgarian" "chinese" "czech" "danish" "dutch" "english"
-    "finnish" "french" "german" "hungarian" "italian" "japanese" "korean"
-    "polish" "portuguese" "romanian" "russian" "slovene" "spanish"
+  '("british" "bulgarian" "chinese" "croatian" "czech" "danish" "dutch"
+    "english" "finnish" "french" "german" "hungarian" "italian" "japanese"
+    "korean" "polish" "portuguese" "romanian" "russian" "slovene" "spanish"
     "swedish" "taiwanese" "ukrainian"))
 
 (define-public (supported-language? lan)
@@ -160,6 +160,7 @@
   (in-british% (== (get-env "language") "british") in-text%)
   (in-bulgarian% (== (get-env "language") "bulgarian") in-cyrillic%)
   (in-chinese% (== (get-env "language") "chinese") in-oriental%)
+  (in-croatian% (== (get-env "language") "croatian") in-text%)
   (in-czech% (== (get-env "language") "czech") in-text%)
   (in-danish% (== (get-env "language") "danish") in-text%)
   (in-dutch% (== (get-env "language") "dutch") in-text%)

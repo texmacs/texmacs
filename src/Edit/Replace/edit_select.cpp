@@ -22,7 +22,7 @@
 
 string
 selection_encode (string lan, string s) {
-  if ((lan == "czech") || (lan == "hungarian") ||
+  if ((lan == "croatian") || (lan == "czech") || (lan == "hungarian") ||
       (lan == "polish") || (lan == "slovene"))
     return cork_to_il2 (s);
   else if (lan == "spanish")
@@ -34,7 +34,7 @@ selection_encode (string lan, string s) {
 
 string
 selection_decode (string lan, string s) {
-  if ((lan == "czech") || (lan == "hungarian") ||
+  if ((lan == "croatian") || (lan == "czech") || (lan == "hungarian") ||
       (lan == "polish") || (lan == "slovene"))
     return il2_to_cork (s);
   else if (lan == "spanish")
