@@ -1589,15 +1589,15 @@ upgrade_mod_symbols (tree t) {
   else if (is_with (t, "math font", "cal") &&
 	   is_with (t[2], "math font series", "bold") && is_upper (t[2][2]))
     return upgrade_mod_symbol ("b-cal-", t[2][2]->label);
-  else if ((is_func (t, VALUE, 1) || is_func (t, EXPAND, 1) ||
-	    is_func (t, APPLY, 1)) && (is_atomic (t[0]))) {
-    string s= t[0]->label;
-    if ((N(s) == 2) && ((s[0]=='m') && (s[1]>='a') && s[1]<='z'))
-      return upgrade_mod_symbol ("frak-", s(1,2));
-    if ((N(s) == 2) && ((s[0]=='M') && (s[1]>='A') && s[1]<='Z'))
-      return upgrade_mod_symbol ("frak-", s(1,2));
-    return t;
-  }
+  //else if ((is_func (t, VALUE, 1) || is_func (t, EXPAND, 1) ||
+  //         is_func (t, APPLY, 1)) && (is_atomic (t[0]))) {
+  //  string s= t[0]->label;
+  //  if ((N(s) == 2) && ((s[0]=='m') && (s[1]>='a') && s[1]<='z'))
+  //    return upgrade_mod_symbol ("frak-", s(1,2));
+  //  if ((N(s) == 2) && ((s[0]=='M') && (s[1]>='A') && s[1]<='Z'))
+  //    return upgrade_mod_symbol ("frak-", s(1,2));
+  //  return t;
+  //}
   else {
     int i, n= N(t);
     tree r (t, n);
