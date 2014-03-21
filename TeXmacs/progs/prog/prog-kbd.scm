@@ -21,7 +21,9 @@
   ; rewrite some text mode shortcuts
   ("space var" (insert-tabstop))
   ("space var var" (begin (insert-tabstop) (insert-tabstop)))
-  ("$" (insert "$")))
+  ("$" (insert "$"))
+  ("$ tab" (make 'math))
+  ("\\ tab" (make 'hybrid)))
 
 (kbd-map
   (:mode in-prog-scheme?)
@@ -41,7 +43,11 @@
   (:require (and developer-mode? (in-prog-scheme?)))
   ("A-F1" (scheme-popup-help (cursor-word)))
   ("cmd A-F1" (scheme-inbuffer-help (cursor-word)))
-  ("std F1" (scheme-go-to-definition (cursor-word)))
+  ("std F1" (scheme-go-to-definition (cursor-word))))
+
+(kbd-map
+  (:require (and developer-mode? (in-prog-scheme?) 
+                 (== "scheme-file" (file-format (current-buffer-url)))))
   ("F5" (run-scheme-file (current-buffer-url))))
 
 (kbd-map
