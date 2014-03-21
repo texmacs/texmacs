@@ -192,14 +192,15 @@ class QTMLineEdit : public QLineEdit {
 
   bool completing;
   string       ww; // width of the parsed widget
-  
+  int    last_key;
 public:
   QTMLineEdit (QWidget *parent, string _ww, int style=0);
   virtual QSize	sizeHint () const ;
   virtual bool event (QEvent* ev);
 
 signals:
-  void focusOut ();
+  void focusOut (Qt::FocusReason reason);
+  
 protected:
   virtual void keyPressEvent (QKeyEvent* ev);
   virtual void focusInEvent (QFocusEvent* ev);
@@ -239,7 +240,7 @@ protected:
 
 public slots:
   void commit ();
-  void leave ();
+  void leave (Qt::FocusReason reason);
 };
 
 

@@ -302,7 +302,8 @@ QTMInputTextWidgetHelper::QTMInputTextWidgetHelper (qt_widget _wid,
 : QObject (le), p_wid (_wid), done (false) {
   ASSERT (le != NULL, "QTMInputTextWidgetHelper: expecting valid QTMLineEdit");
   QObject::connect (le, SIGNAL (returnPressed ()), this, SLOT (commit ()));
-  QObject::connect (le, SIGNAL (focusOut ()),      this, SLOT (leave ()));
+  QObject::connect (le, SIGNAL (focusOut (Qt::FocusReason)),
+                    this, SLOT (leave (Qt::FocusReason)));
 }
 
 void
@@ -334,11 +335,14 @@ QTMInputTextWidgetHelper::commit () {
 
 /*! Executed after commit of the input field (enter) and when losing focus */
 void
-QTMInputTextWidgetHelper::leave () {
+QTMInputTextWidgetHelper::leave (Qt::FocusReason reason) {
   QTMLineEdit* le = qobject_cast <QTMLineEdit*> (sender());
   if (!le) return;
 
-  if (get_preference ("gui:line-input:autocommit") == "#t") {
+    // Don't autocommit if the user pressed the escape key
+    // (see QTMLineEdit::focusOut()).
+  if (reason != Qt::OtherFocusReason &&
+      get_preference ("gui:line-input:autocommit") == "#t") {
     done         = false;
     wid()->ok    = true;
     wid()->input = from_qstring (le->text());
@@ -372,7 +376,7 @@ QTMFieldWidgetHelper::commit (const QString& qst) {
  ******************************************************************************/
 
 QTMLineEdit::QTMLineEdit (QWidget* parent, string _ww, int style)
-: QLineEdit (parent), completing (false), ww (_ww) {
+: QLineEdit (parent), completing (false), ww (_ww), last_key (0) {
   if (style & WIDGET_STYLE_MINI) {
     setStyle (qtmstyle());
       // FIXME: we should remove this and let the scheme code decide.
@@ -409,18 +413,17 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
 {
   QCompleter* c = completer();
   
-  int key = (ev->key() == Qt::Key_Tab && ev->modifiers() & Qt::ShiftModifier)
+  last_key = (ev->key() == Qt::Key_Tab && ev->modifiers() & Qt::ShiftModifier)
             ? Qt::Key_Backtab
             : ev->key();
   
   if (c) {
     int row = 0;
-    switch (key) {
+    switch (last_key) {
       case Qt::Key_Down:
         completing = true;
-        c->setCompletionPrefix (text().left (cursorPosition()));
+        setCursorPosition (0);
         c->complete();
-        return;
       case Qt::Key_Tab:
       {
 //        cout << "Completing= " << completing << LF;
@@ -434,8 +437,9 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
             if (! c->setCurrentRow (c->currentRow() + 1))
               c->setCurrentRow (0);    // cycle
           } else {
-            setCursorPosition (text().length());
             completing = false;
+            setCursorPosition (text().length());
+            c->setCompletionPrefix ("");
               //c->popup()->hide();
           }
           if (hasSelectedText())
@@ -447,8 +451,8 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
           } else {
             completing = false;
             setSelection (0, text(). length());
+            c->setCompletionPrefix ("");
           }
-
         } else {
           QString prefix;
           if (hasSelectedText())
@@ -490,9 +494,8 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
           // we want to display the previous entry to the one suggested
       case Qt::Key_Up:
         completing = true;
-        c->setCompletionPrefix (text().left (cursorPosition()));
+        setCursorPosition (0);
         c->complete();
-        return;
       case Qt::Key_Backtab:
       {
         if (!completing) {
@@ -512,7 +515,6 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
             } else {
               setCursorPosition (text().length());
             }
-
             return;
           }
           completing = true;
@@ -540,29 +542,33 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
           setCursorPosition (text().length());
           c->popup()->hide();
         } else if (completing) {
+          completing = false;
           setText (c->currentCompletion());
           setCursorPosition (text().length());
-          completing = false;
+          c->setCompletionPrefix ("");
         } else {
           completing = false;
+          c->setCompletionPrefix ("");
           QLineEdit::keyPressEvent (ev);
           return;
         }
         ev->accept();
         return;
       case Qt::Key_Escape:
-        if (completing) {
+        if (completing && c->completionMode() == QCompleter::PopupCompletion) {
           if (c->popup()) c->popup()->hide();
           completing = false;
         } else {
           emit editingFinished();
           ev->accept();
           if (parentWidget())        // HACK to return focus to the main editor widget
-            parentWidget()->setFocus();
+            parentWidget()->setFocus ();
         }
+        c->setCompletionPrefix ("");
         return;
       default:
         completing = false;
+        c->setCompletionPrefix ("");
         QLineEdit::keyPressEvent (ev);
         return;
     }
@@ -587,7 +593,9 @@ QTMLineEdit::focusInEvent (QFocusEvent* ev)
 void
 QTMLineEdit::focusOutEvent (QFocusEvent* ev)
 {
-  emit focusOut();
+  Qt::FocusReason reason = (last_key != Qt::Key_Escape)
+                           ? ev->reason() : Qt::OtherFocusReason;
+  emit focusOut (reason);
   QLineEdit::focusOutEvent (ev);
 }
 
