@@ -1016,12 +1016,12 @@ latex_parser::parse_command (string s, int& i, string cmd, int change) {
       command_type  (var)= "user";
       command_arity (var)= 0;
       command_def   (var)= tree_to_str_array (u[2]);
-      // hack to retrive arity of shortcuts
+      // hack to retrieve arity of shortcuts
       if (is_func (t[2], TUPLE, 1) &&
           latex_type (as_string (t[2][0])) != "undefined") {
         command_arity (var)= latex_arity (as_string (t[2][0]));
       }
-      // hack to retrive shortcuts to environments
+      // hack to retrieve shortcuts to environments
       if (as_string (t[2]) == "\\begin" || as_string (t[2]) == "\\end") {
         command_arity (var)= 1;
         command_type  (var)= "begin-end!";

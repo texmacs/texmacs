@@ -653,6 +653,8 @@ latex_symbol_to_tree (string s) {
         return tree (SET, "par-columns", "2");
       if (s == "onecolumn")
         return tree (SET, "par-columns", "1");
+      if (s == "bysame") return "---";
+      if (s == "MR") return "MR ";
     }
 
     if (latex_type (s) == "symbol") {
@@ -2080,10 +2082,15 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\noalign", 1))
     return ""; // FIXME: for larger space in maple matrices
   if (is_tuple (t, "\\etalchar", 1)) return t2e (t[1]);
+  if (is_tuple (t, "\\MR", 1)) return tree (CONCAT, "MR ", l2e (t[1]));
+  if (is_tuple (t, "\\MRhref", 2))
+    return compound ("hlink", l2e (t[2]),
+                     "http://www.ams.org/mathscinet-getitem?mr=" *
+                     as_string (t2e (t[1])));
   if (is_tuple (t, "\\natexlab", 1)) return t2e (t[1]);
   if (is_tuple (t, "\\penalty", 1)) return "";
   if (is_tuple (t, "\\url", 1))
-    return tree (APPLY, "href", url_arg_to_string (t[1]));
+    return tree (APPLY, "slink", url_arg_to_string (t[1]));
   if (is_tuple (t, "\\href", 2))
     return tree (APPLY, "hlink", l2e (t[2]), url_arg_to_string (t[1]));
 
