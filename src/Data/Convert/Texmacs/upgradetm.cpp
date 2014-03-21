@@ -508,10 +508,10 @@ static charp apply_expand_value_strings[]= {
   "include-document", "include-project", "globalize-variable",
   "localize-variable", "assign-variable",
   "gb", "cgb", "gbt", "cgbt", "head", "tail", "hm", "tm", "binom",
-  "ma", "mb", "md", "me", "mf", "mg", "mh", "mi", "mj", "mk",
-  "mm", "mn", "mu", "mv", "mw", "my", "mz",
-  "MA", "MB", "MD", "ME", "MF", "MG", "MH", "MI", "MJ", "MK",
-  "MM", "MN", "MU", "MV", "MW", "MY", "MZ",
+  //"ma", "mb", "md", "me", "mf", "mg", "mh", "mi", "mj", "mk",
+  //"mm", "mn", "mu", "mv", "mw", "my", "mz",
+  //"MA", "MB", "MD", "ME", "MF", "MG", "MH", "MI", "MJ", "MK",
+  //"MM", "MN", "MU", "MV", "MW", "MY", "MZ",
   ""
 };
 
