@@ -1,6 +1,6 @@
-<TeXmacs|1.0.6.10>
+<TeXmacs|1.99.1>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|High level modification routines>
@@ -25,27 +25,27 @@
     that <scm|tree-set> tries to cleverly decompose the assignment into
     fundamental modification routines. The objective of this decomposition is
     to make a less intrusive modifications in the document, so as to preserve
-    as many tree positions and cursor positions.
+    as many tree positions and cursor positions as possible.
 
     For instance, the operation <scm|(tree-set t t)> is a no-operation for
     all trees <scm|t>. A more complex operations like
 
-    <\scheme-fragment>
+    <\scm-code>
       (<scm|tree-set!> t `(foo "Hop" ,(<scm|tree-ref> t 2)))
-    </scheme-fragment>
+    </scm-code>
 
     is decomposed into the following fundamental modifications:
 
-    <\scheme-fragment>
+    <\scm-code>
       (<scm|tree-remove-node!> t 2)
 
       (<scm|tree-insert-node!> t 1 '(foo "Hop"))
-    </scheme-fragment>
+    </scm-code>
 
     Like in the case <scm|tree-assign> and <scm|tree-assign!>, you should use
     the macro <scm|tree-set!> in order to update the value of <scm-arg|which>
-    if <scm-arg|which> is a <value|scheme> variable <scm-arg|accessors> is
-    the empty list.
+    if <scm-arg|which> is a <scheme> variable <scm-arg|accessors> is the
+    empty list.
   </explain>
 
   <\explain>
@@ -61,10 +61,10 @@
     In its general form, <scm|tree-ref> relies on the routine <scm|select> in
     order to compute the desired subtree. With <scm-arg|which> as in the
     above example, this makes it possible to retrieve the subtree
-    <group|<scm|(sqrt "b")>> using <scm|(tree-ref t 'frac)>. In the case when
+    <rigid|<scm|(sqrt "b")>> using <scm|(tree-ref t 'frac)>. In the case when
     there are several matches, the first match is returned. For instance, if
-    <scm-arg|which> contains the tree <group|<scm|(frac (sqrt "a") (sqrt
-    "b")))>>, then <scm|(tree-ref t 'frac)> returns <group|<scm|(sqrt "a")>>.
+    <scm-arg|which> contains the tree <rigid|<scm|(frac (sqrt "a") (sqrt
+    "b")))>>, then <scm|(tree-ref t 'frac)> returns <rigid|<scm|(sqrt "a")>>.
 
     In fact, the result of <scm|tree-ref> is not necessarily a subtree of
     <scm-arg|which>: the <scm|select> utility also accepts the accessors
@@ -111,8 +111,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
