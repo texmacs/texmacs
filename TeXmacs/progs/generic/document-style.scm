@@ -149,7 +149,8 @@
   ("hanging-theorems"     "Hanging theorems")
   ("number-europe"        "European numbering style")
   ("number-us"            "US numbering style")
-  ("number-long-article"  "Prefix by section number"))
+  ("number-long-article"  "Prefix by section number")
+  ("captions-above"       "Captions above"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Table with brief descriptions for common styles and style packages
@@ -231,6 +232,7 @@
   ("number-europe"      "Individual counters for theorems, propositions, etc.")
   ("number-long-article" "Prefix numbered environments by section number")
   ("number-us"          "Shared counter for theorems, propositions, etc.")
+  ("captions-above"     "Place captions above in figures and tables")
 
   ("doc"                "Rich collection of markup for writing documentation")
   ("doxygen"            "Package for mixing TeXmacs and doxygen documentation")

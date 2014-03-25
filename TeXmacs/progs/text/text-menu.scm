@@ -853,6 +853,11 @@
                "Alignment of balloon")
       (link position-balloon-menu)))
 
+(tm-define (standard-options l)
+  (:require (in? l (numbered-unnumbered-append
+                     (append (small-figure-tag-list) (big-figure-tag-list)))))
+  (list "captions-above"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Possibility to rename titled environments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
