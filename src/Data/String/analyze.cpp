@@ -1347,11 +1347,22 @@ recompose (array<string> a, string sep) {
 }
 
 string
-trim_spaces (string s) {
-  int start, end;
+trim_spaces_left (string s) {
+  int start;
   for (start=0; start<N(s) && is_space (s[start]); start++) ;
-  for (end=N(s)-1; end > start && is_space (s[end]); end--) ;
-  return s (start, end+1);
+  return s (start, N(s));
+}
+
+string
+trim_spaces_right (string s) {
+  int end;
+  for (end=N(s)-1; end >= 0 && is_space (s[end]); end--) ;
+  return s (0, end+1);
+}
+
+string
+trim_spaces (string s) {
+  return trim_spaces_left (trim_spaces_right (s));
 }
 
 array<string>
@@ -1363,20 +1374,47 @@ trim_spaces (array<string> a) {
 }
 
 tree
-trim_spaces (tree t) {
-  if (is_atomic (t)) return trim_spaces (as_string (t));
+trim_spaces_right (tree t) {
+  if (is_atomic (t)) return trim_spaces_right (as_string (t));
   else if (is_concat (t)) {
-    int start, end;
-    for (start=0; start < N(t) && t[start] == " "; start++);
-    for (end=N(t)-1; end > start && t[end] == " "; end--);
+    int end;
+    for (end=N(t)-1; end >= 0 && t[end] == " "; end--);
     tree r= tree (L(t));
-    for (int i=start; i<=end; i++) r << t[i];
+    for (int i=0; i<=end; i++) {
+      if (i == end)
+        r << trim_spaces_right (t[i]);
+      else
+        r << t[i];
+    }
     return r;
   }
   else return t;
 }
 
-/******************************************************************************
+tree
+trim_spaces_left (tree t) {
+  if (is_atomic (t)) return trim_spaces (as_string (t));
+  else if (is_concat (t)) {
+    int start;
+    for (start=0; start < N(t) && t[start] == " "; start++);
+    tree r= tree (L(t));
+    for (int i=start; i<N(t); i++) {
+      if (i == start)
+        r << trim_spaces_left (t[i]);
+      else
+        r << t[i];
+    }
+    return r;
+  }
+  else return t;
+}
+
+tree
+trim_spaces (tree t) {
+  return trim_spaces_left (trim_spaces_right (t));
+}
+
+ /******************************************************************************
 * Computations with completions
 ******************************************************************************/
 
