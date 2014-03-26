@@ -186,25 +186,6 @@ is_block_environnement (tree t) {
     ends (s, "verbatim")         ||
     ends (s, "verse")            ||
     ends (s, "multicols")        ||
-    ends (s, "acknowledgments")  ||
-    ends (s, "answer")           ||
-    ends (s, "axiom")            ||
-    ends (s, "conjecture")       ||
-    ends (s, "convention")       ||
-    ends (s, "corollary")        ||
-    ends (s, "definition")       ||
-    ends (s, "example")          ||
-    ends (s, "exercise")         ||
-    ends (s, "notation")         ||
-    ends (s, "note")             ||
-    ends (s, "problem")          ||
-    ends (s, "proof")            ||
-    ends (s, "proposition")      ||
-    ends (s, "question")         ||
-    ends (s, "remark")           ||
-    ends (s, "solution")         ||
-    ends (s, "theorem")          ||
-    ends (s, "warning")          ||
     ends (s, "part")             ||
     ends (s, "chapter")          ||
     ends (s, "section");
