@@ -93,12 +93,14 @@ might_not_be_typesetted (tree t) {
           (is_func (t, TUPLE) && t[0] == "\\hyphenation")     ||
           (is_func (t, TUPLE) && t[0] == "\\index")           ||
           (is_func (t, TUPLE) && t[0] == "\\label")           ||
+          (is_func (t, TUPLE) && t[0] == "\\lnl")             ||
           (is_func (t, TUPLE) && t[0] == "\\newdef")          ||
           (is_func (t, TUPLE) && t[0] == "\\newenvironment")  ||
           (is_func (t, TUPLE) && t[0] == "\\newenvironment*") ||
           (is_func (t, TUPLE) && t[0] == "\\newenvironment**")||
           (is_func (t, TUPLE) && t[0] == "\\newtheorem")      ||
           (is_func (t, TUPLE) && t[0] == "\\newtheorem*")     ||
+          (is_func (t, TUPLE) && t[0] == "\\nllabel")         ||
           (is_func (t, TUPLE) && t[0] == "\\noindent*")       ||
           (is_func (t, TUPLE) && t[0] == "\\pagenumbering")   ||
           (is_func (t, TUPLE) && t[0] == "\\setcounter")      ||
@@ -132,8 +134,32 @@ is_enunciation (string s) {
 }
 
 static bool
+is_block_algorithm (tree t) {
+  if (!is_tuple (t) || N(t) == 0) return false;
+  string s= as_string (t[0]);
+  s= s (1, N(s));
+  if (ends (s, "*")) s= s (0, N(s)-1);
+  static tree a (CONCAT);
+  if (N(a) == 0) {
+    a << "BEGIN" << "BODY" << "Begin" << "Call" << "ELSE" << "ELSIF"
+      << "ENDBODY" << "ENDFOR" << "ENDIF" << "ENDINPUTS" << "ENDLOOP"
+      << "ENDOUTPUTS" << "ENDWHILE" << "ElsIf" << "Else" << "ElseIf"
+      << "EndFor" <<"EndFunction" << "EndIf" << "EndLoop" << "EndProcedure"
+      << "EndWhile" << "FOR" << "FORALL" << "For" << "ForAll" << "ForEach"
+      << "Function" << "IF" << "INPUTS" << "If" << "KwData" << "KwIn"
+      << "KwOut" << "KwResult" << "KwRet" << "LOOP" << "Loop" << "OUTPUTS"
+      << "REPEAT" << "RETURN" << "Repeat" << "UNTIL" << "Until" << "WHILE"
+      << "While" << "eIf" << "lElse" << "lElseIf" << "lFor" << "lForAll"
+      << "lForEach" << "lIf" << "uElse" << "uElseIf" << "uIf";
+  }
+  return contains (tree (s), A(a));
+}
+
+static bool
 is_block_environnement (tree t) {
-  if (!is_begin (t) && ! is_end (t)) return false;
+  if (is_block_algorithm (t)) return true;
+  if (!is_begin (t) && ! is_end (t))
+    return is_block_algorithm (t);
   string s= as_string (t[0]);
   s= replace (s, "*", "");
   return

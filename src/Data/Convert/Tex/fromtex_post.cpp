@@ -931,7 +931,7 @@ textm_algorithm_parse_arg (tree t, int &i) {
   while (i<N(t) && !textm_algorithm_end_arg (t[i]))
     arg << t[i++];
   i--;
-  r << arg;
+  r << trim_spaces (arg);
   return r;
 }
 
@@ -939,7 +939,7 @@ tree
 complete_algorithm_args (tree t, bool &in) {
   if (is_atomic (t)) return t;
   tree r = tree (L(t));
-  for (int i=0; i<N(t); i++) {
+  for (int i=0, n=N(t); i<n; i++) {
     if (textm_algorithm_begin_algo (t[i])) in = true;
     else if (in && textm_algorithm_end_algo (t[i])) {
       in = false;
@@ -950,9 +950,9 @@ complete_algorithm_args (tree t, bool &in) {
     if (in && textm_algorithm_need_arg (t[i])) {
       r << textm_algorithm_parse_arg (t, i) << "\n";
     }
-    else if (in && textm_algorithm_space_after (t[i]))
+    else if (in && textm_algorithm_space_after (t[i]) && i != n-1)
       r << t[i] << " ";
-    else if (in && textm_algorithm_break_after (t[i]))
+    else if (in && textm_algorithm_break_after (t[i]) && i != n-1)
       r << t[i] << "\n";
     else if (in && is_func (t[i], SPACE, 1) && t[i][0] == "0.75spc")
       r << "\n";
