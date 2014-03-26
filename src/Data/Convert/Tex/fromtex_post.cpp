@@ -1583,18 +1583,19 @@ finalize_misc (tree t) {
   }
   else {
     int i, n= N(t);
-    tree r (t, n);
     string l= as_string (L(t));
     // Restore name of users envs, munged in finalize_layout.
     if (latex_type ("\\begin-"*l) == "user" && latex_arity ("\\begin-"*l) < 0
         && N(t) == abs (latex_arity ("\\begin-"*l))+1) {
-      r= compound (l*"*");
+      tree r= compound (l*"*");
       for (int i=0; i<n; i++)
         r << finalize_misc (t[i]);
       return r;
     }
     if (n > 1 && is_var_compound (t, "algo-if-else-if")
-        && (is_var_compound (t[N(t)-1], "document", 0))) n--;
+        && ((t[n-1] == "" || t[n-1] == document () || t[n-1] == concat ())))
+      n--;
+    tree r (t, n);
     for (i=0; i<n; i++)
       r[i]= finalize_misc (t[i]);
     return r;
