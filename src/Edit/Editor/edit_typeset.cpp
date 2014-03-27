@@ -435,6 +435,7 @@ edit_typeset_rep::exec_texmacs (tree t) {
 
 tree
 edit_typeset_rep::exec_verbatim (tree t, path p) {
+  t= convert_OTS1_symbols_to_universal_encoding (t);
   typeset_exec_until (p);
   hashmap<string,tree> H= copy (cur[p]);
   H ("TeXmacs")= tree (MACRO, "TeXmacs");
@@ -450,6 +451,7 @@ edit_typeset_rep::exec_verbatim (tree t) {
 
 tree
 edit_typeset_rep::exec_html (tree t, path p) {
+  t= convert_OTS1_symbols_to_universal_encoding (t);
   if (p == (rp * 0)) typeset_preamble ();
   typeset_exec_until (p);
   hashmap<string,tree> H= copy (cur[p]);
@@ -499,6 +501,7 @@ value_to_compound (tree t, hashmap<string,tree> h) {
 
 tree
 edit_typeset_rep::exec_latex (tree t, path p) {
+  t= convert_OTS1_symbols_to_universal_encoding (t);
   string pref= "texmacs->latex:expand-macros";
   if (as_string (call ("get-preference", pref)) != "on") return t;
   if (p == (rp * 0)) typeset_preamble ();
