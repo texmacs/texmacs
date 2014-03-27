@@ -20,7 +20,7 @@
 ;;; Controls and Latin-1 Supplement		0080--00FF
 
 ("<flip-!>"	"#A1")
-("<paragraph>"	"#A7")
+;("<paragraph>"	"#A7")
 ("<ddot>"	"#A8")
 ("<bar>"	"#AF")
 ("<acute>"	"#B4")

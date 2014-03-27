@@ -402,6 +402,45 @@ iso_to_koi8uk (string s) {
 }
 
 /******************************************************************************
+* Convert TS1 defined symbols to universal encoding
+******************************************************************************/
+
+tree
+convert_OTS1_symbols_to_universal_encoding (tree t) {
+  if (is_atomic (t)) return t;
+  if (N(t) == 0) {
+    static tree symbols (CONCAT);
+    if (N(symbols) == 0)
+      symbols << "cent" << "copyright" << "currency" << "yen" << "twosuperior"
+        << "threesuperior" << "onesuperior" << "mu" << "onequarter"
+        << "onehalf" << "threequarters" << "trademark";
+    tree l= tree (as_string (L(t)));
+    if (contains (l, A(symbols)))
+      return "<" * as_string (L(t)) * ">";
+    else if (l == "degreesign")
+      return "<degree>";
+    else if (l == "copyleft")
+      return "<copyright>"; // Copyleft is nor defined in TeXmacs universal
+                            // encoding, neither in utf8, neither buildable
+                            // with TeXmacs primitive construction.
+    else if (l == "registered")
+      return "<circledR>";
+    else if (l == "paragraphsign")
+      return "<paragraph>";
+    else if (l == "euro")
+      return "<#20AC>";
+    else
+      return t;
+
+  }
+  int i, n= N(t);
+  tree r (t, n);
+  for (i=0; i<n; i++)
+    r[i]= convert_OTS1_symbols_to_universal_encoding (t[i]);
+  return r;
+}
+
+/******************************************************************************
 * Convert between TeXmacs and XML strings
 ******************************************************************************/
 

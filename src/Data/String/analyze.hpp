@@ -60,6 +60,7 @@ string tm_to_xml_name (string s);
 string xml_name_to_tm (string s);
 string xml_unspace (string s, bool first, bool last);
 bool   contains_unicode_char (string s);
+tree   convert_OTS1_symbols_to_universal_encoding (tree t);
 
 string roman_nr (int nr);
 string Roman_nr (int nr);
