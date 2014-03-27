@@ -300,7 +300,7 @@
   (cond ((tree-in? t '(shown hidden document))
          (search-slide-name (tree-ref t 0)))
         ((tree-is? t 'tit)
-         (texmacs->string (tm-ref t 0)))
+         (texmacs->code (verbatim-expand (tm-ref t 0)) "cork"))
         (else "")))
 
 (tm-define (get-slide-name t i)
