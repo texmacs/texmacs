@@ -26,6 +26,7 @@
   ("graphicx" 40)
   ("wasysym" 50)
   ("stmaryrd" 60)
+  ("textcomp" 60)
   ("enumerate" 70)
   ("epsfig" 80)
   ("mathrsfs" 90)
@@ -100,6 +101,8 @@
   (widthof "calc")
   
   (color "xcolor")
+
+  (euro "eurosym")
 
   (mdfsetup ("tikz" "mdframed"))
 

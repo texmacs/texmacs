@@ -193,8 +193,18 @@
 ;; Symbols from mathabx package
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(logic-group latex-mathabx-symbols%
+(logic-group latex-mathabx-symbol%
   divides ndivides)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Symbols from textcomp package
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(logic-group latex-textcomp-symbol%
+ textcent textcurrency textyen textbrokenbar textasciidieresis textlnot
+ textasciimacron textdegree textpm texttwosuperior textthreesuperior
+ textasciiacute textmu textonesuperior textonequarter textonehalf
+ textthreequarters texttimes textdiv)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Rules
@@ -214,4 +224,6 @@
   ((latex-big-symbol% 'x) (latex-stmary-big-symbol% 'x))
   ((latex-needs% 'x "stmaryrd") (latex-stmary-big-symbol% 'x))
   ((latex-symbol% 'x) (latex-mathabx-symbol% 'x))
-  ((latex-needs% 'x "mathabx") (latex-mathabx-symbol% 'x)))
+  ((latex-needs% 'x "mathabx") (latex-mathabx-symbol% 'x))
+  ((latex-symbol% 'x) (latex-textcomp-symbol% 'x))
+  ((latex-needs% 'x "textcomp") (latex-textcomp-symbol% 'x)))

@@ -550,6 +550,7 @@ latex_symbol_to_tree (string s) {
       if (s == "pounds") return "\xBF";
       if (s == "BlankLine")    return "\n";
       if (s == "par")          return "\n";
+      if (s == "P")            return tree (APPLY, "paragraphsign");;
       if (s == "AND")          return concat (tree (APPLY, "algo-and"), " ");
       if (s == "NOT")          return concat (tree (APPLY, "algo-not"), " ");
       if (s == "OR")           return concat (tree (APPLY, "algo-or"), " ");

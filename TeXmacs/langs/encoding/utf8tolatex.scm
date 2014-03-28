@@ -29,7 +29,7 @@
 ("#B3" "{\\textthreesuperior}")
 ("#B4" "{\\textasciiacute}")
 ("#B5" "{\\textmu}") ; micro sign
-("#B6" "{\\textparagraph}")
+("#B6" "{\\P}")
 ("#B7" "{\\textperiodcentered}")
 ("#B8" "\\c{}")
 ("#B9" "{\\textonesuperior}")
@@ -173,6 +173,7 @@
 ("#2D8" "{\\textasciibreve}")
 ("#2DD" "{\\textacutedbl}")
 ("#311" "{\\textroundcap}")
+("#3BC" "{\\textmu}")
 ("#400" "{\\`\CYRE}")
 ("#401" "{\\CYRYO}")
 ("#402" "{\\CYRDJE}")
