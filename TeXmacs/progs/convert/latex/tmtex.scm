@@ -311,33 +311,33 @@
 
 (define (tmtex-token-sub s group?)
   (cond ((== s "less") #\<)
-	((== s "gtr") #\>)
-	((== s "box") (list 'Box))
-	((== s "||") (list '|))
-	((string-starts? s "cal-") (tmtex-modified-token 'mathcal s 4))
-	((string-starts? s "frak-") (tmtex-modified-token 'mathfrak s 5))
-	((string-starts? s "bbb-") (tmtex-modified-token 'mathbbm s 4))
-	((string-starts? s "b-cal-")
-	 (tex-apply 'tmmathbf (tmtex-modified-token 'mathcal s 6)))
-	((string-starts? s "b-up-") (tmtex-modified-token 'mathbf s 5))
-	((string-starts? s "b-") (tmtex-modified-token 'tmmathbf s 2))
+        ((== s "gtr") #\>)
+        ((== s "box") (list 'Box))
+        ((== s "||") (list '|))
+        ((string-starts? s "cal-") (tmtex-modified-token 'mathcal s 4))
+        ((string-starts? s "frak-") (tmtex-modified-token 'mathfrak s 5))
+        ((string-starts? s "bbb-") (tmtex-modified-token 'mathbbm s 4))
+        ((string-starts? s "b-cal-")
+         (tex-apply 'tmmathbf (tmtex-modified-token 'mathcal s 6)))
+        ((string-starts? s "b-up-") (tmtex-modified-token 'mathbf s 5))
+        ((string-starts? s "b-") (tmtex-modified-token 'tmmathbf s 2))
         ((logic-ref latex-text-symbols% s)
          (list '!group (list (logic-ref latex-text-symbols% s))))
-	((and (string-starts? s "#") (not tmtex-use-catcodes?)) 
-	 	(let* ((qs (string-append "<" s ">"))
-		       (cv (string-convert qs "Cork" "UTF-8")))
-		   (list '!widechar (string->symbol cv))))
-	((and (string-starts? s "#") tmtex-use-catcodes?) 
-	 	(let* ((qs (string-append "<" s ">"))
-                       (us (string-convert qs "Cork" "UTF-8"))
-		       (cv (string-convert us "UTF-8" "LaTeX")))
-		   (list '!widechar (string->symbol cv))))
-	(else (let ((ss (list (string->symbol s))))
-		(cond ((not (logic-in? (car ss) latex-symbol%))
-		       (display* "TeXmacs] non converted symbol: " s "\n")
-		       "")
-		      (group? (list '!group ss))
-		      (else (list '!symbol ss)))))))
+        ((and (string-starts? s "#") (not tmtex-use-catcodes?))
+         (let* ((qs (string-append "<" s ">"))
+                (cv (string-convert qs "Cork" "UTF-8")))
+           (list '!widechar (string->symbol cv))))
+        ((and (string-starts? s "#") tmtex-use-catcodes?)
+         (let* ((qs (string-append "<" s ">"))
+                (us (string-convert qs "Cork" "UTF-8"))
+                (cv (string-convert us "UTF-8" "LaTeX")))
+           (list '!widechar (string->symbol cv))))
+        (else (let ((ss (list (string->symbol s))))
+                (cond ((not (logic-in? (car ss) latex-symbol%))
+                       (display* "TeXmacs] non converted symbol: " s "\n")
+                       "")
+                      (group? (list '!group ss))
+                      (else (list '!symbol ss)))))))
 
 (define (tmtex-token l routine group?)
   (receive (p1 p2) (list-break (cdr l) (lambda (x) (== x #\>)))
@@ -395,7 +395,7 @@
 	      ((== c #\36) (tmtex-text-sub "ffi" l))
 	      ((== c #\37) (tmtex-text-sub "ffl" l))
 	      ((== c #\174) (tmtex-text-sub "{\\textbar}" l))
-	      (else 
+	      (else
 		(append
                   (if (or tmtex-use-unicode? tmtex-use-ascii?)
                       (string->list (string-convert (char->string c)
@@ -444,10 +444,10 @@
 	    (let ((r (tmtex-token l tmtex-verb-list #t)))
 	      (if (char? (car r)) r (cdr r)))
 	    (cons c (tmtex-verb-list (cdr l)))))))
-            
+
 (define (tmtex-string-break? x start)
   (or (not (char? x))
-      (and (tmtex-math-mode?) 
+      (and (tmtex-math-mode?)
 	   (or (tmtex-break-char? x)
 	       (and (char-alphabetic? x) (char-numeric? start))
 	       (and (char-alphabetic? start) (char-numeric? x))))))
@@ -984,7 +984,7 @@
       (and (!= s "")
 	   (== (string-ref s 0) #\<)
 	   (== (string-index s #\>) (- (string-length s) 1)))))
-       
+
 (define (tmtex-wide-star? x)
   (cond ((func? x 'wide* 1) (tmtex-wide-star? (cadr x)))
 	((nstring? x) #t)
@@ -1071,9 +1071,9 @@
 (define (tmtex-table-rows-assemble tb bb rows)
   (cond ((null? rows)
 	 (if (null? bb) '() (if (car bb) (list (list 'hline)) '())))
-	(else (append (if (or (car tb) (car bb)) (list (list 'hline)) '()) 
+	(else (append (if (or (car tb) (car bb)) (list (list 'hline)) '())
 		      (cons (cons '!row (map tmtex (car rows)))
-			    (tmtex-table-rows-assemble 
+			    (tmtex-table-rows-assemble
 			     (cdr tb) (cdr bb) (cdr rows)))))))
 
 (define (tmtex-table-make p)
@@ -1086,14 +1086,14 @@
   (cond
     ((null? ha) (if (null? rb) '() (list (if (car rb) "|" ""))))
     (else (cons (if (or (car lb) (car rb)) "|" "")
-		(cons (car ha) (tmtex-table-args-assemble 
+		(cons (car ha) (tmtex-table-args-assemble
 				(cdr lb) (cdr rb) (cdr ha)))))))
- 
+
 (define (tmtex-table-args p)
   (let ((lb (p 'cols 'lborder))
 	(rb (p 'cols 'rborder))
 	(l (p 'cols 'halign)))
-    (apply string-append 
+    (apply string-append
 	   (tmtex-table-args-assemble lb (cons (car lb) rb) l))))
 
 (define (tmtex-table-apply key args x)
@@ -1772,7 +1772,7 @@
         (else "")))
 
 (define (tmtex-number l)
-  (tmtex-default 
+  (tmtex-default
     (tmtex-number-renderer (cdr l))
     (list (tmtex-number-counter (car l)))))
 
@@ -2342,13 +2342,13 @@
 	old-matrix old-table old-mosaic old-mosaic-item
 	set reset expand expand* hide-expand display-baloon
 	apply begin end func env) tmtex-noop)
-  
+
   (shown tmtex-id)
   (!ilx tmtex-ilx)
   (mtm tmtex-mtm)
   (!file tmtex-file)
   (!arg tmtex-tex-arg))
-      
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Expansion of all macros which are not recognized by LaTeX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2586,7 +2586,7 @@
   aa ae bf cr dh dj dp em fi ge gg ht if in it le lg ll lu lq mp mu
   ne ng ni nu oe or pi pm rm rq sb sc sf sl sp ss th to tt wd wp wr xi
   AA AE DH DJ Im NG OE Pi Pr Re SS TH Xi)
-      
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Expansion of all macros which are not recognized by LaTeX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
