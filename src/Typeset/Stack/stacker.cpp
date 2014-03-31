@@ -43,8 +43,8 @@ get_pos (array<SI> a, SI which) {
   step= test= N(a)>>1;
   while (a[test] != which) {
     if (step==1) {
-      if (which < a[test]) return test-1;
-      else return test+1;
+      if (which < a[test]) return max (0, test-1);
+      else return min (N(a)-1, test+1);
     }
     else {
       step = (step + 1) >> 1;
@@ -91,22 +91,24 @@ shove_in (box b1, box b2, SI hor_sep, SI top, SI bot) {
     vpos2[i]= top;
   }
 
-  for (i=0; i<N(b1); i++) {
-    SI  y    = b1->sy1(i);
-    int start= get_pos (hpos, b1->sx1(i)- hor_sep);
-    int end  = get_pos (hpos, b1->sx2(i)+ hor_sep);
-    if (end>n) end= n;
-    for (j=start; j<end; j++)
-      vpos1[j]= min (vpos1[j], y);
-  }
-  for (i=0; i<N(b2); i++) {
-    SI  y    = b2->sy2(i);
-    int start= get_pos (hpos, b2->sx1(i)- hor_sep);
-    int end  = get_pos (hpos, b2->sx2(i)+ hor_sep);
-    if (end>n) end= n;
-    for (j=start; j<end; j++)
-      vpos2[j]= max (vpos2[j], y);
-  }
+  for (i=0; i<N(b1); i++)
+    if (b1[i]->w() > 0) {
+      SI  y    = b1->sy1(i);
+      int start= get_pos (hpos, b1->sx1(i)- hor_sep);
+      int end  = get_pos (hpos, b1->sx2(i)+ hor_sep);
+      if (end>n) end= n;
+      for (j=start; j<end; j++)
+	vpos1[j]= min (vpos1[j], y);
+    }
+  for (i=0; i<N(b2); i++)
+    if (b2[i]->w() > 0) {
+      SI  y    = b2->sy2(i);
+      int start= get_pos (hpos, b2->sx1(i)- hor_sep);
+      int end  = get_pos (hpos, b2->sx2(i)+ hor_sep);
+      if (end>n) end= n;
+      for (j=start; j<end; j++)
+	vpos2[j]= max (vpos2[j], y);
+    }
 
   SI m= vpos2[0]-vpos1[0];
   for (i=1; i<n; i++)
