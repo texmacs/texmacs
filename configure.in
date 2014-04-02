@@ -20,7 +20,7 @@ AC_CANONICAL_HOST
 #--------------------------------------------------------------------
 AC_MSG_CHECKING(current Subversion revision number)
 SVNREV=`svnversion -n . 2>/dev/null`
-SVNREV=${SVNREV/:/#}
+SVNREV=${SVNREV/:/_}
 if { test "$SVNREV" = "" || test "$SVNREV" = "exported" ; } ; then 
   SVNREV=`cat $srcdir/SVNREV`
   AC_MSG_RESULT($SVNREV, read from $srcdir/SVNREV)

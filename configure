@@ -2888,7 +2888,7 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking current Subversion revision number" >&5
 $as_echo_n "checking current Subversion revision number... " >&6; }
 SVNREV=`svnversion -n . 2>/dev/null`
-SVNREV=${SVNREV/:/#}
+SVNREV=${SVNREV/:/_}
 if { test "$SVNREV" = "" || test "$SVNREV" = "exported" ; } ; then
   SVNREV=`cat $srcdir/SVNREV`
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $SVNREV" >&5
