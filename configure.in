@@ -19,7 +19,8 @@ AC_CANONICAL_HOST
 # Retrieve SVN revision number from working dir or fallback file
 #--------------------------------------------------------------------
 AC_MSG_CHECKING(current Subversion revision number)
-SVNREV=`(svnversion -n | sed 's/.*://') 2>/dev/null`
+SVNREV=`svnversion -n . 2>/dev/null`
+SVNREV=${SVNREV/:/#}
 if { test "$SVNREV" = "" || test "$SVNREV" = "exported" ; } ; then 
   SVNREV=`cat $srcdir/SVNREV`
   AC_MSG_RESULT($SVNREV, read from $srcdir/SVNREV)

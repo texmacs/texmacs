@@ -2887,7 +2887,8 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 #--------------------------------------------------------------------
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking current Subversion revision number" >&5
 $as_echo_n "checking current Subversion revision number... " >&6; }
-SVNREV=`(svnversion -n | sed 's/.*://') 2>/dev/null`
+SVNREV=`svnversion -n . 2>/dev/null`
+SVNREV=${SVNREV/:/#}
 if { test "$SVNREV" = "" || test "$SVNREV" = "exported" ; } ; then
   SVNREV=`cat $srcdir/SVNREV`
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $SVNREV" >&5
@@ -7314,8 +7315,6 @@ CONFIG_HOST_VENDOR="$host_vendor"
 CONFIG_HOST_CPU="$host_cpu"
 CONFIG_USER="$USER"
 CONFIG_DATE="`date`"
-
-
 # tweak for XCode project
 CONFIG_ARCHS='$(NATIVE_ARCH)'
 
@@ -7532,7 +7531,7 @@ case "$GXX_VERSION" in
 esac
 
 #--------------------------------------------------------------------
-# Check for  lib expat and xcb which exitonly in only some  OS version
+# Check for expat and xcb libraries which exist only on certain OS
 #--------------------------------------------------------------------
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for XML_ParserCreate in -lexpat" >&5
@@ -7614,8 +7613,6 @@ $as_echo "$ac_cv_lib_xcb_xcb_disconnect" >&6; }
 if test "x$ac_cv_lib_xcb_xcb_disconnect" = x""yes; then :
   CONFIG_BSTATIC="-lxcb $CONFIG_BSTATIC";CONFIG_STYPE=B
 fi
-
-
 
 
 #--------------------------------------------------------------------
