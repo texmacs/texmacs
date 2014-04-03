@@ -196,10 +196,15 @@ conv_sub (const string& ks) {
         a[i] = a[i](0, pos+1) * "&&";
       else if (is_locase (a[i][pos+1]))
         a[i] = a[i](0, pos) * upcase_all (a[i] (pos, n));
-      else if (is_upcase (a[i][pos+1]))
-        a[i] = a[i](0, pos) * "+Shift" * upcase_all (a[i] (pos, n));
+      else if (is_upcase (a[i][pos+1])) {
+        // HACK: don't prepend Shift for function keys F1, F2...
+        if (n>pos+2 && a[i][pos+1] == 'F' && as_int (a[i][pos+2]) > 0)
+          ;
+        else
+          a[i] = a[i](0, pos) * "+Shift" * upcase_all (a[i] (pos, n));
+      }
+    }
   }
-}
   return recompose (a, ",");
 }
 
