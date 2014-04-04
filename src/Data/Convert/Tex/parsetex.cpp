@@ -1844,21 +1844,20 @@ latex_encoding_to_iconv (string s) {
 }
 
 tree
-parse_latex (string s, bool change, bool using_cork, bool as_pic) {
+parse_latex (string s, bool change, bool as_pic) {
   tree r;
   s= dos_to_better (s);
-  string encoding= "Cork";
   string lan= get_latex_language (s);
-  if (!using_cork) {
-    encoding= latex_encoding_to_iconv (get_latex_encoding (s));
-    if (encoding != "UTF-8" && encoding != "Cork" && encoding != "")
-      s= convert (s, encoding, "UTF-8");
-    else if (encoding == "")
-      // migth be pure ascii TeX or TeX snippet:
-      // we then make heuristic charset detection
-      s= western_to_utf8 (s);
-  }
-  s= convert (s, "LaTeX", "UTF-8");
+  string encoding= latex_encoding_to_iconv (get_latex_encoding (s));
+  if (encoding != "UTF-8" && encoding != "Cork" && encoding != "")
+    s= convert (s, encoding, "UTF-8");
+  else if (encoding == "")
+    // migth be pure ascii TeX or TeX snippet:
+    // we then make heuristic charset detection
+    s= western_to_utf8 (s);
+
+  if (encoding != "Cork")
+    s= convert (s, "LaTeX", "UTF-8");
 
   latex_parser ltx (encoding != "Cork");
   ltx.lf= 'M';
@@ -1872,5 +1871,5 @@ parse_latex (string s, bool change, bool using_cork, bool as_pic) {
 
 tree
 parse_latex_document (string s, bool change, bool as_pic) {
-  return compound ("!file", parse_latex (s, change, false, as_pic));
+  return compound ("!file", parse_latex (s, change, as_pic));
 }
