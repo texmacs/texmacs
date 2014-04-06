@@ -48,7 +48,7 @@
 (kbd-map
   (:require (and developer-mode? (in-prog-scheme?) 
                  (== "scheme-file" (file-format (current-buffer-url)))))
-  ("F5" (run-scheme-file (current-buffer-url))))
+  ("std R" (run-scheme-file (current-buffer-url))))
 
 (kbd-map
   (:mode in-prog-cpp?)
