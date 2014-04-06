@@ -447,6 +447,13 @@
             (scripts-preferences-list)
             (get-pretty-preference "scripting language")
             "15em"))
+    (item (text "Document updates run:")
+      (hlist
+        (enum (set-preference "document update times" answer)
+              '("1" "2" "3")
+              (get-preference "document update times") 
+              "2em")
+        // (text "time(s)") >>>))
     (assuming (updater-supported?)
         (item (text "Check for automatic updates:")
           (enum (set-pretty-preference "updater:interval" answer)

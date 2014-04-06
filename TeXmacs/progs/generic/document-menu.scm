@@ -99,19 +99,14 @@
 ;; The Document -> Update menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (wait-update-current-buffer)
-  (system-wait "Updating current buffer, " "please wait")
-  (update-current-buffer))
-
 (menu-bind document-update-menu
-  ("All" (generate-all-aux) (inclusions-gc) (wait-update-current-buffer))
+  ("All" (update-document "all"))
   ---
-  ("Buffer" (wait-update-current-buffer))
-  ("Bibliography" (generate-all-aux) (wait-update-current-buffer))
-  ;; ("Bibliography" (generate-aux "bibliography"))
-  ("Table of contents" (generate-aux "table-of-contents"))
-  ("Index" (generate-aux "index"))
-  ("Glossary" (generate-aux "glossary"))
+  ("Buffer" (update-document "buffer"))
+  ("Bibliography" (update-document "bibliography"))
+  ("Table of contents" (update-document "table-of-contents"))
+  ("Index" (update-document "index"))
+  ("Glossary" (update-document "glossary"))
   (if (project-attached?)
       ---
       ("Clear local information" (clear-local-info))))
@@ -187,7 +182,7 @@
               ("MingLiU" (init-env "font" "mingliu")))
           (if (and (font-exists-in-tt? "PMingLiU")
                    (not (font-exists-in-tt? "mingliu")))
-              ("MingLiU" (init-env "font" "pmingliu")))	      
+              ("MingLiU" (init-env "font" "pmingliu")))       
           (if (font-exists-in-tt? "MS Gothic")
               ("MS Gothic" (init-env "font" "ms-gothic")))
           (if (font-exists-in-tt? "MS Mincho")
@@ -589,15 +584,15 @@
           ("Bottom margin" (init-interactive-env "page-bot")))))
   (-> "Screen margins"
       ("Default" (init-default "page-screen-margin"
-			       "page-screen-left" "page-screen-right"
-			       "page-screen-top" "page-screen-bot"))
+                               "page-screen-left" "page-screen-right"
+                               "page-screen-top" "page-screen-bot"))
       ("Margins as on paper" (toggle-page-screen-margin))
       ---
       (when (test-env? "page-screen-margin" "true")
-	("Left margin" (init-interactive-env "page-screen-left"))
-	("Right margin" (init-interactive-env "page-screen-right"))
-	("Top margin" (init-interactive-env "page-screen-top"))
-	("Bottom margin" (init-interactive-env "page-screen-bot"))))
+        ("Left margin" (init-interactive-env "page-screen-left"))
+        ("Right margin" (init-interactive-env "page-screen-right"))
+        ("Top margin" (init-interactive-env "page-screen-top"))
+        ("Bottom margin" (init-interactive-env "page-screen-bot"))))
   (if (detailed-menus?)
       ---
       (group "Breaking")

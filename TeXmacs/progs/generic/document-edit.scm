@@ -242,3 +242,35 @@
   (:check-mark "v" not-page-screen-margin?)
   (init-env "page-screen-margin"
 	    (if (not-page-screen-margin?) "true" "false")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Document updates
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define doc-update-times 1)
+
+(define (notify-doc-update-times var val)
+  (with n (cond ((string? val) (or (string->number val) 1))
+                ((number? val) val)
+                (else 1))
+    (set! doc-update-times (min (max 1 n) 5)))) ; Just in case
+
+(define-preferences 
+  ("document update times" "1" notify-doc-update-times))
+
+(define (wait-update-current-buffer)
+  (system-wait "Updating current buffer, " "please wait")
+  (update-current-buffer))
+
+(tm-define (update-document what)
+  (for (.. 0 doc-update-times)       
+    (delayed    ; allow typesetting/magic to happen before next update
+      (:idle 1)
+      (cursor-after
+       (cond ((== what "all") 
+              (generate-all-aux) (inclusions-gc) (wait-update-current-buffer))
+             ((== what "bibliography")
+              (generate-all-aux) (wait-update-current-buffer))
+             ((== what "buffer") 
+              (wait-update-current-buffer))
+             (else (generate-aux what)))))))
