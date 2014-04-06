@@ -14,7 +14,7 @@
 (texmacs-module (dynamic fold-markup)
   (:use (utils library tree)
         (utils library cursor)
-	(dynamic fold-edit)))
+        (dynamic fold-edit)))
 
 (define (screens-parent? t)
   (tree-is? (tree-up t) 'screens))
@@ -29,15 +29,19 @@
   (with t (tree-search-upwards body screens-parent?)
     (if t (number->string (tree-arity (tree-up t))) "-1")))
 
-(define (screen-link i)
+(define (screen-link i strong?)
   (let* ((nr (number->string (+ i 1)))
-	 (s (number->string i))
-	 (cmd (string-append "(screens-switch-to " s ")")))
-    `(concat (action ,nr ,cmd) " ")))
+         (s (number->string i))
+         (cmd (string-append "(screens-switch-to " s ")"))
+         (act `(action ,nr ,cmd)))
+    `(concat ,(if strong? `(strong ,act) act) " ")))
 
 (tm-define (screens-bar body)
   (:secure #t)
   (with t (tree-search-upwards body screens-parent?)
     (if (not t) ""
-	(with n (tree-arity (tree-up t))
-	  `(concat ,@(map screen-link (.. 0 n)))))))
+        (let ((n (tree-arity (tree-up t)))
+              (c (tree-index t)))
+          `(concat 
+             ,@(map (lambda (x) (screen-link x (== x c))) (.. 0 n)))))))
+
