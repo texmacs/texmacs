@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.99.1>
 
 <style|tmdoc>
 
@@ -8,7 +8,7 @@
   In addition to the <hlink|preferences dialog|man-preferences.en.tm>, where
   most of the important customization may be made, there are some other user
   preferences available. These are either too ``fine-grained'' to be added to
-  the main dialog or simply unsupported and therefore the are only made
+  the main dialog or simply unsupported and therefore they are only made
   accessible through the <scheme> procedures <scm|set-preference> and
   <scm|get-preference> as explained in <hlink|<scheme> procedures for user
   preferences|../../devel/scheme/utils/utils-preferences.en.tm>. These are
