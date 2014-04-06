@@ -379,7 +379,7 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
       QRect rect = QRect (QPoint (0,0),sz);
         //HACK:
         // processEvents is needed to let Qt update windows coordinates in the case
-      qApp->processEvents();
+      qApp->processEvents (QEventLoop::ExcludeUserInputEvents);
         //ENDHACK
       QPoint pt = wid->qwid->window()->geometry().center();
       rect.moveCenter (pt);
@@ -387,7 +387,7 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
       
     }
     waitWindow->show();
-    qApp->processEvents();
+    qApp->processEvents (QEventLoop::ExcludeUserInputEvents);
     waitWindow->repaint();
   } else {
     waitWindow->close();
@@ -395,8 +395,8 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
   qApp->processEvents();
   QApplication::flush();
   
-    //    wid->wid->setUpdatesEnabled (true);
-  
+  wid->qwid->activateWindow ();
+  send_keyboard_focus (wid);
     // next time we do update the dialog will disappear
   needs_update();
 }
