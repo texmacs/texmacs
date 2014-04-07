@@ -17,6 +17,7 @@
 #include "vars.hpp"
 #include "tree_correct.hpp"
 #include "url.hpp"
+#include "font.hpp"
 
 tree upgrade_tex (tree t);
 bool textm_class_flag= false;
@@ -308,55 +309,105 @@ kill_space_invaders (tree t) {
 * Set extra fonts
 ******************************************************************************/
 
-// Cyrrilic
-
-tree set_cyrillic_font (tree t);
+tree set_special_fonts (tree t, string lan);
 
 static bool
-is_cyrillic_codepoint_entity (tree t) {
-  if (!is_atomic (t)) return false;
-  string s= as_string (t);
-  if (!starts (s, "<#") || !ends (s, ">")) return false;
-  s= s (2, N(s)-1);
-  int code= from_hexadecimal (s);
+is_cjk_code (int code) {
+  // Unfortunatelly there is now way to distinguish if it is Chinese, Japanese,
+  // Korean or Taiwanese.
+  return (code >= 0x4E00 && code <= 0x62FF ) ||
+         (code >= 0x6300 && code <= 0x77FF ) ||
+         (code >= 0x7800 && code <= 0x8CFF ) ||
+         (code >= 0x8D00 && code <= 0x9FFF );
+}
+
+static bool
+is_cyrillic_code (int code) {
   return (code >= 0x400  && code <= 0x4FF ) ||
          (code >= 0x2DE0 && code <= 0x2DFF) ||
          (code >= 0xA640 && code <= 0xA69F);
 }
 
-tree
-set_cyrillic_font (tree t, bool &in) {
-  if (is_atomic (t) && !in && is_cyrillic_codepoint_entity (t))
-    return concat (tree (SET, "font", "cyrillic"), t, tree (RESET, "font"));
+static string
+lang_of_code (int code) {
+  if (is_cyrillic_code (code)) return "cyrillic";
+  if (is_cjk_code      (code)) return "cjk";
+  return "";
+}
+
+static int
+codepoint_of_tree (tree t) {
+  if (!is_atomic (t)) return -1;
+  string s= as_string (t);
+  if (!starts (s, "<#") || !ends (s, ">"))
+    return -1;
+  s= s (2, N(s)-1);
+  return from_hexadecimal (s);
+}
+
+static bool
+is_special_codepoint_entity (tree t, string lan) {
+  int code= codepoint_of_tree (t);
+  return code != -1 && lang_of_code (code) != lan;
+}
+
+static string
+font_of_tree (tree t) {
+  if (!is_atomic (t)) return "roman";
+  int code= codepoint_of_tree (t);
+  string lang= lang_of_code (code);
+  if (lang == "cyrillic")
+    return "cyrillic";
+  // Unfortunatelly there is now way to distinguish if it is Chinese, Japanese,
+  // Korean or Taiwanese.
+  if (lang == "cjk")
+    return default_chinese_font_name ();
+  return "roman";
+}
+
+static tree
+set_special_fonts (tree t, string lan, string &current_lang) {
+  if (is_atomic (t) && is_special_codepoint_entity (t, current_lang)
+      && is_special_codepoint_entity (t, lan))
+    return concat (tree (SET, "font", font_of_tree (t)), t,
+                   tree (RESET, "font"));
   if (is_atomic (t))
     return t;
   int i, n= N(t);
   tree r (L(t));
   if (is_concat (t)) {
     for (i=0; i<n; i++) {
-      if ((t[i] == " "))
+      if (t[i] == " ")
         r << t[i];
-      else if (!in && is_cyrillic_codepoint_entity (t[i])) {
-        in= true;
-        r << tree (SET, "font", "cyrillic");
+      else {
+        string charlang= lang_of_code (codepoint_of_tree (t[i]));
+        if (current_lang != charlang && charlang != lan) {
+          current_lang= charlang;
+          r << tree (SET, "font", font_of_tree (t[i]));
+        }
+        else if (current_lang != charlang && charlang == lan) {
+          current_lang= lan;
+          r << tree (RESET, "font");
+        }
+        r << set_special_fonts (t[i], lan, current_lang);
       }
-      else if (in && !is_cyrillic_codepoint_entity (t[i])) {
-        in= false;
-        r << tree (RESET, "font");
-      }
-      r << set_cyrillic_font (t[i], in);
     }
   }
   else
     for (i=0; i<n; i++)
-      r << set_cyrillic_font (t[i]);
+      r << set_special_fonts (t[i], lan);
   return r;
 }
 
 tree
-set_cyrillic_font (tree t) {
-  bool in= false;
-  return set_cyrillic_font (t, in);
+set_special_fonts (tree t, string lan) {
+  // Unfortunatelly there is now way to distinguish if it is Chinese, Japanese,
+  // Korean or Taiwanese.
+  if (lan == "chinese"  || lan == "taiwanese" ||
+      lan == "japanese" || lan == "korean")
+    lan= "cjk";
+  string current_lang= lan;
+  return set_special_fonts (t, lan, current_lang);
 }
 
 /******************************************************************************
