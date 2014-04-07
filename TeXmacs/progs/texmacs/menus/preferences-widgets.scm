@@ -403,6 +403,11 @@
   ("168" "Once a week")
   ("720" "Once a month"))
 
+(define-preference-names "document update times"
+  ("1" "Once")
+  ("2" "Twice")
+  ("3" "Three times"))
+
 (define (updater-last-check-formatted)
   "Time since last update check formatted for use in the preferences dialog"
   (with c (updater-last-check)
@@ -449,11 +454,10 @@
             "15em"))
     (item (text "Document updates run:")
       (hlist
-        (enum (set-preference "document update times" answer)
-              '("1" "2" "3")
-              (get-preference "document update times") 
-              "2em")
-        // (text "time(s)") >>>))
+        (enum (set-pretty-preference "document update times" answer)
+              '("Once" "Twice" "Three times")
+              (get-pretty-preference "document update times") 
+              "15em")))
     (assuming (updater-supported?)
         (item (text "Check for automatic updates:")
           (enum (set-pretty-preference "updater:interval" answer)
